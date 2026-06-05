@@ -49,7 +49,12 @@
           "type": "string",
           "enum": [
             "local-hardware",
-            "linux-xpad.c"
+            "linux-xpad.c",
+            "linux-hid-steam.c",
+            "linux-hid-playstation.c",
+            "linux-hid-sony.c",
+            "linux-hid-nintendo.c",
+            "tester-packets"
           ]
         },
         "hardware_verified": {
@@ -175,6 +180,15 @@
         },
         {
           "$ref": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/Protocols/generic-hid.schema.json"
+        },
+        {
+          "$ref": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/Protocols/steam.schema.json"
+        },
+        {
+          "$ref": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/Protocols/switch-pro.schema.json"
+        },
+        {
+          "$ref": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/Protocols/xbox-adaptive-joystick.schema.json"
         }
       ]
     },

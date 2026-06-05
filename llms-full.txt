@@ -21,7 +21,7 @@ Input:
 
 ```text
 USB vendor-specific class 0xff -> LibUSB / SwiftUSB -> GIPParser
-USB/Bluetooth HID class 0x03   -> IOHIDManager      -> DS4Parser or GenericHIDParser
+USB/Bluetooth HID class 0x03   -> IOHIDManager      -> DS4Parser, experimental DS3Parser with USB and Bluetooth operational-mode setup, experimental DualSenseParser with USB and Bluetooth input framing, experimental SteamControllerParser with wireless receiver lifecycle gating and lizard-mode feature reports, experimental SwitchProParser with USB-scoped startup reports, or GenericHIDParser
 ```
 
 Output:
@@ -88,7 +88,9 @@ Rules:
   `input.usb.configuration` or `input.usb.post_handshake_settle_ms`.
 - Protocol family and mapping differences must be represented as
   `protocol.variant` and `protocol.mapping_flags` where possible, following the
-  Linux `xpad.c` style of data-driven device families.
+  Linux `xpad.c` style of data-driven device families. Experimental parser
+  profiles also carry `experimental` and `needsHardwareTest` flags until real
+  devices confirm runtime behavior.
 - GIP startup differences belong in `protocol.startup_packets`, not parser
   VID/PID branches.
 
@@ -164,10 +166,11 @@ Fast local rebuild without reinstalling the DriverKit extension:
 ./scripts/ojd rebuild-fast dev
 ```
 
-Package tests:
+Package compile and macOS 14 parser regressions:
 
 ```bash
-swift test
+swift build
+./scripts/ojd test parsers-macos14
 ```
 
 Profile/schema validation:
@@ -215,6 +218,10 @@ Run these checks before merging profile, schema, or package changes:
 
 ```bash
 swift build
-swift test
 ./scripts/ojd validate profiles
+./scripts/ojd test parsers-macos14
 ```
+
+Run Swift Testing only when the local toolchain can compile package tests for the
+intended deployment target. Use the parser harness when `_Testing_Foundation` is
+blocked by a newer macOS deployment requirement.

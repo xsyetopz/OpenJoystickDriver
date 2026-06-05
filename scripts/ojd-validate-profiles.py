@@ -40,11 +40,52 @@ PROTOCOLS = {
     },
     "DS3": {
         "variants": {"dualShock3", "unknown"},
-        "mapping_flags": {"gyro", "accelerometer", "battery"},
+        "mapping_flags": {"gyro", "accelerometer", "battery", "experimental", "needsHardwareTest"},
     },
     "DS4": {
         "variants": {"dualShock4", "unknown"},
         "mapping_flags": {"touchpad", "gyro", "accelerometer", "battery", "lightbar"},
+    },
+    "DualSense": {
+        "variants": {"dualSense", "unknown"},
+        "mapping_flags": {
+            "touchpad",
+            "gyro",
+            "accelerometer",
+            "battery",
+            "lightbar",
+            "microphoneMute",
+            "adaptiveTriggers",
+            "experimental",
+            "needsHardwareTest",
+        },
+    },
+    "SteamController": {
+        "variants": {"steamController", "unknown"},
+        "mapping_flags": {
+            "lizardMode",
+            "trackpads",
+            "gyro",
+            "battery",
+            "wirelessReceiver",
+            "experimental",
+            "needsHardwareTest",
+        },
+    },
+    "SwitchPro": {
+        "variants": {"switchPro", "unknown"},
+        "mapping_flags": {
+            "usbHandshake",
+            "calibration",
+            "imu",
+            "rumble",
+            "experimental",
+            "needsHardwareTest",
+        },
+    },
+    "XboxAdaptiveJoystick": {
+        "variants": {"xboxAdaptiveJoystick", "unknown"},
+        "mapping_flags": {"rawUSBPackets", "genericHIDPackets", "experimental", "needsHardwareTest"},
     },
     "GenericHID": {
         "variants": {"genericHID"},
@@ -54,7 +95,15 @@ PROTOCOLS = {
 
 BACKENDS = {"driverKitHID", "userSpaceHID", "gameControllerVirtual"}
 VIRTUAL_PROFILES = {"xboxOneS"}
-PROFILE_SOURCES = {"local-hardware", "linux-xpad.c"}
+PROFILE_SOURCES = {
+    "local-hardware",
+    "linux-xpad.c",
+    "linux-hid-steam.c",
+    "linux-hid-playstation.c",
+    "linux-hid-sony.c",
+    "linux-hid-nintendo.c",
+    "tester-packets",
+}
 GIP_STARTUP_PACKETS = {
     "powerOn",
     "xboxOneSInit",

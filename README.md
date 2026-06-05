@@ -11,14 +11,16 @@ app, or native macOS app.
 
 ## Status
 
-| Item                                 | Status | Notes                                                         |
-| ------------------------------------ | ------ | ------------------------------------------------------------- |
-| GameSir G7 SE                        | ✅      | Hardware verified through GIP and Xbox One HID compatibility. |
-| Flydigi Vader 5S                     | ✅      | Uses GIP and needs `setConfiguration(1)` before claim.        |
-| Sony DualShock 4 (USB/Bluetooth)     | ✅      | Input and physical rumble are implemented.                    |
-| Xbox 360 wired (USB)                 | ✅      | Parser and profiles exist; hardware coverage varies by model. |
-| More xpad-derived Xbox batches       | 🚧      | Profiles exist but need local hardware checks.                |
-| DualShock 3 / DualSense / Switch Pro | ❌      | Not implemented.                                              |
+| --------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| GameSir G7 SE                     | ✅      | Hardware verified through GIP and Xbox One HID compatibility.                                                                                |
+| Flydigi Vader 5S                  | ✅      | Uses GIP and needs `setConfiguration(1)` before claim.                                                                                       |
+| Sony DualShock 4 (USB/Bluetooth)  | ✅      | Input and physical rumble are implemented.                                                                                                   |
+| Xbox 360 wired (USB)              | ✅      | Parser and profiles exist; hardware coverage varies by model.                                                                                |
+| More xpad-derived Xbox batches    | 🚧      | Profiles exist but need local hardware checks.                                                                                               |
+| Valve Steam Controller            | 🚧      | Experimental parser/profile with source-backed wireless receiver lifecycle and lizard-mode feature reports; needs physical hardware testing. |
+| Sony DualSense USB/Bluetooth      | 🚧      | Experimental parser/profile with source-backed USB and Bluetooth input; needs physical hardware testing.                                     |
+| Sony DualShock 3 USB/Bluetooth    | 🚧      | Experimental parser/profile with source-backed transport-specific operational mode; needs physical hardware testing.                         |
+| Nintendo Switch Pro USB/Bluetooth | 🚧      | Experimental parser/profile with USB startup reports and source-backed Bluetooth input gating; needs physical hardware testing.              |
 
 For the full feature matrix, mapping notes, and per-mode caveats, see
 [docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md).
@@ -29,7 +31,7 @@ For the full feature matrix, mapping notes, and per-mode caveats, see
 2. Open the menu-bar item.
 3. Follow the UI prompts to grant **Input Monitoring** for the app and helper.
 4. Connect a supported controller.
-5. Use **Input Test** to confirm buttons/sticks and physical rumble.
+5. Use **Input Test** to confirm buttons/sticks; test physical rumble only for devices whose rumble path is listed as implemented.
 
 ## Choose An Output Mode
 
@@ -59,10 +61,10 @@ Useful commands:
 
 ```bash
 ./scripts/ojd validate profiles
+./scripts/ojd test parsers-macos14
 ./scripts/ojd diagnose backends --seconds 5
 ./scripts/ojd diagnose gamecontroller --seconds 5
 ./scripts/ojd diagnose sdl3 --seconds 10
-swift test
 ```
 
 From the installed app bundle:
@@ -79,7 +81,9 @@ If you're changing parsers/profiles/tests, signing is not required:
 
 ```bash
 brew install libusb
-swift test
+./scripts/ojd validate profiles
+./scripts/ojd test parsers-macos14
+swift build
 ```
 
 If you're working on the app/daemon, DriverKit, or signing/notarization, start here:

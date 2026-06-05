@@ -3,7 +3,11 @@ import Foundation
 import PackageDescription
 
 let useLocalSwiftUSB = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTUSB"] == "1"
-let localSwiftUSBPath = "../SwiftUSB"
+let packageDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+let localSwiftUSBPath = packageDirectory
+  .appendingPathComponent("../SwiftUSB")
+  .standardizedFileURL
+  .path
 let swiftUSBDependency: Package.Dependency =
   useLocalSwiftUSB && FileManager.default.fileExists(atPath: localSwiftUSBPath)
     ? .package(path: localSwiftUSBPath)
@@ -56,7 +60,10 @@ let package = Package(
 
     .executableTarget(
       name: "OpenJoystickDriverHIDTool",
-      dependencies: ["OpenJoystickDriverKit"],
+      dependencies: [
+        "OpenJoystickDriverKit",
+        .product(name: "SwiftUSB", package: "SwiftUSB"),
+      ],
       path: "Sources/OpenJoystickDriverHIDTool"
     ),
 

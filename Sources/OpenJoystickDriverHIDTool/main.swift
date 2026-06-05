@@ -1,6 +1,8 @@
+import Dispatch
 import Foundation
 import IOKit
 import IOKit.hid
+import SwiftUSB
 
 private func parseInt(_ s: String) -> Int? {
   if s.hasPrefix("0x") || s.hasPrefix("0X") {
@@ -19,6 +21,21 @@ private func strProp(_ dev: IOHIDDevice, _ key: String) -> String? {
 
 private func dataProp(_ dev: IOHIDDevice, _ key: String) -> Data? {
   IOHIDDeviceGetProperty(dev, key as CFString) as? Data
+}
+
+private func hexString(_ bytes: UnsafePointer<UInt8>?, count: Int) -> String {
+  guard let bytes, count > 0 else { return "" }
+  return (0..<count).map { String(format: "%02x", bytes[$0]) }.joined(separator: " ")
+}
+
+private final class ExitCodeBox: @unchecked Sendable {
+  private let lock = NSLock()
+  private var rawValue: Int32 = 0
+
+  var value: Int32 {
+    get { lock.withLock { rawValue } }
+    set { lock.withLock { rawValue = newValue } }
+  }
 }
 
 private func enumerateDevices(matching: [String: Any]?) -> [IOHIDDevice] {
@@ -88,6 +105,8 @@ private func printUsageAndExit(_ code: Int32) -> Never {
       OpenJoystickDriverHIDTool --dump --vid 0x045e --pid 0x02ea
       OpenJoystickDriverHIDTool --open --vid 0x045e --pid 0x028e [--service-open] [--set-report]
       OpenJoystickDriverHIDTool --monitor [--vid 0x4f4a --pid 0x4447] [--seconds 10]
+      OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000\
+        [--endpoint 0x81] [--interface 0] [--length 64] [--seconds 20] [--detach]
 
     Options:
       --list           List HID devices (vid/pid/product/transport + report sizes).
@@ -96,8 +115,13 @@ private func printUsageAndExit(_ code: Int32) -> Never {
       --service-open   With --open, recreate the device from IOHIDDeviceGetService first.
       --set-report     With --open, send one Xbox 360-style rumble output report.
       --monitor        Open matching HID devices and print input value/report callbacks.
+      --usb-monitor    Claim one USB interface and print raw interrupt IN packets.
+      --detach         With --usb-monitor, try detaching the kernel driver first.
       --vid <int>      Vendor ID (decimal or 0x... hex).
       --pid <int>      Product ID (decimal or 0x... hex).
+      --interface <n>  USB interface number for --usb-monitor (default: 0).
+      --endpoint <n>   Interrupt IN endpoint for --usb-monitor; omitted sweeps 0x81...0x8f.
+      --length <n>     Read length for --usb-monitor (default: 64, max: 1024).
       --seconds <int>  Monitor duration in seconds (default: 10, max: 60).
       --help           Show this help.
 
@@ -116,6 +140,8 @@ let open = args.contains("--open")
 let serviceOpen = args.contains("--service-open")
 let setReport = args.contains("--set-report")
 let monitor = args.contains("--monitor")
+let usbMonitor = args.contains("--usb-monitor")
+let detachKernel = args.contains("--detach")
 
 func argValue(_ name: String) -> String? {
   guard let idx = args.firstIndex(of: name), idx + 1 < args.count else { return nil }
@@ -126,6 +152,108 @@ func intArg(_ name: String, default defaultValue: Int) -> Int {
   guard let raw = argValue(name), let parsed = parseInt(raw) else { return defaultValue }
   return parsed
 }
+
+
+func runRawUSBMonitor() {
+  let vid = UInt16(clamping: intArg("--vid", default: 0x045E))
+  let pid = UInt16(clamping: intArg("--pid", default: 0))
+  let interfaceNumber = intArg("--interface", default: 0)
+  let explicitEndpoint = argValue("--endpoint").flatMap(parseInt).map { UInt8(clamping: $0) }
+  let endpoints = explicitEndpoint.map { [$0] } ?? Array(UInt8(0x81)...UInt8(0x8F))
+  let length = min(max(intArg("--length", default: 64), 1), 1024)
+  let seconds = min(max(intArg("--seconds", default: 20), 1), 300)
+  let timeoutMs: UInt32 = explicitEndpoint == nil ? 100 : 250
+  let exitCode = ExitCodeBox()
+  let done = DispatchSemaphore(value: 0)
+
+  Task {
+    defer { done.signal() }
+    do {
+      let devices = try await USBDevice.findAll(vendorId: vid, productId: pid, deviceClass: nil)
+      let endpointDescription = explicitEndpoint.map { "0x" + String($0, radix: 16) }
+        ?? "sweep:0x81-0x8f"
+      print(
+        "USB_MONITOR devices=\(devices.count) vid=0x\(String(vid, radix: 16))"
+          + " pid=0x\(String(pid, radix: 16)) interface=\(interfaceNumber)"
+          + " endpoint=\(endpointDescription) length=\(length) seconds=\(seconds)"
+      )
+      guard let device = devices.first else {
+        fputs("ERROR: no matching USB device found\n", stderr)
+        exitCode.value = 2
+        return
+      }
+
+      print(
+        "USB_DEVICE bus=\(device.bus) address=\(device.address)"
+          + " class=0x\(String(device.deviceClass, radix: 16))"
+          + " subclass=0x\(String(device.deviceSubClass, radix: 16))"
+          + " protocol=0x\(String(device.deviceProtocol, radix: 16))"
+      )
+      if let manufacturer = try? device.getManufacturer() {
+        print("USB_STRING manufacturer=\(manufacturer)")
+      }
+      if let product = try? device.getProduct() { print("USB_STRING product=\(product)") }
+      if let serial = try? device.getSerialNumber() { print("USB_STRING serial=\(serial)") }
+
+      let handle = try device.open()
+      if detachKernel {
+        do {
+          try handle.detachKernelDriver(interface: interfaceNumber)
+          print("USB_DETACH interface=\(interfaceNumber) result=detached")
+        } catch let error as USBError where error.isNotFound || error.isNotSupported {
+          print("USB_DETACH interface=\(interfaceNumber) result=not-needed code=\(error.code)")
+        }
+      }
+      try handle.claimInterface(interfaceNumber)
+      print("USB_CLAIM interface=\(interfaceNumber) result=claimed")
+      if explicitEndpoint == nil {
+        print("USB_ENDPOINT_SWEEP candidates=0x81...0x8f timeout_ms=\(timeoutMs)")
+      }
+
+      let end = Date().addingTimeInterval(TimeInterval(seconds))
+      var packets = 0
+      var disabledEndpoints = Set<UInt8>()
+      while Date() < end {
+        for endpoint in endpoints where Date() < end && !disabledEndpoints.contains(endpoint) {
+          do {
+            let bytes = try handle.readInterrupt(
+              endpoint: endpoint,
+              length: length,
+              timeout: timeoutMs
+            )
+            packets += 1
+            let hex = bytes.map { String(format: "%02x", $0) }.joined(separator: " ")
+            print(
+              "USB_REPORT endpoint=0x\(String(endpoint, radix: 16))"
+                + " len=\(bytes.count) bytes=\(hex)"
+            )
+            fflush(stdout)
+          } catch let error as USBError where error.isTimeout {
+            continue
+          } catch let error as USBError {
+            if explicitEndpoint == nil { disabledEndpoints.insert(endpoint) }
+            print(
+              "USB_ENDPOINT endpoint=0x\(String(endpoint, radix: 16))"
+                + " result=error code=\(error.code)"
+            )
+            fflush(stdout)
+          }
+        }
+        if disabledEndpoints.count == endpoints.count { break }
+      }
+      print("USB_SUMMARY packets=\(packets) disabled_endpoints=\(disabledEndpoints.count)")
+      exitCode.value = packets > 0 ? 0 : 3
+    } catch {
+      fputs("ERROR: raw USB monitor failed: \(error)\n", stderr)
+      exitCode.value = 1
+    }
+  }
+
+  done.wait()
+  exit(exitCode.value)
+}
+
+if usbMonitor { runRawUSBMonitor() }
 
 if monitor {
   let vid = intArg("--vid", default: 0x4F4A)
@@ -150,9 +278,17 @@ if monitor {
       fflush(stdout)
     }
 
-    func report(_ type: IOHIDReportType, _ reportID: UInt32, _ reportLength: CFIndex) {
+    func report(
+      _ type: IOHIDReportType,
+      _ reportID: UInt32,
+      _ report: UnsafePointer<UInt8>?,
+      _ reportLength: CFIndex
+    ) {
       lock.withLock { reports += 1 }
-      print("REPORT type=\(type.rawValue) id=\(reportID) len=\(reportLength)")
+      print(
+        "REPORT type=\(type.rawValue) id=\(reportID) len=\(reportLength)"
+          + " bytes=\(hexString(report, count: reportLength))"
+      )
       fflush(stdout)
     }
 
@@ -179,10 +315,10 @@ if monitor {
   }
   IOHIDManagerRegisterInputValueCallback(mgr, valueCallback, counterPtr)
 
-  let reportCallback: IOHIDReportCallback = { context, _, _, type, reportID, _, reportLength in
+  let reportCallback: IOHIDReportCallback = { context, _, _, type, reportID, report, reportLength in
     guard let context else { return }
     let counter = Unmanaged<MonitorCounter>.fromOpaque(context).takeUnretainedValue()
-    counter.report(type, reportID, reportLength)
+    counter.report(type, reportID, report, reportLength)
   }
   IOHIDManagerRegisterInputReportCallback(mgr, reportCallback, counterPtr)
   IOHIDManagerScheduleWithRunLoop(mgr, CFRunLoopGetCurrent(), CFRunLoopMode.defaultMode.rawValue)

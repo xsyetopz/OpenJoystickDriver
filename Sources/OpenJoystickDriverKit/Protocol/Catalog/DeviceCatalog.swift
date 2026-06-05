@@ -34,6 +34,10 @@ public enum ControllerProtocolVariant: String, Sendable {
   case xboxOne
   case dualShock3
   case dualShock4
+  case dualSense
+  case steamController
+  case switchPro
+  case xboxAdaptiveJoystick
   case genericHID
   case unknown
 }
@@ -224,6 +228,10 @@ struct DeviceCatalog: Sendable {
     switch parserName(for: identifier) {
     case "GIP": return .xboxOne
     case "DS4": return .dualShock4
+    case "DualSense": return .dualSense
+    case "SteamController": return .steamController
+    case "SwitchPro": return .switchPro
+    case "XboxAdaptiveJoystick": return .xboxAdaptiveJoystick
     case "Xbox360": return .xbox360
     case "GenericHID": return .genericHID
     default: return .unknown

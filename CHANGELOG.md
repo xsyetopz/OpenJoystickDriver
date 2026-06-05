@@ -2,6 +2,37 @@
 
 All notable changes to OpenJoystickDriver are documented in this file.
 
+## 0.5.0-alpha.1
+
+### Added
+
+- Added source-backed experimental Steam Controller USB and wireless receiver
+  profiles for Valve `10462:4354` and `10462:4418`, including Linux
+  `hid-steam.c` input parsing, lizard-mode feature reports, and wireless
+  receiver connect/disconnect status gating. Steam Client coexistence and
+  physical adapter timing still need hardware testing.
+- Added source-backed experimental DualSense profiles for Sony `1356:3302`
+  and `1356:3570` using Linux `hid-playstation.c` USB input offsets and
+  Bluetooth report `0x31` CRC/input framing. Haptics and physical hardware
+  behavior still need testing.
+- Added source-backed experimental DualShock 3 profile `1356:616` using
+  Linux `hid-sony.c` and SIXAXIS descriptor evidence, including USB feature
+  reads, Bluetooth operational-mode feature report `0xf4`, and the Linux
+  bogus Bluetooth status-report filter. Rumble, sensors, pairing, and
+  physical hardware behavior still need testing.
+- Added source-backed experimental Nintendo Switch Pro profile `1406:8201`
+  using Linux `hid-nintendo.c` USB startup reports and full-report input
+  parsing. USB startup reports are transport-gated away from Bluetooth;
+  calibration, rumble, IMU, and physical hardware behavior still need testing.
+- Added an Xbox Adaptive Joystick packet-capture checklist for collecting exact
+  standalone VID/PID, interface, endpoint, and annotated input packet evidence
+  before adding a profile or parser.
+
+### Changed
+
+- Documented experimental controller support with explicit source provenance and
+  hardware-validation caveats in the compatibility matrix and LLM context.
+
 ## 0.4.1
 
 ### Changed

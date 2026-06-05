@@ -169,11 +169,48 @@ struct DevicePipelineSleepTests {
       ]
     )
   }
+
+  @Test
+  func testInputConnectionLifecycleDefersAndStopsOutput() async {
+    let dispatcher = RecordingOutputDispatcher()
+    let pipeline = DevicePipeline(
+      identifier: DeviceIdentifier(vendorID: 10462, productID: 4418),
+      transport: .hid(locationID: 1),
+      parser: ScriptedLifecycleInputParser(),
+      dispatcher: dispatcher,
+      usbContext: nil,
+      idleTimeoutNanoseconds: 5_000_000_000,
+      idleMonitorIntervalNanoseconds: 5_000_000_000
+    )
+
+    await pipeline.start()
+    #expect(await pipeline.hidShutdownFeatureReports().isEmpty)
+
+    await pipeline.feedHIDData(Data([1]))
+    #expect(dispatcher.flattenedEvents.isEmpty)
+
+    let connectReports = await pipeline.feedHIDData(Data([7]))
+    #expect(dispatcher.batches == [[]])
+    #expect(connectReports == [PhysicalHIDOutputReport(reportID: 0, bytes: [0xAA])])
+
+    await pipeline.feedHIDData(Data([1]))
+    #expect(dispatcher.flattenedEvents == [.buttonPressed(.a)])
+    let shutdownReports = await pipeline.hidShutdownFeatureReports()
+    #expect(shutdownReports == [PhysicalHIDOutputReport(reportID: 0, bytes: [0xBB])])
+
+    let disconnectReports = await pipeline.feedHIDData(Data([8]))
+    #expect(dispatcher.flattenedEvents == [.buttonPressed(.a), .buttonReleased(.a)])
+    #expect(disconnectReports == [PhysicalHIDOutputReport(reportID: 0, bytes: [0xBB])])
+    #expect(await pipeline.hidShutdownFeatureReports().isEmpty)
+    #expect(dispatcher.stoppedIdentifiers == [DeviceIdentifier(vendorID: 10462, productID: 4418)])
+  }
+
 }
 
 private final class ScriptedInputParser: InputParser, @unchecked Sendable {
-  // swiftlint:disable:next async_without_await
-  func performHandshake(handle: USBDeviceHandle?) async throws {}
+  func performHandshake(handle: USBDeviceHandle?) async throws {
+    await Task.yield()
+  }
 
   func parse(data: Data) throws -> [ControllerEvent] {
     switch data.first {
@@ -195,24 +232,86 @@ private final class ScriptedInputParser: InputParser, @unchecked Sendable {
   }
 }
 
+
+private final class ScriptedLifecycleInputParser: InputParser, ControllerInputConnectionLifecycle,
+  HIDStartupFeatureReportProvider, HIDShutdownFeatureReportProvider, @unchecked Sendable
+{
+  private var connected = false
+  private var pendingState: ControllerInputConnectionState?
+
+  var requiresInputConnectionBeforeOutput: Bool { true }
+
+  func hidStartupFeatureReports() -> [PhysicalHIDOutputReport] {
+    [PhysicalHIDOutputReport(reportID: 0, bytes: [0xAA])]
+  }
+
+  func hidShutdownFeatureReports() -> [PhysicalHIDOutputReport] {
+    [PhysicalHIDOutputReport(reportID: 0, bytes: [0xBB])]
+  }
+
+  func consumeInputConnectionStateChange() -> ControllerInputConnectionState? {
+    let state = pendingState
+    pendingState = nil
+    return state
+  }
+
+  func performHandshake(handle: USBDeviceHandle?) async throws {
+    await Task.yield()
+  }
+
+  func parse(data: Data) throws -> [ControllerEvent] {
+    switch data.first {
+    case 7:
+      connected = true
+      pendingState = .connected
+      return []
+    case 8:
+      connected = false
+      pendingState = .disconnected
+      return []
+    case 1 where connected:
+      return [.buttonPressed(.a)]
+    default:
+      return []
+    }
+  }
+}
+
 private final class RecordingOutputDispatcher: OutputDispatcher, @unchecked Sendable {
   var suppressOutput = false
 
   private let lock = NSLock()
-  private var batches: [[ControllerEvent]] = []
+  private var recordedBatches: [[ControllerEvent]] = []
+  private var recordedStops: [DeviceIdentifier] = []
+
+  var batches: [[ControllerEvent]] {
+    lock.withLock { recordedBatches }
+  }
+
+  var stoppedIdentifiers: [DeviceIdentifier] {
+    lock.withLock { recordedStops }
+  }
 
   var dispatchCount: Int {
-    lock.withLock { batches.count }
+    lock.withLock { recordedBatches.count }
   }
 
   var flattenedEvents: [ControllerEvent] {
-    lock.withLock { batches.flatMap { $0 } }
+    lock.withLock { recordedBatches.flatMap { $0 } }
   }
 
   // swiftlint:disable:next async_without_await
   func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {
     lock.withLock {
-      batches.append(events)
+      recordedBatches.append(events)
+    }
+  }
+}
+
+extension RecordingOutputDispatcher: ControllerLifecycleListener {
+  func controllerDidStop(_ identifier: DeviceIdentifier) {
+    lock.withLock {
+      recordedStops.append(identifier)
     }
   }
 }

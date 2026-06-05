@@ -23,7 +23,14 @@ public final class ParserRegistry: Sendable {
         transportProfile: transportProfile,
         startupPackets: runtimeProfile.gipStartupPackets
       )
+    case "DS3": return DS3Parser()
     case "DS4": return DS4Parser()
+    case "DualSense": return DualSenseParser()
+    case "SteamController":
+      return SteamControllerParser(
+        isWirelessReceiver: runtimeProfile.mappingFlags.contains("wirelessReceiver")
+      )
+    case "SwitchPro": return SwitchProParser()
     case "Xbox360": return Xbox360Parser(outEndpoint: transportProfile.outputEndpoint)
     default: return GenericHIDParser(identifier: identifier)
     }

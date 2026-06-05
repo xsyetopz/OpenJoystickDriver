@@ -39,6 +39,85 @@ struct DeviceTransportProfileTests {
     #expect(profile.needsSetConfiguration)
     #expect(profile.postHandshakeSettleNanoseconds == 200_000_000)
   }
+
+  @Test
+  func testDS3ExperimentalProfile() {
+    let registry = ParserRegistry()
+    let identifier = DeviceIdentifier(vendorID: 1356, productID: 616)
+    let profile = registry.runtimeProfile(for: identifier)
+
+    #expect(registry.parserName(for: identifier) == "DS3")
+    #expect(profile.protocolVariant == .dualShock3)
+    #expect(profile.mappingFlags == ["experimental", "needsHardwareTest"])
+    #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
+    #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
+  }
+
+  @Test
+  func testDualSenseExperimentalProfiles() {
+    let registry = ParserRegistry()
+    let identifiers = [
+      DeviceIdentifier(vendorID: 1356, productID: 3302),
+      DeviceIdentifier(vendorID: 1356, productID: 3570),
+    ]
+
+    for identifier in identifiers {
+      let profile = registry.runtimeProfile(for: identifier)
+      #expect(registry.parserName(for: identifier) == "DualSense")
+      #expect(profile.protocolVariant == .dualSense)
+      #expect(profile.mappingFlags == [
+        "touchpad",
+        "microphoneMute",
+        "experimental",
+        "needsHardwareTest",
+      ])
+      #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
+      #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
+    }
+  }
+
+  @Test
+  func testSteamControllerExperimentalProfiles() {
+    let registry = ParserRegistry()
+    let identifiers = [
+      DeviceIdentifier(vendorID: 10462, productID: 4354),
+      DeviceIdentifier(vendorID: 10462, productID: 4418),
+    ]
+
+    let wired = registry.runtimeProfile(for: identifiers[0])
+    #expect(registry.parserName(for: identifiers[0]) == "SteamController")
+    #expect(wired.protocolVariant == .steamController)
+    #expect(wired.mappingFlags == ["lizardMode", "trackpads", "experimental", "needsHardwareTest"])
+
+    let wireless = registry.runtimeProfile(for: identifiers[1])
+    #expect(registry.parserName(for: identifiers[1]) == "SteamController")
+    #expect(wireless.protocolVariant == .steamController)
+    #expect(
+      wireless.mappingFlags == [
+        "lizardMode", "trackpads", "wirelessReceiver", "experimental", "needsHardwareTest",
+      ]
+    )
+
+    for identifier in identifiers {
+      #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
+      #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
+    }
+  }
+
+
+  @Test
+  func testSwitchProExperimentalProfile() {
+    let registry = ParserRegistry()
+    let identifier = DeviceIdentifier(vendorID: 1406, productID: 8201)
+    let profile = registry.runtimeProfile(for: identifier)
+
+    #expect(registry.parserName(for: identifier) == "SwitchPro")
+    #expect(profile.protocolVariant == .switchPro)
+    #expect(profile.mappingFlags == ["usbHandshake", "experimental", "needsHardwareTest"])
+    #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
+    #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
+  }
+
   @Test
   func testXpadXbox360ProfileBatch() {
     let registry = ParserRegistry()

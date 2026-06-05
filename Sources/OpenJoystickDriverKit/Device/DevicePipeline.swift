@@ -81,6 +81,7 @@ actor DevicePipeline {
   private var waitingForExternalNeutral = false
   private var consecutiveUSBIOErrors: Int = 0
   private var lastUSBIOErrorLogNs: UInt64 = 0
+  private var inputConnectionActive: Bool
 
   init(
     identifier: DeviceIdentifier,
@@ -101,6 +102,8 @@ actor DevicePipeline {
     self.transportProfile = transportProfile
     self.idleMonitorIntervalNanoseconds = idleMonitorIntervalNanoseconds
     self.externalOutputAllowed = externalOutputAllowed
+    let inputLifecycle = parser as? any ControllerInputConnectionLifecycle
+    self.inputConnectionActive = !(inputLifecycle?.requiresInputConnectionBeforeOutput ?? false)
     let initialState = DeviceInputState(
       vendorID: identifier.vendorID,
       productID: identifier.productID
@@ -145,13 +148,29 @@ actor DevicePipeline {
   }
 
   /// Feed HID input report data (called by DeviceManager for class 0x03 devices).
-  func feedHIDData(_ data: Data) async {
-    guard isActive else { return }
+  func feedHIDData(_ data: Data) async -> [PhysicalHIDOutputReport] {
+    guard isActive else { return [] }
     appendToPacketLog(bytes: Array(data), direction: "rx")
     do {
       let events = try parser.parse(data: data)
+      let featureReports = await handleInputConnectionStateChangeIfNeeded()
+      guard inputConnectionActive else { return featureReports }
       await handleParsedEvents(events, now: DispatchTime.now().uptimeNanoseconds)
-    } catch { print("[DevicePipeline] Parse error" + " for \(identifier): \(error)") }
+      return featureReports
+    } catch {
+      print("[DevicePipeline] Parse error" + " for \(identifier): \(error)")
+      return []
+    }
+  }
+
+  nonisolated func requiresInputConnectionBeforeOutput() -> Bool {
+    (parser as? any ControllerInputConnectionLifecycle)?
+      .requiresInputConnectionBeforeOutput ?? false
+  }
+
+  func hidShutdownFeatureReports() -> [PhysicalHIDOutputReport] {
+    if requiresInputConnectionBeforeOutput(), !inputConnectionActive { return [] }
+    return (parser as? any HIDShutdownFeatureReportProvider)?.hidShutdownFeatureReports() ?? []
   }
 
   nonisolated func supportsPhysicalRumble() -> Bool {
@@ -205,6 +224,14 @@ actor DevicePipeline {
     snapshots.updateInputState(currentInputState)
   }
 
+  private func resetObservedInputState() {
+    currentInputState = DeviceInputState(
+      vendorID: identifier.vendorID,
+      productID: identifier.productID
+    )
+    snapshots.updateInputState(currentInputState)
+  }
+
   private func updateOutputState(from events: [ControllerEvent]) {
     outputState.apply(events: events)
   }
@@ -214,6 +241,31 @@ actor DevicePipeline {
     guard !neutralizingEvents.isEmpty else { return }
     await dispatcher.dispatch(events: neutralizingEvents, from: identifier)
     updateOutputState(from: neutralizingEvents)
+  }
+
+  private func handleInputConnectionStateChangeIfNeeded() async -> [PhysicalHIDOutputReport] {
+    guard let lifecycle = parser as? any ControllerInputConnectionLifecycle,
+      let state = lifecycle.consumeInputConnectionStateChange()
+    else { return [] }
+
+    switch state {
+    case .connected:
+      guard !inputConnectionActive else { return [] }
+      inputConnectionActive = true
+      await dispatcher.dispatch(events: [], from: identifier)
+      print("[DevicePipeline] Input controller connected: \(identifier)")
+      return (parser as? any HIDStartupFeatureReportProvider)?.hidStartupFeatureReports() ?? []
+    case .disconnected:
+      resetObservedInputState()
+      await neutralizeOutput()
+      if inputConnectionActive, let listener = dispatcher as? any ControllerLifecycleListener {
+        listener.controllerDidStop(identifier)
+      }
+      inputConnectionActive = false
+      waitingForExternalNeutral = false
+      print("[DevicePipeline] Input controller disconnected: \(identifier)")
+      return (parser as? any HIDShutdownFeatureReportProvider)?.hidShutdownFeatureReports() ?? []
+    }
   }
 
   private func appendToPacketLog(bytes: [UInt8], direction: String) {

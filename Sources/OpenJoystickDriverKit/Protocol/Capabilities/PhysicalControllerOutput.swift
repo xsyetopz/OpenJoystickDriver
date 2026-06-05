@@ -1,5 +1,17 @@
 import SwiftUSB
 
+
+/// A raw HID feature-report read request sent through IOKit.
+public struct PhysicalHIDFeatureReadRequest: Equatable, Sendable {
+  public let reportID: UInt8
+  public let length: Int
+
+  public init(reportID: UInt8, length: Int) {
+    self.reportID = reportID
+    self.length = length
+  }
+}
+
 /// A raw HID output report that can be sent through IOKit.
 public struct PhysicalHIDOutputReport: Equatable, Sendable {
   public let reportID: UInt8

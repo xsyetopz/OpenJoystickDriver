@@ -6,6 +6,76 @@ import SwiftUSB
 /// Each controller protocol (GIP for Xbox, DS4 for PlayStation, GenericHID)
 /// has its own implementation. Add a new conforming type when you need to
 /// support a new protocol.
+
+/// Receiver-backed controllers can report logical controller connect/disconnect
+/// independently from the HID device that carries reports.
+public enum ControllerInputConnectionState: Sendable, Equatable {
+  case connected
+  case disconnected
+}
+
+/// Optional parser hook for logical controller lifecycle inside a physical input transport.
+public protocol ControllerInputConnectionLifecycle: AnyObject, Sendable {
+  /// True when output should not be created until a logical controller connect event arrives.
+  var requiresInputConnectionBeforeOutput: Bool { get }
+
+  /// Returns and clears the most recent logical connection state change, if any.
+  func consumeInputConnectionStateChange() -> ControllerInputConnectionState?
+}
+
+/// Optional parser hook for receiver status requests over HID feature reports.
+public protocol HIDInputConnectionStatusRequester: AnyObject, Sendable {
+  /// Feature report that asks the receiver to emit its current logical connection state.
+  func inputConnectionStatusRequestReport() -> PhysicalHIDOutputReport?
+}
+
+/// Optional parser hook for startup output reports sent through a HID transport.
+public protocol HIDStartupOutputReportProvider: AnyObject, Sendable {
+  /// Source-backed startup reports needed before the controller emits full input reports.
+  func hidStartupReports() -> [PhysicalHIDOutputReport]
+}
+
+extension HIDStartupOutputReportProvider {
+  /// Source-backed startup reports for a specific HID transport, when transport matters.
+  public func hidStartupReports(transport _: String?) -> [PhysicalHIDOutputReport] {
+    hidStartupReports()
+  }
+}
+
+/// Optional parser hook for startup feature reports sent through a HID transport.
+public protocol HIDStartupFeatureReportProvider: AnyObject, Sendable {
+  /// Source-backed feature reports needed when OJD starts consuming the physical input.
+  func hidStartupFeatureReports() -> [PhysicalHIDOutputReport]
+}
+
+extension HIDStartupFeatureReportProvider {
+  /// Source-backed feature reports for a specific HID transport, when transport matters.
+  public func hidStartupFeatureReports(transport _: String?) -> [PhysicalHIDOutputReport] {
+    hidStartupFeatureReports()
+  }
+}
+
+/// Optional parser hook for shutdown feature reports sent through a HID transport.
+public protocol HIDShutdownFeatureReportProvider: AnyObject, Sendable {
+  /// Source-backed feature reports needed when OJD stops consuming the physical input.
+  func hidShutdownFeatureReports() -> [PhysicalHIDOutputReport]
+}
+
+/// Optional parser hook for startup feature-report reads sent through a HID transport.
+public protocol HIDStartupFeatureReadRequestProvider: AnyObject, Sendable {
+  /// Source-backed feature reads needed to put the controller into operational mode.
+  func hidStartupFeatureReadRequests() -> [PhysicalHIDFeatureReadRequest]
+}
+
+extension HIDStartupFeatureReadRequestProvider {
+  /// Source-backed feature reads for a specific HID transport, when transport matters.
+  public func hidStartupFeatureReadRequests(transport _: String?)
+    -> [PhysicalHIDFeatureReadRequest]
+  {
+    hidStartupFeatureReadRequests()
+  }
+}
+
 public protocol InputParser: AnyObject, Sendable {
   /// Runs the startup handshake the controller needs before it starts sending input.
   ///

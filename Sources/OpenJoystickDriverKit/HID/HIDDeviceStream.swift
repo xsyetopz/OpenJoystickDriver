@@ -80,6 +80,53 @@ public final class HIDDeviceStream: @unchecked Sendable {
   }
 
   public func setOutputReport(locationID: UInt32, report: PhysicalHIDOutputReport) -> Bool {
+    setReport(locationID: locationID, report: report, type: kIOHIDReportTypeOutput, label: "Output")
+  }
+
+  public func setFeatureReport(locationID: UInt32, report: PhysicalHIDOutputReport) -> Bool {
+    setReport(
+      locationID: locationID,
+      report: report,
+      type: kIOHIDReportTypeFeature,
+      label: "Feature"
+    )
+  }
+
+  public func getFeatureReport(
+    locationID: UInt32,
+    request: PhysicalHIDFeatureReadRequest
+  ) -> Data? {
+    let device = seizeLock.withLock { seizedByLocation[locationID] }
+    guard let device else { return nil }
+
+    var bytes = [UInt8](repeating: 0, count: request.length)
+    var reportLength = request.length
+    let result = bytes.withUnsafeMutableBufferPointer { pointer in
+      guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
+      return IOHIDDeviceGetReport(
+        device,
+        kIOHIDReportTypeFeature,
+        CFIndex(request.reportID),
+        baseAddress,
+        &reportLength
+      )
+    }
+    if result != kIOReturnSuccess {
+      print(
+        "[HIDDeviceStream] Feature report read failed for loc=\(locationID)"
+          + " report=0x\(String(format: "%02X", request.reportID)) kr=\(result)"
+      )
+      return nil
+    }
+    return Data(bytes.prefix(reportLength))
+  }
+
+  private func setReport(
+    locationID: UInt32,
+    report: PhysicalHIDOutputReport,
+    type: IOHIDReportType,
+    label: String
+  ) -> Bool {
     let device = seizeLock.withLock { seizedByLocation[locationID] }
     guard let device else { return false }
 
@@ -89,7 +136,7 @@ public final class HIDDeviceStream: @unchecked Sendable {
       guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
       return IOHIDDeviceSetReport(
         device,
-        kIOHIDReportTypeOutput,
+        type,
         CFIndex(report.reportID),
         baseAddress,
         reportLength
@@ -97,7 +144,7 @@ public final class HIDDeviceStream: @unchecked Sendable {
     }
     if result != kIOReturnSuccess {
       print(
-        "[HIDDeviceStream] Output report failed for loc=\(locationID)"
+        "[HIDDeviceStream] \(label) report failed for loc=\(locationID)"
           + " report=0x\(String(format: "%02X", report.reportID)) kr=\(result)"
       )
     }

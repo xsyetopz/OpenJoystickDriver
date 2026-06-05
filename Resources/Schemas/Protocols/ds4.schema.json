@@ -34,7 +34,9 @@
               "enum": [
                 "gyro",
                 "accelerometer",
-                "battery"
+                "battery",
+                "experimental",
+                "needsHardwareTest"
               ]
             }
           }
@@ -73,13 +75,51 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "driver": {
+            "const": "DualSense"
+          }
+        },
+        "required": [
+          "driver"
+        ]
+      },
+      "then": {
+        "properties": {
+          "variant": {
+            "enum": [
+              "dualSense",
+              "unknown"
+            ]
+          },
+          "mapping_flags": {
+            "items": {
+              "enum": [
+                "touchpad",
+                "gyro",
+                "accelerometer",
+                "battery",
+                "lightbar",
+                "microphoneMute",
+                "adaptiveTriggers",
+                "experimental",
+                "needsHardwareTest"
+              ]
+            }
+          }
+        }
+      }
     }
   ],
   "properties": {
     "driver": {
       "enum": [
         "DS3",
-        "DS4"
+        "DS4",
+        "DualSense"
       ]
     },
     "variant": {
@@ -87,7 +127,8 @@
       "enum": [
         "dualShock3",
         "dualShock4",
-        "unknown"
+        "unknown",
+        "dualSense"
       ]
     },
     "mapping_flags": {
@@ -100,7 +141,13 @@
           "gyro",
           "accelerometer",
           "battery",
-          "lightbar"
+          "experimental",
+          "needsHardwareTest",
+          "lightbar",
+          "microphoneMute",
+          "adaptiveTriggers",
+          "experimental",
+          "needsHardwareTest"
         ]
       },
       "default": []

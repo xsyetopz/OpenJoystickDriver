@@ -1,0 +1,36 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-profile.schema.json",
+  "profile_version": "1.0.0",
+  "identity": {
+    "vendor_id": 1356,
+    "product_id": 616,
+    "name": "Sony DualShock 3 / SIXAXIS",
+    "short_name": "DualShock3"
+  },
+  "input": {
+    "transport": "hid",
+    "usb": {
+      "class": 3,
+      "interface": 0
+    }
+  },
+  "protocol": {
+    "driver": "DS3",
+    "variant": "dualShock3",
+    "mapping_flags": [
+      "experimental",
+      "needsHardwareTest"
+    ]
+  },
+  "output": {
+    "virtual_profile": "xboxOneS",
+    "preferred_backends": [
+      "driverKitHID",
+      "userSpaceHID"
+    ]
+  },
+  "provenance": {
+    "source": "linux-hid-sony.c",
+    "hardware_verified": false
+  }
+}

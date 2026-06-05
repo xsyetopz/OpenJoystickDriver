@@ -40,7 +40,8 @@ brew install libusb
 ./scripts/ojd rebuild dev
 ./scripts/ojd rebuild-fast dev
 ./scripts/ojd validate profiles
-swift test
+./scripts/ojd test parsers-macos14
+swift build
 ```
 
 ## Validation Rules
@@ -50,7 +51,7 @@ swift test
 - GIP runtime profiles must have matching device schemas.
 - VID/PID and endpoint values are decimal integers.
 - Use `./scripts/ojd validate profiles` after profile or schema changes.
-- Use `swift test` for package-level validation.
+- Use `./scripts/ojd test parsers-macos14` for macOS 14-compatible parser regressions; use `swift build` for package compile validation when Swift Testing is toolchain-blocked.
 
 ## Agent Instructions
 

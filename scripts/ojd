@@ -49,6 +49,7 @@ Commands:
   repair stale-dext           Kill stale DriverKit process copies after upgrade
   repair swiftpm-module-cache Clear SwiftPM module caches under `.build/` (fixes toolchain/target mismatches)
   validate profiles           Validate bundled controller profiles
+  test parsers-macos14        Run focused parser regressions without Swift Testing
   launch sdl-gamecontroller <app>
                               Launch an SDL app through GameController/MFI rumble route
   rtk install-filters         Create/update project-local RTK filters without duplicates
@@ -211,6 +212,18 @@ case "$cmd" in
         ;;
       *)
         die "Unknown: validate $sub (expected: profiles)"
+        ;;
+    esac
+    ;;
+
+  test)
+    sub="${1:-}"; shift || true
+    case "$sub" in
+      parsers-macos14)
+        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-test-parsers-macos14.sh"
+        ;;
+      *)
+        die "Unknown: test $sub (expected: parsers-macos14)"
         ;;
     esac
     ;;

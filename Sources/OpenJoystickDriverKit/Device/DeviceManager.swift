@@ -169,7 +169,12 @@ public actor DeviceManager {
   public func stop() async {
     for task in detectionTasks { task.cancel() }
     detectionTasks = []
-    for pipeline in pipelines.values { await pipeline.stop() }
+    for (identifier, pipeline) in pipelines {
+      if let locationID = identifier.locationID {
+        await sendHIDShutdownFeatureReportsIfNeeded(pipeline: pipeline, locationID: locationID)
+      }
+      await pipeline.stop()
+    }
     pipelines = [:]
     await permissionManager.stopPolling()
     print("[DeviceManager] Stopped")
@@ -303,7 +308,9 @@ public actor DeviceManager {
     )
     pipelines[identifier] = pipeline
     Task { await pipeline.start() }
-    Task { await dispatcher.dispatch(events: [], from: identifier) }
+    if !pipeline.requiresInputConnectionBeforeOutput() {
+      Task { await dispatcher.dispatch(events: [], from: identifier) }
+    }
     return identifier
   }
 
@@ -371,7 +378,81 @@ public actor DeviceManager {
     )
     pipelines[identifier] = pipeline
     Task { await pipeline.start() }
-    Task { await dispatcher.dispatch(events: [], from: identifier) }
+    if !pipeline.requiresInputConnectionBeforeOutput() {
+      Task { await dispatcher.dispatch(events: [], from: identifier) }
+    }
+    sendHIDStartupFeatureReadRequestsIfNeeded(
+      parser: parser,
+      locationID: locationID,
+      transport: transport
+    )
+    if !pipeline.requiresInputConnectionBeforeOutput() {
+      sendHIDStartupFeatureReportsIfNeeded(
+        parser: parser,
+        locationID: locationID,
+        transport: transport
+      )
+    }
+    sendHIDStartupOutputReportsIfNeeded(
+      parser: parser,
+      locationID: locationID,
+      transport: transport
+    )
+    requestHIDInputConnectionStatusIfNeeded(parser: parser, locationID: locationID)
+  }
+
+  private func sendHIDStartupFeatureReadRequestsIfNeeded(
+    parser: any InputParser,
+    locationID: UInt32,
+    transport: String?
+  ) {
+    guard let provider = parser as? any HIDStartupFeatureReadRequestProvider else { return }
+    for request in provider.hidStartupFeatureReadRequests(transport: transport)
+      where hidManager.getFeatureReport(locationID: locationID, request: request) == nil
+    {
+      print("[DeviceManager] HID startup feature report read failed for loc=\(locationID)")
+    }
+  }
+
+  private func sendHIDStartupFeatureReportsIfNeeded(
+    parser: any InputParser,
+    locationID: UInt32,
+    transport: String?
+  ) {
+    guard let provider = parser as? any HIDStartupFeatureReportProvider else { return }
+    for report in provider.hidStartupFeatureReports(transport: transport) {
+      let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
+      if !sent {
+        print("[DeviceManager] HID startup feature report failed for loc=\(locationID)")
+      }
+    }
+  }
+
+  private func sendHIDStartupOutputReportsIfNeeded(
+    parser: any InputParser,
+    locationID: UInt32,
+    transport: String?
+  ) {
+    guard let provider = parser as? any HIDStartupOutputReportProvider else { return }
+    for report in provider.hidStartupReports(transport: transport) {
+      let sent = hidManager.setOutputReport(locationID: locationID, report: report)
+      if !sent {
+        print("[DeviceManager] HID startup output report failed for loc=\(locationID)")
+      }
+    }
+  }
+
+  private func requestHIDInputConnectionStatusIfNeeded(
+    parser: any InputParser,
+    locationID: UInt32
+  ) {
+    guard let requester = parser as? any HIDInputConnectionStatusRequester,
+      let report = requester.inputConnectionStatusRequestReport()
+    else { return }
+    let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
+    if !sent {
+      print("[DeviceManager] HID input connection status request failed for loc=\(locationID)")
+    }
   }
 
   private func handleHIDDeviceDisconnected(vendorID: UInt16, productID: UInt16, locationID: UInt32)
@@ -380,6 +461,7 @@ public actor DeviceManager {
     if let key = pipelines.keys.first(where: { $0.locationID == locationID }) {
       let pipeline = pipelines.removeValue(forKey: key)
       deviceInfos.removeValue(forKey: key)
+      await sendHIDShutdownFeatureReportsIfNeeded(pipeline: pipeline, locationID: locationID)
       await pipeline?.stop()
       print(
         "[DeviceManager] HID device disconnected:" + " VID=\(vendorID) PID=\(productID)"
@@ -388,9 +470,29 @@ public actor DeviceManager {
     }
   }
 
+  private func sendHIDShutdownFeatureReportsIfNeeded(
+    pipeline: DevicePipeline?,
+    locationID: UInt32
+  ) async {
+    guard let pipeline else { return }
+    for report in await pipeline.hidShutdownFeatureReports() {
+      let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
+      if !sent {
+        print("[DeviceManager] HID shutdown feature report failed for loc=\(locationID)")
+      }
+    }
+  }
+
   private func routeHIDInputReport(locationID: UInt32, data: Data) async {
-    if let key = pipelines.keys.first(where: { $0.locationID == locationID }) {
-      await pipelines[key]?.feedHIDData(data)
+    if let key = pipelines.keys.first(where: { $0.locationID == locationID }),
+      let featureReports = await pipelines[key]?.feedHIDData(data)
+    {
+      for report in featureReports {
+        let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
+        if !sent {
+          print("[DeviceManager] HID lifecycle feature report failed for loc=\(locationID)")
+        }
+      }
     }
   }
 }
