@@ -177,8 +177,8 @@
 - [x] Run `rtk err bash -n scripts/ojd scripts/ojd-*.sh`: passed with no errors.
 - [x] If `swift test` fails with SwiftPM module-cache mismatch, run `./scripts/ojd repair swiftpm-module-cache` and rerun `rtk test swift test`: repair removed 2 module-cache directories, but `rtk test swift test` still fails because `_Testing_Foundation` requires macOS 26 while tests compile for macOS 14.
 - [ ] Run backend diagnostics only if parser/profile work changes runtime backend behavior: `rtk ./scripts/ojd diagnose backends --seconds 5`, `rtk ./scripts/ojd diagnose gamecontroller --seconds 5`, and `rtk ./scripts/ojd diagnose sdl3 --seconds 10`.
-- [ ] Add results from the Steam Controller GitHub tester before marking Steam support hardware verified.
-- [ ] Add results from the Xbox Adaptive Joystick Discord/GitHub tester before marking Xbox Adaptive Joystick support hardware verified.
+- [ ] Add results from the Steam Controller GitHub tester before marking Steam support hardware verified; use `docs/STEAM_CONTROLLER_HARDWARE_TEST_REQUEST.md` for the requested wired, wireless receiver lifecycle, and lizard-mode evidence.
+- [ ] Add results from the Xbox Adaptive Joystick Discord/GitHub tester before adding a standalone profile/parser; use `docs/XBOX_ADAPTIVE_JOYSTICK_PACKET_REQUEST.md` for the exact identity and packet evidence.
 
 ## Slice Validation Log
 
@@ -234,6 +234,7 @@
 - Steam wireless macOS 14 harness expansion: `./scripts/ojd test parsers-macos14` now covers explicit Steam receiver connect event `0x03/0x02`, consume-once connected lifecycle, post-connect input parsing, disconnect event `0x03/0x01`, and post-disconnect input gating in addition to status-report fallback.
 - Latest validation after Steam wireless macOS 14 harness expansion: `./scripts/ojd test parsers-macos14` passed and printed `PASS: macOS-14-compatible parser harness`; `rtk test swift build` passed in 0.09s; `rtk ./scripts/ojd validate profiles` passed with 29 profiles and 2 device schemas; `python3 -m py_compile scripts/ojd-validate-profiles.py` passed; `rtk err bash -n scripts/ojd scripts/ojd-*.sh` passed with no errors; `git diff --check` passed.
 - Release-prep validation for `0.5.0-alpha.1`: `./scripts/ojd bump-version 0.5.0-alpha.1` completed and updated release metadata; `./scripts/ojd lint` passed with 0 violations in 115 Swift files after fixing violations without adding suppressions; `rtk test swift build` passed in 2.86s with known Swift 26/macOS 13 linker warnings; `./scripts/ojd test parsers-macos14` passed and printed `PASS: macOS-14-compatible parser harness`; `rtk ./scripts/ojd validate profiles` passed with 29 profiles and 2 device schemas; `python3 -m py_compile scripts/ojd-validate-profiles.py` passed; `rtk err bash -n scripts/ojd scripts/ojd-*.sh` passed with no errors; `git diff --check` passed.
+- Steam Controller tester request prep: added `docs/STEAM_CONTROLLER_HARDWARE_TEST_REQUEST.md` with exact wired `0x28de:0x1102`, wireless receiver `0x28de:0x1142`, connect/disconnect/status fallback, lizard-mode, Input Test, and raw `REPORT ... bytes=...` evidence requirements for the expected GitHub hardware tester.
 
 ## Hardware Test Log
 
@@ -246,7 +247,7 @@ No hardware validation has been recorded in this plan yet.
 
 - Swift Testing execution is not currently macOS 14-compliant in the local Swift 6.2.4/Xcode 26 environment: `_Testing_Foundation` is compiled with minimum deployment target macOS 26 while SwiftPM compiles package tests for macOS 14. `./scripts/ojd repair swiftpm-module-cache`, `MACOSX_DEPLOYMENT_TARGET=26.0`, `--triple arm64-apple-macosx26.0`, and an isolated `--scratch-path /tmp/ojd-swift-test-build` did not move the test compile target off macOS 14. Use focused macOS 14 executable harnesses for parser regressions until the repository test runner is toolchain-compatible.
 - Xbox Adaptive Joystick support needs exact VID/PID and annotated raw USB packets from the requester or another hardware tester.
-- Steam Controller physical lizard-mode timing, physical wireless adapter status request timing, DualSense USB/Bluetooth behavior, DS3 USB/Bluetooth operational-mode/pairing/rumble/sensor behavior, and Switch Pro USB/Bluetooth behavior need physical hardware validation before they can be marked more than experimental.
+- Steam Controller physical lizard-mode timing, physical wireless adapter status request timing, DualSense USB/Bluetooth behavior, DS3 USB/Bluetooth operational-mode/pairing/rumble/sensor behavior, and Switch Pro USB/Bluetooth behavior need physical hardware validation before they can be marked more than experimental. Steam tester instructions are in `docs/STEAM_CONTROLLER_HARDWARE_TEST_REQUEST.md`.
 
 ## Execution Notes For Subagents
 
