@@ -1,9 +1,5 @@
 # AGENTS.md
 
-This file contains the detailed agent instructions for the repo.
-
----
-
 OpenJoystickDriver is a macOS userspace gamepad driver. Keep changes grounded in
 current source, controller profile schemas, and observed hardware behavior.
 
@@ -19,15 +15,6 @@ current source, controller profile schemas, and observed hardware behavior.
 You must not document behavior as supported unless production code, schemas,
 tests, or manual hardware notes in this repo support it.
 
-## Current Hardware Notes
-
-- GameSir G7 SE is hardware verified for GIP input and Xbox One HID
-  compatibility mode.
-- Flydigi Vader 5S is supported through the GIP path and needs
-  `setConfiguration(1)` before claim plus a post-handshake settle delay.
-- DualShock 4 USB/Bluetooth input and physical rumble are hardware verified.
-- Non-DS4 Bluetooth, DualSense, and Switch Pro support are not implemented.
-
 For the current user-facing feature matrix, see `docs/COMPATIBILITY_LAYERS.md`.
 
 ## Edit Rules
@@ -38,10 +25,8 @@ For the current user-facing feature matrix, see `docs/COMPATIBILITY_LAYERS.md`.
   `Sources/OpenJoystickDriverKit/Resources/Controllers/`.
 - Add a matching `Resources/Schemas/Devices/*.json` file for GIP controllers.
 - Use decimal VID, PID, endpoint, and packet values in JSON files.
-- Keep protocol variants and mapping flags in data where possible; you must not
-  bake device quirks into parser code unless the protocol requires it.
-- Avoid broad rewrites of signing, DriverKit, or daemon lifecycle code without
-  targeted validation.
+- Keep protocol variants and mapping flags in data where possible; you must not bake device quirks into parser code unless the protocol requires it.
+- Avoid broad rewrites of signing, DriverKit, or daemon lifecycle code without targeted validation.
 
 ## Validation
 
@@ -69,8 +54,7 @@ rtk ./scripts/ojd diagnose sdl3 --seconds 10
 Use `rtk summary <cmd>` for one-off noisy runtime probes, `rtk log` or
 `rtk pipe --filter ...` for captured logs, and `rtk run <cmd>` only when raw
 execution should intentionally avoid filtering and tracking. You must not use
-`rtk proxy` for routine tests, validation, app binary runs, `launchctl`, or
-`log show` diagnostics.
+`rtk proxy` for routine tests, validation, app binary runs, `launchctl`, or `log show` diagnostics.
 
 This repo has project-local filters in `.rtk/filters.toml`. Install or append the managed common filters idempotently with:
 
@@ -87,14 +71,11 @@ rtk discover --project OpenJoystickDriver
 RTK_HOOK_AUDIT=1 rtk hook-audit
 ```
 
-DriverKit, signing, notarization, TCC permissions, and real controller input may
-require local macOS hardware validation. CI cannot prove those end to end.
+DriverKit, signing, notarization, TCC permissions, and real controller input may require local macOS hardware validation. CI cannot prove those end to end.
 
 ## Known Runtime Caveat
 
-Compatibility mode can still create a stale, non-working first controller
-instance in browser Gamepad API pages. Treat that as a runtime/backend issue,
-not as evidence that the controller profile mapping is wrong.
+Compatibility mode can still create a stale, non-working first controller instance in browser Gamepad API pages. Treat that as a runtime/backend issue, not as evidence that the controller profile mapping is wrong.
 
 ## Documentation Surfaces
 
