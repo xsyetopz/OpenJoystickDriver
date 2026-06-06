@@ -38,12 +38,36 @@ menu-bar Input Test window. If testing only parser-visible HID bytes, use
 
 ## Wired Controller Capture
 
-Plug the Steam Controller directly over USB with Steam Client fully quit, then
-run:
+Plug the Steam Controller directly over USB with Steam Client fully quit. First
+capture how macOS enumerates it:
+
+```bash
+OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --list
+system_profiler SPUSBDataType
+```
+
+Paste every `--list` line with `VID:0x28de`, plus the matching
+`system_profiler` USB entry. If no `VID:0x28de` line appears, paste the nearby
+keyboard/mouse/HID entries that appear or disappear when the controller is
+plugged/unplugged.
+
+Then run the exact wired HID monitor:
 
 ```bash
 OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --monitor --vid 0x28de --pid 0x1102 --seconds 30
 ```
+
+If this prints `Monitoring 0 device(s)`, keep the terminal output and run the raw
+USB fallback so OJD can tell whether macOS hid matching, PID assumptions, or USB
+claiming is the next failure:
+
+```bash
+OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x28de --pid 0x1102 --interface 0 --length 64 --seconds 20
+OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x28de --pid 0x1102 --interface 1 --length 64 --seconds 20
+```
+
+If libusb reports access denied or busy, repeat the same command with `--detach`
+and include both outputs.
 
 Capture one neutral packet, then one action at a time:
 
@@ -60,8 +84,11 @@ Capture one neutral packet, then one action at a time:
 - left trackpad click, if possible
 - right trackpad touch/click, if visible
 
-For each labeled action, paste the `REPORT ... bytes=...` line and note what
-changed in Input Test.
+For each labeled action, paste the `REPORT ... bytes=...` or
+`USB_REPORT ... bytes=...` line and note what changed in Input Test. If the only
+visible behavior is terminal keyboard input such as escape sequences, include
+that exact terminal output too; that is evidence that lizard mode is active even
+when OJD cannot yet see the controller as the expected HID device.
 
 ## Wireless Receiver Lifecycle Capture
 
@@ -118,7 +145,10 @@ Steam Client running: yes/no
 Controller path tested: wired / wireless / both
 
 Wired 0x28de:0x1102:
+- `--list` shows VID:0x28de device(s): yes/no, lines:
 - HID reports captured: yes/no
+- Raw USB reports captured: yes/no, endpoint/interface:
+- Terminal receives lizard keyboard input while monitoring: yes/no, excerpt:
 - Input Test buttons/sticks/triggers correct: yes/no, notes:
 - Lizard mode disabled while open: yes/no/unknown, notes:
 - Lizard mode restored after close: yes/no/unknown, notes:

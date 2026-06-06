@@ -95,6 +95,31 @@ private func inputElements(_ dev: IOHIDDevice) -> [IOHIDElement] {
   }
 }
 
+private func printMonitorNoDeviceHint(vid: Int, pid: Int) {
+  let vendorDevices = enumerateDevices(matching: [kIOHIDVendorIDKey as String: vid])
+  print(
+    "HINT no exact IOHID match; same-vendor devices=\(vendorDevices.count)"
+  )
+  for dev in vendorDevices {
+    let candidatePID = intProp(dev, kIOHIDProductIDKey as String)
+    let product = strProp(dev, kIOHIDProductKey as String) ?? "(unknown)"
+    let transport = strProp(dev, kIOHIDTransportKey as String) ?? "(null)"
+    let primaryPage = intProp(dev, kIOHIDPrimaryUsagePageKey as String)
+    let primaryUsage = intProp(dev, kIOHIDPrimaryUsageKey as String)
+    print(
+      "HINT_DEVICE VID:0x\(String(vid, radix: 16))"
+        + " PID:0x\(String(candidatePID, radix: 16))"
+        + " transport=\(transport) primary=\(primaryPage):\(primaryUsage)"
+        + " product=\"\(product)\""
+    )
+  }
+  print(
+    "HINT raw USB fallback: OJD_USE_LOCAL_SWIFTUSB=1 swift run "
+      + "OpenJoystickDriverHIDTool --usb-monitor --vid 0x\(String(vid, radix: 16))"
+      + " --pid 0x\(String(pid, radix: 16)) --interface 0 --length 64 --seconds 20"
+  )
+}
+
 private func printUsageAndExit(_ code: Int32) -> Never {
   fputs(
     """
@@ -349,6 +374,7 @@ if monitor {
         + " elements=\(elementsByDevice[idx].count)"
     )
   }
+  if devices.isEmpty { printMonitorNoDeviceHint(vid: vid, pid: pid) }
   fflush(stdout)
 
   let end = Date().addingTimeInterval(TimeInterval(seconds))
