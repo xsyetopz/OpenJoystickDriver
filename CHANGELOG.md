@@ -2,6 +2,15 @@
 
 All notable changes to OpenJoystickDriver are documented in this file.
 
+## 0.5.0-alpha.2
+
+### Changed
+
+- Reworked Steam Controller and Xbox Adaptive Joystick request docs into
+  tester-first macOS/OJD capture runbooks.
+- Improved Steam Controller tester diagnostics after issue #8 showed lizard-mode
+  keyboard input but no exact IOHID match for wired `0x28de:0x1102`.
+
 ## 0.5.0-alpha.1
 
 ### Added
