@@ -30,6 +30,7 @@ let package = Package(
   ],
   dependencies: [
     swiftUSBDependency,
+    .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.9.3"),
   ],
   targets: [
     .target(
@@ -54,7 +55,10 @@ let package = Package(
 
     .executableTarget(
       name: "OpenJoystickDriver",
-      dependencies: ["OpenJoystickDriverKit"],
+      dependencies: [
+        "OpenJoystickDriverKit",
+        .product(name: "Sparkle", package: "Sparkle"),
+      ],
       path: "Sources/OpenJoystickDriver",
       exclude: [
         "OpenJoystickDriver.entitlements.template",

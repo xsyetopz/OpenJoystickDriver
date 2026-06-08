@@ -79,6 +79,51 @@ struct ScriptPackagingTests {
     )
     #expect(daemonEntitlements.contains("<key>com.apple.developer.team-identifier</key>"))
   }
+
+  @Test
+  func testSparkleReleaseWiringIsPresent() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let packageURL = rootURL.appendingPathComponent("Package.swift")
+    let bundlesURL = rootURL.appendingPathComponent("scripts/ojd-build-bundles.sh")
+    let packageScriptURL = rootURL.appendingPathComponent("scripts/ojd-package.sh")
+    let dispatcherURL = rootURL.appendingPathComponent("scripts/ojd")
+    let workflowURL = rootURL.appendingPathComponent(".github/workflows/release.yml")
+    let appModelURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriver/App/AppModel.swift"
+    )
+    let xpcOpsURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriver/App/AppModel+XPCOperations.swift"
+    )
+    let package = try String(contentsOf: packageURL, encoding: .utf8)
+    let bundles = try String(contentsOf: bundlesURL, encoding: .utf8)
+    let packageScript = try String(contentsOf: packageScriptURL, encoding: .utf8)
+    let dispatcher = try String(contentsOf: dispatcherURL, encoding: .utf8)
+    let workflow = try String(contentsOf: workflowURL, encoding: .utf8)
+    let appModel = try String(contentsOf: appModelURL, encoding: .utf8)
+    let xpcOps = try String(contentsOf: xpcOpsURL, encoding: .utf8)
+
+    #expect(package.contains("https://github.com/sparkle-project/Sparkle"))
+    #expect(package.contains(".product(name: \"Sparkle\", package: \"Sparkle\")"))
+    #expect(bundles.contains("SUPublicEDKey"))
+    #expect(bundles.contains("SUFeedURL"))
+    #expect(bundles.contains("SPARKLE_PUBLIC_ED_KEY"))
+    #expect(bundles.contains("SPARKLE_FEED_URL"))
+    #expect(bundles.contains("GUI_FRAMEWORKS=\"$GUI_CONTENTS/Frameworks\""))
+    #expect(bundles.contains("*.framework"))
+    #expect(packageScript.contains("bundle_version_from_semver"))
+    #expect(packageScript.contains("generate_appcast"))
+    #expect(packageScript.contains("--ed-key-file"))
+    #expect(packageScript.contains("SPARKLE_ED_PRIVATE_KEY"))
+    #expect(dispatcher.contains("appcast)"))
+    #expect(workflow.contains("SPARKLE_PUBLIC_ED_KEY"))
+    #expect(workflow.contains("SPARKLE_ED_PRIVATE_KEY"))
+    #expect(workflow.contains("package appcast"))
+    #expect(workflow.contains("appcast.xml"))
+    #expect(appModel.contains("SparkleUpdateController"))
+    #expect(appModel.contains("repairDaemonForCurrentAppVersionIfNeeded"))
+    #expect(xpcOps.contains("sparkleUpdates.checkForUpdates"))
+  }
+
   @Test
   func testInputMonitoringRequestUsesNativeAppRegistration() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)

@@ -104,6 +104,12 @@ import OpenJoystickDriverKit
   }
 
   func checkForUpdates() async {
+    if sparkleUpdates.isConfigured {
+      sparkleUpdates.checkForUpdates(nil)
+      updateCheckState = .idle
+      return
+    }
+
     updateCheckState = .checking
     updateCheckState = await updateChecker.check(
       currentVersion: appVersion,

@@ -228,10 +228,12 @@ extension MenuBarPopoverView {
           .disabled(model.updateCheckState == .checking)
         }
 
-        Toggle(L10n.string("updates.includePrereleases"), isOn: $model.includePrereleaseUpdates)
-          .font(.caption)
-          .toggleStyle(.checkbox)
-          .disabled(model.updateCheckState == .checking)
+        if !model.sparkleUpdates.isConfigured {
+          Toggle(L10n.string("updates.includePrereleases"), isOn: $model.includePrereleaseUpdates)
+            .font(.caption)
+            .toggleStyle(.checkbox)
+            .disabled(model.updateCheckState == .checking)
+        }
 
         if case .available(let info) = model.updateCheckState {
           HStack(spacing: 8) {
@@ -255,6 +257,10 @@ extension MenuBarPopoverView {
   }
 
   var updateStatusLine: String {
+    if model.sparkleUpdates.isConfigured {
+      return L10n.string("updates.currentVersion", model.appVersion)
+    }
+
     switch model.updateCheckState {
     case .idle: return L10n.string("updates.currentVersion", model.appVersion)
     case .checking: return L10n.string("updates.checkingGithub")

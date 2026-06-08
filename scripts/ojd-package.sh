@@ -11,11 +11,13 @@ usage() {
   cat <<'TXT'
 Usage:
   OJD_ENV=release ./scripts/ojd package release [version]
+  OJD_ENV=release ./scripts/ojd package appcast [version]
 
 Builds a release-signed app, embeds the DriverKit extension, submits it for
 notarization, staples the accepted ticket, and writes:
 
   .build/release-artifacts/OpenJoystickDriver-<version>-macOS.dmg
+  .build/release-artifacts/appcast.xml
 
 This does not install the app, register the LaunchAgent, or submit a sysext
 activation request on the build machine.
@@ -30,7 +32,8 @@ if [[ "$cmd" == "-h" || "$cmd" == "--help" || "$cmd" == "help" ]]; then
   exit 0
 fi
 
-[[ "$cmd" == "release" ]] || die "Unknown package command: ${cmd:-<empty>} (expected: release)"
+[[ "$cmd" == "release" || "$cmd" == "appcast" ]] \
+  || die "Unknown package command: ${cmd:-<empty>} (expected: release | appcast)"
 [[ "$OJD_ENV" == "release" ]] || die "package $cmd requires OJD_ENV=release"
 
 version="${1:-${GITHUB_REF_NAME:-$(date -u +%Y%m%d%H%M%S)}}"
@@ -42,6 +45,90 @@ artifact_dmg="$artifact_dir/OpenJoystickDriver-${safe_version}-macOS.dmg"
 staging_dir="$PROJECT_DIR/.build/dmg-staging"
 rw_dmg="$PROJECT_DIR/.build/OpenJoystickDriver-${safe_version}-rw.dmg"
 mount_dir="$PROJECT_DIR/.build/dmg-mount"
+appcast_workspace="$PROJECT_DIR/.build/sparkle-appcast"
+
+bundle_version_from_semver() {
+  python3 - "$1" <<'PY'
+import re
+import sys
+
+version = sys.argv[1]
+match = re.match(r"^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?$", version)
+if not match:
+    print("ERROR: release tag must be SemVer without build metadata", file=sys.stderr)
+    sys.exit(2)
+
+major, minor, patch = (int(match.group(i)) for i in range(1, 4))
+prerelease = match.group(4) or ""
+build = major * 1_000_000 + minor * 1_000 + patch
+if prerelease:
+    numbers = [int(part) for part in re.findall(r"\d+", prerelease)]
+    build = build * 100 + (numbers[-1] if numbers else 0)
+else:
+    build = build * 100 + 99
+print(build)
+PY
+}
+
+find_sparkle_tool() {
+  local tool_name="$1"
+  local candidate
+  while IFS= read -r candidate; do
+    if [[ -x "$candidate" ]]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done < <(/usr/bin/find "$PROJECT_DIR/.build" -path "*/Sparkle/bin/$tool_name" -type f 2>/dev/null)
+  return 1
+}
+
+create_appcast() {
+  local tag="$1"
+  local download_base="${SPARKLE_DOWNLOAD_BASE_URL:-https://github.com/xsyetopz/OpenJoystickDriver/releases/download/$tag}"
+  local feed_url="${SPARKLE_FEED_URL:-https://github.com/xsyetopz/OpenJoystickDriver/releases/latest/download/appcast.xml}"
+  local appcast_name
+  appcast_name="$(basename "$feed_url")"
+  [[ "$appcast_name" == *.xml ]] || appcast_name="appcast.xml"
+  local private_key="${SPARKLE_ED_PRIVATE_KEY:-}"
+  [[ -n "$private_key" ]] || die "SPARKLE_ED_PRIVATE_KEY not set"
+  local generate_appcast
+  if ! generate_appcast="$(find_sparkle_tool generate_appcast)"; then
+    echo "Sparkle generate_appcast not found; resolving package artifacts..."
+    (cd "$PROJECT_DIR" && "$SWIFT_BIN" package resolve)
+    generate_appcast="$(find_sparkle_tool generate_appcast)" \
+      || die "Sparkle generate_appcast not found under .build after package resolve"
+  fi
+
+  rm -rf "$appcast_workspace"
+  mkdir -p "$appcast_workspace" "$artifact_dir"
+  local dmg="$artifact_dir/OpenJoystickDriver-${safe_version}-macOS.dmg"
+  [[ -f "$dmg" ]] || die "Release DMG not found: $dmg"
+  cp "$dmg" "$appcast_workspace/"
+
+  printf '%s' "$private_key" | "$generate_appcast" \
+    --ed-key-file - \
+    --download-url-prefix "$download_base" \
+    "$appcast_workspace"
+
+  [[ -f "$appcast_workspace/$appcast_name" ]] \
+    || die "Sparkle appcast was not generated: $appcast_workspace/$appcast_name"
+  cp "$appcast_workspace/$appcast_name" "$artifact_dir/appcast.xml"
+  for delta in "$appcast_workspace"/*.delta; do
+    [[ -f "$delta" ]] && cp "$delta" "$artifact_dir/"
+  done
+
+  echo ""
+  echo "Sparkle appcast ready:"
+  echo "  $artifact_dir/appcast.xml"
+}
+
+if [[ "$cmd" == "appcast" ]]; then
+  create_appcast "$version"
+  exit 0
+fi
+
+export OJD_BUNDLE_SHORT_VERSION="${OJD_BUNDLE_SHORT_VERSION:-$version}"
+export OJD_BUNDLE_VERSION="${OJD_BUNDLE_VERSION:-$(bundle_version_from_semver "$version")}"
 
 mount_dir_is_mounted() {
   /sbin/mount | /usr/bin/grep -F " on $1 " >/dev/null

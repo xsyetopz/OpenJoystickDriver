@@ -30,6 +30,9 @@ jobs:
       OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64 }}
       NOTARIZE_APPLE_ID: ${{ secrets.NOTARIZE_APPLE_ID }}
       NOTARIZE_PASSWORD: ${{ secrets.NOTARIZE_PASSWORD }}
+      SPARKLE_PUBLIC_ED_KEY: ${{ secrets.SPARKLE_PUBLIC_ED_KEY }}
+      SPARKLE_ED_PRIVATE_KEY: ${{ secrets.SPARKLE_ED_PRIVATE_KEY }}
+      SPARKLE_FEED_URL: https://github.com/xsyetopz/OpenJoystickDriver/releases/latest/download/appcast.xml
     steps:
       - name: Resolve release tag
         id: release
@@ -72,11 +75,15 @@ jobs:
         run: |
           ./scripts/ojd package release "${{ steps.release.outputs.tag }}"
 
+      - name: Generate Sparkle appcast
+        run: |
+          ./scripts/ojd package appcast "${{ steps.release.outputs.tag }}"
+
       - name: Upload release artifact
         uses: actions/upload-artifact@v7
         with:
           name: OpenJoystickDriver-${{ steps.release.outputs.tag }}
-          path: .build/release-artifacts/*.dmg
+          path: .build/release-artifacts/*
           if-no-files-found: error
           retention-days: 14
 
@@ -85,7 +92,7 @@ jobs:
         with:
           tag_name: ${{ steps.release.outputs.tag }}
           name: OpenJoystickDriver ${{ steps.release.outputs.tag }}
-          files: .build/release-artifacts/*.dmg
+          files: .build/release-artifacts/*
           fail_on_unmatched_files: true
           generate_release_notes: true
           prerelease: ${{ steps.release.outputs.prerelease }}

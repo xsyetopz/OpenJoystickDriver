@@ -8,6 +8,7 @@ let daemonHealthPollNanosecondsDisconnected: UInt64 = 2_000_000_000
 let inputMonitoringPromptPollNanoseconds: UInt64 = 500_000_000
 let inputMonitoringPromptPollAttempts = 10
 let includePrereleaseUpdatesDefaultsKey = "IncludePrereleaseUpdates"
+let daemonRepairBundleVersionDefaultsKey = "DaemonRepairBundleVersion"
 
 /// Parsed, displayable representation of connected controller.
 struct DeviceViewModel: Identifiable, Hashable, Sendable {
@@ -85,6 +86,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   let client = XPCClient()
   let permissionManager = PermissionManager()
   let updateChecker = UpdateChecker()
+  let sparkleUpdates = SparkleUpdateController()
   var pollTask: Task<Void, Never>?
 
   var lastHealthPollNs: UInt64 = 0
@@ -146,12 +148,16 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
 
   func start() async {
     refreshDaemonStatus()
+    await repairDaemonForCurrentAppVersionIfNeeded()
+    refreshDaemonStatus()
     await refreshDaemonHealth()
     if daemonInstalled { client.connect() }
     await poll()
     await refreshVirtualDeviceDiagnostics()
     extensionManager.refreshInstallState()
-    Task { await checkForUpdates() }
+    if !sparkleUpdates.isConfigured {
+      Task { await checkForUpdates() }
+    }
   }
 
   func setPollingEnabled(_ enabled: Bool) {
@@ -183,6 +189,26 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     await refreshDaemonHealth()
     await poll()
     await refreshVirtualDeviceDiagnostics()
+  }
+
+  func repairDaemonForCurrentAppVersionIfNeeded() async {
+    guard daemonInstalled, Bundle.main.bundleURL.pathExtension == "app" else { return }
+    let currentBundleVersion =
+      Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? appVersion
+    guard !currentBundleVersion.isEmpty else { return }
+    guard UserDefaults.standard.string(forKey: daemonRepairBundleVersionDefaultsKey)
+      != currentBundleVersion
+    else {
+      return
+    }
+
+    do {
+      let task = Task.detached { try DaemonManager.restart() }
+      try await task.value
+      UserDefaults.standard.set(currentBundleVersion, forKey: daemonRepairBundleVersionDefaultsKey)
+    } catch {
+      daemonError = formatDaemonError(error)
+    }
   }
 
 }

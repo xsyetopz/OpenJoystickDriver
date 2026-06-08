@@ -96,10 +96,21 @@ build_app_bundle() {
   local GUI_CONTENTS="$GUI_APP/Contents"
   local GUI_MACOS="$GUI_CONTENTS/MacOS"
   local GUI_LOGIN_ITEMS="$GUI_CONTENTS/Library/LoginItems"
+  local GUI_FRAMEWORKS="$GUI_CONTENTS/Frameworks"
+  local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.3}"
+  local bundle_version="${OJD_BUNDLE_VERSION:-1}"
+  local sparkle_feed_url="${SPARKLE_FEED_URL:-https://github.com/xsyetopz/OpenJoystickDriver/releases/latest/download/appcast.xml}"
+  local sparkle_public_ed_key="${SPARKLE_PUBLIC_ED_KEY:-}"
+
+  if [[ "$OJD_ENV" == "release" && -z "$sparkle_public_ed_key" ]]; then
+    echo "ERROR: SPARKLE_PUBLIC_ED_KEY not set."
+    echo "Fix: add the Sparkle EdDSA public key to CI/local release env."
+    exit 1
+  fi
 
   echo "Creating app bundle..."
   rm -rf "$GUI_APP"
-  mkdir -p "$GUI_MACOS" "$GUI_LOGIN_ITEMS"
+  mkdir -p "$GUI_MACOS" "$GUI_LOGIN_ITEMS" "$GUI_FRAMEWORKS"
   cp "$gui_bin" "$GUI_MACOS/OpenJoystickDriver"
 
   local BUILD_DIR
@@ -110,6 +121,9 @@ build_app_bundle() {
     "$GUI_RESOURCES/OpenJoystickDriver.icns"
   for bundle in "$BUILD_DIR"/OpenJoystickDriver_*.bundle; do
     [[ -d "$bundle" ]] && cp -R "$bundle" "$GUI_RESOURCES/"
+  done
+  for framework in "$BUILD_DIR"/*.framework; do
+    [[ -d "$framework" ]] && cp -R "$framework" "$GUI_FRAMEWORKS/"
   done
 
   local LAUNCHAGENTS_SRC="$PROJECT_DIR/Sources/OpenJoystickDriver/App/com.openjoystickdriver.daemon.plist"
@@ -154,6 +168,16 @@ build_app_bundle() {
 </dict>
 </plist>
 PLIST
+  /usr/bin/plutil -replace CFBundleShortVersionString -string "$bundle_short_version" \
+    "$GUI_CONTENTS/Info.plist"
+  /usr/bin/plutil -replace CFBundleVersion -string "$bundle_version" "$GUI_CONTENTS/Info.plist"
+  /usr/bin/plutil -replace SUFeedURL -string "$sparkle_feed_url" "$GUI_CONTENTS/Info.plist"
+  /usr/bin/plutil -replace SUEnableAutomaticChecks -bool YES "$GUI_CONTENTS/Info.plist"
+  /usr/bin/plutil -replace SUAutomaticallyUpdate -bool NO "$GUI_CONTENTS/Info.plist"
+  if [[ -n "$sparkle_public_ed_key" ]]; then
+    /usr/bin/plutil -replace SUPublicEDKey -string "$sparkle_public_ed_key" \
+      "$GUI_CONTENTS/Info.plist"
+  fi
 
   local DAEMON_BUNDLE="$GUI_LOGIN_ITEMS/OpenJoystickDriverDaemon.app"
   local DAEMON_BUNDLE_CONTENTS="$DAEMON_BUNDLE/Contents"
@@ -199,6 +223,10 @@ PLIST
 </dict>
 </plist>
 PLIST
+  /usr/bin/plutil -replace CFBundleShortVersionString -string "$bundle_short_version" \
+    "$DAEMON_BUNDLE_CONTENTS/Info.plist"
+  /usr/bin/plutil -replace CFBundleVersion -string "$bundle_version" \
+    "$DAEMON_BUNDLE_CONTENTS/Info.plist"
 
   echo "Signing GUI using:    $GUI_IDENTITY"
   echo "Signing daemon using: $DAEMON_IDENTITY"

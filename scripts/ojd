@@ -324,8 +324,11 @@ case "$cmd" in
       release)
         exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-package.sh" release "$@"
         ;;
+      appcast)
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-package.sh" appcast "$@"
+        ;;
       *)
-        die "Unknown: package $sub (expected: release)"
+        die "Unknown: package $sub (expected: release | appcast)"
         ;;
     esac
     ;;
