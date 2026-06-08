@@ -68,7 +68,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   var developerMode: Bool
 
   var appVersion: String {
-    Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.5.0-alpha.2"
+    Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.5.0-alpha.3"
   }
 
   private let client = XPCClient()
@@ -365,11 +365,18 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
 
   func requestDaemonInputMonitoringAccess() async {
     inputMonitoringAssist = nil
+    if !daemonConnected {
+      await recoverDaemonForInputMonitoringRequest()
+    }
+
     guard daemonConnected else {
+      openInputMonitoringSettings(for: ["OpenJoystickDriver Helper"])
       inputMonitoringAssist =
-        "Start OpenJoystickDriver Helper first so it can ask macOS for access."
+        "OpenJoystickDriver tried to start the helper so macOS can add it to Input Monitoring. " +
+        "If OpenJoystickDriver Helper appears, turn it on, then quit and reopen OpenJoystickDriver."
       return
     }
+
     do {
       inputMonitoring = try await client.requestInputMonitoringAccess()
       try? await Task.sleep(nanoseconds: 500_000_000)
@@ -380,6 +387,38 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     } catch {
       daemonError = formatDaemonError(error)
     }
+  }
+
+  private func recoverDaemonForInputMonitoringRequest() async {
+    daemonError = nil
+    daemonRestarting = true
+    defer { daemonRestarting = false }
+
+    guard ensureRunningFromApplications() else { return }
+    guard ensureBundleSignatureValid(for: "Request Access") else { return }
+
+    do {
+      let shouldInstall = !daemonInstalled
+      let shouldStart = daemonUIState == .stopped || daemonUIState == .unknown
+      let task = Task.detached {
+        if shouldInstall {
+          try DaemonManager.install()
+        } else if shouldStart {
+          try DaemonManager.start()
+        } else {
+          try DaemonManager.restart()
+        }
+      }
+      try await task.value
+    } catch {
+      daemonError = error.localizedDescription
+      return
+    }
+
+    client.disconnect()
+    try? await Task.sleep(nanoseconds: 1_000_000_000)
+    client.connect()
+    await syncFromDaemonNow()
   }
 
   func openInputMonitoringSettings(

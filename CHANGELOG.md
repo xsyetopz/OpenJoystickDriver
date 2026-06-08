@@ -2,6 +2,16 @@
 
 All notable changes to OpenJoystickDriver are documented in this file.
 
+## 0.5.0-alpha.3
+
+### Changed
+
+- Split oversized source and helper-script files into focused modules while preserving existing behavior.
+
+### Fixed
+
+- Fixed the menu-bar setup flow so helper Input Monitoring recovery does not require end-user diagnostics when the helper is disconnected or restarting.
+
 ## 0.5.0-alpha.2
 
 ### Changed

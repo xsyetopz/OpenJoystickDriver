@@ -19,7 +19,7 @@ Updates:
   - Sources/OpenJoystickDriver/CLI.swift
   - Sources/OpenJoystickDriver/App/AppModel.swift fallback version
   - scripts/README.md release examples
-  - scripts/ojd-build.sh generated GUI/daemon bundle versions
+  - scripts/ojd-build-bundles.sh generated GUI/daemon bundle versions
   - DriverKitExtension/Info.plist short version
 
 The target version must already have a CHANGELOG.md heading.
@@ -44,7 +44,7 @@ fi
 cli_file="$PROJECT_DIR/Sources/OpenJoystickDriver/CLI.swift"
 app_model_file="$PROJECT_DIR/Sources/OpenJoystickDriver/App/AppModel.swift"
 scripts_readme="$PROJECT_DIR/scripts/README.md"
-build_script="$PROJECT_DIR/scripts/ojd-build.sh"
+build_script="$PROJECT_DIR/scripts/ojd-build-bundles.sh"
 dext_plist="$PROJECT_DIR/DriverKitExtension/Info.plist"
 changelog="$PROJECT_DIR/CHANGELOG.md"
 
@@ -118,7 +118,7 @@ replacements = [
         Path(build_script_path),
         [
             (
-                "ojd-build GUI/daemon short versions",
+                "ojd-build-bundles GUI/daemon short versions",
                 re.compile(
                     r"(<key>CFBundleShortVersionString</key>\n[ \t]*<string>)\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(</string>)"
                 ),
