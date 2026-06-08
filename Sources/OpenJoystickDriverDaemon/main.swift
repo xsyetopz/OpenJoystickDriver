@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import OpenJoystickDriverKit
 
@@ -7,6 +8,8 @@ setbuf(stdout, nil)
 let permissionManager = PermissionManager()
 
 if ProcessInfo.processInfo.environment["OJD_PERMISSION_PROMPT_ONLY"] == "1" {
+  NSApplication.shared.setActivationPolicy(.accessory)
+  NSApp.activate(ignoringOtherApps: true)
   print("[Daemon] Requesting Input Monitoring access for daemon...")
   let semaphore = DispatchSemaphore(value: 0)
   Task {

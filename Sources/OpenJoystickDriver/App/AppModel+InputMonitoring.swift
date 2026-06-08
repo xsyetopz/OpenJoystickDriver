@@ -1,10 +1,12 @@
 import AppKit
+import CoreServices
 import Foundation
 import OpenJoystickDriverKit
 
 @MainActor extension AppModel {
   func requestAppInputMonitoringAccess() async {
     inputMonitoringAssist = nil
+    registerApplicationBundleForPermissionPrompt(Bundle.main.bundleURL)
     NSApp.activate(ignoringOtherApps: true)
     appInputMonitoring = "\(await permissionManager.requestAccess())"
     appInputMonitoring = await waitForAppInputMonitoringDecision()
@@ -92,8 +94,10 @@ import OpenJoystickDriverKit
         )
       }
 
+      registerApplicationBundleForPermissionPrompt(daemonAppURL)
+
       let configuration = NSWorkspace.OpenConfiguration()
-      configuration.activates = false
+      configuration.activates = true
       configuration.createsNewApplicationInstance = true
       configuration.environment = promptEnvironment
       try await withCheckedThrowingContinuation {
@@ -128,6 +132,19 @@ import OpenJoystickDriverKit
     try process.run()
   }
 
+
+  @discardableResult
+  func registerApplicationBundleForPermissionPrompt(_ appURL: URL) -> Bool {
+    guard appURL.pathExtension == "app" else { return false }
+    let status = LSRegisterURL(appURL as CFURL, true)
+    if status != noErr {
+      print(
+        "[AppModel] LaunchServices registration failed for "
+          + "\(appURL.path): \(status)"
+      )
+    }
+    return status == noErr
+  }
 
   func recoverDaemonForInputMonitoringRequest() async {
     daemonError = nil

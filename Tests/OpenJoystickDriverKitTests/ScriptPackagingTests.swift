@@ -51,6 +51,8 @@ struct ScriptPackagingTests {
     )
     #expect(!script.contains("cp \"$daemon_bin\" \"$GUI_MACOS/OpenJoystickDriverDaemon\""))
     #expect(script.contains("<string>OpenJoystickDriver Daemon</string>"))
+    #expect(script.contains("<key>LSUIElement</key>"))
+    #expect(!script.contains("<key>LSBackgroundOnly</key>"))
     #expect(script.contains("<key>NSInputMonitoringUsageDescription</key>"))
     #expect(
       script.contains(
@@ -77,4 +79,28 @@ struct ScriptPackagingTests {
     )
     #expect(daemonEntitlements.contains("<key>com.apple.developer.team-identifier</key>"))
   }
+  @Test
+  func testInputMonitoringRequestUsesNativeAppRegistration() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let appModelURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriver/App/AppModel+InputMonitoring.swift"
+    )
+    let daemonMainURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriverDaemon/main.swift"
+    )
+    let appModel = try String(contentsOf: appModelURL, encoding: .utf8)
+    let daemonMain = try String(contentsOf: daemonMainURL, encoding: .utf8)
+
+    #expect(appModel.contains("LSRegisterURL(appURL as CFURL, true)"))
+    #expect(
+      appModel.contains("registerApplicationBundleForPermissionPrompt(Bundle.main.bundleURL)")
+    )
+    #expect(appModel.contains("registerApplicationBundleForPermissionPrompt(daemonAppURL)"))
+    #expect(appModel.contains("configuration.createsNewApplicationInstance = true"))
+    #expect(appModel.contains("configuration.activates = true"))
+    #expect(daemonMain.contains("NSApplication.shared.setActivationPolicy(.accessory)"))
+    #expect(daemonMain.contains("NSApp.activate(ignoringOtherApps: true)"))
+    #expect(daemonMain.contains("OJD_PERMISSION_PROMPT_ONLY"))
+  }
+
 }

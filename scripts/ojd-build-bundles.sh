@@ -192,7 +192,7 @@ PLIST
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
     <string>10.15</string>
-    <key>LSBackgroundOnly</key>
+    <key>LSUIElement</key>
     <true/>
     <key>NSInputMonitoringUsageDescription</key>
     <string>OpenJoystickDriver Daemon needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
