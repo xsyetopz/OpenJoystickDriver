@@ -1,25 +1,49 @@
 # OpenJoystickDriver
 
-OpenJoystickDriver is a macOS menu-bar app and daemon that turns supported
-physical controllers into app-friendly virtual controllers.
+[![GitHub Repo stars](https://img.shields.io/github/stars/xsyetopz/OpenJoystickDriver?style=social)](https://github.com/xsyetopz/OpenJoystickDriver/stargazers)
+[![License](https://img.shields.io/github/license/xsyetopz/OpenJoystickDriver)](LICENSE)
+[![Swift](https://img.shields.io/badge/Swift-Package-orange)](Package.swift)
+[![macOS](https://img.shields.io/badge/platform-macOS-lightgrey)](README.md)
 
-Use it when a controller works in OJD but not in a game, emulator, browser, SDL
-app, or native macOS app.
+OpenJoystickDriver is a macOS menu-bar app and daemon that turns supported physical controllers into app-friendly virtual controllers.
 
-<img width="512" height="632" alt="image" src="https://github.com/user-attachments/assets/b2ad4741-8082-445f-8721-d66edb3f79df" />
+Use it when a controller works in OpenJoystickDriver but not in a game, emulator, browser, SDL app, or native macOS app.
 
+<p>
+  <a href="#quickstart">Quickstart</a> ·
+  <a href="docs/COMPATIBILITY_LAYERS.md">Compatibility</a> ·
+  <a href="#choose-an-output-mode">Output Modes</a> ·
+  <a href="#troubleshooting">Troubleshooting</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a> ·
+  <a href="https://github.com/xsyetopz/OpenJoystickDriver/stargazers">Star</a>
+</p>
+
+<p align="center">
+  <img width="512" height="632" alt="OpenJoystickDriver menu-bar app showing controller input and compatibility controls" src="https://github.com/user-attachments/assets/b2ad4741-8082-445f-8721-d66edb3f79df" />
+</p>
+
+## Why OpenJoystickDriver
+
+- Normalizes physical controller input into virtual controller outputs that apps can understand.
+- Provides compatibility modes for SDL, Apple GameController, Generic HID, and experimental Xbox HID targets.
+- Keeps common diagnostics and validation commands in one repo-controlled workflow.
 
 ## Status
 
-See [docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md).
+See [docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md) for current backend, output-mode, and device-support status.
 
-## Quickstart (Using The App)
+Compatibility mode can still be useful without DriverKit. Use DriverKit only when you specifically need that path.
+
+## Quickstart
 
 1. Install `OpenJoystickDriver.app` into `/Applications`.
 2. Open the menu-bar item.
 3. Follow the UI prompts to grant **Input Monitoring** for the app and helper.
 4. Connect a supported controller.
-5. Use **Input Test** to confirm buttons/sticks; test physical rumble only for devices whose rumble path is listed as implemented.
+5. Use **Input Test** to confirm buttons and sticks.
+6. Test physical rumble only for devices whose rumble path is listed as implemented.
+
+Expected result: your target app sees a compatible virtual controller.
 
 ## Choose An Output Mode
 
@@ -30,7 +54,7 @@ See [docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md).
 | Apps that inspect HID descriptors      | Compatibility + `Generic HID`                    | Descriptor-driven HID surface.                      |
 | A picky app expecting Microsoft HID    | Compatibility + `Xbox 360 HID` or `Xbox One HID` | Experimental spoof identities for targeted testing. |
 
-CLI equivalents (installed app bundle):
+CLI equivalents from the installed app bundle:
 
 ```bash
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat sdl2-3
@@ -45,7 +69,7 @@ CLI equivalents (installed app bundle):
 | SDL / browser sees 0 controllers      | Ensure Input Monitoring is granted, then re-open the app and re-test.                  |
 | DriverKit extension install fails     | Compatibility mode still works without DriverKit. Use DriverKit only when you need it. |
 
-Useful commands:
+Useful diagnostics:
 
 ```bash
 ./scripts/ojd validate profiles
@@ -55,7 +79,7 @@ Useful commands:
 ./scripts/ojd diagnose sdl3 --seconds 10
 ```
 
-From the installed app bundle:
+Installed app bundle commands:
 
 ```bash
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status
@@ -65,7 +89,7 @@ From the installed app bundle:
 
 ## Development
 
-If you're changing parsers/profiles/tests, signing is not required:
+Parser, profile, and test changes do not require signing:
 
 ```bash
 brew install libusb
@@ -74,11 +98,48 @@ brew install libusb
 swift build
 ```
 
-If you're working on the app/daemon, DriverKit, or signing/notarization, start here:
+For app/daemon, DriverKit, signing, and notarization work, start here:
 
 - [scripts/README.md](scripts/README.md)
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+
+## Contributing
+
+Useful contribution areas:
+
+- controller parser and profile improvements
+- compatibility-layer tests and diagnostics
+- documentation for supported devices, output modes, and troubleshooting
+- reproducible reports for games, emulators, browsers, SDL apps, and native macOS apps
+
+Before opening a PR for parser/profile work, run:
+
+```bash
+./scripts/ojd validate profiles
+./scripts/ojd test parsers-macos14
+swift build
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for repository expectations.
+
+## AI / Coding Agents
+
+Use this context path before editing:
+
+1. [README.md](README.md) — product intent and user workflows.
+2. [scripts/README.md](scripts/README.md) — repository command interface.
+3. [CONTRIBUTING.md](CONTRIBUTING.md) — PR expectations.
+4. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — app, daemon, DriverKit, and compatibility boundaries.
+5. [docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md) — support status and output-mode behavior.
+
+Minimum validation for parser/profile changes:
+
+```bash
+./scripts/ojd validate profiles
+./scripts/ojd test parsers-macos14
+swift build
+```
 
 ## Star History
 
@@ -90,6 +151,6 @@ If you're working on the app/daemon, DriverKit, or signing/notarization, start h
  </picture>
 </a>
 
-# License
+## License
 
 [MIT](LICENSE)
