@@ -6,10 +6,10 @@ import Testing
 @Suite("Update checker")
 struct UpdateCheckerTests {
   @Test("stable checks use latest release endpoint")
-  func stableChecksUseLatestReleaseEndpoint() async {
+  func stableChecksUseLatestReleaseEndpoint() async throws {
     let checker = UpdateChecker(
-      latestReleaseURL: URL(string: "https://example.test/stable-latest")!,
-      releasesURL: URL(string: "https://example.test/prerelease-releases")!,
+      latestReleaseURL: try #require(URL(string: "https://example.test/stable-latest")),
+      releasesURL: try #require(URL(string: "https://example.test/prerelease-releases")),
       session: Self.session()
     )
 
@@ -21,9 +21,9 @@ struct UpdateCheckerTests {
   }
 
   @Test("prerelease checks include newer prereleases")
-  func prereleaseChecksIncludeNewerPrereleases() async {
+  func prereleaseChecksIncludeNewerPrereleases() async throws {
     let checker = UpdateChecker(
-      releasesURL: URL(string: "https://example.test/prerelease-releases")!,
+      releasesURL: try #require(URL(string: "https://example.test/prerelease-releases")),
       session: Self.session()
     )
 
@@ -36,9 +36,9 @@ struct UpdateCheckerTests {
   }
 
   @Test("prerelease checks ignore drafts and invalid tags")
-  func prereleaseChecksIgnoreDraftsAndInvalidTags() async {
+  func prereleaseChecksIgnoreDraftsAndInvalidTags() async throws {
     let checker = UpdateChecker(
-      releasesURL: URL(string: "https://example.test/drafts-releases")!,
+      releasesURL: try #require(URL(string: "https://example.test/drafts-releases")),
       session: Self.session()
     )
 
