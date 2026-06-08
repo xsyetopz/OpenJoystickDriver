@@ -393,7 +393,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     }
 
     do {
-      try requestBundledDaemonInputMonitoringPrompt()
+      try await requestBundledDaemonInputMonitoringPrompt()
     } catch {
       daemonError = error.localizedDescription
       return
@@ -434,8 +434,55 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     return state
   }
 
-  private func requestBundledDaemonInputMonitoringPrompt() throws {
+  private func requestBundledDaemonInputMonitoringPrompt() async throws {
     let appURL = Bundle.main.bundleURL
+    let promptEnvironment = ProcessInfo.processInfo.environment.merging(
+      ["OJD_PERMISSION_PROMPT_ONLY": "1"]
+    ) { _, new in new }
+
+    if appURL.pathExtension == "app" {
+      let daemonAppURL = DaemonManager.bundledDaemonApplicationURL(in: appURL)
+      let executableURL = DaemonManager.bundledDaemonExecutableURL(in: appURL)
+      let fileManager = FileManager.default
+      guard fileManager.fileExists(atPath: daemonAppURL.path) else {
+        throw NSError(
+          domain: "OpenJoystickDriver",
+          code: 1,
+          userInfo: [
+            NSLocalizedDescriptionKey:
+              L10n.string("daemon.error.requestAccessMissingExecutable", daemonAppURL.path),
+          ]
+        )
+      }
+      guard fileManager.fileExists(atPath: executableURL.path) else {
+        throw NSError(
+          domain: "OpenJoystickDriver",
+          code: 1,
+          userInfo: [
+            NSLocalizedDescriptionKey:
+              L10n.string("daemon.error.requestAccessMissingExecutable", executableURL.path),
+          ]
+        )
+      }
+
+      let configuration = NSWorkspace.OpenConfiguration()
+      configuration.activates = false
+      configuration.createsNewApplicationInstance = true
+      configuration.environment = promptEnvironment
+      try await withCheckedThrowingContinuation {
+        (continuation: CheckedContinuation<Void, Error>) in
+        NSWorkspace.shared.openApplication(at: daemonAppURL, configuration: configuration) {
+          _, error in
+          if let error {
+            continuation.resume(throwing: error)
+          } else {
+            continuation.resume()
+          }
+        }
+      }
+      return
+    }
+
     let executableURL = DaemonManager.daemonExecutableURL(forMainBundleURL: appURL)
     guard FileManager.default.fileExists(atPath: executableURL.path) else {
       throw NSError(
@@ -450,9 +497,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
 
     let process = Process()
     process.executableURL = executableURL
-    process.environment = ProcessInfo.processInfo.environment.merging(
-      ["OJD_PERMISSION_PROMPT_ONLY": "1"]
-    ) { _, new in new }
+    process.environment = promptEnvironment
     try process.run()
   }
 

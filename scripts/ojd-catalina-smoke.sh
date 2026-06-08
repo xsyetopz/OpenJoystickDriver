@@ -96,8 +96,7 @@ echo ""
 
 INFO_PLIST="$APP_PATH/Contents/Info.plist"
 GUI_BIN="$APP_PATH/Contents/MacOS/OpenJoystickDriver"
-DAEMON_BIN="$APP_PATH/Contents/MacOS/OpenJoystickDriverDaemon"
-DAEMON_APP_BIN="$APP_PATH/Contents/MacOS/OpenJoystickDriverDaemon.app/Contents/MacOS/OpenJoystickDriverDaemon"
+DAEMON_APP_BIN="$APP_PATH/Contents/Library/LoginItems/OpenJoystickDriverDaemon.app/Contents/MacOS/OpenJoystickDriverDaemon"
 ICON="$APP_PATH/Contents/Resources/OpenJoystickDriver.icns"
 AGENT_PLIST="$APP_PATH/Contents/Library/LaunchAgents/$LABEL.plist"
 
@@ -118,8 +117,7 @@ note "CFBundleIconFile: ${icon_name:-missing}"
 [[ "$icon_name" == "OpenJoystickDriver" ]] || fail "CFBundleIconFile is not OpenJoystickDriver"
 
 check_binary "GUI" "$GUI_BIN"
-check_binary "daemon" "$DAEMON_BIN"
-check_binary "nested daemon app" "$DAEMON_APP_BIN"
+check_binary "daemon app" "$DAEMON_APP_BIN"
 
 echo ""
 note "headless status:"

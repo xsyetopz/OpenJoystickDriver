@@ -3,8 +3,9 @@ import ServiceManagement
 
 /// Manages daemon LaunchAgent lifecycle.
 ///
-/// Uses ServiceManagement (`SMAppService`) on macOS 13 and newer, with a
-/// launchd plist fallback for macOS 10.15 through 12.
+/// Uses launchctl registration for the embedded LaunchAgent. This avoids
+/// BackgroundTaskManagement/LWCR failures seen when `SMAppService.agent`
+/// launches an executable inside an embedded daemon app bundle.
 public enum DaemonManager: Sendable {
   /// Launchd job label.
   public static let label = "com.openjoystickdriver.daemon"
@@ -19,7 +20,8 @@ public enum DaemonManager: Sendable {
   public static func bundledDaemonApplicationURL(in appBundleURL: URL) -> URL {
     appBundleURL
       .appendingPathComponent("Contents", isDirectory: true)
-      .appendingPathComponent("MacOS", isDirectory: true)
+      .appendingPathComponent("Library", isDirectory: true)
+      .appendingPathComponent("LoginItems", isDirectory: true)
       .appendingPathComponent("OpenJoystickDriverDaemon.app", isDirectory: true)
   }
 
@@ -44,8 +46,11 @@ public enum DaemonManager: Sendable {
     SMAppService.agent(plistName: agentPlistName)
   }
 
+  private static let usesLaunchctlAgentRegistration = true
+
   /// Whether the daemon LaunchAgent is registered for the current user.
   public static var isInstalled: Bool {
+    if usesLaunchctlAgentRegistration { return legacyIsInstalled }
     if #available(macOS 13.0, *) {
       switch appService.status {
       case .notRegistered: return false
@@ -60,6 +65,7 @@ public enum DaemonManager: Sendable {
   /// - Important: The LaunchAgent plist must be embedded in the app bundle.
   public static func install() throws {
     do {
+      if usesLaunchctlAgentRegistration { try legacyInstall(); return }
       if #available(macOS 13.0, *) {
         try appService.register()
         print("[DaemonManager] Installed (SMAppService)")
@@ -75,6 +81,7 @@ public enum DaemonManager: Sendable {
   /// Unregisters the daemon LaunchAgent.
   public static func uninstall() throws {
     do {
+      if usesLaunchctlAgentRegistration { try legacyUninstall(); return }
       if #available(macOS 13.0, *) {
         try appService.unregister()
         print("[DaemonManager] Uninstalled (SMAppService)")
@@ -96,6 +103,7 @@ public enum DaemonManager: Sendable {
   /// Restarts the daemon (best-effort).
   public static func restart() throws {
     do {
+      if usesLaunchctlAgentRegistration { try legacyRestart(); return }
       if #available(macOS 13.0, *) {
         // Unregister+register is the most reliable cross-shell restart path.
         try? appService.unregister()
@@ -214,6 +222,22 @@ public enum DaemonManager: Sendable {
     }
   }
 
+  static func launchctlPrintShowsRunning(_ output: String) -> Bool {
+    var hasRunningState = false
+    var hasPID = false
+
+    for rawLine in output.split(separator: "\n", omittingEmptySubsequences: false) {
+      let line = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
+      if line == "state = running" || line == "job state = running" {
+        hasRunningState = true
+      } else if line.hasPrefix("pid = ") {
+        hasPID = Int(line.dropFirst("pid = ".count)) != nil
+      }
+    }
+
+    return hasRunningState && hasPID
+  }
+
   // MARK: - Private
 
   private static var launchdDomain: String { "gui/\(getuid())" }
@@ -240,23 +264,57 @@ public enum DaemonManager: Sendable {
   }
 
   private static func legacyInstall() throws {
+    unregisterAppServiceIfAvailable()
     try installLaunchAgentPlist()
     _ = try? launchctl(["bootout", launchdTarget])
-    try launchctl(["bootstrap", launchdDomain, installedLaunchAgentURL.path])
+    try bootstrapOrKickstartInstalledLaunchAgent()
+    print("[DaemonManager] Installed (launchctl)")
   }
 
   private static func legacyUninstall() throws {
+    unregisterAppServiceIfAvailable()
     _ = try? launchctl(["bootout", launchdTarget])
     if FileManager.default.fileExists(atPath: installedLaunchAgentURL.path) {
       try FileManager.default.removeItem(at: installedLaunchAgentURL)
     }
+    print("[DaemonManager] Uninstalled (launchctl)")
   }
 
   private static func legacyRestart() throws {
+    unregisterAppServiceIfAvailable()
     try installLaunchAgentPlist()
     _ = try? launchctl(["bootout", launchdTarget])
-    try launchctl(["bootstrap", launchdDomain, installedLaunchAgentURL.path])
-    _ = try? launchctl(["kickstart", "-k", launchdTarget])
+    try bootstrapOrKickstartInstalledLaunchAgent()
+    print("[DaemonManager] Restarted (launchctl)")
+  }
+
+  private static func bootstrapOrKickstartInstalledLaunchAgent() throws {
+    do {
+      try launchctl(["bootstrap", launchdDomain, installedLaunchAgentURL.path])
+    } catch {
+      guard let printOut = try? launchctl(["print", launchdTarget]) else {
+        throw error
+      }
+      do {
+        _ = try launchctl(["kickstart", "-k", launchdTarget])
+      } catch {
+        if launchctlPrintShowsRunning(printOut) {
+          return
+        }
+        if let refreshedPrintOut = try? launchctl(["print", launchdTarget]),
+          launchctlPrintShowsRunning(refreshedPrintOut)
+        {
+          return
+        }
+        throw error
+      }
+    }
+  }
+
+  private static func unregisterAppServiceIfAvailable() {
+    if #available(macOS 13.0, *) {
+      try? appService.unregister()
+    }
   }
 
   private static func installLaunchAgentPlist() throws {

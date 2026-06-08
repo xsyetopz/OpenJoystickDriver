@@ -13,6 +13,40 @@ build_app_bundle() {
     fi
   done
 
+  if [[ -z "${DEVELOPMENT_TEAM:-}" ]]; then
+    echo "ERROR: DEVELOPMENT_TEAM not set."
+    echo "Fix: run: ./scripts/ojd signing configure"
+    exit 1
+  fi
+
+  _require_profile_entitlement_value \
+    "$GUI_PROFILE" \
+    "com.apple.application-identifier" \
+    "${DEVELOPMENT_TEAM}.com.openjoystickdriver" \
+    "GUI app signing identity / provisioning profile" \
+    "Fix: regenerate the GUI provisioning profile for Identifier com.openjoystickdriver, then reinstall profiles (./scripts/ojd signing install-profiles)."
+
+  _require_profile_entitlement_value \
+    "$GUI_PROFILE" \
+    "com.apple.developer.team-identifier" \
+    "$DEVELOPMENT_TEAM" \
+    "GUI app signing identity / provisioning profile" \
+    "Fix: run ./scripts/ojd signing configure, then reinstall matching GUI profiles."
+
+  _require_profile_entitlement_value \
+    "$DAEMON_PROFILE" \
+    "com.apple.application-identifier" \
+    "${DEVELOPMENT_TEAM}.com.openjoystickdriver.daemon" \
+    "Daemon app signing identity / provisioning profile" \
+    "Fix: regenerate the daemon provisioning profile for Identifier com.openjoystickdriver.daemon, then reinstall profiles (./scripts/ojd signing install-profiles)."
+
+  _require_profile_entitlement_value \
+    "$DAEMON_PROFILE" \
+    "com.apple.developer.team-identifier" \
+    "$DEVELOPMENT_TEAM" \
+    "Daemon app signing identity / provisioning profile" \
+    "Fix: run ./scripts/ojd signing configure, then reinstall matching daemon profiles."
+
   _require_profile_entitlement \
     "$GUI_PROFILE" \
     "com.apple.developer.system-extension.install" \
@@ -35,16 +69,16 @@ build_app_bundle() {
     setup_libusb_pkgconfig
     echo "Building release binaries (universal)..."
     cd "$PROJECT_DIR"
-    swift build -c release --product OpenJoystickDriverDaemon --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
-    swift build -c release --product OpenJoystickDriver --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
+    "$SWIFT_BIN" build -c release --product OpenJoystickDriverDaemon --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
+    "$SWIFT_BIN" build -c release --product OpenJoystickDriver --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
     local daemon_bin="$DAEMON_RELEASE"
     local gui_bin="$GUI_RELEASE"
   else
     setup_libusb_pkgconfig
     echo "Building debug binaries (universal)..."
     cd "$PROJECT_DIR"
-    swift build --product OpenJoystickDriverDaemon --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
-    swift build --product OpenJoystickDriver --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
+    "$SWIFT_BIN" build --product OpenJoystickDriverDaemon --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
+    "$SWIFT_BIN" build --product OpenJoystickDriver --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
     local daemon_bin="$PROJECT_DIR/.build/apple/Products/Debug/OpenJoystickDriverDaemon"
     local gui_bin="$PROJECT_DIR/.build/apple/Products/Debug/OpenJoystickDriver"
   fi
@@ -61,12 +95,12 @@ build_app_bundle() {
   local GUI_APP="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
   local GUI_CONTENTS="$GUI_APP/Contents"
   local GUI_MACOS="$GUI_CONTENTS/MacOS"
+  local GUI_LOGIN_ITEMS="$GUI_CONTENTS/Library/LoginItems"
 
   echo "Creating app bundle..."
   rm -rf "$GUI_APP"
-  mkdir -p "$GUI_MACOS"
+  mkdir -p "$GUI_MACOS" "$GUI_LOGIN_ITEMS"
   cp "$gui_bin" "$GUI_MACOS/OpenJoystickDriver"
-  cp "$daemon_bin" "$GUI_MACOS/OpenJoystickDriverDaemon"
 
   local BUILD_DIR
   BUILD_DIR="$(dirname "$daemon_bin")"
@@ -121,7 +155,7 @@ build_app_bundle() {
 </plist>
 PLIST
 
-  local DAEMON_BUNDLE="$GUI_MACOS/OpenJoystickDriverDaemon.app"
+  local DAEMON_BUNDLE="$GUI_LOGIN_ITEMS/OpenJoystickDriverDaemon.app"
   local DAEMON_BUNDLE_CONTENTS="$DAEMON_BUNDLE/Contents"
   local DAEMON_BUNDLE_MACOS="$DAEMON_BUNDLE_CONTENTS/MacOS"
 
@@ -176,8 +210,32 @@ PLIST
   done
   OJD_ACTIVE_SIGN_IDENTITY="$DAEMON_IDENTITY" ojd_sign "$DAEMON_BUNDLE_MACOS/OpenJoystickDriverDaemon" --entitlements "$DAEMON_ENTITLEMENTS"
   OJD_ACTIVE_SIGN_IDENTITY="$DAEMON_IDENTITY" ojd_sign "$DAEMON_BUNDLE" --entitlements "$DAEMON_ENTITLEMENTS"
-  OJD_ACTIVE_SIGN_IDENTITY="$DAEMON_IDENTITY" ojd_sign "$GUI_MACOS/OpenJoystickDriverDaemon" --entitlements "$DAEMON_ENTITLEMENTS"
   OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign "$GUI_APP" --entitlements "$GUI_ENTITLEMENTS"
+
+  _require_signed_entitlement_value \
+    "$GUI_APP" \
+    "com.apple.application-identifier" \
+    "${DEVELOPMENT_TEAM}.com.openjoystickdriver" \
+    "GUI app signed entitlements" \
+    "Fix: regenerate GUI entitlements/provisioning, then rebuild."
+  _require_signed_entitlement_value \
+    "$GUI_APP" \
+    "com.apple.developer.hid.virtual.device" \
+    "true" \
+    "GUI app Compatibility backend" \
+    "Fix: enable com.apple.developer.hid.virtual.device on the GUI profile, then rebuild."
+  _require_signed_entitlement_value \
+    "$DAEMON_BUNDLE" \
+    "com.apple.application-identifier" \
+    "${DEVELOPMENT_TEAM}.com.openjoystickdriver.daemon" \
+    "Daemon app signed entitlements" \
+    "Fix: regenerate daemon entitlements/provisioning, then rebuild."
+  _require_signed_entitlement_value \
+    "$DAEMON_BUNDLE" \
+    "com.apple.developer.hid.virtual.device" \
+    "true" \
+    "Daemon Compatibility backend" \
+    "Fix: enable com.apple.developer.hid.virtual.device on the daemon profile, then rebuild."
 
   if [[ "$OJD_ENV" == "release" ]]; then
     verify_profile_cert "$GUI_PROFILE" "$GUI_IDENTITY"

@@ -7,7 +7,7 @@
 
   <key>ProgramArguments</key>
   <array>
-    <string>/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriverDaemon.app/Contents/MacOS/OpenJoystickDriverDaemon</string>
+    <string>/Applications/OpenJoystickDriver.app/Contents/Library/LoginItems/OpenJoystickDriverDaemon.app/Contents/MacOS/OpenJoystickDriverDaemon</string>
   </array>
 
   <!-- Required so NSXPCListener(machServiceName:) is allowed to bind this name. -->
@@ -32,4 +32,3 @@
   <string>/tmp/com.openjoystickdriver.daemon.err</string>
 </dict>
 </plist>
-

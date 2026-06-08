@@ -18,5 +18,12 @@
     <!-- Required for IOHIDUserDevice (user-space virtual gamepad / SDL compatibility mode). -->
     <key>com.apple.developer.hid.virtual.device</key>
     <true/>
+
+    <!-- Required by AMFI on macOS 26+ to validate the embedded provisioning
+         profile. Must match the daemon profile's application-identifier. -->
+    <key>com.apple.application-identifier</key>
+    <string>${DEVELOPMENT_TEAM}.com.openjoystickdriver.daemon</string>
+    <key>com.apple.developer.team-identifier</key>
+    <string>${DEVELOPMENT_TEAM}</string>
 </dict>
 </plist>
