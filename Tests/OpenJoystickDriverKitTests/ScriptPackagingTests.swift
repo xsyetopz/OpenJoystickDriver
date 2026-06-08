@@ -16,9 +16,11 @@ struct ScriptPackagingTests {
 
   @Test
   func testBuildScriptRequiresInstalledSigningIdentity() throws {
-    let scriptURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-      .appendingPathComponent("scripts/ojd-build.sh")
-    let script = try String(contentsOf: scriptURL, encoding: .utf8)
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let scriptURL = rootURL.appendingPathComponent("scripts/ojd-build.sh")
+    let bundlesURL = rootURL.appendingPathComponent("scripts/ojd-build-bundles.sh")
+    let script = try String(contentsOf: scriptURL, encoding: .utf8) + "\n"
+      + String(contentsOf: bundlesURL, encoding: .utf8)
 
     #expect(script.contains("security find-identity -v -p codesigning"))
     #expect(script.contains("grep -Fi \"$identity\""))

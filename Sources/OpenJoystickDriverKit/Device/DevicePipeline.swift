@@ -148,6 +148,7 @@ actor DevicePipeline {
   }
 
   /// Feed HID input report data (called by DeviceManager for class 0x03 devices).
+  @discardableResult
   func feedHIDData(_ data: Data) async -> [PhysicalHIDOutputReport] {
     guard isActive else { return [] }
     appendToPacketLog(bytes: Array(data), direction: "rx")

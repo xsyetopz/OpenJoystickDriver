@@ -13,6 +13,14 @@ let swiftUSBDependency: Package.Dependency =
     ? .package(path: localSwiftUSBPath)
     : .package(url: "https://github.com/xsyetopz/SwiftUSB.git", from: "0.1.0")
 
+#if arch(arm64)
+let testTargetTriple = "arm64-apple-macosx26.0"
+#elseif arch(x86_64)
+let testTargetTriple = "x86_64-apple-macosx26.0"
+#else
+#error("Unsupported host architecture for Swift Testing target triple")
+#endif
+
 let package = Package(
   name: "OpenJoystickDriver",
   platforms: [.macOS(.v10_15)],
@@ -82,7 +90,13 @@ let package = Package(
         "OpenJoystickDriverKit",
         .product(name: "SwiftUSB", package: "SwiftUSB"),
       ],
-      path: "Tests/OpenJoystickDriverKitTests"
+      path: "Tests/OpenJoystickDriverKitTests",
+      swiftSettings: [
+        .unsafeFlags(["-target", testTargetTriple])
+      ],
+      linkerSettings: [
+        .unsafeFlags(["-target", testTargetTriple])
+      ]
     ),
   ]
 )
