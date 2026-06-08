@@ -15,6 +15,14 @@ public enum DaemonManager: Sendable {
   ///   `OpenJoystickDriver.app/Contents/Library/LaunchAgents/<plistName>`
   public static let agentPlistName = "\(label).plist"
 
+  /// Returns the embedded helper app URL for a given OpenJoystickDriver.app bundle.
+  public static func bundledHelperApplicationURL(in appBundleURL: URL) -> URL {
+    appBundleURL
+      .appendingPathComponent("Contents", isDirectory: true)
+      .appendingPathComponent("MacOS", isDirectory: true)
+      .appendingPathComponent("OpenJoystickDriverDaemon.app", isDirectory: true)
+  }
+
   @available(macOS 13.0, *)
   private static var appService: SMAppService {
     SMAppService.agent(plistName: agentPlistName)

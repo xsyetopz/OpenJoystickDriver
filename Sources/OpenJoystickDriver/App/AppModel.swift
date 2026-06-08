@@ -5,6 +5,8 @@ import OpenJoystickDriverKit
 private let appModelPollNanoseconds: UInt64 = 2_000_000_000
 private let daemonHealthPollNanosecondsConnected: UInt64 = 15_000_000_000
 private let daemonHealthPollNanosecondsDisconnected: UInt64 = 2_000_000_000
+private let inputMonitoringPromptPollNanoseconds: UInt64 = 500_000_000
+private let inputMonitoringPromptPollAttempts = 10
 
 /// Parsed, displayable representation of connected controller.
 struct DeviceViewModel: Identifiable, Hashable, Sendable {
@@ -355,9 +357,9 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
 
   func requestAppInputMonitoringAccess() async {
     inputMonitoringAssist = nil
+    NSApp.activate(ignoringOtherApps: true)
     appInputMonitoring = "\(await permissionManager.requestAccess())"
-    try? await Task.sleep(nanoseconds: 500_000_000)
-    appInputMonitoring = "\(await permissionManager.checkAccess())"
+    appInputMonitoring = await waitForAppInputMonitoringDecision()
     if appInputMonitoring != "granted" {
       openInputMonitoringSettings(for: ["OpenJoystickDriver"])
     }
@@ -369,23 +371,77 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
       await recoverDaemonForInputMonitoringRequest()
     }
 
-    guard daemonConnected else {
-      openInputMonitoringSettings(for: ["OpenJoystickDriver Helper"])
-      inputMonitoringAssist =
-        "OpenJoystickDriver tried to start the helper so macOS can add it to Input Monitoring. " +
-        "If OpenJoystickDriver Helper appears, turn it on, then quit and reopen OpenJoystickDriver."
-      return
+    do {
+      try await requestBundledHelperInputMonitoringPrompt()
+    } catch {
+      daemonError = error.localizedDescription
     }
 
-    do {
-      inputMonitoring = try await client.requestInputMonitoringAccess()
-      try? await Task.sleep(nanoseconds: 500_000_000)
-      await syncFromDaemonNow()
-      if inputMonitoring != "granted" {
-        openInputMonitoringSettings(for: ["OpenJoystickDriver Helper"])
+    if daemonConnected {
+      do {
+        inputMonitoring = try await client.requestInputMonitoringAccess()
+      } catch {
+        daemonError = formatDaemonError(error)
       }
-    } catch {
-      daemonError = formatDaemonError(error)
+    }
+
+    inputMonitoring = await waitForDaemonInputMonitoringDecision()
+    if inputMonitoring != "granted" {
+      openInputMonitoringSettings(for: ["OpenJoystickDriver Helper"])
+    }
+  }
+
+  private func waitForAppInputMonitoringDecision() async -> String {
+    var state = appInputMonitoring
+    for _ in 0..<inputMonitoringPromptPollAttempts {
+      try? await Task.sleep(nanoseconds: inputMonitoringPromptPollNanoseconds)
+      state = "\(await permissionManager.checkAccess())"
+      if state == "granted" { break }
+    }
+    return state
+  }
+
+  private func waitForDaemonInputMonitoringDecision() async -> String {
+    var state = inputMonitoring
+    for _ in 0..<inputMonitoringPromptPollAttempts {
+      try? await Task.sleep(nanoseconds: inputMonitoringPromptPollNanoseconds)
+      await syncFromDaemonNow()
+      state = inputMonitoring
+      if state == "granted" { break }
+    }
+    return state
+  }
+
+  private func requestBundledHelperInputMonitoringPrompt() async throws {
+    let helperURL = DaemonManager.bundledHelperApplicationURL(in: Bundle.main.bundleURL)
+    guard FileManager.default.fileExists(atPath: helperURL.path) else {
+      throw NSError(
+        domain: "OpenJoystickDriver",
+        code: 1,
+        userInfo: [
+          NSLocalizedDescriptionKey:
+            "Request Access failed: bundled helper app was not found at \(helperURL.path)."
+        ]
+      )
+    }
+
+    let configuration = NSWorkspace.OpenConfiguration()
+    configuration.activates = true
+    configuration.addsToRecentItems = false
+    configuration.createsNewApplicationInstance = true
+    configuration.environment = ProcessInfo.processInfo.environment.merging(
+      ["OJD_PERMISSION_PROMPT_ONLY": "1"],
+      uniquingKeysWith: { _, new in new }
+    )
+
+    let _: Void = try await withCheckedThrowingContinuation { continuation in
+      NSWorkspace.shared.openApplication(at: helperURL, configuration: configuration) { _, error in
+        if let error {
+          continuation.resume(throwing: error)
+        } else {
+          continuation.resume()
+        }
+      }
     }
   }
 

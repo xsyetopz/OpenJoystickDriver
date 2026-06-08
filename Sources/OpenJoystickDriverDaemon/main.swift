@@ -6,6 +6,18 @@ setbuf(stdout, nil)
 
 let permissionManager = PermissionManager()
 
+if ProcessInfo.processInfo.environment["OJD_PERMISSION_PROMPT_ONLY"] == "1" {
+  print("[Daemon] Requesting Input Monitoring access for helper...")
+  let semaphore = DispatchSemaphore(value: 0)
+  Task {
+    _ = await permissionManager.requestAccess()
+    semaphore.signal()
+  }
+  semaphore.wait()
+  Thread.sleep(forTimeInterval: 5)
+  exit(0)
+}
+
 // DriverKit virtual HID output is optional and can be enabled/disabled by the GUI via XPC.
 // We do not connect eagerly at startup — this avoids "half-active" states where the
 // DriverKit virtual device is present but idle while Compatibility is selected.
