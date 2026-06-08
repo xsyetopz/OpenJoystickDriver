@@ -76,6 +76,7 @@ jobs:
           ./scripts/ojd package release "${{ steps.release.outputs.tag }}"
 
       - name: Generate Sparkle appcast
+        if: ${{ env.SPARKLE_ED_PRIVATE_KEY != '' }}
         run: |
           ./scripts/ojd package appcast "${{ steps.release.outputs.tag }}"
 

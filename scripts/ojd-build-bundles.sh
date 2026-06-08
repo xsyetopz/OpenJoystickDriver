@@ -233,6 +233,30 @@ PLIST
   for bundle in "$GUI_RESOURCES"/*.bundle; do
     [[ -d "$bundle" ]] && OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign_resource_bundle "$bundle"
   done
+  for framework in "$GUI_FRAMEWORKS"/*.framework; do
+    if [[ -d "$framework" && "$(basename "$framework")" == "Sparkle.framework" ]]; then
+      local sparkle_extra_args=()
+      if [[ "$OJD_ENV" == "release" ]]; then
+        sparkle_extra_args=(--options runtime --timestamp)
+      fi
+      /usr/bin/codesign --force --sign "$GUI_IDENTITY" \
+        "${sparkle_extra_args[@]}" \
+        "$framework/Versions/B/XPCServices/Installer.xpc"
+      /usr/bin/codesign --force --sign "$GUI_IDENTITY" \
+        "${sparkle_extra_args[@]}" \
+        --preserve-metadata=entitlements \
+        "$framework/Versions/B/XPCServices/Downloader.xpc"
+      /usr/bin/codesign --force --sign "$GUI_IDENTITY" \
+        "${sparkle_extra_args[@]}" \
+        "$framework/Versions/B/Autoupdate"
+      /usr/bin/codesign --force --sign "$GUI_IDENTITY" \
+        "${sparkle_extra_args[@]}" \
+        "$framework/Versions/B/Updater.app"
+      /usr/bin/codesign --force --sign "$GUI_IDENTITY" \
+        "${sparkle_extra_args[@]}" \
+        "$framework"
+    fi
+  done
   for bundle in "$DAEMON_RESOURCES"/*.bundle; do
     [[ -d "$bundle" ]] && OJD_ACTIVE_SIGN_IDENTITY="$DAEMON_IDENTITY" ojd_sign_resource_bundle "$bundle"
   done
