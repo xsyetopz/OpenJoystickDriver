@@ -11,19 +11,7 @@ app, or native macOS app.
 
 ## Status
 
-| --------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| GameSir G7 SE                     | ✅      | Hardware verified through GIP and Xbox One HID compatibility.                                                                                |
-| Flydigi Vader 5S                  | ✅      | Uses GIP and needs `setConfiguration(1)` before claim.                                                                                       |
-| Sony DualShock 4 (USB/Bluetooth)  | ✅      | Input and physical rumble are implemented.                                                                                                   |
-| Xbox 360 wired (USB)              | ✅      | Parser and profiles exist; hardware coverage varies by model.                                                                                |
-| More xpad-derived Xbox batches    | 🚧      | Profiles exist but need local hardware checks.                                                                                               |
-| Valve Steam Controller            | 🚧      | Experimental parser/profile with source-backed wireless receiver lifecycle and lizard-mode feature reports; needs physical hardware testing. |
-| Sony DualSense USB/Bluetooth      | 🚧      | Experimental parser/profile with source-backed USB and Bluetooth input; needs physical hardware testing.                                     |
-| Sony DualShock 3 USB/Bluetooth    | 🚧      | Experimental parser/profile with source-backed transport-specific operational mode; needs physical hardware testing.                         |
-| Nintendo Switch Pro USB/Bluetooth | 🚧      | Experimental parser/profile with USB startup reports and source-backed Bluetooth input gating; needs physical hardware testing.              |
-
-For the full feature matrix, mapping notes, and per-mode caveats, see
-[docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md).
+See[docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md).
 
 ## Quickstart (Using The App)
 
