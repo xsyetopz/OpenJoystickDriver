@@ -23,6 +23,7 @@ let testTargetTriple = "x86_64-apple-macosx26.0"
 
 let package = Package(
   name: "OpenJoystickDriver",
+  defaultLocalization: "en-US",
   platforms: [.macOS(.v10_15)],
   products: [
     .library(name: "OpenJoystickDriverKit", targets: ["OpenJoystickDriverKit"]),

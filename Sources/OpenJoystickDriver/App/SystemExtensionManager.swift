@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverKit
 import SystemExtensions
 
 /// Manages installation and removal of the `com.openjoystickdriver.VirtualHIDDevice`
@@ -39,12 +40,12 @@ import SystemExtensions
 
     var label: String {
       switch self {
-      case .unknown: return "Unknown"
-      case .installing: return "Installing…"
-      case .requiresApproval: return "Requires Approval"
-      case .installed: return "Installed"
-      case .removing: return "Removing…"
-      case .failed(let msg): return "Failed: \(msg)"
+      case .unknown: return L10n.string("systemExtension.state.unknown")
+      case .installing: return L10n.string("systemExtension.state.installing")
+      case .requiresApproval: return L10n.string("systemExtension.state.requiresApproval")
+      case .installed: return L10n.string("systemExtension.state.installed")
+      case .removing: return L10n.string("systemExtension.state.removing")
+      case .failed(let msg): return L10n.string("systemExtension.state.failed", msg)
       }
     }
 

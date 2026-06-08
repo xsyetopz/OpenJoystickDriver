@@ -26,6 +26,19 @@ struct ScriptPackagingTests {
     #expect(script.contains("grep -Fi \"$identity\""))
     #expect(script.contains("_codesign_identity_available \"$GUI_IDENTITY\""))
     #expect(script.contains("_codesign_identity_available \"$DAEMON_IDENTITY\""))
-    #expect(script.contains("<string>OpenJoystickDriver Helper</string>"))
+    #expect(script.contains("<string>OpenJoystickDriver Daemon</string>"))
+    #expect(script.contains("<key>NSInputMonitoringUsageDescription</key>"))
+    #expect(
+      script.contains(
+        "OpenJoystickDriver needs Input Monitoring to read controller input and publish " +
+          "virtual gamepad events."
+      )
+    )
+    #expect(
+      script.contains(
+        "OpenJoystickDriver Daemon needs Input Monitoring to read controller input and " +
+          "publish virtual gamepad events."
+      )
+    )
   }
 }

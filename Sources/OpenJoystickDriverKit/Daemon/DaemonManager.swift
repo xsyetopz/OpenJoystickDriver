@@ -15,12 +15,28 @@ public enum DaemonManager: Sendable {
   ///   `OpenJoystickDriver.app/Contents/Library/LaunchAgents/<plistName>`
   public static let agentPlistName = "\(label).plist"
 
-  /// Returns the embedded helper app URL for a given OpenJoystickDriver.app bundle.
-  public static func bundledHelperApplicationURL(in appBundleURL: URL) -> URL {
+  /// Returns the embedded daemon app URL for a given OpenJoystickDriver.app bundle.
+  public static func bundledDaemonApplicationURL(in appBundleURL: URL) -> URL {
     appBundleURL
       .appendingPathComponent("Contents", isDirectory: true)
       .appendingPathComponent("MacOS", isDirectory: true)
       .appendingPathComponent("OpenJoystickDriverDaemon.app", isDirectory: true)
+  }
+
+  /// Returns the embedded daemon executable URL for a given OpenJoystickDriver.app bundle.
+  public static func bundledDaemonExecutableURL(in appBundleURL: URL) -> URL {
+    bundledDaemonApplicationURL(in: appBundleURL)
+      .appendingPathComponent("Contents", isDirectory: true)
+      .appendingPathComponent("MacOS", isDirectory: true)
+      .appendingPathComponent("OpenJoystickDriverDaemon", isDirectory: false)
+  }
+
+  /// Returns the daemon executable URL for an app bundle or unbundled SwiftPM executable folder.
+  public static func daemonExecutableURL(forMainBundleURL mainBundleURL: URL) -> URL {
+    if mainBundleURL.pathExtension == "app" {
+      return bundledDaemonExecutableURL(in: mainBundleURL)
+    }
+    return mainBundleURL.appendingPathComponent("OpenJoystickDriverDaemon", isDirectory: false)
   }
 
   @available(macOS 13.0, *)
@@ -96,7 +112,7 @@ public enum DaemonManager: Sendable {
 
   /// Best-effort snapshot of launchd state for the daemon job.
   ///
-  /// This is used to explain "couldn't communicate with a helper application"
+  /// This is used to explain "couldn't communicate with a daemon application"
   /// XPC errors, which commonly occur when launchd kills/restarts the job.
   public static func health() -> DaemonHealth {
     autoreleasepool {

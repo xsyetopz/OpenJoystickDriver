@@ -49,7 +49,7 @@ struct InputTestWindowView: View {
           VStack(alignment: .leading, spacing: 14) {
             controllerHero(device)
             HStack(alignment: .top, spacing: 16) {
-              OJDCard(title: "Live input") {
+              OJDCard(title: L10n.string("input.liveInput")) {
                 axesGrid
                 Divider()
                 buttonGrid
@@ -70,8 +70,8 @@ struct InputTestWindowView: View {
           OJDCard {
             VStack(spacing: 10) {
               StatusOrb(isReady: false, isBusy: false)
-              Text("No controller selected").font(.headline)
-              Text("Connect a controller, then refresh.")
+              Text(L10n.string("input.noControllerSelected")).font(.headline)
+              Text(L10n.string("input.connectThenRefresh"))
                 .font(.caption)
                 .foregroundColor(.secondary)
             }
@@ -105,15 +105,15 @@ struct InputTestWindowView: View {
   private var header: some View {
     HStack(spacing: 12) {
       VStack(alignment: .leading, spacing: 2) {
-        Text("Input Test")
+        Text(L10n.string("input.title"))
           .font(.system(size: 24, weight: .semibold))
-        Text("Live input, packet log, and rumble controls.")
+        Text(L10n.string("input.subtitle"))
           .font(.caption)
           .foregroundColor(.secondary)
       }
       Spacer()
       HStack(spacing: 8) {
-        Text("Controller")
+        Text(L10n.string("input.controller"))
           .font(.caption.weight(.semibold))
           .foregroundColor(.secondary)
         Picker("", selection: Binding(get: {
@@ -128,7 +128,7 @@ struct InputTestWindowView: View {
         .labelsHidden()
         .frame(width: 260)
         .disabled(model.devices.isEmpty)
-        SwiftUI.Button("Refresh") {
+        SwiftUI.Button(L10n.string("app.refresh")) {
           Task {
             await model.syncFromDaemonNow()
             await refreshState()
@@ -149,7 +149,7 @@ struct InputTestWindowView: View {
             Text(device.name)
               .font(.system(size: 19, weight: .semibold))
               .lineLimit(1)
-            Text(state == nil ? "idle" : "live")
+            Text(state == nil ? L10n.string("input.idle") : L10n.string("input.live"))
               .font(.system(size: 10, weight: .bold))
               .foregroundColor(state == nil ? .secondary : .green)
               .padding(.horizontal, 7)
@@ -163,14 +163,18 @@ struct InputTestWindowView: View {
             MiniBadge(device.connection)
             MiniBadge(String(format: "%04X:%04X", device.vendorID, device.productID))
             if let serial = device.serialNumber, !serial.isEmpty {
-              MiniBadge("Serial \(serial)")
+              MiniBadge(L10n.string("input.serial", serial))
                 .layoutPriority(-1)
             }
           }
         }
         Spacer()
         VStack(alignment: .trailing, spacing: 4) {
-          Text(state == nil ? "Waiting for input" : "Reading input")
+          Text(
+            state == nil
+              ? L10n.string("input.waitingForInput")
+              : L10n.string("input.readingInput")
+          )
             .font(.caption.weight(.semibold))
           Text(buttonSummary)
             .font(.caption)
@@ -184,9 +188,9 @@ struct InputTestWindowView: View {
   private var axesGrid: some View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
-        Text("Sticks and triggers").font(.caption.weight(.semibold))
+        Text(L10n.string("input.sticksAndTriggers")).font(.caption.weight(.semibold))
         Spacer()
-        Text(state == nil ? "idle" : "live")
+        Text(state == nil ? L10n.string("input.idle") : L10n.string("input.live"))
           .font(.system(size: 10, weight: .semibold))
           .foregroundColor(state == nil ? .secondary : .green)
       }
@@ -212,9 +216,13 @@ struct InputTestWindowView: View {
     let rowCount = (buttons.count + columnCount - 1) / columnCount
     return VStack(alignment: .leading, spacing: 6) {
       HStack {
-        Text("Buttons").font(.caption.weight(.semibold))
+        Text(L10n.string("input.buttons")).font(.caption.weight(.semibold))
         Spacer()
-        Text(pressed.isEmpty ? "none pressed" : "\(pressed.count) pressed")
+        Text(
+          pressed.isEmpty
+            ? L10n.string("input.nonePressed")
+            : L10n.string("input.pressedCount", pressed.count)
+        )
           .font(.system(size: 10, weight: .semibold))
           .foregroundColor(pressed.isEmpty ? .secondary : .accentColor)
       }
@@ -240,9 +248,11 @@ struct InputTestWindowView: View {
   private var buttonSummary: String {
     let pressed = state?.pressedButtons ?? []
     if pressed.isEmpty {
-      return "No buttons pressed"
+      return L10n.string("input.noButtonsPressed")
     }
-    return "\(pressed.count) button\(pressed.count == 1 ? "" : "s") pressed"
+    return pressed.count == 1
+      ? L10n.string("input.buttonsPressed.one", pressed.count)
+      : L10n.string("input.buttonsPressed.other", pressed.count)
   }
 
   @ViewBuilder
@@ -309,29 +319,29 @@ struct InputTestWindowView: View {
 
   private func outputTestRow(_ device: DeviceViewModel) -> some View {
     let canRumble = device.supportsPhysicalRumble
-    return OJDCard(title: "Rumble test") {
+    return OJDCard(title: L10n.string("input.rumbleTest")) {
       VStack(alignment: .leading, spacing: 12) {
         HStack {
           Text(
             canRumble
-              ? "Send a short rumble command to the controller."
-              : "This controller does not expose rumble."
+              ? L10n.string("input.rumbleSendShort")
+              : L10n.string("input.rumbleUnavailable")
           )
             .font(.caption)
             .foregroundColor(.secondary)
           Spacer()
-          Text(canRumble ? "supported" : "unavailable")
+          Text(canRumble ? L10n.string("input.supported") : L10n.string("input.unavailable"))
             .font(.system(size: 10, weight: .semibold))
             .foregroundColor(canRumble ? .green : .secondary)
         }
         VStack(alignment: .leading, spacing: 7) {
-          Text("Motors")
+          Text(L10n.string("input.motors"))
             .font(.system(size: 10, weight: .semibold))
             .foregroundColor(.secondary)
           HStack(alignment: .top, spacing: 18) {
             VStack(alignment: .leading, spacing: 5) {
-              RumbleSlider(label: "Left", value: $rumbleLeft)
-              RumbleSlider(label: "Right", value: $rumbleRight)
+              RumbleSlider(label: L10n.string("input.left"), value: $rumbleLeft)
+              RumbleSlider(label: L10n.string("input.right"), value: $rumbleRight)
             }
             VStack(alignment: .leading, spacing: 5) {
               RumbleSlider(label: "LT", value: $rumbleLT)
@@ -342,23 +352,23 @@ struct InputTestWindowView: View {
         VStack(alignment: .leading, spacing: 6) {
           HStack(spacing: 8) {
             rumbleIconButton(
-              rumbleRunning ? "Sending" : "Pulse",
+              rumbleRunning ? L10n.string("input.sending") : L10n.string("input.pulse"),
               systemName: rumbleRunning ? "hourglass" : "dot.radiowaves.left.and.right"
             ) {
               sendRumble(to: device, durationMs: Int(rumbleDurationMs))
             }
             .disabled(rumbleRunning || !canRumble)
-            rumbleIconButton("Hold", systemName: "infinity") {
+            rumbleIconButton(L10n.string("input.hold"), systemName: "infinity") {
               sendRumble(to: device, durationMs: 0)
             }
             .disabled(!canRumble)
-            rumbleIconButton("Stop", systemName: "stop.fill") {
+            rumbleIconButton(L10n.string("input.stop"), systemName: "stop.fill") {
               sendRumble(to: device, left: 0, right: 0, lt: 0, rt: 0, durationMs: 0)
             }
             .disabled(!canRumble)
             Divider().frame(height: 18)
             Stepper(
-              "Duration \(Int(rumbleDurationMs)) ms",
+              L10n.string("input.durationMs", Int(rumbleDurationMs)),
               value: $rumbleDurationMs,
               in: 50...5000,
               step: 50
@@ -367,7 +377,7 @@ struct InputTestWindowView: View {
               .frame(width: 160)
           }
           HStack(spacing: 8) {
-            rumbleIconButton("Left motor", systemName: "l.circle") {
+            rumbleIconButton(L10n.string("input.leftMotor"), systemName: "l.circle") {
               sendRumble(
                 to: device,
                 left: UInt8(clamping: Int(rumbleLeft)),
@@ -377,7 +387,7 @@ struct InputTestWindowView: View {
               )
             }
             .disabled(rumbleRunning || !canRumble)
-            rumbleIconButton("Right motor", systemName: "r.circle") {
+            rumbleIconButton(L10n.string("input.rightMotor"), systemName: "r.circle") {
               sendRumble(
                 to: device,
                 left: 0,
@@ -388,24 +398,26 @@ struct InputTestWindowView: View {
             }
             .disabled(rumbleRunning || !canRumble)
             Divider().frame(height: 16)
-            rumbleIconButton("Low", systemName: "speaker.wave.1.fill") {
+            rumbleIconButton(L10n.string("input.low"), systemName: "speaker.wave.1.fill") {
               setRumbleValues(left: 32, right: 32, lt: 32, rt: 32)
             }
-            rumbleIconButton("Mid", systemName: "speaker.wave.2.fill") {
+            rumbleIconButton(L10n.string("input.mid"), systemName: "speaker.wave.2.fill") {
               setRumbleValues(left: 128, right: 128, lt: 128, rt: 128)
             }
-            rumbleIconButton("Max", systemName: "speaker.wave.3.fill") {
+            rumbleIconButton(L10n.string("input.max"), systemName: "speaker.wave.3.fill") {
               setRumbleValues(left: 255, right: 255, lt: 255, rt: 255)
             }
-            rumbleIconButton("Zero", systemName: "speaker.slash.fill") {
+            rumbleIconButton(L10n.string("input.zero"), systemName: "speaker.slash.fill") {
               setRumbleValues(left: 0, right: 0, lt: 0, rt: 0)
             }
           }
           HStack(spacing: 8) {
             if let rumbleResult {
-              Text("Last command: \(rumbleResult)").font(.caption).foregroundColor(.secondary)
+              Text(L10n.string("input.lastCommand", rumbleResult))
+                .font(.caption)
+                .foregroundColor(.secondary)
             } else {
-              Text("Rumble commands affect the physical controller only.")
+              Text(L10n.string("input.rumblePhysicalOnly"))
                 .font(.caption)
                 .foregroundColor(.secondary)
             }
@@ -444,19 +456,17 @@ struct InputTestWindowView: View {
   }
 
   private func rumbleGlyphCaption(_ title: String) -> String {
-    switch title {
-    case "Sending": return "sending"
-    case "Pulse": return "pulse"
-    case "Hold": return "hold"
-    case "Stop": return "stop"
-    case "Left motor": return "L"
-    case "Right motor": return "R"
-    case "Low": return "low"
-    case "Mid": return "mid"
-    case "Max": return "max"
-    case "Zero": return "zero"
-    default: return title
-    }
+    if title == L10n.string("input.sending") { return "sending" }
+    if title == L10n.string("input.pulse") { return "pulse" }
+    if title == L10n.string("input.hold") { return "hold" }
+    if title == L10n.string("input.stop") { return "stop" }
+    if title == L10n.string("input.leftMotor") { return "L" }
+    if title == L10n.string("input.rightMotor") { return "R" }
+    if title == L10n.string("input.low") { return "low" }
+    if title == L10n.string("input.mid") { return "mid" }
+    if title == L10n.string("input.max") { return "max" }
+    if title == L10n.string("input.zero") { return "zero" }
+    return title
   }
 
   private func sendRumble(
@@ -479,7 +489,7 @@ struct InputTestWindowView: View {
         rt: rt ?? UInt8(clamping: Int(rumbleRT)),
         durationMs: durationMs ?? Int(rumbleDurationMs)
       )
-      rumbleResult = ok ? "sent" : "not available"
+      rumbleResult = ok ? L10n.string("input.rumbleSent") : L10n.string("input.rumbleNotAvailable")
       rumbleRunning = false
     }
   }
@@ -492,10 +502,10 @@ struct InputTestWindowView: View {
   }
 
   private var packetLogView: some View {
-    OJDCard(title: "Recent packets") {
+    OJDCard(title: L10n.string("input.recentPackets")) {
       VStack(alignment: .leading, spacing: 8) {
         if packetLog.isEmpty {
-          Text("No packets captured yet.").font(.caption).foregroundColor(.secondary)
+          Text(L10n.string("input.noPackets")).font(.caption).foregroundColor(.secondary)
         } else {
           ForEach(Array(packetLog.suffix(8).enumerated()), id: \.offset) { _, entry in
             Text("\(entry.direction) \(entry.length)b \(entry.hex)")
@@ -513,13 +523,13 @@ struct InputTestWindowView: View {
       showPackets.toggle()
     } label: {
       HStack {
-        Text(showPackets ? "Hide packet log" : "Show packet log")
+        Text(showPackets ? L10n.string("input.hidePacketLog") : L10n.string("input.showPacketLog"))
         Spacer()
         if #available(macOS 11.0, *) {
           Image(systemName: showPackets ? "chevron.up" : "chevron.down")
             .font(.system(size: 10, weight: .semibold))
         } else {
-          Text(showPackets ? "▴" : "▾")
+          Text(showPackets ? L10n.string("advanced.collapse") : L10n.string("advanced.expand"))
         }
       }
       .font(.caption.weight(.semibold))

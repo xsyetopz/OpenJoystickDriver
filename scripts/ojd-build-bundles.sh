@@ -113,6 +113,8 @@ build_app_bundle() {
     <true/>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>NSInputMonitoringUsageDescription</key>
+    <string>OpenJoystickDriver needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
     <key>NSSystemExtensionUsageDescription</key>
     <string>OpenJoystickDriver uses this extension to present physical controllers as a standard virtual HID gamepad to games and applications, without requiring Accessibility permission.</string>
 </dict>
@@ -145,7 +147,7 @@ PLIST
     <key>CFBundleName</key>
     <string>OpenJoystickDriverDaemon</string>
     <key>CFBundleDisplayName</key>
-    <string>OpenJoystickDriver Helper</string>
+    <string>OpenJoystickDriver Daemon</string>
     <key>CFBundleExecutable</key>
     <string>OpenJoystickDriverDaemon</string>
     <key>CFBundlePackageType</key>
@@ -158,6 +160,8 @@ PLIST
     <string>10.15</string>
     <key>LSBackgroundOnly</key>
     <true/>
+    <key>NSInputMonitoringUsageDescription</key>
+    <string>OpenJoystickDriver Daemon needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
 </dict>
 </plist>
 PLIST
@@ -184,7 +188,7 @@ PLIST
   echo "Signed GUI with:    $GUI_IDENTITY"
   echo "Signed daemon with: $DAEMON_IDENTITY"
   echo "  GUI app:        $GUI_APP"
-  echo "  Daemon bundle:  $DAEMON_BUNDLE"
+  echo "  Daemon app:     $DAEMON_BUNDLE"
 }
 
 # ---------------------------------------------------------------------------

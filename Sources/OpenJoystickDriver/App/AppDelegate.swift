@@ -1,5 +1,4 @@
 import AppKit
-import IOKit.hid
 import OpenJoystickDriverKit
 import SwiftUI
 
@@ -19,14 +18,8 @@ import SwiftUI
     NSApp.setActivationPolicy(.accessory)
     configureApplicationIcon()
     setupStatusItem()
-    requestPermissions()
     Task { @MainActor in await model.start() }
   }
-
-  /// Trigger system permission dialogs on first launch.
-  ///
-  /// These are no-ops if already granted.
-  private func requestPermissions() { IOHIDRequestAccess(kIOHIDRequestTypeListenEvent) }
 
   func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 

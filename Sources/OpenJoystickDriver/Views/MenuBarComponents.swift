@@ -1,4 +1,5 @@
 import AppKit
+import OpenJoystickDriverKit
 import SwiftUI
 
 struct OJDCard<Content: View>: View {
@@ -89,9 +90,9 @@ struct PermissionRow: View {
   }
   private var statusLabel: String {
     switch state {
-    case "granted": return "Allowed"
-    case "denied": return "Needs approval"
-    default: return "Not set up"
+    case "granted": return L10n.string("access.allowed")
+    case "denied": return L10n.string("access.needsApproval")
+    default: return L10n.string("access.notSetUp")
     }
   }
   private var statusColor: Color {
@@ -191,7 +192,7 @@ struct MiniBadge: View {
     let root = InputTestWindowView().environmentObject(model)
     let hosting = NSHostingController(rootView: root)
     let newWindow = NSWindow(contentViewController: hosting)
-    newWindow.title = "OpenJoystickDriver Input Test"
+    newWindow.title = L10n.string("input.title")
     newWindow.setContentSize(compactSize)
     newWindow.minSize = compactSize
     newWindow.styleMask = [.titled, .closable, .miniaturizable, .resizable]

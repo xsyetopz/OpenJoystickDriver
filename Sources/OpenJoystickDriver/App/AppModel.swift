@@ -7,6 +7,7 @@ private let daemonHealthPollNanosecondsConnected: UInt64 = 15_000_000_000
 private let daemonHealthPollNanosecondsDisconnected: UInt64 = 2_000_000_000
 private let inputMonitoringPromptPollNanoseconds: UInt64 = 500_000_000
 private let inputMonitoringPromptPollAttempts = 10
+private let includePrereleaseUpdatesDefaultsKey = "IncludePrereleaseUpdates"
 
 /// Parsed, displayable representation of connected controller.
 struct DeviceViewModel: Identifiable, Hashable, Sendable {
@@ -66,6 +67,14 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   @Published var virtualDeviceDiagnostics: XPCVirtualDeviceDiagnosticsPayload?
   @Published var virtualDeviceSelfTest: XPCVirtualDeviceSelfTestPayload?
   @Published var updateCheckState: UpdateCheckState = .idle
+  @Published var includePrereleaseUpdates: Bool {
+    didSet {
+      UserDefaults.standard.set(
+        includePrereleaseUpdates,
+        forKey: includePrereleaseUpdatesDefaultsKey
+      )
+    }
+  }
 
   var developerMode: Bool
 
@@ -86,7 +95,12 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   private var lastDaemonPid: Int?
   private var daemonStartEventsNs: [UInt64] = []
 
-  init(developerMode: Bool = false) { self.developerMode = developerMode }
+  init(developerMode: Bool = false) {
+    self.developerMode = developerMode
+    self.includePrereleaseUpdates = UserDefaults.standard.bool(
+      forKey: includePrereleaseUpdatesDefaultsKey
+    )
+  }
 
   var daemonUIState: DaemonUIState {
     if daemonRestarting { return .restarting }
@@ -107,21 +121,25 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
 
   var daemonStatusLabel: String {
     switch daemonUIState {
-    case .missing: return "missing"
-    case .stopped: return "stopped"
-    case .runningConnected: return "running"
-    case .runningDisconnected: return "running (disconnected)"
-    case .restarting: return "restarting…"
-    case .crashLooping: return "crash-looping"
-    case .unknown: return daemonConnected ? "running" : "unknown"
+    case .missing: return L10n.string("daemon.status.missing")
+    case .stopped: return L10n.string("daemon.status.stopped")
+    case .runningConnected: return L10n.string("daemon.status.running")
+    case .runningDisconnected: return L10n.string("daemon.status.runningDisconnected")
+    case .restarting: return L10n.string("daemon.status.restarting")
+    case .crashLooping: return L10n.string("daemon.status.crashLooping")
+    case .unknown:
+      return daemonConnected
+        ? L10n.string("daemon.status.running")
+        : L10n.string("daemon.status.unknown")
     }
   }
 
   var daemonSuggestedActionLabel: String? {
     switch daemonUIState {
-    case .missing: return "Install Helper"
-    case .stopped: return "Start Helper"
-    case .runningDisconnected, .restarting, .crashLooping: return "Restart Helper"
+    case .missing: return L10n.string("button.installDaemon")
+    case .stopped: return L10n.string("button.startDaemon")
+    case .runningDisconnected, .restarting, .crashLooping:
+      return L10n.string("button.restartDaemon")
     case .runningConnected, .unknown: return nil
     }
   }
@@ -346,7 +364,10 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
 
   func checkForUpdates() async {
     updateCheckState = .checking
-    updateCheckState = await updateChecker.check(currentVersion: appVersion)
+    updateCheckState = await updateChecker.check(
+      currentVersion: appVersion,
+      includePrereleases: includePrereleaseUpdates
+    )
   }
 
   func openLatestRelease() {
@@ -372,9 +393,10 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     }
 
     do {
-      try await requestBundledHelperInputMonitoringPrompt()
+      try requestBundledDaemonInputMonitoringPrompt()
     } catch {
       daemonError = error.localizedDescription
+      return
     }
 
     if daemonConnected {
@@ -387,7 +409,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
 
     inputMonitoring = await waitForDaemonInputMonitoringDecision()
     if inputMonitoring != "granted" {
-      openInputMonitoringSettings(for: ["OpenJoystickDriver Helper"])
+      openInputMonitoringSettings(for: ["OpenJoystickDriver Daemon"])
     }
   }
 
@@ -412,37 +434,28 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     return state
   }
 
-  private func requestBundledHelperInputMonitoringPrompt() async throws {
-    let helperURL = DaemonManager.bundledHelperApplicationURL(in: Bundle.main.bundleURL)
-    guard FileManager.default.fileExists(atPath: helperURL.path) else {
+  private func requestBundledDaemonInputMonitoringPrompt() throws {
+    let appURL = Bundle.main.bundleURL
+    let executableURL = DaemonManager.daemonExecutableURL(forMainBundleURL: appURL)
+    guard FileManager.default.fileExists(atPath: executableURL.path) else {
       throw NSError(
         domain: "OpenJoystickDriver",
         code: 1,
         userInfo: [
           NSLocalizedDescriptionKey:
-            "Request Access failed: bundled helper app was not found at \(helperURL.path).",
+            L10n.string("daemon.error.requestAccessMissingExecutable", executableURL.path),
         ]
       )
     }
 
-    let configuration = NSWorkspace.OpenConfiguration()
-    configuration.activates = true
-    configuration.addsToRecentItems = false
-    configuration.createsNewApplicationInstance = true
-    configuration.environment = ProcessInfo.processInfo.environment.merging(
+    let process = Process()
+    process.executableURL = executableURL
+    process.environment = ProcessInfo.processInfo.environment.merging(
       ["OJD_PERMISSION_PROMPT_ONLY": "1"]
     ) { _, new in new }
-
-    let _: Void = try await withCheckedThrowingContinuation { continuation in
-      NSWorkspace.shared.openApplication(at: helperURL, configuration: configuration) { _, error in
-        if let error {
-          continuation.resume(throwing: error)
-        } else {
-          continuation.resume()
-        }
-      }
-    }
+    try process.run()
   }
+
 
   private func recoverDaemonForInputMonitoringRequest() async {
     daemonError = nil
@@ -477,12 +490,13 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   }
 
   func openInputMonitoringSettings(
-    for appNames: [String] = ["OpenJoystickDriver", "OpenJoystickDriver Helper"]
+    for appNames: [String] = [
+    L10n.string("app.name"),
+    L10n.string("permissions.daemonName"),
+  ]
   ) {
     let names = appNames.joined(separator: " and ")
-    inputMonitoringAssist =
-      "OpenJoystickDriver asked macOS for access. In Input Monitoring, turn on \(names). " +
-      "If macOS asks to quit and reopen, allow it."
+    inputMonitoringAssist = L10n.string("permissions.assist", names)
     let url = URL(
       string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent"
     )
@@ -499,14 +513,12 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
         let runs = h.runs.map { "\($0)" } ?? "unknown"
         let active = h.activeCount.map { "\($0)" } ?? "unknown"
         return
-          "Daemon was killed by launchd " +
-          "(reason: inefficient, active=\(active), runs=\(runs)). " +
-          "Restart or reinstall the daemon."
+          L10n.string("daemon.error.inefficientKill", active, runs)
       }
-      return "Lost connection to daemon (helper application). Restart the daemon."
+      return L10n.string("daemon.error.lostApplication")
     }
     if ns.domain == "NSXPCErrorDomain" {
-      return "Lost connection to daemon. Restart the daemon."
+      return L10n.string("daemon.error.lostConnection")
     }
     return ns.localizedDescription
   }
@@ -553,8 +565,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
       // If launchd says the job is loaded/running but XPC isn't responding, call that out.
       if let h = daemonHealth, h.pid != nil {
         daemonError =
-          "Couldn't communicate with the helper application. " +
-          "The daemon is running but the connection was lost. Restart the daemon."
+          L10n.string("daemon.error.runningNoConnection")
       } else {
         daemonError = formatDaemonError(error)
       }
@@ -613,8 +624,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     let path = Bundle.main.bundlePath
     if path.hasPrefix("/Applications/") { return true }
     daemonError =
-      "Daemon install/restart requires running the app from /Applications. " +
-      "Current app bundle: \(path)"
+      L10n.string("daemon.error.requiresApplications", path)
     return false
   }
 
@@ -635,8 +645,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
       try process.run()
     } catch {
       daemonError =
-        "\(action) failed: could not run codesign verification " +
-        "(\(error.localizedDescription))."
+        L10n.string("daemon.error.codesignLaunchFailed", action, error.localizedDescription)
       return false
     }
     process.waitUntilExit()

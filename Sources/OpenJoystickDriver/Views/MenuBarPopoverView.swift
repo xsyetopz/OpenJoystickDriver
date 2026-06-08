@@ -11,17 +11,17 @@ struct MenuBarPopoverView: View {
 
   private var gameControllerSupportLabel: String {
     guard let devices = model.virtualDeviceDiagnostics?.hidGamepads else {
-      return "unknown"
+      return L10n.string("daemon.status.unknown")
     }
     let ojdDevices = devices.filter { $0.isOJDUserSpace || $0.isOJDDriverKit }
-    if ojdDevices.isEmpty { return "no OJD virtual device visible" }
+    if ojdDevices.isEmpty { return L10n.string("gameController.noOJDDevice") }
     if ojdDevices.contains(where: { $0.isGameControllerSupported == true }) {
-      return "yes"
+      return L10n.string("gameController.yes")
     }
     if ojdDevices.contains(where: { $0.isGameControllerSupported == nil }) {
-      return "unknown on this macOS version"
+      return L10n.string("gameController.unknownOnMacOS")
     }
-    return "no"
+    return L10n.string("gameController.no")
   }
 
   var body: some View {
@@ -35,7 +35,7 @@ struct MenuBarPopoverView: View {
         advancedToggle
         if showAdvanced {
           outputDetailsCard
-          helperCard
+          daemonCard
           selfTestRow
           updateRow
           footerRow
@@ -46,9 +46,9 @@ struct MenuBarPopoverView: View {
     .frame(width: 440)
     .alert(isPresented: $showUninstallConfirm) {
       Alert(
-        title: Text("Uninstall LaunchAgent?"),
-        message: Text("This removes the LaunchAgent plist. You can reinstall later."),
-        primaryButton: .destructive(Text("Uninstall")) {
+        title: Text(L10n.string("alert.uninstallTitle")),
+        message: Text(L10n.string("alert.uninstallMessage")),
+        primaryButton: .destructive(Text(L10n.string("app.uninstall"))) {
           Task {
             await model.uninstallDaemon()
             await model.syncFromDaemonNow()
@@ -62,11 +62,11 @@ struct MenuBarPopoverView: View {
   private var headerRow: some View {
     HStack(alignment: .center, spacing: 12) {
       VStack(alignment: .leading, spacing: 2) {
-        Text("OpenJoystickDriver")
+        Text(L10n.string("app.name"))
           .font(.system(size: 17, weight: .semibold))
       }
       Spacer()
-      SwiftUI.Button("Quit") { NSApplication.shared.terminate(nil) }
+      SwiftUI.Button(L10n.string("app.quit")) { NSApplication.shared.terminate(nil) }
         .buttonStyle(.borderless)
         .foregroundColor(.secondary)
     }
@@ -76,32 +76,34 @@ struct MenuBarPopoverView: View {
     let permissionsReady =
       model.appInputMonitoring == "granted" && model.inputMonitoring == "granted"
     let ready = model.daemonConnected && permissionsReady
-    let title = ready ? "Ready" : "Setup needs attention"
+    let title = ready ? L10n.string("readiness.ready") : L10n.string("readiness.needsAttention")
     let summary: String = {
       switch model.daemonUIState {
       case .restarting:
-        return "The helper is restarting."
+        return L10n.string("readiness.daemonRestarting")
       case .crashLooping:
-        return "The helper is crash-looping. Restart or reinstall it."
+        return L10n.string("readiness.daemonCrashLooping")
       case .missing:
-        return "Install the helper to read controller input."
+        return L10n.string("readiness.installDaemon")
       case .stopped:
-        return "Start the helper to connect controllers."
+        return L10n.string("readiness.startDaemon")
       case .runningDisconnected:
-        return "The helper is running but disconnected. Restart the helper."
+        return L10n.string("readiness.daemonDisconnected")
       case .runningConnected, .unknown:
         break
       }
-      if !model.daemonInstalled { return "Install the helper to read controller input." }
-      if !model.daemonConnected { return "Start the helper to connect controllers." }
+      if !model.daemonInstalled { return L10n.string("readiness.installDaemon") }
+      if !model.daemonConnected { return L10n.string("readiness.startDaemon") }
       if model.appInputMonitoring != "granted" {
-        return "Allow Input Monitoring for OpenJoystickDriver."
+        return L10n.string("readiness.allowAppInputMonitoring")
       }
       if model.inputMonitoring != "granted" {
-        return "Allow Input Monitoring for OpenJoystickDriver Helper."
+        return L10n.string("readiness.allowDaemonInputMonitoring")
       }
-      if model.devices.isEmpty { return "Connect a controller." }
-      return "\(model.devices.count) controller\(model.devices.count == 1 ? "" : "s") connected."
+      if model.devices.isEmpty { return L10n.string("readiness.connectController") }
+      return model.devices.count == 1
+        ? L10n.string("readiness.controllersConnected.one", model.devices.count)
+        : L10n.string("readiness.controllersConnected.other", model.devices.count)
     }()
 
     return OJDCard {
@@ -125,9 +127,14 @@ struct MenuBarPopoverView: View {
       }
 
       HStack(spacing: 10) {
-        MetricChip(title: "Controllers", value: "\(model.devices.count)")
-        MetricChip(title: "Profile", value: compatibilityIdentityLabel)
-        MetricChip(title: "Access", value: permissionsReady ? "Allowed" : "Needs access")
+        MetricChip(title: L10n.string("metric.controllers"), value: "\(model.devices.count)")
+        MetricChip(title: L10n.string("metric.profile"), value: compatibilityIdentityLabel)
+        MetricChip(
+          title: L10n.string("metric.access"),
+          value: permissionsReady
+            ? L10n.string("access.allowed")
+            : L10n.string("access.needsAccess")
+        )
       }
       .padding(.top, 4)
 
@@ -150,19 +157,19 @@ struct MenuBarPopoverView: View {
     if model.daemonRestarting {
       EmptyView()
     } else if model.appInputMonitoring != "granted" {
-      SwiftUI.Button("Request Access") {
+      SwiftUI.Button(L10n.string("button.requestAccess")) {
         Task { await model.requestAppInputMonitoringAccess() }
       }
       .controlSize(.small)
       .padding(.top, 2)
     } else if model.inputMonitoring != "granted" {
-      SwiftUI.Button("Request Access") {
+      SwiftUI.Button(L10n.string("button.requestAccess")) {
         Task { await model.requestDaemonInputMonitoringAccess() }
       }
       .controlSize(.small)
       .padding(.top, 2)
     } else if !model.daemonInstalled {
-      SwiftUI.Button("Install Helper") {
+      SwiftUI.Button(L10n.string("button.installDaemon")) {
         Task {
           await model.installDaemon()
           await model.syncFromDaemonNow()
@@ -172,7 +179,7 @@ struct MenuBarPopoverView: View {
       .padding(.top, 2)
     } else if !model.daemonConnected {
       if model.daemonUIState == .stopped || model.daemonUIState == .unknown {
-        SwiftUI.Button("Start Helper") {
+        SwiftUI.Button(L10n.string("button.startDaemon")) {
           Task {
             await model.startDaemon()
             await model.syncFromDaemonNow()
@@ -181,7 +188,7 @@ struct MenuBarPopoverView: View {
         .controlSize(.small)
         .padding(.top, 2)
       } else {
-        SwiftUI.Button("Restart Helper") {
+        SwiftUI.Button(L10n.string("button.restartDaemon")) {
           Task {
             await model.restartDaemon()
             await model.syncFromDaemonNow()
@@ -193,28 +200,29 @@ struct MenuBarPopoverView: View {
     }
   }
 
-  private var helperCard: some View {
-    OJDCard(title: "Helper") {
+  private var daemonCard: some View {
+    OJDCard(title: L10n.string("daemon.cardTitle")) {
       VStack(alignment: .leading, spacing: 10) {
         if let h = model.daemonHealth, h.installed {
           let state = h.state ?? "unknown"
           let pid = h.pid.map { "\($0)" } ?? "?"
           let runs = h.runs.map { "\($0)" } ?? "?"
           let reason = h.isInefficientKillLoop ? (h.immediateReason ?? h.blame) : nil
+          let reasonText = reason.map { L10n.string("daemon.launchdReason", $0) } ?? ""
           HStack(spacing: 8) {
-            Text("launchd \(state), pid \(pid), runs \(runs)\(reason.map { ", \($0)" } ?? "")")
+            Text(L10n.string("daemon.launchdStatus", state, pid, runs, reasonText))
               .font(.caption)
               .foregroundColor(h.isInefficientKillLoop ? .orange : .secondary)
               .lineLimit(2)
             Spacer()
-            SwiftUI.Button("Refresh") {
+            SwiftUI.Button(L10n.string("app.refresh")) {
               Task { await model.refreshDaemonHealth() }
             }
             .buttonStyle(.borderless)
             .controlSize(.small)
           }
         } else {
-          Text("The helper starts automatically after install.")
+          Text(L10n.string("daemon.autoStarts"))
             .font(.caption)
             .foregroundColor(.secondary)
         }
@@ -222,14 +230,14 @@ struct MenuBarPopoverView: View {
         Divider()
 
         HStack(spacing: 8) {
-          Text("System extension")
+          Text(L10n.string("daemon.systemExtension"))
             .font(.caption)
             .foregroundColor(.secondary)
           Spacer()
           Text(model.extensionManager.installState.label)
             .font(.caption.weight(.semibold))
             .foregroundColor(model.extensionManager.installState.isInstalled ? .green : .secondary)
-          SwiftUI.Button("Install") { model.extensionManager.installExtension() }
+          SwiftUI.Button(L10n.string("app.install")) { model.extensionManager.installExtension() }
             .controlSize(.small)
             .disabled(
               model.extensionManager.installState.isInstalled ||
@@ -253,7 +261,7 @@ struct MenuBarPopoverView: View {
 
         HStack(spacing: 8) {
           if !model.daemonInstalled {
-            SwiftUI.Button("Install Helper") {
+            SwiftUI.Button(L10n.string("button.installDaemon")) {
               Task {
                 await model.installDaemon()
                 await model.syncFromDaemonNow()
@@ -261,7 +269,7 @@ struct MenuBarPopoverView: View {
             }
             .controlSize(.small)
           } else {
-            SwiftUI.Button("Start") {
+            SwiftUI.Button(L10n.string("app.start")) {
               Task {
                 await model.startDaemon()
                 await model.syncFromDaemonNow()
@@ -274,7 +282,7 @@ struct MenuBarPopoverView: View {
                 || model.daemonUIState == .restarting
                 || model.daemonUIState == .crashLooping
             )
-            SwiftUI.Button("Restart") {
+            SwiftUI.Button(L10n.string("app.restart")) {
               Task {
                 await model.restartDaemon()
                 await model.syncFromDaemonNow()
@@ -282,7 +290,7 @@ struct MenuBarPopoverView: View {
             }
             .controlSize(.small)
             .disabled(model.daemonRestarting)
-            SwiftUI.Button("Uninstall") { showUninstallConfirm = true }
+            SwiftUI.Button(L10n.string("app.uninstall")) { showUninstallConfirm = true }
               .buttonStyle(.borderless)
               .controlSize(.small)
               .foregroundColor(.secondary)
@@ -294,11 +302,14 @@ struct MenuBarPopoverView: View {
   }
 
   private var permissionsCard: some View {
-    OJDCard(title: "Permissions") {
+    OJDCard(title: L10n.string("permissions.title")) {
       VStack(alignment: .leading, spacing: 8) {
         PermissionRow(
-          title: "OpenJoystickDriver",
-          subtitle: permissionSubtitle(for: model.appInputMonitoring, owner: "the app"),
+          title: L10n.string("app.name"),
+          subtitle: permissionSubtitle(
+            for: model.appInputMonitoring,
+            owner: L10n.string("permissions.ownerApp")
+          ),
           state: model.appInputMonitoring,
           actionTitle: permissionActionTitle(for: model.appInputMonitoring)
         ) {
@@ -306,11 +317,11 @@ struct MenuBarPopoverView: View {
         }
         Divider()
         PermissionRow(
-          title: "OpenJoystickDriver Helper",
+          title: L10n.string("permissions.daemonName"),
           subtitle: permissionSubtitle(
             for: model.inputMonitoring,
-            owner: "the helper",
-            settingsName: "OpenJoystickDriver Helper"
+            owner: L10n.string("permissions.ownerDaemon"),
+            settingsName: L10n.string("permissions.daemonName")
           ),
           state: model.inputMonitoring,
           actionTitle: permissionActionTitle(for: model.inputMonitoring),
@@ -326,7 +337,7 @@ struct MenuBarPopoverView: View {
   }
 
   private func permissionActionTitle(for state: String) -> String {
-    state == "granted" ? "Allowed" : "Request Access"
+    state == "granted" ? L10n.string("access.allowed") : L10n.string("button.requestAccess")
   }
 
   private func permissionSubtitle(
@@ -336,28 +347,28 @@ struct MenuBarPopoverView: View {
   ) -> String {
     switch state {
     case "granted":
-      return "Access is allowed."
+      return L10n.string("permissions.accessAllowed")
     case "denied":
       let name = settingsName ?? owner
-      return "Open System Settings, then turn on Input Monitoring for \(name)."
+      return L10n.string("permissions.openSettings", name)
     default:
-      return "Request access so macOS can add this item to Input Monitoring."
+      return L10n.string("permissions.requestAccessDefault")
     }
   }
 
   private var gameProfileCard: some View {
-    OJDCard(title: "Game profile") {
+    OJDCard(title: L10n.string("profile.cardTitle")) {
       VStack(alignment: .leading, spacing: 10) {
         HStack(alignment: .top, spacing: 10) {
           VStack(alignment: .leading, spacing: 3) {
-            Text("Compatibility mode works well for Steam, emulators, and SDL-based apps.")
+            Text(L10n.string("profile.description"))
               .font(.caption)
               .foregroundColor(.secondary)
               .fixedSize(horizontal: false, vertical: true)
           }
           Spacer()
           if model.virtualDeviceMode != VirtualDeviceMode.compatUserSpace.rawValue {
-            SwiftUI.Button("Use Compatibility") {
+            SwiftUI.Button(L10n.string("button.useCompatibility")) {
               Task { await model.setVirtualDeviceMode(VirtualDeviceMode.compatUserSpace.rawValue) }
             }
             .controlSize(.small)
@@ -367,7 +378,7 @@ struct MenuBarPopoverView: View {
 
         let compatSelected = model.virtualDeviceMode == VirtualDeviceMode.compatUserSpace.rawValue
         HStack(spacing: 10) {
-          Text("Identity")
+          Text(L10n.string("profile.identity"))
             .font(.caption)
             .foregroundColor(.secondary)
           Picker(
@@ -377,18 +388,19 @@ struct MenuBarPopoverView: View {
               set: { v in Task { await model.setCompatibilityIdentity(v) } }
             )
           ) {
-            Text("SDL 2/3").tag(CompatibilityIdentity.sdl2_3.rawValue)
-            Text("Apple GameController").tag(CompatibilityIdentity.appleGameController.rawValue)
-            Text("Generic HID").tag(CompatibilityIdentity.genericHID.rawValue)
-            Text("Xbox 360 HID").tag(CompatibilityIdentity.x360HID.rawValue)
-            Text("Xbox One HID").tag(CompatibilityIdentity.xoneHID.rawValue)
+            Text(L10n.string("profile.sdl")).tag(CompatibilityIdentity.sdl2_3.rawValue)
+            Text(L10n.string("profile.appleGameController"))
+              .tag(CompatibilityIdentity.appleGameController.rawValue)
+            Text(L10n.string("profile.genericHID")).tag(CompatibilityIdentity.genericHID.rawValue)
+            Text(L10n.string("profile.xbox360HID")).tag(CompatibilityIdentity.x360HID.rawValue)
+            Text(L10n.string("profile.xboxOneHID")).tag(CompatibilityIdentity.xoneHID.rawValue)
           }
           .frame(maxWidth: .infinity)
           .disabled(!model.daemonConnected || !compatSelected)
         }
 
         if !compatSelected {
-          Text("Switch to Compatibility mode before changing profiles.")
+          Text(L10n.string("profile.switchToCompatibility"))
             .font(.caption)
             .foregroundColor(.secondary)
         }
@@ -397,40 +409,40 @@ struct MenuBarPopoverView: View {
   }
 
   private var outputDetailsCard: some View {
-    OJDCard(title: "Output details") {
+    OJDCard(title: L10n.string("output.detailsCardTitle")) {
       VStack(alignment: .leading, spacing: 10) {
         Picker(
-          "Mode",
+          L10n.string("output.mode"),
           selection: Binding(
             get: { model.virtualDeviceMode },
             set: { newValue in Task { await model.setVirtualDeviceMode(newValue) } }
           )
         ) {
-          Text("Auto").tag(VirtualDeviceMode.auto.rawValue)
-          Text("DriverKit").tag(VirtualDeviceMode.driverKit.rawValue)
-          Text("Compatibility").tag(VirtualDeviceMode.compatUserSpace.rawValue)
+          Text(L10n.string("output.auto")).tag(VirtualDeviceMode.auto.rawValue)
+          Text(L10n.string("output.driverKit")).tag(VirtualDeviceMode.driverKit.rawValue)
+          Text(L10n.string("output.compatibility")).tag(VirtualDeviceMode.compatUserSpace.rawValue)
           if model.developerMode {
-            Text("Both").tag(VirtualDeviceMode.both.rawValue)
+            Text(L10n.string("output.both")).tag(VirtualDeviceMode.both.rawValue)
           }
         }
         .pickerStyle(.segmented)
         .disabled(!model.daemonConnected)
 
         VStack(alignment: .leading, spacing: 3) {
-          statusLine("Active", activeOutputLabel)
+          statusLine(L10n.string("output.active"), activeOutputLabel)
           statusLine(
-            "Backend",
+            L10n.string("output.backend"),
             model.userSpaceVirtualDeviceStatus,
             warning: model.userSpaceVirtualDeviceStatus.hasPrefix("error:")
           )
           statusLine(
-            "GameController",
+            L10n.string("output.gameController"),
             gameControllerSupportLabel,
-            success: gameControllerSupportLabel == "yes"
+            success: gameControllerSupportLabel == L10n.string("gameController.yes")
           )
           if let s = model.virtualDeviceDiagnostics?.driverKitOutputStats {
             statusLine(
-              "DriverKit reports",
+              L10n.string("output.driverKitReports"),
               "ok \(s.successes), fail \(s.failures), last \(s.lastErrorHex ?? "none")"
             )
           }
@@ -459,40 +471,46 @@ struct MenuBarPopoverView: View {
 
   private var activeOutputLabel: String {
     switch model.outputMode {
-    case CompositeOutputDispatcher.Mode.primaryOnly.rawValue: return "DriverKit"
-    case CompositeOutputDispatcher.Mode.secondaryOnly.rawValue: return "Compatibility"
-    case CompositeOutputDispatcher.Mode.both.rawValue: return "Both"
-    default: return "Unknown"
+    case CompositeOutputDispatcher.Mode.primaryOnly.rawValue: return L10n.string("output.driverKit")
+    case CompositeOutputDispatcher.Mode.secondaryOnly.rawValue:
+      return L10n.string("output.compatibility")
+    case CompositeOutputDispatcher.Mode.both.rawValue: return L10n.string("output.both")
+    default: return L10n.string("output.unknown")
     }
   }
 
   private var compatibilityIdentityLabel: String {
     switch model.compatibilityIdentity {
-    case CompatibilityIdentity.sdl2_3.rawValue: return "SDL"
-    case CompatibilityIdentity.appleGameController.rawValue: return "GameController"
-    case CompatibilityIdentity.genericHID.rawValue: return "Generic HID"
-    case CompatibilityIdentity.x360HID.rawValue: return "Xbox 360"
-    case CompatibilityIdentity.xoneHID.rawValue: return "Xbox One"
+    case CompatibilityIdentity.sdl2_3.rawValue:
+      return L10n.string("identity.sdlShort")
+    case CompatibilityIdentity.appleGameController.rawValue:
+      return L10n.string("output.gameController")
+    case CompatibilityIdentity.genericHID.rawValue: return L10n.string("profile.genericHID")
+    case CompatibilityIdentity.x360HID.rawValue:
+      return L10n.string("identity.xbox360Short")
+    case CompatibilityIdentity.xoneHID.rawValue:
+      return L10n.string("identity.xboxOneShort")
     default: return model.compatibilityIdentity
     }
   }
 
   private var selfTestRow: some View {
-    OJDCard(title: "Self-test") {
+    OJDCard(title: L10n.string("selfTest.cardTitle")) {
       VStack(alignment: .leading, spacing: 8) {
       HStack {
-        Text("Check virtual output for 5 seconds.")
+        Text(L10n.string("selfTest.description"))
           .font(.caption)
           .foregroundColor(.secondary)
         Spacer()
-        SwiftUI.Button(runningSelfTest ? "Running…" : "Run 5s") {
+        SwiftUI.Button(
+          runningSelfTest ? L10n.string("selfTest.running") : L10n.string("selfTest.run5s")
+        ) {
           runningSelfTest = true
           Task {
               await model.syncFromDaemonNow()
             if model.daemonHealth?.isInefficientKillLoop == true {
               model.daemonError =
-                "Daemon is being killed by launchd (inefficient). " +
-                "Fix daemon stability before self-test."
+                L10n.string("selfTest.daemonKillLoop")
               runningSelfTest = false
               return
             }
@@ -507,22 +525,22 @@ struct MenuBarPopoverView: View {
       if let t = model.virtualDeviceSelfTest {
         VStack(alignment: .leading, spacing: 3) {
           statusLine(
-            "DriverKit",
+            L10n.string("output.driverKit"),
             "value \(t.driverKitValueEvents), report \(t.driverKitReportEvents)"
           )
           if let delta = t.driverKitInputReportDelta {
-            statusLine("ioreg input", "Δ \(delta)")
+            statusLine(L10n.string("output.ioregInput"), "Δ \(delta)")
           }
           if let delta = t.driverKitSetReportSuccessDelta {
-            statusLine("daemon setReport", "ok Δ \(delta)")
+            statusLine(L10n.string("output.daemonSetReport"), "ok Δ \(delta)")
           }
           statusLine(
-            "User-space",
+            L10n.string("output.userSpace"),
             "value \(t.userSpaceValueEvents), report \(t.userSpaceReportEvents)"
           )
         }
       } else {
-        Text("Press controller buttons during the check.")
+        Text(L10n.string("selfTest.pressButtons"))
           .font(.caption)
           .foregroundColor(.secondary)
       }
@@ -531,14 +549,14 @@ struct MenuBarPopoverView: View {
   }
 
   private var inputTestRow: some View {
-    OJDCard(title: "Input Test") {
+    OJDCard(title: L10n.string("input.title")) {
       VStack(alignment: .leading, spacing: 8) {
         HStack {
-          Text("View live buttons, sticks, packets, and rumble controls.")
+          Text(L10n.string("inputTest.description"))
             .font(.caption)
             .foregroundColor(.secondary)
           Spacer()
-          SwiftUI.Button("Open Input Test") {
+          SwiftUI.Button(L10n.string("button.openInputTest")) {
             inputTester.show(model: model)
           }
           .controlSize(.small)
@@ -553,9 +571,13 @@ struct MenuBarPopoverView: View {
       showAdvanced.toggle()
     } label: {
       HStack {
-        Text(showAdvanced ? "Hide details" : "Show details")
+        Text(
+          showAdvanced
+            ? L10n.string("advanced.hideDetails")
+            : L10n.string("advanced.showDetails")
+        )
         Spacer()
-        Text(showAdvanced ? "▴" : "▾")
+        Text(showAdvanced ? L10n.string("advanced.collapse") : L10n.string("advanced.expand"))
       }
       .font(.caption.weight(.semibold))
       .foregroundColor(.secondary)
@@ -571,14 +593,14 @@ struct MenuBarPopoverView: View {
 
   private var footerRow: some View {
     HStack(spacing: 10) {
-      SwiftUI.Button("Refresh") {
+      SwiftUI.Button(L10n.string("app.refresh")) {
         Task {
           await model.syncFromDaemonNow()
         }
       }
       .buttonStyle(.borderless)
 
-      SwiftUI.Button("Show Log") {
+      SwiftUI.Button(L10n.string("button.showLog")) {
         NSWorkspace.shared.selectFile(
           "/tmp/com.openjoystickdriver.daemon.out",
           inFileViewerRootedAtPath: ""
@@ -586,7 +608,7 @@ struct MenuBarPopoverView: View {
       }
       .buttonStyle(.borderless)
 
-      SwiftUI.Button("Quit") { NSApplication.shared.terminate(nil) }
+      SwiftUI.Button(L10n.string("app.quit")) { NSApplication.shared.terminate(nil) }
         .buttonStyle(.borderless)
 
       Spacer()
@@ -595,7 +617,7 @@ struct MenuBarPopoverView: View {
   }
 
   private var updateRow: some View {
-    OJDCard(title: "Updates") {
+    OJDCard(title: L10n.string("updates.cardTitle")) {
       VStack(alignment: .leading, spacing: 8) {
         HStack(spacing: 8) {
           Text(updateStatusLine)
@@ -611,13 +633,18 @@ struct MenuBarPopoverView: View {
           .disabled(model.updateCheckState == .checking)
         }
 
+        Toggle(L10n.string("updates.includePrereleases"), isOn: $model.includePrereleaseUpdates)
+          .font(.caption)
+          .toggleStyle(.checkbox)
+          .disabled(model.updateCheckState == .checking)
+
         if case .available(let info) = model.updateCheckState {
           HStack(spacing: 8) {
-            Text("OpenJoystickDriver \(info.tagName) is available.")
+            Text(L10n.string("updates.available", info.tagName))
               .font(.caption)
               .foregroundColor(.orange)
             Spacer()
-            SwiftUI.Button("Open") { model.openLatestRelease() }
+            SwiftUI.Button(L10n.string("app.open")) { model.openLatestRelease() }
               .buttonStyle(.borderless)
               .controlSize(.small)
           }
@@ -627,16 +654,18 @@ struct MenuBarPopoverView: View {
   }
 
   private var updateButtonTitle: String {
-    model.updateCheckState == .checking ? "Checking…" : "Check"
+    model.updateCheckState == .checking
+      ? L10n.string("updates.checking")
+      : L10n.string("updates.check")
   }
 
   private var updateStatusLine: String {
     switch model.updateCheckState {
-    case .idle: return "Current version \(model.appVersion)."
-    case .checking: return "Checking GitHub releases…"
-    case .upToDate(let version): return "OpenJoystickDriver \(version) is current."
-    case .available: return "Update available."
-    case .failed(let message): return "Update check failed: \(message)"
+    case .idle: return L10n.string("updates.currentVersion", model.appVersion)
+    case .checking: return L10n.string("updates.checkingGithub")
+    case .upToDate(let version): return L10n.string("updates.current", version)
+    case .available: return L10n.string("updates.updateAvailable")
+    case .failed(let message): return L10n.string("updates.checkFailed", message)
     }
   }
 
