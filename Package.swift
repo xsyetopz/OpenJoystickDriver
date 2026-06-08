@@ -68,6 +68,7 @@ let package = Package(
       resources: [.copy("Resources")],
       linkerSettings: [
         .linkedFramework("SystemExtensions"),
+        .unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"]),
       ]
     ),
 

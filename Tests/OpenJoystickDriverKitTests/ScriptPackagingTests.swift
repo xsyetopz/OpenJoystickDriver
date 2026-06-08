@@ -104,6 +104,7 @@ struct ScriptPackagingTests {
 
     #expect(package.contains("https://github.com/sparkle-project/Sparkle"))
     #expect(package.contains(".product(name: \"Sparkle\", package: \"Sparkle\")"))
+    #expect(package.contains("@executable_path/../Frameworks"))
     #expect(bundles.contains("SUPublicEDKey"))
     #expect(bundles.contains("SUFeedURL"))
     #expect(bundles.contains("SPARKLE_PUBLIC_ED_KEY"))
