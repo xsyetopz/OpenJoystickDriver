@@ -11,7 +11,7 @@ app, or native macOS app.
 
 ## Status
 
-See[docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md).
+See [docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md).
 
 ## Quickstart (Using The App)
 
