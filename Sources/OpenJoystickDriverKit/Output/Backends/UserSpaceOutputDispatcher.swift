@@ -72,6 +72,10 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
   public private(set) var status: String = "off"
   public private(set) var lastRumbleStatus: String = "none"
   private let onRumbleCommand: RumbleCommandHandler?
+  static let requiredVirtualDeviceEntitlement = "com.apple.developer.hid.virtual.device"
+  static var hasRequiredVirtualDeviceEntitlement: Bool {
+    hasEntitlement(requiredVirtualDeviceEntitlement)
+  }
 
   @preconcurrency
   public init(
@@ -90,6 +94,14 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     self.routeToken = routeToken
     self.productNameOverride = productNameOverride
     self.onRumbleCommand = onRumbleCommand
+
+    guard Self.hasRequiredVirtualDeviceEntitlement else {
+      status =
+        "error: missing entitlement \(Self.requiredVirtualDeviceEntitlement) "
+        + "(regenerate daemon profile)"
+      throw CreationError.missingEntitlement(Self.requiredVirtualDeviceEntitlement)
+    }
+
     // Device(s) are created lazily on first dispatch for each physical controller.
   }
 
@@ -185,7 +197,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     }
 
     guard let dev else {
-      let entitlement = "com.apple.developer.hid.virtual.device"
+      let entitlement = Self.requiredVirtualDeviceEntitlement
       if !Self.hasEntitlement(entitlement) {
         status = "error: missing entitlement \(entitlement) (regenerate daemon profile)"
         throw CreationError.missingEntitlement(entitlement)

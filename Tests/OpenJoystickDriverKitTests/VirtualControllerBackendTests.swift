@@ -142,6 +142,20 @@ struct VirtualControllerBackendTests {
     #expect(outputSize == SDLGamepadHIDDescriptor.maxOutputReportPayloadSize)
   }
   @Test
+  func testUserSpaceDispatcherFailsFastWithoutVirtualDeviceEntitlement() throws {
+    guard !UserSpaceOutputDispatcher.hasRequiredVirtualDeviceEntitlement else { return }
+
+    do {
+      _ = try UserSpaceOutputDispatcher()
+      Issue.record("UserSpaceOutputDispatcher should require the virtual HID entitlement")
+    } catch UserSpaceOutputDispatcher.CreationError.missingEntitlement(let entitlement) {
+      #expect(entitlement == UserSpaceOutputDispatcher.requiredVirtualDeviceEntitlement)
+    } catch {
+      Issue.record("Unexpected error: \(error)")
+    }
+  }
+
+  @Test
   func testXbox360FormatDefaultsToJoystickPrimaryUsage() {
     #expect(
       UserSpaceOutputDispatcher.defaultPrimaryUsage(for: Xbox360MacHIDReportFormat())
