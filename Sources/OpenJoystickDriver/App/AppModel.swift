@@ -420,7 +420,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
         code: 1,
         userInfo: [
           NSLocalizedDescriptionKey:
-            "Request Access failed: bundled helper app was not found at \(helperURL.path)."
+            "Request Access failed: bundled helper app was not found at \(helperURL.path).",
         ]
       )
     }
@@ -430,9 +430,8 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     configuration.addsToRecentItems = false
     configuration.createsNewApplicationInstance = true
     configuration.environment = ProcessInfo.processInfo.environment.merging(
-      ["OJD_PERMISSION_PROMPT_ONLY": "1"],
-      uniquingKeysWith: { _, new in new }
-    )
+      ["OJD_PERMISSION_PROMPT_ONLY": "1"]
+    ) { _, new in new }
 
     let _: Void = try await withCheckedThrowingContinuation { continuation in
       NSWorkspace.shared.openApplication(at: helperURL, configuration: configuration) { _, error in

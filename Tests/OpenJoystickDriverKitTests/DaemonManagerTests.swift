@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import OpenJoystickDriverKit
 
 @Suite("Daemon manager bundle paths")
@@ -10,6 +11,9 @@ struct DaemonManagerTests {
       in: URL(fileURLWithPath: "/Applications/OpenJoystickDriver.app", isDirectory: true)
     )
 
-    #expect(url.path == "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriverDaemon.app")
+    #expect(
+      url.path ==
+        "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriverDaemon.app"
+    )
   }
 }
