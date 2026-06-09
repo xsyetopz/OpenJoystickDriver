@@ -4,13 +4,25 @@ All notable changes to OpenJoystickDriver are documented in this file.
 
 ## 0.5.0-alpha.3
 
+### Added
+
+- Added Sparkle 2 update support, signed appcast generation, and release-feed wiring for notarized DMG updates.
+- Added a local release-parity install command for testing the packaged app shape before shipping.
+
 ### Changed
 
+- Kept release builds as a universal macOS app while moving release packaging to native Finder DMG styling.
+- Switched the daemon LaunchAgent registration to SMAppService on modern macOS so the bundled helper stays associated with the main app.
 - Split oversized source and helper-script files into focused modules while preserving existing behavior.
 
 ### Fixed
 
+- Fixed packaged app launch failures by adding the runtime framework search path needed for embedded Sparkle.
+- Fixed release notarization for embedded Sparkle framework helpers and XPC services.
+- Fixed daemon Input Monitoring requests so the native prompt is made by the bundled daemon helper app and appears under the daemon identity.
+- Fixed daemon quit/reopen behavior by retaining shutdown signal sources so launchd can terminate and reopen the helper cleanly.
 - Fixed the menu-bar setup flow so helper Input Monitoring recovery does not require end-user diagnostics when the helper is disconnected or restarting.
+- Fixed update-check error reporting so feed, network, signing, download, and install failures explain the failing stage.
 
 ## 0.5.0-alpha.2
 
