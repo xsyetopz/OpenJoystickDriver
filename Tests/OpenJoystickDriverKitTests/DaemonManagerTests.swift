@@ -57,21 +57,24 @@ struct DaemonManagerTests {
     )
   }
 
-  @Test("daemon lifecycle uses launchctl agent registration")
-  func daemonLifecycleUsesLaunchctlAgentRegistration() throws {
+  @Test("daemon lifecycle uses SMAppService on modern macOS")
+  func daemonLifecycleUsesSMAppService() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let sourceURL = rootURL.appendingPathComponent(
       "Sources/OpenJoystickDriverKit/Daemon/DaemonManager.swift"
     )
     let source = try String(contentsOf: sourceURL, encoding: .utf8)
 
-    #expect(source.contains("private static let usesLaunchctlAgentRegistration = true"))
-    #expect(source.contains("if usesLaunchctlAgentRegistration { return legacyIsInstalled }"))
+    #expect(source.contains("private static var usesLaunchctlAgentRegistration: Bool"))
+    #expect(source.contains("if #available(macOS 13.0, *) {"))
+    #expect(source.contains("return false"))
+    #expect(source.contains("try appService.register()"))
+    #expect(source.contains("try appService.unregister()"))
+    #expect(source.contains("print(\"[DaemonManager] Installed (SMAppService)\")"))
+    #expect(source.contains("print(\"[DaemonManager] Restarted (SMAppService)\")"))
     #expect(source.contains("if usesLaunchctlAgentRegistration { try legacyInstall(); return }"))
     #expect(source.contains("if usesLaunchctlAgentRegistration { try legacyUninstall(); return }"))
     #expect(source.contains("if usesLaunchctlAgentRegistration { try legacyRestart(); return }"))
-    #expect(source.contains("try bootstrapOrKickstartInstalledLaunchAgent()"))
-    #expect(source.contains("launchctl([\"kickstart\", \"-k\", launchdTarget])"))
   }
 
   @Test("launchctl print parser recognizes a running daemon")

@@ -183,46 +183,10 @@ if mount_dir_is_mounted "$mount_dir"; then
   die "Mount path is still active; refusing to remove: $mount_dir"
 fi
 rm -rf "$staging_dir" "$mount_dir" "$rw_dmg" "$artifact_dmg"
-mkdir -p "$staging_dir/.background" "$mount_dir"
+mkdir -p "$staging_dir"
 cp -R "$app_path" "$staging_dir/OpenJoystickDriver.app"
 ln -s /Applications "$staging_dir/Applications"
-python3 "$SCRIPT_DIR/ojd-dmg-background.py" "$staging_dir/.background/background.png"
-/usr/bin/hdiutil create -srcfolder "$staging_dir" -volname "OpenJoystickDriver" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW "$rw_dmg"
-/usr/bin/hdiutil attach "$rw_dmg" -mountpoint "$mount_dir" -nobrowse -quiet
-trap '/usr/bin/hdiutil detach "$mount_dir" -quiet 2>/dev/null || true' EXIT
-if ! OJD_DMG_MOUNT_DIR="$mount_dir" /usr/bin/osascript <<'OSA'
-on run argv
-  set mountPath to system attribute "OJD_DMG_MOUNT_DIR"
-  set volumeName to "OpenJoystickDriver"
-  set backgroundPath to POSIX file (mountPath & "/.background/background.png") as alias
-  tell application "Finder"
-    set volumeDisk to disk volumeName
-    open volumeDisk
-    set containerWindow to container window of volumeDisk
-    set current view of containerWindow to icon view
-    set toolbar visible of containerWindow to false
-    set statusbar visible of containerWindow to false
-    set the bounds of containerWindow to {100, 100, 760, 500}
-    set viewOptions to the icon view options of containerWindow
-    set arrangement of viewOptions to not arranged
-    set icon size of viewOptions to 96
-    set background picture of viewOptions to backgroundPath
-    set position of item "OpenJoystickDriver.app" of volumeDisk to {160, 205}
-    set position of item "Applications" of volumeDisk to {520, 205}
-    close containerWindow
-    open volumeDisk
-    update volumeDisk without registering applications
-    delay 1
-  end tell
-end run
-OSA
-then
-  echo "WARNING: Finder DMG styling failed; continuing with unstyled DMG." >&2
-fi
-sync
-detach_mount_dir_if_mounted "$mount_dir"
-trap - EXIT
-/usr/bin/hdiutil convert "$rw_dmg" -format UDZO -imagekey zlib-level=9 -o "$artifact_dmg"
+/usr/bin/hdiutil create -srcfolder "$staging_dir" -volname "OpenJoystickDriver" -fs HFS+ -format UDZO "$artifact_dmg"
 cleanup_dmg_workdirs
 if [[ -n "${CODESIGN_IDENTITY:-}" && "${CODESIGN_IDENTITY:-}" != "-" ]]; then
   /usr/bin/codesign --sign "$CODESIGN_IDENTITY" --timestamp "$artifact_dmg"

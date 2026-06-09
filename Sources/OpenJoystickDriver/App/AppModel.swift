@@ -6,7 +6,7 @@ let appModelPollNanoseconds: UInt64 = 2_000_000_000
 let daemonHealthPollNanosecondsConnected: UInt64 = 15_000_000_000
 let daemonHealthPollNanosecondsDisconnected: UInt64 = 2_000_000_000
 let inputMonitoringPromptPollNanoseconds: UInt64 = 500_000_000
-let inputMonitoringPromptPollAttempts = 10
+let inputMonitoringPromptPollAttempts = 240
 let includePrereleaseUpdatesDefaultsKey = "IncludePrereleaseUpdates"
 let daemonRepairBundleVersionDefaultsKey = "DaemonRepairBundleVersion"
 
@@ -86,7 +86,9 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   let client = XPCClient()
   let permissionManager = PermissionManager()
   let updateChecker = UpdateChecker()
-  let sparkleUpdates = SparkleUpdateController()
+  lazy var sparkleUpdates = SparkleUpdateController { [weak self] state in
+    self?.updateCheckState = state
+  }
   var pollTask: Task<Void, Never>?
 
   var lastHealthPollNs: UInt64 = 0

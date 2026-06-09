@@ -3,15 +3,28 @@ import Testing
 
 struct ScriptPackagingTests {
   @Test
-  func testDmgStylingAppleScriptOpensFinderDiskObject() throws {
+  func testJustfileExposesReleaseParityLocalInstallCommand() throws {
+    let justfileURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+      .appendingPathComponent("justfile")
+    let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
+
+    #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.3\""))
+    #expect(justfile.contains("OJD_ENV=release ./scripts/ojd package release \"{{version}}\""))
+    #expect(justfile.contains("cp -R .build/debug/OpenJoystickDriver.app /Applications/"))
+  }
+
+  @Test
+  func testDmgPackagingUsesNativeFinderStyling() throws {
     let scriptURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
       .appendingPathComponent("scripts/ojd-package.sh")
     let script = try String(contentsOf: scriptURL, encoding: .utf8)
 
-    #expect(!script.contains("tell volumeRoot"))
-    #expect(script.contains("set volumeName to \"OpenJoystickDriver\""))
-    #expect(script.contains("set volumeDisk to disk volumeName"))
-    #expect(script.contains("open volumeDisk"))
+    #expect(script.contains("cp -R \"$app_path\" \"$staging_dir/OpenJoystickDriver.app\""))
+    #expect(script.contains("ln -s /Applications \"$staging_dir/Applications\""))
+    #expect(!script.contains("ojd-dmg-background.py"))
+    #expect(!script.contains("set background picture of viewOptions"))
+    #expect(!script.contains("tell application \"Finder\""))
+    #expect(!script.contains("osascript"))
   }
 
   @Test
@@ -132,6 +145,33 @@ struct ScriptPackagingTests {
     #expect(xpcOps.contains("sparkleUpdates.checkForUpdates"))
   }
 
+
+  @Test
+  func testSparkleUpdateErrorsAreExplicitlyMapped() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let controllerURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriver/App/SparkleUpdateController.swift"
+    )
+    let appModelURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriver/App/AppModel.swift"
+    )
+    let controller = try String(contentsOf: controllerURL, encoding: .utf8)
+    let appModel = try String(contentsOf: appModelURL, encoding: .utf8)
+
+    #expect(controller.contains("checkForUpdateInformation()"))
+    #expect(controller.contains("didFinishUpdateCycleFor updateCheck"))
+    #expect(controller.contains("SPUNoUpdateFoundReason"))
+    #expect(controller.contains("SUInvalidFeedURLError"))
+    #expect(controller.contains("SUAppcastParseError"))
+    #expect(controller.contains("SUSignatureError"))
+    #expect(controller.contains("SURunningFromDiskImageError"))
+    #expect(controller.contains("NSURLErrorNotConnectedToInternet"))
+    #expect(controller.contains("TLS validation failed for update feed"))
+    #expect(controller.contains("Move OpenJoystickDriver.app into /Applications"))
+    #expect(appModel.contains("lazy var sparkleUpdates = SparkleUpdateController"))
+    #expect(appModel.contains("self?.updateCheckState = state"))
+  }
+
   @Test
   func testInputMonitoringRequestUsesNativeAppRegistration() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
@@ -151,9 +191,44 @@ struct ScriptPackagingTests {
     #expect(appModel.contains("registerApplicationBundleForPermissionPrompt(daemonAppURL)"))
     #expect(appModel.contains("configuration.createsNewApplicationInstance = true"))
     #expect(appModel.contains("configuration.activates = true"))
-    #expect(daemonMain.contains("NSApplication.shared.setActivationPolicy(.accessory)"))
+    #expect(appModel.contains("configuration.arguments = [\"--request-input-monitoring\"]"))
+    #expect(daemonMain.contains("NSApp.setActivationPolicy(.accessory)"))
     #expect(daemonMain.contains("NSApp.activate(ignoringOtherApps: true)"))
     #expect(daemonMain.contains("OJD_PERMISSION_PROMPT_ONLY"))
+    #expect(daemonMain.contains("--request-input-monitoring"))
+  }
+
+  @Test
+  func testLaunchAgentUsesBundleProgramAndModernServiceManagement() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let launchAgentURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriver/App/com.openjoystickdriver.daemon.plist"
+    )
+    let daemonManagerURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriverKit/Daemon/DaemonManager.swift"
+    )
+    let bundlesScriptURL = rootURL.appendingPathComponent("scripts/ojd-build-bundles.sh")
+
+    let launchAgent = try String(contentsOf: launchAgentURL, encoding: .utf8)
+    let daemonManager = try String(contentsOf: daemonManagerURL, encoding: .utf8)
+    let bundlesScript = try String(contentsOf: bundlesScriptURL, encoding: .utf8)
+
+    #expect(launchAgent.contains("<key>BundleProgram</key>"))
+    #expect(
+      launchAgent.contains(
+        "Contents/Library/LoginItems/OpenJoystickDriverDaemon.app/Contents/MacOS/"
+          + "OpenJoystickDriverDaemon"
+      )
+    )
+    #expect(!launchAgent.contains("<key>ProgramArguments</key>"))
+    #expect(
+      bundlesScript.contains(
+        "cp \"$LAUNCHAGENTS_SRC\" "
+          + "\"$LAUNCHAGENTS_DST/com.openjoystickdriver.daemon.plist\""
+      )
+    )
+    #expect(daemonManager.contains("SMAppService.agent(plistName: agentPlistName)"))
+    #expect(daemonManager.contains("try appService.register()"))
   }
 
 }

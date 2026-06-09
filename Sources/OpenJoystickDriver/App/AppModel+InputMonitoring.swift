@@ -17,29 +17,61 @@ import OpenJoystickDriverKit
 
   func requestDaemonInputMonitoringAccess() async {
     inputMonitoringAssist = nil
-    if !daemonConnected {
-      await recoverDaemonForInputMonitoringRequest()
-    }
-
     do {
+      try await prepareDaemonRegistrationForPermissionPrompt()
       try await requestBundledDaemonInputMonitoringPrompt()
     } catch {
       daemonError = error.localizedDescription
       return
     }
 
-    if daemonConnected {
-      do {
-        inputMonitoring = try await client.requestInputMonitoringAccess()
-      } catch {
-        daemonError = formatDaemonError(error)
+    inputMonitoring = await waitForDaemonInputMonitoringDecision()
+    if inputMonitoring == "granted" {
+      if !daemonConnected {
+        await recoverDaemonForInputMonitoringRequest()
+      } else {
+        await syncFromDaemonNow()
       }
+      inputMonitoring = probeBundledDaemonInputMonitoringState()
+      return
     }
 
-    inputMonitoring = await waitForDaemonInputMonitoringDecision()
+    if daemonConnected {
+      await syncFromDaemonNow()
+    }
+
     if inputMonitoring != "granted" {
       openInputMonitoringSettings(for: ["OpenJoystickDriver Daemon"])
     }
+  }
+
+  func prepareDaemonRegistrationForPermissionPrompt() async throws {
+    guard ensureRunningFromApplications() else {
+      throw NSError(
+        domain: "OpenJoystickDriver",
+        code: 1,
+        userInfo: [
+          NSLocalizedDescriptionKey:
+            "Request Access requires /Applications/OpenJoystickDriver.app.",
+        ]
+      )
+    }
+    guard ensureBundleSignatureValid(for: "Request Access") else {
+      throw NSError(
+        domain: "OpenJoystickDriver",
+        code: 1,
+        userInfo: [
+          NSLocalizedDescriptionKey:
+            "Request Access requires a valid signed OpenJoystickDriver.app bundle.",
+        ]
+      )
+    }
+
+    guard !daemonInstalled else { return }
+    let task = Task.detached { try DaemonManager.install() }
+    try await task.value
+    try? await Task.sleep(nanoseconds: 500_000_000)
+    refreshDaemonStatus()
   }
 
   func waitForAppInputMonitoringDecision() async -> String {
@@ -53,21 +85,53 @@ import OpenJoystickDriverKit
   }
 
   func waitForDaemonInputMonitoringDecision() async -> String {
-    var state = inputMonitoring
+    var state = probeBundledDaemonInputMonitoringState()
     for _ in 0..<inputMonitoringPromptPollAttempts {
+      if state == "granted" || state == "denied" { break }
       try? await Task.sleep(nanoseconds: inputMonitoringPromptPollNanoseconds)
-      await syncFromDaemonNow()
-      state = inputMonitoring
-      if state == "granted" { break }
+      state = probeBundledDaemonInputMonitoringState()
     }
     return state
   }
 
+  func probeBundledDaemonInputMonitoringState() -> String {
+    let executableURL = DaemonManager.daemonExecutableURL(forMainBundleURL: Bundle.main.bundleURL)
+    guard FileManager.default.fileExists(atPath: executableURL.path) else { return "unknown" }
+
+    let process = Process()
+    process.executableURL = executableURL
+    process.environment = ProcessInfo.processInfo.environment.merging(
+      ["OJD_PERMISSION_CHECK_ONLY": "1"]
+    ) { _, new in new }
+    let stdout = Pipe()
+    process.standardOutput = stdout
+    process.standardError = Pipe()
+
+    do {
+      try process.run()
+      process.waitUntilExit()
+    } catch {
+      print("[AppModel] Failed to probe daemon Input Monitoring state: \(error)")
+      return "unknown"
+    }
+
+    guard process.terminationStatus == 0 else { return "unknown" }
+    let data = stdout.fileHandleForReading.readDataToEndOfFile()
+    guard let state = String(bytes: data, encoding: .utf8)?
+      .trimmingCharacters(in: .whitespacesAndNewlines)
+    else {
+      return "unknown"
+    }
+    switch state {
+    case "granted", "denied", "unknown":
+      return state
+    default:
+      return "unknown"
+    }
+  }
+
   func requestBundledDaemonInputMonitoringPrompt() async throws {
     let appURL = Bundle.main.bundleURL
-    let promptEnvironment = ProcessInfo.processInfo.environment.merging(
-      ["OJD_PERMISSION_PROMPT_ONLY": "1"]
-    ) { _, new in new }
 
     if appURL.pathExtension == "app" {
       let daemonAppURL = DaemonManager.bundledDaemonApplicationURL(in: appURL)
@@ -99,7 +163,7 @@ import OpenJoystickDriverKit
       let configuration = NSWorkspace.OpenConfiguration()
       configuration.activates = true
       configuration.createsNewApplicationInstance = true
-      configuration.environment = promptEnvironment
+      configuration.arguments = ["--request-input-monitoring"]
       try await withCheckedThrowingContinuation {
         (continuation: CheckedContinuation<Void, Error>) in
         NSWorkspace.shared.openApplication(at: daemonAppURL, configuration: configuration) {
@@ -128,7 +192,9 @@ import OpenJoystickDriverKit
 
     let process = Process()
     process.executableURL = executableURL
-    process.environment = promptEnvironment
+    process.environment = ProcessInfo.processInfo.environment.merging(
+      ["OJD_PERMISSION_PROMPT_ONLY": "1"]
+    ) { _, new in new }
     try process.run()
   }
 

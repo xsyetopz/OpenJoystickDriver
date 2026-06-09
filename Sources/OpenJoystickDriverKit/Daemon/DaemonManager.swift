@@ -3,9 +3,9 @@ import ServiceManagement
 
 /// Manages daemon LaunchAgent lifecycle.
 ///
-/// Uses launchctl registration for the embedded LaunchAgent. This avoids
-/// BackgroundTaskManagement/LWCR failures seen when `SMAppService.agent`
-/// launches an executable inside an embedded daemon app bundle.
+/// On macOS 13 and later, use SMAppService so the bundled LaunchAgent stays
+/// associated with the app in System Settings and launchd resolves the
+/// executable from the signed app bundle via BundleProgram.
 public enum DaemonManager: Sendable {
   /// Launchd job label.
   public static let label = "com.openjoystickdriver.daemon"
@@ -46,7 +46,12 @@ public enum DaemonManager: Sendable {
     SMAppService.agent(plistName: agentPlistName)
   }
 
-  private static let usesLaunchctlAgentRegistration = true
+  private static var usesLaunchctlAgentRegistration: Bool {
+    if #available(macOS 13.0, *) {
+      return false
+    }
+    return true
+  }
 
   /// Whether the daemon LaunchAgent is registered for the current user.
   public static var isInstalled: Bool {
@@ -105,7 +110,7 @@ public enum DaemonManager: Sendable {
     do {
       if usesLaunchctlAgentRegistration { try legacyRestart(); return }
       if #available(macOS 13.0, *) {
-        // Unregister+register is the most reliable cross-shell restart path.
+        // Apple requires re-registering after plist or executable changes.
         try? appService.unregister()
         try appService.register()
         print("[DaemonManager] Restarted (SMAppService)")

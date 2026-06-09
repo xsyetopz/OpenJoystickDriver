@@ -2,6 +2,7 @@ import Foundation
 import SwiftUSB
 
 private let usbDetectionPollNanoseconds: UInt64 = 2_000_000_000
+private let devicePermissionWatchNanoseconds: UInt64 = 1_000_000_000
 private let usbVendorSpecificClass: UInt8 = 0xFF
 
 /// Manages device detection and pipeline lifecycle for all
@@ -27,6 +28,8 @@ public actor DeviceManager {
   private var pipelines: [DeviceIdentifier: DevicePipeline] = [:]
   private var deviceInfos: [DeviceIdentifier: DeviceInfo] = [:]
   private var detectionTasks: [Task<Void, Never>] = []
+  private var hidDetectionTask: Task<Void, Never>?
+  private var permissionWatchTask: Task<Void, Never>?
   private var externalOutputAllowed = true
 
   /// Creates a manager that sends all output to `dispatcher`.
@@ -46,9 +49,6 @@ public actor DeviceManager {
     let state = await permissionManager.checkAccess()
     switch state {
     case .unknown, .denied:
-      // Request (or re-request) so TCC entry stays current in System Settings.
-      // When denied, IOHIDRequestAccess is no-op dialog-wise but keeps entry alive.
-      await permissionManager.requestAccess()
       if state == .denied {
         print("[DeviceManager] Input Monitoring denied" + " - running in detect-only mode")
         print(
@@ -56,7 +56,10 @@ public actor DeviceManager {
             + " to grant access"
         )
       } else {
-        print("[DeviceManager] Requesting Input Monitoring" + " permission...")
+        print("[DeviceManager] Input Monitoring not yet granted" + " - running in detect-only mode")
+        print(
+          "[DeviceManager] Use the app's Request Access action" + " to show the native macOS prompt"
+        )
       }
     case .granted: print("[DeviceManager] Input Monitoring granted")
     }
@@ -64,8 +67,16 @@ public actor DeviceManager {
     ensureUSBContext()
 
     let usbTask = Task { await self.runUSBDetection() }
-    let hidTask = Task { await self.runHIDDetection() }
-    detectionTasks = [usbTask, hidTask]
+    detectionTasks = [usbTask]
+    await ensureHIDDetectionState(for: state)
+    permissionWatchTask = Task { [weak self] in
+      guard let self else { return }
+      while !Task.isCancelled {
+        let currentState = await self.permissionManager.checkAccess()
+        await self.ensureHIDDetectionState(for: currentState)
+        try? await Task.sleep(nanoseconds: devicePermissionWatchNanoseconds)
+      }
+    }
 
     print("[DeviceManager] Started" + " - dual detection active")
   }
@@ -169,6 +180,10 @@ public actor DeviceManager {
   public func stop() async {
     for task in detectionTasks { task.cancel() }
     detectionTasks = []
+    hidDetectionTask?.cancel()
+    hidDetectionTask = nil
+    permissionWatchTask?.cancel()
+    permissionWatchTask = nil
     for (identifier, pipeline) in pipelines {
       if let locationID = identifier.locationID {
         await sendHIDShutdownFeatureReportsIfNeeded(pipeline: pipeline, locationID: locationID)
@@ -316,6 +331,18 @@ public actor DeviceManager {
 
   // MARK: - HID detection (class 0x03)
 
+  private func ensureHIDDetectionState(for state: PermissionManager.AccessState) async {
+    switch state {
+    case .granted:
+      guard hidDetectionTask == nil else { return }
+      hidDetectionTask = Task { await self.runHIDDetection() }
+    case .unknown, .denied:
+      hidDetectionTask?.cancel()
+      hidDetectionTask = nil
+      await removeHIDPipelines()
+    }
+  }
+
   private func runHIDDetection() async {
     print("[DeviceManager] HID detection started" + " (class 0x03)")
     for await event in hidManager.deviceEvents() {
@@ -334,6 +361,19 @@ public actor DeviceManager {
       case .inputReport(let loc, _, let data):
         await routeHIDInputReport(locationID: loc, data: data)
       }
+    }
+  }
+
+  private func removeHIDPipelines() async {
+    let hidIdentifiers = pipelines.keys.filter {
+      (deviceInfos[$0]?.connection ?? "") != "USB"
+    }
+
+    for identifier in hidIdentifiers {
+      guard let pipeline = pipelines.removeValue(forKey: identifier) else { continue }
+      deviceInfos.removeValue(forKey: identifier)
+      await pipeline.stop()
+      print("[DeviceManager] HID pipeline removed: \(identifier)")
     }
   }
 

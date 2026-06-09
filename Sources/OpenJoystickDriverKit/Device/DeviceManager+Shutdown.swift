@@ -1,5 +1,18 @@
 import Foundation
 
+private final class ShutdownSignalSourceStore: @unchecked Sendable {
+  private let lock = NSLock()
+  private var sources: [DispatchSourceSignal] = []
+
+  func retain(_ source: DispatchSourceSignal) {
+    lock.lock()
+    sources.append(source)
+    lock.unlock()
+  }
+}
+
+private let shutdownSignalSourceStore = ShutdownSignalSourceStore()
+
 extension DeviceManager {
   /// Installs SIGTERM and SIGINT handlers that stop device manager and exit cleanly.
   ///
@@ -15,6 +28,7 @@ extension DeviceManager {
       }
     }
     sigterm.resume()
+    shutdownSignalSourceStore.retain(sigterm)
     signal(SIGTERM, SIG_IGN)
 
     let sigint = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
@@ -26,6 +40,7 @@ extension DeviceManager {
       }
     }
     sigint.resume()
+    shutdownSignalSourceStore.retain(sigint)
     signal(SIGINT, SIG_IGN)
   }
 }

@@ -5,10 +5,13 @@
   <key>Label</key>
   <string>com.openjoystickdriver.daemon</string>
 
-  <key>ProgramArguments</key>
-  <array>
-    <string>/Applications/OpenJoystickDriver.app/Contents/Library/LoginItems/OpenJoystickDriverDaemon.app/Contents/MacOS/OpenJoystickDriverDaemon</string>
-  </array>
+  <key>BundleProgram</key>
+  <string>Contents/Library/LoginItems/OpenJoystickDriverDaemon.app/Contents/MacOS/OpenJoystickDriverDaemon</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>OJD_LAUNCHD_DAEMON</key>
+    <string>1</string>
+  </dict>
 
   <!-- Required so NSXPCListener(machServiceName:) is allowed to bind this name. -->
   <key>MachServices</key>

@@ -6,18 +6,89 @@ import OpenJoystickDriverKit
 setbuf(stdout, nil)
 
 let permissionManager = PermissionManager()
+let commandLineArguments = Set(CommandLine.arguments.dropFirst())
 
-if ProcessInfo.processInfo.environment["OJD_PERMISSION_PROMPT_ONLY"] == "1" {
-  NSApplication.shared.setActivationPolicy(.accessory)
-  NSApp.activate(ignoringOtherApps: true)
-  print("[Daemon] Requesting Input Monitoring access for daemon...")
-  let semaphore = DispatchSemaphore(value: 0)
-  Task {
-    _ = await permissionManager.requestAccess()
-    semaphore.signal()
+func daemonLog(_ message: String) {
+  print(message)
+  NSLog("%@", message)
+}
+
+@MainActor
+final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
+  private let permissionManager: PermissionManager
+  private var pollTask: Task<Void, Never>?
+
+  init(permissionManager: PermissionManager) {
+    self.permissionManager = permissionManager
   }
-  semaphore.wait()
-  Thread.sleep(forTimeInterval: 5)
+
+  func applicationDidFinishLaunching(_ notification: Notification) {
+    NSApp.setActivationPolicy(.accessory)
+    NSApp.activate(ignoringOtherApps: true)
+    daemonLog("[Daemon] Requesting Input Monitoring access for daemon...")
+
+    pollTask = Task { @MainActor [permissionManager] in
+      let initialState = await permissionManager.requestAccess()
+      if initialState == .granted {
+        daemonLog("[Daemon] Input Monitoring granted for daemon helper app")
+        NSApp.terminate(nil)
+        return
+      }
+      if initialState == .denied {
+        daemonLog("[Daemon] Input Monitoring denied for daemon helper app")
+        NSApp.terminate(nil)
+        return
+      }
+
+      let timeoutNanoseconds: UInt64 = 120_000_000_000
+      let pollNanoseconds: UInt64 = 500_000_000
+      let deadline = DispatchTime.now().uptimeNanoseconds + timeoutNanoseconds
+
+      while !Task.isCancelled {
+        let state = await permissionManager.checkAccess()
+        if state == .granted {
+          daemonLog("[Daemon] Input Monitoring granted for daemon helper app")
+          NSApp.terminate(nil)
+          return
+        }
+        if state == .denied {
+          daemonLog("[Daemon] Input Monitoring denied for daemon helper app")
+          NSApp.terminate(nil)
+          return
+        }
+        if DispatchTime.now().uptimeNanoseconds >= deadline {
+          daemonLog("[Daemon] Input Monitoring helper timed out waiting for approval")
+          NSApp.terminate(nil)
+          return
+        }
+        try? await Task.sleep(nanoseconds: pollNanoseconds)
+      }
+    }
+  }
+
+  func applicationWillTerminate(_ notification: Notification) {
+    pollTask?.cancel()
+    pollTask = nil
+  }
+}
+
+let environment = ProcessInfo.processInfo.environment
+let permissionCheckOnlyMode = environment["OJD_PERMISSION_CHECK_ONLY"] == "1"
+let promptOnlyMode = environment["OJD_PERMISSION_PROMPT_ONLY"] == "1"
+  || commandLineArguments.contains("--request-input-monitoring")
+
+if permissionCheckOnlyMode {
+  daemonLog("[Daemon] Starting permission-check probe mode")
+  print(PermissionManager.currentAccessState())
+  exit(0)
+}
+
+if promptOnlyMode {
+  daemonLog("[Daemon] Starting permission prompt helper mode")
+  let appDelegate = PermissionPromptAppDelegate(permissionManager: permissionManager)
+  NSApplication.shared.delegate = appDelegate
+  _ = appDelegate
+  NSApplication.shared.run()
   exit(0)
 }
 
@@ -25,7 +96,8 @@ if ProcessInfo.processInfo.environment["OJD_PERMISSION_PROMPT_ONLY"] == "1" {
 // We do not connect eagerly at startup — this avoids "half-active" states where the
 // DriverKit virtual device is present but idle while Compatibility is selected.
 let dextDispatcher = DextOutputDispatcher()
-print("[Daemon] DriverKit output: on-demand (managed by Mode)")
+daemonLog("[Daemon] DriverKit output: on-demand (managed by Mode)")
+daemonLog("[Daemon] Starting daemon service mode")
 
 // Optional secondary output is controlled by the GUI via XPC (user-space IOHIDUserDevice).
 let dispatcher = CompositeOutputDispatcher(primary: dextDispatcher)
@@ -54,7 +126,7 @@ let foregroundConsumerOutputMonitor = ForegroundConsumerOutputMonitor(
 
 manager.setupGracefulShutdown(label: "Daemon")
 
-print("[Daemon] OpenJoystickDriverDaemon starting...")
+daemonLog("[Daemon] OpenJoystickDriverDaemon starting...")
 
 Task { await permissionManager.startPolling() }
 

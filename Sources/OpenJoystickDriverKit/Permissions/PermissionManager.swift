@@ -34,10 +34,22 @@ public actor PermissionManager {
   /// Creates a new PermissionManager.
   public init() {}
 
+  /// Returns current Input Monitoring permission state for the current process.
+  ///
+  /// This is safe to call from short-lived helper probes that need the daemon
+  /// bundle's effective TCC state without spinning up the full actor runtime.
+  nonisolated public static func currentAccessState() -> AccessState {
+    let result = IOHIDCheckAccess(kIOHIDRequestTypeListenEvent)
+    switch result {
+    case kIOHIDAccessTypeGranted: return .granted
+    case kIOHIDAccessTypeDenied: return .denied
+    default: return .unknown
+    }
+  }
+
   /// Checks current Input Monitoring permission state without prompting.
   public func checkAccess() -> AccessState {
-    let result = IOHIDCheckAccess(kIOHIDRequestTypeListenEvent)
-    return mapAccess(result)
+    Self.currentAccessState()
   }
 
   /// Requests Input Monitoring permission, showing the system dialog if needed.
@@ -74,13 +86,5 @@ public actor PermissionManager {
     let previous = inputMonitoringState
     inputMonitoringState = state
     print("[PermissionManager] Input Monitoring " + "state changed: \(previous) -> \(state)")
-  }
-
-  private func mapAccess(_ result: IOHIDAccessType) -> AccessState {
-    switch result {
-    case kIOHIDAccessTypeGranted: return .granted
-    case kIOHIDAccessTypeDenied: return .denied
-    default: return .unknown
-    }
   }
 }
