@@ -56,10 +56,11 @@ struct ScriptPackagingTests {
     #expect(script.contains("\"$DAEMON_BUNDLE\""))
     #expect(script.contains("\"com.apple.developer.hid.virtual.device\""))
     #expect(packaging.contains("Contents/Library/LoginItems"))
+    #expect(packaging.contains("<key>BundleProgram</key>"))
     #expect(
       packaging.contains(
-        "/Applications/OpenJoystickDriver.app/Contents/Library/LoginItems/" +
-        "OpenJoystickDriverDaemon.app/Contents/MacOS/OpenJoystickDriverDaemon"
+        "Contents/Library/LoginItems/OpenJoystickDriverDaemon.app/Contents/MacOS/" +
+        "OpenJoystickDriverDaemon"
       )
     )
     #expect(!script.contains("cp \"$daemon_bin\" \"$GUI_MACOS/OpenJoystickDriverDaemon\""))
