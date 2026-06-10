@@ -18,6 +18,7 @@ Examples:
 Updates:
   - Sources/OpenJoystickDriver/CLI.swift
   - Sources/OpenJoystickDriver/App/AppModel.swift fallback version
+  - justfile release-local-install default
   - scripts/README.md release examples
   - scripts/ojd-build-bundles.sh generated GUI/daemon bundle versions
   - DriverKitExtension/Info.plist short version
@@ -43,6 +44,7 @@ fi
 
 cli_file="$PROJECT_DIR/Sources/OpenJoystickDriver/CLI.swift"
 app_model_file="$PROJECT_DIR/Sources/OpenJoystickDriver/App/AppModel.swift"
+justfile="$PROJECT_DIR/justfile"
 scripts_readme="$PROJECT_DIR/scripts/README.md"
 build_script="$PROJECT_DIR/scripts/ojd-build-bundles.sh"
 dext_plist="$PROJECT_DIR/DriverKitExtension/Info.plist"
@@ -50,6 +52,7 @@ changelog="$PROJECT_DIR/CHANGELOG.md"
 
 [[ -f "$cli_file" ]] || die "Missing $cli_file"
 [[ -f "$app_model_file" ]] || die "Missing $app_model_file"
+[[ -f "$justfile" ]] || die "Missing $justfile"
 [[ -f "$scripts_readme" ]] || die "Missing $scripts_readme"
 [[ -f "$build_script" ]] || die "Missing $build_script"
 [[ -f "$dext_plist" ]] || die "Missing $dext_plist"
@@ -59,12 +62,12 @@ if ! grep -Fxq "## $version" "$changelog"; then
   die "CHANGELOG.md must contain heading: ## $version"
 fi
 
-python3 - "$version" "$cli_file" "$app_model_file" "$scripts_readme" "$build_script" "$dext_plist" <<'PY'
+python3 - "$version" "$cli_file" "$app_model_file" "$justfile" "$scripts_readme" "$build_script" "$dext_plist" <<'PY'
 import re
 import sys
 from pathlib import Path
 
-version, cli_path, app_model_path, readme_path, build_script_path, dext_plist_path = sys.argv[1:]
+version, cli_path, app_model_path, justfile_path, readme_path, build_script_path, dext_plist_path = sys.argv[1:]
 
 replacements = [
     (
@@ -94,6 +97,19 @@ replacements = [
         ],
     ),
     (
+        Path(justfile_path),
+        [
+            (
+                "justfile release-local-install default",
+                re.compile(
+                    r'release-local-install version="\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?":'
+                ),
+                f'release-local-install version="{version}":',
+                1,
+            ),
+        ],
+    ),
+    (
         Path(readme_path),
         [
             (
@@ -117,6 +133,14 @@ replacements = [
     (
         Path(build_script_path),
         [
+            (
+                "ojd-build-bundles default short version",
+                re.compile(
+                    r'(OJD_BUNDLE_SHORT_VERSION:-)\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?'
+                ),
+                rf"\g<1>{version}",
+                1,
+            ),
             (
                 "ojd-build-bundles GUI/daemon short versions",
                 re.compile(

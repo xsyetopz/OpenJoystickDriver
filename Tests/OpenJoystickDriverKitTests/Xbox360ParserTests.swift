@@ -250,4 +250,13 @@ struct Xbox360ParserTests {
     let events = try parser.parse(data: Data(bytes))
     #expect(events.isEmpty)
   }
+
+  @Test
+  func testStartupLEDReportSetsPlayerOneSolidOnlyForXbox360Parser() {
+    let parser = Xbox360Parser()
+
+    #expect(parser.usbStartupOutputPackets() == [[0x01, 0x03, 0x06]])
+    #expect(!(GenericHIDParser(identifier: DeviceIdentifier(vendorID: 1, productID: 2))
+      is USBStartupOutputProvider))
+  }
 }

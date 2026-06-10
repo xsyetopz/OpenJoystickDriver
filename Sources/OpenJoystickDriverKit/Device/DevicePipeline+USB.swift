@@ -50,6 +50,7 @@ extension DevicePipeline {
   func performUSBHandshake(handle: USBDeviceHandle) async -> Bool {
     do {
       try await parser.performHandshake(handle: handle)
+      try sendUSBStartupOutputPackets(handle: handle)
       print("[DevicePipeline] Handshake complete:" + " \(identifier)")
       return true
     } catch {
@@ -57,6 +58,18 @@ extension DevicePipeline {
       try? handle.releaseInterface(0)
       usbHandle = nil
       return false
+    }
+  }
+
+  func sendUSBStartupOutputPackets(handle: USBDeviceHandle) throws {
+    guard let startupOutput = parser as? USBStartupOutputProvider else { return }
+    for packet in startupOutput.usbStartupOutputPackets() {
+      _ = try handle.interruptTransfer(
+        endpoint: transportProfile.outputEndpoint,
+        data: packet,
+        timeout: 2000
+      )
+      appendToPacketLog(bytes: packet, direction: "tx")
     }
   }
 

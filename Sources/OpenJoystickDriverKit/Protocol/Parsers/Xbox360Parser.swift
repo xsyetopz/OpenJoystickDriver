@@ -82,7 +82,9 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
 ///   byte 1 : 0x03 (length)
 ///   byte 2 : LED pattern (see Xbox360LEDPattern)
 /// ```
-public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, @unchecked Sendable {
+public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupOutputProvider,
+  @unchecked Sendable
+{
 
   // MARK: - Thread safety
   //
@@ -109,11 +111,15 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, @unchecked 
   // MARK: - InputParser
 
   // swiftlint:disable async_without_await
-  /// No-op — Xbox 360 requires no handshake.
+  /// Xbox 360 starts input without a handshake; startup output only sets the ring LED.
   public func performHandshake(handle: USBDeviceHandle?) async throws {
     // Xbox 360 starts sending input reports immediately after interface claim.
   }
   // swiftlint:enable async_without_await
+
+  public func usbStartupOutputPackets() -> [[UInt8]] {
+    [[0x01, 0x03, Xbox360LEDPattern.player1On.rawValue]]
+  }
 
   /// Parses one Xbox 360 input report and returns zero or more controller events.
   ///

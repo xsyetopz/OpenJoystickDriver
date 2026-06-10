@@ -42,6 +42,12 @@ extension HIDStartupOutputReportProvider {
   }
 }
 
+/// Optional parser hook for startup output packets sent through a USB interrupt OUT endpoint.
+public protocol USBStartupOutputProvider: AnyObject, Sendable {
+  /// Source-backed startup packets needed when OJD starts consuming a USB controller.
+  func usbStartupOutputPackets() -> [[UInt8]]
+}
+
 /// Optional parser hook for startup feature reports sent through a HID transport.
 public protocol HIDStartupFeatureReportProvider: AnyObject, Sendable {
   /// Source-backed feature reports needed when OJD starts consuming the physical input.

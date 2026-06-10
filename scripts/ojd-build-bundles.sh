@@ -97,7 +97,7 @@ build_app_bundle() {
   local GUI_MACOS="$GUI_CONTENTS/MacOS"
   local GUI_LOGIN_ITEMS="$GUI_CONTENTS/Library/LoginItems"
   local GUI_FRAMEWORKS="$GUI_CONTENTS/Frameworks"
-  local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.3}"
+  local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.4}"
   local bundle_version="${OJD_BUNDLE_VERSION:-1}"
   local sparkle_feed_url="${SPARKLE_FEED_URL:-https://github.com/xsyetopz/OpenJoystickDriver/releases/latest/download/appcast.xml}"
   local sparkle_public_ed_key="${SPARKLE_PUBLIC_ED_KEY:-}"
@@ -152,7 +152,7 @@ build_app_bundle() {
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.5.0-alpha.3</string>
+    <string>0.5.0-alpha.4</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
@@ -211,7 +211,7 @@ PLIST
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.5.0-alpha.3</string>
+    <string>0.5.0-alpha.4</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>LSMinimumSystemVersion</key>

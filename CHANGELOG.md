@@ -2,6 +2,12 @@
 
 All notable changes to OpenJoystickDriver are documented in this file.
 
+## 0.5.0-alpha.4
+
+### Fixed
+
+- (Hopefully) fixed wired Xbox 360 controller startup so OpenJoystickDriver sends the source-backed player-1 solid ring-of-light command instead of leaving the controller flashing after attach.
+
 ## 0.5.0-alpha.3
 
 ### Added
