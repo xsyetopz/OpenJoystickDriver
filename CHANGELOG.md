@@ -12,6 +12,12 @@ All notable changes to OpenJoystickDriver are documented in this file.
 - Added SDL3 backend regression coverage and packaged SDL3 dylib bundling for
   the app and daemon helper.
 
+### Fixed
+
+- Fixed Xbox 360 HID compatibility identity button mapping so SDL3 reads
+  A/B/X/Y, Guide, and shoulder buttons from the expected report bits.
+- Fixed duplicate SDL3 badges in the Input Test controller header.
+
 ### Changed
 
 - Replaced the runtime physical input backend with SDL3 while keeping virtual

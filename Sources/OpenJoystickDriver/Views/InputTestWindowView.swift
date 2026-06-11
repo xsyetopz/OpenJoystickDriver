@@ -159,8 +159,9 @@ struct InputTestWindowView: View {
               )
           }
           HStack(spacing: 7) {
-            MiniBadge(device.parser)
-            MiniBadge(device.connection)
+            ForEach(controllerBadges(for: device), id: \.self) { badge in
+              MiniBadge(badge)
+            }
             MiniBadge(String(format: "%04X:%04X", device.vendorID, device.productID))
             if let serial = device.serialNumber, !serial.isEmpty {
               MiniBadge(L10n.string("input.serial", serial))
@@ -182,6 +183,13 @@ struct InputTestWindowView: View {
             .lineLimit(1)
         }
       }
+    }
+  }
+
+  private func controllerBadges(for device: DeviceViewModel) -> [String] {
+    var seen = Set<String>()
+    return [device.parser, device.connection].filter { badge in
+      seen.insert(badge).inserted
     }
   }
 

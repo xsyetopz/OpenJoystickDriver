@@ -128,3 +128,137 @@ public struct Xbox360XUSBDirectInputReportFormat: VirtualGamepadReportFormat {
     report[offset + 1] = b.1
   }
 }
+
+/// HID surface used by SDL's ASTRO C40 Xbox 360-mode mapping on macOS.
+///
+/// SDL identifies `9886:0024` with a fixed gamepad mapping:
+/// `a:b0,b:b1,x:b2,y:b3,back:b4,guide:b5,start:b6,leftstick:b7,
+/// rightstick:b8,leftshoulder:b9,rightshoulder:b10`.
+/// The compatibility identity must publish report bytes in that order. The
+/// older counted-buffer Xbox packet puts shoulders in byte 3 bits 0/1, which
+/// SDL's descriptor-driven path reads as A/B.
+public enum Xbox360SDLHIDDescriptor {
+  public static let descriptor: [UInt8] = [
+    0x05, 0x01,  // Usage Page: Generic Desktop
+    0x09, 0x05,  // Usage: Game Pad
+    0xA1, 0x01,  // Collection: Application
+
+    // Buttons 1-12 in SDL ASTRO C40 mapping order:
+    // A, B, X, Y, Back, Guide, Start, L3, R3, LB, RB, Touchpad(unused).
+    0x05, 0x09,
+    0x19, 0x01,
+    0x29, 0x0C,
+    0x15, 0x00,
+    0x25, 0x01,
+    0x75, 0x01,
+    0x95, 0x0C,
+    0x81, 0x02,
+
+    // Pad buttons to 16 bits.
+    0x75, 0x04,
+    0x95, 0x01,
+    0x81, 0x03,
+
+    // D-pad as a hat switch, matching SDL's h0 mapping for this GUID.
+    0x05, 0x01,
+    0x09, 0x39,
+    0x15, 0x01,
+    0x25, 0x08,
+    0x35, 0x00,
+    0x46, 0x3B, 0x01,
+    0x66, 0x14, 0x00,
+    0x75, 0x04,
+    0x95, 0x01,
+    0x81, 0x42,
+
+    // Pad hat to a full byte.
+    0x75, 0x04,
+    0x95, 0x01,
+    0x81, 0x03,
+
+    // Sticks: X, Y, Rx, Ry.
+    0x05, 0x01,
+    0x09, 0x30,
+    0x09, 0x31,
+    0x09, 0x33,
+    0x09, 0x34,
+    0x16, 0x00, 0x80,
+    0x26, 0xFF, 0x7F,
+    0x75, 0x10,
+    0x95, 0x04,
+    0x81, 0x02,
+
+    // Triggers: Z, Rz, zero-idle unsigned.
+    0x09, 0x32,
+    0x09, 0x35,
+    0x15, 0x00,
+    0x26, 0xFF, 0x7F,
+    0x75, 0x10,
+    0x95, 0x02,
+    0x81, 0x02,
+
+    // Xbox 360 rumble output report accepted by the virtual rumble parser.
+    0x09, 0x01,
+    0x15, 0x00,
+    0x26, 0xFF, 0x00,
+    0x75, 0x08,
+    0x95, 0x08,
+    0x91, 0x02,
+
+    0xC0,
+  ]
+}
+
+public struct Xbox360SDLHIDReportFormat: VirtualGamepadReportFormat {
+  public let descriptor: [UInt8] = Xbox360SDLHIDDescriptor.descriptor
+  public let inputReportPayloadSize: Int = 15
+  public let inputReportID: UInt8? = nil
+  public let outputReportPayloadSize: Int? = 8
+  public let outputReportID: UInt8? = nil
+
+  public init() {}
+
+  public func buildInputReport(from state: VirtualGamepadState) -> [UInt8] {
+    var r = [UInt8](repeating: 0, count: inputReportPayloadSize)
+    let buttons = sdlMappedButtons(from: state.buttons)
+    r[0] = UInt8(buttons & 0xFF)
+    r[1] = UInt8((buttons >> 8) & 0x0F)
+    r[2] = state.hat.rawValue & 0x0F
+    write(state.leftStickX, to: &r, at: 3)
+    write(state.leftStickY, to: &r, at: 5)
+    write(state.rightStickX, to: &r, at: 7)
+    write(state.rightStickY, to: &r, at: 9)
+    write(state.leftTrigger, to: &r, at: 11)
+    write(state.rightTrigger, to: &r, at: 13)
+    return r
+  }
+
+  private func sdlMappedButtons(from normalized: UInt32) -> UInt16 {
+    var out: UInt16 = 0
+
+    func set(_ sourceBit: Int, _ sdlBit: Int) {
+      if ((normalized >> UInt32(sourceBit)) & 1) != 0 {
+        out |= UInt16(1 << sdlBit)
+      }
+    }
+
+    set(0, 0)  // A
+    set(1, 1)  // B
+    set(2, 2)  // X
+    set(3, 3)  // Y
+    set(9, 4)  // Back/View
+    set(10, 5)  // Guide
+    set(8, 6)  // Start/Menu
+    set(6, 7)  // L3
+    set(7, 8)  // R3
+    set(4, 9)  // LB
+    set(5, 10)  // RB
+    return out
+  }
+
+  private func write(_ value: Int16, to report: inout [UInt8], at offset: Int) {
+    let b = value.littleEndianBytes
+    report[offset] = b.0
+    report[offset + 1] = b.1
+  }
+}

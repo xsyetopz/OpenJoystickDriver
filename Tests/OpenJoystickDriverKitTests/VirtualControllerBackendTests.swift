@@ -169,6 +169,17 @@ struct VirtualControllerBackendTests {
       ) == kHIDUsage_GD_GamePad)
   }
   @Test
+  func testXbox360CompatibilityIdentityUsesSDLMappingFormat() throws {
+    let profile = CompatibilityOutputProfileCatalog.profile(for: .x360HID).deviceProfile
+    let (format, primaryUsage) = try UserSpaceOutputDispatcher.compatibilityReportFormat(
+      for: .x360HID,
+      profile: profile
+    )
+
+    #expect(format is Xbox360SDLHIDReportFormat)
+    #expect(primaryUsage == nil)
+  }
+  @Test
   func testXboxOneCompatibilityFormatDeclaresRumbleOutputSize() throws {
     let format = try HIDDescriptorReportFormat(
       descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
@@ -232,14 +243,14 @@ struct VirtualControllerBackendTests {
     let sdl = OJDSDLGamepadFormat().buildInputReport(from: VirtualGamepadState())
     let apple = Xbox360MacHIDReportFormat(topLevelUsage: UInt8(kHIDUsage_GD_GamePad))
       .buildInputReport(from: VirtualGamepadState())
-    let x360 = Xbox360MacHIDReportFormat().buildInputReport(from: VirtualGamepadState())
+    let x360 = Xbox360SDLHIDReportFormat().buildInputReport(from: VirtualGamepadState())
     let xone = try HIDDescriptorReportFormat(descriptor: XboxOneBluetoothHIDDescriptor.descriptor)
       .buildInputReport(from: VirtualGamepadState())
 
     #expect(generic == [UInt8](repeating: 0, count: generic.count))
     #expect(sdl == [UInt8](repeating: 0, count: sdl.count))
     #expect(Array(apple.dropFirst(2)) == [UInt8](repeating: 0, count: apple.count - 2))
-    #expect(Array(x360.dropFirst(2)) == [UInt8](repeating: 0, count: x360.count - 2))
+    #expect(x360 == [UInt8](repeating: 0, count: x360.count))
     #expect(xone[0] == 1)
     #expect(xone[13] == 0x00)
     #expect(xone[14] == 0x00)
