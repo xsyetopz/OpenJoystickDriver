@@ -1,6 +1,48 @@
 # shellcheck shell=bash
 # App and DriverKit bundle builders for scripts/ojd-build.sh.
 
+_sdl3_dylib_path() {
+  local libdir
+  libdir="$(pkg-config --variable=libdir sdl3 2>/dev/null || true)"
+  [[ -n "$libdir" && -f "$libdir/libSDL3.0.dylib" ]] || return 1
+  printf '%s/libSDL3.0.dylib\n' "$libdir"
+}
+
+_copy_sdl3_dylib() {
+  local destination="$1"
+  local sdl3_dylib
+  sdl3_dylib="$(_sdl3_dylib_path)" || {
+    echo "ERROR: SDL3 dylib not found through pkg-config."
+    echo "Fix: install SDL3, for example: brew install sdl3"
+    exit 1
+  }
+  mkdir -p "$destination"
+  cp "$sdl3_dylib" "$destination/libSDL3.0.dylib"
+}
+
+_patch_sdl3_load_path() {
+  local binary="$1"
+  local sdl3_dylib
+  sdl3_dylib="$(_sdl3_dylib_path)" || return 1
+  local install_name
+  install_name="$(otool -D "$sdl3_dylib" 2>/dev/null | tail -n 1)"
+  [[ -n "$install_name" ]] || return 0
+  install_name_tool -change "$install_name" "@rpath/libSDL3.0.dylib" "$binary" 2>/dev/null || true
+}
+
+_sign_dylibs_in_dir() {
+  local identity="$1"
+  local directory="$2"
+  local sign_args=()
+  if [[ "$OJD_ENV" == "release" ]]; then
+    sign_args=(--options runtime --timestamp)
+  fi
+  for dylib in "$directory"/*.dylib; do
+    [[ -f "$dylib" ]] || continue
+    /usr/bin/codesign --force --sign "$identity" "${sign_args[@]}" "$dylib"
+  done
+}
+
 build_app_bundle() {
   _require_codesign_identity
 
@@ -97,7 +139,7 @@ build_app_bundle() {
   local GUI_MACOS="$GUI_CONTENTS/MacOS"
   local GUI_LOGIN_ITEMS="$GUI_CONTENTS/Library/LoginItems"
   local GUI_FRAMEWORKS="$GUI_CONTENTS/Frameworks"
-  local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.4}"
+  local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.5}"
   local bundle_version="${OJD_BUNDLE_VERSION:-1}"
   local sparkle_feed_url="${SPARKLE_FEED_URL:-https://github.com/xsyetopz/OpenJoystickDriver/releases/latest/download/appcast.xml}"
   local sparkle_public_ed_key="${SPARKLE_PUBLIC_ED_KEY:-}"
@@ -112,6 +154,8 @@ build_app_bundle() {
   rm -rf "$GUI_APP"
   mkdir -p "$GUI_MACOS" "$GUI_LOGIN_ITEMS" "$GUI_FRAMEWORKS"
   cp "$gui_bin" "$GUI_MACOS/OpenJoystickDriver"
+  _copy_sdl3_dylib "$GUI_FRAMEWORKS"
+  _patch_sdl3_load_path "$GUI_MACOS/OpenJoystickDriver"
 
   local BUILD_DIR
   BUILD_DIR="$(dirname "$daemon_bin")"
@@ -152,7 +196,7 @@ build_app_bundle() {
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.5.0-alpha.4</string>
+    <string>0.5.0-alpha.5</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
@@ -182,10 +226,13 @@ PLIST
   local DAEMON_BUNDLE="$GUI_LOGIN_ITEMS/OpenJoystickDriverDaemon.app"
   local DAEMON_BUNDLE_CONTENTS="$DAEMON_BUNDLE/Contents"
   local DAEMON_BUNDLE_MACOS="$DAEMON_BUNDLE_CONTENTS/MacOS"
+  local DAEMON_BUNDLE_FRAMEWORKS="$DAEMON_BUNDLE_CONTENTS/Frameworks"
 
   echo "Creating daemon bundle..."
-  mkdir -p "$DAEMON_BUNDLE_MACOS"
+  mkdir -p "$DAEMON_BUNDLE_MACOS" "$DAEMON_BUNDLE_FRAMEWORKS"
   cp "$daemon_bin" "$DAEMON_BUNDLE_MACOS/OpenJoystickDriverDaemon"
+  _copy_sdl3_dylib "$DAEMON_BUNDLE_FRAMEWORKS"
+  _patch_sdl3_load_path "$DAEMON_BUNDLE_MACOS/OpenJoystickDriverDaemon"
   cp "$DAEMON_PROFILE" "$DAEMON_BUNDLE_CONTENTS/embedded.provisionprofile"
   xattr -d com.apple.quarantine "$DAEMON_BUNDLE_CONTENTS/embedded.provisionprofile" 2>/dev/null || true
 
@@ -211,7 +258,7 @@ PLIST
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.5.0-alpha.4</string>
+    <string>0.5.0-alpha.5</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
@@ -230,6 +277,7 @@ PLIST
 
   echo "Signing GUI using:    $GUI_IDENTITY"
   echo "Signing daemon using: $DAEMON_IDENTITY"
+  _sign_dylibs_in_dir "$GUI_IDENTITY" "$GUI_FRAMEWORKS"
   for bundle in "$GUI_RESOURCES"/*.bundle; do
     [[ -d "$bundle" ]] && OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign_resource_bundle "$bundle"
   done
@@ -260,6 +308,7 @@ PLIST
   for bundle in "$DAEMON_RESOURCES"/*.bundle; do
     [[ -d "$bundle" ]] && OJD_ACTIVE_SIGN_IDENTITY="$DAEMON_IDENTITY" ojd_sign_resource_bundle "$bundle"
   done
+  _sign_dylibs_in_dir "$DAEMON_IDENTITY" "$DAEMON_BUNDLE_FRAMEWORKS"
   OJD_ACTIVE_SIGN_IDENTITY="$DAEMON_IDENTITY" ojd_sign "$DAEMON_BUNDLE_MACOS/OpenJoystickDriverDaemon" --entitlements "$DAEMON_ENTITLEMENTS"
   OJD_ACTIVE_SIGN_IDENTITY="$DAEMON_IDENTITY" ojd_sign "$DAEMON_BUNDLE" --entitlements "$DAEMON_ENTITLEMENTS"
   OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign "$GUI_APP" --entitlements "$GUI_ENTITLEMENTS"

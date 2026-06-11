@@ -1,103 +1,66 @@
 import Foundation
-import SwiftUSB
 
-private let usbDetectionPollNanoseconds: UInt64 = 2_000_000_000
 private let devicePermissionWatchNanoseconds: UInt64 = 1_000_000_000
-private let usbVendorSpecificClass: UInt8 = 0xFF
 
-/// Manages device detection and pipeline lifecycle for all
-/// connected controllers.
-/// Uses dual detection: SwiftUSB for class 0xFF (GIP) +
-/// IOKit HIDManager for class 0x03 (HID).
+/// Manages SDL3-backed physical gamepad detection and lifecycle.
+///
+/// SDL3 owns real-controller access. OJD keeps the daemon lifecycle,
+/// canonical state boundary, foreground output gate, and virtual output routing.
 public actor DeviceManager {
-  private struct DeviceInfo {
-    let name: String
-    let connection: String
-    let serialNumber: String?
-  }
-
-  private let parserRegistry: ParserRegistry
   private let dispatcher: any OutputDispatcher
   private let permissionManager: PermissionManager
-  private let hidManager: HIDManager
-  /// Single libusb context shared across the entire daemon process.
-  ///
-  /// Creating multiple libusb contexts spins up multiple event threads and can
-  /// trigger launchd "inefficient" kills for LaunchAgents.
-  private var usbContext: USBContext?
-  private var pipelines: [DeviceIdentifier: DevicePipeline] = [:]
-  private var deviceInfos: [DeviceIdentifier: DeviceInfo] = [:]
-  private var detectionTasks: [Task<Void, Never>] = []
-  private var hidDetectionTask: Task<Void, Never>?
+  private let sdlSource: SDL3GamepadSource
+  private var detectionTask: Task<Void, Never>?
   private var permissionWatchTask: Task<Void, Never>?
   private var externalOutputAllowed = true
+  private var outputStates: [DeviceIdentifier: DeviceInputState] = [:]
+  private var waitingForExternalNeutral: Set<DeviceIdentifier> = []
 
-  /// Creates a manager that sends all output to `dispatcher`.
-  ///
-  /// - Parameters:
-  ///   - dispatcher: Output dispatcher for sending HID reports.
-  ///   - virtualProfile: Virtual device profile for self-exclusion filtering.
-  public init(dispatcher: any OutputDispatcher, virtualProfile: VirtualDeviceProfile = .default) {
+  public init(dispatcher: any OutputDispatcher, virtualProfile _: VirtualDeviceProfile = .default) {
     self.dispatcher = dispatcher
-    self.parserRegistry = ParserRegistry()
     self.permissionManager = PermissionManager()
-    self.hidManager = HIDManager(virtualProfile: virtualProfile)
+    self.sdlSource = SDL3GamepadSource()
   }
 
-  /// Start device detection and input processing.
   public func start() async {
     let state = await permissionManager.checkAccess()
     switch state {
     case .unknown, .denied:
-      if state == .denied {
-        print("[DeviceManager] Input Monitoring denied" + " - running in detect-only mode")
-        print(
-          "[DeviceManager] Open System Settings" + " > Privacy > Input Monitoring"
-            + " to grant access"
-        )
-      } else {
-        print("[DeviceManager] Input Monitoring not yet granted" + " - running in detect-only mode")
-        print(
-          "[DeviceManager] Use the app's Request Access action" + " to show the native macOS prompt"
-        )
-      }
-    case .granted: print("[DeviceManager] Input Monitoring granted")
+      print("[DeviceManager] Input Monitoring not granted; SDL3 may see fewer controllers")
+    case .granted:
+      print("[DeviceManager] Input Monitoring granted")
     }
 
-    ensureUSBContext()
+    guard sdlSource.start() else {
+      print("[DeviceManager] SDL3 input startup failed")
+      return
+    }
 
-    let usbTask = Task { await self.runUSBDetection() }
-    detectionTasks = [usbTask]
-    await ensureHIDDetectionState(for: state)
+    detectionTask = Task { [weak self] in
+      guard let self else { return }
+      while !Task.isCancelled {
+        await self.pollSDL3InputOnce()
+        try? await Task.sleep(nanoseconds: SDL3GamepadSource.pollIntervalNanoseconds)
+      }
+    }
+
     permissionWatchTask = Task { [weak self] in
       guard let self else { return }
       while !Task.isCancelled {
-        let currentState = await self.permissionManager.checkAccess()
-        await self.ensureHIDDetectionState(for: currentState)
+        _ = await self.permissionManager.checkAccess()
         try? await Task.sleep(nanoseconds: devicePermissionWatchNanoseconds)
       }
     }
 
-    print("[DeviceManager] Started" + " - dual detection active")
+    print("[DeviceManager] Started - SDL3 physical input active")
   }
 
-  /// Returns the latest input snapshot for a device matched by vendor and product ID.
-  ///
-  /// Returns nil if no pipeline is active for the device.
   public func inputState(for identifier: DeviceIdentifier) -> DeviceInputState? {
-    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }) else { return nil }
-    return pipelines[key]?.inputState()
+    sdlSource.inputState(for: identifier)
   }
 
-  /// Returns recent raw USB packets for a device matched by vendor and product ID.
-  ///
-  /// Returns an empty array if no pipeline is active for the device.
-  public func packetLog(for identifier: DeviceIdentifier) -> [PacketLogEntry] {
-    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }) else { return [] }
-    return pipelines[key]?.getPacketLog() ?? []
-  }
+  public func packetLog(for _: DeviceIdentifier) -> [PacketLogEntry] { [] }
 
-  /// Sends a short physical-controller rumble command for a matched USB device.
   public func sendRumble(
     for identifier: DeviceIdentifier,
     left: UInt8,
@@ -105,92 +68,57 @@ public actor DeviceManager {
     lt: UInt8,
     rt: UInt8,
     durationMs: Int
-  ) async -> Bool {
-    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }),
-      let pipeline = pipelines[key]
-    else {
-      return false
-    }
-    let didStartUSB = await pipeline.sendRumble(left: left, right: right, lt: lt, rt: rt)
-    let didStartHID =
-      didStartUSB
-      ? false
-      : sendHIDRumbleReport(
-        await pipeline.hidRumbleReport(left: left, right: right, lt: lt, rt: rt),
-        locationID: key.locationID
-      )
-    let didStart = didStartUSB || didStartHID
-    guard didStart else { return false }
-    let clampedDurationMs = max(0, min(durationMs, 5_000))
-    if clampedDurationMs > 0 {
-      try? await Task.sleep(nanoseconds: UInt64(clampedDurationMs) * 1_000_000)
-      let didStopUSB = await pipeline.sendRumble(left: 0, right: 0, lt: 0, rt: 0)
-      if !didStopUSB {
-        _ = sendHIDRumbleReport(
-          await pipeline.hidRumbleReport(left: 0, right: 0, lt: 0, rt: 0),
-          locationID: key.locationID
-        )
-      }
-    }
-    return true
-  }
-
-  private func sendHIDRumbleReport(
-    _ report: PhysicalHIDOutputReport?,
-    locationID: UInt32?
   ) -> Bool {
-    guard let report, let locationID else { return false }
-    return hidManager.setOutputReport(locationID: locationID, report: report)
+    sdlSource.sendRumble(
+      for: identifier,
+      left: left,
+      right: right,
+      lt: lt,
+      rt: rt,
+      durationMs: durationMs
+    )
   }
 
-  /// Returns structured descriptions for all connected controllers.
-  ///
-  /// Used by XPCService to report live device list.
   public func connectedDeviceDescriptions() -> [XPCDeviceDescription] {
-    pipelines.keys.map { id in
-      let info = deviceInfos[id]
-      let profile = parserRegistry.runtimeProfile(for: id)
-      return XPCDeviceDescription(
-        name: info?.name ?? "Controller",
-        vendorID: id.vendorID,
-        productID: id.productID,
-        parser: profile.parserName,
-        connection: info?.connection ?? "USB",
-        serialNumber: info?.serialNumber,
-        protocolVariant: profile.protocolVariant.rawValue,
-        mappingFlags: profile.mappingFlags,
-        inputEndpoint: profile.transportProfile.inputEndpoint,
-        outputEndpoint: profile.transportProfile.outputEndpoint,
-        needsSetConfiguration: profile.transportProfile.needsSetConfiguration,
-        postHandshakeSettleMs: Int(
-          profile.transportProfile.postHandshakeSettleNanoseconds / 1_000_000
-        ),
-        preferredBackends: profile.preferredBackends.map(\.rawValue),
-        supportsPhysicalRumble: pipelines[id]?.supportsPhysicalRumble() ?? false
+    sdlSource.connectedGamepads().map { gamepad in
+      XPCDeviceDescription(
+        name: gamepad.identity.name,
+        vendorID: gamepad.identifier.vendorID,
+        productID: gamepad.identifier.productID,
+        parser: "SDL3",
+        connection: "SDL3",
+        serialNumber: gamepad.identifier.serialNumber,
+        protocolVariant: "sdl3Gamepad",
+        mappingFlags: [],
+        inputEndpoint: 0,
+        outputEndpoint: 0,
+        needsSetConfiguration: false,
+        postHandshakeSettleMs: 0,
+        preferredBackends: [],
+        supportsPhysicalRumble: gamepad.supportsRumble
       )
     }
   }
 
-  /// Returns live identifiers for connected controller pipelines.
   public func connectedDeviceIdentifiers() -> [DeviceIdentifier] {
-    Array(pipelines.keys)
+    sdlSource.connectedGamepads().map(\.identifier)
   }
 
-  /// Stop all detection and pipelines.
   public func stop() async {
-    for task in detectionTasks { task.cancel() }
-    detectionTasks = []
-    hidDetectionTask?.cancel()
-    hidDetectionTask = nil
+    detectionTask?.cancel()
+    detectionTask = nil
     permissionWatchTask?.cancel()
     permissionWatchTask = nil
-    for (identifier, pipeline) in pipelines {
-      if let locationID = identifier.locationID {
-        await sendHIDShutdownFeatureReportsIfNeeded(pipeline: pipeline, locationID: locationID)
+
+    for identifier in Array(outputStates.keys) {
+      await neutralizeOutput(for: identifier)
+      if let listener = dispatcher as? any ControllerLifecycleListener {
+        listener.controllerDidStop(identifier)
       }
-      await pipeline.stop()
     }
-    pipelines = [:]
+    outputStates.removeAll()
+    waitingForExternalNeutral.removeAll()
+    sdlSource.close()
     await permissionManager.stopPolling()
     print("[DeviceManager] Stopped")
   }
@@ -198,341 +126,79 @@ public actor DeviceManager {
   public func setExternalOutputAllowed(_ allowed: Bool) async {
     guard externalOutputAllowed != allowed else { return }
     externalOutputAllowed = allowed
-    for pipeline in pipelines.values {
-      await pipeline.setExternalOutputAllowed(allowed)
-    }
-  }
-
-  // MARK: - USB detection (class 0xFF)
-
-  private func runUSBDetection() async {
-    print("[DeviceManager] USB detection started" + " (class 0xFF)")
-    ensureUSBContext()
-    guard let context = usbContext else {
-      print("[DeviceManager] Failed to create USBContext")
+    if !allowed {
+      waitingForExternalNeutral.removeAll()
+      for identifier in Array(outputStates.keys) { await neutralizeOutput(for: identifier) }
+      print("[DeviceManager] Output gated by foreground consumer")
       return
     }
 
-    var knownLocations: Set<String> = []
-    var locationToIdentifier: [String: DeviceIdentifier] = [:]
-
-    while !Task.isCancelled {
-      let (currentKeys, addedDevices) = await usbDetectCurrentDevices(
-        context: context,
-        knownLocations: knownLocations
-      )
-
-      updateUSBKnownLocations(
-        &knownLocations,
-        currentKeys: currentKeys,
-        addedDevices: addedDevices,
-        locationToIdentifier: &locationToIdentifier
-      )
-
-      await removeUSBLostDevices(
-        knownLocations: &knownLocations,
-        currentKeys: currentKeys,
-        locationToIdentifier: &locationToIdentifier
-      )
-
-      try? await Task.sleep(nanoseconds: usbDetectionPollNanoseconds)
+    for gamepad in sdlSource.connectedGamepads() where !gamepad.snapshot.isEffectivelyNeutral {
+      waitingForExternalNeutral.insert(gamepad.identifier)
     }
+    print("[DeviceManager] Output ungated by foreground consumer")
   }
 
-  private func usbDetectCurrentDevices(context: USBContext, knownLocations: Set<String>) async -> (
-    Set<String>, [(device: USBDevice, key: String)]
-  ) {
-    var currentKeys: Set<String> = []
-    var addedDevices: [(device: USBDevice, key: String)] = []
-    let stream = context.findDevices(deviceClass: usbVendorSpecificClass, findAll: true)
-    for await device in stream {
-      let key = "\(device.bus):\(device.address)"
-      currentKeys.insert(key)
-      if !knownLocations.contains(key) { addedDevices.append((device, key)) }
-    }
-    return (currentKeys, addedDevices)
+  private func pollSDL3InputOnce() async {
+    await sdlSource.pollOnce(
+      onEvents: { [weak self] identifier, events in
+        guard let self else { return }
+        await self.handleSDLEvents(events, from: identifier)
+      },
+      onRemoved: { [weak self] identifier in
+        guard let self else { return }
+        await self.handleSDLRemoval(identifier)
+      }
+    )
   }
 
-  private func updateUSBKnownLocations(
-    _ knownLocations: inout Set<String>,
-    currentKeys: Set<String>,
-    addedDevices: [(device: USBDevice, key: String)],
-    locationToIdentifier: inout [String: DeviceIdentifier]
-  ) {
-    for (device, key) in addedDevices {
-      knownLocations.insert(key)
-      if let id = handleUSBDeviceAdded(device) { locationToIdentifier[key] = id }
-    }
-  }
-
-  private func removeUSBLostDevices(
-    knownLocations: inout Set<String>,
-    currentKeys: Set<String>,
-    locationToIdentifier: inout [String: DeviceIdentifier]
+  private func handleSDLEvents(
+    _ events: [ControllerEvent],
+    from identifier: DeviceIdentifier
   ) async {
-    let removedKeys = knownLocations.subtracting(currentKeys)
-    for key in removedKeys {
-      knownLocations.remove(key)
-      if let id = locationToIdentifier.removeValue(forKey: key) {
-        let pipeline = pipelines.removeValue(forKey: id)
-        deviceInfos.removeValue(forKey: id)
-        await pipeline?.stop()
-        print("[DeviceManager] USB device removed: \(id)")
-      }
-    }
-  }
-
-  private func ensureUSBContext() {
-    if usbContext != nil { return }
-    do {
-      usbContext = try USBContext()
-    } catch {
-      usbContext = nil
-      print("[DeviceManager] Failed to create USBContext: \(error)")
-    }
-  }
-
-  @discardableResult private func handleUSBDeviceAdded(_ device: USBDevice) -> DeviceIdentifier? {
-    let locationID = UInt32((UInt32(device.bus) << 8) | UInt32(device.address))
-    let serial = try? device.getSerialNumber()
-    let identifier = DeviceIdentifier(
-      vendorID: device.idVendor,
-      productID: device.idProduct,
-      serialNumber: serial,
-      locationID: locationID
-    )
-
-    guard pipelines[identifier] == nil else {
-      print("[DeviceManager] Pipeline already exists" + " for \(identifier)")
-      return nil
-    }
-
-    let productName = (try? device.getProduct()) ?? "Controller"
-    deviceInfos[identifier] = DeviceInfo(name: productName, connection: "USB", serialNumber: serial)
-    print("[DeviceManager] USB device added: \(productName) (\(identifier))")
-    let parser = parserRegistry.parser(for: identifier)
-    let transportProfile = parserRegistry.transportProfile(for: identifier)
-    let pipeline = DevicePipeline(
-      identifier: identifier,
-      transport: .usb(vendorID: device.idVendor, productID: device.idProduct),
-      parser: parser,
-      dispatcher: dispatcher,
-      usbContext: usbContext,
-      transportProfile: transportProfile,
-      externalOutputAllowed: externalOutputAllowed
-    )
-    pipelines[identifier] = pipeline
-    Task { await pipeline.start() }
-    if !pipeline.requiresInputConnectionBeforeOutput() {
-      Task { await dispatcher.dispatch(events: [], from: identifier) }
-    }
-    return identifier
-  }
-
-  // MARK: - HID detection (class 0x03)
-
-  private func ensureHIDDetectionState(for state: PermissionManager.AccessState) async {
-    switch state {
-    case .granted:
-      guard hidDetectionTask == nil else { return }
-      hidDetectionTask = Task { await self.runHIDDetection() }
-    case .unknown, .denied:
-      hidDetectionTask?.cancel()
-      hidDetectionTask = nil
-      await removeHIDPipelines()
-    }
-  }
-
-  private func runHIDDetection() async {
-    print("[DeviceManager] HID detection started" + " (class 0x03)")
-    for await event in hidManager.deviceEvents() {
-      switch event {
-      case .connected(let vid, let pid, let serial, let loc, let productName, let transport):
-        handleHIDDeviceConnected(
-          vendorID: vid,
-          productID: pid,
-          serialNumber: serial,
-          locationID: loc,
-          productName: productName,
-          transport: transport
-        )
-      case .disconnected(let vid, let pid, let loc):
-        await handleHIDDeviceDisconnected(vendorID: vid, productID: pid, locationID: loc)
-      case .inputReport(let loc, _, let data):
-        await routeHIDInputReport(locationID: loc, data: data)
-      }
-    }
-  }
-
-  private func removeHIDPipelines() async {
-    let hidIdentifiers = pipelines.keys.filter {
-      (deviceInfos[$0]?.connection ?? "") != "USB"
-    }
-
-    for identifier in hidIdentifiers {
-      guard let pipeline = pipelines.removeValue(forKey: identifier) else { continue }
-      deviceInfos.removeValue(forKey: identifier)
-      await pipeline.stop()
-      print("[DeviceManager] HID pipeline removed: \(identifier)")
-    }
-  }
-
-  private func handleHIDDeviceConnected(
-    vendorID: UInt16,
-    productID: UInt16,
-    serialNumber: String?,
-    locationID: UInt32,
-    productName: String?,
-    transport: String?
-  ) {
-    let identifier = DeviceIdentifier(
-      vendorID: vendorID,
-      productID: productID,
-      serialNumber: serialNumber,
-      locationID: locationID
-    )
-
-    guard pipelines[identifier] == nil else { return }
-
-    let name = productName ?? "Controller"
-    let connection = transport ?? "HID"
-    deviceInfos[identifier] = DeviceInfo(
-      name: name,
-      connection: connection,
-      serialNumber: serialNumber
-    )
-    print("[DeviceManager] HID device connected:" + " \(name) (\(identifier))")
-    let parser: any InputParser
-    if parserRegistry.parserName(for: identifier) == "DS4", connection == "Bluetooth" {
-      parser = DS4Parser(prefersBluetooth: true)
-    } else {
-      parser = parserRegistry.parser(for: identifier)
-    }
-    let pipeline = DevicePipeline(
-      identifier: identifier,
-      transport: .hid(locationID: locationID),
-      parser: parser,
-      dispatcher: dispatcher,
-      usbContext: nil,
-      externalOutputAllowed: externalOutputAllowed
-    )
-    pipelines[identifier] = pipeline
-    Task { await pipeline.start() }
-    if !pipeline.requiresInputConnectionBeforeOutput() {
-      Task { await dispatcher.dispatch(events: [], from: identifier) }
-    }
-    sendHIDStartupFeatureReadRequestsIfNeeded(
-      parser: parser,
-      locationID: locationID,
-      transport: transport
-    )
-    if !pipeline.requiresInputConnectionBeforeOutput() {
-      sendHIDStartupFeatureReportsIfNeeded(
-        parser: parser,
-        locationID: locationID,
-        transport: transport
+    if outputStates[identifier] == nil {
+      outputStates[identifier] = DeviceInputState(
+        vendorID: identifier.vendorID,
+        productID: identifier.productID
       )
+      await dispatcher.dispatch(events: [], from: identifier)
     }
-    sendHIDStartupOutputReportsIfNeeded(
-      parser: parser,
-      locationID: locationID,
-      transport: transport
-    )
-    requestHIDInputConnectionStatusIfNeeded(parser: parser, locationID: locationID)
+
+    if var state = outputStates[identifier] {
+      state.apply(events: events)
+      outputStates[identifier] = state
+    }
+
+    guard externalOutputAllowed else { return }
+    if waitingForExternalNeutral.contains(identifier) {
+      guard outputStates[identifier]?.isEffectivelyNeutral == true else { return }
+      waitingForExternalNeutral.remove(identifier)
+    }
+    await dispatcher.dispatch(events: events, from: identifier)
   }
 
-  private func sendHIDStartupFeatureReadRequestsIfNeeded(
-    parser: any InputParser,
-    locationID: UInt32,
-    transport: String?
-  ) {
-    guard let provider = parser as? any HIDStartupFeatureReadRequestProvider else { return }
-    for request in provider.hidStartupFeatureReadRequests(transport: transport)
-      where hidManager.getFeatureReport(locationID: locationID, request: request) == nil
-    {
-      print("[DeviceManager] HID startup feature report read failed for loc=\(locationID)")
+  private func handleSDLRemoval(_ identifier: DeviceIdentifier) {
+    outputStates.removeValue(forKey: identifier)
+    waitingForExternalNeutral.remove(identifier)
+    if let listener = dispatcher as? any ControllerLifecycleListener {
+      listener.controllerDidStop(identifier)
     }
+    print("[DeviceManager] SDL3 gamepad removed: \(identifier)")
   }
 
-  private func sendHIDStartupFeatureReportsIfNeeded(
-    parser: any InputParser,
-    locationID: UInt32,
-    transport: String?
-  ) {
-    guard let provider = parser as? any HIDStartupFeatureReportProvider else { return }
-    for report in provider.hidStartupFeatureReports(transport: transport) {
-      let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
-      if !sent {
-        print("[DeviceManager] HID startup feature report failed for loc=\(locationID)")
-      }
-    }
+  private func neutralizeOutput(for identifier: DeviceIdentifier) async {
+    guard let state = outputStates[identifier] else { return }
+    let neutralizingEvents = state.neutralizingEvents()
+    guard !neutralizingEvents.isEmpty else { return }
+    await dispatcher.dispatch(events: neutralizingEvents, from: identifier)
+    var neutral = state
+    neutral.apply(events: neutralizingEvents)
+    outputStates[identifier] = neutral
   }
+}
 
-  private func sendHIDStartupOutputReportsIfNeeded(
-    parser: any InputParser,
-    locationID: UInt32,
-    transport: String?
-  ) {
-    guard let provider = parser as? any HIDStartupOutputReportProvider else { return }
-    for report in provider.hidStartupReports(transport: transport) {
-      let sent = hidManager.setOutputReport(locationID: locationID, report: report)
-      if !sent {
-        print("[DeviceManager] HID startup output report failed for loc=\(locationID)")
-      }
-    }
-  }
-
-  private func requestHIDInputConnectionStatusIfNeeded(
-    parser: any InputParser,
-    locationID: UInt32
-  ) {
-    guard let requester = parser as? any HIDInputConnectionStatusRequester,
-      let report = requester.inputConnectionStatusRequestReport()
-    else { return }
-    let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
-    if !sent {
-      print("[DeviceManager] HID input connection status request failed for loc=\(locationID)")
-    }
-  }
-
-  private func handleHIDDeviceDisconnected(vendorID: UInt16, productID: UInt16, locationID: UInt32)
-    async
-  {
-    if let key = pipelines.keys.first(where: { $0.locationID == locationID }) {
-      let pipeline = pipelines.removeValue(forKey: key)
-      deviceInfos.removeValue(forKey: key)
-      await sendHIDShutdownFeatureReportsIfNeeded(pipeline: pipeline, locationID: locationID)
-      await pipeline?.stop()
-      print(
-        "[DeviceManager] HID device disconnected:" + " VID=\(vendorID) PID=\(productID)"
-          + " loc=\(locationID)"
-      )
-    }
-  }
-
-  private func sendHIDShutdownFeatureReportsIfNeeded(
-    pipeline: DevicePipeline?,
-    locationID: UInt32
-  ) async {
-    guard let pipeline else { return }
-    for report in await pipeline.hidShutdownFeatureReports() {
-      let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
-      if !sent {
-        print("[DeviceManager] HID shutdown feature report failed for loc=\(locationID)")
-      }
-    }
-  }
-
-  private func routeHIDInputReport(locationID: UInt32, data: Data) async {
-    if let key = pipelines.keys.first(where: { $0.locationID == locationID }),
-      let featureReports = await pipelines[key]?.feedHIDData(data)
-    {
-      for report in featureReports {
-        let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
-        if !sent {
-          print("[DeviceManager] HID lifecycle feature report failed for loc=\(locationID)")
-        }
-      }
-    }
+extension SDL3GamepadSnapshot {
+  var isEffectivelyNeutral: Bool {
+    buttons.isEmpty && axes.values.allSatisfy { abs(Int($0)) < 1_000 }
   }
 }

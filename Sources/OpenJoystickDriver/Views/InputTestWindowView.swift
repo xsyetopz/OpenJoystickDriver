@@ -300,7 +300,7 @@ struct InputTestWindowView: View {
         .back, .start, .guide, .share,
         .dpadUp, .dpadDown, .dpadLeft, .dpadRight,
       ]
-    case "Xbox360":
+    case "Xbox360", "SDL3":
       return [
         .a, .b, .x, .y,
         .leftBumper, .rightBumper,

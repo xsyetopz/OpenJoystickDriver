@@ -90,10 +90,11 @@ struct InputMonitoringPromptFlowTests {
     #expect(source.contains("process.environment = ProcessInfo.processInfo.environment.merging"))
     #expect(source.contains("\"OJD_PERMISSION_PROMPT_ONLY\": \"1\""))
     #expect(!deviceManager.contains("await permissionManager.requestAccess()"))
-    #expect(deviceManager.contains("Use the app's Request Access action"))
-    #expect(deviceManager.contains("await ensureHIDDetectionState(for: state)"))
-    #expect(deviceManager.contains("private func ensureHIDDetectionState"))
-    #expect(deviceManager.contains("await removeHIDPipelines()"))
+    #expect(deviceManager.contains("SDL3 physical input active"))
+    #expect(deviceManager.contains("sdlSource.start()"))
+    #expect(deviceManager.contains("pollSDL3InputOnce()"))
+    #expect(!deviceManager.contains("ensureHIDDetectionState"))
+    #expect(!deviceManager.contains("removeHIDPipelines"))
   }
   @Test
   func testDaemonRetainsShutdownSignalSourcesForQuitAndReopen() throws {

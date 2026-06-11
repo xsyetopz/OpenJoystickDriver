@@ -25,6 +25,7 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
 ## Why OpenJoystickDriver
 
 - Normalizes physical controller input into virtual controller outputs that apps can understand.
+- Uses SDL3 for real controller access, including SDL HIDAPI/libusb-backed controllers on macOS.
 - Provides compatibility modes for SDL, Apple GameController, Generic HID, and experimental Xbox HID targets.
 - Keeps common diagnostics and validation commands in one repo-controlled workflow.
 
@@ -92,7 +93,7 @@ Installed app bundle commands:
 Parser, profile, and test changes do not require signing:
 
 ```bash
-brew install libusb
+brew install sdl3 libusb
 ./scripts/ojd validate profiles
 ./scripts/ojd test parsers-macos14
 swift build

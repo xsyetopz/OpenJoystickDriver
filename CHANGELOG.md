@@ -2,6 +2,21 @@
 
 All notable changes to OpenJoystickDriver are documented in this file.
 
+## 0.5.0-alpha.5
+
+### Added
+
+- Added SDL3-backed physical gamepad input so controllers supported by SDL3,
+  including libusb-backed macOS devices, can be forwarded through OJD without
+  per-device parser patches.
+- Added SDL3 backend regression coverage and packaged SDL3 dylib bundling for
+  the app and daemon helper.
+
+### Changed
+
+- Replaced the runtime physical input backend with SDL3 while keeping virtual
+  output routing through the existing compatibility layers.
+
 ## 0.5.0-alpha.4
 
 ### Fixed

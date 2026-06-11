@@ -58,14 +58,14 @@ static constexpr uint8_t OJD_RELAY_MAGIC_0 = 0x4F;  // 'O'
 static constexpr uint8_t OJD_RELAY_MAGIC_1 = 0x4A;  // 'J'
 static constexpr uint32_t OJD_RELAY_HEADER_SIZE = 3;
 
-static inline void publishDebugState(OpenJoystickVirtualHIDDevice* self) {
+static auto publishDebugState(OpenJoystickVirtualHIDDevice* self) -> void {
     auto* ivars = self->ivars;
     if (ivars == nullptr) {
         return;
     }
 
     // Rate-limit publishing to IORegistry: update every 25 setReport calls, or on any failure.
-    const bool shouldPublish =
+    const auto shouldPublish =
         (ivars->setReportCount - ivars->lastPublishedSetReportCount) >= 25
         || (ivars->inputReportCount - ivars->lastPublishedInputReportCount) >= 25;
 
@@ -113,7 +113,7 @@ auto OpenJoystickVirtualHIDDevice::init() -> bool {
     return true;
 }
 
-auto OpenJoystickVirtualHIDDevice::free() -> void {
+auto OpenJoystickVirtualHIDDevice::free() {
     IOSafeDeleteNULL(ivars, OpenJoystickVirtualHIDDevice_IVars, 1);
     super::free();
 }
@@ -278,7 +278,7 @@ auto OpenJoystickVirtualHIDDevice::setReport(
     }
 
     uint64_t len = 0;
-    const kern_return_t lenKr = report->GetLength(&len);
+    const auto lenKr = report->GetLength(&len);
     if (lenKr != kIOReturnSuccess || len == 0) {
         os_log(
             OS_LOG_DEFAULT,
@@ -293,7 +293,7 @@ auto OpenJoystickVirtualHIDDevice::setReport(
     }
 
     IOBufferMemoryDescriptor* buffer = nullptr;
-    const kern_return_t bufKr = IOBufferMemoryDescriptor::Create(
+    const auto bufKr = IOBufferMemoryDescriptor::Create(
         kIOMemoryDirectionIn,
         len,
         /* alignment */ 0,
@@ -316,9 +316,8 @@ auto OpenJoystickVirtualHIDDevice::setReport(
     IOMemoryMap* reportMap = nullptr;
     IOMemoryMap* bufferMap = nullptr;
 
-    const kern_return_t mapInKr =
-        report->CreateMapping(kIOMemoryMapReadOnly, 0, 0, len, 0, &reportMap);
-    const kern_return_t mapOutKr = buffer->CreateMapping(0, 0, 0, len, 0, &bufferMap);
+    const auto mapInKr = report->CreateMapping(kIOMemoryMapReadOnly, 0, 0, len, 0, &reportMap);
+    const auto mapOutKr = buffer->CreateMapping(0, 0, 0, len, 0, &bufferMap);
 
     if (mapInKr != kIOReturnSuccess || reportMap == nullptr || mapOutKr != kIOReturnSuccess
         || bufferMap == nullptr) {
@@ -339,8 +338,8 @@ auto OpenJoystickVirtualHIDDevice::setReport(
         return kIOReturnSuccess;
     }
 
-    void* const src = reinterpret_cast<void*>(static_cast<uintptr_t>(reportMap->GetAddress()));
-    void* const dst = reinterpret_cast<void*>(static_cast<uintptr_t>(bufferMap->GetAddress()));
+    auto* const src = reinterpret_cast<void*>(static_cast<uintptr_t>(reportMap->GetAddress()));
+    auto* const dst = reinterpret_cast<void*>(static_cast<uintptr_t>(bufferMap->GetAddress()));
     if (src != nullptr && dst != nullptr) {
         memcpy(dst, src, static_cast<size_t>(len));
     } else {
@@ -356,7 +355,7 @@ auto OpenJoystickVirtualHIDDevice::setReport(
     }
 
     uint32_t targetReportID = 0;
-    uint64_t relayLen = len;
+    auto relayLen = len;
     if (dst != nullptr && len >= OJD_RELAY_HEADER_SIZE) {
         const auto* bytes = reinterpret_cast<const uint8_t*>(dst);
         if (bytes[0] == OJD_RELAY_MAGIC_0 && bytes[1] == OJD_RELAY_MAGIC_1) {
@@ -370,9 +369,8 @@ auto OpenJoystickVirtualHIDDevice::setReport(
     // The generic DriverKit descriptor has no report IDs. Unframed daemon reports
     // are primary gamepad payloads; framed reports can still carry the relay header
     // so the Swift side can share one path with report-ID-based descriptors.
-    const uint32_t reportLen32 =
-        (relayLen > UINT32_MAX) ? UINT32_MAX : static_cast<uint32_t>(relayLen);
-    const kern_return_t relayKr =
+    const auto reportLen32 = (relayLen > UINT32_MAX) ? UINT32_MAX : static_cast<uint32_t>(relayLen);
+    const auto relayKr =
         handleReport(targetReportID, buffer, reportLen32, kIOHIDReportTypeInput, 0);
     if (relayKr != kIOReturnSuccess) {
         os_log(

@@ -7,20 +7,26 @@ or virtual-controller publication.
 ## Runtime Boundaries
 
 ```text
-Physical USB/HID device
+Physical USB/HID/Bluetooth gamepad
+  -> SDL3 Gamepad/HIDAPI
   -> DeviceManager
-  -> one DevicePipeline actor per controller
-  -> protocol parser and optional protocol output capabilities
+  -> SDL3GamepadSource per physical gamepad
+  -> SDL3 canonical gamepad mapping
   -> virtual output dispatcher
   -> DriverKit relay or IOHIDUserDevice profile
 ```
 
-The pipeline boundary is per controller. One device failing to parse, reconnect,
-or send output must not take down another connected controller.
+SDL3 owns physical-controller enumeration, HIDAPI/libusb access, controller
+database mapping, and physical rumble. OJD owns the daemon lifecycle,
+foreground-output gate, canonical `ControllerEvent` boundary, and virtual output
+surfaces. One device failing to open, reconnect, or send rumble must not take
+down another connected controller.
 
 ## Controller Profiles
 
-Controller metadata is profile-driven. Bundled controller profiles live in:
+Controller profiles are retained as parser/catalog fixtures and compatibility
+metadata, but the production physical input path is SDL3's Gamepad API. Bundled
+legacy/controller-profile data lives in:
 
 ```text
 Sources/OpenJoystickDriverKit/Resources/Controllers/
@@ -32,11 +38,11 @@ Device schemas live in:
 Resources/Schemas/Devices/
 ```
 
-The runtime catalog loads controller profiles directly. The old monolithic
-device catalog shape is not a supported runtime input. New devices must add
-one controller profile plus, for GIP devices, a matching device schema.
+Do not add new production physical input support by patching one parser/profile
+at a time. New real-controller support should land upstream in SDL3 or as an
+SDL controller mapping when SDL already exposes the device.
 
-Device-specific USB behavior must live in data:
+For legacy/reference parser work, device-specific USB behavior must live in data:
 
 - endpoint addresses
 - `setConfiguration(1)` before claim
@@ -46,20 +52,20 @@ Device-specific USB behavior must live in data:
 - GIP startup packet sequence
 - preferred virtual output backends
 
-Parser code must only carry behavior required by a protocol family.
+Legacy parser code must only carry behavior required by a protocol family.
 
-## Protocol Extensions
+## Legacy Protocol Parsers
 
-Input parsers convert raw reports into `ControllerEvent` values. Optional
-physical-controller output is modeled as explicit protocol capabilities, not as
-special cases in `DevicePipeline`.
+Legacy input parsers convert raw reports into `ControllerEvent` values for
+tests, capture tools, and source-backed reference behavior. They are not the
+production path used by `DeviceManager`.
 
 Current capability surface:
 
 - `PhysicalRumbleOutput`: source-controller rumble with `L`, `R`, `LT`, and `RT`
   byte values in the `0...255` range.
 
-Current source-backed physical rumble implementations:
+Legacy source-backed physical rumble implementations:
 
 - GIP Xbox One / Series class controllers
 - Xbox 360 wired controllers
@@ -89,17 +95,15 @@ Windows XInput or XUSB emulation on macOS.
 
 ## Extension Rules
 
-To add a controller:
+To add production physical-controller support:
 
-1. Add a controller profile under `Sources/OpenJoystickDriverKit/Resources/Controllers/`.
-2. Add a matching `Resources/Schemas/Devices/*.json` file for locally verified
-   GIP devices.
-3. Keep protocol quirks in `protocol.variant`, `protocol.mapping_flags`, and
-   transport/startup data unless parser behavior truly changes.
-4. Add parser tests or report-format tests for any new protocol behavior.
-5. Validate profiles with `./scripts/ojd validate profiles`; for parser regressions that must avoid Swift Testing, use `./scripts/ojd test parsers-macos14`.
+1. Confirm SDL3 exposes the device through `SDL_GetGamepads`.
+2. Add or upstream an SDL controller mapping if SDL's canonical mapping is wrong.
+3. Add OJD tests only for OJD's SDL3-to-`ControllerEvent` translation or virtual
+   output behavior.
+4. Do not add a new OJD raw-protocol backend for a single device.
 
-To add a protocol:
+To change a legacy/reference protocol parser:
 
 1. Add a parser under `Sources/OpenJoystickDriverKit/Protocol/`.
 2. Add any optional physical output capability under
