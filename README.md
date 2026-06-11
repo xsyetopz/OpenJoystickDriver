@@ -93,7 +93,8 @@ Installed app bundle commands:
 Parser, profile, and test changes do not require signing:
 
 ```bash
-brew install sdl3 libusb
+brew install libusb
+./scripts/ojd install-sdl3
 ./scripts/ojd validate profiles
 ./scripts/ojd test parsers-macos14
 swift build

@@ -37,6 +37,10 @@ jobs:
           brew install libusb
           brew install swiftlint
 
+      - name: Build SDL3
+        run: |
+          ./scripts/ojd install-sdl3 --github-env
+
       - name: Validate controller profiles
         run: |
           bash scripts/ojd validate profiles

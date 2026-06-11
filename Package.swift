@@ -37,7 +37,6 @@ let package = Package(
       name: "CSDL3",
       path: "Sources/CSDL3",
       pkgConfig: "sdl3",
-      providers: [.brew(["sdl3"])]
     ),
 
     .target(

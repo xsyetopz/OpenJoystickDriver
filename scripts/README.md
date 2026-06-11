@@ -147,9 +147,9 @@ install and approve the app/system extension locally.
 
 `.github/workflows/release.yml` runs on SemVer tags such as `0.1.0` or
 `0.5.0-alpha.5` and by manual dispatch.
-It installs `libusb`, validates profiles, imports signing material, builds a
-release app, notarizes it, uploads the release DMG as a workflow artifact, and
-publishes the GitHub Release.
+It installs `libusb`, builds current SDL3 from upstream source, validates
+profiles, imports signing material, builds a release app, notarizes it, uploads
+the release DMG as a workflow artifact, and publishes the GitHub Release.
 
 ### Required repository secrets
 
