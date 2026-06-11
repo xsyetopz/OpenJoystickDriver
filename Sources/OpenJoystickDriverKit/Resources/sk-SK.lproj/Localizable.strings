@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Spustite daemon na pripojenie ovládačov.";
 "readiness.daemonDisconnected" = "Daemon beží, ale je odpojený. Reštartujte daemon.";
 "readiness.allowAppInputMonitoring" = "Povoľte Sledovanie vstupu pre OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Povoľte Sledovanie vstupu pre OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Povoľte Sledovanie vstupu pre OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Pripojte ovládač.";
 "readiness.controllersConnected.one" = "Pripojený %d ovládač.";
 "readiness.controllersConnected.other" = "Pripojených %d ovládačov.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Otvorte Nastavenia systému a zapnite Sledovanie vstupu pre %@.";
 "permissions.assist" = "OpenJoystickDriver požiadal macOS o prístup. V Sledovaní vstupu zapnite %@. Ak macOS požiada o ukončenie a opätovné otvorenie, povoľte to.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Daemon sa po inštalácii spustí automaticky.";
 "daemon.systemExtension" = "Systémové rozšírenie";

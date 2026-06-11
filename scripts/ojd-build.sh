@@ -288,64 +288,6 @@ _require_profile_entitlement_value() {
   fi
 }
 
-_signed_entitlement_value() {
-  local target="$1" key="$2"
-  python3 - "$target" "$key" <<'PY'
-import plistlib, subprocess, sys
-
-target, key = sys.argv[1], sys.argv[2]
-result = subprocess.run(
-    ["codesign", "-d", "--entitlements", "-", "--xml", target],
-    stdout=subprocess.PIPE,
-    stderr=subprocess.DEVNULL,
-)
-if result.returncode != 0 or not result.stdout or b"<?xml" not in result.stdout:
-    print("decode_error")
-    raise SystemExit(0)
-
-try:
-    raw = result.stdout[result.stdout.index(b"<?xml") :]
-    entitlements = plistlib.loads(raw)
-except Exception:
-    print("decode_error")
-    raise SystemExit(0)
-
-value = entitlements.get(key, "missing")
-if isinstance(value, bool):
-    print("true" if value else "false")
-elif isinstance(value, str):
-    print(value)
-else:
-    print("missing" if value == "missing" else str(value))
-PY
-}
-
-_require_signed_entitlement_value() {
-  local target="$1" key="$2" expected="$3" what="$4" fix="$5"
-  local actual
-  actual="$(_signed_entitlement_value "$target" "$key" || echo "missing")"
-  if [[ "$actual" == "decode_error" ]]; then
-    echo ""
-    echo "ERROR: Could not read signed entitlements from bundle."
-    echo "  path: $target"
-    echo "  affects: $what"
-    echo ""
-    echo "$fix"
-    exit 1
-  fi
-  if [[ "$actual" != "$expected" ]]; then
-    echo ""
-    echo "ERROR: Signed bundle entitlement value mismatch: $key"
-    echo "  path: $target"
-    echo "  affects: $what"
-    echo "  expected: $expected"
-    echo "  actual: $actual"
-    echo ""
-    echo "$fix"
-    exit 1
-  fi
-}
-
 source "$SCRIPT_DIR/ojd-build-bundles.sh"
 
 next_dext_bundle_version() {

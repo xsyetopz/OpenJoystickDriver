@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Tosaigh an deamhan chun rialtóirí a nascadh.";
 "readiness.daemonDisconnected" = "Tá an deamhan ag rith ach dícheangailte. Atosaigh an deamhan.";
 "readiness.allowAppInputMonitoring" = "Ceadaigh Monatóireacht Ionchuir do OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Ceadaigh Monatóireacht Ionchuir do OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Ceadaigh Monatóireacht Ionchuir do OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Ceangail rialtóir.";
 "readiness.controllersConnected.one" = "%d rialtóir ceangailte.";
 "readiness.controllersConnected.other" = "%d rialtóir ceangailte.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Oscail Socruithe Córais, ansin cuir Monatóireacht Ionchuir ar siúl do %@.";
 "permissions.assist" = "D’iarr OpenJoystickDriver rochtain ar macOS. I Monatóireacht Ionchuir, cuir %@ ar siúl. Má iarrann macOS ort scor agus oscailt arís, ceadaigh é.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Deamhan";
 "daemon.autoStarts" = "Tosaíonn an deamhan go huathoibríoch tar éis suiteála.";
 "daemon.systemExtension" = "Síneadh córais";

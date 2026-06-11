@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Ξεκινήστε τον δαίμονα για σύνδεση χειριστηρίων.";
 "readiness.daemonDisconnected" = "Ο δαίμονας εκτελείται αλλά είναι αποσυνδεδεμένος. Επανεκκινήστε τον δαίμονα.";
 "readiness.allowAppInputMonitoring" = "Επιτρέψτε την Παρακολούθηση εισόδου για το OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Επιτρέψτε την Παρακολούθηση εισόδου για το OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Επιτρέψτε την Παρακολούθηση εισόδου για το OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Συνδέστε ένα χειριστήριο.";
 "readiness.controllersConnected.one" = "Συνδέθηκε %d χειριστήριο.";
 "readiness.controllersConnected.other" = "Συνδέθηκαν %d χειριστήρια.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Ανοίξτε τις Ρυθμίσεις συστήματος και ενεργοποιήστε την Παρακολούθηση εισόδου για το %@.";
 "permissions.assist" = "Το OpenJoystickDriver ζήτησε πρόσβαση από το macOS. Στην Παρακολούθηση εισόδου, ενεργοποιήστε το %@. Αν το macOS ζητήσει έξοδο και επανάνοιγμα, επιτρέψτε το.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Δαίμονας";
 "daemon.autoStarts" = "Ο δαίμονας ξεκινά αυτόματα μετά την εγκατάσταση.";
 "daemon.systemExtension" = "Επέκταση συστήματος";

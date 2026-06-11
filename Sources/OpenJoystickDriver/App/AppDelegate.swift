@@ -18,7 +18,10 @@ import SwiftUI
     NSApp.setActivationPolicy(.accessory)
     configureApplicationIcon()
     setupStatusItem()
-    Task { @MainActor in await model.start() }
+    Task { @MainActor in
+      await model.start()
+      model.setPollingEnabled(true)
+    }
   }
 
   func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
@@ -140,8 +143,6 @@ extension AppDelegate: NSPopoverDelegate {
   }
 
   func popoverDidClose(_ notification: Notification) {
-    model.setPollingEnabled(false)
-
     // Drop the hosting controller so the SwiftUI tree can be reclaimed.
     if let pop = notification.object as? NSPopover {
       pop.contentViewController = nil

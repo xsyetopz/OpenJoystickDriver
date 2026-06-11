@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Indítsa el a démont a kontrollerek csatlakoztatásához.";
 "readiness.daemonDisconnected" = "A démon fut, de nincs kapcsolat. Indítsa újra a démont.";
 "readiness.allowAppInputMonitoring" = "Engedélyezze a bemenetfigyelést az OpenJoystickDriver számára.";
-"readiness.allowDaemonInputMonitoring" = "Engedélyezze a bemenetfigyelést az OpenJoystickDriver Daemon számára.";
+"readiness.allowDaemonInputMonitoring" = "Engedélyezze a bemenetfigyelést az OpenJoystickDriverDaemon számára.";
 "readiness.connectController" = "Csatlakoztasson egy kontrollert.";
 "readiness.controllersConnected.one" = "%d kontroller csatlakoztatva.";
 "readiness.controllersConnected.other" = "%d kontroller csatlakoztatva.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Nyissa meg a Rendszerbeállításokat, majd kapcsolja be a bemenetfigyelést ehhez: %@.";
 "permissions.assist" = "Az OpenJoystickDriver hozzáférést kért a macOS-től. A Bemenetfigyelés alatt kapcsolja be ezt: %@. Ha a macOS kilépést és újranyitást kér, engedélyezze.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "A démon telepítés után automatikusan elindul.";
 "daemon.systemExtension" = "Rendszerbővítmény";

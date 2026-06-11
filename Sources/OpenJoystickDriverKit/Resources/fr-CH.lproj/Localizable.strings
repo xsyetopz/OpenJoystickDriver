@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Démarrez le démon pour connecter les contrôleurs.";
 "readiness.daemonDisconnected" = "Le démon est en cours d’exécution mais déconnecté. Redémarrez le démon.";
 "readiness.allowAppInputMonitoring" = "Autorisez la surveillance de l’entrée pour OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Autorisez la surveillance de l’entrée pour OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Autorisez la surveillance de l’entrée pour OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Connectez une manette.";
 "readiness.controllersConnected.one" = "%d manette connectée.";
 "readiness.controllersConnected.other" = "%d manettes connectées.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Ouvrez Réglages Système, puis activez la surveillance de l’entrée pour %@.";
 "permissions.assist" = "OpenJoystickDriver a demandé l’accès à macOS. Dans Surveillance de l’entrée, activez %@. Si macOS demande de quitter et rouvrir, autorisez-le.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Démon";
 "daemon.autoStarts" = "Le démon démarre automatiquement après l’installation.";
 "daemon.systemExtension" = "Extension système";

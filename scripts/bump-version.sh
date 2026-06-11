@@ -81,6 +81,13 @@ from pathlib import Path
     dext_plist_path,
 ) = sys.argv[1:]
 
+version_pattern = r"\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?"
+current_release_match = re.search(
+    rf'release-local-install version="({version_pattern})":',
+    Path(justfile_path).read_text(),
+)
+current_release_version = current_release_match.group(1) if current_release_match else version
+
 replacements = [
     (
         Path(cli_path),
@@ -198,6 +205,18 @@ replacements = [
         ],
     ),
 ]
+
+if current_release_version != version:
+    replacements[-1][1].append(
+        (
+            "ScriptPackagingTests stale version guards",
+            re.compile(
+                rf'(!(?:bundles|justfile)\.contains\("){version_pattern}("\))'
+            ),
+            rf"\g<1>{current_release_version}\g<2>",
+            2,
+        )
+    )
 
 missing = []
 updates = []

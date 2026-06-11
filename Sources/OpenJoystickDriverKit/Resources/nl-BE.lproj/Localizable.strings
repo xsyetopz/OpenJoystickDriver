@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Start de daemon om controllers te verbinden.";
 "readiness.daemonDisconnected" = "De daemon draait, maar is niet verbonden. Herstart de daemon.";
 "readiness.allowAppInputMonitoring" = "Sta invoerbewaking toe voor OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Sta invoerbewaking toe voor OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Sta invoerbewaking toe voor OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Verbind een controller.";
 "readiness.controllersConnected.one" = "%d controller verbonden.";
 "readiness.controllersConnected.other" = "%d controllers verbonden.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Open Systeeminstellingen en schakel Invoerbewaking in voor %@.";
 "permissions.assist" = "OpenJoystickDriver heeft macOS om toegang gevraagd. Schakel in Invoerbewaking %@ in. Als macOS vraagt om te stoppen en opnieuw te openen, sta dit toe.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "De daemon start automatisch na installatie.";
 "daemon.systemExtension" = "Systeemextensie";

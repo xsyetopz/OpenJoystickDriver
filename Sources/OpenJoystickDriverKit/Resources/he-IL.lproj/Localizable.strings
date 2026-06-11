@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "הפעל את הדיימון כדי לחבר בקרים.";
 "readiness.daemonDisconnected" = "הדיימון פועל אך מנותק. הפעל את הדיימון מחדש.";
 "readiness.allowAppInputMonitoring" = "אפשר ניטור קלט עבור OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "אפשר ניטור קלט עבור OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "אפשר ניטור קלט עבור OpenJoystickDriverDaemon.";
 "readiness.connectController" = "חבר בקר.";
 "readiness.controllersConnected.one" = "בקר אחד מחובר.";
 "readiness.controllersConnected.other" = "%d בקרים מחוברים.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "פתח את הגדרות המערכת ואז הפעל ניטור קלט עבור %@.";
 "permissions.assist" = "OpenJoystickDriver ביקש גישה מ-macOS. בניטור קלט, הפעל את %@. אם macOS מבקש לצאת ולפתוח מחדש, אשר זאת.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "דיימון";
 "daemon.autoStarts" = "הדיימון מופעל אוטומטית לאחר ההתקנה.";
 "daemon.systemExtension" = "הרחבת מערכת";

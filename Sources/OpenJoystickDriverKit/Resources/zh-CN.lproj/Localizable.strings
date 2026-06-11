@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "启动守护进程以连接控制器。";
 "readiness.daemonDisconnected" = "守护进程正在运行但已断开连接。请重新启动守护进程。";
 "readiness.allowAppInputMonitoring" = "允许 OpenJoystickDriver 进行输入监控。";
-"readiness.allowDaemonInputMonitoring" = "允许 OpenJoystickDriver Daemon 进行输入监控。";
+"readiness.allowDaemonInputMonitoring" = "允许 OpenJoystickDriverDaemon 进行输入监控。";
 "readiness.connectController" = "连接控制器。";
 "readiness.controllersConnected.one" = "已连接 %d 个控制器。";
 "readiness.controllersConnected.other" = "已连接 %d 个控制器。";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "打开“系统设置”，然后为 %@ 开启输入监控。";
 "permissions.assist" = "OpenJoystickDriver 已向 macOS 请求访问权限。在输入监控中开启 %@。如果 macOS 要求退出并重新打开，请允许。";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "守护进程";
 "daemon.autoStarts" = "守护进程会在安装后自动启动。";
 "daemon.systemExtension" = "系统扩展";

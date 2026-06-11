@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Pornește daemonul pentru a conecta controlere.";
 "readiness.daemonDisconnected" = "Daemonul rulează, dar este deconectat. Repornește daemonul.";
 "readiness.allowAppInputMonitoring" = "Permite monitorizarea intrării pentru OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Permite monitorizarea intrării pentru OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Permite monitorizarea intrării pentru OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Conectează un controler.";
 "readiness.controllersConnected.one" = "%d controler conectat.";
 "readiness.controllersConnected.other" = "%d controlere conectate.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Deschide Configurări sistem, apoi activează Monitorizarea intrării pentru %@.";
 "permissions.assist" = "OpenJoystickDriver a solicitat acces de la macOS. În Monitorizarea intrării, activează %@. Dacă macOS cere închiderea și redeschiderea, permite acest lucru.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Daemonul pornește automat după instalare.";
 "daemon.systemExtension" = "Extensie de sistem";

@@ -86,10 +86,12 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   let client = XPCClient()
   let permissionManager = PermissionManager()
   let updateChecker = UpdateChecker()
+  let compatibilityOutputBridge = AppOwnedCompatibilityOutputBridge()
   lazy var sparkleUpdates = SparkleUpdateController { [weak self] state in
     self?.updateCheckState = state
   }
   var pollTask: Task<Void, Never>?
+  var compatibilityOutputTask: Task<Void, Never>?
 
   var lastHealthPollNs: UInt64 = 0
 
@@ -171,6 +173,9 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
 
     pollTask?.cancel()
     pollTask = nil
+    compatibilityOutputTask?.cancel()
+    compatibilityOutputTask = nil
+    compatibilityOutputBridge.stop()
     client.disconnect()
   }
 

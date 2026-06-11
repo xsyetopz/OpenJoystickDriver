@@ -34,11 +34,7 @@ final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
         NSApp.terminate(nil)
         return
       }
-      if initialState == .denied {
-        daemonLog("[Daemon] Input Monitoring denied for daemon helper app")
-        NSApp.terminate(nil)
-        return
-      }
+      daemonLog("[Daemon] Input Monitoring approval pending for daemon helper app")
 
       let timeoutNanoseconds: UInt64 = 120_000_000_000
       let pollNanoseconds: UInt64 = 500_000_000
@@ -48,11 +44,6 @@ final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
         let state = await permissionManager.checkAccess()
         if state == .granted {
           daemonLog("[Daemon] Input Monitoring granted for daemon helper app")
-          NSApp.terminate(nil)
-          return
-        }
-        if state == .denied {
-          daemonLog("[Daemon] Input Monitoring denied for daemon helper app")
           NSApp.terminate(nil)
           return
         }
@@ -78,7 +69,7 @@ let promptOnlyMode = environment["OJD_PERMISSION_PROMPT_ONLY"] == "1"
   || commandLineArguments.contains("--request-input-monitoring")
 
 if permissionCheckOnlyMode {
-  daemonLog("[Daemon] Starting permission-check probe mode")
+  NSLog("%@", "[Daemon] Starting permission-check probe mode")
   print(PermissionManager.currentAccessState())
   exit(0)
 }

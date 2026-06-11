@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "ابدأ الخادم الخفي لتوصيل وحدات التحكم.";
 "readiness.daemonDisconnected" = "الخادم الخفي يعمل لكنه غير متصل. أعد تشغيل الخادم الخفي.";
 "readiness.allowAppInputMonitoring" = "اسمح بمراقبة الإدخال لـ OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "اسمح بمراقبة الإدخال لـ OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "اسمح بمراقبة الإدخال لـ OpenJoystickDriverDaemon.";
 "readiness.connectController" = "وصّل وحدة تحكم.";
 "readiness.controllersConnected.one" = "تم توصيل وحدة تحكم واحدة.";
 "readiness.controllersConnected.other" = "تم توصيل %d وحدات تحكم.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "افتح إعدادات النظام، ثم فعّل مراقبة الإدخال لـ %@.";
 "permissions.assist" = "طلب OpenJoystickDriver الوصول من macOS. في مراقبة الإدخال، فعّل %@. إذا طلب macOS الإنهاء وإعادة الفتح، فاسمح بذلك.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "الخادم الخفي";
 "daemon.autoStarts" = "يبدأ الخادم الخفي تلقائياً بعد التثبيت.";
 "daemon.systemExtension" = "امتداد النظام";

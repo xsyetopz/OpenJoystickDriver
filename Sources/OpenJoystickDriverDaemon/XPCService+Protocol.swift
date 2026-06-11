@@ -35,7 +35,7 @@ extension XPCService {
     let dm = deviceManager
     let pm = permissionManager
     Task {
-      let inputState = await pm.inputMonitoringState
+      let inputState = await pm.checkAccess()
       let devices = await dm.connectedDeviceDescriptions()
       let userEnabled = userSpaceEnabled
       let userStatus = currentUserSpaceStatus()

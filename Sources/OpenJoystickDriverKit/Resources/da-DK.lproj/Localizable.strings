@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Start daemonen for at forbinde controllere.";
 "readiness.daemonDisconnected" = "Daemonen kører, men er afbrudt. Genstart daemonen.";
 "readiness.allowAppInputMonitoring" = "Tillad inputovervågning for OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Tillad inputovervågning for OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Tillad inputovervågning for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Tilslut en controller.";
 "readiness.controllersConnected.one" = "%d controller tilsluttet.";
 "readiness.controllersConnected.other" = "%d controllere tilsluttet.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Åbn Systemindstillinger, og slå Inputovervågning til for %@.";
 "permissions.assist" = "OpenJoystickDriver bad macOS om adgang. Slå %@ til under Inputovervågning. Hvis macOS beder om at afslutte og åbne igen, skal du tillade det.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Daemonen starter automatisk efter installation.";
 "daemon.systemExtension" = "Systemudvidelse";

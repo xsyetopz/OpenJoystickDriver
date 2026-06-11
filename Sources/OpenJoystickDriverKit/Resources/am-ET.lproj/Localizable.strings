@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "መቆጣጠሪያዎችን ለማገናኘት ዴሞኑን ይጀምሩ።";
 "readiness.daemonDisconnected" = "ዴሞኑ እየሰራ ነው ግን ተቋርጧል። ዴሞኑን እንደገና ያስጀምሩ።";
 "readiness.allowAppInputMonitoring" = "ለOpenJoystickDriver የግቤት ክትትልን ይፍቀዱ።";
-"readiness.allowDaemonInputMonitoring" = "ለOpenJoystickDriver Daemon የግቤት ክትትልን ይፍቀዱ።";
+"readiness.allowDaemonInputMonitoring" = "ለOpenJoystickDriverDaemon የግቤት ክትትልን ይፍቀዱ።";
 "readiness.connectController" = "መቆጣጠሪያ ያገናኙ።";
 "readiness.controllersConnected.one" = "%d መቆጣጠሪያ ተገናኝቷል።";
 "readiness.controllersConnected.other" = "%d መቆጣጠሪያዎች ተገናኝተዋል።";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "የስርዓት ቅንብሮችን ይክፈቱ፣ ከዚያ ለ%@ የግቤት ክትትልን ያብሩ።";
 "permissions.assist" = "OpenJoystickDriver ከmacOS መዳረሻ ጠይቋል። በግቤት ክትትል ውስጥ %@ን ያብሩ። macOS መውጣትና እንደገና መክፈት ካስጠየቀ ይፍቀዱ።";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "ዴሞን";
 "daemon.autoStarts" = "ዴሞኑ ከተጫነ በኋላ በራስ-ሰር ይጀምራል።";
 "daemon.systemExtension" = "የስርዓት ቅጥያ";

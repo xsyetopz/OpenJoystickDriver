@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Käivita deemon kontrollerite ühendamiseks.";
 "readiness.daemonDisconnected" = "Deemon töötab, kuid ühendus puudub. Taaskäivita deemon.";
 "readiness.allowAppInputMonitoring" = "Luba OpenJoystickDriverile sisendi jälgimine.";
-"readiness.allowDaemonInputMonitoring" = "Luba OpenJoystickDriver Daemonile sisendi jälgimine.";
+"readiness.allowDaemonInputMonitoring" = "Luba OpenJoystickDriverDaemonile sisendi jälgimine.";
 "readiness.connectController" = "Ühenda kontroller.";
 "readiness.controllersConnected.one" = "%d kontroller ühendatud.";
 "readiness.controllersConnected.other" = "%d kontrollerit ühendatud.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Ava Süsteemiseaded ja lülita sisendi jälgimine sisse üksusele %@.";
 "permissions.assist" = "OpenJoystickDriver küsis macOS-ilt ligipääsu. Lülita sisendi jälgimises sisse %@. Kui macOS palub sulgeda ja uuesti avada, luba see.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Deemon käivitub pärast installimist automaatselt.";
 "daemon.systemExtension" = "Süsteemilaiendus";

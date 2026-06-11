@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Käynnistä daemon ohjainten yhdistämistä varten.";
 "readiness.daemonDisconnected" = "Daemon on käynnissä, mutta yhteys on katkennut. Käynnistä daemon uudelleen.";
 "readiness.allowAppInputMonitoring" = "Salli syötön valvonta OpenJoystickDriverille.";
-"readiness.allowDaemonInputMonitoring" = "Salli syötön valvonta OpenJoystickDriver Daemonille.";
+"readiness.allowDaemonInputMonitoring" = "Salli syötön valvonta OpenJoystickDriverDaemonille.";
 "readiness.connectController" = "Yhdistä ohjain.";
 "readiness.controllersConnected.one" = "%d ohjain yhdistetty.";
 "readiness.controllersConnected.other" = "%d ohjainta yhdistetty.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Avaa Järjestelmäasetukset ja ota sitten syötön valvonta käyttöön kohteelle %@.";
 "permissions.assist" = "OpenJoystickDriver pyysi macOS:lta käyttöoikeutta. Ota syötön valvonnassa %@ käyttöön. Jos macOS pyytää lopettamaan ja avaamaan uudelleen, salli se.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Daemon käynnistyy automaattisesti asennuksen jälkeen.";
 "daemon.systemExtension" = "Järjestelmälaajennus";

@@ -282,3 +282,93 @@ resolve_entitlements() {
   local template="$1" output="$2"
   sed "s/\${DEVELOPMENT_TEAM}/$DEVELOPMENT_TEAM/g" "$template" > "$output"
 }
+
+_signed_entitlement_value() {
+  local target="$1" key="$2"
+  python3 - "$target" "$key" <<'PY'
+import plistlib, subprocess, sys
+
+target, key = sys.argv[1], sys.argv[2]
+result = subprocess.run(
+    ["codesign", "-d", "--entitlements", "-", "--xml", target],
+    stdout=subprocess.PIPE,
+    stderr=subprocess.DEVNULL,
+)
+if result.returncode != 0 or not result.stdout or b"<?xml" not in result.stdout:
+    print("decode_error")
+    raise SystemExit(0)
+
+try:
+    raw = result.stdout[result.stdout.index(b"<?xml") :]
+    entitlements = plistlib.loads(raw)
+except Exception:
+    print("decode_error")
+    raise SystemExit(0)
+
+value = entitlements.get(key, "missing")
+if isinstance(value, bool):
+    print("true" if value else "false")
+elif isinstance(value, str):
+    print(value)
+else:
+    print("missing" if value == "missing" else str(value))
+PY
+}
+
+_require_signed_entitlement_value() {
+  local target="$1" key="$2" expected="$3" what="$4" fix="$5"
+  local actual
+  actual="$(_signed_entitlement_value "$target" "$key" || echo "missing")"
+  if [[ "$actual" == "decode_error" ]]; then
+    echo ""
+    echo "ERROR: Could not read signed entitlements from bundle."
+    echo "  path: $target"
+    echo "  affects: $what"
+    echo ""
+    echo "$fix"
+    exit 1
+  fi
+  if [[ "$actual" != "$expected" ]]; then
+    echo ""
+    echo "ERROR: Signed bundle entitlement value mismatch: $key"
+    echo "  path: $target"
+    echo "  affects: $what"
+    echo "  expected: $expected"
+    echo "  actual: $actual"
+    echo ""
+    echo "$fix"
+    exit 1
+  fi
+}
+
+verify_gui_app_signed_entitlements() {
+  local target_app="$1"
+  _require_signed_entitlement_value \
+    "$target_app" \
+    "com.apple.application-identifier" \
+    "${DEVELOPMENT_TEAM}.com.openjoystickdriver" \
+    "GUI app signed entitlements" \
+    "Fix: regenerate GUI entitlements/provisioning, then rebuild."
+  _require_signed_entitlement_value \
+    "$target_app" \
+    "com.apple.developer.hid.virtual.device" \
+    "true" \
+    "GUI app Compatibility backend" \
+    "Fix: enable com.apple.developer.hid.virtual.device on the GUI profile, then rebuild."
+}
+
+verify_daemon_app_signed_entitlements() {
+  local target_daemon="$1"
+  _require_signed_entitlement_value \
+    "$target_daemon" \
+    "com.apple.application-identifier" \
+    "${DEVELOPMENT_TEAM}.com.openjoystickdriver.daemon" \
+    "Daemon app signed entitlements" \
+    "Fix: regenerate daemon entitlements/provisioning, then rebuild."
+  _require_signed_entitlement_value \
+    "$target_daemon" \
+    "com.apple.developer.hid.virtual.device" \
+    "true" \
+    "Daemon Compatibility backend" \
+    "Fix: enable com.apple.developer.hid.virtual.device on the daemon profile, then rebuild."
+}

@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Denetleyicileri bağlamak için daemonu başlatın.";
 "readiness.daemonDisconnected" = "Daemon çalışıyor ama bağlantısı kesildi. Daemonu yeniden başlatın.";
 "readiness.allowAppInputMonitoring" = "OpenJoystickDriver için Giriş İzleme’ye izin verin.";
-"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriver Daemon için Giriş İzleme’ye izin verin.";
+"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriverDaemon için Giriş İzleme’ye izin verin.";
 "readiness.connectController" = "Bir denetleyici bağlayın.";
 "readiness.controllersConnected.one" = "%d denetleyici bağlı.";
 "readiness.controllersConnected.other" = "%d denetleyici bağlı.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Sistem Ayarları’nı açın, ardından %@ için Giriş İzleme’yi etkinleştirin.";
 "permissions.assist" = "OpenJoystickDriver macOS’ten erişim istedi. Giriş İzleme’de %@ öğesini etkinleştirin. macOS kapatıp yeniden açmayı isterse izin verin.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Daemon yüklemeden sonra otomatik olarak başlar.";
 "daemon.systemExtension" = "Sistem uzantısı";

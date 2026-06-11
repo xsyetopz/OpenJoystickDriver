@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Inicia el daemon para conectar mandos.";
 "readiness.daemonDisconnected" = "El daemon se está ejecutando, pero está desconectado. Reinicia el daemon.";
 "readiness.allowAppInputMonitoring" = "Permite Monitorización de entrada para OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Permite Monitorización de entrada para OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Permite Monitorización de entrada para OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Conecta un mando.";
 "readiness.controllersConnected.one" = "%d mando conectado.";
 "readiness.controllersConnected.other" = "%d mandos conectados.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Abre Ajustes del Sistema y activa Monitorización de entrada para %@.";
 "permissions.assist" = "OpenJoystickDriver solicitó acceso a macOS. En Monitorización de entrada, activa %@. Si macOS pide salir y volver a abrir, permítelo.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "El daemon se inicia automáticamente después de la instalación.";
 "daemon.systemExtension" = "Extensión del sistema";

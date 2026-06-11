@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Zaženi daemon za povezavo krmilnikov.";
 "readiness.daemonDisconnected" = "Daemon teče, vendar ni povezan. Znova zaženi daemon.";
 "readiness.allowAppInputMonitoring" = "Dovoli nadzor vnosa za OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Dovoli nadzor vnosa za OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Dovoli nadzor vnosa za OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Poveži krmilnik.";
 "readiness.controllersConnected.one" = "Povezan %d krmilnik.";
 "readiness.controllersConnected.other" = "Povezanih %d krmilnikov.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Odpri Sistemske nastavitve in vklopi Nadzor vnosa za %@.";
 "permissions.assist" = "OpenJoystickDriver je macOS zaprosil za dostop. V Nadzoru vnosa vklopi %@. Če macOS zahteva zapiranje in ponovno odpiranje, to dovoli.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Daemon se po namestitvi zažene samodejno.";
 "daemon.systemExtension" = "Sistemska razširitev";

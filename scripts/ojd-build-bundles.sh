@@ -254,7 +254,7 @@ PLIST
     <key>CFBundleName</key>
     <string>OpenJoystickDriverDaemon</string>
     <key>CFBundleDisplayName</key>
-    <string>OpenJoystickDriver Daemon</string>
+    <string>OpenJoystickDriverDaemon</string>
     <key>CFBundleExecutable</key>
     <string>OpenJoystickDriverDaemon</string>
     <key>CFBundlePackageType</key>
@@ -268,7 +268,7 @@ PLIST
     <key>LSUIElement</key>
     <true/>
     <key>NSInputMonitoringUsageDescription</key>
-    <string>OpenJoystickDriver Daemon needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
+    <string>OpenJoystickDriverDaemon needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
 </dict>
 </plist>
 PLIST
@@ -315,30 +315,8 @@ PLIST
   OJD_ACTIVE_SIGN_IDENTITY="$DAEMON_IDENTITY" ojd_sign "$DAEMON_BUNDLE" --entitlements "$DAEMON_ENTITLEMENTS"
   OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign "$GUI_APP" --entitlements "$GUI_ENTITLEMENTS"
 
-  _require_signed_entitlement_value \
-    "$GUI_APP" \
-    "com.apple.application-identifier" \
-    "${DEVELOPMENT_TEAM}.com.openjoystickdriver" \
-    "GUI app signed entitlements" \
-    "Fix: regenerate GUI entitlements/provisioning, then rebuild."
-  _require_signed_entitlement_value \
-    "$GUI_APP" \
-    "com.apple.developer.hid.virtual.device" \
-    "true" \
-    "GUI app Compatibility backend" \
-    "Fix: enable com.apple.developer.hid.virtual.device on the GUI profile, then rebuild."
-  _require_signed_entitlement_value \
-    "$DAEMON_BUNDLE" \
-    "com.apple.application-identifier" \
-    "${DEVELOPMENT_TEAM}.com.openjoystickdriver.daemon" \
-    "Daemon app signed entitlements" \
-    "Fix: regenerate daemon entitlements/provisioning, then rebuild."
-  _require_signed_entitlement_value \
-    "$DAEMON_BUNDLE" \
-    "com.apple.developer.hid.virtual.device" \
-    "true" \
-    "Daemon Compatibility backend" \
-    "Fix: enable com.apple.developer.hid.virtual.device on the daemon profile, then rebuild."
+  verify_gui_app_signed_entitlements "$GUI_APP"
+  verify_daemon_app_signed_entitlements "$DAEMON_BUNDLE"
 
   if [[ "$OJD_ENV" == "release" ]]; then
     verify_profile_cert "$GUI_PROFILE" "$GUI_IDENTITY"
@@ -562,6 +540,9 @@ PY
       APP_SIGN_ARGS+=(--options runtime --timestamp)
     fi
     codesign "${APP_SIGN_ARGS[@]}" "$GUI_APP"
+    verify_gui_app_signed_entitlements "$GUI_APP"
+    verify_daemon_app_signed_entitlements \
+      "$GUI_APP/Contents/Library/LoginItems/OpenJoystickDriverDaemon.app"
 
     if [[ "${OJD_SKIP_INSTALL:-0}" != "1" ]]; then
       echo "Installing to /Applications/OpenJoystickDriver.app..."

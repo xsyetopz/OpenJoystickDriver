@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Ræstu púkann til að tengja stýringar.";
 "readiness.daemonDisconnected" = "Púkinn er í gangi en ótengdur. Endurræstu púkann.";
 "readiness.allowAppInputMonitoring" = "Leyfðu inntaksvöktun fyrir OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Leyfðu inntaksvöktun fyrir OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Leyfðu inntaksvöktun fyrir OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Tengdu stýringu.";
 "readiness.controllersConnected.one" = "%d stýring tengd.";
 "readiness.controllersConnected.other" = "%d stýringar tengdar.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Opnaðu Kerfisstillingar og kveiktu síðan á Inntaksvöktun fyrir %@.";
 "permissions.assist" = "OpenJoystickDriver bað macOS um aðgang. Í Inntaksvöktun skaltu kveikja á %@. Ef macOS biður um að hætta og opna aftur, leyfðu það.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Púki";
 "daemon.autoStarts" = "Púkinn ræsist sjálfkrafa eftir uppsetningu.";
 "daemon.systemExtension" = "Kerfisviðbót";

@@ -212,68 +212,6 @@ public final class XPCService: NSObject, NSXPCListenerDelegate, OpenJoystickDriv
   func buildUserSpaceDispatcher(
     identity: CompatibilityIdentity
   ) throws -> UserSpaceDispatcherBuild {
-    enum CompatError: Swift.Error, CustomStringConvertible, Sendable {
-      case unsupported(String)
-      var description: String {
-        switch self {
-        case .unsupported(let msg):
-          return msg
-        }
-      }
-    }
-
-    let compatibilityProfile = CompatibilityOutputProfileCatalog.profile(for: identity)
-    let profile = compatibilityProfile.deviceProfile
-    let format: any VirtualGamepadReportFormat
-    let primaryUsage: Int?
-    switch identity {
-    case .genericHID:
-      format = OJDSDLGamepadFormat()
-      primaryUsage = nil
-    case .sdl2_3:
-      format = OJDSDLGamepadFormat()
-      primaryUsage = nil
-    case .appleGameController:
-      format = Xbox360MacHIDReportFormat(topLevelUsage: UInt8(kHIDUsage_GD_GamePad))
-      primaryUsage = Int(kHIDUsage_GD_GamePad)
-    case .xoneHID:
-      primaryUsage = nil
-      // Xbox One identity for SDL consumers:
-      // - Prefer the physical HID report descriptor exposed by macOS for 045E:02EA (USB).
-      //   This makes SDL treat the virtual device as a real Xbox controller.
-      // - Fall back to a built-in descriptor if the physical device is not present.
-      if let physical = HIDDescriptorReportFormat.copyPhysicalReportDescriptor(
-        vendorID: profile.vendorID,
-        productID: profile.productID,
-        preferredTransport: "USB"
-      ) {
-        do {
-          format = try HIDDescriptorReportFormat(
-            descriptor: physical,
-            outputReportID: VirtualRumbleOutputReportParser.xboxGIPReportID,
-            outputReportPayloadSize:
-              VirtualRumbleOutputReportParser.xboxGIPReportPayloadSizeWithoutReportID
-          )
-        } catch {
-          // If parsing fails on this OS build, fall back to the built-in descriptor.
-          format = try HIDDescriptorReportFormat(
-            descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
-            outputReportID: VirtualRumbleOutputReportParser.xboxOneReportID,
-            outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize
-          )
-        }
-      } else {
-        format = try HIDDescriptorReportFormat(
-          descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
-          outputReportID: VirtualRumbleOutputReportParser.xboxOneReportID,
-          outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize
-        )
-      }
-    case .x360HID:
-      format = Xbox360MacHIDReportFormat()
-      primaryUsage = nil
-    }
-
     let rumbleHandler: UserSpaceOutputDispatcher.RumbleCommandHandler = {
       [weak self] identifier, command in
       guard let self else { return }
@@ -289,16 +227,10 @@ public final class XPCService: NSObject, NSXPCListenerDelegate, OpenJoystickDriv
       }
     }
 
-    let pool = try ForegroundConsumerCompatibilityDispatcherPool { routeToken in
-      try UserSpaceOutputDispatcher(
-        profile: profile,
-        format: format,
-        primaryUsage: primaryUsage,
-        emitsXboxGuideReport: compatibilityProfile.emitsXboxGuideReport,
-        routeToken: routeToken,
-        onRumbleCommand: rumbleHandler
-      )
-    }
+    let pool = try UserSpaceOutputDispatcher.makeCompatibilityDispatcher(
+      identity: identity,
+      onRumbleCommand: rumbleHandler
+    )
     return UserSpaceDispatcherBuild(
       dispatcher: pool,
       foregroundConsumerPool: pool,

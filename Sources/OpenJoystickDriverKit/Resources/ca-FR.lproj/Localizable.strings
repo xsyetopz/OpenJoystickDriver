@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Inicia el dimoni per connectar controladors.";
 "readiness.daemonDisconnected" = "El dimoni s’està executant però està desconnectat. Reinicia el dimoni.";
 "readiness.allowAppInputMonitoring" = "Permet la monitorització d’entrada per a OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Permet la monitorització d’entrada per a OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Permet la monitorització d’entrada per a OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Connecta un controlador.";
 "readiness.controllersConnected.one" = "%d controlador connectat.";
 "readiness.controllersConnected.other" = "%d controladors connectats.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Obre Configuració del sistema i activa la monitorització d’entrada per a %@.";
 "permissions.assist" = "OpenJoystickDriver ha demanat accés a macOS. A Monitorització d’entrada, activa %@. Si macOS demana sortir i tornar a obrir, permet-ho.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Dimoni";
 "daemon.autoStarts" = "El dimoni s’inicia automàticament després de la instal·lació.";
 "daemon.systemExtension" = "Extensió del sistema";

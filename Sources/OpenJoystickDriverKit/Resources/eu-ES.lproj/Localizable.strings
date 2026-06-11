@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Hasi daemon-a kontrolagailuak konektatzeko.";
 "readiness.daemonDisconnected" = "Daemon-a martxan dago baina deskonektatuta. Berrabiarazi daemon-a.";
 "readiness.allowAppInputMonitoring" = "Baimendu Sarrera-monitorizazioa OpenJoystickDriver-entzat.";
-"readiness.allowDaemonInputMonitoring" = "Baimendu Sarrera-monitorizazioa OpenJoystickDriver Daemon-entzat.";
+"readiness.allowDaemonInputMonitoring" = "Baimendu Sarrera-monitorizazioa OpenJoystickDriverDaemon-entzat.";
 "readiness.connectController" = "Konektatu kontrolagailu bat.";
 "readiness.controllersConnected.one" = "Kontrolagailu %d konektatuta.";
 "readiness.controllersConnected.other" = "%d kontrolagailu konektatuta.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Ireki Sistemaren Ezarpenak, eta aktibatu Sarrera-monitorizazioa %@ elementuarentzat.";
 "permissions.assist" = "OpenJoystickDriver-ek macOS-i sarbidea eskatu dio. Sarrera-monitorizazioan, aktibatu %@. macOS-ek irten eta berriro irekitzea eskatzen badu, baimendu.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon-a";
 "daemon.autoStarts" = "Daemon-a automatikoki hasten da instalatu ondoren.";
 "daemon.systemExtension" = "Sistema-hedapena";

@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "برای اتصال کنترلرها، دیمن را شروع کنید.";
 "readiness.daemonDisconnected" = "دیمن در حال اجراست اما اتصال قطع است. دیمن را دوباره راه‌اندازی کنید.";
 "readiness.allowAppInputMonitoring" = "نظارت ورودی را برای OpenJoystickDriver مجاز کنید.";
-"readiness.allowDaemonInputMonitoring" = "نظارت ورودی را برای OpenJoystickDriver Daemon مجاز کنید.";
+"readiness.allowDaemonInputMonitoring" = "نظارت ورودی را برای OpenJoystickDriverDaemon مجاز کنید.";
 "readiness.connectController" = "یک کنترلر وصل کنید.";
 "readiness.controllersConnected.one" = "%d کنترلر وصل شد.";
 "readiness.controllersConnected.other" = "%d کنترلر وصل شدند.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "تنظیمات سیستم را باز کنید، سپس نظارت ورودی را برای %@ روشن کنید.";
 "permissions.assist" = "OpenJoystickDriver از macOS درخواست دسترسی کرد. در نظارت ورودی، %@ را روشن کنید. اگر macOS درخواست خروج و باز کردن دوباره کرد، اجازه دهید.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "دیمن";
 "daemon.autoStarts" = "دیمن پس از نصب به‌صورت خودکار شروع می‌شود.";
 "daemon.systemExtension" = "افزونه سیستم";

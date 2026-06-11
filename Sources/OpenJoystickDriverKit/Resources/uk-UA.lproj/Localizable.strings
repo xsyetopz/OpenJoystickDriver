@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Запустіть демон, щоб підключати контролери.";
 "readiness.daemonDisconnected" = "Демон запущено, але він від’єднаний. Перезапустіть демон.";
 "readiness.allowAppInputMonitoring" = "Дозвольте моніторинг вводу для OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Дозвольте моніторинг вводу для OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Дозвольте моніторинг вводу для OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Підключіть контролер.";
 "readiness.controllersConnected.one" = "Підключено %d контролер.";
 "readiness.controllersConnected.other" = "Підключено %d контролерів.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Відкрийте Системні параметри, потім увімкніть Моніторинг вводу для %@.";
 "permissions.assist" = "OpenJoystickDriver запросив доступ у macOS. У Моніторингу вводу увімкніть %@. Якщо macOS попросить закрити й відкрити знову, дозвольте це.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Демон";
 "daemon.autoStarts" = "Демон запускається автоматично після встановлення.";
 "daemon.systemExtension" = "Системне розширення";

@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "コントローラーを接続するにはデーモンを開始してください。";
 "readiness.daemonDisconnected" = "デーモンは実行中ですが切断されています。デーモンを再起動してください。";
 "readiness.allowAppInputMonitoring" = "OpenJoystickDriver の入力監視を許可してください。";
-"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriver Daemon の入力監視を許可してください。";
+"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriverDaemon の入力監視を許可してください。";
 "readiness.connectController" = "コントローラーを接続してください。";
 "readiness.controllersConnected.one" = "%d 台のコントローラーが接続されています。";
 "readiness.controllersConnected.other" = "%d 台のコントローラーが接続されています。";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "システム設定を開き、%@ の入力監視をオンにしてください。";
 "permissions.assist" = "OpenJoystickDriver が macOS にアクセスを要求しました。入力監視で %@ をオンにしてください。macOS が終了して再度開くよう求めた場合は許可してください。";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "デーモン";
 "daemon.autoStarts" = "デーモンはインストール後に自動的に開始します。";
 "daemon.systemExtension" = "システム拡張";

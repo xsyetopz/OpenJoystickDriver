@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Удирдлагуудыг холбохын тулд демоныг эхлүүлнэ үү.";
 "readiness.daemonDisconnected" = "Демон ажиллаж байгаа ч холболт тасарсан. Демоныг дахин эхлүүлнэ үү.";
 "readiness.allowAppInputMonitoring" = "OpenJoystickDriver-д оролтын хяналтыг зөвшөөрнө үү.";
-"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriver Daemon-д оролтын хяналтыг зөвшөөрнө үү.";
+"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriverDaemon-д оролтын хяналтыг зөвшөөрнө үү.";
 "readiness.connectController" = "Удирдлага холбоно уу.";
 "readiness.controllersConnected.one" = "%d удирдлага холбогдсон.";
 "readiness.controllersConnected.other" = "%d удирдлага холбогдсон.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Системийн тохиргоог нээгээд %@-д Оролтын хяналтыг асаана уу.";
 "permissions.assist" = "OpenJoystickDriver macOS-оос хандалт хүссэн. Оролтын хяналт дээр %@-г асаана уу. macOS хаагаад дахин нээхийг хүсвэл зөвшөөрнө үү.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Демон";
 "daemon.autoStarts" = "Демон суулгасны дараа автоматаар эхэлнэ.";
 "daemon.systemExtension" = "Системийн өргөтгөл";

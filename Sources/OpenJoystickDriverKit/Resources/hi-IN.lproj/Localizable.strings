@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "कंट्रोलर कनेक्ट करने के लिए डेमन शुरू करें।";
 "readiness.daemonDisconnected" = "डेमन चल रहा है लेकिन डिस्कनेक्ट है। डेमन रीस्टार्ट करें।";
 "readiness.allowAppInputMonitoring" = "OpenJoystickDriver के लिए इनपुट मॉनिटरिंग की अनुमति दें।";
-"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriver Daemon के लिए इनपुट मॉनिटरिंग की अनुमति दें।";
+"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriverDaemon के लिए इनपुट मॉनिटरिंग की अनुमति दें।";
 "readiness.connectController" = "कंट्रोलर कनेक्ट करें।";
 "readiness.controllersConnected.one" = "%d कंट्रोलर कनेक्ट है।";
 "readiness.controllersConnected.other" = "%d कंट्रोलर कनेक्ट हैं।";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "सिस्टम सेटिंग्स खोलें, फिर %@ के लिए इनपुट मॉनिटरिंग चालू करें।";
 "permissions.assist" = "OpenJoystickDriver ने macOS से एक्सेस माँगा। इनपुट मॉनिटरिंग में %@ चालू करें। अगर macOS बंद करके फिर खोलने को कहे, तो अनुमति दें।";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "डेमन";
 "daemon.autoStarts" = "डेमन इंस्टॉल के बाद अपने-आप शुरू होता है।";
 "daemon.systemExtension" = "सिस्टम एक्सटेंशन";

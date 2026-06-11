@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Begin die daemon om beheerders te koppel.";
 "readiness.daemonDisconnected" = "Die daemon loop maar is ontkoppel. Herbegin die daemon.";
 "readiness.allowAppInputMonitoring" = "Laat Invoermonitering vir OpenJoystickDriver toe.";
-"readiness.allowDaemonInputMonitoring" = "Laat Invoermonitering vir OpenJoystickDriver Daemon toe.";
+"readiness.allowDaemonInputMonitoring" = "Laat Invoermonitering vir OpenJoystickDriverDaemon toe.";
 "readiness.connectController" = "Koppel ’n beheerder.";
 "readiness.controllersConnected.one" = "%d beheerder gekoppel.";
 "readiness.controllersConnected.other" = "%d beheerders gekoppel.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Maak Stelselinstellings oop en skakel dan Invoermonitering vir %@ aan.";
 "permissions.assist" = "OpenJoystickDriver het macOS om toegang gevra. Skakel %@ in Invoermonitering aan. As macOS vra om toe te maak en weer oop te maak, laat dit toe.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Die daemon begin outomaties ná installasie.";
 "daemon.systemExtension" = "Stelseluitbreiding";

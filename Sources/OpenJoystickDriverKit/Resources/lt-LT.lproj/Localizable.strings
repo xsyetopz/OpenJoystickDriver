@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Paleiskite demoną valdikliams prijungti.";
 "readiness.daemonDisconnected" = "Demonas veikia, bet ryšys nutrūkęs. Paleiskite demoną iš naujo.";
 "readiness.allowAppInputMonitoring" = "Leiskite „OpenJoystickDriver“ stebėti įvestį.";
-"readiness.allowDaemonInputMonitoring" = "Leiskite „OpenJoystickDriver Daemon“ stebėti įvestį.";
+"readiness.allowDaemonInputMonitoring" = "Leiskite „OpenJoystickDriverDaemon“ stebėti įvestį.";
 "readiness.connectController" = "Prijunkite valdiklį.";
 "readiness.controllersConnected.one" = "Prijungtas %d valdiklis.";
 "readiness.controllersConnected.other" = "Prijungta %d valdiklių.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Atidarykite Sistemos nuostatas ir įjunkite įvesties stebėjimą elementui %@.";
 "permissions.assist" = "„OpenJoystickDriver“ paprašė macOS prieigos. Įvesties stebėjime įjunkite %@. Jei macOS prašo uždaryti ir atidaryti iš naujo, leiskite.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Demonas po įdiegimo paleidžiamas automatiškai.";
 "daemon.systemExtension" = "Sistemos plėtinys";

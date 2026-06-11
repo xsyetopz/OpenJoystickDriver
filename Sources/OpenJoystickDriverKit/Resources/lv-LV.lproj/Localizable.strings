@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Palaidiet dēmonu, lai pievienotu kontrollerus.";
 "readiness.daemonDisconnected" = "Dēmons darbojas, bet nav savienots. Restartējiet dēmonu.";
 "readiness.allowAppInputMonitoring" = "Atļaujiet ievades pārraudzību lietotnei OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Atļaujiet ievades pārraudzību OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Atļaujiet ievades pārraudzību OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Pievienojiet kontrolleru.";
 "readiness.controllersConnected.one" = "Pievienots %d kontrolleris.";
 "readiness.controllersConnected.other" = "Pievienoti %d kontrolleri.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Atveriet Sistēmas iestatījumus un ieslēdziet ievades pārraudzību objektam %@.";
 "permissions.assist" = "OpenJoystickDriver pieprasīja macOS piekļuvi. Ievades pārraudzībā ieslēdziet %@. Ja macOS lūdz aizvērt un atvērt no jauna, atļaujiet to.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Dēmons pēc instalēšanas startē automātiski.";
 "daemon.systemExtension" = "Sistēmas paplašinājums";

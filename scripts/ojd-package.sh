@@ -19,8 +19,9 @@ notarization, staples the accepted ticket, and writes:
   .build/release-artifacts/OpenJoystickDriver-<version>-macOS.dmg
   .build/release-artifacts/appcast.xml
 
-This does not install the app, register the LaunchAgent, or submit a sysext
-activation request on the build machine.
+By default this does not install the app, register the LaunchAgent, or submit a
+sysext activation request on the build machine. Set OJD_INSTALL_AFTER_PACKAGE=1
+to install the verified app into /Applications after packaging.
 TXT
 }
 
@@ -150,6 +151,32 @@ cleanup_dmg_workdirs() {
   rm -rf "$staging_dir" "$rw_dmg" "$mount_dir"
 }
 
+verify_release_app_entitlements() {
+  local target_app="$1"
+  local target_daemon="$target_app/Contents/Library/LoginItems/OpenJoystickDriverDaemon.app"
+
+  [[ -d "$target_app" ]] || die "App bundle not found: $target_app"
+  [[ -d "$target_daemon" ]] || die "Daemon bundle not found: $target_daemon"
+
+  /usr/bin/codesign --verify --deep --strict --verbose=2 "$target_app"
+  verify_gui_app_signed_entitlements "$target_app"
+  verify_daemon_app_signed_entitlements "$target_daemon"
+}
+
+install_packaged_app() {
+  local source_app="$1"
+  local dest_app="/Applications/OpenJoystickDriver.app"
+
+  echo ""
+  echo "=== Install verified app to /Applications ==="
+  verify_release_app_entitlements "$source_app"
+  /bin/rm -rf "$dest_app"
+  /usr/bin/ditto "$source_app" "$dest_app"
+  verify_release_app_entitlements "$dest_app"
+  /usr/sbin/spctl --assess --type execute --verbose=4 "$dest_app"
+  echo "Installed: $dest_app"
+}
+
 mkdir -p "$artifact_dir"
 
 echo "=== Build release app bundle ==="
@@ -163,7 +190,7 @@ OJD_ENV=release OJD_SKIP_INSTALL=1 /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" 
 
 echo ""
 echo "=== Verify signed app before notarization ==="
-/usr/bin/codesign --verify --deep --strict --verbose=2 "$app_path"
+verify_release_app_entitlements "$app_path"
 
 echo ""
 echo "=== Notarize and staple ==="
@@ -175,6 +202,7 @@ OJD_ENV=release \
 echo ""
 echo "=== Verify notarized app ==="
 /usr/sbin/spctl --assess --type execute --verbose=4 "$app_path"
+verify_release_app_entitlements "$app_path"
 
 echo ""
 echo "=== Create drag-and-drop DMG ==="
@@ -195,7 +223,11 @@ else
   echo "WARNING: CODESIGN_IDENTITY not set; skipping DMG codesign." >&2
 fi
 /usr/bin/hdiutil verify "$artifact_dmg"
-/usr/bin/codesign --verify --deep --strict --verbose=2 "$app_path"
+verify_release_app_entitlements "$app_path"
+
+if [[ "${OJD_INSTALL_AFTER_PACKAGE:-0}" == "1" ]]; then
+  install_packaged_app "$app_path"
+fi
 
 echo ""
 echo "Release artifact ready:"

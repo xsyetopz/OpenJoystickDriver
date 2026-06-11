@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Սկսեք դեմոնը՝ կարգավորիչները միացնելու համար։";
 "readiness.daemonDisconnected" = "Դեմոնը աշխատում է, բայց անջատված է։ Վերագործարկեք դեմոնը։";
 "readiness.allowAppInputMonitoring" = "Թույլատրեք մուտքի մոնիտորինգը OpenJoystickDriver-ի համար։";
-"readiness.allowDaemonInputMonitoring" = "Թույլատրեք մուտքի մոնիտորինգը OpenJoystickDriver Daemon-ի համար։";
+"readiness.allowDaemonInputMonitoring" = "Թույլատրեք մուտքի մոնիտորինգը OpenJoystickDriverDaemon-ի համար։";
 "readiness.connectController" = "Միացրեք կարգավորիչ։";
 "readiness.controllersConnected.one" = "%d կարգավորիչ միացված է։";
 "readiness.controllersConnected.other" = "%d կարգավորիչ միացված է։";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Բացեք Համակարգի կարգավորումները, ապա միացրեք մուտքի մոնիտորինգը %@-ի համար։";
 "permissions.assist" = "OpenJoystickDriver-ը macOS-ից հասանելիություն է խնդրել։ Մուտքի մոնիտորինգում միացրեք %@։ Եթե macOS-ը խնդրի փակել և նորից բացել, թույլատրեք։";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Դեմոն";
 "daemon.autoStarts" = "Դեմոնը տեղադրումից հետո ավտոմատ սկսվում է։";
 "daemon.systemExtension" = "Համակարգային ընդլայնում";

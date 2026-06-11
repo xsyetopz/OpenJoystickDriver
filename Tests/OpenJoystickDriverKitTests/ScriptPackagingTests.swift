@@ -9,8 +9,13 @@ struct ScriptPackagingTests {
     let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
 
     #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.5\""))
-    #expect(justfile.contains("OJD_ENV=release ./scripts/ojd package release \"{{version}}\""))
-    #expect(justfile.contains("cp -R .build/debug/OpenJoystickDriver.app /Applications/"))
+    #expect(
+      justfile.contains(
+        "OJD_ENV=release OJD_INSTALL_AFTER_PACKAGE=1 ./scripts/ojd package release \"{{version}}\""
+      )
+    )
+    #expect(!justfile.contains("cp -R .build/debug/OpenJoystickDriver.app /Applications/"))
+    #expect(!justfile.contains("rm -rf /Applications/OpenJoystickDriver.app"))
   }
 
   @Test
@@ -27,8 +32,9 @@ struct ScriptPackagingTests {
     #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.5\""))
     #expect(bumpScript.contains("justfile"))
     #expect(bumpScript.contains("ScriptPackagingTests.swift"))
-    #expect(!bundles.contains("0.5.0-alpha.3"))
-    #expect(!justfile.contains("0.5.0-alpha.3"))
+    #expect(bumpScript.contains("ScriptPackagingTests stale version guards"))
+    #expect(!bundles.contains("0.5.0-alpha.4"))
+    #expect(!justfile.contains("0.5.0-alpha.4"))
   }
 
   @Test
@@ -43,6 +49,29 @@ struct ScriptPackagingTests {
     #expect(!script.contains("set background picture of viewOptions"))
     #expect(!script.contains("tell application \"Finder\""))
     #expect(!script.contains("osascript"))
+  }
+
+  @Test
+  func testReleasePackageVerifiesSignedHIDEntitlementsBeforeInstall() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let packageScriptURL = rootURL.appendingPathComponent("scripts/ojd-package.sh")
+    let bundlesScriptURL = rootURL.appendingPathComponent("scripts/ojd-build-bundles.sh")
+    let commonScriptURL = rootURL.appendingPathComponent("scripts/ojd-common.sh")
+    let packageScript = try String(contentsOf: packageScriptURL, encoding: .utf8)
+    let bundlesScript = try String(contentsOf: bundlesScriptURL, encoding: .utf8)
+    let commonScript = try String(contentsOf: commonScriptURL, encoding: .utf8)
+    let releaseScripts = packageScript + "\n" + bundlesScript + "\n" + commonScript
+
+    #expect(packageScript.contains("verify_release_app_entitlements()"))
+    #expect(packageScript.contains("verify_release_app_entitlements \"$app_path\""))
+    #expect(packageScript.contains("OJD_INSTALL_AFTER_PACKAGE"))
+    #expect(packageScript.contains("/usr/bin/ditto \"$source_app\" \"$dest_app\""))
+    #expect(releaseScripts.contains("_require_signed_entitlement_value"))
+    #expect(packageScript.contains("\"$target_app\""))
+    #expect(packageScript.contains("\"$target_daemon\""))
+    #expect(releaseScripts.contains("com.apple.developer.hid.virtual.device"))
+    #expect(bundlesScript.contains("verify_gui_app_signed_entitlements \"$GUI_APP\""))
+    #expect(bundlesScript.contains("verify_daemon_app_signed_entitlements \"$DAEMON_BUNDLE\""))
   }
 
   @Test
@@ -82,7 +111,7 @@ struct ScriptPackagingTests {
       )
     )
     #expect(!script.contains("cp \"$daemon_bin\" \"$GUI_MACOS/OpenJoystickDriverDaemon\""))
-    #expect(script.contains("<string>OpenJoystickDriver Daemon</string>"))
+    #expect(script.contains("<string>OpenJoystickDriverDaemon</string>"))
     #expect(script.contains("<key>LSUIElement</key>"))
     #expect(!script.contains("<key>LSBackgroundOnly</key>"))
     #expect(script.contains("<key>NSInputMonitoringUsageDescription</key>"))
@@ -94,7 +123,7 @@ struct ScriptPackagingTests {
     )
     #expect(
       script.contains(
-        "OpenJoystickDriver Daemon needs Input Monitoring to read controller input and " +
+        "OpenJoystickDriverDaemon needs Input Monitoring to read controller input and " +
           "publish virtual gamepad events."
       )
     )
@@ -192,7 +221,7 @@ struct ScriptPackagingTests {
   }
 
   @Test
-  func testInputMonitoringRequestUsesNativeAppRegistration() throws {
+  func testInputMonitoringRequestUsesMainAppRegistration() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let appModelURL = rootURL.appendingPathComponent(
       "Sources/OpenJoystickDriver/App/AppModel+InputMonitoring.swift"
@@ -207,10 +236,18 @@ struct ScriptPackagingTests {
     #expect(
       appModel.contains("registerApplicationBundleForPermissionPrompt(Bundle.main.bundleURL)")
     )
-    #expect(appModel.contains("registerApplicationBundleForPermissionPrompt(daemonAppURL)"))
-    #expect(appModel.contains("configuration.createsNewApplicationInstance = true"))
-    #expect(appModel.contains("configuration.activates = true"))
-    #expect(appModel.contains("configuration.arguments = [\"--request-input-monitoring\"]"))
+    #expect(!appModel.contains("installTopLevelDaemonPermissionPromptApp"))
+    #expect(!appModel.contains("OpenJoystickDriver Daemon.app"))
+    #expect(!appModel.contains("registerApplicationBundleForPermissionPrompt(promptAppURL)"))
+    #expect(!appModel.contains("NSWorkspace.shared.openApplication(at: promptAppURL"))
+    #expect(!appModel.contains("registerApplicationBundleForPermissionPrompt(daemonAppURL)"))
+    #expect(!appModel.contains("configuration.createsNewApplicationInstance = true"))
+    #expect(!appModel.contains("configuration.activates = true"))
+    #expect(!appModel.contains("configuration.arguments = [\"--request-input-monitoring\"]"))
+    #expect(appModel.contains("openInputMonitoringSettings(for: [\"OpenJoystickDriver\"])"))
+    #expect(
+      appModel.contains("appInputMonitoring = \"\\(await permissionManager.requestAccess())\"")
+    )
     #expect(daemonMain.contains("NSApp.setActivationPolicy(.accessory)"))
     #expect(daemonMain.contains("NSApp.activate(ignoringOtherApps: true)"))
     #expect(daemonMain.contains("OJD_PERMISSION_PROMPT_ONLY"))

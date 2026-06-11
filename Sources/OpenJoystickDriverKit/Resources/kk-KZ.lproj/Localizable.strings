@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Контроллерлерді қосу үшін демонды бастаңыз.";
 "readiness.daemonDisconnected" = "Демон жұмыс істеп тұр, бірақ ажыратылған. Демонды қайта іске қосыңыз.";
 "readiness.allowAppInputMonitoring" = "OpenJoystickDriver үшін енгізуді бақылауға рұқсат беріңіз.";
-"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriver Daemon үшін енгізуді бақылауға рұқсат беріңіз.";
+"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriverDaemon үшін енгізуді бақылауға рұқсат беріңіз.";
 "readiness.connectController" = "Контроллерді қосыңыз.";
 "readiness.controllersConnected.one" = "%d контроллер қосылды.";
 "readiness.controllersConnected.other" = "%d контроллер қосылды.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Жүйе баптауларын ашып, %@ үшін енгізуді бақылауды қосыңыз.";
 "permissions.assist" = "OpenJoystickDriver macOS жүйесінен қатынас сұрады. Енгізуді бақылауда %@ қосыңыз. Егер macOS шығуды және қайта ашуды сұраса, рұқсат беріңіз.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Демон";
 "daemon.autoStarts" = "Демон орнатудан кейін автоматты түрде басталады.";
 "daemon.systemExtension" = "Жүйелік кеңейтім";

@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "컨트롤러를 연결하려면 데몬을 시작하십시오.";
 "readiness.daemonDisconnected" = "데몬은 실행 중이지만 연결이 끊겼습니다. 데몬을 재시작하십시오.";
 "readiness.allowAppInputMonitoring" = "OpenJoystickDriver의 입력 모니터링을 허용하십시오.";
-"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriver Daemon의 입력 모니터링을 허용하십시오.";
+"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriverDaemon의 입력 모니터링을 허용하십시오.";
 "readiness.connectController" = "컨트롤러를 연결하십시오.";
 "readiness.controllersConnected.one" = "컨트롤러 %d개가 연결되었습니다.";
 "readiness.controllersConnected.other" = "컨트롤러 %d개가 연결되었습니다.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "시스템 설정을 열고 %@의 입력 모니터링을 켜십시오.";
 "permissions.assist" = "OpenJoystickDriver가 macOS에 접근을 요청했습니다. 입력 모니터링에서 %@을(를) 켜십시오. macOS가 종료 후 다시 열기를 요청하면 허용하십시오.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "데몬";
 "daemon.autoStarts" = "데몬은 설치 후 자동으로 시작됩니다.";
 "daemon.systemExtension" = "시스템 확장";

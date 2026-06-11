@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "啟動背景程式以連接控制器。";
 "readiness.daemonDisconnected" = "背景程式正在執行但已中斷連線。請重新啟動背景程式。";
 "readiness.allowAppInputMonitoring" = "允許 OpenJoystickDriver 進行輸入監控。";
-"readiness.allowDaemonInputMonitoring" = "允許 OpenJoystickDriver Daemon 進行輸入監控。";
+"readiness.allowDaemonInputMonitoring" = "允許 OpenJoystickDriverDaemon 進行輸入監控。";
 "readiness.connectController" = "連接控制器。";
 "readiness.controllersConnected.one" = "已連接 %d 個控制器。";
 "readiness.controllersConnected.other" = "已連接 %d 個控制器。";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "開啟「系統設定」，然後為 %@ 開啟輸入監控。";
 "permissions.assist" = "OpenJoystickDriver 已向 macOS 要求取用權限。在輸入監控中開啟 %@。如果 macOS 要求結束並重新開啟，請允許。";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "背景程式";
 "daemon.autoStarts" = "背景程式會在安裝後自動啟動。";
 "daemon.systemExtension" = "系統延伸功能";

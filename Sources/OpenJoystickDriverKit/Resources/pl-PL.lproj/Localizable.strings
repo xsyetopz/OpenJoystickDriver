@@ -14,7 +14,7 @@
 "readiness.startDaemon" = "Uruchom daemon, aby podłączyć kontrolery.";
 "readiness.daemonDisconnected" = "Daemon działa, ale jest rozłączony. Uruchom daemon ponownie.";
 "readiness.allowAppInputMonitoring" = "Zezwól na Monitorowanie wejścia dla OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Zezwól na Monitorowanie wejścia dla OpenJoystickDriver Daemon.";
+"readiness.allowDaemonInputMonitoring" = "Zezwól na Monitorowanie wejścia dla OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Podłącz kontroler.";
 "readiness.controllersConnected.one" = "Podłączono %d kontroler.";
 "readiness.controllersConnected.other" = "Podłączono %d kontrolerów.";
@@ -37,7 +37,7 @@
 "permissions.openSettings" = "Otwórz Ustawienia systemowe, a następnie włącz Monitorowanie wejścia dla %@.";
 "permissions.assist" = "OpenJoystickDriver poprosił macOS o dostęp. W Monitorowaniu wejścia włącz %@. Jeśli macOS poprosi o zamknięcie i ponowne otwarcie, zezwól na to.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriver Daemon";
+"permissions.daemonName" = "OpenJoystickDriverDaemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Daemon uruchamia się automatycznie po instalacji.";
 "daemon.systemExtension" = "Rozszerzenie systemowe";
