@@ -113,7 +113,7 @@ auto OpenJoystickVirtualHIDDevice::init() -> bool {
     return true;
 }
 
-auto OpenJoystickVirtualHIDDevice::free() {
+auto OpenJoystickVirtualHIDDevice::free() -> void {
     IOSafeDeleteNULL(ivars, OpenJoystickVirtualHIDDevice_IVars, 1);
     super::free();
 }
