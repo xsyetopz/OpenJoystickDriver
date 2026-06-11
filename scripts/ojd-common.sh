@@ -164,6 +164,24 @@ EOF
   export PKG_CONFIG_PATH="$LIBUSB_CACHE_DIR${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 }
 
+setup_sdl3_pkgconfig() {
+  local sdl3_prefix="${OJD_SDL3_PREFIX:-$PROJECT_DIR/.build/sdl3}"
+  local sdl3_pc="$sdl3_prefix/lib/pkgconfig/sdl3.pc"
+  if [[ -f "$sdl3_pc" ]]; then
+    export PKG_CONFIG_PATH="$sdl3_prefix/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+    export DYLD_LIBRARY_PATH="$sdl3_prefix/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
+    return 0
+  fi
+
+  if pkg-config --exists sdl3 2>/dev/null; then
+    return 0
+  fi
+
+  echo "ERROR: SDL3 pkg-config metadata not found."
+  echo "Fix: run: ./scripts/ojd install-sdl3"
+  return 1
+}
+
 # Provisioning profiles (selected by OJD_ENV)
 if [[ "$OJD_ENV" == "release" ]]; then
   DAEMON_PROFILE="${DAEMON_PROVISIONING_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriverDaemon_DevID.provisionprofile}"

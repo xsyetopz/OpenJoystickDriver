@@ -4,6 +4,11 @@ import PackageDescription
 
 let useLocalSwiftUSB = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTUSB"] == "1"
 let packageDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+let sdl3Prefix = ProcessInfo.processInfo.environment["OJD_SDL3_PREFIX"].map {
+  URL(fileURLWithPath: $0)
+} ?? packageDirectory.appendingPathComponent(".build/sdl3")
+let sdl3IncludePath = sdl3Prefix.appendingPathComponent("include").standardizedFileURL.path
+let sdl3LibPath = sdl3Prefix.appendingPathComponent("lib").standardizedFileURL.path
 let localSwiftUSBPath = packageDirectory
   .appendingPathComponent("../SwiftUSB")
   .standardizedFileURL
@@ -43,7 +48,13 @@ let package = Package(
       name: "OJDSDL3Shim",
       dependencies: ["CSDL3"],
       path: "Sources/OJDSDL3Shim",
-      publicHeadersPath: "include"
+      publicHeadersPath: "include",
+      cSettings: [
+        .unsafeFlags(["-I", sdl3IncludePath]),
+      ],
+      linkerSettings: [
+        .unsafeFlags(["-L", sdl3LibPath, "-lSDL3"]),
+      ]
     ),
 
     .target(

@@ -13,7 +13,7 @@ _copy_sdl3_dylib() {
   local sdl3_dylib
   sdl3_dylib="$(_sdl3_dylib_path)" || {
     echo "ERROR: SDL3 dylib not found through pkg-config."
-    echo "Fix: install SDL3, for example: brew install sdl3"
+    echo "Fix: run: ./scripts/ojd install-sdl3"
     exit 1
   }
   mkdir -p "$destination"
@@ -109,6 +109,7 @@ build_app_bundle() {
 
   if [[ "$OJD_ENV" == "release" ]]; then
     setup_libusb_pkgconfig
+    setup_sdl3_pkgconfig
     echo "Building release binaries (universal)..."
     cd "$PROJECT_DIR"
     "$SWIFT_BIN" build -c release --product OpenJoystickDriverDaemon --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
@@ -117,6 +118,7 @@ build_app_bundle() {
     local gui_bin="$GUI_RELEASE"
   else
     setup_libusb_pkgconfig
+    setup_sdl3_pkgconfig
     echo "Building debug binaries (universal)..."
     cd "$PROJECT_DIR"
     "$SWIFT_BIN" build --product OpenJoystickDriverDaemon --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors

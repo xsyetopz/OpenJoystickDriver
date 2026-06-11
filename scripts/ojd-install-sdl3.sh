@@ -3,12 +3,14 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+source "$SCRIPT_DIR/ojd-common.sh"
 
 SDL3_REF="${OJD_SDL3_REF:-main}"
 PREFIX="${OJD_SDL3_PREFIX:-$PROJECT_DIR/.build/sdl3}"
 SRC_DIR="$PROJECT_DIR/.build/sdl3-src"
 BUILD_DIR="$PROJECT_DIR/.build/sdl3-build"
+SDL3_DYLIB="$PREFIX/lib/libSDL3.0.dylib"
+REQUIRED_ARCHES=("arm64" "x86_64")
 
 usage() {
   cat <<'USAGE'
@@ -43,22 +45,36 @@ case "${1:-}" in
     ;;
 esac
 
+has_required_sdl3() {
+  [[ -x "$PREFIX/bin/sdl3-config" && -f "$SDL3_DYLIB" ]] || return 1
+  [[ "$("$PREFIX/bin/sdl3-config" --version)" == "3.5.0" ]] || return 1
+
+  local arches
+  arches="$(lipo -archs "$SDL3_DYLIB" 2>/dev/null || true)"
+  for arch in "${REQUIRED_ARCHES[@]}"; do
+    [[ " $arches " == *" $arch "* ]] || return 1
+  done
+}
+
 if [[ -x "$PREFIX/bin/sdl3-config" ]]; then
   current_version="$("$PREFIX/bin/sdl3-config" --version)"
-  if [[ "$current_version" == "3.5.0" ]]; then
+  if has_required_sdl3; then
     echo "SDL3 cache hit: $current_version at $PREFIX"
   fi
 fi
 
-if [[ ! -x "$PREFIX/bin/sdl3-config" || "$("$PREFIX/bin/sdl3-config" --version)" != "3.5.0" ]]; then
+if ! has_required_sdl3; then
   rm -rf "$SRC_DIR" "$BUILD_DIR" "$PREFIX"
+  setup_libusb_pkgconfig
   git clone --depth 1 --branch "$SDL3_REF" https://github.com/libsdl-org/SDL.git "$SRC_DIR"
   cmake -S "$SRC_DIR" -B "$BUILD_DIR" \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+    -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
     -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
     -DSDL_SHARED=ON \
     -DSDL_STATIC=OFF \
+    -DSDL_HIDAPI_LIBUSB_SHARED=OFF \
     -DSDL_TEST_LIBRARY=OFF \
     -DSDL_TESTS=OFF
   cmake --build "$BUILD_DIR" --parallel
