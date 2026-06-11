@@ -8,7 +8,7 @@ struct ScriptPackagingTests {
       .appendingPathComponent("justfile")
     let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
 
-    #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.5\""))
+    #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.6\""))
     #expect(
       justfile.contains(
         "OJD_ENV=release OJD_INSTALL_AFTER_PACKAGE=1 ./scripts/ojd package release \"{{version}}\""
@@ -28,13 +28,13 @@ struct ScriptPackagingTests {
     let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
     let bumpScript = try String(contentsOf: bumpURL, encoding: .utf8)
 
-    #expect(bundles.contains("OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.5"))
-    #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.5\""))
+    #expect(bundles.contains("OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.6"))
+    #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.6\""))
     #expect(bumpScript.contains("justfile"))
     #expect(bumpScript.contains("ScriptPackagingTests.swift"))
     #expect(bumpScript.contains("ScriptPackagingTests stale version guards"))
-    #expect(!bundles.contains("0.5.0-alpha.4"))
-    #expect(!justfile.contains("0.5.0-alpha.4"))
+    #expect(!bundles.contains("0.5.0-alpha.5"))
+    #expect(!justfile.contains("0.5.0-alpha.5"))
   }
 
   @Test

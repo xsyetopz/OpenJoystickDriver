@@ -265,7 +265,19 @@ struct InputTestWindowView: View {
 
   @ViewBuilder
   private func buttonPill(button: OpenJoystickDriverKit.Button, isDown: Bool) -> some View {
-    if #available(macOS 11.0, *) {
+    if let text = button.inputTesterTextFallback {
+      Text(text)
+        .font(.system(size: 12, weight: .semibold))
+        .lineLimit(1)
+        .minimumScaleFactor(0.8)
+        .frame(width: 32, height: 30)
+        .background(isDown ? Color.accentColor.opacity(0.85) : Color.secondary.opacity(0.14))
+        .foregroundColor(isDown ? .white : .primary)
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .transaction { transaction in
+          transaction.animation = nil
+        }
+    } else if #available(macOS 11.0, *) {
       Image(systemName: button.systemImageName)
         .font(.system(size: 15, weight: .semibold))
         .frame(width: 32, height: 30)

@@ -2,6 +2,13 @@
 
 All notable changes to OpenJoystickDriver are documented in this file.
 
+## 0.5.0-alpha.6
+
+### Fixed
+
+- Fixed blank L1/R1 shoulder buttons in the Input Tester by rendering text
+  fallbacks for shoulder labels when SF Symbols are unavailable.
+
 ## 0.5.0-alpha.5
 
 ### Added
