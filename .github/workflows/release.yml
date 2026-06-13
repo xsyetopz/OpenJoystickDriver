@@ -78,6 +78,9 @@ jobs:
       - name: Set up release signing
         run: ./scripts/ojd signing ci-release-setup
 
+      - name: Validate notarization credentials
+        run: ./scripts/ojd notarize history
+
       - name: Package release build
         run: |
           ./scripts/ojd package release "${{ steps.release.outputs.tag }}"

@@ -264,6 +264,42 @@ struct ScriptPackagingTests {
   }
 
   @Test
+  func testReleaseWorkflowPreflightsNotarizationCredentials() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let workflowURL = rootURL.appendingPathComponent(".github/workflows/release.yml")
+    let workflow = try String(contentsOf: workflowURL, encoding: .utf8)
+
+    #expect(workflow.contains("- name: Validate notarization credentials"))
+    #expect(workflow.contains("./scripts/ojd notarize history"))
+    guard
+      let preflightRange = workflow.range(of: "Validate notarization credentials"),
+      let packageRange = workflow.range(of: "Package release build")
+    else {
+      Issue.record("Expected release workflow preflight before package step")
+      return
+    }
+
+    #expect(preflightRange.lowerBound < packageRange.lowerBound)
+  }
+
+  @Test
+  func testNotarizeHistoryDoesNotRequireBuiltAppBundle() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let notarizeURL = rootURL.appendingPathComponent("scripts/ojd-notarize.sh")
+    let script = try String(contentsOf: notarizeURL, encoding: .utf8)
+
+    guard
+      let historyRange = script.range(of: "if [[ \"$subcmd\" == \"history\" ]]; then"),
+      let appCheckRange = script.range(of: "if [[ ! -d \"$APP\" ]]; then")
+    else {
+      Issue.record("Expected notarize history and app bundle existence check blocks")
+      return
+    }
+
+    #expect(historyRange.lowerBound < appCheckRange.lowerBound)
+  }
+
+  @Test
   func testInputMonitoringRequestUsesDaemonOwnedPrompt() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let appModelURL = rootURL.appendingPathComponent(

@@ -74,12 +74,6 @@ TIMEOUT_MINUTES="${NOTARIZE_TIMEOUT_MINUTES:-180}"
 POLL_INTERVAL="${NOTARIZE_POLL_INTERVAL:-30}"
 MAX_RETRIES="${NOTARIZE_MAX_RETRIES:-5}"
 
-if [[ ! -d "$APP" ]]; then
-  echo "ERROR: App not found at $APP"
-  echo "Run: OJD_ENV=release ./scripts/ojd rebuild release"
-  exit 1
-fi
-
 if [[ -n "${NOTARIZE_KEYCHAIN_PROFILE:-}" ]]; then
   AUTH_ARGS=(--keychain-profile "$NOTARIZE_KEYCHAIN_PROFILE")
   if [[ -n "${NOTARIZE_KEYCHAIN:-}" ]]; then
@@ -121,6 +115,12 @@ fi
 
 if [[ "$subcmd" != "submit" ]]; then
   die "Unknown notarize subcommand: $subcmd"
+fi
+
+if [[ ! -d "$APP" ]]; then
+  echo "ERROR: App not found at $APP"
+  echo "Run: OJD_ENV=release ./scripts/ojd rebuild release"
+  exit 1
 fi
 
 # ---------------------------------------------------------------------------
