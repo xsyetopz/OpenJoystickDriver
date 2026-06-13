@@ -300,6 +300,43 @@ struct ScriptPackagingTests {
   }
 
   @Test
+  func testReleaseWorkflowExposesAppStoreConnectNotarySecrets() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let workflowURL = rootURL.appendingPathComponent(".github/workflows/release.yml")
+    let workflow = try String(contentsOf: workflowURL, encoding: .utf8)
+
+    #expect(workflow.contains("NOTARIZE_KEY_ID: ${{ secrets.NOTARIZE_KEY_ID }}"))
+    #expect(workflow.contains("NOTARIZE_ISSUER_ID: ${{ secrets.NOTARIZE_ISSUER_ID }}"))
+    #expect(workflow.contains("NOTARIZE_API_KEY_BASE64: ${{ secrets.NOTARIZE_API_KEY_BASE64 }}"))
+  }
+
+  @Test
+  func testNotarizePrefersAppStoreConnectApiKeyAuth() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let notarizeURL = rootURL.appendingPathComponent("scripts/ojd-notarize.sh")
+    let script = try String(contentsOf: notarizeURL, encoding: .utf8)
+
+    #expect(script.contains("NOTARIZE_KEY_ID"))
+    #expect(script.contains("NOTARIZE_ISSUER_ID"))
+    #expect(script.contains("NOTARIZE_API_KEY_BASE64"))
+    #expect(script.contains("--key-id \"$NOTARIZE_KEY_ID\""))
+    #expect(script.contains("--issuer \"$NOTARIZE_ISSUER_ID\""))
+
+    guard
+      let apiKeyRange = script.range(of: "if [[ \"$HAS_API_KEY_AUTH\" -eq 1 ]]; then"),
+      let appleIDRange = script.range(
+        of: "--apple-id \"$NOTARIZE_APPLE_ID\"",
+        range: apiKeyRange.upperBound..<script.endIndex
+      )
+    else {
+      Issue.record("Expected API key auth branch before Apple ID auth branch")
+      return
+    }
+
+    #expect(apiKeyRange.lowerBound < appleIDRange.lowerBound)
+  }
+
+  @Test
   func testInputMonitoringRequestUsesDaemonOwnedPrompt() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let appModelURL = rootURL.appendingPathComponent(

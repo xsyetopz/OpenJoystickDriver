@@ -58,9 +58,22 @@ if [[ "$subcmd" == "store-credentials" ]]; then
   exit 0
 fi
 
-if [[ -z "${NOTARIZE_KEYCHAIN_PROFILE:-}" && ( -z "${NOTARIZE_APPLE_ID:-}" || -z "${NOTARIZE_PASSWORD:-}" ) ]]; then
+HAS_API_KEY_AUTH=0
+if [[ -n "${NOTARIZE_KEY_ID:-}" && -n "${NOTARIZE_ISSUER_ID:-}" ]] \
+  && [[ -n "${NOTARIZE_API_KEY_PATH:-}" || -n "${NOTARIZE_API_KEY_BASE64:-}" ]]; then
+  HAS_API_KEY_AUTH=1
+fi
+
+if [[ "$HAS_API_KEY_AUTH" -eq 0 && -z "${NOTARIZE_KEYCHAIN_PROFILE:-}" ]] \
+  && [[ -z "${NOTARIZE_APPLE_ID:-}" || -z "${NOTARIZE_PASSWORD:-}" ]]; then
   echo "ERROR: Notarization credentials not set in scripts/.env.release"
   echo ""
+  echo "Preferred App Store Connect API key auth:"
+  echo "  NOTARIZE_KEY_ID          = App Store Connect API key ID"
+  echo "  NOTARIZE_ISSUER_ID       = App Store Connect issuer ID"
+  echo "  NOTARIZE_API_KEY_BASE64  = base64-encoded AuthKey_<key-id>.p8"
+  echo ""
+  echo "Legacy Apple ID auth:"
   echo "  NOTARIZE_APPLE_ID  = your Apple ID email"
   echo "  NOTARIZE_PASSWORD  = app-specific password from:"
   echo "    appleid.apple.com → Sign-In and Security → App-Specific Passwords"
@@ -74,7 +87,33 @@ TIMEOUT_MINUTES="${NOTARIZE_TIMEOUT_MINUTES:-180}"
 POLL_INTERVAL="${NOTARIZE_POLL_INTERVAL:-30}"
 MAX_RETRIES="${NOTARIZE_MAX_RETRIES:-5}"
 
-if [[ -n "${NOTARIZE_KEYCHAIN_PROFILE:-}" ]]; then
+NOTARIZE_API_KEY_TEMP=""
+cleanup_notarize_api_key() {
+  if [[ -n "$NOTARIZE_API_KEY_TEMP" ]]; then
+    rm -f "$NOTARIZE_API_KEY_TEMP"
+  fi
+}
+trap cleanup_notarize_api_key EXIT
+
+if [[ "$HAS_API_KEY_AUTH" -eq 1 ]]; then
+  if [[ -n "${NOTARIZE_API_KEY_PATH:-}" ]]; then
+    NOTARIZE_API_KEY_FILE="$NOTARIZE_API_KEY_PATH"
+  else
+    if [[ -n "${RUNNER_TEMP:-}" ]]; then
+      NOTARIZE_API_KEY_TEMP="$RUNNER_TEMP/AuthKey_${NOTARIZE_KEY_ID}.p8"
+    else
+      NOTARIZE_API_KEY_TEMP="$(mktemp "${TMPDIR:-/tmp}/AuthKey_${NOTARIZE_KEY_ID}.XXXXXX.p8")"
+    fi
+    printf '%s' "$NOTARIZE_API_KEY_BASE64" | base64 --decode >"$NOTARIZE_API_KEY_TEMP"
+    chmod 600 "$NOTARIZE_API_KEY_TEMP"
+    NOTARIZE_API_KEY_FILE="$NOTARIZE_API_KEY_TEMP"
+  fi
+  AUTH_ARGS=(
+    --key "$NOTARIZE_API_KEY_FILE"
+    --key-id "$NOTARIZE_KEY_ID"
+    --issuer "$NOTARIZE_ISSUER_ID"
+  )
+elif [[ -n "${NOTARIZE_KEYCHAIN_PROFILE:-}" ]]; then
   AUTH_ARGS=(--keychain-profile "$NOTARIZE_KEYCHAIN_PROFILE")
   if [[ -n "${NOTARIZE_KEYCHAIN:-}" ]]; then
     AUTH_ARGS+=(--keychain "$NOTARIZE_KEYCHAIN")
