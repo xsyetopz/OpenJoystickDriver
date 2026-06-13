@@ -219,26 +219,26 @@ struct Xbox360SDLHIDReportFormatTests {
 
     #expect(f.inputReportID == nil)
     #expect(f.outputReportID == nil)
-    #expect(f.inputReportPayloadSize == 15)
+    #expect(f.inputReportPayloadSize == 20)
     #expect(f.outputReportPayloadSize == 8)
-    #expect(f.buildInputReport(from: VirtualGamepadState()).count == 15)
+    #expect(f.buildInputReport(from: VirtualGamepadState()).count == 20)
     #expect(parsed.inputReportID == nil)
-    #expect(parsed.inputReportPayloadSize == 15)
+    #expect(parsed.inputReportPayloadSize == 20)
   }
 
   @Test
-  func testMapsButtonsInSDLAstroC40Order() {
-    #expect(report(buttonBit: .a)[0] == 0x01)
-    #expect(report(buttonBit: .b)[0] == 0x02)
-    #expect(report(buttonBit: .x)[0] == 0x04)
-    #expect(report(buttonBit: .y)[0] == 0x08)
-    #expect(report(buttonBit: .back)[0] == 0x10)
-    #expect(report(buttonBit: .guide)[0] == 0x20)
-    #expect(report(buttonBit: .start)[0] == 0x40)
-    #expect(report(buttonBit: .leftStick)[0] == 0x80)
-    #expect(report(buttonBit: .rightStick)[1] == 0x01)
-    #expect(report(buttonBit: .leftBumper)[1] == 0x02)
-    #expect(report(buttonBit: .rightBumper)[1] == 0x04)
+  func testMapsButtonsInSDLXbox360HIDAPIOrder() {
+    #expect(report(buttonBit: .start)[2] == 0x10)
+    #expect(report(buttonBit: .back)[2] == 0x20)
+    #expect(report(buttonBit: .leftStick)[2] == 0x40)
+    #expect(report(buttonBit: .rightStick)[2] == 0x80)
+    #expect(report(buttonBit: .a)[3] == 0x10)
+    #expect(report(buttonBit: .b)[3] == 0x20)
+    #expect(report(buttonBit: .x)[3] == 0x40)
+    #expect(report(buttonBit: .y)[3] == 0x80)
+    #expect(report(buttonBit: .leftBumper)[3] == 0x01)
+    #expect(report(buttonBit: .rightBumper)[3] == 0x02)
+    #expect(report(buttonBit: .guide)[3] == 0x04)
   }
 
   @Test
@@ -255,19 +255,19 @@ struct Xbox360SDLHIDReportFormatTests {
       )
     )
 
-    #expect(report[2] == GamepadHIDDescriptor.Hat.east.rawValue)
-    #expect(report[3] == 0xFF)
-    #expect(report[4] == 0x7F)
-    #expect(report[5] == 0x01)
-    #expect(report[6] == 0x80)
-    #expect(report[7] == 0x00)
-    #expect(report[8] == 0x40)
-    #expect(report[9] == 0x00)
-    #expect(report[10] == 0xC0)
-    #expect(report[11] == 0x00)
-    #expect(report[12] == 0x20)
-    #expect(report[13] == 0x00)
-    #expect(report[14] == 0x60)
+    #expect(report[0] == 0x00)
+    #expect(report[1] == 0x14)
+    #expect(report[2] == 0x08)
+    #expect(report[4] == 0x40)
+    #expect(report[5] == 0xC0)
+    #expect(report[6] == 0xFF)
+    #expect(report[7] == 0x7F)
+    #expect(report[8] == 0x01)
+    #expect(report[9] == 0x80)
+    #expect(report[10] == 0x00)
+    #expect(report[11] == 0x40)
+    #expect(report[12] == 0x00)
+    #expect(report[13] == 0xC0)
   }
 
   @Test
@@ -279,7 +279,7 @@ struct Xbox360SDLHIDReportFormatTests {
       )
     )
 
-    #expect(shoulders[0] == 0x00)
-    #expect(shoulders[1] == 0x06)
+    #expect(shoulders[2] == 0x00)
+    #expect(shoulders[3] == 0x03)
   }
 }

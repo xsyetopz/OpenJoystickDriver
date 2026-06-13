@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "El dimoni s’està executant però està desconnectat. Reinicia el dimoni.";
 "readiness.allowAppInputMonitoring" = "Permet la monitorització d’entrada per a OpenJoystickDriver.";
 "readiness.allowDaemonInputMonitoring" = "Permet la monitorització d’entrada per a OpenJoystickDriverDaemon.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Connecta un controlador.";
 "readiness.controllersConnected.one" = "%d controlador connectat.";
 "readiness.controllersConnected.other" = "%d controladors connectats.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Necessita aprovació";
 "access.notSetUp" = "No configurat";
 "permissions.title" = "Permisos";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "L’accés està permès.";
 "permissions.openSettings" = "Obre Configuració del sistema i activa la monitorització d’entrada per a %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver ha demanat accés a macOS. A Monitorització d’entrada, activa %@. Si macOS demana sortir i tornar a obrir, permet-ho.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Vols desinstal·lar el LaunchAgent?";
 "alert.uninstallMessage" = "Això elimina el plist del LaunchAgent. El pots reinstal·lar més tard.";
 "permissions.requestAccessDefault" = "Sol·licita accés perquè macOS pugui afegir aquest element a Monitorització d’entrada.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "l’aplicació";
 "permissions.ownerDaemon" = "el dimoni";
 "output.detailsCardTitle" = "Detalls de sortida";

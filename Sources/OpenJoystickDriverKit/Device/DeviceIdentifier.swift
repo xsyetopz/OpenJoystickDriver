@@ -33,6 +33,11 @@ public struct DeviceIdentifier: Hashable, Sendable {
     self.locationID = locationID
   }
 
+  /// Encodes a USB bus/address pair into the location fallback used by OJD.
+  public static func usbLocationID(bus: UInt32, address: UInt32) -> UInt32 {
+    (bus << 16) | (address & 0x0000_FFFF)
+  }
+
   /// Returns true when both identifiers point to the same physical device.
   ///
   /// Requires matching vendor ID, product ID, and a non-nil serial number.
@@ -46,6 +51,18 @@ public struct DeviceIdentifier: Hashable, Sendable {
   /// Regardless of serial number or location. Used for model-level profile matching.
   public func modelMatches(_ other: Self) -> Bool {
     vendorID == other.vendorID && productID == other.productID
+  }
+
+  /// Matches a query identifier, preferring serial, then location, then model-level fallback.
+  public func matchesQuery(_ query: Self) -> Bool {
+    guard modelMatches(query) else { return false }
+    if let serial = query.serialNumber {
+      return serialNumber == serial
+    }
+    if let location = query.locationID {
+      return locationID == location
+    }
+    return true
   }
 }
 

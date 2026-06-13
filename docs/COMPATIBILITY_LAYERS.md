@@ -31,10 +31,10 @@ here, and keep README short.
 | xpad-derived Xbox batches         | ✅      | Varies                             | Runtime input comes from SDL3 instead of OJD xpad-derived parser patches.                                             |
 | Valve Steam Controller            | ✅      | `sdl2-3`                           | Runtime support depends on SDL3 exposing the controller as an SDL gamepad.                                            |
 | Nintendo Switch Pro USB/Bluetooth | ✅      | `sdl2-3`                           | Runtime input comes from SDL3. Calibration/IMU behavior remains outside OJD's virtual gamepad scope.                  |
-| Generic USB HID fallback          | ⚠️      | `generic-hid`                      | Basic fallback for descriptor-driven apps.                                                                            |
+| Generic USB HID fallback          | ⚠️      | `generic-hid`                      | Browser-safe compatibility surface; use targeted diagnostics for raw descriptor consumers.                            |
 | SDL 2/3 apps                      | ✅      | `sdl2-3`                           | Use for Steam, DuckStation, Moonlight/SDL, and similar apps.                                                          |
 | Apple GameController apps         | ✅      | `apple-gamecontroller`             | Use for native macOS apps that read `GCController`.                                                                   |
-| Browser Gamepad API               | ⚠️      | active compatibility identity      | Browser mappings can vary by identity and stale devices.                                                              |
+| Browser Gamepad API               | ✅      | active compatibility identity      | Safari verified across SDL2/3, Generic HID, Apple GameController, Xbox 360 HID, and Xbox One HID.                     |
 | App rumble                        | ✅      | Compatibility modes                | Parses Xbox One, Xbox 360, and compact OJD rumble reports, then sends physical rumble through SDL3.                   |
 | DriverKit output                  | ⚠️      | `driverKit`                        | Good for relay/diagnostics; not the main app compatibility path.                                                      |
 | Other Bluetooth controllers       | ✅      | `sdl2-3`                           | Supported when SDL3 exposes them as gamepads.                                                                         |
@@ -46,11 +46,12 @@ here, and keep README short.
 | ----------------------------------------------- | ------------------------ | ------------------------------------------------------------------------ |
 | Most games and emulators                        | ✅ `sdl2-3`               | Best default for SDL-based apps.                                         |
 | Native macOS app using GameController.framework | ✅ `apple-gamecontroller` | Publishes a `GCController`-friendly Xbox-style HID surface with haptics. |
-| SDL app needs output-report rumble              | 🚧 `x360-hid`             | Test with `./scripts/ojd diagnose sdl3-hidapi-x360 --seconds 5`.         |
-| SDL app needs macOS GameController rumble       | 🚧 `apple-gamecontroller` | GameController haptics work; SDL MFI enumeration is still gated.         |
-| Direct HID testing                              | ⚠️ `generic-hid`          | Keeps OJD's own VID/PID and exposes a plain HID GamePad.                 |
-| App expects Xbox 360 HID                        | 🚧 `x360-hid`             | Experimental Microsoft-style HID identity.                               |
-| App expects Xbox One HID                        | 🚧 `xone-hid`             | Experimental Microsoft-style HID identity.                               |
+| SDL app needs output-report rumble              | ✅ `x360-hid`             | Test with `./scripts/ojd diagnose sdl3-hidapi-x360 --seconds 5`.         |
+| SDL app needs macOS GameController rumble       | ✅ `apple-gamecontroller` | GameController haptics work through the compatibility surface.           |
+| Safari/Web Gamepad API                          | ✅ any compatibility mode | All compatibility identities publish a GameController-accepted surface.  |
+| Direct HID testing                              | ⚠️ `generic-hid`          | Browser-safe mode no longer preserves OJD's own VID/PID.                 |
+| App expects Xbox 360 HID                        | ✅ `x360-hid`             | Microsoft-style identity verified through Safari/GameController.         |
+| App expects Xbox One HID                        | ✅ `xone-hid`             | Microsoft-style identity verified through Safari/GameController.         |
 | DualShock 4 over Bluetooth                      | ✅ `sdl2-3`               | Runtime input and physical rumble go through SDL3.                       |
 
 CLI examples:
@@ -82,25 +83,11 @@ Notes:
 
 ## Browser Mapping
 
-### `sdl2-3` and `generic-hid`
+Safari's Gamepad API is backed by GameController.framework. Compatibility
+identities therefore publish accepted Xbox-style HID surfaces for browser use,
+including `sdl2-3` and `generic-hid`.
 
-| Browser control               | Meaning                        |
-| ----------------------------- | ------------------------------ |
-| `B0` / `B1` / `B2` / `B3`     | A / B / X / Y                  |
-| `B4` / `B5`                   | LB / RB                        |
-| `B6` / `B7`                   | L3 / R3                        |
-| `B8` / `B9`                   | Menu / View                    |
-| `B10`                         | Xbox/Home                      |
-| `B11` / `B12` / `B13` / `B14` | D-pad Up / Down / Left / Right |
-| `B15`                         | Share                          |
-| `A0` / `A1`                   | Left stick X / Y               |
-| `A2`                          | LT                             |
-| `A3` / `A4`                   | Right stick X / Y              |
-| `A5`                          | RT                             |
-
-LT and RT idle at zero. D-pad is button-backed only.
-
-### `apple-gamecontroller`, `x360-hid`, and `xone-hid`
+### `sdl2-3`, `generic-hid`, `apple-gamecontroller`, `x360-hid`, and `xone-hid`
 
 | Browser control               | Meaning                        |
 | ----------------------------- | ------------------------------ |
@@ -115,6 +102,8 @@ LT and RT idle at zero. D-pad is button-backed only.
 ## SDL Mapping
 
 `Resources/SDL/openjoystickdriver.gamecontrollerdb.txt` maps `sdl2-3` like this:
+
+This SDL app mapping is separate from Safari's Browser API surface above.
 
 | SDL control                              | HID source                    |
 | ---------------------------------------- | ----------------------------- |

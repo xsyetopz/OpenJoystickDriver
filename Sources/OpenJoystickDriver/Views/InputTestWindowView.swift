@@ -12,12 +12,32 @@ private actor InputTestSampler {
     client.disconnect()
   }
 
-  func deviceInputState(vendorID: UInt16, productID: UInt16) async -> DeviceInputState? {
-    try? await client.deviceInputState(vendorID: vendorID, productID: productID)
+  func deviceInputState(
+    vendorID: UInt16,
+    productID: UInt16,
+    serialNumber: String?,
+    locationID: UInt32?
+  ) async -> DeviceInputState? {
+    try? await client.deviceInputState(
+      vendorID: vendorID,
+      productID: productID,
+      serialNumber: serialNumber,
+      locationID: locationID
+    )
   }
 
-  func packetLog(vendorID: UInt16, productID: UInt16) async -> [PacketLogEntry] {
-    (try? await client.packetLog(vendorID: vendorID, productID: productID)) ?? []
+  func packetLog(
+    vendorID: UInt16,
+    productID: UInt16,
+    serialNumber: String?,
+    locationID: UInt32?
+  ) async -> [PacketLogEntry] {
+    (try? await client.packetLog(
+      vendorID: vendorID,
+      productID: productID,
+      serialNumber: serialNumber,
+      locationID: locationID
+    )) ?? []
   }
 }
 
@@ -408,7 +428,9 @@ struct InputTestWindowView: View {
     }
     let nextState = await sampler.deviceInputState(
       vendorID: device.vendorID,
-      productID: device.productID
+      productID: device.productID,
+      serialNumber: device.serialNumber,
+      locationID: device.locationID
     )
     if state != nextState {
       state = nextState
@@ -420,7 +442,12 @@ struct InputTestWindowView: View {
       packetLog = []
       return
     }
-    packetLog = await sampler.packetLog(vendorID: device.vendorID, productID: device.productID)
+    packetLog = await sampler.packetLog(
+      vendorID: device.vendorID,
+      productID: device.productID,
+      serialNumber: device.serialNumber,
+      locationID: device.locationID
+    )
   }
 }
 

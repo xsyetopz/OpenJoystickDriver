@@ -318,6 +318,25 @@ next_dext_bundle_version() {
   echo $((max_version + 1))
 }
 
+quit_running_gui_app() {
+  if ! pgrep -x OpenJoystickDriver >/dev/null 2>&1; then
+    return 0
+  fi
+
+  echo "  Quitting running OpenJoystickDriver GUI..."
+  /usr/bin/osascript -e 'tell application id "com.openjoystickdriver" to quit' >/dev/null 2>&1 || true
+
+  for _ in 1 2 3 4 5; do
+    if ! pgrep -x OpenJoystickDriver >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 0.2
+  done
+
+  echo "  GUI did not quit after AppleEvent; terminating process..."
+  killall OpenJoystickDriver 2>/dev/null || true
+}
+
 rebuild_fast() {
   local APP_DST="/Applications/OpenJoystickDriver.app"
   local APP_SRC="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
@@ -353,6 +372,7 @@ rebuild_fast() {
 
   echo ""
   echo "=== Step 3: Install app (without triggering sysext upgrade) ==="
+  quit_running_gui_app
   rm -rf "$APP_DST"
   cp -R "$APP_SRC" "$APP_DST"
   xattr -dr com.apple.quarantine "$APP_DST" 2>/dev/null || true

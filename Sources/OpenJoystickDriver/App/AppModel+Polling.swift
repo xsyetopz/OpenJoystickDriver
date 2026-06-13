@@ -28,10 +28,12 @@ import OpenJoystickDriverKit
       daemonConnected = false
       devices = []
       userSpaceVirtualDeviceEnabled = false
+      daemonUserSpaceVirtualDeviceStatus = "off"
       userSpaceVirtualDeviceStatus = "off"
       virtualDeviceDiagnostics = nil
       appInputMonitoring = "\(await permissionManager.checkAccess())"
       inputMonitoring = "unknown"
+      daemonAccessibility = "unknown"
       resetDaemonHealthTrend()
       return
     }
@@ -42,19 +44,20 @@ import OpenJoystickDriverKit
       let status = try await client.getStatus()
       daemonConnected = true
       daemonError = nil
-      let probedDaemonInputMonitoring = probeBundledDaemonInputMonitoringState()
+      let probedDaemonInputMonitoring = await probeBundledDaemonInputMonitoringState()
       inputMonitoring = mergeDaemonInputMonitoringStatus(
         xpc: status.inputMonitoring,
         probed: probedDaemonInputMonitoring
       )
+      daemonAccessibility = status.accessibility ?? "unknown"
       devices = status.connectedDevices.map { DeviceViewModel(from: $0) }
       userSpaceVirtualDeviceEnabled = status.userSpaceVirtualDeviceEnabled ?? false
-      userSpaceVirtualDeviceStatus = status.userSpaceVirtualDeviceStatus ?? "unknown"
+      daemonUserSpaceVirtualDeviceStatus = status.userSpaceVirtualDeviceStatus ?? "unknown"
       virtualDeviceMode = status.virtualDeviceMode ?? VirtualDeviceMode.compatUserSpace.rawValue
       outputMode = status.effectiveOutputMode ?? CompositeOutputDispatcher.Mode.primaryOnly.rawValue
       compatibilityIdentity = status.compatibilityIdentity ?? CompatibilityIdentity.sdl2_3.rawValue
       userSpaceVirtualDeviceStatus = visibleCompatibilityStatus(
-        daemonStatus: userSpaceVirtualDeviceStatus
+        daemonStatus: daemonUserSpaceVirtualDeviceStatus
       )
 
       await maybeRefreshDaemonHealth(isConnected: true)
@@ -64,6 +67,7 @@ import OpenJoystickDriverKit
       client.disconnect()
       appInputMonitoring = "\(await permissionManager.checkAccess())"
       inputMonitoring = "unknown"
+      daemonAccessibility = "unknown"
 
       // When XPC is failing, refresh launchd health immediately so we can explain why.
       await refreshDaemonHealth()
@@ -207,19 +211,30 @@ import OpenJoystickDriverKit
     guard compatibilityOutputTask == nil else { return }
     compatibilityOutputTask = Task { [weak self] in
       while !Task.isCancelled {
-        try? await Task.sleep(nanoseconds: 16_666_667)
-        await self?.syncCompatibilityOutputBridge()
+        guard let self else { return }
+        try? await Task.sleep(nanoseconds: self.compatibilityOutputBridgePollNanoseconds())
+        await self.syncCompatibilityOutputBridge()
       }
     }
   }
 
-  var isAppOwnedCompatibilityOutputActive: Bool {
-    virtualDeviceMode == VirtualDeviceMode.compatUserSpace.rawValue
-      || virtualDeviceMode == VirtualDeviceMode.both.rawValue
+  func compatibilityOutputBridgePollNanoseconds() -> UInt64 {
+    if isAppOwnedCompatibilityOutputActive(daemonStatus: daemonUserSpaceVirtualDeviceStatus) {
+      return compatibilityOutputBridgeFastPollNanoseconds
+    }
+    return appModelPollNanoseconds
+  }
+
+  func isAppOwnedCompatibilityOutputActive(daemonStatus: String) -> Bool {
+    daemonStatus.hasPrefix("error:")
+      && (virtualDeviceMode == VirtualDeviceMode.compatUserSpace.rawValue
+        || virtualDeviceMode == VirtualDeviceMode.both.rawValue)
   }
 
   func visibleCompatibilityStatus(daemonStatus: String) -> String {
-    guard isAppOwnedCompatibilityOutputActive else { return daemonStatus }
+    guard isAppOwnedCompatibilityOutputActive(daemonStatus: daemonStatus) else {
+      return daemonStatus
+    }
     let bridgeStatus = compatibilityOutputBridge.status
     if daemonStatus.hasPrefix("error:") && bridgeStatus.hasPrefix("on") {
       return bridgeStatus
@@ -233,6 +248,7 @@ import OpenJoystickDriverKit
       return
     }
 
+    let daemonStatus = daemonUserSpaceVirtualDeviceStatus
     let identity = CompatibilityIdentity(rawValue: compatibilityIdentity) ?? .sdl2_3
     let identifiers = devices.map {
       DeviceIdentifier(
@@ -242,7 +258,7 @@ import OpenJoystickDriverKit
       )
     }
     await compatibilityOutputBridge.update(
-      isEnabled: isAppOwnedCompatibilityOutputActive,
+      isEnabled: isAppOwnedCompatibilityOutputActive(daemonStatus: daemonStatus),
       identity: identity,
       devices: identifiers
     ) { [client] identifier in
@@ -252,7 +268,7 @@ import OpenJoystickDriverKit
       )
     }
     userSpaceVirtualDeviceStatus = visibleCompatibilityStatus(
-      daemonStatus: userSpaceVirtualDeviceStatus
+      daemonStatus: daemonStatus
     )
   }
 }

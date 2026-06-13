@@ -81,6 +81,8 @@ struct DiagnoseCommand {
       let inputState = await permManager.checkAccess()
       print("Permissions:")
       print("  Input Monitoring : " + "\(inputState.label) \(inputState)")
+      let accessibilityState = PermissionManager.currentAccessibilityState()
+      print("  Accessibility   : " + "\(accessibilityState.label) \(accessibilityState)")
     }
   }
 
@@ -111,6 +113,8 @@ struct DiagnoseCommand {
     print("Troubleshooting:")
     print("  No input from controller?")
     print("    -> Grant Input Monitoring: System Settings → Privacy & Security → Input Monitoring")
+    print("  Compatibility mode cannot create virtual HID?")
+    print("    -> Grant Accessibility: System Settings → Privacy & Security → Accessibility")
     print("  DriverKit extension missing/broken?")
     print("    -> Run: ./scripts/ojd rebuild dev")
   }

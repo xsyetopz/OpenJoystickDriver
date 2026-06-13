@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "Der Daemon läuft, ist aber getrennt. Starte den Daemon neu.";
 "readiness.allowAppInputMonitoring" = "Erlaube Eingabeüberwachung für OpenJoystickDriver.";
 "readiness.allowDaemonInputMonitoring" = "Erlaube Eingabeüberwachung für OpenJoystickDriverDaemon.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Verbinde einen Controller.";
 "readiness.controllersConnected.one" = "%d Controller verbunden.";
 "readiness.controllersConnected.other" = "%d Controller verbunden.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Genehmigung erforderlich";
 "access.notSetUp" = "Nicht eingerichtet";
 "permissions.title" = "Berechtigungen";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Zugriff ist erlaubt.";
 "permissions.openSettings" = "Öffne die Systemeinstellungen und aktiviere Eingabeüberwachung für %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver hat macOS um Zugriff gebeten. Aktiviere in der Eingabeüberwachung %@. Wenn macOS zum Beenden und erneuten Öffnen auffordert, erlaube es.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "LaunchAgent deinstallieren?";
 "alert.uninstallMessage" = "Dies entfernt die LaunchAgent-plist. Du kannst sie später neu installieren.";
 "permissions.requestAccessDefault" = "Fordere Zugriff an, damit macOS dieses Element zur Eingabeüberwachung hinzufügen kann.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "die App";
 "permissions.ownerDaemon" = "der Daemon";
 "output.detailsCardTitle" = "Ausgabedetails";

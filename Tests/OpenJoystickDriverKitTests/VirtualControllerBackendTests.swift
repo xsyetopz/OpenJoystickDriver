@@ -40,16 +40,38 @@ struct VirtualControllerBackendTests {
     let x360 = CompatibilityOutputProfileCatalog.profile(for: .x360HID)
     let xone = CompatibilityOutputProfileCatalog.profile(for: .xoneHID)
 
-    #expect(generic.deviceProfile.productID == 0x4449)
-    #expect(sdl.deviceProfile.productID == 0x4448)
+    #expect(generic.deviceProfile.productID == 0x028E)
+    #expect(sdl.deviceProfile.productID == 0x028E)
     #expect(apple.deviceProfile.productID == 0x028E)
-    #expect(!generic.isHardwareSpoof)
-    #expect(!sdl.isHardwareSpoof)
+    #expect(generic.isHardwareSpoof)
+    #expect(sdl.isHardwareSpoof)
     #expect(apple.isHardwareSpoof)
     #expect(x360.isHardwareSpoof)
-    #expect(x360.deviceProfile.productName == "ASTRO C40 TR Controller")
+    #expect(x360.deviceProfile.vendorID == 0x045E)
+    #expect(x360.deviceProfile.productID == 0x028E)
+    #expect(x360.deviceProfile.productName == "Xbox 360 Wired Controller")
     #expect(xone.isHardwareSpoof)
+    #expect(xone.deviceProfile.productID == 0x02E0)
+    #expect(xone.deviceProfile.versionNumber == 0x5326)
+    #expect(xone.deviceProfile.productName == "Xbox One Wireless Controller")
     #expect(xone.emitsXboxGuideReport)
+  }
+  @Test
+  func testOJDOwnedIdentitiesUseBrowserAcceptedProfileInCompatibilityMode() throws {
+    for identity in [CompatibilityIdentity.genericHID, .sdl2_3] {
+      let profile = CompatibilityOutputProfileCatalog.profile(for: identity).deviceProfile
+      let (format, primaryUsage) = try UserSpaceOutputDispatcher.compatibilityReportFormat(
+        for: identity,
+        profile: profile
+      )
+
+      #expect(profile.vendorID == 0x045E)
+      #expect(profile.productID == 0x028E)
+      #expect(profile.productName == "Xbox 360 Wired Controller")
+      #expect(format is Xbox360SDLHIDReportFormat)
+      #expect(format.inputReportPayloadSize == 20)
+      #expect(primaryUsage == kHIDUsage_GD_GamePad)
+    }
   }
   @Test
   func testCompatibilityIdentitiesRequestDriverKitSeizure() {
@@ -156,6 +178,81 @@ struct VirtualControllerBackendTests {
   }
 
   @Test
+  func testUserSpaceDispatcherPreflightsAccessibilityAfterEntitlement() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let dispatcherURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriverKit/Output/Backends/UserSpaceOutputDispatcher.swift"
+    )
+    let source = try String(contentsOf: dispatcherURL, encoding: .utf8)
+
+    #expect(source.contains("missingAccessibilityPermission"))
+    #expect(source.contains("PermissionManager.currentAccessibilityState() == .granted"))
+    #expect(source.contains("Accessibility permission required for virtual HID device"))
+  }
+
+  @Test
+  func testUserSpaceDispatcherPublishesInitialNeutralReportOnActivation() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let dispatcherURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriverKit/Output/Backends/UserSpaceOutputDispatcher.swift"
+    )
+    let source = try String(contentsOf: dispatcherURL, encoding: .utf8)
+
+    #expect(source.contains("sendInitialInputReport(to: dev)"))
+    #expect(source.contains("format.buildInputReport(from: VirtualGamepadState())"))
+    #expect(source.contains("IOHIDUserDeviceHandleReportWithTimeStamp("))
+    #expect(source.contains("status = \"on (initial neutral report failed:"))
+  }
+
+  @Test
+  func testUserSpaceGetReportReturnsCurrentStateWithoutDuplicatingReportID() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let dispatcherURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriverKit/Output/Backends/UserSpaceOutputDispatcher.swift"
+    )
+    let source = try String(contentsOf: dispatcherURL, encoding: .utf8)
+    guard
+      let getReportStart = source.range(of: "IOHIDUserDeviceRegisterGetReportBlock(dev)"),
+      let getReportEnd = source.range(
+        of: "if let onRumbleCommand",
+        range: getReportStart.upperBound..<source.endIndex
+      )
+    else {
+      Issue.record("Could not locate user-space GetReport block")
+      return
+    }
+    let getReportSource = String(source[getReportStart.lowerBound..<getReportEnd.lowerBound])
+
+    #expect(getReportSource.contains("stateBox.currentReport(format: self.format)"))
+    #expect(
+      getReportSource.contains(
+        "Self.payloadBytes(for: currentReport, reportID: expectedReportID)"
+      )
+    )
+    #expect(!getReportSource.contains("VirtualGamepadState()"))
+  }
+
+  @Test
+  func testUserSpaceStatusPublishesDispatchAndGetReportTelemetry() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let dispatcherURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriverKit/Output/Backends/UserSpaceOutputDispatcher.swift"
+    )
+    let source = try String(contentsOf: dispatcherURL, encoding: .utf8)
+
+    #expect(source.contains("recordInputDispatchTelemetry("))
+    #expect(source.contains("eventCount: events.count"))
+    #expect(source.contains("recordGetReportTelemetry(result: kIOReturnSuccess)"))
+    #expect(source.contains("dispatches="))
+    #expect(source.contains("nonEmpty="))
+    #expect(source.contains("events="))
+    #expect(source.contains("writes="))
+    #expect(source.contains("getReports="))
+    #expect(source.contains("lastWrite=0x"))
+    #expect(source.contains("lastGet=0x"))
+  }
+
+  @Test
   func testXbox360FormatDefaultsToJoystickPrimaryUsage() {
     #expect(
       UserSpaceOutputDispatcher.defaultPrimaryUsage(for: Xbox360MacHIDReportFormat())
@@ -167,6 +264,20 @@ struct VirtualControllerBackendTests {
     #expect(UserSpaceOutputDispatcher.defaultPrimaryUsage(
         for: Xbox360MacHIDReportFormat(topLevelUsage: UInt8(kHIDUsage_GD_GamePad))
       ) == kHIDUsage_GD_GamePad)
+  }
+  @Test
+  func testAppleGameControllerIdentityUsesAcceptedXbox360IdentityWithSDLPacketShape() throws {
+    let profile = CompatibilityOutputProfileCatalog.profile(for: .appleGameController).deviceProfile
+    let (format, primaryUsage) = try UserSpaceOutputDispatcher.compatibilityReportFormat(
+      for: .appleGameController,
+      profile: profile
+    )
+
+    #expect(profile.productID == 0x028E)
+    #expect(format is Xbox360SDLHIDReportFormat)
+    #expect(format.inputReportID == nil)
+    #expect(format.inputReportPayloadSize == 20)
+    #expect(primaryUsage == kHIDUsage_GD_GamePad)
   }
   @Test
   func testXbox360CompatibilityIdentityUsesSDLMappingFormat() throws {
@@ -192,6 +303,36 @@ struct VirtualControllerBackendTests {
     #expect(
       format.outputReportPayloadSize == VirtualRumbleOutputReportParser.xboxOneReportPayloadSize
     )
+  }
+  @Test
+  func testXboxOneCompatibilitySwapsCenterButtonsForSafariOrder() throws {
+    let profile = CompatibilityOutputProfileCatalog.profile(for: .xoneHID).deviceProfile
+    let (format, _) = try UserSpaceOutputDispatcher.compatibilityReportFormat(
+      for: .xoneHID,
+      profile: profile
+    )
+
+    let leftStick = format.buildInputReport(
+      from: VirtualGamepadState(
+        buttons: 1 << GamepadHIDDescriptor.ButtonBit.leftStick.rawValue
+      )
+    )
+    let rightStick = format.buildInputReport(
+      from: VirtualGamepadState(
+        buttons: 1 << GamepadHIDDescriptor.ButtonBit.rightStick.rawValue
+      )
+    )
+    let menu = format.buildInputReport(
+      from: VirtualGamepadState(buttons: 1 << GamepadHIDDescriptor.ButtonBit.start.rawValue)
+    )
+    let view = format.buildInputReport(
+      from: VirtualGamepadState(buttons: 1 << GamepadHIDDescriptor.ButtonBit.back.rawValue)
+    )
+
+    #expect(leftStick[15] == 0x01)
+    #expect(rightStick[15] == 0x02)
+    #expect(menu[14] == 0x80)
+    #expect(view[14] == 0x40)
   }
   @Test
   func testXboxGIPCompatibilityFormatAdvertisesFullOutputSize() throws {
@@ -250,7 +391,8 @@ struct VirtualControllerBackendTests {
     #expect(generic == [UInt8](repeating: 0, count: generic.count))
     #expect(sdl == [UInt8](repeating: 0, count: sdl.count))
     #expect(Array(apple.dropFirst(2)) == [UInt8](repeating: 0, count: apple.count - 2))
-    #expect(x360 == [UInt8](repeating: 0, count: x360.count))
+    #expect(Array(x360.prefix(2)) == [0x00, 0x14])
+    #expect(Array(x360.dropFirst(2)) == [UInt8](repeating: 0, count: x360.count - 2))
     #expect(xone[0] == 1)
     #expect(xone[13] == 0x00)
     #expect(xone[14] == 0x00)

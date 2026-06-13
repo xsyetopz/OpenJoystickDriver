@@ -17,8 +17,10 @@
 
 static const char *OJD_GUIDS[] = {
     "0300f88c4a4f00004844000008040000",  // OpenJoystickDriver generic user-space profile
+    "03008d62869800002400000000006800",  // OJD x360-hid / ASTRO C40 compatibility profile
 };
 static const int OJD_GUID_COUNT = (int)(sizeof(OJD_GUIDS) / sizeof(OJD_GUIDS[0]));
+static const char *OJD_SERIAL_PREFIX = "OpenJoystickDriver-UserSpace:";
 
 static const char *env_or_unset(const char *key) {
     const char *v = getenv(key);
@@ -53,6 +55,20 @@ static int is_ojd_guid(const char *guid) {
             return 1;
     }
     return 0;
+}
+
+static int has_ojd_serial(SDL_JoystickID id) {
+    int result = 0;
+    SDL_Joystick *joy = SDL_OpenJoystick(id);
+    if (!joy)
+        return 0;
+
+    const char *serial = SDL_GetJoystickSerial(joy);
+    if (serial && strncmp(serial, OJD_SERIAL_PREFIX, strlen(OJD_SERIAL_PREFIX)) == 0) {
+        result = 1;
+    }
+    SDL_CloseJoystick(joy);
+    return result;
 }
 
 static void print_joystick_id(SDL_JoystickID id) {
@@ -191,7 +207,7 @@ static SDL_JoystickID *wait_for_joysticks(int wait_seconds, int *joy_count) {
     return enumerate_joysticks(joy_count);
 }
 
-static int check_single_neutral_ojd(SDL_JoystickID *joy_ids, int joy_count) {
+static int check_single_neutral_ojd(SDL_JoystickID *joy_ids, int joy_count, int neutral_axis_tolerance) {
     int ojd_count = 0;
     int failures = 0;
 
@@ -200,7 +216,7 @@ static int check_single_neutral_ojd(SDL_JoystickID *joy_ids, int joy_count) {
         SDL_GUID guid = SDL_GetJoystickGUIDForID(id);
         char guid_str[64];
         SDL_GUIDToString(guid, guid_str, (int)sizeof(guid_str));
-        if (!is_ojd_guid(guid_str))
+        if (!is_ojd_guid(guid_str) && !has_ojd_serial(id))
             continue;
 
         ojd_count++;
@@ -219,8 +235,12 @@ static int check_single_neutral_ojd(SDL_JoystickID *joy_ids, int joy_count) {
 
         for (int axis = 0; axis < SDL_GAMEPAD_AXIS_COUNT; axis++) {
             Sint16 value = SDL_GetGamepadAxis(gamepad, (SDL_GamepadAxis)axis);
-            if (value != 0) {
-                printf("EXPECT_FAIL: OJD idle axis %d is %d, expected 0\n", axis, value);
+            if (abs((int)value) > neutral_axis_tolerance) {
+                printf(
+                    "EXPECT_FAIL: OJD idle axis %d is %d, expected within +/- %d\n",
+                    axis,
+                    value,
+                    neutral_axis_tolerance);
                 failures++;
             }
         }
@@ -246,13 +266,65 @@ static int check_single_neutral_ojd(SDL_JoystickID *joy_ids, int joy_count) {
     return 3;
 }
 
+static int check_single_neutral_gamepad(SDL_JoystickID *joy_ids, int joy_count, int neutral_axis_tolerance) {
+    int gamepad_count = 0;
+    int failures = 0;
+
+    for (int i = 0; i < joy_count; i++) {
+        SDL_JoystickID id = joy_ids[i];
+        if (!SDL_IsGamepad(id))
+            continue;
+
+        gamepad_count++;
+        SDL_Gamepad *gamepad = SDL_OpenGamepad(id);
+        if (!gamepad) {
+            printf("EXPECT_FAIL: gamepad open failed: %s\n", SDL_GetError());
+            failures++;
+            continue;
+        }
+
+        for (int axis = 0; axis < SDL_GAMEPAD_AXIS_COUNT; axis++) {
+            Sint16 value = SDL_GetGamepadAxis(gamepad, (SDL_GamepadAxis)axis);
+            if (abs((int)value) > neutral_axis_tolerance) {
+                printf(
+                    "EXPECT_FAIL: idle axis %d is %d, expected within +/- %d\n",
+                    axis,
+                    value,
+                    neutral_axis_tolerance);
+                failures++;
+            }
+        }
+        for (int button = 0; button < SDL_GAMEPAD_BUTTON_COUNT; button++) {
+            bool pressed = SDL_GetGamepadButton(gamepad, (SDL_GamepadButton)button);
+            if (pressed) {
+                printf("EXPECT_FAIL: idle button %d is pressed, expected released\n", button);
+                failures++;
+            }
+        }
+        SDL_CloseGamepad(gamepad);
+    }
+
+    if (gamepad_count != 1) {
+        printf("EXPECT_FAIL: found %d SDL gamepad(s), expected 1\n", gamepad_count);
+        failures++;
+    }
+
+    if (failures == 0) {
+        printf("EXPECT_PASS: exactly one neutral SDL gamepad\n");
+        return 0;
+    }
+    return 5;
+}
+
 int main(int argc, char **argv) {
     int seconds = parse_seconds(argc, argv);
     int wait_devices_seconds = parse_int_arg(argc, argv, "--wait-devices", 0, 0, 30);
+    int neutral_axis_tolerance = parse_int_arg(argc, argv, "--neutral-axis-tolerance", 0, 0, 1024);
     const char *mappings_file = parse_mappings_file(argc, argv);
     int gc_prewarm = has_flag(argc, argv, "--gc-prewarm");
     int init_video = has_flag(argc, argv, "--video");
     int expect_single_neutral_ojd = has_flag(argc, argv, "--expect-single-neutral-ojd");
+    int expect_single_neutral_gamepad = has_flag(argc, argv, "--expect-single-neutral-gamepad");
     int send_rumble = has_flag(argc, argv, "--rumble");
     int expect_rumble = has_flag(argc, argv, "--expect-rumble");
 
@@ -403,7 +475,12 @@ int main(int argc, char **argv) {
 
     int expectation_result = 0;
     if (expect_single_neutral_ojd) {
-        expectation_result = check_single_neutral_ojd(joy_ids, joy_count);
+        expectation_result = check_single_neutral_ojd(joy_ids, joy_count, neutral_axis_tolerance);
+    }
+    if (expect_single_neutral_gamepad) {
+        int result = check_single_neutral_gamepad(joy_ids, joy_count, neutral_axis_tolerance);
+        if (result != 0)
+            expectation_result = result;
     }
     if (expect_rumble) {
         if (rumble_attempts == 0) {

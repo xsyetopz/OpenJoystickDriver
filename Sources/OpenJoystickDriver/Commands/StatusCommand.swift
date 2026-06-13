@@ -38,6 +38,12 @@ struct StatusCommand {
     print("")
     print("Permissions:")
     print("  Input Monitoring : " + payload.inputMonitoring)
+    if let accessibility = payload.accessibility {
+      print("  Accessibility   : " + accessibility)
+      if accessibility != "granted" {
+        print("  -> Grant in: System Settings" + " > Privacy > Accessibility")
+      }
+    }
     print("")
     if let mode = payload.virtualDeviceMode {
       print("Virtual device mode:")
@@ -96,6 +102,11 @@ struct StatusCommand {
       print("  Input Monitoring : " + "\(inputState.label)" + " \(inputState)")
       if inputState != .granted {
         print("  -> Grant in: System Settings" + " > Privacy > Input Monitoring")
+      }
+      let accessibilityState = PermissionManager.currentAccessibilityState()
+      print("  Accessibility   : " + "\(accessibilityState.label) \(accessibilityState)")
+      if accessibilityState != .granted {
+        print("  -> Grant in: System Settings" + " > Privacy > Accessibility")
       }
     }
   }

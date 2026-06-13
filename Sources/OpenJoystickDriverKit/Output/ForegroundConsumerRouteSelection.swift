@@ -8,7 +8,16 @@ public enum ForegroundConsumerRouteSelection {
     clients: [ForegroundConsumerClientSample]
   ) -> String? {
     guard let frontmostBundleRootPath else { return nil }
-    guard effectiveConsumerBundleRoots.contains(frontmostBundleRootPath) else { return nil }
+    guard effectiveConsumerBundleRoots.contains(frontmostBundleRootPath) else {
+      let unbundledRoots = effectiveConsumerBundleRoots
+        .filter(ForegroundConsumerAccessPolicy.isUnbundledConsumerRoot)
+      guard unbundledRoots.count == 1, let unbundledRoot = unbundledRoots.first else {
+        return nil
+      }
+      return UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
+        forConsumerBundleRootPath: unbundledRoot
+      )
+    }
 
     // Route ownership is derived from the focused bundle, not from whichever
     // routes the app currently has clients attached to. Some apps attach HID

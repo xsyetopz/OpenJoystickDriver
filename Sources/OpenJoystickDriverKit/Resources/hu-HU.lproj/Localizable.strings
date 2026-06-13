@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "A démon fut, de nincs kapcsolat. Indítsa újra a démont.";
 "readiness.allowAppInputMonitoring" = "Engedélyezze a bemenetfigyelést az OpenJoystickDriver számára.";
 "readiness.allowDaemonInputMonitoring" = "Engedélyezze a bemenetfigyelést az OpenJoystickDriverDaemon számára.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Csatlakoztasson egy kontrollert.";
 "readiness.controllersConnected.one" = "%d kontroller csatlakoztatva.";
 "readiness.controllersConnected.other" = "%d kontroller csatlakoztatva.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Jóváhagyás szükséges";
 "access.notSetUp" = "Nincs beállítva";
 "permissions.title" = "Engedélyek";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "A hozzáférés engedélyezett.";
 "permissions.openSettings" = "Nyissa meg a Rendszerbeállításokat, majd kapcsolja be a bemenetfigyelést ehhez: %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "Az OpenJoystickDriver hozzáférést kért a macOS-től. A Bemenetfigyelés alatt kapcsolja be ezt: %@. Ha a macOS kilépést és újranyitást kér, engedélyezze.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Eltávolítja a LaunchAgentet?";
 "alert.uninstallMessage" = "Ez eltávolítja a LaunchAgent plist fájlt. Később újratelepítheti.";
 "permissions.requestAccessDefault" = "Kérjen hozzáférést, hogy a macOS hozzáadhassa ezt az elemet a bemenetfigyeléshez.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "az alkalmazás";
 "permissions.ownerDaemon" = "a démon";
 "output.detailsCardTitle" = "Kimenet részletei";

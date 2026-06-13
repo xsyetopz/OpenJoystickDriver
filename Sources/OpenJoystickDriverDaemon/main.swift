@@ -26,15 +26,18 @@ final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
     NSApp.setActivationPolicy(.accessory)
     NSApp.activate(ignoringOtherApps: true)
     daemonLog("[Daemon] Requesting Input Monitoring access for daemon...")
+    daemonLog("[Daemon] Requesting Accessibility access for daemon...")
+    _ = PermissionManager.requestAccessibilityAccess(prompt: true)
 
     pollTask = Task { @MainActor [permissionManager] in
       let initialState = await permissionManager.requestAccess()
-      if initialState == .granted {
-        daemonLog("[Daemon] Input Monitoring granted for daemon helper app")
+      let initialAccessibility = PermissionManager.currentAccessibilityState()
+      if initialState == .granted && initialAccessibility == .granted {
+        daemonLog("[Daemon] Input Monitoring and Accessibility granted for daemon helper app")
         NSApp.terminate(nil)
         return
       }
-      daemonLog("[Daemon] Input Monitoring approval pending for daemon helper app")
+      daemonLog("[Daemon] Permission approval pending for daemon helper app")
 
       let timeoutNanoseconds: UInt64 = 120_000_000_000
       let pollNanoseconds: UInt64 = 500_000_000
@@ -42,13 +45,14 @@ final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
 
       while !Task.isCancelled {
         let state = await permissionManager.checkAccess()
-        if state == .granted {
-          daemonLog("[Daemon] Input Monitoring granted for daemon helper app")
+        let accessibility = PermissionManager.currentAccessibilityState()
+        if state == .granted && accessibility == .granted {
+          daemonLog("[Daemon] Input Monitoring and Accessibility granted for daemon helper app")
           NSApp.terminate(nil)
           return
         }
         if DispatchTime.now().uptimeNanoseconds >= deadline {
-          daemonLog("[Daemon] Input Monitoring helper timed out waiting for approval")
+          daemonLog("[Daemon] Permission helper timed out waiting for approval")
           NSApp.terminate(nil)
           return
         }

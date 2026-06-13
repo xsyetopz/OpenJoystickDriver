@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "Daemon on käynnissä, mutta yhteys on katkennut. Käynnistä daemon uudelleen.";
 "readiness.allowAppInputMonitoring" = "Salli syötön valvonta OpenJoystickDriverille.";
 "readiness.allowDaemonInputMonitoring" = "Salli syötön valvonta OpenJoystickDriverDaemonille.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Yhdistä ohjain.";
 "readiness.controllersConnected.one" = "%d ohjain yhdistetty.";
 "readiness.controllersConnected.other" = "%d ohjainta yhdistetty.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Tarvitsee hyväksynnän";
 "access.notSetUp" = "Ei määritetty";
 "permissions.title" = "Käyttöoikeudet";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Käyttöoikeus on sallittu.";
 "permissions.openSettings" = "Avaa Järjestelmäasetukset ja ota sitten syötön valvonta käyttöön kohteelle %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver pyysi macOS:lta käyttöoikeutta. Ota syötön valvonnassa %@ käyttöön. Jos macOS pyytää lopettamaan ja avaamaan uudelleen, salli se.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Poistetaanko LaunchAgent?";
 "alert.uninstallMessage" = "Tämä poistaa LaunchAgent-plist-tiedoston. Voit asentaa sen myöhemmin uudelleen.";
 "permissions.requestAccessDefault" = "Pyydä käyttöoikeutta, jotta macOS voi lisätä tämän kohteen syötön valvontaan.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "sovellus";
 "permissions.ownerDaemon" = "daemon";
 "output.detailsCardTitle" = "Lähdön tiedot";

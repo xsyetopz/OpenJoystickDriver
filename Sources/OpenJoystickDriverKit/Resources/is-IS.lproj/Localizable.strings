@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "Púkinn er í gangi en ótengdur. Endurræstu púkann.";
 "readiness.allowAppInputMonitoring" = "Leyfðu inntaksvöktun fyrir OpenJoystickDriver.";
 "readiness.allowDaemonInputMonitoring" = "Leyfðu inntaksvöktun fyrir OpenJoystickDriverDaemon.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Tengdu stýringu.";
 "readiness.controllersConnected.one" = "%d stýring tengd.";
 "readiness.controllersConnected.other" = "%d stýringar tengdar.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Þarf samþykki";
 "access.notSetUp" = "Ekki sett upp";
 "permissions.title" = "Heimildir";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Aðgangur er leyfður.";
 "permissions.openSettings" = "Opnaðu Kerfisstillingar og kveiktu síðan á Inntaksvöktun fyrir %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver bað macOS um aðgang. Í Inntaksvöktun skaltu kveikja á %@. Ef macOS biður um að hætta og opna aftur, leyfðu það.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Fjarlægja LaunchAgent?";
 "alert.uninstallMessage" = "Þetta fjarlægir LaunchAgent plist-skrána. Þú getur sett hana upp aftur síðar.";
 "permissions.requestAccessDefault" = "Biddu um aðgang svo macOS geti bætt þessu atriði við Inntaksvöktun.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "forritið";
 "permissions.ownerDaemon" = "púkinn";
 "output.detailsCardTitle" = "Upplýsingar um úttak";

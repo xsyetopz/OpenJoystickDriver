@@ -127,7 +127,7 @@ OJD_ENV=release ./scripts/ojd notarize status
 For a release build that does not install anything on the build machine:
 
 ```bash
-./scripts/ojd package release 0.5.0-alpha.6
+./scripts/ojd package release 0.5.0-alpha.7
 ```
 
 This command uses release signing, embeds the DriverKit extension into the app
@@ -146,7 +146,7 @@ install and approve the app/system extension locally.
 ## GitHub Actions release
 
 `.github/workflows/release.yml` runs on SemVer tags such as `0.1.0` or
-`0.5.0-alpha.6` and by manual dispatch.
+`0.5.0-alpha.7` and by manual dispatch.
 It installs `libusb`, builds current SDL3 from upstream source, validates
 profiles, imports signing material, builds a release app, notarizes it, uploads
 the release DMG as a workflow artifact, and publishes the GitHub Release.

@@ -25,6 +25,17 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   private var lastAppliedConsumerBundleRoots: Set<String> = []
   private var lastAppliedObservedBundleRoots: Set<String> = []
   private var lastAppliedActiveRouteToken: String?
+  private var cachedFrontmostBundleRoot: String?
+  nonisolated(unsafe) private static let virtualDeviceManager: IOHIDManager = {
+    let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
+    IOHIDManagerSetDeviceMatching(manager, nil)
+    let openResult = IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
+    if openResult != kIOReturnSuccess {
+      print("[ForegroundConsumerOutputMonitor] Failed to open HID manager: \(openResult)")
+    }
+    return manager
+  }()
+  private static let virtualDeviceManagerLock = NSLock()
 
   init(
     deviceManager: DeviceManager,
@@ -58,12 +69,16 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
 
     Task { @MainActor [weak self] in
       guard let self else { return }
+      noteFrontmostBundleRoot(Self.frontmostBundleRootPath())
       let center = NSWorkspace.shared.notificationCenter
       activationObserver = center.addObserver(
         forName: NSWorkspace.didActivateApplicationNotification,
         object: nil,
-        queue: nil
-      ) { [weak self] _ in
+        queue: .main
+      ) { [weak self] notification in
+        let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey]
+          as? NSRunningApplication
+        self?.noteFrontmostBundleRoot(Self.bundleRootPath(for: app))
         self?.scheduleBurstPolling()
         Task { await self?.evaluateAndApply() }
       }
@@ -105,7 +120,7 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   }
 
   private func evaluateAndApply() async {
-    let frontmostBundleRoot = await MainActor.run { Self.frontmostBundleRootPath() }
+    let frontmostBundleRoot = frontmostBundleRootPathFromCache()
     let now = DispatchTime.now().uptimeNanoseconds
     let consumerClients = Self.consumerClientSamples()
     let observedBundleRoots = Set(
@@ -193,6 +208,18 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
     await deviceManager.setExternalOutputAllowed(allowOutput)
   }
 
+  private func noteFrontmostBundleRoot(_ bundleRoot: String?) {
+    stateLock.withLock {
+      cachedFrontmostBundleRoot = bundleRoot
+    }
+  }
+
+  private func frontmostBundleRootPathFromCache() -> String? {
+    stateLock.withLock {
+      cachedFrontmostBundleRoot
+    }
+  }
+
   @MainActor
   private static func frontmostBundleRootPath() -> String? {
     guard let app = NSWorkspace.shared.frontmostApplication else { return nil }
@@ -209,13 +236,10 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   }
 
   private static func virtualDeviceServices() -> [io_service_t] {
-    let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
-    IOHIDManagerSetDeviceMatching(manager, nil)
-    let openResult = IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
-    guard openResult == kIOReturnSuccess else { return [] }
-    defer { IOHIDManagerClose(manager, IOOptionBits(kIOHIDOptionsTypeNone)) }
-
-    guard let rawDevices = IOHIDManagerCopyDevices(manager) else { return [] }
+    let rawDevices = virtualDeviceManagerLock.withLock {
+      IOHIDManagerCopyDevices(virtualDeviceManager)
+    }
+    guard let rawDevices else { return [] }
     let devices = rawDevices as? Set<IOHIDDevice> ?? []
     var services: [io_service_t] = []
 
@@ -452,7 +476,7 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
       if url.pathExtension == "app" { return url.path }
       url.deleteLastPathComponent()
     }
-    return nil
+    return path
   }
 
   private static func bundleRootPath(for application: NSRunningApplication?) -> String? {

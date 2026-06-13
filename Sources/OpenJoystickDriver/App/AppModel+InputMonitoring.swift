@@ -9,6 +9,7 @@ import OpenJoystickDriverKit
     registerApplicationBundleForPermissionPrompt(Bundle.main.bundleURL)
     NSApp.activate(ignoringOtherApps: true)
     openInputMonitoringSettings(for: ["OpenJoystickDriver"])
+    _ = PermissionManager.requestAccessibilityAccess(prompt: true)
     appInputMonitoring = "\(await permissionManager.requestAccess())"
     monitorAppInputMonitoringDecisionInBackground()
   }
@@ -17,22 +18,76 @@ import OpenJoystickDriverKit
     inputMonitoringAssist = nil
     do {
       try await prepareDaemonRegistrationForPermissionPrompt()
+      openInputMonitoringSettings(for: ["OpenJoystickDriverDaemon"])
+      try await requestDaemonOwnedInputMonitoringPrompt()
     } catch {
       daemonError = error.localizedDescription
       return
     }
 
-    openInputMonitoringSettings(for: ["OpenJoystickDriver"])
-    appInputMonitoring = "\(await permissionManager.requestAccess())"
-    inputMonitoring = appInputMonitoring
-    monitorAppInputMonitoringDecisionInBackground()
-    inputMonitoring = probeBundledDaemonInputMonitoringState()
+    inputMonitoring = await probeBundledDaemonInputMonitoringState()
     if inputMonitoring == "granted" {
       await recoverDaemonForInputMonitoringRequest()
       return
     }
 
     monitorDaemonInputMonitoringDecisionInBackground()
+  }
+
+  func requestCompatibilityAccessibilityAccess() async {
+    inputMonitoringAssist = nil
+    do {
+      try await prepareDaemonRegistrationForPermissionPrompt()
+      openAccessibilitySettings(for: ["OpenJoystickDriverDaemon"])
+      try requestBundledDaemonInputMonitoringPrompt()
+    } catch {
+      daemonError = error.localizedDescription
+      return
+    }
+
+    inputMonitoringAssist =
+      "OpenJoystickDriver asked macOS for Accessibility access. In Accessibility, "
+        + "turn on OpenJoystickDriverDaemon."
+  }
+
+  func requestDaemonOwnedInputMonitoringPrompt() async throws {
+    if daemonConnected {
+      do {
+        inputMonitoring = try await client.requestInputMonitoringAccess()
+        return
+      } catch {
+        print("[AppModel] Daemon XPC Input Monitoring request failed: \(error)")
+      }
+    }
+
+    try requestBundledDaemonInputMonitoringPrompt()
+  }
+
+  func requestBundledDaemonInputMonitoringPrompt() throws {
+    let daemonAppURL = DaemonManager.bundledDaemonApplicationURL(in: Bundle.main.bundleURL)
+    let executableURL = DaemonManager.daemonExecutableURL(forMainBundleURL: Bundle.main.bundleURL)
+    guard FileManager.default.fileExists(atPath: executableURL.path) else {
+      throw NSError(
+        domain: "OpenJoystickDriver",
+        code: 1,
+        userInfo: [
+          NSLocalizedDescriptionKey:
+            "Request Access could not find OpenJoystickDriverDaemon inside the app bundle.",
+        ]
+      )
+    }
+
+    registerApplicationBundleForPermissionPrompt(daemonAppURL)
+
+    let process = Process()
+    process.executableURL = executableURL
+    process.arguments = ["--request-input-monitoring"]
+    process.environment = ProcessInfo.processInfo.environment.merging(
+      ["OJD_PERMISSION_PROMPT_ONLY": "1"]
+    ) { _, new in new }
+    process.standardOutput = Pipe()
+    process.standardError = Pipe()
+    try process.run()
   }
 
   func prepareDaemonRegistrationForPermissionPrompt() async throws {
@@ -58,8 +113,7 @@ import OpenJoystickDriverKit
     }
 
     guard !daemonInstalled else { return }
-    let task = Task.detached { try DaemonManager.install() }
-    try await task.value
+    try await runDaemonLifecycleOperation { try DaemonManager.install() }
     try? await Task.sleep(nanoseconds: 500_000_000)
     refreshDaemonStatus()
   }
@@ -75,11 +129,11 @@ import OpenJoystickDriverKit
   }
 
   func waitForDaemonInputMonitoringDecision() async -> String {
-    var state = probeBundledDaemonInputMonitoringState()
+    var state = await probeBundledDaemonInputMonitoringState()
     for _ in 0..<inputMonitoringPromptPollAttempts {
       if state == "granted" { break }
       try? await Task.sleep(nanoseconds: inputMonitoringPromptPollNanoseconds)
-      state = probeBundledDaemonInputMonitoringState()
+      state = await probeBundledDaemonInputMonitoringState()
     }
     return state
   }
@@ -102,7 +156,13 @@ import OpenJoystickDriverKit
     }
   }
 
-  func probeBundledDaemonInputMonitoringState() -> String {
+  func probeBundledDaemonInputMonitoringState() async -> String {
+    await Task.detached {
+      Self.probeBundledDaemonInputMonitoringStateNow()
+    }.value
+  }
+
+  nonisolated static func probeBundledDaemonInputMonitoringStateNow() -> String {
     let executableURL = DaemonManager.daemonExecutableURL(forMainBundleURL: Bundle.main.bundleURL)
     guard FileManager.default.fileExists(atPath: executableURL.path) else { return "unknown" }
 
@@ -164,7 +224,7 @@ import OpenJoystickDriverKit
     do {
       let shouldInstall = !daemonInstalled
       let shouldStart = daemonUIState == .stopped || daemonUIState == .unknown
-      let task = Task.detached {
+      try await runDaemonLifecycleOperation {
         if shouldInstall {
           try DaemonManager.install()
         } else if shouldStart {
@@ -173,7 +233,6 @@ import OpenJoystickDriverKit
           try DaemonManager.restart()
         }
       }
-      try await task.value
     } catch {
       daemonError = error.localizedDescription
       return
@@ -194,6 +253,17 @@ import OpenJoystickDriverKit
     inputMonitoringAssist = L10n.string("permissions.assist", names)
     let url = URL(
       string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent"
+    )
+    if let url, NSWorkspace.shared.open(url) { return }
+    NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/System Settings.app"))
+  }
+
+  func openAccessibilitySettings(for appNames: [String]) {
+    let names = appNames.joined(separator: " and ")
+    inputMonitoringAssist =
+      "OpenJoystickDriver asked macOS for Accessibility access. In Accessibility, turn on \(names)."
+    let url = URL(
+      string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
     )
     if let url, NSWorkspace.shared.open(url) { return }
     NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/System Settings.app"))

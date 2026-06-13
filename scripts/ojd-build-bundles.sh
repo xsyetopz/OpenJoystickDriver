@@ -141,7 +141,7 @@ build_app_bundle() {
   local GUI_MACOS="$GUI_CONTENTS/MacOS"
   local GUI_LOGIN_ITEMS="$GUI_CONTENTS/Library/LoginItems"
   local GUI_FRAMEWORKS="$GUI_CONTENTS/Frameworks"
-  local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.6}"
+  local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.7}"
   local bundle_version="${OJD_BUNDLE_VERSION:-1}"
   local sparkle_feed_url="${SPARKLE_FEED_URL:-https://github.com/xsyetopz/OpenJoystickDriver/releases/latest/download/appcast.xml}"
   local sparkle_public_ed_key="${SPARKLE_PUBLIC_ED_KEY:-}"
@@ -198,7 +198,7 @@ build_app_bundle() {
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.5.0-alpha.6</string>
+    <string>0.5.0-alpha.7</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
@@ -209,8 +209,10 @@ build_app_bundle() {
     <true/>
     <key>NSInputMonitoringUsageDescription</key>
     <string>OpenJoystickDriver needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
+    <key>NSAccessibilityUsageDescription</key>
+    <string>OpenJoystickDriver needs Accessibility to publish user-space virtual gamepad events for compatibility mode.</string>
     <key>NSSystemExtensionUsageDescription</key>
-    <string>OpenJoystickDriver uses this extension to present physical controllers as a standard virtual HID gamepad to games and applications, without requiring Accessibility permission.</string>
+    <string>OpenJoystickDriver uses this extension to present physical controllers as a standard virtual HID gamepad to games and applications.</string>
 </dict>
 </plist>
 PLIST
@@ -260,7 +262,7 @@ PLIST
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.5.0-alpha.6</string>
+    <string>0.5.0-alpha.7</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
@@ -269,6 +271,8 @@ PLIST
     <true/>
     <key>NSInputMonitoringUsageDescription</key>
     <string>OpenJoystickDriverDaemon needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
+    <key>NSAccessibilityUsageDescription</key>
+    <string>OpenJoystickDriverDaemon needs Accessibility to publish user-space virtual gamepad events for compatibility mode.</string>
 </dict>
 </plist>
 PLIST
@@ -318,10 +322,8 @@ PLIST
   verify_gui_app_signed_entitlements "$GUI_APP"
   verify_daemon_app_signed_entitlements "$DAEMON_BUNDLE"
 
-  if [[ "$OJD_ENV" == "release" ]]; then
-    verify_profile_cert "$GUI_PROFILE" "$GUI_IDENTITY"
-    verify_profile_cert "$DAEMON_PROFILE" "$DAEMON_IDENTITY"
-  fi
+  verify_profile_cert "$GUI_PROFILE" "$GUI_IDENTITY"
+  verify_profile_cert "$DAEMON_PROFILE" "$DAEMON_IDENTITY"
 
   echo ""
   echo "Signed GUI with:    $GUI_IDENTITY"
@@ -528,14 +530,24 @@ PY
       /usr/libexec/PlistBuddy -c "Delete :get-task-allow" "$DEXT_ENTITLEMENTS_TMP" 2>/dev/null || true
     fi
 
-    local DEXT_SIGN_ARGS=(--sign "$CODESIGN_IDENTITY" --force --generate-entitlement-der --entitlements "$DEXT_ENTITLEMENTS_TMP")
+    local DEXT_SIGN_ARGS=(
+      --sign "$CODESIGN_IDENTITY"
+      --force
+      --generate-entitlement-der
+      --entitlements "$DEXT_ENTITLEMENTS_TMP"
+    )
     if [[ "$OJD_ENV" == "release" ]]; then
       DEXT_SIGN_ARGS+=(--options runtime --timestamp)
     fi
     codesign "${DEXT_SIGN_ARGS[@]}" "$DEXT_SYSEXT/$DEXT_FILENAME"
 
     [[ -f "$GUI_ENTITLEMENTS" ]] || resolve_entitlements "$GUI_ENTITLEMENTS_TEMPLATE" "$GUI_ENTITLEMENTS"
-    local APP_SIGN_ARGS=(--sign "$CODESIGN_IDENTITY" --force --generate-entitlement-der --entitlements "$GUI_ENTITLEMENTS")
+    local APP_SIGN_ARGS=(
+      --sign "$CODESIGN_IDENTITY"
+      --force
+      --generate-entitlement-der
+      --entitlements "$GUI_ENTITLEMENTS"
+    )
     if [[ "$OJD_ENV" == "release" ]]; then
       APP_SIGN_ARGS+=(--options runtime --timestamp)
     fi

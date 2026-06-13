@@ -40,4 +40,20 @@ struct ForegroundConsumerAccessPolicyTests {
         consumerBundleRootPaths: ["/Applications/ConsumerA.app"]
       )))
   }
+
+  @Test
+  func testAllowsOutputForSingleUnbundledConsumer() {
+    #expect(ForegroundConsumerAccessPolicy.allowsOutput(
+      frontmostBundleRootPath: nil,
+      consumerBundleRootPaths: ["/tmp/ojd-sdl3-probe"]
+    ))
+  }
+
+  @Test
+  func testBundledConsumerStillRequiresFrontmostMatchWhenUnbundledConsumerAlsoExists() {
+    #expect(!(ForegroundConsumerAccessPolicy.allowsOutput(
+      frontmostBundleRootPath: "/Applications/Safari.app",
+      consumerBundleRootPaths: ["/Applications/ConsumerA.app", "/tmp/ojd-sdl3-probe"]
+    )))
+  }
 }

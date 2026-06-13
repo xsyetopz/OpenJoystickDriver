@@ -8,9 +8,8 @@ public let xpcServiceName = "com.openjoystickdriver.xpc"
 /// Which identity/protocol the user-space Compatibility virtual device should publish.
 ///
 /// IMPORTANT:
-/// - `sdl2-3` is the mature SDL path: OJD-owned identity plus
-///   an explicit SDL mapping.
-/// - `generic-hid` is a plain OJD HID GamePad for consumers that inspect descriptors directly.
+/// - `sdl2-3` and `generic-hid` publish a browser-compatible Xbox 360 HID surface because
+///   Safari's Gamepad API is GameController-backed and rejects OJD-owned virtual identities.
 /// - `apple-gamecontroller` publishes the HID surface accepted by Apple's GameController.framework.
 /// - `xone-hid` and `x360-hid` are hardware-spoof profiles. They are only correct for
 ///   consumers whose expected descriptor/report layout exactly matches the selected profile.
@@ -126,14 +125,46 @@ public enum VirtualDeviceMode: String, Codable, CaseIterable, Sendable {
   /// Replies with JSON-encoded ``DeviceInputState``, or nil if no input has been received yet.
   @objc func getDeviceInputState(vendorID: Int, productID: Int, reply: @escaping (Data?) -> Void)
 
+  /// Gets the latest input state for a device, disambiguated by serial or location when present.
+  @objc func getDeviceInputState(
+    vendorID: Int,
+    productID: Int,
+    serialNumber: String?,
+    locationID: Int,
+    reply: @escaping (Data?) -> Void
+  )
+
   /// Gets recent raw packets sent to or received from a device.
   /// Replies with a JSON-encoded array of ``PacketLogEntry``.
   @objc func getPacketLog(vendorID: Int, productID: Int, reply: @escaping (Data) -> Void)
+
+  /// Gets recent raw packets for a device, disambiguated by serial or location when present.
+  @objc func getPacketLog(
+    vendorID: Int,
+    productID: Int,
+    serialNumber: String?,
+    locationID: Int,
+    reply: @escaping (Data) -> Void
+  )
 
   /// Sends a short physical rumble command to a connected USB controller.
   @objc func sendPhysicalRumble(
     vendorID: Int,
     productID: Int,
+    left: Int,
+    right: Int,
+    lt: Int,
+    rt: Int,
+    durationMs: Int,
+    reply: @escaping (Bool) -> Void
+  )
+
+  /// Sends a physical rumble command to a device, disambiguated by serial or location when present.
+  @objc func sendPhysicalRumble(
+    vendorID: Int,
+    productID: Int,
+    serialNumber: String?,
+    locationID: Int,
     left: Int,
     right: Int,
     lt: Int,

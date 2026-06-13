@@ -10,9 +10,39 @@ import OpenJoystickDriverKit
     return try? await client.deviceInputState(vendorID: vendorID, productID: productID)
   }
 
+  func deviceInputState(
+    vendorID: UInt16,
+    productID: UInt16,
+    serialNumber: String?,
+    locationID: UInt32?
+  ) async -> DeviceInputState? {
+    guard daemonConnected else { return nil }
+    return try? await client.deviceInputState(
+      vendorID: vendorID,
+      productID: productID,
+      serialNumber: serialNumber,
+      locationID: locationID
+    )
+  }
+
   func packetLog(vendorID: UInt16, productID: UInt16) async -> [PacketLogEntry] {
     guard daemonConnected else { return [] }
     return (try? await client.packetLog(vendorID: vendorID, productID: productID)) ?? []
+  }
+
+  func packetLog(
+    vendorID: UInt16,
+    productID: UInt16,
+    serialNumber: String?,
+    locationID: UInt32?
+  ) async -> [PacketLogEntry] {
+    guard daemonConnected else { return [] }
+    return (try? await client.packetLog(
+      vendorID: vendorID,
+      productID: productID,
+      serialNumber: serialNumber,
+      locationID: locationID
+    )) ?? []
   }
 
   func sendPhysicalRumble(
@@ -29,6 +59,36 @@ import OpenJoystickDriverKit
       return try await client.sendPhysicalRumble(
         vendorID: vendorID,
         productID: productID,
+        left: left,
+        right: right,
+        lt: lt,
+        rt: rt,
+        durationMs: durationMs
+      )
+    } catch {
+      daemonError = formatDaemonError(error)
+      return false
+    }
+  }
+
+  func sendPhysicalRumble(
+    vendorID: UInt16,
+    productID: UInt16,
+    serialNumber: String?,
+    locationID: UInt32?,
+    left: UInt8,
+    right: UInt8,
+    lt: UInt8,
+    rt: UInt8,
+    durationMs: Int
+  ) async -> Bool {
+    guard daemonConnected else { return false }
+    do {
+      return try await client.sendPhysicalRumble(
+        vendorID: vendorID,
+        productID: productID,
+        serialNumber: serialNumber,
+        locationID: locationID,
         left: left,
         right: right,
         lt: lt,

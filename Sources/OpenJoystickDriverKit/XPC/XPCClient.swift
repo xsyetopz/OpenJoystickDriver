@@ -104,12 +104,54 @@ public final class XPCClient: @unchecked Sendable {
     return try? JSONDecoder().decode(DeviceInputState.self, from: data)
   }
 
+  /// Gets the latest input snapshot for a specific physical device.
+  public func deviceInputState(
+    vendorID: UInt16,
+    productID: UInt16,
+    serialNumber: String?,
+    locationID: UInt32?
+  ) async throws -> DeviceInputState? {
+    let data: Data? = try await xpcCall { service, reply in
+      service.getDeviceInputState(
+        vendorID: Int(vendorID),
+        productID: Int(productID),
+        serialNumber: serialNumber,
+        locationID: locationID.map(Int.init) ?? -1,
+        reply: reply
+      )
+    }
+    guard let data else { return nil }
+    return try? JSONDecoder().decode(DeviceInputState.self, from: data)
+  }
+
   /// Gets recent raw USB packets exchanged with a device.
   ///
   /// Useful for debugging protocols.
   public func packetLog(vendorID: UInt16, productID: UInt16) async throws -> [PacketLogEntry] {
     let data: Data = try await xpcCall { service, reply in
       service.getPacketLog(vendorID: Int(vendorID), productID: Int(productID), reply: reply)
+    }
+    guard let entries = try? JSONDecoder().decode([PacketLogEntry].self, from: data) else {
+      throw XPCError.invalidResponse
+    }
+    return entries
+  }
+
+  /// Gets recent raw packets for a specific physical device.
+  public func packetLog(
+    vendorID: UInt16,
+    productID: UInt16,
+    serialNumber: String?,
+    locationID: UInt32?
+  ) async throws -> [PacketLogEntry] {
+    let data: Data = try await xpcCall { service, reply in
+      service.getPacketLog(
+        vendorID: Int(vendorID),
+        productID: Int(productID),
+        serialNumber: serialNumber,
+        locationID: locationID.map(Int.init) ?? -1,
+        reply: reply
+      )
     }
     guard let entries = try? JSONDecoder().decode([PacketLogEntry].self, from: data) else {
       throw XPCError.invalidResponse
@@ -131,6 +173,34 @@ public final class XPCClient: @unchecked Sendable {
       service.sendPhysicalRumble(
         vendorID: Int(vendorID),
         productID: Int(productID),
+        left: Int(left),
+        right: Int(right),
+        lt: Int(lt),
+        rt: Int(rt),
+        durationMs: durationMs,
+        reply: reply
+      )
+    }
+  }
+
+  /// Sends a physical rumble command to a specific physical controller.
+  public func sendPhysicalRumble(
+    vendorID: UInt16,
+    productID: UInt16,
+    serialNumber: String?,
+    locationID: UInt32?,
+    left: UInt8,
+    right: UInt8,
+    lt: UInt8,
+    rt: UInt8,
+    durationMs: Int
+  ) async throws -> Bool {
+    try await xpcCall { service, reply in
+      service.sendPhysicalRumble(
+        vendorID: Int(vendorID),
+        productID: Int(productID),
+        serialNumber: serialNumber,
+        locationID: locationID.map(Int.init) ?? -1,
         left: Int(left),
         right: Int(right),
         lt: Int(lt),

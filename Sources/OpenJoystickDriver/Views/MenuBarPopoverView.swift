@@ -25,7 +25,9 @@ struct MenuBarPopoverView: View {
   }
 
   var permissionsGranted: Bool {
-    model.appInputMonitoring == "granted" && model.inputMonitoring == "granted"
+    model.appInputMonitoring == "granted"
+      && model.inputMonitoring == "granted"
+      && model.compatibilityAccessibilityGranted
   }
 
   var body: some View {
@@ -53,6 +55,7 @@ struct MenuBarPopoverView: View {
         title: Text(L10n.string("alert.uninstallTitle")),
         message: Text(L10n.string("alert.uninstallMessage")),
         primaryButton: .destructive(Text(L10n.string("app.uninstall"))) {
+          showUninstallConfirm = false
           Task {
             await model.uninstallDaemon()
             await model.syncFromDaemonNow()
@@ -102,6 +105,9 @@ struct MenuBarPopoverView: View {
       }
       if model.inputMonitoring != "granted" {
         return L10n.string("readiness.allowDaemonInputMonitoring")
+      }
+      if !model.compatibilityAccessibilityGranted {
+        return L10n.string("readiness.allowDaemonAccessibility")
       }
       if model.devices.isEmpty { return L10n.string("readiness.connectController") }
       return model.devices.count == 1
@@ -168,6 +174,12 @@ struct MenuBarPopoverView: View {
     } else if model.inputMonitoring != "granted" {
       SwiftUI.Button(L10n.string("button.requestAccess")) {
         Task { await model.requestDaemonInputMonitoringAccess() }
+      }
+      .controlSize(.small)
+      .padding(.top, 2)
+    } else if !model.compatibilityAccessibilityGranted {
+      SwiftUI.Button(L10n.string("button.requestAccess")) {
+        Task { await model.requestCompatibilityAccessibilityAccess() }
       }
       .controlSize(.small)
       .padding(.top, 2)

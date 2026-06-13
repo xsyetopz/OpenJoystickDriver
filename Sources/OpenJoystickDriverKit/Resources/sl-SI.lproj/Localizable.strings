@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "Daemon teče, vendar ni povezan. Znova zaženi daemon.";
 "readiness.allowAppInputMonitoring" = "Dovoli nadzor vnosa za OpenJoystickDriver.";
 "readiness.allowDaemonInputMonitoring" = "Dovoli nadzor vnosa za OpenJoystickDriverDaemon.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Poveži krmilnik.";
 "readiness.controllersConnected.one" = "Povezan %d krmilnik.";
 "readiness.controllersConnected.other" = "Povezanih %d krmilnikov.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Potrebuje odobritev";
 "access.notSetUp" = "Ni nastavljeno";
 "permissions.title" = "Dovoljenja";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Dostop je dovoljen.";
 "permissions.openSettings" = "Odpri Sistemske nastavitve in vklopi Nadzor vnosa za %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver je macOS zaprosil za dostop. V Nadzoru vnosa vklopi %@. Če macOS zahteva zapiranje in ponovno odpiranje, to dovoli.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Odstrani LaunchAgent?";
 "alert.uninstallMessage" = "To odstrani plist LaunchAgent. Pozneje ga lahko znova namestiš.";
 "permissions.requestAccessDefault" = "Zahtevaj dostop, da lahko macOS ta element doda v Nadzor vnosa.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "aplikacija";
 "permissions.ownerDaemon" = "daemon";
 "output.detailsCardTitle" = "Podrobnosti izhoda";

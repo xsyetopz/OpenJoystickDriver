@@ -30,19 +30,20 @@ public enum CompatibilityOutputProfileCatalog {
     case .genericHID:
       CompatibilityOutputProfile(
         identity: identity,
-        deviceProfile: .openJoystickDriverGenericHID,
+        deviceProfile: .xbox360Wired,
         displayName: "Generic HID",
-        notes: "OJD-owned HID GamePad identity for descriptor-driven consumers.",
-        isHardwareSpoof: false,
+        notes: "Browser-compatible HID GamePad surface accepted by Apple's GameController stack.",
+        isHardwareSpoof: true,
         emitsXboxGuideReport: false
       )
     case .sdl2_3:
       CompatibilityOutputProfile(
         identity: identity,
-        deviceProfile: .openJoystickDriverSDL2_3,
+        deviceProfile: .xbox360Wired,
         displayName: "SDL 2/3",
-        notes: "OJD-owned SDL identity backed by an explicit SDL mapping.",
-        isHardwareSpoof: false,
+        notes: "Browser-compatible SDL/Xbox 360 HID surface accepted by Apple's " +
+          "GameController stack.",
+        isHardwareSpoof: true,
         emitsXboxGuideReport: false
       )
     case .appleGameController:
@@ -58,18 +59,18 @@ public enum CompatibilityOutputProfileCatalog {
     case .x360HID:
       CompatibilityOutputProfile(
         identity: identity,
-        deviceProfile: .sdlHIDAPIXbox360,
+        deviceProfile: .xbox360Wired,
         displayName: "Xbox 360 HID",
-        notes: "SDL macOS Xbox 360 HIDAPI identity for output-report rumble.",
+        notes: "Xbox 360 HID identity accepted by Apple's Browser/GameController stack.",
         isHardwareSpoof: true,
         emitsXboxGuideReport: false
       )
     case .xoneHID:
       CompatibilityOutputProfile(
         identity: identity,
-        deviceProfile: .xboxOneS,
+        deviceProfile: .xboxOneWirelessGameController,
         displayName: "Xbox One HID",
-        notes: "Experimental Microsoft hardware-spoof profile; SDL may use Xbox-specific paths.",
+        notes: "Experimental Microsoft hardware-spoof profile for Apple's Xbox One bridge.",
         isHardwareSpoof: true,
         emitsXboxGuideReport: true
       )

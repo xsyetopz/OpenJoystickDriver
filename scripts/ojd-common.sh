@@ -252,10 +252,12 @@ verify_profile_cert() {
 # Sign binary with configured identity.
 # Usage: ojd_sign <binary> [--entitlements <path>]
 # NOTE: --entitlements must be the first extra arg pair (before any other flags).
-# When OJD_ENV=release, adds hardened runtime (required for notarization).
+# Always emits DER entitlements because launchd/AMFI enforces launch constraints
+# from the DER slot on modern macOS. Release also adds hardened runtime.
 ojd_sign() {
   local binary="$1"
   local identity="${OJD_ACTIVE_SIGN_IDENTITY:-$IDENTITY}"
+  local sign_args=(--sign "$identity" --force --generate-entitlement-der)
   local extra_args=()
   if [[ "${2:-}" == "--entitlements" && -n "${3:-}" ]]; then
     extra_args=(--entitlements "$3")
@@ -263,7 +265,7 @@ ojd_sign() {
   if [[ "$OJD_ENV" == "release" ]]; then
     extra_args+=(--options runtime --timestamp)
   fi
-  codesign --sign "$identity" --force --generate-entitlement-der "${extra_args[@]+"${extra_args[@]}"}" "$binary"
+  codesign "${sign_args[@]}" "${extra_args[@]+"${extra_args[@]}"}" "$binary"
 }
 
 ojd_sign_resource_bundle() {

@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "背景程式正在執行但已中斷連線。請重新啟動背景程式。";
 "readiness.allowAppInputMonitoring" = "允許 OpenJoystickDriver 進行輸入監控。";
 "readiness.allowDaemonInputMonitoring" = "允許 OpenJoystickDriverDaemon 進行輸入監控。";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "連接控制器。";
 "readiness.controllersConnected.one" = "已連接 %d 個控制器。";
 "readiness.controllersConnected.other" = "已連接 %d 個控制器。";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "需要核准";
 "access.notSetUp" = "未設定";
 "permissions.title" = "權限";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "已允許取用。";
 "permissions.openSettings" = "開啟「系統設定」，然後為 %@ 開啟輸入監控。";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver 已向 macOS 要求取用權限。在輸入監控中開啟 %@。如果 macOS 要求結束並重新開啟，請允許。";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "解除安裝 LaunchAgent？";
 "alert.uninstallMessage" = "這會移除 LaunchAgent plist。你可以稍後重新安裝。";
 "permissions.requestAccessDefault" = "要求取用權限，讓 macOS 可以將此項目加入輸入監控。";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "App";
 "permissions.ownerDaemon" = "背景程式";
 "output.detailsCardTitle" = "輸出詳細資訊";

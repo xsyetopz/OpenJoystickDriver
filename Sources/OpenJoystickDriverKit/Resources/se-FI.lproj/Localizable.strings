@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "Daemon lea jođus muhto ii leat čatnon. Álggat daemon-a ođđasit.";
 "readiness.allowAppInputMonitoring" = "Divtte Sisačállima goziheami OpenJoystickDriver várás.";
 "readiness.allowDaemonInputMonitoring" = "Divtte Sisačállima goziheami OpenJoystickDriverDaemon várás.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Čana stivrra.";
 "readiness.controllersConnected.one" = "%d stivra čatnon.";
 "readiness.controllersConnected.other" = "%d stivrrat čatnon.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Dárbbaša dohkkeheami";
 "access.notSetUp" = "Ii leat heivehuvvon";
 "permissions.title" = "Lobit";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Beassan lea lobálaš.";
 "permissions.openSettings" = "Raba Vuogádatheivehusaid ja bijat Sisačállima goziheami johtui %@ várás.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver dáhtui macOS beassama. Sisačállima goziheamis, bijat %@ johtui. Jos macOS bivdá heaittit ja rahpat ođđasit, divtte dan.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Sihkkut LaunchAgent?";
 "alert.uninstallMessage" = "Dát váldá eret LaunchAgent plist-a. Sáhtát sajáiduhttit dan maŋŋel ođđasit.";
 "permissions.requestAccessDefault" = "Dáhto beassama vai macOS sáhttá lasihit dán áđa Sisačállima goziheapmái.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "appa";
 "permissions.ownerDaemon" = "daemon";
 "output.detailsCardTitle" = "Olggosa bienat";

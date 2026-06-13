@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "Le démon est en cours d’exécution mais déconnecté. Redémarrez le démon.";
 "readiness.allowAppInputMonitoring" = "Autorisez la surveillance de l’entrée pour OpenJoystickDriver.";
 "readiness.allowDaemonInputMonitoring" = "Autorisez la surveillance de l’entrée pour OpenJoystickDriverDaemon.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Connectez une manette.";
 "readiness.controllersConnected.one" = "%d manette connectée.";
 "readiness.controllersConnected.other" = "%d manettes connectées.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Approbation requise";
 "access.notSetUp" = "Non configuré";
 "permissions.title" = "Autorisations";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "L’accès est autorisé.";
 "permissions.openSettings" = "Ouvrez Réglages Système, puis activez la surveillance de l’entrée pour %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver a demandé l’accès à macOS. Dans Surveillance de l’entrée, activez %@. Si macOS demande de quitter et rouvrir, autorisez-le.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Désinstaller le LaunchAgent ?";
 "alert.uninstallMessage" = "Cela supprime le plist du LaunchAgent. Vous pourrez le réinstaller plus tard.";
 "permissions.requestAccessDefault" = "Demandez l’accès afin que macOS puisse ajouter cet élément à la surveillance de l’entrée.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "l’app";
 "permissions.ownerDaemon" = "le démon";
 "output.detailsCardTitle" = "Détails de sortie";

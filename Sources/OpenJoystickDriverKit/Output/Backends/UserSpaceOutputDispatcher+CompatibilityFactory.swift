@@ -28,10 +28,13 @@ extension UserSpaceOutputDispatcher {
   ) throws -> (any VirtualGamepadReportFormat, Int?) {
     switch identity {
     case .genericHID, .sdl2_3:
-      return (OJDSDLGamepadFormat(), nil)
+      return (
+        Xbox360SDLHIDReportFormat(),
+        Int(kHIDUsage_GD_GamePad)
+      )
     case .appleGameController:
       return (
-        Xbox360MacHIDReportFormat(topLevelUsage: UInt8(kHIDUsage_GD_GamePad)),
+        Xbox360SDLHIDReportFormat(),
         Int(kHIDUsage_GD_GamePad)
       )
     case .xoneHID:
@@ -54,7 +57,8 @@ extension UserSpaceOutputDispatcher {
           descriptor: physical,
           outputReportID: VirtualRumbleOutputReportParser.xboxGIPReportID,
           outputReportPayloadSize:
-            VirtualRumbleOutputReportParser.xboxGIPReportPayloadSizeWithoutReportID
+            VirtualRumbleOutputReportParser.xboxGIPReportPayloadSizeWithoutReportID,
+          buttonUsageByBit: xboxOneBrowserButtonUsageByBit
         )
       } catch {
         return try fallbackXboxOneCompatibilityReportFormat()
@@ -68,7 +72,17 @@ extension UserSpaceOutputDispatcher {
     try HIDDescriptorReportFormat(
       descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
       outputReportID: VirtualRumbleOutputReportParser.xboxOneReportID,
-      outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize
+      outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize,
+      buttonUsageByBit: xboxOneBrowserButtonUsageByBit
     )
   }
+
+  /// Safari's Gamepad API maps this Xbox One identity's center buttons before stick clicks.
+  /// Swap only the affected logical bits for the Xbox One compatibility identity.
+  static let xboxOneBrowserButtonUsageByBit: [Int: Int] = [
+    GamepadHIDDescriptor.ButtonBit.leftStick.rawValue: 9,  // L3 -> usage Safari reads as L3.
+    GamepadHIDDescriptor.ButtonBit.rightStick.rawValue: 10,  // R3 -> usage Safari reads as R3.
+    GamepadHIDDescriptor.ButtonBit.start.rawValue: 8,  // Menu / right center button.
+    GamepadHIDDescriptor.ButtonBit.back.rawValue: 7,  // View / left center button.
+  ]
 }

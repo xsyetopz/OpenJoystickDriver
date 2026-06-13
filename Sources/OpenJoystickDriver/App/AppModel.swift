@@ -3,6 +3,7 @@ import Foundation
 import OpenJoystickDriverKit
 
 let appModelPollNanoseconds: UInt64 = 2_000_000_000
+let compatibilityOutputBridgeFastPollNanoseconds: UInt64 = 16_666_667
 let daemonHealthPollNanosecondsConnected: UInt64 = 15_000_000_000
 let daemonHealthPollNanosecondsDisconnected: UInt64 = 2_000_000_000
 let inputMonitoringPromptPollNanoseconds: UInt64 = 500_000_000
@@ -21,16 +22,21 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   let connection: String
   /// USB serial number string, nil when unavailable.
   let serialNumber: String?
+  /// USB or HID location ID, nil when unavailable.
+  let locationID: UInt32?
   let supportsPhysicalRumble: Bool
 
   init(from description: XPCDeviceDescription) {
-    self.id = "\(description.vendorID):\(description.productID):\(description.name)"
+    let discriminator =
+      description.serialNumber ?? description.locationID.map { "loc:\($0)" } ?? "unknown"
+    self.id = "\(description.vendorID):\(description.productID):\(description.name):\(discriminator)"
     self.name = description.name
     self.vendorID = description.vendorID
     self.productID = description.productID
     self.parser = description.parser
     self.connection = description.connection
     self.serialNumber = description.serialNumber
+    self.locationID = description.locationID
     self.supportsPhysicalRumble = description.supportsPhysicalRumble
   }
 }
@@ -57,11 +63,13 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   @Published var devices: [DeviceViewModel] = []
   @Published var appInputMonitoring = "unknown"
   @Published var inputMonitoring = "unknown"
+  @Published var daemonAccessibility = "unknown"
   @Published var inputMonitoringAssist: String?
   @Published var extensionManager = SystemExtensionManager()
 
   @Published var userSpaceVirtualDeviceEnabled = false
   @Published var userSpaceVirtualDeviceStatus = "unknown"
+  var daemonUserSpaceVirtualDeviceStatus = "unknown"
   @Published var virtualDeviceMode: String = VirtualDeviceMode.compatUserSpace.rawValue
   @Published var outputMode: String = CompositeOutputDispatcher.Mode.primaryOnly.rawValue
   @Published var compatibilityIdentity: String = CompatibilityIdentity.sdl2_3.rawValue
@@ -80,7 +88,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   var developerMode: Bool
 
   var appVersion: String {
-    Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.5.0-alpha.6"
+    Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.5.0-alpha.7"
   }
 
   let client = XPCClient()
@@ -210,12 +218,26 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     }
 
     do {
-      let task = Task.detached { try DaemonManager.restart() }
-      try await task.value
+      try await runDaemonLifecycleOperation { try DaemonManager.restart() }
       UserDefaults.standard.set(currentBundleVersion, forKey: daemonRepairBundleVersionDefaultsKey)
     } catch {
       daemonError = formatDaemonError(error)
     }
+  }
+
+  var needsVirtualHIDAccessibility: Bool {
+    userSpaceVirtualDeviceStatus.contains("Accessibility permission")
+      || daemonUserSpaceVirtualDeviceStatus.contains("Accessibility permission")
+  }
+
+  var compatibilityRequiresAccessibility: Bool {
+    virtualDeviceMode == VirtualDeviceMode.compatUserSpace.rawValue
+      || virtualDeviceMode == VirtualDeviceMode.both.rawValue
+      || needsVirtualHIDAccessibility
+  }
+
+  var compatibilityAccessibilityGranted: Bool {
+    !compatibilityRequiresAccessibility || daemonAccessibility == "granted"
   }
 
 }

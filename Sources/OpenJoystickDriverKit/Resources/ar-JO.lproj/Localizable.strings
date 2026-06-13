@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "الخادم الخفي يعمل لكنه غير متصل. أعد تشغيل الخادم الخفي.";
 "readiness.allowAppInputMonitoring" = "اسمح بمراقبة الإدخال لـ OpenJoystickDriver.";
 "readiness.allowDaemonInputMonitoring" = "اسمح بمراقبة الإدخال لـ OpenJoystickDriverDaemon.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "وصّل وحدة تحكم.";
 "readiness.controllersConnected.one" = "تم توصيل وحدة تحكم واحدة.";
 "readiness.controllersConnected.other" = "تم توصيل %d وحدات تحكم.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "يحتاج إلى موافقة";
 "access.notSetUp" = "غير معدّ";
 "permissions.title" = "الأذونات";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "الوصول مسموح.";
 "permissions.openSettings" = "افتح إعدادات النظام، ثم فعّل مراقبة الإدخال لـ %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "طلب OpenJoystickDriver الوصول من macOS. في مراقبة الإدخال، فعّل %@. إذا طلب macOS الإنهاء وإعادة الفتح، فاسمح بذلك.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "إزالة تثبيت LaunchAgent؟";
 "alert.uninstallMessage" = "سيؤدي هذا إلى إزالة ملف plist الخاص بـ LaunchAgent. يمكنك إعادة تثبيته لاحقاً.";
 "permissions.requestAccessDefault" = "اطلب الوصول حتى يتمكن macOS من إضافة هذا العنصر إلى مراقبة الإدخال.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "التطبيق";
 "permissions.ownerDaemon" = "الخادم الخفي";
 "output.detailsCardTitle" = "تفاصيل الإخراج";

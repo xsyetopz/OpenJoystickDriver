@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "デーモンは実行中ですが切断されています。デーモンを再起動してください。";
 "readiness.allowAppInputMonitoring" = "OpenJoystickDriver の入力監視を許可してください。";
 "readiness.allowDaemonInputMonitoring" = "OpenJoystickDriverDaemon の入力監視を許可してください。";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "コントローラーを接続してください。";
 "readiness.controllersConnected.one" = "%d 台のコントローラーが接続されています。";
 "readiness.controllersConnected.other" = "%d 台のコントローラーが接続されています。";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "承認が必要";
 "access.notSetUp" = "未設定";
 "permissions.title" = "権限";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "アクセスは許可されています。";
 "permissions.openSettings" = "システム設定を開き、%@ の入力監視をオンにしてください。";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver が macOS にアクセスを要求しました。入力監視で %@ をオンにしてください。macOS が終了して再度開くよう求めた場合は許可してください。";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "LaunchAgent をアンインストールしますか？";
 "alert.uninstallMessage" = "LaunchAgent の plist を削除します。後で再インストールできます。";
 "permissions.requestAccessDefault" = "macOS がこの項目を入力監視に追加できるようにアクセスを要求してください。";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "アプリ";
 "permissions.ownerDaemon" = "デーモン";
 "output.detailsCardTitle" = "出力の詳細";

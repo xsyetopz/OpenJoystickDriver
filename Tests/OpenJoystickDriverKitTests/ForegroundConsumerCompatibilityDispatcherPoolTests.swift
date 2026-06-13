@@ -5,7 +5,27 @@ import Testing
 
 struct ForegroundConsumerCompatibilityDispatcherPoolTests {
   @Test
-  func testActivatingNeutralDedicatedRouteEmitsNeutralReport() async throws {
+  func testEnsuringConsumerRouteDoesNotPublishSecondVirtualController() async throws {
+    let bundleRoot = "/Applications/Steam.app"
+    let shared = RecordingCompatibilityDispatcher(
+      routeToken: UserSpaceVirtualDeviceConstants.sharedRouteToken
+    )
+    let dedicatedByRoute = LockedRouteDispatchers()
+
+    let pool = try ForegroundConsumerCompatibilityDispatcherPool { requestedRouteToken in
+      if let requestedRouteToken {
+        return dedicatedByRoute.dispatcher(for: requestedRouteToken)
+      }
+      return shared
+    }
+
+    try await pool.ensureDedicatedRoute(forConsumerBundleRootPath: bundleRoot)
+
+    #expect(dedicatedByRoute.createdRouteTokens.isEmpty)
+  }
+
+  @Test
+  func testActivatingNeutralConsumerRouteUsesSharedVirtualController() async throws {
     let identifier = DeviceIdentifier(vendorID: 0x1234, productID: 0x5678)
     let bundleRoot = "/Applications/ConsumerA.app"
     let routeToken = UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
@@ -28,21 +48,49 @@ struct ForegroundConsumerCompatibilityDispatcherPoolTests {
     try await pool.ensureDedicatedRoute(forConsumerBundleRootPath: bundleRoot)
     await pool.setActiveRouteToken(routeToken)
 
-    let dedicated = try #require(dedicatedByRoute.dispatcherIfPresent(for: routeToken))
-    #expect(dedicated.recordedDispatches.map(\.events) == [[], []])
-    #expect(shared.recordedDispatches.map(\.events) == [[]])
+    #expect(dedicatedByRoute.createdRouteTokens.isEmpty)
+    #expect(shared.recordedDispatches.map(\.events) == [[], []])
   }
 
   @Test
-  func testRouteHandoffNeutralizesPreviousActiveButtonState() async throws {
+  func testDispatchesInputToSharedControllerWhenNoActiveRouteIsDetected() async throws {
+    let identifier = DeviceIdentifier(vendorID: 0x1234, productID: 0x5678)
+    let shared = RecordingCompatibilityDispatcher(
+      routeToken: UserSpaceVirtualDeviceConstants.sharedRouteToken
+    )
+    let pool = try ForegroundConsumerCompatibilityDispatcherPool { requestedRouteToken in
+      #expect(requestedRouteToken == nil)
+      return shared
+    }
+
+    await pool.dispatch(events: [.buttonPressed(.a)], from: identifier)
+
+    #expect(shared.recordedDispatches.map(\.events) == [[.buttonPressed(.a)]])
+  }
+
+  @Test
+  func testStatusPreservesSharedDispatcherTelemetry() throws {
+    let shared = RecordingCompatibilityDispatcher(
+      routeToken: UserSpaceVirtualDeviceConstants.sharedRouteToken
+    )
+    shared.status =
+      "on (devices=1, dispatches=2, nonEmpty=1, events=1, writes=2, getReports=3)"
+    let pool = try ForegroundConsumerCompatibilityDispatcherPool { requestedRouteToken in
+      #expect(requestedRouteToken == nil)
+      return shared
+    }
+
+    let expectedStatus = "on (routes=1, active=none, child=on "
+      + "(devices=1, dispatches=2, nonEmpty=1, events=1, writes=2, getReports=3))"
+    #expect(pool.status == expectedStatus)
+  }
+
+  @Test
+  func testClearingActiveRouteNeutralizesSharedButtonState() async throws {
     let identifier = DeviceIdentifier(vendorID: 0x1234, productID: 0x5678)
     let firstBundleRoot = "/Applications/ConsumerA.app"
-    let secondBundleRoot = "/Applications/ConsumerB.app"
     let firstRoute = UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
       forConsumerBundleRootPath: firstBundleRoot
-    )
-    let secondRoute = UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
-      forConsumerBundleRootPath: secondBundleRoot
     )
 
     let shared = RecordingCompatibilityDispatcher(
@@ -57,27 +105,21 @@ struct ForegroundConsumerCompatibilityDispatcherPoolTests {
     }
 
     try await pool.ensureDedicatedRoute(forConsumerBundleRootPath: firstBundleRoot)
-    try await pool.ensureDedicatedRoute(forConsumerBundleRootPath: secondBundleRoot)
     await pool.setActiveRouteToken(firstRoute)
     await pool.dispatch(events: [.buttonPressed(.a)], from: identifier)
-    await pool.setActiveRouteToken(secondRoute)
+    await pool.setActiveRouteToken(nil)
 
-    let first = try #require(dedicatedByRoute.dispatcherIfPresent(for: firstRoute))
-    let second = try #require(dedicatedByRoute.dispatcherIfPresent(for: secondRoute))
-    #expect(first.recordedDispatches.map(\.events).contains([.buttonReleased(.a)]))
-    #expect(second.recordedDispatches.map(\.events).contains([.buttonPressed(.a)]))
+    #expect(dedicatedByRoute.createdRouteTokens.isEmpty)
+    #expect(shared.recordedDispatches.map(\.events).contains([.buttonPressed(.a)]))
+    #expect(shared.recordedDispatches.map(\.events).contains([.buttonReleased(.a)]))
   }
 
   @Test
-  func testRouteHandoffNeutralizesPreviousActiveDpadState() async throws {
+  func testClearingActiveRouteNeutralizesSharedDpadState() async throws {
     let identifier = DeviceIdentifier(vendorID: 0x1234, productID: 0x5678)
     let firstBundleRoot = "/Applications/ConsumerA.app"
-    let secondBundleRoot = "/Applications/ConsumerB.app"
     let firstRoute = UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
       forConsumerBundleRootPath: firstBundleRoot
-    )
-    let secondRoute = UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
-      forConsumerBundleRootPath: secondBundleRoot
     )
 
     let shared = RecordingCompatibilityDispatcher(
@@ -92,15 +134,13 @@ struct ForegroundConsumerCompatibilityDispatcherPoolTests {
     }
 
     try await pool.ensureDedicatedRoute(forConsumerBundleRootPath: firstBundleRoot)
-    try await pool.ensureDedicatedRoute(forConsumerBundleRootPath: secondBundleRoot)
     await pool.setActiveRouteToken(firstRoute)
     await pool.dispatch(events: [.dpadChanged(.north)], from: identifier)
-    await pool.setActiveRouteToken(secondRoute)
+    await pool.setActiveRouteToken(nil)
 
-    let first = try #require(dedicatedByRoute.dispatcherIfPresent(for: firstRoute))
-    let second = try #require(dedicatedByRoute.dispatcherIfPresent(for: secondRoute))
-    #expect(first.recordedDispatches.map(\.events).contains([.dpadChanged(.neutral)]))
-    #expect(second.recordedDispatches.map(\.events).contains([.dpadChanged(.north)]))
+    #expect(dedicatedByRoute.createdRouteTokens.isEmpty)
+    #expect(shared.recordedDispatches.map(\.events).contains([.dpadChanged(.north)]))
+    #expect(shared.recordedDispatches.map(\.events).contains([.dpadChanged(.neutral)]))
   }
 }
 
@@ -119,6 +159,10 @@ private final class LockedRouteDispatchers: @unchecked Sendable {
 
   func dispatcherIfPresent(for routeToken: String) -> RecordingCompatibilityDispatcher? {
     lock.withLock { storage[routeToken] }
+  }
+
+  var createdRouteTokens: [String] {
+    lock.withLock { storage.keys.sorted() }
   }
 }
 

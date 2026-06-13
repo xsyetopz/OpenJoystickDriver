@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "Demonas veikia, bet ryšys nutrūkęs. Paleiskite demoną iš naujo.";
 "readiness.allowAppInputMonitoring" = "Leiskite „OpenJoystickDriver“ stebėti įvestį.";
 "readiness.allowDaemonInputMonitoring" = "Leiskite „OpenJoystickDriverDaemon“ stebėti įvestį.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Prijunkite valdiklį.";
 "readiness.controllersConnected.one" = "Prijungtas %d valdiklis.";
 "readiness.controllersConnected.other" = "Prijungta %d valdiklių.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Reikia patvirtinimo";
 "access.notSetUp" = "Nenustatyta";
 "permissions.title" = "Leidimai";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Prieiga leidžiama.";
 "permissions.openSettings" = "Atidarykite Sistemos nuostatas ir įjunkite įvesties stebėjimą elementui %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "„OpenJoystickDriver“ paprašė macOS prieigos. Įvesties stebėjime įjunkite %@. Jei macOS prašo uždaryti ir atidaryti iš naujo, leiskite.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Pašalinti LaunchAgent?";
 "alert.uninstallMessage" = "Tai pašalins LaunchAgent plist failą. Vėliau galėsite įdiegti iš naujo.";
 "permissions.requestAccessDefault" = "Prašykite prieigos, kad macOS galėtų pridėti šį elementą prie įvesties stebėjimo.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "programa";
 "permissions.ownerDaemon" = "demonas";
 "output.detailsCardTitle" = "Išvesties informacija";

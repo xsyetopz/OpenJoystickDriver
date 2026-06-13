@@ -66,6 +66,9 @@ jobs:
       - name: Validate profiles
         run: ./scripts/ojd validate profiles
 
+      - name: Check shell scripts
+        run: bash -n scripts/ojd scripts/ojd-*.sh
+
       - name: Lint Swift
         run: ./scripts/ojd lint
 

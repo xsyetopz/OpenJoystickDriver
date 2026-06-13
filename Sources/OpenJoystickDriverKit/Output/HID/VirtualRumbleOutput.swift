@@ -57,7 +57,11 @@ public enum VirtualRumbleOutputReportParser {
   ) -> VirtualRumbleCommand? {
     let payload: [UInt8]
     if reportID == UInt32(xboxOneReportID) {
-      payload = bytes
+      if bytes.first == xboxOneReportID {
+        payload = Array(bytes.dropFirst())
+      } else {
+        payload = bytes
+      }
     } else if reportID == 0, bytes.first == 0x03 {
       payload = Array(bytes.dropFirst())
     } else {
@@ -65,6 +69,19 @@ public enum VirtualRumbleOutputReportParser {
     }
     guard payload.count >= 5 else { return nil }
     let activation = payload[0] & 0x0F
+    if (activation == 0x01 || activation == 0x0F) && payload[2] == 0 && payload[3] == 0
+      && payload[4] == 0
+    {
+      let magnitude = payload[1]
+      let duration = payload.count >= 6 ? Int(payload[5]) * 10 : 250
+      return VirtualRumbleCommand(
+        left: magnitude,
+        right: magnitude,
+        leftTrigger: magnitude,
+        rightTrigger: magnitude,
+        durationMs: max(0, duration)
+      )
+    }
     let leftTrigger = (activation & 0x01) != 0 ? payload[1] : 0
     let rightTrigger = (activation & 0x02) != 0 ? payload[2] : 0
     let left = (activation & 0x04) != 0 ? payload[3] : 0

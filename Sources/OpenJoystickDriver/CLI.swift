@@ -13,6 +13,7 @@ struct CLI {
     case "userspace": UserSpaceCommand().run(arguments: Array(args.dropFirst()))
     case "output": OutputModeCommand().run(arguments: Array(args.dropFirst()))
     case "compat": CompatibilityCommand().run(arguments: Array(args.dropFirst()))
+    case "permissions": PermissionsCommand().run(arguments: Array(args.dropFirst()))
     case "selftest": SelfTestCommand().run(arguments: Array(args.dropFirst()))
     case "sysext": SystemExtensionCommand().run(arguments: Array(args.dropFirst()))
     case "start": StartDaemonCommand().run()
@@ -22,7 +23,7 @@ struct CLI {
     case "uninstall": UninstallCommand().run()
     case "run": RunCommand().run()
     case "--help", "-h", "help": printHelp()
-    case "--version", "-v", "version": print("OpenJoystickDriver v0.5.0-alpha.6")
+    case "--version", "-v", "version": print("OpenJoystickDriver v0.5.0-alpha.7")
     default:
       print("Unknown command: \(command)")
       printHelp()
@@ -33,7 +34,7 @@ struct CLI {
   private func printHelp() {
     print(
       """
-      OpenJoystickDriver v0.5.0-alpha.6 \
+      OpenJoystickDriver v0.5.0-alpha.7 \
       - macOS gamepad driver
 
       Usage: OpenJoystickDriver \
@@ -48,6 +49,7 @@ struct CLI {
         userspace  Toggle user-space virtual gamepad (IOHIDUserDevice)
         output     Set output routing mode (DriverKit/user-space)
         compat     Set compatibility identity (generic-hid/sdl2-3/x360-hid/xone-hid)
+        permissions Request macOS Input Monitoring/Accessibility prompts
         selftest   Count input events on virtual devices
         sysext     Manage DriverKit system extension
         install    Register daemon LaunchAgent

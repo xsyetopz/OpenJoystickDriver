@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "The daemon is running but disconnected. Restart the daemon.";
 "readiness.allowAppInputMonitoring" = "Allow Input Monitoring for OpenJoystickDriver.";
 "readiness.allowDaemonInputMonitoring" = "Allow Input Monitoring for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Connect a controller.";
 "readiness.controllersConnected.one" = "%d controller connected.";
 "readiness.controllersConnected.other" = "%d controllers connected.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Needs approval";
 "access.notSetUp" = "Not set up";
 "permissions.title" = "Permissions";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Access is allowed.";
 "permissions.openSettings" = "Open System Settings, then turn on Input Monitoring for %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver asked macOS for access. In Input Monitoring, turn on %@. If macOS asks to quit and reopen, allow it.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Uninstall LaunchAgent?";
 "alert.uninstallMessage" = "This removes the LaunchAgent plist. You can reinstall later.";
 "permissions.requestAccessDefault" = "Request access so macOS can add this item to Input Monitoring.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "the app";
 "permissions.ownerDaemon" = "the daemon";
 "output.detailsCardTitle" = "Output details";

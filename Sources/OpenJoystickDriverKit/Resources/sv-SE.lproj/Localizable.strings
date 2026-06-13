@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "Daemonen körs men är frånkopplad. Starta om daemonen.";
 "readiness.allowAppInputMonitoring" = "Tillåt indataövervakning för OpenJoystickDriver.";
 "readiness.allowDaemonInputMonitoring" = "Tillåt indataövervakning för OpenJoystickDriverDaemon.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Anslut en handkontroll.";
 "readiness.controllersConnected.one" = "%d handkontroll ansluten.";
 "readiness.controllersConnected.other" = "%d handkontroller anslutna.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Behöver godkännande";
 "access.notSetUp" = "Inte inställt";
 "permissions.title" = "Behörigheter";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Åtkomst är tillåten.";
 "permissions.openSettings" = "Öppna Systeminställningar och aktivera Indataövervakning för %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver bad macOS om åtkomst. Aktivera %@ i Indataövervakning. Om macOS ber om att avsluta och öppna igen, tillåt det.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Avinstallera LaunchAgent?";
 "alert.uninstallMessage" = "Detta tar bort LaunchAgent-plist. Du kan installera om senare.";
 "permissions.requestAccessDefault" = "Begär åtkomst så att macOS kan lägga till detta objekt i Indataövervakning.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "appen";
 "permissions.ownerDaemon" = "daemonen";
 "output.detailsCardTitle" = "Utdatadetaljer";

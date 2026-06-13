@@ -2,6 +2,27 @@ import AppKit
 import Foundation
 import OpenJoystickDriverKit
 
+private let daemonLifecycleTimeoutNanoseconds: UInt64 = 8_000_000_000
+
+private struct DaemonLifecycleTimeoutError: LocalizedError {
+  var errorDescription: String? {
+    "Daemon operation timed out. Quit OpenJoystickDriver, reopen it, then try again."
+  }
+}
+
+private final class DaemonLifecycleCompletionBox: @unchecked Sendable {
+  private let lock = NSLock()
+  private var didResume = false
+
+  func resumeOnce(_ body: () -> Void) {
+    lock.lock()
+    defer { lock.unlock() }
+    guard !didResume else { return }
+    didResume = true
+    body()
+  }
+}
+
 @MainActor extension AppModel {
   // MARK: - Daemon lifecycle
 
@@ -10,8 +31,7 @@ import OpenJoystickDriverKit
     guard ensureRunningFromApplications() else { return }
     guard ensureBundleSignatureValid(for: "Install") else { return }
     do {
-      let task = Task.detached { try DaemonManager.install() }
-      try await task.value
+      try await runDaemonLifecycleOperation { try DaemonManager.install() }
     } catch {
       daemonError = error.localizedDescription
       return
@@ -27,8 +47,7 @@ import OpenJoystickDriverKit
     guard ensureRunningFromApplications() else { return }
     guard ensureBundleSignatureValid(for: "Start") else { return }
     do {
-      let task = Task.detached { try DaemonManager.start() }
-      try await task.value
+      try await runDaemonLifecycleOperation { try DaemonManager.start() }
     } catch {
       daemonError = error.localizedDescription
       return
@@ -51,8 +70,7 @@ import OpenJoystickDriverKit
       return
     }
     do {
-      let task = Task.detached { try DaemonManager.restart() }
-      try await task.value
+      try await runDaemonLifecycleOperation { try DaemonManager.restart() }
     } catch {
       daemonError = error.localizedDescription
       daemonRestarting = false
@@ -67,16 +85,52 @@ import OpenJoystickDriverKit
 
   func uninstallDaemon() async {
     daemonError = nil
+    daemonRestarting = true
+    defer { daemonRestarting = false }
     guard ensureRunningFromApplications() else { return }
     guard ensureBundleSignatureValid(for: "Uninstall") else { return }
     do {
-      let task = Task.detached { try DaemonManager.uninstall() }
-      try await task.value
+      try await runDaemonLifecycleOperation { try DaemonManager.uninstall() }
     } catch {
       daemonError = error.localizedDescription
       return
     }
     client.disconnect()
     await syncFromDaemonNow()
+  }
+
+  func runDaemonLifecycleOperation(
+    _ operation: @escaping @Sendable () throws -> Void
+  ) async throws {
+    let operationTask = Task.detached {
+      try operation()
+    }
+
+    try await withCheckedThrowingContinuation { continuation in
+      let completion = DaemonLifecycleCompletionBox()
+
+      Task.detached {
+        do {
+          try await operationTask.value
+          completion.resumeOnce {
+            continuation.resume(returning: ())
+          }
+        } catch {
+          completion.resumeOnce {
+            continuation.resume(throwing: error)
+          }
+        }
+      }
+
+      let timeoutMilliseconds = Int(daemonLifecycleTimeoutNanoseconds / 1_000_000)
+      DispatchQueue.global(qos: .userInitiated).asyncAfter(
+        deadline: .now() + .milliseconds(timeoutMilliseconds)
+      ) {
+        operationTask.cancel()
+        completion.resumeOnce {
+          continuation.resume(throwing: DaemonLifecycleTimeoutError())
+        }
+      }
+    }
   }
 }

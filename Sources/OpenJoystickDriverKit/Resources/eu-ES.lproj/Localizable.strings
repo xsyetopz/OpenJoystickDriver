@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "Daemon-a martxan dago baina deskonektatuta. Berrabiarazi daemon-a.";
 "readiness.allowAppInputMonitoring" = "Baimendu Sarrera-monitorizazioa OpenJoystickDriver-entzat.";
 "readiness.allowDaemonInputMonitoring" = "Baimendu Sarrera-monitorizazioa OpenJoystickDriverDaemon-entzat.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Konektatu kontrolagailu bat.";
 "readiness.controllersConnected.one" = "Kontrolagailu %d konektatuta.";
 "readiness.controllersConnected.other" = "%d kontrolagailu konektatuta.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Onarpena behar du";
 "access.notSetUp" = "Konfiguratu gabe";
 "permissions.title" = "Baimenak";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Sarbidea baimenduta dago.";
 "permissions.openSettings" = "Ireki Sistemaren Ezarpenak, eta aktibatu Sarrera-monitorizazioa %@ elementuarentzat.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver-ek macOS-i sarbidea eskatu dio. Sarrera-monitorizazioan, aktibatu %@. macOS-ek irten eta berriro irekitzea eskatzen badu, baimendu.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "LaunchAgent desinstalatu?";
 "alert.uninstallMessage" = "Honek LaunchAgent plist-a kentzen du. Gero berrinstala dezakezu.";
 "permissions.requestAccessDefault" = "Eskatu sarbidea macOS-ek elementu hau Sarrera-monitorizaziora gehi dezan.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "aplikazioa";
 "permissions.ownerDaemon" = "daemon-a";
 "output.detailsCardTitle" = "Irteeraren xehetasunak";

@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "Daemonen kører, men er afbrudt. Genstart daemonen.";
 "readiness.allowAppInputMonitoring" = "Tillad inputovervågning for OpenJoystickDriver.";
 "readiness.allowDaemonInputMonitoring" = "Tillad inputovervågning for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Tilslut en controller.";
 "readiness.controllersConnected.one" = "%d controller tilsluttet.";
 "readiness.controllersConnected.other" = "%d controllere tilsluttet.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Kræver godkendelse";
 "access.notSetUp" = "Ikke konfigureret";
 "permissions.title" = "Tilladelser";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Adgang er tilladt.";
 "permissions.openSettings" = "Åbn Systemindstillinger, og slå Inputovervågning til for %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver bad macOS om adgang. Slå %@ til under Inputovervågning. Hvis macOS beder om at afslutte og åbne igen, skal du tillade det.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Afinstaller LaunchAgent?";
 "alert.uninstallMessage" = "Dette fjerner LaunchAgent-plist. Du kan geninstallere senere.";
 "permissions.requestAccessDefault" = "Anmod om adgang, så macOS kan føje dette element til Inputovervågning.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "appen";
 "permissions.ownerDaemon" = "daemonen";
 "output.detailsCardTitle" = "Outputdetaljer";

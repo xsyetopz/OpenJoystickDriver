@@ -188,6 +188,8 @@ public struct XPCDeviceDescription: Codable, Sendable {
   public let connection: String
   /// USB serial number, or nil if not reported.
   public let serialNumber: String?
+  /// USB or HID location ID, or nil if unavailable.
+  public let locationID: UInt32?
   /// Source-backed protocol variant (for example, "xboxOne" or "dualShock4").
   public let protocolVariant: String
   /// Source-backed mapping quirks from the controller profile.
@@ -212,6 +214,7 @@ public struct XPCDeviceDescription: Codable, Sendable {
     case parser
     case connection
     case serialNumber
+    case locationID
     case protocolVariant
     case mappingFlags
     case inputEndpoint
@@ -230,6 +233,7 @@ public struct XPCDeviceDescription: Codable, Sendable {
     parser: String,
     connection: String,
     serialNumber: String?,
+    locationID: UInt32? = nil,
     protocolVariant: String = "unknown",
     mappingFlags: [String] = [],
     inputEndpoint: UInt8 = 0,
@@ -245,6 +249,7 @@ public struct XPCDeviceDescription: Codable, Sendable {
     self.parser = parser
     self.connection = connection
     self.serialNumber = serialNumber
+    self.locationID = locationID
     self.protocolVariant = protocolVariant
     self.mappingFlags = mappingFlags
     self.inputEndpoint = inputEndpoint
@@ -263,6 +268,7 @@ public struct XPCDeviceDescription: Codable, Sendable {
     self.parser = try container.decode(String.self, forKey: .parser)
     self.connection = try container.decode(String.self, forKey: .connection)
     self.serialNumber = try container.decodeIfPresent(String.self, forKey: .serialNumber)
+    self.locationID = try container.decodeIfPresent(UInt32.self, forKey: .locationID)
     self.protocolVariant =
       try container.decodeIfPresent(String.self, forKey: .protocolVariant) ?? "unknown"
     self.mappingFlags = try container.decodeIfPresent([String].self, forKey: .mappingFlags) ?? []
@@ -286,6 +292,8 @@ public struct XPCDeviceDescription: Codable, Sendable {
 public struct XPCStatusPayload: Codable, Sendable {
   /// Input Monitoring permission state (e.g. "granted", "denied").
   public let inputMonitoring: String
+  /// Accessibility permission state for the daemon process (e.g. "granted", "denied").
+  public let accessibility: String?
   /// Structured descriptions of all connected controllers.
   public let connectedDevices: [XPCDeviceDescription]
   /// Whether the user-space virtual gamepad is enabled (IOHIDUserDevice).
@@ -304,6 +312,7 @@ public struct XPCStatusPayload: Codable, Sendable {
   /// Creates a new XPCStatusPayload.
   public init(
     inputMonitoring: String,
+    accessibility: String? = nil,
     connectedDevices: [XPCDeviceDescription],
     userSpaceVirtualDeviceEnabled: Bool? = nil,
     userSpaceVirtualDeviceStatus: String? = nil,
@@ -312,6 +321,7 @@ public struct XPCStatusPayload: Codable, Sendable {
     compatibilityIdentity: String? = nil
   ) {
     self.inputMonitoring = inputMonitoring
+    self.accessibility = accessibility
     self.connectedDevices = connectedDevices
     self.userSpaceVirtualDeviceEnabled = userSpaceVirtualDeviceEnabled
     self.userSpaceVirtualDeviceStatus = userSpaceVirtualDeviceStatus

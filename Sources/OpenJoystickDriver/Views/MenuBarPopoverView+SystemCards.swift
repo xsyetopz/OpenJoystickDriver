@@ -107,10 +107,14 @@ extension MenuBarPopoverView {
   var permissionsCard: some View {
     OJDCard(title: L10n.string("permissions.title")) {
       VStack(alignment: .leading, spacing: 8) {
+        Text(L10n.string("permissions.groupInputMonitoring"))
+          .font(.caption.weight(.semibold))
+          .foregroundColor(.secondary)
         PermissionRow(
           title: L10n.string("app.name"),
           subtitle: permissionSubtitle(
             for: model.appInputMonitoring,
+            permission: L10n.string("permissions.groupInputMonitoring"),
             owner: L10n.string("permissions.ownerApp")
           ),
           state: model.appInputMonitoring,
@@ -123,6 +127,7 @@ extension MenuBarPopoverView {
           title: L10n.string("permissions.daemonName"),
           subtitle: permissionSubtitle(
             for: model.inputMonitoring,
+            permission: L10n.string("permissions.groupInputMonitoring"),
             owner: L10n.string("permissions.ownerDaemon"),
             settingsName: L10n.string("permissions.daemonName")
           ),
@@ -131,6 +136,24 @@ extension MenuBarPopoverView {
           disabled: model.daemonRestarting
         ) {
           Task { await model.requestDaemonInputMonitoringAccess() }
+        }
+        Divider()
+        Text(L10n.string("permissions.groupAccessibility"))
+          .font(.caption.weight(.semibold))
+          .foregroundColor(.secondary)
+        PermissionRow(
+          title: L10n.string("permissions.daemonName"),
+          subtitle: permissionSubtitle(
+            for: model.daemonAccessibility,
+            permission: L10n.string("permissions.groupAccessibility"),
+            owner: L10n.string("permissions.ownerDaemon"),
+            settingsName: L10n.string("permissions.daemonName")
+          ),
+          state: model.daemonAccessibility,
+          actionTitle: permissionActionTitle(for: model.daemonAccessibility),
+          disabled: model.daemonRestarting
+        ) {
+          Task { await model.requestCompatibilityAccessibilityAccess() }
         }
         if let assist = model.inputMonitoringAssist {
           PermissionAssistView(message: assist)
@@ -145,6 +168,7 @@ extension MenuBarPopoverView {
 
   func permissionSubtitle(
     for state: String,
+    permission: String,
     owner: String,
     settingsName: String? = nil
   ) -> String {
@@ -153,9 +177,9 @@ extension MenuBarPopoverView {
       return L10n.string("permissions.accessAllowed")
     case "denied":
       let name = settingsName ?? owner
-      return L10n.string("permissions.openSettings", name)
+      return L10n.string("permissions.openSettingsForPermission", permission, name)
     default:
-      return L10n.string("permissions.requestAccessDefault")
+      return L10n.string("permissions.requestAccessForPermission", permission)
     }
   }
 }

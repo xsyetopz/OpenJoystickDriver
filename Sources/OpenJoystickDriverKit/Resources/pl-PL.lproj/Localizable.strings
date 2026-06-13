@@ -15,6 +15,7 @@
 "readiness.daemonDisconnected" = "Daemon działa, ale jest rozłączony. Uruchom daemon ponownie.";
 "readiness.allowAppInputMonitoring" = "Zezwól na Monitorowanie wejścia dla OpenJoystickDriver.";
 "readiness.allowDaemonInputMonitoring" = "Zezwól na Monitorowanie wejścia dla OpenJoystickDriverDaemon.";
+"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
 "readiness.connectController" = "Podłącz kontroler.";
 "readiness.controllersConnected.one" = "Podłączono %d kontroler.";
 "readiness.controllersConnected.other" = "Podłączono %d kontrolerów.";
@@ -33,8 +34,11 @@
 "access.needsApproval" = "Wymaga zatwierdzenia";
 "access.notSetUp" = "Nie skonfigurowano";
 "permissions.title" = "Uprawnienia";
+"permissions.groupInputMonitoring" = "Input Monitoring";
+"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Dostęp jest dozwolony.";
 "permissions.openSettings" = "Otwórz Ustawienia systemowe, a następnie włącz Monitorowanie wejścia dla %@.";
+"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver poprosił macOS o dostęp. W Monitorowaniu wejścia włącz %@. Jeśli macOS poprosi o zamknięcie i ponowne otwarcie, zezwól na to.";
 "permissions.appName" = "OpenJoystickDriver";
 "permissions.daemonName" = "OpenJoystickDriverDaemon";
@@ -105,6 +109,7 @@
 "alert.uninstallTitle" = "Odinstalować LaunchAgent?";
 "alert.uninstallMessage" = "To usunie plist LaunchAgent. Możesz zainstalować go ponownie później.";
 "permissions.requestAccessDefault" = "Poproś o dostęp, aby macOS mógł dodać ten element do Monitorowania wejścia.";
+"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "aplikacja";
 "permissions.ownerDaemon" = "daemon";
 "output.detailsCardTitle" = "Szczegóły wyjścia";
