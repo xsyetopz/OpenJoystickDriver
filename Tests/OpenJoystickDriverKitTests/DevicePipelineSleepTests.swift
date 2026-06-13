@@ -22,7 +22,8 @@ struct DevicePipelineSleepTests {
     await pipeline.feedHIDData(Data([1]))
     await pipeline.feedHIDData(Data([2]))
 
-    try? await Task.sleep(nanoseconds: 80_000_000)
+    try? await Task.sleep(nanoseconds: 6_000_000)
+    await pipeline.evaluateIdleSleep()
 
     let dispatchCountBeforeSleepInput = dispatcher.dispatchCount
     await pipeline.feedHIDData(Data([3]))
