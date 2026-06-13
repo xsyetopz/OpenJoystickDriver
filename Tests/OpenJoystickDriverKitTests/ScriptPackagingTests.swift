@@ -248,6 +248,22 @@ struct ScriptPackagingTests {
   }
 
   @Test
+  func testNotarizeSubmitPrintsNotarytoolFailures() throws {
+    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    let notarizeURL = rootURL.appendingPathComponent("scripts/ojd-notarize.sh")
+    let script = try String(contentsOf: notarizeURL, encoding: .utf8)
+
+    #expect(
+      script.contains(
+        "if ! SUBMIT_OUTPUT=$(xcrun notarytool submit \"$ZIP_PATH\" \\\n" +
+          "  \"${AUTH_ARGS[@]}\" 2>&1); then"
+      )
+    )
+    #expect(script.contains("echo \"$SUBMIT_OUTPUT\""))
+    #expect(script.contains("ERROR: notarytool submit failed before a submission ID was issued"))
+  }
+
+  @Test
   func testInputMonitoringRequestUsesDaemonOwnedPrompt() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let appModelURL = rootURL.appendingPathComponent(

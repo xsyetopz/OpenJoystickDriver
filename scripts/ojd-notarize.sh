@@ -134,8 +134,12 @@ echo "  Zip: $ZIP_PATH ($(du -h "$ZIP_PATH" | cut -f1))"
 # Step 2a: Submit to Apple (no --wait)
 # ---------------------------------------------------------------------------
 echo "Submitting to Apple for notarization..."
-SUBMIT_OUTPUT=$(xcrun notarytool submit "$ZIP_PATH" \
-  "${AUTH_ARGS[@]}" 2>&1)
+if ! SUBMIT_OUTPUT=$(xcrun notarytool submit "$ZIP_PATH" \
+  "${AUTH_ARGS[@]}" 2>&1); then
+  echo "$SUBMIT_OUTPUT"
+  echo "ERROR: notarytool submit failed before a submission ID was issued"
+  exit 1
+fi
 
 echo "$SUBMIT_OUTPUT"
 
