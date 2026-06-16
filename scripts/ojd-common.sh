@@ -164,24 +164,6 @@ EOF
   export PKG_CONFIG_PATH="$LIBUSB_CACHE_DIR${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 }
 
-setup_sdl3_pkgconfig() {
-  local sdl3_prefix="${OJD_SDL3_PREFIX:-$PROJECT_DIR/.build/sdl3}"
-  local sdl3_pc="$sdl3_prefix/lib/pkgconfig/sdl3.pc"
-  if [[ -f "$sdl3_pc" ]]; then
-    export PKG_CONFIG_PATH="$sdl3_prefix/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
-    export DYLD_LIBRARY_PATH="$sdl3_prefix/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
-    return 0
-  fi
-
-  if pkg-config --exists sdl3 2>/dev/null; then
-    return 0
-  fi
-
-  echo "ERROR: SDL3 pkg-config metadata not found."
-  echo "Fix: run: ./scripts/ojd install-sdl3"
-  return 1
-}
-
 # Provisioning profiles (selected by OJD_ENV)
 if [[ "$OJD_ENV" == "release" ]]; then
   DAEMON_PROFILE="${DAEMON_PROVISIONING_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriverDaemon_DevID.provisionprofile}"
@@ -252,12 +234,10 @@ verify_profile_cert() {
 # Sign binary with configured identity.
 # Usage: ojd_sign <binary> [--entitlements <path>]
 # NOTE: --entitlements must be the first extra arg pair (before any other flags).
-# Always emits DER entitlements because launchd/AMFI enforces launch constraints
-# from the DER slot on modern macOS. Release also adds hardened runtime.
+# When OJD_ENV=release, adds hardened runtime (required for notarization).
 ojd_sign() {
   local binary="$1"
   local identity="${OJD_ACTIVE_SIGN_IDENTITY:-$IDENTITY}"
-  local sign_args=(--sign "$identity" --force --generate-entitlement-der)
   local extra_args=()
   if [[ "${2:-}" == "--entitlements" && -n "${3:-}" ]]; then
     extra_args=(--entitlements "$3")
@@ -265,7 +245,7 @@ ojd_sign() {
   if [[ "$OJD_ENV" == "release" ]]; then
     extra_args+=(--options runtime --timestamp)
   fi
-  codesign "${sign_args[@]}" "${extra_args[@]+"${extra_args[@]}"}" "$binary"
+  codesign --sign "$identity" --force --generate-entitlement-der "${extra_args[@]+"${extra_args[@]}"}" "$binary"
 }
 
 ojd_sign_resource_bundle() {
@@ -283,94 +263,4 @@ ojd_sign_resource_bundle() {
 resolve_entitlements() {
   local template="$1" output="$2"
   sed "s/\${DEVELOPMENT_TEAM}/$DEVELOPMENT_TEAM/g" "$template" > "$output"
-}
-
-_signed_entitlement_value() {
-  local target="$1" key="$2"
-  python3 - "$target" "$key" <<'PY'
-import plistlib, subprocess, sys
-
-target, key = sys.argv[1], sys.argv[2]
-result = subprocess.run(
-    ["codesign", "-d", "--entitlements", "-", "--xml", target],
-    stdout=subprocess.PIPE,
-    stderr=subprocess.DEVNULL,
-)
-if result.returncode != 0 or not result.stdout or b"<?xml" not in result.stdout:
-    print("decode_error")
-    raise SystemExit(0)
-
-try:
-    raw = result.stdout[result.stdout.index(b"<?xml") :]
-    entitlements = plistlib.loads(raw)
-except Exception:
-    print("decode_error")
-    raise SystemExit(0)
-
-value = entitlements.get(key, "missing")
-if isinstance(value, bool):
-    print("true" if value else "false")
-elif isinstance(value, str):
-    print(value)
-else:
-    print("missing" if value == "missing" else str(value))
-PY
-}
-
-_require_signed_entitlement_value() {
-  local target="$1" key="$2" expected="$3" what="$4" fix="$5"
-  local actual
-  actual="$(_signed_entitlement_value "$target" "$key" || echo "missing")"
-  if [[ "$actual" == "decode_error" ]]; then
-    echo ""
-    echo "ERROR: Could not read signed entitlements from bundle."
-    echo "  path: $target"
-    echo "  affects: $what"
-    echo ""
-    echo "$fix"
-    exit 1
-  fi
-  if [[ "$actual" != "$expected" ]]; then
-    echo ""
-    echo "ERROR: Signed bundle entitlement value mismatch: $key"
-    echo "  path: $target"
-    echo "  affects: $what"
-    echo "  expected: $expected"
-    echo "  actual: $actual"
-    echo ""
-    echo "$fix"
-    exit 1
-  fi
-}
-
-verify_gui_app_signed_entitlements() {
-  local target_app="$1"
-  _require_signed_entitlement_value \
-    "$target_app" \
-    "com.apple.application-identifier" \
-    "${DEVELOPMENT_TEAM}.com.openjoystickdriver" \
-    "GUI app signed entitlements" \
-    "Fix: regenerate GUI entitlements/provisioning, then rebuild."
-  _require_signed_entitlement_value \
-    "$target_app" \
-    "com.apple.developer.hid.virtual.device" \
-    "true" \
-    "GUI app Compatibility backend" \
-    "Fix: enable com.apple.developer.hid.virtual.device on the GUI profile, then rebuild."
-}
-
-verify_daemon_app_signed_entitlements() {
-  local target_daemon="$1"
-  _require_signed_entitlement_value \
-    "$target_daemon" \
-    "com.apple.application-identifier" \
-    "${DEVELOPMENT_TEAM}.com.openjoystickdriver.daemon" \
-    "Daemon app signed entitlements" \
-    "Fix: regenerate daemon entitlements/provisioning, then rebuild."
-  _require_signed_entitlement_value \
-    "$target_daemon" \
-    "com.apple.developer.hid.virtual.device" \
-    "true" \
-    "Daemon Compatibility backend" \
-    "Fix: enable com.apple.developer.hid.virtual.device on the daemon profile, then rebuild."
 }

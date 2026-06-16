@@ -168,8 +168,6 @@ extension InputTestWindowView {
       let ok = await model.sendPhysicalRumble(
         vendorID: device.vendorID,
         productID: device.productID,
-        serialNumber: device.serialNumber,
-        locationID: device.locationID,
         left: left ?? UInt8(clamping: Int(rumbleLeft)),
         right: right ?? UInt8(clamping: Int(rumbleRight)),
         lt: lt ?? UInt8(clamping: Int(rumbleLT)),

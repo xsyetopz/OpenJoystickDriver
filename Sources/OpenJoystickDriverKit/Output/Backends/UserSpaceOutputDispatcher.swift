@@ -19,14 +19,11 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
 
   public enum CreationError: Error, CustomStringConvertible, Sendable {
     case createFailed
-    case missingAccessibilityPermission
     case missingEntitlement(String)
 
     public var description: String {
       switch self {
       case .createFailed: return "Failed to create IOHIDUserDevice"
-      case .missingAccessibilityPermission:
-        return "Accessibility permission is required to create IOHIDUserDevice"
       case .missingEntitlement(let e): return "Missing entitlement: \(e)"
       }
     }
@@ -50,7 +47,6 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     let device: IOHIDUserDevice
     let queue: DispatchQueue
     let lock = NSLock()
-    let stateBox: InputStateBox
     var state = VirtualGamepadState()
     var lastFailure: IOReturn?
     // Counts failures since last successful report delivery.
@@ -59,27 +55,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     var consecutiveFailures: Int = 0
     var nextRecreateAttemptNs: UInt64 = 0
 
-    init(device: IOHIDUserDevice, queue: DispatchQueue, stateBox: InputStateBox) {
+    init(device: IOHIDUserDevice, queue: DispatchQueue) {
       self.device = device
       self.queue = queue
-      self.stateBox = stateBox
-    }
-  }
-
-  private final class InputStateBox {
-    private let lock = NSLock()
-    private var state = VirtualGamepadState()
-
-    func update(_ nextState: VirtualGamepadState) {
-      lock.withLock {
-        state = nextState
-      }
-    }
-
-    func currentReport(format: any VirtualGamepadReportFormat) -> [UInt8] {
-      lock.withLock {
-        format.buildInputReport(from: state)
-      }
     }
   }
 
@@ -94,13 +72,6 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
   public private(set) var status: String = "off"
   public private(set) var lastRumbleStatus: String = "none"
   private let onRumbleCommand: RumbleCommandHandler?
-  private var inputDispatchCount = 0
-  private var nonEmptyInputDispatchCount = 0
-  private var inputEventCount = 0
-  private var inputWriteCount = 0
-  private var getReportCount = 0
-  private var lastInputWriteResult: IOReturn?
-  private var lastGetReportResult: IOReturn?
   static let requiredVirtualDeviceEntitlement = "com.apple.developer.hid.virtual.device"
   static var hasRequiredVirtualDeviceEntitlement: Bool {
     hasEntitlement(requiredVirtualDeviceEntitlement)
@@ -130,10 +101,6 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
         + "(regenerate daemon profile)"
       throw CreationError.missingEntitlement(Self.requiredVirtualDeviceEntitlement)
     }
-    guard PermissionManager.currentAccessibilityState() == .granted else {
-      status = "error: Accessibility permission required for virtual HID device"
-      throw CreationError.missingAccessibilityPermission
-    }
 
     // Device(s) are created lazily on first dispatch for each physical controller.
   }
@@ -157,53 +124,8 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       if !status.hasPrefix("error:") { status = "off" }
       return
     }
-    if !status.hasPrefix("error:") && !status.contains("initial neutral report failed") {
-      status = healthyStatusLocked()
-    }
-  }
-
-  private func healthyStatusLocked() -> String {
-    var details = ["devices=\(entries.count)"]
-    if inputDispatchCount > 0 || inputWriteCount > 0 || getReportCount > 0 {
-      details.append("dispatches=\(inputDispatchCount)")
-      details.append("nonEmpty=\(nonEmptyInputDispatchCount)")
-      details.append("events=\(inputEventCount)")
-      details.append("writes=\(inputWriteCount)")
-      details.append("getReports=\(getReportCount)")
-      if let lastInputWriteResult {
-        details.append("lastWrite=0x\(String(lastInputWriteResult, radix: 16))")
-      }
-      if let lastGetReportResult {
-        details.append("lastGet=0x\(String(lastGetReportResult, radix: 16))")
-      }
-    }
-    return "on (\(details.joined(separator: ", ")))"
-  }
-
-  private func recordInputDispatchTelemetry(eventCount: Int, writeCount: Int, result: IOReturn) {
-    registryLock.withLock {
-      inputDispatchCount += 1
-      if eventCount > 0 { nonEmptyInputDispatchCount += 1 }
-      inputEventCount += eventCount
-      inputWriteCount += writeCount
-      lastInputWriteResult = result
-      if !status.hasPrefix("error:") && !status.contains("initial neutral report failed")
-        && !entries.isEmpty
-      {
-        status = healthyStatusLocked()
-      }
-    }
-  }
-
-  private func recordGetReportTelemetry(result: IOReturn) {
-    registryLock.withLock {
-      getReportCount += 1
-      lastGetReportResult = result
-      if !status.hasPrefix("error:") && !status.contains("initial neutral report failed")
-        && !entries.isEmpty
-      {
-        status = healthyStatusLocked()
-      }
+    if !status.hasPrefix("error:") {
+      status = "on (devices=\(entries.count))"
     }
   }
 
@@ -289,11 +211,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
         + "\(routeToken ?? UserSpaceVirtualDeviceConstants.sharedRouteToken)."
         + "\(identifier.vendorID).\(identifier.productID)"
     )
-    let stateBox = InputStateBox()
     IOHIDUserDeviceRegisterGetReportBlock(dev) { type, reportID, report, reportLength in
       guard type == kIOHIDReportTypeInput else {
         reportLength.pointee = 0
-        self.recordGetReportTelemetry(result: kIOReturnUnsupported)
         return kIOReturnUnsupported
       }
       let payloadSize = self.format.inputReportPayloadSize
@@ -301,41 +221,22 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       let requiredLength = payloadSize + (includesReportID ? 1 : 0)
       guard reportLength.pointee >= requiredLength else {
         reportLength.pointee = CFIndex(requiredLength)
-        self.recordGetReportTelemetry(result: kIOReturnNoSpace)
         return kIOReturnNoSpace
       }
-      let currentReport = stateBox.currentReport(format: self.format)
-      let offset = 0
+      let neutral = self.format.buildInputReport(from: VirtualGamepadState())
+      var offset = 0
       if let expectedReportID = self.format.inputReportID {
         guard reportID == expectedReportID else {
           reportLength.pointee = 0
-          self.recordGetReportTelemetry(result: kIOReturnUnsupported)
           return kIOReturnUnsupported
         }
         report[0] = expectedReportID
-        let payload = Self.payloadBytes(for: currentReport, reportID: expectedReportID)
-        guard payload.count == payloadSize else {
-          reportLength.pointee = 0
-          self.recordGetReportTelemetry(result: kIOReturnBadArgument)
-          return kIOReturnBadArgument
-        }
-        for (index, byte) in payload.enumerated() {
-          report[1 + index] = byte
-        }
-        reportLength.pointee = CFIndex(requiredLength)
-        self.recordGetReportTelemetry(result: kIOReturnSuccess)
-        return kIOReturnSuccess
+        offset = 1
       }
-      guard currentReport.count == payloadSize else {
-        reportLength.pointee = 0
-        self.recordGetReportTelemetry(result: kIOReturnBadArgument)
-        return kIOReturnBadArgument
-      }
-      for (index, byte) in currentReport.enumerated() {
+      for (index, byte) in neutral.enumerated() {
         report[offset + index] = byte
       }
       reportLength.pointee = CFIndex(requiredLength)
-      self.recordGetReportTelemetry(result: kIOReturnSuccess)
       return kIOReturnSuccess
     }
     if let onRumbleCommand {
@@ -351,10 +252,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
         guard let command else {
           return kIOReturnUnsupported
         }
-        let hexBytes = bytes.map { String(format: "%02X", $0) }.joined(separator: " ")
         self?.lastRumbleStatus =
           "app report id=\(reportID) L=\(command.left) R=\(command.right) " +
-          "LT=\(command.leftTrigger) RT=\(command.rightTrigger) bytes=[\(hexBytes)]"
+          "LT=\(command.leftTrigger) RT=\(command.rightTrigger)"
         let status = self?.lastRumbleStatus ?? ""
         print("[UserSpaceOutputDispatcher] App rumble report: \(identifier) \(status)")
         onRumbleCommand(identifier, command)
@@ -363,31 +263,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     }
     IOHIDUserDeviceSetDispatchQueue(dev, queue)
     IOHIDUserDeviceActivate(dev)
-    let initialResult = sendInitialInputReport(to: dev)
-    if initialResult != kIOReturnSuccess {
-      status = "on (initial neutral report failed: \(String(initialResult, radix: 16)))"
-    }
-    return Entry(device: dev, queue: queue, stateBox: stateBox)
-  }
-
-  private static func payloadBytes(for report: [UInt8], reportID: UInt8) -> [UInt8] {
-    if report.first == reportID {
-      return Array(report.dropFirst())
-    }
-    return report
-  }
-
-  private func sendInitialInputReport(to device: IOHIDUserDevice) -> IOReturn {
-    let neutral = format.buildInputReport(from: VirtualGamepadState())
-    return neutral.withUnsafeBytes { ptr -> IOReturn in
-      guard let base = ptr.baseAddress else { return kIOReturnBadArgument }
-      return IOHIDUserDeviceHandleReportWithTimeStamp(
-        device,
-        mach_absolute_time(),
-        base.assumingMemoryBound(to: UInt8.self),
-        ptr.count
-      )
-    }
+    return Entry(device: dev, queue: queue)
   }
 
   public static func defaultPrimaryUsage(for format: any VirtualGamepadReportFormat) -> Int {
@@ -463,7 +339,6 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
 
     let reports = entry.lock.withLock { () -> [[UInt8]] in
       for event in events { applyEvent(event, deadzone: 0.15, state: &entry.state) }
-      entry.stateBox.update(entry.state)
       let secondaryReports =
         emitsXboxGuideReport ? events.compactMap { xboxGuideReport(for: $0) } : []
       return [format.buildInputReport(from: entry.state)] + secondaryReports
@@ -482,28 +357,24 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       }
       if result != kIOReturnSuccess { lastResult = result }
     }
-    recordInputDispatchTelemetry(
-      eventCount: events.count,
-      writeCount: reports.count,
-      result: lastResult
-    )
 
     if lastResult != kIOReturnSuccess {
       status = "error: \(String(lastResult, radix: 16))"
       noteFailureAndMaybeRecreate(entry: entry, identifier: identifier, error: lastResult)
-    } else if status.hasPrefix("error:") || status.contains("initial neutral report failed") {
+    } else if status.hasPrefix("error:") {
       // Clear any previous failure streak once we successfully deliver again.
       entry.lock.withLock {
         entry.lastFailure = nil
         entry.consecutiveFailures = 0
       }
       registryLock.withLock {
-        if status.hasPrefix("error:") || status.contains("initial neutral report failed") {
+        if status.hasPrefix("error:") {
           recomputeStatusLocked()
         }
       }
     }
   }
+
   private func noteFailureAndMaybeRecreate(
     entry: Entry,
     identifier: DeviceIdentifier,
@@ -557,9 +428,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       if let existing = entries[identifier] { return existing }
       let newEntry = try createDevice(for: identifier)
       entries[identifier] = newEntry
-      if !status.hasPrefix("error:") && !status.contains("initial neutral report failed") {
-        status = healthyStatusLocked()
-      }
+      if !status.hasPrefix("error:") { status = "on" }
       recomputeStatusLocked()
       return newEntry
     }

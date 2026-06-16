@@ -145,48 +145,4 @@ struct HardwarePipelineTests {
     #expect(!id1.modelMatches(id3))
     #expect(!id1.exactlyMatches(id2))
   }
-
-  @Test
-  func testUSBLocationIDUsesDocumentedBusAddressEncoding() {
-    #expect(DeviceIdentifier.usbLocationID(bus: 0x0001, address: 0x0002) == 0x0001_0002)
-  }
-
-  @Test
-  func testDeviceIdentifierQueryPrefersSerialThenLocationBeforeModelFallback() {
-    let first = DeviceIdentifier(
-      vendorID: gamesirVID,
-      productID: gamesirPID,
-      serialNumber: "ABC123",
-      locationID: 0x0001_0002
-    )
-    let second = DeviceIdentifier(
-      vendorID: gamesirVID,
-      productID: gamesirPID,
-      serialNumber: "XYZ789",
-      locationID: 0x0001_0003
-    )
-
-    #expect(first.matchesQuery(DeviceIdentifier(
-      vendorID: gamesirVID,
-      productID: gamesirPID,
-      serialNumber: "ABC123"
-    )))
-    #expect(!second.matchesQuery(DeviceIdentifier(
-      vendorID: gamesirVID,
-      productID: gamesirPID,
-      serialNumber: "ABC123"
-    )))
-    #expect(first.matchesQuery(DeviceIdentifier(
-      vendorID: gamesirVID,
-      productID: gamesirPID,
-      locationID: 0x0001_0002
-    )))
-    #expect(!second.matchesQuery(DeviceIdentifier(
-      vendorID: gamesirVID,
-      productID: gamesirPID,
-      locationID: 0x0001_0002
-    )))
-    #expect(first.matchesQuery(DeviceIdentifier(vendorID: gamesirVID, productID: gamesirPID)))
-    #expect(second.matchesQuery(DeviceIdentifier(vendorID: gamesirVID, productID: gamesirPID)))
-  }
 }

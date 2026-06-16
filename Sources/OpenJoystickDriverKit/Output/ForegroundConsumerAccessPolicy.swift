@@ -15,14 +15,7 @@ public enum ForegroundConsumerAccessPolicy {
     consumerBundleRootPaths: Set<String>
   ) -> Bool {
     guard !consumerBundleRootPaths.isEmpty else { return true }
-    if consumerBundleRootPaths.allSatisfy(isUnbundledConsumerRoot) {
-      return true
-    }
     guard let frontmostBundleRootPath else { return false }
     return consumerBundleRootPaths.contains(frontmostBundleRootPath)
-  }
-
-  static func isUnbundledConsumerRoot(_ path: String) -> Bool {
-    URL(fileURLWithPath: path).pathExtension != "app"
   }
 }

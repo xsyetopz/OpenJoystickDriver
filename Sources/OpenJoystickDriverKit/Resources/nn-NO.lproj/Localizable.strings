@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Start daemonen for å koble til kontrollere.";
 "readiness.daemonDisconnected" = "Daemonen kjører, men er frakoblet. Start daemonen på nytt.";
 "readiness.allowAppInputMonitoring" = "Tillat inndataovervåking for OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Tillat inndataovervåking for OpenJoystickDriverDaemon.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Tillat inndataovervåking for OpenJoystickDriver Daemon.";
 "readiness.connectController" = "Koble til en kontroller.";
 "readiness.controllersConnected.one" = "%d kontroller tilkoblet.";
 "readiness.controllersConnected.other" = "%d kontrollere tilkoblet.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Trenger godkjenning";
 "access.notSetUp" = "Ikke konfigurert";
 "permissions.title" = "Tillatelser";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Tilgang er tillatt.";
 "permissions.openSettings" = "Åpne Systeminnstillinger, og slå på Inndataovervåking for %@.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver ba macOS om tilgang. Slå på %@ i Inndataovervåking. Hvis macOS ber om å avslutte og åpne på nytt, tillat det.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Daemonen starter automatisk etter installasjon.";
 "daemon.systemExtension" = "Systemutvidelse";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "Avinstaller LaunchAgent?";
 "alert.uninstallMessage" = "Dette fjerner LaunchAgent-plist. Du kan installere på nytt senere.";
 "permissions.requestAccessDefault" = "Be om tilgang slik at macOS kan legge dette elementet til i Inndataovervåking.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "appen";
 "permissions.ownerDaemon" = "daemonen";
 "output.detailsCardTitle" = "Utdatadetaljer";

@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Запустите демон, чтобы подключать контроллеры.";
 "readiness.daemonDisconnected" = "Демон запущен, но отключён. Перезапустите демон.";
 "readiness.allowAppInputMonitoring" = "Разрешите мониторинг ввода для OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Разрешите мониторинг ввода для OpenJoystickDriverDaemon.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Разрешите мониторинг ввода для OpenJoystickDriver Daemon.";
 "readiness.connectController" = "Подключите контроллер.";
 "readiness.controllersConnected.one" = "Подключён %d контроллер.";
 "readiness.controllersConnected.other" = "Подключено %d контроллеров.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Нужно подтверждение";
 "access.notSetUp" = "Не настроено";
 "permissions.title" = "Разрешения";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Доступ разрешён.";
 "permissions.openSettings" = "Откройте Системные настройки, затем включите Мониторинг ввода для %@.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver запросил доступ у macOS. В разделе «Мониторинг ввода» включите %@. Если macOS попросит закрыть и открыть снова, разрешите это.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Демон";
 "daemon.autoStarts" = "Демон запускается автоматически после установки.";
 "daemon.systemExtension" = "Системное расширение";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "Удалить LaunchAgent?";
 "alert.uninstallMessage" = "Это удалит plist LaunchAgent. Его можно установить снова позже.";
 "permissions.requestAccessDefault" = "Запросите доступ, чтобы macOS могла добавить этот элемент в Мониторинг ввода.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "приложение";
 "permissions.ownerDaemon" = "демон";
 "output.detailsCardTitle" = "Сведения о выводе";

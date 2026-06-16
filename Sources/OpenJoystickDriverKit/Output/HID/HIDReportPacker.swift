@@ -9,12 +9,8 @@ struct HIDReportPacker: @unchecked Sendable {
   let buttonFields: [Int: HIDField]  // usage -> field
   let axisFields: [Int: HIDField]  // usage -> field (Generic Desktop)
   let hatField: HIDField?
-  let buttonUsageByBit: [Int: Int]
 
-  static func bestEffortGamepadPacker(
-    from parsed: HIDParsedDescriptor,
-    buttonUsageByBit: [Int: Int] = [:]
-  ) -> Self? {
+  static func bestEffortGamepadPacker(from parsed: HIDParsedDescriptor) -> Self? {
     // Score each report ID by how many "gamepad-ish" fields it contains.
     let grouped = Dictionary(grouping: parsed.fields) { $0.reportID }
     var best: (UInt8, Int)?
@@ -58,8 +54,7 @@ struct HIDReportPacker: @unchecked Sendable {
       payloadSizeBytes: parsed.payloadSizeBytesByReportID[rid] ?? 0,
       buttonFields: buttons,
       axisFields: axes,
-      hatField: hat,
-      buttonUsageByBit: buttonUsageByBit
+      hatField: hat
     )
   }
 
@@ -125,11 +120,10 @@ struct HIDReportPacker: @unchecked Sendable {
       return UInt32(max(minV, min(maxV, idx + minV)))
     }
 
-    // Buttons: normalized state bit 0 is normally HID Button usage 1, bit 1 is usage 2, etc.
-    // Hardware-spoof profiles may override this when a consumer expects a different logical order.
-    for bitIndex in 0..<32 {
-      let usage = buttonUsageByBit[bitIndex] ?? (bitIndex + 1)
+    // Buttons: normalized state bit 0 is HID Button usage 1, bit 1 is usage 2, etc.
+    for usage in 1...32 {
       guard let field = buttonFields[usage] else { continue }
+      let bitIndex = usage - 1
       let pressed = ((state.buttons >> bitIndex) & 1) != 0
       setBits(bitOffset: field.bitOffset, bitSize: field.bitSize, value: pressed ? 1 : 0)
     }

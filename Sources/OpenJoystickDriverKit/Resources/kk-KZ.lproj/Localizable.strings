@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Контроллерлерді қосу үшін демонды бастаңыз.";
 "readiness.daemonDisconnected" = "Демон жұмыс істеп тұр, бірақ ажыратылған. Демонды қайта іске қосыңыз.";
 "readiness.allowAppInputMonitoring" = "OpenJoystickDriver үшін енгізуді бақылауға рұқсат беріңіз.";
-"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriverDaemon үшін енгізуді бақылауға рұқсат беріңіз.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriver Daemon үшін енгізуді бақылауға рұқсат беріңіз.";
 "readiness.connectController" = "Контроллерді қосыңыз.";
 "readiness.controllersConnected.one" = "%d контроллер қосылды.";
 "readiness.controllersConnected.other" = "%d контроллер қосылды.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Мақұлдау қажет";
 "access.notSetUp" = "Бапталмаған";
 "permissions.title" = "Рұқсаттар";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Қатынасқа рұқсат етілген.";
 "permissions.openSettings" = "Жүйе баптауларын ашып, %@ үшін енгізуді бақылауды қосыңыз.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver macOS жүйесінен қатынас сұрады. Енгізуді бақылауда %@ қосыңыз. Егер macOS шығуды және қайта ашуды сұраса, рұқсат беріңіз.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Демон";
 "daemon.autoStarts" = "Демон орнатудан кейін автоматты түрде басталады.";
 "daemon.systemExtension" = "Жүйелік кеңейтім";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "LaunchAgent жойылсын ба?";
 "alert.uninstallMessage" = "Бұл LaunchAgent plist файлын жояды. Оны кейін қайта орнатуға болады.";
 "permissions.requestAccessDefault" = "macOS бұл элементті енгізуді бақылауға қоса алуы үшін қатынасты сұраңыз.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "қолданба";
 "permissions.ownerDaemon" = "демон";
 "output.detailsCardTitle" = "Шығыс мәліметтері";

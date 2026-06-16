@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Pornește daemonul pentru a conecta controlere.";
 "readiness.daemonDisconnected" = "Daemonul rulează, dar este deconectat. Repornește daemonul.";
 "readiness.allowAppInputMonitoring" = "Permite monitorizarea intrării pentru OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Permite monitorizarea intrării pentru OpenJoystickDriverDaemon.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Permite monitorizarea intrării pentru OpenJoystickDriver Daemon.";
 "readiness.connectController" = "Conectează un controler.";
 "readiness.controllersConnected.one" = "%d controler conectat.";
 "readiness.controllersConnected.other" = "%d controlere conectate.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Necesită aprobare";
 "access.notSetUp" = "Neconfigurat";
 "permissions.title" = "Permisiuni";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Accesul este permis.";
 "permissions.openSettings" = "Deschide Configurări sistem, apoi activează Monitorizarea intrării pentru %@.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver a solicitat acces de la macOS. În Monitorizarea intrării, activează %@. Dacă macOS cere închiderea și redeschiderea, permite acest lucru.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Daemonul pornește automat după instalare.";
 "daemon.systemExtension" = "Extensie de sistem";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "Dezinstalezi LaunchAgent?";
 "alert.uninstallMessage" = "Aceasta elimină fișierul plist LaunchAgent. Îl poți reinstala mai târziu.";
 "permissions.requestAccessDefault" = "Solicită acces pentru ca macOS să poată adăuga acest element la Monitorizarea intrării.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "aplicația";
 "permissions.ownerDaemon" = "daemonul";
 "output.detailsCardTitle" = "Detalii ieșire";

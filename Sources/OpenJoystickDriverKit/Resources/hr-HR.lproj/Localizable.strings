@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Pokreni daemon za povezivanje kontrolera.";
 "readiness.daemonDisconnected" = "Daemon radi, ali je odspojen. Ponovno pokreni daemon.";
 "readiness.allowAppInputMonitoring" = "Dopusti nadzor unosa za OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Dopusti nadzor unosa za OpenJoystickDriverDaemon.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Dopusti nadzor unosa za OpenJoystickDriver Daemon.";
 "readiness.connectController" = "Poveži kontroler.";
 "readiness.controllersConnected.one" = "Povezan %d kontroler.";
 "readiness.controllersConnected.other" = "Povezano %d kontrolera.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Potrebno odobrenje";
 "access.notSetUp" = "Nije postavljeno";
 "permissions.title" = "Dopuštenja";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Pristup je dopušten.";
 "permissions.openSettings" = "Otvori Postavke sustava i uključi Nadzor unosa za %@.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver zatražio je pristup od macOS-a. U Nadzoru unosa uključi %@. Ako macOS zatraži zatvaranje i ponovno otvaranje, dopusti to.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Daemon se automatski pokreće nakon instalacije.";
 "daemon.systemExtension" = "Sistemsko proširenje";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "Deinstalirati LaunchAgent?";
 "alert.uninstallMessage" = "Ovo uklanja LaunchAgent plist. Možeš ga ponovno instalirati kasnije.";
 "permissions.requestAccessDefault" = "Zatraži pristup kako bi macOS mogao dodati ovu stavku u Nadzor unosa.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "aplikacija";
 "permissions.ownerDaemon" = "daemon";
 "output.detailsCardTitle" = "Detalji izlaza";

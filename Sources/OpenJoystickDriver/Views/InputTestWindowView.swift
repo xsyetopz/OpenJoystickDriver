@@ -12,32 +12,12 @@ private actor InputTestSampler {
     client.disconnect()
   }
 
-  func deviceInputState(
-    vendorID: UInt16,
-    productID: UInt16,
-    serialNumber: String?,
-    locationID: UInt32?
-  ) async -> DeviceInputState? {
-    try? await client.deviceInputState(
-      vendorID: vendorID,
-      productID: productID,
-      serialNumber: serialNumber,
-      locationID: locationID
-    )
+  func deviceInputState(vendorID: UInt16, productID: UInt16) async -> DeviceInputState? {
+    try? await client.deviceInputState(vendorID: vendorID, productID: productID)
   }
 
-  func packetLog(
-    vendorID: UInt16,
-    productID: UInt16,
-    serialNumber: String?,
-    locationID: UInt32?
-  ) async -> [PacketLogEntry] {
-    (try? await client.packetLog(
-      vendorID: vendorID,
-      productID: productID,
-      serialNumber: serialNumber,
-      locationID: locationID
-    )) ?? []
+  func packetLog(vendorID: UInt16, productID: UInt16) async -> [PacketLogEntry] {
+    (try? await client.packetLog(vendorID: vendorID, productID: productID)) ?? []
   }
 }
 
@@ -179,9 +159,8 @@ struct InputTestWindowView: View {
               )
           }
           HStack(spacing: 7) {
-            ForEach(controllerBadges(for: device), id: \.self) { badge in
-              MiniBadge(badge)
-            }
+            MiniBadge(device.parser)
+            MiniBadge(device.connection)
             MiniBadge(String(format: "%04X:%04X", device.vendorID, device.productID))
             if let serial = device.serialNumber, !serial.isEmpty {
               MiniBadge(L10n.string("input.serial", serial))
@@ -203,13 +182,6 @@ struct InputTestWindowView: View {
             .lineLimit(1)
         }
       }
-    }
-  }
-
-  private func controllerBadges(for device: DeviceViewModel) -> [String] {
-    var seen = Set<String>()
-    return [device.parser, device.connection].filter { badge in
-      seen.insert(badge).inserted
     }
   }
 
@@ -285,19 +257,7 @@ struct InputTestWindowView: View {
 
   @ViewBuilder
   private func buttonPill(button: OpenJoystickDriverKit.Button, isDown: Bool) -> some View {
-    if let text = button.inputTesterTextFallback {
-      Text(text)
-        .font(.system(size: 12, weight: .semibold))
-        .lineLimit(1)
-        .minimumScaleFactor(0.8)
-        .frame(width: 32, height: 30)
-        .background(isDown ? Color.accentColor.opacity(0.85) : Color.secondary.opacity(0.14))
-        .foregroundColor(isDown ? .white : .primary)
-        .clipShape(RoundedRectangle(cornerRadius: 6))
-        .transaction { transaction in
-          transaction.animation = nil
-        }
-    } else if #available(macOS 11.0, *) {
+    if #available(macOS 11.0, *) {
       Image(systemName: button.systemImageName)
         .font(.system(size: 15, weight: .semibold))
         .frame(width: 32, height: 30)
@@ -340,7 +300,7 @@ struct InputTestWindowView: View {
         .back, .start, .guide, .share,
         .dpadUp, .dpadDown, .dpadLeft, .dpadRight,
       ]
-    case "Xbox360", "SDL3":
+    case "Xbox360":
       return [
         .a, .b, .x, .y,
         .leftBumper, .rightBumper,
@@ -428,9 +388,7 @@ struct InputTestWindowView: View {
     }
     let nextState = await sampler.deviceInputState(
       vendorID: device.vendorID,
-      productID: device.productID,
-      serialNumber: device.serialNumber,
-      locationID: device.locationID
+      productID: device.productID
     )
     if state != nextState {
       state = nextState
@@ -442,12 +400,7 @@ struct InputTestWindowView: View {
       packetLog = []
       return
     }
-    packetLog = await sampler.packetLog(
-      vendorID: device.vendorID,
-      productID: device.productID,
-      serialNumber: device.serialNumber,
-      locationID: device.locationID
-    )
+    packetLog = await sampler.packetLog(vendorID: device.vendorID, productID: device.productID)
   }
 }
 

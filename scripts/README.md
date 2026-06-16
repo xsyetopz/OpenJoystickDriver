@@ -127,7 +127,7 @@ OJD_ENV=release ./scripts/ojd notarize status
 For a release build that does not install anything on the build machine:
 
 ```bash
-./scripts/ojd package release 0.5.0-alpha.7
+./scripts/ojd package release 0.5.0-alpha.4
 ```
 
 This command uses release signing, embeds the DriverKit extension into the app
@@ -146,10 +146,10 @@ install and approve the app/system extension locally.
 ## GitHub Actions release
 
 `.github/workflows/release.yml` runs on SemVer tags such as `0.1.0` or
-`0.5.0-alpha.7` and by manual dispatch.
-It installs `libusb`, builds current SDL3 from upstream source, validates
-profiles, imports signing material, builds a release app, notarizes it, uploads
-the release DMG as a workflow artifact, and publishes the GitHub Release.
+`0.5.0-alpha.4` and by manual dispatch.
+It installs `libusb`, validates profiles, imports signing material, builds a
+release app, notarizes it, uploads the release DMG as a workflow artifact, and
+publishes the GitHub Release.
 
 ### Required repository secrets
 
@@ -160,39 +160,11 @@ the release DMG as a workflow artifact, and publishes the GitHub Release.
 - `OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64`
 - `OPENJOYSTICKDRIVER_DAEMON_DEVID_PROFILE_BASE64`
 - `OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64`
-- `NOTARIZE_KEY_ID`
-- `NOTARIZE_ISSUER_ID`
-- `NOTARIZE_API_KEY_BASE64`
-
-Legacy Apple ID notarization still works when API-key secrets are absent:
-
 - `NOTARIZE_APPLE_ID`
 - `NOTARIZE_PASSWORD`
 
 The certificate payload secrets are base64-encoded certificate export files.
 The profile secrets are base64-encoded `.provisionprofile` files.
-`NOTARIZE_API_KEY_BASE64` is a base64-encoded App Store Connect
-`AuthKey_<key-id>.p8` file.
-
-Get the App Store Connect API key values from
-<https://appstoreconnect.apple.com/access/integrations/api>:
-
-1. Open App Store Connect > Users and Access > Integrations > App Store
-   Connect API.
-2. Generate an API key with access to the Developer ID team used by the
-   provisioning profiles.
-3. Copy the generated key ID into `NOTARIZE_KEY_ID`.
-4. Copy the issuer ID shown on the API keys page into `NOTARIZE_ISSUER_ID`.
-5. Download `AuthKey_<key-id>.p8` once, then encode it for GitHub:
-
-```bash
-base64 -i AuthKey_<key-id>.p8 | tr -d '\n' | gh secret set NOTARIZE_API_KEY_BASE64
-gh secret set NOTARIZE_KEY_ID --body '<key-id>'
-gh secret set NOTARIZE_ISSUER_ID --body '<issuer-uuid>'
-```
-
-Apple documents API key creation in "Creating API Keys for App Store Connect
-API" and notarization API-key usage in TN3147.
 
 ### Generate GitHub secrets locally
 

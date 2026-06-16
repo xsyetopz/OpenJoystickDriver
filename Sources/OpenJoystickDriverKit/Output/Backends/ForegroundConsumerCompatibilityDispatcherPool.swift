@@ -1,9 +1,10 @@
 import Foundation
 
-/// Compatibility user-space output that keeps a single shared virtual device.
+/// Compatibility user-space output that keeps one bootstrap/shared device plus
+/// lazily-created dedicated devices for focused consumer apps.
 ///
 /// Real controller state is routed only to the currently active route token.
-/// When no consumer route is active, the shared virtual device is neutralized.
+/// Non-active routes are neutralized on handoff.
 public final class ForegroundConsumerCompatibilityDispatcherPool:
   CompatibilityUserSpaceOutputDispatching, @unchecked Sendable
 {
@@ -11,57 +12,72 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
     @Sendable (String?) throws -> any CompatibilityUserSpaceOutputDispatching
 
   private let lock = NSLock()
+  private let childFactory: ChildFactory
   private let sharedDispatcher: any CompatibilityUserSpaceOutputDispatching
+  private var dedicatedDispatchers: [String: any CompatibilityUserSpaceOutputDispatching] = [:]
   private var activeRouteToken: String?
   private var knownIdentifiers: Set<DeviceIdentifier> = []
   private var currentStateByIdentifier: [DeviceIdentifier: DeviceInputState] = [:]
   private var _suppressOutput = false
 
   public init(childFactory: @escaping ChildFactory) throws {
+    self.childFactory = childFactory
     self.sharedDispatcher = try childFactory(nil)
   }
 
   public var suppressOutput: Bool {
     get { lock.withLock { _suppressOutput } }
     set {
-      let child = lock.withLock { () -> any CompatibilityUserSpaceOutputDispatching in
+      let children = lock.withLock { () -> [any CompatibilityUserSpaceOutputDispatching] in
         _suppressOutput = newValue
-        return sharedDispatcher
+        return [sharedDispatcher] + Array(dedicatedDispatchers.values)
       }
-      child.suppressOutput = newValue
+      for child in children {
+        child.suppressOutput = newValue
+      }
     }
   }
 
   public var status: String {
     lock.withLock {
       let activeLabel = activeRouteToken ?? "none"
-      let childStatus = sharedDispatcher.status
-      if childStatus.hasPrefix("error:") { return childStatus }
-      if childStatus == "off" {
+      let routeCount = 1 + dedicatedDispatchers.count
+      let childStatuses = [sharedDispatcher.status] + dedicatedDispatchers.values.map(\.status)
+      if let errorStatus = childStatuses.first(where: { $0.hasPrefix("error:") }) {
+        return errorStatus
+      }
+      if childStatuses.allSatisfy({ $0 == "off" }) {
         return "off"
       }
-      if childStatus != "on" {
-        return "on (routes=1, active=\(activeLabel), child=\(childStatus))"
-      }
-      return "on (routes=1, active=\(activeLabel))"
+      return "on (routes=\(routeCount), active=\(activeLabel))"
     }
   }
 
   public var lastRumbleStatus: String {
     lock.withLock {
-      sharedDispatcher.lastRumbleStatus
+      if let active = dispatcher(for: activeRouteToken),
+        active.lastRumbleStatus != "none"
+      {
+        return active.lastRumbleStatus
+      }
+      let all = [sharedDispatcher] + Array(dedicatedDispatchers.values)
+      return all.first { $0.lastRumbleStatus != "none" }?.lastRumbleStatus ?? "none"
     }
   }
 
   public func close() {
-    let child = lock.withLock { () -> any CompatibilityUserSpaceOutputDispatching in
+    let children = lock.withLock { () -> [any CompatibilityUserSpaceOutputDispatching] in
+      let all = [sharedDispatcher] + Array(dedicatedDispatchers.values)
+      dedicatedDispatchers.removeAll()
       activeRouteToken = nil
       knownIdentifiers.removeAll()
       currentStateByIdentifier.removeAll()
-      return sharedDispatcher
+      return all
     }
 
-    child.close()
+    for child in children {
+      child.close()
+    }
   }
 
   public func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {
@@ -72,7 +88,6 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
         ?? DeviceInputState(vendorID: identifier.vendorID, productID: identifier.productID)
       state.apply(events: events)
       currentStateByIdentifier[identifier] = state
-      if activeRouteToken == nil { return sharedDispatcher }
       return dispatcher(for: activeRouteToken)
     }
 
@@ -85,11 +100,41 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
     await activeDispatcher.dispatch(events: events, from: identifier)
   }
 
-  // swiftlint:disable:next async_without_await
   public func ensureDedicatedRoute(forConsumerBundleRootPath bundleRootPath: String) async throws {
-    // Steam enumerates every IOHIDUserDevice we publish. Keep routing logical only:
-    // one shared virtual controller, no per-consumer duplicate devices.
-    _ = bundleRootPath
+    let routeToken = UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
+      forConsumerBundleRootPath: bundleRootPath
+    )
+
+    let created: (any CompatibilityUserSpaceOutputDispatching)?
+    let identifiers: [DeviceIdentifier]
+
+    let existing = lock.withLock { dedicatedDispatchers[routeToken] }
+    if let existing {
+      existing.suppressOutput = suppressOutput
+      return
+    }
+
+    let child = try childFactory(routeToken)
+    child.suppressOutput = suppressOutput
+
+    created = lock.withLock { () -> (any CompatibilityUserSpaceOutputDispatching)? in
+      if let existing = dedicatedDispatchers[routeToken] {
+        return existing
+      }
+      dedicatedDispatchers[routeToken] = child
+      return child
+    }
+    identifiers = lock.withLock { Array(knownIdentifiers) }
+
+    if let created {
+      for identifier in identifiers {
+        await created.dispatch(events: [], from: identifier)
+      }
+      print(
+        "[ForegroundConsumerCompatibilityDispatcherPool] Created dedicated Compatibility route "
+          + "\(routeToken) for \(URL(fileURLWithPath: bundleRootPath).lastPathComponent)"
+      )
+    }
   }
 
   public func setActiveRouteToken(_ newActiveRouteToken: String?) async {
@@ -126,6 +171,9 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
     for routeToken: String?
   ) -> (any CompatibilityUserSpaceOutputDispatching)? {
     if routeToken == nil { return nil }
-    return sharedDispatcher
+    if routeToken == UserSpaceVirtualDeviceConstants.sharedRouteToken {
+      return sharedDispatcher
+    }
+    return dedicatedDispatchers[routeToken ?? ""]
   }
 }

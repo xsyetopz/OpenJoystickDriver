@@ -53,16 +53,6 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
     manufacturer: "Microsoft"
   )
 
-  /// Xbox One Wireless Controller identity observed through Apple's Xbox One
-  /// GameController bridge on macOS.
-  public static let xboxOneWirelessGameController = Self(
-    vendorID: 0x045E,
-    productID: 0x02E0,
-    versionNumber: 0x5326,
-    productName: "Xbox One Wireless Controller",
-    manufacturer: "Microsoft"
-  )
-
   /// Xbox 360 Controller (Wired) — experimental on macOS.
   ///
   /// Note: many macOS stacks do not treat 045E:028E as a standard HID gamepad.

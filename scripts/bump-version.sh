@@ -21,7 +21,6 @@ Updates:
   - justfile release-local-install default
   - scripts/README.md release examples
   - scripts/ojd-build-bundles.sh generated GUI/daemon bundle versions
-  - Tests/OpenJoystickDriverKitTests/ScriptPackagingTests.swift version guards
   - DriverKitExtension/Info.plist short version
 
 The target version must already have a CHANGELOG.md heading.
@@ -48,7 +47,6 @@ app_model_file="$PROJECT_DIR/Sources/OpenJoystickDriver/App/AppModel.swift"
 justfile="$PROJECT_DIR/justfile"
 scripts_readme="$PROJECT_DIR/scripts/README.md"
 build_script="$PROJECT_DIR/scripts/ojd-build-bundles.sh"
-script_packaging_tests="$PROJECT_DIR/Tests/OpenJoystickDriverKitTests/ScriptPackagingTests.swift"
 dext_plist="$PROJECT_DIR/DriverKitExtension/Info.plist"
 changelog="$PROJECT_DIR/CHANGELOG.md"
 
@@ -57,7 +55,6 @@ changelog="$PROJECT_DIR/CHANGELOG.md"
 [[ -f "$justfile" ]] || die "Missing $justfile"
 [[ -f "$scripts_readme" ]] || die "Missing $scripts_readme"
 [[ -f "$build_script" ]] || die "Missing $build_script"
-[[ -f "$script_packaging_tests" ]] || die "Missing $script_packaging_tests"
 [[ -f "$dext_plist" ]] || die "Missing $dext_plist"
 [[ -f "$changelog" ]] || die "Missing $changelog"
 
@@ -65,28 +62,12 @@ if ! grep -Fxq "## $version" "$changelog"; then
   die "CHANGELOG.md must contain heading: ## $version"
 fi
 
-python3 - "$version" "$cli_file" "$app_model_file" "$justfile" "$scripts_readme" "$build_script" "$script_packaging_tests" "$dext_plist" <<'PY'
+python3 - "$version" "$cli_file" "$app_model_file" "$justfile" "$scripts_readme" "$build_script" "$dext_plist" <<'PY'
 import re
 import sys
 from pathlib import Path
 
-(
-    version,
-    cli_path,
-    app_model_path,
-    justfile_path,
-    readme_path,
-    build_script_path,
-    script_packaging_tests_path,
-    dext_plist_path,
-) = sys.argv[1:]
-
-version_pattern = r"\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?"
-current_release_match = re.search(
-    rf'release-local-install version="({version_pattern})":',
-    Path(justfile_path).read_text(),
-)
-current_release_version = current_release_match.group(1) if current_release_match else version
+version, cli_path, app_model_path, justfile_path, readme_path, build_script_path, dext_plist_path = sys.argv[1:]
 
 replacements = [
     (
@@ -183,40 +164,7 @@ replacements = [
             ),
         ],
     ),
-    (
-        Path(script_packaging_tests_path),
-        [
-            (
-                "ScriptPackagingTests justfile version guards",
-                re.compile(
-                    r'(release-local-install version=\\")\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(\\")'
-                ),
-                rf"\g<1>{version}\g<2>",
-                2,
-            ),
-            (
-                "ScriptPackagingTests bundle version guard",
-                re.compile(
-                    r'(OJD_BUNDLE_SHORT_VERSION:-)\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?'
-                ),
-                rf"\g<1>{version}",
-                1,
-            ),
-        ],
-    ),
 ]
-
-if current_release_version != version:
-    replacements[-1][1].append(
-        (
-            "ScriptPackagingTests stale version guards",
-            re.compile(
-                rf'(!(?:bundles|justfile)\.contains\("){version_pattern}("\))'
-            ),
-            rf"\g<1>{current_release_version}\g<2>",
-            2,
-        )
-    )
 
 missing = []
 updates = []

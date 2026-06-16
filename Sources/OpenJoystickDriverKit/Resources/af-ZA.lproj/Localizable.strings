@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Begin die daemon om beheerders te koppel.";
 "readiness.daemonDisconnected" = "Die daemon loop maar is ontkoppel. Herbegin die daemon.";
 "readiness.allowAppInputMonitoring" = "Laat Invoermonitering vir OpenJoystickDriver toe.";
-"readiness.allowDaemonInputMonitoring" = "Laat Invoermonitering vir OpenJoystickDriverDaemon toe.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Laat Invoermonitering vir OpenJoystickDriver Daemon toe.";
 "readiness.connectController" = "Koppel ’n beheerder.";
 "readiness.controllersConnected.one" = "%d beheerder gekoppel.";
 "readiness.controllersConnected.other" = "%d beheerders gekoppel.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Benodig goedkeuring";
 "access.notSetUp" = "Nie opgestel nie";
 "permissions.title" = "Toestemmings";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Toegang word toegelaat.";
 "permissions.openSettings" = "Maak Stelselinstellings oop en skakel dan Invoermonitering vir %@ aan.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver het macOS om toegang gevra. Skakel %@ in Invoermonitering aan. As macOS vra om toe te maak en weer oop te maak, laat dit toe.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Die daemon begin outomaties ná installasie.";
 "daemon.systemExtension" = "Stelseluitbreiding";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "LaunchAgent deïnstalleer?";
 "alert.uninstallMessage" = "Dit verwyder die LaunchAgent-plist. Jy kan dit later herinstalleer.";
 "permissions.requestAccessDefault" = "Versoek toegang sodat macOS hierdie item by Invoermonitering kan voeg.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "die program";
 "permissions.ownerDaemon" = "die daemon";
 "output.detailsCardTitle" = "Uitvoerbesonderhede";

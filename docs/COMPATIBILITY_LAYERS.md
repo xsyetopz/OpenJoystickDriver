@@ -15,30 +15,28 @@ here, and keep README short.
 
 ## Feature Set
 
-| Feature                           | Status | Best mode                          | Notes                                                                                                                 |
-| --------------------------------- | ------ | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Menu-bar app                      | ✅      | `N/A`                              | OJD is menu-bar-only.                                                                                                 |
-| Input Test window                 | ✅      | `N/A`                              | Shows live input, packets, and physical rumble controls.                                                              |
-| Physical controller input         | ✅      | `N/A`                              | SDL3 is the production physical input source. OJD no longer patches per-device raw USB/HID parsers for runtime input. |
-| Controllers requiring libusb      | ✅      | `sdl2-3`                           | Requires an SDL3 build that includes the macOS HIDAPI/libusb controller support merged for SDL PR #15794.             |
-| GameSir G7 SE                     | ✅      | `sdl2-3` or `xone-hid`             | Runtime input comes from SDL3; virtual output mode still controls app-facing identity.                                |
-| Flydigi Vader 5S                  | ✅      | `sdl2-3`                           | Runtime input comes from SDL3; SDL handles physical device access.                                                    |
-| Sony DualShock 4 USB input        | ✅      | `sdl2-3` or `apple-gamecontroller` | Runtime input comes from SDL3. Legacy parser tests remain as reference coverage.                                      |
-| Sony DualShock 4 Bluetooth input  | ✅      | `sdl2-3` or `apple-gamecontroller` | Runtime input comes from SDL3.                                                                                        |
-| Sony DualShock 4 physical rumble  | ✅      | Compatibility modes                | App rumble routes through SDL3 physical rumble when supported by the opened controller.                               |
-| Sony DualShock 3 USB/Bluetooth    | ✅      | `sdl2-3`                           | Runtime support depends on SDL3 exposing the controller as an SDL gamepad.                                            |
-| Xbox 360 USB input                | ✅      | `sdl2-3` or `x360-hid`             | Runtime input comes from SDL3, including controllers reached through SDL HIDAPI/libusb.                               |
-| xpad-derived Xbox batches         | ✅      | Varies                             | Runtime input comes from SDL3 instead of OJD xpad-derived parser patches.                                             |
-| Valve Steam Controller            | ✅      | `sdl2-3`                           | Runtime support depends on SDL3 exposing the controller as an SDL gamepad.                                            |
-| Nintendo Switch Pro USB/Bluetooth | ✅      | `sdl2-3`                           | Runtime input comes from SDL3. Calibration/IMU behavior remains outside OJD's virtual gamepad scope.                  |
-| Generic USB HID fallback          | ⚠️      | `generic-hid`                      | Browser-safe compatibility surface; use targeted diagnostics for raw descriptor consumers.                            |
-| SDL 2/3 apps                      | ✅      | `sdl2-3`                           | Use for Steam, DuckStation, Moonlight/SDL, and similar apps.                                                          |
-| Apple GameController apps         | ✅      | `apple-gamecontroller`             | Use for native macOS apps that read `GCController`.                                                                   |
-| Browser Gamepad API               | ✅      | active compatibility identity      | Safari verified across SDL2/3, Generic HID, Apple GameController, Xbox 360 HID, and Xbox One HID.                     |
-| App rumble                        | ✅      | Compatibility modes                | Parses Xbox One, Xbox 360, and compact OJD rumble reports, then sends physical rumble through SDL3.                   |
-| DriverKit output                  | ⚠️      | `driverKit`                        | Good for relay/diagnostics; not the main app compatibility path.                                                      |
-| Other Bluetooth controllers       | ✅      | `sdl2-3`                           | Supported when SDL3 exposes them as gamepads.                                                                         |
-| Sony DualSense USB/Bluetooth      | ✅      | `sdl2-3`                           | Runtime input comes from SDL3.                                                                                        |
+| Feature                           | Status | Best mode                          | Notes                                                                                                                                                                                                                      |
+| --------------------------------- | ------ | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Menu-bar app                      | ✅      | `N/A`                              | OJD is menu-bar-only.                                                                                                                                                                                                      |
+| Input Test window                 | ✅      | `N/A`                              | Shows live input, packets, and physical rumble controls.                                                                                                                                                                   |
+| GameSir G7 SE                     | ✅      | `sdl2-3` or `xone-hid`             | Hardware verified through GIP and Xbox One HID compatibility.                                                                                                                                                              |
+| Flydigi Vader 5S                  | ✅      | `sdl2-3`                           | Uses GIP and needs `setConfiguration(1)` before claim.                                                                                                                                                                     |
+| Sony DualShock 4 USB input        | ✅      | `sdl2-3` or `apple-gamecontroller` | USB HID parser is implemented.                                                                                                                                                                                             |
+| Sony DualShock 4 Bluetooth input  | ✅      | `sdl2-3` or `apple-gamecontroller` | Bluetooth HID report `0x11` parser support is implemented.                                                                                                                                                                 |
+| Sony DualShock 4 physical rumble  | ✅      | Compatibility modes                | USB and Bluetooth output reports are implemented. App rumble routes through compatibility set reports.                                                                                                                     |
+| Sony DualShock 3 USB/Bluetooth    | 🚧      | `sdl2-3`                           | Experimental HID parser/profile from Linux `hid-sony.c` plus SIXAXIS descriptor evidence; USB and Bluetooth operational-mode setup is source-backed, while rumble, sensors, pairing, and hardware behavior need tests.     |
+| Xbox 360 USB parser               | ✅      | `sdl2-3` or `x360-hid`             | Parser and profiles exist. Hardware coverage varies by model.                                                                                                                                                              |
+| xpad-derived Xbox batches         | 🚧      | Varies                             | Added from source data, not all locally hardware verified.                                                                                                                                                                 |
+| Valve Steam Controller            | 🚧      | `sdl2-3`                           | Experimental HID parser/profile from Linux `hid-steam.c`; wireless receiver status and lizard-mode feature reports are modeled, but hardware behavior needs tests.                                                         |
+| Nintendo Switch Pro USB/Bluetooth | 🚧      | `sdl2-3`                           | Experimental HID parser/profile from Linux `hid-nintendo.c`; USB startup reports are sent only on USB transport, Bluetooth input report parsing is source-backed, and calibration/rumble/IMU/hardware behavior need tests. |
+| Generic USB HID fallback          | ⚠️      | `generic-hid`                      | Basic fallback for descriptor-driven apps.                                                                                                                                                                                 |
+| SDL 2/3 apps                      | ✅      | `sdl2-3`                           | Use for Steam, DuckStation, Moonlight/SDL, and similar apps.                                                                                                                                                               |
+| Apple GameController apps         | ✅      | `apple-gamecontroller`             | Use for native macOS apps that read `GCController`.                                                                                                                                                                        |
+| Browser Gamepad API               | ⚠️      | active compatibility identity      | Browser mappings can vary by identity and stale devices.                                                                                                                                                                   |
+| App rumble                        | ✅      | Compatibility modes                | Parses Xbox One, Xbox 360, and compact OJD rumble reports.                                                                                                                                                                 |
+| DriverKit output                  | ⚠️      | `driverKit`                        | Good for relay/diagnostics; not the main app compatibility path.                                                                                                                                                           |
+| Other Bluetooth controllers       | ❌      | `N/A`                              | Not implemented except the specific experimental DS3, DualSense, and Switch Pro Bluetooth parser slices.                                                                                                                   |
+| Sony DualSense USB/Bluetooth      | 🚧      | `sdl2-3`                           | Experimental HID parser/profile from Linux `hid-playstation.c`; Bluetooth report `0x31` CRC/input parsing is source-backed but hardware-unverified.                                                                        |
 
 ## Pick A Mode
 
@@ -46,13 +44,12 @@ here, and keep README short.
 | ----------------------------------------------- | ------------------------ | ------------------------------------------------------------------------ |
 | Most games and emulators                        | ✅ `sdl2-3`               | Best default for SDL-based apps.                                         |
 | Native macOS app using GameController.framework | ✅ `apple-gamecontroller` | Publishes a `GCController`-friendly Xbox-style HID surface with haptics. |
-| SDL app needs output-report rumble              | ✅ `x360-hid`             | Test with `./scripts/ojd diagnose sdl3-hidapi-x360 --seconds 5`.         |
-| SDL app needs macOS GameController rumble       | ✅ `apple-gamecontroller` | GameController haptics work through the compatibility surface.           |
-| Safari/Web Gamepad API                          | ✅ any compatibility mode | All compatibility identities publish a GameController-accepted surface.  |
-| Direct HID testing                              | ⚠️ `generic-hid`          | Browser-safe mode no longer preserves OJD's own VID/PID.                 |
-| App expects Xbox 360 HID                        | ✅ `x360-hid`             | Microsoft-style identity verified through Safari/GameController.         |
-| App expects Xbox One HID                        | ✅ `xone-hid`             | Microsoft-style identity verified through Safari/GameController.         |
-| DualShock 4 over Bluetooth                      | ✅ `sdl2-3`               | Runtime input and physical rumble go through SDL3.                       |
+| SDL app needs output-report rumble              | 🚧 `x360-hid`             | Test with `./scripts/ojd diagnose sdl3-hidapi-x360 --seconds 5`.         |
+| SDL app needs macOS GameController rumble       | 🚧 `apple-gamecontroller` | GameController haptics work; SDL MFI enumeration is still gated.         |
+| Direct HID testing                              | ⚠️ `generic-hid`          | Keeps OJD's own VID/PID and exposes a plain HID GamePad.                 |
+| App expects Xbox 360 HID                        | 🚧 `x360-hid`             | Experimental Microsoft-style HID identity.                               |
+| App expects Xbox One HID                        | 🚧 `xone-hid`             | Experimental Microsoft-style HID identity.                               |
+| DualShock 4 over Bluetooth                      | ✅ `sdl2-3`               | Uses Sony Bluetooth HID report parsing with compatibility output.        |
 
 CLI examples:
 
@@ -69,25 +66,41 @@ CLI examples:
 OJD forwards app rumble to the physical controller only when both sides support
 it.
 
-| App-facing report                                                        | Status | Physical target                 |
-| ------------------------------------------------------------------------ | ------ | ------------------------------- |
-| Xbox One output report ID `3`                                            | ✅      | SDL3 body/trigger rumble bridge |
-| Xbox 360 packet `[0x00, 0x08, 0x00, left, right, 0, 0, 0]`               | ✅      | SDL3 left/right motor bridge    |
-| OJD compact packet `[0x4F, left, right, lt, rt, durationLo, durationHi]` | ✅      | SDL3 body/trigger rumble bridge |
-| DualShock 4 Bluetooth output report `0x11`                               | ✅      | SDL3 left/right motor bridge    |
+| App-facing report                                                        | Status | Physical target                                          |
+| ------------------------------------------------------------------------ | ------ | -------------------------------------------------------- |
+| Xbox One output report ID `3`                                            | ✅      | GIP/Xbox and DualShock 4-compatible physical rumble path |
+| Xbox 360 packet `[0x00, 0x08, 0x00, left, right, 0, 0, 0]`               | ✅      | Main left/right motors                                   |
+| OJD compact packet `[0x4F, left, right, lt, rt, durationLo, durationHi]` | ✅      | Main and trigger motors when present                     |
+| DualShock 4 Bluetooth output report `0x11`                               | ✅      | Main left/right motors                                   |
 
 Notes:
 
-- SDL3 reports whether the opened gamepad accepts body or trigger rumble.
+- Sony DualShock 4 has two physical motors. OJD ignores trigger motor values for DualShock 4.
+- GIP/Xbox controllers can use main motors and trigger motors when the physical
+  protocol exposes them.
 - DriverKit relay bytes are ignored unless they match a supported rumble report.
 
 ## Browser Mapping
 
-Safari's Gamepad API is backed by GameController.framework. Compatibility
-identities therefore publish accepted Xbox-style HID surfaces for browser use,
-including `sdl2-3` and `generic-hid`.
+### `sdl2-3` and `generic-hid`
 
-### `sdl2-3`, `generic-hid`, `apple-gamecontroller`, `x360-hid`, and `xone-hid`
+| Browser control               | Meaning                        |
+| ----------------------------- | ------------------------------ |
+| `B0` / `B1` / `B2` / `B3`     | A / B / X / Y                  |
+| `B4` / `B5`                   | LB / RB                        |
+| `B6` / `B7`                   | L3 / R3                        |
+| `B8` / `B9`                   | Menu / View                    |
+| `B10`                         | Xbox/Home                      |
+| `B11` / `B12` / `B13` / `B14` | D-pad Up / Down / Left / Right |
+| `B15`                         | Share                          |
+| `A0` / `A1`                   | Left stick X / Y               |
+| `A2`                          | LT                             |
+| `A3` / `A4`                   | Right stick X / Y              |
+| `A5`                          | RT                             |
+
+LT and RT idle at zero. D-pad is button-backed only.
+
+### `apple-gamecontroller`, `x360-hid`, and `xone-hid`
 
 | Browser control               | Meaning                        |
 | ----------------------------- | ------------------------------ |
@@ -102,8 +115,6 @@ including `sdl2-3` and `generic-hid`.
 ## SDL Mapping
 
 `Resources/SDL/openjoystickdriver.gamecontrollerdb.txt` maps `sdl2-3` like this:
-
-This SDL app mapping is separate from Safari's Browser API surface above.
 
 | SDL control                              | HID source                    |
 | ---------------------------------------- | ----------------------------- |

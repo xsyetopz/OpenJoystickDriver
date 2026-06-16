@@ -85,7 +85,7 @@ public actor DeviceManager {
   ///
   /// Returns nil if no pipeline is active for the device.
   public func inputState(for identifier: DeviceIdentifier) -> DeviceInputState? {
-    guard let key = pipelines.keys.first(where: { $0.matchesQuery(identifier) }) else { return nil }
+    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }) else { return nil }
     return pipelines[key]?.inputState()
   }
 
@@ -93,7 +93,7 @@ public actor DeviceManager {
   ///
   /// Returns an empty array if no pipeline is active for the device.
   public func packetLog(for identifier: DeviceIdentifier) -> [PacketLogEntry] {
-    guard let key = pipelines.keys.first(where: { $0.matchesQuery(identifier) }) else { return [] }
+    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }) else { return [] }
     return pipelines[key]?.getPacketLog() ?? []
   }
 
@@ -106,7 +106,7 @@ public actor DeviceManager {
     rt: UInt8,
     durationMs: Int
   ) async -> Bool {
-    guard let key = pipelines.keys.first(where: { $0.matchesQuery(identifier) }),
+    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }),
       let pipeline = pipelines[key]
     else {
       return false
@@ -157,7 +157,6 @@ public actor DeviceManager {
         parser: profile.parserName,
         connection: info?.connection ?? "USB",
         serialNumber: info?.serialNumber,
-        locationID: id.locationID,
         protocolVariant: profile.protocolVariant.rawValue,
         mappingFlags: profile.mappingFlags,
         inputEndpoint: profile.transportProfile.inputEndpoint,
@@ -294,10 +293,7 @@ public actor DeviceManager {
   }
 
   @discardableResult private func handleUSBDeviceAdded(_ device: USBDevice) -> DeviceIdentifier? {
-    let locationID = DeviceIdentifier.usbLocationID(
-      bus: UInt32(device.bus),
-      address: UInt32(device.address)
-    )
+    let locationID = UInt32((UInt32(device.bus) << 8) | UInt32(device.address))
     let serial = try? device.getSerialNumber()
     let identifier = DeviceIdentifier(
       vendorID: device.idVendor,

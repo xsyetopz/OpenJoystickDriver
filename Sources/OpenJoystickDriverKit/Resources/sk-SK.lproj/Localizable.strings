@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Spustite daemon na pripojenie ovládačov.";
 "readiness.daemonDisconnected" = "Daemon beží, ale je odpojený. Reštartujte daemon.";
 "readiness.allowAppInputMonitoring" = "Povoľte Sledovanie vstupu pre OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Povoľte Sledovanie vstupu pre OpenJoystickDriverDaemon.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Povoľte Sledovanie vstupu pre OpenJoystickDriver Daemon.";
 "readiness.connectController" = "Pripojte ovládač.";
 "readiness.controllersConnected.one" = "Pripojený %d ovládač.";
 "readiness.controllersConnected.other" = "Pripojených %d ovládačov.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Vyžaduje schválenie";
 "access.notSetUp" = "Nenastavené";
 "permissions.title" = "Oprávnenia";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Prístup je povolený.";
 "permissions.openSettings" = "Otvorte Nastavenia systému a zapnite Sledovanie vstupu pre %@.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver požiadal macOS o prístup. V Sledovaní vstupu zapnite %@. Ak macOS požiada o ukončenie a opätovné otvorenie, povoľte to.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Daemon sa po inštalácii spustí automaticky.";
 "daemon.systemExtension" = "Systémové rozšírenie";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "Odinštalovať LaunchAgent?";
 "alert.uninstallMessage" = "Tým sa odstráni plist LaunchAgent. Neskôr ho môžete znova nainštalovať.";
 "permissions.requestAccessDefault" = "Požiadajte o prístup, aby macOS mohol túto položku pridať do Sledovania vstupu.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "aplikácia";
 "permissions.ownerDaemon" = "daemon";
 "output.detailsCardTitle" = "Podrobnosti výstupu";

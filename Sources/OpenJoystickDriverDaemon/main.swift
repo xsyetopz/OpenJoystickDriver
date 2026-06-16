@@ -26,18 +26,19 @@ final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
     NSApp.setActivationPolicy(.accessory)
     NSApp.activate(ignoringOtherApps: true)
     daemonLog("[Daemon] Requesting Input Monitoring access for daemon...")
-    daemonLog("[Daemon] Requesting Accessibility access for daemon...")
-    _ = PermissionManager.requestAccessibilityAccess(prompt: true)
 
     pollTask = Task { @MainActor [permissionManager] in
       let initialState = await permissionManager.requestAccess()
-      let initialAccessibility = PermissionManager.currentAccessibilityState()
-      if initialState == .granted && initialAccessibility == .granted {
-        daemonLog("[Daemon] Input Monitoring and Accessibility granted for daemon helper app")
+      if initialState == .granted {
+        daemonLog("[Daemon] Input Monitoring granted for daemon helper app")
         NSApp.terminate(nil)
         return
       }
-      daemonLog("[Daemon] Permission approval pending for daemon helper app")
+      if initialState == .denied {
+        daemonLog("[Daemon] Input Monitoring denied for daemon helper app")
+        NSApp.terminate(nil)
+        return
+      }
 
       let timeoutNanoseconds: UInt64 = 120_000_000_000
       let pollNanoseconds: UInt64 = 500_000_000
@@ -45,14 +46,18 @@ final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
 
       while !Task.isCancelled {
         let state = await permissionManager.checkAccess()
-        let accessibility = PermissionManager.currentAccessibilityState()
-        if state == .granted && accessibility == .granted {
-          daemonLog("[Daemon] Input Monitoring and Accessibility granted for daemon helper app")
+        if state == .granted {
+          daemonLog("[Daemon] Input Monitoring granted for daemon helper app")
+          NSApp.terminate(nil)
+          return
+        }
+        if state == .denied {
+          daemonLog("[Daemon] Input Monitoring denied for daemon helper app")
           NSApp.terminate(nil)
           return
         }
         if DispatchTime.now().uptimeNanoseconds >= deadline {
-          daemonLog("[Daemon] Permission helper timed out waiting for approval")
+          daemonLog("[Daemon] Input Monitoring helper timed out waiting for approval")
           NSApp.terminate(nil)
           return
         }
@@ -73,7 +78,7 @@ let promptOnlyMode = environment["OJD_PERMISSION_PROMPT_ONLY"] == "1"
   || commandLineArguments.contains("--request-input-monitoring")
 
 if permissionCheckOnlyMode {
-  NSLog("%@", "[Daemon] Starting permission-check probe mode")
+  daemonLog("[Daemon] Starting permission-check probe mode")
   print(PermissionManager.currentAccessState())
   exit(0)
 }

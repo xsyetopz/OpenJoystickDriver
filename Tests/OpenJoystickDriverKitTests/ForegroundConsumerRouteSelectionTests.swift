@@ -35,46 +35,6 @@ struct ForegroundConsumerRouteSelectionTests {
         == UserSpaceVirtualDeviceConstants.dedicatedRouteToken(forConsumerBundleRootPath: consumerA)
     )
   }
-
-  @Test
-  func testSingleUnbundledConsumerUsesOwnRouteWhenNoFrontmostBundleMatches() {
-    let tool = "/tmp/ojd-sdl3-probe"
-
-    let activeRoute = ForegroundConsumerRouteSelection.activeRouteToken(
-      frontmostBundleRootPath: "/Applications/Terminal.app",
-      effectiveConsumerBundleRoots: [tool],
-      clients: [
-        .sample(id: 1, route: UserSpaceVirtualDeviceConstants.sharedRouteToken, bundle: tool)
-      ]
-    )
-
-    #expect(
-      activeRoute
-        == UserSpaceVirtualDeviceConstants.dedicatedRouteToken(forConsumerBundleRootPath: tool)
-    )
-  }
-
-  @Test
-  func testMultipleUnbundledConsumersDoNotChooseAmbiguousRoute() {
-    let activeRoute = ForegroundConsumerRouteSelection.activeRouteToken(
-      frontmostBundleRootPath: "/Applications/Terminal.app",
-      effectiveConsumerBundleRoots: ["/tmp/tool-a", "/tmp/tool-b"],
-      clients: [
-        .sample(
-          id: 1,
-          route: UserSpaceVirtualDeviceConstants.sharedRouteToken,
-          bundle: "/tmp/tool-a"
-        ),
-        .sample(
-          id: 2,
-          route: UserSpaceVirtualDeviceConstants.sharedRouteToken,
-          bundle: "/tmp/tool-b"
-        ),
-      ]
-    )
-
-    #expect(activeRoute == nil)
-  }
 }
 
 private extension ForegroundConsumerClientSample {

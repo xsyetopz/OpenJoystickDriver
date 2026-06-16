@@ -25,8 +25,7 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
 ## Why OpenJoystickDriver
 
 - Normalizes physical controller input into virtual controller outputs that apps can understand.
-- Uses SDL3 for real controller access, including SDL HIDAPI/libusb-backed controllers on macOS.
-- Provides Safari-verified Browser Gamepad API compatibility across SDL, Apple GameController, Generic HID, and Xbox HID identities.
+- Provides compatibility modes for SDL, Apple GameController, Generic HID, and experimental Xbox HID targets.
 - Keeps common diagnostics and validation commands in one repo-controlled workflow.
 
 ## Status
@@ -52,9 +51,8 @@ Expected result: your target app sees a compatible virtual controller.
 | -------------------------------------- | ------------------------------------------------ | --------------------------------------------------- |
 | Most games, Steam, emulators, SDL apps | Compatibility + `SDL 2/3`                        | Stable app-facing identity and mapping.             |
 | Native macOS apps using `GCController` | Compatibility + `Apple GameController`           | Targets GameController.framework consumers.         |
-| Browser Gamepad API / web games        | Any compatibility identity                        | Safari sees the GameController-compatible surface.  |
-| Apps that inspect HID descriptors      | Compatibility + `Generic HID`                    | Browser-safe HID surface for targeted testing.      |
-| A picky app expecting Microsoft HID    | Compatibility + `Xbox 360 HID` or `Xbox One HID` | Microsoft-style identities for targeted testing.    |
+| Apps that inspect HID descriptors      | Compatibility + `Generic HID`                    | Descriptor-driven HID surface.                      |
+| A picky app expecting Microsoft HID    | Compatibility + `Xbox 360 HID` or `Xbox One HID` | Experimental spoof identities for targeted testing. |
 
 CLI equivalents from the installed app bundle:
 
@@ -95,7 +93,6 @@ Parser, profile, and test changes do not require signing:
 
 ```bash
 brew install libusb
-./scripts/ojd install-sdl3
 ./scripts/ojd validate profiles
 ./scripts/ojd test parsers-macos14
 swift build

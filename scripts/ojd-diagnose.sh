@@ -24,7 +24,7 @@ Usage:
   ./scripts/ojd diagnose sdl3 [--seconds N] [--rumble] [other args]
   ./scripts/ojd diagnose sdl3-gamecontroller [--seconds N] [--rumble]
   ./scripts/ojd diagnose sdl3-hidapi-x360 [--seconds N] [--rumble]
-  ./scripts/ojd diagnose gamecontroller [--seconds N] [--rumble] [--inject-selftest] [--inject-delay-ms N] [--inject-seconds N]
+  ./scripts/ojd diagnose gamecontroller [--seconds N] [--rumble]
   ./scripts/ojd diagnose backends [--seconds N]
 TXT
   exit 0
@@ -79,6 +79,13 @@ run_sdl3_gamecontroller_probe() {
   configure_ojd_gamecontroller_route
   SDL_JOYSTICK_MFI=1 \
     SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1 \
+    SDL_JOYSTICK_IOKIT=0 \
+    SDL_JOYSTICK_HIDAPI=0 \
+    SDL_JOYSTICK_HIDAPI_XBOX=0 \
+    SDL_JOYSTICK_HIDAPI_XBOX_360=0 \
+    SDL_JOYSTICK_HIDAPI_XBOX_360_WIRELESS=0 \
+    SDL_JOYSTICK_HIDAPI_XBOX_ONE=0 \
+    SDL_JOYSTICK_HIDAPI_GIP=0 \
     run_sdl3_probe_native --gc-prewarm --wait-devices 8 --rumble --expect-rumble "$@"
 }
 
@@ -162,9 +169,6 @@ run_limited_command() {
 run_gamecontroller_probe() {
   local seconds="${1:-5}"
   local rumble="${2:-0}"
-  local inject_selftest="${3:-0}"
-  local inject_delay_ms="${4:-1500}"
-  local inject_seconds="${5:-2}"
   local ROOT
   ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
   local PROBE="$ROOT/.build/debug/OpenJoystickDriverGameControllerProbe"
@@ -179,11 +183,6 @@ run_gamecontroller_probe() {
   if [[ "$rumble" == "1" ]]; then
     args+=(--rumble)
   fi
-  if [[ "$inject_selftest" == "1" ]]; then
-    args+=(--inject-selftest)
-    args+=(--inject-delay-ms "$inject_delay_ms")
-    args+=(--inject-seconds "$inject_seconds")
-  fi
   "$PROBE" "${args[@]}"
 }
 
@@ -197,7 +196,6 @@ run_backend_acceptance_loop() {
   fi
   local seconds="${1:-5}"
   local step_timeout="$((seconds + 15))"
-  local backend_failures=0
 
   echo "=== OpenJoystickDriver backend acceptance loop ==="
   echo
@@ -221,47 +219,7 @@ run_backend_acceptance_loop() {
     wait "$pid"
   }
 
-  get_ojd_identity() {
-    "$CLI_BIN" --headless compat status 2>/dev/null \
-      | awk -F': ' '/compatibility identity:/ { print $2; exit }'
-  }
-
-  get_ojd_userspace_state() {
-    "$CLI_BIN" --headless userspace status 2>/dev/null \
-      | awk -F': ' '/user-space:/ { print $2; exit }'
-  }
-
-  restore_ojd_route() {
-    local identity="$1"
-    local userspace_state="$2"
-
-    if [[ -n "$identity" && "$identity" != "unknown" ]]; then
-      run_limited "$step_timeout" "$CLI_BIN" --headless compat "$identity" >/dev/null || {
-        echo "WARN: could not restore OJD compatibility identity to $identity" >&2
-      }
-    fi
-
-    case "$userspace_state" in
-      enabled)
-        run_limited "$step_timeout" "$CLI_BIN" --headless userspace on >/dev/null || {
-          echo "WARN: could not restore OJD user-space output to enabled" >&2
-        }
-        ;;
-      disabled)
-        run_limited "$step_timeout" "$CLI_BIN" --headless userspace off >/dev/null || {
-          echo "WARN: could not restore OJD user-space output to disabled" >&2
-        }
-        ;;
-    esac
-  }
-
-  local initial_identity=""
-  local initial_userspace=""
   if [[ -x "$CLI_BIN" ]]; then
-    initial_identity="$(get_ojd_identity || true)"
-    initial_userspace="$(get_ojd_userspace_state || true)"
-    trap 'restore_ojd_route "${initial_identity:-}" "${initial_userspace:-}"' RETURN
-
     echo "0) CLI status:"
     run_limited "$step_timeout" "$CLI_BIN" --headless status || true
     echo
@@ -280,26 +238,17 @@ run_backend_acceptance_loop() {
   fi
 
   echo "3) DriverKit backend diagnostics:"
-  if ! run_limited "$step_timeout" /usr/bin/env bash "$0" dext; then
-    backend_failures=$((backend_failures + 1))
-  fi
+  run_limited "$step_timeout" /usr/bin/env bash "$0" dext || true
   echo
 
-  echo "4) SDL3 HIDAPI Xbox 360 consumer probe:"
-  if ! run_limited "$step_timeout" /usr/bin/env OJD_CLI="$CLI_BIN" bash "$0" \
-    sdl3-hidapi-x360 --seconds "$seconds" \
-    --expect-single-neutral-ojd; then
-    backend_failures=$((backend_failures + 1))
-  fi
+  echo "4) SDL3 consumer probe:"
+  run_limited "$step_timeout" /usr/bin/env bash "$0" sdl3 --seconds "$seconds" \
+    --mappings-file "$ROOT/Resources/SDL/openjoystickdriver.gamecontrollerdb.txt" \
+    --expect-single-neutral-ojd || true
   echo
 
   echo "5) GameController.framework consumer probe:"
-  if ! run_limited "$step_timeout" /usr/bin/env OJD_CLI="$CLI_BIN" bash "$0" \
-    sdl3-gamecontroller --seconds "$seconds" --expect-single-neutral-gamepad --neutral-axis-tolerance 1; then
-    backend_failures=$((backend_failures + 1))
-  fi
-
-  return "$backend_failures"
+  run_limited "$step_timeout" /usr/bin/env bash "$0" gamecontroller --seconds "$seconds" || true
 }
 
 if [[ "$cmd" == "sdl3" ]]; then
@@ -320,9 +269,6 @@ fi
 if [[ "$cmd" == "gamecontroller" ]]; then
   seconds="5"
   rumble="0"
-  inject_selftest="0"
-  inject_delay_ms="1500"
-  inject_seconds="2"
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --seconds)
@@ -334,26 +280,12 @@ if [[ "$cmd" == "gamecontroller" ]]; then
         rumble="1"
         shift
         ;;
-      --inject-selftest)
-        inject_selftest="1"
-        shift
-        ;;
-      --inject-delay-ms)
-        [[ -n "${2:-}" ]] || die "--inject-delay-ms requires a value"
-        inject_delay_ms="$2"
-        shift 2
-        ;;
-      --inject-seconds)
-        [[ -n "${2:-}" ]] || die "--inject-seconds requires a value"
-        inject_seconds="$2"
-        shift 2
-        ;;
       *)
         die "Unknown gamecontroller option: $1"
         ;;
     esac
   done
-  run_gamecontroller_probe "$seconds" "$rumble" "$inject_selftest" "$inject_delay_ms" "$inject_seconds"
+  run_gamecontroller_probe "$seconds" "$rumble"
   exit 0
 fi
 
@@ -363,7 +295,7 @@ if [[ "$cmd" == "backends" ]]; then
     seconds="$2"
   fi
   run_backend_acceptance_loop "$seconds"
-  exit $?
+  exit 0
 fi
 
 # cmd == dext falls through to the dext diagnostics implementation below.

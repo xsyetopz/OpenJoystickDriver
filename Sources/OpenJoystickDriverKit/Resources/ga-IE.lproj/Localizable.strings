@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Tosaigh an deamhan chun rialtóirí a nascadh.";
 "readiness.daemonDisconnected" = "Tá an deamhan ag rith ach dícheangailte. Atosaigh an deamhan.";
 "readiness.allowAppInputMonitoring" = "Ceadaigh Monatóireacht Ionchuir do OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Ceadaigh Monatóireacht Ionchuir do OpenJoystickDriverDaemon.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Ceadaigh Monatóireacht Ionchuir do OpenJoystickDriver Daemon.";
 "readiness.connectController" = "Ceangail rialtóir.";
 "readiness.controllersConnected.one" = "%d rialtóir ceangailte.";
 "readiness.controllersConnected.other" = "%d rialtóir ceangailte.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Teastaíonn ceadú";
 "access.notSetUp" = "Gan socrú";
 "permissions.title" = "Ceadanna";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Tá rochtain ceadaithe.";
 "permissions.openSettings" = "Oscail Socruithe Córais, ansin cuir Monatóireacht Ionchuir ar siúl do %@.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "D’iarr OpenJoystickDriver rochtain ar macOS. I Monatóireacht Ionchuir, cuir %@ ar siúl. Má iarrann macOS ort scor agus oscailt arís, ceadaigh é.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Deamhan";
 "daemon.autoStarts" = "Tosaíonn an deamhan go huathoibríoch tar éis suiteála.";
 "daemon.systemExtension" = "Síneadh córais";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "Díshuiteáil LaunchAgent?";
 "alert.uninstallMessage" = "Baineann sé seo plist LaunchAgent. Is féidir leat é a athshuiteáil níos déanaí.";
 "permissions.requestAccessDefault" = "Iarr rochtain ionas gur féidir le macOS an mhír seo a chur le Monatóireacht Ionchuir.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "an aip";
 "permissions.ownerDaemon" = "an deamhan";
 "output.detailsCardTitle" = "Sonraí aschuir";

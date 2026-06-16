@@ -1,13 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
 
-private extension UInt32 {
-  init?(optionalXPCID value: Int) {
-    guard value >= 0, value <= Int(Self.max) else { return nil }
-    self.init(value)
-  }
-}
-
 extension XPCService {
   // MARK: - OpenJoystickDriverXPCProtocol
 
@@ -42,14 +35,12 @@ extension XPCService {
     let dm = deviceManager
     let pm = permissionManager
     Task {
-      let inputState = await pm.checkAccess()
-      let accessibilityState = PermissionManager.currentAccessibilityState()
+      let inputState = await pm.inputMonitoringState
       let devices = await dm.connectedDeviceDescriptions()
       let userEnabled = userSpaceEnabled
       let userStatus = currentUserSpaceStatus()
       let payload = XPCStatusPayload(
         inputMonitoring: "\(inputState)",
-        accessibility: "\(accessibilityState)",
         connectedDevices: devices,
         userSpaceVirtualDeviceEnabled: userEnabled,
         userSpaceVirtualDeviceStatus: userStatus,
@@ -87,27 +78,6 @@ extension XPCService {
     }
   }
 
-  public func getDeviceInputState(
-    vendorID: Int,
-    productID: Int,
-    serialNumber: String?,
-    locationID: Int,
-    reply: @escaping (Data?) -> Void
-  ) {
-    let callback = SendableReply(call: reply)
-    let dm = deviceManager
-    Task {
-      let identifier = DeviceIdentifier(
-        vendorID: UInt16(vendorID),
-        productID: UInt16(productID),
-        serialNumber: serialNumber,
-        locationID: UInt32(optionalXPCID: locationID)
-      )
-      let state = await dm.inputState(for: identifier)
-      callback.call(try? JSONEncoder().encode(state))
-    }
-  }
-
   /// Returns the recent packet log for the specified device as encoded JSON data.
   public func getPacketLog(vendorID: Int, productID: Int, reply: @escaping (Data) -> Void) {
     let callback = SendableReply(call: reply)
@@ -125,33 +95,6 @@ extension XPCService {
     }
   }
 
-  public func getPacketLog(
-    vendorID: Int,
-    productID: Int,
-    serialNumber: String?,
-    locationID: Int,
-    reply: @escaping (Data) -> Void
-  ) {
-    let callback = SendableReply(call: reply)
-    let dm = deviceManager
-    Task {
-      let identifier = DeviceIdentifier(
-        vendorID: UInt16(vendorID),
-        productID: UInt16(productID),
-        serialNumber: serialNumber,
-        locationID: UInt32(optionalXPCID: locationID)
-      )
-      let log = await dm.packetLog(for: identifier)
-      do {
-        let data = try JSONEncoder().encode(log)
-        callback.call(data)
-      } catch {
-        print("[XPCService] getPacketLog encode error: \(error)")
-        callback.call(Data())
-      }
-    }
-  }
-
   public func sendPhysicalRumble(
     vendorID: Int,
     productID: Int,
@@ -166,39 +109,6 @@ extension XPCService {
     let dm = deviceManager
     Task {
       let identifier = DeviceIdentifier(vendorID: UInt16(vendorID), productID: UInt16(productID))
-      let ok = await dm.sendRumble(
-        for: identifier,
-        left: UInt8(clamping: left),
-        right: UInt8(clamping: right),
-        lt: UInt8(clamping: lt),
-        rt: UInt8(clamping: rt),
-        durationMs: durationMs
-      )
-      callback.call(ok)
-    }
-  }
-
-  public func sendPhysicalRumble(
-    vendorID: Int,
-    productID: Int,
-    serialNumber: String?,
-    locationID: Int,
-    left: Int,
-    right: Int,
-    lt: Int,
-    rt: Int,
-    durationMs: Int,
-    reply: @escaping (Bool) -> Void
-  ) {
-    let callback = SendableReply(call: reply)
-    let dm = deviceManager
-    Task {
-      let identifier = DeviceIdentifier(
-        vendorID: UInt16(vendorID),
-        productID: UInt16(productID),
-        serialNumber: serialNumber,
-        locationID: UInt32(optionalXPCID: locationID)
-      )
       let ok = await dm.sendRumble(
         for: identifier,
         left: UInt8(clamping: left),

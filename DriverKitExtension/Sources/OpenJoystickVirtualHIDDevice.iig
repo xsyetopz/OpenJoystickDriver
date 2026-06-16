@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OpenJoystickVirtualHIDDevice_h
+#define OpenJoystickVirtualHIDDevice_h
 
 #include <HIDDriverKit/IOUserHIDDevice.iig>
 
@@ -18,3 +19,5 @@ protected:
                                     uint32_t completionTimeout,
                                     OSAction *action) LOCALONLY override;
 };
+
+#endif /* OpenJoystickVirtualHIDDevice_h */

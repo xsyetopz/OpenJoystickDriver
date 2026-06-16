@@ -33,19 +33,13 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
   public init(
     descriptor: [UInt8],
     outputReportID: UInt8? = nil,
-    outputReportPayloadSize: Int? = nil,
-    buttonUsageByBit: [Int: Int] = [:]
+    outputReportPayloadSize: Int? = nil
   ) throws {
     self.descriptor = descriptor
     guard let parsed = HIDReportDescriptorParser.parse(descriptor: descriptor) else {
       throw Error.cannotParseDescriptor
     }
-    guard
-      let packer = HIDReportPacker.bestEffortGamepadPacker(
-        from: parsed,
-        buttonUsageByBit: buttonUsageByBit
-      )
-    else {
+    guard let packer = HIDReportPacker.bestEffortGamepadPacker(from: parsed) else {
       throw Error.noSuitableInputReport
     }
     self.packer = packer

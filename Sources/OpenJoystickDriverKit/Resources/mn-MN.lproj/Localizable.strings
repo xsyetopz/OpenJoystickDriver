@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Удирдлагуудыг холбохын тулд демоныг эхлүүлнэ үү.";
 "readiness.daemonDisconnected" = "Демон ажиллаж байгаа ч холболт тасарсан. Демоныг дахин эхлүүлнэ үү.";
 "readiness.allowAppInputMonitoring" = "OpenJoystickDriver-д оролтын хяналтыг зөвшөөрнө үү.";
-"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriverDaemon-д оролтын хяналтыг зөвшөөрнө үү.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "OpenJoystickDriver Daemon-д оролтын хяналтыг зөвшөөрнө үү.";
 "readiness.connectController" = "Удирдлага холбоно уу.";
 "readiness.controllersConnected.one" = "%d удирдлага холбогдсон.";
 "readiness.controllersConnected.other" = "%d удирдлага холбогдсон.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Зөвшөөрөл хэрэгтэй";
 "access.notSetUp" = "Тохируулаагүй";
 "permissions.title" = "Зөвшөөрлүүд";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Хандалт зөвшөөрөгдсөн.";
 "permissions.openSettings" = "Системийн тохиргоог нээгээд %@-д Оролтын хяналтыг асаана уу.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver macOS-оос хандалт хүссэн. Оролтын хяналт дээр %@-г асаана уу. macOS хаагаад дахин нээхийг хүсвэл зөвшөөрнө үү.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Демон";
 "daemon.autoStarts" = "Демон суулгасны дараа автоматаар эхэлнэ.";
 "daemon.systemExtension" = "Системийн өргөтгөл";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "LaunchAgent-г устгах уу?";
 "alert.uninstallMessage" = "Энэ нь LaunchAgent plist-г устгана. Дараа дахин суулгаж болно.";
 "permissions.requestAccessDefault" = "macOS энэ зүйлийг Оролтын хяналт руу нэмэхийн тулд хандалт хүснэ үү.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "апп";
 "permissions.ownerDaemon" = "демон";
 "output.detailsCardTitle" = "Гаралтын дэлгэрэнгүй";

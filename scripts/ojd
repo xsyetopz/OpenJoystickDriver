@@ -25,7 +25,6 @@ Commands:
   build release               Build + sign app bundle for release (no dext)
   build dext                  Build DriverKit `.dext` and embed into `.build/` app
   bump-version <version>      Update release version references
-  install-sdl3                Build SDL3 from upstream source into `.build/sdl3`
 
   signing install-profiles    Copy profiles from ~/Documents/Profiles into MobileDevice
   signing configure            Generate .env.dev + .env.release from Keychain + profiles
@@ -134,10 +133,6 @@ case "$cmd" in
 
   bump-version)
     exec /usr/bin/env bash "$SCRIPT_DIR/bump-version.sh" "$@"
-    ;;
-
-  install-sdl3)
-    exec /usr/bin/env bash "$SCRIPT_DIR/ojd-install-sdl3.sh" "$@"
     ;;
 
   signing)

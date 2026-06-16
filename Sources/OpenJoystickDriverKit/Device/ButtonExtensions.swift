@@ -40,17 +40,6 @@ extension Button {
     }
   }
 
-  /// Text label used when SF Symbols may be unavailable on older macOS releases.
-  public var inputTesterTextFallback: String? {
-    switch self {
-    case .leftBumper: "LB"
-    case .rightBumper: "RB"
-    case .l1: "L1"
-    case .r1: "R1"
-    default: nil
-    }
-  }
-
   /// A short, human-readable label for the button (e.g. `"Left Bumper (LB)"`).
   ///
   /// Used in the mapping editor and profile display.

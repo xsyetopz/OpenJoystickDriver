@@ -1,48 +1,6 @@
 # shellcheck shell=bash
 # App and DriverKit bundle builders for scripts/ojd-build.sh.
 
-_sdl3_dylib_path() {
-  local libdir
-  libdir="$(pkg-config --variable=libdir sdl3 2>/dev/null || true)"
-  [[ -n "$libdir" && -f "$libdir/libSDL3.0.dylib" ]] || return 1
-  printf '%s/libSDL3.0.dylib\n' "$libdir"
-}
-
-_copy_sdl3_dylib() {
-  local destination="$1"
-  local sdl3_dylib
-  sdl3_dylib="$(_sdl3_dylib_path)" || {
-    echo "ERROR: SDL3 dylib not found through pkg-config."
-    echo "Fix: run: ./scripts/ojd install-sdl3"
-    exit 1
-  }
-  mkdir -p "$destination"
-  cp "$sdl3_dylib" "$destination/libSDL3.0.dylib"
-}
-
-_patch_sdl3_load_path() {
-  local binary="$1"
-  local sdl3_dylib
-  sdl3_dylib="$(_sdl3_dylib_path)" || return 1
-  local install_name
-  install_name="$(otool -D "$sdl3_dylib" 2>/dev/null | tail -n 1)"
-  [[ -n "$install_name" ]] || return 0
-  install_name_tool -change "$install_name" "@rpath/libSDL3.0.dylib" "$binary" 2>/dev/null || true
-}
-
-_sign_dylibs_in_dir() {
-  local identity="$1"
-  local directory="$2"
-  local sign_args=()
-  if [[ "$OJD_ENV" == "release" ]]; then
-    sign_args=(--options runtime --timestamp)
-  fi
-  for dylib in "$directory"/*.dylib; do
-    [[ -f "$dylib" ]] || continue
-    /usr/bin/codesign --force --sign "$identity" "${sign_args[@]}" "$dylib"
-  done
-}
-
 build_app_bundle() {
   _require_codesign_identity
 
@@ -109,7 +67,6 @@ build_app_bundle() {
 
   if [[ "$OJD_ENV" == "release" ]]; then
     setup_libusb_pkgconfig
-    setup_sdl3_pkgconfig
     echo "Building release binaries (universal)..."
     cd "$PROJECT_DIR"
     "$SWIFT_BIN" build -c release --product OpenJoystickDriverDaemon --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
@@ -118,7 +75,6 @@ build_app_bundle() {
     local gui_bin="$GUI_RELEASE"
   else
     setup_libusb_pkgconfig
-    setup_sdl3_pkgconfig
     echo "Building debug binaries (universal)..."
     cd "$PROJECT_DIR"
     "$SWIFT_BIN" build --product OpenJoystickDriverDaemon --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
@@ -141,7 +97,7 @@ build_app_bundle() {
   local GUI_MACOS="$GUI_CONTENTS/MacOS"
   local GUI_LOGIN_ITEMS="$GUI_CONTENTS/Library/LoginItems"
   local GUI_FRAMEWORKS="$GUI_CONTENTS/Frameworks"
-  local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.7}"
+  local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.4}"
   local bundle_version="${OJD_BUNDLE_VERSION:-1}"
   local sparkle_feed_url="${SPARKLE_FEED_URL:-https://github.com/xsyetopz/OpenJoystickDriver/releases/latest/download/appcast.xml}"
   local sparkle_public_ed_key="${SPARKLE_PUBLIC_ED_KEY:-}"
@@ -156,8 +112,6 @@ build_app_bundle() {
   rm -rf "$GUI_APP"
   mkdir -p "$GUI_MACOS" "$GUI_LOGIN_ITEMS" "$GUI_FRAMEWORKS"
   cp "$gui_bin" "$GUI_MACOS/OpenJoystickDriver"
-  _copy_sdl3_dylib "$GUI_FRAMEWORKS"
-  _patch_sdl3_load_path "$GUI_MACOS/OpenJoystickDriver"
 
   local BUILD_DIR
   BUILD_DIR="$(dirname "$daemon_bin")"
@@ -198,7 +152,7 @@ build_app_bundle() {
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.5.0-alpha.7</string>
+    <string>0.5.0-alpha.4</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
@@ -209,10 +163,8 @@ build_app_bundle() {
     <true/>
     <key>NSInputMonitoringUsageDescription</key>
     <string>OpenJoystickDriver needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
-    <key>NSAccessibilityUsageDescription</key>
-    <string>OpenJoystickDriver needs Accessibility to publish user-space virtual gamepad events for compatibility mode.</string>
     <key>NSSystemExtensionUsageDescription</key>
-    <string>OpenJoystickDriver uses this extension to present physical controllers as a standard virtual HID gamepad to games and applications.</string>
+    <string>OpenJoystickDriver uses this extension to present physical controllers as a standard virtual HID gamepad to games and applications, without requiring Accessibility permission.</string>
 </dict>
 </plist>
 PLIST
@@ -230,13 +182,10 @@ PLIST
   local DAEMON_BUNDLE="$GUI_LOGIN_ITEMS/OpenJoystickDriverDaemon.app"
   local DAEMON_BUNDLE_CONTENTS="$DAEMON_BUNDLE/Contents"
   local DAEMON_BUNDLE_MACOS="$DAEMON_BUNDLE_CONTENTS/MacOS"
-  local DAEMON_BUNDLE_FRAMEWORKS="$DAEMON_BUNDLE_CONTENTS/Frameworks"
 
   echo "Creating daemon bundle..."
-  mkdir -p "$DAEMON_BUNDLE_MACOS" "$DAEMON_BUNDLE_FRAMEWORKS"
+  mkdir -p "$DAEMON_BUNDLE_MACOS"
   cp "$daemon_bin" "$DAEMON_BUNDLE_MACOS/OpenJoystickDriverDaemon"
-  _copy_sdl3_dylib "$DAEMON_BUNDLE_FRAMEWORKS"
-  _patch_sdl3_load_path "$DAEMON_BUNDLE_MACOS/OpenJoystickDriverDaemon"
   cp "$DAEMON_PROFILE" "$DAEMON_BUNDLE_CONTENTS/embedded.provisionprofile"
   xattr -d com.apple.quarantine "$DAEMON_BUNDLE_CONTENTS/embedded.provisionprofile" 2>/dev/null || true
 
@@ -256,13 +205,13 @@ PLIST
     <key>CFBundleName</key>
     <string>OpenJoystickDriverDaemon</string>
     <key>CFBundleDisplayName</key>
-    <string>OpenJoystickDriverDaemon</string>
+    <string>OpenJoystickDriver Daemon</string>
     <key>CFBundleExecutable</key>
     <string>OpenJoystickDriverDaemon</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.5.0-alpha.7</string>
+    <string>0.5.0-alpha.4</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
@@ -270,9 +219,7 @@ PLIST
     <key>LSUIElement</key>
     <true/>
     <key>NSInputMonitoringUsageDescription</key>
-    <string>OpenJoystickDriverDaemon needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
-    <key>NSAccessibilityUsageDescription</key>
-    <string>OpenJoystickDriverDaemon needs Accessibility to publish user-space virtual gamepad events for compatibility mode.</string>
+    <string>OpenJoystickDriver Daemon needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
 </dict>
 </plist>
 PLIST
@@ -283,7 +230,6 @@ PLIST
 
   echo "Signing GUI using:    $GUI_IDENTITY"
   echo "Signing daemon using: $DAEMON_IDENTITY"
-  _sign_dylibs_in_dir "$GUI_IDENTITY" "$GUI_FRAMEWORKS"
   for bundle in "$GUI_RESOURCES"/*.bundle; do
     [[ -d "$bundle" ]] && OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign_resource_bundle "$bundle"
   done
@@ -314,16 +260,39 @@ PLIST
   for bundle in "$DAEMON_RESOURCES"/*.bundle; do
     [[ -d "$bundle" ]] && OJD_ACTIVE_SIGN_IDENTITY="$DAEMON_IDENTITY" ojd_sign_resource_bundle "$bundle"
   done
-  _sign_dylibs_in_dir "$DAEMON_IDENTITY" "$DAEMON_BUNDLE_FRAMEWORKS"
   OJD_ACTIVE_SIGN_IDENTITY="$DAEMON_IDENTITY" ojd_sign "$DAEMON_BUNDLE_MACOS/OpenJoystickDriverDaemon" --entitlements "$DAEMON_ENTITLEMENTS"
   OJD_ACTIVE_SIGN_IDENTITY="$DAEMON_IDENTITY" ojd_sign "$DAEMON_BUNDLE" --entitlements "$DAEMON_ENTITLEMENTS"
   OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign "$GUI_APP" --entitlements "$GUI_ENTITLEMENTS"
 
-  verify_gui_app_signed_entitlements "$GUI_APP"
-  verify_daemon_app_signed_entitlements "$DAEMON_BUNDLE"
+  _require_signed_entitlement_value \
+    "$GUI_APP" \
+    "com.apple.application-identifier" \
+    "${DEVELOPMENT_TEAM}.com.openjoystickdriver" \
+    "GUI app signed entitlements" \
+    "Fix: regenerate GUI entitlements/provisioning, then rebuild."
+  _require_signed_entitlement_value \
+    "$GUI_APP" \
+    "com.apple.developer.hid.virtual.device" \
+    "true" \
+    "GUI app Compatibility backend" \
+    "Fix: enable com.apple.developer.hid.virtual.device on the GUI profile, then rebuild."
+  _require_signed_entitlement_value \
+    "$DAEMON_BUNDLE" \
+    "com.apple.application-identifier" \
+    "${DEVELOPMENT_TEAM}.com.openjoystickdriver.daemon" \
+    "Daemon app signed entitlements" \
+    "Fix: regenerate daemon entitlements/provisioning, then rebuild."
+  _require_signed_entitlement_value \
+    "$DAEMON_BUNDLE" \
+    "com.apple.developer.hid.virtual.device" \
+    "true" \
+    "Daemon Compatibility backend" \
+    "Fix: enable com.apple.developer.hid.virtual.device on the daemon profile, then rebuild."
 
-  verify_profile_cert "$GUI_PROFILE" "$GUI_IDENTITY"
-  verify_profile_cert "$DAEMON_PROFILE" "$DAEMON_IDENTITY"
+  if [[ "$OJD_ENV" == "release" ]]; then
+    verify_profile_cert "$GUI_PROFILE" "$GUI_IDENTITY"
+    verify_profile_cert "$DAEMON_PROFILE" "$DAEMON_IDENTITY"
+  fi
 
   echo ""
   echo "Signed GUI with:    $GUI_IDENTITY"
@@ -530,31 +499,18 @@ PY
       /usr/libexec/PlistBuddy -c "Delete :get-task-allow" "$DEXT_ENTITLEMENTS_TMP" 2>/dev/null || true
     fi
 
-    local DEXT_SIGN_ARGS=(
-      --sign "$CODESIGN_IDENTITY"
-      --force
-      --generate-entitlement-der
-      --entitlements "$DEXT_ENTITLEMENTS_TMP"
-    )
+    local DEXT_SIGN_ARGS=(--sign "$CODESIGN_IDENTITY" --force --generate-entitlement-der --entitlements "$DEXT_ENTITLEMENTS_TMP")
     if [[ "$OJD_ENV" == "release" ]]; then
       DEXT_SIGN_ARGS+=(--options runtime --timestamp)
     fi
     codesign "${DEXT_SIGN_ARGS[@]}" "$DEXT_SYSEXT/$DEXT_FILENAME"
 
     [[ -f "$GUI_ENTITLEMENTS" ]] || resolve_entitlements "$GUI_ENTITLEMENTS_TEMPLATE" "$GUI_ENTITLEMENTS"
-    local APP_SIGN_ARGS=(
-      --sign "$CODESIGN_IDENTITY"
-      --force
-      --generate-entitlement-der
-      --entitlements "$GUI_ENTITLEMENTS"
-    )
+    local APP_SIGN_ARGS=(--sign "$CODESIGN_IDENTITY" --force --generate-entitlement-der --entitlements "$GUI_ENTITLEMENTS")
     if [[ "$OJD_ENV" == "release" ]]; then
       APP_SIGN_ARGS+=(--options runtime --timestamp)
     fi
     codesign "${APP_SIGN_ARGS[@]}" "$GUI_APP"
-    verify_gui_app_signed_entitlements "$GUI_APP"
-    verify_daemon_app_signed_entitlements \
-      "$GUI_APP/Contents/Library/LoginItems/OpenJoystickDriverDaemon.app"
 
     if [[ "${OJD_SKIP_INSTALL:-0}" != "1" ]]; then
       echo "Installing to /Applications/OpenJoystickDriver.app..."

@@ -24,12 +24,6 @@ struct MenuBarPopoverView: View {
     return L10n.string("gameController.no")
   }
 
-  var permissionsGranted: Bool {
-    model.appInputMonitoring == "granted"
-      && model.inputMonitoring == "granted"
-      && model.compatibilityAccessibilityGranted
-  }
-
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 14) {
@@ -55,7 +49,6 @@ struct MenuBarPopoverView: View {
         title: Text(L10n.string("alert.uninstallTitle")),
         message: Text(L10n.string("alert.uninstallMessage")),
         primaryButton: .destructive(Text(L10n.string("app.uninstall"))) {
-          showUninstallConfirm = false
           Task {
             await model.uninstallDaemon()
             await model.syncFromDaemonNow()
@@ -80,7 +73,8 @@ struct MenuBarPopoverView: View {
   }
 
   var readinessCard: some View {
-    let permissionsReady = permissionsGranted
+    let permissionsReady =
+      model.appInputMonitoring == "granted" && model.inputMonitoring == "granted"
     let ready = model.daemonConnected && permissionsReady
     let title = ready ? L10n.string("readiness.ready") : L10n.string("readiness.needsAttention")
     let summary: String = {
@@ -105,9 +99,6 @@ struct MenuBarPopoverView: View {
       }
       if model.inputMonitoring != "granted" {
         return L10n.string("readiness.allowDaemonInputMonitoring")
-      }
-      if !model.compatibilityAccessibilityGranted {
-        return L10n.string("readiness.allowDaemonAccessibility")
       }
       if model.devices.isEmpty { return L10n.string("readiness.connectController") }
       return model.devices.count == 1
@@ -177,12 +168,6 @@ struct MenuBarPopoverView: View {
       }
       .controlSize(.small)
       .padding(.top, 2)
-    } else if !model.compatibilityAccessibilityGranted {
-      SwiftUI.Button(L10n.string("button.requestAccess")) {
-        Task { await model.requestCompatibilityAccessibilityAccess() }
-      }
-      .controlSize(.small)
-      .padding(.top, 2)
     } else if !model.daemonInstalled {
       SwiftUI.Button(L10n.string("button.installDaemon")) {
         Task {
@@ -217,56 +202,52 @@ struct MenuBarPopoverView: View {
 
 
   var gameProfileCard: some View {
-    PermissionLockedContent(isLocked: !permissionsGranted) {
-      OJDCard(title: L10n.string("profile.cardTitle")) {
-        VStack(alignment: .leading, spacing: 10) {
-          HStack(alignment: .top, spacing: 10) {
-            VStack(alignment: .leading, spacing: 3) {
-              Text(L10n.string("profile.description"))
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            }
-            Spacer()
-            if model.virtualDeviceMode != VirtualDeviceMode.compatUserSpace.rawValue {
-              SwiftUI.Button(L10n.string("button.useCompatibility")) {
-                Task {
-                  await model.setVirtualDeviceMode(VirtualDeviceMode.compatUserSpace.rawValue)
-                }
-              }
-              .controlSize(.small)
-              .disabled(!model.daemonConnected)
-            }
-          }
-
-          let compatSelected = model.virtualDeviceMode == VirtualDeviceMode.compatUserSpace.rawValue
-          HStack(spacing: 10) {
-            Text(L10n.string("profile.identity"))
+    OJDCard(title: L10n.string("profile.cardTitle")) {
+      VStack(alignment: .leading, spacing: 10) {
+        HStack(alignment: .top, spacing: 10) {
+          VStack(alignment: .leading, spacing: 3) {
+            Text(L10n.string("profile.description"))
               .font(.caption)
               .foregroundColor(.secondary)
-            Picker(
-              "Compatibility identity",
-              selection: Binding(
-                get: { model.compatibilityIdentity },
-                set: { v in Task { await model.setCompatibilityIdentity(v) } }
-              )
-            ) {
-              Text(L10n.string("profile.sdl")).tag(CompatibilityIdentity.sdl2_3.rawValue)
-              Text(L10n.string("profile.appleGameController"))
-                .tag(CompatibilityIdentity.appleGameController.rawValue)
-              Text(L10n.string("profile.genericHID")).tag(CompatibilityIdentity.genericHID.rawValue)
-              Text(L10n.string("profile.xbox360HID")).tag(CompatibilityIdentity.x360HID.rawValue)
-              Text(L10n.string("profile.xboxOneHID")).tag(CompatibilityIdentity.xoneHID.rawValue)
+              .fixedSize(horizontal: false, vertical: true)
+          }
+          Spacer()
+          if model.virtualDeviceMode != VirtualDeviceMode.compatUserSpace.rawValue {
+            SwiftUI.Button(L10n.string("button.useCompatibility")) {
+              Task { await model.setVirtualDeviceMode(VirtualDeviceMode.compatUserSpace.rawValue) }
             }
-            .frame(maxWidth: .infinity)
-            .disabled(!model.daemonConnected || !compatSelected)
+            .controlSize(.small)
+            .disabled(!model.daemonConnected)
           }
+        }
 
-          if !compatSelected {
-            Text(L10n.string("profile.switchToCompatibility"))
-              .font(.caption)
-              .foregroundColor(.secondary)
+        let compatSelected = model.virtualDeviceMode == VirtualDeviceMode.compatUserSpace.rawValue
+        HStack(spacing: 10) {
+          Text(L10n.string("profile.identity"))
+            .font(.caption)
+            .foregroundColor(.secondary)
+          Picker(
+            "Compatibility identity",
+            selection: Binding(
+              get: { model.compatibilityIdentity },
+              set: { v in Task { await model.setCompatibilityIdentity(v) } }
+            )
+          ) {
+            Text(L10n.string("profile.sdl")).tag(CompatibilityIdentity.sdl2_3.rawValue)
+            Text(L10n.string("profile.appleGameController"))
+              .tag(CompatibilityIdentity.appleGameController.rawValue)
+            Text(L10n.string("profile.genericHID")).tag(CompatibilityIdentity.genericHID.rawValue)
+            Text(L10n.string("profile.xbox360HID")).tag(CompatibilityIdentity.x360HID.rawValue)
+            Text(L10n.string("profile.xboxOneHID")).tag(CompatibilityIdentity.xoneHID.rawValue)
           }
+          .frame(maxWidth: .infinity)
+          .disabled(!model.daemonConnected || !compatSelected)
+        }
+
+        if !compatSelected {
+          Text(L10n.string("profile.switchToCompatibility"))
+            .font(.caption)
+            .foregroundColor(.secondary)
         }
       }
     }

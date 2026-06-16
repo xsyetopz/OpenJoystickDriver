@@ -24,22 +24,6 @@ struct PhysicalRumbleOutputTests {
 
     #expect(description.supportsPhysicalRumble == false)
   }
-
-  @Test
-  func testXpcDescriptionCarriesLocationIDForDuplicateControllerModels() {
-    let description = XPCDeviceDescription(
-      name: "Test",
-      vendorID: 1,
-      productID: 2,
-      parser: "Test",
-      connection: "USB",
-      serialNumber: nil,
-      locationID: 0x0001_0002
-    )
-
-    #expect(description.locationID == 0x0001_0002)
-  }
-
   @Test
   func testXpcDescriptionDecodesMissingRumbleSupportAsFalse() throws {
     let json = """
@@ -56,24 +40,6 @@ struct PhysicalRumbleOutputTests {
 
     #expect(description.supportsPhysicalRumble == false)
   }
-
-  @Test
-  func testXpcDescriptionDecodesMissingLocationIDAsNil() throws {
-    let json = """
-      {
-        "name": "Test",
-        "vendorID": 1,
-        "productID": 2,
-        "parser": "Test",
-        "connection": "USB",
-        "serialNumber": null
-      }
-      """
-    let description = try JSONDecoder().decode(XPCDeviceDescription.self, from: Data(json.utf8))
-
-    #expect(description.locationID == nil)
-  }
-
   @Test
   func testVirtualParserAcceptsXboxOneRumbleReports() {
     let command = VirtualRumbleOutputReportParser.parse(
@@ -88,40 +54,6 @@ struct PhysicalRumbleOutputTests {
       leftTrigger: 10,
       rightTrigger: 20,
       durationMs: 50
-    )
-    #expect(command == expected)
-  }
-  @Test
-  func testVirtualParserFansOutAppleXboxOneBridgeSingleChannelRumble() {
-    let command = VirtualRumbleOutputReportParser.parse(
-      type: kIOHIDReportTypeOutput,
-      reportID: 3,
-      bytes: [0x0F, 15, 0, 0, 0, 0, 0, 0]
-    )
-
-    let expected = VirtualRumbleCommand(
-      left: 15,
-      right: 15,
-      leftTrigger: 15,
-      rightTrigger: 15,
-      durationMs: 0
-    )
-    #expect(command == expected)
-  }
-  @Test
-  func testVirtualParserStripsDuplicateXboxOneReportIDFromSafariSetReport() {
-    let command = VirtualRumbleOutputReportParser.parse(
-      type: kIOHIDReportTypeOutput,
-      reportID: 3,
-      bytes: [0x03, 0x0F, 0x00, 0x00, 100, 100, 10, 0, 0]
-    )
-
-    let expected = VirtualRumbleCommand(
-      left: 100,
-      right: 100,
-      leftTrigger: 0,
-      rightTrigger: 0,
-      durationMs: 100
     )
     #expect(command == expected)
   }

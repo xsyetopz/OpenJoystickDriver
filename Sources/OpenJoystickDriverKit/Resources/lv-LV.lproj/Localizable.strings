@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Palaidiet dēmonu, lai pievienotu kontrollerus.";
 "readiness.daemonDisconnected" = "Dēmons darbojas, bet nav savienots. Restartējiet dēmonu.";
 "readiness.allowAppInputMonitoring" = "Atļaujiet ievades pārraudzību lietotnei OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Atļaujiet ievades pārraudzību OpenJoystickDriverDaemon.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Atļaujiet ievades pārraudzību OpenJoystickDriver Daemon.";
 "readiness.connectController" = "Pievienojiet kontrolleru.";
 "readiness.controllersConnected.one" = "Pievienots %d kontrolleris.";
 "readiness.controllersConnected.other" = "Pievienoti %d kontrolleri.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Nepieciešams apstiprinājums";
 "access.notSetUp" = "Nav iestatīts";
 "permissions.title" = "Atļaujas";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Piekļuve ir atļauta.";
 "permissions.openSettings" = "Atveriet Sistēmas iestatījumus un ieslēdziet ievades pārraudzību objektam %@.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver pieprasīja macOS piekļuvi. Ievades pārraudzībā ieslēdziet %@. Ja macOS lūdz aizvērt un atvērt no jauna, atļaujiet to.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Dēmons pēc instalēšanas startē automātiski.";
 "daemon.systemExtension" = "Sistēmas paplašinājums";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "Atinstalēt LaunchAgent?";
 "alert.uninstallMessage" = "Tas noņem LaunchAgent plist failu. Vēlāk varēsiet to pārinstalēt.";
 "permissions.requestAccessDefault" = "Pieprasiet piekļuvi, lai macOS varētu pievienot šo objektu ievades pārraudzībai.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "lietotne";
 "permissions.ownerDaemon" = "dēmons";
 "output.detailsCardTitle" = "Izvades informācija";

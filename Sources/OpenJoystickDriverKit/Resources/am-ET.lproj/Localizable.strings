@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "መቆጣጠሪያዎችን ለማገናኘት ዴሞኑን ይጀምሩ።";
 "readiness.daemonDisconnected" = "ዴሞኑ እየሰራ ነው ግን ተቋርጧል። ዴሞኑን እንደገና ያስጀምሩ።";
 "readiness.allowAppInputMonitoring" = "ለOpenJoystickDriver የግቤት ክትትልን ይፍቀዱ።";
-"readiness.allowDaemonInputMonitoring" = "ለOpenJoystickDriverDaemon የግቤት ክትትልን ይፍቀዱ።";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "ለOpenJoystickDriver Daemon የግቤት ክትትልን ይፍቀዱ።";
 "readiness.connectController" = "መቆጣጠሪያ ያገናኙ።";
 "readiness.controllersConnected.one" = "%d መቆጣጠሪያ ተገናኝቷል።";
 "readiness.controllersConnected.other" = "%d መቆጣጠሪያዎች ተገናኝተዋል።";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "ማጽደቅ ያስፈልጋል";
 "access.notSetUp" = "አልተዋቀረም";
 "permissions.title" = "ፈቃዶች";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "መዳረሻ ተፈቅዷል።";
 "permissions.openSettings" = "የስርዓት ቅንብሮችን ይክፈቱ፣ ከዚያ ለ%@ የግቤት ክትትልን ያብሩ።";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver ከmacOS መዳረሻ ጠይቋል። በግቤት ክትትል ውስጥ %@ን ያብሩ። macOS መውጣትና እንደገና መክፈት ካስጠየቀ ይፍቀዱ።";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "ዴሞን";
 "daemon.autoStarts" = "ዴሞኑ ከተጫነ በኋላ በራስ-ሰር ይጀምራል።";
 "daemon.systemExtension" = "የስርዓት ቅጥያ";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "LaunchAgent ይወገድ?";
 "alert.uninstallMessage" = "ይህ የLaunchAgent plistን ያስወግዳል። በኋላ እንደገና መጫን ይችላሉ።";
 "permissions.requestAccessDefault" = "macOS ይህን ንጥል ወደ ግቤት ክትትል እንዲጨምር መዳረሻ ይጠይቁ።";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "መተግበሪያው";
 "permissions.ownerDaemon" = "ዴሞኑ";
 "output.detailsCardTitle" = "የውጤት ዝርዝሮች";

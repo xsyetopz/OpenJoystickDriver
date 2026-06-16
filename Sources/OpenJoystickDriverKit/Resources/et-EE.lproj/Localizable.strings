@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Käivita deemon kontrollerite ühendamiseks.";
 "readiness.daemonDisconnected" = "Deemon töötab, kuid ühendus puudub. Taaskäivita deemon.";
 "readiness.allowAppInputMonitoring" = "Luba OpenJoystickDriverile sisendi jälgimine.";
-"readiness.allowDaemonInputMonitoring" = "Luba OpenJoystickDriverDaemonile sisendi jälgimine.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Luba OpenJoystickDriver Daemonile sisendi jälgimine.";
 "readiness.connectController" = "Ühenda kontroller.";
 "readiness.controllersConnected.one" = "%d kontroller ühendatud.";
 "readiness.controllersConnected.other" = "%d kontrollerit ühendatud.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Vajab kinnitust";
 "access.notSetUp" = "Pole seadistatud";
 "permissions.title" = "Õigused";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Ligipääs on lubatud.";
 "permissions.openSettings" = "Ava Süsteemiseaded ja lülita sisendi jälgimine sisse üksusele %@.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver küsis macOS-ilt ligipääsu. Lülita sisendi jälgimises sisse %@. Kui macOS palub sulgeda ja uuesti avada, luba see.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "Deemon käivitub pärast installimist automaatselt.";
 "daemon.systemExtension" = "Süsteemilaiendus";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "Kas desinstallida LaunchAgent?";
 "alert.uninstallMessage" = "See eemaldab LaunchAgenti plist-faili. Saad selle hiljem uuesti installida.";
 "permissions.requestAccessDefault" = "Taotle ligipääsu, et macOS saaks selle üksuse sisendi jälgimisse lisada.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "rakendus";
 "permissions.ownerDaemon" = "deemon";
 "output.detailsCardTitle" = "Väljundi üksikasjad";

@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Стартирайте демона, за да свързвате контролери.";
 "readiness.daemonDisconnected" = "Демонът работи, но е разкачен. Рестартирайте демона.";
 "readiness.allowAppInputMonitoring" = "Разрешете наблюдение на входа за OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Разрешете наблюдение на входа за OpenJoystickDriverDaemon.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Разрешете наблюдение на входа за OpenJoystickDriver Daemon.";
 "readiness.connectController" = "Свържете контролер.";
 "readiness.controllersConnected.one" = "Свързан е %d контролер.";
 "readiness.controllersConnected.other" = "Свързани са %d контролера.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Нуждае се от одобрение";
 "access.notSetUp" = "Не е настроено";
 "permissions.title" = "Разрешения";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Достъпът е разрешен.";
 "permissions.openSettings" = "Отворете Системни настройки и включете Наблюдение на входа за %@.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver поиска достъп от macOS. В Наблюдение на входа включете %@. Ако macOS поиска затваряне и повторно отваряне, разрешете го.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Демон";
 "daemon.autoStarts" = "Демонът стартира автоматично след инсталиране.";
 "daemon.systemExtension" = "Системно разширение";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "Деинсталиране на LaunchAgent?";
 "alert.uninstallMessage" = "Това премахва plist файла на LaunchAgent. Можете да го преинсталирате по-късно.";
 "permissions.requestAccessDefault" = "Заявете достъп, за да може macOS да добави този елемент към Наблюдение на входа.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "приложението";
 "permissions.ownerDaemon" = "демонът";
 "output.detailsCardTitle" = "Подробности за изхода";

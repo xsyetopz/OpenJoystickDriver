@@ -4,11 +4,6 @@ import PackageDescription
 
 let useLocalSwiftUSB = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTUSB"] == "1"
 let packageDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
-let sdl3Prefix = ProcessInfo.processInfo.environment["OJD_SDL3_PREFIX"].map {
-  URL(fileURLWithPath: $0)
-} ?? packageDirectory.appendingPathComponent(".build/sdl3")
-let sdl3IncludePath = sdl3Prefix.appendingPathComponent("include").standardizedFileURL.path
-let sdl3LibPath = sdl3Prefix.appendingPathComponent("lib").standardizedFileURL.path
 let localSwiftUSBPath = packageDirectory
   .appendingPathComponent("../SwiftUSB")
   .standardizedFileURL
@@ -38,35 +33,13 @@ let package = Package(
     .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.9.3"),
   ],
   targets: [
-    .systemLibrary(
-      name: "CSDL3",
-      path: "Sources/CSDL3",
-      pkgConfig: "sdl3",
-    ),
-
-    .target(
-      name: "OJDSDL3Shim",
-      dependencies: ["CSDL3"],
-      path: "Sources/OJDSDL3Shim",
-      publicHeadersPath: "include",
-      cSettings: [
-        .unsafeFlags(["-I", sdl3IncludePath]),
-      ],
-      linkerSettings: [
-        .unsafeFlags(["-L", sdl3LibPath, "-lSDL3"]),
-      ]
-    ),
-
     .target(
       name: "OpenJoystickDriverKit",
-      dependencies: [
-        "OJDSDL3Shim",
-        .product(name: "SwiftUSB", package: "SwiftUSB"),
-      ],
+      dependencies: [.product(name: "SwiftUSB", package: "SwiftUSB")],
       path: "Sources/OpenJoystickDriverKit",
       resources: [.process("Resources/")],
       linkerSettings: [
-        .linkedFramework("ServiceManagement"),
+        .linkedFramework("ServiceManagement")
       ]
     ),
 
@@ -76,11 +49,7 @@ let package = Package(
       path: "Sources/OpenJoystickDriverDaemon",
       exclude: ["OpenJoystickDriverDaemon.entitlements.template"],
       linkerSettings: [
-        .linkedFramework("GameController"),
-        .unsafeFlags([
-          "-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks",
-          "-Xlinker", "-rpath", "-Xlinker", "/opt/homebrew/lib",
-        ]),
+        .linkedFramework("GameController")
       ]
     ),
 
@@ -99,10 +68,7 @@ let package = Package(
       resources: [.copy("Resources")],
       linkerSettings: [
         .linkedFramework("SystemExtensions"),
-        .unsafeFlags([
-          "-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks",
-          "-Xlinker", "-rpath", "-Xlinker", "/opt/homebrew/lib",
-        ]),
+        .unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"]),
       ]
     ),
 
@@ -112,10 +78,7 @@ let package = Package(
         "OpenJoystickDriverKit",
         .product(name: "SwiftUSB", package: "SwiftUSB"),
       ],
-      path: "Sources/OpenJoystickDriverHIDTool",
-      linkerSettings: [
-        .unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "/opt/homebrew/lib"])
-      ]
+      path: "Sources/OpenJoystickDriverHIDTool"
     ),
 
     .executableTarget(
@@ -135,13 +98,10 @@ let package = Package(
       ],
       path: "Tests/OpenJoystickDriverKitTests",
       swiftSettings: [
-        .unsafeFlags(["-target", testTargetTriple]),
+        .unsafeFlags(["-target", testTargetTriple])
       ],
       linkerSettings: [
-        .unsafeFlags([
-          "-target", testTargetTriple,
-          "-Xlinker", "-rpath", "-Xlinker", "/opt/homebrew/lib",
-        ]),
+        .unsafeFlags(["-target", testTargetTriple])
       ]
     ),
   ]

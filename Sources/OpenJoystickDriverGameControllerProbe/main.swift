@@ -67,76 +67,6 @@ func playHapticPulse(on controller: GCController) -> String {
   }
 }
 
-func installInputLogging(on controller: GCController) {
-  guard let gamepad = controller.extendedGamepad else { return }
-
-  gamepad.valueChangedHandler = { gamepad, _ in
-    print(
-      String(
-        format:
-          "GC_INPUT a=%d b=%d x=%d y=%d lb=%d rb=%d lt=%.3f rt=%.3f "
-            + "lx=%.3f ly=%.3f rx=%.3f ry=%.3f dpad=(%.3f,%.3f)",
-        gamepad.buttonA.isPressed ? 1 : 0,
-        gamepad.buttonB.isPressed ? 1 : 0,
-        gamepad.buttonX.isPressed ? 1 : 0,
-        gamepad.buttonY.isPressed ? 1 : 0,
-        gamepad.leftShoulder.isPressed ? 1 : 0,
-        gamepad.rightShoulder.isPressed ? 1 : 0,
-        gamepad.leftTrigger.value,
-        gamepad.rightTrigger.value,
-        gamepad.leftThumbstick.xAxis.value,
-        gamepad.leftThumbstick.yAxis.value,
-        gamepad.rightThumbstick.xAxis.value,
-        gamepad.rightThumbstick.yAxis.value,
-        gamepad.dpad.xAxis.value,
-        gamepad.dpad.yAxis.value
-      )
-    )
-  }
-}
-
-func runInstalledSelfTest(seconds: Int) -> String {
-  let process = Process()
-  process.executableURL = URL(
-    fileURLWithPath: "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
-  )
-  process.arguments = ["--headless", "selftest", "\(max(1, seconds))"]
-
-  let pipe = Pipe()
-  process.standardOutput = pipe
-  process.standardError = pipe
-
-  do {
-    try process.run()
-    process.waitUntilExit()
-    let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    return String(data: data, encoding: .utf8) ?? ""
-  } catch {
-    return "ERROR: \(error)"
-  }
-}
-
-func summarizeSelfTest(_ output: String) -> [String] {
-  output
-    .split(separator: "\n")
-    .map(String.init)
-    .filter {
-      $0.contains("User-space:")
-        || $0.contains("DriverKit:")
-        || $0.contains("ERROR:")
-        || $0.contains("XPCClient")
-    }
-    .map { line in
-      if line.contains("User-space:") {
-        return "GC_SELFTEST " + line.trimmingCharacters(in: .whitespaces)
-      }
-      if line.contains("DriverKit:") {
-        return "GC_SELFTEST " + line.trimmingCharacters(in: .whitespaces)
-      }
-      return "GC_SELFTEST " + line
-    }
-}
-
 func intProp(_ device: IOHIDDevice, _ key: String) -> Int {
   IOHIDDeviceGetProperty(device, key as CFString) as? Int ?? 0
 }
@@ -210,17 +140,11 @@ func printHIDSupport() {
 
 let seconds = argValue("--seconds", default: 5)
 let shouldRumble = hasArg("--rumble")
-let shouldInjectSelfTest = hasArg("--inject-selftest")
-let injectDelayMs = argValue("--inject-delay-ms", default: 1500)
-let injectSeconds = argValue("--inject-seconds", default: 2)
 
 print("GameController probe")
 print("Listening for \(seconds)s")
 if shouldRumble {
   print("Rumble pulse requested")
-}
-if shouldInjectSelfTest {
-  print("Synthetic self-test injection requested")
 }
 print("")
 if #available(macOS 11.3, *) {
@@ -238,7 +162,6 @@ observerTokens.append(
     queue: .main
   ) { note in
     guard let controller = note.object as? GCController else { return }
-    installInputLogging(on: controller)
     print("connect: \(describe(controller))")
   }
 )
@@ -256,23 +179,7 @@ observerTokens.append(
 let controllers = GCController.controllers()
 print("Initial controllers: \(controllers.count)")
 for controller in controllers {
-  installInputLogging(on: controller)
   print("- \(describe(controller))")
-}
-
-if shouldInjectSelfTest {
-  Task {
-    try? await Task.sleep(nanoseconds: UInt64(max(0, injectDelayMs)) * 1_000_000)
-    let output = runInstalledSelfTest(seconds: injectSeconds)
-    let lines = summarizeSelfTest(output)
-    if lines.isEmpty {
-      print("GC_SELFTEST no summary output")
-    } else {
-      for line in lines {
-        print(line)
-      }
-    }
-  }
 }
 
 let end = Date().addingTimeInterval(TimeInterval(seconds))

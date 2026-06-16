@@ -1,4 +1,3 @@
-import ApplicationServices
 import Foundation
 import IOKit
 import IOKit.hid
@@ -46,26 +45,6 @@ public actor PermissionManager {
     case kIOHIDAccessTypeDenied: return .denied
     default: return .unknown
     }
-  }
-
-  /// Returns current Accessibility permission state for the current process.
-  ///
-  /// macOS 26 gates virtual HID device creation behind this TCC service even when the
-  /// `com.apple.developer.hid.virtual.device` entitlement is present.
-  nonisolated public static func currentAccessibilityState() -> AccessState {
-    AXIsProcessTrusted() ? .granted : .denied
-  }
-
-  /// Requests Accessibility permission for the current process.
-  ///
-  /// The system owns the final approval. This call registers the current app/helper
-  /// in Privacy & Security > Accessibility so the user never has to browse inside
-  /// OpenJoystickDriver.app to find the daemon executable.
-  @discardableResult nonisolated public static func requestAccessibilityAccess(
-    prompt: Bool = true
-  ) -> AccessState {
-    let options = ["AXTrustedCheckOptionPrompt": prompt] as CFDictionary
-    return AXIsProcessTrustedWithOptions(options) ? .granted : .denied
   }
 
   /// Checks current Input Monitoring permission state without prompting.

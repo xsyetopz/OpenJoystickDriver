@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Inicia el daemon para conectar mandos.";
 "readiness.daemonDisconnected" = "El daemon se está ejecutando, pero está desconectado. Reinicia el daemon.";
 "readiness.allowAppInputMonitoring" = "Permite Monitorización de entrada para OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Permite Monitorización de entrada para OpenJoystickDriverDaemon.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Permite Monitorización de entrada para OpenJoystickDriver Daemon.";
 "readiness.connectController" = "Conecta un mando.";
 "readiness.controllersConnected.one" = "%d mando conectado.";
 "readiness.controllersConnected.other" = "%d mandos conectados.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Necesita aprobación";
 "access.notSetUp" = "No configurado";
 "permissions.title" = "Permisos";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "El acceso está permitido.";
 "permissions.openSettings" = "Abre Ajustes del Sistema y activa Monitorización de entrada para %@.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver solicitó acceso a macOS. En Monitorización de entrada, activa %@. Si macOS pide salir y volver a abrir, permítelo.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Daemon";
 "daemon.autoStarts" = "El daemon se inicia automáticamente después de la instalación.";
 "daemon.systemExtension" = "Extensión del sistema";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "¿Desinstalar LaunchAgent?";
 "alert.uninstallMessage" = "Esto elimina el plist de LaunchAgent. Puedes reinstalarlo más tarde.";
 "permissions.requestAccessDefault" = "Solicita acceso para que macOS pueda añadir este elemento a Monitorización de entrada.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "la app";
 "permissions.ownerDaemon" = "el daemon";
 "output.detailsCardTitle" = "Detalles de salida";

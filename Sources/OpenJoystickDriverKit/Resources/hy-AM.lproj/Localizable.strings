@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Սկսեք դեմոնը՝ կարգավորիչները միացնելու համար։";
 "readiness.daemonDisconnected" = "Դեմոնը աշխատում է, բայց անջատված է։ Վերագործարկեք դեմոնը։";
 "readiness.allowAppInputMonitoring" = "Թույլատրեք մուտքի մոնիտորինգը OpenJoystickDriver-ի համար։";
-"readiness.allowDaemonInputMonitoring" = "Թույլատրեք մուտքի մոնիտորինգը OpenJoystickDriverDaemon-ի համար։";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Թույլատրեք մուտքի մոնիտորինգը OpenJoystickDriver Daemon-ի համար։";
 "readiness.connectController" = "Միացրեք կարգավորիչ։";
 "readiness.controllersConnected.one" = "%d կարգավորիչ միացված է։";
 "readiness.controllersConnected.other" = "%d կարգավորիչ միացված է։";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Հաստատում է պետք";
 "access.notSetUp" = "Կարգավորված չէ";
 "permissions.title" = "Թույլտվություններ";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Հասանելիությունը թույլատրված է։";
 "permissions.openSettings" = "Բացեք Համակարգի կարգավորումները, ապա միացրեք մուտքի մոնիտորինգը %@-ի համար։";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver-ը macOS-ից հասանելիություն է խնդրել։ Մուտքի մոնիտորինգում միացրեք %@։ Եթե macOS-ը խնդրի փակել և նորից բացել, թույլատրեք։";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Դեմոն";
 "daemon.autoStarts" = "Դեմոնը տեղադրումից հետո ավտոմատ սկսվում է։";
 "daemon.systemExtension" = "Համակարգային ընդլայնում";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "Հեռացնե՞լ LaunchAgent-ը";
 "alert.uninstallMessage" = "Սա հեռացնում է LaunchAgent plist-ը։ Կարող եք այն հետո նորից տեղադրել։";
 "permissions.requestAccessDefault" = "Պահանջեք հասանելիություն, որպեսզի macOS-ը կարողանա այս տարրը ավելացնել մուտքի մոնիտորինգին։";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "հավելվածը";
 "permissions.ownerDaemon" = "դեմոնը";
 "output.detailsCardTitle" = "Ելքի մանրամասներ";

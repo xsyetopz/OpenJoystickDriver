@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "Ξεκινήστε τον δαίμονα για σύνδεση χειριστηρίων.";
 "readiness.daemonDisconnected" = "Ο δαίμονας εκτελείται αλλά είναι αποσυνδεδεμένος. Επανεκκινήστε τον δαίμονα.";
 "readiness.allowAppInputMonitoring" = "Επιτρέψτε την Παρακολούθηση εισόδου για το OpenJoystickDriver.";
-"readiness.allowDaemonInputMonitoring" = "Επιτρέψτε την Παρακολούθηση εισόδου για το OpenJoystickDriverDaemon.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "Επιτρέψτε την Παρακολούθηση εισόδου για το OpenJoystickDriver Daemon.";
 "readiness.connectController" = "Συνδέστε ένα χειριστήριο.";
 "readiness.controllersConnected.one" = "Συνδέθηκε %d χειριστήριο.";
 "readiness.controllersConnected.other" = "Συνδέθηκαν %d χειριστήρια.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "Χρειάζεται έγκριση";
 "access.notSetUp" = "Δεν έχει ρυθμιστεί";
 "permissions.title" = "Δικαιώματα";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "Η πρόσβαση επιτρέπεται.";
 "permissions.openSettings" = "Ανοίξτε τις Ρυθμίσεις συστήματος και ενεργοποιήστε την Παρακολούθηση εισόδου για το %@.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "Το OpenJoystickDriver ζήτησε πρόσβαση από το macOS. Στην Παρακολούθηση εισόδου, ενεργοποιήστε το %@. Αν το macOS ζητήσει έξοδο και επανάνοιγμα, επιτρέψτε το.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "Δαίμονας";
 "daemon.autoStarts" = "Ο δαίμονας ξεκινά αυτόματα μετά την εγκατάσταση.";
 "daemon.systemExtension" = "Επέκταση συστήματος";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "Απεγκατάσταση LaunchAgent;";
 "alert.uninstallMessage" = "Αυτό αφαιρεί το plist του LaunchAgent. Μπορείτε να το εγκαταστήσετε ξανά αργότερα.";
 "permissions.requestAccessDefault" = "Ζητήστε πρόσβαση ώστε το macOS να προσθέσει αυτό το στοιχείο στην Παρακολούθηση εισόδου.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "η εφαρμογή";
 "permissions.ownerDaemon" = "ο δαίμονας";
 "output.detailsCardTitle" = "Λεπτομέρειες εξόδου";

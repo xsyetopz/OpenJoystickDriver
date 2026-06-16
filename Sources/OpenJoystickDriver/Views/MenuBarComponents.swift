@@ -73,46 +73,6 @@ struct MetricChip: View {
   }
 }
 
-struct PermissionLockedContent<Content: View>: View {
-  let isLocked: Bool
-  private let content: Content
-
-  init(isLocked: Bool, @ViewBuilder content: () -> Content) {
-    self.isLocked = isLocked
-    self.content = content()
-  }
-
-  var body: some View {
-    ZStack {
-      content
-        .disabled(isLocked)
-        .grayscale(isLocked ? 1 : 0)
-        .opacity(isLocked ? 0.48 : 1)
-        .blur(radius: isLocked ? 1.2 : 0)
-        .allowsHitTesting(!isLocked)
-
-      if isLocked {
-        lockedOverlay
-      }
-    }
-  }
-
-  private var lockedOverlay: some View {
-    Group {
-      if #available(macOS 11.0, *) {
-        Image(systemName: "lock.fill")
-          .font(.system(size: 72, weight: .bold))
-      } else {
-        Text("LOCK")
-          .font(.system(size: 36, weight: .bold))
-      }
-    }
-    .foregroundColor(.secondary.opacity(0.22))
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .allowsHitTesting(false)
-  }
-}
-
 struct PermissionRow: View {
   let title: String
   let subtitle: String

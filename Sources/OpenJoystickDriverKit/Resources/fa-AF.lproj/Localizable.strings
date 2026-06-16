@@ -14,8 +14,7 @@
 "readiness.startDaemon" = "برای اتصال کنترلرها، دیمن را شروع کنید.";
 "readiness.daemonDisconnected" = "دیمن در حال اجراست اما اتصال قطع است. دیمن را دوباره راه‌اندازی کنید.";
 "readiness.allowAppInputMonitoring" = "نظارت ورودی را برای OpenJoystickDriver مجاز کنید.";
-"readiness.allowDaemonInputMonitoring" = "نظارت ورودی را برای OpenJoystickDriverDaemon مجاز کنید.";
-"readiness.allowDaemonAccessibility" = "Allow Accessibility for OpenJoystickDriverDaemon.";
+"readiness.allowDaemonInputMonitoring" = "نظارت ورودی را برای OpenJoystickDriver Daemon مجاز کنید.";
 "readiness.connectController" = "یک کنترلر وصل کنید.";
 "readiness.controllersConnected.one" = "%d کنترلر وصل شد.";
 "readiness.controllersConnected.other" = "%d کنترلر وصل شدند.";
@@ -34,14 +33,11 @@
 "access.needsApproval" = "نیازمند تأیید";
 "access.notSetUp" = "تنظیم نشده";
 "permissions.title" = "مجوزها";
-"permissions.groupInputMonitoring" = "Input Monitoring";
-"permissions.groupAccessibility" = "Accessibility";
 "permissions.accessAllowed" = "دسترسی مجاز است.";
 "permissions.openSettings" = "تنظیمات سیستم را باز کنید، سپس نظارت ورودی را برای %@ روشن کنید.";
-"permissions.openSettingsForPermission" = "Open System Settings, then turn on %@ for %@.";
 "permissions.assist" = "OpenJoystickDriver از macOS درخواست دسترسی کرد. در نظارت ورودی، %@ را روشن کنید. اگر macOS درخواست خروج و باز کردن دوباره کرد، اجازه دهید.";
 "permissions.appName" = "OpenJoystickDriver";
-"permissions.daemonName" = "OpenJoystickDriverDaemon";
+"permissions.daemonName" = "OpenJoystickDriver Daemon";
 "daemon.cardTitle" = "دیمن";
 "daemon.autoStarts" = "دیمن پس از نصب به‌صورت خودکار شروع می‌شود.";
 "daemon.systemExtension" = "افزونه سیستم";
@@ -109,7 +105,6 @@
 "alert.uninstallTitle" = "LaunchAgent حذف نصب شود؟";
 "alert.uninstallMessage" = "این کار plist مربوط به LaunchAgent را حذف می‌کند. می‌توانید بعداً دوباره نصبش کنید.";
 "permissions.requestAccessDefault" = "درخواست دسترسی کنید تا macOS بتواند این مورد را به نظارت ورودی اضافه کند.";
-"permissions.requestAccessForPermission" = "Request access so macOS can add this item to %@.";
 "permissions.ownerApp" = "برنامه";
 "permissions.ownerDaemon" = "دیمن";
 "output.detailsCardTitle" = "جزئیات خروجی";
