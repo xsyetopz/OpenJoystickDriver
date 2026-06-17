@@ -55,7 +55,7 @@ struct SelfTestCommand {
       print("  DriverKit discovery: \(summary)")
     }
     print(
-      "  User-space: value \(payload.userSpaceValueEvents), report \(payload.userSpaceReportEvents)"
+      "  User     : value \(payload.userSpaceValueEvents), report \(payload.userSpaceReportEvents)"
     )
   }
 }

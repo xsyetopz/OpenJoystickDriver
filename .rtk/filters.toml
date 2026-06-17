@@ -204,7 +204,7 @@ expected = "[FAIL] Sources/OpenJoystickDriverKit/Resources/Controllers/foo.json:
 
 [filters.ojd-script-diagnostics]
 description = "Compact OpenJoystickDriver script diagnostics and rebuild output"
-match_command = "^\\./scripts/ojd\\s+(diagnose|rebuild-fast|rebuild|status|doctor)\\b"
+match_command = "^\\./scripts/ojd\\s+(diag|rebuild-fast|rebuild|status|doctor)\\b"
 strip_ansi = true
 keep_lines_matching = [
   "(?i)error|fail|failed|fatal|panic|warning|warn|denied|not found|missing|invalid|timeout|timed out",

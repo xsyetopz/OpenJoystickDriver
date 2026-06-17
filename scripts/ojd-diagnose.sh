@@ -2,7 +2,7 @@
 # Diagnostics helper for OpenJoystickDriver.
 #
 # Human-facing entrypoint:
-#   ./scripts/ojd diagnose <subcommand>
+#   ./scripts/ojd diag <subcommand>
 #
 # Subcommands:
 #   dext (default), sdl3, sdl3-gamecontroller, sdl3-hidapi-x360, backends
@@ -23,12 +23,12 @@ shift || true
 if [[ "$cmd" == "-h" || "$cmd" == "--help" || "$cmd" == "help" ]]; then
   cat << 'TXT'
 Usage:
-  ./scripts/ojd diagnose dext
-  ./scripts/ojd diagnose sdl3 [--seconds N] [--rumble] [other args]
-  ./scripts/ojd diagnose sdl3-gamecontroller [--seconds N] [--rumble]
-  ./scripts/ojd diagnose sdl3-hidapi-x360 [--seconds N] [--rumble]
-  ./scripts/ojd diagnose gamecontroller [--seconds N] [--rumble]
-  ./scripts/ojd diagnose backends [--seconds N]
+  ./scripts/ojd diag dext
+  ./scripts/ojd diag sdl3 [--seconds N] [--rumble] [other args]
+  ./scripts/ojd diag sdl3-gamecontroller [--seconds N] [--rumble]
+  ./scripts/ojd diag sdl3-hidapi-x360 [--seconds N] [--rumble]
+  ./scripts/ojd diag gamecontroller [--seconds N] [--rumble]
+  ./scripts/ojd diag backends [--seconds N]
 TXT
   exit 0
 fi
@@ -70,11 +70,11 @@ configure_ojd_gamecontroller_route() {
 
   [[ -x "$CLI_BIN" ]] || die "OpenJoystickDriver CLI not found at $CLI_BIN or $APP_BIN"
 
-  run_limited_command 8 "$CLI_BIN" --headless compat apple-gamecontroller > /dev/null || {
-    echo "WARN: could not set OJD compatibility identity to apple-gamecontroller" >&2
+  run_limited_command 8 "$CLI_BIN" --headless id apple-gamecontroller > /dev/null || {
+    echo "WARN: could not set OJD identity to apple-gamecontroller" >&2
   }
-  run_limited_command 8 "$CLI_BIN" --headless userspace on > /dev/null || {
-    echo "WARN: could not enable OJD user-space output" >&2
+  run_limited_command 8 "$CLI_BIN" --headless user on > /dev/null || {
+    echo "WARN: could not enable OJD user output" >&2
   }
 }
 
@@ -103,11 +103,11 @@ configure_ojd_hidapi_x360_route() {
 
   [[ -x "$CLI_BIN" ]] || die "OpenJoystickDriver CLI not found at $CLI_BIN or $APP_BIN"
 
-  run_limited_command 8 "$CLI_BIN" --headless compat x360-hid > /dev/null || {
-    echo "WARN: could not set OJD compatibility identity to x360-hid" >&2
+  run_limited_command 8 "$CLI_BIN" --headless id x360-hid > /dev/null || {
+    echo "WARN: could not set OJD identity to x360-hid" >&2
   }
-  run_limited_command 8 "$CLI_BIN" --headless userspace on > /dev/null || {
-    echo "WARN: could not enable OJD user-space output" >&2
+  run_limited_command 8 "$CLI_BIN" --headless user on > /dev/null || {
+    echo "WARN: could not enable OJD user output" >&2
   }
 }
 

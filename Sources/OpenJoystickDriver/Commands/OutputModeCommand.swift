@@ -4,14 +4,14 @@ import OpenJoystickDriverKit
 struct OutputModeCommand {
   func run(arguments: [String]) {
     guard let arg = arguments.first else {
-      print("Usage: OpenJoystickDriver --headless output primary|secondary|both|status")
+      print("Usage: OpenJoystickDriver --headless output driver|user|both|status")
       return
     }
 
     func normalize(_ s: String) -> String? {
       switch s {
-      case "primary", "primaryOnly", "driverkit", "dext": return "primaryOnly"
-      case "secondary", "secondaryOnly", "userspace", "user-space": return "secondaryOnly"
+      case "driver": return "primaryOnly"
+      case "user": return "secondaryOnly"
       case "both": return "both"
       default: return nil
       }
@@ -29,7 +29,7 @@ struct OutputModeCommand {
     }
 
     guard let mode = normalize(arg) else {
-      print("Usage: OpenJoystickDriver --headless output primary|secondary|both|status")
+      print("Usage: OpenJoystickDriver --headless output driver|user|both|status")
       exit(1)
     }
 

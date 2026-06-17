@@ -9,7 +9,7 @@ LABEL="com.openjoystickdriver.daemon"
 usage() {
   cat << 'USAGE'
 Usage:
-  ./scripts/ojd diagnose catalina [app-path] [--install]
+  ./scripts/ojd diag catalina [app-path] [--install]
 
 Checks the app bundle copied to a macOS 10.15 machine. By default this is
 read-only. Pass --install to run the app's LaunchAgent registration path.

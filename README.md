@@ -62,19 +62,19 @@ The daemon helper lives inside that app bundle:
 
 Use the menu-bar controls for the normal flow:
 
-| Action                  | Menu-bar path                                      | Headless equivalent                                                                           |
-| ----------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Install or start helper | Open the app, then choose **Install** or **Start** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless install`   |
-| Check helper status     | Open the app and check the System card             | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status`    |
-| Restart helper          | Choose **Restart Helper**                          | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart`   |
-| Remove helper           | Choose **Uninstall**                               | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless uninstall` |
+| Action                  | Menu-bar path                                      | Headless equivalent                                                                         |
+| ----------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Install or start helper | Open the app, then choose **Install** or **Start** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless install` |
+| Check helper status     | Open the app and check the System card             | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status`  |
+| Restart helper          | Choose **Restart Helper**                          | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart` |
+| Remove helper           | Choose **Uninstall**                               | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless remove`  |
 
 To uninstall OpenJoystickDriver completely:
 
 1. Run **Uninstall** from the menu-bar app, or run:
 
    ```bash
-   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless uninstall
+   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless remove
    ```
 
 2. Quit OpenJoystickDriver.
@@ -95,8 +95,8 @@ Don't delete `OpenJoystickDriverDaemon.app` by itself. It's bundled inside `Open
 CLI equivalents from the installed app bundle:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat sdl2-3
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless output secondary
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless id sdl2-3
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless output user
 ```
 
 ## Troubleshooting
@@ -112,9 +112,9 @@ Useful diagnostics:
 ```bash
 ./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
-./scripts/ojd diagnose backends --seconds 5
-./scripts/ojd diagnose gamecontroller --seconds 5
-./scripts/ojd diagnose sdl3 --seconds 10
+./scripts/ojd diag backends --seconds 5
+./scripts/ojd diag gamecontroller --seconds 5
+./scripts/ojd diag sdl3 --seconds 10
 ```
 
 Installed app bundle commands:
@@ -127,7 +127,7 @@ Installed app bundle commands:
 
 ## Development
 
-Parser, profile, and test changes Don't require signing:
+Parser, profile, and test changes do not require signing:
 
 ```bash
 brew install libusb

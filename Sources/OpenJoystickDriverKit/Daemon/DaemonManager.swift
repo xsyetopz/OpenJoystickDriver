@@ -107,6 +107,14 @@ public enum DaemonManager: Sendable {
   /// or bootstrapping an agent with `RunAtLoad` starts it.
   public static func start() throws { try install() }
 
+  /// Stops the loaded daemon job without removing its registration.
+  public static func stop() throws {
+    do {
+      _ = try launchctl(["bootout", launchdTarget])
+      print("[DaemonManager] Stopped")
+    } catch { throw wrap(error, hint: stopHint()) }
+  }
+
   /// Restarts the daemon (best-effort).
   public static func restart() throws {
     do {
@@ -344,7 +352,7 @@ public enum DaemonManager: Sendable {
     Fix checklist:
       1) Run the /Applications copy: `/Applications/OpenJoystickDriver.app` (not `.build/...`).
       2) Ensure the app bundle contains: `Contents/Library/LaunchAgents/\(agentPlistName)`.
-      3) If a previous daemon is stuck, uninstall first: `OpenJoystickDriver --headless uninstall`.
+      3) If a previous daemon is stuck, remove it first: `OpenJoystickDriver --headless remove`.
     """
   }
 
@@ -356,11 +364,20 @@ public enum DaemonManager: Sendable {
     """
   }
 
+  private static func stopHint() -> String {
+    """
+    Fix checklist:
+      1) Check whether the helper is installed: `OpenJoystickDriver --headless status`.
+      2) If you want to remove it completely, run: `OpenJoystickDriver --headless remove`.
+      3) Check launchd health: `launchctl print gui/$(id -u)/\(label) | head -n 80`
+    """
+  }
+
   private static func restartHint() -> String {
     """
     Fix checklist:
-      1) Try uninstall+install:
-         `OpenJoystickDriver --headless uninstall`
+      1) Try remove+install:
+         `OpenJoystickDriver --headless remove`
          `OpenJoystickDriver --headless install`.
       2) Check daemon log: `tail -n 80 /tmp/\(label).out` and `/tmp/\(label).err`.
       3) Check launchd health: `launchctl print gui/$(id -u)/\(label) | head -n 80`

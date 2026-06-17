@@ -4,7 +4,7 @@ import OpenJoystickDriverKit
 struct CompatibilityCommand {
   func run(arguments: [String]) {
     let usage = """
-      Usage: OpenJoystickDriver --headless compat \
+      Usage: OpenJoystickDriver --headless id \
       generic-hid|sdl2-3|apple-gamecontroller|x360-hid|xone-hid|status
       """
     guard let sub = arguments.first else {
@@ -18,9 +18,9 @@ struct CompatibilityCommand {
     if sub == "status" {
       let status = runSyncResult { try? await client.getStatus() }
       if let id = status?.compatibilityIdentity {
-        print("compatibility identity: \(id)")
+        print("identity: \(id)")
       } else {
-        print("compatibility identity: unknown")
+        print("identity: unknown")
       }
       return
     }
@@ -38,12 +38,12 @@ struct CompatibilityCommand {
     }
 
     if !ok {
-      print("ERROR: failed to set compatibility identity to \(sub) (daemon not running?)")
+      print("ERROR: failed to set identity to \(sub) (daemon not running?)")
       exit(1)
     }
 
     let status = runSyncResult { try? await client.getStatus() }
-    print("compatibility identity: \(status?.compatibilityIdentity ?? sub)")
-    if let s = status?.userSpaceVirtualDeviceStatus { print("user-space status: \(s)") }
+    print("identity: \(status?.compatibilityIdentity ?? sub)")
+    if let s = status?.userSpaceVirtualDeviceStatus { print("user status: \(s)") }
   }
 }

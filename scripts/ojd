@@ -42,15 +42,15 @@ Commands:
   signing export-github-secrets
                                Write/import GitHub Actions release secrets
 
-  diagnose dext               Run dext diagnostics (activation, codesign, IORegistry, daemon connection)
-  diagnose sdl3 [--seconds N] Run SDL3 probe against the virtual device
-  diagnose sdl3-gamecontroller [--seconds N]
+  diag dext                   Run dext diagnostics (activation, codesign, IORegistry, daemon connection)
+  diag sdl3 [--seconds N]     Run SDL3 probe against the virtual device
+  diag sdl3-gamecontroller [--seconds N]
                               Run SDL3 through GameController/MFI and test rumble
-  diagnose sdl3-hidapi-x360 [--seconds N]
+  diag sdl3-hidapi-x360 [--seconds N]
                               Run SDL3 through Xbox 360 HIDAPI and test rumble
-  diagnose gamecontroller     Run GameController.framework probe
-  diagnose catalina [app]     Check a macOS 10.15 test app bundle
-  diagnose backends           Run current backend acceptance loop
+  diag gamecontroller         Run GameController.framework probe
+  diag catalina [app]         Check a macOS 10.15 test app bundle
+  diag backends               Run current backend acceptance loop
   analyze gamepad             Raw USB/GIP analyzer for unsupported controller buttons
   repair stale-dext           Kill stale DriverKit process copies after upgrade
   repair swiftpm-module-cache Clear SwiftPM module caches under `.build/` (fixes toolchain/target mismatches)
@@ -222,7 +222,7 @@ case "$cmd" in
     esac
     ;;
 
-  diagnose)
+  diag)
     sub="${1:-}"
     shift || true
     case "$sub" in
@@ -248,7 +248,7 @@ case "$cmd" in
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-diagnose.sh" backends "$@"
         ;;
       *)
-        die "Unknown: diagnose $sub (expected: dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | catalina | backends)"
+        die "Unknown: diag $sub (expected: dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | catalina | backends)"
         ;;
     esac
     ;;

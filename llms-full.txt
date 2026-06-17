@@ -52,7 +52,7 @@ XPC status/control APIs.
   for the generic user-space OJD device. SDL3 needs `platform:macOS`;
   `platform:Mac OS X` is SDL2-era and can be ignored by SDL 3.2.x.
 - `Tests/OpenJoystickDriverKitTests/`: package tests for core behavior.
-- Hardware-facing checks live in package tests or `./scripts/ojd diagnose ...`
+- Hardware-facing checks live in package tests or `./scripts/ojd diag ...`
   commands and must skip cleanly without local device access.
 
 ## Controller and Schema Model
@@ -182,9 +182,9 @@ Profile/schema checks:
 Backend probes:
 
 ```bash
-./scripts/ojd diagnose backends --seconds 5
-./scripts/ojd diagnose gamecontroller --seconds 5
-./scripts/ojd diagnose sdl3 --seconds 10
+./scripts/ojd diag backends --seconds 5
+./scripts/ojd diag gamecontroller --seconds 5
+./scripts/ojd diag sdl3 --seconds 10
 ```
 
 Shell syntax check for script changes:

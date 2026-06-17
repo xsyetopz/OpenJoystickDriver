@@ -9,10 +9,10 @@ struct SystemExtensionCommand {
     switch subcommand {
     case "status": printStatus()
     case "install": submitActivation()
-    case "uninstall": submitDeactivation()
+    case "remove": submitDeactivation()
     case "--help", "-h", "help": printHelp()
     default:
-      print("Unknown sysext command: \(subcommand)")
+      print("Unknown ext command: \(subcommand)")
       printHelp()
       exit(1)
     }
@@ -21,12 +21,12 @@ struct SystemExtensionCommand {
   private func printHelp() {
     print(
       """
-      Usage: OpenJoystickDriver --headless sysext <command>
+      Usage: OpenJoystickDriver --headless ext <command>
 
       Commands:
         status     Show registered OpenJoystickDriver system extensions
         install    Submit DriverKit system extension activation request
-        uninstall  Submit DriverKit system extension deactivation request
+        remove     Submit DriverKit system extension deactivation request
       """
     )
   }
@@ -69,7 +69,7 @@ struct SystemExtensionCommand {
       print("Open System Settings > General > Login Items & Extensions > Driver Extensions.")
     case .timedOut:
       print("System extension request did not finish within 60s.")
-      print("Check System Settings for an approval prompt, then run sysext status.")
+      print("Check System Settings for an approval prompt, then run ext status.")
       exit(2)
     case .failed(let error):
       print(error)

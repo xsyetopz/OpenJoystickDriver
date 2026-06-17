@@ -44,7 +44,7 @@ run_backend_acceptance_loop() {
     echo
 
     echo "2) User-space backend status:"
-    run_limited "$step_timeout" "$CLI_BIN" --headless userspace status || true
+    run_limited "$step_timeout" "$CLI_BIN" --headless user status || true
     echo
   else
     echo "0) SKIP: OpenJoystickDriver CLI not found at:"

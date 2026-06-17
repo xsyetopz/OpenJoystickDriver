@@ -44,7 +44,7 @@ here, and keep README short.
 | ----------------------------------------------- | ------------------------ | ------------------------------------------------------------------------ |
 | Most games and emulators                        | ✅ `sdl2-3`               | Best default for SDL-based apps.                                         |
 | Native macOS app using GameController.framework | ✅ `apple-gamecontroller` | Publishes a `GCController`-friendly Xbox-style HID surface with haptics. |
-| SDL app needs output-report rumble              | 🚧 `x360-hid`             | Test with `./scripts/ojd diagnose sdl3-hidapi-x360 --seconds 5`.         |
+| SDL app needs output-report rumble              | 🚧 `x360-hid`             | Test with `./scripts/ojd diag sdl3-hidapi-x360 --seconds 5`.             |
 | SDL app needs macOS GameController rumble       | 🚧 `apple-gamecontroller` | GameController haptics work; SDL MFI enumeration is still gated.         |
 | Direct HID testing                              | ⚠️ `generic-hid`          | Keeps OJD's own VID/PID and exposes a plain HID GamePad.                 |
 | App expects Xbox 360 HID                        | 🚧 `x360-hid`             | Experimental Microsoft-style HID identity.                               |
@@ -54,11 +54,11 @@ here, and keep README short.
 CLI examples:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat sdl2-3
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat apple-gamecontroller
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless output secondary
-./scripts/ojd diagnose sdl3-gamecontroller --seconds 5
-./scripts/ojd diagnose sdl3-hidapi-x360 --seconds 5
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless id sdl2-3
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless id apple-gamecontroller
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless output user
+./scripts/ojd diag sdl3-gamecontroller --seconds 5
+./scripts/ojd diag sdl3-hidapi-x360 --seconds 5
 ```
 
 ## App Rumble

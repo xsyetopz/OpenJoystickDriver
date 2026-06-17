@@ -87,7 +87,7 @@ nuke_all() {
   echo ""
   echo "=== NUKE: removing daemon from launchd ==="
   if [[ -x "$APP_PATH/Contents/MacOS/OpenJoystickDriver" ]]; then
-    "$APP_PATH/Contents/MacOS/OpenJoystickDriver" --headless uninstall &&
+    "$APP_PATH/Contents/MacOS/OpenJoystickDriver" --headless remove &&
       echo "  daemon uninstall succeeded" || true
   fi
   launchctl bootout "gui/$(id -u)/$DAEMON_LABEL" 2> /dev/null && echo "  bootout succeeded" || true
@@ -280,11 +280,11 @@ rebuild_full() {
   : > /tmp/com.openjoystickdriver.daemon.out 2> /dev/null || true
   : > /tmp/com.openjoystickdriver.daemon.err 2> /dev/null || true
   local APP_BIN="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
-  if "$APP_BIN" --headless sysext install; then
+  if "$APP_BIN" --headless ext install; then
     echo "  ✓ Sysext activation request submitted"
   else
     echo "  ✗ Sysext activation request failed"
-    echo "    Fix: run: $APP_BIN --headless sysext install"
+    echo "    Fix: run: $APP_BIN --headless ext install"
   fi
 
   echo ""

@@ -30,8 +30,8 @@ Hardware-facing tests and diagnostics require a USB controller plugged in. Use
 the focused diagnostics that match your change, for example:
 
 ```bash
-./scripts/ojd diagnose backends --seconds 5
-./scripts/ojd diagnose sdl3 --seconds 5
+./scripts/ojd diag backends --seconds 5
+./scripts/ojd diag sdl3 --seconds 5
 ```
 
 ---

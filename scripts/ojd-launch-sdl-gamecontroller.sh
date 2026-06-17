@@ -17,7 +17,7 @@ Examples:
 
 This experimental route selects OJD's apple-gamecontroller compatibility
 identity and launches the SDL app with SDL's GameController/MFI backend enabled.
-Use `./scripts/ojd diagnose sdl3-gamecontroller` to verify whether the target
+Use `./scripts/ojd diag sdl3-gamecontroller` to verify whether the target
 SDL build enumerates the virtual GCController.
 USAGE
 }
@@ -43,11 +43,11 @@ if [[ ! -e "$APP_PATH" ]]; then
 fi
 
 if [[ -x "$OJD_CLI" ]]; then
-  "$OJD_CLI" --headless compat apple-gamecontroller > /dev/null || {
-    echo "WARN: could not set OJD compatibility identity to apple-gamecontroller" >&2
+  "$OJD_CLI" --headless id apple-gamecontroller > /dev/null || {
+    echo "WARN: could not set OJD identity to apple-gamecontroller" >&2
   }
-  "$OJD_CLI" --headless userspace on > /dev/null || {
-    echo "WARN: could not enable OJD user-space output" >&2
+  "$OJD_CLI" --headless user on > /dev/null || {
+    echo "WARN: could not enable OJD user output" >&2
   }
 else
   echo "WARN: OJD CLI not found at $OJD_CLI; launching with SDL env only" >&2

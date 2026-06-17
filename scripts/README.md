@@ -140,7 +140,7 @@ Commands (run the app-bundled binary):
 ```bash
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless install
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless uninstall
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless remove
 ```
 
 ### Dev build (signed) + app bundle

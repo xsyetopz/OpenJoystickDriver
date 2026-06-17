@@ -46,9 +46,9 @@ If `swift test` fails with a SwiftPM module-cache mismatch (for example
 For backend/runtime changes, also use compact diagnostics:
 
 ```bash
-rtk ./scripts/ojd diagnose backends --seconds 5
-rtk ./scripts/ojd diagnose gamecontroller --seconds 5
-rtk ./scripts/ojd diagnose sdl3 --seconds 10
+rtk ./scripts/ojd diag backends --seconds 5
+rtk ./scripts/ojd diag gamecontroller --seconds 5
+rtk ./scripts/ojd diag sdl3 --seconds 10
 ```
 
 Use `rtk summary <cmd>` for one-off noisy runtime probes, `rtk log` or

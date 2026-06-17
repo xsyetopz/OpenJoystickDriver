@@ -46,7 +46,7 @@ struct StatusCommand {
       if let id = payload.compatibilityIdentity { print("  identity  : \(id)") }
       if let enabled = payload.userSpaceVirtualDeviceEnabled {
         let s = enabled ? "enabled" : "disabled"
-        print("  user-space: \(s)")
+        print("  user     : \(s)")
       }
       if let s = payload.userSpaceVirtualDeviceStatus { print("  status    : \(s)") }
       print("")

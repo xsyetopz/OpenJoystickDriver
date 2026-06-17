@@ -135,9 +135,9 @@ parser-regression coverage.
 Runtime checks for backend changes:
 
 ```bash
-./scripts/ojd diagnose backends --seconds 5
-./scripts/ojd diagnose gamecontroller --seconds 5
-./scripts/ojd diagnose sdl3 --seconds 10
+./scripts/ojd diag backends --seconds 5
+./scripts/ojd diag gamecontroller --seconds 5
+./scripts/ojd diag sdl3 --seconds 10
 ```
 
 DriverKit approval, TCC permissions, physical rumble, and real controller input
