@@ -51,6 +51,7 @@ Commands:
   diag gamecontroller         Run GameController.framework probe
   diag catalina [app]         Check a macOS 10.15 test app bundle
   diag backends               Run current backend acceptance loop
+  install-sdl3 [--github-env] Install SDL3 probe dependencies
   analyze gamepad             Raw USB/GIP analyzer for unsupported controller buttons
   repair stale-dext           Kill stale DriverKit process copies after upgrade
   repair swiftpm-module-cache Clear SwiftPM module caches under `.build/` (fixes toolchain/target mismatches)
@@ -86,6 +87,26 @@ USAGE
 die() {
   echo "ERROR: $*" >&2
   exit 2
+}
+
+install_sdl3() {
+  case "${1:-}" in
+    "" | --github-env) ;;
+    *) die "Unknown: install-sdl3 $1 (expected: --github-env)" ;;
+  esac
+
+  command -v brew > /dev/null 2>&1 || die "Homebrew not found; install SDL3 with your package manager"
+  brew install pkg-config sdl3
+
+  if [[ "${1:-}" == "--github-env" ]]; then
+    [[ -n "${GITHUB_ENV:-}" ]] || die "--github-env requires GITHUB_ENV"
+    local prefix
+    prefix="$(brew --prefix)"
+    {
+      echo "PKG_CONFIG_PATH=$prefix/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+      echo "SDL3_DIR=$prefix"
+    } >> "$GITHUB_ENV"
+  fi
 }
 
 cmd="${1:-}"
@@ -220,6 +241,10 @@ case "$cmd" in
         die "Unknown: signing $sub (expected: install-profiles | configure | doctor | audit | cert-info | profile-info | import-embedded | ci-release-setup | export-github-secrets)"
         ;;
     esac
+    ;;
+
+  install-sdl3)
+    install_sdl3 "${1:-}"
     ;;
 
   diag)
