@@ -10,11 +10,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 usage() {
-  cat <<'USAGE'
-OpenJoystickDriver — dev helper
+  cat << 'USAGE'
+OpenJoystickDriver -- dev helper
 
 Usage:
   ./scripts/ojd <command> [args]
+
+Environment:
+  env status                  Show loaded .env files and redacted effective settings
+  env example dev             Print the development env template
+  env example release         Print the release env template
 
 Commands:
   rebuild dev                 Full rebuild (app + dext), installs to /Applications
@@ -46,9 +51,10 @@ Commands:
   diagnose gamecontroller     Run GameController.framework probe
   diagnose catalina [app]     Check a macOS 10.15 test app bundle
   diagnose backends           Run current backend acceptance loop
+  analyze gamepad             Raw USB/GIP analyzer for unsupported controller buttons
   repair stale-dext           Kill stale DriverKit process copies after upgrade
   repair swiftpm-module-cache Clear SwiftPM module caches under `.build/` (fixes toolchain/target mismatches)
-  validate profiles           Validate bundled controller profiles
+  check profiles              Check bundled controller profiles
   test parsers-macos14        Run focused parser regressions without Swift Testing
   launch sdl-gamecontroller <app>
                               Launch an SDL app through GameController/MFI rumble route
@@ -64,9 +70,11 @@ Commands:
   lint                        Run SwiftLint (requires swiftlint)
 
 Examples:
+  ./scripts/ojd env status
   ./scripts/ojd signing install-profiles
   ./scripts/ojd signing configure
   ./scripts/ojd rebuild-fast dev
+  ./scripts/ojd analyze gamepad --investigate
   ./scripts/ojd bump-version 0.1.0-rc.2
 
 Notes:
@@ -75,19 +83,56 @@ Notes:
 USAGE
 }
 
-die() { echo "ERROR: $*" >&2; exit 2; }
+die() {
+  echo "ERROR: $*" >&2
+  exit 2
+}
 
 cmd="${1:-}"
 shift || true
 
 case "$cmd" in
-  ""|-h|--help|help)
+  "" | -h | --help | help)
     usage
     exit 0
     ;;
 
+  env)
+    sub="${1:-status}"
+    shift || true
+    case "$sub" in
+      status | doctor)
+        # shellcheck source=ojd-common.sh
+        source "$SCRIPT_DIR/ojd-common.sh"
+        ojd_env_status
+        ;;
+      example)
+        env_name="${1:-}"
+        shift || true
+        case "$env_name" in
+          dev)
+            cat "$PROJECT_DIR/.env.dev.example"
+            ;;
+          release)
+            cat "$PROJECT_DIR/.env.release.example"
+            ;;
+          common | base | default)
+            cat "$PROJECT_DIR/.env.example"
+            ;;
+          *)
+            die "Unknown: env example $env_name (expected: dev | release | common)"
+            ;;
+        esac
+        ;;
+      *)
+        die "Unknown: env $sub (expected: status | example)"
+        ;;
+    esac
+    ;;
+
   build)
-    sub="${1:-}"; shift || true
+    sub="${1:-}"
+    shift || true
     case "$sub" in
       dev)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" build dev
@@ -105,7 +150,8 @@ case "$cmd" in
     ;;
 
   rebuild)
-    sub="${1:-}"; shift || true
+    sub="${1:-}"
+    shift || true
     case "$sub" in
       dev)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" rebuild dev
@@ -120,7 +166,8 @@ case "$cmd" in
     ;;
 
   rebuild-fast)
-    sub="${1:-}"; shift || true
+    sub="${1:-}"
+    shift || true
     case "$sub" in
       dev)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" rebuild-fast dev
@@ -132,13 +179,14 @@ case "$cmd" in
     ;;
 
   bump-version)
-    exec /usr/bin/env bash "$SCRIPT_DIR/bump-version.sh" "$@"
+    exec /usr/bin/env bash "$SCRIPT_DIR/ojd-bump-version.sh" "$@"
     ;;
 
   signing)
-    sub="${1:-}"; shift || true
+    sub="${1:-}"
+    shift || true
     case "$sub" in
-      ""|-h|--help|help)
+      "" | -h | --help | help)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-signing.sh" help
         ;;
       install-profiles)
@@ -175,7 +223,8 @@ case "$cmd" in
     ;;
 
   diagnose)
-    sub="${1:-}"; shift || true
+    sub="${1:-}"
+    shift || true
     case "$sub" in
       dext)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-diagnose.sh" dext
@@ -204,20 +253,22 @@ case "$cmd" in
     esac
     ;;
 
-  validate)
-    sub="${1:-}"; shift || true
+  check)
+    sub="${1:-}"
+    shift || true
     case "$sub" in
       profiles)
-        exec /usr/bin/env python3 "$SCRIPT_DIR/ojd-validate-profiles.py"
+        exec /usr/bin/env python3 "$SCRIPT_DIR/ojd-check-profiles.py"
         ;;
       *)
-        die "Unknown: validate $sub (expected: profiles)"
+        die "Unknown: check $sub (expected: profiles)"
         ;;
     esac
     ;;
 
   test)
-    sub="${1:-}"; shift || true
+    sub="${1:-}"
+    shift || true
     case "$sub" in
       parsers-macos14)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-test-parsers-macos14.sh"
@@ -228,8 +279,22 @@ case "$cmd" in
     esac
     ;;
 
+  analyze)
+    sub="${1:-}"
+    shift || true
+    case "$sub" in
+      gamepad | gip | usb-gamepad)
+        exec /usr/bin/env python3 "$SCRIPT_DIR/ojd-analyze-gamepad.py" "$@"
+        ;;
+      *)
+        die "Unknown: analyze $sub (expected: gamepad)"
+        ;;
+    esac
+    ;;
+
   repair)
-    sub="${1:-}"; shift || true
+    sub="${1:-}"
+    shift || true
     case "$sub" in
       stale-dext)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-repair-stale-dext.sh" "$@"
@@ -246,7 +311,7 @@ case "$cmd" in
           while IFS= read -r -d '' dir; do
             rm -rf "$dir"
             removed=$((removed + 1))
-          done < <(find ".build" -type d -name 'ModuleCache' -print0 2>/dev/null || true)
+          done < <(find ".build" -type d -name 'ModuleCache' -print0 2> /dev/null || true)
 
           echo "Removed $removed SwiftPM module cache directories."
         )
@@ -258,7 +323,8 @@ case "$cmd" in
     ;;
 
   launch)
-    sub="${1:-}"; shift || true
+    sub="${1:-}"
+    shift || true
     case "$sub" in
       sdl-gamecontroller)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-launch-sdl-gamecontroller.sh" "$@"
@@ -274,12 +340,13 @@ case "$cmd" in
     ;;
 
   rtk)
-    sub="${1:-}"; shift || true
+    sub="${1:-}"
+    shift || true
     case "$sub" in
       install-filters)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-rtk-filters.sh" install-filters
         ;;
-      ""|-h|--help|help)
+      "" | -h | --help | help)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-rtk-filters.sh" help
         ;;
       *)
@@ -289,12 +356,13 @@ case "$cmd" in
     ;;
 
   notarize)
-    sub="${1:-}"; shift || true
+    sub="${1:-}"
+    shift || true
     case "$sub" in
-      submit|"")
+      submit | "")
         exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-notarize.sh" submit "$@"
         ;;
-      help|-h|--help)
+      help | -h | --help)
         exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-notarize.sh" help
         ;;
       status)
@@ -316,9 +384,10 @@ case "$cmd" in
     ;;
 
   package)
-    sub="${1:-}"; shift || true
+    sub="${1:-}"
+    shift || true
     case "$sub" in
-      ""|-h|--help|help)
+      "" | -h | --help | help)
         exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-package.sh" help
         ;;
       release)

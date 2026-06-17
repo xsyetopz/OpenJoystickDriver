@@ -8,19 +8,12 @@ public enum ForegroundConsumerClientOwner {
   /// `"pid 30617, Google Chrome"`, while other call sites may surface an
   /// integer-backed NSNumber/Int.
   public static func pid(from value: Any?) -> Int? {
-    if let integer = value as? Int, integer > 0 {
-      return integer
-    }
-    if let integer = value as? Int64, integer > 0 {
-      return Int(integer)
-    }
+    if let integer = value as? Int, integer > 0 { return integer }
+    if let integer = value as? Int64, integer > 0 { return Int(integer) }
     switch value {
-    case let integer as Int:
-      return integer > 0 ? integer : nil
-    case let string as String:
-      return pid(from: string)
-    default:
-      return nil
+    case let integer as Int: return integer > 0 ? integer : nil
+    case let string as String: return pid(from: string)
+    default: return nil
     }
   }
 

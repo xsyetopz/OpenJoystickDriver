@@ -17,9 +17,7 @@ extension DextOutputDispatcher {
     if shouldClose { closeDevice() }
   }
 
-  public func isConnected() -> Bool {
-    connectionLock.withLock { hidDevice != nil }
-  }
+  public func isConnected() -> Bool { connectionLock.withLock { hidDevice != nil } }
 
   /// Best-effort: when enabled, tries to seize the DriverKit virtual HID device so
   /// SDL/IOKit apps prefer the user-space controller (Compatibility mode) and do not
@@ -82,7 +80,7 @@ extension DextOutputDispatcher {
   @discardableResult public func connect() -> Bool {
     guard connectionLock.withLock({ enabled }) else { return false }
     guard let (device, mgr) = findDevice(openOptions: IOOptionBits(kIOHIDOptionsTypeNone)) else {
-      print("[DextOutputDispatcher] Virtual gamepad not found — not installed or not approved")
+      print("[DextOutputDispatcher] Virtual gamepad not found -- not installed or not approved")
       return false
     }
     connectionLock.withLock {
@@ -90,8 +88,8 @@ extension DextOutputDispatcher {
       hidManager = mgr
     }
     print(
-      "[DextOutputDispatcher] Connected to virtual gamepad " +
-        "(VID:\(profile.vendorID) PID:\(profile.productID))"
+      "[DextOutputDispatcher] Connected to virtual gamepad "
+        + "(VID:\(profile.vendorID) PID:\(profile.productID))"
     )
     return true
   }
@@ -154,30 +152,20 @@ extension DextOutputDispatcher {
         let service = IOIteratorNext(iterator)
         if service == 0 { break }
         defer { IOObjectRelease(service) }
-        if let device = IOHIDDeviceCreate(kCFAllocatorDefault, service) {
-          result.append(device)
-        }
+        if let device = IOHIDDeviceCreate(kCFAllocatorDefault, service) { result.append(device) }
       }
       return result
     }
 
     func registryString(_ service: io_object_t, _ key: String) -> String? {
-      let value = IORegistryEntryCreateCFProperty(
-        service,
-        key as CFString,
-        kCFAllocatorDefault,
-        0
-      )?.takeRetainedValue()
+      let value = IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?
+        .takeRetainedValue()
       return value as? String
     }
 
     func registryInt(_ service: io_object_t, _ key: String) -> Int {
-      let value = IORegistryEntryCreateCFProperty(
-        service,
-        key as CFString,
-        kCFAllocatorDefault,
-        0
-      )?.takeRetainedValue()
+      let value = IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?
+        .takeRetainedValue()
       return value as? Int ?? 0
     }
 
@@ -219,9 +207,9 @@ extension DextOutputDispatcher {
 
         let ret = IOHIDDeviceOpen(device, openOptions)
         recordDiscoverySummary(
-          "service-open \(productName ?? "?")|\(serial ?? "?")|\(ioUserClass ?? "?")|" +
-            "\(vendorID):\(productID)|score=\(score) " +
-            "ret=\(String(format: "0x%08x", UInt32(bitPattern: ret)))"
+          "service-open \(productName ?? "?")|\(serial ?? "?")|\(ioUserClass ?? "?")|"
+            + "\(vendorID):\(productID)|score=\(score) "
+            + "ret=\(String(format: "0x%08x", UInt32(bitPattern: ret)))"
         )
         return (device, ret)
       }
@@ -260,18 +248,13 @@ extension DextOutputDispatcher {
       let productName = strProp(device, kIOHIDProductKey as String)
       let manufacturer = strProp(device, kIOHIDManufacturerKey as String)
 
-      if UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial) {
-        return Int.min / 2
-      }
-      if ioUserClass == "IOHIDUserDevice" {
-        return Int.min / 2
-      }
+      if UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial) { return Int.min / 2 }
+      if ioUserClass == "IOHIDUserDevice" { return Int.min / 2 }
       // Extra guard: our user-space devices live in the OJ namespace.
       let rawLocation = UInt32(truncatingIfNeeded: location)
       let isUserSpaceLocation =
         (rawLocation & 0xFFFF_0000) == VirtualDeviceIdentityConstants.userSpaceLocationIDNamespace
-      if rawLocation != VirtualDeviceIdentityConstants.driverKitLocationID && isUserSpaceLocation
-      {
+      if rawLocation != VirtualDeviceIdentityConstants.driverKitLocationID && isUserSpaceLocation {
         return Int.min / 2
       }
 
@@ -292,9 +275,7 @@ extension DextOutputDispatcher {
       return s
     }
 
-    let candidates = devices
-      .map { ($0, score($0)) }
-      .sorted { a, b in a.1 > b.1 }
+    let candidates = devices.map { ($0, score($0)) }.sorted { a, b in a.1 > b.1 }
 
     let summary = candidates.prefix(6).map { device, score in
       let product = strProp(device, kIOHIDProductKey as String) ?? "?"
@@ -313,8 +294,8 @@ extension DextOutputDispatcher {
       if s <= Int.min / 4 { continue }  // filtered (likely our user-space device)
       let ret = IOHIDDeviceOpen(device, openOptions)
       recordDiscoverySummary(
-        "open \(strProp(device, kIOHIDProductKey as String) ?? "?") score=\(s) " +
-          "ret=\(String(format: "0x%08x", UInt32(bitPattern: ret)))"
+        "open \(strProp(device, kIOHIDProductKey as String) ?? "?") score=\(s) "
+          + "ret=\(String(format: "0x%08x", UInt32(bitPattern: ret)))"
       )
       lastOpenResult = ret
       if ret == kIOReturnSuccess {

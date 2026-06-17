@@ -21,8 +21,9 @@ struct OutputModeCommand {
     client.connect()
 
     if arg == "status" {
-      let mode: String? =
-        runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) { try? await client.getOutputMode() }
+      let mode: String? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
+        try? await client.getOutputMode()
+      }
       print("output: \(mode ?? "unknown")")
       return
     }
@@ -36,9 +37,7 @@ struct OutputModeCommand {
       do {
         try await client.setOutputMode(mode)
         return true
-      } catch {
-        return false
-      }
+      } catch { return false }
     }
 
     if !ok {
@@ -46,8 +45,9 @@ struct OutputModeCommand {
       exit(1)
     }
 
-    let actual: String? =
-      runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) { try? await client.getOutputMode() }
+    let actual: String? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
+      try? await client.getOutputMode()
+    }
     print("output: \(actual ?? mode)")
   }
 }

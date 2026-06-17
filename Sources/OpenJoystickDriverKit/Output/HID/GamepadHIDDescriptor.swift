@@ -7,17 +7,17 @@ import Foundation
 ///
 /// Report layout (15 bytes total):
 ///   Bytes 0–1  : Button bitmask, buttons 1–16 (LSB = button 1)
-///   Bytes 2–3  : Left Stick X  (Int16 LE, –32767…32767) — Usage: X  (0x30)
-///   Bytes 4–5  : Left Stick Y  (Int16 LE, –32767…32767) — Usage: Y  (0x31)
-///   Bytes 6–7  : Left Trigger  (Int16 LE, 0…32767)      — Usage: Z  (0x32)
-///   Bytes 8–9  : Right Stick X (Int16 LE, –32767…32767) — Usage: Rx (0x33)
-///   Bytes 10–11: Right Stick Y (Int16 LE, –32767…32767) — Usage: Ry (0x34)
-///   Bytes 12–13: Right Trigger (Int16 LE, 0…32767)      — Usage: Rz (0x35)
+///   Bytes 2–3  : Left Stick X  (Int16 LE, –32767…32767) -- Usage: X  (0x30)
+///   Bytes 4–5  : Left Stick Y  (Int16 LE, –32767…32767) -- Usage: Y  (0x31)
+///   Bytes 6–7  : Left Trigger  (Int16 LE, 0…32767)      -- Usage: Z  (0x32)
+///   Bytes 8–9  : Right Stick X (Int16 LE, –32767…32767) -- Usage: Rx (0x33)
+///   Bytes 10–11: Right Stick Y (Int16 LE, –32767…32767) -- Usage: Ry (0x34)
+///   Bytes 12–13: Right Trigger (Int16 LE, 0…32767)      -- Usage: Rz (0x35)
 ///   Byte  14   : Hat switch (low nibble, 1–8 = direction, 0 = neutral) + 4-bit pad
 public enum GamepadHIDDescriptor {
   // MARK: - Report descriptor bytes
 
-  // Indentation reflects HID descriptor hierarchy — intentionally not vertically aligned.
+  // Indentation reflects HID descriptor hierarchy -- intentionally not vertically aligned.
   /// Raw HID report descriptor that describes the virtual gamepad layout.
   public static let descriptor: [UInt8] = [
     // ----- Usage Page: Generic Desktop -----
@@ -48,7 +48,7 @@ public enum GamepadHIDDescriptor {
     // Order: LSX(X), LSY(Y), LT(Z), RSX(Rx), RSY(Ry), RT(Rz)
     0x05, 0x01,  // Usage Page: Generic Desktop
 
-    // Left stick: X(0x30), Y(0x31) — signed
+    // Left stick: X(0x30), Y(0x31) -- signed
     0x09, 0x30,  // Usage: X  (left stick X)
     0x09, 0x31,  // Usage: Y  (left stick Y)
     0x16, 0x01, 0x80,  // Logical Minimum: -32767
@@ -57,7 +57,7 @@ public enum GamepadHIDDescriptor {
     0x95, 0x02,  // Report Count: 2
     0x81, 0x02,  // Input: Data, Variable, Absolute
 
-    // Left trigger: Z(0x32) — unsigned
+    // Left trigger: Z(0x32) -- unsigned
     0x09, 0x32,  // Usage: Z  (left trigger)
     0x15, 0x00,  // Logical Minimum: 0
     0x26, 0xFF, 0x7F,  // Logical Maximum: 32767
@@ -65,7 +65,7 @@ public enum GamepadHIDDescriptor {
     0x95, 0x01,  // Report Count: 1
     0x81, 0x02,  // Input: Data, Variable, Absolute
 
-    // Right stick: Rx(0x33), Ry(0x34) — signed
+    // Right stick: Rx(0x33), Ry(0x34) -- signed
     0x09, 0x33,  // Usage: Rx (right stick X)
     0x09, 0x34,  // Usage: Ry (right stick Y)
     0x16, 0x01, 0x80,  // Logical Minimum: -32767
@@ -74,7 +74,7 @@ public enum GamepadHIDDescriptor {
     0x95, 0x02,  // Report Count: 2
     0x81, 0x02,  // Input: Data, Variable, Absolute
 
-    // Right trigger: Rz(0x35) — unsigned
+    // Right trigger: Rz(0x35) -- unsigned
     0x09, 0x35,  // Usage: Rz (right trigger)
     0x15, 0x00,  // Logical Minimum: 0
     0x26, 0xFF, 0x7F,  // Logical Maximum: 32767
@@ -122,7 +122,7 @@ public enum GamepadHIDDescriptor {
   /// Raw hat-switch nibble values (stored in the low 4 bits of byte 14).
   /// 1-based directions, 0 = neutral (null state).
   public enum Hat: UInt8, Sendable {
-    /// Null / neutral — no direction pressed. Value below Logical Minimum,
+    /// Null / neutral -- no direction pressed. Value below Logical Minimum,
     /// which the HID system interprets as the null state.
     case neutral = 0
     case north = 1

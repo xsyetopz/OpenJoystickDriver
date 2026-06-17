@@ -31,9 +31,7 @@ public enum Xbox360XUSBDirectInputHIDDescriptor {
     0x81, 0x02,  // Input: Data, Variable, Absolute
 
     // Pad buttons to 16 bits.
-    0x75, 0x06,
-    0x95, 0x01,
-    0x81, 0x03,
+    0x75, 0x06, 0x95, 0x01, 0x81, 0x03,
 
     // D-pad as a hat switch. DirectInput does not expose it as four buttons.
     0x05, 0x01,  // Usage Page: Generic Desktop
@@ -43,27 +41,20 @@ public enum Xbox360XUSBDirectInputHIDDescriptor {
     0x35, 0x00,  // Physical Minimum: 0
     0x46, 0x3B, 0x01,  // Physical Maximum: 315
     0x66, 0x14, 0x00,  // Unit: degrees
-    0x75, 0x04,
-    0x95, 0x01,
-    0x81, 0x42,  // Input: Data, Variable, Absolute, Null State
+    0x75, 0x04, 0x95, 0x01, 0x81, 0x42,  // Input: Data, Variable, Absolute, Null State
 
     // Pad hat to a full byte.
-    0x75, 0x04,
-    0x95, 0x01,
-    0x81, 0x03,
+    0x75, 0x04, 0x95, 0x01, 0x81, 0x03,
 
     // Axes: X, Y, combined-trigger Z, Rx, Ry.
-    0x05, 0x01,
-    0x09, 0x30,  // X
+    0x05, 0x01, 0x09, 0x30,  // X
     0x09, 0x31,  // Y
     0x09, 0x32,  // Z
     0x09, 0x33,  // Rx
     0x09, 0x34,  // Ry
     0x16, 0x00, 0x80,  // Logical Minimum: -32768
     0x26, 0xFF, 0x7F,  // Logical Maximum: 32767
-    0x75, 0x10,
-    0x95, 0x05,
-    0x81, 0x02,
+    0x75, 0x10, 0x95, 0x05, 0x81, 0x02,
 
     0xC0,
   ]
@@ -97,9 +88,7 @@ public struct Xbox360XUSBDirectInputReportFormat: VirtualGamepadReportFormat {
     var out: UInt16 = 0
 
     func set(_ sourceBit: Int, _ directInputBit: Int) {
-      if ((normalized >> UInt32(sourceBit)) & 1) != 0 {
-        out |= UInt16(1 << directInputBit)
-      }
+      if ((normalized >> UInt32(sourceBit)) & 1) != 0 { out |= UInt16(1 << directInputBit) }
     }
 
     set(0, 0)  // A

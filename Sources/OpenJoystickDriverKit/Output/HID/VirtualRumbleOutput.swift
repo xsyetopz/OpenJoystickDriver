@@ -29,32 +29,20 @@ public enum VirtualRumbleOutputReportParser {
   public static let xboxGIPReportID: UInt8 = 9
   public static let xboxGIPReportPayloadSizeWithoutReportID = 12
 
-  public static func parse(
-    type: IOHIDReportType,
-    reportID: UInt32,
-    bytes: [UInt8]
-  ) -> VirtualRumbleCommand? {
+  public static func parse(type: IOHIDReportType, reportID: UInt32, bytes: [UInt8])
+    -> VirtualRumbleCommand?
+  {
     guard type == kIOHIDReportTypeOutput || type == kIOHIDReportTypeFeature else { return nil }
 
-    if let command = parseXboxOneReport(reportID: reportID, bytes: bytes) {
-      return command
-    }
-    if let command = parseXboxGIPReport(reportID: reportID, bytes: bytes) {
-      return command
-    }
-    if let command = parseXbox360Report(reportID: reportID, bytes: bytes) {
-      return command
-    }
-    if let command = parseOJDReport(reportID: reportID, bytes: bytes) {
-      return command
-    }
+    if let command = parseXboxOneReport(reportID: reportID, bytes: bytes) { return command }
+    if let command = parseXboxGIPReport(reportID: reportID, bytes: bytes) { return command }
+    if let command = parseXbox360Report(reportID: reportID, bytes: bytes) { return command }
+    if let command = parseOJDReport(reportID: reportID, bytes: bytes) { return command }
     return nil
   }
 
-  private static func parseXboxOneReport(
-    reportID: UInt32,
-    bytes: [UInt8]
-  ) -> VirtualRumbleCommand? {
+  private static func parseXboxOneReport(reportID: UInt32, bytes: [UInt8]) -> VirtualRumbleCommand?
+  {
     let payload: [UInt8]
     if reportID == UInt32(xboxOneReportID) {
       payload = bytes
@@ -79,10 +67,8 @@ public enum VirtualRumbleOutputReportParser {
     )
   }
 
-  private static func parseXboxGIPReport(
-    reportID: UInt32,
-    bytes: [UInt8]
-  ) -> VirtualRumbleCommand? {
+  private static func parseXboxGIPReport(reportID: UInt32, bytes: [UInt8]) -> VirtualRumbleCommand?
+  {
     let payload: [UInt8]
     if reportID == UInt32(xboxGIPReportID) {
       payload = bytes.first == GIPCommand.rumble ? bytes : [GIPCommand.rumble] + bytes
@@ -108,16 +94,11 @@ public enum VirtualRumbleOutputReportParser {
     )
   }
 
-  private static func parseXbox360Report(
-    reportID: UInt32,
-    bytes: [UInt8]
-  ) -> VirtualRumbleCommand? {
+  private static func parseXbox360Report(reportID: UInt32, bytes: [UInt8]) -> VirtualRumbleCommand?
+  {
     let payload: [UInt8]
-    if reportID == 0 {
-      payload = bytes
-    } else {
-      return nil
-    }
+    guard reportID == 0 else { return nil }
+    payload = bytes
 
     if payload.count >= 8, payload[0] == 0x00, payload[1] == 0x08 {
       return VirtualRumbleCommand(left: payload[3], right: payload[4])

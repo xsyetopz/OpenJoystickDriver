@@ -97,7 +97,7 @@ To add a controller:
 3. Keep protocol quirks in `protocol.variant`, `protocol.mapping_flags`, and
    transport/startup data unless parser behavior truly changes.
 4. Add parser tests or report-format tests for any new protocol behavior.
-5. Validate profiles with `./scripts/ojd validate profiles`; for parser regressions that must avoid Swift Testing, use `./scripts/ojd test parsers-macos14`.
+5. Check profiles with `./scripts/ojd check profiles`; for parser regressions that must avoid Swift Testing, use `./scripts/ojd test parsers-macos14`.
 
 To add a protocol:
 
@@ -117,13 +117,13 @@ To add a virtual output profile:
    compatibility surface.
 4. Add a consumer mapping file when SDL or another consumer requires one.
 
-## Validation Contract
+## Check Contract
 
-Source-level validation:
+Source-level checks:
 
 ```bash
 swift build
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
 ```
 
@@ -132,7 +132,7 @@ the intended deployment target. In the current Swift 6.2.4/Xcode 26 environment,
 `_Testing_Foundation` requires macOS 26 while this project still needs macOS 14
 parser-regression coverage.
 
-Runtime validation for backend changes:
+Runtime checks for backend changes:
 
 ```bash
 ./scripts/ojd diagnose backends --seconds 5

@@ -47,10 +47,8 @@ extension XPCService {
 
       let isUserSpace =
         UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial)
-        || (
-          (UInt32(truncatingIfNeeded: location) & 0xFFFF_0000)
-            == VirtualDeviceIdentityConstants.userSpaceLocationIDNamespace
-        )
+        || ((UInt32(truncatingIfNeeded: location) & 0xFFFF_0000)
+          == VirtualDeviceIdentityConstants.userSpaceLocationIDNamespace)
         || (ioUserClass == "IOHIDUserDevice")
 
       let looksLikeOJDVirtual =
@@ -62,8 +60,7 @@ extension XPCService {
       let isDriverKit =
         (serial == VirtualDeviceIdentityConstants.driverKitSerialNumber)
         || (location == Int(VirtualDeviceIdentityConstants.driverKitLocationID))
-        || (ioUserClass == "OpenJoystickVirtualHIDDevice")
-        || (!isUserSpace && looksLikeOJDVirtual)
+        || (ioUserClass == "OpenJoystickVirtualHIDDevice") || (!isUserSpace && looksLikeOJDVirtual)
 
       lock.withLock {
         if isDriverKit {
@@ -82,9 +79,7 @@ extension XPCService {
     }
   }
 
-  func runVirtualDeviceSelfTestInternal(
-    seconds: Int
-  ) async -> XPCVirtualDeviceSelfTestPayload {
+  func runVirtualDeviceSelfTestInternal(seconds: Int) async -> XPCVirtualDeviceSelfTestPayload {
     let driverKitStartCount = Self.readDriverKitInputReportCount()
     let startStats = dextDispatcher.outputStatsSnapshot()
 
@@ -143,19 +138,13 @@ extension XPCService {
       dextDispatcher.dispatch(events: [.buttonReleased(.a)], from: syntheticIdentifier)
       await userSpace?.dispatch(events: [.buttonReleased(.a)], from: syntheticIdentifier)
       try? await Task.sleep(nanoseconds: 250_000_000)
-      dextDispatcher.dispatch(
-        events: [.leftStickChanged(x: 0.75, y: 0)],
-        from: syntheticIdentifier
-      )
+      dextDispatcher.dispatch(events: [.leftStickChanged(x: 0.75, y: 0)], from: syntheticIdentifier)
       await userSpace?.dispatch(
         events: [.leftStickChanged(x: 0.75, y: 0)],
         from: syntheticIdentifier
       )
       try? await Task.sleep(nanoseconds: 250_000_000)
-      dextDispatcher.dispatch(
-        events: [.leftStickChanged(x: 0, y: 0)],
-        from: syntheticIdentifier
-      )
+      dextDispatcher.dispatch(events: [.leftStickChanged(x: 0, y: 0)], from: syntheticIdentifier)
       await userSpace?.dispatch(events: [.leftStickChanged(x: 0, y: 0)], from: syntheticIdentifier)
     }
 
@@ -173,10 +162,11 @@ extension XPCService {
     let setReportSuccessDelta = max(0, endStats.successes - startStats.successes)
     let setReportAttemptDelta = max(0, endStats.attempts - startStats.attempts)
     let setReportFailureDelta = max(0, endStats.failures - startStats.failures)
-    let connectionAttemptDelta =
-      max(0, endStats.connectionAttempts - startStats.connectionAttempts)
-    let connectionSuccessDelta =
-      max(0, endStats.connectionSuccesses - startStats.connectionSuccesses)
+    let connectionAttemptDelta = max(0, endStats.connectionAttempts - startStats.connectionAttempts)
+    let connectionSuccessDelta = max(
+      0,
+      endStats.connectionSuccesses - startStats.connectionSuccesses
+    )
     let connectionFailureDelta = max(0, endStats.connectionFailures - startStats.connectionFailures)
 
     let retained = Unmanaged<SelfTestCounter>.fromOpaque(counterPtr).takeRetainedValue()
@@ -237,8 +227,7 @@ extension XPCService {
 
       let isDriverKit =
         (serial == VirtualDeviceIdentityConstants.driverKitSerialNumber)
-        || (ioUserClass == "OpenJoystickVirtualHIDDevice")
-        || looksLikeOJDVirtual
+        || (ioUserClass == "OpenJoystickVirtualHIDDevice") || looksLikeOJDVirtual
 
       if !isDriverKit { continue }
 

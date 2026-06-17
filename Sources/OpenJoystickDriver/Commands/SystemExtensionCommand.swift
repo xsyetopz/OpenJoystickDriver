@@ -63,8 +63,7 @@ struct SystemExtensionCommand {
     submission.start()
     let result = submission.wait(timeout: 60)
     switch result {
-    case .completed(let message):
-      print(message)
+    case .completed(let message): print(message)
     case .requiresApproval:
       print("System extension request submitted and requires approval in System Settings.")
       print("Open System Settings > General > Login Items & Extensions > Driver Extensions.")
@@ -80,8 +79,7 @@ struct SystemExtensionCommand {
 
   private func bundleContainsSystemExtension() -> Bool {
     let bundlePath = Bundle.main.bundlePath
-    let dextPath =
-      bundlePath + "/Contents/Library/SystemExtensions/\(ojdSystemExtensionID).dext"
+    let dextPath = bundlePath + "/Contents/Library/SystemExtensions/\(ojdSystemExtensionID).dext"
     return FileManager.default.fileExists(atPath: dextPath)
   }
 
@@ -92,9 +90,7 @@ struct SystemExtensionCommand {
     let pipe = Pipe()
     process.standardOutput = pipe
     process.standardError = pipe
-    do {
-      try process.run()
-    } catch {
+    do { try process.run() } catch {
       return "systemextensionsctl failed: \(error.localizedDescription)"
     }
     process.waitUntilExit()
@@ -151,22 +147,18 @@ private final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
     _ request: OSSystemExtensionRequest,
     didFinishWithResult result: OSSystemExtensionRequest.Result
   ) {
-    self.result = .completed(
-      "System extension request finished with result \(result.rawValue)."
-    )
+    self.result = .completed("System extension request finished with result \(result.rawValue).")
   }
 
   func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
     let nsError = error as NSError
     result = .failed(
-      "System extension request failed: \(nsError.domain) " +
-        "code=\(nsError.code) \(nsError.localizedDescription)"
+      "System extension request failed: \(nsError.domain) "
+        + "code=\(nsError.code) \(nsError.localizedDescription)"
     )
   }
 
-  func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
-    result = .requiresApproval
-  }
+  func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) { result = .requiresApproval }
 
   func request(
     _ request: OSSystemExtensionRequest,
@@ -174,8 +166,8 @@ private final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
     withExtension ext: OSSystemExtensionProperties
   ) -> OSSystemExtensionRequest.ReplacementAction {
     print(
-      "Replacing \(existing.bundleIdentifier) v\(existing.bundleVersion) " +
-        "with v\(ext.bundleVersion)."
+      "Replacing \(existing.bundleIdentifier) v\(existing.bundleVersion) "
+        + "with v\(ext.bundleVersion)."
     )
     return .replace
   }

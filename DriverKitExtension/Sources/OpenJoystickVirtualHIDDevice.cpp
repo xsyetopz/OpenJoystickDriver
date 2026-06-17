@@ -58,17 +58,32 @@ static constexpr uint8_t OJD_RELAY_MAGIC_0 = 0x4F;  // 'O'
 static constexpr uint8_t OJD_RELAY_MAGIC_1 = 0x4A;  // 'J'
 static constexpr uint32_t OJD_RELAY_HEADER_SIZE = 3;
 
-static inline void publishDebugState(OpenJoystickVirtualHIDDevice* self) {
+template<typename Value>
+static inline auto
+    setNumberValue(OSDictionary* dict, const char* key, Value value, uint32_t bitCount) -> void {
+    if (auto* number = OSNumber::withNumber(value, bitCount)) {
+        OSDictionarySetValue(dict, key, number);
+        number->release();
+    }
+}
+
+static inline auto setStringValue(OSDictionary* dict, const char* key, const char* value) -> void {
+    if (auto* string = OSString::withCString(value)) {
+        OSDictionarySetValue(dict, key, string);
+        string->release();
+    }
+}
+
+static inline auto publishDebugState(OpenJoystickVirtualHIDDevice* self) -> void {
     auto* ivars = self->ivars;
     if (ivars == nullptr) {
         return;
     }
 
     // Rate-limit publishing to IORegistry: update every 25 setReport calls, or on any failure.
-    const bool shouldPublish =
+    const auto shouldPublish =
         (ivars->setReportCount - ivars->lastPublishedSetReportCount) >= 25
         || (ivars->inputReportCount - ivars->lastPublishedInputReportCount) >= 25;
-
     if (!shouldPublish) {
         return;
     }
@@ -78,18 +93,9 @@ static inline void publishDebugState(OpenJoystickVirtualHIDDevice* self) {
         return;
     }
 
-    if (auto* n = OSNumber::withNumber(ivars->setReportCount, 64)) {
-        OSDictionarySetValue(dict, "SetReportCount", n);
-        n->release();
-    }
-    if (auto* n = OSNumber::withNumber(ivars->setReportFailCount, 64)) {
-        OSDictionarySetValue(dict, "SetReportFailCount", n);
-        n->release();
-    }
-    if (auto* n = OSNumber::withNumber(ivars->inputReportCount, 64)) {
-        OSDictionarySetValue(dict, "InputReportCount", n);
-        n->release();
-    }
+    setNumberValue(dict, "SetReportCount", ivars->setReportCount, 64);
+    setNumberValue(dict, "SetReportFailCount", ivars->setReportFailCount, 64);
+    setNumberValue(dict, "InputReportCount", ivars->inputReportCount, 64);
 
     // Publish under "DebugState" so user-space can read it via ioreg.
     if (auto* key = OSSymbol::withCString("DebugState")) {
@@ -143,18 +149,9 @@ auto OpenJoystickVirtualHIDDevice::newDeviceDescription() -> OSDictionary* {
     // Publish an initial debug state snapshot so user-space can reliably read counters
     // even before the first report is sent.
     if (auto* dbg = OSDictionary::withCapacity(3)) {
-        if (auto* n = OSNumber::withNumber(static_cast<uint64_t>(0), 64)) {
-            OSDictionarySetValue(dbg, "SetReportCount", n);
-            n->release();
-        }
-        if (auto* n = OSNumber::withNumber(static_cast<uint64_t>(0), 64)) {
-            OSDictionarySetValue(dbg, "SetReportFailCount", n);
-            n->release();
-        }
-        if (auto* n = OSNumber::withNumber(static_cast<uint64_t>(0), 64)) {
-            OSDictionarySetValue(dbg, "InputReportCount", n);
-            n->release();
-        }
+        setNumberValue(dbg, "SetReportCount", static_cast<uint64_t>(0), 64);
+        setNumberValue(dbg, "SetReportFailCount", static_cast<uint64_t>(0), 64);
+        setNumberValue(dbg, "InputReportCount", static_cast<uint64_t>(0), 64);
         OSDictionarySetValue(dict, "DebugState", dbg);
         dbg->release();
     }
@@ -168,69 +165,30 @@ auto OpenJoystickVirtualHIDDevice::newDeviceDescription() -> OSDictionary* {
     // We intentionally present the DriverKit device as a "real" controller to SDL-based apps
     // that rely on stable HID transport semantics. This means Transport must NOT be "Virtual"
     // (SDL may filter/penalize it).
-    if (auto* transport = OSString::withCString("USB")) {
-        OSDictionarySetValue(dict, kIOHIDTransportKey, transport);
-        transport->release();
-    }
+    setStringValue(dict, kIOHIDTransportKey, "USB");
     // Must match VirtualDeviceProfile.openJoystickDriver in the Swift layer.
-    if (auto* vid = OSNumber::withNumber(static_cast<uint32_t>(0x4F4A), 32)) {
-        OSDictionarySetValue(dict, kIOHIDVendorIDKey, vid);
-        vid->release();
-    }
-    if (auto* pid = OSNumber::withNumber(static_cast<uint32_t>(0x4447), 32)) {
-        OSDictionarySetValue(dict, kIOHIDProductIDKey, pid);
-        pid->release();
-    }
+    setNumberValue(dict, kIOHIDVendorIDKey, static_cast<uint32_t>(0x4F4A), 32);
+    setNumberValue(dict, kIOHIDProductIDKey, static_cast<uint32_t>(0x4447), 32);
     // Some consumers treat LocationID=0 as "not a real device". Use a stable non-zero value.
     // Keep this value stable to avoid confusing HID consumers that cache devices by LocationID.
-    if (auto* location = OSNumber::withNumber(static_cast<uint32_t>(0x4F4A4401), 32)) {
-        OSDictionarySetValue(dict, kIOHIDLocationIDKey, location);
-        location->release();
-    }
+    setNumberValue(dict, kIOHIDLocationIDKey, static_cast<uint32_t>(0x4F4A4401), 32);
     // Stable (non-hardware) serial number used to disambiguate our virtual device from
     // real controllers that share VID/PID. Safe to expose to user-space.
-    if (auto* serial = OSString::withCString("OpenJoystickDriver-DriverKit")) {
-        OSDictionarySetValue(dict, kIOHIDSerialNumberKey, serial);
-        serial->release();
-    }
-    if (auto* product = OSString::withCString("OpenJoystickDriver DriverKit Relay")) {
-        OSDictionarySetValue(dict, kIOHIDProductKey, product);
-        product->release();
-    }
-    if (auto* manufacturer = OSString::withCString("OpenJoystickDriver")) {
-        OSDictionarySetValue(dict, kIOHIDManufacturerKey, manufacturer);
-        manufacturer->release();
-    }
-    if (auto* usage_page = OSNumber::withNumber(static_cast<uint32_t>(0xFF00), 32)) {
-        OSDictionarySetValue(dict, kIOHIDPrimaryUsagePageKey, usage_page);
-        usage_page->release();
-    }
-    if (auto* usage = OSNumber::withNumber(static_cast<uint32_t>(0x0001), 32)) {
-        OSDictionarySetValue(dict, kIOHIDPrimaryUsageKey, usage);
-        usage->release();
-    }
-    if (auto* version = OSNumber::withNumber(static_cast<uint32_t>(0x0408), 32)) {
-        OSDictionarySetValue(dict, kIOHIDVersionNumberKey, version);
-        version->release();
-    }
-    if (auto* country = OSNumber::withNumber(static_cast<uint32_t>(0), 32)) {
-        OSDictionarySetValue(dict, kIOHIDCountryCodeKey, country);
-        country->release();
-    }
+    setStringValue(dict, kIOHIDSerialNumberKey, "OpenJoystickDriver-DriverKit");
+    setStringValue(dict, kIOHIDProductKey, "OpenJoystickDriver DriverKit Relay");
+    setStringValue(dict, kIOHIDManufacturerKey, "OpenJoystickDriver");
+    setNumberValue(dict, kIOHIDPrimaryUsagePageKey, static_cast<uint32_t>(0xFF00), 32);
+    setNumberValue(dict, kIOHIDPrimaryUsageKey, static_cast<uint32_t>(0x0001), 32);
+    setNumberValue(dict, kIOHIDVersionNumberKey, static_cast<uint32_t>(0x0408), 32);
+    setNumberValue(dict, kIOHIDCountryCodeKey, static_cast<uint32_t>(0), 32);
 
     // Explicitly publish the top-level usage pairs. IOHIDInterface usually derives this
     // from the report descriptor, but providing it here improves compatibility with some
     // user-space enumerators.
     if (auto* pairs = OSArray::withCapacity(1)) {
         if (auto* pair = OSDictionary::withCapacity(2)) {
-            if (auto* page = OSNumber::withNumber(static_cast<uint32_t>(0xFF00), 32)) {
-                OSDictionarySetValue(pair, kIOHIDDeviceUsagePageKey, page);
-                page->release();
-            }
-            if (auto* u = OSNumber::withNumber(static_cast<uint32_t>(0x0001), 32)) {
-                OSDictionarySetValue(pair, kIOHIDDeviceUsageKey, u);
-                u->release();
-            }
+            setNumberValue(pair, kIOHIDDeviceUsagePageKey, static_cast<uint32_t>(0xFF00), 32);
+            setNumberValue(pair, kIOHIDDeviceUsageKey, static_cast<uint32_t>(0x0001), 32);
             pairs->setObject(pair);
             pair->release();
         }
@@ -250,7 +208,7 @@ auto OpenJoystickVirtualHIDDevice::newReportDescriptor() -> OSData* {
     if (data == nullptr) {
         os_log(
             OS_LOG_DEFAULT,
-            "OpenJoystickVirtualHID: newReportDescriptor — OSData::withBytes returned NULL");
+            "OpenJoystickVirtualHID: newReportDescriptor -- OSData::withBytes returned NULL");
     }
     return data;
 }
@@ -277,8 +235,8 @@ auto OpenJoystickVirtualHIDDevice::setReport(
         return kIOReturnSuccess;
     }
 
-    uint64_t len = 0;
-    const kern_return_t lenKr = report->GetLength(&len);
+    auto len = 0U;
+    const auto lenKr = report->GetLength(&len);
     if (lenKr != kIOReturnSuccess || len == 0) {
         os_log(
             OS_LOG_DEFAULT,
@@ -293,7 +251,7 @@ auto OpenJoystickVirtualHIDDevice::setReport(
     }
 
     IOBufferMemoryDescriptor* buffer = nullptr;
-    const kern_return_t bufKr = IOBufferMemoryDescriptor::Create(
+    const auto bufKr = IOBufferMemoryDescriptor::Create(
         kIOMemoryDirectionIn,
         len,
         /* alignment */ 0,
@@ -316,9 +274,8 @@ auto OpenJoystickVirtualHIDDevice::setReport(
     IOMemoryMap* reportMap = nullptr;
     IOMemoryMap* bufferMap = nullptr;
 
-    const kern_return_t mapInKr =
-        report->CreateMapping(kIOMemoryMapReadOnly, 0, 0, len, 0, &reportMap);
-    const kern_return_t mapOutKr = buffer->CreateMapping(0, 0, 0, len, 0, &bufferMap);
+    const auto mapInKr = report->CreateMapping(kIOMemoryMapReadOnly, 0, 0, len, 0, &reportMap);
+    const auto mapOutKr = buffer->CreateMapping(0, 0, 0, len, 0, &bufferMap);
 
     if (mapInKr != kIOReturnSuccess || reportMap == nullptr || mapOutKr != kIOReturnSuccess
         || bufferMap == nullptr) {
@@ -339,8 +296,8 @@ auto OpenJoystickVirtualHIDDevice::setReport(
         return kIOReturnSuccess;
     }
 
-    void* const src = reinterpret_cast<void*>(static_cast<uintptr_t>(reportMap->GetAddress()));
-    void* const dst = reinterpret_cast<void*>(static_cast<uintptr_t>(bufferMap->GetAddress()));
+    auto* const src = reinterpret_cast<void*>(static_cast<uintptr_t>(reportMap->GetAddress()));
+    auto* const dst = reinterpret_cast<void*>(static_cast<uintptr_t>(bufferMap->GetAddress()));
     if (src != nullptr && dst != nullptr) {
         memcpy(dst, src, static_cast<size_t>(len));
     } else {
@@ -355,8 +312,8 @@ auto OpenJoystickVirtualHIDDevice::setReport(
         return kIOReturnSuccess;
     }
 
-    uint32_t targetReportID = 0;
-    uint64_t relayLen = len;
+    auto targetReportID = 0U;
+    auto relayLen = len;
     if (dst != nullptr && len >= OJD_RELAY_HEADER_SIZE) {
         const auto* bytes = reinterpret_cast<const uint8_t*>(dst);
         if (bytes[0] == OJD_RELAY_MAGIC_0 && bytes[1] == OJD_RELAY_MAGIC_1) {
@@ -370,9 +327,8 @@ auto OpenJoystickVirtualHIDDevice::setReport(
     // The generic DriverKit descriptor has no report IDs. Unframed daemon reports
     // are primary gamepad payloads; framed reports can still carry the relay header
     // so the Swift side can share one path with report-ID-based descriptors.
-    const uint32_t reportLen32 =
-        (relayLen > UINT32_MAX) ? UINT32_MAX : static_cast<uint32_t>(relayLen);
-    const kern_return_t relayKr =
+    const auto reportLen32 = (relayLen > UINT32_MAX) ? UINT32_MAX : static_cast<uint32_t>(relayLen);
+    const auto relayKr =
         handleReport(targetReportID, buffer, reportLen32, kIOHIDReportTypeInput, 0);
     if (relayKr != kIOReturnSuccess) {
         os_log(

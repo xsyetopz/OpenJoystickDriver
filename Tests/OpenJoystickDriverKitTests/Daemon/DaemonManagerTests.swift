@@ -64,6 +64,11 @@ struct DaemonManagerTests {
       "Sources/OpenJoystickDriverKit/Daemon/DaemonManager.swift"
     )
     let source = try String(contentsOf: sourceURL, encoding: .utf8)
+    let compactSource = source.replacingOccurrences(
+      of: #"\s+"#,
+      with: " ",
+      options: .regularExpression
+    )
 
     #expect(source.contains("private static var usesLaunchctlAgentRegistration: Bool"))
     #expect(source.contains("if #available(macOS 13.0, *) {"))
@@ -72,9 +77,15 @@ struct DaemonManagerTests {
     #expect(source.contains("try appService.unregister()"))
     #expect(source.contains("print(\"[DaemonManager] Installed (SMAppService)\")"))
     #expect(source.contains("print(\"[DaemonManager] Restarted (SMAppService)\")"))
-    #expect(source.contains("if usesLaunchctlAgentRegistration { try legacyInstall(); return }"))
-    #expect(source.contains("if usesLaunchctlAgentRegistration { try legacyUninstall(); return }"))
-    #expect(source.contains("if usesLaunchctlAgentRegistration { try legacyRestart(); return }"))
+    #expect(
+      compactSource.contains("if usesLaunchctlAgentRegistration { try legacyInstall() return }")
+    )
+    #expect(
+      compactSource.contains("if usesLaunchctlAgentRegistration { try legacyUninstall() return }")
+    )
+    #expect(
+      compactSource.contains("if usesLaunchctlAgentRegistration { try legacyRestart() return }")
+    )
   }
 
   @Test("launchctl print parser recognizes a running daemon")

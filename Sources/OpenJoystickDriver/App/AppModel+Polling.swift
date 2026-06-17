@@ -11,14 +11,11 @@ import OpenJoystickDriverKit
       if let h = daemonHealth, h.isInefficientKillLoop {
         let runs = h.runs.map { "\($0)" } ?? "unknown"
         let active = h.activeCount.map { "\($0)" } ?? "unknown"
-        return
-          L10n.string("daemon.error.inefficientKill", active, runs)
+        return L10n.string("daemon.error.inefficientKill", active, runs)
       }
       return L10n.string("daemon.error.lostApplication")
     }
-    if ns.domain == "NSXPCErrorDomain" {
-      return L10n.string("daemon.error.lostConnection")
-    }
+    if ns.domain == "NSXPCErrorDomain" { return L10n.string("daemon.error.lostConnection") }
     return ns.localizedDescription
   }
 
@@ -63,8 +60,7 @@ import OpenJoystickDriverKit
 
       // If launchd says the job is loaded/running but XPC isn't responding, call that out.
       if let h = daemonHealth, h.pid != nil {
-        daemonError =
-          L10n.string("daemon.error.runningNoConnection")
+        daemonError = L10n.string("daemon.error.runningNoConnection")
       } else {
         daemonError = formatDaemonError(error)
       }
@@ -73,11 +69,9 @@ import OpenJoystickDriverKit
 
   func maybeRefreshDaemonHealth(isConnected: Bool) async {
     let now = DispatchTime.now().uptimeNanoseconds
-    let intervalNs = isConnected ? daemonHealthPollNanosecondsConnected
-      : daemonHealthPollNanosecondsDisconnected
-    if daemonHealth == nil || now &- lastHealthPollNs >= intervalNs {
-      await refreshDaemonHealth()
-    }
+    let intervalNs =
+      isConnected ? daemonHealthPollNanosecondsConnected : daemonHealthPollNanosecondsDisconnected
+    if daemonHealth == nil || now &- lastHealthPollNs >= intervalNs { await refreshDaemonHealth() }
   }
 
   func noteDaemonHealth(_ snapshot: DaemonManager.DaemonHealth) {
@@ -97,9 +91,7 @@ import OpenJoystickDriverKit
     }
 
     if let pid = snapshot.pid {
-      if let lastPid = lastDaemonPid, pid != lastPid {
-        daemonStartEventsNs.append(now)
-      }
+      if let lastPid = lastDaemonPid, pid != lastPid { daemonStartEventsNs.append(now) }
       lastDaemonPid = pid
     }
 
@@ -122,8 +114,7 @@ import OpenJoystickDriverKit
   func ensureRunningFromApplications() -> Bool {
     let path = Bundle.main.bundlePath
     if path.hasPrefix("/Applications/") { return true }
-    daemonError =
-      L10n.string("daemon.error.requiresApplications", path)
+    daemonError = L10n.string("daemon.error.requiresApplications", path)
     return false
   }
 
@@ -140,11 +131,12 @@ import OpenJoystickDriverKit
     let pipe = Pipe()
     process.standardOutput = pipe
     process.standardError = pipe
-    do {
-      try process.run()
-    } catch {
-      daemonError =
-        L10n.string("daemon.error.codesignLaunchFailed", action, error.localizedDescription)
+    do { try process.run() } catch {
+      daemonError = L10n.string(
+        "daemon.error.codesignLaunchFailed",
+        action,
+        error.localizedDescription
+      )
       return false
     }
     process.waitUntilExit()
@@ -153,8 +145,7 @@ import OpenJoystickDriverKit
 
     // Keep the UI message self-describing and fix-oriented.
     if out.contains("a sealed resource is missing or invalid") {
-      daemonError =
-        """
+      daemonError = """
         \(action) failed: this app bundle's signature is INVALID.
         macOS thinks it was modified after signing.
 
@@ -170,8 +161,7 @@ import OpenJoystickDriverKit
       return false
     }
 
-    daemonError =
-      """
+    daemonError = """
       \(action) failed: app signature verification failed.
 
       Diagnostic output:

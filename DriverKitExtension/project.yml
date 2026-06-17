@@ -3,8 +3,8 @@ options:
   bundleIdPrefix: com.openjoystickdriver
 settings:
   base:
-    SWIFT_VERSION: "5.10"
-    # DriverKit predates Swift concurrency — strict mode produces false errors
+    SWIFT_VERSION: "6.2"
+    # DriverKit predates Swift concurrency -- strict mode produces false errors
     SWIFT_STRICT_CONCURRENCY: minimal
     ENABLE_HARDENED_RUNTIME: YES
     CODE_SIGN_ENTITLEMENTS: OpenJoystickVirtualHID.entitlements
@@ -21,8 +21,8 @@ settings:
     # C++20 support for DriverKit C++ interop
     CLANG_CXX_LANGUAGE_STANDARD: c++20
     CLANG_CXX_LIBRARY: libc++
-    GCC_ENABLE_CPP_EXCEPTIONS: NO   # DriverKit prohibits C++ exceptions
-    GCC_ENABLE_CPP_RTTI: NO        # RTTI unsupported in DriverKit
+    GCC_ENABLE_CPP_EXCEPTIONS: NO         # DriverKit prohibits C++ exceptions
+    GCC_ENABLE_CPP_RTTI: NO               # RTTI unsupported in DriverKit
     GCC_GENERATE_DEBUGGING_SYMBOLS: YES
 targets:
   OpenJoystickVirtualHID:

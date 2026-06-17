@@ -1,15 +1,24 @@
 import Foundation
 import SwiftUSB
 
-/// Report type byte for Xbox 360 input reports.
-private let xbox360InputReportType: UInt8 = 0x00
-/// Expected length byte and minimum size for a wired Xbox 360 input report.
-private let xbox360InputReportLengthByte: UInt8 = 0x14
-private let xbox360InputReportLength = 20
-/// Maximum value for a trigger axis (UInt8).
-private let xbox360TriggerMax: Float = 255
-/// Maximum positive value for a signed stick axis.
-private let xbox360StickMax = Float(Int16.max)
+public enum Xbox360ReportLayout {
+  public static let inputReportType: UInt8 = 0x00
+  public static let inputReportLengthByte: UInt8 = 0x14
+  public static let inputReportLength = 20
+  public static let triggerMax: Float = 255
+  public static let stickMax = Float(Int16.max)
+  public static let defaultOutEndpoint: UInt8 = 0x01
+  public static let transferTimeoutMs: UInt32 = 2_000
+  public static let startupLEDPacket: [UInt8] = [0x01, 0x03, Xbox360LEDPattern.player1On.rawValue]
+
+  public static func rumblePacket(left: UInt8, right: UInt8) -> [UInt8] {
+    [0x00, 0x08, 0x00, left, right, 0x00, 0x00, 0x00]
+  }
+
+  public static func ledPacket(pattern: Xbox360LEDPattern) -> [UInt8] {
+    [0x01, 0x03, pattern.rawValue]
+  }
+}
 
 /// Xbox 360 LED pattern constants for `sendLED(_:handle:pattern:)`.
 public enum Xbox360LEDPattern: UInt8, Sendable {
@@ -90,7 +99,7 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
   //
   // @unchecked Sendable safety:
   // - All mutable state (prevButtons, prevLT/RT, prevLS/RS) is accessed
-  //   exclusively from the owning DevicePipeline actor — no concurrent access.
+  //   exclusively from the owning DevicePipeline actor -- no concurrent access.
 
   private let outEndpoint: UInt8
 
@@ -104,7 +113,7 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
 
   /// Creates a new Xbox360Parser.
   /// - Parameter outEndpoint: Interrupt OUT endpoint address (default 0x01).
-  public init(outEndpoint: UInt8 = 0x01) {
+  public init(outEndpoint: UInt8 = Xbox360ReportLayout.defaultOutEndpoint) {
     self.outEndpoint = outEndpoint
   }
 
@@ -117,9 +126,7 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
   }
   // swiftlint:enable async_without_await
 
-  public func usbStartupOutputPackets() -> [[UInt8]] {
-    [[0x01, 0x03, Xbox360LEDPattern.player1On.rawValue]]
-  }
+  public func usbStartupOutputPackets() -> [[UInt8]] { [Xbox360ReportLayout.startupLEDPacket] }
 
   /// Parses one Xbox 360 input report and returns zero or more controller events.
   ///
@@ -127,10 +134,10 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
   /// on the wireless receiver). Returns an empty array for reports that carry no
   /// state change since the previous call.
   public func parse(data: Data) throws -> [ControllerEvent] {
-    guard !data.isEmpty, data[0] == xbox360InputReportType else { return [] }
-    guard data.count >= xbox360InputReportLength, data[1] == xbox360InputReportLengthByte else {
-      return []
-    }
+    guard !data.isEmpty, data[0] == Xbox360ReportLayout.inputReportType else { return [] }
+    guard data.count >= Xbox360ReportLayout.inputReportLength,
+      data[1] == Xbox360ReportLayout.inputReportLengthByte
+    else { return [] }
     let bytes = Array(data)
 
     let buttons = UInt16(bytes[2]) | (UInt16(bytes[3]) << 8)
@@ -168,8 +175,11 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
   ///   - left: Left (strong) motor intensity (0–255).
   ///   - right: Right (weak) motor intensity (0–255).
   public func sendRumble(handle: USBDeviceHandle, left: UInt8, right: UInt8) throws {
-    let packet: [UInt8] = [0x00, 0x08, 0x00, left, right, 0x00, 0x00, 0x00]
-    _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
+    _ = try handle.interruptTransfer(
+      endpoint: outEndpoint,
+      data: Xbox360ReportLayout.rumblePacket(left: left, right: right),
+      timeout: Xbox360ReportLayout.transferTimeoutMs
+    )
   }
 
   public func sendPhysicalRumble(
@@ -178,9 +188,7 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
     right: UInt8,
     lt: UInt8,
     rt: UInt8
-  ) throws {
-    try sendRumble(handle: handle, left: left, right: right)
-  }
+  ) throws { try sendRumble(handle: handle, left: left, right: right) }
 
   /// Sets the ring-of-light LED pattern on the physical controller.
   ///
@@ -188,8 +196,11 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
   ///   - handle: Active USB device handle.
   ///   - pattern: One of the ``Xbox360LEDPattern`` values.
   public func sendLED(handle: USBDeviceHandle, pattern: Xbox360LEDPattern) throws {
-    let packet: [UInt8] = [0x01, 0x03, pattern.rawValue]
-    _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
+    _ = try handle.interruptTransfer(
+      endpoint: outEndpoint,
+      data: Xbox360ReportLayout.ledPacket(pattern: pattern),
+      timeout: Xbox360ReportLayout.transferTimeoutMs
+    )
   }
 
   // MARK: - Private parsing
@@ -230,10 +241,10 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
   private func parseTriggers(lt: UInt8, rt: UInt8) -> [ControllerEvent] {
     var events: [ControllerEvent] = []
     if lt != prevLT {
-      events.append(.leftTriggerChanged(Float(lt) / xbox360TriggerMax))
+      events.append(.leftTriggerChanged(Float(lt) / Xbox360ReportLayout.triggerMax))
     }
     if rt != prevRT {
-      events.append(.rightTriggerChanged(Float(rt) / xbox360TriggerMax))
+      events.append(.rightTriggerChanged(Float(rt) / Xbox360ReportLayout.triggerMax))
     }
     return events
   }
@@ -251,7 +262,7 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
 
   private func normalizeStick(_ raw: Int16) -> Float {
     if raw == Int16.min { return -1.0 }
-    return Float(raw) / xbox360StickMax
+    return Float(raw) / Xbox360ReportLayout.stickMax
   }
 
   private func mapDpad(_ value: UInt16) -> DpadDirection {
@@ -261,10 +272,10 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
     case 2: .south
     case 4: .west
     case 8: .east
-    case 9: .northEast   // up + right
-    case 5: .northWest   // up + left
+    case 9: .northEast  // up + right
+    case 5: .northWest  // up + left
     case 10: .southEast  // down + right
-    case 6: .southWest   // down + left
+    case 6: .southWest  // down + left
     default: .neutral
     }
   }

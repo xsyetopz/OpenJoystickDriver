@@ -4,33 +4,28 @@ import PackageDescription
 
 let useLocalSwiftUSB = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTUSB"] == "1"
 let packageDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
-let localSwiftUSBPath = packageDirectory
-  .appendingPathComponent("../SwiftUSB")
-  .standardizedFileURL
+let localSwiftUSBPath = packageDirectory.appendingPathComponent("../SwiftUSB").standardizedFileURL
   .path
 let swiftUSBDependency: Package.Dependency =
   useLocalSwiftUSB && FileManager.default.fileExists(atPath: localSwiftUSBPath)
-    ? .package(path: localSwiftUSBPath)
-    : .package(url: "https://github.com/xsyetopz/SwiftUSB.git", from: "0.1.0")
+  ? .package(path: localSwiftUSBPath)
+  : .package(url: "https://github.com/xsyetopz/SwiftUSB.git", from: "0.1.0")
 
 #if arch(arm64)
-let testTargetTriple = "arm64-apple-macosx26.0"
+  let testTargetTriple = "arm64-apple-macosx26.0"
 #elseif arch(x86_64)
-let testTargetTriple = "x86_64-apple-macosx26.0"
+  let testTargetTriple = "x86_64-apple-macosx26.0"
 #else
-#error("Unsupported host architecture for Swift Testing target triple")
+  #error("Unsupported host architecture for Swift Testing target triple")
 #endif
 
 let package = Package(
   name: "OpenJoystickDriver",
   defaultLocalization: "en-US",
   platforms: [.macOS(.v10_15)],
-  products: [
-    .library(name: "OpenJoystickDriverKit", targets: ["OpenJoystickDriverKit"]),
-  ],
+  products: [.library(name: "OpenJoystickDriverKit", targets: ["OpenJoystickDriverKit"])],
   dependencies: [
-    swiftUSBDependency,
-    .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.9.3"),
+    swiftUSBDependency, .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.9.3"),
   ],
   targets: [
     .target(
@@ -38,9 +33,7 @@ let package = Package(
       dependencies: [.product(name: "SwiftUSB", package: "SwiftUSB")],
       path: "Sources/OpenJoystickDriverKit",
       resources: [.process("Resources/")],
-      linkerSettings: [
-        .linkedFramework("ServiceManagement")
-      ]
+      linkerSettings: [.linkedFramework("ServiceManagement")]
     ),
 
     .executableTarget(
@@ -48,21 +41,15 @@ let package = Package(
       dependencies: ["OpenJoystickDriverKit"],
       path: "Sources/OpenJoystickDriverDaemon",
       exclude: ["OpenJoystickDriverDaemon.entitlements.template"],
-      linkerSettings: [
-        .linkedFramework("GameController")
-      ]
+      linkerSettings: [.linkedFramework("GameController")]
     ),
 
     .executableTarget(
       name: "OpenJoystickDriver",
-      dependencies: [
-        "OpenJoystickDriverKit",
-        .product(name: "Sparkle", package: "Sparkle"),
-      ],
+      dependencies: ["OpenJoystickDriverKit", .product(name: "Sparkle", package: "Sparkle")],
       path: "Sources/OpenJoystickDriver",
       exclude: [
-        "OpenJoystickDriver.entitlements.template",
-        "App/Info.plist",
+        "OpenJoystickDriver.entitlements.template", "App/Info.plist",
         "App/com.openjoystickdriver.daemon.plist",
       ],
       resources: [.copy("Resources")],
@@ -74,35 +61,30 @@ let package = Package(
 
     .executableTarget(
       name: "OpenJoystickDriverHIDTool",
-      dependencies: [
-        "OpenJoystickDriverKit",
-        .product(name: "SwiftUSB", package: "SwiftUSB"),
-      ],
+      dependencies: ["OpenJoystickDriverKit", .product(name: "SwiftUSB", package: "SwiftUSB")],
       path: "Sources/OpenJoystickDriverHIDTool"
     ),
 
     .executableTarget(
       name: "OpenJoystickDriverGameControllerProbe",
       path: "Sources/OpenJoystickDriverGameControllerProbe",
-      linkerSettings: [
-        .linkedFramework("CoreHaptics"),
-        .linkedFramework("GameController"),
-      ]
+      linkerSettings: [.linkedFramework("CoreHaptics"), .linkedFramework("GameController")]
+    ),
+
+    .testTarget(
+      name: "OpenJoystickDriverAppTests",
+      dependencies: [],
+      path: "Tests/OpenJoystickDriverAppTests",
+      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
+      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
     ),
 
     .testTarget(
       name: "OpenJoystickDriverKitTests",
-      dependencies: [
-        "OpenJoystickDriverKit",
-        .product(name: "SwiftUSB", package: "SwiftUSB"),
-      ],
+      dependencies: ["OpenJoystickDriverKit", .product(name: "SwiftUSB", package: "SwiftUSB")],
       path: "Tests/OpenJoystickDriverKitTests",
-      swiftSettings: [
-        .unsafeFlags(["-target", testTargetTriple])
-      ],
-      linkerSettings: [
-        .unsafeFlags(["-target", testTargetTriple])
-      ]
+      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
+      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
     ),
   ]
 )

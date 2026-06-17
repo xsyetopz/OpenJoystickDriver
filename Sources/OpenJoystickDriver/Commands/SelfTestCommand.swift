@@ -21,8 +21,8 @@ struct SelfTestCommand {
 
     print("Virtual device self-test (\(payload.seconds)s)")
     print(
-      "  DriverKit: value \(payload.driverKitValueEvents), " +
-        "report \(payload.driverKitReportEvents)"
+      "  DriverKit: value \(payload.driverKitValueEvents), "
+        + "report \(payload.driverKitReportEvents)"
     )
     if let delta = payload.driverKitInputReportDelta {
       print("  DriverKit input report delta: \(delta)")

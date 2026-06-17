@@ -41,9 +41,9 @@ jobs:
         run: |
           ./scripts/ojd install-sdl3 --github-env
 
-      - name: Validate controller profiles
+      - name: Check controller profiles
         run: |
-          bash scripts/ojd validate profiles
+          bash scripts/ojd check profiles
 
       - name: Check shell scripts
         run: |

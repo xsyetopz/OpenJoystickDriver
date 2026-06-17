@@ -34,7 +34,7 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
   // @unchecked Sendable safety:
   // - All mutable state (prevButtons, sequencer, authHandler, handle)
   //   is accessed exclusively from the owning DevicePipeline actor's
-  //   feedHIDData/feedUSBData methods — no concurrent access occurs
+  //   feedHIDData/feedUSBData methods -- no concurrent access occurs
 
   private let outEndpoint: UInt8
   private let startupPackets: [GIPStartupPacket]
@@ -77,8 +77,10 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
     for attempt in 0..<gipHandshakeMaxAttempts {
       do {
         try await sendInitSequence(handle: handle)
-        print("[GIPParser] Init sequence sent" + " (attempt \(attempt + 1))"
-              + " outEP=0x\(String(outEndpoint, radix: 16))")
+        print(
+          "[GIPParser] Init sequence sent" + " (attempt \(attempt + 1))"
+            + " outEP=0x\(String(outEndpoint, radix: 16))"
+        )
         return
       } catch {
         print("[GIPParser] Init attempt \(attempt + 1) " + "failed: \(error)")
@@ -102,7 +104,7 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
       throw GIPError.malformedPacket("Packet too short: \(data.count) bytes")
     }
 
-    // Parse payload length — extended encoding when bit 7 is set on byte 3
+    // Parse payload length -- extended encoding when bit 7 is set on byte 3
     let payloadLength: Int
     let headerSize: Int
     if data[3] & 0x80 != 0 {
@@ -171,9 +173,7 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
     right: UInt8,
     lt: UInt8,
     rt: UInt8
-  ) throws {
-    try sendRumble(handle: handle, left: left, right: right, ltMotor: lt, rtMotor: rt)
-  }
+  ) throws { try sendRumble(handle: handle, left: left, right: right, ltMotor: lt, rtMotor: rt) }
 
   // MARK: - Private
 
@@ -188,9 +188,7 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
         data: startupPacket.packet(sequence: seq),
         timeout: 2000
       )
-      if index < startupPackets.count - 1 {
-        try await Task.sleep(nanoseconds: initDelay)
-      }
+      if index < startupPackets.count - 1 { try await Task.sleep(nanoseconds: initDelay) }
     }
   }
 

@@ -63,8 +63,7 @@ extension DextOutputDispatcher {
       return framedInputReport(reportID: 2, payload: [0x01])
     case .buttonReleased(let button) where button == .guide || button == .ps:
       return framedInputReport(reportID: 2, payload: [0x00])
-    default:
-      return nil
+    default: return nil
     }
   }
 

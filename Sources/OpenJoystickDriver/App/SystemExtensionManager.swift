@@ -157,7 +157,7 @@ extension SystemExtensionManager: OSSystemExtensionRequestDelegate {
 
   nonisolated func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
     let nsError = error as NSError
-    print("[SysExt] FAILED — domain: \(nsError.domain), code: \(nsError.code)")
+    print("[SysExt] FAILED -- domain: \(nsError.domain), code: \(nsError.code)")
     print("[SysExt]   localizedDescription: \(nsError.localizedDescription)")
 
     let message: String = {
@@ -173,20 +173,18 @@ extension SystemExtensionManager: OSSystemExtensionRequestDelegate {
         lines.append("")
         lines.append("Fix checklist (no guesswork):")
         lines.append(
-          "  1) Make sure you are running `/Applications/OpenJoystickDriver.app` " +
-            "(not `.build/...`)."
+          "  1) Make sure you are running `/Applications/OpenJoystickDriver.app` "
+            + "(not `.build/...`)."
         )
         lines.append(
-          "  2) If you are streaming / cannot reboot: use " +
-            "`./scripts/ojd rebuild-fast dev` to avoid sysext upgrades."
+          "  2) If you are streaming / cannot reboot: use "
+            + "`./scripts/ojd rebuild-fast dev` to avoid sysext upgrades."
         )
         lines.append(
-          "  3) If diagnostics mention stale sysext copies, macOS usually needs " +
-            "a reboot to clean up old versions."
+          "  3) If diagnostics mention stale sysext copies, macOS usually needs "
+            + "a reboot to clean up old versions."
         )
-        lines.append(
-          "  4) Compatibility mode still works without touching the system extension."
-        )
+        lines.append("  4) Compatibility mode still works without touching the system extension.")
         return lines.joined(separator: "\n")
       }
       return "\(nsError.localizedDescription) [code=\(nsError.code)]"
@@ -203,8 +201,8 @@ extension SystemExtensionManager: OSSystemExtensionRequestDelegate {
       // to clean up stale copies.
       if Self.isSysextActive(extensionID: self.extensionBundleID) {
         self.installWarning =
-          "DriverKit extension appears active, but the last install request failed. " +
-          "If diagnostics mention stale copies, a reboot cleans them up."
+          "DriverKit extension appears active, but the last install request failed. "
+          + "If diagnostics mention stale copies, a reboot cleans them up."
         self.installState = .installed
       }
     }
@@ -292,11 +290,7 @@ extension SystemExtensionManager {
     let pipe = Pipe()
     process.standardOutput = pipe
     process.standardError = pipe
-    do {
-      try process.run()
-    } catch {
-      return false
-    }
+    do { try process.run() } catch { return false }
     process.waitUntilExit()
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
     let out = String(data: data, encoding: .utf8) ?? ""

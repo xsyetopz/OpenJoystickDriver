@@ -59,8 +59,8 @@ public enum VirtualControllerBackendCatalog {
     supportsMultiplePhysicalControllers: true,
     requiresEntitlement: true,
     isImplemented: true,
-    notes: "Apple GameController.framework support uses the user-space HID " +
-      "backend with the apple-gamecontroller identity."
+    notes: "Apple GameController.framework support uses the user-space HID "
+      + "backend with the apple-gamecontroller identity."
   )
 }
 
@@ -87,9 +87,7 @@ extension DextOutputDispatcher: VirtualControllerBackend {
     )
   }
 
-  public func stopBackend() {
-    setEnabled(false)
-  }
+  public func stopBackend() { setEnabled(false) }
 
   public func backendStatus() -> VirtualControllerBackendStatus {
     let connected = isConnected()
@@ -118,9 +116,7 @@ extension UserSpaceOutputDispatcher: VirtualControllerBackend {
     VirtualControllerBackendStatus(id: backendID, isRunning: true, detail: status)
   }
 
-  public func stopBackend() {
-    close()
-  }
+  public func stopBackend() { close() }
 
   public func backendStatus() -> VirtualControllerBackendStatus {
     VirtualControllerBackendStatus(id: backendID, isRunning: status != "off", detail: status)

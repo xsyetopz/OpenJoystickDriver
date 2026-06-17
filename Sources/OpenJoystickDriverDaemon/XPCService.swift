@@ -155,8 +155,8 @@ public final class XPCService: NSObject, NSXPCListenerDelegate, OpenJoystickDriv
         effectiveOutputMode = .primaryOnly
         dispatcher.setMode(.primaryOnly)
         userSpaceStatus =
-          "off (\(compatibilityIdentity.rawValue) Compatibility disabled while DriverKit " +
-          "output is active)"
+          "off (\(compatibilityIdentity.rawValue) Compatibility disabled while DriverKit "
+          + "output is active)"
         return
       }
       if setUserSpaceVirtualDeviceEnabledInternal(true) {
@@ -200,24 +200,29 @@ public final class XPCService: NSObject, NSXPCListenerDelegate, OpenJoystickDriv
     _ listener: NSXPCListener,
     shouldAcceptNewConnection connection: NSXPCConnection
   ) -> Bool {
+    guard let clientDescription = Self.authorizedClientDescription(connection) else {
+      print(
+        "[XPCService] Rejected unauthorized connection"
+          + " pid=\(connection.processIdentifier) uid=\(connection.effectiveUserIdentifier)"
+      )
+      return false
+    }
     connection.exportedInterface = NSXPCInterface(with: OpenJoystickDriverXPCProtocol.self)
     connection.exportedObject = self
     connection.resume()
-    print("[XPCService] Accepted new connection")
+    print("[XPCService] Accepted new connection from \(clientDescription)")
     return true
   }
 
   // MARK: - Private
 
-  func buildUserSpaceDispatcher(
-    identity: CompatibilityIdentity
-  ) throws -> UserSpaceDispatcherBuild {
+  func buildUserSpaceDispatcher(identity: CompatibilityIdentity) throws -> UserSpaceDispatcherBuild
+  {
     enum CompatError: Swift.Error, CustomStringConvertible, Sendable {
       case unsupported(String)
       var description: String {
         switch self {
-        case .unsupported(let msg):
-          return msg
+        case .unsupported(let msg): return msg
         }
       }
     }
@@ -251,8 +256,8 @@ public final class XPCService: NSObject, NSXPCListenerDelegate, OpenJoystickDriv
           format = try HIDDescriptorReportFormat(
             descriptor: physical,
             outputReportID: VirtualRumbleOutputReportParser.xboxGIPReportID,
-            outputReportPayloadSize:
-              VirtualRumbleOutputReportParser.xboxGIPReportPayloadSizeWithoutReportID
+            outputReportPayloadSize: VirtualRumbleOutputReportParser
+              .xboxGIPReportPayloadSizeWithoutReportID
           )
         } catch {
           // If parsing fails on this OS build, fall back to the built-in descriptor.
@@ -318,33 +323,7 @@ public final class XPCService: NSObject, NSXPCListenerDelegate, OpenJoystickDriv
       }
     }
 
-    if enabled {
-      do {
-        let build = try buildUserSpaceDispatcher(identity: compatibilityIdentity)
-        userSpaceLock.withLock {
-          userSpaceDispatcher = build.dispatcher
-          foregroundConsumerDispatcherPool = build.foregroundConsumerPool
-          dispatcher.setSecondary(build.dispatcher)
-          userSpaceEnabled = true
-          userSpaceStatus = build.status
-        }
-        UserDefaults.standard.set(true, forKey: Self.userSpaceEnabledDefaultsKey)
-        print("[XPCService] Enabled user-space virtual gamepad")
-        primeUserSpaceDevices(build.dispatcher)
-        return true
-      } catch {
-        userSpaceLock.withLock {
-          dispatcher.setSecondary(nil)
-          userSpaceDispatcher = nil
-          foregroundConsumerDispatcherPool = nil
-          userSpaceEnabled = false
-          userSpaceStatus = "error: \(error)"
-        }
-        UserDefaults.standard.set(false, forKey: Self.userSpaceEnabledDefaultsKey)
-        print("[XPCService] Failed to enable user-space virtual gamepad: \(error)")
-        return false
-      }
-    } else {
+    guard enabled else {
       userSpaceLock.withLock {
         dispatcher.setSecondary(nil)
         userSpaceDispatcher?.close()
@@ -357,14 +336,45 @@ public final class XPCService: NSObject, NSXPCListenerDelegate, OpenJoystickDriv
       print("[XPCService] Disabled user-space virtual gamepad")
       return true
     }
+    do {
+      let build = try buildUserSpaceDispatcher(identity: compatibilityIdentity)
+      userSpaceLock.withLock {
+        userSpaceDispatcher = build.dispatcher
+        foregroundConsumerDispatcherPool = build.foregroundConsumerPool
+        dispatcher.setSecondary(build.dispatcher)
+        userSpaceEnabled = true
+        userSpaceStatus = build.status
+      }
+      UserDefaults.standard.set(true, forKey: Self.userSpaceEnabledDefaultsKey)
+      print("[XPCService] Enabled user-space virtual gamepad")
+      primeUserSpaceDevices(build.dispatcher)
+      return true
+    } catch {
+      userSpaceLock.withLock {
+        dispatcher.setSecondary(nil)
+        userSpaceDispatcher = nil
+        foregroundConsumerDispatcherPool = nil
+        userSpaceEnabled = false
+        userSpaceStatus = "error: \(error)"
+      }
+      UserDefaults.standard.set(false, forKey: Self.userSpaceEnabledDefaultsKey)
+      print("[XPCService] Failed to enable user-space virtual gamepad: \(error)")
+      return false
+    }
   }
 
   func setOutputModeInternal(_ modeRaw: String) -> Bool {
     guard let newMode = CompositeOutputDispatcher.Mode(rawValue: modeRaw) else { return false }
     switch newMode {
-    case .primaryOnly: applyMode(.driverKit); return true
-    case .secondaryOnly: applyMode(.compatUserSpace); return true
-    case .both: applyMode(.both); return true
+    case .primaryOnly:
+      applyMode(.driverKit)
+      return true
+    case .secondaryOnly:
+      applyMode(.compatUserSpace)
+      return true
+    case .both:
+      applyMode(.both)
+      return true
     }
   }
 
@@ -386,14 +396,8 @@ public final class XPCService: NSObject, NSXPCListenerDelegate, OpenJoystickDriv
     Task {
       let identifiers = await dm.connectedDeviceIdentifiers()
       guard !identifiers.isEmpty else { return }
-      for identifier in identifiers {
-        await ud.dispatch(events: [], from: identifier)
-      }
-      userSpaceLock.withLock {
-        if userSpaceDispatcher != nil {
-          userSpaceStatus = ud.status
-        }
-      }
+      for identifier in identifiers { await ud.dispatch(events: [], from: identifier) }
+      userSpaceLock.withLock { if userSpaceDispatcher != nil { userSpaceStatus = ud.status } }
     }
   }
 
@@ -419,24 +423,19 @@ public final class XPCService: NSObject, NSXPCListenerDelegate, OpenJoystickDriv
   ) async {
     guard virtualDeviceMode == .compatUserSpace else { return }
     guard userSpaceEnabled else { return }
-    guard
-      let pool = userSpaceLock.withLock({ foregroundConsumerDispatcherPool })
-    else { return }
+    guard let pool = userSpaceLock.withLock({ foregroundConsumerDispatcherPool }) else { return }
 
     let routeBundleRoots = observedConsumerBundleRoots.union(effectiveConsumerBundleRoots)
     let prioritizedRouteBundleRoots = routeBundleRoots.sorted {
       switch ($0 == frontmostBundleRootPath, $1 == frontmostBundleRootPath) {
       case (true, false): return true
       case (false, true): return false
-      default:
-        return $0 < $1
+      default: return $0 < $1
       }
     }
 
     for bundleRootPath in prioritizedRouteBundleRoots {
-      do {
-        try await pool.ensureDedicatedRoute(forConsumerBundleRootPath: bundleRootPath)
-      } catch {
+      do { try await pool.ensureDedicatedRoute(forConsumerBundleRootPath: bundleRootPath) } catch {
         print(
           "[XPCService] Failed to create dedicated Compatibility route for "
             + "\(URL(fileURLWithPath: bundleRootPath).lastPathComponent): \(error)"
@@ -445,8 +444,6 @@ public final class XPCService: NSObject, NSXPCListenerDelegate, OpenJoystickDriv
     }
 
     await pool.setActiveRouteToken(activeRouteToken)
-    userSpaceLock.withLock {
-      userSpaceStatus = pool.status
-    }
+    userSpaceLock.withLock { userSpaceStatus = pool.status }
   }
 }

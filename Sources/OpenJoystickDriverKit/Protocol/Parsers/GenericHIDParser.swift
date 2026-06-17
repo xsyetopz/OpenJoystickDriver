@@ -27,7 +27,7 @@ public final class GenericHIDParser: InputParser, @unchecked Sendable {
     if !didLogParseWarning {
       print(
         "[GenericHIDParser] Dropping input from \(identifier)"
-          + " — no parser implemented for this controller"
+          + " -- no parser implemented for this controller"
       )
       didLogParseWarning = true
     }

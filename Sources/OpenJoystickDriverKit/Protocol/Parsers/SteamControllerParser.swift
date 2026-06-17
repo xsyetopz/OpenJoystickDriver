@@ -1,25 +1,30 @@
 import Foundation
 import SwiftUSB
 
-private let steamControllerReportPrefix0: UInt8 = 0x01
-private let steamControllerReportPrefix1: UInt8 = 0x00
-private let steamControllerStateMessageID: UInt8 = 0x01
-private let steamControllerWirelessMessageID: UInt8 = 0x03
-private let steamControllerStatusMessageID: UInt8 = 0x04
-private let steamControllerReportLength = 64
-private let steamControllerTriggerMax: Float = 255
-private let steamControllerStickMax: Float = 32767
-private let steamControllerDeadzone: Float = 0.08
-private let steamControllerWirelessDisconnected: UInt8 = 0x01
-private let steamControllerWirelessConnected: UInt8 = 0x02
-private let steamControllerSetDefaultDigitalMappingsCommand: UInt8 = 0x85
-private let steamControllerLoadDefaultSettingsCommand: UInt8 = 0x8E
-private let steamControllerClearDigitalMappingsCommand: UInt8 = 0x81
-private let steamControllerSetSettingsValuesCommand: UInt8 = 0x87
-private let steamControllerGetWirelessStateCommand: UInt8 = 0xB4
-private let steamControllerTrackpadNone: UInt8 = 0x07
-private let steamControllerLeftTrackpadModeSetting: UInt8 = 0x07
-private let steamControllerRightTrackpadModeSetting: UInt8 = 0x08
+private enum SteamControllerReportLayout {
+  static let prefix0: UInt8 = 0x01
+  static let prefix1: UInt8 = 0x00
+  static let stateMessageID: UInt8 = 0x01
+  static let wirelessMessageID: UInt8 = 0x03
+  static let statusMessageID: UInt8 = 0x04
+  static let reportLength = 64
+  static let triggerMax: Float = 255
+  static let stickMax: Float = 32_767
+  static let deadzone: Float = 0.08
+  static let wirelessDisconnected: UInt8 = 0x01
+  static let wirelessConnected: UInt8 = 0x02
+}
+
+private enum SteamControllerCommand {
+  static let setDefaultDigitalMappings: UInt8 = 0x85
+  static let loadDefaultSettings: UInt8 = 0x8E
+  static let clearDigitalMappings: UInt8 = 0x81
+  static let setSettingsValues: UInt8 = 0x87
+  static let getWirelessState: UInt8 = 0xB4
+  static let trackpadNone: UInt8 = 0x07
+  static let leftTrackpadModeSetting: UInt8 = 0x07
+  static let rightTrackpadModeSetting: UInt8 = 0x08
+}
 
 /// Parser for Valve Steam Controller input reports.
 ///
@@ -77,59 +82,49 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
 
   public func hidStartupFeatureReports() -> [PhysicalHIDOutputReport] {
     [
-      steamFeatureReport([steamControllerClearDigitalMappingsCommand]),
+      steamFeatureReport([SteamControllerCommand.clearDigitalMappings]),
       steamFeatureReport([
-        steamControllerSetSettingsValuesCommand,
-        6,
-        steamControllerLeftTrackpadModeSetting,
-        steamControllerTrackpadNone,
-        0,
-        steamControllerRightTrackpadModeSetting,
-        steamControllerTrackpadNone,
-        0,
+        SteamControllerCommand.setSettingsValues, 6, SteamControllerCommand.leftTrackpadModeSetting,
+        SteamControllerCommand.trackpadNone, 0, SteamControllerCommand.rightTrackpadModeSetting,
+        SteamControllerCommand.trackpadNone, 0,
       ]),
     ]
   }
 
   public func hidShutdownFeatureReports() -> [PhysicalHIDOutputReport] {
     [
-      steamFeatureReport([steamControllerSetDefaultDigitalMappingsCommand]),
-      steamFeatureReport([steamControllerLoadDefaultSettingsCommand]),
+      steamFeatureReport([SteamControllerCommand.setDefaultDigitalMappings]),
+      steamFeatureReport([SteamControllerCommand.loadDefaultSettings]),
     ]
   }
 
   public func inputConnectionStatusRequestReport() -> PhysicalHIDOutputReport? {
     guard isWirelessReceiver else { return nil }
-    return steamFeatureReport([steamControllerGetWirelessStateCommand])
+    return steamFeatureReport([SteamControllerCommand.getWirelessState])
   }
 
   /// No-op for the current experimental input slice.
-  public func performHandshake(handle: USBDeviceHandle?) async throws {
-    await Task.yield()
-  }
+  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
 
   /// Parses one Steam Controller state report and returns controller events.
   public func parse(data: Data) throws -> [ControllerEvent] {
     let bytes = Array(data)
-    guard bytes.count == steamControllerReportLength,
-      bytes[0] == steamControllerReportPrefix0,
-      bytes[1] == steamControllerReportPrefix1
-    else {
-      return []
-    }
+    guard bytes.count == SteamControllerReportLayout.reportLength,
+      bytes[0] == SteamControllerReportLayout.prefix0,
+      bytes[1] == SteamControllerReportLayout.prefix1
+    else { return [] }
 
     switch bytes[ReportOffset.messageType] {
-    case steamControllerWirelessMessageID:
+    case SteamControllerReportLayout.wirelessMessageID:
       parseWirelessStatus(bytes)
       return []
-    case steamControllerStatusMessageID:
+    case SteamControllerReportLayout.statusMessageID:
       parseWirelessStatusFallback()
       return []
-    case steamControllerStateMessageID:
+    case SteamControllerReportLayout.stateMessageID:
       guard isLogicalControllerConnected else { return [] }
       return parseControllerState(bytes)
-    default:
-      return []
+    default: return []
     }
   }
 
@@ -137,19 +132,15 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     guard isWirelessReceiver else { return }
     let nextConnected: Bool
     switch bytes[ReportOffset.wirelessStatus] {
-    case steamControllerWirelessDisconnected:
-      nextConnected = false
-    case steamControllerWirelessConnected:
-      nextConnected = true
-    default:
-      return
+    case SteamControllerReportLayout.wirelessDisconnected: nextConnected = false
+    case SteamControllerReportLayout.wirelessConnected: nextConnected = true
+    default: return
     }
     guard nextConnected != isLogicalControllerConnected else { return }
     isLogicalControllerConnected = nextConnected
     pendingConnectionStateChange = nextConnected ? .connected : .disconnected
     resetPreviousReportState()
   }
-
 
   private func parseWirelessStatusFallback() {
     guard isWirelessReceiver, !isLogicalControllerConnected else { return }
@@ -193,8 +184,8 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
   }
 
   private func steamFeatureReport(_ command: [UInt8]) -> PhysicalHIDOutputReport {
-    var report = [UInt8](repeating: 0, count: steamControllerReportLength)
-    for (index, byte) in command.prefix(steamControllerReportLength).enumerated() {
+    var report = [UInt8](repeating: 0, count: SteamControllerReportLayout.reportLength)
+    for (index, byte) in command.prefix(SteamControllerReportLayout.reportLength).enumerated() {
       report[index] = byte
     }
     return PhysicalHIDOutputReport(reportID: 0, bytes: report)
@@ -217,29 +208,33 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     -> [ControllerEvent]
   {
     var events: [ControllerEvent] = []
-    events.append(contentsOf: diffButtons(prev: prevButtons0, curr: b0, mapping: [
-      (0x01, .r2Digital),
-      (0x02, .l2Digital),
-      (0x04, .rightBumper),
-      (0x08, .leftBumper),
-      (0x10, .y),
-      (0x20, .b),
-      (0x40, .x),
-      (0x80, .a),
-    ]))
-    events.append(contentsOf: diffButtons(prev: prevButtons1, curr: b1, mapping: [
-      (0x10, .back),
-      (0x20, .guide),
-      (0x40, .start),
-      (0x80, .genericButton1),
-    ]))
-    events.append(contentsOf: diffButtons(prev: prevButtons2, curr: b2, mapping: [
-      (0x01, .genericButton2),
-      (0x02, .genericButton3),
-      (0x04, .rightStick),
-      (0x10, .genericButton5),
-      (0x40, .leftStick),
-    ]))
+    events.append(
+      contentsOf: diffButtons(
+        prev: prevButtons0,
+        curr: b0,
+        mapping: [
+          (0x01, .r2Digital), (0x02, .l2Digital), (0x04, .rightBumper), (0x08, .leftBumper),
+          (0x10, .y), (0x20, .b), (0x40, .x), (0x80, .a),
+        ]
+      )
+    )
+    events.append(
+      contentsOf: diffButtons(
+        prev: prevButtons1,
+        curr: b1,
+        mapping: [(0x10, .back), (0x20, .guide), (0x40, .start), (0x80, .genericButton1)]
+      )
+    )
+    events.append(
+      contentsOf: diffButtons(
+        prev: prevButtons2,
+        curr: b2,
+        mapping: [
+          (0x01, .genericButton2), (0x02, .genericButton3), (0x04, .rightStick),
+          (0x10, .genericButton5), (0x40, .leftStick),
+        ]
+      )
+    )
     let wasLeftPadTouched = (prevButtons2 & 0x88) != 0
     let isLeftPadTouched = (b2 & 0x88) != 0
     if wasLeftPadTouched != isLeftPadTouched {
@@ -259,10 +254,10 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
   private func parseTriggers(left: UInt8, right: UInt8) -> [ControllerEvent] {
     var events: [ControllerEvent] = []
     if left != prevLT {
-      events.append(.leftTriggerChanged(Float(left) / steamControllerTriggerMax))
+      events.append(.leftTriggerChanged(Float(left) / SteamControllerReportLayout.triggerMax))
     }
     if right != prevRT {
-      events.append(.rightTriggerChanged(Float(right) / steamControllerTriggerMax))
+      events.append(.rightTriggerChanged(Float(right) / SteamControllerReportLayout.triggerMax))
     }
     return events
   }
@@ -305,8 +300,8 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
   }
 
   private func normalizeAxis(_ value: Int16) -> Float {
-    let normalized = Float(value) / steamControllerStickMax
-    if abs(normalized) < steamControllerDeadzone { return 0 }
+    let normalized = Float(value) / SteamControllerReportLayout.stickMax
+    if abs(normalized) < SteamControllerReportLayout.deadzone { return 0 }
     return max(-1, min(1, normalized))
   }
 

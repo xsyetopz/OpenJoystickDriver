@@ -22,27 +22,17 @@ public enum CompatibilityIdentity: Codable, CaseIterable, Sendable, Equatable {
   case xoneHID
 
   public static let allCases: [Self] = [
-    .genericHID,
-    .sdl2_3,
-    .appleGameController,
-    .x360HID,
-    .xoneHID,
+    .genericHID, .sdl2_3, .appleGameController, .x360HID, .xoneHID,
   ]
 
   public init?(rawValue: String) {
     switch rawValue {
-    case "generic-hid":
-      self = .genericHID
-    case "sdl2-3":
-      self = .sdl2_3
-    case "apple-gamecontroller":
-      self = .appleGameController
-    case "x360-hid":
-      self = .x360HID
-    case "xone-hid":
-      self = .xoneHID
-    default:
-      return nil
+    case "generic-hid": self = .genericHID
+    case "sdl2-3": self = .sdl2_3
+    case "apple-gamecontroller": self = .appleGameController
+    case "x360-hid": self = .x360HID
+    case "xone-hid": self = .xoneHID
+    default: return nil
     }
   }
 
@@ -76,18 +66,13 @@ public enum CompatibilityIdentity: Codable, CaseIterable, Sendable, Equatable {
 
   public var disablesDriverKitMirror: Bool {
     switch self {
-    case .genericHID, .sdl2_3:
-      true
-    case .appleGameController:
-      false
-    case .xoneHID, .x360HID:
-      false
+    case .genericHID, .sdl2_3: true
+    case .appleGameController: false
+    case .xoneHID, .x360HID: false
     }
   }
 
-  public var seizesDriverKitInCompatibilityMode: Bool {
-    true
-  }
+  public var seizesDriverKitInCompatibilityMode: Bool { true }
 }
 
 /// Which virtual device output path the daemon should actively drive.

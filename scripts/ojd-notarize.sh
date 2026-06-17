@@ -5,14 +5,14 @@
 #   ./scripts/ojd notarize <submit|status|history|log>
 #
 # Prerequisites:
-#   1. Developer ID signing (scripts/.env.release)
-#   2. NOTARIZE_APPLE_ID and NOTARIZE_PASSWORD set in scripts/.env.release
+#   1. Developer ID signing (.env.release)
+#   2. NOTARIZE_KEYCHAIN_PROFILE or NOTARIZE_APPLE_ID/NOTARIZE_PASSWORD in .env.release
 #
 # Environment variables:
-#   NOTARIZE_TIMEOUT_MINUTES  — overall timeout (default: 180, i.e. 3 hours)
+#   NOTARIZE_TIMEOUT_MINUTES  -- overall timeout (default: 180, i.e. 3 hours)
 #                               First-ever submissions can take hours; subsequent ones ~5 min.
-#   NOTARIZE_POLL_INTERVAL    — seconds between polls (default: 30)
-#   NOTARIZE_MAX_RETRIES      — consecutive transient failures before abort (default: 5)
+#   NOTARIZE_POLL_INTERVAL    -- seconds between polls (default: 30)
+#   NOTARIZE_MAX_RETRIES      -- consecutive transient failures before abort (default: 5)
 #
 # USAGE:
 #   OJD_ENV=release ./scripts/notarize.sh
@@ -21,13 +21,16 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/ojd-common.sh"
 
-die() { echo "ERROR: $*" >&2; exit 2; }
+die() {
+  echo "ERROR: $*" >&2
+  exit 2
+}
 
 subcmd="${1:-submit}"
 shift || true
 
 if [[ "$subcmd" == "-h" || "$subcmd" == "--help" || "$subcmd" == "help" ]]; then
-  cat <<'TXT'
+  cat << 'TXT'
 Usage:
   OJD_ENV=release ./scripts/ojd notarize submit
   OJD_ENV=release ./scripts/ojd notarize status [submission-id]
@@ -58,8 +61,8 @@ if [[ "$subcmd" == "store-credentials" ]]; then
   exit 0
 fi
 
-if [[ -z "${NOTARIZE_KEYCHAIN_PROFILE:-}" && ( -z "${NOTARIZE_APPLE_ID:-}" || -z "${NOTARIZE_PASSWORD:-}" ) ]]; then
-  echo "ERROR: Notarization credentials not set in scripts/.env.release"
+if [[ -z "${NOTARIZE_KEYCHAIN_PROFILE:-}" && (-z "${NOTARIZE_APPLE_ID:-}" || -z "${NOTARIZE_PASSWORD:-}") ]]; then
+  echo "ERROR: Notarization credentials not set in .env.release"
   echo ""
   echo "  NOTARIZE_APPLE_ID  = your Apple ID email"
   echo "  NOTARIZE_PASSWORD  = app-specific password from:"
@@ -149,13 +152,13 @@ fi
 
 echo "  Submission ID: $SUBMISSION_ID"
 
-# Remove zip now — it's already uploaded
+# Remove zip now -- it's already uploaded
 rm -f "$ZIP_PATH"
 
 # ---------------------------------------------------------------------------
 # Step 2b: Poll for completion with timeout and retry
 # ---------------------------------------------------------------------------
-DEADLINE=$(( $(date +%s) + TIMEOUT_MINUTES * 60 ))
+DEADLINE=$(($(date +%s) + TIMEOUT_MINUTES * 60))
 CONSECUTIVE_FAILURES=0
 
 echo "Polling for notarization status (timeout: ${TIMEOUT_MINUTES}m, interval: ${POLL_INTERVAL}s)..."
@@ -165,11 +168,11 @@ echo ""
 
 while true; do
   NOW=$(date +%s)
-  if (( NOW >= DEADLINE )); then
+  if ((NOW >= DEADLINE)); then
     echo "ERROR: Notarization timed out after ${TIMEOUT_MINUTES} minutes"
     echo "  Submission ID: $SUBMISSION_ID"
     echo ""
-    echo "  The submission is still queued with Apple — it may yet complete."
+    echo "  The submission is still queued with Apple -- it may yet complete."
     echo "  Check status:  OJD_ENV=release ./scripts/ojd notarize status $SUBMISSION_ID"
     echo "  View history:  OJD_ENV=release ./scripts/ojd notarize history"
     echo ""
@@ -178,17 +181,17 @@ while true; do
     exit 1
   fi
 
-  REMAINING=$(( (DEADLINE - NOW) / 60 ))
+  REMAINING=$(((DEADLINE - NOW) / 60))
 
   # Query status, handling transient failures
   if INFO_OUTPUT=$(xcrun notarytool info "$SUBMISSION_ID" \
     "${AUTH_ARGS[@]}" 2>&1); then
     CONSECUTIVE_FAILURES=0
   else
-    CONSECUTIVE_FAILURES=$(( CONSECUTIVE_FAILURES + 1 ))
+    CONSECUTIVE_FAILURES=$((CONSECUTIVE_FAILURES + 1))
     echo "[$(date '+%H:%M:%S')] Poll failed (attempt $CONSECUTIVE_FAILURES/$MAX_RETRIES): $(echo "$INFO_OUTPUT" | head -1)"
-    if (( CONSECUTIVE_FAILURES >= MAX_RETRIES )); then
-      echo "ERROR: $MAX_RETRIES consecutive poll failures — giving up"
+    if ((CONSECUTIVE_FAILURES >= MAX_RETRIES)); then
+      echo "ERROR: $MAX_RETRIES consecutive poll failures -- giving up"
       echo "$INFO_OUTPUT"
       exit 1
     fi
@@ -206,7 +209,7 @@ while true; do
       echo "Notarization accepted."
       break
       ;;
-    invalid|rejected)
+    invalid | rejected)
       echo ""
       echo "ERROR: Notarization failed with status: $STATUS"
       echo ""
@@ -215,7 +218,7 @@ while true; do
         "${AUTH_ARGS[@]}" 2>&1 || true
       exit 1
       ;;
-    "in progress"|*)
+    "in progress" | *)
       sleep "$POLL_INTERVAL"
       ;;
   esac

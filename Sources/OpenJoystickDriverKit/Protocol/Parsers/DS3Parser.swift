@@ -1,18 +1,23 @@
 import Foundation
 import SwiftUSB
 
-private let ds3InputReportID: UInt8 = 0x01
-private let ds3InputReportLength = 49
-private let ds3AxisCenter: Float = 128
-private let ds3AxisPositiveMax: Float = 127
-private let ds3AxisNegativeMax: Float = 128
-private let ds3TriggerMax: Float = 255
-private let ds3OperationalReportF2: UInt8 = 0xF2
-private let ds3OperationalReportF2Length = 17
-private let ds3OperationalReportF5: UInt8 = 0xF5
-private let ds3OperationalReportF5Length = 8
-private let ds3BluetoothOperationalReportID: UInt8 = 0xF4
-private let ds3Deadzone: Float = 0.08
+private enum DS3ReportLayout {
+  static let inputReportID: UInt8 = 0x01
+  static let inputReportLength = 49
+  static let axisCenter: UInt8 = 128
+  static let axisNormalization = HIDAxisNormalizationStrategy.unsigned8CenteredFullScale127(
+    deadzone: 0.08
+  )
+  static let triggerMax: Float = 255
+  static let bluetoothOperationalReportID: UInt8 = 0xF4
+}
+
+private enum DS3OperationalReport {
+  static let f2: UInt8 = 0xF2
+  static let f2Length = 17
+  static let f5: UInt8 = 0xF5
+  static let f5Length = 8
+}
 
 /// Parser for Sony DualShock 3 / SIXAXIS USB and Bluetooth input reports.
 ///
@@ -43,28 +48,26 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
   private var prevButtons1: UInt8 = 0
   private var prevButtons2: UInt8 = 0
   private var prevDpad: UInt8 = 0
-  private var prevLX = UInt8(ds3AxisCenter)
-  private var prevLY = UInt8(ds3AxisCenter)
-  private var prevRX = UInt8(ds3AxisCenter)
-  private var prevRY = UInt8(ds3AxisCenter)
+  private var prevLX = DS3ReportLayout.axisCenter
+  private var prevLY = DS3ReportLayout.axisCenter
+  private var prevRX = DS3ReportLayout.axisCenter
+  private var prevRY = DS3ReportLayout.axisCenter
   private var prevL2: UInt8 = 0
   private var prevR2: UInt8 = 0
 
   public init() {}
 
-  public func performHandshake(handle: USBDeviceHandle?) async throws {
-    await Task.yield()
-  }
+  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
 
   public func hidStartupFeatureReadRequests() -> [PhysicalHIDFeatureReadRequest] {
     [
       PhysicalHIDFeatureReadRequest(
-        reportID: ds3OperationalReportF2,
-        length: ds3OperationalReportF2Length
+        reportID: DS3OperationalReport.f2,
+        length: DS3OperationalReport.f2Length
       ),
       PhysicalHIDFeatureReadRequest(
-        reportID: ds3OperationalReportF5,
-        length: ds3OperationalReportF5Length
+        reportID: DS3OperationalReport.f5,
+        length: DS3OperationalReport.f5Length
       ),
     ]
   }
@@ -74,25 +77,22 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
     return hidStartupFeatureReadRequests()
   }
 
-  public func hidStartupFeatureReports() -> [PhysicalHIDOutputReport] {
-    []
-  }
+  public func hidStartupFeatureReports() -> [PhysicalHIDOutputReport] { [] }
 
   public func hidStartupFeatureReports(transport: String?) -> [PhysicalHIDOutputReport] {
     guard transport == "Bluetooth" else { return [] }
     return [
       PhysicalHIDOutputReport(
-        reportID: ds3BluetoothOperationalReportID,
-        bytes: [ds3BluetoothOperationalReportID, 0x42, 0x03, 0x00, 0x00]
+        reportID: DS3ReportLayout.bluetoothOperationalReportID,
+        bytes: [DS3ReportLayout.bluetoothOperationalReportID, 0x42, 0x03, 0x00, 0x00]
       ),
     ]
   }
 
   public func parse(data: Data) throws -> [ControllerEvent] {
     let bytes = Array(data)
-    guard bytes.count >= ds3InputReportLength,
-      bytes[ReportOffset.reportID] == ds3InputReportID,
-      bytes[1] != 0xFF
+    guard bytes.count >= DS3ReportLayout.inputReportLength,
+      bytes[ReportOffset.reportID] == DS3ReportLayout.inputReportID, bytes[1] != 0xFF
     else { return [] }
 
     let b0 = bytes[ReportOffset.buttons0]
@@ -129,25 +129,24 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
     -> [ControllerEvent]
   {
     var events: [ControllerEvent] = []
-    events.append(contentsOf: diffButtons(prev: prevButtons0, curr: b0, mapping: [
-      (0x01, .back),
-      (0x02, .leftStick),
-      (0x04, .rightStick),
-      (0x08, .start),
-    ]))
-    events.append(contentsOf: diffButtons(prev: prevButtons1, curr: b1, mapping: [
-      (0x01, .l2Digital),
-      (0x02, .r2Digital),
-      (0x04, .l1),
-      (0x08, .r1),
-      (0x10, .triangle),
-      (0x20, .circle),
-      (0x40, .cross),
-      (0x80, .square),
-    ]))
-    events.append(contentsOf: diffButtons(prev: prevButtons2, curr: b2, mapping: [
-      (0x01, .ps),
-    ]))
+    events.append(
+      contentsOf: diffButtons(
+        prev: prevButtons0,
+        curr: b0,
+        mapping: [(0x01, .back), (0x02, .leftStick), (0x04, .rightStick), (0x08, .start)]
+      )
+    )
+    events.append(
+      contentsOf: diffButtons(
+        prev: prevButtons1,
+        curr: b1,
+        mapping: [
+          (0x01, .l2Digital), (0x02, .r2Digital), (0x04, .l1), (0x08, .r1), (0x10, .triangle),
+          (0x20, .circle), (0x40, .cross), (0x80, .square),
+        ]
+      )
+    )
+    events.append(contentsOf: diffButtons(prev: prevButtons2, curr: b2, mapping: [(0x01, .ps)]))
     return events
   }
 
@@ -176,8 +175,12 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
 
   private func parseTriggers(left: UInt8, right: UInt8) -> [ControllerEvent] {
     var events: [ControllerEvent] = []
-    if left != prevL2 { events.append(.leftTriggerChanged(Float(left) / ds3TriggerMax)) }
-    if right != prevR2 { events.append(.rightTriggerChanged(Float(right) / ds3TriggerMax)) }
+    if left != prevL2 {
+      events.append(.leftTriggerChanged(Float(left) / DS3ReportLayout.triggerMax))
+    }
+    if right != prevR2 {
+      events.append(.rightTriggerChanged(Float(right) / DS3ReportLayout.triggerMax))
+    }
     return events
   }
 
@@ -196,11 +199,7 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
   }
 
   private func normalizeAxis(_ value: UInt8) -> Float {
-    let centered = Float(value) - ds3AxisCenter
-    let divisor = centered >= 0 ? ds3AxisPositiveMax : ds3AxisNegativeMax
-    let normalized = centered / divisor
-    if abs(normalized) < ds3Deadzone { return 0 }
-    return max(-1, min(1, normalized))
+    DS3ReportLayout.axisNormalization.normalize(value)
   }
 
   private func mapDpad(up: Bool, right: Bool, down: Bool, left: Bool) -> DpadDirection {

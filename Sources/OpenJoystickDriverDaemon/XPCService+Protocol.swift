@@ -16,14 +16,11 @@ extension XPCService {
         let backends =
           d.preferredBackends.isEmpty ? "none" : d.preferredBackends.joined(separator: ",")
         return "\(d.name) (VID:\(d.vendorID)" + " PID:\(d.productID) \(d.parser)"
-          + " [\(d.connection)] SN:\(sn))"
-          + " protocol=\(d.protocolVariant)"
+          + " [\(d.connection)] SN:\(sn))" + " protocol=\(d.protocolVariant)"
           + " endpoints=in:0x\(String(d.inputEndpoint, radix: 16))"
           + " out:0x\(String(d.outputEndpoint, radix: 16))"
-          + " setConfig=\(d.needsSetConfiguration)"
-          + " settleMs=\(d.postHandshakeSettleMs)"
-          + " mappings=\(mappings)"
-          + " backends=\(backends)"
+          + " setConfig=\(d.needsSetConfiguration)" + " settleMs=\(d.postHandshakeSettleMs)"
+          + " mappings=\(mappings)" + " backends=\(backends)"
       }
       callback.call(strings)
     }
@@ -142,11 +139,7 @@ extension XPCService {
 
   public func setUserSpaceVirtualDeviceEnabled(_ enabled: Bool, reply: @escaping (Bool) -> Void) {
     // Legacy API: map to virtual device modes.
-    if enabled {
-      applyMode(.compatUserSpace)
-    } else {
-      applyMode(.driverKit)
-    }
+    if enabled { applyMode(.compatUserSpace) } else { applyMode(.driverKit) }
     reply(true)
   }
 
@@ -159,7 +152,10 @@ extension XPCService {
   }
 
   public func setCompatibilityIdentity(_ raw: String, reply: @escaping (Bool) -> Void) {
-    guard let id = CompatibilityIdentity(rawValue: raw) else { reply(false); return }
+    guard let id = CompatibilityIdentity(rawValue: raw) else {
+      reply(false)
+      return
+    }
     // Transactional switch:
     // - If user-space is enabled, do not tear down the current device until the new one is ready.
     // - If creation fails, keep the existing device alive and do not change the persisted identity.
@@ -179,8 +175,8 @@ extension XPCService {
         } catch {
           if !userSpaceStatus.hasPrefix("error:") {
             userSpaceStatus =
-              "error: Failed to switch Compatibility identity (\(id.rawValue)). Kept " +
-              "previous Compatibility device running. \(error)"
+              "error: Failed to switch Compatibility identity (\(id.rawValue)). Kept "
+              + "previous Compatibility device running. \(error)"
           } else {
             userSpaceStatus += " (kept previous Compatibility device running)"
           }
@@ -193,9 +189,7 @@ extension XPCService {
       UserDefaults.standard.set(id.rawValue, forKey: Self.compatibilityIdentityDefaultsKey)
       return true
     }
-    if ok && id.disablesDriverKitMirror && virtualDeviceMode == .both {
-      applyMode(.both)
-    }
+    if ok && id.disablesDriverKitMirror && virtualDeviceMode == .both { applyMode(.both) }
     reply(ok)
   }
 
@@ -218,9 +212,7 @@ extension XPCService {
         hidGamepads: devices,
         driverKitOutputStats: stats
       )
-      do {
-        callback.call(try JSONEncoder().encode(payload))
-      } catch {
+      do { callback.call(try JSONEncoder().encode(payload)) } catch {
         print("[XPCService] getVirtualDeviceDiagnostics encode error: \(error)")
         callback.call(Data())
       }
@@ -242,9 +234,7 @@ extension XPCService {
     let secs = max(1, min(30, seconds))
     Task {
       let payload = await runVirtualDeviceSelfTestInternal(seconds: secs)
-      do {
-        callback.call(try JSONEncoder().encode(payload))
-      } catch {
+      do { callback.call(try JSONEncoder().encode(payload)) } catch {
         print("[XPCService] runVirtualDeviceSelfTest encode error: \(error)")
         callback.call(Data())
       }

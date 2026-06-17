@@ -1,6 +1,21 @@
 # Signing, Profiles, Notarization
 
-This folder contains the build/signing tooling for OpenJoystickDriver.
+This folder contains the build/signing tooling for OpenJoystickDriver. Use
+`./scripts/ojd ...` as the stable developer entrypoint. Helper scripts are
+implementation details and follow the `ojd-*` naming convention.
+
+## Layout
+
+```text
+scripts/ojd                     stable command dispatcher
+scripts/ojd-*.sh                shell implementation helpers
+scripts/ojd-*.py                Python implementation helpers
+scripts/README.md               developer script workflow
+scripts/ojd-catalina-testkit.md macOS 10.15 test notes
+```
+
+Avoid adding one-off root scripts; route new developer commands through
+`./scripts/ojd` and keep implementation files under `scripts/ojd-*`.
 
 ## Task Map
 
@@ -14,6 +29,44 @@ This folder contains the build/signing tooling for OpenJoystickDriver.
 | Install a signed dev build into `/Applications`                       | `./scripts/ojd rebuild dev`                                                                         | App, daemon, and (optionally) dext.                   |
 | Fast rebuild app only (no dext upgrade)                               | `./scripts/ojd rebuild-fast dev`                                                                    | Best when you are iterating while streaming.          |
 | Package a release DMG                                                 | `./scripts/ojd package release <version>`                                                           | Builds, notarizes, staples, and writes a DMG.         |
+
+## Environment Files
+
+The canonical local configuration files live at the repository root:
+
+```text
+.env                  shared local defaults, optional
+.env.dev              development signing, loaded by default
+.env.release          release signing and notarization, loaded with OJD_ENV=release
+```
+
+Create them from templates or let the signing helper generate them:
+
+```bash
+cp .env.dev.example .env.dev
+cp .env.release.example .env.release
+./scripts/ojd signing configure
+```
+
+Scripts load env files in this order, with later files overriding earlier ones:
+
+```text
+.env                    shared local defaults
+.env.$OJD_ENV           canonical env-specific values
+$OJD_ENV_FILE           optional explicit override
+```
+
+Useful checks:
+
+```bash
+./scripts/ojd env status
+OJD_ENV=release ./scripts/ojd env status
+./scripts/ojd env example dev
+./scripts/ojd env example release
+```
+
+Secret-like values are redacted in `env status`. Use `OJD_ENV=none` to disable
+automatic env loading for a single command.
 
 ## Initial Setup (Per Machine / Team)
 
@@ -64,10 +117,12 @@ certificates (WWDR / Developer ID). Apple publishes them here:
 
 ### 3. Generate `.env.dev` and `.env.release`
 
-This repo reads your Keychain + installed profiles and writes both env files:
+This repo reads your Keychain + installed profiles and writes both root env files:
 
 ```bash
 ./scripts/ojd signing configure
+./scripts/ojd env status
+OJD_ENV=release ./scripts/ojd env status
 ```
 
 Re-run this after rotating certificates, regenerating profiles, or switching teams.
@@ -92,6 +147,22 @@ Commands (run the app-bundled binary):
 
 ```bash
 ./scripts/ojd build dev
+```
+
+### Raw USB/GIP gamepad analyzer
+
+Use this when investigating whether unsupported controller buttons produce USB
+traffic, for example Gamesir G7 SE L4/R4/M/Mic buttons:
+
+```bash
+./scripts/ojd analyze gamepad --investigate
+./scripts/ojd analyze gamepad --capture --all
+```
+
+Stop the daemon before claiming the USB interface:
+
+```bash
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless stop
 ```
 
 ### Build the DriverKit system extension (.dext)
@@ -127,7 +198,7 @@ OJD_ENV=release ./scripts/ojd notarize status
 For a release build that does not install anything on the build machine:
 
 ```bash
-./scripts/ojd package release 0.5.0-alpha.4
+./scripts/ojd package release 0.5.0-alpha.5
 ```
 
 This command uses release signing, embeds the DriverKit extension into the app
@@ -146,8 +217,8 @@ install and approve the app/system extension locally.
 ## GitHub Actions release
 
 `.github/workflows/release.yml` runs on SemVer tags such as `0.1.0` or
-`0.5.0-alpha.4` and by manual dispatch.
-It installs `libusb`, validates profiles, imports signing material, builds a
+`0.5.0-alpha.5` and by manual dispatch.
+It installs `libusb`, checks profiles, imports signing material, builds a
 release app, notarizes it, uploads the release DMG as a workflow artifact, and
 publishes the GitHub Release.
 

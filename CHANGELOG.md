@@ -2,6 +2,26 @@
 
 All notable changes to OpenJoystickDriver are documented in this file.
 
+## 0.5.0-alpha.5
+
+### Added
+
+- Added controller and device coverage for recent experimental profiles and moved reusable test fixtures into source-mirrored test support folders.
+- Added canonical root `.env` templates plus `./scripts/ojd env` and `./scripts/ojd analyze gamepad` developer workflows.
+
+### Changed
+
+- Reorganized tests to mirror the `Sources/` target and folder layout.
+- Split `DeviceManager`, XPC authorization, parser constants, and oversized scripts into smaller focused files.
+- Renamed profile/schema checking from `validate profiles` to `check profiles` across scripts, docs, workflows, and RTK filters.
+- Applied repository Swift formatting, SwiftLint cleanup, and shell formatting.
+
+### Fixed
+
+- Fixed Xbox 360 HID compatibility button packing so face buttons, shoulders, and Guide map to the expected XInput bits.
+- Documented the app-bundled daemon location and menu-bar/headless uninstall paths.
+- Gated daemon XPC connections by same-user and signing identity before accepting mutating control calls.
+
 ## 0.5.0-alpha.4
 
 ### Fixed

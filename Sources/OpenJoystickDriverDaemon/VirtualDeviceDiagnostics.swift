@@ -26,9 +26,9 @@ enum VirtualDeviceDiagnostics {
       if primaryPage == kHIDPage_GenericDesktop && primaryUsage == kHIDUsage_GD_GamePad {
         return true
       }
-      if let pairs = IOHIDDeviceGetProperty(device, kIOHIDDeviceUsagePairsKey as CFString) as? [[
-        String: Any
-      ]] {
+      if let pairs = IOHIDDeviceGetProperty(device, kIOHIDDeviceUsagePairsKey as CFString)
+        as? [[String: Any]]
+      {
         for pair in pairs {
           let page = pair[kIOHIDDeviceUsagePageKey as String] as? Int ?? 0
           let usage = pair[kIOHIDDeviceUsageKey as String] as? Int ?? 0
@@ -55,12 +55,11 @@ enum VirtualDeviceDiagnostics {
       // Only report:
       // - OJD virtual devices (DriverKit or user-space), OR
       // - real devices that look like GamePads (keeps the list relevant).
-      if !isOJDDriverKit && !isOJDUserSpace && !looksLikeGamepad(device) {
-        return nil
-      }
+      if !isOJDDriverKit && !isOJDUserSpace && !looksLikeGamepad(device) { return nil }
 
       let serialKind: XPCSerialKind =
-        (serial == nil || serial?.isEmpty == true) ? .none
+        (serial == nil || serial?.isEmpty == true)
+        ? .none
         : (UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial) ? .ojdUserSpace : .present)
 
       return XPCHIDGamepadSnapshot(
@@ -74,9 +73,7 @@ enum VirtualDeviceDiagnostics {
         isOJDDriverKit: isOJDDriverKit,
         isOJDUserSpace: isOJDUserSpace,
         isGameControllerSupported: {
-          if #available(macOS 11.0, *) {
-            return GCController.supportsHIDDevice(device)
-          }
+          if #available(macOS 11.0, *) { return GCController.supportsHIDDevice(device) }
           return nil
         }()
       )

@@ -81,9 +81,8 @@ import OpenJoystickDriverKit
 
   func runVirtualDeviceSelfTest(seconds: Int = 5) async {
     guard daemonConnected else { return }
-    do {
-      virtualDeviceSelfTest = try await client.runVirtualDeviceSelfTest(seconds: seconds)
-    } catch {
+    do { virtualDeviceSelfTest = try await client.runVirtualDeviceSelfTest(seconds: seconds) } catch
+    {
       await refreshDaemonHealth()
       daemonError = formatDaemonError(error)
       virtualDeviceSelfTest = nil
@@ -95,9 +94,7 @@ import OpenJoystickDriverKit
       virtualDeviceDiagnostics = nil
       return
     }
-    do {
-      virtualDeviceDiagnostics = try await client.getVirtualDeviceDiagnostics()
-    } catch {
+    do { virtualDeviceDiagnostics = try await client.getVirtualDeviceDiagnostics() } catch {
       daemonError = formatDaemonError(error)
       virtualDeviceDiagnostics = nil
     }
@@ -118,8 +115,6 @@ import OpenJoystickDriverKit
   }
 
   func openLatestRelease() {
-    if case .available(let info) = updateCheckState {
-      NSWorkspace.shared.open(info.htmlURL)
-    }
+    if case .available(let info) = updateCheckState { NSWorkspace.shared.open(info.htmlURL) }
   }
 }

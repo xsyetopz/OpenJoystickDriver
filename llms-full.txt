@@ -94,16 +94,16 @@ Rules:
 - GIP startup differences belong in `protocol.startup_packets`, not parser
   VID/PID branches.
 
-Validate profile/schema consistency with:
+Check profile/schema consistency with:
 
 ```bash
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ```
 
 ## Documentation and Agent Files
 
 - `README.md`: human entry point.
-- `docs/ARCHITECTURE.md`: runtime boundaries, extension rules, and validation contract.
+- `docs/ARCHITECTURE.md`: runtime boundaries, extension rules, and check contract.
 - `llms.txt`: concise LLM context.
 - `llms-full.txt`: expanded LLM context.
 - `AGENTS.md`: authored coding-agent instructions.
@@ -173,10 +173,10 @@ swift build
 ./scripts/ojd test parsers-macos14
 ```
 
-Profile/schema validation:
+Profile/schema checks:
 
 ```bash
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ```
 
 Backend probes:
@@ -207,7 +207,7 @@ Important constraints:
   credentials.
 - CI can build and run SwiftPM tests, but cannot prove local DriverKit approval,
   TCC permissions, physical controller behavior, or notarized install behavior
-  without configured secrets and macOS hardware validation.
+  without configured secrets and macOS hardware confirmation.
 
 ## CI Context
 
@@ -218,7 +218,7 @@ Run these checks before merging profile, schema, or package changes:
 
 ```bash
 swift build
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
 ```
 

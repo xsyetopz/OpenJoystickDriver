@@ -80,7 +80,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   var developerMode: Bool
 
   var appVersion: String {
-    Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.5.0-alpha.4"
+    Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.5.0-alpha.5"
   }
 
   let client = XPCClient()
@@ -133,8 +133,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     case .crashLooping: return L10n.string("daemon.status.crashLooping")
     case .unknown:
       return daemonConnected
-        ? L10n.string("daemon.status.running")
-        : L10n.string("daemon.status.unknown")
+        ? L10n.string("daemon.status.running") : L10n.string("daemon.status.unknown")
     }
   }
 
@@ -157,9 +156,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     await poll()
     await refreshVirtualDeviceDiagnostics()
     extensionManager.refreshInstallState()
-    if !sparkleUpdates.isConfigured {
-      Task { await checkForUpdates() }
-    }
+    if !sparkleUpdates.isConfigured { Task { await checkForUpdates() } }
   }
 
   func setPollingEnabled(_ enabled: Bool) {
@@ -198,19 +195,16 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     let currentBundleVersion =
       Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? appVersion
     guard !currentBundleVersion.isEmpty else { return }
-    guard UserDefaults.standard.string(forKey: daemonRepairBundleVersionDefaultsKey)
-      != currentBundleVersion
-    else {
-      return
-    }
+    guard
+      UserDefaults.standard.string(forKey: daemonRepairBundleVersionDefaultsKey)
+        != currentBundleVersion
+    else { return }
 
     do {
       let task = Task.detached { try DaemonManager.restart() }
       try await task.value
       UserDefaults.standard.set(currentBundleVersion, forKey: daemonRepairBundleVersionDefaultsKey)
-    } catch {
-      daemonError = formatDaemonError(error)
-    }
+    } catch { daemonError = formatDaemonError(error) }
   }
 
 }

@@ -7,7 +7,7 @@
     <false/>
 
     <!-- DextOutputDispatcher sends reports via IOHIDDeviceSetReport (public  -->
-    <!-- HID manager API). No user-client entitlement is needed — the daemon -->
+    <!-- HID manager API). No user-client entitlement is needed -- the daemon -->
     <!-- never calls IOServiceOpen on the dext.                              -->
 
     <!-- Allows IOKit USB device access (class 0xFF / vendor-specific) -->

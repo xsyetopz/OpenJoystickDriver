@@ -4,10 +4,7 @@ public struct Localization: Sendable {
   private let bundle: Bundle
   private let preferredLanguages: [String]
 
-  public init(
-    bundle: Bundle? = nil,
-    preferredLanguages: [String] = Locale.preferredLanguages
-  ) {
+  public init(bundle: Bundle? = nil, preferredLanguages: [String] = Locale.preferredLanguages) {
     self.bundle = bundle ?? .module
     self.preferredLanguages = preferredLanguages
   }
@@ -34,17 +31,14 @@ public struct Localization: Sendable {
       forPreferences: preferredLanguages
     )
     guard let language = preferred.first,
-          let path = bundle.path(forResource: language, ofType: "lproj") else {
-      return nil
-    }
+      let path = bundle.path(forResource: language, ofType: "lproj")
+    else { return nil }
     return Bundle(path: path)
   }
 }
 
 public enum L10n {
-  public static func string(_ key: String) -> String {
-    Localization().string(key)
-  }
+  public static func string(_ key: String) -> String { Localization().string(key) }
 
   public static func string(_ key: String, _ arguments: CVarArg...) -> String {
     String(format: Localization().string(key), locale: Locale.current, arguments: arguments)

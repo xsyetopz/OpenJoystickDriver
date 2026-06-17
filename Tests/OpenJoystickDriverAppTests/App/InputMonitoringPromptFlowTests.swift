@@ -50,6 +50,11 @@ struct InputMonitoringPromptFlowTests {
       "Sources/OpenJoystickDriverKit/Device/DeviceManager.swift"
     )
     let source = try String(contentsOf: inputMonitoringURL, encoding: .utf8)
+    let compactSource = source.replacingOccurrences(
+      of: #"\s+"#,
+      with: " ",
+      options: .regularExpression
+    )
     let deviceManager = try String(contentsOf: deviceManagerURL, encoding: .utf8)
 
     #expect(source.contains("NSWorkspace.OpenConfiguration()"))
@@ -86,14 +91,18 @@ struct InputMonitoringPromptFlowTests {
       #expect(waitRange.lowerBound < daemonRecoveryRange.lowerBound)
     }
     #expect(source.contains("if inputMonitoring == \"granted\""))
-    #expect(source.contains("if daemonConnected {\n      await syncFromDaemonNow()\n    }"))
+    #expect(compactSource.contains("if daemonConnected { await syncFromDaemonNow() }"))
     #expect(source.contains("process.environment = ProcessInfo.processInfo.environment.merging"))
     #expect(source.contains("\"OJD_PERMISSION_PROMPT_ONLY\": \"1\""))
     #expect(!deviceManager.contains("await permissionManager.requestAccess()"))
     #expect(deviceManager.contains("Use the app's Request Access action"))
+    let hidDetectionURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriverKit/Device/DeviceManager+HIDDetection.swift"
+    )
+    let hidDetection = try String(contentsOf: hidDetectionURL, encoding: .utf8)
     #expect(deviceManager.contains("await ensureHIDDetectionState(for: state)"))
-    #expect(deviceManager.contains("private func ensureHIDDetectionState"))
-    #expect(deviceManager.contains("await removeHIDPipelines()"))
+    #expect(hidDetection.contains("func ensureHIDDetectionState"))
+    #expect(hidDetection.contains("await removeHIDPipelines()"))
   }
   @Test
   func testDaemonRetainsShutdownSignalSourcesForQuitAndReopen() throws {

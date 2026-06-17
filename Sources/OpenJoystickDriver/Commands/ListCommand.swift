@@ -61,8 +61,7 @@ struct ListCommand {
             profile.mappingFlags.isEmpty ? "none" : profile.mappingFlags.joined(separator: ",")
           print(
             "  VID=0x\(vid)" + " PID=0x\(pid)" + " bus=\(device.bus)" + " addr=\(device.address)"
-              + " parser=\(profile.parserName)"
-              + " protocol=\(profile.protocolVariant.rawValue)"
+              + " parser=\(profile.parserName)" + " protocol=\(profile.protocolVariant.rawValue)"
               + " endpoints=in:0x\(String(profile.transportProfile.inputEndpoint, radix: 16))"
               + " out:0x\(String(profile.transportProfile.outputEndpoint, radix: 16))"
               + " mappings=\(mappings)"

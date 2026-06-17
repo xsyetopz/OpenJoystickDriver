@@ -48,9 +48,7 @@ public actor PermissionManager {
   }
 
   /// Checks current Input Monitoring permission state without prompting.
-  public func checkAccess() -> AccessState {
-    Self.currentAccessState()
-  }
+  public func checkAccess() -> AccessState { Self.currentAccessState() }
 
   /// Requests Input Monitoring permission, showing the system dialog if needed.
   ///

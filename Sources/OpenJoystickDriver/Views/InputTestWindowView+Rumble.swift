@@ -9,19 +9,15 @@ extension InputTestWindowView {
         HStack {
           Text(
             canRumble
-              ? L10n.string("input.rumbleSendShort")
-              : L10n.string("input.rumbleUnavailable")
-          )
-            .font(.caption)
-            .foregroundColor(.secondary)
+              ? L10n.string("input.rumbleSendShort") : L10n.string("input.rumbleUnavailable")
+          ).font(.caption).foregroundColor(.secondary)
           Spacer()
-          Text(canRumble ? L10n.string("input.supported") : L10n.string("input.unavailable"))
-            .font(.system(size: 10, weight: .semibold))
-            .foregroundColor(canRumble ? .green : .secondary)
+          Text(canRumble ? L10n.string("input.supported") : L10n.string("input.unavailable")).font(
+            .system(size: 10, weight: .semibold)
+          ).foregroundColor(canRumble ? .green : .secondary)
         }
         VStack(alignment: .leading, spacing: 7) {
-          Text(L10n.string("input.motors"))
-            .font(.system(size: 10, weight: .semibold))
+          Text(L10n.string("input.motors")).font(.system(size: 10, weight: .semibold))
             .foregroundColor(.secondary)
           HStack(alignment: .top, spacing: 18) {
             VStack(alignment: .leading, spacing: 5) {
@@ -39,39 +35,27 @@ extension InputTestWindowView {
             rumbleIconButton(
               rumbleRunning ? L10n.string("input.sending") : L10n.string("input.pulse"),
               systemName: rumbleRunning ? "hourglass" : "dot.radiowaves.left.and.right"
-            ) {
-              sendRumble(to: device, durationMs: Int(rumbleDurationMs))
-            }
-            .disabled(rumbleRunning || !canRumble)
+            ) { sendRumble(to: device, durationMs: Int(rumbleDurationMs)) }.disabled(
+              rumbleRunning || !canRumble
+            )
             rumbleIconButton(L10n.string("input.hold"), systemName: "infinity") {
               sendRumble(to: device, durationMs: 0)
-            }
-            .disabled(!canRumble)
+            }.disabled(!canRumble)
             rumbleIconButton(L10n.string("input.stop"), systemName: "stop.fill") {
               sendRumble(to: device, left: 0, right: 0, lt: 0, rt: 0, durationMs: 0)
-            }
-            .disabled(!canRumble)
+            }.disabled(!canRumble)
             Divider().frame(height: 18)
             Stepper(
               L10n.string("input.durationMs", Int(rumbleDurationMs)),
               value: $rumbleDurationMs,
               in: 50...5000,
               step: 50
-            )
-              .font(.caption)
-              .frame(width: 160)
+            ).font(.caption).frame(width: 160)
           }
           HStack(spacing: 8) {
             rumbleIconButton(L10n.string("input.leftMotor"), systemName: "l.circle") {
-              sendRumble(
-                to: device,
-                left: UInt8(clamping: Int(rumbleLeft)),
-                right: 0,
-                lt: 0,
-                rt: 0
-              )
-            }
-            .disabled(rumbleRunning || !canRumble)
+              sendRumble(to: device, left: UInt8(clamping: Int(rumbleLeft)), right: 0, lt: 0, rt: 0)
+            }.disabled(rumbleRunning || !canRumble)
             rumbleIconButton(L10n.string("input.rightMotor"), systemName: "r.circle") {
               sendRumble(
                 to: device,
@@ -80,8 +64,7 @@ extension InputTestWindowView {
                 lt: 0,
                 rt: 0
               )
-            }
-            .disabled(rumbleRunning || !canRumble)
+            }.disabled(rumbleRunning || !canRumble)
             Divider().frame(height: 16)
             rumbleIconButton(L10n.string("input.low"), systemName: "speaker.wave.1.fill") {
               setRumbleValues(left: 32, right: 32, lt: 32, rt: 32)
@@ -98,13 +81,13 @@ extension InputTestWindowView {
           }
           HStack(spacing: 8) {
             if let rumbleResult {
-              Text(L10n.string("input.lastCommand", rumbleResult))
-                .font(.caption)
-                .foregroundColor(.secondary)
+              Text(L10n.string("input.lastCommand", rumbleResult)).font(.caption).foregroundColor(
+                .secondary
+              )
             } else {
-              Text(L10n.string("input.rumblePhysicalOnly"))
-                .font(.caption)
-                .foregroundColor(.secondary)
+              Text(L10n.string("input.rumblePhysicalOnly")).font(.caption).foregroundColor(
+                .secondary
+              )
             }
           }
         }
@@ -112,8 +95,7 @@ extension InputTestWindowView {
     }
   }
 
-  @ViewBuilder
-  func rumbleIconButton(
+  @ViewBuilder func rumbleIconButton(
     _ title: String,
     systemName: String,
     action: @escaping () -> Void
@@ -121,23 +103,14 @@ extension InputTestWindowView {
     SwiftUI.Button(action: action) {
       if #available(macOS 11.0, *) {
         VStack(spacing: 3) {
-          Image(systemName: systemName)
-            .font(.system(size: 14, weight: .semibold))
-          Text(rumbleGlyphCaption(title))
-            .font(.system(size: 9, weight: .medium))
-            .lineLimit(1)
-        }
-        .frame(width: 44, height: 36)
-        .contentShape(RoundedRectangle(cornerRadius: 7))
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(title))
+          Image(systemName: systemName).font(.system(size: 14, weight: .semibold))
+          Text(rumbleGlyphCaption(title)).font(.system(size: 9, weight: .medium)).lineLimit(1)
+        }.frame(width: 44, height: 36).contentShape(RoundedRectangle(cornerRadius: 7))
+          .accessibilityElement(children: .ignore).accessibilityLabel(Text(title))
       } else {
-        Text(title)
-          .font(.caption)
-          .frame(width: 44, height: 36)
+        Text(title).font(.caption).frame(width: 44, height: 36)
       }
-    }
-    .buttonStyle(.borderless)
+    }.buttonStyle(.borderless)
   }
 
   func rumbleGlyphCaption(_ title: String) -> String {

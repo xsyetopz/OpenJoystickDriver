@@ -66,8 +66,8 @@ jobs:
         run: |
           ./scripts/ojd install-sdl3 --github-env
 
-      - name: Validate profiles
-        run: ./scripts/ojd validate profiles
+      - name: Check profiles
+        run: ./scripts/ojd check profiles
 
       - name: Check shell scripts
         run: bash -n scripts/ojd scripts/ojd-*.sh
@@ -81,7 +81,7 @@ jobs:
       - name: Set up release signing
         run: ./scripts/ojd signing ci-release-setup
 
-      - name: Validate notarization credentials
+      - name: Check notarization credentials
         run: ./scripts/ojd notarize history
 
       - name: Package release build

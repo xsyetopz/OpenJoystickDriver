@@ -14,21 +14,18 @@ struct OJDCard<Content: View>: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
       if let title {
-        Text(title)
-          .font(.system(size: 13, weight: .semibold))
-          .foregroundColor(.secondary)
+        Text(title).font(.system(size: 13, weight: .semibold)).foregroundColor(.secondary)
       }
       content
-    }
-    .padding(12)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .background(
-      RoundedRectangle(cornerRadius: 14, style: .continuous)
-        .fill(Color(NSColor.controlBackgroundColor))
-    )
-    .overlay(
-      RoundedRectangle(cornerRadius: 14, style: .continuous)
-        .stroke(Color.secondary.opacity(0.16), lineWidth: 1)
+    }.padding(12).frame(maxWidth: .infinity, alignment: .leading).background(
+      RoundedRectangle(cornerRadius: 14, style: .continuous).fill(
+        Color(NSColor.controlBackgroundColor)
+      )
+    ).overlay(
+      RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(
+        Color.secondary.opacity(0.16),
+        lineWidth: 1
+      )
     )
   }
 }
@@ -39,13 +36,14 @@ struct StatusOrb: View {
 
   var body: some View {
     ZStack {
-      Circle()
-        .fill((isReady ? Color.green : (isBusy ? Color.orange : Color.secondary)).opacity(0.14))
-      Circle()
-        .fill(isReady ? Color.green : (isBusy ? Color.orange : Color.secondary))
-        .frame(width: 10, height: 10)
-    }
-    .frame(width: 28, height: 28)
+      Circle().fill(
+        (isReady ? Color.green : (isBusy ? Color.orange : Color.secondary)).opacity(0.14)
+      )
+      Circle().fill(isReady ? Color.green : (isBusy ? Color.orange : Color.secondary)).frame(
+        width: 10,
+        height: 10
+      )
+    }.frame(width: 28, height: 28)
   }
 }
 
@@ -55,21 +53,12 @@ struct MetricChip: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 2) {
-      Text(title)
-        .font(.system(size: 10, weight: .medium))
-        .foregroundColor(.secondary)
-      Text(value)
-        .font(.caption.weight(.semibold))
-        .lineLimit(1)
-        .minimumScaleFactor(0.8)
-    }
-    .padding(.horizontal, 9)
-    .padding(.vertical, 7)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .background(
-      RoundedRectangle(cornerRadius: 10, style: .continuous)
-        .fill(Color.secondary.opacity(0.08))
-    )
+      Text(title).font(.system(size: 10, weight: .medium)).foregroundColor(.secondary)
+      Text(value).font(.caption.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.8)
+    }.padding(.horizontal, 9).padding(.vertical, 7).frame(maxWidth: .infinity, alignment: .leading)
+      .background(
+        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.secondary.opacity(0.08))
+      )
   }
 }
 
@@ -107,38 +96,30 @@ struct PermissionRow: View {
 
       VStack(alignment: .leading, spacing: 2) {
         HStack(spacing: 6) {
-          Text(title)
-            .font(.caption.weight(.semibold))
-          Text(statusLabel)
-            .font(.system(size: 10, weight: .semibold))
-            .foregroundColor(statusColor)
+          Text(title).font(.caption.weight(.semibold))
+          Text(statusLabel).font(.system(size: 10, weight: .semibold)).foregroundColor(statusColor)
         }
-        Text(subtitle)
-          .font(.caption)
-          .foregroundColor(.secondary)
-          .fixedSize(horizontal: false, vertical: true)
+        Text(subtitle).font(.caption).foregroundColor(.secondary).fixedSize(
+          horizontal: false,
+          vertical: true
+        )
       }
       Spacer()
-      SwiftUI.Button(actionTitle, action: action)
-        .controlSize(.small)
-        .disabled(disabled || isGranted)
+      SwiftUI.Button(actionTitle, action: action).controlSize(.small).disabled(
+        disabled || isGranted
+      )
     }
   }
 
-  @ViewBuilder
-  private var permissionIndicator: some View {
+  @ViewBuilder private var permissionIndicator: some View {
     if #available(macOS 11.0, *) {
-      Image(systemName: symbolName)
-        .font(.system(size: 10, weight: .bold))
-        .foregroundColor(statusColor)
-        .frame(width: 22, height: 22)
-        .background(Circle().fill(statusColor.opacity(0.12)))
+      Image(systemName: symbolName).font(.system(size: 10, weight: .bold)).foregroundColor(
+        statusColor
+      ).frame(width: 22, height: 22).background(Circle().fill(statusColor.opacity(0.12)))
     } else {
-      Text(isGranted ? "✓" : (isDenied ? "!" : "…"))
-        .font(.caption.weight(.bold))
-        .foregroundColor(statusColor)
-        .frame(width: 22, height: 22)
-        .background(Circle().fill(statusColor.opacity(0.12)))
+      Text(isGranted ? "✓" : (isDenied ? "!" : "…")).font(.caption.weight(.bold)).foregroundColor(
+        statusColor
+      ).frame(width: 22, height: 22).background(Circle().fill(statusColor.opacity(0.12)))
     }
   }
 }
@@ -147,34 +128,25 @@ struct PermissionAssistView: View {
   let message: String
 
   var body: some View {
-    Text(message)
-      .font(.caption)
-      .foregroundColor(.secondary)
-      .fixedSize(horizontal: false, vertical: true)
-      .padding(8)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .background(
-        RoundedRectangle(cornerRadius: 10, style: .continuous)
-          .fill(Color.secondary.opacity(0.08))
-      )
+    Text(message).font(.caption).foregroundColor(.secondary).fixedSize(
+      horizontal: false,
+      vertical: true
+    ).padding(8).frame(maxWidth: .infinity, alignment: .leading).background(
+      RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.secondary.opacity(0.08))
+    )
   }
 }
 
 struct MiniBadge: View {
   let title: String
 
-  init(_ title: String) {
-    self.title = title
-  }
+  init(_ title: String) { self.title = title }
 
   var body: some View {
-    Text(title)
-      .font(.system(size: 10, weight: .semibold))
-      .foregroundColor(.secondary)
-      .lineLimit(1)
-      .padding(.horizontal, 7)
-      .padding(.vertical, 4)
-      .background(Capsule().fill(Color.secondary.opacity(0.10)))
+    Text(title).font(.system(size: 10, weight: .semibold)).foregroundColor(.secondary).lineLimit(1)
+      .padding(.horizontal, 7).padding(.vertical, 4).background(
+        Capsule().fill(Color.secondary.opacity(0.10))
+      )
   }
 }
 

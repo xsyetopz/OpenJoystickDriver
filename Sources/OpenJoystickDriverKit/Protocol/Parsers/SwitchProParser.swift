@@ -1,19 +1,20 @@
 import Foundation
 import SwiftUSB
 
-private let switchProFullReportID: UInt8 = 0x30
-private let switchProFullReportMinLength = 12
-private let switchProStickCenter: UInt16 = 2048
-private let switchProStickMax: Float = 2047
-private let switchProDeadzone: Float = 0.08
+private enum SwitchProReportLayout {
+  static let fullReportID: UInt8 = 0x30
+  static let fullReportMinLength = 12
+  static let stickCenter: UInt16 = 2_048
+  static let stickMax: Float = 2_047
+  static let deadzone: Float = 0.08
+}
 
 /// Parser for Nintendo Switch Pro Controller full input reports.
 ///
 /// Linux `hid-nintendo.c` uses report `0x30`, a packed 24-bit button field,
 /// and two packed 12-bit stick fields. This experimental slice uses default
 /// center calibration until physical hardware can verify SPI calibration reads.
-public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
-  @unchecked Sendable
+public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider, @unchecked Sendable
 {
 
   private enum ReportOffset {
@@ -25,23 +26,18 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
 
   private var prevButtons: UInt32 = 0
   private var prevDpad: UInt32 = 0
-  private var prevLX: UInt16 = switchProStickCenter
-  private var prevLY: UInt16 = switchProStickCenter
-  private var prevRX: UInt16 = switchProStickCenter
-  private var prevRY: UInt16 = switchProStickCenter
+  private var prevLX: UInt16 = SwitchProReportLayout.stickCenter
+  private var prevLY: UInt16 = SwitchProReportLayout.stickCenter
+  private var prevRX: UInt16 = SwitchProReportLayout.stickCenter
+  private var prevRY: UInt16 = SwitchProReportLayout.stickCenter
 
   public init() {}
 
-  public func performHandshake(handle: USBDeviceHandle?) async throws {
-    await Task.yield()
-  }
+  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
 
   public func hidStartupReports() -> [PhysicalHIDOutputReport] {
     [
-      usbCommand(0x02),
-      usbCommand(0x03),
-      usbCommand(0x02),
-      usbCommand(0x04),
+      usbCommand(0x02), usbCommand(0x03), usbCommand(0x02), usbCommand(0x04),
       subcommand(0x03, data: [0x30]),
     ]
   }
@@ -53,8 +49,8 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
 
   public func parse(data: Data) throws -> [ControllerEvent] {
     let bytes = Array(data)
-    guard bytes.count >= switchProFullReportMinLength,
-      bytes[ReportOffset.reportID] == switchProFullReportID
+    guard bytes.count >= SwitchProReportLayout.fullReportMinLength,
+      bytes[ReportOffset.reportID] == SwitchProReportLayout.fullReportID
     else { return [] }
 
     let buttons = readUInt24LE(bytes, offset: ReportOffset.buttons)
@@ -85,29 +81,22 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
     bytes[0] = 0x01
     bytes[1] = 0x00
     bytes[10] = id
-    for (index, value) in data.enumerated() {
-      bytes[11 + index] = value
-    }
+    for (index, value) in data.enumerated() { bytes[11 + index] = value }
     return PhysicalHIDOutputReport(reportID: 0x01, bytes: bytes)
   }
 
   private func parseButtons(_ buttons: UInt32) -> [ControllerEvent] {
-    diffButtons(prev: prevButtons, curr: buttons, mapping: [
-      (0x0000_0008, .b),
-      (0x0000_0004, .a),
-      (0x0000_0002, .y),
-      (0x0000_0001, .x),
-      (0x0040_0000, .leftBumper),
-      (0x0000_0040, .rightBumper),
-      (0x0080_0000, .l2Digital),
-      (0x0000_0080, .r2Digital),
-      (0x0000_0100, .back),
-      (0x0000_0200, .start),
-      (0x0000_0800, .leftStick),
-      (0x0000_0400, .rightStick),
-      (0x0000_1000, .guide),
-      (0x0000_2000, .share),
-    ])
+    diffButtons(
+      prev: prevButtons,
+      curr: buttons,
+      mapping: [
+        (0x0000_0008, .b), (0x0000_0004, .a), (0x0000_0002, .y), (0x0000_0001, .x),
+        (0x0040_0000, .leftBumper), (0x0000_0040, .rightBumper), (0x0080_0000, .l2Digital),
+        (0x0000_0080, .r2Digital), (0x0000_0100, .back), (0x0000_0200, .start),
+        (0x0000_0800, .leftStick), (0x0000_0400, .rightStick), (0x0000_1000, .guide),
+        (0x0000_2000, .share),
+      ]
+    )
   }
 
   private func parseDpad(_ buttons: UInt32) -> [ControllerEvent] {
@@ -158,8 +147,9 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
   }
 
   private func normalizeStick(_ value: UInt16) -> Float {
-    let centered = Float(Int(value) - Int(switchProStickCenter)) / switchProStickMax
-    if abs(centered) < switchProDeadzone { return 0 }
+    let centered =
+      Float(Int(value) - Int(SwitchProReportLayout.stickCenter)) / SwitchProReportLayout.stickMax
+    if abs(centered) < SwitchProReportLayout.deadzone { return 0 }
     return max(-1, min(1, centered))
   }
 

@@ -13,14 +13,11 @@ func daemonLog(_ message: String) {
   NSLog("%@", message)
 }
 
-@MainActor
-final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
+@MainActor final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
   private let permissionManager: PermissionManager
   private var pollTask: Task<Void, Never>?
 
-  init(permissionManager: PermissionManager) {
-    self.permissionManager = permissionManager
-  }
+  init(permissionManager: PermissionManager) { self.permissionManager = permissionManager }
 
   func applicationDidFinishLaunching(_ notification: Notification) {
     NSApp.setActivationPolicy(.accessory)
@@ -74,7 +71,8 @@ final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
 
 let environment = ProcessInfo.processInfo.environment
 let permissionCheckOnlyMode = environment["OJD_PERMISSION_CHECK_ONLY"] == "1"
-let promptOnlyMode = environment["OJD_PERMISSION_PROMPT_ONLY"] == "1"
+let promptOnlyMode =
+  environment["OJD_PERMISSION_PROMPT_ONLY"] == "1"
   || commandLineArguments.contains("--request-input-monitoring")
 
 if permissionCheckOnlyMode {
@@ -93,7 +91,7 @@ if promptOnlyMode {
 }
 
 // DriverKit virtual HID output is optional and can be enabled/disabled by the GUI via XPC.
-// We do not connect eagerly at startup — this avoids "half-active" states where the
+// We do not connect eagerly at startup -- this avoids "half-active" states where the
 // DriverKit virtual device is present but idle while Compatibility is selected.
 let dextDispatcher = DextOutputDispatcher()
 daemonLog("[Daemon] DriverKit output: on-demand (managed by Mode)")
@@ -109,9 +107,7 @@ let xpcService = XPCService(
   dispatcher: dispatcher,
   dextDispatcher: dextDispatcher
 )
-let foregroundConsumerOutputMonitor = ForegroundConsumerOutputMonitor(
-  deviceManager: manager
-) {
+let foregroundConsumerOutputMonitor = ForegroundConsumerOutputMonitor(deviceManager: manager) {
   frontmostBundleRootPath,
   effectiveConsumerBundleRoots,
   observedConsumerBundleRoots,

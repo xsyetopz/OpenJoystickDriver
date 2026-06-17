@@ -65,10 +65,9 @@ public struct UpdateChecker: Sendable {
     self.session = session
   }
 
-  public func check(
-    currentVersion rawCurrentVersion: String,
-    includePrereleases: Bool = false
-  ) async -> UpdateCheckState {
+  public func check(currentVersion rawCurrentVersion: String, includePrereleases: Bool = false)
+    async -> UpdateCheckState
+  {
     guard let currentVersion = SemanticVersion(rawCurrentVersion) else {
       return .failed("Current app version is not SemVer: \(rawCurrentVersion)")
     }
@@ -85,17 +84,13 @@ public struct UpdateChecker: Sendable {
         htmlURL: release.htmlURL
       )
       return latestVersion > currentVersion ? .available(info) : .upToDate(rawCurrentVersion)
-    } catch let error as UpdateCheckerError {
-      return .failed(error.message)
-    } catch {
+    } catch let error as UpdateCheckerError { return .failed(error.message) } catch {
       return .failed(error.localizedDescription)
     }
   }
 
   private func latestRelease(includePrereleases: Bool) async throws -> GitHubRelease {
-    if includePrereleases {
-      return try await latestReleaseIncludingPrereleases()
-    }
+    if includePrereleases { return try await latestReleaseIncludingPrereleases() }
 
     let release: GitHubRelease = try await decode(url: latestReleaseURL)
     guard !release.draft else { throw UpdateCheckerError("Latest GitHub release is a draft") }

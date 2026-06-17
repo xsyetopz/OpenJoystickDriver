@@ -32,9 +32,7 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
         _suppressOutput = newValue
         return [sharedDispatcher] + Array(dedicatedDispatchers.values)
       }
-      for child in children {
-        child.suppressOutput = newValue
-      }
+      for child in children { child.suppressOutput = newValue }
     }
   }
 
@@ -46,18 +44,14 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
       if let errorStatus = childStatuses.first(where: { $0.hasPrefix("error:") }) {
         return errorStatus
       }
-      if childStatuses.allSatisfy({ $0 == "off" }) {
-        return "off"
-      }
+      if childStatuses.allSatisfy({ $0 == "off" }) { return "off" }
       return "on (routes=\(routeCount), active=\(activeLabel))"
     }
   }
 
   public var lastRumbleStatus: String {
     lock.withLock {
-      if let active = dispatcher(for: activeRouteToken),
-        active.lastRumbleStatus != "none"
-      {
+      if let active = dispatcher(for: activeRouteToken), active.lastRumbleStatus != "none" {
         return active.lastRumbleStatus
       }
       let all = [sharedDispatcher] + Array(dedicatedDispatchers.values)
@@ -75,9 +69,7 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
       return all
     }
 
-    for child in children {
-      child.close()
-    }
+    for child in children { child.close() }
   }
 
   public func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {
@@ -118,18 +110,14 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
     child.suppressOutput = suppressOutput
 
     created = lock.withLock { () -> (any CompatibilityUserSpaceOutputDispatching)? in
-      if let existing = dedicatedDispatchers[routeToken] {
-        return existing
-      }
+      if let existing = dedicatedDispatchers[routeToken] { return existing }
       dedicatedDispatchers[routeToken] = child
       return child
     }
     identifiers = lock.withLock { Array(knownIdentifiers) }
 
     if let created {
-      for identifier in identifiers {
-        await created.dispatch(events: [], from: identifier)
-      }
+      for identifier in identifiers { await created.dispatch(events: [], from: identifier) }
       print(
         "[ForegroundConsumerCompatibilityDispatcherPool] Created dedicated Compatibility route "
           + "\(routeToken) for \(URL(fileURLWithPath: bundleRootPath).lastPathComponent)"
@@ -167,13 +155,10 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
     }
   }
 
-  private func dispatcher(
-    for routeToken: String?
-  ) -> (any CompatibilityUserSpaceOutputDispatching)? {
+  private func dispatcher(for routeToken: String?) -> (any CompatibilityUserSpaceOutputDispatching)?
+  {
     if routeToken == nil { return nil }
-    if routeToken == UserSpaceVirtualDeviceConstants.sharedRouteToken {
-      return sharedDispatcher
-    }
+    if routeToken == UserSpaceVirtualDeviceConstants.sharedRouteToken { return sharedDispatcher }
     return dedicatedDispatchers[routeToken ?? ""]
   }
 }

@@ -84,10 +84,10 @@ Add parser, profile, or report-format tests under `Tests/OpenJoystickDriverKitTe
 Hardware-only checks must be guarded or expressed as diagnostics so they can
 skip cleanly without local device access.
 
-6. Validate.
+6. Check.
 
 ```bash
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 swift test
 ```
 

@@ -14,7 +14,7 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
   public let productName: String
   public let manufacturer: String
 
-  /// OpenJoystickDriver virtual gamepad — a standard HID GamePad identity that
+  /// OpenJoystickDriver virtual gamepad -- a standard HID GamePad identity that
   /// avoids triggering device-specific HID parsers in consumers (e.g. SDL's Xbox path).
   public static let openJoystickDriver = Self(
     vendorID: 0x4F4A,  // "OJ"
@@ -40,7 +40,7 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
     manufacturer: "OpenJoystickDriver"
   )
 
-  /// Xbox One S — standard for XInput/GIP controllers and the default
+  /// Xbox One S -- standard for XInput/GIP controllers and the default
   /// normalization target for all protocols.
   public static let xboxOneS = Self(
     vendorID: 0x045E,
@@ -53,7 +53,7 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
     manufacturer: "Microsoft"
   )
 
-  /// Xbox 360 Controller (Wired) — experimental on macOS.
+  /// Xbox 360 Controller (Wired) -- experimental on macOS.
   ///
   /// Note: many macOS stacks do not treat 045E:028E as a standard HID gamepad.
   public static let xbox360Wired = Self(

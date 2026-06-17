@@ -5,10 +5,13 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/ojd-common.sh"
 
-die() { echo "ERROR: $*" >&2; exit 2; }
+die() {
+  echo "ERROR: $*" >&2
+  exit 2
+}
 
 usage() {
-  cat <<'TXT'
+  cat << 'TXT'
 Usage:
   OJD_ENV=release ./scripts/ojd package release [version]
   OJD_ENV=release ./scripts/ojd package appcast [version]
@@ -32,8 +35,8 @@ if [[ "$cmd" == "-h" || "$cmd" == "--help" || "$cmd" == "help" ]]; then
   exit 0
 fi
 
-[[ "$cmd" == "release" || "$cmd" == "appcast" ]] \
-  || die "Unknown package command: ${cmd:-<empty>} (expected: release | appcast)"
+[[ "$cmd" == "release" || "$cmd" == "appcast" ]] ||
+  die "Unknown package command: ${cmd:-<empty>} (expected: release | appcast)"
 [[ "$OJD_ENV" == "release" ]] || die "package $cmd requires OJD_ENV=release"
 
 version="${1:-${GITHUB_REF_NAME:-$(date -u +%Y%m%d%H%M%S)}}"
@@ -48,7 +51,7 @@ mount_dir="$PROJECT_DIR/.build/dmg-mount"
 appcast_workspace="$PROJECT_DIR/.build/sparkle-appcast"
 
 bundle_version_from_semver() {
-  python3 - "$1" <<'PY'
+  python3 - "$1" << 'PY'
 import re
 import sys
 
@@ -78,7 +81,7 @@ find_sparkle_tool() {
       printf '%s\n' "$candidate"
       return 0
     fi
-  done < <(/usr/bin/find "$PROJECT_DIR/.build" -path "*/Sparkle/bin/$tool_name" -type f 2>/dev/null)
+  done < <(/usr/bin/find "$PROJECT_DIR/.build" -path "*/Sparkle/bin/$tool_name" -type f 2> /dev/null)
   return 1
 }
 
@@ -95,8 +98,8 @@ create_appcast() {
   if ! generate_appcast="$(find_sparkle_tool generate_appcast)"; then
     echo "Sparkle generate_appcast not found; resolving package artifacts..."
     (cd "$PROJECT_DIR" && "$SWIFT_BIN" package resolve)
-    generate_appcast="$(find_sparkle_tool generate_appcast)" \
-      || die "Sparkle generate_appcast not found under .build after package resolve"
+    generate_appcast="$(find_sparkle_tool generate_appcast)" ||
+      die "Sparkle generate_appcast not found under .build after package resolve"
   fi
 
   rm -rf "$appcast_workspace"
@@ -110,8 +113,8 @@ create_appcast() {
     --download-url-prefix "$download_base" \
     "$appcast_workspace"
 
-  [[ -f "$appcast_workspace/$appcast_name" ]] \
-    || die "Sparkle appcast was not generated: $appcast_workspace/$appcast_name"
+  [[ -f "$appcast_workspace/$appcast_name" ]] ||
+    die "Sparkle appcast was not generated: $appcast_workspace/$appcast_name"
   cp "$appcast_workspace/$appcast_name" "$artifact_dir/appcast.xml"
   for delta in "$appcast_workspace"/*.delta; do
     [[ -f "$delta" ]] && cp "$delta" "$artifact_dir/"
@@ -131,7 +134,7 @@ export OJD_BUNDLE_SHORT_VERSION="${OJD_BUNDLE_SHORT_VERSION:-$version}"
 export OJD_BUNDLE_VERSION="${OJD_BUNDLE_VERSION:-$(bundle_version_from_semver "$version")}"
 
 mount_dir_is_mounted() {
-  /sbin/mount | /usr/bin/grep -F " on $1 " >/dev/null
+  /sbin/mount | /usr/bin/grep -F " on $1 " > /dev/null
 }
 
 detach_mount_dir_if_mounted() {

@@ -5,28 +5,28 @@ import Sparkle
 @MainActor final class SparkleUpdateController: NSObject, SPUUpdaterDelegate {
   private enum SparkleErrorCode {
     // SUErrors.h
-    static let noPublicDSAFoundError = 1 // SUNoPublicDSAFoundError
-    static let insufficientSigningError = 2 // SUInsufficientSigningError
-    static let insecureFeedURLError = 3 // SUInsecureFeedURLError
-    static let invalidFeedURLError = 4 // SUInvalidFeedURLError
-    static let appcastParseError = 1000 // SUAppcastParseError
-    static let appcastError = 1002 // SUAppcastError
-    static let runningFromDiskImageError = 1003 // SURunningFromDiskImageError
-    static let resumeAppcastError = 1004 // SUResumeAppcastError
-    static let runningTranslocatedError = 1005 // SURunningTranslocated
-    static let downloadError = 2001 // SUDownloadError
-    static let unarchivingError = 3000 // SUUnarchivingError
-    static let signatureError = 3001 // SUSignatureError
-    static let validationError = 3002 // SUValidationError
-    static let fileCopyFailure = 4000 // SUFileCopyFailure
-    static let authenticationFailure = 4001 // SUAuthenticationFailure
-    static let missingUpdateError = 4002 // SUMissingUpdateError
-    static let missingInstallerToolError = 4003 // SUMissingInstallerToolError
-    static let relaunchError = 4004 // SURelaunchError
-    static let installationError = 4005 // SUInstallationError
-    static let agentInvalidationError = 4010 // SUAgentInvalidationError
-    static let installationWriteNoPermissionError = 4012 // SUInstallationWriteNoPermissionError
-    static let incorrectAPIUsageError = 5000 // SUIncorrectAPIUsageError
+    static let noPublicDSAFoundError = 1  // SUNoPublicDSAFoundError
+    static let insufficientSigningError = 2  // SUInsufficientSigningError
+    static let insecureFeedURLError = 3  // SUInsecureFeedURLError
+    static let invalidFeedURLError = 4  // SUInvalidFeedURLError
+    static let appcastParseError = 1000  // SUAppcastParseError
+    static let appcastError = 1002  // SUAppcastError
+    static let runningFromDiskImageError = 1003  // SURunningFromDiskImageError
+    static let resumeAppcastError = 1004  // SUResumeAppcastError
+    static let runningTranslocatedError = 1005  // SURunningTranslocated
+    static let downloadError = 2001  // SUDownloadError
+    static let unarchivingError = 3000  // SUUnarchivingError
+    static let signatureError = 3001  // SUSignatureError
+    static let validationError = 3002  // SUValidationError
+    static let fileCopyFailure = 4000  // SUFileCopyFailure
+    static let authenticationFailure = 4001  // SUAuthenticationFailure
+    static let missingUpdateError = 4002  // SUMissingUpdateError
+    static let missingInstallerToolError = 4003  // SUMissingInstallerToolError
+    static let relaunchError = 4004  // SURelaunchError
+    static let installationError = 4005  // SUInstallationError
+    static let agentInvalidationError = 4010  // SUAgentInvalidationError
+    static let installationWriteNoPermissionError = 4012  // SUInstallationWriteNoPermissionError
+    static let incorrectAPIUsageError = 5000  // SUIncorrectAPIUsageError
   }
 
   private enum SparkleNoUpdateReasonCode {
@@ -54,9 +54,7 @@ import Sparkle
     self.updaterController = nil
     super.init()
 
-    guard Self.isConfigured(in: bundle) else {
-      return
-    }
+    guard Self.isConfigured(in: bundle) else { return }
 
     self.updaterController = SPUStandardUpdaterController(
       startingUpdater: true,
@@ -104,18 +102,14 @@ import Sparkle
       probeCompletionState = .failed(Self.explicitMessage(for: error as NSError, bundle: bundle))
     }
 
-    if let probeCompletionState {
-      stateHandler(probeCompletionState)
-    }
+    if let probeCompletionState { stateHandler(probeCompletionState) }
 
     let shouldPresentStandardUpdateUI = self.shouldPresentStandardUpdateUI
     self.shouldPresentStandardUpdateUI = false
     self.probeCompletionState = nil
 
     guard shouldPresentStandardUpdateUI else { return }
-    DispatchQueue.main.async { [weak self] in
-      self?.updaterController?.checkForUpdates(nil)
-    }
+    DispatchQueue.main.async { [weak self] in self?.updaterController?.checkForUpdates(nil) }
   }
 
   private func noUpdateState(for error: NSError) -> UpdateCheckState {
@@ -126,13 +120,9 @@ import Sparkle
       SparkleNoUpdateReasonCode.onNewerThanLatestVersion:
       return .upToDate(appVersion)
     case SparkleNoUpdateReasonCode.systemIsTooOld:
-      return .failed(
-        "Update feed has a newer version, but this macOS version is too old for it."
-      )
+      return .failed("Update feed has a newer version, but this macOS version is too old for it.")
     case SparkleNoUpdateReasonCode.systemIsTooNew:
-      return .failed(
-        "Update feed has no build compatible with this macOS version yet."
-      )
+      return .failed("Update feed has no build compatible with this macOS version yet.")
     case SparkleNoUpdateReasonCode.hardwareDoesNotSupportARM64:
       return .failed(
         "Update feed only offers Apple Silicon builds, but this Mac does not support ARM64."
@@ -166,8 +156,7 @@ import Sparkle
           + "The appcast XML is malformed or missing required Sparkle fields."
       case SparkleErrorCode.appcastError, SparkleErrorCode.resumeAppcastError:
         return fallbackMessage(
-          prefix:
-            "Failed to retrieve update feed from "
+          prefix: "Failed to retrieve update feed from "
             + "\(feedURL(in: bundle) ?? "the configured SUFeedURL")",
           error: rootError
         )
@@ -175,10 +164,7 @@ import Sparkle
         return "Updates cannot be installed from a disk image or translocated app. "
           + "Move OpenJoystickDriver.app into /Applications and launch it from there."
       case SparkleErrorCode.downloadError:
-        return fallbackMessage(
-          prefix: "Failed to download the update archive",
-          error: rootError
-        )
+        return fallbackMessage(prefix: "Failed to download the update archive", error: rootError)
       case SparkleErrorCode.unarchivingError:
         return fallbackMessage(
           prefix: "Downloaded update archive could not be extracted",
@@ -198,17 +184,10 @@ import Sparkle
         SparkleErrorCode.authenticationFailure, SparkleErrorCode.relaunchError,
         SparkleErrorCode.missingInstallerToolError, SparkleErrorCode.missingUpdateError,
         SparkleErrorCode.agentInvalidationError:
-        return fallbackMessage(
-          prefix: "Update installation failed",
-          error: rootError
-        )
+        return fallbackMessage(prefix: "Update installation failed", error: rootError)
       case SparkleErrorCode.incorrectAPIUsageError:
-        return fallbackMessage(
-          prefix: "Sparkle was invoked incorrectly",
-          error: rootError
-        )
-      default:
-        break
+        return fallbackMessage(prefix: "Sparkle was invoked incorrectly", error: rootError)
+      default: break
       }
     }
 
@@ -219,18 +198,13 @@ import Sparkle
     guard error.domain == NSURLErrorDomain else { return nil }
 
     let url =
-      failingURL(in: error)?.absoluteString
-      ?? feedURL(in: bundle)
-      ?? "the configured SUFeedURL"
+      failingURL(in: error)?.absoluteString ?? feedURL(in: bundle) ?? "the configured SUFeedURL"
     switch error.code {
     case NSURLErrorNotConnectedToInternet:
       return "Could not reach update feed at \(url): this Mac appears to be offline."
-    case NSURLErrorTimedOut:
-      return "Timed out while contacting update feed at \(url)."
-    case NSURLErrorCannotFindHost:
-      return "Could not resolve update host for \(url)."
-    case NSURLErrorCannotConnectToHost:
-      return "Could not connect to update host for \(url)."
+    case NSURLErrorTimedOut: return "Timed out while contacting update feed at \(url)."
+    case NSURLErrorCannotFindHost: return "Could not resolve update host for \(url)."
+    case NSURLErrorCannotConnectToHost: return "Could not connect to update host for \(url)."
     case NSURLErrorNetworkConnectionLost:
       return "Network connection dropped while contacting update feed at \(url)."
     case NSURLErrorSecureConnectionFailed, NSURLErrorServerCertificateUntrusted,
@@ -241,24 +215,17 @@ import Sparkle
         prefix: "TLS validation failed for update feed at \(url)",
         error: error
       )
-    case NSURLErrorBadURL:
-      return "Update feed URL is malformed: \(url)."
+    case NSURLErrorBadURL: return "Update feed URL is malformed: \(url)."
     default:
-      return fallbackMessage(
-        prefix: "Could not retrieve update feed from \(url)",
-        error: error
-      )
+      return fallbackMessage(prefix: "Could not retrieve update feed from \(url)", error: error)
     }
   }
 
   private static func fallbackMessage(prefix: String, error: NSError) -> String {
     let reason = [
-      error.localizedFailureReason,
-      error.localizedDescription,
+      error.localizedFailureReason, error.localizedDescription,
       (error.userInfo[NSDebugDescriptionErrorKey] as? String),
-    ]
-      .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
-      .first { !$0.isEmpty }
+    ].compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }.first { !$0.isEmpty }
 
     guard let reason else { return prefix }
     if reason.caseInsensitiveCompare(prefix) == .orderedSame || reason.hasPrefix(prefix) {
@@ -286,9 +253,7 @@ import Sparkle
   }
 
   private static func failingURL(in error: NSError) -> URL? {
-    if let url = error.userInfo[NSURLErrorFailingURLErrorKey] as? URL {
-      return url
-    }
+    if let url = error.userInfo[NSURLErrorFailingURLErrorKey] as? URL { return url }
     if let urlString = error.userInfo[NSURLErrorFailingURLStringErrorKey] as? String {
       return URL(string: urlString)
     }

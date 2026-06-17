@@ -5,22 +5,102 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
-# Load environment: legacy script-local files first, then central project files.
-# Override with OJD_ENV=release or OJD_ENV=dev (default: dev)
+# Load environment: project-root files are the canonical source.
+# Selection:
+#   OJD_ENV=dev|release       selects .env.<name> (default: dev)
+#   OJD_ENV=none              disables automatic env loading
+#   OJD_ENV_FILE=/path/file   loads one explicit file after .env
+# Load order is low -> high precedence:
+#   .env                      shared local defaults
+#   .env.<env>                canonical environment-specific overrides
+#   $OJD_ENV_FILE             explicit override
 OJD_ENV="${OJD_ENV:-dev}"
-for _ENV_FILE in   "$SCRIPT_DIR/.env.$OJD_ENV"   "$PROJECT_DIR/.env"   "$PROJECT_DIR/.env.$OJD_ENV"
-do
+OJD_ENV_LOADED_FILES=()
+
+_OJD_ENV_FILES=()
+if [[ "$OJD_ENV" != "none" ]]; then
+  _OJD_ENV_FILES+=(
+    "$PROJECT_DIR/.env"
+    "$PROJECT_DIR/.env.$OJD_ENV"
+  )
+  if [[ -n "${OJD_ENV_FILE:-}" ]]; then
+    _OJD_ENV_FILES+=("$OJD_ENV_FILE")
+  fi
+fi
+
+for _ENV_FILE in "${_OJD_ENV_FILES[@]}"; do
   if [[ -f "$_ENV_FILE" ]]; then
     set -a
+    # shellcheck disable=SC1090
     source "$_ENV_FILE"
     set +a
+    OJD_ENV_LOADED_FILES+=("$_ENV_FILE")
   fi
 done
 unset _ENV_FILE
+unset _OJD_ENV_FILES
+
+# Backward-compatible aliases for the old publisher .env.example names.
+if [[ -z "${DEVELOPMENT_TEAM:-}" && -n "${APPLE_TEAM_ID:-}" ]]; then
+  export DEVELOPMENT_TEAM="$APPLE_TEAM_ID"
+fi
+if [[ -z "${NOTARIZE_APPLE_ID:-}" && -n "${APPLE_ID:-}" ]]; then
+  export NOTARIZE_APPLE_ID="$APPLE_ID"
+fi
+if [[ -z "${NOTARIZE_PASSWORD:-}" && -n "${APPLE_ID_PASSWORD:-}" ]]; then
+  export NOTARIZE_PASSWORD="$APPLE_ID_PASSWORD"
+fi
+
+redact_env_value() {
+  local key="$1" value="${2:-}"
+  if [[ -z "$value" ]]; then
+    printf '<unset>'
+    return 0
+  fi
+  case "$key" in
+    *PASSWORD* | *SECRET* | *TOKEN* | *KEYCHAIN* | *PRIVATE* | *APPLE_ID*)
+      printf '[REDACTED]'
+      ;;
+    *)
+      printf '%s' "$value"
+      ;;
+  esac
+}
+
+ojd_env_status() {
+  echo "OJD_ENV=${OJD_ENV}"
+  if [[ ${#OJD_ENV_LOADED_FILES[@]} -eq 0 ]]; then
+    echo "Loaded env files: (none)"
+  else
+    echo "Loaded env files:"
+    local file
+    for file in "${OJD_ENV_LOADED_FILES[@]}"; do
+      echo "  $file"
+    done
+  fi
+  echo "Effective signing settings:"
+  local key value
+  for key in \
+    CODESIGN_IDENTITY \
+    GUI_CODESIGN_IDENTITY \
+    DAEMON_CODESIGN_IDENTITY \
+    DEVELOPMENT_TEAM \
+    DEXT_BUILD_IDENTITY \
+    DEXT_BUILD_PROFILE \
+    DEXT_PROVISIONING_PROFILE \
+    GUI_PROVISIONING_PROFILE \
+    DAEMON_PROVISIONING_PROFILE \
+    NOTARIZE_KEYCHAIN_PROFILE \
+    NOTARIZE_APPLE_ID \
+    NOTARIZE_PASSWORD; do
+    value="${!key:-}"
+    printf '  %s=%s\n' "$key" "$(redact_env_value "$key" "$value")"
+  done
+}
 
 # Prefer full Xcode toolchain when installed, even if `xcode-select` still
 # points at Command Line Tools (avoids requiring sudo for local builds).
-XCODE_SELECT_PATH="$(xcode-select -p 2>/dev/null || true)"
+XCODE_SELECT_PATH="$(xcode-select -p 2> /dev/null || true)"
 if [[ -z "${DEVELOPER_DIR:-}" ]] && [[ "$XCODE_SELECT_PATH" == "/Library/Developer/CommandLineTools" ]]; then
   if [[ -d "/Applications/Xcode.app/Contents/Developer" ]]; then
     export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
@@ -44,7 +124,7 @@ unset XCODE_SELECT_PATH
 
 SWIFT_BIN="${SWIFT_BIN:-}"
 if [[ -z "$SWIFT_BIN" ]]; then
-  SWIFT_BIN="$(xcrun --find swift 2>/dev/null || command -v swift)"
+  SWIFT_BIN="$(xcrun --find swift 2> /dev/null || command -v swift)"
 fi
 
 IDENTITY="${CODESIGN_IDENTITY:--}"
@@ -181,10 +261,10 @@ decode_provisioning_profile() {
   local profile="$1"
   # Prefer Apple tooling when it works, but fall back to OpenSSL because
   # `security cms -D` can fail on some systems for `.provisionprofile`.
-  if security cms -D -i "$profile" 2>/dev/null; then
+  if security cms -D -i "$profile" 2> /dev/null; then
     return 0
   fi
-  openssl smime -inform der -verify -noverify -in "$profile" 2>/dev/null
+  openssl smime -inform der -verify -noverify -in "$profile" 2> /dev/null
 }
 
 verify_profile_cert() {
@@ -196,21 +276,21 @@ verify_profile_cert() {
   trap "rm -f '$tmpder'" RETURN
 
   # Extract first DeveloperCertificate from profile to a temp file
-  # (binary DER data contains null bytes — can't store in bash variables)
-  decode_provisioning_profile "$profile" \
-    | plutil -extract DeveloperCertificates.0 raw -o - - \
-    | base64 -d > "$tmpder" 2>/dev/null
+  # (binary DER data contains null bytes -- can't store in bash variables)
+  decode_provisioning_profile "$profile" |
+    plutil -extract DeveloperCertificates.0 raw -o - - |
+    base64 -d > "$tmpder" 2> /dev/null
 
-  profile_sha1=$(openssl x509 -inform DER -in "$tmpder" -noout -fingerprint -sha1 2>/dev/null \
-    | sed 's/.*=//;s/://g' | tr '[:upper:]' '[:lower:]')
+  profile_sha1=$(openssl x509 -inform DER -in "$tmpder" -noout -fingerprint -sha1 2> /dev/null |
+    sed 's/.*=//;s/://g' | tr '[:upper:]' '[:lower:]')
 
-  keychain_sha1=$(security find-identity -v -p codesigning 2>/dev/null \
-    | grep -i "$identity" | head -1 \
-    | awk '{print $2}' | tr '[:upper:]' '[:lower:]')
+  keychain_sha1=$(security find-identity -v -p codesigning 2> /dev/null |
+    grep -i "$identity" | head -1 |
+    awk '{print $2}' | tr '[:upper:]' '[:lower:]')
 
   if [[ -z "$profile_sha1" || -z "$keychain_sha1" ]]; then
     echo "WARNING: Could not extract SHA1 for profile cert verification (profile_sha1=${profile_sha1:-empty}, keychain_sha1=${keychain_sha1:-empty})"
-    return 0  # can't verify, don't block
+    return 0 # can't verify, don't block
   fi
 
   if [[ "$profile_sha1" != "$keychain_sha1" ]]; then
