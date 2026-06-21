@@ -6,9 +6,13 @@ struct ResetSettingsCommand {
     let client = XPCClient()
     client.connect()
 
-    let ok =
-      runSyncResult { do { return try await client.resetSettings() } catch { return false } }
-      ?? false
+    let ok = runSyncResult {
+      do {
+        return try await client.resetSettings()
+      } catch {
+        return false
+      }
+    } ?? false
 
     if !ok {
       print("ERROR: failed to reset settings (daemon not running?)")
@@ -16,6 +20,6 @@ struct ResetSettingsCommand {
     }
 
     print("OK: reset daemon settings.")
-    print("Next: open the menu bar app, set Mode → Compatibility, then pick an identity.")
+    print("Next: open the menubar app, set Mode → Compatibility, then pick Compatibility identity.")
   }
 }

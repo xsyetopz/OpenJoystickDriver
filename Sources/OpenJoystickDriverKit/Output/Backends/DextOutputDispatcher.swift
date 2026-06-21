@@ -93,6 +93,7 @@ public final class DextOutputDispatcher: OutputDispatcher, @unchecked Sendable {
 
   deinit { closeDevice() }
 
+
   // MARK: - OutputDispatcher
 
   public func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) {
@@ -165,7 +166,9 @@ public final class DextOutputDispatcher: OutputDispatcher, @unchecked Sendable {
       }
       recordFailure(now: now)
       closeDevice()
-      connectionLock.withLock { nextAutoRetryConnectNs = now &+ autoRetryBackoffNs }
+      connectionLock.withLock {
+        nextAutoRetryConnectNs = now &+ autoRetryBackoffNs
+      }
     } else if lastResult != kIOReturnSuccess {
       // Keep this quiet; repeated failures are handled via stats + fallback mode.
     }
@@ -191,10 +194,16 @@ public final class DextOutputDispatcher: OutputDispatcher, @unchecked Sendable {
   }
 
   func recordDiscoverySummary(_ summary: String) {
-    statsLock.withLock { lastDiscoverySummary = String(summary.prefix(500)) }
+    statsLock.withLock {
+      lastDiscoverySummary = String(summary.prefix(500))
+    }
   }
 
-  func recordConnectionAttempt() { statsLock.withLock { connectionAttempts += 1 } }
+  func recordConnectionAttempt() {
+    statsLock.withLock {
+      connectionAttempts += 1
+    }
+  }
 
   func recordConnectionResult(_ result: IOReturn) {
     statsLock.withLock {
@@ -222,7 +231,9 @@ public final class DextOutputDispatcher: OutputDispatcher, @unchecked Sendable {
       if failureTimestamps.count > 512 {
         failureTimestamps.removeFirst(failureTimestamps.count - 512)
       }
-      while let first = failureTimestamps.first, first < cutoff { failureTimestamps.removeFirst() }
+      while let first = failureTimestamps.first, first < cutoff {
+        failureTimestamps.removeFirst()
+      }
 
       if failureTimestamps.count >= threshold && (now &- lastUnstablePost) > cooldownNs {
         lastUnstablePost = now

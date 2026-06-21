@@ -6,7 +6,7 @@ PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 FILTERS_FILE="$PROJECT_DIR/.rtk/filters.toml"
 
 usage() {
-  cat << 'USAGE'
+  cat <<'USAGE'
 OpenJoystickDriver RTK filters
 
 Usage:
@@ -20,11 +20,11 @@ USAGE
 ensure_filters_file() {
   mkdir -p "$(dirname "$FILTERS_FILE")"
   if [[ ! -f "$FILTERS_FILE" ]]; then
-    printf 'schema_version = 1\n' > "$FILTERS_FILE"
+    printf 'schema_version = 1\n' >"$FILTERS_FILE"
   elif ! grep -Eq '^schema_version[[:space:]]*=' "$FILTERS_FILE"; then
     tmp="$(mktemp)"
-    printf 'schema_version = 1\n\n' > "$tmp"
-    cat "$FILTERS_FILE" >> "$tmp"
+    printf 'schema_version = 1\n\n' >"$tmp"
+    cat "$FILTERS_FILE" >>"$tmp"
     mv "$tmp" "$FILTERS_FILE"
   fi
 }
@@ -36,12 +36,11 @@ append_filter() {
     echo "skip $name"
     return
   fi
-  printf '\n%s\n' "$body" >> "$FILTERS_FILE"
+  printf '\n%s\n' "$body" >>"$FILTERS_FILE"
   echo "add  $name"
 }
 
-COMMON_SWIFT_TEST=$(
-  cat << 'FILTER'
+COMMON_SWIFT_TEST=$(cat <<'FILTER'
 [filters.common-swift-test]
 description = "Compact Swift test output"
 match_command = "^swift\\s+test\\b"
@@ -65,8 +64,7 @@ expected = "Test Case 'DeviceTests.testFoo' failed (0.001 seconds).\n/repo/Tests
 FILTER
 )
 
-COMMON_XCODEBUILD=$(
-  cat << 'FILTER'
+COMMON_XCODEBUILD=$(cat <<'FILTER'
 [filters.common-xcodebuild]
 description = "Compact xcodebuild output"
 match_command = "^xcodebuild\\b"
@@ -93,8 +91,7 @@ expected = "/repo/Sources/Foo.swift:5:10: error: cannot find 'bar' in scope\n** 
 FILTER
 )
 
-COMMON_SHELL_SYNTAX=$(
-  cat << 'FILTER'
+COMMON_SHELL_SYNTAX=$(cat <<'FILTER'
 [filters.common-shell-syntax]
 description = "Compact shell syntax-check output"
 match_command = "^(bash|zsh|sh)\\s+-n\\b"
@@ -117,8 +114,7 @@ expected = "scripts/dev: line 10: syntax error near unexpected token `fi'"
 FILTER
 )
 
-COMMON_JS_TS_CHECKS=$(
-  cat << 'FILTER'
+COMMON_JS_TS_CHECKS=$(cat <<'FILTER'
 [filters.common-js-ts-checks]
 description = "Compact JavaScript and TypeScript runtime checks"
 match_command = "^(bun|deno|yarn|corepack\\s+yarn|node\\s+--test)\\b.*\\b(test|spec|check|lint|typecheck)\\b|^(npm|pnpm)\\s+(run\\s+)?(test|check|typecheck|lint)\\b"
@@ -142,8 +138,7 @@ expected = "FAIL src/foo.test.ts\nError: expected true to be false\nTests: 1 fai
 FILTER
 )
 
-COMMON_PYTHON_TEST=$(
-  cat << 'FILTER'
+COMMON_PYTHON_TEST=$(cat <<'FILTER'
 [filters.common-python-test]
 description = "Compact Python pytest and unittest output"
 match_command = "^python(3)?\\s+-m\\s+(pytest|unittest)\\b"
@@ -180,7 +175,7 @@ cmd="${1:-}"
 shift || true
 
 case "$cmd" in
-  "" | -h | --help | help)
+  ""|-h|--help|help)
     usage
     ;;
   install-filters)

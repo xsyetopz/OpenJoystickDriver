@@ -1,10 +1,10 @@
 import Foundation
 import SwiftUSB
 
-private let dualSenseAxisCenter: UInt8 = 128
-private let dualSenseAxisNormalization = HIDAxisNormalizationStrategy.unsigned8CenteredFullScale127(
-  deadzone: 0.08
-)
+private let dualSenseAxisCenter: Float = 128
+private let dualSenseAxisPositiveMax: Float = 127
+private let dualSenseAxisNegativeMax: Float = 128
+private let dualSenseAxisDeadzone: Float = 0.08
 private let dualSenseHatNeutral: UInt8 = 0xFF
 private let dualSenseTriggerMax: Float = 255
 private let dualSenseUSBInputReportID: UInt8 = 0x01
@@ -14,7 +14,9 @@ private let dualSenseBluetoothInputReportLength = 78
 private let dualSenseBluetoothHIDInputTransaction: UInt8 = 0xA1
 private let dualSenseInputCRC32Seed: UInt8 = 0xA1
 
-public enum DualSenseParserError: Error, Equatable { case invalidBluetoothCRC }
+public enum DualSenseParserError: Error, Equatable {
+  case invalidBluetoothCRC
+}
 
 /// Parser for Sony DualSense controllers.
 ///
@@ -44,16 +46,18 @@ public final class DualSenseParser: InputParser, @unchecked Sendable {
   private var prevHat: UInt8 = dualSenseHatNeutral
   private var prevL2: UInt8 = 0
   private var prevR2: UInt8 = 0
-  private var prevLSX = dualSenseAxisCenter
-  private var prevLSY = dualSenseAxisCenter
-  private var prevRSX = dualSenseAxisCenter
-  private var prevRSY = dualSenseAxisCenter
+  private var prevLSX = UInt8(dualSenseAxisCenter)
+  private var prevLSY = UInt8(dualSenseAxisCenter)
+  private var prevRSX = UInt8(dualSenseAxisCenter)
+  private var prevRSY = UInt8(dualSenseAxisCenter)
 
   /// Creates a new DualSense parser.
   public init() {}
 
   /// No-op for the current experimental HID input slice.
-  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
+  public func performHandshake(handle: USBDeviceHandle?) async throws {
+    await Task.yield()
+  }
 
   /// Parses one DualSense HID input report and returns controller events.
   public func parse(data: Data) throws -> [ControllerEvent] {
@@ -123,9 +127,10 @@ public final class DualSenseParser: InputParser, @unchecked Sendable {
 
   private func validateBluetoothCRC(report: [UInt8]) throws {
     let expectedOffset = report.count - 4
-    let expected =
-      UInt32(report[expectedOffset]) | (UInt32(report[expectedOffset + 1]) << 8)
-      | (UInt32(report[expectedOffset + 2]) << 16) | (UInt32(report[expectedOffset + 3]) << 24)
+    let expected = UInt32(report[expectedOffset])
+      | (UInt32(report[expectedOffset + 1]) << 8)
+      | (UInt32(report[expectedOffset + 2]) << 16)
+      | (UInt32(report[expectedOffset + 3]) << 24)
     guard dualSenseBluetoothCRC32(report: report) == expected else {
       throw DualSenseParserError.invalidBluetoothCRC
     }
@@ -133,13 +138,21 @@ public final class DualSenseParser: InputParser, @unchecked Sendable {
 
   private func dualSenseBluetoothCRC32(report: [UInt8]) -> UInt32 {
     var crc = updateCRC32(0xFFFF_FFFF, byte: dualSenseInputCRC32Seed)
-    for byte in report.dropLast(4) { crc = updateCRC32(crc, byte: byte) }
+    for byte in report.dropLast(4) {
+      crc = updateCRC32(crc, byte: byte)
+    }
     return ~crc
   }
 
   private func updateCRC32(_ current: UInt32, byte: UInt8) -> UInt32 {
     var crc = current ^ UInt32(byte)
-    for _ in 0..<8 { if crc & 1 == 1 { crc = (crc >> 1) ^ 0xEDB8_8320 } else { crc >>= 1 } }
+    for _ in 0..<8 {
+      if crc & 1 == 1 {
+        crc = (crc >> 1) ^ 0xEDB8_8320
+      } else {
+        crc >>= 1
+      }
+    }
     return crc
   }
 
@@ -160,13 +173,18 @@ public final class DualSenseParser: InputParser, @unchecked Sendable {
     return (events, (lsxRaw, lsyRaw, rsxRaw, rsyRaw))
   }
 
-  private func parseTriggers(bytes: [UInt8]) -> (events: [ControllerEvent], values: (UInt8, UInt8))
+  private func parseTriggers(bytes: [UInt8])
+    -> (events: [ControllerEvent], values: (UInt8, UInt8))
   {
     let l2 = bytes[ReportOffset.l2Trigger]
     let r2 = bytes[ReportOffset.r2Trigger]
     var events: [ControllerEvent] = []
-    if l2 != prevL2 { events.append(.leftTriggerChanged(Float(l2) / dualSenseTriggerMax)) }
-    if r2 != prevR2 { events.append(.rightTriggerChanged(Float(r2) / dualSenseTriggerMax)) }
+    if l2 != prevL2 {
+      events.append(.leftTriggerChanged(Float(l2) / dualSenseTriggerMax))
+    }
+    if r2 != prevR2 {
+      events.append(.rightTriggerChanged(Float(r2) / dualSenseTriggerMax))
+    }
     return (events, (l2, r2))
   }
 
@@ -210,7 +228,13 @@ public final class DualSenseParser: InputParser, @unchecked Sendable {
     return (events, system)
   }
 
-  private func normalizeHID(_ raw: UInt8) -> Float { dualSenseAxisNormalization.normalize(raw) }
+  private func normalizeHID(_ raw: UInt8) -> Float {
+    let centered = Float(raw) - dualSenseAxisCenter
+    let divisor = centered >= 0 ? dualSenseAxisPositiveMax : dualSenseAxisNegativeMax
+    let normalized = centered / divisor
+    if abs(normalized) < dualSenseAxisDeadzone { return 0 }
+    return max(-1, min(1, normalized))
+  }
 
   private func mapHat(_ hat: UInt8) -> DpadDirection {
     switch hat {
@@ -226,9 +250,9 @@ public final class DualSenseParser: InputParser, @unchecked Sendable {
     }
   }
 
-  private func diffButtons(prev: UInt8, curr: UInt8, mapping: [(UInt8, Button)])
-    -> [ControllerEvent]
-  {
+  private func diffButtons(
+    prev: UInt8, curr: UInt8, mapping: [(UInt8, Button)]
+  ) -> [ControllerEvent] {
     var events: [ControllerEvent] = []
     for (mask, button) in mapping {
       let wasPressed = (prev & mask) != 0

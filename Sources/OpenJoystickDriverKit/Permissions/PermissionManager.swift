@@ -1,4 +1,3 @@
-import ApplicationServices
 import Foundation
 import IOKit
 import IOKit.hid
@@ -30,7 +29,6 @@ public actor PermissionManager {
   ///
   /// Updated by ``startPolling()`` and ``requestAccess()``.
   public private(set) var inputMonitoringState: AccessState = .unknown
-  public private(set) var accessibilityState: AccessState = .unknown
   private var pollingTask: Task<Void, Never>?
 
   /// Creates a new PermissionManager.
@@ -49,14 +47,10 @@ public actor PermissionManager {
     }
   }
 
-  nonisolated public static func currentAccessibilityState() -> AccessState {
-    AXIsProcessTrusted() ? .granted : .denied
-  }
-
   /// Checks current Input Monitoring permission state without prompting.
-  public func checkAccess() -> AccessState { Self.currentAccessState() }
-
-  public func checkAccessibilityAccess() -> AccessState { Self.currentAccessibilityState() }
+  public func checkAccess() -> AccessState {
+    Self.currentAccessState()
+  }
 
   /// Requests Input Monitoring permission, showing the system dialog if needed.
   ///
@@ -65,14 +59,6 @@ public actor PermissionManager {
     IOHIDRequestAccess(kIOHIDRequestTypeListenEvent)
     let state = checkAccess()
     inputMonitoringState = state
-    return state
-  }
-
-  @discardableResult public func requestAccessibilityAccess() -> AccessState {
-    let options = ["AXTrustedCheckOptionPrompt": true]
-    AXIsProcessTrustedWithOptions(options as CFDictionary)
-    let state = checkAccessibilityAccess()
-    accessibilityState = state
     return state
   }
 
@@ -85,12 +71,7 @@ public actor PermissionManager {
         guard let self else { break }
         let currentInput = await self.checkAccess()
         let prevInput = await self.inputMonitoringState
-        if currentInput != prevInput { await self.updateInputMonitoringState(currentInput) }
-        let currentAccessibility = await self.checkAccessibilityAccess()
-        let prevAccessibility = await self.accessibilityState
-        if currentAccessibility != prevAccessibility {
-          await self.updateAccessibilityState(currentAccessibility)
-        }
+        if currentInput != prevInput { await self.updateState(currentInput) }
       }
     }
   }
@@ -101,15 +82,9 @@ public actor PermissionManager {
     pollingTask = nil
   }
 
-  private func updateInputMonitoringState(_ state: AccessState) {
+  private func updateState(_ state: AccessState) {
     let previous = inputMonitoringState
     inputMonitoringState = state
     print("[PermissionManager] Input Monitoring " + "state changed: \(previous) -> \(state)")
-  }
-
-  private func updateAccessibilityState(_ state: AccessState) {
-    let previous = accessibilityState
-    accessibilityState = state
-    print("[PermissionManager] Accessibility state changed: \(previous) -> \(state)")
   }
 }

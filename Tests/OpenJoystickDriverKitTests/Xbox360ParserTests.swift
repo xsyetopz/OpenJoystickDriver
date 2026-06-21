@@ -3,6 +3,38 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
+private func le16(_ value: Int16) -> (UInt8, UInt8) {
+  let u = UInt16(bitPattern: value)
+  return (UInt8(u & 0xFF), UInt8(u >> 8))
+}
+
+private func makeXbox360ReportLE(
+  buttons: UInt16 = 0,
+  lt: UInt8 = 0,
+  rt: UInt8 = 0,
+  lsx: Int16 = 0,
+  lsy: Int16 = 0,
+  rsx: Int16 = 0,
+  rsy: Int16 = 0
+) -> Data {
+  var r = [UInt8](repeating: 0, count: 20)
+  r[0] = 0x00
+  r[1] = 0x14
+  r[2] = UInt8(buttons & 0xFF)
+  r[3] = UInt8(buttons >> 8)
+  r[4] = lt
+  r[5] = rt
+  let (lsxL, lsxH) = le16(lsx)
+  let (lsyL, lsyH) = le16(lsy)
+  let (rsxL, rsxH) = le16(rsx)
+  let (rsyL, rsyH) = le16(rsy)
+  r[6] = lsxL; r[7] = lsxH
+  r[8] = lsyL; r[9] = lsyH
+  r[10] = rsxL; r[11] = rsxH
+  r[12] = rsyL; r[13] = rsyH
+  return Data(r)
+}
+
 struct Xbox360ParserTests {
   @Test
   func testIgnoresNonInputReportType() throws {

@@ -42,13 +42,19 @@ struct StatusCommand {
     if let mode = payload.virtualDeviceMode {
       print("Virtual device mode:")
       print("  requested : \(mode)")
-      if let output = payload.effectiveOutputMode { print("  output    : \(output)") }
-      if let id = payload.compatibilityIdentity { print("  identity  : \(id)") }
+      if let output = payload.effectiveOutputMode {
+        print("  output    : \(output)")
+      }
+      if let id = payload.compatibilityIdentity {
+        print("  identity  : \(id)")
+      }
       if let enabled = payload.userSpaceVirtualDeviceEnabled {
         let s = enabled ? "enabled" : "disabled"
-        print("  user     : \(s)")
+        print("  user-space: \(s)")
       }
-      if let s = payload.userSpaceVirtualDeviceStatus { print("  status    : \(s)") }
+      if let s = payload.userSpaceVirtualDeviceStatus {
+        print("  status    : \(s)")
+      }
       print("")
     }
     if payload.connectedDevices.isEmpty {
@@ -70,7 +76,8 @@ struct StatusCommand {
           "    protocol=\(dev.protocolVariant)"
             + " endpoints=in:0x\(String(dev.inputEndpoint, radix: 16))"
             + " out:0x\(String(dev.outputEndpoint, radix: 16))"
-            + " setConfig=\(dev.needsSetConfiguration)" + " settleMs=\(dev.postHandshakeSettleMs)"
+            + " setConfig=\(dev.needsSetConfiguration)"
+            + " settleMs=\(dev.postHandshakeSettleMs)"
         )
         print("    mappings=\(mappings) backends=\(backends)")
       }

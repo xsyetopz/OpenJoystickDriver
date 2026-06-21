@@ -3,18 +3,26 @@ import Foundation
 extension UserSpaceOutputDispatcher {
   // MARK: - Event application (called inside reportLock.withLock)
 
-  func applyEvent(_ event: ControllerEvent, deadzone: Float, state: inout VirtualGamepadState) {
+  func applyEvent(
+    _ event: ControllerEvent,
+    deadzone: Float,
+    state: inout VirtualGamepadState
+  ) {
     switch event {
-    case .buttonPressed(let btn): if let bit = buttonBit(for: btn) { state.buttons |= (1 << bit) }
-    case .buttonReleased(let btn): if let bit = buttonBit(for: btn) { state.buttons &= ~(1 << bit) }
+    case .buttonPressed(let btn):
+      if let bit = buttonBit(for: btn) { state.buttons |= (1 << bit) }
+    case .buttonReleased(let btn):
+      if let bit = buttonBit(for: btn) { state.buttons &= ~(1 << bit) }
     case .leftStickChanged(let x, let y):
       state.leftStickX = axisValue(x, deadzone: deadzone)
       state.leftStickY = axisValue(y, deadzone: deadzone)
     case .rightStickChanged(let x, let y):
       state.rightStickX = axisValue(x, deadzone: deadzone)
       state.rightStickY = axisValue(y, deadzone: deadzone)
-    case .leftTriggerChanged(let v): state.leftTrigger = Int16(v.clamped(to: 0...1) * 32_767)
-    case .rightTriggerChanged(let v): state.rightTrigger = Int16(v.clamped(to: 0...1) * 32_767)
+    case .leftTriggerChanged(let v):
+      state.leftTrigger = Int16(v.clamped(to: 0...1) * 32_767)
+    case .rightTriggerChanged(let v):
+      state.rightTrigger = Int16(v.clamped(to: 0...1) * 32_767)
     case .dpadChanged(let dir):
       state.hat = hatValue(for: dir)
       let dpadMask: UInt32 = 0xF << 11
@@ -25,9 +33,12 @@ extension UserSpaceOutputDispatcher {
 
   func xboxGuideReport(for event: ControllerEvent) -> [UInt8]? {
     switch event {
-    case .buttonPressed(let button) where button == .guide || button == .ps: return [0x02, 0x01]
-    case .buttonReleased(let button) where button == .guide || button == .ps: return [0x02, 0x00]
-    default: return nil
+    case .buttonPressed(let button) where button == .guide || button == .ps:
+      return [0x02, 0x01]
+    case .buttonReleased(let button) where button == .guide || button == .ps:
+      return [0x02, 0x00]
+    default:
+      return nil
     }
   }
 

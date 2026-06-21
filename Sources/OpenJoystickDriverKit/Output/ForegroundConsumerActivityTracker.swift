@@ -25,8 +25,12 @@ public struct ForegroundConsumerClientActivitySignature: Equatable, Sendable {
   }
 
   var hasSignal: Bool {
-    (queueHead ?? 0) != 0 || (queueTail ?? 0) != 0 || (queueEntries ?? 0) != 0
-      || getReportCount != 0 || setReportCount != 0 || setReportErrorCount != 0
+    (queueHead ?? 0) != 0
+      || (queueTail ?? 0) != 0
+      || (queueEntries ?? 0) != 0
+      || getReportCount != 0
+      || setReportCount != 0
+      || setReportErrorCount != 0
   }
 }
 
@@ -80,9 +84,10 @@ public struct ForegroundConsumerActivityTracker: Sendable {
 
     for client in openClients {
       seenClientIDs.insert(client.clientID)
-      var state =
-        states[client.clientID]
-        ?? ClientState(lastSignature: client.activitySignature, lastChangedNanoseconds: nil)
+      var state = states[client.clientID] ?? ClientState(
+        lastSignature: client.activitySignature,
+        lastChangedNanoseconds: nil
+      )
 
       if state.lastSignature != client.activitySignature {
         state.lastSignature = client.activitySignature
@@ -100,7 +105,8 @@ public struct ForegroundConsumerActivityTracker: Sendable {
 
     states = states.filter { seenClientIDs.contains($0.key) }
 
-    if openBundleRoots.count > 1, let frontmostBundleRootPath,
+    if openBundleRoots.count > 1,
+      let frontmostBundleRootPath,
       openBundleRoots.contains(frontmostBundleRootPath)
     {
       return [frontmostBundleRootPath]

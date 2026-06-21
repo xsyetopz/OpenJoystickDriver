@@ -20,7 +20,7 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 360
     env:
-      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
       APPLE_DEVELOPMENT_CERT_BASE64: ${{ secrets.APPLE_DEVELOPMENT_CERT_BASE64 }}
       DEVELOPER_ID_APPLICATION_CERT_BASE64: ${{ secrets.DEVELOPER_ID_APPLICATION_CERT_BASE64 }}
       CERTIFICATE_SECRET: ${{ secrets.CERTIFICATE_SECRET }}
@@ -28,9 +28,6 @@ jobs:
       OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64 }}
       OPENJOYSTICKDRIVER_DAEMON_DEVID_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_DAEMON_DEVID_PROFILE_BASE64 }}
       OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64 }}
-      NOTARIZE_KEY_ID: ${{ secrets.NOTARIZE_KEY_ID }}
-      NOTARIZE_ISSUER_ID: ${{ secrets.NOTARIZE_ISSUER_ID }}
-      NOTARIZE_API_KEY_BASE64: ${{ secrets.NOTARIZE_API_KEY_BASE64 }}
       NOTARIZE_APPLE_ID: ${{ secrets.NOTARIZE_APPLE_ID }}
       NOTARIZE_PASSWORD: ${{ secrets.NOTARIZE_PASSWORD }}
       SPARKLE_PUBLIC_ED_KEY: ${{ secrets.SPARKLE_PUBLIC_ED_KEY }}
@@ -55,22 +52,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          ref: ${{ steps.release.outputs.tag }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || steps.release.outputs.tag }}
 
       - name: Install dependencies
         run: |
           brew install libusb
           brew install swiftlint
 
-      - name: Build SDL3
-        run: |
-          ./scripts/ojd install-sdl3 --github-env
-
-      - name: Check profiles
-        run: ./scripts/ojd check profiles
-
-      - name: Check shell scripts
-        run: bash -n scripts/ojd scripts/ojd-*.sh
+      - name: Validate profiles
+        run: ./scripts/ojd validate profiles
 
       - name: Lint Swift
         run: ./scripts/ojd lint
@@ -80,9 +70,6 @@ jobs:
 
       - name: Set up release signing
         run: ./scripts/ojd signing ci-release-setup
-
-      - name: Check notarization credentials
-        run: ./scripts/ojd notarize history
 
       - name: Package release build
         run: |

@@ -18,38 +18,38 @@ public enum DaemonManager: Sendable {
 
   /// Returns the embedded daemon app URL for a given OpenJoystickDriver.app bundle.
   public static func bundledDaemonApplicationURL(in appBundleURL: URL) -> URL {
-    appBundleURL.appendingPathComponent("Contents", isDirectory: true).appendingPathComponent(
-      "Library",
-      isDirectory: true
-    ).appendingPathComponent("LoginItems", isDirectory: true).appendingPathComponent(
-      "OpenJoystickDriverDaemon.app",
-      isDirectory: true
-    )
+    appBundleURL
+      .appendingPathComponent("Contents", isDirectory: true)
+      .appendingPathComponent("Library", isDirectory: true)
+      .appendingPathComponent("LoginItems", isDirectory: true)
+      .appendingPathComponent("OpenJoystickDriverDaemon.app", isDirectory: true)
   }
 
   /// Returns the embedded daemon executable URL for a given OpenJoystickDriver.app bundle.
   public static func bundledDaemonExecutableURL(in appBundleURL: URL) -> URL {
-    bundledDaemonApplicationURL(in: appBundleURL).appendingPathComponent(
-      "Contents",
-      isDirectory: true
-    ).appendingPathComponent("MacOS", isDirectory: true).appendingPathComponent(
-      "OpenJoystickDriverDaemon",
-      isDirectory: false
-    )
+    bundledDaemonApplicationURL(in: appBundleURL)
+      .appendingPathComponent("Contents", isDirectory: true)
+      .appendingPathComponent("MacOS", isDirectory: true)
+      .appendingPathComponent("OpenJoystickDriverDaemon", isDirectory: false)
   }
 
   /// Returns the daemon executable URL for an app bundle or unbundled SwiftPM executable folder.
   public static func daemonExecutableURL(forMainBundleURL mainBundleURL: URL) -> URL {
-    if mainBundleURL.pathExtension == "app" { return bundledDaemonExecutableURL(in: mainBundleURL) }
+    if mainBundleURL.pathExtension == "app" {
+      return bundledDaemonExecutableURL(in: mainBundleURL)
+    }
     return mainBundleURL.appendingPathComponent("OpenJoystickDriverDaemon", isDirectory: false)
   }
 
-  @available(macOS 13.0, *) private static var appService: SMAppService {
+  @available(macOS 13.0, *)
+  private static var appService: SMAppService {
     SMAppService.agent(plistName: agentPlistName)
   }
 
   private static var usesLaunchctlAgentRegistration: Bool {
-    if #available(macOS 13.0, *) { return false }
+    if #available(macOS 13.0, *) {
+      return false
+    }
     return true
   }
 
@@ -70,10 +70,7 @@ public enum DaemonManager: Sendable {
   /// - Important: The LaunchAgent plist must be embedded in the app bundle.
   public static func install() throws {
     do {
-      if usesLaunchctlAgentRegistration {
-        try legacyInstall()
-        return
-      }
+      if usesLaunchctlAgentRegistration { try legacyInstall(); return }
       if #available(macOS 13.0, *) {
         try appService.register()
         print("[DaemonManager] Installed (SMAppService)")
@@ -81,16 +78,15 @@ public enum DaemonManager: Sendable {
         try legacyInstall()
         print("[DaemonManager] Installed (launchctl)")
       }
-    } catch { throw wrap(error, hint: installHint()) }
+    } catch {
+      throw wrap(error, hint: installHint())
+    }
   }
 
   /// Unregisters the daemon LaunchAgent.
   public static func uninstall() throws {
     do {
-      if usesLaunchctlAgentRegistration {
-        try legacyUninstall()
-        return
-      }
+      if usesLaunchctlAgentRegistration { try legacyUninstall(); return }
       if #available(macOS 13.0, *) {
         try appService.unregister()
         print("[DaemonManager] Uninstalled (SMAppService)")
@@ -98,7 +94,9 @@ public enum DaemonManager: Sendable {
         try legacyUninstall()
         print("[DaemonManager] Uninstalled (launchctl)")
       }
-    } catch { throw wrap(error, hint: uninstallHint()) }
+    } catch {
+      throw wrap(error, hint: uninstallHint())
+    }
   }
 
   /// Starts the daemon (idempotent).
@@ -107,21 +105,10 @@ public enum DaemonManager: Sendable {
   /// or bootstrapping an agent with `RunAtLoad` starts it.
   public static func start() throws { try install() }
 
-  /// Stops the loaded daemon job without removing its registration.
-  public static func stop() throws {
-    do {
-      _ = try launchctl(["bootout", launchdTarget])
-      print("[DaemonManager] Stopped")
-    } catch { throw wrap(error, hint: stopHint()) }
-  }
-
   /// Restarts the daemon (best-effort).
   public static func restart() throws {
     do {
-      if usesLaunchctlAgentRegistration {
-        try legacyRestart()
-        return
-      }
+      if usesLaunchctlAgentRegistration { try legacyRestart(); return }
       if #available(macOS 13.0, *) {
         // Apple requires re-registering after plist or executable changes.
         try? appService.unregister()
@@ -131,7 +118,9 @@ public enum DaemonManager: Sendable {
         try legacyRestart()
         print("[DaemonManager] Restarted (launchctl)")
       }
-    } catch { throw wrap(error, hint: restartHint()) }
+    } catch {
+      throw wrap(error, hint: restartHint())
+    }
   }
 
   /// Best-effort snapshot of launchd state for the daemon job.
@@ -146,13 +135,14 @@ public enum DaemonManager: Sendable {
 
       var printOut = ""
       var printErr: String?
-      do { printOut = try launchctl(["print", target]) } catch {
+      do {
+        printOut = try launchctl(["print", target])
+      } catch {
         printErr = error.localizedDescription
       }
 
-      let blameOut = (try? launchctl(["blame", target]))?.trimmingCharacters(
-        in: .whitespacesAndNewlines
-      )
+      let blameOut =
+        (try? launchctl(["blame", target]))?.trimmingCharacters(in: .whitespacesAndNewlines)
 
       let rawPrint: String?
       if let printErr {
@@ -169,7 +159,9 @@ public enum DaemonManager: Sendable {
         rawPrint: rawPrint
       )
 
-      if printErr != nil { return health }
+      if printErr != nil {
+        return health
+      }
 
       for rawLine in printOut.split(separator: "\n", omittingEmptySubsequences: false) {
         let line = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -225,7 +217,9 @@ public enum DaemonManager: Sendable {
       self.rawPrint = rawPrint
     }
 
-    public var wasSigkill9: Bool { (lastTerminatingSignal ?? "").contains("Killed: 9") }
+    public var wasSigkill9: Bool {
+      (lastTerminatingSignal ?? "").contains("Killed: 9")
+    }
 
     public var isInefficientKillLoop: Bool {
       let reason = (immediateReason ?? blame ?? "").lowercased()
@@ -255,20 +249,18 @@ public enum DaemonManager: Sendable {
   private static var launchdTarget: String { "\(launchdDomain)/\(label)" }
 
   private static var bundledLaunchAgentURL: URL {
-    Bundle.main.bundleURL.appendingPathComponent("Contents", isDirectory: true)
-      .appendingPathComponent("Library", isDirectory: true).appendingPathComponent(
-        "LaunchAgents",
-        isDirectory: true
-      ).appendingPathComponent(agentPlistName)
+    Bundle.main.bundleURL
+      .appendingPathComponent("Contents", isDirectory: true)
+      .appendingPathComponent("Library", isDirectory: true)
+      .appendingPathComponent("LaunchAgents", isDirectory: true)
+      .appendingPathComponent(agentPlistName)
   }
 
   private static var installedLaunchAgentURL: URL {
-    FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(
-      "Library",
-      isDirectory: true
-    ).appendingPathComponent("LaunchAgents", isDirectory: true).appendingPathComponent(
-      agentPlistName
-    )
+    FileManager.default.homeDirectoryForCurrentUser
+      .appendingPathComponent("Library", isDirectory: true)
+      .appendingPathComponent("LaunchAgents", isDirectory: true)
+      .appendingPathComponent(agentPlistName)
   }
 
   private static var legacyIsInstalled: Bool {
@@ -302,10 +294,18 @@ public enum DaemonManager: Sendable {
   }
 
   private static func bootstrapOrKickstartInstalledLaunchAgent() throws {
-    do { try launchctl(["bootstrap", launchdDomain, installedLaunchAgentURL.path]) } catch {
-      guard let printOut = try? launchctl(["print", launchdTarget]) else { throw error }
-      do { _ = try launchctl(["kickstart", "-k", launchdTarget]) } catch {
-        if launchctlPrintShowsRunning(printOut) { return }
+    do {
+      try launchctl(["bootstrap", launchdDomain, installedLaunchAgentURL.path])
+    } catch {
+      guard let printOut = try? launchctl(["print", launchdTarget]) else {
+        throw error
+      }
+      do {
+        _ = try launchctl(["kickstart", "-k", launchdTarget])
+      } catch {
+        if launchctlPrintShowsRunning(printOut) {
+          return
+        }
         if let refreshedPrintOut = try? launchctl(["print", launchdTarget]),
           launchctlPrintShowsRunning(refreshedPrintOut)
         {
@@ -317,7 +317,9 @@ public enum DaemonManager: Sendable {
   }
 
   private static func unregisterAppServiceIfAvailable() {
-    if #available(macOS 13.0, *) { try? appService.unregister() }
+    if #available(macOS 13.0, *) {
+      try? appService.unregister()
+    }
   }
 
   private static func installLaunchAgentPlist() throws {
@@ -327,7 +329,8 @@ public enum DaemonManager: Sendable {
         domain: "OpenJoystickDriver.DaemonManager",
         code: 2,
         userInfo: [
-          NSLocalizedDescriptionKey: "LaunchAgent plist not found at \(bundledLaunchAgentURL.path)."
+          NSLocalizedDescriptionKey:
+            "LaunchAgent plist not found at \(bundledLaunchAgentURL.path).",
         ]
       )
     }
@@ -352,7 +355,7 @@ public enum DaemonManager: Sendable {
     Fix checklist:
       1) Run the /Applications copy: `/Applications/OpenJoystickDriver.app` (not `.build/...`).
       2) Ensure the app bundle contains: `Contents/Library/LaunchAgents/\(agentPlistName)`.
-      3) If a previous daemon is stuck, remove it first: `OpenJoystickDriver --headless remove`.
+      3) If a previous daemon is stuck, uninstall first: `OpenJoystickDriver --headless uninstall`.
     """
   }
 
@@ -364,20 +367,11 @@ public enum DaemonManager: Sendable {
     """
   }
 
-  private static func stopHint() -> String {
-    """
-    Fix checklist:
-      1) Check whether the helper is installed: `OpenJoystickDriver --headless status`.
-      2) If you want to remove it completely, run: `OpenJoystickDriver --headless remove`.
-      3) Check launchd health: `launchctl print gui/$(id -u)/\(label) | head -n 80`
-    """
-  }
-
   private static func restartHint() -> String {
     """
     Fix checklist:
-      1) Try remove+install:
-         `OpenJoystickDriver --headless remove`
+      1) Try uninstall+install:
+         `OpenJoystickDriver --headless uninstall`
          `OpenJoystickDriver --headless install`.
       2) Check daemon log: `tail -n 80 /tmp/\(label).out` and `/tmp/\(label).err`.
       3) Check launchd health: `launchctl print gui/$(id -u)/\(label) | head -n 80`
@@ -392,7 +386,9 @@ public enum DaemonManager: Sendable {
     var errorDescription: String? {
       let cmd = (["launchctl"] + args).joined(separator: " ")
       let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
-      if trimmed.isEmpty { return "\(cmd) failed (exit status \(status))." }
+      if trimmed.isEmpty {
+        return "\(cmd) failed (exit status \(status))."
+      }
       return "\(cmd) failed (exit status \(status)):\n\(trimmed)"
     }
   }

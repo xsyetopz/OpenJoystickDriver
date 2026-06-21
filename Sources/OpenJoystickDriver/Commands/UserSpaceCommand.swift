@@ -4,7 +4,7 @@ import OpenJoystickDriverKit
 struct UserSpaceCommand {
   func run(arguments: [String]) {
     guard let sub = arguments.first else {
-      print("Usage: OpenJoystickDriver --headless user on|off|status")
+      print("Usage: OpenJoystickDriver --headless userspace on|off|status")
       return
     }
 
@@ -17,29 +17,32 @@ struct UserSpaceCommand {
         do {
           try await client.setUserSpaceVirtualDeviceEnabled(true)
           return true
-        } catch { return false }
+        } catch {
+          return false
+        }
       }
       if !ok {
-        print("ERROR: failed to enable user virtual gamepad (daemon not running?)")
+        print("ERROR: failed to enable user-space virtual gamepad (daemon not running?)")
         exit(1)
       }
-      let status: XPCStatusPayload? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
-        try? await client.getStatus()
-      }
-      print("user: enabled")
+      let status: XPCStatusPayload? =
+        runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) { try? await client.getStatus() }
+      print("user-space: enabled")
       if let s = status?.userSpaceVirtualDeviceStatus { print("status: \(s)") }
     case "off":
       let ok = runSyncResult {
         do {
           try await client.setUserSpaceVirtualDeviceEnabled(false)
           return true
-        } catch { return false }
+        } catch {
+          return false
+        }
       }
       if !ok {
-        print("ERROR: failed to disable user virtual gamepad (daemon not running?)")
+        print("ERROR: failed to disable user-space virtual gamepad (daemon not running?)")
         exit(1)
       }
-      print("user: disabled")
+      print("user-space: disabled")
     case "status":
       let enabled: Bool? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
         try? await client.getUserSpaceVirtualDeviceEnabled()
@@ -47,10 +50,10 @@ struct UserSpaceCommand {
       let status: String? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
         try? await client.getUserSpaceVirtualDeviceStatus()
       }
-      print("user: " + ((enabled ?? false) ? "enabled" : "disabled"))
+      print("user-space: " + ((enabled ?? false) ? "enabled" : "disabled"))
       if let status { print("status: \(status)") }
     default:
-      print("Usage: OpenJoystickDriver --headless user on|off|status")
+      print("Usage: OpenJoystickDriver --headless userspace on|off|status")
       exit(1)
     }
   }

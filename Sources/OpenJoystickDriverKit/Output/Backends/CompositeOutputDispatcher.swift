@@ -36,7 +36,11 @@ public final class CompositeOutputDispatcher: OutputDispatcher, @unchecked Senda
     self.secondary?.suppressOutput = self._suppressOutput
   }
 
-  public func setMode(_ newMode: Mode) { lock.withLock { mode = newMode } }
+  public func setMode(_ newMode: Mode) {
+    lock.withLock {
+      mode = newMode
+    }
+  }
 
   public func getMode() -> Mode { lock.withLock { mode } }
 
@@ -51,8 +55,10 @@ public final class CompositeOutputDispatcher: OutputDispatcher, @unchecked Senda
     guard !suppressOutput else { return }
     let (p, s, m) = lock.withLock { (primary, secondary, mode) }
     switch m {
-    case .primaryOnly: await p.dispatch(events: events, from: identifier)
-    case .secondaryOnly: if let s { await s.dispatch(events: events, from: identifier) }
+    case .primaryOnly:
+      await p.dispatch(events: events, from: identifier)
+    case .secondaryOnly:
+      if let s { await s.dispatch(events: events, from: identifier) }
     case .both:
       await p.dispatch(events: events, from: identifier)
       if let s { await s.dispatch(events: events, from: identifier) }
@@ -63,7 +69,11 @@ public final class CompositeOutputDispatcher: OutputDispatcher, @unchecked Senda
 extension CompositeOutputDispatcher: ControllerLifecycleListener {
   public func controllerDidStop(_ identifier: DeviceIdentifier) {
     let (p, s) = lock.withLock { (primary, secondary) }
-    if let p = p as? any ControllerLifecycleListener { p.controllerDidStop(identifier) }
-    if let s, let s = s as? any ControllerLifecycleListener { s.controllerDidStop(identifier) }
+    if let p = p as? any ControllerLifecycleListener {
+      p.controllerDidStop(identifier)
+    }
+    if let s, let s = s as? any ControllerLifecycleListener {
+      s.controllerDidStop(identifier)
+    }
   }
 }

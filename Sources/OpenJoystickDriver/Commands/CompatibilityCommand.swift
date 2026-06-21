@@ -4,9 +4,9 @@ import OpenJoystickDriverKit
 struct CompatibilityCommand {
   func run(arguments: [String]) {
     let usage = """
-      Usage: OpenJoystickDriver --headless id \
-      generic-hid|sdl2-3|apple-gamecontroller|x360-hid|xone-hid|status
-      """
+    Usage: OpenJoystickDriver --headless compat \
+    generic-hid|sdl2-3|apple-gamecontroller|x360-hid|xone-hid|status
+    """
     guard let sub = arguments.first else {
       print(usage)
       return
@@ -18,9 +18,9 @@ struct CompatibilityCommand {
     if sub == "status" {
       let status = runSyncResult { try? await client.getStatus() }
       if let id = status?.compatibilityIdentity {
-        print("identity: \(id)")
+        print("compatibility identity: \(id)")
       } else {
-        print("identity: unknown")
+        print("compatibility identity: unknown")
       }
       return
     }
@@ -34,16 +34,20 @@ struct CompatibilityCommand {
       do {
         try await client.setCompatibilityIdentity(sub)
         return true
-      } catch { return false }
+      } catch {
+        return false
+      }
     }
 
     if !ok {
-      print("ERROR: failed to set identity to \(sub) (daemon not running?)")
+      print("ERROR: failed to set compatibility identity to \(sub) (daemon not running?)")
       exit(1)
     }
 
     let status = runSyncResult { try? await client.getStatus() }
-    print("identity: \(status?.compatibilityIdentity ?? sub)")
-    if let s = status?.userSpaceVirtualDeviceStatus { print("user status: \(s)") }
+    print("compatibility identity: \(status?.compatibilityIdentity ?? sub)")
+    if let s = status?.userSpaceVirtualDeviceStatus {
+      print("user-space status: \(s)")
+    }
   }
 }

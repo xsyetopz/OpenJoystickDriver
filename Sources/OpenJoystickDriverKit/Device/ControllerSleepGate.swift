@@ -64,13 +64,17 @@ struct ControllerSleepGate {
   private static func containsWakeEvent(_ events: [ControllerEvent]) -> Bool {
     for event in events {
       switch event {
-      case .buttonPressed: return true
+      case .buttonPressed:
+        return true
       case .dpadChanged(let direction):
         switch direction {
-        case .neutral: break
-        default: return true
+        case .neutral:
+          break
+        default:
+          return true
         }
-      default: break
+      default:
+        break
       }
     }
     return false
@@ -100,17 +104,23 @@ extension DeviceInputState {
       switch event {
       case .buttonPressed(let button):
         let raw = button.rawValue
-        if !pressedButtons.contains(raw) { pressedButtons.append(raw) }
-      case .buttonReleased(let button): pressedButtons.removeAll { $0 == button.rawValue }
+        if !pressedButtons.contains(raw) {
+          pressedButtons.append(raw)
+        }
+      case .buttonReleased(let button):
+        pressedButtons.removeAll { $0 == button.rawValue }
       case .leftStickChanged(let x, let y):
         leftStickX = x
         leftStickY = y
       case .rightStickChanged(let x, let y):
         rightStickX = x
         rightStickY = y
-      case .leftTriggerChanged(let v): leftTrigger = v
-      case .rightTriggerChanged(let v): rightTrigger = v
-      case .dpadChanged(let direction): applyDpad(direction)
+      case .leftTriggerChanged(let v):
+        leftTrigger = v
+      case .rightTriggerChanged(let v):
+        rightTrigger = v
+      case .dpadChanged(let direction):
+        applyDpad(direction)
       }
     }
   }
@@ -122,12 +132,16 @@ extension DeviceInputState {
     for raw in pressedButtons {
       guard let button = Button(rawValue: raw) else { continue }
       switch button {
-      case .dpadUp, .dpadDown, .dpadLeft, .dpadRight: needsDpadNeutral = true
-      default: events.append(.buttonReleased(button))
+      case .dpadUp, .dpadDown, .dpadLeft, .dpadRight:
+        needsDpadNeutral = true
+      default:
+        events.append(.buttonReleased(button))
       }
     }
 
-    if needsDpadNeutral { events.append(.dpadChanged(.neutral)) }
+    if needsDpadNeutral {
+      events.append(.dpadChanged(.neutral))
+    }
     if abs(leftStickX) > controllerSleepStickDeadzone
       || abs(leftStickY) > controllerSleepStickDeadzone
     {
@@ -138,8 +152,12 @@ extension DeviceInputState {
     {
       events.append(.rightStickChanged(x: 0, y: 0))
     }
-    if leftTrigger > controllerSleepTriggerDeadzone { events.append(.leftTriggerChanged(0)) }
-    if rightTrigger > controllerSleepTriggerDeadzone { events.append(.rightTriggerChanged(0)) }
+    if leftTrigger > controllerSleepTriggerDeadzone {
+      events.append(.leftTriggerChanged(0))
+    }
+    if rightTrigger > controllerSleepTriggerDeadzone {
+      events.append(.rightTriggerChanged(0))
+    }
 
     return events
   }
@@ -151,8 +169,10 @@ extension DeviceInputState {
     for raw in pressedButtons.sorted() {
       guard let button = Button(rawValue: raw) else { continue }
       switch button {
-      case .dpadUp, .dpadDown, .dpadLeft, .dpadRight: break
-      default: events.append(.buttonPressed(button))
+      case .dpadUp, .dpadDown, .dpadLeft, .dpadRight:
+        break
+      default:
+        events.append(.buttonPressed(button))
       }
     }
 
@@ -185,31 +205,40 @@ extension DeviceInputState {
 
   private mutating func applyDpad(_ direction: DpadDirection) {
     let dpadButtons = Set([
-      Button.dpadUp.rawValue, Button.dpadDown.rawValue, Button.dpadLeft.rawValue,
+      Button.dpadUp.rawValue,
+      Button.dpadDown.rawValue,
+      Button.dpadLeft.rawValue,
       Button.dpadRight.rawValue,
     ])
     pressedButtons.removeAll { dpadButtons.contains($0) }
 
     func append(_ button: Button) {
       let raw = button.rawValue
-      if !pressedButtons.contains(raw) { pressedButtons.append(raw) }
+      if !pressedButtons.contains(raw) {
+        pressedButtons.append(raw)
+      }
     }
 
     switch direction {
-    case .neutral: break
-    case .north: append(.dpadUp)
+    case .neutral:
+      break
+    case .north:
+      append(.dpadUp)
     case .northEast:
       append(.dpadUp)
       append(.dpadRight)
-    case .east: append(.dpadRight)
+    case .east:
+      append(.dpadRight)
     case .southEast:
       append(.dpadDown)
       append(.dpadRight)
-    case .south: append(.dpadDown)
+    case .south:
+      append(.dpadDown)
     case .southWest:
       append(.dpadDown)
       append(.dpadLeft)
-    case .west: append(.dpadLeft)
+    case .west:
+      append(.dpadLeft)
     case .northWest:
       append(.dpadUp)
       append(.dpadLeft)
@@ -223,15 +252,24 @@ extension DeviceInputState {
     let right = pressedButtons.contains(Button.dpadRight.rawValue)
 
     switch (up, down, left, right) {
-    case (true, false, false, false): return .north
-    case (true, false, false, true): return .northEast
-    case (false, false, false, true): return .east
-    case (false, true, false, true): return .southEast
-    case (false, true, false, false): return .south
-    case (false, true, true, false): return .southWest
-    case (false, false, true, false): return .west
-    case (true, false, true, false): return .northWest
-    default: return .neutral
+    case (true, false, false, false):
+      return .north
+    case (true, false, false, true):
+      return .northEast
+    case (false, false, false, true):
+      return .east
+    case (false, true, false, true):
+      return .southEast
+    case (false, true, false, false):
+      return .south
+    case (false, true, true, false):
+      return .southWest
+    case (false, false, true, false):
+      return .west
+    case (true, false, true, false):
+      return .northWest
+    default:
+      return .neutral
     }
   }
 }

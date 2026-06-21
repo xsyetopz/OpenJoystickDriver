@@ -4,14 +4,14 @@ import OpenJoystickDriverKit
 struct OutputModeCommand {
   func run(arguments: [String]) {
     guard let arg = arguments.first else {
-      print("Usage: OpenJoystickDriver --headless output driver|user|both|status")
+      print("Usage: OpenJoystickDriver --headless output primary|secondary|both|status")
       return
     }
 
     func normalize(_ s: String) -> String? {
       switch s {
-      case "driver": return "primaryOnly"
-      case "user": return "secondaryOnly"
+      case "primary", "primaryOnly", "driverkit", "dext": return "primaryOnly"
+      case "secondary", "secondaryOnly", "userspace", "user-space": return "secondaryOnly"
       case "both": return "both"
       default: return nil
       }
@@ -21,15 +21,14 @@ struct OutputModeCommand {
     client.connect()
 
     if arg == "status" {
-      let mode: String? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
-        try? await client.getOutputMode()
-      }
+      let mode: String? =
+        runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) { try? await client.getOutputMode() }
       print("output: \(mode ?? "unknown")")
       return
     }
 
     guard let mode = normalize(arg) else {
-      print("Usage: OpenJoystickDriver --headless output driver|user|both|status")
+      print("Usage: OpenJoystickDriver --headless output primary|secondary|both|status")
       exit(1)
     }
 
@@ -37,7 +36,9 @@ struct OutputModeCommand {
       do {
         try await client.setOutputMode(mode)
         return true
-      } catch { return false }
+      } catch {
+        return false
+      }
     }
 
     if !ok {
@@ -45,9 +46,8 @@ struct OutputModeCommand {
       exit(1)
     }
 
-    let actual: String? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
-      try? await client.getOutputMode()
-    }
+    let actual: String? =
+      runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) { try? await client.getOutputMode() }
     print("output: \(actual ?? mode)")
   }
 }

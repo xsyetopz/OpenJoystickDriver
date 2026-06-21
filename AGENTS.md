@@ -26,15 +26,15 @@ For the current user-facing feature matrix, see `docs/COMPATIBILITY_LAYERS.md`.
 - Add a matching `Resources/Schemas/Devices/*.json` file for GIP controllers.
 - Use decimal VID, PID, endpoint, and packet values in JSON files.
 - Keep protocol variants and mapping flags in data where possible; you must not bake device quirks into parser code unless the protocol requires it.
-- Avoid broad rewrites of signing, DriverKit, or daemon lifecycle code without targeted checks.
+- Avoid broad rewrites of signing, DriverKit, or daemon lifecycle code without targeted validation.
 
-## Checks
+## Validation
 
 Run focused checks for the touched surface through RTK filters instead of
 `rtk proxy`, because proxy tracks raw output and can collapse project savings:
 
 ```bash
-rtk ./scripts/ojd check profiles
+rtk ./scripts/ojd validate profiles
 rtk test swift test
 rtk err bash -n scripts/ojd scripts/ojd-*.sh
 ```
@@ -46,15 +46,15 @@ If `swift test` fails with a SwiftPM module-cache mismatch (for example
 For backend/runtime changes, also use compact diagnostics:
 
 ```bash
-rtk ./scripts/ojd diag backends --seconds 5
-rtk ./scripts/ojd diag gamecontroller --seconds 5
-rtk ./scripts/ojd diag sdl3 --seconds 10
+rtk ./scripts/ojd diagnose backends --seconds 5
+rtk ./scripts/ojd diagnose gamecontroller --seconds 5
+rtk ./scripts/ojd diagnose sdl3 --seconds 10
 ```
 
 Use `rtk summary <cmd>` for one-off noisy runtime probes, `rtk log` or
 `rtk pipe --filter ...` for captured logs, and `rtk run <cmd>` only when raw
 execution should intentionally avoid filtering and tracking. You must not use
-`rtk proxy` for routine tests, checks, app binary runs, `launchctl`, or `log show` diagnostics.
+`rtk proxy` for routine tests, validation, app binary runs, `launchctl`, or `log show` diagnostics.
 
 This repo has project-local filters in `.rtk/filters.toml`. Install or append the managed common filters idempotently with:
 
@@ -71,7 +71,7 @@ rtk discover --project OpenJoystickDriver
 RTK_HOOK_AUDIT=1 rtk hook-audit
 ```
 
-DriverKit, signing, notarization, TCC permissions, and real controller input may require local macOS hardware confirmation. CI cannot prove those end to end.
+DriverKit, signing, notarization, TCC permissions, and real controller input may require local macOS hardware validation. CI cannot prove those end to end.
 
 ## Known Runtime Caveat
 

@@ -23,10 +23,7 @@ public struct DeviceTransportProfile: Equatable, Sendable {
   }
 
   public static let gipDefault = Self(
-    inputEndpoint: 0x82,
-    outputEndpoint: 0x02,
-    needsSetConfiguration: false
-  )
+    inputEndpoint: 0x82, outputEndpoint: 0x02, needsSetConfiguration: false)
 }
 
 /// Controller protocol family/variant used for long-term compatibility metadata.
@@ -199,7 +196,9 @@ struct DeviceCatalog: Sendable {
     let profiles = profileURLs.compactMap { url -> RuntimeEntry? in
       guard let data = try? Data(contentsOf: url),
         let decoded = try? decoder.decode(ProfileDeviceEntry.self, from: data)
-      else { return nil }
+      else {
+        return nil
+      }
       return RuntimeEntry(profile: decoded)
     }
     if !profiles.isEmpty { return profiles }
@@ -223,8 +222,9 @@ struct DeviceCatalog: Sendable {
     return options
   }
 
-  private func defaultProtocolVariant(for identifier: DeviceIdentifier) -> ControllerProtocolVariant
-  {
+  private func defaultProtocolVariant(
+    for identifier: DeviceIdentifier
+  ) -> ControllerProtocolVariant {
     switch parserName(for: identifier) {
     case "GIP": return .xboxOne
     case "DS4": return .dualShock4
@@ -287,7 +287,9 @@ struct DeviceCatalog: Sendable {
     }
   }
 
-  private struct ProfileDeviceList: Decodable { let controllers: [ProfileDeviceEntry] }
+  private struct ProfileDeviceList: Decodable {
+    let controllers: [ProfileDeviceEntry]
+  }
 
   private struct ProfileDeviceEntry: Decodable {
     let identity: Identity

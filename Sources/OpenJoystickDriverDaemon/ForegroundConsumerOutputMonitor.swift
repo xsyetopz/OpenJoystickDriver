@@ -30,10 +30,7 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
     deviceManager: DeviceManager,
     compatibilityRouteHandler:
       @escaping @Sendable (String?, Set<String>, Set<String>, String?) async -> Void = {
-        _,
-        _,
-        _,
-        _ in
+        _, _, _, _ in
       },
     pollIntervalNanoseconds: UInt64 = 1_000_000_000,
     burstPollIntervalNanoseconds: UInt64 = 100_000_000,
@@ -112,7 +109,9 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
     let now = DispatchTime.now().uptimeNanoseconds
     let consumerClients = Self.consumerClientSamples()
     let observedBundleRoots = Set(
-      consumerClients.filter { $0.isOpened && !$0.isSuspended }.map(\.bundleRootPath)
+      consumerClients
+        .filter { $0.isOpened && !$0.isSuspended }
+        .map(\.bundleRootPath)
     )
     let consumerBundleRoots = stateLock.withLock {
       activityTracker.consumerBundleRootPaths(
@@ -172,7 +171,8 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
             + "\(URL(fileURLWithPath: frontmostBundleRoot).lastPathComponent)"
             + " route=\(routeLabel)"
             + (observedBundleRoots == consumerBundleRoots
-              ? "" : " effective=[\(effectiveLabel)] observed=[\(observedLabel)]")
+              ? ""
+              : " effective=[\(effectiveLabel)] observed=[\(observedLabel)]")
         )
       } else {
         print("[ForegroundConsumerOutputMonitor] Output active")
@@ -193,7 +193,8 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
     await deviceManager.setExternalOutputAllowed(allowOutput)
   }
 
-  @MainActor private static func frontmostBundleRootPath() -> String? {
+  @MainActor
+  private static func frontmostBundleRootPath() -> String? {
     guard let app = NSWorkspace.shared.frontmostApplication else { return nil }
     return bundleRootPath(for: app)
   }
@@ -286,9 +287,9 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
     return false
   }
 
-  private static func consumerClientSamples(under service: io_service_t)
-    -> [ForegroundConsumerClientSample]
-  {
+  private static func consumerClientSamples(
+    under service: io_service_t
+  ) -> [ForegroundConsumerClientSample] {
     let routeToken = userSpaceRouteToken(for: service)
     var iterator: io_iterator_t = 0
     let kr = IORegistryEntryCreateIterator(
@@ -309,12 +310,16 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
     return samples
   }
 
-  private static func clientSample(entry: io_registry_entry_t, routeToken: String)
-    -> ForegroundConsumerClientSample?
-  {
-    guard let ioUserClass = IOObjectCopyClass(entry)?.takeRetainedValue() as String?,
+  private static func clientSample(
+    entry: io_registry_entry_t,
+    routeToken: String
+  ) -> ForegroundConsumerClientSample? {
+    guard
+      let ioUserClass = IOObjectCopyClass(entry)?.takeRetainedValue() as String?,
       ioUserClass == "IOHIDLibUserClient"
-    else { return nil }
+    else {
+      return nil
+    }
 
     let creatorValue = IORegistryEntryCreateCFProperty(
       entry,
@@ -343,7 +348,8 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
         queueTail: intValue(queue["tail"]),
         queueEntries: intValue(queue["numEntries"]),
         getReportCount: boolProperty("ClientOpened", dictionary: debugState) == nil
-          ? 0 : (intValue(debugState["GetReportCnt"]) ?? 0),
+          ? 0
+          : (intValue(debugState["GetReportCnt"]) ?? 0),
         setReportCount: intValue(debugState["SetReportCnt"]) ?? 0,
         setReportErrorCount: intValue(debugState["SetReportErrCnt"]) ?? 0
       )
@@ -351,18 +357,28 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   }
 
   private static func intProperty(_ key: String, entry: io_registry_entry_t) -> Int? {
-    if let value = IORegistryEntryCreateCFProperty(entry, key as CFString, kCFAllocatorDefault, 0)?
-      .takeRetainedValue() as? Int
-    {
+    if let value = IORegistryEntryCreateCFProperty(
+      entry,
+      key as CFString,
+      kCFAllocatorDefault,
+      0
+    )?.takeRetainedValue() as? Int {
       return value
     }
-    if let value = IORegistryEntryCreateCFProperty(entry, key as CFString, kCFAllocatorDefault, 0)?
-      .takeRetainedValue() as? Int64
-    {
+    if let value = IORegistryEntryCreateCFProperty(
+      entry,
+      key as CFString,
+      kCFAllocatorDefault,
+      0
+    )?.takeRetainedValue() as? Int64 {
       return Int(value)
     }
-    return IORegistryEntryCreateCFProperty(entry, key as CFString, kCFAllocatorDefault, 0)?
-      .takeRetainedValue() as? Int
+    return IORegistryEntryCreateCFProperty(
+      entry,
+      key as CFString,
+      kCFAllocatorDefault,
+      0
+    )?.takeRetainedValue() as? Int
   }
 
   private static func userSpaceRouteToken(for service: io_service_t) -> String {
@@ -372,7 +388,8 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
         kIOHIDSerialNumberKey as CFString,
         kCFAllocatorDefault,
         0
-      )?.takeRetainedValue() as? String ?? IORegistryEntryCreateCFProperty(
+      )?.takeRetainedValue() as? String
+      ?? IORegistryEntryCreateCFProperty(
         service,
         "SerialNumber" as CFString,
         kCFAllocatorDefault,
@@ -382,10 +399,16 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
       ?? UserSpaceVirtualDeviceConstants.sharedRouteToken
   }
 
-  private static func dictionaryProperty(_ key: String, entry: io_registry_entry_t) -> [String: Any]
-  {
-    IORegistryEntryCreateCFProperty(entry, key as CFString, kCFAllocatorDefault, 0)?
-      .takeRetainedValue() as? [String: Any] ?? [:]
+  private static func dictionaryProperty(
+    _ key: String,
+    entry: io_registry_entry_t
+  ) -> [String: Any] {
+    IORegistryEntryCreateCFProperty(
+      entry,
+      key as CFString,
+      kCFAllocatorDefault,
+      0
+    )?.takeRetainedValue() as? [String: Any] ?? [:]
   }
 
   private static func eventQueueMap(from value: Any?) -> [String: Any] {
@@ -410,7 +433,10 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   }
 
   private static func bundleLabelList(_ bundleRoots: Set<String>) -> String {
-    bundleRoots.map { URL(fileURLWithPath: $0).lastPathComponent }.sorted().joined(separator: ", ")
+    bundleRoots
+      .map { URL(fileURLWithPath: $0).lastPathComponent }
+      .sorted()
+      .joined(separator: ", ")
   }
 
   private static func bundleRootPath(for pid: pid_t) -> String? {

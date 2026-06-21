@@ -37,9 +37,10 @@ func runSyncResult<T: Sendable>(_ block: @Sendable @escaping () async -> T) -> T
 ///
 /// Returns nil on timeout. Safe for CLI status probes that must not hang when
 /// the daemon connection is invalidated without a reply.
-func runSyncResult<T: Sendable>(timeout seconds: Double, _ block: @Sendable @escaping () async -> T)
-  -> T?
-{
+func runSyncResult<T: Sendable>(
+  timeout seconds: Double,
+  _ block: @Sendable @escaping () async -> T
+) -> T? {
   let semaphore = DispatchSemaphore(value: 0)
   nonisolated(unsafe) var result: T?
   Task {
@@ -68,8 +69,9 @@ func requireApplicationsBundleOrExit() {
     print("ERROR: This command must be run from the /Applications-installed app bundle.")
     print("  Current bundle: \(path)")
     print(
-      "  Fix: run: " + "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver "
-        + "--headless <command>"
+      "  Fix: run: " +
+        "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver " +
+        "--headless <command>"
     )
     exit(1)
   }
@@ -87,10 +89,12 @@ func requireValidBundleSignatureOrExit(action: String) {
   let pipe = Pipe()
   process.standardOutput = pipe
   process.standardError = pipe
-  do { try process.run() } catch {
+  do {
+    try process.run()
+  } catch {
     print(
-      "ERROR: \(action) failed: could not run codesign verification: "
-        + "\(error.localizedDescription)"
+      "ERROR: \(action) failed: could not run codesign verification: " +
+        "\(error.localizedDescription)"
     )
     exit(1)
   }
@@ -99,16 +103,16 @@ func requireValidBundleSignatureOrExit(action: String) {
   guard process.terminationStatus == 0 else {
     if out.contains("a sealed resource is missing or invalid") {
       print(
-        "ERROR: \(action) failed: this app bundle's signature is INVALID "
-          + "(modified after signing)."
+        "ERROR: \(action) failed: this app bundle's signature is INVALID " +
+          "(modified after signing)."
       )
       print("")
       print("Fix:")
       print("  1) Run: ./scripts/ojd rebuild-fast dev")
       print(
-        "  2) Then re-run: "
-          + "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver "
-          + "--headless \(action.lowercased())"
+        "  2) Then re-run: " +
+          "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver " +
+          "--headless \(action.lowercased())"
       )
       print("")
       print("Diagnostic command:")
@@ -117,7 +121,11 @@ func requireValidBundleSignatureOrExit(action: String) {
     }
     let trimmed = out.trimmingCharacters(in: .whitespacesAndNewlines)
     print("ERROR: \(action) failed: app signature verification failed:")
-    if trimmed.isEmpty { print("  (no output)") } else { print(trimmed) }
+    if trimmed.isEmpty {
+      print("  (no output)")
+    } else {
+      print(trimmed)
+    }
     exit(1)
   }
 }

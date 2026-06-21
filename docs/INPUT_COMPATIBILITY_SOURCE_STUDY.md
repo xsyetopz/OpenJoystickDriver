@@ -105,7 +105,7 @@ belongs in consumer profiles and launch/diagnostic tooling, not in parser code.
 2. OJD must keep app compatibility separate from controller support.
    A controller profile proves how to read hardware. A consumer profile proves
    how an app stack should see OJD output. SDL apps, browser Gamepad API, SDL3
-   probes, and GameController.framework must remain separate checks
+   probes, and GameController.framework must remain separate validation
    surfaces.
 
 3. OJD must treat Apple GameController and Xbox hardware spoofing as explicit paths.

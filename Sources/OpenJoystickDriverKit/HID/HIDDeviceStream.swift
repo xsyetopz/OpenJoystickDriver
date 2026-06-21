@@ -92,8 +92,10 @@ public final class HIDDeviceStream: @unchecked Sendable {
     )
   }
 
-  public func getFeatureReport(locationID: UInt32, request: PhysicalHIDFeatureReadRequest) -> Data?
-  {
+  public func getFeatureReport(
+    locationID: UInt32,
+    request: PhysicalHIDFeatureReadRequest
+  ) -> Data? {
     let device = seizeLock.withLock { seizedByLocation[locationID] }
     guard let device else { return nil }
 
@@ -132,7 +134,13 @@ public final class HIDDeviceStream: @unchecked Sendable {
     let reportLength = bytes.count
     let result = bytes.withUnsafeMutableBufferPointer { pointer in
       guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
-      return IOHIDDeviceSetReport(device, type, CFIndex(report.reportID), baseAddress, reportLength)
+      return IOHIDDeviceSetReport(
+        device,
+        type,
+        CFIndex(report.reportID),
+        baseAddress,
+        reportLength
+      )
     }
     if result != kIOReturnSuccess {
       print(
@@ -177,7 +185,9 @@ public final class HIDDeviceStream: @unchecked Sendable {
     // Try to take exclusive access so SDL sees only the virtual controller (no duplicates).
     // This is best-effort; if it fails we still function, but users may see SDL-0/SDL-1 conflicts.
     let seizeKr = IOHIDDeviceOpen(device, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
-    if seizeKr == kIOReturnSuccess { seizeLock.withLock { seizedByLocation[locationID] = device } }
+    if seizeKr == kIOReturnSuccess {
+      seizeLock.withLock { seizedByLocation[locationID] = device }
+    }
 
     continuation?.yield(
       .connected(
@@ -219,7 +229,9 @@ public final class HIDDeviceStream: @unchecked Sendable {
     reportLength: CFIndex
   ) {
     var bytes = [UInt8](UnsafeBufferPointer(start: report, count: reportLength))
-    if reportID != 0, bytes.first != reportID { bytes.insert(reportID, at: 0) }
+    if reportID != 0, bytes.first != reportID {
+      bytes.insert(reportID, at: 0)
+    }
     continuation?.yield(.inputReport(locationID: locationID, reportID: reportID, data: Data(bytes)))
   }
 

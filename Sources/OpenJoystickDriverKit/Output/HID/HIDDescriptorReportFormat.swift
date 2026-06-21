@@ -24,7 +24,8 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
       switch self {
       case .noSuitableInputReport:
         return "Descriptor does not contain a usable GamePad-style input report (buttons/axes/hat)."
-      case .cannotParseDescriptor: return "Failed to parse HID report descriptor."
+      case .cannotParseDescriptor:
+        return "Failed to parse HID report descriptor."
       }
     }
   }
@@ -72,12 +73,15 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
     preferredTransport: String?
   ) -> [UInt8]? {
     let matching: [String: Any] = [
-      kIOHIDVendorIDKey as String: vendorID, kIOHIDProductIDKey as String: productID,
+      kIOHIDVendorIDKey as String: vendorID,
+      kIOHIDProductIDKey as String: productID,
     ]
     let mgr = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
     IOHIDManagerSetDeviceMatching(mgr, matching as CFDictionary)
     _ = IOHIDManagerOpen(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
-    defer { IOHIDManagerClose(mgr, IOOptionBits(kIOHIDOptionsTypeNone)) }
+    defer {
+      IOHIDManagerClose(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
+    }
 
     let devices = (IOHIDManagerCopyDevices(mgr) as? Set<IOHIDDevice>) ?? []
 
@@ -103,7 +107,9 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
       return s
     }
 
-    let candidates = devices.map { ($0, score($0)) }.sorted { a, b in a.1 > b.1 }
+    let candidates = devices
+      .map { ($0, score($0)) }
+      .sorted { a, b in a.1 > b.1 }
 
     for (dev, s) in candidates {
       if s <= Int.min / 4 { continue }

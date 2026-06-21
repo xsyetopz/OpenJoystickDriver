@@ -15,9 +15,12 @@ struct HIDReportPacker: @unchecked Sendable {
     let grouped = Dictionary(grouping: parsed.fields) { $0.reportID }
     var best: (UInt8, Int)?
     for (rid, fields) in grouped {
-      let hasButtons = fields.contains { $0.usagePage == 0x09 && (1...32).contains($0.usage) }
-      let axisCount = fields.filter { $0.usagePage == 0x01 && (0x30...0x35).contains($0.usage) }
-        .count
+      let hasButtons = fields.contains {
+        $0.usagePage == 0x09 && (1...32).contains($0.usage)
+      }
+      let axisCount = fields.filter {
+        $0.usagePage == 0x01 && (0x30...0x35).contains($0.usage)
+      }.count
       let hasHat = fields.contains { $0.usagePage == 0x01 && $0.usage == 0x39 }
       var score = 0
       if hasButtons { score += 10 }
@@ -25,7 +28,9 @@ struct HIDReportPacker: @unchecked Sendable {
       if hasHat { score += 5 }
       if let size = parsed.payloadSizeBytesByReportID[rid] { score += min(20, size) }
       if let currentBest = best {
-        if score > currentBest.1 { best = (rid, score) }
+        if score > currentBest.1 {
+          best = (rid, score)
+        }
       } else {
         best = (rid, score)
       }
@@ -171,7 +176,9 @@ struct HIDReportPacker: @unchecked Sendable {
       setBits(bitOffset: f.bitOffset, bitSize: f.bitSize, value: encodeHat(state.hat, field: f))
     }
 
-    if reportID != 0 { return [reportID] + payload }
+    if reportID != 0 {
+      return [reportID] + payload
+    }
     return payload
   }
 }

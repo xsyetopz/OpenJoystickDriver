@@ -4,7 +4,7 @@ import SwiftUSB
 /// Handles the GIP authentication sub-protocol (CMD 0x06).
 ///
 /// Responds to device auth messages with correctly-framed dummy payloads.
-/// The Windows driver analysis shows lenient enforcement -- structurally valid
+/// The Windows driver analysis shows lenient enforcement — structurally valid
 /// but cryptographically empty responses allow the device to eventually
 /// transition to FULL_POWER via xboxgip.sys retry/timeout logic.
 final class GIPAuthHandler: @unchecked Sendable {
@@ -14,7 +14,9 @@ final class GIPAuthHandler: @unchecked Sendable {
   /// Current device power state, driven by auth progress.
   private(set) var deviceState: GIPDeviceState = .start
 
-  init(outEndpoint: UInt8 = 0x02) { self.outEndpoint = outEndpoint }
+  init(outEndpoint: UInt8 = 0x02) {
+    self.outEndpoint = outEndpoint
+  }
 
   /// Maps device auth states to the host response state we should send.
   private static let responseMap: [GIPAuthState: GIPAuthState] = [

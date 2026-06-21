@@ -100,8 +100,8 @@ extension DevicePipeline {
     return nil
   }
 
-  func findDevice(on context: USBContext, vendorID: UInt16, productID: UInt16, attempt: Int) async
-    -> USBDevice?
+  func findDevice(on context: USBContext, vendorID: UInt16, productID: UInt16, attempt: Int)
+    async -> USBDevice?
   {
     guard let device = await context.findDevice(vendorId: vendorID, productId: productID) else {
       print("[DevicePipeline] Device not found (attempt \(attempt + 1)):" + " \(identifier)")
@@ -114,7 +114,9 @@ extension DevicePipeline {
     let handle = try device.open()
     if transportProfile.needsSetConfiguration {
       let cfg = (try? handle.getConfiguration()) ?? 0
-      if cfg != 1 { try handle.setConfiguration(1) }
+      if cfg != 1 {
+        try handle.setConfiguration(1)
+      }
     }
     try handle.claimInterface(0)
     return handle
@@ -131,10 +133,8 @@ extension DevicePipeline {
   func runUSBInputLoop(handle: USBDeviceHandle) async {
     let inEndpoint = transportProfile.inputEndpoint
     var lastKeepAliveNs = DispatchTime.now().uptimeNanoseconds
-    print(
-      "[DevicePipeline] Starting USB input loop:" + " \(identifier)"
-        + " inEP=0x\(String(inEndpoint, radix: 16))"
-    )
+    print("[DevicePipeline] Starting USB input loop:" + " \(identifier)"
+          + " inEP=0x\(String(inEndpoint, radix: 16))")
 
     if transportProfile.postHandshakeSettleNanoseconds > 0 {
       try? await Task.sleep(nanoseconds: transportProfile.postHandshakeSettleNanoseconds)
@@ -180,12 +180,12 @@ extension DevicePipeline {
         try? await Task.sleep(nanoseconds: backoff)
 
         if consecutiveUSBIOErrors >= usbIOErrorReconnectThreshold {
-          print("[DevicePipeline] Too many USB I/O errors -- reconnecting:" + " \(identifier)")
+          print("[DevicePipeline] Too many USB I/O errors — reconnecting:" + " \(identifier)")
           shouldBreak = true
         }
       } catch {
         // Unknown failures: slow down and let the outer loop reconnect.
-        print("[DevicePipeline] Read error" + " for \(identifier):" + " \(error) -- reconnecting")
+        print("[DevicePipeline] Read error" + " for \(identifier):" + " \(error) — reconnecting")
         try? await Task.sleep(nanoseconds: 250_000_000)
         shouldBreak = true
       }
@@ -245,7 +245,8 @@ extension DevicePipeline {
       sleepGate.idleTransition(
         currentState: currentInputState,
         now: DispatchTime.now().uptimeNanoseconds
-      ) != nil
+      )
+        != nil
     else { return }
 
     let neutralizingEvents = outputState.neutralizingEvents()
@@ -284,10 +285,14 @@ extension DevicePipeline {
         }
         return
       }
-      if !events.isEmpty { await dispatcher.dispatch(events: events, from: identifier) }
+      if !events.isEmpty {
+        await dispatcher.dispatch(events: events, from: identifier)
+      }
       updateOutputState(from: events)
-    case .consumeWhileSleeping: break
-    case .consumeWake: print("[DevicePipeline] Controller woke from sleep: \(identifier)")
+    case .consumeWhileSleeping:
+      break
+    case .consumeWake:
+      print("[DevicePipeline] Controller woke from sleep: \(identifier)")
     }
   }
 }

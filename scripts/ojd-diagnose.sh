@@ -2,7 +2,7 @@
 # Diagnostics helper for OpenJoystickDriver.
 #
 # Human-facing entrypoint:
-#   ./scripts/ojd diag <subcommand>
+#   ./scripts/ojd diagnose <subcommand>
 #
 # Subcommands:
 #   dext (default), sdl3, sdl3-gamecontroller, sdl3-hidapi-x360, backends
@@ -12,23 +12,20 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/ojd-common.sh"
 
-die() {
-  echo "ERROR: $*" >&2
-  exit 2
-}
+die() { echo "ERROR: $*" >&2; exit 2; }
 
 cmd="${1:-dext}"
 shift || true
 
 if [[ "$cmd" == "-h" || "$cmd" == "--help" || "$cmd" == "help" ]]; then
-  cat << 'TXT'
+  cat <<'TXT'
 Usage:
-  ./scripts/ojd diag dext
-  ./scripts/ojd diag sdl3 [--seconds N] [--rumble] [other args]
-  ./scripts/ojd diag sdl3-gamecontroller [--seconds N] [--rumble]
-  ./scripts/ojd diag sdl3-hidapi-x360 [--seconds N] [--rumble]
-  ./scripts/ojd diag gamecontroller [--seconds N] [--rumble]
-  ./scripts/ojd diag backends [--seconds N]
+  ./scripts/ojd diagnose dext
+  ./scripts/ojd diagnose sdl3 [--seconds N] [--rumble] [other args]
+  ./scripts/ojd diagnose sdl3-gamecontroller [--seconds N] [--rumble]
+  ./scripts/ojd diagnose sdl3-hidapi-x360 [--seconds N] [--rumble]
+  ./scripts/ojd diagnose gamecontroller [--seconds N] [--rumble]
+  ./scripts/ojd diagnose backends [--seconds N]
 TXT
   exit 0
 fi
@@ -41,7 +38,7 @@ run_sdl3_probe_native() {
   local SDKROOT
   SDKROOT="$(select_macos_sdk)" || return $?
 
-  command -v pkg-config > /dev/null 2>&1 || die "pkg-config not found (brew install pkg-config)"
+  command -v pkg-config >/dev/null 2>&1 || die "pkg-config not found (brew install pkg-config)"
   pkg-config --exists sdl3 || die "SDL3 not found (brew install sdl3)"
   [[ -f "$SRC" ]] || die "Missing probe source: $SRC"
 
@@ -70,11 +67,11 @@ configure_ojd_gamecontroller_route() {
 
   [[ -x "$CLI_BIN" ]] || die "OpenJoystickDriver CLI not found at $CLI_BIN or $APP_BIN"
 
-  run_limited_command 8 "$CLI_BIN" --headless id apple-gamecontroller > /dev/null || {
-    echo "WARN: could not set OJD identity to apple-gamecontroller" >&2
+  run_limited_command 8 "$CLI_BIN" --headless compat apple-gamecontroller >/dev/null || {
+    echo "WARN: could not set OJD compatibility identity to apple-gamecontroller" >&2
   }
-  run_limited_command 8 "$CLI_BIN" --headless user on > /dev/null || {
-    echo "WARN: could not enable OJD user output" >&2
+  run_limited_command 8 "$CLI_BIN" --headless userspace on >/dev/null || {
+    echo "WARN: could not enable OJD user-space output" >&2
   }
 }
 
@@ -103,11 +100,11 @@ configure_ojd_hidapi_x360_route() {
 
   [[ -x "$CLI_BIN" ]] || die "OpenJoystickDriver CLI not found at $CLI_BIN or $APP_BIN"
 
-  run_limited_command 8 "$CLI_BIN" --headless id x360-hid > /dev/null || {
-    echo "WARN: could not set OJD identity to x360-hid" >&2
+  run_limited_command 8 "$CLI_BIN" --headless compat x360-hid >/dev/null || {
+    echo "WARN: could not set OJD compatibility identity to x360-hid" >&2
   }
-  run_limited_command 8 "$CLI_BIN" --headless user on > /dev/null || {
-    echo "WARN: could not enable OJD user output" >&2
+  run_limited_command 8 "$CLI_BIN" --headless userspace on >/dev/null || {
+    echo "WARN: could not enable OJD user-space output" >&2
   }
 }
 
@@ -127,7 +124,7 @@ run_sdl3_hidapi_x360_probe() {
 
 select_macos_sdk() {
   local sdk
-  sdk="$(xcrun --show-sdk-path 2> /dev/null || true)"
+  sdk="$(xcrun --show-sdk-path 2>/dev/null || true)"
   if [[ -f "$sdk/usr/include/AvailabilityMacros.h" ]]; then
     echo "$sdk"
     return 0
@@ -140,7 +137,7 @@ select_macos_sdk() {
       echo "$sdk"
       return 0
     fi
-    sdk="$(DEVELOPER_DIR="$xcode_dev" xcrun --show-sdk-path 2> /dev/null || true)"
+    sdk="$(DEVELOPER_DIR="$xcode_dev" xcrun --show-sdk-path 2>/dev/null || true)"
     if [[ -f "$sdk/usr/include/AvailabilityMacros.h" ]]; then
       echo "$sdk"
       return 0
@@ -156,11 +153,11 @@ run_limited_command() {
   "$@" &
   local pid=$!
   local elapsed=0
-  while kill -0 "$pid" 2> /dev/null; do
-    if ((elapsed >= limit)); then
+  while kill -0 "$pid" 2>/dev/null; do
+    if (( elapsed >= limit )); then
       echo "WARN: timed out after ${limit}s: $*"
-      kill "$pid" 2> /dev/null || true
-      wait "$pid" 2> /dev/null || true
+      kill "$pid" 2>/dev/null || true
+      wait "$pid" 2>/dev/null || true
       return 124
     fi
     sleep 1
@@ -189,7 +186,70 @@ run_gamecontroller_probe() {
   "$PROBE" "${args[@]}"
 }
 
-source "$SCRIPT_DIR/ojd-diagnose-backends.sh"
+run_backend_acceptance_loop() {
+  local APP_BIN="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
+  local ROOT
+  ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+  local CLI_BIN="$ROOT/.build/debug/OpenJoystickDriver"
+  if [[ ! -x "$CLI_BIN" ]]; then
+    CLI_BIN="$APP_BIN"
+  fi
+  local seconds="${1:-5}"
+  local step_timeout="$((seconds + 15))"
+
+  echo "=== OpenJoystickDriver backend acceptance loop ==="
+  echo
+
+  run_limited() {
+    local limit="$1"
+    shift
+    "$@" &
+    local pid=$!
+    local elapsed=0
+    while kill -0 "$pid" 2>/dev/null; do
+      if (( elapsed >= limit )); then
+        echo "WARN: timed out after ${limit}s: $*"
+        kill "$pid" 2>/dev/null || true
+        wait "$pid" 2>/dev/null || true
+        return 124
+      fi
+      sleep 1
+      elapsed=$((elapsed + 1))
+    done
+    wait "$pid"
+  }
+
+  if [[ -x "$CLI_BIN" ]]; then
+    echo "0) CLI status:"
+    run_limited "$step_timeout" "$CLI_BIN" --headless status || true
+    echo
+
+    echo "1) Output mode:"
+    run_limited "$step_timeout" "$CLI_BIN" --headless output status || true
+    echo
+
+    echo "2) User-space backend status:"
+    run_limited "$step_timeout" "$CLI_BIN" --headless userspace status || true
+    echo
+  else
+    echo "0) SKIP: OpenJoystickDriver CLI not found at:"
+    echo "   $APP_BIN"
+    echo
+  fi
+
+  echo "3) DriverKit backend diagnostics:"
+  run_limited "$step_timeout" /usr/bin/env bash "$0" dext || true
+  echo
+
+  echo "4) SDL3 consumer probe:"
+  run_limited "$step_timeout" /usr/bin/env bash "$0" sdl3 --seconds "$seconds" \
+    --mappings-file "$ROOT/Resources/SDL/openjoystickdriver.gamecontrollerdb.txt" \
+    --expect-single-neutral-ojd || true
+  echo
+
+  echo "5) GameController.framework consumer probe:"
+  run_limited "$step_timeout" /usr/bin/env bash "$0" gamecontroller --seconds "$seconds" || true
+}
 
 if [[ "$cmd" == "sdl3" ]]; then
   run_sdl3_probe_native "$@"
@@ -240,7 +300,7 @@ fi
 
 # cmd == dext falls through to the dext diagnostics implementation below.
 
-# zsh has a 'log' builtin that shadows /usr/bin/log -- always use full path
+# zsh has a 'log' builtin that shadows /usr/bin/log — always use full path
 LOG=/usr/bin/log
 
 # Color output when stdout is a terminal
@@ -298,7 +358,7 @@ if [[ -n "$sysext_output" ]]; then
     info "$sysext_output"
   fi
 else
-  fail "Sysext not found -- extension not installed"
+  fail "Sysext not found — extension not installed"
 fi
 
 # --- 2. Installed binary exists ---
@@ -321,12 +381,12 @@ if [[ -n "$INSTALLED_BINARY" ]]; then
   pass "Installed binary exists (executable)"
   info "$INSTALLED_BINARY"
 elif [[ ${#STALE_BINARIES[@]} -gt 0 ]]; then
-  fail "All installed binaries are non-executable (stale sysext state -- reboot required)"
+  fail "All installed binaries are non-executable (stale sysext state — reboot required)"
   for stale in "${STALE_BINARIES[@]}"; do
     info "  stale: $stale"
   done
 else
-  fail "Installed binary missing -- stale activation (re-run Install Extension)"
+  fail "Installed binary missing — stale activation (re-run Install Extension)"
 fi
 
 if [[ ${#STALE_BINARIES[@]} -gt 0 && -n "$INSTALLED_BINARY" ]]; then
@@ -350,13 +410,13 @@ if [[ -d "$APP_DEXT_DIR" ]]; then
   pass "App bundle dext present"
   info "$APP_DEXT_DIR"
 else
-  fail "App bundle dext missing -- rebuild the app"
+  fail "App bundle dext missing — rebuild the app"
 fi
 
 # --- 5. Codesigning valid ---
 if [[ -n "$INSTALLED_BINARY" ]]; then
   installed_dext_dir="$(dirname "$INSTALLED_BINARY")"
-  if codesign -v "$installed_dext_dir" 2> /dev/null; then
+  if codesign -v "$installed_dext_dir" 2>/dev/null; then
     pass "Installed dext codesign valid"
   else
     fail "Installed dext codesign invalid"
@@ -364,7 +424,7 @@ if [[ -n "$INSTALLED_BINARY" ]]; then
 fi
 
 if [[ -d "$APP_DEXT_DIR" ]]; then
-  if codesign -v "$APP_DEXT_DIR" 2> /dev/null; then
+  if codesign -v "$APP_DEXT_DIR" 2>/dev/null; then
     pass "App bundle dext codesign valid"
   else
     fail "App bundle dext codesign invalid"
@@ -375,7 +435,7 @@ fi
 check_entitlements() {
   local label="$1" path="$2"
   local ent_output
-  ent_output=$(codesign -d --entitlements - "$path" 2> /dev/null || true)
+  ent_output=$(codesign -d --entitlements - "$path" 2>/dev/null || true)
   if echo "$ent_output" | grep -q "com.apple.developer.driverkit"; then
     pass "$label has DriverKit entitlement"
   else
@@ -391,7 +451,7 @@ if [[ -d "$APP_DEXT_DIR" ]]; then
 fi
 
 # --- 7. Dext process running ---
-if pgrep -x "$DEXT_PROCESS" > /dev/null 2>&1; then
+if pgrep -x "$DEXT_PROCESS" >/dev/null 2>&1; then
   pid=$(pgrep -x "$DEXT_PROCESS")
   pass "Dext process running (PID $pid)"
   running_binary=$(ps -p "$pid" -o args= | awk '{print $1}' || true)
@@ -408,15 +468,15 @@ else
 fi
 
 # --- 8. IORegistry HID device ---
-ioreg_hid=$(ioreg -r -c IOUserHIDDevice 2> /dev/null | grep -i OpenJoystick || true)
+ioreg_hid=$(ioreg -r -c IOUserHIDDevice 2>/dev/null | grep -i OpenJoystick || true)
 if [[ -n "$ioreg_hid" ]]; then
   pass "IORegistry IOUserHIDDevice present"
 else
-  fail "IORegistry IOUserHIDDevice not found -- dext not providing HID service"
+  fail "IORegistry IOUserHIDDevice not found — dext not providing HID service"
 fi
 
 # --- 9. IOUserService presence ---
-ioreg_service=$(ioreg -l -c IOUserService 2> /dev/null | grep -i openjoystick || true)
+ioreg_service=$(ioreg -l -c IOUserService 2>/dev/null | grep -i openjoystick || true)
 if [[ -n "$ioreg_service" ]]; then
   pass "IORegistry IOUserService proxy node present"
 else
@@ -425,9 +485,9 @@ fi
 
 # --- 10. Daemon connection ---
 if [[ -f "$DAEMON_LOG" ]]; then
-  if grep -qE "Connected|Auto-retry connected" "$DAEMON_LOG" 2> /dev/null; then
+  if grep -qE "Connected|Auto-retry connected" "$DAEMON_LOG" 2>/dev/null; then
     pass "Daemon reports connected to dext"
-  elif grep -qE "not yet available|not found.*not installed|not approved" "$DAEMON_LOG" 2> /dev/null; then
+  elif grep -qE "not yet available|not found.*not installed|not approved" "$DAEMON_LOG" 2>/dev/null; then
     fail "Daemon reports dext not yet available"
   else
     warn "Daemon log exists but no connection status found"
@@ -439,7 +499,7 @@ fi
 # --- 11. Dext os_log (last 2 minutes) ---
 echo ""
 echo -e "${BOLD}--- Recent dext logs (last 2m) ---${RESET}"
-dext_logs=$($LOG show --last 2m --predicate "process == \"$DEXT_PROCESS\"" --style compact 2> /dev/null | tail -10 || true)
+dext_logs=$($LOG show --last 2m --predicate "process == \"$DEXT_PROCESS\"" --style compact 2>/dev/null | tail -10 || true)
 if [[ -n "$dext_logs" ]]; then
   echo "$dext_logs"
 else
@@ -449,7 +509,7 @@ fi
 # --- 12. Kernel DK logs (last 2 minutes) ---
 echo ""
 echo -e "${BOLD}--- Recent DK kernel logs (last 2m) ---${RESET}"
-dk_logs=$($LOG show --last 2m --predicate 'eventMessage contains "DK:"' --style compact 2> /dev/null | tail -10 || true)
+dk_logs=$($LOG show --last 2m --predicate 'eventMessage contains "DK:"' --style compact 2>/dev/null | tail -10 || true)
 if [[ -n "$dk_logs" ]]; then
   echo "$dk_logs"
 else
@@ -471,11 +531,11 @@ if [[ $FAIL_COUNT -gt 0 ]]; then
   # Suggest most likely root cause
   echo ""
   if printf '%s\n' "${ISSUES[@]}" | grep -q "stale activation"; then
-    echo "Most likely: stale sysext -- re-activate from the app (Install Extension) or re-run rebuild.sh"
+    echo "Most likely: stale sysext — re-activate from the app (Install Extension) or re-run rebuild.sh"
   elif printf '%s\n' "${ISSUES[@]}" | grep -q "not running"; then
-    echo "Most likely: dext process crashed or failed to start -- check DK logs above"
+    echo "Most likely: dext process crashed or failed to start — check DK logs above"
   elif printf '%s\n' "${ISSUES[@]}" | grep -q "codesign"; then
-    echo "Most likely: signing issue -- re-sign and re-install the dext"
+    echo "Most likely: signing issue — re-sign and re-install the dext"
   fi
 fi
 

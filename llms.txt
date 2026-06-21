@@ -25,7 +25,7 @@ DriverKit HID or IOHIDUserDevice compatibility mode.
 
 - User-facing device/mode matrix: `docs/COMPATIBILITY_LAYERS.md`.
 - Hardware verification notes and user setup: `README.md`.
-- Repo change rules and check commands: `AGENTS.md`.
+- Repo change rules and validation commands: `AGENTS.md`.
 - Deeper implementation notes (SDL mappings, xpad-derived profiles): `llms-full.txt`.
 
 You must keep controller support status out of `llms*.txt`. Update `README.md`
@@ -39,19 +39,19 @@ brew install libusb
 ./scripts/ojd signing configure
 ./scripts/ojd rebuild dev
 ./scripts/ojd rebuild-fast dev
-./scripts/ojd check profiles
+./scripts/ojd validate profiles
 ./scripts/ojd test parsers-macos14
 swift build
 ```
 
-## Check Rules
+## Validation Rules
 
 - Controller JSON `$schema` values must use repo raw GitHub URLs, not local file
   URLs.
 - GIP runtime profiles must have matching device schemas.
 - VID/PID and endpoint values are decimal integers.
-- Use `./scripts/ojd check profiles` after profile or schema changes.
-- Use `./scripts/ojd test parsers-macos14` for macOS 14-compatible parser regressions; use `swift build` for package compile checks when Swift Testing is toolchain-blocked.
+- Use `./scripts/ojd validate profiles` after profile or schema changes.
+- Use `./scripts/ojd test parsers-macos14` for macOS 14-compatible parser regressions; use `swift build` for package compile validation when Swift Testing is toolchain-blocked.
 
 ## Agent Instructions
 

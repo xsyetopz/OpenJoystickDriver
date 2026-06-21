@@ -6,19 +6,16 @@ set -euo pipefail
 DEXT_ID="com.openjoystickdriver.VirtualHIDDevice"
 PROCESS_NAME="OpenJoystickVirtualHID"
 
-die() {
-  echo "ERROR: $*" >&2
-  exit 2
-}
+die() { echo "ERROR: $*" >&2; exit 2; }
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
   die "DriverKit repair is macOS-only"
 fi
 
 expected_path="$(
-  find /Library/SystemExtensions -path "*/${DEXT_ID}.dext/${PROCESS_NAME}" -type f -print0 2> /dev/null |
-    xargs -0 ls -t 2> /dev/null |
-    head -1
+  find /Library/SystemExtensions -path "*/${DEXT_ID}.dext/${PROCESS_NAME}" -type f -print0 2>/dev/null \
+    | xargs -0 ls -t 2>/dev/null \
+    | head -1
 )"
 
 if [[ -z "$expected_path" ]]; then
@@ -45,8 +42,8 @@ while IFS= read -r line; do
   echo "  pid=$pid $path"
   sudo kill -9 "$pid"
 done < <(
-  ps -axo pid=,command= |
-    awk -v name="$PROCESS_NAME" -v id="$DEXT_ID" '$0 ~ name && $0 ~ id {pid=$1; sub(/^[[:space:]]*[0-9]+[[:space:]]+/, ""); print pid " " $0}'
+  ps -axo pid=,command= \
+    | awk -v name="$PROCESS_NAME" -v id="$DEXT_ID" '$0 ~ name && $0 ~ id {pid=$1; sub(/^[[:space:]]*[0-9]+[[:space:]]+/, ""); print pid " " $0}'
 )
 
 if [[ "$found_stale" == "0" ]]; then

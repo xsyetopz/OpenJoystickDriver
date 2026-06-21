@@ -55,9 +55,9 @@ public protocol VirtualGamepadReportFormat: Sendable {
   func buildInputReport(from state: VirtualGamepadState) -> [UInt8]
 }
 
-extension VirtualGamepadReportFormat {
-  public var outputReportPayloadSize: Int? { nil }
-  public var outputReportID: UInt8? { nil }
+public extension VirtualGamepadReportFormat {
+  var outputReportPayloadSize: Int? { nil }
+  var outputReportID: UInt8? { nil }
 }
 
 /// Generic OJD HID GamePad format (matches ``GamepadHIDDescriptor``).
@@ -101,6 +101,7 @@ public struct OJDGenericGamepadFormat: VirtualGamepadReportFormat {
     return r
   }
 }
+
 
 /// SDL-focused HID GamePad format.
 ///

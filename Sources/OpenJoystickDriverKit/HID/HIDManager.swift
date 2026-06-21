@@ -30,6 +30,10 @@ public final class HIDManager: Sendable {
   }
 
   /// Reads a raw HID feature report from the connected device at `locationID`.
-  public func getFeatureReport(locationID: UInt32, request: PhysicalHIDFeatureReadRequest) -> Data?
-  { stream.getFeatureReport(locationID: locationID, request: request) }
+  public func getFeatureReport(
+    locationID: UInt32,
+    request: PhysicalHIDFeatureReadRequest
+  ) -> Data? {
+    stream.getFeatureReport(locationID: locationID, request: request)
+  }
 }

@@ -20,7 +20,7 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 45
     env:
-      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -37,17 +37,9 @@ jobs:
           brew install libusb
           brew install swiftlint
 
-      - name: Build SDL3
+      - name: Validate controller profiles
         run: |
-          ./scripts/ojd install-sdl3 --github-env
-
-      - name: Check controller profiles
-        run: |
-          bash scripts/ojd check profiles
-
-      - name: Check shell scripts
-        run: |
-          bash -n scripts/ojd scripts/ojd-*.sh
+          bash scripts/ojd validate profiles
 
       - name: Lint Swift
         run: |

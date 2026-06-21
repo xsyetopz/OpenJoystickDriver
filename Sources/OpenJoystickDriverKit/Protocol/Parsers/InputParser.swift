@@ -75,8 +75,11 @@ public protocol HIDStartupFeatureReadRequestProvider: AnyObject, Sendable {
 
 extension HIDStartupFeatureReadRequestProvider {
   /// Source-backed feature reads for a specific HID transport, when transport matters.
-  public func hidStartupFeatureReadRequests(transport _: String?) -> [PhysicalHIDFeatureReadRequest]
-  { hidStartupFeatureReadRequests() }
+  public func hidStartupFeatureReadRequests(transport _: String?)
+    -> [PhysicalHIDFeatureReadRequest]
+  {
+    hidStartupFeatureReadRequests()
+  }
 }
 
 public protocol InputParser: AnyObject, Sendable {

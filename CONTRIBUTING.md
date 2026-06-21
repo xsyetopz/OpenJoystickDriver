@@ -30,8 +30,8 @@ Hardware-facing tests and diagnostics require a USB controller plugged in. Use
 the focused diagnostics that match your change, for example:
 
 ```bash
-./scripts/ojd diag backends --seconds 5
-./scripts/ojd diag sdl3 --seconds 5
+./scripts/ojd diagnose backends --seconds 5
+./scripts/ojd diagnose sdl3 --seconds 5
 ```
 
 ---
@@ -84,10 +84,10 @@ Add parser, profile, or report-format tests under `Tests/OpenJoystickDriverKitTe
 Hardware-only checks must be guarded or expressed as diagnostics so they can
 skip cleanly without local device access.
 
-6. Check.
+6. Validate.
 
 ```bash
-./scripts/ojd check profiles
+./scripts/ojd validate profiles
 swift test
 ```
 

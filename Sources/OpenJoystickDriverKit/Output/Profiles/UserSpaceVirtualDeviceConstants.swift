@@ -31,18 +31,22 @@ public enum UserSpaceVirtualDeviceConstants {
   /// Builds a stable, non-sensitive serial number for a virtual device.
   ///
   /// We hash the physical identifier so we don't leak hardware serial numbers.
-  public static func serialNumber(for identifier: DeviceIdentifier, routeToken: String? = nil)
-    -> String
-  {
+  public static func serialNumber(
+    for identifier: DeviceIdentifier,
+    routeToken: String? = nil
+  ) -> String {
     let physicalHash = hex64(fnv1a64(stableKey(for: identifier)))
-    guard let routeToken, routeToken != sharedRouteToken else { return serialPrefix + physicalHash }
+    guard let routeToken, routeToken != sharedRouteToken else {
+      return serialPrefix + physicalHash
+    }
     return serialPrefix + routeToken + ":" + physicalHash
   }
 
   /// Computes a stable LocationID in the OJD namespace for this physical identifier.
-  public static func locationID(for identifier: DeviceIdentifier, routeToken: String? = nil)
-    -> UInt32
-  {
+  public static func locationID(
+    for identifier: DeviceIdentifier,
+    routeToken: String? = nil
+  ) -> UInt32 {
     let routeKey =
       (routeToken == nil || routeToken == sharedRouteToken) ? "" : "\(routeToken ?? ""):"
     let h = fnv1a64(routeKey + stableKey(for: identifier))
@@ -59,13 +63,18 @@ public enum UserSpaceVirtualDeviceConstants {
     guard let serial, serial.hasPrefix(serialPrefix) else { return nil }
     let suffix = String(serial.dropFirst(serialPrefix.count))
     let parts = suffix.split(separator: ":", omittingEmptySubsequences: false)
-    if parts.count >= 2, !parts[0].isEmpty { return String(parts[0]) }
+    if parts.count >= 2, !parts[0].isEmpty {
+      return String(parts[0])
+    }
     return sharedRouteToken
   }
 
   /// Returns the stable dedicated route token for one consumer bundle root.
-  public static func dedicatedRouteToken(forConsumerBundleRootPath bundleRootPath: String) -> String
-  { "consumer-" + hex64(fnv1a64(bundleRootPath)) }
+  public static func dedicatedRouteToken(
+    forConsumerBundleRootPath bundleRootPath: String
+  ) -> String {
+    "consumer-" + hex64(fnv1a64(bundleRootPath))
+  }
 
   // MARK: - Private helpers
 
@@ -79,13 +88,15 @@ public enum UserSpaceVirtualDeviceConstants {
 
   private static func fnv1a64(_ s: String) -> UInt64 {
     // FNV-1a 64-bit (deterministic, tiny, no extra deps).
-    var hash: UInt64 = 0xcbf2_9ce4_8422_2325
+    var hash: UInt64 = 0xcbf29ce484222325
     for b in s.utf8 {
       hash ^= UInt64(b)
-      hash &*= 0x100_0000_01b3
+      hash &*= 0x100000001b3
     }
     return hash
   }
 
-  private static func hex64(_ v: UInt64) -> String { String(format: "%016llx", v) }
+  private static func hex64(_ v: UInt64) -> String {
+    String(format: "%016llx", v)
+  }
 }

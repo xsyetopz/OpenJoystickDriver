@@ -8,7 +8,9 @@ public struct SemanticVersion: Comparable, Equatable, Sendable {
 
   public init?(_ value: String) {
     var version = value
-    if version.first == "v" || version.first == "V" { version.removeFirst() }
+    if version.first == "v" || version.first == "V" {
+      version.removeFirst()
+    }
 
     if let buildStart = version.firstIndex(of: "+") {
       let build = String(version[version.index(after: buildStart)...])
@@ -24,15 +26,23 @@ public struct SemanticVersion: Comparable, Equatable, Sendable {
     guard let core = versionAndPrerelease.first else { return nil }
 
     let numbers = core.split(separator: ".", omittingEmptySubsequences: false)
-    guard numbers.count == 3, Self.isValidNumericIdentifier(String(numbers[0])),
-      Self.isValidNumericIdentifier(String(numbers[1])),
-      Self.isValidNumericIdentifier(String(numbers[2])), let major = Int(numbers[0]),
-      let minor = Int(numbers[1]), let patch = Int(numbers[2]), major >= 0, minor >= 0, patch >= 0
-    else { return nil }
+    guard numbers.count == 3,
+          Self.isValidNumericIdentifier(String(numbers[0])),
+          Self.isValidNumericIdentifier(String(numbers[1])),
+          Self.isValidNumericIdentifier(String(numbers[2])),
+          let major = Int(numbers[0]),
+          let minor = Int(numbers[1]),
+          let patch = Int(numbers[2]),
+          major >= 0,
+          minor >= 0,
+          patch >= 0 else {
+      return nil
+    }
 
     let prerelease: [String]
     if versionAndPrerelease.count == 2 {
-      prerelease = versionAndPrerelease[1].split(separator: ".", omittingEmptySubsequences: false)
+      prerelease = versionAndPrerelease[1]
+        .split(separator: ".", omittingEmptySubsequences: false)
         .map(String.init)
       guard !prerelease.isEmpty, prerelease.allSatisfy(Self.isValidIdentifier) else { return nil }
     } else {
@@ -83,8 +93,10 @@ public struct SemanticVersion: Comparable, Equatable, Sendable {
       )
       if comparison == .orderedSame { return .orderedSame }
       return comparison == .orderedAscending ? .orderedAscending : .orderedDescending
-    case (true, false): return .orderedAscending
-    case (false, true): return .orderedDescending
+    case (true, false):
+      return .orderedAscending
+    case (false, true):
+      return .orderedDescending
     case (false, false):
       let comparison = lhs.compare(
         rhs,
@@ -104,13 +116,12 @@ public struct SemanticVersion: Comparable, Equatable, Sendable {
   }
 
   private static func isValidBuildMetadata(_ buildMetadata: String) -> Bool {
-    let identifiers = buildMetadata.split(separator: ".", omittingEmptySubsequences: false).map(
-      String.init
-    )
-    return !identifiers.isEmpty
-      && identifiers.allSatisfy { identifier in
-        !identifier.isEmpty && identifier.unicodeScalars.allSatisfy(Self.isValidIdentifierScalar)
-      }
+    let identifiers = buildMetadata
+      .split(separator: ".", omittingEmptySubsequences: false)
+      .map(String.init)
+    return !identifiers.isEmpty && identifiers.allSatisfy { identifier in
+      !identifier.isEmpty && identifier.unicodeScalars.allSatisfy(Self.isValidIdentifierScalar)
+    }
   }
 
   private static func isValidNumericIdentifier(_ identifier: String) -> Bool {
@@ -118,8 +129,9 @@ public struct SemanticVersion: Comparable, Equatable, Sendable {
   }
 
   private static func isNumericIdentifier(_ identifier: String) -> Bool {
-    !identifier.isEmpty
-      && identifier.unicodeScalars.allSatisfy { scalar in ("0"..."9").contains(scalar) }
+    !identifier.isEmpty && identifier.unicodeScalars.allSatisfy { scalar in
+      ("0"..."9").contains(scalar)
+    }
   }
 
   private static func isNumericIdentifierWithLeadingZero(_ identifier: String) -> Bool {
@@ -127,7 +139,9 @@ public struct SemanticVersion: Comparable, Equatable, Sendable {
   }
 
   private static func isValidIdentifierScalar(_ scalar: Unicode.Scalar) -> Bool {
-    ("0"..."9").contains(scalar) || ("A"..."Z").contains(scalar) || ("a"..."z").contains(scalar)
-      || scalar == "-"
+      ("0"..."9").contains(scalar) ||
+      ("A"..."Z").contains(scalar) ||
+      ("a"..."z").contains(scalar) ||
+      scalar == "-"
   }
 }

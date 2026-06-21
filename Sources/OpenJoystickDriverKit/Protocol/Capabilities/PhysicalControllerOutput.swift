@@ -1,5 +1,6 @@
 import SwiftUSB
 
+
 /// A raw HID feature-report read request sent through IOKit.
 public struct PhysicalHIDFeatureReadRequest: Equatable, Sendable {
   public let reportID: UInt8
@@ -30,11 +31,18 @@ public protocol PhysicalRumbleOutput: AnyObject, Sendable {
   /// Sends physical rumble to the source controller.
   ///
   /// Values are 0...255. Protocols without trigger motors may ignore `lt` and `rt`.
-  func sendPhysicalRumble(handle: USBDeviceHandle, left: UInt8, right: UInt8, lt: UInt8, rt: UInt8)
-    throws
+  func sendPhysicalRumble(
+    handle: USBDeviceHandle,
+    left: UInt8,
+    right: UInt8,
+    lt: UInt8,
+    rt: UInt8
+  ) throws
 }
 
-extension PhysicalRumbleOutput { public var supportsPhysicalRumble: Bool { true } }
+extension PhysicalRumbleOutput {
+  public var supportsPhysicalRumble: Bool { true }
+}
 
 /// Optional physical output support exposed by HID-backed controller protocols.
 public protocol PhysicalHIDRumbleOutput: AnyObject, Sendable {
@@ -44,4 +52,6 @@ public protocol PhysicalHIDRumbleOutput: AnyObject, Sendable {
     -> PhysicalHIDOutputReport
 }
 
-extension PhysicalHIDRumbleOutput { public var supportsPhysicalRumble: Bool { true } }
+extension PhysicalHIDRumbleOutput {
+  public var supportsPhysicalRumble: Bool { true }
+}

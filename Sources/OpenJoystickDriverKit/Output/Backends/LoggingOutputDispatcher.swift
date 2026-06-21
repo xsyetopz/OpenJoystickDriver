@@ -4,7 +4,7 @@ import Foundation
 ///
 /// Used for hardware validation and testing. For production output use DextOutputDispatcher.
 public final class LoggingOutputDispatcher: OutputDispatcher, @unchecked Sendable {
-  // Suppression is accepted but ignored -- this is a dev-only dispatcher.
+  // Suppression is accepted but ignored — this is a dev-only dispatcher.
   /// Accepted but ignored; this dispatcher always logs.
   public var suppressOutput = false
 

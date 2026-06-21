@@ -9,21 +9,20 @@ struct CLI {
     switch command {
     case "list": ListCommand().run()
     case "status": StatusCommand().run()
-    case "diag": DiagnoseCommand().run()
-    case "user": UserSpaceCommand().run(arguments: Array(args.dropFirst()))
+    case "diagnose": DiagnoseCommand().run()
+    case "userspace": UserSpaceCommand().run(arguments: Array(args.dropFirst()))
     case "output": OutputModeCommand().run(arguments: Array(args.dropFirst()))
-    case "id": CompatibilityCommand().run(arguments: Array(args.dropFirst()))
-    case "test": SelfTestCommand().run(arguments: Array(args.dropFirst()))
-    case "ext": SystemExtensionCommand().run(arguments: Array(args.dropFirst()))
+    case "compat": CompatibilityCommand().run(arguments: Array(args.dropFirst()))
+    case "selftest": SelfTestCommand().run(arguments: Array(args.dropFirst()))
+    case "sysext": SystemExtensionCommand().run(arguments: Array(args.dropFirst()))
     case "start": StartDaemonCommand().run()
-    case "stop": StopDaemonCommand().run()
     case "restart": RestartDaemonCommand().run()
-    case "reset": ResetSettingsCommand().run()
+    case "reset-settings": ResetSettingsCommand().run()
     case "install": InstallCommand().run()
-    case "remove": UninstallCommand().run()
+    case "uninstall": UninstallCommand().run()
     case "run": RunCommand().run()
     case "--help", "-h", "help": printHelp()
-    case "--version", "-v", "version": print("OpenJoystickDriver v0.5.0-alpha.5")
+    case "--version", "-v", "version": print("OpenJoystickDriver v0.5.0-alpha.4")
     default:
       print("Unknown command: \(command)")
       printHelp()
@@ -34,27 +33,28 @@ struct CLI {
   private func printHelp() {
     print(
       """
-      OpenJoystickDriver v0.5.0-alpha.5 \
+      OpenJoystickDriver v0.5.0-alpha.4 \
       - macOS gamepad driver
 
-      Usage: OpenJoystickDriver --headless <command>
+      Usage: OpenJoystickDriver \
+      --headless <command>
 
       Commands:
-        run      Start driver input loop (default)
-        list     List connected game controllers
-        status   Show permissions, output mode, and devices
-        diag     Show hardware diagnostics
-        user     Turn user virtual gamepad on/off/status
-        output   Set output route: driver, user, both, status
-        id       Set app identity: sdl2-3, x360-hid, xone-hid, status
-        test     Count input events on virtual devices
-        ext      Manage DriverKit system extension
-        install  Install login helper
-        remove   Remove login helper
-        start    Start login helper
-        stop     Stop login helper without removing it
-        restart  Restart login helper
-        reset    Reset mode, identity, and output settings
+        run        Start driver \
+      (default - processes controller input)
+        list       List connected game controllers
+        status     Show permission and device status
+        diagnose   Hardware diagnostics
+        userspace  Toggle user-space virtual gamepad (IOHIDUserDevice)
+        output     Set output routing mode (DriverKit/user-space)
+        compat     Set compatibility identity (generic-hid/sdl2-3/x360-hid/xone-hid)
+        selftest   Count input events on virtual devices
+        sysext     Manage DriverKit system extension
+        install    Register daemon LaunchAgent
+        uninstall  Unregister daemon LaunchAgent
+        start      Start daemon (register if needed)
+        restart    Restart daemon
+        reset-settings Reset daemon settings (mode/identity/output)
 
       Options:
         -h, --help     Show this help

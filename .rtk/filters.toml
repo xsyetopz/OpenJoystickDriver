@@ -169,42 +169,48 @@ E   AssertionError: missing vendorId
 """
 expected = "FAILED tests/test_profiles.py::test_profile - AssertionError: missing vendorId\nE   AssertionError: missing vendorId\n=========================== 1 failed, 2 passed in 0.20s ======================="
 
-[filters.ojd-check-profiles]
-description = "Compact OpenJoystickDriver profile check output"
-match_command = "^\\./scripts/ojd\\s+check\\s+profiles\\b"
+[filters.ojd-validate-profiles]
+description = "Compact OpenJoystickDriver profile validation output"
+match_command = "^\\./scripts/ojd\\s+validate\\s+profiles\\b"
 strip_ansi = true
 strip_lines_matching = [
   "^\\s*$",
-  "^\\[OK\\] .+\\.json$",
+  "^Validating controller profiles\\b",
+  "^Checking schema\\b",
+  "^Loaded \\d+ profile",
+  "^Validated .+\\.json$",
 ]
 match_output = [
-  { pattern = "(?i)checked \\d+ controller profile", message = "ok (profiles checked)", unless = "(?i)error|fail|invalid|warning" },
+  { pattern = "(?i)(all|profile).*(valid|ok|passed|success)", message = "ok (profiles valid)", unless = "(?i)error|fail|invalid|warning" },
 ]
 max_lines = 80
 filter_stderr = true
-on_empty = "ok (profile check produced no output)"
+on_empty = "ok (profile validation produced no output)"
 
-[[tests.ojd-check-profiles]]
-name = "successful profile check compacts to ok"
+[[tests.ojd-validate-profiles]]
+name = "successful profile validation compacts to ok"
 input = """
-[OK] Sources/OpenJoystickDriverKit/Resources/Controllers/gamesir-g7-se.json
-[OK] Resources/Schemas/Devices/GamesirG7SE.json
-Checked 29 controller profile(s) and 2 device schema(s).
+Validating controller profiles
+Checking schema Resources/Schemas/controller-profile.schema.json
+Loaded 12 profiles
+Validated Sources/OpenJoystickDriverKit/Resources/Controllers/gamesir-g7-se.json
+All profiles valid
 """
-expected = "ok (profiles checked)"
+expected = "ok (profiles valid)"
 
-[[tests.ojd-check-profiles]]
-name = "profile check failures are preserved"
+[[tests.ojd-validate-profiles]]
+name = "invalid profile details are preserved"
 input = """
-[OK] Sources/OpenJoystickDriverKit/Resources/Controllers/gamesir-g7-se.json
-[FAIL] Sources/OpenJoystickDriverKit/Resources/Controllers/foo.json: missing vendorId
-FAILED: 1 profile(s) invalid
+Validating controller profiles
+Validated Sources/OpenJoystickDriverKit/Resources/Controllers/gamesir-g7-se.json
+error: Sources/OpenJoystickDriverKit/Resources/Controllers/foo.json: missing vendorId
+Profile validation failed
 """
-expected = "[FAIL] Sources/OpenJoystickDriverKit/Resources/Controllers/foo.json: missing vendorId\nFAILED: 1 profile(s) invalid"
+expected = "error: Sources/OpenJoystickDriverKit/Resources/Controllers/foo.json: missing vendorId\nProfile validation failed"
 
 [filters.ojd-script-diagnostics]
 description = "Compact OpenJoystickDriver script diagnostics and rebuild output"
-match_command = "^\\./scripts/ojd\\s+(diag|rebuild-fast|rebuild|status|doctor)\\b"
+match_command = "^\\./scripts/ojd\\s+(diagnose|rebuild-fast|rebuild|status|doctor)\\b"
 strip_ansi = true
 keep_lines_matching = [
   "(?i)error|fail|failed|fatal|panic|warning|warn|denied|not found|missing|invalid|timeout|timed out",

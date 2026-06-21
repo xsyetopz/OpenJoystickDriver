@@ -87,11 +87,13 @@ enum HIDReportDescriptorParser {
         let v = UInt16(bytes[0]) | (UInt16(bytes[1]) << 8)
         return Int(Int16(bitPattern: v))
       case 4:
-        let v =
-          UInt32(bytes[0]) | (UInt32(bytes[1]) << 8) | (UInt32(bytes[2]) << 16)
+        let v = UInt32(bytes[0])
+          | (UInt32(bytes[1]) << 8)
+          | (UInt32(bytes[2]) << 16)
           | (UInt32(bytes[3]) << 24)
         return Int(Int32(bitPattern: v))
-      default: return 0
+      default:
+        return 0
       }
     }
 
@@ -204,13 +206,16 @@ enum HIDReportDescriptorParser {
           usageMin = nil
           usageMax = nil
         }
-      case .reserved: break
+      case .reserved:
+        break
       }
     }
 
     // Compute payload size per report ID.
     var payloadSize: [UInt8: Int] = [:]
-    for (rid, bits) in bitOffsetByReportID { payloadSize[rid] = (bits + 7) / 8 }
+    for (rid, bits) in bitOffsetByReportID {
+      payloadSize[rid] = (bits + 7) / 8
+    }
     return HIDParsedDescriptor(fields: fields, payloadSizeBytesByReportID: payloadSize)
   }
 }

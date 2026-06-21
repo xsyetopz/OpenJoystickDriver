@@ -93,7 +93,11 @@ struct LocalizationResourceTests {
     "zh-HK",
     "zh-TW",
     ]
-    let resourceRoot = Self.sourceResourceRoot
+    let resourceRoot = URL(fileURLWithPath: #filePath)
+      .deletingLastPathComponent()
+      .deletingLastPathComponent()
+      .deletingLastPathComponent()
+      .appendingPathComponent("Sources/OpenJoystickDriverKit/Resources")
     let sourceLocales = try FileManager.default.contentsOfDirectory(
       at: resourceRoot,
       includingPropertiesForKeys: nil
@@ -141,7 +145,11 @@ struct LocalizationResourceTests {
       "en-US",
       "en-ZA",
     ]
-    let resourceRoot = Self.sourceResourceRoot
+    let resourceRoot = URL(fileURLWithPath: #filePath)
+      .deletingLastPathComponent()
+      .deletingLastPathComponent()
+      .deletingLastPathComponent()
+      .appendingPathComponent("Sources/OpenJoystickDriverKit/Resources")
     let templateText = try String(
       contentsOf: resourceRoot
         .appendingPathComponent("Localization/Localizable.template.strings"),
@@ -169,11 +177,6 @@ struct LocalizationResourceTests {
     let localization = Localization(preferredLanguages: ["en-US"])
 
     #expect(localization.string("app.quit") == "Quit")
-  }
-
-  private static var sourceResourceRoot: URL {
-    URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-      .appendingPathComponent("Sources/OpenJoystickDriverKit/Resources")
   }
 
   private static func keys(in url: URL) throws -> Set<String> {

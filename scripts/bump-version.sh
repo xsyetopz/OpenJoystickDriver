@@ -8,7 +8,7 @@ PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 usage() {
   cat <<'USAGE'
 Usage:
-  ./scripts/ojd bump-version <version>
+  ./scripts/bump-version.sh <version>
   ./scripts/ojd bump-version <version>
 
 Examples:

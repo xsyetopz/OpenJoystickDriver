@@ -14,7 +14,8 @@ import Security
 public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispatching,
   @unchecked Sendable
 {
-  public typealias RumbleCommandHandler = @Sendable (DeviceIdentifier, VirtualRumbleCommand) -> Void
+  public typealias RumbleCommandHandler =
+    @Sendable (DeviceIdentifier, VirtualRumbleCommand) -> Void
 
   public enum CreationError: Error, CustomStringConvertible, Sendable {
     case createFailed
@@ -76,7 +77,8 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     hasEntitlement(requiredVirtualDeviceEntitlement)
   }
 
-  @preconcurrency public init(
+  @preconcurrency
+  public init(
     profile: VirtualDeviceProfile = .default,
     format: any VirtualGamepadReportFormat = OJDGenericGamepadFormat(),
     primaryUsage: Int? = nil,
@@ -111,7 +113,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       entries.removeAll()
       return old
     }
-    for entry in oldEntries { IOHIDUserDeviceCancel(entry.device) }
+    for entry in oldEntries {
+      IOHIDUserDeviceCancel(entry.device)
+    }
     status = "off"
   }
 
@@ -120,7 +124,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       if !status.hasPrefix("error:") { status = "off" }
       return
     }
-    if !status.hasPrefix("error:") { status = "on (devices=\(entries.count))" }
+    if !status.hasPrefix("error:") {
+      status = "on (devices=\(entries.count))"
+    }
   }
 
   private func createDevice(for identifier: DeviceIdentifier) throws -> Entry {
@@ -166,7 +172,8 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     // Some macOS builds reject certain LocationID values for IOHIDUserDevice creation.
     // Try the computed namespaced LocationID first, then a small stable fallback.
     let candidateLocationIDs: [UInt32] = [
-      UserSpaceVirtualDeviceConstants.locationID(for: identifier), 0x1000_0002,
+      UserSpaceVirtualDeviceConstants.locationID(for: identifier),
+      0x1000_0002,
     ]
 
     var dev: IOHIDUserDevice?
@@ -176,13 +183,17 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       for loc in candidateLocationIDs {
         properties[kIOHIDLocationIDKey as String] = Int64(loc)
         dev = tryCreate(properties)
-        if dev != nil { break attemptLoop }
+        if dev != nil {
+          break attemptLoop
+        }
       }
 
       // LocationID is optional; try without it.
       properties.removeValue(forKey: kIOHIDLocationIDKey as String)
       dev = tryCreate(properties)
-      if dev != nil { break attemptLoop }
+      if dev != nil {
+        break attemptLoop
+      }
     }
 
     guard let dev else {
@@ -195,7 +206,8 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       throw CreationError.createFailed
     }
     let queue = DispatchQueue(
-      label: "com.openjoystickdriver.userspace-hid."
+      label:
+        "com.openjoystickdriver.userspace-hid."
         + "\(routeToken ?? UserSpaceVirtualDeviceConstants.sharedRouteToken)."
         + "\(identifier.vendorID).\(identifier.productID)"
     )
@@ -221,7 +233,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
         report[0] = expectedReportID
         offset = 1
       }
-      for (index, byte) in neutral.enumerated() { report[offset + index] = byte }
+      for (index, byte) in neutral.enumerated() {
+        report[offset + index] = byte
+      }
       reportLength.pointee = CFIndex(requiredLength)
       return kIOReturnSuccess
     }
@@ -235,10 +249,12 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
           reportID: reportID,
           bytes: bytes
         )
-        guard let command else { return kIOReturnUnsupported }
+        guard let command else {
+          return kIOReturnUnsupported
+        }
         self?.lastRumbleStatus =
-          "app report id=\(reportID) L=\(command.left) R=\(command.right) "
-          + "LT=\(command.leftTrigger) RT=\(command.rightTrigger)"
+          "app report id=\(reportID) L=\(command.left) R=\(command.right) " +
+          "LT=\(command.leftTrigger) RT=\(command.rightTrigger)"
         let status = self?.lastRumbleStatus ?? ""
         print("[UserSpaceOutputDispatcher] App rumble report: \(identifier) \(status)")
         onRumbleCommand(identifier, command)
@@ -251,7 +267,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
   }
 
   public static func defaultPrimaryUsage(for format: any VirtualGamepadReportFormat) -> Int {
-    if let xbox360 = format as? Xbox360MacHIDReportFormat { return Int(xbox360.topLevelUsage) }
+    if let xbox360 = format as? Xbox360MacHIDReportFormat {
+      return Int(xbox360.topLevelUsage)
+    }
     return Int(kHIDUsage_GD_GamePad)
   }
 
@@ -269,10 +287,8 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       kIOHIDVersionNumberKey as String: profile.versionNumber,
       kIOHIDProductKey as String: productNameOverride ?? profile.productName,
       kIOHIDManufacturerKey as String: profile.manufacturer,
-      kIOHIDSerialNumberKey as String: UserSpaceVirtualDeviceConstants.serialNumber(
-        for: identifier,
-        routeToken: routeToken
-      ),
+      kIOHIDSerialNumberKey as String:
+        UserSpaceVirtualDeviceConstants.serialNumber(for: identifier, routeToken: routeToken),
       kIOHIDTransportKey as String: "USB",
       kIOHIDMaxInputReportSizeKey as String: reportBufferSize(
         payloadSize: format.inputReportPayloadSize,
@@ -314,7 +330,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     guard !suppressOutput else { return }
 
     let entry: Entry
-    do { entry = try getEntry(for: identifier) } catch {
+    do {
+      entry = try getEntry(for: identifier)
+    } catch {
       status = "error: \(error)"
       return
     }
@@ -349,7 +367,11 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
         entry.lastFailure = nil
         entry.consecutiveFailures = 0
       }
-      registryLock.withLock { if status.hasPrefix("error:") { recomputeStatusLocked() } }
+      registryLock.withLock {
+        if status.hasPrefix("error:") {
+          recomputeStatusLocked()
+        }
+      }
     }
   }
 
@@ -396,7 +418,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       _ = try getEntry(for: identifier)
       registryLock.withLock { recomputeStatusLocked() }
       print("[UserSpaceOutputDispatcher] Recreated IOHIDUserDevice after error for \(identifier)")
-    } catch { status = "error: \(error)" }
+    } catch {
+      status = "error: \(error)"
+    }
   }
 
   private func getEntry(for identifier: DeviceIdentifier) throws -> Entry {
@@ -415,7 +439,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
 extension UserSpaceOutputDispatcher: ControllerLifecycleListener {
   public func controllerDidStop(_ identifier: DeviceIdentifier) {
     let old = registryLock.withLock { entries.removeValue(forKey: identifier) }
-    if let old { IOHIDUserDeviceCancel(old.device) }
+    if let old {
+      IOHIDUserDeviceCancel(old.device)
+    }
     registryLock.withLock { recomputeStatusLocked() }
   }
 }

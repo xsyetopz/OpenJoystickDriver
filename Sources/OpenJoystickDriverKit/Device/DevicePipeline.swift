@@ -28,9 +28,13 @@ private final class DevicePipelineSnapshots: @unchecked Sendable {
     self.maxPacketLogEntries = maxPacketLogEntries
   }
 
-  func updateInputState(_ state: DeviceInputState) { lock.withLock { inputState = state } }
+  func updateInputState(_ state: DeviceInputState) {
+    lock.withLock { inputState = state }
+  }
 
-  func currentInputState() -> DeviceInputState { lock.withLock { inputState } }
+  func currentInputState() -> DeviceInputState {
+    lock.withLock { inputState }
+  }
 
   func appendPacket(_ entry: PacketLogEntry) {
     lock.withLock {
@@ -41,7 +45,9 @@ private final class DevicePipelineSnapshots: @unchecked Sendable {
     }
   }
 
-  func currentPacketLog() -> [PacketLogEntry] { lock.withLock { packetLog } }
+  func currentPacketLog() -> [PacketLogEntry] {
+    lock.withLock { packetLog }
+  }
 }
 
 /// Manages full lifecycle of single connected controller.
@@ -142,7 +148,8 @@ actor DevicePipeline {
   }
 
   /// Feed HID input report data (called by DeviceManager for class 0x03 devices).
-  @discardableResult func feedHIDData(_ data: Data) async -> [PhysicalHIDOutputReport] {
+  @discardableResult
+  func feedHIDData(_ data: Data) async -> [PhysicalHIDOutputReport] {
     guard isActive else { return [] }
     appendToPacketLog(bytes: Array(data), direction: "rx")
     do {
@@ -158,8 +165,8 @@ actor DevicePipeline {
   }
 
   nonisolated func requiresInputConnectionBeforeOutput() -> Bool {
-    (parser as? any ControllerInputConnectionLifecycle)?.requiresInputConnectionBeforeOutput
-      ?? false
+    (parser as? any ControllerInputConnectionLifecycle)?
+      .requiresInputConnectionBeforeOutput ?? false
   }
 
   func hidShutdownFeatureReports() -> [PhysicalHIDOutputReport] {
@@ -168,7 +175,9 @@ actor DevicePipeline {
   }
 
   nonisolated func supportsPhysicalRumble() -> Bool {
-    if let usbOutput = parser as? PhysicalRumbleOutput { return usbOutput.supportsPhysicalRumble }
+    if let usbOutput = parser as? PhysicalRumbleOutput {
+      return usbOutput.supportsPhysicalRumble
+    }
     if let hidOutput = parser as? PhysicalHIDRumbleOutput {
       return hidOutput.supportsPhysicalRumble
     }
@@ -205,7 +214,9 @@ actor DevicePipeline {
           + "non-neutral state: \(identifier)"
       )
     } else {
-      print("[DevicePipeline] Output ungated by foreground consumer: \(identifier)")
+      print(
+        "[DevicePipeline] Output ungated by foreground consumer: \(identifier)"
+      )
     }
   }
 
@@ -222,7 +233,9 @@ actor DevicePipeline {
     snapshots.updateInputState(currentInputState)
   }
 
-  func updateOutputState(from events: [ControllerEvent]) { outputState.apply(events: events) }
+  func updateOutputState(from events: [ControllerEvent]) {
+    outputState.apply(events: events)
+  }
 
   func neutralizeOutput() async {
     let neutralizingEvents = outputState.neutralizingEvents()
@@ -278,7 +291,13 @@ actor DevicePipeline {
       return false
     }
     do {
-      try rumbleOutput.sendPhysicalRumble(handle: handle, left: left, right: right, lt: lt, rt: rt)
+      try rumbleOutput.sendPhysicalRumble(
+        handle: handle,
+        left: left,
+        right: right,
+        lt: lt,
+        rt: rt
+      )
       return true
     } catch {
       print("[DevicePipeline] Rumble send failed for \(identifier): \(error)")
@@ -286,7 +305,8 @@ actor DevicePipeline {
     }
   }
 
-  func hidRumbleReport(left: UInt8, right: UInt8, lt: UInt8, rt: UInt8) -> PhysicalHIDOutputReport?
+  func hidRumbleReport(left: UInt8, right: UInt8, lt: UInt8, rt: UInt8)
+    -> PhysicalHIDOutputReport?
   {
     guard let rumbleOutput = parser as? PhysicalHIDRumbleOutput else { return nil }
     return rumbleOutput.physicalRumbleReport(left: left, right: right, lt: lt, rt: rt)

@@ -188,7 +188,9 @@ public final class XPCClient: @unchecked Sendable {
     }
     guard
       let payload = try? JSONDecoder().decode(XPCVirtualDeviceDiagnosticsPayload.self, from: data)
-    else { throw XPCError.invalidResponse }
+    else {
+      throw XPCError.invalidResponse
+    }
     return payload
   }
 
@@ -210,7 +212,9 @@ public final class XPCClient: @unchecked Sendable {
   ///
   /// Values: "primaryOnly", "secondaryOnly", or "both".
   public func setOutputMode(_ mode: String) async throws {
-    let _: Bool = try await xpcCall { service, reply in service.setOutputMode(mode, reply: reply) }
+    let _: Bool = try await xpcCall { service, reply in
+      service.setOutputMode(mode, reply: reply)
+    }
   }
 
   /// Gets the daemon output routing mode.
@@ -225,7 +229,9 @@ public final class XPCClient: @unchecked Sendable {
       service.runVirtualDeviceSelfTest(seconds: seconds, reply: reply)
     }
     guard let payload = try? JSONDecoder().decode(XPCVirtualDeviceSelfTestPayload.self, from: data)
-    else { throw XPCError.invalidResponse }
+    else {
+      throw XPCError.invalidResponse
+    }
     return payload
   }
 

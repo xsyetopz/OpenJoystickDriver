@@ -8,7 +8,7 @@ struct ScriptPackagingTests {
       .appendingPathComponent("justfile")
     let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
 
-    #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.5\""))
+    #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.4\""))
     #expect(justfile.contains("OJD_ENV=release ./scripts/ojd package release \"{{version}}\""))
     #expect(justfile.contains("cp -R .build/debug/OpenJoystickDriver.app /Applications/"))
   }
@@ -18,13 +18,13 @@ struct ScriptPackagingTests {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let bundlesURL = rootURL.appendingPathComponent("scripts/ojd-build-bundles.sh")
     let justfileURL = rootURL.appendingPathComponent("justfile")
-    let bumpURL = rootURL.appendingPathComponent("scripts/ojd-bump-version.sh")
+    let bumpURL = rootURL.appendingPathComponent("scripts/bump-version.sh")
     let bundles = try String(contentsOf: bundlesURL, encoding: .utf8)
     let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
     let bumpScript = try String(contentsOf: bumpURL, encoding: .utf8)
 
-    #expect(bundles.contains("OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.5"))
-    #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.5\""))
+    #expect(bundles.contains("OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.4"))
+    #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.4\""))
     #expect(bumpScript.contains("justfile"))
     #expect(!bundles.contains("0.5.0-alpha.3"))
     #expect(!justfile.contains("0.5.0-alpha.3"))
@@ -47,20 +47,15 @@ struct ScriptPackagingTests {
   @Test
   func testBuildScriptRequiresInstalledSigningIdentity() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let scriptsURL = rootURL.appendingPathComponent("scripts")
-    let scriptURLs = try FileManager.default.contentsOfDirectory(
-      at: scriptsURL,
-      includingPropertiesForKeys: nil
-    )
-    .filter {
-      $0.lastPathComponent.hasPrefix("ojd-build") || $0.lastPathComponent == "ojd-common.sh"
-    }
-    .sorted { $0.lastPathComponent < $1.lastPathComponent }
+    let scriptURL = rootURL.appendingPathComponent("scripts/ojd-build.sh")
+    let bundlesURL = rootURL.appendingPathComponent("scripts/ojd-build-bundles.sh")
+    let commonURL = rootURL.appendingPathComponent("scripts/ojd-common.sh")
     let launchAgentURL = rootURL.appendingPathComponent(
       "Sources/OpenJoystickDriver/App/com.openjoystickdriver.daemon.plist"
     )
-    let script = try scriptURLs.map { try String(contentsOf: $0, encoding: .utf8) }
-      .joined(separator: "\n")
+    let script = try String(contentsOf: scriptURL, encoding: .utf8) + "\n"
+      + String(contentsOf: bundlesURL, encoding: .utf8) + "\n"
+      + String(contentsOf: commonURL, encoding: .utf8)
     let launchAgent = try String(contentsOf: launchAgentURL, encoding: .utf8)
     let packaging = script + "\n" + launchAgent
 
@@ -214,9 +209,7 @@ struct ScriptPackagingTests {
     #expect(appModel.contains("registerApplicationBundleForPermissionPrompt(daemonAppURL)"))
     #expect(appModel.contains("configuration.createsNewApplicationInstance = true"))
     #expect(appModel.contains("configuration.activates = true"))
-    #expect(appModel.contains("configuration.arguments = [appArgument]"))
-    #expect(appModel.contains("--request-input-monitoring"))
-    #expect(appModel.contains("--request-accessibility"))
+    #expect(appModel.contains("configuration.arguments = [\"--request-input-monitoring\"]"))
     #expect(daemonMain.contains("NSApp.setActivationPolicy(.accessory)"))
     #expect(daemonMain.contains("NSApp.activate(ignoringOtherApps: true)"))
     #expect(daemonMain.contains("OJD_PERMISSION_PROMPT_ONLY"))

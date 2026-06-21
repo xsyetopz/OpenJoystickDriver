@@ -375,12 +375,3 @@ __marimo__/
 
 # Serena AI tool workspace
 .serena/
-
-/.crew/
-/.crew
-!.crew/artifacts/
-!.crew/graphs/
-!.crew/artifacts/.gitkeep
-!.crew/graphs/.gitkeep
-
-.pi/goals/

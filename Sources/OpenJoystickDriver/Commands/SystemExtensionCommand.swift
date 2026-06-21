@@ -9,10 +9,10 @@ struct SystemExtensionCommand {
     switch subcommand {
     case "status": printStatus()
     case "install": submitActivation()
-    case "remove": submitDeactivation()
+    case "uninstall": submitDeactivation()
     case "--help", "-h", "help": printHelp()
     default:
-      print("Unknown ext command: \(subcommand)")
+      print("Unknown sysext command: \(subcommand)")
       printHelp()
       exit(1)
     }
@@ -21,12 +21,12 @@ struct SystemExtensionCommand {
   private func printHelp() {
     print(
       """
-      Usage: OpenJoystickDriver --headless ext <command>
+      Usage: OpenJoystickDriver --headless sysext <command>
 
       Commands:
         status     Show registered OpenJoystickDriver system extensions
         install    Submit DriverKit system extension activation request
-        remove     Submit DriverKit system extension deactivation request
+        uninstall  Submit DriverKit system extension deactivation request
       """
     )
   }
@@ -63,13 +63,14 @@ struct SystemExtensionCommand {
     submission.start()
     let result = submission.wait(timeout: 60)
     switch result {
-    case .completed(let message): print(message)
+    case .completed(let message):
+      print(message)
     case .requiresApproval:
       print("System extension request submitted and requires approval in System Settings.")
       print("Open System Settings > General > Login Items & Extensions > Driver Extensions.")
     case .timedOut:
       print("System extension request did not finish within 60s.")
-      print("Check System Settings for an approval prompt, then run ext status.")
+      print("Check System Settings for an approval prompt, then run sysext status.")
       exit(2)
     case .failed(let error):
       print(error)
@@ -79,7 +80,8 @@ struct SystemExtensionCommand {
 
   private func bundleContainsSystemExtension() -> Bool {
     let bundlePath = Bundle.main.bundlePath
-    let dextPath = bundlePath + "/Contents/Library/SystemExtensions/\(ojdSystemExtensionID).dext"
+    let dextPath =
+      bundlePath + "/Contents/Library/SystemExtensions/\(ojdSystemExtensionID).dext"
     return FileManager.default.fileExists(atPath: dextPath)
   }
 
@@ -90,7 +92,9 @@ struct SystemExtensionCommand {
     let pipe = Pipe()
     process.standardOutput = pipe
     process.standardError = pipe
-    do { try process.run() } catch {
+    do {
+      try process.run()
+    } catch {
       return "systemextensionsctl failed: \(error.localizedDescription)"
     }
     process.waitUntilExit()
@@ -147,18 +151,22 @@ private final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
     _ request: OSSystemExtensionRequest,
     didFinishWithResult result: OSSystemExtensionRequest.Result
   ) {
-    self.result = .completed("System extension request finished with result \(result.rawValue).")
+    self.result = .completed(
+      "System extension request finished with result \(result.rawValue)."
+    )
   }
 
   func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
     let nsError = error as NSError
     result = .failed(
-      "System extension request failed: \(nsError.domain) "
-        + "code=\(nsError.code) \(nsError.localizedDescription)"
+      "System extension request failed: \(nsError.domain) " +
+        "code=\(nsError.code) \(nsError.localizedDescription)"
     )
   }
 
-  func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) { result = .requiresApproval }
+  func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
+    result = .requiresApproval
+  }
 
   func request(
     _ request: OSSystemExtensionRequest,
@@ -166,8 +174,8 @@ private final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
     withExtension ext: OSSystemExtensionProperties
   ) -> OSSystemExtensionRequest.ReplacementAction {
     print(
-      "Replacing \(existing.bundleIdentifier) v\(existing.bundleVersion) "
-        + "with v\(ext.bundleVersion)."
+      "Replacing \(existing.bundleIdentifier) v\(existing.bundleVersion) " +
+        "with v\(ext.bundleVersion)."
     )
     return .replace
   }

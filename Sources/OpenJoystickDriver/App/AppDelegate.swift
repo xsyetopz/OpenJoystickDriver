@@ -25,7 +25,7 @@ import SwiftUI
 
   private func configureApplicationIcon() {
     if let url = Bundle.main.url(forResource: "OpenJoystickDriver", withExtension: "icns"),
-      let image = NSImage(contentsOf: url)
+       let image = NSImage(contentsOf: url)
     {
       NSApp.applicationIconImage = image
     }
@@ -68,8 +68,9 @@ import SwiftUI
       return
     }
 
-    statusItemLocalRightClickMonitor = NSEvent.addLocalMonitorForEvents(matching: [.rightMouseDown])
-    { [weak self] event in
+    statusItemLocalRightClickMonitor = NSEvent.addLocalMonitorForEvents(
+      matching: [.rightMouseDown]
+    ) { [weak self] event in
       guard let self, let button = self.statusItem?.button, event.window === button.window else {
         return event
       }
@@ -81,9 +82,9 @@ import SwiftUI
       return nil
     }
 
-    statusItemGlobalRightClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [
-      .rightMouseDown
-    ]) { [weak self] event in
+    statusItemGlobalRightClickMonitor = NSEvent.addGlobalMonitorForEvents(
+      matching: [.rightMouseDown]
+    ) { [weak self] event in
       Task { @MainActor [weak self] in
         guard let self, self.eventIsInsideStatusItem(event) else { return }
         self.showPopover(event)
@@ -100,7 +101,11 @@ import SwiftUI
     ensurePopover()
 
     guard let popover else { return }
-    if popover.isShown { popover.performClose(sender) } else { showPopover(sender) }
+    if popover.isShown {
+      popover.performClose(sender)
+    } else {
+      showPopover(sender)
+    }
   }
 
   private func showPopover(_ sender: Any?) {
@@ -138,7 +143,9 @@ extension AppDelegate: NSPopoverDelegate {
     model.setPollingEnabled(false)
 
     // Drop the hosting controller so the SwiftUI tree can be reclaimed.
-    if let pop = notification.object as? NSPopover { pop.contentViewController = nil }
+    if let pop = notification.object as? NSPopover {
+      pop.contentViewController = nil
+    }
     popover = nil
   }
 }

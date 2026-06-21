@@ -26,6 +26,7 @@ func intArg(_ name: String, default defaultValue: Int) -> Int {
   return parsed
 }
 
+
 func runRawUSBMonitor() {
   let vid = UInt16(clamping: intArg("--vid", default: 0x045E))
   let pid = UInt16(clamping: intArg("--pid", default: 0))
@@ -42,8 +43,8 @@ func runRawUSBMonitor() {
     defer { done.signal() }
     do {
       let devices = try await USBDevice.findAll(vendorId: vid, productId: pid, deviceClass: nil)
-      let endpointDescription =
-        explicitEndpoint.map { "0x" + String($0, radix: 16) } ?? "sweep:0x81-0x8f"
+      let endpointDescription = explicitEndpoint.map { "0x" + String($0, radix: 16) }
+        ?? "sweep:0x81-0x8f"
       print(
         "USB_MONITOR devices=\(devices.count) vid=0x\(String(vid, radix: 16))"
           + " pid=0x\(String(pid, radix: 16)) interface=\(interfaceNumber)"
@@ -100,9 +101,9 @@ func runRawUSBMonitor() {
                 + " len=\(bytes.count) bytes=\(hex)"
             )
             fflush(stdout)
-          } catch let error as USBError where error.isTimeout { continue } catch let error
-            as USBError
-          {
+          } catch let error as USBError where error.isTimeout {
+            continue
+          } catch let error as USBError {
             if explicitEndpoint == nil { disabledEndpoints.insert(endpoint) }
             print(
               "USB_ENDPOINT endpoint=0x\(String(endpoint, radix: 16))"
@@ -164,7 +165,9 @@ if monitor {
       fflush(stdout)
     }
 
-    func snapshot() -> (Int, Int) { lock.withLock { (values, reports) } }
+    func snapshot() -> (Int, Int) {
+      lock.withLock { (values, reports) }
+    }
   }
 
   let counter = MonitorCounter()
@@ -172,10 +175,10 @@ if monitor {
   defer { Unmanaged<MonitorCounter>.fromOpaque(counterPtr).release() }
 
   let mgr = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
-  IOHIDManagerSetDeviceMatching(
-    mgr,
-    [kIOHIDVendorIDKey as String: vid, kIOHIDProductIDKey as String: pid] as CFDictionary
-  )
+  IOHIDManagerSetDeviceMatching(mgr, [
+    kIOHIDVendorIDKey as String: vid,
+    kIOHIDProductIDKey as String: pid,
+  ] as CFDictionary)
 
   let valueCallback: IOHIDValueCallback = { context, _, sender, value in
     guard let context, let sender else { return }
@@ -266,8 +269,10 @@ if list {
     let primaryPage = intProp(dev, kIOHIDPrimaryUsagePageKey as String)
     let primaryUsage = intProp(dev, kIOHIDPrimaryUsageKey as String)
     print(
-      "VID:0x\(String(vid, radix: 16)) PID:0x\(String(pid, radix: 16))" + " transport=\(transport)"
-        + " primary=\(primaryPage):\(primaryUsage)" + " maxIn=\(inSize) maxOut=\(outSize)"
+      "VID:0x\(String(vid, radix: 16)) PID:0x\(String(pid, radix: 16))"
+        + " transport=\(transport)"
+        + " primary=\(primaryPage):\(primaryUsage)"
+        + " maxIn=\(inSize) maxOut=\(outSize)"
         + " product=\"\(product)\""
     )
   }
@@ -278,7 +283,8 @@ if open {
   let vid = intArg("--vid", default: 0x045E)
   let pid = intArg("--pid", default: 0x028E)
   let devs = enumerateDevices(matching: [
-    kIOHIDVendorIDKey as String: vid, kIOHIDProductIDKey as String: pid,
+    kIOHIDVendorIDKey as String: vid,
+    kIOHIDProductIDKey as String: pid,
   ])
   print(
     "Opening \(devs.count) device(s), VID:0x\(String(vid, radix: 16))"
@@ -348,7 +354,8 @@ if dump {
     exit(2)
   }
   let devs = enumerateDevices(matching: [
-    kIOHIDVendorIDKey as String: vid, kIOHIDProductIDKey as String: pid,
+    kIOHIDVendorIDKey as String: vid,
+    kIOHIDProductIDKey as String: pid,
   ])
   guard let dev = devs.first else {
     fputs("ERROR: Device not found. Is it connected?\n", stderr)

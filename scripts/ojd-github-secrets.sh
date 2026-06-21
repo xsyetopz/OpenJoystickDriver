@@ -5,13 +5,10 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
-die() {
-  echo "ERROR: $*" >&2
-  exit 2
-}
+die() { echo "ERROR: $*" >&2; exit 2; }
 
 usage() {
-  cat << 'TXT'
+  cat <<'TXT'
 Usage:
   ./scripts/ojd signing export-github-secrets [options]
 
@@ -46,7 +43,7 @@ developer_id_identity="${DEVELOPER_ID_APPLICATION_IDENTITY_EXPORT:-}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -h | --help | help)
+    -h|--help|help)
       usage
       exit 0
       ;;
@@ -96,7 +93,7 @@ read_secret() {
 
 base64_file() {
   local path="$1"
-  python3 - "$path" << 'PY'
+  python3 - "$path" <<'PY'
 import base64, pathlib, sys
 path = pathlib.Path(sys.argv[1]).expanduser()
 sys.stdout.write(base64.b64encode(path.read_bytes()).decode("ascii"))
@@ -143,7 +140,7 @@ if [[ -z "$apple_development_identity" || -z "$developer_id_identity" ]]; then
     -t identities \
     -f pkcs12 \
     -P "$certificate_secret" \
-    -o "$auto_identity" > /dev/null
+    -o "$auto_identity" >/dev/null
   chmod 600 "$auto_identity"
   apple_development_identity="${apple_development_identity:-$auto_identity}"
   developer_id_identity="${developer_id_identity:-$auto_identity}"
@@ -163,7 +160,7 @@ write_secret_file NOTARIZE_APPLE_ID "$notarize_apple_id"
 write_secret_file NOTARIZE_PASSWORD "$notarize_password"
 chmod 600 "$values_dir"/*.txt
 
-cat > "$out_dir/apply-github-secrets.sh" << 'SH'
+cat > "$out_dir/apply-github-secrets.sh" <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -188,7 +185,7 @@ chmod 700 "$out_dir/apply-github-secrets.sh"
 display_out_dir="$(display_path "$out_dir")"
 display_apply_path="$(display_path "$out_dir/apply-github-secrets.sh")"
 
-cat > "$out_dir/README.txt" << TXT
+cat > "$out_dir/README.txt" <<TXT
 OpenJoystickDriver GitHub Actions secrets
 
 Files:

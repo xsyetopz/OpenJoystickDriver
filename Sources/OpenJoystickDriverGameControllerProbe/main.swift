@@ -4,12 +4,17 @@ import GameController
 import IOKit
 import IOKit.hid
 
-func hasArg(_ name: String) -> Bool { CommandLine.arguments.dropFirst().contains(name) }
+func hasArg(_ name: String) -> Bool {
+  CommandLine.arguments.dropFirst().contains(name)
+}
 
 func argValue(_ name: String, default defaultValue: Int) -> Int {
   let args = Array(CommandLine.arguments.dropFirst())
-  guard let idx = args.firstIndex(of: name), idx + 1 < args.count, let value = Int(args[idx + 1])
-  else { return defaultValue }
+  guard let idx = args.firstIndex(of: name), idx + 1 < args.count,
+    let value = Int(args[idx + 1])
+  else {
+    return defaultValue
+  }
   return value
 }
 
@@ -26,7 +31,10 @@ func describe(_ controller: GCController) -> String {
 func controllerHapticsDescription(_ controller: GCController) -> String {
   if #available(macOS 11.0, *) {
     guard let haptics = controller.haptics else { return "haptics=false" }
-    let localities = haptics.supportedLocalities.map(\.rawValue).sorted().joined(separator: ",")
+    let localities = haptics.supportedLocalities
+      .map(\.rawValue)
+      .sorted()
+      .joined(separator: ",")
     return "haptics=true localities=[\(localities)]"
   }
   return "haptics=unavailable"
@@ -54,7 +62,9 @@ func playHapticPulse(on controller: GCController) -> String {
     Thread.sleep(forTimeInterval: 0.7)
     engine.stop()
     return "played"
-  } catch { return "failed: \(error)" }
+  } catch {
+    return "failed: \(error)"
+  }
 }
 
 func intProp(_ device: IOHIDDevice, _ key: String) -> Int {
@@ -71,8 +81,14 @@ func looksLikeGamepad(_ device: IOHIDDevice) -> Bool {
   {
     return true
   }
-  let rawPairs = IOHIDDeviceGetProperty(device, kIOHIDDeviceUsagePairsKey as CFString)
-  guard let pairs = rawPairs as? [[String: Any]] else { return false }
+  let rawPairs = IOHIDDeviceGetProperty(
+    device,
+    kIOHIDDeviceUsagePairsKey as CFString
+  )
+  guard let pairs = rawPairs as? [[String: Any]]
+  else {
+    return false
+  }
   return pairs.contains { pair in
     let page = pair[kIOHIDDeviceUsagePageKey as String] as? Int ?? 0
     let usage = pair[kIOHIDDeviceUsageKey as String] as? Int ?? 0
@@ -84,17 +100,19 @@ func printHIDSupport() {
   let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
   IOHIDManagerSetDeviceMatching(manager, nil)
   IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
-  let devices = ((IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice>) ?? []).filter(
-    looksLikeGamepad
-  ).sorted {
-    let leftVID = intProp($0, kIOHIDVendorIDKey)
-    let rightVID = intProp($1, kIOHIDVendorIDKey)
-    if leftVID != rightVID { return leftVID < rightVID }
-    return intProp($0, kIOHIDProductIDKey) < intProp($1, kIOHIDProductIDKey)
-  }
+  let devices = ((IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice>) ?? [])
+    .filter(looksLikeGamepad)
+    .sorted {
+      let leftVID = intProp($0, kIOHIDVendorIDKey)
+      let rightVID = intProp($1, kIOHIDVendorIDKey)
+      if leftVID != rightVID { return leftVID < rightVID }
+      return intProp($0, kIOHIDProductIDKey) < intProp($1, kIOHIDProductIDKey)
+    }
 
   print("HID GamePad support:")
-  if devices.isEmpty { print("- none") }
+  if devices.isEmpty {
+    print("- none")
+  }
   for device in devices {
     let vid = intProp(device, kIOHIDVendorIDKey)
     let pid = intProp(device, kIOHIDProductIDKey)
@@ -125,22 +143,34 @@ let shouldRumble = hasArg("--rumble")
 
 print("GameController probe")
 print("Listening for \(seconds)s")
-if shouldRumble { print("Rumble pulse requested") }
+if shouldRumble {
+  print("Rumble pulse requested")
+}
 print("")
-if #available(macOS 11.3, *) { GCController.shouldMonitorBackgroundEvents = true }
+if #available(macOS 11.3, *) {
+  GCController.shouldMonitorBackgroundEvents = true
+}
 printHIDSupport()
 print("")
 
 let center = NotificationCenter.default
 var observerTokens: [NSObjectProtocol] = []
 observerTokens.append(
-  center.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { note in
+  center.addObserver(
+    forName: .GCControllerDidConnect,
+    object: nil,
+    queue: .main
+  ) { note in
     guard let controller = note.object as? GCController else { return }
     print("connect: \(describe(controller))")
   }
 )
 observerTokens.append(
-  center.addObserver(forName: .GCControllerDidDisconnect, object: nil, queue: .main) { note in
+  center.addObserver(
+    forName: .GCControllerDidDisconnect,
+    object: nil,
+    queue: .main
+  ) { note in
     guard let controller = note.object as? GCController else { return }
     print("disconnect: \(describe(controller))")
   }
@@ -148,12 +178,18 @@ observerTokens.append(
 
 let controllers = GCController.controllers()
 print("Initial controllers: \(controllers.count)")
-for controller in controllers { print("- \(describe(controller))") }
+for controller in controllers {
+  print("- \(describe(controller))")
+}
 
 let end = Date().addingTimeInterval(TimeInterval(seconds))
-while Date() < end { RunLoop.main.run(mode: .default, before: Date().addingTimeInterval(0.1)) }
+while Date() < end {
+  RunLoop.main.run(mode: .default, before: Date().addingTimeInterval(0.1))
+}
 
-for token in observerTokens { center.removeObserver(token) }
+for token in observerTokens {
+  center.removeObserver(token)
+}
 
 if shouldRumble {
   let controllers = GCController.controllers()
