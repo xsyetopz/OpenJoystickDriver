@@ -11,6 +11,7 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
 
 <p>
   <a href="#quickstart">Quickstart</a> ·
+  <a href="#install-update-or-remove">Install / Remove</a> ·
   <a href="docs/COMPATIBILITY_LAYERS.md">Compatibility</a> ·
   <a href="#choose-an-output-mode">Output Modes</a> ·
   <a href="#troubleshooting">Troubleshooting</a> ·
@@ -26,7 +27,7 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
 
 - Normalizes physical controller input into virtual controller outputs that apps can understand.
 - Provides compatibility modes for SDL, Apple GameController, Generic HID, and experimental Xbox HID targets.
-- Keeps common diagnostics and validation commands in one repo-controlled workflow.
+- Keeps common diagnostics and check commands in one repo-controlled workflow.
 
 ## Status
 
@@ -36,14 +37,51 @@ Compatibility mode can still be useful without DriverKit. Use DriverKit only whe
 
 ## Quickstart
 
-1. Install `OpenJoystickDriver.app` into `/Applications`.
-2. Open the menu-bar item.
-3. Follow the UI prompts to grant **Input Monitoring** for the app and helper.
-4. Connect a supported controller.
-5. Use **Input Test** to confirm buttons and sticks.
-6. Test physical rumble only for devices whose rumble path is listed as implemented.
+1. Drag `OpenJoystickDriver.app` to `/Applications`.
+2. Open `OpenJoystickDriver.app`.
+3. Choose **Install** or **Start** in the menu-bar app when prompted.
+4. Grant **Input Monitoring** for OpenJoystickDriver and its helper when macOS asks.
+5. Connect a supported controller.
+6. Use **Input Test** to confirm buttons and sticks.
 
 Expected result: your target app sees a compatible virtual controller.
+
+## Install, Update, or Remove
+
+OpenJoystickDriver has one app bundle in `/Applications`:
+
+```text
+/Applications/OpenJoystickDriver.app
+```
+
+The daemon helper lives inside that app bundle:
+
+```text
+/Applications/OpenJoystickDriver.app/Contents/Library/LoginItems/OpenJoystickDriverDaemon.app
+```
+
+Use the menu-bar controls for the normal flow:
+
+| Action                  | Menu-bar path                                      | Headless equivalent                                                                         |
+| ----------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Install or start helper | Open the app, then choose **Install** or **Start** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless install` |
+| Check helper status     | Open the app and check the System card             | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status`  |
+| Restart helper          | Choose **Restart Helper**                          | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart` |
+| Remove helper           | Choose **Uninstall**                               | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless remove`  |
+
+To uninstall OpenJoystickDriver completely:
+
+1. Run **Uninstall** from the menu-bar app, or run:
+
+   ```bash
+   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless remove
+   ```
+
+2. Quit OpenJoystickDriver.
+3. Delete `/Applications/OpenJoystickDriver.app`.
+4. Optional: remove Input Monitoring permission in **System Settings → Privacy & Security → Input Monitoring**.
+
+Don't delete `OpenJoystickDriverDaemon.app` by itself. It's bundled inside `OpenJoystickDriver.app`; uninstall the helper first, then delete the main app.
 
 ## Choose An Output Mode
 
@@ -57,8 +95,8 @@ Expected result: your target app sees a compatible virtual controller.
 CLI equivalents from the installed app bundle:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat sdl2-3
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless output secondary
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless id sdl2-3
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless output user
 ```
 
 ## Troubleshooting
@@ -72,11 +110,11 @@ CLI equivalents from the installed app bundle:
 Useful diagnostics:
 
 ```bash
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
-./scripts/ojd diagnose backends --seconds 5
-./scripts/ojd diagnose gamecontroller --seconds 5
-./scripts/ojd diagnose sdl3 --seconds 10
+./scripts/ojd diag backends --seconds 5
+./scripts/ojd diag gamecontroller --seconds 5
+./scripts/ojd diag sdl3 --seconds 10
 ```
 
 Installed app bundle commands:
@@ -93,7 +131,7 @@ Parser, profile, and test changes do not require signing:
 
 ```bash
 brew install libusb
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
 swift build
 ```
@@ -116,7 +154,7 @@ Useful contribution areas:
 Before opening a PR for parser/profile work, run:
 
 ```bash
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
 swift build
 ```
@@ -127,16 +165,16 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for repository expectations.
 
 Use this context path before editing:
 
-1. [README.md](README.md) — product intent and user workflows.
-2. [scripts/README.md](scripts/README.md) — repository command interface.
-3. [CONTRIBUTING.md](CONTRIBUTING.md) — PR expectations.
-4. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — app, daemon, DriverKit, and compatibility boundaries.
-5. [docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md) — support status and output-mode behavior.
+1. [README.md](README.md) -- product intent and user workflows.
+2. [scripts/README.md](scripts/README.md) -- repository command interface.
+3. [CONTRIBUTING.md](CONTRIBUTING.md) -- PR expectations.
+4. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) -- app, daemon, DriverKit, and compatibility boundaries.
+5. [docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md) -- support status and output-mode behavior.
 
-Minimum validation for parser/profile changes:
+Minimum checks for parser/profile changes:
 
 ```bash
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
 swift build
 ```
