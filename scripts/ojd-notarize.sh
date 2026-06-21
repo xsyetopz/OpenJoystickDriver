@@ -6,7 +6,9 @@
 #
 # Prerequisites:
 #   1. Developer ID signing (.env.release)
-#   2. NOTARIZE_KEYCHAIN_PROFILE or NOTARIZE_APPLE_ID/NOTARIZE_PASSWORD in .env.release
+#   2. NOTARIZE_KEY_ID/NOTARIZE_ISSUER_ID with NOTARIZE_API_KEY_BASE64,
+#      or NOTARIZE_KEYCHAIN_PROFILE,
+#      or NOTARIZE_APPLE_ID/NOTARIZE_PASSWORD in .env.release
 #
 # Environment variables:
 #   NOTARIZE_TIMEOUT_MINUTES  -- overall timeout (default: 180, i.e. 3 hours)
@@ -61,15 +63,6 @@ if [[ "$subcmd" == "store-credentials" ]]; then
   exit 0
 fi
 
-if [[ -z "${NOTARIZE_KEYCHAIN_PROFILE:-}" && (-z "${NOTARIZE_APPLE_ID:-}" || -z "${NOTARIZE_PASSWORD:-}") ]]; then
-  echo "ERROR: Notarization credentials not set in .env.release"
-  echo ""
-  echo "  NOTARIZE_APPLE_ID  = your Apple ID email"
-  echo "  NOTARIZE_PASSWORD  = app-specific password from:"
-  echo "    appleid.apple.com → Sign-In and Security → App-Specific Passwords"
-  exit 1
-fi
-
 APP="${OJD_NOTARIZE_APP:-/Applications/OpenJoystickDriver.app}"
 ZIP_PATH="${OJD_NOTARIZE_ZIP:-$PROJECT_DIR/.build/OpenJoystickDriver-notarize.zip}"
 
@@ -77,13 +70,81 @@ TIMEOUT_MINUTES="${NOTARIZE_TIMEOUT_MINUTES:-180}"
 POLL_INTERVAL="${NOTARIZE_POLL_INTERVAL:-30}"
 MAX_RETRIES="${NOTARIZE_MAX_RETRIES:-5}"
 
-if [[ ! -d "$APP" ]]; then
-  echo "ERROR: App not found at $APP"
-  echo "Run: OJD_ENV=release ./scripts/ojd rebuild release"
+NOTARIZE_API_KEY_FILE=""
+NOTARIZE_API_KEY_TEMP=""
+
+cleanup_notarize_api_key() {
+  if [[ -n "$NOTARIZE_API_KEY_TEMP" ]]; then
+    rm -f "$NOTARIZE_API_KEY_TEMP"
+  fi
+}
+trap cleanup_notarize_api_key EXIT
+
+api_key_requested=0
+for key in NOTARIZE_KEY_ID NOTARIZE_ISSUER_ID NOTARIZE_API_KEY_BASE64 NOTARIZE_API_KEY_PATH; do
+  if [[ -n "${!key:-}" ]]; then
+    api_key_requested=1
+  fi
+done
+
+if [[ "$api_key_requested" -eq 1 ]]; then
+  missing=()
+  [[ -n "${NOTARIZE_KEY_ID:-}" ]] || missing+=("NOTARIZE_KEY_ID")
+  [[ -n "${NOTARIZE_ISSUER_ID:-}" ]] || missing+=("NOTARIZE_ISSUER_ID")
+  if [[ -z "${NOTARIZE_API_KEY_BASE64:-}" && -z "${NOTARIZE_API_KEY_PATH:-}" ]]; then
+    missing+=("NOTARIZE_API_KEY_BASE64 or NOTARIZE_API_KEY_PATH")
+  fi
+  if [[ "${#missing[@]}" -gt 0 ]]; then
+    echo "ERROR: Incomplete App Store Connect API key notarization settings."
+    printf '  Missing: %s\n' "${missing[@]}"
+    exit 1
+  fi
+
+  if [[ -n "${NOTARIZE_API_KEY_BASE64:-}" ]]; then
+    NOTARIZE_API_KEY_TEMP="$(mktemp "${TMPDIR:-/tmp}/ojd-notary-api-key.XXXXXX")"
+    if ! printf '%s' "$NOTARIZE_API_KEY_BASE64" | python3 -c 'import base64, pathlib, sys
+encoded = "".join(sys.stdin.read().split())
+try:
+    decoded = base64.b64decode(encoded, validate=True)
+except Exception as exc:
+    print(f"invalid base64: {exc}", file=sys.stderr)
+    sys.exit(1)
+if not decoded:
+    print("decoded key is empty", file=sys.stderr)
+    sys.exit(1)
+pathlib.Path(sys.argv[1]).write_bytes(decoded)
+' "$NOTARIZE_API_KEY_TEMP"; then
+      rm -f "$NOTARIZE_API_KEY_TEMP"
+      NOTARIZE_API_KEY_TEMP=""
+      die "NOTARIZE_API_KEY_BASE64 is not valid base64"
+    fi
+    chmod 600 "$NOTARIZE_API_KEY_TEMP"
+    NOTARIZE_API_KEY_FILE="$NOTARIZE_API_KEY_TEMP"
+  else
+    NOTARIZE_API_KEY_FILE="$NOTARIZE_API_KEY_PATH"
+    case "$NOTARIZE_API_KEY_FILE" in
+      "~/"*) NOTARIZE_API_KEY_FILE="$HOME/${NOTARIZE_API_KEY_FILE#~/}" ;;
+    esac
+    [[ -f "$NOTARIZE_API_KEY_FILE" ]] || die "NOTARIZE_API_KEY_PATH does not exist: $NOTARIZE_API_KEY_FILE"
+  fi
+elif [[ -z "${NOTARIZE_KEYCHAIN_PROFILE:-}" && (-z "${NOTARIZE_APPLE_ID:-}" || -z "${NOTARIZE_PASSWORD:-}") ]]; then
+  echo "ERROR: Notarization credentials not set in .env.release"
+  echo ""
+  echo "Preferred App Store Connect API key settings:"
+  echo "  NOTARIZE_KEY_ID"
+  echo "  NOTARIZE_ISSUER_ID"
+  echo "  NOTARIZE_API_KEY_BASE64 (or NOTARIZE_API_KEY_PATH)"
+  echo ""
+  echo "Fallback Apple ID settings:"
+  echo "  NOTARIZE_APPLE_ID  = your Apple ID email"
+  echo "  NOTARIZE_PASSWORD  = app-specific password from:"
+  echo "    appleid.apple.com → Sign-In and Security → App-Specific Passwords"
   exit 1
 fi
 
-if [[ -n "${NOTARIZE_KEYCHAIN_PROFILE:-}" ]]; then
+if [[ "$api_key_requested" -eq 1 ]]; then
+  AUTH_ARGS=(--key "$NOTARIZE_API_KEY_FILE" --key-id "$NOTARIZE_KEY_ID" --issuer "$NOTARIZE_ISSUER_ID")
+elif [[ -n "${NOTARIZE_KEYCHAIN_PROFILE:-}" ]]; then
   AUTH_ARGS=(--keychain-profile "$NOTARIZE_KEYCHAIN_PROFILE")
   if [[ -n "${NOTARIZE_KEYCHAIN:-}" ]]; then
     AUTH_ARGS+=(--keychain "$NOTARIZE_KEYCHAIN")
@@ -126,6 +187,12 @@ if [[ "$subcmd" != "submit" ]]; then
   die "Unknown notarize subcommand: $subcmd"
 fi
 
+if [[ ! -d "$APP" ]]; then
+  echo "ERROR: App not found at $APP"
+  echo "Run: OJD_ENV=release ./scripts/ojd rebuild release"
+  exit 1
+fi
+
 # ---------------------------------------------------------------------------
 # Step 1: Create zip for upload
 # ---------------------------------------------------------------------------
@@ -137,13 +204,18 @@ echo "  Zip: $ZIP_PATH ($(du -h "$ZIP_PATH" | cut -f1))"
 # Step 2a: Submit to Apple (no --wait)
 # ---------------------------------------------------------------------------
 echo "Submitting to Apple for notarization..."
-SUBMIT_OUTPUT=$(xcrun notarytool submit "$ZIP_PATH" \
-  "${AUTH_ARGS[@]}" 2>&1)
-
-echo "$SUBMIT_OUTPUT"
+if SUBMIT_OUTPUT=$(xcrun notarytool submit "$ZIP_PATH" \
+  "${AUTH_ARGS[@]}" 2>&1); then
+  echo "$SUBMIT_OUTPUT"
+else
+  submit_status=$?
+  echo "$SUBMIT_OUTPUT"
+  echo "ERROR: notarytool submit failed (exit $submit_status)"
+  exit "$submit_status"
+fi
 
 # Parse submission ID (UUID) from output
-SUBMISSION_ID=$(echo "$SUBMIT_OUTPUT" | grep -oE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' | head -1)
+SUBMISSION_ID=$(echo "$SUBMIT_OUTPUT" | grep -oE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' | head -1 || true)
 
 if [[ -z "$SUBMISSION_ID" ]]; then
   echo "ERROR: Failed to parse submission ID from notarytool output"

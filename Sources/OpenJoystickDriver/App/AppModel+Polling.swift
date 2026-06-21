@@ -28,12 +28,16 @@ import OpenJoystickDriverKit
       userSpaceVirtualDeviceStatus = "off"
       virtualDeviceDiagnostics = nil
       appInputMonitoring = "\(await permissionManager.checkAccess())"
+      appAccessibility = "\(await permissionManager.checkAccessibilityAccess())"
       inputMonitoring = "unknown"
+      daemonAccessibility = "unknown"
       resetDaemonHealthTrend()
       return
     }
 
     appInputMonitoring = "\(await permissionManager.checkAccess())"
+    appAccessibility = "\(await permissionManager.checkAccessibilityAccess())"
+    daemonAccessibility = probeBundledDaemonAccessibilityState()
     if !client.isConnected { client.connect() }
     do {
       let status = try await client.getStatus()
@@ -53,7 +57,9 @@ import OpenJoystickDriverKit
       devices = []
       client.disconnect()
       appInputMonitoring = "\(await permissionManager.checkAccess())"
+      appAccessibility = "\(await permissionManager.checkAccessibilityAccess())"
       inputMonitoring = "unknown"
+      daemonAccessibility = probeBundledDaemonAccessibilityState()
 
       // When XPC is failing, refresh launchd health immediately so we can explain why.
       await refreshDaemonHealth()

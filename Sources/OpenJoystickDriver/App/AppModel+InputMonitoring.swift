@@ -13,6 +13,29 @@ import OpenJoystickDriverKit
     if appInputMonitoring != "granted" { openInputMonitoringSettings(for: ["OpenJoystickDriver"]) }
   }
 
+  func requestAppAccessibilityAccess() async {
+    inputMonitoringAssist = nil
+    registerApplicationBundleForPermissionPrompt(Bundle.main.bundleURL)
+    NSApp.activate(ignoringOtherApps: true)
+    appAccessibility = "\(await permissionManager.requestAccessibilityAccess())"
+    appAccessibility = await waitForAppAccessibilityDecision()
+    if appAccessibility != "granted" { openAccessibilitySettings() }
+  }
+
+  func requestDaemonAccessibilityAccess() async {
+    inputMonitoringAssist = nil
+    do {
+      try await prepareDaemonRegistrationForPermissionPrompt()
+      try await requestBundledDaemonAccessibilityPrompt()
+    } catch {
+      daemonError = error.localizedDescription
+      return
+    }
+
+    daemonAccessibility = await waitForDaemonAccessibilityDecision()
+    if daemonAccessibility != "granted" { openAccessibilitySettings() }
+  }
+
   func requestDaemonInputMonitoringAccess() async {
     inputMonitoringAssist = nil
     do {
@@ -80,6 +103,16 @@ import OpenJoystickDriverKit
     return state
   }
 
+  func waitForAppAccessibilityDecision() async -> String {
+    var state = appAccessibility
+    for _ in 0..<inputMonitoringPromptPollAttempts {
+      try? await Task.sleep(nanoseconds: inputMonitoringPromptPollNanoseconds)
+      state = "\(await permissionManager.checkAccessibilityAccess())"
+      if state == "granted" { break }
+    }
+    return state
+  }
+
   func waitForDaemonInputMonitoringDecision() async -> String {
     var state = probeBundledDaemonInputMonitoringState()
     for _ in 0..<inputMonitoringPromptPollAttempts {
@@ -90,14 +123,32 @@ import OpenJoystickDriverKit
     return state
   }
 
+  func waitForDaemonAccessibilityDecision() async -> String {
+    var state = probeBundledDaemonAccessibilityState()
+    for _ in 0..<inputMonitoringPromptPollAttempts {
+      if state == "granted" || state == "denied" { break }
+      try? await Task.sleep(nanoseconds: inputMonitoringPromptPollNanoseconds)
+      state = probeBundledDaemonAccessibilityState()
+    }
+    return state
+  }
+
+  func probeBundledDaemonAccessibilityState() -> String {
+    probeBundledDaemonPermissionState(environmentKey: "OJD_ACCESSIBILITY_CHECK_ONLY")
+  }
+
   func probeBundledDaemonInputMonitoringState() -> String {
+    probeBundledDaemonPermissionState(environmentKey: "OJD_PERMISSION_CHECK_ONLY")
+  }
+
+  func probeBundledDaemonPermissionState(environmentKey: String) -> String {
     let executableURL = DaemonManager.daemonExecutableURL(forMainBundleURL: Bundle.main.bundleURL)
     guard FileManager.default.fileExists(atPath: executableURL.path) else { return "unknown" }
 
     let process = Process()
     process.executableURL = executableURL
     process.environment = ProcessInfo.processInfo.environment.merging([
-      "OJD_PERMISSION_CHECK_ONLY": "1",
+      environmentKey: "1",
     ]) { _, new in new }
     let stdout = Pipe()
     process.standardOutput = stdout
@@ -124,7 +175,24 @@ import OpenJoystickDriverKit
     }
   }
 
+  func requestBundledDaemonAccessibilityPrompt() async throws {
+    try await requestBundledDaemonPermissionPrompt(
+      appArgument: "--request-accessibility",
+      environmentKey: "OJD_ACCESSIBILITY_PROMPT_ONLY"
+    )
+  }
+
   func requestBundledDaemonInputMonitoringPrompt() async throws {
+    try await requestBundledDaemonPermissionPrompt(
+      appArgument: "--request-input-monitoring",
+      environmentKey: "OJD_PERMISSION_PROMPT_ONLY"
+    )
+  }
+
+  func requestBundledDaemonPermissionPrompt(
+    appArgument: String,
+    environmentKey: String
+  ) async throws {
     let appURL = Bundle.main.bundleURL
 
     if appURL.pathExtension == "app" {
@@ -161,7 +229,7 @@ import OpenJoystickDriverKit
       let configuration = NSWorkspace.OpenConfiguration()
       configuration.activates = true
       configuration.createsNewApplicationInstance = true
-      configuration.arguments = ["--request-input-monitoring"]
+      configuration.arguments = [appArgument]
       try await withCheckedThrowingContinuation {
         (continuation: CheckedContinuation<Void, Error>) in
         NSWorkspace.shared.openApplication(at: daemonAppURL, configuration: configuration) {
@@ -190,7 +258,7 @@ import OpenJoystickDriverKit
     let process = Process()
     process.executableURL = executableURL
     process.environment = ProcessInfo.processInfo.environment.merging([
-      "OJD_PERMISSION_PROMPT_ONLY": "1",
+      environmentKey: "1",
     ]) { _, new in new }
     try process.run()
   }
@@ -234,6 +302,16 @@ import OpenJoystickDriverKit
     try? await Task.sleep(nanoseconds: 1_000_000_000)
     client.connect()
     await syncFromDaemonNow()
+  }
+
+  func openAccessibilitySettings() {
+    inputMonitoringAssist = "If macOS asks for Accessibility, enable OpenJoystickDriver "
+      + "or OpenJoystickDriver Daemon in System Settings."
+    let url = URL(
+      string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+    )
+    if let url, NSWorkspace.shared.open(url) { return }
+    NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/System Settings.app"))
   }
 
   func openInputMonitoringSettings(

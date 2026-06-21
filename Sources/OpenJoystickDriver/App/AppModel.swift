@@ -57,6 +57,8 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   @Published var devices: [DeviceViewModel] = []
   @Published var appInputMonitoring = "unknown"
   @Published var inputMonitoring = "unknown"
+  @Published var appAccessibility = "unknown"
+  @Published var daemonAccessibility = "unknown"
   @Published var inputMonitoringAssist: String?
   @Published var extensionManager = SystemExtensionManager()
 

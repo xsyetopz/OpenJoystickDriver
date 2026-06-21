@@ -17,6 +17,16 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 OJD_ENV="${OJD_ENV:-dev}"
 OJD_ENV_LOADED_FILES=()
 
+# Env files provide local defaults, but CI/local process credentials should win
+# over stale release files so notarization uses API key auth when supplied.
+_OJD_PROCESS_NOTARIZE_API_OVERRIDES=()
+for _OJD_ENV_KEY in NOTARIZE_KEY_ID NOTARIZE_ISSUER_ID NOTARIZE_API_KEY_BASE64 NOTARIZE_API_KEY_PATH; do
+  if [[ -n "${!_OJD_ENV_KEY:-}" ]]; then
+    _OJD_PROCESS_NOTARIZE_API_OVERRIDES+=("$_OJD_ENV_KEY=${!_OJD_ENV_KEY}")
+  fi
+done
+unset _OJD_ENV_KEY
+
 _OJD_ENV_FILES=()
 if [[ "$OJD_ENV" != "none" ]]; then
   _OJD_ENV_FILES+=(
@@ -37,6 +47,12 @@ for _ENV_FILE in "${_OJD_ENV_FILES[@]}"; do
     OJD_ENV_LOADED_FILES+=("$_ENV_FILE")
   fi
 done
+
+for _OJD_ENV_ASSIGNMENT in "${_OJD_PROCESS_NOTARIZE_API_OVERRIDES[@]}"; do
+  export "$_OJD_ENV_ASSIGNMENT"
+done
+unset _OJD_ENV_ASSIGNMENT
+unset _OJD_PROCESS_NOTARIZE_API_OVERRIDES
 unset _ENV_FILE
 unset _OJD_ENV_FILES
 
@@ -58,7 +74,7 @@ redact_env_value() {
     return 0
   fi
   case "$key" in
-    *PASSWORD* | *SECRET* | *TOKEN* | *KEYCHAIN* | *PRIVATE* | *APPLE_ID*)
+    NOTARIZE_KEY_ID | NOTARIZE_ISSUER_ID | *API_KEY* | *PASSWORD* | *SECRET* | *TOKEN* | *KEYCHAIN* | *PRIVATE* | *APPLE_ID*)
       printf '[REDACTED]'
       ;;
     *)
@@ -90,6 +106,10 @@ ojd_env_status() {
     DEXT_PROVISIONING_PROFILE \
     GUI_PROVISIONING_PROFILE \
     DAEMON_PROVISIONING_PROFILE \
+    NOTARIZE_KEY_ID \
+    NOTARIZE_ISSUER_ID \
+    NOTARIZE_API_KEY_BASE64 \
+    NOTARIZE_API_KEY_PATH \
     NOTARIZE_KEYCHAIN_PROFILE \
     NOTARIZE_APPLE_ID \
     NOTARIZE_PASSWORD; do

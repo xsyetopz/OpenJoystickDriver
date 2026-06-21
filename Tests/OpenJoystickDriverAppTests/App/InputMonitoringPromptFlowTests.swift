@@ -22,6 +22,10 @@ struct InputMonitoringPromptFlowTests {
     #expect(daemonMain.contains("Starting permission-check probe mode"))
     #expect(daemonMain.contains("let promptOnlyMode ="))
     #expect(daemonMain.contains("commandLineArguments.contains(\"--request-input-monitoring\")"))
+    #expect(daemonMain.contains("commandLineArguments.contains(\"--request-accessibility\")"))
+    #expect(daemonMain.contains("OJD_ACCESSIBILITY_CHECK_ONLY"))
+    #expect(daemonMain.contains("OJD_ACCESSIBILITY_PROMPT_ONLY"))
+    #expect(daemonMain.contains("PermissionPromptAppDelegate.PromptKind"))
     #expect(
       daemonMain.contains(
         "environment[\"OJD_PERMISSION_PROMPT_ONLY\"] == \"1\""
@@ -30,7 +34,7 @@ struct InputMonitoringPromptFlowTests {
     #expect(daemonMain.contains("timeoutNanoseconds: UInt64 = 120_000_000_000"))
     #expect(daemonMain.contains("Starting permission prompt helper mode"))
     #expect(daemonMain.contains("Starting daemon service mode"))
-    #expect(daemonMain.contains("Input Monitoring denied for daemon helper app"))
+    #expect(daemonMain.contains("denied for daemon helper app"))
     #expect(daemonMain.contains("if initialState == .denied"))
     #expect(daemonMain.contains("if state == .denied"))
     #expect(!daemonMain.contains("DispatchSemaphore"))
@@ -59,14 +63,17 @@ struct InputMonitoringPromptFlowTests {
 
     #expect(source.contains("NSWorkspace.OpenConfiguration()"))
     #expect(source.contains("configuration.createsNewApplicationInstance = true"))
-    #expect(source.contains("configuration.arguments = [\"--request-input-monitoring\"]"))
+    #expect(source.contains("configuration.arguments = [appArgument]"))
+    #expect(source.contains("--request-input-monitoring"))
+    #expect(source.contains("--request-accessibility"))
     #expect(!source.contains("configuration.environment = promptEnvironment"))
     #expect(!source.contains("client.requestInputMonitoringAccess()"))
     #expect(source.contains("try await prepareDaemonRegistrationForPermissionPrompt()"))
     #expect(source.contains("try await requestBundledDaemonInputMonitoringPrompt()"))
     #expect(source.contains("inputMonitoring = await waitForDaemonInputMonitoringDecision()"))
     #expect(source.contains("probeBundledDaemonInputMonitoringState()"))
-    #expect(source.contains("\"OJD_PERMISSION_CHECK_ONLY\": \"1\""))
+    #expect(source.contains("\"OJD_PERMISSION_CHECK_ONLY\""))
+    #expect(source.contains("\"OJD_ACCESSIBILITY_CHECK_ONLY\""))
     #expect(source.contains("guard !daemonInstalled else { return }"))
     #expect(source.contains("let task = Task.detached { try DaemonManager.install() }"))
     let promptLaunchRange = source.firstRange(
@@ -93,7 +100,8 @@ struct InputMonitoringPromptFlowTests {
     #expect(source.contains("if inputMonitoring == \"granted\""))
     #expect(compactSource.contains("if daemonConnected { await syncFromDaemonNow() }"))
     #expect(source.contains("process.environment = ProcessInfo.processInfo.environment.merging"))
-    #expect(source.contains("\"OJD_PERMISSION_PROMPT_ONLY\": \"1\""))
+    #expect(source.contains("\"OJD_PERMISSION_PROMPT_ONLY\""))
+    #expect(source.contains("\"OJD_ACCESSIBILITY_PROMPT_ONLY\""))
     #expect(!deviceManager.contains("await permissionManager.requestAccess()"))
     #expect(deviceManager.contains("Use the app's Request Access action"))
     let hidDetectionURL = rootURL.appendingPathComponent(

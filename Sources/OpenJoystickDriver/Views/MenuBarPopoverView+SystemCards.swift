@@ -111,6 +111,25 @@ extension MenuBarPopoverView {
           actionTitle: permissionActionTitle(for: model.inputMonitoring),
           disabled: model.daemonRestarting
         ) { Task { await model.requestDaemonInputMonitoringAccess() } }
+        Divider()
+        Text("Accessibility (optional)").font(.caption.weight(.semibold))
+          .foregroundColor(.secondary)
+        PermissionRow(
+          title: "OpenJoystickDriver Accessibility",
+          subtitle: accessibilitySubtitle(for: model.appAccessibility, owner: "OpenJoystickDriver"),
+          state: model.appAccessibility,
+          actionTitle: permissionActionTitle(for: model.appAccessibility)
+        ) { Task { await model.requestAppAccessibilityAccess() } }
+        PermissionRow(
+          title: "OpenJoystickDriver Daemon Accessibility",
+          subtitle: accessibilitySubtitle(
+            for: model.daemonAccessibility,
+            owner: "OpenJoystickDriver Daemon"
+          ),
+          state: model.daemonAccessibility,
+          actionTitle: permissionActionTitle(for: model.daemonAccessibility),
+          disabled: model.daemonRestarting
+        ) { Task { await model.requestDaemonAccessibilityAccess() } }
         if let assist = model.inputMonitoringAssist { PermissionAssistView(message: assist) }
       }
     }
@@ -118,6 +137,14 @@ extension MenuBarPopoverView {
 
   func permissionActionTitle(for state: String) -> String {
     state == "granted" ? L10n.string("access.allowed") : L10n.string("button.requestAccess")
+  }
+
+  func accessibilitySubtitle(for state: String, owner: String) -> String {
+    switch state {
+    case "granted": return "Accessibility is allowed."
+    case "denied": return "Open System Settings, then turn on Accessibility for \(owner) if asked."
+    default: return "Optional fallback for macOS permission prompts if the daemon asks for it."
+    }
   }
 
   func permissionSubtitle(for state: String, owner: String, settingsName: String? = nil) -> String {

@@ -235,14 +235,14 @@ auto OpenJoystickVirtualHIDDevice::setReport(
         return kIOReturnSuccess;
     }
 
-    auto len = 0U;
+    uint64_t len = 0;
     const auto lenKr = report->GetLength(&len);
     if (lenKr != kIOReturnSuccess || len == 0) {
         os_log(
             OS_LOG_DEFAULT,
             "OpenJoystickVirtualHID: setReport GetLength failed (kr=%d, len=%llu)",
             static_cast<int>(lenKr),
-            len);
+            static_cast<unsigned long long>(len));
         if (ivars != nullptr) {
             ivars->setReportFailCount += 1;
         }
@@ -261,7 +261,7 @@ auto OpenJoystickVirtualHIDDevice::setReport(
             OS_LOG_DEFAULT,
             "OpenJoystickVirtualHID: setReport failed to allocate buffer (kr=%d, len=%llu)",
             static_cast<int>(bufKr),
-            len);
+            static_cast<unsigned long long>(len));
         if (ivars != nullptr) {
             ivars->setReportFailCount += 1;
         }

@@ -14,25 +14,34 @@ func daemonLog(_ message: String) {
 }
 
 @MainActor final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
+  enum PromptKind {
+    case inputMonitoring
+    case accessibility
+  }
+
   private let permissionManager: PermissionManager
+  private let promptKind: PromptKind
   private var pollTask: Task<Void, Never>?
 
-  init(permissionManager: PermissionManager) { self.permissionManager = permissionManager }
+  init(permissionManager: PermissionManager, promptKind: PromptKind) {
+    self.permissionManager = permissionManager
+    self.promptKind = promptKind
+  }
 
   func applicationDidFinishLaunching(_ notification: Notification) {
     NSApp.setActivationPolicy(.accessory)
     NSApp.activate(ignoringOtherApps: true)
-    daemonLog("[Daemon] Requesting Input Monitoring access for daemon...")
+    daemonLog("[Daemon] Requesting \(permissionName) access for daemon...")
 
-    pollTask = Task { @MainActor [permissionManager] in
-      let initialState = await permissionManager.requestAccess()
+    pollTask = Task { @MainActor [permissionManager, promptKind] in
+      let initialState = await Self.requestAccess(permissionManager, promptKind: promptKind)
       if initialState == .granted {
-        daemonLog("[Daemon] Input Monitoring granted for daemon helper app")
+        daemonLog("[Daemon] \(Self.permissionName(promptKind)) granted for daemon helper app")
         NSApp.terminate(nil)
         return
       }
       if initialState == .denied {
-        daemonLog("[Daemon] Input Monitoring denied for daemon helper app")
+        daemonLog("[Daemon] \(Self.permissionName(promptKind)) denied for daemon helper app")
         NSApp.terminate(nil)
         return
       }
@@ -42,24 +51,55 @@ func daemonLog(_ message: String) {
       let deadline = DispatchTime.now().uptimeNanoseconds + timeoutNanoseconds
 
       while !Task.isCancelled {
-        let state = await permissionManager.checkAccess()
+        let state = await Self.checkAccess(permissionManager, promptKind: promptKind)
         if state == .granted {
-          daemonLog("[Daemon] Input Monitoring granted for daemon helper app")
+          daemonLog("[Daemon] \(Self.permissionName(promptKind)) granted for daemon helper app")
           NSApp.terminate(nil)
           return
         }
         if state == .denied {
-          daemonLog("[Daemon] Input Monitoring denied for daemon helper app")
+          daemonLog("[Daemon] \(Self.permissionName(promptKind)) denied for daemon helper app")
           NSApp.terminate(nil)
           return
         }
         if DispatchTime.now().uptimeNanoseconds >= deadline {
-          daemonLog("[Daemon] Input Monitoring helper timed out waiting for approval")
+          daemonLog(
+            "[Daemon] \(Self.permissionName(promptKind)) helper timed out waiting for approval"
+          )
           NSApp.terminate(nil)
           return
         }
         try? await Task.sleep(nanoseconds: pollNanoseconds)
       }
+    }
+  }
+
+  private var permissionName: String { Self.permissionName(promptKind) }
+
+  private static func permissionName(_ promptKind: PromptKind) -> String {
+    switch promptKind {
+    case .inputMonitoring: return "Input Monitoring"
+    case .accessibility: return "Accessibility"
+    }
+  }
+
+  private static func requestAccess(
+    _ permissionManager: PermissionManager,
+    promptKind: PromptKind
+  ) async -> PermissionManager.AccessState {
+    switch promptKind {
+    case .inputMonitoring: return await permissionManager.requestAccess()
+    case .accessibility: return await permissionManager.requestAccessibilityAccess()
+    }
+  }
+
+  private static func checkAccess(
+    _ permissionManager: PermissionManager,
+    promptKind: PromptKind
+  ) async -> PermissionManager.AccessState {
+    switch promptKind {
+    case .inputMonitoring: return await permissionManager.checkAccess()
+    case .accessibility: return await permissionManager.checkAccessibilityAccess()
     }
   }
 
@@ -71,9 +111,14 @@ func daemonLog(_ message: String) {
 
 let environment = ProcessInfo.processInfo.environment
 let permissionCheckOnlyMode = environment["OJD_PERMISSION_CHECK_ONLY"] == "1"
-let promptOnlyMode =
+let accessibilityCheckOnlyMode = environment["OJD_ACCESSIBILITY_CHECK_ONLY"] == "1"
+let inputMonitoringPromptOnlyMode =
   environment["OJD_PERMISSION_PROMPT_ONLY"] == "1"
   || commandLineArguments.contains("--request-input-monitoring")
+let accessibilityPromptOnlyMode =
+  environment["OJD_ACCESSIBILITY_PROMPT_ONLY"] == "1"
+  || commandLineArguments.contains("--request-accessibility")
+let promptOnlyMode = inputMonitoringPromptOnlyMode || accessibilityPromptOnlyMode
 
 if permissionCheckOnlyMode {
   daemonLog("[Daemon] Starting permission-check probe mode")
@@ -81,9 +126,21 @@ if permissionCheckOnlyMode {
   exit(0)
 }
 
+if accessibilityCheckOnlyMode {
+  daemonLog("[Daemon] Starting accessibility-check probe mode")
+  print(PermissionManager.currentAccessibilityState())
+  exit(0)
+}
+
 if promptOnlyMode {
   daemonLog("[Daemon] Starting permission prompt helper mode")
-  let appDelegate = PermissionPromptAppDelegate(permissionManager: permissionManager)
+  let promptKind: PermissionPromptAppDelegate.PromptKind = accessibilityPromptOnlyMode
+    ? .accessibility
+    : .inputMonitoring
+  let appDelegate = PermissionPromptAppDelegate(
+    permissionManager: permissionManager,
+    promptKind: promptKind
+  )
   NSApplication.shared.delegate = appDelegate
   _ = appDelegate
   NSApplication.shared.run()
