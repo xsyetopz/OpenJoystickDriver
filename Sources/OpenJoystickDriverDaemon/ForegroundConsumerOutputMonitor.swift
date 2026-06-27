@@ -20,6 +20,7 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   private var burstPollingDeadlineNanoseconds: UInt64 = 0
   private var activationObserver: NSObjectProtocol?
   private var activityTracker = ForegroundConsumerActivityTracker()
+  private var cachedFrontmostBundleRoot: String?
   private var lastAppliedAllowOutput: Bool?
   private var lastAppliedFrontmostBundleRoot: String?
   private var lastAppliedConsumerBundleRoots: Set<String> = []
@@ -48,7 +49,6 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
       guard periodicTask == nil else { return }
       periodicTask = Task { [weak self] in
         guard let self else { return }
-        await self.evaluateAndApply()
         while !Task.isCancelled {
           try? await Task.sleep(nanoseconds: self.pollIntervalNanoseconds)
           await self.evaluateAndApply()
@@ -58,14 +58,19 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
 
     Task { @MainActor [weak self] in
       guard let self else { return }
+      self.updateFrontmostBundleRoot(Self.frontmostBundleRootPath())
+      Task { await self.evaluateAndApply() }
+
       let center = NSWorkspace.shared.notificationCenter
       activationObserver = center.addObserver(
         forName: NSWorkspace.didActivateApplicationNotification,
         object: nil,
-        queue: nil
-      ) { [weak self] _ in
-        self?.scheduleBurstPolling()
-        Task { await self?.evaluateAndApply() }
+        queue: .main
+      ) { [weak self] notification in
+        guard let self else { return }
+        let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+        self.updateFrontmostBundleRoot(Self.bundleRootPath(for: app))
+        self.scheduleBurstPolling()
       }
     }
   }
@@ -105,9 +110,11 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   }
 
   private func evaluateAndApply() async {
-    let frontmostBundleRoot = await MainActor.run { Self.frontmostBundleRootPath() }
+    let frontmostBundleRoot = stateLock.withLock { cachedFrontmostBundleRoot }
     let now = DispatchTime.now().uptimeNanoseconds
-    let consumerClients = Self.consumerClientSamples()
+    let consumerClients = autoreleasepool {
+      Self.consumerClientSamples()
+    }
     let observedBundleRoots = Set(
       consumerClients
         .filter { $0.isOpened && !$0.isSuspended }
@@ -197,6 +204,12 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   private static func frontmostBundleRootPath() -> String? {
     guard let app = NSWorkspace.shared.frontmostApplication else { return nil }
     return bundleRootPath(for: app)
+  }
+
+  private func updateFrontmostBundleRoot(_ bundleRoot: String?) {
+    stateLock.withLock {
+      cachedFrontmostBundleRoot = bundleRoot
+    }
   }
 
   private static func consumerClientSamples() -> [ForegroundConsumerClientSample] {
