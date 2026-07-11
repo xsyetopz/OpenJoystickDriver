@@ -14,7 +14,7 @@
       "interface": 0,
       "endpoints": {
         "in": 129,
-        "out": 1
+        "out": 2
       }
     }
   },
