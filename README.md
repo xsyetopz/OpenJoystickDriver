@@ -191,4 +191,4 @@ swift build
 
 ## License
 
-[MIT](LICENSE)
+[ISC](LICENSE)
