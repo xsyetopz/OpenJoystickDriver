@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+  "vendor_id": 1356,
+  "product_id": 3302,
+  "transport": "hid",
+  "protocol": {
+    "driver": "DualSense",
+    "variant": "dualSense",
+    "flags": [
+      "touchpad",
+      "microphoneMute",
+      "experimental",
+      "needsHardwareTest"
+    ]
+  },
+  "provenance": {
+    "source": "linux-hid-playstation.c",
+    "verified": false
+  }
+}

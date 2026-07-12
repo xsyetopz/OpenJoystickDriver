@@ -17,6 +17,10 @@ private let steamControllerLoadDefaultSettingsCommand: UInt8 = 0x8E
 private let steamControllerClearDigitalMappingsCommand: UInt8 = 0x81
 private let steamControllerSetSettingsValuesCommand: UInt8 = 0x87
 private let steamControllerGetWirelessStateCommand: UInt8 = 0xB4
+private let steamControllerHapticPulseCommand: UInt8 = 0x8F
+private let steamControllerHapticPulsePayloadLength: UInt8 = 8
+private let steamControllerUserLEDBrightnessSetting: UInt8 = 45
+private let steamControllerMaximumPulseMicroseconds = 65_535
 private let steamControllerTrackpadNone: UInt8 = 0x07
 private let steamControllerLeftTrackpadModeSetting: UInt8 = 0x07
 private let steamControllerRightTrackpadModeSetting: UInt8 = 0x08
@@ -30,7 +34,8 @@ private let steamControllerRightTrackpadModeSetting: UInt8 = 0x08
 /// reports are sent when OJD starts and stops consuming Steam Controller input.
 public final class SteamControllerParser: InputParser, ControllerInputConnectionLifecycle,
   HIDInputConnectionStatusRequester, HIDStartupFeatureReportProvider,
-  HIDShutdownFeatureReportProvider, @unchecked Sendable
+  HIDShutdownFeatureReportProvider, PhysicalHIDFeatureHapticOutput,
+  PhysicalHIDFeatureBrightnessOutput, @unchecked Sendable
 {
 
   private enum ReportOffset {
@@ -67,6 +72,10 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     isLogicalControllerConnected = !isWirelessReceiver
   }
 
+  public var physicalRumbleMotors: [PhysicalRumbleMotor] {
+    [.leftHaptic, .rightHaptic]
+  }
+
   public var requiresInputConnectionBeforeOutput: Bool { isWirelessReceiver }
 
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? {
@@ -96,6 +105,53 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
       steamFeatureReport([steamControllerSetDefaultDigitalMappingsCommand]),
       steamFeatureReport([steamControllerLoadDefaultSettingsCommand]),
     ]
+  }
+
+  public func physicalBrightnessReport(_ brightness: UInt8) -> PhysicalHIDOutputReport {
+    steamFeatureReport([
+      steamControllerSetSettingsValuesCommand,
+      3,
+      steamControllerUserLEDBrightnessSetting,
+      brightness,
+      0,
+    ])
+  }
+
+  public func physicalHapticReports(
+    left: UInt8,
+    right: UInt8,
+    durationMs: Int
+  ) -> [PhysicalHIDOutputReport] {
+    guard isLogicalControllerConnected else { return [] }
+    let effectiveDurationMs = durationMs > 0 ? min(durationMs, 5_000) : 65
+    let totalMicroseconds = max(1, effectiveDurationMs * 1_000)
+    let pulseDuration = min(totalMicroseconds, steamControllerMaximumPulseMicroseconds)
+    let pulseCount = min(
+      65_535,
+      (totalMicroseconds + pulseDuration - 1) / pulseDuration
+    )
+    var reports: [PhysicalHIDOutputReport] = []
+    if left > 0 {
+      reports.append(
+        hapticPulseReport(
+          pad: 1,
+          intensity: left,
+          durationMicroseconds: pulseDuration,
+          count: pulseCount
+        )
+      )
+    }
+    if right > 0 {
+      reports.append(
+        hapticPulseReport(
+          pad: 0,
+          intensity: right,
+          durationMicroseconds: pulseDuration,
+          count: pulseCount
+        )
+      )
+    }
+    return reports
   }
 
   public func inputConnectionStatusRequestReport() -> PhysicalHIDOutputReport? {
@@ -190,6 +246,28 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     prevRY = ry
 
     return events
+  }
+
+  private func hapticPulseReport(
+    pad: UInt8,
+    intensity: UInt8,
+    durationMicroseconds: Int,
+    count: Int
+  ) -> PhysicalHIDOutputReport {
+    let gainDecibels = -24 + Int((Double(intensity) * 30.0 / 255.0).rounded())
+    let gain = UInt8(bitPattern: Int8(clamping: gainDecibels))
+    return steamFeatureReport([
+      steamControllerHapticPulseCommand,
+      steamControllerHapticPulsePayloadLength,
+      pad,
+      UInt8(truncatingIfNeeded: durationMicroseconds),
+      UInt8(truncatingIfNeeded: durationMicroseconds >> 8),
+      0,
+      0,
+      UInt8(truncatingIfNeeded: count),
+      UInt8(truncatingIfNeeded: count >> 8),
+      gain,
+    ])
   }
 
   private func steamFeatureReport(_ command: [UInt8]) -> PhysicalHIDOutputReport {

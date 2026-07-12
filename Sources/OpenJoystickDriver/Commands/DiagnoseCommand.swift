@@ -3,7 +3,27 @@ import OpenJoystickDriverKit
 import SwiftUSB
 
 struct DiagnoseCommand {
-  func run() {
+  func run(arguments: [String] = []) {
+    if let subcommand = arguments.first {
+      switch subcommand {
+      case "runtime":
+        RuntimeHealthCommand().run(arguments: Array(arguments.dropFirst()))
+      case "gamecontroller-catalog":
+        GameControllerCatalogCommand().run(arguments: Array(arguments.dropFirst()))
+      case "browser-gamepad":
+        BrowserGamepadDiagnosticCommand().run(arguments: Array(arguments.dropFirst()))
+      case "--help", "-h", "help":
+        print(
+          "Usage: OpenJoystickDriver --headless diagnose "
+            + "[runtime|gamecontroller-catalog|browser-gamepad]"
+        )
+      default:
+        print("Unknown diagnose command: \(subcommand)")
+        exit(1)
+      }
+      return
+    }
+
     print("OpenJoystickDriver Diagnostics")
     let divider = String(repeating: "\u{2550}", count: 30)
     print(divider)
@@ -76,12 +96,7 @@ struct DiagnoseCommand {
   }
 
   private func printPermissions() {
-    let permManager = PermissionManager()
-    runSync {
-      let inputState = await permManager.checkAccess()
-      print("Permissions:")
-      print("  Input Monitoring : " + "\(inputState.label) \(inputState)")
-    }
+    printInputMonitoringPermissions(currentInputMonitoringPermissions())
   }
 
   private func printUSBDevices() {
@@ -110,8 +125,13 @@ struct DiagnoseCommand {
   private func printTroubleshooting() {
     print("Troubleshooting:")
     print("  No input from controller?")
-    print("    -> Grant Input Monitoring: System Settings → Privacy & Security → Input Monitoring")
+    print(
+      "    -> Grant Input Monitoring: System Settings -> Privacy & Security"
+        + " -> Input Monitoring"
+    )
     print("  DriverKit extension missing/broken?")
     print("    -> Run: ./scripts/ojd rebuild dev")
+    print("  Reporting a controller issue?")
+    print("    -> Run: --headless report create")
   }
 }

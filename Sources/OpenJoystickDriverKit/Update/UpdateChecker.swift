@@ -21,6 +21,8 @@ public enum UpdateCheckState: Equatable, Sendable {
 }
 
 public struct UpdateChecker: Sendable {
+  public static let requestTimeoutSeconds: TimeInterval = 15
+
   public static var defaultLatestReleaseURL: URL {
     var components = URLComponents()
     components.scheme = "https"
@@ -119,6 +121,7 @@ public struct UpdateChecker: Sendable {
 
   private func decode<T: Decodable>(url: URL) async throws -> T {
     var request = URLRequest(url: url)
+    request.timeoutInterval = Self.requestTimeoutSeconds
     request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
     request.setValue("OpenJoystickDriver", forHTTPHeaderField: "User-Agent")
 

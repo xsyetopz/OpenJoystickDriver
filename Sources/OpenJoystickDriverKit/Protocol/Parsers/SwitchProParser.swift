@@ -13,7 +13,7 @@ private let switchProDeadzone: Float = 0.08
 /// and two packed 12-bit stick fields. This experimental slice uses default
 /// center calibration until physical hardware can verify SPI calibration reads.
 public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
-  @unchecked Sendable
+  PhysicalHIDRumbleOutput, PhysicalHIDPlayerIndicatorOutput, @unchecked Sendable
 {
 
   private enum ReportOffset {
@@ -29,8 +29,13 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
   private var prevLY: UInt16 = switchProStickCenter
   private var prevRX: UInt16 = switchProStickCenter
   private var prevRY: UInt16 = switchProStickCenter
+  private var outputPacketNumber: UInt8 = 0
+  private var physicalRumbleData =
+    SwitchProRumbleCodec.encode(intensity: 0) + SwitchProRumbleCodec.encode(intensity: 0)
 
   public init() {}
+
+  public var minimumPhysicalOutputIntervalNanoseconds: UInt64 { 50_000_000 }
 
   public func performHandshake(handle: USBDeviceHandle?) async throws {
     await Task.yield()
@@ -43,12 +48,50 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
       usbCommand(0x02),
       usbCommand(0x04),
       subcommand(0x03, data: [0x30]),
+      subcommand(0x48, data: [0x01]),
     ]
   }
 
   public func hidStartupReports(transport: String?) -> [PhysicalHIDOutputReport] {
-    guard transport == "USB" else { return [] }
-    return hidStartupReports()
+    switch transport {
+    case "USB": return hidStartupReports()
+    case "Bluetooth":
+      return [
+        subcommand(0x03, data: [0x30]),
+        subcommand(0x48, data: [0x01]),
+      ]
+    default: return []
+    }
+  }
+
+  public func hidStartupReportIntervalNanoseconds(transport: String?) -> UInt64 {
+    transport == "Bluetooth" ? 60_000_000 : 20_000_000
+  }
+
+  public func physicalRumbleReport(left: UInt8, right: UInt8, lt _: UInt8, rt _: UInt8)
+    -> PhysicalHIDOutputReport
+  {
+    physicalRumbleData =
+      SwitchProRumbleCodec.encode(intensity: left)
+      + SwitchProRumbleCodec.encode(intensity: right)
+    var bytes = [UInt8](repeating: 0, count: 10)
+    bytes[0] = 0x10
+    bytes[1] = nextPacketNumber()
+    bytes.replaceSubrange(2..<10, with: physicalRumbleData)
+    return PhysicalHIDOutputReport(reportID: 0x10, bytes: bytes)
+  }
+
+  public func physicalPlayerIndicatorReport(_ indicator: PhysicalPlayerIndicator)
+    -> PhysicalHIDOutputReport
+  {
+    let patterns: [PhysicalPlayerIndicator: UInt8] = [
+      .off: 0x00,
+      .player1: 0x01,
+      .player2: 0x03,
+      .player3: 0x07,
+      .player4: 0x0F,
+    ]
+    return subcommand(0x30, data: [patterns[indicator] ?? 0])
   }
 
   public func parse(data: Data) throws -> [ControllerEvent] {
@@ -83,12 +126,18 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
   private func subcommand(_ id: UInt8, data: [UInt8]) -> PhysicalHIDOutputReport {
     var bytes = [UInt8](repeating: 0, count: 11 + data.count)
     bytes[0] = 0x01
-    bytes[1] = 0x00
+    bytes[1] = nextPacketNumber()
+    bytes.replaceSubrange(2..<10, with: physicalRumbleData)
     bytes[10] = id
     for (index, value) in data.enumerated() {
       bytes[11 + index] = value
     }
     return PhysicalHIDOutputReport(reportID: 0x01, bytes: bytes)
+  }
+
+  private func nextPacketNumber() -> UInt8 {
+    defer { outputPacketNumber = (outputPacketNumber + 1) & 0x0F }
+    return outputPacketNumber
   }
 
   private func parseButtons(_ buttons: UInt32) -> [ControllerEvent] {

@@ -11,9 +11,18 @@ public final class HIDManager: Sendable {
 
   /// Creates a new HIDManager.
   ///
-  /// - Parameter virtualProfile: Profile of the virtual device to exclude from detection.
-  public init(virtualProfile: VirtualDeviceProfile = .default) {
-    stream = HIDDeviceStream(virtualProfile: virtualProfile)
+  /// - Parameters:
+  ///   - virtualProfile: Profile of the virtual device to exclude from detection.
+  ///   - additionalProfileIdentifiers: Exact profile-backed HID devices whose top-level
+  ///     usage is not necessarily GamePad.
+  public init(
+    virtualProfile: VirtualDeviceProfile = .default,
+    additionalProfileIdentifiers: [DeviceIdentifier] = []
+  ) {
+    stream = HIDDeviceStream(
+      virtualProfile: virtualProfile,
+      additionalProfileIdentifiers: additionalProfileIdentifiers
+    )
   }
 
   /// Returns a live stream of HID device events (connect, disconnect, input report).

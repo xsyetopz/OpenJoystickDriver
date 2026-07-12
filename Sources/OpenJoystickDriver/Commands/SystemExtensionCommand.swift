@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverKit
 import SystemExtensions
 
 private let ojdSystemExtensionID = "com.openjoystickdriver.VirtualHIDDevice"
@@ -86,20 +87,20 @@ struct SystemExtensionCommand {
   }
 
   private func systemExtensionsList() -> String {
-    let process = Process()
-    process.executableURL = URL(fileURLWithPath: "/usr/bin/systemextensionsctl")
-    process.arguments = ["list"]
-    let pipe = Pipe()
-    process.standardOutput = pipe
-    process.standardError = pipe
     do {
-      try process.run()
+      let result = try BoundedProcessRunner.run(
+        executableURL: URL(fileURLWithPath: "/usr/bin/systemextensionsctl"),
+        arguments: ["list"],
+        timeoutSeconds: 5,
+        maximumOutputBytes: 262_144
+      )
+      if result.timedOut {
+        return "systemextensionsctl timed out after 5 seconds"
+      }
+      return result.output
     } catch {
       return "systemextensionsctl failed: \(error.localizedDescription)"
     }
-    process.waitUntilExit()
-    let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    return String(data: data, encoding: .utf8) ?? ""
   }
 }
 

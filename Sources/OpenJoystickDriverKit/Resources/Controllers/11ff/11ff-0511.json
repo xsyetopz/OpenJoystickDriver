@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+  "vendor_id": 4607,
+  "product_id": 1297,
+  "transport": "usb",
+  "protocol": {
+    "driver": "Xbox360",
+    "variant": "xbox360"
+  },
+  "provenance": {
+    "source": "linux-xpad.c",
+    "verified": false
+  }
+}

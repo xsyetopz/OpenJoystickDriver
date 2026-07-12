@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <!-- Required when the app submits OSSystemExtensionRequest — shown in
-         System Settings → Privacy & Security when user approves the extension. -->
+         System Settings -> Privacy & Security when user approves the extension. -->
     <key>NSInputMonitoringUsageDescription</key>
     <string>OpenJoystickDriver needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
     <key>NSSystemExtensionUsageDescription</key>

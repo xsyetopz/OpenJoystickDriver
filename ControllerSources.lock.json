@@ -1,0 +1,32 @@
+{
+  "linux": {
+    "repository": "torvalds/linux",
+    "commit": "44696aa3a489d2baf58efa61b37833f100072bee",
+    "files": {
+      "xpad": {
+        "path": "drivers/input/joystick/xpad.c",
+        "sha256": "c24c86cbb74e74eba751e50899f3137ef0439e0d2a2c391a2e7c7d7556e87278"
+      },
+      "hid_ids": {
+        "path": "drivers/hid/hid-ids.h",
+        "sha256": "330e393ecb01d5cde4ad347cc174ba6e177d822430918166a5fff06473d2293d"
+      },
+      "hid_playstation": {
+        "path": "drivers/hid/hid-playstation.c",
+        "sha256": "48a08dddf8d276a611195311a29cd4f113a949a1f5431ecc84b0396b106ec896"
+      },
+      "hid_sony": {
+        "path": "drivers/hid/hid-sony.c",
+        "sha256": "e0978323b0d10d502f9f85891cf5f785b204759d54bb052478aea17237eba1c7"
+      },
+      "hid_nintendo": {
+        "path": "drivers/hid/hid-nintendo.c",
+        "sha256": "e52d6a35b2ebe9503160481c0b704d401e0c5cb02f3300be02f3920c9ec713e4"
+      },
+      "hid_steam": {
+        "path": "drivers/hid/hid-steam.c",
+        "sha256": "f9f2d7403c044e8215afd31a81e9e2d09377bdb46ff1c4aa716d69fd71d668d7"
+      }
+    }
+  }
+}

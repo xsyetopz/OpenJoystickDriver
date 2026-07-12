@@ -1,28 +1,8 @@
 import OpenJoystickDriverKit
 import SwiftUI
 
-private actor InputTestSampler {
-  private let client = XPCClient()
-
-  init() {
-    client.connect()
-  }
-
-  func disconnect() {
-    client.disconnect()
-  }
-
-  func deviceInputState(vendorID: UInt16, productID: UInt16) async -> DeviceInputState? {
-    try? await client.deviceInputState(vendorID: vendorID, productID: productID)
-  }
-
-  func packetLog(vendorID: UInt16, productID: UInt16) async -> [PacketLogEntry] {
-    (try? await client.packetLog(vendorID: vendorID, productID: productID)) ?? []
-  }
-}
-
 struct InputTestWindowView: View {
-  private let inputRefreshIntervalNanoseconds: UInt64 = 8_333_333
+  private let inputRefreshIntervalNanoseconds: UInt64 = 16_666_667
   private let packetLogRefreshIntervalNanoseconds: UInt64 = 1_000_000_000
 
   @EnvironmentObject var model: AppModel
@@ -36,10 +16,22 @@ struct InputTestWindowView: View {
   @State var rumbleLT = 0.0
   @State var rumbleRT = 0.0
   @State var rumbleDurationMs = 450.0
+  @State var playerIndicator = PhysicalPlayerIndicator.player1
+  @State var playerIndicatorRunning = false
+  @State var playerIndicatorResult: String?
+  @State var physicalBrightness = 128.0
+  @State var physicalBrightnessRunning = false
+  @State var physicalBrightnessResult: String?
+  @State var physicalColorRed = 32.0
+  @State var physicalColorGreen = 96.0
+  @State var physicalColorBlue = 255.0
+  @State var physicalColorRunning = false
+  @State var physicalColorResult: String?
+  @State var showPhysicalOutputValidationPlan = false
   @State private var showPackets = false
   @State private var stateTask: Task<Void, Never>?
   @State private var packetLogTask: Task<Void, Never>?
-  @State private var sampler = InputTestSampler()
+  @State private var sampler = ControllerInputDiagnosticService()
 
   var body: some View {
     ScrollView {
@@ -255,32 +247,22 @@ struct InputTestWindowView: View {
       : L10n.string("input.buttonsPressed.other", pressed.count)
   }
 
-  @ViewBuilder
-  private func buttonPill(button: OpenJoystickDriverKit.Button, isDown: Bool) -> some View {
-    if #available(macOS 11.0, *) {
-      Image(systemName: button.systemImageName)
-        .font(.system(size: 15, weight: .semibold))
-        .frame(width: 32, height: 30)
-        .background(isDown ? Color.accentColor.opacity(0.85) : Color.secondary.opacity(0.14))
-        .foregroundColor(isDown ? .white : .primary)
-        .clipShape(RoundedRectangle(cornerRadius: 6))
-        .transaction { transaction in
-          transaction.animation = nil
-        }
-        .accessibilityLabel(Text(button.displayName))
-    } else {
-      Text(button.displayName)
-        .font(.caption)
-        .lineLimit(1)
-        .minimumScaleFactor(0.8)
-        .frame(width: 32, height: 30)
-        .background(isDown ? Color.accentColor.opacity(0.85) : Color.secondary.opacity(0.14))
-        .foregroundColor(isDown ? .white : .primary)
-        .clipShape(RoundedRectangle(cornerRadius: 6))
-        .transaction { transaction in
-          transaction.animation = nil
-        }
-    }
+  private func buttonPill(
+    button: OpenJoystickDriverKit.Button,
+    isDown: Bool
+  ) -> some View {
+    Text(button.compactLabel)
+      .font(.system(size: 11, weight: .semibold, design: .rounded))
+      .lineLimit(1)
+      .minimumScaleFactor(0.7)
+      .frame(width: 32, height: 30)
+      .background(isDown ? Color.accentColor.opacity(0.85) : Color.secondary.opacity(0.14))
+      .foregroundColor(isDown ? .white : .primary)
+      .clipShape(RoundedRectangle(cornerRadius: 6))
+      .transaction { transaction in
+        transaction.animation = nil
+      }
+      .accessibility(label: Text(button.displayName))
   }
 
   private func supportedButtons(for parser: String?) -> [OpenJoystickDriverKit.Button] {
@@ -310,6 +292,10 @@ struct InputTestWindowView: View {
       ]
     default:
       return [
+        .a, .b, .x, .y,
+        .leftBumper, .rightBumper,
+        .leftStick, .rightStick,
+        .back, .start, .guide,
         .genericButton1, .genericButton2, .genericButton3, .genericButton4,
         .genericButton5, .genericButton6, .genericButton7, .genericButton8,
         .dpadUp, .dpadDown, .dpadLeft, .dpadRight,
@@ -338,6 +324,13 @@ struct InputTestWindowView: View {
   private var packetLogToggle: some View {
     SwiftUI.Button {
       showPackets.toggle()
+      if showPackets {
+        startPacketLogRefreshTask()
+      } else {
+        packetLogTask?.cancel()
+        packetLogTask = nil
+        packetLog = []
+      }
     } label: {
       HStack {
         Text(showPackets ? L10n.string("input.hidePacketLog") : L10n.string("input.showPacketLog"))
@@ -370,13 +363,14 @@ struct InputTestWindowView: View {
         }
       }
     }
-    if packetLogTask == nil {
-      packetLogTask = Task {
+  }
+
+  private func startPacketLogRefreshTask() {
+    guard packetLogTask == nil else { return }
+    packetLogTask = Task {
+      while !Task.isCancelled {
         await refreshPacketLog()
-        while !Task.isCancelled {
-          try? await Task.sleep(nanoseconds: packetLogRefreshIntervalNanoseconds)
-          await refreshPacketLog()
-        }
+        try? await Task.sleep(nanoseconds: packetLogRefreshIntervalNanoseconds)
       }
     }
   }
@@ -386,7 +380,7 @@ struct InputTestWindowView: View {
       state = nil
       return
     }
-    let nextState = await sampler.deviceInputState(
+    let nextState = try? await sampler.deviceInputState(
       vendorID: device.vendorID,
       productID: device.productID
     )
@@ -396,11 +390,15 @@ struct InputTestWindowView: View {
   }
 
   private func refreshPacketLog() async {
-    guard let device = selectedDevice else {
-      packetLog = []
+    guard showPackets, let device = selectedDevice else {
+      if !packetLog.isEmpty { packetLog = [] }
       return
     }
-    packetLog = await sampler.packetLog(vendorID: device.vendorID, productID: device.productID)
+    packetLog =
+      (try? await sampler.packetLog(
+        vendorID: device.vendorID,
+        productID: device.productID
+      )) ?? []
   }
 }
 

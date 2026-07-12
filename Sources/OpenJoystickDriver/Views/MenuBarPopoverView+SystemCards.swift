@@ -46,6 +46,16 @@ extension MenuBarPopoverView {
               model.extensionManager.installState.isInstalled ||
                 model.extensionManager.installState.isPending
             )
+          SwiftUI.Button(L10n.string("app.uninstall")) {
+            pendingConfirmation = .systemExtensionUninstall
+          }
+          .buttonStyle(.borderless)
+          .controlSize(.small)
+          .foregroundColor(.secondary)
+          .disabled(
+            !model.extensionManager.installState.isInstalled ||
+              model.extensionManager.installState.isPending
+          )
         }
         if case .failed(let msg) = model.extensionManager.installState {
           Text(msg)
@@ -93,11 +103,13 @@ extension MenuBarPopoverView {
             }
             .controlSize(.small)
             .disabled(model.daemonRestarting)
-            SwiftUI.Button(L10n.string("app.uninstall")) { showUninstallConfirm = true }
-              .buttonStyle(.borderless)
-              .controlSize(.small)
-              .foregroundColor(.secondary)
-              .disabled(model.daemonRestarting)
+            SwiftUI.Button(L10n.string("app.uninstall")) {
+              pendingConfirmation = .daemonUninstall
+            }
+            .buttonStyle(.borderless)
+            .controlSize(.small)
+            .foregroundColor(.secondary)
+            .disabled(model.daemonRestarting)
           }
         }
       }
@@ -134,6 +146,28 @@ extension MenuBarPopoverView {
         }
         if let assist = model.inputMonitoringAssist {
           PermissionAssistView(message: assist)
+        }
+        Text(
+          "Input Monitoring may be requested by the app for direct diagnostics and by the "
+            + "daemon for background controller input. OJD does not request Accessibility. "
+            + "Driver Extension approval is separate."
+        )
+          .font(.caption)
+          .foregroundColor(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+        HStack {
+          SwiftUI.Button("Refresh stale entries…") {
+            pendingConfirmation = .refreshInputMonitoring
+          }
+          .buttonStyle(.borderless)
+          .controlSize(.small)
+          .disabled(model.daemonRestarting)
+          Spacer()
+          SwiftUI.Button(L10n.string("permissions.openSettingsButton")) {
+            model.openInputMonitoringSettings()
+          }
+          .buttonStyle(.borderless)
+          .controlSize(.small)
         }
       }
     }

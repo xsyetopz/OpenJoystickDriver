@@ -1,5 +1,91 @@
 import Foundation
 
+let xpcDefaultReplyTimeoutSeconds: TimeInterval = 5
+let xpcSelfTestReplyGraceSeconds: TimeInterval = 5
+
+// Immutable result wrapper; arbitrary XPC errors cross the callback boundary only into the locked gate.
+enum XPCReplyResult<Value: Sendable>: @unchecked Sendable {
+  case success(Value)
+  case failure(any Error)
+}
+
+// The lock guards both continuation ownership and timeout cancellation.
+final class XPCReplyGate<Value: Sendable>: @unchecked Sendable {
+  private let lock = NSLock()
+  private var continuation: CheckedContinuation<Value, any Error>?
+  private var timeout: DispatchWorkItem?
+
+  init(continuation: CheckedContinuation<Value, any Error>) {
+    self.continuation = continuation
+  }
+
+  func installTimeout(_ timeout: DispatchWorkItem) {
+    lock.withLock {
+      if continuation == nil {
+        timeout.cancel()
+      } else {
+        self.timeout = timeout
+      }
+    }
+  }
+
+  @discardableResult
+  func resolve(_ result: XPCReplyResult<Value>) -> Bool {
+    let pending = lock.withLock {
+      () -> (CheckedContinuation<Value, any Error>, DispatchWorkItem?)? in
+      guard let continuation else { return nil }
+      self.continuation = nil
+      let timeout = self.timeout
+      self.timeout = nil
+      return (continuation, timeout)
+    }
+    guard let (continuation, timeout) = pending else { return false }
+    timeout?.cancel()
+
+    switch result {
+    case .success(let value):
+      continuation.resume(returning: value)
+    case .failure(let error):
+      continuation.resume(throwing: error)
+    }
+    return true
+  }
+}
+
+// Weak transport reference; XPCClient locks all strong ownership changes.
+final class XPCConnectionReference: @unchecked Sendable {
+  weak var connection: NSXPCConnection?
+
+  init(_ connection: NSXPCConnection) {
+    self.connection = connection
+  }
+}
+
+func waitForXPCReply<Value: Sendable>(
+  timeoutSeconds: TimeInterval,
+  onTimeout: @escaping @Sendable () -> Void = {},
+  start: (@escaping @Sendable (XPCReplyResult<Value>) -> Void) -> Void
+) async throws -> Value {
+  try await withCheckedThrowingContinuation { continuation in
+    let gate = XPCReplyGate(continuation: continuation)
+    let timeout = DispatchWorkItem {
+      if gate.resolve(.failure(XPCError.timeout)) {
+        onTimeout()
+      }
+    }
+    gate.installTimeout(timeout)
+    let finish: @Sendable (XPCReplyResult<Value>) -> Void = { result in
+      gate.resolve(result)
+    }
+
+    start(finish)
+    DispatchQueue.global(qos: .userInitiated).asyncAfter(
+      deadline: .now() + max(0, timeoutSeconds),
+      execute: timeout
+    )
+  }
+}
+
 /// Errors thrown by ``XPCClient`` when communication with the daemon fails.
 public enum XPCError: Error, Sendable {
   /// No connection to the daemon. Call ``XPCClient/connect()`` first,
@@ -37,6 +123,7 @@ extension XPCError: LocalizedError {
 ///
 /// - Important: Thread-safe only when accessed from a single isolation domain (e.g. `@MainActor`).
 public final class XPCClient: @unchecked Sendable {
+  private let connectionLock = NSLock()
   private var connection: NSXPCConnection?
 
   /// Creates a new XPCClient.
@@ -44,29 +131,44 @@ public final class XPCClient: @unchecked Sendable {
 
   /// Opens a connection to the daemon's Mach service.
   ///
-  /// Safe to call multiple times - replaces any existing connection.
+  /// Safe to call multiple times - invalidates and replaces any existing connection.
   public func connect() {
     let conn = NSXPCConnection(machServiceName: xpcServiceName)
     conn.remoteObjectInterface = NSXPCInterface(with: OpenJoystickDriverXPCProtocol.self)
-    conn.invalidationHandler = { [weak self] in
-      self?.connection = nil
-      print("[XPCClient] Connection invalidated")
+    conn.invalidationHandler = { [weak self, weak conn] in
+      guard let conn else { return }
+      self?.clearConnection(ifMatching: conn)
+      FileHandle.standardError.write(
+        Data("[XPCClient] Connection invalidated\n".utf8)
+      )
     }
     conn.interruptionHandler = {}
+
+    let previous = connectionLock.withLock {
+      let current = connection
+      connection = conn
+      return current
+    }
+    previous?.invalidate()
     conn.resume()
-    connection = conn
   }
 
   /// Closes the connection to the daemon and releases resources.
   public func disconnect() {
-    connection?.invalidate()
-    connection = nil
+    let current = connectionLock.withLock {
+      let current = connection
+      connection = nil
+      return current
+    }
+    current?.invalidate()
   }
 
   /// True while a connection exists.
   ///
   /// Does not guarantee the daemon is still alive.
-  public var isConnected: Bool { connection != nil }
+  public var isConnected: Bool {
+    connectionLock.withLock { connection != nil }
+  }
 
   // MARK: - XPC Methods
 
@@ -136,6 +238,58 @@ public final class XPCClient: @unchecked Sendable {
         lt: Int(lt),
         rt: Int(rt),
         durationMs: durationMs,
+        reply: reply
+      )
+    }
+  }
+
+  /// Sets a numbered physical player indicator, where zero means off.
+  public func setPhysicalPlayerIndicator(
+    vendorID: UInt16,
+    productID: UInt16,
+    indicator: PhysicalPlayerIndicator
+  ) async throws -> Bool {
+    try await xpcCall { service, reply in
+      service.setPhysicalPlayerIndicator(
+        vendorID: Int(vendorID),
+        productID: Int(productID),
+        playerIndex: indicator.rawValue,
+        reply: reply
+      )
+    }
+  }
+
+  /// Sets an RGB physical lightbar.
+  public func setPhysicalColor(
+    vendorID: UInt16,
+    productID: UInt16,
+    red: UInt8,
+    green: UInt8,
+    blue: UInt8
+  ) async throws -> Bool {
+    try await xpcCall { service, reply in
+      service.setPhysicalColor(
+        vendorID: Int(vendorID),
+        productID: Int(productID),
+        red: Int(red),
+        green: Int(green),
+        blue: Int(blue),
+        reply: reply
+      )
+    }
+  }
+
+  /// Sets scalar physical LED brightness.
+  public func setPhysicalBrightness(
+    vendorID: UInt16,
+    productID: UInt16,
+    brightness: UInt8
+  ) async throws -> Bool {
+    try await xpcCall { service, reply in
+      service.setPhysicalBrightness(
+        vendorID: Int(vendorID),
+        productID: Int(productID),
+        brightness: Int(brightness),
         reply: reply
       )
     }
@@ -225,7 +379,9 @@ public final class XPCClient: @unchecked Sendable {
   /// Runs a short virtual device self-test.
   public func runVirtualDeviceSelfTest(seconds: Int) async throws -> XPCVirtualDeviceSelfTestPayload
   {
-    let data: Data = try await xpcCall { service, reply in
+    let clampedSeconds = max(1, min(30, seconds))
+    let timeout = TimeInterval(clampedSeconds) + xpcSelfTestReplyGraceSeconds
+    let data: Data = try await xpcCall(timeoutSeconds: timeout) { service, reply in
       service.runVirtualDeviceSelfTest(seconds: seconds, reply: reply)
     }
     guard let payload = try? JSONDecoder().decode(XPCVirtualDeviceSelfTestPayload.self, from: data)
@@ -241,22 +397,49 @@ public final class XPCClient: @unchecked Sendable {
 
   // MARK: - Private
 
-  /// Wraps an XPC reply-block call as a Swift async function.
+  /// Wraps an XPC reply-block call as a bounded Swift async function.
   private func xpcCall<T: Sendable>(
+    timeoutSeconds: TimeInterval = xpcDefaultReplyTimeoutSeconds,
     _ body: @escaping (any OpenJoystickDriverXPCProtocol, @escaping (T) -> Void) -> Void
   ) async throws -> T {
-    guard let conn = connection else { throw XPCError.notConnected }
-    return try await withCheckedThrowingContinuation { cont in
-      let proxy = conn.remoteObjectProxyWithErrorHandler { [weak self] error in
-        // Ensure subsequent calls reconnect cleanly instead of staying on a poisoned connection.
-        self?.disconnect()
-        cont.resume(throwing: error)
-      }
-      guard let service = proxy as? any OpenJoystickDriverXPCProtocol else {
-        cont.resume(throwing: XPCError.invalidResponse)
-        return
-      }
-      body(service) { value in cont.resume(returning: value) }
+    guard let conn = connectionLock.withLock({ connection }) else {
+      throw XPCError.notConnected
     }
+
+    let connectionReference = XPCConnectionReference(conn)
+    return try await waitForXPCReply(
+      timeoutSeconds: timeoutSeconds,
+      onTimeout: { [weak self, connectionReference] in
+        guard let conn = connectionReference.connection else { return }
+        self?.invalidateConnection(conn)
+      },
+      start: { finish in
+        let proxy = conn.remoteObjectProxyWithErrorHandler {
+          [weak self, connectionReference] error in
+          if let conn = connectionReference.connection {
+            self?.invalidateConnection(conn)
+          }
+          finish(.failure(error))
+        }
+        guard let service = proxy as? any OpenJoystickDriverXPCProtocol else {
+          finish(.failure(XPCError.invalidResponse))
+          return
+        }
+        body(service) { value in finish(.success(value)) }
+      }
+    )
+  }
+
+  private func clearConnection(ifMatching candidate: NSXPCConnection) {
+    connectionLock.withLock {
+      if connection === candidate {
+        connection = nil
+      }
+    }
+  }
+
+  private func invalidateConnection(_ candidate: NSXPCConnection) {
+    clearConnection(ifMatching: candidate)
+    candidate.invalidate()
   }
 }

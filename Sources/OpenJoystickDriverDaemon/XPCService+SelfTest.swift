@@ -137,25 +137,16 @@ extension XPCService {
     Task {
       let userSpace = userSpaceLock.withLock { userSpaceDispatcher }
       try? await Task.sleep(nanoseconds: 250_000_000)
-      dextDispatcher.dispatch(events: [.buttonPressed(.a)], from: syntheticIdentifier)
+      dextDispatcher.sendDiagnosticProbe()
       await userSpace?.dispatch(events: [.buttonPressed(.a)], from: syntheticIdentifier)
       try? await Task.sleep(nanoseconds: 250_000_000)
-      dextDispatcher.dispatch(events: [.buttonReleased(.a)], from: syntheticIdentifier)
       await userSpace?.dispatch(events: [.buttonReleased(.a)], from: syntheticIdentifier)
       try? await Task.sleep(nanoseconds: 250_000_000)
-      dextDispatcher.dispatch(
-        events: [.leftStickChanged(x: 0.75, y: 0)],
-        from: syntheticIdentifier
-      )
       await userSpace?.dispatch(
         events: [.leftStickChanged(x: 0.75, y: 0)],
         from: syntheticIdentifier
       )
       try? await Task.sleep(nanoseconds: 250_000_000)
-      dextDispatcher.dispatch(
-        events: [.leftStickChanged(x: 0, y: 0)],
-        from: syntheticIdentifier
-      )
       await userSpace?.dispatch(events: [.leftStickChanged(x: 0, y: 0)], from: syntheticIdentifier)
     }
 

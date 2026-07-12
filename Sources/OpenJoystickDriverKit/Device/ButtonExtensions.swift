@@ -1,4 +1,45 @@
 extension Button {
+  /// Compact text guaranteed to render on every supported macOS version.
+  public var compactLabel: String {
+    switch self {
+    case .a: "A"
+    case .b: "B"
+    case .x: "X"
+    case .y: "Y"
+    case .leftBumper: "LB"
+    case .rightBumper: "RB"
+    case .l1: "L1"
+    case .r1: "R1"
+    case .leftStick: "L3"
+    case .rightStick: "R3"
+    case .start: "Start"
+    case .options: "Opt"
+    case .back: "Back"
+    case .share: "Share"
+    case .guide: "Guide"
+    case .ps: "PS"
+    case .dpadUp: "↑"
+    case .dpadDown: "↓"
+    case .dpadLeft: "←"
+    case .dpadRight: "->"
+    case .cross: "×"
+    case .circle: "○"
+    case .square: "□"
+    case .triangle: "△"
+    case .l2Digital: "L2"
+    case .r2Digital: "R2"
+    case .touchpad: "TP"
+    case .genericButton1: "1"
+    case .genericButton2: "2"
+    case .genericButton3: "3"
+    case .genericButton4: "4"
+    case .genericButton5: "5"
+    case .genericButton6: "6"
+    case .genericButton7: "7"
+    case .genericButton8: "8"
+    }
+  }
+
   /// SF Symbol name used by the Input Test button grid.
   public var systemImageName: String {
     switch self {

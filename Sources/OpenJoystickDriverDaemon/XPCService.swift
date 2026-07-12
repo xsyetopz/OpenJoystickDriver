@@ -423,28 +423,29 @@ public final class XPCService: NSObject, NSXPCListenerDelegate, OpenJoystickDriv
       let pool = userSpaceLock.withLock({ foregroundConsumerDispatcherPool })
     else { return }
 
-    let routeBundleRoots = observedConsumerBundleRoots.union(effectiveConsumerBundleRoots)
-    let prioritizedRouteBundleRoots = routeBundleRoots.sorted {
-      switch ($0 == frontmostBundleRootPath, $1 == frontmostBundleRootPath) {
-      case (true, false): return true
-      case (false, true): return false
-      default:
-        return $0 < $1
-      }
-    }
+    let retainedBundleRoots =
+      ForegroundConsumerRouteSelection.retainedDedicatedBundleRootPaths(
+        frontmostBundleRootPath: frontmostBundleRootPath,
+        effectiveConsumerBundleRoots: effectiveConsumerBundleRoots,
+        observedConsumerBundleRoots: observedConsumerBundleRoots,
+        activeRouteToken: activeRouteToken
+      )
 
-    for bundleRootPath in prioritizedRouteBundleRoots {
+    if let activeBundleRootPath = retainedBundleRoots.first {
       do {
-        try await pool.ensureDedicatedRoute(forConsumerBundleRootPath: bundleRootPath)
+        try pool.ensureDedicatedRoute(
+          forConsumerBundleRootPath: activeBundleRootPath
+        )
       } catch {
         print(
           "[XPCService] Failed to create dedicated Compatibility route for "
-            + "\(URL(fileURLWithPath: bundleRootPath).lastPathComponent): \(error)"
+            + "\(URL(fileURLWithPath: activeBundleRootPath).lastPathComponent): \(error)"
         )
       }
     }
 
     await pool.setActiveRouteToken(activeRouteToken)
+    pool.retainDedicatedRoutes(forConsumerBundleRootPaths: retainedBundleRoots)
     userSpaceLock.withLock {
       userSpaceStatus = pool.status
     }

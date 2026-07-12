@@ -13,6 +13,8 @@ private let ds3OperationalReportF5: UInt8 = 0xF5
 private let ds3OperationalReportF5Length = 8
 private let ds3BluetoothOperationalReportID: UInt8 = 0xF4
 private let ds3Deadzone: Float = 0.08
+private let ds3OutputReportID: UInt8 = 0x01
+private let ds3OutputReportLength = 36
 
 /// Parser for Sony DualShock 3 / SIXAXIS USB and Bluetooth input reports.
 ///
@@ -20,10 +22,11 @@ private let ds3Deadzone: Float = 0.08
 /// usages. The native SIXAXIS descriptor uses report ID `0x01`, one reserved
 /// byte, digital button bits including D-pad usages, four 8-bit stick axes,
 /// and pressure axes later in the
-/// 49-byte report. This parser intentionally omits sensors and rumble until
-/// hardware packets can verify calibration and output behavior.
+/// 49-byte report. Physical rumble and player LEDs use the fixed 36-byte
+/// Sixaxis output report from Linux `hid-sony.c`; sensors remain intentionally omitted.
 public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
-  HIDStartupFeatureReportProvider, @unchecked Sendable
+  HIDStartupFeatureReportProvider, PhysicalHIDRumbleOutput,
+  PhysicalHIDPlayerIndicatorOutput, @unchecked Sendable
 {
 
   private enum ReportOffset {
@@ -49,8 +52,13 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
   private var prevRY = UInt8(ds3AxisCenter)
   private var prevL2: UInt8 = 0
   private var prevR2: UInt8 = 0
+  private var physicalRumbleLeft: UInt8 = 0
+  private var physicalRumbleRightOn = false
+  private var physicalPlayerIndicator: PhysicalPlayerIndicator = .player1
 
   public init() {}
+
+  public var physicalBinaryRumbleMotors: [PhysicalRumbleMotor] { [.rightMain] }
 
   public func performHandshake(handle: USBDeviceHandle?) async throws {
     await Task.yield()
@@ -86,6 +94,45 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
         bytes: [ds3BluetoothOperationalReportID, 0x42, 0x03, 0x00, 0x00]
       ),
     ]
+  }
+
+  public func physicalRumbleReport(left: UInt8, right: UInt8, lt _: UInt8, rt _: UInt8)
+    -> PhysicalHIDOutputReport
+  {
+    physicalRumbleLeft = left
+    physicalRumbleRightOn = right > 0
+    return physicalOutputReport()
+  }
+
+  public func physicalPlayerIndicatorReport(_ indicator: PhysicalPlayerIndicator)
+    -> PhysicalHIDOutputReport
+  {
+    physicalPlayerIndicator = indicator
+    return physicalOutputReport()
+  }
+
+  private func physicalOutputReport() -> PhysicalHIDOutputReport {
+    var bytes: [UInt8] = [
+      0x01,
+      0x01, 0xFF, 0x00, 0xFF, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00,
+      0xFF, 0x27, 0x10, 0x00, 0x32,
+      0xFF, 0x27, 0x10, 0x00, 0x32,
+      0xFF, 0x27, 0x10, 0x00, 0x32,
+      0xFF, 0x27, 0x10, 0x00, 0x32,
+      0x00, 0x00, 0x00, 0x00, 0x00,
+    ]
+    precondition(bytes.count == ds3OutputReportLength)
+    bytes[3] = physicalRumbleRightOn ? 1 : 0
+    bytes[5] = physicalRumbleLeft
+    switch physicalPlayerIndicator {
+    case .off: bytes[10] = 0x20
+    case .player1: bytes[10] = 0x02
+    case .player2: bytes[10] = 0x04
+    case .player3: bytes[10] = 0x08
+    case .player4: bytes[10] = 0x10
+    }
+    return PhysicalHIDOutputReport(reportID: ds3OutputReportID, bytes: bytes)
   }
 
   public func parse(data: Data) throws -> [ControllerEvent] {

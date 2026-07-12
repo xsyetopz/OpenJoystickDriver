@@ -142,6 +142,32 @@ public enum VirtualDeviceMode: String, Codable, CaseIterable, Sendable {
     reply: @escaping (Bool) -> Void
   )
 
+  /// Sets a source-backed numbered player indicator on a physical controller.
+  @objc func setPhysicalPlayerIndicator(
+    vendorID: Int,
+    productID: Int,
+    playerIndex: Int,
+    reply: @escaping (Bool) -> Void
+  )
+
+  /// Sets an RGB lightbar on a supported physical controller.
+  @objc func setPhysicalColor(
+    vendorID: Int,
+    productID: Int,
+    red: Int,
+    green: Int,
+    blue: Int,
+    reply: @escaping (Bool) -> Void
+  )
+
+  /// Sets scalar LED brightness on a supported physical controller.
+  @objc func setPhysicalBrightness(
+    vendorID: Int,
+    productID: Int,
+    brightness: Int,
+    reply: @escaping (Bool) -> Void
+  )
+
   /// Enables or disables keyboard/mouse output from button mappings.
   /// Pass true to suppress output (useful during developer packet capture).
   /// Replies with true to confirm the change.

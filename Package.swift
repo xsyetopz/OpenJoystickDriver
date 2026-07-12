@@ -11,7 +11,7 @@ let localSwiftUSBPath = packageDirectory
 let swiftUSBDependency: Package.Dependency =
   useLocalSwiftUSB && FileManager.default.fileExists(atPath: localSwiftUSBPath)
     ? .package(path: localSwiftUSBPath)
-    : .package(url: "https://github.com/xsyetopz/SwiftUSB.git", from: "0.1.0")
+    : .package(url: "https://github.com/xsyetopz/SwiftUSB.git", from: "0.1.1")
 
 #if arch(arm64)
 let testTargetTriple = "arm64-apple-macosx26.0"
@@ -35,7 +35,9 @@ let package = Package(
   targets: [
     .target(
       name: "OpenJoystickDriverKit",
-      dependencies: [.product(name: "SwiftUSB", package: "SwiftUSB")],
+      dependencies: [
+        .product(name: "SwiftUSB", package: "SwiftUSB"),
+      ],
       path: "Sources/OpenJoystickDriverKit",
       resources: [.process("Resources/")],
       linkerSettings: [

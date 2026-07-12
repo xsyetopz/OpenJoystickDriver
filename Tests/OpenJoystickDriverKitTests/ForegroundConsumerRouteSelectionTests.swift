@@ -35,6 +35,37 @@ struct ForegroundConsumerRouteSelectionTests {
         == UserSpaceVirtualDeviceConstants.dedicatedRouteToken(forConsumerBundleRootPath: consumerA)
     )
   }
+  @Test
+  func testOnlyFocusedActiveConsumerRetainsADedicatedRoute() {
+    let consumerA = "/Applications/ConsumerA.app"
+    let consumerB = "/Applications/ConsumerB.app"
+
+    let retained = ForegroundConsumerRouteSelection.retainedDedicatedBundleRootPaths(
+      frontmostBundleRootPath: consumerA,
+      effectiveConsumerBundleRoots: [consumerA, consumerB],
+      observedConsumerBundleRoots: [consumerA, consumerB],
+      activeRouteToken: UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
+        forConsumerBundleRootPath: consumerA
+      )
+    )
+
+    #expect(retained == [consumerA])
+  }
+
+  @Test
+  func testNoActiveRouteRetainsNoDedicatedConsumerRoutes() {
+    let consumerA = "/Applications/ConsumerA.app"
+
+    let retained = ForegroundConsumerRouteSelection.retainedDedicatedBundleRootPaths(
+      frontmostBundleRootPath: consumerA,
+      effectiveConsumerBundleRoots: [consumerA],
+      observedConsumerBundleRoots: [consumerA],
+      activeRouteToken: nil
+    )
+
+    #expect(retained.isEmpty)
+  }
+
 }
 
 private extension ForegroundConsumerClientSample {

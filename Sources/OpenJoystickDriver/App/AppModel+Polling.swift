@@ -30,6 +30,7 @@ import OpenJoystickDriverKit
       userSpaceVirtualDeviceEnabled = false
       userSpaceVirtualDeviceStatus = "off"
       virtualDeviceDiagnostics = nil
+      latestStatusPayload = nil
       appInputMonitoring = "\(await permissionManager.checkAccess())"
       inputMonitoring = "unknown"
       resetDaemonHealthTrend()
@@ -40,6 +41,7 @@ import OpenJoystickDriverKit
     if !client.isConnected { client.connect() }
     do {
       let status = try await client.getStatus()
+      latestStatusPayload = status
       daemonConnected = true
       daemonError = nil
       inputMonitoring = status.inputMonitoring
@@ -54,6 +56,7 @@ import OpenJoystickDriverKit
     } catch {
       daemonConnected = false
       devices = []
+      latestStatusPayload = nil
       client.disconnect()
       appInputMonitoring = "\(await permissionManager.checkAccess())"
       inputMonitoring = "unknown"
@@ -127,29 +130,38 @@ import OpenJoystickDriverKit
     return false
   }
 
-  func ensureBundleSignatureValid(for action: String) -> Bool {
+  func ensureBundleSignatureValid(for action: String) async -> Bool {
     // SMAppService refuses to register an agent if the app bundle has been modified
     // after signing (e.g. copying the .dext into Contents/Library/SystemExtensions).
     //
     // When that happens, codesign reports:
     //   "a sealed resource is missing or invalid" + "file added: ..."
     let appPath = Bundle.main.bundlePath
-    let process = Process()
-    process.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
-    process.arguments = ["--verify", "--deep", "--strict", "--verbose=2", appPath]
-    let pipe = Pipe()
-    process.standardOutput = pipe
-    process.standardError = pipe
+    let result: BoundedProcessResult
     do {
-      try process.run()
+      result = try await Task.detached(priority: .userInitiated) {
+        try BoundedProcessRunner.run(
+          executableURL: URL(fileURLWithPath: "/usr/bin/codesign"),
+          arguments: ["--verify", "--deep", "--strict", "--verbose=2", appPath],
+          timeoutSeconds: 15,
+          maximumOutputBytes: 262_144
+        )
+      }.value
     } catch {
       daemonError =
         L10n.string("daemon.error.codesignLaunchFailed", action, error.localizedDescription)
       return false
     }
-    process.waitUntilExit()
-    let out = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-    if process.terminationStatus == 0 { return true }
+    if result.timedOut {
+      daemonError = L10n.string(
+        "daemon.error.codesignLaunchFailed",
+        action,
+        "verification timed out after 15 seconds"
+      )
+      return false
+    }
+    let out = result.output
+    if result.terminationStatus == 0 { return true }
 
     // Keep the UI message self-describing and fix-oriented.
     if out.contains("a sealed resource is missing or invalid") {

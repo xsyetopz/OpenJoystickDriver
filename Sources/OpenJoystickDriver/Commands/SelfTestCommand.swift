@@ -24,6 +24,7 @@ struct SelfTestCommand {
       "  DriverKit: value \(payload.driverKitValueEvents), " +
         "report \(payload.driverKitReportEvents)"
     )
+    print("  DriverKit relay verdict: \(payload.driverKitRelayVerdict.rawValue.uppercased())")
     if let delta = payload.driverKitInputReportDelta {
       print("  DriverKit input report delta: \(delta)")
     }

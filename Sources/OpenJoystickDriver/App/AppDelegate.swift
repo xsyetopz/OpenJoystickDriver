@@ -23,6 +23,11 @@ import SwiftUI
 
   func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 
+  func applicationWillTerminate(_ notification: Notification) {
+    model.stopBrowserGamepadDiagnostic()
+    model.stopRuntimeHealthCheck()
+  }
+
   private func configureApplicationIcon() {
     if let url = Bundle.main.url(forResource: "OpenJoystickDriver", withExtension: "icns"),
        let image = NSImage(contentsOf: url)

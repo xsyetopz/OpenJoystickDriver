@@ -9,9 +9,15 @@ struct CLI {
     switch command {
     case "list": ListCommand().run()
     case "status": StatusCommand().run()
-    case "diagnose": DiagnoseCommand().run()
+    case "input": InputCommand().run(arguments: Array(args.dropFirst()))
+    case "logs": LogsCommand().run(arguments: Array(args.dropFirst()))
+    case "updates": UpdatesCommand().run(arguments: Array(args.dropFirst()))
+    case "permissions": PermissionsCommand().run(arguments: Array(args.dropFirst()))
+    case "report": ReportCommand().run(arguments: Array(args.dropFirst()))
+    case "diagnose": DiagnoseCommand().run(arguments: Array(args.dropFirst()))
     case "userspace": UserSpaceCommand().run(arguments: Array(args.dropFirst()))
     case "output": OutputModeCommand().run(arguments: Array(args.dropFirst()))
+    case "physical-output": PhysicalOutputCommand().run(arguments: Array(args.dropFirst()))
     case "compat": CompatibilityCommand().run(arguments: Array(args.dropFirst()))
     case "selftest": SelfTestCommand().run(arguments: Array(args.dropFirst()))
     case "sysext": SystemExtensionCommand().run(arguments: Array(args.dropFirst()))
@@ -22,7 +28,7 @@ struct CLI {
     case "uninstall": UninstallCommand().run()
     case "run": RunCommand().run()
     case "--help", "-h", "help": printHelp()
-    case "--version", "-v", "version": print("OpenJoystickDriver v0.5.0-alpha.4")
+    case "--version", "-v", "version": print("OpenJoystickDriver v0.5.0-alpha.5")
     default:
       print("Unknown command: \(command)")
       printHelp()
@@ -33,7 +39,7 @@ struct CLI {
   private func printHelp() {
     print(
       """
-      OpenJoystickDriver v0.5.0-alpha.4 \
+      OpenJoystickDriver v0.5.0-alpha.5 \
       - macOS gamepad driver
 
       Usage: OpenJoystickDriver \
@@ -44,9 +50,15 @@ struct CLI {
       (default - processes controller input)
         list       List connected game controllers
         status     Show permission and device status
-        diagnose   Hardware diagnostics
+        input      Inspect or watch normalized input and raw packet logs
+        logs       Read or reveal bounded daemon log tails
+        updates    Check GitHub release metadata without installing
+        permissions Inspect or request Input Monitoring access
+        report     Create a redacted controller support report
+        diagnose   Hardware and runtime diagnostics
         userspace  Toggle user-space virtual gamepad (IOHIDUserDevice)
         output     Set output routing mode (DriverKit/user-space)
+        physical-output Inspect/test source-controller rumble and player LEDs
         compat     Set compatibility identity (generic-hid/sdl2-3/x360-hid/xone-hid)
         selftest   Count input events on virtual devices
         sysext     Manage DriverKit system extension

@@ -36,8 +36,10 @@ struct StatusCommand {
   private func printPayloadStatus(_ payload: XPCStatusPayload) {
     print("(connected to running daemon via XPC)")
     print("")
-    print("Permissions:")
-    print("  Input Monitoring : " + payload.inputMonitoring)
+    let permissions = currentInputMonitoringPermissions(
+      daemonStatus: payload.inputMonitoring
+    )
+    printInputMonitoringPermissions(permissions)
     print("")
     if let mode = payload.virtualDeviceMode {
       print("Virtual device mode:")
@@ -80,6 +82,15 @@ struct StatusCommand {
             + " settleMs=\(dev.postHandshakeSettleMs)"
         )
         print("    mappings=\(mappings) backends=\(backends)")
+        let motors = dev.physicalOutputCapabilities.rumbleMotors.map(\.rawValue)
+        let lighting = dev.physicalOutputCapabilities.lightingFeatures.map(\.rawValue)
+        let binaryMotors = dev.physicalOutputCapabilities.binaryRumbleMotors.map(\.rawValue)
+        print(
+          "    physical-output motors=\(motors.isEmpty ? "none" : motors.joined(separator: ","))"
+            + " lighting=\(lighting.isEmpty ? "none" : lighting.joined(separator: ","))"
+            + " binary=\(binaryMotors.isEmpty ? "none" : binaryMotors.joined(separator: ","))"
+            + " evidence=\(dev.physicalOutputCapabilities.evidence.rawValue)"
+        )
       }
     }
   }
@@ -89,14 +100,13 @@ struct StatusCommand {
   private func runDirectMode() {
     print("(direct mode - daemon not running)")
     print("")
-    let permManager = PermissionManager()
-    runSync {
-      let inputState = await permManager.checkAccess()
-      print("Permissions:")
-      print("  Input Monitoring : " + "\(inputState.label)" + " \(inputState)")
-      if inputState != .granted {
-        print("  -> Grant in: System Settings" + " > Privacy > Input Monitoring")
-      }
+    let permissions = currentInputMonitoringPermissions()
+    printInputMonitoringPermissions(permissions)
+    if permissions.application != .granted {
+      print("  -> App recovery: --headless permissions request app")
+    }
+    if permissions.daemon != .granted {
+      print("  -> Daemon recovery: --headless permissions request daemon")
     }
   }
 }

@@ -13,6 +13,8 @@ public struct VirtualControllerBackendCapabilities: Equatable, Sendable {
   public let supportsMultiplePhysicalControllers: Bool
   public let requiresEntitlement: Bool
   public let isImplemented: Bool
+  /// Whether this backend publishes a controller that games and other consumers can open.
+  public let publishesConsumerGamepad: Bool
   public let notes: String
 
   public init(
@@ -20,12 +22,14 @@ public struct VirtualControllerBackendCapabilities: Equatable, Sendable {
     supportsMultiplePhysicalControllers: Bool,
     requiresEntitlement: Bool,
     isImplemented: Bool,
+    publishesConsumerGamepad: Bool = true,
     notes: String
   ) {
     self.isSystemWide = isSystemWide
     self.supportsMultiplePhysicalControllers = supportsMultiplePhysicalControllers
     self.requiresEntitlement = requiresEntitlement
     self.isImplemented = isImplemented
+    self.publishesConsumerGamepad = publishesConsumerGamepad
     self.notes = notes
   }
 }
@@ -73,7 +77,9 @@ extension DextOutputDispatcher: VirtualControllerBackend {
       supportsMultiplePhysicalControllers: false,
       requiresEntitlement: true,
       isImplemented: true,
-      notes: "DriverKit IOUserHIDDevice output path."
+      publishesConsumerGamepad: false,
+      notes: "Vendor-defined DriverKit integrity relay for self-test and diagnostics; " +
+        "Compatibility IOHIDUserDevice publishes the consumer gamepad."
     )
   }
 

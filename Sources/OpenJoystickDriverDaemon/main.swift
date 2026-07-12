@@ -72,6 +72,29 @@ final class PermissionPromptAppDelegate: NSObject, NSApplicationDelegate {
   }
 }
 
+if let probeArgument = commandLineArguments.first(where: {
+  $0.hasPrefix("--probe-foreground-consumer-memory=")
+}) {
+  let rawIterations = String(
+    probeArgument.dropFirst("--probe-foreground-consumer-memory=".count)
+  )
+  guard let iterations = Int(rawIterations), (1...100_000).contains(iterations) else {
+    daemonLog("[Daemon] Probe iterations must be 1...100000")
+    exit(1)
+  }
+  do {
+    let result = try ForegroundConsumerMemoryProbe.run(iterations: iterations)
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    let data = try encoder.encode(result)
+    print(String(data: data, encoding: .utf8) ?? "{}")
+    exit(0)
+  } catch {
+    daemonLog("[Daemon] Foreground consumer memory probe failed: \(error.localizedDescription)")
+    exit(1)
+  }
+}
+
 let environment = ProcessInfo.processInfo.environment
 let permissionCheckOnlyMode = environment["OJD_PERMISSION_CHECK_ONLY"] == "1"
 let promptOnlyMode = environment["OJD_PERMISSION_PROMPT_ONLY"] == "1"

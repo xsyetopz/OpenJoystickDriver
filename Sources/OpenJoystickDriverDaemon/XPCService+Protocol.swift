@@ -121,6 +121,85 @@ extension XPCService {
     }
   }
 
+  public func setPhysicalPlayerIndicator(
+    vendorID: Int,
+    productID: Int,
+    playerIndex: Int,
+    reply: @escaping (Bool) -> Void
+  ) {
+    guard let indicator = PhysicalPlayerIndicator(rawValue: playerIndex) else {
+      reply(false)
+      return
+    }
+    let callback = SendableReply(call: reply)
+    let dm = deviceManager
+    Task {
+      let identifier = DeviceIdentifier(
+        vendorID: UInt16(clamping: vendorID),
+        productID: UInt16(clamping: productID)
+      )
+      callback.call(
+        await dm.sendPlayerIndicator(for: identifier, indicator: indicator)
+      )
+    }
+  }
+
+  public func setPhysicalColor(
+    vendorID: Int,
+    productID: Int,
+    red: Int,
+    green: Int,
+    blue: Int,
+    reply: @escaping (Bool) -> Void
+  ) {
+    guard [red, green, blue].allSatisfy({ (0...255).contains($0) }) else {
+      reply(false)
+      return
+    }
+    let callback = SendableReply(call: reply)
+    let dm = deviceManager
+    Task {
+      let identifier = DeviceIdentifier(
+        vendorID: UInt16(clamping: vendorID),
+        productID: UInt16(clamping: productID)
+      )
+      callback.call(
+        await dm.setPhysicalColor(
+          for: identifier,
+          red: UInt8(red),
+          green: UInt8(green),
+          blue: UInt8(blue)
+        )
+      )
+    }
+  }
+
+  public func setPhysicalBrightness(
+    vendorID: Int,
+    productID: Int,
+    brightness: Int,
+    reply: @escaping (Bool) -> Void
+  ) {
+    guard (0...255).contains(brightness) else {
+      reply(false)
+      return
+    }
+    let callback = SendableReply(call: reply)
+    let dm = deviceManager
+    Task {
+      let identifier = DeviceIdentifier(
+        vendorID: UInt16(clamping: vendorID),
+        productID: UInt16(clamping: productID)
+      )
+      callback.call(
+        await dm.setPhysicalBrightness(
+          for: identifier,
+          brightness: UInt8(brightness)
+        )
+      )
+    }
+  }
+
   /// Enables or disables virtual output suppression and reports success.
   public func setSuppressOutput(_ suppress: Bool, reply: @escaping (Bool) -> Void) {
     dispatcher.suppressOutput = suppress

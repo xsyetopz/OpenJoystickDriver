@@ -201,7 +201,7 @@ extension SystemExtensionManager: OSSystemExtensionRequestDelegate {
       // If the extension is already active, treat this as a warning rather than a blocker.
       // This happens frequently during sysext replacement/upgrade when a reboot is needed
       // to clean up stale copies.
-      if Self.isSysextActive(extensionID: self.extensionBundleID) {
+      if await Self.isSysextActiveAsync(extensionID: self.extensionBundleID) {
         self.installWarning =
           "DriverKit extension appears active, but the last install request failed. " +
           "If diagnostics mention stale copies, a reboot cleans them up."
@@ -286,20 +286,19 @@ extension SystemExtensionManager {
 
   nonisolated private static func isSysextActive(extensionID: String) -> Bool {
     guard !extensionID.isEmpty else { return false }
-    let process = Process()
-    process.executableURL = URL(fileURLWithPath: "/usr/bin/systemextensionsctl")
-    process.arguments = ["list"]
-    let pipe = Pipe()
-    process.standardOutput = pipe
-    process.standardError = pipe
-    do {
-      try process.run()
-    } catch {
+    guard
+      let result = try? BoundedProcessRunner.run(
+        executableURL: URL(fileURLWithPath: "/usr/bin/systemextensionsctl"),
+        arguments: ["list"],
+        timeoutSeconds: 5,
+        maximumOutputBytes: 262_144
+      ),
+      !result.timedOut,
+      result.terminationStatus == 0
+    else {
       return false
     }
-    process.waitUntilExit()
-    let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    let out = String(data: data, encoding: .utf8) ?? ""
+    let out = result.output
     if !out.contains(extensionID) { return false }
     // Heuristic: the line usually contains "[activated enabled]" when active.
     return out.split(separator: "\n").contains { line in
@@ -308,10 +307,8 @@ extension SystemExtensionManager {
   }
 
   private static func isSysextActiveAsync(extensionID: String) async -> Bool {
-    await withCheckedContinuation { cont in
-      DispatchQueue.global(qos: .utility).async {
-        cont.resume(returning: isSysextActive(extensionID: extensionID))
-      }
-    }
+    await Task.detached(priority: .utility) {
+      isSysextActive(extensionID: extensionID)
+    }.value
   }
 }

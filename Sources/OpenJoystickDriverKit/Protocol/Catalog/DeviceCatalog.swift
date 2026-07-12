@@ -1,9 +1,13 @@
 import Foundation
 
-/// Per-device transport configuration resolved from controller profiles.
+/// Per-device transport configuration resolved from controller records.
 public struct DeviceTransportProfile: Equatable, Sendable {
   public let inputEndpoint: UInt8
   public let outputEndpoint: UInt8
+  public let interfaceNumber: UInt8
+  public let alternateSetting: UInt8
+  public let hasInterfaceOverride: Bool
+  public let hasEndpointOverride: Bool
   /// When true, pipeline calls setConfiguration(1) before claiming interface.
   /// Required for controllers that enumerate unconfigured (e.g. Vader 5S).
   public let needsSetConfiguration: Bool
@@ -13,17 +17,28 @@ public struct DeviceTransportProfile: Equatable, Sendable {
   public init(
     inputEndpoint: UInt8,
     outputEndpoint: UInt8,
+    interfaceNumber: UInt8 = 0,
+    alternateSetting: UInt8 = 0,
+    hasInterfaceOverride: Bool = false,
+    hasEndpointOverride: Bool = false,
     needsSetConfiguration: Bool,
     postHandshakeSettleNanoseconds: UInt64 = 0
   ) {
     self.inputEndpoint = inputEndpoint
     self.outputEndpoint = outputEndpoint
+    self.interfaceNumber = interfaceNumber
+    self.alternateSetting = alternateSetting
+    self.hasInterfaceOverride = hasInterfaceOverride
+    self.hasEndpointOverride = hasEndpointOverride
     self.needsSetConfiguration = needsSetConfiguration
     self.postHandshakeSettleNanoseconds = postHandshakeSettleNanoseconds
   }
 
   public static let gipDefault = Self(
-    inputEndpoint: 0x82, outputEndpoint: 0x02, needsSetConfiguration: false)
+    inputEndpoint: 0x82,
+    outputEndpoint: 0x02,
+    needsSetConfiguration: false
+  )
 }
 
 /// Controller protocol family/variant used for long-term compatibility metadata.
@@ -79,289 +94,389 @@ public struct DeviceRuntimeProfile: Sendable {
   public let mappingOptions: ControllerMappingOptions
   public let preferredBackends: [VirtualControllerBackendID]
   public let gipStartupPackets: [GIPStartupPacket]
+  public let hardwareVerified: Bool
 }
 
-/// Loads and caches VID:PID -> runtime profiles from bundled controller profiles.
+/// Loads the canonical VID/PID controller records bundled with the driver.
 struct DeviceCatalog: Sendable {
-  /// Maps "VID:PID" strings to parser names (e.g. "GIP", "DS4").
-  let entries: [String: String]
-
-  /// Maps "VID:PID" strings to virtual profile keys (e.g. "xboxOneS").
-  let profileEntries: [String: String]
-
-  /// Maps "VID:PID" strings to per-device transport overrides.
-  let transportEntries: [String: DeviceTransportProfile]
-
-  /// Maps "VID:PID" strings to source-backed protocol variants.
-  let protocolVariants: [String: ControllerProtocolVariant]
-
-  /// Maps "VID:PID" strings to mapping quirks.
-  let mappingOptions: [String: ControllerMappingOptions]
-
-  /// Maps "VID:PID" strings to protocol-specific mapping/feature flag names.
-  let mappingFlags: [String: [String]]
-
-  /// Maps "VID:PID" strings to preferred output backends.
-  let backendPreferences: [String: [VirtualControllerBackendID]]
-
-  /// Maps "VID:PID" strings to ordered GIP startup packets.
-  let gipStartupPackets: [String: [GIPStartupPacket]]
+  private let profiles: [String: DeviceRuntimeProfile]
+  let hidProfileIdentifiers: [DeviceIdentifier]
 
   init() {
-    let loadedEntries = Self.loadProfileEntries()
-    if !loadedEntries.isEmpty {
-      var map: [String: String] = [:]
-      var profiles: [String: String] = [:]
-      var transports: [String: DeviceTransportProfile] = [:]
-      var variants: [String: ControllerProtocolVariant] = [:]
-      var mappings: [String: ControllerMappingOptions] = [:]
-      var flags: [String: [String]] = [:]
-      var backends: [String: [VirtualControllerBackendID]] = [:]
-      var startupPackets: [String: [GIPStartupPacket]] = [:]
-      for entry in loadedEntries {
-        let key = "\(entry.vendorId):\(entry.productId)"
-        map[key] = entry.parser
-        profiles[key] = entry.virtualProfile
-        transports[key] = entry.transportProfile
-        variants[key] = entry.protocolVariant
-        mappings[key] = entry.mappingOptions
-        flags[key] = entry.mappingFlags
-        backends[key] = entry.preferredBackends
-        startupPackets[key] = entry.gipStartupPackets
+    do {
+      var loaded: [String: DeviceRuntimeProfile] = [:]
+      var hid: [DeviceIdentifier] = []
+      for record in try Self.loadRecords() {
+        let key = "\(record.vendorID):\(record.productID)"
+        guard loaded[key] == nil else { throw CatalogError("duplicate controller identity \(key)") }
+        loaded[key] = try Self.makeRuntimeProfile(record)
+        if record.transport == "hid" {
+          hid.append(
+            DeviceIdentifier(vendorID: UInt16(record.vendorID), productID: UInt16(record.productID))
+          )
+        }
       }
-      entries = map
-      profileEntries = profiles
-      transportEntries = transports
-      protocolVariants = variants
-      mappingOptions = mappings
-      mappingFlags = flags
-      backendPreferences = backends
-      gipStartupPackets = startupPackets
-    } else {
-      print("[DeviceCatalog] Could not load controller profiles - using built-in fallbacks")
-      entries = ["13623:4112": "GIP", "1356:1476": "DS4", "1356:2508": "DS4"]
-      profileEntries = [:]
-      transportEntries = [:]
-      protocolVariants = [:]
-      mappingOptions = [:]
-      mappingFlags = [:]
-      backendPreferences = [:]
-      gipStartupPackets = [:]
-    }
+      profiles = loaded
+      hidProfileIdentifiers = hid.sorted {
+        if $0.vendorID != $1.vendorID { return $0.vendorID < $1.vendorID }
+        return $0.productID < $1.productID
+      }
+    } catch { fatalError("[DeviceCatalog] Invalid controller catalog: \(error)") }
   }
 
   func parserName(for identifier: DeviceIdentifier) -> String {
-    let key = "\(identifier.vendorID):\(identifier.productID)"
-    return entries[key] ?? "GenericHID"
+    profiles[key(for: identifier)]?.parserName ?? "GenericHID"
   }
 
-  /// Returns the virtual device profile for a physical device.
-  ///
-  /// Looks up the `output.virtual_profile` field from controller profiles by VID:PID.
-  /// Falls back to `.default` (Xbox One S) for unknown devices.
   func virtualProfile(for identifier: DeviceIdentifier) -> VirtualDeviceProfile {
-    let key = "\(identifier.vendorID):\(identifier.productID)"
-    guard let profileKey = profileEntries[key] else { return .default }
-    switch profileKey {
-    case "xboxOneS": return .xboxOneS
-    default: return .default
-    }
+    profiles[key(for: identifier)]?.virtualProfile ?? .default
   }
 
-  /// Returns transport profile for a device, falling back to GIP defaults.
   func transportProfile(for identifier: DeviceIdentifier) -> DeviceTransportProfile {
-    let key = "\(identifier.vendorID):\(identifier.productID)"
-    return transportEntries[key] ?? .gipDefault
+    profiles[key(for: identifier)]?.transportProfile ?? .gipDefault
   }
 
   func runtimeProfile(for identifier: DeviceIdentifier) -> DeviceRuntimeProfile {
-    let key = "\(identifier.vendorID):\(identifier.productID)"
+    profiles[key(for: identifier)]
+      ?? DeviceRuntimeProfile(
+        parserName: "GenericHID",
+        virtualProfile: .default,
+        transportProfile: .gipDefault,
+        protocolVariant: .genericHID,
+        mappingFlags: [],
+        mappingOptions: [],
+        preferredBackends: [.driverKitHID, .userSpaceHID],
+        gipStartupPackets: GIPStartupPacket.defaultSequence,
+        hardwareVerified: false
+      )
+  }
+
+  private func key(for identifier: DeviceIdentifier) -> String {
+    "\(identifier.vendorID):\(identifier.productID)"
+  }
+
+  private static func loadRecords() throws -> [ControllerRecord] {
+    let urls = (Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: nil) ?? [])
+      .filter { isControllerRecordFilename($0.lastPathComponent) }.sorted {
+        $0.lastPathComponent < $1.lastPathComponent
+      }
+    guard !urls.isEmpty else { throw CatalogError("controller catalog is empty") }
+
+    let decoder = JSONDecoder()
+    return try urls.map { url in
+      let data = try Data(contentsOf: url)
+      try validateShape(JSONSerialization.jsonObject(with: data), path: url.path)
+      do {
+        let record = try decoder.decode(ControllerRecord.self, from: data)
+        let expectedName = String(format: "%04x-%04x.json", record.vendorID, record.productID)
+        guard url.lastPathComponent == expectedName else {
+          throw CatalogError("\(url.path): filename must be \(expectedName)")
+        }
+        return record
+      } catch { throw CatalogError("\(url.path): \(error)") }
+    }
+  }
+
+  private static func isControllerRecordFilename(_ name: String) -> Bool {
+    guard name.count == 14, name.hasSuffix(".json") else { return false }
+    let stem = name.dropLast(5)
+    guard stem[stem.index(stem.startIndex, offsetBy: 4)] == "-" else { return false }
+    return stem.enumerated().allSatisfy { offset, character in offset == 4 || character.isHexDigit }
+  }
+
+  private static func validateShape(_ value: Any, path: String) throws {
+    guard let root = value as? [String: Any] else {
+      throw CatalogError("\(path): root must be an object")
+    }
+    try requireKeys(
+      root,
+      allowed: [
+        "$schema", "vendor_id", "product_id", "transport", "protocol", "usb", "provenance",
+      ],
+      required: ["$schema", "vendor_id", "product_id", "transport", "protocol", "provenance"],
+      path: path
+    )
+    guard root["$schema"] as? String == ControllerRecord.schemaID else {
+      throw CatalogError("\(path): invalid $schema")
+    }
+    guard let protocolObject = root["protocol"] as? [String: Any] else {
+      throw CatalogError("\(path): protocol must be an object")
+    }
+    try requireKeys(
+      protocolObject,
+      allowed: ["driver", "variant", "flags", "startup_packets"],
+      required: ["driver", "variant"],
+      path: "\(path).protocol"
+    )
+    guard let provenance = root["provenance"] as? [String: Any] else {
+      throw CatalogError("\(path): provenance must be an object")
+    }
+    try requireKeys(
+      provenance,
+      allowed: ["source", "revision", "verified"],
+      required: ["source", "verified"],
+      path: "\(path).provenance"
+    )
+    if let usb = root["usb"] as? [String: Any] {
+      try requireKeys(
+        usb,
+        allowed: ["interface", "configuration", "post_handshake_settle_ms", "endpoints"],
+        required: [],
+        path: "\(path).usb"
+      )
+      if let endpoints = usb["endpoints"] as? [String: Any] {
+        try requireKeys(
+          endpoints,
+          allowed: ["in", "out"],
+          required: ["in", "out"],
+          path: "\(path).usb.endpoints"
+        )
+      }
+    }
+  }
+
+  private static func requireKeys(
+    _ object: [String: Any],
+    allowed: Set<String>,
+    required: Set<String>,
+    path: String
+  ) throws {
+    let keys = Set(object.keys)
+    let unknown = keys.subtracting(allowed).sorted()
+    let missing = required.subtracting(keys).sorted()
+    if !unknown.isEmpty {
+      throw CatalogError("\(path): unknown fields \(unknown.joined(separator: ", "))")
+    }
+    if !missing.isEmpty {
+      throw CatalogError("\(path): missing fields \(missing.joined(separator: ", "))")
+    }
+  }
+
+  private static func makeRuntimeProfile(_ record: ControllerRecord) throws -> DeviceRuntimeProfile
+  {
+    guard (1...65_535).contains(record.vendorID), (0...65_535).contains(record.productID) else {
+      throw CatalogError("invalid controller identity \(record.vendorID):\(record.productID)")
+    }
+    guard record.transport == "usb" || record.transport == "hid" else {
+      throw CatalogError("unsupported transport \(record.transport)")
+    }
+    let driver = record.protocolInfo.driver
+    guard let contract = protocolContracts[driver] else {
+      throw CatalogError("unsupported parser \(driver)")
+    }
+    guard contract.variants.contains(record.protocolInfo.variant),
+      let variant = ControllerProtocolVariant(rawValue: record.protocolInfo.variant)
+    else {
+      throw CatalogError(
+        "unsupported protocol variant \(record.protocolInfo.variant) for \(driver)"
+      )
+    }
+
+    let flags = record.protocolInfo.flags ?? []
+    let unknownFlags = Set(flags).subtracting(contract.flags).sorted()
+    guard unknownFlags.isEmpty else {
+      throw CatalogError("unsupported flags \(unknownFlags.joined(separator: ", "))")
+    }
+    guard Set(flags).count == flags.count else {
+      throw CatalogError("duplicate flags for \(record.vendorID):\(record.productID)")
+    }
+
+    let defaultEndpoints = driver == "Xbox360" ? (input: 129, output: 1) : (input: 130, output: 2)
+    let inputEndpoint = record.usb?.endpoints?.input ?? defaultEndpoints.input
+    let outputEndpoint = record.usb?.endpoints?.output ?? defaultEndpoints.output
+    if record.usb != nil && record.transport != "usb" {
+      throw CatalogError("USB overrides require usb transport")
+    }
+    if let configuration = record.usb?.configuration, configuration != "set1-before-claim" {
+      throw CatalogError("unsupported USB configuration \(configuration)")
+    }
+    let interfaceNumber = record.usb?.interface ?? 0
+    let settleMilliseconds = record.usb?.postHandshakeSettleMilliseconds ?? 0
+    if record.usb?.interface == 0 || record.usb?.postHandshakeSettleMilliseconds == 0 {
+      throw CatalogError("protocol-default USB values must be omitted")
+    }
+    if let endpoints = record.usb?.endpoints,
+      endpoints.input == defaultEndpoints.input && endpoints.output == defaultEndpoints.output
+    {
+      throw CatalogError("protocol-default endpoints must be omitted")
+    }
+    if let usb = record.usb, usb.interface == nil, usb.configuration == nil,
+      usb.postHandshakeSettleMilliseconds == nil, usb.endpoints == nil
+    {
+      throw CatalogError("empty USB override")
+    }
+    guard supportedSources.contains(record.provenance.source) else {
+      throw CatalogError("unsupported provenance source \(record.provenance.source)")
+    }
+    guard (128...255).contains(inputEndpoint), (1...127).contains(outputEndpoint),
+      (0...255).contains(interfaceNumber), settleMilliseconds >= 0
+    else { throw CatalogError("invalid USB override for \(record.vendorID):\(record.productID)") }
+
+    let packetNames = record.protocolInfo.startupPackets ?? []
+    let startupPackets = packetNames.compactMap(GIPStartupPacket.init(rawValue:))
+    guard startupPackets.count == packetNames.count else {
+      throw CatalogError("unsupported startup packets \(packetNames)")
+    }
+    guard packetNames.isEmpty || driver == "GIP" else {
+      throw CatalogError("startup packets require the GIP parser")
+    }
+
     return DeviceRuntimeProfile(
-      parserName: parserName(for: identifier),
-      virtualProfile: virtualProfile(for: identifier),
-      transportProfile: transportProfile(for: identifier),
-      protocolVariant: protocolVariants[key] ?? defaultProtocolVariant(for: identifier),
-      mappingFlags: mappingFlags[key] ?? mappingOptions[key]?.names ?? [],
-      mappingOptions: mappingOptions[key] ?? [],
-      preferredBackends: backendPreferences[key] ?? [.driverKitHID, .userSpaceHID],
-      gipStartupPackets: gipStartupPackets[key] ?? GIPStartupPacket.defaultSequence
+      parserName: driver,
+      virtualProfile: .default,
+      transportProfile: DeviceTransportProfile(
+        inputEndpoint: UInt8(inputEndpoint),
+        outputEndpoint: UInt8(outputEndpoint),
+        interfaceNumber: UInt8(interfaceNumber),
+        hasInterfaceOverride: record.usb?.interface != nil,
+        hasEndpointOverride: record.usb?.endpoints != nil,
+        needsSetConfiguration: record.usb?.configuration == "set1-before-claim",
+        postHandshakeSettleNanoseconds: UInt64(settleMilliseconds) * 1_000_000
+      ),
+      protocolVariant: variant,
+      mappingFlags: flags,
+      mappingOptions: mappingOptions(from: flags),
+      preferredBackends: [.driverKitHID, .userSpaceHID],
+      gipStartupPackets: startupPackets.isEmpty ? GIPStartupPacket.defaultSequence : startupPackets,
+      hardwareVerified: record.provenance.verified
     )
   }
 
-  private static func loadProfileEntries() -> [RuntimeEntry] {
-    let profileURLs =
-      (Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: "Controllers") ?? [])
-      + (Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: nil) ?? [])
-    let decoder = JSONDecoder()
-    let profiles = profileURLs.compactMap { url -> RuntimeEntry? in
-      guard let data = try? Data(contentsOf: url),
-        let decoded = try? decoder.decode(ProfileDeviceEntry.self, from: data)
-      else {
-        return nil
-      }
-      return RuntimeEntry(profile: decoded)
-    }
-    if !profiles.isEmpty { return profiles }
-    return []
-  }
-
-  private static func mappingOptions(from flags: [String]?) -> ControllerMappingOptions {
-    var options: ControllerMappingOptions = []
-    for flag in flags ?? [] {
+  private static func mappingOptions(from flags: [String]) -> ControllerMappingOptions {
+    var result: ControllerMappingOptions = []
+    for flag in flags {
       switch flag {
-      case "dpadToButtons": options.insert(.dpadToButtons)
-      case "triggersToButtons": options.insert(.triggersToButtons)
-      case "sticksToNull": options.insert(.sticksToNull)
-      case "shareButton": options.insert(.shareButton)
-      case "paddles": options.insert(.paddles)
-      case "profileButton": options.insert(.profileButton)
-      case "shareOffset": options.insert(.shareOffset)
+      case "dpadToButtons": result.insert(.dpadToButtons)
+      case "triggersToButtons": result.insert(.triggersToButtons)
+      case "sticksToNull": result.insert(.sticksToNull)
+      case "shareButton": result.insert(.shareButton)
+      case "paddles": result.insert(.paddles)
+      case "profileButton": result.insert(.profileButton)
+      case "shareOffset": result.insert(.shareOffset)
       default: break
       }
     }
-    return options
+    return result
   }
 
-  private func defaultProtocolVariant(
-    for identifier: DeviceIdentifier
-  ) -> ControllerProtocolVariant {
-    switch parserName(for: identifier) {
-    case "GIP": return .xboxOne
-    case "DS4": return .dualShock4
-    case "DualSense": return .dualSense
-    case "SteamController": return .steamController
-    case "SwitchPro": return .switchPro
-    case "XboxAdaptiveJoystick": return .xboxAdaptiveJoystick
-    case "Xbox360": return .xbox360
-    case "GenericHID": return .genericHID
-    default: return .unknown
-    }
-  }
+  private static let protocolContracts: [String: (variants: Set<String>, flags: Set<String>)] = [
+    "GIP": (
+      ["xboxOriginal", "xboxOne", "unknown"],
+      [
+        "dpadToButtons", "triggersToButtons", "sticksToNull", "shareButton", "paddles",
+        "profileButton", "shareOffset",
+      ]
+    ),
+    "Xbox360": (
+      ["xbox360", "xbox360Wireless", "unknown"],
+      ["dpadToButtons", "triggersToButtons", "sticksToNull"]
+    ),
+    "DS3": (
+      ["dualShock3", "unknown"],
+      ["gyro", "accelerometer", "battery", "experimental", "needsHardwareTest"]
+    ),
+    "DS4": (
+      ["dualShock4", "unknown"], ["touchpad", "gyro", "accelerometer", "battery", "lightbar"]
+    ),
+    "DualSense": (
+      ["dualSense", "unknown"],
+      [
+        "touchpad", "gyro", "accelerometer", "battery", "lightbar", "microphoneMute",
+        "adaptiveTriggers", "experimental", "needsHardwareTest",
+      ]
+    ),
+    "SteamController": (
+      ["steamController", "unknown"],
+      [
+        "lizardMode", "trackpads", "gyro", "battery", "wirelessReceiver", "experimental",
+        "needsHardwareTest",
+      ]
+    ),
+    "SwitchPro": (
+      ["switchPro", "unknown"],
+      ["usbHandshake", "calibration", "imu", "rumble", "experimental", "needsHardwareTest"]
+    ),
+    "XboxAdaptiveJoystick": (
+      ["xboxAdaptiveJoystick", "unknown"],
+      ["rawUSBPackets", "genericHIDPackets", "experimental", "needsHardwareTest"]
+    ),
+    "GenericHID": (["genericHID"], []),
+  ]
 
-  // MARK: - Internal JSON shape
+  private static let supportedSources: Set<String> = [
+    "local-hardware", "linux-xpad.c", "linux-hid-steam.c", "linux-hid-playstation.c",
+    "linux-hid-sony.c", "linux-hid-nintendo.c", "tester-packets",
+  ]
 
-  private struct RuntimeEntry {
-    let vendorId: Int
-    let productId: Int
-    let parser: String
-    let virtualProfile: String
-    let transportProfile: DeviceTransportProfile
-    let protocolVariant: ControllerProtocolVariant
-    let mappingFlags: [String]
-    let mappingOptions: ControllerMappingOptions
-    let preferredBackends: [VirtualControllerBackendID]
-    let gipStartupPackets: [GIPStartupPacket]
+  private struct ControllerRecord: Decodable {
+    static let schemaID =
+      "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
+      + "Resources/Schemas/controller.schema.json"
 
-    init?(profile: ProfileDeviceEntry) {
-      vendorId = profile.identity.vendorId
-      productId = profile.identity.productId
-      parser = profile.protocolConfig.driver
-      virtualProfile = profile.output.virtualProfile
-      protocolVariant =
-        ControllerProtocolVariant(rawValue: profile.protocolConfig.variant) ?? .unknown
-      mappingFlags = profile.protocolConfig.mappingFlags ?? []
-      mappingOptions = DeviceCatalog.mappingOptions(from: mappingFlags)
-      let packetNames = profile.protocolConfig.startupPackets ?? []
-      let decodedStartupPackets = packetNames.compactMap(GIPStartupPacket.init(rawValue:))
-      guard decodedStartupPackets.count == packetNames.count else { return nil }
-      gipStartupPackets =
-        decodedStartupPackets.isEmpty ? GIPStartupPacket.defaultSequence : decodedStartupPackets
-      preferredBackends = profile.output.preferredBackends.compactMap(
-        VirtualControllerBackendID.init(rawValue:)
-      )
-
-      let endpoints = profile.input.usb.endpoints
-      let inEndpoint = endpoints?.inEndpoint ?? 0x82
-      let outEndpoint = endpoints?.outEndpoint ?? 0x02
-      guard (0...255).contains(inEndpoint), (0...255).contains(outEndpoint) else { return nil }
-      let settleMs = profile.input.usb.postHandshakeSettleMs ?? 0
-      guard settleMs >= 0 else { return nil }
-      let needsSetConfiguration = profile.input.usb.configuration == "set1BeforeClaim"
-      let settleNs = UInt64(settleMs) * 1_000_000
-      transportProfile = DeviceTransportProfile(
-        inputEndpoint: UInt8(inEndpoint),
-        outputEndpoint: UInt8(outEndpoint),
-        needsSetConfiguration: needsSetConfiguration,
-        postHandshakeSettleNanoseconds: settleNs
-      )
-    }
-  }
-
-  private struct ProfileDeviceList: Decodable {
-    let controllers: [ProfileDeviceEntry]
-  }
-
-  private struct ProfileDeviceEntry: Decodable {
-    let identity: Identity
-    let input: Input
-    let protocolConfig: ProtocolConfig
-    let output: Output
+    let vendorID: Int
+    let productID: Int
+    let transport: String
+    let protocolInfo: ProtocolInfo
+    let usb: USBOverride?
+    let provenance: Provenance
 
     enum CodingKeys: String, CodingKey {
-      case identity
-      case input
-      case protocolConfig = "protocol"
-      case output
+      case vendorID = "vendor_id"
+      case productID = "product_id"
+      case transport
+      case protocolInfo = "protocol"
+      case usb
+      case provenance
     }
 
-    struct Identity: Decodable {
-      let vendorId: Int
-      let productId: Int
-
-      enum CodingKeys: String, CodingKey {
-        case vendorId = "vendor_id"
-        case productId = "product_id"
-      }
-    }
-
-    struct Input: Decodable {
-      let usb: USB
-
-      struct USB: Decodable {
-        let configuration: String?
-        let postHandshakeSettleMs: Int?
-        let endpoints: Endpoints?
-
-        enum CodingKeys: String, CodingKey {
-          case configuration
-          case postHandshakeSettleMs = "post_handshake_settle_ms"
-          case endpoints
-        }
-      }
-
-      struct Endpoints: Decodable {
-        let inEndpoint: Int
-        let outEndpoint: Int
-
-        enum CodingKeys: String, CodingKey {
-          case inEndpoint = "in"
-          case outEndpoint = "out"
-        }
-      }
-    }
-
-    struct ProtocolConfig: Decodable {
+    struct ProtocolInfo: Decodable {
       let driver: String
       let variant: String
-      let mappingFlags: [String]?
+      let flags: [String]?
       let startupPackets: [String]?
 
       enum CodingKeys: String, CodingKey {
         case driver
         case variant
-        case mappingFlags = "mapping_flags"
+        case flags
         case startupPackets = "startup_packets"
       }
     }
 
-    struct Output: Decodable {
-      let virtualProfile: String
-      let preferredBackends: [String]
+    struct USBOverride: Decodable {
+      let interface: Int?
+      let configuration: String?
+      let postHandshakeSettleMilliseconds: Int?
+      let endpoints: Endpoints?
 
       enum CodingKeys: String, CodingKey {
-        case virtualProfile = "virtual_profile"
-        case preferredBackends = "preferred_backends"
+        case interface
+        case configuration
+        case postHandshakeSettleMilliseconds = "post_handshake_settle_ms"
+        case endpoints
       }
     }
+
+    struct Endpoints: Decodable {
+      let input: Int
+      let output: Int
+
+      enum CodingKeys: String, CodingKey {
+        case input = "in"
+        case output = "out"
+      }
+    }
+
+    struct Provenance: Decodable {
+      let source: String
+      let revision: String?
+      let verified: Bool
+    }
+  }
+
+  private struct CatalogError: Error, CustomStringConvertible {
+    let description: String
+
+    init(_ description: String) { self.description = description }
   }
 }

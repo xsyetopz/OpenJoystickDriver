@@ -190,6 +190,60 @@ struct SteamControllerParserTests {
   }
 
   @Test
+  func testSteamControllerBrightnessMatchesSDLSettingReport() {
+    let report = SteamControllerParser().physicalBrightnessReport(197)
+
+    #expect(report.reportID == 0)
+    #expect(report.bytes.count == 64)
+    #expect(Array(report.bytes.prefix(5)) == [0x87, 3, 45, 197, 0])
+    #expect(report.bytes.dropFirst(5).allSatisfy { $0 == 0 })
+  }
+
+  @Test
+  func testSteamControllerHapticReportsMatchLinuxFeatureCommand() {
+    let reports = SteamControllerParser().physicalHapticReports(
+      left: 255,
+      right: 128,
+      durationMs: 450
+    )
+
+    #expect(reports.count == 2)
+    #expect(reports.allSatisfy { $0.reportID == 0 && $0.bytes.count == 64 })
+    #expect(Array(reports[0].bytes.prefix(10)) == [
+      0x8F, 8, 1, 0xFF, 0xFF, 0, 0, 7, 0, 0x06,
+    ])
+    #expect(Array(reports[1].bytes.prefix(10)) == [
+      0x8F, 8, 0, 0xFF, 0xFF, 0, 0, 7, 0, 0xF7,
+    ])
+    #expect(reports.flatMap { $0.bytes.dropFirst(10) }.allSatisfy { $0 == 0 })
+  }
+
+  @Test
+  func testSteamControllerHapticIntensityAndSafeHoldFallback() {
+    let low = SteamControllerParser().physicalHapticReports(left: 1, right: 0, durationMs: 0)
+
+    #expect(low.count == 1)
+    #expect(Array(low[0].bytes.prefix(10)) == [
+      0x8F, 8, 1, 0xE8, 0xFD, 0, 0, 1, 0, 0xE8,
+    ])
+    #expect(
+      SteamControllerParser().physicalHapticReports(left: 0, right: 0, durationMs: 10).isEmpty
+    )
+  }
+
+  @Test
+  func testSteamWirelessHapticsRequireLogicalControllerConnection() throws {
+    let parser = SteamControllerParser(isWirelessReceiver: true)
+    #expect(parser.physicalHapticReports(left: 255, right: 0, durationMs: 100).isEmpty)
+
+    _ = try parser.parse(data: makeSteamWirelessReport(status: 0x02))
+    #expect(parser.physicalHapticReports(left: 255, right: 0, durationMs: 100).count == 1)
+
+    _ = try parser.parse(data: makeSteamWirelessReport(status: 0x01))
+    #expect(parser.physicalHapticReports(left: 255, right: 0, durationMs: 100).isEmpty)
+  }
+
+  @Test
   func testSteamWirelessReceiverStatusRequestReport() {
     let wired = SteamControllerParser()
     #expect(wired.inputConnectionStatusRequestReport() == nil)

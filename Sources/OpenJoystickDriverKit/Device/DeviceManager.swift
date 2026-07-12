@@ -1,6 +1,14 @@
 import Foundation
 import SwiftUSB
 
+func controllerDisplayName(productName: String?, vendorID: UInt16, productID: UInt16) -> String {
+  if let productName {
+    let value = productName.trimmingCharacters(in: .whitespacesAndNewlines)
+    if !value.isEmpty { return value }
+  }
+  return String(format: "Controller %04x:%04x", vendorID, productID)
+}
+
 private let usbDetectionPollNanoseconds: UInt64 = 2_000_000_000
 private let devicePermissionWatchNanoseconds: UInt64 = 1_000_000_000
 private let usbVendorSpecificClass: UInt8 = 0xFF
@@ -31,6 +39,7 @@ public actor DeviceManager {
   private var hidDetectionTask: Task<Void, Never>?
   private var permissionWatchTask: Task<Void, Never>?
   private var externalOutputAllowed = true
+  private var lastPhysicalHIDOutputNanoseconds: [DeviceIdentifier: UInt64] = [:]
 
   /// Creates a manager that sends all output to `dispatcher`.
   ///
@@ -39,9 +48,13 @@ public actor DeviceManager {
   ///   - virtualProfile: Virtual device profile for self-exclusion filtering.
   public init(dispatcher: any OutputDispatcher, virtualProfile: VirtualDeviceProfile = .default) {
     self.dispatcher = dispatcher
-    self.parserRegistry = ParserRegistry()
+    let registry = ParserRegistry()
+    self.parserRegistry = registry
     self.permissionManager = PermissionManager()
-    self.hidManager = HIDManager(virtualProfile: virtualProfile)
+    self.hidManager = HIDManager(
+      virtualProfile: virtualProfile,
+      additionalProfileIdentifiers: registry.hidProfileIdentifiers()
+    )
   }
 
   /// Start device detection and input processing.
@@ -108,10 +121,20 @@ public actor DeviceManager {
   ) async -> Bool {
     guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }),
       let pipeline = pipelines[key]
-    else {
-      return false
+    else { return false }
+    let featureHaptics = await pipeline.hidFeatureHapticReports(
+      left: left,
+      right: right,
+      durationMs: durationMs
+    )
+    if !featureHaptics.isEmpty, let locationID = key.locationID {
+      return featureHaptics.allSatisfy {
+        hidManager.setFeatureReport(locationID: locationID, report: $0)
+      }
     }
+
     let didStartUSB = await pipeline.sendRumble(left: left, right: right, lt: lt, rt: rt)
+    if !didStartUSB { await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline) }
     let didStartHID =
       didStartUSB
       ? false
@@ -126,6 +149,7 @@ public actor DeviceManager {
       try? await Task.sleep(nanoseconds: UInt64(clampedDurationMs) * 1_000_000)
       let didStopUSB = await pipeline.sendRumble(left: 0, right: 0, lt: 0, rt: 0)
       if !didStopUSB {
+        await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline)
         _ = sendHIDRumbleReport(
           await pipeline.hidRumbleReport(left: 0, right: 0, lt: 0, rt: 0),
           locationID: key.locationID
@@ -135,10 +159,69 @@ public actor DeviceManager {
     return true
   }
 
-  private func sendHIDRumbleReport(
-    _ report: PhysicalHIDOutputReport?,
-    locationID: UInt32?
-  ) -> Bool {
+  /// Sets an RGB physical lightbar when the active protocol supports it.
+  public func setPhysicalColor(
+    for identifier: DeviceIdentifier,
+    red: UInt8,
+    green: UInt8,
+    blue: UInt8
+  ) async -> Bool {
+    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }),
+      let pipeline = pipelines[key], let locationID = key.locationID,
+      let report = await pipeline.hidColorReport(red: red, green: green, blue: blue)
+    else { return false }
+    await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline)
+    return hidManager.setOutputReport(locationID: locationID, report: report)
+  }
+
+  /// Sets scalar physical LED brightness when the active protocol supports it.
+  public func setPhysicalBrightness(for identifier: DeviceIdentifier, brightness: UInt8) async
+    -> Bool
+  {
+    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }),
+      let pipeline = pipelines[key], let locationID = key.locationID,
+      let report = await pipeline.hidBrightnessReport(brightness)
+    else { return false }
+    return hidManager.setFeatureReport(locationID: locationID, report: report)
+  }
+
+  /// Sets the physical numbered player indicator when the active protocol supports it.
+  public func sendPlayerIndicator(
+    for identifier: DeviceIdentifier,
+    indicator: PhysicalPlayerIndicator
+  ) async -> Bool {
+    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }),
+      let pipeline = pipelines[key]
+    else { return false }
+    let didSendUSB = await pipeline.sendPlayerIndicator(indicator)
+    if didSendUSB { return true }
+    guard let locationID = key.locationID,
+      let report = await pipeline.hidPlayerIndicatorReport(indicator)
+    else { return false }
+    await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline)
+    return hidManager.setOutputReport(locationID: locationID, report: report)
+  }
+
+  private func enforcePhysicalHIDOutputInterval(
+    for identifier: DeviceIdentifier,
+    pipeline: DevicePipeline
+  ) async {
+    let minimum = pipeline.minimumPhysicalOutputIntervalNanoseconds()
+    guard minimum > 0 else { return }
+    while true {
+      let now = DispatchTime.now().uptimeNanoseconds
+      let previous = lastPhysicalHIDOutputNanoseconds[identifier] ?? 0
+      let elapsed = now >= previous ? now - previous : minimum
+      if elapsed >= minimum {
+        lastPhysicalHIDOutputNanoseconds[identifier] = now
+        return
+      }
+      try? await Task.sleep(nanoseconds: minimum - elapsed)
+    }
+  }
+
+  private func sendHIDRumbleReport(_ report: PhysicalHIDOutputReport?, locationID: UInt32?) -> Bool
+  {
     guard let report, let locationID else { return false }
     return hidManager.setOutputReport(locationID: locationID, report: report)
   }
@@ -166,15 +249,15 @@ public actor DeviceManager {
           profile.transportProfile.postHandshakeSettleNanoseconds / 1_000_000
         ),
         preferredBackends: profile.preferredBackends.map(\.rawValue),
-        supportsPhysicalRumble: pipelines[id]?.supportsPhysicalRumble() ?? false
+        supportsPhysicalRumble: pipelines[id]?.supportsPhysicalRumble() ?? false,
+        physicalOutputCapabilities: (pipelines[id]?.physicalOutputCapabilities() ?? .none)
+          .withEvidence(profile.hardwareVerified ? .hardwareVerified : .sourceBacked)
       )
     }
   }
 
   /// Returns live identifiers for connected controller pipelines.
-  public func connectedDeviceIdentifiers() -> [DeviceIdentifier] {
-    Array(pipelines.keys)
-  }
+  public func connectedDeviceIdentifiers() -> [DeviceIdentifier] { Array(pipelines.keys) }
 
   /// Stop all detection and pipelines.
   public func stop() async {
@@ -191,6 +274,7 @@ public actor DeviceManager {
       await pipeline.stop()
     }
     pipelines = [:]
+    lastPhysicalHIDOutputNanoseconds = [:]
     await permissionManager.stopPolling()
     print("[DeviceManager] Stopped")
   }
@@ -198,9 +282,7 @@ public actor DeviceManager {
   public func setExternalOutputAllowed(_ allowed: Bool) async {
     guard externalOutputAllowed != allowed else { return }
     externalOutputAllowed = allowed
-    for pipeline in pipelines.values {
-      await pipeline.setExternalOutputAllowed(allowed)
-    }
+    for pipeline in pipelines.values { await pipeline.setExternalOutputAllowed(allowed) }
   }
 
   // MARK: - USB detection (class 0xFF)
@@ -276,6 +358,7 @@ public actor DeviceManager {
       if let id = locationToIdentifier.removeValue(forKey: key) {
         let pipeline = pipelines.removeValue(forKey: id)
         deviceInfos.removeValue(forKey: id)
+        lastPhysicalHIDOutputNanoseconds.removeValue(forKey: id)
         await pipeline?.stop()
         print("[DeviceManager] USB device removed: \(id)")
       }
@@ -284,9 +367,7 @@ public actor DeviceManager {
 
   private func ensureUSBContext() {
     if usbContext != nil { return }
-    do {
-      usbContext = try USBContext()
-    } catch {
+    do { usbContext = try USBContext() } catch {
       usbContext = nil
       print("[DeviceManager] Failed to create USBContext: \(error)")
     }
@@ -307,11 +388,19 @@ public actor DeviceManager {
       return nil
     }
 
-    let productName = (try? device.getProduct()) ?? "Controller"
+    let productName = controllerDisplayName(
+      productName: try? device.getProduct(),
+      vendorID: device.idVendor,
+      productID: device.idProduct
+    )
     deviceInfos[identifier] = DeviceInfo(name: productName, connection: "USB", serialNumber: serial)
     print("[DeviceManager] USB device added: \(productName) (\(identifier))")
-    let parser = parserRegistry.parser(for: identifier)
-    let transportProfile = parserRegistry.transportProfile(for: identifier)
+    let configuredTransport = parserRegistry.transportProfile(for: identifier)
+    let transportProfile = USBDescriptorTransportResolver.resolve(
+      device: device,
+      configured: configuredTransport
+    )
+    let parser = parserRegistry.parser(for: identifier, transportProfile: transportProfile)
     let pipeline = DevicePipeline(
       identifier: identifier,
       transport: .usb(vendorID: device.idVendor, productID: device.idProduct),
@@ -360,18 +449,19 @@ public actor DeviceManager {
         await handleHIDDeviceDisconnected(vendorID: vid, productID: pid, locationID: loc)
       case .inputReport(let loc, _, let data):
         await routeHIDInputReport(locationID: loc, data: data)
+      case .inputValue(let loc, let value):
+        await routeHIDElementValue(locationID: loc, value: value)
       }
     }
   }
 
   private func removeHIDPipelines() async {
-    let hidIdentifiers = pipelines.keys.filter {
-      (deviceInfos[$0]?.connection ?? "") != "USB"
-    }
+    let hidIdentifiers = pipelines.keys.filter { (deviceInfos[$0]?.connection ?? "") != "USB" }
 
     for identifier in hidIdentifiers {
       guard let pipeline = pipelines.removeValue(forKey: identifier) else { continue }
       deviceInfos.removeValue(forKey: identifier)
+      lastPhysicalHIDOutputNanoseconds.removeValue(forKey: identifier)
       await pipeline.stop()
       print("[DeviceManager] HID pipeline removed: \(identifier)")
     }
@@ -394,7 +484,11 @@ public actor DeviceManager {
 
     guard pipelines[identifier] == nil else { return }
 
-    let name = productName ?? "Controller"
+    let name = controllerDisplayName(
+      productName: productName,
+      vendorID: vendorID,
+      productID: productID
+    )
     let connection = transport ?? "HID"
     deviceInfos[identifier] = DeviceInfo(
       name: name,
@@ -405,6 +499,8 @@ public actor DeviceManager {
     let parser: any InputParser
     if parserRegistry.parserName(for: identifier) == "DS4", connection == "Bluetooth" {
       parser = DS4Parser(prefersBluetooth: true)
+    } else if parserRegistry.parserName(for: identifier) == "DualSense" {
+      parser = DualSenseParser(prefersBluetooth: connection == "Bluetooth")
     } else {
       parser = parserRegistry.parser(for: identifier)
     }
@@ -448,8 +544,7 @@ public actor DeviceManager {
   ) {
     guard let provider = parser as? any HIDStartupFeatureReadRequestProvider else { return }
     for request in provider.hidStartupFeatureReadRequests(transport: transport)
-      where hidManager.getFeatureReport(locationID: locationID, request: request) == nil
-    {
+    where hidManager.getFeatureReport(locationID: locationID, request: request) == nil {
       print("[DeviceManager] HID startup feature report read failed for loc=\(locationID)")
     }
   }
@@ -462,9 +557,7 @@ public actor DeviceManager {
     guard let provider = parser as? any HIDStartupFeatureReportProvider else { return }
     for report in provider.hidStartupFeatureReports(transport: transport) {
       let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
-      if !sent {
-        print("[DeviceManager] HID startup feature report failed for loc=\(locationID)")
-      }
+      if !sent { print("[DeviceManager] HID startup feature report failed for loc=\(locationID)") }
     }
   }
 
@@ -474,18 +567,26 @@ public actor DeviceManager {
     transport: String?
   ) {
     guard let provider = parser as? any HIDStartupOutputReportProvider else { return }
-    for report in provider.hidStartupReports(transport: transport) {
-      let sent = hidManager.setOutputReport(locationID: locationID, report: report)
-      if !sent {
-        print("[DeviceManager] HID startup output report failed for loc=\(locationID)")
+    let reports = provider.hidStartupReports(transport: transport)
+    let interval = provider.hidStartupReportIntervalNanoseconds(transport: transport)
+    if interval == 0 {
+      for report in reports {
+        let sent = hidManager.setOutputReport(locationID: locationID, report: report)
+        if !sent { print("[DeviceManager] HID startup output report failed for loc=\(locationID)") }
+      }
+      return
+    }
+    Task { [hidManager] in
+      for (index, report) in reports.enumerated() {
+        if index > 0 { try? await Task.sleep(nanoseconds: interval) }
+        let sent = hidManager.setOutputReport(locationID: locationID, report: report)
+        if !sent { print("[DeviceManager] HID startup output report failed for loc=\(locationID)") }
       }
     }
   }
 
-  private func requestHIDInputConnectionStatusIfNeeded(
-    parser: any InputParser,
-    locationID: UInt32
-  ) {
+  private func requestHIDInputConnectionStatusIfNeeded(parser: any InputParser, locationID: UInt32)
+  {
     guard let requester = parser as? any HIDInputConnectionStatusRequester,
       let report = requester.inputConnectionStatusRequestReport()
     else { return }
@@ -501,6 +602,7 @@ public actor DeviceManager {
     if let key = pipelines.keys.first(where: { $0.locationID == locationID }) {
       let pipeline = pipelines.removeValue(forKey: key)
       deviceInfos.removeValue(forKey: key)
+      lastPhysicalHIDOutputNanoseconds.removeValue(forKey: key)
       await sendHIDShutdownFeatureReportsIfNeeded(pipeline: pipeline, locationID: locationID)
       await pipeline?.stop()
       print(
@@ -510,17 +612,21 @@ public actor DeviceManager {
     }
   }
 
-  private func sendHIDShutdownFeatureReportsIfNeeded(
-    pipeline: DevicePipeline?,
-    locationID: UInt32
-  ) async {
+  private func sendHIDShutdownFeatureReportsIfNeeded(pipeline: DevicePipeline?, locationID: UInt32)
+    async
+  {
     guard let pipeline else { return }
     for report in await pipeline.hidShutdownFeatureReports() {
       let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
-      if !sent {
-        print("[DeviceManager] HID shutdown feature report failed for loc=\(locationID)")
-      }
+      if !sent { print("[DeviceManager] HID shutdown feature report failed for loc=\(locationID)") }
     }
+  }
+
+  private func routeHIDElementValue(locationID: UInt32, value: HIDElementValue) async {
+    guard let key = pipelines.keys.first(where: { $0.locationID == locationID }),
+      let pipeline = pipelines[key]
+    else { return }
+    await pipeline.feedHIDElementValue(value)
   }
 
   private func routeHIDInputReport(locationID: UInt32, data: Data) async {

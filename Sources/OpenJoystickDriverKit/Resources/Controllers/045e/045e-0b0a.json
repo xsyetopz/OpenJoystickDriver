@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+  "vendor_id": 1118,
+  "product_id": 2826,
+  "transport": "usb",
+  "protocol": {
+    "driver": "GIP",
+    "variant": "xboxOne",
+    "flags": [
+      "profileButton"
+    ]
+  },
+  "provenance": {
+    "source": "linux-xpad.c",
+    "verified": false
+  }
+}

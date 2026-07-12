@@ -2,12 +2,28 @@ import AppKit
 import OpenJoystickDriverKit
 import SwiftUI
 
+enum MenuBarConfirmationAction: String, Identifiable {
+  case daemonUninstall
+  case refreshInputMonitoring
+  case systemExtensionUninstall
+  case resetSettings
+
+  var id: String { rawValue }
+}
+
 struct MenuBarPopoverView: View {
   @EnvironmentObject var model: AppModel
   @State var runningSelfTest = false
-  @State var showUninstallConfirm = false
+  @State var pendingConfirmation: MenuBarConfirmationAction?
   @State var showAdvanced = false
   @State var inputTester = InputTestWindowController()
+  @State var browserGamepadTarget = BrowserGamepadTarget.systemDefault
+  @State var browserGamepadPort = 8_765
+  @State var browserGamepadSeconds = 300
+  @State var runtimeHealthSeconds = 60
+  @State var runtimeHealthIntervalMilliseconds = 1_000
+  @State var runtimeHealthResidentLimitMiB = 0
+  @State var runtimeHealthFootprintLimitMiB = 512
 
   var gameControllerSupportLabel: String {
     guard let devices = model.virtualDeviceDiagnostics?.hidGamepads else {
@@ -37,6 +53,10 @@ struct MenuBarPopoverView: View {
           outputDetailsCard
           daemonCard
           selfTestRow
+          runtimeHealthRow
+          appleGameControllerCatalogRow
+          browserGamepadDiagnosticRow
+          supportReportRow
           updateRow
           footerRow
         }
@@ -44,8 +64,28 @@ struct MenuBarPopoverView: View {
       .padding(14)
     }
     .frame(width: 440)
-    .alert(isPresented: $showUninstallConfirm) {
-      Alert(
+    .alert(item: $pendingConfirmation) { action in
+      confirmationAlert(for: action)
+    }
+  }
+
+  func confirmationAlert(for action: MenuBarConfirmationAction) -> Alert {
+    switch action {
+    case .refreshInputMonitoring:
+      return Alert(
+        title: Text("Refresh Input Monitoring?"),
+        message: Text(
+          "This removes only OpenJoystickDriver and OpenJoystickDriver Daemon from Input "
+            + "Monitoring, refreshes the helper registration, and requires you to grant "
+            + "access again. Accessibility is not changed."
+        ),
+        primaryButton: .destructive(Text("Refresh")) {
+          Task { await model.refreshStaleInputMonitoringPermissions() }
+        },
+        secondaryButton: .cancel()
+      )
+    case .daemonUninstall:
+      return Alert(
         title: Text(L10n.string("alert.uninstallTitle")),
         message: Text(L10n.string("alert.uninstallMessage")),
         primaryButton: .destructive(Text(L10n.string("app.uninstall"))) {
@@ -53,6 +93,24 @@ struct MenuBarPopoverView: View {
             await model.uninstallDaemon()
             await model.syncFromDaemonNow()
           }
+        },
+        secondaryButton: .cancel()
+      )
+    case .systemExtensionUninstall:
+      return Alert(
+        title: Text(L10n.string("alert.systemExtensionUninstallTitle")),
+        message: Text(L10n.string("alert.systemExtensionUninstallMessage")),
+        primaryButton: .destructive(Text(L10n.string("app.uninstall"))) {
+          model.extensionManager.uninstallExtension()
+        },
+        secondaryButton: .cancel()
+      )
+    case .resetSettings:
+      return Alert(
+        title: Text(L10n.string("alert.resetSettingsTitle")),
+        message: Text(L10n.string("alert.resetSettingsMessage")),
+        primaryButton: .destructive(Text(L10n.string("settings.reset"))) {
+          Task { await model.resetSettings() }
         },
         secondaryButton: .cancel()
       )
@@ -73,8 +131,8 @@ struct MenuBarPopoverView: View {
   }
 
   var readinessCard: some View {
-    let permissionsReady =
-      model.appInputMonitoring == "granted" && model.inputMonitoring == "granted"
+    let permissions = model.inputMonitoringPermissions
+    let permissionsReady = permissions.isReady
     let ready = model.daemonConnected && permissionsReady
     let title = ready ? L10n.string("readiness.ready") : L10n.string("readiness.needsAttention")
     let summary: String = {
@@ -94,10 +152,10 @@ struct MenuBarPopoverView: View {
       }
       if !model.daemonInstalled { return L10n.string("readiness.installDaemon") }
       if !model.daemonConnected { return L10n.string("readiness.startDaemon") }
-      if model.appInputMonitoring != "granted" {
+      if model.inputMonitoringPermissions.application != .granted {
         return L10n.string("readiness.allowAppInputMonitoring")
       }
-      if model.inputMonitoring != "granted" {
+      if model.inputMonitoringPermissions.daemon != .granted {
         return L10n.string("readiness.allowDaemonInputMonitoring")
       }
       if model.devices.isEmpty { return L10n.string("readiness.connectController") }
@@ -156,13 +214,13 @@ struct MenuBarPopoverView: View {
   var readinessAction: some View {
     if model.daemonRestarting {
       EmptyView()
-    } else if model.appInputMonitoring != "granted" {
+    } else if model.inputMonitoringPermissions.application != .granted {
       SwiftUI.Button(L10n.string("button.requestAccess")) {
         Task { await model.requestAppInputMonitoringAccess() }
       }
       .controlSize(.small)
       .padding(.top, 2)
-    } else if model.inputMonitoring != "granted" {
+    } else if model.inputMonitoringPermissions.daemon != .granted {
       SwiftUI.Button(L10n.string("button.requestAccess")) {
         Task { await model.requestDaemonInputMonitoringAccess() }
       }

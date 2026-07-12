@@ -174,6 +174,68 @@ public final class DextOutputDispatcher: OutputDispatcher, @unchecked Sendable {
     }
   }
 
+  /// Sends a bounded synthetic sequence directly through the DriverKit relay.
+  ///
+  /// Unlike normal dispatch, this probe works while Compatibility mode has disabled
+  /// consumer-event mirroring. Twenty-five reports cross the dext's rate-limited
+  /// IORegistry counter publication boundary; the final report is neutral.
+  @discardableResult
+  public func sendDiagnosticProbe(reportCount: Int = 26) -> Int {
+    let reports = Self.diagnosticProbeReports(reportCount: reportCount)
+
+    func send(to device: IOHIDDevice) -> Int {
+      var acceptedCount = 0
+      for var report in reports {
+        let result = report.withUnsafeMutableBytes { bytes -> IOReturn in
+          guard let baseAddress = bytes.baseAddress else { return kIOReturnBadArgument }
+          return IOHIDDeviceSetReport(
+            device,
+            kIOHIDReportTypeOutput,
+            0,
+            baseAddress.assumingMemoryBound(to: UInt8.self),
+            bytes.count
+          )
+        }
+        recordSetReportResult(result)
+        if result == kIOReturnSuccess || result == kIOReturnAborted {
+          acceptedCount += 1
+        }
+      }
+      return acceptedCount
+    }
+
+    if let acceptedCount = connectionLock.withLock({
+      hidDevice.map { send(to: $0) }
+    }) {
+      return acceptedCount
+    }
+    if let acceptedCount = seizeLock.withLock({
+      seizedDevice.map { send(to: $0) }
+    }) {
+      return acceptedCount
+    }
+    guard let (temporaryDevice, temporaryManager) = findDevice(
+      openOptions: IOOptionBits(kIOHIDOptionsTypeNone)
+    ) else {
+      return 0
+    }
+    defer {
+      IOHIDDeviceClose(temporaryDevice, IOOptionBits(kIOHIDOptionsTypeNone))
+      IOHIDManagerClose(temporaryManager, IOOptionBits(kIOHIDOptionsTypeNone))
+    }
+    return send(to: temporaryDevice)
+  }
+
+  static func diagnosticProbeReports(reportCount: Int) -> [[UInt8]] {
+    let boundedCount = min(max(1, reportCount), 100)
+    let format = OJDGenericGamepadFormat()
+    return (0..<boundedCount).map { index in
+      let isFinalReport = index == boundedCount - 1
+      let buttons: UInt32 = index.isMultiple(of: 2) && !isFinalReport ? 1 : 0
+      return format.buildInputReport(from: VirtualGamepadState(buttons: buttons))
+    }
+  }
+
   public func outputStatsSnapshot() -> XPCDriverKitOutputStats {
     statsLock.withLock {
       let err = lastSetReportError.map { String(format: "0x%08x", UInt32(bitPattern: $0)) }

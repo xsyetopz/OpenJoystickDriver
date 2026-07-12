@@ -21,6 +21,8 @@ struct VirtualControllerBackendTests {
     #expect(backend.capabilities.isImplemented)
     #expect(backend.capabilities.isSystemWide)
     #expect(backend.capabilities.requiresEntitlement)
+    #expect(!backend.capabilities.publishesConsumerGamepad)
+    #expect(backend.capabilities.notes.contains("integrity relay"))
   }
   @Test
   func testCompatibilityIdentityIDs() {

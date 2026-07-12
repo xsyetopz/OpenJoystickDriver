@@ -20,17 +20,29 @@ public final class HIDDeviceStream: @unchecked Sendable {
   private let manager: IOHIDManager
   private var continuation: AsyncStream<HIDDeviceEvent>.Continuation?
   private let seizeLock = NSLock()
-  private var seizedByLocation: [UInt32: IOHIDDevice] = [:]
+  private var seizedByLocation: [UInt32: [IOHIDDevice]] = [:]
 
   /// Creates a new stream that matches HID gamepad devices.
   ///
   /// - Parameter virtualProfile: The virtual device profile to exclude from detection.
-  public init(virtualProfile _: VirtualDeviceProfile = .default) {
+  public init(
+    virtualProfile _: VirtualDeviceProfile = .default,
+    additionalProfileIdentifiers: [DeviceIdentifier] = []
+  ) {
     manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
-    let matching: [String: Any] = [
-      kIOHIDDeviceUsagePageKey: kHIDPage_GenericDesktop, kIOHIDDeviceUsageKey: kHIDUsage_GD_GamePad,
+    var matches: [[String: Any]] = [
+      [
+        kIOHIDDeviceUsagePageKey: kHIDPage_GenericDesktop,
+        kIOHIDDeviceUsageKey: kHIDUsage_GD_GamePad,
+      ],
     ]
-    IOHIDManagerSetDeviceMatching(manager, matching as CFDictionary)
+    matches += additionalProfileIdentifiers.map {
+      [
+        kIOHIDVendorIDKey: Int($0.vendorID),
+        kIOHIDProductIDKey: Int($0.productID),
+      ]
+    }
+    IOHIDManagerSetDeviceMatchingMultiple(manager, matches as CFArray)
   }
 
   /// Returns a live stream of HID device events (connect, disconnect, input report).
@@ -55,6 +67,7 @@ public final class HIDDeviceStream: @unchecked Sendable {
     IOHIDManagerRegisterDeviceMatchingCallback(manager, Self.matchingCallback, context)
     IOHIDManagerRegisterDeviceRemovalCallback(manager, Self.removalCallback, context)
     IOHIDManagerRegisterInputReportCallback(manager, Self.inputReportCallback, context)
+    IOHIDManagerRegisterInputValueCallback(manager, Self.inputValueCallback, context)
     // CRITICAL: schedule BEFORE open
     IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
     IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
@@ -70,8 +83,10 @@ public final class HIDDeviceStream: @unchecked Sendable {
     )
     IOHIDManagerClose(manager, IOOptionBits(kIOHIDOptionsTypeNone))
     seizeLock.withLock {
-      for (_, dev) in seizedByLocation {
-        IOHIDDeviceClose(dev, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
+      for devices in seizedByLocation.values {
+        for device in devices {
+          IOHIDDeviceClose(device, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
+        }
       }
       seizedByLocation.removeAll()
     }
@@ -96,29 +111,33 @@ public final class HIDDeviceStream: @unchecked Sendable {
     locationID: UInt32,
     request: PhysicalHIDFeatureReadRequest
   ) -> Data? {
-    let device = seizeLock.withLock { seizedByLocation[locationID] }
-    guard let device else { return nil }
+    let devices = seizeLock.withLock { seizedByLocation[locationID] ?? [] }
+    guard !devices.isEmpty else { return nil }
 
-    var bytes = [UInt8](repeating: 0, count: request.length)
-    var reportLength = request.length
-    let result = bytes.withUnsafeMutableBufferPointer { pointer in
-      guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
-      return IOHIDDeviceGetReport(
-        device,
-        kIOHIDReportTypeFeature,
-        CFIndex(request.reportID),
-        baseAddress,
-        &reportLength
-      )
+    var lastResult = kIOReturnNotFound
+    for device in devices {
+      var bytes = [UInt8](repeating: 0, count: request.length)
+      var reportLength = request.length
+      let result = bytes.withUnsafeMutableBufferPointer { pointer in
+        guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
+        return IOHIDDeviceGetReport(
+          device,
+          kIOHIDReportTypeFeature,
+          CFIndex(request.reportID),
+          baseAddress,
+          &reportLength
+        )
+      }
+      if result == kIOReturnSuccess {
+        return Data(bytes.prefix(reportLength))
+      }
+      lastResult = result
     }
-    if result != kIOReturnSuccess {
-      print(
-        "[HIDDeviceStream] Feature report read failed for loc=\(locationID)"
-          + " report=0x\(String(format: "%02X", request.reportID)) kr=\(result)"
-      )
-      return nil
-    }
-    return Data(bytes.prefix(reportLength))
+    print(
+      "[HIDDeviceStream] Feature report read failed for loc=\(locationID)"
+        + " report=0x\(String(format: "%02X", request.reportID)) kr=\(lastResult)"
+    )
+    return nil
   }
 
   private func setReport(
@@ -127,28 +146,31 @@ public final class HIDDeviceStream: @unchecked Sendable {
     type: IOHIDReportType,
     label: String
   ) -> Bool {
-    let device = seizeLock.withLock { seizedByLocation[locationID] }
-    guard let device else { return false }
+    let devices = seizeLock.withLock { seizedByLocation[locationID] ?? [] }
+    guard !devices.isEmpty else { return false }
 
-    var bytes = report.bytes
-    let reportLength = bytes.count
-    let result = bytes.withUnsafeMutableBufferPointer { pointer in
-      guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
-      return IOHIDDeviceSetReport(
-        device,
-        type,
-        CFIndex(report.reportID),
-        baseAddress,
-        reportLength
-      )
+    var lastResult = kIOReturnNotFound
+    for device in devices {
+      var bytes = report.bytes
+      let reportLength = bytes.count
+      let result = bytes.withUnsafeMutableBufferPointer { pointer in
+        guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
+        return IOHIDDeviceSetReport(
+          device,
+          type,
+          CFIndex(report.reportID),
+          baseAddress,
+          reportLength
+        )
+      }
+      if result == kIOReturnSuccess { return true }
+      lastResult = result
     }
-    if result != kIOReturnSuccess {
-      print(
-        "[HIDDeviceStream] \(label) report failed for loc=\(locationID)"
-          + " report=0x\(String(format: "%02X", report.reportID)) kr=\(result)"
-      )
-    }
-    return result == kIOReturnSuccess
+    print(
+      "[HIDDeviceStream] \(label) report failed for loc=\(locationID)"
+        + " report=0x\(String(format: "%02X", report.reportID)) kr=\(lastResult)"
+    )
+    return false
   }
 
   // MARK: - Event handlers
@@ -186,7 +208,13 @@ public final class HIDDeviceStream: @unchecked Sendable {
     // This is best-effort; if it fails we still function, but users may see SDL-0/SDL-1 conflicts.
     let seizeKr = IOHIDDeviceOpen(device, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
     if seizeKr == kIOReturnSuccess {
-      seizeLock.withLock { seizedByLocation[locationID] = device }
+      seizeLock.withLock {
+        var devices = seizedByLocation[locationID] ?? []
+        if !devices.contains(where: { CFEqual($0, device) }) {
+          devices.append(device)
+          seizedByLocation[locationID] = devices
+        }
+      }
     }
 
     continuation?.yield(
@@ -207,18 +235,29 @@ public final class HIDDeviceStream: @unchecked Sendable {
     let pid = deviceProperty(device, kIOHIDProductIDKey)
     let loc = deviceProperty(device, kIOHIDLocationIDKey)
     let locationID = UInt32(truncatingIfNeeded: loc)
-    seizeLock.withLock {
-      if let dev = seizedByLocation.removeValue(forKey: locationID) {
-        IOHIDDeviceClose(dev, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
+    let locationRemoved = seizeLock.withLock { () -> Bool in
+      guard var devices = seizedByLocation[locationID] else { return true }
+      let removed = devices.filter { CFEqual($0, device) }
+      devices.removeAll { CFEqual($0, device) }
+      for removedDevice in removed {
+        IOHIDDeviceClose(removedDevice, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
       }
+      if devices.isEmpty {
+        seizedByLocation.removeValue(forKey: locationID)
+        return true
+      }
+      seizedByLocation[locationID] = devices
+      return false
     }
-    continuation?.yield(
-      .disconnected(
-        vendorID: UInt16(truncatingIfNeeded: vid),
-        productID: UInt16(truncatingIfNeeded: pid),
-        locationID: locationID
+    if locationRemoved {
+      continuation?.yield(
+        .disconnected(
+          vendorID: UInt16(truncatingIfNeeded: vid),
+          productID: UInt16(truncatingIfNeeded: pid),
+          locationID: locationID
+        )
       )
-    )
+    }
   }
 
   /// Copies raw report bytes and yields an `.inputReport` event.
@@ -233,6 +272,26 @@ public final class HIDDeviceStream: @unchecked Sendable {
       bytes.insert(reportID, at: 0)
     }
     continuation?.yield(.inputReport(locationID: locationID, reportID: reportID, data: Data(bytes)))
+  }
+
+  /// Yields one descriptor-decoded input element value.
+  private func handleInputValue(_ value: IOHIDValue) {
+    let element = IOHIDValueGetElement(value)
+    let device = IOHIDElementGetDevice(element)
+    let loc = deviceProperty(device, kIOHIDLocationIDKey)
+    let semanticValue = HIDElementValue(
+      usagePage: IOHIDElementGetUsagePage(element),
+      usage: IOHIDElementGetUsage(element),
+      logicalMinimum: IOHIDElementGetLogicalMin(element),
+      logicalMaximum: IOHIDElementGetLogicalMax(element),
+      integerValue: IOHIDValueGetIntegerValue(value)
+    )
+    continuation?.yield(
+      .inputValue(
+        locationID: UInt32(truncatingIfNeeded: loc),
+        value: semanticValue
+      )
+    )
   }
 
   /// Reads an integer property from an IOKit HID device.
@@ -252,6 +311,12 @@ public final class HIDDeviceStream: @unchecked Sendable {
   private static let removalCallback: IOHIDDeviceCallback = { context, _, _, device in
     guard let context else { return }
     Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue().handleDeviceRemoved(device)
+  }
+
+  private static let inputValueCallback: IOHIDValueCallback = { context, _, _, value in
+    guard let context else { return }
+    Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue()
+      .handleInputValue(value)
   }
 
   private static let inputReportCallback: IOHIDReportCallback = {

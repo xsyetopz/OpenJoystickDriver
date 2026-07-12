@@ -55,7 +55,7 @@ extension DevicePipeline {
       return true
     } catch {
       print("[DevicePipeline] Handshake failed" + " for \(identifier): \(error)")
-      try? handle.releaseInterface(0)
+      try? handle.releaseInterface(Int(transportProfile.interfaceNumber))
       usbHandle = nil
       return false
     }
@@ -100,8 +100,8 @@ extension DevicePipeline {
     return nil
   }
 
-  func findDevice(on context: USBContext, vendorID: UInt16, productID: UInt16, attempt: Int)
-    async -> USBDevice?
+  func findDevice(on context: USBContext, vendorID: UInt16, productID: UInt16, attempt: Int) async
+    -> USBDevice?
   {
     guard let device = await context.findDevice(vendorId: vendorID, productId: productID) else {
       print("[DevicePipeline] Device not found (attempt \(attempt + 1)):" + " \(identifier)")
@@ -114,11 +114,15 @@ extension DevicePipeline {
     let handle = try device.open()
     if transportProfile.needsSetConfiguration {
       let cfg = (try? handle.getConfiguration()) ?? 0
-      if cfg != 1 {
-        try handle.setConfiguration(1)
-      }
+      if cfg != 1 { try handle.setConfiguration(1) }
     }
-    try handle.claimInterface(0)
+    try handle.claimInterface(Int(transportProfile.interfaceNumber))
+    if transportProfile.alternateSetting != 0 {
+      try handle.setInterfaceAltSetting(
+        interface: Int(transportProfile.interfaceNumber),
+        alternateSetting: Int(transportProfile.alternateSetting)
+      )
+    }
     return handle
   }
 
@@ -133,8 +137,10 @@ extension DevicePipeline {
   func runUSBInputLoop(handle: USBDeviceHandle) async {
     let inEndpoint = transportProfile.inputEndpoint
     var lastKeepAliveNs = DispatchTime.now().uptimeNanoseconds
-    print("[DevicePipeline] Starting USB input loop:" + " \(identifier)"
-          + " inEP=0x\(String(inEndpoint, radix: 16))")
+    print(
+      "[DevicePipeline] Starting USB input loop:" + " \(identifier)"
+        + " inEP=0x\(String(inEndpoint, radix: 16))"
+    )
 
     if transportProfile.postHandshakeSettleNanoseconds > 0 {
       try? await Task.sleep(nanoseconds: transportProfile.postHandshakeSettleNanoseconds)
@@ -155,7 +161,10 @@ extension DevicePipeline {
         consecutiveUSBIOErrors = 0
         appendToPacketLog(bytes: bytes, direction: "rx")
         let events = try parseEvents(from: bytes)
-        await handleParsedEvents(events, now: DispatchTime.now().uptimeNanoseconds)
+        _ = await handleInputConnectionStateChangeIfNeeded()
+        if inputConnectionActive {
+          await handleParsedEvents(events, now: DispatchTime.now().uptimeNanoseconds)
+        }
       } catch let error as USBError where error.isTimeout {
         // No data in this interval; throttle below to avoid a hot timeout loop.
         shouldThrottleIdle = true
@@ -202,7 +211,7 @@ extension DevicePipeline {
     }
 
     await neutralizeOutput()
-    try? handle.releaseInterface(0)
+    try? handle.releaseInterface(Int(transportProfile.interfaceNumber))
     usbHandle = nil
     print("[DevicePipeline] Input loop ended:" + " \(identifier)")
   }
@@ -245,8 +254,7 @@ extension DevicePipeline {
       sleepGate.idleTransition(
         currentState: currentInputState,
         now: DispatchTime.now().uptimeNanoseconds
-      )
-        != nil
+      ) != nil
     else { return }
 
     let neutralizingEvents = outputState.neutralizingEvents()
@@ -259,11 +267,12 @@ extension DevicePipeline {
 
   func handleParsedEvents(_ events: [ControllerEvent], now: UInt64) async {
     let previousState = currentInputState
-    let nextState = currentInputState.applying(events: events)
-    updateObservedInputState(from: events)
+    let normalizedEvents = ControllerEventNormalizer.normalize(events, from: previousState).events
+    let nextState = previousState.applying(events: normalizedEvents)
+    updateObservedInputState(from: normalizedEvents)
 
     switch sleepGate.handleInput(
-      events: events,
+      events: normalizedEvents,
       previousState: previousState,
       nextState: nextState,
       now: now
@@ -276,7 +285,7 @@ extension DevicePipeline {
           print("[DevicePipeline] Foreground gate re-armed after neutral: \(identifier)")
           return
         }
-        if !events.isEmpty {
+        if !normalizedEvents.isEmpty {
           waitingForExternalNeutral = false
           print(
             "[DevicePipeline] Foreground gate re-armed after first post-focus change: \(identifier)"
@@ -285,14 +294,12 @@ extension DevicePipeline {
         }
         return
       }
-      if !events.isEmpty {
-        await dispatcher.dispatch(events: events, from: identifier)
+      if !normalizedEvents.isEmpty {
+        await dispatcher.dispatch(events: normalizedEvents, from: identifier)
       }
-      updateOutputState(from: events)
-    case .consumeWhileSleeping:
-      break
-    case .consumeWake:
-      print("[DevicePipeline] Controller woke from sleep: \(identifier)")
+      updateOutputState(from: normalizedEvents)
+    case .consumeWhileSleeping: break
+    case .consumeWake: print("[DevicePipeline] Controller woke from sleep: \(identifier)")
     }
   }
 }

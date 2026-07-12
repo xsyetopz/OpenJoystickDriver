@@ -8,7 +8,7 @@ import OpenJoystickDriverKit
   func installDaemon() async {
     daemonError = nil
     guard ensureRunningFromApplications() else { return }
-    guard ensureBundleSignatureValid(for: "Install") else { return }
+    guard await ensureBundleSignatureValid(for: "Install") else { return }
     do {
       let task = Task.detached { try DaemonManager.install() }
       try await task.value
@@ -25,7 +25,7 @@ import OpenJoystickDriverKit
   func startDaemon() async {
     daemonError = nil
     guard ensureRunningFromApplications() else { return }
-    guard ensureBundleSignatureValid(for: "Start") else { return }
+    guard await ensureBundleSignatureValid(for: "Start") else { return }
     do {
       let task = Task.detached { try DaemonManager.start() }
       try await task.value
@@ -46,7 +46,7 @@ import OpenJoystickDriverKit
       daemonRestarting = false
       return
     }
-    guard ensureBundleSignatureValid(for: "Restart") else {
+    guard await ensureBundleSignatureValid(for: "Restart") else {
       daemonRestarting = false
       return
     }
@@ -68,7 +68,7 @@ import OpenJoystickDriverKit
   func uninstallDaemon() async {
     daemonError = nil
     guard ensureRunningFromApplications() else { return }
-    guard ensureBundleSignatureValid(for: "Uninstall") else { return }
+    guard await ensureBundleSignatureValid(for: "Uninstall") else { return }
     do {
       let task = Task.detached { try DaemonManager.uninstall() }
       try await task.value

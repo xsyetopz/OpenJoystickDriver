@@ -41,6 +41,64 @@ import OpenJoystickDriverKit
     }
   }
 
+  func setPhysicalPlayerIndicator(
+    vendorID: UInt16,
+    productID: UInt16,
+    indicator: PhysicalPlayerIndicator
+  ) async -> Bool {
+    guard daemonConnected else { return false }
+    do {
+      return try await client.setPhysicalPlayerIndicator(
+        vendorID: vendorID,
+        productID: productID,
+        indicator: indicator
+      )
+    } catch {
+      daemonError = formatDaemonError(error)
+      return false
+    }
+  }
+
+  func setPhysicalColor(
+    vendorID: UInt16,
+    productID: UInt16,
+    red: UInt8,
+    green: UInt8,
+    blue: UInt8
+  ) async -> Bool {
+    guard daemonConnected else { return false }
+    do {
+      return try await client.setPhysicalColor(
+        vendorID: vendorID,
+        productID: productID,
+        red: red,
+        green: green,
+        blue: blue
+      )
+    } catch {
+      daemonError = formatDaemonError(error)
+      return false
+    }
+  }
+
+  func setPhysicalBrightness(
+    vendorID: UInt16,
+    productID: UInt16,
+    brightness: UInt8
+  ) async -> Bool {
+    guard daemonConnected else { return false }
+    do {
+      return try await client.setPhysicalBrightness(
+        vendorID: vendorID,
+        productID: productID,
+        brightness: brightness
+      )
+    } catch {
+      daemonError = formatDaemonError(error)
+      return false
+    }
+  }
+
   func setSuppressOutput(_ suppress: Bool) async {
     guard daemonConnected else { return }
     try? await client.setSuppressOutput(suppress)
@@ -72,6 +130,31 @@ import OpenJoystickDriverKit
     guard daemonConnected else { return }
     do {
       try await client.setUserSpaceVirtualDeviceEnabled(enabled)
+      await syncFromDaemonNow()
+    } catch {
+      await refreshDaemonHealth()
+      daemonError = formatDaemonError(error)
+    }
+  }
+
+  func setOutputMode(_ modeRaw: String) async {
+    guard daemonConnected else { return }
+    do {
+      try await client.setOutputMode(modeRaw)
+      await syncFromDaemonNow()
+    } catch {
+      await refreshDaemonHealth()
+      daemonError = formatDaemonError(error)
+    }
+  }
+
+  func resetSettings() async {
+    guard daemonConnected else { return }
+    do {
+      guard try await client.resetSettings() else {
+        daemonError = L10n.string("settings.resetFailed")
+        return
+      }
       await syncFromDaemonNow()
     } catch {
       await refreshDaemonHealth()

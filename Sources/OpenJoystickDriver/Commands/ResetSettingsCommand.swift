@@ -20,6 +20,9 @@ struct ResetSettingsCommand {
     }
 
     print("OK: reset daemon settings.")
-    print("Next: open the menubar app, set Mode → Compatibility, then pick Compatibility identity.")
+    print(
+      "Next: open the menubar app, set Mode -> Compatibility,"
+        + " then pick Compatibility identity."
+    )
   }
 }

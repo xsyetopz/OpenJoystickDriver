@@ -114,6 +114,13 @@ public struct XPCDriverKitOutputStats: Codable, Sendable {
   }
 }
 
+/// End-to-end verdict for one virtual-device self-test path.
+public enum XPCVirtualDeviceSelfTestVerdict: String, Codable, Sendable {
+  case passed
+  case failed
+  case inconclusive
+}
+
 /// Result of a short "press buttons now" self-test for virtual device input delivery.
 public struct XPCVirtualDeviceSelfTestPayload: Codable, Sendable {
   public let seconds: Int
@@ -138,6 +145,24 @@ public struct XPCVirtualDeviceSelfTestPayload: Codable, Sendable {
   public let driverKitConnectionFailureDelta: Int?
   public let driverKitLastConnectionErrorHex: String?
   public let driverKitDiscoverySummary: String?
+
+  /// End-to-end DriverKit relay assessment.
+  ///
+  /// A successful setReport alone is not enough: the dext intentionally accepts
+  /// reports even when its internal relay fails. Positive IORegistry or HID callback
+  /// evidence proves delivery; submission alone remains inconclusive.
+  public var driverKitRelayVerdict: XPCVirtualDeviceSelfTestVerdict {
+    if let inputDelta = driverKitInputReportDelta, inputDelta > 0 { return .passed }
+    if driverKitReportEvents > 0 || driverKitValueEvents > 0 { return .passed }
+    if driverKitInputReportDelta != nil { return .failed }
+
+    let attempts = driverKitSetReportAttemptDelta ?? 0
+    guard attempts > 0 else { return .failed }
+    let successes = driverKitSetReportSuccessDelta ?? 0
+    let failures = driverKitSetReportFailureDelta ?? 0
+    if successes == 0 || failures >= attempts { return .failed }
+    return .inconclusive
+  }
 
   public init(
     seconds: Int,
@@ -190,7 +215,7 @@ public struct XPCDeviceDescription: Codable, Sendable {
   public let serialNumber: String?
   /// Source-backed protocol variant (for example, "xboxOne" or "dualShock4").
   public let protocolVariant: String
-  /// Source-backed mapping quirks from the controller profile.
+  /// Source-backed mapping quirks from the controller record.
   public let mappingFlags: [String]
   /// Interrupt IN endpoint address used by USB transports.
   public let inputEndpoint: UInt8
@@ -200,10 +225,12 @@ public struct XPCDeviceDescription: Codable, Sendable {
   public let needsSetConfiguration: Bool
   /// Post-handshake settle delay in milliseconds.
   public let postHandshakeSettleMs: Int
-  /// Preferred virtual output backends from the controller profile.
+  /// Preferred virtual output backends from the controller record.
   public let preferredBackends: [String]
   /// Whether the active physical parser can send source-controller rumble.
   public let supportsPhysicalRumble: Bool
+  /// Exact source-backed motors and lighting features of the active parser.
+  public let physicalOutputCapabilities: PhysicalControllerOutputCapabilities
 
   private enum CodingKeys: String, CodingKey {
     case name
@@ -220,6 +247,7 @@ public struct XPCDeviceDescription: Codable, Sendable {
     case postHandshakeSettleMs
     case preferredBackends
     case supportsPhysicalRumble
+    case physicalOutputCapabilities
   }
 
   /// Creates a new XPCDeviceDescription.
@@ -237,7 +265,8 @@ public struct XPCDeviceDescription: Codable, Sendable {
     needsSetConfiguration: Bool = false,
     postHandshakeSettleMs: Int = 0,
     preferredBackends: [String] = [],
-    supportsPhysicalRumble: Bool = false
+    supportsPhysicalRumble: Bool = false,
+    physicalOutputCapabilities: PhysicalControllerOutputCapabilities? = nil
   ) {
     self.name = name
     self.vendorID = vendorID
@@ -252,7 +281,10 @@ public struct XPCDeviceDescription: Codable, Sendable {
     self.needsSetConfiguration = needsSetConfiguration
     self.postHandshakeSettleMs = postHandshakeSettleMs
     self.preferredBackends = preferredBackends
-    self.supportsPhysicalRumble = supportsPhysicalRumble
+    let capabilities =
+      physicalOutputCapabilities ?? (supportsPhysicalRumble ? .dualMainRumble : .none)
+    self.physicalOutputCapabilities = capabilities
+    self.supportsPhysicalRumble = supportsPhysicalRumble || capabilities.supportsRumble
   }
 
   public init(from decoder: Decoder) throws {
@@ -274,8 +306,14 @@ public struct XPCDeviceDescription: Codable, Sendable {
       try container.decodeIfPresent(Int.self, forKey: .postHandshakeSettleMs) ?? 0
     self.preferredBackends =
       try container.decodeIfPresent([String].self, forKey: .preferredBackends) ?? []
-    self.supportsPhysicalRumble =
+    let legacyRumble =
       try container.decodeIfPresent(Bool.self, forKey: .supportsPhysicalRumble) ?? false
+    self.physicalOutputCapabilities =
+      try container.decodeIfPresent(
+        PhysicalControllerOutputCapabilities.self,
+        forKey: .physicalOutputCapabilities
+      ) ?? (legacyRumble ? .dualMainRumble : .none)
+    self.supportsPhysicalRumble = legacyRumble || physicalOutputCapabilities.supportsRumble
   }
 }
 

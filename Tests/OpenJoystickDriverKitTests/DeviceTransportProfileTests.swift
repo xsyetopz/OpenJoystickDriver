@@ -3,8 +3,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct DeviceTransportProfileTests {
-  @Test
-  func testGamesirG7SETransportProfile() {
+  @Test func testGamesirG7SETransportProfile() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 13623, productID: 4112)
 
@@ -15,8 +14,7 @@ struct DeviceTransportProfileTests {
     #expect(!profile.needsSetConfiguration)
     #expect(profile.postHandshakeSettleNanoseconds == 0)
   }
-  @Test
-  func testGamesirG7SERuntimeProfile() {
+  @Test func testGamesirG7SERuntimeProfile() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 13623, productID: 4112)
 
@@ -27,8 +25,36 @@ struct DeviceTransportProfileTests {
     #expect(profile.mappingFlags == ["shareButton"])
     #expect(profile.mappingOptions.contains(.shareButton))
   }
-  @Test
-  func testVader5STransportProfile() {
+  @Test func testRuntimeProfileCarriesHardwareVerificationProvenance() {
+    let registry = ParserRegistry()
+    let verified = registry.runtimeProfile(for: DeviceIdentifier(vendorID: 13623, productID: 4112))
+    let sourceBacked = registry.runtimeProfile(
+      for: DeviceIdentifier(vendorID: 1356, productID: 3302)
+    )
+    let unknown = registry.runtimeProfile(for: DeviceIdentifier(vendorID: 65535, productID: 65535))
+
+    #expect(verified.hardwareVerified)
+    #expect(!sourceBacked.hardwareVerified)
+    #expect(!unknown.hardwareVerified)
+  }
+
+  @Test func testRazerWolverineV3TournamentEditionProfile() {
+    let registry = ParserRegistry()
+    let identifier = DeviceIdentifier(vendorID: 5_426, productID: 2_627)
+
+    let runtime = registry.runtimeProfile(for: identifier)
+    let transport = registry.transportProfile(for: identifier)
+
+    #expect(runtime.parserName == "GIP")
+    #expect(runtime.protocolVariant == .xboxOne)
+    #expect(runtime.mappingFlags == ["shareButton", "paddles"])
+    #expect(!runtime.hardwareVerified)
+    #expect(transport.inputEndpoint == 0x82)
+    #expect(transport.outputEndpoint == 0x02)
+    #expect(!transport.needsSetConfiguration)
+  }
+
+  @Test func testVader5STransportProfile() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 14295, productID: 10241)
 
@@ -40,8 +66,7 @@ struct DeviceTransportProfileTests {
     #expect(profile.postHandshakeSettleNanoseconds == 200_000_000)
   }
 
-  @Test
-  func testDS3ExperimentalProfile() {
+  @Test func testDS3ExperimentalProfile() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 1356, productID: 616)
     let profile = registry.runtimeProfile(for: identifier)
@@ -53,8 +78,7 @@ struct DeviceTransportProfileTests {
     #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
   }
 
-  @Test
-  func testDualSenseExperimentalProfiles() {
+  @Test func testDualSenseExperimentalProfiles() {
     let registry = ParserRegistry()
     let identifiers = [
       DeviceIdentifier(vendorID: 1356, productID: 3302),
@@ -65,19 +89,15 @@ struct DeviceTransportProfileTests {
       let profile = registry.runtimeProfile(for: identifier)
       #expect(registry.parserName(for: identifier) == "DualSense")
       #expect(profile.protocolVariant == .dualSense)
-      #expect(profile.mappingFlags == [
-        "touchpad",
-        "microphoneMute",
-        "experimental",
-        "needsHardwareTest",
-      ])
+      #expect(
+        profile.mappingFlags == ["touchpad", "microphoneMute", "experimental", "needsHardwareTest"]
+      )
       #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
       #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
     }
   }
 
-  @Test
-  func testSteamControllerExperimentalProfiles() {
+  @Test func testSteamControllerExperimentalProfiles() {
     let registry = ParserRegistry()
     let identifiers = [
       DeviceIdentifier(vendorID: 10462, productID: 4354),
@@ -104,9 +124,7 @@ struct DeviceTransportProfileTests {
     }
   }
 
-
-  @Test
-  func testSwitchProExperimentalProfile() {
+  @Test func testSwitchProExperimentalProfile() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 1406, productID: 8201)
     let profile = registry.runtimeProfile(for: identifier)
@@ -118,8 +136,33 @@ struct DeviceTransportProfileTests {
     #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
   }
 
-  @Test
-  func testXpadXbox360ProfileBatch() {
+  @Test func testXbox360WirelessReceiverProfiles() {
+    let registry = ParserRegistry()
+    let identifiers = [
+      DeviceIdentifier(vendorID: 1_118, productID: 657),
+      DeviceIdentifier(vendorID: 1_118, productID: 681),
+      DeviceIdentifier(vendorID: 1_118, productID: 1_817),
+    ]
+
+    for identifier in identifiers {
+      let runtime = registry.runtimeProfile(for: identifier)
+      let transport = registry.transportProfile(for: identifier)
+      let parser = registry.parser(for: identifier)
+
+      #expect(runtime.parserName == "Xbox360")
+      #expect(runtime.protocolVariant == .xbox360Wireless)
+      #expect(runtime.mappingFlags == ["dpadToButtons"])
+      #expect(!runtime.hardwareVerified)
+      #expect(transport.inputEndpoint == 0x81)
+      #expect(transport.outputEndpoint == 0x01)
+      #expect(
+        (parser as? any ControllerInputConnectionLifecycle)?.requiresInputConnectionBeforeOutput
+          == true
+      )
+    }
+  }
+
+  @Test func testXpadXbox360ProfileBatch() {
     let registry = ParserRegistry()
     let identifiers = [
       DeviceIdentifier(vendorID: 1133, productID: 49693),
@@ -140,24 +183,20 @@ struct DeviceTransportProfileTests {
       #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x01)
     }
   }
-  @Test
-  func testXpadXboxOneProfileBatch() {
+  @Test func testXpadXboxOneProfileBatch() {
     let registry = ParserRegistry()
     let defaultSequence = GIPStartupPacket.defaultSequence
     let cases: [(DeviceIdentifier, [GIPStartupPacket], [String])] = [
       (
         DeviceIdentifier(vendorID: 1118, productID: 746),
-        [.powerOn, .xboxOneSInit, .ledOn, .authDone],
-        ["shareButton"]
+        [.powerOn, .xboxOneSInit, .ledOn, .authDone], []
       ),
       (
         DeviceIdentifier(vendorID: 1118, productID: 2816),
-        [.powerOn, .xboxOneSInit, .extraInput, .ledOn, .authDone],
-        ["shareButton", "paddles", "profileButton"]
+        [.powerOn, .xboxOneSInit, .extraInput, .ledOn, .authDone], ["paddles"]
       ),
       (
-        DeviceIdentifier(vendorID: 3853, productID: 103),
-        [.horiAck, .powerOn, .ledOn, .authDone],
+        DeviceIdentifier(vendorID: 3853, productID: 103), [.horiAck, .powerOn, .ledOn, .authDone],
         []
       ),
       (DeviceIdentifier(vendorID: 3695, productID: 676), defaultSequence, []),
@@ -165,18 +204,15 @@ struct DeviceTransportProfileTests {
       (DeviceIdentifier(vendorID: 3695, productID: 683), defaultSequence, []),
       (
         DeviceIdentifier(vendorID: 9414, productID: 21530),
-        [.powerOn, .ledOn, .authDone, .rumbleBegin, .rumbleEnd],
-        []
+        [.powerOn, .ledOn, .authDone, .rumbleBegin, .rumbleEnd], []
       ),
       (
         DeviceIdentifier(vendorID: 9414, productID: 21546),
-        [.powerOn, .ledOn, .authDone, .rumbleBegin, .rumbleEnd],
-        []
+        [.powerOn, .ledOn, .authDone, .rumbleBegin, .rumbleEnd], []
       ),
       (
         DeviceIdentifier(vendorID: 9414, productID: 21562),
-        [.powerOn, .ledOn, .authDone, .rumbleBegin, .rumbleEnd],
-        []
+        [.powerOn, .ledOn, .authDone, .rumbleBegin, .rumbleEnd], []
       ),
     ]
 

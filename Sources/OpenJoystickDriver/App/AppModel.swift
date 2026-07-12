@@ -22,6 +22,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   /// USB serial number string, nil when unavailable.
   let serialNumber: String?
   let supportsPhysicalRumble: Bool
+  let physicalOutputCapabilities: PhysicalControllerOutputCapabilities
 
   init(from description: XPCDeviceDescription) {
     self.id = "\(description.vendorID):\(description.productID):\(description.name)"
@@ -32,6 +33,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     self.connection = description.connection
     self.serialNumber = description.serialNumber
     self.supportsPhysicalRumble = description.supportsPhysicalRumble
+    self.physicalOutputCapabilities = description.physicalOutputCapabilities
   }
 }
 
@@ -60,6 +62,13 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   @Published var inputMonitoringAssist: String?
   @Published var extensionManager = SystemExtensionManager()
 
+  var inputMonitoringPermissions: InputMonitoringPermissionSnapshot {
+    InputMonitoringPermissionSnapshot(
+      application: PermissionManager.AccessState(status: appInputMonitoring),
+      daemon: PermissionManager.AccessState(status: inputMonitoring)
+    )
+  }
+
   @Published var userSpaceVirtualDeviceEnabled = false
   @Published var userSpaceVirtualDeviceStatus = "unknown"
   @Published var virtualDeviceMode: String = VirtualDeviceMode.compatUserSpace.rawValue
@@ -67,6 +76,16 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   @Published var compatibilityIdentity: String = CompatibilityIdentity.sdl2_3.rawValue
   @Published var virtualDeviceDiagnostics: XPCVirtualDeviceDiagnosticsPayload?
   @Published var virtualDeviceSelfTest: XPCVirtualDeviceSelfTestPayload?
+  @Published var creatingSupportReport = false
+  @Published var runtimeHealthRunning = false
+  @Published var runtimeHealthSummary: RuntimeHealthSummary?
+  @Published var appleGameControllerAuditRunning = false
+  @Published var appleGameControllerAudit: AppleGameControllerSupportAudit?
+  @Published var browserGamepadDiagnosticRunning = false
+  @Published var browserGamepadDiagnosticURL: URL?
+  @Published var browserGamepadDiagnosticError: String?
+  @Published var browserGamepadSnapshotCount = 0
+  var latestStatusPayload: XPCStatusPayload?
   @Published var updateCheckState: UpdateCheckState = .idle
   @Published var includePrereleaseUpdates: Bool {
     didSet {
@@ -80,7 +99,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   var developerMode: Bool
 
   var appVersion: String {
-    Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.5.0-alpha.4"
+    Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.5.0-alpha.5"
   }
 
   let client = XPCClient()
@@ -90,6 +109,11 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     self?.updateCheckState = state
   }
   var pollTask: Task<Void, Never>?
+  var browserGamepadDiagnosticSession: BrowserGamepadDiagnosticSession?
+  var browserGamepadDiagnosticStopTask: Task<Void, Never>?
+  var browserGamepadSnapshotPollTask: Task<Void, Never>?
+  var runtimeHealthTask: Task<RuntimeHealthSummary, any Error>?
+  var runtimeHealthRunID: UUID?
 
   var lastHealthPollNs: UInt64 = 0
 

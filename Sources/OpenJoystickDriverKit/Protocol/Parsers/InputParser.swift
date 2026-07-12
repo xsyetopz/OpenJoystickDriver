@@ -33,6 +33,9 @@ public protocol HIDInputConnectionStatusRequester: AnyObject, Sendable {
 public protocol HIDStartupOutputReportProvider: AnyObject, Sendable {
   /// Source-backed startup reports needed before the controller emits full input reports.
   func hidStartupReports() -> [PhysicalHIDOutputReport]
+
+  /// Minimum interval between startup reports for the selected transport.
+  func hidStartupReportIntervalNanoseconds(transport: String?) -> UInt64
 }
 
 extension HIDStartupOutputReportProvider {
@@ -40,6 +43,16 @@ extension HIDStartupOutputReportProvider {
   public func hidStartupReports(transport _: String?) -> [PhysicalHIDOutputReport] {
     hidStartupReports()
   }
+
+  public func hidStartupReportIntervalNanoseconds(transport _: String?) -> UInt64 { 0 }
+}
+
+/// Optional USB output emitted when a receiver-backed controller connects or disconnects.
+public protocol USBInputConnectionOutputProvider: AnyObject, Sendable {
+  /// Source-backed packets for one logical controller lifecycle transition.
+  func usbInputConnectionOutputPackets(
+    for state: ControllerInputConnectionState
+  ) -> [[UInt8]]
 }
 
 /// Optional parser hook for startup output packets sent through a USB interrupt OUT endpoint.
@@ -80,6 +93,12 @@ extension HIDStartupFeatureReadRequestProvider {
   {
     hidStartupFeatureReadRequests()
   }
+}
+
+/// Optional semantic input path for descriptor-defined HID gamepads.
+public protocol HIDElementValueParser: AnyObject, Sendable {
+  /// Converts one IOKit-decoded HID element value into controller events.
+  func parse(elementValue: HIDElementValue) -> [ControllerEvent]
 }
 
 public protocol InputParser: AnyObject, Sendable {

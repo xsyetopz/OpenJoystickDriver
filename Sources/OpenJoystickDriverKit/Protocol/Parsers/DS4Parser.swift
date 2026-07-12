@@ -14,6 +14,7 @@ private let ds4USBOutputReportLength = 32
 private let ds4BluetoothOutputReportID: UInt8 = 0x11
 private let ds4BluetoothOutputReportLength = 78
 private let ds4OutputValidFlagMotor: UInt8 = 0x01
+private let ds4OutputValidFlagColor: UInt8 = 0x02
 private let ds4BluetoothOutputHIDAndCRCFlag: UInt8 = 0xC0
 private let ds4BluetoothOutputEnableFlags: UInt8 = 0x0F
 
@@ -29,7 +30,9 @@ private enum DS4ConnectionMode {
 /// either with or without the leading `0x01` report ID byte.
 /// Bluetooth input report `0x11` carries the same controller state after its
 /// transport/control prefix.
-public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, @unchecked Sendable {
+public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDColorOutput,
+  @unchecked Sendable
+{
 
   private enum ReportOffset {
     static let leftStickX: Int = 0
@@ -129,6 +132,35 @@ public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, @unchecked S
       report[3] = ds4BluetoothOutputEnableFlags
       report[6] = right
       report[7] = left
+      let crc = ds4BluetoothCRC32(report: report)
+      report[74] = UInt8(truncatingIfNeeded: crc)
+      report[75] = UInt8(truncatingIfNeeded: crc >> 8)
+      report[76] = UInt8(truncatingIfNeeded: crc >> 16)
+      report[77] = UInt8(truncatingIfNeeded: crc >> 24)
+      return PhysicalHIDOutputReport(reportID: ds4BluetoothOutputReportID, bytes: report)
+    }
+  }
+
+  public func physicalColorReport(red: UInt8, green: UInt8, blue: UInt8)
+    -> PhysicalHIDOutputReport
+  {
+    switch connectionMode {
+    case .usb:
+      var report = [UInt8](repeating: 0, count: ds4USBOutputReportLength)
+      report[0] = ds4USBOutputReportID
+      report[1] = ds4OutputValidFlagColor
+      report[6] = red
+      report[7] = green
+      report[8] = blue
+      return PhysicalHIDOutputReport(reportID: ds4USBOutputReportID, bytes: report)
+    case .bluetooth:
+      var report = [UInt8](repeating: 0, count: ds4BluetoothOutputReportLength)
+      report[0] = ds4BluetoothOutputReportID
+      report[1] = ds4BluetoothOutputHIDAndCRCFlag
+      report[3] = ds4OutputValidFlagColor
+      report[8] = red
+      report[9] = green
+      report[10] = blue
       let crc = ds4BluetoothCRC32(report: report)
       report[74] = UInt8(truncatingIfNeeded: crc)
       report[75] = UInt8(truncatingIfNeeded: crc >> 8)

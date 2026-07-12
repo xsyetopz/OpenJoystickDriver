@@ -20,12 +20,11 @@ private let defaultIdleMonitorIntervalNanoseconds: UInt64 = 1_000_000_000
 private final class DevicePipelineSnapshots: @unchecked Sendable {
   private let lock = NSLock()
   private var inputState: DeviceInputState
-  var packetLog: [PacketLogEntry] = []
-  let maxPacketLogEntries: Int
+  private let packetLog: PacketLogBuffer
 
   init(inputState: DeviceInputState, maxPacketLogEntries: Int) {
     self.inputState = inputState
-    self.maxPacketLogEntries = maxPacketLogEntries
+    self.packetLog = PacketLogBuffer(maxEntries: maxPacketLogEntries)
   }
 
   func updateInputState(_ state: DeviceInputState) {
@@ -36,17 +35,12 @@ private final class DevicePipelineSnapshots: @unchecked Sendable {
     lock.withLock { inputState }
   }
 
-  func appendPacket(_ entry: PacketLogEntry) {
-    lock.withLock {
-      packetLog.append(entry)
-      if packetLog.count > maxPacketLogEntries {
-        packetLog.removeFirst(packetLog.count - maxPacketLogEntries)
-      }
-    }
+  func appendPacket(bytes: [UInt8], direction: String) {
+    packetLog.append(bytes: bytes, direction: direction)
   }
 
   func currentPacketLog() -> [PacketLogEntry] {
-    lock.withLock { packetLog }
+    packetLog.entries()
   }
 }
 
@@ -72,7 +66,6 @@ actor DevicePipeline {
   var usbHandle: USBDeviceHandle?
   var currentInputState: DeviceInputState
   var outputState: DeviceInputState
-  var packetLog: [PacketLogEntry] = []
   let maxPacketLogEntries = 200
   private let snapshots: DevicePipelineSnapshots
   var sleepGate = ControllerSleepGate()
@@ -164,6 +157,15 @@ actor DevicePipeline {
     }
   }
 
+  /// Feed one descriptor-decoded value to the Generic HID fallback.
+  func feedHIDElementValue(_ value: HIDElementValue) async {
+    guard isActive, inputConnectionActive,
+      let elementParser = parser as? any HIDElementValueParser
+    else { return }
+    let events = elementParser.parse(elementValue: value)
+    await handleParsedEvents(events, now: DispatchTime.now().uptimeNanoseconds)
+  }
+
   nonisolated func requiresInputConnectionBeforeOutput() -> Bool {
     (parser as? any ControllerInputConnectionLifecycle)?
       .requiresInputConnectionBeforeOutput ?? false
@@ -174,14 +176,33 @@ actor DevicePipeline {
     return (parser as? any HIDShutdownFeatureReportProvider)?.hidShutdownFeatureReports() ?? []
   }
 
-  nonisolated func supportsPhysicalRumble() -> Bool {
+  nonisolated func physicalOutputCapabilities() -> PhysicalControllerOutputCapabilities {
+    let rumbleMotors: [PhysicalRumbleMotor]
     if let usbOutput = parser as? PhysicalRumbleOutput {
-      return usbOutput.supportsPhysicalRumble
+      rumbleMotors = usbOutput.physicalRumbleMotors
+    } else if let hidOutput = parser as? PhysicalHIDRumbleOutput {
+      rumbleMotors = hidOutput.physicalRumbleMotors
+    } else if let featureHaptics = parser as? PhysicalHIDFeatureHapticOutput {
+      rumbleMotors = featureHaptics.physicalRumbleMotors
+    } else {
+      rumbleMotors = []
     }
-    if let hidOutput = parser as? PhysicalHIDRumbleOutput {
-      return hidOutput.supportsPhysicalRumble
-    }
-    return false
+    let binaryRumbleMotors =
+      (parser as? PhysicalHIDRumbleOutput)?.physicalBinaryRumbleMotors ?? []
+    var lighting: [PhysicalLightingFeature] = []
+    lighting += (parser as? PhysicalPlayerIndicatorOutput)?.physicalLightingFeatures ?? []
+    lighting += (parser as? PhysicalHIDPlayerIndicatorOutput)?.physicalLightingFeatures ?? []
+    lighting += (parser as? PhysicalHIDColorOutput)?.physicalLightingFeatures ?? []
+    lighting += (parser as? PhysicalHIDFeatureBrightnessOutput)?.physicalLightingFeatures ?? []
+    return PhysicalControllerOutputCapabilities(
+      rumbleMotors: rumbleMotors,
+      lightingFeatures: lighting,
+      binaryRumbleMotors: binaryRumbleMotors
+    )
+  }
+
+  nonisolated func supportsPhysicalRumble() -> Bool {
+    physicalOutputCapabilities().supportsRumble
   }
 
   // MARK: - Input state and packet log
@@ -244,10 +265,27 @@ actor DevicePipeline {
     updateOutputState(from: neutralizingEvents)
   }
 
-  private func handleInputConnectionStateChangeIfNeeded() async -> [PhysicalHIDOutputReport] {
+  func handleInputConnectionStateChangeIfNeeded() async -> [PhysicalHIDOutputReport] {
     guard let lifecycle = parser as? any ControllerInputConnectionLifecycle,
       let state = lifecycle.consumeInputConnectionStateChange()
     else { return [] }
+
+    if let output = parser as? any USBInputConnectionOutputProvider,
+      let handle = usbHandle
+    {
+      for packet in output.usbInputConnectionOutputPackets(for: state) {
+        do {
+          _ = try handle.interruptTransfer(
+            endpoint: transportProfile.outputEndpoint,
+            data: packet,
+            timeout: 2_000
+          )
+          appendToPacketLog(bytes: packet, direction: "tx")
+        } catch {
+          print("[DevicePipeline] USB lifecycle output failed for \(identifier): \(error)")
+        }
+      }
+    }
 
     switch state {
     case .connected:
@@ -270,18 +308,7 @@ actor DevicePipeline {
   }
 
   func appendToPacketLog(bytes: [UInt8], direction: String) {
-    let hexString = bytes.map { String(format: "%02X", $0) }.joined(separator: " ")
-    let entry = PacketLogEntry(
-      timestamp: Date().timeIntervalSince1970,
-      direction: direction,
-      hex: hexString,
-      length: bytes.count
-    )
-    packetLog.append(entry)
-    if packetLog.count > maxPacketLogEntries {
-      packetLog.removeFirst(packetLog.count - maxPacketLogEntries)
-    }
-    snapshots.appendPacket(entry)
+    snapshots.appendPacket(bytes: bytes, direction: direction)
   }
 
   // MARK: - Rumble
@@ -305,6 +332,20 @@ actor DevicePipeline {
     }
   }
 
+  func hidFeatureHapticReports(left: UInt8, right: UInt8, durationMs: Int)
+    -> [PhysicalHIDOutputReport]
+  {
+    (parser as? PhysicalHIDFeatureHapticOutput)?.physicalHapticReports(
+      left: left,
+      right: right,
+      durationMs: durationMs
+    ) ?? []
+  }
+
+  nonisolated func minimumPhysicalOutputIntervalNanoseconds() -> UInt64 {
+    (parser as? PhysicalHIDRumbleOutput)?.minimumPhysicalOutputIntervalNanoseconds ?? 0
+  }
+
   func hidRumbleReport(left: UInt8, right: UInt8, lt: UInt8, rt: UInt8)
     -> PhysicalHIDOutputReport?
   {
@@ -312,4 +353,36 @@ actor DevicePipeline {
     return rumbleOutput.physicalRumbleReport(left: left, right: right, lt: lt, rt: rt)
   }
 
+  func hidColorReport(red: UInt8, green: UInt8, blue: UInt8) -> PhysicalHIDOutputReport? {
+    (parser as? PhysicalHIDColorOutput)?.physicalColorReport(
+      red: red,
+      green: green,
+      blue: blue
+    )
+  }
+
+  func hidBrightnessReport(_ brightness: UInt8) -> PhysicalHIDOutputReport? {
+    (parser as? PhysicalHIDFeatureBrightnessOutput)?.physicalBrightnessReport(brightness)
+  }
+
+  func hidPlayerIndicatorReport(_ indicator: PhysicalPlayerIndicator)
+    -> PhysicalHIDOutputReport?
+  {
+    (parser as? PhysicalHIDPlayerIndicatorOutput)?.physicalPlayerIndicatorReport(indicator)
+  }
+
+  func sendPlayerIndicator(_ indicator: PhysicalPlayerIndicator) -> Bool {
+    guard let handle = usbHandle,
+      let lightingOutput = parser as? PhysicalPlayerIndicatorOutput
+    else {
+      return false
+    }
+    do {
+      try lightingOutput.sendPhysicalPlayerIndicator(handle: handle, indicator: indicator)
+      return true
+    } catch {
+      print("[DevicePipeline] Player indicator send failed for \(identifier): \(error)")
+      return false
+    }
+  }
 }

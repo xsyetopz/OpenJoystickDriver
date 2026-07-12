@@ -94,7 +94,8 @@ extension DextOutputDispatcher {
     case .share: return 15
     case .l2Digital, .r2Digital: return nil  // triggers are analog only in XInputHID
     case .touchpad: return nil
-    case .genericButton1, .genericButton2: return nil
+    case .genericButton1: return 15
+    case .genericButton2: return nil
     case .genericButton3, .genericButton4: return nil
     case .genericButton5, .genericButton6, .genericButton7, .genericButton8: return nil
     }

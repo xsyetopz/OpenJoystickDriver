@@ -1,0 +1,609 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+  "title": "OpenJoystickDriver controller identity record",
+  "type": "object",
+  "required": [
+    "$schema",
+    "vendor_id",
+    "product_id",
+    "transport",
+    "protocol",
+    "provenance"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json"
+    },
+    "vendor_id": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "product_id": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 65535
+    },
+    "transport": {
+      "enum": [
+        "usb",
+        "hid"
+      ]
+    },
+    "protocol": {
+      "$ref": "#/$defs/protocol"
+    },
+    "usb": {
+      "$ref": "#/$defs/usbOverride"
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    }
+  },
+  "$defs": {
+    "protocol": {
+      "type": "object",
+      "required": [
+        "driver",
+        "variant"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "driver": {
+          "enum": [
+            "GIP",
+            "Xbox360",
+            "DS3",
+            "DS4",
+            "DualSense",
+            "SteamController",
+            "SwitchPro",
+            "XboxAdaptiveJoystick",
+            "GenericHID"
+          ]
+        },
+        "variant": {
+          "enum": [
+            "xboxOriginal",
+            "xbox360",
+            "xbox360Wireless",
+            "xboxOne",
+            "dualShock3",
+            "dualShock4",
+            "dualSense",
+            "steamController",
+            "switchPro",
+            "xboxAdaptiveJoystick",
+            "genericHID",
+            "unknown"
+          ]
+        },
+        "flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "startup_packets": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "powerOn",
+              "xboxOneSInit",
+              "extraInput",
+              "horiAck",
+              "ledOn",
+              "authDone",
+              "rumbleBegin",
+              "rumbleEnd"
+            ]
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "driver": {
+                "const": "GIP"
+              }
+            },
+            "required": [
+              "driver"
+            ]
+          },
+          "then": {
+            "properties": {
+              "variant": {
+                "enum": [
+                  "unknown",
+                  "xboxOne",
+                  "xboxOriginal"
+                ]
+              },
+              "flags": {
+                "items": {
+                  "enum": [
+                    "dpadToButtons",
+                    "paddles",
+                    "profileButton",
+                    "shareButton",
+                    "shareOffset",
+                    "sticksToNull",
+                    "triggersToButtons"
+                  ]
+                },
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "driver": {
+                "const": "Xbox360"
+              }
+            },
+            "required": [
+              "driver"
+            ]
+          },
+          "then": {
+            "properties": {
+              "variant": {
+                "enum": [
+                  "unknown",
+                  "xbox360",
+                  "xbox360Wireless"
+                ]
+              },
+              "flags": {
+                "items": {
+                  "enum": [
+                    "dpadToButtons",
+                    "sticksToNull",
+                    "triggersToButtons"
+                  ]
+                },
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "driver": {
+                "const": "DS3"
+              }
+            },
+            "required": [
+              "driver"
+            ]
+          },
+          "then": {
+            "properties": {
+              "variant": {
+                "enum": [
+                  "dualShock3",
+                  "unknown"
+                ]
+              },
+              "flags": {
+                "items": {
+                  "enum": [
+                    "accelerometer",
+                    "battery",
+                    "experimental",
+                    "gyro",
+                    "needsHardwareTest"
+                  ]
+                },
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "driver": {
+                "const": "DS4"
+              }
+            },
+            "required": [
+              "driver"
+            ]
+          },
+          "then": {
+            "properties": {
+              "variant": {
+                "enum": [
+                  "dualShock4",
+                  "unknown"
+                ]
+              },
+              "flags": {
+                "items": {
+                  "enum": [
+                    "accelerometer",
+                    "battery",
+                    "gyro",
+                    "lightbar",
+                    "touchpad"
+                  ]
+                },
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "driver": {
+                "const": "DualSense"
+              }
+            },
+            "required": [
+              "driver"
+            ]
+          },
+          "then": {
+            "properties": {
+              "variant": {
+                "enum": [
+                  "dualSense",
+                  "unknown"
+                ]
+              },
+              "flags": {
+                "items": {
+                  "enum": [
+                    "accelerometer",
+                    "adaptiveTriggers",
+                    "battery",
+                    "experimental",
+                    "gyro",
+                    "lightbar",
+                    "microphoneMute",
+                    "needsHardwareTest",
+                    "touchpad"
+                  ]
+                },
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "driver": {
+                "const": "SteamController"
+              }
+            },
+            "required": [
+              "driver"
+            ]
+          },
+          "then": {
+            "properties": {
+              "variant": {
+                "enum": [
+                  "steamController",
+                  "unknown"
+                ]
+              },
+              "flags": {
+                "items": {
+                  "enum": [
+                    "battery",
+                    "experimental",
+                    "gyro",
+                    "lizardMode",
+                    "needsHardwareTest",
+                    "trackpads",
+                    "wirelessReceiver"
+                  ]
+                },
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "driver": {
+                "const": "SwitchPro"
+              }
+            },
+            "required": [
+              "driver"
+            ]
+          },
+          "then": {
+            "properties": {
+              "variant": {
+                "enum": [
+                  "switchPro",
+                  "unknown"
+                ]
+              },
+              "flags": {
+                "items": {
+                  "enum": [
+                    "calibration",
+                    "experimental",
+                    "imu",
+                    "needsHardwareTest",
+                    "rumble",
+                    "usbHandshake"
+                  ]
+                },
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "driver": {
+                "const": "XboxAdaptiveJoystick"
+              }
+            },
+            "required": [
+              "driver"
+            ]
+          },
+          "then": {
+            "properties": {
+              "variant": {
+                "enum": [
+                  "unknown",
+                  "xboxAdaptiveJoystick"
+                ]
+              },
+              "flags": {
+                "items": {
+                  "enum": [
+                    "experimental",
+                    "genericHIDPackets",
+                    "needsHardwareTest",
+                    "rawUSBPackets"
+                  ]
+                },
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "driver": {
+                "const": "GenericHID"
+              }
+            },
+            "required": [
+              "driver"
+            ]
+          },
+          "then": {
+            "properties": {
+              "variant": {
+                "enum": [
+                  "genericHID"
+                ]
+              }
+            },
+            "not": {
+              "required": [
+                "flags"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "usbOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "interface": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "configuration": {
+          "const": "set1-before-claim"
+        },
+        "post_handshake_settle_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endpoints": {
+          "type": "object",
+          "required": [
+            "in",
+            "out"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "in": {
+              "type": "integer",
+              "minimum": 128,
+              "maximum": 255
+            },
+            "out": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 127
+            }
+          }
+        }
+      },
+      "minProperties": 1
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "source",
+        "verified"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "enum": [
+            "local-hardware",
+            "linux-xpad.c",
+            "linux-hid-steam.c",
+            "linux-hid-playstation.c",
+            "linux-hid-sony.c",
+            "linux-hid-nintendo.c",
+            "tester-packets"
+          ]
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 7
+        },
+        "verified": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "usb"
+        ]
+      },
+      "then": {
+        "properties": {
+          "transport": {
+            "const": "usb"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "protocol": {
+            "properties": {
+              "startup_packets": {}
+            },
+            "required": [
+              "startup_packets"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "protocol"
+        ]
+      },
+      "then": {
+        "properties": {
+          "protocol": {
+            "properties": {
+              "driver": {
+                "const": "GIP"
+              }
+            },
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "protocol": {
+            "properties": {
+              "driver": {
+                "const": "GIP"
+              }
+            },
+            "required": [
+              "driver"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "protocol",
+          "usb"
+        ]
+      },
+      "then": {
+        "properties": {
+          "usb": {
+            "properties": {
+              "endpoints": {
+                "not": {
+                  "const": {
+                    "in": 130,
+                    "out": 2
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "protocol": {
+            "properties": {
+              "driver": {
+                "const": "Xbox360"
+              }
+            },
+            "required": [
+              "driver"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "protocol",
+          "usb"
+        ]
+      },
+      "then": {
+        "properties": {
+          "usb": {
+            "properties": {
+              "endpoints": {
+                "not": {
+                  "const": {
+                    "in": 129,
+                    "out": 1
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        }
+      }
+    }
+  ]
+}

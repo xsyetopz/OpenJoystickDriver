@@ -32,7 +32,7 @@ import OpenJoystickDriverKit
       } else {
         await syncFromDaemonNow()
       }
-      inputMonitoring = probeBundledDaemonInputMonitoringState()
+      inputMonitoring = await probeBundledDaemonInputMonitoringState()
       return
     }
 
@@ -56,7 +56,7 @@ import OpenJoystickDriverKit
         ]
       )
     }
-    guard ensureBundleSignatureValid(for: "Request Access") else {
+    guard await ensureBundleSignatureValid(for: "Request Access") else {
       throw NSError(
         domain: "OpenJoystickDriver",
         code: 1,
@@ -85,49 +85,20 @@ import OpenJoystickDriverKit
   }
 
   func waitForDaemonInputMonitoringDecision() async -> String {
-    var state = probeBundledDaemonInputMonitoringState()
+    var state = await probeBundledDaemonInputMonitoringState()
     for _ in 0..<inputMonitoringPromptPollAttempts {
       if state == "granted" || state == "denied" { break }
       try? await Task.sleep(nanoseconds: inputMonitoringPromptPollNanoseconds)
-      state = probeBundledDaemonInputMonitoringState()
+      state = await probeBundledDaemonInputMonitoringState()
     }
     return state
   }
 
-  func probeBundledDaemonInputMonitoringState() -> String {
-    let executableURL = DaemonManager.daemonExecutableURL(forMainBundleURL: Bundle.main.bundleURL)
-    guard FileManager.default.fileExists(atPath: executableURL.path) else { return "unknown" }
-
-    let process = Process()
-    process.executableURL = executableURL
-    process.environment = ProcessInfo.processInfo.environment.merging(
-      ["OJD_PERMISSION_CHECK_ONLY": "1"]
-    ) { _, new in new }
-    let stdout = Pipe()
-    process.standardOutput = stdout
-    process.standardError = Pipe()
-
-    do {
-      try process.run()
-      process.waitUntilExit()
-    } catch {
-      print("[AppModel] Failed to probe daemon Input Monitoring state: \(error)")
-      return "unknown"
-    }
-
-    guard process.terminationStatus == 0 else { return "unknown" }
-    let data = stdout.fileHandleForReading.readDataToEndOfFile()
-    guard let state = String(bytes: data, encoding: .utf8)?
-      .trimmingCharacters(in: .whitespacesAndNewlines)
-    else {
-      return "unknown"
-    }
-    switch state {
-    case "granted", "denied", "unknown":
-      return state
-    default:
-      return "unknown"
-    }
+  func probeBundledDaemonInputMonitoringState() async -> String {
+    let state = await PermissionManager.daemonAccessStateAsync(
+      mainBundleURL: Bundle.main.bundleURL
+    )
+    return state.description
   }
 
   func requestBundledDaemonInputMonitoringPrompt() async throws {
@@ -218,7 +189,7 @@ import OpenJoystickDriverKit
     defer { daemonRestarting = false }
 
     guard ensureRunningFromApplications() else { return }
-    guard ensureBundleSignatureValid(for: "Request Access") else { return }
+    guard await ensureBundleSignatureValid(for: "Request Access") else { return }
 
     do {
       let shouldInstall = !daemonInstalled
@@ -242,6 +213,51 @@ import OpenJoystickDriverKit
     try? await Task.sleep(nanoseconds: 1_000_000_000)
     client.connect()
     await syncFromDaemonNow()
+  }
+
+  func refreshStaleInputMonitoringPermissions() async {
+    daemonError = nil
+    daemonRestarting = true
+    defer { daemonRestarting = false }
+
+    let result: Result<Void, Error> = await Task.detached {
+      do {
+        for identifier in ["com.openjoystickdriver", "com.openjoystickdriver.daemon"] {
+          let reset = try BoundedProcessRunner.run(
+            executableURL: URL(fileURLWithPath: "/usr/bin/tccutil"),
+            arguments: ["reset", "ListenEvent", identifier],
+            timeoutSeconds: 5,
+            maximumOutputBytes: 65_536
+          )
+          guard !reset.timedOut, reset.terminationStatus == 0 else {
+            throw NSError(
+              domain: "OpenJoystickDriver.PermissionRefresh",
+              code: Int(reset.terminationStatus),
+              userInfo: [NSLocalizedDescriptionKey: reset.output]
+            )
+          }
+        }
+        if DaemonManager.isInstalled { try DaemonManager.uninstall() }
+        try DaemonManager.install()
+        return .success(())
+      } catch {
+        return .failure(error)
+      }
+    }.value
+
+    switch result {
+    case .success:
+      appInputMonitoring = "unknown"
+      inputMonitoring = "unknown"
+      inputMonitoringAssist =
+        "Old Input Monitoring decisions were removed. Request access again for each OJD item."
+      client.disconnect()
+      try? await Task.sleep(nanoseconds: 1_000_000_000)
+      client.connect()
+      openInputMonitoringSettings()
+    case .failure(let error):
+      daemonError = error.localizedDescription
+    }
   }
 
   func openInputMonitoringSettings(

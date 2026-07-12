@@ -5,6 +5,43 @@ import IOKit
 import IOKit.hid
 import OpenJoystickDriverKit
 
+private final class ForegroundConsumerHIDManagerState: @unchecked Sendable {
+  private let lock = NSLock()
+  private let manager: IOHIDManager
+  private var isOpen = false
+
+  init() {
+    manager = IOHIDManagerCreate(
+      kCFAllocatorDefault,
+      IOOptionBits(kIOHIDOptionsTypeNone)
+    )
+    IOHIDManagerSetDeviceMatching(manager, nil)
+  }
+
+  deinit {
+    lock.withLock {
+      if isOpen {
+        IOHIDManagerClose(manager, IOOptionBits(kIOHIDOptionsTypeNone))
+        isOpen = false
+      }
+    }
+  }
+
+  func withOpenManager<T>(_ body: (IOHIDManager) -> T) -> T? {
+    lock.withLock {
+      if !isOpen {
+        let result = IOHIDManagerOpen(
+          manager,
+          IOOptionBits(kIOHIDOptionsTypeNone)
+        )
+        guard result == kIOReturnSuccess else { return nil }
+        isOpen = true
+      }
+      return body(manager)
+    }
+  }
+}
+
 /// Gates controller output unless the frontmost app is one of the current
 /// OpenJoystickDriver virtual-device consumers.
 final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
@@ -26,6 +63,7 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   private var lastAppliedConsumerBundleRoots: Set<String> = []
   private var lastAppliedObservedBundleRoots: Set<String> = []
   private var lastAppliedActiveRouteToken: String?
+  private static let consumerHIDManagerState = ForegroundConsumerHIDManagerState()
 
   init(
     deviceManager: DeviceManager,
@@ -68,7 +106,8 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
         queue: .main
       ) { [weak self] notification in
         guard let self else { return }
-        let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+        let app =
+          notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
         self.updateFrontmostBundleRoot(Self.bundleRootPath(for: app))
         self.scheduleBurstPolling()
       }
@@ -212,6 +251,16 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
     }
   }
 
+  /// Runs one production consumer-discovery scan inside an explicit autorelease pool.
+  ///
+  /// Used by the daemon's isolated allocation probe; it does not start XPC, USB,
+  /// virtual output, or the periodic monitor.
+  static func diagnosticConsumerClientCount() -> Int {
+    autoreleasepool {
+      consumerClientSamples().count
+    }
+  }
+
   private static func consumerClientSamples() -> [ForegroundConsumerClientSample] {
     var samples: [ForegroundConsumerClientSample] = []
     for service in virtualDeviceServices() {
@@ -222,25 +271,21 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   }
 
   private static func virtualDeviceServices() -> [io_service_t] {
-    let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
-    IOHIDManagerSetDeviceMatching(manager, nil)
-    let openResult = IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
-    guard openResult == kIOReturnSuccess else { return [] }
-    defer { IOHIDManagerClose(manager, IOOptionBits(kIOHIDOptionsTypeNone)) }
+    consumerHIDManagerState.withOpenManager { manager in
+      guard let rawDevices = IOHIDManagerCopyDevices(manager) else { return [] }
+      let devices = rawDevices as? Set<IOHIDDevice> ?? []
+      var services: [io_service_t] = []
 
-    guard let rawDevices = IOHIDManagerCopyDevices(manager) else { return [] }
-    let devices = rawDevices as? Set<IOHIDDevice> ?? []
-    var services: [io_service_t] = []
+      for device in devices {
+        let service = IOHIDDeviceGetService(device)
+        guard service != 0 else { continue }
+        guard isOJDVirtualDevice(service: service, device: device) else { continue }
+        IOObjectRetain(service)
+        services.append(service)
+      }
 
-    for device in devices {
-      let service = IOHIDDeviceGetService(device)
-      guard service != 0 else { continue }
-      guard isOJDVirtualDevice(service: service, device: device) else { continue }
-      IOObjectRetain(service)
-      services.append(service)
-    }
-
-    return services
+      return services
+    } ?? []
   }
 
   private static func isOJDVirtualDevice(service: io_service_t, device: IOHIDDevice) -> Bool {

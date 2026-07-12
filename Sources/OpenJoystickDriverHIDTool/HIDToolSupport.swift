@@ -5,9 +5,7 @@ import IOKit.hid
 import SwiftUSB
 
 func parseInt(_ s: String) -> Int? {
-  if s.hasPrefix("0x") || s.hasPrefix("0X") {
-    return Int(s.dropFirst(2), radix: 16)
-  }
+  if s.hasPrefix("0x") || s.hasPrefix("0X") { return Int(s.dropFirst(2), radix: 16) }
   return Int(s)
 }
 
@@ -47,15 +45,17 @@ func enumerateDevices(matching: [String: Any]?) -> [IOHIDDevice] {
   }
   _ = IOHIDManagerOpen(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
   defer { IOHIDManagerClose(mgr, IOOptionBits(kIOHIDOptionsTypeNone)) }
-  return Array(((IOHIDManagerCopyDevices(mgr) as? Set<IOHIDDevice>) ?? []).sorted {
-    let a =
-      intProp($0, kIOHIDVendorIDKey as String) * 0x1_0000
-      + intProp($0, kIOHIDProductIDKey as String)
-    let b =
-      intProp($1, kIOHIDVendorIDKey as String) * 0x1_0000
-      + intProp($1, kIOHIDProductIDKey as String)
-    return a < b
-  })
+  return Array(
+    ((IOHIDManagerCopyDevices(mgr) as? Set<IOHIDDevice>) ?? []).sorted {
+      let a =
+        intProp($0, kIOHIDVendorIDKey as String) * 0x1_0000
+        + intProp($0, kIOHIDProductIDKey as String)
+      let b =
+        intProp($1, kIOHIDVendorIDKey as String) * 0x1_0000
+        + intProp($1, kIOHIDProductIDKey as String)
+      return a < b
+    }
+  )
 }
 
 func managerDevices(_ mgr: IOHIDManager) -> [IOHIDDevice] {
@@ -80,26 +80,20 @@ func managerDevices(_ mgr: IOHIDManager) -> [IOHIDDevice] {
 }
 
 func inputElements(_ dev: IOHIDDevice) -> [IOHIDElement] {
-  guard let rawElements = IOHIDDeviceCopyMatchingElements(
-    dev,
-    nil,
-    IOOptionBits(kIOHIDOptionsTypeNone)
-  ) as? [IOHIDElement] else {
-    return []
-  }
+  guard
+    let rawElements = IOHIDDeviceCopyMatchingElements(dev, nil, IOOptionBits(kIOHIDOptionsTypeNone))
+      as? [IOHIDElement]
+  else { return [] }
   return rawElements.filter { element in
     let type = IOHIDElementGetType(element)
-    return type == kIOHIDElementTypeInput_Misc
-      || type == kIOHIDElementTypeInput_Button
+    return type == kIOHIDElementTypeInput_Misc || type == kIOHIDElementTypeInput_Button
       || type == kIOHIDElementTypeInput_Axis
   }
 }
 
 func printMonitorNoDeviceHint(vid: Int, pid: Int) {
   let vendorDevices = enumerateDevices(matching: [kIOHIDVendorIDKey as String: vid])
-  print(
-    "HINT no exact IOHID match; same-vendor devices=\(vendorDevices.count)"
-  )
+  print("HINT no exact IOHID match; same-vendor devices=\(vendorDevices.count)")
   for dev in vendorDevices {
     let candidatePID = intProp(dev, kIOHIDProductIDKey as String)
     let product = strProp(dev, kIOHIDProductKey as String) ?? "(unknown)"
@@ -107,8 +101,7 @@ func printMonitorNoDeviceHint(vid: Int, pid: Int) {
     let primaryPage = intProp(dev, kIOHIDPrimaryUsagePageKey as String)
     let primaryUsage = intProp(dev, kIOHIDPrimaryUsageKey as String)
     print(
-      "HINT_DEVICE VID:0x\(String(vid, radix: 16))"
-        + " PID:0x\(String(candidatePID, radix: 16))"
+      "HINT_DEVICE VID:0x\(String(vid, radix: 16))" + " PID:0x\(String(candidatePID, radix: 16))"
         + " transport=\(transport) primary=\(primaryPage):\(primaryUsage)"
         + " product=\"\(product)\""
     )
@@ -132,6 +125,8 @@ func printUsageAndExit(_ code: Int32) -> Never {
       OpenJoystickDriverHIDTool --monitor [--vid 0x4f4a --pid 0x4447] [--seconds 10]
       OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000\
         [--endpoint 0x81] [--interface 0] [--length 64] [--seconds 20] [--detach]
+      OpenJoystickDriverHIDTool --record-probe <record.json>
+        [--seconds 30] [--detach] [--validate-only]
 
     Options:
       --list           List HID devices (vid/pid/product/transport + report sizes).
@@ -141,13 +136,15 @@ func printUsageAndExit(_ code: Int32) -> Never {
       --set-report     With --open, send one Xbox 360-style rumble output report.
       --monitor        Open matching HID devices and print input value/report callbacks.
       --usb-monitor    Claim one USB interface and print raw interrupt IN packets.
-      --detach         With --usb-monitor, try detaching the kernel driver first.
+      --record-probe  Validate and exercise one GIP or Xbox 360 JSON record over raw USB.
+      --validate-only  Validate --record-probe input without opening physical hardware.
+      --detach         With a raw USB mode, try detaching the kernel driver first.
       --vid <int>      Vendor ID (decimal or 0x... hex).
       --pid <int>      Product ID (decimal or 0x... hex).
       --interface <n>  USB interface number for --usb-monitor (default: 0).
       --endpoint <n>   Interrupt IN endpoint for --usb-monitor; omitted sweeps 0x81...0x8f.
       --length <n>     Read length for --usb-monitor (default: 64, max: 1024).
-      --seconds <int>  Monitor duration in seconds (default: 10, max: 60).
+      --seconds <int>  Monitor duration in seconds (default varies, max: 300).
       --help           Show this help.
 
     """,

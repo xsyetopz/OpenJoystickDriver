@@ -172,6 +172,31 @@ struct LocalizationResourceTests {
     #expect(Set(templateCopyLocales) == expectedTemplateCopyLocales)
   }
 
+  @Test("localized values contain no unexpected control characters")
+  func localizedValuesContainNoUnexpectedControlCharacters() throws {
+    let urls = try #require(
+      Bundle.module.urls(forResourcesWithExtension: "strings", subdirectory: nil)
+    )
+    for url in urls {
+      let data = try Data(contentsOf: url)
+      let plist = try PropertyListSerialization.propertyList(
+        from: data,
+        options: [],
+        format: nil
+      )
+      let strings = try #require(plist as? [String: String])
+      for (key, value) in strings {
+        let unexpected = value.unicodeScalars.filter {
+          $0.value < 0x20 && $0.value != 0x09 && $0.value != 0x0A
+        }
+        #expect(
+          unexpected.isEmpty,
+          "Unexpected control character in \(url.lastPathComponent):\(key)"
+        )
+      }
+    }
+  }
+
   @Test("bundle localization follows the user's preferred macOS locale")
   func bundleLocalizationFollowsPreferredLocale() {
     let localization = Localization(preferredLanguages: ["en-US"])

@@ -60,8 +60,19 @@ public final class CompositeOutputDispatcher: OutputDispatcher, @unchecked Senda
     case .secondaryOnly:
       if let s { await s.dispatch(events: events, from: identifier) }
     case .both:
-      await p.dispatch(events: events, from: identifier)
-      if let s { await s.dispatch(events: events, from: identifier) }
+      if let s {
+        async let primaryDispatch: Void = p.dispatch(
+          events: events,
+          from: identifier
+        )
+        async let secondaryDispatch: Void = s.dispatch(
+          events: events,
+          from: identifier
+        )
+        _ = await (primaryDispatch, secondaryDispatch)
+      } else {
+        await p.dispatch(events: events, from: identifier)
+      }
     }
   }
 }

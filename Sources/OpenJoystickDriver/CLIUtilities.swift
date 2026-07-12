@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverKit
 
 /// Timeout for XPC calls from CLI - keeps commands
 /// responsive when daemon is not running.
@@ -83,14 +84,14 @@ func requireApplicationsBundleOrExit() {
 /// after signing, which breaks the signature and causes daemon registration to fail.
 func requireValidBundleSignatureOrExit(action: String) {
   let appPath = Bundle.main.bundlePath
-  let process = Process()
-  process.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
-  process.arguments = ["--verify", "--deep", "--strict", "--verbose=2", appPath]
-  let pipe = Pipe()
-  process.standardOutput = pipe
-  process.standardError = pipe
+  let result: BoundedProcessResult
   do {
-    try process.run()
+    result = try BoundedProcessRunner.run(
+      executableURL: URL(fileURLWithPath: "/usr/bin/codesign"),
+      arguments: ["--verify", "--deep", "--strict", "--verbose=2", appPath],
+      timeoutSeconds: 15,
+      maximumOutputBytes: 262_144
+    )
   } catch {
     print(
       "ERROR: \(action) failed: could not run codesign verification: " +
@@ -98,9 +99,12 @@ func requireValidBundleSignatureOrExit(action: String) {
     )
     exit(1)
   }
-  process.waitUntilExit()
-  let out = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-  guard process.terminationStatus == 0 else {
+  if result.timedOut {
+    print("ERROR: \(action) failed: codesign verification timed out after 15 seconds.")
+    exit(1)
+  }
+  let out = result.output
+  guard result.terminationStatus == 0 else {
     if out.contains("a sealed resource is missing or invalid") {
       print(
         "ERROR: \(action) failed: this app bundle's signature is INVALID " +

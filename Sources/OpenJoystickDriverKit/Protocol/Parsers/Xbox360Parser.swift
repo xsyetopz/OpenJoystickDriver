@@ -82,8 +82,9 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
 ///   byte 1 : 0x03 (length)
 ///   byte 2 : LED pattern (see Xbox360LEDPattern)
 /// ```
-public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupOutputProvider,
-  @unchecked Sendable
+public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPlayerIndicatorOutput,
+  USBStartupOutputProvider, ControllerInputConnectionLifecycle,
+  USBInputConnectionOutputProvider, @unchecked Sendable
 {
 
   // MARK: - Thread safety
@@ -93,6 +94,9 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
   //   exclusively from the owning DevicePipeline actor — no concurrent access.
 
   private let outEndpoint: UInt8
+  private let isWirelessReceiver: Bool
+  private var receiverConnected = false
+  private var pendingConnectionState: ControllerInputConnectionState?
 
   private var prevButtons: UInt16 = 0
   private var prevLT: UInt8 = 0
@@ -103,9 +107,19 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
   private var prevRSY: Int16 = 0
 
   /// Creates a new Xbox360Parser.
-  /// - Parameter outEndpoint: Interrupt OUT endpoint address (default 0x01).
-  public init(outEndpoint: UInt8 = 0x01) {
+  /// - Parameters:
+  ///   - outEndpoint: Interrupt OUT endpoint address (default 0x01).
+  ///   - isWirelessReceiver: Whether reports use the Xbox 360 receiver envelope.
+  public init(outEndpoint: UInt8 = 0x01, isWirelessReceiver: Bool = false) {
     self.outEndpoint = outEndpoint
+    self.isWirelessReceiver = isWirelessReceiver
+  }
+
+  public var requiresInputConnectionBeforeOutput: Bool { isWirelessReceiver }
+
+  public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? {
+    defer { pendingConnectionState = nil }
+    return pendingConnectionState
   }
 
   // MARK: - InputParser
@@ -118,15 +132,35 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
   // swiftlint:enable async_without_await
 
   public func usbStartupOutputPackets() -> [[UInt8]] {
-    [[0x01, 0x03, Xbox360LEDPattern.player1On.rawValue]]
+    isWirelessReceiver
+      ? []
+      : [[0x01, 0x03, Xbox360LEDPattern.player1On.rawValue]]
   }
 
-  /// Parses one Xbox 360 input report and returns zero or more controller events.
-  ///
-  /// Silently ignores non-input report types (e.g. connection/disconnection events
-  /// on the wireless receiver). Returns an empty array for reports that carry no
-  /// state change since the previous call.
+  public func usbInputConnectionOutputPackets(
+    for state: ControllerInputConnectionState
+  ) -> [[UInt8]] {
+    guard isWirelessReceiver, state == .connected else { return [] }
+    return [wirelessLEDPacket(pattern: .player1On)]
+  }
+
+  /// Parses either a wired report or an Xbox 360 wireless receiver envelope.
   public func parse(data: Data) throws -> [ControllerEvent] {
+    guard isWirelessReceiver else { return parseWired(data: data) }
+    guard data.count >= 2 else { return [] }
+
+    if data[0] & 0x08 != 0 {
+      updateReceiverConnection(isConnected: data[1] & 0x80 != 0)
+    }
+    guard data[1] == 0x01, data.count >= xbox360InputReportLength + 4 else {
+      return []
+    }
+    updateReceiverConnection(isConnected: true)
+    return parseWired(data: Data(data.dropFirst(4)))
+  }
+
+  /// Parses one wired-format Xbox 360 state report.
+  private func parseWired(data: Data) -> [ControllerEvent] {
     guard !data.isEmpty, data[0] == xbox360InputReportType else { return [] }
     guard data.count >= xbox360InputReportLength, data[1] == xbox360InputReportLengthByte else {
       return []
@@ -168,7 +202,7 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
   ///   - left: Left (strong) motor intensity (0–255).
   ///   - right: Right (weak) motor intensity (0–255).
   public func sendRumble(handle: USBDeviceHandle, left: UInt8, right: UInt8) throws {
-    let packet: [UInt8] = [0x00, 0x08, 0x00, left, right, 0x00, 0x00, 0x00]
+    let packet = rumblePacket(left: left, right: right)
     _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
   }
 
@@ -188,8 +222,64 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, USBStartupO
   ///   - handle: Active USB device handle.
   ///   - pattern: One of the ``Xbox360LEDPattern`` values.
   public func sendLED(handle: USBDeviceHandle, pattern: Xbox360LEDPattern) throws {
-    let packet: [UInt8] = [0x01, 0x03, pattern.rawValue]
+    let packet = ledPacket(pattern: pattern)
     _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
+  }
+
+  func rumblePacket(left: UInt8, right: UInt8) -> [UInt8] {
+    if isWirelessReceiver {
+      return [
+        0x00, 0x01, 0x0F, 0xC0, 0x00, left,
+        right, 0x00, 0x00, 0x00, 0x00, 0x00,
+      ]
+    }
+    return [0x00, 0x08, 0x00, left, right, 0x00, 0x00, 0x00]
+  }
+
+  func ledPacket(pattern: Xbox360LEDPattern) -> [UInt8] {
+    isWirelessReceiver
+      ? wirelessLEDPacket(pattern: pattern)
+      : [0x01, 0x03, pattern.rawValue]
+  }
+
+  private func wirelessLEDPacket(pattern: Xbox360LEDPattern) -> [UInt8] {
+    [
+      0x00, 0x00, 0x08, 0x40 + pattern.rawValue,
+      0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00,
+    ]
+  }
+
+  private func updateReceiverConnection(isConnected: Bool) {
+    guard receiverConnected != isConnected else { return }
+    receiverConnected = isConnected
+    pendingConnectionState = isConnected ? .connected : .disconnected
+    if !isConnected {
+      prevButtons = 0
+      prevLT = 0
+      prevRT = 0
+      prevLSX = 0
+      prevLSY = 0
+      prevRSX = 0
+      prevRSY = 0
+    }
+  }
+
+  static func ledPattern(for indicator: PhysicalPlayerIndicator) -> Xbox360LEDPattern {
+    switch indicator {
+    case .off: .allOff
+    case .player1: .player1On
+    case .player2: .player2On
+    case .player3: .player3On
+    case .player4: .player4On
+    }
+  }
+
+  public func sendPhysicalPlayerIndicator(
+    handle: USBDeviceHandle,
+    indicator: PhysicalPlayerIndicator
+  ) throws {
+    try sendLED(handle: handle, pattern: Self.ledPattern(for: indicator))
   }
 
   // MARK: - Private parsing

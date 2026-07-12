@@ -13,10 +13,19 @@ public final class ParserRegistry: Sendable {
     catalog.parserName(for: identifier)
   }
 
+  /// Exact profile-backed HID devices that may not advertise GamePad usage.
+  public func hidProfileIdentifiers() -> [DeviceIdentifier] { catalog.hidProfileIdentifiers }
+
   /// Returns parser for given device identifier.
   public func parser(for identifier: DeviceIdentifier) -> any InputParser {
+    parser(for: identifier, transportProfile: catalog.transportProfile(for: identifier))
+  }
+
+  /// Returns the parser using transport facts resolved from the connected USB device.
+  public func parser(for identifier: DeviceIdentifier, transportProfile: DeviceTransportProfile)
+    -> any InputParser
+  {
     let runtimeProfile = catalog.runtimeProfile(for: identifier)
-    let transportProfile = runtimeProfile.transportProfile
     switch catalog.parserName(for: identifier) {
     case "GIP":
       return GIPParser(
@@ -31,7 +40,11 @@ public final class ParserRegistry: Sendable {
         isWirelessReceiver: runtimeProfile.mappingFlags.contains("wirelessReceiver")
       )
     case "SwitchPro": return SwitchProParser()
-    case "Xbox360": return Xbox360Parser(outEndpoint: transportProfile.outputEndpoint)
+    case "Xbox360":
+      return Xbox360Parser(
+        outEndpoint: transportProfile.outputEndpoint,
+        isWirelessReceiver: runtimeProfile.protocolVariant == .xbox360Wireless
+      )
     default: return GenericHIDParser(identifier: identifier)
     }
   }

@@ -48,7 +48,7 @@ public enum Button: String, Sendable, CaseIterable {
 }
 
 /// One of eight compass directions, or neutral (center) for the D-pad.
-public enum DpadDirection: Sendable {
+public enum DpadDirection: Equatable, Sendable {
   case neutral
   case north, northEast, east, southEast, south, southWest, west, northWest
 }

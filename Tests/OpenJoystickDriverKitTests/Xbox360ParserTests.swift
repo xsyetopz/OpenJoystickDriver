@@ -203,7 +203,7 @@ struct Xbox360ParserTests {
     let rs = events.first { if case .rightStickChanged = $0 { return true }; return false }
     guard case .rightStickChanged(let rx, let ry) = rs else { Issue.record("no RS event"); return }
     #expect(rx == -1.0)
-    // RSY raw positive = stick down → normalized output negative
+    // RSY raw positive = stick down -> normalized output negative
     #expect(ry < -0.99)
   }
   @Test
@@ -249,6 +249,47 @@ struct Xbox360ParserTests {
     bytes[0] = 0x08  // connection notification
     let events = try parser.parse(data: Data(bytes))
     #expect(events.isEmpty)
+  }
+
+  @Test
+  func testWirelessReceiverLifecycleAndWrappedInput() throws {
+    let parser = Xbox360Parser(isWirelessReceiver: true)
+
+    #expect(parser.requiresInputConnectionBeforeOutput)
+    #expect(parser.usbStartupOutputPackets().isEmpty)
+    #expect(try parser.parse(data: Data([0x08, 0x80])).isEmpty)
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
+    #expect(parser.consumeInputConnectionStateChange() == nil)
+
+    var state = [UInt8](repeating: 0, count: 20)
+    state[0] = 0x00
+    state[1] = 0x14
+    state[3] = 0x01
+    let events = try parser.parse(data: Data([0x00, 0x01, 0x00, 0x00] + state))
+    #expect(events.contains(.buttonPressed(.a)))
+    #expect(parser.consumeInputConnectionStateChange() == nil)
+
+    #expect(try parser.parse(data: Data([0x08, 0x00])).isEmpty)
+    #expect(parser.consumeInputConnectionStateChange() == .disconnected)
+  }
+
+  @Test
+  func testWirelessReceiverSourceBackedOutputPackets() {
+    let parser = Xbox360Parser(isWirelessReceiver: true)
+
+    #expect(parser.rumblePacket(left: 0x40, right: 0x20) == [
+      0x00, 0x01, 0x0F, 0xC0, 0x00, 0x40,
+      0x20, 0x00, 0x00, 0x00, 0x00, 0x00,
+    ])
+    #expect(parser.ledPacket(pattern: .player1On) == [
+      0x00, 0x00, 0x08, 0x46,
+      0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00,
+    ])
+    #expect(parser.usbInputConnectionOutputPackets(for: .connected) == [
+      parser.ledPacket(pattern: .player1On),
+    ])
+    #expect(parser.usbInputConnectionOutputPackets(for: .disconnected).isEmpty)
   }
 
   @Test

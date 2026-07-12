@@ -245,7 +245,7 @@ extension DeviceInputState {
     }
   }
 
-  private func currentDpadDirection() -> DpadDirection {
+  func currentDpadDirection() -> DpadDirection {
     let up = pressedButtons.contains(Button.dpadUp.rawValue)
     let down = pressedButtons.contains(Button.dpadDown.rawValue)
     let left = pressedButtons.contains(Button.dpadLeft.rawValue)

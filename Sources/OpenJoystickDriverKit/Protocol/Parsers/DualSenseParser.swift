@@ -13,6 +13,20 @@ private let dualSenseBluetoothInputReportID: UInt8 = 0x31
 private let dualSenseBluetoothInputReportLength = 78
 private let dualSenseBluetoothHIDInputTransaction: UInt8 = 0xA1
 private let dualSenseInputCRC32Seed: UInt8 = 0xA1
+private let dualSenseOutputCRC32Seed: UInt8 = 0xA2
+private let dualSenseUSBOutputReportID: UInt8 = 0x02
+private let dualSenseUSBOutputReportLength = 63
+private let dualSenseBluetoothOutputReportID: UInt8 = 0x31
+private let dualSenseBluetoothOutputReportLength = 78
+private let dualSenseOutputTag: UInt8 = 0x10
+private let dualSenseCompatibleVibrationFlags: UInt8 = 0x03
+private let dualSensePlayerIndicatorFlag: UInt8 = 0x10
+private let dualSenseLightbarFlag: UInt8 = 0x04
+
+private enum DualSenseConnectionMode {
+  case usb
+  case bluetooth
+}
 
 public enum DualSenseParserError: Error, Equatable {
   case invalidBluetoothCRC
@@ -26,7 +40,9 @@ public enum DualSenseParserError: Error, Equatable {
 /// generic experimental button. Bluetooth report `0x31` carries the same
 /// common input report after its two-byte header and is accepted only when
 /// its Linux-compatible CRC32 validates.
-public final class DualSenseParser: InputParser, @unchecked Sendable {
+public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
+  PhysicalHIDPlayerIndicatorOutput, PhysicalHIDColorOutput, @unchecked Sendable
+{
 
   private enum ReportOffset {
     static let leftStickX = 0
@@ -50,9 +66,17 @@ public final class DualSenseParser: InputParser, @unchecked Sendable {
   private var prevLSY = UInt8(dualSenseAxisCenter)
   private var prevRSX = UInt8(dualSenseAxisCenter)
   private var prevRSY = UInt8(dualSenseAxisCenter)
+  private var connectionMode: DualSenseConnectionMode
+  private var outputSequence: UInt8 = 0
+
+  public var physicalLightingFeatures: [PhysicalLightingFeature] {
+    [.playerIndicator, .programmableColor]
+  }
 
   /// Creates a new DualSense parser.
-  public init() {}
+  public init(prefersBluetooth: Bool = false) {
+    connectionMode = prefersBluetooth ? .bluetooth : .usb
+  }
 
   /// No-op for the current experimental HID input slice.
   public func performHandshake(handle: USBDeviceHandle?) async throws {
@@ -103,15 +127,96 @@ public final class DualSenseParser: InputParser, @unchecked Sendable {
     return events
   }
 
+  public func physicalRumbleReport(left: UInt8, right: UInt8, lt _: UInt8, rt _: UInt8)
+    -> PhysicalHIDOutputReport
+  {
+    outputReport(validFlag0: dualSenseCompatibleVibrationFlags, motorRight: right, motorLeft: left)
+  }
+
+  public func physicalPlayerIndicatorReport(_ indicator: PhysicalPlayerIndicator)
+    -> PhysicalHIDOutputReport
+  {
+    let patterns: [PhysicalPlayerIndicator: UInt8] = [
+      .off: 0,
+      .player1: 0x04,
+      .player2: 0x0A,
+      .player3: 0x15,
+      .player4: 0x1B,
+    ]
+    return outputReport(
+      validFlag1: dualSensePlayerIndicatorFlag,
+      playerIndicator: patterns[indicator] ?? 0
+    )
+  }
+
+  public func physicalColorReport(red: UInt8, green: UInt8, blue: UInt8)
+    -> PhysicalHIDOutputReport
+  {
+    outputReport(
+      validFlag1: dualSenseLightbarFlag,
+      red: red,
+      green: green,
+      blue: blue
+    )
+  }
+
+  private func outputReport(
+    validFlag0: UInt8 = 0,
+    validFlag1: UInt8 = 0,
+    motorRight: UInt8 = 0,
+    motorLeft: UInt8 = 0,
+    playerIndicator: UInt8 = 0,
+    red: UInt8 = 0,
+    green: UInt8 = 0,
+    blue: UInt8 = 0
+  ) -> PhysicalHIDOutputReport {
+    switch connectionMode {
+    case .usb:
+      var report = [UInt8](repeating: 0, count: dualSenseUSBOutputReportLength)
+      report[0] = dualSenseUSBOutputReportID
+      report[1] = validFlag0
+      report[2] = validFlag1
+      report[3] = motorRight
+      report[4] = motorLeft
+      report[44] = playerIndicator
+      report[45] = red
+      report[46] = green
+      report[47] = blue
+      return PhysicalHIDOutputReport(reportID: dualSenseUSBOutputReportID, bytes: report)
+    case .bluetooth:
+      var report = [UInt8](repeating: 0, count: dualSenseBluetoothOutputReportLength)
+      report[0] = dualSenseBluetoothOutputReportID
+      report[1] = outputSequence << 4
+      outputSequence = (outputSequence + 1) & 0x0F
+      report[2] = dualSenseOutputTag
+      report[3] = validFlag0
+      report[4] = validFlag1
+      report[5] = motorRight
+      report[6] = motorLeft
+      report[46] = playerIndicator
+      report[47] = red
+      report[48] = green
+      report[49] = blue
+      let crc = dualSenseOutputCRC32(report: report)
+      report[74] = UInt8(truncatingIfNeeded: crc)
+      report[75] = UInt8(truncatingIfNeeded: crc >> 8)
+      report[76] = UInt8(truncatingIfNeeded: crc >> 16)
+      report[77] = UInt8(truncatingIfNeeded: crc >> 24)
+      return PhysicalHIDOutputReport(reportID: dualSenseBluetoothOutputReportID, bytes: report)
+    }
+  }
+
   private func reportPayload(from data: Data) throws -> [UInt8] {
     let bytes = Array(data)
     if bytes.first == dualSenseUSBInputReportID, bytes.count >= dualSenseUSBInputReportLength {
+      connectionMode = .usb
       return Array(bytes.dropFirst())
     }
     if bytes.first == dualSenseBluetoothInputReportID,
       bytes.count >= dualSenseBluetoothInputReportLength
     {
       try validateBluetoothCRC(report: bytes)
+      connectionMode = .bluetooth
       return Array(bytes.dropFirst(2).dropLast(4))
     }
     if bytes.first == dualSenseBluetoothHIDInputTransaction,
@@ -120,6 +225,7 @@ public final class DualSenseParser: InputParser, @unchecked Sendable {
     {
       let report = Array(bytes.dropFirst())
       try validateBluetoothCRC(report: report)
+      connectionMode = .bluetooth
       return Array(report.dropFirst(2).dropLast(4))
     }
     return []
@@ -138,6 +244,14 @@ public final class DualSenseParser: InputParser, @unchecked Sendable {
 
   private func dualSenseBluetoothCRC32(report: [UInt8]) -> UInt32 {
     var crc = updateCRC32(0xFFFF_FFFF, byte: dualSenseInputCRC32Seed)
+    for byte in report.dropLast(4) {
+      crc = updateCRC32(crc, byte: byte)
+    }
+    return ~crc
+  }
+
+  private func dualSenseOutputCRC32(report: [UInt8]) -> UInt32 {
+    var crc = updateCRC32(0xFFFF_FFFF, byte: dualSenseOutputCRC32Seed)
     for byte in report.dropLast(4) {
       crc = updateCRC32(crc, byte: byte)
     }

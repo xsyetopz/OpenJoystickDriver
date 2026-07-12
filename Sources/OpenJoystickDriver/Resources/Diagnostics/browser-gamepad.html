@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenJoystickDriver Browser Gamepad Diagnostic</title>
+<style>
+  :root { color-scheme: light dark; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  body { margin: 0 auto; max-width: 1120px; padding: 28px; line-height: 1.45; }
+  h1 { margin-bottom: 4px; }
+  h2 { font-size: 18px; margin: 0 0 12px; }
+  .muted { color: #7c8490; }
+  .warning { color: #d97706; }
+  .ok { color: #16a34a; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+  .card { border: 1px solid color-mix(in srgb, CanvasText 18%, transparent); border-radius: 12px; padding: 16px; }
+  button, select { font: inherit; margin: 3px 5px 3px 0; padding: 7px 10px; }
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 360px; overflow: auto; font-size: 12px; }
+  .pill { display: inline-block; border-radius: 999px; padding: 2px 8px; margin: 2px; background: color-mix(in srgb, CanvasText 10%, transparent); font-size: 12px; }
+  table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; border-bottom: 1px solid color-mix(in srgb, CanvasText 12%, transparent); padding: 5px; }
+</style>
+</head>
+<body>
+<h1>OpenJoystickDriver Browser Gamepad Diagnostic</h1>
+<p class="muted">Local-only Blink, Gecko, and WebKit comparison. Nothing is uploaded.</p>
+<p id="exposure" class="warning">Focus this page and press a controller button or move an axis once. Some browsers do not expose a gamepad until user interaction.</p>
+
+<div class="grid">
+  <section class="card">
+    <h2>Browser and frame cadence</h2>
+    <div id="environment"></div>
+    <div id="frames"></div>
+  </section>
+  <section class="card">
+    <h2>Connected instances</h2>
+    <div id="duplicates"></div>
+    <div id="gamepads"></div>
+  </section>
+  <section class="card">
+    <h2>Hands-off stability sample</h2>
+    <p>Put the controller down, then sample for 10 seconds. Button transitions suggest misfires; axis delta shows idle drift; long frame gaps show page or browser stalls.</p>
+    <button id="idle-start">Start 10-second sample</button>
+    <div id="idle-result" class="muted">Not sampled.</div>
+  </section>
+  <section class="card">
+    <h2>Feature-detected haptics</h2>
+    <label for="haptic-device">Gamepad:</label>
+    <select id="haptic-device"></select>
+    <div id="haptic-support" class="muted"></div>
+    <button id="dual-rumble" disabled>Dual rumble (500 ms)</button>
+    <button id="trigger-rumble" disabled>Trigger rumble (500 ms)</button>
+    <button id="haptic-reset" disabled>Stop/reset</button>
+    <div id="haptic-result" class="muted">No command sent.</div>
+  </section>
+</div>
+
+<section class="card" style="margin-top:14px">
+  <h2>Reviewable snapshot</h2>
+  <p class="muted">Includes browser user agent and Gamepad <code>id</code> strings, but not serial numbers by design. Review before sharing.</p>
+  <button id="refresh-json">Refresh JSON</button>
+  <button id="copy-json">Copy JSON</button>
+  <button id="download-json">Download JSON</button>
+  <button id="submit-json">Submit to local OJD session</button>
+  <div id="submit-result" class="muted">Not submitted.</div>
+  <pre id="snapshot"></pre>
+</section>
+
+<section class="card" style="margin-top:14px">
+  <h2>Connection events</h2>
+  <pre id="events">No events yet.</pre>
+</section>
+
+<script>
+"use strict";
+
+const eventLog = [];
+const frameIntervals = [];
+let previousFrame = performance.now();
+let lastRender = 0;
+let idleSample = null;
+let lastSnapshot = null;
+
+function currentGamepads() {
+  if (!navigator.getGamepads) return [];
+  return Array.from(navigator.getGamepads()).filter(Boolean);
+}
+
+function actuatorsFor(gamepad) {
+  const found = [];
+  if (gamepad.vibrationActuator) found.push(gamepad.vibrationActuator);
+  if (gamepad.hapticActuators) found.push(...Array.from(gamepad.hapticActuators));
+  return [...new Set(found)];
+}
+
+function effectsFor(actuator) {
+  try {
+    return actuator && actuator.effects ? Array.from(actuator.effects) : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function gamepadSnapshot(gamepad) {
+  const actuators = actuatorsFor(gamepad);
+  return {
+    index: gamepad.index,
+    id: gamepad.id,
+    mapping: gamepad.mapping,
+    connected: gamepad.connected,
+    timestamp: Number(gamepad.timestamp || 0),
+    buttonCount: gamepad.buttons.length,
+    axisCount: gamepad.axes.length,
+    buttons: gamepad.buttons.map((button, index) => ({
+      index,
+      pressed: button.pressed,
+      touched: Boolean(button.touched),
+      value: Number(button.value.toFixed(5))
+    })),
+    axes: gamepad.axes.map((value, index) => ({
+      index,
+      value: Number(value.toFixed(5))
+    })),
+    haptics: actuators.map((actuator, index) => ({
+      index,
+      effects: effectsFor(actuator),
+      hasPlayEffect: typeof actuator.playEffect === "function",
+      hasReset: typeof actuator.reset === "function",
+      legacyType: actuator.type || null
+    }))
+  };
+}
+
+function percentile(values, fraction) {
+  if (!values.length) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  return sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * fraction))];
+}
+
+function frameStats() {
+  const values = frameIntervals.slice(-600);
+  const total = values.reduce((sum, value) => sum + value, 0);
+  return {
+    samples: values.length,
+    averageMs: values.length ? Number((total / values.length).toFixed(3)) : 0,
+    p95Ms: Number(percentile(values, 0.95).toFixed(3)),
+    maxMs: Number(Math.max(0, ...values).toFixed(3)),
+    over50Ms: values.filter(value => value > 50).length
+  };
+}
+
+function duplicateGroups(gamepads) {
+  const byID = new Map();
+  for (const gamepad of gamepads) {
+    const group = byID.get(gamepad.id) || [];
+    group.push(gamepad.index);
+    byID.set(gamepad.id, group);
+  }
+  return [...byID.entries()]
+    .filter(([, indices]) => indices.length > 1)
+    .map(([id, indices]) => ({ id, indices }));
+}
+
+function makeSnapshot() {
+  const pads = currentGamepads();
+  return {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    page: {
+      origin: location.origin,
+      secureContext: window.isSecureContext,
+      visibility: document.visibilityState
+    },
+    browser: {
+      userAgent: navigator.userAgent,
+      platform: navigator.platform || null,
+      language: navigator.language
+    },
+    frameCadence: frameStats(),
+    duplicateGamepads: duplicateGroups(pads),
+    idleSample: idleSample && idleSample.complete ? idleSample.result : null,
+    gamepads: pads.map(gamepadSnapshot),
+    events: eventLog.slice(-100)
+  };
+}
+
+function renderEnvironment() {
+  const stats = frameStats();
+  document.getElementById("environment").innerHTML =
+    "<div><strong>Secure context:</strong> " + window.isSecureContext + "</div>" +
+    "<div><strong>Visibility:</strong> " + document.visibilityState + "</div>" +
+    "<div><strong>User agent:</strong> " + escapeHTML(navigator.userAgent) + "</div>";
+  document.getElementById("frames").innerHTML =
+    "<p><strong>requestAnimationFrame intervals</strong></p>" +
+    "<span class='pill'>avg " + stats.averageMs + " ms</span>" +
+    "<span class='pill'>p95 " + stats.p95Ms + " ms</span>" +
+    "<span class='pill'>max " + stats.maxMs + " ms</span>" +
+    "<span class='pill'>&gt;50 ms " + stats.over50Ms + "</span>";
+}
+
+function escapeHTML(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function renderGamepads() {
+  const pads = currentGamepads();
+  const exposure = document.getElementById("exposure");
+  exposure.textContent = pads.length
+    ? pads.length + " gamepad instance(s) exposed."
+    : "No gamepad exposed. Focus this page and press a controller control once.";
+  exposure.className = pads.length ? "ok" : "warning";
+
+  const duplicates = duplicateGroups(pads);
+  document.getElementById("duplicates").innerHTML = duplicates.length
+    ? "<p class='warning'><strong>Duplicate ID instances:</strong> " +
+      duplicates.map(item => escapeHTML(item.id) + " at [" + item.indices.join(", ") + "]").join("; ") +
+      "</p>"
+    : "<p class='ok'>No duplicate Gamepad IDs currently exposed.</p>";
+
+  document.getElementById("gamepads").innerHTML = pads.length
+    ? pads.map(gamepad => {
+        const pressed = gamepad.buttons
+          .map((button, index) => button.pressed ? index : null)
+          .filter(index => index !== null);
+        const axes = gamepad.axes.map(value => Number(value.toFixed(3))).join(", ");
+        return "<div><strong>#" + gamepad.index + " " + escapeHTML(gamepad.id) + "</strong>" +
+          "<div>mapping=" + escapeHTML(gamepad.mapping || "(none)") +
+          "; buttons=" + gamepad.buttons.length + "; axes=" + gamepad.axes.length + "</div>" +
+          "<div>pressed=[" + pressed.join(", ") + "]</div>" +
+          "<div>axes=[" + axes + "]</div></div>";
+      }).join("<hr>")
+    : "<p class='muted'>No instances.</p>";
+
+  const select = document.getElementById("haptic-device");
+  const selected = Number(select.value);
+  select.innerHTML = pads.map(gamepad =>
+    "<option value='" + gamepad.index + "'>#" + gamepad.index + " " +
+    escapeHTML(gamepad.id) + "</option>"
+  ).join("");
+  if (pads.some(gamepad => gamepad.index === selected)) select.value = String(selected);
+  updateHapticControls();
+}
+
+function selectedGamepad() {
+  const index = Number(document.getElementById("haptic-device").value);
+  return currentGamepads().find(gamepad => gamepad.index === index) || null;
+}
+
+function updateHapticControls() {
+  const gamepad = selectedGamepad();
+  const actuator = gamepad ? actuatorsFor(gamepad)[0] : null;
+  const effects = effectsFor(actuator);
+  document.getElementById("haptic-support").textContent = actuator
+    ? "Browser-reported effects: " + (effects.join(", ") || "none")
+    : "No haptic actuator exposed.";
+  document.getElementById("dual-rumble").disabled = !effects.includes("dual-rumble");
+  document.getElementById("trigger-rumble").disabled = !effects.includes("trigger-rumble");
+  document.getElementById("haptic-reset").disabled =
+    !actuator || typeof actuator.reset !== "function";
+}
+
+async function playEffect(type) {
+  const gamepad = selectedGamepad();
+  const actuator = gamepad ? actuatorsFor(gamepad)[0] : null;
+  const result = document.getElementById("haptic-result");
+  if (!actuator || !effectsFor(actuator).includes(type)) {
+    result.textContent = type + " is not reported as supported.";
+    return;
+  }
+  const params = type === "trigger-rumble"
+    ? { duration: 500, strongMagnitude: 0, weakMagnitude: 0, leftTrigger: 0.75, rightTrigger: 0.75 }
+    : { duration: 500, strongMagnitude: 0.65, weakMagnitude: 0.65 };
+  try {
+    result.textContent = type + " command running...";
+    const outcome = await actuator.playEffect(type, params);
+    result.textContent = type + " result: " + outcome;
+  } catch (error) {
+    result.textContent = type + " error: " + error.name + ": " + error.message;
+  }
+}
+
+function startIdleSample() {
+  const pads = currentGamepads();
+  idleSample = {
+    complete: false,
+    startedAt: performance.now(),
+    endsAt: performance.now() + 10000,
+    baseline: new Map(pads.map(gamepad => [
+      gamepad.index,
+      {
+        axes: [...gamepad.axes],
+        buttons: gamepad.buttons.map(button => button.pressed)
+      }
+    ])),
+    previousButtons: new Map(pads.map(gamepad => [
+      gamepad.index,
+      gamepad.buttons.map(button => button.pressed)
+    ])),
+    maxAxisDelta: 0,
+    buttonTransitions: 0,
+    missingInstances: 0,
+    maxFrameGapMs: 0
+  };
+  document.getElementById("idle-start").disabled = true;
+  document.getElementById("idle-result").textContent = "Sampling hands-off stability...";
+}
+
+function updateIdleSample(frameGap) {
+  if (!idleSample || idleSample.complete) return;
+  idleSample.maxFrameGapMs = Math.max(idleSample.maxFrameGapMs, frameGap);
+  const pads = currentGamepads();
+  for (const [index, baseline] of idleSample.baseline) {
+    const gamepad = pads.find(item => item.index === index);
+    if (!gamepad) {
+      idleSample.missingInstances += 1;
+      continue;
+    }
+    gamepad.axes.forEach((value, axis) => {
+      const initial = baseline.axes[axis] || 0;
+      idleSample.maxAxisDelta = Math.max(idleSample.maxAxisDelta, Math.abs(value - initial));
+    });
+    const previous = idleSample.previousButtons.get(index) || [];
+    gamepad.buttons.forEach((button, buttonIndex) => {
+      if (Boolean(button.pressed) !== Boolean(previous[buttonIndex])) {
+        idleSample.buttonTransitions += 1;
+      }
+    });
+    idleSample.previousButtons.set(index, gamepad.buttons.map(button => button.pressed));
+  }
+  if (performance.now() >= idleSample.endsAt) {
+    idleSample.complete = true;
+    idleSample.result = {
+      durationMs: Number((performance.now() - idleSample.startedAt).toFixed(1)),
+      sampledIndices: [...idleSample.baseline.keys()],
+      buttonTransitions: idleSample.buttonTransitions,
+      maxAxisDelta: Number(idleSample.maxAxisDelta.toFixed(6)),
+      maxFrameGapMs: Number(idleSample.maxFrameGapMs.toFixed(3)),
+      missingInstanceFrames: idleSample.missingInstances
+    };
+    document.getElementById("idle-start").disabled = false;
+    document.getElementById("idle-result").textContent = JSON.stringify(idleSample.result);
+    refreshJSON();
+  }
+}
+
+function refreshJSON() {
+  lastSnapshot = makeSnapshot();
+  document.getElementById("snapshot").textContent = JSON.stringify(lastSnapshot, null, 2);
+}
+
+function recordEvent(type, gamepad) {
+  eventLog.push({
+    at: new Date().toISOString(),
+    type,
+    index: gamepad.index,
+    id: gamepad.id,
+    mapping: gamepad.mapping,
+    buttons: gamepad.buttons.length,
+    axes: gamepad.axes.length
+  });
+  document.getElementById("events").textContent = JSON.stringify(eventLog, null, 2);
+  refreshJSON();
+}
+
+window.addEventListener("gamepadconnected", event => recordEvent("connected", event.gamepad));
+window.addEventListener("gamepaddisconnected", event => recordEvent("disconnected", event.gamepad));
+document.addEventListener("visibilitychange", renderEnvironment);
+document.getElementById("haptic-device").addEventListener("change", updateHapticControls);
+document.getElementById("dual-rumble").addEventListener("click", () => playEffect("dual-rumble"));
+document.getElementById("trigger-rumble").addEventListener("click", () => playEffect("trigger-rumble"));
+document.getElementById("haptic-reset").addEventListener("click", async () => {
+  const gamepad = selectedGamepad();
+  const actuator = gamepad ? actuatorsFor(gamepad)[0] : null;
+  try {
+    const outcome = actuator ? await actuator.reset() : "unavailable";
+    document.getElementById("haptic-result").textContent = "reset result: " + outcome;
+  } catch (error) {
+    document.getElementById("haptic-result").textContent =
+      "reset error: " + error.name + ": " + error.message;
+  }
+});
+document.getElementById("idle-start").addEventListener("click", startIdleSample);
+document.getElementById("refresh-json").addEventListener("click", refreshJSON);
+document.getElementById("copy-json").addEventListener("click", async () => {
+  refreshJSON();
+  await navigator.clipboard.writeText(JSON.stringify(lastSnapshot, null, 2));
+});
+document.getElementById("download-json").addEventListener("click", () => {
+  refreshJSON();
+  const blob = new Blob([JSON.stringify(lastSnapshot, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "ojd-browser-gamepad-" + new Date().toISOString().replaceAll(":", "-") + ".json";
+  link.click();
+  URL.revokeObjectURL(link.href);
+});
+document.getElementById("submit-json").addEventListener("click", async () => {
+  refreshJSON();
+  const result = document.getElementById("submit-result");
+  result.textContent = "Submitting to 127.0.0.1...";
+  try {
+    const response = await fetch("/snapshot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(lastSnapshot)
+    });
+    const outcome = await response.json();
+    if (!response.ok || !outcome.accepted) {
+      throw new Error(outcome.error || "HTTP " + response.status);
+    }
+    result.textContent = "Accepted locally. Session snapshots: " + outcome.count;
+  } catch (error) {
+    result.textContent = "Submission failed: " + error.message;
+  }
+});
+
+function frame(now) {
+  const gap = now - previousFrame;
+  previousFrame = now;
+  if (gap < 5000) {
+    frameIntervals.push(gap);
+    if (frameIntervals.length > 1200) frameIntervals.shift();
+  }
+  updateIdleSample(gap);
+  if (now - lastRender > 100) {
+    lastRender = now;
+    renderEnvironment();
+    renderGamepads();
+  }
+  requestAnimationFrame(frame);
+}
+
+refreshJSON();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

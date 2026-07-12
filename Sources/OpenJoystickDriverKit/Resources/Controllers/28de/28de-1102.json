@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+  "vendor_id": 10462,
+  "product_id": 4354,
+  "transport": "hid",
+  "protocol": {
+    "driver": "SteamController",
+    "variant": "steamController",
+    "flags": [
+      "lizardMode",
+      "trackpads",
+      "experimental",
+      "needsHardwareTest"
+    ]
+  },
+  "provenance": {
+    "source": "linux-hid-steam.c",
+    "verified": false
+  }
+}

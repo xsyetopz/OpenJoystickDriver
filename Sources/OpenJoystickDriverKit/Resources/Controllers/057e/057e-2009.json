@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+  "vendor_id": 1406,
+  "product_id": 8201,
+  "transport": "hid",
+  "protocol": {
+    "driver": "SwitchPro",
+    "variant": "switchPro",
+    "flags": [
+      "usbHandshake",
+      "experimental",
+      "needsHardwareTest"
+    ]
+  },
+  "provenance": {
+    "source": "linux-hid-nintendo.c",
+    "verified": false
+  }
+}

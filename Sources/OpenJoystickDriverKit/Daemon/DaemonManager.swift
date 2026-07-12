@@ -394,18 +394,26 @@ public enum DaemonManager: Sendable {
   }
 
   @discardableResult private static func launchctl(_ args: [String]) throws -> String {
-    let process = Process()
-    process.executableURL = URL(fileURLWithPath: "/bin/launchctl")
-    process.arguments = args
-    let pipe = Pipe()
-    process.standardOutput = pipe
-    process.standardError = pipe
-    try process.run()
-    process.waitUntilExit()
-    let out = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-    if process.terminationStatus != 0 {
-      throw LaunchctlError(args: args, status: process.terminationStatus, output: out)
+    let result = try BoundedProcessRunner.run(
+      executableURL: URL(fileURLWithPath: "/bin/launchctl"),
+      arguments: args,
+      timeoutSeconds: 30,
+      maximumOutputBytes: 1_048_576
+    )
+    if result.timedOut {
+      throw LaunchctlError(
+        args: args,
+        status: -1,
+        output: "Timed out after 30 seconds."
+      )
     }
-    return out
+    if result.terminationStatus != 0 {
+      throw LaunchctlError(
+        args: args,
+        status: result.terminationStatus,
+        output: result.output
+      )
+    }
+    return result.output
   }
 }

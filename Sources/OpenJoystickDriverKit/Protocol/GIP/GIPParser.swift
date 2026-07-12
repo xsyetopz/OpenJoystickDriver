@@ -165,6 +165,10 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
     _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
   }
 
+  public var physicalRumbleMotors: [PhysicalRumbleMotor] {
+    [.leftMain, .rightMain, .leftTrigger, .rightTrigger]
+  }
+
   public func sendPhysicalRumble(
     handle: USBDeviceHandle,
     left: UInt8,

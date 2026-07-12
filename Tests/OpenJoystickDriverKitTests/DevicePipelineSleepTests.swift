@@ -121,6 +121,29 @@ struct DevicePipelineSleepTests {
   }
 
   @Test
+  func testPipelineSuppressesContradictoryDuplicateAndInvalidParserEvents() async {
+    let dispatcher = RecordingOutputDispatcher()
+    let pipeline = DevicePipeline(
+      identifier: DeviceIdentifier(vendorID: 100, productID: 200),
+      transport: .hid(locationID: 1),
+      parser: ScriptedInputParser(),
+      dispatcher: dispatcher,
+      usbContext: nil,
+      idleTimeoutNanoseconds: 5_000_000_000,
+      idleMonitorIntervalNanoseconds: 5_000_000_000
+    )
+
+    await pipeline.start()
+    await pipeline.feedHIDData(Data([9]))
+    await pipeline.feedHIDData(Data([11]))
+    #expect(dispatcher.flattenedEvents.isEmpty)
+
+    await pipeline.feedHIDData(Data([1]))
+    await pipeline.feedHIDData(Data([10]))
+    #expect(dispatcher.flattenedEvents == [.buttonPressed(.a)])
+  }
+
+  @Test
   func testStopNeutralizesForwardedButtonState() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
@@ -226,6 +249,12 @@ private final class ScriptedInputParser: InputParser, @unchecked Sendable {
       return [.leftStickChanged(x: 0.6, y: 0)]
     case 6:
       return [.dpadChanged(.north)]
+    case 9:
+      return [.buttonPressed(.a), .buttonReleased(.a)]
+    case 10:
+      return [.buttonPressed(.a), .buttonPressed(.a)]
+    case 11:
+      return [.leftStickChanged(x: .nan, y: .infinity)]
     default:
       return []
     }
