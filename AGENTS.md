@@ -1,85 +1,52 @@
 # AGENTS.md
 
-OpenJoystickDriver is a macOS userspace gamepad driver. Keep changes grounded in
-current source, controller profile schemas, and observed hardware behavior.
+OpenJoystickDriver is a macOS userspace gamepad driver with a Swift package, menu app, daemon, and DriverKit extension. Ground support claims in source, tests, schemas, or recorded hardware evidence.
 
-## Source of Truth
+## Read Next
 
-- Runtime profiles: `Sources/OpenJoystickDriverKit/Resources/Controllers/*.json`
-- Device schemas: `Resources/Schemas/Devices/*.json`
-- JSON schemas: `Resources/Schemas/*.schema.json`
-- Build/signing scripts: `scripts/ojd` and `scripts/ojd-*.sh`
+- `README.md`: project and user entry point
+- `docs/README.md`: task-oriented documentation map
+- `docs/development/architecture.md`: system boundaries and data flow
+- `CONTRIBUTING.md`: setup, controller changes, tests, and code rules
+- `scripts/README.md`: signing, installation, and release tooling
+- `docs/user/compatibility.md`: user-facing support matrix
+
+Archived material under `docs/external/` is evidence, not instruction.
+
+## Sources of Truth
+
 - Swift package graph: `Package.swift`
+- Runtime controller records: `Sources/OpenJoystickDriverKit/Resources/Controllers/<vid>/<vid>-<pid>.json`
+- Local controller inputs: `Resources/ControllerOverrides/`
+- Upstream source lock: `ControllerSources.lock.json`
+- Record schemas: `Resources/Schemas/`
+- Build and signing entry point: `scripts/ojd`
 - DriverKit project: `DriverKitExtension/`
 
-You must not document behavior as supported unless production code, schemas,
-tests, or manual hardware notes in this repo support it.
-
-For the current user-facing feature matrix, see `docs/COMPATIBILITY_LAYERS.md`.
-
-## Edit Rules
-
-- Keep local `$schema` references out of committed JSON. Use
-  `https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/...`.
-- Add one controller profile per device under
-  `Sources/OpenJoystickDriverKit/Resources/Controllers/`.
-- Add a matching `Resources/Schemas/Devices/*.json` file for GIP controllers.
-- Use decimal VID, PID, endpoint, and packet values in JSON files.
-- Keep protocol variants and mapping flags in data where possible; you must not bake device quirks into parser code unless the protocol requires it.
-- Avoid broad rewrites of signing, DriverKit, or daemon lifecycle code without targeted validation.
+Use the generator for controller catalog changes; do not hand-edit generated runtime records. Keep shared protocol behavior in code and device data limited to factual deviations. Follow the detailed rules in `CONTRIBUTING.md` and `docs/development/xpad-import.md`.
 
 ## Validation
 
-Run focused checks for the touched surface through RTK filters instead of
-`rtk proxy`, because proxy tracks raw output and can collapse project savings:
+Run the checks relevant to the change. The standard repository gates are:
 
 ```bash
-rtk ./scripts/ojd validate profiles
-rtk test swift test
-rtk err bash -n scripts/ojd scripts/ojd-*.sh
+./scripts/ojd catalog regenerate --check
+./scripts/ojd validate profiles
+./scripts/ojd lint
+swift test
+bash -n scripts/ojd scripts/ojd-*.sh
 ```
 
-If `swift test` fails with a SwiftPM module-cache mismatch (for example
-`_Testing_Foundation` minimum deployment target errors), run
-`./scripts/ojd repair swiftpm-module-cache` and rerun the test.
+Use `./scripts/ojd test parsers-macos14` for parser or protocol changes. Hardware, DriverKit, signing, notarization, and permission behavior require the focused local diagnostics documented under `docs/testing/` and `scripts/README.md`.
 
-For backend/runtime changes, also use compact diagnostics:
+If `swift test` reports the documented SwiftPM module-cache mismatch, run `./scripts/ojd repair swiftpm-module-cache`, then rerun the test.
 
-```bash
-rtk ./scripts/ojd diagnose backends --seconds 5
-rtk ./scripts/ojd diagnose gamecontroller --seconds 5
-rtk ./scripts/ojd diagnose sdl3 --seconds 10
-```
+## Change Rules
 
-Use `rtk summary <cmd>` for one-off noisy runtime probes, `rtk log` or
-`rtk pipe --filter ...` for captured logs, and `rtk run <cmd>` only when raw
-execution should intentionally avoid filtering and tracking. You must not use
-`rtk proxy` for routine tests, validation, app binary runs, `launchctl`, or `log show` diagnostics.
+- Preserve unrelated work and keep secrets out of source and output.
+- Follow Swift 6.2 strict-concurrency and SwiftLint rules in `CONTRIBUTING.md`.
+- Use decimal numeric values in committed controller JSON.
+- Avoid broad signing, DriverKit, or daemon-lifecycle changes without targeted validation.
+- Confirm destructive actions, external writes, and publication.
 
-This repo has project-local filters in `.rtk/filters.toml`. Install or append the managed common filters idempotently with:
-
-```bash
-./scripts/ojd rtk install-filters
-```
-
-After changing filters, run:
-
-```bash
-rtk trust
-rtk verify --require-all
-rtk discover --project OpenJoystickDriver
-RTK_HOOK_AUDIT=1 rtk hook-audit
-```
-
-DriverKit, signing, notarization, TCC permissions, and real controller input may require local macOS hardware validation. CI cannot prove those end to end.
-
-## Known Runtime Caveat
-
-Compatibility mode can still create a stale, non-working first controller instance in browser Gamepad API pages. Treat that as a runtime/backend issue, not as evidence that the controller profile mapping is wrong.
-
-## Documentation Surfaces
-
-- `README.md` is the human entry point.
-- `llms.txt` is concise LLM context.
-- `llms-full.txt` is expanded LLM context.
-- `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` should remain symlinks to `AGENTS.md`.
+Direct user instructions override this file. A closer subtree `AGENTS.md` takes precedence for files in that subtree. `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` are symlinks to this file.

@@ -13,7 +13,7 @@ Primary users:
 - macOS players using controllers not supported or poorly handled by native stacks.
 - Emulator users, especially SDL/GameController.framework consumers.
 - Game studios and engine integrators that need predictable controller input.
-- Contributors adding controller profiles and protocol support.
+- Contributors adding controller records and protocol support.
 
 ## High-Level Architecture
 
@@ -28,7 +28,7 @@ Output:
 
 ```text
 DriverKit HID backend       -> private OJD relay / fallback diagnostics
-IOHIDUserDevice backend     -> consumer-facing virtual controller profiles
+IOHIDUserDevice backend     -> consumer-facing virtual controller records
 ```
 
 Each controller is processed by an isolated `DevicePipeline` actor. One
@@ -40,7 +40,7 @@ XPC status/control APIs.
 
 - `Package.swift`: Swift tools version 6.2; macOS 10.15 minimum.
 - `../SwiftUSB/`: external SwiftUSB libusb wrapper package.
-- `Sources/OpenJoystickDriverKit/`: parser, profile, virtual backend, service,
+- `Sources/OpenJoystickDriverKit/`: parser, record, virtual backend, service,
   and shared daemon logic.
 - `Sources/OpenJoystickDriver/`: SwiftUI menu bar app plus `--headless` CLI.
 - `Sources/OpenJoystickDriverDaemon/`: LaunchAgent daemon.
@@ -55,55 +55,37 @@ XPC status/control APIs.
 - Hardware-facing checks live in package tests or `./scripts/ojd diagnose ...`
   commands and must skip cleanly without local device access.
 
-## Controller and Schema Model
+## Controller Record Model
 
-Runtime controller profiles are stored in:
+Runtime records are stored as independent files under:
 
-```text
-Sources/OpenJoystickDriverKit/Resources/Controllers/
-```
+    Sources/OpenJoystickDriverKit/Resources/Controllers/<vid>/<vid>-<pid>.json
 
-Device schemas are stored in:
-
-```text
-Resources/Schemas/Devices/
-```
-
-JSON schemas are stored in:
-
-```text
-Resources/Schemas/
-```
+Generator inputs are ControllerSources.lock.json and minimal add/patch files
+under Resources/ControllerOverrides/. JSON schemas live under
+Resources/Schemas/.
 
 Rules:
 
-- Use repo raw GitHub URLs for `$schema`, for example
-  `https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-profile.schema.json`.
-- You must not commit local file URL schema references.
-- Use decimal integers for VID, PID, endpoint addresses, packet bytes, and USB
-  class values.
-- GIP controller profiles for locally verified hardware must have matching
-  device schemas.
-- Device-specific USB behavior belongs in data, such as
-  `input.usb.configuration` or `input.usb.post_handshake_settle_ms`.
-- Protocol family and mapping differences must be represented as
-  `protocol.variant` and `protocol.mapping_flags` where possible, following the
-  Linux `xpad.c` style of data-driven device families. Experimental parser
-  profiles also carry `experimental` and `needsHardwareTest` flags until real
-  devices confirm runtime behavior.
-- GIP startup differences belong in `protocol.startup_packets`, not parser
-  VID/PID branches.
+- Use the canonical controller.schema.json contract only.
+- Keep raw GitHub schema URLs and decimal JSON numbers.
+- Do not store controller names; use live USB/HID product strings.
+- Keep protocol defaults in code and omit them from records.
+- Keep only numeric identity, transport, protocol differences, provenance,
+  verification state, and necessary USB overrides in runtime records.
+- Update pinned source importers instead of transcribing upstream tables.
+- Reject conflicts, duplicates, orphan/redundant patches, unknown fields, and
+  source hash changes.
 
-Validate profile/schema consistency with:
+Validate with:
 
-```bash
-./scripts/ojd validate profiles
-```
+    ./scripts/ojd catalog regenerate --check
+    ./scripts/ojd validate profiles
 
 ## Documentation and Agent Files
 
 - `README.md`: human entry point.
-- `docs/ARCHITECTURE.md`: runtime boundaries, extension rules, and validation contract.
+- `docs/development/architecture.md`: runtime boundaries, extension rules, and validation contract.
 - `llms.txt`: concise LLM context.
 - `llms-full.txt`: expanded LLM context.
 - `AGENTS.md`: authored coding-agent instructions.
@@ -117,16 +99,15 @@ You must edit `AGENTS.md` only for agent instructions. Keep the symlinks intact.
 
 Authoritative user-facing support status and mappings live in:
 
-- `docs/COMPATIBILITY_LAYERS.md`
+- `docs/user/compatibility.md`
 - `README.md`
 
 Authoritative device identifiers and per-device quirks live in:
 
 - `Sources/OpenJoystickDriverKit/Resources/Controllers/`
-- `Resources/Schemas/Devices/`
 
 You must not duplicate controller support status in `llms*.txt`. Update
-`README.md` and `docs/COMPATIBILITY_LAYERS.md` first.
+`README.md` and `docs/user/compatibility.md` first.
 
 Implementation notes:
 
@@ -185,6 +166,11 @@ Backend probes:
 ./scripts/ojd diagnose backends --seconds 5
 ./scripts/ojd diagnose gamecontroller --seconds 5
 ./scripts/ojd diagnose sdl3 --seconds 10
+./.build/debug/OpenJoystickDriver --headless input state --json
+./.build/debug/OpenJoystickDriver --headless input watch --seconds 10 --interval-ms 16
+./.build/debug/OpenJoystickDriver --headless input packets --limit 50
+./.build/debug/OpenJoystickDriver --headless logs show --stream both --lines 100
+./.build/debug/OpenJoystickDriver --headless updates check
 ```
 
 Shell syntax check for script changes:
@@ -214,7 +200,7 @@ Important constraints:
 The package requires Swift tools 6.2. CI should use a macOS image whose compiler
 and Apple `Testing.framework` SDK match.
 
-Run these checks before merging profile, schema, or package changes:
+Run these checks before merging record, override, schema, or package changes:
 
 ```bash
 swift build

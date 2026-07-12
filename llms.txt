@@ -7,29 +7,31 @@ DriverKit HID or IOHIDUserDevice compatibility mode.
 ## Important Paths
 
 - `Package.swift`: SwiftPM package graph, Swift tools 6.2.
-- `docs/ARCHITECTURE.md`: runtime boundaries and extension rules.
-- `Sources/OpenJoystickDriverKit/`: core daemon library, parsers, profiles,
+- `docs/development/architecture.md`: runtime boundaries and extension rules.
+- `Sources/OpenJoystickDriverKit/`: core daemon library, parsers, records,
   virtual backends, XPC/service logic.
 - `Sources/OpenJoystickDriver/`: SwiftUI menu bar app and headless CLI.
 - `Sources/OpenJoystickDriverDaemon/`: LaunchAgent daemon executable.
 - `DriverKitExtension/`: DriverKit virtual HID system extension.
 - `Resources/SDL/openjoystickdriver.gamecontrollerdb.txt`: SDL gamepad mapping
   for the generic user-space OJD device; use `platform:macOS` for SDL3.
-- `Sources/OpenJoystickDriverKit/Resources/Controllers/`: runtime controller
-  profiles.
-- `Resources/Schemas/`: JSON schemas and per-device schema documents.
+- `Sources/OpenJoystickDriverKit/Resources/Controllers/`: generated runtime controller
+  records.
+- `Resources/Schemas/`: canonical record and override schemas.
 - `scripts/ojd`: supported developer command surface.
 - `scripts/README.md`: signing, provisioning, and notarization notes.
 
 ## Current Status (Authoritative)
 
-- User-facing device/mode matrix: `docs/COMPATIBILITY_LAYERS.md`.
+- User-facing device/mode matrix: `docs/user/compatibility.md`.
+- CLI/GUI capability audit: `docs/development/cli-and-menu-app.md`.
+- Xbox fallback evidence gates: `docs/development/xbox-identities.md`.
 - Hardware verification notes and user setup: `README.md`.
 - Repo change rules and validation commands: `AGENTS.md`.
-- Deeper implementation notes (SDL mappings, xpad-derived profiles): `llms-full.txt`.
+- Deeper implementation notes (SDL mappings, xpad-derived records): `llms-full.txt`.
 
 You must keep controller support status out of `llms*.txt`. Update `README.md`
-and `docs/COMPATIBILITY_LAYERS.md` instead.
+and `docs/user/compatibility.md` instead.
 
 ## Core Commands
 
@@ -48,9 +50,8 @@ swift build
 
 - Controller JSON `$schema` values must use repo raw GitHub URLs, not local file
   URLs.
-- GIP runtime profiles must have matching device schemas.
 - VID/PID and endpoint values are decimal integers.
-- Use `./scripts/ojd validate profiles` after profile or schema changes.
+- Use `./scripts/ojd validate profiles` after record, override, or schema changes.
 - Use `./scripts/ojd test parsers-macos14` for macOS 14-compatible parser regressions; use `swift build` for package compile validation when Swift Testing is toolchain-blocked.
 
 ## Agent Instructions

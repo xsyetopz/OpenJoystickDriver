@@ -1,18 +1,12 @@
-# Xbox Adaptive Joystick Packet Notes
+# Capture Xbox Adaptive Joystick packets
 
-OJD should not add a standalone Xbox Adaptive Joystick profile until we have the
-actual USB identity and packets from the device plugged directly into a Mac.
+OJD should not add a standalone Xbox Adaptive Joystick record until we have the actual USB identity and packets from the device plugged directly into a Mac.
 
-Microsoft documents direct PC use, USB-C, and 7 physical buttons. It does not
-publish the standalone VID/PID, interface, endpoint, or report bytes. A public
-Reddit comment mentions `USB\VID_045E&PID_0B1A\...`, but OJD needs tester output
-before committing that as a profile.
+Microsoft documents direct PC use, USB-C, and 7 physical buttons. It does not publish the standalone VID/PID, interface, endpoint, or report bytes. A public Reddit comment mentions `USB\VID_045E&PID_0B1A\...`, but OJD needs tester output before committing a record.
 
 ## What To Send Back
 
-Useful output is better than perfect output. If a command fails, paste the full
-failure. That tells us whether the next step is HID parsing, raw USB, or
-DriverKit.
+Useful output is better than perfect output. If a command fails, paste the full failure. That tells us whether the next step is HID parsing, raw USB, or DriverKit.
 
 Please include:
 
@@ -33,9 +27,7 @@ ioreg -p IOUSB -l -w0
 ioreg -r -c IOHIDDevice -l -w0
 ```
 
-Paste the entries that mention Xbox, Microsoft, Adaptive, joystick, gamepad, or
-`045e`. If no obvious entry appears, unplug the joystick, run the commands again,
-and paste the entries that disappeared.
+Paste the entries that mention Xbox, Microsoft, Adaptive, joystick, gamepad, or `045e`. If no obvious entry appears, unplug the joystick, run the commands again, and paste the entries that disappeared.
 
 Record these fields if visible:
 
@@ -54,21 +46,17 @@ From the repository root:
 OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --list
 ```
 
-Paste any `VID:0x45e` or Microsoft-looking lines. If the joystick appears under a
-different VID/PID, use that exact pair in the commands below.
+Paste any `VID:0x45e` or Microsoft-looking lines. If the joystick appears under a different VID/PID, use that exact pair in the commands below.
 
 ## 3. HID Monitor
 
-If `--list` shows the joystick as an IOHID device, run the HID monitor with the
-observed VID/PID:
+If `--list` shows the joystick as an IOHID device, run the HID monitor with the observed VID/PID:
 
 ```bash
 OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --monitor --vid 0x045e --pid 0x0000 --seconds 30
 ```
 
-Replace `0x0000` with the observed PID. Paste every `REPORT ... bytes=...`,
-`VALUE ...`, and `POLL ...` line. If the monitor prints `Monitoring 0 device(s)`
-or no reports, keep the full output and continue to raw USB.
+Replace `0x0000` with the observed PID. Paste every `REPORT ... bytes=...`, `VALUE ...`, and `POLL ...` line. If the monitor prints `Monitoring 0 device(s)` or no reports, keep the full output and continue to raw USB.
 
 ## 4. Raw USB Monitor
 
@@ -84,11 +72,9 @@ If interface 0 produces no packets, try interface 1:
 OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --interface 1 --length 64 --seconds 20
 ```
 
-If libusb reports access denied or busy, rerun the same command with `--detach`
-and paste both outputs.
+If libusb reports access denied or busy, rerun the same command with `--detach` and paste both outputs.
 
-If the sweep finds an endpoint, repeat with that endpoint while pressing one
-control at a time:
+If the sweep finds an endpoint, repeat with that endpoint while pressing one control at a time:
 
 ```bash
 OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --interface 0 --endpoint 0x81 --length 64 --seconds 30
@@ -124,12 +110,9 @@ For each capture, paste:
 
 ## 6. OJD App Check
 
-If OJD sees the joystick in the app or daemon path, open Input Test and use the
-packet log. For each action above, paste the recent RX entries and say whether
-the on-screen state changed.
+If OJD sees the joystick in the app or daemon path, open Input Test and use the packet log. For each action above, paste the recent RX entries and say whether the on-screen state changed.
 
-If OJD cannot see it but macOS native tools can, say that. That points toward a
-DriverKit/raw USB path instead of a profile-only fix.
+If OJD cannot see it but macOS native tools can, say that. That points toward a DriverKit/raw USB path instead of a record-only fix.
 
 ## Minimum Parser Evidence
 

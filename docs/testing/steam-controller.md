@@ -1,20 +1,19 @@
-# Steam Controller Test Notes
+# Test Steam Controller hardware
 
-We have experimental Steam Controller support based on Linux `hid-steam.c`.
-We still need real macOS output before calling it verified.
+We have experimental Steam Controller support based on Linux `hid-steam.c`. We still need real macOS output before calling it verified.
 
 Test what you have:
 
 - wired Steam Controller: `0x28de:0x1102`
 - wireless receiver: `0x28de:0x1142`
 
-Keep Steam fully quit for the first pass. If you later repeat with Steam open,
-say so in the notes.
+Keep Steam fully quit for the first pass. If you later repeat with Steam open, say so in the notes.
+
+OJD production discovery now matches both normal GamePad top-level collections and exact HID VID/PID identities loaded from bundled records. This specifically covers Steam Controller collections that remain exposed as keyboard or mouse lizard-mode devices.
 
 ## What To Send Back
 
-Send the easiest evidence first. Raw packets help, but even a native macOS
-listing is useful if OJD cannot see the controller yet.
+Send the easiest evidence first. Raw packets help, but even a native macOS listing is useful if OJD cannot see the controller yet.
 
 Please include:
 
@@ -36,14 +35,9 @@ ioreg -p IOUSB -l -w0
 ioreg -r -c IOHIDDevice -l -w0
 ```
 
-Paste the entries that mention Valve, Steam, gamepad, keyboard, mouse, or
-`28de`. If nothing obvious appears, unplug the controller, run the command
-again, and paste the entries that disappeared.
+Paste the entries that mention Valve, Steam, gamepad, keyboard, mouse, or `28de`. If nothing obvious appears, unplug the controller, run the command again, and paste the entries that disappeared.
 
-For wired controller testing, also click in a plain Terminal window and press a
-few Steam Controller buttons or the d-pad. If the terminal prints escape
-sequences such as `^[[A`, paste them. That shows the controller is alive and
-still in lizard keyboard mode even if OJD cannot open it yet.
+For wired controller testing, also click in a plain Terminal window and press a few Steam Controller buttons or the d-pad. If the terminal prints escape sequences such as `^[[A`, paste them. That shows the controller is alive and still in lizard keyboard mode even if OJD cannot open it yet.
 
 ## 2. OJD Device Listing
 
@@ -53,9 +47,7 @@ From the repository root:
 OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --list
 ```
 
-Paste every `VID:0x28de` line. If there is no `VID:0x28de` line, say that and
-paste any nearby keyboard, mouse, or game controller lines that appear only while
-the controller is plugged in.
+Paste every `VID:0x28de` line. If there is no `VID:0x28de` line, say that and paste any nearby keyboard, mouse, or game controller lines that appear only while the controller is plugged in.
 
 ## 3. Wired Controller Capture
 
@@ -65,18 +57,16 @@ Run the HID monitor for the expected wired PID:
 OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --monitor --vid 0x28de --pid 0x1102 --seconds 30
 ```
 
-If it prints `Monitoring 0 device(s)`, keep that output. Then try raw USB:
+If it still prints `Monitoring 0 device(s)`, keep that output and also report whether the current OJD Input Test lists the controller; production discovery now has the record-backed exact match. Then try raw USB:
 
 ```bash
 OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x28de --pid 0x1102 --interface 0 --length 64 --seconds 20
 OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x28de --pid 0x1102 --interface 1 --length 64 --seconds 20
 ```
 
-If either command reports access denied or busy, run the same command again with
-`--detach` at the end and paste both outputs.
+If either command reports access denied or busy, run the same command again with `--detach` at the end and paste both outputs.
 
-If you get `REPORT` or `USB_REPORT` lines, collect one neutral packet and one
-packet for each action:
+If you get `REPORT` or `USB_REPORT` lines, collect one neutral packet and one packet for each action:
 
 - A, B, X, Y press and release
 - left bumper, right bumper press and release
@@ -110,21 +100,17 @@ During the 60 second monitor run:
 5. Wait 10 seconds.
 6. Turn it back on without restarting the monitor.
 
-Paste all `REPORT ... bytes=...` lines around connect and disconnect. We are
-looking for these source-backed cases:
+Paste all `REPORT ... bytes=...` lines around connect and disconnect. We are looking for these source-backed cases:
 
 - lifecycle report `0x03` with connected payload `0x02`
 - lifecycle report `0x03` with disconnected payload `0x01`
 - status fallback report `0x04` when the controller was already connected
 
-Also say whether OJD Input Test creates a usable controller only after connect,
-neutralizes or removes it after disconnect, and resumes after reconnect.
+Also say whether OJD Input Test creates a usable controller only after connect, neutralizes or removes it after disconnect, and resumes after reconnect.
 
 ## 5. Lizard Mode
 
-Linux turns off the Steam Controller's mouse/keyboard lizard mappings while the
-driver owns the controller, then restores them on close. OJD sends the same
-feature report sequence. We need hardware confirmation on macOS.
+Linux turns off the Steam Controller's mouse/keyboard lizard mappings while the driver owns the controller, then restores them on close. OJD sends the same feature report sequence. We need hardware confirmation on macOS.
 
 Check these states:
 

@@ -4,16 +4,16 @@ This folder contains the build/signing tooling for OpenJoystickDriver.
 
 ## Task Map
 
-| Goal                                                                  | Command                                                                                             | Notes                                                 |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| Install profiles into `~/Library/MobileDevice/Provisioning Profiles/` | `./scripts/ojd signing install-profiles`                                                            | Copies from `~/Documents/Profiles/` (or `profiles/`). |
-| Check installed profiles (safe output)                                | `./scripts/ojd signing audit "$HOME/Library/MobileDevice/Provisioning Profiles"/*.provisionprofile` | No identifiers printed.                               |
-| Generate `.env.dev` + `.env.release`                                  | `./scripts/ojd signing configure`                                                                   | Re-run after changing certs/profiles.                 |
-| Diagnose common signing mismatches (safe output)                      | `./scripts/ojd signing doctor`                                                                      | Use this before tweaking Xcode settings.              |
-| Build a signed dev app into `.build/`                                 | `./scripts/ojd build dev`                                                                           | Does not install.                                     |
-| Install a signed dev build into `/Applications`                       | `./scripts/ojd rebuild dev`                                                                         | App, daemon, and (optionally) dext.                   |
-| Fast rebuild app only (no dext upgrade)                               | `./scripts/ojd rebuild-fast dev`                                                                    | Best when you are iterating while streaming.          |
-| Package a release DMG                                                 | `./scripts/ojd package release <version>`                                                           | Builds, notarizes, staples, and writes a DMG.         |
+| Goal | Command | Notes |
+| --- | --- | --- |
+| Install profiles | `./scripts/ojd signing install-profiles` | Copies from `~/Documents/Profiles/` |
+| Check installed profiles | `./scripts/ojd signing audit "$HOME/Library/MobileDevice/Provisioning Profiles"/*.provisionprofile` | Safe output; no identifiers |
+| Generate `.env.dev` + `.env.release` | `./scripts/ojd signing configure` | Re-run after cert/profile changes |
+| Diagnose signing mismatches | `./scripts/ojd signing doctor` | Use before tweaking Xcode settings |
+| Build signed dev app | `./scripts/ojd build dev` | Output to `.build/` |
+| Install signed dev build | `./scripts/ojd rebuild dev` | App, daemon, and dext |
+| Fast rebuild (app only) | `./scripts/ojd rebuild-fast dev` | Skip dext upgrade |
+| Package release DMG | `./scripts/ojd package release <version>` | Builds, notarizes, staples |
 
 ## Initial Setup (Per Machine / Team)
 
@@ -60,9 +60,11 @@ You must not trust the `(...)` suffix in the Keychain display name as the Team I
 If `security find-identity` shows **0 valid identities**, you are usually missing Apple intermediate CA
 certificates (WWDR / Developer ID). Apple publishes them here:
 
-- https://www.apple.com/certificateauthority/
+- <https://www.apple.com/certificateauthority/>
 
-### 3. Generate `.env.dev` and `.env.release`
+### 3. Generate root `.env.dev` and `.env.release`
+
+These are the only local environment files loaded. See `../docs/development/environment.md`; run `./scripts/ojd env audit` to validate names without printing values.
 
 This repo reads your Keychain + installed profiles and writes both env files:
 
@@ -127,7 +129,7 @@ OJD_ENV=release ./scripts/ojd notarize status
 For a release build that does not install anything on the build machine:
 
 ```bash
-./scripts/ojd package release 0.5.0-alpha.4
+./scripts/ojd package release 0.5.0-alpha.5
 ```
 
 This command uses release signing, embeds the DriverKit extension into the app
@@ -146,7 +148,7 @@ install and approve the app/system extension locally.
 ## GitHub Actions release
 
 `.github/workflows/release.yml` runs on SemVer tags such as `0.1.0` or
-`0.5.0-alpha.4` and by manual dispatch.
+`0.5.0-alpha.5` and by manual dispatch.
 It installs `libusb`, validates profiles, imports signing material, builds a
 release app, notarizes it, uploads the release DMG as a workflow artifact, and
 publishes the GitHub Release.

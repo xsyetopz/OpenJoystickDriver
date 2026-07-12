@@ -4,7 +4,7 @@
 
 OpenJoystickDriver has two common workflows:
 
-- Swift package work (parsers, profiles, tests): no signing required.
+- Swift package work (parsers, records, tests): no signing required.
 - App/daemon + DriverKit extension work: requires signing/provisioning; use
   `./scripts/ojd`.
 
@@ -26,6 +26,18 @@ swift build
 swift test
 ```
 
+Candidate GIP and wired Xbox 360 records can be validated and exercised against
+physical USB hardware without building or signing the app:
+
+```bash
+./scripts/ojd diagnose record /tmp/controller-candidate.json --validate-only
+./scripts/ojd diagnose record /tmp/controller-candidate.json --seconds 30
+```
+
+See `docs/testing/controller-record.md` for the capture and
+reporting procedure. This path does not require Apple Developer Program
+membership, provisioning profiles, DriverKit approval, or app installation.
+
 Hardware-facing tests and diagnostics require a USB controller plugged in. Use
 the focused diagnostics that match your change, for example:
 
@@ -33,6 +45,21 @@ the focused diagnostics that match your change, for example:
 ./scripts/ojd diagnose backends --seconds 5
 ./scripts/ojd diagnose sdl3 --seconds 5
 ```
+
+Before filing a controller issue, create a reviewable support report with the
+installed app:
+
+```bash
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
+  --headless report create
+```
+
+The same action is available under **Advanced > Support report** in the menu
+app. The JSON includes VID/PID, active parser/record data, permissions, output
+configuration, GameController visibility, and backend counters. It excludes raw
+serial values, filesystem paths, packet payloads, HID location IDs, and free-form
+DriverKit discovery text. Review device product names before attaching it to an
+issue.
 
 ---
 
@@ -59,32 +86,39 @@ Check `bDeviceClass`:
 - `0xff` (255): vendor-specific (often GIP for Xbox-compatible hardware)
 - `0x03` (3): standard HID
 
-2. Add the runtime profile.
+1. Update a source or override.
 
-Add one runtime profile under `Sources/OpenJoystickDriverKit/Resources/Controllers/`.
-VID, PID, endpoint, and packet values must be decimal integers. Use existing
-profiles such as `gamesir-g7-se.json` and `flydigi-vader-5s.json` as current
-format examples.
+Do not hand-edit generated runtime records. If the device exists in a supported
+upstream table, update its pinned importer and lock. Otherwise add the smallest
+explicit add or patch input under
+`Resources/ControllerOverrides/<vid>/<vid>-<pid>.json`.
 
-3. Add a device schema.
+Records use decimal JSON numbers and contain no display names. Protocol-default
+endpoints, startup packets, output policy, and parser behavior must not be
+repeated in device data.
 
-If the controller is vendor-specific/GIP, you must add a matching device schema
-under `Resources/Schemas/Devices/`. For standard HID controllers, a device schema
-is optional but encouraged.
+Regenerate and inspect the affected VID/PID file:
 
-4. Implement a parser only when the protocol is new.
+```bash
+./scripts/ojd catalog regenerate --write
+./scripts/ojd catalog regenerate --check
+```
+
+See docs/development/xpad-import.md for source and conflict rules.
+
+1. Implement a parser only when the protocol is new.
 
 New parsers go in `Sources/OpenJoystickDriverKit/Protocol/Parsers/` and must
 conform to the `InputParser` protocol. Use `GIPParser.swift`, `Xbox360Parser.swift`,
 and `DS4Parser.swift` as references.
 
-5. Add tests.
+1. Add tests.
 
-Add parser, profile, or report-format tests under `Tests/OpenJoystickDriverKitTests/`.
+Add parser, record, or report-format tests under `Tests/OpenJoystickDriverKitTests/`.
 Hardware-only checks must be guarded or expressed as diagnostics so they can
 skip cleanly without local device access.
 
-6. Validate.
+1. Validate.
 
 ```bash
 ./scripts/ojd validate profiles
@@ -127,14 +161,16 @@ There's no formal PR template. Just be clear about what changed and why.
 
 ## Project layout
 
-```
-Sources/OpenJoystickDriverKit/    Shared library: parsers, device management, output, XPC
-Sources/OpenJoystickDriverDaemon/ Background daemon executable
-Sources/OpenJoystickDriver/       GUI app (SwiftUI, menu bar) + CLI (--headless)
-Tests/OpenJoystickDriverKitTests/ Unit tests (no hardware required)
-Resources/Schemas/                JSON schemas and per-device schema files
-docs/COMPATIBILITY_LAYERS.md      Consumer-visible compatibility mappings
-scripts/                          Build, sign, install, uninstall helpers
+```text
+Sources/OpenJoystickDriverKit/     Shared parsers, device management, output, and XPC
+Sources/OpenJoystickDriverDaemon/  Background daemon executable
+Sources/OpenJoystickDriver/        Menu app and headless CLI
+Tests/OpenJoystickDriverKitTests/  Unit tests that do not require hardware
+Resources/Schemas/                 Canonical record and override schemas
+Resources/ControllerOverrides/     Source omissions and evidence-backed corrections
+ControllerSources.lock.json        Pinned upstream revisions and hashes
+docs/user/compatibility.md         Consumer-visible compatibility mappings
+scripts/                           Build, signing, installation, and release tools
 ```
 
 The daemon and GUI communicate over XPC (`com.openjoystickdriver.xpc`). If you

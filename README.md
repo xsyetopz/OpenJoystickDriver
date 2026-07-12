@@ -12,7 +12,7 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
 <p>
   <a href="#quickstart">Quickstart</a> ·
   <a href="#install-update-or-remove">Install / Remove</a> ·
-  <a href="docs/COMPATIBILITY_LAYERS.md">Compatibility</a> ·
+  <a href="docs/user/compatibility.md">Compatibility</a> ·
   <a href="#choose-an-output-mode">Output Modes</a> ·
   <a href="#troubleshooting">Troubleshooting</a> ·
   <a href="CONTRIBUTING.md">Contribute</a> ·
@@ -31,9 +31,10 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
 
 ## Status
 
-See [docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md) for current backend, output-mode, and device-support status.
+See [docs/user/compatibility.md](docs/user/compatibility.md) for current backend, output-mode, and device-support status.
 
-Compatibility mode can still be useful without DriverKit. Use DriverKit only when you specifically need that path.
+Compatibility mode does not require DriverKit. The system extension is a vendor-defined integrity relay for self-test and diagnostics; it deliberately does not publish a second
+consumer gamepad.
 
 ## Quickstart
 
@@ -50,24 +51,24 @@ Expected result: your target app sees a compatible virtual controller.
 
 OpenJoystickDriver has one app bundle in `/Applications`:
 
-```text
+```bash
 /Applications/OpenJoystickDriver.app
 ```
 
 The daemon helper lives inside that app bundle:
 
-```text
+```bash
 /Applications/OpenJoystickDriver.app/Contents/Library/LoginItems/OpenJoystickDriverDaemon.app
 ```
 
 Use the menu-bar controls for the normal flow:
 
-| Action                  | Menu-bar path                                      | Headless equivalent                                                                         |
-| ----------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Action | Menu-bar path | Headless equivalent |
+| --- | --- | --- |
 | Install or start helper | Open the app, then choose **Install** or **Start** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless install` |
-| Check helper status     | Open the app and check the System card             | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status`  |
-| Restart helper          | Choose **Restart Helper**                          | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart` |
-| Remove helper           | Choose **Uninstall**                               | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless remove`  |
+| Check helper status | Open the app and check the System card | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status` |
+| Restart helper | Choose **Restart Helper** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart` |
+| Remove helper | Choose **Uninstall** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless remove` |
 
 To uninstall OpenJoystickDriver completely:
 
@@ -79,18 +80,18 @@ To uninstall OpenJoystickDriver completely:
 
 2. Quit OpenJoystickDriver.
 3. Delete `/Applications/OpenJoystickDriver.app`.
-4. Optional: remove Input Monitoring permission in **System Settings → Privacy & Security → Input Monitoring**.
+4. Optional: remove Input Monitoring permission in **System Settings -> Privacy & Security -> Input Monitoring**.
 
 Don't delete `OpenJoystickDriverDaemon.app` by itself. It's bundled inside `OpenJoystickDriver.app`; uninstall the helper first, then delete the main app.
 
 ## Choose An Output Mode
 
-| What you are trying to run             | Recommended                                      | Why                                                 |
-| -------------------------------------- | ------------------------------------------------ | --------------------------------------------------- |
-| Most games, Steam, emulators, SDL apps | Compatibility + `SDL 2/3`                        | Stable app-facing identity and mapping.             |
-| Native macOS apps using `GCController` | Compatibility + `Apple GameController`           | Targets GameController.framework consumers.         |
-| Apps that inspect HID descriptors      | Compatibility + `Generic HID`                    | Descriptor-driven HID surface.                      |
-| A picky app expecting Microsoft HID    | Compatibility + `Xbox 360 HID` or `Xbox One HID` | Experimental spoof identities for targeted testing. |
+| What you are trying to run | Recommended | Why |
+| --- | --- | --- |
+| Most games, Steam, emulators, SDL apps | Compatibility + `SDL 2/3` | Stable app-facing identity and mapping. |
+| Native macOS apps using `GCController` | Compatibility + `Apple GameController` | Targets GameController.framework consumers. |
+| Apps that inspect HID descriptors | Compatibility + `Generic HID` | Descriptor-driven HID surface. |
+| A picky app expecting Microsoft HID | Compatibility + `Xbox 360 HID` or `Xbox One HID` | Experimental spoof identities for targeted testing. |
 
 CLI equivalents from the installed app bundle:
 
@@ -101,37 +102,52 @@ CLI equivalents from the installed app bundle:
 
 ## Troubleshooting
 
-| Symptom                               | What to do                                                                             |
-| ------------------------------------- | -------------------------------------------------------------------------------------- |
-| Menu UI says “running (disconnected)” | Use **Restart Helper** in the menu, or run `--headless restart`.                       |
-| SDL / browser sees 0 controllers      | Ensure Input Monitoring is granted, then re-open the app and re-test.                  |
-| DriverKit extension install fails     | Compatibility mode still works without DriverKit. Use DriverKit only when you need it. |
+| Symptom | What to do |
+| --- | --- |
+| Menu UI says “running (disconnected)” | Use **Restart Helper** in the menu, or run `--headless restart`. |
+| SDL / browser sees 0 controllers | Ensure Input Monitoring is granted, then re-open the app and re-test. |
+| Compare Chrome, Firefox, and Safari | Run `--headless diagnose browser-gamepad --open all`, then press a controller control. |
+| DriverKit extension install fails | Compatibility output still works; use `--headless selftest` to test the optional relay. |
 
 Useful diagnostics:
 
 ```bash
-./scripts/ojd check profiles
+./scripts/ojd catalog regenerate --check
+./scripts/ojd validate profiles
 ./scripts/ojd test parsers-macos14
-./scripts/ojd diag backends --seconds 5
-./scripts/ojd diag gamecontroller --seconds 5
-./scripts/ojd diag sdl3 --seconds 10
+./scripts/ojd diagnose backends --seconds 5
+./scripts/ojd diagnose gamecontroller --seconds 5
+./.build/debug/OpenJoystickDriver --headless diagnose gamecontroller-catalog --json
+./.build/debug/OpenJoystickDriver --headless diagnose runtime --seconds 300 --json
+./.build/debug/OpenJoystickDriver --headless input state --json
+./.build/debug/OpenJoystickDriver --headless input watch --seconds 10 --interval-ms 16
+./.build/debug/OpenJoystickDriver --headless input packets --limit 50
+./.build/debug/OpenJoystickDriver --headless logs show --stream both --lines 100
+./.build/debug/OpenJoystickDriver --headless updates check
+./scripts/ojd diagnose sdl3 --seconds 10
 ```
+
+See [Daemon Runtime Health](docs/development/daemon-health.md) for soak verdicts, high-water limits, and the foreground-consumer polling leak regression probe.
+See [Menu App Responsiveness](docs/development/menu-responsiveness.md) for bounded system-tool execution and main-actor isolation guarantees.
+See [CLI and GUI Capability Parity](docs/development/cli-and-menu-app.md) for the current shared capability audit and remaining one-sided surfaces.
 
 Installed app bundle commands:
 
 ```bash
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless list
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless report create
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart
 ```
 
 ## Development
 
-Parser, profile, and test changes do not require signing:
+Parser, record, and test changes do not require signing:
 
 ```bash
 brew install libusb
-./scripts/ojd check profiles
+./scripts/ojd catalog regenerate --check
+./scripts/ojd validate profiles
 ./scripts/ojd test parsers-macos14
 swift build
 ```
@@ -140,21 +156,22 @@ For app/daemon, DriverKit, signing, and notarization work, start here:
 
 - [scripts/README.md](scripts/README.md)
 - [CONTRIBUTING.md](CONTRIBUTING.md)
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- [docs/development/architecture.md](docs/development/architecture.md)
 
 ## Contributing
 
 Useful contribution areas:
 
-- controller parser and profile improvements
+- controller parser and record improvements
 - compatibility-layer tests and diagnostics
 - documentation for supported devices, output modes, and troubleshooting
 - reproducible reports for games, emulators, browsers, SDL apps, and native macOS apps
 
-Before opening a PR for parser/profile work, run:
+Before opening a PR for parser/record work, run:
 
 ```bash
-./scripts/ojd check profiles
+./scripts/ojd catalog regenerate --check
+./scripts/ojd validate profiles
 ./scripts/ojd test parsers-macos14
 swift build
 ```
@@ -168,13 +185,14 @@ Use this context path before editing:
 1. [README.md](README.md) -- product intent and user workflows.
 2. [scripts/README.md](scripts/README.md) -- repository command interface.
 3. [CONTRIBUTING.md](CONTRIBUTING.md) -- PR expectations.
-4. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) -- app, daemon, DriverKit, and compatibility boundaries.
-5. [docs/COMPATIBILITY_LAYERS.md](docs/COMPATIBILITY_LAYERS.md) -- support status and output-mode behavior.
+4. [docs/development/architecture.md](docs/development/architecture.md) -- app, daemon, DriverKit, and compatibility boundaries.
+5. [docs/user/compatibility.md](docs/user/compatibility.md) -- support status and output-mode behavior.
 
-Minimum checks for parser/profile changes:
+Minimum checks for parser/record changes:
 
 ```bash
-./scripts/ojd check profiles
+./scripts/ojd catalog regenerate --check
+./scripts/ojd validate profiles
 ./scripts/ojd test parsers-macos14
 swift build
 ```
