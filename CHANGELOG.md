@@ -2,6 +2,34 @@
 
 All notable changes to OpenJoystickDriver are documented in this file.
 
+## 0.5.0-alpha.5
+
+### Added
+
+- Added a deterministic controller-record catalog generated from pinned Linux
+  kernel sources, with strict schemas, provenance, reviewable per-device output,
+  and explicit local add/patch overrides.
+- Added live USB interface, alternate-setting, and interrupt-endpoint discovery
+  through SwiftUSB, plus device-provided product names with numeric VID/PID
+  fallback text.
+- Added focused validation for malformed records, duplicate identities,
+  conflicting or orphaned overrides, redundant defaults, and descriptor
+  selection failures.
+
+### Changed
+
+- Replaced all earlier controller and device configuration formats with the
+  canonical `Controllers/<vid>/<vid>-<pid>.json` record format.
+- Moved shared endpoints, startup sequences, timeouts, packet behavior, and
+  output policy out of controller records and into protocol implementations.
+- Updated the runtime to SwiftUSB 0.1.1 and removed OpenJoystickDriver-specific
+  libusb descriptor shims and extra USB contexts.
+
+### Fixed
+
+- Applied discovered nonzero USB alternate settings after claiming the selected
+  interface, while preserving explicit record overrides and protocol fallbacks.
+
 ## 0.5.0-alpha.4
 
 ### Fixed
@@ -166,7 +194,6 @@ All notable changes to OpenJoystickDriver are documented in this file.
   controller-specific button glyphs.
 - Added user-space compatibility identities for SDL 2/3, Apple GameController,
   Generic HID, Xbox 360 HID, and Xbox One HID.
-- Added RTK filter install command plumbing under `./scripts/ojd rtk`.
 
 ### Changed
 
@@ -176,7 +203,7 @@ All notable changes to OpenJoystickDriver are documented in this file.
   labels.
 - Updated README into a shorter user-first guide.
 - Moved detailed compatibility information into an emoji-based feature matrix in
-  `docs/COMPATIBILITY_LAYERS.md`.
+  `docs/user/compatibility.md`.
 - Clarified Sony controller names: DualShock 4 is supported over USB; DualShock
   3 and DualSense are not implemented.
 
