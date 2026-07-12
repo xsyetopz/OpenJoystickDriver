@@ -54,6 +54,7 @@ Commands:
   catalog regenerate --write Rebuild the runtime catalog from pinned sources and overrides
   catalog xpad [options]      Generate review-only records from a pinned Linux xpad.c
   validate profiles           Validate canonical controller records
+  validate swift-structure    Validate Swift file sizes and ownership layout
   test parsers-macos14        Run focused parser regressions without Swift Testing
   test xpad-generator         Run deterministic Linux xpad importer tests
   launch sdl-gamecontroller <app>
@@ -251,8 +252,11 @@ case "$cmd" in
       profiles)
         exec /usr/bin/env python3 "$SCRIPT_DIR/ojd-validate-profiles.py"
         ;;
+      swift-structure)
+        exec /usr/bin/env python3 "$SCRIPT_DIR/ojd-validate-swift-structure.py"
+        ;;
       *)
-        die "Unknown: validate $sub (expected: profiles)"
+        die "Unknown: validate $sub (expected: profiles | swift-structure)"
         ;;
     esac
     ;;

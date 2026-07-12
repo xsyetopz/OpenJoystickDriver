@@ -46,6 +46,9 @@ jobs:
         run: |
           bash scripts/ojd validate profiles
 
+      - name: Validate Swift structure
+        run: ./scripts/ojd validate swift-structure
+
       - name: Lint Swift
         run: |
           bash scripts/ojd lint

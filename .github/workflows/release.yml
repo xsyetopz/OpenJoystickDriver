@@ -67,6 +67,9 @@ jobs:
       - name: Validate records
         run: ./scripts/ojd validate profiles
 
+      - name: Validate Swift structure
+        run: ./scripts/ojd validate swift-structure
+
       - name: Lint Swift
         run: ./scripts/ojd lint
 
