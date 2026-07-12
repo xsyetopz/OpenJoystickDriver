@@ -37,7 +37,12 @@ jobs:
           brew install libusb
           brew install swiftlint
 
-      - name: Validate controller profiles
+      - name: Verify generated controller catalog
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/ojd catalog regenerate --check
+
+      - name: Validate controller records
         run: |
           bash scripts/ojd validate profiles
 

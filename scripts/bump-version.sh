@@ -18,10 +18,12 @@ Examples:
 Updates:
   - Sources/OpenJoystickDriver/CLI.swift
   - Sources/OpenJoystickDriver/App/AppModel.swift fallback version
+  - Headless update and support-report fallback versions
   - justfile release-local-install default
   - scripts/README.md release examples
   - scripts/ojd-build-bundles.sh generated GUI/daemon bundle versions
   - DriverKitExtension/Info.plist short version
+  - Release-version packaging assertions
 
 The target version must already have a CHANGELOG.md heading.
 USAGE
@@ -44,6 +46,9 @@ fi
 
 cli_file="$PROJECT_DIR/Sources/OpenJoystickDriver/CLI.swift"
 app_model_file="$PROJECT_DIR/Sources/OpenJoystickDriver/App/AppModel.swift"
+report_command_file="$PROJECT_DIR/Sources/OpenJoystickDriver/Commands/ReportCommand.swift"
+updates_command_file="$PROJECT_DIR/Sources/OpenJoystickDriver/Commands/UpdatesCommand.swift"
+packaging_tests="$PROJECT_DIR/Tests/OpenJoystickDriverKitTests/ScriptPackagingTests.swift"
 justfile="$PROJECT_DIR/justfile"
 scripts_readme="$PROJECT_DIR/scripts/README.md"
 build_script="$PROJECT_DIR/scripts/ojd-build-bundles.sh"
@@ -52,6 +57,9 @@ changelog="$PROJECT_DIR/CHANGELOG.md"
 
 [[ -f "$cli_file" ]] || die "Missing $cli_file"
 [[ -f "$app_model_file" ]] || die "Missing $app_model_file"
+[[ -f "$report_command_file" ]] || die "Missing $report_command_file"
+[[ -f "$updates_command_file" ]] || die "Missing $updates_command_file"
+[[ -f "$packaging_tests" ]] || die "Missing $packaging_tests"
 [[ -f "$justfile" ]] || die "Missing $justfile"
 [[ -f "$scripts_readme" ]] || die "Missing $scripts_readme"
 [[ -f "$build_script" ]] || die "Missing $build_script"
@@ -62,12 +70,23 @@ if ! grep -Fxq "## $version" "$changelog"; then
   die "CHANGELOG.md must contain heading: ## $version"
 fi
 
-python3 - "$version" "$cli_file" "$app_model_file" "$justfile" "$scripts_readme" "$build_script" "$dext_plist" <<'PY'
+python3 - "$version" "$cli_file" "$app_model_file" "$report_command_file" "$updates_command_file" "$packaging_tests" "$justfile" "$scripts_readme" "$build_script" "$dext_plist" <<'PY'
 import re
 import sys
 from pathlib import Path
 
-version, cli_path, app_model_path, justfile_path, readme_path, build_script_path, dext_plist_path = sys.argv[1:]
+(
+    version,
+    cli_path,
+    app_model_path,
+    report_command_path,
+    updates_command_path,
+    packaging_tests_path,
+    justfile_path,
+    readme_path,
+    build_script_path,
+    dext_plist_path,
+) = sys.argv[1:]
 
 replacements = [
     (
@@ -92,6 +111,53 @@ replacements = [
                     r'(Bundle\.main\.infoDictionary\?\["CFBundleShortVersionString"\] as\? String \?\? ")\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(")'
                 ),
                 rf"\g<1>{version}\g<2>",
+                1,
+            ),
+        ],
+    ),
+    (
+        Path(report_command_path),
+        [
+            (
+                "support report fallback version",
+                re.compile(
+                    r'(\?\? ")\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(",)'
+                ),
+                rf"\g<1>{version}\g<2>",
+                1,
+            ),
+        ],
+    ),
+    (
+        Path(updates_command_path),
+        [
+            (
+                "update checker fallback version",
+                re.compile(
+                    r'(\?\? ")\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(")'
+                ),
+                rf"\g<1>{version}\g<2>",
+                1,
+            ),
+        ],
+    ),
+    (
+        Path(packaging_tests_path),
+        [
+            (
+                "packaging test release-local-install versions",
+                re.compile(
+                    r'(release-local-install version=\\")\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(\\")'
+                ),
+                rf"\g<1>{version}\g<2>",
+                2,
+            ),
+            (
+                "packaging test bundle short version",
+                re.compile(
+                    r'(OJD_BUNDLE_SHORT_VERSION:-)\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?'
+                ),
+                rf"\g<1>{version}",
                 1,
             ),
         ],

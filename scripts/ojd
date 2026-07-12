@@ -26,6 +26,7 @@ Commands:
   build dext                  Build DriverKit `.dext` and embed into `.build/` app
   bump-version <version>      Update release version references
 
+  env audit                   Validate the single-file env contract without printing values
   signing install-profiles    Copy profiles from ~/Documents/Profiles into MobileDevice
   signing configure            Generate .env.dev + .env.release from Keychain + profiles
   signing doctor               Diagnose common cert/profile mismatch errors (safe output)
@@ -38,6 +39,7 @@ Commands:
                                Write/import GitHub Actions release secrets
 
   diagnose dext               Run dext diagnostics (activation, codesign, IORegistry, daemon connection)
+  diagnose record <json>     Validate/probe a raw-USB record without app signing
   diagnose sdl3 [--seconds N] Run SDL3 probe against the virtual device
   diagnose sdl3-gamecontroller [--seconds N]
                               Run SDL3 through GameController/MFI and test rumble
@@ -48,11 +50,14 @@ Commands:
   diagnose backends           Run current backend acceptance loop
   repair stale-dext           Kill stale DriverKit process copies after upgrade
   repair swiftpm-module-cache Clear SwiftPM module caches under `.build/` (fixes toolchain/target mismatches)
-  validate profiles           Validate bundled controller profiles
+  catalog regenerate --check Verify the runtime catalog against pinned sources and overrides
+  catalog regenerate --write Rebuild the runtime catalog from pinned sources and overrides
+  catalog xpad [options]      Generate review-only records from a pinned Linux xpad.c
+  validate profiles           Validate canonical controller records
   test parsers-macos14        Run focused parser regressions without Swift Testing
+  test xpad-generator         Run deterministic Linux xpad importer tests
   launch sdl-gamecontroller <app>
                               Launch an SDL app through GameController/MFI rumble route
-  rtk install-filters         Create/update project-local RTK filters without duplicates
 
   notarize submit             Submit + poll + staple (release only)
   notarize status [id]        Show notarization status (release only)
@@ -66,6 +71,8 @@ Commands:
 Examples:
   ./scripts/ojd signing install-profiles
   ./scripts/ojd signing configure
+  ./scripts/ojd diagnose record /tmp/controller.json --validate-only
+  ./scripts/ojd catalog xpad --github-ref master --output-dir /tmp/ojd-xpad
   ./scripts/ojd rebuild-fast dev
   ./scripts/ojd bump-version 0.1.0-rc.2
 
@@ -135,6 +142,14 @@ case "$cmd" in
     exec /usr/bin/env bash "$SCRIPT_DIR/bump-version.sh" "$@"
     ;;
 
+  env)
+    sub="${1:-}"
+    shift || true
+    case "$sub" in
+      audit) exec python3 "$SCRIPT_DIR/ojd-env-audit.py" "$@" ;;
+      *) die "Unknown: env $sub (expected: audit)" ;;
+    esac
+    ;;
   signing)
     sub="${1:-}"; shift || true
     case "$sub" in
@@ -174,9 +189,35 @@ case "$cmd" in
     esac
     ;;
 
+  catalog)
+    sub="${1:-}"; shift || true
+    case "$sub" in
+      regenerate)
+        exec /usr/bin/env python3 "$SCRIPT_DIR/ojd-generate-controller-catalog.py" "$@"
+        ;;
+      xpad)
+        exec /usr/bin/env python3 "$SCRIPT_DIR/ojd-generate-xpad-records.py" "$@"
+        ;;
+      *)
+        die "Unknown: catalog $sub (expected: regenerate | xpad)"
+        ;;
+    esac
+    ;;
+
   diagnose)
     sub="${1:-}"; shift || true
     case "$sub" in
+      record)
+        record_path="${1:-}"
+        [[ -n "$record_path" ]] || die "diagnose record requires a canonical controller JSON path"
+        shift
+        if [[ "$record_path" != /* ]]; then
+          record_path="$PWD/$record_path"
+        fi
+        cd "$PROJECT_DIR"
+        exec env OJD_USE_LOCAL_SWIFTUSB=1 swift run \
+          OpenJoystickDriverHIDTool --record-probe "$record_path" "$@"
+        ;;
       dext)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-diagnose.sh" dext
         ;;
@@ -199,7 +240,7 @@ case "$cmd" in
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-diagnose.sh" backends "$@"
         ;;
       *)
-        die "Unknown: diagnose $sub (expected: dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | catalina | backends)"
+        die "Unknown: diagnose $sub (expected: record | dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | catalina | backends)"
         ;;
     esac
     ;;
@@ -222,8 +263,15 @@ case "$cmd" in
       parsers-macos14)
         exec /usr/bin/env bash "$SCRIPT_DIR/ojd-test-parsers-macos14.sh"
         ;;
+      xpad-generator)
+        (
+          cd "$PROJECT_DIR"
+          exec /usr/bin/env python3 -m unittest discover \
+            -s Tests/Scripts -p 'test_*.py' -v
+        )
+        ;;
       *)
-        die "Unknown: test $sub (expected: parsers-macos14)"
+        die "Unknown: test $sub (expected: parsers-macos14 | xpad-generator)"
         ;;
     esac
     ;;
@@ -271,21 +319,6 @@ case "$cmd" in
 
   lint)
     exec /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" lint
-    ;;
-
-  rtk)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      install-filters)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-rtk-filters.sh" install-filters
-        ;;
-      ""|-h|--help|help)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-rtk-filters.sh" help
-        ;;
-      *)
-        die "Unknown: rtk $sub (expected: install-filters)"
-        ;;
-    esac
     ;;
 
   notarize)

@@ -5,8 +5,8 @@
 #   ./scripts/ojd notarize <submit|status|history|log>
 #
 # Prerequisites:
-#   1. Developer ID signing (scripts/.env.release)
-#   2. NOTARIZE_APPLE_ID and NOTARIZE_PASSWORD set in scripts/.env.release
+#   1. Developer ID signing (.env.release)
+#   2. NOTARIZE_APPLE_ID and NOTARIZE_PASSWORD set in .env.release
 #
 # Environment variables:
 #   NOTARIZE_TIMEOUT_MINUTES  — overall timeout (default: 180, i.e. 3 hours)
@@ -59,11 +59,11 @@ if [[ "$subcmd" == "store-credentials" ]]; then
 fi
 
 if [[ -z "${NOTARIZE_KEYCHAIN_PROFILE:-}" && ( -z "${NOTARIZE_APPLE_ID:-}" || -z "${NOTARIZE_PASSWORD:-}" ) ]]; then
-  echo "ERROR: Notarization credentials not set in scripts/.env.release"
+  echo "ERROR: Notarization credentials not set in .env.release"
   echo ""
   echo "  NOTARIZE_APPLE_ID  = your Apple ID email"
   echo "  NOTARIZE_PASSWORD  = app-specific password from:"
-  echo "    appleid.apple.com → Sign-In and Security → App-Specific Passwords"
+  echo "    appleid.apple.com -> Sign-In and Security -> App-Specific Passwords"
   exit 1
 fi
 

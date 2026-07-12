@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate bundled controller profiles without third-party dependencies."""
+"""Validate canonical OpenJoystickDriver controller records."""
 
 from __future__ import annotations
 
@@ -8,111 +8,81 @@ import pathlib
 import sys
 from typing import Any
 
-
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-PROFILE_DIR = ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Controllers"
-DEVICE_SCHEMA_DIR = ROOT / "Resources" / "Schemas" / "Devices"
+RECORD_DIR = ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Controllers"
 SCHEMA_ID = (
     "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
-    "Resources/Schemas/controller-profile.schema.json"
-)
-DEVICE_SCHEMA_ID = (
-    "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
-    "Resources/Schemas/device-profile.schema.json"
+    "Resources/Schemas/controller.schema.json"
 )
 
 PROTOCOLS = {
     "GIP": {
-        "variants": {"xboxOriginal", "xbox360", "xbox360Wireless", "xboxOne", "unknown"},
-        "mapping_flags": {
-            "dpadToButtons",
-            "triggersToButtons",
-            "sticksToNull",
-            "shareButton",
-            "paddles",
-            "profileButton",
-            "shareOffset",
+        "variants": {"xboxOriginal", "xboxOne", "unknown"},
+        "flags": {
+            "dpadToButtons", "triggersToButtons", "sticksToNull", "shareButton",
+            "paddles", "profileButton", "shareOffset",
         },
     },
     "Xbox360": {
-        "variants": {"xbox360", "unknown"},
-        "mapping_flags": {"dpadToButtons", "triggersToButtons", "sticksToNull"},
+        "variants": {"xbox360", "xbox360Wireless", "unknown"},
+        "flags": {"dpadToButtons", "triggersToButtons", "sticksToNull"},
     },
     "DS3": {
         "variants": {"dualShock3", "unknown"},
-        "mapping_flags": {"gyro", "accelerometer", "battery", "experimental", "needsHardwareTest"},
+        "flags": {
+            "gyro", "accelerometer", "battery", "experimental",
+            "needsHardwareTest",
+        },
     },
     "DS4": {
         "variants": {"dualShock4", "unknown"},
-        "mapping_flags": {"touchpad", "gyro", "accelerometer", "battery", "lightbar"},
+        "flags": {
+            "touchpad", "gyro", "accelerometer", "battery", "lightbar",
+        },
     },
     "DualSense": {
         "variants": {"dualSense", "unknown"},
-        "mapping_flags": {
-            "touchpad",
-            "gyro",
-            "accelerometer",
-            "battery",
-            "lightbar",
-            "microphoneMute",
-            "adaptiveTriggers",
-            "experimental",
+        "flags": {
+            "touchpad", "gyro", "accelerometer", "battery", "lightbar",
+            "microphoneMute", "adaptiveTriggers", "experimental",
             "needsHardwareTest",
         },
     },
     "SteamController": {
         "variants": {"steamController", "unknown"},
-        "mapping_flags": {
-            "lizardMode",
-            "trackpads",
-            "gyro",
-            "battery",
-            "wirelessReceiver",
-            "experimental",
-            "needsHardwareTest",
+        "flags": {
+            "lizardMode", "trackpads", "gyro", "battery", "wirelessReceiver",
+            "experimental", "needsHardwareTest",
         },
     },
     "SwitchPro": {
         "variants": {"switchPro", "unknown"},
-        "mapping_flags": {
-            "usbHandshake",
-            "calibration",
-            "imu",
-            "rumble",
-            "experimental",
+        "flags": {
+            "usbHandshake", "calibration", "imu", "rumble", "experimental",
             "needsHardwareTest",
         },
     },
     "XboxAdaptiveJoystick": {
         "variants": {"xboxAdaptiveJoystick", "unknown"},
-        "mapping_flags": {"rawUSBPackets", "genericHIDPackets", "experimental", "needsHardwareTest"},
+        "flags": {
+            "rawUSBPackets", "genericHIDPackets", "experimental",
+            "needsHardwareTest",
+        },
     },
-    "GenericHID": {
-        "variants": {"genericHID"},
-        "mapping_flags": set(),
-    },
+    "GenericHID": {"variants": {"genericHID"}, "flags": set()},
 }
-
-BACKENDS = {"driverKitHID", "userSpaceHID", "gameControllerVirtual"}
-VIRTUAL_PROFILES = {"xboxOneS"}
-PROFILE_SOURCES = {
-    "local-hardware",
-    "linux-xpad.c",
-    "linux-hid-steam.c",
-    "linux-hid-playstation.c",
-    "linux-hid-sony.c",
-    "linux-hid-nintendo.c",
+SOURCES = {
+    "local-hardware", "linux-xpad.c", "linux-hid-steam.c",
+    "linux-hid-playstation.c", "linux-hid-sony.c", "linux-hid-nintendo.c",
     "tester-packets",
 }
-GIP_STARTUP_PACKETS = {
-    "powerOn",
-    "xboxOneSInit",
-    "extraInput",
-    "horiAck",
-    "ledOn",
-    "authDone",
-    "rumbleBegin",
-    "rumbleEnd",
+STARTUP_PACKETS = {
+    "powerOn", "xboxOneSInit", "extraInput", "horiAck", "ledOn",
+    "authDone", "rumbleBegin", "rumbleEnd",
+}
+ROOT_KEYS = {
+    "$schema", "vendor_id", "product_id", "transport", "protocol", "usb",
+    "provenance",
 }
 
 
@@ -130,181 +100,181 @@ def require_object(value: Any, path: str) -> dict[str, Any]:
     return value
 
 
+def require_keys(
+    value: dict[str, Any],
+    allowed: set[str],
+    required: set[str],
+    path: str,
+) -> None:
+    unknown = sorted(set(value) - allowed)
+    missing = sorted(required - set(value))
+    require(not unknown, f"{path} has unknown fields: {', '.join(unknown)}")
+    require(not missing, f"{path} is missing fields: {', '.join(missing)}")
+
+
+def require_int(value: Any, path: str, minimum: int, maximum: int) -> int:
+    require(
+        isinstance(value, int) and not isinstance(value, bool),
+        f"{path} must be an integer",
+    )
+    require(minimum <= value <= maximum, f"{path} must be in {minimum}...{maximum}")
+    return value
+
+
 def require_string(value: Any, path: str) -> str:
     require(isinstance(value, str) and value, f"{path} must be a non-empty string")
     return value
 
 
-def require_int(value: Any, path: str, minimum: int, maximum: int | None = None) -> int:
-    require(isinstance(value, int) and not isinstance(value, bool), f"{path} must be an integer")
-    require(value >= minimum, f"{path} must be >= {minimum}")
-    if maximum is not None:
-        require(value <= maximum, f"{path} must be <= {maximum}")
-    return value
+def expected_relative_path(vendor_id: int, product_id: int) -> pathlib.Path:
+    return pathlib.Path(f"{vendor_id:04x}") / f"{vendor_id:04x}-{product_id:04x}.json"
 
 
-def require_string_list(value: Any, path: str) -> list[str]:
-    require(isinstance(value, list), f"{path} must be an array")
-    result: list[str] = []
-    for idx, item in enumerate(value):
-        result.append(require_string(item, f"{path}[{idx}]"))
-    require(len(result) == len(set(result)), f"{path} must not contain duplicates")
-    return result
+def validate_record(
+    path: pathlib.Path,
+    *,
+    enforce_path: bool = True,
+) -> tuple[int, int, str, bool]:
+    try:
+        root = require_object(json.loads(path.read_text()), "$")
+    except json.JSONDecodeError as error:
+        raise ValidationError(f"invalid JSON: {error}") from error
 
-
-def validate_profile(path: pathlib.Path) -> tuple[int, int, str, bool]:
-    data = json.loads(path.read_text())
-    root = require_object(data, "$")
-    require(
-        root.get("$schema") in {"../../../../../Resources/Schemas/controller-profile.schema.json", SCHEMA_ID},
-        "$schema must reference controller-profile.schema.json",
+    require_keys(
+        root,
+        ROOT_KEYS,
+        {"$schema", "vendor_id", "product_id", "transport", "protocol", "provenance"},
+        "$",
     )
-    require_string(root.get("profile_version"), "profile_version")
+    require(root["$schema"] == SCHEMA_ID, "$schema must reference controller.schema.json")
+    vendor_id = require_int(root["vendor_id"], "vendor_id", 1, 65535)
+    product_id = require_int(root["product_id"], "product_id", 0, 65535)
 
-    identity = require_object(root.get("identity"), "identity")
-    vid = require_int(identity.get("vendor_id"), "identity.vendor_id", 1, 65535)
-    pid = require_int(identity.get("product_id"), "identity.product_id", 0, 65535)
-    require_string(identity.get("name"), "identity.name")
-    require_string(identity.get("short_name"), "identity.short_name")
+    if enforce_path:
+        relative = path.relative_to(RECORD_DIR)
+        require(
+            relative == expected_relative_path(vendor_id, product_id),
+            f"path must be {expected_relative_path(vendor_id, product_id)}",
+        )
 
-    input_section = require_object(root.get("input"), "input")
-    transport = require_string(input_section.get("transport"), "input.transport")
-    require(transport in {"usb", "hid"}, "input.transport must be usb or hid")
-    usb = require_object(input_section.get("usb"), "input.usb")
-    usb_class = require_int(usb.get("class"), "input.usb.class", 0, 255)
-    require(usb_class in {3, 255}, "input.usb.class must be 3 or 255")
-    require_int(usb.get("interface"), "input.usb.interface", 0)
-    configuration = usb.get("configuration")
-    if configuration is not None:
-        require(configuration == "set1BeforeClaim", "input.usb.configuration is unknown")
-    settle_ms = usb.get("post_handshake_settle_ms", 0)
-    require_int(settle_ms, "input.usb.post_handshake_settle_ms", 0)
-    endpoints = usb.get("endpoints")
-    if endpoints is not None:
-        endpoint_obj = require_object(endpoints, "input.usb.endpoints")
-        require_int(endpoint_obj.get("in"), "input.usb.endpoints.in", 0, 255)
-        require_int(endpoint_obj.get("out"), "input.usb.endpoints.out", 0, 255)
-    elif transport == "usb":
-        raise ValidationError("input.usb.endpoints is required for usb transport")
+    transport = require_string(root["transport"], "transport")
+    require(transport in {"usb", "hid"}, "transport must be usb or hid")
 
-    protocol = require_object(root.get("protocol"), "protocol")
-    driver = require_string(protocol.get("driver"), "protocol.driver")
-    require(driver in PROTOCOLS, f"protocol.driver is unsupported: {driver}")
-    variant = require_string(protocol.get("variant"), "protocol.variant")
-    require(variant in PROTOCOLS[driver]["variants"], f"protocol.variant {variant} is invalid for {driver}")
-    flags = require_string_list(protocol.get("mapping_flags", []), "protocol.mapping_flags")
-    invalid_flags = sorted(set(flags) - PROTOCOLS[driver]["mapping_flags"])
-    require(not invalid_flags, f"protocol.mapping_flags invalid for {driver}: {', '.join(invalid_flags)}")
-    startup_packets = require_string_list(protocol.get("startup_packets", []), "protocol.startup_packets")
-    if startup_packets:
-        require(driver == "GIP", "protocol.startup_packets is only valid for GIP")
-        invalid_packets = sorted(set(startup_packets) - GIP_STARTUP_PACKETS)
-        require(not invalid_packets, f"protocol.startup_packets invalid: {', '.join(invalid_packets)}")
+    protocol = require_object(root["protocol"], "protocol")
+    require_keys(
+        protocol,
+        {"driver", "variant", "flags", "startup_packets"},
+        {"driver", "variant"},
+        "protocol",
+    )
+    driver = require_string(protocol["driver"], "protocol.driver")
+    require(driver in PROTOCOLS, f"unsupported protocol.driver: {driver}")
+    variant = require_string(protocol["variant"], "protocol.variant")
+    require(
+        variant in PROTOCOLS[driver]["variants"],
+        f"protocol.variant {variant} is invalid for {driver}",
+    )
+    flags = protocol.get("flags", [])
+    require(isinstance(flags, list), "protocol.flags must be an array")
+    require(all(isinstance(flag, str) and flag for flag in flags), "protocol.flags must contain strings")
+    require(len(flags) == len(set(flags)), "protocol.flags must not contain duplicates")
+    invalid_flags = sorted(set(flags) - PROTOCOLS[driver]["flags"])
+    require(not invalid_flags, f"unsupported protocol.flags: {', '.join(invalid_flags)}")
 
-    output = require_object(root.get("output"), "output")
-    virtual_profile = require_string(output.get("virtual_profile"), "output.virtual_profile")
-    require(virtual_profile in VIRTUAL_PROFILES, f"output.virtual_profile is unsupported: {virtual_profile}")
-    backends = require_string_list(output.get("preferred_backends"), "output.preferred_backends")
-    require(backends, "output.preferred_backends must not be empty")
-    invalid_backends = sorted(set(backends) - BACKENDS)
-    require(not invalid_backends, f"output.preferred_backends invalid: {', '.join(invalid_backends)}")
+    startup = protocol.get("startup_packets", [])
+    require(isinstance(startup, list), "protocol.startup_packets must be an array")
+    if "startup_packets" in protocol:
+        require(startup, "protocol.startup_packets must not be empty when present")
+    require(len(startup) == len(set(startup)), "protocol.startup_packets must not contain duplicates")
+    invalid_packets = sorted(set(startup) - STARTUP_PACKETS)
+    require(not invalid_packets, f"unsupported startup packets: {', '.join(invalid_packets)}")
+    require(not startup or driver == "GIP", "startup packets require GIP")
+    require(
+        startup != ["powerOn", "ledOn", "authDone"],
+        "default GIP startup packets must be omitted",
+    )
 
-    provenance = root.get("provenance")
-    hardware_verified = True
-    if provenance is not None:
-        provenance_obj = require_object(provenance, "provenance")
-        source = require_string(provenance_obj.get("source"), "provenance.source")
-        require(source in PROFILE_SOURCES, f"provenance.source is unsupported: {source}")
-        require(isinstance(provenance_obj.get("hardware_verified"), bool), "provenance.hardware_verified must be a boolean")
-        hardware_verified = provenance_obj["hardware_verified"]
+    usb = root.get("usb")
+    if usb is not None:
+        require(transport == "usb", "usb overrides require usb transport")
+        usb = require_object(usb, "usb")
+        require_keys(
+            usb,
+            {"interface", "configuration", "post_handshake_settle_ms", "endpoints"},
+            set(),
+            "usb",
+        )
+        require(usb, "usb override must not be empty")
+        if "interface" in usb:
+            interface = require_int(usb["interface"], "usb.interface", 0, 255)
+            require(interface != 0, "default USB interface must be omitted")
+        if "configuration" in usb:
+            require(
+                usb["configuration"] == "set1-before-claim",
+                "unsupported usb.configuration",
+            )
+        if "post_handshake_settle_ms" in usb:
+            require_int(
+                usb["post_handshake_settle_ms"],
+                "usb.post_handshake_settle_ms",
+                1,
+                60000,
+            )
+        if "endpoints" in usb:
+            endpoints = require_object(usb["endpoints"], "usb.endpoints")
+            require_keys(endpoints, {"in", "out"}, {"in", "out"}, "usb.endpoints")
+            input_endpoint = require_int(endpoints["in"], "usb.endpoints.in", 128, 255)
+            output_endpoint = require_int(endpoints["out"], "usb.endpoints.out", 1, 127)
+            defaults = (129, 1) if driver == "Xbox360" else (130, 2)
+            require(
+                (input_endpoint, output_endpoint) != defaults,
+                "default protocol endpoints must be omitted",
+            )
 
-    return vid, pid, driver, hardware_verified
+    provenance = require_object(root["provenance"], "provenance")
+    require_keys(
+        provenance,
+        {"source", "revision", "verified"},
+        {"source", "verified"},
+        "provenance",
+    )
+    source = require_string(provenance["source"], "provenance.source")
+    require(source in SOURCES, f"unsupported provenance.source: {source}")
+    require(
+        isinstance(provenance["verified"], bool),
+        "provenance.verified must be a boolean",
+    )
+    if "revision" in provenance:
+        require_string(provenance["revision"], "provenance.revision")
+
+    return vendor_id, product_id, driver, provenance["verified"]
 
 
-def validate_device_schema(path: pathlib.Path) -> tuple[int, int]:
-    data = json.loads(path.read_text())
-    root = require_object(data, "$")
-    require(root.get("$schema") == DEVICE_SCHEMA_ID, "$schema must reference device-profile.schema.json")
-    vid = require_int(root.get("vendor_id"), "vendor_id", 1, 65535)
-    pid = require_int(root.get("product_id"), "product_id", 0, 65535)
-    require_string(root.get("name"), "name")
-    protocol = require_string(root.get("protocol"), "protocol")
-    require(protocol in PROTOCOLS, f"protocol is unsupported: {protocol}")
-
-    usb = require_object(root.get("usb"), "usb")
-    require_int(usb.get("interface"), "usb.interface", 0)
-    usb_class = require_int(usb.get("class"), "usb.class", 0, 255)
-    require(usb_class in {3, 255}, "usb.class must be 3 or 255")
-    configuration = usb.get("configuration")
-    if configuration is not None:
-        require(configuration == "set1BeforeClaim", "usb.configuration is unknown")
-    settle_ms = usb.get("post_handshake_settle_ms", 0)
-    require_int(settle_ms, "usb.post_handshake_settle_ms", 0)
-    endpoints = require_object(usb.get("endpoints"), "usb.endpoints")
-    for direction in ("in", "out"):
-        endpoint = require_object(endpoints.get(direction), f"usb.endpoints.{direction}")
-        require_int(endpoint.get("address"), f"usb.endpoints.{direction}.address", 0, 255)
-        endpoint_type = require_string(endpoint.get("type"), f"usb.endpoints.{direction}.type")
-        require(endpoint_type in {"interrupt", "bulk"}, f"usb.endpoints.{direction}.type is unsupported")
-        require_int(endpoint.get("max_packet"), f"usb.endpoints.{direction}.max_packet", 1)
-
-    init_sequence = root.get("init_sequence")
-    require(isinstance(init_sequence, list) and init_sequence, "init_sequence must be a non-empty array")
-    input_commands = require_object(root.get("input_commands"), "input_commands")
-    require("input" in input_commands, "input_commands.input is required")
-    return vid, pid
+def validate_catalog(record_dir: pathlib.Path = RECORD_DIR) -> list[pathlib.Path]:
+    records = sorted(record_dir.glob("*/*.json"))
+    require(records, f"no controller records found in {record_dir}")
+    seen: dict[tuple[int, int], pathlib.Path] = {}
+    for path in records:
+        vendor_id, product_id, _, _ = validate_record(
+            path,
+            enforce_path=record_dir == RECORD_DIR,
+        )
+        key = (vendor_id, product_id)
+        require(key not in seen, f"{path}: duplicate identity also in {seen.get(key)}")
+        seen[key] = path
+    return records
 
 
 def main() -> int:
-    profiles = sorted(PROFILE_DIR.glob("*.json"))
-    if not profiles:
-        print(f"ERROR: no controller profiles found in {PROFILE_DIR}", file=sys.stderr)
+    try:
+        records = validate_catalog()
+    except Exception as error:
+        print(f"[FAIL] {error}", file=sys.stderr)
         return 1
 
-    seen: dict[tuple[int, int], pathlib.Path] = {}
-    profile_protocols: dict[tuple[int, int], tuple[str, bool]] = {}
-    failures = 0
-    for profile in profiles:
-        try:
-            vid, pid, driver, hardware_verified = validate_profile(profile)
-            key = (vid, pid)
-            if key in seen:
-                raise ValidationError(f"duplicate VID/PID also in {seen[key].name}")
-            seen[key] = profile
-            profile_protocols[key] = (driver, hardware_verified)
-            print(f"[OK] {profile.relative_to(ROOT)}")
-        except Exception as exc:
-            failures += 1
-            print(f"[FAIL] {profile.relative_to(ROOT)}: {exc}", file=sys.stderr)
-
-    device_schemas = sorted(DEVICE_SCHEMA_DIR.glob("*.json"))
-    device_schema_keys: dict[tuple[int, int], pathlib.Path] = {}
-    for schema in device_schemas:
-        try:
-            key = validate_device_schema(schema)
-            if key not in seen:
-                raise ValidationError("device schema VID/PID has no matching controller profile")
-            if key in device_schema_keys:
-                raise ValidationError(f"duplicate device schema also in {device_schema_keys[key].name}")
-            device_schema_keys[key] = schema
-            print(f"[OK] {schema.relative_to(ROOT)}")
-        except Exception as exc:
-            failures += 1
-            print(f"[FAIL] {schema.relative_to(ROOT)}: {exc}", file=sys.stderr)
-
-    for key, (driver, hardware_verified) in sorted(profile_protocols.items()):
-        if driver == "GIP" and hardware_verified and key not in device_schema_keys:
-            failures += 1
-            profile = seen[key]
-            print(
-                f"[FAIL] {profile.relative_to(ROOT)}: GIP controller is missing Resources/Schemas/Devices/*.json",
-                file=sys.stderr,
-            )
-
-    if failures:
-        print(f"FAILED: {failures} profile(s) invalid", file=sys.stderr)
-        return 1
-    print(f"Validated {len(profiles)} controller profile(s) and {len(device_schemas)} device schema(s).")
+    for path in records:
+        print(f"[OK] {path.relative_to(ROOT)}")
+    print(f"Validated {len(records)} canonical controller record(s).")
     return 0
 
 

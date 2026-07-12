@@ -504,9 +504,11 @@ func runDualSenseBluetoothCRCCheck() throws {
 
 func runSwitchProTransportAndMappingCheck() throws {
   let parser = SwitchProParser()
-  require(parser.hidStartupReports(transport: "Bluetooth").isEmpty, "Switch Pro Bluetooth should skip USB startup reports")
+  let bluetoothStartup = parser.hidStartupReports(transport: "Bluetooth")
+  require(bluetoothStartup.map(\.reportID) == [0x01, 0x01], "Switch Pro Bluetooth should send subcommand startup reports")
+  require(bluetoothStartup.map { $0.bytes[10] } == [0x03, 0x48], "Switch Pro Bluetooth startup should select full reports and enable IMU")
   require(parser.hidStartupReports(transport: nil).isEmpty, "Switch Pro unknown transport should skip USB startup reports")
-  require(parser.hidStartupReports(transport: "USB").map(\.reportID) == [0x80, 0x80, 0x80, 0x80, 0x01], "Switch Pro USB startup report IDs should match Linux init slice")
+  require(parser.hidStartupReports(transport: "USB").map(\.reportID) == [0x80, 0x80, 0x80, 0x80, 0x01, 0x01], "Switch Pro USB startup report IDs should match Linux init slice")
 
   let expectations: [(UInt32, Button)] = [
     (0x0000_0008, .b),
@@ -537,10 +539,12 @@ func runSwitchProTransportAndMappingCheck() throws {
   require(hasEvent(stickEvents, .rightStickChanged(x: -1.0, y: -1.0)), "Switch Pro should parse right 12-bit stick")
 
   let startupReports = SwitchProParser().hidStartupReports()
-  require(startupReports.map(\.reportID) == [0x80, 0x80, 0x80, 0x80, 0x01], "Switch Pro USB startup report IDs should match Linux")
-  require(startupReports.map { Array($0.bytes.prefix(2)) } == [[0x80, 0x02], [0x80, 0x03], [0x80, 0x02], [0x80, 0x04], [0x01, 0x00]], "Switch Pro USB startup reports should match Linux init prefixes")
-  require(startupReports.last?.bytes[10] == 0x03, "Switch Pro startup should set full report mode subcommand")
-  require(startupReports.last?.bytes[11] == 0x30, "Switch Pro startup should request full report mode 0x30")
+  require(startupReports.map(\.reportID) == [0x80, 0x80, 0x80, 0x80, 0x01, 0x01], "Switch Pro USB startup report IDs should match Linux")
+  require(startupReports.map { Array($0.bytes.prefix(2)) } == [[0x80, 0x02], [0x80, 0x03], [0x80, 0x02], [0x80, 0x04], [0x01, 0x00], [0x01, 0x01]], "Switch Pro USB startup reports should match Linux init prefixes")
+  require(startupReports[4].bytes[10] == 0x03, "Switch Pro startup should set full report mode subcommand")
+  require(startupReports[4].bytes[11] == 0x30, "Switch Pro startup should request full report mode 0x30")
+  require(startupReports[5].bytes[10] == 0x48, "Switch Pro startup should enable IMU")
+  require(startupReports[5].bytes[11] == 0x01, "Switch Pro startup should enable IMU data")
 }
 
 runProfileMetadataChecks()

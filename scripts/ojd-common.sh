@@ -5,18 +5,20 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
-# Load environment: legacy script-local files first, then central project files.
-# Override with OJD_ENV=release or OJD_ENV=dev (default: dev)
+# Load exactly one repository-local environment file.
+# OJD_ENV selects .env.dev (default) or .env.release at the project root.
 OJD_ENV="${OJD_ENV:-dev}"
-for _ENV_FILE in   "$SCRIPT_DIR/.env.$OJD_ENV"   "$PROJECT_DIR/.env"   "$PROJECT_DIR/.env.$OJD_ENV"
-do
-  if [[ -f "$_ENV_FILE" ]]; then
-    set -a
-    source "$_ENV_FILE"
-    set +a
-  fi
-done
-unset _ENV_FILE
+case "$OJD_ENV" in
+  dev|release) ;;
+  *) echo "ERROR: OJD_ENV must be dev or release (got: $OJD_ENV)" >&2; return 1 2>/dev/null || exit 1 ;;
+esac
+OJD_ENV_FILE="$PROJECT_DIR/.env.$OJD_ENV"
+if [[ -f "$OJD_ENV_FILE" ]]; then
+  set -a
+  source "$OJD_ENV_FILE"
+  set +a
+fi
+export OJD_ENV_FILE
 
 # Prefer full Xcode toolchain when installed, even if `xcode-select` still
 # points at Command Line Tools (avoids requiring sudo for local builds).

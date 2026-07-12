@@ -210,8 +210,8 @@ def claim_interface(dev: usb.core.Device) -> bool:
     except usb.core.USBError as e:
         print(f"[ERROR] Cannot claim interface: {e}")
         if "13" in str(e) or "Access denied" in str(e) or "busy" in str(e).lower():
-            print("  → Run with sudo")
-            print("  → Or stop the daemon first:")
+            print("  -> Run with sudo")
+            print("  -> Or stop the daemon first:")
             print("      .build/debug/OpenJoystickDriver --headless stop")
         return False
 
@@ -226,10 +226,10 @@ def send_init(dev: usb.core.Device, out_ep: int, seq: GIPSequencer):
     for i, pkt in enumerate(init, 1):
         try:
             dev.write(out_ep, pkt, timeout=WRITE_TIMEOUT_MS)
-            print(f"  → ({i}/3) {hex_str(pkt)}")
+            print(f"  -> ({i}/3) {hex_str(pkt)}")
             time.sleep(0.05)
         except usb.core.USBError as e:
-            print(f"  → ({i}/3) FAILED: {e}")
+            print(f"  -> ({i}/3) FAILED: {e}")
 
 
 def send_keepalive(dev: usb.core.Device, out_ep: int, seq: GIPSequencer) -> bool:
@@ -357,7 +357,7 @@ def investigate(dev: usb.core.Device, in_ep: int, out_ep: int, seq: GIPSequencer
 
     all_cmds: Dict[int, int] = {}
     for label, dur in INVESTIGATE_PHASES:
-        prompt = f"\n→  {label}  ({dur:.0f}s - press Enter then act)"
+        prompt = f"\n->  {label}  ({dur:.0f}s - press Enter then act)"
         input(prompt)
         counts = capture(dev, in_ep, out_ep, seq, duration=dur,
                          diff_only=False, label=label)
