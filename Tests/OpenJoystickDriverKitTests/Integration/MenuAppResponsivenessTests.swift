@@ -6,15 +6,15 @@ struct MenuAppResponsivenessTests {
   func guiChildProcessesAreAsyncAndBounded() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let polling = try source(
-      "Sources/OpenJoystickDriver/App/AppModel+Polling.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/Polling.swift",
       root: root
     )
     let inputMonitoring = try source(
-      "Sources/OpenJoystickDriver/App/AppModel+InputMonitoring.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/InputMonitoring.swift",
       root: root
     )
     let browserModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel+BrowserGamepadDiagnostic.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/BrowserGamepadDiagnostic.swift",
       root: root
     )
     let browserService = try source(

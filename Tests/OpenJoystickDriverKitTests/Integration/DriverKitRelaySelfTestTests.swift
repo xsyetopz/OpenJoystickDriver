@@ -49,7 +49,7 @@ struct DriverKitRelaySelfTestTests {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let service = try String(
       contentsOf: root.appendingPathComponent(
-        "Sources/OpenJoystickDriverDaemon/XPCService+SelfTest.swift"
+        "Sources/OpenJoystickDriverDaemon/XPCService/SelfTest.swift"
       ),
       encoding: .utf8
     )
@@ -61,7 +61,7 @@ struct DriverKitRelaySelfTestTests {
     )
     let view = try String(
       contentsOf: root.appendingPathComponent(
-        "Sources/OpenJoystickDriver/Views/MenuBarPopoverView+AdvancedCards.swift"
+        "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/AdvancedCards.swift"
       ),
       encoding: .utf8
     )

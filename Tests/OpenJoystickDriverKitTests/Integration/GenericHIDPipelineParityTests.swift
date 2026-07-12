@@ -9,12 +9,17 @@ struct GenericHIDPipelineParityTests {
       "Sources/OpenJoystickDriverKit/HID/HIDDeviceStream.swift",
       root: root
     )
-    let manager = try source(
-      "Sources/OpenJoystickDriverKit/Device/DeviceManager.swift",
-      root: root
-    )
+    let manager =
+      try source(
+        "Sources/OpenJoystickDriverKit/Device/DeviceManager/DeviceManager.swift",
+        root: root
+      )
+      + source(
+        "Sources/OpenJoystickDriverKit/Device/DeviceManager/HIDDetection.swift",
+        root: root
+      )
     let pipeline = try source(
-      "Sources/OpenJoystickDriverKit/Device/DevicePipeline.swift",
+      "Sources/OpenJoystickDriverKit/Device/DevicePipeline/DevicePipeline.swift",
       root: root
     )
     let parser = try source(
@@ -22,11 +27,11 @@ struct GenericHIDPipelineParityTests {
       root: root
     )
     let userSpaceOutput = try source(
-      "Sources/OpenJoystickDriverKit/Output/Backends/UserSpaceOutputDispatcher+Events.swift",
+      "Sources/OpenJoystickDriverKit/Output/Backends/UserSpaceOutputDispatcher/Events.swift",
       root: root
     )
     let inputTest = try source(
-      "Sources/OpenJoystickDriver/Views/InputTestWindowView.swift",
+      "Sources/OpenJoystickDriver/Views/InputTestWindowView/InputTestWindowView.swift",
       root: root
     )
 

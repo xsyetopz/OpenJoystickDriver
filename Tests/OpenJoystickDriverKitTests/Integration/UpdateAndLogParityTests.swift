@@ -11,11 +11,11 @@ struct UpdateAndLogParityTests {
       root: root
     )
     let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel+XPCOperations.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/XPCOperations.swift",
       root: root
     )
     let view = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView+AdvancedCards.swift",
+      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift",
       root: root
     )
     let checker = try source(
@@ -44,7 +44,7 @@ struct UpdateAndLogParityTests {
       root: root
     )
     let view = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView+AdvancedCards.swift",
+      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift",
       root: root
     )
     let service = try source(

@@ -291,6 +291,5 @@ struct DS4ParserTests {
 private final class CapturingOutputDispatcher: OutputDispatcher, @unchecked Sendable {
   var suppressOutput = false
 
-  // swiftlint:disable:next async_without_await
-  func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {}
+  func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) {}
 }

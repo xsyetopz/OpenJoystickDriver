@@ -235,8 +235,7 @@ private final class RecordingCompatibilityDispatcher:
     }
   }
 
-  // swiftlint:disable:next async_without_await
-  func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {
+  func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) {
     lock.withLock {
       _status = "on"
       _recordedDispatches.append(.init(identifier: identifier, events: events))

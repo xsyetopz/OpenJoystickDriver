@@ -28,7 +28,7 @@ struct HIDProfileDiscoveryTests {
       root: root
     )
     let manager = try source(
-      "Sources/OpenJoystickDriverKit/Device/DeviceManager.swift",
+      "Sources/OpenJoystickDriverKit/Device/DeviceManager/DeviceManager.swift",
       root: root
     )
 

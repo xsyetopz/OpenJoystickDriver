@@ -10,7 +10,7 @@ struct AppleGameControllerCatalogParityTests {
       root: root
     )
     let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel+AppleGameControllerAudit.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/AppleGameControllerAudit.swift",
       root: root
     )
     let reportCommand = try source(
@@ -18,7 +18,7 @@ struct AppleGameControllerCatalogParityTests {
       root: root
     )
     let view = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView+AdvancedCards.swift",
+      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift",
       root: root
     )
     let supportReport = try source(

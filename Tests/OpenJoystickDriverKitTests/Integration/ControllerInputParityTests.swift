@@ -15,7 +15,7 @@ struct ControllerInputParityTests {
       root: root
     )
     let view = try source(
-      "Sources/OpenJoystickDriver/Views/InputTestWindowView.swift",
+      "Sources/OpenJoystickDriver/Views/InputTestWindowView/InputTestWindowView.swift",
       root: root
     )
 
@@ -39,7 +39,7 @@ struct ControllerInputParityTests {
   func diagnosticWindowSamplesAtDisplayCadence() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let view = try source(
-      "Sources/OpenJoystickDriver/Views/InputTestWindowView.swift",
+      "Sources/OpenJoystickDriver/Views/InputTestWindowView/InputTestWindowView.swift",
       root: root
     )
 

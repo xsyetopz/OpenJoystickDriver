@@ -120,10 +120,10 @@ struct ScriptPackagingTests {
     let dispatcherURL = rootURL.appendingPathComponent("scripts/ojd")
     let workflowURL = rootURL.appendingPathComponent(".github/workflows/release.yml")
     let appModelURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/App/AppModel.swift"
+      "Sources/OpenJoystickDriver/App/AppModel/AppModel.swift"
     )
     let xpcOpsURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/App/AppModel+XPCOperations.swift"
+      "Sources/OpenJoystickDriver/App/AppModel/XPCOperations.swift"
     )
     let package = try String(contentsOf: packageURL, encoding: .utf8)
     let bundles = try String(contentsOf: bundlesURL, encoding: .utf8)
@@ -171,7 +171,7 @@ struct ScriptPackagingTests {
       "Sources/OpenJoystickDriver/App/SparkleUpdateController.swift"
     )
     let appModelURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/App/AppModel.swift"
+      "Sources/OpenJoystickDriver/App/AppModel/AppModel.swift"
     )
     let controller = try String(contentsOf: controllerURL, encoding: .utf8)
     let appModel = try String(contentsOf: appModelURL, encoding: .utf8)
@@ -194,7 +194,7 @@ struct ScriptPackagingTests {
   func testInputMonitoringRequestUsesNativeAppRegistration() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let appModelURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/App/AppModel+InputMonitoring.swift"
+      "Sources/OpenJoystickDriver/App/AppModel/InputMonitoring.swift"
     )
     let daemonMainURL = rootURL.appendingPathComponent(
       "Sources/OpenJoystickDriverDaemon/main.swift"

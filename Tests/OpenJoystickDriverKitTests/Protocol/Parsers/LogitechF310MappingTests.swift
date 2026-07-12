@@ -46,7 +46,7 @@ struct LogitechF310MappingTests {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let view = try String(
       contentsOf: root.appendingPathComponent(
-        "Sources/OpenJoystickDriver/Views/InputTestWindowView.swift"
+        "Sources/OpenJoystickDriver/Views/InputTestWindowView/InputTestWindowView.swift"
       ),
       encoding: .utf8
     )

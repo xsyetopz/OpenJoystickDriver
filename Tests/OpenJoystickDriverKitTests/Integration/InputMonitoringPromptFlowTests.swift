@@ -44,16 +44,21 @@ struct InputMonitoringPromptFlowTests {
   func testGuiLaunchesDaemonHelperAppInsteadOfRequestingPermissionOverXPC() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let inputMonitoringURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/App/AppModel+InputMonitoring.swift"
+      "Sources/OpenJoystickDriver/App/AppModel/InputMonitoring.swift"
     )
     let deviceManagerURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriverKit/Device/DeviceManager.swift"
+      "Sources/OpenJoystickDriverKit/Device/DeviceManager/DeviceManager.swift"
     )
     let permissionManagerURL = rootURL.appendingPathComponent(
       "Sources/OpenJoystickDriverKit/Permissions/PermissionManager.swift"
     )
     let source = try String(contentsOf: inputMonitoringURL, encoding: .utf8)
-    let deviceManager = try String(contentsOf: deviceManagerURL, encoding: .utf8)
+    let hidDetectionURL = rootURL.appendingPathComponent(
+      "Sources/OpenJoystickDriverKit/Device/DeviceManager/HIDDetection.swift"
+    )
+    let deviceManager =
+      try String(contentsOf: deviceManagerURL, encoding: .utf8)
+      + String(contentsOf: hidDetectionURL, encoding: .utf8)
     let permissionManager = try String(contentsOf: permissionManagerURL, encoding: .utf8)
 
     #expect(source.contains("NSWorkspace.OpenConfiguration()"))
@@ -101,7 +106,7 @@ struct InputMonitoringPromptFlowTests {
     #expect(!deviceManager.contains("await permissionManager.requestAccess()"))
     #expect(deviceManager.contains("Use the app's Request Access action"))
     #expect(deviceManager.contains("await ensureHIDDetectionState(for: state)"))
-    #expect(deviceManager.contains("private func ensureHIDDetectionState"))
+    #expect(deviceManager.contains("func ensureHIDDetectionState"))
     #expect(deviceManager.contains("await removeHIDPipelines()"))
   }
   @Test
@@ -134,7 +139,7 @@ struct InputMonitoringPromptFlowTests {
   func testDaemonRetainsShutdownSignalSourcesForQuitAndReopen() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let shutdownURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriverKit/Device/DeviceManager+Shutdown.swift"
+      "Sources/OpenJoystickDriverKit/Device/DeviceManager/Shutdown.swift"
     )
     let source = try String(contentsOf: shutdownURL, encoding: .utf8)
 

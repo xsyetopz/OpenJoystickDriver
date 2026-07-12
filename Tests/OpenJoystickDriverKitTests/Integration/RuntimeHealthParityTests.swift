@@ -10,29 +10,34 @@ struct RuntimeHealthParityTests {
       root: rootURL
     )
     let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel+SupportReport.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/SupportReport.swift",
       root: rootURL
     )
     let modelState = try source(
-      "Sources/OpenJoystickDriver/App/AppModel.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/AppModel.swift",
       root: rootURL
     )
     let view = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView+AdvancedCards.swift",
+      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/AdvancedCards.swift",
       root: rootURL
     )
     let menuState = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView.swift",
+      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/MenuBarPopoverView.swift",
       root: rootURL
     )
     let report = try source(
       "Sources/OpenJoystickDriverKit/Diagnostics/SupportReport.swift",
       root: rootURL
     )
-    let consumerMonitor = try source(
-      "Sources/OpenJoystickDriverDaemon/ForegroundConsumerOutputMonitor.swift",
-      root: rootURL
-    )
+    let consumerMonitorPath =
+      "Sources/OpenJoystickDriverDaemon/ForegroundConsumerOutputMonitor/"
+      + "ForegroundConsumerOutputMonitor.swift"
+    let consumerMonitor =
+      try source(consumerMonitorPath, root: rootURL)
+      + source(
+        "Sources/OpenJoystickDriverDaemon/ForegroundConsumerOutputMonitor/ConsumerDiscovery.swift",
+        root: rootURL
+      )
     let consumerProbe = try source(
       "Sources/OpenJoystickDriverDaemon/ForegroundConsumerMemoryProbe.swift",
       root: rootURL

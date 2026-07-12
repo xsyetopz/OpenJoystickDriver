@@ -329,8 +329,7 @@ private final class RecordingOutputDispatcher: OutputDispatcher, @unchecked Send
     lock.withLock { recordedBatches.flatMap { $0 } }
   }
 
-  // swiftlint:disable:next async_without_await
-  func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {
+  func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) {
     lock.withLock {
       recordedBatches.append(events)
     }

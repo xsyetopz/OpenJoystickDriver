@@ -11,11 +11,11 @@ struct PhysicalOutputParityTests {
       root: root
     )
     let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel+XPCOperations.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/XPCOperations.swift",
       root: root
     )
     let view = try source(
-      "Sources/OpenJoystickDriver/Views/InputTestWindowView+Rumble.swift",
+      "Sources/OpenJoystickDriver/Views/InputTestWindowView/Rumble.swift",
       root: root
     )
     let status = try source(
@@ -31,7 +31,7 @@ struct PhysicalOutputParityTests {
       root: root
     )
     let service = try source(
-      "Sources/OpenJoystickDriverDaemon/XPCService+Protocol.swift",
+      "Sources/OpenJoystickDriverDaemon/XPCService/Protocol.swift",
       root: root
     )
     let report = try source(

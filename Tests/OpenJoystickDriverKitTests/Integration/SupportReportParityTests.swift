@@ -17,13 +17,13 @@ struct SupportReportParityTests {
     )
     let appModel = try String(
       contentsOf: rootURL.appendingPathComponent(
-        "Sources/OpenJoystickDriver/App/AppModel+SupportReport.swift"
+        "Sources/OpenJoystickDriver/App/AppModel/SupportReport.swift"
       ),
       encoding: .utf8
     )
     let view = try String(
       contentsOf: rootURL.appendingPathComponent(
-        "Sources/OpenJoystickDriver/Views/MenuBarPopoverView+AdvancedCards.swift"
+        "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift"
       ),
       encoding: .utf8
     )

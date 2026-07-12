@@ -7,7 +7,7 @@ struct PacketLogHotPathTests {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let pipeline = try String(
       contentsOf: rootURL.appendingPathComponent(
-        "Sources/OpenJoystickDriverKit/Device/DevicePipeline.swift"
+        "Sources/OpenJoystickDriverKit/Device/DevicePipeline/DevicePipeline.swift"
       ),
       encoding: .utf8
     )
@@ -19,7 +19,7 @@ struct PacketLogHotPathTests {
     )
     let view = try String(
       contentsOf: rootURL.appendingPathComponent(
-        "Sources/OpenJoystickDriver/Views/InputTestWindowView.swift"
+        "Sources/OpenJoystickDriver/Views/InputTestWindowView/InputTestWindowView.swift"
       ),
       encoding: .utf8
     )

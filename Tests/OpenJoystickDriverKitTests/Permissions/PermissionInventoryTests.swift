@@ -25,8 +25,7 @@ struct PermissionInventoryTests {
 
   @Test("Refresh is scoped and confirmed")
   func refreshSourceContract() throws {
-    let root = URL(fileURLWithPath: #filePath)
-      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+    let root = try RepositoryRoot.from()
     let source = try String(
       contentsOf: root.appendingPathComponent(
         "Sources/OpenJoystickDriver/Commands/PermissionsCommand.swift"

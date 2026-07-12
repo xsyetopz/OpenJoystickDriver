@@ -19,15 +19,15 @@ struct SettingsMutationParityTests {
       root: root
     )
     let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel+XPCOperations.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/XPCOperations.swift",
       root: root
     )
     let view = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView+AdvancedCards.swift",
+      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/AdvancedCards.swift",
       root: root
     )
     let popover = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView.swift",
+      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/MenuBarPopoverView.swift",
       root: root
     )
 
@@ -60,11 +60,11 @@ struct SettingsMutationParityTests {
       root: root
     )
     let cards = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView+SystemCards.swift",
+      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/SystemCards.swift",
       root: root
     )
     let popover = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView.swift",
+      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/MenuBarPopoverView.swift",
       root: root
     )
 
