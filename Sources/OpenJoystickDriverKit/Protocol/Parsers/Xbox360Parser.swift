@@ -124,12 +124,10 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
 
   // MARK: - InputParser
 
-  // swiftlint:disable async_without_await
   /// Xbox 360 starts input without a handshake; startup output only sets the ring LED.
-  public func performHandshake(handle: USBDeviceHandle?) async throws {
+  public func performHandshake(handle: USBDeviceHandle?) throws {
     // Xbox 360 starts sending input reports immediately after interface claim.
   }
-  // swiftlint:enable async_without_await
 
   public func usbStartupOutputPackets() -> [[UInt8]] {
     isWirelessReceiver

@@ -63,12 +63,10 @@ public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDC
     connectionMode = prefersBluetooth ? .bluetooth : .usb
   }
 
-  // swiftlint:disable async_without_await
   /// No-op; DS4 requires no handshake.
-  public func performHandshake(handle: USBDeviceHandle?) async throws {
+  public func performHandshake(handle: USBDeviceHandle?) throws {
     // DS4 requires no handshake; protocol conformance.
   }
-  // swiftlint:enable async_without_await
 
   /// Parses one DS4 HID input report and returns zero or more controller events.
   public func parse(data: Data) throws -> [ControllerEvent] {

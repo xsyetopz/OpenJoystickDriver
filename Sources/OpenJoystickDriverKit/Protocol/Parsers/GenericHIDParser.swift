@@ -20,10 +20,8 @@ public final class GenericHIDParser: InputParser, HIDElementValueParser, @unchec
     print("[GenericHIDParser] Unrecognized controller \(identifier), using HID descriptors")
   }
 
-  // swiftlint:disable async_without_await
   /// No-op; generic HID controllers require no handshake.
-  public func performHandshake(handle: USBDeviceHandle?) async throws {}
-  // swiftlint:enable async_without_await
+  public func performHandshake(handle: USBDeviceHandle?) throws {}
 
   /// Raw reports are handled through IOKit's descriptor-decoded element callback.
   public func parse(data _: Data) throws -> [ControllerEvent] { [] }
