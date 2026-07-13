@@ -3,16 +3,14 @@
 #
 # Human-facing entrypoint is: ./scripts/ojd
 #
-# This file exists so the repo does not devolve into 20+ half-overlapping scripts.
+# Implements the build, rebuild, and lint routes exposed by scripts/ojd.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/ojd-common.sh"
+source "$SCRIPT_DIR/../shared/common.sh"
 
 # zsh has a 'log' builtin that shadows /usr/bin/log — always use full path
 LOG=/usr/bin/log
-
-die() { echo "ERROR: $*" >&2; exit 2; }
 
 usage() {
   cat <<'TXT'
@@ -57,7 +55,7 @@ _codesign_identity_available() {
 }
 
 # ---------------------------------------------------------------------------
-# Nuke (from scripts/nuke.sh)
+# Rebuild cleanup
 # ---------------------------------------------------------------------------
 nuke_all() {
   local SELF_PID=$$
@@ -112,10 +110,10 @@ nuke_all() {
 
   echo ""
   echo "=== NUKE: clearing build artifacts ==="
-  rm -rf "$SCRIPT_DIR/../.build/dext" 2>/dev/null || true
-  rm -rf "$SCRIPT_DIR/../.build/debug/OpenJoystickDriver.app" 2>/dev/null || true
-  rm -rf "$SCRIPT_DIR/../.build/arm64-apple-macosx" 2>/dev/null || true
-  rm -rf "$SCRIPT_DIR/../.build/x86_64-apple-macosx" 2>/dev/null || true
+  rm -rf "$PROJECT_DIR/.build/dext" 2>/dev/null || true
+  rm -rf "$PROJECT_DIR/.build/debug/OpenJoystickDriver.app" 2>/dev/null || true
+  rm -rf "$PROJECT_DIR/.build/arm64-apple-macosx" 2>/dev/null || true
+  rm -rf "$PROJECT_DIR/.build/x86_64-apple-macosx" 2>/dev/null || true
   echo "  cleared .build/dext and .build/debug app"
 
   echo ""
@@ -346,7 +344,7 @@ _require_signed_entitlement_value() {
   fi
 }
 
-source "$SCRIPT_DIR/ojd-build-bundles.sh"
+source "$SCRIPT_DIR/bundles.sh"
 
 next_dext_bundle_version() {
   local max_version=0
@@ -461,7 +459,7 @@ rebuild_full() {
   if [[ "$OJD_ENV" == "release" ]]; then
     echo ""
     echo "=== Notarizing ==="
-    /usr/bin/env bash "$SCRIPT_DIR/ojd-notarize.sh" submit
+    /usr/bin/env bash "$SCRIPT_DIR/../release/notarize.sh" submit
   fi
 
   echo ""

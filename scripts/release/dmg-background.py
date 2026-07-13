@@ -87,7 +87,7 @@ def pixel(x, y):
 
 def main():
     if len(sys.argv) != 2:
-        raise SystemExit("usage: ojd-dmg-background.py <output.png>")
+        raise SystemExit("usage: dmg-background.py <output.png>")
     rows = []
     for y in range(HEIGHT):
         row = bytearray([0])

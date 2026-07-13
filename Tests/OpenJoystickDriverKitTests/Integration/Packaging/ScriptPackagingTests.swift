@@ -16,9 +16,9 @@ struct ScriptPackagingTests {
   @Test
   func testBumpVersionSurfacesUseCurrentReleaseVersion() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let bundlesURL = rootURL.appendingPathComponent("scripts/ojd-build-bundles.sh")
+    let bundlesURL = rootURL.appendingPathComponent("scripts/build-tools/bundles.sh")
     let justfileURL = rootURL.appendingPathComponent("justfile")
-    let bumpURL = rootURL.appendingPathComponent("scripts/bump-version.sh")
+    let bumpURL = rootURL.appendingPathComponent("scripts/release/bump-version.sh")
     let bundles = try String(contentsOf: bundlesURL, encoding: .utf8)
     let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
     let bumpScript = try String(contentsOf: bumpURL, encoding: .utf8)
@@ -33,7 +33,7 @@ struct ScriptPackagingTests {
   @Test
   func testDmgPackagingUsesNativeFinderStyling() throws {
     let scriptURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-      .appendingPathComponent("scripts/ojd-package.sh")
+      .appendingPathComponent("scripts/release/package.sh")
     let script = try String(contentsOf: scriptURL, encoding: .utf8)
 
     #expect(script.contains("cp -R \"$app_path\" \"$staging_dir/OpenJoystickDriver.app\""))
@@ -42,14 +42,16 @@ struct ScriptPackagingTests {
     #expect(!script.contains("set background picture of viewOptions"))
     #expect(!script.contains("tell application \"Finder\""))
     #expect(!script.contains("osascript"))
+    #expect(script.contains("trap cleanup_dmg_workdirs EXIT"))
+    #expect(script.contains("trap - EXIT"))
   }
 
   @Test
   func testBuildScriptRequiresInstalledSigningIdentity() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let scriptURL = rootURL.appendingPathComponent("scripts/ojd-build.sh")
-    let bundlesURL = rootURL.appendingPathComponent("scripts/ojd-build-bundles.sh")
-    let commonURL = rootURL.appendingPathComponent("scripts/ojd-common.sh")
+    let scriptURL = rootURL.appendingPathComponent("scripts/build-tools/build.sh")
+    let bundlesURL = rootURL.appendingPathComponent("scripts/build-tools/bundles.sh")
+    let commonURL = rootURL.appendingPathComponent("scripts/shared/common.sh")
     let launchAgentURL = rootURL.appendingPathComponent(
       "Sources/OpenJoystickDriver/App/com.openjoystickdriver.daemon.plist"
     )
@@ -59,6 +61,8 @@ struct ScriptPackagingTests {
     let launchAgent = try String(contentsOf: launchAgentURL, encoding: .utf8)
     let packaging = script + "\n" + launchAgent
 
+    #expect(script.contains("rm -rf \"$PROJECT_DIR/.build/dext\""))
+    #expect(!script.contains("$SCRIPT_DIR/../.build"))
     #expect(script.contains("security find-identity -v -p codesigning"))
     #expect(script.contains("grep -Fi \"$identity\""))
     #expect(script.contains("_codesign_identity_available \"$GUI_IDENTITY\""))
@@ -67,6 +71,11 @@ struct ScriptPackagingTests {
     #expect(script.contains("\"$SWIFT_BIN\" build"))
     #expect(script.contains("_require_profile_entitlement_value"))
     #expect(script.contains("_require_signed_entitlement_value"))
+    #expect(
+      script.contains(
+        "plutil -extract CFBundleExecutable raw \"$DEXT_PRODUCT/Info.plist\""
+      )
+    )
     #expect(script.contains("codesign\", \"-d\", \"--entitlements\", \"-\", \"--xml\""))
     #expect(script.contains("\"$DAEMON_PROFILE\""))
     #expect(script.contains("\"${DEVELOPMENT_TEAM}.com.openjoystickdriver.daemon\""))
@@ -115,8 +124,8 @@ struct ScriptPackagingTests {
   func testSparkleReleaseWiringIsPresent() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let packageURL = rootURL.appendingPathComponent("Package.swift")
-    let bundlesURL = rootURL.appendingPathComponent("scripts/ojd-build-bundles.sh")
-    let packageScriptURL = rootURL.appendingPathComponent("scripts/ojd-package.sh")
+    let bundlesURL = rootURL.appendingPathComponent("scripts/build-tools/bundles.sh")
+    let packageScriptURL = rootURL.appendingPathComponent("scripts/release/package.sh")
     let dispatcherURL = rootURL.appendingPathComponent("scripts/ojd")
     let workflowURL = rootURL.appendingPathComponent(".github/workflows/release.yml")
     let appModelURL = rootURL.appendingPathComponent(
@@ -225,7 +234,7 @@ struct ScriptPackagingTests {
     let daemonManagerURL = rootURL.appendingPathComponent(
       "Sources/OpenJoystickDriverKit/Daemon/DaemonManager.swift"
     )
-    let bundlesScriptURL = rootURL.appendingPathComponent("scripts/ojd-build-bundles.sh")
+    let bundlesScriptURL = rootURL.appendingPathComponent("scripts/build-tools/bundles.sh")
 
     let launchAgent = try String(contentsOf: launchAgentURL, encoding: .utf8)
     let daemonManager = try String(contentsOf: daemonManagerURL, encoding: .utf8)

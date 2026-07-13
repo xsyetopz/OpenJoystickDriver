@@ -15,13 +15,11 @@
 #   NOTARIZE_MAX_RETRIES      — consecutive transient failures before abort (default: 5)
 #
 # USAGE:
-#   OJD_ENV=release ./scripts/notarize.sh
+#   ./scripts/ojd notarize submit
 #
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/ojd-common.sh"
-
-die() { echo "ERROR: $*" >&2; exit 2; }
+source "$SCRIPT_DIR/../shared/common.sh"
 
 subcmd="${1:-submit}"
 shift || true

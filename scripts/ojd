@@ -27,6 +27,7 @@ Commands:
   bump-version <version>      Update release version references
 
   env audit                   Validate the single-file env contract without printing values
+  docs export-external-issues Refresh archived GitHub issue and pull-request evidence
   signing install-profiles    Copy profiles from ~/Documents/Profiles into MobileDevice
   signing configure            Generate .env.dev + .env.release from Keychain + profiles
   signing doctor               Diagnose common cert/profile mismatch errors (safe output)
@@ -54,9 +55,10 @@ Commands:
   catalog regenerate --write Rebuild the runtime catalog from pinned sources and overrides
   catalog xpad [options]      Generate review-only records from a pinned Linux xpad.c
   validate profiles           Validate canonical controller records
+  validate scripts            Validate script ownership, paths, modes, and syntax
   validate swift-structure    Validate Swift file sizes and ownership layout
   test parsers-macos14        Run focused parser regressions without Swift Testing
-  test xpad-generator         Run deterministic Linux xpad importer tests
+  test scripts                Run deterministic script unit tests
   launch sdl-gamecontroller <app>
                               Launch an SDL app through GameController/MFI rumble route
 
@@ -85,6 +87,24 @@ USAGE
 
 die() { echo "ERROR: $*" >&2; exit 2; }
 
+require_no_args() {
+  local command_name="$1"
+  shift
+  [[ $# -eq 0 ]] || die "$command_name does not accept arguments"
+}
+
+require_one_arg() {
+  local command_name="$1"
+  shift
+  [[ $# -eq 1 ]] || die "$command_name requires exactly one argument"
+}
+
+require_at_most_one_arg() {
+  local command_name="$1"
+  shift
+  [[ $# -le 1 ]] || die "$command_name accepts at most one argument"
+}
+
 cmd="${1:-}"
 shift || true
 
@@ -97,14 +117,20 @@ case "$cmd" in
   build)
     sub="${1:-}"; shift || true
     case "$sub" in
+      ""|-h|--help|help)
+        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" help
+        ;;
       dev)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" build dev
+        require_no_args "build dev" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" build dev
         ;;
       dext)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" build dext
+        require_no_args "build dext" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" build dext
         ;;
       release)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" build release
+        require_no_args "build release" "$@"
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" build release
         ;;
       *)
         die "Unknown: build $sub (expected: dev | dext | release)"
@@ -116,10 +142,12 @@ case "$cmd" in
     sub="${1:-}"; shift || true
     case "$sub" in
       dev)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" rebuild dev
+        require_no_args "rebuild dev" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild dev
         ;;
       release)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" rebuild release
+        require_no_args "rebuild release" "$@"
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild release
         ;;
       *)
         die "Unknown: rebuild $sub (expected: dev | release)"
@@ -131,7 +159,8 @@ case "$cmd" in
     sub="${1:-}"; shift || true
     case "$sub" in
       dev)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" rebuild-fast dev
+        require_no_args "rebuild-fast dev" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild-fast dev
         ;;
       *)
         die "Unknown: rebuild-fast $sub (expected: dev)"
@@ -140,49 +169,71 @@ case "$cmd" in
     ;;
 
   bump-version)
-    exec /usr/bin/env bash "$SCRIPT_DIR/bump-version.sh" "$@"
+    require_one_arg "bump-version" "$@"
+    exec /usr/bin/env bash "$SCRIPT_DIR/release/bump-version.sh" "$@"
     ;;
 
   env)
     sub="${1:-}"
     shift || true
     case "$sub" in
-      audit) exec python3 "$SCRIPT_DIR/ojd-env-audit.py" "$@" ;;
+      audit)
+        require_no_args "env audit" "$@"
+        exec python3 "$SCRIPT_DIR/quality/env-audit.py"
+        ;;
       *) die "Unknown: env $sub (expected: audit)" ;;
+    esac
+    ;;
+
+  docs)
+    sub="${1:-}"
+    shift || true
+    case "$sub" in
+      export-external-issues)
+        require_no_args "docs export-external-issues" "$@"
+        exec /usr/bin/env python3 "$SCRIPT_DIR/docs/export-external-issues.py"
+        ;;
+      *)
+        die "Unknown: docs $sub (expected: export-external-issues)"
+        ;;
     esac
     ;;
   signing)
     sub="${1:-}"; shift || true
     case "$sub" in
       ""|-h|--help|help)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-signing.sh" help
+        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" help
         ;;
       install-profiles)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-signing.sh" install-profiles "${1:-}"
+        require_at_most_one_arg "signing install-profiles" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" install-profiles "${1:-}"
         ;;
       configure)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-signing.sh" configure
+        require_no_args "signing configure" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" configure
         ;;
       doctor)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-signing.sh" doctor
+        require_no_args "signing doctor" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" doctor
         ;;
       audit)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-signing.sh" audit "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" audit "$@"
         ;;
       cert-info)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-signing.sh" cert-info "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" cert-info "$@"
         ;;
       profile-info)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-signing.sh" profile-info "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" profile-info "$@"
         ;;
       import-embedded)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-signing.sh" import-embedded "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" import-embedded "$@"
         ;;
       ci-release-setup)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-signing.sh" ci-release-setup "$@"
+        require_no_args "signing ci-release-setup" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" ci-release-setup
         ;;
       export-github-secrets)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-github-secrets.sh" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/signing/export-github-secrets.sh" "$@"
         ;;
       *)
         die "Unknown: signing $sub (expected: install-profiles | configure | doctor | audit | cert-info | profile-info | import-embedded | ci-release-setup | export-github-secrets)"
@@ -194,10 +245,10 @@ case "$cmd" in
     sub="${1:-}"; shift || true
     case "$sub" in
       regenerate)
-        exec /usr/bin/env python3 "$SCRIPT_DIR/ojd-generate-controller-catalog.py" "$@"
+        exec /usr/bin/env python3 "$SCRIPT_DIR/catalog/generate-controller-catalog.py" "$@"
         ;;
       xpad)
-        exec /usr/bin/env python3 "$SCRIPT_DIR/ojd-generate-xpad-records.py" "$@"
+        exec /usr/bin/env python3 "$SCRIPT_DIR/catalog/generate-xpad-records.py" "$@"
         ;;
       *)
         die "Unknown: catalog $sub (expected: regenerate | xpad)"
@@ -208,6 +259,9 @@ case "$cmd" in
   diagnose)
     sub="${1:-}"; shift || true
     case "$sub" in
+      ""|-h|--help|help)
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" help
+        ;;
       record)
         record_path="${1:-}"
         [[ -n "$record_path" ]] || die "diagnose record requires a canonical controller JSON path"
@@ -220,25 +274,26 @@ case "$cmd" in
           OpenJoystickDriverHIDTool --record-probe "$record_path" "$@"
         ;;
       dext)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-diagnose.sh" dext
+        require_no_args "diagnose dext" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" dext
         ;;
       sdl3)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-diagnose.sh" sdl3 "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" sdl3 "$@"
         ;;
       sdl3-gamecontroller)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-diagnose.sh" sdl3-gamecontroller "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" sdl3-gamecontroller "$@"
         ;;
       sdl3-hidapi-x360)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-diagnose.sh" sdl3-hidapi-x360 "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" sdl3-hidapi-x360 "$@"
         ;;
       gamecontroller)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-diagnose.sh" gamecontroller "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" gamecontroller "$@"
         ;;
       catalina)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-catalina-smoke.sh" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/catalina-smoke.sh" "$@"
         ;;
       backends)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-diagnose.sh" backends "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" backends "$@"
         ;;
       *)
         die "Unknown: diagnose $sub (expected: record | dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | catalina | backends)"
@@ -250,13 +305,19 @@ case "$cmd" in
     sub="${1:-}"; shift || true
     case "$sub" in
       profiles)
-        exec /usr/bin/env python3 "$SCRIPT_DIR/ojd-validate-profiles.py"
+        require_no_args "validate profiles" "$@"
+        exec /usr/bin/env python3 "$SCRIPT_DIR/catalog/validate-profiles.py"
+        ;;
+      scripts)
+        require_no_args "validate scripts" "$@"
+        exec /usr/bin/env python3 "$SCRIPT_DIR/quality/validate-scripts.py"
         ;;
       swift-structure)
-        exec /usr/bin/env python3 "$SCRIPT_DIR/ojd-validate-swift-structure.py"
+        require_no_args "validate swift-structure" "$@"
+        exec /usr/bin/env python3 "$SCRIPT_DIR/quality/validate-swift-structure.py"
         ;;
       *)
-        die "Unknown: validate $sub (expected: profiles | swift-structure)"
+        die "Unknown: validate $sub (expected: profiles | scripts | swift-structure)"
         ;;
     esac
     ;;
@@ -265,9 +326,11 @@ case "$cmd" in
     sub="${1:-}"; shift || true
     case "$sub" in
       parsers-macos14)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-test-parsers-macos14.sh"
+        require_no_args "test parsers-macos14" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/quality/test-parsers-macos14.sh"
         ;;
-      xpad-generator)
+      scripts)
+        require_no_args "test scripts" "$@"
         (
           cd "$PROJECT_DIR"
           exec /usr/bin/env python3 -m unittest discover \
@@ -275,7 +338,7 @@ case "$cmd" in
         )
         ;;
       *)
-        die "Unknown: test $sub (expected: parsers-macos14 | xpad-generator)"
+        die "Unknown: test $sub (expected: parsers-macos14 | scripts)"
         ;;
     esac
     ;;
@@ -284,9 +347,11 @@ case "$cmd" in
     sub="${1:-}"; shift || true
     case "$sub" in
       stale-dext)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-repair-stale-dext.sh" "$@"
+        require_no_args "repair stale-dext" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/repair-stale-dext.sh"
         ;;
       swiftpm-module-cache)
+        require_no_args "repair swiftpm-module-cache" "$@"
         (
           cd "$PROJECT_DIR"
           if [[ ! -d ".build" ]]; then
@@ -313,7 +378,7 @@ case "$cmd" in
     sub="${1:-}"; shift || true
     case "$sub" in
       sdl-gamecontroller)
-        exec /usr/bin/env bash "$SCRIPT_DIR/ojd-launch-sdl-gamecontroller.sh" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/launch-sdl-gamecontroller.sh" "$@"
         ;;
       *)
         die "Unknown: launch $sub (expected: sdl-gamecontroller)"
@@ -322,29 +387,35 @@ case "$cmd" in
     ;;
 
   lint)
-    exec /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" lint
+    require_no_args "lint" "$@"
+    exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" lint
     ;;
 
   notarize)
     sub="${1:-}"; shift || true
     case "$sub" in
       submit|"")
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-notarize.sh" submit "$@"
+        require_no_args "notarize submit" "$@"
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" submit
         ;;
       help|-h|--help)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-notarize.sh" help
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" help
         ;;
       status)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-notarize.sh" status "$@"
+        require_at_most_one_arg "notarize status" "$@"
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" status "$@"
         ;;
       history)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-notarize.sh" history "$@"
+        require_no_args "notarize history" "$@"
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" history
         ;;
       log)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-notarize.sh" log "$@"
+        require_one_arg "notarize log" "$@"
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" log "$@"
         ;;
       store-credentials)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-notarize.sh" store-credentials "$@"
+        require_at_most_one_arg "notarize store-credentials" "$@"
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" store-credentials "$@"
         ;;
       *)
         die "Unknown: notarize $sub (expected: submit | status | history | log | store-credentials)"
@@ -356,13 +427,15 @@ case "$cmd" in
     sub="${1:-}"; shift || true
     case "$sub" in
       ""|-h|--help|help)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-package.sh" help
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/package.sh" help
         ;;
       release)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-package.sh" release "$@"
+        require_at_most_one_arg "package release" "$@"
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/package.sh" release "$@"
         ;;
       appcast)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-package.sh" appcast "$@"
+        require_at_most_one_arg "package appcast" "$@"
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/package.sh" appcast "$@"
         ;;
       *)
         die "Unknown: package $sub (expected: release | appcast)"

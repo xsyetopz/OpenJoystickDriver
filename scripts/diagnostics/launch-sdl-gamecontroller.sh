@@ -3,7 +3,6 @@
 
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OJD_CLI="${OJD_CLI:-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver}"
 
 usage() {

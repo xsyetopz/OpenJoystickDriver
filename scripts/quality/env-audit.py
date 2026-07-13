@@ -6,7 +6,7 @@ import pathlib
 import re
 import sys
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+ROOT = pathlib.Path(__file__).resolve().parents[2]
 PROFILES = {
     "dev": {
         "CODESIGN_IDENTITY", "DEVELOPMENT_TEAM", "DEXT_BUILD_PROFILE",

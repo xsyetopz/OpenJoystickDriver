@@ -1,5 +1,6 @@
 import pathlib
 import subprocess
+import sys
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -7,10 +8,25 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 class EnvironmentContractTests(unittest.TestCase):
     def test_only_root_profile_is_loaded(self):
-        source = (ROOT / "scripts/ojd-common.sh").read_text()
+        source = (ROOT / "scripts/shared/common.sh").read_text()
         self.assertIn("$PROJECT_DIR/.env.$OJD_ENV", source)
         self.assertNotIn("$SCRIPT_DIR/.env.$OJD_ENV", source)
         self.assertNotIn("$PROJECT_DIR/.env\"", source)
+
+    def test_shared_helper_resolves_repository_root(self):
+        result = subprocess.run(
+            [
+                "/usr/bin/env",
+                "bash",
+                "-c",
+                'source scripts/shared/common.sh; [[ "$PROJECT_DIR" == "$PWD" ]]',
+            ],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_legacy_templates_are_removed(self):
         for relative in [
@@ -22,7 +38,7 @@ class EnvironmentContractTests(unittest.TestCase):
 
     def test_audit_suppresses_values(self):
         result = subprocess.run(
-            [str(ROOT / "scripts/ojd-env-audit.py")],
+            [sys.executable, str(ROOT / "scripts/quality/env-audit.py")],
             cwd=ROOT,
             check=True,
             capture_output=True,

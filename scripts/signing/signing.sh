@@ -13,7 +13,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 die() { echo "ERROR: $*" >&2; exit 2; }
 
@@ -547,5 +547,5 @@ export DEXT_PROFILE
 export APPLE_DEV_IDENTITY
 export DEVID_APP_IDENTITY
 
-python3 "$SCRIPT_DIR/ojd-signing-configure.py"
+python3 "$SCRIPT_DIR/configure.py"
 

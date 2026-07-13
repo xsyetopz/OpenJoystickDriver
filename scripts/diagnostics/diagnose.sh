@@ -10,9 +10,7 @@
 # Runs all checks regardless of individual failures.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/ojd-common.sh"
-
-die() { echo "ERROR: $*" >&2; exit 2; }
+source "$SCRIPT_DIR/../shared/common.sh"
 
 cmd="${1:-dext}"
 shift || true
@@ -32,7 +30,7 @@ fi
 
 run_sdl3_probe_native() {
   local ROOT
-  ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+  ROOT="$PROJECT_DIR"
   local SRC="$ROOT/tools/sdl3-gamepad-probe/main.c"
   local OUT="/tmp/ojd-sdl3-probe"
   local SDKROOT
@@ -42,9 +40,11 @@ run_sdl3_probe_native() {
   pkg-config --exists sdl3 || die "SDL3 not found (brew install sdl3)"
   [[ -f "$SRC" ]] || die "Missing probe source: $SRC"
 
+  local -a sdl_flags
+  read -r -a sdl_flags <<< "$(pkg-config --cflags --libs sdl3)"
   echo "Building SDL3 probe (native)..."
-  SDKROOT="$SDKROOT" clang -x objective-c -isysroot "$SDKROOT" "$SRC" \
-    $(pkg-config --cflags --libs sdl3) \
+  clang -x objective-c -isysroot "$SDKROOT" "$SRC" \
+    "${sdl_flags[@]}" \
     -framework Foundation -framework GameController \
     -o "$OUT"
 
@@ -58,7 +58,7 @@ run_sdl3_probe_native() {
 
 configure_ojd_gamecontroller_route() {
   local ROOT
-  ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+  ROOT="$PROJECT_DIR"
   local APP_BIN="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
   local CLI_BIN="${OJD_CLI:-$APP_BIN}"
   if [[ ! -x "$CLI_BIN" ]]; then
@@ -91,7 +91,7 @@ run_sdl3_gamecontroller_probe() {
 
 configure_ojd_hidapi_x360_route() {
   local ROOT
-  ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+  ROOT="$PROJECT_DIR"
   local APP_BIN="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
   local CLI_BIN="${OJD_CLI:-$APP_BIN}"
   if [[ ! -x "$CLI_BIN" ]]; then
@@ -170,7 +170,7 @@ run_gamecontroller_probe() {
   local seconds="${1:-5}"
   local rumble="${2:-0}"
   local ROOT
-  ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+  ROOT="$PROJECT_DIR"
   local PROBE="$ROOT/.build/debug/OpenJoystickDriverGameControllerProbe"
 
   if [[ ! -x "$PROBE" ]]; then
@@ -189,7 +189,7 @@ run_gamecontroller_probe() {
 run_backend_acceptance_loop() {
   local APP_BIN="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
   local ROOT
-  ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+  ROOT="$PROJECT_DIR"
   local CLI_BIN="$ROOT/.build/debug/OpenJoystickDriver"
   if [[ ! -x "$CLI_BIN" ]]; then
     CLI_BIN="$APP_BIN"

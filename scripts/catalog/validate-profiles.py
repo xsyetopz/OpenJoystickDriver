@@ -8,7 +8,7 @@ import pathlib
 import sys
 from typing import Any
 
-ROOT = pathlib.Path(__file__).resolve().parents[1]
+ROOT = pathlib.Path(__file__).resolve().parents[2]
 RECORD_DIR = ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Controllers"
 SCHEMA_ID = (
     "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"

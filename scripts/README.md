@@ -1,6 +1,60 @@
-# Signing, Profiles, Notarization
+# Repository Commands
 
-This folder contains the build/signing tooling for OpenJoystickDriver.
+This directory has one supported command entry point: `./scripts/ojd`.
+Implementation files are grouped by ownership and are not standalone command
+surfaces.
+
+## Layout
+
+| Path | Responsibility |
+| --- | --- |
+| `scripts/ojd` | Stable command dispatcher and help |
+| `scripts/build-tools/` | App, daemon, DriverKit, and bundle construction |
+| `scripts/catalog/` | Controller-source import and record validation |
+| `scripts/diagnostics/` | Runtime probes, focused launch helpers, and repairs |
+| `scripts/docs/` | Archived external-evidence refresh |
+| `scripts/shared/` | Shared shell environment, signing, and libusb helpers |
+| `scripts/quality/` | Repository validators and compatibility test harnesses |
+| `scripts/release/` | Versioning, notarization, appcast, and DMG packaging |
+| `scripts/signing/` | Local and CI signing setup |
+
+Run implementation behavior through `./scripts/ojd`; paths below these ownership
+directories may change. Validate routing, file modes, and shell syntax with:
+
+```bash
+./scripts/ojd validate scripts
+```
+
+## Implementation Inventory
+
+All implementation paths are internal to the dispatcher.
+
+| File | Invoked by | Inputs and effects | Validation |
+| --- | --- | --- | --- |
+| `README.md` | Documentation links | Documents the supported command surface | Link and stale-path checks |
+| `ojd` | Developers and CI | Dispatches commands; fixed routes reject extra arguments | CLI and script-layout tests |
+| `build-tools/build.sh` | `build`, `rebuild`, `rebuild-fast`, `lint` | Writes `.build/`; rebuild routes replace installed components | Swift packaging contracts; shell syntax |
+| `build-tools/bundles.sh` | Build implementation | Constructs and signs app, daemon, and DriverKit bundles | Swift packaging contracts; shell syntax |
+| `catalog/generate-controller-catalog.py` | `catalog regenerate` | Reads locked sources; check is read-only, write replaces generated records | Catalog unit tests and regeneration check |
+| `catalog/generate-xpad-records.py` | `catalog xpad` | Reads local or GitHub Linux source and writes review output | xpad unit tests |
+| `catalog/validate-profiles.py` | `validate profiles` and catalog generator | Reads and validates controller records | Catalog unit tests and profile gate |
+| `diagnostics/catalina-smoke.sh` | `diagnose catalina` | Reads an app bundle; `--install` exercises LaunchAgent installation | Shell syntax; macOS 10.15 manual check |
+| `diagnostics/diagnose.sh` | `diagnose` routes | Reads system/runtime state; backend probes can change temporary runtime output settings | Help routing; shell syntax; local diagnostics |
+| `diagnostics/launch-sdl-gamecontroller.sh` | `launch sdl-gamecontroller` | Selects a compatibility route and launches the requested app | Shell syntax; manual SDL check |
+| `diagnostics/repair-stale-dext.sh` | `repair stale-dext` | Finds and terminates stale DriverKit processes | Shell syntax; focused local repair |
+| `docs/export-external-issues.py` | `docs export-external-issues` | Reads GitHub through `gh` and replaces archived issue evidence | Path validation; explicit manual refresh |
+| `shared/common.sh` | Build, diagnostics, notarization, and packaging implementations | Loads one root environment file; may build cached universal libusb artifacts | Environment and packaging tests; shell syntax |
+| `quality/env-audit.py` | `env audit` | Reads environment-file keys without printing values | Environment contract tests |
+| `quality/test-parsers-macos14.sh` | `test parsers-macos14` | Creates isolated harness and cache directories under `/tmp` | Parser harness gate |
+| `quality/validate-scripts.py` | `validate scripts` | Reads repository paths and runs `bash -n` | Script-layout unit tests and CI |
+| `quality/validate-swift-structure.py` | `validate swift-structure` | Reads Swift paths, sizes, names, and directives | Structural unit tests and CI |
+| `release/bump-version.sh` | `bump-version` | Updates version references after verifying a changelog heading | Swift packaging contracts and diff review |
+| `release/dmg-background.py` | Release package implementation | Writes a deterministic PNG to the requested path | Packaging contract |
+| `release/notarize.sh` | `notarize` and release packaging | Uses Apple notarization services, writes submission state, and staples the app | Help and shell checks; release-only CI |
+| `release/package.sh` | `package release`, `package appcast` | Builds signed artifacts, mounts temporary DMGs, notarizes, and writes release output | Swift packaging contracts; release-only CI |
+| `signing/configure.py` | Signing implementation | Reads profiles and Keychain identities; writes root environment files | Environment contracts; focused local setup |
+| `signing/export-github-secrets.sh` | `signing export-github-secrets` | Reads signing material, writes private build output, optionally updates GitHub secrets | Shell syntax; explicit operator action |
+| `signing/signing.sh` | `signing` routes | Audits or installs profiles, imports identities, creates CI Keychain state, or configures environment files | Help and shell checks; release CI and local setup |
 
 ## Task Map
 
@@ -14,6 +68,7 @@ This folder contains the build/signing tooling for OpenJoystickDriver.
 | Install signed dev build | `./scripts/ojd rebuild dev` | App, daemon, and dext |
 | Fast rebuild (app only) | `./scripts/ojd rebuild-fast dev` | Skip dext upgrade |
 | Package release DMG | `./scripts/ojd package release <version>` | Builds, notarizes, staples |
+| Run script unit tests | `./scripts/ojd test scripts` | Covers catalog, routing, layout, and environment contracts |
 
 ## Initial Setup (Per Machine / Team)
 

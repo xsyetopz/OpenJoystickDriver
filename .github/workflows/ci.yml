@@ -46,6 +46,12 @@ jobs:
         run: |
           bash scripts/ojd validate profiles
 
+      - name: Validate scripts
+        run: ./scripts/ojd validate scripts
+
+      - name: Test scripts
+        run: ./scripts/ojd test scripts
+
       - name: Validate Swift structure
         run: ./scripts/ojd validate swift-structure
 

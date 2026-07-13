@@ -17,7 +17,7 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-ROOT = pathlib.Path(__file__).resolve().parents[1]
+ROOT = pathlib.Path(__file__).resolve().parents[2]
 LOCK_PATH = ROOT / "ControllerSources.lock.json"
 OVERRIDE_DIR = ROOT / "Resources" / "ControllerOverrides"
 OUTPUT_DIR = ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Controllers"
@@ -239,11 +239,11 @@ def apply_overrides(
 def build_catalog() -> dict[tuple[int, int], dict[str, Any]]:
     generator = load_module(
         "ojd_generate_xpad_records",
-        ROOT / "scripts" / "ojd-generate-xpad-records.py",
+        ROOT / "scripts" / "catalog" / "generate-xpad-records.py",
     )
     validator = load_module(
         "ojd_validate_profiles",
-        ROOT / "scripts" / "ojd-validate-profiles.py",
+        ROOT / "scripts" / "catalog" / "validate-profiles.py",
     )
     lock = load_lock()
     linux = lock["linux"]

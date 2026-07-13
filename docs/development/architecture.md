@@ -116,6 +116,9 @@ Source-level validation:
 ```bash
 ./scripts/ojd catalog regenerate --check
 ./scripts/ojd validate profiles
+./scripts/ojd validate scripts
+./scripts/ojd validate swift-structure
+./scripts/ojd test scripts
 ./scripts/ojd lint
 ./scripts/ojd test parsers-macos14
 swift test

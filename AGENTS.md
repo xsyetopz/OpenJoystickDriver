@@ -32,9 +32,11 @@ Run the checks relevant to the change. The standard repository gates are:
 ```bash
 ./scripts/ojd catalog regenerate --check
 ./scripts/ojd validate profiles
+./scripts/ojd validate scripts
+./scripts/ojd validate swift-structure
+./scripts/ojd test scripts
 ./scripts/ojd lint
 swift test
-bash -n scripts/ojd scripts/ojd-*.sh
 ```
 
 Use `./scripts/ojd test parsers-macos14` for parser or protocol changes. Hardware, DriverKit, signing, notarization, and permission behavior require the focused local diagnostics documented under `docs/testing/` and `scripts/README.md`.

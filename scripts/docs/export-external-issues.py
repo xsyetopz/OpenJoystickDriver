@@ -10,7 +10,7 @@ import subprocess
 import sys
 from typing import Any
 
-ROOT = pathlib.Path(__file__).resolve().parents[1]
+ROOT = pathlib.Path(__file__).resolve().parents[2]
 DOCS = ROOT / "docs" / "external"
 OJD_REPO = "xsyetopz/OpenJoystickDriver"
 SDL_REPO = "libsdl-org/SDL"
@@ -184,7 +184,7 @@ def export_ojd() -> None:
         f"[{OJD_REPO}](https://github.com/{OJD_REPO}/issues). GitHub remains the source of truth. "
         "Expiring authentication query parameters are stripped from quoted links.\n\n"
         "Refresh from the repository root:\n\n"
-        "```bash\npython3 scripts/ojd-export-external-issues.py\n```\n\n"
+        "```bash\n./scripts/ojd docs export-external-issues\n```\n\n"
         "| Issue | State | Title |\n| --- | --- | --- |\n" + "\n".join(rows),
     )
 
@@ -223,7 +223,7 @@ def export_sdl() -> None:
         "GitHub remains the source of truth. Expiring authentication query parameters are stripped "
         "from quoted links.\n\n"
         "Refresh from the repository root:\n\n"
-        "```bash\npython3 scripts/ojd-export-external-issues.py\n```\n\n"
+        "```bash\n./scripts/ojd docs export-external-issues\n```\n\n"
         "| Kind | Reference | State | Title |\n| --- | --- | --- | --- |\n"
         + "\n".join(rows),
     )

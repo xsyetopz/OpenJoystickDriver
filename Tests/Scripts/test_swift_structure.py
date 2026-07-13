@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "ojd-validate-swift-structure.py"
+SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "quality" / "validate-swift-structure.py"
 SPEC = importlib.util.spec_from_file_location("swift_structure", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None
 MODULE = importlib.util.module_from_spec(SPEC)

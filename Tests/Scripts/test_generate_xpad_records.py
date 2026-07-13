@@ -23,11 +23,11 @@ def load_module(name: str, path: pathlib.Path):
 
 generator = load_module(
     "ojd_generate_xpad_records",
-    ROOT / "scripts" / "ojd-generate-xpad-records.py",
+    ROOT / "scripts" / "catalog" / "generate-xpad-records.py",
 )
 validator = load_module(
     "ojd_validate_profiles",
-    ROOT / "scripts" / "ojd-validate-profiles.py",
+    ROOT / "scripts" / "catalog" / "validate-profiles.py",
 )
 
 

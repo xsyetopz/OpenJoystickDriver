@@ -22,11 +22,11 @@ def load_module(name: str, path: pathlib.Path):
 
 catalog = load_module(
     "ojd_generate_controller_catalog",
-    ROOT / "scripts" / "ojd-generate-controller-catalog.py",
+    ROOT / "scripts" / "catalog" / "generate-controller-catalog.py",
 )
 validator = load_module(
     "ojd_validate_canonical_profiles",
-    ROOT / "scripts" / "ojd-validate-profiles.py",
+    ROOT / "scripts" / "catalog" / "validate-profiles.py",
 )
 
 SCHEMA_ID = validator.SCHEMA_ID

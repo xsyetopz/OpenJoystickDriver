@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# App and DriverKit bundle builders for scripts/ojd-build.sh.
+# App and DriverKit bundle builders for scripts/build-tools/build.sh.
 
 build_app_bundle() {
   _require_codesign_identity
@@ -68,7 +68,7 @@ build_app_bundle() {
   if [[ "$OJD_ENV" == "release" ]]; then
     setup_libusb_pkgconfig
     echo "Building release binaries (universal)..."
-    cd "$PROJECT_DIR"
+    cd "$PROJECT_DIR" || exit
     "$SWIFT_BIN" build -c release --product OpenJoystickDriverDaemon --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
     "$SWIFT_BIN" build -c release --product OpenJoystickDriver --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
     local daemon_bin="$DAEMON_RELEASE"
@@ -76,7 +76,7 @@ build_app_bundle() {
   else
     setup_libusb_pkgconfig
     echo "Building debug binaries (universal)..."
-    cd "$PROJECT_DIR"
+    cd "$PROJECT_DIR" || exit
     "$SWIFT_BIN" build --product OpenJoystickDriverDaemon --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
     "$SWIFT_BIN" build --product OpenJoystickDriver --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
     local daemon_bin="$PROJECT_DIR/.build/apple/Products/Debug/OpenJoystickDriverDaemon"
@@ -427,7 +427,8 @@ PY
   XCODE_CLANG="$(xcrun --find clang)"
   XCODE_CLANGXX="$(xcrun --find clang++ 2>/dev/null || true)"
   [[ -n "$XCODE_CLANGXX" ]] || XCODE_CLANGXX="$(dirname "$XCODE_CLANG")/clang++"
-  export PATH="$(dirname "$XCODE_CLANG"):/usr/bin:/bin:/usr/sbin:/sbin"
+  PATH="$(dirname "$XCODE_CLANG"):/usr/bin:/bin:/usr/sbin:/sbin"
+  export PATH
   echo "  Compiler: $("$XCODE_CLANG" --version | head -n 1)"
   mkdir -p "$DEXT_BUILD_DIR/Index.noindex/DataStore"
 
@@ -473,12 +474,15 @@ PY
   if [[ -d "$GUI_APP" ]]; then
     echo "Embedding dext into app bundle..."
     mkdir -p "$DEXT_SYSEXT"
-    rm -rf "$DEXT_SYSEXT/$DEXT_FILENAME"
+    rm -rf "${DEXT_SYSEXT:?}/${DEXT_FILENAME:?}"
     rm -rf "$DEXT_SYSEXT/OpenJoystickVirtualHID.dext" 2>/dev/null || true
     cp -R "$DEXT_PRODUCT" "$DEXT_SYSEXT/$DEXT_FILENAME"
 
     local DEXT_EXEC_NAME
-    DEXT_EXEC_NAME=$(ls "$DEXT_SYSEXT/$DEXT_FILENAME/" | grep -v -E 'Info\.plist|_CodeSignature|embedded\.provisionprofile' | head -1)
+    DEXT_EXEC_NAME="$(plutil -extract CFBundleExecutable raw "$DEXT_PRODUCT/Info.plist")"
+    [[ -n "$DEXT_EXEC_NAME" ]] || die "Built dext has no CFBundleExecutable"
+    [[ -f "$DEXT_SYSEXT/$DEXT_FILENAME/$DEXT_EXEC_NAME" ]] \
+      || die "Built dext executable is missing: $DEXT_EXEC_NAME"
     chmod +x "$DEXT_SYSEXT/$DEXT_FILENAME/$DEXT_EXEC_NAME"
     plutil -replace CFBundleExecutable -string "$DEXT_EXEC_NAME" \
       "$DEXT_SYSEXT/$DEXT_FILENAME/Info.plist" 2>/dev/null \

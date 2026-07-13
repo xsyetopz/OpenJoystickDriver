@@ -17,6 +17,7 @@ Open the section that matches the work. Archived upstream material stays under `
 - [Check Steam Controller input and output](testing/steam-controller.md)
 - [Check an Xbox 360 wireless receiver](testing/xbox-360-wireless-receiver.md)
 - [Capture Xbox Adaptive Joystick packets](testing/xbox-adaptive-joystick.md)
+- [Run the macOS 10.15 compatibility kit](testing/catalina-testkit.md)
 
 ## Develop and diagnose
 

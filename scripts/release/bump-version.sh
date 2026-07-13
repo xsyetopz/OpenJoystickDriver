@@ -3,12 +3,11 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 usage() {
   cat <<'USAGE'
 Usage:
-  ./scripts/bump-version.sh <version>
   ./scripts/ojd bump-version <version>
 
 Examples:
@@ -21,7 +20,7 @@ Updates:
   - Headless update and support-report fallback versions
   - justfile release-local-install default
   - scripts/README.md release examples
-  - scripts/ojd-build-bundles.sh generated GUI/daemon bundle versions
+  - scripts/build-tools/bundles.sh generated GUI/daemon bundle versions
   - DriverKitExtension/Info.plist short version
   - Release-version packaging assertions
 
@@ -45,13 +44,13 @@ if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+
 fi
 
 cli_file="$PROJECT_DIR/Sources/OpenJoystickDriver/CLI.swift"
-app_model_file="$PROJECT_DIR/Sources/OpenJoystickDriver/App/AppModel.swift"
+app_model_file="$PROJECT_DIR/Sources/OpenJoystickDriver/App/AppModel/AppModel.swift"
 report_command_file="$PROJECT_DIR/Sources/OpenJoystickDriver/Commands/ReportCommand.swift"
 updates_command_file="$PROJECT_DIR/Sources/OpenJoystickDriver/Commands/UpdatesCommand.swift"
-packaging_tests="$PROJECT_DIR/Tests/OpenJoystickDriverKitTests/ScriptPackagingTests.swift"
+packaging_tests="$PROJECT_DIR/Tests/OpenJoystickDriverKitTests/Integration/Packaging/ScriptPackagingTests.swift"
 justfile="$PROJECT_DIR/justfile"
 scripts_readme="$PROJECT_DIR/scripts/README.md"
-build_script="$PROJECT_DIR/scripts/ojd-build-bundles.sh"
+build_script="$PROJECT_DIR/scripts/build-tools/bundles.sh"
 dext_plist="$PROJECT_DIR/DriverKitExtension/Info.plist"
 changelog="$PROJECT_DIR/CHANGELOG.md"
 
@@ -200,7 +199,7 @@ replacements = [
         Path(build_script_path),
         [
             (
-                "ojd-build-bundles default short version",
+                "build bundles default short version",
                 re.compile(
                     r'(OJD_BUNDLE_SHORT_VERSION:-)\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?'
                 ),
@@ -208,7 +207,7 @@ replacements = [
                 1,
             ),
             (
-                "ojd-build-bundles GUI/daemon short versions",
+                "build bundles GUI/daemon short versions",
                 re.compile(
                     r"(<key>CFBundleShortVersionString</key>\n[ \t]*<string>)\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(</string>)"
                 ),

@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
-# macOS 14-compatible focused parser regression harness.
-#
-# Swift Testing is currently unusable on the local Swift 6.2.4/Xcode 26 setup
-# because _Testing_Foundation requires macOS 26 while package tests compile for
-# macOS 14. This harness builds a plain executable instead.
+# Focused parser regression harness compiled for a macOS 14 deployment target.
+# It uses a plain executable so parser compatibility is checked independently
+# of the Swift Testing runtime.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 SWIFTUSB_DIR="$PROJECT_DIR/../SwiftUSB"
 HARNESS_DIR="${OJD_MACOS14_HARNESS_DIR:-/tmp/ojd-parser-harness}"
 SCRATCH_DIR="${OJD_MACOS14_HARNESS_SCRATCH:-/tmp/ojd-parser-harness-build}"

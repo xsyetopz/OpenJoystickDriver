@@ -11,7 +11,7 @@ swift build
 swift test
 ./scripts/ojd test parsers-macos14
 ./scripts/ojd validate profiles
-bash -n scripts/ojd scripts/ojd-*.sh
+./scripts/ojd validate scripts
 git diff --check
 ```
 

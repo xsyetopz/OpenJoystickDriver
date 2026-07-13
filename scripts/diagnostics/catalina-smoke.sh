@@ -130,9 +130,13 @@ if [[ "$RUN_INSTALL" -eq 1 ]]; then
   else
     note "installing LaunchAgent"
     "$GUI_BIN" --headless install || fail "headless install failed"
-    /bin/launchctl print "gui/$(/usr/bin/id -u)/$LABEL" >/tmp/ojd-catalina-launchctl.txt 2>&1 \
-      && pass "launchctl print succeeded" \
-      || fail "launchctl print failed; see /tmp/ojd-catalina-launchctl.txt"
+    if /bin/launchctl print \
+      "gui/$(/usr/bin/id -u)/$LABEL" >/tmp/ojd-catalina-launchctl.txt 2>&1
+    then
+      pass "launchctl print succeeded"
+    else
+      fail "launchctl print failed; see /tmp/ojd-catalina-launchctl.txt"
+    fi
   fi
 else
   note "skipping LaunchAgent mutation; pass --install to test registration"

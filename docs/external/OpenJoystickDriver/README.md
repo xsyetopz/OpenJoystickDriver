@@ -5,7 +5,7 @@ Snapshot of every issue returned by the GitHub CLI for [xsyetopz/OpenJoystickDri
 Refresh from the repository root:
 
 ```bash
-python3 scripts/ojd-export-external-issues.py
+./scripts/ojd docs export-external-issues
 ```
 
 | Issue | State | Title |

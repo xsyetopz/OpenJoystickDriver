@@ -5,7 +5,7 @@ Snapshots of the SDL issues and pull request referenced by OJD compatibility wor
 Refresh from the repository root:
 
 ```bash
-python3 scripts/ojd-export-external-issues.py
+./scripts/ojd docs export-external-issues
 ```
 
 | Kind | Reference | State | Title |

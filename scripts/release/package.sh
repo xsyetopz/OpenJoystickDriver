@@ -3,9 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/ojd-common.sh"
-
-die() { echo "ERROR: $*" >&2; exit 2; }
+source "$SCRIPT_DIR/../shared/common.sh"
 
 usage() {
   cat <<'TXT'
@@ -151,13 +149,14 @@ cleanup_dmg_workdirs() {
 }
 
 mkdir -p "$artifact_dir"
+trap cleanup_dmg_workdirs EXIT
 
 echo "=== Build release app bundle ==="
-OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" build release
+OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/../build-tools/build.sh" build release
 
 echo ""
 echo "=== Build and embed DriverKit extension ==="
-OJD_ENV=release OJD_SKIP_INSTALL=1 /usr/bin/env bash "$SCRIPT_DIR/ojd-build.sh" build dext
+OJD_ENV=release OJD_SKIP_INSTALL=1 /usr/bin/env bash "$SCRIPT_DIR/../build-tools/build.sh" build dext
 
 [[ -d "$app_path" ]] || die "App bundle not found: $app_path"
 
@@ -170,7 +169,7 @@ echo "=== Notarize and staple ==="
 OJD_ENV=release \
   OJD_NOTARIZE_APP="$app_path" \
   OJD_NOTARIZE_ZIP="$notary_zip" \
-  /usr/bin/env bash "$SCRIPT_DIR/ojd-notarize.sh" submit
+  /usr/bin/env bash "$SCRIPT_DIR/notarize.sh" submit
 
 echo ""
 echo "=== Verify notarized app ==="
@@ -188,6 +187,7 @@ cp -R "$app_path" "$staging_dir/OpenJoystickDriver.app"
 ln -s /Applications "$staging_dir/Applications"
 /usr/bin/hdiutil create -srcfolder "$staging_dir" -volname "OpenJoystickDriver" -fs HFS+ -format UDZO "$artifact_dmg"
 cleanup_dmg_workdirs
+trap - EXIT
 if [[ -n "${CODESIGN_IDENTITY:-}" && "${CODESIGN_IDENTITY:-}" != "-" ]]; then
   /usr/bin/codesign --sign "$CODESIGN_IDENTITY" --timestamp "$artifact_dmg"
   /usr/bin/codesign --verify --verbose=2 "$artifact_dmg"

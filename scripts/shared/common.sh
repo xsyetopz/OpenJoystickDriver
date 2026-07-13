@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 # Shared constants and helpers for OpenJoystickDriver scripts.
-# Source this file: source "$(dirname "$0")/ojd-common.sh"
+# Source this file from an implementation script; do not execute it directly.
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPTS_DIR="$(cd "$LIB_DIR/.." && pwd)"
+PROJECT_DIR="$(cd "$SCRIPTS_DIR/.." && pwd)"
+
+die() {
+  echo "ERROR: $*" >&2
+  exit 2
+}
 
 # Load exactly one repository-local environment file.
 # OJD_ENV selects .env.dev (default) or .env.release at the project root.
@@ -90,8 +96,7 @@ build_universal_libusb() {
   echo "Building universal libusb ${LIBUSB_VERSION} (arm64 + x86_64)..."
   local tmpdir
   tmpdir="$(mktemp -d)"
-  # shellcheck disable=SC2064
-  trap "rm -rf '$tmpdir'" RETURN
+  trap 'rm -rf "$tmpdir"' RETURN
 
   local tarball="$tmpdir/libusb.tar.bz2"
   echo "  Downloading libusb ${LIBUSB_VERSION}..."
@@ -106,7 +111,7 @@ build_universal_libusb() {
   mkdir -p "$tmpdir/src-arm64"
   tar -xjf "$tarball" -C "$tmpdir/src-arm64" --strip-components=1
   (
-    cd "$tmpdir/src-arm64"
+    cd "$tmpdir/src-arm64" || exit
     ./configure \
       CC="clang" \
       CFLAGS="-arch arm64 -target arm64-apple-macos10.15 -isysroot $SDK_PATH" \
@@ -122,7 +127,7 @@ build_universal_libusb() {
   mkdir -p "$tmpdir/src-x86_64"
   tar -xjf "$tarball" -C "$tmpdir/src-x86_64" --strip-components=1
   (
-    cd "$tmpdir/src-x86_64"
+    cd "$tmpdir/src-x86_64" || exit
     ./configure \
       CC="clang" \
       CFLAGS="-arch x86_64 -target x86_64-apple-macos10.15 -isysroot $SDK_PATH" \
@@ -194,8 +199,7 @@ verify_profile_cert() {
   local profile_sha1 keychain_sha1
   local tmpder
   tmpder="$(mktemp)"
-  # shellcheck disable=SC2064
-  trap "rm -f '$tmpder'" RETURN
+  trap 'rm -f "$tmpder"' RETURN
 
   # Extract first DeveloperCertificate from profile to a temp file
   # (binary DER data contains null bytes — can't store in bash variables)

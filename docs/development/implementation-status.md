@@ -10,7 +10,7 @@ Automated checks cover code paths and fixtures. Hardware support claims still re
 
 ### Linux xpad import
 
-`scripts/ojd-generate-xpad-records.py` creates review-only candidates from pinned Linux source metadata. Generated IDs do not become hardware claims.
+`scripts/catalog/generate-xpad-records.py` creates review-only candidates from pinned Linux source metadata. Generated IDs do not become hardware claims.
 
 ### Permissions
 

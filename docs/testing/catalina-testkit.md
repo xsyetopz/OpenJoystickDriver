@@ -6,7 +6,7 @@ Use this on the macOS 10.15 machine after unpacking
 ## Read-only smoke check
 
 ```bash
-./scripts/ojd-catalina-smoke.sh ./OpenJoystickDriver.app
+./scripts/ojd diagnose catalina ./OpenJoystickDriver.app
 ```
 
 ## LaunchAgent registration check
@@ -15,7 +15,7 @@ Copy the app to `/Applications`, then run:
 
 ```bash
 cp -R ./OpenJoystickDriver.app /Applications/OpenJoystickDriver.app
-./scripts/ojd-catalina-smoke.sh /Applications/OpenJoystickDriver.app --install
+./scripts/ojd diagnose catalina /Applications/OpenJoystickDriver.app --install
 ```
 
 The script reports the app bundle minimum OS, binary architectures, x86_64
