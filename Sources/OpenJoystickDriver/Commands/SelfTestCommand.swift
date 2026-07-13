@@ -10,19 +10,19 @@ struct SelfTestCommand {
       seconds = 5
     }
 
-    let client = XPCClient()
+    let client = ApplicationServiceClient()
     client.connect()
 
     let payload = runSyncResult { try? await client.runVirtualDeviceSelfTest(seconds: seconds) }
     guard let payload else {
-      print("ERROR: self-test failed (daemon not running?)")
+      print("ERROR: self-test failed (application service not running?)")
       exit(1)
     }
 
     print("Virtual device self-test (\(payload.seconds)s)")
     print(
-      "  DriverKit: value \(payload.driverKitValueEvents), " +
-        "report \(payload.driverKitReportEvents)"
+      "  DriverKit: value \(payload.driverKitValueEvents), "
+        + "report \(payload.driverKitReportEvents)"
     )
     print("  DriverKit relay verdict: \(payload.driverKitRelayVerdict.rawValue.uppercased())")
     if let delta = payload.driverKitInputReportDelta {
@@ -58,5 +58,10 @@ struct SelfTestCommand {
     print(
       "  User-space: value \(payload.userSpaceValueEvents), report \(payload.userSpaceReportEvents)"
     )
+    if payload.userSpaceRequired {
+      print("  User-space status: \(payload.userSpaceStatus)")
+      print("  User-space verdict: \(payload.userSpaceVerdict.rawValue.uppercased())")
+    }
+    if !payload.isSuccessful { exit(1) }
   }
 }

@@ -1,34 +1,31 @@
 # Permissions
 
-OJD requests Input Monitoring. It does not request Accessibility. Driver Extension and Login Item approvals are separate macOS controls.
+OpenJoystickDriver uses one privacy identity: `OpenJoystickDriver.app`. No nested executable needs to be located or added manually.
 
 ## Input Monitoring
 
-### OpenJoystickDriver app
+Input Monitoring lets the app read reports from physical controllers.
 
-The app needs Input Monitoring only for direct or headless controller diagnostics. Normal background input belongs to the daemon.
-
-### OpenJoystickDriver Daemon
-
-The daemon needs Input Monitoring to read physical controllers while the menu app is closed. Installing or explicitly requesting daemon access may add the helper to System Settings.
-
-## Permissions OJD does not use
-
-OJD does not call `AXUIElement`, synthesize keyboard or mouse input, or control another app. An OpenJoystickDriver entry under Accessibility is unnecessary and may be disabled.
-
-## Other system approvals
-
-Driver Extension approval installs or updates the optional DriverKit relay. Login Item approval registers the daemon through `SMAppService`. Neither approval grants Input Monitoring or Accessibility.
-
-## Repair stale entries
-
-A switch can remain visible after the executable behind it has been replaced. TCC evaluates process identity, and a running daemon can retain an earlier decision until restart. macOS does not provide an API for selecting one old-version row. OJD therefore requires confirmation before resetting consent.
-
-Use **Refresh stale entries…** in the menu app, or run:
-
-```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless permissions refresh --confirm
+```text
+System Settings > Privacy & Security > Input Monitoring
 ```
 
-The repair resets `ListenEvent` only for `com.openjoystickdriver` and `com.openjoystickdriver.daemon`, refreshes daemon registration, and opens Input Monitoring settings. It leaves Accessibility and other applications alone. Grant the required OJD identities again after the reset.
+## Accessibility
+
+The compatibility virtual-gamepad backend uses `IOHIDUserDevice`. macOS authorizes that HID publication through the post-event permission shown as Accessibility.
+
+```text
+System Settings > Privacy & Security > Accessibility
+```
+
+This access publishes a virtual gamepad. OpenJoystickDriver does not inspect other applications' UI or synthesize keyboard or mouse actions.
+
+Use the app's **Request Access** action once. The app requests any missing state and then reads the authoritative result. If macOS asks for a relaunch, quit and reopen OpenJoystickDriver. The CLI command `permissions status` obtains both states from the running main app rather than inheriting the terminal's privacy identity.
+
+## Other approvals
+
+Driver Extension approval installs or updates the optional DriverKit relay. Login Item approval allows macOS 13 or later to start the main app at login. Neither approval grants Input Monitoring or Accessibility.
+
+## Older alpha entries
+
+An older alpha may leave an `OpenJoystickDriverDaemon` registration or stale privacy row. Current builds do not execute that helper. Upgrade migration removes old jobs without resetting TCC. If System Settings offers a remove control for a stale entry, it is safe to remove that entry manually.

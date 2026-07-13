@@ -9,15 +9,16 @@ public:
     virtual void free() override;
 
 protected:
-    virtual bool handleStart(IOService *provider) LOCALONLY override;
-    virtual OSDictionary *newDeviceDescription(void) LOCALONLY override;
-    virtual OSData *newReportDescriptor(void) LOCALONLY override;
+    virtual bool handleStart(IOService* provider) LOCALONLY override;
+    virtual OSDictionary* newDeviceDescription(void) LOCALONLY override;
+    virtual OSData* newReportDescriptor(void) LOCALONLY override;
 
-    virtual kern_return_t setReport(IOMemoryDescriptor *report,
-                                    IOHIDReportType reportType,
-                                    IOOptionBits options,
-                                    uint32_t completionTimeout,
-                                    OSAction *action) LOCALONLY override;
+    virtual kern_return_t setReport(
+        IOMemoryDescriptor* report,
+        IOHIDReportType reportType,
+        IOOptionBits options,
+        uint32_t completionTimeout,
+        OSAction* action) LOCALONLY override;
 };
 
 #endif /* OpenJoystickVirtualHIDDevice_h */

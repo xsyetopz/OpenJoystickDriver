@@ -14,7 +14,7 @@ Shows why connection lifecycle, guide-button handling, and controller slots belo
 
 ### xinput-gui
 
-Provides a useful model for explicit device and control-plane diagnostics. OJD exposes typed state through CLI and menu app instead of hiding daemon decisions.
+Provides a useful model for explicit device and control-plane diagnostics. OJD exposes typed state through CLI and menu app instead of hiding application service decisions.
 
 ### DualShock4-emulator
 
@@ -22,7 +22,7 @@ Keeps Sony report parsing separate from the virtual Xbox-facing surface. OJD use
 
 ### Gopher360
 
-Demonstrates that desktop keyboard or mouse translation is a separate product behavior. OJD does not synthesize desktop input and does not request Accessibility.
+Demonstrates that desktop keyboard or mouse translation is a separate product behavior. OJD does not synthesize desktop keyboard or mouse input. Its Accessibility request authorizes IOHIDUserDevice compatibility output.
 
 ### Joypad OS
 
@@ -43,7 +43,7 @@ SDL mappings and HIDAPI code show how consumer identity affects naming, button o
 3. Compatibility profiles own virtual VID/PID, descriptors, mappings, and report formats.
 4. Physical output capabilities come from the active protocol parser.
 5. Unknown standard HID devices may use descriptor-driven input. Vendor protocols need records.
-6. The CLI and menu app use the same daemon and diagnostic services.
+6. The CLI and menu app use the same application service and diagnostic services.
 7. Duplicate physical and virtual devices are treated as an ownership bug, not a mapping fix.
 8. Hardware and browser claims require observed evidence for the named path.
 

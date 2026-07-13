@@ -28,10 +28,10 @@ public actor DeviceManager {
   let dispatcher: any OutputDispatcher
   let permissionManager: PermissionManager
   let hidManager: HIDManager
-  /// Single libusb context shared across the entire daemon process.
+  /// Single libusb context shared across the entire application service process.
   ///
   /// Creating multiple libusb contexts spins up multiple event threads and can
-  /// trigger launchd "inefficient" kills for LaunchAgents.
+  /// trigger OS process-throttling for background applications.
   var usbContext: USBContext?
   var pipelines: [DeviceIdentifier: DevicePipeline] = [:]
   var deviceInfos: [DeviceIdentifier: DeviceInfo] = [:]
@@ -59,7 +59,7 @@ public actor DeviceManager {
 
   /// Start device detection and input processing.
   public func start() async {
-    let state = await permissionManager.checkAccess()
+    let state = await permissionManager.checkAccess().inputMonitoring
     switch state {
     case .unknown, .denied:
       if state == .denied {
@@ -85,7 +85,7 @@ public actor DeviceManager {
     permissionWatchTask = Task { [weak self] in
       guard let self else { return }
       while !Task.isCancelled {
-        let currentState = await self.permissionManager.checkAccess()
+        let currentState = await self.permissionManager.checkAccess().inputMonitoring
         await self.ensureHIDDetectionState(for: currentState)
         try? await Task.sleep(nanoseconds: devicePermissionWatchNanoseconds)
       }
@@ -228,12 +228,12 @@ public actor DeviceManager {
 
   /// Returns structured descriptions for all connected controllers.
   ///
-  /// Used by XPCService to report live device list.
-  public func connectedDeviceDescriptions() -> [XPCDeviceDescription] {
+  /// Used by the application service to report its live device list.
+  public func connectedDeviceDescriptions() -> [ApplicationServiceDeviceDescription] {
     pipelines.keys.map { id in
       let info = deviceInfos[id]
       let profile = parserRegistry.runtimeProfile(for: id)
-      return XPCDeviceDescription(
+      return ApplicationServiceDeviceDescription(
         name: info?.name ?? "Controller",
         vendorID: id.vendorID,
         productID: id.productID,

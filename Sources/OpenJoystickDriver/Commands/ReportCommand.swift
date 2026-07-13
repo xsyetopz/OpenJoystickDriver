@@ -16,12 +16,12 @@ struct ReportCommand {
     }
 
     let outputURL = parseOutputURL(arguments: arguments)
-    let client = XPCClient()
+    let client = ApplicationServiceClient()
     client.connect()
 
-    let status: XPCStatusPayload? =
+    let status: ApplicationServiceStatusPayload? =
       runSyncOptionalResult(timeout: 1.0) { try? await client.getStatus() }
-    let virtualDiagnostics: XPCVirtualDeviceDiagnosticsPayload? =
+    let virtualDiagnostics: ApplicationServiceVirtualDeviceDiagnosticsPayload? =
       status == nil
       ? nil
       : runSyncOptionalResult(timeout: 1.0) {
@@ -29,16 +29,17 @@ struct ReportCommand {
       }
     client.disconnect()
 
-    let daemonState = status?.inputMonitoring
-    let permissions = currentInputMonitoringPermissions(daemonStatus: daemonState)
-    let health = DaemonManager.health()
+    let permissions = PermissionManager.AccessState(
+      status: status?.inputMonitoring ?? "unknown"
+    )
+    let health = ApplicationServiceManager.health()
     let report = SupportReportService.make(
       status: status,
       virtualDiagnostics: virtualDiagnostics,
-      permissions: permissions,
-      daemonHealth: health,
-      daemonInstalled: DaemonManager.isInstalled,
-      daemonConnected: status != nil,
+      inputMonitoring: permissions,
+      applicationServiceHealth: health,
+      applicationServiceInstalled: ApplicationServiceManager.isInstalled,
+      applicationServiceConnected: status != nil,
       appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         ?? "0.5.0-alpha.5",
       appleGameControllerAudit: AppleGameControllerSupportAuditor.auditCurrentSystem()

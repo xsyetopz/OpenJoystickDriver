@@ -8,14 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		0D001BB12AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice.iig in Sources */ = {isa = PBXBuildFile; fileRef = 0D001BB22AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice.iig */; };
-		0D001BB32AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D001BB42AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice.cpp */; };
+		0D001BB32AAAAAAA00000001 /* Lifecycle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D001BB42AAAAAAA00000001 /* Lifecycle.cpp */; };
+		0D001BB52AAAAAAA00000001 /* DeviceDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D001BB62AAAAAAA00000001 /* DeviceDescription.cpp */; };
+		0D001BB72AAAAAAA00000001 /* ReportRelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D001BB82AAAAAAA00000001 /* ReportRelay.cpp */; };
 		0D001CC12AAAAAAA00000001 /* HIDDriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D001CC22AAAAAAA00000001 /* HIDDriverKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0D001AA12AAAAAAA00000001 /* OpenJoystickVirtualHID.dext */ = {isa = PBXFileReference; explicitFileType = "wrapper.driver-extension"; includeInIndex = 0; path = OpenJoystickVirtualHID.dext; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D001BB22AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice.iig */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.iig; path = OpenJoystickVirtualHIDDevice.iig; sourceTree = "<group>"; };
-		0D001BB42AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OpenJoystickVirtualHIDDevice.cpp; sourceTree = "<group>"; };
+		0D001BB42AAAAAAA00000001 /* Lifecycle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lifecycle.cpp; sourceTree = "<group>"; };
+		0D001BB62AAAAAAA00000001 /* DeviceDescription.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceDescription.cpp; sourceTree = "<group>"; };
+		0D001BB82AAAAAAA00000001 /* ReportRelay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ReportRelay.cpp; sourceTree = "<group>"; };
+		0D001BBA2AAAAAAA00000001 /* Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Private.h; sourceTree = "<group>"; };
 		0D001AAF2AAAAAAA00000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0D001AB02AAAAAAA00000001 /* OpenJoystickVirtualHID.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OpenJoystickVirtualHID.entitlements; sourceTree = "<group>"; };
 		0D001CC22AAAAAAA00000001 /* HIDDriverKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HIDDriverKit.framework; path = System/DriverKit/System/Library/Frameworks/HIDDriverKit.framework; sourceTree = SDKROOT; };
@@ -51,11 +56,22 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		0D001BBB2AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice */ = {
+			isa = PBXGroup;
+			children = (
+				0D001BB42AAAAAAA00000001 /* Lifecycle.cpp */,
+				0D001BB62AAAAAAA00000001 /* DeviceDescription.cpp */,
+				0D001BB82AAAAAAA00000001 /* ReportRelay.cpp */,
+				0D001BBA2AAAAAAA00000001 /* Private.h */,
+			);
+			path = OpenJoystickVirtualHIDDevice;
+			sourceTree = "<group>";
+		};
 		0D001AA32AAAAAAA00000001 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				0D001BB22AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice.iig */,
-				0D001BB42AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice.cpp */,
+				0D001BBB2AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -112,7 +128,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0D001BB12AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice.iig in Sources */,
-				0D001BB32AAAAAAA00000001 /* OpenJoystickVirtualHIDDevice.cpp in Sources */,
+				0D001BB32AAAAAAA00000001 /* Lifecycle.cpp in Sources */,
+				0D001BB52AAAAAAA00000001 /* DeviceDescription.cpp in Sources */,
+				0D001BB72AAAAAAA00000001 /* ReportRelay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

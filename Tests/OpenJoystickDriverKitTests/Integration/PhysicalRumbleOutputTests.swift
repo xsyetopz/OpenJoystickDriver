@@ -41,8 +41,8 @@ struct PhysicalRumbleOutputTests {
     #expect(hasPhysicalRumble(steamController))
   }
   @Test
-  func testXpcDescriptionDefaultsRumbleSupportToFalse() {
-    let description = XPCDeviceDescription(
+  func testServiceDescriptionDefaultsRumbleSupportToFalse() {
+    let description = ApplicationServiceDeviceDescription(
       name: "Test",
       vendorID: 1,
       productID: 2,
@@ -55,7 +55,7 @@ struct PhysicalRumbleOutputTests {
     #expect(description.physicalOutputCapabilities == .none)
   }
   @Test
-  func testXpcDescriptionDecodesMissingRumbleSupportAsFalse() throws {
+  func testServiceDescriptionDecodesMissingRumbleSupportAsFalse() throws {
     let json = """
       {
         "name": "Test",
@@ -66,14 +66,17 @@ struct PhysicalRumbleOutputTests {
         "serialNumber": null
       }
       """
-    let description = try JSONDecoder().decode(XPCDeviceDescription.self, from: Data(json.utf8))
+    let description = try JSONDecoder().decode(
+      ApplicationServiceDeviceDescription.self,
+      from: Data(json.utf8)
+    )
 
     #expect(description.supportsPhysicalRumble == false)
     #expect(description.physicalOutputCapabilities == .none)
   }
 
   @Test
-  func testXpcDescriptionDerivesCapabilitiesFromLegacyRumbleFlag() throws {
+  func testServiceDescriptionDerivesCapabilitiesFromLegacyRumbleFlag() throws {
     let json = """
       {
         "name": "Test",
@@ -85,19 +88,22 @@ struct PhysicalRumbleOutputTests {
         "supportsPhysicalRumble": true
       }
       """
-    let description = try JSONDecoder().decode(XPCDeviceDescription.self, from: Data(json.utf8))
+    let description = try JSONDecoder().decode(
+      ApplicationServiceDeviceDescription.self,
+      from: Data(json.utf8)
+    )
 
     #expect(description.supportsPhysicalRumble)
     #expect(description.physicalOutputCapabilities == .dualMainRumble)
   }
 
   @Test
-  func testXpcDescriptionDecodesExactOutputCapabilities() throws {
+  func testServiceDescriptionDecodesExactOutputCapabilities() throws {
     let capabilities = PhysicalControllerOutputCapabilities(
       rumbleMotors: [.leftMain, .rightMain, .leftTrigger, .rightTrigger],
       lightingFeatures: [.playerIndicator]
     )
-    let original = XPCDeviceDescription(
+    let original = ApplicationServiceDeviceDescription(
       name: "Test",
       vendorID: 1,
       productID: 2,
@@ -107,7 +113,7 @@ struct PhysicalRumbleOutputTests {
       physicalOutputCapabilities: capabilities
     )
     let decoded = try JSONDecoder().decode(
-      XPCDeviceDescription.self,
+      ApplicationServiceDeviceDescription.self,
       from: JSONEncoder().encode(original)
     )
 

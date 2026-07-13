@@ -21,7 +21,7 @@ public struct PhysicalOutputValidationPlan: Codable, Equatable, Sendable {
   public let steps: [Step]
   public let notes: [String]
 
-  public init(device: XPCDeviceDescription) {
+  public init(device: ApplicationServiceDeviceDescription) {
     self.init(
       vendorID: device.vendorID,
       productID: device.productID,

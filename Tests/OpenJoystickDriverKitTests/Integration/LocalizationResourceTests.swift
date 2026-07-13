@@ -191,6 +191,63 @@ struct LocalizationResourceTests {
     }
   }
 
+  @Test("literal application localization keys exist in the template")
+  func literalApplicationLocalizationKeysExistInTemplate() throws {
+    let root = try RepositoryRoot.from()
+    let sourceRoot = root.appendingPathComponent("Sources/OpenJoystickDriver")
+    let templateURL = root.appendingPathComponent(
+      "Sources/OpenJoystickDriverKit/Resources/Localization/Localizable.template.strings"
+    )
+    let templateKeys = try Self.keys(in: templateURL)
+    let expression = try NSRegularExpression(
+      pattern: #"L10n\.string\("([^"]+)""#
+    )
+    let enumerator = try #require(
+      FileManager.default.enumerator(
+        at: sourceRoot,
+        includingPropertiesForKeys: nil
+      )
+    )
+    var referencedKeys = Set<String>()
+
+    for case let url as URL in enumerator where url.pathExtension == "swift" {
+      let source = try String(contentsOf: url, encoding: .utf8)
+      let range = NSRange(source.startIndex..., in: source)
+      for match in expression.matches(in: source, range: range) {
+        guard let keyRange = Range(match.range(at: 1), in: source) else { continue }
+        referencedKeys.insert(String(source[keyRange]))
+      }
+    }
+
+    let missingKeys = referencedKeys.subtracting(templateKeys)
+    #expect(missingKeys.isEmpty, "Missing localization keys: \(missingKeys.sorted())")
+  }
+
+  @Test("localized UI does not describe the removed helper identity")
+  func localizedUIDoesNotDescribeRemovedHelperIdentity() throws {
+    let urls = try #require(
+      Bundle.module.urls(forResourcesWithExtension: "strings", subdirectory: nil)
+    )
+    for url in urls {
+      let value = try String(contentsOf: url, encoding: .utf8).lowercased()
+      #expect(!value.contains("daemon"), "Obsolete helper wording in \(url.path)")
+    }
+  }
+
+  @Test("developer-only GUI localization families are absent")
+  func developerOnlyGUILocalizationFamiliesAreAbsent() throws {
+    let templateURL = try #require(
+      Bundle.module.url(
+        forResource: "Localizable.template",
+        withExtension: "strings"
+      )
+    )
+    let keys = try Self.keys(in: templateURL)
+    for prefix in ["browserDiagnostic.", "runtimeHealth.", "appleCatalog."] {
+      #expect(!keys.contains { $0.hasPrefix(prefix) })
+    }
+  }
+
   @Test("bundle localization follows the user's preferred macOS locale")
   func bundleLocalizationFollowsPreferredLocale() {
     let localization = Localization(preferredLanguages: ["en-US"])

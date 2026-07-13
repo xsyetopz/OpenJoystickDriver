@@ -19,7 +19,7 @@ extension MenuBarPopoverView {
           if model.developerMode {
             Text(L10n.string("output.both")).tag(VirtualDeviceMode.both.rawValue)
           }
-        }.pickerStyle(.segmented).disabled(!model.daemonConnected)
+        }.pickerStyle(.segmented).disabled(!model.serviceConnected)
 
         Toggle(
           L10n.string("output.userSpace"),
@@ -27,7 +27,7 @@ extension MenuBarPopoverView {
             get: { model.userSpaceVirtualDeviceEnabled },
             set: { enabled in Task { await model.setUserSpaceVirtualDeviceEnabled(enabled) } }
           )
-        ).toggleStyle(.checkbox).disabled(!model.daemonConnected)
+        ).toggleStyle(.checkbox).disabled(!model.serviceConnected)
 
         Picker(
           L10n.string("output.active"),
@@ -43,7 +43,7 @@ extension MenuBarPopoverView {
             CompositeOutputDispatcher.Mode.secondaryOnly.rawValue
           )
           Text(L10n.string("output.both")).tag(CompositeOutputDispatcher.Mode.both.rawValue)
-        }.pickerStyle(.segmented).disabled(!model.daemonConnected)
+        }.pickerStyle(.segmented).disabled(!model.serviceConnected)
 
         VStack(alignment: .leading, spacing: 3) {
           statusLine(L10n.string("output.active"), activeOutputLabel)
@@ -69,7 +69,7 @@ extension MenuBarPopoverView {
           Spacer()
           SwiftUI.Button(L10n.string("settings.reset")) { pendingConfirmation = .resetSettings }
             .buttonStyle(.borderless).controlSize(.small).foregroundColor(.secondary).disabled(
-              !model.daemonConnected
+              !model.serviceConnected
             )
         }
       }
@@ -120,17 +120,12 @@ extension MenuBarPopoverView {
           ) {
             runningSelfTest = true
             Task {
-              await model.syncFromDaemonNow()
-              if model.daemonHealth?.isInefficientKillLoop == true {
-                model.daemonError = L10n.string("selfTest.daemonKillLoop")
-                runningSelfTest = false
-                return
-              }
+              await model.syncFromApplicationServiceNow()
               await model.runVirtualDeviceSelfTest(seconds: 5)
               runningSelfTest = false
             }
           }.buttonStyle(.borderless).controlSize(.small).disabled(
-            !model.daemonConnected || runningSelfTest
+            !model.serviceConnected || runningSelfTest
           )
         }
         if let t = model.virtualDeviceSelfTest {
@@ -150,12 +145,21 @@ extension MenuBarPopoverView {
               statusLine(L10n.string("output.ioregInput"), "Δ \(delta)")
             }
             if let delta = t.driverKitSetReportSuccessDelta {
-              statusLine(L10n.string("output.daemonSetReport"), "ok Δ \(delta)")
+              statusLine(L10n.string("output.serviceSetReport"), "ok Δ \(delta)")
             }
             statusLine(
               L10n.string("output.userSpace"),
               "value \(t.userSpaceValueEvents), report \(t.userSpaceReportEvents)"
             )
+            if t.userSpaceRequired {
+              let verdict = t.userSpaceVerdict
+              statusLine(
+                "Compatibility output",
+                "\(verdict.rawValue): \(t.userSpaceStatus)",
+                success: verdict == .passed,
+                warning: verdict != .passed
+              )
+            }
           }
         } else {
           Text(L10n.string("selfTest.pressButtons")).font(.caption).foregroundColor(.secondary)
@@ -171,139 +175,10 @@ extension MenuBarPopoverView {
           Text(L10n.string("inputTest.description")).font(.caption).foregroundColor(.secondary)
           Spacer()
           SwiftUI.Button(L10n.string("button.openInputTest")) { inputTester.show(model: model) }
-            .controlSize(.small).disabled(!model.daemonConnected)
+            .controlSize(.small).disabled(!model.serviceConnected)
         }
       }
     }
   }
 
-  var runtimeHealthRow: some View {
-    OJDCard(title: L10n.string("runtimeHealth.cardTitle")) {
-      VStack(alignment: .leading, spacing: 8) {
-        Text(L10n.string("runtimeHealth.description")).font(.caption).foregroundColor(.secondary)
-          .fixedSize(horizontal: false, vertical: true)
-
-        VStack(alignment: .leading, spacing: 6) {
-          HStack(spacing: 8) {
-            runtimeIntegerField(
-              L10n.string("runtimeHealth.seconds"),
-              value: $runtimeHealthSeconds,
-              width: 58
-            )
-            runtimeIntegerField(
-              L10n.string("runtimeHealth.intervalMs"),
-              value: $runtimeHealthIntervalMilliseconds,
-              width: 64
-            )
-          }
-          HStack(spacing: 8) {
-            runtimeIntegerField(
-              L10n.string("runtimeHealth.rssLimitMiB"),
-              value: $runtimeHealthResidentLimitMiB,
-              width: 58
-            )
-            runtimeIntegerField(
-              L10n.string("runtimeHealth.footprintLimitMiB"),
-              value: $runtimeHealthFootprintLimitMiB,
-              width: 58
-            )
-          }
-        }.disabled(model.runtimeHealthRunning)
-
-        HStack {
-          Text(L10n.string("runtimeHealth.limitDisabledHint")).font(.caption).foregroundColor(
-            .secondary
-          )
-          Spacer()
-          SwiftUI.Button(
-            model.runtimeHealthRunning
-              ? L10n.string("runtimeHealth.stop") : L10n.string("runtimeHealth.run")
-          ) {
-            if model.runtimeHealthRunning {
-              model.stopRuntimeHealthCheck()
-            } else {
-              Task {
-                await model.runRuntimeHealthCheck(
-                  seconds: runtimeHealthSeconds,
-                  intervalMilliseconds: runtimeHealthIntervalMilliseconds,
-                  residentLimitMiB: runtimeHealthResidentLimitMiB,
-                  physicalFootprintLimitMiB: runtimeHealthFootprintLimitMiB
-                )
-              }
-            }
-          }.controlSize(.small).disabled(
-            !model.runtimeHealthRunning && model.daemonHealth?.pid == nil
-          )
-        }
-
-        if let summary = model.runtimeHealthSummary {
-          statusLine(
-            L10n.string("runtimeHealth.rss"),
-            "\(runtimeMebibytes(summary.firstResidentBytes)) -> "
-              + "\(runtimeMebibytes(summary.lastResidentBytes)) MiB; "
-              + "peak \(runtimeMebibytes(summary.peakResidentBytes))"
-          )
-          statusLine(
-            L10n.string("runtimeHealth.footprint"),
-            "\(runtimeMebibytes(summary.firstPhysicalFootprintBytes)) -> "
-              + "\(runtimeMebibytes(summary.lastPhysicalFootprintBytes)) MiB"
-          )
-          statusLine(
-            L10n.string("runtimeHealth.growthRate"),
-            "\(runtimeSignedMebibytes(summary.residentGrowthBytesPerHour)) MiB/hour"
-          )
-          statusLine(
-            L10n.string("runtimeHealth.resources"),
-            "FD \(summary.firstFileDescriptorCount)->\(summary.lastFileDescriptorCount), "
-              + "threads \(summary.firstThreadCount)->\(summary.lastThreadCount)"
-          )
-          statusLine(
-            L10n.string("runtimeHealth.cpu"),
-            String(format: "%.2f%%", summary.averageCPUPercent)
-          )
-          statusLine(
-            L10n.string("runtimeHealth.verdict"),
-            runtimeHealthSoakVerdictLabel(summary.soakVerdict),
-            success: summary.soakVerdict == .stable,
-            warning: summary.soakVerdict != .stable
-          )
-        }
-      }
-    }
-  }
-
-  private func runtimeIntegerField(_ label: String, value: Binding<Int>, width: CGFloat)
-    -> some View
-  {
-    HStack(spacing: 4) {
-      Text(label).font(.caption).foregroundColor(.secondary)
-      TextField(
-        "",
-        text: Binding(
-          get: { String(value.wrappedValue) },
-          set: { text in if let number = Int(text) { value.wrappedValue = number } }
-        )
-      ).frame(width: width)
-    }
-  }
-
-  private func runtimeMebibytes(_ bytes: UInt64) -> String {
-    String(format: "%.2f", Double(bytes) / 1_048_576)
-  }
-
-  private func runtimeSignedMebibytes(_ bytesPerHour: Double) -> String {
-    let value = bytesPerHour / 1_048_576
-    return String(format: value >= 0 ? "+%.2f" : "%.2f", value)
-  }
-
-  private func runtimeHealthSoakVerdictLabel(_ verdict: RuntimeSoakVerdict) -> String {
-    switch verdict {
-    case .stable: return L10n.string("runtimeHealth.stable")
-    case .memoryGrowthObserved: return L10n.string("runtimeHealth.memoryGrowth")
-    case .resourceGrowthObserved: return L10n.string("runtimeHealth.resourceGrowth")
-    case .residentLimitExceeded: return L10n.string("runtimeHealth.limitExceeded")
-    case .physicalFootprintLimitExceeded: return L10n.string("runtimeHealth.footprintLimitExceeded")
-    case .insufficientData: return L10n.string("runtimeHealth.insufficient")
-    }
-  }
 }

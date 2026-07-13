@@ -1,98 +1,27 @@
-# CLI and menu app
+# CLI and menu app parity
 
-The CLI owns each operational contract. The menu app calls the same service or XPC method. Window layout, save panels, refresh buttons, and quitting are GUI-only presentation actions.
+The persistent main app owns controller and virtual-output state. The menu UI calls that service in process. Headless commands use the same operations through the authenticated local RPC endpoint.
 
-## Shared operations
+| Capability | Shared owner |
+| --- | --- |
+| Controller listing and input state | `DeviceManager` and application-service payloads |
+| Permission status and requests | `PermissionManager` in the running main app |
+| Virtual-device mode and diagnostics | `ApplicationServiceServer` |
+| Physical output | Typed application-service payloads |
+| Runtime health | `ApplicationServiceManager` and the RPC socket PID |
+| Logs | `ApplicationServiceLogService` |
+| Updates | `UpdateChecker` |
 
-### Daemon and devices
+RPC is used only where a separately invoked headless process needs live state. The socket is user-private, signing-authenticated, framed, and bounded. GUI-only presentation includes window layout, save panels, and popover state.
 
-- CLI: `status`, `list`, and the install, start, restart, and uninstall commands
-- Menu app: system and device cards
-- Code: `DaemonManager` and typed XPC payloads
+## Diagnostic surfaces
 
-### Permissions
-
-- CLI: `permissions`
-- Menu app: Permissions card
-- Code: `PermissionManager`
-
-### Controller input
-
-- CLI: `input state`, `input watch`, and `input packets`
-- Menu app: Input Test
-- Code: `ControllerInputDiagnosticService`
-
-### Virtual output
-
-- CLI: `compat`, `userspace`, `output`, `selftest`, and `reset-settings`
-- Menu app: compatibility picker, output details, and self-test
-- Code: shared XPC operations and virtual-device diagnostics
-
-### Physical output
-
-- CLI: `physical-output`
-- Menu app: Input Test output controls and validation plan
-- Code: typed physical-output XPC payloads
-
-### Diagnostics and support
-
-- CLI: `diagnose runtime`, `diagnose gamecontroller-catalog`, `diagnose browser-gamepad`, `report create`, and `logs`
-- Menu app: matching diagnostic, report, and log controls
-- Code: the same sampler, auditor, browser service, report service, and bounded log reader
-
-### Updates
-
-- CLI: `updates check`
-- Menu app: update card; signed builds may add Sparkle installation UI
-- Code: `UpdateChecker` for release metadata
-
-### System extension
-
-- CLI: `sysext uninstall`
-- Menu app: confirmed removal in the System card
-- Code: `OSSystemExtensionRequest`
-
-A feature is paired only when both surfaces reach the same operation. Matching labels are not enough.
-
-## Input examples
-
-VID and PID are optional with one connected controller:
+The menu app is limited to connection, permission, output, self-test, and support-report actions needed for normal operation and support. Runtime soaking, private Apple catalog inspection, and browser Gamepad capture are developer diagnostics exposed only by headless commands:
 
 ```bash
-OpenJoystickDriver --headless input state --json
-OpenJoystickDriver --headless input watch --seconds 10 --interval-ms 16
-OpenJoystickDriver --headless input packets --limit 50
+OpenJoystickDriver --headless diagnose runtime --help
+OpenJoystickDriver --headless diagnose gamecontroller-catalog --help
+OpenJoystickDriver --headless diagnose browser-gamepad --help
 ```
 
-Specify the device when more than one controller is connected:
-
-```bash
-OpenJoystickDriver --headless input state 0x045e 0x028e
-```
-
-Raw packets may contain device-specific data. Review them before sharing. Redacted support reports omit packet payloads.
-
-The Input Test window samples normalized state at 60 Hz. Daemon input and virtual output are not tied to that display rate.
-
-## Updates and logs
-
-The CLI update check reads release metadata. It does not install an update:
-
-```bash
-OpenJoystickDriver --headless updates check
-OpenJoystickDriver --headless updates check --prerelease --json
-OpenJoystickDriver --headless updates check --open
-```
-
-`--open` opens the release page only when an update exists.
-
-Log reads retain at most 256 KiB per file:
-
-```bash
-OpenJoystickDriver --headless logs show --stream both --lines 100
-OpenJoystickDriver --headless logs show --stream stderr --json
-OpenJoystickDriver --headless logs path --stream both
-OpenJoystickDriver --headless logs open --stream stdout
-```
-
-Logs can contain device identifiers and paths. Use a redacted support report when possible.
+These commands may share runtime services and report types with the app, but they do not add menu cards, controls, or task state.

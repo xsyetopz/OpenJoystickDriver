@@ -15,14 +15,13 @@ The signing configurator updates recognized signing keys in the central files wh
 
 ## GitHub Actions secrets
 
-`.github/workflows/release.yml` remains the source of truth for GitHub Secret names. This refactor does not rename them:
+`.github/workflows/release.yml` remains the source of truth for GitHub Secret names. Only inputs used by the single-app release remain:
 
 - `APPLE_DEVELOPMENT_CERT_BASE64`
 - `DEVELOPER_ID_APPLICATION_CERT_BASE64`
 - `CERTIFICATE_SECRET`
 - `KEYCHAIN_SECRET`
 - `OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64`
-- `OPENJOYSTICKDRIVER_DAEMON_DEVID_PROFILE_BASE64`
 - `OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64`
 - `NOTARIZE_APPLE_ID`
 - `NOTARIZE_PASSWORD`

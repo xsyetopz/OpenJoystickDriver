@@ -12,7 +12,7 @@ struct CompatibilityCommand {
       return
     }
 
-    let client = XPCClient()
+    let client = ApplicationServiceClient()
     client.connect()
 
     if sub == "status" {
@@ -40,7 +40,10 @@ struct CompatibilityCommand {
     }
 
     if !ok {
-      print("ERROR: failed to set compatibility identity to \(sub) (daemon not running?)")
+      print(
+        "ERROR: failed to set compatibility identity to \(sub) "
+          + "(application service not running?)"
+      )
       exit(1)
     }
 

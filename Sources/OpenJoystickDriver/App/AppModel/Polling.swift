@@ -5,46 +5,26 @@ import OpenJoystickDriverKit
 @MainActor extension AppModel {
   // MARK: - Private
 
-  func formatDaemonError(_ error: Error) -> String {
-    let ns = error as NSError
-    if ns.domain == NSCocoaErrorDomain && ns.code == 4099 {
-      if let h = daemonHealth, h.isInefficientKillLoop {
-        let runs = h.runs.map { "\($0)" } ?? "unknown"
-        let active = h.activeCount.map { "\($0)" } ?? "unknown"
-        return
-          L10n.string("daemon.error.inefficientKill", active, runs)
-      }
-      return L10n.string("daemon.error.lostApplication")
+  func formatApplicationServiceError(_ error: Error) -> String {
+    if error is ApplicationServiceClientError {
+      return L10n.string("service.error.lostConnection")
     }
-    if ns.domain == "NSXPCErrorDomain" {
-      return L10n.string("daemon.error.lostConnection")
-    }
-    return ns.localizedDescription
+    return error.localizedDescription
   }
 
   func poll() async {
-    refreshDaemonStatus()
-    guard daemonInstalled else {
-      daemonConnected = false
-      devices = []
-      userSpaceVirtualDeviceEnabled = false
-      userSpaceVirtualDeviceStatus = "off"
-      virtualDeviceDiagnostics = nil
-      latestStatusPayload = nil
-      appInputMonitoring = "\(await permissionManager.checkAccess())"
-      inputMonitoring = "unknown"
-      resetDaemonHealthTrend()
-      return
-    }
-
-    appInputMonitoring = "\(await permissionManager.checkAccess())"
+    refreshApplicationServiceStatus()
+    let localPermissions = await permissionManager.checkAccess()
+    inputMonitoring = localPermissions.inputMonitoring.rawValue
+    accessibility = localPermissions.accessibility.rawValue
     if !client.isConnected { client.connect() }
     do {
       let status = try await client.getStatus()
       latestStatusPayload = status
-      daemonConnected = true
-      daemonError = nil
+      serviceConnected = true
+      serviceError = nil
       inputMonitoring = status.inputMonitoring
+      accessibility = status.accessibility
       devices = status.connectedDevices.map { DeviceViewModel(from: $0) }
       userSpaceVirtualDeviceEnabled = status.userSpaceVirtualDeviceEnabled ?? false
       userSpaceVirtualDeviceStatus = status.userSpaceVirtualDeviceStatus ?? "unknown"
@@ -52,81 +32,75 @@ import OpenJoystickDriverKit
       outputMode = status.effectiveOutputMode ?? CompositeOutputDispatcher.Mode.primaryOnly.rawValue
       compatibilityIdentity = status.compatibilityIdentity ?? CompatibilityIdentity.sdl2_3.rawValue
 
-      await maybeRefreshDaemonHealth(isConnected: true)
+      await maybeRefreshApplicationServiceHealth(isConnected: true)
     } catch {
-      daemonConnected = false
+      serviceConnected = false
       devices = []
       latestStatusPayload = nil
       client.disconnect()
-      appInputMonitoring = "\(await permissionManager.checkAccess())"
-      inputMonitoring = "unknown"
+      let localPermissions = await permissionManager.checkAccess()
+      inputMonitoring = localPermissions.inputMonitoring.rawValue
+      accessibility = localPermissions.accessibility.rawValue
 
-      // When XPC is failing, refresh launchd health immediately so we can explain why.
-      await refreshDaemonHealth()
+      // Refresh process/socket health immediately so the UI can distinguish a stopped app
+      // from a live runtime that rejected or failed the request.
+      await refreshApplicationServiceHealth()
 
-      // If launchd says the job is loaded/running but XPC isn't responding, call that out.
-      if let h = daemonHealth, h.pid != nil {
-        daemonError =
-          L10n.string("daemon.error.runningNoConnection")
+      if let h = serviceHealth, h.pid != nil {
+        serviceError =
+          L10n.string("service.error.runningNoConnection")
       } else {
-        daemonError = formatDaemonError(error)
+        serviceError = formatApplicationServiceError(error)
       }
     }
   }
 
-  func maybeRefreshDaemonHealth(isConnected: Bool) async {
+  func maybeRefreshApplicationServiceHealth(isConnected: Bool) async {
     let now = DispatchTime.now().uptimeNanoseconds
-    let intervalNs = isConnected ? daemonHealthPollNanosecondsConnected
-      : daemonHealthPollNanosecondsDisconnected
-    if daemonHealth == nil || now &- lastHealthPollNs >= intervalNs {
-      await refreshDaemonHealth()
+    let intervalNs = isConnected ? serviceHealthPollNanosecondsConnected
+      : serviceHealthPollNanosecondsDisconnected
+    if serviceHealth == nil || now &- lastHealthPollNs >= intervalNs {
+      await refreshApplicationServiceHealth()
     }
   }
 
-  func noteDaemonHealth(_ snapshot: DaemonManager.DaemonHealth) {
+  func noteApplicationServiceHealth(
+    _ snapshot: ApplicationServiceManager.ApplicationServiceHealth
+  ) {
     let now = DispatchTime.now().uptimeNanoseconds
     if !snapshot.installed || (snapshot.state ?? "").uppercased() == "NOT_LOADED" {
-      resetDaemonHealthTrend()
-      lastDaemonRuns = snapshot.runs
-      lastDaemonPid = snapshot.pid
+      resetApplicationServiceHealthTrend()
+      lastServicePID = snapshot.pid
       return
     }
 
-    if let runs = snapshot.runs {
-      if let last = lastDaemonRuns, runs > last {
-        for _ in 0..<(runs - last) { daemonStartEventsNs.append(now) }
-      }
-      lastDaemonRuns = runs
-    }
-
     if let pid = snapshot.pid {
-      if let lastPid = lastDaemonPid, pid != lastPid {
-        daemonStartEventsNs.append(now)
+      if let lastPid = lastServicePID, pid != lastPid {
+        serviceStartEventsNanoseconds.append(now)
       }
-      lastDaemonPid = pid
+      lastServicePID = pid
     }
 
     let windowNs: UInt64 = 15 * 1_000_000_000
-    daemonStartEventsNs.removeAll { now &- $0 > windowNs }
+    serviceStartEventsNanoseconds.removeAll { now &- $0 > windowNs }
   }
 
-  func recentDaemonStartCount(windowSeconds: UInt64) -> Int {
+  func recentServiceStartCount(windowSeconds: UInt64) -> Int {
     let now = DispatchTime.now().uptimeNanoseconds
     let windowNs = windowSeconds * 1_000_000_000
-    return daemonStartEventsNs.filter { now &- $0 <= windowNs }.count
+    return serviceStartEventsNanoseconds.filter { now &- $0 <= windowNs }.count
   }
 
-  func resetDaemonHealthTrend() {
-    daemonStartEventsNs.removeAll(keepingCapacity: true)
-    lastDaemonRuns = nil
-    lastDaemonPid = nil
+  func resetApplicationServiceHealthTrend() {
+    serviceStartEventsNanoseconds.removeAll(keepingCapacity: true)
+    lastServicePID = nil
   }
 
   func ensureRunningFromApplications() -> Bool {
     let path = Bundle.main.bundlePath
     if path.hasPrefix("/Applications/") { return true }
-    daemonError =
-      L10n.string("daemon.error.requiresApplications", path)
+    serviceError =
+      L10n.string("service.error.requiresApplications", path)
     return false
   }
 
@@ -148,13 +122,13 @@ import OpenJoystickDriverKit
         )
       }.value
     } catch {
-      daemonError =
-        L10n.string("daemon.error.codesignLaunchFailed", action, error.localizedDescription)
+      serviceError =
+        L10n.string("service.error.codesignLaunchFailed", action, error.localizedDescription)
       return false
     }
     if result.timedOut {
-      daemonError = L10n.string(
-        "daemon.error.codesignLaunchFailed",
+      serviceError = L10n.string(
+        "service.error.codesignLaunchFailed",
         action,
         "verification timed out after 15 seconds"
       )
@@ -165,7 +139,7 @@ import OpenJoystickDriverKit
 
     // Keep the UI message self-describing and fix-oriented.
     if out.contains("a sealed resource is missing or invalid") {
-      daemonError =
+      serviceError =
         """
         \(action) failed: this app bundle's signature is INVALID.
         macOS thinks it was modified after signing.
@@ -182,7 +156,7 @@ import OpenJoystickDriverKit
       return false
     }
 
-    daemonError =
+    serviceError =
       """
       \(action) failed: app signature verification failed.
 

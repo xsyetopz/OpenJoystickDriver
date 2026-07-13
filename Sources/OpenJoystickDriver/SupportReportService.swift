@@ -3,14 +3,13 @@ import OpenJoystickDriverKit
 
 enum SupportReportService {
   static func make(
-    status: XPCStatusPayload?,
-    virtualDiagnostics: XPCVirtualDeviceDiagnosticsPayload?,
-    permissions: InputMonitoringPermissionSnapshot,
-    daemonHealth: DaemonManager.DaemonHealth?,
-    daemonInstalled: Bool,
-    daemonConnected: Bool,
+    status: ApplicationServiceStatusPayload?,
+    virtualDiagnostics: ApplicationServiceVirtualDeviceDiagnosticsPayload?,
+    inputMonitoring: PermissionManager.AccessState,
+    applicationServiceHealth: ApplicationServiceManager.ApplicationServiceHealth?,
+    applicationServiceInstalled: Bool,
+    applicationServiceConnected: Bool,
     appVersion: String,
-    runtimeHealth: RuntimeHealthSummary? = nil,
     appleGameControllerAudit: AppleGameControllerSupportAudit? = nil,
     generatedAt: Date = Date()
   ) -> SupportReport {
@@ -21,11 +20,10 @@ enum SupportReportService {
       appVersion: appVersion,
       macOSVersion: macOSVersion,
       architecture: architecture,
-      permissions: permissions,
-      daemonInstalled: daemonInstalled,
-      daemonConnected: daemonConnected,
-      daemonHealth: daemonHealth,
-      runtimeHealth: runtimeHealth,
+      inputMonitoring: inputMonitoring,
+      applicationServiceInstalled: applicationServiceInstalled,
+      applicationServiceConnected: applicationServiceConnected,
+      applicationServiceHealth: applicationServiceHealth,
       appleGameControllerAudit: appleGameControllerAudit,
       status: status,
       virtualDiagnostics: virtualDiagnostics

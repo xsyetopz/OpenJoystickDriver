@@ -115,11 +115,9 @@ display_path() {
 }
 
 gui_devid_profile="${OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_DevID.provisionprofile}"
-daemon_devid_profile="${OPENJOYSTICKDRIVER_DAEMON_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriverDaemon_DevID.provisionprofile}"
 dext_profile="${OPENJOYSTICKDRIVER_DEXT_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_VirtualHIDDevice.provisionprofile}"
 
 [[ -f "$gui_devid_profile" ]] || die "Missing GUI Developer ID profile: $gui_devid_profile"
-[[ -f "$daemon_devid_profile" ]] || die "Missing daemon Developer ID profile: $daemon_devid_profile"
 [[ -f "$dext_profile" ]] || die "Missing DriverKit profile: $dext_profile"
 
 certificate_secret="$(read_secret CERTIFICATE_SECRET 'identity export password')"
@@ -154,7 +152,6 @@ write_secret_file DEVELOPER_ID_APPLICATION_CERT_BASE64 "$(base64_file "$develope
 write_secret_file CERTIFICATE_SECRET "$certificate_secret"
 write_secret_file KEYCHAIN_SECRET "$keychain_secret"
 write_secret_file OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64 "$(base64_file "$gui_devid_profile")"
-write_secret_file OPENJOYSTICKDRIVER_DAEMON_DEVID_PROFILE_BASE64 "$(base64_file "$daemon_devid_profile")"
 write_secret_file OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64 "$(base64_file "$dext_profile")"
 write_secret_file NOTARIZE_APPLE_ID "$notarize_apple_id"
 write_secret_file NOTARIZE_PASSWORD "$notarize_password"

@@ -1,10 +1,10 @@
 import OpenJoystickDriverKit
 
-/// Shared XPC surface for CLI and GUI controller-input diagnostics.
+/// Shared application-service surface for CLI and GUI controller-input diagnostics.
 actor ControllerInputDiagnosticService {
-  private let client: XPCClient
+  private let client: ApplicationServiceClient
 
-  init(client: XPCClient = XPCClient()) {
+  init(client: ApplicationServiceClient = ApplicationServiceClient()) {
     self.client = client
     client.connect()
   }
@@ -13,7 +13,7 @@ actor ControllerInputDiagnosticService {
     client.disconnect()
   }
 
-  func connectedDevices() async throws -> [XPCDeviceDescription] {
+  func connectedDevices() async throws -> [ApplicationServiceDeviceDescription] {
     try await client.getStatus().connectedDevices
   }
 

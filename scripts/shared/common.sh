@@ -57,28 +57,21 @@ fi
 
 IDENTITY="${CODESIGN_IDENTITY:--}"
 GUI_IDENTITY="${GUI_CODESIGN_IDENTITY:-$IDENTITY}"
-DAEMON_IDENTITY="${DAEMON_CODESIGN_IDENTITY:-$IDENTITY}"
-DAEMON_DEBUG="$PROJECT_DIR/.build/debug/OpenJoystickDriverDaemon"
 GUI_DEBUG="$PROJECT_DIR/.build/debug/OpenJoystickDriver"
-DAEMON_RELEASE="$PROJECT_DIR/.build/apple/Products/Release/OpenJoystickDriverDaemon"
 GUI_RELEASE="$PROJECT_DIR/.build/apple/Products/Release/OpenJoystickDriver"
 
 # Active binary paths (selected by OJD_ENV)
 if [[ "$OJD_ENV" == "release" ]]; then
-  DAEMON_BIN="$DAEMON_RELEASE"
   GUI_BIN="$GUI_RELEASE"
 else
-  DAEMON_BIN="$DAEMON_DEBUG"
   GUI_BIN="$GUI_DEBUG"
 fi
 
 # Template paths (source-controlled, contain ${DEVELOPMENT_TEAM} placeholder)
 GUI_ENTITLEMENTS_TEMPLATE="$PROJECT_DIR/Sources/OpenJoystickDriver/OpenJoystickDriver.entitlements.template"
-DAEMON_ENTITLEMENTS_TEMPLATE="$PROJECT_DIR/Sources/OpenJoystickDriverDaemon/OpenJoystickDriverDaemon.entitlements.template"
 
 # Resolved paths (generated at build time into .build/)
 GUI_ENTITLEMENTS="$PROJECT_DIR/.build/OpenJoystickDriver.entitlements"
-DAEMON_ENTITLEMENTS="$PROJECT_DIR/.build/OpenJoystickDriverDaemon.entitlements"
 
 # ---------------------------------------------------------------------------
 # Universal (fat) static libusb
@@ -173,10 +166,8 @@ EOF
 
 # Provisioning profiles (selected by OJD_ENV)
 if [[ "$OJD_ENV" == "release" ]]; then
-  DAEMON_PROFILE="${DAEMON_PROVISIONING_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriverDaemon_DevID.provisionprofile}"
   GUI_PROFILE="${GUI_PROVISIONING_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_DevID.provisionprofile}"
 else
-  DAEMON_PROFILE="${DAEMON_PROVISIONING_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriverDaemon.provisionprofile}"
   GUI_PROFILE="${GUI_PROVISIONING_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver.provisionprofile}"
 fi
 

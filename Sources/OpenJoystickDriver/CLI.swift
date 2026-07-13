@@ -21,8 +21,8 @@ struct CLI {
     case "compat": CompatibilityCommand().run(arguments: Array(args.dropFirst()))
     case "selftest": SelfTestCommand().run(arguments: Array(args.dropFirst()))
     case "sysext": SystemExtensionCommand().run(arguments: Array(args.dropFirst()))
-    case "start": StartDaemonCommand().run()
-    case "restart": RestartDaemonCommand().run()
+    case "start": StartApplicationServiceCommand().run()
+    case "restart": RestartApplicationServiceCommand().run()
     case "reset-settings": ResetSettingsCommand().run()
     case "install": InstallCommand().run()
     case "uninstall": UninstallCommand().run()
@@ -51,9 +51,9 @@ struct CLI {
         list       List connected game controllers
         status     Show permission and device status
         input      Inspect or watch normalized input and raw packet logs
-        logs       Read or reveal bounded daemon log tails
+        logs       Read or reveal bounded application service log tails
         updates    Check GitHub release metadata without installing
-        permissions Inspect or request Input Monitoring access
+        permissions Inspect or request required HID access
         report     Create a redacted controller support report
         diagnose   Hardware and runtime diagnostics
         userspace  Toggle user-space virtual gamepad (IOHIDUserDevice)
@@ -62,11 +62,11 @@ struct CLI {
         compat     Set compatibility identity (generic-hid/sdl2-3/x360-hid/xone-hid)
         selftest   Count input events on virtual devices
         sysext     Manage DriverKit system extension
-        install    Register daemon LaunchAgent
-        uninstall  Unregister daemon LaunchAgent
-        start      Start daemon (register if needed)
-        restart    Restart daemon
-        reset-settings Reset daemon settings (mode/identity/output)
+        install    Register the main app as a login item
+        uninstall  Remove the main app login item
+        start      Start application service (register if needed)
+        restart    Restart application service
+        reset-settings Reset application service settings (mode/identity/output)
 
       Options:
         -h, --help     Show this help

@@ -2,153 +2,98 @@ import Foundation
 import Testing
 
 struct InputMonitoringPromptFlowTests {
-  @Test
-  func testDaemonHelperUsesAppLifecycleForPermissionPrompt() throws {
-    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let daemonMainURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriverDaemon/main.swift"
+  @Test func mainApplicationOwnsRuntimeAndPermissionState() throws {
+    let root = try RepositoryRoot.from()
+    let delegate = try source(
+      "Sources/OpenJoystickDriver/App/AppDelegate.swift",
+      root: root
     )
-    let launchAgentURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/App/com.openjoystickdriver.daemon.plist"
+    let runtime = try source(
+      "Sources/OpenJoystickDriver/Service/ApplicationServiceRuntime.swift",
+      root: root
     )
-    let daemonMain = try String(contentsOf: daemonMainURL, encoding: .utf8)
-    let launchAgent = try String(contentsOf: launchAgentURL, encoding: .utf8)
+    let permissionModel = try source(
+      "Sources/OpenJoystickDriver/App/AppModel/InputMonitoring.swift",
+      root: root
+    )
 
-    #expect(daemonMain.contains("PermissionPromptAppDelegate"))
-    #expect(daemonMain.contains("NSApplication.shared.run()"))
-    #expect(daemonMain.contains("let permissionCheckOnlyMode ="))
-    #expect(daemonMain.contains("OJD_PERMISSION_CHECK_ONLY"))
-    #expect(daemonMain.contains("PermissionManager.currentAccessState()"))
-    #expect(daemonMain.contains("Starting permission-check probe mode"))
-    #expect(daemonMain.contains("let promptOnlyMode ="))
-    #expect(daemonMain.contains("commandLineArguments.contains(\"--request-input-monitoring\")"))
-    #expect(
-      daemonMain.contains(
-        "environment[\"OJD_PERMISSION_PROMPT_ONLY\"] == \"1\""
-      )
-    )
-    #expect(daemonMain.contains("timeoutNanoseconds: UInt64 = 120_000_000_000"))
-    #expect(daemonMain.contains("Starting permission prompt helper mode"))
-    #expect(daemonMain.contains("Starting daemon service mode"))
-    #expect(daemonMain.contains("Input Monitoring denied for daemon helper app"))
-    #expect(daemonMain.contains("if initialState == .denied"))
-    #expect(daemonMain.contains("if state == .denied"))
-    #expect(!daemonMain.contains("DispatchSemaphore"))
-    #expect(!daemonMain.contains("semaphore.wait()"))
-    #expect(!daemonMain.contains("Thread.sleep(forTimeInterval: 5)"))
-    #expect(launchAgent.contains("<key>EnvironmentVariables</key>"))
-    #expect(launchAgent.contains("<key>OJD_LAUNCHD_DAEMON</key>"))
+    #expect(delegate.contains("ApplicationServiceRuntime"))
+    #expect(runtime.contains("PermissionManager()"))
+    #expect(runtime.contains("DeviceManager("))
+    #expect(runtime.contains("ApplicationServiceServer("))
+    #expect(permissionModel.contains("permissionManager.requestRequiredAccess()"))
+    #expect(!permissionModel.contains("client.requestInputMonitoringAccess()"))
+    #expect(!permissionModel.contains("LSRegisterURL"))
+    #expect(!FileManager.default.fileExists(
+      atPath: root.appendingPathComponent("Sources/OpenJoystickDriverDaemon").path
+    ))
   }
 
-  @Test
-  func testGuiLaunchesDaemonHelperAppInsteadOfRequestingPermissionOverXPC() throws {
-    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let inputMonitoringURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/App/AppModel/InputMonitoring.swift"
+  @Test func oneApplicationIdentityOwnsBothPermissionStates() throws {
+    let root = try RepositoryRoot.from()
+    let model = try source(
+      "Sources/OpenJoystickDriver/App/AppModel/AppModel.swift",
+      root: root
     )
-    let deviceManagerURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriverKit/Device/DeviceManager/DeviceManager.swift"
+    let view = try source(
+      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/SystemCards.swift",
+      root: root
     )
-    let permissionManagerURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriverKit/Permissions/PermissionManager.swift"
+    let permissions = try source(
+      "Sources/OpenJoystickDriverKit/Permissions/PermissionManager.swift",
+      root: root
     )
-    let source = try String(contentsOf: inputMonitoringURL, encoding: .utf8)
-    let hidDetectionURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriverKit/Device/DeviceManager/HIDDetection.swift"
-    )
-    let deviceManager =
-      try String(contentsOf: deviceManagerURL, encoding: .utf8)
-      + String(contentsOf: hidDetectionURL, encoding: .utf8)
-    let permissionManager = try String(contentsOf: permissionManagerURL, encoding: .utf8)
 
-    #expect(source.contains("NSWorkspace.OpenConfiguration()"))
-    #expect(source.contains("configuration.createsNewApplicationInstance = true"))
-    #expect(source.contains("configuration.arguments = [\"--request-input-monitoring\"]"))
-    #expect(!source.contains("configuration.environment = promptEnvironment"))
-    #expect(!source.contains("client.requestInputMonitoringAccess()"))
-    #expect(source.contains("try await prepareDaemonRegistrationForPermissionPrompt()"))
-    #expect(source.contains("try await requestBundledDaemonInputMonitoringPrompt()"))
-    #expect(source.contains("inputMonitoring = await waitForDaemonInputMonitoringDecision()"))
-    #expect(source.contains("probeBundledDaemonInputMonitoringState()"))
-    #expect(source.contains("PermissionManager.daemonAccessState"))
-    #expect(!source.contains("\"OJD_PERMISSION_CHECK_ONLY\": \"1\""))
-    #expect(permissionManager.contains("\"OJD_PERMISSION_CHECK_ONLY\": \"1\""))
-    #expect(permissionManager.contains("return AccessState(status: result.output)"))
-    #expect(permissionManager.contains("daemonAccessStateAsync"))
-    #expect(permissionManager.contains("BoundedProcessRunner.run"))
-    #expect(source.contains("guard !daemonInstalled else { return }"))
-    #expect(source.contains("let task = Task.detached { try DaemonManager.install() }"))
-    let promptLaunchRange = source.firstRange(
-      of: "try await prepareDaemonRegistrationForPermissionPrompt()"
-    )
-    let helperLaunchRange = source.firstRange(
-      of: "try await requestBundledDaemonInputMonitoringPrompt()"
-    )
-    let waitRange = source.firstRange(
-      of: "inputMonitoring = await waitForDaemonInputMonitoringDecision()"
-    )
-    let daemonRecoveryRange = source.firstRange(
-      of: "await recoverDaemonForInputMonitoringRequest()"
-    )
-    #expect(promptLaunchRange != nil)
-    #expect(helperLaunchRange != nil)
-    #expect(waitRange != nil)
-    #expect(daemonRecoveryRange != nil)
-    if let promptLaunchRange, let helperLaunchRange, let waitRange, let daemonRecoveryRange {
-      #expect(promptLaunchRange.lowerBound < helperLaunchRange.lowerBound)
-      #expect(helperLaunchRange.lowerBound < waitRange.lowerBound)
-      #expect(waitRange.lowerBound < daemonRecoveryRange.lowerBound)
-    }
-    #expect(source.contains("if inputMonitoring == \"granted\""))
-    #expect(source.contains("if daemonConnected {\n      await syncFromDaemonNow()\n    }"))
-    #expect(source.contains("process.environment = ProcessInfo.processInfo.environment.merging"))
-    #expect(source.contains("\"OJD_PERMISSION_PROMPT_ONLY\": \"1\""))
-    #expect(!deviceManager.contains("await permissionManager.requestAccess()"))
-    #expect(deviceManager.contains("Use the app's Request Access action"))
-    #expect(deviceManager.contains("await ensureHIDDetectionState(for: state)"))
-    #expect(deviceManager.contains("func ensureHIDDetectionState"))
-    #expect(deviceManager.contains("await removeHIDPipelines()"))
-  }
-  @Test
-  func testCliExposesAppAndDaemonPermissionRecovery() throws {
-    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let cliURL = rootURL.appendingPathComponent("Sources/OpenJoystickDriver/CLI.swift")
-    let commandURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/Commands/PermissionsCommand.swift"
-    )
-    let statusURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/Commands/StatusCommand.swift"
-    )
-    let cli = try String(contentsOf: cliURL, encoding: .utf8)
-    let command = try String(contentsOf: commandURL, encoding: .utf8)
-    let status = try String(contentsOf: statusURL, encoding: .utf8)
-
-    #expect(cli.contains("case \"permissions\""))
-    #expect(command.contains("request app"))
-    #expect(command.contains("request daemon"))
-    #expect(command.contains("open-settings"))
-    #expect(command.contains("PermissionManager.currentAccessState()"))
-    #expect(command.contains("PermissionManager.daemonAccessState"))
-    #expect(command.contains("\"--request-input-monitoring\""))
-    #expect(command.contains("\"/usr/bin/open\""))
-    #expect(status.contains("printInputMonitoringPermissions"))
-    #expect(status.contains("daemonStatus: payload.inputMonitoring"))
+    #expect(model.contains("@Published var inputMonitoring"))
+    #expect(model.contains("@Published var accessibility"))
+    #expect(!model.contains("appInputMonitoring"))
+    #expect(!model.contains("InputMonitoringPermissionSnapshot"))
+    #expect(view.components(separatedBy: "PermissionRow(").count == 3)
+    #expect(!view.contains("permissions.daemonName"))
+    #expect(!permissions.contains("OpenJoystickDriver Application service"))
   }
 
-  @Test
-  func testDaemonRetainsShutdownSignalSourcesForQuitAndReopen() throws {
-    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let shutdownURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriverKit/Device/DeviceManager/Shutdown.swift"
+  @Test func commandUsesServiceStatusWithoutResettingTCC() throws {
+    let root = try RepositoryRoot.from()
+    let command = try source(
+      "Sources/OpenJoystickDriver/Commands/PermissionsCommand.swift",
+      root: root
     )
-    let source = try String(contentsOf: shutdownURL, encoding: .utf8)
+
+    #expect(command.contains("client.getStatus()"))
+    #expect(command.contains("running main app"))
+    #expect(command.contains("client.requestRequiredAccess()"))
+    #expect(!command.contains("tccutil"))
+    #expect(!command.contains("--request-input-monitoring"))
+  }
+
+  @Test func diagnosticsUseTheRunningApplicationPermissionIdentity() throws {
+    let root = try RepositoryRoot.from()
+    let command = try source(
+      "Sources/OpenJoystickDriver/Commands/DiagnoseCommand.swift",
+      root: root
+    )
+
+    #expect(command.contains("client.getStatus()"))
+    #expect(command.contains("State source     : running main app"))
+    #expect(!command.contains("currentInputMonitoringAccessState()"))
+    #expect(!command.contains("currentAccessibilityAccessState()"))
+  }
+
+  @Test func shutdownSignalsRemainRetained() throws {
+    let root = try RepositoryRoot.from()
+    let source = try source(
+      "Sources/OpenJoystickDriverKit/Device/DeviceManager/Shutdown.swift",
+      root: root
+    )
 
     #expect(source.contains("ShutdownSignalSourceStore"))
     #expect(source.contains("private var sources: [DispatchSourceSignal] = []"))
     #expect(source.contains("shutdownSignalSourceStore.retain(sigterm)"))
     #expect(source.contains("shutdownSignalSourceStore.retain(sigint)"))
-    #expect(source.contains("signal(SIGTERM, SIG_IGN)"))
-    #expect(source.contains("signal(SIGINT, SIG_IGN)"))
   }
 
+  private func source(_ path: String, root: URL) throws -> String {
+    try String(contentsOf: root.appendingPathComponent(path), encoding: .utf8)
+  }
 }

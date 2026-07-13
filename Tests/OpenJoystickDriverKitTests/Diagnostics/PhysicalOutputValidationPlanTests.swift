@@ -5,7 +5,7 @@ import Testing
 struct PhysicalOutputValidationPlanTests {
   @Test
   func buildsCapabilityDrivenRedactedSteps() throws {
-    let device = XPCDeviceDescription(
+    let device = ApplicationServiceDeviceDescription(
       name: "Secret Controller Name",
       vendorID: 1234,
       productID: 5678,

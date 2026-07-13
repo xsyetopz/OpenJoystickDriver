@@ -4,7 +4,7 @@ import IOKit.hid
 
 /// Sends HID reports to the DriverKit virtual gamepad via `IOHIDDeviceSetReport`.
 ///
-/// The daemon finds the virtual device by VID/PID through IOHIDManager,
+/// The application service finds the virtual device by VID/PID through IOHIDManager,
 /// then sends output reports. The dext's `setReport` override
 /// relays them as input reports via `handleReport`.
 ///
@@ -20,7 +20,7 @@ public final class DextOutputDispatcher: OutputDispatcher, @unchecked Sendable {
   // @unchecked Sendable safety:
   // - `reportLock` guards all mutable report state (buttons, sticks, triggers, hat)
   // - `connectionLock` guards `hidDevice` and `hidManager`
-  // - `suppressOutput` is only written from the main actor (XPC handler)
+  // - `suppressOutput` is only written from the application service handler
 
   // MARK: - OutputDispatcher
 
@@ -236,10 +236,10 @@ public final class DextOutputDispatcher: OutputDispatcher, @unchecked Sendable {
     }
   }
 
-  public func outputStatsSnapshot() -> XPCDriverKitOutputStats {
+  public func outputStatsSnapshot() -> ApplicationServiceDriverKitOutputStats {
     statsLock.withLock {
       let err = lastSetReportError.map { String(format: "0x%08x", UInt32(bitPattern: $0)) }
-      return XPCDriverKitOutputStats(
+      return ApplicationServiceDriverKitOutputStats(
         attempts: setReportAttempts,
         successes: setReportSuccesses,
         failures: setReportFailures,

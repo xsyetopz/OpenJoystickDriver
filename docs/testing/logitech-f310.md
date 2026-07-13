@@ -4,7 +4,7 @@ This request covers [OpenJoystickDriver issue #11](https://github.com/xsyetopz/O
 
 The current record uses Linux's Xbox 360 packet layout. OJD's parser maps the XInput button bitfield to named controls, and the Input Test window now uses stable text labels instead of SF Symbols that can appear blank on older macOS releases. The record retains `verified: false` until the reporter confirms the complete mapping.
 
-No paid Apple Developer Program account, app signing, daemon installation, or DriverKit provisioning is required for the raw-input test.
+No paid Apple Developer Program account, app signing, application service installation, or DriverKit provisioning is required for the raw-input test.
 
 ## Validate and capture
 

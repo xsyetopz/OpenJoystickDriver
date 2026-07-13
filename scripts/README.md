@@ -9,7 +9,7 @@ surfaces.
 | Path | Responsibility |
 | --- | --- |
 | `scripts/ojd` | Stable command dispatcher and help |
-| `scripts/build-tools/` | App, daemon, DriverKit, and bundle construction |
+| `scripts/build-tools/` | Application, DriverKit, and bundle construction |
 | `scripts/catalog/` | Controller-source import and record validation |
 | `scripts/diagnostics/` | Runtime probes, focused launch helpers, and repairs |
 | `scripts/docs/` | Archived external-evidence refresh |
@@ -34,11 +34,11 @@ All implementation paths are internal to the dispatcher.
 | `README.md` | Documentation links | Documents the supported command surface | Link and stale-path checks |
 | `ojd` | Developers and CI | Dispatches commands; fixed routes reject extra arguments | CLI and script-layout tests |
 | `build-tools/build.sh` | `build`, `rebuild`, `rebuild-fast`, `lint` | Writes `.build/`; rebuild routes replace installed components | Swift packaging contracts; shell syntax |
-| `build-tools/bundles.sh` | Build implementation | Constructs and signs app, daemon, and DriverKit bundles | Swift packaging contracts; shell syntax |
+| `build-tools/bundles.sh` | Build implementation | Constructs and signs the application and DriverKit bundles | Swift packaging contracts; shell syntax |
 | `catalog/generate-controller-catalog.py` | `catalog regenerate` | Reads locked sources; check is read-only, write replaces generated records | Catalog unit tests and regeneration check |
 | `catalog/generate-xpad-records.py` | `catalog xpad` | Reads local or GitHub Linux source and writes review output | xpad unit tests |
 | `catalog/validate-profiles.py` | `validate profiles` and catalog generator | Reads and validates controller records | Catalog unit tests and profile gate |
-| `diagnostics/catalina-smoke.sh` | `diagnose catalina` | Reads an app bundle; `--install` exercises LaunchAgent installation | Shell syntax; macOS 10.15 manual check |
+| `diagnostics/catalina-smoke.sh` | `diagnose catalina` | Verifies the foreground app bundle and absence of helper agents | Shell syntax; macOS 10.15 manual check |
 | `diagnostics/diagnose.sh` | `diagnose` routes | Reads system/runtime state; backend probes can change temporary runtime output settings | Help routing; shell syntax; local diagnostics |
 | `diagnostics/launch-sdl-gamecontroller.sh` | `launch sdl-gamecontroller` | Selects a compatibility route and launches the requested app | Shell syntax; manual SDL check |
 | `diagnostics/repair-stale-dext.sh` | `repair stale-dext` | Finds and terminates stale DriverKit processes | Shell syntax; focused local repair |
@@ -65,7 +65,7 @@ All implementation paths are internal to the dispatcher.
 | Generate `.env.dev` + `.env.release` | `./scripts/ojd signing configure` | Re-run after cert/profile changes |
 | Diagnose signing mismatches | `./scripts/ojd signing doctor` | Use before tweaking Xcode settings |
 | Build signed dev app | `./scripts/ojd build dev` | Output to `.build/` |
-| Install signed dev build | `./scripts/ojd rebuild dev` | App, daemon, and dext |
+| Install signed dev build | `./scripts/ojd rebuild dev` | Application and dext; the app embeds its service registration |
 | Fast rebuild (app only) | `./scripts/ojd rebuild-fast dev` | Skip dext upgrade |
 | Package release DMG | `./scripts/ojd package release <version>` | Builds, notarizes, staples |
 | Run script unit tests | `./scripts/ojd test scripts` | Covers catalog, routing, layout, and environment contracts |
@@ -88,8 +88,6 @@ Expected filenames:
 
 - `OpenJoystickDriver.provisionprofile` (GUI, Apple Development)
 - `OpenJoystickDriver_DevID.provisionprofile` (GUI, Developer ID)
-- `OpenJoystickDriverDaemon.provisionprofile` (daemon, Apple Development)
-- `OpenJoystickDriverDaemon_DevID.provisionprofile` (daemon, Developer ID)
 - `OpenJoystickDriver_VirtualHIDDevice.provisionprofile` (DriverKit dext, Apple Development)
 
 Sanity-check what you installed (safe output; no identifiers printed):
@@ -131,11 +129,11 @@ Re-run this after rotating certificates, regenerating profiles, or switching tea
 
 ## Common Tasks
 
-### Daemon install / restart
+### Application service install / restart
 
-On macOS 13 and newer, daemon lifecycle is managed through `SMAppService` from
-inside the app bundle. On macOS 10.15 through 12, OJD installs the bundled
-LaunchAgent plist through `launchctl`.
+On macOS 13 and newer, `SMAppService.mainApp` registers the main app as a login item.
+The app contains no LaunchAgent or helper executable. On macOS 10.15 through 12,
+run the app directly; automatic login registration is unavailable.
 
 Commands (run the app-bundled binary):
 
@@ -196,7 +194,7 @@ and an `Applications` symlink:
 .build/release-artifacts/OpenJoystickDriver-<version>-macOS.dmg
 ```
 
-The package command does not register the LaunchAgent and does not submit a
+The package command does not register a login item and does not submit a
 system-extension activation request on the build machine. Testers still need to
 install and approve the app/system extension locally.
 
@@ -215,7 +213,6 @@ publishes the GitHub Release.
 - `CERTIFICATE_SECRET`
 - `KEYCHAIN_SECRET`
 - `OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64`
-- `OPENJOYSTICKDRIVER_DAEMON_DEVID_PROFILE_BASE64`
 - `OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64`
 - `NOTARIZE_APPLE_ID`
 - `NOTARIZE_PASSWORD`
@@ -233,7 +230,7 @@ To collect all release secrets in one local step:
 
 If identity export paths are not supplied, the script exports signing identities
 from your login keychain into the private output directory. Keychain may prompt
-for permission. The script reads the three installed release provisioning
+for permission. The script reads the two installed release provisioning
 profiles, prompts for the identity export password and notarization credentials,
 generates a temporary CI keychain password, then writes:
 
@@ -307,14 +304,14 @@ If those Team IDs differ:
 
 1. Create an **Apple Development** certificate for the **same team** as the provisioning profiles.
 2. Import the downloaded `.cer` into Keychain Access (it must include a private key).
-3. Regenerate the Apple Development provisioning profiles (GUI, daemon, dext) selecting that certificate.
+3. Regenerate the Apple Development provisioning profiles (application and dext) selecting that certificate.
 4. Reinstall profiles: `./scripts/ojd signing install-profiles`
 5. Re-generate env files: `./scripts/ojd signing configure`
 
 Entitlement note for `com.apple.developer.hid.virtual.device`:
 
 - It must be present on the identifier that creates the user-space virtual device (IOHIDUserDevice).
-- In this repo that can be the daemon or the GUI app.
+- In this repo it belongs to the main application executable.
 - The DriverKit `.dext` does not use IOHIDUserDevice and does not need this entitlement.
 
 </details>

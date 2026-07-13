@@ -49,20 +49,6 @@ struct GameControllerCatalogCommand {
       }
     }
 
-    print("")
-    print("Compatibility identity comparison:")
-    for profile in audit.compatibilityProfiles {
-      let marker = profile.appleBackedExactIdentity ? "APPLE EXACT" : "not exact-listed"
-      let kind = profile.isHardwareSpoof ? "spoof" : "OJD-owned"
-      print(
-        "  [\(marker)] \(hex(profile.vendorID)):\(hex(profile.productID)) "
-          + "\(profile.displayName) (\(kind))"
-      )
-      if !profile.appleIdentifiers.isEmpty {
-        print("    Apple IDs: \(profile.appleIdentifiers.joined(separator: ", "))")
-      }
-    }
-
     if options.allAppleEntries {
       print("")
       print("All exact Apple catalog entries:")

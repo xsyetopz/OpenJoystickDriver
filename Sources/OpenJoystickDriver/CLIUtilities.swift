@@ -1,9 +1,9 @@
 import Foundation
 import OpenJoystickDriverKit
 
-/// Timeout for XPC calls from CLI - keeps commands
-/// responsive when daemon is not running.
-let xpcCallTimeoutSeconds: Double = 0.5
+/// Timeout for local service calls from CLI - keeps commands
+/// responsive when application service is not running.
+let applicationServiceCallTimeoutSeconds: Double = 0.5
 
 /// Blocks current thread until `block` completes.
 ///
@@ -37,7 +37,7 @@ func runSyncResult<T: Sendable>(_ block: @Sendable @escaping () async -> T) -> T
 /// Blocks current thread until `block` completes or the timeout expires.
 ///
 /// Returns nil on timeout. Safe for CLI status probes that must not hang when
-/// the daemon connection is invalidated without a reply.
+/// the application service connection is invalidated without a reply.
 func runSyncResult<T: Sendable>(
   timeout seconds: Double,
   _ block: @Sendable @escaping () async -> T
@@ -62,8 +62,7 @@ func runSyncOptionalResult<T: Sendable>(
 
 /// Ensures the CLI is executed from an app bundle installed under `/Applications`.
 ///
-/// This repo's LaunchAgent plist uses an absolute ProgramArguments path under
-/// `/Applications/OpenJoystickDriver.app/...` for reliable provisioning profile resolution.
+/// Login registration and headless relaunch both require the signed installed bundle.
 func requireApplicationsBundleOrExit() {
   let path = Bundle.main.bundlePath
   guard path.hasPrefix("/Applications/") else {
@@ -81,7 +80,7 @@ func requireApplicationsBundleOrExit() {
 /// Ensures the app bundle is validly signed.
 ///
 /// This catches the common dev failure mode where a `.dext` is copied into the app bundle
-/// after signing, which breaks the signature and causes daemon registration to fail.
+/// after signing, which breaks the signature and causes application service registration to fail.
 func requireValidBundleSignatureOrExit(action: String) {
   let appPath = Bundle.main.bundlePath
   let result: BoundedProcessResult

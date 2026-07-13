@@ -1,6 +1,6 @@
 # AGENTS.md
 
-OpenJoystickDriver is a macOS userspace gamepad driver with a Swift package, menu app, daemon, and DriverKit extension. Ground support claims in source, tests, schemas, or recorded hardware evidence.
+OpenJoystickDriver is a macOS userspace gamepad driver with a Swift package, persistent menu app runtime, and DriverKit extension. Ground support claims in source, tests, schemas, or recorded hardware evidence.
 
 ## Read Next
 
@@ -48,7 +48,7 @@ If `swift test` reports the documented SwiftPM module-cache mismatch, run `./scr
 - Preserve unrelated work and keep secrets out of source and output.
 - Follow Swift 6.2 strict-concurrency and SwiftLint rules in `CONTRIBUTING.md`.
 - Use decimal numeric values in committed controller JSON.
-- Avoid broad signing, DriverKit, or daemon-lifecycle changes without targeted validation.
+- Avoid broad signing, DriverKit, or application-service lifecycle changes without targeted validation.
 - Confirm destructive actions, external writes, and publication.
 
 Direct user instructions override this file. A closer subtree `AGENTS.md` takes precedence for files in that subtree. `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` are symlinks to this file.

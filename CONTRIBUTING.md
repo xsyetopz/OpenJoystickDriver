@@ -5,10 +5,10 @@
 OpenJoystickDriver has two common workflows:
 
 - Swift package work (parsers, records, tests): no signing required.
-- App/daemon + DriverKit extension work: requires signing/provisioning; use
+- Application + DriverKit extension work: requires signing/provisioning; use
   `./scripts/ojd`.
 
-For app/daemon + DriverKit extension development, you must use the `./scripts/ojd`
+For application + DriverKit extension development, you must use the `./scripts/ojd`
 signing flow; you must not try to hand-run Xcode signing steps.
 
 Start here:
@@ -162,9 +162,8 @@ There's no formal PR template. Just be clear about what changed and why.
 ## Project layout
 
 ```text
-Sources/OpenJoystickDriverKit/     Shared parsers, device management, output, and XPC
-Sources/OpenJoystickDriverDaemon/  Background daemon executable
-Sources/OpenJoystickDriver/        Menu app and headless CLI
+Sources/OpenJoystickDriverKit/     Shared parsers, device management, output, and application-service RPC
+Sources/OpenJoystickDriver/        Menu app, application service, and headless CLI
 Tests/OpenJoystickDriverKitTests/  Unit tests that do not require hardware
 Resources/Schemas/                 Canonical record and override schemas
 Resources/ControllerOverrides/     Source omissions and evidence-backed corrections
@@ -173,6 +172,6 @@ docs/user/compatibility.md         Consumer-visible compatibility mappings
 scripts/                           Build, signing, installation, and release tools
 ```
 
-The daemon and GUI communicate over XPC (`com.openjoystickdriver.xpc`). If you
-add a new capability that the GUI or CLI must expose, add it to
-`Sources/OpenJoystickDriverKit/XPC/XPCProtocol.swift` first.
+The main process owns live controller state. Headless commands use the authenticated,
+bounded RPC types under `Sources/OpenJoystickDriverKit/ApplicationService/`. Add shared
+payloads there and route operations through `ApplicationServiceServer`.

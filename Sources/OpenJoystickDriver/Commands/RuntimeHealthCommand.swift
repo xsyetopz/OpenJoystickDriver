@@ -4,9 +4,9 @@ import OpenJoystickDriverKit
 struct RuntimeHealthCommand {
   func run(arguments: [String]) {
     let options = parse(arguments: arguments)
-    let health = DaemonManager.health()
+    let health = ApplicationServiceManager.health()
     guard let processID = health.pid else {
-      print("ERROR: OpenJoystickDriver daemon is not running.")
+      print("ERROR: OpenJoystickDriver application service is not running.")
       exit(1)
     }
 
@@ -23,7 +23,7 @@ struct RuntimeHealthCommand {
     let result: SamplingResult = runSyncResult {
       do {
         return .success(
-          try await DaemonRuntimeHealthSampler.sample(
+          try await ApplicationServiceRuntimeHealthSampler.sample(
             processID: Int32(processID),
             seconds: options.seconds,
             intervalMilliseconds: options.intervalMilliseconds,
@@ -114,7 +114,7 @@ struct RuntimeHealthCommand {
             / Double(options.intervalMilliseconds)
         )
       ) + 1
-    guard estimatedSamples <= DaemonRuntimeHealthSampler.maximumSampleCount else {
+    guard estimatedSamples <= ApplicationServiceRuntimeHealthSampler.maximumSampleCount else {
       print(
         "ERROR: Configuration would collect \(estimatedSamples) samples; "
           + "increase --interval-ms."
@@ -151,7 +151,7 @@ struct RuntimeHealthCommand {
   }
 
   private func printSummary(_ summary: RuntimeHealthSummary) {
-    print("OpenJoystickDriver Daemon Runtime Soak")
+    print("OpenJoystickDriver Application Service Runtime Soak")
     print("  Samples    : \(summary.sampleCount) over \(format(summary.durationSeconds))s")
     print(
       "  RSS        : \(mebibytes(summary.firstResidentBytes)) -> "
@@ -213,7 +213,7 @@ struct RuntimeHealthCommand {
       [--seconds 1...86400] [--interval-ms 100...60000]
       [--rss-limit-mib 0...65536] [--footprint-limit-mib 0...65536] [--json]
 
-      Samples daemon RSS, physical footprint, CPU, file descriptors, and threads.
+      Samples application service RSS, physical footprint, CPU, file descriptors, and threads.
       Zero disables a high-water limit; footprint defaults to 512 MiB. Windows under 60 seconds
       are explicitly inconclusive; use a longer soak while reproducing activity.
       At most 100000 samples may be requested.

@@ -1,6 +1,6 @@
 # Test a controller record
 
-Controller owners can test a candidate OJD JSON record without an Apple Developer Program membership. This path builds a Swift command-line executable only. It does not build or install the app, daemon, virtual HID device, or DriverKit extension.
+Controller owners can test a candidate OJD JSON record without an Apple Developer Program membership. This path builds a Swift command-line executable only. It does not build or install the app, application service, virtual HID device, or DriverKit extension.
 
 The probe supports raw-USB `GIP` plus wired and wireless-receiver `Xbox360` records. HID, Bluetooth, and unknown protocol probes still need protocol-specific tooling.
 

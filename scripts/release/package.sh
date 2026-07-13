@@ -17,7 +17,7 @@ notarization, staples the accepted ticket, and writes:
   .build/release-artifacts/OpenJoystickDriver-<version>-macOS.dmg
   .build/release-artifacts/appcast.xml
 
-This does not install the app, register the LaunchAgent, or submit a sysext
+This does not install the app, register a login item, or submit a sysext
 activation request on the build machine.
 TXT
 }

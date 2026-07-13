@@ -8,7 +8,7 @@ struct UserSpaceCommand {
       return
     }
 
-    let client = XPCClient()
+    let client = ApplicationServiceClient()
     client.connect()
 
     switch sub {
@@ -22,11 +22,17 @@ struct UserSpaceCommand {
         }
       }
       if !ok {
-        print("ERROR: failed to enable user-space virtual gamepad (daemon not running?)")
+        print(
+          "ERROR: failed to enable user-space virtual gamepad "
+            + "(application service not running?)"
+        )
         exit(1)
       }
-      let status: XPCStatusPayload? =
-        runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) { try? await client.getStatus() }
+      let status: ApplicationServiceStatusPayload? = runSyncOptionalResult(
+        timeout: applicationServiceCallTimeoutSeconds
+      ) {
+        try? await client.getStatus()
+      }
       print("user-space: enabled")
       if let s = status?.userSpaceVirtualDeviceStatus { print("status: \(s)") }
     case "off":
@@ -39,15 +45,18 @@ struct UserSpaceCommand {
         }
       }
       if !ok {
-        print("ERROR: failed to disable user-space virtual gamepad (daemon not running?)")
+        print(
+          "ERROR: failed to disable user-space virtual gamepad "
+            + "(application service not running?)"
+        )
         exit(1)
       }
       print("user-space: disabled")
     case "status":
-      let enabled: Bool? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
+      let enabled: Bool? = runSyncOptionalResult(timeout: applicationServiceCallTimeoutSeconds) {
         try? await client.getUserSpaceVirtualDeviceEnabled()
       }
-      let status: String? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
+      let status: String? = runSyncOptionalResult(timeout: applicationServiceCallTimeoutSeconds) {
         try? await client.getUserSpaceVirtualDeviceStatus()
       }
       print("user-space: " + ((enabled ?? false) ? "enabled" : "disabled"))

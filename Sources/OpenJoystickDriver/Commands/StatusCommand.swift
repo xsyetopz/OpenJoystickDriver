@@ -4,19 +4,21 @@ import OpenJoystickDriverKit
 struct StatusCommand {
   func run() {
     printHeader()
-    let client = XPCClient()
+    let client = ApplicationServiceClient()
     client.connect()
     let semaphore = DispatchSemaphore(value: 0)
     // nonisolated(unsafe): semaphore ensures sequential access - no data race.
-    nonisolated(unsafe) var xpcPayload: XPCStatusPayload?
+    nonisolated(unsafe) var servicePayload: ApplicationServiceStatusPayload?
     Task { @Sendable in
-      xpcPayload = try? await client.getStatus()
+      servicePayload = try? await client.getStatus()
       semaphore.signal()
     }
-    let connected =
-      semaphore.wait(timeout: .now() + xpcCallTimeoutSeconds) == .success && xpcPayload != nil
+    let replied = semaphore.wait(
+      timeout: .now() + applicationServiceCallTimeoutSeconds
+    ) == .success
+    let connected = replied && servicePayload != nil
 
-    if connected, let payload = xpcPayload {
+    if connected, let payload = servicePayload {
       printPayloadStatus(payload)
     } else {
       client.disconnect()
@@ -33,13 +35,14 @@ struct StatusCommand {
     print("")
   }
 
-  private func printPayloadStatus(_ payload: XPCStatusPayload) {
-    print("(connected to running daemon via XPC)")
+  private func printPayloadStatus(_ payload: ApplicationServiceStatusPayload) {
+    print("(connected to running main app)")
     print("")
-    let permissions = currentInputMonitoringPermissions(
-      daemonStatus: payload.inputMonitoring
+    let permissions = permissionSnapshot(
+      inputMonitoring: payload.inputMonitoring,
+      accessibility: payload.accessibility
     )
-    printInputMonitoringPermissions(permissions)
+    printPermissionSnapshot(permissions)
     print("")
     if let mode = payload.virtualDeviceMode {
       print("Virtual device mode:")
@@ -98,15 +101,9 @@ struct StatusCommand {
   private func printUsageHint() { print("Use '--headless list'" + " to enumerate controllers.") }
 
   private func runDirectMode() {
-    print("(direct mode - daemon not running)")
+    print("(direct mode - app service not running)")
     print("")
-    let permissions = currentInputMonitoringPermissions()
-    printInputMonitoringPermissions(permissions)
-    if permissions.application != .granted {
-      print("  -> App recovery: --headless permissions request app")
-    }
-    if permissions.daemon != .granted {
-      print("  -> Daemon recovery: --headless permissions request daemon")
-    }
+    print("Permissions: unavailable without the running main app")
+    print("  -> App recovery: --headless start")
   }
 }

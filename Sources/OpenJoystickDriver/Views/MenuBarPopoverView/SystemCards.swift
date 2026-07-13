@@ -3,29 +3,26 @@ import OpenJoystickDriverKit
 import SwiftUI
 
 extension MenuBarPopoverView {
-  var daemonCard: some View {
-    OJDCard(title: L10n.string("daemon.cardTitle")) {
+  var applicationServiceCard: some View {
+    OJDCard(title: L10n.string("service.cardTitle")) {
       VStack(alignment: .leading, spacing: 10) {
-        if let h = model.daemonHealth, h.installed {
+        if let h = model.serviceHealth, h.installed {
           let state = h.state ?? "unknown"
           let pid = h.pid.map { "\($0)" } ?? "?"
-          let runs = h.runs.map { "\($0)" } ?? "?"
-          let reason = h.isInefficientKillLoop ? (h.immediateReason ?? h.blame) : nil
-          let reasonText = reason.map { L10n.string("daemon.launchdReason", $0) } ?? ""
           HStack(spacing: 8) {
-            Text(L10n.string("daemon.launchdStatus", state, pid, runs, reasonText))
+            Text("Main app \(state), pid \(pid)")
               .font(.caption)
-              .foregroundColor(h.isInefficientKillLoop ? .orange : .secondary)
+              .foregroundColor(.secondary)
               .lineLimit(2)
             Spacer()
             SwiftUI.Button(L10n.string("app.refresh")) {
-              Task { await model.refreshDaemonHealth() }
+              Task { await model.refreshApplicationServiceHealth() }
             }
             .buttonStyle(.borderless)
             .controlSize(.small)
           }
         } else {
-          Text(L10n.string("daemon.autoStarts"))
+          Text(L10n.string("service.autoStarts"))
             .font(.caption)
             .foregroundColor(.secondary)
         }
@@ -33,7 +30,7 @@ extension MenuBarPopoverView {
         Divider()
 
         HStack(spacing: 8) {
-          Text(L10n.string("daemon.systemExtension"))
+          Text(L10n.string("service.systemExtension"))
             .font(.caption)
             .foregroundColor(.secondary)
           Spacer()
@@ -73,43 +70,43 @@ extension MenuBarPopoverView {
         }
 
         HStack(spacing: 8) {
-          if !model.daemonInstalled {
-            SwiftUI.Button(L10n.string("button.installDaemon")) {
+          if !model.serviceInstalled {
+            SwiftUI.Button(L10n.string("button.installService")) {
               Task {
-                await model.installDaemon()
-                await model.syncFromDaemonNow()
+                await model.installApplicationService()
+                await model.syncFromApplicationServiceNow()
               }
             }
             .controlSize(.small)
           } else {
             SwiftUI.Button(L10n.string("app.start")) {
               Task {
-                await model.startDaemon()
-                await model.syncFromDaemonNow()
+                await model.startApplicationService()
+                await model.syncFromApplicationServiceNow()
               }
             }
             .controlSize(.small)
             .disabled(
-              model.daemonUIState == .runningConnected
-                || model.daemonUIState == .runningDisconnected
-                || model.daemonUIState == .restarting
-                || model.daemonUIState == .crashLooping
+              model.applicationServiceUIState == .runningConnected
+                || model.applicationServiceUIState == .runningDisconnected
+                || model.applicationServiceUIState == .restarting
+                || model.applicationServiceUIState == .crashLooping
             )
             SwiftUI.Button(L10n.string("app.restart")) {
               Task {
-                await model.restartDaemon()
-                await model.syncFromDaemonNow()
+                await model.restartApplicationService()
+                await model.syncFromApplicationServiceNow()
               }
             }
             .controlSize(.small)
-            .disabled(model.daemonRestarting)
+            .disabled(model.serviceRestarting)
             SwiftUI.Button(L10n.string("app.uninstall")) {
-              pendingConfirmation = .daemonUninstall
+              pendingConfirmation = .applicationServiceUninstall
             }
             .buttonStyle(.borderless)
             .controlSize(.small)
             .foregroundColor(.secondary)
-            .disabled(model.daemonRestarting)
+            .disabled(model.serviceRestarting)
           }
         }
       }
@@ -120,51 +117,47 @@ extension MenuBarPopoverView {
     OJDCard(title: L10n.string("permissions.title")) {
       VStack(alignment: .leading, spacing: 8) {
         PermissionRow(
-          title: L10n.string("app.name"),
-          subtitle: permissionSubtitle(
-            for: model.appInputMonitoring,
-            owner: L10n.string("permissions.ownerApp")
-          ),
-          state: model.appInputMonitoring,
-          actionTitle: permissionActionTitle(for: model.appInputMonitoring)
-        ) {
-          Task { await model.requestAppInputMonitoringAccess() }
-        }
-        Divider()
-        PermissionRow(
-          title: L10n.string("permissions.daemonName"),
+          title: "Input Monitoring",
           subtitle: permissionSubtitle(
             for: model.inputMonitoring,
-            owner: L10n.string("permissions.ownerDaemon"),
-            settingsName: L10n.string("permissions.daemonName")
+            owner: L10n.string("permissions.ownerApp")
           ),
           state: model.inputMonitoring,
-          actionTitle: permissionActionTitle(for: model.inputMonitoring),
-          disabled: model.daemonRestarting
+          actionTitle: permissionActionTitle(for: model.inputMonitoring)
         ) {
-          Task { await model.requestDaemonInputMonitoringAccess() }
+          Task { await model.requestRequiredAccess() }
+        }
+        PermissionRow(
+          title: "Accessibility",
+          subtitle: permissionSubtitle(
+            for: model.accessibility,
+            owner: L10n.string("permissions.ownerApp"),
+            settingsName: "Accessibility"
+          ),
+          state: model.accessibility,
+          actionTitle: permissionActionTitle(for: model.accessibility)
+        ) {
+          Task { await model.requestRequiredAccess() }
         }
         if let assist = model.inputMonitoringAssist {
           PermissionAssistView(message: assist)
         }
         Text(
-          "Input Monitoring may be requested by the app for direct diagnostics and by the "
-            + "daemon for background controller input. OJD does not request Accessibility. "
-            + "Driver Extension approval is separate."
+          "Input Monitoring reads physical controller reports. Accessibility authorizes "
+            + "the compatibility virtual gamepad. Both permissions belong to this app."
         )
           .font(.caption)
           .foregroundColor(.secondary)
           .fixedSize(horizontal: false, vertical: true)
         HStack {
-          SwiftUI.Button("Refresh stale entries…") {
-            pendingConfirmation = .refreshInputMonitoring
+          Spacer()
+          SwiftUI.Button("Input Monitoring Settings") {
+            model.openInputMonitoringSettings()
           }
           .buttonStyle(.borderless)
           .controlSize(.small)
-          .disabled(model.daemonRestarting)
-          Spacer()
-          SwiftUI.Button(L10n.string("permissions.openSettingsButton")) {
-            model.openInputMonitoringSettings()
+          SwiftUI.Button("Accessibility Settings") {
+            model.openAccessibilitySettings()
           }
           .buttonStyle(.borderless)
           .controlSize(.small)

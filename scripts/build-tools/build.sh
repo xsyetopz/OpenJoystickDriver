@@ -30,19 +30,13 @@ TXT
 }
 
 _require_codesign_identity() {
-  if [[ "${GUI_IDENTITY:-"-"}" == "-" || "${DAEMON_IDENTITY:-"-"}" == "-" ]]; then
+  if [[ "${GUI_IDENTITY:-"-"}" == "-" ]]; then
     echo "ERROR: CODESIGN_IDENTITY not set."
     echo "Fix: run: ./scripts/ojd signing configure"
     exit 1
   fi
   if ! _codesign_identity_available "$GUI_IDENTITY"; then
     echo "ERROR: GUI signing identity is not available/trusted in Keychain: $GUI_IDENTITY"
-    echo "Fix: install the matching signing certificate/private key, then run:"
-    echo "  ./scripts/ojd signing configure"
-    exit 1
-  fi
-  if ! _codesign_identity_available "$DAEMON_IDENTITY"; then
-    echo "ERROR: daemon signing identity is not available/trusted in Keychain: $DAEMON_IDENTITY"
     echo "Fix: install the matching signing certificate/private key, then run:"
     echo "  ./scripts/ojd signing configure"
     exit 1
@@ -60,12 +54,12 @@ _codesign_identity_available() {
 nuke_all() {
   local SELF_PID=$$
   local DEXT_BUNDLE_ID="com.openjoystickdriver.VirtualHIDDevice"
-  local DAEMON_LABEL="com.openjoystickdriver.daemon"
+  local OBSOLETE_AGENT_LABEL="com.openjoystickdriver.service"
+  local LEGACY_DAEMON_LABEL="com.openjoystickdriver.daemon"
   local APP_PATH="/Applications/OpenJoystickDriver.app"
 
   echo "=== NUKE: killing every OJD process ==="
   killall -9 OpenJoystickDriver 2>/dev/null && echo "  killed OpenJoystickDriver" || true
-  killall -9 OpenJoystickDriverDaemon 2>/dev/null && echo "  killed OpenJoystickDriverDaemon" || true
   killall -9 OpenJoystickVirtualHID 2>/dev/null && echo "  killed OpenJoystickVirtualHID" || true
 
   for pid in $(pgrep -f "$DEXT_BUNDLE_ID" 2>/dev/null || true); do
@@ -80,18 +74,22 @@ nuke_all() {
   done
 
   echo ""
-  echo "=== NUKE: removing daemon from launchd ==="
+  echo "=== NUKE: removing application service from launchd ==="
   if [[ -x "$APP_PATH/Contents/MacOS/OpenJoystickDriver" ]]; then
     "$APP_PATH/Contents/MacOS/OpenJoystickDriver" --headless uninstall \
-      && echo "  daemon uninstall succeeded" || true
+      && echo "  application service uninstall succeeded" || true
   fi
-  launchctl bootout "gui/$(id -u)/$DAEMON_LABEL" 2>/dev/null && echo "  bootout succeeded" || true
-  launchctl remove "$DAEMON_LABEL" 2>/dev/null && echo "  remove succeeded" || true
-  launchctl unload ~/Library/LaunchAgents/${DAEMON_LABEL}.plist 2>/dev/null && echo "  unload succeeded" || true
+  for label in "$OBSOLETE_AGENT_LABEL" "$LEGACY_DAEMON_LABEL"; do
+    launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
+    launchctl remove "$label" 2>/dev/null || true
+    launchctl unload "$HOME/Library/LaunchAgents/${label}.plist" 2>/dev/null || true
+  done
 
   echo ""
   echo "=== NUKE: removing LaunchAgent plist ==="
-  rm -f ~/Library/LaunchAgents/${DAEMON_LABEL}.plist && echo "  removed" || true
+  rm -f "$HOME/Library/LaunchAgents/${OBSOLETE_AGENT_LABEL}.plist" \
+    "$HOME/Library/LaunchAgents/${LEGACY_DAEMON_LABEL}.plist"
+  echo "  removed obsolete registration files when present"
 
   echo ""
   echo "=== NUKE: removing app from /Applications ==="
@@ -103,10 +101,9 @@ nuke_all() {
   fi
 
   echo ""
-  echo "=== NUKE: truncating daemon logs ==="
-  : > /tmp/${DAEMON_LABEL}.out 2>/dev/null || true
-  : > /tmp/${DAEMON_LABEL}.err 2>/dev/null || true
-  echo "  truncated"
+  echo "=== NUKE: removing application service logs ==="
+  rm -rf "$HOME/Library/Logs/OpenJoystickDriver"
+  echo "  removed"
 
   echo ""
   echo "=== NUKE: clearing build artifacts ==="
@@ -131,10 +128,11 @@ nuke_all() {
     echo "  ✗ Still running: $STRAY"
   fi
 
-  if launchctl list 2>/dev/null | grep -q "$DAEMON_LABEL"; then
-    echo "  ✗ Daemon still in launchd"
+  if launchctl list 2>/dev/null \
+    | grep -Eq "$OBSOLETE_AGENT_LABEL|$LEGACY_DAEMON_LABEL"; then
+    echo "  ✗ Obsolete agent registration still in launchd"
   else
-    echo "  ✓ Daemon not in launchd"
+    echo "  ✓ No obsolete agent registration in launchd"
   fi
 
   if [[ -d "$APP_PATH" ]]; then
@@ -408,6 +406,20 @@ rebuild_fast() {
   echo "  ✓ Signature OK"
 
   echo ""
+  echo "=== Step 2.75: Stop the installed main app ==="
+  local RUNNING_PID
+  RUNNING_PID="$(pgrep -x OpenJoystickDriver | head -1 || true)"
+  if [[ -n "$RUNNING_PID" ]]; then
+    kill -TERM "$RUNNING_PID"
+    for _ in {1..50}; do
+      pgrep -x OpenJoystickDriver >/dev/null || break
+      sleep 0.1
+    done
+    pgrep -x OpenJoystickDriver >/dev/null \
+      && die "Installed main app did not stop within 5 seconds."
+  fi
+
+  echo ""
   echo "=== Step 3: Install app (without triggering sysext upgrade) ==="
   rm -rf "$APP_DST"
   cp -R "$APP_SRC" "$APP_DST"
@@ -415,15 +427,13 @@ rebuild_fast() {
   echo "  Copied to $APP_DST"
 
   echo ""
-  echo "=== Step 4: Restart daemon ==="
-  : > /tmp/com.openjoystickdriver.daemon.out 2>/dev/null || true
-  : > /tmp/com.openjoystickdriver.daemon.err 2>/dev/null || true
+  echo "=== Step 4: Register and start main app ==="
   local APP_BIN="$APP_DST/Contents/MacOS/OpenJoystickDriver"
-  if "$APP_BIN" --headless restart; then
-    echo "  ✓ Daemon restarted"
+  if "$APP_BIN" --headless start; then
+    echo "  ✓ Main app started"
   else
-    echo "  ✗ Daemon restart failed"
-    echo "    Fix: run: $APP_BIN --headless install"
+    echo "  ✗ Main app start failed"
+    echo "    Fix: run: $APP_BIN --headless start"
   fi
 
   echo ""
@@ -464,8 +474,6 @@ rebuild_full() {
 
   echo ""
   echo "=== Step 5: Submit sysext activation ==="
-  : > /tmp/com.openjoystickdriver.daemon.out 2>/dev/null || true
-  : > /tmp/com.openjoystickdriver.daemon.err 2>/dev/null || true
   local APP_BIN="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
   if "$APP_BIN" --headless sysext install; then
     echo "  ✓ Sysext activation request submitted"
@@ -520,12 +528,12 @@ rebuild_full() {
   fi
 
   echo ""
-  echo "=== Step 8: Restart daemon ==="
+  echo "=== Step 8: Restart application service ==="
   local APP_BIN="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
   if "$APP_BIN" --headless restart; then
-    echo "  ✓ Daemon restarted"
+    echo "  ✓ Application service restarted"
   else
-    echo "  ✗ Daemon restart failed"
+    echo "  ✗ Application service restart failed"
     echo "    Fix: run: $APP_BIN --headless install"
   fi
 
@@ -540,14 +548,14 @@ rebuild_full() {
   echo "--- Sysext status ---"
   systemextensionsctl list 2>&1 || true
   echo ""
-  echo "--- Daemon log (fresh) ---"
-  tail -10 /tmp/com.openjoystickdriver.daemon.out 2>/dev/null || echo "(no daemon log)"
+  echo "--- Application service log (fresh) ---"
+  tail -10 "$HOME/Library/Logs/OpenJoystickDriver/OpenJoystickDriver.out.log" 2>/dev/null || echo "(no application service log)"
 }
 
 run_lint() {
   command -v swiftlint >/dev/null 2>&1 || die "swiftlint not found (brew install swiftlint)"
   cd "$PROJECT_DIR"
-  swiftlint lint --no-cache --strict --baseline .swiftlint-baseline.json
+  swiftlint lint --no-cache --strict
 }
 
 cmd="${1:-}"

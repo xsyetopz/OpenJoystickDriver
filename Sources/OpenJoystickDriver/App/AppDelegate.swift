@@ -10,22 +10,26 @@ import SwiftUI
   private var popover: NSPopover?
   private var statusItemLocalRightClickMonitor: Any?
   private var statusItemGlobalRightClickMonitor: Any?
+  private let serviceRuntime: ApplicationServiceRuntime
   private(set) var model: AppModel
 
-  init(developerMode: Bool = false) { self.model = AppModel(developerMode: developerMode) }
+  init(developerMode: Bool = false) {
+    self.serviceRuntime = ApplicationServiceRuntime()
+    self.model = AppModel(developerMode: developerMode)
+  }
 
   func applicationDidFinishLaunching(_ notification: Notification) {
     NSApp.setActivationPolicy(.accessory)
     configureApplicationIcon()
     setupStatusItem()
+    serviceRuntime.start()
     Task { @MainActor in await model.start() }
   }
 
   func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 
   func applicationWillTerminate(_ notification: Notification) {
-    model.stopBrowserGamepadDiagnostic()
-    model.stopRuntimeHealthCheck()
+    Task { await serviceRuntime.stop() }
   }
 
   private func configureApplicationIcon() {
@@ -139,7 +143,7 @@ extension AppDelegate: NSPopoverDelegate {
   func popoverDidShow(_ notification: Notification) {
     model.setPollingEnabled(true)
     Task { @MainActor in
-      await model.syncFromDaemonNow()
+      await model.syncFromApplicationServiceNow()
       model.extensionManager.refreshInstallState()
     }
   }

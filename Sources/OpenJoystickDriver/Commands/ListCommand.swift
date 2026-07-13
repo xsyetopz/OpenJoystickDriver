@@ -6,26 +6,28 @@ struct ListCommand {
   func run() {
     print("Scanning for game controllers...")
     print("")
-    if checkDaemonAndListDevices() { return }
+    if checkApplicationServiceAndListDevices() { return }
     handleDirectScan()
   }
 
-  private func checkDaemonAndListDevices() -> Bool {
-    let client = XPCClient()
+  private func checkApplicationServiceAndListDevices() -> Bool {
+    let client = ApplicationServiceClient()
     client.connect()
     let semaphore = DispatchSemaphore(value: 0)
-    nonisolated(unsafe) var xpcDevices: [String]?
+    nonisolated(unsafe) var serviceDevices: [String]?
     Task { @Sendable in
-      xpcDevices = try? await client.listDevices()
+      serviceDevices = try? await client.listDevices()
       semaphore.signal()
     }
-    let daemonRunning =
-      semaphore.wait(timeout: .now() + xpcCallTimeoutSeconds) == .success && xpcDevices != nil
+    let replied = semaphore.wait(
+      timeout: .now() + applicationServiceCallTimeoutSeconds
+    ) == .success
+    let serviceRunning = replied && serviceDevices != nil
 
     defer { client.disconnect() }
 
-    guard daemonRunning, let devices = xpcDevices else { return false }
-    print("Controllers (from running daemon):")
+    guard serviceRunning, let devices = serviceDevices else { return false }
+    print("Controllers (from running application service):")
     if devices.isEmpty {
       print("  (none connected)")
     } else {
@@ -36,10 +38,10 @@ struct ListCommand {
   }
 
   private func handleDirectScan() {
-    print("(direct scan - daemon not running)")
+    print("(direct scan - application service not running)")
     listUSBDevices()
     print("")
-    print("Note: HID controllers shown" + " when daemon is running.")
+    print("Note: HID controllers shown" + " when application service is running.")
   }
 
   private func listUSBDevices() {

@@ -6,10 +6,11 @@ struct SupportReportTests {
   @Test func reportExcludesSensitiveAndFreeFormDiagnosticValues() throws {
     let secretSerial = "SERIAL-SECRET-123"
     let secretPath = "/Users/alice/private/controller.txt"
-    let status = XPCStatusPayload(
+    let status = ApplicationServiceStatusPayload(
       inputMonitoring: "granted",
+      accessibility: "granted",
       connectedDevices: [
-        XPCDeviceDescription(
+        ApplicationServiceDeviceDescription(
           name: "Test Controller",
           vendorID: 1234,
           productID: 5678,
@@ -35,12 +36,12 @@ struct SupportReportTests {
       effectiveOutputMode: "primaryOnly",
       compatibilityIdentity: "sdl2-3"
     )
-    let diagnostics = XPCVirtualDeviceDiagnosticsPayload(
+    let diagnostics = ApplicationServiceVirtualDeviceDiagnosticsPayload(
       userSpaceVirtualDeviceEnabled: true,
       userSpaceVirtualDeviceStatus: "error: \(secretPath)",
       outputMode: "primaryOnly",
       hidGamepads: [
-        XPCHIDGamepadSnapshot(
+        ApplicationServiceHIDGamepadSnapshot(
           vendorID: 1234,
           productID: 5678,
           product: "Test Controller",
@@ -53,7 +54,7 @@ struct SupportReportTests {
           isGameControllerSupported: true
         ),
       ],
-      driverKitOutputStats: XPCDriverKitOutputStats(
+      driverKitOutputStats: ApplicationServiceDriverKitOutputStats(
         attempts: 4,
         successes: 3,
         failures: 1,
@@ -65,15 +66,10 @@ struct SupportReportTests {
         lastDiscoverySummary: secretPath
       )
     )
-    let health = DaemonManager.DaemonHealth(
+    let health = ApplicationServiceManager.ApplicationServiceHealth(
       installed: true,
       activeCount: 1,
-      state: "running",
-      runs: 2,
-      immediateReason: "none",
-      lastTerminatingSignal: nil,
-      blame: secretPath,
-      rawPrint: secretPath
+      state: "running"
     )
     let appleAudit = AppleGameControllerSupportAuditor.audit(
       snapshot: AppleGameControllerCatalogSnapshot(
@@ -96,10 +92,10 @@ struct SupportReportTests {
       appVersion: "test",
       macOSVersion: "26.0.0",
       architecture: "arm64",
-      permissions: InputMonitoringPermissionSnapshot(application: .granted, daemon: .granted),
-      daemonInstalled: true,
-      daemonConnected: true,
-      daemonHealth: health,
+      inputMonitoring: .granted,
+      applicationServiceInstalled: true,
+      applicationServiceConnected: true,
+      applicationServiceHealth: health,
       appleGameControllerAudit: appleAudit,
       status: status,
       virtualDiagnostics: diagnostics
@@ -123,16 +119,16 @@ struct SupportReportTests {
     #expect(report.appleGameControllerAudit?.catalogListedOJDRecordCount == 1)
   }
 
-  @Test func unavailableDaemonProducesAnExplicitPartialReport() {
+  @Test func unavailableServiceProducesAnExplicitPartialReport() {
     let report = SupportReport(
       generatedAt: Date(timeIntervalSince1970: 0),
       appVersion: "test",
       macOSVersion: "26.0.0",
       architecture: "arm64",
-      permissions: InputMonitoringPermissionSnapshot(application: .denied, daemon: .unknown),
-      daemonInstalled: false,
-      daemonConnected: false,
-      daemonHealth: nil,
+      inputMonitoring: .denied,
+      applicationServiceInstalled: false,
+      applicationServiceConnected: false,
+      applicationServiceHealth: nil,
       status: nil,
       virtualDiagnostics: nil
     )
@@ -140,7 +136,7 @@ struct SupportReportTests {
     #expect(report.schemaVersion == SupportReport.currentSchemaVersion)
     #expect(report.controllers.isEmpty)
     #expect(report.hidGamepads.isEmpty)
-    #expect(report.notes.contains("Daemon XPC status was unavailable."))
+    #expect(report.notes.contains("Application service status was unavailable."))
     #expect(report.notes.contains("Virtual-device diagnostics were unavailable."))
   }
 }

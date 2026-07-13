@@ -4,25 +4,24 @@ import Testing
 
 struct InputMonitoringPermissionStateTests {
   @Test
-  func accessStateNormalizesXPCAndMultilineProbeOutput() {
+  func accessStateNormalizesMultilineProbeOutput() {
     #expect(PermissionManager.AccessState(status: "granted") == .granted)
     #expect(
       PermissionManager.AccessState(
-        status: "[Daemon] Starting permission-check probe mode\nDENIED\n"
+        status: "[Application service] Starting permission-check probe mode\nDENIED\n"
       ) == .denied
     )
     #expect(PermissionManager.AccessState(status: "unexpected") == .unknown)
   }
 
   @Test
-  func snapshotRequiresBothProcessIdentities() {
-    let ready = InputMonitoringPermissionSnapshot(application: .granted, daemon: .granted)
-    let missingApp = InputMonitoringPermissionSnapshot(application: .denied, daemon: .granted)
-    let missingDaemon = InputMonitoringPermissionSnapshot(application: .granted, daemon: .unknown)
-
-    #expect(ready.isReady)
-    #expect(!missingApp.isReady)
-    #expect(!missingDaemon.isReady)
+  func permissionSnapshotRequiresBothStates() {
+    #expect(
+      PermissionManager.Snapshot(inputMonitoring: .granted, accessibility: .granted).isReady
+    )
+    #expect(
+      !PermissionManager.Snapshot(inputMonitoring: .granted, accessibility: .denied).isReady
+    )
   }
 
   @Test

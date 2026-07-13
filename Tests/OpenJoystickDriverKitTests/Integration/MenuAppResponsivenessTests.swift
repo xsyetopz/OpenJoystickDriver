@@ -3,7 +3,7 @@ import Testing
 
 struct MenuAppResponsivenessTests {
   @Test
-  func guiChildProcessesAreAsyncAndBounded() throws {
+  func applicationAndCLISubprocessesAreAsyncAndBounded() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let polling = try source(
       "Sources/OpenJoystickDriver/App/AppModel/Polling.swift",
@@ -11,10 +11,6 @@ struct MenuAppResponsivenessTests {
     )
     let inputMonitoring = try source(
       "Sources/OpenJoystickDriver/App/AppModel/InputMonitoring.swift",
-      root: root
-    )
-    let browserModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/BrowserGamepadDiagnostic.swift",
       root: root
     )
     let browserService = try source(
@@ -35,12 +31,11 @@ struct MenuAppResponsivenessTests {
     #expect(polling.contains("BoundedProcessRunner.run"))
     #expect(!polling.contains("waitUntilExit()"))
 
-    #expect(inputMonitoring.contains("await probeBundledDaemonInputMonitoringState()"))
-    #expect(inputMonitoring.contains("PermissionManager.daemonAccessStateAsync"))
-    #expect(permissionManager.contains("daemonAccessStateAsync"))
-    #expect(permissionManager.contains("BoundedProcessRunner.run"))
+    #expect(inputMonitoring.contains("permissionManager.requestRequiredAccess()"))
+    #expect(!inputMonitoring.contains("BoundedProcessRunner"))
+    #expect(!inputMonitoring.contains("tccutil"))
+    #expect(permissionManager.contains("public func refreshAccessState()"))
 
-    #expect(browserModel.contains("BrowserGamepadDiagnosticService.openAsync"))
     #expect(browserService.contains("Task.detached(priority: .userInitiated)"))
     #expect(browserService.contains("BoundedProcessRunner.run"))
     #expect(!browserService.contains("waitUntilExit()"))
@@ -51,14 +46,14 @@ struct MenuAppResponsivenessTests {
   }
 
   @Test
-  func cliAndDaemonUseTheSameBoundedProcessPrimitive() throws {
+  func cliAndServiceUseTheSameBoundedProcessPrimitive() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cliUtilities = try source(
       "Sources/OpenJoystickDriver/CLIUtilities.swift",
       root: root
     )
-    let daemonManager = try source(
-      "Sources/OpenJoystickDriverKit/Daemon/DaemonManager.swift",
+    let serviceManager = try source(
+      "Sources/OpenJoystickDriverKit/ApplicationService/ApplicationServiceManager.swift",
       root: root
     )
     let permissions = try source(
@@ -70,11 +65,11 @@ struct MenuAppResponsivenessTests {
       root: root
     )
 
-    for content in [cliUtilities, daemonManager, permissions, systemExtension] {
+    for content in [cliUtilities, serviceManager, systemExtension] {
       #expect(content.contains("BoundedProcessRunner.run"))
     }
     #expect(!cliUtilities.contains("waitUntilExit()"))
-    #expect(!daemonManager.contains("waitUntilExit()"))
+    #expect(!serviceManager.contains("waitUntilExit()"))
     #expect(!permissions.contains("waitUntilExit()"))
     #expect(!systemExtension.contains("waitUntilExit()"))
   }

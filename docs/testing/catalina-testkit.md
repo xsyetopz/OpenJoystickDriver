@@ -1,23 +1,19 @@
-# OpenJoystickDriver macOS 10.15 Test Kit
+# Catalina foreground test kit
 
-Use this on the macOS 10.15 machine after unpacking
-`OpenJoystickDriver-10.15-dev-testkit.zip`.
+macOS 10.15 can run the foreground app and headless CLI. Login-item registration through `SMAppService.mainApp` requires macOS 13 or later, so Catalina testing must not install a LaunchAgent fallback.
 
-## Read-only smoke check
-
-```bash
-./scripts/ojd diagnose catalina ./OpenJoystickDriver.app
-```
-
-## LaunchAgent registration check
-
-Copy the app to `/Applications`, then run:
+Copy the signed universal app to the Catalina machine and run:
 
 ```bash
-cp -R ./OpenJoystickDriver.app /Applications/OpenJoystickDriver.app
-./scripts/ojd diagnose catalina /Applications/OpenJoystickDriver.app --install
+./scripts/ojd diagnose catalina /Applications/OpenJoystickDriver.app
 ```
 
-The script reports the app bundle minimum OS, binary architectures, x86_64
-minimum OS load commands, icon resource, bundled LaunchAgent plist, headless
-status output, and optional `launchctl` registration result.
+The check verifies:
+
+- `LSMinimumSystemVersion` and the executable deployment target are 10.15;
+- the application contains an x86_64 slice;
+- the icon and main executable exist;
+- no LaunchAgent or helper daemon is packaged;
+- the headless CLI starts.
+
+For functional testing, open the app directly, grant the requested privacy permissions to `OpenJoystickDriver.app`, connect a controller, and run the input test. Automatic launch at login is not supported on Catalina.

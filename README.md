@@ -5,7 +5,7 @@
 [![Swift](https://img.shields.io/badge/Swift-Package-orange)](Package.swift)
 [![macOS](https://img.shields.io/badge/platform-macOS-lightgrey)](README.md)
 
-OpenJoystickDriver is a macOS menu-bar app and daemon that turns supported physical controllers into app-friendly virtual controllers.
+OpenJoystickDriver is a macOS menu-bar app that turns supported physical controllers into app-friendly virtual controllers.
 
 Use it when a controller works in OpenJoystickDriver but not in a game, emulator, browser, SDL app, or native macOS app.
 
@@ -41,7 +41,7 @@ consumer gamepad.
 1. Drag `OpenJoystickDriver.app` to `/Applications`.
 2. Open `OpenJoystickDriver.app`.
 3. Choose **Install** or **Start** in the menu-bar app when prompted.
-4. Grant **Input Monitoring** for OpenJoystickDriver and its helper when macOS asks.
+4. Grant **Input Monitoring** and **Accessibility** to OpenJoystickDriver when macOS asks.
 5. Connect a supported controller.
 6. Use **Input Test** to confirm buttons and sticks.
 
@@ -55,34 +55,29 @@ OpenJoystickDriver has one app bundle in `/Applications`:
 /Applications/OpenJoystickDriver.app
 ```
 
-The daemon helper lives inside that app bundle:
-
-```bash
-/Applications/OpenJoystickDriver.app/Contents/Library/LoginItems/OpenJoystickDriverDaemon.app
-```
+The main application executable also hosts the background service. There is no nested helper application or second privacy identity.
 
 Use the menu-bar controls for the normal flow:
 
 | Action | Menu-bar path | Headless equivalent |
 | --- | --- | --- |
-| Install or start helper | Open the app, then choose **Install** or **Start** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless install` |
-| Check helper status | Open the app and check the System card | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status` |
-| Restart helper | Choose **Restart Helper** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart` |
-| Remove helper | Choose **Uninstall** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless remove` |
+| Install or start service | Open the app, then choose **Install** or **Start** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless install` |
+| Check service status | Open the app and check the System card | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status` |
+| Restart service | Choose **Restart Service** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart` |
+| Unregister service | Choose **Uninstall** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless uninstall` |
 
 To uninstall OpenJoystickDriver completely:
 
 1. Run **Uninstall** from the menu-bar app, or run:
 
    ```bash
-   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless remove
+   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless uninstall
    ```
 
 2. Quit OpenJoystickDriver.
 3. Delete `/Applications/OpenJoystickDriver.app`.
-4. Optional: remove Input Monitoring permission in **System Settings -> Privacy & Security -> Input Monitoring**.
+4. Optional: remove OpenJoystickDriver from **Input Monitoring** and **Accessibility** in System Settings.
 
-Don't delete `OpenJoystickDriverDaemon.app` by itself. It's bundled inside `OpenJoystickDriver.app`; uninstall the helper first, then delete the main app.
 
 ## Choose An Output Mode
 
@@ -104,8 +99,8 @@ CLI equivalents from the installed app bundle:
 
 | Symptom | What to do |
 | --- | --- |
-| Menu UI says “running (disconnected)” | Use **Restart Helper** in the menu, or run `--headless restart`. |
-| SDL / browser sees 0 controllers | Ensure Input Monitoring is granted, then re-open the app and re-test. |
+| Menu UI says “running (disconnected)” | Use **Restart Service** in the menu, or run `--headless restart`. |
+| SDL / browser sees 0 controllers | Ensure Input Monitoring and Accessibility are granted, then re-open the app and re-test. |
 | Compare Chrome, Firefox, and Safari | Run `--headless diagnose browser-gamepad --open all`, then press a controller control. |
 | DriverKit extension install fails | Compatibility output still works; use `--headless selftest` to test the optional relay. |
 
@@ -127,7 +122,7 @@ Useful diagnostics:
 ./scripts/ojd diagnose sdl3 --seconds 10
 ```
 
-See [Daemon Runtime Health](docs/development/daemon-health.md) for soak verdicts, high-water limits, and the foreground-consumer polling leak regression probe.
+See [Application service Runtime Health](docs/development/application-service-health.md) for soak verdicts, high-water limits, and the foreground-consumer polling leak regression probe.
 See [Menu App Responsiveness](docs/development/menu-responsiveness.md) for bounded system-tool execution and main-actor isolation guarantees.
 See [CLI and GUI Capability Parity](docs/development/cli-and-menu-app.md) for the current shared capability audit and remaining one-sided surfaces.
 
@@ -152,7 +147,7 @@ brew install libusb
 swift build
 ```
 
-For app/daemon, DriverKit, signing, and notarization work, start here:
+For application, DriverKit, signing, and notarization work, start here:
 
 - [scripts/README.md](scripts/README.md)
 - [CONTRIBUTING.md](CONTRIBUTING.md)
@@ -185,7 +180,7 @@ Use this context path before editing:
 1. [README.md](README.md) -- product intent and user workflows.
 2. [scripts/README.md](scripts/README.md) -- repository command interface.
 3. [CONTRIBUTING.md](CONTRIBUTING.md) -- PR expectations.
-4. [docs/development/architecture.md](docs/development/architecture.md) -- app, daemon, DriverKit, and compatibility boundaries.
+4. [docs/development/architecture.md](docs/development/architecture.md) -- application, DriverKit, and compatibility boundaries.
 5. [docs/user/compatibility.md](docs/user/compatibility.md) -- support status and output-mode behavior.
 
 Minimum checks for parser/record changes:

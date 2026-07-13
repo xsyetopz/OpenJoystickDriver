@@ -11,7 +11,7 @@ struct UpdateAndLogParityTests {
       root: root
     )
     let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/XPCOperations.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/ApplicationServiceOperations.swift",
       root: root
     )
     let view = try source(
@@ -36,7 +36,7 @@ struct UpdateAndLogParityTests {
   }
 
   @Test
-  func cliAndGuiUseTypedDaemonLogPaths() throws {
+  func cliAndGuiUseTypedServiceLogPaths() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cli = try source("Sources/OpenJoystickDriver/CLI.swift", root: root)
     let command = try source(
@@ -48,18 +48,18 @@ struct UpdateAndLogParityTests {
       root: root
     )
     let service = try source(
-      "Sources/OpenJoystickDriverKit/Diagnostics/DaemonLogService.swift",
+      "Sources/OpenJoystickDriverKit/Diagnostics/ApplicationServiceLogService.swift",
       root: root
     )
 
     #expect(cli.contains("case \"logs\""))
-    #expect(command.contains("DaemonLogService.tail"))
-    #expect(command.contains("DaemonLogService.url"))
-    #expect(command.contains("DaemonLogService.sharingWarning"))
+    #expect(command.contains("ApplicationServiceLogService.tail"))
+    #expect(command.contains("ApplicationServiceLogService.url"))
+    #expect(command.contains("ApplicationServiceLogService.sharingWarning"))
     #expect(command.contains("--lines"))
     #expect(command.contains("--json"))
-    #expect(view.contains("DaemonLogStream.allCases"))
-    #expect(view.contains("DaemonLogService.url"))
+    #expect(view.contains("ApplicationServiceLogStream.allCases"))
+    #expect(view.contains("ApplicationServiceLogService.url"))
     #expect(!view.contains("/tmp/com.openjoystickdriver.daemon.out"))
     #expect(service.contains("defaultMaximumBytes = 262_144"))
   }

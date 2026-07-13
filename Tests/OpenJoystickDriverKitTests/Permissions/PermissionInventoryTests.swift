@@ -4,27 +4,28 @@ import Testing
 
 @Suite("Permission inventory")
 struct PermissionInventoryTests {
-  @Test("Accessibility is explicitly not requested")
-  func accessibilityNotRequested() {
+  @Test("Accessibility has the same app owner")
+  func accessibilityHasOneAppOwner() {
     let accessibility = OJDPermissionRequirement.inventory.filter {
       $0.name == "Accessibility"
     }
     #expect(accessibility.count == 1)
-    #expect(accessibility.first?.requested == false)
+    #expect(accessibility.first?.requested == true)
+    #expect(accessibility.first?.owner == "OpenJoystickDriver app")
   }
 
-  @Test("Input Monitoring owners are explicit")
-  func inputMonitoringOwners() {
+  @Test("Input Monitoring has one app owner")
+  func inputMonitoringHasOneAppOwner() {
     let owners = Set(
       OJDPermissionRequirement.inventory
         .filter { $0.name == "Input Monitoring" && $0.requested }
         .map(\.owner)
     )
-    #expect(owners == ["OpenJoystickDriver app", "OpenJoystickDriver Daemon"])
+    #expect(owners == ["OpenJoystickDriver app"])
   }
 
-  @Test("Refresh is scoped and confirmed")
-  func refreshSourceContract() throws {
+  @Test("Permission command does not reset TCC")
+  func commandDoesNotResetTCC() throws {
     let root = try RepositoryRoot.from()
     let source = try String(
       contentsOf: root.appendingPathComponent(
@@ -32,8 +33,7 @@ struct PermissionInventoryTests {
       ),
       encoding: .utf8
     )
-    #expect(source.contains("arguments == [\"--confirm\"]"))
-    #expect(source.contains("[\"reset\", \"ListenEvent\", identifier]"))
-    #expect(!source.contains("[\"reset\", \"Accessibility\""))
+    #expect(!source.contains("tccutil"))
+    #expect(!source.contains("permissions refresh"))
   }
 }

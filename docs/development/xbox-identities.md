@@ -4,7 +4,7 @@ A product name is not enough to create a safe spoof identity. Each selectable id
 
 1. an exact virtual VID/PID;
 2. the matching descriptor and report bytes;
-3. an Apple GameController catalog match or live `GCController.supportsHIDDevice` result.
+3. a live `GCController.supportsHIDDevice` result and hardware evidence for GameController.framework claims.
 
 Linux `xpad.c` identifies physical devices for Linux. It does not prove that a macOS virtual HID device can impersonate them.
 
@@ -12,19 +12,19 @@ Linux `xpad.c` identifies physical devices for Linux. It does not prove that a m
 
 ### Xbox Wireless Controller
 
-OJD has the experimental `xone-hid` path at `045e:02ea`. It still lacks an exact Apple catalog entry and a live descriptor/runtime match.
+OJD has the experimental `xone-hid` path at `045e:02ea`. It still lacks a live descriptor/runtime match.
 
 ### Xbox Wired Controller
 
-OJD has several physical records and parsers but no distinct Apple-backed fallback identity. Promotion needs one Apple-listed identity whose descriptor and reports OJD implements exactly.
+OJD has several physical records and parsers but no distinct verified fallback identity. Promotion needs a live consumer result whose descriptor and reports OJD implements exactly.
 
 ### Xbox 360 Wireless Controller
 
-Linux source lists receiver devices, and OJD parses the physical receiver transport. A virtual family identity still needs a descriptor, report contract, and Apple evidence.
+Linux source lists receiver devices, and OJD parses the physical receiver transport. A virtual family identity still needs a descriptor, report contract, and live consumer evidence.
 
 ### Xbox 360 Wired Controller
 
-`apple-gamecontroller` uses `045e:028e`; `x360-hid` uses ASTRO `9886:0024`. OJD implements Xbox 360-style reports, but neither spoof VID/PID had an exact match in the audited Apple asset.
+`apple-gamecontroller` uses `045e:028e`; `x360-hid` uses ASTRO `9886:0024`. OJD implements Xbox 360-style reports. A signed live test on 2026-07-13 accepted the `045e:028e` virtual device through `GCController.supportsHIDDevice` and exposed an extended controller, despite that pair being absent from the audited private catalog.
 
 ## Apple audit
 
@@ -34,10 +34,10 @@ The GameController MobileAsset version `10.5.2` downloaded on 2026-07-12 had no 
 OpenJoystickDriver --headless diagnose gamecontroller-catalog --json
 ```
 
-The CLI, menu app, and support report use the same audit.
+The developer CLI and support report use the same audit. The menu app has no catalog-audit control or result card.
 
 ## Promotion checks
 
-Add a family identity only after the exact Apple evidence, descriptor, and report bytes are recorded. Browser, SDL, and GameController probes must identify a useful consumer. Hardware tests must cover input, reconnect, rumble, and lights where claimed.
+Add a family identity only after live consumer evidence, descriptor, and report bytes are recorded. Browser, SDL, and GameController probes must identify a useful consumer. Hardware tests must cover input, reconnect, rumble, and lights where claimed.
 
 Use `generic-hid` as the non-spoof fallback and `sdl2-3` as the default mapped identity until those checks pass.

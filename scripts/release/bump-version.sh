@@ -20,7 +20,7 @@ Updates:
   - Headless update and support-report fallback versions
   - justfile release-local-install default
   - scripts/README.md release examples
-  - scripts/build-tools/bundles.sh generated GUI/daemon bundle versions
+  - scripts/build-tools/bundles.sh generated GUI/application service bundle versions
   - DriverKitExtension/Info.plist short version
   - Release-version packaging assertions
 
@@ -207,7 +207,7 @@ replacements = [
                 1,
             ),
             (
-                "build bundles GUI/daemon short versions",
+                "build bundles GUI/application service short versions",
                 re.compile(
                     r"(<key>CFBundleShortVersionString</key>\n[ \t]*<string>)\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(</string>)"
                 ),

@@ -9,8 +9,6 @@ rel_env = pathlib.Path(os.environ.get("REL_ENV", str(script_dir / ".env.release"
 
 gui_dev_profile = os.path.expanduser(os.environ.get("GUI_DEV_PROFILE", ""))
 gui_devid_profile = os.path.expanduser(os.environ.get("GUI_DEVID_PROFILE", ""))
-daemon_dev_profile = os.path.expanduser(os.environ.get("DAEMON_DEV_PROFILE", ""))
-daemon_devid_profile = os.path.expanduser(os.environ.get("DAEMON_DEVID_PROFILE", ""))
 dext_profile = os.path.expanduser(os.environ.get("DEXT_PROFILE", ""))
 
 def run(args, *, check=True):
@@ -114,8 +112,6 @@ def profile_has_entitlement(path: str, key: str) -> bool:
 
 must_exist(gui_dev_profile, "GUI dev provisioning profile")
 must_exist(gui_devid_profile, "GUI DevID provisioning profile")
-must_exist(daemon_dev_profile, "Daemon dev provisioning profile")
-must_exist(daemon_devid_profile, "Daemon DevID provisioning profile")
 must_exist(dext_profile, "DriverKit dext provisioning profile")
 
 def warn_missing_entitlement(profile_path: str, entitlement: str, label: str, why: str):
@@ -130,35 +126,19 @@ def warn_missing_entitlement(profile_path: str, entitlement: str, label: str, wh
         file=sys.stderr,
     )
 
-# NOTE:
-# `com.apple.developer.hid.virtual.device` is required ONLY by the process that creates the
-# IOHIDUserDevice (user-space virtual gamepad). In this repo that can be:
-# - the LaunchAgent daemon (normal path), and/or
-# - the GUI app itself when it falls back to the embedded backend.
+# The main application creates the user-space virtual gamepad.
 hid_entitlement = "com.apple.developer.hid.virtual.device"
-warn_missing_entitlement(
-    daemon_dev_profile,
-    hid_entitlement,
-    "Daemon dev profile",
-    "Compatibility mode (IOHIDUserDevice) will fail if the daemon lacks this entitlement.",
-)
-warn_missing_entitlement(
-    daemon_devid_profile,
-    hid_entitlement,
-    "Daemon DevID profile",
-    "Compatibility mode (IOHIDUserDevice) will fail in release if the daemon lacks this entitlement.",
-)
 warn_missing_entitlement(
     gui_dev_profile,
     hid_entitlement,
-    "GUI dev profile",
-    "If the app falls back to the embedded backend, Compatibility mode needs this entitlement in the GUI profile.",
+    "Application development profile",
+    "Compatibility output requires this entitlement.",
 )
 warn_missing_entitlement(
     gui_devid_profile,
     hid_entitlement,
-    "GUI DevID profile",
-    "If the app falls back to the embedded backend, Compatibility mode needs this entitlement in the GUI profile.",
+    "Application Developer ID profile",
+    "Release compatibility output requires this entitlement.",
 )
 
 dev_team = team_id_from_profile(gui_dev_profile)
@@ -298,27 +278,16 @@ except SystemExit as e:
     print(f"Updated {dev_env} (OK).", file=sys.stderr)
     raise SystemExit(0)
 
-try:
-    daemon_devid_identity = pick_identity_matching_profile("Developer ID Application", daemon_devid_profile)
-except SystemExit as e:
-    print("", file=sys.stderr)
-    print("WARN: Release signing is NOT configured; daemon Developer ID profile mismatch:", file=sys.stderr)
-    print("Need: daemon profile embedded certificate must match an installed Developer ID Application signing identity.", file=sys.stderr)
-    print(str(e), file=sys.stderr)
-    raise SystemExit(0)
-
 update_env_file(
     rel_env,
     "# Release signing (managed by ./scripts/ojd signing configure)",
     {
         "CODESIGN_IDENTITY": devid_app_identity,
         "GUI_CODESIGN_IDENTITY": devid_app_identity,
-        "DAEMON_CODESIGN_IDENTITY": daemon_devid_identity,
         "DEVELOPMENT_TEAM": rel_team,
         "DEXT_BUILD_IDENTITY": apple_dev_identity,
         "DEXT_BUILD_PROFILE": dext_build_profile_name,
         "GUI_PROVISIONING_PROFILE": f"$HOME/Library/MobileDevice/Provisioning Profiles/{pathlib.Path(gui_devid_profile).name}",
-        "DAEMON_PROVISIONING_PROFILE": f"$HOME/Library/MobileDevice/Provisioning Profiles/{pathlib.Path(daemon_devid_profile).name}",
     },
 )
 

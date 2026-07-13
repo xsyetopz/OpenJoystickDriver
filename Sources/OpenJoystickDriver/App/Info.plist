@@ -5,8 +5,8 @@
     <!-- Required when the app submits OSSystemExtensionRequest — shown in
          System Settings -> Privacy & Security when user approves the extension. -->
     <key>NSInputMonitoringUsageDescription</key>
-    <string>OpenJoystickDriver needs Input Monitoring to read controller input and publish virtual gamepad events.</string>
+    <string>OpenJoystickDriver needs Input Monitoring to read physical controller reports.</string>
     <key>NSSystemExtensionUsageDescription</key>
-    <string>OpenJoystickDriver uses this extension to present physical controllers as a standard virtual HID gamepad to games and applications, without requiring Accessibility permission.</string>
+    <string>OpenJoystickDriver uses this extension to publish an optional DriverKit virtual HID relay.</string>
 </dict>
 </plist>

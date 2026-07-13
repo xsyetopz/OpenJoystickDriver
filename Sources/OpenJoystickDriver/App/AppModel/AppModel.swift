@@ -3,12 +3,9 @@ import Foundation
 import OpenJoystickDriverKit
 
 let appModelPollNanoseconds: UInt64 = 2_000_000_000
-let daemonHealthPollNanosecondsConnected: UInt64 = 15_000_000_000
-let daemonHealthPollNanosecondsDisconnected: UInt64 = 2_000_000_000
-let inputMonitoringPromptPollNanoseconds: UInt64 = 500_000_000
-let inputMonitoringPromptPollAttempts = 240
+let serviceHealthPollNanosecondsConnected: UInt64 = 15_000_000_000
+let serviceHealthPollNanosecondsDisconnected: UInt64 = 2_000_000_000
 let includePrereleaseUpdatesDefaultsKey = "IncludePrereleaseUpdates"
-let daemonRepairBundleVersionDefaultsKey = "DaemonRepairBundleVersion"
 
 /// Parsed, displayable representation of connected controller.
 struct DeviceViewModel: Identifiable, Hashable, Sendable {
@@ -24,7 +21,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   let supportsPhysicalRumble: Bool
   let physicalOutputCapabilities: PhysicalControllerOutputCapabilities
 
-  init(from description: XPCDeviceDescription) {
+  init(from description: ApplicationServiceDeviceDescription) {
     self.id = "\(description.vendorID):\(description.productID):\(description.name)"
     self.name = description.name
     self.vendorID = description.vendorID
@@ -39,9 +36,9 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
 
 /// Central observable model for GUI.
 ///
-/// Polls daemon via XPC every 2 seconds.
+/// Polls the in-process runtime through bounded local RPC every 2 seconds.
 @MainActor final class AppModel: ObservableObject {
-  enum DaemonUIState: Equatable, Sendable {
+  enum ApplicationServiceUIState: Equatable, Sendable {
     case missing
     case stopped
     case runningConnected
@@ -51,22 +48,27 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     case unknown
   }
 
-  @Published var daemonConnected = false
-  @Published var daemonInstalled = false
-  @Published var daemonRestarting = false
-  @Published var daemonError: String?
-  @Published var daemonHealth: DaemonManager.DaemonHealth?
+  @Published var serviceConnected = false
+  @Published var serviceInstalled = false
+  @Published var serviceRestarting = false
+  @Published var serviceError: String?
+  @Published var serviceHealth: ApplicationServiceManager.ApplicationServiceHealth?
   @Published var devices: [DeviceViewModel] = []
-  @Published var appInputMonitoring = "unknown"
   @Published var inputMonitoring = "unknown"
+  @Published var accessibility = "unknown"
   @Published var inputMonitoringAssist: String?
   @Published var extensionManager = SystemExtensionManager()
 
-  var inputMonitoringPermissions: InputMonitoringPermissionSnapshot {
-    InputMonitoringPermissionSnapshot(
-      application: PermissionManager.AccessState(status: appInputMonitoring),
-      daemon: PermissionManager.AccessState(status: inputMonitoring)
-    )
+  var inputMonitoringState: PermissionManager.AccessState {
+    PermissionManager.AccessState(status: inputMonitoring)
+  }
+
+  var accessibilityState: PermissionManager.AccessState {
+    PermissionManager.AccessState(status: accessibility)
+  }
+
+  var permissionsReady: Bool {
+    inputMonitoringState == .granted && accessibilityState == .granted
   }
 
   @Published var userSpaceVirtualDeviceEnabled = false
@@ -74,18 +76,10 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   @Published var virtualDeviceMode: String = VirtualDeviceMode.compatUserSpace.rawValue
   @Published var outputMode: String = CompositeOutputDispatcher.Mode.primaryOnly.rawValue
   @Published var compatibilityIdentity: String = CompatibilityIdentity.sdl2_3.rawValue
-  @Published var virtualDeviceDiagnostics: XPCVirtualDeviceDiagnosticsPayload?
-  @Published var virtualDeviceSelfTest: XPCVirtualDeviceSelfTestPayload?
+  @Published var virtualDeviceDiagnostics: ApplicationServiceVirtualDeviceDiagnosticsPayload?
+  @Published var virtualDeviceSelfTest: ApplicationServiceVirtualDeviceSelfTestPayload?
   @Published var creatingSupportReport = false
-  @Published var runtimeHealthRunning = false
-  @Published var runtimeHealthSummary: RuntimeHealthSummary?
-  @Published var appleGameControllerAuditRunning = false
-  @Published var appleGameControllerAudit: AppleGameControllerSupportAudit?
-  @Published var browserGamepadDiagnosticRunning = false
-  @Published var browserGamepadDiagnosticURL: URL?
-  @Published var browserGamepadDiagnosticError: String?
-  @Published var browserGamepadSnapshotCount = 0
-  var latestStatusPayload: XPCStatusPayload?
+  var latestStatusPayload: ApplicationServiceStatusPayload?
   @Published var updateCheckState: UpdateCheckState = .idle
   @Published var includePrereleaseUpdates: Bool {
     didSet {
@@ -102,26 +96,20 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.5.0-alpha.5"
   }
 
-  let client = XPCClient()
+  let client = ApplicationServiceClient()
   let permissionManager = PermissionManager()
   let updateChecker = UpdateChecker()
   lazy var sparkleUpdates = SparkleUpdateController { [weak self] state in
     self?.updateCheckState = state
   }
   var pollTask: Task<Void, Never>?
-  var browserGamepadDiagnosticSession: BrowserGamepadDiagnosticSession?
-  var browserGamepadDiagnosticStopTask: Task<Void, Never>?
-  var browserGamepadSnapshotPollTask: Task<Void, Never>?
-  var runtimeHealthTask: Task<RuntimeHealthSummary, any Error>?
-  var runtimeHealthRunID: UUID?
 
   var lastHealthPollNs: UInt64 = 0
 
-  // Tracks recent launchd restarts (based on `launchctl print runs = ...`) so the UI can
-  // distinguish "stopped" from "restarting" and "crash-looping".
-  var lastDaemonRuns: Int?
-  var lastDaemonPid: Int?
-  var daemonStartEventsNs: [UInt64] = []
+  // Tracks observed runtime PID changes so the UI can distinguish a stopped app from
+  // repeated relaunches.
+  var lastServicePID: Int?
+  var serviceStartEventsNanoseconds: [UInt64] = []
 
   init(developerMode: Bool = false) {
     self.developerMode = developerMode
@@ -130,54 +118,54 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     )
   }
 
-  var daemonUIState: DaemonUIState {
-    if daemonRestarting { return .restarting }
-    guard daemonInstalled else { return .missing }
-    guard let h = daemonHealth, h.installed else {
-      return daemonConnected ? .runningConnected : .unknown
+  var applicationServiceUIState: ApplicationServiceUIState {
+    if serviceRestarting { return .restarting }
+    if serviceConnected { return .runningConnected }
+    guard serviceInstalled else { return .missing }
+    guard let h = serviceHealth, h.installed else {
+      return serviceConnected ? .runningConnected : .unknown
     }
 
-    if h.isInefficientKillLoop { return .crashLooping }
-    if recentDaemonStartCount(windowSeconds: 10) >= 3 { return .crashLooping }
-    if recentDaemonStartCount(windowSeconds: 4) > 0 && !daemonConnected { return .restarting }
+    if recentServiceStartCount(windowSeconds: 10) >= 3 { return .crashLooping }
+    if recentServiceStartCount(windowSeconds: 4) > 0 && !serviceConnected { return .restarting }
 
-    if daemonConnected { return .runningConnected }
+    if serviceConnected { return .runningConnected }
     if h.pid != nil { return .runningDisconnected }
     if (h.state ?? "").uppercased() == "NOT_LOADED" { return .stopped }
     return .unknown
   }
 
-  var daemonStatusLabel: String {
-    switch daemonUIState {
-    case .missing: return L10n.string("daemon.status.missing")
-    case .stopped: return L10n.string("daemon.status.stopped")
-    case .runningConnected: return L10n.string("daemon.status.running")
-    case .runningDisconnected: return L10n.string("daemon.status.runningDisconnected")
-    case .restarting: return L10n.string("daemon.status.restarting")
-    case .crashLooping: return L10n.string("daemon.status.crashLooping")
+  var applicationServiceStatusLabel: String {
+    switch applicationServiceUIState {
+    case .missing: return L10n.string("service.status.missing")
+    case .stopped: return L10n.string("service.status.stopped")
+    case .runningConnected: return L10n.string("service.status.running")
+    case .runningDisconnected: return L10n.string("service.status.runningDisconnected")
+    case .restarting: return L10n.string("service.status.restarting")
+    case .crashLooping: return L10n.string("service.status.crashLooping")
     case .unknown:
-      return daemonConnected
-        ? L10n.string("daemon.status.running")
-        : L10n.string("daemon.status.unknown")
+      return serviceConnected
+        ? L10n.string("service.status.running")
+        : L10n.string("service.status.unknown")
     }
   }
 
-  var daemonSuggestedActionLabel: String? {
-    switch daemonUIState {
-    case .missing: return L10n.string("button.installDaemon")
-    case .stopped: return L10n.string("button.startDaemon")
+  var applicationServiceSuggestedActionLabel: String? {
+    switch applicationServiceUIState {
+    case .missing: return L10n.string("button.installService")
+    case .stopped: return L10n.string("button.startService")
     case .runningDisconnected, .restarting, .crashLooping:
-      return L10n.string("button.restartDaemon")
+      return L10n.string("button.restartService")
     case .runningConnected, .unknown: return nil
     }
   }
 
   func start() async {
-    refreshDaemonStatus()
-    await repairDaemonForCurrentAppVersionIfNeeded()
-    refreshDaemonStatus()
-    await refreshDaemonHealth()
-    if daemonInstalled { client.connect() }
+    refreshApplicationServiceStatus()
+    await registerMainAppForLoginIfNeeded()
+    refreshApplicationServiceStatus()
+    await refreshApplicationServiceHealth()
+    client.connect()
     await poll()
     await refreshVirtualDeviceDiagnostics()
     extensionManager.refreshInstallState()
@@ -198,42 +186,34 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     client.disconnect()
   }
 
-  func refreshDaemonStatus() { daemonInstalled = DaemonManager.isInstalled }
+  func refreshApplicationServiceStatus() {
+    serviceInstalled = ApplicationServiceManager.isInstalled
+  }
 
-  func refreshDaemonHealth() async {
-    let snapshot = await Task.detached { DaemonManager.health() }.value
-    daemonHealth = snapshot
-    noteDaemonHealth(snapshot)
+  func refreshApplicationServiceHealth() async {
+    let snapshot = await Task.detached { ApplicationServiceManager.health() }.value
+    serviceHealth = snapshot
+    noteApplicationServiceHealth(snapshot)
     lastHealthPollNs = DispatchTime.now().uptimeNanoseconds
   }
 
   /// One-shot refresh used after lifecycle actions (install/start/restart/uninstall).
   ///
   /// This avoids relying on the 2s poll interval to correct UI state.
-  func syncFromDaemonNow() async {
-    refreshDaemonStatus()
-    await refreshDaemonHealth()
+  func syncFromApplicationServiceNow() async {
+    refreshApplicationServiceStatus()
+    await refreshApplicationServiceHealth()
     await poll()
     await refreshVirtualDeviceDiagnostics()
   }
 
-  func repairDaemonForCurrentAppVersionIfNeeded() async {
-    guard daemonInstalled, Bundle.main.bundleURL.pathExtension == "app" else { return }
-    let currentBundleVersion =
-      Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? appVersion
-    guard !currentBundleVersion.isEmpty else { return }
-    guard UserDefaults.standard.string(forKey: daemonRepairBundleVersionDefaultsKey)
-      != currentBundleVersion
-    else {
-      return
-    }
-
+  func registerMainAppForLoginIfNeeded() async {
+    guard Bundle.main.bundleURL.pathExtension == "app" else { return }
     do {
-      let task = Task.detached { try DaemonManager.restart() }
+      let task = Task.detached { try ApplicationServiceManager.installByDefaultIfNeeded() }
       try await task.value
-      UserDefaults.standard.set(currentBundleVersion, forKey: daemonRepairBundleVersionDefaultsKey)
     } catch {
-      daemonError = formatDaemonError(error)
+      serviceError = formatApplicationServiceError(error)
     }
   }
 

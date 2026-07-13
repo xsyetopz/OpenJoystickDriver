@@ -9,6 +9,11 @@ if args.contains("--headless") {
   let filtered = args.filter { $0 != "--headless" }
   CLI().run(arguments: filtered[...])
 } else {
+  do {
+    try ApplicationServiceLogService.beginCurrentSessionCapture()
+  } catch {
+    fputs("[OpenJoystickDriver] Log capture unavailable: \(error.localizedDescription)\n", stderr)
+  }
   let developerMode = args.contains("--developer-mode")
   appDelegate = AppDelegate(developerMode: developerMode)
   NSApplication.shared.delegate = appDelegate

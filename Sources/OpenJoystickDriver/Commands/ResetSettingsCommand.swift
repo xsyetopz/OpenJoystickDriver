@@ -3,7 +3,7 @@ import OpenJoystickDriverKit
 
 struct ResetSettingsCommand {
   func run() {
-    let client = XPCClient()
+    let client = ApplicationServiceClient()
     client.connect()
 
     let ok = runSyncResult {
@@ -15,11 +15,11 @@ struct ResetSettingsCommand {
     } ?? false
 
     if !ok {
-      print("ERROR: failed to reset settings (daemon not running?)")
+      print("ERROR: failed to reset settings (application service not running?)")
       exit(1)
     }
 
-    print("OK: reset daemon settings.")
+    print("OK: reset application service settings.")
     print(
       "Next: open the menubar app, set Mode -> Compatibility,"
         + " then pick Compatibility identity."

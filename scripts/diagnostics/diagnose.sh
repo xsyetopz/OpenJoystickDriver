@@ -342,7 +342,7 @@ info() {
 BUNDLE_ID="com.openjoystickdriver.VirtualHIDDevice"
 DEXT_PROCESS="OpenJoystickVirtualHID"
 APP_DEXT_DIR="/Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/${BUNDLE_ID}.dext"
-DAEMON_LOG="/tmp/com.openjoystickdriver.daemon.out"
+SERVICE_LOG="$HOME/Library/Logs/OpenJoystickDriver/OpenJoystickDriver.out.log"
 
 echo -e "${BOLD}=== OpenJoystickDriver Dext Diagnostics ===${RESET}"
 echo ""
@@ -483,17 +483,24 @@ else
   fail "IORegistry IOUserService proxy node not found"
 fi
 
-# --- 10. Daemon connection ---
-if [[ -f "$DAEMON_LOG" ]]; then
-  if grep -qE "Connected|Auto-retry connected" "$DAEMON_LOG" 2>/dev/null; then
-    pass "Daemon reports connected to dext"
-  elif grep -qE "not yet available|not found.*not installed|not approved" "$DAEMON_LOG" 2>/dev/null; then
-    fail "Daemon reports dext not yet available"
+# --- 10. Application service connection ---
+if [[ -f "$SERVICE_LOG" ]]; then
+  service_session=$(awk '
+    /\[Service\] DriverKit output:/ { session = "" }
+    { session = session $0 ORS }
+    END { printf "%s", session }
+  ' "$SERVICE_LOG")
+  if echo "$service_session" | grep -qE "not yet available|not found.*not installed|not approved"; then
+    fail "Application service reports dext not yet available"
+  elif echo "$service_session" | grep -qE "Connected|Auto-retry connected"; then
+    pass "Application service reports connected to dext"
+  elif echo "$service_session" | grep -q "DriverKit output: on-demand"; then
+    pass "Application service reports on-demand dext connection (no persistent connection expected)"
   else
-    warn "Daemon log exists but no connection status found"
+    warn "Current application service session has no dext connection status"
   fi
 else
-  warn "Daemon log not found ($DAEMON_LOG)"
+  warn "Application service log not found ($SERVICE_LOG)"
 fi
 
 # --- 11. Dext os_log (last 2 minutes) ---

@@ -17,12 +17,15 @@ struct OutputModeCommand {
       }
     }
 
-    let client = XPCClient()
+    let client = ApplicationServiceClient()
     client.connect()
 
     if arg == "status" {
-      let mode: String? =
-        runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) { try? await client.getOutputMode() }
+      let mode: String? = runSyncOptionalResult(
+        timeout: applicationServiceCallTimeoutSeconds
+      ) {
+        try? await client.getOutputMode()
+      }
       print("output: \(mode ?? "unknown")")
       return
     }
@@ -42,12 +45,15 @@ struct OutputModeCommand {
     }
 
     if !ok {
-      print("ERROR: failed to set output mode to \(mode) (daemon not running?)")
+      print("ERROR: failed to set output mode to \(mode) (main app not running?)")
       exit(1)
     }
 
-    let actual: String? =
-      runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) { try? await client.getOutputMode() }
+    let actual: String? = runSyncOptionalResult(
+      timeout: applicationServiceCallTimeoutSeconds
+    ) {
+      try? await client.getOutputMode()
+    }
     print("output: \(actual ?? mode)")
   }
 }

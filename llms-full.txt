@@ -32,18 +32,18 @@ IOHIDUserDevice backend     -> consumer-facing virtual controller records
 ```
 
 Each controller is processed by an isolated `DevicePipeline` actor. One
-controller failing must not take down another controller pipeline. The daemon
-owns runtime input/output. The GUI and CLI communicate with the daemon through
-XPC status/control APIs.
+controller failing must not take down another controller pipeline. The persistent
+main app owns runtime input/output. Its UI uses the runtime directly, while
+separate headless CLI invocations use authenticated local RPC.
 
 ## Package and Runtime Surfaces
 
 - `Package.swift`: Swift tools version 6.2; macOS 10.15 minimum.
 - `../SwiftUSB/`: external SwiftUSB libusb wrapper package.
 - `Sources/OpenJoystickDriverKit/`: parser, record, virtual backend, service,
-  and shared daemon logic.
+  and shared application-service logic.
 - `Sources/OpenJoystickDriver/`: SwiftUI menu bar app plus `--headless` CLI.
-- `Sources/OpenJoystickDriverDaemon/`: LaunchAgent daemon.
+- `Sources/OpenJoystickDriver/Service/`: persistent main-app runtime and local RPC.
 - `Sources/OpenJoystickDriverGameControllerProbe/`: GameController.framework
   consumer probe.
 - `Sources/OpenJoystickDriverHIDTool/`: HID diagnostic tool.

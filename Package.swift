@@ -46,16 +46,6 @@ let package = Package(
     ),
 
     .executableTarget(
-      name: "OpenJoystickDriverDaemon",
-      dependencies: ["OpenJoystickDriverKit"],
-      path: "Sources/OpenJoystickDriverDaemon",
-      exclude: ["OpenJoystickDriverDaemon.entitlements.template"],
-      linkerSettings: [
-        .linkedFramework("GameController")
-      ]
-    ),
-
-    .executableTarget(
       name: "OpenJoystickDriver",
       dependencies: [
         "OpenJoystickDriverKit",
@@ -65,10 +55,10 @@ let package = Package(
       exclude: [
         "OpenJoystickDriver.entitlements.template",
         "App/Info.plist",
-        "App/com.openjoystickdriver.daemon.plist",
       ],
       resources: [.copy("Resources")],
       linkerSettings: [
+        .linkedFramework("GameController"),
         .linkedFramework("SystemExtensions"),
         .unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"]),
       ]

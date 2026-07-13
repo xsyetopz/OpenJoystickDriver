@@ -11,7 +11,7 @@ struct PhysicalOutputParityTests {
       root: root
     )
     let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/XPCOperations.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/ApplicationServiceOperations.swift",
       root: root
     )
     let view = try source(
@@ -22,16 +22,12 @@ struct PhysicalOutputParityTests {
       "Sources/OpenJoystickDriver/Commands/StatusCommand.swift",
       root: root
     )
-    let protocolSource = try source(
-      "Sources/OpenJoystickDriverKit/XPC/XPCProtocol.swift",
-      root: root
-    )
     let client = try source(
-      "Sources/OpenJoystickDriverKit/XPC/XPCClient.swift",
+      "Sources/OpenJoystickDriverKit/ApplicationService/ApplicationServiceClient.swift",
       root: root
     )
     let service = try source(
-      "Sources/OpenJoystickDriverDaemon/XPCService/Protocol.swift",
+      "Sources/OpenJoystickDriver/Service/ApplicationServiceServer/Requests.swift",
       root: root
     )
     let report = try source(
@@ -60,8 +56,6 @@ struct PhysicalOutputParityTests {
     #expect(view.contains("showPhysicalOutputValidationPlan"))
     #expect(appModel.contains("setPhysicalBrightness"))
     #expect(appModel.contains("setPhysicalColor"))
-    #expect(protocolSource.contains("setPhysicalBrightness"))
-    #expect(protocolSource.contains("setPhysicalColor"))
     #expect(client.contains("setPhysicalBrightness"))
     #expect(client.contains("setPhysicalColor"))
     #expect(service.contains("setPhysicalBrightness"))

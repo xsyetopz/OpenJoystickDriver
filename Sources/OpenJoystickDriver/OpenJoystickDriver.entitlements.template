@@ -2,9 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- GUI app must not be sandboxed: it manages a LaunchAgent daemon and
-         submits a system extension (OSSystemExtensionManager requires access
-         to /Library/SystemExtensions which is outside the sandbox). -->
+    <!-- The app must not be sandboxed: it submits a system extension and owns
+         the direct USB/HID runtime. -->
     <key>com.apple.security.app-sandbox</key>
     <false/>
 
@@ -14,9 +13,8 @@
     <key>com.apple.developer.system-extension.install</key>
     <true/>
 
-    <!-- Required for IOHIDUserDevice (user-space virtual gamepad / Compatibility mode).
-         Note: if the app falls back to the embedded backend (no LaunchAgent / no XPC),
-         the menubar app itself creates the IOHIDUserDevice and therefore needs this. -->
+    <!-- Required because the main application executable creates IOHIDUserDevice
+         compatibility profiles from the persistent main app. -->
     <key>com.apple.developer.hid.virtual.device</key>
     <true/>
 

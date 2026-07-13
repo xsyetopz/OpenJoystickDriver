@@ -33,7 +33,7 @@ struct DiagnoseCommand {
     print("")
     printSystemExtensionBundle()
     print("")
-    printPermissions()
+    printPermissionsSection()
     print("")
     printUSBDevices()
     print("")
@@ -95,8 +95,28 @@ struct DiagnoseCommand {
     }
   }
 
-  private func printPermissions() {
-    printInputMonitoringPermissions(currentInputMonitoringPermissions())
+  private func printPermissionsSection() {
+    let client = ApplicationServiceClient()
+    client.connect()
+    defer { client.disconnect() }
+    let payload: ApplicationServiceStatusPayload? = runSyncOptionalResult(
+      timeout: applicationServiceCallTimeoutSeconds
+    ) {
+      try? await client.getStatus()
+    }
+    guard let payload else {
+      print("Permissions: unavailable without the running main app")
+      print("  Recovery: --headless start")
+      return
+    }
+
+    printPermissionSnapshot(
+      permissionSnapshot(
+        inputMonitoring: payload.inputMonitoring,
+        accessibility: payload.accessibility
+      )
+    )
+    print("  State source     : running main app")
   }
 
   private func printUSBDevices() {
@@ -129,6 +149,8 @@ struct DiagnoseCommand {
       "    -> Grant Input Monitoring: System Settings -> Privacy & Security"
         + " -> Input Monitoring"
     )
+    print("  User-space virtual device unavailable?")
+    print("    -> Grant Accessibility to OpenJoystickDriver in Privacy & Security")
     print("  DriverKit extension missing/broken?")
     print("    -> Run: ./scripts/ojd rebuild dev")
     print("  Reporting a controller issue?")

@@ -6,7 +6,7 @@ import Foundation
 /// free-form DriverKit discovery text are intentionally not represented.
 public struct SupportReport: Codable, Sendable {
   /// Increment when the report's encoded contract changes incompatibly.
-  public static let currentSchemaVersion = 2
+  public static let currentSchemaVersion = 4
 
   public struct Privacy: Codable, Sendable {
     public let includesRawSerialNumbers: Bool
@@ -23,19 +23,15 @@ public struct SupportReport: Codable, Sendable {
   }
 
   public struct Permissions: Codable, Sendable {
-    public let applicationInputMonitoring: String
-    public let daemonInputMonitoring: String
+    public let inputMonitoring: String
+    public let accessibility: String
   }
 
-  public struct Daemon: Codable, Sendable {
+  public struct ApplicationService: Codable, Sendable {
     public let installed: Bool
     public let connected: Bool
-    public let launchdState: String?
+    public let runtimeState: String?
     public let activeCount: Int?
-    public let runs: Int?
-    public let lastTerminatingSignal: String?
-    public let immediateReason: String?
-    public let inefficientKillLoopDetected: Bool
   }
 
   public struct Configuration: Codable, Sendable {
@@ -68,7 +64,7 @@ public struct SupportReport: Codable, Sendable {
     public let productID: UInt16
     public let product: String?
     public let transport: String?
-    public let serialKind: XPCSerialKind
+    public let serialKind: ApplicationServiceSerialKind
     public let ioUserClass: String?
     public let isOJDDriverKit: Bool
     public let isOJDUserSpace: Bool
@@ -91,30 +87,28 @@ public struct SupportReport: Codable, Sendable {
   public let privacy: Privacy
   public let system: System
   public let permissions: Permissions
-  public let daemon: Daemon
+  public let applicationService: ApplicationService
   public let configuration: Configuration
   public let controllers: [Controller]
   public let outputValidationPlans: [PhysicalOutputValidationPlan]
   public let hidGamepads: [HIDGamepad]
   public let driverKitOutput: DriverKitOutput?
-  public let runtimeHealth: RuntimeHealthSummary?
   public let appleGameControllerAudit: AppleGameControllerSupportAudit?
   public let notes: [String]
 
-  /// Creates a redacted report from daemon and local diagnostic snapshots.
+  /// Creates a redacted report from application service and local diagnostic snapshots.
   public init(
     generatedAt: Date,
     appVersion: String,
     macOSVersion: String,
     architecture: String,
-    permissions: InputMonitoringPermissionSnapshot,
-    daemonInstalled: Bool,
-    daemonConnected: Bool,
-    daemonHealth: DaemonManager.DaemonHealth?,
-    runtimeHealth: RuntimeHealthSummary? = nil,
+    inputMonitoring: PermissionManager.AccessState,
+    applicationServiceInstalled: Bool,
+    applicationServiceConnected: Bool,
+    applicationServiceHealth: ApplicationServiceManager.ApplicationServiceHealth?,
     appleGameControllerAudit: AppleGameControllerSupportAudit? = nil,
-    status: XPCStatusPayload?,
-    virtualDiagnostics: XPCVirtualDeviceDiagnosticsPayload?
+    status: ApplicationServiceStatusPayload?,
+    virtualDiagnostics: ApplicationServiceVirtualDeviceDiagnosticsPayload?
   ) {
     schemaVersion = Self.currentSchemaVersion
     self.generatedAt = ISO8601DateFormatter().string(from: generatedAt)
@@ -130,21 +124,16 @@ public struct SupportReport: Codable, Sendable {
       macOSVersion: macOSVersion,
       architecture: architecture
     )
-    self.permissions = Permissions(
-      applicationInputMonitoring: permissions.application.description,
-      daemonInputMonitoring: permissions.daemon.description
+    permissions = Permissions(
+      inputMonitoring: inputMonitoring.description,
+      accessibility: status?.accessibility ?? "unknown"
     )
-    daemon = Daemon(
-      installed: daemonInstalled,
-      connected: daemonConnected,
-      launchdState: daemonHealth?.state,
-      activeCount: daemonHealth?.activeCount,
-      runs: daemonHealth?.runs,
-      lastTerminatingSignal: daemonHealth?.lastTerminatingSignal,
-      immediateReason: daemonHealth?.immediateReason,
-      inefficientKillLoopDetected: daemonHealth?.isInefficientKillLoop ?? false
+    applicationService = ApplicationService(
+      installed: applicationServiceInstalled,
+      connected: applicationServiceConnected,
+      runtimeState: applicationServiceHealth?.state,
+      activeCount: applicationServiceHealth?.activeCount
     )
-    self.runtimeHealth = runtimeHealth
     self.appleGameControllerAudit = appleGameControllerAudit
     configuration = Configuration(
       virtualDeviceMode: status?.virtualDeviceMode,
@@ -218,7 +207,7 @@ public struct SupportReport: Codable, Sendable {
       "Review this file before sharing. Device product names are included.",
       "Serial values, paths, packet payloads, HID locations, and discovery text are excluded.",
     ]
-    if status == nil { reportNotes.append("Daemon XPC status was unavailable.") }
+    if status == nil { reportNotes.append("Application service status was unavailable.") }
     if virtualDiagnostics == nil {
       reportNotes.append("Virtual-device diagnostics were unavailable.")
     }

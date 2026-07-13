@@ -57,8 +57,6 @@ cmd_install_profiles() {
 
   copy_one "OpenJoystickDriver.provisionprofile"
   copy_one "OpenJoystickDriver_DevID.provisionprofile"
-  copy_one "OpenJoystickDriverDaemon.provisionprofile"
-  copy_one "OpenJoystickDriverDaemon_DevID.provisionprofile"
   copy_one "OpenJoystickDriver_VirtualHIDDevice.provisionprofile"
 
   echo "Installed profiles to: $DST"
@@ -78,7 +76,6 @@ cmd_ci_release_setup() {
   #   KEYCHAIN_SECRET
   #   RUNNER_TEMP
   #   OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64
-  #   OPENJOYSTICKDRIVER_DAEMON_DEVID_PROFILE_BASE64
   #   OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64
 
   require_var() {
@@ -98,7 +95,6 @@ cmd_ci_release_setup() {
   require_var KEYCHAIN_SECRET
   require_var RUNNER_TEMP
   require_var OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64
-  require_var OPENJOYSTICKDRIVER_DAEMON_DEVID_PROFILE_BASE64
   require_var OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64
 
   local keychain_path="$RUNNER_TEMP/openjoystickdriver-release.keychain-db"
@@ -125,22 +121,19 @@ cmd_ci_release_setup() {
 
   echo "Installing provisioning profiles..."
   write_base64_file OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64 "$profiles_dir/OpenJoystickDriver_DevID.provisionprofile"
-  write_base64_file OPENJOYSTICKDRIVER_DAEMON_DEVID_PROFILE_BASE64 "$profiles_dir/OpenJoystickDriverDaemon_DevID.provisionprofile"
   write_base64_file OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64 "$profiles_dir/OpenJoystickDriver_VirtualHIDDevice.provisionprofile"
 
   echo "Generating release signing environment..."
   (
     cd "$PROJECT_DIR"
     GUI_DEV_PROFILE="$profiles_dir/OpenJoystickDriver_DevID.provisionprofile" \
-      DAEMON_DEV_PROFILE="$profiles_dir/OpenJoystickDriverDaemon_DevID.provisionprofile" \
       ./scripts/ojd signing configure
   )
 
   local release_env_file="$PROJECT_DIR/.env.release"
   if [[ ! -f "$release_env_file" ]] \
     || ! grep -q '^CODESIGN_IDENTITY=' "$release_env_file" \
-    || ! grep -q '^GUI_CODESIGN_IDENTITY=' "$release_env_file" \
-    || ! grep -q '^DAEMON_CODESIGN_IDENTITY=' "$release_env_file"; then
+    || ! grep -q '^GUI_CODESIGN_IDENTITY=' "$release_env_file"; then
     die "Release signing is not configured; fix the certificate/profile mismatch reported above."
   fi
 
@@ -406,7 +399,6 @@ import os, plistlib, subprocess, sys
 
 profiles_dir = os.path.expanduser("~/Library/MobileDevice/Provisioning Profiles")
 gui = os.path.join(profiles_dir, "OpenJoystickDriver_DevID.provisionprofile")
-daemon = os.path.join(profiles_dir, "OpenJoystickDriverDaemon_DevID.provisionprofile")
 
 def decode_profile(path: str) -> bytes:
     p = subprocess.run(["security", "cms", "-D", "-i", path], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
@@ -443,17 +435,15 @@ def developer_id_identities() -> set[str]:
 
 try:
     gui_sha = profile_sha1(gui)
-    daemon_sha = profile_sha1(daemon)
 except Exception as e:
     print(f"  [FAIL] {e}")
     sys.exit(1)
 
 ids = developer_id_identities()
 print(f"  GUI DevID profile cert:    {gui_sha}")
-print(f"  daemon DevID profile cert: {daemon_sha}")
 print(f"  keychain Developer IDs:    {', '.join(sorted(ids)) if ids else 'none'}")
 
-missing = [sha for sha in [gui_sha, daemon_sha] if sha not in ids]
+missing = [gui_sha] if gui_sha not in ids else []
 if missing:
     print("  [FAIL] one or more Developer ID profile certificates are not available as signing identities in Keychain.")
     print("  Need: a Developer ID Application signing identity whose SHA1 matches each profile's embedded certificate.")
@@ -461,10 +451,7 @@ if missing:
     print("  Fix: install the missing Developer ID Application certificate/private key, or regenerate that profile for an installed Developer ID identity.")
     sys.exit(1)
 
-if gui_sha != daemon_sha:
-    print("  [OK] GUI and daemon profiles use different Developer ID certs, and both are installed signing identities.")
-else:
-    print("  [OK] release Developer ID profiles match an installed signing identity")
+print("  [OK] application Developer ID profile matches an installed signing identity")
 PY
   local release_status=$?
   set -e
@@ -479,9 +466,9 @@ PY
     echo "Release signing/notarization cannot be proven until the missing Developer ID signing identity above is fixed."
     echo ""
     echo "Resolution:"
-    echo "  Option A: install/import the Developer ID Application certificate + private key whose SHA1 matches the daemon profile."
-    echo "  Option B: regenerate OpenJoystickDriverDaemon_DevID.provisionprofile and select an installed Developer ID Application identity."
-    echo "  In both options, ensure com.apple.developer.hid.virtual.device is present."
+    echo "  Option A: install/import the Developer ID Application certificate + private key whose SHA1 matches the application profile."
+    echo "  Option B: regenerate OpenJoystickDriver_DevID.provisionprofile for an installed Developer ID Application identity."
+    echo "  Ensure com.apple.developer.hid.virtual.device is present."
     echo "  Then install profiles: ./scripts/ojd signing install-profiles \"$HOME/Documents/Profiles\""
     echo "  Then re-run: ./scripts/ojd signing doctor"
     return "$release_status"
@@ -505,8 +492,6 @@ REL_ENV="${REL_ENV:-$PROJECT_DIR/.env.release}"
 
 GUI_DEV_PROFILE="${GUI_DEV_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver.provisionprofile}"
 GUI_DEVID_PROFILE="${GUI_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_DevID.provisionprofile}"
-DAEMON_DEV_PROFILE="${DAEMON_DEV_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriverDaemon.provisionprofile}"
-DAEMON_DEVID_PROFILE="${DAEMON_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriverDaemon_DevID.provisionprofile}"
 DEXT_PROFILE="${DEXT_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_VirtualHIDDevice.provisionprofile}"
 APPLE_DEV_IDENTITY="${APPLE_DEV_IDENTITY:-}"
 DEVID_APP_IDENTITY="${DEVID_APP_IDENTITY:-}"
@@ -525,7 +510,7 @@ Writes:
   - .env.release
 
 Environment overrides (optional):
-  GUI_DEV_PROFILE, GUI_DEVID_PROFILE, DAEMON_DEV_PROFILE, DAEMON_DEVID_PROFILE, DEXT_PROFILE
+  GUI_DEV_PROFILE, GUI_DEVID_PROFILE, DEXT_PROFILE
   APPLE_DEV_IDENTITY, DEVID_APP_IDENTITY
 TXT
 }
@@ -541,8 +526,6 @@ export DEV_ENV
 export REL_ENV
 export GUI_DEV_PROFILE
 export GUI_DEVID_PROFILE
-export DAEMON_DEV_PROFILE
-export DAEMON_DEVID_PROFILE
 export DEXT_PROFILE
 export APPLE_DEV_IDENTITY
 export DEVID_APP_IDENTITY

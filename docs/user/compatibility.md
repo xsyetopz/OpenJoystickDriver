@@ -66,21 +66,13 @@ Set an identity from the installed CLI:
 
 Bluetooth support does not extend to arbitrary controllers. Only the named DS3, DS4, DualSense, and Switch Pro parser paths exist.
 
-## Apple GameController Catalog Evidence
+## Apple GameController support
 
-Use the current-system MobileAsset audit to compare OJD record VID/PID pairs with Apple's private GameController mapping database:
-
-```bash
-./.build/debug/OpenJoystickDriver --headless diagnose gamecontroller-catalog --json
-```
-
-A catalog match is not a support guarantee. Transport, firmware revision, HID descriptor behavior, `GCController.supportsHIDDevice`, and a live hardware test remain authoritative. A missing exact pair does not prove incompatibility because Apple also has non-catalog and family-specific controller paths.
-
-The audit also evaluates OJD virtual Compatibility identities separately from physical controller records. See [Xbox Fallback Family Evidence](../development/xbox-identities.md) for the evidence required before adding wired/wireless family spoof choices.
+Live detection by `GCController.supportsHIDDevice` and a hardware test determine whether the active virtual controller works with GameController.framework. The private current-system mapping catalog is only an optional developer comparison for exact physical OJD record VID/PID pairs; a missing pair does not prove incompatibility. See [Xbox fallback identity evidence](../development/xbox-identities.md).
 
 ## DriverKit Relay
 
-The DriverKit extension publishes a vendor-defined relay, not a Generic Desktop GamePad. This prevents it from becoming a stale or duplicate controller beside the Compatibility IOHIDUserDevice. Its concrete role is end-to-end integrity testing of daemon to DriverKit to IOHID report delivery.
+The DriverKit extension publishes a vendor-defined relay, not a Generic Desktop GamePad. This prevents it from becoming a stale or duplicate controller beside the Compatibility IOHIDUserDevice. Its concrete role is end-to-end integrity testing of application service to DriverKit to IOHID report delivery.
 
 Run the shared CLI/GUI self-test even while Compatibility mode is active:
 
@@ -149,7 +141,7 @@ The page does not change the active compatibility identity and does not upload r
 ./.build/debug/OpenJoystickDriver --headless diagnose browser-gamepad --open all
 ```
 
-Capture the JSON snapshot from Safari/WebKit, Firefox/Gecko, and Chrome/Blink. The page can submit a snapshot only to its loopback OJD session after an explicit button press. For a combined CLI export, pass `--output /path/to/snapshots.json`; the GUI shows the accepted snapshot count while the session is active. It records the browser's Gamepad ID and mapping, button/axis counts, duplicate instances, requestAnimationFrame cadence, a ten-second hands-off misfire/drift sample, connection events, and only the haptic effect names exposed by that browser. Haptic buttons remain disabled unless the actuator reports the corresponding effect. The current Gamepad specification defines both [`dual-rumble` and `trigger-rumble`](https://www.w3.org/TR/gamepad/#gamepadhapticeffecttype-enum); browser and platform exposure still varies.
+Capture the JSON snapshot from Safari/WebKit, Firefox/Gecko, and Chrome/Blink. The page can submit a snapshot only to its loopback OJD session after an explicit button press. For a combined CLI export, pass `--output /path/to/snapshots.json`; the command prints the accepted snapshot count while the session is active. It records the browser's Gamepad ID and mapping, button/axis counts, duplicate instances, requestAnimationFrame cadence, a ten-second hands-off misfire/drift sample, connection events, and only the haptic effect names exposed by that browser. Haptic buttons remain disabled unless the actuator reports the corresponding effect. The current Gamepad specification defines both [`dual-rumble` and `trigger-rumble`](https://www.w3.org/TR/gamepad/#gamepadhapticeffecttype-enum); browser and platform exposure still varies.
 
 A snapshot is evidence for that exact browser, compatibility identity, macOS version, and hardware path. It is not sufficient to mark another combination supported.
 

@@ -3,8 +3,8 @@ import Testing
 
 struct BrowserGamepadDiagnosticTests {
   @Test
-  func cliRoutesToPrivacyReviewableBrowserGamepadSurface() throws {
-    let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+  func cliRetainsDiagnosticWhileApplicationHasNoEntryPoint() throws {
+    let root = try RepositoryRoot.from()
     let diagnose = try source(
       "Sources/OpenJoystickDriver/Commands/DiagnoseCommand.swift",
       root: root
@@ -22,13 +22,18 @@ struct BrowserGamepadDiagnosticTests {
       root: root
     )
     let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/BrowserGamepadDiagnostic.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/AppModel.swift",
       root: root
     )
-    let view = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift",
-      root: root
-    )
+    let view =
+      try source(
+        "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/MenuBarPopoverView.swift",
+        root: root
+      )
+      + source(
+        "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift",
+        root: root
+      )
     let appDelegate = try source(
       "Sources/OpenJoystickDriver/App/AppDelegate.swift",
       root: root
@@ -55,22 +60,17 @@ struct BrowserGamepadDiagnosticTests {
     #expect(command.contains(#"case "--output""#))
     #expect(command.contains("session.encodedSnapshots()"))
     #expect(!command.contains("setCompatibilityIdentity"))
-    #expect(appModel.contains("BrowserGamepadDiagnosticService.start"))
-    #expect(appModel.contains("BrowserGamepadDiagnosticService.openAsync"))
-    #expect(appModel.contains("stopBrowserGamepadDiagnostic"))
-    #expect(appModel.contains("browserGamepadSnapshotCount"))
-    #expect(view.contains("browserDiagnostic.snapshotCount"))
-    #expect(view.contains("browserGamepadTarget"))
-    #expect(view.contains("browserGamepadPort"))
-    #expect(view.contains("browserGamepadSeconds"))
-    #expect(view.contains("BrowserGamepadTarget.allCases"))
-    #expect(view.contains("in: 1...3_600"))
-    #expect(command.contains("(1...3_600).contains(seconds)"))
-    #expect(modelContainsSharedService(appModel))
-    #expect(view.contains("model.startBrowserGamepadDiagnostic"))
-    #expect(view.contains("model.stopBrowserGamepadDiagnostic"))
-    #expect(appDelegate.contains("applicationWillTerminate"))
-    #expect(appDelegate.contains("model.stopBrowserGamepadDiagnostic"))
+
+    #expect(!FileManager.default.fileExists(
+      atPath: root.appendingPathComponent(
+        "Sources/OpenJoystickDriver/App/AppModel/BrowserGamepadDiagnostic.swift"
+      ).path
+    ))
+    for applicationSource in [appModel, view, appDelegate] {
+      #expect(!applicationSource.contains("BrowserGamepad"))
+      #expect(!applicationSource.contains("browserGamepad"))
+      #expect(!applicationSource.contains("browserDiagnostic."))
+    }
 
     #expect(page.contains("navigator.getGamepads"))
     #expect(page.contains("gamepadconnected"))
@@ -90,11 +90,6 @@ struct BrowserGamepadDiagnosticTests {
     #expect(!page.contains("XMLHttpRequest"))
     #expect(!page.contains("WebSocket"))
     #expect(!page.contains("sendBeacon"))
-  }
-
-  private func modelContainsSharedService(_ source: String) -> Bool {
-    source.contains("BrowserGamepadDiagnosticService.start")
-      && source.contains("BrowserGamepadDiagnosticService.openAsync")
   }
 
   private func source(_ path: String, root: URL) throws -> String {

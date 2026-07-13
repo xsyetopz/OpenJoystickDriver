@@ -3,8 +3,7 @@ import OpenJoystickDriverKit
 import SwiftUI
 
 enum MenuBarConfirmationAction: String, Identifiable {
-  case daemonUninstall
-  case refreshInputMonitoring
+  case applicationServiceUninstall
   case systemExtensionUninstall
   case resetSettings
 
@@ -17,17 +16,10 @@ struct MenuBarPopoverView: View {
   @State var pendingConfirmation: MenuBarConfirmationAction?
   @State var showAdvanced = false
   @State var inputTester = InputTestWindowController()
-  @State var browserGamepadTarget = BrowserGamepadTarget.systemDefault
-  @State var browserGamepadPort = 8_765
-  @State var browserGamepadSeconds = 300
-  @State var runtimeHealthSeconds = 60
-  @State var runtimeHealthIntervalMilliseconds = 1_000
-  @State var runtimeHealthResidentLimitMiB = 0
-  @State var runtimeHealthFootprintLimitMiB = 512
 
   var gameControllerSupportLabel: String {
     guard let devices = model.virtualDeviceDiagnostics?.hidGamepads else {
-      return L10n.string("daemon.status.unknown")
+      return L10n.string("service.status.unknown")
     }
     let ojdDevices = devices.filter { $0.isOJDUserSpace || $0.isOJDDriverKit }
     if ojdDevices.isEmpty { return L10n.string("gameController.noOJDDevice") }
@@ -51,11 +43,8 @@ struct MenuBarPopoverView: View {
         advancedToggle
         if showAdvanced {
           outputDetailsCard
-          daemonCard
+          applicationServiceCard
           selfTestRow
-          runtimeHealthRow
-          appleGameControllerCatalogRow
-          browserGamepadDiagnosticRow
           supportReportRow
           updateRow
           footerRow
@@ -71,27 +60,14 @@ struct MenuBarPopoverView: View {
 
   func confirmationAlert(for action: MenuBarConfirmationAction) -> Alert {
     switch action {
-    case .refreshInputMonitoring:
+    case .applicationServiceUninstall:
       return Alert(
-        title: Text("Refresh Input Monitoring?"),
-        message: Text(
-          "This removes only OpenJoystickDriver and OpenJoystickDriver Daemon from Input "
-            + "Monitoring, refreshes the helper registration, and requires you to grant "
-            + "access again. Accessibility is not changed."
-        ),
-        primaryButton: .destructive(Text("Refresh")) {
-          Task { await model.refreshStaleInputMonitoringPermissions() }
-        },
-        secondaryButton: .cancel()
-      )
-    case .daemonUninstall:
-      return Alert(
-        title: Text(L10n.string("alert.uninstallTitle")),
-        message: Text(L10n.string("alert.uninstallMessage")),
+        title: Text("Remove Login Item?"),
+        message: Text("OpenJoystickDriver will no longer start automatically at login."),
         primaryButton: .destructive(Text(L10n.string("app.uninstall"))) {
           Task {
-            await model.uninstallDaemon()
-            await model.syncFromDaemonNow()
+            await model.uninstallApplicationService()
+            await model.syncFromApplicationServiceNow()
           }
         },
         secondaryButton: .cancel()
@@ -131,32 +107,31 @@ struct MenuBarPopoverView: View {
   }
 
   var readinessCard: some View {
-    let permissions = model.inputMonitoringPermissions
-    let permissionsReady = permissions.isReady
-    let ready = model.daemonConnected && permissionsReady
+    let permissionsReady = model.permissionsReady
+    let ready = model.serviceConnected && permissionsReady
     let title = ready ? L10n.string("readiness.ready") : L10n.string("readiness.needsAttention")
     let summary: String = {
-      switch model.daemonUIState {
+      switch model.applicationServiceUIState {
       case .restarting:
-        return L10n.string("readiness.daemonRestarting")
+        return L10n.string("readiness.serviceRestarting")
       case .crashLooping:
-        return L10n.string("readiness.daemonCrashLooping")
+        return L10n.string("readiness.serviceCrashLooping")
       case .missing:
-        return L10n.string("readiness.installDaemon")
+        return L10n.string("readiness.installService")
       case .stopped:
-        return L10n.string("readiness.startDaemon")
+        return L10n.string("readiness.startService")
       case .runningDisconnected:
-        return L10n.string("readiness.daemonDisconnected")
+        return L10n.string("readiness.serviceDisconnected")
       case .runningConnected, .unknown:
         break
       }
-      if !model.daemonInstalled { return L10n.string("readiness.installDaemon") }
-      if !model.daemonConnected { return L10n.string("readiness.startDaemon") }
-      if model.inputMonitoringPermissions.application != .granted {
+      if !model.serviceInstalled { return L10n.string("readiness.installService") }
+      if !model.serviceConnected { return L10n.string("readiness.startService") }
+      if model.inputMonitoringState != .granted {
         return L10n.string("readiness.allowAppInputMonitoring")
       }
-      if model.inputMonitoringPermissions.daemon != .granted {
-        return L10n.string("readiness.allowDaemonInputMonitoring")
+      if model.accessibilityState != .granted {
+        return "Allow Accessibility for the compatibility virtual gamepad."
       }
       if model.devices.isEmpty { return L10n.string("readiness.connectController") }
       return model.devices.count == 1
@@ -166,7 +141,7 @@ struct MenuBarPopoverView: View {
 
     return OJDCard {
       HStack(alignment: .top, spacing: 12) {
-        StatusOrb(isReady: ready, isBusy: model.daemonRestarting)
+        StatusOrb(isReady: ready, isBusy: model.serviceRestarting)
         VStack(alignment: .leading, spacing: 4) {
           Text(title)
             .font(.system(size: 16, weight: .semibold))
@@ -176,7 +151,7 @@ struct MenuBarPopoverView: View {
             .fixedSize(horizontal: false, vertical: true)
         }
         Spacer()
-        Text(model.daemonStatusLabel)
+        Text(model.applicationServiceStatusLabel)
           .font(.caption.weight(.semibold))
           .padding(.horizontal, 8)
           .padding(.vertical, 4)
@@ -200,7 +175,7 @@ struct MenuBarPopoverView: View {
         readinessAction
       }
 
-      if let err = model.daemonError {
+      if let err = model.serviceError {
         Text(err)
           .font(.caption)
           .foregroundColor(.red)
@@ -212,44 +187,40 @@ struct MenuBarPopoverView: View {
 
   @ViewBuilder
   var readinessAction: some View {
-    if model.daemonRestarting {
+    if model.serviceRestarting {
       EmptyView()
-    } else if model.inputMonitoringPermissions.application != .granted {
+    } else if !model.permissionsReady {
       SwiftUI.Button(L10n.string("button.requestAccess")) {
-        Task { await model.requestAppInputMonitoringAccess() }
+        Task { await model.requestRequiredAccess() }
       }
       .controlSize(.small)
       .padding(.top, 2)
-    } else if model.inputMonitoringPermissions.daemon != .granted {
-      SwiftUI.Button(L10n.string("button.requestAccess")) {
-        Task { await model.requestDaemonInputMonitoringAccess() }
-      }
-      .controlSize(.small)
-      .padding(.top, 2)
-    } else if !model.daemonInstalled {
-      SwiftUI.Button(L10n.string("button.installDaemon")) {
+    } else if !model.serviceInstalled {
+      SwiftUI.Button(L10n.string("button.installService")) {
         Task {
-          await model.installDaemon()
-          await model.syncFromDaemonNow()
+          await model.installApplicationService()
+          await model.syncFromApplicationServiceNow()
         }
       }
       .controlSize(.small)
       .padding(.top, 2)
-    } else if !model.daemonConnected {
-      if model.daemonUIState == .stopped || model.daemonUIState == .unknown {
-        SwiftUI.Button(L10n.string("button.startDaemon")) {
+    } else if !model.serviceConnected {
+      if model.applicationServiceUIState == .stopped
+        || model.applicationServiceUIState == .unknown
+      {
+        SwiftUI.Button(L10n.string("button.startService")) {
           Task {
-            await model.startDaemon()
-            await model.syncFromDaemonNow()
+            await model.startApplicationService()
+            await model.syncFromApplicationServiceNow()
           }
         }
         .controlSize(.small)
         .padding(.top, 2)
       } else {
-        SwiftUI.Button(L10n.string("button.restartDaemon")) {
+        SwiftUI.Button(L10n.string("button.restartService")) {
           Task {
-            await model.restartDaemon()
-            await model.syncFromDaemonNow()
+            await model.restartApplicationService()
+            await model.syncFromApplicationServiceNow()
           }
         }
         .controlSize(.small)
@@ -275,7 +246,7 @@ struct MenuBarPopoverView: View {
               Task { await model.setVirtualDeviceMode(VirtualDeviceMode.compatUserSpace.rawValue) }
             }
             .controlSize(.small)
-            .disabled(!model.daemonConnected)
+            .disabled(!model.serviceConnected)
           }
         }
 
@@ -299,7 +270,7 @@ struct MenuBarPopoverView: View {
             Text(L10n.string("profile.xboxOneHID")).tag(CompatibilityIdentity.xoneHID.rawValue)
           }
           .frame(maxWidth: .infinity)
-          .disabled(!model.daemonConnected || !compatSelected)
+          .disabled(!model.serviceConnected || !compatSelected)
         }
 
         if !compatSelected {

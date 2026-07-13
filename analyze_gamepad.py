@@ -4,10 +4,8 @@ analyze_gamepad.py - Gamesir G7 SE / Xbox GIP raw USB packet analyzer.
 
 Investigates whether L4/R4/M/Mic buttons produce USB traffic.
 
-IMPORTANT: Stop the OpenJoystickDriver daemon before running, or this script
-cannot claim the USB interface.
-  Stop:  .build/debug/OpenJoystickDriver --headless stop
-  Start: .build/debug/OpenJoystickDriver --headless start
+IMPORTANT: Quit OpenJoystickDriver before running, or this script cannot claim
+the USB interface. Reopen it afterward with: open -a OpenJoystickDriver
 
 Modes:
   (default)      Device info + 30s capture with GIP parsing and diff display
@@ -211,8 +209,7 @@ def claim_interface(dev: usb.core.Device) -> bool:
         print(f"[ERROR] Cannot claim interface: {e}")
         if "13" in str(e) or "Access denied" in str(e) or "busy" in str(e).lower():
             print("  -> Run with sudo")
-            print("  -> Or stop the daemon first:")
-            print("      .build/debug/OpenJoystickDriver --headless stop")
+            print("  -> Or quit OpenJoystickDriver before running this probe")
         return False
 
 

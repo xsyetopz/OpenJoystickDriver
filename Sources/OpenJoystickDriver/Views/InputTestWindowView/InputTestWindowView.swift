@@ -122,7 +122,7 @@ struct InputTestWindowView: View {
         .disabled(model.devices.isEmpty)
         SwiftUI.Button(L10n.string("app.refresh")) {
           Task {
-            await model.syncFromDaemonNow()
+            await model.syncFromApplicationServiceNow()
             await refreshState()
             await refreshPacketLog()
           }

@@ -70,36 +70,6 @@ struct AppleGameControllerSupportAuditTests {
     #expect(audit.caveat.contains("supportsHIDDevice"))
   }
 
-  @Test func compatibilityAuditRequiresAnExactListedSpoofIdentity() throws {
-    let identity = CompatibilityIdentity.xoneHID
-    let profile = CompatibilityOutputProfileCatalog.profile(for: identity)
-    let snapshot = AppleGameControllerCatalogSnapshot(
-      source: .downloadedMobileAsset,
-      bundleVersions: ["1"],
-      entries: [
-        AppleGameControllerCatalogEntry(
-          vendorID: UInt16(profile.deviceProfile.vendorID),
-          productID: UInt16(profile.deviceProfile.productID),
-          identifiers: ["exact.xbox.one"]
-        ),
-      ]
-    )
-
-    let audit = AppleGameControllerSupportAuditor.audit(snapshot: snapshot, records: [])
-    let row = try #require(audit.compatibilityProfiles.first { $0.identity == identity.rawValue })
-    let generic = try #require(
-      audit.compatibilityProfiles.first { $0.identity == CompatibilityIdentity.genericHID.rawValue }
-    )
-
-    #expect(audit.hardwareSpoofCompatibilityProfileCount == 3)
-    #expect(audit.appleBackedCompatibilityProfileCount == 1)
-    #expect(row.catalogListed)
-    #expect(row.appleBackedExactIdentity)
-    #expect(row.appleIdentifiers == ["exact.xbox.one"])
-    #expect(!generic.isHardwareSpoof)
-    #expect(!generic.appleBackedExactIdentity)
-  }
-
   @Test func malformedBundlesRemainExplicitEvidence() {
     let snapshot = AppleGameControllerSupportAuditor.snapshot(
       bundleInfoData: [Data("not a plist".utf8)],

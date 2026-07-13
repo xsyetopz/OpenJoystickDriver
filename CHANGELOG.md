@@ -6,6 +6,10 @@ All notable changes to OpenJoystickDriver are documented in this file.
 
 ### Added
 
+- Added an authenticated, user-private local RPC endpoint so headless commands can
+  reach the running main application without a helper process.
+- Added application-service health, log, permission, and virtual-output
+  diagnostics with bounded subprocess and report handling.
 - Added a deterministic controller-record catalog generated from pinned Linux
   kernel sources, with strict schemas, provenance, reviewable per-device output,
   and explicit local add/patch overrides.
@@ -18,6 +22,22 @@ All notable changes to OpenJoystickDriver are documented in this file.
 
 ### Changed
 
+- Consolidated controller processing and background service ownership into the
+  persistent main application, removing the embedded daemon, LaunchAgent, XPC
+  protocol, and second privacy identity.
+- Registered the main application itself as the login item and made it the sole
+  owner of Input Monitoring and Accessibility requests.
+- Split the DriverKit relay implementation into focused lifecycle, connection,
+  report, and device-description components.
+- Removed browser Gamepad capture, runtime soak, and private Apple catalog audit
+  controls from the menu app while retaining their headless diagnostic commands
+  and the focused support-report workflow.
+- Limited the private Apple GameController catalog audit to exact physical OJD
+  record evidence; live `GCController.supportsHIDDevice` and hardware behavior
+  remain authoritative for virtual compatibility identities.
+- Reorganized repository scripts by ownership, replaced legacy environment
+  fragments with the single root environment contract, and strengthened script
+  and Swift-structure validation.
 - Replaced all earlier controller and device configuration formats with the
   canonical `Controllers/<vid>/<vid>-<pid>.json` record format.
 - Moved shared endpoints, startup sequences, timeouts, packet behavior, and
@@ -27,6 +47,14 @@ All notable changes to OpenJoystickDriver are documented in this file.
 
 ### Fixed
 
+- Corrected permission status to use authoritative access checks from the main
+  application and removed the obsolete helper-selection workflow.
+- Made virtual-device self-test exit status follow the required DriverKit and
+  user-space relay verdicts.
+- Added bounded compatibility-device creation fallbacks for macOS
+  `IOHIDUserDevice` publication failures.
+- Removed stale GUI diagnostic state, localization keys, and support-report
+  fields that no longer had a user-facing producer.
 - Applied discovered nonzero USB alternate settings after claiming the selected
   interface, while preserving explicit record overrides and protocol fallbacks.
 

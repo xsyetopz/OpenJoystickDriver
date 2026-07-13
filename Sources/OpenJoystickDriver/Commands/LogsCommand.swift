@@ -12,7 +12,7 @@ struct LogsCommand {
   private struct Options {
     var action = "show"
     var selection = Selection.both
-    var maximumLines = DaemonLogService.defaultMaximumLines
+    var maximumLines = ApplicationServiceLogService.defaultMaximumLines
     var json = false
   }
 
@@ -30,7 +30,7 @@ struct LogsCommand {
     let streams = streams(for: options.selection)
     do {
       let snapshots = try streams.map {
-        try DaemonLogService.tail(stream: $0, maximumLines: options.maximumLines)
+        try ApplicationServiceLogService.tail(stream: $0, maximumLines: options.maximumLines)
       }
       warnAboutLogs(json: options.json)
       if options.json {
@@ -56,18 +56,18 @@ struct LogsCommand {
 
   private func printPaths(_ selection: Selection) {
     for stream in streams(for: selection) {
-      print(DaemonLogService.url(for: stream).path)
+      print(ApplicationServiceLogService.url(for: stream).path)
     }
   }
 
   private func open(_ selection: Selection) {
     for stream in streams(for: selection) {
-      let path = DaemonLogService.url(for: stream).path
+      let path = ApplicationServiceLogService.url(for: stream).path
       NSWorkspace.shared.selectFile(path, inFileViewerRootedAtPath: "")
     }
   }
 
-  private func streams(for selection: Selection) -> [DaemonLogStream] {
+  private func streams(for selection: Selection) -> [ApplicationServiceLogStream] {
     switch selection {
     case .stdout: return [.standardOutput]
     case .stderr: return [.standardError]
@@ -75,7 +75,7 @@ struct LogsCommand {
     }
   }
 
-  private func printJSON(_ snapshots: [DaemonLogSnapshot]) throws {
+  private func printJSON(_ snapshots: [ApplicationServiceLogSnapshot]) throws {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     let data = try encoder.encode(snapshots)
@@ -85,10 +85,10 @@ struct LogsCommand {
   private func warnAboutLogs(json: Bool) {
     if json {
       FileHandle.standardError.write(
-        Data("WARNING: \(DaemonLogService.sharingWarning)\n".utf8)
+        Data("WARNING: \(ApplicationServiceLogService.sharingWarning)\n".utf8)
       )
     } else {
-      print("WARNING: \(DaemonLogService.sharingWarning)")
+      print("WARNING: \(ApplicationServiceLogService.sharingWarning)")
     }
   }
 

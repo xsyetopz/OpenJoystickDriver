@@ -10,7 +10,7 @@ struct PhysicalOutputCommand {
     let connection: String
     let physicalOutputCapabilities: PhysicalControllerOutputCapabilities
 
-    init(_ device: XPCDeviceDescription) {
+    init(_ device: ApplicationServiceDeviceDescription) {
       name = device.name
       vendorID = device.vendorID
       productID = device.productID
@@ -126,10 +126,10 @@ struct PhysicalOutputCommand {
     let rumbleLT = lt
     let rumbleRT = rt
     let rumbleDurationMs = durationMs
-    let client = XPCClient()
+    let client = ApplicationServiceClient()
     client.connect()
     defer { client.disconnect() }
-    let sent: Bool? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds + 5.0) {
+    let sent: Bool? = runSyncOptionalResult(timeout: applicationServiceCallTimeoutSeconds + 5.0) {
       try? await client.sendPhysicalRumble(
         vendorID: vendorID,
         productID: productID,
@@ -141,7 +141,7 @@ struct PhysicalOutputCommand {
       )
     }
     guard sent == true else {
-      fail("The daemon could not send the physical rumble command.")
+      fail("The application service could not send the physical rumble command.")
     }
     print("Physical rumble command sent to \(hex(vendorID)):\(hex(productID)).")
   }
@@ -169,10 +169,10 @@ struct PhysicalOutputCommand {
       fail("The selected controller has no source-backed player-indicator implementation.")
     }
 
-    let client = XPCClient()
+    let client = ApplicationServiceClient()
     client.connect()
     defer { client.disconnect() }
-    let sent: Bool? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
+    let sent: Bool? = runSyncOptionalResult(timeout: applicationServiceCallTimeoutSeconds) {
       try? await client.setPhysicalPlayerIndicator(
         vendorID: vendorID,
         productID: productID,
@@ -180,7 +180,7 @@ struct PhysicalOutputCommand {
       )
     }
     guard sent == true else {
-      fail("The daemon could not set the physical player indicator.")
+      fail("The application service could not set the physical player indicator.")
     }
     print("Physical player indicator set on \(hex(vendorID)):\(hex(productID)).")
   }
@@ -236,10 +236,10 @@ struct PhysicalOutputCommand {
       fail("The selected controller has no source-backed RGB implementation.")
     }
 
-    let client = XPCClient()
+    let client = ApplicationServiceClient()
     client.connect()
     defer { client.disconnect() }
-    let sent: Bool? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
+    let sent: Bool? = runSyncOptionalResult(timeout: applicationServiceCallTimeoutSeconds) {
       try? await client.setPhysicalColor(
         vendorID: vendorID,
         productID: productID,
@@ -248,7 +248,7 @@ struct PhysicalOutputCommand {
         blue: components[2]
       )
     }
-    guard sent == true else { fail("The daemon could not set physical RGB color.") }
+    guard sent == true else { fail("The application service could not set physical RGB color.") }
     print("Physical RGB color set on \(hex(vendorID)):\(hex(productID)).")
   }
 
@@ -269,10 +269,10 @@ struct PhysicalOutputCommand {
       fail("The selected controller has no source-backed brightness implementation.")
     }
 
-    let client = XPCClient()
+    let client = ApplicationServiceClient()
     client.connect()
     defer { client.disconnect() }
-    let sent: Bool? = runSyncOptionalResult(timeout: xpcCallTimeoutSeconds) {
+    let sent: Bool? = runSyncOptionalResult(timeout: applicationServiceCallTimeoutSeconds) {
       try? await client.setPhysicalBrightness(
         vendorID: vendorID,
         productID: productID,
@@ -280,25 +280,28 @@ struct PhysicalOutputCommand {
       )
     }
     guard sent == true else {
-      fail("The daemon could not set physical LED brightness.")
+      fail("The application service could not set physical LED brightness.")
     }
     print("Physical LED brightness set on \(hex(vendorID)):\(hex(productID)).")
   }
 
-  private func connectedDevices() -> [XPCDeviceDescription] {
-    let client = XPCClient()
+  private func connectedDevices() -> [ApplicationServiceDeviceDescription] {
+    let client = ApplicationServiceClient()
     client.connect()
     defer { client.disconnect() }
-    guard let status: XPCStatusPayload = runSyncOptionalResult(
-      timeout: xpcCallTimeoutSeconds,
+    guard let status: ApplicationServiceStatusPayload = runSyncOptionalResult(
+      timeout: applicationServiceCallTimeoutSeconds,
       { try? await client.getStatus() }
     ) else {
-      fail("The daemon is unavailable.")
+      fail("The application service is unavailable.")
     }
     return status.connectedDevices
   }
 
-  private func requireDevice(vendorID: UInt16, productID: UInt16) -> XPCDeviceDescription {
+  private func requireDevice(
+    vendorID: UInt16,
+    productID: UInt16
+  ) -> ApplicationServiceDeviceDescription {
     guard let device = connectedDevices().first(where: {
       $0.vendorID == vendorID && $0.productID == productID
     }) else {

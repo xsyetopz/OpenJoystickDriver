@@ -23,7 +23,7 @@ Open the section that matches the work. Archived upstream material stays under `
 
 - [Architecture](development/architecture.md)
 - [CLI and menu app coverage](development/cli-and-menu-app.md)
-- [Daemon runtime health](development/daemon-health.md)
+- [Application service runtime health](development/application-service-health.md)
 - [Menu app responsiveness](development/menu-responsiveness.md)
 - [Environment files](development/environment.md)
 - [Implementation status](development/implementation-status.md)

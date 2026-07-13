@@ -110,7 +110,7 @@ For each capture, paste:
 
 ## 6. OJD App Check
 
-If OJD sees the joystick in the app or daemon path, open Input Test and use the packet log. For each action above, paste the recent RX entries and say whether the on-screen state changed.
+If OJD sees the joystick in the app or application service path, open Input Test and use the packet log. For each action above, paste the recent RX entries and say whether the on-screen state changed.
 
 If OJD cannot see it but macOS native tools can, say that. That points toward a DriverKit/raw USB path instead of a record-only fix.
 

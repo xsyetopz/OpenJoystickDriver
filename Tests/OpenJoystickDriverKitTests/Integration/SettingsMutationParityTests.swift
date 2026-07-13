@@ -19,7 +19,7 @@ struct SettingsMutationParityTests {
       root: root
     )
     let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/XPCOperations.swift",
+      "Sources/OpenJoystickDriver/App/AppModel/ApplicationServiceOperations.swift",
       root: root
     )
     let view = try source(

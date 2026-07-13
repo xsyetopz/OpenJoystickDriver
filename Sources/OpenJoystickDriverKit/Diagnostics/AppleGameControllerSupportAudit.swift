@@ -84,20 +84,6 @@ public struct AppleGameControllerRecordAudit: Codable, Hashable, Sendable {
 }
 
 /// Comparison of OJD records with Apple's private current-system mapping database.
-public struct AppleGameControllerCompatibilityAudit: Codable, Hashable, Sendable {
-  public let identity: String
-  public let displayName: String
-  public let vendorID: UInt16
-  public let productID: UInt16
-  public let isHardwareSpoof: Bool
-  public let catalogListed: Bool
-  public let appleBackedExactIdentity: Bool
-  public let appleIdentifiers: [String]
-  public let transportConstraints: [String]
-  public let versionConstraints: [Int]
-}
-
-/// Comparison of compatibility identities with the private current-system catalog.
 public struct AppleGameControllerSupportAudit: Codable, Sendable {
   public let source: AppleGameControllerCatalogSource
   public let bundleVersions: [String]
@@ -106,9 +92,6 @@ public struct AppleGameControllerSupportAudit: Codable, Sendable {
   public let ojdRecordCount: Int
   public let catalogListedOJDRecordCount: Int
   public let records: [AppleGameControllerRecordAudit]
-  public let hardwareSpoofCompatibilityProfileCount: Int
-  public let appleBackedCompatibilityProfileCount: Int
-  public let compatibilityProfiles: [AppleGameControllerCompatibilityAudit]
   public let warnings: [String]
   public let caveat: String
 }
@@ -224,24 +207,6 @@ public enum AppleGameControllerSupportAuditor {
         versionNumbers: Array(Set(existing.versionNumbers + entry.versionNumbers))
       )
     }
-    let compatibilityRows = CompatibilityIdentity.allCases.map { identity in
-      let profile = CompatibilityOutputProfileCatalog.profile(for: identity)
-      let vendorID = UInt16(clamping: profile.deviceProfile.vendorID)
-      let productID = UInt16(clamping: profile.deviceProfile.productID)
-      let entry = appleByKey[DeviceKey(vendorID: vendorID, productID: productID)]
-      return AppleGameControllerCompatibilityAudit(
-        identity: identity.rawValue,
-        displayName: profile.displayName,
-        vendorID: vendorID,
-        productID: productID,
-        isHardwareSpoof: profile.isHardwareSpoof,
-        catalogListed: entry != nil,
-        appleBackedExactIdentity: profile.isHardwareSpoof && entry != nil,
-        appleIdentifiers: entry?.identifiers ?? [],
-        transportConstraints: entry?.transports ?? [],
-        versionConstraints: entry?.versionNumbers ?? []
-      )
-    }
 
     let rows = records.map { profile in
       let entry = appleByKey[DeviceKey(vendorID: profile.vendorID, productID: profile.productID)]
@@ -268,15 +233,10 @@ public enum AppleGameControllerSupportAuditor {
       ojdRecordCount: rows.count,
       catalogListedOJDRecordCount: rows.filter(\.catalogListed).count,
       records: rows,
-      hardwareSpoofCompatibilityProfileCount: compatibilityRows.filter(\.isHardwareSpoof).count,
-      appleBackedCompatibilityProfileCount: compatibilityRows.filter(\.appleBackedExactIdentity)
-        .count,
-      compatibilityProfiles: compatibilityRows,
       warnings: snapshot.warnings,
       caveat: "Private current-system catalog observation only. A missing entry does not prove "
         + "GameController incompatibility, and a listed entry does not replace a live "
-        + "GCController.supportsHIDDevice or hardware test. Hardware-spoof compatibility "
-        + "identities are Apple-backed by this audit only when their exact VID/PID is listed."
+        + "GCController.supportsHIDDevice or hardware test."
     )
   }
 

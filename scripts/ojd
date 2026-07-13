@@ -39,7 +39,7 @@ Commands:
   signing export-github-secrets
                                Write/import GitHub Actions release secrets
 
-  diagnose dext               Run dext diagnostics (activation, codesign, IORegistry, daemon connection)
+  diagnose dext               Run dext diagnostics (activation, codesign, IORegistry, application service connection)
   diagnose record <json>     Validate/probe a raw-USB record without app signing
   diagnose sdl3 [--seconds N] Run SDL3 probe against the virtual device
   diagnose sdl3-gamecontroller [--seconds N]

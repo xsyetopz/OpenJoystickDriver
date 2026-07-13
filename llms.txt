@@ -8,10 +8,10 @@ DriverKit HID or IOHIDUserDevice compatibility mode.
 
 - `Package.swift`: SwiftPM package graph, Swift tools 6.2.
 - `docs/development/architecture.md`: runtime boundaries and extension rules.
-- `Sources/OpenJoystickDriverKit/`: core daemon library, parsers, records,
-  virtual backends, XPC/service logic.
+- `Sources/OpenJoystickDriverKit/`: shared parsers, controller records, virtual
+  backends, permissions, diagnostics, and application-service IPC.
 - `Sources/OpenJoystickDriver/`: SwiftUI menu bar app and headless CLI.
-- `Sources/OpenJoystickDriverDaemon/`: LaunchAgent daemon executable.
+- `Sources/OpenJoystickDriver/Service/`: persistent main-app runtime and local RPC.
 - `DriverKitExtension/`: DriverKit virtual HID system extension.
 - `Resources/SDL/openjoystickdriver.gamecontrollerdb.txt`: SDL gamepad mapping
   for the generic user-space OJD device; use `platform:macOS` for SDL3.

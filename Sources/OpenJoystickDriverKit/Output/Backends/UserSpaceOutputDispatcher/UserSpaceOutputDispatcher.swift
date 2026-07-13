@@ -14,16 +14,19 @@ import Security
 public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispatching,
   @unchecked Sendable
 {
-  public typealias RumbleCommandHandler =
-    @Sendable (DeviceIdentifier, VirtualRumbleCommand) -> Void
+  public typealias RumbleCommandHandler = @Sendable (DeviceIdentifier, VirtualRumbleCommand) -> Void
 
   public enum CreationError: Error, CustomStringConvertible, Sendable {
     case createFailed
+    case inputMonitoringDenied
+    case accessibilityDenied
     case missingEntitlement(String)
 
     public var description: String {
       switch self {
       case .createFailed: return "Failed to create IOHIDUserDevice"
+      case .inputMonitoringDenied: return "Input Monitoring denied for main app"
+      case .accessibilityDenied: return "Accessibility denied for main app virtual device"
       case .missingEntitlement(let e): return "Missing entitlement: \(e)"
       }
     }
@@ -65,6 +68,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
   ///
   /// Keyed by the physical identifier provided by the input pipeline.
   private var entries: [DeviceIdentifier: Entry] = [:]
+  private var creationRetryPolicies: [DeviceIdentifier: UserSpaceDeviceCreationRetryPolicy] = [:]
 
   // MARK: - Report state
 
@@ -77,8 +81,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     hasEntitlement(requiredVirtualDeviceEntitlement)
   }
 
-  @preconcurrency
-  public init(
+  @preconcurrency public init(
     profile: VirtualDeviceProfile = .default,
     format: any VirtualGamepadReportFormat = OJDGenericGamepadFormat(),
     primaryUsage: Int? = nil,
@@ -98,7 +101,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     guard Self.hasRequiredVirtualDeviceEntitlement else {
       status =
         "error: missing entitlement \(Self.requiredVirtualDeviceEntitlement) "
-        + "(regenerate daemon profile)"
+        + "(regenerate application service profile)"
       throw CreationError.missingEntitlement(Self.requiredVirtualDeviceEntitlement)
     }
 
@@ -111,11 +114,10 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     let oldEntries = registryLock.withLock { () -> [Entry] in
       let old = Array(entries.values)
       entries.removeAll()
+      creationRetryPolicies.removeAll()
       return old
     }
-    for entry in oldEntries {
-      IOHIDUserDeviceCancel(entry.device)
-    }
+    for entry in oldEntries { IOHIDUserDeviceCancel(entry.device) }
     status = "off"
   }
 
@@ -124,20 +126,17 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       if !status.hasPrefix("error:") { status = "off" }
       return
     }
-    if !status.hasPrefix("error:") {
-      status = "on (devices=\(entries.count))"
-    }
+    if !status.hasPrefix("error:") { status = "on (devices=\(entries.count))" }
   }
 
   private func createDevice(for identifier: DeviceIdentifier) throws -> Entry {
-    // IMPORTANT: Keep the properties dictionary minimal. Some HID keys that are valid on
-    // real devices are rejected for IOHIDUserDevice creation on newer macOS builds.
-    func tryCreate(_ props: [String: Any]) -> IOHIDUserDevice? {
-      IOHIDUserDeviceCreateWithProperties(
-        kCFAllocatorDefault,
-        props as CFDictionary,
-        IOOptionBits(1 << 0)
-      )
+    guard PermissionManager.currentInputMonitoringAccessState() == .granted else {
+      status = "error: \(CreationError.inputMonitoringDenied)"
+      throw CreationError.inputMonitoringDenied
+    }
+    guard PermissionManager.currentAccessibilityAccessState() == .granted else {
+      status = "error: \(CreationError.accessibilityDenied)"
+      throw CreationError.accessibilityDenied
     }
 
     let baseProperties = Self.deviceProperties(
@@ -147,67 +146,54 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       routeToken: routeToken,
       productNameOverride: productNameOverride
     )
-
-    let usageProps: [String: Any] = [
-      kIOHIDPrimaryUsagePageKey as String: Int(kHIDPage_GenericDesktop),
-      kIOHIDPrimaryUsageKey as String: primaryUsage,
-      kIOHIDDeviceUsagePairsKey as String: [
-        [
-          kIOHIDDeviceUsagePageKey as String: Int(kHIDPage_GenericDesktop),
-          kIOHIDDeviceUsageKey as String: primaryUsage,
-        ],
-      ],
-    ]
-
-    let noPairsUsageProps: [String: Any] = [
-      kIOHIDPrimaryUsagePageKey as String: Int(kHIDPage_GenericDesktop),
-      kIOHIDPrimaryUsageKey as String: primaryUsage,
-    ]
-
-    let attemptVariants: [(label: String, props: [String: Any])] = [
-      ("usage+pairs", baseProperties.merging(usageProps) { a, _ in a }),
-      ("usage(no-pairs)", baseProperties.merging(noPairsUsageProps) { a, _ in a }),
-      ("no-usage", baseProperties),
-    ]
-    // Some macOS builds reject certain LocationID values for IOHIDUserDevice creation.
-    // Try the computed namespaced LocationID first, then a small stable fallback.
-    let candidateLocationIDs: [UInt32] = [
+    let attempts = Self.deviceCreationAttempts(
+      baseProperties: baseProperties,
+      primaryUsage: primaryUsage
+    )
+    let candidateLocationIDs: [UInt32?] = [
       UserSpaceVirtualDeviceConstants.locationID(for: identifier),
       0x1000_0002,
+      nil,
     ]
 
     var dev: IOHIDUserDevice?
-    attemptLoop: for variant in attemptVariants {
-      var properties = variant.props
-
-      for loc in candidateLocationIDs {
-        properties[kIOHIDLocationIDKey as String] = Int64(loc)
-        dev = tryCreate(properties)
+    var successfulAttempt: String?
+    attemptLoop: for attempt in attempts {
+      for locationID in candidateLocationIDs {
+        var properties = attempt.properties
+        if let locationID {
+          properties[kIOHIDLocationIDKey as String] = Int64(locationID)
+        } else {
+          properties.removeValue(forKey: kIOHIDLocationIDKey as String)
+        }
+        dev = IOHIDUserDeviceCreateWithProperties(
+          kCFAllocatorDefault,
+          properties as CFDictionary,
+          attempt.options
+        )
         if dev != nil {
+          successfulAttempt = attempt.label
           break attemptLoop
         }
-      }
-
-      // LocationID is optional; try without it.
-      properties.removeValue(forKey: kIOHIDLocationIDKey as String)
-      dev = tryCreate(properties)
-      if dev != nil {
-        break attemptLoop
       }
     }
 
     guard let dev else {
       let entitlement = Self.requiredVirtualDeviceEntitlement
       if !Self.hasEntitlement(entitlement) {
-        status = "error: missing entitlement \(entitlement) (regenerate daemon profile)"
+        status =
+          "error: missing entitlement \(entitlement) "
+          + "(regenerate application profile)"
         throw CreationError.missingEntitlement(entitlement)
       }
       status = "error: \(CreationError.createFailed)"
       throw CreationError.createFailed
     }
+    if let successfulAttempt {
+      print("[UserSpaceOutputDispatcher] Created IOHIDUserDevice via \(successfulAttempt)")
+    }
     let queue = DispatchQueue(
-      label:
-        "com.openjoystickdriver.userspace-hid."
+      label: "com.openjoystickdriver.userspace-hid."
         + "\(routeToken ?? UserSpaceVirtualDeviceConstants.sharedRouteToken)."
         + "\(identifier.vendorID).\(identifier.productID)"
     )
@@ -233,9 +219,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
         report[0] = expectedReportID
         offset = 1
       }
-      for (index, byte) in neutral.enumerated() {
-        report[offset + index] = byte
-      }
+      for (index, byte) in neutral.enumerated() { report[offset + index] = byte }
       reportLength.pointee = CFIndex(requiredLength)
       return kIOReturnSuccess
     }
@@ -249,12 +233,10 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
           reportID: reportID,
           bytes: bytes
         )
-        guard let command else {
-          return kIOReturnUnsupported
-        }
+        guard let command else { return kIOReturnUnsupported }
         self?.lastRumbleStatus =
-          "app report id=\(reportID) L=\(command.left) R=\(command.right) " +
-          "LT=\(command.leftTrigger) RT=\(command.rightTrigger)"
+          "app report id=\(reportID) L=\(command.left) R=\(command.right) "
+          + "LT=\(command.leftTrigger) RT=\(command.rightTrigger)"
         let status = self?.lastRumbleStatus ?? ""
         print("[UserSpaceOutputDispatcher] App rumble report: \(identifier) \(status)")
         onRumbleCommand(identifier, command)
@@ -267,9 +249,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
   }
 
   public static func defaultPrimaryUsage(for format: any VirtualGamepadReportFormat) -> Int {
-    if let xbox360 = format as? Xbox360MacHIDReportFormat {
-      return Int(xbox360.topLevelUsage)
-    }
+    if let xbox360 = format as? Xbox360MacHIDReportFormat { return Int(xbox360.topLevelUsage) }
     return Int(kHIDUsage_GD_GamePad)
   }
 
@@ -287,8 +267,10 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       kIOHIDVersionNumberKey as String: profile.versionNumber,
       kIOHIDProductKey as String: productNameOverride ?? profile.productName,
       kIOHIDManufacturerKey as String: profile.manufacturer,
-      kIOHIDSerialNumberKey as String:
-        UserSpaceVirtualDeviceConstants.serialNumber(for: identifier, routeToken: routeToken),
+      kIOHIDSerialNumberKey as String: UserSpaceVirtualDeviceConstants.serialNumber(
+        for: identifier,
+        routeToken: routeToken
+      ),
       kIOHIDTransportKey as String: "USB",
       kIOHIDMaxInputReportSizeKey as String: reportBufferSize(
         payloadSize: format.inputReportPayloadSize,
@@ -330,9 +312,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     guard !suppressOutput else { return }
 
     let entry: Entry
-    do {
-      entry = try getEntry(for: identifier)
-    } catch {
+    do { entry = try getEntry(for: identifier) } catch {
       status = "error: \(error)"
       return
     }
@@ -367,11 +347,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
         entry.lastFailure = nil
         entry.consecutiveFailures = 0
       }
-      registryLock.withLock {
-        if status.hasPrefix("error:") {
-          recomputeStatusLocked()
-        }
-      }
+      registryLock.withLock { if status.hasPrefix("error:") { recomputeStatusLocked() } }
     }
   }
 
@@ -386,7 +362,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       entry.lastFailure = error
       entry.consecutiveFailures += 1
 
-      // Typical "dead device" errors: recreate quickly to avoid requiring a daemon restart.
+      // Typical "dead device" errors: recreate quickly to avoid requiring a application service restart.
       if error == kIOReturnNotOpen || error == kIOReturnNotAttached || error == kIOReturnNoDevice
         || error == kIOReturnNotResponding
       {
@@ -418,19 +394,30 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       _ = try getEntry(for: identifier)
       registryLock.withLock { recomputeStatusLocked() }
       print("[UserSpaceOutputDispatcher] Recreated IOHIDUserDevice after error for \(identifier)")
-    } catch {
-      status = "error: \(error)"
-    }
+    } catch { status = "error: \(error)" }
   }
 
   private func getEntry(for identifier: DeviceIdentifier) throws -> Entry {
     try registryLock.withLock {
       if let existing = entries[identifier] { return existing }
-      let newEntry = try createDevice(for: identifier)
-      entries[identifier] = newEntry
-      if !status.hasPrefix("error:") { status = "on" }
-      recomputeStatusLocked()
-      return newEntry
+
+      let now = DispatchTime.now().uptimeNanoseconds
+      let retryPolicy = creationRetryPolicies[identifier] ?? UserSpaceDeviceCreationRetryPolicy()
+      guard retryPolicy.permitsAttempt(at: now) else { throw CreationError.createFailed }
+
+      do {
+        let newEntry = try createDevice(for: identifier)
+        creationRetryPolicies.removeValue(forKey: identifier)
+        entries[identifier] = newEntry
+        if !status.hasPrefix("error:") { status = "on" }
+        recomputeStatusLocked()
+        return newEntry
+      } catch CreationError.createFailed {
+        var failedPolicy = retryPolicy
+        failedPolicy.recordFailure(at: now)
+        creationRetryPolicies[identifier] = failedPolicy
+        throw CreationError.createFailed
+      }
     }
   }
 
@@ -438,10 +425,11 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
 
 extension UserSpaceOutputDispatcher: ControllerLifecycleListener {
   public func controllerDidStop(_ identifier: DeviceIdentifier) {
-    let old = registryLock.withLock { entries.removeValue(forKey: identifier) }
-    if let old {
-      IOHIDUserDeviceCancel(old.device)
+    let old = registryLock.withLock {
+      creationRetryPolicies.removeValue(forKey: identifier)
+      return entries.removeValue(forKey: identifier)
     }
+    if let old { IOHIDUserDeviceCancel(old.device) }
     registryLock.withLock { recomputeStatusLocked() }
   }
 }

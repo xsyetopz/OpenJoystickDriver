@@ -8,7 +8,7 @@ This request covers [OpenJoystickDriver issue #9](https://github.com/xsyetopz/Op
 
 The parser handles Linux's four-byte receiver envelope, controller presence transitions, wrapped 20-byte state reports, two-motor rumble, and ring-light commands. These paths are source-backed but not hardware-verified.
 
-No paid Apple Developer Program account, application signing, daemon installation, or DriverKit provisioning is required.
+No paid Apple Developer Program account, application signing, application service installation, or DriverKit provisioning is required.
 
 ## Find and validate the receiver record
 
@@ -40,4 +40,4 @@ If claiming the USB interface is busy, repeat once with `--detach` and unplug/re
 
 Attach the complete command output to issue #9 with macOS version, Mac model, receiver VID/PID and branding, controller model, exact OJD commit, whether `--detach` was required, reconnect results, and any missing or incorrect inputs. Raw packet output is included; inspect it before publishing.
 
-After input passes, use the app or daemon-backed `physical-output plan` workflow to verify both rumble motors and all four ring-light player patterns. Do not mark these records hardware-verified until receiver presence, input, reconnect, rumble, and LEDs pass on physical hardware.
+After input passes, use the app or application service-backed `physical-output plan` workflow to verify both rumble motors and all four ring-light player patterns. Do not mark these records hardware-verified until receiver presence, input, reconnect, rumble, and LEDs pass on physical hardware.
