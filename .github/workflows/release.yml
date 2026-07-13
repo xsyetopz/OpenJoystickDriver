@@ -53,6 +53,12 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || steps.release.outputs.tag }}
 
+      - name: Remove unused untrusted Homebrew taps
+        run: |
+          if brew tap | grep -Fxq aws/tap; then
+            brew untap --force aws/tap
+          fi
+
       - name: Install dependencies
         run: |
           brew install libusb

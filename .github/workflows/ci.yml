@@ -32,6 +32,12 @@ jobs:
           swift --version
           xcodebuild -version || true
 
+      - name: Remove unused untrusted Homebrew taps
+        run: |
+          if brew tap | grep -Fxq aws/tap; then
+            brew untap --force aws/tap
+          fi
+
       - name: Install dependencies
         run: |
           brew install libusb

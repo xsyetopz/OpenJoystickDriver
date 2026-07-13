@@ -1,6 +1,8 @@
 import pathlib
+import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -43,14 +45,29 @@ class EnvironmentContractTests(unittest.TestCase):
         self.assertNotIn("DAEMON_PROVISIONING_PROFILE", source)
 
     def test_audit_suppresses_values(self):
-        result = subprocess.run(
-            [sys.executable, str(ROOT / "scripts/quality/env-audit.py")],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
+        sentinel = "must-not-appear-in-audit-output"
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            script = root / "scripts/quality/env-audit.py"
+            script.parent.mkdir(parents=True)
+            shutil.copy2(ROOT / "scripts/quality/env-audit.py", script)
+            (root / ".env.dev").write_text(
+                f"CODESIGN_IDENTITY={sentinel}\n", encoding="utf-8"
+            )
+            (root / ".env.release").write_text(
+                f"GUI_CODESIGN_IDENTITY={sentinel}\n", encoding="utf-8"
+            )
+
+            result = subprocess.run(
+                [sys.executable, str(script)],
+                cwd=root,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+
         self.assertIn("values suppressed", result.stdout)
+        self.assertNotIn(sentinel, result.stdout)
 
 
 if __name__ == "__main__":
