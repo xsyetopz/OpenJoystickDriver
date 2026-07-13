@@ -59,12 +59,21 @@ public enum BoundedProcessRunner {
     let capture = ProcessOutputCapture(maximumBytes: max(0, maximumOutputBytes))
     let readerFinished = DispatchSemaphore(value: 0)
     let readHandle = pipe.fileHandleForReading
-    DispatchQueue.global(qos: .utility).async {
+    let readDescriptor = readHandle.fileDescriptor
+    Thread.detachNewThread {
       defer { readerFinished.signal() }
+      var buffer = [UInt8](repeating: 0, count: 65_536)
       while true {
-        let chunk = readHandle.readData(ofLength: 65_536)
-        guard !chunk.isEmpty else { return }
-        capture.append(chunk)
+        let byteCount = buffer.withUnsafeMutableBytes { bytes in
+          Darwin.read(readDescriptor, bytes.baseAddress, bytes.count)
+        }
+        if byteCount > 0 {
+          capture.append(Data(buffer.prefix(byteCount)))
+        } else if byteCount == -1, errno == EINTR {
+          continue
+        } else {
+          return
+        }
       }
     }
     pipe.fileHandleForWriting.closeFile()
