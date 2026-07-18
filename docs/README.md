@@ -13,6 +13,8 @@ Open the section that matches the work. Archived upstream material stays under `
 - [Test physical output](testing/physical-output.md)
 - [Test a controller record without a signed installation](testing/controller-record.md)
 - [Check Logitech F310 mapping](testing/logitech-f310.md)
+- [Check Microsoft Xbox One Controller (model 1537)](testing/microsoft-xbox-one-controller-1537.md)
+- [Check Razer Wolverine V2](testing/razer-wolverine-v2.md)
 - [Check Razer Wolverine V3 Tournament Edition](testing/razer-wolverine-v3-te.md)
 - [Check Steam Controller input and output](testing/steam-controller.md)
 - [Check an Xbox 360 wireless receiver](testing/xbox-360-wireless-receiver.md)

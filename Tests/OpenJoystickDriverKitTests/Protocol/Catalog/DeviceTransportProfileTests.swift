@@ -54,6 +54,43 @@ struct DeviceTransportProfileTests {
     #expect(!transport.needsSetConfiguration)
   }
 
+  @Test func testRazerWolverineV2ProfileUsesCapturedEndpointsOnly() {
+    let registry = ParserRegistry()
+    let identifier = DeviceIdentifier(vendorID: 5_426, productID: 2_601)
+
+    let runtime = registry.runtimeProfile(for: identifier)
+    let transport = registry.transportProfile(for: identifier)
+
+    #expect(runtime.parserName == "GIP")
+    #expect(runtime.protocolVariant == .xboxOne)
+    #expect(runtime.mappingFlags.isEmpty)
+    #expect(!runtime.hardwareVerified)
+    #expect(runtime.gipStartupPackets == GIPStartupPacket.defaultSequence)
+    #expect(transport.inputEndpoint == 0x81)
+    #expect(transport.outputEndpoint == 0x01)
+    #expect(transport.hasEndpointOverride)
+    #expect(!transport.needsSetConfiguration)
+    #expect(transport.postHandshakeSettleNanoseconds == 0)
+  }
+
+  @Test func testMicrosoftXboxOneController1537UsesImportedDefaults() {
+    let registry = ParserRegistry()
+    let identifier = DeviceIdentifier(vendorID: 1_118, productID: 721)
+
+    let runtime = registry.runtimeProfile(for: identifier)
+    let transport = registry.transportProfile(for: identifier)
+
+    #expect(runtime.parserName == "GIP")
+    #expect(runtime.protocolVariant == .xboxOne)
+    #expect(runtime.mappingFlags.isEmpty)
+    #expect(!runtime.hardwareVerified)
+    #expect(runtime.gipStartupPackets == GIPStartupPacket.defaultSequence)
+    #expect(!runtime.gipStartupPackets.contains(.xboxOneSInit))
+    #expect(transport.inputEndpoint == 0x82)
+    #expect(transport.outputEndpoint == 0x02)
+    #expect(!transport.hasEndpointOverride)
+  }
+
   @Test func testVader5STransportProfile() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 14295, productID: 10241)

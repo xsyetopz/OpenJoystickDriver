@@ -83,6 +83,14 @@ Run [the receiver request](../testing/xbox-360-wireless-receiver.md) with real r
 
 The bundled GIP record replaces the ineffective Generic HID fallback for `1532:0A43`. Endpoint, handshake, input, and output behavior still need the [Razer hardware test](../testing/razer-wolverine-v3-te.md).
 
+## Microsoft Xbox One Controller (model 1537)
+
+The source-backed GIP record for `045E:02D1` uses the standard Xbox One transport and classic default startup behavior. It remains unverified pending the [model 1537 hardware test](../testing/microsoft-xbox-one-controller-1537.md).
+
+## Razer Wolverine V2
+
+The source-backed GIP record for `1532:0A29` has a local-hardware patch for the captured interface-0 endpoints `0x81`/`0x01`. Input mapping, reconnect, LED, and rumble behavior remain unverified pending the [Wolverine V2 hardware test](../testing/razer-wolverine-v2.md).
+
 ## Xbox Adaptive Joystick
 
 No parser claim exists. Product descriptions do not provide a packet layout. Capture neutral, every button, stick axes, stick click, report IDs, and checksums with [the packet request](../testing/xbox-adaptive-joystick.md) before adding a record.
