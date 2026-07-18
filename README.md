@@ -78,7 +78,6 @@ To uninstall OpenJoystickDriver completely:
 3. Delete `/Applications/OpenJoystickDriver.app`.
 4. Optional: remove OpenJoystickDriver from **Input Monitoring** and **Accessibility** in System Settings.
 
-
 ## Choose An Output Mode
 
 | What you are trying to run | Recommended | Why |
@@ -204,4 +203,4 @@ swift build
 
 ## License
 
-[ISC](LICENSE)
+[MIT](LICENSE)
