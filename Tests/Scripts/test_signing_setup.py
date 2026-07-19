@@ -286,6 +286,8 @@ class SigningSetupTests(unittest.TestCase):
                     "PATH": f"{bin_dir}:{environment['PATH']}",
                     "OJD_PROFILES_DIR": str(profiles),
                     "OJD_USE_LEGACY_DRIVERKIT_PROFILE": "1",
+                    "OJD_ENV": "dev",
+                    "CI": "false",
                 }
             )
 

@@ -141,8 +141,11 @@ source scripts/platform/environment.sh
 source scripts/build-tools/driverkit.sh
 OJD_USE_LOCAL_SWIFTERKIT=1
 OJD_ENV=dev
+CI=false
 _reject_local_swifterkit
 if ( _require_pinned_swifterkit ) >/dev/null 2>&1; then exit 9; fi
+CI=true
+if ( _reject_local_swifterkit ) >/dev/null 2>&1; then exit 7; fi
 OJD_ENV=release
 if ( _reject_local_swifterkit ) >/dev/null 2>&1; then exit 8; fi
 """
