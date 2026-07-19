@@ -2,7 +2,7 @@
 
 This request covers [OpenJoystickDriver issue #14](https://github.com/xsyetopz/OpenJoystickDriver/issues/14) for USB device `5426:2627` (`1532:0A43` in hexadecimal).
 
-The candidate record now selects OJD's wired Xbox One GIP parser instead of `GenericHID`. Its endpoint and mapping details remain unverified. No paid Apple Developer Program account, app signing, application service installation, or DriverKit provisioning is needed for this test.
+The candidate record now selects OJD's wired Xbox One GIP parser instead of `GenericHID`. It uses the parser defaults and intentionally declares no `shareButton` or `paddles` flags: the request proposed those flags without packet evidence, and OJD has no paddle packet decoder. Its endpoint, input mapping, and output details remain unverified. No paid Apple Developer Program account, app signing, application service installation, or DriverKit provisioning is needed for this test.
 
 ## Validate the bundled record
 

@@ -7,7 +7,7 @@
 - **State:** OPEN
 - **Author:** cbandras
 - **Created:** 2026-07-06T23:14:27Z
-- **Updated:** 2026-07-12T05:51:13Z
+- **Updated:** 2026-07-18T22:25:39Z
 - **Closed:** —
 - **Labels:** enhancement, help wanted
 
@@ -16,7 +16,7 @@
 ## Device support request: Razer Wolverine V3 Tournament Edition (RZ06-0521)
 
 **Summary**
-Requesting a device profile for the Razer Wolverine V3 Tournament Edition, an Xbox-licensed wired GIP controller. It currently falls back to GenericHID since it's not in the catalog, and the controller's firmware never completes its handshake in that mode (it blinks, then powers off after a timeout). 
+Requesting a device profile for the Razer Wolverine V3 Tournament Edition, an Xbox-licensed wired GIP controller. It currently falls back to GenericHID since it's not in the catalog, and the controller's firmware never completes its handshake in that mode (it blinks, then powers off after a timeout).
 
 **Device details**
 - Product: Razer Wolverine V3 Tournament Edition for Xbox
@@ -31,7 +31,7 @@ Requesting a device profile for the Razer Wolverine V3 Tournament Edition, an Xb
 - Physical light blinks continuously after the macOS "Allow accessory" prompt, then the controller powers off after a timeout, consistent with a firmware waiting for a GIP handshake it never receives
 
 **Draft profile**
-Based on the existing GameSir G7 SE profile (same category: third-party wired Xbox-licensed GIP controller with paddles), attached below. I haven't been able to test this myself since building from source requires DriverKit provisioning profiles I don't have (no Apple Developer Program account), so I'm not able to confirm whether the endpoint numbers or startup packet sequence need adjustment. 
+Based on the existing GameSir G7 SE profile (same category: third-party wired Xbox-licensed GIP controller with paddles), attached below. I haven't been able to test this myself since building from source requires DriverKit provisioning profiles I don't have (no Apple Developer Program account), so I'm not able to confirm whether the endpoint numbers or startup packet sequence need adjustment.
 
 ```json
 {

@@ -1,4 +1,4 @@
-# #15: Logitech F310 (X mode): no input on macOS 26 — profile declares wrong OUT endpoint (1 -> hardware uses 2)
+# #15: Logitech F310 (X mode): no input on macOS 26 — profile declares wrong OUT endpoint (1 → hardware uses 2)
 
 > External GitHub snapshot. GitHub is authoritative if this file is stale.
 
@@ -17,7 +17,7 @@
 
 - OpenJoystickDriver 0.5.0-alpha.4 (release DMG)
 - macOS 26.5.2 (Tahoe), Apple Silicon (M1)
-- Logitech F310, switch on X -> enumerates as `046d:c21d` ("Gamepad F310", class 255/93/1)
+- Logitech F310, switch on X → enumerates as `046d:c21d` ("Gamepad F310", class 255/93/1)
 
 ## Symptom
 

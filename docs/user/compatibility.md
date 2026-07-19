@@ -36,7 +36,6 @@ Set an identity from the installed CLI:
 ```bash
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat sdl2-3
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat apple-gamecontroller
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless output secondary
 ```
 
 ## Controller support
@@ -72,7 +71,11 @@ Live detection by `GCController.supportsHIDDevice` and a hardware test determine
 
 ## DriverKit Relay
 
-The DriverKit extension publishes a vendor-defined relay, not a Generic Desktop GamePad. This prevents it from becoming a stale or duplicate controller beside the Compatibility IOHIDUserDevice. Its concrete role is end-to-end integrity testing of application service to DriverKit to IOHID report delivery.
+The generated SwifterKit DriverKit relay publishes a vendor-defined HID device,
+not a Generic Desktop GamePad. This prevents it from becoming a stale or duplicate
+controller beside the Compatibility `IOHIDUserDevice`. Its role is an integrity
+path between the application service, the host-side relay, and DriverKit HID
+delivery; it is not an alternative consumer output mode.
 
 Run the shared CLI/GUI self-test even while Compatibility mode is active:
 
@@ -80,7 +83,15 @@ Run the shared CLI/GUI self-test even while Compatibility mode is active:
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless selftest 5
 ```
 
-A PASSED verdict requires an observed dext input-counter or HID callback delta. Successful IOHIDDeviceSetReport submission alone is reported as INCONCLUSIVE, because the extension intentionally accepts submissions even if its internal relay later fails.
+A passed relay verdict is based on observed relay input delivery when macOS exposes
+it, or on a successful SwifterKit HID submission when those observations are not
+available. The command reads the signed host's
+`com.apple.developer.driverkit.userclient-access` entitlement. An entitled host
+must pass the relay check. Without that entitlement, relay diagnostics are optional
+and inconclusive, while the Compatibility check still controls command success.
+The Compatibility probe uses neutral reports and does not change controller state.
+A self-test does not prove system-extension approval, signing validity, or behavior
+on a different macOS version or hardware configuration.
 
 ## App rumble
 
@@ -88,11 +99,11 @@ OJD forwards app rumble only when the virtual report and physical parser agree o
 
 Xbox 360 and DualShock 4 use their two main motors. GIP controllers may also use trigger motors. DualShock 4 ignores trigger values. DriverKit relay bytes that do not match a supported report are ignored.
 
-## Input integrity and mirrored output
+## Input integrity
 
 Before a parsed packet reaches an output backend, OJD reduces its events to the packet’s final net controller state. It drops duplicate transitions and contradictory press/release pulses that end unchanged, emits one canonical D-pad direction, rejects non-finite analog values by retaining the prior component, and clamps sticks to `-1...1` and triggers to `0...1`. This integrity gate does not add a timing delay or a new global deadzone. Protocol-specific deadzones remain in their parsers.
 
-In `both` output mode, primary and secondary backends receive the same normalized batch concurrently. A pipeline still waits for both backends before processing its next batch, preserving per-backend batch order without adding one backend’s full dispatch time to the other. Unit timing checks prove concurrent dispatch in the test harness; they do not measure USB-to-app latency on physical hardware.
+The normalized batch is delivered only to the active Compatibility `IOHIDUserDevice` backend.
 
 ## Browser mapping
 

@@ -8,11 +8,7 @@
     "transport": "usb",
     "protocol": {
       "driver": "GIP",
-      "variant": "xboxOne",
-      "flags": [
-        "shareButton",
-        "paddles"
-      ]
+      "variant": "xboxOne"
     },
     "provenance": {
       "source": "local-hardware",

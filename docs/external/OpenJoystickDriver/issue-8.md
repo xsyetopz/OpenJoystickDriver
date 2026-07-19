@@ -7,9 +7,9 @@
 - **State:** OPEN
 - **Author:** julesbravo
 - **Created:** 2026-06-03T23:26:22Z
-- **Updated:** 2026-06-17T22:36:53Z
+- **Updated:** 2026-07-18T22:25:00Z
 - **Closed:** —
-- **Labels:** enhancement, good first issue, question
+- **Labels:** enhancement, help wanted
 
 ## Report
 
@@ -49,7 +49,7 @@ I already dug out some external sources to check out.
 
 [Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/8#issuecomment-4635186400)
 
-Awesome. I'll be on vacation without access to said Mac for next 2 weeks, but as soon as I get back I'll be more than happy to help test. I'm including a screenshot of the information that Steam has said so far about the issue. 
+Awesome. I'll be on vacation without access to said Mac for next 2 weeks, but as soon as I get back I'll be more than happy to help test. I'm including a screenshot of the information that Steam has said so far about the issue.
 
 <img width="1319" height="2200" alt="Image" src="https://github.com/user-attachments/assets/5bca26b4-ab71-4ce3-ae42-1f0954dab0ae" />
 
@@ -58,7 +58,7 @@ Awesome. I'll be on vacation without access to said Mac for next 2 weeks, but as
 [Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/8#issuecomment-4635270572)
 
 > Awesome. I'll be on vacation without access to said Mac for next 2 weeks, but as soon as I get back I'll be more than happy to help test. I'm including a screenshot of the information that Steam has said so far about the issue.
-> 
+>
 > <img alt="Image" width="1199" height="2000" src="https://private-user-images.githubusercontent.com/194692/603690086-5bca26b4-ab71-4ce3-ae42-1f0954dab0ae.png">
 
 I don't know how much Steam or certain communities allow for LLM-generated code, but maybe they could endorse use of OJD for Steam && SDL-based apps? It seems like a solution that there wasn't anything for since 2015 (Enjoyable)

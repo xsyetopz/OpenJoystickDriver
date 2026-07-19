@@ -59,6 +59,11 @@ public final class ParserRegistry: Sendable {
     catalog.runtimeProfile(for: identifier)
   }
 
+  /// Whether an exact catalog record maps this model to a supported raw-USB parser.
+  func supportsRawUSBPipeline(for identifier: DeviceIdentifier) -> Bool {
+    catalog.supportsRawUSBPipeline(for: identifier)
+  }
+
   /// Returns the suggested virtual device identity for compatibility mode.
   ///
   /// Used only when the user explicitly opts into spoofing IDs for picky consumers.

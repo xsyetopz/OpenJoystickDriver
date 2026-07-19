@@ -8,7 +8,14 @@
     "variant": "xboxOne"
   },
   "provenance": {
-    "source": "linux-xpad.c",
-    "verified": false
+    "source": "tester-packets",
+    "verified": true
+  },
+  "usb": {
+    "endpoints": {
+      "in": 129,
+      "out": 1
+    },
+    "configuration": "set1-before-claim"
   }
 }

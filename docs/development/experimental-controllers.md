@@ -15,7 +15,8 @@ swift test
 git diff --check
 ```
 
-The macOS 14 harness covers parser behavior that must remain valid below the local Swift Testing runtime target.
+The macOS 14 harness and Swift test targets share the maintained compatibility
+floor for parser and runtime behavior.
 
 ## DualSense
 
@@ -81,15 +82,15 @@ Run [the receiver request](../testing/xbox-360-wireless-receiver.md) with real r
 
 ## Razer Wolverine V3 Tournament Edition
 
-The bundled GIP record replaces the ineffective Generic HID fallback for `1532:0A43`. Endpoint, handshake, input, and output behavior still need the [Razer hardware test](../testing/razer-wolverine-v3-te.md).
+The bundled GIP record replaces the ineffective Generic HID fallback for `1532:0A43`. Endpoint, handshake, input, and output behavior still need the [Razer hardware test](../testing/razer/v3-te.md).
 
 ## Microsoft Xbox One Controller (model 1537)
 
-The source-backed GIP record for `045E:02D1` uses the standard Xbox One transport and classic default startup behavior. It remains unverified pending the [model 1537 hardware test](../testing/microsoft-xbox-one-controller-1537.md).
+Reporter packet evidence from an IOUSBHost harness verifies the GIP handshake, player LED, every input including Guide, and rumble for `045E:02D1`. The record therefore carries the observed `0x81`/`0x01` endpoints, configuration-1-before-claim requirement, and verified provenance. OJD's libusb/SwiftUSB device-open path has not passed on this hardware and remains pending the [model 1537 regression test](../testing/xbox/1537.md) after the upstream lifetime fix.
 
 ## Razer Wolverine V2
 
-The source-backed GIP record for `1532:0A29` has a local-hardware patch for the captured interface-0 endpoints `0x81`/`0x01`. Input mapping, reconnect, LED, and rumble behavior remain unverified pending the [Wolverine V2 hardware test](../testing/razer-wolverine-v2.md).
+The source-backed GIP record for `1532:0A29` has a local-hardware patch for the captured interface-0 endpoints `0x81`/`0x01`. Input mapping, reconnect, LED, and rumble behavior remain unverified pending the [Wolverine V2 hardware test](../testing/razer/wolverine-v2.md).
 
 ## Xbox Adaptive Joystick
 

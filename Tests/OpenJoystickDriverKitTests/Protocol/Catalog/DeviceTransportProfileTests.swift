@@ -47,7 +47,8 @@ struct DeviceTransportProfileTests {
 
     #expect(runtime.parserName == "GIP")
     #expect(runtime.protocolVariant == .xboxOne)
-    #expect(runtime.mappingFlags == ["shareButton", "paddles"])
+    #expect(runtime.mappingFlags.isEmpty)
+    #expect(runtime.mappingOptions.isEmpty)
     #expect(!runtime.hardwareVerified)
     #expect(transport.inputEndpoint == 0x82)
     #expect(transport.outputEndpoint == 0x02)
@@ -73,7 +74,7 @@ struct DeviceTransportProfileTests {
     #expect(transport.postHandshakeSettleNanoseconds == 0)
   }
 
-  @Test func testMicrosoftXboxOneController1537UsesImportedDefaults() {
+  @Test func testMicrosoftXboxOneController1537UsesHardwareVerifiedTransport() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 1_118, productID: 721)
 
@@ -83,12 +84,14 @@ struct DeviceTransportProfileTests {
     #expect(runtime.parserName == "GIP")
     #expect(runtime.protocolVariant == .xboxOne)
     #expect(runtime.mappingFlags.isEmpty)
-    #expect(!runtime.hardwareVerified)
+    #expect(runtime.hardwareVerified)
     #expect(runtime.gipStartupPackets == GIPStartupPacket.defaultSequence)
     #expect(!runtime.gipStartupPackets.contains(.xboxOneSInit))
-    #expect(transport.inputEndpoint == 0x82)
-    #expect(transport.outputEndpoint == 0x02)
-    #expect(!transport.hasEndpointOverride)
+    #expect(transport.inputEndpoint == 0x81)
+    #expect(transport.outputEndpoint == 0x01)
+    #expect(transport.hasEndpointOverride)
+    #expect(transport.needsSetConfiguration)
+    #expect(transport.postHandshakeSettleNanoseconds == 0)
   }
 
   @Test func testVader5STransportProfile() {
@@ -201,23 +204,23 @@ struct DeviceTransportProfileTests {
 
   @Test func testXpadXbox360ProfileBatch() {
     let registry = ParserRegistry()
-    let identifiers = [
-      DeviceIdentifier(vendorID: 1133, productID: 49693),
-      DeviceIdentifier(vendorID: 1133, productID: 49694),
-      DeviceIdentifier(vendorID: 1133, productID: 49695),
-      DeviceIdentifier(vendorID: 1133, productID: 49730),
-      DeviceIdentifier(vendorID: 1848, productID: 18198),
-      DeviceIdentifier(vendorID: 1848, productID: 18214),
-      DeviceIdentifier(vendorID: 3695, productID: 275),
-      DeviceIdentifier(vendorID: 3695, productID: 287),
-      DeviceIdentifier(vendorID: 3695, productID: 307),
+    let cases: [(DeviceIdentifier, UInt8)] = [
+      (DeviceIdentifier(vendorID: 1133, productID: 49693), 0x02),
+      (DeviceIdentifier(vendorID: 1133, productID: 49694), 0x01),
+      (DeviceIdentifier(vendorID: 1133, productID: 49695), 0x01),
+      (DeviceIdentifier(vendorID: 1133, productID: 49730), 0x01),
+      (DeviceIdentifier(vendorID: 1848, productID: 18198), 0x01),
+      (DeviceIdentifier(vendorID: 1848, productID: 18214), 0x01),
+      (DeviceIdentifier(vendorID: 3695, productID: 275), 0x01),
+      (DeviceIdentifier(vendorID: 3695, productID: 287), 0x01),
+      (DeviceIdentifier(vendorID: 3695, productID: 307), 0x01),
     ]
 
-    for identifier in identifiers {
+    for (identifier, outputEndpoint) in cases {
       #expect(registry.parserName(for: identifier) == "Xbox360")
       #expect(registry.runtimeProfile(for: identifier).protocolVariant == .xbox360)
       #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x81)
-      #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x01)
+      #expect(registry.transportProfile(for: identifier).outputEndpoint == outputEndpoint)
     }
   }
   @Test func testXpadXboxOneProfileBatch() {

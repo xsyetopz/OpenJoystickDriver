@@ -1,6 +1,6 @@
 # Test a controller record
 
-Controller owners can test a candidate OJD JSON record without an Apple Developer Program membership. This path builds a Swift command-line executable only. It does not build or install the app, application service, virtual HID device, or DriverKit extension.
+Controller owners can test a candidate OJD JSON record without an Apple Developer Program membership. This path builds a Swift command-line executable only. It does not build or install the app, application service, virtual HID device, or generated DriverKit relay.
 
 The probe supports raw-USB `GIP` plus wired and wireless-receiver `Xbox360` records. HID, Bluetooth, and unknown protocol probes still need protocol-specific tooling.
 
@@ -16,6 +16,12 @@ cd OpenJoystickDriver
 ```
 
 No paid Apple account, provisioning record, application signing, or system extension approval is required.
+
+The diagnostic does not link the Homebrew libusb dynamic library. On first use,
+it downloads libusb 1.0.29 source and builds the same cached universal static
+library used by signed app builds. Later runs reuse `.build/libusb-universal/`.
+The first run therefore requires network access; `--validate-only` uses the same
+linkage path but does not open USB hardware.
 
 ## 1. Save the candidate record
 

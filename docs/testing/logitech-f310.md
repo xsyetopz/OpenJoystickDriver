@@ -2,7 +2,11 @@
 
 This request covers [OpenJoystickDriver issue #11](https://github.com/xsyetopz/OpenJoystickDriver/issues/11) for `046d:c21d` (`1133:49693` decimal).
 
-The current record uses Linux's Xbox 360 packet layout. OJD's parser maps the XInput button bitfield to named controls, and the Input Test window now uses stable text labels instead of SF Symbols that can appear blank on older macOS releases. The record retains `verified: false` until the reporter confirms the complete mapping.
+The current record uses Linux's Xbox 360 packet layout and the hardware-observed
+interrupt endpoints `0x81`/`0x02`. OJD's parser maps the XInput button bitfield
+to named controls, and the Input Test window uses stable text labels instead of
+SF Symbols that can appear blank on older macOS releases. The record retains
+`verified: false` until the reporter confirms the complete mapping.
 
 No paid Apple Developer Program account, app signing, application service installation, or DriverKit provisioning is required for the raw-input test.
 

@@ -14,7 +14,7 @@ struct LogitechF310MappingTests {
     #expect(profile.protocolVariant == .xbox360)
     #expect(!profile.hardwareVerified)
     #expect(profile.transportProfile.inputEndpoint == 0x81)
-    #expect(profile.transportProfile.outputEndpoint == 0x01)
+    #expect(profile.transportProfile.outputEndpoint == 0x02)
   }
 
   @Test

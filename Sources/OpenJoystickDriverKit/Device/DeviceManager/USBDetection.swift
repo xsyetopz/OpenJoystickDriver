@@ -1,6 +1,33 @@
 import Foundation
 import SwiftUSB
 
+struct RawUSBAdmission {
+  let identifier: DeviceIdentifier
+  let productName: String?
+}
+
+func resolveRawUSBAdmission(
+  parserRegistry: ParserRegistry,
+  vendorID: UInt16,
+  productID: UInt16,
+  locationID: UInt32,
+  loadDescriptorStrings: () -> (serialNumber: String?, productName: String?)
+) -> RawUSBAdmission? {
+  let modelIdentifier = DeviceIdentifier(vendorID: vendorID, productID: productID)
+  guard parserRegistry.supportsRawUSBPipeline(for: modelIdentifier) else { return nil }
+
+  let descriptorStrings = loadDescriptorStrings()
+  return RawUSBAdmission(
+    identifier: DeviceIdentifier(
+      vendorID: vendorID,
+      productID: productID,
+      serialNumber: descriptorStrings.serialNumber,
+      locationID: locationID
+    ),
+    productName: descriptorStrings.productName
+  )
+}
+
 extension DeviceManager {
   // MARK: - USB detection (class 0xFF)
 
@@ -91,14 +118,27 @@ extension DeviceManager {
   }
 
   @discardableResult private func handleUSBDeviceAdded(_ device: USBDevice) -> DeviceIdentifier? {
+    let vendorID = device.idVendor
+    let productID = device.idProduct
     let locationID = UInt32((UInt32(device.bus) << 8) | UInt32(device.address))
-    let serial = try? device.getSerialNumber()
-    let identifier = DeviceIdentifier(
-      vendorID: device.idVendor,
-      productID: device.idProduct,
-      serialNumber: serial,
-      locationID: locationID
-    )
+    guard
+      let admission = resolveRawUSBAdmission(
+        parserRegistry: parserRegistry,
+        vendorID: vendorID,
+        productID: productID,
+        locationID: locationID,
+        loadDescriptorStrings: {
+          (serialNumber: try? device.getSerialNumber(), productName: try? device.getProduct())
+        }
+      )
+    else {
+      let modelIdentifier = DeviceIdentifier(vendorID: vendorID, productID: productID)
+      print("[DeviceManager] Raw USB device observed but left unclaimed: \(modelIdentifier)")
+      return nil
+    }
+
+    let identifier = admission.identifier
+    let serial = identifier.serialNumber
 
     guard pipelines[identifier] == nil else {
       print("[DeviceManager] Pipeline already exists" + " for \(identifier)")
@@ -106,9 +146,9 @@ extension DeviceManager {
     }
 
     let productName = controllerDisplayName(
-      productName: try? device.getProduct(),
-      vendorID: device.idVendor,
-      productID: device.idProduct
+      productName: admission.productName,
+      vendorID: vendorID,
+      productID: productID
     )
     deviceInfos[identifier] = DeviceInfo(name: productName, connection: "USB", serialNumber: serial)
     print("[DeviceManager] USB device added: \(productName) (\(identifier))")
@@ -120,7 +160,7 @@ extension DeviceManager {
     let parser = parserRegistry.parser(for: identifier, transportProfile: transportProfile)
     let pipeline = DevicePipeline(
       identifier: identifier,
-      transport: .usb(vendorID: device.idVendor, productID: device.idProduct),
+      transport: .usb(vendorID: vendorID, productID: productID),
       parser: parser,
       dispatcher: dispatcher,
       usbContext: usbContext,

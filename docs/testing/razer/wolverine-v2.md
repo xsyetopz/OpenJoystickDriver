@@ -2,7 +2,7 @@
 
 This procedure covers [OpenJoystickDriver issue #19](https://github.com/xsyetopz/OpenJoystickDriver/issues/19) for USB device `5426:2601` (`1532:0A29` in hexadecimal).
 
-The bundled record is sourced from Linux xpad and patched with the locally captured interface-0 endpoints `0x81`/`0x01`. The GIP parser, Xbox One defaults, input mapping, reconnect, LED, and rumble remain unverified. The validation and USB probe sections need no paid Apple Developer Program account, app signing, application-service installation, or DriverKit provisioning; the physical-output section separately requires an installed current app.
+The bundled record is sourced from Linux xpad and patched with the locally captured interface-0 endpoints `0x81`/`0x01`. It deliberately omits the proposed `shareButton` and `paddles` flags: the report contains no input packet layout that identifies either control, and OJD has no paddle packet decoder. It also omits `set1-before-claim` and a 200 ms post-handshake delay: enumeration reports configuration 1 but does not establish that OJD must select it, and no timing evidence supports the delay. The GIP parser, Xbox One defaults, input mapping, reconnect, LED, and rumble remain unverified. The validation and USB probe sections need no paid Apple Developer Program account, app signing, application-service installation, or DriverKit provisioning; the physical-output section separately requires an installed current app.
 
 ## Validate the bundled record
 

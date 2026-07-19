@@ -16,4 +16,6 @@ Refresh from the repository root:
 | [#11](issue-11.md) | OPEN | Logitech F310 (Xinput mode) button mapping wrong |
 | [#12](issue-12.md) | CLOSED | Readme instructions should explain how to uninstall the special daemon/drivers. |
 | [#14](issue-14.md) | OPEN | Device support request: Razer Wolverine V3 Tournament Edition (1532:0A43) |
-| [#15](issue-15.md) | CLOSED | Logitech F310 (X mode): no input on macOS 26 — profile declares wrong OUT endpoint (1 -> hardware uses 2) |
+| [#15](issue-15.md) | CLOSED | Logitech F310 (X mode): no input on macOS 26 — profile declares wrong OUT endpoint (1 → hardware uses 2) |
+| [#18](issue-18.md) | OPEN | Original Xbox One controller (model 1537, 045E:02D1) falls back to genericHID — request GIP profile |
+| [#19](issue-19.md) | OPEN | Add controller record: Razer Wolverine V2 (1532:0a29) |

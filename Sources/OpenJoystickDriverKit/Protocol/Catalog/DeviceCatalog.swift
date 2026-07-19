@@ -100,16 +100,19 @@ public struct DeviceRuntimeProfile: Sendable {
 /// Loads the canonical VID/PID controller records bundled with the driver.
 struct DeviceCatalog: Sendable {
   private let profiles: [String: DeviceRuntimeProfile]
+  private let rawUSBPipelineIdentifiers: Set<String>
   let hidProfileIdentifiers: [DeviceIdentifier]
 
   init() {
     do {
       var loaded: [String: DeviceRuntimeProfile] = [:]
       var hid: [DeviceIdentifier] = []
+      var rawUSBPipelineIdentifiers: Set<String> = []
       for record in try Self.loadRecords() {
         let key = "\(record.vendorID):\(record.productID)"
         guard loaded[key] == nil else { throw CatalogError("duplicate controller identity \(key)") }
         loaded[key] = try Self.makeRuntimeProfile(record)
+        if Self.supportsRawUSBPipeline(record) { rawUSBPipelineIdentifiers.insert(key) }
         if record.transport == "hid" {
           hid.append(
             DeviceIdentifier(vendorID: UInt16(record.vendorID), productID: UInt16(record.productID))
@@ -117,6 +120,7 @@ struct DeviceCatalog: Sendable {
         }
       }
       profiles = loaded
+      self.rawUSBPipelineIdentifiers = rawUSBPipelineIdentifiers
       hidProfileIdentifiers = hid.sorted {
         if $0.vendorID != $1.vendorID { return $0.vendorID < $1.vendorID }
         return $0.productID < $1.productID
@@ -149,6 +153,10 @@ struct DeviceCatalog: Sendable {
         gipStartupPackets: GIPStartupPacket.defaultSequence,
         hardwareVerified: false
       )
+  }
+
+  func supportsRawUSBPipeline(for identifier: DeviceIdentifier) -> Bool {
+    rawUSBPipelineIdentifiers.contains(key(for: identifier))
   }
 
   private func key(for identifier: DeviceIdentifier) -> String {
@@ -342,6 +350,10 @@ struct DeviceCatalog: Sendable {
     )
   }
 
+  private static func supportsRawUSBPipeline(_ record: ControllerRecord) -> Bool {
+    record.transport == "usb" && rawUSBParserNames.contains(record.protocolInfo.driver)
+  }
+
   private static func mappingOptions(from flags: [String]) -> ControllerMappingOptions {
     var result: ControllerMappingOptions = []
     for flag in flags {
@@ -407,6 +419,8 @@ struct DeviceCatalog: Sendable {
     "local-hardware", "linux-xpad.c", "linux-hid-steam.c", "linux-hid-playstation.c",
     "linux-hid-sony.c", "linux-hid-nintendo.c", "tester-packets",
   ]
+
+  private static let rawUSBParserNames: Set<String> = ["GIP", "Xbox360"]
 
   private struct ControllerRecord: Decodable {
     static let schemaID =
