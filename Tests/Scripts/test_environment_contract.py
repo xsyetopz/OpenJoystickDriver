@@ -10,7 +10,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 class EnvironmentContractTests(unittest.TestCase):
     def test_only_root_profile_is_loaded(self):
-        source = (ROOT / "scripts/shared/common.sh").read_text()
+        source = (ROOT / "scripts/platform/environment.sh").read_text()
         self.assertIn("$PROJECT_DIR/.env.$OJD_ENV", source)
         self.assertNotIn("$SCRIPT_DIR/.env.$OJD_ENV", source)
         self.assertNotIn("$PROJECT_DIR/.env\"", source)
@@ -21,7 +21,7 @@ class EnvironmentContractTests(unittest.TestCase):
                 "/usr/bin/env",
                 "bash",
                 "-c",
-                'source scripts/shared/common.sh; [[ "$PROJECT_DIR" == "$PWD" ]]',
+                'source scripts/platform/environment.sh; [[ "$PROJECT_DIR" == "$PWD" ]]',
             ],
             cwd=ROOT,
             check=False,
@@ -29,6 +29,13 @@ class EnvironmentContractTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_libusb_build_cleanup_does_not_escape_its_function(self):
+        source = (ROOT / "scripts/platform/environment.sh").read_text()
+
+        self.assertIn("build_universal_libusb() (", source)
+        self.assertIn("trap 'rm -rf \"$tmpdir\"' EXIT", source)
+        self.assertNotIn("trap 'rm -rf \"$tmpdir\"' RETURN", source)
 
     def test_legacy_templates_are_removed(self):
         for relative in [

@@ -76,19 +76,6 @@ extension ApplicationServiceServer {
         )
       case "setSuppressOutput":
         setSuppressOutput(try decode(LocalServiceRPCBoolArguments.self).value, reply: send)
-      case "setVirtualDeviceMode":
-        setVirtualDeviceMode(try decode(LocalServiceRPCStringArguments.self).value, reply: send)
-      case "getVirtualDeviceMode":
-        getVirtualDeviceMode(reply: send)
-      case "setUserSpaceVirtualDeviceEnabled":
-        setUserSpaceVirtualDeviceEnabled(
-          try decode(LocalServiceRPCBoolArguments.self).value,
-          reply: send
-        )
-      case "getUserSpaceVirtualDeviceEnabled":
-        getUserSpaceVirtualDeviceEnabled(reply: send)
-      case "getUserSpaceVirtualDeviceStatus":
-        getUserSpaceVirtualDeviceStatus(reply: send)
       case "getVirtualDeviceDiagnostics":
         getVirtualDeviceDiagnostics(reply: send)
       case "setCompatibilityIdentity":
@@ -98,10 +85,6 @@ extension ApplicationServiceServer {
         )
       case "getCompatibilityIdentity":
         getCompatibilityIdentity(reply: send)
-      case "setOutputMode":
-        setOutputMode(try decode(LocalServiceRPCStringArguments.self).value, reply: send)
-      case "getOutputMode":
-        getOutputMode(reply: send)
       case "runVirtualDeviceSelfTest":
         runVirtualDeviceSelfTest(
           seconds: try decode(LocalServiceRPCIntArguments.self).value,

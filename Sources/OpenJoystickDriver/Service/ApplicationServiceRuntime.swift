@@ -1,10 +1,11 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverRelay
 
 final class ApplicationServiceRuntime: @unchecked Sendable {
   private let permissionManager: PermissionManager
-  private let dextDispatcher: DextOutputDispatcher
-  private let dispatcher: CompositeOutputDispatcher
+  private let driverKitDispatcher: DriverKitOutputDispatcher
+  private let dispatcher: CompatibilityOutputDispatcher
   private let manager: DeviceManager
   private let applicationServiceServer: ApplicationServiceServer
   private let foregroundConsumerOutputMonitor: ForegroundConsumerOutputMonitor
@@ -13,24 +14,22 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
 
   init() {
     let permissionManager = PermissionManager()
-    let dextDispatcher = DextOutputDispatcher()
-    let dispatcher = CompositeOutputDispatcher(primary: dextDispatcher)
+    let driverKitDispatcher = DriverKitOutputDispatcher()
+    let dispatcher = CompatibilityOutputDispatcher()
     let manager = DeviceManager(dispatcher: dispatcher)
     let applicationServiceServer = ApplicationServiceServer(
       deviceManager: manager,
       permissionManager: permissionManager,
       dispatcher: dispatcher,
-      dextDispatcher: dextDispatcher
+      driverKitDispatcher: driverKitDispatcher
     )
 
     self.permissionManager = permissionManager
-    self.dextDispatcher = dextDispatcher
+    self.driverKitDispatcher = driverKitDispatcher
     self.dispatcher = dispatcher
     self.manager = manager
     self.applicationServiceServer = applicationServiceServer
-    self.foregroundConsumerOutputMonitor = ForegroundConsumerOutputMonitor(
-      deviceManager: manager
-    ) {
+    self.foregroundConsumerOutputMonitor = ForegroundConsumerOutputMonitor(deviceManager: manager) {
       frontmostBundleRootPath,
       effectiveConsumerBundleRoots,
       observedConsumerBundleRoots,
@@ -53,13 +52,11 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     guard shouldStart else { return }
 
     setbuf(stdout, nil)
-    serviceLog("[Service] DriverKit output: on-demand (managed by Mode)")
+    serviceLog("[Service] DriverKit integrity relay: diagnostic probes only")
     serviceLog("[Service] Starting main-app service runtime")
     manager.setupGracefulShutdown(label: "Service")
     Task { await permissionManager.startPolling() }
-    do {
-      try applicationServiceServer.start()
-    } catch {
+    do { try applicationServiceServer.start() } catch {
       serviceLog("[Service] RPC socket startup failed: \(error.localizedDescription)")
     }
     foregroundConsumerOutputMonitor.start()
@@ -77,6 +74,7 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     foregroundConsumerOutputMonitor.stop()
     applicationServiceServer.stop()
     await manager.stop()
+    await driverKitDispatcher.stopBackend()
     await permissionManager.stopPolling()
     serviceLog("[Service] Stopped")
   }

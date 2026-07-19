@@ -6,7 +6,7 @@ struct GenericHIDPipelineParityTests {
   func semanticHIDValuesReachOnlyOptInParsers() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let stream = try source(
-      "Sources/OpenJoystickDriverKit/HID/HIDDeviceStream.swift",
+      "Sources/OpenJoystickDriverKit/HID/DeviceStream.swift",
       root: root
     )
     let manager =

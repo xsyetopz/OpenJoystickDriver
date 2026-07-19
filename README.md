@@ -13,7 +13,7 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
   <a href="#quickstart">Quickstart</a> ·
   <a href="#install-update-or-remove">Install / Remove</a> ·
   <a href="docs/user/compatibility.md">Compatibility</a> ·
-  <a href="#choose-an-output-mode">Output Modes</a> ·
+  <a href="#choose-a-compatibility-identity">Compatibility Identity</a> ·
   <a href="#troubleshooting">Troubleshooting</a> ·
   <a href="CONTRIBUTING.md">Contribute</a> ·
   <a href="https://github.com/xsyetopz/OpenJoystickDriver/stargazers">Star</a>
@@ -33,8 +33,11 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
 
 See [docs/user/compatibility.md](docs/user/compatibility.md) for current backend, output-mode, and device-support status.
 
-Compatibility mode does not require DriverKit. The system extension is a vendor-defined integrity relay for self-test and diagnostics; it deliberately does not publish a second
-consumer gamepad.
+Compatibility mode does not require DriverKit. The generated SwifterKit system
+extension is a vendor-defined integrity relay for self-test and diagnostics; it
+deliberately does not publish a second consumer gamepad. Self-test reads the
+signed host entitlement: relay delivery is required for an entitled host and
+reported as optional and inconclusive when the entitlement is absent.
 
 ## Quickstart
 
@@ -78,7 +81,7 @@ To uninstall OpenJoystickDriver completely:
 3. Delete `/Applications/OpenJoystickDriver.app`.
 4. Optional: remove OpenJoystickDriver from **Input Monitoring** and **Accessibility** in System Settings.
 
-## Choose An Output Mode
+## Choose A Compatibility Identity
 
 | What you are trying to run | Recommended | Why |
 | --- | --- | --- |
@@ -90,8 +93,7 @@ To uninstall OpenJoystickDriver completely:
 CLI equivalents from the installed app bundle:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless id sdl2-3
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless output user
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat sdl2-3
 ```
 
 ## Troubleshooting
@@ -101,7 +103,7 @@ CLI equivalents from the installed app bundle:
 | Menu UI says “running (disconnected)” | Use **Restart Service** in the menu, or run `--headless restart`. |
 | SDL / browser sees 0 controllers | Ensure Input Monitoring and Accessibility are granted, then re-open the app and re-test. |
 | Compare Chrome, Firefox, and Safari | Run `--headless diagnose browser-gamepad --open all`, then press a controller control. |
-| DriverKit extension install fails | Compatibility output still works; use `--headless selftest` to test the optional relay. |
+| DriverKit relay installation fails | Compatibility output still works. `--headless selftest` tests Compatibility and reports relay diagnostics as optional when the signed host lacks relay access. |
 
 Useful diagnostics:
 
@@ -143,11 +145,13 @@ brew install libusb
 ./scripts/ojd catalog regenerate --check
 ./scripts/ojd validate profiles
 ./scripts/ojd test parsers-macos14
+./scripts/ojd validate driverkit
 swift build
 ```
 
-For application, DriverKit, signing, and notarization work, start here:
+For application, generated DriverKit relay, signing, and notarization work, start here:
 
+- [Signing assets and Apple Developer portal setup](docs/development/signing.md)
 - [scripts/README.md](scripts/README.md)
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [docs/development/architecture.md](docs/development/architecture.md)
@@ -158,7 +162,7 @@ Useful contribution areas:
 
 - controller parser and record improvements
 - compatibility-layer tests and diagnostics
-- documentation for supported devices, output modes, and troubleshooting
+- documentation for supported devices, compatibility identities, and troubleshooting
 - reproducible reports for games, emulators, browsers, SDL apps, and native macOS apps
 
 Before opening a PR for parser/record work, run:

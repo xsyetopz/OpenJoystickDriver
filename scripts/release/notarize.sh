@@ -19,7 +19,7 @@
 #
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../shared/common.sh"
+source "$SCRIPT_DIR/../platform/environment.sh"
 
 subcmd="${1:-submit}"
 shift || true

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- The app must not be sandboxed: it submits a system extension and owns
+         the direct USB/HID runtime. -->
+    <key>com.apple.security.app-sandbox</key>
+    <false/>
+
+    <!-- Allows OSSystemExtensionManager.shared.submitRequest() to install or
+         remove the generated OpenJoystickDriver system extension.
+         Requires entitlement request at developer.apple.com/contact/request/system-extension. -->
+    <key>com.apple.developer.system-extension.install</key>
+    <true/>
+
+    <!-- Limits DriverKit user-client access to the generated OpenJoystickDriver relay. -->
+    <key>com.apple.developer.driverkit.userclient-access</key>
+    <array>
+        <string>com.openjoystickdriver.VirtualHIDDevice</string>
+    </array>
+
+    <!-- Required because the main application executable creates IOHIDUserDevice
+         compatibility profiles from the persistent main app. -->
+    <key>com.apple.developer.hid.virtual.device</key>
+    <true/>
+
+    <!-- Required by AMFI on macOS 26+ to validate the embedded provisioning
+         profile. Must match the profile's application-identifier. -->
+    <key>com.apple.application-identifier</key>
+    <string>${DEVELOPMENT_TEAM}.com.openjoystickdriver</string>
+    <key>com.apple.developer.team-identifier</key>
+    <string>${DEVELOPMENT_TEAM}</string>
+</dict>
+</plist>

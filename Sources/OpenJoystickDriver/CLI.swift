@@ -15,8 +15,6 @@ struct CLI {
     case "permissions": PermissionsCommand().run(arguments: Array(args.dropFirst()))
     case "report": ReportCommand().run(arguments: Array(args.dropFirst()))
     case "diagnose": DiagnoseCommand().run(arguments: Array(args.dropFirst()))
-    case "userspace": UserSpaceCommand().run(arguments: Array(args.dropFirst()))
-    case "output": OutputModeCommand().run(arguments: Array(args.dropFirst()))
     case "physical-output": PhysicalOutputCommand().run(arguments: Array(args.dropFirst()))
     case "compat": CompatibilityCommand().run(arguments: Array(args.dropFirst()))
     case "selftest": SelfTestCommand().run(arguments: Array(args.dropFirst()))
@@ -56,8 +54,6 @@ struct CLI {
         permissions Inspect or request required HID access
         report     Create a redacted controller support report
         diagnose   Hardware and runtime diagnostics
-        userspace  Toggle user-space virtual gamepad (IOHIDUserDevice)
-        output     Set output routing mode (DriverKit/user-space)
         physical-output Inspect/test source-controller rumble and player LEDs
         compat     Set compatibility identity (generic-hid/sdl2-3/x360-hid/xone-hid)
         selftest   Count input events on virtual devices
@@ -66,7 +62,7 @@ struct CLI {
         uninstall  Remove the main app login item
         start      Start application service (register if needed)
         restart    Restart application service
-        reset-settings Reset application service settings (mode/identity/output)
+        reset-settings Reset the compatibility identity and backend
 
       Options:
         -h, --help     Show this help

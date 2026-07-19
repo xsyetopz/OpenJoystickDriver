@@ -56,8 +56,14 @@ cmd_install_profiles() {
   }
 
   copy_one "OpenJoystickDriver.provisionprofile"
-  copy_one "OpenJoystickDriver_DevID.provisionprofile"
   copy_one "OpenJoystickDriver_VirtualHIDDevice.provisionprofile"
+
+  local release_name="OpenJoystickDriver_DevID.provisionprofile"
+  if [[ -f "$SRC/$release_name" ]]; then
+    cp -f "$SRC/$release_name" "$DST/"
+  else
+    echo "Skipping optional publisher release profile: $SRC/$release_name"
+  fi
 
   echo "Installed profiles to: $DST"
   ls -la "$DST" | awk '/OpenJoystickDriver/ {print "  " $9}'
@@ -383,96 +389,7 @@ PY
 }
 
 cmd_doctor() {
-  # Reuse our own audit/profile-info helpers to keep output safe.
-  echo "OpenJoystickDriver signing doctor"
-  echo ""
-  echo "1) Keychain identities:"
-  security find-identity -v -p codesigning 2>/dev/null | awk '/Apple Development:/{print "  Apple Development SHA1: " tolower($2)} /Developer ID Application:/{print "  Developer ID App SHA1:  " tolower($2)}' || true
-  echo ""
-  echo "2) Profiles audit:"
-  cmd_audit
-  echo ""
-  echo "3) Release signing match:"
-  set +e
-  python3 - <<'PY'
-import os, plistlib, subprocess, sys
-
-profiles_dir = os.path.expanduser("~/Library/MobileDevice/Provisioning Profiles")
-gui = os.path.join(profiles_dir, "OpenJoystickDriver_DevID.provisionprofile")
-
-def decode_profile(path: str) -> bytes:
-    p = subprocess.run(["security", "cms", "-D", "-i", path], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    if p.returncode == 0 and p.stdout:
-        return p.stdout
-    p = subprocess.run(["openssl", "smime", "-inform", "der", "-verify", "-noverify", "-in", path],
-        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    return p.stdout if p.returncode == 0 and p.stdout else b""
-
-def profile_sha1(path: str) -> str:
-    raw = decode_profile(path)
-    if not raw or b"<?xml" not in raw:
-        raise RuntimeError(f"could not decode {path}")
-    raw = raw[raw.index(b"<?xml"):]
-    obj = plistlib.loads(raw)
-    certs = obj.get("DeveloperCertificates") or []
-    if not certs:
-        raise RuntimeError(f"missing DeveloperCertificates in {path}")
-    p = subprocess.run(["openssl", "x509", "-inform", "DER", "-noout", "-fingerprint", "-sha1"],
-        input=certs[0], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True)
-    return p.stdout.decode().strip().split("=", 1)[1].replace(":", "").lower()
-
-def developer_id_identities() -> set[str]:
-    p = subprocess.run(["security", "find-identity", "-v", "-p", "codesigning"],
-        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
-    found: set[str] = set()
-    for line in p.stdout.splitlines():
-        if '"Developer ID Application:' not in line:
-            continue
-        parts = line.split()
-        if len(parts) >= 2 and len(parts[1]) == 40:
-            found.add(parts[1].lower())
-    return found
-
-try:
-    gui_sha = profile_sha1(gui)
-except Exception as e:
-    print(f"  [FAIL] {e}")
-    sys.exit(1)
-
-ids = developer_id_identities()
-print(f"  GUI DevID profile cert:    {gui_sha}")
-print(f"  keychain Developer IDs:    {', '.join(sorted(ids)) if ids else 'none'}")
-
-missing = [gui_sha] if gui_sha not in ids else []
-if missing:
-    print("  [FAIL] one or more Developer ID profile certificates are not available as signing identities in Keychain.")
-    print("  Need: a Developer ID Application signing identity whose SHA1 matches each profile's embedded certificate.")
-    print("  Note: matching Team ID is necessary, but not enough; codesign also needs the matching certificate private key.")
-    print("  Fix: install the missing Developer ID Application certificate/private key, or regenerate that profile for an installed Developer ID identity.")
-    sys.exit(1)
-
-print("  [OK] application Developer ID profile matches an installed signing identity")
-PY
-  local release_status=$?
-  set -e
-  echo ""
-  if [[ "$release_status" -eq 0 ]]; then
-    echo "Next:"
-    echo "  ./scripts/ojd signing configure"
-    echo "  ./scripts/ojd build release"
-    echo "  ./scripts/ojd notarize submit"
-  else
-    echo "STATUS BLOCKED"
-    echo "Release signing/notarization cannot be proven until the missing Developer ID signing identity above is fixed."
-    echo ""
-    echo "Resolution:"
-    echo "  Option A: install/import the Developer ID Application certificate + private key whose SHA1 matches the application profile."
-    echo "  Option B: regenerate OpenJoystickDriver_DevID.provisionprofile for an installed Developer ID Application identity."
-    echo "  Ensure com.apple.developer.hid.virtual.device is present."
-    echo "  Then install profiles: ./scripts/ojd signing install-profiles \"$HOME/Documents/Profiles\""
-    echo "  Then re-run: ./scripts/ojd signing doctor"
-    return "$release_status"
-  fi
+  exec /usr/bin/env python3 "$SCRIPT_DIR/doctor.py"
 }
 
 case "$cmd" in
@@ -502,12 +419,13 @@ Usage:
   ./scripts/ojd signing configure
 
 Reads:
-  - Keychain code signing identities (Apple Development + Developer ID Application)
+  - Apple Development identity and the two development provisioning profiles
+  - Optional publisher-only Developer ID Application identity/profile
   - Provisioning profiles from ~/Library/MobileDevice/Provisioning Profiles/
 
 Writes:
   - .env.dev
-  - .env.release
+  - .env.release when publisher release assets are installed
 
 Environment overrides (optional):
   GUI_DEV_PROFILE, GUI_DEVID_PROFILE, DEXT_PROFILE
@@ -531,4 +449,3 @@ export APPLE_DEV_IDENTITY
 export DEVID_APP_IDENTITY
 
 python3 "$SCRIPT_DIR/configure.py"
-

@@ -20,8 +20,7 @@ Updates:
   - Headless update and support-report fallback versions
   - justfile release-local-install default
   - scripts/README.md release examples
-  - scripts/build-tools/bundles.sh generated GUI/application service bundle versions
-  - DriverKitExtension/Info.plist short version
+  - scripts/platform/environment.sh app and generated DriverKit default version
   - Release-version packaging assertions
 
 The target version must already have a CHANGELOG.md heading.
@@ -50,8 +49,7 @@ updates_command_file="$PROJECT_DIR/Sources/OpenJoystickDriver/Commands/UpdatesCo
 packaging_tests="$PROJECT_DIR/Tests/OpenJoystickDriverKitTests/Integration/Packaging/ScriptPackagingTests.swift"
 justfile="$PROJECT_DIR/justfile"
 scripts_readme="$PROJECT_DIR/scripts/README.md"
-build_script="$PROJECT_DIR/scripts/build-tools/bundles.sh"
-dext_plist="$PROJECT_DIR/DriverKitExtension/Info.plist"
+build_defaults="$PROJECT_DIR/scripts/platform/environment.sh"
 changelog="$PROJECT_DIR/CHANGELOG.md"
 
 [[ -f "$cli_file" ]] || die "Missing $cli_file"
@@ -61,15 +59,14 @@ changelog="$PROJECT_DIR/CHANGELOG.md"
 [[ -f "$packaging_tests" ]] || die "Missing $packaging_tests"
 [[ -f "$justfile" ]] || die "Missing $justfile"
 [[ -f "$scripts_readme" ]] || die "Missing $scripts_readme"
-[[ -f "$build_script" ]] || die "Missing $build_script"
-[[ -f "$dext_plist" ]] || die "Missing $dext_plist"
+[[ -f "$build_defaults" ]] || die "Missing $build_defaults"
 [[ -f "$changelog" ]] || die "Missing $changelog"
 
 if ! grep -Fxq "## $version" "$changelog"; then
   die "CHANGELOG.md must contain heading: ## $version"
 fi
 
-python3 - "$version" "$cli_file" "$app_model_file" "$report_command_file" "$updates_command_file" "$packaging_tests" "$justfile" "$scripts_readme" "$build_script" "$dext_plist" <<'PY'
+python3 - "$version" "$cli_file" "$app_model_file" "$report_command_file" "$updates_command_file" "$packaging_tests" "$justfile" "$scripts_readme" "$build_defaults" <<'PY'
 import re
 import sys
 from pathlib import Path
@@ -83,8 +80,7 @@ from pathlib import Path
     packaging_tests_path,
     justfile_path,
     readme_path,
-    build_script_path,
-    dext_plist_path,
+    build_defaults_path,
 ) = sys.argv[1:]
 
 replacements = [
@@ -151,14 +147,6 @@ replacements = [
                 rf"\g<1>{version}\g<2>",
                 2,
             ),
-            (
-                "packaging test bundle short version",
-                re.compile(
-                    r'(OJD_BUNDLE_SHORT_VERSION:-)\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?'
-                ),
-                rf"\g<1>{version}",
-                1,
-            ),
         ],
     ),
     (
@@ -196,33 +184,12 @@ replacements = [
         ],
     ),
     (
-        Path(build_script_path),
+        Path(build_defaults_path),
         [
             (
-                "build bundles default short version",
+                "shared app and DriverKit default short version",
                 re.compile(
-                    r'(OJD_BUNDLE_SHORT_VERSION:-)\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?'
-                ),
-                rf"\g<1>{version}",
-                1,
-            ),
-            (
-                "build bundles GUI/application service short versions",
-                re.compile(
-                    r"(<key>CFBundleShortVersionString</key>\n[ \t]*<string>)\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(</string>)"
-                ),
-                rf"\g<1>{version}\g<2>",
-                2,
-            ),
-        ],
-    ),
-    (
-        Path(dext_plist_path),
-        [
-            (
-                "DriverKit short version",
-                re.compile(
-                    r"(<key>CFBundleShortVersionString</key>\n[ \t]*<string>)\d+\.\d+(?:\.\d+)?(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(</string>)"
+                    r'(OJD_DEFAULT_BUNDLE_SHORT_VERSION=")\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(")'
                 ),
                 rf"\g<1>{version}\g<2>",
                 1,

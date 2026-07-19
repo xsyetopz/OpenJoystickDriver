@@ -2,13 +2,9 @@ import Foundation
 import Testing
 
 struct MenuAppResponsivenessTests {
-  @Test
-  func applicationAndCLISubprocessesAreAsyncAndBounded() throws {
+  @Test func applicationAndCLISubprocessesAreAsyncAndBounded() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let polling = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/Polling.swift",
-      root: root
-    )
+    let polling = try source("Sources/OpenJoystickDriver/App/AppModel/Polling.swift", root: root)
     let inputMonitoring = try source(
       "Sources/OpenJoystickDriver/App/AppModel/InputMonitoring.swift",
       root: root
@@ -18,7 +14,7 @@ struct MenuAppResponsivenessTests {
       root: root
     )
     let systemExtension = try source(
-      "Sources/OpenJoystickDriver/App/SystemExtensionManager.swift",
+      "Sources/OpenJoystickDriver/App/SystemExtensionLifecycle.swift",
       root: root
     )
     let permissionManager = try source(
@@ -45,13 +41,9 @@ struct MenuAppResponsivenessTests {
     #expect(!systemExtension.contains("waitUntilExit()"))
   }
 
-  @Test
-  func cliAndServiceUseTheSameBoundedProcessPrimitive() throws {
+  @Test func cliAndServiceUseTheSameBoundedProcessPrimitive() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let cliUtilities = try source(
-      "Sources/OpenJoystickDriver/CLIUtilities.swift",
-      root: root
-    )
+    let cliUtilities = try source("Sources/OpenJoystickDriver/CLIUtilities.swift", root: root)
     let serviceManager = try source(
       "Sources/OpenJoystickDriverKit/ApplicationService/ApplicationServiceManager.swift",
       root: root

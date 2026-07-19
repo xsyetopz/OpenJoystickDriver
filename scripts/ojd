@@ -24,6 +24,7 @@ Commands:
   build dev                   Build + sign app bundle into `.build/` (no dext)
   build release               Build + sign app bundle for release (no dext)
   build dext                  Build DriverKit `.dext` and embed into `.build/` app
+  driverkit generate [path]  Generate a fresh SwifterKit DriverKit project
   bump-version <version>      Update release version references
 
   env audit                   Validate the single-file env contract without printing values
@@ -50,13 +51,14 @@ Commands:
   diagnose catalina [app]     Check a macOS 10.15 test app bundle
   diagnose backends           Run current backend acceptance loop
   repair stale-dext           Kill stale DriverKit process copies after upgrade
-  repair swiftpm-module-cache Clear SwiftPM module caches under `.build/` (fixes toolchain/target mismatches)
+  repair swiftpm-module-cache Clean SwiftPM build products after toolchain/target changes
   catalog regenerate --check Verify the runtime catalog against pinned sources and overrides
   catalog regenerate --write Rebuild the runtime catalog from pinned sources and overrides
   catalog xpad [options]      Generate review-only records from a pinned Linux xpad.c
   validate profiles           Validate canonical controller records
   validate scripts            Validate script ownership, paths, modes, and syntax
   validate swift-structure    Validate Swift file sizes and ownership layout
+  validate driverkit          Verify generated DriverKit reproducibility and build
   test parsers-macos14        Run focused parser regressions without Swift Testing
   test scripts                Run deterministic script unit tests
   launch sdl-gamecontroller <app>
@@ -173,6 +175,17 @@ case "$cmd" in
     exec /usr/bin/env bash "$SCRIPT_DIR/release/bump-version.sh" "$@"
     ;;
 
+  driverkit)
+    sub="${1:-}"; shift || true
+    case "$sub" in
+      generate)
+        require_at_most_one_arg "driverkit generate" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/driverkit.sh" generate "$@"
+        ;;
+      *) die "Unknown: driverkit $sub (expected: generate)" ;;
+    esac
+    ;;
+
   env)
     sub="${1:-}"
     shift || true
@@ -191,7 +204,7 @@ case "$cmd" in
     case "$sub" in
       export-external-issues)
         require_no_args "docs export-external-issues" "$@"
-        exec /usr/bin/env python3 "$SCRIPT_DIR/docs/export-external-issues.py"
+        exec /usr/bin/env python3 "$SCRIPT_DIR/docs/issues/export.py"
         ;;
       *)
         die "Unknown: docs $sub (expected: export-external-issues)"
@@ -269,8 +282,10 @@ case "$cmd" in
         if [[ "$record_path" != /* ]]; then
           record_path="$PWD/$record_path"
         fi
+        source "$SCRIPT_DIR/platform/environment.sh"
+        setup_libusb_pkgconfig
         cd "$PROJECT_DIR"
-        exec env OJD_USE_LOCAL_SWIFTUSB=1 swift run \
+        exec env OJD_USE_LOCAL_SWIFTUSB=1 "$SWIFT_BIN" run \
           OpenJoystickDriverHIDTool --record-probe "$record_path" "$@"
         ;;
       dext)
@@ -316,8 +331,12 @@ case "$cmd" in
         require_no_args "validate swift-structure" "$@"
         exec /usr/bin/env python3 "$SCRIPT_DIR/quality/validate-swift-structure.py"
         ;;
+      driverkit)
+        require_no_args "validate driverkit" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/driverkit.sh" validate
+        ;;
       *)
-        die "Unknown: validate $sub (expected: profiles | scripts | swift-structure)"
+        die "Unknown: validate $sub (expected: profiles | scripts | swift-structure | driverkit)"
         ;;
     esac
     ;;
@@ -348,7 +367,7 @@ case "$cmd" in
     case "$sub" in
       stale-dext)
         require_no_args "repair stale-dext" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/repair-stale-dext.sh"
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/dext/repair.sh"
         ;;
       swiftpm-module-cache)
         require_no_args "repair swiftpm-module-cache" "$@"
@@ -359,13 +378,12 @@ case "$cmd" in
             exit 0
           fi
 
-          removed=0
-          while IFS= read -r -d '' dir; do
-            rm -rf "$dir"
-            removed=$((removed + 1))
-          done < <(find ".build" -type d -name 'ModuleCache' -print0 2>/dev/null || true)
-
-          echo "Removed $removed SwiftPM module cache directories."
+          swift_package="${SWIFT_PACKAGE_BIN:-}"
+          if [[ -z "$swift_package" ]]; then
+            swift_package="$(xcrun --find swift-package 2>/dev/null || command -v swift-package)"
+          fi
+          "$swift_package" clean
+          echo "Cleaned SwiftPM build products."
         )
         ;;
       *)
@@ -378,7 +396,7 @@ case "$cmd" in
     sub="${1:-}"; shift || true
     case "$sub" in
       sdl-gamecontroller)
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/launch-sdl-gamecontroller.sh" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/sdl/gamecontroller.sh" "$@"
         ;;
       *)
         die "Unknown: launch $sub (expected: sdl-gamecontroller)"

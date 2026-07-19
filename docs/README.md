@@ -13,9 +13,9 @@ Open the section that matches the work. Archived upstream material stays under `
 - [Test physical output](testing/physical-output.md)
 - [Test a controller record without a signed installation](testing/controller-record.md)
 - [Check Logitech F310 mapping](testing/logitech-f310.md)
-- [Check Microsoft Xbox One Controller (model 1537)](testing/microsoft-xbox-one-controller-1537.md)
-- [Check Razer Wolverine V2](testing/razer-wolverine-v2.md)
-- [Check Razer Wolverine V3 Tournament Edition](testing/razer-wolverine-v3-te.md)
+- [Check Microsoft Xbox One Controller (model 1537)](testing/xbox/1537.md)
+- [Check Razer Wolverine V2](testing/razer/wolverine-v2.md)
+- [Check Razer Wolverine V3 Tournament Edition](testing/razer/v3-te.md)
 - [Check Steam Controller input and output](testing/steam-controller.md)
 - [Check an Xbox 360 wireless receiver](testing/xbox-360-wireless-receiver.md)
 - [Capture Xbox Adaptive Joystick packets](testing/xbox-adaptive-joystick.md)
@@ -24,11 +24,16 @@ Open the section that matches the work. Archived upstream material stays under `
 ## Develop and diagnose
 
 - [Architecture](development/architecture.md)
+- Generated DriverKit relay: run `./scripts/ojd driverkit generate` or
+  `./scripts/ojd validate driverkit`; `./scripts/ojd help` is the supported
+  command index.
 - [CLI and menu app coverage](development/cli-and-menu-app.md)
 - [Application service runtime health](development/application-service-health.md)
 - [Menu app responsiveness](development/menu-responsiveness.md)
 - [Environment files](development/environment.md)
+- [Obtain and configure signing assets](development/signing.md)
 - [Implementation status](development/implementation-status.md)
+- [Seven-issue and DriverKit audit](development/issue-audit.md)
 - [Experimental controller status](development/experimental-controllers.md)
 - [Physical output evidence](development/physical-output-evidence.md)
 - [Import controller identities from Linux xpad](development/xpad-import.md)

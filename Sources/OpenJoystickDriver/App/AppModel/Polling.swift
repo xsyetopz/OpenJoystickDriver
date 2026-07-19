@@ -28,8 +28,6 @@ import OpenJoystickDriverKit
       devices = status.connectedDevices.map { DeviceViewModel(from: $0) }
       userSpaceVirtualDeviceEnabled = status.userSpaceVirtualDeviceEnabled ?? false
       userSpaceVirtualDeviceStatus = status.userSpaceVirtualDeviceStatus ?? "unknown"
-      virtualDeviceMode = status.virtualDeviceMode ?? VirtualDeviceMode.compatUserSpace.rawValue
-      outputMode = status.effectiveOutputMode ?? CompositeOutputDispatcher.Mode.primaryOnly.rawValue
       compatibilityIdentity = status.compatibilityIdentity ?? CompatibilityIdentity.sdl2_3.rawValue
 
       await maybeRefreshApplicationServiceHealth(isConnected: true)

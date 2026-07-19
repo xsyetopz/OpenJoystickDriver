@@ -23,9 +23,9 @@ class ScriptLayoutTests(unittest.TestCase):
         (scripts / "README.md").write_text("# Scripts\n")
         (scripts / "quality" / "check.py").write_text("print('ok')\n")
 
-    def test_common_shell_errors_have_one_owner(self):
-        common = (ROOT / "scripts" / "shared" / "common.sh").read_text()
-        self.assertIn("die() {", common)
+    def test_environment_owns_shell_errors(self):
+        environment = (ROOT / "scripts" / "platform" / "environment.sh").read_text()
+        self.assertIn("die() {", environment)
         for relative in [
             "build-tools/build.sh",
             "diagnostics/diagnose.sh",

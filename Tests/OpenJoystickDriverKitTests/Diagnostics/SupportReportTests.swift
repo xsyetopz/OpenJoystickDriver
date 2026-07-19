@@ -32,14 +32,11 @@ struct SupportReportTests {
       ],
       userSpaceVirtualDeviceEnabled: true,
       userSpaceVirtualDeviceStatus: "error: \(secretPath)",
-      virtualDeviceMode: "auto",
-      effectiveOutputMode: "primaryOnly",
       compatibilityIdentity: "sdl2-3"
     )
     let diagnostics = ApplicationServiceVirtualDeviceDiagnosticsPayload(
       userSpaceVirtualDeviceEnabled: true,
       userSpaceVirtualDeviceStatus: "error: \(secretPath)",
-      outputMode: "primaryOnly",
       hidGamepads: [
         ApplicationServiceHIDGamepadSnapshot(
           vendorID: 1234,

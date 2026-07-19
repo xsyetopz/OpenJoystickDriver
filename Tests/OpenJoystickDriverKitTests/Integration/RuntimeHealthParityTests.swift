@@ -32,7 +32,7 @@ struct RuntimeHealthParityTests {
       + "ForegroundConsumerOutputMonitor.swift"
     let consumerDiscoveryPath =
       "Sources/OpenJoystickDriver/Service/ForegroundConsumerOutputMonitor/"
-      + "ConsumerDiscovery.swift"
+      + "Discovery.swift"
     let consumerMonitor =
       try source(consumerMonitorPath, root: root)
       + source(consumerDiscoveryPath, root: root)

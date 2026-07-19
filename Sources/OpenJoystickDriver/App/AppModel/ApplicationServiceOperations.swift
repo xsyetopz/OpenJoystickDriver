@@ -59,13 +59,9 @@ import OpenJoystickDriverKit
     }
   }
 
-  func setPhysicalColor(
-    vendorID: UInt16,
-    productID: UInt16,
-    red: UInt8,
-    green: UInt8,
-    blue: UInt8
-  ) async -> Bool {
+  func setPhysicalColor(vendorID: UInt16, productID: UInt16, red: UInt8, green: UInt8, blue: UInt8)
+    async -> Bool
+  {
     guard serviceConnected else { return false }
     do {
       return try await client.setPhysicalColor(
@@ -81,11 +77,7 @@ import OpenJoystickDriverKit
     }
   }
 
-  func setPhysicalBrightness(
-    vendorID: UInt16,
-    productID: UInt16,
-    brightness: UInt8
-  ) async -> Bool {
+  func setPhysicalBrightness(vendorID: UInt16, productID: UInt16, brightness: UInt8) async -> Bool {
     guard serviceConnected else { return false }
     do {
       return try await client.setPhysicalBrightness(
@@ -104,43 +96,10 @@ import OpenJoystickDriverKit
     try? await client.setSuppressOutput(suppress)
   }
 
-  func setVirtualDeviceMode(_ modeRaw: String) async {
-    guard serviceConnected else { return }
-    do {
-      try await client.setVirtualDeviceMode(modeRaw)
-      await syncFromApplicationServiceNow()
-    } catch {
-      await refreshApplicationServiceHealth()
-      serviceError = formatApplicationServiceError(error)
-    }
-  }
-
   func setCompatibilityIdentity(_ raw: String) async {
     guard serviceConnected else { return }
     do {
       try await client.setCompatibilityIdentity(raw)
-      await syncFromApplicationServiceNow()
-    } catch {
-      await refreshApplicationServiceHealth()
-      serviceError = formatApplicationServiceError(error)
-    }
-  }
-
-  func setUserSpaceVirtualDeviceEnabled(_ enabled: Bool) async {
-    guard serviceConnected else { return }
-    do {
-      try await client.setUserSpaceVirtualDeviceEnabled(enabled)
-      await syncFromApplicationServiceNow()
-    } catch {
-      await refreshApplicationServiceHealth()
-      serviceError = formatApplicationServiceError(error)
-    }
-  }
-
-  func setOutputMode(_ modeRaw: String) async {
-    guard serviceConnected else { return }
-    do {
-      try await client.setOutputMode(modeRaw)
       await syncFromApplicationServiceNow()
     } catch {
       await refreshApplicationServiceHealth()
@@ -164,9 +123,8 @@ import OpenJoystickDriverKit
 
   func runVirtualDeviceSelfTest(seconds: Int = 5) async {
     guard serviceConnected else { return }
-    do {
-      virtualDeviceSelfTest = try await client.runVirtualDeviceSelfTest(seconds: seconds)
-    } catch {
+    do { virtualDeviceSelfTest = try await client.runVirtualDeviceSelfTest(seconds: seconds) } catch
+    {
       await refreshApplicationServiceHealth()
       serviceError = formatApplicationServiceError(error)
       virtualDeviceSelfTest = nil
@@ -178,9 +136,7 @@ import OpenJoystickDriverKit
       virtualDeviceDiagnostics = nil
       return
     }
-    do {
-      virtualDeviceDiagnostics = try await client.getVirtualDeviceDiagnostics()
-    } catch {
+    do { virtualDeviceDiagnostics = try await client.getVirtualDeviceDiagnostics() } catch {
       serviceError = formatApplicationServiceError(error)
       virtualDeviceDiagnostics = nil
     }
@@ -193,16 +149,17 @@ import OpenJoystickDriverKit
       return
     }
 
+    let includePrereleases = includePrereleaseUpdates
     updateCheckState = .checking
-    updateCheckState = await updateChecker.check(
+    let result = await updateChecker.check(
       currentVersion: appVersion,
-      includePrereleases: includePrereleaseUpdates
+      includePrereleases: includePrereleases
     )
+    guard includePrereleaseUpdates == includePrereleases else { return }
+    updateCheckState = result
   }
 
   func openLatestRelease() {
-    if case .available(let info) = updateCheckState {
-      NSWorkspace.shared.open(info.htmlURL)
-    }
+    if case .available(let info) = updateCheckState { NSWorkspace.shared.open(info.htmlURL) }
   }
 }

@@ -241,16 +241,8 @@ struct MenuBarPopoverView: View {
               .fixedSize(horizontal: false, vertical: true)
           }
           Spacer()
-          if model.virtualDeviceMode != VirtualDeviceMode.compatUserSpace.rawValue {
-            SwiftUI.Button(L10n.string("button.useCompatibility")) {
-              Task { await model.setVirtualDeviceMode(VirtualDeviceMode.compatUserSpace.rawValue) }
-            }
-            .controlSize(.small)
-            .disabled(!model.serviceConnected)
-          }
         }
 
-        let compatSelected = model.virtualDeviceMode == VirtualDeviceMode.compatUserSpace.rawValue
         HStack(spacing: 10) {
           Text(L10n.string("profile.identity"))
             .font(.caption)
@@ -270,14 +262,9 @@ struct MenuBarPopoverView: View {
             Text(L10n.string("profile.xboxOneHID")).tag(CompatibilityIdentity.xoneHID.rawValue)
           }
           .frame(maxWidth: .infinity)
-          .disabled(!model.serviceConnected || !compatSelected)
+          .disabled(!model.serviceConnected)
         }
 
-        if !compatSelected {
-          Text(L10n.string("profile.switchToCompatibility"))
-            .font(.caption)
-            .foregroundColor(.secondary)
-        }
       }
     }
   }

@@ -9,7 +9,7 @@ enum VirtualDeviceDiagnostics {
 
   static func enumerateHIDGamepads() -> [ApplicationServiceHIDGamepadSnapshot] {
     let mgr = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
-    // Do broad matching and filter in-process. Some dext versions may not match
+    // Do broad matching and filter in-process. Some extension versions may not match
     // correctly under the GamePad usage filter during extension replacement/upgrade.
     IOHIDManagerSetDeviceMatching(mgr, nil)
 
@@ -26,9 +26,9 @@ enum VirtualDeviceDiagnostics {
       if primaryPage == kHIDPage_GenericDesktop && primaryUsage == kHIDUsage_GD_GamePad {
         return true
       }
-      if let pairs = IOHIDDeviceGetProperty(device, kIOHIDDeviceUsagePairsKey as CFString) as? [[
-        String: Any
-      ]] {
+      if let pairs = IOHIDDeviceGetProperty(device, kIOHIDDeviceUsagePairsKey as CFString)
+        as? [[String: Any]]
+      {
         for pair in pairs {
           let page = pair[kIOHIDDeviceUsagePageKey as String] as? Int ?? 0
           let usage = pair[kIOHIDDeviceUsageKey as String] as? Int ?? 0
@@ -43,11 +43,27 @@ enum VirtualDeviceDiagnostics {
       let pid = intProp(device, kIOHIDProductIDKey)
       let product = strProp(device, kIOHIDProductKey)
       let transport = strProp(device, kIOHIDTransportKey)
+      let manufacturer = strProp(device, kIOHIDManufacturerKey)
+      let version = intProp(device, kIOHIDVersionNumberKey)
       let location = intProp(device, kIOHIDLocationIDKey)
       let serial = strProp(device, kIOHIDSerialNumberKey)
+      let primaryUsagePage = intProp(device, kIOHIDPrimaryUsagePageKey)
+      let primaryUsage = intProp(device, kIOHIDPrimaryUsageKey)
       let ioUserClass = IOHIDDeviceGetProperty(device, ioUserClassKey as CFString) as? String
 
-      let isOJDDriverKit = (ioUserClass == "OpenJoystickVirtualHIDDevice")
+      let isOJDDriverKit = DriverKitRelayIdentity.matches(
+        runtimeClass: ioUserClass,
+        transport: transport,
+        vendorID: UInt32(truncatingIfNeeded: vid),
+        productID: UInt32(truncatingIfNeeded: pid),
+        versionNumber: UInt32(truncatingIfNeeded: version),
+        locationID: UInt32(truncatingIfNeeded: location),
+        manufacturer: manufacturer,
+        product: product,
+        serialNumber: serial,
+        primaryUsagePage: UInt32(truncatingIfNeeded: primaryUsagePage),
+        primaryUsage: UInt32(truncatingIfNeeded: primaryUsage)
+      )
       let isOJDUserSpace =
         (ioUserClass == "IOHIDUserDevice")
         || UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial)
@@ -55,12 +71,11 @@ enum VirtualDeviceDiagnostics {
       // Only report:
       // - OJD virtual devices (DriverKit or user-space), OR
       // - real devices that look like GamePads (keeps the list relevant).
-      if !isOJDDriverKit && !isOJDUserSpace && !looksLikeGamepad(device) {
-        return nil
-      }
+      if !isOJDDriverKit && !isOJDUserSpace && !looksLikeGamepad(device) { return nil }
 
       let serialKind: ApplicationServiceSerialKind =
-        (serial == nil || serial?.isEmpty == true) ? .none
+        (serial == nil || serial?.isEmpty == true)
+        ? .none
         : (UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial) ? .ojdUserSpace : .present)
 
       return ApplicationServiceHIDGamepadSnapshot(
@@ -74,9 +89,7 @@ enum VirtualDeviceDiagnostics {
         isOJDDriverKit: isOJDDriverKit,
         isOJDUserSpace: isOJDUserSpace,
         isGameControllerSupported: {
-          if #available(macOS 11.0, *) {
-            return GCController.supportsHIDDevice(device)
-          }
+          if #available(macOS 11.0, *) { return GCController.supportsHIDDevice(device) }
           return nil
         }()
       )

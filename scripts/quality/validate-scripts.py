@@ -15,7 +15,7 @@ OWNERS = {
     "catalog",
     "diagnostics",
     "docs",
-    "shared",
+    "platform",
     "quality",
     "release",
     "signing",

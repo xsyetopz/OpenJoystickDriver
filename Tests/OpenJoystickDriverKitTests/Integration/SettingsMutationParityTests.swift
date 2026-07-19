@@ -2,18 +2,9 @@ import Foundation
 import Testing
 
 struct SettingsMutationParityTests {
-  @Test
-  func cliAndGuiExposeTheSameOutputAndResetMutations() throws {
+  @Test func obsoleteOutputMutationsAreRemovedAndResetRemainsAvailable() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cli = try source("Sources/OpenJoystickDriver/CLI.swift", root: root)
-    let userSpace = try source(
-      "Sources/OpenJoystickDriver/Commands/UserSpaceCommand.swift",
-      root: root
-    )
-    let output = try source(
-      "Sources/OpenJoystickDriver/Commands/OutputModeCommand.swift",
-      root: root
-    )
     let reset = try source(
       "Sources/OpenJoystickDriver/Commands/ResetSettingsCommand.swift",
       root: root
@@ -31,32 +22,29 @@ struct SettingsMutationParityTests {
       root: root
     )
 
-    #expect(cli.contains("case \"userspace\""))
-    #expect(cli.contains("case \"output\""))
+    #expect(!cli.contains("case \"userspace\""))
+    #expect(!cli.contains("case \"output\""))
     #expect(cli.contains("case \"reset-settings\""))
-    #expect(userSpace.contains("client.setUserSpaceVirtualDeviceEnabled"))
-    #expect(output.contains("client.setOutputMode"))
     #expect(reset.contains("client.resetSettings"))
 
-    #expect(appModel.contains("client.setUserSpaceVirtualDeviceEnabled"))
-    #expect(appModel.contains("client.setOutputMode"))
+    #expect(!appModel.contains("client.setUserSpaceVirtualDeviceEnabled"))
+    #expect(!appModel.contains("client.setOutputMode"))
     #expect(appModel.contains("client.resetSettings"))
-    #expect(view.contains("model.setUserSpaceVirtualDeviceEnabled"))
-    #expect(view.contains("model.setOutputMode"))
+    #expect(!view.contains("model.setUserSpaceVirtualDeviceEnabled"))
+    #expect(!view.contains("model.setOutputMode"))
     #expect(view.contains("pendingConfirmation = .resetSettings"))
     #expect(popover.contains("case .resetSettings"))
     #expect(popover.contains("primaryButton: .destructive"))
   }
 
-  @Test
-  func guiExposesConfirmedDriverKitRemovalAndPermissionSettings() throws {
+  @Test func guiExposesConfirmedDriverKitRemovalAndPermissionSettings() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cli = try source(
       "Sources/OpenJoystickDriver/Commands/SystemExtensionCommand.swift",
       root: root
     )
     let manager = try source(
-      "Sources/OpenJoystickDriver/App/SystemExtensionManager.swift",
+      "Sources/OpenJoystickDriver/App/SystemExtensionLifecycle.swift",
       root: root
     )
     let cards = try source(

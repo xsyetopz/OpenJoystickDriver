@@ -169,32 +169,6 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     )
   }
 
-  public func setUserSpaceVirtualDeviceEnabled(_ enabled: Bool) async throws {
-    let _: Bool = try await call(
-      "setUserSpaceVirtualDeviceEnabled",
-      LocalServiceRPCBoolArguments(value: enabled)
-    )
-  }
-
-  public func setVirtualDeviceMode(_ mode: String) async throws {
-    let _: Bool = try await call(
-      "setVirtualDeviceMode",
-      LocalServiceRPCStringArguments(value: mode)
-    )
-  }
-
-  public func getVirtualDeviceMode() async throws -> String {
-    try await call("getVirtualDeviceMode", LocalServiceRPCEmptyArguments())
-  }
-
-  public func getUserSpaceVirtualDeviceEnabled() async throws -> Bool {
-    try await call("getUserSpaceVirtualDeviceEnabled", LocalServiceRPCEmptyArguments())
-  }
-
-  public func getUserSpaceVirtualDeviceStatus() async throws -> String {
-    try await call("getUserSpaceVirtualDeviceStatus", LocalServiceRPCEmptyArguments())
-  }
-
   public func getVirtualDeviceDiagnostics() async throws
     -> ApplicationServiceVirtualDeviceDiagnosticsPayload
   {
@@ -222,17 +196,6 @@ public final class ApplicationServiceClient: @unchecked Sendable {
 
   public func getCompatibilityIdentity() async throws -> String {
     try await call("getCompatibilityIdentity", LocalServiceRPCEmptyArguments())
-  }
-
-  public func setOutputMode(_ mode: String) async throws {
-    let _: Bool = try await call(
-      "setOutputMode",
-      LocalServiceRPCStringArguments(value: mode)
-    )
-  }
-
-  public func getOutputMode() async throws -> String {
-    try await call("getOutputMode", LocalServiceRPCEmptyArguments())
   }
 
   public func runVirtualDeviceSelfTest(seconds: Int) async throws

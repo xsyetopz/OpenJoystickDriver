@@ -44,24 +44,13 @@ struct StatusCommand {
     )
     printPermissionSnapshot(permissions)
     print("")
-    if let mode = payload.virtualDeviceMode {
-      print("Virtual device mode:")
-      print("  requested : \(mode)")
-      if let output = payload.effectiveOutputMode {
-        print("  output    : \(output)")
-      }
-      if let id = payload.compatibilityIdentity {
-        print("  identity  : \(id)")
-      }
-      if let enabled = payload.userSpaceVirtualDeviceEnabled {
-        let s = enabled ? "enabled" : "disabled"
-        print("  user-space: \(s)")
-      }
-      if let s = payload.userSpaceVirtualDeviceStatus {
-        print("  status    : \(s)")
-      }
-      print("")
+    print("Compatibility output:")
+    if let id = payload.compatibilityIdentity { print("  identity  : \(id)") }
+    if let enabled = payload.userSpaceVirtualDeviceEnabled {
+      print("  backend   : \(enabled ? "enabled" : "unavailable")")
     }
+    if let status = payload.userSpaceVirtualDeviceStatus { print("  status    : \(status)") }
+    print("")
     if payload.connectedDevices.isEmpty {
       print("Devices: (none connected)")
     } else {

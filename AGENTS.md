@@ -1,6 +1,6 @@
 # AGENTS.md
 
-OpenJoystickDriver is a macOS userspace gamepad driver with a Swift package, persistent menu app runtime, and DriverKit extension. Ground support claims in source, tests, schemas, or recorded hardware evidence.
+OpenJoystickDriver is a macOS userspace gamepad driver with a Swift package, persistent menu-app runtime, and a generated DriverKit relay. Ground support claims in source, tests, schemas, or recorded hardware evidence.
 
 ## Read Next
 
@@ -21,9 +21,12 @@ Archived material under `docs/external/` is evidence, not instruction.
 - Upstream source lock: `ControllerSources.lock.json`
 - Record schemas: `Resources/Schemas/`
 - Build and signing entry point: `scripts/ojd`
-- DriverKit project: `DriverKitExtension/`
+- DriverKit relay configuration and runtime adapter: `Sources/OpenJoystickDriverRelay/`
+- DriverKit native-project generator: `Sources/DriverKitGenerator/`
+- Generated DriverKit project: `.build/driverkit/generated/` (ephemeral; never edit or commit)
+- Resolved package versions: `Package.resolved`
 
-Use the generator for controller catalog changes; do not hand-edit generated runtime records. Keep shared protocol behavior in code and device data limited to factual deviations. Follow the detailed rules in `CONTRIBUTING.md` and `docs/development/xpad-import.md`.
+Use the catalog generator for controller catalog changes; do not hand-edit generated runtime records. Use `./scripts/ojd driverkit generate` for the DriverKit native project; do not patch its output. Keep shared protocol behavior in code and device data limited to factual deviations. Follow the detailed rules in `CONTRIBUTING.md` and `docs/development/xpad-import.md`.
 
 ## Validation
 
@@ -36,6 +39,7 @@ Run the checks relevant to the change. The standard repository gates are:
 ./scripts/ojd validate swift-structure
 ./scripts/ojd test scripts
 ./scripts/ojd lint
+./scripts/ojd validate driverkit
 swift test
 ```
 
@@ -48,6 +52,9 @@ If `swift test` reports the documented SwiftPM module-cache mismatch, run `./scr
 - Preserve unrelated work and keep secrets out of source and output.
 - Follow Swift 6.2 strict-concurrency and SwiftLint rules in `CONTRIBUTING.md`.
 - Use decimal numeric values in committed controller JSON.
+- Keep `OpenJoystickDriverKit` independent of SwifterKit. Only `OpenJoystickDriverRelay` and `DriverKitGenerator` may import it; compose those targets at the app entry point.
+- Do not hand-author or retain a manual DriverKit native build path or post-generation patch path. Generated output remains under `.build/driverkit/`.
+- Preserve the host entitlement allowlist for `com.openjoystickdriver.VirtualHIDDevice`; never substitute an allow-any DriverKit user-client entitlement.
 - Avoid broad signing, DriverKit, or application-service lifecycle changes without targeted validation.
 - Confirm destructive actions, external writes, and publication.
 

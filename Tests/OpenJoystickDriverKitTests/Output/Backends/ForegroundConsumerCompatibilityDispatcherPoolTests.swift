@@ -4,8 +4,21 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct ForegroundConsumerCompatibilityDispatcherPoolTests {
-  @Test
-  func testDedicatedActivationReplacesTheSharedBootstrapDevice() async throws {
+  @Test func testNeutralSelfTestDispatchReachesFallbackWithoutActiveConsumer() async throws {
+    let identifier = DeviceIdentifier(vendorID: 0x4F4A, productID: 0x5445)
+    let shared = RecordingCompatibilityDispatcher(routeToken: "shared")
+    let pool = try makePool(shared: shared, dedicatedByRoute: LockedRouteDispatchers())
+
+    await pool.dispatch(events: [.buttonPressed(.a)], from: identifier)
+    #expect(shared.recordedDispatches.isEmpty)
+
+    await pool.dispatch(events: [], from: identifier)
+
+    #expect(shared.recordedDispatches == [.init(identifier: identifier, events: [])])
+    #expect(pool.status.contains("active=fallback"))
+  }
+
+  @Test func testDedicatedActivationReplacesTheSharedBootstrapDevice() async throws {
     let identifier = DeviceIdentifier(vendorID: 0x1234, productID: 0x5678)
     let bundleRoot = "/Applications/ConsumerA.app"
     let routeToken = UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
@@ -31,8 +44,7 @@ struct ForegroundConsumerCompatibilityDispatcherPoolTests {
     #expect(pool.status.contains("routes=1"))
   }
 
-  @Test
-  func testRouteHandoffNeutralizesAndClosesPreviousButtonState() async throws {
+  @Test func testRouteHandoffNeutralizesAndClosesPreviousButtonState() async throws {
     let identifier = DeviceIdentifier(vendorID: 0x1234, productID: 0x5678)
     let firstBundleRoot = "/Applications/ConsumerA.app"
     let secondBundleRoot = "/Applications/ConsumerB.app"
@@ -60,8 +72,7 @@ struct ForegroundConsumerCompatibilityDispatcherPoolTests {
     #expect(pool.status.contains("routes=1"))
   }
 
-  @Test
-  func testRouteHandoffNeutralizesPreviousActiveDpadState() async throws {
+  @Test func testRouteHandoffNeutralizesPreviousActiveDpadState() async throws {
     let identifier = DeviceIdentifier(vendorID: 0x1234, productID: 0x5678)
     let firstBundleRoot = "/Applications/ConsumerA.app"
     let secondBundleRoot = "/Applications/ConsumerB.app"
@@ -87,8 +98,7 @@ struct ForegroundConsumerCompatibilityDispatcherPoolTests {
     #expect(second.recordedDispatches.map(\.events).contains([.dpadChanged(.north)]))
   }
 
-  @Test
-  func testNoActiveConsumerRestoresOneNeutralSharedFallback() async throws {
+  @Test func testNoActiveConsumerRestoresOneNeutralSharedFallback() async throws {
     let identifier = DeviceIdentifier(vendorID: 0x1234, productID: 0x5678)
     let bundleRoot = "/Applications/ConsumerA.app"
     let routeToken = UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
@@ -113,8 +123,7 @@ struct ForegroundConsumerCompatibilityDispatcherPoolTests {
     #expect(pool.status.contains("active=fallback"))
   }
 
-  @Test
-  func testPhysicalControllerStopReachesEveryChildAndClearsFuturePriming() async throws {
+  @Test func testPhysicalControllerStopReachesEveryChildAndClearsFuturePriming() async throws {
     let identifier = DeviceIdentifier(vendorID: 0x1234, productID: 0x5678)
     let firstBundleRoot = "/Applications/ConsumerA.app"
     let secondBundleRoot = "/Applications/ConsumerB.app"
@@ -141,8 +150,7 @@ struct ForegroundConsumerCompatibilityDispatcherPoolTests {
     #expect(second.recordedDispatches.isEmpty)
   }
 
-  @Test
-  func testInactiveDedicatedRoutesAreClosedAndPruned() async throws {
+  @Test func testInactiveDedicatedRoutesAreClosedAndPruned() async throws {
     let firstBundleRoot = "/Applications/ConsumerA.app"
     let secondBundleRoot = "/Applications/ConsumerB.app"
     let firstRoute = UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
@@ -170,9 +178,7 @@ struct ForegroundConsumerCompatibilityDispatcherPoolTests {
     dedicatedByRoute: LockedRouteDispatchers
   ) throws -> ForegroundConsumerCompatibilityDispatcherPool {
     try ForegroundConsumerCompatibilityDispatcherPool { requestedRouteToken in
-      if let requestedRouteToken {
-        return dedicatedByRoute.dispatcher(for: requestedRouteToken)
-      }
+      if let requestedRouteToken { return dedicatedByRoute.dispatcher(for: requestedRouteToken) }
       return shared
     }
   }
@@ -196,8 +202,8 @@ private final class LockedRouteDispatchers: @unchecked Sendable {
   }
 }
 
-private final class RecordingCompatibilityDispatcher:
-  CompatibilityUserSpaceOutputDispatching, ControllerLifecycleListener, @unchecked Sendable
+private final class RecordingCompatibilityDispatcher: CompatibilityUserSpaceOutputDispatching,
+  ControllerLifecycleListener, @unchecked Sendable
 {
   struct RecordedDispatch: Sendable, Equatable {
     let identifier: DeviceIdentifier
@@ -213,9 +219,7 @@ private final class RecordingCompatibilityDispatcher:
   private var _closeCount = 0
   private var _stoppedIdentifiers: [DeviceIdentifier] = []
 
-  init(routeToken: String) {
-    self.routeToken = routeToken
-  }
+  init(routeToken: String) { self.routeToken = routeToken }
 
   var suppressOutput: Bool {
     get { lock.withLock { _suppressOutput } }

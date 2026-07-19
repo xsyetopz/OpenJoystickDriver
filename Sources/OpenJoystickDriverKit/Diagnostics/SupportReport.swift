@@ -35,8 +35,6 @@ public struct SupportReport: Codable, Sendable {
   }
 
   public struct Configuration: Codable, Sendable {
-    public let virtualDeviceMode: String?
-    public let effectiveOutputMode: String?
     public let compatibilityIdentity: String?
     public let userSpaceVirtualDeviceEnabled: Bool?
   }
@@ -136,8 +134,6 @@ public struct SupportReport: Codable, Sendable {
     )
     self.appleGameControllerAudit = appleGameControllerAudit
     configuration = Configuration(
-      virtualDeviceMode: status?.virtualDeviceMode,
-      effectiveOutputMode: status?.effectiveOutputMode,
       compatibilityIdentity: status?.compatibilityIdentity,
       userSpaceVirtualDeviceEnabled: status?.userSpaceVirtualDeviceEnabled
     )

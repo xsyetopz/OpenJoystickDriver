@@ -7,7 +7,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../shared/common.sh"
+source "$SCRIPT_DIR/../platform/environment.sh"
 
 # zsh has a 'log' builtin that shadows /usr/bin/log — always use full path
 LOG=/usr/bin/log
@@ -107,15 +107,15 @@ nuke_all() {
 
   echo ""
   echo "=== NUKE: clearing build artifacts ==="
-  rm -rf "$PROJECT_DIR/.build/dext" 2>/dev/null || true
+  rm -rf "$PROJECT_DIR/.build/driverkit" 2>/dev/null || true
   rm -rf "$PROJECT_DIR/.build/debug/OpenJoystickDriver.app" 2>/dev/null || true
   rm -rf "$PROJECT_DIR/.build/arm64-apple-macosx" 2>/dev/null || true
   rm -rf "$PROJECT_DIR/.build/x86_64-apple-macosx" 2>/dev/null || true
-  echo "  cleared .build/dext and .build/debug app"
+  echo "  cleared .build/driverkit and .build/debug app"
 
   echo ""
   echo "=== NUKE: clearing Xcode derived data for dext ==="
-  rm -rf ~/Library/Developer/Xcode/DerivedData/OpenJoystickVirtualHID-* 2>/dev/null || true
+  rm -rf "$PROJECT_DIR/.build/driverkit/derived-data" 2>/dev/null || true
   echo "  cleared"
 
   echo ""
@@ -342,16 +342,12 @@ _require_signed_entitlement_value() {
   fi
 }
 
+source "$SCRIPT_DIR/driverkit.sh"
 source "$SCRIPT_DIR/bundles.sh"
 
 next_dext_bundle_version() {
   local max_version=0
   local candidate
-
-  candidate=$(plutil -extract CFBundleVersion raw "$PROJECT_DIR/DriverKitExtension/Info.plist" 2>/dev/null || echo "")
-  if [[ "$candidate" =~ ^[0-9]+$ && "$candidate" -gt "$max_version" ]]; then
-    max_version="$candidate"
-  fi
 
   candidate=$(plutil -extract CFBundleVersion raw \
     /Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/com.openjoystickdriver.VirtualHIDDevice.dext/Info.plist \
@@ -517,7 +513,7 @@ rebuild_full() {
       echo "  ✗ Kernel DK log shows 'user server timeout' after ${ELAPSED}s"
       break
     fi
-    if $LOG show --last 10s --predicate 'eventMessage CONTAINS "OpenJoystickVirtualHID:"' --info --debug --style compact 2>/dev/null | grep -q "OpenJoystickVirtualHID:"; then
+    if $LOG show --last 10s --predicate 'process == "OpenJoystickVirtualHID"' --info --debug --style compact 2>/dev/null | grep -q "OpenJoystickVirtualHID"; then
       echo "  ✓ Dext logs detected after ${ELAPSED}s"
       break
     fi

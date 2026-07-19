@@ -10,7 +10,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 PROFILES = {
     "dev": {
         "CODESIGN_IDENTITY", "DEVELOPMENT_TEAM", "DEXT_BUILD_PROFILE",
-        "APPLE_DEV_IDENTITY",
+        "APPLE_DEV_IDENTITY", "GUI_PROVISIONING_PROFILE",
     },
     "release": {
         "CODESIGN_IDENTITY", "GUI_CODESIGN_IDENTITY",

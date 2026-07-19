@@ -10,7 +10,7 @@
 # Runs all checks regardless of individual failures.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../shared/common.sh"
+source "$SCRIPT_DIR/../platform/environment.sh"
 
 cmd="${1:-dext}"
 shift || true
@@ -70,9 +70,6 @@ configure_ojd_gamecontroller_route() {
   run_limited_command 8 "$CLI_BIN" --headless compat apple-gamecontroller >/dev/null || {
     echo "WARN: could not set OJD compatibility identity to apple-gamecontroller" >&2
   }
-  run_limited_command 8 "$CLI_BIN" --headless userspace on >/dev/null || {
-    echo "WARN: could not enable OJD user-space output" >&2
-  }
 }
 
 run_sdl3_gamecontroller_probe() {
@@ -102,9 +99,6 @@ configure_ojd_hidapi_x360_route() {
 
   run_limited_command 8 "$CLI_BIN" --headless compat x360-hid >/dev/null || {
     echo "WARN: could not set OJD compatibility identity to x360-hid" >&2
-  }
-  run_limited_command 8 "$CLI_BIN" --headless userspace on >/dev/null || {
-    echo "WARN: could not enable OJD user-space output" >&2
   }
 }
 
@@ -224,13 +218,6 @@ run_backend_acceptance_loop() {
     run_limited "$step_timeout" "$CLI_BIN" --headless status || true
     echo
 
-    echo "1) Output mode:"
-    run_limited "$step_timeout" "$CLI_BIN" --headless output status || true
-    echo
-
-    echo "2) User-space backend status:"
-    run_limited "$step_timeout" "$CLI_BIN" --headless userspace status || true
-    echo
   else
     echo "0) SKIP: OpenJoystickDriver CLI not found at:"
     echo "   $APP_BIN"
@@ -486,7 +473,7 @@ fi
 # --- 10. Application service connection ---
 if [[ -f "$SERVICE_LOG" ]]; then
   service_session=$(awk '
-    /\[Service\] DriverKit output:/ { session = "" }
+    /\[Service\] DriverKit integrity relay:/ { session = "" }
     { session = session $0 ORS }
     END { printf "%s", session }
   ' "$SERVICE_LOG")
@@ -494,8 +481,8 @@ if [[ -f "$SERVICE_LOG" ]]; then
     fail "Application service reports dext not yet available"
   elif echo "$service_session" | grep -qE "Connected|Auto-retry connected"; then
     pass "Application service reports connected to dext"
-  elif echo "$service_session" | grep -q "DriverKit output: on-demand"; then
-    pass "Application service reports on-demand dext connection (no persistent connection expected)"
+  elif echo "$service_session" | grep -q "DriverKit integrity relay: diagnostic probes only"; then
+    pass "Application service reserves the dext for diagnostic probes"
   else
     warn "Current application service session has no dext connection status"
   fi

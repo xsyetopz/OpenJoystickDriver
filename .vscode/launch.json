@@ -59,6 +59,26 @@
 			"target": "OpenJoystickDriverGameControllerProbe",
 			"configuration": "release",
 			"preLaunchTask": "swift: Build Release OpenJoystickDriverGameControllerProbe"
+		},
+		{
+			"type": "swift",
+			"request": "launch",
+			"args": [],
+			"cwd": "${workspaceFolder:OpenJoystickDriver}",
+			"name": "Debug DriverKitGenerator",
+			"target": "DriverKitGenerator",
+			"configuration": "debug",
+			"preLaunchTask": "swift: Build Debug DriverKitGenerator"
+		},
+		{
+			"type": "swift",
+			"request": "launch",
+			"args": [],
+			"cwd": "${workspaceFolder:OpenJoystickDriver}",
+			"name": "Release DriverKitGenerator",
+			"target": "DriverKitGenerator",
+			"configuration": "release",
+			"preLaunchTask": "swift: Build Release DriverKitGenerator"
 		}
 	]
 }

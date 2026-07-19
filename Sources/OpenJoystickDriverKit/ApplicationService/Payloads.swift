@@ -53,12 +53,8 @@ public struct ApplicationServiceHIDGamepadSnapshot: Codable, Sendable, Hashable 
 public struct ApplicationServiceVirtualDeviceDiagnosticsPayload: Codable, Sendable {
   public let userSpaceVirtualDeviceEnabled: Bool
   public let userSpaceVirtualDeviceStatus: String
-  /// Output routing mode in the application service.
-  ///
-  /// Values: "primaryOnly", "secondaryOnly", or "both".
-  public let outputMode: String
   public let hidGamepads: [ApplicationServiceHIDGamepadSnapshot]
-  /// DriverKit output injection stats (IOHIDDeviceSetReport).
+  /// DriverKit output injection stats using stable application-service payload keys.
   ///
   /// Present only when the application service is new enough to report it.
   public let driverKitOutputStats: ApplicationServiceDriverKitOutputStats?
@@ -66,24 +62,22 @@ public struct ApplicationServiceVirtualDeviceDiagnosticsPayload: Codable, Sendab
   public init(
     userSpaceVirtualDeviceEnabled: Bool,
     userSpaceVirtualDeviceStatus: String,
-    outputMode: String,
     hidGamepads: [ApplicationServiceHIDGamepadSnapshot],
     driverKitOutputStats: ApplicationServiceDriverKitOutputStats? = nil
   ) {
     self.userSpaceVirtualDeviceEnabled = userSpaceVirtualDeviceEnabled
     self.userSpaceVirtualDeviceStatus = userSpaceVirtualDeviceStatus
-    self.outputMode = outputMode
     self.hidGamepads = hidGamepads
     self.driverKitOutputStats = driverKitOutputStats
   }
 }
 
-/// Stats for DriverKit output injection via IOHIDDeviceSetReport.
+/// Stats for commands submitted through the SwifterKit DriverKit runtime.
 public struct ApplicationServiceDriverKitOutputStats: Codable, Sendable {
   public let attempts: Int
   public let successes: Int
   public let failures: Int
-  /// Last IOKit error as hex string (e.g. "0xe00002cd"), or nil if none.
+  /// Stable payload key; SwifterKit command failures without a platform code report nil.
   public let lastErrorHex: String?
   public let connectionAttempts: Int
   public let connectionSuccesses: Int
@@ -130,18 +124,18 @@ public struct ApplicationServiceVirtualDeviceSelfTestPayload: Codable, Sendable 
   public let userSpaceReportEvents: Int
   public let userSpaceRequired: Bool
   public let userSpaceStatus: String
-  /// DriverKit-only self-test delta based on the dext IOHID device DebugState InputReportCount.
+  /// Whether the signed host is entitled to open the DriverKit relay user client.
+  public let driverKitRequired: Bool
+  /// DriverKit-only self-test delta based on extension-side input delivery counters.
   public let driverKitInputReportDelta: Int?
-  /// DriverKit-only self-test delta based on IOHIDDeviceSetReport successes in the application service.
-  ///
-  /// This is reliable even when IOHID input callbacks are flaky during sysext replacement/upgrade.
-  public let driverKitSetReportSuccessDelta: Int?
-  /// Number of IOHIDDeviceSetReport attempts made by the application service during the self-test.
-  public let driverKitSetReportAttemptDelta: Int?
-  /// Number of IOHIDDeviceSetReport failures made by the application service during the self-test.
-  public let driverKitSetReportFailureDelta: Int?
-  /// Last IOHIDDeviceSetReport error observed by the application service, if any.
-  public let driverKitSetReportLastErrorHex: String?
+  /// DriverKit-only self-test delta based on successful SwifterKit input submissions.
+  public let driverKitSubmissionSuccessDelta: Int?
+  /// Number of SwifterKit input submissions attempted during the self-test.
+  public let driverKitSubmissionAttemptDelta: Int?
+  /// Number of SwifterKit input submissions rejected during the self-test.
+  public let driverKitSubmissionFailureDelta: Int?
+  /// Stable payload key; nil when no platform error code is available.
+  public let driverKitSubmissionLastErrorHex: String?
   public let driverKitConnectionAttemptDelta: Int?
   public let driverKitConnectionSuccessDelta: Int?
   public let driverKitConnectionFailureDelta: Int?
@@ -150,20 +144,20 @@ public struct ApplicationServiceVirtualDeviceSelfTestPayload: Codable, Sendable 
 
   /// End-to-end DriverKit relay assessment.
   ///
-  /// A successful setReport alone is not enough: the dext intentionally accepts
-  /// reports even when its internal relay fails. Positive IORegistry or HID callback
-  /// evidence proves delivery; submission alone remains inconclusive.
+  /// SwifterKit completes `submitHIDInputReport` only after native HID delivery, so a
+  /// successful submission is authoritative even when callbacks or registry counters are absent.
   public var driverKitRelayVerdict: ApplicationServiceVirtualDeviceSelfTestVerdict {
     if let inputDelta = driverKitInputReportDelta, inputDelta > 0 { return .passed }
     if driverKitReportEvents > 0 || driverKitValueEvents > 0 { return .passed }
+    guard driverKitRequired else { return .inconclusive }
     if driverKitInputReportDelta != nil { return .failed }
 
-    let attempts = driverKitSetReportAttemptDelta ?? 0
+    let attempts = driverKitSubmissionAttemptDelta ?? 0
     guard attempts > 0 else { return .failed }
-    let successes = driverKitSetReportSuccessDelta ?? 0
-    let failures = driverKitSetReportFailureDelta ?? 0
+    let successes = driverKitSubmissionSuccessDelta ?? 0
+    let failures = driverKitSubmissionFailureDelta ?? 0
     if successes == 0 || failures >= attempts { return .failed }
-    return .inconclusive
+    return .passed
   }
 
   public var userSpaceVerdict: ApplicationServiceVirtualDeviceSelfTestVerdict {
@@ -175,8 +169,10 @@ public struct ApplicationServiceVirtualDeviceSelfTestPayload: Codable, Sendable 
 
   /// True only when every required self-test assertion passed.
   public var isSuccessful: Bool {
-    driverKitRelayVerdict == .passed
-      && (!userSpaceRequired || userSpaceVerdict == .passed)
+    if driverKitRequired {
+      return driverKitRelayVerdict == .passed && (!userSpaceRequired || userSpaceVerdict == .passed)
+    }
+    return userSpaceVerdict == .passed
   }
 
   public init(
@@ -187,11 +183,12 @@ public struct ApplicationServiceVirtualDeviceSelfTestPayload: Codable, Sendable 
     userSpaceReportEvents: Int,
     userSpaceRequired: Bool = false,
     userSpaceStatus: String = "off",
+    driverKitRequired: Bool = true,
     driverKitInputReportDelta: Int? = nil,
-    driverKitSetReportSuccessDelta: Int? = nil,
-    driverKitSetReportAttemptDelta: Int? = nil,
-    driverKitSetReportFailureDelta: Int? = nil,
-    driverKitSetReportLastErrorHex: String? = nil,
+    driverKitSubmissionSuccessDelta: Int? = nil,
+    driverKitSubmissionAttemptDelta: Int? = nil,
+    driverKitSubmissionFailureDelta: Int? = nil,
+    driverKitSubmissionLastErrorHex: String? = nil,
     driverKitConnectionAttemptDelta: Int? = nil,
     driverKitConnectionSuccessDelta: Int? = nil,
     driverKitConnectionFailureDelta: Int? = nil,
@@ -205,16 +202,92 @@ public struct ApplicationServiceVirtualDeviceSelfTestPayload: Codable, Sendable 
     self.userSpaceReportEvents = userSpaceReportEvents
     self.userSpaceRequired = userSpaceRequired
     self.userSpaceStatus = userSpaceStatus
+    self.driverKitRequired = driverKitRequired
     self.driverKitInputReportDelta = driverKitInputReportDelta
-    self.driverKitSetReportSuccessDelta = driverKitSetReportSuccessDelta
-    self.driverKitSetReportAttemptDelta = driverKitSetReportAttemptDelta
-    self.driverKitSetReportFailureDelta = driverKitSetReportFailureDelta
-    self.driverKitSetReportLastErrorHex = driverKitSetReportLastErrorHex
+    self.driverKitSubmissionSuccessDelta = driverKitSubmissionSuccessDelta
+    self.driverKitSubmissionAttemptDelta = driverKitSubmissionAttemptDelta
+    self.driverKitSubmissionFailureDelta = driverKitSubmissionFailureDelta
+    self.driverKitSubmissionLastErrorHex = driverKitSubmissionLastErrorHex
     self.driverKitConnectionAttemptDelta = driverKitConnectionAttemptDelta
     self.driverKitConnectionSuccessDelta = driverKitConnectionSuccessDelta
     self.driverKitConnectionFailureDelta = driverKitConnectionFailureDelta
     self.driverKitLastConnectionErrorHex = driverKitLastConnectionErrorHex
     self.driverKitDiscoverySummary = driverKitDiscoverySummary
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case seconds
+    case driverKitValueEvents
+    case driverKitReportEvents
+    case userSpaceValueEvents
+    case userSpaceReportEvents
+    case userSpaceRequired
+    case userSpaceStatus
+    case driverKitRequired
+    case driverKitInputReportDelta
+    case driverKitSubmissionSuccessDelta
+    case driverKitSubmissionAttemptDelta
+    case driverKitSubmissionFailureDelta
+    case driverKitSubmissionLastErrorHex
+    case driverKitConnectionAttemptDelta
+    case driverKitConnectionSuccessDelta
+    case driverKitConnectionFailureDelta
+    case driverKitLastConnectionErrorHex
+    case driverKitDiscoverySummary
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let values = try decoder.container(keyedBy: CodingKeys.self)
+    self.init(
+      seconds: try values.decode(Int.self, forKey: .seconds),
+      driverKitValueEvents: try values.decode(Int.self, forKey: .driverKitValueEvents),
+      driverKitReportEvents: try values.decode(Int.self, forKey: .driverKitReportEvents),
+      userSpaceValueEvents: try values.decode(Int.self, forKey: .userSpaceValueEvents),
+      userSpaceReportEvents: try values.decode(Int.self, forKey: .userSpaceReportEvents),
+      userSpaceRequired: try values.decode(Bool.self, forKey: .userSpaceRequired),
+      userSpaceStatus: try values.decode(String.self, forKey: .userSpaceStatus),
+      driverKitRequired: try values.decodeIfPresent(Bool.self, forKey: .driverKitRequired) ?? true,
+      driverKitInputReportDelta: try values.decodeIfPresent(
+        Int.self,
+        forKey: .driverKitInputReportDelta
+      ),
+      driverKitSubmissionSuccessDelta: try values.decodeIfPresent(
+        Int.self,
+        forKey: .driverKitSubmissionSuccessDelta
+      ),
+      driverKitSubmissionAttemptDelta: try values.decodeIfPresent(
+        Int.self,
+        forKey: .driverKitSubmissionAttemptDelta
+      ),
+      driverKitSubmissionFailureDelta: try values.decodeIfPresent(
+        Int.self,
+        forKey: .driverKitSubmissionFailureDelta
+      ),
+      driverKitSubmissionLastErrorHex: try values.decodeIfPresent(
+        String.self,
+        forKey: .driverKitSubmissionLastErrorHex
+      ),
+      driverKitConnectionAttemptDelta: try values.decodeIfPresent(
+        Int.self,
+        forKey: .driverKitConnectionAttemptDelta
+      ),
+      driverKitConnectionSuccessDelta: try values.decodeIfPresent(
+        Int.self,
+        forKey: .driverKitConnectionSuccessDelta
+      ),
+      driverKitConnectionFailureDelta: try values.decodeIfPresent(
+        Int.self,
+        forKey: .driverKitConnectionFailureDelta
+      ),
+      driverKitLastConnectionErrorHex: try values.decodeIfPresent(
+        String.self,
+        forKey: .driverKitLastConnectionErrorHex
+      ),
+      driverKitDiscoverySummary: try values.decodeIfPresent(
+        String.self,
+        forKey: .driverKitDiscoverySummary
+      )
+    )
   }
 }
 
@@ -351,12 +424,6 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
   public let userSpaceVirtualDeviceEnabled: Bool?
   /// Short status string for the user-space virtual gamepad (e.g. "on", "off", "error: ...").
   public let userSpaceVirtualDeviceStatus: String?
-  /// Virtual device mode (driverKit / compatUserSpace / both).
-  public let virtualDeviceMode: String?
-  /// Effective output routing mode (primaryOnly / secondaryOnly / both).
-  ///
-  /// This can differ from `virtualDeviceMode` when the application service is in `auto` mode.
-  public let effectiveOutputMode: String?
   /// Compatibility mode identity/protocol selection.
   public let compatibilityIdentity: String?
 
@@ -367,8 +434,6 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     connectedDevices: [ApplicationServiceDeviceDescription],
     userSpaceVirtualDeviceEnabled: Bool? = nil,
     userSpaceVirtualDeviceStatus: String? = nil,
-    virtualDeviceMode: String? = nil,
-    effectiveOutputMode: String? = nil,
     compatibilityIdentity: String? = nil
   ) {
     self.inputMonitoring = inputMonitoring
@@ -376,8 +441,6 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     self.connectedDevices = connectedDevices
     self.userSpaceVirtualDeviceEnabled = userSpaceVirtualDeviceEnabled
     self.userSpaceVirtualDeviceStatus = userSpaceVirtualDeviceStatus
-    self.virtualDeviceMode = virtualDeviceMode
-    self.effectiveOutputMode = effectiveOutputMode
     self.compatibilityIdentity = compatibilityIdentity
   }
 }

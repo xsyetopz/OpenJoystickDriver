@@ -1,60 +1,67 @@
 # OpenJoystickDriver
 
 OpenJoystickDriver is a macOS userspace gamepad driver. It reads physical
-controllers, parses their native reports, and publishes a virtual controller via
-DriverKit HID or IOHIDUserDevice compatibility mode.
+controllers, parses native reports, and publishes consumer-facing compatibility
+controllers through `IOHIDUserDevice`. An optional generated DriverKit relay is
+used for integrity testing and diagnostics; it is not a consumer gamepad.
 
 ## Important Paths
 
-- `Package.swift`: SwiftPM package graph, Swift tools 6.2.
-- `docs/development/architecture.md`: runtime boundaries and extension rules.
-- `Sources/OpenJoystickDriverKit/`: shared parsers, controller records, virtual
-  backends, permissions, diagnostics, and application-service IPC.
-- `Sources/OpenJoystickDriver/`: SwiftUI menu bar app and headless CLI.
-- `Sources/OpenJoystickDriver/Service/`: persistent main-app runtime and local RPC.
-- `DriverKitExtension/`: DriverKit virtual HID system extension.
-- `Resources/SDL/openjoystickdriver.gamecontrollerdb.txt`: SDL gamepad mapping
-  for the generic user-space OJD device; use `platform:macOS` for SDL3.
-- `Sources/OpenJoystickDriverKit/Resources/Controllers/`: generated runtime controller
-  records.
-- `Resources/Schemas/`: canonical record and override schemas.
+- `Package.swift` and `Package.resolved`: SwiftPM graph and pinned package
+  versions. SwifterKit is pinned here for reproducible DriverKit work.
+- `Sources/OpenJoystickDriverKit/`: parsers, controller records, compatibility
+  output policy, diagnostics, and application-service IPC. It must not import
+  SwifterKit.
+- `Sources/OpenJoystickDriverRelay/`: only runtime adapter allowed to import
+  SwifterKit; owns the DriverKit relay configuration and lifecycle.
+- `Sources/DriverKitGenerator/`: build-time executable that generates the
+  SwifterKit native DriverKit project.
+- `.build/driverkit/generated/`: ephemeral generated native project. Never edit
+  or commit it; no post-generation patches are permitted.
+- `Sources/OpenJoystickDriver/`: menu-bar app, persistent application service,
+  headless CLI, and composition root.
+- `Resources/SDL/openjoystickdriver.gamecontrollerdb.txt`: SDL mapping for the
+  user-space OJD device; use `platform:macOS` for SDL3.
+- `Sources/OpenJoystickDriverKit/Resources/Controllers/`: generated runtime
+  controller records. `Resources/ControllerOverrides/` contains minimal source
+  corrections; schemas are in `Resources/Schemas/`.
 - `scripts/ojd`: supported developer command surface.
-- `scripts/README.md`: signing, provisioning, and notarization notes.
+- `scripts/build-tools/driverkit.sh`: generated relay validation, build, signing,
+  and embedding owner.
+- `scripts/README.md`: signing, generation, installation, and release procedure.
 
-## Current Status (Authoritative)
+## DriverKit Rules
 
-- User-facing device/mode matrix: `docs/user/compatibility.md`.
-- CLI/GUI capability audit: `docs/development/cli-and-menu-app.md`.
-- Xbox fallback evidence gates: `docs/development/xbox-identities.md`.
-- Hardware verification notes and user setup: `README.md`.
-- Repo change rules and validation commands: `AGENTS.md`.
-- Deeper implementation notes (SDL mappings, xpad-derived records): `llms-full.txt`.
+- SwifterKit is the sole owner of generated native DriverKit project structure.
+  Do not add a manual native build path, wrapper, or output patch.
+- Keep `OpenJoystickDriverKit` independent of SwifterKit. `OpenJoystickDriverRelay`
+  depends inward on it; `OpenJoystickDriver` and `DriverKitGenerator` are roots.
+- Preserve bundle ID `com.openjoystickdriver.VirtualHIDDevice`. The host app's
+  user-client entitlement must be exactly allowlisted to that ID; allow-any
+  access is forbidden.
+- Use `./scripts/ojd driverkit generate` to inspect fresh output and
+  `./scripts/ojd validate driverkit` to prove deterministic generation,
+  metadata/entitlement constraints, dependency direction, and unsigned build.
+  Signed activation and hardware delivery require a provisioned Mac and remain
+  separate evidence.
 
-You must keep controller support status out of `llms*.txt`. Update `README.md`
-and `docs/user/compatibility.md` instead.
+## Current Status and Commands
 
-## Core Commands
+- User-facing device/mode status: `docs/user/compatibility.md`.
+- Runtime architecture: `docs/development/architecture.md`.
+- Change rules and required checks: `AGENTS.md`.
+- Never duplicate controller support claims in `llms*.txt`.
 
 ```bash
 brew install libusb
-./scripts/ojd signing install-profiles
-./scripts/ojd signing configure
-./scripts/ojd rebuild dev
-./scripts/ojd rebuild-fast dev
+./scripts/ojd catalog regenerate --check
 ./scripts/ojd validate profiles
 ./scripts/ojd test parsers-macos14
+./scripts/ojd validate driverkit
+./scripts/ojd validate scripts
 swift build
 ```
 
-## Validation Rules
-
-- Controller JSON `$schema` values must use repo raw GitHub URLs, not local file
-  URLs.
-- VID/PID and endpoint values are decimal integers.
-- Use `./scripts/ojd validate profiles` after record, override, or schema changes.
-- Use `./scripts/ojd test parsers-macos14` for macOS 14-compatible parser regressions; use `swift build` for package compile validation when Swift Testing is toolchain-blocked.
-
-## Agent Instructions
-
-Read `AGENTS.md` before making changes. `CLAUDE.md`, `GEMINI.md`, and
-`.github/copilot-instructions.md` are symlinks to `AGENTS.md`.
+Controller JSON `$schema` values use repo raw GitHub URLs; VID/PID and endpoint
+values are decimal. Read `AGENTS.md` before editing. `CLAUDE.md`, `GEMINI.md`,
+and `.github/copilot-instructions.md` are symlinks to it.

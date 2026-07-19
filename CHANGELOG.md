@@ -27,8 +27,13 @@ All notable changes to OpenJoystickDriver are documented in this file.
   protocol, and second privacy identity.
 - Registered the main application itself as the login item and made it the sole
   owner of Input Monitoring and Accessibility requests.
-- Split the DriverKit relay implementation into focused lifecycle, connection,
-  report, and device-description components.
+- Replaced the manually maintained DriverKit extension with a deterministic
+  SwifterKit-generated relay and made the Swift relay configuration the sole
+  application-owned DriverKit source.
+- Made the Compatibility virtual device the sole consumer-gamepad output
+  backend and limited the vendor-defined DriverKit relay to integrity
+  diagnostics, removing output modes that could route gameplay reports only to
+  a non-gamepad relay.
 - Removed browser Gamepad capture, runtime soak, and private Apple catalog audit
   controls from the menu app while retaining their headless diagnostic commands
   and the focused support-report workflow.
@@ -42,21 +47,51 @@ All notable changes to OpenJoystickDriver are documented in this file.
   canonical `Controllers/<vid>/<vid>-<pid>.json` record format.
 - Moved shared endpoints, startup sequences, timeouts, packet behavior, and
   output policy out of controller records and into protocol implementations.
-- Updated the runtime to SwiftUSB 0.1.1 and removed OpenJoystickDriver-specific
+- Updated the runtime to SwiftUSB 0.1.2 and removed OpenJoystickDriver-specific
   libusb descriptor shims and extra USB contexts.
+- Lowered the Swift test deployment target from macOS 26 to the maintained
+  macOS 14 compatibility floor.
 
 ### Fixed
 
+- Made manual update checks select the greatest valid GitHub tag for the chosen
+  stable or prerelease channel and report that remote tag when the installed
+  build is already newer.
 - Corrected permission status to use authoritative access checks from the main
   application and removed the obsolete helper-selection workflow.
-- Made virtual-device self-test exit status follow the required DriverKit and
-  user-space relay verdicts.
+- Made virtual-device self-test probe Compatibility with neutral reports and
+  derive DriverKit relay strictness from the signed host entitlement. Entitled
+  hosts still require relay delivery; hosts awaiting the entitlement report the
+  relay diagnostic as optional and inconclusive.
 - Added bounded compatibility-device creation fallbacks for macOS
   `IOHIDUserDevice` publication failures.
 - Removed stale GUI diagnostic state, localization keys, and support-report
   fields that no longer had a user-facing producer.
 - Applied discovered nonzero USB alternate settings after claiming the selected
   interface, while preserving explicit record overrides and protocol fallbacks.
+- Left unsupported vendor-specific raw USB devices unclaimed instead of opening
+  an unusable generic pipeline that could exclude other controller software.
+- Corrected the Xbox One Controller 1537 record to use hardware-reported
+  endpoints `0x81`/`0x01` and configuration 1 before interface claim.
+- Restored the Logitech F310 XInput record's hardware-reported `0x02` output
+  endpoint so Xbox 360 startup output does not abort the input pipeline.
+- Narrowed the Razer Wolverine V2 and V3 GIP records to captured transport
+  evidence; Share, paddles, configuration, and delay behavior remain unverified.
+- Prevented overlapping state-bridge waiter access from triggering Swift's
+  dynamic exclusivity trap under concurrent relay tests.
+- Made SwiftPM toolchain and deployment-target repair use the package manager's
+  canonical clean operation instead of deleting module directories directly.
+- Made development signing require only the Apple Development host and
+  DriverKit profiles; the publisher-only Developer ID profile is now optional
+  unless release configuration is requested.
+- Added a development-only signing mode for the currently approved legacy
+  DriverKit user-client profile. It omits the malformed user-client entitlement
+  from the signed host so the app and Compatibility output can run while relay
+  diagnostics remain unavailable; release and CI require the exact allowlist.
+- Updated the reviewed SwifterKit branch revision so HID-only generated
+  extensions no longer link unavailable, unused DriverKit family frameworks.
+- Documented where each signing identity, App ID capability, provisioning
+  profile, notarization credential, and generated environment value comes from.
 
 ## 0.5.0-alpha.4
 

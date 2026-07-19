@@ -79,7 +79,6 @@ playground.xcworkspace
 
 # Swift Package Manager
 .swiftpm/
-Package.resolved
 
 # Xcode DerivedData
 DerivedData/

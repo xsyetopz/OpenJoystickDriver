@@ -2,8 +2,7 @@ import Foundation
 import Testing
 
 struct ScriptPackagingTests {
-  @Test
-  func testJustfileExposesReleaseParityLocalInstallCommand() throws {
+  @Test func testJustfileExposesReleaseParityLocalInstallCommand() throws {
     let justfileURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
       .appendingPathComponent("justfile")
     let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
@@ -13,25 +12,26 @@ struct ScriptPackagingTests {
     #expect(justfile.contains("cp -R .build/debug/OpenJoystickDriver.app /Applications/"))
   }
 
-  @Test
-  func testBumpVersionSurfacesUseCurrentReleaseVersion() throws {
+  @Test func testBumpVersionSurfacesUseCurrentReleaseVersion() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let bundlesURL = rootURL.appendingPathComponent("scripts/build-tools/bundles.sh")
+    let defaultsURL = rootURL.appendingPathComponent("scripts/platform/environment.sh")
     let justfileURL = rootURL.appendingPathComponent("justfile")
     let bumpURL = rootURL.appendingPathComponent("scripts/release/bump-version.sh")
     let bundles = try String(contentsOf: bundlesURL, encoding: .utf8)
+    let defaults = try String(contentsOf: defaultsURL, encoding: .utf8)
     let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
     let bumpScript = try String(contentsOf: bumpURL, encoding: .utf8)
 
-    #expect(bundles.contains("OJD_BUNDLE_SHORT_VERSION:-0.5.0-alpha.5"))
+    #expect(defaults.contains("OJD_DEFAULT_BUNDLE_SHORT_VERSION=\"0.5.0-alpha.5\""))
+    #expect(bundles.contains("OJD_DEFAULT_BUNDLE_SHORT_VERSION"))
     #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.5\""))
     #expect(bumpScript.contains("justfile"))
     #expect(!bundles.contains("0.5.0-alpha.3"))
     #expect(!justfile.contains("0.5.0-alpha.3"))
   }
 
-  @Test
-  func testDmgPackagingUsesNativeFinderStyling() throws {
+  @Test func testDmgPackagingUsesNativeFinderStyling() throws {
     let scriptURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
       .appendingPathComponent("scripts/release/package.sh")
     let script = try String(contentsOf: scriptURL, encoding: .utf8)
@@ -46,14 +46,17 @@ struct ScriptPackagingTests {
     #expect(script.contains("trap - EXIT"))
   }
 
-  @Test
-  func testBuildScriptPackagesOneSignedApplicationIdentity() throws {
+  @Test func testBuildScriptPackagesOneSignedApplicationIdentity() throws {
     let root = try RepositoryRoot.from()
     let bundles = try String(
       contentsOf: root.appendingPathComponent("scripts/build-tools/bundles.sh"),
       encoding: .utf8
     )
-    #expect(bundles.contains("security find-identity -v -p codesigning"))
+    let build = try String(
+      contentsOf: root.appendingPathComponent("scripts/build-tools/build.sh"),
+      encoding: .utf8
+    )
+    #expect(build.contains("security find-identity -v -p codesigning"))
     #expect(bundles.contains("_require_codesign_identity"))
     #expect(bundles.contains(#""com.apple.developer.hid.virtual.device""#))
     #expect(bundles.contains(#"codesign --force --sign "$GUI_IDENTITY""#))
@@ -65,8 +68,26 @@ struct ScriptPackagingTests {
     #expect(!bundles.contains("com.openjoystickdriver.service.plist"))
   }
 
-  @Test
-  func testSwiftLintRunsStrictlyWithoutSuppressionBaseline() throws {
+  @Test func testDriverKitBuildIsGeneratedAndVersionedFromReleaseEnvironment() throws {
+    let root = try RepositoryRoot.from()
+    let tooling = try String(
+      contentsOf: root.appendingPathComponent("scripts/build-tools/driverkit.sh"),
+      encoding: .utf8
+    )
+    let bump = try String(
+      contentsOf: root.appendingPathComponent("scripts/release/bump-version.sh"),
+      encoding: .utf8
+    )
+
+    #expect(tooling.contains("DriverKitGenerator"))
+    #expect(tooling.contains("OJD_BUNDLE_SHORT_VERSION"))
+    #expect(tooling.contains("OJD_BUNDLE_VERSION"))
+    #expect(tooling.contains("SwifterKitRuntime.xcodeproj"))
+    #expect(!tooling.contains("plutil -replace CFBundleVersion"))
+    #expect(!bump.contains("DriverKitExtension/Info.plist"))
+  }
+
+  @Test func testSwiftLintRunsStrictlyWithoutSuppressionBaseline() throws {
     let root = try RepositoryRoot.from()
     let buildScript = try String(
       contentsOf: root.appendingPathComponent("scripts/build-tools/build.sh"),
@@ -75,13 +96,14 @@ struct ScriptPackagingTests {
 
     #expect(buildScript.contains("swiftlint lint --no-cache --strict"))
     #expect(!buildScript.contains("--baseline"))
-    #expect(!FileManager.default.fileExists(
-      atPath: root.appendingPathComponent(".swiftlint-baseline.json").path
-    ))
+    #expect(
+      !FileManager.default.fileExists(
+        atPath: root.appendingPathComponent(".swiftlint-baseline.json").path
+      )
+    )
   }
 
-  @Test
-  func testSparkleReleaseWiringIsPresent() throws {
+  @Test func testSparkleReleaseWiringIsPresent() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let packageURL = rootURL.appendingPathComponent("Package.swift")
     let bundlesURL = rootURL.appendingPathComponent("scripts/build-tools/bundles.sh")
@@ -132,9 +154,7 @@ struct ScriptPackagingTests {
     #expect(serviceOps.contains("sparkleUpdates.checkForUpdates"))
   }
 
-
-  @Test
-  func testSparkleUpdateErrorsAreExplicitlyMapped() throws {
+  @Test func testSparkleUpdateErrorsAreExplicitlyMapped() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let controllerURL = rootURL.appendingPathComponent(
       "Sources/OpenJoystickDriver/App/SparkleUpdateController.swift"
@@ -159,8 +179,7 @@ struct ScriptPackagingTests {
     #expect(appModel.contains("self?.updateCheckState = state"))
   }
 
-  @Test
-  func testInputMonitoringRequestUsesMainApplicationIdentity() throws {
+  @Test func testInputMonitoringRequestUsesMainApplicationIdentity() throws {
     let root = try RepositoryRoot.from()
     let appModel = try String(
       contentsOf: root.appendingPathComponent(
@@ -176,8 +195,7 @@ struct ScriptPackagingTests {
     #expect(!appModel.contains("--request-input-monitoring"))
   }
 
-  @Test
-  func testApplicationServiceUsesMainAppLoginRegistration() throws {
+  @Test func testApplicationServiceUsesMainAppLoginRegistration() throws {
     let root = try RepositoryRoot.from()
     let manager = try String(
       contentsOf: root.appendingPathComponent(
@@ -199,11 +217,13 @@ struct ScriptPackagingTests {
     #expect(!main.contains("OJD_APPLICATION_SERVICE"))
     #expect(!main.contains("ApplicationServiceManager.restart()"))
     #expect(!bundles.contains("Contents/Library/LaunchAgents"))
-    #expect(!FileManager.default.fileExists(
-      atPath: root.appendingPathComponent(
-        "Sources/OpenJoystickDriver/App/com.openjoystickdriver.service.plist"
-      ).path
-    ))
+    #expect(
+      !FileManager.default.fileExists(
+        atPath: root.appendingPathComponent(
+          "Sources/OpenJoystickDriver/App/com.openjoystickdriver.service.plist"
+        ).path
+      )
+    )
   }
 
 }

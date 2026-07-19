@@ -40,8 +40,6 @@ extension ApplicationServiceServer {
         connectedDevices: devices,
         userSpaceVirtualDeviceEnabled: userEnabled,
         userSpaceVirtualDeviceStatus: userStatus,
-        virtualDeviceMode: virtualDeviceMode.rawValue,
-        effectiveOutputMode: effectiveOutputMode.rawValue,
         compatibilityIdentity: compatibilityIdentity.rawValue
       )
       do {
@@ -195,33 +193,6 @@ extension ApplicationServiceServer {
     reply(true)
   }
 
-  public func setVirtualDeviceMode(_ modeRaw: String, reply: @escaping (Bool) -> Void) {
-    guard let mode = VirtualDeviceMode(rawValue: modeRaw) else {
-      reply(false)
-      return
-    }
-    applyMode(mode)
-    reply(true)
-  }
-
-  public func getVirtualDeviceMode(reply: @escaping (String) -> Void) {
-    reply(virtualDeviceMode.rawValue)
-  }
-
-  public func setUserSpaceVirtualDeviceEnabled(_ enabled: Bool, reply: @escaping (Bool) -> Void) {
-    // Legacy API: map to virtual device modes.
-    if enabled { applyMode(.compatUserSpace) } else { applyMode(.driverKit) }
-    reply(true)
-  }
-
-  public func getUserSpaceVirtualDeviceEnabled(reply: @escaping (Bool) -> Void) {
-    reply(userSpaceEnabled)
-  }
-
-  public func getUserSpaceVirtualDeviceStatus(reply: @escaping (String) -> Void) {
-    reply(currentUserSpaceStatus())
-  }
-
   public func setCompatibilityIdentity(_ raw: String, reply: @escaping (Bool) -> Void) {
     guard let id = CompatibilityIdentity(rawValue: raw) else {
       reply(false)
@@ -234,7 +205,7 @@ extension ApplicationServiceServer {
       if userSpaceEnabled, let old = userSpaceDispatcher {
         do {
           let build = try buildUserSpaceDispatcher(identity: id)
-          dispatcher.setSecondary(build.dispatcher)
+          dispatcher.setBackend(build.dispatcher)
           userSpaceDispatcher = build.dispatcher
           foregroundConsumerDispatcherPool = build.foregroundConsumerPool
           userSpaceStatus = build.status
@@ -255,12 +226,11 @@ extension ApplicationServiceServer {
         }
       }
 
-      // If user-space isn't currently enabled, just persist the choice. It will be applied on next enable.
+      // A failed backend remains explicit; persist the chosen identity for the next service start.
       compatibilityIdentity = id
       UserDefaults.standard.set(id.rawValue, forKey: Self.compatibilityIdentityDefaultsKey)
       return true
     }
-    if ok && id.disablesDriverKitMirror && virtualDeviceMode == .both { applyMode(.both) }
     reply(ok)
   }
 
@@ -273,13 +243,11 @@ extension ApplicationServiceServer {
     Task {
       let enabled = userSpaceEnabled
       let status = currentUserSpaceStatus()
-      let mode = effectiveOutputMode
       let devices = VirtualDeviceDiagnostics.enumerateHIDGamepads()
-      let stats = dextDispatcher.outputStatsSnapshot()
+      let stats = await driverKitDispatcher.outputStatsSnapshot()
       let payload = ApplicationServiceVirtualDeviceDiagnosticsPayload(
         userSpaceVirtualDeviceEnabled: enabled,
         userSpaceVirtualDeviceStatus: status,
-        outputMode: mode.rawValue,
         hidGamepads: devices,
         driverKitOutputStats: stats
       )
@@ -288,16 +256,6 @@ extension ApplicationServiceServer {
         callback.call(Data())
       }
     }
-  }
-
-  public func setOutputMode(_ mode: String, reply: @escaping (Bool) -> Void) {
-    reply(setOutputModeInternal(mode))
-  }
-
-  public func getOutputMode(reply: @escaping (String) -> Void) {
-    // Legacy API: return the *effective* output routing, not the requested mode.
-    // This prevents UI desync when Auto falls back to user-space.
-    reply(effectiveOutputMode.rawValue)
   }
 
   public func runVirtualDeviceSelfTest(seconds: Int, reply: @escaping (Data) -> Void) {
@@ -314,13 +272,13 @@ extension ApplicationServiceServer {
 
   public func resetSettings(reply: @escaping (Bool) -> Void) {
     // Clear persisted keys so the application service comes up in a known-good baseline.
-    UserDefaults.standard.removeObject(forKey: Self.userSpaceEnabledDefaultsKey)
     UserDefaults.standard.removeObject(forKey: Self.compatibilityIdentityDefaultsKey)
-    UserDefaults.standard.removeObject(forKey: Self.outputModeDefaultsKey)
-    UserDefaults.standard.removeObject(forKey: Self.virtualDeviceModeDefaultsKey)
+    UserDefaults.standard.removeObject(forKey: "UserSpaceVirtualDeviceEnabled")
+    UserDefaults.standard.removeObject(forKey: "OutputMode")
+    UserDefaults.standard.removeObject(forKey: "VirtualDeviceMode")
 
     userSpaceLock.withLock {
-      dispatcher.setSecondary(nil)
+      dispatcher.setBackend(nil)
       userSpaceDispatcher?.close()
       userSpaceDispatcher = nil
       foregroundConsumerDispatcherPool = nil
@@ -329,9 +287,6 @@ extension ApplicationServiceServer {
     }
 
     compatibilityIdentity = .sdl2_3
-    virtualDeviceMode = .compatUserSpace
-    effectiveOutputMode = .primaryOnly
-    applyMode(.compatUserSpace)
-    reply(true)
+    reply(initializeCompatibilityBackend())
   }
 }

@@ -1,18 +1,12 @@
 import Foundation
-import OpenJoystickDriverKit
 
 struct RunCommand {
   func run() {
-    print("[OpenJoystickDriver] Starting driver...")
+    print("[OpenJoystickDriver] Starting compatibility driver runtime...")
     print("[OpenJoystickDriver] Press Ctrl+C to stop.")
 
-    let dispatcher = DextOutputDispatcher()
-    let manager = DeviceManager(dispatcher: dispatcher)
-
-    manager.setupGracefulShutdown(label: "OpenJoystickDriver")
-
-    Task { await manager.start() }
-
+    let runtime = ApplicationServiceRuntime()
+    runtime.start()
     RunLoop.main.run()
   }
 }

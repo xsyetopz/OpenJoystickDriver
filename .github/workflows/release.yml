@@ -32,6 +32,7 @@ jobs:
       SPARKLE_PUBLIC_ED_KEY: ${{ secrets.SPARKLE_PUBLIC_ED_KEY }}
       SPARKLE_ED_PRIVATE_KEY: ${{ secrets.SPARKLE_ED_PRIVATE_KEY }}
       SPARKLE_FEED_URL: https://github.com/xsyetopz/OpenJoystickDriver/releases/latest/download/appcast.xml
+      OJD_USE_LOCAL_SWIFTERKIT: "0"
     steps:
       - name: Resolve release tag
         id: release
@@ -80,6 +81,11 @@ jobs:
 
       - name: Validate Swift structure
         run: ./scripts/ojd validate swift-structure
+
+      - name: Validate generated DriverKit project
+        run: |
+          test "$OJD_USE_LOCAL_SWIFTERKIT" != "1"
+          ./scripts/ojd validate driverkit
 
       - name: Lint Swift
         run: ./scripts/ojd lint

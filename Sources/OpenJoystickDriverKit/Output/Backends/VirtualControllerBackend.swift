@@ -63,48 +63,9 @@ public enum VirtualControllerBackendCatalog {
     supportsMultiplePhysicalControllers: true,
     requiresEntitlement: true,
     isImplemented: true,
-    notes: "Apple GameController.framework support uses the user-space HID " +
-      "backend with the apple-gamecontroller identity."
+    notes: "Apple GameController.framework support uses the user-space HID "
+      + "backend with the apple-gamecontroller identity."
   )
-}
-
-extension DextOutputDispatcher: VirtualControllerBackend {
-  public var backendID: VirtualControllerBackendID { .driverKitHID }
-
-  public var capabilities: VirtualControllerBackendCapabilities {
-    VirtualControllerBackendCapabilities(
-      isSystemWide: true,
-      supportsMultiplePhysicalControllers: false,
-      requiresEntitlement: true,
-      isImplemented: true,
-      publishesConsumerGamepad: false,
-      notes: "Vendor-defined DriverKit integrity relay for self-test and diagnostics; " +
-        "Compatibility IOHIDUserDevice publishes the consumer gamepad."
-    )
-  }
-
-  public func startBackend() -> VirtualControllerBackendStatus {
-    setEnabled(true)
-    let connected = connect()
-    return VirtualControllerBackendStatus(
-      id: backendID,
-      isRunning: connected,
-      detail: connected ? "connected" : "virtual HID device not found"
-    )
-  }
-
-  public func stopBackend() {
-    setEnabled(false)
-  }
-
-  public func backendStatus() -> VirtualControllerBackendStatus {
-    let connected = isConnected()
-    return VirtualControllerBackendStatus(
-      id: backendID,
-      isRunning: connected,
-      detail: connected ? "connected" : "not connected"
-    )
-  }
 }
 
 extension UserSpaceOutputDispatcher: VirtualControllerBackend {
@@ -124,9 +85,7 @@ extension UserSpaceOutputDispatcher: VirtualControllerBackend {
     VirtualControllerBackendStatus(id: backendID, isRunning: true, detail: status)
   }
 
-  public func stopBackend() {
-    close()
-  }
+  public func stopBackend() { close() }
 
   public func backendStatus() -> VirtualControllerBackendStatus {
     VirtualControllerBackendStatus(id: backendID, isRunning: status != "off", detail: status)

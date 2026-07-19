@@ -57,7 +57,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   @Published var inputMonitoring = "unknown"
   @Published var accessibility = "unknown"
   @Published var inputMonitoringAssist: String?
-  @Published var extensionManager = SystemExtensionManager()
+  @Published var extensionManager = SystemExtensionLifecycle()
 
   var inputMonitoringState: PermissionManager.AccessState {
     PermissionManager.AccessState(status: inputMonitoring)
@@ -67,14 +67,10 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     PermissionManager.AccessState(status: accessibility)
   }
 
-  var permissionsReady: Bool {
-    inputMonitoringState == .granted && accessibilityState == .granted
-  }
+  var permissionsReady: Bool { inputMonitoringState == .granted && accessibilityState == .granted }
 
   @Published var userSpaceVirtualDeviceEnabled = false
   @Published var userSpaceVirtualDeviceStatus = "unknown"
-  @Published var virtualDeviceMode: String = VirtualDeviceMode.compatUserSpace.rawValue
-  @Published var outputMode: String = CompositeOutputDispatcher.Mode.primaryOnly.rawValue
   @Published var compatibilityIdentity: String = CompatibilityIdentity.sdl2_3.rawValue
   @Published var virtualDeviceDiagnostics: ApplicationServiceVirtualDeviceDiagnosticsPayload?
   @Published var virtualDeviceSelfTest: ApplicationServiceVirtualDeviceSelfTestPayload?
@@ -83,6 +79,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
   @Published var updateCheckState: UpdateCheckState = .idle
   @Published var includePrereleaseUpdates: Bool {
     didSet {
+      updateCheckState = .idle
       UserDefaults.standard.set(
         includePrereleaseUpdates,
         forKey: includePrereleaseUpdatesDefaultsKey
@@ -145,8 +142,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     case .crashLooping: return L10n.string("service.status.crashLooping")
     case .unknown:
       return serviceConnected
-        ? L10n.string("service.status.running")
-        : L10n.string("service.status.unknown")
+        ? L10n.string("service.status.running") : L10n.string("service.status.unknown")
     }
   }
 
@@ -169,9 +165,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     await poll()
     await refreshVirtualDeviceDiagnostics()
     extensionManager.refreshInstallState()
-    if !sparkleUpdates.isConfigured {
-      Task { await checkForUpdates() }
-    }
+    if !sparkleUpdates.isConfigured { Task { await checkForUpdates() } }
   }
 
   func setPollingEnabled(_ enabled: Bool) {
@@ -212,9 +206,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
     do {
       let task = Task.detached { try ApplicationServiceManager.installByDefaultIfNeeded() }
       try await task.value
-    } catch {
-      serviceError = formatApplicationServiceError(error)
-    }
+    } catch { serviceError = formatApplicationServiceError(error) }
   }
 
 }

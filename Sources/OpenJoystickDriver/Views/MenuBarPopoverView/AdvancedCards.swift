@@ -6,47 +6,7 @@ extension MenuBarPopoverView {
   var outputDetailsCard: some View {
     OJDCard(title: L10n.string("output.detailsCardTitle")) {
       VStack(alignment: .leading, spacing: 10) {
-        Picker(
-          L10n.string("output.mode"),
-          selection: Binding(
-            get: { model.virtualDeviceMode },
-            set: { newValue in Task { await model.setVirtualDeviceMode(newValue) } }
-          )
-        ) {
-          Text(L10n.string("output.auto")).tag(VirtualDeviceMode.auto.rawValue)
-          Text(L10n.string("output.driverKit")).tag(VirtualDeviceMode.driverKit.rawValue)
-          Text(L10n.string("output.compatibility")).tag(VirtualDeviceMode.compatUserSpace.rawValue)
-          if model.developerMode {
-            Text(L10n.string("output.both")).tag(VirtualDeviceMode.both.rawValue)
-          }
-        }.pickerStyle(.segmented).disabled(!model.serviceConnected)
-
-        Toggle(
-          L10n.string("output.userSpace"),
-          isOn: Binding(
-            get: { model.userSpaceVirtualDeviceEnabled },
-            set: { enabled in Task { await model.setUserSpaceVirtualDeviceEnabled(enabled) } }
-          )
-        ).toggleStyle(.checkbox).disabled(!model.serviceConnected)
-
-        Picker(
-          L10n.string("output.active"),
-          selection: Binding(
-            get: { model.outputMode },
-            set: { mode in Task { await model.setOutputMode(mode) } }
-          )
-        ) {
-          Text(L10n.string("output.driverKit")).tag(
-            CompositeOutputDispatcher.Mode.primaryOnly.rawValue
-          )
-          Text(L10n.string("output.compatibility")).tag(
-            CompositeOutputDispatcher.Mode.secondaryOnly.rawValue
-          )
-          Text(L10n.string("output.both")).tag(CompositeOutputDispatcher.Mode.both.rawValue)
-        }.pickerStyle(.segmented).disabled(!model.serviceConnected)
-
         VStack(alignment: .leading, spacing: 3) {
-          statusLine(L10n.string("output.active"), activeOutputLabel)
           statusLine(
             L10n.string("output.backend"),
             model.userSpaceVirtualDeviceStatus,
@@ -87,16 +47,6 @@ extension MenuBarPopoverView {
     }
   }
 
-  var activeOutputLabel: String {
-    switch model.outputMode {
-    case CompositeOutputDispatcher.Mode.primaryOnly.rawValue: return L10n.string("output.driverKit")
-    case CompositeOutputDispatcher.Mode.secondaryOnly.rawValue:
-      return L10n.string("output.compatibility")
-    case CompositeOutputDispatcher.Mode.both.rawValue: return L10n.string("output.both")
-    default: return L10n.string("output.unknown")
-    }
-  }
-
   var compatibilityIdentityLabel: String {
     switch model.compatibilityIdentity {
     case CompatibilityIdentity.sdl2_3.rawValue: return L10n.string("identity.sdlShort")
@@ -133,9 +83,9 @@ extension MenuBarPopoverView {
             let relayVerdict = t.driverKitRelayVerdict
             statusLine(
               L10n.string("selfTest.driverKit"),
-              relayVerdict.rawValue,
+              "\(relayVerdict.rawValue) (\(t.driverKitRequired ? "required" : "optional"))",
               success: relayVerdict == .passed,
-              warning: relayVerdict != .passed
+              warning: t.driverKitRequired && relayVerdict != .passed
             )
             statusLine(
               L10n.string("output.driverKitReports"),
@@ -144,8 +94,8 @@ extension MenuBarPopoverView {
             if let delta = t.driverKitInputReportDelta {
               statusLine(L10n.string("output.ioregInput"), "Δ \(delta)")
             }
-            if let delta = t.driverKitSetReportSuccessDelta {
-              statusLine(L10n.string("output.serviceSetReport"), "ok Δ \(delta)")
+            if let delta = t.driverKitSubmissionSuccessDelta {
+              statusLine(L10n.string("output.serviceSubmission"), "ok Δ \(delta)")
             }
             statusLine(
               L10n.string("output.userSpace"),

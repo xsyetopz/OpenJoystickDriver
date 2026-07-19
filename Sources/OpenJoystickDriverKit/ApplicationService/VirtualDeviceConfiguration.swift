@@ -17,27 +17,17 @@ public enum CompatibilityIdentity: Codable, CaseIterable, Sendable, Equatable {
   case xoneHID
 
   public static let allCases: [Self] = [
-    .genericHID,
-    .sdl2_3,
-    .appleGameController,
-    .x360HID,
-    .xoneHID,
+    .genericHID, .sdl2_3, .appleGameController, .x360HID, .xoneHID,
   ]
 
   public init?(rawValue: String) {
     switch rawValue {
-    case "generic-hid":
-      self = .genericHID
-    case "sdl2-3":
-      self = .sdl2_3
-    case "apple-gamecontroller":
-      self = .appleGameController
-    case "x360-hid":
-      self = .x360HID
-    case "xone-hid":
-      self = .xoneHID
-    default:
-      return nil
+    case "generic-hid": self = .genericHID
+    case "sdl2-3": self = .sdl2_3
+    case "apple-gamecontroller": self = .appleGameController
+    case "x360-hid": self = .x360HID
+    case "xone-hid": self = .xoneHID
+    default: return nil
     }
   }
 
@@ -69,31 +59,4 @@ public enum CompatibilityIdentity: Codable, CaseIterable, Sendable, Equatable {
     try container.encode(rawValue)
   }
 
-  public var disablesDriverKitMirror: Bool {
-    switch self {
-    case .genericHID, .sdl2_3:
-      true
-    case .appleGameController:
-      false
-    case .xoneHID, .x360HID:
-      false
-    }
-  }
-
-  public var seizesDriverKitInCompatibilityMode: Bool {
-    true
-  }
-}
-
-/// Which virtual device output path the application service should actively drive.
-///
-/// - `auto`: prefer DriverKit, fall back to user-space only if DriverKit output is unstable.
-/// - `driverKit`: send reports to the DriverKit dext only.
-/// - `compatUserSpace`: create an IOHIDUserDevice and send reports to it only.
-/// - `both`: send reports to both (developer-only; can cause double input).
-public enum VirtualDeviceMode: String, Codable, CaseIterable, Sendable {
-  case auto
-  case driverKit
-  case compatUserSpace
-  case both
 }

@@ -110,8 +110,36 @@ def profile_has_entitlement(path: str, key: str) -> bool:
     ent = obj.get("Entitlements") or {}
     return key in ent
 
+
+relay_bundle_id = "com.openjoystickdriver.VirtualHIDDevice"
+legacy_userclient_value = f"{relay_bundle_id}\ncom.openjoystickdriver.daemon"
+
+
+def development_host_profile_mode(path: str) -> str:
+    entitlements = decode_profile(path).get("Entitlements") or {}
+    actual = entitlements.get("com.apple.developer.driverkit.userclient-access")
+    if actual == [relay_bundle_id]:
+        return "0"
+    if actual == [legacy_userclient_value]:
+        print(
+            "WARN: The host development profile contains Apple's approved legacy "
+            "DriverKit user-client value. Development fallback is enabled. The "
+            "generated host signature omits DriverKit user-client access so the app "
+            "can launch and provide Compatibility output. DriverKit relay diagnostics "
+            "remain unavailable until the corrected grant is approved.",
+            file=sys.stderr,
+        )
+        return "1"
+    raise SystemExit(
+        "ERROR: Unsupported DriverKit user-client value in host development profile.\n"
+        f"  profile: {path}\n"
+        f"  actual: {actual!r}\n"
+        f"  expected: {[relay_bundle_id]!r}\n"
+        "The only temporary exception is the known Apple-approved value containing "
+        "the removed daemon bundle ID."
+    )
+
 must_exist(gui_dev_profile, "GUI dev provisioning profile")
-must_exist(gui_devid_profile, "GUI DevID provisioning profile")
 must_exist(dext_profile, "DriverKit dext provisioning profile")
 
 def warn_missing_entitlement(profile_path: str, entitlement: str, label: str, why: str):
@@ -134,15 +162,8 @@ warn_missing_entitlement(
     "Application development profile",
     "Compatibility output requires this entitlement.",
 )
-warn_missing_entitlement(
-    gui_devid_profile,
-    hid_entitlement,
-    "Application Developer ID profile",
-    "Release compatibility output requires this entitlement.",
-)
-
 dev_team = team_id_from_profile(gui_dev_profile)
-rel_team = team_id_from_profile(gui_devid_profile)
+legacy_driverkit_profile = development_host_profile_mode(gui_dev_profile)
 
 # Prefer exact certificate match with provisioning profiles (handles multiple teams/idents cleanly).
 def pick_identity_matching_profile(prefix: str, profile_path: str) -> str:
@@ -161,7 +182,7 @@ def pick_identity_matching_profile(prefix: str, profile_path: str) -> str:
             "WARN: macOS reports 0 valid code-signing identities in Keychain.\n"
             "      Proceeding by using the provisioning profile's embedded certificate SHA1.\n"
             "      (The build will still fail if the matching private key isn't available.)\n"
-            "Fix checklist (Keychain Access):\n"
+            "Check the login keychain:\n"
             "  1) Unlock the 'login' keychain.\n"
             "  2) Ensure signing certs appear under 'My Certificates' with a private key underneath.\n"
             "  3) If needed, fix keychain permissions then log out/in:\n"
@@ -196,21 +217,19 @@ def pick_identity_matching_profile(prefix: str, profile_path: str) -> str:
         f"  profile_embedded_cert_sha1: {want}\n"
         f"  keychain_{prefix.replace(' ', '_').lower()}_sha1s: {sha1_str}\n"
         "\n"
-        "What is being looked for:\n"
-        f"  A valid Keychain signing identity named '{prefix}: ...' whose SHA1 is exactly profile_embedded_cert_sha1.\n"
-        "  Team ID matching is required, but not sufficient; codesign needs the matching private key.\n"
+        "Required identity:\n"
+        f"  A Keychain identity named '{prefix}: ...' with SHA1 profile_embedded_cert_sha1.\n"
+        "  The certificate must have its private key. Matching the Team ID alone is insufficient.\n"
         "  Apple Development identities do not satisfy Developer ID Application profiles.\n"
         "\n"
-        "Fix (no guessing):\n"
-        f"  1) Show what certificate this profile embeds:\n"
+        "Check the profile and Keychain:\n"
+        f"  1) Print the certificate embedded in the profile:\n"
         f"       ./scripts/ojd signing profile-info --full \"$HOME/Library/MobileDevice/Provisioning Profiles/{profile_base}\"\n"
-        "  2) Show what identities you can actually sign with (must have private key):\n"
+        "  2) List identities that have private keys:\n"
         "       security find-identity -v -p codesigning\n"
-        "  3) If the embedded cert SHA1 exists in Keychain but is not a signing identity yet,\n"
-        "     import it from the profile (this only helps if you already have the matching private key):\n"
+        "  3) If the private key is already in Keychain, import the profile's embedded certificate:\n"
         f"       ./scripts/ojd signing import-embedded \"$HOME/Library/MobileDevice/Provisioning Profiles/{profile_base}\"\n"
-        "  4) If you still cannot get a matching identity, regenerate the provisioning profile in the Apple Developer portal\n"
-        "     and explicitly select the certificate that matches an identity you have locally.\n"
+        "  4) Otherwise, regenerate the profile in the Apple Developer portal and select an installed certificate.\n"
         "  5) Reinstall profiles: ./scripts/ojd signing install-profiles \"$HOME/Documents/Profiles\"\n"
     )
 
@@ -262,10 +281,30 @@ update_env_file(
         "CODESIGN_IDENTITY": apple_dev_identity,
         "DEVELOPMENT_TEAM": dev_team,
         "DEXT_BUILD_PROFILE": dext_build_profile_name,
+        "GUI_PROVISIONING_PROFILE": f"$HOME/Library/MobileDevice/Provisioning Profiles/{pathlib.Path(gui_dev_profile).name}",
+        "OJD_USE_LEGACY_DRIVERKIT_PROFILE": legacy_driverkit_profile,
     },
 )
 
 print(f"Updated {dev_env}")
+
+if not os.path.isfile(gui_devid_profile):
+    print(
+        "WARN: Publisher release signing was not configured because the optional "
+        f"Developer ID profile is absent:\n  {gui_devid_profile}\n"
+        "Development signing is configured. The Developer ID profile and identity "
+        "are required only for release/notarization commands.",
+        file=sys.stderr,
+    )
+    raise SystemExit(0)
+
+warn_missing_entitlement(
+    gui_devid_profile,
+    hid_entitlement,
+    "Application Developer ID profile",
+    "Release compatibility output requires this entitlement.",
+)
+rel_team = team_id_from_profile(gui_devid_profile)
 
 try:
     devid_app_identity = pick_identity_matching_profile("Developer ID Application", gui_devid_profile)
@@ -288,6 +327,7 @@ update_env_file(
         "DEXT_BUILD_IDENTITY": apple_dev_identity,
         "DEXT_BUILD_PROFILE": dext_build_profile_name,
         "GUI_PROVISIONING_PROFILE": f"$HOME/Library/MobileDevice/Provisioning Profiles/{pathlib.Path(gui_devid_profile).name}",
+        "OJD_USE_LEGACY_DRIVERKIT_PROFILE": "0",
     },
 )
 

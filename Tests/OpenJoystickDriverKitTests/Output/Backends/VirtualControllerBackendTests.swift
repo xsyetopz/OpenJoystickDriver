@@ -12,16 +12,6 @@ struct VirtualControllerBackendTests {
     #expect(capabilities.isSystemWide)
     #expect(capabilities.notes.contains("apple-gamecontroller"))
   }
-  @Test func testDriverKitBackendCapability() {
-    let backend: any VirtualControllerBackend = DextOutputDispatcher()
-
-    #expect(backend.backendID == .driverKitHID)
-    #expect(backend.capabilities.isImplemented)
-    #expect(backend.capabilities.isSystemWide)
-    #expect(backend.capabilities.requiresEntitlement)
-    #expect(!backend.capabilities.publishesConsumerGamepad)
-    #expect(backend.capabilities.notes.contains("integrity relay"))
-  }
   @Test func testCompatibilityIdentityIDs() {
     #expect(CompatibilityIdentity(rawValue: "generic-hid") == .genericHID)
     #expect(CompatibilityIdentity(rawValue: "sdl2-3") == .sdl2_3)
@@ -48,11 +38,6 @@ struct VirtualControllerBackendTests {
     #expect(x360.deviceProfile.productName == "ASTRO C40 TR Controller")
     #expect(xone.isHardwareSpoof)
     #expect(xone.emitsXboxGuideReport)
-  }
-  @Test func testCompatibilityIdentitiesRequestDriverKitSeizure() {
-    for identity in CompatibilityIdentity.allCases {
-      #expect(identity.seizesDriverKitInCompatibilityMode)
-    }
   }
   @Test func testGenericReportDpadButtonPolicy() {
     let state = VirtualGamepadState(

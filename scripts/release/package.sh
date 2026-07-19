@@ -3,7 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../shared/common.sh"
+source "$SCRIPT_DIR/../platform/environment.sh"
 
 usage() {
   cat <<'TXT'
@@ -92,7 +92,7 @@ create_appcast() {
   local generate_appcast
   if ! generate_appcast="$(find_sparkle_tool generate_appcast)"; then
     echo "Sparkle generate_appcast not found; resolving package artifacts..."
-    (cd "$PROJECT_DIR" && "$SWIFT_BIN" package resolve)
+    (cd "$PROJECT_DIR" && "$SWIFT_PACKAGE_BIN" resolve)
     generate_appcast="$(find_sparkle_tool generate_appcast)" \
       || die "Sparkle generate_appcast not found under .build after package resolve"
   fi

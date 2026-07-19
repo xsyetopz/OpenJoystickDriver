@@ -24,7 +24,11 @@ Use the app's **Request Access** action once. The app requests any missing state
 
 ## Other approvals
 
-Driver Extension approval installs or updates the optional DriverKit relay. Login Item approval allows macOS 13 or later to start the main app at login. Neither approval grants Input Monitoring or Accessibility.
+Driver Extension approval installs or updates the optional generated DriverKit
+relay. The host app has a narrow DriverKit user-client allowlist for
+`com.openjoystickdriver.VirtualHIDDevice`; it does not request allow-any access.
+Login Item approval allows macOS 13 or later to start the main app at login.
+Neither approval grants Input Monitoring or Accessibility.
 
 ## Older alpha entries
 

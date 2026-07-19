@@ -24,21 +24,23 @@ struct SelfTestCommand {
       "  DriverKit: value \(payload.driverKitValueEvents), "
         + "report \(payload.driverKitReportEvents)"
     )
+    let relayRequirement = payload.driverKitRequired ? "required" : "optional"
+    print("  DriverKit relay: \(relayRequirement)")
     print("  DriverKit relay verdict: \(payload.driverKitRelayVerdict.rawValue.uppercased())")
     if let delta = payload.driverKitInputReportDelta {
       print("  DriverKit input report delta: \(delta)")
     }
-    if let delta = payload.driverKitSetReportSuccessDelta {
-      print("  DriverKit setReport success delta: \(delta)")
+    if let delta = payload.driverKitSubmissionSuccessDelta {
+      print("  DriverKit submission success delta: \(delta)")
     }
-    if let delta = payload.driverKitSetReportAttemptDelta {
-      print("  DriverKit setReport attempt delta: \(delta)")
+    if let delta = payload.driverKitSubmissionAttemptDelta {
+      print("  DriverKit submission attempt delta: \(delta)")
     }
-    if let delta = payload.driverKitSetReportFailureDelta {
-      print("  DriverKit setReport failure delta: \(delta)")
+    if let delta = payload.driverKitSubmissionFailureDelta {
+      print("  DriverKit submission failure delta: \(delta)")
     }
-    if let error = payload.driverKitSetReportLastErrorHex {
-      print("  DriverKit setReport last error: \(error)")
+    if let error = payload.driverKitSubmissionLastErrorHex {
+      print("  DriverKit submission last error: \(error)")
     }
     if let delta = payload.driverKitConnectionAttemptDelta {
       print("  DriverKit connection attempt delta: \(delta)")
