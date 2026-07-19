@@ -395,7 +395,7 @@ validate_driverkit() {
 
   local tracked_native
   tracked_native="$(
-    git ls-files | grep -E '^(DriverKitExtension/|\.build/driverkit/|.*\.(iig|cpp|hpp)$)' \
+    git ls-files | { grep -E '^(DriverKitExtension/|\.build/driverkit/|.*\.(iig|cpp|hpp)$)' || [[ $? -eq 1 ]]; } \
       | while IFS= read -r path; do
           [[ ! -e "$PROJECT_DIR/$path" ]] || printf '%s\n' "$path"
         done

@@ -155,6 +155,34 @@ if ( _reject_local_swifterkit ) >/dev/null 2>&1; then exit 8; fi
 
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_validation_allows_no_tracked_manual_or_generated_artifacts(self):
+        script = """
+PROJECT_DIR="$PWD"
+OJD_BUNDLE_SHORT_VERSION=1.0.0
+OJD_BUNDLE_VERSION=1
+source scripts/build-tools/driverkit.sh
+generate_driverkit_project() {
+  [[ ! -e "$1" ]] || return 1
+  mkdir -p "$1"
+}
+_validate_driverkit_metadata() { :; }
+_validate_host_entitlement_source() { :; }
+_driverkit_xcodebuild() {
+  local configuration="$1"
+  local product="$DRIVERKIT_DERIVED_DATA/Build/Products/${configuration}-driverkit/${DRIVERKIT_PRODUCT_NAME}.dext"
+  mkdir -p "$product"
+  touch "$product/$DRIVERKIT_PRODUCT_NAME"
+}
+_validate_driverkit_product() { :; }
+lipo() { printf 'arm64 x86_64\\n'; }
+validate_driverkit
+"""
+        result = subprocess.run(
+            ["bash", "-c", script], cwd=ROOT, check=False, capture_output=True, text=True
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_legacy_profile_mode_omits_generated_userclient_access_and_rejects_release(self):
         with tempfile.TemporaryDirectory() as directory:
             temporary = Path(directory)
