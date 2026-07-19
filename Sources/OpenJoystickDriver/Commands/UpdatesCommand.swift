@@ -21,8 +21,7 @@ struct UpdatesCommand {
   func run(arguments: [String]) {
     let options = parse(arguments)
     let currentVersion =
-      Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-      ?? "0.5.0-alpha.5"
+      Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.5.0-alpha.5"
     let state = runSyncResult {
       await UpdateChecker().check(
         currentVersion: currentVersion,
@@ -42,17 +41,14 @@ struct UpdatesCommand {
     if case .failed = state { exit(1) }
   }
 
-  private func printText(
-    _ state: UpdateCheckState,
-    currentVersion: String,
-    options: Options
-  ) {
+  private func printText(_ state: UpdateCheckState, currentVersion: String, options: Options) {
     print("OpenJoystickDriver Update Check")
     print("  Current     : \(currentVersion)")
     print("  Prereleases : \(options.includePrereleases ? "included" : "excluded")")
     switch state {
-    case .upToDate(let version):
-      print("  Status      : up to date (\(version))")
+    case .upToDate(let latestTag):
+      print("  Status      : no update available")
+      print("  Latest      : \(latestTag)")
     case .available(let info):
       print("  Status      : update available")
       print("  Latest      : \(info.tagName)")
@@ -60,23 +56,18 @@ struct UpdatesCommand {
     case .failed(let message):
       print("  Status      : failed")
       print("  Error       : \(message)")
-    case .idle, .checking:
-      print("  Status      : incomplete")
+    case .idle, .checking: print("  Status      : incomplete")
     }
   }
 
-  private func printJSON(
-    _ state: UpdateCheckState,
-    currentVersion: String,
-    options: Options
-  ) {
+  private func printJSON(_ state: UpdateCheckState, currentVersion: String, options: Options) {
     let output: JSONOutput
     switch state {
-    case .upToDate:
+    case .upToDate(let latestTag):
       output = JSONOutput(
         status: "upToDate",
         currentVersion: currentVersion,
-        latestTag: nil,
+        latestTag: latestTag,
         releaseURL: nil,
         includePrereleases: options.includePrereleases,
         message: nil
@@ -147,14 +138,11 @@ struct UpdatesCommand {
   private func printHelp() {
     print(
       [
-        "Usage: OpenJoystickDriver --headless updates check [options]",
-        "",
-        "Options:",
-        "  --prerelease  Include non-draft SemVer prereleases",
+        "Usage: OpenJoystickDriver --headless updates check [options]", "", "Options:",
+        "  --prerelease  Include SemVer prerelease tags",
         "  --json        Emit machine-readable JSON",
-        "  --open        Open the release page only when an update is available",
-        "",
-        "This command checks release metadata; it does not download or install an update.",
+        "  --open        Open the release page only when an update is available", "",
+        "This command checks GitHub tags; it does not download or install an update.",
       ].joined(separator: "\n")
     )
   }

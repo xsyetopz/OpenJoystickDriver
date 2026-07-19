@@ -23,113 +23,138 @@ public enum UpdateCheckState: Equatable, Sendable {
 public struct UpdateChecker: Sendable {
   public static let requestTimeoutSeconds: TimeInterval = 15
 
-  public static var defaultLatestReleaseURL: URL {
+  public static var defaultTagsURL: URL {
     var components = URLComponents()
     components.scheme = "https"
     components.host = "api.github.com"
-    components.path = "/repos/xsyetopz/OpenJoystickDriver/releases/latest"
+    components.path = "/repos/xsyetopz/OpenJoystickDriver/tags"
+    components.queryItems = [URLQueryItem(name: "per_page", value: "100")]
     return components.url ?? URL(fileURLWithPath: "/")
   }
 
-  public static var defaultReleasesURL: URL {
+  public static var defaultRepositoryURL: URL {
     var components = URLComponents()
     components.scheme = "https"
-    components.host = "api.github.com"
-    components.path = "/repos/xsyetopz/OpenJoystickDriver/releases"
+    components.host = "github.com"
+    components.path = "/xsyetopz/OpenJoystickDriver"
     return components.url ?? URL(fileURLWithPath: "/")
   }
 
-  private struct GitHubRelease: Decodable {
-    let tagName: String
-    let htmlURL: URL
-    let draft: Bool
-    let prerelease: Bool
+  private struct GitHubTag: Decodable { let name: String }
 
-    enum CodingKeys: String, CodingKey {
-      case tagName = "tag_name"
-      case htmlURL = "html_url"
-      case draft
-      case prerelease
-    }
+  private struct Candidate {
+    let tag: GitHubTag
+    let version: SemanticVersion
   }
 
-  public let latestReleaseURL: URL
-  public let releasesURL: URL
+  public let tagsURL: URL
+  public let repositoryURL: URL
   public let session: URLSession
 
   public init(
-    latestReleaseURL: URL = Self.defaultLatestReleaseURL,
-    releasesURL: URL = Self.defaultReleasesURL,
+    tagsURL: URL = Self.defaultTagsURL,
+    repositoryURL: URL = Self.defaultRepositoryURL,
     session: URLSession = .shared
   ) {
-    self.latestReleaseURL = latestReleaseURL
-    self.releasesURL = releasesURL
+    self.tagsURL = tagsURL
+    self.repositoryURL = repositoryURL
     self.session = session
   }
 
-  public func check(
-    currentVersion rawCurrentVersion: String,
-    includePrereleases: Bool = false
-  ) async -> UpdateCheckState {
+  public func check(currentVersion rawCurrentVersion: String, includePrereleases: Bool = false)
+    async -> UpdateCheckState
+  {
     guard let currentVersion = SemanticVersion(rawCurrentVersion) else {
       return .failed("Current app version is not SemVer: \(rawCurrentVersion)")
     }
 
     do {
-      let release = try await latestRelease(includePrereleases: includePrereleases)
-      guard let latestVersion = SemanticVersion(release.tagName) else {
-        return .failed("Latest GitHub release tag is not SemVer: \(release.tagName)")
-      }
-
+      let candidate = try await latestTag(includePrereleases: includePrereleases)
       let info = UpdateInfo(
-        tagName: release.tagName,
-        version: latestVersion,
-        htmlURL: release.htmlURL
+        tagName: candidate.tag.name,
+        version: candidate.version,
+        htmlURL: tagURL(candidate.tag.name)
       )
-      return latestVersion > currentVersion ? .available(info) : .upToDate(rawCurrentVersion)
-    } catch let error as UpdateCheckerError {
-      return .failed(error.message)
-    } catch {
+      return candidate.version > currentVersion ? .available(info) : .upToDate(candidate.tag.name)
+    } catch let error as UpdateCheckerError { return .failed(error.message) } catch {
       return .failed(error.localizedDescription)
     }
   }
 
-  private func latestRelease(includePrereleases: Bool) async throws -> GitHubRelease {
-    if includePrereleases {
-      return try await latestReleaseIncludingPrereleases()
+  private func latestTag(includePrereleases: Bool) async throws -> Candidate {
+    let tags = try await allTags()
+    let candidates = tags.compactMap { tag -> Candidate? in
+      guard let version = SemanticVersion(tag.name) else { return nil }
+      guard includePrereleases || version.prerelease.isEmpty else { return nil }
+      return Candidate(tag: tag, version: version)
     }
-
-    let release: GitHubRelease = try await decode(url: latestReleaseURL)
-    guard !release.draft else { throw UpdateCheckerError("Latest GitHub release is a draft") }
-    guard !release.prerelease else {
-      throw UpdateCheckerError("Latest GitHub release is a prerelease")
+    guard let latest = candidates.max(by: { $0.version < $1.version }) else {
+      let channel = includePrereleases ? "" : " stable"
+      throw UpdateCheckerError("No\(channel) SemVer GitHub tags found")
     }
-    return release
+    return latest
   }
 
-  private func latestReleaseIncludingPrereleases() async throws -> GitHubRelease {
-    let releases: [GitHubRelease] = try await decode(url: releasesURL)
-    let candidates = releases.compactMap { release -> (GitHubRelease, SemanticVersion)? in
-      guard !release.draft, let version = SemanticVersion(release.tagName) else { return nil }
-      return (release, version)
+  private func allTags() async throws -> [GitHubTag] {
+    var tags: [GitHubTag] = []
+    var nextURL: URL? = tagsURL
+    var visited: Set<URL> = []
+
+    while let pageURL = nextURL {
+      guard visited.insert(pageURL).inserted else {
+        throw UpdateCheckerError("GitHub tag pagination contains a cycle")
+      }
+
+      let page = try await tagPage(url: pageURL)
+      tags.append(contentsOf: page.tags)
+      nextURL = try nextPageURL(response: page.response, currentURL: pageURL)
     }
-    guard let latest = candidates.max(by: { $0.1 < $1.1 }) else {
-      throw UpdateCheckerError("No non-draft SemVer GitHub releases found")
-    }
-    return latest.0
+
+    return tags
   }
 
-  private func decode<T: Decodable>(url: URL) async throws -> T {
+  private func tagPage(url: URL) async throws -> (tags: [GitHubTag], response: HTTPURLResponse) {
     var request = URLRequest(url: url)
     request.timeoutInterval = Self.requestTimeoutSeconds
     request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
     request.setValue("OpenJoystickDriver", forHTTPHeaderField: "User-Agent")
 
     let (data, response) = try await data(for: request)
-    if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+    guard let http = response as? HTTPURLResponse else {
+      throw UpdateCheckerError("GitHub returned a non-HTTP response")
+    }
+    guard (200...299).contains(http.statusCode) else {
       throw UpdateCheckerError("GitHub returned HTTP \(http.statusCode)")
     }
-    return try JSONDecoder().decode(T.self, from: data)
+    return (try JSONDecoder().decode([GitHubTag].self, from: data), http)
+  }
+
+  private func nextPageURL(response: HTTPURLResponse, currentURL: URL) throws -> URL? {
+    guard let link = response.value(forHTTPHeaderField: "Link") else { return nil }
+
+    for entry in link.split(separator: ",") {
+      let fields = entry.split(separator: ";").map {
+        $0.trimmingCharacters(in: .whitespacesAndNewlines)
+      }
+      guard let target = fields.first, target.hasPrefix("<"), target.hasSuffix(">"),
+        fields.dropFirst().contains(where: { field in field == "rel=\"next\"" || field == "rel=next"
+        })
+      else { continue }
+
+      let value = String(target.dropFirst().dropLast())
+      guard let url = URL(string: value, relativeTo: currentURL)?.absoluteURL,
+        ["http", "https"].contains(url.scheme?.lowercased() ?? ""),
+        url.scheme?.caseInsensitiveCompare(tagsURL.scheme ?? "") == .orderedSame,
+        url.host?.caseInsensitiveCompare(tagsURL.host ?? "") == .orderedSame,
+        url.port == tagsURL.port
+      else { throw UpdateCheckerError("GitHub returned an unsafe tag pagination link") }
+      return url
+    }
+    return nil
+  }
+
+  private func tagURL(_ tagName: String) -> URL {
+    repositoryURL.appendingPathComponent("tree").appendingPathComponent(tagName)
   }
 
   private func data(for request: URLRequest) async throws -> (Data, URLResponse) {

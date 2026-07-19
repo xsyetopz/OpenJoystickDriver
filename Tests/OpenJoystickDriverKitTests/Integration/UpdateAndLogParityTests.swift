@@ -2,14 +2,10 @@ import Foundation
 import Testing
 
 struct UpdateAndLogParityTests {
-  @Test
-  func cliAndGuiShareUpdateChecking() throws {
+  @Test func cliAndGuiShareUpdateChecking() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cli = try source("Sources/OpenJoystickDriver/CLI.swift", root: root)
-    let command = try source(
-      "Sources/OpenJoystickDriver/Commands/UpdatesCommand.swift",
-      root: root
-    )
+    let command = try source("Sources/OpenJoystickDriver/Commands/UpdatesCommand.swift", root: root)
     let appModel = try source(
       "Sources/OpenJoystickDriver/App/AppModel/ApplicationServiceOperations.swift",
       root: root
@@ -18,31 +14,27 @@ struct UpdateAndLogParityTests {
       "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift",
       root: root
     )
-    let checker = try source(
-      "Sources/OpenJoystickDriverKit/Update/UpdateChecker.swift",
-      root: root
-    )
+    let checker = try source("Sources/OpenJoystickDriverKit/Update/UpdateChecker.swift", root: root)
 
     #expect(cli.contains("case \"updates\""))
     #expect(command.contains("UpdateChecker().check"))
     #expect(command.contains("--prerelease"))
     #expect(command.contains("--json"))
     #expect(command.contains("--open"))
-    #expect(command.contains("does not download or install"))
+    #expect(command.contains("checks GitHub tags"))
+    #expect(command.contains("latestTag: latestTag"))
     #expect(appModel.contains("updateChecker.check"))
     #expect(appModel.contains("includePrereleases"))
     #expect(view.contains("model.checkForUpdates()"))
     #expect(checker.contains("request.timeoutInterval = Self.requestTimeoutSeconds"))
+    #expect(checker.contains("/repos/xsyetopz/OpenJoystickDriver/tags"))
+    #expect(!checker.contains("/releases"))
   }
 
-  @Test
-  func cliAndGuiUseTypedServiceLogPaths() throws {
+  @Test func cliAndGuiUseTypedServiceLogPaths() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cli = try source("Sources/OpenJoystickDriver/CLI.swift", root: root)
-    let command = try source(
-      "Sources/OpenJoystickDriver/Commands/LogsCommand.swift",
-      root: root
-    )
+    let command = try source("Sources/OpenJoystickDriver/Commands/LogsCommand.swift", root: root)
     let view = try source(
       "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift",
       root: root
