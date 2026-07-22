@@ -158,8 +158,11 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
   ) throws {
     let seq = sequencer.next(for: GIPCommand.rumble)
     let activation: UInt8 = 0x0F  // all four motors
+    // The options byte must be 0x00: controllers silently discard rumble frames
+    // flagged with GIPOption.internal (verified on 045E:02D1 hardware), matching
+    // the unflagged rumble commands sent by the Linux xone and xpad drivers.
     let packet: [UInt8] = [
-      GIPCommand.rumble, GIPOption.internal, seq, 0x09, 0x00, activation, ltMotor, rtMotor, left,
+      GIPCommand.rumble, 0x00, seq, 0x09, 0x00, activation, ltMotor, rtMotor, left,
       right, 0x20, 0x00, 0x00,  // duration=32, delay=0, repeat=0
     ]
     _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
