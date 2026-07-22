@@ -54,6 +54,9 @@ All notable changes to OpenJoystickDriver are documented in this file.
 
 ### Fixed
 
+- Cleared the internal option flag from GIP rumble frames, which Xbox One
+  controllers silently discard; physical rumble on all four motors verified on
+  045E:02D1 hardware.
 - Made manual update checks select the greatest valid GitHub tag for the chosen
   stable or prerelease channel and report that remote tag when the installed
   build is already newer.
