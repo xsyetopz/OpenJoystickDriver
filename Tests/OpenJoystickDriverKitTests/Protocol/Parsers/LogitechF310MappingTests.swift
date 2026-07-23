@@ -37,22 +37,11 @@ struct LogitechF310MappingTests {
   }
 
   @Test
-  func inputTestUsesStableXboxLabelsInsteadOfOptionalSymbols() throws {
+  func semanticButtonLabelsRemainStable() {
     #expect(Button.leftBumper.compactLabel == "LB")
     #expect(Button.rightBumper.compactLabel == "RB")
     #expect(Button.a.compactLabel == "A")
     #expect(Button.guide.compactLabel == "Guide")
-
-    let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let view = try String(
-      contentsOf: root.appendingPathComponent(
-        "Sources/OpenJoystickDriver/Views/InputTestWindowView/InputTestWindowView.swift"
-      ),
-      encoding: .utf8
-    )
-    #expect(view.contains("Text(button.compactLabel)"))
-    #expect(view.contains(#"case "Xbox360":"#))
-    #expect(view.contains(".leftBumper, .rightBumper"))
   }
 
   private func report(buttons: UInt16) -> Data {

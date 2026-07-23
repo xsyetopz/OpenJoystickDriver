@@ -21,7 +21,7 @@ struct BrowserGamepadDiagnosticCommand {
     print("Browser Gamepad diagnostic")
     print("  URL      : \(session.url.absoluteString)")
     print("  Duration : \(options.seconds) seconds")
-    print("  Identity : set separately with '--headless compat <identity>'")
+    print("  Identity : set separately with '--headless compatibility set <identity>'")
     print("")
     print("Keep the page focused, press a controller control once, then:")
     print("  1. Check ID, mapping, button/axis counts, and duplicate instances.")

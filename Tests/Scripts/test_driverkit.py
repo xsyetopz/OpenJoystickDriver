@@ -259,13 +259,6 @@ if ( _legacy_driverkit_profile_enabled ) >/dev/null 2>&1; then exit 8; fi
         self.assertIn('" x86_64 "', tooling)
         self.assertNotIn("universal binary with 2 architectures", tooling)
 
-    def test_development_sparkle_signing_handles_empty_optional_arguments(self):
-        bundles = (ROOT / "scripts/build-tools/bundles.sh").read_text()
-
-        safe = '${sparkle_extra_args[@]+"${sparkle_extra_args[@]}"}'
-        self.assertEqual(bundles.count(safe), 5)
-        self.assertNotIn('"${sparkle_extra_args[@]}"', bundles.replace(safe, ""))
-
     def test_generator_cli_requires_versions_and_destination(self):
         generator = (ROOT / "Sources/DriverKitGenerator/main.swift").read_text()
 

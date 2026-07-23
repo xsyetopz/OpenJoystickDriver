@@ -3,7 +3,7 @@ import Testing
 
 struct BrowserGamepadDiagnosticTests {
   @Test
-  func cliRetainsDiagnosticWhileApplicationHasNoEntryPoint() throws {
+  func headlessDiagnosticsOwnTheBrowserDiagnostic() throws {
     let root = try RepositoryRoot.from()
     let diagnose = try source(
       "Sources/OpenJoystickDriver/Commands/DiagnoseCommand.swift",
@@ -19,23 +19,6 @@ struct BrowserGamepadDiagnosticTests {
     )
     let service = try source(
       "Sources/OpenJoystickDriver/Commands/BrowserGamepadDiagnosticService.swift",
-      root: root
-    )
-    let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/AppModel.swift",
-      root: root
-    )
-    let view =
-      try source(
-        "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/MenuBarPopoverView.swift",
-        root: root
-      )
-      + source(
-        "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift",
-        root: root
-      )
-    let appDelegate = try source(
-      "Sources/OpenJoystickDriver/App/AppDelegate.swift",
       root: root
     )
     let page = try source(
@@ -60,17 +43,6 @@ struct BrowserGamepadDiagnosticTests {
     #expect(command.contains(#"case "--output""#))
     #expect(command.contains("session.encodedSnapshots()"))
     #expect(!command.contains("setCompatibilityIdentity"))
-
-    #expect(!FileManager.default.fileExists(
-      atPath: root.appendingPathComponent(
-        "Sources/OpenJoystickDriver/App/AppModel/BrowserGamepadDiagnostic.swift"
-      ).path
-    ))
-    for applicationSource in [appModel, view, appDelegate] {
-      #expect(!applicationSource.contains("BrowserGamepad"))
-      #expect(!applicationSource.contains("browserGamepad"))
-      #expect(!applicationSource.contains("browserDiagnostic."))
-    }
 
     #expect(page.contains("navigator.getGamepads"))
     #expect(page.contains("gamepadconnected"))

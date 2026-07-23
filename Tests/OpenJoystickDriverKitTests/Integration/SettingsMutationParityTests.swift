@@ -2,66 +2,42 @@ import Foundation
 import Testing
 
 struct SettingsMutationParityTests {
-  @Test func obsoleteOutputMutationsAreRemovedAndResetRemainsAvailable() throws {
+  @Test func headlessResetRemainsAvailableWithoutObsoleteOutputMutations() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let cli = try source("Sources/OpenJoystickDriver/CLI.swift", root: root)
+    let cli = try source("Sources/OpenJoystickDriver/CLIGrammar.swift", root: root)
     let reset = try source(
       "Sources/OpenJoystickDriver/Commands/ResetSettingsCommand.swift",
       root: root
     )
-    let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/ApplicationServiceOperations.swift",
-      root: root
-    )
-    let view = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/AdvancedCards.swift",
-      root: root
-    )
-    let popover = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/MenuBarPopoverView.swift",
+    let requests = try source(
+      "Sources/OpenJoystickDriver/Service/ApplicationServiceServer/Requests.swift",
       root: root
     )
 
     #expect(!cli.contains("case \"userspace\""))
-    #expect(!cli.contains("case \"output\""))
-    #expect(cli.contains("case \"reset-settings\""))
+    #expect(cli.contains("case \"output\":\n      return .controllerOutput"))
+    #expect(cli.contains("case .reset: ResetSettingsCommand().run()"))
     #expect(reset.contains("client.resetSettings"))
 
-    #expect(!appModel.contains("client.setUserSpaceVirtualDeviceEnabled"))
-    #expect(!appModel.contains("client.setOutputMode"))
-    #expect(appModel.contains("client.resetSettings"))
-    #expect(!view.contains("model.setUserSpaceVirtualDeviceEnabled"))
-    #expect(!view.contains("model.setOutputMode"))
-    #expect(view.contains("pendingConfirmation = .resetSettings"))
-    #expect(popover.contains("case .resetSettings"))
-    #expect(popover.contains("primaryButton: .destructive"))
+    #expect(requests.contains("public func resetSettings(reply:"))
+    #expect(!requests.contains("setUserSpaceVirtualDeviceEnabled"))
+    #expect(!requests.contains("setOutputMode"))
   }
 
-  @Test func guiExposesConfirmedDriverKitRemovalAndPermissionSettings() throws {
+  @Test func headlessExtensionRemovalAndPermissionSettingsRemainAvailable() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cli = try source(
       "Sources/OpenJoystickDriver/Commands/SystemExtensionCommand.swift",
       root: root
     )
-    let manager = try source(
-      "Sources/OpenJoystickDriver/App/SystemExtensionLifecycle.swift",
-      root: root
-    )
-    let cards = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/SystemCards.swift",
-      root: root
-    )
-    let popover = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/MenuBarPopoverView.swift",
+    let permissions = try source(
+      "Sources/OpenJoystickDriver/Commands/PermissionsCommand.swift",
       root: root
     )
 
     #expect(cli.contains("case \"uninstall\""))
-    #expect(manager.contains("func uninstallExtension()"))
-    #expect(cards.contains("pendingConfirmation = .systemExtensionUninstall"))
-    #expect(popover.contains("case .systemExtensionUninstall"))
-    #expect(popover.contains("model.extensionManager.uninstallExtension()"))
-    #expect(cards.contains("model.openInputMonitoringSettings()"))
+    #expect(permissions.contains("case \"open-settings\""))
+    #expect(permissions.contains("Open Input Monitoring or Accessibility"))
   }
 
   private func source(_ path: String, root: URL) throws -> String {

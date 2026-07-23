@@ -14,7 +14,7 @@ extension ApplicationServiceServer {
         let backends =
           d.preferredBackends.isEmpty ? "none" : d.preferredBackends.joined(separator: ",")
         return "\(d.name) (VID:\(d.vendorID)" + " PID:\(d.productID) \(d.parser)"
-          + " [\(d.connection)] SN:\(sn))" + " protocol=\(d.protocolVariant)"
+          + " [\(d.connection)] SN:\(sn))" + " protocol=\(d.protocolVariant.rawValue)"
           + " endpoints=in:0x\(String(d.inputEndpoint, radix: 16))"
           + " out:0x\(String(d.outputEndpoint, radix: 16))"
           + " setConfig=\(d.needsSetConfiguration)" + " settleMs=\(d.postHandshakeSettleMs)"
@@ -62,23 +62,33 @@ extension ApplicationServiceServer {
   }
 
   /// Returns the current input state for the specified device as encoded JSON data.
-  public func getDeviceInputState(vendorID: Int, productID: Int, reply: @escaping (Data?) -> Void) {
+  public func getDeviceInputState(
+    vendorID: Int,
+    productID: Int,
+    runtimeIdentifier: String?,
+    reply: @escaping (Data?) -> Void
+  ) {
     let callback = SendableReply(call: reply)
     let dm = deviceManager
     Task {
       let identifier = DeviceIdentifier(vendorID: UInt16(vendorID), productID: UInt16(productID))
-      let state = await dm.inputState(for: identifier)
+      let state = await dm.inputState(for: identifier, runtimeIdentifier: runtimeIdentifier)
       callback.call(try? JSONEncoder().encode(state))
     }
   }
 
   /// Returns the recent packet log for the specified device as encoded JSON data.
-  public func getPacketLog(vendorID: Int, productID: Int, reply: @escaping (Data) -> Void) {
+  public func getPacketLog(
+    vendorID: Int,
+    productID: Int,
+    runtimeIdentifier: String?,
+    reply: @escaping (Data) -> Void
+  ) {
     let callback = SendableReply(call: reply)
     let dm = deviceManager
     Task {
       let identifier = DeviceIdentifier(vendorID: UInt16(vendorID), productID: UInt16(productID))
-      let log = await dm.packetLog(for: identifier)
+      let log = await dm.packetLog(for: identifier, runtimeIdentifier: runtimeIdentifier)
       do {
         let data = try JSONEncoder().encode(log)
         callback.call(data)
@@ -92,6 +102,7 @@ extension ApplicationServiceServer {
   public func sendPhysicalRumble(
     vendorID: Int,
     productID: Int,
+    runtimeIdentifier: String?,
     left: Int,
     right: Int,
     lt: Int,
@@ -105,6 +116,7 @@ extension ApplicationServiceServer {
       let identifier = DeviceIdentifier(vendorID: UInt16(vendorID), productID: UInt16(productID))
       let ok = await dm.sendRumble(
         for: identifier,
+        runtimeIdentifier: runtimeIdentifier,
         left: UInt8(clamping: left),
         right: UInt8(clamping: right),
         lt: UInt8(clamping: lt),
@@ -118,6 +130,7 @@ extension ApplicationServiceServer {
   public func setPhysicalPlayerIndicator(
     vendorID: Int,
     productID: Int,
+    runtimeIdentifier: String?,
     playerIndex: Int,
     reply: @escaping (Bool) -> Void
   ) {
@@ -132,13 +145,20 @@ extension ApplicationServiceServer {
         vendorID: UInt16(clamping: vendorID),
         productID: UInt16(clamping: productID)
       )
-      callback.call(await dm.sendPlayerIndicator(for: identifier, indicator: indicator))
+      callback.call(
+        await dm.sendPlayerIndicator(
+          for: identifier,
+          runtimeIdentifier: runtimeIdentifier,
+          indicator: indicator
+        )
+      )
     }
   }
 
   public func setPhysicalColor(
     vendorID: Int,
     productID: Int,
+    runtimeIdentifier: String?,
     red: Int,
     green: Int,
     blue: Int,
@@ -158,6 +178,7 @@ extension ApplicationServiceServer {
       callback.call(
         await dm.setPhysicalColor(
           for: identifier,
+          runtimeIdentifier: runtimeIdentifier,
           red: UInt8(red),
           green: UInt8(green),
           blue: UInt8(blue)
@@ -169,6 +190,7 @@ extension ApplicationServiceServer {
   public func setPhysicalBrightness(
     vendorID: Int,
     productID: Int,
+    runtimeIdentifier: String?,
     brightness: Int,
     reply: @escaping (Bool) -> Void
   ) {
@@ -183,14 +205,27 @@ extension ApplicationServiceServer {
         vendorID: UInt16(clamping: vendorID),
         productID: UInt16(clamping: productID)
       )
-      callback.call(await dm.setPhysicalBrightness(for: identifier, brightness: UInt8(brightness)))
+      callback.call(
+        await dm.setPhysicalBrightness(
+          for: identifier,
+          runtimeIdentifier: runtimeIdentifier,
+          brightness: UInt8(brightness)
+        )
+      )
     }
   }
 
   /// Enables or disables virtual output suppression and reports success.
   public func setSuppressOutput(_ suppress: Bool, reply: @escaping (Bool) -> Void) {
-    dispatcher.suppressOutput = suppress
-    reply(true)
+    let callback = SendableReply(call: reply)
+    Task {
+      do {
+        try await remappingRouter.setOutputSuppressed(suppress)
+        callback.call(true)
+      } catch {
+        callback.call(false)
+      }
+    }
   }
 
   public func setCompatibilityIdentity(_ raw: String, reply: @escaping (Bool) -> Void) {
@@ -288,5 +323,92 @@ extension ApplicationServiceServer {
 
     compatibilityIdentity = .sdl2_3
     reply(initializeCompatibilityBackend())
+  }
+
+  func getRemappingSnapshot(
+    reply: @escaping (RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.snapshot()) }
+  }
+
+  func getRemappingProfile(
+    id: UUID,
+    reply: @escaping (RemappingRequestResult<RemappingProfile>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.profile(id: id)) }
+  }
+
+  func createRemappingProfile(
+    _ profile: RemappingProfile,
+    reply: @escaping (RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.create(profile)) }
+  }
+
+  func updateRemappingProfile(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile,
+    reply: @escaping (RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task {
+      callback.call(
+        await remappingRequests.update(profile, expectedCurrent: expectedCurrent)
+      )
+    }
+  }
+
+  func importRemappingProfile(
+    _ profile: RemappingProfile,
+    reply: @escaping (RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.importProfile(profile)) }
+  }
+
+  func deleteRemappingProfile(
+    id: UUID,
+    reply: @escaping (RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.delete(id: id)) }
+  }
+
+  func activateRemappingProfile(
+    id: UUID,
+    reply: @escaping (RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.activate(id: id)) }
+  }
+
+  func deactivateRemappingProfile(
+    vendorID: UInt16,
+    productID: UInt16,
+    reply: @escaping (RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task {
+      callback.call(
+        await remappingRequests.deactivate(vendorID: vendorID, productID: productID)
+      )
+    }
+  }
+
+  func getRemappingPostEventAccess(
+    reply: @escaping (RemappingRequestResult<RemappingPostEventAccessState>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.currentPostEventAccess()) }
+  }
+
+  func requestRemappingPostEventAccess(
+    reply: @escaping (RemappingRequestResult<RemappingPostEventAccessState>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.requestPostEventAccess()) }
   }
 }

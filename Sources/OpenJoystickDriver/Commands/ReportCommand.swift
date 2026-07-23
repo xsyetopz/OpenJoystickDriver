@@ -40,8 +40,7 @@ struct ReportCommand {
       applicationServiceHealth: health,
       applicationServiceInstalled: ApplicationServiceManager.isInstalled,
       applicationServiceConnected: status != nil,
-      appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        ?? "0.5.0-alpha.5",
+      appVersion: ApplicationVersion.current,
       appleGameControllerAudit: AppleGameControllerSupportAuditor.auditCurrentSystem()
     )
 
@@ -71,7 +70,7 @@ struct ReportCommand {
   private func printHelp() {
     print(
       """
-      Usage: OpenJoystickDriver --headless report create [--output <path>]
+      Usage: OpenJoystickDriver --headless diagnose report [--output <path>]
 
       Creates a JSON support report for controller issues. The report excludes
       raw serial values, filesystem paths, packet payloads, HID location IDs,

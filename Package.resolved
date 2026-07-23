@@ -2,15 +2,6 @@
   "originHash" : "1b446ee21cb0a16ff27ada77d76b3c7d14800a4be333f76779606667b222e2b3",
   "pins" : [
     {
-      "identity" : "sparkle",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sparkle-project/Sparkle",
-      "state" : {
-        "revision" : "b6496a74a087257ef5e6da1c5b29a447a60f5bd7",
-        "version" : "2.9.4"
-      }
-    },
-    {
       "identity" : "swifterkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/xsyetopz/SwifterKit.git",

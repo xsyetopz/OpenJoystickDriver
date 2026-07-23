@@ -23,32 +23,103 @@ public struct LocalServiceRPCIntArguments: Codable, Sendable { public let value:
 public struct LocalServiceRPCDeviceArguments: Codable, Sendable {
   public let vendorID: Int
   public let productID: Int
+  public let runtimeIdentifier: String?
+
+  public init(vendorID: Int, productID: Int, runtimeIdentifier: String? = nil) {
+    self.vendorID = vendorID
+    self.productID = productID
+    self.runtimeIdentifier = runtimeIdentifier
+  }
 }
 public struct LocalServiceRPCRumbleArguments: Codable, Sendable {
   public let vendorID: Int
   public let productID: Int
+  public let runtimeIdentifier: String?
   public let left: Int
   public let right: Int
   public let leftTrigger: Int
   public let rightTrigger: Int
   public let durationMilliseconds: Int
+
+  public init(
+    vendorID: Int,
+    productID: Int,
+    runtimeIdentifier: String? = nil,
+    left: Int,
+    right: Int,
+    leftTrigger: Int,
+    rightTrigger: Int,
+    durationMilliseconds: Int
+  ) {
+    self.vendorID = vendorID
+    self.productID = productID
+    self.runtimeIdentifier = runtimeIdentifier
+    self.left = left
+    self.right = right
+    self.leftTrigger = leftTrigger
+    self.rightTrigger = rightTrigger
+    self.durationMilliseconds = durationMilliseconds
+  }
 }
 public struct LocalServiceRPCPlayerIndicatorArguments: Codable, Sendable {
   public let vendorID: Int
   public let productID: Int
+  public let runtimeIdentifier: String?
   public let playerIndex: Int
+
+  public init(
+    vendorID: Int,
+    productID: Int,
+    runtimeIdentifier: String? = nil,
+    playerIndex: Int
+  ) {
+    self.vendorID = vendorID
+    self.productID = productID
+    self.runtimeIdentifier = runtimeIdentifier
+    self.playerIndex = playerIndex
+  }
 }
 public struct LocalServiceRPCColorArguments: Codable, Sendable {
   public let vendorID: Int
   public let productID: Int
+  public let runtimeIdentifier: String?
   public let red: Int
   public let green: Int
   public let blue: Int
+
+  public init(
+    vendorID: Int,
+    productID: Int,
+    runtimeIdentifier: String? = nil,
+    red: Int,
+    green: Int,
+    blue: Int
+  ) {
+    self.vendorID = vendorID
+    self.productID = productID
+    self.runtimeIdentifier = runtimeIdentifier
+    self.red = red
+    self.green = green
+    self.blue = blue
+  }
 }
 public struct LocalServiceRPCBrightnessArguments: Codable, Sendable {
   public let vendorID: Int
   public let productID: Int
+  public let runtimeIdentifier: String?
   public let brightness: Int
+
+  public init(
+    vendorID: Int,
+    productID: Int,
+    runtimeIdentifier: String? = nil,
+    brightness: Int
+  ) {
+    self.vendorID = vendorID
+    self.productID = productID
+    self.runtimeIdentifier = runtimeIdentifier
+    self.brightness = brightness
+  }
 }
 
 enum LocalServiceRPCError: Error, LocalizedError, Sendable {
@@ -73,7 +144,7 @@ enum LocalServiceRPCError: Error, LocalizedError, Sendable {
 }
 
 enum LocalServiceRPCTransport {
-  static let maximumFrameBytes = 8 * 1_024 * 1_024
+  static let maximumFrameBytes = ApplicationServiceRemappingRPC.maximumTransportFrameBytes
   static var defaultSocketPath: String { "/tmp/com.openjoystickdriver.\(geteuid()).rpc" }
 
   static func openConnectedSocket(

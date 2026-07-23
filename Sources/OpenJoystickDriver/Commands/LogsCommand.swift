@@ -143,7 +143,7 @@ struct LogsCommand {
   private func printHelp() {
     print(
       [
-        "Usage: OpenJoystickDriver --headless logs <show|path|open> [options]",
+        "Usage: OpenJoystickDriver --headless app logs <show|path|open> [options]",
         "",
         "Options:",
         "  --stream stdout|stderr|both",

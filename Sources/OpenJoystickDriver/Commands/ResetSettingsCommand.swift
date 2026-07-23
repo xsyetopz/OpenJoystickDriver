@@ -20,9 +20,6 @@ struct ResetSettingsCommand {
     }
 
     print("OK: reset application service settings.")
-    print(
-      "Next: open the menubar app, set Mode -> Compatibility,"
-        + " then pick Compatibility identity."
-    )
+    print("Next: run compatibility set <identity> to choose the compatibility identity.")
   }
 }

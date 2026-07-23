@@ -1,3 +1,4 @@
+import Darwin
 import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverRelay
@@ -6,41 +7,73 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
   private let permissionManager: PermissionManager
   private let driverKitDispatcher: DriverKitOutputDispatcher
   private let dispatcher: CompatibilityOutputDispatcher
+  private let remappingRouter: RemappingOutputRouter
   private let manager: DeviceManager
   private let applicationServiceServer: ApplicationServiceServer
   private let foregroundConsumerOutputMonitor: ForegroundConsumerOutputMonitor
   private let stateLock = NSLock()
   private var started = false
+  private var shutdownSignalSources: [DispatchSourceSignal] = []
 
   init() {
     let permissionManager = PermissionManager()
     let driverKitDispatcher = DriverKitOutputDispatcher()
     let dispatcher = CompatibilityOutputDispatcher()
-    let manager = DeviceManager(dispatcher: dispatcher)
+    let remappingProfileLibrary = RemappingProfileLibrary()
+    let postEventAccess = CoreGraphicsPostEventAccess()
+    let remappingEngine = RemappingEventEngine(
+      sink: CoreGraphicsSystemInputSink(access: postEventAccess)
+    )
+    let remappingRouter = RemappingOutputRouter(
+      library: remappingProfileLibrary,
+      engine: remappingEngine,
+      compatibility: dispatcher,
+      foregroundApplication: WorkspaceRemappingForegroundApplication(),
+      postEventAccess: postEventAccess
+    )
+    let manager = DeviceManager(dispatcher: remappingRouter)
     let applicationServiceServer = ApplicationServiceServer(
       deviceManager: manager,
       permissionManager: permissionManager,
       dispatcher: dispatcher,
-      driverKitDispatcher: driverKitDispatcher
+      driverKitDispatcher: driverKitDispatcher,
+      remappingProfileLibrary: remappingProfileLibrary,
+      remappingRouter: remappingRouter,
+      postEventAccess: postEventAccess
     )
 
     self.permissionManager = permissionManager
     self.driverKitDispatcher = driverKitDispatcher
     self.dispatcher = dispatcher
+    self.remappingRouter = remappingRouter
     self.manager = manager
     self.applicationServiceServer = applicationServiceServer
-    self.foregroundConsumerOutputMonitor = ForegroundConsumerOutputMonitor(deviceManager: manager) {
-      frontmostBundleRootPath,
-      effectiveConsumerBundleRoots,
-      observedConsumerBundleRoots,
-      activeRouteToken in
-      await applicationServiceServer.applyForegroundCompatibilityRoutingUpdate(
-        frontmostBundleRootPath: frontmostBundleRootPath,
-        effectiveConsumerBundleRoots: effectiveConsumerBundleRoots,
-        observedConsumerBundleRoots: observedConsumerBundleRoots,
-        activeRouteToken: activeRouteToken
-      )
-    }
+    self.foregroundConsumerOutputMonitor = ForegroundConsumerOutputMonitor(
+      compatibilityOutputGate: { allowed in
+        do {
+          try await remappingRouter.foregroundStateDidChange(
+            compatibilityOutputAllowed: allowed
+          )
+        } catch {
+          NSLog(
+            "%@",
+            "[Service] Compatibility output gate failed: \(error.localizedDescription)"
+          )
+        }
+      },
+      compatibilityRouteHandler: {
+        frontmostBundleRootPath,
+        effectiveConsumerBundleRoots,
+        observedConsumerBundleRoots,
+        activeRouteToken in
+        await applicationServiceServer.applyForegroundCompatibilityRoutingUpdate(
+          frontmostBundleRootPath: frontmostBundleRootPath,
+          effectiveConsumerBundleRoots: effectiveConsumerBundleRoots,
+          observedConsumerBundleRoots: observedConsumerBundleRoots,
+          activeRouteToken: activeRouteToken
+        )
+      }
+    )
   }
 
   func start() {
@@ -54,8 +87,9 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     setbuf(stdout, nil)
     serviceLog("[Service] DriverKit integrity relay: diagnostic probes only")
     serviceLog("[Service] Starting main-app service runtime")
-    manager.setupGracefulShutdown(label: "Service")
+    setupGracefulShutdown()
     Task { await permissionManager.startPolling() }
+    remappingRouter.startTicker()
     do { try applicationServiceServer.start() } catch {
       serviceLog("[Service] RPC socket startup failed: \(error.localizedDescription)")
     }
@@ -71,9 +105,15 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     }
     guard shouldStop else { return }
 
+    cancelGracefulShutdown()
     foregroundConsumerOutputMonitor.stop()
     applicationServiceServer.stop()
     await manager.stop()
+    do {
+      try await remappingRouter.shutdown()
+    } catch {
+      serviceLog("[Service] Remapping shutdown failed: \(error.localizedDescription)")
+    }
     await driverKitDispatcher.stopBackend()
     await permissionManager.stopPolling()
     serviceLog("[Service] Stopped")
@@ -82,5 +122,33 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
   private func serviceLog(_ message: String) {
     print(message)
     NSLog("%@", message)
+  }
+
+  private func setupGracefulShutdown() {
+    stateLock.withLock {
+      guard shutdownSignalSources.isEmpty else { return }
+      shutdownSignalSources = [SIGTERM, SIGINT].map { signalNumber in
+        let source = DispatchSource.makeSignalSource(signal: signalNumber, queue: .main)
+        source.setEventHandler { [weak self] in
+          guard let self else { return }
+          serviceLog("[Service] Signal \(signalNumber) - stopping...")
+          Task {
+            await self.stop()
+            exit(0)
+          }
+        }
+        signal(signalNumber, SIG_IGN)
+        source.resume()
+        return source
+      }
+    }
+  }
+
+  private func cancelGracefulShutdown() {
+    let sources = stateLock.withLock {
+      defer { shutdownSignalSources.removeAll() }
+      return shutdownSignalSources
+    }
+    for source in sources { source.cancel() }
   }
 }

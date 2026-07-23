@@ -70,21 +70,12 @@ build_app_bundle() {
   local GUI_APP="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
   local GUI_CONTENTS="$GUI_APP/Contents"
   local GUI_MACOS="$GUI_CONTENTS/MacOS"
-  local GUI_FRAMEWORKS="$GUI_CONTENTS/Frameworks"
   local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-$OJD_DEFAULT_BUNDLE_SHORT_VERSION}"
   local bundle_version="${OJD_BUNDLE_VERSION:-1}"
-  local sparkle_feed_url="${SPARKLE_FEED_URL:-https://github.com/xsyetopz/OpenJoystickDriver/releases/latest/download/appcast.xml}"
-  local sparkle_public_ed_key="${SPARKLE_PUBLIC_ED_KEY:-}"
-
-  if [[ "$OJD_ENV" == "release" && -z "$sparkle_public_ed_key" ]]; then
-    echo "ERROR: SPARKLE_PUBLIC_ED_KEY not set."
-    echo "Fix: add the Sparkle EdDSA public key to CI/local release env."
-    exit 1
-  fi
 
   echo "Creating app bundle..."
   rm -rf "$GUI_APP"
-  mkdir -p "$GUI_MACOS" "$GUI_FRAMEWORKS"
+  mkdir -p "$GUI_MACOS"
   cp "$gui_bin" "$GUI_MACOS/OpenJoystickDriver"
 
   local BUILD_DIR
@@ -96,10 +87,6 @@ build_app_bundle() {
   for bundle in "$BUILD_DIR"/OpenJoystickDriver_*.bundle; do
     [[ -d "$bundle" ]] && cp -R "$bundle" "$GUI_RESOURCES/"
   done
-  for framework in "$BUILD_DIR"/*.framework; do
-    [[ -d "$framework" ]] && cp -R "$framework" "$GUI_FRAMEWORKS/"
-  done
-
   cp "$GUI_PROFILE" "$GUI_CONTENTS/embedded.provisionprofile"
   xattr -d com.apple.quarantine "$GUI_CONTENTS/embedded.provisionprofile" 2>/dev/null || true
 
@@ -140,41 +127,10 @@ PLIST
   /usr/bin/plutil -replace CFBundleShortVersionString -string "$bundle_short_version" \
     "$GUI_CONTENTS/Info.plist"
   /usr/bin/plutil -replace CFBundleVersion -string "$bundle_version" "$GUI_CONTENTS/Info.plist"
-  /usr/bin/plutil -replace SUFeedURL -string "$sparkle_feed_url" "$GUI_CONTENTS/Info.plist"
-  /usr/bin/plutil -replace SUEnableAutomaticChecks -bool YES "$GUI_CONTENTS/Info.plist"
-  /usr/bin/plutil -replace SUAutomaticallyUpdate -bool NO "$GUI_CONTENTS/Info.plist"
-  if [[ -n "$sparkle_public_ed_key" ]]; then
-    /usr/bin/plutil -replace SUPublicEDKey -string "$sparkle_public_ed_key" \
-      "$GUI_CONTENTS/Info.plist"
-  fi
 
   echo "Signing GUI using:    $GUI_IDENTITY"
   for bundle in "$GUI_RESOURCES"/*.bundle; do
     [[ -d "$bundle" ]] && OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign_resource_bundle "$bundle"
-  done
-  for framework in "$GUI_FRAMEWORKS"/*.framework; do
-    if [[ -d "$framework" && "$(basename "$framework")" == "Sparkle.framework" ]]; then
-      local sparkle_extra_args=()
-      if [[ "$OJD_ENV" == "release" ]]; then
-        sparkle_extra_args=(--options runtime --timestamp)
-      fi
-      /usr/bin/codesign --force --sign "$GUI_IDENTITY" \
-        "${sparkle_extra_args[@]+"${sparkle_extra_args[@]}"}" \
-        "$framework/Versions/B/XPCServices/Installer.xpc"
-      /usr/bin/codesign --force --sign "$GUI_IDENTITY" \
-        "${sparkle_extra_args[@]+"${sparkle_extra_args[@]}"}" \
-        --preserve-metadata=entitlements \
-        "$framework/Versions/B/XPCServices/Downloader.xpc"
-      /usr/bin/codesign --force --sign "$GUI_IDENTITY" \
-        "${sparkle_extra_args[@]+"${sparkle_extra_args[@]}"}" \
-        "$framework/Versions/B/Autoupdate"
-      /usr/bin/codesign --force --sign "$GUI_IDENTITY" \
-        "${sparkle_extra_args[@]+"${sparkle_extra_args[@]}"}" \
-        "$framework/Versions/B/Updater.app"
-      /usr/bin/codesign --force --sign "$GUI_IDENTITY" \
-        "${sparkle_extra_args[@]+"${sparkle_extra_args[@]}"}" \
-        "$framework"
-    fi
   done
   OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign "$GUI_APP" --entitlements "$GUI_ENTITLEMENTS"
 

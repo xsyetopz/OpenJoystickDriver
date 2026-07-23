@@ -4,8 +4,9 @@ import OpenJoystickDriverKit
 struct CompatibilityCommand {
   func run(arguments: [String]) {
     let usage = """
-    Usage: OpenJoystickDriver --headless compat \
-    generic-hid|sdl2-3|apple-gamecontroller|x360-hid|xone-hid|status
+    Usage: OpenJoystickDriver --headless compatibility get
+           OpenJoystickDriver --headless compatibility set \
+    <generic-hid|sdl2-3|apple-gamecontroller|x360-hid|xone-hid>
     """
     guard let sub = arguments.first else {
       print(usage)

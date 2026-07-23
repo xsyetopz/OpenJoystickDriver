@@ -45,7 +45,7 @@ public enum ApplicationServiceLogService {
       .appendingPathComponent("OpenJoystickDriver.\(suffix).log", isDirectory: false)
   }
 
-  /// Redirects the GUI process streams to fresh, user-private files for this session.
+  /// Redirects the host process streams to fresh, user-private files for this session.
   ///
   /// Headless commands deliberately do not call this function so their output remains
   /// attached to the invoking terminal.

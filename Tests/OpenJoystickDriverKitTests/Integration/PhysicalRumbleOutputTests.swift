@@ -41,7 +41,7 @@ struct PhysicalRumbleOutputTests {
     #expect(hasPhysicalRumble(steamController))
   }
   @Test
-  func testServiceDescriptionDefaultsRumbleSupportToFalse() {
+  func testServiceDescriptionDefaultsToNoPhysicalOutputCapabilities() {
     let description = ApplicationServiceDeviceDescription(
       name: "Test",
       vendorID: 1,
@@ -51,32 +51,10 @@ struct PhysicalRumbleOutputTests {
       serialNumber: nil
     )
 
-    #expect(description.supportsPhysicalRumble == false)
     #expect(description.physicalOutputCapabilities == .none)
   }
   @Test
-  func testServiceDescriptionDecodesMissingRumbleSupportAsFalse() throws {
-    let json = """
-      {
-        "name": "Test",
-        "vendorID": 1,
-        "productID": 2,
-        "parser": "Test",
-        "connection": "USB",
-        "serialNumber": null
-      }
-      """
-    let description = try JSONDecoder().decode(
-      ApplicationServiceDeviceDescription.self,
-      from: Data(json.utf8)
-    )
-
-    #expect(description.supportsPhysicalRumble == false)
-    #expect(description.physicalOutputCapabilities == .none)
-  }
-
-  @Test
-  func testServiceDescriptionDerivesCapabilitiesFromLegacyRumbleFlag() throws {
+  func testServiceDescriptionRejectsIncompleteOutputCapabilities() throws {
     let json = """
       {
         "name": "Test",
@@ -85,16 +63,39 @@ struct PhysicalRumbleOutputTests {
         "parser": "Test",
         "connection": "USB",
         "serialNumber": null,
+        "protocolVariant": "unknown",
+        "runtimeIdentifier": "0001:0002:M"
+      }
+      """
+    #expect(throws: DecodingError.self) {
+      try JSONDecoder().decode(
+        ApplicationServiceDeviceDescription.self,
+        from: Data(json.utf8)
+      )
+    }
+  }
+
+  @Test
+  func testServiceDescriptionRejectsLegacyRumbleFlag() throws {
+    let json = """
+      {
+        "name": "Test",
+        "vendorID": 1,
+        "productID": 2,
+        "parser": "Test",
+        "connection": "USB",
+        "serialNumber": null,
+        "protocolVariant": "unknown",
+        "runtimeIdentifier": "0001:0002:M",
         "supportsPhysicalRumble": true
       }
       """
-    let description = try JSONDecoder().decode(
-      ApplicationServiceDeviceDescription.self,
-      from: Data(json.utf8)
-    )
-
-    #expect(description.supportsPhysicalRumble)
-    #expect(description.physicalOutputCapabilities == .dualMainRumble)
+    #expect(throws: DecodingError.self) {
+      try JSONDecoder().decode(
+        ApplicationServiceDeviceDescription.self,
+        from: Data(json.utf8)
+      )
+    }
   }
 
   @Test
@@ -117,19 +118,19 @@ struct PhysicalRumbleOutputTests {
       from: JSONEncoder().encode(original)
     )
 
-    #expect(decoded.supportsPhysicalRumble)
+    #expect(decoded.physicalOutputCapabilities.supportsRumble)
     #expect(decoded.physicalOutputCapabilities == capabilities)
   }
 
   @Test
-  func testCapabilitiesDecodeLegacyPayloadAsSourceBacked() throws {
+  func testCapabilitiesRejectLegacyPayloadWithoutEvidence() throws {
     let json = #"{"rumbleMotors":["leftMain","rightMain"],"lightingFeatures":[]}"#
-    let capabilities = try JSONDecoder().decode(
-      PhysicalControllerOutputCapabilities.self,
-      from: Data(json.utf8)
-    )
-
-    #expect(capabilities.evidence == .sourceBacked)
+    #expect(throws: DecodingError.self) {
+      try JSONDecoder().decode(
+        PhysicalControllerOutputCapabilities.self,
+        from: Data(json.utf8)
+      )
+    }
   }
 
   @Test

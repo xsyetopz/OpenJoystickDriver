@@ -29,9 +29,6 @@ jobs:
       OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64 }}
       NOTARIZE_APPLE_ID: ${{ secrets.NOTARIZE_APPLE_ID }}
       NOTARIZE_PASSWORD: ${{ secrets.NOTARIZE_PASSWORD }}
-      SPARKLE_PUBLIC_ED_KEY: ${{ secrets.SPARKLE_PUBLIC_ED_KEY }}
-      SPARKLE_ED_PRIVATE_KEY: ${{ secrets.SPARKLE_ED_PRIVATE_KEY }}
-      SPARKLE_FEED_URL: https://github.com/xsyetopz/OpenJoystickDriver/releases/latest/download/appcast.xml
       OJD_USE_LOCAL_SWIFTERKIT: "0"
     steps:
       - name: Resolve release tag
@@ -99,11 +96,6 @@ jobs:
       - name: Package release build
         run: |
           ./scripts/ojd package release "${{ steps.release.outputs.tag }}"
-
-      - name: Generate Sparkle appcast
-        if: ${{ env.SPARKLE_ED_PRIVATE_KEY != '' }}
-        run: |
-          ./scripts/ojd package appcast "${{ steps.release.outputs.tag }}"
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v7

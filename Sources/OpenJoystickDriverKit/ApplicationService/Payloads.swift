@@ -293,6 +293,8 @@ public struct ApplicationServiceVirtualDeviceSelfTestPayload: Codable, Sendable 
 
 /// Structured description of a connected controller, used in ``ApplicationServiceStatusPayload``.
 public struct ApplicationServiceDeviceDescription: Codable, Sendable {
+  /// Opaque selector for one connected controller during the current runtime session.
+  public let runtimeIdentifier: String
   /// Human-readable controller name.
   public let name: String
   /// USB vendor ID.
@@ -305,8 +307,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   public let connection: String
   /// USB serial number, or nil if not reported.
   public let serialNumber: String?
-  /// Source-backed protocol variant (for example, "xboxOne" or "dualShock4").
-  public let protocolVariant: String
+  /// Source-backed protocol variant selected from the generated controller record.
+  public let protocolVariant: ControllerProtocolVariant
   /// Source-backed mapping quirks from the controller record.
   public let mappingFlags: [String]
   /// Interrupt IN endpoint address used by USB transports.
@@ -319,13 +321,12 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   public let postHandshakeSettleMs: Int
   /// Preferred virtual output backends from the controller record.
   public let preferredBackends: [String]
-  /// Whether the active physical parser can send source-controller rumble.
-  public let supportsPhysicalRumble: Bool
   /// Exact source-backed motors and lighting features of the active parser.
   public let physicalOutputCapabilities: PhysicalControllerOutputCapabilities
 
   private enum CodingKeys: String, CodingKey {
     case name
+    case runtimeIdentifier
     case vendorID
     case productID
     case parser
@@ -338,7 +339,6 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case needsSetConfiguration
     case postHandshakeSettleMs
     case preferredBackends
-    case supportsPhysicalRumble
     case physicalOutputCapabilities
   }
 
@@ -350,16 +350,18 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     parser: String,
     connection: String,
     serialNumber: String?,
-    protocolVariant: String = "unknown",
+    protocolVariant: ControllerProtocolVariant = .unknown,
     mappingFlags: [String] = [],
     inputEndpoint: UInt8 = 0,
     outputEndpoint: UInt8 = 0,
     needsSetConfiguration: Bool = false,
     postHandshakeSettleMs: Int = 0,
     preferredBackends: [String] = [],
-    supportsPhysicalRumble: Bool = false,
-    physicalOutputCapabilities: PhysicalControllerOutputCapabilities? = nil
+    physicalOutputCapabilities: PhysicalControllerOutputCapabilities = .none,
+    runtimeIdentifier: String? = nil
   ) {
+    self.runtimeIdentifier = runtimeIdentifier
+      ?? String(format: "%04X:%04X:M", vendorID, productID)
     self.name = name
     self.vendorID = vendorID
     self.productID = productID
@@ -373,22 +375,22 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.needsSetConfiguration = needsSetConfiguration
     self.postHandshakeSettleMs = postHandshakeSettleMs
     self.preferredBackends = preferredBackends
-    let capabilities =
-      physicalOutputCapabilities ?? (supportsPhysicalRumble ? .dualMainRumble : .none)
-    self.physicalOutputCapabilities = capabilities
-    self.supportsPhysicalRumble = supportsPhysicalRumble || capabilities.supportsRumble
+    self.physicalOutputCapabilities = physicalOutputCapabilities
   }
 
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.runtimeIdentifier = try container.decode(String.self, forKey: .runtimeIdentifier)
     self.name = try container.decode(String.self, forKey: .name)
     self.vendorID = try container.decode(UInt16.self, forKey: .vendorID)
     self.productID = try container.decode(UInt16.self, forKey: .productID)
     self.parser = try container.decode(String.self, forKey: .parser)
     self.connection = try container.decode(String.self, forKey: .connection)
     self.serialNumber = try container.decodeIfPresent(String.self, forKey: .serialNumber)
-    self.protocolVariant =
-      try container.decodeIfPresent(String.self, forKey: .protocolVariant) ?? "unknown"
+    self.protocolVariant = try container.decode(
+      ControllerProtocolVariant.self,
+      forKey: .protocolVariant
+    )
     self.mappingFlags = try container.decodeIfPresent([String].self, forKey: .mappingFlags) ?? []
     self.inputEndpoint = try container.decodeIfPresent(UInt8.self, forKey: .inputEndpoint) ?? 0
     self.outputEndpoint = try container.decodeIfPresent(UInt8.self, forKey: .outputEndpoint) ?? 0
@@ -398,14 +400,10 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
       try container.decodeIfPresent(Int.self, forKey: .postHandshakeSettleMs) ?? 0
     self.preferredBackends =
       try container.decodeIfPresent([String].self, forKey: .preferredBackends) ?? []
-    let legacyRumble =
-      try container.decodeIfPresent(Bool.self, forKey: .supportsPhysicalRumble) ?? false
-    self.physicalOutputCapabilities =
-      try container.decodeIfPresent(
-        PhysicalControllerOutputCapabilities.self,
-        forKey: .physicalOutputCapabilities
-      ) ?? (legacyRumble ? .dualMainRumble : .none)
-    self.supportsPhysicalRumble = legacyRumble || physicalOutputCapabilities.supportsRumble
+    self.physicalOutputCapabilities = try container.decode(
+      PhysicalControllerOutputCapabilities.self,
+      forKey: .physicalOutputCapabilities
+    )
   }
 }
 

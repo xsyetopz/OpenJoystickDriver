@@ -2,10 +2,15 @@ import Foundation
 import OpenJoystickDriverKit
 
 struct StatusCommand {
-  func run() {
-    printHeader()
+  func run(arguments: [String] = []) {
+    guard arguments.isEmpty || arguments == ["--json"] else {
+      fputs("error: status accepts only --json.\n", stderr)
+      exit(CLIParseError.exitCode)
+    }
+    let json = arguments.contains("--json")
+    if !json { printHeader() }
     let client = ApplicationServiceClient()
-    client.connect()
+    client.connect(timeoutSeconds: applicationServiceCallTimeoutSeconds)
     let semaphore = DispatchSemaphore(value: 0)
     // nonisolated(unsafe): semaphore ensures sequential access - no data race.
     nonisolated(unsafe) var servicePayload: ApplicationServiceStatusPayload?
@@ -19,13 +24,23 @@ struct StatusCommand {
     let connected = replied && servicePayload != nil
 
     if connected, let payload = servicePayload {
-      printPayloadStatus(payload)
+      if json {
+        printJSON(payload)
+      } else {
+        printPayloadStatus(payload)
+      }
     } else {
       client.disconnect()
-      runDirectMode()
+      if json {
+        printJSON(directPayload())
+      } else {
+        runDirectMode()
+      }
     }
-    print("")
-    printUsageHint()
+    if !json {
+      print("")
+      printUsageHint()
+    }
   }
 
   private func printHeader() {
@@ -36,63 +51,51 @@ struct StatusCommand {
   }
 
   private func printPayloadStatus(_ payload: ApplicationServiceStatusPayload) {
-    print("(connected to running main app)")
-    print("")
-    let permissions = permissionSnapshot(
-      inputMonitoring: payload.inputMonitoring,
-      accessibility: payload.accessibility
-    )
-    printPermissionSnapshot(permissions)
-    print("")
-    print("Compatibility output:")
-    if let id = payload.compatibilityIdentity { print("  identity  : \(id)") }
-    if let enabled = payload.userSpaceVirtualDeviceEnabled {
-      print("  backend   : \(enabled ? "enabled" : "unavailable")")
-    }
-    if let status = payload.userSpaceVirtualDeviceStatus { print("  status    : \(status)") }
-    print("")
-    if payload.connectedDevices.isEmpty {
-      print("Devices: (none connected)")
-    } else {
-      print("Devices" + " (\(payload.connectedDevices.count)):")
-      for dev in payload.connectedDevices {
-        let sn = dev.serialNumber ?? "none"
-        let vid = dev.vendorID
-        let pid = dev.productID
-        print(
-          "  \(dev.name)" + " (VID:\(vid) PID:\(pid)" + " \(dev.parser) [\(dev.connection)]"
-            + " SN:\(sn))"
-        )
-        let mappings = dev.mappingFlags.isEmpty ? "none" : dev.mappingFlags.joined(separator: ",")
-        let backends =
-          dev.preferredBackends.isEmpty ? "none" : dev.preferredBackends.joined(separator: ",")
-        print(
-          "    protocol=\(dev.protocolVariant)"
-            + " endpoints=in:0x\(String(dev.inputEndpoint, radix: 16))"
-            + " out:0x\(String(dev.outputEndpoint, radix: 16))"
-            + " setConfig=\(dev.needsSetConfiguration)"
-            + " settleMs=\(dev.postHandshakeSettleMs)"
-        )
-        print("    mappings=\(mappings) backends=\(backends)")
-        let motors = dev.physicalOutputCapabilities.rumbleMotors.map(\.rawValue)
-        let lighting = dev.physicalOutputCapabilities.lightingFeatures.map(\.rawValue)
-        let binaryMotors = dev.physicalOutputCapabilities.binaryRumbleMotors.map(\.rawValue)
-        print(
-          "    physical-output motors=\(motors.isEmpty ? "none" : motors.joined(separator: ","))"
-            + " lighting=\(lighting.isEmpty ? "none" : lighting.joined(separator: ","))"
-            + " binary=\(binaryMotors.isEmpty ? "none" : binaryMotors.joined(separator: ","))"
-            + " evidence=\(dev.physicalOutputCapabilities.evidence.rawValue)"
-        )
+    RuntimeStatusText.payloadLines(RuntimeStatusSnapshot(payload: payload)).forEach { print($0) }
+  }
+
+  private func printUsageHint() {
+    print("Use '--headless controller list' to enumerate controllers.")
+  }
+
+  private func runDirectMode() {
+    RuntimeStatusText.directModeLines(localPermissionStatus()).forEach { print($0) }
+  }
+
+  private func printJSON(_ payload: ApplicationServiceStatusPayload) {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    do {
+      let data = try encoder.encode(payload)
+      guard let text = String(bytes: data, encoding: .utf8) else {
+        fputs("error: could not encode status JSON as UTF-8.\n", stderr)
+        exit(1)
       }
+      print(text)
+    } catch {
+      fputs("error: could not encode status JSON: \(error.localizedDescription)\n", stderr)
+      exit(1)
     }
   }
 
-  private func printUsageHint() { print("Use '--headless list'" + " to enumerate controllers.") }
+  private func directPayload() -> ApplicationServiceStatusPayload {
+    let permissions = localPermissionStatus()
+    return ApplicationServiceStatusPayload(
+      inputMonitoring: permissions.inputMonitoring.rawValue,
+      accessibility: permissions.accessibility.rawValue,
+      connectedDevices: []
+    )
+  }
 
-  private func runDirectMode() {
-    print("(direct mode - app service not running)")
-    print("")
-    print("Permissions: unavailable without the running main app")
-    print("  -> App recovery: --headless start")
+  private func localPermissionStatus() -> StatusPermissions {
+    let snapshot = runSyncResult(timeout: applicationServiceCallTimeoutSeconds) {
+      PermissionManager.Snapshot(
+        inputMonitoring: PermissionManager.currentInputMonitoringAccessState(),
+        accessibility: PermissionManager.currentAccessibilityAccessState()
+      )
+    } ?? PermissionManager.Snapshot(inputMonitoring: .unknown, accessibility: .unknown)
+    return StatusPermissions(
+      snapshot
+    )
   }
 }

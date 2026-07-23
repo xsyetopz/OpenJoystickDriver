@@ -40,7 +40,7 @@ extension Button {
     }
   }
 
-  /// SF Symbol name used by the Input Test button grid.
+  /// SF Symbol name used by controller input presentation.
   public var systemImageName: String {
     switch self {
     case .a: "a.circle"

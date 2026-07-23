@@ -57,7 +57,7 @@ Run the HID monitor for the expected wired PID:
 OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --monitor --vid 0x28de --pid 0x1102 --seconds 30
 ```
 
-If it still prints `Monitoring 0 device(s)`, keep that output and also report whether the current OJD Input Test lists the controller; production discovery now has the record-backed exact match. Then try raw USB:
+If it still prints `Monitoring 0 device(s)`, keep that output and also report whether Controller Settings lists the controller; production discovery now has the record-backed exact match. Then try raw USB:
 
 ```bash
 OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x28de --pid 0x1102 --interface 0 --length 64 --seconds 20
@@ -106,7 +106,7 @@ Paste all `REPORT ... bytes=...` lines around connect and disconnect. We are loo
 - lifecycle report `0x03` with disconnected payload `0x01`
 - status fallback report `0x04` when the controller was already connected
 
-Also say whether OJD Input Test creates a usable controller only after connect, neutralizes or removes it after disconnect, and resumes after reconnect.
+Also say whether Controller Settings lists the controller only after connect, clears it after disconnect, and resumes after reconnect.
 
 ## 5. Lizard Mode
 
@@ -115,11 +115,11 @@ Linux turns off the Steam Controller's mouse/keyboard lizard mappings while the 
 Check these states:
 
 - before OJD opens it, does the controller type keys or move the cursor?
-- while OJD Input Test is receiving input, does lizard keyboard/mouse behavior stop?
+- while OJD Controller Settings Live is receiving input, does lizard keyboard/mouse behavior stop?
 - after OJD quits or the controller disconnects, does lizard behavior return?
 - if you repeat with Steam open, does Steam fight OJD or duplicate input?
 
-## Paste-Back Template
+## Paste-Back Report Form
 
 ```text
 OJD version/commit:
@@ -140,7 +140,7 @@ Wired 0x28de:0x1102:
 - HID monitor device count:
 - HID REPORT lines captured: yes/no
 - Raw USB reports captured: yes/no, interface/endpoint:
-- Input Test buttons/sticks/triggers correct: yes/no/unknown, notes:
+- Controller Settings Live buttons/sticks/triggers correct: yes/no/unknown, notes:
 
 Wireless 0x28de:0x1142:
 - HID monitor device count:

@@ -28,12 +28,10 @@ let swifterKitDependency: Package.Dependency =
 
 let package = Package(
   name: "OpenJoystickDriver",
-  defaultLocalization: "en-US",
   platforms: [.macOS(.v10_15)],
   products: [.library(name: "OpenJoystickDriverKit", targets: ["OpenJoystickDriverKit"])],
   dependencies: [
     swiftUSBDependency, swifterKitDependency,
-    .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.9.3"),
   ],
   targets: [
     .target(
@@ -63,14 +61,12 @@ let package = Package(
       name: "OpenJoystickDriver",
       dependencies: [
         "OpenJoystickDriverKit", "OpenJoystickDriverRelay",
-        .product(name: "Sparkle", package: "Sparkle"),
       ],
       path: "Sources/OpenJoystickDriver",
       exclude: ["App/Host.entitlements", "App/Info.plist"],
       resources: [.copy("Resources")],
       linkerSettings: [
         .linkedFramework("GameController"), .linkedFramework("SystemExtensions"),
-        .unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"]),
       ]
     ),
 

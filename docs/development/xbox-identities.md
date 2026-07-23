@@ -34,7 +34,7 @@ The GameController MobileAsset version `10.5.2` downloaded on 2026-07-12 had no 
 OpenJoystickDriver --headless diagnose gamecontroller-catalog --json
 ```
 
-The developer CLI and support report use the same audit. The menu app has no catalog-audit control or result card.
+The developer CLI and support report use the same audit. The signed app host keeps catalog auditing in the CLI rather than adding a second presentation surface.
 
 ## Promotion checks
 

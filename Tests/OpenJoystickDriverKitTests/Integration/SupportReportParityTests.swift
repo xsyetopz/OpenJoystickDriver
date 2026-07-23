@@ -3,10 +3,10 @@ import Testing
 
 struct SupportReportParityTests {
   @Test
-  func cliAndGuiUseTheSameReportService() throws {
+  func headlessReportCommandUsesTheSharedReportService() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cli = try String(
-      contentsOf: rootURL.appendingPathComponent("Sources/OpenJoystickDriver/CLI.swift"),
+      contentsOf: rootURL.appendingPathComponent("Sources/OpenJoystickDriver/CLIGrammar.swift"),
       encoding: .utf8
     )
     let command = try String(
@@ -15,15 +15,9 @@ struct SupportReportParityTests {
       ),
       encoding: .utf8
     )
-    let appModel = try String(
+    let service = try String(
       contentsOf: rootURL.appendingPathComponent(
-        "Sources/OpenJoystickDriver/App/AppModel/SupportReport.swift"
-      ),
-      encoding: .utf8
-    )
-    let view = try String(
-      contentsOf: rootURL.appendingPathComponent(
-        "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift"
+        "Sources/OpenJoystickDriver/SupportReportService.swift"
       ),
       encoding: .utf8
     )
@@ -31,9 +25,7 @@ struct SupportReportParityTests {
     #expect(cli.contains("case \"report\""))
     #expect(command.contains("SupportReportService.make"))
     #expect(command.contains("SupportReportService.write"))
-    #expect(appModel.contains("SupportReportService.make"))
-    #expect(appModel.contains("SupportReportService.write"))
-    #expect(appModel.contains("NSSavePanel()"))
-    #expect(view.contains("model.saveSupportReport()"))
+    #expect(service.contains("static func make("))
+    #expect(service.contains("static func write("))
   }
 }

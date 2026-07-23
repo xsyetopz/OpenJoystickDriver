@@ -12,7 +12,6 @@ struct PhysicalOutputValidationPlanTests {
       parser: "GIP",
       connection: "USB",
       serialNumber: "SERIAL-SECRET",
-      supportsPhysicalRumble: true,
       physicalOutputCapabilities: PhysicalControllerOutputCapabilities(
         rumbleMotors: [.leftMain, .rightMain, .leftTrigger, .rightTrigger],
         lightingFeatures: [.playerIndicator, .programmableColor, .programmableBrightness],
@@ -25,7 +24,7 @@ struct PhysicalOutputValidationPlanTests {
       "player-indicators", "player-indicators-off", "color-red", "color-green",
       "color-blue", "brightness-low", "brightness-high",
     ])
-    let firstCommand = "OpenJoystickDriver --headless physical-output rumble 1234 5678"
+    let firstCommand = "OpenJoystickDriver --headless controller output rumble 1234 5678"
       + " --left 160 --right 0 --duration-ms 300"
     #expect(plan.steps.first?.command == firstCommand)
     #expect(plan.evidence == .sourceBacked)

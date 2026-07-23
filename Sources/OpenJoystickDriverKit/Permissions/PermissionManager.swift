@@ -6,6 +6,11 @@ private let permissionPollNanoseconds: UInt64 = 1_000_000_000
 
 /// Manages the macOS HID permissions used by OpenJoystickDriver.
 public actor PermissionManager {
+  public enum Requirement: Sendable, Equatable {
+    case inputMonitoring
+    case accessibility
+  }
+
   public enum AccessState: String, Codable, Sendable, Equatable, CustomStringConvertible {
     case granted
     case denied
@@ -107,6 +112,23 @@ public actor PermissionManager {
     return refreshAccessState()
   }
 
+  /// Requests one permission from the row that owns that permission.
+  ///
+  /// The request result is never treated as a grant; the returned snapshot is
+  /// read back through `IOHIDCheckAccess`.
+  @discardableResult public func requestAccess(_ requirement: Requirement) -> Snapshot {
+    let snapshot = checkAccess()
+    switch requirement {
+    case .inputMonitoring where snapshot.inputMonitoring != .granted:
+      IOHIDRequestAccess(kIOHIDRequestTypeListenEvent)
+    case .accessibility where snapshot.accessibility != .granted:
+      IOHIDRequestAccess(kIOHIDRequestTypePostEvent)
+    default:
+      break
+    }
+    return refreshAccessState()
+  }
+
   public func startPolling() {
     pollingTask = Task { [weak self] in
       while !Task.isCancelled {
@@ -141,24 +163,28 @@ public struct OJDPermissionRequirement: Sendable, Equatable {
     self.requested = requested
   }
 
-  public static let inventory = [
-    Self(
+  public static let inputMonitoring = Self(
       name: "Input Monitoring",
       owner: "OpenJoystickDriver app",
-      purpose: "Read reports from physical controllers",
+      purpose: "Read input from physical controllers",
       requested: true
-    ),
-    Self(
+    )
+  public static let accessibility = Self(
       name: "Accessibility",
       owner: "OpenJoystickDriver app",
-      purpose: "Publish the compatibility virtual gamepad through IOHIDUserDevice",
+      purpose: "Publish virtual controller output",
       requested: true
-    ),
-    Self(
+    )
+  public static let driverExtensionApproval = Self(
       name: "Driver Extension approval",
       owner: "OpenJoystickDriver app",
       purpose: "Optional DriverKit integrity relay; not a TCC privacy permission",
       requested: true
-    ),
+    )
+
+  public static let inventory = [
+    inputMonitoring,
+    accessibility,
+    driverExtensionApproval,
   ]
 }

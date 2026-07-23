@@ -20,8 +20,7 @@ struct UpdatesCommand {
 
   func run(arguments: [String]) {
     let options = parse(arguments)
-    let currentVersion =
-      Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.5.0-alpha.5"
+    let currentVersion = ApplicationVersion.current
     let state = runSyncResult {
       await UpdateChecker().check(
         currentVersion: currentVersion,
@@ -138,7 +137,7 @@ struct UpdatesCommand {
   private func printHelp() {
     print(
       [
-        "Usage: OpenJoystickDriver --headless updates check [options]", "", "Options:",
+        "Usage: OpenJoystickDriver --headless update check [options]", "", "Options:",
         "  --prerelease  Include SemVer prerelease tags",
         "  --json        Emit machine-readable JSON",
         "  --open        Open the release page only when an update is available", "",

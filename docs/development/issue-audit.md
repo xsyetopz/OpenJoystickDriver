@@ -64,7 +64,7 @@ macOS 15.7.7. The observed runtime state was:
 - the registered dext matched the app-embedded binary by SHA-256;
 - `otool -L` showed only HIDDriverKit, base DriverKit, and libc++;
 - the kernel reported `SwifterKitRuntimeService::start(...) ok`;
-- `--headless selftest 2` observed four Compatibility reports, reported the
+- `--headless diagnose self-test 2` observed four Compatibility reports, reported the
   Compatibility verdict as passed, reported DriverKit as optional and
   inconclusive, and exited successfully.
 

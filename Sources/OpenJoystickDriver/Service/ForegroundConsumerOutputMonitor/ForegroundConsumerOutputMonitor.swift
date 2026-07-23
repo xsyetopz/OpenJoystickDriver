@@ -45,7 +45,7 @@ final class ForegroundConsumerHIDManagerState: @unchecked Sendable {
 /// Gates controller output unless the frontmost app is one of the current
 /// OpenJoystickDriver virtual-device consumers.
 final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
-  private let deviceManager: DeviceManager
+  private let compatibilityOutputGate: @Sendable (Bool) async -> Void
   private let compatibilityRouteHandler:
     @Sendable (String?, Set<String>, Set<String>, String?) async -> Void
   private let pollIntervalNanoseconds: UInt64
@@ -66,7 +66,7 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   static let consumerHIDManagerState = ForegroundConsumerHIDManagerState()
 
   init(
-    deviceManager: DeviceManager,
+    compatibilityOutputGate: @escaping @Sendable (Bool) async -> Void,
     compatibilityRouteHandler:
       @escaping @Sendable (String?, Set<String>, Set<String>, String?) async -> Void = {
         _, _, _, _ in
@@ -75,7 +75,7 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
     burstPollIntervalNanoseconds: UInt64 = 100_000_000,
     burstPollDurationNanoseconds: UInt64 = 3_000_000_000
   ) {
-    self.deviceManager = deviceManager
+    self.compatibilityOutputGate = compatibilityOutputGate
     self.compatibilityRouteHandler = compatibilityRouteHandler
     self.pollIntervalNanoseconds = pollIntervalNanoseconds
     self.burstPollIntervalNanoseconds = burstPollIntervalNanoseconds
@@ -253,7 +253,7 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
       )
     }
 
-    await deviceManager.setExternalOutputAllowed(allowOutput)
+    await compatibilityOutputGate(allowOutput)
   }
 
   @MainActor

@@ -15,9 +15,6 @@ Examples:
   ./scripts/ojd bump-version 0.1.0
 
 Updates:
-  - Sources/OpenJoystickDriver/CLI.swift
-  - Sources/OpenJoystickDriver/App/AppModel.swift fallback version
-  - Headless update and support-report fallback versions
   - justfile release-local-install default
   - scripts/README.md release examples
   - scripts/platform/environment.sh app and generated DriverKit default version
@@ -42,20 +39,12 @@ if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+
   die "Version must be SemVer, for example 0.1.0-rc.2"
 fi
 
-cli_file="$PROJECT_DIR/Sources/OpenJoystickDriver/CLI.swift"
-app_model_file="$PROJECT_DIR/Sources/OpenJoystickDriver/App/AppModel/AppModel.swift"
-report_command_file="$PROJECT_DIR/Sources/OpenJoystickDriver/Commands/ReportCommand.swift"
-updates_command_file="$PROJECT_DIR/Sources/OpenJoystickDriver/Commands/UpdatesCommand.swift"
 packaging_tests="$PROJECT_DIR/Tests/OpenJoystickDriverKitTests/Integration/Packaging/ScriptPackagingTests.swift"
 justfile="$PROJECT_DIR/justfile"
 scripts_readme="$PROJECT_DIR/scripts/README.md"
 build_defaults="$PROJECT_DIR/scripts/platform/environment.sh"
 changelog="$PROJECT_DIR/CHANGELOG.md"
 
-[[ -f "$cli_file" ]] || die "Missing $cli_file"
-[[ -f "$app_model_file" ]] || die "Missing $app_model_file"
-[[ -f "$report_command_file" ]] || die "Missing $report_command_file"
-[[ -f "$updates_command_file" ]] || die "Missing $updates_command_file"
 [[ -f "$packaging_tests" ]] || die "Missing $packaging_tests"
 [[ -f "$justfile" ]] || die "Missing $justfile"
 [[ -f "$scripts_readme" ]] || die "Missing $scripts_readme"
@@ -66,17 +55,13 @@ if ! grep -Fxq "## $version" "$changelog"; then
   die "CHANGELOG.md must contain heading: ## $version"
 fi
 
-python3 - "$version" "$cli_file" "$app_model_file" "$report_command_file" "$updates_command_file" "$packaging_tests" "$justfile" "$scripts_readme" "$build_defaults" <<'PY'
+python3 - "$version" "$packaging_tests" "$justfile" "$scripts_readme" "$build_defaults" <<'PY'
 import re
 import sys
 from pathlib import Path
 
 (
     version,
-    cli_path,
-    app_model_path,
-    report_command_path,
-    updates_command_path,
     packaging_tests_path,
     justfile_path,
     readme_path,
@@ -84,58 +69,6 @@ from pathlib import Path
 ) = sys.argv[1:]
 
 replacements = [
-    (
-        Path(cli_path),
-        [
-            (
-                "CLI version strings",
-                re.compile(
-                    r"OpenJoystickDriver v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?"
-                ),
-                f"OpenJoystickDriver v{version}",
-                2,
-            ),
-        ],
-    ),
-    (
-        Path(app_model_path),
-        [
-            (
-                "AppModel fallback version",
-                re.compile(
-                    r'(Bundle\.main\.infoDictionary\?\["CFBundleShortVersionString"\] as\? String \?\? ")\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(")'
-                ),
-                rf"\g<1>{version}\g<2>",
-                1,
-            ),
-        ],
-    ),
-    (
-        Path(report_command_path),
-        [
-            (
-                "support report fallback version",
-                re.compile(
-                    r'(\?\? ")\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(",)'
-                ),
-                rf"\g<1>{version}\g<2>",
-                1,
-            ),
-        ],
-    ),
-    (
-        Path(updates_command_path),
-        [
-            (
-                "update checker fallback version",
-                re.compile(
-                    r'(\?\? ")\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(")'
-                ),
-                rf"\g<1>{version}\g<2>",
-                1,
-            ),
-        ],
-    ),
     (
         Path(packaging_tests_path),
         [

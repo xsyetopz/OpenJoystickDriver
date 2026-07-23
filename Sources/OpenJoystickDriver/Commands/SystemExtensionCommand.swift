@@ -2,7 +2,7 @@ import Foundation
 import OpenJoystickDriverKit
 import SystemExtensions
 
-private let ojdSystemExtensionID = "com.openjoystickdriver.VirtualHIDDevice"
+private let ojdSystemExtensionID = ExtensionProbe.bundleIdentifier
 
 struct SystemExtensionCommand {
   func run(arguments: [String]) {
@@ -13,7 +13,7 @@ struct SystemExtensionCommand {
     case "uninstall": submitDeactivation()
     case "--help", "-h", "help": printHelp()
     default:
-      print("Unknown sysext command: \(subcommand)")
+      print("Unknown extension command: \(subcommand)")
       printHelp()
       exit(1)
     }
@@ -22,7 +22,7 @@ struct SystemExtensionCommand {
   private func printHelp() {
     print(
       """
-      Usage: OpenJoystickDriver --headless sysext <command>
+      Usage: OpenJoystickDriver --headless extension <status|activate|deactivate>
 
       Commands:
         status     Show registered OpenJoystickDriver system extensions
@@ -33,12 +33,29 @@ struct SystemExtensionCommand {
   }
 
   private func printStatus() {
-    let output = systemExtensionsList()
-    let matches = output.split(separator: "\n").filter { $0.contains(ojdSystemExtensionID) }
-    if matches.isEmpty {
-      print("No OpenJoystickDriver system extension is registered.")
-    } else {
-      for line in matches { print(line) }
+    let status = ExtensionProbe.currentStatus()
+    switch status.bundle {
+    case .present:
+      print("Embedded DriverKit extension: present")
+    case .missing:
+      print("Embedded DriverKit extension: missing")
+    case .invalid(let actualIdentifier):
+      print("Embedded DriverKit extension: invalid (\(actualIdentifier))")
+    }
+
+    switch status.registration {
+    case .active(let record):
+      print("OS registration: active")
+      print(record)
+    case .inactive(let record):
+      print("OS registration: registered but inactive")
+      print(record)
+    case .absent:
+      print("OS registration: absent")
+    case .unavailable(let reason):
+      print("OS registration: unavailable")
+      print("ERROR: \(reason)")
+      exit(1)
     }
   }
 
@@ -86,22 +103,6 @@ struct SystemExtensionCommand {
     return FileManager.default.fileExists(atPath: dextPath)
   }
 
-  private func systemExtensionsList() -> String {
-    do {
-      let result = try BoundedProcessRunner.run(
-        executableURL: URL(fileURLWithPath: "/usr/bin/systemextensionsctl"),
-        arguments: ["list"],
-        timeoutSeconds: 5,
-        maximumOutputBytes: 262_144
-      )
-      if result.timedOut {
-        return "systemextensionsctl timed out after 5 seconds"
-      }
-      return result.output
-    } catch {
-      return "systemextensionsctl failed: \(error.localizedDescription)"
-    }
-  }
 }
 
 private final class SystemExtensionSubmission: NSObject, OSSystemExtensionRequestDelegate {

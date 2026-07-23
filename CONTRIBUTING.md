@@ -57,11 +57,10 @@ installed app:
 
 ```bash
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless report create
+  --headless diagnose report
 ```
 
-The same action is available under **Advanced > Support report** in the menu
-app. The JSON includes VID/PID, active parser/record data, permissions, output
+The JSON includes VID/PID, active parser/record data, permissions, output
 configuration, and GameController visibility. It excludes raw serial values,
 filesystem paths, packet payloads, HID location IDs, and free-form DriverKit
 runtime summary text. Review device product names before attaching it to an issue.
@@ -179,7 +178,7 @@ There's no formal PR template. Just be clear about what changed and why.
 ```text
 Sources/OpenJoystickDriverKit/     Shared parsers, device management, output, and application-service RPC
 Sources/OpenJoystickDriverRelay/   SwifterKit DriverKit relay adapter and runtime lifecycle
-Sources/OpenJoystickDriver/        Menu app, application service, and headless CLI
+Sources/OpenJoystickDriver/        Headless app host, application service, and CLI
 Sources/DriverKitGenerator/        Build-time SwifterKit native-project generator
 Tests/OpenJoystickDriverKitTests/  Unit tests that do not require hardware
 Tests/OpenJoystickDriverRelayTests/ Relay configuration, transport, and lifecycle tests

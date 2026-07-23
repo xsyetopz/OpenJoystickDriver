@@ -66,14 +66,13 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
 
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let motors =
-      try container.decodeIfPresent([PhysicalRumbleMotor].self, forKey: .rumbleMotors) ?? []
-    let lighting =
-      try container.decodeIfPresent([PhysicalLightingFeature].self, forKey: .lightingFeatures) ?? []
-    let binaryMotors =
-      try container.decodeIfPresent([PhysicalRumbleMotor].self, forKey: .binaryRumbleMotors) ?? []
-    let decodedEvidence =
-      try container.decodeIfPresent(PhysicalOutputEvidence.self, forKey: .evidence)
+    let motors = try container.decode([PhysicalRumbleMotor].self, forKey: .rumbleMotors)
+    let lighting = try container.decode([PhysicalLightingFeature].self, forKey: .lightingFeatures)
+    let binaryMotors = try container.decode(
+      [PhysicalRumbleMotor].self,
+      forKey: .binaryRumbleMotors
+    )
+    let decodedEvidence = try container.decode(PhysicalOutputEvidence.self, forKey: .evidence)
     self.init(
       rumbleMotors: motors,
       lightingFeatures: lighting,

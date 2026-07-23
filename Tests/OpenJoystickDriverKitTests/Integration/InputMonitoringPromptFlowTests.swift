@@ -2,41 +2,41 @@ import Foundation
 import Testing
 
 struct InputMonitoringPromptFlowTests {
-  @Test func mainApplicationOwnsRuntimeAndPermissionState() throws {
+  @Test func headlessApplicationHostOwnsRuntimeAndPermissionState() throws {
     let root = try RepositoryRoot.from()
-    let delegate = try source(
-      "Sources/OpenJoystickDriver/App/AppDelegate.swift",
+    let host = try source(
+      "Sources/OpenJoystickDriver/App/HeadlessApplicationHost.swift",
       root: root
     )
     let runtime = try source(
       "Sources/OpenJoystickDriver/Service/ApplicationServiceRuntime.swift",
       root: root
     )
-    let permissionModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/InputMonitoring.swift",
+    let requests = try source(
+      "Sources/OpenJoystickDriver/Service/ApplicationServiceServer/Requests.swift",
       root: root
     )
 
-    #expect(delegate.contains("ApplicationServiceRuntime"))
+    #expect(host.contains("private let runtime = ApplicationServiceRuntime()"))
+    #expect(host.contains("runtime.start()"))
     #expect(runtime.contains("PermissionManager()"))
     #expect(runtime.contains("DeviceManager("))
     #expect(runtime.contains("ApplicationServiceServer("))
-    #expect(permissionModel.contains("permissionManager.requestRequiredAccess()"))
-    #expect(!permissionModel.contains("client.requestInputMonitoringAccess()"))
-    #expect(!permissionModel.contains("LSRegisterURL"))
+    #expect(requests.contains("requestRequiredAccess(reply:"))
+    #expect(!requests.contains("tccutil"))
     #expect(!FileManager.default.fileExists(
       atPath: root.appendingPathComponent("Sources/OpenJoystickDriverDaemon").path
     ))
   }
 
-  @Test func oneApplicationIdentityOwnsBothPermissionStates() throws {
+  @Test func runningServiceOwnsBothPermissionStates() throws {
     let root = try RepositoryRoot.from()
-    let model = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/AppModel.swift",
+    let requests = try source(
+      "Sources/OpenJoystickDriver/Service/ApplicationServiceServer/Requests.swift",
       root: root
     )
-    let view = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/SystemCards.swift",
+    let client = try source(
+      "Sources/OpenJoystickDriverKit/ApplicationService/ApplicationServiceClient.swift",
       root: root
     )
     let permissions = try source(
@@ -44,12 +44,12 @@ struct InputMonitoringPromptFlowTests {
       root: root
     )
 
-    #expect(model.contains("@Published var inputMonitoring"))
-    #expect(model.contains("@Published var accessibility"))
-    #expect(!model.contains("appInputMonitoring"))
-    #expect(!model.contains("InputMonitoringPermissionSnapshot"))
-    #expect(view.components(separatedBy: "PermissionRow(").count == 3)
-    #expect(!view.contains("permissions.daemonName"))
+    #expect(requests.contains("let permissions = await pm.refreshAccessState()"))
+    #expect(requests.contains("inputMonitoring: \""))
+    #expect(requests.contains("accessibility: \""))
+    #expect(requests.contains("requestRequiredAccess(reply:"))
+    #expect(client.contains("public func getStatus()"))
+    #expect(client.contains("public func requestRequiredAccess()"))
     #expect(!permissions.contains("OpenJoystickDriver Application service"))
   }
 

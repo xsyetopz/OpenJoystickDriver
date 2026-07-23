@@ -35,8 +35,8 @@ the current build contract intentionally uses the publisher identifiers.
 ### Release publisher
 
 Release signing additionally requires the publisher's Developer ID Application
-identity, Developer ID provisioning, notarization credentials, and Sparkle
-EdDSA keys. Do not distribute these secrets to contributors or end users.
+identity, Developer ID provisioning, and notarization credentials. Do not
+distribute these secrets to contributors or end users.
 
 ## Development setup
 
@@ -287,12 +287,6 @@ Set `NOTARIZE_KEYCHAIN_PROFILE` to `openjoystickdriver-notary`. Apple documents
 this flow in
 [Customizing the notarization workflow](https://developer.apple.com/documentation/security/customizing-the-notarization-workflow).
 
-Sparkle's `bin/generate_keys` creates the publisher EdDSA key pair. Keep the
-private key private; place the printed public key in `SPARKLE_PUBLIC_ED_KEY` and
-the release automation's private-key representation in
-`SPARKLE_ED_PRIVATE_KEY`. See
-[Sparkle's EdDSA documentation](https://sparkle-project.org/documentation/).
-
 A dev-signed dext does not prove that the Developer ID build can be distributed
 or notarized. Apple requires a distribution profile for the release target.
 
@@ -308,4 +302,4 @@ These commands omit private values from their normal output:
 ```
 
 Never commit `.env.dev`, `.env.release`, certificates, provisioning profiles,
-notarization passwords, `.p12` files, or Sparkle private keys.
+notarization passwords, or `.p12` files.

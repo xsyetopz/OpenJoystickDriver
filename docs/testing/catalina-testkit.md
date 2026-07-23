@@ -16,4 +16,4 @@ The check verifies:
 - no LaunchAgent or helper daemon is packaged;
 - the headless CLI starts.
 
-For functional testing, open the app directly, grant the requested privacy permissions to `OpenJoystickDriver.app`, connect a controller, and run the input test. Automatic launch at login is not supported on Catalina.
+For functional testing, open the app directly, grant the requested privacy permissions to `OpenJoystickDriver.app`, connect a controller, and enable Live in that controller's Settings. Use `input state` if the window is unavailable. Automatic launch at login is not supported on Catalina.

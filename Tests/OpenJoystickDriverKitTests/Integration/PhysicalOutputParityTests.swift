@@ -3,23 +3,16 @@ import Testing
 
 struct PhysicalOutputParityTests {
   @Test
-  func cliGuiStatusAndSupportReportExposeTypedPhysicalOutput() throws {
+  func cliServiceStatusAndSupportReportExposeTypedPhysicalOutput() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cli = try source("Sources/OpenJoystickDriver/CLI.swift", root: root)
+    let grammar = try source("Sources/OpenJoystickDriver/CLIGrammar.swift", root: root)
     let command = try source(
       "Sources/OpenJoystickDriver/Commands/PhysicalOutputCommand.swift",
       root: root
     )
-    let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/ApplicationServiceOperations.swift",
-      root: root
-    )
-    let view = try source(
-      "Sources/OpenJoystickDriver/Views/InputTestWindowView/Rumble.swift",
-      root: root
-    )
-    let status = try source(
-      "Sources/OpenJoystickDriver/Commands/StatusCommand.swift",
+    let statusText = try source(
+      "Sources/OpenJoystickDriver/Status/Text.swift",
       root: root
     )
     let client = try source(
@@ -35,35 +28,26 @@ struct PhysicalOutputParityTests {
       root: root
     )
 
-    #expect(cli.contains("case \"physical-output\""))
+    #expect(cli.contains("CLIGrammar"))
+    #expect(grammar.contains("case \"controller\""))
     #expect(command.contains("sendPhysicalRumble"))
     #expect(command.contains("setPhysicalPlayerIndicator"))
     #expect(command.contains("physicalOutputCapabilities"))
     #expect(command.contains("capabilities.evidence.rawValue"))
     #expect(command.contains("capabilities.binaryRumbleMotors"))
+    #expect(command.contains("id = device.runtimeIdentifier"))
+    #expect(command.contains("runtimeIdentifier: device.runtimeIdentifier"))
+    #expect(command.contains("ConnectedControllerSelection.resolve"))
     #expect(command.contains(#"case "brightness""#))
     #expect(command.contains(#"case "color""#))
     #expect(command.contains(#"case "plan""#))
     #expect(command.contains("supportsProgrammableBrightness"))
-    #expect(appModel.contains("setPhysicalPlayerIndicator"))
-    #expect(view.contains("physicalOutputCapabilities"))
-    #expect(view.contains("capabilities.evidence.rawValue"))
-    #expect(view.contains("capabilities.binaryRumbleMotors"))
-    #expect(view.contains("supportsProgrammableBrightness"))
-    #expect(view.contains("sendPhysicalBrightness"))
-    #expect(view.contains("sendPhysicalColor"))
-    #expect(view.contains("PhysicalOutputValidationPlan"))
-    #expect(view.contains("showPhysicalOutputValidationPlan"))
-    #expect(appModel.contains("setPhysicalBrightness"))
-    #expect(appModel.contains("setPhysicalColor"))
     #expect(client.contains("setPhysicalBrightness"))
     #expect(client.contains("setPhysicalColor"))
     #expect(service.contains("setPhysicalBrightness"))
     #expect(service.contains("setPhysicalColor"))
-    #expect(view.contains("supportsTriggerRumble"))
-    #expect(view.contains("sendPlayerIndicator"))
-    #expect(status.contains("physical-output motors="))
-    #expect(status.contains("physicalOutputCapabilities.evidence.rawValue"))
+    #expect(statusText.contains("physical-output motors="))
+    #expect(statusText.contains("capabilities.evidence.rawValue"))
     #expect(report.contains("physicalOutputCapabilities"))
     #expect(report.contains("outputValidationPlans"))
   }

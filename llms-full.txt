@@ -27,9 +27,9 @@ Generated SwifterKit DriverKit relay  -> vendor-defined integrity path and diagn
 ```
 
 Each controller is processed by an isolated `DevicePipeline` actor. One
-controller failure must not stop another pipeline. The persistent menu app owns
-runtime input/output. Its UI calls the runtime in process; separately invoked
-headless commands use authenticated local RPC.
+controller failure must not stop another pipeline. The signed app host owns
+runtime input/output. Separately invoked headless commands use authenticated
+local RPC.
 
 The repository is a modular monolith with ports at platform and transport
 boundaries:
@@ -59,7 +59,7 @@ post-generation patch.
   permissions, diagnostics, and shared application-service logic.
 - `Sources/OpenJoystickDriverRelay/`: generated DriverKit relay adapter.
 - `Sources/DriverKitGenerator/`: command-line native-project generator.
-- `Sources/OpenJoystickDriver/`: SwiftUI menu app plus `--headless` CLI.
+- `Sources/OpenJoystickDriver/`: headless app host plus `--headless` CLI.
 - `Sources/OpenJoystickDriverGameControllerProbe/`: GameController consumer probe.
 - `Sources/OpenJoystickDriverHIDTool/`: HID diagnostic tool.
 - `Tests/OpenJoystickDriverKitTests/`: core package tests.

@@ -451,12 +451,8 @@ case "$cmd" in
         require_at_most_one_arg "package release" "$@"
         exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/package.sh" release "$@"
         ;;
-      appcast)
-        require_at_most_one_arg "package appcast" "$@"
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/package.sh" appcast "$@"
-        ;;
       *)
-        die "Unknown: package $sub (expected: release | appcast)"
+        die "Unknown: package $sub (expected: release)"
         ;;
     esac
     ;;

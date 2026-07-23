@@ -27,9 +27,9 @@ Open the section that matches the work. Archived upstream material stays under `
 - Generated DriverKit relay: run `./scripts/ojd driverkit generate` or
   `./scripts/ojd validate driverkit`; `./scripts/ojd help` is the supported
   command index.
-- [CLI and menu app coverage](development/cli-and-menu-app.md)
+- [CLI and runtime coverage](development/cli-and-runtime.md)
 - [Application service runtime health](development/application-service-health.md)
-- [Menu app responsiveness](development/menu-responsiveness.md)
+- [Application responsiveness](development/application-responsiveness.md)
 - [Environment files](development/environment.md)
 - [Obtain and configure signing assets](development/signing.md)
 - [Implementation status](development/implementation-status.md)

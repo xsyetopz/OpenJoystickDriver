@@ -3,6 +3,7 @@ import OpenJoystickDriverKit
 
 struct PhysicalOutputCommand {
   private struct ListedDevice: Codable {
+    let id: String
     let name: String
     let vendorID: UInt16
     let productID: UInt16
@@ -11,6 +12,7 @@ struct PhysicalOutputCommand {
     let physicalOutputCapabilities: PhysicalControllerOutputCapabilities
 
     init(_ device: ApplicationServiceDeviceDescription) {
+      id = device.runtimeIdentifier
       name = device.name
       vendorID = device.vendorID
       productID = device.productID
@@ -38,7 +40,7 @@ struct PhysicalOutputCommand {
     case "--help", "-h", "help":
       printHelp()
     default:
-      fail("Unknown physical-output command: \(subcommand)")
+      fail("Unknown controller output command: \(subcommand)")
     }
   }
 
@@ -68,6 +70,7 @@ struct PhysicalOutputCommand {
     for device in devices {
       let capabilities = device.physicalOutputCapabilities
       print("  \(device.name) (\(hex(device.vendorID)):\(hex(device.productID)))")
+      print("    device   : \(device.runtimeIdentifier)")
       print("    motors   : \(names(capabilities.rumbleMotors.map(\.rawValue)))")
       print("    lighting : \(names(capabilities.lightingFeatures.map(\.rawValue)))")
       print("    binary   : \(names(capabilities.binaryRumbleMotors.map(\.rawValue)))")
@@ -76,6 +79,8 @@ struct PhysicalOutputCommand {
   }
 
   private func rumble(arguments: [String]) {
+    let parsed = parseDeviceOption(arguments)
+    let arguments = parsed.arguments
     guard arguments.count >= 2 else {
       printHelp()
       exit(1)
@@ -109,7 +114,11 @@ struct PhysicalOutputCommand {
       index += 2
     }
 
-    let device = requireDevice(vendorID: vendorID, productID: productID)
+    let device = requireDevice(
+      vendorID: vendorID,
+      productID: productID,
+      runtimeIdentifier: parsed.runtimeIdentifier
+    )
     let capabilities = device.physicalOutputCapabilities
     guard capabilities.supportsRumble else {
       fail("The selected controller has no physical rumble implementation.")
@@ -133,6 +142,7 @@ struct PhysicalOutputCommand {
       try? await client.sendPhysicalRumble(
         vendorID: vendorID,
         productID: productID,
+        runtimeIdentifier: device.runtimeIdentifier,
         left: rumbleLeft,
         right: rumbleRight,
         lt: rumbleLT,
@@ -147,6 +157,8 @@ struct PhysicalOutputCommand {
   }
 
   private func player(arguments: [String]) {
+    let parsed = parseDeviceOption(arguments)
+    let arguments = parsed.arguments
     guard arguments.count == 3 else {
       printHelp()
       exit(1)
@@ -164,7 +176,11 @@ struct PhysicalOutputCommand {
       indicator = parsed
     }
 
-    let device = requireDevice(vendorID: vendorID, productID: productID)
+    let device = requireDevice(
+      vendorID: vendorID,
+      productID: productID,
+      runtimeIdentifier: parsed.runtimeIdentifier
+    )
     guard device.physicalOutputCapabilities.supportsPlayerIndicator else {
       fail("The selected controller has no source-backed player-indicator implementation.")
     }
@@ -176,6 +192,7 @@ struct PhysicalOutputCommand {
       try? await client.setPhysicalPlayerIndicator(
         vendorID: vendorID,
         productID: productID,
+        runtimeIdentifier: device.runtimeIdentifier,
         indicator: indicator
       )
     }
@@ -186,15 +203,20 @@ struct PhysicalOutputCommand {
   }
 
   private func plan(arguments: [String]) {
-    let json = arguments.last == "--json"
-    let values = json ? Array(arguments.dropLast()) : arguments
+    let parsed = parseDeviceOption(arguments)
+    let json = parsed.arguments.last == "--json"
+    let values = json ? Array(parsed.arguments.dropLast()) : parsed.arguments
     guard values.count == 2 else {
       printHelp()
       exit(1)
     }
     let vendorID = parseIdentifier(values[0], label: "VID")
     let productID = parseIdentifier(values[1], label: "PID")
-    let device = requireDevice(vendorID: vendorID, productID: productID)
+    let device = requireDevice(
+      vendorID: vendorID,
+      productID: productID,
+      runtimeIdentifier: parsed.runtimeIdentifier
+    )
     let plan = PhysicalOutputValidationPlan(device: device)
     if json {
       do {
@@ -219,6 +241,8 @@ struct PhysicalOutputCommand {
   }
 
   private func color(arguments: [String]) {
+    let parsed = parseDeviceOption(arguments)
+    let arguments = parsed.arguments
     guard arguments.count == 5 else {
       printHelp()
       exit(1)
@@ -231,7 +255,11 @@ struct PhysicalOutputCommand {
       return UInt8(parsed)
     }
 
-    let device = requireDevice(vendorID: vendorID, productID: productID)
+    let device = requireDevice(
+      vendorID: vendorID,
+      productID: productID,
+      runtimeIdentifier: parsed.runtimeIdentifier
+    )
     guard device.physicalOutputCapabilities.lightingFeatures.contains(.programmableColor) else {
       fail("The selected controller has no source-backed RGB implementation.")
     }
@@ -243,6 +271,7 @@ struct PhysicalOutputCommand {
       try? await client.setPhysicalColor(
         vendorID: vendorID,
         productID: productID,
+        runtimeIdentifier: device.runtimeIdentifier,
         red: components[0],
         green: components[1],
         blue: components[2]
@@ -253,6 +282,8 @@ struct PhysicalOutputCommand {
   }
 
   private func brightness(arguments: [String]) {
+    let parsed = parseDeviceOption(arguments)
+    let arguments = parsed.arguments
     guard arguments.count == 3 else {
       printHelp()
       exit(1)
@@ -264,7 +295,11 @@ struct PhysicalOutputCommand {
       fail("Brightness must be 0...255.")
     }
 
-    let device = requireDevice(vendorID: vendorID, productID: productID)
+    let device = requireDevice(
+      vendorID: vendorID,
+      productID: productID,
+      runtimeIdentifier: parsed.runtimeIdentifier
+    )
     guard device.physicalOutputCapabilities.supportsProgrammableBrightness else {
       fail("The selected controller has no source-backed brightness implementation.")
     }
@@ -276,6 +311,7 @@ struct PhysicalOutputCommand {
       try? await client.setPhysicalBrightness(
         vendorID: vendorID,
         productID: productID,
+        runtimeIdentifier: device.runtimeIdentifier,
         brightness: UInt8(rawBrightness)
       )
     }
@@ -300,14 +336,44 @@ struct PhysicalOutputCommand {
 
   private func requireDevice(
     vendorID: UInt16,
-    productID: UInt16
+    productID: UInt16,
+    runtimeIdentifier: String?
   ) -> ApplicationServiceDeviceDescription {
-    guard let device = connectedDevices().first(where: {
-      $0.vendorID == vendorID && $0.productID == productID
-    }) else {
-      fail("No connected controller matches \(hex(vendorID)):\(hex(productID)).")
+    do {
+      return try ConnectedControllerSelection.resolve(
+        devices: connectedDevices(),
+        vendorID: vendorID,
+        productID: productID,
+        runtimeIdentifier: runtimeIdentifier
+      )
+    } catch {
+      fail(error.localizedDescription)
     }
-    return device
+  }
+
+  private func parseDeviceOption(
+    _ arguments: [String]
+  ) -> (arguments: [String], runtimeIdentifier: String?) {
+    var values: [String] = []
+    var runtimeIdentifier: String?
+    var index = 0
+    while index < arguments.count {
+      if arguments[index] == "--device" {
+        guard runtimeIdentifier == nil, index + 1 < arguments.count else {
+          fail("--device requires one unique identifier from controller output list.")
+        }
+        let identifier = arguments[index + 1]
+        guard !identifier.isEmpty, !identifier.hasPrefix("--") else {
+          fail("--device requires one unique identifier from controller output list.")
+        }
+        runtimeIdentifier = identifier
+        index += 2
+      } else {
+        values.append(arguments[index])
+        index += 1
+      }
+    }
+    return (values, runtimeIdentifier)
   }
 
   private func parseIdentifier(_ value: String, label: String) -> UInt16 {
@@ -349,20 +415,21 @@ struct PhysicalOutputCommand {
   private func printHelp() {
     print(
       """
-      Usage: OpenJoystickDriver --headless physical-output <command>
+      Usage: OpenJoystickDriver --headless controller output <command>
 
       Commands:
         list [--json]
-        rumble <vid> <pid> [--left 0...255] [--right 0...255]
+        rumble <vid> <pid> [--device <id>] [--left 0...255] [--right 0...255]
                [--lt 0...255] [--rt 0...255] [--duration-ms 0...5000]
-        player <vid> <pid> off|1|2|3|4
-        brightness <vid> <pid> 0...255
-        color <vid> <pid> <red 0...255> <green 0...255> <blue 0...255>
-        plan <vid> <pid> [--json]
+        player <vid> <pid> off|1|2|3|4 [--device <id>]
+        brightness <vid> <pid> 0...255 [--device <id>]
+        color <vid> <pid> <red 0...255> <green 0...255> <blue 0...255> [--device <id>]
+        plan <vid> <pid> [--device <id>] [--json]
 
       VID and PID accept decimal values or a 0x prefix. Output commands write to
       connected physical hardware and reject capabilities the active parser does
-      not implement.
+      not implement. When identical models are connected, pass the opaque device
+      identifier printed by controller output list.
       """
     )
   }

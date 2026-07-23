@@ -1,3 +1,30 @@
+import CryptoKit
+import Foundation
+
+private enum RuntimeDeviceIdentity {
+  /// Ephemeral by construction: this key is generated once per process and is never persisted.
+  private static let key = SymmetricKey(size: .bits256)
+
+  static func token(for identifier: DeviceIdentifier) -> String? {
+    let model = String(format: "%04X:%04X:", identifier.vendorID, identifier.productID)
+    var components: [String] = []
+    if let locationID = identifier.locationID {
+      components.append(String(format: "L:%08X", locationID))
+    }
+    if let serialNumber = identifier.serialNumber, !serialNumber.isEmpty {
+      components.append("S:" + serialNumber)
+    }
+    guard !components.isEmpty else { return nil }
+    let identity = Data((model + components.joined(separator: ":")).utf8)
+
+    let digest = Data(HMAC<SHA256>.authenticationCode(for: identity, using: key))
+    return "E-" + digest.base64EncodedString()
+      .replacingOccurrences(of: "+", with: "-")
+      .replacingOccurrences(of: "/", with: "_")
+      .replacingOccurrences(of: "=", with: "")
+  }
+}
+
 /// Identifies a game controller for profile matching and multi-controller support.
 ///
 /// Three levels of matching, from most specific to least:
@@ -46,6 +73,16 @@ public struct DeviceIdentifier: Hashable, Sendable {
   /// Regardless of serial number or location. Used for model-level profile matching.
   public func modelMatches(_ other: Self) -> Bool {
     vendorID == other.vendorID && productID == other.productID
+  }
+
+  /// Opaque, session-stable selector used by the local application-service API.
+  ///
+  /// Exact selectors are authenticated with a process-local, non-persisted key,
+  /// making private hardware identity non-reversible and unlinkable across launches.
+  /// The model fallback is explicit because it cannot select one of multiple devices.
+  public var runtimeIdentifier: String {
+    RuntimeDeviceIdentity.token(for: self)
+      ?? String(format: "M-%04X-%04X", vendorID, productID)
   }
 }
 

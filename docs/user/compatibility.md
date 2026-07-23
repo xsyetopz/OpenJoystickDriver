@@ -34,8 +34,8 @@ Use only when software expects an Xbox One-style HID identity. The identity is e
 Set an identity from the installed CLI:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat sdl2-3
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat apple-gamecontroller
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compatibility set sdl2-3
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compatibility set apple-gamecontroller
 ```
 
 ## Controller support
@@ -77,10 +77,10 @@ controller beside the Compatibility `IOHIDUserDevice`. Its role is an integrity
 path between the application service, the host-side relay, and DriverKit HID
 delivery; it is not an alternative consumer output mode.
 
-Run the shared CLI/GUI self-test even while Compatibility mode is active:
+Run the shared CLI self-test even while Compatibility mode is active:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless selftest 5
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless diagnose self-test 5
 ```
 
 A passed relay verdict is based on observed relay input delivery when macOS exposes
@@ -145,10 +145,10 @@ Serve OJD's local-only test page from the main CLI:
 The page does not change the active compatibility identity and does not upload results. Run it once per identity and browser engine:
 
 ```bash
-./.build/debug/OpenJoystickDriver --headless compat sdl2-3
+./.build/debug/OpenJoystickDriver --headless compatibility set sdl2-3
 ./.build/debug/OpenJoystickDriver --headless diagnose browser-gamepad --open all
 
-./.build/debug/OpenJoystickDriver --headless compat generic-hid
+./.build/debug/OpenJoystickDriver --headless compatibility set generic-hid
 ./.build/debug/OpenJoystickDriver --headless diagnose browser-gamepad --open all
 ```
 

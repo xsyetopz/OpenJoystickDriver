@@ -1,6 +1,6 @@
 # Architecture
 
-OpenJoystickDriver ships one application bundle and one user-facing process identity. The persistent LSUIElement main app owns the menu-bar UI, physical-controller pipeline, virtual-output dispatch, and authenticated local command endpoint.
+OpenJoystickDriver ships one application bundle and one host process identity. The headless host owns the physical-controller pipeline, virtual-output dispatch, and authenticated local command endpoint. The same executable exposes the expert CLI through `--headless`; there is no second UI or daemon identity.
 
 ```mermaid
 flowchart LR
@@ -9,7 +9,7 @@ flowchart LR
   C --> D[Composite output dispatcher]
   D --> E[Generated DriverKit integrity relay]
   D --> F[IOHIDUserDevice compatibility HID]
-  G[Menu UI] --> H[In-process application service]
+  G[Signed app host] --> H[In-process application service]
   I[Headless CLI] <--> J[Authenticated local RPC socket]
   J <--> H
   H --> B
@@ -18,7 +18,7 @@ flowchart LR
 
 ## Process lifecycle
 
-An interactive launch starts the main app and its runtime. Closing the popover does not stop controller processing. Choosing Quit stops the process.
+Launching the signed app starts the main runtime and keeps it alive without a status item or window. Sending `SIGTERM` or `SIGINT` stops the runtime cleanly. The CLI is an explicit invocation of the same executable and never starts a second process.
 
 On macOS 13 and later, `SMAppService.mainApp` registers the same app as a login item. There is no bundled helper, LaunchAgent plist, daemon executable, or second privacy identity. Migration removes obsolete alpha registrations and processes without resetting TCC.
 
@@ -58,4 +58,4 @@ The application reports authoritative `IOHIDCheckAccess` results. Registration a
 
 ## Diagnostics
 
-GUI process output is captured per launch under `~/Library/Logs/OpenJoystickDriver/`. Headless commands retain terminal output. Runtime health uses the authenticated socket PID rather than a launchd job. DriverKit diagnostics remain separate because the generated extension has its own lifecycle and registry state. `./scripts/ojd validate driverkit` proves deterministic generation, native-project metadata and entitlement constraints, dependency direction, and an unsigned build; it cannot prove signing, activation, OS approval, or hardware delivery.
+Host process output is captured per launch under `~/Library/Logs/OpenJoystickDriver/`. Headless commands retain terminal output. Runtime health uses the authenticated socket PID rather than a launchd job. DriverKit diagnostics remain separate because the generated extension has its own lifecycle and registry state. `./scripts/ojd validate driverkit` proves deterministic generation, native-project metadata and entitlement constraints, dependency direction, and an unsigned build; it cannot prove signing, activation, OS approval, or hardware delivery.

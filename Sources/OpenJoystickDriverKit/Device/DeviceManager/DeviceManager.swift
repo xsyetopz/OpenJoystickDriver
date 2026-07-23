@@ -97,29 +97,38 @@ public actor DeviceManager {
   /// Returns the latest input snapshot for a device matched by vendor and product ID.
   ///
   /// Returns nil if no pipeline is active for the device.
-  public func inputState(for identifier: DeviceIdentifier) -> DeviceInputState? {
-    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }) else { return nil }
+  public func inputState(
+    for identifier: DeviceIdentifier,
+    runtimeIdentifier: String? = nil
+  ) -> DeviceInputState? {
+    guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier)
+    else { return nil }
     return pipelines[key]?.inputState()
   }
 
   /// Returns recent raw USB packets for a device matched by vendor and product ID.
   ///
   /// Returns an empty array if no pipeline is active for the device.
-  public func packetLog(for identifier: DeviceIdentifier) -> [PacketLogEntry] {
-    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }) else { return [] }
+  public func packetLog(
+    for identifier: DeviceIdentifier,
+    runtimeIdentifier: String? = nil
+  ) -> [PacketLogEntry] {
+    guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier)
+    else { return [] }
     return pipelines[key]?.getPacketLog() ?? []
   }
 
   /// Sends a short physical-controller rumble command for a matched USB device.
   public func sendRumble(
     for identifier: DeviceIdentifier,
+    runtimeIdentifier: String? = nil,
     left: UInt8,
     right: UInt8,
     lt: UInt8,
     rt: UInt8,
     durationMs: Int
   ) async -> Bool {
-    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }),
+    guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier),
       let pipeline = pipelines[key]
     else { return false }
     let featureHaptics = await pipeline.hidFeatureHapticReports(
@@ -162,11 +171,12 @@ public actor DeviceManager {
   /// Sets an RGB physical lightbar when the active protocol supports it.
   public func setPhysicalColor(
     for identifier: DeviceIdentifier,
+    runtimeIdentifier: String? = nil,
     red: UInt8,
     green: UInt8,
     blue: UInt8
   ) async -> Bool {
-    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }),
+    guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier),
       let pipeline = pipelines[key], let locationID = key.locationID,
       let report = await pipeline.hidColorReport(red: red, green: green, blue: blue)
     else { return false }
@@ -175,10 +185,14 @@ public actor DeviceManager {
   }
 
   /// Sets scalar physical LED brightness when the active protocol supports it.
-  public func setPhysicalBrightness(for identifier: DeviceIdentifier, brightness: UInt8) async
+  public func setPhysicalBrightness(
+    for identifier: DeviceIdentifier,
+    runtimeIdentifier: String? = nil,
+    brightness: UInt8
+  ) async
     -> Bool
   {
-    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }),
+    guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier),
       let pipeline = pipelines[key], let locationID = key.locationID,
       let report = await pipeline.hidBrightnessReport(brightness)
     else { return false }
@@ -188,9 +202,10 @@ public actor DeviceManager {
   /// Sets the physical numbered player indicator when the active protocol supports it.
   public func sendPlayerIndicator(
     for identifier: DeviceIdentifier,
+    runtimeIdentifier: String? = nil,
     indicator: PhysicalPlayerIndicator
   ) async -> Bool {
-    guard let key = pipelines.keys.first(where: { $0.modelMatches(identifier) }),
+    guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier),
       let pipeline = pipelines[key]
     else { return false }
     let didSendUSB = await pipeline.sendPlayerIndicator(indicator)
@@ -200,6 +215,29 @@ public actor DeviceManager {
     else { return false }
     await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline)
     return hidManager.setOutputReport(locationID: locationID, report: report)
+  }
+
+  private func connectedIdentifier(
+    matching model: DeviceIdentifier,
+    runtimeIdentifier: String?
+  ) -> DeviceIdentifier? {
+    Self.connectedIdentifier(
+      among: pipelines.keys,
+      matching: model,
+      runtimeIdentifier: runtimeIdentifier
+    )
+  }
+
+  static func connectedIdentifier<Identifiers: Sequence>(
+    among identifiers: Identifiers,
+    matching model: DeviceIdentifier,
+    runtimeIdentifier: String?
+  ) -> DeviceIdentifier? where Identifiers.Element == DeviceIdentifier {
+    let matches = identifiers.filter {
+      $0.modelMatches(model)
+        && (runtimeIdentifier == nil || $0.runtimeIdentifier == runtimeIdentifier)
+    }
+    return matches.count == 1 ? matches.first : nil
   }
 
   private func enforcePhysicalHIDOutputInterval(
@@ -240,7 +278,7 @@ public actor DeviceManager {
         parser: profile.parserName,
         connection: info?.connection ?? "USB",
         serialNumber: info?.serialNumber,
-        protocolVariant: profile.protocolVariant.rawValue,
+        protocolVariant: profile.protocolVariant,
         mappingFlags: profile.mappingFlags,
         inputEndpoint: profile.transportProfile.inputEndpoint,
         outputEndpoint: profile.transportProfile.outputEndpoint,
@@ -249,9 +287,9 @@ public actor DeviceManager {
           profile.transportProfile.postHandshakeSettleNanoseconds / 1_000_000
         ),
         preferredBackends: profile.preferredBackends.map(\.rawValue),
-        supportsPhysicalRumble: pipelines[id]?.supportsPhysicalRumble() ?? false,
         physicalOutputCapabilities: (pipelines[id]?.physicalOutputCapabilities() ?? .none)
-          .withEvidence(profile.hardwareVerified ? .hardwareVerified : .sourceBacked)
+          .withEvidence(profile.hardwareVerified ? .hardwareVerified : .sourceBacked),
+        runtimeIdentifier: id.runtimeIdentifier
       )
     }
   }

@@ -22,6 +22,10 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
   let permissionManager: PermissionManager
   let dispatcher: CompatibilityOutputDispatcher
   let driverKitDispatcher: DriverKitOutputDispatcher
+  let remappingProfileLibrary: RemappingProfileLibrary
+  let remappingRouter: RemappingOutputRouter
+  let postEventAccess: CoreGraphicsPostEventAccess
+  let remappingRequests: RemappingRequestCoordinator
   let userSpaceLock = NSLock()
   var userSpaceDispatcher: (any CompatibilityUserSpaceOutputDispatching)?
   var foregroundConsumerDispatcherPool: ForegroundConsumerCompatibilityDispatcherPool?
@@ -38,16 +42,27 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
   }
 
   /// Creates a server backed by the device manager, permissions, and output dispatchers.
-  public init(
+  init(
     deviceManager: DeviceManager,
     permissionManager: PermissionManager,
     dispatcher: CompatibilityOutputDispatcher,
-    driverKitDispatcher: DriverKitOutputDispatcher
+    driverKitDispatcher: DriverKitOutputDispatcher,
+    remappingProfileLibrary: RemappingProfileLibrary,
+    remappingRouter: RemappingOutputRouter,
+    postEventAccess: CoreGraphicsPostEventAccess
   ) {
     self.deviceManager = deviceManager
     self.permissionManager = permissionManager
     self.dispatcher = dispatcher
     self.driverKitDispatcher = driverKitDispatcher
+    self.remappingProfileLibrary = remappingProfileLibrary
+    self.remappingRouter = remappingRouter
+    self.postEventAccess = postEventAccess
+    self.remappingRequests = RemappingRequestCoordinator(
+      library: remappingProfileLibrary,
+      router: remappingRouter,
+      postEventAccess: postEventAccess
+    )
     self.userSpaceEnabled = false
     let savedCompat = UserDefaults.standard.string(forKey: Self.compatibilityIdentityDefaultsKey)
     self.compatibilityIdentity = CompatibilityIdentity(rawValue: savedCompat ?? "") ?? .sdl2_3
@@ -61,7 +76,7 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     _ = initializeCompatibilityBackend()
   }
 
-  /// Starts the authenticated local RPC server used by GUI and headless clients.
+  /// Starts the authenticated local RPC server used by the headless host and CLI.
   public func start() throws {
     let server = LocalServiceRPCServer(authentication: Self.isTrustedClient(processIdentifier:)) {
       [weak self] request, completion in

@@ -1,0 +1,341 @@
+import Foundation
+
+enum CLIParseError: LocalizedError {
+  static let exitCode: Int32 = 64
+
+  case missingCommand
+  case unknownCommand(String)
+  case missingSubcommand(String)
+  case unexpectedArguments(command: String)
+
+  var errorDescription: String? {
+    switch self {
+    case .missingCommand:
+      "A command is required."
+    case let .unknownCommand(command):
+      "Unknown command '\(command)'."
+    case let .missingSubcommand(command):
+      "'\(command)' requires a subcommand."
+    case let .unexpectedArguments(command):
+      "'\(command)' does not accept additional arguments."
+    }
+  }
+}
+
+enum CLIInvocation: Equatable {
+  case help
+  case version
+  case status([String])
+  case controllerList
+  case controllerInput([String])
+  case controllerOutput([String])
+  case mapping([String])
+  case appStatus([String])
+  case appStart
+  case appRestart
+  case appLogin(enable: Bool)
+  case appLogs([String])
+  case `extension`(CLIExtensionAction)
+  case permissions([String])
+  case compatibility(CLICompatibilityAction)
+  case diagnose(CLIDiagnosticAction)
+  case updateCheck([String])
+}
+
+enum CLIExtensionAction: Equatable {
+  case status
+  case activate
+  case deactivate
+}
+
+enum CLICompatibilityAction: Equatable {
+  case get
+  case set(String)
+  case reset
+}
+
+enum CLIDiagnosticAction: Equatable {
+  case summary
+  case selfTest([String])
+  case runtime([String])
+  case browserGamepad([String])
+  case gameControllerCatalog([String])
+  case report([String])
+}
+
+struct CLIGrammar {
+  let invocation: CLIInvocation
+  let serviceTimeoutSeconds: Double
+
+  init(arguments: [String]) throws {
+    let parsed = try Self.parse(arguments)
+    self.invocation = parsed.invocation
+    self.serviceTimeoutSeconds = parsed.serviceTimeoutSeconds
+  }
+
+  func run() throws {
+    let previousTimeout = CLIExecutionContext.serviceCallTimeoutSeconds
+    CLIExecutionContext.serviceCallTimeoutSeconds = serviceTimeoutSeconds
+    defer { CLIExecutionContext.serviceCallTimeoutSeconds = previousTimeout }
+
+    switch invocation {
+    case .help:
+      print(CLIHelp.text)
+    case .version:
+      print("OpenJoystickDriver v\(ApplicationVersion.current)")
+    case let .status(arguments), let .appStatus(arguments):
+      StatusCommand().run(arguments: arguments)
+    case .controllerList:
+      ListCommand().run()
+    case let .controllerInput(arguments):
+      InputCommand().run(arguments: arguments)
+    case let .controllerOutput(arguments):
+      PhysicalOutputCommand().run(arguments: arguments)
+    case let .mapping(arguments):
+      MappingCommand().run(arguments: arguments)
+    case .appStart:
+      StartApplicationServiceCommand().run()
+    case .appRestart:
+      RestartApplicationServiceCommand().run()
+    case let .appLogin(enable):
+      if enable {
+        InstallCommand().run()
+      } else {
+        UninstallCommand().run()
+      }
+    case let .appLogs(arguments):
+      LogsCommand().run(arguments: arguments)
+    case let .extension(action):
+      switch action {
+      case .status: SystemExtensionCommand().run(arguments: ["status"])
+      case .activate: SystemExtensionCommand().run(arguments: ["install"])
+      case .deactivate: SystemExtensionCommand().run(arguments: ["uninstall"])
+      }
+    case let .permissions(arguments):
+      PermissionsCommand().run(arguments: arguments)
+    case let .compatibility(action):
+      switch action {
+      case .get: CompatibilityCommand().run(arguments: ["status"])
+      case let .set(identity): CompatibilityCommand().run(arguments: [identity])
+      case .reset: ResetSettingsCommand().run()
+      }
+    case let .diagnose(action):
+      switch action {
+      case .summary: DiagnoseCommand().run()
+      case let .selfTest(arguments): SelfTestCommand().run(arguments: arguments)
+      case let .runtime(arguments): DiagnoseCommand().run(arguments: ["runtime"] + arguments)
+      case let .browserGamepad(arguments):
+        DiagnoseCommand().run(arguments: ["browser-gamepad"] + arguments)
+      case let .gameControllerCatalog(arguments):
+        DiagnoseCommand().run(arguments: ["gamecontroller-catalog"] + arguments)
+      case let .report(arguments): ReportCommand().run(arguments: ["create"] + arguments)
+      }
+    case let .updateCheck(arguments):
+      UpdatesCommand().run(arguments: ["check"] + arguments)
+    }
+  }
+
+  private static func parse(_ arguments: [String]) throws -> CLIParseResult {
+    let (commandArguments, serviceTimeoutSeconds) = try extractGlobalOptions(arguments)
+    let invocation = try parseInvocation(commandArguments)
+    return CLIParseResult(invocation: invocation, serviceTimeoutSeconds: serviceTimeoutSeconds)
+  }
+
+  private static func parseInvocation(_ arguments: [String]) throws -> CLIInvocation {
+    guard let command = arguments.first else { throw CLIParseError.missingCommand }
+    let trailing = Array(arguments.dropFirst())
+
+    switch command {
+    case "--help", "-h":
+      try requireEmpty(trailing, command: command)
+      return .help
+    case "--version", "-v":
+      try requireEmpty(trailing, command: command)
+      return .version
+    case "status":
+      try requireStatusOptions(trailing, command: command)
+      return .status(trailing)
+    case "controller":
+      return try parseController(trailing)
+    case "mapping":
+      guard !trailing.isEmpty else { throw CLIParseError.missingSubcommand(command) }
+      return .mapping(trailing)
+    case "app":
+      return try parseApp(trailing)
+    case "extension":
+      return try parseExtension(trailing)
+    case "permissions":
+      return .permissions(trailing)
+    case "compatibility":
+      return try parseCompatibility(trailing)
+    case "diagnose":
+      return try parseDiagnose(trailing)
+    case "update":
+      return try parseUpdate(trailing)
+    default:
+      throw CLIParseError.unknownCommand(command)
+    }
+  }
+
+  private static func parseController(_ arguments: [String]) throws -> CLIInvocation {
+    guard let command = arguments.first else { throw CLIParseError.missingSubcommand("controller") }
+    let trailing = Array(arguments.dropFirst())
+    switch command {
+    case "list":
+      try requireEmpty(trailing, command: "controller list")
+      return .controllerList
+    case "input":
+      return .controllerInput(["state"] + trailing)
+    case "packets", "watch":
+      return .controllerInput([command] + trailing)
+    case "output":
+      return .controllerOutput(trailing)
+    default:
+      throw CLIParseError.unknownCommand("controller \(command)")
+    }
+  }
+
+  private static func parseApp(_ arguments: [String]) throws -> CLIInvocation {
+    guard let command = arguments.first else { throw CLIParseError.missingSubcommand("app") }
+    let trailing = Array(arguments.dropFirst())
+    switch command {
+    case "status":
+      try requireStatusOptions(trailing, command: "app status")
+      return .appStatus(trailing)
+    case "start":
+      try requireEmpty(trailing, command: "app start")
+      return .appStart
+    case "restart":
+      try requireEmpty(trailing, command: "app restart")
+      return .appRestart
+    case "logs":
+      return .appLogs(trailing)
+    case "login":
+      guard let action = trailing.first else { throw CLIParseError.missingSubcommand("app login") }
+      try requireEmpty(Array(trailing.dropFirst()), command: "app login \(action)")
+      switch action {
+      case "enable": return .appLogin(enable: true)
+      case "disable": return .appLogin(enable: false)
+      default: throw CLIParseError.unknownCommand("app login \(action)")
+      }
+    default:
+      throw CLIParseError.unknownCommand("app \(command)")
+    }
+  }
+
+  private static func parseExtension(_ arguments: [String]) throws -> CLIInvocation {
+    guard let command = arguments.first else { throw CLIParseError.missingSubcommand("extension") }
+    try requireEmpty(Array(arguments.dropFirst()), command: "extension \(command)")
+    switch command {
+    case "status": return .extension(.status)
+    case "activate": return .extension(.activate)
+    case "deactivate": return .extension(.deactivate)
+    default: throw CLIParseError.unknownCommand("extension \(command)")
+    }
+  }
+
+  private static func parseCompatibility(_ arguments: [String]) throws -> CLIInvocation {
+    guard let command = arguments.first else {
+      throw CLIParseError.missingSubcommand("compatibility")
+    }
+    let trailing = Array(arguments.dropFirst())
+    switch command {
+    case "get":
+      try requireEmpty(trailing, command: "compatibility get")
+      return .compatibility(.get)
+    case "set":
+      guard trailing.count == 1 else {
+        throw CLIParseError.unexpectedArguments(command: "compatibility set")
+      }
+      return .compatibility(.set(trailing[0]))
+    case "reset":
+      try requireEmpty(trailing, command: "compatibility reset")
+      return .compatibility(.reset)
+    default:
+      throw CLIParseError.unknownCommand("compatibility \(command)")
+    }
+  }
+
+  private static func parseDiagnose(_ arguments: [String]) throws -> CLIInvocation {
+    guard let command = arguments.first else { throw CLIParseError.missingSubcommand("diagnose") }
+    let trailing = Array(arguments.dropFirst())
+    switch command {
+    case "summary": return .diagnose(.summary)
+    case "self-test": return .diagnose(.selfTest(trailing))
+    case "runtime": return .diagnose(.runtime(trailing))
+    case "browser-gamepad": return .diagnose(.browserGamepad(trailing))
+    case "gamecontroller-catalog": return .diagnose(.gameControllerCatalog(trailing))
+    case "report": return .diagnose(.report(trailing))
+    default: throw CLIParseError.unknownCommand("diagnose \(command)")
+    }
+  }
+
+  private static func parseUpdate(_ arguments: [String]) throws -> CLIInvocation {
+    guard let command = arguments.first else { throw CLIParseError.missingSubcommand("update") }
+    guard command == "check" else { throw CLIParseError.unknownCommand("update \(command)") }
+    return .updateCheck(Array(arguments.dropFirst()))
+  }
+
+  private static func requireEmpty(_ arguments: [String], command: String) throws {
+    guard arguments.isEmpty else { throw CLIParseError.unexpectedArguments(command: command) }
+  }
+
+  private static func requireStatusOptions(_ arguments: [String], command: String) throws {
+    guard arguments.isEmpty || arguments == ["--json"] else {
+      throw CLIParseError.unexpectedArguments(command: command)
+    }
+  }
+
+  private static func extractGlobalOptions(_ arguments: [String]) throws -> ([String], Double) {
+    var index = 0
+    var timeout = 0.5
+    while index < arguments.count, arguments[index] == "--timeout" {
+      guard index + 1 < arguments.count,
+        let value = Double(arguments[index + 1]), value > 0
+      else {
+        throw CLIParseError.unexpectedArguments(command: "--timeout")
+      }
+      timeout = value
+      index += 2
+      guard index == arguments.count || arguments[index] != "--timeout" else {
+        throw CLIParseError.unexpectedArguments(command: "--timeout")
+      }
+    }
+    return (Array(arguments.dropFirst(index)), timeout)
+  }
+}
+
+private struct CLIParseResult {
+  let invocation: CLIInvocation
+  let serviceTimeoutSeconds: Double
+}
+
+enum CLIHelp {
+  static let text = """
+  OpenJoystickDriver v\(ApplicationVersion.current) - macOS gamepad driver
+
+  Usage: OpenJoystickDriver --headless [--timeout <seconds>] <command>
+
+  Commands:
+  status [--json]
+    controller list|input|packets|watch|output
+    mapping <command>
+    app status|start|restart|login enable|disable|logs
+    extension status|activate|deactivate
+    permissions [status|request|open-settings|explain]
+    compatibility get|set <identity>|reset
+    diagnose summary|self-test|runtime|browser-gamepad|gamecontroller-catalog|report
+    update check
+
+  Shared options are accepted by the command that owns them. Use `--json` for
+  machine-readable output where supported and `--device <id>` for controller-scoped
+  operations. `--timeout <seconds>` applies to local application-service calls.
+
+  Low-level controller output:
+    controller output [list|rumble|player|brightness|color|plan] [options]
+
+  Options:
+    -h, --help     Show this help
+    -v, --version  Show version
+  """
+}

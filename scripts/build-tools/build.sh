@@ -76,7 +76,7 @@ nuke_all() {
   echo ""
   echo "=== NUKE: removing application service from launchd ==="
   if [[ -x "$APP_PATH/Contents/MacOS/OpenJoystickDriver" ]]; then
-    "$APP_PATH/Contents/MacOS/OpenJoystickDriver" --headless uninstall \
+    "$APP_PATH/Contents/MacOS/OpenJoystickDriver" --headless app login disable \
       && echo "  application service uninstall succeeded" || true
   fi
   for label in "$OBSOLETE_AGENT_LABEL" "$LEGACY_DAEMON_LABEL"; do
@@ -425,11 +425,11 @@ rebuild_fast() {
   echo ""
   echo "=== Step 4: Register and start main app ==="
   local APP_BIN="$APP_DST/Contents/MacOS/OpenJoystickDriver"
-  if "$APP_BIN" --headless start; then
+  if "$APP_BIN" --headless app start; then
     echo "  ✓ Main app started"
   else
     echo "  ✗ Main app start failed"
-    echo "    Fix: run: $APP_BIN --headless start"
+    echo "    Fix: run: $APP_BIN --headless app start"
   fi
 
   echo ""
@@ -471,11 +471,11 @@ rebuild_full() {
   echo ""
   echo "=== Step 5: Submit sysext activation ==="
   local APP_BIN="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
-  if "$APP_BIN" --headless sysext install; then
+  if "$APP_BIN" --headless extension activate; then
     echo "  ✓ Sysext activation request submitted"
   else
     echo "  ✗ Sysext activation request failed"
-    echo "    Fix: run: $APP_BIN --headless sysext install"
+    echo "    Fix: run: $APP_BIN --headless extension activate"
   fi
 
   echo ""
@@ -526,11 +526,11 @@ rebuild_full() {
   echo ""
   echo "=== Step 8: Restart application service ==="
   local APP_BIN="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
-  if "$APP_BIN" --headless restart; then
+  if "$APP_BIN" --headless app restart; then
     echo "  ✓ Application service restarted"
   else
     echo "  ✗ Application service restart failed"
-    echo "    Fix: run: $APP_BIN --headless install"
+    echo "    Fix: run: $APP_BIN --headless app start"
   fi
 
   echo ""

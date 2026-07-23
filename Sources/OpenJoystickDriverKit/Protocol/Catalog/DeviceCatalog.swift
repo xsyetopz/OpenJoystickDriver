@@ -42,7 +42,7 @@ public struct DeviceTransportProfile: Equatable, Sendable {
 }
 
 /// Controller protocol family/variant used for long-term compatibility metadata.
-public enum ControllerProtocolVariant: String, Sendable {
+public enum ControllerProtocolVariant: String, Codable, Hashable, Sendable {
   case xboxOriginal
   case xbox360
   case xbox360Wireless

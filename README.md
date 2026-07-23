@@ -5,7 +5,7 @@
 [![Swift](https://img.shields.io/badge/Swift-Package-orange)](Package.swift)
 [![macOS](https://img.shields.io/badge/platform-macOS-lightgrey)](README.md)
 
-OpenJoystickDriver is a macOS menu-bar app that turns supported physical controllers into app-friendly virtual controllers.
+OpenJoystickDriver is a macOS userspace gamepad driver. Its signed app bundle hosts the controller runtime; the same executable exposes a low-level CLI for setup, control, and diagnostics.
 
 Use it when a controller works in OpenJoystickDriver but not in a game, emulator, browser, SDL app, or native macOS app.
 
@@ -17,10 +17,6 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
   <a href="#troubleshooting">Troubleshooting</a> ·
   <a href="CONTRIBUTING.md">Contribute</a> ·
   <a href="https://github.com/xsyetopz/OpenJoystickDriver/stargazers">Star</a>
-</p>
-
-<p align="center">
-  <img width="512" height="632" alt="OpenJoystickDriver menu-bar app showing controller input and compatibility controls" src="https://github.com/user-attachments/assets/b2ad4741-8082-445f-8721-d66edb3f79df" />
 </p>
 
 ## Why OpenJoystickDriver
@@ -43,10 +39,10 @@ reported as optional and inconclusive when the entitlement is absent.
 
 1. Drag `OpenJoystickDriver.app` to `/Applications`.
 2. Open `OpenJoystickDriver.app`.
-3. Choose **Install** or **Start** in the menu-bar app when prompted.
+3. The app intentionally has no visible UI; start and inspect it with the installed bundle command below.
 4. Grant **Input Monitoring** and **Accessibility** to OpenJoystickDriver when macOS asks.
 5. Connect a supported controller.
-6. Use **Input Test** to confirm buttons and sticks.
+6. Run `controller input` or `controller watch` from the CLI to confirm buttons and sticks.
 
 Expected result: your target app sees a compatible virtual controller.
 
@@ -60,21 +56,21 @@ OpenJoystickDriver has one app bundle in `/Applications`:
 
 The main application executable also hosts the background service. There is no nested helper application or second privacy identity.
 
-Use the menu-bar controls for the normal flow:
+Use the installed executable for setup and diagnostics:
 
-| Action | Menu-bar path | Headless equivalent |
-| --- | --- | --- |
-| Install or start service | Open the app, then choose **Install** or **Start** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless install` |
-| Check service status | Open the app and check the System card | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status` |
-| Restart service | Choose **Restart Service** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart` |
-| Unregister service | Choose **Uninstall** | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless uninstall` |
+| Action | Command |
+| --- | --- |
+| Install or start service | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app start` |
+| Check service status | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status` |
+| Restart service | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app restart` |
+| Disable Open at Login | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app login disable` |
 
 To uninstall OpenJoystickDriver completely:
 
-1. Run **Uninstall** from the menu-bar app, or run:
+1. Disable the login item with:
 
    ```bash
-   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless uninstall
+   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app login disable
    ```
 
 2. Quit OpenJoystickDriver.
@@ -93,17 +89,17 @@ To uninstall OpenJoystickDriver completely:
 CLI equivalents from the installed app bundle:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat sdl2-3
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compatibility set sdl2-3
 ```
 
 ## Troubleshooting
 
 | Symptom | What to do |
 | --- | --- |
-| Menu UI says “running (disconnected)” | Use **Restart Service** in the menu, or run `--headless restart`. |
-| SDL / browser sees 0 controllers | Ensure Input Monitoring and Accessibility are granted, then re-open the app and re-test. |
+| The runtime is disconnected | Run `--headless app restart`, then check `--headless status`. |
+| SDL / browser sees 0 controllers | Ensure Input Monitoring and Accessibility are granted, then restart the host and re-test. |
 | Compare Chrome, Firefox, and Safari | Run `--headless diagnose browser-gamepad --open all`, then press a controller control. |
-| DriverKit relay installation fails | Compatibility output still works. `--headless selftest` tests Compatibility and reports relay diagnostics as optional when the signed host lacks relay access. |
+| DriverKit relay installation fails | Compatibility output still works. `--headless diagnose self-test` tests Compatibility and reports relay diagnostics as optional when the signed host lacks relay access. |
 
 Useful diagnostics:
 
@@ -115,25 +111,30 @@ Useful diagnostics:
 ./scripts/ojd diagnose gamecontroller --seconds 5
 ./.build/debug/OpenJoystickDriver --headless diagnose gamecontroller-catalog --json
 ./.build/debug/OpenJoystickDriver --headless diagnose runtime --seconds 300 --json
-./.build/debug/OpenJoystickDriver --headless input state --json
-./.build/debug/OpenJoystickDriver --headless input watch --seconds 10 --interval-ms 16
-./.build/debug/OpenJoystickDriver --headless input packets --limit 50
-./.build/debug/OpenJoystickDriver --headless logs show --stream both --lines 100
-./.build/debug/OpenJoystickDriver --headless updates check
+./.build/debug/OpenJoystickDriver --headless controller input --json
+./.build/debug/OpenJoystickDriver --headless controller watch --seconds 10 --interval-ms 16
+./.build/debug/OpenJoystickDriver --headless controller packets --limit 50
+./.build/debug/OpenJoystickDriver --headless app logs show --stream both --lines 100
+./.build/debug/OpenJoystickDriver --headless update check
 ./scripts/ojd diagnose sdl3 --seconds 10
 ```
 
+When identical controller models are connected, run `controller output list`
+and pass its opaque selector as `--device <id>` to `input` or
+`controller output`. This targets the same runtime device identity used by Input
+diagnostics instead of selecting an arbitrary matching VID/PID.
+
 See [Application service Runtime Health](docs/development/application-service-health.md) for soak verdicts, high-water limits, and the foreground-consumer polling leak regression probe.
-See [Menu App Responsiveness](docs/development/menu-responsiveness.md) for bounded system-tool execution and main-actor isolation guarantees.
-See [CLI and GUI Capability Parity](docs/development/cli-and-menu-app.md) for the current shared capability audit and remaining one-sided surfaces.
+See [Application Responsiveness](docs/development/application-responsiveness.md) for bounded system-tool execution and shutdown guarantees.
+See [CLI and Application Runtime](docs/development/cli-and-runtime.md) for the shared runtime boundary.
 
 Installed app bundle commands:
 
 ```bash
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless list
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless report create
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller list
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless diagnose report
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app restart
 ```
 
 ## Development

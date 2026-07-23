@@ -15,7 +15,7 @@ surfaces.
 | `scripts/docs/` | Archived external-evidence refresh |
 | `scripts/platform/` | macOS toolchain, environment, signing, and libusb contract |
 | `scripts/quality/` | Repository validators and compatibility test harnesses |
-| `scripts/release/` | Versioning, notarization, appcast, and DMG packaging |
+| `scripts/release/` | Versioning, notarization, and DMG packaging |
 | `scripts/signing/` | Local and CI signing setup |
 
 Run implementation behavior through `./scripts/ojd`; paths below these ownership
@@ -52,7 +52,7 @@ All implementation paths are internal to the dispatcher.
 | `release/bump-version.sh` | `bump-version` | Updates version references after verifying a changelog heading | Swift packaging contracts and diff review |
 | `release/dmg-background.py` | Release package implementation | Writes a deterministic PNG to the requested path | Packaging contract |
 | `release/notarize.sh` | `notarize` and release packaging | Uses Apple notarization services, writes submission state, and staples the app | Help and shell checks; release-only CI |
-| `release/package.sh` | `package release`, `package appcast` | Builds signed artifacts, mounts temporary DMGs, notarizes, and writes release output | Swift packaging contracts; release-only CI |
+| `release/package.sh` | `package release` | Builds signed artifacts, mounts temporary DMGs, notarizes, and writes release output | Swift packaging contracts; release-only CI |
 | `signing/configure.py` | Signing implementation | Reads profiles and Keychain identities; writes root environment files | Environment contracts; focused local setup |
 | `signing/export-github-secrets.sh` | `signing export-github-secrets` | Reads signing material, writes private build output, optionally updates GitHub secrets | Shell syntax; explicit operator action |
 | `signing/signing.sh` | `signing` routes | Audits or installs profiles, imports identities, creates CI Keychain state, or configures environment files | Help and shell checks; release CI and local setup |
@@ -158,9 +158,9 @@ run the app directly; automatic login registration is unavailable.
 Commands (run the app-bundled binary):
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless install
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless restart
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless uninstall
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app login enable
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app restart
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app login disable
 ```
 
 ### Dev build (signed) + app bundle

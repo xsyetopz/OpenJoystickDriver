@@ -3,7 +3,13 @@ import OpenJoystickDriverKit
 
 /// Timeout for local service calls from CLI - keeps commands
 /// responsive when application service is not running.
-let applicationServiceCallTimeoutSeconds: Double = 0.5
+enum CLIExecutionContext {
+  nonisolated(unsafe) static var serviceCallTimeoutSeconds: Double = 0.5
+}
+
+var applicationServiceCallTimeoutSeconds: Double {
+  CLIExecutionContext.serviceCallTimeoutSeconds
+}
 
 /// Blocks current thread until `block` completes.
 ///

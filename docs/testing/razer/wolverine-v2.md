@@ -45,8 +45,8 @@ If the interface is busy, repeat once with `--detach`, then unplug and reconnect
 LED and rumble checks require a separately installed current OpenJoystickDriver app. Use the [physical-output procedure](physical-output.md) to generate a device-specific plan:
 
 ```bash
-OpenJoystickDriver --headless physical-output list
-OpenJoystickDriver --headless physical-output plan 5426 2601
+OpenJoystickDriver --headless controller output list
+OpenJoystickDriver --headless controller output plan 5426 2601
 ```
 
 Run each generated step individually. Record the player-indicator result and, where the plan exposes them, left and right main rumble plus left and right trigger rumble. This output check is separate from the signing-free record probe and does not establish support by itself.

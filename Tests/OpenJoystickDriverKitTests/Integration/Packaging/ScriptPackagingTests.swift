@@ -59,7 +59,7 @@ struct ScriptPackagingTests {
     #expect(build.contains("security find-identity -v -p codesigning"))
     #expect(bundles.contains("_require_codesign_identity"))
     #expect(bundles.contains(#""com.apple.developer.hid.virtual.device""#))
-    #expect(bundles.contains(#"codesign --force --sign "$GUI_IDENTITY""#))
+    #expect(bundles.contains("ojd_sign \"$GUI_APP\" --entitlements \"$GUI_ENTITLEMENTS\""))
     #expect(!bundles.contains("DAEMON_IDENTITY"))
     #expect(!bundles.contains("DAEMON_PROFILE"))
     #expect(!bundles.contains("OpenJoystickDriverDaemon"))
@@ -101,98 +101,6 @@ struct ScriptPackagingTests {
         atPath: root.appendingPathComponent(".swiftlint-baseline.json").path
       )
     )
-  }
-
-  @Test func testSparkleReleaseWiringIsPresent() throws {
-    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let packageURL = rootURL.appendingPathComponent("Package.swift")
-    let bundlesURL = rootURL.appendingPathComponent("scripts/build-tools/bundles.sh")
-    let packageScriptURL = rootURL.appendingPathComponent("scripts/release/package.sh")
-    let dispatcherURL = rootURL.appendingPathComponent("scripts/ojd")
-    let workflowURL = rootURL.appendingPathComponent(".github/workflows/release.yml")
-    let appModelURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/App/AppModel/AppModel.swift"
-    )
-    let serviceOpsURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/App/AppModel/ApplicationServiceOperations.swift"
-    )
-    let package = try String(contentsOf: packageURL, encoding: .utf8)
-    let bundles = try String(contentsOf: bundlesURL, encoding: .utf8)
-    let packageScript = try String(contentsOf: packageScriptURL, encoding: .utf8)
-    let dispatcher = try String(contentsOf: dispatcherURL, encoding: .utf8)
-    let workflow = try String(contentsOf: workflowURL, encoding: .utf8)
-    let appModel = try String(contentsOf: appModelURL, encoding: .utf8)
-    let serviceOps = try String(contentsOf: serviceOpsURL, encoding: .utf8)
-
-    #expect(package.contains("https://github.com/sparkle-project/Sparkle"))
-    #expect(package.contains(".product(name: \"Sparkle\", package: \"Sparkle\")"))
-    #expect(package.contains("@executable_path/../Frameworks"))
-    #expect(bundles.contains("SUPublicEDKey"))
-    #expect(bundles.contains("SUFeedURL"))
-    #expect(bundles.contains("SPARKLE_PUBLIC_ED_KEY"))
-    #expect(bundles.contains("SPARKLE_FEED_URL"))
-    #expect(bundles.contains("GUI_FRAMEWORKS=\"$GUI_CONTENTS/Frameworks\""))
-    #expect(bundles.contains("*.framework"))
-    #expect(bundles.contains("$(basename \"$framework\")\" == \"Sparkle.framework\""))
-    #expect(bundles.contains("$framework/Versions/B/XPCServices/Installer.xpc"))
-    #expect(bundles.contains("$framework/Versions/B/XPCServices/Downloader.xpc"))
-    #expect(bundles.contains("$framework/Versions/B/Autoupdate"))
-    #expect(bundles.contains("$framework/Versions/B/Updater.app"))
-    #expect(bundles.contains("--preserve-metadata=entitlements"))
-    #expect(packageScript.contains("bundle_version_from_semver"))
-    #expect(packageScript.contains("generate_appcast"))
-    #expect(packageScript.contains("--ed-key-file"))
-    #expect(packageScript.contains("SPARKLE_ED_PRIVATE_KEY"))
-    #expect(dispatcher.contains("appcast)"))
-    #expect(workflow.contains("SPARKLE_PUBLIC_ED_KEY"))
-    #expect(workflow.contains("SPARKLE_ED_PRIVATE_KEY"))
-    #expect(workflow.contains("package appcast"))
-    #expect(workflow.contains("appcast.xml"))
-    #expect(workflow.contains("if: ${{ env.SPARKLE_ED_PRIVATE_KEY != '' }}"))
-    #expect(appModel.contains("SparkleUpdateController"))
-    #expect(appModel.contains("registerMainAppForLoginIfNeeded"))
-    #expect(serviceOps.contains("sparkleUpdates.checkForUpdates"))
-  }
-
-  @Test func testSparkleUpdateErrorsAreExplicitlyMapped() throws {
-    let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let controllerURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/App/SparkleUpdateController.swift"
-    )
-    let appModelURL = rootURL.appendingPathComponent(
-      "Sources/OpenJoystickDriver/App/AppModel/AppModel.swift"
-    )
-    let controller = try String(contentsOf: controllerURL, encoding: .utf8)
-    let appModel = try String(contentsOf: appModelURL, encoding: .utf8)
-
-    #expect(controller.contains("checkForUpdateInformation()"))
-    #expect(controller.contains("didFinishUpdateCycleFor updateCheck"))
-    #expect(controller.contains("SPUNoUpdateFoundReason"))
-    #expect(controller.contains("SUInvalidFeedURLError"))
-    #expect(controller.contains("SUAppcastParseError"))
-    #expect(controller.contains("SUSignatureError"))
-    #expect(controller.contains("SURunningFromDiskImageError"))
-    #expect(controller.contains("NSURLErrorNotConnectedToInternet"))
-    #expect(controller.contains("TLS validation failed for update feed"))
-    #expect(controller.contains("Move OpenJoystickDriver.app into /Applications"))
-    #expect(appModel.contains("lazy var sparkleUpdates = SparkleUpdateController"))
-    #expect(appModel.contains("self?.updateCheckState = state"))
-  }
-
-  @Test func testInputMonitoringRequestUsesMainApplicationIdentity() throws {
-    let root = try RepositoryRoot.from()
-    let appModel = try String(
-      contentsOf: root.appendingPathComponent(
-        "Sources/OpenJoystickDriver/App/AppModel/InputMonitoring.swift"
-      ),
-      encoding: .utf8
-    )
-
-    #expect(appModel.contains("permissionManager.requestRequiredAccess()"))
-    #expect(!appModel.contains("registerApplicationBundleForPermissionPrompt"))
-    #expect(!appModel.contains("LSRegisterURL"))
-    #expect(!appModel.contains("client.requestInputMonitoringAccess()"))
-    #expect(!appModel.contains("--request-input-monitoring"))
   }
 
   @Test func testApplicationServiceUsesMainAppLoginRegistration() throws {

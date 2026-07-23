@@ -34,14 +34,6 @@
     },
     {
       "rule": "redundant-owner-prefix",
-      "path": "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/MenuBarPopoverView.swift",
-      "reason": "The Swift compiler module uses a source filename matching its primary MenuBarPopoverView declaration, while the directory owns cohesive extensions and components.",
-      "owner": "menu application UI",
-      "control": "The ./scripts/ojd validate swift-structure gate and Swift compiler test build verify references.",
-      "review": "Remove if the view owner directory or primary declaration is renamed."
-    },
-    {
-      "rule": "redundant-owner-prefix",
       "path": "Sources/OpenJoystickDriverKit/ApplicationService/ApplicationServiceClient.swift",
       "reason": "The Swift compiler module uses a source filename matching the public ApplicationServiceClient declaration in its application-service owner boundary.",
       "owner": "application-service client contract",

@@ -7,12 +7,21 @@ OpenJoystickDriver can generate a manual test plan from the exact output capabil
 List connected devices, then request a plan with decimal VID and PID:
 
 ```bash
-OpenJoystickDriver --headless physical-output list
-OpenJoystickDriver --headless physical-output plan <vid> <pid>
-OpenJoystickDriver --headless physical-output plan <vid> <pid> --json
+OpenJoystickDriver --headless controller output list
+OpenJoystickDriver --headless controller output plan <vid> <pid>
+OpenJoystickDriver --headless controller output plan <vid> <pid> --json
 ```
 
-The Input Test window exposes the same steps under **Physical output validation plan**. A redacted support report includes plans for connected devices with implemented output capabilities.
+Each list entry includes an opaque `device` identifier. VID/PID is sufficient
+when one matching controller is connected. If identical models are connected,
+append `--device <id>` to `plan` and every output command; ambiguous commands
+are rejected rather than sent to an arbitrary controller. The identifier is
+valid only for the current runtime session and should not be recorded as
+hardware evidence.
+
+The `controller output` CLI exposes capability-driven controls. Its `plan` command
+prints the same generated validation steps. A redacted support report includes plans for connected devices with
+implemented output capabilities.
 
 ## Record results
 

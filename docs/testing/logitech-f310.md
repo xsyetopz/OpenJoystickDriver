@@ -4,11 +4,11 @@ This request covers [OpenJoystickDriver issue #11](https://github.com/xsyetopz/O
 
 The current record uses Linux's Xbox 360 packet layout and the hardware-observed
 interrupt endpoints `0x81`/`0x02`. OJD's parser maps the XInput button bitfield
-to named controls, and the Input Test window uses stable text labels instead of
-SF Symbols that can appear blank on older macOS releases. The record retains
+to named controls. Confirm the reported semantic labels through Controller
+Settings Live or `input state`; the record retains
 `verified: false` until the reporter confirms the complete mapping.
 
-No paid Apple Developer Program account, app signing, application service installation, or DriverKit provisioning is required for the raw-input test.
+No paid Apple Developer Program account, app signing, application service installation, or DriverKit provisioning is required for raw-input verification.
 
 ## Validate and capture
 
@@ -34,8 +34,8 @@ Verify that each `USB_RX` packet produces only the matching `EVENT` output. If c
 
 ## Verify the app and consumers
 
-In the Input Test window, confirm LB and RB show text rather than blank tiles and every highlighted control matches the physical input. Then compare `generic-hid` and `sdl2-3` with the browser diagnostic in Chrome, Firefox, and Safari.
+In Controller Settings, enable Live and confirm LB and RB labels and every active control match the physical input. Use `input watch` if the Settings window is unavailable. Then compare `generic-hid` and `sdl2-3` with the browser diagnostic in Chrome, Firefox, and Safari.
 
-Attach the complete record-probe output, macOS version, Mac model, exact OJD commit, F310 mode-switch position, whether `--detach` was required, Input Test results, and per-browser results to issue #11. Raw packets are included; inspect the output before publishing.
+Attach the complete record-probe output, macOS version, Mac model, exact OJD commit, F310 mode-switch position, whether `--detach` was required, Controller Settings Live or CLI input results, and per-browser results to issue #11. Raw packets are included; inspect the output before publishing.
 
 Schema validation and deterministic fixtures do not replace this physical mapping test.

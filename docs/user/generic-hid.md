@@ -6,4 +6,4 @@ Generic HID maps button usages 1 through 19, X/Y and Rx/Ry stick pairs, Z/Rz tri
 
 The sixteenth virtual button carries the first extra generic button. Further buttons remain visible in OJD diagnostics but do not fit the 16-button compatibility reports.
 
-A HID descriptor names fields but does not define a universal physical button order. Vendor reports, unusual axes, handshakes, paddles, and extra controls need a record and parser. Verify every control in Input Test or the headless input diagnostic before claiming support.
+A HID descriptor names fields but does not define a universal physical button order. Vendor reports, unusual axes, handshakes, paddles, and extra controls need a record and parser. Verify every control in Controller Settings Live or the headless input diagnostic before claiming support.

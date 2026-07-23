@@ -2,21 +2,12 @@ import AppKit
 import Foundation
 import OpenJoystickDriverKit
 
-func permissionSnapshot(
-  inputMonitoring: String,
-  accessibility: String
-) -> PermissionManager.Snapshot {
-  PermissionManager.Snapshot(
-    inputMonitoring: PermissionManager.AccessState(status: inputMonitoring),
-    accessibility: PermissionManager.AccessState(status: accessibility)
-  )
+func printPermissionSnapshot(_ permissions: StatusPermissions) {
+  RuntimeStatusText.permissionLines(permissions).forEach { print($0) }
 }
 
 func printPermissionSnapshot(_ snapshot: PermissionManager.Snapshot) {
-  print("Permissions:")
-  print("  Input Monitoring : \(snapshot.inputMonitoring.label) \(snapshot.inputMonitoring)")
-  print("  Accessibility    : \(snapshot.accessibility.label) \(snapshot.accessibility)")
-  print("  Overall          : " + (snapshot.isReady ? "[OK] ready" : "[ACTION] blocked"))
+  printPermissionSnapshot(StatusPermissions(snapshot))
 }
 
 struct PermissionsCommand {
@@ -60,7 +51,8 @@ struct PermissionsCommand {
   }
 
   private func printStatus() {
-    let client = connectedClient()
+    let client = ApplicationServiceClient()
+    client.connect()
     defer { client.disconnect() }
     let result: ApplicationServiceStatusPayload? = runSyncOptionalResult(
       timeout: applicationServiceCallTimeoutSeconds
@@ -68,24 +60,27 @@ struct PermissionsCommand {
       try? await client.getStatus()
     }
     guard let payload = result else {
-      print("ERROR: The main app did not return permission status.")
+      printPermissionSnapshot(localPermissionSnapshot())
+      print("")
+      print("State source: local system (main app did not return status)")
+      print("Recovery: --headless app start")
       exit(1)
     }
 
-    printPermissionSnapshot(
-      permissionSnapshot(
-        inputMonitoring: payload.inputMonitoring,
-        accessibility: payload.accessibility
-      )
-    )
+    let status = RuntimeStatusSnapshot(payload: payload)
+    printPermissionSnapshot(status.permissions)
     print("")
     print("State source: running main app")
-    if !permissionSnapshot(
-      inputMonitoring: payload.inputMonitoring,
-      accessibility: payload.accessibility
-    ).isReady {
+    if !status.permissions.isReady {
       print("Recovery: --headless permissions request")
     }
+  }
+
+  private func localPermissionSnapshot() -> PermissionManager.Snapshot {
+    PermissionManager.Snapshot(
+      inputMonitoring: PermissionManager.currentInputMonitoringAccessState(),
+      accessibility: PermissionManager.currentAccessibilityAccessState()
+    )
   }
 
   private func printPermissionInventory() {

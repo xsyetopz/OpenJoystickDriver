@@ -2,43 +2,28 @@ import Foundation
 import Testing
 
 struct UpdateAndLogParityTests {
-  @Test func cliAndGuiShareUpdateChecking() throws {
+  @Test func headlessUpdateCheckUsesTheSharedChecker() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let cli = try source("Sources/OpenJoystickDriver/CLI.swift", root: root)
+    let cli = try source("Sources/OpenJoystickDriver/CLIGrammar.swift", root: root)
     let command = try source("Sources/OpenJoystickDriver/Commands/UpdatesCommand.swift", root: root)
-    let appModel = try source(
-      "Sources/OpenJoystickDriver/App/AppModel/ApplicationServiceOperations.swift",
-      root: root
-    )
-    let view = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift",
-      root: root
-    )
     let checker = try source("Sources/OpenJoystickDriverKit/Update/UpdateChecker.swift", root: root)
 
-    #expect(cli.contains("case \"updates\""))
+    #expect(cli.contains("case \"update\""))
     #expect(command.contains("UpdateChecker().check"))
     #expect(command.contains("--prerelease"))
     #expect(command.contains("--json"))
     #expect(command.contains("--open"))
     #expect(command.contains("checks GitHub tags"))
     #expect(command.contains("latestTag: latestTag"))
-    #expect(appModel.contains("updateChecker.check"))
-    #expect(appModel.contains("includePrereleases"))
-    #expect(view.contains("model.checkForUpdates()"))
     #expect(checker.contains("request.timeoutInterval = Self.requestTimeoutSeconds"))
     #expect(checker.contains("/repos/xsyetopz/OpenJoystickDriver/tags"))
     #expect(!checker.contains("/releases"))
   }
 
-  @Test func cliAndGuiUseTypedServiceLogPaths() throws {
+  @Test func headlessLogsUseTypedServiceLogPaths() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let cli = try source("Sources/OpenJoystickDriver/CLI.swift", root: root)
+    let cli = try source("Sources/OpenJoystickDriver/CLIGrammar.swift", root: root)
     let command = try source("Sources/OpenJoystickDriver/Commands/LogsCommand.swift", root: root)
-    let view = try source(
-      "Sources/OpenJoystickDriver/Views/MenuBarPopoverView/DiagnosticCards.swift",
-      root: root
-    )
     let service = try source(
       "Sources/OpenJoystickDriverKit/Diagnostics/ApplicationServiceLogService.swift",
       root: root
@@ -50,9 +35,6 @@ struct UpdateAndLogParityTests {
     #expect(command.contains("ApplicationServiceLogService.sharingWarning"))
     #expect(command.contains("--lines"))
     #expect(command.contains("--json"))
-    #expect(view.contains("ApplicationServiceLogStream.allCases"))
-    #expect(view.contains("ApplicationServiceLogService.url"))
-    #expect(!view.contains("/tmp/com.openjoystickdriver.daemon.out"))
     #expect(service.contains("defaultMaximumBytes = 262_144"))
   }
 

@@ -53,7 +53,6 @@ public struct SupportReport: Codable, Sendable {
     public let needsSetConfiguration: Bool
     public let postHandshakeSettleMs: Int
     public let preferredBackends: [String]
-    public let supportsPhysicalRumble: Bool
     public let physicalOutputCapabilities: PhysicalControllerOutputCapabilities
   }
 
@@ -145,14 +144,13 @@ public struct SupportReport: Codable, Sendable {
         parser: $0.parser,
         connection: $0.connection,
         serialNumberPresent: $0.serialNumber?.isEmpty == false,
-        protocolVariant: $0.protocolVariant,
+        protocolVariant: $0.protocolVariant.rawValue,
         mappingFlags: $0.mappingFlags.sorted(),
         inputEndpoint: $0.inputEndpoint,
         outputEndpoint: $0.outputEndpoint,
         needsSetConfiguration: $0.needsSetConfiguration,
         postHandshakeSettleMs: $0.postHandshakeSettleMs,
         preferredBackends: $0.preferredBackends.sorted(),
-        supportsPhysicalRumble: $0.supportsPhysicalRumble,
         physicalOutputCapabilities: $0.physicalOutputCapabilities
       )
     }.sorted {

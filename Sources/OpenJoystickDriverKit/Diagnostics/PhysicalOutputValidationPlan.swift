@@ -63,7 +63,7 @@ public struct PhysicalOutputValidationPlan: Codable, Equatable, Sendable {
     productID: UInt16,
     capabilities: PhysicalControllerOutputCapabilities
   ) -> [Step] {
-    let prefix = "OpenJoystickDriver --headless physical-output"
+    let prefix = "OpenJoystickDriver --headless controller output"
     let identity = "\(vendorID) \(productID)"
     var result: [Step] = []
     let motors = Set(capabilities.rumbleMotors)

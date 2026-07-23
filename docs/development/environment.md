@@ -11,13 +11,13 @@ Repository scripts load exactly one optional local file from the project root:
 ./scripts/ojd env audit
 ```
 
-The examples are annotated output templates, not a source for identities,
+The examples are annotated output forms, not a source for identities,
 profiles, Team IDs, or credentials. Read [Signing assets](signing.md) before
 creating either local file. Development configuration requires the two
 development profiles and an Apple Development identity; publisher-only
 Developer ID assets are optional and do not block `.env.dev` generation.
 
-The signing configurator updates recognized signing keys in the central files while preserving unrelated recognized publisher keys such as notarization and Sparkle credentials. Never commit actual `.env.dev` or `.env.release` files.
+The signing configurator updates recognized signing keys in the central files while preserving unrelated recognized publisher keys. Never commit actual `.env.dev` or `.env.release` files.
 
 ## GitHub Actions secrets
 
@@ -31,8 +31,6 @@ The signing configurator updates recognized signing keys in the central files wh
 - `OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64`
 - `NOTARIZE_APPLE_ID`
 - `NOTARIZE_PASSWORD`
-- `SPARKLE_PUBLIC_ED_KEY`
-- `SPARKLE_ED_PRIVATE_KEY`
 
 Workflow secrets are injected directly by GitHub; CI does not create or depend on a local `.env` file.
 

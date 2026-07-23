@@ -1,21 +1,21 @@
-import AppKit
+import Dispatch
 import Foundation
 import OpenJoystickDriverKit
 
-private var appDelegate: AppDelegate?
+private var applicationHost: HeadlessApplicationHost?
 
 let args = Array(CommandLine.arguments.dropFirst())
 if args.contains("--headless") {
   let filtered = args.filter { $0 != "--headless" }
   CLI().run(arguments: filtered[...])
+} else if !args.isEmpty {
+  CLI().run(arguments: args[...])
 } else {
   do {
     try ApplicationServiceLogService.beginCurrentSessionCapture()
   } catch {
     fputs("[OpenJoystickDriver] Log capture unavailable: \(error.localizedDescription)\n", stderr)
   }
-  let developerMode = args.contains("--developer-mode")
-  appDelegate = AppDelegate(developerMode: developerMode)
-  NSApplication.shared.delegate = appDelegate
-  NSApplication.shared.run()
+  applicationHost = HeadlessApplicationHost()
+  applicationHost?.run()
 }

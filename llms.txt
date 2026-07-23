@@ -18,8 +18,8 @@ used for integrity testing and diagnostics; it is not a consumer gamepad.
   SwifterKit native DriverKit project.
 - `.build/driverkit/generated/`: ephemeral generated native project. Never edit
   or commit it; no post-generation patches are permitted.
-- `Sources/OpenJoystickDriver/`: menu-bar app, persistent application service,
-  headless CLI, and composition root.
+- `Sources/OpenJoystickDriver/`: headless application host, persistent application
+  service, headless CLI, and composition root.
 - `Resources/SDL/openjoystickdriver.gamecontrollerdb.txt`: SDL mapping for the
   user-space OJD device; use `platform:macOS` for SDL3.
 - `Sources/OpenJoystickDriverKit/Resources/Controllers/`: generated runtime

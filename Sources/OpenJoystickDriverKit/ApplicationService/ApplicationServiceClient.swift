@@ -20,20 +20,27 @@ public enum ApplicationServiceClientError: Error, LocalizedError, Sendable {
 
 public final class ApplicationServiceClient: @unchecked Sendable {
   private let stateLock = NSLock()
+  private let socketPath: String
   private var connected = false
 
-  public init() {}
+  public init() {
+    socketPath = LocalServiceRPCTransport.defaultSocketPath
+  }
+
+  init(socketPath: String) {
+    self.socketPath = socketPath
+  }
 
   /// Connects to the running main app, launching the installed app when needed.
-  public func connect() {
-    if LocalServiceRPCClient.isAvailable() {
+  public func connect(timeoutSeconds: TimeInterval = 5) {
+    if LocalServiceRPCClient.serverProcessIdentifier(socketPath: socketPath) != nil {
       stateLock.withLock { connected = true }
       return
     }
     launchMainApplicationIfPossible()
-    let deadline = Date().addingTimeInterval(5)
+    let deadline = Date().addingTimeInterval(max(0, timeoutSeconds))
     while Date() < deadline {
-      if LocalServiceRPCClient.isAvailable() {
+      if LocalServiceRPCClient.serverProcessIdentifier(socketPath: socketPath) != nil {
         stateLock.withLock { connected = true }
         return
       }
@@ -68,21 +75,37 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     try await call("requestRequiredAccess", LocalServiceRPCEmptyArguments())
   }
 
-  public func deviceInputState(vendorID: UInt16, productID: UInt16) async throws
+  public func deviceInputState(
+    vendorID: UInt16,
+    productID: UInt16,
+    runtimeIdentifier: String? = nil
+  ) async throws
     -> DeviceInputState?
   {
     let data: Data? = try await call(
       "getDeviceInputState",
-      LocalServiceRPCDeviceArguments(vendorID: Int(vendorID), productID: Int(productID))
+      LocalServiceRPCDeviceArguments(
+        vendorID: Int(vendorID),
+        productID: Int(productID),
+        runtimeIdentifier: runtimeIdentifier
+      )
     )
     guard let data else { return nil }
     return try? JSONDecoder().decode(DeviceInputState.self, from: data)
   }
 
-  public func packetLog(vendorID: UInt16, productID: UInt16) async throws -> [PacketLogEntry] {
+  public func packetLog(
+    vendorID: UInt16,
+    productID: UInt16,
+    runtimeIdentifier: String? = nil
+  ) async throws -> [PacketLogEntry] {
     let data: Data = try await call(
       "getPacketLog",
-      LocalServiceRPCDeviceArguments(vendorID: Int(vendorID), productID: Int(productID))
+      LocalServiceRPCDeviceArguments(
+        vendorID: Int(vendorID),
+        productID: Int(productID),
+        runtimeIdentifier: runtimeIdentifier
+      )
     )
     guard let entries = try? JSONDecoder().decode([PacketLogEntry].self, from: data) else {
       throw ApplicationServiceClientError.invalidResponse
@@ -93,6 +116,7 @@ public final class ApplicationServiceClient: @unchecked Sendable {
   public func sendPhysicalRumble(
     vendorID: UInt16,
     productID: UInt16,
+    runtimeIdentifier: String? = nil,
     left: UInt8,
     right: UInt8,
     lt: UInt8,
@@ -104,6 +128,7 @@ public final class ApplicationServiceClient: @unchecked Sendable {
       LocalServiceRPCRumbleArguments(
         vendorID: Int(vendorID),
         productID: Int(productID),
+        runtimeIdentifier: runtimeIdentifier,
         left: Int(left),
         right: Int(right),
         leftTrigger: Int(lt),
@@ -116,6 +141,7 @@ public final class ApplicationServiceClient: @unchecked Sendable {
   public func setPhysicalPlayerIndicator(
     vendorID: UInt16,
     productID: UInt16,
+    runtimeIdentifier: String? = nil,
     indicator: PhysicalPlayerIndicator
   ) async throws -> Bool {
     try await call(
@@ -123,6 +149,7 @@ public final class ApplicationServiceClient: @unchecked Sendable {
       LocalServiceRPCPlayerIndicatorArguments(
         vendorID: Int(vendorID),
         productID: Int(productID),
+        runtimeIdentifier: runtimeIdentifier,
         playerIndex: indicator.rawValue
       )
     )
@@ -131,6 +158,7 @@ public final class ApplicationServiceClient: @unchecked Sendable {
   public func setPhysicalColor(
     vendorID: UInt16,
     productID: UInt16,
+    runtimeIdentifier: String? = nil,
     red: UInt8,
     green: UInt8,
     blue: UInt8
@@ -140,6 +168,7 @@ public final class ApplicationServiceClient: @unchecked Sendable {
       LocalServiceRPCColorArguments(
         vendorID: Int(vendorID),
         productID: Int(productID),
+        runtimeIdentifier: runtimeIdentifier,
         red: Int(red),
         green: Int(green),
         blue: Int(blue)
@@ -150,6 +179,7 @@ public final class ApplicationServiceClient: @unchecked Sendable {
   public func setPhysicalBrightness(
     vendorID: UInt16,
     productID: UInt16,
+    runtimeIdentifier: String? = nil,
     brightness: UInt8
   ) async throws -> Bool {
     try await call(
@@ -157,6 +187,7 @@ public final class ApplicationServiceClient: @unchecked Sendable {
       LocalServiceRPCBrightnessArguments(
         vendorID: Int(vendorID),
         productID: Int(productID),
+        runtimeIdentifier: runtimeIdentifier,
         brightness: Int(brightness)
       )
     )
@@ -223,6 +254,105 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     try await call("resetSettings", LocalServiceRPCEmptyArguments())
   }
 
+  public func getRemappingSnapshot() async throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  {
+    try await remappingCall(.getSnapshot, LocalServiceRPCEmptyArguments())
+  }
+
+  public func getRemappingProfile(id: UUID) async throws -> RemappingProfile {
+    try await remappingCall(
+      .getProfile,
+      ApplicationServiceRemappingProfileIDArguments(profileID: id)
+    )
+  }
+
+  public func createRemappingProfile(_ profile: RemappingProfile) async throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  {
+    try await remappingCall(
+      .createProfile,
+      ApplicationServiceRemappingProfileArguments(profile: profile)
+    )
+  }
+
+  public func updateRemappingProfile(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile
+  ) async throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  {
+    try await remappingCall(
+      .updateProfile,
+      ApplicationServiceRemappingProfileUpdateArguments(
+        profile: profile,
+        expectedCurrent: expectedCurrent
+      )
+    )
+  }
+
+  public func importRemappingProfile(_ profile: RemappingProfile) async throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  {
+    try await remappingCall(
+      .importProfile,
+      ApplicationServiceRemappingProfileArguments(profile: profile)
+    )
+  }
+
+  public func deleteRemappingProfile(id: UUID) async throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  {
+    try await remappingCall(
+      .deleteProfile,
+      ApplicationServiceRemappingProfileIDArguments(profileID: id)
+    )
+  }
+
+  public func activateRemappingProfile(id: UUID) async throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  {
+    try await remappingCall(
+      .activateProfile,
+      ApplicationServiceRemappingProfileIDArguments(profileID: id)
+    )
+  }
+
+  public func deactivateRemappingProfile(
+    vendorID: UInt16,
+    productID: UInt16
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    try await remappingCall(
+      .deactivateProfile,
+      ApplicationServiceRemappingModelArguments(
+        vendorID: vendorID,
+        productID: productID
+      )
+    )
+  }
+
+  public func getRemappingPostEventAccess() async throws -> RemappingPostEventAccessState {
+    try await remappingCall(.getPostEventAccess, LocalServiceRPCEmptyArguments())
+  }
+
+  public func requestRemappingPostEventAccess() async throws -> RemappingPostEventAccessState {
+    try await remappingCall(.requestPostEventAccess, LocalServiceRPCEmptyArguments())
+  }
+
+  private func remappingCall<Arguments: Encodable & Sendable, Value: Decodable & Sendable>(
+    _ method: ApplicationServiceRemappingRPCMethod,
+    _ arguments: Arguments
+  ) async throws -> Value {
+    do {
+      return try await call(method.rawValue, arguments)
+    } catch LocalServiceRPCError.remote(let description) {
+      guard let error = ApplicationServiceRemappingRPCError(rpcDescription: description) else {
+        throw LocalServiceRPCError.remote(description)
+      }
+      throw error
+    }
+  }
+
   private func call<Arguments: Encodable & Sendable, Value: Decodable & Sendable>(
     _ method: String,
     _ arguments: Arguments,
@@ -235,7 +365,8 @@ public final class ApplicationServiceClient: @unchecked Sendable {
       return try await LocalServiceRPCClient.call(
         method: method,
         arguments: arguments,
-        timeoutSeconds: timeoutSeconds
+        timeoutSeconds: timeoutSeconds,
+        socketPath: socketPath
       )
     } catch LocalServiceRPCError.timeout {
       throw ApplicationServiceClientError.timeout

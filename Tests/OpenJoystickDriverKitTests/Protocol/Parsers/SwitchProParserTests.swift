@@ -70,6 +70,12 @@ struct SwitchProParserTests {
   }
 
   @Test
+  func testSwitchDigitalTriggersNormalizeToAuxiliaryButtonSources() {
+    #expect(RemappingEngineState.source(for: .l2Digital) == .button(.auxiliary1))
+    #expect(RemappingEngineState.source(for: .r2Digital) == .button(.auxiliary2))
+  }
+
+  @Test
   func testSwitchProFaceButtonsUseLinuxPositionalMapping() throws {
     let expectations: [(UInt32, Button)] = [
       (0x0000_0008, .b),

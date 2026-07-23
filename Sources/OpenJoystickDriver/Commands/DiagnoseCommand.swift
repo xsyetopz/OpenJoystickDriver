@@ -106,12 +106,12 @@ struct DiagnoseCommand {
     }
     guard let payload else {
       print("Permissions: unavailable without the running main app")
-      print("  Recovery: --headless start")
+      print("  Recovery: --headless app start")
       return
     }
 
     printPermissionSnapshot(
-      permissionSnapshot(
+      StatusPermissions(
         inputMonitoring: payload.inputMonitoring,
         accessibility: payload.accessibility
       )
@@ -154,6 +154,6 @@ struct DiagnoseCommand {
     print("  DriverKit extension missing/broken?")
     print("    -> Run: ./scripts/ojd rebuild dev")
     print("  Reporting a controller issue?")
-    print("    -> Run: --headless report create")
+    print("    -> Run: --headless diagnose report")
   }
 }

@@ -12,6 +12,7 @@ struct InputCommand {
     var action: Action
     var vendorID: UInt16?
     var productID: UInt16?
+    var runtimeIdentifier: String?
     var json = false
     var jsonLines = false
     var limit = 50
@@ -37,20 +38,20 @@ struct InputCommand {
     service: ControllerInputDiagnosticService
   ) async -> String? {
     do {
-      let identifier = try await resolveIdentifier(options, service: service)
+      let device = try await resolveDevice(options, service: service)
       switch options.action {
       case .state:
-        try await printState(identifier, json: options.json, service: service)
+        try await printState(device, json: options.json, service: service)
       case .packets:
         try await printPackets(
-          identifier,
+          device,
           limit: options.limit,
           json: options.json,
           service: service
         )
       case .watch:
         try await watch(
-          identifier,
+          device,
           seconds: options.seconds,
           intervalMilliseconds: options.intervalMilliseconds,
           jsonLines: options.jsonLines,
@@ -63,43 +64,34 @@ struct InputCommand {
     }
   }
 
-  private func resolveIdentifier(
+  private func resolveDevice(
     _ options: Options,
     service: ControllerInputDiagnosticService
-  ) async throws -> DeviceIdentifier {
-    if let vendorID = options.vendorID, let productID = options.productID {
-      return DeviceIdentifier(vendorID: vendorID, productID: productID)
-    }
-
+  ) async throws -> ApplicationServiceDeviceDescription {
     let devices = try await service.connectedDevices()
-    guard let device = devices.only else {
-      if devices.isEmpty {
-        throw InputCommandFailure("No controller is connected.")
-      }
-      let choices = devices.map {
-        "\(hex($0.vendorID)) \(hex($0.productID)) \($0.name)"
-      }.joined(separator: "\n  ")
-      throw InputCommandFailure(
-        "Multiple controllers are connected. Pass VID and PID:\n  \(choices)"
-      )
-    }
-    return DeviceIdentifier(vendorID: device.vendorID, productID: device.productID)
+    return try ConnectedControllerSelection.resolve(
+      devices: devices,
+      vendorID: options.vendorID,
+      productID: options.productID,
+      runtimeIdentifier: options.runtimeIdentifier
+    )
   }
 
   private func printState(
-    _ identifier: DeviceIdentifier,
+    _ device: ApplicationServiceDeviceDescription,
     json: Bool,
     service: ControllerInputDiagnosticService
   ) async throws {
     guard
       let state = try await service.deviceInputState(
-        vendorID: identifier.vendorID,
-        productID: identifier.productID
+        vendorID: device.vendorID,
+        productID: device.productID,
+        runtimeIdentifier: device.runtimeIdentifier
       )
     else {
       throw InputCommandFailure(
-        "No input state has been received for \(hex(identifier.vendorID)) "
-          + "\(hex(identifier.productID))."
+        "No input state has been received for \(hex(device.vendorID)) "
+          + "\(hex(device.productID))."
       )
     }
 
@@ -107,19 +99,20 @@ struct InputCommand {
       try printJSON(state, pretty: true)
       return
     }
-    print("Controller input \(hex(identifier.vendorID)):\(hex(identifier.productID))")
+    print("Controller input \(hex(device.vendorID)):\(hex(device.productID))")
     print("  \(formatted(state))")
   }
 
   private func printPackets(
-    _ identifier: DeviceIdentifier,
+    _ device: ApplicationServiceDeviceDescription,
     limit: Int,
     json: Bool,
     service: ControllerInputDiagnosticService
   ) async throws {
     let entries = try await service.packetLog(
-      vendorID: identifier.vendorID,
-      productID: identifier.productID
+      vendorID: device.vendorID,
+      productID: device.productID,
+      runtimeIdentifier: device.runtimeIdentifier
     )
     let selected = Array(entries.suffix(limit))
     warnAboutRawPackets(json: json)
@@ -130,7 +123,7 @@ struct InputCommand {
     }
 
     print(
-      "Recent packets \(hex(identifier.vendorID)):\(hex(identifier.productID)) "
+      "Recent packets \(hex(device.vendorID)):\(hex(device.productID)) "
         + "(\(selected.count)/\(entries.count))"
     )
     if selected.isEmpty {
@@ -146,7 +139,7 @@ struct InputCommand {
   }
 
   private func watch(
-    _ identifier: DeviceIdentifier,
+    _ device: ApplicationServiceDeviceDescription,
     seconds: Int,
     intervalMilliseconds: Int,
     jsonLines: Bool,
@@ -160,15 +153,16 @@ struct InputCommand {
 
     if !jsonLines {
       print(
-        "Watching \(hex(identifier.vendorID)):\(hex(identifier.productID)) "
+        "Watching \(hex(device.vendorID)):\(hex(device.productID)) "
           + "for \(seconds)s every \(intervalMilliseconds)ms. Press controls now."
       )
     }
 
     while DispatchTime.now().uptimeNanoseconds < deadline {
       let state = try await service.deviceInputState(
-        vendorID: identifier.vendorID,
-        productID: identifier.productID
+        vendorID: device.vendorID,
+        productID: device.productID,
+        runtimeIdentifier: device.runtimeIdentifier
       )
       if let state, state != previous {
         observedState = true
@@ -277,6 +271,18 @@ struct InputCommand {
           option: argument,
           range: 8...1_000
         )
+      case "--device":
+        guard options.runtimeIdentifier == nil, index + 1 < arguments.count else {
+          print("--device requires one unique identifier.")
+          exit(1)
+        }
+        let identifier = arguments[index + 1]
+        guard !identifier.isEmpty, !identifier.hasPrefix("--") else {
+          print("--device requires one unique identifier.")
+          exit(1)
+        }
+        options.runtimeIdentifier = identifier
+        index += 2
       default:
         guard !argument.hasPrefix("--"), let value = parseIdentifier(argument) else {
           print("Invalid input option or identifier: \(argument)")
@@ -330,7 +336,7 @@ struct InputCommand {
   private func printHelp() {
     print(
       [
-        "Usage: OpenJoystickDriver --headless input <command> [VID PID] [options]",
+        "Usage: OpenJoystickDriver --headless controller <input|packets|watch> [options]",
         "",
         "Commands:",
         "  state    Print the latest normalized buttons, sticks, and triggers",
@@ -338,12 +344,14 @@ struct InputCommand {
         "  watch    Print normalized state changes for a bounded duration",
         "",
         "VID and PID accept decimal or 0x-prefixed hexadecimal. Omit both when",
-        "exactly one controller is connected.",
+        "exactly one controller is connected. Use --device with the opaque ID",
+        "reported by controller output list when identical models are connected.",
         "",
         "Options:",
-        "  state   [--json]",
-        "  packets [--limit 1...200] [--json]",
-        "  watch   [--seconds 1...3600] [--interval-ms 8...1000] [--json-lines]",
+        "  state   [--device <id>] [--json]",
+        "  packets [--device <id>] [--limit 1...200] [--json]",
+        "  watch   [--device <id>] [--seconds 1...3600]",
+        "          [--interval-ms 8...1000] [--json-lines]",
       ].joined(separator: "\n")
     )
   }
@@ -357,10 +365,4 @@ private struct InputCommandFailure: LocalizedError, Sendable {
   }
 
   var errorDescription: String? { message }
-}
-
-private extension Collection {
-  var only: Element? {
-    count == 1 ? first : nil
-  }
 }

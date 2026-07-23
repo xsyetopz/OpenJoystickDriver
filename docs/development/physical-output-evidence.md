@@ -6,7 +6,7 @@ OJD reports each output capability with its evidence level.
 - `sourceBacked` means production code follows a named protocol source, but matching hardware has not passed the project test.
 - `unavailable` means the parser exposes no implementation.
 
-See the evidence in `physical-output list`, `physical-output list --json`, `status`, Input Test, and redacted support reports. Generate device-specific checks with `physical-output plan <vid> <pid>`.
+See the evidence in `controller output list`, `controller output list --json`, `status`, and redacted support reports. Generate device-specific checks with `controller output plan <vid> <pid>`.
 
 ## Implemented output
 

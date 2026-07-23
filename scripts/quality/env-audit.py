@@ -19,8 +19,6 @@ PROFILES = {
         "GUI_PROVISIONING_PROFILE",
         "DEVID_APP_IDENTITY", "NOTARIZE_APPLE_ID",
         "NOTARIZE_PASSWORD", "NOTARIZE_KEYCHAIN_PROFILE",
-        "SPARKLE_PUBLIC_ED_KEY", "SPARKLE_ED_PRIVATE_KEY",
-        "SPARKLE_FEED_URL",
     },
 }
 LEGACY = [ROOT / ".env", ROOT / "scripts/.env", ROOT / "scripts/.env.dev", ROOT / "scripts/.env.release"]
