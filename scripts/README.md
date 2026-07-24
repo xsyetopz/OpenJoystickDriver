@@ -149,7 +149,7 @@ Re-run this after rotating certificates, regenerating profiles, or switching tea
 
 ## Common Tasks
 
-### Application service install / restart
+### Application login item
 
 On macOS 13 and newer, `SMAppService.mainApp` registers the main app as a login item.
 The app contains no LaunchAgent or helper executable. On macOS 10.15 through 12,
@@ -159,8 +159,13 @@ Commands (run the app-bundled binary):
 
 ```bash
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app login enable
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app restart
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app login disable
+```
+
+Launch the installed app directly when the runtime is not running:
+
+```bash
+open /Applications/OpenJoystickDriver.app
 ```
 
 ### Dev build (signed) + app bundle
@@ -210,13 +215,9 @@ This route regenerates the project before building it, then embeds the resulting
 `com.openjoystickdriver.VirtualHIDDevice.dext` in the app. The host application
 must be signed with the exact
 `com.apple.developer.driverkit.userclient-access` allowlist for that bundle ID;
-allow-any user-client access is rejected. A development-only compatibility mode
-accepts the one known Apple-approved legacy host value while its corrected grant
-is pending. `signing configure` selects that mode from the profile. The generated
-host entitlements omit user-client access so the app can launch and provide
-Compatibility output. DriverKit relay diagnostics remain unavailable. Release
-and CI reject the fallback. If this build fails due to certificate or profile
-matching, see the Troubleshooting section below.
+allow-any user-client access is rejected. `signing configure` and the build
+pipeline require the exact single-relay grant. If this build fails due to
+certificate or profile matching, see the Troubleshooting section below.
 
 ## Notarization
 
@@ -243,7 +244,7 @@ OJD_ENV=release ./scripts/ojd notarize status
 For a release build that does not install anything on the build machine:
 
 ```bash
-./scripts/ojd package release 0.5.0-alpha.5
+./scripts/ojd package release 0.5.0-beta.1
 ```
 
 This command uses release signing, regenerates and embeds the DriverKit relay into the app
@@ -263,7 +264,7 @@ creation do not prove activation or HID delivery on a tester's Mac.
 ## GitHub Actions release
 
 `.github/workflows/release.yml` runs on SemVer tags such as `0.1.0` or
-`0.5.0-alpha.5` and by manual dispatch.
+`0.5.0-beta.1` and by manual dispatch.
 It installs `libusb`, validates profiles, imports signing material, builds a
 release app, notarizes it, uploads the release DMG as a workflow artifact, and
 publishes the GitHub Release.
@@ -385,15 +386,8 @@ com.apple.developer.driverkit.userclient-access = [com.openjoystickdriver.Virtua
 Do not replace it with `com.apple.developer.driverkit.allow-any-userclient-access`.
 
 Older profiles may contain the removed daemon bundle ID or allow-any access.
-Follow [Replace legacy profile entitlements](../docs/development/signing.md#replace-legacy-profile-entitlements)
+Follow [Replace invalid profile entitlements](../docs/development/signing.md#replace-invalid-profile-entitlements)
 to replace the Apple capability grant and regenerate all three profiles.
-
-While the corrected host grant is pending, `signing configure` recognizes the
-one approved legacy value and enables a development-only fallback. The legacy
-profile remains embedded, but the generated host signature omits
-`com.apple.developer.driverkit.userclient-access`. The app and Compatibility
-output can run; DriverKit relay diagnostics cannot. Release and CI reject this
-fallback.
 
 </details>
 

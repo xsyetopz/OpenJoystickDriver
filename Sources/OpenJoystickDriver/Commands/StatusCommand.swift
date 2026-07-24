@@ -59,7 +59,17 @@ struct StatusCommand {
   }
 
   private func runDirectMode() {
-    RuntimeStatusText.directModeLines(localPermissionStatus()).forEach { print($0) }
+    RuntimeStatusText.directModeLines(localPermissionStatus()).forEach { line in
+      if line.hasPrefix("  -> App recovery:") {
+        CLIOutput.diagnostic(line)
+      } else {
+        print(line)
+      }
+    }
+    CLIOutput.diagnostic(
+      "If access is denied, run --headless permissions request and approve "
+        + "Input Monitoring and Accessibility in System Settings."
+    )
   }
 
   private func printJSON(_ payload: ApplicationServiceStatusPayload) {

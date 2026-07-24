@@ -4,8 +4,8 @@ import OpenJoystickDriverKit
 struct CompatibilityCommand {
   func run(arguments: [String]) {
     let usage = """
-    Usage: OpenJoystickDriver --headless compatibility get
-           OpenJoystickDriver --headless compatibility set \
+    Usage: OpenJoystickDriver --headless compat show
+           OpenJoystickDriver --headless compat set \
     <generic-hid|sdl2-3|apple-gamecontroller|x360-hid|xone-hid>
     """
     guard let sub = arguments.first else {
@@ -15,6 +15,7 @@ struct CompatibilityCommand {
 
     let client = ApplicationServiceClient()
     client.connect()
+    defer { client.disconnect() }
 
     if sub == "status" {
       let status = runSyncResult { try? await client.getStatus() }
@@ -27,7 +28,7 @@ struct CompatibilityCommand {
     }
 
     guard CompatibilityIdentity(rawValue: sub) != nil else {
-      print(usage)
+      CLIOutput.error(usage)
       exit(1)
     }
 
@@ -41,9 +42,9 @@ struct CompatibilityCommand {
     }
 
     if !ok {
-      print(
-        "ERROR: failed to set compatibility identity to \(sub) "
-          + "(application service not running?)"
+      CLIOutput.error(
+        "Failed to set compatibility identity to \(sub). "
+          + "Launch the installed app and verify Input Monitoring and Accessibility access."
       )
       exit(1)
     }

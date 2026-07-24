@@ -408,7 +408,7 @@ struct PhysicalOutputCommand {
   }
 
   private func fail(_ message: String) -> Never {
-    print("ERROR: \(message)")
+    CLIOutput.error(message)
     exit(1)
   }
 

@@ -22,29 +22,6 @@ HOST_DEVELOPMENT = PROFILES / "OpenJoystickDriver.provisionprofile"
 DRIVER_DEVELOPMENT = PROFILES / "OpenJoystickDriver_VirtualHIDDevice.provisionprofile"
 HOST_RELEASE = PROFILES / "OpenJoystickDriver_DevID.provisionprofile"
 RELAY_BUNDLE_ID = "com.openjoystickdriver.VirtualHIDDevice"
-LEGACY_USERCLIENT_VALUE = f"{RELAY_BUNDLE_ID}\ncom.openjoystickdriver.daemon"
-PROJECT_ENV = pathlib.Path(__file__).resolve().parents[2] / ".env.dev"
-
-
-def legacy_profile_mode() -> tuple[bool, str | None]:
-    raw = os.environ.get("OJD_USE_LEGACY_DRIVERKIT_PROFILE")
-    if raw is None and PROJECT_ENV.is_file():
-        match = re.search(
-            r"^\s*(?:export\s+)?OJD_USE_LEGACY_DRIVERKIT_PROFILE=[\"']?([^\"'\s#]+)",
-            PROJECT_ENV.read_text(encoding="utf-8"),
-            re.MULTILINE,
-        )
-        raw = match.group(1) if match else "0"
-    raw = raw or "0"
-    if raw not in {"0", "1"}:
-        return False, "OJD_USE_LEGACY_DRIVERKIT_PROFILE must be 0 or 1"
-    if raw == "0":
-        return False, None
-    if os.environ.get("OJD_ENV", "dev") != "dev":
-        return False, "legacy DriverKit profile mode is forbidden for release signing"
-    if os.environ.get("CI", "false") in {"true", "1"}:
-        return False, "legacy DriverKit profile mode is forbidden in CI"
-    return True, None
 
 
 def decode_profile(path: pathlib.Path) -> dict:
@@ -121,8 +98,7 @@ def main() -> int:
     print(f"Developer ID Application identities: {len(developer_id)}")
     print()
 
-    legacy_mode, mode_error = legacy_profile_mode()
-    errors = [mode_error] if mode_error else []
+    errors = []
     host, host_errors = load("host development profile", HOST_DEVELOPMENT)
     errors.extend(host_errors)
     driver, driver_errors = load("DriverKit development profile", DRIVER_DEVELOPMENT)
@@ -137,7 +113,7 @@ def main() -> int:
                     "com.apple.developer.system-extension.install": True,
                     "com.apple.developer.hid.virtual.device": True,
                     "com.apple.developer.driverkit.userclient-access": [
-                        LEGACY_USERCLIENT_VALUE if legacy_mode else RELAY_BUNDLE_ID
+                        RELAY_BUNDLE_ID
                     ],
                 },
             )
@@ -178,27 +154,7 @@ def main() -> int:
         print("  ./scripts/ojd signing configure")
         return 1
 
-    if legacy_mode:
-        print("Development signing: READY (COMPATIBILITY OUTPUT ONLY)")
-        print(
-            "  [WARN] the selected host profile contains Apple's approved legacy "
-            "DriverKit user-client value"
-        )
-        print(
-            "  [OK] generated host signing omits DriverKit user-client access so "
-            "the app can launch"
-        )
-        print("  [OK] Compatibility IOHIDUserDevice output remains available")
-        print(
-            "  [UNAVAILABLE] DriverKit relay diagnostics require the corrected "
-            "host grant"
-        )
-        print(
-            "  [ACTION] replace the host profile after Apple approves the corrected "
-            "grant"
-        )
-    else:
-        print("Development signing: READY")
+    print("Development signing: READY")
     print("  [OK] host and DriverKit profiles share an installed Apple Development identity")
     print("  [OK] host Compatibility and system-extension entitlements are present")
     print("  [OK] required DriverKit profile entitlements are present")

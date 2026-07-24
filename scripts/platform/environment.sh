@@ -61,7 +61,7 @@ IDENTITY="${CODESIGN_IDENTITY:--}"
 GUI_IDENTITY="${GUI_CODESIGN_IDENTITY:-$IDENTITY}"
 GUI_DEBUG="$PROJECT_DIR/.build/debug/OpenJoystickDriver"
 GUI_RELEASE="$PROJECT_DIR/.build/apple/Products/Release/OpenJoystickDriver"
-OJD_DEFAULT_BUNDLE_SHORT_VERSION="0.5.0-alpha.5"
+OJD_DEFAULT_BUNDLE_SHORT_VERSION="0.5.0-beta.1"
 
 # Active binary paths (selected by OJD_ENV)
 if [[ "$OJD_ENV" == "release" ]]; then

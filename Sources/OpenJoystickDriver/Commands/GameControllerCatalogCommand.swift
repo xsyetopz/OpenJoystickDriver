@@ -22,45 +22,51 @@ struct GameControllerCatalogCommand {
       return
     }
 
-    print("Apple GameController Catalog Audit")
-    print("  Source       : \(audit.source.rawValue)")
-    print(
+    CLIOutput.diagnostic("Apple GameController Catalog Audit")
+    CLIOutput.diagnostic("  Source       : \(audit.source.rawValue)")
+    CLIOutput.diagnostic(
       "  Version      : "
         + (audit.bundleVersions.isEmpty ? "unknown" : audit.bundleVersions.joined(separator: ", "))
     )
-    print("  Apple pairs  : \(audit.appleExactDeviceCount) exact VID/PID entries")
-    print("  OJD listed   : \(audit.catalogListedOJDRecordCount)/\(audit.ojdRecordCount) records")
-    for warning in audit.warnings { print("  Warning      : \(warning)") }
-    print("")
-    print("OJD record comparison:")
+    CLIOutput.diagnostic("  Apple pairs  : \(audit.appleExactDeviceCount) exact VID/PID entries")
+    CLIOutput.diagnostic(
+      "  OJD listed   : \(audit.catalogListedOJDRecordCount)/\(audit.ojdRecordCount) records"
+    )
+    for warning in audit.warnings { CLIOutput.diagnostic("  Warning      : \(warning)") }
+    CLIOutput.diagnostic("")
+    CLIOutput.diagnostic("OJD record comparison:")
     for record in audit.records {
       let marker = record.catalogListed ? "LISTED" : "not listed"
-      print("  [\(marker)] \(hex(record.vendorID)):\(hex(record.productID)) \(record.name)")
+      CLIOutput.diagnostic(
+        "  [\(marker)] \(hex(record.vendorID)):\(hex(record.productID)) \(record.name)"
+      )
       if !record.appleIdentifiers.isEmpty {
-        print("    Apple IDs: \(record.appleIdentifiers.joined(separator: ", "))")
+        CLIOutput.diagnostic("    Apple IDs: \(record.appleIdentifiers.joined(separator: ", "))")
       }
       if !record.transportConstraints.isEmpty {
-        print("    Transport: \(record.transportConstraints.joined(separator: ", "))")
+        CLIOutput.diagnostic(
+          "    Transport: \(record.transportConstraints.joined(separator: ", "))"
+        )
       }
       if !record.versionConstraints.isEmpty {
-        print(
+        CLIOutput.diagnostic(
           "    Versions : " + record.versionConstraints.map(String.init).joined(separator: ", ")
         )
       }
     }
 
     if options.allAppleEntries {
-      print("")
-      print("All exact Apple catalog entries:")
+      CLIOutput.diagnostic("")
+      CLIOutput.diagnostic("All exact Apple catalog entries:")
       for entry in snapshot.entries {
         let names =
           entry.identifiers.isEmpty ? "(unnamed)" : entry.identifiers.joined(separator: ", ")
-        print("  \(hex(entry.vendorID)):\(hex(entry.productID)) \(names)")
+        CLIOutput.diagnostic("  \(hex(entry.vendorID)):\(hex(entry.productID)) \(names)")
       }
     }
 
-    print("")
-    print(audit.caveat)
+    CLIOutput.diagnostic("")
+    CLIOutput.diagnostic(audit.caveat)
   }
 
   private struct Options {
@@ -92,7 +98,9 @@ struct GameControllerCatalogCommand {
       let data = try encoder.encode(output)
       print(String(data: data, encoding: .utf8) ?? "{}")
     } catch {
-      print("ERROR: Could not encode GameController catalog audit: \(error.localizedDescription)")
+      CLIOutput.error(
+        "Could not encode GameController catalog audit: \(error.localizedDescription)"
+      )
       exit(1)
     }
   }
@@ -100,7 +108,7 @@ struct GameControllerCatalogCommand {
   private func printHelp() {
     print(
       [
-        "Usage: OpenJoystickDriver --headless diagnose gamecontroller-catalog "
+        "Usage: OpenJoystickDriver --headless diagnose catalog "
           + "[--all-apple] [--json]",
         "",
         "Compares OJD profiles with Apple's private current-system GameController "

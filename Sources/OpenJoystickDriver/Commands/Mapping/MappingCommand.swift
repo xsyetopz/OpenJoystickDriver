@@ -24,7 +24,7 @@ struct MappingCommand {
       }
       print(try result.get())
     } catch {
-      print("ERROR: \(error.localizedDescription)")
+      CLIOutput.error(error.localizedDescription)
       exit(1)
     }
   }
@@ -32,7 +32,7 @@ struct MappingCommand {
 
 struct MappingInvocation {
   private static let bindingOptions: Set<String> = [
-    "--source", "--target", "--deadzone", "--gain", "--sensitivity", "--invert", "--response-curve",
+    "--source", "--target", "--deadzone", "--gain", "--invert", "--response-curve",
     "--digital-threshold", "--turbo-rate", "--turbo-duty",
   ]
   private let command: String
@@ -51,7 +51,7 @@ struct MappingInvocation {
   func execute(client: any MappingServiceClient) async throws -> String {
     switch command {
     case "help", "--help", "-h": return Self.help
-    case "list", "status": return try await renderSnapshot(client: client)
+    case "list": return try await renderSnapshot(client: client)
     case "show": return try await show(client: client)
     case "create": return try await create(client: client)
     case "update": return try await update(client: client)
@@ -60,10 +60,10 @@ struct MappingInvocation {
     case "delete": return try await delete(client: client)
     case "import": return try await importProfile(client: client)
     case "export": return try await export(client: client)
-    case "activate": return try await activate(client: client)
-    case "deactivate": return try await deactivate(client: client)
+    case "enable": return try await activate(client: client)
+    case "disable": return try await deactivate(client: client)
     case "permission": return try await permission(client: client)
-    default: throw MappingCommandError.invalidArguments("Unknown mapping command '\(command)'.")
+    default: throw MappingCommandError.invalidArguments("Unknown map command '\(command)'.")
     }
   }
 
@@ -146,15 +146,14 @@ struct MappingInvocation {
   }
 
   private func delete(client: any MappingServiceClient) async throws -> String {
-    let selector = try soleArgument("mapping delete <uuid-or-name>")
+    let selector = try soleArgument("map delete <uuid-or-name>")
     let profile = try await resolve(selector, client: client)
     return MappingRenderer.snapshot(try await client.delete(id: profile.id))
   }
 
   private func importProfile(client: any MappingServiceClient) async throws -> String {
-    let path = try soleArgument("mapping import <file>")
-    let data = try Data(contentsOf: URL(fileURLWithPath: path))
-    let profile = try JSONDecoder().decode(RemappingProfile.self, from: data)
+    let path = try soleArgument("map import <file>")
+    let profile = try RemappingProfileFileStore.load(from: URL(fileURLWithPath: path))
     return render(try await client.importProfile(profile), profileID: profile.id)
   }
 
@@ -163,16 +162,16 @@ struct MappingInvocation {
     let options = try MappingOptions(trailing)
     try options.validate(allowed: ["--output"])
     let profile = try await resolve(selector, client: client)
-    let text = try MappingRenderer.json(profile)
+    let text = try RemappingProfileFileStore.encodedJSON(profile)
     if let output = options["--output"] {
-      try Data(text.utf8).write(to: URL(fileURLWithPath: output), options: .atomic)
+      try RemappingProfileFileStore.write(profile, to: URL(fileURLWithPath: output))
       return output
     }
     return text
   }
 
   private func activate(client: any MappingServiceClient) async throws -> String {
-    let profile = try await resolve(soleArgument("mapping activate <uuid-or-name>"), client: client)
+    let profile = try await resolve(soleArgument("map enable <uuid-or-name>"), client: client)
     return MappingRenderer.snapshot(try await client.activate(id: profile.id))
   }
 
@@ -187,9 +186,9 @@ struct MappingInvocation {
   }
 
   private func permission(client: any MappingServiceClient) async throws -> String {
-    let operation = try soleArgument("mapping permission status|request")
+    let operation = try soleArgument("map permission status|request")
     guard operation == "status" || operation == "request" else {
-      throw MappingCommandError.invalidArguments("mapping permission status|request")
+      throw MappingCommandError.invalidArguments("map permission status|request")
     }
     return try await client.access(request: operation == "request").rawValue
   }
@@ -234,11 +233,10 @@ struct MappingInvocation {
   }
 
   static let help = """
-    Usage: OpenJoystickDriver --headless mapping <command>
+    Usage: OpenJoystickDriver --headless map <command>
 
     Commands:
       list [--json]
-      status [--json]
       show <profile> [--json]
       create <name> --vid <id> --pid <id> (--target-app <bundle-id> | --global)
       update <profile> [--name <name>] [--vid <id>] [--pid <id>]
@@ -248,8 +246,8 @@ struct MappingInvocation {
       delete <profile>
       import <file>
       export <profile> [--output <file>]
-      activate <profile>
-      deactivate --vid <id> --pid <id>
+      enable <profile>
+      disable --vid <id> --pid <id>
       permission status | request
 
     Source: button:<name> | dpad:<direction> | axis:<name>[:negative|positive]
@@ -257,7 +255,7 @@ struct MappingInvocation {
       move:x|y | scroll:x|y
 
     Axis options:
-      --deadzone <0...0.95> --gain <0.1...10> | --sensitivity <0.1...10>
+      --deadzone <0...0.95> --gain <0.1...10>
       --invert --response-curve <linear|ease_in|ease_out|smooth_step>
       --digital-threshold <0.01...1>
 

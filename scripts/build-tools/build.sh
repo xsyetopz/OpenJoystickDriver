@@ -54,8 +54,6 @@ _codesign_identity_available() {
 nuke_all() {
   local SELF_PID=$$
   local DEXT_BUNDLE_ID="com.openjoystickdriver.VirtualHIDDevice"
-  local OBSOLETE_AGENT_LABEL="com.openjoystickdriver.service"
-  local LEGACY_DAEMON_LABEL="com.openjoystickdriver.daemon"
   local APP_PATH="/Applications/OpenJoystickDriver.app"
 
   echo "=== NUKE: killing every OJD process ==="
@@ -74,22 +72,12 @@ nuke_all() {
   done
 
   echo ""
-  echo "=== NUKE: removing application service from launchd ==="
+  echo "=== NUKE: removing main app login item ==="
   if [[ -x "$APP_PATH/Contents/MacOS/OpenJoystickDriver" ]]; then
     "$APP_PATH/Contents/MacOS/OpenJoystickDriver" --headless app login disable \
-      && echo "  application service uninstall succeeded" || true
+      && echo "  main app login item removed" || true
   fi
-  for label in "$OBSOLETE_AGENT_LABEL" "$LEGACY_DAEMON_LABEL"; do
-    launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
-    launchctl remove "$label" 2>/dev/null || true
-    launchctl unload "$HOME/Library/LaunchAgents/${label}.plist" 2>/dev/null || true
-  done
-
-  echo ""
-  echo "=== NUKE: removing LaunchAgent plist ==="
-  rm -f "$HOME/Library/LaunchAgents/${OBSOLETE_AGENT_LABEL}.plist" \
-    "$HOME/Library/LaunchAgents/${LEGACY_DAEMON_LABEL}.plist"
-  echo "  removed obsolete registration files when present"
+  echo "  legacy launchd registrations are not modified; remove stale entries manually if present"
 
   echo ""
   echo "=== NUKE: removing app from /Applications ==="
@@ -126,13 +114,6 @@ nuke_all() {
     echo "  ✓ No OJD processes running"
   else
     echo "  ✗ Still running: $STRAY"
-  fi
-
-  if launchctl list 2>/dev/null \
-    | grep -Eq "$OBSOLETE_AGENT_LABEL|$LEGACY_DAEMON_LABEL"; then
-    echo "  ✗ Obsolete agent registration still in launchd"
-  else
-    echo "  ✓ No obsolete agent registration in launchd"
   fi
 
   if [[ -d "$APP_PATH" ]]; then
@@ -423,17 +404,7 @@ rebuild_fast() {
   echo "  Copied to $APP_DST"
 
   echo ""
-  echo "=== Step 4: Register and start main app ==="
-  local APP_BIN="$APP_DST/Contents/MacOS/OpenJoystickDriver"
-  if "$APP_BIN" --headless app start; then
-    echo "  ✓ Main app started"
-  else
-    echo "  ✗ Main app start failed"
-    echo "    Fix: run: $APP_BIN --headless app start"
-  fi
-
-  echo ""
-  echo "=== Step 5: Launch app ==="
+  echo "=== Step 4: Launch app ==="
   open "$APP_DST" || true
   echo "  Launched OpenJoystickDriver"
 }
@@ -471,11 +442,11 @@ rebuild_full() {
   echo ""
   echo "=== Step 5: Submit sysext activation ==="
   local APP_BIN="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
-  if "$APP_BIN" --headless extension activate; then
+  if "$APP_BIN" --headless extension enable; then
     echo "  ✓ Sysext activation request submitted"
   else
     echo "  ✗ Sysext activation request failed"
-    echo "    Fix: run: $APP_BIN --headless extension activate"
+    echo "    Fix: run: $APP_BIN --headless extension enable"
   fi
 
   echo ""
@@ -524,17 +495,8 @@ rebuild_full() {
   fi
 
   echo ""
-  echo "=== Step 8: Restart application service ==="
-  local APP_BIN="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
-  if "$APP_BIN" --headless app restart; then
-    echo "  ✓ Application service restarted"
-  else
-    echo "  ✗ Application service restart failed"
-    echo "    Fix: run: $APP_BIN --headless app start"
-  fi
-
   echo ""
-  echo "=== Step 9: Diagnostics ==="
+  echo "=== Step 8: Diagnostics ==="
   echo "--- Dext os_log (last 60s) ---"
   $LOG show --last 60s --predicate 'eventMessage CONTAINS "OpenJoystickVirtualHID"' --info --debug --style compact 2>/dev/null || echo "(none)"
   echo ""

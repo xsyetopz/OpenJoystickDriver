@@ -31,34 +31,31 @@ enum CLIInvocation: Equatable {
   case controllerOutput([String])
   case mapping([String])
   case appStatus([String])
-  case appStart
-  case appRestart
   case appLogin(enable: Bool)
   case appLogs([String])
   case `extension`(CLIExtensionAction)
   case permissions([String])
   case compatibility(CLICompatibilityAction)
+  case selfTest([String])
   case diagnose(CLIDiagnosticAction)
   case updateCheck([String])
 }
 
 enum CLIExtensionAction: Equatable {
   case status
-  case activate
-  case deactivate
+  case enable
+  case disable
 }
 
 enum CLICompatibilityAction: Equatable {
-  case get
+  case show
   case set(String)
   case reset
 }
 
 enum CLIDiagnosticAction: Equatable {
   case summary
-  case selfTest([String])
   case runtime([String])
-  case browserGamepad([String])
   case gameControllerCatalog([String])
   case report([String])
 }
@@ -93,10 +90,6 @@ struct CLIGrammar {
       PhysicalOutputCommand().run(arguments: arguments)
     case let .mapping(arguments):
       MappingCommand().run(arguments: arguments)
-    case .appStart:
-      StartApplicationServiceCommand().run()
-    case .appRestart:
-      RestartApplicationServiceCommand().run()
     case let .appLogin(enable):
       if enable {
         InstallCommand().run()
@@ -108,26 +101,25 @@ struct CLIGrammar {
     case let .extension(action):
       switch action {
       case .status: SystemExtensionCommand().run(arguments: ["status"])
-      case .activate: SystemExtensionCommand().run(arguments: ["install"])
-      case .deactivate: SystemExtensionCommand().run(arguments: ["uninstall"])
+      case .enable: SystemExtensionCommand().run(arguments: ["enable"])
+      case .disable: SystemExtensionCommand().run(arguments: ["disable"])
       }
     case let .permissions(arguments):
       PermissionsCommand().run(arguments: arguments)
     case let .compatibility(action):
       switch action {
-      case .get: CompatibilityCommand().run(arguments: ["status"])
+      case .show: CompatibilityCommand().run(arguments: ["status"])
       case let .set(identity): CompatibilityCommand().run(arguments: [identity])
       case .reset: ResetSettingsCommand().run()
       }
+    case let .selfTest(arguments):
+      SelfTestCommand().run(arguments: arguments)
     case let .diagnose(action):
       switch action {
       case .summary: DiagnoseCommand().run()
-      case let .selfTest(arguments): SelfTestCommand().run(arguments: arguments)
       case let .runtime(arguments): DiagnoseCommand().run(arguments: ["runtime"] + arguments)
-      case let .browserGamepad(arguments):
-        DiagnoseCommand().run(arguments: ["browser-gamepad"] + arguments)
       case let .gameControllerCatalog(arguments):
-        DiagnoseCommand().run(arguments: ["gamecontroller-catalog"] + arguments)
+        DiagnoseCommand().run(arguments: ["catalog"] + arguments)
       case let .report(arguments): ReportCommand().run(arguments: ["create"] + arguments)
       }
     case let .updateCheck(arguments):
@@ -157,7 +149,7 @@ struct CLIGrammar {
       return .status(trailing)
     case "controller":
       return try parseController(trailing)
-    case "mapping":
+    case "map":
       guard !trailing.isEmpty else { throw CLIParseError.missingSubcommand(command) }
       return .mapping(trailing)
     case "app":
@@ -165,9 +157,11 @@ struct CLIGrammar {
     case "extension":
       return try parseExtension(trailing)
     case "permissions":
-      return .permissions(trailing)
-    case "compatibility":
-      return try parseCompatibility(trailing)
+      return try parsePermissions(trailing)
+    case "compat":
+      return try parseCompat(trailing)
+    case "test":
+      return .selfTest(trailing)
     case "diagnose":
       return try parseDiagnose(trailing)
     case "update":
@@ -184,7 +178,7 @@ struct CLIGrammar {
     case "list":
       try requireEmpty(trailing, command: "controller list")
       return .controllerList
-    case "input":
+    case "state":
       return .controllerInput(["state"] + trailing)
     case "packets", "watch":
       return .controllerInput([command] + trailing)
@@ -202,12 +196,6 @@ struct CLIGrammar {
     case "status":
       try requireStatusOptions(trailing, command: "app status")
       return .appStatus(trailing)
-    case "start":
-      try requireEmpty(trailing, command: "app start")
-      return .appStart
-    case "restart":
-      try requireEmpty(trailing, command: "app restart")
-      return .appRestart
     case "logs":
       return .appLogs(trailing)
     case "login":
@@ -228,43 +216,50 @@ struct CLIGrammar {
     try requireEmpty(Array(arguments.dropFirst()), command: "extension \(command)")
     switch command {
     case "status": return .extension(.status)
-    case "activate": return .extension(.activate)
-    case "deactivate": return .extension(.deactivate)
+    case "enable": return .extension(.enable)
+    case "disable": return .extension(.disable)
     default: throw CLIParseError.unknownCommand("extension \(command)")
     }
   }
 
-  private static func parseCompatibility(_ arguments: [String]) throws -> CLIInvocation {
+  private static func parseCompat(_ arguments: [String]) throws -> CLIInvocation {
     guard let command = arguments.first else {
-      throw CLIParseError.missingSubcommand("compatibility")
+      throw CLIParseError.missingSubcommand("compat")
     }
     let trailing = Array(arguments.dropFirst())
     switch command {
-    case "get":
-      try requireEmpty(trailing, command: "compatibility get")
-      return .compatibility(.get)
+    case "show":
+      try requireEmpty(trailing, command: "compat show")
+      return .compatibility(.show)
     case "set":
       guard trailing.count == 1 else {
-        throw CLIParseError.unexpectedArguments(command: "compatibility set")
+        throw CLIParseError.unexpectedArguments(command: "compat set")
       }
       return .compatibility(.set(trailing[0]))
     case "reset":
-      try requireEmpty(trailing, command: "compatibility reset")
+      try requireEmpty(trailing, command: "compat reset")
       return .compatibility(.reset)
     default:
-      throw CLIParseError.unknownCommand("compatibility \(command)")
+      throw CLIParseError.unknownCommand("compat \(command)")
+    }
+  }
+
+  private static func parsePermissions(_ arguments: [String]) throws -> CLIInvocation {
+    guard let command = arguments.first else { return .permissions([]) }
+    switch command {
+    case "status", "request", "open", "explain", "help", "--help", "-h":
+      return .permissions(arguments)
+    default:
+      throw CLIParseError.unknownCommand("permissions \(command)")
     }
   }
 
   private static func parseDiagnose(_ arguments: [String]) throws -> CLIInvocation {
-    guard let command = arguments.first else { throw CLIParseError.missingSubcommand("diagnose") }
+    guard let command = arguments.first else { return .diagnose(.summary) }
     let trailing = Array(arguments.dropFirst())
     switch command {
-    case "summary": return .diagnose(.summary)
-    case "self-test": return .diagnose(.selfTest(trailing))
     case "runtime": return .diagnose(.runtime(trailing))
-    case "browser-gamepad": return .diagnose(.browserGamepad(trailing))
-    case "gamecontroller-catalog": return .diagnose(.gameControllerCatalog(trailing))
+    case "catalog": return .diagnose(.gameControllerCatalog(trailing))
     case "report": return .diagnose(.report(trailing))
     default: throw CLIParseError.unknownCommand("diagnose \(command)")
     }
@@ -318,13 +313,14 @@ enum CLIHelp {
 
   Commands:
   status [--json]
-    controller list|input|packets|watch|output
-    mapping <command>
-    app status|start|restart|login enable|disable|logs
-    extension status|activate|deactivate
-    permissions [status|request|open-settings|explain]
-    compatibility get|set <identity>|reset
-    diagnose summary|self-test|runtime|browser-gamepad|gamecontroller-catalog|report
+    controller list|state|packets|watch|output
+    map <command>
+    app status|login enable|disable|logs
+    extension status|enable|disable
+    permissions [status|request|open|explain]
+    compat show|set <identity>|reset
+    test [positive-seconds]
+    diagnose [runtime|catalog|report]
     update check
 
   Shared options are accepted by the command that owns them. Use `--json` for

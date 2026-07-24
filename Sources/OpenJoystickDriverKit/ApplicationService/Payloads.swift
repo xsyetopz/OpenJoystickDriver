@@ -246,7 +246,7 @@ public struct ApplicationServiceVirtualDeviceSelfTestPayload: Codable, Sendable 
       userSpaceReportEvents: try values.decode(Int.self, forKey: .userSpaceReportEvents),
       userSpaceRequired: try values.decode(Bool.self, forKey: .userSpaceRequired),
       userSpaceStatus: try values.decode(String.self, forKey: .userSpaceStatus),
-      driverKitRequired: try values.decodeIfPresent(Bool.self, forKey: .driverKitRequired) ?? true,
+      driverKitRequired: try values.decode(Bool.self, forKey: .driverKitRequired),
       driverKitInputReportDelta: try values.decodeIfPresent(
         Int.self,
         forKey: .driverKitInputReportDelta

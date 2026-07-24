@@ -14,7 +14,7 @@ struct ControllerInputParityTests {
       "Sources/OpenJoystickDriver/ControllerInputDiagnosticService.swift",
       root: root
     )
-    #expect(cli.contains("case \"input\""))
+    #expect(cli.contains("case \"state\""))
     #expect(cli.contains("InputCommand().run"))
     #expect(command.contains("case \"state\""))
     #expect(command.contains("case \"packets\""))

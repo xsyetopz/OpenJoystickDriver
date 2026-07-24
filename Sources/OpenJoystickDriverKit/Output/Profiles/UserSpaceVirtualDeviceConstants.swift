@@ -36,10 +36,8 @@ public enum UserSpaceVirtualDeviceConstants {
     routeToken: String? = nil
   ) -> String {
     let physicalHash = hex64(fnv1a64(stableKey(for: identifier)))
-    guard let routeToken, routeToken != sharedRouteToken else {
-      return serialPrefix + physicalHash
-    }
-    return serialPrefix + routeToken + ":" + physicalHash
+    let encodedRouteToken = routeToken ?? sharedRouteToken
+    return serialPrefix + encodedRouteToken + ":" + physicalHash
   }
 
   /// Computes a stable LocationID in the OJD namespace for this physical identifier.
@@ -57,16 +55,14 @@ public enum UserSpaceVirtualDeviceConstants {
   }
 
   /// Returns the encoded route token carried by an OJD user-space serial.
-  ///
-  /// Legacy single-device serials map to ``sharedRouteToken``.
   public static func routeToken(from serial: String?) -> String? {
     guard let serial, serial.hasPrefix(serialPrefix) else { return nil }
     let suffix = String(serial.dropFirst(serialPrefix.count))
     let parts = suffix.split(separator: ":", omittingEmptySubsequences: false)
-    if parts.count >= 2, !parts[0].isEmpty {
-      return String(parts[0])
-    }
-    return sharedRouteToken
+    guard parts.count == 2, !parts[0].isEmpty, parts[1].count == 16,
+      parts[1].allSatisfy(\.isHexDigit)
+    else { return nil }
+    return String(parts[0])
   }
 
   /// Returns the stable dedicated route token for one consumer bundle root.

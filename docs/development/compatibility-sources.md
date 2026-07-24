@@ -45,7 +45,7 @@ SDL mappings and HIDAPI code show how consumer identity affects naming, button o
 5. Unknown standard HID devices may use descriptor-driven input. Vendor protocols need records.
 6. The CLI and application runtime use the same application-service and diagnostic services.
 7. Duplicate physical and virtual devices are treated as an ownership bug, not a mapping fix.
-8. Hardware and browser claims require observed evidence for the named path.
+8. Hardware claims require observed evidence for the named path.
 
 ## Gates for new work
 

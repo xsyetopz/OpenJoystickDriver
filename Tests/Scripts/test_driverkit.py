@@ -183,12 +183,11 @@ validate_driverkit
 
         self.assertEqual(result.returncode, 0, result.stderr)
 
-    def test_legacy_profile_mode_omits_generated_userclient_access_and_rejects_release(self):
+    def test_legacy_host_profile_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             temporary = Path(directory)
             profile = temporary / "host.plist"
             output = temporary / "resolved.plist"
-            signed_legacy = temporary / "signed-legacy.plist"
             profile.write_bytes(
                 plistlib.dumps(
                     {
@@ -204,7 +203,6 @@ validate_driverkit
             script = f"""
 PROJECT_DIR={ROOT!s}
 OJD_ENV=dev
-OJD_USE_LEGACY_DRIVERKIT_PROFILE=1
 CI=false
 DEVELOPMENT_TEAM=ABCDEF1234
 die() {{ echo "ERROR: $*" >&2; exit 2; }}
@@ -215,29 +213,6 @@ source scripts/build-tools/driverkit.sh
 DRIVERKIT_ROOT={temporary!s}/driverkit
 GUI_ENTITLEMENTS_TEMPLATE=Sources/OpenJoystickDriver/App/Host.entitlements
 _resolve_host_entitlements {profile!s} {output!s}
-python3 - {output!s} <<'PY'
-import plistlib, sys
-value = plistlib.loads(open(sys.argv[1], "rb").read())
-assert "com.apple.developer.driverkit.userclient-access" not in value
-assert value["com.apple.developer.hid.virtual.device"] is True
-PY
-SIGNED_ENTITLEMENTS={output!s}
-_require_signed_host_access ignored.app {profile!s}
-python3 - {output!s} {signed_legacy!s} <<'PY'
-import plistlib, sys
-value = plistlib.loads(open(sys.argv[1], "rb").read())
-value["com.apple.developer.driverkit.userclient-access"] = [
-    "com.openjoystickdriver.VirtualHIDDevice\\ncom.openjoystickdriver.daemon"
-]
-open(sys.argv[2], "wb").write(plistlib.dumps(value))
-PY
-SIGNED_ENTITLEMENTS={signed_legacy!s}
-if ( _require_signed_host_access ignored.app {profile!s} ) >/dev/null 2>&1; then exit 7; fi
-OJD_ENV=release
-if ( _legacy_driverkit_profile_enabled ) >/dev/null 2>&1; then exit 9; fi
-OJD_ENV=dev
-CI=true
-if ( _legacy_driverkit_profile_enabled ) >/dev/null 2>&1; then exit 8; fi
 """
             result = subprocess.run(
                 ["bash", "-c", script],
@@ -247,9 +222,8 @@ if ( _legacy_driverkit_profile_enabled ) >/dev/null 2>&1; then exit 8; fi
                 text=True,
             )
 
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertIn("Compatibility output remains available", result.stderr)
-            self.assertIn("relay diagnostics are unavailable", result.stderr)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("incorrect DriverKit user-client value", result.stderr)
 
     def test_universal_binary_gate_uses_lipo_architecture_names(self):
         tooling = (ROOT / "scripts/build-tools/driverkit.sh").read_text()

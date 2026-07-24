@@ -34,8 +34,8 @@ Verify that each `USB_RX` packet produces only the matching `EVENT` output. If c
 
 ## Verify the app and consumers
 
-In Controller Settings, enable Live and confirm LB and RB labels and every active control match the physical input. Use `input watch` if the Settings window is unavailable. Then compare `generic-hid` and `sdl2-3` with the browser diagnostic in Chrome, Firefox, and Safari.
+In Controller Settings, enable Live and confirm LB and RB labels and every active control match the physical input. Use `controller watch` if the Settings window is unavailable.
 
-Attach the complete record-probe output, macOS version, Mac model, exact OJD commit, F310 mode-switch position, whether `--detach` was required, Controller Settings Live or CLI input results, and per-browser results to issue #11. Raw packets are included; inspect the output before publishing.
+Attach the complete record-probe output, macOS version, Mac model, exact OJD commit, F310 mode-switch position, whether `--detach` was required, and Controller Settings Live or CLI state results to issue #11. Raw packets are included; inspect the output before publishing.
 
 Schema validation and deterministic fixtures do not replace this physical mapping test.

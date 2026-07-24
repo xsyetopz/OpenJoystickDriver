@@ -67,7 +67,7 @@ configure_ojd_gamecontroller_route() {
 
   [[ -x "$CLI_BIN" ]] || die "OpenJoystickDriver CLI not found at $CLI_BIN or $APP_BIN"
 
-  run_limited_command 8 "$CLI_BIN" --headless compatibility set apple-gamecontroller >/dev/null || {
+  run_limited_command 8 "$CLI_BIN" --headless compat set apple-gamecontroller >/dev/null || {
     echo "WARN: could not set OJD compatibility identity to apple-gamecontroller" >&2
   }
 }
@@ -97,7 +97,7 @@ configure_ojd_hidapi_x360_route() {
 
   [[ -x "$CLI_BIN" ]] || die "OpenJoystickDriver CLI not found at $CLI_BIN or $APP_BIN"
 
-  run_limited_command 8 "$CLI_BIN" --headless compatibility set x360-hid >/dev/null || {
+  run_limited_command 8 "$CLI_BIN" --headless compat set x360-hid >/dev/null || {
     echo "WARN: could not set OJD compatibility identity to x360-hid" >&2
   }
 }

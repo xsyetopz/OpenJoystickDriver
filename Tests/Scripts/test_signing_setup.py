@@ -92,6 +92,7 @@ class SigningSetupTests(unittest.TestCase):
             write_profile(host, "OpenJoystickDriver Development")
             write_profile(driver, "OpenJoystickDriver DriverKit Development")
             dev_env = root / ".env.dev"
+            dev_env.write_text('CODESIGN_IDENTITY="old-identity"\n')
             release_env = root / ".env.release"
             environment = os.environ.copy()
             environment.update(
@@ -120,9 +121,6 @@ class SigningSetupTests(unittest.TestCase):
             self.assertIn('CODESIGN_IDENTITY="development-identity-sha1"', dev_env.read_text())
             self.assertIn('DEVELOPMENT_TEAM="ABCDEF1234"', dev_env.read_text())
             self.assertIn(
-                'OJD_USE_LEGACY_DRIVERKIT_PROFILE="0"', dev_env.read_text()
-            )
-            self.assertIn(
                 'GUI_PROVISIONING_PROFILE="$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver.provisionprofile"',
                 dev_env.read_text(),
             )
@@ -146,12 +144,10 @@ class SigningSetupTests(unittest.TestCase):
                 text=True,
             )
 
-            self.assertEqual(legacy_result.returncode, 0, legacy_result.stderr)
+            self.assertNotEqual(legacy_result.returncode, 0)
             self.assertIn(
-                'OJD_USE_LEGACY_DRIVERKIT_PROFILE="1"', dev_env.read_text()
+                "Unsupported DriverKit user-client value", legacy_result.stderr
             )
-            self.assertIn("Compatibility output", legacy_result.stderr)
-            self.assertIn("relay diagnostics", legacy_result.stderr)
 
     def test_doctor_reports_development_ready_without_publisher_assets(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -210,7 +206,6 @@ class SigningSetupTests(unittest.TestCase):
             environment = os.environ.copy()
             environment["PATH"] = f"{bin_dir}:{environment['PATH']}"
             environment["OJD_PROFILES_DIR"] = str(profiles)
-            environment["OJD_USE_LEGACY_DRIVERKIT_PROFILE"] = "0"
 
             result = subprocess.run(
                 [sys.executable, str(ROOT / "scripts/signing/doctor.py")],
@@ -228,7 +223,7 @@ class SigningSetupTests(unittest.TestCase):
             )
             self.assertIn("./scripts/ojd rebuild dev", result.stdout)
 
-    def test_doctor_accepts_known_legacy_profile_only_in_explicit_dev_mode(self):
+    def test_doctor_rejects_legacy_host_profile(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)
             profiles = root / "profiles"
@@ -285,9 +280,6 @@ class SigningSetupTests(unittest.TestCase):
                 {
                     "PATH": f"{bin_dir}:{environment['PATH']}",
                     "OJD_PROFILES_DIR": str(profiles),
-                    "OJD_USE_LEGACY_DRIVERKIT_PROFILE": "1",
-                    "OJD_ENV": "dev",
-                    "CI": "false",
                 }
             )
 
@@ -300,13 +292,12 @@ class SigningSetupTests(unittest.TestCase):
                 text=True,
             )
 
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertIn("READY (COMPATIBILITY OUTPUT ONLY)", result.stdout)
-            self.assertIn("generated host signing omits DriverKit", result.stdout)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("Development signing: BLOCKED", result.stdout)
             self.assertIn(
-                "Compatibility IOHIDUserDevice output remains available", result.stdout
+                "host development profile: com.apple.developer.driverkit.userclient-access",
+                result.stdout,
             )
-            self.assertIn("DriverKit relay diagnostics require", result.stdout)
 
 
 if __name__ == "__main__":

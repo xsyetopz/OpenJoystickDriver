@@ -9,11 +9,11 @@ struct SystemExtensionCommand {
     let subcommand = arguments.first ?? "status"
     switch subcommand {
     case "status": printStatus()
-    case "install": submitActivation()
-    case "uninstall": submitDeactivation()
+    case "enable": submitActivation()
+    case "disable": submitDeactivation()
     case "--help", "-h", "help": printHelp()
     default:
-      print("Unknown extension command: \(subcommand)")
+      CLIOutput.error("Unknown extension command: \(subcommand)")
       printHelp()
       exit(1)
     }
@@ -22,12 +22,12 @@ struct SystemExtensionCommand {
   private func printHelp() {
     print(
       """
-      Usage: OpenJoystickDriver --headless extension <status|activate|deactivate>
+      Usage: OpenJoystickDriver --headless extension <status|enable|disable>
 
       Commands:
         status     Show registered OpenJoystickDriver system extensions
-        install    Submit DriverKit system extension activation request
-        uninstall  Submit DriverKit system extension deactivation request
+        enable     Submit DriverKit system extension activation request
+        disable    Submit DriverKit system extension deactivation request
       """
     )
   }
@@ -53,8 +53,8 @@ struct SystemExtensionCommand {
     case .absent:
       print("OS registration: absent")
     case .unavailable(let reason):
-      print("OS registration: unavailable")
-      print("ERROR: \(reason)")
+      CLIOutput.diagnostic("OS registration: unavailable")
+      CLIOutput.error(reason)
       exit(1)
     }
   }
@@ -63,8 +63,8 @@ struct SystemExtensionCommand {
     requireApplicationsBundleOrExit()
     requireValidBundleSignatureOrExit(action: "Install system extension")
     guard bundleContainsSystemExtension() else {
-      print("ERROR: App bundle does not contain \(ojdSystemExtensionID).dext")
-      print("Fix: run ./scripts/ojd rebuild dev, then retry from /Applications.")
+      CLIOutput.error("App bundle does not contain \(ojdSystemExtensionID).dext")
+      CLIOutput.diagnostic("Fix: run ./scripts/ojd rebuild dev, then retry from /Applications.")
       exit(1)
     }
     submit(.activation)
@@ -82,16 +82,22 @@ struct SystemExtensionCommand {
     let result = submission.wait(timeout: 60)
     switch result {
     case .completed(let message):
-      print(message)
+      CLIOutput.diagnostic(message)
     case .requiresApproval:
-      print("System extension request submitted and requires approval in System Settings.")
-      print("Open System Settings > General > Login Items & Extensions > Driver Extensions.")
+      CLIOutput.diagnostic(
+        "System extension request submitted and requires approval in System Settings."
+      )
+      CLIOutput.diagnostic(
+        "Open System Settings > General > Login Items & Extensions > Driver Extensions."
+      )
     case .timedOut:
-      print("System extension request did not finish within 60s.")
-      print("Check System Settings for an approval prompt, then run sysext status.")
+      CLIOutput.error("System extension request did not finish within 60s.")
+      CLIOutput.diagnostic(
+        "Check System Settings for an approval prompt, then run extension status."
+      )
       exit(2)
     case .failed(let error):
-      print(error)
+      CLIOutput.error(error)
       exit(1)
     }
   }
@@ -175,7 +181,7 @@ private final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
     actionForReplacingExtension existing: OSSystemExtensionProperties,
     withExtension ext: OSSystemExtensionProperties
   ) -> OSSystemExtensionRequest.ReplacementAction {
-    print(
+    CLIOutput.diagnostic(
       "Replacing \(existing.bundleIdentifier) v\(existing.bundleVersion) " +
         "with v\(ext.bundleVersion)."
     )

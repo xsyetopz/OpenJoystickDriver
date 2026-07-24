@@ -8,9 +8,9 @@ struct InstallCommand {
     requireValidBundleSignatureOrExit(action: "Install")
     do {
       try ApplicationServiceManager.install()
-      print("OpenJoystickDriver registered to launch at login.")
+      CLIOutput.stdout("OpenJoystickDriver registered to launch at login.")
     } catch {
-      print("Install failed: \(error.localizedDescription)")
+      CLIOutput.error("Install failed: \(error.localizedDescription)")
       exit(1)
     }
   }

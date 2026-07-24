@@ -16,34 +16,8 @@ struct ApplicationServiceManagerTests {
     #expect(!url.path.contains("OpenJoystickDriverDaemon"))
   }
 
-  @Test("main app and obsolete registrations have distinct identities")
+  @Test("main app has a stable service identity")
   func serviceIdentity() {
     #expect(ApplicationServiceManager.label == "com.openjoystickdriver")
-    #expect(ApplicationServiceManager.obsoleteAgentLabel == "com.openjoystickdriver.service")
-    #expect(ApplicationServiceManager.legacyDaemonLabel == "com.openjoystickdriver.daemon")
-  }
-
-  @Test(
-    "migration waits for both obsolete jobs and the daemon process",
-    arguments: [
-      (false, false, false, true),
-      (true, false, false, false),
-      (false, true, false, false),
-      (false, false, true, false),
-    ]
-  )
-  func obsoleteRuntimeExitPolicy(
-    agentIsLoaded: Bool,
-    daemonIsLoaded: Bool,
-    daemonProcessIsRunning: Bool,
-    expected: Bool
-  ) {
-    #expect(
-      ApplicationServiceManager.obsoleteRuntimesHaveStopped(
-        agentIsLoaded: agentIsLoaded,
-        daemonIsLoaded: daemonIsLoaded,
-        daemonProcessIsRunning: daemonProcessIsRunning
-      ) == expected
-    )
   }
 }

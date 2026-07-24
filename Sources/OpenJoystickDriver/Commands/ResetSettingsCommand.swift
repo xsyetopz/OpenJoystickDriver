@@ -5,6 +5,7 @@ struct ResetSettingsCommand {
   func run() {
     let client = ApplicationServiceClient()
     client.connect()
+    defer { client.disconnect() }
 
     let ok = runSyncResult {
       do {
@@ -15,11 +16,13 @@ struct ResetSettingsCommand {
     } ?? false
 
     if !ok {
-      print("ERROR: failed to reset settings (application service not running?)")
+      CLIOutput.error(
+        "Failed to reset settings. Launch the installed app and verify its permissions."
+      )
       exit(1)
     }
 
     print("OK: reset application service settings.")
-    print("Next: run compatibility set <identity> to choose the compatibility identity.")
+    print("Next: run compat set <identity> to choose the compatibility identity.")
   }
 }

@@ -54,19 +54,19 @@ struct DriverKitRelaySelfTestTests {
     #expect(!result.isSuccessful)
   }
 
-  @Test func missingRelayRequirementKeyDecodesAsStrict() throws {
+  @Test func missingRelayRequirementKeyFailsDecoding() throws {
     let original = payload(inputDelta: 1)
     let encoded = try JSONEncoder().encode(original)
     var object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
     object.removeValue(forKey: "driverKitRequired")
-    let legacyData = try JSONSerialization.data(withJSONObject: object)
+    let incompleteData = try JSONSerialization.data(withJSONObject: object)
 
-    let decoded = try JSONDecoder().decode(
-      ApplicationServiceVirtualDeviceSelfTestPayload.self,
-      from: legacyData
-    )
-
-    #expect(decoded.driverKitRequired)
+    #expect(throws: DecodingError.self) {
+      try JSONDecoder().decode(
+        ApplicationServiceVirtualDeviceSelfTestPayload.self,
+        from: incompleteData
+      )
+    }
   }
 
   @Test func requiredUserSpaceFailureControlsExitVerdict() {

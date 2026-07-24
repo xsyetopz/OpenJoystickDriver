@@ -38,25 +38,25 @@ struct LogsCommand {
         return
       }
       for snapshot in snapshots {
-        print("== \(snapshot.stream.rawValue): \(snapshot.path) ==")
+        CLIOutput.diagnostic("== \(snapshot.stream.rawValue): \(snapshot.path) ==")
         if !snapshot.exists {
-          print("(log file does not exist)")
+          CLIOutput.diagnostic("(log file does not exist)")
         } else if snapshot.lines.isEmpty {
-          print("(log file is empty)")
+          CLIOutput.diagnostic("(log file is empty)")
         } else {
-          for line in snapshot.lines { print(line) }
+          for line in snapshot.lines { CLIOutput.diagnostic(line) }
         }
-        if snapshot.truncated { print("(earlier log content omitted)") }
+        if snapshot.truncated { CLIOutput.diagnostic("(earlier log content omitted)") }
       }
     } catch {
-      print("ERROR: \(error.localizedDescription)")
+      CLIOutput.error(error.localizedDescription)
       exit(1)
     }
   }
 
   private func printPaths(_ selection: Selection) {
     for stream in streams(for: selection) {
-      print(ApplicationServiceLogService.url(for: stream).path)
+      CLIOutput.diagnostic(ApplicationServiceLogService.url(for: stream).path)
     }
   }
 
@@ -88,7 +88,7 @@ struct LogsCommand {
         Data("WARNING: \(ApplicationServiceLogService.sharingWarning)\n".utf8)
       )
     } else {
-      print("WARNING: \(ApplicationServiceLogService.sharingWarning)")
+      CLIOutput.warning(ApplicationServiceLogService.sharingWarning)
     }
   }
 
@@ -110,7 +110,7 @@ struct LogsCommand {
         guard index + 1 < arguments.count,
           let selection = Selection(rawValue: arguments[index + 1])
         else {
-          print("--stream must be stdout, stderr, or both.")
+          CLIOutput.error("--stream must be stdout, stderr, or both.")
           exit(1)
         }
         options.selection = selection
@@ -120,7 +120,7 @@ struct LogsCommand {
           let lines = Int(arguments[index + 1]),
           (1...10_000).contains(lines)
         else {
-          print("--lines must be 1...10000.")
+          CLIOutput.error("--lines must be 1...10000.")
           exit(1)
         }
         options.maximumLines = lines
@@ -132,7 +132,7 @@ struct LogsCommand {
         printHelp()
         exit(0)
       default:
-        print("Unknown logs option: \(argument)")
+        CLIOutput.error("Unknown logs option: \(argument)")
         printHelp()
         exit(1)
       }

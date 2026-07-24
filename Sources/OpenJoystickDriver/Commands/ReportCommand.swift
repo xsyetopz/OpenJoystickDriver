@@ -10,7 +10,7 @@ struct ReportCommand {
       printHelp()
       return
     } else if let first = arguments.first {
-      print("Unknown report command: \(first)")
+      CLIOutput.error("Unknown report command: \(first)")
       printHelp()
       exit(1)
     }
@@ -49,7 +49,7 @@ struct ReportCommand {
       print("Support report written to \(outputURL.path)")
       print("Review it before sharing; device product names are included.")
     } catch {
-      print("ERROR: \(error.localizedDescription)")
+      CLIOutput.error(error.localizedDescription)
       exit(1)
     }
   }

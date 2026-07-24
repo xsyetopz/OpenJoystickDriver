@@ -7,20 +7,23 @@ struct CLIGrammarTests {
     ("status", CLIInvocation.status([])),
     ("status --json", CLIInvocation.status(["--json"])),
     ("controller list", CLIInvocation.controllerList),
-    ("controller input --json", CLIInvocation.controllerInput(["state", "--json"])),
+    ("controller state --json", CLIInvocation.controllerInput(["state", "--json"])),
     ("controller packets --limit 10", CLIInvocation.controllerInput(["packets", "--limit", "10"])),
     (
       "controller watch --device device-1",
       CLIInvocation.controllerInput(["watch", "--device", "device-1"])
     ),
     ("controller output plan 1 2", CLIInvocation.controllerOutput(["plan", "1", "2"])),
-    ("mapping list --json", CLIInvocation.mapping(["list", "--json"])),
+    ("map list --json", CLIInvocation.mapping(["list", "--json"])),
     ("app status", CLIInvocation.appStatus([])),
     ("app login enable", CLIInvocation.appLogin(enable: true)),
-    ("extension activate", CLIInvocation.extension(.activate)),
-    ("permissions request", CLIInvocation.permissions(["request"])),
-    ("compatibility set sdl2-3", CLIInvocation.compatibility(.set("sdl2-3"))),
-    ("diagnose self-test 10", CLIInvocation.diagnose(.selfTest(["10"]))),
+    ("extension enable", CLIInvocation.extension(.enable)),
+    ("permissions open input", CLIInvocation.permissions(["open", "input"])),
+    ("compat show", CLIInvocation.compatibility(.show)),
+    ("compat set sdl2-3", CLIInvocation.compatibility(.set("sdl2-3"))),
+    ("test 10", CLIInvocation.selfTest(["10"])),
+    ("diagnose", CLIInvocation.diagnose(.summary)),
+    ("diagnose catalog --json", CLIInvocation.diagnose(.gameControllerCatalog(["--json"]))),
     (
       "diagnose report --output report.json",
       CLIInvocation.diagnose(.report(["--output", "report.json"]))
@@ -33,7 +36,7 @@ struct CLIGrammarTests {
 
   @Test(arguments: [
     [], ["run"], ["list"], ["input"], ["logs"], ["updates"], ["report"],
-    ["physical-output"], ["compat"], ["selftest"], ["sysext"], ["install"],
+    ["physical-output"], ["compatibility"], ["selftest"], ["sysext"], ["install"],
     ["uninstall"], ["start"], ["restart"], ["reset-settings"],
   ]) func rejectsRemovedTopLevelSpellings(arguments: [String]) {
     #expect(throws: CLIParseError.self) { try CLIGrammar(arguments: arguments) }
@@ -45,7 +48,25 @@ struct CLIGrammarTests {
     #expect(throws: CLIParseError.self) {
       try CLIGrammar(arguments: ["extension", "status", "now"])
     }
-    #expect(throws: CLIParseError.self) { try CLIGrammar(arguments: ["compatibility", "set"]) }
+    #expect(throws: CLIParseError.self) { try CLIGrammar(arguments: ["compat", "set"]) }
+  }
+
+  @Test func rejectsRetiredPublicSpellingsAtGrammarLevel() {
+    for arguments in [
+      ["controller", "input"],
+      ["mapping", "list"],
+      ["compatibility", "get"],
+      ["extension", "activate"],
+      ["extension", "deactivate"],
+      ["permissions", "open-settings"],
+      ["diagnose", "self-test"],
+      ["diagnose", "gamecontroller-catalog"],
+      ["diagnose", "summary"],
+      ["app", "start"],
+      ["app", "restart"],
+    ] {
+      #expect(throws: CLIParseError.self) { try CLIGrammar(arguments: arguments) }
+    }
   }
 
   @Test func standardHelpAndVersionFlagsRemainExplicit() throws {

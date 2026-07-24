@@ -23,12 +23,19 @@ struct InputCommand {
   func run(arguments: [String]) {
     let options = parse(arguments)
     let service = ControllerInputDiagnosticService()
-    let failure = runSyncResult {
-      await execute(options, service: service)
-    }
+    let failure = withCLIShutdownCleanup(
+      {
+        runSync { await service.disconnect() }
+      },
+      {
+        runSyncResult {
+          await execute(options, service: service)
+        }
+      }
+    )
     runSync { await service.disconnect() }
     if let failure {
-      print("ERROR: \(failure)")
+      CLIOutput.error(failure)
       exit(1)
     }
   }
@@ -99,7 +106,7 @@ struct InputCommand {
       try printJSON(state, pretty: true)
       return
     }
-    print("Controller input \(hex(device.vendorID)):\(hex(device.productID))")
+    print("Controller state \(hex(device.vendorID)):\(hex(device.productID))")
     print("  \(formatted(state))")
   }
 
@@ -115,7 +122,7 @@ struct InputCommand {
       runtimeIdentifier: device.runtimeIdentifier
     )
     let selected = Array(entries.suffix(limit))
-    warnAboutRawPackets(json: json)
+    warnAboutRawPackets()
 
     if json {
       try printJSON(selected, pretty: true)
@@ -207,14 +214,10 @@ struct InputCommand {
     print(output)
   }
 
-  private func warnAboutRawPackets(json: Bool) {
+  private func warnAboutRawPackets() {
     let warning =
       "Raw controller packets may contain device-specific data. Review before sharing."
-    if json {
-      FileHandle.standardError.write(Data("WARNING: \(warning)\n".utf8))
-    } else {
-      print("WARNING: \(warning)")
-    }
+    CLIOutput.warning(warning)
   }
 
   private func parse(_ arguments: [String]) -> Options {
@@ -233,7 +236,7 @@ struct InputCommand {
     case "packets": action = .packets
     case "watch": action = .watch
     default:
-      print("Unknown input command: \(command)")
+      CLIOutput.error("Unknown controller command: \(command)")
       printHelp()
       exit(1)
     }
@@ -273,19 +276,19 @@ struct InputCommand {
         )
       case "--device":
         guard options.runtimeIdentifier == nil, index + 1 < arguments.count else {
-          print("--device requires one unique identifier.")
+          CLIOutput.error("--device requires one unique identifier.")
           exit(1)
         }
         let identifier = arguments[index + 1]
         guard !identifier.isEmpty, !identifier.hasPrefix("--") else {
-          print("--device requires one unique identifier.")
+          CLIOutput.error("--device requires one unique identifier.")
           exit(1)
         }
         options.runtimeIdentifier = identifier
         index += 2
       default:
         guard !argument.hasPrefix("--"), let value = parseIdentifier(argument) else {
-          print("Invalid input option or identifier: \(argument)")
+          CLIOutput.error("Invalid controller option or identifier: \(argument)")
           printHelp()
           exit(1)
         }
@@ -295,7 +298,7 @@ struct InputCommand {
     }
 
     guard identifiers.isEmpty || identifiers.count == 2 else {
-      print("Pass both VID and PID, or omit both when one controller is connected.")
+      CLIOutput.error("Pass both VID and PID, or omit both when one controller is connected.")
       exit(1)
     }
     if identifiers.count == 2 {
@@ -315,7 +318,7 @@ struct InputCommand {
       let value = Int(arguments[index + 1]),
       range.contains(value)
     else {
-      print("\(option) must be \(range.lowerBound)...\(range.upperBound).")
+      CLIOutput.error("\(option) must be \(range.lowerBound)...\(range.upperBound).")
       exit(1)
     }
     index += 2
@@ -336,7 +339,7 @@ struct InputCommand {
   private func printHelp() {
     print(
       [
-        "Usage: OpenJoystickDriver --headless controller <input|packets|watch> [options]",
+        "Usage: OpenJoystickDriver --headless controller <state|packets|watch> [options]",
         "",
         "Commands:",
         "  state    Print the latest normalized buttons, sticks, and triggers",

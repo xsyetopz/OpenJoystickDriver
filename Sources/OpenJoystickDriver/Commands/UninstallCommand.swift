@@ -8,9 +8,9 @@ struct UninstallCommand {
     requireValidBundleSignatureOrExit(action: "Uninstall")
     do {
       try ApplicationServiceManager.uninstall()
-      print("Main application removed from login items.")
+      CLIOutput.stdout("Main application removed from login items.")
     } catch {
-      print("Uninstall failed: \(error.localizedDescription)")
+      CLIOutput.error("Uninstall failed: \(error.localizedDescription)")
       exit(1)
     }
   }

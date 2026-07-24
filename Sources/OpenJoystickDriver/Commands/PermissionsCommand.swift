@@ -3,11 +3,15 @@ import Foundation
 import OpenJoystickDriverKit
 
 func printPermissionSnapshot(_ permissions: StatusPermissions) {
-  RuntimeStatusText.permissionLines(permissions).forEach { print($0) }
+  permissionSnapshotLines(permissions).forEach { print($0) }
 }
 
 func printPermissionSnapshot(_ snapshot: PermissionManager.Snapshot) {
   printPermissionSnapshot(StatusPermissions(snapshot))
+}
+
+func permissionSnapshotLines(_ permissions: StatusPermissions) -> [String] {
+  RuntimeStatusText.permissionLines(permissions)
 }
 
 struct PermissionsCommand {
@@ -15,11 +19,11 @@ struct PermissionsCommand {
     switch arguments.first ?? "status" {
     case "status": printStatus()
     case "request": requestAccess(arguments: Array(arguments.dropFirst()))
-    case "open-settings": openSettings(arguments: Array(arguments.dropFirst()))
+    case "open": openSettings(arguments: Array(arguments.dropFirst()))
     case "explain": printPermissionInventory()
     case "--help", "-h", "help": printHelp()
     case let command:
-      print("Unknown permissions command: \(command)")
+      CLIOutput.error("Unknown permissions command: \(command)")
       printHelp()
       exit(1)
     }
@@ -33,7 +37,7 @@ struct PermissionsCommand {
       Commands:
         status                     Show the main app permission states
         request                    Request required permissions for the main app
-        open-settings [input|output]
+        open [input|output]
                                    Open Input Monitoring or Accessibility
         explain                    Explain every permission OJD may request
       """
@@ -44,7 +48,10 @@ struct PermissionsCommand {
     let client = ApplicationServiceClient()
     client.connect()
     guard client.isConnected else {
-      print("ERROR: Could not connect to the installed main app.")
+      CLIOutput.error(
+        "Could not connect to the installed main app. Launch it manually, then verify "
+          + "Input Monitoring and Accessibility access."
+      )
       exit(1)
     }
     return client
@@ -61,18 +68,18 @@ struct PermissionsCommand {
     }
     guard let payload = result else {
       printPermissionSnapshot(localPermissionSnapshot())
-      print("")
-      print("State source: local system (main app did not return status)")
-      print("Recovery: --headless app start")
+      CLIOutput.diagnostic("")
+      CLIOutput.diagnostic("State source: local system (main app did not return status)")
+      CLIOutput.diagnostic("Recovery: launch the installed OpenJoystickDriver app")
       exit(1)
     }
 
     let status = RuntimeStatusSnapshot(payload: payload)
     printPermissionSnapshot(status.permissions)
-    print("")
-    print("State source: running main app")
+    CLIOutput.diagnostic("")
+    CLIOutput.diagnostic("State source: running main app")
     if !status.permissions.isReady {
-      print("Recovery: --headless permissions request")
+      CLIOutput.diagnostic("Recovery: run --headless permissions request")
     }
   }
 
@@ -94,7 +101,7 @@ struct PermissionsCommand {
 
   private func requestAccess(arguments: [String]) {
     guard arguments.isEmpty else {
-      print("Usage: OpenJoystickDriver --headless permissions request")
+      CLIOutput.error("Usage: OpenJoystickDriver --headless permissions request")
       exit(1)
     }
     let client = connectedClient()
@@ -103,11 +110,17 @@ struct PermissionsCommand {
       try? await client.requestRequiredAccess()
     }
     guard let snapshot = result else {
-      print("ERROR: The main app did not return permission status.")
+      CLIOutput.error(
+        "The main app did not return permission status. Launch it manually and retry."
+      )
       exit(1)
     }
     printPermissionSnapshot(snapshot)
     guard snapshot.isReady else {
+      CLIOutput.error(
+        "Required access is blocked. Grant Input Monitoring and Accessibility in "
+          + "System Settings > Privacy & Security, then retry."
+      )
       if snapshot.inputMonitoring != .granted {
         openPermissionSettings(kind: "input")
       } else {
@@ -119,7 +132,7 @@ struct PermissionsCommand {
 
   private func openSettings(arguments: [String]) {
     guard arguments.count <= 1 else {
-      print("Usage: OpenJoystickDriver --headless permissions open-settings [input|output]")
+      CLIOutput.error("Usage: OpenJoystickDriver --headless permissions open [input|output]")
       exit(1)
     }
     openPermissionSettings(kind: arguments.first ?? "input")
@@ -131,13 +144,14 @@ struct PermissionsCommand {
     case "input": pane = "Privacy_ListenEvent"
     case "output": pane = "Privacy_Accessibility"
     default:
-      print("Unknown permission kind: \(kind)")
+      CLIOutput.error("Unknown permission kind: \(kind)")
       exit(1)
     }
     let url = URL(
       string: "x-apple.systempreferences:com.apple.preference.security?\(pane)"
     )
     if let url, NSWorkspace.shared.open(url) { return }
+    CLIOutput.warning("Could not open the requested privacy pane; opening System Settings.")
     NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/System Settings.app"))
   }
 }

@@ -126,7 +126,7 @@ struct UpdatesCommand {
       case "--json": options.json = true
       case "--open": options.openRelease = true
       default:
-        print("Unknown updates option: \(argument)")
+        CLIOutput.error("Unknown updates option: \(argument)")
         printHelp()
         exit(1)
       }

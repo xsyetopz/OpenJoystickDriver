@@ -113,7 +113,7 @@ extension ForegroundConsumerOutputMonitor {
   private static func consumerClientSamples(under service: io_service_t)
     -> [ForegroundConsumerClientSample]
   {
-    let routeToken = userSpaceRouteToken(for: service)
+    guard let routeToken = userSpaceRouteToken(for: service) else { return [] }
     var iterator: io_iterator_t = 0
     let kr = IORegistryEntryCreateIterator(
       service,
@@ -189,7 +189,7 @@ extension ForegroundConsumerOutputMonitor {
       .takeRetainedValue() as? Int
   }
 
-  private static func userSpaceRouteToken(for service: io_service_t) -> String {
+  private static func userSpaceRouteToken(for service: io_service_t) -> String? {
     let serial =
       IORegistryEntryCreateCFProperty(
         service,
@@ -202,8 +202,10 @@ extension ForegroundConsumerOutputMonitor {
         kCFAllocatorDefault,
         0
       )?.takeRetainedValue() as? String
+    if serial == DriverKitRelayIdentity.serialNumber {
+      return UserSpaceVirtualDeviceConstants.sharedRouteToken
+    }
     return UserSpaceVirtualDeviceConstants.routeToken(from: serial)
-      ?? UserSpaceVirtualDeviceConstants.sharedRouteToken
   }
 
   private static func dictionaryProperty(_ key: String, entry: io_registry_entry_t) -> [String: Any]

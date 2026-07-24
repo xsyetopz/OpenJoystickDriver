@@ -67,5 +67,5 @@ manifest or index.
 
 Linux recognition proves numeric identity and Linux driver classification. It
 does not prove macOS permissions, physical USB descriptors, Apple framework
-mapping, browser behavior, or successful input/output. Those require runtime
+mapping or successful input/output. Those require runtime
 descriptor discovery and hardware evidence.

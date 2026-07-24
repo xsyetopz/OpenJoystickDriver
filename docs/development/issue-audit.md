@@ -33,7 +33,7 @@ Dependency baseline:
 | [#18 Xbox One 1537](https://github.com/xsyetopz/OpenJoystickDriver/issues/18) | `045E:02D1` uses GIP with configuration 1 and endpoints `0x81`/`0x01`; handshake, all controls, Guide, LED, rumble, and reconnect work through OJD without blocking unsupported devices. | Reporter hardware proved the protocol through IOUSBHost. The record contains the verified configuration/endpoints, raw-USB admission rejects unsupported devices, and parser/record tests pass. SwiftUSB 0.1.2 contains the lifetime fix. | **Partial: protocol resolved; production transport unverified.** | The reporter or equivalent hardware must show OJD's SwiftUSB/libusb path opens successfully and completes the [1537 procedure](../testing/xbox/1537.md). The prior production open returned `LIBUSB_ERROR_NO_DEVICE`. |
 | [#19 Wolverine V2](https://github.com/xsyetopz/OpenJoystickDriver/issues/19) | `1532:0A29` selects GIP on interface 0 endpoints `0x81`/`0x01`, then proves input decoding, reconnect, indicator, and rumble. | Linux `xpad.c` explicitly classifies `1532:0A29` as Xbox One/GIP. OJD pins the locally captured interrupt endpoints; the announce packet proves GIP classification. Unsupported Share, paddles, forced configuration, and delay claims are intentionally absent. | **Partial: classification and endpoints implemented.** | Complete the [Wolverine V2 procedure](../testing/razer/wolverine-v2.md) on hardware. |
 | [#21 Nacon Revolution X Pro](https://github.com/xsyetopz/OpenJoystickDriver/issues/21) | `3285:0634` selects GIP on interface 0 endpoints `0x87`/`0x07`, stays stable through continuous input, and supports the observed controls without a synthetic host status packet. | A local override and generated record select GIP/xboxOne with the captured endpoints and profile-scoped keep-alive disabled. GIP framing accepts split, stacked, and base-128 length frames and builds requested ACKs from the Linux/xone message layout; chunk payload reassembly remains out of scope. Provenance remains unverified. | **Partial: profile and protocol handling implemented; hardware unverified.** | Run the [Nacon Revolution X Pro procedure](../testing/nacon-revolution-x.md), especially reconnect, continuous input, and proof that no host `0x03` is emitted. |
-| DriverKit to SwifterKit | The manual DriverKit project is absent; generation is deterministic; host and extension policies are exact; the extension builds for supported architectures; signed activation and relay delivery pass without replacing the consumer gamepad. | SwifterKit owns generation and host transport at reviewed revision `564a77c`. Its generated HID project links only HID/base DriverKit. The signed version-2 dext is activated on macOS 15.7.7 and the kernel reports `start(...) ok`. Normal controller events reach only `CompatibilityOutputDispatcher`; DriverKit is diagnostic-only. Self-test independently probes Compatibility with neutral reports and derives relay strictness from the signed host entitlement. | **Migration and signed dext runtime resolved; host relay delivery blocked by the pending exact entitlement grant.** | Replace the legacy host profile after Apple approves the exact single-relay grant, then run the installed relay self-test. Until then, self-test reports relay delivery as optional and inconclusive while requiring Compatibility delivery. |
+| DriverKit to SwifterKit | The manual DriverKit project is absent; generation is deterministic; host and extension policies are exact; the extension builds for supported architectures; signed activation and relay delivery pass without replacing the consumer gamepad. | SwifterKit owns generation and host transport at reviewed revision `564a77c`. Its generated HID project links only HID/base DriverKit. The signed version-2 dext is activated on macOS 15.7.7 and the kernel reports `start(...) ok`. Normal controller events reach only `CompatibilityOutputDispatcher`; DriverKit is diagnostic-only. Self-test independently probes Compatibility with neutral reports and derives relay strictness from the signed host entitlement. | **Migration and signed dext runtime resolved; current exact entitlement path is enforced.** | Run the installed relay self-test with a host profile containing only `com.openjoystickdriver.VirtualHIDDevice`. |
 
 ## Code-level gates
 
@@ -72,17 +72,14 @@ macOS 15.7.7. The observed runtime state was:
 - the registered dext matched the app-embedded binary by SHA-256;
 - `otool -L` showed only HIDDriverKit, base DriverKit, and libc++;
 - the kernel reported `SwifterKitRuntimeService::start(...) ok`;
-- `--headless diagnose self-test 2` observed four Compatibility reports, reported the
+- `--headless test 2` observed four Compatibility reports, reported the
   Compatibility verdict as passed, reported DriverKit as optional and
   inconclusive, and exited successfully.
 
-The installed host intentionally omits
-`com.apple.developer.driverkit.userclient-access` while the only approved host
-profile contains Apple's malformed legacy value. This permits the app and
-Compatibility output to run, but it prevents the relay self-test from opening
-the DriverKit user client. The installed self-test reports that relay diagnostic
-as optional and inconclusive; a failed Compatibility probe still fails the
-command. After Apple approves the corrected grant, replace the profiles and rerun:
+Earlier installed evidence recorded a host that omitted
+`com.apple.developer.driverkit.userclient-access` while its profile contained a
+malformed legacy value. Current signing tooling rejects that profile and requires
+the exact single-relay grant. Reinstall corrected profiles and rerun:
 
 ```bash
 ./scripts/ojd signing install-profiles

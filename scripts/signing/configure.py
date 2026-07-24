@@ -112,31 +112,19 @@ def profile_has_entitlement(path: str, key: str) -> bool:
 
 
 relay_bundle_id = "com.openjoystickdriver.VirtualHIDDevice"
-legacy_userclient_value = f"{relay_bundle_id}\ncom.openjoystickdriver.daemon"
 
 
-def development_host_profile_mode(path: str) -> str:
+def require_development_host_profile_entitlements(path: str) -> None:
     entitlements = decode_profile(path).get("Entitlements") or {}
     actual = entitlements.get("com.apple.developer.driverkit.userclient-access")
     if actual == [relay_bundle_id]:
-        return "0"
-    if actual == [legacy_userclient_value]:
-        print(
-            "WARN: The host development profile contains Apple's approved legacy "
-            "DriverKit user-client value. Development fallback is enabled. The "
-            "generated host signature omits DriverKit user-client access so the app "
-            "can launch and provide Compatibility output. DriverKit relay diagnostics "
-            "remain unavailable until the corrected grant is approved.",
-            file=sys.stderr,
-        )
-        return "1"
+        return
     raise SystemExit(
         "ERROR: Unsupported DriverKit user-client value in host development profile.\n"
         f"  profile: {path}\n"
         f"  actual: {actual!r}\n"
         f"  expected: {[relay_bundle_id]!r}\n"
-        "The only temporary exception is the known Apple-approved value containing "
-        "the removed daemon bundle ID."
+        "Regenerate the profile after requesting the exact single-relay entitlement."
     )
 
 must_exist(gui_dev_profile, "GUI dev provisioning profile")
@@ -163,7 +151,7 @@ warn_missing_entitlement(
     "Compatibility output requires this entitlement.",
 )
 dev_team = team_id_from_profile(gui_dev_profile)
-legacy_driverkit_profile = development_host_profile_mode(gui_dev_profile)
+require_development_host_profile_entitlements(gui_dev_profile)
 
 # Prefer exact certificate match with provisioning profiles (handles multiple teams/idents cleanly).
 def pick_identity_matching_profile(prefix: str, profile_path: str) -> str:
@@ -245,7 +233,11 @@ def shell_quote(value: str) -> str:
     return '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"'
 
 
-def update_env_file(path: pathlib.Path, header: str, values: dict[str, str]) -> None:
+def update_env_file(
+    path: pathlib.Path,
+    header: str,
+    values: dict[str, str],
+) -> None:
     existing = path.read_text(encoding="utf-8") if path.exists() else ""
     lines = existing.splitlines()
     seen: set[str] = set()
@@ -282,7 +274,6 @@ update_env_file(
         "DEVELOPMENT_TEAM": dev_team,
         "DEXT_BUILD_PROFILE": dext_build_profile_name,
         "GUI_PROVISIONING_PROFILE": f"$HOME/Library/MobileDevice/Provisioning Profiles/{pathlib.Path(gui_dev_profile).name}",
-        "OJD_USE_LEGACY_DRIVERKIT_PROFILE": legacy_driverkit_profile,
     },
 )
 
@@ -327,7 +318,6 @@ update_env_file(
         "DEXT_BUILD_IDENTITY": apple_dev_identity,
         "DEXT_BUILD_PROFILE": dext_build_profile_name,
         "GUI_PROVISIONING_PROFILE": f"$HOME/Library/MobileDevice/Provisioning Profiles/{pathlib.Path(gui_devid_profile).name}",
-        "OJD_USE_LEGACY_DRIVERKIT_PROFILE": "0",
     },
 )
 

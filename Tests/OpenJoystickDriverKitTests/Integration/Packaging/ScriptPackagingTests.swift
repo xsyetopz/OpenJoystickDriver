@@ -7,7 +7,7 @@ struct ScriptPackagingTests {
       .appendingPathComponent("justfile")
     let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
 
-    #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.5\""))
+    #expect(justfile.contains("release-local-install version=\"0.5.0-beta.1\""))
     #expect(justfile.contains("OJD_ENV=release ./scripts/ojd package release \"{{version}}\""))
     #expect(justfile.contains("cp -R .build/debug/OpenJoystickDriver.app /Applications/"))
   }
@@ -23,9 +23,9 @@ struct ScriptPackagingTests {
     let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
     let bumpScript = try String(contentsOf: bumpURL, encoding: .utf8)
 
-    #expect(defaults.contains("OJD_DEFAULT_BUNDLE_SHORT_VERSION=\"0.5.0-alpha.5\""))
+    #expect(defaults.contains("OJD_DEFAULT_BUNDLE_SHORT_VERSION=\"0.5.0-beta.1\""))
     #expect(bundles.contains("OJD_DEFAULT_BUNDLE_SHORT_VERSION"))
-    #expect(justfile.contains("release-local-install version=\"0.5.0-alpha.5\""))
+    #expect(justfile.contains("release-local-install version=\"0.5.0-beta.1\""))
     #expect(bumpScript.contains("justfile"))
     #expect(!bundles.contains("0.5.0-alpha.3"))
     #expect(!justfile.contains("0.5.0-alpha.3"))

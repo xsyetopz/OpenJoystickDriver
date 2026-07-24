@@ -1,11 +1,10 @@
 import Foundation
 import OpenJoystickDriverKit
-import SwiftUSB
 
 struct ListCommand {
   func run() {
-    print("Scanning for game controllers...")
-    print("")
+    CLIOutput.diagnostic("Scanning for game controllers...")
+    CLIOutput.diagnostic("")
     if checkApplicationServiceAndListDevices() { return }
     handleDirectScan()
   }
@@ -38,44 +37,48 @@ struct ListCommand {
   }
 
   private func handleDirectScan() {
-    print("(direct scan - application service not running)")
+    CLIOutput.diagnostic("(direct scan - application service not running)")
     listUSBDevices()
-    print("")
-    print("Note: HID controllers shown" + " when application service is running.")
+    CLIOutput.diagnostic("")
+    CLIOutput.diagnostic("Note: HID controllers are shown when application service is running.")
   }
 
   private func listUSBDevices() {
     print("USB Controllers (class 0xFF / GIP):")
-    do {
-      let context = try USBContext()
-      runSync {
-        var found = false
-        let stream = context.findDevices(
-          deviceClass: USBConstants.DeviceClass.vendorSpecific.rawValue,
-          findAll: true
-        )
-        for await device in stream {
-          let id = DeviceIdentifier(vendorID: device.idVendor, productID: device.idProduct)
-          let profile = ParserRegistry().runtimeProfile(for: id)
-          let vid = String(format: "%04X", device.idVendor)
-          let pid = String(format: "%04X", device.idProduct)
-          let mappings =
-            profile.mappingFlags.isEmpty ? "none" : profile.mappingFlags.joined(separator: ",")
-          print(
-            "  VID=0x\(vid)" + " PID=0x\(pid)" + " bus=\(device.bus)" + " addr=\(device.address)"
-              + " parser=\(profile.parserName)"
-              + " protocol=\(profile.protocolVariant.rawValue)"
-              + " endpoints=in:0x\(String(profile.transportProfile.inputEndpoint, radix: 16))"
-              + " out:0x\(String(profile.transportProfile.outputEndpoint, radix: 16))"
-              + " mappings=\(mappings)"
-          )
-          found = true
-        }
-        if !found { print("  (none found)") }
+    let result: Result<[USBControllerDescription], USBScanFailure> = runSyncResult {
+      do {
+        return .success(try await USBControllerScanner.scanVendorSpecific())
+      } catch {
+        return .failure(USBScanFailure(message: error.localizedDescription))
       }
-    } catch {
-      print("  Error accessing USB: \(error)")
-      print("  Tip: Run with sudo or sign with" + " entitlement" + " (see scripts/sign-dev.sh)")
+    }
+    guard let devices = try? result.get() else {
+      if case .failure(let error) = result {
+        CLIOutput.error("USB access failed: \(error.message)")
+      }
+      CLIOutput.diagnostic("Tip: grant the required entitlement and Input Monitoring access.")
+      return
+    }
+    if devices.isEmpty {
+      print("  (none found)")
+      return
+    }
+    for device in devices {
+      let vid = String(format: "%04X", device.vendorID)
+      let pid = String(format: "%04X", device.productID)
+      let mappings = device.mappings.isEmpty ? "none" : device.mappings.joined(separator: ",")
+      print(
+        "  VID=0x\(vid)" + " PID=0x\(pid)" + " bus=\(device.bus)" + " addr=\(device.address)"
+          + " parser=\(device.parser)"
+          + " protocol=\(device.protocolVariant)"
+          + " endpoints=in:0x\(device.inputEndpoint)"
+          + " out:0x\(device.outputEndpoint)"
+          + " mappings=\(mappings)"
+      )
     }
   }
+}
+
+private struct USBScanFailure: Error, Sendable {
+  let message: String
 }

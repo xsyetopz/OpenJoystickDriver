@@ -1,5 +1,99 @@
+import Darwin
+import Dispatch
 import Foundation
 import OpenJoystickDriverKit
+
+enum CLIOutput {
+  static func stdout(_ message: String = "", terminator: String = "\n") {
+    write(message, terminator: terminator, to: FileHandle.standardOutput)
+  }
+
+  static func stderr(_ message: String = "", terminator: String = "\n") {
+    write(message, terminator: terminator, to: FileHandle.standardError)
+  }
+
+  static func warning(_ message: String) {
+    stderr("WARNING: \(message)")
+  }
+
+  static func error(_ message: String) {
+    stderr("ERROR: \(message)")
+  }
+
+  static func diagnostic(_ message: String = "", terminator: String = "\n") {
+    stderr(message, terminator: terminator)
+  }
+
+  private static func write(
+    _ message: String,
+    terminator: String,
+    to handle: FileHandle
+  ) {
+    handle.write(Data((message + terminator).utf8))
+  }
+}
+
+private final class CLIShutdownState: @unchecked Sendable {
+  private let lock = NSLock()
+  private var cleanup: (@Sendable () -> Void)?
+
+  func replaceCleanup(_ cleanup: (@Sendable () -> Void)?) -> (@Sendable () -> Void)? {
+    lock.withLock {
+      let previous = self.cleanup
+      self.cleanup = cleanup
+      return previous
+    }
+  }
+
+  func runCleanup() {
+    let action = lock.withLock { cleanup }
+    action?()
+  }
+}
+
+private let cliShutdownState = CLIShutdownState()
+private let cliShutdownSourceStore = NSLockProtectedSignalSourceStore()
+
+private final class NSLockProtectedSignalSourceStore: @unchecked Sendable {
+  private let lock = NSLock()
+  private var sources: [DispatchSourceSignal] = []
+
+  var hasSources: Bool {
+    lock.withLock { !sources.isEmpty }
+  }
+
+  func append(_ source: DispatchSourceSignal) {
+    lock.withLock { sources.append(source) }
+  }
+}
+
+func installCLIShutdownHandlers() {
+  guard !cliShutdownSourceStore.hasSources else { return }
+  for signalNumber in [SIGINT, SIGTERM] {
+    let source = DispatchSource.makeSignalSource(
+      signal: signalNumber,
+      queue: DispatchQueue.global(qos: .userInitiated)
+    )
+    source.setEventHandler {
+      cliShutdownState.runCleanup()
+      fflush(stdout)
+      fflush(stderr)
+      exit(128 + signalNumber)
+    }
+    source.resume()
+    signal(signalNumber, SIG_IGN)
+    cliShutdownSourceStore.append(source)
+  }
+}
+
+func withCLIShutdownCleanup<T>(
+  _ cleanup: @escaping @Sendable () -> Void,
+  _ body: () throws -> T
+) rethrows -> T {
+  let previous = cliShutdownState.replaceCleanup(cleanup)
+  defer { _ = cliShutdownState.replaceCleanup(previous) }
+  return try body()
+}
 
 /// Timeout for local service calls from CLI - keeps commands
 /// responsive when application service is not running.
@@ -68,13 +162,13 @@ func runSyncOptionalResult<T: Sendable>(
 
 /// Ensures the CLI is executed from an app bundle installed under `/Applications`.
 ///
-/// Login registration and headless relaunch both require the signed installed bundle.
+/// Login registration requires the signed installed bundle.
 func requireApplicationsBundleOrExit() {
   let path = Bundle.main.bundlePath
   guard path.hasPrefix("/Applications/") else {
-    print("ERROR: This command must be run from the /Applications-installed app bundle.")
-    print("  Current bundle: \(path)")
-    print(
+    CLIOutput.error("This command must be run from the /Applications-installed app bundle.")
+    CLIOutput.diagnostic("Current bundle: \(path)")
+    CLIOutput.diagnostic(
       "  Fix: run: " +
         "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver " +
         "--headless <command>"
@@ -98,42 +192,42 @@ func requireValidBundleSignatureOrExit(action: String) {
       maximumOutputBytes: 262_144
     )
   } catch {
-    print(
-      "ERROR: \(action) failed: could not run codesign verification: " +
+    CLIOutput.error(
+      "\(action) failed: could not run codesign verification: " +
         "\(error.localizedDescription)"
     )
     exit(1)
   }
   if result.timedOut {
-    print("ERROR: \(action) failed: codesign verification timed out after 15 seconds.")
+    CLIOutput.error("\(action) failed: codesign verification timed out after 15 seconds.")
     exit(1)
   }
   let out = result.output
   guard result.terminationStatus == 0 else {
     if out.contains("a sealed resource is missing or invalid") {
-      print(
-        "ERROR: \(action) failed: this app bundle's signature is INVALID " +
+      CLIOutput.error(
+        "\(action) failed: this app bundle's signature is INVALID " +
           "(modified after signing)."
       )
-      print("")
-      print("Fix:")
-      print("  1) Run: ./scripts/ojd rebuild-fast dev")
-      print(
+      CLIOutput.diagnostic("")
+      CLIOutput.diagnostic("Fix:")
+      CLIOutput.diagnostic("  1) Run: ./scripts/ojd rebuild-fast dev")
+      CLIOutput.diagnostic(
         "  2) Then re-run: " +
           "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver " +
           "--headless \(action.lowercased())"
       )
-      print("")
-      print("Diagnostic command:")
-      print("  /usr/bin/codesign --verify --deep --strict --verbose=2 \(appPath)")
+      CLIOutput.diagnostic("")
+      CLIOutput.diagnostic("Diagnostic command:")
+      CLIOutput.diagnostic("  /usr/bin/codesign --verify --deep --strict --verbose=2 \(appPath)")
       exit(1)
     }
     let trimmed = out.trimmingCharacters(in: .whitespacesAndNewlines)
-    print("ERROR: \(action) failed: app signature verification failed:")
+    CLIOutput.error("\(action) failed: app signature verification failed:")
     if trimmed.isEmpty {
-      print("  (no output)")
+      CLIOutput.diagnostic("  (no output)")
     } else {
-      print(trimmed)
+      CLIOutput.diagnostic(trimmed)
     }
     exit(1)
   }

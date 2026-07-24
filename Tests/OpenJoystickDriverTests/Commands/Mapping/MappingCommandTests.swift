@@ -52,10 +52,10 @@ import Testing
     #expect(updated.applicationScope == .application(bundleIdentifier: "com.example.Game"))
   }
 
-  @Test func allAxisFieldsAndSensitivityAliasAreApplied() throws {
+  @Test func allAxisFieldsAndGainAreApplied() throws {
     let options = try MappingOptions(
       [
-        "--deadzone", "0.2", "--sensitivity", "1.5", "--invert", "--response-curve", "smooth_step",
+        "--deadzone", "0.2", "--gain", "1.5", "--invert", "--response-curve", "smooth_step",
         "--digital-threshold", "0.7", "--source", "axis:left_stick_x", "--target", "move:x",
       ],
       flags: ["--invert"]
@@ -72,18 +72,6 @@ import Testing
     #expect(tuning.inverted)
     #expect(tuning.responseCurve == .smoothStep)
     #expect(tuning.digitalActivationThreshold == 0.7)
-  }
-
-  @Test func gainAndSensitivityConflictBeforeEditing() throws {
-    let options = try MappingOptions(["--gain", "1", "--sensitivity", "2"])
-    #expect(throws: MappingCommandError.self) {
-      try MappingProfileEditor.replacingBinding(
-        in: makeProfile(),
-        source: .axis(.leftStickX),
-        destination: .mouseMovement(.x),
-        options: options
-      )
-    }
   }
 
   @Test func turboRequiresPairAndRejectsContinuousOutputs() throws {
@@ -147,6 +135,21 @@ import Testing
     #expect(await client.mutationCount == 0)
   }
 
+  @Test func retiredAliasesAreRejectedBeforeRPC() async throws {
+    let profile = makeProfile()
+    let client = MockMappingClient(snapshotValue: snapshot([profile]))
+    await #expect(throws: MappingCommandError.self) {
+      try await MappingInvocation(arguments: ["status"]).execute(client: client)
+    }
+    await #expect(throws: MappingCommandError.self) {
+      try await MappingInvocation(arguments: [
+        "bind", profile.id.uuidString, "--source", "axis:left_stick_x", "--target", "move:x",
+        "--sensitivity", "1.5",
+      ]).execute(client: client)
+    }
+    #expect(await client.mutationCount == 0)
+  }
+
   @Test func helpIsRecognizedAndRenderedWithoutAServiceOperation() async throws {
     let invocation = try MappingInvocation(arguments: ["--help"])
     let client = MockMappingClient(snapshotValue: snapshot([]))
@@ -188,8 +191,8 @@ import Testing
       ["create", "New", "--vid", "1118", "--pid", "654", "--global"],
       ["update", profile.id.uuidString, "--name", "Renamed"],
       ["bind", profile.id.uuidString, "--source", "button:south", "--target", "key:a"],
-      ["delete", profile.id.uuidString], ["activate", profile.id.uuidString],
-      ["deactivate", "--vid", "1118", "--pid", "654"],
+      ["delete", profile.id.uuidString], ["enable", profile.id.uuidString],
+      ["disable", "--vid", "1118", "--pid", "654"],
     ]
     for arguments in commands {
       _ = try await MappingInvocation(arguments: arguments).execute(client: client)

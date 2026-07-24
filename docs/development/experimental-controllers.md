@@ -116,7 +116,3 @@ No parser claim exists. Product descriptions do not provide a packet layout. Cap
 ## Generic HID
 
 Descriptor-driven fallback handles standard buttons, stick pairs, triggers, and an eight-way hat. Known protocol parsers still consume their raw reports. Vendor-defined layouts need a record and parser instead of more guesses in Generic HID.
-
-## Browser evidence
-
-The local Gamepad diagnostic accepts an explicit same-origin snapshot submission and exports up to 12 bounded snapshots. Use it to record browser IDs, mappings, duplicate instances, button and axis counts, and actuator exposure. A browser snapshot proves only the tested browser, macOS build, identity, and hardware path.

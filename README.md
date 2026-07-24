@@ -7,7 +7,7 @@
 
 OpenJoystickDriver is a macOS userspace gamepad driver. Its signed app bundle hosts the controller runtime; the same executable exposes a low-level CLI for setup, control, and diagnostics.
 
-Use it when a controller works in OpenJoystickDriver but not in a game, emulator, browser, SDL app, or native macOS app.
+Use it when a controller works in OpenJoystickDriver but not in a game, emulator, SDL app, or native macOS app.
 
 <p>
   <a href="#quickstart">Quickstart</a> ·
@@ -42,7 +42,7 @@ reported as optional and inconclusive when the entitlement is absent.
 3. The app intentionally has no visible UI; start and inspect it with the installed bundle command below.
 4. Grant **Input Monitoring** and **Accessibility** to OpenJoystickDriver when macOS asks.
 5. Connect a supported controller.
-6. Run `controller input` or `controller watch` from the CLI to confirm buttons and sticks.
+6. Run `controller state` or `controller watch` from the CLI to confirm buttons and sticks.
 
 Expected result: your target app sees a compatible virtual controller.
 
@@ -54,15 +54,13 @@ OpenJoystickDriver has one app bundle in `/Applications`:
 /Applications/OpenJoystickDriver.app
 ```
 
-The main application executable also hosts the background service. There is no nested helper application or second privacy identity.
+The main application executable also hosts the in-process runtime. There is no nested helper application or second privacy identity.
 
 Use the installed executable for setup and diagnostics:
 
 | Action | Command |
 | --- | --- |
-| Install or start service | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app start` |
 | Check service status | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status` |
-| Restart service | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app restart` |
 | Disable Open at Login | `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app login disable` |
 
 To uninstall OpenJoystickDriver completely:
@@ -89,17 +87,16 @@ To uninstall OpenJoystickDriver completely:
 CLI equivalents from the installed app bundle:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compatibility set sdl2-3
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat set sdl2-3
 ```
 
 ## Troubleshooting
 
 | Symptom | What to do |
 | --- | --- |
-| The runtime is disconnected | Run `--headless app restart`, then check `--headless status`. |
-| SDL / browser sees 0 controllers | Ensure Input Monitoring and Accessibility are granted, then restart the host and re-test. |
-| Compare Chrome, Firefox, and Safari | Run `--headless diagnose browser-gamepad --open all`, then press a controller control. |
-| DriverKit relay installation fails | Compatibility output still works. `--headless diagnose self-test` tests Compatibility and reports relay diagnostics as optional when the signed host lacks relay access. |
+| The runtime is disconnected | Launch the installed app, then check `--headless status`. |
+| SDL sees 0 controllers | Ensure Input Monitoring and Accessibility are granted, then restart the host and re-test. |
+| DriverKit relay installation fails | Compatibility output still works. `--headless test` tests Compatibility and reports relay diagnostics as optional when the signed host lacks relay access. |
 
 Useful diagnostics:
 
@@ -109,9 +106,9 @@ Useful diagnostics:
 ./scripts/ojd test parsers-macos14
 ./scripts/ojd diagnose backends --seconds 5
 ./scripts/ojd diagnose gamecontroller --seconds 5
-./.build/debug/OpenJoystickDriver --headless diagnose gamecontroller-catalog --json
+./.build/debug/OpenJoystickDriver --headless diagnose catalog --json
 ./.build/debug/OpenJoystickDriver --headless diagnose runtime --seconds 300 --json
-./.build/debug/OpenJoystickDriver --headless controller input --json
+./.build/debug/OpenJoystickDriver --headless controller state --json
 ./.build/debug/OpenJoystickDriver --headless controller watch --seconds 10 --interval-ms 16
 ./.build/debug/OpenJoystickDriver --headless controller packets --limit 50
 ./.build/debug/OpenJoystickDriver --headless app logs show --stream both --lines 100
@@ -134,7 +131,6 @@ Installed app bundle commands:
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller list
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless diagnose report
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app restart
 ```
 
 ## Development
@@ -164,7 +160,7 @@ Useful contribution areas:
 - controller parser and record improvements
 - compatibility-layer tests and diagnostics
 - documentation for supported devices, compatibility identities, and troubleshooting
-- reproducible reports for games, emulators, browsers, SDL apps, and native macOS apps
+- reproducible reports for games, emulators, SDL apps, and native macOS apps
 
 Before opening a PR for parser/record work, run:
 

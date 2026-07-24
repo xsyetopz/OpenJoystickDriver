@@ -6,7 +6,7 @@ struct RuntimeHealthCommand {
     let options = parse(arguments: arguments)
     let health = ApplicationServiceManager.health()
     guard let processID = health.pid else {
-      print("ERROR: OpenJoystickDriver application service is not running.")
+      CLIOutput.error("OpenJoystickDriver application service is not running.")
       exit(1)
     }
 
@@ -39,7 +39,7 @@ struct RuntimeHealthCommand {
     case .success(let value):
       summary = value
     case .failure(let message):
-      print("ERROR: \(message)")
+      CLIOutput.error(message)
       exit(1)
     }
 
@@ -115,9 +115,8 @@ struct RuntimeHealthCommand {
         )
       ) + 1
     guard estimatedSamples <= ApplicationServiceRuntimeHealthSampler.maximumSampleCount else {
-      print(
-        "ERROR: Configuration would collect \(estimatedSamples) samples; "
-          + "increase --interval-ms."
+      CLIOutput.error(
+        "Configuration would collect \(estimatedSamples) samples; increase --interval-ms."
       )
       exit(1)
     }
@@ -145,7 +144,7 @@ struct RuntimeHealthCommand {
       let data = try encoder.encode(summary)
       print(String(data: data, encoding: .utf8) ?? "{}")
     } catch {
-      print("ERROR: Could not encode runtime summary: \(error.localizedDescription)")
+      CLIOutput.error("Could not encode runtime summary: \(error.localizedDescription)")
       exit(1)
     }
   }

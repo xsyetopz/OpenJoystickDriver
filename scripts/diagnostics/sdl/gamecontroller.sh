@@ -39,7 +39,7 @@ if [[ ! -e "$APP_PATH" ]]; then
 fi
 
 if [[ -x "$OJD_CLI" ]]; then
-  "$OJD_CLI" --headless compatibility set apple-gamecontroller >/dev/null || {
+  "$OJD_CLI" --headless compat set apple-gamecontroller >/dev/null || {
     echo "WARN: could not set OJD compatibility identity to apple-gamecontroller" >&2
   }
 else

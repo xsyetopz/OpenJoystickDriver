@@ -33,7 +33,7 @@ enum RuntimeStatusText {
   static func directModeLines(_ permissions: StatusPermissions) -> [String] {
     var lines = ["(direct mode - app service not running)", ""]
     lines.append(contentsOf: permissionLines(permissions))
-    lines.append("  -> App recovery: --headless app start")
+    lines.append("  -> App recovery: launch the installed OpenJoystickDriver app")
     return lines
   }
 

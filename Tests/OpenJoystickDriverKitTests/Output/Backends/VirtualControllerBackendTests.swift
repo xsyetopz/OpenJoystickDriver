@@ -21,6 +21,35 @@ struct VirtualControllerBackendTests {
 
     #expect(CompatibilityIdentity(rawValue: "not-a-profile") == nil)
   }
+  @Test func testUserSpaceSerialRequiresEncodedRouteIdentity() {
+    let identifier = DeviceIdentifier(
+      vendorID: 13623,
+      productID: 4112,
+      serialNumber: "physical-serial"
+    )
+    let sharedSerial = UserSpaceVirtualDeviceConstants.serialNumber(for: identifier)
+    let dedicatedRoute = UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
+      forConsumerBundleRootPath: "/Applications/Consumer.app"
+    )
+    let dedicatedSerial = UserSpaceVirtualDeviceConstants.serialNumber(
+      for: identifier,
+      routeToken: dedicatedRoute
+    )
+
+    #expect(
+      UserSpaceVirtualDeviceConstants.routeToken(from: sharedSerial)
+        == UserSpaceVirtualDeviceConstants.sharedRouteToken
+    )
+    #expect(UserSpaceVirtualDeviceConstants.routeToken(from: dedicatedSerial) == dedicatedRoute)
+
+    let legacySerial = sharedSerial.replacingOccurrences(of: "shared:", with: "")
+    #expect(UserSpaceVirtualDeviceConstants.routeToken(from: legacySerial) == nil)
+    #expect(
+      UserSpaceVirtualDeviceConstants.routeToken(
+        from: UserSpaceVirtualDeviceConstants.serialPrefix + "shared:not-a-hash"
+      ) == nil
+    )
+  }
   @Test func testCompatibilityProfileCatalog() {
     let generic = CompatibilityOutputProfileCatalog.profile(for: .genericHID)
     let sdl = CompatibilityOutputProfileCatalog.profile(for: .sdl2_3)

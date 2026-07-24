@@ -75,7 +75,7 @@ enum MappingProfileEditor {
     -> RemappingAxisTuning?
   {
     let tuningOptions = [
-      "--deadzone", "--gain", "--sensitivity", "--invert", "--response-curve",
+      "--deadzone", "--gain", "--invert", "--response-curve",
       "--digital-threshold",
     ]
     let supplied = tuningOptions.contains(where: options.contains)
@@ -88,13 +88,9 @@ enum MappingProfileEditor {
       throw MappingCommandError.invalidArguments("Axis options require an axis source.")
     }
     guard isAxis else { return nil }
-    guard options["--gain"] == nil || options["--sensitivity"] == nil else {
-      throw MappingCommandError.invalidArguments("Pass only one of --gain or --sensitivity.")
-    }
-    let gain = options["--gain"] ?? options["--sensitivity"]
     return RemappingAxisTuning(
       deadzone: try number(options["--deadzone"], option: "--deadzone", fallback: 0.1),
-      gain: try number(gain, option: "--gain", fallback: 1),
+      gain: try number(options["--gain"], option: "--gain", fallback: 1),
       inverted: options.contains("--invert"),
       responseCurve: try curve(options["--response-curve"]),
       digitalActivationThreshold: try number(

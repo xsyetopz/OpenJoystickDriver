@@ -31,13 +31,13 @@ Linux source lists receiver devices, and OJD parses the physical receiver transp
 The GameController MobileAsset version `10.5.2` downloaded on 2026-07-12 had no exact entry for `045e:028e`, `045e:02ea`, or `9886:0024`. That result applies only to the audited system and asset version. Check again after macOS or MobileAsset updates:
 
 ```bash
-OpenJoystickDriver --headless diagnose gamecontroller-catalog --json
+OpenJoystickDriver --headless diagnose catalog --json
 ```
 
 The developer CLI and support report use the same audit. The signed app host keeps catalog auditing in the CLI rather than adding a second presentation surface.
 
 ## Promotion checks
 
-Add a family identity only after live consumer evidence, descriptor, and report bytes are recorded. Browser, SDL, and GameController probes must identify a useful consumer. Hardware tests must cover input, reconnect, rumble, and lights where claimed.
+Add a family identity only after live consumer evidence, descriptor, and report bytes are recorded. SDL and GameController probes must identify a useful consumer. Hardware tests must cover input, reconnect, rumble, and lights where claimed.
 
 Use `generic-hid` as the non-spoof fallback and `sdl2-3` as the default mapped identity until those checks pass.

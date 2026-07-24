@@ -35,8 +35,8 @@ struct SettingsMutationParityTests {
       root: root
     )
 
-    #expect(cli.contains("case \"uninstall\""))
-    #expect(permissions.contains("case \"open-settings\""))
+    #expect(cli.contains("case \"disable\""))
+    #expect(permissions.contains("case \"open\""))
     #expect(permissions.contains("Open Input Monitoring or Accessibility"))
   }
 

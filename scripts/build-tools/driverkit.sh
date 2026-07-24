@@ -20,33 +20,6 @@ DRIVERKIT_REQUIRED_ENTITLEMENTS=(
   com.apple.developer.driverkit.transport.hid
   com.apple.developer.driverkit.family.hid.eventservice
 )
-LEGACY_DRIVERKIT_USERCLIENT_VALUE=$'com.openjoystickdriver.VirtualHIDDevice\ncom.openjoystickdriver.daemon'
-
-_legacy_driverkit_profile_enabled() {
-  case "${OJD_USE_LEGACY_DRIVERKIT_PROFILE:-0}" in
-    0) return 1 ;;
-    1) ;;
-    *) die "OJD_USE_LEGACY_DRIVERKIT_PROFILE must be 0 or 1" ;;
-  esac
-  [[ "$OJD_ENV" == "dev" ]] \
-    || die "OJD_USE_LEGACY_DRIVERKIT_PROFILE=1 is forbidden for release builds"
-  [[ "${CI:-false}" != "true" && "${CI:-0}" != "1" ]] \
-    || die "OJD_USE_LEGACY_DRIVERKIT_PROFILE=1 is forbidden in CI"
-  return 0
-}
-
-_warn_legacy_driverkit_profile() {
-  [[ "${OJD_LEGACY_DRIVERKIT_WARNING_EMITTED:-0}" != "1" ]] || return 0
-  OJD_LEGACY_DRIVERKIT_WARNING_EMITTED=1
-  cat >&2 <<'TXT'
-WARNING: The selected development profile contains Apple's approved legacy
-DriverKit user-client value. The generated host entitlements omit
-com.apple.developer.driverkit.userclient-access so macOS can launch the app.
-Compatibility output remains available. DriverKit relay diagnostics are unavailable
-until Apple approves the corrected single-relay grant and the profile is replaced.
-TXT
-}
-
 _reject_local_swifterkit() {
   if [[ "${OJD_USE_LOCAL_SWIFTERKIT:-0}" == "1" ]] \
     && { [[ "$OJD_ENV" == "release" ]] || [[ "${CI:-false}" == "true" ]]; }; then
@@ -174,24 +147,17 @@ PY
 
 _require_host_access_profile() {
   local profile="$1" decoded="$DRIVERKIT_ROOT/profile-entitlements.plist"
-  local mode="exact"
-  if _legacy_driverkit_profile_enabled; then
-    mode="legacy"
-    _warn_legacy_driverkit_profile
-  fi
   mkdir -p "$DRIVERKIT_ROOT"
   decode_provisioning_profile "$profile" > "$decoded" \
     || die "Could not decode GUI provisioning profile for DriverKit allowlist validation"
-  python3 - \
-    "$decoded" "$DRIVERKIT_BUNDLE_ID" "$mode" "$LEGACY_DRIVERKIT_USERCLIENT_VALUE" <<'PY'
+  python3 - "$decoded" "$DRIVERKIT_BUNDLE_ID" <<'PY'
 import plistlib
 import sys
 
-profile, bundle_id, mode, legacy_value = sys.argv[1:]
+profile, bundle_id = sys.argv[1:]
 entitlements = plistlib.loads(open(profile, "rb").read()).get("Entitlements", {})
 value = entitlements.get("com.apple.developer.driverkit.userclient-access")
-legacy = [legacy_value]
-expected = legacy if mode == "legacy" else [bundle_id]
+expected = [bundle_id]
 if value != expected:
     raise SystemExit(
         "GUI provisioning profile has an incorrect DriverKit user-client value: "
@@ -206,20 +172,6 @@ _resolve_host_entitlements() {
   local profile="$1" output="$2"
   _require_host_access_profile "$profile"
   resolve_entitlements "$GUI_ENTITLEMENTS_TEMPLATE" "$output"
-  if ! _legacy_driverkit_profile_enabled; then
-    return 0
-  fi
-
-  python3 - "$output" <<'PY'
-import plistlib
-import sys
-
-output_path = sys.argv[1]
-output = plistlib.loads(open(output_path, "rb").read())
-output.pop("com.apple.developer.driverkit.userclient-access", None)
-with open(output_path, "wb") as file:
-    plistlib.dump(output, file, sort_keys=False)
-PY
 }
 
 _require_driverkit_profile() {
@@ -255,23 +207,15 @@ _require_signed_host_access() {
     || die "Could not read signed app entitlements"
   decode_provisioning_profile "$profile" > "$decoded_profile" \
     || die "Could not decode GUI provisioning profile for signed entitlement validation"
-  local mode="exact"
-  if _legacy_driverkit_profile_enabled; then
-    mode="legacy"
-  fi
-  python3 - "$decoded" "$decoded_profile" "$mode" <<'PY'
+  python3 - "$decoded" "$decoded_profile" <<'PY'
 import plistlib
 import sys
 
-signed_path, profile_path, mode = sys.argv[1:]
+signed_path, profile_path = sys.argv[1:]
 signed = plistlib.loads(open(signed_path, "rb").read())
 profile = plistlib.loads(open(profile_path, "rb").read()).get("Entitlements", {})
 key = "com.apple.developer.driverkit.userclient-access"
-if mode == "legacy" and key in signed:
-    raise SystemExit(
-        f"legacy development host must omit {key}, got {signed.get(key)!r}"
-    )
-if mode == "exact" and signed.get(key) != profile.get(key):
+if signed.get(key) != profile.get(key):
     raise SystemExit(
         f"signed host {key} does not match the selected profile: "
         f"signed={signed.get(key)!r}, profile={profile.get(key)!r}"

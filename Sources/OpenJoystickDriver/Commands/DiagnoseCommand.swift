@@ -1,6 +1,5 @@
 import Foundation
 import OpenJoystickDriverKit
-import SwiftUSB
 
 struct DiagnoseCommand {
   func run(arguments: [String] = []) {
@@ -8,42 +7,42 @@ struct DiagnoseCommand {
       switch subcommand {
       case "runtime":
         RuntimeHealthCommand().run(arguments: Array(arguments.dropFirst()))
-      case "gamecontroller-catalog":
+      case "catalog":
         GameControllerCatalogCommand().run(arguments: Array(arguments.dropFirst()))
-      case "browser-gamepad":
-        BrowserGamepadDiagnosticCommand().run(arguments: Array(arguments.dropFirst()))
       case "--help", "-h", "help":
-        print(
+        CLIOutput.stdout(
           "Usage: OpenJoystickDriver --headless diagnose "
-            + "[runtime|gamecontroller-catalog|browser-gamepad]"
+            + "[runtime|catalog|report]"
         )
       default:
-        print("Unknown diagnose command: \(subcommand)")
+        CLIOutput.error("Unknown diagnose command: \(subcommand)")
         exit(1)
       }
       return
     }
 
-    print("OpenJoystickDriver Diagnostics")
+    CLIOutput.diagnostic("OpenJoystickDriver Diagnostics")
     let divider = String(repeating: "\u{2550}", count: 30)
-    print(divider)
-    print("")
+    CLIOutput.diagnostic(divider)
+    CLIOutput.diagnostic("")
 
     printSystemInfo()
-    print("")
+    CLIOutput.diagnostic("")
     printSystemExtensionBundle()
-    print("")
+    CLIOutput.diagnostic("")
     printPermissionsSection()
-    print("")
+    CLIOutput.diagnostic("")
     printUSBDevices()
-    print("")
+    CLIOutput.diagnostic("")
     printTroubleshooting()
   }
 
   private func printSystemInfo() {
     let ver = ProcessInfo.processInfo.operatingSystemVersion
-    print("macOS: \(ver.majorVersion)" + ".\(ver.minorVersion)" + ".\(ver.patchVersion)")
-    print("Binary: \(CommandLine.arguments[0])")
+    CLIOutput.diagnostic(
+      "macOS: \(ver.majorVersion).\(ver.minorVersion).\(ver.patchVersion)"
+    )
+    CLIOutput.diagnostic("Binary: \(CommandLine.arguments[0])")
   }
 
   private func printSystemExtensionBundle() {
@@ -52,46 +51,46 @@ struct DiagnoseCommand {
     let expectedID = "com.openjoystickdriver.VirtualHIDDevice"
     let expectedDextPath = sysextDir + "/com.openjoystickdriver.VirtualHIDDevice.dext"
 
-    print("DriverKit System Extension (in /Applications):")
+    CLIOutput.diagnostic("DriverKit System Extension (in /Applications):")
 
     let fm = FileManager.default
     guard fm.fileExists(atPath: appPath) else {
-      print("  App: missing at \(appPath)")
-      print("  Fix: build + install the app to /Applications")
+      CLIOutput.diagnostic("  App: missing at \(appPath)")
+      CLIOutput.diagnostic("  Fix: build + install the app to /Applications")
       return
     }
 
-    print("  App: present")
-    print("  Expected .dext: \(expectedDextPath)")
+    CLIOutput.diagnostic("  App: present")
+    CLIOutput.diagnostic("  Expected .dext: \(expectedDextPath)")
 
     guard fm.fileExists(atPath: sysextDir) else {
-      print("  Result: FAIL (missing SystemExtensions folder)")
-      print("  Fix: run: ./scripts/ojd rebuild dev")
+      CLIOutput.diagnostic("  Result: FAIL (missing SystemExtensions folder)")
+      CLIOutput.diagnostic("  Fix: run: ./scripts/ojd rebuild dev")
       return
     }
 
     let items = (try? fm.contentsOfDirectory(atPath: sysextDir)) ?? []
     let dexts = items.filter { $0.hasSuffix(".dext") }.sorted()
     if dexts.isEmpty {
-      print("  Result: FAIL (no .dext bundles found)")
-      print("  Fix: run: ./scripts/ojd build dext")
+      CLIOutput.diagnostic("  Result: FAIL (no .dext bundles found)")
+      CLIOutput.diagnostic("  Fix: run: ./scripts/ojd build dext")
       return
     }
 
-    print("  Found .dext bundles:")
+    CLIOutput.diagnostic("  Found .dext bundles:")
     var foundExpected = false
     for d in dexts {
       let path = sysextDir + "/" + d
       let bid = Bundle(path: path)?.bundleIdentifier ?? "UNKNOWN"
-      print("    - \(d) (id: \(bid))")
+      CLIOutput.diagnostic("    - \(d) (id: \(bid))")
       if bid == expectedID { foundExpected = true }
     }
 
     if foundExpected {
-      print("  Result: PASS (expected id present: \(expectedID))")
+      CLIOutput.diagnostic("  Result: PASS (expected id present: \(expectedID))")
     } else {
-      print("  Result: FAIL (expected id missing: \(expectedID))")
-      print("  Fix: run: ./scripts/ojd build dext")
+      CLIOutput.diagnostic("  Result: FAIL (expected id missing: \(expectedID))")
+      CLIOutput.diagnostic("  Fix: run: ./scripts/ojd build dext")
     }
   }
 
@@ -105,55 +104,65 @@ struct DiagnoseCommand {
       try? await client.getStatus()
     }
     guard let payload else {
-      print("Permissions: unavailable without the running main app")
-      print("  Recovery: --headless app start")
+      CLIOutput.diagnostic("Permissions: unavailable without the running main app")
+      CLIOutput.diagnostic("  Recovery: launch the installed OpenJoystickDriver app")
       return
     }
 
-    printPermissionSnapshot(
+    permissionSnapshotLines(
       StatusPermissions(
         inputMonitoring: payload.inputMonitoring,
         accessibility: payload.accessibility
       )
-    )
-    print("  State source     : running main app")
+    ).forEach { CLIOutput.diagnostic($0) }
+    CLIOutput.diagnostic("  State source     : running main app")
   }
 
   private func printUSBDevices() {
-    print("USB Game Controllers (class 0xFF):")
-    do {
-      let context = try USBContext()
-      runSync {
-        var found = false
-        let stream = context.findDevices(
-          deviceClass: USBConstants.DeviceClass.vendorSpecific.rawValue,
-          findAll: true
-        )
-        for await device in stream {
-          let vid = String(format: "%04X", device.idVendor)
-          let pid = String(format: "%04X", device.idProduct)
-          print(
-            "  VID=0x\(vid)" + " PID=0x\(pid)" + " bus=\(device.bus)" + " addr=\(device.address)"
-          )
-          found = true
-        }
-        if !found { print("  (none detected)") }
+    CLIOutput.diagnostic("USB Game Controllers (class 0xFF):")
+    let result: Result<[USBControllerDescription], DiagnoseUSBScanFailure> = runSyncResult {
+      do {
+        return .success(try await USBControllerScanner.scanVendorSpecific())
+      } catch {
+        return .failure(DiagnoseUSBScanFailure(message: error.localizedDescription))
       }
-    } catch { print("  USB access error: \(error)") }
+    }
+    guard let devices = try? result.get() else {
+      if case .failure(let error) = result {
+        CLIOutput.error("USB access failed: \(error.message)")
+      }
+      CLIOutput.diagnostic("Tip: grant the required entitlement and Input Monitoring access.")
+      return
+    }
+    if devices.isEmpty {
+      CLIOutput.diagnostic("  (none detected)")
+      return
+    }
+    for device in devices {
+      let vid = String(format: "%04X", device.vendorID)
+      let pid = String(format: "%04X", device.productID)
+      CLIOutput.diagnostic(
+        "  VID=0x\(vid)" + " PID=0x\(pid)" + " bus=\(device.bus)" + " addr=\(device.address)"
+      )
+    }
   }
 
   private func printTroubleshooting() {
-    print("Troubleshooting:")
-    print("  No input from controller?")
-    print(
+    CLIOutput.diagnostic("Troubleshooting:")
+    CLIOutput.diagnostic("  No input from controller?")
+    CLIOutput.diagnostic(
       "    -> Grant Input Monitoring: System Settings -> Privacy & Security"
         + " -> Input Monitoring"
     )
-    print("  User-space virtual device unavailable?")
-    print("    -> Grant Accessibility to OpenJoystickDriver in Privacy & Security")
-    print("  DriverKit extension missing/broken?")
-    print("    -> Run: ./scripts/ojd rebuild dev")
-    print("  Reporting a controller issue?")
-    print("    -> Run: --headless diagnose report")
+    CLIOutput.diagnostic("  User-space virtual device unavailable?")
+    CLIOutput.diagnostic("    -> Grant Accessibility to OpenJoystickDriver in Privacy & Security")
+    CLIOutput.diagnostic("  DriverKit extension missing/broken?")
+    CLIOutput.diagnostic("    -> Run: ./scripts/ojd rebuild dev")
+    CLIOutput.diagnostic("  Reporting a controller issue?")
+    CLIOutput.diagnostic("    -> Run: --headless diagnose report")
   }
+}
+
+private struct DiagnoseUSBScanFailure: Error, Sendable {
+  let message: String
 }

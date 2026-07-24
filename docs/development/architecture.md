@@ -20,7 +20,7 @@ flowchart LR
 
 Launching the signed app starts the main runtime and keeps it alive without a status item or window. Sending `SIGTERM` or `SIGINT` stops the runtime cleanly. The CLI is an explicit invocation of the same executable and never starts a second process.
 
-On macOS 13 and later, `SMAppService.mainApp` registers the same app as a login item. There is no bundled helper, LaunchAgent plist, daemon executable, or second privacy identity. Migration removes obsolete alpha registrations and processes without resetting TCC.
+On macOS 13 and later, `SMAppService.mainApp` registers the same app as a login item. There is no bundled helper, LaunchAgent plist, daemon executable, or second privacy identity. If an older alpha left a stale registration, remove it manually; current builds do not manage legacy launchd jobs or reset TCC.
 
 Headless commands invoke the installed executable with `--headless`. Commands that need live state use a user-private Unix-domain socket at `/tmp/com.openjoystickdriver.<uid>.rpc`. The socket is mode `0600`; the server requires the same user, signing identifier, and team identifier. Frames and deadlines are bounded.
 

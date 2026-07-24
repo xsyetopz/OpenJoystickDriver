@@ -2,6 +2,20 @@
 
 All notable changes to OpenJoystickDriver are documented in this file.
 
+## 0.5.0-beta.1
+
+### Changed
+
+- Consolidated the supported headless CLI around the current `map`, `compat`,
+  `extension`, `permissions`, and `diagnose` command surfaces.
+- Removed browser diagnostics and obsolete application-service start/restart
+  lifecycle paths; the installed app is now launched directly when needed.
+- Removed active backwards-compatibility aliases, legacy DriverKit signing
+  fallbacks, legacy virtual-device serial decoding, and permissive self-test
+  payload decoding.
+- Kept Compatibility output behavior current while requiring exact relay
+  entitlements and current route identities.
+
 ## 0.5.0-alpha.5
 
 ### Added
@@ -34,9 +48,8 @@ All notable changes to OpenJoystickDriver are documented in this file.
   backend and limited the vendor-defined DriverKit relay to integrity
   diagnostics, removing output modes that could route gameplay reports only to
   a non-gamepad relay.
-- Removed browser Gamepad capture, runtime soak, and private Apple catalog audit
-  controls from the menu app while retaining their headless diagnostic commands
-  and the focused support-report workflow.
+- Removed obsolete interactive capture, menu-app runtime soak, and private Apple
+  catalog audit controls.
 - Limited the private Apple GameController catalog audit to exact physical OJD
   record evidence; live `GCController.supportsHIDDevice` and hardware behavior
   remain authoritative for virtual compatibility identities.

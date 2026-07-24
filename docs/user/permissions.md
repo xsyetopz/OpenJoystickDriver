@@ -32,4 +32,4 @@ Neither approval grants Input Monitoring or Accessibility.
 
 ## Older alpha entries
 
-An older alpha may leave an `OpenJoystickDriverDaemon` registration or stale privacy row. Current builds do not execute that helper. Upgrade migration removes old jobs without resetting TCC. If System Settings offers a remove control for a stale entry, it is safe to remove that entry manually.
+An older alpha may leave an `OpenJoystickDriverDaemon` registration or stale privacy row. Current builds do not execute that helper or manage its launchd registration. If System Settings offers a remove control for a stale entry, remove that entry manually; OJD never resets TCC.

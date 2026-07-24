@@ -3,6 +3,7 @@ import OpenJoystickDriverKit
 
 struct CLI {
   func run(arguments: ArraySlice<String>) {
+    installCLIShutdownHandlers()
     do {
       try CLIGrammar(arguments: Array(arguments)).run()
     } catch let error as CLIParseError {
