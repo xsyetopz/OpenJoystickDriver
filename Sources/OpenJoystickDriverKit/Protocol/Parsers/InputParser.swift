@@ -116,11 +116,12 @@ public protocol InputParser: AnyObject, Sendable {
   /// system receives from the controller.
   func parse(data: Data) throws -> [ControllerEvent]
 
-  /// Sends a keep-alive packet so the controller does not power off.
+  /// Sends profile-selected periodic output so the controller does not power off.
   ///
   /// ``DevicePipeline`` calls this at a regular interval during the input
-  /// loop. The default implementation does nothing; override it if the
-  /// protocol requires periodic pings (GIP uses CMD 0x03).
+  /// loop. The default implementation does nothing; protocol profiles may
+  /// override it when periodic output is supported and hardware evidence
+  /// requires it.
   func keepAlive(handle: USBDeviceHandle?) throws
 }
 

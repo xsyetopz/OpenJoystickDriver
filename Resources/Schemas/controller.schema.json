@@ -105,9 +105,33 @@
               "rumbleEnd"
             ]
           }
+        },
+        "keep_alive": {
+          "type": "boolean"
         }
       },
       "allOf": [
+        {
+          "if": {
+            "required": [
+              "driver"
+            ],
+            "properties": {
+              "driver": {
+                "not": {
+                  "const": "GIP"
+                }
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "keep_alive"
+              ]
+            }
+          }
+        },
         {
           "if": {
             "properties": {
@@ -430,7 +454,8 @@
         },
         "post_handshake_settle_ms": {
           "type": "integer",
-          "minimum": 1
+          "minimum": 1,
+          "maximum": 60000
         },
         "endpoints": {
           "type": "object",

@@ -66,6 +66,27 @@ class CanonicalRecordValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(validator.ValidationError, "must be omitted"):
             self.validate_document(document)
 
+    def test_gip_keep_alive_policy_is_validated(self):
+        document = record()
+        document["protocol"]["keep_alive"] = False
+        self.validate_document(document)
+
+        document["protocol"]["keep_alive"] = True
+        self.validate_document(document)
+
+        document["protocol"]["keep_alive"] = "unsupported"
+        with self.assertRaisesRegex(validator.ValidationError, "keep_alive"):
+            self.validate_document(document)
+
+        document = record()
+        document["protocol"] = {
+            "driver": "Xbox360",
+            "variant": "xbox360",
+            "keep_alive": False,
+        }
+        with self.assertRaisesRegex(validator.ValidationError, "requires GIP"):
+            self.validate_document(document)
+
     def test_duplicate_identity_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

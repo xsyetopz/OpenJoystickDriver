@@ -112,10 +112,14 @@ func runControllerRecordProbe(
         let now = DispatchTime.now().uptimeNanoseconds
         if now &- lastKeepAlive >= controllerRecordProbeKeepAliveIntervalNanoseconds {
           lastKeepAlive = now
-          do {
-            try parser.keepAlive(handle: handle)
-            print("USB_KEEPALIVE result=sent")
-          } catch { print("USB_KEEPALIVE result=error detail=\(error.localizedDescription)") }
+          if plan.driver == .gip, plan.keepAlivePolicy == .disabled {
+            print("USB_KEEPALIVE result=disabled")
+          } else {
+            do {
+              try parser.keepAlive(handle: handle)
+              print("USB_KEEPALIVE result=sent")
+            } catch { print("USB_KEEPALIVE result=error detail=\(error.localizedDescription)") }
+          }
         }
 
         do {

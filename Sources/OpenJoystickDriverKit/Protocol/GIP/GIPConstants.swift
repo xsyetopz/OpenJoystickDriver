@@ -2,9 +2,9 @@ import Foundation
 
 /// All GIP command bytes identified from Windows driver decompilation.
 public enum GIPCommand {
-  static let announce: UInt8 = 0x01
-  static let status: UInt8 = 0x02
-  static let keepAlive: UInt8 = 0x03
+  static let acknowledge: UInt8 = 0x01
+  static let announce: UInt8 = 0x02
+  static let status: UInt8 = 0x03
   static let power: UInt8 = 0x05
   static let authenticate: UInt8 = 0x06
   static let virtualKey: UInt8 = 0x07
@@ -14,7 +14,12 @@ public enum GIPCommand {
 }
 
 /// GIP packet option flags.
-public enum GIPOption { static let `internal`: UInt8 = 0x20 }
+public enum GIPOption {
+  static let acknowledge: UInt8 = 0x10
+  static let `internal`: UInt8 = 0x20
+  static let chunkStart: UInt8 = 0x40
+  static let chunk: UInt8 = 0x80
+}
 
 /// Device power states from the xboxgip.sys state machine.
 public enum GIPDeviceState: UInt8, Sendable, CustomStringConvertible {

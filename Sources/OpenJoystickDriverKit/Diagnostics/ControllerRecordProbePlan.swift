@@ -16,6 +16,7 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
   public let driver: ControllerRecordProbeDriver
   public let isWirelessReceiver: Bool
   public let startupPackets: [GIPStartupPacket]
+  public let keepAlivePolicy: GIPKeepAlivePolicy
 
   public init(contentsOf url: URL) throws { try self.init(data: Data(contentsOf: url)) }
 
@@ -83,6 +84,10 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
       names: document.protocolConfig.startupPackets,
       driver: parsedDriver
     )
+    let parsedKeepAlivePolicy = try Self.parseKeepAlivePolicy(
+      enabled: document.protocolConfig.keepAliveEnabled,
+      driver: parsedDriver
+    )
 
     vendorID = UInt16(document.vendorID)
     productID = UInt16(document.productID)
@@ -99,11 +104,17 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     isWirelessReceiver =
       parsedDriver == .xbox360 && document.protocolConfig.variant == "xbox360Wireless"
     startupPackets = parsedStartupPackets
+    keepAlivePolicy = parsedKeepAlivePolicy
   }
 
   public func makeParser() -> any InputParser {
     switch driver {
-    case .gip: GIPParser(transportProfile: transportProfile, startupPackets: startupPackets)
+    case .gip:
+      GIPParser(
+        transportProfile: transportProfile,
+        startupPackets: startupPackets,
+        keepAlivePolicy: keepAlivePolicy
+      )
     case .xbox360:
       Xbox360Parser(
         outEndpoint: transportProfile.outputEndpoint,
@@ -153,6 +164,18 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     }
   }
 
+  private static func parseKeepAlivePolicy(
+    enabled: Bool?,
+    driver: ControllerRecordProbeDriver
+  ) throws -> GIPKeepAlivePolicy {
+    guard driver == .gip || enabled == nil else {
+      throw ControllerRecordProbeError.invalidProfile(
+        "protocol.keep_alive is only valid for GIP records"
+      )
+    }
+    return enabled.map { $0 ? .enabled : .disabled } ?? .enabled
+  }
+
   private struct RecordDocument: Decodable {
     let vendorID: Int
     let productID: Int
@@ -196,11 +219,13 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
       let driver: String
       let variant: String
       let startupPackets: [String]?
+      let keepAliveEnabled: Bool?
 
       enum CodingKeys: String, CodingKey {
         case driver
         case variant
         case startupPackets = "startup_packets"
+        case keepAliveEnabled = "keep_alive"
       }
     }
   }

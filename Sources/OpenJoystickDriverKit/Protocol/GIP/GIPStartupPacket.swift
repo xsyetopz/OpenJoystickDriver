@@ -17,7 +17,7 @@ public enum GIPStartupPacket: String, CaseIterable, Sendable {
     switch self {
     case .powerOn, .xboxOneSInit: GIPCommand.power
     case .extraInput: 0x4D
-    case .horiAck: 0x01
+    case .horiAck: GIPCommand.acknowledge
     case .ledOn: GIPCommand.led
     case .authDone: 0x06
     case .rumbleBegin, .rumbleEnd: GIPCommand.rumble

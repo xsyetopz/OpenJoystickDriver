@@ -84,6 +84,12 @@ public struct ControllerMappingOptions: OptionSet, Sendable {
   }
 }
 
+/// Whether the GIP parser sends periodic host-side keep-alive packets.
+public enum GIPKeepAlivePolicy: String, Codable, Sendable {
+  case enabled
+  case disabled
+}
+
 /// Complete runtime profile for one physical controller model.
 public struct DeviceRuntimeProfile: Sendable {
   public let parserName: String
@@ -94,6 +100,7 @@ public struct DeviceRuntimeProfile: Sendable {
   public let mappingOptions: ControllerMappingOptions
   public let preferredBackends: [VirtualControllerBackendID]
   public let gipStartupPackets: [GIPStartupPacket]
+  public let gipKeepAlivePolicy: GIPKeepAlivePolicy
   public let hardwareVerified: Bool
 }
 
@@ -151,6 +158,7 @@ struct DeviceCatalog: Sendable {
         mappingOptions: [],
         preferredBackends: [.driverKitHID, .userSpaceHID],
         gipStartupPackets: GIPStartupPacket.defaultSequence,
+        gipKeepAlivePolicy: .enabled,
         hardwareVerified: false
       )
   }
@@ -212,7 +220,7 @@ struct DeviceCatalog: Sendable {
     }
     try requireKeys(
       protocolObject,
-      allowed: ["driver", "variant", "flags", "startup_packets"],
+      allowed: ["driver", "variant", "flags", "startup_packets", "keep_alive"],
       required: ["driver", "variant"],
       path: "\(path).protocol"
     )
@@ -328,6 +336,11 @@ struct DeviceCatalog: Sendable {
     guard packetNames.isEmpty || driver == "GIP" else {
       throw CatalogError("startup packets require the GIP parser")
     }
+    let keepAlivePolicy: GIPKeepAlivePolicy =
+      record.protocolInfo.keepAliveEnabled.map { $0 ? .enabled : .disabled } ?? .enabled
+    guard driver == "GIP" || record.protocolInfo.keepAliveEnabled == nil else {
+      throw CatalogError("keep-alive policy requires the GIP parser")
+    }
 
     return DeviceRuntimeProfile(
       parserName: driver,
@@ -346,6 +359,7 @@ struct DeviceCatalog: Sendable {
       mappingOptions: mappingOptions(from: flags),
       preferredBackends: [.driverKitHID, .userSpaceHID],
       gipStartupPackets: startupPackets.isEmpty ? GIPStartupPacket.defaultSequence : startupPackets,
+      gipKeepAlivePolicy: keepAlivePolicy,
       hardwareVerified: record.provenance.verified
     )
   }
@@ -448,12 +462,14 @@ struct DeviceCatalog: Sendable {
       let variant: String
       let flags: [String]?
       let startupPackets: [String]?
+      let keepAliveEnabled: Bool?
 
       enum CodingKeys: String, CodingKey {
         case driver
         case variant
         case flags
         case startupPackets = "startup_packets"
+        case keepAliveEnabled = "keep_alive"
       }
     }
 

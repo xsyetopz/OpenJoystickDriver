@@ -8,6 +8,15 @@ private let gipHandshakeRetryDelays: [UInt64] = [1_000_000_000, 2_000_000_000, 4
 private let gipInitDelayNanoseconds: UInt64 = 50_000_000
 private let gipStickMax: Float = 32767
 private let gipTriggerMax: Float = 1023
+private let gipMaximumVarintBytes = 5
+
+private struct GIPFrame {
+  let command: UInt8
+  let options: UInt8
+  let sequence: UInt8
+  let payload: Data
+  let chunkOffset: Int
+}
 
 /// Errors that ``GIPParser`` can throw during the handshake or while parsing packets.
 public enum GIPError: Error, Sendable {
@@ -25,8 +34,7 @@ public enum GIPError: Error, Sendable {
 ///
 /// Sends the three-packet GIP init sequence on connection, then parses
 /// incoming interrupt-transfer packets into ``ControllerEvent`` values.
-/// Sends a keep-alive ping every ~4 seconds to prevent the controller
-/// from entering idle.
+/// Sends a keep-alive ping every ~4 seconds when the device profile permits it.
 public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Sendable {
 
   // MARK: - Thread safety
@@ -38,10 +46,12 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
 
   private let outEndpoint: UInt8
   private let startupPackets: [GIPStartupPacket]
+  public let keepAlivePolicy: GIPKeepAlivePolicy
 
   private var sequencer = GIPSequencer()
   private let authHandler: GIPAuthHandler
   private var handle: USBDeviceHandle?
+  private var pendingInput = Data()
 
   /// Current device state, driven by auth progress.
   public var deviceState: GIPDeviceState { authHandler.deviceState }
@@ -59,10 +69,12 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
   /// Creates a new GIPParser with the given endpoint configuration.
   public init(
     transportProfile: DeviceTransportProfile = .gipDefault,
-    startupPackets: [GIPStartupPacket] = GIPStartupPacket.defaultSequence
+    startupPackets: [GIPStartupPacket] = GIPStartupPacket.defaultSequence,
+    keepAlivePolicy: GIPKeepAlivePolicy = .enabled
   ) {
     self.outEndpoint = transportProfile.outputEndpoint
     self.startupPackets = startupPackets
+    self.keepAlivePolicy = keepAlivePolicy
     self.authHandler = GIPAuthHandler(outEndpoint: transportProfile.outputEndpoint)
   }
 
@@ -88,49 +100,100 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
     }
   }
 
-  /// Send GIP keep-alive (CMD=0x03) to prevent the controller entering idle.
+  /// Sends the periodic host-side GIP status packet (CMD=0x03).
   public func keepAlive(handle: USBDeviceHandle?) throws {
+    guard keepAlivePolicy == .enabled else { return }
     guard let handle else { return }
-    let seq = sequencer.next(for: GIPCommand.keepAlive)
-    let packet: [UInt8] = [GIPCommand.keepAlive, GIPOption.internal, seq, 3, 0x00, 0x00, 0x00]
+    let seq = sequencer.next(for: GIPCommand.status)
+    let packet: [UInt8] = [GIPCommand.status, GIPOption.internal, seq, 3, 0x00, 0x00, 0x00]
     _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
   }
 
-  /// Parses one GIP packet and returns zero or more controller events.
+  /// Builds the ACK frame required by a GIP packet with the acknowledge option bit set.
+  static func acknowledgementPacket(
+    command: UInt8,
+    options: UInt8,
+    sequence: UInt8,
+    totalLength: UInt16,
+    remaining: UInt16 = 0
+  ) -> [UInt8] {
+    let clientAndInternal = (options & 0x0F) | GIPOption.internal
+    return [
+      GIPCommand.acknowledge, clientAndInternal, sequence, 9, 0, command, clientAndInternal,
+      UInt8(truncatingIfNeeded: totalLength), UInt8(truncatingIfNeeded: totalLength >> 8), 0, 0,
+      UInt8(truncatingIfNeeded: remaining), UInt8(truncatingIfNeeded: remaining >> 8),
+    ]
+  }
+
+  /// Parses complete GIP frames buffered across one or more interrupt transfers.
   public func parse(data: Data) throws -> [ControllerEvent] {
-    guard data.count >= 4 else {
-      throw GIPError.malformedPacket("Packet too short: \(data.count) bytes")
+    pendingInput.append(data)
+    var events: [ControllerEvent] = []
+    while let frame = try nextFrame() {
+      events += process(frame)
     }
+    return events
+  }
 
-    // Parse payload length — extended encoding when bit 7 is set on byte 3
-    let payloadLength: Int
-    let headerSize: Int
-    if data[3] & 0x80 != 0 {
-      guard data.count >= 5 else {
-        throw GIPError.malformedPacket("Extended length but packet too short")
+  private func nextFrame() throws -> GIPFrame? {
+    guard pendingInput.count >= 4 else { return nil }
+    let bytes = Array(pendingInput)
+
+    let command = bytes[0]
+    let options = bytes[1]
+    let sequence = bytes[2]
+    guard let (payloadLength, afterLength) = try decodeVarint(bytes, start: 3) else { return nil }
+    var headerLength = afterLength
+    var chunkOffset = 0
+    if options & GIPOption.chunk != 0 {
+      guard let (offset, afterOffset) = try decodeVarint(bytes, start: headerLength) else {
+        return nil
       }
-      payloadLength = Int(data[3] & 0x7F) << 8 | Int(data[4])
-      headerSize = 5
-    } else {
-      payloadLength = Int(data[3])
-      headerSize = 4
+      chunkOffset = offset
+      headerLength = afterOffset
     }
+    guard pendingInput.count >= headerLength + payloadLength else { return nil }
 
-    guard data.count >= headerSize + payloadLength else {
-      throw GIPError.malformedPacket(
-        "Packet shorter than declared payload: " + "\(data.count) < \(headerSize + payloadLength)"
-      )
+    let payload = Data(bytes[headerLength..<(headerLength + payloadLength)])
+    pendingInput.removeFirst(headerLength + payloadLength)
+    return GIPFrame(
+      command: command,
+      options: options,
+      sequence: sequence,
+      payload: payload,
+      chunkOffset: chunkOffset
+    )
+  }
+
+  private func decodeVarint(_ bytes: [UInt8], start: Int) throws -> (Int, Int)? {
+    var value = 0
+    var shift = 0
+    for index in 0..<gipMaximumVarintBytes {
+      let offset = start + index
+      guard offset < bytes.count else { return nil }
+      let byte = bytes[offset]
+      value |= Int(byte & 0x7F) << shift
+      if byte & 0x80 == 0 { return (value, offset + 1) }
+      shift += 7
     }
-    let payload = data.dropFirst(headerSize).prefix(payloadLength)
+    throw GIPError.malformedPacket("Header varint exceeds \(gipMaximumVarintBytes) bytes")
+  }
 
-    switch data[0] {
-    case GIPCommand.input: return parseMainInput(payload: Data(payload))
-    case GIPCommand.virtualKey: return parseGuideButton(payload: Data(payload))
+  private func process(_ frame: GIPFrame) -> [ControllerEvent] {
+    let totalLength = frame.chunkOffset + frame.payload.count
+    if frame.options & GIPOption.acknowledge != 0 {
+      sendAcknowledgement(for: frame, totalLength: totalLength)
+    }
+    guard frame.options & GIPOption.chunk == 0 else { return [] }
+
+    switch frame.command {
+    case GIPCommand.input: return parseMainInput(payload: frame.payload)
+    case GIPCommand.virtualKey: return parseGuideButton(payload: frame.payload)
     case GIPCommand.authenticate:
       if let handle {
         do {
           try authHandler.handleAuthMessage(
-            payload: Data(payload),
+            payload: frame.payload,
             handle: handle,
             sequencer: &sequencer
           )
@@ -139,6 +202,19 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
       return []
     default: return []
     }
+  }
+
+  private func sendAcknowledgement(for frame: GIPFrame, totalLength: Int) {
+    guard let handle, let length = UInt16(exactly: totalLength) else { return }
+    let packet = Self.acknowledgementPacket(
+      command: frame.command,
+      options: frame.options,
+      sequence: frame.sequence,
+      totalLength: length
+    )
+    do {
+      _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
+    } catch { print("[GIPParser] Acknowledgement error: \(error)") }
   }
 
   /// Sends a GIP rumble command (CMD=0x09) to the physical controller.

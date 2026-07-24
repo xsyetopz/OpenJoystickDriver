@@ -33,10 +33,15 @@ Save the proposed controller JSON outside the bundled record directory until its
 
 Use decimal numbers in the JSON. Review `protocol.startup_packets` before probing. The command sends only the startup behavior already modeled by OJD:
 
-- GIP: the named startup sequence plus a keep-alive approximately every four seconds.
+- GIP: the named startup sequence; profiles may disable the default keep-alive
+  when hardware evidence requires it.
 - Xbox 360 wired: the steady Player 1 ring-light packet.
 - Xbox 360 wireless receiver: no output until a logical controller connects, then the receiver-wrapped steady Player 1 packet.
 - A record containing `rumbleBegin` and `rumbleEnd` sends those brief initialization packets because they are part of that record's declared startup sequence.
+
+`protocol.keep_alive` is an optional boolean for GIP records. Omit it for the
+default-enabled behavior; set it to `false` only when device evidence requires
+periodic host output to be disabled.
 
 ## 2. Validate without opening hardware
 

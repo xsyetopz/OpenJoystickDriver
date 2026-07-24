@@ -163,7 +163,7 @@ def validate_record(
     protocol = require_object(root["protocol"], "protocol")
     require_keys(
         protocol,
-        {"driver", "variant", "flags", "startup_packets"},
+        {"driver", "variant", "flags", "startup_packets", "keep_alive"},
         {"driver", "variant"},
         "protocol",
     )
@@ -193,6 +193,12 @@ def validate_record(
         startup != ["powerOn", "ledOn", "authDone"],
         "default GIP startup packets must be omitted",
     )
+    if "keep_alive" in protocol:
+        require(
+            isinstance(protocol["keep_alive"], bool),
+            "protocol.keep_alive must be a boolean",
+        )
+        require(driver == "GIP", "keep_alive policy requires GIP")
 
     usb = root.get("usb")
     if usb is not None:

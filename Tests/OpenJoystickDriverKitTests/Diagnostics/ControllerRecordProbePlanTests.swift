@@ -15,6 +15,7 @@ struct ControllerRecordProbePlanTests {
     #expect(plan.transportProfile.outputEndpoint == 2)
     #expect(!plan.transportProfile.needsSetConfiguration)
     #expect(plan.startupPackets == GIPStartupPacket.defaultSequence)
+    #expect(plan.keepAlivePolicy == .enabled)
     #expect(plan.makeParser() is GIPParser)
   }
 
@@ -40,6 +41,14 @@ struct ControllerRecordProbePlanTests {
     #expect(plan.driver == .xbox360)
     #expect(plan.startupPackets.isEmpty)
     #expect(plan.makeParser() is Xbox360Parser)
+  }
+
+  @Test func loadsGIPRecordWithKeepAliveDisabled() throws {
+    let plan = try ControllerRecordProbePlan(data: try recordData(keepAliveEnabled: false))
+    let parser = try #require(plan.makeParser() as? GIPParser)
+
+    #expect(plan.keepAlivePolicy == .disabled)
+    #expect(parser.keepAlivePolicy == .disabled)
   }
 
   @Test func loadsXbox360WirelessReceiverRecord() throws {
@@ -92,7 +101,8 @@ struct ControllerRecordProbePlanTests {
     outputEndpoint: Int = 2,
     configuration: String? = nil,
     settleMilliseconds: Int? = nil,
-    startupPackets: [String]? = nil
+    startupPackets: [String]? = nil,
+    keepAliveEnabled: Bool? = nil
   ) throws -> Data {
     let defaults = driver == "Xbox360" ? (129, 1) : (130, 2)
     var usb: [String: Any] = [:]
@@ -104,6 +114,7 @@ struct ControllerRecordProbePlanTests {
 
     var protocolConfig: [String: Any] = ["driver": driver, "variant": variant]
     if let startupPackets { protocolConfig["startup_packets"] = startupPackets }
+    if let keepAliveEnabled { protocolConfig["keep_alive"] = keepAliveEnabled }
 
     var record: [String: Any] = [
       "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"

@@ -92,6 +92,23 @@ Reporter packet evidence from an IOUSBHost harness verifies the GIP handshake, p
 
 The source-backed GIP record for `1532:0A29` has a local-hardware patch for the captured interface-0 endpoints `0x81`/`0x01`. Input mapping, reconnect, LED, and rumble behavior remain unverified pending the [Wolverine V2 hardware test](../testing/razer/wolverine-v2.md).
 
+## Nacon Revolution X Pro
+
+The local `3285:0634` override selects GIP/xboxOne on interface 0 with the
+captured interrupt endpoints `0x87`/`0x07`. The profile disables OJD's periodic
+host-side GIP `0x03` transmission because the issue's working WebUSB trace
+shows the device emitting `0x03` status frames and remaining stable without a
+synthetic host packet. The parser also accepts split or stacked transfers,
+base-128 payload lengths, and requested ACK frames using the Linux/xone layout.
+Chunk headers are drained and acknowledged, but payload reassembly is not yet
+implemented because no issue capture requires a multi-chunk input report.
+
+Current Linux `xpad.c` supports the Nacon vendor and Xbox One fallback, but does
+not name this exact PID. That supports classification only; it does not prove
+the captured endpoint addresses or the native SwiftUSB session. Keep
+`provenance.verified` false until the [Nacon hardware procedure](../testing/nacon-revolution-x.md)
+passes input, continuous-read, reconnect, and no-host-keep-alive checks.
+
 ## Xbox Adaptive Joystick
 
 No parser claim exists. Product descriptions do not provide a packet layout. Capture neutral, every button, stick axes, stick click, report IDs, and checksums with [the packet request](../testing/xbox-adaptive-joystick.md) before adding a record.

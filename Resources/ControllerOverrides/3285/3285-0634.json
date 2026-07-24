@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+  "operation": "add",
+  "record": {
+    "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+    "vendor_id": 12933,
+    "product_id": 1588,
+    "transport": "usb",
+    "protocol": {
+      "driver": "GIP",
+      "variant": "xboxOne",
+      "keep_alive": false
+    },
+    "usb": {
+      "endpoints": {
+        "in": 135,
+        "out": 7
+      }
+    },
+    "provenance": {
+      "source": "local-hardware",
+      "verified": false
+    }
+  }
+}

@@ -30,7 +30,8 @@ public final class ParserRegistry: Sendable {
     case "GIP":
       return GIPParser(
         transportProfile: transportProfile,
-        startupPackets: runtimeProfile.gipStartupPackets
+        startupPackets: runtimeProfile.gipStartupPackets,
+        keepAlivePolicy: runtimeProfile.gipKeepAlivePolicy
       )
     case "DS3": return DS3Parser()
     case "DS4": return DS4Parser()

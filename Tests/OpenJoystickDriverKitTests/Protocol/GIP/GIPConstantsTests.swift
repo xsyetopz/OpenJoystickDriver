@@ -67,15 +67,22 @@ struct GIPConstantsTests {
   }
   @Test
   func test_command_constants_match_protocol() {
-    #expect(GIPCommand.announce == 0x01)
-    #expect(GIPCommand.status == 0x02)
-    #expect(GIPCommand.keepAlive == 0x03)
+    #expect(GIPCommand.acknowledge == 0x01)
+    #expect(GIPCommand.announce == 0x02)
+    #expect(GIPCommand.status == 0x03)
     #expect(GIPCommand.power == 0x05)
     #expect(GIPCommand.authenticate == 0x06)
     #expect(GIPCommand.virtualKey == 0x07)
     #expect(GIPCommand.rumble == 0x09)
     #expect(GIPCommand.led == 0x0A)
     #expect(GIPCommand.input == 0x20)
+  }
+  @Test
+  func test_option_constants_match_protocol() {
+    #expect(GIPOption.acknowledge == 0x10)
+    #expect(GIPOption.internal == 0x20)
+    #expect(GIPOption.chunkStart == 0x40)
+    #expect(GIPOption.chunk == 0x80)
   }
   @Test
   func test_authType_constants() {

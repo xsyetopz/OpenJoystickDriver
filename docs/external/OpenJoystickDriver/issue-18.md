@@ -7,7 +7,7 @@
 - **State:** OPEN
 - **Author:** cooltune
 - **Created:** 2026-07-18T19:56:50Z
-- **Updated:** 2026-07-19T01:17:45Z
+- **Updated:** 2026-07-20T14:56:15Z
 - **Closed:** —
 - **Labels:** enhancement, help wanted
 
@@ -311,3 +311,11 @@ int main(int argc, char **argv) {
 }
 ```
 </details>
+
+### xsyetopz — 2026-07-20T14:56:15Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/18#issuecomment-5023668307)
+
+Currently 0.5.0-alpha.5 is undergoing a major UI/flow rewrite, so there's some patience needed.
+
+But, in the meantime, being able to try the current upstream code may help, as a lot of the "needs x or y" for apple dev account issues were mostly removed.

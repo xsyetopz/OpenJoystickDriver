@@ -74,6 +74,24 @@ struct DeviceTransportProfileTests {
     #expect(transport.postHandshakeSettleNanoseconds == 0)
   }
 
+  @Test func testNaconRevolutionXProProfileDisablesGIPKeepAlive() {
+    let registry = ParserRegistry()
+    let identifier = DeviceIdentifier(vendorID: 12_933, productID: 1_588)
+
+    let runtime = registry.runtimeProfile(for: identifier)
+    let transport = registry.transportProfile(for: identifier)
+    let parser = registry.parser(for: identifier) as? GIPParser
+
+    #expect(runtime.parserName == "GIP")
+    #expect(runtime.protocolVariant == .xboxOne)
+    #expect(!runtime.hardwareVerified)
+    #expect(runtime.gipKeepAlivePolicy == .disabled)
+    #expect(transport.inputEndpoint == 0x87)
+    #expect(transport.outputEndpoint == 0x07)
+    #expect(transport.interfaceNumber == 0)
+    #expect(parser?.keepAlivePolicy == .disabled)
+  }
+
   @Test func testMicrosoftXboxOneController1537UsesHardwareVerifiedTransport() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 1_118, productID: 721)

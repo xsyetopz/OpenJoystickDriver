@@ -19,3 +19,4 @@ Refresh from the repository root:
 | [#15](issue-15.md) | CLOSED | Logitech F310 (X mode): no input on macOS 26 — profile declares wrong OUT endpoint (1 → hardware uses 2) |
 | [#18](issue-18.md) | OPEN | Original Xbox One controller (model 1537, 045E:02D1) falls back to genericHID — request GIP profile |
 | [#19](issue-19.md) | OPEN | Add controller record: Razer Wolverine V2 (1532:0a29) |
+| [#21](issue-21.md) | OPEN | Nacon Revolution X Pro (3285:0634): add GIP profile and investigate USB disconnects |
