@@ -6,8 +6,6 @@ import Testing
 
 @Suite(.serialized)
 struct LocalServiceRPCTests {
-  private let rpcTimeoutSeconds: TimeInterval = 5
-
   @Test func roundTripUsesPrivateSocketAndBoundedJSONFrame() async throws {
     let socketPath = temporarySocketPath()
     let server = LocalServiceRPCServer(
@@ -25,7 +23,7 @@ struct LocalServiceRPCTests {
     let result: String = try await LocalServiceRPCClient.call(
       method: "uppercase",
       arguments: "controller",
-      timeoutSeconds: rpcTimeoutSeconds,
+      timeoutSeconds: 1,
       socketPath: socketPath
     )
     let attributes = try FileManager.default.attributesOfItem(
@@ -52,7 +50,7 @@ struct LocalServiceRPCTests {
       let _: Data = try await LocalServiceRPCClient.call(
         method: "rejected",
         arguments: LocalServiceRPCEmptyArguments(),
-        timeoutSeconds: rpcTimeoutSeconds,
+        timeoutSeconds: 1,
         socketPath: socketPath
       )
     }

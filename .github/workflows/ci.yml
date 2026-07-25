@@ -41,8 +41,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install libusb
-          brew install swiftlint
+          brew list --versions libusb >/dev/null 2>&1 || brew install libusb
+          brew list --versions swiftlint >/dev/null 2>&1 || brew install swiftlint
+
+      - name: Prepare universal libusb
+        run: |
+          source scripts/platform/environment.sh
+          setup_libusb_pkgconfig
+          echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH" >> "$GITHUB_ENV"
 
       - name: Verify generated controller catalog
         env:
@@ -77,4 +83,4 @@ jobs:
 
       - name: Run tests
         run: |
-          swift test
+          swift test --no-parallel

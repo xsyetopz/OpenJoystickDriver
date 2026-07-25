@@ -227,7 +227,7 @@ import Testing
 
     #expect(await client.updateAttempts == 1)
     #expect(await client.lastExpectedCurrent == profile)
-    #expect(await client.snapshotValue.profiles == [profile])
+    #expect(client.snapshotValue.profiles == [profile])
   }
 
   @Test func editBindAndUnbindPassTheExactProfileTheyRead() async throws {

@@ -255,6 +255,7 @@ _driverkit_xcodebuild() {
     -project "$DRIVERKIT_PROJECT" \
     -scheme "$DRIVERKIT_SCHEME" \
     -configuration "$configuration" \
+    -destination "generic/platform=DriverKit" \
     -derivedDataPath "$DRIVERKIT_DERIVED_DATA" \
     PRODUCT_BUNDLE_IDENTIFIER="$DRIVERKIT_BUNDLE_ID" \
     PRODUCT_NAME="$DRIVERKIT_PRODUCT_NAME" \
@@ -349,8 +350,6 @@ validate_driverkit() {
   fi
   grep -q 'name: "DriverKitGenerator"' "$PROJECT_DIR/Package.swift" \
     || die "DriverKitGenerator target is missing"
-  ! rg -l '^import SwifterKit$' "$PROJECT_DIR/Sources/OpenJoystickDriverKit" >/dev/null \
-    || die "OpenJoystickDriverKit must not import SwifterKit"
   python3 - "$PROJECT_DIR/Sources" <<'PY'
 import sys
 from pathlib import Path

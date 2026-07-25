@@ -108,7 +108,7 @@ build_universal_libusb() (
   tar -xjf "$tarball" -C "$tmpdir/src-arm64" --strip-components=1
   (
     cd "$tmpdir/src-arm64" || exit
-    ./configure \
+    LT_MULTI_MODULE=1 ./configure \
       CC="clang" \
       CFLAGS="-arch arm64 -target arm64-apple-macos10.15 -isysroot $SDK_PATH" \
       LDFLAGS="-arch arm64 -target arm64-apple-macos10.15" \
@@ -124,7 +124,7 @@ build_universal_libusb() (
   tar -xjf "$tarball" -C "$tmpdir/src-x86_64" --strip-components=1
   (
     cd "$tmpdir/src-x86_64" || exit
-    ./configure \
+    LT_MULTI_MODULE=1 ./configure \
       CC="clang" \
       CFLAGS="-arch x86_64 -target x86_64-apple-macos10.15 -isysroot $SDK_PATH" \
       LDFLAGS="-arch x86_64 -target x86_64-apple-macos10.15" \
