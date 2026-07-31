@@ -76,7 +76,29 @@ extension DeviceManager {
       currentKeys.insert(key)
       if !knownLocations.contains(key) { addedDevices.append((device, key)) }
     }
+
+    // #22: some controllers declare vendor-specific class only on interfaces,
+    // so the device-class filter misses them entirely.
+    let classZeroStream = context.findDevices(deviceClass: 0, findAll: true)
+    for await device in classZeroStream {
+      let key = "\(device.bus):\(device.address)"
+      if currentKeys.contains(key) { continue }
+      if Self.hasVendorSpecificInterface(device) {
+        currentKeys.insert(key)
+        if !knownLocations.contains(key) { addedDevices.append((device, key)) }
+      }
+    }
+
     return (currentKeys, addedDevices)
+  }
+
+  /// Returns `true` when any interface on the device declares `bInterfaceClass == 0xFF`.
+  private static func hasVendorSpecificInterface(_ device: USBDevice) -> Bool {
+    let config: USBConfigurationDescriptor
+    do { config = try device.getActiveConfigurationDescriptor() } catch {
+      do { config = try device.getConfigurationDescriptor(index: 0) } catch { return false }
+    }
+    return config.interfaces.contains { $0.bInterfaceClass == usbVendorSpecificClass }
   }
 
   private func updateUSBKnownLocations(
