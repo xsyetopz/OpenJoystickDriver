@@ -306,32 +306,5 @@ private struct CLIParseResult {
 }
 
 enum CLIHelp {
-  static let text = """
-  OpenJoystickDriver v\(ApplicationVersion.current) - macOS gamepad driver
-
-  Usage: OpenJoystickDriver --headless [--timeout <seconds>] <command>
-
-  Commands:
-  status [--json]
-    controller list|state|packets|watch|output
-    map <command>
-    app status|login enable|disable|logs
-    extension status|enable|disable
-    permissions [status|request|open|explain]
-    compat show|set <identity>|reset
-    test [positive-seconds]
-    diagnose [runtime|catalog|report]
-    update check
-
-  Shared options are accepted by the command that owns them. Use `--json` for
-  machine-readable output where supported and `--device <id>` for controller-scoped
-  operations. `--timeout <seconds>` applies to local application-service calls.
-
-  Low-level controller output:
-    controller output [list|rumble|player|brightness|color|plan] [options]
-
-  Options:
-    -h, --help     Show this help
-    -v, --version  Show version
-  """
+  static let text = InstalledCLIHelpRenderer.render()
 }

@@ -1,9 +1,9 @@
 # CLI and application runtime
 
 The signed application bundle is a thin, headless host for the in-process
-controller runtime. The executable also provides the low-level CLI through
-`--headless`; both paths use the same `OpenJoystickDriverKit` contracts and
-authenticated local RPC endpoint. The app host does not shell out to the CLI.
+controller runtime. With `--headless`, the same executable provides the low-level
+CLI. Both paths use the same `OpenJoystickDriverKit` contracts and authenticated
+local RPC endpoint. The app host does not shell out to the CLI.
 
 | Capability | Shared owner |
 | --- | --- |
@@ -20,12 +20,18 @@ authenticated local RPC endpoint. The app host does not shell out to the CLI.
 Launching `OpenJoystickDriver.app` starts `ApplicationServiceRuntime` directly
 and keeps the process alive on the main dispatch queue. It has no status item,
 popover, custom panel, or menu-specific state. The app remains the single
-signed TCC and DriverKit host, and `SMAppService.mainApp` registration is still
-performed on first launch unless the user opted out.
+signed TCC and DriverKit host. Unless the user opted out,
+`SMAppService.mainApp` registration is still performed on first launch.
 
 ## CLI
 
-Headless commands are the supported control and diagnostic surface:
+The installed `OpenJoystickDriver` CLI is the supported user interface for control
+and diagnostics. Repository development, build, validation, and release tasks
+use the separate maintainer command, `./scripts/ojd`. Direct use of
+`OpenJoystickDriverHIDTool` is internal and supported only for focused hardware
+investigation.
+
+Headless commands preserve these command families:
 
 ```text
 status [--json]
@@ -42,9 +48,9 @@ update check ...
 
 `--timeout <seconds>` applies to bounded application-service calls. Controller
 operations retain opaque `--device` selection and ambiguity rejection.
-Machine-readable output uses `--json` where supported; stream commands use
+Machine-readable output uses `--json` where supported. Stream commands use
 their documented JSONL mode.
 
 Raw packet data, runtime soaking, catalog inspection, permission audits, and
-virtual-device self-tests stay in the CLI because their output is diagnostic,
-verbose, or unsuitable for an always-present consumer surface.
+virtual-device self-tests stay in the CLI. Their output is diagnostic, verbose,
+or unsuitable for an always-present consumer interface.
