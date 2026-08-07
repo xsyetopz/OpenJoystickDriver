@@ -56,6 +56,7 @@ If `swift test` reports the documented SwiftPM module-cache mismatch, run `./scr
 - Do not hand-author or retain a manual DriverKit native build path or post-generation patch path. Generated output remains under `.build/driverkit/`.
 - Preserve the host entitlement allowlist for `com.openjoystickdriver.VirtualHIDDevice`; never substitute an allow-any DriverKit user-client entitlement.
 - Avoid broad signing, DriverKit, or application-service lifecycle changes without targeted validation.
+- Do not assert human-readable message text in tests; check return codes, routes, and structural properties instead.
 - Confirm destructive actions, external writes, and publication.
 
 Direct user instructions override this file. A closer subtree `AGENTS.md` takes precedence for files in that subtree. `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` are symlinks to this file.

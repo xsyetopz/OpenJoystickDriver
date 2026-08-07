@@ -147,6 +147,11 @@ swift test
 - The host app's `com.apple.developer.driverkit.userclient-access` entitlement
   must contain only `com.openjoystickdriver.VirtualHIDDevice`. Do not use an
   allow-any entitlement.
+- Do not assert human-readable message text in tests. Check return codes,
+  exit statuses, command routes, identifiers, file paths, and structural
+  properties. Prose-text assertions (`assertIn("Error: …")`,
+  `#expect(help.contains("Output never…"))`) break every time a message is
+  reworded and add no coverage.
 
 ---
 
