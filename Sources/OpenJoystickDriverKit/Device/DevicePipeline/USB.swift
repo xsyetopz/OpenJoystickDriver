@@ -1,6 +1,15 @@
 import Foundation
 import SwiftUSB
 
+/// Checks whether USB startup can continue after an Xbox 360 ring LED rejection.
+public func isIgnorableUSBStartupOutputError(
+  parser: any InputParser,
+  packet: [UInt8],
+  error: USBError
+) -> Bool {
+  parser is Xbox360Parser && packet == [0x01, 0x03, 0x06] && error.isIOError
+}
+
 extension DevicePipeline {
   // MARK: - Private USB pipeline
 
@@ -64,12 +73,21 @@ extension DevicePipeline {
   func sendUSBStartupOutputPackets(handle: USBDeviceHandle) throws {
     guard let startupOutput = parser as? USBStartupOutputProvider else { return }
     for packet in startupOutput.usbStartupOutputPackets() {
-      _ = try handle.interruptTransfer(
-        endpoint: transportProfile.outputEndpoint,
-        data: packet,
-        timeout: 2000
-      )
-      appendToPacketLog(bytes: packet, direction: "tx")
+      do {
+        _ = try handle.interruptTransfer(
+          endpoint: transportProfile.outputEndpoint,
+          data: packet,
+          timeout: 2000
+        )
+        appendToPacketLog(bytes: packet, direction: "tx")
+      } catch let error as USBError
+        where isIgnorableUSBStartupOutputError(parser: parser, packet: packet, error: error)
+      {
+        print(
+          "[DevicePipeline] Optional USB startup output rejected for \(identifier):"
+            + " code=\(error.code) detail=\"\(error.message)\""
+        )
+      }
     }
   }
 
@@ -183,18 +201,18 @@ extension DevicePipeline {
           )
         }
 
-        // Back off aggressively to avoid triggering launchd "inefficient" kills.
+        // Back off to avoid a launchd "inefficient" kill.
         let exp = min(max(0, consecutiveUSBIOErrors - 1), 4)
         let backoff = min(usbIOErrorBackoffMaxNs, usbIOErrorBackoffBaseNs << exp)
         try? await Task.sleep(nanoseconds: backoff)
 
         if consecutiveUSBIOErrors >= usbIOErrorReconnectThreshold {
-          print("[DevicePipeline] Too many USB I/O errors — reconnecting:" + " \(identifier)")
+          print("[DevicePipeline] Too many USB I/O errors. Reconnecting:" + " \(identifier)")
           shouldBreak = true
         }
       } catch {
-        // Unknown failures: slow down and let the outer loop reconnect.
-        print("[DevicePipeline] Read error" + " for \(identifier):" + " \(error) — reconnecting")
+        // Slow down after an unknown failure, then reconnect.
+        print("[DevicePipeline] Read error" + " for \(identifier):" + " \(error). Reconnecting")
         try? await Task.sleep(nanoseconds: 250_000_000)
         shouldBreak = true
       }
