@@ -91,7 +91,7 @@ Use these commands:
 
 ```bash
 ./scripts/ojd driverkit generate
-./scripts/ojd validate driverkit
+./scripts/ojd check driverkit
 ./scripts/ojd build dext
 ```
 
@@ -127,7 +127,7 @@ Validate with:
 
 ```bash
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ```
 
 ## Documentation and Agent Files
@@ -159,11 +159,11 @@ Core checks:
 swift build
 swift test
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
-./scripts/ojd validate scripts
-./scripts/ojd validate swift-structure
-./scripts/ojd validate driverkit
+./scripts/ojd check scripts
+./scripts/ojd check swift-structure
+./scripts/ojd check driverkit
 ```
 
 The macOS 14 parser harness covers parser behavior below the local Swift Testing

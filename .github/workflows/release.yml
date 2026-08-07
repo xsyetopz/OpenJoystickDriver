@@ -73,22 +73,22 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: ./scripts/ojd catalog regenerate --check
 
-      - name: Validate records
-        run: ./scripts/ojd validate profiles
+      - name: Check records
+        run: ./scripts/ojd check profiles
 
-      - name: Validate scripts
-        run: ./scripts/ojd validate scripts
+      - name: Check scripts
+        run: ./scripts/ojd check scripts
 
       - name: Test scripts
         run: ./scripts/ojd test scripts
 
-      - name: Validate Swift structure
-        run: ./scripts/ojd validate swift-structure
+      - name: Check Swift structure
+        run: ./scripts/ojd check swift-structure
 
-      - name: Validate generated DriverKit project
+      - name: Check generated DriverKit project
         run: |
           test "$OJD_USE_LOCAL_SWIFTERKIT" != "1"
-          ./scripts/ojd validate driverkit
+          ./scripts/ojd check driverkit
 
       - name: Lint Swift
         run: ./scripts/ojd lint

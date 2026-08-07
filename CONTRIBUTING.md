@@ -116,7 +116,7 @@ without local device access.
 1. Validate.
 
 ```bash
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 swift test
 ```
 
@@ -142,8 +142,8 @@ swift test
   invocation only in `Sources/DriverKitGenerator/` and
   `scripts/build-tools/driverkit.sh`.
 - Never add a manual DriverKit native build path, compatibility wrapper, or
-  post-generation patch. Generate fresh output and validate it with
-  `./scripts/ojd validate driverkit`.
+  post-generation patch. Generate fresh output and check it with
+  `./scripts/ojd check driverkit`.
 - The host app's `com.apple.developer.driverkit.userclient-access` entitlement
   must contain only `com.openjoystickdriver.VirtualHIDDevice`. Do not use an
   allow-any entitlement.

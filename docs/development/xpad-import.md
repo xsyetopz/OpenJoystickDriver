@@ -13,7 +13,7 @@ Verify committed output:
 Rewrite it after an intentional lock or override change:
 
     ./scripts/ojd catalog regenerate --write
-    ./scripts/ojd validate profiles
+    ./scripts/ojd check profiles
 
 The generator downloads every locked Linux source, verifies each SHA-256, parses the
 complete xpad device/initialization tables and supported HID registration tables, normalizes supported rows,

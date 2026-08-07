@@ -98,7 +98,7 @@ OpenJoystickDriver 在 `/Applications` 中只有一个 app bundle：
 
 ```bash
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
 ./scripts/ojd diagnose backends --seconds 5
 ./scripts/ojd diagnose gamecontroller --seconds 5
@@ -133,9 +133,9 @@ OpenJoystickDriver 在 `/Applications` 中只有一个 app bundle：
 ```bash
 brew install libusb
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
-./scripts/ojd validate driverkit
+./scripts/ojd check driverkit
 swift build
 ```
 
@@ -159,7 +159,7 @@ swift build
 
 ```bash
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
 swift build
 ```
@@ -180,7 +180,7 @@ swift build
 
 ```bash
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
 swift build
 ```

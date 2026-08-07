@@ -10,8 +10,8 @@ Run these checks after parser or record changes:
 swift build
 swift test
 ./scripts/ojd test parsers-macos14
-./scripts/ojd validate profiles
-./scripts/ojd validate scripts
+./scripts/ojd check profiles
+./scripts/ojd check scripts
 git diff --check
 ```
 

@@ -40,7 +40,7 @@ used for integrity testing and diagnostics; it is not a consumer gamepad.
   user-client entitlement must be exactly allowlisted to that ID; allow-any
   access is forbidden.
 - Use `./scripts/ojd driverkit generate` to inspect fresh output and
-  `./scripts/ojd validate driverkit` to prove deterministic generation,
+  `./scripts/ojd check driverkit` to prove deterministic generation,
   metadata/entitlement constraints, dependency direction, and unsigned build.
   Signed activation and hardware delivery require a provisioned Mac and remain
   separate evidence.
@@ -55,10 +55,10 @@ used for integrity testing and diagnostics; it is not a consumer gamepad.
 ```bash
 brew install libusb
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
-./scripts/ojd validate driverkit
-./scripts/ojd validate scripts
+./scripts/ojd check driverkit
+./scripts/ojd check scripts
 swift build
 ```
 

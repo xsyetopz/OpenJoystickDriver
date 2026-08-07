@@ -24,7 +24,7 @@
 
 - [Architecture](development/architecture.md)
 - Generated DriverKit relay: run `./scripts/ojd driverkit generate` or
-  `./scripts/ojd validate driverkit`.
+  `./scripts/ojd check driverkit`.
 - Repository command reference and supported command index: run `./scripts/ojd help`.
   Its output is catalog-backed, non-color, and keyboard-readable.
 - [CLI and runtime coverage](development/cli-and-runtime.md)

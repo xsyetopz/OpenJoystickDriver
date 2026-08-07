@@ -34,12 +34,12 @@ Run the checks relevant to the change. The standard repository gates are:
 
 ```bash
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
-./scripts/ojd validate scripts
-./scripts/ojd validate swift-structure
+./scripts/ojd check profiles
+./scripts/ojd check scripts
+./scripts/ojd check swift-structure
 ./scripts/ojd test scripts
 ./scripts/ojd lint
-./scripts/ojd validate driverkit
+./scripts/ojd check driverkit
 swift test
 ```
 

@@ -58,10 +58,10 @@ Commands:
   catalog regenerate --check Verify the runtime catalog against pinned sources and overrides
   catalog regenerate --write Rebuild the runtime catalog from pinned sources and overrides
   catalog xpad [options]      Generate review-only records from a pinned Linux xpad.c
-  validate profiles           Validate canonical controller records
-  validate scripts            Validate script ownership, paths, modes, and syntax
-  validate swift-structure    Validate Swift file sizes and ownership layout
-  validate driverkit          Verify generated DriverKit reproducibility and build
+  check profiles              Check canonical controller records
+  check scripts               Check script ownership, paths, modes, and syntax
+  check swift-structure       Check Swift file sizes and ownership layout
+  check driverkit             Verify generated DriverKit reproducibility and build
   test parsers-macos14        Run focused parser regressions without Swift Testing
   test scripts                Run deterministic script unit tests
   launch sdl-gamecontroller <app>
@@ -343,27 +343,27 @@ case "$cmd" in
     esac
     ;;
 
-  validate)
+  check)
     sub="${1:-}"; shift || true
     case "$sub" in
       profiles)
-        require_no_args "validate profiles" "$@"
+        require_no_args "check profiles" "$@"
         exec /usr/bin/env python3 "$SCRIPT_DIR/catalog/validate-profiles.py"
         ;;
       scripts)
-        require_no_args "validate scripts" "$@"
+        require_no_args "check scripts" "$@"
         exec /usr/bin/env python3 "$SCRIPT_DIR/quality/validate-scripts.py"
         ;;
       swift-structure)
-        require_no_args "validate swift-structure" "$@"
+        require_no_args "check swift-structure" "$@"
         exec /usr/bin/env python3 "$SCRIPT_DIR/quality/validate-swift-structure.py"
         ;;
       driverkit)
-        require_no_args "validate driverkit" "$@"
+        require_no_args "check driverkit" "$@"
         exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/driverkit.sh" validate
         ;;
       *)
-        die "Unknown: validate $sub (expected: profiles | scripts | swift-structure | driverkit)"
+        die "Unknown: check $sub (expected: profiles | scripts | swift-structure | driverkit)"
         ;;
     esac
     ;;

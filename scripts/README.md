@@ -34,7 +34,7 @@ Run implementation behavior through `./scripts/ojd`; paths below these ownership
 directories may change. Validate routing, file modes, and shell syntax with:
 
 ```bash
-./scripts/ojd validate scripts
+./scripts/ojd check scripts
 ```
 
 ## Implementation inventory
@@ -50,7 +50,7 @@ All implementation paths are internal to the dispatcher.
 | `build-tools/driverkit.sh` | `driverkit`, `build dext`, and install implementation | Generates, validates, builds, signs, and embeds the SwifterKit DriverKit relay | Deterministic generation, metadata/entitlement checks, unsigned native build, shell syntax |
 | `catalog/generate-controller-catalog.py` | `catalog regenerate` | Reads locked sources; check is read-only, write replaces generated records | Catalog unit tests and regeneration check |
 | `catalog/generate-xpad-records.py` | `catalog xpad` | Reads local or GitHub Linux source and writes review output | xpad unit tests |
-| `catalog/validate-profiles.py` | `validate profiles` and catalog generator | Reads and validates controller records | Catalog unit tests and profile gate |
+| `catalog/validate-profiles.py` | `check profiles` and catalog generator | Reads and validates controller records | Catalog unit tests and profile gate |
 | `diagnostics/catalina-smoke.sh` | `diagnose catalina` | Verifies the foreground app bundle and absence of helper agents | Shell syntax; macOS 10.15 manual check |
 | `diagnostics/diagnose.sh` | `diagnose` routes | Reads system/runtime state; backend probes can change temporary runtime output settings | Help routing; shell syntax; local diagnostics |
 | `diagnostics/sdl/gamecontroller.sh` | `launch sdl-gamecontroller` | Selects a compatibility route and launches the requested app | Shell syntax; manual SDL check |
@@ -59,8 +59,8 @@ All implementation paths are internal to the dispatcher.
 | `platform/environment.sh` | Build, diagnostics, notarization, and packaging implementations | Loads one root environment file; may build cached universal libusb artifacts | Environment and packaging tests; shell syntax |
 | `quality/env-audit.py` | `env audit` | Reads environment-file keys without printing values | Environment contract tests |
 | `quality/test-parsers-macos14.sh` | `test parsers-macos14` | Creates isolated harness and cache directories under `/tmp` | Parser harness gate |
-| `quality/validate-scripts.py` | `validate scripts` | Reads repository paths and runs `bash -n` | Script-layout unit tests and CI |
-| `quality/validate-swift-structure.py` | `validate swift-structure` | Reads Swift paths, sizes, names, and directives | Structural unit tests and CI |
+| `quality/validate-scripts.py` | `check scripts` | Reads repository paths and runs `bash -n` | Script-layout unit tests and CI |
+| `quality/validate-swift-structure.py` | `check swift-structure` | Reads Swift paths, sizes, names, and directives | Structural unit tests and CI |
 | `release/bump-version.sh` | `release bump-version` | Updates version references after verifying a changelog heading | Swift packaging contracts and diff review |
 | `release/dmg-background.py` | Release package implementation | Writes a deterministic PNG to the requested path | Packaging contract |
 | `release/install-local.sh` | `release install-local` | Packages a release and replaces the local app in `/Applications` | Dispatcher argument checks; Swift packaging contract |
@@ -80,7 +80,7 @@ All implementation paths are internal to the dispatcher.
 | Diagnose signing mismatches | `./scripts/ojd signing doctor` | Use before tweaking Xcode settings |
 | Build signed dev app | `./scripts/ojd build dev` | Output to `.build/` |
 | Generate DriverKit project | `./scripts/ojd driverkit generate` | Writes a fresh ephemeral SwifterKit project under `.build/driverkit/generated/` |
-| Validate DriverKit generation | `./scripts/ojd validate driverkit` | Double-generates, checks metadata/boundaries, and performs an unsigned native build |
+| Check DriverKit generation | `./scripts/ojd check driverkit` | Double-generates, checks metadata/boundaries, and performs an unsigned native build |
 | Install signed dev build | `./scripts/ojd build install dev` | Application and generated DriverKit relay; the app embeds its service registration |
 | Fast install (app only) | `./scripts/ojd build install-fast dev` | Skips a generated relay upgrade |
 | Bump release version | `./scripts/ojd release bump-version <version>` | Verifies the changelog heading and updates version references |
@@ -208,7 +208,7 @@ Prove the supported generated path before changing generation, signing, or
 relay configuration:
 
 ```bash
-./scripts/ojd validate driverkit
+./scripts/ojd check driverkit
 ```
 
 Validation rejects a local SwifterKit override, generates twice and compares the

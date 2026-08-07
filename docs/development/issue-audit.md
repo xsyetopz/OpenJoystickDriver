@@ -42,13 +42,13 @@ The audit baseline passed:
 
 ```bash
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
-./scripts/ojd validate scripts
+./scripts/ojd check profiles
+./scripts/ojd check scripts
 ./scripts/ojd test scripts
-./scripts/ojd validate swift-structure
+./scripts/ojd check swift-structure
 ./scripts/ojd lint
 ./scripts/ojd test parsers-macos14
-./scripts/ojd validate driverkit
+./scripts/ojd check driverkit
 MACOSX_DEPLOYMENT_TARGET=14.0 /usr/bin/xcrun swift test
 ```
 

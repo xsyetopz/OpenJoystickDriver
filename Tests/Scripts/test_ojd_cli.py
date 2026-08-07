@@ -23,8 +23,8 @@ class OJDCLITests(unittest.TestCase):
         result = self.run_ojd("--help")
 
         self.assertEqual(result.returncode, 0)
-        self.assertIn("validate scripts", result.stdout)
-        self.assertIn("validate driverkit", result.stdout)
+        self.assertIn("check scripts", result.stdout)
+        self.assertIn("check driverkit", result.stdout)
         self.assertIn("driverkit generate", result.stdout)
         self.assertIn("docs export-external-issues", result.stdout)
 

@@ -102,7 +102,7 @@ Useful diagnostics:
 
 ```bash
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
 ./scripts/ojd diagnose backends --seconds 5
 ./scripts/ojd diagnose gamecontroller --seconds 5
@@ -140,9 +140,9 @@ Parser, record, and test changes do not require signing:
 ```bash
 brew install libusb
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
-./scripts/ojd validate driverkit
+./scripts/ojd check driverkit
 swift build
 ```
 
@@ -166,7 +166,7 @@ Before opening a PR for parser/record work, run:
 
 ```bash
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
 swift build
 ```
@@ -187,7 +187,7 @@ Minimum checks for parser/record changes:
 
 ```bash
 ./scripts/ojd catalog regenerate --check
-./scripts/ojd validate profiles
+./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
 swift build
 ```
