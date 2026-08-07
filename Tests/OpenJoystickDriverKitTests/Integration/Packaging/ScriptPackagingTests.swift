@@ -8,8 +8,30 @@ struct ScriptPackagingTests {
     let justfile = try String(contentsOf: justfileURL, encoding: .utf8)
 
     #expect(justfile.contains("release-local-install version=\"0.5.0-beta.1\""))
-    #expect(justfile.contains("OJD_ENV=release ./scripts/ojd package release \"{{version}}\""))
-    #expect(justfile.contains("cp -R .build/debug/OpenJoystickDriver.app /Applications/"))
+    #expect(justfile.contains("./scripts/ojd release install-local \"{{version}}\""))
+    #expect(!justfile.contains("rm -rf"))
+    #expect(!justfile.contains("cp -R"))
+  }
+
+  @Test func testLocalInstallUsesCanonicalVersionAndStagedReplacement() throws {
+    let root = try RepositoryRoot.from()
+    let install = try String(
+      contentsOf: root.appendingPathComponent("scripts/release/install-local.sh"),
+      encoding: .utf8
+    )
+    let package = try String(
+      contentsOf: root.appendingPathComponent("scripts/release/package.sh"),
+      encoding: .utf8
+    )
+
+    #expect(install.contains("VERSION=\"${1:-$OJD_DEFAULT_BUNDLE_SHORT_VERSION}\""))
+    #expect(install.contains("APP_STAGED="))
+    #expect(install.contains("APP_BACKUP="))
+    #expect(install.contains("codesign --verify --deep --strict"))
+    #expect(package.contains("release_ref=\"${GITHUB_REF_NAME:-}\""))
+    #expect(package.contains("release_ref#v"))
+    #expect(package.contains("OJD_DEFAULT_BUNDLE_SHORT_VERSION"))
+    #expect(!package.contains("date -u"))
   }
 
   @Test func testBumpVersionSurfacesUseCurrentReleaseVersion() throws {

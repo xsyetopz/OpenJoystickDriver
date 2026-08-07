@@ -38,9 +38,11 @@ struct ControllerRecordProbePlanTests {
       data: try recordData(driver: "Xbox360", variant: "xbox360")
     )
 
+    let parser = try #require(plan.makeParser() as? Xbox360Parser)
+
     #expect(plan.driver == .xbox360)
     #expect(plan.startupPackets.isEmpty)
-    #expect(plan.makeParser() is Xbox360Parser)
+    #expect(parser.usbStartupOutputPackets() == [[0x01, 0x03, 0x06]])
   }
 
   @Test func loadsGIPRecordWithKeepAliveDisabled() throws {

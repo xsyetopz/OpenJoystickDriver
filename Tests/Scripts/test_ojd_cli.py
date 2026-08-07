@@ -1,9 +1,9 @@
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 import unittest
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 OJD = ROOT / "scripts" / "ojd"
@@ -48,6 +48,55 @@ class OJDCLITests(unittest.TestCase):
         self.assertEqual(bump_result.returncode, 2)
         self.assertIn("bump-version requires exactly one argument", bump_result.stderr)
 
+    def test_canonical_build_routes_preserve_legacy_validation(self):
+        install = self.run_ojd("build", "install", "dev", "unexpected")
+        self.assertEqual(install.returncode, 2)
+        self.assertIn("build install dev does not accept arguments", install.stderr)
+
+        install_fast = self.run_ojd("build", "install-fast", "dev", "unexpected")
+        self.assertEqual(install_fast.returncode, 2)
+        self.assertIn(
+            "build install-fast dev does not accept arguments", install_fast.stderr
+        )
+
+        legacy = self.run_ojd("rebuild", "dev", "unexpected")
+        self.assertEqual(legacy.returncode, 2)
+        self.assertIn("rebuild dev does not accept arguments", legacy.stderr)
+
+    def test_canonical_release_routes_preserve_legacy_validation(self):
+        bump = self.run_ojd("release", "bump-version")
+        self.assertEqual(bump.returncode, 2)
+        self.assertIn("release bump-version requires exactly one argument", bump.stderr)
+
+        package = self.run_ojd("release", "package", "one", "two")
+        self.assertEqual(package.returncode, 2)
+        self.assertIn("release package accepts at most one argument", package.stderr)
+
+        install = self.run_ojd("release", "install-local", "one", "two")
+        self.assertEqual(install.returncode, 2)
+        self.assertIn(
+            "release install-local accepts at most one argument", install.stderr
+        )
+
+        notarize = self.run_ojd("release", "notarize", "log")
+        self.assertEqual(notarize.returncode, 2)
+        self.assertIn(
+            "release notarize log requires exactly one argument", notarize.stderr
+        )
+
+        legacy = self.run_ojd("package", "release", "one", "two")
+        self.assertEqual(legacy.returncode, 2)
+        self.assertIn("package release accepts at most one argument", legacy.stderr)
+
+    def test_unknown_canonical_nested_commands_are_argument_errors(self):
+        build = self.run_ojd("build", "install", "unknown")
+        self.assertEqual(build.returncode, 2)
+        self.assertIn("Unknown: build install unknown", build.stderr)
+
+        release = self.run_ojd("release", "unknown")
+        self.assertEqual(release.returncode, 2)
+        self.assertIn("Unknown: release unknown", release.stderr)
+
     def test_record_diagnostic_uses_universal_libusb_for_swiftpm(self):
         with tempfile.TemporaryDirectory() as directory:
             project = Path(directory)
@@ -79,7 +128,13 @@ class OJDCLITests(unittest.TestCase):
             environment["SWIFT_BIN"] = str(swift)
             environment.pop("PKG_CONFIG_PATH", None)
             result = subprocess.run(
-                [str(scripts / "ojd"), "diagnose", "record", str(record), "--validate-only"],
+                [
+                    str(scripts / "ojd"),
+                    "diagnose",
+                    "record",
+                    str(record),
+                    "--validate-only",
+                ],
                 cwd=project,
                 env=environment,
                 check=False,
@@ -88,7 +143,10 @@ class OJDCLITests(unittest.TestCase):
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertIn(f"Universal libusb cache hit: {libusb_cache / 'lib' / 'libusb-1.0.a'}", result.stdout)
+            self.assertIn(
+                f"Universal libusb cache hit: {libusb_cache / 'lib' / 'libusb-1.0.a'}",
+                result.stdout,
+            )
             self.assertIn(f"PKG_CONFIG_PATH={libusb_cache}", result.stdout)
             self.assertIn("OJD_USE_LOCAL_SWIFTUSB=1", result.stdout)
             self.assertIn("ARG=run", result.stdout)
@@ -111,8 +169,7 @@ class OJDCLITests(unittest.TestCase):
             invocation = project / "swift-package-invocation"
             swift_package = project / "fake-swift-package"
             swift_package.write_text(
-                "#!/usr/bin/env bash\n"
-                f"printf '%s\\n' \"$@\" > {invocation}\n"
+                f"#!/usr/bin/env bash\nprintf '%s\\n' \"$@\" > {invocation}\n"
             )
             swift_package.chmod(0o755)
 
