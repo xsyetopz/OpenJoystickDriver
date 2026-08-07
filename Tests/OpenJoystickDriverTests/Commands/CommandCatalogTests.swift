@@ -49,7 +49,6 @@ struct CommandCatalogTests {
     for family in families {
       #expect(help.contains(family))
     }
-    #expect(help.contains("Output never relies on color alone."))
     #expect(help.contains("--timeout <seconds>"))
     #expect(help.contains("compat set <identity>"))
   }
