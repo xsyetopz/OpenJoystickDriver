@@ -1,12 +1,14 @@
 # Test Razer Wolverine V3 Tournament Edition
 
-This request covers [OpenJoystickDriver issue #14](https://github.com/xsyetopz/OpenJoystickDriver/issues/14) for USB device `5426:2627` (`1532:0A43` in hexadecimal).
+This test covers [OpenJoystickDriver issue #14](https://github.com/xsyetopz/OpenJoystickDriver/issues/14) for USB device `5426:2627` (`1532:0A43` in hexadecimal).
 
-The candidate record now selects OJD's wired Xbox One GIP parser instead of `GenericHID`. It uses the parser defaults and intentionally declares no `shareButton` or `paddles` flags: the request proposed those flags without packet evidence, and OJD has no paddle packet decoder. Its endpoint, input mapping, and output details remain unverified. No paid Apple Developer Program account, app signing, application service installation, or DriverKit provisioning is needed for this test.
+The candidate record selects OJD's wired Xbox One GIP parser instead of `GenericHID` and uses the parser defaults. It declares no `shareButton` or `paddles` flags. The request proposed those flags without packet evidence, and OJD has no paddle packet decoder.
+
+The endpoint, input mapping, and output details remain unverified. This test does not need a paid Apple Developer Program account, app signing, application service installation, or DriverKit provisioning.
 
 ## Validate the bundled record
 
-From the repository root:
+Run this command from the repository root:
 
 ```bash
 ./scripts/ojd diagnose record \
@@ -22,7 +24,7 @@ PROFILE_VALIDATION result=valid
 
 ## Run the USB probe
 
-Quit Steam, games, and controller utilities. Connect the controller directly by USB, then run:
+Quit Steam, games, and controller utilities. Connect the controller directly by USB. Then run:
 
 ```bash
 ./scripts/ojd diagnose record \

@@ -1,49 +1,48 @@
 # Signing assets
 
-OpenJoystickDriver's application contains a DriverKit system extension and uses
-restricted HID entitlements. Apple issues the certificates and provisioning
-profiles through
+OpenJoystickDriver contains a DriverKit system extension and uses restricted HID
+entitlements. Apple issues the certificates and provisioning profiles through
 [Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/).
 
 ## Who needs signing assets
 
 ### End user
 
-Do not create certificates or provisioning profiles. Install a signed,
-notarized OpenJoystickDriver release from the project publisher. Never accept a
-publisher's private signing key or `.p12` file.
+Install a signed, notarized OpenJoystickDriver release from the project
+publisher. Do not create certificates or provisioning profiles, and never accept
+a publisher's private signing key or `.p12` file.
 
 ### Parser or controller-record contributor
 
-No signing assets are required. `swift test` and
+You do not need signing assets. `swift test` and
 `./scripts/ojd diagnose record` cover the source and raw-USB paths documented in
 `CONTRIBUTING.md`.
 
 ### Full-app developer
 
-You must be a member of the Apple Developer Program team that owns both exact
-App IDs:
+You must belong to the Apple Developer Program team that owns both exact App
+IDs:
 
 - host application: `com.openjoystickdriver`;
 - generated DriverKit extension: `com.openjoystickdriver.VirtualHIDDevice`.
 
 App IDs are globally registered. Membership in a different Apple developer team
-does not grant permission to generate profiles for these identifiers. A fork
-would need its own configurable identifiers and matching entitlement approval;
-the current build contract intentionally uses the publisher identifiers.
+does not let you generate profiles for these identifiers. A fork would need its
+own configurable identifiers and matching entitlement approval. The current
+build contract intentionally uses the publisher identifiers.
 
 ### Release publisher
 
-Release signing additionally requires the publisher's Developer ID Application
-identity, Developer ID provisioning, and notarization credentials. Do not
-distribute these secrets to contributors or end users.
+Release signing also requires the publisher's Developer ID Application identity,
+Developer ID provisioning, and notarization credentials. Do not distribute these
+secrets to contributors or end users.
 
 ## Development setup
 
 ### 1. Obtain entitlement access
 
-The team's Account Holder must request or enable the capabilities before profile
-creation. Apple documents DriverKit entitlement requests at
+Before creating profiles, the team's Account Holder must request or enable the
+capabilities. Apple documents DriverKit entitlement requests at
 [Requesting Entitlements for DriverKit Development](https://developer.apple.com/documentation/driverkit/requesting-entitlements-for-driverkit-development)
 and managed capability requests at
 [Capability Requests](https://developer.apple.com/help/account/capabilities/capability-requests).
@@ -66,13 +65,13 @@ com.apple.developer.driverkit.family.hid.eventservice
 ```
 
 Do not enable `com.apple.developer.driverkit.allow-any-userclient-access`.
-OpenJoystickDriver deliberately uses the host's exact user-client allowlist.
+OpenJoystickDriver uses the host's exact user-client allowlist by design.
 
 Apple ties approved DriverKit entitlements to the development team. If the
 DriverKit App ID or entitlement group is unavailable in the portal, the Account
 Holder must complete the request at
 [Apple's system-extension entitlement page](https://developer.apple.com/system-extensions/)
-or contact Apple Developer Support. Repository changes cannot grant the
+or contact Apple Developer Support. A repository change cannot grant the
 entitlement.
 
 ### 2. Create an Apple Development identity
@@ -100,7 +99,7 @@ The output must include at least one valid `Apple Development` identity.
 ### 3. Create the two development profiles
 
 An Account Holder or Admin creates these in **Certificates, Identifiers &
-Profiles > Profiles**; a team member with access can then download them:
+Profiles > Profiles**. A team member with access can then download them:
 
 | Local filename | Portal profile type | App ID | Certificate/device |
 | --- | --- | --- | --- |
@@ -139,7 +138,7 @@ from the profiles.
 Then build and install:
 
 ```bash
-./scripts/ojd rebuild dev
+./scripts/ojd build install dev
 ```
 
 macOS must approve the system extension and the app's requested privacy access

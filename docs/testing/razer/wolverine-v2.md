@@ -1,8 +1,12 @@
-# Test Razer Wolverine V2
+# Testing the Razer Wolverine V2
 
 This procedure covers [OpenJoystickDriver issue #19](https://github.com/xsyetopz/OpenJoystickDriver/issues/19) for USB device `5426:2601` (`1532:0A29` in hexadecimal).
 
-The bundled record is sourced from Linux xpad and patched with the locally captured interface-0 endpoints `0x81`/`0x01`. It deliberately omits the proposed `shareButton` and `paddles` flags: the report contains no input packet layout that identifies either control, and OJD has no paddle packet decoder. It also omits `set1-before-claim` and a 200 ms post-handshake delay: enumeration reports configuration 1 but does not establish that OJD must select it, and no timing evidence supports the delay. The GIP parser, Xbox One defaults, input mapping, reconnect, LED, and rumble remain unverified. The validation and USB probe sections need no paid Apple Developer Program account, app signing, application-service installation, or DriverKit provisioning; the physical-output section separately requires an installed current app.
+The bundled record comes from Linux xpad, patched with the locally captured interface-0 endpoints `0x81`/`0x01`. It deliberately omits the proposed `shareButton` and `paddles` flags. The report contains no input packet layout that identifies either control, and OJD has no paddle packet decoder.
+
+The record also omits `set1-before-claim` and a 200 ms post-handshake delay. Enumeration reports configuration 1 but does not establish that OJD must select it, and no timing evidence supports the delay. The GIP parser, Xbox One defaults, input mapping, reconnect, LED, and rumble remain unverified.
+
+Validation and the USB probe need no paid Apple Developer Program account, app signing, application-service installation, or DriverKit provisioning. Testing physical output requires a separately installed current app.
 
 ## Validate the bundled record
 
@@ -22,7 +26,7 @@ RECORD_VALIDATION result=valid
 
 ## Run the signing-free USB probe
 
-Quit Steam, games, and controller utilities. Connect the controller directly by USB, then run:
+Quit Steam, games, and controller utilities. Connect the controller directly by USB. Then run:
 
 ```bash
 ./scripts/ojd diagnose record \

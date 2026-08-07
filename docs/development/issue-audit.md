@@ -88,7 +88,7 @@ the exact single-relay grant. Reinstall corrected profiles and rerun:
 ./scripts/ojd signing install-profiles
 ./scripts/ojd signing configure
 ./scripts/ojd signing doctor
-./scripts/ojd rebuild dev
+./scripts/ojd build install dev
 ```
 
 The Developer ID profile also remains unsuitable for release because its

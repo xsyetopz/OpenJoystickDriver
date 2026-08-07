@@ -1,7 +1,5 @@
 # Documentation
 
-Open the section that matches the work. Archived upstream material stays under `external/`.
-
 ## Use the app
 
 - [Choose a compatibility mode](user/compatibility.md)
@@ -26,8 +24,9 @@ Open the section that matches the work. Archived upstream material stays under `
 
 - [Architecture](development/architecture.md)
 - Generated DriverKit relay: run `./scripts/ojd driverkit generate` or
-  `./scripts/ojd validate driverkit`; `./scripts/ojd help` is the supported
-  command index.
+  `./scripts/ojd validate driverkit`.
+- Repository command reference and supported command index: run `./scripts/ojd help`.
+  Its output is catalog-backed, non-color, and keyboard-readable.
 - [CLI and runtime coverage](development/cli-and-runtime.md)
 - [Application service runtime health](development/application-service-health.md)
 - [Application responsiveness](development/application-responsiveness.md)

@@ -1,4 +1,4 @@
-# Application Service Runtime Health
+# Application service runtime health
 
 OpenJoystickDriver provides a bounded soak diagnostic for the installed application process:
 

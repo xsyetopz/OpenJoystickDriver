@@ -2,9 +2,9 @@
 
 OpenJoystickDriver uses one privacy identity: `OpenJoystickDriver.app`. No nested executable needs to be located or added manually.
 
-## Input Monitoring
+## Input monitoring
 
-Input Monitoring lets the app read reports from physical controllers.
+This permission lets the app read reports from physical controllers.
 
 ```text
 System Settings > Privacy & Security > Input Monitoring
@@ -12,15 +12,17 @@ System Settings > Privacy & Security > Input Monitoring
 
 ## Accessibility
 
-The compatibility virtual-gamepad backend uses `IOHIDUserDevice`. macOS authorizes that HID publication through the post-event permission shown as Accessibility.
+The compatibility virtual-gamepad backend uses `IOHIDUserDevice`. macOS authorizes HID publication through the post-event permission shown as Accessibility.
 
 ```text
 System Settings > Privacy & Security > Accessibility
 ```
 
-This access publishes a virtual gamepad. OpenJoystickDriver does not inspect other applications' UI or synthesize keyboard or mouse actions.
+This access publishes a virtual gamepad. OpenJoystickDriver does not inspect other applications' UI. It also does not synthesize keyboard or mouse actions.
 
-Use the app's **Request Access** action once. The app requests any missing state and then reads the authoritative result. If macOS asks for a relaunch, quit and reopen OpenJoystickDriver. The CLI command `permissions status` obtains both states from the running main app rather than inheriting the terminal's privacy identity.
+Use the app's Request Access action once. The app requests any missing state and then reads the authoritative result. If macOS asks for a relaunch, quit and reopen OpenJoystickDriver.
+
+The CLI command `permissions status` gets both states from the running main app. It does not inherit the terminal's privacy identity.
 
 ## Other approvals
 

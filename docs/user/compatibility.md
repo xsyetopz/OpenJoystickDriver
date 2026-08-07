@@ -66,15 +66,15 @@ Bluetooth support does not extend to arbitrary controllers. Only the named DS3, 
 
 ## Apple GameController support
 
-Live detection by `GCController.supportsHIDDevice` and a hardware test determine whether the active virtual controller works with GameController.framework. The private current-system mapping catalog is only an optional developer comparison for exact physical OJD record VID/PID pairs; a missing pair does not prove incompatibility. See [Xbox fallback identity evidence](../development/xbox-identities.md).
+Use live detection by `GCController.supportsHIDDevice` and a hardware test to determine whether the active virtual controller works with GameController.framework. The private current-system mapping catalog is optional. Developers can use it to compare exact physical OJD record VID/PID pairs, but a missing pair does not prove incompatibility. See [Xbox fallback identity evidence](../development/xbox-identities.md).
 
-## DriverKit Relay
+## DriverKit relay
 
 The generated SwifterKit DriverKit relay publishes a vendor-defined HID device,
-not a Generic Desktop GamePad. This prevents it from becoming a stale or duplicate
-controller beside the Compatibility `IOHIDUserDevice`. Its role is an integrity
+not a Generic Desktop GamePad. This prevents a stale or duplicate controller from
+appearing beside the Compatibility `IOHIDUserDevice`. The relay provides an integrity
 path between the application service, the host-side relay, and DriverKit HID
-delivery; it is not an alternative consumer output mode.
+delivery. It is not an alternative consumer output mode.
 
 Run the shared CLI self-test even while Compatibility mode is active:
 
@@ -100,7 +100,7 @@ Xbox 360 and DualShock 4 use their two main motors. GIP controllers may also use
 
 ## Input integrity
 
-Before a parsed packet reaches an output backend, OJD reduces its events to the packet’s final net controller state. It drops duplicate transitions and contradictory press/release pulses that end unchanged, emits one canonical D-pad direction, rejects non-finite analog values by retaining the prior component, and clamps sticks to `-1...1` and triggers to `0...1`. This integrity gate does not add a timing delay or a new global deadzone. Protocol-specific deadzones remain in their parsers.
+Before a parsed packet reaches an output backend, OJD reduces its events to the packet’s final net controller state. It drops duplicate transitions and contradictory press/release pulses that end unchanged. It also emits one canonical D-pad direction, rejects non-finite analog values by retaining the prior component, and clamps sticks to `-1...1` and triggers to `0...1`. This integrity gate does not add a timing delay or a new global deadzone. Protocol-specific deadzones remain in their parsers.
 
 The normalized batch is delivered only to the active Compatibility `IOHIDUserDevice` backend.
 
@@ -108,18 +108,18 @@ The normalized batch is delivered only to the active Compatibility `IOHIDUserDev
 
 `Resources/SDL/openjoystickdriver.gamecontrollerdb.txt` maps `sdl2-3` like this:
 
-- **`a` / `b` / `x` / `y`** — **HID source:** `b0` / `b1` / `b2` / `b3`
-- **`leftshoulder` / `rightshoulder`** — **HID source:** `b4` / `b5`
-- **`leftstick` / `rightstick`** — **HID source:** `b6` / `b7`
-- **`start` / `back` / `guide`** — **HID source:** `b8` / `b9` / `b10`
-- **`dpup` / `dpdown` / `dpleft` / `dpright`** — **HID source:** `b11` / `b12` / `b13` / `b14`
-- **`misc1`** — **HID source:** `b15`
-- **`leftx` / `lefty`** — **HID source:** `a0` / `a1`
-- **`lefttrigger`** — **HID source:** `a2`
-- **`rightx` / `righty`** — **HID source:** `a3` / `a4`
-- **`righttrigger`** — **HID source:** `a5`
+- `a` / `b` / `x` / `y` use HID sources `b0` / `b1` / `b2` / `b3`.
+- `leftshoulder` / `rightshoulder` use HID sources `b4` / `b5`.
+- `leftstick` / `rightstick` use HID sources `b6` / `b7`.
+- `start` / `back` / `guide` use HID sources `b8` / `b9` / `b10`.
+- `dpup` / `dpdown` / `dpleft` / `dpright` use HID sources `b11` / `b12` / `b13` / `b14`.
+- `misc1` uses HID source `b15`.
+- `leftx` / `lefty` use HID sources `a0` / `a1`.
+- `lefttrigger` uses HID source `a2`.
+- `rightx` / `righty` use HID sources `a3` / `a4`.
+- `righttrigger` uses HID source `a5`.
 
-## Manual Checks
+## Manual checks
 
 Before marking a mapping verified, you must check the exact app and mode:
 

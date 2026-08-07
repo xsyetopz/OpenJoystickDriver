@@ -2,7 +2,7 @@
 
 We have experimental Steam Controller support based on Linux `hid-steam.c`. We still need real macOS output before calling it verified.
 
-Test what you have:
+You can test:
 
 - wired Steam Controller: `0x28de:0x1102`
 - wireless receiver: `0x28de:0x1142`
@@ -11,11 +11,11 @@ Keep Steam fully quit for the first pass. If you later repeat with Steam open, s
 
 OJD production discovery now matches both normal GamePad top-level collections and exact HID VID/PID identities loaded from bundled records. This specifically covers Steam Controller collections that remain exposed as keyboard or mouse lizard-mode devices.
 
-## What To Send Back
+## What to send back
 
-Send the easiest evidence first. Raw packets help, but even a native macOS listing is useful if OJD cannot see the controller yet.
+Start with the easiest evidence. If OJD cannot see the controller, a native macOS listing is still useful. Raw packets also help.
 
-Please include:
+Include:
 
 - macOS version
 - OJD version or commit
@@ -25,9 +25,9 @@ Please include:
 - full output for commands that found no device or no packets
 - any terminal text caused by the controller, such as escape sequences
 
-## 1. macOS Native Checks
+## 1. macOS native checks
 
-Plug in the wired controller or receiver. Run these before any OJD command:
+Plug in the wired controller or receiver, then run these before any OJD command:
 
 ```bash
 system_profiler SPUSBDataType
@@ -35,11 +35,11 @@ ioreg -p IOUSB -l -w0
 ioreg -r -c IOHIDDevice -l -w0
 ```
 
-Paste the entries that mention Valve, Steam, gamepad, keyboard, mouse, or `28de`. If nothing obvious appears, unplug the controller, run the command again, and paste the entries that disappeared.
+Paste the entries that mention Valve, Steam, gamepad, keyboard, mouse, or `28de`. If nothing obvious appears, unplug the controller and run the commands again. Paste the entries that disappeared.
 
-For wired controller testing, also click in a plain Terminal window and press a few Steam Controller buttons or the d-pad. If the terminal prints escape sequences such as `^[[A`, paste them. That shows the controller is alive and still in lizard keyboard mode even if OJD cannot open it yet.
+For wired testing, click in a plain Terminal window and press a few Steam Controller buttons or the d-pad. Paste any escape sequences the terminal prints, such as `^[[A`. This shows that the controller is alive and still in lizard keyboard mode, even if OJD cannot open it yet.
 
-## 2. OJD Device Listing
+## 2. OJD device listing
 
 From the repository root:
 
@@ -49,7 +49,7 @@ OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --list
 
 Paste every `VID:0x28de` line. If there is no `VID:0x28de` line, say that and paste any nearby keyboard, mouse, or game controller lines that appear only while the controller is plugged in.
 
-## 3. Wired Controller Capture
+## 3. Wired controller capture
 
 Run the HID monitor for the expected wired PID:
 
@@ -82,7 +82,7 @@ If you get `REPORT` or `USB_REPORT` lines, collect one neutral packet and one pa
 
 One action per capture is enough. Return to neutral between captures.
 
-## 4. Wireless Receiver Capture
+## 4. Wireless receiver capture
 
 Plug in only the receiver. Keep the controller off at first.
 

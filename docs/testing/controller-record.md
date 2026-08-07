@@ -1,12 +1,12 @@
 # Test a controller record
 
-Controller owners can test a candidate OJD JSON record without an Apple Developer Program membership. This path builds a Swift command-line executable only. It does not build or install the app, application service, virtual HID device, or generated DriverKit relay.
+You can test a candidate OJD JSON record without an Apple Developer Program membership. The test builds only a Swift command-line executable, not the app, application service, virtual HID device, or generated DriverKit relay.
 
-The probe supports raw-USB `GIP` plus wired and wireless-receiver `Xbox360` records. HID, Bluetooth, and unknown protocol probes still need protocol-specific tooling.
+The probe supports raw-USB `GIP` records and wired or wireless-receiver `Xbox360` records. HID, Bluetooth, and unknown protocols need their own tools.
 
 ## Prerequisites
 
-Install the Xcode command-line tools and libusb, then clone OJD:
+Install the Xcode command-line tools and libusb. Then clone OJD:
 
 ```bash
 xcode-select --install
@@ -15,23 +15,23 @@ git clone https://github.com/xsyetopz/OpenJoystickDriver.git
 cd OpenJoystickDriver
 ```
 
-No paid Apple account, provisioning record, application signing, or system extension approval is required.
+You do not need a paid Apple account, provisioning record, application signing, or system extension approval.
 
 The diagnostic does not link the Homebrew libusb dynamic library. On first use,
-it downloads libusb 1.0.29 source and builds the same cached universal static
-library used by signed app builds. Later runs reuse `.build/libusb-universal/`.
-The first run therefore requires network access; `--validate-only` uses the same
+it downloads the libusb 1.0.29 source and builds the same cached universal static
+library used by signed app builds. Later runs reuse `.build/libusb-universal/`,
+so only the first run needs network access. `--validate-only` uses the same
 linkage path but does not open USB hardware.
 
 ## 1. Save the candidate record
 
-Save the proposed controller JSON outside the bundled record directory until its VID, PID, interface, endpoints, and startup behavior are verified. For example:
+Save the proposed controller JSON outside the bundled record directory until you verify its VID, PID, interface, endpoints, and startup behavior. For example:
 
 ```text
 /tmp/controller-candidate.json
 ```
 
-Use decimal numbers in the JSON. Review `protocol.startup_packets` before probing. The command sends only the startup behavior already modeled by OJD:
+Use decimal numbers in the JSON. Before probing, review `protocol.startup_packets`. The command sends only the startup behavior already modeled by OJD:
 
 - GIP: the named startup sequence; profiles may disable the default keep-alive
   when hardware evidence requires it.
@@ -39,9 +39,9 @@ Use decimal numbers in the JSON. Review `protocol.startup_packets` before probin
 - Xbox 360 wireless receiver: no output until a logical controller connects, then the receiver-wrapped steady Player 1 packet.
 - A record containing `rumbleBegin` and `rumbleEnd` sends those brief initialization packets because they are part of that record's declared startup sequence.
 
-`protocol.keep_alive` is an optional boolean for GIP records. Omit it for the
-default-enabled behavior; set it to `false` only when device evidence requires
-periodic host output to be disabled.
+`protocol.keep_alive` is an optional boolean for GIP records. Omit it to keep
+the default-enabled behavior. Set it to `false` only when device evidence
+requires periodic host output to be disabled.
 
 ## 2. Validate without opening hardware
 
