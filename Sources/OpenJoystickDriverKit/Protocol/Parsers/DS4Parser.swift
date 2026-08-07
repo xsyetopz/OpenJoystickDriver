@@ -25,9 +25,9 @@ private enum DS4ConnectionMode {
 
 /// Parser for Sony DualShock 4 controllers.
 ///
-/// No handshake required — DS4 sends input reports automatically on USB connection.
+/// DS4 sends input reports automatically over USB, with no handshake.
 /// IOKit reports the DS4 report ID separately, so wired HID input can arrive
-/// either with or without the leading `0x01` report ID byte.
+/// with or without the leading `0x01` report ID byte.
 /// Bluetooth input report `0x11` carries the same controller state after its
 /// transport/control prefix.
 public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDColorOutput,
@@ -63,9 +63,9 @@ public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDC
     connectionMode = prefersBluetooth ? .bluetooth : .usb
   }
 
-  /// No-op; DS4 requires no handshake.
+  /// No-op because DS4 requires no handshake.
   public func performHandshake(handle: USBDeviceHandle?) throws {
-    // DS4 requires no handshake; protocol conformance.
+    // Required by InputParser; DS4 needs no handshake.
   }
 
   /// Parses one DS4 HID input report and returns zero or more controller events.

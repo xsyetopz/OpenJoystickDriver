@@ -40,9 +40,9 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
   // MARK: - Thread safety
   //
   // @unchecked Sendable safety:
-  // - All mutable state (prevButtons, sequencer, authHandler, handle)
-  //   is accessed exclusively from the owning DevicePipeline actor's
-  //   feedHIDData/feedUSBData methods — no concurrent access occurs
+  // - Only the owning DevicePipeline actor accesses mutable state
+  //   (prevButtons, sequencer, authHandler, handle) through
+  //   feedHIDData/feedUSBData, so access is serial.
 
   private let outEndpoint: UInt8
   private let startupPackets: [GIPStartupPacket]

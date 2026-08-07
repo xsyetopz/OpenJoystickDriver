@@ -3,10 +3,10 @@ import SwiftUSB
 
 /// Handles the GIP authentication sub-protocol (CMD 0x06).
 ///
-/// Responds to device auth messages with correctly-framed dummy payloads.
-/// The Windows driver analysis shows lenient enforcement — structurally valid
-/// but cryptographically empty responses allow the device to eventually
-/// transition to FULL_POWER via xboxgip.sys retry/timeout logic.
+/// Responds to device auth messages with correctly framed dummy payloads.
+/// Windows driver analysis shows that structurally valid but cryptographically
+/// empty responses let the device reach FULL_POWER through xboxgip.sys
+/// retry/timeout logic.
 final class GIPAuthHandler: @unchecked Sendable {
 
   private let outEndpoint: UInt8

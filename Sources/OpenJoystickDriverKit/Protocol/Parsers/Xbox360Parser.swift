@@ -90,8 +90,8 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
   // MARK: - Thread safety
   //
   // @unchecked Sendable safety:
-  // - All mutable state (prevButtons, prevLT/RT, prevLS/RS) is accessed
-  //   exclusively from the owning DevicePipeline actor — no concurrent access.
+  // - Only the owning DevicePipeline actor accesses mutable state
+  //   (prevButtons, prevLT/RT, prevLS/RS), so access is serial.
 
   private let outEndpoint: UInt8
   private let isWirelessReceiver: Bool
