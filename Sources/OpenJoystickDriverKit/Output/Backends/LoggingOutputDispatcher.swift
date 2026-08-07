@@ -4,7 +4,7 @@ import Foundation
 ///
 /// Used for hardware validation and testing. Production output uses a transport adapter.
 public final class LoggingOutputDispatcher: OutputDispatcher, @unchecked Sendable {
-  // Suppression is accepted but ignored — this is a dev-only dispatcher.
+  // Suppression is ignored because this dispatcher is only for development.
   /// Accepted but ignored; this dispatcher always logs.
   public var suppressOutput = false
 

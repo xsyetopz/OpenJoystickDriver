@@ -14,8 +14,8 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
   public let productName: String
   public let manufacturer: String
 
-  /// OpenJoystickDriver virtual gamepad — a standard HID GamePad identity that
-  /// avoids triggering device-specific HID parsers in consumers (e.g. SDL's Xbox path).
+  /// OpenJoystickDriver virtual gamepad. This standard HID GamePad identity avoids
+  /// triggering device-specific HID parsers in consumers (e.g. SDL's Xbox path).
   public static let openJoystickDriver = Self(
     vendorID: 0x4F4A,  // "OJ"
     productID: 0x4447,  // "DG" (arbitrary, stable)
@@ -40,7 +40,7 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
     manufacturer: "OpenJoystickDriver"
   )
 
-  /// Xbox One S — standard for XInput/GIP controllers and the default
+  /// Xbox One S is the standard XInput/GIP controller and the default
   /// normalization target for all protocols.
   public static let xboxOneS = Self(
     vendorID: 0x045E,
@@ -53,9 +53,9 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
     manufacturer: "Microsoft"
   )
 
-  /// Xbox 360 Controller (Wired) — experimental on macOS.
+  /// Xbox 360 Controller (Wired), experimental on macOS.
   ///
-  /// Note: many macOS stacks do not treat 045E:028E as a standard HID gamepad.
+  /// Many macOS stacks do not treat 045E:028E as a standard HID gamepad.
   public static let xbox360Wired = Self(
     vendorID: 0x045E,
     productID: 0x028E,
@@ -80,10 +80,9 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
 
   /// SDL 2/3 compatibility identity.
   ///
-  /// This profile is intentionally not exposed in the Compatibility UI. macOS GameController
-  /// claims SDL-known third-party controller identities before SDL's IOKit backend can use
-  /// them, so the generic OpenJoystickDriver user-space identity is the consumer-facing
-  /// SDL consumer path.
+  /// This profile is not exposed in the Compatibility UI. macOS GameController claims
+  /// SDL-known third-party controller identities before SDL's IOKit backend can use them.
+  /// Consumers use the generic OpenJoystickDriver user-space identity instead.
   public static let sdlGamepad = Self(
     vendorID: 0x1BAD,
     productID: 0xF901,
