@@ -4,9 +4,9 @@ import OpenJoystickDriverKit
 actor RemappingRoutingCore {
   let library: RemappingProfileLibrary
   let engine: RemappingEventEngine
-  private let compatibility: any OutputDispatcher
-  private let foregroundApplication: any RemappingForegroundApplicationProviding
-  private let postEventAccess: any RemappingPostEventAccessProviding
+  let compatibility: any OutputDispatcher
+  let foregroundApplication: any RemappingForegroundApplicationProviding
+  let postEventAccess: any RemappingPostEventAccessProviding
   let operationCheckpoint: @Sendable (RemappingRoutingCheckpoint) async -> Void
   var emissionBarrier: RemappingEmissionBarrier { engine.emissionBarrier }
   var controls = RemappingRoutingControls(
@@ -17,7 +17,7 @@ actor RemappingRoutingCore {
   var routes: [DeviceIdentifier: RemappingControllerRoute] = [:]
   var connectedIdentifiers: Set<DeviceIdentifier> = []
   var profileTransactionState = RemappingProfileTransactionState.inactive
-  private var terminationRequested = false
+  var terminationRequested = false
   private var terminalCleanupComplete = false
   var schedulingRevision: UInt64 = 0
 
@@ -488,60 +488,5 @@ actor RemappingRoutingCore {
         throw error
       }
     }
-  }
-
-  private func compatibilityRoute() -> RemappingControllerRoute {
-    let suppressed = controls.outputSuppressed || !controls.compatibilityOutputAllowed
-    return RemappingControllerRoute(
-      selection: .compatibility,
-      eligibilitySnapshot: RemappingEligibilitySnapshot(
-        eligibility: suppressed ? .compatibilityOutputSuppressed : .eligible,
-        environment: sampleEligibilityEnvironment()
-      ),
-      error: nil
-    )
-  }
-
-  func recordEngineFailure(_ error: RemappingEventEngineError) {
-    for identifier in sortedIdentifiers {
-      guard var route = routes[identifier], case .remapping = route.selection else { continue }
-      route.eligibility = .unavailable
-      route.error = .engine(error)
-      routes[identifier] = route
-    }
-  }
-
-  func sampleEligibilityEnvironment() -> RemappingEligibilityEnvironment {
-    RemappingEligibilityEnvironment(
-      frontmostBundleIdentifier: foregroundApplication.frontmostBundleIdentifier(),
-      postEventAccessState: postEventAccess.currentState()
-    )
-  }
-
-
-  var sortedIdentifiers: [DeviceIdentifier] {
-    connectedIdentifiers.sorted { $0.runtimeIdentifier < $1.runtimeIdentifier }
-  }
-
-  var compatibilityIsSuppressed: Bool {
-    controls.outputSuppressed || !controls.compatibilityOutputAllowed
-  }
-
-  func notifyCompatibilityStop(_ identifier: DeviceIdentifier) {
-    (compatibility as? any ControllerLifecycleListener)?.controllerDidStop(identifier)
-  }
-
-  func ensureRunning() throws {
-    guard !terminationRequested else { throw RemappingOutputRoutingError.shutDown }
-  }
-
-  @discardableResult func requireOperationalPermit(
-    _ permit: RemappingEmissionPermit?
-  ) throws -> RemappingEmissionPermit {
-    if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
-    guard let permit, emissionBarrier.permits(permit) else {
-      throw RemappingEventEngineError.outputSuspended
-    }
-    return permit
   }
 }
