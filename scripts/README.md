@@ -1,8 +1,20 @@
-# Repository Commands
+# Repository commands
 
-This directory has one supported command entry point: `./scripts/ojd`.
-Implementation files are grouped by ownership and are not standalone command
-surfaces.
+OpenJoystickDriver has two supported command interfaces:
+
+- the installed `OpenJoystickDriver` CLI for user control and diagnostics
+- `./scripts/ojd` for repository development, validation, installation, and release tasks
+
+Run `./scripts/ojd help` to see the repository commands. Its plain, non-color
+output is keyboard-readable. `OpenJoystickDriverHIDTool` is internal and reserved
+for focused hardware investigation. Files below `scripts/` are not standalone
+commands. The `justfile` only delegates convenience commands to `./scripts/ojd`.
+
+The main repository routes are `build install dev|release`, `build install-fast
+dev`, `release bump-version`, `release package [version]`, `release install-local
+[version]`, and `release notarize ...`. The legacy `rebuild`, `rebuild-fast`,
+`bump-version`, `package release`, and `notarize` routes remain compatibility
+aliases.
 
 ## Layout
 
@@ -25,7 +37,7 @@ directories may change. Validate routing, file modes, and shell syntax with:
 ./scripts/ojd validate scripts
 ```
 
-## Implementation Inventory
+## Implementation inventory
 
 All implementation paths are internal to the dispatcher.
 
@@ -33,9 +45,9 @@ All implementation paths are internal to the dispatcher.
 | --- | --- | --- | --- |
 | `README.md` | Documentation links | Documents the supported command surface | Link and stale-path checks |
 | `ojd` | Developers and CI | Dispatches commands; fixed routes reject extra arguments | CLI and script-layout tests |
-| `build-tools/build.sh` | `build`, `rebuild`, `rebuild-fast`, `lint` | Writes `.build/`; rebuild routes replace installed components | Swift packaging contracts; shell syntax |
+| `build-tools/build.sh` | `build`, `build install`, `build install-fast`, `lint` | Writes `.build/`; install routes replace installed components | Swift packaging contracts; shell syntax |
 | `build-tools/bundles.sh` | Build implementation | Constructs and signs the application bundle | Swift packaging contracts; shell syntax |
-| `build-tools/driverkit.sh` | `driverkit`, `build dext`, and rebuild implementation | Generates, validates, builds, signs, and embeds the SwifterKit DriverKit relay | Deterministic generation, metadata/entitlement checks, unsigned native build, shell syntax |
+| `build-tools/driverkit.sh` | `driverkit`, `build dext`, and install implementation | Generates, validates, builds, signs, and embeds the SwifterKit DriverKit relay | Deterministic generation, metadata/entitlement checks, unsigned native build, shell syntax |
 | `catalog/generate-controller-catalog.py` | `catalog regenerate` | Reads locked sources; check is read-only, write replaces generated records | Catalog unit tests and regeneration check |
 | `catalog/generate-xpad-records.py` | `catalog xpad` | Reads local or GitHub Linux source and writes review output | xpad unit tests |
 | `catalog/validate-profiles.py` | `validate profiles` and catalog generator | Reads and validates controller records | Catalog unit tests and profile gate |
@@ -49,15 +61,16 @@ All implementation paths are internal to the dispatcher.
 | `quality/test-parsers-macos14.sh` | `test parsers-macos14` | Creates isolated harness and cache directories under `/tmp` | Parser harness gate |
 | `quality/validate-scripts.py` | `validate scripts` | Reads repository paths and runs `bash -n` | Script-layout unit tests and CI |
 | `quality/validate-swift-structure.py` | `validate swift-structure` | Reads Swift paths, sizes, names, and directives | Structural unit tests and CI |
-| `release/bump-version.sh` | `bump-version` | Updates version references after verifying a changelog heading | Swift packaging contracts and diff review |
+| `release/bump-version.sh` | `release bump-version` | Updates version references after verifying a changelog heading | Swift packaging contracts and diff review |
 | `release/dmg-background.py` | Release package implementation | Writes a deterministic PNG to the requested path | Packaging contract |
-| `release/notarize.sh` | `notarize` and release packaging | Uses Apple notarization services, writes submission state, and staples the app | Help and shell checks; release-only CI |
-| `release/package.sh` | `package release` | Builds signed artifacts, mounts temporary DMGs, notarizes, and writes release output | Swift packaging contracts; release-only CI |
+| `release/install-local.sh` | `release install-local` | Packages a release and replaces the local app in `/Applications` | Dispatcher argument checks; Swift packaging contract |
+| `release/notarize.sh` | `release notarize` | Uses Apple notarization services, writes submission state, and staples the app | Help and shell checks; release-only CI |
+| `release/package.sh` | `release package` | Builds signed artifacts, mounts temporary DMGs, notarizes, and writes release output | Swift packaging contracts; release-only CI |
 | `signing/configure.py` | Signing implementation | Reads profiles and Keychain identities; writes root environment files | Environment contracts; focused local setup |
 | `signing/export-github-secrets.sh` | `signing export-github-secrets` | Reads signing material, writes private build output, optionally updates GitHub secrets | Shell syntax; explicit operator action |
 | `signing/signing.sh` | `signing` routes | Audits or installs profiles, imports identities, creates CI Keychain state, or configures environment files | Help and shell checks; release CI and local setup |
 
-## Task Map
+## Task map
 
 | Goal | Command | Notes |
 | --- | --- | --- |
@@ -68,17 +81,19 @@ All implementation paths are internal to the dispatcher.
 | Build signed dev app | `./scripts/ojd build dev` | Output to `.build/` |
 | Generate DriverKit project | `./scripts/ojd driverkit generate` | Writes a fresh ephemeral SwifterKit project under `.build/driverkit/generated/` |
 | Validate DriverKit generation | `./scripts/ojd validate driverkit` | Double-generates, checks metadata/boundaries, and performs an unsigned native build |
-| Install signed dev build | `./scripts/ojd rebuild dev` | Application and generated DriverKit relay; the app embeds its service registration |
-| Fast rebuild (app only) | `./scripts/ojd rebuild-fast dev` | Skips a generated relay upgrade |
-| Package release DMG | `./scripts/ojd package release <version>` | Builds, notarizes, staples |
+| Install signed dev build | `./scripts/ojd build install dev` | Application and generated DriverKit relay; the app embeds its service registration |
+| Fast install (app only) | `./scripts/ojd build install-fast dev` | Skips a generated relay upgrade |
+| Bump release version | `./scripts/ojd release bump-version <version>` | Verifies the changelog heading and updates version references |
+| Package release DMG | `./scripts/ojd release package [version]` | Builds, notarizes, and staples; version defaults to the package version |
+| Package and install locally | `./scripts/ojd release install-local [version]` | Replaces the app in `/Applications` after packaging |
 | Run script unit tests | `./scripts/ojd test scripts` | Covers catalog, routing, layout, and environment contracts |
 
-## Initial Setup (Per Machine / Team)
+## Initial setup (per machine or team)
 
-First read [Signing assets](../docs/development/signing.md). It identifies who
-can obtain each Apple asset, the exact App IDs and capabilities, the portal
-profile types, and every generated environment value. End users and
-parser/record contributors do not need signing assets.
+Start with [Signing assets](../docs/development/signing.md). It lists who can
+obtain each Apple asset, the exact App IDs and capabilities, the portal profile
+types, and every generated environment value. End users and parser or record
+contributors do not need signing assets.
 
 ### 1. Provisioning profiles
 
@@ -116,7 +131,7 @@ Development requires:
 
 - `Apple Development: …`
 
-Publisher release additionally requires:
+Publisher releases also require:
 
 - `Developer ID Application: …`
 
@@ -147,7 +162,7 @@ available:
 
 Re-run this after rotating certificates, regenerating profiles, or switching teams.
 
-## Common Tasks
+## Common tasks
 
 ### Application login item
 
@@ -224,7 +239,7 @@ certificate or profile matching, see the Troubleshooting section below.
 Store notarization credentials in the macOS Keychain:
 
 ```bash
-OJD_ENV=release ./scripts/ojd notarize store-credentials OJDNotary
+./scripts/ojd release notarize store-credentials OJDNotary
 ```
 
 Put these into `.env.release`:
@@ -234,9 +249,9 @@ Put these into `.env.release`:
 Then:
 
 ```bash
-OJD_ENV=release ./scripts/ojd rebuild release
-OJD_ENV=release ./scripts/ojd notarize submit
-OJD_ENV=release ./scripts/ojd notarize status
+./scripts/ojd build install release
+./scripts/ojd release notarize submit
+./scripts/ojd release notarize status
 ```
 
 ### Release package
@@ -244,7 +259,7 @@ OJD_ENV=release ./scripts/ojd notarize status
 For a release build that does not install anything on the build machine:
 
 ```bash
-./scripts/ojd package release 0.5.0-beta.1
+./scripts/ojd release package 0.5.0-beta.1
 ```
 
 This command uses release signing, regenerates and embeds the DriverKit relay into the app

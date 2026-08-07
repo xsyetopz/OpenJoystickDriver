@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # OpenJoystickDriver developer entrypoint.
 #
-# Goal: one command surface for common tasks, with self-describing failures.
+# Provides one command for common tasks and clear errors.
 #
-# Use this instead of invoking individual scripts directly.
+# Use this instead of running individual scripts.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,21 +11,24 @@ PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 usage() {
   cat <<'USAGE'
-OpenJoystickDriver — dev helper
+OpenJoystickDriver dev helper
 
 Usage:
   ./scripts/ojd <command> [args]
 
 Commands:
-  rebuild dev                 Full rebuild (app + dext), installs to /Applications
-  rebuild release             Same as above, but uses release signing + notarization
-  rebuild-fast dev            Fast rebuild (app only; preserves installed dext)
-
   build dev                   Build + sign app bundle into `.build/` (no dext)
   build release               Build + sign app bundle for release (no dext)
   build dext                  Build DriverKit `.dext` and embed into `.build/` app
-  driverkit generate [path]  Generate a fresh SwifterKit DriverKit project
-  bump-version <version>      Update release version references
+  build install dev|release   Full rebuild and install (alias: rebuild)
+  build install-fast dev      App-only rebuild and install (alias: rebuild-fast)
+  driverkit generate [path]   Generate a fresh SwifterKit DriverKit project
+  release bump-version <version>
+                              Update release version references
+  release package [version]  Build, notarize, staple, and package a release DMG
+  release install-local [version]
+                              Package and install the release app locally
+  release notarize <command> Run release notarization operations
 
   env audit                   Validate the single-file env contract without printing values
   docs export-external-issues Refresh archived GitHub issue and pull-request evidence
@@ -64,26 +67,26 @@ Commands:
   launch sdl-gamecontroller <app>
                               Launch an SDL app through GameController/MFI rumble route
 
-  notarize submit             Submit + poll + staple (release only)
-  notarize status [id]        Show notarization status (release only)
-  notarize log <id>           Fetch notarization log (release only)
-  notarize history            List notarization history (release only)
-  notarize store-credentials  Store notarytool credentials in Keychain
-  package release             Build, notarize, staple, and package a release DMG
-
   lint                        Run SwiftLint (requires swiftlint)
+
+Compatibility aliases:
+  rebuild dev|release         Alias for build install dev|release
+  rebuild-fast dev            Alias for build install-fast dev
+  bump-version <version>      Alias for release bump-version
+  package release [version]  Alias for release package
+  notarize <command>         Alias for release notarize
 
 Examples:
   ./scripts/ojd signing install-profiles
   ./scripts/ojd signing configure
   ./scripts/ojd diagnose record /tmp/controller.json --validate-only
   ./scripts/ojd catalog xpad --github-ref master --output-dir /tmp/ojd-xpad
-  ./scripts/ojd rebuild-fast dev
-  ./scripts/ojd bump-version 0.1.0-rc.2
+  ./scripts/ojd build install-fast dev
+  ./scripts/ojd release bump-version 0.1.0-rc.2
 
 Notes:
   - Most commands expect the app to be installed to /Applications.
-  - DriverKit upgrades can require a reboot; use rebuild-fast while streaming.
+  - DriverKit upgrades can require a reboot; use build install-fast while streaming.
 USAGE
 }
 
@@ -134,8 +137,32 @@ case "$cmd" in
         require_no_args "build release" "$@"
         exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" build release
         ;;
+      install)
+        configuration="${1:-}"; shift || true
+        case "$configuration" in
+          dev)
+            require_no_args "build install dev" "$@"
+            exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild dev
+            ;;
+          release)
+            require_no_args "build install release" "$@"
+            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild release
+            ;;
+          *) die "Unknown: build install $configuration (expected: dev | release)" ;;
+        esac
+        ;;
+      install-fast)
+        configuration="${1:-}"; shift || true
+        case "$configuration" in
+          dev)
+            require_no_args "build install-fast dev" "$@"
+            exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild-fast dev
+            ;;
+          *) die "Unknown: build install-fast $configuration (expected: dev)" ;;
+        esac
+        ;;
       *)
-        die "Unknown: build $sub (expected: dev | dext | release)"
+        die "Unknown: build $sub (expected: dev | dext | release | install | install-fast)"
         ;;
     esac
     ;;
@@ -407,6 +434,59 @@ case "$cmd" in
   lint)
     require_no_args "lint" "$@"
     exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" lint
+    ;;
+
+  release)
+    sub="${1:-}"; shift || true
+    case "$sub" in
+      ""|help|-h|--help)
+        usage
+        ;;
+      bump-version)
+        require_one_arg "release bump-version" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/release/bump-version.sh" "$@"
+        ;;
+      package)
+        require_at_most_one_arg "release package" "$@"
+        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/package.sh" release "$@"
+        ;;
+      install-local)
+        require_at_most_one_arg "release install-local" "$@"
+        exec /usr/bin/env bash "$SCRIPT_DIR/release/install-local.sh" "$@"
+        ;;
+      notarize)
+        action="${1:-}"; shift || true
+        case "$action" in
+          submit|"")
+            require_no_args "release notarize submit" "$@"
+            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" submit
+            ;;
+          help|-h|--help)
+            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" help
+            ;;
+          status)
+            require_at_most_one_arg "release notarize status" "$@"
+            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" status "$@"
+            ;;
+          history)
+            require_no_args "release notarize history" "$@"
+            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" history
+            ;;
+          log)
+            require_one_arg "release notarize log" "$@"
+            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" log "$@"
+            ;;
+          store-credentials)
+            require_at_most_one_arg "release notarize store-credentials" "$@"
+            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" store-credentials "$@"
+            ;;
+          *)
+            die "Unknown: release notarize $action (expected: submit | status | history | log | store-credentials)"
+            ;;
+        esac
+        ;;
+      *) die "Unknown: release $sub (expected: bump-version | package | install-local | notarize)" ;;
+    esac
     ;;
 
   notarize)

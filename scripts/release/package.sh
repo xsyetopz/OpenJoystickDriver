@@ -32,7 +32,9 @@ fi
   || die "Unknown package command: ${cmd:-<empty>} (expected: release)"
 [[ "$OJD_ENV" == "release" ]] || die "package $cmd requires OJD_ENV=release"
 
-version="${1:-${GITHUB_REF_NAME:-$(date -u +%Y%m%d%H%M%S)}}"
+release_ref="${GITHUB_REF_NAME:-}"
+version="${1:-${release_ref#v}}"
+version="${version:-$OJD_DEFAULT_BUNDLE_SHORT_VERSION}"
 safe_version="$(printf '%s' "$version" | tr -c 'A-Za-z0-9._-' '-')"
 artifact_dir="$PROJECT_DIR/.build/release-artifacts"
 app_path="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"

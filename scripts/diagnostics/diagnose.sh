@@ -287,7 +287,7 @@ fi
 
 # cmd == dext falls through to the dext diagnostics implementation below.
 
-# zsh has a 'log' builtin that shadows /usr/bin/log — always use full path
+# zsh has a 'log' builtin that shadows /usr/bin/log. Always use the full path.
 LOG=/usr/bin/log
 
 # Color output when stdout is a terminal
@@ -345,7 +345,7 @@ if [[ -n "$sysext_output" ]]; then
     info "$sysext_output"
   fi
 else
-  fail "Sysext not found — extension not installed"
+  fail "Sysext not found. Extension is not installed."
 fi
 
 # --- 2. Installed binary exists ---
@@ -368,12 +368,12 @@ if [[ -n "$INSTALLED_BINARY" ]]; then
   pass "Installed binary exists (executable)"
   info "$INSTALLED_BINARY"
 elif [[ ${#STALE_BINARIES[@]} -gt 0 ]]; then
-  fail "All installed binaries are non-executable (stale sysext state — reboot required)"
+  fail "All installed binaries are non-executable (stale sysext state; reboot required)"
   for stale in "${STALE_BINARIES[@]}"; do
     info "  stale: $stale"
   done
 else
-  fail "Installed binary missing — stale activation (re-run Install Extension)"
+  fail "Installed binary missing due to stale activation (re-run Install Extension)"
 fi
 
 if [[ ${#STALE_BINARIES[@]} -gt 0 && -n "$INSTALLED_BINARY" ]]; then
@@ -397,7 +397,7 @@ if [[ -d "$APP_DEXT_DIR" ]]; then
   pass "App bundle dext present"
   info "$APP_DEXT_DIR"
 else
-  fail "App bundle dext missing — rebuild the app"
+  fail "App bundle dext missing. Rebuild the app."
 fi
 
 # --- 5. Codesigning valid ---
@@ -459,7 +459,7 @@ ioreg_hid=$(ioreg -r -c IOUserHIDDevice 2>/dev/null | grep -i OpenJoystick || tr
 if [[ -n "$ioreg_hid" ]]; then
   pass "IORegistry IOUserHIDDevice present"
 else
-  fail "IORegistry IOUserHIDDevice not found — dext not providing HID service"
+  fail "IORegistry IOUserHIDDevice not found. Dext is not providing a HID service."
 fi
 
 # --- 9. IOUserService presence ---
@@ -525,11 +525,11 @@ if [[ $FAIL_COUNT -gt 0 ]]; then
   # Suggest most likely root cause
   echo ""
   if printf '%s\n' "${ISSUES[@]}" | grep -q "stale activation"; then
-    echo "Most likely: stale sysext — re-activate from the app (Install Extension) or re-run rebuild.sh"
+    echo "Most likely: stale sysext. Re-activate it from the app (Install Extension) or rerun rebuild.sh."
   elif printf '%s\n' "${ISSUES[@]}" | grep -q "not running"; then
-    echo "Most likely: dext process crashed or failed to start — check DK logs above"
+    echo "Most likely: the dext process crashed or failed to start. Check the DK logs above."
   elif printf '%s\n' "${ISSUES[@]}" | grep -q "codesign"; then
-    echo "Most likely: signing issue — re-sign and re-install the dext"
+    echo "Most likely: signing failed. Sign and install the dext again."
   fi
 fi
 

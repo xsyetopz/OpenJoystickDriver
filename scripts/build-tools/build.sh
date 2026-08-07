@@ -9,7 +9,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../platform/environment.sh"
 
-# zsh has a 'log' builtin that shadows /usr/bin/log — always use full path
+# zsh has a 'log' builtin that shadows /usr/bin/log. Always use the full path.
 LOG=/usr/bin/log
 
 usage() {
@@ -123,7 +123,7 @@ nuke_all() {
   fi
 
   echo ""
-  echo "=== Sysext status (cannot remove with SIP — will be replaced on next install) ==="
+  echo "=== Sysext status (SIP prevents removal; the next install will replace it) ==="
   systemextensionsctl list 2>&1 | grep openjoystick || echo "  (none)"
 }
 
@@ -431,7 +431,7 @@ rebuild_full() {
   DEXT_ID=$(plutil -extract CFBundleIdentifier raw ".build/debug/OpenJoystickDriver.app/Contents/Library/SystemExtensions/${APP_ID}.VirtualHIDDevice.dext/Info.plist" 2>/dev/null || echo "MISSING")
   echo "  App:  $APP_ID"
   echo "  Dext: $DEXT_ID"
-  [[ "$DEXT_ID" == "$APP_ID"* ]] || die "PREFIX MISMATCH — dext will not be found in app bundle"
+  [[ "$DEXT_ID" == "$APP_ID"* ]] || die "PREFIX MISMATCH: dext will not be found in app bundle"
 
   if [[ "$OJD_ENV" == "release" ]]; then
     echo ""
@@ -467,7 +467,7 @@ rebuild_full() {
     printf "  …waiting for sysext v%s (%ds)\n" "$NEW_VERSION" "$SYSEXT_ELAPSED"
   done
   if (( SYSEXT_ELAPSED >= SYSEXT_TIMEOUT )); then
-    echo "  ⚠ Sysext v${NEW_VERSION} not activated after ${SYSEXT_TIMEOUT}s — continuing anyway"
+    echo "  ⚠ Sysext v${NEW_VERSION} not activated after ${SYSEXT_TIMEOUT}s. Continuing anyway."
   fi
 
   echo ""
@@ -491,7 +491,7 @@ rebuild_full() {
     printf "  …%ds\n" "$ELAPSED"
   done
   if (( ELAPSED >= TIMEOUT )); then
-    echo "  ⚠ Timed out after ${TIMEOUT}s — no dext logs or start fail detected"
+    echo "  ⚠ Timed out after ${TIMEOUT}s. No dext logs or start failure detected."
   fi
 
   echo ""

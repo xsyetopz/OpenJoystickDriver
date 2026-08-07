@@ -147,7 +147,7 @@ fi
 
 echo "  Submission ID: $SUBMISSION_ID"
 
-# Remove zip now — it's already uploaded
+# Remove the zip after upload.
 rm -f "$ZIP_PATH"
 
 # ---------------------------------------------------------------------------
@@ -167,11 +167,11 @@ while true; do
     echo "ERROR: Notarization timed out after ${TIMEOUT_MINUTES} minutes"
     echo "  Submission ID: $SUBMISSION_ID"
     echo ""
-    echo "  The submission is still queued with Apple — it may yet complete."
+    echo "  Apple still has the submission queued. It may complete later."
     echo "  Check status:  OJD_ENV=release ./scripts/ojd notarize status $SUBMISSION_ID"
     echo "  View history:  OJD_ENV=release ./scripts/ojd notarize history"
     echo ""
-    echo "  If it completes later, staple manually:"
+    echo "  If it completes, staple manually:"
     echo "    xcrun stapler staple $APP"
     exit 1
   fi
@@ -186,7 +186,7 @@ while true; do
     CONSECUTIVE_FAILURES=$(( CONSECUTIVE_FAILURES + 1 ))
     echo "[$(date '+%H:%M:%S')] Poll failed (attempt $CONSECUTIVE_FAILURES/$MAX_RETRIES): $(echo "$INFO_OUTPUT" | head -1)"
     if (( CONSECUTIVE_FAILURES >= MAX_RETRIES )); then
-      echo "ERROR: $MAX_RETRIES consecutive poll failures — giving up"
+      echo "ERROR: Stopping after $MAX_RETRIES consecutive poll failures"
       echo "$INFO_OUTPUT"
       exit 1
     fi
