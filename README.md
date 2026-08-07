@@ -1,11 +1,13 @@
 # OpenJoystickDriver
 
+English | [简体中文](README.zh.md)
+
 [![GitHub Repo stars](https://img.shields.io/github/stars/xsyetopz/OpenJoystickDriver?style=social)](https://github.com/xsyetopz/OpenJoystickDriver/stargazers)
 [![License](https://img.shields.io/github/license/xsyetopz/OpenJoystickDriver)](LICENSE)
 [![Swift](https://img.shields.io/badge/Swift-Package-orange)](Package.swift)
 [![macOS](https://img.shields.io/badge/platform-macOS-lightgrey)](README.md)
 
-OpenJoystickDriver is a macOS userspace gamepad driver. Its signed app bundle hosts the controller runtime; the same executable exposes a low-level CLI for setup, control, and diagnostics.
+OpenJoystickDriver is a macOS userspace gamepad driver. Its signed app bundle hosts the controller runtime. The same executable provides a low-level CLI for setup, control, and diagnostics.
 
 Use it when a controller works in OpenJoystickDriver but not in a game, emulator, SDL app, or native macOS app.
 
@@ -21,32 +23,30 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
 
 ## Why OpenJoystickDriver
 
-- Normalizes physical controller input into virtual controller outputs that apps can understand.
-- Provides compatibility modes for SDL, Apple GameController, Generic HID, and experimental Xbox HID targets.
-- Keeps common diagnostics and check commands in one repo-controlled workflow.
+OpenJoystickDriver normalizes physical controller input into virtual controller outputs that apps can understand. It provides compatibility modes for SDL, Apple GameController, Generic HID, and experimental Xbox HID targets, with common diagnostics and checks in one repo-controlled workflow.
 
 ## Status
 
 See [docs/user/compatibility.md](docs/user/compatibility.md) for current backend, output-mode, and device-support status.
 
 Compatibility mode does not require DriverKit. The generated SwifterKit system
-extension is a vendor-defined integrity relay for self-test and diagnostics; it
+extension is a vendor-defined integrity relay for self-test and diagnostics. It
 deliberately does not publish a second consumer gamepad. Self-test reads the
-signed host entitlement: relay delivery is required for an entitled host and
+signed host entitlement. Relay delivery is required for an entitled host and
 reported as optional and inconclusive when the entitlement is absent.
 
 ## Quickstart
 
 1. Drag `OpenJoystickDriver.app` to `/Applications`.
 2. Open `OpenJoystickDriver.app`.
-3. The app intentionally has no visible UI; start and inspect it with the installed bundle command below.
+3. The app intentionally has no visible UI. Start and inspect it with the installed bundle command below.
 4. Grant **Input Monitoring** and **Accessibility** to OpenJoystickDriver when macOS asks.
 5. Connect a supported controller.
 6. Run `controller state` or `controller watch` from the CLI to confirm buttons and sticks.
 
-Expected result: your target app sees a compatible virtual controller.
+Your target app should now see a compatible virtual controller.
 
-## Install, Update, or Remove
+## Install, update, or remove
 
 OpenJoystickDriver has one app bundle in `/Applications`:
 
@@ -75,7 +75,7 @@ To uninstall OpenJoystickDriver completely:
 3. Delete `/Applications/OpenJoystickDriver.app`.
 4. Optional: remove OpenJoystickDriver from **Input Monitoring** and **Accessibility** in System Settings.
 
-## Choose A Compatibility Identity
+## Choose a compatibility identity
 
 | What you are trying to run | Recommended | Why |
 | --- | --- | --- |
@@ -173,9 +173,9 @@ swift build
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for repository expectations.
 
-## AI / Coding Agents
+## AI and coding agents
 
-Use this context path before editing:
+Read these files before editing:
 
 1. [README.md](README.md) -- product intent and user workflows.
 2. [scripts/README.md](scripts/README.md) -- repository command interface.
@@ -192,7 +192,7 @@ Minimum checks for parser/record changes:
 swift build
 ```
 
-## Star History
+## Star history
 
 <a href="https://www.star-history.com/?repos=xsyetopz%2FOpenJoystickDriver&type=date&legend=top-left">
  <picture>
