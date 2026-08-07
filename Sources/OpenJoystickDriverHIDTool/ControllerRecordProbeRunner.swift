@@ -21,13 +21,17 @@ func runControllerRecordProbe(
       let plan = try ControllerRecordProbePlan(contentsOf: URL(fileURLWithPath: recordPath))
       let inputEndpoint = plan.transportProfile.inputEndpoint
       let outputEndpoint = plan.transportProfile.outputEndpoint
-      let startupNames = plan.startupPackets.map(\.rawValue).joined(separator: ",")
+      let parser = plan.makeParser()
+      let profileStartup = plan.startupPackets.map(\.rawValue).joined(separator: ",")
+      let usbStartup = (parser as? any USBStartupOutputProvider)?.usbStartupOutputPackets() ?? []
+      let usbStartupBytes = usbStartup.map(\.hexBytes).joined(separator: ",")
       print(
         "RECORD identity=\"\(plan.name)\"" + " vid=\(plan.vendorID) pid=\(plan.productID)"
           + " driver=\(plan.driver.rawValue)" + " interface=\(plan.interfaceNumber)"
           + " in=\(hex(inputEndpoint)) out=\(hex(outputEndpoint))"
           + " configuration=\(plan.transportProfile.needsSetConfiguration ? "set1" : "current")"
-          + " startup=\(startupNames.isEmpty ? "none" : startupNames)"
+          + " profile_startup=\(profileStartup.isEmpty ? "none" : profileStartup)"
+          + " usb_startup=\(usbStartupBytes.isEmpty ? "none" : usbStartupBytes)"
       )
 
       if validateOnly {
@@ -87,14 +91,26 @@ func runControllerRecordProbe(
       claimedInterface = true
       print("USB_CLAIM interface=\(plan.interfaceNumber) result=claimed")
 
-      let parser = plan.makeParser()
       try await parser.performHandshake(handle: handle)
       print("RECORD_HANDSHAKE driver=\(plan.driver.rawValue) result=complete")
 
       if let startupOutput = parser as? any USBStartupOutputProvider {
         for packet in startupOutput.usbStartupOutputPackets() {
-          _ = try handle.interruptTransfer(endpoint: outputEndpoint, data: packet, timeout: 2_000)
-          print("USB_TX endpoint=\(hex(outputEndpoint)) bytes=\(packet.hexBytes)")
+          do {
+            _ = try handle.interruptTransfer(
+              endpoint: outputEndpoint,
+              data: packet,
+              timeout: 2_000
+            )
+            print("USB_TX endpoint=\(hex(outputEndpoint)) bytes=\(packet.hexBytes)")
+          } catch let error as USBError
+            where isIgnorableUSBStartupOutputError(parser: parser, packet: packet, error: error)
+          {
+            print(
+              "USB_TX endpoint=\(hex(outputEndpoint)) result=ignored"
+                + " code=\(error.code) detail=\"\(error.message)\" bytes=\(packet.hexBytes)"
+            )
+          }
         }
       }
 
@@ -160,6 +176,14 @@ func runControllerRecordProbe(
           + " events=\(eventCount) parse_errors=\(parseErrorCount)"
       )
       exitCode.value = packetCount > 0 ? 0 : 3
+    } catch let error as USBError {
+      let context = error.context.map { " context=\"\($0)\"" } ?? ""
+      fputs(
+        "ERROR: record probe failed: code=\(error.code)"
+          + " detail=\"\(error.message)\"\(context)\n",
+        stderr
+      )
+      exitCode.value = 1
     } catch {
       fputs("ERROR: record probe failed: \(error.localizedDescription)\n", stderr)
       exitCode.value = 1

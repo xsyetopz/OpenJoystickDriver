@@ -4,35 +4,38 @@ import IOKit
 import IOKit.hid
 import SwiftUSB
 
-let args = Array(CommandLine.arguments.dropFirst())
-if args.contains("--help") { printUsageAndExit(0) }
-
-let list = args.contains("--list")
-let dump = args.contains("--dump")
-let open = args.contains("--open")
-let serviceOpen = args.contains("--service-open")
-let setReport = args.contains("--set-report")
-let monitor = args.contains("--monitor")
-let usbMonitor = args.contains("--usb-monitor")
-let detachKernel = args.contains("--detach")
-
-func argValue(_ name: String) -> String? {
-  guard let idx = args.firstIndex(of: name), idx + 1 < args.count else { return nil }
-  return args[idx + 1]
+let parsedArguments: HIDToolArguments
+do {
+  guard let parsed = try parseHIDToolArguments(Array(CommandLine.arguments.dropFirst())) else {
+    printUsageAndExit(0)
+  }
+  parsedArguments = parsed
+} catch {
+  fputs("ERROR: \(error)\n", stderr)
+  printUsageAndExit(2)
 }
 
+let list = parsedArguments.mode == .list
+let dump = parsedArguments.mode == .dump
+let open = parsedArguments.mode == .open
+let serviceOpen = parsedArguments.flags.contains("--service-open")
+let setReport = parsedArguments.flags.contains("--set-report")
+let monitor = parsedArguments.mode == .monitor
+let usbMonitor = parsedArguments.mode == .usbMonitor
+let detachKernel = parsedArguments.flags.contains("--detach")
+
+func argValue(_ name: String) -> String? { parsedArguments.values[name] }
+
 func intArg(_ name: String, default defaultValue: Int) -> Int {
-  guard let raw = argValue(name), let parsed = parseInt(raw) else { return defaultValue }
-  return parsed
+  parsedArguments.int(name, default: defaultValue)
 }
 
 if let recordPath = argValue("--record-probe") {
-  let seconds = min(max(intArg("--seconds", default: 30), 1), 300)
   runControllerRecordProbe(
     recordPath: recordPath,
-    seconds: seconds,
+    seconds: intArg("--seconds", default: 30),
     detachKernel: detachKernel,
-    validateOnly: args.contains("--validate-only")
+    validateOnly: parsedArguments.flags.contains("--validate-only")
   )
 }
 

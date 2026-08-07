@@ -9,6 +9,131 @@ func parseInt(_ s: String) -> Int? {
   return Int(s)
 }
 
+enum HIDToolMode: String, CaseIterable {
+  case list = "--list"
+  case dump = "--dump"
+  case open = "--open"
+  case monitor = "--monitor"
+  case usbMonitor = "--usb-monitor"
+  case recordProbe = "--record-probe"
+}
+
+struct HIDToolArguments {
+  let mode: HIDToolMode
+  let values: [String: String]
+  let flags: Set<String>
+
+  func int(_ name: String, default defaultValue: Int) -> Int {
+    values[name].flatMap(parseInt) ?? defaultValue
+  }
+}
+
+enum HIDToolArgumentError: Error, CustomStringConvertible {
+  case message(String)
+
+  var description: String {
+    switch self {
+    case .message(let message): message
+    }
+  }
+}
+
+func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
+  if arguments == ["-h"] || arguments == ["--help"] { return nil }
+
+  let valueOptions = Set(["--vid", "--pid", "--interface", "--endpoint", "--length", "--seconds"])
+  let booleanOptions = Set(["--service-open", "--set-report", "--detach", "--validate-only"])
+  let knownOptions = valueOptions.union(booleanOptions).union(HIDToolMode.allCases.map(\.rawValue))
+  var values: [String: String] = [:]
+  var flags = Set<String>()
+  var modes: [HIDToolMode] = []
+  var index = 0
+
+  while index < arguments.count {
+    let argument = arguments[index]
+    guard knownOptions.contains(argument) else {
+      throw HIDToolArgumentError.message("unknown option '\(argument)'")
+    }
+    guard !flags.contains(argument), values[argument] == nil else {
+      throw HIDToolArgumentError.message("duplicate option '\(argument)'")
+    }
+    if let mode = HIDToolMode(rawValue: argument) {
+      modes.append(mode)
+      if mode == .recordProbe {
+        guard index + 1 < arguments.count, !knownOptions.contains(arguments[index + 1]) else {
+          throw HIDToolArgumentError.message("missing value for '--record-probe'")
+        }
+        values[argument] = arguments[index + 1]
+        index += 2
+        continue
+      }
+      flags.insert(argument)
+      index += 1
+      continue
+    }
+    if valueOptions.contains(argument) {
+      guard index + 1 < arguments.count, !arguments[index + 1].hasPrefix("-") else {
+        throw HIDToolArgumentError.message("missing value for '\(argument)'")
+      }
+      values[argument] = arguments[index + 1]
+      index += 2
+    } else {
+      flags.insert(argument)
+      index += 1
+    }
+  }
+
+  guard modes.count == 1, let mode = modes.first else {
+    let message = modes.isEmpty ? "missing mode selector" : "multiple mode selectors"
+    throw HIDToolArgumentError.message(message)
+  }
+
+  let owned: Set<String>
+  switch mode {
+  case .list: owned = []
+  case .dump: owned = ["--vid", "--pid"]
+  case .open: owned = ["--vid", "--pid", "--service-open", "--set-report"]
+  case .monitor: owned = ["--vid", "--pid", "--seconds"]
+  case .usbMonitor:
+    owned = [
+      "--vid", "--pid", "--interface", "--endpoint", "--length", "--seconds", "--detach",
+    ]
+  case .recordProbe: owned = ["--seconds", "--detach", "--validate-only"]
+  }
+  let suppliedOptions = Set(values.keys).union(flags).subtracting([mode.rawValue])
+  if let option = suppliedOptions.subtracting(owned).min() {
+    throw HIDToolArgumentError.message("option '\(option)' is not valid with '\(mode.rawValue)'")
+  }
+
+  func validate(_ name: String, range: ClosedRange<Int>) throws {
+    guard let raw = values[name] else { return }
+    guard let value = parseInt(raw) else {
+      throw HIDToolArgumentError.message("malformed value '\(raw)' for '\(name)'")
+    }
+    guard range.contains(value) else {
+      let bounds = "\(range.lowerBound)...\(range.upperBound)"
+      throw HIDToolArgumentError.message("value for '\(name)' is out of range \(bounds)")
+    }
+  }
+
+  try validate("--vid", range: 0...0xFFFF)
+  try validate("--pid", range: 0...0xFFFF)
+  if mode == .monitor { try validate("--seconds", range: 1...60) }
+  if mode == .usbMonitor || mode == .recordProbe { try validate("--seconds", range: 1...300) }
+  if mode == .usbMonitor {
+    try validate("--interface", range: 0...255)
+    try validate("--endpoint", range: 0...255)
+    try validate("--length", range: 1...1024)
+  }
+  if mode == .dump {
+    for required in ["--vid", "--pid"] where values[required] == nil {
+      throw HIDToolArgumentError.message("'--dump' requires '\(required)'")
+    }
+  }
+
+  return HIDToolArguments(mode: mode, values: values, flags: flags)
+}
+
 func intProp(_ dev: IOHIDDevice, _ key: String) -> Int {
   IOHIDDeviceGetProperty(dev, key as CFString) as? Int ?? 0
 }
@@ -116,14 +241,17 @@ func printMonitorNoDeviceHint(vid: Int, pid: Int) {
 func printUsageAndExit(_ code: Int32) -> Never {
   fputs(
     """
-    OpenJoystickDriverHIDTool
+    OpenJoystickDriverHIDTool. Internal hardware diagnostic utility.
+
+    Use `./scripts/ojd diagnose` for supported workflows. Run this utility directly
+    only for focused hardware debugging.
 
     Usage:
       OpenJoystickDriverHIDTool --list
       OpenJoystickDriverHIDTool --dump --vid 0x045e --pid 0x02ea
       OpenJoystickDriverHIDTool --open --vid 0x045e --pid 0x028e [--service-open] [--set-report]
       OpenJoystickDriverHIDTool --monitor [--vid 0x4f4a --pid 0x4447] [--seconds 10]
-      OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000\
+      OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000
         [--endpoint 0x81] [--interface 0] [--length 64] [--seconds 20] [--detach]
       OpenJoystickDriverHIDTool --record-probe <record.json>
         [--seconds 30] [--detach] [--validate-only]
@@ -145,7 +273,7 @@ func printUsageAndExit(_ code: Int32) -> Never {
       --endpoint <n>   Interrupt IN endpoint for --usb-monitor; omitted sweeps 0x81...0x8f.
       --length <n>     Read length for --usb-monitor (default: 64, max: 1024).
       --seconds <int>  Monitor duration in seconds (default varies, max: 300).
-      --help           Show this help.
+      -h, --help       Show this help.
 
     """,
     stderr
