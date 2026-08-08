@@ -30,7 +30,6 @@ extension RemappingRoutingCore {
     )
   }
 
-
   var sortedIdentifiers: [DeviceIdentifier] {
     connectedIdentifiers.sorted { $0.runtimeIdentifier < $1.runtimeIdentifier }
   }
@@ -47,13 +46,30 @@ extension RemappingRoutingCore {
     guard !terminationRequested else { throw RemappingOutputRoutingError.shutDown }
   }
 
-  @discardableResult func requireOperationalPermit(
-    _ permit: RemappingEmissionPermit?
-  ) throws -> RemappingEmissionPermit {
+  @discardableResult func requireOperationalPermit(_ permit: RemappingEmissionPermit?) throws
+    -> RemappingEmissionPermit
+  {
     if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
     guard let permit, emissionBarrier.permits(permit) else {
       throw RemappingEventEngineError.outputSuspended
     }
     return permit
+  }
+
+  func releaseAllSafely(
+    for identifier: DeviceIdentifier,
+    requiring proposedPermit: RemappingEmissionPermit?
+  ) async throws {
+    let permit = try requireOperationalPermit(proposedPermit)
+    do { try await engine.releaseAll(for: identifier, requiring: permit) } catch let error
+      as RemappingEventEngineError
+    {
+      if error == .outputSuspended {
+        if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
+        return
+      }
+      recordEngineFailure(error)
+      throw RemappingOutputRoutingError.engine(error)
+    }
   }
 }

@@ -71,23 +71,16 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
     )
   }
 
-  deinit {
-    tickerTask?.cancel()
-  }
+  deinit { tickerTask?.cancel() }
 
   func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {
-    do {
-      try await dispatchCausally(events: events, from: identifier)
-    } catch {
+    do { try await dispatchCausally(events: events, from: identifier) } catch {
       // OutputDispatcher cannot surface errors. Callers that need causal failure
       // reporting use dispatchCausally or inspect the typed route status.
     }
   }
 
-  func dispatchCausally(
-    events: [ControllerEvent],
-    from identifier: DeviceIdentifier
-  ) async throws {
+  func dispatchCausally(events: [ControllerEvent], from identifier: DeviceIdentifier) async throws {
     guard let lease = try outputLeaseIfOpen() else {
       try await core.recordConnectedIdentifierWhileOutputClosed(identifier)
       return
@@ -96,17 +89,12 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
     let permit = lease.permit
     do {
       let snapshot = lock.withLock { controls }
-      do {
-        try await core.apply(snapshot, requiring: permit)
-      } catch RemappingEventEngineError.outputSuspended {
+      do { try await core.apply(snapshot, requiring: permit) } catch RemappingEventEngineError
+        .outputSuspended
+      {
         // A transaction still admits exact controller identity while blocking output.
       }
-      try await core.dispatch(
-        events: events,
-        from: identifier,
-        at: uptime(),
-        requiring: permit
-      )
+      try await core.dispatch(events: events, from: identifier, at: uptime(), requiring: permit)
     } catch {
       await reconcileTickerWithEngine()
       if error as? RemappingEventEngineError == .outputSuspended { return }
@@ -138,11 +126,7 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
     }
     do {
       try await synchronizeControls(requiring: permit)
-      try await core.refreshModel(
-        vendorID: vendorID,
-        productID: productID,
-        requiring: permit
-      )
+      try await core.refreshModel(vendorID: vendorID, productID: productID, requiring: permit)
     } catch {
       await reconcileTickerWithEngine()
       throw error
@@ -155,8 +139,7 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
     setProfileTransactionGateActive(true)
     let permit: RemappingEmissionPermit
     switch await emissionBarrier.suspend(owner: transaction.id) {
-    case .admitted(let admittedPermit):
-      permit = admittedPermit
+    case .admitted(let admittedPermit): permit = admittedPermit
     case .transactionAlreadyActive:
       await reconcileTickerWithEngine()
       throw RemappingOutputRoutingError.profileTransactionAlreadyActive
@@ -173,13 +156,12 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
         case .profileTransactionAlreadyActive, .profileTransactionUnreconciled, .shutDown:
           await reconcileTickerWithEngine()
           throw routingError
-        default:
-          break
+        default: break
         }
       }
-      do {
-        try await core.rollBackProfileTransaction(transaction, requiring: permit)
-      } catch let reconciliationError {
+      do { try await core.rollBackProfileTransaction(transaction, requiring: permit) } catch let
+        reconciliationError
+      {
         let unreconciled = RemappingOutputRoutingError.profileTransactionUnreconciled(
           reconciliationError.localizedDescription
         )
@@ -187,9 +169,7 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
         await reconcileTickerWithEngine()
         throw unreconciled
       }
-      if emissionBarrier.resume(owner: transaction.id) {
-        setProfileTransactionGateActive(false)
-      }
+      if emissionBarrier.resume(owner: transaction.id) { setProfileTransactionGateActive(false) }
       await reconcileTickerWithEngine()
       throw beginError
     }
@@ -199,23 +179,17 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
 
   func acceptProfileTransaction(_ transaction: RemappingProfileTransaction) async throws {
     let permit = emissionBarrier.transactionPermit(owner: transaction.id)
-    do {
-      try await core.acceptProfileTransaction(transaction, requiring: permit)
-    } catch {
+    do { try await core.acceptProfileTransaction(transaction, requiring: permit) } catch {
       await reconcileTickerWithEngine()
       throw error
     }
-    if emissionBarrier.resume(owner: transaction.id) {
-      setProfileTransactionGateActive(false)
-    }
+    if emissionBarrier.resume(owner: transaction.id) { setProfileTransactionGateActive(false) }
     await reconcileTickerWithEngine()
   }
 
   func rollBackProfileTransaction(_ transaction: RemappingProfileTransaction) async throws {
     let permit = emissionBarrier.transactionPermit(owner: transaction.id)
-    do {
-      try await core.rollBackProfileTransaction(transaction, requiring: permit)
-    } catch {
+    do { try await core.rollBackProfileTransaction(transaction, requiring: permit) } catch {
       if error as? RemappingOutputRoutingError == .shutDown {
         await reconcileTickerWithEngine()
         throw error
@@ -227,9 +201,7 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
       await reconcileTickerWithEngine()
       throw unreconciled
     }
-    if emissionBarrier.resume(owner: transaction.id) {
-      setProfileTransactionGateActive(false)
-    }
+    if emissionBarrier.resume(owner: transaction.id) { setProfileTransactionGateActive(false) }
     await reconcileTickerWithEngine()
   }
 
@@ -245,15 +217,11 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
 
   func recoverProfileTransaction() async throws {
     let permit = await core.profileTransactionPermit()
-    do {
-      try await core.recoverProfileTransaction(requiring: permit)
-    } catch {
+    do { try await core.recoverProfileTransaction(requiring: permit) } catch {
       await reconcileTickerWithEngine()
       throw error
     }
-    if let permit, emissionBarrier.resume(permit) {
-      setProfileTransactionGateActive(false)
-    }
+    if let permit, emissionBarrier.resume(permit) { setProfileTransactionGateActive(false) }
     await reconcileTickerWithEngine()
   }
 
@@ -273,38 +241,25 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
 
   func setOutputSuppressed(_ suppressed: Bool) async throws {
     let snapshot = updateControls(outputSuppressed: suppressed)
-    updateCompatibilitySuppression(controls: snapshot)
-    guard let lease = try outputLeaseIfOpen() else { return }
-    defer { lease.finish() }
-    let permit = lease.permit
-    do {
-      try await core.apply(snapshot, requiring: permit)
-    } catch {
-      await reconcileTickerWithEngine()
-      throw error
-    }
-    await reconcileTickerWithEngine()
+    try await applyControlsSnapshot(snapshot)
   }
 
   func setCompatibilityOutputAllowed(_ allowed: Bool) async throws {
     let snapshot = updateControls(compatibilityOutputAllowed: allowed)
-    updateCompatibilitySuppression(controls: snapshot)
-    guard let lease = try outputLeaseIfOpen() else { return }
-    defer { lease.finish() }
-    let permit = lease.permit
-    do {
-      try await core.apply(snapshot, requiring: permit)
-    } catch {
-      await reconcileTickerWithEngine()
-      throw error
-    }
-    await reconcileTickerWithEngine()
+    try await applyControlsSnapshot(snapshot)
   }
 
   /// Applies the compatibility gate and causally re-evaluates application-scoped
   /// remapping after a foreground-consumer lifecycle notification.
   func foregroundStateDidChange(compatibilityOutputAllowed allowed: Bool) async throws {
     let snapshot = updateControls(compatibilityOutputAllowed: allowed)
+    try await applyControlsSnapshot(snapshot, refreshEligibilityWhenUnchanged: true)
+  }
+
+  private func applyControlsSnapshot(
+    _ snapshot: RemappingRoutingControls,
+    refreshEligibilityWhenUnchanged: Bool = false
+  ) async throws {
     updateCompatibilitySuppression(controls: snapshot)
     guard let lease = try outputLeaseIfOpen() else { return }
     defer { lease.finish() }
@@ -313,7 +268,7 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
       try await core.apply(
         snapshot,
         requiring: permit,
-        refreshEligibilityWhenUnchanged: true
+        refreshEligibilityWhenUnchanged: refreshEligibilityWhenUnchanged
       )
     } catch {
       await reconcileTickerWithEngine()
@@ -363,19 +318,14 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
   func controllerDidStop(_ identifier: DeviceIdentifier) {
     Task { [weak self] in
       guard let self else { return }
-      try? await core.stopController(
-        identifier,
-        requiring: emissionBarrier.currentPermit()
-      )
+      try? await core.stopController(identifier, requiring: emissionBarrier.currentPermit())
       await reconcileTickerWithEngine()
     }
   }
 
   func stopController(_ identifier: DeviceIdentifier) async throws {
     let permit = emissionBarrier.currentPermit()
-    do {
-      try await core.stopController(identifier, requiring: permit)
-    } catch {
+    do { try await core.stopController(identifier, requiring: permit) } catch {
       await reconcileTickerWithEngine()
       throw error
     }

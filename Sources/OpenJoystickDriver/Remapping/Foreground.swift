@@ -30,8 +30,7 @@ enum RemappingForegroundPolicy {
     guard !outputSuppressed else { return .outputSuppressed }
     guard accessState == .granted else { return .postEventAccessNotAuthorized }
     switch scope {
-    case .global:
-      return .eligible
+    case .global: return .eligible
     case .application(let requiredBundleIdentifier):
       return frontmostBundleIdentifier == requiredBundleIdentifier
         ? .eligible : .targetApplicationNotFrontmost

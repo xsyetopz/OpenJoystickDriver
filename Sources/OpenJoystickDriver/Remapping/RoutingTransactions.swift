@@ -9,12 +9,9 @@ extension RemappingRoutingCore {
     defer { schedulingRevision &+= 1 }
     try ensureRunning()
     switch profileTransactionState {
-    case .inactive:
-      profileTransactionState = .active(transaction)
-    case .active:
-      throw RemappingOutputRoutingError.profileTransactionAlreadyActive
-    case .unreconciled(_, let error):
-      throw error
+    case .inactive: profileTransactionState = .active(transaction)
+    case .active: throw RemappingOutputRoutingError.profileTransactionAlreadyActive
+    case .unreconciled(_, let error): throw error
     }
     let permit = try requireOperationalPermit(proposedPermit)
 
@@ -101,8 +98,7 @@ extension RemappingRoutingCore {
     switch profileTransactionState {
     case .active(let transaction), .unreconciled(let transaction, _):
       return emissionBarrier.transactionPermit(owner: transaction.id)
-    case .inactive:
-      return nil
+    case .inactive: return nil
     }
   }
 
@@ -120,7 +116,8 @@ extension RemappingRoutingCore {
       do {
         profile = try await library.activeProfile(
           vendorID: identifier.vendorID,
-          productID: identifier.productID
+          productID: identifier.productID,
+          frontmostBundleIdentifier: environment.frontmostBundleIdentifier
         )
       } catch let error as RemappingProfileLibraryError {
         _ = try requireOperationalPermit(permit)
@@ -136,13 +133,11 @@ extension RemappingRoutingCore {
     }
   }
 
-  private func installCurrentRoutes(
-    requiring proposedPermit: RemappingEmissionPermit?
-  ) async throws {
+  private func installCurrentRoutes(requiring proposedPermit: RemappingEmissionPermit?) async throws
+  {
     let permit = try requireOperationalPermit(proposedPermit)
-    do {
-      try await engine.recover(requiring: permit)
-    } catch let error as RemappingEventEngineError {
+    do { try await engine.recover(requiring: permit) } catch let error as RemappingEventEngineError
+    {
       if error == .outputSuspended, emissionBarrier.isTerminated {
         throw RemappingOutputRoutingError.shutDown
       }
@@ -192,8 +187,7 @@ extension RemappingRoutingCore {
         ),
         error: nil
       )
-    case .unavailable(let error):
-      return unavailableRoute(error, environment: environment)
+    case .unavailable(let error): return unavailableRoute(error, environment: environment)
     }
   }
 
@@ -211,9 +205,7 @@ extension RemappingRoutingCore {
     )
   }
 
-  private func requireActiveProfileTransaction(
-    _ transaction: RemappingProfileTransaction
-  ) throws {
+  private func requireActiveProfileTransaction(_ transaction: RemappingProfileTransaction) throws {
     guard case .active(let active) = profileTransactionState, active == transaction else {
       throw RemappingOutputRoutingError.profileTransactionViolation
     }

@@ -11,15 +11,14 @@ extension ApplicationServiceServer {
     }
     func send<Value: Encodable>(_ value: Value) {
       do {
-        completion(
-          LocalServiceRPCResponse(result: try JSONEncoder().encode(value), error: nil)
-        )
+        completion(LocalServiceRPCResponse(result: try JSONEncoder().encode(value), error: nil))
       } catch {
         completion(LocalServiceRPCResponse(result: nil, error: error.localizedDescription))
       }
     }
     func fail(_ error: Error) {
-      let description = (error as? ApplicationServiceRemappingRPCError)?.rpcDescription
+      let description =
+        (error as? ApplicationServiceRemappingRPCError)?.rpcDescription
         ?? error.localizedDescription
       completion(LocalServiceRPCResponse(result: nil, error: description))
     }
@@ -30,9 +29,7 @@ extension ApplicationServiceServer {
           message: "Remapping RPC arguments exceed the service limit."
         )
       }
-      do {
-        return try decode(type)
-      } catch let error as ApplicationServiceRemappingRPCError {
+      do { return try decode(type) } catch let error as ApplicationServiceRemappingRPCError {
         throw error
       } catch {
         throw ApplicationServiceRemappingRPCError(
@@ -41,9 +38,7 @@ extension ApplicationServiceServer {
         )
       }
     }
-    func sendRemapping<Value: Encodable & Sendable>(
-      _ result: RemappingRequestResult<Value>
-    ) {
+    func sendRemapping<Value: Encodable & Sendable>(_ result: RemappingRequestResult<Value>) {
       switch result {
       case .success(let value):
         do {
@@ -55,20 +50,17 @@ extension ApplicationServiceServer {
             )
           }
           let response = LocalServiceRPCResponse(result: encodedValue, error: nil)
-          guard try JSONEncoder().encode(response).count
-            <= ApplicationServiceRemappingRPC.maximumTransportFrameBytes
+          guard
+            try JSONEncoder().encode(response).count
+              <= ApplicationServiceRemappingRPC.maximumTransportFrameBytes
           else {
             throw ApplicationServiceRemappingRPCError(
               code: .responseTooLarge,
               message: "The remapping RPC response exceeds the transport frame limit."
             )
           }
-          completion(
-            response
-          )
-        } catch let error as ApplicationServiceRemappingRPCError {
-          fail(error)
-        } catch {
+          completion(response)
+        } catch let error as ApplicationServiceRemappingRPCError { fail(error) } catch {
           fail(
             ApplicationServiceRemappingRPCError(
               code: .responseEncodingFailed,
@@ -76,8 +68,7 @@ extension ApplicationServiceServer {
             )
           )
         }
-      case .failure(let error):
-        fail(error)
+      case .failure(let error): fail(error)
       }
     }
 
@@ -116,6 +107,9 @@ extension ApplicationServiceServer {
             productID: value.productID,
             reply: sendRemapping
           )
+        case .deactivateProfileByID:
+          let value = try decodeRemapping(ApplicationServiceRemappingProfileIDArguments.self)
+          deactivateRemappingProfile(id: value.profileID, reply: sendRemapping)
         case .getPostEventAccess:
           _ = try decodeRemapping(LocalServiceRPCEmptyArguments.self)
           getRemappingPostEventAccess(reply: sendRemapping)
@@ -127,12 +121,9 @@ extension ApplicationServiceServer {
       }
 
       switch request.method {
-      case "listDevices":
-        listDevices(reply: send)
-      case "getStatus":
-        getStatus(reply: send)
-      case "requestRequiredAccess":
-        requestRequiredAccess(reply: send)
+      case "listDevices": listDevices(reply: send)
+      case "getStatus": getStatus(reply: send)
+      case "requestRequiredAccess": requestRequiredAccess(reply: send)
       case "getDeviceInputState":
         let value = try decode(LocalServiceRPCDeviceArguments.self)
         getDeviceInputState(
@@ -193,22 +184,16 @@ extension ApplicationServiceServer {
         )
       case "setSuppressOutput":
         setSuppressOutput(try decode(LocalServiceRPCBoolArguments.self).value, reply: send)
-      case "getVirtualDeviceDiagnostics":
-        getVirtualDeviceDiagnostics(reply: send)
+      case "getVirtualDeviceDiagnostics": getVirtualDeviceDiagnostics(reply: send)
       case "setCompatibilityIdentity":
-        setCompatibilityIdentity(
-          try decode(LocalServiceRPCStringArguments.self).value,
-          reply: send
-        )
-      case "getCompatibilityIdentity":
-        getCompatibilityIdentity(reply: send)
+        setCompatibilityIdentity(try decode(LocalServiceRPCStringArguments.self).value, reply: send)
+      case "getCompatibilityIdentity": getCompatibilityIdentity(reply: send)
       case "runVirtualDeviceSelfTest":
         runVirtualDeviceSelfTest(
           seconds: try decode(LocalServiceRPCIntArguments.self).value,
           reply: send
         )
-      case "resetSettings":
-        resetSettings(reply: send)
+      case "resetSettings": resetSettings(reply: send)
       default:
         throw NSError(
           domain: "OpenJoystickDriver.LocalServiceRPC",
@@ -216,8 +201,6 @@ extension ApplicationServiceServer {
           userInfo: [NSLocalizedDescriptionKey: "Unknown RPC method: \(request.method)"]
         )
       }
-    } catch {
-      fail(error)
-    }
+    } catch { fail(error) }
   }
 }

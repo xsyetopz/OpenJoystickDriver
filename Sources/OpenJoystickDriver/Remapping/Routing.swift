@@ -61,8 +61,8 @@ actor RemappingRoutingCore {
         notifyCompatibilityStop(identifier)
       }
     }
-    guard outputSuppressionChanged || compatibilityEligibilityChanged
-      || refreshEligibilityWhenUnchanged
+    guard
+      outputSuppressionChanged || compatibilityEligibilityChanged || refreshEligibilityWhenUnchanged
     else { return }
     try await refreshEligibility(requiring: permit)
   }
@@ -110,8 +110,7 @@ actor RemappingRoutingCore {
         recordEngineFailure(error)
         throw RemappingOutputRoutingError.engine(error)
       }
-    case .unavailable(let error):
-      throw error
+    case .unavailable(let error): throw error
     }
   }
 
@@ -119,19 +118,16 @@ actor RemappingRoutingCore {
   ///
   /// This operation never selects a route or reaches either output sink. Accepted and rolled-back
   /// transactions use the retained identity when installing their completed route set.
-  func recordConnectedIdentifierWhileOutputClosed(
-    _ identifier: DeviceIdentifier
-  ) throws {
+  func recordConnectedIdentifierWhileOutputClosed(_ identifier: DeviceIdentifier) throws {
     defer { schedulingRevision &+= 1 }
     try ensureRunning()
     connectedIdentifiers.insert(identifier)
     recordUnreconciledRouteIfNeeded(for: identifier)
   }
 
-  func refresh(
-    _ identifier: DeviceIdentifier,
-    requiring permit: RemappingEmissionPermit?
-  ) async throws {
+  func refresh(_ identifier: DeviceIdentifier, requiring permit: RemappingEmissionPermit?)
+    async throws
+  {
     defer { schedulingRevision &+= 1 }
     try ensureRunning()
     connectedIdentifiers.insert(identifier)
@@ -142,20 +138,21 @@ actor RemappingRoutingCore {
     try await loadSelection(for: identifier, requiring: permit)
   }
 
-  func refreshModel(
-    vendorID: UInt16,
-    productID: UInt16,
-    requiring permit: RemappingEmissionPermit?
-  ) async throws {
+  func refreshModel(vendorID: UInt16, productID: UInt16, requiring permit: RemappingEmissionPermit?)
+    async throws
+  {
     defer { schedulingRevision &+= 1 }
     try ensureRunning()
     if case .unreconciled(_, let error) = profileTransactionState { throw error }
-    let affected = sortedIdentifiers.filter {
-      $0.vendorID == vendorID && $0.productID == productID
-    }
+    let affected = sortedIdentifiers.filter { $0.vendorID == vendorID && $0.productID == productID }
     let profile: RemappingProfile?
     do {
-      profile = try await library.activeProfile(vendorID: vendorID, productID: productID)
+      let frontmostBundleID = foregroundApplication.frontmostBundleIdentifier()
+      profile = try await library.activeProfile(
+        vendorID: vendorID,
+        productID: productID,
+        frontmostBundleIdentifier: frontmostBundleID
+      )
     } catch let error as RemappingProfileLibraryError {
       try await markLibraryUnavailable(error, identifiers: affected, requiring: permit)
       throw RemappingOutputRoutingError.library(error)
@@ -179,18 +176,13 @@ actor RemappingRoutingCore {
       return
     }
     for identifier in sortedIdentifiers {
-      try await reconcileEligibility(
-        for: identifier,
-        environment: environment,
-        requiring: permit
-      )
+      try await reconcileEligibility(for: identifier, environment: environment, requiring: permit)
     }
   }
 
-  func tick(
-    at uptimeNanoseconds: UInt64,
-    requiring proposedPermit: RemappingEmissionPermit?
-  ) async throws {
+  func tick(at uptimeNanoseconds: UInt64, requiring proposedPermit: RemappingEmissionPermit?)
+    async throws
+  {
     defer { schedulingRevision &+= 1 }
     try ensureRunning()
     guard !profileTransactionState.blocksOutput else { return }
@@ -202,9 +194,9 @@ actor RemappingRoutingCore {
     }
     guard hasEligibleRemapping else { return }
     let permit = try requireOperationalPermit(proposedPermit)
-    do {
-      try await engine.tick(at: uptimeNanoseconds, requiring: permit)
-    } catch let error as RemappingEventEngineError {
+    do { try await engine.tick(at: uptimeNanoseconds, requiring: permit) } catch let error
+      as RemappingEventEngineError
+    {
       if error == .outputSuspended {
         if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
         return
@@ -214,10 +206,9 @@ actor RemappingRoutingCore {
     }
   }
 
-  func schedulingSnapshot(
-    after uptimeNanoseconds: UInt64,
-    continuousIntervalNanoseconds: UInt64
-  ) async -> RemappingSchedulingSnapshot {
+  func schedulingSnapshot(after uptimeNanoseconds: UInt64, continuousIntervalNanoseconds: UInt64)
+    async -> RemappingSchedulingSnapshot
+  {
     guard !profileTransactionState.blocksOutput else {
       return RemappingSchedulingSnapshot(
         revision: schedulingRevision,
@@ -246,32 +237,9 @@ actor RemappingRoutingCore {
       return
     }
     switch route.selection {
-    case .compatibility:
-      notifyCompatibilityStop(identifier)
-    case .remapping:
-      let permit = try requireOperationalPermit(proposedPermit)
-      do {
-        try await engine.releaseAll(for: identifier, requiring: permit)
-      } catch let error as RemappingEventEngineError {
-        if error == .outputSuspended {
-          if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
-          return
-        }
-        recordEngineFailure(error)
-        throw RemappingOutputRoutingError.engine(error)
-      }
-    case .unavailable:
-      let permit = try requireOperationalPermit(proposedPermit)
-      do {
-        try await engine.releaseAll(for: identifier, requiring: permit)
-      } catch let error as RemappingEventEngineError {
-        if error == .outputSuspended {
-          if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
-          return
-        }
-        recordEngineFailure(error)
-        throw RemappingOutputRoutingError.engine(error)
-      }
+    case .compatibility: notifyCompatibilityStop(identifier)
+    case .remapping, .unavailable:
+      try await releaseAllSafely(for: identifier, requiring: proposedPermit)
     }
     routes.removeValue(forKey: identifier)
     connectedIdentifiers.remove(identifier)
@@ -281,9 +249,7 @@ actor RemappingRoutingCore {
     defer { schedulingRevision &+= 1 }
     terminationRequested = true
     guard !terminalCleanupComplete else { return }
-    do {
-      try await engine.drainAfterTermination()
-    } catch let error as RemappingEventEngineError {
+    do { try await engine.drainAfterTermination() } catch let error as RemappingEventEngineError {
       recordEngineFailure(error)
       throw RemappingOutputRoutingError.engine(error)
     }
@@ -296,14 +262,15 @@ actor RemappingRoutingCore {
     terminalCleanupComplete = true
   }
 
-  func loadSelection(
-    for identifier: DeviceIdentifier,
-    requiring permit: RemappingEmissionPermit?
-  ) async throws {
+  func loadSelection(for identifier: DeviceIdentifier, requiring permit: RemappingEmissionPermit?)
+    async throws
+  {
     do {
+      let frontmostBundleID = foregroundApplication.frontmostBundleIdentifier()
       let profile = try await library.activeProfile(
         vendorID: identifier.vendorID,
-        productID: identifier.productID
+        productID: identifier.productID,
+        frontmostBundleIdentifier: frontmostBundleID
       )
       _ = try requireOperationalPermit(permit)
       try await transition(
@@ -324,9 +291,7 @@ actor RemappingRoutingCore {
   ) async throws {
     _ = try requireOperationalPermit(proposedPermit)
     let oldRoute = routes[identifier]
-    if case .compatibility = oldRoute?.selection,
-      case .compatibility = selection
-    {
+    if case .compatibility = oldRoute?.selection, case .compatibility = selection {
       let route = compatibilityRoute()
       _ = try requireOperationalPermit(proposedPermit)
       routes[identifier] = route
@@ -334,31 +299,19 @@ actor RemappingRoutingCore {
     }
 
     if case .remapping(let oldProfile) = oldRoute?.selection,
-      case .remapping(let newProfile) = selection,
-      oldProfile == newProfile
+      case .remapping(let newProfile) = selection, oldProfile == newProfile
     {
       try await reconcileEligibility(for: identifier, requiring: proposedPermit)
       return
     }
 
     if !profileTransactionState.blocksOutput, case .remapping = oldRoute?.selection {
-      let permit = try requireOperationalPermit(proposedPermit)
-      do {
-        try await engine.releaseAll(for: identifier, requiring: permit)
-      } catch let error as RemappingEventEngineError {
-        if error == .outputSuspended {
-          if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
-          return
-        }
-        recordEngineFailure(error)
-        throw RemappingOutputRoutingError.engine(error)
-      }
+      try await releaseAllSafely(for: identifier, requiring: proposedPermit)
     }
     if profileTransactionState.blocksOutput {
       // The transaction entry already stopped compatibility output once.
-    } else if case .compatibility = oldRoute?.selection,
-      case .compatibility = selection
-    {} else if case .compatibility = oldRoute?.selection {
+    } else if case .compatibility = oldRoute?.selection, case .compatibility = selection {
+    } else if case .compatibility = oldRoute?.selection {
       notifyCompatibilityStop(identifier)
     }
 

@@ -1,27 +1,83 @@
 import Foundation
 
+private let nanosecondsPerMillisecond: Double = 1_000_000
+
+private let nanosecondsPerSecond: Double = 1_000_000_000
+
 extension RemappingEngineState {
   var hasScheduledOutput: Bool {
     devices.values.contains { device in
-      !device.turbos.isEmpty || !device.continuous.isEmpty
+      !device.turbos.isEmpty || !device.continuous.isEmpty || deviceHasPendingActivation(device)
     }
   }
 
-  func nextScheduledTick(
-    after uptimeNanoseconds: UInt64,
-    continuousIntervalNanoseconds: UInt64
-  ) -> UInt64? {
+  private func deviceHasPendingActivation(_ device: RemappingDeviceState) -> Bool {
+    for (_, tracker) in device.activations {
+      if tracker.pendingDefault { return true }
+      if tracker.firedBindingID == nil, tracker.pressUptime != nil { return true }
+    }
+    if !device.sequenceHistory.isEmpty {
+      let profile = device.profile
+      var allSequences = profile.sequences
+      for layerID in device.activeLayers {
+        guard let layer = profile.layers.first(where: { $0.id == layerID }) else { continue }
+        allSequences.append(contentsOf: layer.sequences)
+      }
+      if allSequences.contains(where: { !$0.sources.isEmpty }) { return true }
+    }
+    return false
+  }
+
+  func nextScheduledTick(after uptimeNanoseconds: UInt64, continuousIntervalNanoseconds: UInt64)
+    -> UInt64?
+  {
     var deadline: UInt64?
     if devices.values.contains(where: { !$0.continuous.isEmpty }) {
-      deadline = Self.saturatingAdd(
-        uptimeNanoseconds,
-        continuousIntervalNanoseconds
-      )
+      deadline = Self.saturatingAdd(uptimeNanoseconds, continuousIntervalNanoseconds)
     }
     for device in devices.values {
       for turbo in device.turbos.values {
         let turboDeadline = turbo.nextTransition(after: uptimeNanoseconds)
         deadline = min(deadline ?? turboDeadline, turboDeadline)
+      }
+      for (source, tracker) in device.activations {
+        guard let binding = device.binding(for: source) else { continue }
+        if let longHold = binding.longHold, let pressTime = tracker.pressUptime,
+          tracker.firedBindingID == nil, tracker.pendingDefault, tracker.releaseUptime == nil
+        {
+          let holdDeadline = Self.saturatingAdd(
+            pressTime,
+            UInt64(longHold.durationMs * nanosecondsPerMillisecond)
+          )
+          deadline = min(deadline ?? holdDeadline, holdDeadline)
+        }
+        if let doubleTap = binding.doubleTap, let releaseTime = tracker.releaseUptime,
+          tracker.pendingDefault
+        {
+          let windowDeadline = Self.saturatingAdd(
+            releaseTime,
+            UInt64(doubleTap.windowMs * nanosecondsPerMillisecond)
+          )
+          deadline = min(deadline ?? windowDeadline, windowDeadline)
+        }
+      }
+      if !device.sequenceHistory.isEmpty {
+        var allSequences = device.profile.sequences
+        for layerID in device.activeLayers {
+          guard let layer = device.profile.layers.first(where: { $0.id == layerID }) else {
+            continue
+          }
+          allSequences.append(contentsOf: layer.sequences)
+        }
+        if let firstEntry = device.sequenceHistory.first {
+          for sequence in allSequences where !sequence.sources.isEmpty {
+            let seqDeadline = Self.saturatingAdd(
+              firstEntry.uptime,
+              UInt64(sequence.windowMs * nanosecondsPerMillisecond)
+            )
+            deadline = min(deadline ?? seqDeadline, seqDeadline)
+          }
+        }
       }
     }
     return deadline
@@ -52,27 +108,62 @@ extension RemappingEngineState {
           device.turbos[bindingID] = turbo
         }
       }
+
+      for source in device.activations.keys.sorted(by: {
+        String(describing: $0) < String(describing: $1)
+      }) {
+        guard let binding = device.binding(for: source) else { continue }
+        guard var tracker = device.activations[source] else { continue }
+
+        if let longHold = binding.longHold, let pressTime = tracker.pressUptime,
+          tracker.firedBindingID == nil, tracker.pendingDefault, tracker.releaseUptime == nil
+        {
+          let threshold = Self.saturatingAdd(
+            pressTime,
+            UInt64(longHold.durationMs * nanosecondsPerMillisecond)
+          )
+          if uptimeNanoseconds >= threshold {
+            tracker.firedBindingID = binding.id
+            tracker.pendingDefault = false
+            actions += setBinding(
+              binding.id,
+              destination: longHold.destination,
+              isDown: true,
+              device: &device
+            )
+          }
+        }
+
+        if let doubleTap = binding.doubleTap, let releaseTime = tracker.releaseUptime,
+          tracker.pendingDefault
+        {
+          let windowEnd = Self.saturatingAdd(
+            releaseTime,
+            UInt64(doubleTap.windowMs * nanosecondsPerMillisecond)
+          )
+          if uptimeNanoseconds >= windowEnd {
+            actions += tapBinding(binding.id, destination: binding.destination, device: &device)
+            tracker.pendingDefault = false
+          }
+        }
+
+        device.activations[source] = tracker
+      }
+
       devices[identifier] = device
     }
     actions += continuousActions()
     return actions
   }
 
-  mutating func releaseController(
-    _ identifier: DeviceIdentifier
-  ) -> [RemappingSystemInputAction] {
+  mutating func releaseController(_ identifier: DeviceIdentifier) -> [RemappingSystemInputAction] {
     guard var device = devices[identifier] else { return [] }
     let oldContinuous = continuousTotals()
     devices.removeValue(forKey: identifier)
     var actions: [RemappingSystemInputAction] = []
     for bindingID in device.heldBindings.keys.sorted(by: Self.uuidLessThan) {
       guard let destination = device.heldBindings[bindingID] else { continue }
-      actions += setBinding(
-        bindingID,
-        destination: destination,
-        isDown: false,
-        device: &device
-      )
+      actions += setBinding(bindingID, destination: destination, isDown: false, device: &device)
     }
     actions += stoppedContinuousActions(previous: oldContinuous)
     return actions
@@ -80,9 +171,7 @@ extension RemappingEngineState {
 
   mutating func drain() -> [RemappingSystemInputAction] {
     var actions: [RemappingSystemInputAction] = []
-    for identifier in sortedDeviceIdentifiers {
-      actions += releaseController(identifier)
-    }
+    for identifier in sortedDeviceIdentifiers { actions += releaseController(identifier) }
     return actions
   }
 
@@ -102,14 +191,23 @@ extension RemappingEngineState {
     return release(destination)
   }
 
-  func stoppedContinuousActions(
-    previous: [RemappingContinuousDestination: Double]
+  mutating func tapBinding(
+    _ bindingID: UUID,
+    destination: RemappingDestination,
+    device: inout RemappingDeviceState
   ) -> [RemappingSystemInputAction] {
+    setBinding(bindingID, destination: destination, isDown: true, device: &device)
+      + setBinding(bindingID, destination: destination, isDown: false, device: &device)
+  }
+
+  func stoppedContinuousActions(previous: [RemappingContinuousDestination: Double])
+    -> [RemappingSystemInputAction]
+  {
     let current = continuousTotals()
     return RemappingContinuousDestination.allCases.compactMap { destination in
-      guard previous[destination, default: 0] != 0,
-        current[destination, default: 0] == 0
-      else { return nil }
+      guard previous[destination, default: 0] != 0, current[destination, default: 0] == 0 else {
+        return nil
+      }
       return destination.action(amount: 0)
     }
   }
@@ -124,9 +222,7 @@ extension RemappingEngineState {
     return totals.mapValues { min(max($0, -1), 1) }
   }
 
-  private mutating func press(
-    _ destination: RemappingDestination
-  ) -> [RemappingSystemInputAction] {
+  private mutating func press(_ destination: RemappingDestination) -> [RemappingSystemInputAction] {
     switch destination {
     case .keyboard(let key, let modifiers):
       var actions: [RemappingSystemInputAction] = []
@@ -135,27 +231,21 @@ extension RemappingEngineState {
         guard referenceCount == 1 else { continue }
         actions.append(.modifierDown(modifier))
       }
-      if Self.increment(&keyReferences, key: key) == 1 {
-        actions.append(.keyDown(key))
-      }
+      if Self.increment(&keyReferences, key: key) == 1 { actions.append(.keyDown(key)) }
       return actions
     case .mouseButton(let button):
       return Self.increment(&mouseButtonReferences, key: button) == 1
         ? [.mouseButtonDown(button)] : []
-    case .mouseMovement, .scroll:
-      return []
+    case .mouseMovement, .scroll: return []
     }
   }
 
-  private mutating func release(
-    _ destination: RemappingDestination
-  ) -> [RemappingSystemInputAction] {
+  private mutating func release(_ destination: RemappingDestination) -> [RemappingSystemInputAction]
+  {
     switch destination {
     case .keyboard(let key, let modifiers):
       var actions: [RemappingSystemInputAction] = []
-      if Self.decrement(&keyReferences, key: key) == 0 {
-        actions.append(.keyUp(key))
-      }
+      if Self.decrement(&keyReferences, key: key) == 0 { actions.append(.keyUp(key)) }
       for modifier in Self.sortedModifiers(modifiers).reversed() {
         let referenceCount = Self.decrement(&modifierReferences, key: modifier)
         guard referenceCount == 0 else { continue }
@@ -165,8 +255,7 @@ extension RemappingEngineState {
     case .mouseButton(let button):
       return Self.decrement(&mouseButtonReferences, key: button) == 0
         ? [.mouseButtonUp(button)] : []
-    case .mouseMovement, .scroll:
-      return []
+    case .mouseMovement, .scroll: return []
     }
   }
 
@@ -178,25 +267,15 @@ extension RemappingEngineState {
     }
   }
 
-  private static func increment<Key: Hashable>(
-    _ references: inout [Key: Int],
-    key: Key
-  ) -> Int {
+  private static func increment<Key: Hashable>(_ references: inout [Key: Int], key: Key) -> Int {
     let count = references[key, default: 0] + 1
     references[key] = count
     return count
   }
 
-  private static func decrement<Key: Hashable>(
-    _ references: inout [Key: Int],
-    key: Key
-  ) -> Int {
+  private static func decrement<Key: Hashable>(_ references: inout [Key: Int], key: Key) -> Int {
     let count = max(references[key, default: 0] - 1, 0)
-    if count == 0 {
-      references.removeValue(forKey: key)
-    } else {
-      references[key] = count
-    }
+    if count == 0 { references.removeValue(forKey: key) } else { references[key] = count }
     return count
   }
 
@@ -204,11 +283,9 @@ extension RemappingEngineState {
     devices.keys.sorted { $0.runtimeIdentifier < $1.runtimeIdentifier }
   }
 
-  private static func sortedModifiers(
-    _ modifiers: Set<RemappingKeyModifier>
-  ) -> [RemappingKeyModifier] {
-    modifiers.sorted { $0.rawValue < $1.rawValue }
-  }
+  private static func sortedModifiers(_ modifiers: Set<RemappingKeyModifier>)
+    -> [RemappingKeyModifier]
+  { modifiers.sorted { $0.rawValue < $1.rawValue } }
 
   private static func uuidLessThan(_ lhs: UUID, _ rhs: UUID) -> Bool {
     lhs.uuidString < rhs.uuidString
@@ -235,19 +312,15 @@ struct RemappingTurboOutput {
     guard uptimeNanoseconds >= startedAt else {
       return Self.saturatingAdd(startedAt, onDurationNanoseconds)
     }
-    guard isDown(at: uptimeNanoseconds) == outputIsDown else {
-      return uptimeNanoseconds
-    }
+    guard isDown(at: uptimeNanoseconds) == outputIsDown else { return uptimeNanoseconds }
 
     let phase = (uptimeNanoseconds - startedAt) % periodNanoseconds
-    let remaining = outputIsDown
-      ? onDurationNanoseconds - phase
-      : periodNanoseconds - phase
+    let remaining = outputIsDown ? onDurationNanoseconds - phase : periodNanoseconds - phase
     return Self.saturatingAdd(uptimeNanoseconds, remaining)
   }
 
   private var periodNanoseconds: UInt64 {
-    max(1, UInt64((1_000_000_000 / configuration.repeatRateHz).rounded()))
+    max(1, UInt64((nanosecondsPerSecond / configuration.repeatRateHz).rounded()))
   }
 
   private var onDurationNanoseconds: UInt64 {

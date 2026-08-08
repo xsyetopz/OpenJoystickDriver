@@ -222,9 +222,7 @@ extension ApplicationServiceServer {
       do {
         try await remappingRouter.setOutputSuppressed(suppress)
         callback.call(true)
-      } catch {
-        callback.call(false)
-      }
+      } catch { callback.call(false) }
     }
   }
 
@@ -355,9 +353,7 @@ extension ApplicationServiceServer {
   ) {
     let callback = SendableReply(call: reply)
     Task {
-      callback.call(
-        await remappingRequests.update(profile, expectedCurrent: expectedCurrent)
-      )
+      callback.call(await remappingRequests.update(profile, expectedCurrent: expectedCurrent))
     }
   }
 
@@ -392,10 +388,16 @@ extension ApplicationServiceServer {
   ) {
     let callback = SendableReply(call: reply)
     Task {
-      callback.call(
-        await remappingRequests.deactivate(vendorID: vendorID, productID: productID)
-      )
+      callback.call(await remappingRequests.deactivate(vendorID: vendorID, productID: productID))
     }
+  }
+
+  func deactivateRemappingProfile(
+    id: UUID,
+    reply: @escaping (RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.deactivate(profileID: id)) }
   }
 
   func getRemappingPostEventAccess(

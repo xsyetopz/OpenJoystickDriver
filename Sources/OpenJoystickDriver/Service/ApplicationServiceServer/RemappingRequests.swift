@@ -2,15 +2,13 @@ import Foundation
 import OpenJoystickDriverKit
 
 typealias RemappingRequestResult<Value: Sendable> = Result<
-  Value,
-  ApplicationServiceRemappingRPCError
+  Value, ApplicationServiceRemappingRPCError
 >
 
 /// Serializes profile mutations, route refreshes, and the snapshot returned to RPC clients.
 actor RemappingRequestCoordinator {
-  typealias MutationResponseAcceptanceHook = @Sendable (
-    ApplicationServiceRemappingSnapshotPayload
-  ) async throws -> Void
+  typealias MutationResponseAcceptanceHook =
+    @Sendable (ApplicationServiceRemappingSnapshotPayload) async throws -> Void
 
   private let library: RemappingProfileLibrary
   private let router: RemappingOutputRouter
@@ -25,8 +23,7 @@ actor RemappingRequestCoordinator {
     router: RemappingOutputRouter,
     postEventAccess: CoreGraphicsPostEventAccess,
     maximumResponseBytes: Int = ApplicationServiceRemappingRPC.maximumPayloadBytes,
-    maximumTransportFrameBytes: Int = ApplicationServiceRemappingRPC
-      .maximumTransportFrameBytes,
+    maximumTransportFrameBytes: Int = ApplicationServiceRemappingRPC.maximumTransportFrameBytes,
     beforeMutationResponseAcceptance: @escaping MutationResponseAcceptanceHook = { _ in }
   ) {
     self.library = library
@@ -51,60 +48,37 @@ actor RemappingRequestCoordinator {
     }
   }
 
-  func create(
-    _ profile: RemappingProfile
-  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
-    await mutate {
-      try await library.create(profile)
-    }
-  }
+  func create(_ profile: RemappingProfile) async -> RemappingRequestResult<
+    ApplicationServiceRemappingSnapshotPayload
+  > { await mutate { try await library.create(profile) } }
 
-  func update(
-    _ profile: RemappingProfile,
-    expectedCurrent: RemappingProfile
-  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
+  func update(_ profile: RemappingProfile, expectedCurrent: RemappingProfile) async
+    -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>
+  {
     await mutate(
-      preflight: {
-        try await library.requireCurrent(expectedCurrent, profileID: profile.id)
-      },
-      operation: {
-        try await library.update(profile, expectedCurrent: expectedCurrent)
-      }
+      preflight: { try await library.requireCurrent(expectedCurrent, profileID: profile.id) },
+      operation: { try await library.update(profile, expectedCurrent: expectedCurrent) }
     )
   }
 
-  func importProfile(
-    _ profile: RemappingProfile
-  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
-    await mutate {
-      try await library.importProfile(profile)
-    }
-  }
+  func importProfile(_ profile: RemappingProfile) async -> RemappingRequestResult<
+    ApplicationServiceRemappingSnapshotPayload
+  > { await mutate { try await library.importProfile(profile) } }
 
-  func delete(
-    id: UUID
-  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
-    await mutate {
-      try await library.delete(id: id)
-    }
-  }
+  func delete(id: UUID) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>
+  { await mutate { try await library.delete(id: id) } }
 
-  func activate(
-    id: UUID
-  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
-    await mutate {
-      try await library.activate(profileID: id)
-    }
-  }
+  func activate(id: UUID) async -> RemappingRequestResult<
+    ApplicationServiceRemappingSnapshotPayload
+  > { await mutate { try await library.activate(profileID: id) } }
 
-  func deactivate(
-    vendorID: UInt16,
-    productID: UInt16
-  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
-    await mutate {
-      try await library.deactivate(vendorID: vendorID, productID: productID)
-    }
-  }
+  func deactivate(vendorID: UInt16, productID: UInt16) async -> RemappingRequestResult<
+    ApplicationServiceRemappingSnapshotPayload
+  > { await mutate { try await library.deactivateAll(vendorID: vendorID, productID: productID) } }
+
+  func deactivate(profileID: UUID) async -> RemappingRequestResult<
+    ApplicationServiceRemappingSnapshotPayload
+  > { await mutate { try await library.deactivate(profileID: profileID) } }
 
   func currentPostEventAccess() async -> RemappingRequestResult<RemappingPostEventAccessState> {
     await exclusively { postEventAccess.currentState() }
@@ -140,19 +114,15 @@ actor RemappingRequestCoordinator {
         return payload
       } catch {
         let original = Self.rpcError(error)
-        try await rollBack(
-          checkpoint: checkpoint,
-          transaction: transaction,
-          original: original
-        )
+        try await rollBack(checkpoint: checkpoint, transaction: transaction, original: original)
         throw original
       }
     }
   }
 
-  private func makeSnapshot(
-    validateResponse: Bool = true
-  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+  private func makeSnapshot(validateResponse: Bool = true) async throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  {
     let librarySnapshot = try await library.snapshot()
     let profilesByID = Dictionary(
       uniqueKeysWithValues: librarySnapshot.profiles.map { ($0.id, $0) }
@@ -186,23 +156,16 @@ actor RemappingRequestCoordinator {
     transaction: RemappingProfileTransaction,
     original: ApplicationServiceRemappingRPCError
   ) async throws {
-    do {
-      try await library.restore(checkpoint)
-    } catch {
+    do { try await library.restore(checkpoint) } catch {
       let unreconciled = Self.unreconciledError(
         original: original,
         detail: "The prior profile library could not be restored: \(error.localizedDescription)"
       )
-      await router.markProfileTransactionUnreconciled(
-        transaction,
-        detail: unreconciled.message
-      )
+      await router.markProfileTransactionUnreconciled(transaction, detail: unreconciled.message)
       throw unreconciled
     }
 
-    do {
-      try await router.rollBackProfileTransaction(transaction)
-    } catch {
+    do { try await router.rollBackProfileTransaction(transaction) } catch {
       throw Self.unreconciledError(
         original: original,
         detail: "The prior profile library was restored, but route reconciliation failed: "
@@ -213,9 +176,7 @@ actor RemappingRequestCoordinator {
 
   private func ensurePayloadFits<Value: Encodable>(_ value: Value) throws {
     let encoded: Data
-    do {
-      encoded = try JSONEncoder().encode(value)
-    } catch {
+    do { encoded = try JSONEncoder().encode(value) } catch {
       throw ApplicationServiceRemappingRPCError(
         code: .responseEncodingFailed,
         message: "The remapping RPC response could not be encoded."
@@ -229,9 +190,7 @@ actor RemappingRequestCoordinator {
     }
     let response = LocalServiceRPCResponse(result: encoded, error: nil)
     let framed: Data
-    do {
-      framed = try JSONEncoder().encode(response)
-    } catch {
+    do { framed = try JSONEncoder().encode(response) } catch {
       throw ApplicationServiceRemappingRPCError(
         code: .responseEncodingFailed,
         message: "The remapping RPC response could not be encoded."
@@ -245,9 +204,9 @@ actor RemappingRequestCoordinator {
     }
   }
 
-  private func exclusively<Value: Sendable>(
-    _ operation: () async throws -> Value
-  ) async -> RemappingRequestResult<Value> {
+  private func exclusively<Value: Sendable>(_ operation: () async throws -> Value) async
+    -> RemappingRequestResult<Value>
+  {
     let predecessor = operationTail?.task
     let operationID = UUID()
     let signal = AsyncStream<Void>.makeStream()
@@ -264,22 +223,12 @@ actor RemappingRequestCoordinator {
     return await capture(operation)
   }
 
-  private func capture<Value: Sendable>(
-    _ operation: () async throws -> Value
-  ) async -> RemappingRequestResult<Value> {
-    do {
-      return .success(try await operation())
-    } catch {
-      return .failure(Self.rpcError(error))
-    }
-  }
+  private func capture<Value: Sendable>(_ operation: () async throws -> Value) async
+    -> RemappingRequestResult<Value>
+  { do { return .success(try await operation()) } catch { return .failure(Self.rpcError(error)) } }
 
-  private static func sorted(
-    _ models: Set<RemappingProfileModel>
-  ) -> [RemappingProfileModel] {
-    models.sorted {
-      ($0.vendorID, $0.productID) < ($1.vendorID, $1.productID)
-    }
+  private static func sorted(_ models: Set<RemappingProfileModel>) -> [RemappingProfileModel] {
+    models.sorted { ($0.vendorID, $0.productID) < ($1.vendorID, $1.productID) }
   }
 
   private static func routePayload(_ status: RemappingRouteStatus)
@@ -325,12 +274,8 @@ actor RemappingRequestCoordinator {
 
   static func rpcError(_ error: any Error) -> ApplicationServiceRemappingRPCError {
     if let error = error as? ApplicationServiceRemappingRPCError { return error }
-    if let error = error as? RemappingProfileLibraryError {
-      return libraryError(error)
-    }
-    if let error = error as? RemappingOutputRoutingError {
-      return routingError(error)
-    }
+    if let error = error as? RemappingProfileLibraryError { return libraryError(error) }
+    if let error = error as? RemappingOutputRoutingError { return routingError(error) }
     return ApplicationServiceRemappingRPCError(
       code: .unexpected,
       message: error.localizedDescription
@@ -348,9 +293,9 @@ actor RemappingRequestCoordinator {
     )
   }
 
-  private static func libraryError(
-    _ error: RemappingProfileLibraryError
-  ) -> ApplicationServiceRemappingRPCError {
+  private static func libraryError(_ error: RemappingProfileLibraryError)
+    -> ApplicationServiceRemappingRPCError
+  {
     let code: ApplicationServiceRemappingRPCError.Code
     switch error {
     case .corruptLibrary: code = .corruptLibrary
@@ -365,29 +310,22 @@ actor RemappingRequestCoordinator {
     case .unsupportedLibraryVersion: code = .unsupportedLibraryVersion
     case .unwritableLibrary: code = .unwritableLibrary
     }
-    return ApplicationServiceRemappingRPCError(
-      code: code,
-      message: error.localizedDescription
-    )
+    return ApplicationServiceRemappingRPCError(code: code, message: error.localizedDescription)
   }
 
-  private static func routingError(
-    _ error: RemappingOutputRoutingError
-  ) -> ApplicationServiceRemappingRPCError {
+  private static func routingError(_ error: RemappingOutputRoutingError)
+    -> ApplicationServiceRemappingRPCError
+  {
     let code: ApplicationServiceRemappingRPCError.Code
     switch error {
     case .engine: code = .routerEngineUnavailable
     case .library: code = .routerLibraryUnavailable
     case .libraryAndEngine: code = .routerLibraryAndEngineUnavailable
-    case .profileTransactionAlreadyActive,
-      .profileTransactionUnreconciled,
+    case .profileTransactionAlreadyActive, .profileTransactionUnreconciled,
       .profileTransactionViolation:
       code = .transactionUnreconciled
     case .shutDown: code = .routerShutDown
     }
-    return ApplicationServiceRemappingRPCError(
-      code: code,
-      message: error.localizedDescription
-    )
+    return ApplicationServiceRemappingRPCError(code: code, message: error.localizedDescription)
   }
 }
