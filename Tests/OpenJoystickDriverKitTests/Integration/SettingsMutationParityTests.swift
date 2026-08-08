@@ -15,7 +15,7 @@ struct SettingsMutationParityTests {
     )
 
     #expect(!cli.contains("case \"userspace\""))
-    #expect(cli.contains("case \"output\":\n      return .controllerOutput"))
+    #expect(cli.contains("case \"output\": return .controllerOutput"))
     #expect(cli.contains("case .reset: ResetSettingsCommand().run()"))
     #expect(reset.contains("client.resetSettings"))
 
