@@ -513,7 +513,14 @@ rebuild_full() {
 run_lint() {
   command -v swiftlint >/dev/null 2>&1 || die "swiftlint not found (brew install swiftlint)"
   cd "$PROJECT_DIR"
-  swiftlint lint --no-cache --strict
+  local framework_path
+  framework_path="$(xcrun --show-sdk-path 2>/dev/null)/../../usr/lib"
+  [ -d "$framework_path/sourcekitdInProc.framework" ] || framework_path=""
+  if [ -n "$framework_path" ]; then
+    DYLD_FRAMEWORK_PATH="$framework_path" swiftlint lint --no-cache --strict
+  else
+    swiftlint lint --no-cache --strict
+  fi
 }
 
 cmd="${1:-}"
