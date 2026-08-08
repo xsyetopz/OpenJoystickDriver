@@ -57,6 +57,7 @@ If `swift test` reports the documented SwiftPM module-cache mismatch, run `./scr
 - Preserve the host entitlement allowlist for `com.openjoystickdriver.VirtualHIDDevice`; never substitute an allow-any DriverKit user-client entitlement.
 - Avoid broad signing, DriverKit, or application-service lifecycle changes without targeted validation.
 - Do not assert human-readable message text in tests; check return codes, routes, and structural properties instead.
+- Do not write tests that read source files with `String(contentsOf:)` and assert on literal substrings via `.contains(...)`. These break on any reformat and guard formatting, not function. Test behavior: call the public API, feed it inputs, and assert on outputs. Use `@testable import` to access internal types when needed. Verify invariants through function calls (e.g. `CLIGrammar(arguments:).invocation`, `ParserRegistry().hidProfileIdentifiers()`, `ApplicationServiceRuntimeHealthAnalyzer.summarize(...)`), not source-text matching.
 - Confirm destructive actions, external writes, and publication.
 
 Direct user instructions override this file. A closer subtree `AGENTS.md` takes precedence for files in that subtree. `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` are symlinks to this file.

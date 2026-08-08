@@ -152,6 +152,16 @@ swift test
   properties. Prose-text assertions (`assertIn("Error: …")`,
   `#expect(help.contains("Output never…"))`) break every time a message is
   reworded and add no coverage.
+- Do not read source files and assert on literal substrings. Tests that call
+  `String(contentsOf:)` on a `.swift` file and then `.contains(...)`-match
+  source text (e.g. `#expect(cli.contains("case \"output\":\n      return"))`)
+  guard formatting, not function — any innocent reformat breaks them. Test
+  behavior instead: call the public API, feed it inputs, assert on outputs.
+  Use `@testable import` to reach internal types. Verify invariants through
+  function calls (`CLIGrammar(arguments:).invocation`,
+  `ParserRegistry().hidProfileIdentifiers()`,
+  `ApplicationServiceRuntimeHealthAnalyzer.summarize(...)`, etc.), not
+  source-text matching.
 
 ---
 
