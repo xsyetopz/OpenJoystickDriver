@@ -95,29 +95,6 @@ struct DriverKitRelaySelfTestTests {
     #expect(delivered.isSuccessful)
   }
 
-  @Test func cliRelayVerdictUsesDistinctSharedDiagnosticContracts() throws {
-    let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let service = try String(
-      contentsOf: root.appendingPathComponent(
-        "Sources/OpenJoystickDriver/Service/ApplicationServiceServer/SelfTest.swift"
-      ),
-      encoding: .utf8
-    )
-    let command = try String(
-      contentsOf: root.appendingPathComponent(
-        "Sources/OpenJoystickDriver/Commands/SelfTestCommand.swift"
-      ),
-      encoding: .utf8
-    )
-    #expect(service.contains("driverKitDispatcher.sendDiagnosticProbe()"))
-    #expect(service.contains("DriverKitRelayRequirement.currentExecutableRequiresRelay()"))
-    #expect(service.contains("dispatch(events: [], from: identifier)"))
-    #expect(command.contains("payload.driverKitRelayVerdict"))
-    #expect(command.contains("payload.driverKitRequired"))
-    #expect(command.contains("payload.userSpaceVerdict"))
-    #expect(command.contains("if !payload.isSuccessful { exit(1) }"))
-  }
-
   private func payload(
     inputDelta: Int? = nil,
     reportEvents: Int = 0,

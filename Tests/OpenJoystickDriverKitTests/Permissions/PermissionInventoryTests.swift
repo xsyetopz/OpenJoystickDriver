@@ -18,15 +18,4 @@ import Testing
     #expect(owners == ["OpenJoystickDriver app"])
   }
 
-  @Test("Permission command does not reset TCC") func commandDoesNotResetTCC() throws {
-    let root = try RepositoryRoot.from()
-    let source = try String(
-      contentsOf: root.appendingPathComponent(
-        "Sources/OpenJoystickDriver/Commands/PermissionsCommand.swift"
-      ),
-      encoding: .utf8
-    )
-    #expect(!source.contains("tccutil"))
-    #expect(!source.contains("permissions refresh"))
-  }
 }

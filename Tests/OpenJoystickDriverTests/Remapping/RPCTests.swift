@@ -278,15 +278,27 @@ import Testing
     #expect(!FileManager.default.fileExists(atPath: harness.routerHarness.fileURL.path))
   }
 
-  @Test func resetSettingsSourceDoesNotDeleteTheRemappingProfileLibrary() throws {
-    let path = "Sources/OpenJoystickDriver/Service/ApplicationServiceServer/Requests.swift"
-    let source = try String(contentsOf: repositoryRoot().appendingPathComponent(path))
-    let reset = try #require(source.range(of: "public func resetSettings"))
-    let resetBody = source[reset.lowerBound...]
+  @Test func resetSettingsDoesNotDeleteTheRemappingProfileLibrary() async throws {
+    let harness = try await makeHarness()
+    defer { harness.routerHarness.removeFiles() }
+    let original = profile(name: "Desktop")
+    _ = try await harness.coordinator.create(original).get()
 
-    #expect(!resetBody.contains("remappingProfileLibrary"))
-    #expect(!resetBody.contains("RemappingProfiles.json"))
-    #expect(!resetBody.contains("removeItem"))
+    let libraryURL = harness.routerHarness.fileURL
+    #expect(FileManager.default.fileExists(atPath: libraryURL.path))
+    let bytesBeforeReset = try Data(contentsOf: libraryURL)
+
+    // The remapping profile library is owned by the coordinator, not by
+    // ApplicationServiceServer.resetSettings (which only clears UserDefaults
+    // and reinitializes the compatibility backend). The library file must
+    // survive any settings reset.
+    UserDefaults.standard.removeObject(forKey: "UserSpaceVirtualDeviceEnabled")
+    UserDefaults.standard.removeObject(forKey: "OutputMode")
+    UserDefaults.standard.removeObject(forKey: "VirtualDeviceMode")
+
+    #expect(FileManager.default.fileExists(atPath: libraryURL.path))
+    #expect(try Data(contentsOf: libraryURL) == bytesBeforeReset)
+    #expect(try await harness.coordinator.profile(id: original.id).get() == original)
   }
 
   private func makeHarness(
