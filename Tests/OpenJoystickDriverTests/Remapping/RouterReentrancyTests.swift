@@ -4,8 +4,7 @@ import Testing
 
 @testable import OpenJoystickDriver
 
-@Suite(.serialized)
-struct RemappingRouterReentrancyTests {
+@Suite(.serialized) struct RemappingRouterReentrancyTests {
   @Test func beginWaitsForCompatibilityDispatchAdmittedBeforeSuppression() async throws {
     let gate = RoutingCheckpointGate(pausing: .dispatch)
     let harness = try await RemappingRouterHarness.make(
@@ -23,10 +22,7 @@ struct RemappingRouterReentrancyTests {
     await gate.arm()
 
     let dispatch = Task {
-      try await harness.router.dispatchCausally(
-        events: [.buttonPressed(.b)],
-        from: compatibility
-      )
+      try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: compatibility)
     }
     await gate.waitUntilPaused()
     let completion = AsyncCompletionProbe()
@@ -38,10 +34,7 @@ struct RemappingRouterReentrancyTests {
     #expect(await eventually { harness.compatibility.suppressOutput })
     #expect(!(await completion.isFinished))
 
-    try await harness.router.dispatchCausally(
-      events: [.buttonPressed(.a)],
-      from: compatibility
-    )
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: compatibility)
     try await harness.router.tick(at: 1_100_000_000)
     #expect(harness.recorder.snapshot().isEmpty)
 
@@ -53,24 +46,20 @@ struct RemappingRouterReentrancyTests {
     gate.resume()
     try await dispatch.value
     let transaction = try await begin.value
-    #expect(harness.recorder.snapshot() == [
-      .compatibility([.buttonPressed(.b)], compatibility),
-      .compatibilityStop(compatibility),
-    ])
-
-    try await harness.router.dispatchCausally(
-      events: [.buttonPressed(.a)],
-      from: compatibility
+    #expect(
+      harness.recorder.snapshot() == [
+        .compatibility([.buttonPressed(.b)], compatibility), .compatibilityStop(compatibility),
+      ]
     )
+
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: compatibility)
     #expect(harness.recorder.snapshot().count == 2)
     try await harness.router.rollBackProfileTransaction(transaction)
   }
 
   @Test func transactionAdmissionStopsAlreadySuspendedCompatibilityDispatch() async throws {
     let gate = RoutingCheckpointGate(pausing: .dispatch)
-    let checkpointHook: @Sendable () async -> Void = {
-      await gate.checkpoint(.dispatch)
-    }
+    let checkpointHook: @Sendable () async -> Void = { await gate.checkpoint(.dispatch) }
     let harness = try await RemappingRouterHarness.make(
       profile: remappingRouterProfile(applicationScope: .global),
       compatibilityDispatchCheckpoint: checkpointHook
@@ -83,10 +72,7 @@ struct RemappingRouterReentrancyTests {
     await gate.arm()
 
     let dispatch = Task {
-      try await harness.router.dispatchCausally(
-        events: [.buttonPressed(.b)],
-        from: compatibility
-      )
+      try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: compatibility)
     }
     await gate.waitUntilPaused()
     let begin = Task { try await harness.router.beginProfileTransaction() }
@@ -95,9 +81,9 @@ struct RemappingRouterReentrancyTests {
 
     try await dispatch.value
     let transaction = try await begin.value
-    #expect(!harness.recorder.snapshot().contains(
-      .compatibility([.buttonPressed(.b)], compatibility)
-    ))
+    #expect(
+      !harness.recorder.snapshot().contains(.compatibility([.buttonPressed(.b)], compatibility))
+    )
     try await harness.router.rollBackProfileTransaction(transaction)
   }
 
@@ -229,10 +215,7 @@ struct RemappingRouterReentrancyTests {
     await gate.arm()
 
     let dispatch = Task {
-      try await harness.router.dispatchCausally(
-        events: [.buttonPressed(.b)],
-        from: compatibility
-      )
+      try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: compatibility)
     }
     await gate.waitUntilPaused()
     let completion = AsyncCompletionProbe()
@@ -247,15 +230,13 @@ struct RemappingRouterReentrancyTests {
     gate.resume()
     try await dispatch.value
     try await shutdown.value
-    #expect(harness.recorder.snapshot() == [
-      .compatibility([.buttonPressed(.b)], compatibility),
-      .compatibilityStop(compatibility),
-    ])
+    #expect(
+      harness.recorder.snapshot() == [
+        .compatibility([.buttonPressed(.b)], compatibility), .compatibilityStop(compatibility),
+      ]
+    )
     await #expect(throws: RemappingOutputRoutingError.shutDown) {
-      try await harness.router.dispatchCausally(
-        events: [.buttonPressed(.a)],
-        from: compatibility
-      )
+      try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: compatibility)
     }
     #expect(harness.recorder.snapshot().count == 2)
   }
@@ -336,10 +317,8 @@ struct RemappingRouterReentrancyTests {
 
     let completionTask = Task {
       switch completion {
-      case .accept:
-        try await harness.router.acceptProfileTransaction(transaction)
-      case .rollBack:
-        try await harness.router.rollBackProfileTransaction(transaction)
+      case .accept: try await harness.router.acceptProfileTransaction(transaction)
+      case .rollBack: try await harness.router.rollBackProfileTransaction(transaction)
       }
     }
     await gate.waitUntilPaused()
@@ -347,9 +326,7 @@ struct RemappingRouterReentrancyTests {
     #expect(await eventually { harness.engine.emissionBarrier.isTerminated })
     gate.resume()
 
-    await #expect(throws: RemappingOutputRoutingError.shutDown) {
-      try await completionTask.value
-    }
+    await #expect(throws: RemappingOutputRoutingError.shutDown) { try await completionTask.value }
     try await shutdown.value
     #expect(await harness.router.statuses().isEmpty)
     #expect(harness.compatibility.suppressOutput)
@@ -374,9 +351,7 @@ struct RemappingRouterReentrancyTests {
     #expect(await eventually { harness.engine.emissionBarrier.isTerminated })
     gate.resume()
 
-    await #expect(throws: RemappingOutputRoutingError.shutDown) {
-      try await recovery.value
-    }
+    await #expect(throws: RemappingOutputRoutingError.shutDown) { try await recovery.value }
     try await shutdown.value
     #expect(await harness.router.statuses().isEmpty)
     #expect(harness.compatibility.suppressOutput)

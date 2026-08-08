@@ -30,21 +30,13 @@ private func makeDualSenseUSBReport(
 
 private func dualSenseBluetoothCRC32(_ report: [UInt8]) -> UInt32 {
   var crc = updateCRC32(0xFFFF_FFFF, byte: 0xA1)
-  for byte in report.dropLast(4) {
-    crc = updateCRC32(crc, byte: byte)
-  }
+  for byte in report.dropLast(4) { crc = updateCRC32(crc, byte: byte) }
   return ~crc
 }
 
 private func updateCRC32(_ current: UInt32, byte: UInt8) -> UInt32 {
   var crc = current ^ UInt32(byte)
-  for _ in 0..<8 {
-    if crc & 1 == 1 {
-      crc = (crc >> 1) ^ 0xEDB8_8320
-    } else {
-      crc >>= 1
-    }
-  }
+  for _ in 0..<8 { if crc & 1 == 1 { crc = (crc >> 1) ^ 0xEDB8_8320 } else { crc >>= 1 } }
   return crc
 }
 
@@ -83,8 +75,7 @@ private func hasEvent(_ events: [ControllerEvent], _ expected: ControllerEvent) 
 }
 
 struct DualSenseParserTests {
-  @Test
-  func testDualSenseUSBReportParsesPrimaryControls() throws {
+  @Test func testDualSenseUSBReportParsesPrimaryControls() throws {
     let identifier = DeviceIdentifier(vendorID: 1356, productID: 3302)
     let parser = ParserRegistry().parser(for: identifier)
     _ = try parser.parse(data: makeDualSenseUSBReport())
@@ -114,8 +105,7 @@ struct DualSenseParserTests {
     #expect(hasEvent(events, .buttonPressed(.touchpad)))
   }
 
-  @Test
-  func testDualSenseBluetoothReportParsesPrimaryControlsWithCRC() throws {
+  @Test func testDualSenseBluetoothReportParsesPrimaryControlsWithCRC() throws {
     let parser = DualSenseParser()
     _ = try parser.parse(data: makeDualSenseBluetoothReport())
 
@@ -145,8 +135,7 @@ struct DualSenseParserTests {
     #expect(hasEvent(events, .buttonPressed(.genericButton1)))
   }
 
-  @Test
-  func testDualSenseUnknownReportIDIsIgnored() throws {
+  @Test func testDualSenseUnknownReportIDIsIgnored() throws {
     let parser = DualSenseParser()
     var report = [UInt8](repeating: 0, count: 64)
     report[0] = 0x02
@@ -160,8 +149,7 @@ struct DualSenseParserTests {
     #expect(events.isEmpty)
   }
 
-  @Test
-  func testDualSenseBluetoothReportRejectsInvalidCRC() throws {
+  @Test func testDualSenseBluetoothReportRejectsInvalidCRC() throws {
     let parser = DualSenseParser()
     var report = Array(makeDualSenseBluetoothReport(buttons0: 0x28))
     report[77] ^= 0xFF
@@ -169,15 +157,12 @@ struct DualSenseParserTests {
     do {
       _ = try parser.parse(data: Data(report))
       #expect(Bool(false))
-    } catch let error as DualSenseParserError {
-      #expect(error == .invalidBluetoothCRC)
-    } catch {
+    } catch let error as DualSenseParserError { #expect(error == .invalidBluetoothCRC) } catch {
       #expect(Bool(false))
     }
   }
 
-  @Test
-  func testDualSenseUSBReportParsesMicMuteButtonAsGenericInput() throws {
+  @Test func testDualSenseUSBReportParsesMicMuteButtonAsGenericInput() throws {
     let parser = DualSenseParser()
     _ = try parser.parse(data: makeDualSenseUSBReport())
 
@@ -186,8 +171,7 @@ struct DualSenseParserTests {
     #expect(hasEvent(events, .buttonPressed(.genericButton1)))
   }
 
-  @Test
-  func testDualSenseProfilesAreExperimentalAndUnverified() {
+  @Test func testDualSenseProfilesAreExperimentalAndUnverified() {
     let registry = ParserRegistry()
     let identifiers = [
       DeviceIdentifier(vendorID: 1356, productID: 3302),
@@ -198,12 +182,9 @@ struct DualSenseParserTests {
       let profile = registry.runtimeProfile(for: identifier)
       #expect(profile.parserName == "DualSense")
       #expect(profile.protocolVariant.rawValue == "dualSense")
-      #expect(profile.mappingFlags == [
-        "touchpad",
-        "microphoneMute",
-        "experimental",
-        "needsHardwareTest",
-      ])
+      #expect(
+        profile.mappingFlags == ["touchpad", "microphoneMute", "experimental", "needsHardwareTest"]
+      )
     }
   }
 }

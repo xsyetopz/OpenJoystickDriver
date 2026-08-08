@@ -95,8 +95,7 @@ struct DriverKitRelaySelfTestTests {
     #expect(delivered.isSuccessful)
   }
 
-  @Test
-  func cliRelayVerdictUsesDistinctSharedDiagnosticContracts() throws {
+  @Test func cliRelayVerdictUsesDistinctSharedDiagnosticContracts() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let service = try String(
       contentsOf: root.appendingPathComponent(

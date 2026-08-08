@@ -4,8 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct RemappingValidationTests {
-  @Test
-  func turboAcceptsKeyboardAndMouseButtons() throws {
+  @Test func turboAcceptsKeyboardAndMouseButtons() throws {
     let turbo = RemappingTurbo(repeatRateHz: 12, dutyCycle: 0.4)
     let profile = makeProfile(bindings: [
       RemappingBinding(
@@ -13,20 +12,13 @@ struct RemappingValidationTests {
         destination: .keyboard(key: .space, modifiers: []),
         turbo: turbo
       ),
-      RemappingBinding(
-        source: .button(.east),
-        destination: .mouseButton(.left),
-        turbo: turbo
-      ),
+      RemappingBinding(source: .button(.east), destination: .mouseButton(.left), turbo: turbo),
     ])
 
     try profile.validate()
   }
 
-  @Test(arguments: [
-    RemappingDestination.mouseMovement(.x),
-    RemappingDestination.scroll(.y),
-  ])
+  @Test(arguments: [RemappingDestination.mouseMovement(.x), RemappingDestination.scroll(.y)])
   func turboRejectsContinuousDestinations(destination: RemappingDestination) {
     let profile = makeProfile(bindings: [
       RemappingBinding(
@@ -37,49 +29,33 @@ struct RemappingValidationTests {
       ),
     ])
 
-    #expect(throws: RemappingValidationError.turboNotSupported(index: 0)) {
-      try profile.validate()
-    }
+    #expect(throws: RemappingValidationError.turboNotSupported(index: 0)) { try profile.validate() }
   }
 
   @Test(arguments: [
-    RemappingAxisTuning(deadzone: -0.01),
-    RemappingAxisTuning(deadzone: 0.951),
-    RemappingAxisTuning(gain: 0.09),
-    RemappingAxisTuning(gain: 10.01),
+    RemappingAxisTuning(deadzone: -0.01), RemappingAxisTuning(deadzone: 0.951),
+    RemappingAxisTuning(gain: 0.09), RemappingAxisTuning(gain: 10.01),
     RemappingAxisTuning(digitalActivationThreshold: 0),
     RemappingAxisTuning(digitalActivationThreshold: 1.01),
-  ])
-  func tuningRejectsOutOfRangeValues(tuning: RemappingAxisTuning) {
+  ]) func tuningRejectsOutOfRangeValues(tuning: RemappingAxisTuning) {
     let profile = axisProfile(tuning: tuning)
     #expect(throws: RemappingValidationError.self) { try profile.validate() }
   }
 
   @Test(arguments: [
-    RemappingAxisTuning(deadzone: .nan),
-    RemappingAxisTuning(gain: .infinity),
+    RemappingAxisTuning(deadzone: .nan), RemappingAxisTuning(gain: .infinity),
     RemappingAxisTuning(digitalActivationThreshold: -.infinity),
-  ])
-  func tuningRejectsNonFiniteValues(tuning: RemappingAxisTuning) {
+  ]) func tuningRejectsNonFiniteValues(tuning: RemappingAxisTuning) {
     let profile = axisProfile(tuning: tuning)
     #expect(throws: RemappingValidationError.self) { try profile.validate() }
   }
 
-  @Test
-  func tuningAcceptsInclusiveBoundaryValues() throws {
+  @Test func tuningAcceptsInclusiveBoundaryValues() throws {
     try axisProfile(
-      tuning: RemappingAxisTuning(
-        deadzone: 0,
-        gain: 0.1,
-        digitalActivationThreshold: 0.01
-      )
+      tuning: RemappingAxisTuning(deadzone: 0, gain: 0.1, digitalActivationThreshold: 0.01)
     ).validate()
     try axisProfile(
-      tuning: RemappingAxisTuning(
-        deadzone: 0.95,
-        gain: 10,
-        digitalActivationThreshold: 1
-      )
+      tuning: RemappingAxisTuning(deadzone: 0.95, gain: 10, digitalActivationThreshold: 1)
     ).validate()
   }
 
@@ -90,8 +66,7 @@ struct RemappingValidationTests {
     RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.951),
     RemappingTurbo(repeatRateHz: .nan, dutyCycle: 0.5),
     RemappingTurbo(repeatRateHz: 10, dutyCycle: .infinity),
-  ])
-  func turboRejectsInvalidNumericalValues(turbo: RemappingTurbo) {
+  ]) func turboRejectsInvalidNumericalValues(turbo: RemappingTurbo) {
     let profile = makeProfile(bindings: [
       RemappingBinding(
         source: .button(.south),
@@ -102,8 +77,7 @@ struct RemappingValidationTests {
     #expect(throws: RemappingValidationError.self) { try profile.validate() }
   }
 
-  @Test
-  func duplicateBindingIdentifiersAreRejected() {
+  @Test func duplicateBindingIdentifiersAreRejected() {
     let id = UUID()
     let profile = makeProfile(bindings: [
       RemappingBinding(
@@ -117,13 +91,10 @@ struct RemappingValidationTests {
         destination: .keyboard(key: .b, modifiers: [])
       ),
     ])
-    #expect(throws: RemappingValidationError.duplicateBindingID(id)) {
-      try profile.validate()
-    }
+    #expect(throws: RemappingValidationError.duplicateBindingID(id)) { try profile.validate() }
   }
 
-  @Test
-  func ambiguousDuplicateSourcesAreRejected() {
+  @Test func ambiguousDuplicateSourcesAreRejected() {
     let source = RemappingSource.axisDirection(.leftStickY, .negative)
     let profile = makeProfile(bindings: [
       RemappingBinding(
@@ -137,20 +108,13 @@ struct RemappingValidationTests {
         axisTuning: .default
       ),
     ])
-    #expect(throws: RemappingValidationError.duplicateSource(source)) {
-      try profile.validate()
-    }
+    #expect(throws: RemappingValidationError.duplicateSource(source)) { try profile.validate() }
   }
 
   @Test(arguments: [
-    "Game",
-    "com..example",
-    ".com.example",
-    "com.example.",
-    "com.example.bad_value",
+    "Game", "com..example", ".com.example", "com.example.", "com.example.bad_value",
     "com.-example.Game",
-  ])
-  func applicationScopeRequiresValidBundleIdentifier(identifier: String) {
+  ]) func applicationScopeRequiresValidBundleIdentifier(identifier: String) {
     let profile = RemappingProfile(
       name: "Invalid scope",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),
@@ -162,8 +126,7 @@ struct RemappingValidationTests {
     }
   }
 
-  @Test
-  func axisBindingsRequireTuningAndCompatibleDestinations() {
+  @Test func axisBindingsRequireTuningAndCompatibleDestinations() {
     let missingTuning = makeProfile(bindings: [
       RemappingBinding(source: .axis(.leftStickX), destination: .mouseMovement(.x))
     ])
@@ -190,26 +153,23 @@ struct RemappingValidationTests {
     }
   }
 
-  @Test
-  func profileMetadataBoundsAreEnforced() {
+  @Test func profileMetadataBoundsAreEnforced() {
     let invalidName = RemappingProfile(
       name: " Padded ",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),
       applicationScope: .global,
       bindings: []
     )
-    #expect(throws: RemappingValidationError.invalidProfileName) {
-      try invalidName.validate()
-    }
+    #expect(throws: RemappingValidationError.invalidProfileName) { try invalidName.validate() }
 
     let unsupportedVersion = RemappingProfile(
-      schemaVersion: 2,
+      schemaVersion: 3,
       name: "Future",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),
       applicationScope: .global,
       bindings: []
     )
-    #expect(throws: RemappingValidationError.unsupportedSchemaVersion(2)) {
+    #expect(throws: RemappingValidationError.unsupportedSchemaVersion(3)) {
       try unsupportedVersion.validate()
     }
 
@@ -221,12 +181,8 @@ struct RemappingValidationTests {
       bindings: Array(repeating: binding, count: RemappingProfile.maximumBindingCount + 1)
     )
     #expect(
-      throws: RemappingValidationError.tooManyBindings(
-        RemappingProfile.maximumBindingCount + 1
-      )
-    ) {
-      try oversized.validate()
-    }
+      throws: RemappingValidationError.tooManyBindings(RemappingProfile.maximumBindingCount + 1)
+    ) { try oversized.validate() }
   }
 
   private func makeProfile(bindings: [RemappingBinding]) -> RemappingProfile {

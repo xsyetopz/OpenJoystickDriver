@@ -6,9 +6,7 @@ public func isIgnorableUSBStartupOutputError(
   parser: any InputParser,
   packet: [UInt8],
   error: USBError
-) -> Bool {
-  parser is Xbox360Parser && packet == [0x01, 0x03, 0x06] && error.isIOError
-}
+) -> Bool { parser is Xbox360Parser && packet == [0x01, 0x03, 0x06] && error.isIOError }
 
 extension DevicePipeline {
   // MARK: - Private USB pipeline

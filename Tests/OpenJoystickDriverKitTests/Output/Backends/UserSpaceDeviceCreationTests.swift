@@ -9,12 +9,9 @@ struct UserSpaceDeviceCreationTests {
   @Test func attemptsProgressFromFullDeferredCreationToDocumentedMinimum() throws {
     let descriptor = Data([0x05, 0x01, 0x09, 0x05])
     let base: [String: Any] = [
-      kIOHIDReportDescriptorKey as String: descriptor,
-      kIOHIDVendorIDKey as String: 1,
-      kIOHIDProductIDKey as String: 2,
-      kIOHIDProductKey as String: "Test",
-      kIOHIDLocationIDKey as String: 3,
-      kIOHIDMaxInputReportSizeKey as String: 15,
+      kIOHIDReportDescriptorKey as String: descriptor, kIOHIDVendorIDKey as String: 1,
+      kIOHIDProductIDKey as String: 2, kIOHIDProductKey as String: "Test",
+      kIOHIDLocationIDKey as String: 3, kIOHIDMaxInputReportSizeKey as String: 15,
     ]
 
     let attempts = UserSpaceOutputDispatcher.deviceCreationAttempts(

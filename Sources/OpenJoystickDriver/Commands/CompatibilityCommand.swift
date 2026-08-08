@@ -4,10 +4,10 @@ import OpenJoystickDriverKit
 struct CompatibilityCommand {
   func run(arguments: [String]) {
     let usage = """
-    Usage: OpenJoystickDriver --headless compat show
-           OpenJoystickDriver --headless compat set \
-    <generic-hid|sdl2-3|apple-gamecontroller|x360-hid|xone-hid>
-    """
+      Usage: OpenJoystickDriver --headless compat show
+             OpenJoystickDriver --headless compat set \
+      <generic-hid|sdl2-3|apple-gamecontroller|x360-hid|xone-hid>
+      """
     guard let sub = arguments.first else {
       print(usage)
       return
@@ -36,9 +36,7 @@ struct CompatibilityCommand {
       do {
         try await client.setCompatibilityIdentity(sub)
         return true
-      } catch {
-        return false
-      }
+      } catch { return false }
     }
 
     if !ok {
@@ -51,8 +49,6 @@ struct CompatibilityCommand {
 
     let status = runSyncResult { try? await client.getStatus() }
     print("compatibility identity: \(status?.compatibilityIdentity ?? sub)")
-    if let s = status?.userSpaceVirtualDeviceStatus {
-      print("user-space status: \(s)")
-    }
+    if let s = status?.userSpaceVirtualDeviceStatus { print("user-space status: \(s)") }
   }
 }

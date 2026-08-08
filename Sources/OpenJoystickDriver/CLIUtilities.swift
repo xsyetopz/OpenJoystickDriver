@@ -12,23 +12,15 @@ enum CLIOutput {
     write(message, terminator: terminator, to: FileHandle.standardError)
   }
 
-  static func warning(_ message: String) {
-    stderr("WARNING: \(message)")
-  }
+  static func warning(_ message: String) { stderr("WARNING: \(message)") }
 
-  static func error(_ message: String) {
-    stderr("ERROR: \(message)")
-  }
+  static func error(_ message: String) { stderr("ERROR: \(message)") }
 
   static func diagnostic(_ message: String = "", terminator: String = "\n") {
     stderr(message, terminator: terminator)
   }
 
-  private static func write(
-    _ message: String,
-    terminator: String,
-    to handle: FileHandle
-  ) {
+  private static func write(_ message: String, terminator: String, to handle: FileHandle) {
     handle.write(Data((message + terminator).utf8))
   }
 }
@@ -58,13 +50,9 @@ private final class NSLockProtectedSignalSourceStore: @unchecked Sendable {
   private let lock = NSLock()
   private var sources: [DispatchSourceSignal] = []
 
-  var hasSources: Bool {
-    lock.withLock { !sources.isEmpty }
-  }
+  var hasSources: Bool { lock.withLock { !sources.isEmpty } }
 
-  func append(_ source: DispatchSourceSignal) {
-    lock.withLock { sources.append(source) }
-  }
+  func append(_ source: DispatchSourceSignal) { lock.withLock { sources.append(source) } }
 }
 
 func installCLIShutdownHandlers() {
@@ -86,10 +74,9 @@ func installCLIShutdownHandlers() {
   }
 }
 
-func withCLIShutdownCleanup<T>(
-  _ cleanup: @escaping @Sendable () -> Void,
-  _ body: () throws -> T
-) rethrows -> T {
+func withCLIShutdownCleanup<T>(_ cleanup: @escaping @Sendable () -> Void, _ body: () throws -> T)
+  rethrows -> T
+{
   let previous = cliShutdownState.replaceCleanup(cleanup)
   defer { _ = cliShutdownState.replaceCleanup(previous) }
   return try body()
@@ -97,13 +84,9 @@ func withCLIShutdownCleanup<T>(
 
 /// Timeout for local service calls from CLI - keeps commands
 /// responsive when application service is not running.
-enum CLIExecutionContext {
-  nonisolated(unsafe) static var serviceCallTimeoutSeconds: Double = 0.5
-}
+enum CLIExecutionContext { nonisolated(unsafe) static var serviceCallTimeoutSeconds: Double = 0.5 }
 
-var applicationServiceCallTimeoutSeconds: Double {
-  CLIExecutionContext.serviceCallTimeoutSeconds
-}
+var applicationServiceCallTimeoutSeconds: Double { CLIExecutionContext.serviceCallTimeoutSeconds }
 
 /// Blocks current thread until `block` completes.
 ///
@@ -138,10 +121,9 @@ func runSyncResult<T: Sendable>(_ block: @Sendable @escaping () async -> T) -> T
 ///
 /// Returns nil on timeout. Safe for CLI status probes that must not hang when
 /// the application service connection is invalidated without a reply.
-func runSyncResult<T: Sendable>(
-  timeout seconds: Double,
-  _ block: @Sendable @escaping () async -> T
-) -> T? {
+func runSyncResult<T: Sendable>(timeout seconds: Double, _ block: @Sendable @escaping () async -> T)
+  -> T?
+{
   let semaphore = DispatchSemaphore(value: 0)
   nonisolated(unsafe) var result: T?
   Task {
@@ -169,9 +151,8 @@ func requireApplicationsBundleOrExit() {
     CLIOutput.error("This command must be run from the /Applications-installed app bundle.")
     CLIOutput.diagnostic("Current bundle: \(path)")
     CLIOutput.diagnostic(
-      "  Fix: run: " +
-        "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver " +
-        "--headless <command>"
+      "  Fix: run: " + "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver "
+        + "--headless <command>"
     )
     exit(1)
   }
@@ -193,8 +174,7 @@ func requireValidBundleSignatureOrExit(action: String) {
     )
   } catch {
     CLIOutput.error(
-      "\(action) failed: could not run codesign verification: " +
-        "\(error.localizedDescription)"
+      "\(action) failed: could not run codesign verification: " + "\(error.localizedDescription)"
     )
     exit(1)
   }
@@ -206,16 +186,15 @@ func requireValidBundleSignatureOrExit(action: String) {
   guard result.terminationStatus == 0 else {
     if out.contains("a sealed resource is missing or invalid") {
       CLIOutput.error(
-        "\(action) failed: this app bundle's signature is INVALID " +
-          "(modified after signing)."
+        "\(action) failed: this app bundle's signature is INVALID " + "(modified after signing)."
       )
       CLIOutput.diagnostic("")
       CLIOutput.diagnostic("Fix:")
       CLIOutput.diagnostic("  1) Run: ./scripts/ojd rebuild-fast dev")
       CLIOutput.diagnostic(
-        "  2) Then re-run: " +
-          "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver " +
-          "--headless \(action.lowercased())"
+        "  2) Then re-run: "
+          + "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver "
+          + "--headless \(action.lowercased())"
       )
       CLIOutput.diagnostic("")
       CLIOutput.diagnostic("Diagnostic command:")

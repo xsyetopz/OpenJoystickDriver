@@ -3,8 +3,7 @@ import OpenJoystickDriverKit
 import Testing
 
 struct PhysicalOutputValidationPlanTests {
-  @Test
-  func buildsCapabilityDrivenRedactedSteps() throws {
+  @Test func buildsCapabilityDrivenRedactedSteps() throws {
     let device = ApplicationServiceDeviceDescription(
       name: "Secret Controller Name",
       vendorID: 1234,
@@ -19,12 +18,15 @@ struct PhysicalOutputValidationPlanTests {
       )
     )
     let plan = PhysicalOutputValidationPlan(device: device)
-    #expect(plan.steps.map(\.id) == [
-      "left-main", "right-main", "left-trigger", "right-trigger",
-      "player-indicators", "player-indicators-off", "color-red", "color-green",
-      "color-blue", "brightness-low", "brightness-high",
-    ])
-    let firstCommand = "OpenJoystickDriver --headless controller output rumble 1234 5678"
+    #expect(
+      plan.steps.map(\.id) == [
+        "left-main", "right-main", "left-trigger", "right-trigger", "player-indicators",
+        "player-indicators-off", "color-red", "color-green", "color-blue", "brightness-low",
+        "brightness-high",
+      ]
+    )
+    let firstCommand =
+      "OpenJoystickDriver --headless controller output rumble 1234 5678"
       + " --left 160 --right 0 --duration-ms 300"
     #expect(plan.steps.first?.command == firstCommand)
     #expect(plan.evidence == .sourceBacked)
@@ -35,15 +37,12 @@ struct PhysicalOutputValidationPlanTests {
     #expect(!json.contains("/Users/"))
   }
 
-  @Test
-  func usesHapticLabelsAndProducesNoUnsupportedSteps() {
+  @Test func usesHapticLabelsAndProducesNoUnsupportedSteps() {
     let haptics = PhysicalOutputValidationPlan(
       vendorID: 10,
       productID: 20,
       parser: "Steam",
-      capabilities: PhysicalControllerOutputCapabilities(
-        rumbleMotors: [.leftHaptic, .rightHaptic]
-      )
+      capabilities: PhysicalControllerOutputCapabilities(rumbleMotors: [.leftHaptic, .rightHaptic])
     )
     #expect(haptics.steps.map(\.id) == ["left-haptic", "right-haptic"])
     #expect(haptics.steps[0].expectedObservation.contains("left trackpad"))

@@ -71,12 +71,9 @@ public enum RemappingSource: Codable, Equatable, Hashable, Sendable {
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     switch try container.decode(Kind.self, forKey: .type) {
-    case .button:
-      self = .button(try container.decode(RemappingButton.self, forKey: .button))
-    case .dpad:
-      self = .dpad(try container.decode(RemappingDpadDirection.self, forKey: .direction))
-    case .axis:
-      self = .axis(try container.decode(RemappingAxis.self, forKey: .axis))
+    case .button: self = .button(try container.decode(RemappingButton.self, forKey: .button))
+    case .dpad: self = .dpad(try container.decode(RemappingDpadDirection.self, forKey: .direction))
+    case .axis: self = .axis(try container.decode(RemappingAxis.self, forKey: .axis))
     case .axisDirection:
       self = .axisDirection(
         try container.decode(RemappingAxis.self, forKey: .axis),
@@ -239,8 +236,7 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       self = .mouseButton(try container.decode(RemappingMouseButton.self, forKey: .button))
     case .mouseMovement:
       self = .mouseMovement(try container.decode(RemappingPointerAxis.self, forKey: .axis))
-    case .scroll:
-      self = .scroll(try container.decode(RemappingPointerAxis.self, forKey: .axis))
+    case .scroll: self = .scroll(try container.decode(RemappingPointerAxis.self, forKey: .axis))
     }
   }
 

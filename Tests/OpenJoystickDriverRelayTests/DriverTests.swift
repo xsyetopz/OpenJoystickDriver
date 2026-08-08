@@ -22,9 +22,8 @@ struct DriverTests {
 
   @Test func emptyFramedPayloadIsRejectedWithoutSubmission() {
     #expect(
-      OpenJoystickRelayDriver.forwardedInput(
-        for: HIDReport(bytes: [0x4F, 0x4A, 9], type: .output)
-      ) == nil
+      OpenJoystickRelayDriver.forwardedInput(for: HIDReport(bytes: [0x4F, 0x4A, 9], type: .output))
+        == nil
     )
     #expect(OpenJoystickRelayDriver.forwardedInput(for: HIDReport(bytes: [], type: .output)) == nil)
   }

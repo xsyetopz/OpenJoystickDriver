@@ -4,8 +4,7 @@ import Testing
 
 @testable import OpenJoystickDriver
 
-@Suite(.serialized)
-struct RemappingRequestCoordinatorTests {
+@Suite(.serialized) struct RemappingRequestCoordinatorTests {
   @Test func fullCRUDImportActivationAndDeactivationUseOneServiceOwnedLibrary() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
@@ -32,10 +31,15 @@ struct RemappingRequestCoordinatorTests {
     snapshot = try await harness.coordinator.delete(id: original.id).get()
     #expect(snapshot.profiles.isEmpty)
     let missing = await harness.coordinator.profile(id: original.id)
-    #expect(missing == .failure(ApplicationServiceRemappingRPCError(
-      code: .profileNotFound,
-      message: "The remapping profile \(original.id.uuidString) does not exist."
-    )))
+    #expect(
+      missing
+        == .failure(
+          ApplicationServiceRemappingRPCError(
+            code: .profileNotFound,
+            message: "The remapping profile \(original.id.uuidString) does not exist."
+          )
+        )
+    )
   }
 
   @Test func activeUpdateAndDeleteReleaseHeldStateBeforeSuccess() async throws {
@@ -52,22 +56,23 @@ struct RemappingRequestCoordinatorTests {
 
     let updated = profile(id: original.id, name: "Desktop", key: .b)
     _ = try await harness.coordinator.update(updated, expectedCurrent: original).get()
-    #expect(harness.routerHarness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-    ])
+    #expect(
+      harness.routerHarness.recorder.snapshot() == [
+        .system(.keyDown(.space)), .system(.keyUp(.space)),
+      ]
+    )
 
     try await harness.routerHarness.router.dispatchCausally(
       events: [.buttonPressed(.a)],
       from: device
     )
     _ = try await harness.coordinator.delete(id: updated.id).get()
-    #expect(harness.routerHarness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-      .system(.keyDown(.b)),
-      .system(.keyUp(.b)),
-    ])
+    #expect(
+      harness.routerHarness.recorder.snapshot() == [
+        .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.b)),
+        .system(.keyUp(.b)),
+      ]
+    )
     #expect(await harness.routerHarness.router.status(for: device)?.selection == .compatibility)
   }
 
@@ -85,24 +90,23 @@ struct RemappingRequestCoordinatorTests {
     harness.routerHarness.recorder.removeAll()
 
     let firstUpdate = profile(id: original.id, name: "Desktop", key: .a)
-    _ = try await harness.coordinator.update(
-      firstUpdate,
-      expectedCurrent: original
-    ).get()
+    _ = try await harness.coordinator.update(firstUpdate, expectedCurrent: original).get()
     harness.routerHarness.recorder.removeAll()
     let bytesAfterFirstUpdate = try Data(contentsOf: harness.routerHarness.fileURL)
     let routeAfterFirstUpdate = await harness.routerHarness.router.status(for: device)
     let staleUpdate = profile(id: original.id, name: "Desktop", key: .b)
 
-    let result = await harness.coordinator.update(
-      staleUpdate,
-      expectedCurrent: original
-    )
+    let result = await harness.coordinator.update(staleUpdate, expectedCurrent: original)
 
-    #expect(result == .failure(ApplicationServiceRemappingRPCError(
-      code: .profileUpdateConflict,
-      message: "The remapping profile \(original.id.uuidString) changed since it was read."
-    )))
+    #expect(
+      result
+        == .failure(
+          ApplicationServiceRemappingRPCError(
+            code: .profileUpdateConflict,
+            message: "The remapping profile \(original.id.uuidString) changed since it was read."
+          )
+        )
+    )
     #expect(try Data(contentsOf: harness.routerHarness.fileURL) == bytesAfterFirstUpdate)
     #expect(try await harness.routerHarness.library.profile(id: original.id) == firstUpdate)
     #expect(await harness.routerHarness.router.status(for: device) == routeAfterFirstUpdate)
@@ -121,19 +125,15 @@ struct RemappingRequestCoordinatorTests {
       from: device
     )
 
-    let moved = profile(
-      id: original.id,
-      name: "Desktop",
-      vendorID: 1356,
-      productID: 2508
-    )
+    let moved = profile(id: original.id, name: "Desktop", vendorID: 1356, productID: 2508)
     let snapshot = try await harness.coordinator.update(moved, expectedCurrent: original).get()
 
     #expect(snapshot.activeProfiles.isEmpty)
-    #expect(harness.routerHarness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-    ])
+    #expect(
+      harness.routerHarness.recorder.snapshot() == [
+        .system(.keyDown(.space)), .system(.keyUp(.space)),
+      ]
+    )
     #expect(await harness.routerHarness.router.status(for: device)?.selection == .compatibility)
   }
 
@@ -150,15 +150,14 @@ struct RemappingRequestCoordinatorTests {
 
     let snapshot = try await harness.coordinator.snapshot().get()
     #expect(snapshot.routes.count == 2)
-    #expect(Set(snapshot.routes.map(\.runtimeIdentifier)) == [
-      first.runtimeIdentifier,
-      second.runtimeIdentifier,
-    ])
+    #expect(
+      Set(snapshot.routes.map(\.runtimeIdentifier)) == [
+        first.runtimeIdentifier, second.runtimeIdentifier,
+      ]
+    )
     #expect(snapshot.routes.allSatisfy { $0.selection == .remapping })
     #expect(snapshot.routes.allSatisfy { $0.activeProfileID == mapped.id })
-    let encoded = try #require(
-      String(data: JSONEncoder().encode(snapshot), encoding: .utf8)
-    )
+    let encoded = try #require(String(data: JSONEncoder().encode(snapshot), encoding: .utf8))
     #expect(!encoded.contains("serial"))
   }
 
@@ -180,10 +179,15 @@ struct RemappingRequestCoordinatorTests {
     defer { corruptHarness.routerHarness.removeFiles() }
     try Data("not json".utf8).write(to: corruptHarness.routerHarness.fileURL)
     let corrupt = await corruptHarness.coordinator.snapshot()
-    #expect(corrupt == .failure(ApplicationServiceRemappingRPCError(
-      code: .corruptLibrary,
-      message: "The remapping profile library is corrupt."
-    )))
+    #expect(
+      corrupt
+        == .failure(
+          ApplicationServiceRemappingRPCError(
+            code: .corruptLibrary,
+            message: "The remapping profile library is corrupt."
+          )
+        )
+    )
 
     let stoppedHarness = try await makeHarness()
     defer { stoppedHarness.routerHarness.removeFiles() }
@@ -197,10 +201,10 @@ struct RemappingRequestCoordinatorTests {
     }
     #expect(activationError.code == .routerShutDown)
     #expect(activationError.message == "The remapping output router has shut down.")
-    #expect(try await stoppedHarness.routerHarness.library.activeProfile(
-      vendorID: 1118,
-      productID: 654
-    ) == nil)
+    #expect(
+      try await stoppedHarness.routerHarness.library.activeProfile(vendorID: 1118, productID: 654)
+        == nil
+    )
   }
 
   @Test func failedActiveModelMoveRestoresExactLibraryAndBothRoutes() async throws {
@@ -218,30 +222,24 @@ struct RemappingRequestCoordinatorTests {
     let priorParentPermissions = try permissions(at: harness.fileURL.deletingLastPathComponent())
     harness.sink.failNextAction()
 
-    let moved = profile(
-      id: original.id,
-      name: original.name,
-      vendorID: 1356,
-      productID: 2508
-    )
+    let moved = profile(id: original.id, name: original.name, vendorID: 1356, productID: 2508)
     let result = await harness.coordinator.update(moved, expectedCurrent: original)
 
     expectRecoveredEngineFailure(result)
     #expect(try Data(contentsOf: harness.fileURL) == exactPriorBytes)
     #expect(try permissions(at: harness.fileURL) == priorFilePermissions)
-    #expect(try permissions(at: harness.fileURL.deletingLastPathComponent())
-      == priorParentPermissions)
+    #expect(
+      try permissions(at: harness.fileURL.deletingLastPathComponent()) == priorParentPermissions
+    )
     #expect(try await harness.library.profile(id: original.id) == original)
-    #expect(try await harness.library.activeProfile(vendorID: 1118, productID: 654)
-      == original)
+    #expect(try await harness.library.activeProfile(vendorID: 1118, productID: 654) == original)
     #expect(try await harness.library.activeProfile(vendorID: 1356, productID: 2508) == nil)
     #expect(await harness.router.status(for: oldDevice)?.activeProfileID == original.id)
     #expect(await harness.router.status(for: newDevice)?.selection == .compatibility)
   }
 
   @Test(arguments: [RollbackMutation.delete, .deactivate])
-  func failedDeleteOrDeactivateRestoresExactActiveProfile(_ mutation: RollbackMutation)
-    async throws
+  func failedDeleteOrDeactivateRestoresExactActiveProfile(_ mutation: RollbackMutation) async throws
   {
     let harness = try makeRollbackHarness()
     defer { harness.removeFiles() }
@@ -255,17 +253,14 @@ struct RemappingRequestCoordinatorTests {
 
     let result: RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>
     switch mutation {
-    case .delete:
-      result = await harness.coordinator.delete(id: original.id)
-    case .deactivate:
-      result = await harness.coordinator.deactivate(vendorID: 1118, productID: 654)
+    case .delete: result = await harness.coordinator.delete(id: original.id)
+    case .deactivate: result = await harness.coordinator.deactivate(vendorID: 1118, productID: 654)
     }
 
     expectRecoveredEngineFailure(result)
     #expect(try Data(contentsOf: harness.fileURL) == exactPriorBytes)
     #expect(try await harness.library.profile(id: original.id) == original)
-    #expect(try await harness.library.activeProfile(vendorID: 1118, productID: 654)
-      == original)
+    #expect(try await harness.library.activeProfile(vendorID: 1118, productID: 654) == original)
     #expect(await harness.router.status(for: device)?.activeProfileID == original.id)
   }
 
@@ -285,9 +280,7 @@ struct RemappingRequestCoordinatorTests {
 
   @Test func resetSettingsSourceDoesNotDeleteTheRemappingProfileLibrary() throws {
     let path = "Sources/OpenJoystickDriver/Service/ApplicationServiceServer/Requests.swift"
-    let source = try String(
-      contentsOf: repositoryRoot().appendingPathComponent(path)
-    )
+    let source = try String(contentsOf: repositoryRoot().appendingPathComponent(path))
     let reset = try #require(source.range(of: "public func resetSettings"))
     let resetBody = source[reset.lowerBound...]
 
@@ -297,10 +290,7 @@ struct RemappingRequestCoordinatorTests {
   }
 
   private func makeHarness(
-    postEventProbe: RPCPostEventProbe = RPCPostEventProbe(
-      preflight: [true],
-      requestResult: true
-    ),
+    postEventProbe: RPCPostEventProbe = RPCPostEventProbe(preflight: [true], requestResult: true),
     maximumResponseBytes: Int = ApplicationServiceRemappingRPC.maximumPayloadBytes
   ) async throws -> CoordinatorHarness {
     let routerHarness = try await RemappingRouterHarness.make(
@@ -377,20 +367,14 @@ struct RemappingRequestCoordinatorTests {
       device: RemappingDeviceScope(vendorID: vendorID, productID: productID),
       applicationScope: .global,
       bindings: [
-        RemappingBinding(
-          source: .button(.south),
-          destination: .keyboard(key: key, modifiers: [])
-        ),
+        RemappingBinding(source: .button(.south), destination: .keyboard(key: key, modifiers: []))
       ]
     )
   }
 
   private func repositoryRoot() -> URL {
-    URL(fileURLWithPath: #filePath)
-      .deletingLastPathComponent()
-      .deletingLastPathComponent()
-      .deletingLastPathComponent()
-      .deletingLastPathComponent()
+    URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+      .deletingLastPathComponent().deletingLastPathComponent()
   }
 
   private func permissions(at url: URL) throws -> Int {
@@ -426,13 +410,9 @@ private final class TransactionFaultSink: RemappingSystemInputSink, @unchecked S
   private let recorder: RemappingRouterRecorder
   private var pendingFailures = 0
 
-  init(recorder: RemappingRouterRecorder) {
-    self.recorder = recorder
-  }
+  init(recorder: RemappingRouterRecorder) { self.recorder = recorder }
 
-  func failNextAction() {
-    lock.withLock { pendingFailures += 1 }
-  }
+  func failNextAction() { lock.withLock { pendingFailures += 1 } }
 
   func send(_ action: RemappingSystemInputAction) throws {
     let shouldFail = lock.withLock { () -> Bool in

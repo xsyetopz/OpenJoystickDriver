@@ -34,12 +34,7 @@ struct RemappingEmissionBarrierTests {
     sink.barrier = barrier
     let engine = RemappingEventEngine(sink: sink, emissionBarrier: barrier)
 
-    try await engine.process(
-      events: [.buttonPressed(.a)],
-      from: device(),
-      using: profile(),
-      at: 1
-    )
+    try await engine.process(events: [.buttonPressed(.a)], from: device(), using: profile(), at: 1)
     await barrier.terminate()
     try await engine.drainAfterTermination()
 
@@ -145,9 +140,7 @@ struct RemappingEmissionBarrierTests {
 private actor BarrierCompletionProbe {
   private(set) var isFinished = false
 
-  func finish() {
-    isFinished = true
-  }
+  func finish() { isFinished = true }
 }
 
 private final class BarrierQueryingSink: RemappingSystemInputSink, @unchecked Sendable {
@@ -155,9 +148,7 @@ private final class BarrierQueryingSink: RemappingSystemInputSink, @unchecked Se
   private var recordedActions: [RemappingSystemInputAction] = []
   var barrier: RemappingEmissionBarrier?
 
-  var actions: [RemappingSystemInputAction] {
-    lock.withLock { recordedActions }
-  }
+  var actions: [RemappingSystemInputAction] { lock.withLock { recordedActions } }
 
   func send(_ action: RemappingSystemInputAction) throws {
     _ = barrier?.currentPermit()

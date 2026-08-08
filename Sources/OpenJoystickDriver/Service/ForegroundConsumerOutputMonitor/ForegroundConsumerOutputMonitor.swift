@@ -11,10 +11,7 @@ final class ForegroundConsumerHIDManagerState: @unchecked Sendable {
   private var isOpen = false
 
   init() {
-    manager = IOHIDManagerCreate(
-      kCFAllocatorDefault,
-      IOOptionBits(kIOHIDOptionsTypeNone)
-    )
+    manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
     IOHIDManagerSetDeviceMatching(manager, nil)
   }
 
@@ -30,10 +27,7 @@ final class ForegroundConsumerHIDManagerState: @unchecked Sendable {
   func withOpenManager<T>(_ body: (IOHIDManager) -> T) -> T? {
     lock.withLock {
       if !isOpen {
-        let result = IOHIDManagerOpen(
-          manager,
-          IOOptionBits(kIOHIDOptionsTypeNone)
-        )
+        let result = IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
         guard result == kIOReturnSuccess else { return nil }
         isOpen = true
       }
@@ -69,7 +63,10 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
     compatibilityOutputGate: @escaping @Sendable (Bool) async -> Void,
     compatibilityRouteHandler:
       @escaping @Sendable (String?, Set<String>, Set<String>, String?) async -> Void = {
-        _, _, _, _ in
+        _,
+        _,
+        _,
+        _ in
       },
     pollIntervalNanoseconds: UInt64 = 1_000_000_000,
     burstPollIntervalNanoseconds: UInt64 = 100_000_000,
@@ -168,13 +165,9 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
   private func evaluateAndApply() async {
     let frontmostBundleRoot = stateLock.withLock { cachedFrontmostBundleRoot }
     let now = DispatchTime.now().uptimeNanoseconds
-    let consumerClients = autoreleasepool {
-      Self.consumerClientSamples()
-    }
+    let consumerClients = autoreleasepool { Self.consumerClientSamples() }
     let observedBundleRoots = Set(
-      consumerClients
-        .filter { $0.isOpened && !$0.isSuspended }
-        .map(\.bundleRootPath)
+      consumerClients.filter { $0.isOpened && !$0.isSuspended }.map(\.bundleRootPath)
     )
     let consumerBundleRoots = stateLock.withLock {
       activityTracker.consumerBundleRootPaths(
@@ -234,8 +227,7 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
             + "\(URL(fileURLWithPath: frontmostBundleRoot).lastPathComponent)"
             + " route=\(routeLabel)"
             + (observedBundleRoots == consumerBundleRoots
-              ? ""
-              : " effective=[\(effectiveLabel)] observed=[\(observedLabel)]")
+              ? "" : " effective=[\(effectiveLabel)] observed=[\(observedLabel)]")
         )
       } else {
         print("[ForegroundConsumerOutputMonitor] Output active")
@@ -256,15 +248,12 @@ final class ForegroundConsumerOutputMonitor: @unchecked Sendable {
     await compatibilityOutputGate(allowOutput)
   }
 
-  @MainActor
-  private static func frontmostBundleRootPath() -> String? {
+  @MainActor private static func frontmostBundleRootPath() -> String? {
     guard let app = NSWorkspace.shared.frontmostApplication else { return nil }
     return bundleRootPath(for: app)
   }
 
   private func updateFrontmostBundleRoot(_ bundleRoot: String?) {
-    stateLock.withLock {
-      cachedFrontmostBundleRoot = bundleRoot
-    }
+    stateLock.withLock { cachedFrontmostBundleRoot = bundleRoot }
   }
 }

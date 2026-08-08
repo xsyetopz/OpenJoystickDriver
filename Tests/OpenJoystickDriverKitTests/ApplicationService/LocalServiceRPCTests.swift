@@ -4,8 +4,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-@Suite(.serialized)
-struct LocalServiceRPCTests {
+@Suite(.serialized) struct LocalServiceRPCTests {
   @Test func roundTripUsesPrivateSocketAndBoundedJSONFrame() async throws {
     let socketPath = temporarySocketPath()
     let server = LocalServiceRPCServer(
@@ -26,9 +25,7 @@ struct LocalServiceRPCTests {
       timeoutSeconds: 1,
       socketPath: socketPath
     )
-    let attributes = try FileManager.default.attributesOfItem(
-      atPath: socketPath
-    )
+    let attributes = try FileManager.default.attributesOfItem(atPath: socketPath)
 
     #expect(result == "CONTROLLER")
     #expect(attributes[.posixPermissions] as? Int == 0o600)
@@ -39,9 +36,7 @@ struct LocalServiceRPCTests {
     let server = LocalServiceRPCServer(
       socketPath: socketPath,
       authentication: { _ in false },
-      handler: { _, completion in
-        completion(LocalServiceRPCResponse(result: Data(), error: nil))
-      }
+      handler: { _, completion in completion(LocalServiceRPCResponse(result: Data(), error: nil)) }
     )
     try server.start()
     defer { server.stop() }

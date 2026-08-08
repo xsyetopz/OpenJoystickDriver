@@ -50,9 +50,7 @@ extension HIDStartupOutputReportProvider {
 /// Optional USB output emitted when a receiver-backed controller connects or disconnects.
 public protocol USBInputConnectionOutputProvider: AnyObject, Sendable {
   /// Source-backed packets for one logical controller lifecycle transition.
-  func usbInputConnectionOutputPackets(
-    for state: ControllerInputConnectionState
-  ) -> [[UInt8]]
+  func usbInputConnectionOutputPackets(for state: ControllerInputConnectionState) -> [[UInt8]]
 }
 
 /// Optional parser hook for startup output packets sent through a USB interrupt OUT endpoint.
@@ -88,11 +86,8 @@ public protocol HIDStartupFeatureReadRequestProvider: AnyObject, Sendable {
 
 extension HIDStartupFeatureReadRequestProvider {
   /// Source-backed feature reads for a specific HID transport, when transport matters.
-  public func hidStartupFeatureReadRequests(transport _: String?)
-    -> [PhysicalHIDFeatureReadRequest]
-  {
-    hidStartupFeatureReadRequests()
-  }
+  public func hidStartupFeatureReadRequests(transport _: String?) -> [PhysicalHIDFeatureReadRequest]
+  { hidStartupFeatureReadRequests() }
 }
 
 /// Optional semantic input path for descriptor-defined HID gamepads.

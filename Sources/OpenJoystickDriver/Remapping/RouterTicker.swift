@@ -24,9 +24,7 @@ extension RemappingOutputRouter {
     task?.cancel()
   }
 
-  var tickerIsRunning: Bool {
-    lock.withLock { tickerTask != nil }
-  }
+  var tickerIsRunning: Bool { lock.withLock { tickerTask != nil } }
 
   func shutdown() async throws {
     setProfileTransactionGateActive(true)
@@ -51,9 +49,7 @@ extension RemappingOutputRouter {
         if shutdownAttempt?.id == attempt.id { shutdownAttempt = nil }
       }
     } catch {
-      lock.withLock {
-        if shutdownAttempt?.id == attempt.id { shutdownAttempt = nil }
-      }
+      lock.withLock { if shutdownAttempt?.id == attempt.id { shutdownAttempt = nil } }
       throw error
     }
   }
@@ -81,8 +77,7 @@ extension RemappingOutputRouter {
     let taskToCancel = lock.withLock { () -> Task<Void, Never>? in
       guard snapshot.revision >= tickerSnapshotRevision else { return nil }
       tickerSnapshotRevision = snapshot.revision
-      guard tickerEnabled, let deadline = snapshot.nextTickUptimeNanoseconds
-      else {
+      guard tickerEnabled, let deadline = snapshot.nextTickUptimeNanoseconds else {
         tickerGeneration &+= 1
         defer {
           tickerTask = nil
@@ -97,9 +92,7 @@ extension RemappingOutputRouter {
       let sleeper = tickerSleeper
       let delay = deadline >= uptimeNanoseconds ? deadline - uptimeNanoseconds : 0
       let task = Task { [weak self] in
-        do {
-          try await sleeper(delay)
-        } catch {
+        do { try await sleeper(delay) } catch {
           self?.tickerFinished(generation: generation)
           return
         }
@@ -123,9 +116,7 @@ extension RemappingOutputRouter {
       return
     }
     defer { lease.finish() }
-    do {
-      try await core.tick(at: uptime(), requiring: lease.permit)
-    } catch {
+    do { try await core.tick(at: uptime(), requiring: lease.permit) } catch {
       tickerFinished(generation: generation)
       return
     }
@@ -141,10 +132,9 @@ extension RemappingOutputRouter {
     }
   }
 
-  func updateControls(
-    outputSuppressed: Bool? = nil,
-    compatibilityOutputAllowed: Bool? = nil
-  ) -> RemappingRoutingControls {
+  func updateControls(outputSuppressed: Bool? = nil, compatibilityOutputAllowed: Bool? = nil)
+    -> RemappingRoutingControls
+  {
     lock.withLock {
       controls = RemappingRoutingControls(
         outputSuppressed: outputSuppressed ?? controls.outputSuppressed,
@@ -166,8 +156,7 @@ extension RemappingOutputRouter {
 
   func updateCompatibilitySuppression(controls snapshot: RemappingRoutingControls) {
     let transactionSuppressed = lock.withLock { profileTransactionGateActive }
-    compatibility.suppressOutput = Self.compatibilityIsSuppressed(snapshot)
-      || transactionSuppressed
+    compatibility.suppressOutput = Self.compatibilityIsSuppressed(snapshot) || transactionSuppressed
   }
 
   private static func compatibilityIsSuppressed(_ controls: RemappingRoutingControls) -> Bool {

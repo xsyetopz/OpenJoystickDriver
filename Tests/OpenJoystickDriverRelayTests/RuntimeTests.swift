@@ -71,8 +71,7 @@ struct RuntimeTests {
 
     let batch = Task {
       await runtime.submit([
-        HIDReport(bytes: [1], type: .input),
-        HIDReport(bytes: [2], type: .input),
+        HIDReport(bytes: [1], type: .input), HIDReport(bytes: [2], type: .input),
         HIDReport(bytes: [3], type: .input),
       ])
     }
@@ -159,9 +158,7 @@ struct RuntimeTests {
     await runtime.setEnabled(true, revision: 1)
     #expect(await runtime.waitUntilConnected())
 
-    let submission = Task {
-      await runtime.submit([HIDReport(bytes: [1], type: .input)])
-    }
+    let submission = Task { await runtime.submit([HIDReport(bytes: [1], type: .input)]) }
     await submitter.waitUntilSubmissionStarts()
     await runtime.setEnabled(false, revision: 2)
     await runtime.setEnabled(true, revision: 3)
@@ -246,14 +243,10 @@ actor SuspendedRelaySubmitter: DriverKitRelaySubmitting {
 
   func submit(_ report: HIDReport) async {
     reports.append(report)
-    if reports.count == 1 {
-      await withCheckedContinuation { firstContinuation = $0 }
-    }
+    if reports.count == 1 { await withCheckedContinuation { firstContinuation = $0 } }
   }
 
-  func waitUntilFirstSubmissionStarts() async {
-    while reports.isEmpty { await Task.yield() }
-  }
+  func waitUntilFirstSubmissionStarts() async { while reports.isEmpty { await Task.yield() } }
 
   func resumeFirstSubmission() {
     firstContinuation?.resume()
@@ -281,21 +274,15 @@ actor SuspendedStopRelayHost: DriverKitRelayHosting {
     return "connected suspended-stop|\(startCount)"
   }
 
-  func run() async throws {
-    while !stopped { try await Task.sleep(nanoseconds: 1_000_000) }
-  }
+  func run() async throws { while !stopped { try await Task.sleep(nanoseconds: 1_000_000) } }
 
   func stop() async {
     stopped = true
     stopCount += 1
-    if stopCount == 1 {
-      await withCheckedContinuation { stopContinuation = $0 }
-    }
+    if stopCount == 1 { await withCheckedContinuation { stopContinuation = $0 } }
   }
 
-  func waitUntilStopStarts() async {
-    while stopCount == 0 { await Task.yield() }
-  }
+  func waitUntilStopStarts() async { while stopCount == 0 { await Task.yield() } }
 
   func resumeStop() {
     stopContinuation?.resume()
@@ -340,9 +327,7 @@ actor DelayedFailingRelaySubmitter: DriverKitRelaySubmitting {
     throw DriverKitError(kind: .serviceUnavailable, operation: "submit")
   }
 
-  func waitUntilSubmissionStarts() async {
-    while !started { await Task.yield() }
-  }
+  func waitUntilSubmissionStarts() async { while !started { await Task.yield() } }
 
   func resumeWithFailure() {
     continuation?.resume()

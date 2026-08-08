@@ -14,6 +14,7 @@ protocol MappingServiceClient: Sendable {
   func activate(id: UUID) async throws -> ApplicationServiceRemappingSnapshotPayload
   func deactivate(vendorID: UInt16, productID: UInt16) async throws
     -> ApplicationServiceRemappingSnapshotPayload
+  func deactivate(profileID: UUID) async throws -> ApplicationServiceRemappingSnapshotPayload
   func access(request: Bool) async throws -> RemappingPostEventAccessState
 }
 
@@ -51,6 +52,10 @@ struct ApplicationMappingServiceClient: MappingServiceClient {
   func deactivate(vendorID: UInt16, productID: UInt16) async throws
     -> ApplicationServiceRemappingSnapshotPayload
   { try await client.deactivateRemappingProfile(vendorID: vendorID, productID: productID) }
+
+  func deactivate(profileID: UUID) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    try await client.deactivateRemappingProfile(profileID: profileID)
+  }
 
   func access(request: Bool) async throws -> RemappingPostEventAccessState {
     if request { return try await client.requestRemappingPostEventAccess() }

@@ -28,52 +28,50 @@ private func makeXbox360ReportLE(
   let (lsyL, lsyH) = le16(lsy)
   let (rsxL, rsxH) = le16(rsx)
   let (rsyL, rsyH) = le16(rsy)
-  r[6] = lsxL; r[7] = lsxH
-  r[8] = lsyL; r[9] = lsyH
-  r[10] = rsxL; r[11] = rsxH
-  r[12] = rsyL; r[13] = rsyH
+  r[6] = lsxL
+  r[7] = lsxH
+  r[8] = lsyL
+  r[9] = lsyH
+  r[10] = rsxL
+  r[11] = rsxH
+  r[12] = rsyL
+  r[13] = rsyH
   return Data(r)
 }
 
 struct Xbox360ParserTests {
-  @Test
-  func testIgnoresNonInputReportType() throws {
+  @Test func testIgnoresNonInputReportType() throws {
     let parser = Xbox360Parser()
     // Type 0x08 = device connected notification on the wireless receiver
     let packet = Data([0x08, 0x14] + [UInt8](repeating: 0, count: 18))
     let events = try parser.parse(data: packet)
     #expect(events.isEmpty)
   }
-  @Test
-  func testEmptyDataReturnsEmpty() throws {
+  @Test func testEmptyDataReturnsEmpty() throws {
     let parser = Xbox360Parser()
     let events = try parser.parse(data: Data())
     #expect(events.isEmpty)
   }
-  @Test
-  func testShortReportReturnsEmpty() throws {
+  @Test func testShortReportReturnsEmpty() throws {
     let parser = Xbox360Parser()
     let packet = Data([0x00, 0x14, 0x00, 0x00, 0x00])
     let events = try parser.parse(data: packet)
     #expect(events.isEmpty)
   }
-  @Test
-  func testInvalidLengthByteReturnsEmpty() throws {
+  @Test func testInvalidLengthByteReturnsEmpty() throws {
     let parser = Xbox360Parser()
     var packet = [UInt8](makeXbox360ReportLE(buttons: 1 << 8))
     packet[1] = 0x0E
     let events = try parser.parse(data: Data(packet))
     #expect(events.isEmpty)
   }
-  @Test
-  func testAllZeroReportReturnsNoSyntheticEvents() throws {
+  @Test func testAllZeroReportReturnsNoSyntheticEvents() throws {
     let parser = Xbox360Parser()
     let packet = makeXbox360ReportLE()
     let events = try parser.parse(data: packet)
     #expect(events.isEmpty)
   }
-  @Test
-  func testAButtonPressRelease() throws {
+  @Test func testAButtonPressRelease() throws {
     let parser = Xbox360Parser()
     // Bit 8 = A
     let press = makeXbox360ReportLE(buttons: 1 << 8)
@@ -83,8 +81,7 @@ struct Xbox360ParserTests {
     let releaseEvents = try parser.parse(data: release)
     #expect(releaseEvents.contains(.buttonReleased(.a)))
   }
-  @Test
-  func testBxyButtons() throws {
+  @Test func testBxyButtons() throws {
     let parser = Xbox360Parser()
     let packet = makeXbox360ReportLE(buttons: (1 << 9) | (1 << 10) | (1 << 11))
     let events = try parser.parse(data: packet)
@@ -92,8 +89,7 @@ struct Xbox360ParserTests {
     #expect(events.contains(.buttonPressed(.x)))
     #expect(events.contains(.buttonPressed(.y)))
   }
-  @Test
-  func testShoulderAndStickClicks() throws {
+  @Test func testShoulderAndStickClicks() throws {
     let parser = Xbox360Parser()
     // LB=bit12, RB=bit13, L3=bit6, R3=bit7
     let packet = makeXbox360ReportLE(buttons: (1 << 12) | (1 << 13) | (1 << 6) | (1 << 7))
@@ -103,8 +99,7 @@ struct Xbox360ParserTests {
     #expect(events.contains(.buttonPressed(.leftStick)))
     #expect(events.contains(.buttonPressed(.rightStick)))
   }
-  @Test
-  func testStartBackButtons() throws {
+  @Test func testStartBackButtons() throws {
     let parser = Xbox360Parser()
     // START=bit4, BACK=bit5
     let packet = makeXbox360ReportLE(buttons: (1 << 4) | (1 << 5))
@@ -112,31 +107,44 @@ struct Xbox360ParserTests {
     #expect(events.contains(.buttonPressed(.start)))
     #expect(events.contains(.buttonPressed(.back)))
   }
-  @Test
-  func testGuideButton() throws {
+  @Test func testGuideButton() throws {
     let parser = Xbox360Parser()
     // GUIDE=bit14
     let packet = makeXbox360ReportLE(buttons: 1 << 14)
     let events = try parser.parse(data: packet)
     #expect(events.contains(.buttonPressed(.guide)))
   }
-  @Test
-  func testDpadDirections() throws {
+  @Test func testDpadDirections() throws {
     let parser = Xbox360Parser()
     // up=bit0, down=bit1, left=bit2, right=bit3
     func dpadEvent(bits: UInt16) throws -> ControllerEvent? {
       let events = try parser.parse(data: makeXbox360ReportLE(buttons: bits))
       // Reset to neutral for next test
       _ = try parser.parse(data: makeXbox360ReportLE(buttons: 0))
-      return events.first { if case .dpadChanged = $0 { return true }; return false }
+      return events.first {
+        if case .dpadChanged = $0 { return true }
+        return false
+      }
     }
-    guard case .dpadChanged(let n) = try dpadEvent(bits: 1) else { Issue.record("no dpad"); return }
+    guard case .dpadChanged(let n) = try dpadEvent(bits: 1) else {
+      Issue.record("no dpad")
+      return
+    }
     #expect(n == .north)
-    guard case .dpadChanged(let s) = try dpadEvent(bits: 2) else { Issue.record("no dpad"); return }
+    guard case .dpadChanged(let s) = try dpadEvent(bits: 2) else {
+      Issue.record("no dpad")
+      return
+    }
     #expect(s == .south)
-    guard case .dpadChanged(let w) = try dpadEvent(bits: 4) else { Issue.record("no dpad"); return }
+    guard case .dpadChanged(let w) = try dpadEvent(bits: 4) else {
+      Issue.record("no dpad")
+      return
+    }
     #expect(w == .west)
-    guard case .dpadChanged(let e) = try dpadEvent(bits: 8) else { Issue.record("no dpad"); return }
+    guard case .dpadChanged(let e) = try dpadEvent(bits: 8) else {
+      Issue.record("no dpad")
+      return
+    }
     #expect(e == .east)
     // northEast = up + right
     guard case .dpadChanged(let ne) = try dpadEvent(bits: 9) else {
@@ -145,8 +153,7 @@ struct Xbox360ParserTests {
     }
     #expect(ne == .northEast)
   }
-  @Test
-  func testDpadBitsNotFaceButtons() throws {
+  @Test func testDpadBitsNotFaceButtons() throws {
     let parser = Xbox360Parser()
     let packet = makeXbox360ReportLE(buttons: 0x000F)  // all four dpad bits set
     let events = try parser.parse(data: packet)
@@ -155,59 +162,89 @@ struct Xbox360ParserTests {
     #expect(!events.contains(.buttonPressed(.x)))
     #expect(!events.contains(.buttonPressed(.y)))
   }
-  @Test
-  func testTriggerNormalization() throws {
+  @Test func testTriggerNormalization() throws {
     let parser = Xbox360Parser()
     let packet = makeXbox360ReportLE(lt: 255, rt: 255)
     let events = try parser.parse(data: packet)
-    let lt = events.first { if case .leftTriggerChanged = $0 { return true }; return false }
-    let rt = events.first { if case .rightTriggerChanged = $0 { return true }; return false }
-    guard case .leftTriggerChanged(let ltVal) = lt else { Issue.record("no LT event"); return }
-    guard case .rightTriggerChanged(let rtVal) = rt else { Issue.record("no RT event"); return }
+    let lt = events.first {
+      if case .leftTriggerChanged = $0 { return true }
+      return false
+    }
+    let rt = events.first {
+      if case .rightTriggerChanged = $0 { return true }
+      return false
+    }
+    guard case .leftTriggerChanged(let ltVal) = lt else {
+      Issue.record("no LT event")
+      return
+    }
+    guard case .rightTriggerChanged(let rtVal) = rt else {
+      Issue.record("no RT event")
+      return
+    }
     #expect(abs(ltVal - 1.0) < 0.01)
     #expect(abs(rtVal - 1.0) < 0.01)
   }
-  @Test
-  func testTriggerHalfPress() throws {
+  @Test func testTriggerHalfPress() throws {
     let parser = Xbox360Parser()
     let packet = makeXbox360ReportLE(lt: 128, rt: 128)
     let events = try parser.parse(data: packet)
-    let lt = events.first { if case .leftTriggerChanged = $0 { return true }; return false }
-    guard case .leftTriggerChanged(let ltVal) = lt else { Issue.record("no LT event"); return }
+    let lt = events.first {
+      if case .leftTriggerChanged = $0 { return true }
+      return false
+    }
+    guard case .leftTriggerChanged(let ltVal) = lt else {
+      Issue.record("no LT event")
+      return
+    }
     #expect(abs(ltVal - (128.0 / 255.0)) < 0.01)
   }
-  @Test
-  func testLeftStickFullRight() throws {
+  @Test func testLeftStickFullRight() throws {
     let parser = Xbox360Parser()
     let packet = makeXbox360ReportLE(lsx: Int16.max)
     let events = try parser.parse(data: packet)
-    let ls = events.first { if case .leftStickChanged = $0 { return true }; return false }
-    guard case .leftStickChanged(let lx, _) = ls else { Issue.record("no LS event"); return }
+    let ls = events.first {
+      if case .leftStickChanged = $0 { return true }
+      return false
+    }
+    guard case .leftStickChanged(let lx, _) = ls else {
+      Issue.record("no LS event")
+      return
+    }
     #expect(abs(lx - 1.0) < 0.01)
   }
-  @Test
-  func testLeftStickFullUp() throws {
+  @Test func testLeftStickFullUp() throws {
     let parser = Xbox360Parser()
     // Raw negative LSY = stick pushed up; normalized output should be positive Y
     let packet = makeXbox360ReportLE(lsy: Int16.min)
     let events = try parser.parse(data: packet)
-    let ls = events.first { if case .leftStickChanged = $0 { return true }; return false }
-    guard case .leftStickChanged(_, let ly) = ls else { Issue.record("no LS event"); return }
+    let ls = events.first {
+      if case .leftStickChanged = $0 { return true }
+      return false
+    }
+    guard case .leftStickChanged(_, let ly) = ls else {
+      Issue.record("no LS event")
+      return
+    }
     #expect(ly == 1.0)
   }
-  @Test
-  func testRightStickNormalization() throws {
+  @Test func testRightStickNormalization() throws {
     let parser = Xbox360Parser()
     let packet = makeXbox360ReportLE(rsx: Int16.min, rsy: Int16.max)
     let events = try parser.parse(data: packet)
-    let rs = events.first { if case .rightStickChanged = $0 { return true }; return false }
-    guard case .rightStickChanged(let rx, let ry) = rs else { Issue.record("no RS event"); return }
+    let rs = events.first {
+      if case .rightStickChanged = $0 { return true }
+      return false
+    }
+    guard case .rightStickChanged(let rx, let ry) = rs else {
+      Issue.record("no RS event")
+      return
+    }
     #expect(rx == -1.0)
     // RSY raw positive = stick down -> normalized output negative
     #expect(ry < -0.99)
   }
-  @Test
-  func testChangeDetectionButtons() throws {
+  @Test func testChangeDetectionButtons() throws {
     let parser = Xbox360Parser()
     let press = makeXbox360ReportLE(buttons: 1 << 8)  // A
     _ = try parser.parse(data: press)
@@ -215,26 +252,29 @@ struct Xbox360ParserTests {
     #expect(!events2.contains(.buttonPressed(.a)))
     #expect(!events2.contains(.buttonReleased(.a)))
   }
-  @Test
-  func testChangeDetectionTriggers() throws {
+  @Test func testChangeDetectionTriggers() throws {
     let parser = Xbox360Parser()
     let first = makeXbox360ReportLE(lt: 200)
     _ = try parser.parse(data: first)
     let events2 = try parser.parse(data: first)
-    let hasLT = events2.contains { if case .leftTriggerChanged = $0 { return true }; return false }
+    let hasLT = events2.contains {
+      if case .leftTriggerChanged = $0 { return true }
+      return false
+    }
     #expect(!hasLT)
   }
-  @Test
-  func testChangeDetectionSticks() throws {
+  @Test func testChangeDetectionSticks() throws {
     let parser = Xbox360Parser()
     let first = makeXbox360ReportLE(lsx: 10_000)
     _ = try parser.parse(data: first)
     let events2 = try parser.parse(data: first)
-    let hasLS = events2.contains { if case .leftStickChanged = $0 { return true }; return false }
+    let hasLS = events2.contains {
+      if case .leftStickChanged = $0 { return true }
+      return false
+    }
     #expect(!hasLS)
   }
-  @Test
-  func testMultipleSimultaneousButtons() throws {
+  @Test func testMultipleSimultaneousButtons() throws {
     let parser = Xbox360Parser()
     let packet = makeXbox360ReportLE(buttons: (1 << 8) | (1 << 9) | (1 << 12))
     let events = try parser.parse(data: packet)
@@ -242,8 +282,7 @@ struct Xbox360ParserTests {
     #expect(events.contains(.buttonPressed(.b)))
     #expect(events.contains(.buttonPressed(.leftBumper)))
   }
-  @Test
-  func testIgnoresConnectionReport() throws {
+  @Test func testIgnoresConnectionReport() throws {
     let parser = Xbox360Parser()
     var bytes = [UInt8](repeating: 0, count: 20)
     bytes[0] = 0x08  // connection notification
@@ -251,8 +290,7 @@ struct Xbox360ParserTests {
     #expect(events.isEmpty)
   }
 
-  @Test
-  func testWirelessReceiverLifecycleAndWrappedInput() throws {
+  @Test func testWirelessReceiverLifecycleAndWrappedInput() throws {
     let parser = Xbox360Parser(isWirelessReceiver: true)
 
     #expect(parser.requiresInputConnectionBeforeOutput)
@@ -273,31 +311,34 @@ struct Xbox360ParserTests {
     #expect(parser.consumeInputConnectionStateChange() == .disconnected)
   }
 
-  @Test
-  func testWirelessReceiverSourceBackedOutputPackets() {
+  @Test func testWirelessReceiverSourceBackedOutputPackets() {
     let parser = Xbox360Parser(isWirelessReceiver: true)
 
-    #expect(parser.rumblePacket(left: 0x40, right: 0x20) == [
-      0x00, 0x01, 0x0F, 0xC0, 0x00, 0x40,
-      0x20, 0x00, 0x00, 0x00, 0x00, 0x00,
-    ])
-    #expect(parser.ledPacket(pattern: .player1On) == [
-      0x00, 0x00, 0x08, 0x46,
-      0x00, 0x00, 0x00, 0x00,
-      0x00, 0x00, 0x00, 0x00,
-    ])
-    #expect(parser.usbInputConnectionOutputPackets(for: .connected) == [
-      parser.ledPacket(pattern: .player1On),
-    ])
+    #expect(
+      parser.rumblePacket(left: 0x40, right: 0x20) == [
+        0x00, 0x01, 0x0F, 0xC0, 0x00, 0x40, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00,
+      ]
+    )
+    #expect(
+      parser.ledPacket(pattern: .player1On) == [
+        0x00, 0x00, 0x08, 0x46, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      ]
+    )
+    #expect(
+      parser.usbInputConnectionOutputPackets(for: .connected) == [
+        parser.ledPacket(pattern: .player1On)
+      ]
+    )
     #expect(parser.usbInputConnectionOutputPackets(for: .disconnected).isEmpty)
   }
 
-  @Test
-  func testStartupLEDReportSetsPlayerOneSolidOnlyForXbox360Parser() {
+  @Test func testStartupLEDReportSetsPlayerOneSolidOnlyForXbox360Parser() {
     let parser = Xbox360Parser()
 
     #expect(parser.usbStartupOutputPackets() == [[0x01, 0x03, 0x06]])
-    #expect(!(GenericHIDParser(identifier: DeviceIdentifier(vendorID: 1, productID: 2))
-      is USBStartupOutputProvider))
+    #expect(
+      !(GenericHIDParser(identifier: DeviceIdentifier(vendorID: 1, productID: 2))
+        is USBStartupOutputProvider)
+    )
   }
 }

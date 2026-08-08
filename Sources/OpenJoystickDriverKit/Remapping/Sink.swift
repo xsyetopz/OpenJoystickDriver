@@ -25,23 +25,15 @@ public final class RemappingEmissionLease: @unchecked Sendable {
   private let id: UUID
   private let barrier: RemappingEmissionBarrier
 
-  init(
-    id: UUID,
-    permit: RemappingEmissionPermit,
-    barrier: RemappingEmissionBarrier
-  ) {
+  init(id: UUID, permit: RemappingEmissionPermit, barrier: RemappingEmissionBarrier) {
     self.id = id
     self.permit = permit
     self.barrier = barrier
   }
 
-  deinit {
-    finish()
-  }
+  deinit { finish() }
 
-  public func finish() {
-    barrier.finishLease(id: id)
-  }
+  public func finish() { barrier.finishLease(id: id) }
 }
 
 /// Synchronizes routing admission with the engine's final synchronous sink boundary.
@@ -89,10 +81,8 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
         let permit = RemappingEmissionPermit(revision: revision &+ 1, owner: owner)
         state = .transaction(revision: permit.revision, owner: owner)
         return .admitted(permit)
-      case .transaction:
-        return .transactionAlreadyActive
-      case .terminated:
-        return .terminated
+      case .transaction: return .transactionAlreadyActive
+      case .terminated: return .terminated
       }
     }
     guard case .admitted(let permit) = initial else { return initial }
@@ -111,18 +101,18 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
 
   public func transactionPermit(owner: UUID) -> RemappingEmissionPermit? {
     lock.withLock {
-      guard case .transaction(let revision, let activeOwner) = state,
-        activeOwner == owner
-      else { return nil }
+      guard case .transaction(let revision, let activeOwner) = state, activeOwner == owner else {
+        return nil
+      }
       return RemappingEmissionPermit(revision: revision, owner: owner)
     }
   }
 
   @discardableResult public func resume(owner: UUID) -> Bool {
     lock.withLock {
-      guard case .transaction(let revision, let activeOwner) = state,
-        activeOwner == owner
-      else { return false }
+      guard case .transaction(let revision, let activeOwner) = state, activeOwner == owner else {
+        return false
+      }
       state = .open(revision: revision &+ 1)
       return true
     }
@@ -130,8 +120,7 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
 
   @discardableResult public func resume(_ permit: RemappingEmissionPermit) -> Bool {
     lock.withLock {
-      guard case .transaction(let revision, let owner) = state,
-        permit.revision == revision,
+      guard case .transaction(let revision, let owner) = state, permit.revision == revision,
         permit.owner == owner
       else { return false }
       state = .open(revision: revision &+ 1)
@@ -145,8 +134,7 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
       switch state {
       case .open(let revision), .transaction(let revision, _):
         state = .terminated(revision: revision &+ 1)
-      case .terminated:
-        break
+      case .terminated: break
       }
     }
     await waitUntilDrained()
@@ -163,10 +151,9 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
     lock.withLock { permitsEmission(permit) }
   }
 
-  func withEmissionPermit<Result>(
-    _ permit: RemappingEmissionPermit,
-    _ body: () throws -> Result
-  ) throws -> Result {
+  func withEmissionPermit<Result>(_ permit: RemappingEmissionPermit, _ body: () throws -> Result)
+    throws -> Result
+  {
     guard let lease = acquireLease(requiring: permit) else {
       throw RemappingEventEngineError.outputSuspended
     }
@@ -175,12 +162,12 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
   }
 
   func withTermination<Result>(_ body: () throws -> Result) throws -> Result {
-    guard let lease = acquireLease({ state in
-      guard case .terminated(let revision) = state else { return nil }
-      return RemappingEmissionPermit(revision: revision, owner: nil)
-    }) else {
-      throw RemappingEventEngineError.outputSuspended
-    }
+    guard
+      let lease = acquireLease({ state in
+        guard case .terminated(let revision) = state else { return nil }
+        return RemappingEmissionPermit(revision: revision, owner: nil)
+      })
+    else { throw RemappingEventEngineError.outputSuspended }
     defer { lease.finish() }
     return try body()
   }
@@ -194,18 +181,16 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
     for waiter in waiters { waiter.resume() }
   }
 
-  private func acquireLease(
-    requiring permit: RemappingEmissionPermit
-  ) -> RemappingEmissionLease? {
+  private func acquireLease(requiring permit: RemappingEmissionPermit) -> RemappingEmissionLease? {
     acquireLease { state in
       guard Self.permitsEmission(permit, in: state) else { return nil }
       return permit
     }
   }
 
-  private func acquireLease(
-    _ admittedPermit: (State) -> RemappingEmissionPermit?
-  ) -> RemappingEmissionLease? {
+  private func acquireLease(_ admittedPermit: (State) -> RemappingEmissionPermit?)
+    -> RemappingEmissionLease?
+  {
     lock.withLock {
       guard let permit = admittedPermit(state) else { return nil }
       let id = UUID()
@@ -229,17 +214,11 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
     Self.permitsEmission(permit, in: state)
   }
 
-  private static func permitsEmission(
-    _ permit: RemappingEmissionPermit,
-    in state: State
-  ) -> Bool {
+  private static func permitsEmission(_ permit: RemappingEmissionPermit, in state: State) -> Bool {
     switch state {
-    case .open(let revision):
-      permit.owner == nil && permit.revision == revision
-    case .transaction(let revision, let owner):
-      permit.owner == owner && permit.revision == revision
-    case .terminated:
-      false
+    case .open(let revision): permit.owner == nil && permit.revision == revision
+    case .transaction(let revision, let owner): permit.owner == owner && permit.revision == revision
+    case .terminated: false
     }
   }
 }
@@ -278,12 +257,9 @@ public enum RemappingEventEngineError: Error, Equatable, LocalizedError, Sendabl
 
   public var errorDescription: String? {
     switch self {
-    case .faulted:
-      "System-input remapping is suspended until sink recovery succeeds."
-    case .outputSuspended:
-      "System-input remapping is suspended by routing admission."
-    case .sinkUnavailable:
-      "The system-input sink rejected a remapping action."
+    case .faulted: "System-input remapping is suspended until sink recovery succeeds."
+    case .outputSuspended: "System-input remapping is suspended by routing admission."
+    case .sinkUnavailable: "The system-input sink rejected a remapping action."
     }
   }
 }

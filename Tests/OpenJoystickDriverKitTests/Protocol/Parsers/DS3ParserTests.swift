@@ -34,8 +34,7 @@ private func eventExists(_ events: [ControllerEvent], _ expected: ControllerEven
 }
 
 struct DS3ParserTests {
-  @Test
-  func testDS3ProfileIsExperimentalAndUnverified() {
+  @Test func testDS3ProfileIsExperimentalAndUnverified() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 1356, productID: 616)
     let profile = registry.runtimeProfile(for: identifier)
@@ -47,14 +46,11 @@ struct DS3ParserTests {
     #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
   }
 
-  @Test
-  func testDS3ReportParsesPrimaryButtonsAndDpad() throws {
+  @Test func testDS3ReportParsesPrimaryButtonsAndDpad() throws {
     let parser = DS3Parser()
     _ = try parser.parse(data: makeDS3Report())
 
-    let events = try parser.parse(
-      data: makeDS3Report(button0: 0x3F, button1: 0xFF, ps: true)
-    )
+    let events = try parser.parse(data: makeDS3Report(button0: 0x3F, button1: 0xFF, ps: true))
 
     #expect(eventExists(events, .buttonPressed(.back)))
     #expect(eventExists(events, .buttonPressed(.leftStick)))
@@ -72,8 +68,7 @@ struct DS3ParserTests {
     #expect(eventExists(events, .dpadChanged(.northEast)))
   }
 
-  @Test
-  func testDS3ReportParsesSticksAndAnalogTriggers() throws {
+  @Test func testDS3ReportParsesSticksAndAnalogTriggers() throws {
     let parser = DS3Parser()
     _ = try parser.parse(data: makeDS3Report())
 
@@ -94,34 +89,37 @@ struct DS3ParserTests {
     #expect(eventExists(events, .rightTriggerChanged(128.0 / 255.0)))
   }
 
-  @Test
-  func testDS3OperationalFeatureReadRequestsMatchLinuxUsbInitNeed() {
+  @Test func testDS3OperationalFeatureReadRequestsMatchLinuxUsbInitNeed() {
     let requests = DS3Parser().hidStartupFeatureReadRequests()
 
-    #expect(requests == [
-      PhysicalHIDFeatureReadRequest(reportID: 0xF2, length: 17),
-      PhysicalHIDFeatureReadRequest(reportID: 0xF5, length: 8),
-    ])
+    #expect(
+      requests == [
+        PhysicalHIDFeatureReadRequest(reportID: 0xF2, length: 17),
+        PhysicalHIDFeatureReadRequest(reportID: 0xF5, length: 8),
+      ]
+    )
   }
 
-  @Test
-  func testDS3StartupReportsAreTransportScoped() {
+  @Test func testDS3StartupReportsAreTransportScoped() {
     let parser = DS3Parser()
 
-    #expect(parser.hidStartupFeatureReadRequests(transport: "USB") == [
-      PhysicalHIDFeatureReadRequest(reportID: 0xF2, length: 17),
-      PhysicalHIDFeatureReadRequest(reportID: 0xF5, length: 8),
-    ])
+    #expect(
+      parser.hidStartupFeatureReadRequests(transport: "USB") == [
+        PhysicalHIDFeatureReadRequest(reportID: 0xF2, length: 17),
+        PhysicalHIDFeatureReadRequest(reportID: 0xF5, length: 8),
+      ]
+    )
     #expect(parser.hidStartupFeatureReadRequests(transport: "Bluetooth").isEmpty)
     #expect(parser.hidStartupFeatureReadRequests(transport: nil).isEmpty)
     #expect(parser.hidStartupFeatureReports(transport: "USB").isEmpty)
-    #expect(parser.hidStartupFeatureReports(transport: "Bluetooth") == [
-      PhysicalHIDOutputReport(reportID: 0xF4, bytes: [0xF4, 0x42, 0x03, 0x00, 0x00])
-    ])
+    #expect(
+      parser.hidStartupFeatureReports(transport: "Bluetooth") == [
+        PhysicalHIDOutputReport(reportID: 0xF4, bytes: [0xF4, 0x42, 0x03, 0x00, 0x00])
+      ]
+    )
   }
 
-  @Test
-  func testDS3IgnoresBogusBluetoothStatusReport() throws {
+  @Test func testDS3IgnoresBogusBluetoothStatusReport() throws {
     let parser = DS3Parser()
     var report = Array(makeDS3Report(button0: 0x10, button1: 0x40, leftX: 255, l2Analog: 255))
     report[1] = 0xFF
@@ -131,8 +129,7 @@ struct DS3ParserTests {
     #expect(events.isEmpty)
   }
 
-  @Test
-  func testDS3IgnoresUnsupportedReports() throws {
+  @Test func testDS3IgnoresUnsupportedReports() throws {
     let parser = DS3Parser()
     let events = try parser.parse(data: Data([0x02, 0, 0, 0]))
 

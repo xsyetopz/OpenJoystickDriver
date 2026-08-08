@@ -26,32 +26,34 @@ struct CoreGraphicsSinkTests {
     try sink.send(.modifierUp(.command))
     try sink.send(.modifierUp(.shift))
 
-    #expect(poster.events == [
-      .modifier(virtualKey: CGKeyCode(kVK_Shift), flags: [.shift]),
-      .modifier(virtualKey: CGKeyCode(kVK_Command), flags: [.shift, .command]),
-      .keyboard(virtualKey: CGKeyCode(kVK_ANSI_A), isDown: true, flags: [.shift, .command]),
-      .keyboard(virtualKey: CGKeyCode(kVK_ANSI_A), isDown: false, flags: [.shift, .command]),
-      .modifier(virtualKey: CGKeyCode(kVK_Command), flags: [.shift]),
-      .modifier(virtualKey: CGKeyCode(kVK_Shift), flags: []),
-    ])
+    #expect(
+      poster.events == [
+        .modifier(virtualKey: CGKeyCode(kVK_Shift), flags: [.shift]),
+        .modifier(virtualKey: CGKeyCode(kVK_Command), flags: [.shift, .command]),
+        .keyboard(virtualKey: CGKeyCode(kVK_ANSI_A), isDown: true, flags: [.shift, .command]),
+        .keyboard(virtualKey: CGKeyCode(kVK_ANSI_A), isDown: false, flags: [.shift, .command]),
+        .modifier(virtualKey: CGKeyCode(kVK_Command), flags: [.shift]),
+        .modifier(virtualKey: CGKeyCode(kVK_Shift), flags: []),
+      ]
+    )
   }
 
   @Test func everyModifierUsesItsPlatformKeyAndFlag() throws {
     let cases: [(RemappingKeyModifier, CGKeyCode, CoreGraphicsModifierFlags)] = [
-      (.command, CGKeyCode(kVK_Command), .command),
-      (.control, CGKeyCode(kVK_Control), .control),
-      (.option, CGKeyCode(kVK_Option), .option),
-      (.shift, CGKeyCode(kVK_Shift), .shift),
+      (.command, CGKeyCode(kVK_Command), .command), (.control, CGKeyCode(kVK_Control), .control),
+      (.option, CGKeyCode(kVK_Option), .option), (.shift, CGKeyCode(kVK_Shift), .shift),
     ]
     for (modifier, virtualKey, flag) in cases {
       let poster = RecordingPoster()
       let sink = makeSink(poster: poster)
       try sink.send(.modifierDown(modifier))
       try sink.send(.modifierUp(modifier))
-      #expect(poster.events == [
-        .modifier(virtualKey: virtualKey, flags: flag),
-        .modifier(virtualKey: virtualKey, flags: []),
-      ])
+      #expect(
+        poster.events == [
+          .modifier(virtualKey: virtualKey, flags: flag),
+          .modifier(virtualKey: virtualKey, flags: []),
+        ]
+      )
     }
   }
 
@@ -90,20 +92,18 @@ struct CoreGraphicsSinkTests {
     poster.pointerLocation = CGPoint(x: 140, y: 210)
     try sink.send(.mouseMoved(axis: .y, amount: -4))
 
-    #expect(poster.events == [
-      .pointer(location: CGPoint(x: 132, y: 200), deltaX: 32, deltaY: 0),
-      .pointer(location: CGPoint(x: 140, y: 178), deltaX: 0, deltaY: -32),
-    ])
+    #expect(
+      poster.events == [
+        .pointer(location: CGPoint(x: 132, y: 200), deltaX: 32, deltaY: 0),
+        .pointer(location: CGPoint(x: 140, y: 178), deltaX: 0, deltaY: -32),
+      ]
+    )
     #expect(poster.pointerReadCount == 2)
 
     try sink.send(.mouseMoved(axis: .x, amount: 0))
     poster.pointerLocation = CGPoint(x: 10, y: 20)
     try sink.send(.mouseMoved(axis: .x, amount: 0.5))
-    #expect(poster.events.last == .pointer(
-      location: CGPoint(x: 26, y: 20),
-      deltaX: 16,
-      deltaY: 0
-    ))
+    #expect(poster.events.last == .pointer(location: CGPoint(x: 26, y: 20), deltaX: 16, deltaY: 0))
     #expect(poster.pointerReadCount == 3)
   }
 
@@ -205,9 +205,7 @@ private enum PosterFailure {
   case posting
 }
 
-private enum SyntheticPostingError: Error {
-  case failed
-}
+private enum SyntheticPostingError: Error { case failed }
 
 private final class RecordingPoster: CoreGraphicsEventPosting, @unchecked Sendable {
   var events: [CoreGraphicsPreparedEvent] = []

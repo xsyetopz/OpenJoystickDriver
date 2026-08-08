@@ -8,12 +8,7 @@ public struct BoundedProcessResult: Equatable, Sendable {
   public let timedOut: Bool
   public let outputWasTruncated: Bool
 
-  public init(
-    terminationStatus: Int32,
-    output: String,
-    timedOut: Bool,
-    outputWasTruncated: Bool
-  ) {
+  public init(terminationStatus: Int32, output: String, timedOut: Bool, outputWasTruncated: Bool) {
     self.terminationStatus = terminationStatus
     self.output = output
     self.timedOut = timedOut
@@ -36,9 +31,7 @@ public enum BoundedProcessRunner {
     let process = Process()
     process.executableURL = executableURL
     process.arguments = arguments
-    if let environment {
-      process.environment = environment
-    }
+    if let environment { process.environment = environment }
 
     let pipe = Pipe()
     process.standardOutput = pipe
@@ -47,9 +40,7 @@ public enum BoundedProcessRunner {
     let terminationFinished = DispatchSemaphore(value: 0)
     process.terminationHandler = { _ in terminationFinished.signal() }
 
-    do {
-      try process.run()
-    } catch {
+    do { try process.run() } catch {
       process.terminationHandler = nil
       pipe.fileHandleForReading.closeFile()
       pipe.fileHandleForWriting.closeFile()
@@ -95,9 +86,7 @@ public enum BoundedProcessRunner {
 
     let snapshot = capture.snapshot()
     let status = process.isRunning ? Int32(-1) : process.terminationStatus
-    if status == -1 {
-      timedOut = true
-    }
+    if status == -1 { timedOut = true }
     process.terminationHandler = nil
 
     return BoundedProcessResult(
@@ -115,23 +104,15 @@ private final class ProcessOutputCapture: @unchecked Sendable {
   private var data = Data()
   private var wasTruncated = false
 
-  init(maximumBytes: Int) {
-    self.maximumBytes = maximumBytes
-  }
+  init(maximumBytes: Int) { self.maximumBytes = maximumBytes }
 
   func append(_ chunk: Data) {
     lock.withLock {
       let remaining = max(0, maximumBytes - data.count)
-      if remaining > 0 {
-        data.append(chunk.prefix(remaining))
-      }
-      if chunk.count > remaining {
-        wasTruncated = true
-      }
+      if remaining > 0 { data.append(chunk.prefix(remaining)) }
+      if chunk.count > remaining { wasTruncated = true }
     }
   }
 
-  func snapshot() -> (data: Data, wasTruncated: Bool) {
-    lock.withLock { (data, wasTruncated) }
-  }
+  func snapshot() -> (data: Data, wasTruncated: Bool) { lock.withLock { (data, wasTruncated) } }
 }

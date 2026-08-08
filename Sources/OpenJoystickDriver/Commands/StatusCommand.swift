@@ -18,24 +18,14 @@ struct StatusCommand {
       servicePayload = try? await client.getStatus()
       semaphore.signal()
     }
-    let replied = semaphore.wait(
-      timeout: .now() + applicationServiceCallTimeoutSeconds
-    ) == .success
+    let replied = semaphore.wait(timeout: .now() + applicationServiceCallTimeoutSeconds) == .success
     let connected = replied && servicePayload != nil
 
     if connected, let payload = servicePayload {
-      if json {
-        printJSON(payload)
-      } else {
-        printPayloadStatus(payload)
-      }
+      if json { printJSON(payload) } else { printPayloadStatus(payload) }
     } else {
       client.disconnect()
-      if json {
-        printJSON(directPayload())
-      } else {
-        runDirectMode()
-      }
+      if json { printJSON(directPayload()) } else { runDirectMode() }
     }
     if !json {
       print("")
@@ -60,11 +50,7 @@ struct StatusCommand {
 
   private func runDirectMode() {
     RuntimeStatusText.directModeLines(localPermissionStatus()).forEach { line in
-      if line.hasPrefix("  -> App recovery:") {
-        CLIOutput.diagnostic(line)
-      } else {
-        print(line)
-      }
+      if line.hasPrefix("  -> App recovery:") { CLIOutput.diagnostic(line) } else { print(line) }
     }
     CLIOutput.diagnostic(
       "If access is denied, run --headless permissions request and approve "
@@ -98,14 +84,13 @@ struct StatusCommand {
   }
 
   private func localPermissionStatus() -> StatusPermissions {
-    let snapshot = runSyncResult(timeout: applicationServiceCallTimeoutSeconds) {
-      PermissionManager.Snapshot(
-        inputMonitoring: PermissionManager.currentInputMonitoringAccessState(),
-        accessibility: PermissionManager.currentAccessibilityAccessState()
-      )
-    } ?? PermissionManager.Snapshot(inputMonitoring: .unknown, accessibility: .unknown)
-    return StatusPermissions(
-      snapshot
-    )
+    let snapshot =
+      runSyncResult(timeout: applicationServiceCallTimeoutSeconds) {
+        PermissionManager.Snapshot(
+          inputMonitoring: PermissionManager.currentInputMonitoringAccessState(),
+          accessibility: PermissionManager.currentAccessibilityAccessState()
+        )
+      } ?? PermissionManager.Snapshot(inputMonitoring: .unknown, accessibility: .unknown)
+    return StatusPermissions(snapshot)
   }
 }

@@ -37,9 +37,9 @@ struct RemappingCompositionTests {
     )
     let method = try #require(requests.range(of: "public func setSuppressOutput"))
     let tail = requests[method.lowerBound...]
-    let routerCall = try #require(tail.range(
-      of: "try await remappingRouter.setOutputSuppressed(suppress)"
-    ))
+    let routerCall = try #require(
+      tail.range(of: "try await remappingRouter.setOutputSuppressed(suppress)")
+    )
     let successReply = try #require(tail.range(of: "callback.call(true)"))
 
     #expect(routerCall.lowerBound < successReply.lowerBound)
@@ -76,11 +76,8 @@ struct RemappingCompositionTests {
   }
 
   private func source(_ path: String) throws -> String {
-    let root = URL(fileURLWithPath: #filePath)
-      .deletingLastPathComponent()
-      .deletingLastPathComponent()
-      .deletingLastPathComponent()
-      .deletingLastPathComponent()
+    let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
     return try String(contentsOf: root.appendingPathComponent(path), encoding: .utf8)
   }
 }

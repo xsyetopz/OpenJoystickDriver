@@ -4,12 +4,9 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct HIDProfileDiscoveryTests {
-  @Test
-  func catalogIncludesSteamProfilesButExcludesRawUSBProfiles() {
+  @Test func catalogIncludesSteamProfilesButExcludesRawUSBProfiles() {
     let identifiers = Set(
-      ParserRegistry().hidProfileIdentifiers().map {
-        "\($0.vendorID):\($0.productID)"
-      }
+      ParserRegistry().hidProfileIdentifiers().map { "\($0.vendorID):\($0.productID)" }
     )
 
     #expect(identifiers.contains("10462:4354"))
@@ -20,13 +17,9 @@ struct HIDProfileDiscoveryTests {
     #expect(!identifiers.contains("5426:2627"))
   }
 
-  @Test
-  func hidManagerUsesGamePadAndExactProfileMatches() throws {
+  @Test func hidManagerUsesGamePadAndExactProfileMatches() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let stream = try source(
-      "Sources/OpenJoystickDriverKit/HID/DeviceStream.swift",
-      root: root
-    )
+    let stream = try source("Sources/OpenJoystickDriverKit/HID/DeviceStream.swift", root: root)
     let manager = try source(
       "Sources/OpenJoystickDriverKit/Device/DeviceManager/DeviceManager.swift",
       root: root

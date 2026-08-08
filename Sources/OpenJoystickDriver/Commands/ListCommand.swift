@@ -18,9 +18,7 @@ struct ListCommand {
       serviceDevices = try? await client.listDevices()
       semaphore.signal()
     }
-    let replied = semaphore.wait(
-      timeout: .now() + applicationServiceCallTimeoutSeconds
-    ) == .success
+    let replied = semaphore.wait(timeout: .now() + applicationServiceCallTimeoutSeconds) == .success
     let serviceRunning = replied && serviceDevices != nil
 
     defer { client.disconnect() }
@@ -46,9 +44,7 @@ struct ListCommand {
   private func listUSBDevices() {
     print("USB Controllers (class 0xFF / GIP):")
     let result: Result<[USBControllerDescription], USBScanFailure> = runSyncResult {
-      do {
-        return .success(try await USBControllerScanner.scanVendorSpecific())
-      } catch {
+      do { return .success(try await USBControllerScanner.scanVendorSpecific()) } catch {
         return .failure(USBScanFailure(message: error.localizedDescription))
       }
     }
@@ -69,16 +65,12 @@ struct ListCommand {
       let mappings = device.mappings.isEmpty ? "none" : device.mappings.joined(separator: ",")
       print(
         "  VID=0x\(vid)" + " PID=0x\(pid)" + " bus=\(device.bus)" + " addr=\(device.address)"
-          + " parser=\(device.parser)"
-          + " protocol=\(device.protocolVariant)"
-          + " endpoints=in:0x\(device.inputEndpoint)"
-          + " out:0x\(device.outputEndpoint)"
+          + " parser=\(device.parser)" + " protocol=\(device.protocolVariant)"
+          + " endpoints=in:0x\(device.inputEndpoint)" + " out:0x\(device.outputEndpoint)"
           + " mappings=\(mappings)"
       )
     }
   }
 }
 
-private struct USBScanFailure: Error, Sendable {
-  let message: String
-}
+private struct USBScanFailure: Error, Sendable { let message: String }

@@ -83,8 +83,8 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
 ///   byte 2 : LED pattern (see Xbox360LEDPattern)
 /// ```
 public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPlayerIndicatorOutput,
-  USBStartupOutputProvider, ControllerInputConnectionLifecycle,
-  USBInputConnectionOutputProvider, @unchecked Sendable
+  USBStartupOutputProvider, ControllerInputConnectionLifecycle, USBInputConnectionOutputProvider,
+  @unchecked Sendable
 {
 
   // MARK: - Thread safety
@@ -130,14 +130,12 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
   }
 
   public func usbStartupOutputPackets() -> [[UInt8]] {
-    isWirelessReceiver
-      ? []
-      : [[0x01, 0x03, Xbox360LEDPattern.player1On.rawValue]]
+    isWirelessReceiver ? [] : [[0x01, 0x03, Xbox360LEDPattern.player1On.rawValue]]
   }
 
-  public func usbInputConnectionOutputPackets(
-    for state: ControllerInputConnectionState
-  ) -> [[UInt8]] {
+  public func usbInputConnectionOutputPackets(for state: ControllerInputConnectionState)
+    -> [[UInt8]]
+  {
     guard isWirelessReceiver, state == .connected else { return [] }
     return [wirelessLEDPacket(pattern: .player1On)]
   }
@@ -147,12 +145,8 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
     guard isWirelessReceiver else { return parseWired(data: data) }
     guard data.count >= 2 else { return [] }
 
-    if data[0] & 0x08 != 0 {
-      updateReceiverConnection(isConnected: data[1] & 0x80 != 0)
-    }
-    guard data[1] == 0x01, data.count >= xbox360InputReportLength + 4 else {
-      return []
-    }
+    if data[0] & 0x08 != 0 { updateReceiverConnection(isConnected: data[1] & 0x80 != 0) }
+    guard data[1] == 0x01, data.count >= xbox360InputReportLength + 4 else { return [] }
     updateReceiverConnection(isConnected: true)
     return parseWired(data: Data(data.dropFirst(4)))
   }
@@ -210,9 +204,7 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
     right: UInt8,
     lt: UInt8,
     rt: UInt8
-  ) throws {
-    try sendRumble(handle: handle, left: left, right: right)
-  }
+  ) throws { try sendRumble(handle: handle, left: left, right: right) }
 
   /// Sets the ring-of-light LED pattern on the physical controller.
   ///
@@ -226,26 +218,17 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
 
   func rumblePacket(left: UInt8, right: UInt8) -> [UInt8] {
     if isWirelessReceiver {
-      return [
-        0x00, 0x01, 0x0F, 0xC0, 0x00, left,
-        right, 0x00, 0x00, 0x00, 0x00, 0x00,
-      ]
+      return [0x00, 0x01, 0x0F, 0xC0, 0x00, left, right, 0x00, 0x00, 0x00, 0x00, 0x00]
     }
     return [0x00, 0x08, 0x00, left, right, 0x00, 0x00, 0x00]
   }
 
   func ledPacket(pattern: Xbox360LEDPattern) -> [UInt8] {
-    isWirelessReceiver
-      ? wirelessLEDPacket(pattern: pattern)
-      : [0x01, 0x03, pattern.rawValue]
+    isWirelessReceiver ? wirelessLEDPacket(pattern: pattern) : [0x01, 0x03, pattern.rawValue]
   }
 
   private func wirelessLEDPacket(pattern: Xbox360LEDPattern) -> [UInt8] {
-    [
-      0x00, 0x00, 0x08, 0x40 + pattern.rawValue,
-      0x00, 0x00, 0x00, 0x00,
-      0x00, 0x00, 0x00, 0x00,
-    ]
+    [0x00, 0x00, 0x08, 0x40 + pattern.rawValue, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
   }
 
   private func updateReceiverConnection(isConnected: Bool) {
@@ -276,9 +259,7 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
   public func sendPhysicalPlayerIndicator(
     handle: USBDeviceHandle,
     indicator: PhysicalPlayerIndicator
-  ) throws {
-    try sendLED(handle: handle, pattern: Self.ledPattern(for: indicator))
-  }
+  ) throws { try sendLED(handle: handle, pattern: Self.ledPattern(for: indicator)) }
 
   // MARK: - Private parsing
 
@@ -317,12 +298,8 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
 
   private func parseTriggers(lt: UInt8, rt: UInt8) -> [ControllerEvent] {
     var events: [ControllerEvent] = []
-    if lt != prevLT {
-      events.append(.leftTriggerChanged(Float(lt) / xbox360TriggerMax))
-    }
-    if rt != prevRT {
-      events.append(.rightTriggerChanged(Float(rt) / xbox360TriggerMax))
-    }
+    if lt != prevLT { events.append(.leftTriggerChanged(Float(lt) / xbox360TriggerMax)) }
+    if rt != prevRT { events.append(.rightTriggerChanged(Float(rt) / xbox360TriggerMax)) }
     return events
   }
 
@@ -349,10 +326,10 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
     case 2: .south
     case 4: .west
     case 8: .east
-    case 9: .northEast   // up + right
-    case 5: .northWest   // up + left
+    case 9: .northEast  // up + right
+    case 5: .northWest  // up + left
     case 10: .southEast  // down + right
-    case 6: .southWest   // down + left
+    case 6: .southWest  // down + left
     default: .neutral
     }
   }

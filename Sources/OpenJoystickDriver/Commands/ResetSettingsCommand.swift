@@ -7,13 +7,9 @@ struct ResetSettingsCommand {
     client.connect()
     defer { client.disconnect() }
 
-    let ok = runSyncResult {
-      do {
-        return try await client.resetSettings()
-      } catch {
-        return false
-      }
-    } ?? false
+    let ok =
+      runSyncResult { do { return try await client.resetSettings() } catch { return false } }
+      ?? false
 
     if !ok {
       CLIOutput.error(

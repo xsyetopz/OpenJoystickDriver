@@ -63,9 +63,7 @@ struct PermissionsCommand {
     defer { client.disconnect() }
     let result: ApplicationServiceStatusPayload? = runSyncOptionalResult(
       timeout: applicationServiceCallTimeoutSeconds
-    ) {
-      try? await client.getStatus()
-    }
+    ) { try? await client.getStatus() }
     guard let payload = result else {
       printPermissionSnapshot(localPermissionSnapshot())
       CLIOutput.diagnostic("")
@@ -147,9 +145,7 @@ struct PermissionsCommand {
       CLIOutput.error("Unknown permission kind: \(kind)")
       exit(1)
     }
-    let url = URL(
-      string: "x-apple.systempreferences:com.apple.preference.security?\(pane)"
-    )
+    let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(pane)")
     if let url, NSWorkspace.shared.open(url) { return }
     CLIOutput.warning("Could not open the requested privacy pane; opening System Settings.")
     NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/System Settings.app"))

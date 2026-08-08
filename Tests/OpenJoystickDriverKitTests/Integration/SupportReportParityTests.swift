@@ -2,8 +2,7 @@ import Foundation
 import Testing
 
 struct SupportReportParityTests {
-  @Test
-  func headlessReportCommandUsesTheSharedReportService() throws {
+  @Test func headlessReportCommandUsesTheSharedReportService() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cli = try String(
       contentsOf: rootURL.appendingPathComponent("Sources/OpenJoystickDriver/CLIGrammar.swift"),

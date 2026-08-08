@@ -220,8 +220,9 @@ struct DeviceCatalog: Sendable {
     guard supportedSources.contains(record.provenance.source) else {
       throw CatalogError("unsupported provenance source \(record.provenance.source)")
     }
-    guard (128...255).contains(inputEndpoint), (1...127).contains(outputEndpoint),
-      (0...255).contains(interfaceNumber), settleMilliseconds >= 0
+    guard DeviceTransportProfile.inputEndpointRange.contains(inputEndpoint),
+      DeviceTransportProfile.outputEndpointRange.contains(outputEndpoint),
+      DeviceTransportProfile.interfaceNumberRange.contains(interfaceNumber), settleMilliseconds >= 0
     else { throw CatalogError("invalid USB override for \(record.vendorID):\(record.productID)") }
 
     let packetNames = record.protocolInfo.startupPackets ?? []
@@ -248,7 +249,8 @@ struct DeviceCatalog: Sendable {
         hasInterfaceOverride: record.usb?.interface != nil,
         hasEndpointOverride: record.usb?.endpoints != nil,
         needsSetConfiguration: record.usb?.configuration == "set1-before-claim",
-        postHandshakeSettleNanoseconds: UInt64(settleMilliseconds) * 1_000_000
+        postHandshakeSettleNanoseconds: UInt64(settleMilliseconds)
+          * DeviceTransportProfile.nanosecondsPerMillisecond
       ),
       protocolVariant: variant,
       mappingFlags: flags,

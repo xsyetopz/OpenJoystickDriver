@@ -6,8 +6,7 @@ import Testing
 struct LogitechF310MappingTests {
   private let identifier = DeviceIdentifier(vendorID: 1_133, productID: 49_693)
 
-  @Test
-  func profileSelectsUnverifiedXbox360Parser() {
+  @Test func profileSelectsUnverifiedXbox360Parser() {
     let profile = ParserRegistry().runtimeProfile(for: identifier)
 
     #expect(profile.parserName == "Xbox360")
@@ -17,12 +16,10 @@ struct LogitechF310MappingTests {
     #expect(profile.transportProfile.outputEndpoint == 0x02)
   }
 
-  @Test
-  func xinputButtonsReachNamedDiagnosticState() throws {
+  @Test func xinputButtonsReachNamedDiagnosticState() throws {
     let expected: [(Int, Button)] = [
-      (4, .start), (5, .back), (6, .leftStick), (7, .rightStick),
-      (8, .a), (9, .b), (10, .x), (11, .y),
-      (12, .leftBumper), (13, .rightBumper), (14, .guide),
+      (4, .start), (5, .back), (6, .leftStick), (7, .rightStick), (8, .a), (9, .b), (10, .x),
+      (11, .y), (12, .leftBumper), (13, .rightBumper), (14, .guide),
     ]
 
     for (bit, button) in expected {
@@ -36,8 +33,7 @@ struct LogitechF310MappingTests {
     }
   }
 
-  @Test
-  func semanticButtonLabelsRemainStable() {
+  @Test func semanticButtonLabelsRemainStable() {
     #expect(Button.leftBumper.compactLabel == "LB")
     #expect(Button.rightBumper.compactLabel == "RB")
     #expect(Button.a.compactLabel == "A")

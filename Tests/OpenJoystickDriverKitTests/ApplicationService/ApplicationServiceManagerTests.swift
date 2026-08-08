@@ -3,10 +3,8 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-@Suite("Application service lifecycle")
-struct ApplicationServiceManagerTests {
-  @Test("main app executable owns runtime")
-  func applicationExecutableURL() {
+@Suite("Application service lifecycle") struct ApplicationServiceManagerTests {
+  @Test("main app executable owns runtime") func applicationExecutableURL() {
     let url = ApplicationServiceManager.applicationExecutableURL(
       in: URL(fileURLWithPath: "/Applications/OpenJoystickDriver.app", isDirectory: true)
     )
@@ -16,8 +14,7 @@ struct ApplicationServiceManagerTests {
     #expect(!url.path.contains("OpenJoystickDriverDaemon"))
   }
 
-  @Test("main app has a stable service identity")
-  func serviceIdentity() {
+  @Test("main app has a stable service identity") func serviceIdentity() {
     #expect(ApplicationServiceManager.label == "com.openjoystickdriver")
   }
 }

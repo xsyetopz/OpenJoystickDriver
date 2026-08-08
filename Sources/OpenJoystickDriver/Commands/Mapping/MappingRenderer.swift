@@ -16,10 +16,33 @@ enum MappingRenderer {
     let header =
       "\(profile.id.uuidString)  \(profile.name)  "
       + "\(profile.device.vendorID):\(profile.device.productID)  \(scope(profile.applicationScope))"
-    let bindings = profile.bindings.map {
-      "  \($0.id.uuidString) \(source($0.source)) -> \(destination($0.destination))"
+    let bindings = profile.bindings.map { binding in
+      var line =
+        "  \(binding.id.uuidString) \(source(binding.source)) -> "
+        + "\(destination(binding.destination))"
+      if let longHold = binding.longHold {
+        line += "  [long-hold: \(longHold.durationMs)ms -> \(destination(longHold.destination))]"
+      }
+      if let doubleTap = binding.doubleTap {
+        line += "  [double-tap: \(doubleTap.windowMs)ms -> \(destination(doubleTap.destination))]"
+      }
+      return line
     }
-    return ([header] + bindings).joined(separator: "\n")
+    let chords = profile.chords.map { chord in
+      let sources = chord.sources.map(source).sorted().joined(separator: ",")
+      return "  \(chord.id.uuidString) chord[\(sources)] -> \(destination(chord.destination))"
+    }
+    let sequences = profile.sequences.map { seq in
+      let sources = seq.sources.map(source).joined(separator: ",")
+      return "  \(seq.id.uuidString) sequence[\(sources)] window:\(seq.windowMs)ms -> "
+        + "\(destination(seq.destination))"
+    }
+    let layers = profile.layers.map { layer in
+      "  \(layer.id.uuidString) layer:\(layer.name) "
+        + "\(layer.activationMode.rawValue):\(source(layer.activator)) "
+        + "bindings:\(layer.bindings.count)"
+    }
+    return ([header] + bindings + chords + sequences + layers).joined(separator: "\n")
   }
 
   static func snapshot(_ snapshot: ApplicationServiceRemappingSnapshotPayload) -> String {
@@ -60,5 +83,17 @@ enum MappingRenderer {
     case .global: "global"
     case .application(let bundleID): "app:\(bundleID)"
     }
+  }
+
+  static func layers(_ profile: RemappingProfile) -> String {
+    if profile.layers.isEmpty { return "No layers." }
+    return profile.layers.enumerated().map { index, layer in
+      let bindings = layer.bindings.map { b in
+        "    \(b.id.uuidString) \(source(b.source)) -> \(destination(b.destination))"
+      }
+      return "  [\(index)] \(layer.id.uuidString) \(layer.name) "
+        + "\(layer.activationMode.rawValue):\(source(layer.activator))\n"
+        + bindings.joined(separator: "\n")
+    }.joined(separator: "\n")
   }
 }

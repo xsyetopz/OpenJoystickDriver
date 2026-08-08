@@ -52,20 +52,12 @@ public actor RemappingEventEngine {
     try ensureAvailable()
     try profile.validate()
     try commit(requiring: permit) { state in
-      state.process(
-        events: events,
-        from: identifier,
-        profile: profile,
-        at: uptimeNanoseconds
-      )
+      state.process(events: events, from: identifier, profile: profile, at: uptimeNanoseconds)
     }
   }
 
   /// Replaces or deactivates the profile for one exact controller.
-  public func setProfile(
-    _ profile: RemappingProfile?,
-    for identifier: DeviceIdentifier
-  ) throws {
+  public func setProfile(_ profile: RemappingProfile?, for identifier: DeviceIdentifier) throws {
     guard let permit = emissionBarrier.currentPermit() else {
       throw RemappingEventEngineError.outputSuspended
     }
@@ -79,9 +71,7 @@ public actor RemappingEventEngine {
   ) throws {
     try ensureAvailable()
     try profile?.validate()
-    try commit(requiring: permit) { state in
-      state.setProfile(profile, for: identifier)
-    }
+    try commit(requiring: permit) { state in state.setProfile(profile, for: identifier) }
   }
 
   /// Advances deterministic turbo phases and continuous pointer/scroll output.
@@ -92,14 +82,9 @@ public actor RemappingEventEngine {
     try tick(at: uptimeNanoseconds, requiring: permit)
   }
 
-  public func tick(
-    at uptimeNanoseconds: UInt64,
-    requiring permit: RemappingEmissionPermit
-  ) throws {
+  public func tick(at uptimeNanoseconds: UInt64, requiring permit: RemappingEmissionPermit) throws {
     try ensureAvailable()
-    try commit(requiring: permit) { state in
-      state.tick(at: uptimeNanoseconds)
-    }
+    try commit(requiring: permit) { state in state.tick(at: uptimeNanoseconds) }
   }
 
   /// Whether turbo or nonzero continuous output requires future tick work.
@@ -107,9 +92,7 @@ public actor RemappingEventEngine {
   /// Ordinary held keys and mouse buttons do not require scheduling and are not
   /// included. A faulted engine reports `false` because fail-closed handling
   /// clears all active mapping state.
-  public func hasScheduledOutput() -> Bool {
-    state.hasScheduledOutput
-  }
+  public func hasScheduledOutput() -> Bool { state.hasScheduledOutput }
 
   /// Returns the earliest monotonic deadline required by scheduled output.
   ///
@@ -139,9 +122,7 @@ public actor RemappingEventEngine {
     requiring permit: RemappingEmissionPermit
   ) throws {
     try ensureAvailable()
-    try commit(requiring: permit) { state in
-      state.releaseController(identifier)
-    }
+    try commit(requiring: permit) { state in state.releaseController(identifier) }
   }
 
   /// Releases all keyboard and pointer state. Repeated drains are no-ops.
@@ -154,17 +135,13 @@ public actor RemappingEventEngine {
 
   public func drain(requiring permit: RemappingEmissionPermit) throws {
     try ensureAvailable()
-    try commit(requiring: permit) { state in
-      state.drain()
-    }
+    try commit(requiring: permit) { state in state.drain() }
   }
 
   /// Performs the one terminal neutralization after routing admission has closed permanently.
   public func drainAfterTermination() throws {
     try emissionBarrier.withTermination {
-      if faulted {
-        try recoverUncertainOutputs()
-      }
+      if faulted { try recoverUncertainOutputs() }
       try commitUnchecked { state in state.drain() }
     }
   }
@@ -209,11 +186,7 @@ public actor RemappingEventEngine {
   private func commit(
     requiring permit: RemappingEmissionPermit,
     _ transition: (inout RemappingEngineState) -> [RemappingSystemInputAction]
-  ) throws {
-    try emissionBarrier.withEmissionPermit(permit) {
-      try commitUnchecked(transition)
-    }
-  }
+  ) throws { try emissionBarrier.withEmissionPermit(permit) { try commitUnchecked(transition) } }
 
   private func commitUnchecked(
     _ transition: (inout RemappingEngineState) -> [RemappingSystemInputAction]
@@ -235,9 +208,7 @@ public actor RemappingEventEngine {
     state = candidate
   }
 
-  private func failClosed(
-    potentiallyHeld: Set<RemappingHeldOutput>
-  ) {
+  private func failClosed(potentiallyHeld: Set<RemappingHeldOutput>) {
     state = RemappingEngineState()
     faulted = true
 
@@ -246,9 +217,7 @@ public actor RemappingEventEngine {
       do {
         try sink.send(output.releaseAction)
         remaining.remove(output)
-      } catch {
-        break
-      }
+      } catch { break }
     }
     uncertainHeldOutputs = remaining
   }
@@ -275,24 +244,17 @@ public actor RemappingEventEngine {
     switch action {
     case .modifierDown(let modifier), .modifierUp(let modifier):
       heldOutputs.insert(.modifier(modifier))
-    case .keyDown(let key), .keyUp(let key):
-      heldOutputs.insert(.key(key))
+    case .keyDown(let key), .keyUp(let key): heldOutputs.insert(.key(key))
     case .mouseButtonDown(let button), .mouseButtonUp(let button):
       heldOutputs.insert(.mouseButton(button))
     case .mouseMoved, .scrolled: break
     }
   }
 
-  private static func releaseOrder(
-    _ outputs: Set<RemappingHeldOutput>
-  ) -> [RemappingHeldOutput] {
+  private static func releaseOrder(_ outputs: Set<RemappingHeldOutput>) -> [RemappingHeldOutput] {
     outputs.sorted { lhs, rhs in
-      if lhs.releaseOrder != rhs.releaseOrder {
-        return lhs.releaseOrder < rhs.releaseOrder
-      }
-      if lhs.releaseOrder == 2 {
-        return lhs.stableName > rhs.stableName
-      }
+      if lhs.releaseOrder != rhs.releaseOrder { return lhs.releaseOrder < rhs.releaseOrder }
+      if lhs.releaseOrder == 2 { return lhs.stableName > rhs.stableName }
       return lhs.stableName < rhs.stableName
     }
   }

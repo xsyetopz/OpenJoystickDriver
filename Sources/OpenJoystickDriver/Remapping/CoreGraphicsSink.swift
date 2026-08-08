@@ -11,14 +11,11 @@ public enum CoreGraphicsSystemInputSinkError: Error, Equatable, LocalizedError, 
 
   public var errorDescription: String? {
     switch self {
-    case .postEventAccessNotGranted:
-      "Keyboard and pointer posting access is not granted."
+    case .postEventAccessNotGranted: "Keyboard and pointer posting access is not granted."
     case .unsupportedKeyboardKey(let key):
       "The keyboard key '\(key.rawValue)' is not supported on macOS."
-    case .eventPreparationFailed:
-      "CoreGraphics could not prepare a system-input event."
-    case .eventPostingFailed:
-      "CoreGraphics could not post a system-input event."
+    case .eventPreparationFailed: "CoreGraphics could not prepare a system-input event."
+    case .eventPostingFailed: "CoreGraphics could not post a system-input event."
     }
   }
 }
@@ -48,9 +45,7 @@ enum CoreGraphicsPreparedEvent: Equatable, Sendable {
   case scroll(deltaX: Int32, deltaY: Int32)
 }
 
-enum CoreGraphicsEventPosterError: Error {
-  case eventCreationFailed
-}
+enum CoreGraphicsEventPosterError: Error { case eventCreationFailed }
 
 protocol CoreGraphicsEventPosting: Sendable {
   func currentPointerLocation() throws -> CGPoint
@@ -77,18 +72,18 @@ private struct PlatformCoreGraphicsEventPoster: CoreGraphicsEventPosting {
     switch prepared {
     case .keyboard(let virtualKey, let isDown, let flags):
       event = CGEvent(keyboardEventSource: source, virtualKey: virtualKey, keyDown: isDown)
-      event?.flags = flags.cgEventFlags
+      event?.flags = CoreGraphicsMapping.cgEventFlags(for: flags)
     case .modifier(let virtualKey, let flags):
       event = CGEvent(keyboardEventSource: source, virtualKey: virtualKey, keyDown: true)
       event?.type = .flagsChanged
-      event?.flags = flags.cgEventFlags
+      event?.flags = CoreGraphicsMapping.cgEventFlags(for: flags)
     case .mouseButton(let button, let isDown, let location):
       guard let mouseButton = CGMouseButton(rawValue: button.rawValue) else {
         throw CoreGraphicsEventPosterError.eventCreationFailed
       }
       event = CGEvent(
         mouseEventSource: source,
-        mouseType: button.eventType(isDown: isDown),
+        mouseType: CoreGraphicsMapping.eventType(for: button, isDown: isDown),
         mouseCursorPosition: location,
         mouseButton: mouseButton
       )
@@ -112,9 +107,7 @@ private struct PlatformCoreGraphicsEventPoster: CoreGraphicsEventPosting {
         wheel3: 0
       )
     }
-    guard let event else {
-      throw CoreGraphicsEventPosterError.eventCreationFailed
-    }
+    guard let event else { throw CoreGraphicsEventPosterError.eventCreationFailed }
     event.post(tap: .cghidEventTap)
   }
 }
@@ -245,9 +238,7 @@ public final class CoreGraphicsSystemInputSink: RemappingSystemInputSink, @unche
   private var scrollResidualX = 0.0
   private var scrollResidualY = 0.0
 
-  public convenience init() {
-    self.init(access: CoreGraphicsPostEventAccess())
-  }
+  public convenience init() { self.init(access: CoreGraphicsPostEventAccess()) }
 
   public init(access: CoreGraphicsPostEventAccess) {
     self.access = access
@@ -271,43 +262,33 @@ public final class CoreGraphicsSystemInputSink: RemappingSystemInputSink, @unche
     guard access.currentState() == .granted else {
       throw CoreGraphicsSystemInputSinkError.postEventAccessNotGranted
     }
-    do {
-      try sendAuthorized(action)
-    } catch let error as CoreGraphicsSystemInputSinkError {
+    do { try sendAuthorized(action) } catch let error as CoreGraphicsSystemInputSinkError {
       throw error
     } catch CoreGraphicsEventPosterError.eventCreationFailed {
       throw CoreGraphicsSystemInputSinkError.eventPreparationFailed
-    } catch {
-      throw CoreGraphicsSystemInputSinkError.eventPostingFailed
-    }
+    } catch { throw CoreGraphicsSystemInputSinkError.eventPostingFailed }
   }
 
   private func sendAuthorized(_ action: RemappingSystemInputAction) throws {
     switch action {
-    case .modifierDown(let modifier):
-      try postModifier(modifier, isDown: true)
-    case .modifierUp(let modifier):
-      try postModifier(modifier, isDown: false)
-    case .keyDown(let key):
-      try postKey(key, isDown: true)
-    case .keyUp(let key):
-      try postKey(key, isDown: false)
-    case .mouseButtonDown(let button):
-      try postMouseButton(button, isDown: true)
-    case .mouseButtonUp(let button):
-      try postMouseButton(button, isDown: false)
-    case .mouseMoved(let axis, let amount):
-      try postPointer(axis: axis, amount: amount)
-    case .scrolled(let axis, let amount):
-      try postScroll(axis: axis, amount: amount)
+    case .modifierDown(let modifier): try postModifier(modifier, isDown: true)
+    case .modifierUp(let modifier): try postModifier(modifier, isDown: false)
+    case .keyDown(let key): try postKey(key, isDown: true)
+    case .keyUp(let key): try postKey(key, isDown: false)
+    case .mouseButtonDown(let button): try postMouseButton(button, isDown: true)
+    case .mouseButtonUp(let button): try postMouseButton(button, isDown: false)
+    case .mouseMoved(let axis, let amount): try postPointer(axis: axis, amount: amount)
+    case .scrolled(let axis, let amount): try postScroll(axis: axis, amount: amount)
     }
   }
 
   private func postModifier(_ modifier: RemappingKeyModifier, isDown: Bool) throws {
-    let flag = modifier.coreGraphicsFlag
+    let flag = CoreGraphicsMapping.coreGraphicsFlag(for: modifier)
     var candidate = modifierFlags
     if isDown { candidate.insert(flag) } else { candidate.remove(flag) }
-    try poster.post(.modifier(virtualKey: modifier.virtualKey, flags: candidate))
+    try poster.post(
+      .modifier(virtualKey: CoreGraphicsMapping.virtualKey(for: modifier), flags: candidate)
+    )
     modifierFlags = candidate
   }
 
@@ -320,17 +301,14 @@ public final class CoreGraphicsSystemInputSink: RemappingSystemInputSink, @unche
 
   private func postMouseButton(_ button: RemappingMouseButton, isDown: Bool) throws {
     let location = try poster.currentPointerLocation()
-    try poster.post(.mouseButton(
-      button: button.coreGraphicsButton,
-      isDown: isDown,
-      location: location
-    ))
+    let cgButton = CoreGraphicsMapping.coreGraphicsButton(for: button)
+    try poster.post(.mouseButton(button: cgButton, isDown: isDown, location: location))
   }
 
   private func postPointer(axis: RemappingPointerAxis, amount: Double) throws {
     guard amount.isFinite else { throw CoreGraphicsSystemInputSinkError.eventPreparationFailed }
     if amount == 0 { return }
-    let delta = amount.clampedNormalized * Self.pointerPointsPerAction
+    let delta = CoreGraphicsMapping.clampedNormalized(amount) * Self.pointerPointsPerAction
     // Read every action so physical mouse movement between remapping ticks is
     // never overwritten by a stale synthetic-cursor cache.
     let origin = try poster.currentPointerLocation()
@@ -349,36 +327,32 @@ public final class CoreGraphicsSystemInputSink: RemappingSystemInputSink, @unche
     var candidateX = scrollResidualX
     var candidateY = scrollResidualY
     if axis == .x {
-      candidateX += amount.clampedNormalized * Self.scrollLinesPerAction
+      candidateX += CoreGraphicsMapping.clampedNormalized(amount) * Self.scrollLinesPerAction
     } else {
-      candidateY += amount.clampedNormalized * Self.scrollLinesPerAction
+      candidateY += CoreGraphicsMapping.clampedNormalized(amount) * Self.scrollLinesPerAction
     }
     let deltaX = Int32(candidateX.rounded(.towardZero))
     let deltaY = Int32(candidateY.rounded(.towardZero))
     candidateX -= Double(deltaX)
     candidateY -= Double(deltaY)
-    if deltaX != 0 || deltaY != 0 {
-      try poster.post(.scroll(deltaX: deltaX, deltaY: deltaY))
-    }
+    if deltaX != 0 || deltaY != 0 { try poster.post(.scroll(deltaX: deltaX, deltaY: deltaY)) }
     scrollResidualX = candidateX
     scrollResidualY = candidateY
   }
 }
 
-private extension CoreGraphicsModifierFlags {
-  var cgEventFlags: CGEventFlags {
-    var flags: CGEventFlags = []
-    if contains(.command) { flags.insert(.maskCommand) }
-    if contains(.control) { flags.insert(.maskControl) }
-    if contains(.option) { flags.insert(.maskAlternate) }
-    if contains(.shift) { flags.insert(.maskShift) }
-    return flags
+private enum CoreGraphicsMapping {
+  static func cgEventFlags(for flags: CoreGraphicsModifierFlags) -> CGEventFlags {
+    var result: CGEventFlags = []
+    if flags.contains(.command) { result.insert(.maskCommand) }
+    if flags.contains(.control) { result.insert(.maskControl) }
+    if flags.contains(.option) { result.insert(.maskAlternate) }
+    if flags.contains(.shift) { result.insert(.maskShift) }
+    return result
   }
-}
 
-private extension RemappingKeyModifier {
-  var coreGraphicsFlag: CoreGraphicsModifierFlags {
-    switch self {
+  static func coreGraphicsFlag(for modifier: RemappingKeyModifier) -> CoreGraphicsModifierFlags {
+    switch modifier {
     case .command: .command
     case .control: .control
     case .option: .option
@@ -386,19 +360,17 @@ private extension RemappingKeyModifier {
     }
   }
 
-  var virtualKey: CGKeyCode {
-    switch self {
+  static func virtualKey(for modifier: RemappingKeyModifier) -> CGKeyCode {
+    switch modifier {
     case .command: CGKeyCode(kVK_Command)
     case .control: CGKeyCode(kVK_Control)
     case .option: CGKeyCode(kVK_Option)
     case .shift: CGKeyCode(kVK_Shift)
     }
   }
-}
 
-private extension RemappingMouseButton {
-  var coreGraphicsButton: CoreGraphicsMouseButton {
-    switch self {
+  static func coreGraphicsButton(for button: RemappingMouseButton) -> CoreGraphicsMouseButton {
+    switch button {
     case .left: .left
     case .right: .right
     case .middle: .middle
@@ -406,20 +378,14 @@ private extension RemappingMouseButton {
     case .forward: .forward
     }
   }
-}
 
-private extension CoreGraphicsMouseButton {
-  func eventType(isDown: Bool) -> CGEventType {
-    switch self {
+  static func eventType(for button: CoreGraphicsMouseButton, isDown: Bool) -> CGEventType {
+    switch button {
     case .left: isDown ? .leftMouseDown : .leftMouseUp
     case .right: isDown ? .rightMouseDown : .rightMouseUp
     case .middle, .back, .forward: isDown ? .otherMouseDown : .otherMouseUp
     }
   }
-}
 
-private extension Double {
-  var clampedNormalized: Double {
-    min(1, max(-1, self))
-  }
+  static func clampedNormalized(_ value: Double) -> Double { min(1, max(-1, value)) }
 }

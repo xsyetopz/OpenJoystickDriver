@@ -46,19 +46,19 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     let defaults = parsedDriver == .xbox360 ? (input: 129, output: 1) : (input: 130, output: 2)
     let inputEndpoint = document.usb?.endpoints?.input ?? defaults.input
     let outputEndpoint = document.usb?.endpoints?.output ?? defaults.output
-    guard (128...255).contains(inputEndpoint) else {
+    guard DeviceTransportProfile.inputEndpointRange.contains(inputEndpoint) else {
       throw ControllerRecordProbeError.invalidProfile(
         "usb.endpoints.in must be an IN endpoint in 128...255"
       )
     }
-    guard (1...127).contains(outputEndpoint) else {
+    guard DeviceTransportProfile.outputEndpointRange.contains(outputEndpoint) else {
       throw ControllerRecordProbeError.invalidProfile(
         "usb.endpoints.out must be an OUT endpoint in 1...127"
       )
     }
 
     let interfaceNumber = document.usb?.interfaceNumber ?? 0
-    guard (0...255).contains(interfaceNumber) else {
+    guard DeviceTransportProfile.interfaceNumberRange.contains(interfaceNumber) else {
       throw ControllerRecordProbeError.invalidProfile("usb.interface must be in 0...255")
     }
     let configuration = document.usb?.configuration
@@ -74,7 +74,7 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
       )
     }
     let (settleNanoseconds, overflow) = UInt64(settleMilliseconds).multipliedReportingOverflow(
-      by: 1_000_000
+      by: DeviceTransportProfile.nanosecondsPerMillisecond
     )
     guard !overflow else {
       throw ControllerRecordProbeError.invalidProfile("usb.post_handshake_settle_ms is too large")
@@ -164,10 +164,9 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     }
   }
 
-  private static func parseKeepAlivePolicy(
-    enabled: Bool?,
-    driver: ControllerRecordProbeDriver
-  ) throws -> GIPKeepAlivePolicy {
+  private static func parseKeepAlivePolicy(enabled: Bool?, driver: ControllerRecordProbeDriver)
+    throws -> GIPKeepAlivePolicy
+  {
     guard driver == .gip || enabled == nil else {
       throw ControllerRecordProbeError.invalidProfile(
         "protocol.keep_alive is only valid for GIP records"

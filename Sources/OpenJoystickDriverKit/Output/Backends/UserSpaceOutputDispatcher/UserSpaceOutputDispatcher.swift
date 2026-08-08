@@ -77,6 +77,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
   public private(set) var lastRumbleStatus: String = "none"
   private let onRumbleCommand: RumbleCommandHandler?
   static let requiredVirtualDeviceEntitlement = "com.apple.developer.hid.virtual.device"
+  private static let recreateCooldownNanoseconds: UInt64 = 1_000_000_000
   static var hasRequiredVirtualDeviceEntitlement: Bool {
     hasEntitlement(requiredVirtualDeviceEntitlement)
   }
@@ -151,9 +152,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       primaryUsage: primaryUsage
     )
     let candidateLocationIDs: [UInt32?] = [
-      UserSpaceVirtualDeviceConstants.locationID(for: identifier),
-      0x1000_0002,
-      nil,
+      UserSpaceVirtualDeviceConstants.locationID(for: identifier), 0x1000_0002, nil,
     ]
 
     var dev: IOHIDUserDevice?
@@ -181,9 +180,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     guard let dev else {
       let entitlement = Self.requiredVirtualDeviceEntitlement
       if !Self.hasEntitlement(entitlement) {
-        status =
-          "error: missing entitlement \(entitlement) "
-          + "(regenerate application profile)"
+        status = "error: missing entitlement \(entitlement) " + "(regenerate application profile)"
         throw CreationError.missingEntitlement(entitlement)
       }
       status = "error: \(CreationError.createFailed)"
@@ -366,7 +363,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       if error == kIOReturnNotOpen || error == kIOReturnNotAttached || error == kIOReturnNoDevice
         || error == kIOReturnNotResponding
       {
-        entry.nextRecreateAttemptNs = now &+ 1_000_000_000  // 1s cooldown
+        entry.nextRecreateAttemptNs = now &+ Self.recreateCooldownNanoseconds
         entry.consecutiveFailures = 0
         return true
       }

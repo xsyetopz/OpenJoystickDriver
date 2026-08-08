@@ -214,10 +214,7 @@ import Testing
       code: .profileUpdateConflict,
       message: "The profile changed since it was read."
     )
-    let client = MockMappingClient(
-      snapshotValue: snapshot([profile]),
-      updateError: conflict
-    )
+    let client = MockMappingClient(snapshotValue: snapshot([profile]), updateError: conflict)
 
     await #expect(throws: conflict) {
       try await MappingInvocation(arguments: [
@@ -231,12 +228,15 @@ import Testing
   }
 
   @Test func editBindAndUnbindPassTheExactProfileTheyRead() async throws {
-    let profile = makeProfile(name: "Desktop", bindings: [
-      RemappingBinding(
-        source: .button(.south),
-        destination: .keyboard(key: .space, modifiers: [])
-      ),
-    ])
+    let profile = makeProfile(
+      name: "Desktop",
+      bindings: [
+        RemappingBinding(
+          source: .button(.south),
+          destination: .keyboard(key: .space, modifiers: [])
+        ),
+      ]
+    )
     let client = MockMappingClient(snapshotValue: snapshot([profile]))
     let commands = [
       ["update", profile.id.uuidString, "--name", "Renamed"],
@@ -376,6 +376,10 @@ private actor MockMappingClient: MappingServiceClient {
   }
   func deactivate(vendorID: UInt16, productID: UInt16) -> ApplicationServiceRemappingSnapshotPayload
   {
+    mutationCount += 1
+    return snapshotValue
+  }
+  func deactivate(profileID: UUID) -> ApplicationServiceRemappingSnapshotPayload {
     mutationCount += 1
     return snapshotValue
   }

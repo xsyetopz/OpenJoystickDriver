@@ -154,9 +154,7 @@ actor DriverKitRelayRuntime {
         inputReportSuccesses: statistics.inputReportSuccesses,
         inputReportFailures: statistics.inputReportFailures
       )
-    } catch {
-      return nil
-    }
+    } catch { return nil }
   }
 
   func statsSnapshot() -> ApplicationServiceDriverKitOutputStats {
@@ -205,9 +203,7 @@ actor DriverKitRelayRuntime {
         } else if enabled, !Task.isCancelled {
           recordConnectionFailure(DriverKitRelayError.connectionEnded)
         }
-      } catch is CancellationError {
-        break
-      } catch {
+      } catch is CancellationError { break } catch {
         if restartRequestedForSupervisor == generation {
           restartRequestedForSupervisor = nil
         } else if enabled, !Task.isCancelled {

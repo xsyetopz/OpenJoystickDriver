@@ -103,8 +103,7 @@ struct DeviceIdentifierTests {
 
   private func assertExactTokenShape(_ token: String) throws {
     #expect(token.hasPrefix("E-"))
-    var payload = String(token.dropFirst(2))
-      .replacingOccurrences(of: "-", with: "+")
+    var payload = String(token.dropFirst(2)).replacingOccurrences(of: "-", with: "+")
       .replacingOccurrences(of: "_", with: "/")
     payload += String(repeating: "=", count: (4 - payload.count % 4) % 4)
     let decoded = try #require(Data(base64Encoded: payload))
@@ -115,11 +114,7 @@ struct DeviceIdentifierTests {
 private struct AnyEncodable: Encodable {
   private let encodeValue: (Encoder) throws -> Void
 
-  init(_ value: any Encodable) {
-    self.encodeValue = value.encode
-  }
+  init(_ value: any Encodable) { self.encodeValue = value.encode }
 
-  func encode(to encoder: Encoder) throws {
-    try encodeValue(encoder)
-  }
+  func encode(to encoder: Encoder) throws { try encodeValue(encoder) }
 }

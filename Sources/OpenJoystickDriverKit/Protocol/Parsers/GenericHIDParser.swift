@@ -6,6 +6,16 @@ import SwiftUSB
 /// Raw report layouts vary between devices, so IOKit decodes descriptor elements
 /// and this parser maps standard Generic Desktop and Button usages.
 public final class GenericHIDParser: InputParser, HIDElementValueParser, @unchecked Sendable {
+  private static let buttonUsagePage: UInt32 = 0x09
+  private static let genericDesktopUsagePage: UInt32 = 0x01
+  private static let usageX: UInt32 = 0x30
+  private static let usageY: UInt32 = 0x31
+  private static let usageZ: UInt32 = 0x32
+  private static let usageRx: UInt32 = 0x33
+  private static let usageRy: UInt32 = 0x34
+  private static let usageRz: UInt32 = 0x35
+  private static let usageHatSwitch: UInt32 = 0x39
+
   private let identifier: DeviceIdentifier
   private let stateLock = NSLock()
   private var pressedButtons: Set<Button> = []
@@ -30,12 +40,9 @@ public final class GenericHIDParser: InputParser, HIDElementValueParser, @unchec
   public func parse(elementValue value: HIDElementValue) -> [ControllerEvent] {
     stateLock.withLock {
       switch value.usagePage {
-      case 0x09:
-        return parseButton(value)
-      case 0x01:
-        return parseGenericDesktop(value)
-      default:
-        return []
+      case Self.buttonUsagePage: return parseButton(value)
+      case Self.genericDesktopUsagePage: return parseGenericDesktop(value)
+      default: return []
       }
     }
   }
@@ -55,26 +62,22 @@ public final class GenericHIDParser: InputParser, HIDElementValueParser, @unchec
 
   private func parseGenericDesktop(_ value: HIDElementValue) -> [ControllerEvent] {
     switch value.usage {
-    case 0x30:
+    case Self.usageX:
       leftX = Self.normalizedAxis(value)
       return [.leftStickChanged(x: leftX, y: leftY)]
-    case 0x31:
+    case Self.usageY:
       leftY = -Self.normalizedAxis(value)
       return [.leftStickChanged(x: leftX, y: leftY)]
-    case 0x32:
-      return [.leftTriggerChanged(Self.normalizedTrigger(value))]
-    case 0x33:
+    case Self.usageZ: return [.leftTriggerChanged(Self.normalizedTrigger(value))]
+    case Self.usageRx:
       rightX = Self.normalizedAxis(value)
       return [.rightStickChanged(x: rightX, y: rightY)]
-    case 0x34:
+    case Self.usageRy:
       rightY = -Self.normalizedAxis(value)
       return [.rightStickChanged(x: rightX, y: rightY)]
-    case 0x35:
-      return [.rightTriggerChanged(Self.normalizedTrigger(value))]
-    case 0x39:
-      return [.dpadChanged(Self.hatDirection(value))]
-    default:
-      return []
+    case Self.usageRz: return [.rightTriggerChanged(Self.normalizedTrigger(value))]
+    case Self.usageHatSwitch: return [.dpadChanged(Self.hatDirection(value))]
+    default: return []
     }
   }
 
@@ -95,18 +98,14 @@ public final class GenericHIDParser: InputParser, HIDElementValueParser, @unchec
   private static func hatDirection(_ value: HIDElementValue) -> DpadDirection {
     let position = value.integerValue - value.logicalMinimum
     guard position >= 0, position < 8 else { return .neutral }
-    return [
-      .north, .northEast, .east, .southEast,
-      .south, .southWest, .west, .northWest,
-    ][position]
+    return [.north, .northEast, .east, .southEast, .south, .southWest, .west, .northWest][position]
   }
 
   private static func button(for usage: UInt32) -> Button? {
     let standard: [Button] = [
-      .a, .b, .x, .y, .leftBumper, .rightBumper,
-      .back, .start, .leftStick, .rightStick, .guide,
-      .genericButton1, .genericButton2, .genericButton3, .genericButton4,
-      .genericButton5, .genericButton6, .genericButton7, .genericButton8,
+      .a, .b, .x, .y, .leftBumper, .rightBumper, .back, .start, .leftStick, .rightStick, .guide,
+      .genericButton1, .genericButton2, .genericButton3, .genericButton4, .genericButton5,
+      .genericButton6, .genericButton7, .genericButton8,
     ]
     guard usage > 0, usage <= standard.count else { return nil }
     return standard[Int(usage - 1)]

@@ -25,22 +25,14 @@ struct PhysicalOutputCommand {
   func run(arguments: [String]) {
     let subcommand = arguments.first ?? "list"
     switch subcommand {
-    case "list":
-      list(arguments: Array(arguments.dropFirst()))
-    case "rumble":
-      rumble(arguments: Array(arguments.dropFirst()))
-    case "player":
-      player(arguments: Array(arguments.dropFirst()))
-    case "brightness":
-      brightness(arguments: Array(arguments.dropFirst()))
-    case "color":
-      color(arguments: Array(arguments.dropFirst()))
-    case "plan":
-      plan(arguments: Array(arguments.dropFirst()))
-    case "--help", "-h", "help":
-      printHelp()
-    default:
-      fail("Unknown controller output command: \(subcommand)")
+    case "list": list(arguments: Array(arguments.dropFirst()))
+    case "rumble": rumble(arguments: Array(arguments.dropFirst()))
+    case "player": player(arguments: Array(arguments.dropFirst()))
+    case "brightness": brightness(arguments: Array(arguments.dropFirst()))
+    case "color": color(arguments: Array(arguments.dropFirst()))
+    case "plan": plan(arguments: Array(arguments.dropFirst()))
+    case "--help", "-h", "help": printHelp()
+    default: fail("Unknown controller output command: \(subcommand)")
     }
   }
 
@@ -94,9 +86,7 @@ struct PhysicalOutputCommand {
     var durationMs = 450
     var index = 2
     while index < arguments.count {
-      guard index + 1 < arguments.count else {
-        fail("Missing value for \(arguments[index])")
-      }
+      guard index + 1 < arguments.count else { fail("Missing value for \(arguments[index])") }
       let option = arguments[index]
       let value = parseInteger(arguments[index + 1], label: option)
       switch option {
@@ -105,9 +95,7 @@ struct PhysicalOutputCommand {
       case "--lt": lt = parseIntensity(value, label: option)
       case "--rt": rt = parseIntensity(value, label: option)
       case "--duration-ms":
-        guard (0...5_000).contains(value) else {
-          fail("--duration-ms must be 0...5000")
-        }
+        guard (0...5_000).contains(value) else { fail("--duration-ms must be 0...5000") }
         durationMs = value
       default: fail("Unknown rumble option: \(option)")
       }
@@ -229,9 +217,7 @@ struct PhysicalOutputCommand {
     }
     print("Physical output validation plan for \(hex(vendorID)):\(hex(productID))")
     print("Evidence: \(plan.evidence.rawValue)")
-    if plan.steps.isEmpty {
-      print("No source-backed physical output steps are available.")
-    }
+    if plan.steps.isEmpty { print("No source-backed physical output steps are available.") }
     for (index, step) in plan.steps.enumerated() {
       print("\(index + 1). \(step.id)")
       print("   Run: \(step.command)")
@@ -291,9 +277,7 @@ struct PhysicalOutputCommand {
     let vendorID = parseIdentifier(arguments[0], label: "VID")
     let productID = parseIdentifier(arguments[1], label: "PID")
     let rawBrightness = parseInteger(arguments[2], label: "brightness")
-    guard (0...255).contains(rawBrightness) else {
-      fail("Brightness must be 0...255.")
-    }
+    guard (0...255).contains(rawBrightness) else { fail("Brightness must be 0...255.") }
 
     let device = requireDevice(
       vendorID: vendorID,
@@ -325,20 +309,18 @@ struct PhysicalOutputCommand {
     let client = ApplicationServiceClient()
     client.connect()
     defer { client.disconnect() }
-    guard let status: ApplicationServiceStatusPayload = runSyncOptionalResult(
-      timeout: applicationServiceCallTimeoutSeconds,
-      { try? await client.getStatus() }
-    ) else {
-      fail("The application service is unavailable.")
-    }
+    guard
+      let status: ApplicationServiceStatusPayload = runSyncOptionalResult(
+        timeout: applicationServiceCallTimeoutSeconds,
+        { try? await client.getStatus() }
+      )
+    else { fail("The application service is unavailable.") }
     return status.connectedDevices
   }
 
-  private func requireDevice(
-    vendorID: UInt16,
-    productID: UInt16,
-    runtimeIdentifier: String?
-  ) -> ApplicationServiceDeviceDescription {
+  private func requireDevice(vendorID: UInt16, productID: UInt16, runtimeIdentifier: String?)
+    -> ApplicationServiceDeviceDescription
+  {
     do {
       return try ConnectedControllerSelection.resolve(
         devices: connectedDevices(),
@@ -346,14 +328,12 @@ struct PhysicalOutputCommand {
         productID: productID,
         runtimeIdentifier: runtimeIdentifier
       )
-    } catch {
-      fail(error.localizedDescription)
-    }
+    } catch { fail(error.localizedDescription) }
   }
 
-  private func parseDeviceOption(
-    _ arguments: [String]
-  ) -> (arguments: [String], runtimeIdentifier: String?) {
+  private func parseDeviceOption(_ arguments: [String]) -> (
+    arguments: [String], runtimeIdentifier: String?
+  ) {
     var values: [String] = []
     var runtimeIdentifier: String?
     var index = 0
@@ -386,16 +366,12 @@ struct PhysicalOutputCommand {
   }
 
   private func parseInteger(_ value: String, label: String) -> Int {
-    guard let parsed = Int(value) else {
-      fail("\(label) must be an integer.")
-    }
+    guard let parsed = Int(value) else { fail("\(label) must be an integer.") }
     return parsed
   }
 
   private func parseIntensity(_ value: Int, label: String) -> UInt8 {
-    guard (0...255).contains(value) else {
-      fail("\(label) must be 0...255.")
-    }
+    guard (0...255).contains(value) else { fail("\(label) must be 0...255.") }
     return UInt8(value)
   }
 
@@ -403,9 +379,7 @@ struct PhysicalOutputCommand {
     values.isEmpty ? "none" : values.joined(separator: ",")
   }
 
-  private func hex(_ value: UInt16) -> String {
-    String(format: "%04x", value)
-  }
+  private func hex(_ value: UInt16) -> String { String(format: "%04x", value) }
 
   private func fail(_ message: String) -> Never {
     CLIOutput.error(message)

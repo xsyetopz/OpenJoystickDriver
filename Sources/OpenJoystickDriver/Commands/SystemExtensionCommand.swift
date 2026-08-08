@@ -35,10 +35,8 @@ struct SystemExtensionCommand {
   private func printStatus() {
     let status = ExtensionProbe.currentStatus()
     switch status.bundle {
-    case .present:
-      print("Embedded DriverKit extension: present")
-    case .missing:
-      print("Embedded DriverKit extension: missing")
+    case .present: print("Embedded DriverKit extension: present")
+    case .missing: print("Embedded DriverKit extension: missing")
     case .invalid(let actualIdentifier):
       print("Embedded DriverKit extension: invalid (\(actualIdentifier))")
     }
@@ -50,8 +48,7 @@ struct SystemExtensionCommand {
     case .inactive(let record):
       print("OS registration: registered but inactive")
       print(record)
-    case .absent:
-      print("OS registration: absent")
+    case .absent: print("OS registration: absent")
     case .unavailable(let reason):
       CLIOutput.diagnostic("OS registration: unavailable")
       CLIOutput.error(reason)
@@ -81,8 +78,7 @@ struct SystemExtensionCommand {
     submission.start()
     let result = submission.wait(timeout: 60)
     switch result {
-    case .completed(let message):
-      CLIOutput.diagnostic(message)
+    case .completed(let message): CLIOutput.diagnostic(message)
     case .requiresApproval:
       CLIOutput.diagnostic(
         "System extension request submitted and requires approval in System Settings."
@@ -104,8 +100,7 @@ struct SystemExtensionCommand {
 
   private func bundleContainsSystemExtension() -> Bool {
     let bundlePath = Bundle.main.bundlePath
-    let dextPath =
-      bundlePath + "/Contents/Library/SystemExtensions/\(ojdSystemExtensionID).dext"
+    let dextPath = bundlePath + "/Contents/Library/SystemExtensions/\(ojdSystemExtensionID).dext"
     return FileManager.default.fileExists(atPath: dextPath)
   }
 
@@ -159,22 +154,18 @@ private final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
     _ request: OSSystemExtensionRequest,
     didFinishWithResult result: OSSystemExtensionRequest.Result
   ) {
-    self.result = .completed(
-      "System extension request finished with result \(result.rawValue)."
-    )
+    self.result = .completed("System extension request finished with result \(result.rawValue).")
   }
 
   func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
     let nsError = error as NSError
     result = .failed(
-      "System extension request failed: \(nsError.domain) " +
-        "code=\(nsError.code) \(nsError.localizedDescription)"
+      "System extension request failed: \(nsError.domain) "
+        + "code=\(nsError.code) \(nsError.localizedDescription)"
     )
   }
 
-  func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
-    result = .requiresApproval
-  }
+  func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) { result = .requiresApproval }
 
   func request(
     _ request: OSSystemExtensionRequest,
@@ -182,8 +173,8 @@ private final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
     withExtension ext: OSSystemExtensionProperties
   ) -> OSSystemExtensionRequest.ReplacementAction {
     CLIOutput.diagnostic(
-      "Replacing \(existing.bundleIdentifier) v\(existing.bundleVersion) " +
-        "with v\(ext.bundleVersion)."
+      "Replacing \(existing.bundleIdentifier) v\(existing.bundleVersion) "
+        + "with v\(ext.bundleVersion)."
     )
     return .replace
   }

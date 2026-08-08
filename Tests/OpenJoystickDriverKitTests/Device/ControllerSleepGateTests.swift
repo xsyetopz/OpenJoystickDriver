@@ -3,25 +3,28 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct ControllerSleepGateTests {
-  @Test
-  func testControllerSleepsAfterNeutralIdleTimeout() {
+  @Test func testControllerSleepsAfterNeutralIdleTimeout() {
     var gate = ControllerSleepGate(idleTimeoutNanoseconds: 5)
     let neutral = DeviceInputState(vendorID: 100, productID: 200)
     var pressed = neutral
     pressed.pressedButtons = [Button.a.rawValue]
 
-    #expect(gate.handleInput(
+    #expect(
+      gate.handleInput(
         events: [.buttonPressed(.a)],
         previousState: neutral,
         nextState: pressed,
         now: 10
-      ) == .forward)
-    #expect(gate.handleInput(
+      ) == .forward
+    )
+    #expect(
+      gate.handleInput(
         events: [.buttonReleased(.a)],
         previousState: pressed,
         nextState: neutral,
         now: 12
-      ) == .forward)
+      ) == .forward
+    )
 
     #expect(gate.idleTransition(currentState: neutral, now: 16) == nil)
 
@@ -56,20 +59,24 @@ struct ControllerSleepGateTests {
     var stickMoved = neutral
     stickMoved.leftStickX = 0.8
 
-    #expect(gate.handleInput(
+    #expect(
+      gate.handleInput(
         events: [.leftStickChanged(x: 0.8, y: 0)],
         previousState: neutral,
         nextState: stickMoved,
         now: 18
-      ) == .consumeWhileSleeping)
+      ) == .consumeWhileSleeping
+    )
     #expect(gate.isSleeping)
 
-    #expect(gate.handleInput(
+    #expect(
+      gate.handleInput(
         events: [.buttonPressed(.guide)],
         previousState: neutral,
         nextState: pressed,
         now: 19
-      ) == .consumeWake)
+      ) == .consumeWake
+    )
     #expect(!(gate.isSleeping))
   }
 

@@ -37,9 +37,7 @@ struct CoreGraphicsAccessTests {
   }
 
   private func makeAccess(preflight: [Bool]) -> CoreGraphicsPostEventAccess {
-    CoreGraphicsPostEventAccess(
-      probe: AccessProbe(preflight: preflight, requestResult: false)
-    )
+    CoreGraphicsPostEventAccess(probe: AccessProbe(preflight: preflight, requestResult: false))
   }
 }
 

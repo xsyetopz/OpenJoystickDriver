@@ -28,9 +28,7 @@ private enum DualSenseConnectionMode {
   case bluetooth
 }
 
-public enum DualSenseParserError: Error, Equatable {
-  case invalidBluetoothCRC
-}
+public enum DualSenseParserError: Error, Equatable { case invalidBluetoothCRC }
 
 /// Parser for Sony DualSense controllers.
 ///
@@ -79,9 +77,7 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
   }
 
   /// No-op for the current experimental HID input slice.
-  public func performHandshake(handle: USBDeviceHandle?) async throws {
-    await Task.yield()
-  }
+  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
 
   /// Parses one DualSense HID input report and returns controller events.
   public func parse(data: Data) throws -> [ControllerEvent] {
@@ -137,11 +133,7 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
     -> PhysicalHIDOutputReport
   {
     let patterns: [PhysicalPlayerIndicator: UInt8] = [
-      .off: 0,
-      .player1: 0x04,
-      .player2: 0x0A,
-      .player3: 0x15,
-      .player4: 0x1B,
+      .off: 0, .player1: 0x04, .player2: 0x0A, .player3: 0x15, .player4: 0x1B,
     ]
     return outputReport(
       validFlag1: dualSensePlayerIndicatorFlag,
@@ -149,16 +141,8 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
     )
   }
 
-  public func physicalColorReport(red: UInt8, green: UInt8, blue: UInt8)
-    -> PhysicalHIDOutputReport
-  {
-    outputReport(
-      validFlag1: dualSenseLightbarFlag,
-      red: red,
-      green: green,
-      blue: blue
-    )
-  }
+  public func physicalColorReport(red: UInt8, green: UInt8, blue: UInt8) -> PhysicalHIDOutputReport
+  { outputReport(validFlag1: dualSenseLightbarFlag, red: red, green: green, blue: blue) }
 
   private func outputReport(
     validFlag0: UInt8 = 0,
@@ -233,10 +217,9 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
 
   private func validateBluetoothCRC(report: [UInt8]) throws {
     let expectedOffset = report.count - 4
-    let expected = UInt32(report[expectedOffset])
-      | (UInt32(report[expectedOffset + 1]) << 8)
-      | (UInt32(report[expectedOffset + 2]) << 16)
-      | (UInt32(report[expectedOffset + 3]) << 24)
+    let expected =
+      UInt32(report[expectedOffset]) | (UInt32(report[expectedOffset + 1]) << 8)
+      | (UInt32(report[expectedOffset + 2]) << 16) | (UInt32(report[expectedOffset + 3]) << 24)
     guard dualSenseBluetoothCRC32(report: report) == expected else {
       throw DualSenseParserError.invalidBluetoothCRC
     }
@@ -244,29 +227,19 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
 
   private func dualSenseBluetoothCRC32(report: [UInt8]) -> UInt32 {
     var crc = updateCRC32(0xFFFF_FFFF, byte: dualSenseInputCRC32Seed)
-    for byte in report.dropLast(4) {
-      crc = updateCRC32(crc, byte: byte)
-    }
+    for byte in report.dropLast(4) { crc = updateCRC32(crc, byte: byte) }
     return ~crc
   }
 
   private func dualSenseOutputCRC32(report: [UInt8]) -> UInt32 {
     var crc = updateCRC32(0xFFFF_FFFF, byte: dualSenseOutputCRC32Seed)
-    for byte in report.dropLast(4) {
-      crc = updateCRC32(crc, byte: byte)
-    }
+    for byte in report.dropLast(4) { crc = updateCRC32(crc, byte: byte) }
     return ~crc
   }
 
   private func updateCRC32(_ current: UInt32, byte: UInt8) -> UInt32 {
     var crc = current ^ UInt32(byte)
-    for _ in 0..<8 {
-      if crc & 1 == 1 {
-        crc = (crc >> 1) ^ 0xEDB8_8320
-      } else {
-        crc >>= 1
-      }
-    }
+    for _ in 0..<8 { if crc & 1 == 1 { crc = (crc >> 1) ^ 0xEDB8_8320 } else { crc >>= 1 } }
     return crc
   }
 
@@ -287,18 +260,13 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
     return (events, (lsxRaw, lsyRaw, rsxRaw, rsyRaw))
   }
 
-  private func parseTriggers(bytes: [UInt8])
-    -> (events: [ControllerEvent], values: (UInt8, UInt8))
+  private func parseTriggers(bytes: [UInt8]) -> (events: [ControllerEvent], values: (UInt8, UInt8))
   {
     let l2 = bytes[ReportOffset.l2Trigger]
     let r2 = bytes[ReportOffset.r2Trigger]
     var events: [ControllerEvent] = []
-    if l2 != prevL2 {
-      events.append(.leftTriggerChanged(Float(l2) / dualSenseTriggerMax))
-    }
-    if r2 != prevR2 {
-      events.append(.rightTriggerChanged(Float(r2) / dualSenseTriggerMax))
-    }
+    if l2 != prevL2 { events.append(.leftTriggerChanged(Float(l2) / dualSenseTriggerMax)) }
+    if r2 != prevR2 { events.append(.rightTriggerChanged(Float(r2) / dualSenseTriggerMax)) }
     return (events, (l2, r2))
   }
 
@@ -364,9 +332,9 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
     }
   }
 
-  private func diffButtons(
-    prev: UInt8, curr: UInt8, mapping: [(UInt8, Button)]
-  ) -> [ControllerEvent] {
+  private func diffButtons(prev: UInt8, curr: UInt8, mapping: [(UInt8, Button)])
+    -> [ControllerEvent]
+  {
     var events: [ControllerEvent] = []
     for (mask, button) in mapping {
       let wasPressed = (prev & mask) != 0

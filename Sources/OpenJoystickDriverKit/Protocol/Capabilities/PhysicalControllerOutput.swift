@@ -48,11 +48,11 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
     evidence: PhysicalOutputEvidence? = nil
   ) {
     self.rumbleMotors = Array(Set(rumbleMotors)).sorted { $0.rawValue < $1.rawValue }
-    self.lightingFeatures =
-      Array(Set(lightingFeatures)).sorted { $0.rawValue < $1.rawValue }
+    self.lightingFeatures = Array(Set(lightingFeatures)).sorted { $0.rawValue < $1.rawValue }
     let supportedMotors = Set(self.rumbleMotors)
-    self.binaryRumbleMotors = Array(Set(binaryRumbleMotors).intersection(supportedMotors))
-      .sorted { $0.rawValue < $1.rawValue }
+    self.binaryRumbleMotors = Array(Set(binaryRumbleMotors).intersection(supportedMotors)).sorted {
+      $0.rawValue < $1.rawValue
+    }
     let hasCapabilities = !self.rumbleMotors.isEmpty || !self.lightingFeatures.isEmpty
     self.evidence = hasCapabilities ? (evidence ?? .sourceBacked) : .unavailable
   }
@@ -68,10 +68,7 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let motors = try container.decode([PhysicalRumbleMotor].self, forKey: .rumbleMotors)
     let lighting = try container.decode([PhysicalLightingFeature].self, forKey: .lightingFeatures)
-    let binaryMotors = try container.decode(
-      [PhysicalRumbleMotor].self,
-      forKey: .binaryRumbleMotors
-    )
+    let binaryMotors = try container.decode([PhysicalRumbleMotor].self, forKey: .binaryRumbleMotors)
     let decodedEvidence = try container.decode(PhysicalOutputEvidence.self, forKey: .evidence)
     self.init(
       rumbleMotors: motors,
@@ -105,9 +102,7 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
   public var supportsTriggerRumble: Bool {
     rumbleMotors.contains(.leftTrigger) || rumbleMotors.contains(.rightTrigger)
   }
-  public var supportsPlayerIndicator: Bool {
-    lightingFeatures.contains(.playerIndicator)
-  }
+  public var supportsPlayerIndicator: Bool { lightingFeatures.contains(.playerIndicator) }
   public var supportsProgrammableBrightness: Bool {
     lightingFeatures.contains(.programmableBrightness)
   }
@@ -146,19 +141,12 @@ public protocol PhysicalRumbleOutput: AnyObject, Sendable {
   /// Sends physical rumble to the source controller.
   ///
   /// Values are 0...255. Unsupported actuator values must be ignored.
-  func sendPhysicalRumble(
-    handle: USBDeviceHandle,
-    left: UInt8,
-    right: UInt8,
-    lt: UInt8,
-    rt: UInt8
-  ) throws
+  func sendPhysicalRumble(handle: USBDeviceHandle, left: UInt8, right: UInt8, lt: UInt8, rt: UInt8)
+    throws
 }
 
 extension PhysicalRumbleOutput {
-  public var physicalRumbleMotors: [PhysicalRumbleMotor] {
-    [.leftMain, .rightMain]
-  }
+  public var physicalRumbleMotors: [PhysicalRumbleMotor] { [.leftMain, .rightMain] }
 
   public var supportsPhysicalRumble: Bool { !physicalRumbleMotors.isEmpty }
 }
@@ -175,9 +163,7 @@ public protocol PhysicalHIDRumbleOutput: AnyObject, Sendable {
 }
 
 extension PhysicalHIDRumbleOutput {
-  public var physicalRumbleMotors: [PhysicalRumbleMotor] {
-    [.leftMain, .rightMain]
-  }
+  public var physicalRumbleMotors: [PhysicalRumbleMotor] { [.leftMain, .rightMain] }
 
   public var physicalBinaryRumbleMotors: [PhysicalRumbleMotor] { [] }
   public var minimumPhysicalOutputIntervalNanoseconds: UInt64 { 0 }
@@ -189,11 +175,8 @@ extension PhysicalHIDRumbleOutput {
 public protocol PhysicalHIDFeatureHapticOutput: AnyObject, Sendable {
   var physicalRumbleMotors: [PhysicalRumbleMotor] { get }
 
-  func physicalHapticReports(
-    left: UInt8,
-    right: UInt8,
-    durationMs: Int
-  ) -> [PhysicalHIDOutputReport]
+  func physicalHapticReports(left: UInt8, right: UInt8, durationMs: Int)
+    -> [PhysicalHIDOutputReport]
 }
 
 /// Optional RGB lightbar support delivered through a HID output report.
@@ -225,23 +208,17 @@ public protocol PhysicalHIDPlayerIndicatorOutput: AnyObject, Sendable {
 }
 
 extension PhysicalHIDPlayerIndicatorOutput {
-  public var physicalLightingFeatures: [PhysicalLightingFeature] {
-    [.playerIndicator]
-  }
+  public var physicalLightingFeatures: [PhysicalLightingFeature] { [.playerIndicator] }
 }
 
 /// Optional physical player-indicator support exposed by USB-backed protocols.
 public protocol PhysicalPlayerIndicatorOutput: AnyObject, Sendable {
   var physicalLightingFeatures: [PhysicalLightingFeature] { get }
 
-  func sendPhysicalPlayerIndicator(
-    handle: USBDeviceHandle,
-    indicator: PhysicalPlayerIndicator
-  ) throws
+  func sendPhysicalPlayerIndicator(handle: USBDeviceHandle, indicator: PhysicalPlayerIndicator)
+    throws
 }
 
 extension PhysicalPlayerIndicatorOutput {
-  public var physicalLightingFeatures: [PhysicalLightingFeature] {
-    [.playerIndicator]
-  }
+  public var physicalLightingFeatures: [PhysicalLightingFeature] { [.playerIndicator] }
 }

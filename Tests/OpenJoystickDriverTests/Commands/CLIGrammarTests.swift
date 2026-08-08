@@ -4,8 +4,7 @@ import Testing
 
 struct CLIGrammarTests {
   @Test(arguments: [
-    ("status", CLIInvocation.status([])),
-    ("status --json", CLIInvocation.status(["--json"])),
+    ("status", CLIInvocation.status([])), ("status --json", CLIInvocation.status(["--json"])),
     ("controller list", CLIInvocation.controllerList),
     ("controller state --json", CLIInvocation.controllerInput(["state", "--json"])),
     ("controller packets --limit 10", CLIInvocation.controllerInput(["packets", "--limit", "10"])),
@@ -21,8 +20,7 @@ struct CLIGrammarTests {
     ("permissions open input", CLIInvocation.permissions(["open", "input"])),
     ("compat show", CLIInvocation.compatibility(.show)),
     ("compat set sdl2-3", CLIInvocation.compatibility(.set("sdl2-3"))),
-    ("test 10", CLIInvocation.selfTest(["10"])),
-    ("diagnose", CLIInvocation.diagnose(.summary)),
+    ("test 10", CLIInvocation.selfTest(["10"])), ("diagnose", CLIInvocation.diagnose(.summary)),
     ("diagnose catalog --json", CLIInvocation.diagnose(.gameControllerCatalog(["--json"]))),
     (
       "diagnose report --output report.json",
@@ -35,9 +33,9 @@ struct CLIGrammarTests {
   }
 
   @Test(arguments: [
-    [], ["run"], ["list"], ["input"], ["logs"], ["updates"], ["report"],
-    ["physical-output"], ["compatibility"], ["selftest"], ["sysext"], ["install"],
-    ["uninstall"], ["start"], ["restart"], ["reset-settings"],
+    [], ["run"], ["list"], ["input"], ["logs"], ["updates"], ["report"], ["physical-output"],
+    ["compatibility"], ["selftest"], ["sysext"], ["install"], ["uninstall"], ["start"], ["restart"],
+    ["reset-settings"],
   ]) func rejectsRemovedTopLevelSpellings(arguments: [String]) {
     #expect(throws: CLIParseError.self) { try CLIGrammar(arguments: arguments) }
   }
@@ -53,20 +51,11 @@ struct CLIGrammarTests {
 
   @Test func rejectsRetiredPublicSpellingsAtGrammarLevel() {
     for arguments in [
-      ["controller", "input"],
-      ["mapping", "list"],
-      ["compatibility", "get"],
-      ["extension", "activate"],
-      ["extension", "deactivate"],
-      ["permissions", "open-settings"],
-      ["diagnose", "self-test"],
-      ["diagnose", "gamecontroller-catalog"],
-      ["diagnose", "summary"],
-      ["app", "start"],
-      ["app", "restart"],
-    ] {
-      #expect(throws: CLIParseError.self) { try CLIGrammar(arguments: arguments) }
-    }
+      ["controller", "input"], ["mapping", "list"], ["compatibility", "get"],
+      ["extension", "activate"], ["extension", "deactivate"], ["permissions", "open-settings"],
+      ["diagnose", "self-test"], ["diagnose", "gamecontroller-catalog"], ["diagnose", "summary"],
+      ["app", "start"], ["app", "restart"],
+    ] { #expect(throws: CLIParseError.self) { try CLIGrammar(arguments: arguments) } }
   }
 
   @Test func standardHelpAndVersionFlagsRemainExplicit() throws {
@@ -78,8 +67,6 @@ struct CLIGrammarTests {
     let grammar = try CLIGrammar(arguments: ["--timeout", "2.5", "status"])
     #expect(grammar.invocation == .status([]))
     #expect(grammar.serviceTimeoutSeconds == 2.5)
-    #expect(throws: CLIParseError.self) {
-      try CLIGrammar(arguments: ["--timeout", "0", "status"])
-    }
+    #expect(throws: CLIParseError.self) { try CLIGrammar(arguments: ["--timeout", "0", "status"]) }
   }
 }

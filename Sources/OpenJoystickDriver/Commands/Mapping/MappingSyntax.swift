@@ -60,17 +60,13 @@ struct MappingOptions {
 
 enum MappingSyntax {
   static func source(_ raw: String) throws -> RemappingSource {
-    do {
-      return try RemappingCommandValueParser.source(raw)
-    } catch {
+    do { return try RemappingCommandValueParser.source(raw) } catch {
       throw MappingCommandError.invalidArguments(error.localizedDescription)
     }
   }
 
   static func destination(_ raw: String) throws -> RemappingDestination {
-    do {
-      return try RemappingCommandValueParser.destination(raw)
-    } catch {
+    do { return try RemappingCommandValueParser.destination(raw) } catch {
       throw MappingCommandError.invalidArguments(error.localizedDescription)
     }
   }
@@ -90,5 +86,20 @@ enum MappingSyntax {
       throw MappingCommandError.invalidArguments("\(option) must be a finite number.")
     }
     return value
+  }
+
+  static func sourceList(_ raw: String) throws -> [RemappingSource] {
+    let entries = raw.split(separator: ",").map(String.init)
+    guard !entries.isEmpty else {
+      throw MappingCommandError.invalidArguments("--sources requires at least one source.")
+    }
+    return try entries.map { try source($0) }
+  }
+
+  static func uuid(_ raw: String, option: String) throws -> UUID {
+    guard let id = UUID(uuidString: raw) else {
+      throw MappingCommandError.invalidArguments("\(option) must be a valid UUID.")
+    }
+    return id
   }
 }

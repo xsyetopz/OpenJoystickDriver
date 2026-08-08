@@ -2,14 +2,10 @@ import Foundation
 import Testing
 
 struct ControllerInputParityTests {
-  @Test
-  func cliUsesTheSharedControllerInputDiagnostics() throws {
+  @Test func cliUsesTheSharedControllerInputDiagnostics() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cli = try source("Sources/OpenJoystickDriver/CLIGrammar.swift", root: root)
-    let command = try source(
-      "Sources/OpenJoystickDriver/Commands/InputCommand.swift",
-      root: root
-    )
+    let command = try source("Sources/OpenJoystickDriver/Commands/InputCommand.swift", root: root)
     let service = try source(
       "Sources/OpenJoystickDriver/ControllerInputDiagnosticService.swift",
       root: root

@@ -2,8 +2,7 @@ import Foundation
 import Testing
 
 struct PacketLogHotPathTests {
-  @Test
-  func packetFormattingIsDeferredUntilDiagnosticRetrieval() throws {
+  @Test func packetFormattingIsDeferredUntilDiagnosticRetrieval() throws {
     let rootURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let pipeline = try String(
       contentsOf: rootURL.appendingPathComponent(

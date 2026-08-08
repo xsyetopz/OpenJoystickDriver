@@ -21,8 +21,7 @@ extension RemappingRoutingCore {
     if proposedControls.revision >= controls.revision {
       let previousCompatibilitySuppressed = compatibilityIsSuppressed
       controls = proposedControls
-      if !previousCompatibilitySuppressed,
-        compatibilityIsSuppressed,
+      if !previousCompatibilitySuppressed, compatibilityIsSuppressed,
         !profileTransactionState.blocksOutput
       {
         for identifier in sortedIdentifiers {
@@ -35,9 +34,7 @@ extension RemappingRoutingCore {
     if case .unreconciled(_, let error) = profileTransactionState {
       markRoutesUnreconciled(error, environment: environment)
     } else {
-      do {
-        try await refreshEligibility(environment: environment, requiring: permit)
-      } catch {
+      do { try await refreshEligibility(environment: environment, requiring: permit) } catch {
         // The route statuses retain the typed engine/library failure recorded by
         // reconciliation. Status sampling itself remains nonthrowing for RPC use.
       }
@@ -53,18 +50,13 @@ extension RemappingRoutingCore {
     requiring permit: RemappingEmissionPermit?
   ) async throws {
     for identifier in sortedIdentifiers {
-      try await reconcileEligibility(
-        for: identifier,
-        environment: environment,
-        requiring: permit
-      )
+      try await reconcileEligibility(for: identifier, environment: environment, requiring: permit)
     }
   }
 
-  private func makeStatus(
-    identifier: DeviceIdentifier,
-    route: RemappingControllerRoute
-  ) -> RemappingRouteStatus {
+  private func makeStatus(identifier: DeviceIdentifier, route: RemappingControllerRoute)
+    -> RemappingRouteStatus
+  {
     let selection: RemappingRouteSelection
     let profile: RemappingProfile?
     switch route.selection {

@@ -40,9 +40,10 @@ public enum ApplicationServiceLogService {
 
   public static func url(for stream: ApplicationServiceLogStream) -> URL {
     let suffix = stream == .standardOutput ? "out" : "err"
-    return FileManager.default.homeDirectoryForCurrentUser
-      .appendingPathComponent("Library/Logs/OpenJoystickDriver", isDirectory: true)
-      .appendingPathComponent("OpenJoystickDriver.\(suffix).log", isDirectory: false)
+    return FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(
+      "Library/Logs/OpenJoystickDriver",
+      isDirectory: true
+    ).appendingPathComponent("OpenJoystickDriver.\(suffix).log", isDirectory: false)
   }
 
   /// Redirects the host process streams to fresh, user-private files for this session.
@@ -145,9 +146,7 @@ public enum ApplicationServiceLogService {
 private struct ApplicationServiceLogError: LocalizedError, Sendable {
   let message: String
 
-  init(_ message: String) {
-    self.message = message
-  }
+  init(_ message: String) { self.message = message }
 
   var errorDescription: String? { message }
 }

@@ -13,17 +13,11 @@ final class RemappingRouterRecorder: @unchecked Sendable {
   private let lock = NSLock()
   private var entries: [RemappingRouterTrace] = []
 
-  func append(_ entry: RemappingRouterTrace) {
-    lock.withLock { entries.append(entry) }
-  }
+  func append(_ entry: RemappingRouterTrace) { lock.withLock { entries.append(entry) } }
 
-  func snapshot() -> [RemappingRouterTrace] {
-    lock.withLock { entries }
-  }
+  func snapshot() -> [RemappingRouterTrace] { lock.withLock { entries } }
 
-  func removeAll() {
-    lock.withLock { entries.removeAll() }
-  }
+  func removeAll() { lock.withLock { entries.removeAll() } }
 }
 
 final class RemappingRouterCompatibility: OutputDispatcher, ControllerLifecycleListener,
@@ -71,26 +65,19 @@ final class RemappingRouterCompatibility: OutputDispatcher, ControllerLifecycleL
 final class RemappingRouterSink: RemappingSystemInputSink, @unchecked Sendable {
   private let recorder: RemappingRouterRecorder
 
-  init(recorder: RemappingRouterRecorder) {
-    self.recorder = recorder
-  }
+  init(recorder: RemappingRouterRecorder) { self.recorder = recorder }
 
-  func send(_ action: RemappingSystemInputAction) throws {
-    recorder.append(.system(action))
-  }
+  func send(_ action: RemappingSystemInputAction) throws { recorder.append(.system(action)) }
 }
 
-final class RemappingRouterForeground: RemappingForegroundApplicationProviding,
-  @unchecked Sendable
+final class RemappingRouterForeground: RemappingForegroundApplicationProviding, @unchecked Sendable
 {
   private let lock = NSLock()
   private var bundleIdentifier: String?
   private var sequence: [String?] = []
   private var reads = 0
 
-  init(_ bundleIdentifier: String?) {
-    self.bundleIdentifier = bundleIdentifier
-  }
+  init(_ bundleIdentifier: String?) { self.bundleIdentifier = bundleIdentifier }
 
   func frontmostBundleIdentifier() -> String? {
     lock.withLock {
@@ -107,17 +94,11 @@ final class RemappingRouterForeground: RemappingForegroundApplicationProviding,
     }
   }
 
-  func setSequence(_ values: [String?]) {
-    lock.withLock { sequence = values }
-  }
+  func setSequence(_ values: [String?]) { lock.withLock { sequence = values } }
 
-  func resetReadCount() {
-    lock.withLock { reads = 0 }
-  }
+  func resetReadCount() { lock.withLock { reads = 0 } }
 
-  var readCount: Int {
-    lock.withLock { reads }
-  }
+  var readCount: Int { lock.withLock { reads } }
 
 }
 
@@ -127,9 +108,7 @@ final class RemappingRouterAccess: RemappingPostEventAccessProviding, @unchecked
   private var sequence: [RemappingPostEventAccessState] = []
   private var reads = 0
 
-  init(_ state: RemappingPostEventAccessState) {
-    self.state = state
-  }
+  init(_ state: RemappingPostEventAccessState) { self.state = state }
 
   func currentState() -> RemappingPostEventAccessState {
     lock.withLock {
@@ -150,30 +129,20 @@ final class RemappingRouterAccess: RemappingPostEventAccessProviding, @unchecked
     lock.withLock { sequence = values }
   }
 
-  func resetReadCount() {
-    lock.withLock { reads = 0 }
-  }
+  func resetReadCount() { lock.withLock { reads = 0 } }
 
-  var readCount: Int {
-    lock.withLock { reads }
-  }
+  var readCount: Int { lock.withLock { reads } }
 }
 
 final class RemappingTickerClock: @unchecked Sendable {
   private let lock = NSLock()
   private var value: UInt64
 
-  init(_ value: UInt64) {
-    self.value = value
-  }
+  init(_ value: UInt64) { self.value = value }
 
-  func read() -> UInt64 {
-    lock.withLock { value }
-  }
+  func read() -> UInt64 { lock.withLock { value } }
 
-  func advance(by nanoseconds: UInt64) {
-    lock.withLock { value &+= nanoseconds }
-  }
+  func advance(by nanoseconds: UInt64) { lock.withLock { value &+= nanoseconds } }
 }
 
 final class RemappingTickerProbe: @unchecked Sendable {
@@ -187,27 +156,18 @@ final class RemappingTickerProbe: @unchecked Sendable {
   private var pendingSleeps: [PendingSleep] = []
   private var requestedDurations: [UInt64] = []
 
-  init(clock: RemappingTickerClock? = nil) {
-    self.clock = clock
-  }
+  init(clock: RemappingTickerClock? = nil) { self.clock = clock }
 
-  var sleepCount: Int {
-    lock.withLock { requestedDurations.count }
-  }
+  var sleepCount: Int { lock.withLock { requestedDurations.count } }
 
-  var sleepDurations: [UInt64] {
-    lock.withLock { requestedDurations }
-  }
+  var sleepDurations: [UInt64] { lock.withLock { requestedDurations } }
 
   func sleep(nanoseconds: UInt64) async throws {
     try Task.checkCancellation()
     try await withCheckedThrowingContinuation { continuation in
       lock.withLock {
         requestedDurations.append(nanoseconds)
-        pendingSleeps.append(PendingSleep(
-          nanoseconds: nanoseconds,
-          continuation: continuation
-        ))
+        pendingSleeps.append(PendingSleep(nanoseconds: nanoseconds, continuation: continuation))
       }
     }
     try Task.checkCancellation()
@@ -268,8 +228,8 @@ struct RemappingRouterHarness {
     let recorder = RemappingRouterRecorder()
     let foreground = RemappingRouterForeground(frontmostBundleIdentifier)
     let access = RemappingRouterAccess(accessState)
-    let sink: any RemappingSystemInputSink = systemInputSink
-      ?? RemappingRouterSink(recorder: recorder)
+    let sink: any RemappingSystemInputSink =
+      systemInputSink ?? RemappingRouterSink(recorder: recorder)
     let engine = RemappingEventEngine(sink: sink)
     let compatibility = RemappingRouterCompatibility(
       recorder: recorder,
@@ -304,20 +264,14 @@ struct RemappingRouterHarness {
   }
 }
 
-func remappingRouterDevice(
-  _ location: UInt32,
-  vendorID: UInt16 = 1118,
-  productID: UInt16 = 654
-) -> DeviceIdentifier {
-  DeviceIdentifier(vendorID: vendorID, productID: productID, locationID: location)
-}
+func remappingRouterDevice(_ location: UInt32, vendorID: UInt16 = 1118, productID: UInt16 = 654)
+  -> DeviceIdentifier
+{ DeviceIdentifier(vendorID: vendorID, productID: productID, locationID: location) }
 
 func remappingRouterProfile(
   id: UUID = UUID(),
   name: String = "Game",
-  applicationScope: RemappingApplicationScope = .application(
-    bundleIdentifier: "com.example.Game"
-  ),
+  applicationScope: RemappingApplicationScope = .application(bundleIdentifier: "com.example.Game"),
   destination: RemappingDestination = .keyboard(key: .space, modifiers: []),
   turbo: RemappingTurbo? = nil
 ) -> RemappingProfile {
@@ -326,12 +280,6 @@ func remappingRouterProfile(
     name: name,
     device: RemappingDeviceScope(vendorID: 1118, productID: 654),
     applicationScope: applicationScope,
-    bindings: [
-      RemappingBinding(
-        source: .button(.south),
-        destination: destination,
-        turbo: turbo
-      ),
-    ]
+    bindings: [RemappingBinding(source: .button(.south), destination: destination, turbo: turbo)]
   )
 }

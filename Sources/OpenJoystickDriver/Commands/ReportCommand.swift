@@ -19,19 +19,16 @@ struct ReportCommand {
     let client = ApplicationServiceClient()
     client.connect()
 
-    let status: ApplicationServiceStatusPayload? =
-      runSyncOptionalResult(timeout: 1.0) { try? await client.getStatus() }
+    let status: ApplicationServiceStatusPayload? = runSyncOptionalResult(timeout: 1.0) {
+      try? await client.getStatus()
+    }
     let virtualDiagnostics: ApplicationServiceVirtualDeviceDiagnosticsPayload? =
       status == nil
       ? nil
-      : runSyncOptionalResult(timeout: 1.0) {
-        try? await client.getVirtualDeviceDiagnostics()
-      }
+      : runSyncOptionalResult(timeout: 1.0) { try? await client.getVirtualDeviceDiagnostics() }
     client.disconnect()
 
-    let permissions = PermissionManager.AccessState(
-      status: status?.inputMonitoring ?? "unknown"
-    )
+    let permissions = PermissionManager.AccessState(status: status?.inputMonitoring ?? "unknown")
     let health = ApplicationServiceManager.health()
     let report = SupportReportService.make(
       status: status,
@@ -56,8 +53,9 @@ struct ReportCommand {
 
   private func parseOutputURL(arguments: [String]) -> URL {
     if arguments.isEmpty {
-      return URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-        .appendingPathComponent(SupportReportService.defaultFilename())
+      return URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent(
+        SupportReportService.defaultFilename()
+      )
     }
     guard arguments.count == 2, arguments[0] == "--output" else {
       printHelp()

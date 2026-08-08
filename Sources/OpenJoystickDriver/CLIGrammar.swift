@@ -10,14 +10,10 @@ enum CLIParseError: LocalizedError {
 
   var errorDescription: String? {
     switch self {
-    case .missingCommand:
-      "A command is required."
-    case let .unknownCommand(command):
-      "Unknown command '\(command)'."
-    case let .missingSubcommand(command):
-      "'\(command)' requires a subcommand."
-    case let .unexpectedArguments(command):
-      "'\(command)' does not accept additional arguments."
+    case .missingCommand: "A command is required."
+    case .unknownCommand(let command): "Unknown command '\(command)'."
+    case .missingSubcommand(let command): "'\(command)' requires a subcommand."
+    case .unexpectedArguments(let command): "'\(command)' does not accept additional arguments."
     }
   }
 }
@@ -76,54 +72,40 @@ struct CLIGrammar {
     defer { CLIExecutionContext.serviceCallTimeoutSeconds = previousTimeout }
 
     switch invocation {
-    case .help:
-      print(CLIHelp.text)
-    case .version:
-      print("OpenJoystickDriver v\(ApplicationVersion.current)")
-    case let .status(arguments), let .appStatus(arguments):
+    case .help: print(CLIHelp.text)
+    case .version: print("OpenJoystickDriver v\(ApplicationVersion.current)")
+    case .status(let arguments), .appStatus(let arguments):
       StatusCommand().run(arguments: arguments)
-    case .controllerList:
-      ListCommand().run()
-    case let .controllerInput(arguments):
-      InputCommand().run(arguments: arguments)
-    case let .controllerOutput(arguments):
-      PhysicalOutputCommand().run(arguments: arguments)
-    case let .mapping(arguments):
-      MappingCommand().run(arguments: arguments)
-    case let .appLogin(enable):
-      if enable {
-        InstallCommand().run()
-      } else {
-        UninstallCommand().run()
-      }
-    case let .appLogs(arguments):
-      LogsCommand().run(arguments: arguments)
-    case let .extension(action):
+    case .controllerList: ListCommand().run()
+    case .controllerInput(let arguments): InputCommand().run(arguments: arguments)
+    case .controllerOutput(let arguments): PhysicalOutputCommand().run(arguments: arguments)
+    case .mapping(let arguments): MappingCommand().run(arguments: arguments)
+    case .appLogin(let enable):
+      if enable { InstallCommand().run() } else { UninstallCommand().run() }
+    case .appLogs(let arguments): LogsCommand().run(arguments: arguments)
+    case .extension(let action):
       switch action {
       case .status: SystemExtensionCommand().run(arguments: ["status"])
       case .enable: SystemExtensionCommand().run(arguments: ["enable"])
       case .disable: SystemExtensionCommand().run(arguments: ["disable"])
       }
-    case let .permissions(arguments):
-      PermissionsCommand().run(arguments: arguments)
-    case let .compatibility(action):
+    case .permissions(let arguments): PermissionsCommand().run(arguments: arguments)
+    case .compatibility(let action):
       switch action {
       case .show: CompatibilityCommand().run(arguments: ["status"])
-      case let .set(identity): CompatibilityCommand().run(arguments: [identity])
+      case .set(let identity): CompatibilityCommand().run(arguments: [identity])
       case .reset: ResetSettingsCommand().run()
       }
-    case let .selfTest(arguments):
-      SelfTestCommand().run(arguments: arguments)
-    case let .diagnose(action):
+    case .selfTest(let arguments): SelfTestCommand().run(arguments: arguments)
+    case .diagnose(let action):
       switch action {
       case .summary: DiagnoseCommand().run()
-      case let .runtime(arguments): DiagnoseCommand().run(arguments: ["runtime"] + arguments)
-      case let .gameControllerCatalog(arguments):
+      case .runtime(let arguments): DiagnoseCommand().run(arguments: ["runtime"] + arguments)
+      case .gameControllerCatalog(let arguments):
         DiagnoseCommand().run(arguments: ["catalog"] + arguments)
-      case let .report(arguments): ReportCommand().run(arguments: ["create"] + arguments)
+      case .report(let arguments): ReportCommand().run(arguments: ["create"] + arguments)
       }
-    case let .updateCheck(arguments):
-      UpdatesCommand().run(arguments: ["check"] + arguments)
+    case .updateCheck(let arguments): UpdatesCommand().run(arguments: ["check"] + arguments)
     }
   }
 
@@ -147,27 +129,18 @@ struct CLIGrammar {
     case "status":
       try requireStatusOptions(trailing, command: command)
       return .status(trailing)
-    case "controller":
-      return try parseController(trailing)
+    case "controller": return try parseController(trailing)
     case "map":
       guard !trailing.isEmpty else { throw CLIParseError.missingSubcommand(command) }
       return .mapping(trailing)
-    case "app":
-      return try parseApp(trailing)
-    case "extension":
-      return try parseExtension(trailing)
-    case "permissions":
-      return try parsePermissions(trailing)
-    case "compat":
-      return try parseCompat(trailing)
-    case "test":
-      return .selfTest(trailing)
-    case "diagnose":
-      return try parseDiagnose(trailing)
-    case "update":
-      return try parseUpdate(trailing)
-    default:
-      throw CLIParseError.unknownCommand(command)
+    case "app": return try parseApp(trailing)
+    case "extension": return try parseExtension(trailing)
+    case "permissions": return try parsePermissions(trailing)
+    case "compat": return try parseCompat(trailing)
+    case "test": return .selfTest(trailing)
+    case "diagnose": return try parseDiagnose(trailing)
+    case "update": return try parseUpdate(trailing)
+    default: throw CLIParseError.unknownCommand(command)
     }
   }
 
@@ -178,14 +151,10 @@ struct CLIGrammar {
     case "list":
       try requireEmpty(trailing, command: "controller list")
       return .controllerList
-    case "state":
-      return .controllerInput(["state"] + trailing)
-    case "packets", "watch":
-      return .controllerInput([command] + trailing)
-    case "output":
-      return .controllerOutput(trailing)
-    default:
-      throw CLIParseError.unknownCommand("controller \(command)")
+    case "state": return .controllerInput(["state"] + trailing)
+    case "packets", "watch": return .controllerInput([command] + trailing)
+    case "output": return .controllerOutput(trailing)
+    default: throw CLIParseError.unknownCommand("controller \(command)")
     }
   }
 
@@ -196,8 +165,7 @@ struct CLIGrammar {
     case "status":
       try requireStatusOptions(trailing, command: "app status")
       return .appStatus(trailing)
-    case "logs":
-      return .appLogs(trailing)
+    case "logs": return .appLogs(trailing)
     case "login":
       guard let action = trailing.first else { throw CLIParseError.missingSubcommand("app login") }
       try requireEmpty(Array(trailing.dropFirst()), command: "app login \(action)")
@@ -206,8 +174,7 @@ struct CLIGrammar {
       case "disable": return .appLogin(enable: false)
       default: throw CLIParseError.unknownCommand("app login \(action)")
       }
-    default:
-      throw CLIParseError.unknownCommand("app \(command)")
+    default: throw CLIParseError.unknownCommand("app \(command)")
     }
   }
 
@@ -223,9 +190,7 @@ struct CLIGrammar {
   }
 
   private static func parseCompat(_ arguments: [String]) throws -> CLIInvocation {
-    guard let command = arguments.first else {
-      throw CLIParseError.missingSubcommand("compat")
-    }
+    guard let command = arguments.first else { throw CLIParseError.missingSubcommand("compat") }
     let trailing = Array(arguments.dropFirst())
     switch command {
     case "show":
@@ -239,8 +204,7 @@ struct CLIGrammar {
     case "reset":
       try requireEmpty(trailing, command: "compat reset")
       return .compatibility(.reset)
-    default:
-      throw CLIParseError.unknownCommand("compat \(command)")
+    default: throw CLIParseError.unknownCommand("compat \(command)")
     }
   }
 
@@ -249,8 +213,7 @@ struct CLIGrammar {
     switch command {
     case "status", "request", "open", "explain", "help", "--help", "-h":
       return .permissions(arguments)
-    default:
-      throw CLIParseError.unknownCommand("permissions \(command)")
+    default: throw CLIParseError.unknownCommand("permissions \(command)")
     }
   }
 
@@ -285,9 +248,7 @@ struct CLIGrammar {
     var index = 0
     var timeout = 0.5
     while index < arguments.count, arguments[index] == "--timeout" {
-      guard index + 1 < arguments.count,
-        let value = Double(arguments[index + 1]), value > 0
-      else {
+      guard index + 1 < arguments.count, let value = Double(arguments[index + 1]), value > 0 else {
         throw CLIParseError.unexpectedArguments(command: "--timeout")
       }
       timeout = value
@@ -305,6 +266,4 @@ private struct CLIParseResult {
   let serviceTimeoutSeconds: Double
 }
 
-enum CLIHelp {
-  static let text = InstalledCLIHelpRenderer.render()
-}
+enum CLIHelp { static let text = InstalledCLIHelpRenderer.render() }

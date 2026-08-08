@@ -3,11 +3,10 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct RemappingScheduleTests {
-  @Test
-  func turboDeadlineHonorsSixtyHertzFivePercentDutyBoundaries() async throws {
+  @Test func turboDeadlineHonorsSixtyHertzFivePercentDutyBoundaries() async throws {
     let engine = RemappingEventEngine(sink: RemappingTestSink())
     let currentProfile = profile(bindings: [
-      turboBinding(source: .button(.south), key: .a, rate: 60, duty: 0.05),
+      turboBinding(source: .button(.south), key: .a, rate: 60, duty: 0.05)
     ])
     let start: UInt64 = 1_000_000_000
     let offBoundary = start + 833_333
@@ -27,13 +26,11 @@ struct RemappingScheduleTests {
     #expect(await deadline(engine, after: offBoundary, cadence: 8_000_000) == nextPeriod)
   }
 
-  @Test
-  func continuousAndMultipleTurboDeadlinesChooseTheEarliestWork() async throws {
+  @Test func continuousAndMultipleTurboDeadlinesChooseTheEarliestWork() async throws {
     let engine = RemappingEventEngine(sink: RemappingTestSink())
     let currentProfile = profile(bindings: [
       turboBinding(source: .button(.south), key: .a, rate: 10, duty: 0.5),
-      turboBinding(source: .button(.east), key: .b, rate: 20, duty: 0.1),
-      continuousBinding(),
+      turboBinding(source: .button(.east), key: .b, rate: 20, duty: 0.1), continuousBinding(),
     ])
     let start: UInt64 = 2_000_000_000
 
@@ -62,8 +59,7 @@ struct RemappingScheduleTests {
     #expect(await deadline(engine, after: start, cadence: 1_000_000) == nil)
   }
 
-  @Test
-  func scheduledDeadlineSaturatesAndReleasePathsReturnNil() async throws {
+  @Test func scheduledDeadlineSaturatesAndReleasePathsReturnNil() async throws {
     let engine = RemappingEventEngine(sink: RemappingTestSink())
     let currentProfile = profile(bindings: [continuousBinding(destination: .scroll(.x))])
 
@@ -81,18 +77,11 @@ struct RemappingScheduleTests {
     #expect(await deadline(engine, after: 0, cadence: 8) == nil)
   }
 
-  @Test
-  func scheduledWorkExcludesOrdinaryHeldKeysAndMouseButtons() async throws {
+  @Test func scheduledWorkExcludesOrdinaryHeldKeysAndMouseButtons() async throws {
     let engine = RemappingEventEngine(sink: RemappingTestSink())
     let currentProfile = profile(bindings: [
-      RemappingBinding(
-        source: .button(.east),
-        destination: .keyboard(key: .b, modifiers: [])
-      ),
-      RemappingBinding(
-        source: .button(.west),
-        destination: .mouseButton(.right)
-      ),
+      RemappingBinding(source: .button(.east), destination: .keyboard(key: .b, modifiers: [])),
+      RemappingBinding(source: .button(.west), destination: .mouseButton(.right)),
       turboBinding(source: .button(.south), key: .a, rate: 10, duty: 0.5),
     ])
 
@@ -120,8 +109,7 @@ struct RemappingScheduleTests {
     #expect(await engine.hasScheduledOutput() == false)
   }
 
-  @Test
-  func continuousSchedulingStopsAtNeutralAndEveryReleaseLifecycle() async throws {
+  @Test func continuousSchedulingStopsAtNeutralAndEveryReleaseLifecycle() async throws {
     let engine = RemappingEventEngine(sink: RemappingTestSink())
     let currentProfile = profile(bindings: [continuousBinding()])
 
@@ -157,10 +145,7 @@ struct RemappingScheduleTests {
     after uptimeNanoseconds: UInt64,
     cadence: UInt64
   ) async -> UInt64? {
-    await engine.nextScheduledTick(
-      after: uptimeNanoseconds,
-      continuousIntervalNanoseconds: cadence
-    )
+    await engine.nextScheduledTick(after: uptimeNanoseconds, continuousIntervalNanoseconds: cadence)
   }
 
   private func profile(bindings: [RemappingBinding]) -> RemappingProfile {
@@ -185,20 +170,13 @@ struct RemappingScheduleTests {
     )
   }
 
-  private func continuousBinding(
-    destination: RemappingDestination = .mouseMovement(.x)
-  ) -> RemappingBinding {
-    RemappingBinding(
-      source: .axis(.leftStickX),
-      destination: destination,
-      axisTuning: .default
-    )
-  }
+  private func continuousBinding(destination: RemappingDestination = .mouseMovement(.x))
+    -> RemappingBinding
+  { RemappingBinding(source: .axis(.leftStickX), destination: destination, axisTuning: .default) }
 
-  private func activateContinuous(
-    _ engine: RemappingEventEngine,
-    profile: RemappingProfile
-  ) async throws {
+  private func activateContinuous(_ engine: RemappingEventEngine, profile: RemappingProfile)
+    async throws
+  {
     try await engine.process(
       events: [.leftStickChanged(x: 0.8, y: 0)],
       from: device,

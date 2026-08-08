@@ -18,10 +18,11 @@ private enum RuntimeDeviceIdentity {
     let identity = Data((model + components.joined(separator: ":")).utf8)
 
     let digest = Data(HMAC<SHA256>.authenticationCode(for: identity, using: key))
-    return "E-" + digest.base64EncodedString()
-      .replacingOccurrences(of: "+", with: "-")
-      .replacingOccurrences(of: "/", with: "_")
-      .replacingOccurrences(of: "=", with: "")
+    return "E-"
+      + digest.base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(
+        of: "/",
+        with: "_"
+      ).replacingOccurrences(of: "=", with: "")
   }
 }
 
@@ -81,8 +82,7 @@ public struct DeviceIdentifier: Hashable, Sendable {
   /// making private hardware identity non-reversible and unlinkable across launches.
   /// The model fallback is explicit because it cannot select one of multiple devices.
   public var runtimeIdentifier: String {
-    RuntimeDeviceIdentity.token(for: self)
-      ?? String(format: "M-%04X-%04X", vendorID, productID)
+    RuntimeDeviceIdentity.token(for: self) ?? String(format: "M-%04X-%04X", vendorID, productID)
   }
 }
 

@@ -12,21 +12,16 @@ enum RemappingOutputRoutingError: Error, Equatable, LocalizedError, Sendable {
 
   var errorDescription: String? {
     switch self {
-    case .engine(let error):
-      error.localizedDescription
-    case .library(let error):
-      error.localizedDescription
+    case .engine(let error): error.localizedDescription
+    case .library(let error): error.localizedDescription
     case .libraryAndEngine(let libraryError, let engineError):
       "\(libraryError.localizedDescription) \(engineError.localizedDescription)"
-    case .profileTransactionAlreadyActive:
-      "A remapping profile transaction is already active."
+    case .profileTransactionAlreadyActive: "A remapping profile transaction is already active."
     case .profileTransactionUnreconciled(let detail):
       "Remapping output remains suspended because a profile transaction could not be "
         + "reconciled. \(detail)"
-    case .profileTransactionViolation:
-      "The remapping profile transaction token is invalid."
-    case .shutDown:
-      "The remapping output router has shut down."
+    case .profileTransactionViolation: "The remapping profile transaction token is invalid."
+    case .shutDown: "The remapping output router has shut down."
     }
   }
 }
@@ -72,9 +67,7 @@ struct RemappingSchedulingSnapshot: Equatable, Sendable {
 struct RemappingProfileTransaction: Equatable, Hashable, Sendable {
   let id: UUID
 
-  init() {
-    id = UUID()
-  }
+  init() { id = UUID() }
 }
 
 struct RemappingRouterStatusSnapshot: Equatable, Sendable {
@@ -87,9 +80,7 @@ enum RemappingProfileTransactionState: Equatable, Sendable {
   case active(RemappingProfileTransaction)
   case unreconciled(RemappingProfileTransaction, RemappingOutputRoutingError)
 
-  var blocksOutput: Bool {
-    self != .inactive
-  }
+  var blocksOutput: Bool { self != .inactive }
 }
 
 enum RemappingSelectedRoute: Equatable, Sendable {
@@ -127,10 +118,7 @@ struct RemappingEligibilitySnapshot: Equatable, Sendable {
   let frontmostBundleIdentifier: String?
   let postEventAccessState: RemappingPostEventAccessState
 
-  init(
-    eligibility: RemappingRouteEligibility,
-    environment: RemappingEligibilityEnvironment
-  ) {
+  init(eligibility: RemappingRouteEligibility, environment: RemappingEligibilityEnvironment) {
     self.eligibility = eligibility
     self.frontmostBundleIdentifier = environment.frontmostBundleIdentifier
     self.postEventAccessState = environment.postEventAccessState

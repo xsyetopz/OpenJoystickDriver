@@ -107,8 +107,7 @@ struct LogsCommand {
       let argument = arguments[index]
       switch argument {
       case "--stream":
-        guard index + 1 < arguments.count,
-          let selection = Selection(rawValue: arguments[index + 1])
+        guard index + 1 < arguments.count, let selection = Selection(rawValue: arguments[index + 1])
         else {
           CLIOutput.error("--stream must be stdout, stderr, or both.")
           exit(1)
@@ -116,8 +115,7 @@ struct LogsCommand {
         options.selection = selection
         index += 2
       case "--lines" where options.action == "show":
-        guard index + 1 < arguments.count,
-          let lines = Int(arguments[index + 1]),
+        guard index + 1 < arguments.count, let lines = Int(arguments[index + 1]),
           (1...10_000).contains(lines)
         else {
           CLIOutput.error("--lines must be 1...10000.")
@@ -143,13 +141,10 @@ struct LogsCommand {
   private func printHelp() {
     print(
       [
-        "Usage: OpenJoystickDriver --headless app logs <show|path|open> [options]",
-        "",
-        "Options:",
+        "Usage: OpenJoystickDriver --headless app logs <show|path|open> [options]", "", "Options:",
         "  --stream stdout|stderr|both",
         "  --lines 1...10000       Tail limit for show (default 100)",
-        "  --json                   Emit typed snapshots for show",
-        "",
+        "  --json                   Emit typed snapshots for show", "",
         "Log reads retain at most 256 KiB per file and warn before sharing.",
       ].joined(separator: "\n")
     )

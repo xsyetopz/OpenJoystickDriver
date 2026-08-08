@@ -5,8 +5,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct DevicePipelineSleepTests {
-  @Test
-  func testSleepingPipelineKeepsPhysicalInputStateButStopsVirtualDispatch() async {
+  @Test func testSleepingPipelineKeepsPhysicalInputStateButStopsVirtualDispatch() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: DeviceIdentifier(vendorID: 100, productID: 200),
@@ -58,13 +57,11 @@ struct DevicePipelineSleepTests {
 
     await pipeline.feedHIDData(Data([4]))
     #expect(
-      dispatcher.flattenedEvents
-        == [.buttonPressed(.a), .buttonReleased(.a), .buttonPressed(.b)]
+      dispatcher.flattenedEvents == [.buttonPressed(.a), .buttonReleased(.a), .buttonPressed(.b)]
     )
   }
 
-  @Test
-  func testForegroundGateRearmsAfterFirstPostFocusChangeWithoutFullNeutral() async {
+  @Test func testForegroundGateRearmsAfterFirstPostFocusChangeWithoutFullNeutral() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: DeviceIdentifier(vendorID: 100, productID: 200),
@@ -82,26 +79,28 @@ struct DevicePipelineSleepTests {
 
     await pipeline.setExternalOutputAllowed(false)
     #expect(
-      dispatcher.flattenedEvents
-        == [.leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0)]
+      dispatcher.flattenedEvents == [
+        .leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0),
+      ]
     )
 
     await pipeline.setExternalOutputAllowed(true)
     await pipeline.feedHIDData(Data([5]))
     #expect(
-      dispatcher.flattenedEvents
-        == [.leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0)]
+      dispatcher.flattenedEvents == [
+        .leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0),
+      ]
     )
 
     await pipeline.feedHIDData(Data([4]))
     #expect(
-      dispatcher.flattenedEvents
-        == [.leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0), .buttonPressed(.b)]
+      dispatcher.flattenedEvents == [
+        .leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0), .buttonPressed(.b),
+      ]
     )
   }
 
-  @Test
-  func testRepeatedAllowedSignalDoesNotRearmForegroundGate() async {
+  @Test func testRepeatedAllowedSignalDoesNotRearmForegroundGate() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: DeviceIdentifier(vendorID: 100, productID: 200),
@@ -120,8 +119,7 @@ struct DevicePipelineSleepTests {
     #expect(dispatcher.flattenedEvents == [.buttonPressed(.b)])
   }
 
-  @Test
-  func testPipelineSuppressesContradictoryDuplicateAndInvalidParserEvents() async {
+  @Test func testPipelineSuppressesContradictoryDuplicateAndInvalidParserEvents() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: DeviceIdentifier(vendorID: 100, productID: 200),
@@ -143,8 +141,7 @@ struct DevicePipelineSleepTests {
     #expect(dispatcher.flattenedEvents == [.buttonPressed(.a)])
   }
 
-  @Test
-  func testStopNeutralizesForwardedButtonState() async {
+  @Test func testStopNeutralizesForwardedButtonState() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: DeviceIdentifier(vendorID: 100, productID: 200),
@@ -164,8 +161,7 @@ struct DevicePipelineSleepTests {
     #expect(dispatcher.flattenedEvents == [.buttonPressed(.a), .buttonReleased(.a)])
   }
 
-  @Test
-  func testStopNeutralizesForwardedDpadAndAxesState() async {
+  @Test func testStopNeutralizesForwardedDpadAndAxesState() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: DeviceIdentifier(vendorID: 100, productID: 200),
@@ -185,16 +181,13 @@ struct DevicePipelineSleepTests {
 
     #expect(
       dispatcher.flattenedEvents == [
-        .dpadChanged(.north),
-        .leftStickChanged(x: 0.8, y: 0),
-        .dpadChanged(.neutral),
+        .dpadChanged(.north), .leftStickChanged(x: 0.8, y: 0), .dpadChanged(.neutral),
         .leftStickChanged(x: 0, y: 0),
       ]
     )
   }
 
-  @Test
-  func testInputConnectionLifecycleDefersAndStopsOutput() async {
+  @Test func testInputConnectionLifecycleDefersAndStopsOutput() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: DeviceIdentifier(vendorID: 10462, productID: 4418),
@@ -231,36 +224,23 @@ struct DevicePipelineSleepTests {
 }
 
 private final class ScriptedInputParser: InputParser, @unchecked Sendable {
-  func performHandshake(handle: USBDeviceHandle?) async throws {
-    await Task.yield()
-  }
+  func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
 
   func parse(data: Data) throws -> [ControllerEvent] {
     switch data.first {
-    case 1:
-      return [.buttonPressed(.a)]
-    case 2:
-      return [.buttonReleased(.a)]
-    case 3:
-      return [.leftStickChanged(x: 0.8, y: 0)]
-    case 4:
-      return [.buttonPressed(.b)]
-    case 5:
-      return [.leftStickChanged(x: 0.6, y: 0)]
-    case 6:
-      return [.dpadChanged(.north)]
-    case 9:
-      return [.buttonPressed(.a), .buttonReleased(.a)]
-    case 10:
-      return [.buttonPressed(.a), .buttonPressed(.a)]
-    case 11:
-      return [.leftStickChanged(x: .nan, y: .infinity)]
-    default:
-      return []
+    case 1: return [.buttonPressed(.a)]
+    case 2: return [.buttonReleased(.a)]
+    case 3: return [.leftStickChanged(x: 0.8, y: 0)]
+    case 4: return [.buttonPressed(.b)]
+    case 5: return [.leftStickChanged(x: 0.6, y: 0)]
+    case 6: return [.dpadChanged(.north)]
+    case 9: return [.buttonPressed(.a), .buttonReleased(.a)]
+    case 10: return [.buttonPressed(.a), .buttonPressed(.a)]
+    case 11: return [.leftStickChanged(x: .nan, y: .infinity)]
+    default: return []
     }
   }
 }
-
 
 private final class ScriptedLifecycleInputParser: InputParser, ControllerInputConnectionLifecycle,
   HIDStartupFeatureReportProvider, HIDShutdownFeatureReportProvider, @unchecked Sendable
@@ -284,9 +264,7 @@ private final class ScriptedLifecycleInputParser: InputParser, ControllerInputCo
     return state
   }
 
-  func performHandshake(handle: USBDeviceHandle?) async throws {
-    await Task.yield()
-  }
+  func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
 
   func parse(data: Data) throws -> [ControllerEvent] {
     switch data.first {
@@ -298,10 +276,8 @@ private final class ScriptedLifecycleInputParser: InputParser, ControllerInputCo
       connected = false
       pendingState = .disconnected
       return []
-    case 1 where connected:
-      return [.buttonPressed(.a)]
-    default:
-      return []
+    case 1 where connected: return [.buttonPressed(.a)]
+    default: return []
     }
   }
 }
@@ -313,33 +289,21 @@ private final class RecordingOutputDispatcher: OutputDispatcher, @unchecked Send
   private var recordedBatches: [[ControllerEvent]] = []
   private var recordedStops: [DeviceIdentifier] = []
 
-  var batches: [[ControllerEvent]] {
-    lock.withLock { recordedBatches }
-  }
+  var batches: [[ControllerEvent]] { lock.withLock { recordedBatches } }
 
-  var stoppedIdentifiers: [DeviceIdentifier] {
-    lock.withLock { recordedStops }
-  }
+  var stoppedIdentifiers: [DeviceIdentifier] { lock.withLock { recordedStops } }
 
-  var dispatchCount: Int {
-    lock.withLock { recordedBatches.count }
-  }
+  var dispatchCount: Int { lock.withLock { recordedBatches.count } }
 
-  var flattenedEvents: [ControllerEvent] {
-    lock.withLock { recordedBatches.flatMap { $0 } }
-  }
+  var flattenedEvents: [ControllerEvent] { lock.withLock { recordedBatches.flatMap { $0 } } }
 
   func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) {
-    lock.withLock {
-      recordedBatches.append(events)
-    }
+    lock.withLock { recordedBatches.append(events) }
   }
 }
 
 extension RecordingOutputDispatcher: ControllerLifecycleListener {
   func controllerDidStop(_ identifier: DeviceIdentifier) {
-    lock.withLock {
-      recordedStops.append(identifier)
-    }
+    lock.withLock { recordedStops.append(identifier) }
   }
 }

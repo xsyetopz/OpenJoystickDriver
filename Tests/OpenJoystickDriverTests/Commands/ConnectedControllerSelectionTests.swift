@@ -36,11 +36,7 @@ struct ConnectedControllerSelectionTests {
     let second = device(name: "Controller", vendorID: 1, productID: 2, id: "second")
 
     #expect(throws: ConnectedControllerSelection.Failure.self) {
-      try ConnectedControllerSelection.resolve(
-        devices: [first, second],
-        vendorID: 1,
-        productID: 2
-      )
+      try ConnectedControllerSelection.resolve(devices: [first, second], vendorID: 1, productID: 2)
     }
 
     do {
@@ -57,12 +53,7 @@ struct ConnectedControllerSelectionTests {
   }
 
   @Test func runtimeIdentifierMustBelongToTheRequestedModel() {
-    let selectedIDOnAnotherModel = device(
-      name: "Other",
-      vendorID: 3,
-      productID: 4,
-      id: "selected"
-    )
+    let selectedIDOnAnotherModel = device(name: "Other", vendorID: 3, productID: 4, id: "selected")
 
     #expect(throws: ConnectedControllerSelection.Failure.self) {
       try ConnectedControllerSelection.resolve(
@@ -86,12 +77,9 @@ struct ConnectedControllerSelectionTests {
     }
   }
 
-  private func device(
-    name: String,
-    vendorID: UInt16,
-    productID: UInt16,
-    id: String
-  ) -> ApplicationServiceDeviceDescription {
+  private func device(name: String, vendorID: UInt16, productID: UInt16, id: String)
+    -> ApplicationServiceDeviceDescription
+  {
     ApplicationServiceDeviceDescription(
       name: name,
       vendorID: vendorID,

@@ -3,6 +3,12 @@ import Foundation
 // MARK: - Packing
 
 struct HIDReportPacker: @unchecked Sendable {
+  private static let buttonUsagePage = 0x09
+  private static let genericDesktopUsagePage = 0x01
+  private static let buttonUsageRange = 1...32
+  private static let axisUsageRange = 0x30...0x35
+  private static let hatSwitchUsage = 0x39
+
   let reportID: UInt8
   let payloadSizeBytes: Int
 
@@ -16,21 +22,21 @@ struct HIDReportPacker: @unchecked Sendable {
     var best: (UInt8, Int)?
     for (rid, fields) in grouped {
       let hasButtons = fields.contains {
-        $0.usagePage == 0x09 && (1...32).contains($0.usage)
+        $0.usagePage == Self.buttonUsagePage && Self.buttonUsageRange.contains($0.usage)
       }
       let axisCount = fields.filter {
-        $0.usagePage == 0x01 && (0x30...0x35).contains($0.usage)
+        $0.usagePage == Self.genericDesktopUsagePage && Self.axisUsageRange.contains($0.usage)
       }.count
-      let hasHat = fields.contains { $0.usagePage == 0x01 && $0.usage == 0x39 }
+      let hasHat = fields.contains {
+        $0.usagePage == Self.genericDesktopUsagePage && $0.usage == Self.hatSwitchUsage
+      }
       var score = 0
       if hasButtons { score += 10 }
       score += min(6, axisCount) * 3
       if hasHat { score += 5 }
       if let size = parsed.payloadSizeBytesByReportID[rid] { score += min(20, size) }
       if let currentBest = best {
-        if score > currentBest.1 {
-          best = (rid, score)
-        }
+        if score > currentBest.1 { best = (rid, score) }
       } else {
         best = (rid, score)
       }
@@ -41,11 +47,12 @@ struct HIDReportPacker: @unchecked Sendable {
     var axes: [Int: HIDField] = [:]
     var hat: HIDField?
     for f in fields {
-      if f.usagePage == 0x09 {
+      if f.usagePage == Self.buttonUsagePage {
         buttons[f.usage] = f
-      } else if f.usagePage == 0x01 && (0x30...0x35).contains(f.usage) {
+      } else if f.usagePage == Self.genericDesktopUsagePage && Self.axisUsageRange.contains(f.usage)
+      {
         axes[f.usage] = f
-      } else if f.usagePage == 0x01 && f.usage == 0x39 {
+      } else if f.usagePage == Self.genericDesktopUsagePage && f.usage == Self.hatSwitchUsage {
         hat = f
       }
     }
@@ -176,9 +183,7 @@ struct HIDReportPacker: @unchecked Sendable {
       setBits(bitOffset: f.bitOffset, bitSize: f.bitSize, value: encodeHat(state.hat, field: f))
     }
 
-    if reportID != 0 {
-      return [reportID] + payload
-    }
+    if reportID != 0 { return [reportID] + payload }
     return payload
   }
 }

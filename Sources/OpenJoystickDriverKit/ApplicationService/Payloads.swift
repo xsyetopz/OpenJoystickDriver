@@ -360,8 +360,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     physicalOutputCapabilities: PhysicalControllerOutputCapabilities = .none,
     runtimeIdentifier: String? = nil
   ) {
-    self.runtimeIdentifier = runtimeIdentifier
-      ?? String(format: "%04X:%04X:M", vendorID, productID)
+    self.runtimeIdentifier = runtimeIdentifier ?? String(format: "%04X:%04X:M", vendorID, productID)
     self.name = name
     self.vendorID = vendorID
     self.productID = productID

@@ -4,8 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct PacketLogBufferTests {
-  @Test
-  func materializesTheExistingPacketLogContractOnRead() {
+  @Test func materializesTheExistingPacketLogContractOnRead() {
     let buffer = PacketLogBuffer(maxEntries: 3)
     buffer.append(bytes: [0x00, 0x0A, 0xFF], direction: "rx", timestamp: 10)
     buffer.append(bytes: [], direction: "tx", timestamp: 11)
@@ -22,8 +21,7 @@ struct PacketLogBufferTests {
     #expect(entries[1].hex.isEmpty)
   }
 
-  @Test
-  func keepsOnlyTheNewestBoundedEntries() {
+  @Test func keepsOnlyTheNewestBoundedEntries() {
     let buffer = PacketLogBuffer(maxEntries: 2)
     buffer.append(bytes: [1], direction: "rx", timestamp: 1)
     buffer.append(bytes: [2], direction: "rx", timestamp: 2)
@@ -34,8 +32,7 @@ struct PacketLogBufferTests {
     #expect(entries.map(\.hex) == ["02", "03"])
   }
 
-  @Test
-  func concurrentInputNeverExceedsTheRingLimit() {
+  @Test func concurrentInputNeverExceedsTheRingLimit() {
     let buffer = PacketLogBuffer(maxEntries: 200)
     DispatchQueue.concurrentPerform(iterations: 1_000) { value in
       buffer.append(

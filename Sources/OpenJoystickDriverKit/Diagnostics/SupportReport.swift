@@ -116,11 +116,7 @@ public struct SupportReport: Codable, Sendable {
       includesHIDLocationIDs: false,
       includesDeviceProductNames: true
     )
-    system = System(
-      appVersion: appVersion,
-      macOSVersion: macOSVersion,
-      architecture: architecture
-    )
+    system = System(appVersion: appVersion, macOSVersion: macOSVersion, architecture: architecture)
     permissions = Permissions(
       inputMonitoring: inputMonitoring.description,
       accessibility: status?.accessibility ?? "unknown"
@@ -158,13 +154,12 @@ public struct SupportReport: Codable, Sendable {
       if $0.productID != $1.productID { return $0.productID < $1.productID }
       return $0.name < $1.name
     }
-    outputValidationPlans = (status?.connectedDevices ?? [])
-      .map(PhysicalOutputValidationPlan.init(device:))
-      .filter { !$0.steps.isEmpty }
-      .sorted {
-        if $0.vendorID != $1.vendorID { return $0.vendorID < $1.vendorID }
-        return $0.productID < $1.productID
-      }
+    outputValidationPlans = (status?.connectedDevices ?? []).map(
+      PhysicalOutputValidationPlan.init(device:)
+    ).filter { !$0.steps.isEmpty }.sorted {
+      if $0.vendorID != $1.vendorID { return $0.vendorID < $1.vendorID }
+      return $0.productID < $1.productID
+    }
     hidGamepads = (virtualDiagnostics?.hidGamepads ?? []).map {
       HIDGamepad(
         vendorID: $0.vendorID,

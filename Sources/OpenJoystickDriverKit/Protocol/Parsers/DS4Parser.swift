@@ -139,8 +139,7 @@ public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDC
     }
   }
 
-  public func physicalColorReport(red: UInt8, green: UInt8, blue: UInt8)
-    -> PhysicalHIDOutputReport
+  public func physicalColorReport(red: UInt8, green: UInt8, blue: UInt8) -> PhysicalHIDOutputReport
   {
     switch connectionMode {
     case .usb:
@@ -175,15 +174,13 @@ public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDC
       return Array(bytes.dropFirst())
     }
     if bytes.first == ds4BluetoothHIDInputTransaction,
-      bytes.dropFirst().first == ds4USBInputReportID,
-      bytes.count >= 12
+      bytes.dropFirst().first == ds4USBInputReportID, bytes.count >= 12
     {
       connectionMode = .bluetooth
       return Array(bytes.dropFirst(2))
     }
     if bytes.first == ds4BluetoothHIDInputTransaction,
-      bytes.dropFirst().first == ds4BluetoothInputReportID,
-      bytes.count >= 79
+      bytes.dropFirst().first == ds4BluetoothInputReportID, bytes.count >= 79
     {
       connectionMode = .bluetooth
       return Array(bytes.dropFirst(4).dropLast(4))
@@ -292,21 +289,13 @@ public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDC
 
   private func ds4BluetoothCRC32(report: [UInt8]) -> UInt32 {
     var crc = updateCRC32(0xFFFF_FFFF, byte: ds4BluetoothHIDOutputHeader)
-    for byte in report.dropLast(4) {
-      crc = updateCRC32(crc, byte: byte)
-    }
+    for byte in report.dropLast(4) { crc = updateCRC32(crc, byte: byte) }
     return ~crc
   }
 
   private func updateCRC32(_ current: UInt32, byte: UInt8) -> UInt32 {
     var crc = current ^ UInt32(byte)
-    for _ in 0..<8 {
-      if crc & 1 == 1 {
-        crc = (crc >> 1) ^ 0xEDB8_8320
-      } else {
-        crc >>= 1
-      }
-    }
+    for _ in 0..<8 { if crc & 1 == 1 { crc = (crc >> 1) ^ 0xEDB8_8320 } else { crc >>= 1 } }
     return crc
   }
 }

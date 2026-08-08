@@ -95,9 +95,7 @@ func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
   case .open: owned = ["--vid", "--pid", "--service-open", "--set-report"]
   case .monitor: owned = ["--vid", "--pid", "--seconds"]
   case .usbMonitor:
-    owned = [
-      "--vid", "--pid", "--interface", "--endpoint", "--length", "--seconds", "--detach",
-    ]
+    owned = ["--vid", "--pid", "--interface", "--endpoint", "--length", "--seconds", "--detach"]
   case .recordProbe: owned = ["--seconds", "--detach", "--validate-only"]
   }
   let suppliedOptions = Set(values.keys).union(flags).subtracting([mode.rawValue])

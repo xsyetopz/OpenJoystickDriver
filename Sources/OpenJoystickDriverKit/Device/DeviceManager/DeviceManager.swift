@@ -11,6 +11,8 @@ func controllerDisplayName(productName: String?, vendorID: UInt16, productID: UI
 
 let usbDetectionPollNanoseconds: UInt64 = 2_000_000_000
 let devicePermissionWatchNanoseconds: UInt64 = 1_000_000_000
+private let nanosecondsPerMillisecond: UInt64 = 1_000_000
+let maxRumbleDurationMs = 5_000
 let usbVendorSpecificClass: UInt8 = 0xFF
 
 /// Manages device detection and pipeline lifecycle for all
@@ -97,10 +99,9 @@ public actor DeviceManager {
   /// Returns the latest input snapshot for a device matched by vendor and product ID.
   ///
   /// Returns nil if no pipeline is active for the device.
-  public func inputState(
-    for identifier: DeviceIdentifier,
-    runtimeIdentifier: String? = nil
-  ) -> DeviceInputState? {
+  public func inputState(for identifier: DeviceIdentifier, runtimeIdentifier: String? = nil)
+    -> DeviceInputState?
+  {
     guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier)
     else { return nil }
     return pipelines[key]?.inputState()
@@ -109,10 +110,9 @@ public actor DeviceManager {
   /// Returns recent raw USB packets for a device matched by vendor and product ID.
   ///
   /// Returns an empty array if no pipeline is active for the device.
-  public func packetLog(
-    for identifier: DeviceIdentifier,
-    runtimeIdentifier: String? = nil
-  ) -> [PacketLogEntry] {
+  public func packetLog(for identifier: DeviceIdentifier, runtimeIdentifier: String? = nil)
+    -> [PacketLogEntry]
+  {
     guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier)
     else { return [] }
     return pipelines[key]?.getPacketLog() ?? []
@@ -153,9 +153,9 @@ public actor DeviceManager {
       )
     let didStart = didStartUSB || didStartHID
     guard didStart else { return false }
-    let clampedDurationMs = max(0, min(durationMs, 5_000))
+    let clampedDurationMs = max(0, min(durationMs, maxRumbleDurationMs))
     if clampedDurationMs > 0 {
-      try? await Task.sleep(nanoseconds: UInt64(clampedDurationMs) * 1_000_000)
+      try? await Task.sleep(nanoseconds: UInt64(clampedDurationMs) * nanosecondsPerMillisecond)
       let didStopUSB = await pipeline.sendRumble(left: 0, right: 0, lt: 0, rt: 0)
       if !didStopUSB {
         await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline)
@@ -189,9 +189,7 @@ public actor DeviceManager {
     for identifier: DeviceIdentifier,
     runtimeIdentifier: String? = nil,
     brightness: UInt8
-  ) async
-    -> Bool
-  {
+  ) async -> Bool {
     guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier),
       let pipeline = pipelines[key], let locationID = key.locationID,
       let report = await pipeline.hidBrightnessReport(brightness)
@@ -217,10 +215,9 @@ public actor DeviceManager {
     return hidManager.setOutputReport(locationID: locationID, report: report)
   }
 
-  private func connectedIdentifier(
-    matching model: DeviceIdentifier,
-    runtimeIdentifier: String?
-  ) -> DeviceIdentifier? {
+  private func connectedIdentifier(matching model: DeviceIdentifier, runtimeIdentifier: String?)
+    -> DeviceIdentifier?
+  {
     Self.connectedIdentifier(
       among: pipelines.keys,
       matching: model,
@@ -284,7 +281,7 @@ public actor DeviceManager {
         outputEndpoint: profile.transportProfile.outputEndpoint,
         needsSetConfiguration: profile.transportProfile.needsSetConfiguration,
         postHandshakeSettleMs: Int(
-          profile.transportProfile.postHandshakeSettleNanoseconds / 1_000_000
+          profile.transportProfile.postHandshakeSettleNanoseconds / nanosecondsPerMillisecond
         ),
         preferredBackends: profile.preferredBackends.map(\.rawValue),
         physicalOutputCapabilities: (pipelines[id]?.physicalOutputCapabilities() ?? .none)

@@ -11,14 +11,10 @@ struct RuntimeHealthCommand {
     }
 
     let policy = RuntimeHealthPolicy(
-      maximumResidentBytes:
-        options.residentLimitMiB == 0
-        ? nil
-        : UInt64(options.residentLimitMiB) * 1_048_576,
-      maximumPhysicalFootprintBytes:
-        options.physicalFootprintLimitMiB == 0
-        ? nil
-        : UInt64(options.physicalFootprintLimitMiB) * 1_048_576
+      maximumResidentBytes: options.residentLimitMiB == 0
+        ? nil : UInt64(options.residentLimitMiB) * 1_048_576,
+      maximumPhysicalFootprintBytes: options.physicalFootprintLimitMiB == 0
+        ? nil : UInt64(options.physicalFootprintLimitMiB) * 1_048_576
     )
     let result: SamplingResult = runSyncResult {
       do {
@@ -30,14 +26,11 @@ struct RuntimeHealthCommand {
             policy: policy
           )
         )
-      } catch {
-        return .failure(error.localizedDescription)
-      }
+      } catch { return .failure(error.localizedDescription) }
     }
     let summary: RuntimeHealthSummary
     switch result {
-    case .success(let value):
-      summary = value
+    case .success(let value): summary = value
     case .failure(let message):
       CLIOutput.error(message)
       exit(1)
@@ -69,32 +62,16 @@ struct RuntimeHealthCommand {
     while index < arguments.count {
       switch arguments[index] {
       case "--seconds":
-        options.seconds = parseValue(
-          arguments,
-          at: index,
-          allowed: 1...86_400
-        )
+        options.seconds = parseValue(arguments, at: index, allowed: 1...86_400)
         index += 2
       case "--interval-ms":
-        options.intervalMilliseconds = parseValue(
-          arguments,
-          at: index,
-          allowed: 100...60_000
-        )
+        options.intervalMilliseconds = parseValue(arguments, at: index, allowed: 100...60_000)
         index += 2
       case "--rss-limit-mib":
-        options.residentLimitMiB = parseValue(
-          arguments,
-          at: index,
-          allowed: 0...65_536
-        )
+        options.residentLimitMiB = parseValue(arguments, at: index, allowed: 0...65_536)
         index += 2
       case "--footprint-limit-mib":
-        options.physicalFootprintLimitMiB = parseValue(
-          arguments,
-          at: index,
-          allowed: 0...65_536
-        )
+        options.physicalFootprintLimitMiB = parseValue(arguments, at: index, allowed: 0...65_536)
         index += 2
       case "--json":
         options.json = true
@@ -102,18 +79,12 @@ struct RuntimeHealthCommand {
       case "--help", "-h", "help":
         printHelp()
         exit(0)
-      default:
-        failUsage()
+      default: failUsage()
       }
     }
 
     let estimatedSamples =
-      Int(
-        ceil(
-          Double(options.seconds * 1_000)
-            / Double(options.intervalMilliseconds)
-        )
-      ) + 1
+      Int(ceil(Double(options.seconds * 1_000) / Double(options.intervalMilliseconds))) + 1
     guard estimatedSamples <= ApplicationServiceRuntimeHealthSampler.maximumSampleCount else {
       CLIOutput.error(
         "Configuration would collect \(estimatedSamples) samples; increase --interval-ms."
@@ -123,17 +94,10 @@ struct RuntimeHealthCommand {
     return options
   }
 
-  private func parseValue(
-    _ arguments: [String],
-    at index: Int,
-    allowed: ClosedRange<Int>
-  ) -> Int {
-    guard index + 1 < arguments.count,
-      let value = Int(arguments[index + 1]),
+  private func parseValue(_ arguments: [String], at index: Int, allowed: ClosedRange<Int>) -> Int {
+    guard index + 1 < arguments.count, let value = Int(arguments[index + 1]),
       allowed.contains(value)
-    else {
-      failUsage()
-    }
+    else { failUsage() }
     return value
   }
 
@@ -162,17 +126,13 @@ struct RuntimeHealthCommand {
         + "\(mebibytes(summary.lastPhysicalFootprintBytes)) MiB "
         + "(peak \(mebibytes(summary.peakPhysicalFootprintBytes)))"
     )
+    print("  RSS rate   : \(signedMebibytes(summary.residentGrowthBytesPerHour)) MiB/hour")
     print(
-      "  RSS rate   : \(signedMebibytes(summary.residentGrowthBytesPerHour)) MiB/hour"
-    )
-    print(
-      "  Foot rate  : "
-        + "\(signedMebibytes(summary.physicalFootprintGrowthBytesPerHour)) MiB/hour"
+      "  Foot rate  : " + "\(signedMebibytes(summary.physicalFootprintGrowthBytesPerHour)) MiB/hour"
     )
     print(
       "  FDs        : \(summary.firstFileDescriptorCount) -> "
-        + "\(summary.lastFileDescriptorCount) "
-        + "(peak \(summary.peakFileDescriptorCount))"
+        + "\(summary.lastFileDescriptorCount) " + "(peak \(summary.peakFileDescriptorCount))"
     )
     print(
       "  Threads    : \(summary.firstThreadCount) -> "
@@ -181,9 +141,7 @@ struct RuntimeHealthCommand {
     print("  CPU avg    : \(format(summary.averageCPUPercent))%")
     print("  RSS trend  : \(summary.memoryTrend.rawValue)")
     print("  Foot trend : \(summary.physicalMemoryTrend.rawValue)")
-    if let limit = summary.residentLimitBytes {
-      print("  RSS limit  : \(mebibytes(limit)) MiB")
-    }
+    if let limit = summary.residentLimitBytes { print("  RSS limit  : \(mebibytes(limit)) MiB") }
     if let limit = summary.physicalFootprintLimitBytes {
       print("  Foot limit : \(mebibytes(limit)) MiB")
     }
@@ -220,16 +178,12 @@ struct RuntimeHealthCommand {
     )
   }
 
-  private func mebibytes(_ bytes: UInt64) -> String {
-    format(Double(bytes) / 1_048_576)
-  }
+  private func mebibytes(_ bytes: UInt64) -> String { format(Double(bytes) / 1_048_576) }
 
   private func signedMebibytes(_ bytesPerHour: Double) -> String {
     let value = bytesPerHour / 1_048_576
     return value >= 0 ? "+\(format(value))" : format(value)
   }
 
-  private func format(_ value: Double) -> String {
-    String(format: "%.2f", value)
-  }
+  private func format(_ value: Double) -> String { String(format: "%.2f", value) }
 }

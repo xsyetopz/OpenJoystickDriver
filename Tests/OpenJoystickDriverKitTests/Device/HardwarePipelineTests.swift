@@ -6,8 +6,7 @@ import Testing
 
 private let gamesirVID: UInt16 = 13623  // 0x3537
 private let gamesirPID: UInt16 = 4112  // 0x1010
-private let hardwareTestsEnabled =
-  ProcessInfo.processInfo.environment["OJD_HARDWARE_TESTS"] == "1"
+private let hardwareTestsEnabled = ProcessInfo.processInfo.environment["OJD_HARDWARE_TESTS"] == "1"
 private let hardwareSkipMessage =
   "[HardwareTest] Skipping USB hardware test; set OJD_HARDWARE_TESTS=1 to require it."
 private let hardwareAccessSkipMessage =
@@ -30,23 +29,15 @@ struct HardwarePipelineTests {
     do {
       let handle = try device.open()
       var claimedInterface = false
-      defer {
-        if claimedInterface { try? handle.releaseInterface(0) }
-      }
+      defer { if claimedInterface { try? handle.releaseInterface(0) } }
       do {
         try handle.claimInterface(0)
         claimedInterface = true
         return true
-      } catch let error as USBError where error.isAccessDenied {
-        return false
-      } catch {
+      } catch let error as USBError where error.isAccessDenied { return false } catch {
         return true
       }
-    } catch let error as USBError where error.isAccessDenied {
-      return false
-    } catch {
-      return true
-    }
+    } catch let error as USBError where error.isAccessDenied { return false } catch { return true }
   }
 
   @Test(.enabled(if: hardwareTestsEnabled, Comment(rawValue: hardwareSkipMessage)))
@@ -57,8 +48,7 @@ struct HardwarePipelineTests {
     }
     var found = false
     let stream = context.findDevices(vendorId: gamesirVID, productId: gamesirPID, findAll: false)
-    for await device in stream
-      where device.idVendor == gamesirVID && device.idProduct == gamesirPID
+    for await device in stream where device.idVendor == gamesirVID && device.idProduct == gamesirPID
     {
       found = true
       print(
@@ -70,11 +60,8 @@ struct HardwarePipelineTests {
     #expect(found)
   }
   @Test(
-    .enabled(Comment(rawValue: hardwareAccessSkipMessage)) {
-      await Self.canAccessHandshakeDevice()
-    }
-  )
-  func testGipHandshakeAndInput() async throws {
+    .enabled(Comment(rawValue: hardwareAccessSkipMessage)) { await Self.canAccessHandshakeDevice() }
+  ) func testGipHandshakeAndInput() async throws {
     guard let context = Self.sharedContext else {
       Issue.record("Failed to create USBContext")
       return
@@ -129,15 +116,13 @@ struct HardwarePipelineTests {
     if let parseError { Issue.record("Parse/USB error: \(parseError)") }
     #expect(gotReport)
   }
-  @Test
-  func testParserRegistryDispatch() {
+  @Test func testParserRegistryDispatch() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: gamesirVID, productID: gamesirPID)
     let parser = registry.parser(for: identifier)
     #expect(parser is GIPParser)
   }
-  @Test
-  func testDeviceIdentifierMatching() {
+  @Test func testDeviceIdentifierMatching() {
     let id1 = DeviceIdentifier(vendorID: gamesirVID, productID: gamesirPID, serialNumber: "ABC123")
     let id2 = DeviceIdentifier(vendorID: gamesirVID, productID: gamesirPID, serialNumber: "XYZ789")
     let id3 = DeviceIdentifier(vendorID: 0x045E, productID: 0x02EA)

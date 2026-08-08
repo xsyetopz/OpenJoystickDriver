@@ -157,10 +157,8 @@ enum InstalledCommandCatalog {
 enum InstalledCLIHelpRenderer {
   static func render(commands: [CommandDefinition] = InstalledCommandCatalog.commands) -> String {
     var lines = [
-      "OpenJoystickDriver v\(ApplicationVersion.current) - macOS gamepad driver",
-      "",
-      "Usage: OpenJoystickDriver --headless [--timeout <seconds>] <command>",
-      "",
+      "OpenJoystickDriver v\(ApplicationVersion.current) - macOS gamepad driver", "",
+      "Usage: OpenJoystickDriver --headless [--timeout <seconds>] <command>", "",
     ]
     var currentGroup: String?
     for command in commands {
@@ -173,12 +171,8 @@ enum InstalledCLIHelpRenderer {
       lines.append("    \(command.summary).")
     }
     lines += [
-      "",
-      "Options:",
-      "  --timeout <seconds>  Set the local application-service timeout",
-      "  -h, --help           Show this help",
-      "  -v, --version        Show version",
-      "",
+      "", "Options:", "  --timeout <seconds>  Set the local application-service timeout",
+      "  -h, --help           Show this help", "  -v, --version        Show version", "",
       "Use --json for machine-readable output where supported and --device <id>",
       "for controller-scoped operations. Output never relies on color alone.",
     ]

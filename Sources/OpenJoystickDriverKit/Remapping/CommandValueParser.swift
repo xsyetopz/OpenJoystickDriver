@@ -48,8 +48,7 @@ public enum RemappingCommandValueParser {
         return .keyboard(key: key, modifiers: Set(modifiers))
       }
     }
-    if parts.count == 2, parts[0] == "mouse",
-      let button = RemappingMouseButton(rawValue: parts[1])
+    if parts.count == 2, parts[0] == "mouse", let button = RemappingMouseButton(rawValue: parts[1])
     {
       return .mouseButton(button)
     }

@@ -108,9 +108,7 @@ struct GameControllerCatalogCommand {
   private func printHelp() {
     print(
       [
-        "Usage: OpenJoystickDriver --headless diagnose catalog "
-          + "[--all-apple] [--json]",
-        "",
+        "Usage: OpenJoystickDriver --headless diagnose catalog " + "[--all-apple] [--json]", "",
         "Compares OJD profiles with Apple's private current-system GameController "
           + "mapping MobileAsset. Catalog presence is evidence, not a support guarantee.",
       ].joined(separator: "\n")

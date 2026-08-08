@@ -1,6 +1,12 @@
 import Darwin
 import Foundation
 
+private let runtimeHealthNanosecondsPerSecond: Double = 1_000_000_000
+private let runtimeHealthNanosecondsPerMillisecond: UInt64 = 1_000_000
+private let runtimeHealthSecondsRange = 1...86_400
+private let runtimeHealthIntervalMillisecondsRange = 100...60_000
+private let runtimeHealthCPUPercentScale = 100.0
+
 public enum RuntimeMemoryTrend: String, Codable, Sendable {
   case insufficientData
   case stable
@@ -113,29 +119,22 @@ public enum ApplicationServiceRuntimeHealthAnalyzer {
     let threadValues = samples.map(\.threadCount)
     let minimumResidentBytes = residentValues.min() ?? first.residentBytes
     let peakResidentBytes = residentValues.max() ?? first.residentBytes
-    let peakPhysicalFootprintBytes =
-      physicalValues.max() ?? first.physicalFootprintBytes
-    let peakFileDescriptorCount =
-      fileDescriptorValues.max() ?? first.fileDescriptorCount
+    let peakPhysicalFootprintBytes = physicalValues.max() ?? first.physicalFootprintBytes
+    let peakFileDescriptorCount = fileDescriptorValues.max() ?? first.fileDescriptorCount
     let peakThreadCount = threadValues.max() ?? first.threadCount
-    let residentDeltaBytes = signedDelta(
-      from: first.residentBytes,
-      to: last.residentBytes
-    )
+    let residentDeltaBytes = signedDelta(from: first.residentBytes, to: last.residentBytes)
     let physicalFootprintDeltaBytes = signedDelta(
       from: first.physicalFootprintBytes,
       to: last.physicalFootprintBytes
     )
     let elapsedNanoseconds = last.elapsedNanoseconds &- first.elapsedNanoseconds
-    let durationSeconds = Double(elapsedNanoseconds) / 1_000_000_000
+    let durationSeconds = Double(elapsedNanoseconds) / runtimeHealthNanosecondsPerSecond
     let cpuDelta =
       last.cumulativeCPUNanoseconds >= first.cumulativeCPUNanoseconds
-      ? last.cumulativeCPUNanoseconds - first.cumulativeCPUNanoseconds
-      : 0
+      ? last.cumulativeCPUNanoseconds - first.cumulativeCPUNanoseconds : 0
     let averageCPUPercent =
       elapsedNanoseconds == 0
-      ? 0
-      : Double(cpuDelta) / Double(elapsedNanoseconds) * 100
+      ? 0 : Double(cpuDelta) / Double(elapsedNanoseconds) * runtimeHealthCPUPercentScale
 
     let nondecreasingStepRatio = stepRatio(residentValues)
     let physicalNondecreasingStepRatio = stepRatio(physicalValues)
@@ -153,17 +152,13 @@ public enum ApplicationServiceRuntimeHealthAnalyzer {
     let threadDelta = last.threadCount - first.threadCount
 
     let soakVerdict: RuntimeSoakVerdict
-    if let limit = policy.maximumPhysicalFootprintBytes,
-      peakPhysicalFootprintBytes > limit
-    {
+    if let limit = policy.maximumPhysicalFootprintBytes, peakPhysicalFootprintBytes > limit {
       soakVerdict = .physicalFootprintLimitExceeded
     } else if let limit = policy.maximumResidentBytes, peakResidentBytes > limit {
       soakVerdict = .residentLimitExceeded
     } else if durationSeconds < Double(policy.minimumSoakSeconds) || samples.count < 5 {
       soakVerdict = .insufficientData
-    } else if residentMemoryTrend == .growthObserved
-      || physicalMemoryTrend == .growthObserved
-    {
+    } else if residentMemoryTrend == .growthObserved || physicalMemoryTrend == .growthObserved {
       soakVerdict = .memoryGrowthObserved
     } else if fileDescriptorDelta >= policy.maximumFileDescriptorGrowth
       || threadDelta >= policy.maximumThreadGrowth
@@ -181,10 +176,7 @@ public enum ApplicationServiceRuntimeHealthAnalyzer {
       minimumResidentBytes: minimumResidentBytes,
       peakResidentBytes: peakResidentBytes,
       residentDeltaBytes: residentDeltaBytes,
-      residentGrowthBytesPerHour: growthRateBytesPerHour(
-        samples: samples,
-        value: \.residentBytes
-      ),
+      residentGrowthBytesPerHour: growthRateBytesPerHour(samples: samples, value: \.residentBytes),
       firstPhysicalFootprintBytes: first.physicalFootprintBytes,
       lastPhysicalFootprintBytes: last.physicalFootprintBytes,
       peakPhysicalFootprintBytes: peakPhysicalFootprintBytes,
@@ -218,17 +210,12 @@ public enum ApplicationServiceRuntimeHealthAnalyzer {
     durationNanoseconds: UInt64,
     nondecreasingStepRatio: Double
   ) -> RuntimeMemoryTrend {
-    guard let first = values.first, let last = values.last else {
-      return .insufficientData
-    }
-    guard values.count >= 5, durationNanoseconds > 0 else {
-      return .insufficientData
-    }
+    guard let first = values.first, let last = values.last else { return .insufficientData }
+    guard values.count >= 5, durationNanoseconds > 0 else { return .insufficientData }
     let delta = signedDelta(from: first, to: last)
     let growthThreshold = max(minimumMeaningfulGrowthBytes, first / 10)
     return delta > Int64(clamping: growthThreshold) && nondecreasingStepRatio >= 0.75
-      ? .growthObserved
-      : .stable
+      ? .growthObserved : .stable
   }
 
   private static func stepRatio<T: Comparable>(_ values: [T]) -> Double {
@@ -245,8 +232,8 @@ public enum ApplicationServiceRuntimeHealthAnalyzer {
     guard samples.count >= 2, let first = samples.first else { return 0 }
     let points = samples.map {
       (
-        x: Double($0.elapsedNanoseconds &- first.elapsedNanoseconds) / 1_000_000_000,
-        y: Double($0[keyPath: value])
+        x: Double($0.elapsedNanoseconds &- first.elapsedNanoseconds)
+          / runtimeHealthNanosecondsPerSecond, y: Double($0[keyPath: value])
       )
     }
     let count = Double(points.count)
@@ -261,9 +248,7 @@ public enum ApplicationServiceRuntimeHealthAnalyzer {
   }
 
   private static func signedDelta(from first: UInt64, to last: UInt64) -> Int64 {
-    if last >= first {
-      return Int64(clamping: last - first)
-    }
+    if last >= first { return Int64(clamping: last - first) }
     return -Int64(clamping: first - last)
   }
 }
@@ -282,8 +267,7 @@ public enum RuntimeHealthSamplingError: LocalizedError, Sendable {
       return "Runtime sampling requires 1...86400 seconds and a 100...60000 ms interval."
     case .tooManySamples(let count):
       return "Runtime sampling would collect \(count) samples; increase the interval."
-    case .noSamples:
-      return "No application service runtime samples were collected."
+    case .noSamples: return "No application service runtime samples were collected."
     }
   }
 }
@@ -297,19 +281,16 @@ public enum ApplicationServiceRuntimeHealthSampler {
     intervalMilliseconds: Int = 1_000,
     policy: RuntimeHealthPolicy = .standard
   ) async throws -> RuntimeHealthSummary {
-    guard (1...86_400).contains(seconds),
-      (100...60_000).contains(intervalMilliseconds)
-    else {
-      throw RuntimeHealthSamplingError.invalidConfiguration
-    }
-    let estimatedSampleCount =
-      Int(ceil(Double(seconds * 1_000) / Double(intervalMilliseconds))) + 1
+    guard runtimeHealthSecondsRange.contains(seconds),
+      runtimeHealthIntervalMillisecondsRange.contains(intervalMilliseconds)
+    else { throw RuntimeHealthSamplingError.invalidConfiguration }
+    let estimatedSampleCount = Int(ceil(Double(seconds * 1_000) / Double(intervalMilliseconds))) + 1
     guard estimatedSampleCount <= maximumSampleCount else {
       throw RuntimeHealthSamplingError.tooManySamples(estimatedSampleCount)
     }
 
-    let durationNanoseconds = UInt64(seconds) * 1_000_000_000
-    let intervalNanoseconds = UInt64(intervalMilliseconds) * 1_000_000
+    let durationNanoseconds = UInt64(seconds) * UInt64(runtimeHealthNanosecondsPerSecond)
+    let intervalNanoseconds = UInt64(intervalMilliseconds) * runtimeHealthNanosecondsPerMillisecond
     let startedAt = DispatchTime.now().uptimeNanoseconds
     var samples: [RuntimeHealthSample] = []
     samples.reserveCapacity(estimatedSampleCount)
@@ -331,30 +312,17 @@ public enum ApplicationServiceRuntimeHealthSampler {
 
       let elapsed = now &- startedAt
       if elapsed >= durationNanoseconds { break }
-      try await Task.sleep(
-        nanoseconds: min(intervalNanoseconds, durationNanoseconds &- elapsed)
-      )
+      try await Task.sleep(nanoseconds: min(intervalNanoseconds, durationNanoseconds &- elapsed))
     }
 
-    guard
-      let summary = ApplicationServiceRuntimeHealthAnalyzer.summarize(
-        samples,
-        policy: policy
-      )
-    else {
-      throw RuntimeHealthSamplingError.noSamples
-    }
+    guard let summary = ApplicationServiceRuntimeHealthAnalyzer.summarize(samples, policy: policy)
+    else { throw RuntimeHealthSamplingError.noSamples }
     return summary
   }
 
-  private static func processUsage(
-    processID: Int32
-  ) throws -> (
-    residentBytes: UInt64,
-    physicalFootprintBytes: UInt64,
-    cpuNanoseconds: UInt64,
-    fileDescriptorCount: Int,
-    threadCount: Int
+  private static func processUsage(processID: Int32) throws -> (
+    residentBytes: UInt64, physicalFootprintBytes: UInt64, cpuNanoseconds: UInt64,
+    fileDescriptorCount: Int, threadCount: Int
   ) {
     var usage = rusage_info_v2()
     let usageResult = withUnsafeMutableBytes(of: &usage) { bytes in
@@ -364,41 +332,25 @@ public enum ApplicationServiceRuntimeHealthSampler {
         bytes.baseAddress?.assumingMemoryBound(to: Optional<UnsafeMutableRawPointer>.self)
       )
     }
-    guard usageResult == 0 else {
-      throw RuntimeHealthSamplingError.processUnavailable(processID)
-    }
+    guard usageResult == 0 else { throw RuntimeHealthSamplingError.processUnavailable(processID) }
 
     var taskInfo = proc_taskinfo()
     let taskResult = withUnsafeMutablePointer(to: &taskInfo) {
-      proc_pidinfo(
-        processID,
-        PROC_PIDTASKINFO,
-        0,
-        $0,
-        Int32(MemoryLayout<proc_taskinfo>.size)
-      )
+      proc_pidinfo(processID, PROC_PIDTASKINFO, 0, $0, Int32(MemoryLayout<proc_taskinfo>.size))
     }
     guard taskResult == Int32(MemoryLayout<proc_taskinfo>.size) else {
       throw RuntimeHealthSamplingError.processUnavailable(processID)
     }
 
-    let fileDescriptorBytes = proc_pidinfo(
-      processID,
-      PROC_PIDLISTFDS,
-      0,
-      nil,
-      0
-    )
+    let fileDescriptorBytes = proc_pidinfo(processID, PROC_PIDLISTFDS, 0, nil, 0)
     guard fileDescriptorBytes >= 0 else {
       throw RuntimeHealthSamplingError.processUnavailable(processID)
     }
 
     return (
-      residentBytes: usage.ri_resident_size,
-      physicalFootprintBytes: usage.ri_phys_footprint,
+      residentBytes: usage.ri_resident_size, physicalFootprintBytes: usage.ri_phys_footprint,
       cpuNanoseconds: usage.ri_user_time &+ usage.ri_system_time,
-      fileDescriptorCount:
-        Int(fileDescriptorBytes) / MemoryLayout<proc_fdinfo>.size,
+      fileDescriptorCount: Int(fileDescriptorBytes) / MemoryLayout<proc_fdinfo>.size,
       threadCount: Int(taskInfo.pti_threadnum)
     )
   }

@@ -25,8 +25,8 @@ private let ds3OutputReportLength = 36
 /// 49-byte report. Physical rumble and player LEDs use the fixed 36-byte
 /// Sixaxis output report from Linux `hid-sony.c`; sensors remain intentionally omitted.
 public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
-  HIDStartupFeatureReportProvider, PhysicalHIDRumbleOutput,
-  PhysicalHIDPlayerIndicatorOutput, @unchecked Sendable
+  HIDStartupFeatureReportProvider, PhysicalHIDRumbleOutput, PhysicalHIDPlayerIndicatorOutput,
+  @unchecked Sendable
 {
 
   private enum ReportOffset {
@@ -60,9 +60,7 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
 
   public var physicalBinaryRumbleMotors: [PhysicalRumbleMotor] { [.rightMain] }
 
-  public func performHandshake(handle: USBDeviceHandle?) async throws {
-    await Task.yield()
-  }
+  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
 
   public func hidStartupFeatureReadRequests() -> [PhysicalHIDFeatureReadRequest] {
     [
@@ -82,9 +80,7 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
     return hidStartupFeatureReadRequests()
   }
 
-  public func hidStartupFeatureReports() -> [PhysicalHIDOutputReport] {
-    []
-  }
+  public func hidStartupFeatureReports() -> [PhysicalHIDOutputReport] { [] }
 
   public func hidStartupFeatureReports(transport: String?) -> [PhysicalHIDOutputReport] {
     guard transport == "Bluetooth" else { return [] }
@@ -113,14 +109,9 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
 
   private func physicalOutputReport() -> PhysicalHIDOutputReport {
     var bytes: [UInt8] = [
-      0x01,
-      0x01, 0xFF, 0x00, 0xFF, 0x00,
-      0x00, 0x00, 0x00, 0x00, 0x00,
-      0xFF, 0x27, 0x10, 0x00, 0x32,
-      0xFF, 0x27, 0x10, 0x00, 0x32,
-      0xFF, 0x27, 0x10, 0x00, 0x32,
-      0xFF, 0x27, 0x10, 0x00, 0x32,
-      0x00, 0x00, 0x00, 0x00, 0x00,
+      0x01, 0x01, 0xFF, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x27, 0x10, 0x00,
+      0x32, 0xFF, 0x27, 0x10, 0x00, 0x32, 0xFF, 0x27, 0x10, 0x00, 0x32, 0xFF, 0x27, 0x10, 0x00,
+      0x32, 0x00, 0x00, 0x00, 0x00, 0x00,
     ]
     precondition(bytes.count == ds3OutputReportLength)
     bytes[3] = physicalRumbleRightOn ? 1 : 0
@@ -137,8 +128,7 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
 
   public func parse(data: Data) throws -> [ControllerEvent] {
     let bytes = Array(data)
-    guard bytes.count >= ds3InputReportLength,
-      bytes[ReportOffset.reportID] == ds3InputReportID,
+    guard bytes.count >= ds3InputReportLength, bytes[ReportOffset.reportID] == ds3InputReportID,
       bytes[1] != 0xFF
     else { return [] }
 
@@ -176,25 +166,24 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
     -> [ControllerEvent]
   {
     var events: [ControllerEvent] = []
-    events.append(contentsOf: diffButtons(prev: prevButtons0, curr: b0, mapping: [
-      (0x01, .back),
-      (0x02, .leftStick),
-      (0x04, .rightStick),
-      (0x08, .start),
-    ]))
-    events.append(contentsOf: diffButtons(prev: prevButtons1, curr: b1, mapping: [
-      (0x01, .l2Digital),
-      (0x02, .r2Digital),
-      (0x04, .l1),
-      (0x08, .r1),
-      (0x10, .triangle),
-      (0x20, .circle),
-      (0x40, .cross),
-      (0x80, .square),
-    ]))
-    events.append(contentsOf: diffButtons(prev: prevButtons2, curr: b2, mapping: [
-      (0x01, .ps),
-    ]))
+    events.append(
+      contentsOf: diffButtons(
+        prev: prevButtons0,
+        curr: b0,
+        mapping: [(0x01, .back), (0x02, .leftStick), (0x04, .rightStick), (0x08, .start)]
+      )
+    )
+    events.append(
+      contentsOf: diffButtons(
+        prev: prevButtons1,
+        curr: b1,
+        mapping: [
+          (0x01, .l2Digital), (0x02, .r2Digital), (0x04, .l1), (0x08, .r1), (0x10, .triangle),
+          (0x20, .circle), (0x40, .cross), (0x80, .square),
+        ]
+      )
+    )
+    events.append(contentsOf: diffButtons(prev: prevButtons2, curr: b2, mapping: [(0x01, .ps)]))
     return events
   }
 

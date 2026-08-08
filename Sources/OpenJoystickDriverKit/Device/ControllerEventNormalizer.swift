@@ -7,10 +7,9 @@ struct ControllerEventNormalizationResult: Equatable, Sendable {
 }
 
 enum ControllerEventNormalizer {
-  static func normalize(
-    _ events: [ControllerEvent],
-    from currentState: DeviceInputState
-  ) -> ControllerEventNormalizationResult {
+  static func normalize(_ events: [ControllerEvent], from currentState: DeviceInputState)
+    -> ControllerEventNormalizationResult
+  {
     var adjustedAnalogValueCount = 0
     let sanitized = events.map { event in
       sanitize(
@@ -82,8 +81,7 @@ enum ControllerEventNormalizer {
           adjustedCount: &adjustedAnalogValueCount
         )
       )
-    case .buttonPressed, .buttonReleased, .dpadChanged:
-      return event
+    case .buttonPressed, .buttonReleased, .dpadChanged: return event
     }
   }
 
@@ -98,9 +96,7 @@ enum ControllerEventNormalizer {
       return fallback
     }
     let clamped = min(max(value, range.lowerBound), range.upperBound)
-    if clamped != value {
-      adjustedCount += 1
-    }
+    if clamped != value { adjustedCount += 1 }
     return clamped
   }
 }
@@ -128,22 +124,16 @@ extension DeviceInputState {
     if rightStickX != next.rightStickX || rightStickY != next.rightStickY {
       events.append(.rightStickChanged(x: next.rightStickX, y: next.rightStickY))
     }
-    if leftTrigger != next.leftTrigger {
-      events.append(.leftTriggerChanged(next.leftTrigger))
-    }
-    if rightTrigger != next.rightTrigger {
-      events.append(.rightTriggerChanged(next.rightTrigger))
-    }
+    if leftTrigger != next.leftTrigger { events.append(.leftTriggerChanged(next.leftTrigger)) }
+    if rightTrigger != next.rightTrigger { events.append(.rightTriggerChanged(next.rightTrigger)) }
 
     return events
   }
 
   private func isDpadButton(_ button: Button) -> Bool {
     switch button {
-    case .dpadUp, .dpadDown, .dpadLeft, .dpadRight:
-      return true
-    default:
-      return false
+    case .dpadUp, .dpadDown, .dpadLeft, .dpadRight: return true
+    default: return false
     }
   }
 }

@@ -42,9 +42,7 @@ public actor PermissionManager {
       self.accessibility = accessibility
     }
 
-    public var isReady: Bool {
-      inputMonitoring == .granted && accessibility == .granted
-    }
+    public var isReady: Bool { inputMonitoring == .granted && accessibility == .granted }
   }
 
   public private(set) var inputMonitoringState: AccessState = .unknown
@@ -62,9 +60,7 @@ public actor PermissionManager {
     accessState(for: kIOHIDRequestTypePostEvent)
   }
 
-  nonisolated private static func accessState(
-    for requestType: IOHIDRequestType
-  ) -> AccessState {
+  nonisolated private static func accessState(for requestType: IOHIDRequestType) -> AccessState {
     switch IOHIDCheckAccess(requestType) {
     case kIOHIDAccessTypeGranted: return .granted
     case kIOHIDAccessTypeDenied: return .denied
@@ -102,13 +98,9 @@ public actor PermissionManager {
   /// authoritative post-request state comes from IOHIDCheckAccess.
   @discardableResult public func requestRequiredAccess() -> Snapshot {
     var snapshot = checkAccess()
-    if snapshot.inputMonitoring != .granted {
-      IOHIDRequestAccess(kIOHIDRequestTypeListenEvent)
-    }
+    if snapshot.inputMonitoring != .granted { IOHIDRequestAccess(kIOHIDRequestTypeListenEvent) }
     snapshot = checkAccess()
-    if snapshot.accessibility != .granted {
-      IOHIDRequestAccess(kIOHIDRequestTypePostEvent)
-    }
+    if snapshot.accessibility != .granted { IOHIDRequestAccess(kIOHIDRequestTypePostEvent) }
     return refreshAccessState()
   }
 
@@ -123,8 +115,7 @@ public actor PermissionManager {
       IOHIDRequestAccess(kIOHIDRequestTypeListenEvent)
     case .accessibility where snapshot.accessibility != .granted:
       IOHIDRequestAccess(kIOHIDRequestTypePostEvent)
-    default:
-      break
+    default: break
     }
     return refreshAccessState()
   }
@@ -164,27 +155,23 @@ public struct OJDPermissionRequirement: Sendable, Equatable {
   }
 
   public static let inputMonitoring = Self(
-      name: "Input Monitoring",
-      owner: "OpenJoystickDriver app",
-      purpose: "Read input from physical controllers",
-      requested: true
-    )
+    name: "Input Monitoring",
+    owner: "OpenJoystickDriver app",
+    purpose: "Read input from physical controllers",
+    requested: true
+  )
   public static let accessibility = Self(
-      name: "Accessibility",
-      owner: "OpenJoystickDriver app",
-      purpose: "Publish virtual controller output",
-      requested: true
-    )
+    name: "Accessibility",
+    owner: "OpenJoystickDriver app",
+    purpose: "Publish virtual controller output",
+    requested: true
+  )
   public static let driverExtensionApproval = Self(
-      name: "Driver Extension approval",
-      owner: "OpenJoystickDriver app",
-      purpose: "Optional DriverKit integrity relay; not a TCC privacy permission",
-      requested: true
-    )
+    name: "Driver Extension approval",
+    owner: "OpenJoystickDriver app",
+    purpose: "Optional DriverKit integrity relay; not a TCC privacy permission",
+    requested: true
+  )
 
-  public static let inventory = [
-    inputMonitoring,
-    accessibility,
-    driverExtensionApproval,
-  ]
+  public static let inventory = [inputMonitoring, accessibility, driverExtensionApproval]
 }

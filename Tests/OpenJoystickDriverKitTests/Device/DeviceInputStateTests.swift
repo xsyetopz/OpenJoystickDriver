@@ -4,8 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct DeviceInputStateTests {
-  @Test
-  func testInitialStateIsZero() {
+  @Test func testInitialStateIsZero() {
     let state = DeviceInputState(vendorID: 100, productID: 200)
     #expect(state.pressedButtons.isEmpty)
     #expect(state.leftStickX == 0)
@@ -15,8 +14,7 @@ struct DeviceInputStateTests {
     #expect(state.leftTrigger == 0)
     #expect(state.rightTrigger == 0)
   }
-  @Test
-  func testCodableRoundTrip() throws {
+  @Test func testCodableRoundTrip() throws {
     var state = DeviceInputState(vendorID: 0x3537, productID: 0x1010)
     state.pressedButtons = ["a", "b"]
     state.leftStickX = 0.5

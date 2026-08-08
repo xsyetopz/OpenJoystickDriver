@@ -22,6 +22,7 @@ public enum UpdateCheckState: Equatable, Sendable {
 
 public struct UpdateChecker: Sendable {
   public static let requestTimeoutSeconds: TimeInterval = 15
+  private static let httpSuccessStatusRange = 200...299
 
   public static var defaultTagsURL: URL {
     var components = URLComponents()
@@ -123,7 +124,7 @@ public struct UpdateChecker: Sendable {
     guard let http = response as? HTTPURLResponse else {
       throw UpdateCheckerError("GitHub returned a non-HTTP response")
     }
-    guard (200...299).contains(http.statusCode) else {
+    guard Self.httpSuccessStatusRange.contains(http.statusCode) else {
       throw UpdateCheckerError("GitHub returned HTTP \(http.statusCode)")
     }
     return (try JSONDecoder().decode([GitHubTag].self, from: data), http)

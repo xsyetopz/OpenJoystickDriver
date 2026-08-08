@@ -27,21 +27,15 @@ private final class DevicePipelineSnapshots: @unchecked Sendable {
     self.packetLog = PacketLogBuffer(maxEntries: maxPacketLogEntries)
   }
 
-  func updateInputState(_ state: DeviceInputState) {
-    lock.withLock { inputState = state }
-  }
+  func updateInputState(_ state: DeviceInputState) { lock.withLock { inputState = state } }
 
-  func currentInputState() -> DeviceInputState {
-    lock.withLock { inputState }
-  }
+  func currentInputState() -> DeviceInputState { lock.withLock { inputState } }
 
   func appendPacket(bytes: [UInt8], direction: String) {
     packetLog.append(bytes: bytes, direction: direction)
   }
 
-  func currentPacketLog() -> [PacketLogEntry] {
-    packetLog.entries()
-  }
+  func currentPacketLog() -> [PacketLogEntry] { packetLog.entries() }
 }
 
 /// Manages full lifecycle of single connected controller.
@@ -141,8 +135,7 @@ actor DevicePipeline {
   }
 
   /// Feed HID input report data (called by DeviceManager for class 0x03 devices).
-  @discardableResult
-  func feedHIDData(_ data: Data) async -> [PhysicalHIDOutputReport] {
+  @discardableResult func feedHIDData(_ data: Data) async -> [PhysicalHIDOutputReport] {
     guard isActive else { return [] }
     appendToPacketLog(bytes: Array(data), direction: "rx")
     do {
@@ -159,16 +152,15 @@ actor DevicePipeline {
 
   /// Feed one descriptor-decoded value to the Generic HID fallback.
   func feedHIDElementValue(_ value: HIDElementValue) async {
-    guard isActive, inputConnectionActive,
-      let elementParser = parser as? any HIDElementValueParser
+    guard isActive, inputConnectionActive, let elementParser = parser as? any HIDElementValueParser
     else { return }
     let events = elementParser.parse(elementValue: value)
     await handleParsedEvents(events, now: DispatchTime.now().uptimeNanoseconds)
   }
 
   nonisolated func requiresInputConnectionBeforeOutput() -> Bool {
-    (parser as? any ControllerInputConnectionLifecycle)?
-      .requiresInputConnectionBeforeOutput ?? false
+    (parser as? any ControllerInputConnectionLifecycle)?.requiresInputConnectionBeforeOutput
+      ?? false
   }
 
   func hidShutdownFeatureReports() -> [PhysicalHIDOutputReport] {
@@ -187,8 +179,7 @@ actor DevicePipeline {
     } else {
       rumbleMotors = []
     }
-    let binaryRumbleMotors =
-      (parser as? PhysicalHIDRumbleOutput)?.physicalBinaryRumbleMotors ?? []
+    let binaryRumbleMotors = (parser as? PhysicalHIDRumbleOutput)?.physicalBinaryRumbleMotors ?? []
     var lighting: [PhysicalLightingFeature] = []
     lighting += (parser as? PhysicalPlayerIndicatorOutput)?.physicalLightingFeatures ?? []
     lighting += (parser as? PhysicalHIDPlayerIndicatorOutput)?.physicalLightingFeatures ?? []
@@ -201,9 +192,7 @@ actor DevicePipeline {
     )
   }
 
-  nonisolated func supportsPhysicalRumble() -> Bool {
-    physicalOutputCapabilities().supportsRumble
-  }
+  nonisolated func supportsPhysicalRumble() -> Bool { physicalOutputCapabilities().supportsRumble }
 
   // MARK: - Input state and packet log
 
@@ -235,9 +224,7 @@ actor DevicePipeline {
           + "non-neutral state: \(identifier)"
       )
     } else {
-      print(
-        "[DevicePipeline] Output ungated by foreground consumer: \(identifier)"
-      )
+      print("[DevicePipeline] Output ungated by foreground consumer: \(identifier)")
     }
   }
 
@@ -254,9 +241,7 @@ actor DevicePipeline {
     snapshots.updateInputState(currentInputState)
   }
 
-  func updateOutputState(from events: [ControllerEvent]) {
-    outputState.apply(events: events)
-  }
+  func updateOutputState(from events: [ControllerEvent]) { outputState.apply(events: events) }
 
   func neutralizeOutput() async {
     let neutralizingEvents = outputState.neutralizingEvents()
@@ -270,9 +255,7 @@ actor DevicePipeline {
       let state = lifecycle.consumeInputConnectionStateChange()
     else { return [] }
 
-    if let output = parser as? any USBInputConnectionOutputProvider,
-      let handle = usbHandle
-    {
+    if let output = parser as? any USBInputConnectionOutputProvider, let handle = usbHandle {
       for packet in output.usbInputConnectionOutputPackets(for: state) {
         do {
           _ = try handle.interruptTransfer(
@@ -318,13 +301,7 @@ actor DevicePipeline {
       return false
     }
     do {
-      try rumbleOutput.sendPhysicalRumble(
-        handle: handle,
-        left: left,
-        right: right,
-        lt: lt,
-        rt: rt
-      )
+      try rumbleOutput.sendPhysicalRumble(handle: handle, left: left, right: right, lt: lt, rt: rt)
       return true
     } catch {
       print("[DevicePipeline] Rumble send failed for \(identifier): \(error)")
@@ -346,37 +323,27 @@ actor DevicePipeline {
     (parser as? PhysicalHIDRumbleOutput)?.minimumPhysicalOutputIntervalNanoseconds ?? 0
   }
 
-  func hidRumbleReport(left: UInt8, right: UInt8, lt: UInt8, rt: UInt8)
-    -> PhysicalHIDOutputReport?
+  func hidRumbleReport(left: UInt8, right: UInt8, lt: UInt8, rt: UInt8) -> PhysicalHIDOutputReport?
   {
     guard let rumbleOutput = parser as? PhysicalHIDRumbleOutput else { return nil }
     return rumbleOutput.physicalRumbleReport(left: left, right: right, lt: lt, rt: rt)
   }
 
   func hidColorReport(red: UInt8, green: UInt8, blue: UInt8) -> PhysicalHIDOutputReport? {
-    (parser as? PhysicalHIDColorOutput)?.physicalColorReport(
-      red: red,
-      green: green,
-      blue: blue
-    )
+    (parser as? PhysicalHIDColorOutput)?.physicalColorReport(red: red, green: green, blue: blue)
   }
 
   func hidBrightnessReport(_ brightness: UInt8) -> PhysicalHIDOutputReport? {
     (parser as? PhysicalHIDFeatureBrightnessOutput)?.physicalBrightnessReport(brightness)
   }
 
-  func hidPlayerIndicatorReport(_ indicator: PhysicalPlayerIndicator)
-    -> PhysicalHIDOutputReport?
-  {
+  func hidPlayerIndicatorReport(_ indicator: PhysicalPlayerIndicator) -> PhysicalHIDOutputReport? {
     (parser as? PhysicalHIDPlayerIndicatorOutput)?.physicalPlayerIndicatorReport(indicator)
   }
 
   func sendPlayerIndicator(_ indicator: PhysicalPlayerIndicator) -> Bool {
-    guard let handle = usbHandle,
-      let lightingOutput = parser as? PhysicalPlayerIndicatorOutput
-    else {
-      return false
-    }
+    guard let handle = usbHandle, let lightingOutput = parser as? PhysicalPlayerIndicatorOutput
+    else { return false }
     do {
       try lightingOutput.sendPhysicalPlayerIndicator(handle: handle, indicator: indicator)
       return true

@@ -4,8 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct BoundedProcessRunnerTests {
-  @Test
-  func capturesMergedOutputAndExitStatus() throws {
+  @Test func capturesMergedOutputAndExitStatus() throws {
     let result = try BoundedProcessRunner.run(
       executableURL: URL(fileURLWithPath: "/bin/sh"),
       arguments: ["-c", "printf stdout; printf stderr >&2; exit 7"]
@@ -18,8 +17,7 @@ struct BoundedProcessRunnerTests {
     #expect(!result.outputWasTruncated)
   }
 
-  @Test
-  func drainsFloodingOutputAndTerminatesAtDeadline() throws {
+  @Test func drainsFloodingOutputAndTerminatesAtDeadline() throws {
     let startedAt = DispatchTime.now().uptimeNanoseconds
     let result = try BoundedProcessRunner.run(
       executableURL: URL(fileURLWithPath: "/usr/bin/yes"),
@@ -35,8 +33,7 @@ struct BoundedProcessRunnerTests {
     #expect(elapsed < 1_500_000_000)
   }
 
-  @Test
-  func truncatesCapturedOutputWithoutChangingSuccessfulStatus() throws {
+  @Test func truncatesCapturedOutputWithoutChangingSuccessfulStatus() throws {
     let result = try BoundedProcessRunner.run(
       executableURL: URL(fileURLWithPath: "/usr/bin/printf"),
       arguments: [String(repeating: "x", count: 4_096)],

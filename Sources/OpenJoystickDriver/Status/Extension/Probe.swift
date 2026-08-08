@@ -35,9 +35,7 @@ enum ExtensionProbe {
   }
 
   static func registration(from result: BoundedProcessResult) -> ExtensionRegistrationState {
-    if result.timedOut {
-      return .unavailable("systemextensionsctl timed out after 5 seconds.")
-    }
+    if result.timedOut { return .unavailable("systemextensionsctl timed out after 5 seconds.") }
     guard result.terminationStatus == 0 else {
       let detail = result.output.trimmingCharacters(in: .whitespacesAndNewlines)
       return .unavailable(
@@ -54,9 +52,7 @@ enum ExtensionProbe {
     }) {
       return .active(String(active))
     }
-    if !matches.isEmpty {
-      return .inactive(matches.map(String.init).joined(separator: "\n"))
-    }
+    if !matches.isEmpty { return .inactive(matches.map(String.init).joined(separator: "\n")) }
     if result.outputWasTruncated {
       return .unavailable("systemextensionsctl output was truncated before a match was found.")
     }

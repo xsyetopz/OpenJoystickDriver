@@ -24,9 +24,11 @@ struct InputMonitoringPromptFlowTests {
     #expect(runtime.contains("ApplicationServiceServer("))
     #expect(requests.contains("requestRequiredAccess(reply:"))
     #expect(!requests.contains("tccutil"))
-    #expect(!FileManager.default.fileExists(
-      atPath: root.appendingPathComponent("Sources/OpenJoystickDriverDaemon").path
-    ))
+    #expect(
+      !FileManager.default.fileExists(
+        atPath: root.appendingPathComponent("Sources/OpenJoystickDriverDaemon").path
+      )
+    )
   }
 
   @Test func runningServiceOwnsBothPermissionStates() throws {

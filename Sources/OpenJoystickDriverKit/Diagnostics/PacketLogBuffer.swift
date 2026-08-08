@@ -42,9 +42,7 @@ final class PacketLogBuffer: @unchecked Sendable {
     let snapshot: [BufferedPacket] = lock.withLock {
       guard entryCount > 0 else { return [] }
       let oldestIndex = entryCount == maxEntries ? nextWriteIndex : 0
-      return (0..<entryCount).compactMap {
-        bufferedPackets[(oldestIndex + $0) % maxEntries]
-      }
+      return (0..<entryCount).compactMap { bufferedPackets[(oldestIndex + $0) % maxEntries] }
     }
     return snapshot.map {
       PacketLogEntry(

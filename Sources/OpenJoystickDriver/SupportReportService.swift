@@ -38,11 +38,7 @@ enum SupportReportService {
     return "OpenJoystickDriver-support-\(formatter.string(from: date)).json"
   }
 
-  static func write(
-    _ report: SupportReport,
-    to outputURL: URL,
-    overwrite: Bool = false
-  ) throws {
+  static func write(_ report: SupportReport, to outputURL: URL, overwrite: Bool = false) throws {
     if !overwrite && FileManager.default.fileExists(atPath: outputURL.path) {
       throw NSError(
         domain: "OpenJoystickDriver.SupportReport",

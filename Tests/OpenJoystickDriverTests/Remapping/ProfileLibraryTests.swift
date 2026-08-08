@@ -69,9 +69,7 @@ struct ProfileLibraryTests {
       try await library.update(firstUpdate, expectedCurrent: original)
       let bytesAfterFirstUpdate = try Data(contentsOf: url)
 
-      await #expect(
-        throws: RemappingProfileLibraryError.profileUpdateConflict(original.id)
-      ) {
+      await #expect(throws: RemappingProfileLibraryError.profileUpdateConflict(original.id)) {
         try await library.update(staleUpdate, expectedCurrent: original)
       }
 
@@ -131,7 +129,7 @@ struct ProfileLibraryTests {
       let activeOtherModel = try await library.activeProfile(vendorID: 1356, productID: 2508)
       #expect(activeFirstModel == replacement)
       #expect(activeOtherModel == other)
-      try await library.deactivate(vendorID: 1118, productID: 654)
+      try await library.deactivateAll(vendorID: 1118, productID: 654)
       let deactivated = try await library.activeProfile(vendorID: 1118, productID: 654)
       let stillActive = try await library.activeProfile(vendorID: 1356, productID: 2508)
       #expect(deactivated == nil)
@@ -165,18 +163,9 @@ struct ProfileLibraryTests {
 
   @Test func listingUsesDeterministicNameThenIdentifierOrder() async throws {
     try await withLibrary { library, _ in
-      let alphaLast = makeProfile(
-        id: identifier(last: 255),
-        name: "alpha"
-      )
-      let beta = makeProfile(
-        id: identifier(last: 1),
-        name: "Beta"
-      )
-      let alphaFirst = makeProfile(
-        id: identifier(last: 0),
-        name: "Alpine"
-      )
+      let alphaLast = makeProfile(id: identifier(last: 255), name: "alpha")
+      let beta = makeProfile(id: identifier(last: 1), name: "Beta")
+      let alphaFirst = makeProfile(id: identifier(last: 0), name: "Alpine")
       try await library.create(alphaLast)
       try await library.create(beta)
       try await library.create(alphaFirst)
@@ -200,9 +189,9 @@ struct ProfileLibraryTests {
     }
   }
 
-  private func withLibrary(
-    _ body: @Sendable (RemappingProfileLibrary, URL) async throws -> Void
-  ) async throws {
+  private func withLibrary(_ body: @Sendable (RemappingProfileLibrary, URL) async throws -> Void)
+    async throws
+  {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       UUID().uuidString,
       isDirectory: true

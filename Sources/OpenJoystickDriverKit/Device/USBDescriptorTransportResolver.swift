@@ -56,12 +56,8 @@ enum USBDescriptorTransportResolver {
     -> DeviceTransportProfile
   {
     let configuration: USBConfigurationDescriptor
-    do {
-      configuration = try device.getActiveConfigurationDescriptor()
-    } catch {
-      do {
-        configuration = try device.getConfigurationDescriptor(index: 0)
-      } catch {
+    do { configuration = try device.getActiveConfigurationDescriptor() } catch {
+      do { configuration = try device.getConfigurationDescriptor(index: 0) } catch {
         print(
           "[USBDescriptors] Discovery failed"
             + " bus=\(device.bus) address=\(device.address): \(error);"
@@ -71,11 +67,13 @@ enum USBDescriptorTransportResolver {
       }
     }
 
-    guard let discovered = discover(
-      interfaces: configuration.interfaces.map(USBInterfaceTransportFacts.init),
-      preferredInterface: configured.interfaceNumber,
-      requirePreferredInterface: configured.hasInterfaceOverride
-    ) else {
+    guard
+      let discovered = discover(
+        interfaces: configuration.interfaces.map(USBInterfaceTransportFacts.init),
+        preferredInterface: configured.interfaceNumber,
+        requirePreferredInterface: configured.hasInterfaceOverride
+      )
+    else {
       print(
         "[USBDescriptors] No interrupt endpoint pair"
           + " bus=\(device.bus) address=\(device.address);"

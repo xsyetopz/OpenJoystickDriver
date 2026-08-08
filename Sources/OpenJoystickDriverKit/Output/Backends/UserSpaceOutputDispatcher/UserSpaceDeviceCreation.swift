@@ -18,9 +18,7 @@ struct UserSpaceDeviceCreationRetryPolicy {
     self.delayNanoseconds = delayNanoseconds
   }
 
-  func permitsAttempt(at now: UInt64) -> Bool {
-    now >= nextAttemptNanoseconds
-  }
+  func permitsAttempt(at now: UInt64) -> Bool { now >= nextAttemptNanoseconds }
 
   mutating func recordFailure(at now: UInt64) {
     let (nextAttempt, overflow) = now.addingReportingOverflow(delayNanoseconds)
@@ -29,10 +27,9 @@ struct UserSpaceDeviceCreationRetryPolicy {
 }
 
 extension UserSpaceOutputDispatcher {
-  static func deviceCreationAttempts(
-    baseProperties: [String: Any],
-    primaryUsage: Int
-  ) -> [UserSpaceDeviceCreationAttempt] {
+  static func deviceCreationAttempts(baseProperties: [String: Any], primaryUsage: Int)
+    -> [UserSpaceDeviceCreationAttempt]
+  {
     let usageProperties: [String: Any] = [
       kIOHIDPrimaryUsagePageKey as String: Int(kHIDPage_GenericDesktop),
       kIOHIDPrimaryUsageKey as String: primaryUsage,
@@ -48,13 +45,9 @@ extension UserSpaceOutputDispatcher {
       kIOHIDPrimaryUsageKey as String: primaryUsage,
     ]
     let identityKeys = [
-      kIOHIDReportDescriptorKey as String,
-      kIOHIDVendorIDKey as String,
-      kIOHIDProductIDKey as String,
-      kIOHIDVersionNumberKey as String,
-      kIOHIDProductKey as String,
-      kIOHIDManufacturerKey as String,
-      kIOHIDSerialNumberKey as String,
+      kIOHIDReportDescriptorKey as String, kIOHIDVendorIDKey as String,
+      kIOHIDProductIDKey as String, kIOHIDVersionNumberKey as String, kIOHIDProductKey as String,
+      kIOHIDManufacturerKey as String, kIOHIDSerialNumberKey as String,
       kIOHIDTransportKey as String,
     ]
     let identityProperties = baseProperties.filter { identityKeys.contains($0.key) }

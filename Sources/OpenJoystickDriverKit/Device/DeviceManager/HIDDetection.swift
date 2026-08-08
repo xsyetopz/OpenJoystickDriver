@@ -195,9 +195,7 @@ extension DeviceManager {
     }
   }
 
-  func sendHIDShutdownFeatureReportsIfNeeded(pipeline: DevicePipeline?, locationID: UInt32)
-    async
-  {
+  func sendHIDShutdownFeatureReportsIfNeeded(pipeline: DevicePipeline?, locationID: UInt32) async {
     guard let pipeline else { return }
     for report in await pipeline.hidShutdownFeatureReports() {
       let sent = hidManager.setFeatureReport(locationID: locationID, report: report)

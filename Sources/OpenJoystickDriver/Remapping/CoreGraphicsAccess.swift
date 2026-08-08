@@ -7,13 +7,9 @@ protocol CoreGraphicsPostEventAccessProbing: Sendable {
 }
 
 private struct PlatformPostEventAccessProbe: CoreGraphicsPostEventAccessProbing {
-  func preflight() -> Bool {
-    CGPreflightPostEventAccess()
-  }
+  func preflight() -> Bool { CGPreflightPostEventAccess() }
 
-  @discardableResult func request() -> Bool {
-    CGRequestPostEventAccess()
-  }
+  @discardableResult func request() -> Bool { CGRequestPostEventAccess() }
 }
 
 /// Reads and requests the CoreGraphics permission used for keyboard and pointer injection.
@@ -23,13 +19,9 @@ private struct PlatformPostEventAccessProbe: CoreGraphicsPostEventAccessProbing 
 public struct CoreGraphicsPostEventAccess: Sendable {
   private let probe: any CoreGraphicsPostEventAccessProbing
 
-  public init() {
-    probe = PlatformPostEventAccessProbe()
-  }
+  public init() { probe = PlatformPostEventAccessProbe() }
 
-  init(probe: any CoreGraphicsPostEventAccessProbing) {
-    self.probe = probe
-  }
+  init(probe: any CoreGraphicsPostEventAccessProbing) { self.probe = probe }
 
   public func currentState() -> RemappingPostEventAccessState {
     probe.preflight() ? .granted : .notAuthorized

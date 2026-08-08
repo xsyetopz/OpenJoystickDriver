@@ -2,6 +2,9 @@ import Foundation
 import OpenJoystickDriverKit
 
 struct InputCommand {
+  private static let nanosecondsPerSecond: UInt64 = 1_000_000_000
+  private static let nanosecondsPerMillisecond: UInt64 = 1_000_000
+
   private enum Action {
     case state
     case packets
@@ -24,14 +27,8 @@ struct InputCommand {
     let options = parse(arguments)
     let service = ControllerInputDiagnosticService()
     let failure = withCLIShutdownCleanup(
-      {
-        runSync { await service.disconnect() }
-      },
-      {
-        runSyncResult {
-          await execute(options, service: service)
-        }
-      }
+      { runSync { await service.disconnect() } },
+      { runSyncResult { await execute(options, service: service) } }
     )
     runSync { await service.disconnect() }
     if let failure {
@@ -40,22 +37,15 @@ struct InputCommand {
     }
   }
 
-  private func execute(
-    _ options: Options,
-    service: ControllerInputDiagnosticService
-  ) async -> String? {
+  private func execute(_ options: Options, service: ControllerInputDiagnosticService) async
+    -> String?
+  {
     do {
       let device = try await resolveDevice(options, service: service)
       switch options.action {
-      case .state:
-        try await printState(device, json: options.json, service: service)
+      case .state: try await printState(device, json: options.json, service: service)
       case .packets:
-        try await printPackets(
-          device,
-          limit: options.limit,
-          json: options.json,
-          service: service
-        )
+        try await printPackets(device, limit: options.limit, json: options.json, service: service)
       case .watch:
         try await watch(
           device,
@@ -66,15 +56,12 @@ struct InputCommand {
         )
       }
       return nil
-    } catch {
-      return error.localizedDescription
-    }
+    } catch { return error.localizedDescription }
   }
 
-  private func resolveDevice(
-    _ options: Options,
-    service: ControllerInputDiagnosticService
-  ) async throws -> ApplicationServiceDeviceDescription {
+  private func resolveDevice(_ options: Options, service: ControllerInputDiagnosticService)
+    async throws -> ApplicationServiceDeviceDescription
+  {
     let devices = try await service.connectedDevices()
     return try ConnectedControllerSelection.resolve(
       devices: devices,
@@ -152,9 +139,9 @@ struct InputCommand {
     jsonLines: Bool,
     service: ControllerInputDiagnosticService
   ) async throws {
-    let deadline = DispatchTime.now().uptimeNanoseconds
-      + UInt64(seconds) * 1_000_000_000
-    let interval = UInt64(intervalMilliseconds) * 1_000_000
+    let deadline =
+      DispatchTime.now().uptimeNanoseconds + UInt64(seconds) * Self.nanosecondsPerSecond
+    let interval = UInt64(intervalMilliseconds) * Self.nanosecondsPerMillisecond
     var previous: DeviceInputState?
     var observedState = false
 
@@ -173,27 +160,20 @@ struct InputCommand {
       )
       if let state, state != previous {
         observedState = true
-        if jsonLines {
-          try printJSON(state, pretty: false)
-        } else {
-          print("  \(formatted(state))")
-        }
+        if jsonLines { try printJSON(state, pretty: false) } else { print("  \(formatted(state))") }
         previous = state
       }
       try await Task.sleep(nanoseconds: interval)
     }
 
-    if !observedState && !jsonLines {
-      print("No input state was observed.")
-    }
+    if !observedState && !jsonLines { print("No input state was observed.") }
   }
 
   private func formatted(_ state: DeviceInputState) -> String {
-    let buttons = state.pressedButtons.isEmpty
-      ? "none" : state.pressedButtons.sorted().joined(separator: ",")
+    let buttons =
+      state.pressedButtons.isEmpty ? "none" : state.pressedButtons.sorted().joined(separator: ",")
     return String(
-      format:
-        "buttons=[%@] LS=(%.3f,%.3f) RS=(%.3f,%.3f) LT=%.3f RT=%.3f",
+      format: "buttons=[%@] LS=(%.3f,%.3f) RS=(%.3f,%.3f) LT=%.3f RT=%.3f",
       buttons,
       state.leftStickX,
       state.leftStickY,
@@ -215,8 +195,7 @@ struct InputCommand {
   }
 
   private func warnAboutRawPackets() {
-    let warning =
-      "Raw controller packets may contain device-specific data. Review before sharing."
+    let warning = "Raw controller packets may contain device-specific data. Review before sharing."
     CLIOutput.warning(warning)
   }
 
@@ -314,9 +293,7 @@ struct InputCommand {
     option: String,
     range: ClosedRange<Int>
   ) -> Int {
-    guard index + 1 < arguments.count,
-      let value = Int(arguments[index + 1]),
-      range.contains(value)
+    guard index + 1 < arguments.count, let value = Int(arguments[index + 1]), range.contains(value)
     else {
       CLIOutput.error("\(option) must be \(range.lowerBound)...\(range.upperBound).")
       exit(1)
@@ -326,31 +303,22 @@ struct InputCommand {
   }
 
   private func parseIdentifier(_ raw: String) -> UInt16? {
-    if raw.lowercased().hasPrefix("0x") {
-      return UInt16(raw.dropFirst(2), radix: 16)
-    }
+    if raw.lowercased().hasPrefix("0x") { return UInt16(raw.dropFirst(2), radix: 16) }
     return UInt16(raw, radix: 10)
   }
 
-  private func hex(_ value: UInt16) -> String {
-    String(format: "0x%04X", value)
-  }
+  private func hex(_ value: UInt16) -> String { String(format: "0x%04X", value) }
 
   private func printHelp() {
     print(
       [
-        "Usage: OpenJoystickDriver --headless controller <state|packets|watch> [options]",
-        "",
-        "Commands:",
-        "  state    Print the latest normalized buttons, sticks, and triggers",
+        "Usage: OpenJoystickDriver --headless controller <state|packets|watch> [options]", "",
+        "Commands:", "  state    Print the latest normalized buttons, sticks, and triggers",
         "  packets  Print recent raw controller packets",
-        "  watch    Print normalized state changes for a bounded duration",
-        "",
+        "  watch    Print normalized state changes for a bounded duration", "",
         "VID and PID accept decimal or 0x-prefixed hexadecimal. Omit both when",
         "exactly one controller is connected. Use --device with the opaque ID",
-        "reported by controller output list when identical models are connected.",
-        "",
-        "Options:",
+        "reported by controller output list when identical models are connected.", "", "Options:",
         "  state   [--device <id>] [--json]",
         "  packets [--device <id>] [--limit 1...200] [--json]",
         "  watch   [--device <id>] [--seconds 1...3600]",
@@ -363,9 +331,7 @@ struct InputCommand {
 private struct InputCommandFailure: LocalizedError, Sendable {
   let message: String
 
-  init(_ message: String) {
-    self.message = message
-  }
+  init(_ message: String) { self.message = message }
 
   var errorDescription: String? { message }
 }

@@ -4,8 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct ApplicationServiceLogServiceTests {
-  @Test
-  func missingLogReturnsAnEmptyTypedSnapshot() throws {
+  @Test func missingLogReturnsAnEmptyTypedSnapshot() throws {
     let url = temporaryURL()
     let snapshot = try ApplicationServiceLogService.tail(
       url: url,
@@ -21,8 +20,7 @@ struct ApplicationServiceLogServiceTests {
     #expect(!snapshot.truncated)
   }
 
-  @Test
-  func tailReturnsOnlyTheRequestedFinalLines() throws {
+  @Test func tailReturnsOnlyTheRequestedFinalLines() throws {
     let url = temporaryURL()
     defer { try? FileManager.default.removeItem(at: url) }
     try Data("one\ntwo\nthree\nfour\n".utf8).write(to: url)
@@ -39,8 +37,7 @@ struct ApplicationServiceLogServiceTests {
     #expect(snapshot.truncated)
   }
 
-  @Test
-  func byteLimitDropsTheLeadingPartialLine() throws {
+  @Test func byteLimitDropsTheLeadingPartialLine() throws {
     let url = temporaryURL()
     defer { try? FileManager.default.removeItem(at: url) }
     try Data("discard-this-line\nkeep-one\nkeep-two\n".utf8).write(to: url)
@@ -58,7 +55,8 @@ struct ApplicationServiceLogServiceTests {
   }
 
   private func temporaryURL() -> URL {
-    FileManager.default.temporaryDirectory
-      .appendingPathComponent("ojd-application service-log-\(UUID().uuidString)")
+    FileManager.default.temporaryDirectory.appendingPathComponent(
+      "ojd-application service-log-\(UUID().uuidString)"
+    )
   }
 }

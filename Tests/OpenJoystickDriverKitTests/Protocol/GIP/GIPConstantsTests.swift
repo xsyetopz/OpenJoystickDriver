@@ -4,8 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct GIPConstantsTests {
-  @Test
-  func test_deviceState_rawValues_match_windows_driver() {
+  @Test func test_deviceState_rawValues_match_windows_driver() {
     #expect(GIPDeviceState.start.rawValue == 0x00)
     #expect(GIPDeviceState.stop.rawValue == 0x01)
     #expect(GIPDeviceState.standby.rawValue == 0x02)
@@ -15,8 +14,7 @@ struct GIPConstantsTests {
     #expect(GIPDeviceState.enroll.rawValue == 0x06)
     #expect(GIPDeviceState.reset.rawValue == 0x07)
   }
-  @Test
-  func test_authState_expectedPayloadSize_matches_windows_driver() {
+  @Test func test_authState_expectedPayloadSize_matches_windows_driver() {
     #expect(GIPAuthState.hostInit.expectedPayloadSize == 40)
     #expect(GIPAuthState.hostResponse1.expectedPayloadSize == 176)
     #expect(GIPAuthState.hostResponse2.expectedPayloadSize == 772)
@@ -25,48 +23,37 @@ struct GIPConstantsTests {
     #expect(GIPAuthState.hostResponse5.expectedPayloadSize == 36)
     #expect(GIPAuthState.hostComplete.expectedPayloadSize == 68)
   }
-  @Test
-  func test_authState_isDeviceToHost_correct_for_all_cases() {
+  @Test func test_authState_isDeviceToHost_correct_for_all_cases() {
     // Device -> Host states (rawValue < 0x20)
     let deviceStates: [GIPAuthState] = [
       .devInit, .devCertificate, .devIntermediate, .devData1, .devData2, .devFinal, .devComplete,
       .devStatus, .devAck1, .devAck2,
     ]
-    for state in deviceStates {
-      #expect(state.isDeviceToHost)
-    }
+    for state in deviceStates { #expect(state.isDeviceToHost) }
 
     // Host -> Device states (rawValue >= 0x20)
     let hostStates: [GIPAuthState] = [
       .hostInit, .hostResponse1, .hostResponse2, .hostResponse3, .hostResponse4, .hostResponse5,
       .hostComplete,
     ]
-    for state in hostStates {
-      #expect(!state.isDeviceToHost)
-    }
+    for state in hostStates { #expect(!state.isDeviceToHost) }
   }
-  @Test
-  func test_deviceState_has_all_8_states() {
+  @Test func test_deviceState_has_all_8_states() {
     let allStates: [GIPDeviceState] = [
       .start, .stop, .standby, .fullPower, .off, .quiesce, .enroll, .reset,
     ]
     #expect(allStates.count == 8)
-    // Verify no duplicate raw values
     let rawValues = Set(allStates.map(\.rawValue))
     #expect(rawValues.count == 8)
   }
-  @Test
-  func test_deviceState_expectedPayloadSize_nil_for_device_states() {
+  @Test func test_deviceState_expectedPayloadSize_nil_for_device_states() {
     let deviceStates: [GIPAuthState] = [
       .devInit, .devCertificate, .devIntermediate, .devData1, .devData2, .devFinal, .devComplete,
       .devStatus, .devAck1, .devAck2,
     ]
-    for state in deviceStates {
-      #expect(state.expectedPayloadSize == nil)
-    }
+    for state in deviceStates { #expect(state.expectedPayloadSize == nil) }
   }
-  @Test
-  func test_command_constants_match_protocol() {
+  @Test func test_command_constants_match_protocol() {
     #expect(GIPCommand.acknowledge == 0x01)
     #expect(GIPCommand.announce == 0x02)
     #expect(GIPCommand.status == 0x03)
@@ -77,15 +64,13 @@ struct GIPConstantsTests {
     #expect(GIPCommand.led == 0x0A)
     #expect(GIPCommand.input == 0x20)
   }
-  @Test
-  func test_option_constants_match_protocol() {
+  @Test func test_option_constants_match_protocol() {
     #expect(GIPOption.acknowledge == 0x10)
     #expect(GIPOption.internal == 0x20)
     #expect(GIPOption.chunkStart == 0x40)
     #expect(GIPOption.chunk == 0x80)
   }
-  @Test
-  func test_authType_constants() {
+  @Test func test_authType_constants() {
     #expect(GIPAuthType.host == 0x41)
     #expect(GIPAuthType.device == 0x42)
     #expect(GIPAuthType.version == 0x01)

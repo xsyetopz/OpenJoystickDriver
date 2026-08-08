@@ -72,9 +72,7 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     isLogicalControllerConnected = !isWirelessReceiver
   }
 
-  public var physicalRumbleMotors: [PhysicalRumbleMotor] {
-    [.leftHaptic, .rightHaptic]
-  }
+  public var physicalRumbleMotors: [PhysicalRumbleMotor] { [.leftHaptic, .rightHaptic] }
 
   public var requiresInputConnectionBeforeOutput: Bool { isWirelessReceiver }
 
@@ -88,14 +86,9 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     [
       steamFeatureReport([steamControllerClearDigitalMappingsCommand]),
       steamFeatureReport([
-        steamControllerSetSettingsValuesCommand,
-        6,
-        steamControllerLeftTrackpadModeSetting,
-        steamControllerTrackpadNone,
-        0,
-        steamControllerRightTrackpadModeSetting,
-        steamControllerTrackpadNone,
-        0,
+        steamControllerSetSettingsValuesCommand, 6, steamControllerLeftTrackpadModeSetting,
+        steamControllerTrackpadNone, 0, steamControllerRightTrackpadModeSetting,
+        steamControllerTrackpadNone, 0,
       ]),
     ]
   }
@@ -109,27 +102,19 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
 
   public func physicalBrightnessReport(_ brightness: UInt8) -> PhysicalHIDOutputReport {
     steamFeatureReport([
-      steamControllerSetSettingsValuesCommand,
-      3,
-      steamControllerUserLEDBrightnessSetting,
-      brightness,
-      0,
+      steamControllerSetSettingsValuesCommand, 3, steamControllerUserLEDBrightnessSetting,
+      brightness, 0,
     ])
   }
 
-  public func physicalHapticReports(
-    left: UInt8,
-    right: UInt8,
-    durationMs: Int
-  ) -> [PhysicalHIDOutputReport] {
+  public func physicalHapticReports(left: UInt8, right: UInt8, durationMs: Int)
+    -> [PhysicalHIDOutputReport]
+  {
     guard isLogicalControllerConnected else { return [] }
     let effectiveDurationMs = durationMs > 0 ? min(durationMs, 5_000) : 65
     let totalMicroseconds = max(1, effectiveDurationMs * 1_000)
     let pulseDuration = min(totalMicroseconds, steamControllerMaximumPulseMicroseconds)
-    let pulseCount = min(
-      65_535,
-      (totalMicroseconds + pulseDuration - 1) / pulseDuration
-    )
+    let pulseCount = min(65_535, (totalMicroseconds + pulseDuration - 1) / pulseDuration)
     var reports: [PhysicalHIDOutputReport] = []
     if left > 0 {
       reports.append(
@@ -160,19 +145,14 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
   }
 
   /// No-op for the current experimental input slice.
-  public func performHandshake(handle: USBDeviceHandle?) async throws {
-    await Task.yield()
-  }
+  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
 
   /// Parses one Steam Controller state report and returns controller events.
   public func parse(data: Data) throws -> [ControllerEvent] {
     let bytes = Array(data)
-    guard bytes.count == steamControllerReportLength,
-      bytes[0] == steamControllerReportPrefix0,
+    guard bytes.count == steamControllerReportLength, bytes[0] == steamControllerReportPrefix0,
       bytes[1] == steamControllerReportPrefix1
-    else {
-      return []
-    }
+    else { return [] }
 
     switch bytes[ReportOffset.messageType] {
     case steamControllerWirelessMessageID:
@@ -184,8 +164,7 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     case steamControllerStateMessageID:
       guard isLogicalControllerConnected else { return [] }
       return parseControllerState(bytes)
-    default:
-      return []
+    default: return []
     }
   }
 
@@ -193,19 +172,15 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     guard isWirelessReceiver else { return }
     let nextConnected: Bool
     switch bytes[ReportOffset.wirelessStatus] {
-    case steamControllerWirelessDisconnected:
-      nextConnected = false
-    case steamControllerWirelessConnected:
-      nextConnected = true
-    default:
-      return
+    case steamControllerWirelessDisconnected: nextConnected = false
+    case steamControllerWirelessConnected: nextConnected = true
+    default: return
     }
     guard nextConnected != isLogicalControllerConnected else { return }
     isLogicalControllerConnected = nextConnected
     pendingConnectionStateChange = nextConnected ? .connected : .disconnected
     resetPreviousReportState()
   }
-
 
   private func parseWirelessStatusFallback() {
     guard isWirelessReceiver, !isLogicalControllerConnected else { return }
@@ -257,16 +232,10 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     let gainDecibels = -24 + Int((Double(intensity) * 30.0 / 255.0).rounded())
     let gain = UInt8(bitPattern: Int8(clamping: gainDecibels))
     return steamFeatureReport([
-      steamControllerHapticPulseCommand,
-      steamControllerHapticPulsePayloadLength,
-      pad,
+      steamControllerHapticPulseCommand, steamControllerHapticPulsePayloadLength, pad,
       UInt8(truncatingIfNeeded: durationMicroseconds),
-      UInt8(truncatingIfNeeded: durationMicroseconds >> 8),
-      0,
-      0,
-      UInt8(truncatingIfNeeded: count),
-      UInt8(truncatingIfNeeded: count >> 8),
-      gain,
+      UInt8(truncatingIfNeeded: durationMicroseconds >> 8), 0, 0, UInt8(truncatingIfNeeded: count),
+      UInt8(truncatingIfNeeded: count >> 8), gain,
     ])
   }
 
@@ -295,29 +264,33 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     -> [ControllerEvent]
   {
     var events: [ControllerEvent] = []
-    events.append(contentsOf: diffButtons(prev: prevButtons0, curr: b0, mapping: [
-      (0x01, .r2Digital),
-      (0x02, .l2Digital),
-      (0x04, .rightBumper),
-      (0x08, .leftBumper),
-      (0x10, .y),
-      (0x20, .b),
-      (0x40, .x),
-      (0x80, .a),
-    ]))
-    events.append(contentsOf: diffButtons(prev: prevButtons1, curr: b1, mapping: [
-      (0x10, .back),
-      (0x20, .guide),
-      (0x40, .start),
-      (0x80, .genericButton1),
-    ]))
-    events.append(contentsOf: diffButtons(prev: prevButtons2, curr: b2, mapping: [
-      (0x01, .genericButton2),
-      (0x02, .genericButton3),
-      (0x04, .rightStick),
-      (0x10, .genericButton5),
-      (0x40, .leftStick),
-    ]))
+    events.append(
+      contentsOf: diffButtons(
+        prev: prevButtons0,
+        curr: b0,
+        mapping: [
+          (0x01, .r2Digital), (0x02, .l2Digital), (0x04, .rightBumper), (0x08, .leftBumper),
+          (0x10, .y), (0x20, .b), (0x40, .x), (0x80, .a),
+        ]
+      )
+    )
+    events.append(
+      contentsOf: diffButtons(
+        prev: prevButtons1,
+        curr: b1,
+        mapping: [(0x10, .back), (0x20, .guide), (0x40, .start), (0x80, .genericButton1)]
+      )
+    )
+    events.append(
+      contentsOf: diffButtons(
+        prev: prevButtons2,
+        curr: b2,
+        mapping: [
+          (0x01, .genericButton2), (0x02, .genericButton3), (0x04, .rightStick),
+          (0x10, .genericButton5), (0x40, .leftStick),
+        ]
+      )
+    )
     let wasLeftPadTouched = (prevButtons2 & 0x88) != 0
     let isLeftPadTouched = (b2 & 0x88) != 0
     if wasLeftPadTouched != isLeftPadTouched {

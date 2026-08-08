@@ -33,9 +33,7 @@ struct RemappingOutputSchedulerTests {
 
   @Test func turboStartsStopsAndReactivatesExactlyOneTicker() async throws {
     let probe = RemappingTickerProbe()
-    let profile = remappingRouterProfile(
-      turbo: RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.25)
-    )
+    let profile = remappingRouterProfile(turbo: RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.25))
     let harness = try await RemappingRouterHarness.make(
       profile: profile,
       tickerIntervalNanoseconds: 1,
@@ -67,9 +65,7 @@ struct RemappingOutputSchedulerTests {
     let start: UInt64 = 1_000_000_000
     let clock = RemappingTickerClock(start)
     let probe = RemappingTickerProbe(clock: clock)
-    let profile = remappingRouterProfile(
-      turbo: RemappingTurbo(repeatRateHz: 60, dutyCycle: 0.05)
-    )
+    let profile = remappingRouterProfile(turbo: RemappingTurbo(repeatRateHz: 60, dutyCycle: 0.05))
     let harness = try await RemappingRouterHarness.make(
       profile: profile,
       tickerIntervalNanoseconds: 8_000_000,
@@ -95,11 +91,11 @@ struct RemappingOutputSchedulerTests {
     probe.resumeNext()
     #expect(await yieldUntil { harness.recorder.snapshot().count >= 3 })
 
-    #expect(Array(harness.recorder.snapshot().prefix(3)) == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-      .system(.keyDown(.space)),
-    ])
+    #expect(
+      Array(harness.recorder.snapshot().prefix(3)) == [
+        .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.space)),
+      ]
+    )
   }
 
   @Test func continuousOutputStartsTickerAndNeutralAxisStopsIt() async throws {

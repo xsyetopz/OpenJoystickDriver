@@ -18,14 +18,13 @@ public enum ApplicationServiceManager: Sendable {
   }
 
   public static func applicationExecutableURL(in appBundleURL: URL) -> URL {
-    appBundleURL
-      .appendingPathComponent("Contents", isDirectory: true)
-      .appendingPathComponent("MacOS", isDirectory: true)
-      .appendingPathComponent("OpenJoystickDriver", isDirectory: false)
+    appBundleURL.appendingPathComponent("Contents", isDirectory: true).appendingPathComponent(
+      "MacOS",
+      isDirectory: true
+    ).appendingPathComponent("OpenJoystickDriver", isDirectory: false)
   }
 
-  @available(macOS 13.0, *)
-  private static var mainAppService: SMAppService { .mainApp }
+  @available(macOS 13.0, *) private static var mainAppService: SMAppService { .mainApp }
 
   public static var isInstalled: Bool {
     guard #available(macOS 13.0, *) else { return false }
@@ -46,18 +45,14 @@ public enum ApplicationServiceManager: Sendable {
 
   private static func registerMainApp() throws {
     guard #available(macOS 13.0, *) else { throw ManagerError.unsupportedOperatingSystem }
-    if mainAppService.status == .notRegistered {
-      try mainAppService.register()
-    }
+    if mainAppService.status == .notRegistered { try mainAppService.register() }
     log("[ApplicationServiceManager] Main app registered for login")
   }
 
   public static func uninstall() throws {
     UserDefaults.standard.set(true, forKey: launchAtLoginOptOutDefaultsKey)
     guard #available(macOS 13.0, *) else { throw ManagerError.unsupportedOperatingSystem }
-    if mainAppService.status != .notRegistered {
-      try mainAppService.unregister()
-    }
+    if mainAppService.status != .notRegistered { try mainAppService.unregister() }
     log("[ApplicationServiceManager] Main app removed from login items")
   }
 
@@ -77,12 +72,7 @@ public enum ApplicationServiceManager: Sendable {
     public var state: String?
     public var pid: Int?
 
-    public init(
-      installed: Bool,
-      activeCount: Int? = nil,
-      state: String? = nil,
-      pid: Int? = nil
-    ) {
+    public init(installed: Bool, activeCount: Int? = nil, state: String? = nil, pid: Int? = nil) {
       self.installed = installed
       self.activeCount = activeCount
       self.state = state

@@ -4,8 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct ForegroundConsumerClientOwnerTests {
-  @Test
-  func testParsesPIDFromIORegistryCreatorString() {
+  @Test func testParsesPIDFromIORegistryCreatorString() {
     #expect(ForegroundConsumerClientOwner.pid(from: "pid 30617, Google Chrome") == 30_617)
   }
 

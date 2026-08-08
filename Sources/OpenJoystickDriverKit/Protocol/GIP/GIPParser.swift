@@ -9,6 +9,11 @@ private let gipInitDelayNanoseconds: UInt64 = 50_000_000
 private let gipStickMax: Float = 32767
 private let gipTriggerMax: Float = 1023
 private let gipMaximumVarintBytes = 5
+private let gipRumbleAllMotors: UInt8 = 0x0F
+private let gipRumbleSubCommandLength: UInt8 = 0x09
+private let gipRumbleDefaultDuration: UInt8 = 0x20
+private let gipStatusSubCommandLength: UInt8 = 3
+private let gipRumbleTransferTimeoutMs: UInt32 = 2000
 
 private struct GIPFrame {
   let command: UInt8
@@ -89,8 +94,10 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
     for attempt in 0..<gipHandshakeMaxAttempts {
       do {
         try await sendInitSequence(handle: handle)
-        print("[GIPParser] Init sequence sent" + " (attempt \(attempt + 1))"
-              + " outEP=0x\(String(outEndpoint, radix: 16))")
+        print(
+          "[GIPParser] Init sequence sent" + " (attempt \(attempt + 1))"
+            + " outEP=0x\(String(outEndpoint, radix: 16))"
+        )
         return
       } catch {
         print("[GIPParser] Init attempt \(attempt + 1) " + "failed: \(error)")
@@ -105,8 +112,14 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
     guard keepAlivePolicy == .enabled else { return }
     guard let handle else { return }
     let seq = sequencer.next(for: GIPCommand.status)
-    let packet: [UInt8] = [GIPCommand.status, GIPOption.internal, seq, 3, 0x00, 0x00, 0x00]
-    _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
+    let packet: [UInt8] = [
+      GIPCommand.status, GIPOption.internal, seq, gipStatusSubCommandLength, 0x00, 0x00, 0x00,
+    ]
+    _ = try handle.interruptTransfer(
+      endpoint: outEndpoint,
+      data: packet,
+      timeout: gipRumbleTransferTimeoutMs
+    )
   }
 
   /// Builds the ACK frame required by a GIP packet with the acknowledge option bit set.
@@ -129,9 +142,7 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
   public func parse(data: Data) throws -> [ControllerEvent] {
     pendingInput.append(data)
     var events: [ControllerEvent] = []
-    while let frame = try nextFrame() {
-      events += process(frame)
-    }
+    while let frame = try nextFrame() { events += process(frame) }
     return events
   }
 
@@ -233,15 +244,19 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
     rtMotor: UInt8
   ) throws {
     let seq = sequencer.next(for: GIPCommand.rumble)
-    let activation: UInt8 = 0x0F  // all four motors
+    let activation: UInt8 = gipRumbleAllMotors
     // The options byte must be 0x00: controllers silently discard rumble frames
     // flagged with GIPOption.internal (verified on 045E:02D1 hardware), matching
     // the unflagged rumble commands sent by the Linux xone and xpad drivers.
     let packet: [UInt8] = [
-      GIPCommand.rumble, 0x00, seq, 0x09, 0x00, activation, ltMotor, rtMotor, left,
-      right, 0x20, 0x00, 0x00,  // duration=32, delay=0, repeat=0
+      GIPCommand.rumble, 0x00, seq, gipRumbleSubCommandLength, 0x00, activation, ltMotor, rtMotor,
+      left, right, gipRumbleDefaultDuration, 0x00, 0x00,  // duration=32, delay=0, repeat=0
     ]
-    _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
+    _ = try handle.interruptTransfer(
+      endpoint: outEndpoint,
+      data: packet,
+      timeout: gipRumbleTransferTimeoutMs
+    )
   }
 
   public var physicalRumbleMotors: [PhysicalRumbleMotor] {
@@ -254,9 +269,7 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
     right: UInt8,
     lt: UInt8,
     rt: UInt8
-  ) throws {
-    try sendRumble(handle: handle, left: left, right: right, ltMotor: lt, rtMotor: rt)
-  }
+  ) throws { try sendRumble(handle: handle, left: left, right: right, ltMotor: lt, rtMotor: rt) }
 
   // MARK: - Private
 
@@ -271,9 +284,7 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
         data: startupPacket.packet(sequence: seq),
         timeout: 2000
       )
-      if index < startupPackets.count - 1 {
-        try await Task.sleep(nanoseconds: initDelay)
-      }
+      if index < startupPackets.count - 1 { try await Task.sleep(nanoseconds: initDelay) }
     }
   }
 

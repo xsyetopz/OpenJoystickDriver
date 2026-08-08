@@ -2,6 +2,11 @@ import Foundation
 
 /// Per-device transport configuration resolved from controller records.
 public struct DeviceTransportProfile: Equatable, Sendable {
+  public static let inputEndpointRange = 128...255
+  public static let outputEndpointRange = 1...127
+  public static let interfaceNumberRange = 0...255
+  public static let nanosecondsPerMillisecond: UInt64 = 1_000_000
+
   public let inputEndpoint: UInt8
   public let outputEndpoint: UInt8
   public let interfaceNumber: UInt8

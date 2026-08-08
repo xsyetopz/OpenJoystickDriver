@@ -5,14 +5,11 @@ struct DiagnoseCommand {
   func run(arguments: [String] = []) {
     if let subcommand = arguments.first {
       switch subcommand {
-      case "runtime":
-        RuntimeHealthCommand().run(arguments: Array(arguments.dropFirst()))
-      case "catalog":
-        GameControllerCatalogCommand().run(arguments: Array(arguments.dropFirst()))
+      case "runtime": RuntimeHealthCommand().run(arguments: Array(arguments.dropFirst()))
+      case "catalog": GameControllerCatalogCommand().run(arguments: Array(arguments.dropFirst()))
       case "--help", "-h", "help":
         CLIOutput.stdout(
-          "Usage: OpenJoystickDriver --headless diagnose "
-            + "[runtime|catalog|report]"
+          "Usage: OpenJoystickDriver --headless diagnose " + "[runtime|catalog|report]"
         )
       default:
         CLIOutput.error("Unknown diagnose command: \(subcommand)")
@@ -39,9 +36,7 @@ struct DiagnoseCommand {
 
   private func printSystemInfo() {
     let ver = ProcessInfo.processInfo.operatingSystemVersion
-    CLIOutput.diagnostic(
-      "macOS: \(ver.majorVersion).\(ver.minorVersion).\(ver.patchVersion)"
-    )
+    CLIOutput.diagnostic("macOS: \(ver.majorVersion).\(ver.minorVersion).\(ver.patchVersion)")
     CLIOutput.diagnostic("Binary: \(CommandLine.arguments[0])")
   }
 
@@ -100,9 +95,7 @@ struct DiagnoseCommand {
     defer { client.disconnect() }
     let payload: ApplicationServiceStatusPayload? = runSyncOptionalResult(
       timeout: applicationServiceCallTimeoutSeconds
-    ) {
-      try? await client.getStatus()
-    }
+    ) { try? await client.getStatus() }
     guard let payload else {
       CLIOutput.diagnostic("Permissions: unavailable without the running main app")
       CLIOutput.diagnostic("  Recovery: launch the installed OpenJoystickDriver app")
@@ -121,9 +114,7 @@ struct DiagnoseCommand {
   private func printUSBDevices() {
     CLIOutput.diagnostic("USB Game Controllers (class 0xFF):")
     let result: Result<[USBControllerDescription], DiagnoseUSBScanFailure> = runSyncResult {
-      do {
-        return .success(try await USBControllerScanner.scanVendorSpecific())
-      } catch {
+      do { return .success(try await USBControllerScanner.scanVendorSpecific()) } catch {
         return .failure(DiagnoseUSBScanFailure(message: error.localizedDescription))
       }
     }
@@ -163,6 +154,4 @@ struct DiagnoseCommand {
   }
 }
 
-private struct DiagnoseUSBScanFailure: Error, Sendable {
-  let message: String
-}
+private struct DiagnoseUSBScanFailure: Error, Sendable { let message: String }

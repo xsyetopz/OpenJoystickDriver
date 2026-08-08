@@ -10,8 +10,7 @@ struct XboxOneHIDReportFormatTests {
   private func report(buttonBit: Int) throws -> [UInt8] {
     try format().buildInputReport(from: VirtualGamepadState(buttons: 1 << UInt32(buttonBit)))
   }
-  @Test
-  func testMapsFaceAndShoulderButtonsDirectly() throws {
+  @Test func testMapsFaceAndShoulderButtonsDirectly() throws {
     let a = try report(buttonBit: 0)
     let rb = try report(buttonBit: 5)
 
@@ -20,8 +19,7 @@ struct XboxOneHIDReportFormatTests {
     #expect(a[14] == 0x01)
     #expect(rb[14] == 0x20)
   }
-  @Test
-  func testParsesAndPacksPrimaryAxes() throws {
+  @Test func testParsesAndPacksPrimaryAxes() throws {
     let full = try format().buildInputReport(
       from: VirtualGamepadState(
         leftStickX: 32_767,
@@ -49,8 +47,7 @@ struct XboxOneHIDReportFormatTests {
     #expect(full[13] == 0x00)
     #expect(full[14] == 0x00)
   }
-  @Test
-  func testMapsStickClicksAndMenuButtonsInRawHIDOrder() throws {
+  @Test func testMapsStickClicksAndMenuButtonsInRawHIDOrder() throws {
     let view = try report(buttonBit: 9)
     let menu = try report(buttonBit: 8)
     let leftStick = try report(buttonBit: 6)
@@ -61,24 +58,16 @@ struct XboxOneHIDReportFormatTests {
     #expect(menu[15] == 0x01)
     #expect(view[15] == 0x02)
   }
-  @Test
-  func testPacksDpadAsHatSwitch() throws {
-    let north = try format().buildInputReport(
-      from: VirtualGamepadState(hat: .north)
-    )
-    let east = try format().buildInputReport(
-      from: VirtualGamepadState(hat: .east)
-    )
-    let neutral = try format().buildInputReport(
-      from: VirtualGamepadState(hat: .neutral)
-    )
+  @Test func testPacksDpadAsHatSwitch() throws {
+    let north = try format().buildInputReport(from: VirtualGamepadState(hat: .north))
+    let east = try format().buildInputReport(from: VirtualGamepadState(hat: .east))
+    let neutral = try format().buildInputReport(from: VirtualGamepadState(hat: .neutral))
 
     #expect(north[13] == 0x01)
     #expect(east[13] == 0x03)
     #expect(neutral[13] == 0x00)
   }
-  @Test
-  func testPacksDpadAsDigitalButtons() throws {
+  @Test func testPacksDpadAsDigitalButtons() throws {
     let north = try format().buildInputReport(
       from: VirtualGamepadState(buttons: GamepadHIDDescriptor.dpadButtonBits(for: .north))
     )

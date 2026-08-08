@@ -31,8 +31,7 @@ private func eventExists(_ events: [ControllerEvent], _ expected: ControllerEven
 }
 
 struct SwitchProParserTests {
-  @Test
-  func testSwitchProProfileIsExperimentalAndUnverified() {
+  @Test func testSwitchProProfileIsExperimentalAndUnverified() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 1406, productID: 8201)
     let profile = registry.runtimeProfile(for: identifier)
@@ -44,8 +43,7 @@ struct SwitchProParserTests {
     #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
   }
 
-  @Test
-  func testSwitchProReportParsesPrimaryButtonsAndDpad() throws {
+  @Test func testSwitchProReportParsesPrimaryButtonsAndDpad() throws {
     let parser = SwitchProParser()
     _ = try parser.parse(data: makeSwitchProReport())
 
@@ -69,19 +67,14 @@ struct SwitchProParserTests {
     #expect(eventExists(events, .dpadChanged(.northWest)))
   }
 
-  @Test
-  func testSwitchDigitalTriggersNormalizeToAuxiliaryButtonSources() {
+  @Test func testSwitchDigitalTriggersNormalizeToAuxiliaryButtonSources() {
     #expect(RemappingEngineState.source(for: .l2Digital) == .button(.auxiliary1))
     #expect(RemappingEngineState.source(for: .r2Digital) == .button(.auxiliary2))
   }
 
-  @Test
-  func testSwitchProFaceButtonsUseLinuxPositionalMapping() throws {
+  @Test func testSwitchProFaceButtonsUseLinuxPositionalMapping() throws {
     let expectations: [(UInt32, Button)] = [
-      (0x0000_0008, .b),
-      (0x0000_0004, .a),
-      (0x0000_0002, .y),
-      (0x0000_0001, .x),
+      (0x0000_0008, .b), (0x0000_0004, .a), (0x0000_0002, .y), (0x0000_0001, .x),
     ]
 
     for (mask, button) in expectations {
@@ -94,8 +87,7 @@ struct SwitchProParserTests {
     }
   }
 
-  @Test
-  func testSwitchProReportParsesTwelveBitSticks() throws {
+  @Test func testSwitchProReportParsesTwelveBitSticks() throws {
     let parser = SwitchProParser()
     _ = try parser.parse(data: makeSwitchProReport())
 
@@ -107,19 +99,15 @@ struct SwitchProParserTests {
     #expect(eventExists(events, .rightStickChanged(x: -1.0, y: -1.0)))
   }
 
-  @Test
-  func testSwitchProStartupReportsMatchLinuxUsbInitSlice() {
+  @Test func testSwitchProStartupReportsMatchLinuxUsbInitSlice() {
     let reports = SwitchProParser().hidStartupReports()
 
     #expect(reports.map(\.reportID) == [0x80, 0x80, 0x80, 0x80, 0x01, 0x01])
-    #expect(reports.map { Array($0.bytes.prefix(2)) } == [
-      [0x80, 0x02],
-      [0x80, 0x03],
-      [0x80, 0x02],
-      [0x80, 0x04],
-      [0x01, 0x00],
-      [0x01, 0x01],
-    ])
+    #expect(
+      reports.map { Array($0.bytes.prefix(2)) } == [
+        [0x80, 0x02], [0x80, 0x03], [0x80, 0x02], [0x80, 0x04], [0x01, 0x00], [0x01, 0x01],
+      ]
+    )
     #expect(Array(reports[4].bytes[2...9]) == [0x00, 0x01, 0x40, 0x40] + [0x00, 0x01, 0x40, 0x40])
     #expect(reports[4].bytes[10] == 0x03)
     #expect(reports[4].bytes[11] == 0x30)
@@ -127,9 +115,7 @@ struct SwitchProParserTests {
     #expect(reports[5].bytes[11] == 0x01)
   }
 
-
-  @Test
-  func testSwitchProStartupReportsAreTransportScopedAndRateLimited() {
+  @Test func testSwitchProStartupReportsAreTransportScopedAndRateLimited() {
     let bluetooth = SwitchProParser().hidStartupReports(transport: "Bluetooth")
     #expect(bluetooth.map(\.reportID) == [0x01, 0x01])
     #expect(bluetooth.map { $0.bytes[10] } == [0x03, 0x48])
@@ -143,23 +129,17 @@ struct SwitchProParserTests {
     #expect(SwitchProParser().minimumPhysicalOutputIntervalNanoseconds == 50_000_000)
   }
 
-  @Test
-  func testSwitchProRumbleCodecMatchesLinuxDefaultFrequencyFixtures() {
+  @Test func testSwitchProRumbleCodecMatchesLinuxDefaultFrequencyFixtures() {
     #expect(SwitchProRumbleCodec.encode(intensity: 0) == [0x00, 0x01, 0x40, 0x40])
     #expect(SwitchProRumbleCodec.encode(intensity: 128) == [0x00, 0x8B, 0xC0, 0x63])
     #expect(SwitchProRumbleCodec.encode(intensity: 255) == [0x00, 0xC9, 0x40, 0x72])
   }
 
-  @Test
-  func testSwitchProRumbleAndPlayerLedReportsPreserveStateAndSequence() {
+  @Test func testSwitchProRumbleAndPlayerLedReportsPreserveStateAndSequence() {
     let parser = SwitchProParser()
     let rumble = parser.physicalRumbleReport(left: 255, right: 128, lt: 0, rt: 0)
     #expect(rumble.reportID == 0x10)
-    #expect(rumble.bytes == [
-      0x10, 0x00,
-      0x00, 0xC9, 0x40, 0x72,
-      0x00, 0x8B, 0xC0, 0x63,
-    ])
+    #expect(rumble.bytes == [0x10, 0x00, 0x00, 0xC9, 0x40, 0x72, 0x00, 0x8B, 0xC0, 0x63])
 
     let player = parser.physicalPlayerIndicatorReport(.player3)
     #expect(player.reportID == 0x01)
@@ -168,8 +148,7 @@ struct SwitchProParserTests {
     #expect(player.bytes[11] == 0x07)
   }
 
-  @Test
-  func testSwitchProIgnoresUnsupportedReports() throws {
+  @Test func testSwitchProIgnoresUnsupportedReports() throws {
     let parser = SwitchProParser()
     let events = try parser.parse(data: Data([0x3F, 0, 0, 0]))
 

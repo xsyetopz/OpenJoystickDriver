@@ -97,11 +97,7 @@ func runControllerRecordProbe(
       if let startupOutput = parser as? any USBStartupOutputProvider {
         for packet in startupOutput.usbStartupOutputPackets() {
           do {
-            _ = try handle.interruptTransfer(
-              endpoint: outputEndpoint,
-              data: packet,
-              timeout: 2_000
-            )
+            _ = try handle.interruptTransfer(endpoint: outputEndpoint, data: packet, timeout: 2_000)
             print("USB_TX endpoint=\(hex(outputEndpoint)) bytes=\(packet.hexBytes)")
           } catch let error as USBError
             where isIgnorableUSBStartupOutputError(parser: parser, packet: packet, error: error)

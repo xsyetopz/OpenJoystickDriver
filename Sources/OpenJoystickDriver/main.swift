@@ -11,9 +11,7 @@ if args.contains("--headless") {
 } else if !args.isEmpty {
   CLI().run(arguments: args[...])
 } else {
-  do {
-    try ApplicationServiceLogService.beginCurrentSessionCapture()
-  } catch {
+  do { try ApplicationServiceLogService.beginCurrentSessionCapture() } catch {
     fputs("[OpenJoystickDriver] Log capture unavailable: \(error.localizedDescription)\n", stderr)
   }
   applicationHost = HeadlessApplicationHost()

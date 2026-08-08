@@ -41,7 +41,8 @@ public enum USBControllerScanner {
     var seenKeys: Set<String> = []
 
     for await device in context.findDevices(
-      deviceClass: USBConstants.DeviceClass.vendorSpecific.rawValue, findAll: true
+      deviceClass: USBConstants.DeviceClass.vendorSpecific.rawValue,
+      findAll: true
     ) {
       let key = "\(device.bus):\(device.address)"
       seenKeys.insert(key)

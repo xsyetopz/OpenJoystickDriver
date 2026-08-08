@@ -11,14 +11,10 @@ enum RemappingTransform {
     let scaled = min(max((magnitude - tuning.deadzone) / (1 - tuning.deadzone), 0), 1)
     let curved: Double
     switch tuning.responseCurve {
-    case .linear:
-      curved = scaled
-    case .easeIn:
-      curved = scaled * scaled
-    case .easeOut:
-      curved = 1 - ((1 - scaled) * (1 - scaled))
-    case .smoothStep:
-      curved = scaled * scaled * (3 - (2 * scaled))
+    case .linear: curved = scaled
+    case .easeIn: curved = scaled * scaled
+    case .easeOut: curved = 1 - ((1 - scaled) * (1 - scaled))
+    case .smoothStep: curved = scaled * scaled * (3 - (2 * scaled))
     }
 
     let sign = clamped.sign == .minus ? -1.0 : 1.0
@@ -34,14 +30,10 @@ enum RemappingTransform {
   ) -> Bool {
     let directionalMagnitude: Double
     switch direction {
-    case .negative:
-      directionalMagnitude = max(-value, 0)
-    case .positive:
-      directionalMagnitude = max(value, 0)
+    case .negative: directionalMagnitude = max(-value, 0)
+    case .positive: directionalMagnitude = max(value, 0)
     }
     let releaseThreshold = max(0, threshold - Self.hysteresisWidth)
-    return wasActive
-      ? directionalMagnitude > releaseThreshold
-      : directionalMagnitude >= threshold
+    return wasActive ? directionalMagnitude > releaseThreshold : directionalMagnitude >= threshold
   }
 }

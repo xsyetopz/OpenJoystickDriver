@@ -15,9 +15,7 @@ final class HeadlessApplicationHost {
 
   private func registerForLoginIfNeeded() {
     guard Bundle.main.bundleURL.pathExtension == "app" else { return }
-    do {
-      try ApplicationServiceManager.installByDefaultIfNeeded()
-    } catch {
+    do { try ApplicationServiceManager.installByDefaultIfNeeded() } catch {
       fputs(
         "[OpenJoystickDriver] Login registration unavailable: \(error.localizedDescription)\n",
         stderr

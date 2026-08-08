@@ -10,6 +10,7 @@ public enum ApplicationServiceRemappingRPCMethod: String, CaseIterable, Sendable
   case importProfile = "importRemappingProfile"
   case activateProfile = "activateRemappingProfile"
   case deactivateProfile = "deactivateRemappingProfile"
+  case deactivateProfileByID = "deactivateRemappingProfileByID"
   case getPostEventAccess = "getRemappingPostEventAccess"
   case requestPostEventAccess = "requestRemappingPostEventAccess"
 }
@@ -24,21 +25,15 @@ public enum ApplicationServiceRemappingRPC {
 public struct ApplicationServiceRemappingProfileIDArguments: Codable, Sendable {
   public let profileID: UUID
 
-  public init(profileID: UUID) {
-    self.profileID = profileID
-  }
+  public init(profileID: UUID) { self.profileID = profileID }
 
-  private enum CodingKeys: String, CodingKey {
-    case profileID = "profile_id"
-  }
+  private enum CodingKeys: String, CodingKey { case profileID = "profile_id" }
 }
 
 public struct ApplicationServiceRemappingProfileArguments: Codable, Sendable {
   public let profile: RemappingProfile
 
-  public init(profile: RemappingProfile) {
-    self.profile = profile
-  }
+  public init(profile: RemappingProfile) { self.profile = profile }
 }
 
 /// Compare-and-swap arguments for an ordinary profile update.

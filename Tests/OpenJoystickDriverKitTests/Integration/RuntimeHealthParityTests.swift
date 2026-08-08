@@ -2,8 +2,7 @@ import Foundation
 import Testing
 
 struct RuntimeHealthParityTests {
-  @Test
-  func cliOwnsRuntimeSoakWithoutAppEntryPoint() throws {
+  @Test func cliOwnsRuntimeSoakWithoutAppEntryPoint() throws {
     let root = try RepositoryRoot.from()
     let command = try source(
       "Sources/OpenJoystickDriver/Commands/RuntimeHealthCommand.swift",
@@ -13,11 +12,9 @@ struct RuntimeHealthParityTests {
       "Sources/OpenJoystickDriver/Service/ForegroundConsumerOutputMonitor/"
       + "ForegroundConsumerOutputMonitor.swift"
     let consumerDiscoveryPath =
-      "Sources/OpenJoystickDriver/Service/ForegroundConsumerOutputMonitor/"
-      + "Discovery.swift"
+      "Sources/OpenJoystickDriver/Service/ForegroundConsumerOutputMonitor/" + "Discovery.swift"
     let consumerMonitor =
-      try source(consumerMonitorPath, root: root)
-      + source(consumerDiscoveryPath, root: root)
+      try source(consumerMonitorPath, root: root) + source(consumerDiscoveryPath, root: root)
 
     #expect(command.contains("ApplicationServiceRuntimeHealthSampler.sample"))
     #expect(command.contains("--seconds 1...86400"))

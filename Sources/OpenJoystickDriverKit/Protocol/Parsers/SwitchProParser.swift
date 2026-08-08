@@ -37,29 +37,19 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
 
   public var minimumPhysicalOutputIntervalNanoseconds: UInt64 { 50_000_000 }
 
-  public func performHandshake(handle: USBDeviceHandle?) async throws {
-    await Task.yield()
-  }
+  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
 
   public func hidStartupReports() -> [PhysicalHIDOutputReport] {
     [
-      usbCommand(0x02),
-      usbCommand(0x03),
-      usbCommand(0x02),
-      usbCommand(0x04),
-      subcommand(0x03, data: [0x30]),
-      subcommand(0x48, data: [0x01]),
+      usbCommand(0x02), usbCommand(0x03), usbCommand(0x02), usbCommand(0x04),
+      subcommand(0x03, data: [0x30]), subcommand(0x48, data: [0x01]),
     ]
   }
 
   public func hidStartupReports(transport: String?) -> [PhysicalHIDOutputReport] {
     switch transport {
     case "USB": return hidStartupReports()
-    case "Bluetooth":
-      return [
-        subcommand(0x03, data: [0x30]),
-        subcommand(0x48, data: [0x01]),
-      ]
+    case "Bluetooth": return [subcommand(0x03, data: [0x30]), subcommand(0x48, data: [0x01])]
     default: return []
     }
   }
@@ -72,8 +62,7 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
     -> PhysicalHIDOutputReport
   {
     physicalRumbleData =
-      SwitchProRumbleCodec.encode(intensity: left)
-      + SwitchProRumbleCodec.encode(intensity: right)
+      SwitchProRumbleCodec.encode(intensity: left) + SwitchProRumbleCodec.encode(intensity: right)
     var bytes = [UInt8](repeating: 0, count: 10)
     bytes[0] = 0x10
     bytes[1] = nextPacketNumber()
@@ -85,11 +74,7 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
     -> PhysicalHIDOutputReport
   {
     let patterns: [PhysicalPlayerIndicator: UInt8] = [
-      .off: 0x00,
-      .player1: 0x01,
-      .player2: 0x03,
-      .player3: 0x07,
-      .player4: 0x0F,
+      .off: 0x00, .player1: 0x01, .player2: 0x03, .player3: 0x07, .player4: 0x0F,
     ]
     return subcommand(0x30, data: [patterns[indicator] ?? 0])
   }
@@ -129,9 +114,7 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
     bytes[1] = nextPacketNumber()
     bytes.replaceSubrange(2..<10, with: physicalRumbleData)
     bytes[10] = id
-    for (index, value) in data.enumerated() {
-      bytes[11 + index] = value
-    }
+    for (index, value) in data.enumerated() { bytes[11 + index] = value }
     return PhysicalHIDOutputReport(reportID: 0x01, bytes: bytes)
   }
 
@@ -141,22 +124,17 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
   }
 
   private func parseButtons(_ buttons: UInt32) -> [ControllerEvent] {
-    diffButtons(prev: prevButtons, curr: buttons, mapping: [
-      (0x0000_0008, .b),
-      (0x0000_0004, .a),
-      (0x0000_0002, .y),
-      (0x0000_0001, .x),
-      (0x0040_0000, .leftBumper),
-      (0x0000_0040, .rightBumper),
-      (0x0080_0000, .l2Digital),
-      (0x0000_0080, .r2Digital),
-      (0x0000_0100, .back),
-      (0x0000_0200, .start),
-      (0x0000_0800, .leftStick),
-      (0x0000_0400, .rightStick),
-      (0x0000_1000, .guide),
-      (0x0000_2000, .share),
-    ])
+    diffButtons(
+      prev: prevButtons,
+      curr: buttons,
+      mapping: [
+        (0x0000_0008, .b), (0x0000_0004, .a), (0x0000_0002, .y), (0x0000_0001, .x),
+        (0x0040_0000, .leftBumper), (0x0000_0040, .rightBumper), (0x0080_0000, .l2Digital),
+        (0x0000_0080, .r2Digital), (0x0000_0100, .back), (0x0000_0200, .start),
+        (0x0000_0800, .leftStick), (0x0000_0400, .rightStick), (0x0000_1000, .guide),
+        (0x0000_2000, .share),
+      ]
+    )
   }
 
   private func parseDpad(_ buttons: UInt32) -> [ControllerEvent] {

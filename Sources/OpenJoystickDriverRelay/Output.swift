@@ -27,10 +27,7 @@ public final class DriverKitOutputDispatcher: OutputDispatcher, @unchecked Senda
 
   public init() {
     let driver = OpenJoystickRelayDriver()
-    let runtime = DriverKitRelayRuntime(
-      submitter: driver,
-      host: SwifterRelayHost(driver: driver)
-    )
+    let runtime = DriverKitRelayRuntime(submitter: driver, host: SwifterRelayHost(driver: driver))
     let pipeline = DriverKitReportPipeline(runtime: runtime)
     self.runtime = runtime
     self.reportPipeline = pipeline
@@ -39,8 +36,7 @@ public final class DriverKitOutputDispatcher: OutputDispatcher, @unchecked Senda
     }
     self.suppressionBridge = DriverKitStateBridge(preservesTrueEdges: true) {
       suppressed,
-      revision in
-      await pipeline.setSuppressed(suppressed, revision: revision)
+      revision in await pipeline.setSuppressed(suppressed, revision: revision)
     }
   }
 
@@ -53,8 +49,7 @@ public final class DriverKitOutputDispatcher: OutputDispatcher, @unchecked Senda
     }
     self.suppressionBridge = DriverKitStateBridge(preservesTrueEdges: true) {
       suppressed,
-      revision in
-      await pipeline.setSuppressed(suppressed, revision: revision)
+      revision in await pipeline.setSuppressed(suppressed, revision: revision)
     }
   }
 
@@ -314,9 +309,7 @@ actor DriverKitReportPipeline {
       diagnostics.remove(at: index).completion.resume(returning: 0)
       return
     }
-    if inFlightDiagnosticID == id {
-      await runtime.invalidateSubmissions()
-    }
+    if inFlightDiagnosticID == id { await runtime.invalidateSubmissions() }
   }
 
   private func apply(_ event: ControllerEvent) {

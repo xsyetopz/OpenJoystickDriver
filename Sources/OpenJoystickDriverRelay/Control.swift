@@ -25,10 +25,7 @@ final class DriverKitStateBridge: @unchecked Sendable {
   private let lock = NSLock()
   private var state = State()
 
-  init(
-    preservesTrueEdges: Bool = false,
-    apply: @escaping @Sendable (Bool, UInt64) async -> Void
-  ) {
+  init(preservesTrueEdges: Bool = false, apply: @escaping @Sendable (Bool, UInt64) async -> Void) {
     self.preservesTrueEdges = preservesTrueEdges
     self.apply = apply
   }
@@ -85,8 +82,7 @@ final class DriverKitStateBridge: @unchecked Sendable {
 
       let completion = lock.withLock { () -> (Bool, [CheckedContinuation<Void, Never>]) in
         let needsAnotherApplication =
-          state.requestedRevision != request.1
-          || state.desiredValue != request.0
+          state.requestedRevision != request.1 || state.desiredValue != request.0
           || (preservesTrueEdges && state.pendingTrueEdge)
         if !needsAnotherApplication {
           state.appliedRevision = max(state.appliedRevision, request.1)

@@ -9,19 +9,15 @@ actor ControllerInputDiagnosticService {
     client.connect()
   }
 
-  func disconnect() {
-    client.disconnect()
-  }
+  func disconnect() { client.disconnect() }
 
   func connectedDevices() async throws -> [ApplicationServiceDeviceDescription] {
     try await client.getStatus().connectedDevices
   }
 
-  func deviceInputState(
-    vendorID: UInt16,
-    productID: UInt16,
-    runtimeIdentifier: String? = nil
-  ) async throws -> DeviceInputState? {
+  func deviceInputState(vendorID: UInt16, productID: UInt16, runtimeIdentifier: String? = nil)
+    async throws -> DeviceInputState?
+  {
     try await client.deviceInputState(
       vendorID: vendorID,
       productID: productID,
@@ -29,11 +25,9 @@ actor ControllerInputDiagnosticService {
     )
   }
 
-  func packetLog(
-    vendorID: UInt16,
-    productID: UInt16,
-    runtimeIdentifier: String? = nil
-  ) async throws -> [PacketLogEntry] {
+  func packetLog(vendorID: UInt16, productID: UInt16, runtimeIdentifier: String? = nil) async throws
+    -> [PacketLogEntry]
+  {
     try await client.packetLog(
       vendorID: vendorID,
       productID: productID,

@@ -3,8 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-@Suite(.serialized)
-struct RemappingRPCTests {
+@Suite(.serialized) struct RemappingRPCTests {
   @Test func explicitPayloadsRoundTripWithoutAssociatedEnumAmbiguity() throws {
     let profile = makeProfile()
     let snapshot = makeSnapshot(profile: profile)
@@ -17,8 +16,10 @@ struct RemappingRPCTests {
     #expect(route["eligibility"] as? String == "eligible")
     #expect(route["runtime_identifier"] as? String == "045e:028e:location:1")
     #expect(route["serial_number"] == nil)
-    #expect(try JSONDecoder().decode(ApplicationServiceRemappingSnapshotPayload.self, from: data)
-      == snapshot)
+    #expect(
+      try JSONDecoder().decode(ApplicationServiceRemappingSnapshotPayload.self, from: data)
+        == snapshot
+    )
   }
 
   @Test func clientUsesEveryStableMethodAndDecodesTypedResults() async throws {
@@ -73,10 +74,15 @@ struct RemappingRPCTests {
             #expect(arguments.vendorID == 1118)
             #expect(arguments.productID == 654)
             result = try JSONEncoder().encode(snapshot)
-          case .getSnapshot:
+          case .deactivateProfileByID:
+            let arguments = try JSONDecoder().decode(
+              ApplicationServiceRemappingProfileIDArguments.self,
+              from: request.arguments
+            )
+            #expect(arguments.profileID == profile.id)
             result = try JSONEncoder().encode(snapshot)
-          case nil:
-            throw ApplicationServiceClientError.invalidResponse
+          case .getSnapshot: result = try JSONEncoder().encode(snapshot)
+          case nil: throw ApplicationServiceClientError.invalidResponse
           }
           completion(LocalServiceRPCResponse(result: result, error: nil))
         } catch {
@@ -97,14 +103,13 @@ struct RemappingRPCTests {
     #expect(try await client.importRemappingProfile(profile) == snapshot)
     #expect(try await client.deleteRemappingProfile(id: profile.id) == snapshot)
     #expect(try await client.activateRemappingProfile(id: profile.id) == snapshot)
-    #expect(
-      try await client.deactivateRemappingProfile(vendorID: 1118, productID: 654) == snapshot
-    )
+    #expect(try await client.deactivateRemappingProfile(vendorID: 1118, productID: 654) == snapshot)
+    #expect(try await client.deactivateRemappingProfile(profileID: profile.id) == snapshot)
     #expect(try await client.getRemappingPostEventAccess() == .granted)
     #expect(try await client.requestRemappingPostEventAccess() == .granted)
-    #expect(Set(methods.snapshot()) == Set(
-      ApplicationServiceRemappingRPCMethod.allCases.map(\.rawValue)
-    ))
+    #expect(
+      Set(methods.snapshot()) == Set(ApplicationServiceRemappingRPCMethod.allCases.map(\.rawValue))
+    )
   }
 
   @Test func clientReconstructsStableCodeBearingRemoteFailure() async throws {
@@ -125,9 +130,7 @@ struct RemappingRPCTests {
     let client = ApplicationServiceClient(socketPath: socketPath)
     client.connect()
 
-    await #expect(throws: expected) {
-      try await client.getRemappingProfile(id: UUID())
-    }
+    await #expect(throws: expected) { try await client.getRemappingProfile(id: UUID()) }
   }
 
   @Test func argumentLimitLeavesRoomForTheBase64FramedEnvelope() throws {
@@ -139,10 +142,13 @@ struct RemappingRPCTests {
 
     #expect(encodedRequest.count < LocalServiceRPCTransport.maximumFrameBytes)
     #expect(encodedResponse.count < LocalServiceRPCTransport.maximumFrameBytes)
-    #expect(LocalServiceRPCTransport.maximumFrameBytes
-      == ApplicationServiceRemappingRPC.maximumTransportFrameBytes)
-    #expect(RemappingProfile.maximumEncodedBytes
-      == ApplicationServiceRemappingRPC.maximumPayloadBytes)
+    #expect(
+      LocalServiceRPCTransport.maximumFrameBytes
+        == ApplicationServiceRemappingRPC.maximumTransportFrameBytes
+    )
+    #expect(
+      RemappingProfile.maximumEncodedBytes == ApplicationServiceRemappingRPC.maximumPayloadBytes
+    )
   }
 
   @Test func updateArgumentsRoundTripExactlyAndFitArgumentBounds() throws {
@@ -217,11 +223,7 @@ struct RemappingRPCTests {
     }
     for axis in RemappingAxis.allCases {
       bindings.append(
-        RemappingBinding(
-          source: .axis(axis),
-          destination: .mouseMovement(.x),
-          axisTuning: .default
-        )
+        RemappingBinding(source: .axis(axis), destination: .mouseMovement(.x), axisTuning: .default)
       )
       for direction in [RemappingAxisDirection.negative, .positive] {
         bindings.append(
@@ -238,16 +240,13 @@ struct RemappingRPCTests {
     return RemappingProfile(
       name: String(repeating: "P", count: 77) + suffix,
       device: RemappingDeviceScope(vendorID: UInt16(index), productID: UInt16(index)),
-      applicationScope: .application(
-        bundleIdentifier: "com." + String(repeating: "a", count: 251)
-      ),
+      applicationScope: .application(bundleIdentifier: "com." + String(repeating: "a", count: 251)),
       bindings: bindings
     )
   }
 
-  private func makeSnapshot(
-    profile: RemappingProfile
-  ) -> ApplicationServiceRemappingSnapshotPayload {
+  private func makeSnapshot(profile: RemappingProfile) -> ApplicationServiceRemappingSnapshotPayload
+  {
     ApplicationServiceRemappingSnapshotPayload(
       profiles: [profile],
       activeProfiles: [
@@ -287,11 +286,7 @@ private final class MethodRecorder: @unchecked Sendable {
   private let lock = NSLock()
   private var methods: [String] = []
 
-  func append(_ method: String) {
-    lock.withLock { methods.append(method) }
-  }
+  func append(_ method: String) { lock.withLock { methods.append(method) } }
 
-  func snapshot() -> [String] {
-    lock.withLock { methods }
-  }
+  func snapshot() -> [String] { lock.withLock { methods } }
 }

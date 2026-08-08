@@ -40,11 +40,7 @@ public struct PhysicalOutputValidationPlan: Codable, Equatable, Sendable {
     self.productID = productID
     self.parser = parser
     evidence = capabilities.evidence
-    steps = Self.steps(
-      vendorID: vendorID,
-      productID: productID,
-      capabilities: capabilities
-    )
+    steps = Self.steps(vendorID: vendorID, productID: productID, capabilities: capabilities)
     notes = [
       "Record pass/fail separately; generating this plan does not verify hardware.",
       "Stop testing and disconnect the controller if output behaves unexpectedly.",
@@ -68,73 +64,89 @@ public struct PhysicalOutputValidationPlan: Codable, Equatable, Sendable {
     var result: [Step] = []
     let motors = Set(capabilities.rumbleMotors)
     if motors.contains(.leftMain) || motors.contains(.leftHaptic) {
-      result.append(Step(
-        id: motors.contains(.leftHaptic) ? "left-haptic" : "left-main",
-        command: "\(prefix) rumble \(identity) --left 160 --right 0 --duration-ms 300",
-        expectedObservation: motors.contains(.leftHaptic)
-          ? "Only the left trackpad haptic actuator pulses."
-          : "Only the left main actuator runs."
-      ))
+      result.append(
+        Step(
+          id: motors.contains(.leftHaptic) ? "left-haptic" : "left-main",
+          command: "\(prefix) rumble \(identity) --left 160 --right 0 --duration-ms 300",
+          expectedObservation: motors.contains(.leftHaptic)
+            ? "Only the left trackpad haptic actuator pulses." : "Only the left main actuator runs."
+        )
+      )
     }
     if motors.contains(.rightMain) || motors.contains(.rightHaptic) {
-      result.append(Step(
-        id: motors.contains(.rightHaptic) ? "right-haptic" : "right-main",
-        command: "\(prefix) rumble \(identity) --left 0 --right 160 --duration-ms 300",
-        expectedObservation: motors.contains(.rightHaptic)
-          ? "Only the right trackpad haptic actuator pulses."
-          : "Only the right main actuator runs."
-      ))
+      result.append(
+        Step(
+          id: motors.contains(.rightHaptic) ? "right-haptic" : "right-main",
+          command: "\(prefix) rumble \(identity) --left 0 --right 160 --duration-ms 300",
+          expectedObservation: motors.contains(.rightHaptic)
+            ? "Only the right trackpad haptic actuator pulses."
+            : "Only the right main actuator runs."
+        )
+      )
     }
     if motors.contains(.leftTrigger) {
-      result.append(Step(
-        id: "left-trigger",
-        command: "\(prefix) rumble \(identity) --left 0 --right 0 --lt 160 --duration-ms 300",
-        expectedObservation: "Only the left trigger actuator runs."
-      ))
+      result.append(
+        Step(
+          id: "left-trigger",
+          command: "\(prefix) rumble \(identity) --left 0 --right 0 --lt 160 --duration-ms 300",
+          expectedObservation: "Only the left trigger actuator runs."
+        )
+      )
     }
     if motors.contains(.rightTrigger) {
-      result.append(Step(
-        id: "right-trigger",
-        command: "\(prefix) rumble \(identity) --left 0 --right 0 --rt 160 --duration-ms 300",
-        expectedObservation: "Only the right trigger actuator runs."
-      ))
+      result.append(
+        Step(
+          id: "right-trigger",
+          command: "\(prefix) rumble \(identity) --left 0 --right 0 --rt 160 --duration-ms 300",
+          expectedObservation: "Only the right trigger actuator runs."
+        )
+      )
     }
     if capabilities.supportsPlayerIndicator {
-      result.append(Step(
-        id: "player-indicators",
-        command: "\(prefix) player \(identity) 1",
-        expectedObservation: "The controller displays the player-one indicator pattern."
-      ))
-      result.append(Step(
-        id: "player-indicators-off",
-        command: "\(prefix) player \(identity) off",
-        expectedObservation: "The numbered player indicators turn off."
-      ))
+      result.append(
+        Step(
+          id: "player-indicators",
+          command: "\(prefix) player \(identity) 1",
+          expectedObservation: "The controller displays the player-one indicator pattern."
+        )
+      )
+      result.append(
+        Step(
+          id: "player-indicators-off",
+          command: "\(prefix) player \(identity) off",
+          expectedObservation: "The numbered player indicators turn off."
+        )
+      )
     }
     if capabilities.lightingFeatures.contains(.programmableColor) {
       for (id, color, values) in [
-        ("color-red", "red", "255 0 0"),
-        ("color-green", "green", "0 255 0"),
+        ("color-red", "red", "255 0 0"), ("color-green", "green", "0 255 0"),
         ("color-blue", "blue", "0 0 255"),
       ] {
-        result.append(Step(
-          id: id,
-          command: "\(prefix) color \(identity) \(values)",
-          expectedObservation: "The lightbar becomes \(color)."
-        ))
+        result.append(
+          Step(
+            id: id,
+            command: "\(prefix) color \(identity) \(values)",
+            expectedObservation: "The lightbar becomes \(color)."
+          )
+        )
       }
     }
     if capabilities.supportsProgrammableBrightness {
-      result.append(Step(
-        id: "brightness-low",
-        command: "\(prefix) brightness \(identity) 32",
-        expectedObservation: "The controller LED becomes dim."
-      ))
-      result.append(Step(
-        id: "brightness-high",
-        command: "\(prefix) brightness \(identity) 224",
-        expectedObservation: "The controller LED becomes bright."
-      ))
+      result.append(
+        Step(
+          id: "brightness-low",
+          command: "\(prefix) brightness \(identity) 32",
+          expectedObservation: "The controller LED becomes dim."
+        )
+      )
+      result.append(
+        Step(
+          id: "brightness-high",
+          command: "\(prefix) brightness \(identity) 224",
+          expectedObservation: "The controller LED becomes bright."
+        )
+      )
     }
     return result
   }

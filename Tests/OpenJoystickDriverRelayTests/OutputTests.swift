@@ -19,9 +19,7 @@ struct OutputTests {
     }
     var finalRevision: UInt64 = 0
 
-    for index in 0..<5_000 {
-      finalRevision = bridge.request(!index.isMultiple(of: 2))
-    }
+    for index in 0..<5_000 { finalRevision = bridge.request(!index.isMultiple(of: 2)) }
     await bridge.wait(untilApplied: finalRevision)
     let metrics = bridge.metrics()
 
@@ -121,9 +119,9 @@ struct OutputTests {
     await pipeline.dispatch(events: [.buttonPressed(.a)])
     await submitter.waitUntilFirstSubmissionStarts()
     let diagnostic = Task {
-      await pipeline.submit(
-        reports: [HIDReport(bytes: [UInt8](repeating: 9, count: 15), type: .input)]
-      )
+      await pipeline.submit(reports: [
+        HIDReport(bytes: [UInt8](repeating: 9, count: 15), type: .input)
+      ])
     }
     for index in 0..<5_000 {
       let event: ControllerEvent =
@@ -176,9 +174,9 @@ struct OutputTests {
     await pipeline.dispatch(events: [.buttonPressed(.a)])
     await submitter.waitUntilFirstSubmissionStarts()
     let diagnostic = Task {
-      await pipeline.submit(
-        reports: [HIDReport(bytes: [UInt8](repeating: 9, count: 15), type: .input)]
-      )
+      await pipeline.submit(reports: [
+        HIDReport(bytes: [UInt8](repeating: 9, count: 15), type: .input)
+      ])
     }
     await Task.yield()
     diagnostic.cancel()
@@ -197,9 +195,9 @@ struct OutputTests {
 
     let completion = DiagnosticResult()
     let diagnostic = Task {
-      let delivered = await pipeline.submit(
-        reports: [HIDReport(bytes: [UInt8](repeating: 9, count: 15), type: .input)]
-      )
+      let delivered = await pipeline.submit(reports: [
+        HIDReport(bytes: [UInt8](repeating: 9, count: 15), type: .input)
+      ])
       await completion.record(delivered)
       return delivered
     }
@@ -227,11 +225,9 @@ struct OutputTests {
     #expect(await runtime.waitUntilConnected())
 
     let diagnostic = Task {
-      await pipeline.submit(
-        reports: [
-          HIDReport(bytes: [UInt8](repeating: 9, count: 15), type: .input)
-        ]
-      )
+      await pipeline.submit(reports: [
+        HIDReport(bytes: [UInt8](repeating: 9, count: 15), type: .input)
+      ])
     }
     await submitter.waitUntilFirstSubmissionStarts()
     await pipeline.setSuppressed(true, revision: 1)
@@ -246,10 +242,7 @@ struct OutputTests {
     await runtime.setEnabled(false, revision: 2)
   }
 
-  private func waitForReportCount(
-    _ expected: Int,
-    submitter: SuspendedRelaySubmitter
-  ) async {
+  private func waitForReportCount(_ expected: Int, submitter: SuspendedRelaySubmitter) async {
     for _ in 0..<10_000 {
       if await submitter.reports.count >= expected { return }
       await Task.yield()

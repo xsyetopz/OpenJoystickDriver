@@ -2,8 +2,7 @@ import Foundation
 import Testing
 
 struct PhysicalOutputParityTests {
-  @Test
-  func cliServiceStatusAndSupportReportExposeTypedPhysicalOutput() throws {
+  @Test func cliServiceStatusAndSupportReportExposeTypedPhysicalOutput() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     let cli = try source("Sources/OpenJoystickDriver/CLI.swift", root: root)
     let grammar = try source("Sources/OpenJoystickDriver/CLIGrammar.swift", root: root)
@@ -11,10 +10,7 @@ struct PhysicalOutputParityTests {
       "Sources/OpenJoystickDriver/Commands/PhysicalOutputCommand.swift",
       root: root
     )
-    let statusText = try source(
-      "Sources/OpenJoystickDriver/Status/Text.swift",
-      root: root
-    )
+    let statusText = try source("Sources/OpenJoystickDriver/Status/Text.swift", root: root)
     let client = try source(
       "Sources/OpenJoystickDriverKit/ApplicationService/ApplicationServiceClient.swift",
       root: root

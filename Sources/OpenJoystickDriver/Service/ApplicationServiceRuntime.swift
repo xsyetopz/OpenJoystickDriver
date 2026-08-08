@@ -51,14 +51,9 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     self.foregroundConsumerOutputMonitor = ForegroundConsumerOutputMonitor(
       compatibilityOutputGate: { allowed in
         do {
-          try await remappingRouter.foregroundStateDidChange(
-            compatibilityOutputAllowed: allowed
-          )
+          try await remappingRouter.foregroundStateDidChange(compatibilityOutputAllowed: allowed)
         } catch {
-          NSLog(
-            "%@",
-            "[Service] Compatibility output gate failed: \(error.localizedDescription)"
-          )
+          NSLog("%@", "[Service] Compatibility output gate failed: \(error.localizedDescription)")
         }
       },
       compatibilityRouteHandler: {
@@ -109,9 +104,7 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     foregroundConsumerOutputMonitor.stop()
     applicationServiceServer.stop()
     await manager.stop()
-    do {
-      try await remappingRouter.shutdown()
-    } catch {
+    do { try await remappingRouter.shutdown() } catch {
       serviceLog("[Service] Remapping shutdown failed: \(error.localizedDescription)")
     }
     await driverKitDispatcher.stopBackend()

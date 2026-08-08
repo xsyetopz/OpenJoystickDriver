@@ -15,18 +15,8 @@ package enum DriverKitRelayIdentity {
   package static let reportSize = 15
 
   package static let reportDescriptor: [UInt8] = [
-    0x06, 0x00, 0xFF,
-    0x09, 0x01,
-    0xA1, 0x01,
-    0x15, 0x00,
-    0x26, 0xFF, 0x00,
-    0x75, 0x08,
-    0x95, 0x0F,
-    0x09, 0x02,
-    0x91, 0x02,
-    0x09, 0x03,
-    0x81, 0x02,
-    0xC0,
+    0x06, 0x00, 0xFF, 0x09, 0x01, 0xA1, 0x01, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95, 0x0F,
+    0x09, 0x02, 0x91, 0x02, 0x09, 0x03, 0x81, 0x02, 0xC0,
   ]
 
   package static func matches(
@@ -42,16 +32,11 @@ package enum DriverKitRelayIdentity {
     primaryUsagePage: UInt32,
     primaryUsage: UInt32
   ) -> Bool {
-    runtimeClass == Self.runtimeServiceClass
-      && transport == Self.transport
-      && vendorID == Self.vendorID
-      && productID == Self.productID
-      && versionNumber == Self.versionNumber
-      && locationID == Self.locationID
-      && manufacturer == Self.manufacturer
-      && product == Self.product
-      && serialNumber == Self.serialNumber
-      && primaryUsagePage == Self.primaryUsagePage
+    runtimeClass == Self.runtimeServiceClass && transport == Self.transport
+      && vendorID == Self.vendorID && productID == Self.productID
+      && versionNumber == Self.versionNumber && locationID == Self.locationID
+      && manufacturer == Self.manufacturer && product == Self.product
+      && serialNumber == Self.serialNumber && primaryUsagePage == Self.primaryUsagePage
       && primaryUsage == Self.primaryUsage
   }
 }

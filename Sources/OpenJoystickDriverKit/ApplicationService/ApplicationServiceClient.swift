@@ -23,13 +23,9 @@ public final class ApplicationServiceClient: @unchecked Sendable {
   private let socketPath: String
   private var connected = false
 
-  public init() {
-    socketPath = LocalServiceRPCTransport.defaultSocketPath
-  }
+  public init() { socketPath = LocalServiceRPCTransport.defaultSocketPath }
 
-  init(socketPath: String) {
-    self.socketPath = socketPath
-  }
+  init(socketPath: String) { self.socketPath = socketPath }
 
   /// Connects to the running main app, launching the installed app when needed.
   public func connect(timeoutSeconds: TimeInterval = 5) {
@@ -49,13 +45,9 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     stateLock.withLock { connected = false }
   }
 
-  public func disconnect() {
-    stateLock.withLock { connected = false }
-  }
+  public func disconnect() { stateLock.withLock { connected = false } }
 
-  public var isConnected: Bool {
-    stateLock.withLock { connected }
-  }
+  public var isConnected: Bool { stateLock.withLock { connected } }
 
   public func listDevices() async throws -> [String] {
     try await call("listDevices", LocalServiceRPCEmptyArguments())
@@ -63,11 +55,8 @@ public final class ApplicationServiceClient: @unchecked Sendable {
 
   public func getStatus() async throws -> ApplicationServiceStatusPayload {
     let data: Data = try await call("getStatus", LocalServiceRPCEmptyArguments())
-    guard
-      let payload = try? JSONDecoder().decode(ApplicationServiceStatusPayload.self, from: data)
-    else {
-      throw ApplicationServiceClientError.invalidResponse
-    }
+    guard let payload = try? JSONDecoder().decode(ApplicationServiceStatusPayload.self, from: data)
+    else { throw ApplicationServiceClientError.invalidResponse }
     return payload
   }
 
@@ -79,9 +68,7 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     vendorID: UInt16,
     productID: UInt16,
     runtimeIdentifier: String? = nil
-  ) async throws
-    -> DeviceInputState?
-  {
+  ) async throws -> DeviceInputState? {
     let data: Data? = try await call(
       "getDeviceInputState",
       LocalServiceRPCDeviceArguments(
@@ -94,11 +81,9 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     return try? JSONDecoder().decode(DeviceInputState.self, from: data)
   }
 
-  public func packetLog(
-    vendorID: UInt16,
-    productID: UInt16,
-    runtimeIdentifier: String? = nil
-  ) async throws -> [PacketLogEntry] {
+  public func packetLog(vendorID: UInt16, productID: UInt16, runtimeIdentifier: String? = nil)
+    async throws -> [PacketLogEntry]
+  {
     let data: Data = try await call(
       "getPacketLog",
       LocalServiceRPCDeviceArguments(
@@ -194,27 +179,19 @@ public final class ApplicationServiceClient: @unchecked Sendable {
   }
 
   public func setSuppressOutput(_ suppress: Bool) async throws {
-    let _: Bool = try await call(
-      "setSuppressOutput",
-      LocalServiceRPCBoolArguments(value: suppress)
-    )
+    let _: Bool = try await call("setSuppressOutput", LocalServiceRPCBoolArguments(value: suppress))
   }
 
   public func getVirtualDeviceDiagnostics() async throws
     -> ApplicationServiceVirtualDeviceDiagnosticsPayload
   {
-    let data: Data = try await call(
-      "getVirtualDeviceDiagnostics",
-      LocalServiceRPCEmptyArguments()
-    )
+    let data: Data = try await call("getVirtualDeviceDiagnostics", LocalServiceRPCEmptyArguments())
     guard
       let payload = try? JSONDecoder().decode(
         ApplicationServiceVirtualDeviceDiagnosticsPayload.self,
         from: data
       )
-    else {
-      throw ApplicationServiceClientError.invalidResponse
-    }
+    else { throw ApplicationServiceClientError.invalidResponse }
     return payload
   }
 
@@ -236,17 +213,14 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     let data: Data = try await call(
       "runVirtualDeviceSelfTest",
       LocalServiceRPCIntArguments(value: clampedSeconds),
-      timeoutSeconds:
-        TimeInterval(clampedSeconds) + applicationServiceSelfTestReplyGraceSeconds
+      timeoutSeconds: TimeInterval(clampedSeconds) + applicationServiceSelfTestReplyGraceSeconds
     )
     guard
       let payload = try? JSONDecoder().decode(
         ApplicationServiceVirtualDeviceSelfTestPayload.self,
         from: data
       )
-    else {
-      throw ApplicationServiceClientError.invalidResponse
-    }
+    else { throw ApplicationServiceClientError.invalidResponse }
     return payload
   }
 
@@ -254,9 +228,7 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     try await call("resetSettings", LocalServiceRPCEmptyArguments())
   }
 
-  public func getRemappingSnapshot() async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  public func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await remappingCall(.getSnapshot, LocalServiceRPCEmptyArguments())
   }
 
@@ -276,11 +248,8 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     )
   }
 
-  public func updateRemappingProfile(
-    _ profile: RemappingProfile,
-    expectedCurrent: RemappingProfile
-  ) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
+  public func updateRemappingProfile(_ profile: RemappingProfile, expectedCurrent: RemappingProfile)
+    async throws -> ApplicationServiceRemappingSnapshotPayload
   {
     try await remappingCall(
       .updateProfile,
@@ -318,16 +287,21 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     )
   }
 
-  public func deactivateRemappingProfile(
-    vendorID: UInt16,
-    productID: UInt16
-  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+  public func deactivateRemappingProfile(vendorID: UInt16, productID: UInt16) async throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  {
     try await remappingCall(
       .deactivateProfile,
-      ApplicationServiceRemappingModelArguments(
-        vendorID: vendorID,
-        productID: productID
-      )
+      ApplicationServiceRemappingModelArguments(vendorID: vendorID, productID: productID)
+    )
+  }
+
+  public func deactivateRemappingProfile(profileID: UUID) async throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  {
+    try await remappingCall(
+      .deactivateProfileByID,
+      ApplicationServiceRemappingProfileIDArguments(profileID: profileID)
     )
   }
 
@@ -343,9 +317,9 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     _ method: ApplicationServiceRemappingRPCMethod,
     _ arguments: Arguments
   ) async throws -> Value {
-    do {
-      return try await call(method.rawValue, arguments)
-    } catch LocalServiceRPCError.remote(let description) {
+    do { return try await call(method.rawValue, arguments) } catch LocalServiceRPCError.remote(
+      let description
+    ) {
       guard let error = ApplicationServiceRemappingRPCError(rpcDescription: description) else {
         throw LocalServiceRPCError.remote(description)
       }
@@ -368,24 +342,22 @@ public final class ApplicationServiceClient: @unchecked Sendable {
         timeoutSeconds: timeoutSeconds,
         socketPath: socketPath
       )
-    } catch LocalServiceRPCError.timeout {
-      throw ApplicationServiceClientError.timeout
-    }
+    } catch LocalServiceRPCError.timeout { throw ApplicationServiceClientError.timeout }
   }
 
   private func launchMainApplicationIfPossible() {
     guard Bundle.main.bundleURL.pathExtension == "app" else { return }
     let configuration = NSWorkspace.OpenConfiguration()
     configuration.activates = false
-    NSWorkspace.shared.openApplication(
-      at: Bundle.main.bundleURL,
-      configuration: configuration
-    ) { _, error in
+    NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration) {
+      _,
+      error in
       if let error {
         FileHandle.standardError.write(
           Data(
-            "[ApplicationServiceClient] Could not launch main app: "
-              .appending("\(error.localizedDescription)\n").utf8
+            "[ApplicationServiceClient] Could not launch main app: ".appending(
+              "\(error.localizedDescription)\n"
+            ).utf8
           )
         )
       }

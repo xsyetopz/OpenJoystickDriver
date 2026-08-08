@@ -4,8 +4,7 @@ import Testing
 
 @testable import OpenJoystickDriver
 
-@Suite(.serialized)
-struct RemappingProfileTransactionIsolationTests {
+@Suite(.serialized) struct RemappingProfileTransactionIsolationTests {
   @Test func rejectedCandidateCannotEmitBeforeExactRollbackCompletes() async throws {
     let original = transactionProfile(name: "Original", key: .space)
     let gate = ResponseAcceptanceGate()
@@ -35,14 +34,8 @@ struct RemappingProfileTransactionIsolationTests {
       from: mapped
     )
     try await harness.router.tick(at: 1_100_000_000)
-    try await harness.router.dispatchCausally(
-      events: [.buttonPressed(.a)],
-      from: newlyConnected
-    )
-    try await harness.router.dispatchCausally(
-      events: [.buttonPressed(.b)],
-      from: compatibility
-    )
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: newlyConnected)
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: compatibility)
 
     let gatedTrace = harness.recorder.snapshot()
     #expect(gatedTrace.count == 2)
@@ -65,10 +58,7 @@ struct RemappingProfileTransactionIsolationTests {
     #expect(await harness.router.status(for: newlyConnected)?.activeProfileID == original.id)
 
     try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: mapped)
-    try await harness.router.dispatchCausally(
-      events: [.buttonPressed(.b)],
-      from: compatibility
-    )
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: compatibility)
     let resumedTrace = harness.recorder.snapshot()
     #expect(resumedTrace.count == 4)
     #expect(resumedTrace.contains(.system(.keyDown(.space))))
@@ -78,8 +68,8 @@ struct RemappingProfileTransactionIsolationTests {
   @Test func acceptedCandidateCannotEmitUntilResponseAcceptanceCompletes() async throws {
     let original = transactionProfile(name: "Original", key: .space)
     let gate = ResponseAcceptanceGate()
-    let harness = try await TransactionIsolationHarness.make(initialProfile: original) {
-      _ in await gate.pause()
+    let harness = try await TransactionIsolationHarness.make(initialProfile: original) { _ in
+      await gate.pause()
     }
     defer { harness.removeFiles() }
     let mapped = remappingRouterDevice(1)
@@ -91,27 +81,21 @@ struct RemappingProfileTransactionIsolationTests {
     let mutation = Task { await harness.coordinator.update(candidate, expectedCurrent: original) }
     await gate.waitUntilPaused()
     try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: mapped)
-    try await harness.router.dispatchCausally(
-      events: [.buttonPressed(.b)],
-      from: compatibility
-    )
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: compatibility)
     #expect(!harness.recorder.snapshot().contains(.system(.keyDown(.b))))
-    #expect(!harness.recorder.snapshot().contains(
-      .compatibility([.buttonPressed(.b)], compatibility)
-    ))
+    #expect(
+      !harness.recorder.snapshot().contains(.compatibility([.buttonPressed(.b)], compatibility))
+    )
 
     gate.resume()
     let snapshot = try await mutation.value.get()
     #expect(snapshot.profiles == [candidate])
     try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: mapped)
-    try await harness.router.dispatchCausally(
-      events: [.buttonPressed(.b)],
-      from: compatibility
-    )
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: compatibility)
     #expect(harness.recorder.snapshot().contains(.system(.keyDown(.b))))
-    #expect(harness.recorder.snapshot().contains(
-      .compatibility([.buttonPressed(.b)], compatibility)
-    ))
+    #expect(
+      harness.recorder.snapshot().contains(.compatibility([.buttonPressed(.b)], compatibility))
+    )
   }
 
   @Test func createFailureRollsBackGateAndRestoresOutput() async throws {
@@ -130,10 +114,7 @@ struct RemappingProfileTransactionIsolationTests {
     }
     #expect(error.code == .profileAlreadyExists)
     #expect(try Data(contentsOf: harness.fileURL) == exactPriorBytes)
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-    ])
+    #expect(harness.recorder.snapshot() == [.system(.keyDown(.space)), .system(.keyUp(.space))])
     try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: mapped)
     #expect(harness.recorder.snapshot().last == .system(.keyDown(.space)))
   }
@@ -204,16 +185,14 @@ struct RemappingProfileTransactionIsolationTests {
   @Test func cancelledMutationRollsBackBeforeNextSerializedMutationRuns() async throws {
     let original = transactionProfile(name: "Original", key: .space)
     let gate = ResponseAcceptanceGate()
-    let harness = try await TransactionIsolationHarness.make(initialProfile: original) {
-      _ in await gate.pause()
+    let harness = try await TransactionIsolationHarness.make(initialProfile: original) { _ in
+      await gate.pause()
     }
     defer { harness.removeFiles() }
     let firstCandidate = transactionProfile(id: original.id, name: original.name, key: .b)
     let finalCandidate = transactionProfile(id: original.id, name: original.name, key: .c)
 
-    let first = Task {
-      await harness.coordinator.update(firstCandidate, expectedCurrent: original)
-    }
+    let first = Task { await harness.coordinator.update(firstCandidate, expectedCurrent: original) }
     await gate.waitUntilPaused()
     let second = Task {
       await harness.coordinator.update(finalCandidate, expectedCurrent: original)
@@ -300,13 +279,9 @@ private actor ResponseAcceptanceGate {
     await withCheckedContinuation { continuation = $0 }
   }
 
-  func waitUntilPaused() async {
-    while !paused { await Task.yield() }
-  }
+  func waitUntilPaused() async { while !paused { await Task.yield() } }
 
-  nonisolated func resume() {
-    Task { await release() }
-  }
+  nonisolated func resume() { Task { await release() } }
 
   private func release() {
     continuation?.resume()
@@ -314,9 +289,7 @@ private actor ResponseAcceptanceGate {
   }
 }
 
-private final class MutablePostEventProbe: CoreGraphicsPostEventAccessProbing,
-  @unchecked Sendable
-{
+private final class MutablePostEventProbe: CoreGraphicsPostEventAccessProbing, @unchecked Sendable {
   private let lock = NSLock()
   private var preflightValues = [true]
   private var index = 0
@@ -347,17 +320,16 @@ private func transactionProfile(
   includesContinuousPointer: Bool = false
 ) -> RemappingProfile {
   var bindings = [
-    RemappingBinding(
-      source: .button(.south),
-      destination: .keyboard(key: key, modifiers: [])
-    ),
+    RemappingBinding(source: .button(.south), destination: .keyboard(key: key, modifiers: []))
   ]
   if includesContinuousPointer {
-    bindings.append(RemappingBinding(
-      source: .axis(.rightStickX),
-      destination: .mouseMovement(.x),
-      axisTuning: RemappingAxisTuning(deadzone: 0, gain: 1)
-    ))
+    bindings.append(
+      RemappingBinding(
+        source: .axis(.rightStickX),
+        destination: .mouseMovement(.x),
+        axisTuning: RemappingAxisTuning(deadzone: 0, gain: 1)
+      )
+    )
   }
   return RemappingProfile(
     id: id,

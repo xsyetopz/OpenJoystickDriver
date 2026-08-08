@@ -2,8 +2,7 @@ import Foundation
 import Testing
 
 struct AppleGameControllerCatalogParityTests {
-  @Test
-  func headlessCommandsUseTheSharedAuditor() throws {
+  @Test func headlessCommandsUseTheSharedAuditor() throws {
     let root = try RepositoryRoot.from()
     let command = try source(
       "Sources/OpenJoystickDriver/Commands/GameControllerCatalogCommand.swift",

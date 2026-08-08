@@ -2,22 +2,15 @@ import Foundation
 import Testing
 
 struct GenericHIDPipelineParityTests {
-  @Test
-  func semanticHIDValuesReachOnlyOptInParsers() throws {
+  @Test func semanticHIDValuesReachOnlyOptInParsers() throws {
     let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let stream = try source(
-      "Sources/OpenJoystickDriverKit/HID/DeviceStream.swift",
-      root: root
-    )
+    let stream = try source("Sources/OpenJoystickDriverKit/HID/DeviceStream.swift", root: root)
     let manager =
       try source(
         "Sources/OpenJoystickDriverKit/Device/DeviceManager/DeviceManager.swift",
         root: root
       )
-      + source(
-        "Sources/OpenJoystickDriverKit/Device/DeviceManager/HIDDetection.swift",
-        root: root
-      )
+      + source("Sources/OpenJoystickDriverKit/Device/DeviceManager/HIDDetection.swift", root: root)
     let pipeline = try source(
       "Sources/OpenJoystickDriverKit/Device/DevicePipeline/DevicePipeline.swift",
       root: root

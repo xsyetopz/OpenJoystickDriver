@@ -45,9 +45,7 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
         _suppressOutput = newValue
         return [sharedDispatcher] + Array(dedicatedDispatchers.values)
       }
-      for child in children {
-        child.suppressOutput = newValue
-      }
+      for child in children { child.suppressOutput = newValue }
     }
   }
 
@@ -67,17 +65,13 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
   public var lastRumbleStatus: String {
     lock.withLock {
       let active = dispatcherLocked(for: activeRouteToken)
-      if active.lastRumbleStatus != "none" {
-        return active.lastRumbleStatus
-      }
+      if active.lastRumbleStatus != "none" { return active.lastRumbleStatus }
       let all = [sharedDispatcher] + Array(dedicatedDispatchers.values)
       return all.first { $0.lastRumbleStatus != "none" }?.lastRumbleStatus ?? "none"
     }
   }
 
-  var retainedDedicatedRouteCount: Int {
-    lock.withLock { dedicatedDispatchers.count }
-  }
+  var retainedDedicatedRouteCount: Int { lock.withLock { dedicatedDispatchers.count } }
 
   public func close() {
     let children = lock.withLock { () -> [any CompatibilityUserSpaceOutputDispatching] in
@@ -89,9 +83,7 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
       return all
     }
 
-    for child in children {
-      child.close()
-    }
+    for child in children { child.close() }
   }
 
   public func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {
@@ -157,15 +149,12 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
   public func retainDedicatedRoutes(forConsumerBundleRootPaths bundleRootPaths: Set<String>) {
     var retainedTokens = Set(
       bundleRootPaths.map {
-        UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
-          forConsumerBundleRootPath: $0
-        )
+        UserSpaceVirtualDeviceConstants.dedicatedRouteToken(forConsumerBundleRootPath: $0)
       }
     )
 
     let removed = lock.withLock { () -> [any CompatibilityUserSpaceOutputDispatching] in
-      if let activeRouteToken,
-        activeRouteToken != UserSpaceVirtualDeviceConstants.sharedRouteToken
+      if let activeRouteToken, activeRouteToken != UserSpaceVirtualDeviceConstants.sharedRouteToken
       {
         retainedTokens.insert(activeRouteToken)
       }
@@ -174,9 +163,7 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
       return staleTokens.compactMap { dedicatedDispatchers.removeValue(forKey: $0) }
     }
 
-    for child in removed {
-      child.close()
-    }
+    for child in removed { child.close() }
   }
 
   public func setActiveRouteToken(_ requestedRouteToken: String?) async {
@@ -201,10 +188,7 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
       for (identifier, state) in transition.states {
         let neutralizingEvents = state.neutralizingEvents()
         if !neutralizingEvents.isEmpty {
-          await transition.previousDispatcher.dispatch(
-            events: neutralizingEvents,
-            from: identifier
-          )
+          await transition.previousDispatcher.dispatch(events: neutralizingEvents, from: identifier)
         }
       }
     }
@@ -224,13 +208,11 @@ public final class ForegroundConsumerCompatibilityDispatcherPool:
     return dedicatedDispatchers[requestedRouteToken] == nil ? nil : requestedRouteToken
   }
 
-  private func dispatcherLocked(
-    for routeToken: String?
-  ) -> any CompatibilityUserSpaceOutputDispatching {
+  private func dispatcherLocked(for routeToken: String?)
+    -> any CompatibilityUserSpaceOutputDispatching
+  {
     guard let routeToken else { return sharedDispatcher }
-    if routeToken == UserSpaceVirtualDeviceConstants.sharedRouteToken {
-      return sharedDispatcher
-    }
+    if routeToken == UserSpaceVirtualDeviceConstants.sharedRouteToken { return sharedDispatcher }
     return dedicatedDispatchers[routeToken] ?? sharedDispatcher
   }
 }

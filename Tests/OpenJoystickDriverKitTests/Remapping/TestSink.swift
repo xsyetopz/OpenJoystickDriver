@@ -8,17 +8,13 @@ final class RemappingTestSink: RemappingSystemInputSink, @unchecked Sendable {
   private var sendCount = 0
   private var failingCalls: Set<Int>
 
-  init(failingCalls: Set<Int> = []) {
-    self.failingCalls = failingCalls
-  }
+  init(failingCalls: Set<Int> = []) { self.failingCalls = failingCalls }
 
   func send(_ action: RemappingSystemInputAction) throws {
     lock.lock()
     defer { lock.unlock() }
     sendCount += 1
-    if failingCalls.remove(sendCount) != nil {
-      throw TestSinkError.rejected
-    }
+    if failingCalls.remove(sendCount) != nil { throw TestSinkError.rejected }
     recordedActions.append(action)
   }
 
@@ -36,7 +32,5 @@ final class RemappingTestSink: RemappingSystemInputSink, @unchecked Sendable {
     return actions
   }
 
-  private enum TestSinkError: Error {
-    case rejected
-  }
+  private enum TestSinkError: Error { case rejected }
 }

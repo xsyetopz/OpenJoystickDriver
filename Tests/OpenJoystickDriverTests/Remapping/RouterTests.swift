@@ -15,11 +15,14 @@ struct RemappingOutputRouterTests {
     try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: mapped)
     try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: compatibility)
 
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .compatibility([.buttonPressed(.b)], compatibility),
-    ])
-    #expect(await harness.router.status(for: mapped)?.selection == .remapping(profileID: profile.id))
+    #expect(
+      harness.recorder.snapshot() == [
+        .system(.keyDown(.space)), .compatibility([.buttonPressed(.b)], compatibility),
+      ]
+    )
+    #expect(
+      await harness.router.status(for: mapped)?.selection == .remapping(profileID: profile.id)
+    )
     #expect(await harness.router.status(for: compatibility)?.selection == .compatibility)
   }
 
@@ -34,17 +37,17 @@ struct RemappingOutputRouterTests {
 
     try await harness.router.refreshModel(vendorID: 1118, productID: 654)
     try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
-    try await harness.library.deactivate(vendorID: 1118, productID: 654)
+    try await harness.library.deactivateAll(vendorID: 1118, productID: 654)
     try await harness.router.refreshModel(vendorID: 1118, productID: 654)
     try await harness.router.dispatchCausally(events: [.buttonPressed(.x)], from: device)
 
-    #expect(harness.recorder.snapshot() == [
-      .compatibility([.buttonPressed(.b)], device),
-      .compatibilityStop(device),
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-      .compatibility([.buttonPressed(.x)], device),
-    ])
+    #expect(
+      harness.recorder.snapshot() == [
+        .compatibility([.buttonPressed(.b)], device), .compatibilityStop(device),
+        .system(.keyDown(.space)), .system(.keyUp(.space)),
+        .compatibility([.buttonPressed(.x)], device),
+      ]
+    )
   }
 
   @Test func sameModelControllersRetainExactIdentityAndAggregateHeldOutputs() async throws {
@@ -58,10 +61,7 @@ struct RemappingOutputRouterTests {
     try await harness.router.stopController(first)
     try await harness.router.stopController(second)
 
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-    ])
+    #expect(harness.recorder.snapshot() == [.system(.keyDown(.space)), .system(.keyUp(.space))])
     #expect(await harness.router.status(for: first) == nil)
     #expect(await harness.router.status(for: second) == nil)
   }
@@ -78,8 +78,9 @@ struct RemappingOutputRouterTests {
 
     #expect(harness.recorder.snapshot() == [.system(.keyDown(.space))])
     #expect(await harness.router.status(for: mapped)?.eligibility == .eligible)
-    #expect(await harness.router.status(for: compatibility)?.eligibility
-      == .compatibilityOutputSuppressed)
+    #expect(
+      await harness.router.status(for: compatibility)?.eligibility == .compatibilityOutputSuppressed
+    )
   }
 
   @Test func compatibilityGateTearsDownTrackedRoutesBeforeReturning() async throws {
@@ -93,13 +94,15 @@ struct RemappingOutputRouterTests {
     try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: mapped)
     try await harness.router.setCompatibilityOutputAllowed(false)
 
-    #expect(harness.recorder.snapshot() == [
-      .compatibility([.buttonPressed(.b)], compatibility),
-      .compatibilityStop(compatibility),
-      .system(.keyDown(.space)),
-    ])
-    #expect(await harness.router.status(for: compatibility)?.eligibility
-      == .compatibilityOutputSuppressed)
+    #expect(
+      harness.recorder.snapshot() == [
+        .compatibility([.buttonPressed(.b)], compatibility), .compatibilityStop(compatibility),
+        .system(.keyDown(.space)),
+      ]
+    )
+    #expect(
+      await harness.router.status(for: compatibility)?.eligibility == .compatibilityOutputSuppressed
+    )
   }
 
   @Test func targetApplicationLossReleasesAndNeverFallsBack() async throws {
@@ -114,11 +117,11 @@ struct RemappingOutputRouterTests {
     try await harness.router.refreshEligibility()
     try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
 
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-      .system(.keyDown(.space)),
-    ])
+    #expect(
+      harness.recorder.snapshot() == [
+        .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.space)),
+      ]
+    )
     #expect(await harness.router.status(for: device)?.eligibility == .eligible)
   }
 
@@ -135,18 +138,11 @@ struct RemappingOutputRouterTests {
 
     #expect(harness.foreground.readCount == 1)
     #expect(harness.access.readCount == 1)
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-    ])
-    #expect(await harness.router.status(for: device)?.eligibility
-      == .targetApplicationNotFrontmost)
+    #expect(harness.recorder.snapshot() == [.system(.keyDown(.space)), .system(.keyUp(.space))])
+    #expect(await harness.router.status(for: device)?.eligibility == .targetApplicationNotFrontmost)
 
     try await harness.router.foregroundStateDidChange(compatibilityOutputAllowed: true)
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-    ])
+    #expect(harness.recorder.snapshot() == [.system(.keyDown(.space)), .system(.keyUp(.space))])
   }
 
   @Test func foregroundCallbackPreservesPermissionAndSuppressionPrecedence() async throws {
@@ -157,17 +153,13 @@ struct RemappingOutputRouterTests {
 
     harness.access.set(.notAuthorized)
     try await harness.router.foregroundStateDidChange(compatibilityOutputAllowed: true)
-    #expect(await harness.router.status(for: device)?.eligibility
-      == .postEventAccessNotAuthorized)
+    #expect(await harness.router.status(for: device)?.eligibility == .postEventAccessNotAuthorized)
 
     try await harness.router.setOutputSuppressed(true)
     harness.foreground.set("com.example.Other")
     try await harness.router.foregroundStateDidChange(compatibilityOutputAllowed: true)
     #expect(await harness.router.status(for: device)?.eligibility == .outputSuppressed)
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-    ])
+    #expect(harness.recorder.snapshot() == [.system(.keyDown(.space)), .system(.keyUp(.space))])
   }
 
   @Test func statusReportsTheSameProviderSampleUsedForEligibility() async throws {
@@ -206,20 +198,17 @@ struct RemappingOutputRouterTests {
     harness.access.set(.granted)
     try await harness.router.refreshEligibility()
     try await harness.router.dispatchCausally(events: [.buttonReleased(.a)], from: device)
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-    ])
+    #expect(harness.recorder.snapshot() == [.system(.keyDown(.space)), .system(.keyUp(.space))])
     try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
     let restoredStatus = try #require(await harness.router.status(for: device))
     #expect(restoredStatus.selection != .compatibility)
     #expect(restoredStatus.eligibility == .eligible)
     #expect(restoredStatus.postEventAccessState == .granted)
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-      .system(.keyDown(.space)),
-    ])
+    #expect(
+      harness.recorder.snapshot() == [
+        .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.space)),
+      ]
+    )
   }
 
   @Test func activeProfileUpdateAndSwitchReleaseOldStateImmediately() async throws {
@@ -238,22 +227,20 @@ struct RemappingOutputRouterTests {
     try await harness.router.refreshModel(vendorID: 1118, productID: 654)
     try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
 
-    let replacement = remappingRouterProfile(
-      name: "Replacement",
-      destination: .mouseButton(.left)
-    )
+    let replacement = remappingRouterProfile(name: "Replacement", destination: .mouseButton(.left))
     try await harness.library.create(replacement)
     try await harness.library.activate(profileID: replacement.id)
     try await harness.router.refreshModel(vendorID: 1118, productID: 654)
 
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-      .system(.keyDown(.returnKey)),
-      .system(.keyUp(.returnKey)),
-    ])
-    #expect(await harness.router.status(for: device)?.selection
-      == .remapping(profileID: replacement.id))
+    #expect(
+      harness.recorder.snapshot() == [
+        .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.returnKey)),
+        .system(.keyUp(.returnKey)),
+      ]
+    )
+    #expect(
+      await harness.router.status(for: device)?.selection == .remapping(profileID: replacement.id)
+    )
   }
 
   @Test func causalSuppressionReleasesMappingAndIsIdempotent() async throws {
@@ -268,12 +255,12 @@ struct RemappingOutputRouterTests {
     try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: device)
     try await harness.router.setOutputSuppressed(false)
 
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .compatibility([.buttonPressed(.b)], compatibility),
-      .compatibilityStop(compatibility),
-      .system(.keyUp(.space)),
-    ])
+    #expect(
+      harness.recorder.snapshot() == [
+        .system(.keyDown(.space)), .compatibility([.buttonPressed(.b)], compatibility),
+        .compatibilityStop(compatibility), .system(.keyUp(.space)),
+      ]
+    )
     #expect(await harness.router.status(for: device)?.selection != .compatibility)
   }
 
@@ -287,10 +274,7 @@ struct RemappingOutputRouterTests {
     harness.router.suppressOutput = true
     try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: device)
 
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-    ])
+    #expect(harness.recorder.snapshot() == [.system(.keyDown(.space)), .system(.keyUp(.space))])
     #expect(harness.router.suppressOutput)
   }
 
@@ -310,9 +294,7 @@ struct RemappingOutputRouterTests {
   }
 
   @Test func ticksAdvanceOnlyEligibleRemappingRoutes() async throws {
-    let profile = remappingRouterProfile(
-      turbo: RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.25)
-    )
+    let profile = remappingRouterProfile(turbo: RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.25))
     let harness = try await RemappingRouterHarness.make(profile: profile)
     defer { harness.removeFiles() }
     let device = remappingRouterDevice(1)
@@ -322,12 +304,8 @@ struct RemappingOutputRouterTests {
     try await harness.router.tick(at: 1_100_000_000)
     try await harness.router.tick(at: 1_200_000_000)
 
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .system(.keyUp(.space)),
-    ])
-    #expect(await harness.router.status(for: device)?.eligibility
-      == .targetApplicationNotFrontmost)
+    #expect(harness.recorder.snapshot() == [.system(.keyDown(.space)), .system(.keyUp(.space))])
+    #expect(await harness.router.status(for: device)?.eligibility == .targetApplicationNotFrontmost)
   }
 
   @Test func continuousTicksStopAtFocusLossAndDoNotResumeWithoutInput() async throws {
@@ -356,10 +334,11 @@ struct RemappingOutputRouterTests {
     harness.foreground.set("com.example.Game")
     try await harness.router.tick(at: 1_030_000_000)
 
-    #expect(harness.recorder.snapshot() == [
-      .system(.mouseMoved(axis: .x, amount: 0.75)),
-      .system(.mouseMoved(axis: .x, amount: 0)),
-    ])
+    #expect(
+      harness.recorder.snapshot() == [
+        .system(.mouseMoved(axis: .x, amount: 0.75)), .system(.mouseMoved(axis: .x, amount: 0)),
+      ]
+    )
   }
 
   @Test func controllerStopAndShutdownDrainRoutesIdempotently() async throws {
@@ -374,12 +353,12 @@ struct RemappingOutputRouterTests {
     try await harness.router.shutdown()
     try await harness.router.shutdown()
 
-    #expect(harness.recorder.snapshot() == [
-      .system(.keyDown(.space)),
-      .compatibility([.buttonPressed(.b)], compatibility),
-      .system(.keyUp(.space)),
-      .compatibilityStop(compatibility),
-    ])
+    #expect(
+      harness.recorder.snapshot() == [
+        .system(.keyDown(.space)), .compatibility([.buttonPressed(.b)], compatibility),
+        .system(.keyUp(.space)), .compatibilityStop(compatibility),
+      ]
+    )
     #expect(await harness.router.statuses().isEmpty)
     await #expect(throws: RemappingOutputRoutingError.shutDown) {
       try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: mapped)

@@ -21,9 +21,7 @@ enum ConnectedControllerSelection {
       let matches = candidates.filter { $0.runtimeIdentifier == runtimeIdentifier }
       guard matches.count == 1, let device = matches.first else {
         if matches.count > 1 {
-          throw Failure(
-            "The --device selector is ambiguous for multiple connected controllers."
-          )
+          throw Failure("The --device selector is ambiguous for multiple connected controllers.")
         }
         throw Failure("No connected controller matches --device \(runtimeIdentifier).")
       }
@@ -31,13 +29,10 @@ enum ConnectedControllerSelection {
     }
 
     switch candidates.count {
-    case 1:
-      return candidates[0]
+    case 1: return candidates[0]
     case 0:
       if let vendorID, let productID {
-        throw Failure(
-          "No connected controller matches \(hex(vendorID)):\(hex(productID))."
-        )
+        throw Failure("No connected controller matches \(hex(vendorID)):\(hex(productID)).")
       }
       throw Failure("No controller is connected.")
     default:
@@ -45,23 +40,17 @@ enum ConnectedControllerSelection {
         "\(hex(device.vendorID)) \(hex(device.productID)) "
           + "--device \(device.runtimeIdentifier) \(device.name)"
       }.joined(separator: "\n  ")
-      throw Failure(
-        "Multiple controllers match. Select one with --device:\n  \(choices)"
-      )
+      throw Failure("Multiple controllers match. Select one with --device:\n  \(choices)")
     }
   }
 
   struct Failure: LocalizedError, Sendable {
     let message: String
 
-    init(_ message: String) {
-      self.message = message
-    }
+    init(_ message: String) { self.message = message }
 
     var errorDescription: String? { message }
   }
 
-  private static func hex(_ value: UInt16) -> String {
-    String(format: "0x%04X", value)
-  }
+  private static func hex(_ value: UInt16) -> String { String(format: "0x%04X", value) }
 }

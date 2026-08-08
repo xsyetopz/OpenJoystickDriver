@@ -56,7 +56,6 @@ struct USBDescriptorTransportResolverTests {
     )
   }
 
-
   @Test func descriptorSelectionUsesCompleteInterruptPairFromAlternateSetting() throws {
     let selected = USBDescriptorTransportResolver.discover(
       interfaces: [
@@ -136,13 +135,9 @@ struct USBDescriptorTransportResolverTests {
     #expect(selected == nil)
   }
 
-  private func endpoint(
-    _ address: UInt8,
-    input: Bool,
-    interrupt: Bool = true
-  ) -> USBEndpointTransportFacts {
-    USBEndpointTransportFacts(address: address, isInterrupt: interrupt, isInput: input)
-  }
+  private func endpoint(_ address: UInt8, input: Bool, interrupt: Bool = true)
+    -> USBEndpointTransportFacts
+  { USBEndpointTransportFacts(address: address, isInterrupt: interrupt, isInput: input) }
 
   private func interface(
     number: UInt8,

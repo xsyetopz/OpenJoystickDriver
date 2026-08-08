@@ -67,12 +67,7 @@ public struct LocalServiceRPCPlayerIndicatorArguments: Codable, Sendable {
   public let runtimeIdentifier: String?
   public let playerIndex: Int
 
-  public init(
-    vendorID: Int,
-    productID: Int,
-    runtimeIdentifier: String? = nil,
-    playerIndex: Int
-  ) {
+  public init(vendorID: Int, productID: Int, runtimeIdentifier: String? = nil, playerIndex: Int) {
     self.vendorID = vendorID
     self.productID = productID
     self.runtimeIdentifier = runtimeIdentifier
@@ -109,12 +104,7 @@ public struct LocalServiceRPCBrightnessArguments: Codable, Sendable {
   public let runtimeIdentifier: String?
   public let brightness: Int
 
-  public init(
-    vendorID: Int,
-    productID: Int,
-    runtimeIdentifier: String? = nil,
-    brightness: Int
-  ) {
+  public init(vendorID: Int, productID: Int, runtimeIdentifier: String? = nil, brightness: Int) {
     self.vendorID = vendorID
     self.productID = productID
     self.runtimeIdentifier = runtimeIdentifier
@@ -195,12 +185,9 @@ enum LocalServiceRPCTransport {
       tv_usec: Int32((clamped - floor(clamped)) * 1_000_000)
     )
     let size = socklen_t(MemoryLayout<timeval>.size)
-    guard
-      setsockopt(descriptor, SOL_SOCKET, SO_RCVTIMEO, &timeout, size) == 0,
+    guard setsockopt(descriptor, SOL_SOCKET, SO_RCVTIMEO, &timeout, size) == 0,
       setsockopt(descriptor, SOL_SOCKET, SO_SNDTIMEO, &timeout, size) == 0
-    else {
-      throw LocalServiceRPCError.connectionFailed(errno)
-    }
+    else { throw LocalServiceRPCError.connectionFailed(errno) }
   }
 
   static func sendFrame(_ data: Data, to descriptor: Int32) throws {
@@ -220,10 +207,7 @@ enum LocalServiceRPCTransport {
     return data
   }
 
-  private static func sendAll(
-    _ bytes: UnsafeRawBufferPointer,
-    to descriptor: Int32
-  ) throws {
+  private static func sendAll(_ bytes: UnsafeRawBufferPointer, to descriptor: Int32) throws {
     var offset = 0
     while offset < bytes.count {
       guard let base = bytes.baseAddress else { return }
@@ -238,10 +222,9 @@ enum LocalServiceRPCTransport {
     }
   }
 
-  private static func receiveAll(
-    _ bytes: UnsafeMutableRawBufferPointer,
-    from descriptor: Int32
-  ) throws {
+  private static func receiveAll(_ bytes: UnsafeMutableRawBufferPointer, from descriptor: Int32)
+    throws
+  {
     var offset = 0
     while offset < bytes.count {
       guard let base = bytes.baseAddress else { return }
@@ -258,29 +241,25 @@ enum LocalServiceRPCTransport {
 }
 
 public enum LocalServiceRPCClient {
-  public static func isAvailable() -> Bool {
-    serverProcessIdentifier() != nil
-  }
+  public static func isAvailable() -> Bool { serverProcessIdentifier() != nil }
 
   public static func serverProcessIdentifier() -> Int32? {
     serverProcessIdentifier(socketPath: LocalServiceRPCTransport.defaultSocketPath)
   }
 
   static func serverProcessIdentifier(socketPath: String) -> Int32? {
-    guard let descriptor = try? LocalServiceRPCTransport.openConnectedSocket(
-      timeoutSeconds: 0.2,
-      socketPath: socketPath
-    )
+    guard
+      let descriptor = try? LocalServiceRPCTransport.openConnectedSocket(
+        timeoutSeconds: 0.2,
+        socketPath: socketPath
+      )
     else { return nil }
     defer { Darwin.close(descriptor) }
     var processIdentifier: pid_t = 0
     var size = socklen_t(MemoryLayout<pid_t>.size)
-    guard
-      getsockopt(descriptor, SOL_LOCAL, LOCAL_PEERPID, &processIdentifier, &size) == 0,
+    guard getsockopt(descriptor, SOL_LOCAL, LOCAL_PEERPID, &processIdentifier, &size) == 0,
       processIdentifier > 0
-    else {
-      return nil
-    }
+    else { return nil }
     return processIdentifier
   }
 
@@ -327,10 +306,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
   )
   private var listeningDescriptor: Int32 = -1
 
-  public convenience init(
-    authentication: @escaping Authentication,
-    handler: @escaping Handler
-  ) {
+  public convenience init(authentication: @escaping Authentication, handler: @escaping Handler) {
     self.init(
       socketPath: LocalServiceRPCTransport.defaultSocketPath,
       authentication: authentication,
@@ -338,11 +314,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     )
   }
 
-  init(
-    socketPath: String,
-    authentication: @escaping Authentication,
-    handler: @escaping Handler
-  ) {
+  init(socketPath: String, authentication: @escaping Authentication, handler: @escaping Handler) {
     self.socketPath = socketPath
     self.authentication = authentication
     self.handler = handler
@@ -357,11 +329,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
       var address = try LocalServiceRPCTransport.socketAddress(path: path)
       let bindStatus = withUnsafePointer(to: &address) {
         $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-          Darwin.bind(
-            descriptor,
-            $0,
-            LocalServiceRPCTransport.socketAddressLength(path: path)
-          )
+          Darwin.bind(descriptor, $0, LocalServiceRPCTransport.socketAddressLength(path: path))
         }
       }
       guard bindStatus == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
@@ -432,12 +400,9 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     guard getpeereid(descriptor, &userID, &groupID) == 0, userID == geteuid() else { return nil }
     var processIdentifier: pid_t = 0
     var size = socklen_t(MemoryLayout<pid_t>.size)
-    guard
-      getsockopt(descriptor, SOL_LOCAL, LOCAL_PEERPID, &processIdentifier, &size) == 0,
+    guard getsockopt(descriptor, SOL_LOCAL, LOCAL_PEERPID, &processIdentifier, &size) == 0,
       processIdentifier > 0
-    else {
-      return nil
-    }
+    else { return nil }
     return processIdentifier
   }
 

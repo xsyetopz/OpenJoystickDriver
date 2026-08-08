@@ -14,13 +14,9 @@ actor RoutingCheckpointGate {
   private var paused = false
   private var continuation: CheckedContinuation<Void, Never>?
 
-  init(pausing checkpoint: RemappingRoutingCheckpoint) {
-    checkpointToPause = checkpoint
-  }
+  init(pausing checkpoint: RemappingRoutingCheckpoint) { checkpointToPause = checkpoint }
 
-  func arm() {
-    armed = true
-  }
+  func arm() { armed = true }
 
   func checkpoint(_ checkpoint: RemappingRoutingCheckpoint) async {
     guard armed, checkpoint == checkpointToPause else { return }
@@ -29,13 +25,9 @@ actor RoutingCheckpointGate {
     await withCheckedContinuation { continuation = $0 }
   }
 
-  func waitUntilPaused() async {
-    while !paused { await Task.yield() }
-  }
+  func waitUntilPaused() async { while !paused { await Task.yield() } }
 
-  nonisolated func resume() {
-    Task { await release() }
-  }
+  nonisolated func resume() { Task { await release() } }
 
   private func release() {
     continuation?.resume()
@@ -47,9 +39,7 @@ actor RoutingCheckpointGate {
 actor AsyncCompletionProbe {
   private(set) var isFinished = false
 
-  func finish() {
-    isFinished = true
-  }
+  func finish() { isFinished = true }
 }
 
 final class BlockingReleaseSink: RemappingSystemInputSink, @unchecked Sendable {
@@ -58,9 +48,7 @@ final class BlockingReleaseSink: RemappingSystemInputSink, @unchecked Sendable {
   private var releaseBlocked = false
   private var recordedActions: [RemappingSystemInputAction] = []
 
-  var actions: [RemappingSystemInputAction] {
-    lock.withLock { recordedActions }
-  }
+  var actions: [RemappingSystemInputAction] { lock.withLock { recordedActions } }
 
   func send(_ action: RemappingSystemInputAction) throws {
     if action == .keyUp(.space) {
@@ -74,9 +62,7 @@ final class BlockingReleaseSink: RemappingSystemInputSink, @unchecked Sendable {
     while !lock.withLock({ releaseBlocked }) { await Task.yield() }
   }
 
-  func resumeRelease() {
-    releaseGate.signal()
-  }
+  func resumeRelease() { releaseGate.signal() }
 }
 
 final class TransientTerminalFailureSink: RemappingSystemInputSink, @unchecked Sendable {
@@ -85,13 +71,9 @@ final class TransientTerminalFailureSink: RemappingSystemInputSink, @unchecked S
   private var failingCalls: Set<Int>
   private var recordedActions: [RemappingSystemInputAction] = []
 
-  init(failingCalls: Set<Int>) {
-    self.failingCalls = failingCalls
-  }
+  init(failingCalls: Set<Int>) { self.failingCalls = failingCalls }
 
-  var actions: [RemappingSystemInputAction] {
-    lock.withLock { recordedActions }
-  }
+  var actions: [RemappingSystemInputAction] { lock.withLock { recordedActions } }
 
   func send(_ action: RemappingSystemInputAction) throws {
     try lock.withLock {
@@ -101,9 +83,7 @@ final class TransientTerminalFailureSink: RemappingSystemInputSink, @unchecked S
     }
   }
 
-  private enum TransientSinkError: Error {
-    case rejected
-  }
+  private enum TransientSinkError: Error { case rejected }
 }
 
 func eventually(_ condition: @escaping @Sendable () -> Bool) async -> Bool {

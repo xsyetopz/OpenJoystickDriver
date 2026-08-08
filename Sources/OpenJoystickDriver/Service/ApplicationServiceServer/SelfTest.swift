@@ -4,6 +4,9 @@ import IOKit.hid
 import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
+  private static let nanosecondsPerSecond: UInt64 = 1_000_000_000
+  private static let probeDelayNanoseconds: UInt64 = 250_000_000
+
   private final class SelfTestCounter {
     let lock = NSLock()
     private(set) var driverKitValueEvents: Int = 0
@@ -201,7 +204,7 @@ extension ApplicationServiceServer {
   ) async {
     for probe in 0..<4 {
       await userSpace?.dispatch(events: [], from: identifier)
-      if probe < 3 { try? await Task.sleep(nanoseconds: 250_000_000) }
+      if probe < 3 { try? await Task.sleep(nanoseconds: Self.probeDelayNanoseconds) }
     }
   }
 
@@ -209,7 +212,7 @@ extension ApplicationServiceServer {
     await withTaskGroup(of: Int.self) { group in
       group.addTask { await self.driverKitDispatcher.sendDiagnosticProbe() }
       group.addTask {
-        try? await Task.sleep(nanoseconds: UInt64(seconds) * 1_000_000_000)
+        try? await Task.sleep(nanoseconds: UInt64(seconds) * Self.nanosecondsPerSecond)
         return 0
       }
       let result = await group.next() ?? 0
@@ -220,7 +223,7 @@ extension ApplicationServiceServer {
   }
 
   private func waitForSelfTestWindow(seconds: Int) async {
-    try? await Task.sleep(nanoseconds: UInt64(seconds) * 1_000_000_000)
+    try? await Task.sleep(nanoseconds: UInt64(seconds) * Self.nanosecondsPerSecond)
   }
 
 }
