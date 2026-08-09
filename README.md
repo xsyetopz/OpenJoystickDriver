@@ -197,8 +197,6 @@ Minimum checks for parser/record changes:
 swift build
 ```
 
-## Star history
-
 ## Star History
 
 <a href="https://www.star-history.com/?repos=xsyetopz%2FOpenJoystickDriver&type=date&legend=top-left">
