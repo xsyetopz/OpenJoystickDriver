@@ -1,5 +1,10 @@
 # OpenJoystickDriver
 
+> [!WARNING]
+> All compiled 'releases' before 0.5.0-alpha.4 have been swooped due to [#23]([https://github.com/xsyetopz/OpenJoystickDriver/issues/](https://github.com/xsyetopz/OpenJoystickDriver/issues/23)). Please be patient (or compile a private version yourself) for `0.5.0-beta.1`. Thanks for your patience.
+>
+> - Krystian, OJD's core maintainer.
+
 English | [简体中文](README.zh.md)
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/xsyetopz/OpenJoystickDriver?style=social)](https://github.com/xsyetopz/OpenJoystickDriver/stargazers)
