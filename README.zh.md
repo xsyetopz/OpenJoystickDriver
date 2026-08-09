@@ -185,8 +185,6 @@ swift build
 swift build
 ```
 
-## Star 历史
-
 ## Star History
 
 <a href="https://www.star-history.com/?repos=xsyetopz%2FOpenJoystickDriver&type=date&legend=top-left">
