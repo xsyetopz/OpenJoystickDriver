@@ -49,6 +49,7 @@ If `swift test` reports the documented SwiftPM module-cache mismatch, run `./scr
 
 ## Change Rules
 
+- Never generate SVGs or images.
 - Preserve unrelated work and keep secrets out of source and output.
 - Follow Swift 6.2 strict-concurrency and SwiftLint rules in `CONTRIBUTING.md`.
 - Use decimal numeric values in committed controller JSON.
