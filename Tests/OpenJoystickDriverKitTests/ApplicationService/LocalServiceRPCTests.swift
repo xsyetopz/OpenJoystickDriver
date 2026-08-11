@@ -61,6 +61,44 @@ import Testing
       try LocalServiceRPCTransport.sendFrame(data, to: descriptor)
     }
   }
+
+  @Test func typedPermissionRequestRoundTripsThroughClient() async throws {
+    let socketPath = temporarySocketPath()
+    let server = LocalServiceRPCServer(
+      socketPath: socketPath,
+      authentication: { _ in true },
+      handler: { request, completion in
+        #expect(request.method == "requestAccess")
+        do {
+          let arguments = try JSONDecoder().decode(
+            LocalServiceRPCPermissionArguments.self,
+            from: request.arguments
+          )
+          #expect(arguments.requirement == .inputMonitoring)
+          let snapshot = PermissionManager.Snapshot(
+            inputMonitoring: .denied,
+            accessibility: .granted
+          )
+          completion(
+            LocalServiceRPCResponse(result: try JSONEncoder().encode(snapshot), error: nil)
+          )
+        } catch {
+          completion(LocalServiceRPCResponse(result: nil, error: error.localizedDescription))
+        }
+      }
+    )
+    try server.start()
+    defer { server.stop() }
+
+    let client = ApplicationServiceClient(socketPath: socketPath)
+    client.connect()
+    #expect(client.isConnected)
+    #expect(
+      try await client.requestAccess(.inputMonitoring)
+        == PermissionManager.Snapshot(inputMonitoring: .denied, accessibility: .granted)
+    )
+  }
+
   private func temporarySocketPath() -> String {
     "/tmp/com.openjoystickdriver.test.\(UUID().uuidString).rpc"
   }

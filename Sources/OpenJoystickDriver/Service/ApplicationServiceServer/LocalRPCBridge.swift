@@ -124,6 +124,9 @@ extension ApplicationServiceServer {
       case "listDevices": listDevices(reply: send)
       case "getStatus": getStatus(reply: send)
       case "requestRequiredAccess": requestRequiredAccess(reply: send)
+      case "requestAccess":
+        let value = try decode(LocalServiceRPCPermissionArguments.self)
+        requestAccess(value.requirement, reply: send)
       case "getDeviceInputState":
         let value = try decode(LocalServiceRPCDeviceArguments.self)
         getDeviceInputState(

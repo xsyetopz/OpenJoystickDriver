@@ -33,10 +33,7 @@ struct CompatibilityCommand {
     }
 
     let ok = runSyncResult {
-      do {
-        try await client.setCompatibilityIdentity(sub)
-        return true
-      } catch { return false }
+      do { return try await client.setCompatibilityIdentity(sub) } catch { return false }
     }
 
     if !ok {

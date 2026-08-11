@@ -20,6 +20,11 @@ public struct LocalServiceRPCEmptyArguments: Codable, Sendable {}
 public struct LocalServiceRPCBoolArguments: Codable, Sendable { public let value: Bool }
 public struct LocalServiceRPCStringArguments: Codable, Sendable { public let value: String }
 public struct LocalServiceRPCIntArguments: Codable, Sendable { public let value: Int }
+public struct LocalServiceRPCPermissionArguments: Codable, Sendable {
+  public let requirement: PermissionManager.Requirement
+
+  public init(requirement: PermissionManager.Requirement) { self.requirement = requirement }
+}
 public struct LocalServiceRPCDeviceArguments: Codable, Sendable {
   public let vendorID: Int
   public let productID: Int

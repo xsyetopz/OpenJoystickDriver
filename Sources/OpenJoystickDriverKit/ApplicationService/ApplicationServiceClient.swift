@@ -64,6 +64,10 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     try await call("requestRequiredAccess", LocalServiceRPCEmptyArguments())
   }
 
+  public func requestAccess(_ requirement: PermissionManager.Requirement) async throws
+    -> PermissionManager.Snapshot
+  { try await call("requestAccess", LocalServiceRPCPermissionArguments(requirement: requirement)) }
+
   public func deviceInputState(
     vendorID: UInt16,
     productID: UInt16,
@@ -195,11 +199,8 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     return payload
   }
 
-  public func setCompatibilityIdentity(_ raw: String) async throws {
-    let _: Bool = try await call(
-      "setCompatibilityIdentity",
-      LocalServiceRPCStringArguments(value: raw)
-    )
+  public func setCompatibilityIdentity(_ raw: String) async throws -> Bool {
+    try await call("setCompatibilityIdentity", LocalServiceRPCStringArguments(value: raw))
   }
 
   public func getCompatibilityIdentity() async throws -> String {

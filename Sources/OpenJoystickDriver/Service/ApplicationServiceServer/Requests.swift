@@ -61,6 +61,18 @@ extension ApplicationServiceServer {
     }
   }
 
+  public func requestAccess(
+    _ requirement: PermissionManager.Requirement,
+    reply: @escaping (PermissionManager.Snapshot) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    let pm = permissionManager
+    Task {
+      let snapshot = await pm.requestAccess(requirement)
+      callback.call(snapshot)
+    }
+  }
+
   /// Returns the current input state for the specified device as encoded JSON data.
   public func getDeviceInputState(
     vendorID: Int,

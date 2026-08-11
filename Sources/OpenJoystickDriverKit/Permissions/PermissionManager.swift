@@ -3,10 +3,14 @@ import IOKit
 import IOKit.hid
 
 private let permissionPollNanoseconds: UInt64 = 1_000_000_000
+// TCC needs a short run-loop turn to register the application after the
+// Input Monitoring request.  Asking for Accessibility immediately afterwards
+// can make macOS skip adding the app to the Input Monitoring list altogether.
+private let inputMonitoringRegistrationDelayNanoseconds: UInt64 = 600_000_000
 
 /// Manages the macOS HID permissions used by OpenJoystickDriver.
 public actor PermissionManager {
-  public enum Requirement: Sendable, Equatable {
+  public enum Requirement: String, Codable, Sendable, Equatable {
     case inputMonitoring
     case accessibility
   }
@@ -94,13 +98,21 @@ public actor PermissionManager {
 
   /// Requests every HID permission that is not already granted.
   ///
+  /// Input Monitoring is deliberately requested before Accessibility. macOS
+  /// registers the caller in the Input Monitoring list asynchronously; a
+  /// short delay lets that registration complete before the second request.
   /// Return values from IOHIDRequestAccess are deliberately ignored. The
   /// authoritative post-request state comes from IOHIDCheckAccess.
-  @discardableResult public func requestRequiredAccess() -> Snapshot {
+  @discardableResult public func requestRequiredAccess() async -> Snapshot {
     var snapshot = checkAccess()
-    if snapshot.inputMonitoring != .granted { IOHIDRequestAccess(kIOHIDRequestTypeListenEvent) }
-    snapshot = checkAccess()
-    if snapshot.accessibility != .granted { IOHIDRequestAccess(kIOHIDRequestTypePostEvent) }
+    if snapshot.inputMonitoring != .granted {
+      await requestAccessOnMainActor(kIOHIDRequestTypeListenEvent)
+      try? await Task.sleep(nanoseconds: inputMonitoringRegistrationDelayNanoseconds)
+      snapshot = checkAccess()
+    }
+    if snapshot.accessibility != .granted {
+      await requestAccessOnMainActor(kIOHIDRequestTypePostEvent)
+    }
     return refreshAccessState()
   }
 
@@ -108,16 +120,24 @@ public actor PermissionManager {
   ///
   /// The request result is never treated as a grant; the returned snapshot is
   /// read back through `IOHIDCheckAccess`.
-  @discardableResult public func requestAccess(_ requirement: Requirement) -> Snapshot {
+  @discardableResult public func requestAccess(_ requirement: Requirement) async -> Snapshot {
     let snapshot = checkAccess()
     switch requirement {
     case .inputMonitoring where snapshot.inputMonitoring != .granted:
-      IOHIDRequestAccess(kIOHIDRequestTypeListenEvent)
+      await requestAccessOnMainActor(kIOHIDRequestTypeListenEvent)
+      try? await Task.sleep(nanoseconds: inputMonitoringRegistrationDelayNanoseconds)
     case .accessibility where snapshot.accessibility != .granted:
-      IOHIDRequestAccess(kIOHIDRequestTypePostEvent)
+      await requestAccessOnMainActor(kIOHIDRequestTypePostEvent)
     default: break
     }
     return refreshAccessState()
+  }
+
+  /// TCC request calls are initiated on the app's main actor.  Besides matching
+  /// AppKit's user-initiated permission flow, this gives macOS a live run loop
+  /// for registering the bundle before the settings deep link is opened.
+  private func requestAccessOnMainActor(_ requestType: IOHIDRequestType) async {
+    await MainActor.run { _ = IOHIDRequestAccess(requestType) }
   }
 
   public func startPolling() {
