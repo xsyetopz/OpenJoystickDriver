@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test OpenJoystickDriver"
+  short_description: "Prove product behavior with focused Swift tests"
+  default_prompt: "Use $test-openjoystickdriver to test OpenJoystickDriver product behavior and run its executable validation gates."
