@@ -513,13 +513,29 @@ rebuild_full() {
 run_lint() {
   command -v swiftlint >/dev/null 2>&1 || die "swiftlint not found (brew install swiftlint)"
   cd "$PROJECT_DIR"
+
+  # SwiftLint's implicit recursive walk includes ignored working-tree paths
+  # (for example, disposable external checkouts under .tmp). Build the input
+  # list from tracked and non-ignored Swift files instead, while retaining
+  # untracked repository-owned files during local development.
+  local lint_paths=()
+  local lint_path
+  while IFS= read -r -d '' lint_path; do
+    lint_paths+=("$lint_path")
+  done < <(git -C "$PROJECT_DIR" ls-files -z --cached --others --exclude-standard -- '*.swift')
+  # Keep a useful fallback if the checkout metadata is unavailable. In a
+  # normal repository Package.swift is already returned by the pathspec.
+  if [ "${#lint_paths[@]}" -eq 0 ]; then
+    lint_paths+=("Package.swift")
+  fi
+
   local framework_path
   framework_path="$(xcrun --show-sdk-path 2>/dev/null)/../../usr/lib"
   [ -d "$framework_path/sourcekitdInProc.framework" ] || framework_path=""
   if [ -n "$framework_path" ]; then
-    DYLD_FRAMEWORK_PATH="$framework_path" swiftlint lint --no-cache --strict
+    DYLD_FRAMEWORK_PATH="$framework_path" swiftlint lint --no-cache --strict "${lint_paths[@]}"
   else
-    swiftlint lint --no-cache --strict
+    swiftlint lint --no-cache --strict "${lint_paths[@]}"
   fi
 }
 
