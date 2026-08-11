@@ -6,11 +6,23 @@ import OpenJoystickDriverKit
 /// controller discovery, output, and the authenticated local RPC endpoint.
 final class HeadlessApplicationHost {
   private let runtime = ApplicationServiceRuntime()
+  #if canImport(AppKit) && canImport(SwiftUI)
+    private var presentation: DesktopPresentationCoordinator?
+  #endif
 
-  func run() -> Never {
+  @MainActor func run() -> Never {
     registerForLoginIfNeeded()
     runtime.start()
-    dispatchMain()
+    #if canImport(AppKit) && canImport(SwiftUI)
+      presentation = DesktopPresentationCoordinator(
+        runtime: runtime,
+        gateway: ApplicationServiceClientGateway()
+      )
+      guard let presentation else { dispatchMain() }
+      presentation.run()
+    #else
+      dispatchMain()
+    #endif
   }
 
   private func registerForLoginIfNeeded() {
