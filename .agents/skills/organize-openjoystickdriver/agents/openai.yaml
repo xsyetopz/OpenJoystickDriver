@@ -1,0 +1,4 @@
+interface:
+  display_name: "Organize OpenJoystickDriver"
+  short_description: "Organize Sources and matching product Tests"
+  default_prompt: "Use $organize-openjoystickdriver to map ownership, migrate Sources and matching Tests, and prove the topology fail-closed."

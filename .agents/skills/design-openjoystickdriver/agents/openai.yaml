@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design OpenJoystickDriver"
+  short_description: "Design Apple-native driver UI and user flows"
+  default_prompt: "Use $design-openjoystickdriver to design or review an OpenJoystickDriver macOS flow with Apple-native controls, truthful states, and accessibility proof."

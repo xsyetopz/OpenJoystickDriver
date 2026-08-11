@@ -1,0 +1,14 @@
+{
+  "positive": [
+    "Design the reusable macOS settings window and menu-bar flow.",
+    "Review VoiceOver labels, keyboard focus, and reduced motion for profile editing.",
+    "Fix stale runtime responses and truthful permission states in SwiftUI.",
+    "Provide screenshot-backed proof for an OpenJoystickDriver presentation change."
+  ],
+  "negative": [
+    "Move parser Sources into a new capability directory.",
+    "Add a product behavior test without a UI change.",
+    "Edit generated DriverKit output directly.",
+    "Give generic HIG advice for an unrelated app."
+  ]
+}

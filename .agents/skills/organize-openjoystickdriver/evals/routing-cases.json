@@ -1,0 +1,14 @@
+{
+  "positive": [
+    "Move Sources and matching Tests into capability owners.",
+    "Review a SwiftPM target topology change with architecture-enforce.",
+    "Remove an obsolete source path without a compatibility shim.",
+    "Decide whether a new OpenJoystickDriver package boundary is justified."
+  ],
+  "negative": [
+    "Fix a parser behavior without changing any path.",
+    "Edit generated .build/driverkit/generated output.",
+    "Add unit tests for a standalone script.",
+    "Polish a settings control with no topology change."
+  ]
+}
