@@ -10,7 +10,10 @@ English | [简体中文](README.zh.md)
 [![GitHub Repo stars](https://img.shields.io/github/stars/xsyetopz/OpenJoystickDriver?style=social)](https://github.com/xsyetopz/OpenJoystickDriver/stargazers)
 [![License](https://img.shields.io/github/license/xsyetopz/OpenJoystickDriver)](LICENSE)
 [![Swift](https://img.shields.io/badge/Swift-Package-orange)](Package.swift)
-[![macOS](https://img.shields.io/badge/platform-macOS-lightgrey)](README.md)
+
+![Github-sponsors](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#EA4AAA)
+[![BuyMeACoffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/jarveaarkry)
+[![Ko-Fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/krystian3219)
 
 OpenJoystickDriver is a macOS userspace gamepad driver. Its signed app bundle hosts the controller runtime. The same executable provides a low-level CLI for setup, control, and diagnostics.
 
