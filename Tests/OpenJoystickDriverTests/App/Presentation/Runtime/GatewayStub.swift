@@ -1,0 +1,179 @@
+import Foundation
+import OpenJoystickDriverKit
+
+@testable import OpenJoystickDriver
+
+func makeProfile(id: UUID = UUID(), name: String = "Test Profile") -> RemappingProfile {
+  RemappingProfile(
+    id: id,
+    name: name,
+    device: RemappingDeviceScope(vendorID: 0x1234, productID: 0x5678),
+    applicationScope: .global,
+    bindings: [
+      RemappingBinding(source: .button(.south), destination: .keyboard(key: .a, modifiers: []))
+    ]
+  )
+}
+
+func snapshot(
+  profiles: [RemappingProfile],
+  activeProfiles: [ApplicationServiceRemappingActiveProfilePayload] = [],
+  postEventAccess: RemappingPostEventAccessState = .granted
+) -> ApplicationServiceRemappingSnapshotPayload {
+  ApplicationServiceRemappingSnapshotPayload(
+    profiles: profiles,
+    activeProfiles: activeProfiles,
+    routes: [],
+    postEventAccess: postEventAccess
+  )
+}
+
+actor GatewayStub: ApplicationServiceGateway {
+  let statusPayload: ApplicationServiceStatusPayload
+  let snapshotPayload: ApplicationServiceRemappingSnapshotPayload
+  let statusShouldFail: Bool
+  let inputState: DeviceInputState?
+  let inputSequence: [DeviceInputState]?
+  let updateShouldConflict: Bool
+  let updateDelayNanoseconds: UInt64
+  let setIdentityResult: Bool
+  let compatibilityReadDelayNanoseconds: UInt64
+  var lastExpectedCurrent: RemappingProfile?
+  var lastInputSelector: RuntimeDeviceSelector?
+  var updateCallCount = 0
+  var inputReadCount = 0
+  var setIdentityCallCount = 0
+  var selectedIdentity: CompatibilityIdentity = .sdl2_3
+
+  init(
+    statusPayload: ApplicationServiceStatusPayload = ApplicationServiceStatusPayload(
+      inputMonitoring: "granted",
+      accessibility: "granted",
+      connectedDevices: [],
+      userSpaceVirtualDeviceEnabled: true,
+      userSpaceVirtualDeviceStatus: "ready",
+      compatibilityIdentity: CompatibilityIdentity.sdl2_3.rawValue
+    ),
+    snapshotPayload: ApplicationServiceRemappingSnapshotPayload =
+      ApplicationServiceRemappingSnapshotPayload(
+        profiles: [],
+        activeProfiles: [],
+        routes: [],
+        postEventAccess: .granted
+      ),
+    statusShouldFail: Bool = false,
+    inputState: DeviceInputState? = nil,
+    inputSequence: [DeviceInputState]? = nil,
+    updateShouldConflict: Bool = false,
+    updateDelayNanoseconds: UInt64 = 0,
+    setIdentityResult: Bool = true,
+    compatibilityReadDelayNanoseconds: UInt64 = 0
+  ) {
+    self.statusPayload = statusPayload
+    self.snapshotPayload = snapshotPayload
+    self.statusShouldFail = statusShouldFail
+    self.inputState = inputState
+    self.inputSequence = inputSequence
+    self.updateShouldConflict = updateShouldConflict
+    self.updateDelayNanoseconds = updateDelayNanoseconds
+    self.setIdentityResult = setIdentityResult
+    self.compatibilityReadDelayNanoseconds = compatibilityReadDelayNanoseconds
+  }
+
+  func status() throws -> ApplicationServiceStatusPayload {
+    if statusShouldFail { throw ApplicationServiceClientError.timeout }
+    return statusPayload
+  }
+
+  func virtualDeviceDiagnostics() throws -> ApplicationServiceVirtualDeviceDiagnosticsPayload {
+    ApplicationServiceVirtualDeviceDiagnosticsPayload(
+      userSpaceVirtualDeviceEnabled: true,
+      userSpaceVirtualDeviceStatus: "ready",
+      hidGamepads: []
+    )
+  }
+
+  func requestPermissions() throws -> PermissionManager.Snapshot {
+    PermissionManager.Snapshot(inputMonitoring: .granted, accessibility: .granted)
+  }
+
+  func deviceInputState(for selector: RuntimeDeviceSelector) throws -> DeviceInputState? {
+    lastInputSelector = selector
+    if let inputSequence, !inputSequence.isEmpty {
+      let index = min(inputReadCount, inputSequence.count - 1)
+      inputReadCount += 1
+      return inputSequence[index]
+    }
+    return inputState
+  }
+
+  func remappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+
+  func remappingProfile(id: UUID) throws -> RemappingProfile {
+    guard let profile = snapshotPayload.profiles.first(where: { $0.id == id }) else {
+      throw ApplicationServiceClientError.invalidResponse
+    }
+    return profile
+  }
+
+  func createRemappingProfile(_ profile: RemappingProfile) throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  { snapshotPayload }
+
+  func updateRemappingProfile(_ profile: RemappingProfile, expectedCurrent: RemappingProfile)
+    async throws -> ApplicationServiceRemappingSnapshotPayload
+  {
+    updateCallCount += 1
+    lastExpectedCurrent = expectedCurrent
+    if updateDelayNanoseconds > 0 { try await Task.sleep(nanoseconds: updateDelayNanoseconds) }
+    if updateShouldConflict {
+      throw ApplicationServiceRemappingRPCError(
+        code: .profileUpdateConflict,
+        message: "stale profile"
+      )
+    }
+    return snapshotPayload
+  }
+
+  func importRemappingProfile(_ profile: RemappingProfile) throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  { snapshotPayload }
+
+  func deleteRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+    snapshotPayload
+  }
+
+  func activateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+    snapshotPayload
+  }
+
+  func deactivateRemappingProfile(vendorID: UInt16, productID: UInt16) throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  { snapshotPayload }
+
+  func deactivateRemappingProfile(profileID: UUID) throws
+    -> ApplicationServiceRemappingSnapshotPayload
+  { snapshotPayload }
+
+  func remappingPostEventAccess() throws -> RemappingPostEventAccessState {
+    snapshotPayload.postEventAccess
+  }
+
+  func requestRemappingPostEventAccess() throws -> RemappingPostEventAccessState {
+    snapshotPayload.postEventAccess
+  }
+
+  func compatibilityIdentity() async throws -> CompatibilityIdentity {
+    let identity = selectedIdentity
+    if compatibilityReadDelayNanoseconds > 0 {
+      try await Task.sleep(nanoseconds: compatibilityReadDelayNanoseconds)
+    }
+    return identity
+  }
+
+  func setCompatibilityIdentity(_ identity: CompatibilityIdentity) throws -> Bool {
+    setIdentityCallCount += 1
+    if setIdentityResult { selectedIdentity = identity }
+    return setIdentityResult
+  }
+}

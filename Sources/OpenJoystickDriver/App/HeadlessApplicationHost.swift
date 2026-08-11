@@ -7,14 +7,14 @@ import OpenJoystickDriverKit
 final class HeadlessApplicationHost {
   private let runtime = ApplicationServiceRuntime()
   #if canImport(AppKit) && canImport(SwiftUI)
-    private var presentation: DesktopPresentationCoordinator?
+    private var presentation: MenuBarCoordinator?
   #endif
 
   @MainActor func run() -> Never {
     registerForLoginIfNeeded()
     runtime.start()
     #if canImport(AppKit) && canImport(SwiftUI)
-      presentation = DesktopPresentationCoordinator(
+      presentation = MenuBarCoordinator(
         runtime: runtime,
         gateway: ApplicationServiceClientGateway()
       )
