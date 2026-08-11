@@ -1,0 +1,4 @@
+interface:
+  display_name: "Add Controller Support"
+  short_description: "Add catalog-backed controller support safely"
+  default_prompt: "Use $add-controller-openjoystickdriver to add or import controller support through canonical catalog inputs, deterministic records, and honest evidence."
