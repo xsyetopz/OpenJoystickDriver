@@ -1,0 +1,4 @@
+interface:
+  display_name: "Debug Controller OpenJoystickDriver"
+  short_description: "Diagnose physical controller support and evidence"
+  default_prompt: "Use $debug-controller-openjoystickdriver to diagnose OpenJoystickDriver USB/HID, parser packets, record probes, reconnect, rumble, and LED evidence without overstating hardware support."
