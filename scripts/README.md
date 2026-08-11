@@ -56,11 +56,11 @@ All implementation paths are internal to the dispatcher.
 | `diagnostics/sdl/gamecontroller.sh` | `launch sdl-gamecontroller` | Selects a compatibility route and launches the requested app | Shell syntax; manual SDL check |
 | `diagnostics/dext/repair.sh` | repair route | Finds and terminates stale generated DriverKit processes | Shell syntax; focused local repair |
 | `docs/issues/export.py` | `docs export-external-issues` | Reads GitHub through `gh` and replaces archived issue evidence | Path validation; explicit manual refresh |
-| `platform/environment.sh` | Build, diagnostics, notarization, and packaging implementations | Loads one root environment file; may build cached universal libusb artifacts | Environment and packaging tests; shell syntax |
-| `quality/env-audit.py` | `env audit` | Reads environment-file keys without printing values | Environment contract tests |
+| `platform/environment.sh` | Build, diagnostics, notarization, and packaging implementations | Loads one root environment file; may build cached universal libusb artifacts | Environment and packaging checks; shell syntax |
+| `quality/env-audit.py` | `env audit` | Reads environment-file keys without printing values | Environment contract validation |
 | `quality/test-parsers-macos14.sh` | `test parsers-macos14` | Creates isolated harness and cache directories under `/tmp` | Parser harness gate |
-| `quality/validate-scripts.py` | `check scripts` | Reads repository paths and runs `bash -n` | Script-layout unit tests and CI |
-| `quality/validate-swift-structure.py` | `check swift-structure` | Reads Swift paths, sizes, names, and directives | Structural unit tests and CI |
+| `quality/validate-scripts.py` | `check scripts` | Reads repository paths and runs `bash -n` | Script-layout validation |
+| `quality/validate-swift-structure.py` | `check swift-structure` | Reads Swift paths, sizes, names, and directives | Structural validation |
 | `release/bump-version.sh` | `release bump-version` | Updates version references after verifying a changelog heading | Swift packaging contracts and diff review |
 | `release/dmg-background.py` | Release package implementation | Writes a deterministic PNG to the requested path | Packaging contract |
 | `release/install-local.sh` | `release install-local` | Packages a release and replaces the local app in `/Applications` | Dispatcher argument checks; Swift packaging contract |
@@ -86,7 +86,6 @@ All implementation paths are internal to the dispatcher.
 | Bump release version | `./scripts/ojd release bump-version <version>` | Verifies the changelog heading and updates version references |
 | Package release DMG | `./scripts/ojd release package [version]` | Builds, notarizes, and staples; version defaults to the package version |
 | Package and install locally | `./scripts/ojd release install-local [version]` | Replaces the app in `/Applications` after packaging |
-| Run script unit tests | `./scripts/ojd test scripts` | Covers catalog, routing, layout, and environment contracts |
 
 ## Initial setup (per machine or team)
 

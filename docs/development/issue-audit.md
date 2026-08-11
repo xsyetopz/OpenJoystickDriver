@@ -43,7 +43,6 @@ The audit baseline passed:
 ./scripts/ojd catalog regenerate --check
 ./scripts/ojd check profiles
 ./scripts/ojd check scripts
-./scripts/ojd test scripts
 ./scripts/ojd check swift-structure
 ./scripts/ojd lint
 ./scripts/ojd test parsers-macos14

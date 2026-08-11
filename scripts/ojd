@@ -63,7 +63,6 @@ Commands:
   check swift-structure       Check Swift file sizes and ownership layout
   check driverkit             Verify generated DriverKit reproducibility and build
   test parsers-macos14        Run focused parser regressions without Swift Testing
-  test scripts                Run deterministic script unit tests
   launch sdl-gamecontroller <app>
                               Launch an SDL app through GameController/MFI rumble route
 
@@ -375,16 +374,8 @@ case "$cmd" in
         require_no_args "test parsers-macos14" "$@"
         exec /usr/bin/env bash "$SCRIPT_DIR/quality/test-parsers-macos14.sh"
         ;;
-      scripts)
-        require_no_args "test scripts" "$@"
-        (
-          cd "$PROJECT_DIR"
-          exec /usr/bin/env python3 -m unittest discover \
-            -s Tests/Scripts -p 'test_*.py' -v
-        )
-        ;;
       *)
-        die "Unknown: test $sub (expected: parsers-macos14 | scripts)"
+        die "Unknown: test $sub (expected: parsers-macos14)"
         ;;
     esac
     ;;

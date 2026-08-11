@@ -184,14 +184,16 @@ There is no formal PR template. Be clear about what changed and why.
 ```text
 Sources/OpenJoystickDriverKit/       Shared parsers, device management, output, and application-service RPC
 Sources/OpenJoystickDriverRelay/     SwifterKit DriverKit relay adapter and runtime lifecycle
-Sources/OpenJoystickDriver/          Headless app host, application service, and CLI
-Sources/OpenJoystickDriver/CommandArchitecture/  Installed CLI command catalog and help renderer
+Sources/OpenJoystickDriver/          App host, presentation, runtime, CLI, remapping, and status
+Sources/OpenJoystickDriver/App/Presentation/  AppKit shell and SwiftUI settings/presentation capabilities
+Sources/OpenJoystickDriver/CLI/       Installed CLI grammar, catalog, and capability commands
+Sources/OpenJoystickDriver/Runtime/   Single application runtime, authenticated RPC, and foreground output
+Sources/OpenJoystickDriver/Remapping/ App-side profile storage, routing, and CoreGraphics event adaptation
 Sources/OpenJoystickDriverHIDTool/  Internal hardware investigation tool (not a user surface)
 Sources/DriverKitGenerator/          Build-time SwifterKit native-project generator
 Tests/OpenJoystickDriverKitTests/    Unit tests that do not require hardware
 Tests/OpenJoystickDriverRelayTests/  Relay configuration, transport, and lifecycle tests
-Tests/OpenJoystickDriverTests/       App-level command and runtime tests
-Tests/Scripts/                       Python tests for script routing, layout, and env contracts
+Tests/OpenJoystickDriverTests/App/Presentation/ App-level presentation product tests matching `Sources/OpenJoystickDriver/App/Presentation/`
 Resources/Schemas/                   Canonical record and override schemas
 Resources/ControllerOverrides/       Source omissions and evidence-backed corrections
 ControllerSources.lock.json          Pinned upstream revisions and hashes
@@ -205,7 +207,7 @@ bounded, authenticated RPC types under
 and route operations through `ApplicationServiceServer`.
 
 The installed CLI help text is rendered from `InstalledCommandCatalog` in
-`Sources/OpenJoystickDriver/CommandArchitecture/CommandCatalog.swift`. When you
+`Sources/OpenJoystickDriver/CLI/Catalog/CommandCatalog.swift`. When you
 add, rename, or remove a CLI command, update the catalog entry there so the
 help output stays in sync. `OpenJoystickDriverHIDTool` is an internal
 hardware-investigation tool, not a supported user or contributor surface; route

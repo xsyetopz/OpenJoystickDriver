@@ -48,14 +48,15 @@ remains independent of SwifterKit.
 
 | Area | Owner | Boundary |
 | --- | --- | --- |
-| App lifecycle and status item | `MenuBarCoordinator.swift` | AppKit activation, menu, settings window, and termination only |
-| Settings panes and access summary | `SettingsViews.swift` | Pane navigation, native toolbar symbols, permission presentation, and shared accessibility compatibility |
-| Shared settings primitives | `SettingsSupportViews.swift` | Headers, rows, loading, empty, and error states |
-| Controller details and identity | `ControllerViews.swift`, `OutputViews.swift` | Connected devices, identity selection, loading, failure, and retry |
-| Profiles and editor | `MappingViews.swift`, `ProfileEditorViews.swift` | Selection, drafts, assignments, save/conflict flow, and profile actions |
-| Mapping capture | `MappingCaptureViews.swift`, `KeyboardCaptureViews.swift` | Controller and keyboard capture plus axis adjustment |
-| Presentation state | `Runtime/State.swift`, `Runtime/SupportState.swift` | Loading, permission, input, compatibility, mutation, diagnostics, and conflict state |
-| Service adapter | `Runtime/Gateway.swift` | Typed `ApplicationServiceClient` calls and stable presentation errors |
+| App lifecycle and status item | `App/Presentation/MenuBar/Coordinator.swift` | AppKit activation, status menu, and termination only |
+| Settings window lifecycle | `App/Presentation/Settings/WindowController.swift` | One reusable window, toolbar selection, geometry persistence, and pane activation |
+| Settings panes and access summary | `App/Presentation/Settings/Shell.swift` | Pane navigation, native toolbar symbols, permission presentation, and shared accessibility compatibility |
+| Shared settings primitives | `App/Presentation/Settings/Support.swift` | Headers, rows, loading, empty, and error states |
+| Controller details and identity | `App/Presentation/Controllers/{ControllerViews,OutputViews}.swift` | Connected devices, identity selection, loading, failure, and retry |
+| Profiles and editor | `App/Presentation/Profiles/{MappingViews,ProfileEditorViews}.swift` | Selection, drafts, assignments, save/conflict flow, and profile actions |
+| Mapping capture | `App/Presentation/Profiles/MappingCaptureViews.swift`, `App/Presentation/InputCapture/KeyboardCaptureViews.swift` | Controller and keyboard capture plus axis adjustment |
+| Presentation state | `App/Presentation/Runtime/{State,SupportState}.swift` | Loading, permission, input, compatibility, mutation, diagnostics, and conflict state |
+| Service adapter | `App/Presentation/Runtime/Gateway.swift` | Typed `ApplicationServiceClient` calls and stable presentation errors |
 
 Add a new file only for a focused, independently testable capability. Keep related helpers together
 rather than splitting them by individual control or visual role.
@@ -156,7 +157,6 @@ Run the repository gates relevant to the change:
 ./scripts/ojd check profiles
 ./scripts/ojd check scripts
 ./scripts/ojd check swift-structure
-./scripts/ojd test scripts
 ./scripts/ojd lint
 ./scripts/ojd check driverkit
 swift test

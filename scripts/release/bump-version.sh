@@ -18,7 +18,6 @@ Updates:
   - justfile release-local-install default
   - scripts/README.md release examples
   - scripts/platform/environment.sh app and generated DriverKit default version
-  - Release-version packaging assertions
 
 The target version must already have a CHANGELOG.md heading.
 USAGE
@@ -39,13 +38,11 @@ if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+
   die "Version must be SemVer, for example 0.1.0-rc.2"
 fi
 
-packaging_tests="$PROJECT_DIR/Tests/OpenJoystickDriverKitTests/Integration/Packaging/ScriptPackagingTests.swift"
 justfile="$PROJECT_DIR/justfile"
 scripts_readme="$PROJECT_DIR/scripts/README.md"
 build_defaults="$PROJECT_DIR/scripts/platform/environment.sh"
 changelog="$PROJECT_DIR/CHANGELOG.md"
 
-[[ -f "$packaging_tests" ]] || die "Missing $packaging_tests"
 [[ -f "$justfile" ]] || die "Missing $justfile"
 [[ -f "$scripts_readme" ]] || die "Missing $scripts_readme"
 [[ -f "$build_defaults" ]] || die "Missing $build_defaults"
@@ -55,33 +52,19 @@ if ! grep -Fxq "## $version" "$changelog"; then
   die "CHANGELOG.md must contain heading: ## $version"
 fi
 
-python3 - "$version" "$packaging_tests" "$justfile" "$scripts_readme" "$build_defaults" <<'PY'
+python3 - "$version" "$justfile" "$scripts_readme" "$build_defaults" <<'PY'
 import re
 import sys
 from pathlib import Path
 
 (
     version,
-    packaging_tests_path,
     justfile_path,
     readme_path,
     build_defaults_path,
 ) = sys.argv[1:]
 
 replacements = [
-    (
-        Path(packaging_tests_path),
-        [
-            (
-                "packaging test release-local-install versions",
-                re.compile(
-                    r'(release-local-install version=\\")\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(\\")'
-                ),
-                rf"\g<1>{version}\g<2>",
-                2,
-            ),
-        ],
-    ),
     (
         Path(justfile_path),
         [

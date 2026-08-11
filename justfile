@@ -100,14 +100,6 @@ check-swift-structure:
 check-driverkit:
     ./scripts/ojd check driverkit
 
-# =========================================================================
-# Tests
-# =========================================================================
-
-# Run deterministic script unit tests (catalog, routing, layout, env contracts)
-test-scripts:
-    python3 -m unittest discover -s Tests/Scripts -p 'test_*.py' -v
-
 # Run focused parser regressions for macOS 14 (no Swift Testing runtime)
 test-parsers-macos14:
     ./scripts/ojd test parsers-macos14

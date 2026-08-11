@@ -37,7 +37,6 @@ Run the checks relevant to the change. The standard repository gates are:
 ./scripts/ojd check profiles
 ./scripts/ojd check scripts
 ./scripts/ojd check swift-structure
-./scripts/ojd test scripts
 ./scripts/ojd lint
 ./scripts/ojd check driverkit
 swift test

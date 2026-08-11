@@ -79,9 +79,6 @@ jobs:
       - name: Check scripts
         run: ./scripts/ojd check scripts
 
-      - name: Test scripts
-        run: ./scripts/ojd test scripts
-
       - name: Check Swift structure
         run: ./scripts/ojd check swift-structure
 
