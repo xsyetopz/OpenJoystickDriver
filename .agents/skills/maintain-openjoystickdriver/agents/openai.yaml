@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maintain OpenJoystickDriver"
+  short_description: "Maintain product behavior and boundaries"
+  default_prompt: "Use $maintain-openjoystickdriver to repair existing OpenJoystickDriver product behavior while preserving package and generated boundaries."
