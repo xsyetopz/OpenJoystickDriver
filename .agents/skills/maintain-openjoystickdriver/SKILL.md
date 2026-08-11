@@ -1,7 +1,7 @@
 ---
 name: maintain-openjoystickdriver
 description: >
-  Use when implementing or repairing OpenJoystickDriver Swift 6/macOS product behavior, shared Kit/app/relay boundaries, controller catalog inputs, or DriverKit generator inputs; not for topology-only moves, product-test validation, UI design, generated .build output, or script tests.
+  Use when implementing or repairing OpenJoystickDriver Swift 6/macOS product behavior, shared Kit/app/relay boundaries, controller behavior that consumes canonical catalog data, or DriverKit generator inputs; not for controller catalog authoring/regeneration, physical diagnosis, topology-only moves, product-test validation, UI design, generated .build output, or script tests.
 ---
 
 # Maintain OpenJoystickDriver
@@ -16,12 +16,13 @@ product-test evidence, and Apple UI design. `AGENTS.md` remains authoritative.
 - Adding or repairing Swift behavior in an existing `Sources/` capability and
   its public/internal product seam.
 - Changing controller discovery, HID, protocol parsers, output backends,
-  remapping, runtime/RPC, diagnostics, status, or controller catalog inputs
-  without changing their ownership topology.
+  remapping, runtime/RPC, diagnostics, status, or product behavior that
+  consumes existing controller catalog inputs without changing ownership
+  topology.
 - Changing shared Kit/app/relay contracts, permissions, service boundaries, or
   `OpenJoystickDriverRelay` and `DriverKitGenerator` authored inputs.
-- Updating canonical generator inputs or controller overrides while preserving
-  generated ownership and package dependency direction.
+- Changing DriverKit generator behavior or other generated-project inputs while
+  preserving generated ownership and package dependency direction.
 
 ## When NOT to use
 
@@ -32,6 +33,10 @@ product-test evidence, and Apple UI design. `AGENTS.md` remains authoritative.
   audit; use `$organize-openjoystickdriver`.
 - A test-only task, test gate, parser harness, or validation report; use
   `$test-openjoystickdriver`.
+- Authoring, importing, or regenerating controller catalog records, lock entries,
+  or overrides; use `$add-controller-openjoystickdriver`.
+- Capturing or diagnosing physical controller discovery, packets, reconnect, or
+  rumble/LED behavior; use `$debug-controller-openjoystickdriver`.
 - A menu-bar/settings/accessibility/user-flow task; use
   `$design-openjoystickdriver` and `$apple-design-hig`.
 - Direct edits to `.build/driverkit/generated/`, other build output, or a
@@ -53,8 +58,9 @@ product-test evidence, and Apple UI design. `AGENTS.md` remains authoritative.
 - Preserve Swift 6.2 strict concurrency, SwiftLint, entitlements, resources,
   RPC contracts, and the generated DriverKit boundary. Never hand-edit
   `.build/driverkit/generated/`.
-- Treat controller records as generated runtime data. For catalog work, update
-  locked sources or overrides and use the catalog generator.
+- Treat controller records as generated runtime data. Route catalog authoring to
+  `$add-controller-openjoystickdriver`; update locked sources or overrides and
+  use the catalog generator there.
 - Do not broaden signing, DriverKit, permission, or application-service changes
   without focused validation and an explicit risk note.
 
@@ -80,6 +86,8 @@ product-test evidence, and Apple UI design. `AGENTS.md` remains authoritative.
 | Need | Load |
 |---|---|
 | Existing package, import, and generated boundaries | `references/boundaries.md` |
+| Controller catalog authoring and deterministic record generation | `$add-controller-openjoystickdriver` |
+| Physical controller discovery, packet, and hardware evidence | `$debug-controller-openjoystickdriver` |
 | Source/test topology or ownership change | `$organize-openjoystickdriver` |
 | Product-only tests and executable gates | `$test-openjoystickdriver` |
 | macOS UI, accessibility, and visual proof | `$design-openjoystickdriver`, `$apple-design-hig`, `$skizzles:design-proof-gate` |
@@ -114,6 +122,8 @@ Then route product evidence to `$test-openjoystickdriver`, topology audits to
 ## Related skills
 
 - `$organize-openjoystickdriver` — source/test topology and ownership changes.
+- `$add-controller-openjoystickdriver` — controller catalog authoring and imports.
+- `$debug-controller-openjoystickdriver` — physical controller diagnosis and evidence.
 - `$test-openjoystickdriver` — product-only behavior tests and repository gates.
 - `$design-openjoystickdriver` — Apple menu-bar, settings, and accessibility work.
 - `$apple-design-hig` — Apple platform interaction and accessibility review.

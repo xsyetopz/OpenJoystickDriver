@@ -2,13 +2,15 @@
   "positive": [
     "Repair an existing HID parser behavior without changing its owner.",
     "Change a Kit protocol contract while preserving the app boundary.",
-    "Update a controller catalog input and regenerate the canonical record.",
+    "Repair product behavior that consumes an existing controller catalog record.",
     "Change authored DriverKit relay configuration without editing .build output.",
     "Repair an existing RPC or remapping behavior at its current package seam."
   ],
   "negative": [
     "Move Sources and matching Tests into a new capability directory.",
     "Add a product-only behavior test and run the repository gates.",
+    "Author or regenerate a controller catalog record from a lockfile or override.",
+    "Capture live controller packets or diagnose reconnect and rumble behavior.",
     "Design the macOS menu-bar settings flow and accessibility states.",
     "Design an unrelated Swift package with no OpenJoystickDriver files.",
     "Edit generated .build/driverkit/generated files directly.",

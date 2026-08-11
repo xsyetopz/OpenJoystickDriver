@@ -2,7 +2,8 @@
 name: test-openjoystickdriver
 description: >
   Use when proving OpenJoystickDriver product behavior through Swift Sources,
-  matching Tests, parser regressions, and repository validation; not for script
+  matching Tests, parser regressions, and repository validation; not for
+  controller catalog authoring, live physical-controller diagnosis, script
   fixtures, prose/source inspection, UI design, topology ownership, or unrelated
   repositories.
 ---
@@ -35,6 +36,10 @@ product-only test rule and validation sequence into a repeatable contract.
 - Designing or relocating capability ownership. Route shared repository
   boundaries to `$maintain-openjoystickdriver` and topology work to
   `$organize-openjoystickdriver`.
+- Authoring, importing, or regenerating controller catalog records, lock entries,
+  or overrides; route to `$add-controller-openjoystickdriver`.
+- Capturing or diagnosing live controller discovery, packets, reconnect, or
+  rumble/LED behavior; route to `$debug-controller-openjoystickdriver`.
 - Designing menu-bar/settings UI or visual/accessibility proof. Route UI work
   to `$design-openjoystickdriver` and use `$apple-design-hig` for Apple HIG
   review.
@@ -92,6 +97,8 @@ product-only test rule and validation sequence into a repeatable contract.
 | Need | Load |
 |---|---|
 | Focused tests, parser harness, gate order, and recovery | [`references/validation.md`](references/validation.md) |
+| Controller catalog authoring and deterministic record generation | `$add-controller-openjoystickdriver` |
+| Physical controller discovery, packet, and hardware evidence | `$debug-controller-openjoystickdriver` |
 | Canonical source/test ownership and shared repository boundaries | `$maintain-openjoystickdriver` |
 | Topology moves, splits, merges, or architecture audit | `$organize-openjoystickdriver`, `$architecture-design`, `$architecture-enforce` |
 | Menu-bar/settings UI, interaction, accessibility, and visual proof | `$design-openjoystickdriver`, `$apple-design-hig`, `$skizzles:design-proof-gate` |
@@ -141,6 +148,8 @@ what was unavailable instead of substituting source-text assertions.
 
 - `$maintain-openjoystickdriver` — shared product boundaries and implementation
   ownership.
+- `$add-controller-openjoystickdriver` — controller catalog authoring and imports.
+- `$debug-controller-openjoystickdriver` — physical controller diagnosis and evidence.
 - `$organize-openjoystickdriver` — source/test topology ownership and migration.
 - `$design-openjoystickdriver` — product UI implementation and proof.
 - `$apple-design-hig` — Apple interaction, accessibility, and platform review.
