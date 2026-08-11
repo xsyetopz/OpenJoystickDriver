@@ -1,6 +1,47 @@
 import Foundation
 import ServiceManagement
 
+enum ApplicationServiceRegistrationStatus: Sendable, Equatable {
+  case notRegistered
+  case enabled
+  case requiresApproval
+  case notFound
+}
+
+protocol ApplicationServiceRegistration: Sendable {
+  var status: ApplicationServiceRegistrationStatus { get }
+
+  func register() throws
+  func unregister() throws
+}
+
+private struct MainAppServiceRegistration: ApplicationServiceRegistration {
+  var status: ApplicationServiceRegistrationStatus {
+    guard #available(macOS 13.0, *) else { return .notFound }
+    switch SMAppService.mainApp.status {
+    case .notRegistered: return .notRegistered
+    case .enabled: return .enabled
+    case .requiresApproval: return .requiresApproval
+    case .notFound: return .notFound
+    @unknown default: return .notFound
+    }
+  }
+
+  func register() throws {
+    guard #available(macOS 13.0, *) else {
+      throw ApplicationServiceManager.ManagerError.unsupportedOperatingSystem
+    }
+    try SMAppService.mainApp.register()
+  }
+
+  func unregister() throws {
+    guard #available(macOS 13.0, *) else {
+      throw ApplicationServiceManager.ManagerError.unsupportedOperatingSystem
+    }
+    try SMAppService.mainApp.unregister()
+  }
+}
+
 /// Manages the main application's login-item registration.
 public enum ApplicationServiceManager: Sendable {
   public static let label = "com.openjoystickdriver"
@@ -24,11 +65,9 @@ public enum ApplicationServiceManager: Sendable {
     ).appendingPathComponent("OpenJoystickDriver", isDirectory: false)
   }
 
-  @available(macOS 13.0, *) private static var mainAppService: SMAppService { .mainApp }
-
   public static var isInstalled: Bool {
     guard #available(macOS 13.0, *) else { return false }
-    return mainAppService.status != .notRegistered
+    return MainAppServiceRegistration().status != .notRegistered
   }
 
   /// Registers the main application itself to launch on subsequent logins.
@@ -44,15 +83,23 @@ public enum ApplicationServiceManager: Sendable {
   }
 
   private static func registerMainApp() throws {
+    try registerMainApp(using: MainAppServiceRegistration())
+  }
+
+  static func registerMainApp(using service: any ApplicationServiceRegistration) throws {
     guard #available(macOS 13.0, *) else { throw ManagerError.unsupportedOperatingSystem }
-    if mainAppService.status == .notRegistered { try mainAppService.register() }
+    if service.status == .notRegistered { try service.register() }
     log("[ApplicationServiceManager] Main app registered for login")
   }
 
   public static func uninstall() throws {
     UserDefaults.standard.set(true, forKey: launchAtLoginOptOutDefaultsKey)
+    try unregisterMainApp(using: MainAppServiceRegistration())
+  }
+
+  private static func unregisterMainApp(using service: any ApplicationServiceRegistration) throws {
     guard #available(macOS 13.0, *) else { throw ManagerError.unsupportedOperatingSystem }
-    if mainAppService.status != .notRegistered { try mainAppService.unregister() }
+    if service.status != .notRegistered { try service.unregister() }
     log("[ApplicationServiceManager] Main app removed from login items")
   }
 
