@@ -11,7 +11,7 @@ OpenJoystickDriver provides a bounded soak diagnostic for the installed applicat
   --footprint-limit-mib 512
 ```
 
-Use `--json` for automation. The Advanced view exposes the same duration, interval, RSS limit, footprint limit, run, and stop controls.
+Use `--json` for automation.
 
 ## Measurements
 
@@ -33,4 +33,9 @@ The foreground-consumer monitor owns one locked, process-lifetime `IOHIDManager`
 
 ## Validation
 
-Run the diagnostic against the signed installed build, not only `.build/debug`. Confirm the sampled PID matches `ApplicationServiceManager.health()`, keep a controller active for the requested window, and record the verdict and high-water limits. Reinstall or restart the application after changing its binary before collecting evidence.
+Run the diagnostic against the signed installed build, not only `.build/debug`.
+
+- Confirm that the sampled PID matches `ApplicationServiceManager.health()`.
+- Keep a controller active for the requested window.
+- Record the verdict and high-water limits.
+- Reinstall or restart the application after changing its binary before collecting evidence.

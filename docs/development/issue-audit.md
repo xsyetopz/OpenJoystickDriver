@@ -15,11 +15,10 @@ Dependency baseline:
   `564a77c050561c286ba81198ad56518dad069c17`. The branch is intentionally
   mutable while its required HID host-report allowlist remains unreleased.
 - [Linux `xpad.c`](https://github.com/torvalds/linux/blob/44696aa3a489d2baf58efa61b37833f100072bee/drivers/input/joystick/xpad.c),
-  `hid-steam.c`, and `hid-ids.h` remain byte-identical between
-  the pinned commit `44696aa3a489d2baf58efa61b37833f100072bee` and upstream
-  master observed on 2026-07-23. The pinned source remains the catalog import
-  authority; current upstream is a verification reference, not a reason to
-  regenerate the catalog.
+  `hid-steam.c`, and `hid-ids.h` were byte-identical between pinned commit
+  `44696aa3a489d2baf58efa61b37833f100072bee` and upstream master, as observed
+  on 2026-07-23. The pinned source is the catalog import authority; upstream is
+  a verification reference and does not require catalog regeneration.
 
 ## Evidence matrix
 
@@ -34,7 +33,7 @@ Dependency baseline:
 | [#19 Wolverine V2](https://github.com/xsyetopz/OpenJoystickDriver/issues/19) | `1532:0A29` selects GIP on interface 0 endpoints `0x81`/`0x01`, then proves input decoding, reconnect, indicator, and rumble. | Linux `xpad.c` explicitly classifies `1532:0A29` as Xbox One/GIP. OJD pins the locally captured interrupt endpoints; the announce packet proves GIP classification. Unsupported Share, paddles, forced configuration, and delay claims are intentionally absent. | **Partial: classification and endpoints implemented.** | Complete the [Wolverine V2 procedure](../testing/razer/wolverine-v2.md) on hardware. |
 | [#21 Nacon Revolution X Pro](https://github.com/xsyetopz/OpenJoystickDriver/issues/21) | `3285:0634` selects GIP on interface 0 endpoints `0x87`/`0x07`, stays stable through continuous input, and supports the observed controls without a synthetic host status packet. | A local override and generated record select GIP/xboxOne with the captured endpoints and profile-scoped keep-alive disabled. GIP framing accepts split, stacked, and base-128 length frames and builds requested ACKs from the Linux/xone message layout; chunk payload reassembly remains out of scope. Provenance remains unverified. | **Partial: profile and protocol handling implemented; hardware unverified.** | Run the [Nacon Revolution X Pro procedure](../testing/nacon-revolution-x.md), especially reconnect, continuous input, and proof that no host `0x03` is emitted. |
 | [#22 bDeviceClass=0 discovery](https://github.com/xsyetopz/OpenJoystickDriver/issues/22) | Controllers with `bDeviceClass = 0` that declare vendor-specific class only at the interface level are discovered and matched to their catalog profile. | Both `USBDetection` and `USBControllerScanner` now fall back to interface-level class checks when `bDeviceClass` is 0. The fallback enumerates all USB devices, opens the configuration descriptor, and checks for `bInterfaceClass == 0xFF` before admitting the device. `USBDescriptorTransportResolver` already used the same interface-level pattern. | **Code-resolved, hardware unverified.** | Test with a `bDeviceClass=0` controller (e.g. ZD Ultimate Legend `413D:2104`) and confirm discovery without manual intervention. |
-| DriverKit to SwifterKit | The manual DriverKit project is absent; generation is deterministic; host and extension policies are exact; the extension builds for supported architectures; signed activation and relay delivery pass without replacing the consumer gamepad. | SwifterKit owns generation and host transport at reviewed revision `564a77c`. Its generated HID project links only HID/base DriverKit. The signed version-2 dext is activated on macOS 15.7.7 and the kernel reports `start(...) ok`. Normal controller events reach only `CompatibilityOutputDispatcher`; DriverKit is diagnostic-only. Self-test independently probes Compatibility with neutral reports and derives relay strictness from the signed host entitlement. | **Migration and signed dext runtime resolved; current exact entitlement path is enforced.** | Run the installed relay self-test with a host profile containing only `com.openjoystickdriver.VirtualHIDDevice`. |
+| DriverKit to SwifterKit | The manual DriverKit project is absent; generation is deterministic; host and extension policies are exact; the extension builds for supported architectures; signed activation and relay delivery pass without replacing the consumer gamepad. | SwifterKit owns generation and host transport at reviewed revision `564a77c`.<br><br>Its generated HID project links only HID/base DriverKit. The signed version-2 dext is activated on macOS 15.7.7, and the kernel reports `start(...) ok`.<br><br>Normal controller events reach only `CompatibilityOutputDispatcher`; DriverKit is diagnostic-only. Self-test independently probes Compatibility with neutral reports and derives relay strictness from the signed host entitlement. | **Migration and signed dext runtime resolved; current exact entitlement path is enforced.** | Run the installed relay self-test with a host profile containing only `com.openjoystickdriver.VirtualHIDDevice`. |
 
 ## Code-level gates
 
@@ -60,9 +59,8 @@ Focused issue filters also passed: #8 (17 tests), #9 (4), #10 (2), #11 (4),
 
 # 14 (1), #18 (4), #19 (1), #21 (record, probe, and GIP parser tests), and #22
 
-These filters prove the recorded parser,
-catalog, admission, and startup contracts; they do not replace the hardware
-procedures named in the matrix.
+These filters prove the recorded parser, catalog, admission, and startup
+contracts; they do not replace the hardware procedures named in the matrix.
 
 ## Installed runtime evidence
 
@@ -79,6 +77,8 @@ macOS 15.7.7. The observed runtime state was:
   Compatibility verdict as passed, reported DriverKit as optional and
   inconclusive, and exited successfully.
 
+### Superseded signing evidence
+
 Earlier installed evidence recorded a host that omitted
 `com.apple.developer.driverkit.userclient-access` while its profile contained a
 malformed legacy value. Current signing tooling rejects that profile and requires
@@ -91,7 +91,9 @@ the exact single-relay grant. Reinstall corrected profiles and rerun:
 ./scripts/ojd build install dev
 ```
 
-The Developer ID profile also remains unsuitable for release because its
-embedded certificate does not match the installed Developer ID Application
-identity. Development readiness and the installed evidence above do not prove
-release signing or notarization.
+### Remaining release blocker
+
+The Developer ID profile remains unsuitable for release because its embedded
+certificate does not match the installed Developer ID Application identity.
+Development readiness and the installed evidence above do not prove release
+signing or notarization.

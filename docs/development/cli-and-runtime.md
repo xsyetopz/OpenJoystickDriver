@@ -1,9 +1,10 @@
 # CLI and application runtime
 
-The signed application bundle is a thin, headless host for the in-process
-controller runtime. With `--headless`, the same executable provides the low-level
-CLI. Both paths use the same `OpenJoystickDriverKit` contracts and authenticated
-local RPC endpoint. The app host does not shell out to the CLI.
+The signed application bundle provides the menu-bar and settings interface for the
+in-process controller runtime. With `--headless`, the same executable provides the
+expert CLI for automation, advanced mappings, and diagnostics. The app host does
+not shell out to the CLI. See [Architecture](architecture.md) for the shared
+contracts, local-RPC boundary, and process lifecycle.
 
 | Capability | Shared owner |
 | --- | --- |
@@ -17,21 +18,22 @@ local RPC endpoint. The app host does not shell out to the CLI.
 
 ## Application host
 
-Launching `OpenJoystickDriver.app` starts `ApplicationServiceRuntime` directly
-and keeps the process alive on the main dispatch queue. It has no status item,
-popover, custom panel, or menu-specific state. The app remains the single
-signed TCC and DriverKit host. Unless the user opted out,
-`SMAppService.mainApp` registration is still performed on first launch.
+Launching `OpenJoystickDriver.app` starts `ApplicationServiceRuntime` once, then
+installs the AppKit status-item menu and reusable settings window facade. See
+[Architecture](architecture.md) for host identity, socket ownership, and login
+registration.
 
 ## CLI
 
-The installed `OpenJoystickDriver` CLI is the supported user interface for control
-and diagnostics. Repository development, build, validation, and release tasks
-use the separate maintainer command, `./scripts/ojd`. Direct use of
-`OpenJoystickDriverHIDTool` is internal and supported only for focused hardware
-investigation.
+The installed `OpenJoystickDriver --headless` CLI remains the supported expert
+interface for automation, complete mapping operations, streaming input, and
+diagnostics. The menu-bar/settings facade is the supported consumer interface for
+readiness, permissions, connected controllers, profiles, and ordinary remapping.
+Repository development, build, validation, and release tasks use the separate
+maintainer command, `./scripts/ojd`. Direct use of `OpenJoystickDriverHIDTool` is
+internal and supported only for focused hardware investigation.
 
-Headless commands preserve these command families:
+The CLI command families are:
 
 ```text
 status [--json]

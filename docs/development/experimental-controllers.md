@@ -1,22 +1,8 @@
 # Experimental controller status
 
-Experimental means that production parser or output code exists but accepted hardware evidence is incomplete. Do not set `provenance.verified` to `true` because a fixture passes.
+Experimental entries have implementation work but incomplete accepted hardware evidence. Do not set `provenance.verified` to `true` because a fixture passes.
 
-## Validation
-
-Run these checks after parser or record changes:
-
-```bash
-swift build
-swift test
-./scripts/ojd test parsers-macos14
-./scripts/ojd check profiles
-./scripts/ojd check scripts
-git diff --check
-```
-
-The macOS 14 harness and Swift test targets share the maintained compatibility
-floor for parser and runtime behavior.
+For parser or record changes, run the parser validation gates in `AGENTS.md`.
 
 ## DualSense
 
@@ -54,7 +40,7 @@ Implemented:
 - left and right trackpad haptics
 - home-button LED brightness
 
-The wired report for issue #8 reached macOS as lizard-mode keyboard input while the old gamepad-only monitor found no device. Profile-backed discovery now covers that case. Run [the Steam Controller request](../testing/steam-controller.md) to check the new path.
+The issue #8 wired report reaches macOS as lizard-mode keyboard input; gamepad-only monitoring does not find it. Profile-backed discovery covers that case. Run [the Steam Controller request](../testing/steam-controller.md) to check it.
 
 ## Switch Pro
 
@@ -86,7 +72,7 @@ The bundled GIP record replaces the ineffective Generic HID fallback for `1532:0
 
 ## Microsoft Xbox One Controller (model 1537)
 
-Reporter packet evidence from an IOUSBHost harness verifies the GIP handshake, player LED, every input including Guide, and rumble for `045E:02D1`. The record therefore carries the observed `0x81`/`0x01` endpoints, configuration-1-before-claim requirement, and verified provenance. OJD's libusb/SwiftUSB device-open path has not passed on this hardware and remains pending the [model 1537 regression test](../testing/xbox/1537.md) after the upstream lifetime fix.
+Reporter packet evidence from an IOUSBHost harness verifies the GIP handshake, player LED, every input including Guide, and rumble for `045E:02D1`. The record carries the observed `0x81`/`0x01` endpoints, configuration-1-before-claim requirement, and verified provenance. OJD's libusb/SwiftUSB device-open path has not passed on this hardware. It remains pending the [model 1537 regression test](../testing/xbox/1537.md) after the upstream lifetime fix.
 
 ## Razer Wolverine V2
 

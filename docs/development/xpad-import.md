@@ -15,9 +15,7 @@ Rewrite it after an intentional lock or override change:
     ./scripts/ojd catalog regenerate --write
     ./scripts/ojd check profiles
 
-The generator downloads every locked Linux source, verifies each SHA-256, parses the
-complete xpad device/initialization tables and supported HID registration tables, normalizes supported rows,
-applies explicit local overrides, and writes deterministic VID/PID paths.
+The generator downloads every locked Linux source and verifies each SHA-256. It parses the complete xpad device/initialization tables and supported HID registration tables, normalizes supported rows, applies explicit local overrides, and writes deterministic VID/PID paths.
 
 ## Translation
 
@@ -32,7 +30,7 @@ Supported Linux inputs map as follows:
 
 Protocol-default endpoints and startup packets are omitted. Imported records use
 linux-xpad.c provenance and verified=false. Unknown types, flags, mappings, or
-startup macros are skipped with an explicit count; partial source-table parsing
+startup macros are skipped with an explicit count. Partial source-table parsing
 fails generation.
 
 ## Local source overrides
@@ -62,8 +60,7 @@ revision without changing runtime data:
       --vid 0x1532 --pid 0x0a29 --output-dir /tmp/ojd-xpad
 
 Its manifest belongs only to the temporary inspection output. The runtime tree
-is reproduced from ControllerSources.lock.json and contains no monolithic
-manifest or index.
+is reproduced from ControllerSources.lock.json.
 
 Linux recognition proves numeric identity and Linux driver classification. It
 does not prove macOS permissions, physical USB descriptors, Apple framework

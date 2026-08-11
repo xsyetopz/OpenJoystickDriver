@@ -6,7 +6,7 @@ OJD reports each output capability with its evidence level.
 - `sourceBacked` means production code follows a named protocol source, but matching hardware has not passed the project test.
 - `unavailable` means the parser exposes no implementation.
 
-See the evidence in `controller output list`, `controller output list --json`, `status`, and redacted support reports. Generate device-specific checks with `controller output plan <vid> <pid>`.
+Inspect reported capability levels with `controller output list`, `controller output list --json`, `status`, and redacted support reports. Generate a device-specific procedure with `controller output plan <vid> <pid>`.
 
 ## Implemented output
 
@@ -38,4 +38,4 @@ Independent HD-rumble actuators at the Linux default 160/320 Hz frequencies and 
 
 Independent left and right trackpad haptics through feature command `0x8F`, plus home-button brightness through setting 45. Haptic gain maps to -24 through +6 dB. Long effects are split into bounded pulses. Wireless output stops when no logical controller is connected.
 
-Xbox Adaptive Joystick and Generic HID expose no physical output. Add source-backed report construction and tests before advertising output for either parser.
+Xbox Adaptive Joystick and Generic HID expose no physical output. Before advertising output for either parser, add source-backed report construction and tests.

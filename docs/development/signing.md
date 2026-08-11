@@ -42,10 +42,8 @@ secrets to contributors or end users.
 ### 1. Obtain entitlement access
 
 Before creating profiles, the team's Account Holder must request or enable the
-capabilities. Apple documents DriverKit entitlement requests at
-[Requesting Entitlements for DriverKit Development](https://developer.apple.com/documentation/driverkit/requesting-entitlements-for-driverkit-development)
-and managed capability requests at
-[Capability Requests](https://developer.apple.com/help/account/capabilities/capability-requests).
+capabilities through [Requesting Entitlements for DriverKit Development](https://developer.apple.com/documentation/driverkit/requesting-entitlements-for-driverkit-development)
+and [Capability Requests](https://developer.apple.com/help/account/capabilities/capability-requests).
 
 The host App ID must authorize:
 
@@ -131,11 +129,10 @@ repository reads the embedded display name for `DEXT_BUILD_PROFILE`.
 ./scripts/ojd signing doctor
 ```
 
-`signing configure` generates `.env.dev`. It matches the certificate embedded in
-each profile to a Keychain identity, then reads the Team ID and profile name
-from the profiles.
+`signing configure` generates `.env.dev`. It matches each profile's embedded
+certificate to a Keychain identity, then reads the Team ID and profile name.
 
-Then build and install:
+Build and install:
 
 ```bash
 ./scripts/ojd build install dev

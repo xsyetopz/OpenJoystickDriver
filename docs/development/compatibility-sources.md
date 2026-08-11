@@ -1,6 +1,8 @@
 # Compatibility source notes
 
-These projects informed OJD architecture. They are evidence for design choices, not dependencies or support claims. Snapshots of the relevant SDL discussions live under `docs/external/sdl/`.
+These projects informed OJD architecture. They are not runtime dependencies or
+support evidence. Snapshots of the relevant SDL discussions live under
+`docs/external/sdl/`.
 
 ## Sources
 
@@ -22,7 +24,10 @@ Keeps Sony report parsing separate from the virtual Xbox-facing surface. OJD use
 
 ### Gopher360
 
-Demonstrates that desktop keyboard or mouse translation is a separate product behavior. OJD does not synthesize desktop keyboard or mouse input. Its Accessibility request authorizes IOHIDUserDevice compatibility output.
+Demonstrates that desktop keyboard or mouse translation is a separate product behavior. OJD keeps
+that path in the CoreGraphics remapping sink. The Accessibility request authorizes
+`IOHIDUserDevice` compatibility output; CoreGraphics post-event access authorizes keyboard, mouse,
+pointer, and scroll events.
 
 ### Joypad OS
 
@@ -39,14 +44,14 @@ SDL mappings and HIDAPI code show how consumer identity affects naming, button o
 ## Architecture decisions
 
 1. A physical device has one input owner and one pipeline.
-2. Parsers emit normalized state; they do not choose a consumer identity.
-3. Compatibility profiles own virtual VID/PID, descriptors, mappings, and report formats.
-4. Physical output capabilities come from the active protocol parser.
-5. Unknown standard HID devices may use descriptor-driven input. Vendor protocols need records.
-6. The CLI and application runtime use the same application-service and diagnostic services.
-7. Duplicate physical and virtual devices are treated as an ownership bug, not a mapping fix.
-8. Hardware claims require observed evidence for the named path.
+2. Parsers emit normalized state; compatibility profiles choose consumer identity.
+3. Physical output capabilities come from the active protocol parser.
+4. Unknown standard HID devices may use descriptor-driven input; vendor protocols need records.
+5. Duplicate physical and virtual devices are an ownership bug, not a mapping fix.
+6. Hardware claims require observed evidence for the named path.
 
 ## Gates for new work
 
-Before adding a transport or backend, record the device lifecycle, report framing, ownership rules, and failure behavior. Before adding a spoof identity, record the exact descriptor, report bytes, and consumer that needs it. Before advertising output, add protocol fixtures and a hardware plan.
+- Before adding a transport or backend, record the device lifecycle, report framing, ownership rules, and failure behavior.
+- Before adding a spoof identity, record the exact descriptor, report bytes, and consumer that needs it.
+- Before advertising output, add protocol fixtures and a hardware plan.
