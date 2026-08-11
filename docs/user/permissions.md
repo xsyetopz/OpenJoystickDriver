@@ -1,37 +1,57 @@
 # Permissions
 
-OpenJoystickDriver uses one privacy identity: `OpenJoystickDriver.app`. No nested executable needs to be located or added manually.
+OpenJoystickDriver uses separate macOS permissions for reading controllers, publishing a virtual
+controller, and sending keyboard or pointer events.
 
-## Input monitoring
+## Input Monitoring
 
-This permission lets the app read reports from physical controllers.
+Input Monitoring lets the app read reports from physical controllers.
 
 ```text
 System Settings > Privacy & Security > Input Monitoring
 ```
 
-## Accessibility
+## Controller publication
 
-The compatibility virtual-gamepad backend uses `IOHIDUserDevice`. macOS authorizes HID publication through the post-event permission shown as Accessibility.
+The virtual controller is published through the permission macOS lists under Accessibility.
 
 ```text
 System Settings > Privacy & Security > Accessibility
 ```
 
-This access publishes a virtual gamepad. OpenJoystickDriver does not inspect other applications' UI. It also does not synthesize keyboard or mouse actions.
+This permission is separate from the access used for keyboard and pointer output.
 
-Use the app's Request Access action once. The app requests any missing state and then reads the authoritative result. If macOS asks for a relaunch, quit and reopen OpenJoystickDriver.
+## Keyboard & pointer
 
-The CLI command `permissions status` gets both states from the running main app. It does not inherit the terminal's privacy identity.
+Profiles can send keyboard keys, mouse buttons, pointer movement, and scroll events to the frontmost
+app. macOS may list this access under Accessibility, but it is separate from controller publication.
+
+Use the **Keyboard & pointer** row in Overview when a profile needs these destinations. If access is
+still blocked, open:
+
+```text
+System Settings > Privacy & Security > Accessibility
+```
+
+## Request access
+
+Use the matching **Request…** action in Overview for Input Monitoring, controller publication, or
+Keyboard & pointer. The menu-bar **Request access…** action opens the same native macOS flow.
+
+If macOS asks for a relaunch, quit and reopen OpenJoystickDriver. The app checks the permission again
+after each request; a request result alone is not treated as approval.
 
 ## Other approvals
 
-Driver Extension approval installs or updates the optional generated DriverKit
-relay. The host app has a narrow DriverKit user-client allowlist for
-`com.openjoystickdriver.VirtualHIDDevice`; it does not request allow-any access.
-Login Item approval allows macOS 13 or later to start the main app at login.
-Neither approval grants Input Monitoring or Accessibility.
+macOS may also ask for:
+
+- **Driver Extension:** required to install or update the optional controller relay.
+- **Login Item:** allows macOS 13 or later to start the app at login.
+
+These approvals do not grant Input Monitoring, controller publication, or Keyboard & pointer access.
 
 ## Older alpha entries
 
-An older alpha may leave an `OpenJoystickDriverDaemon` registration or stale privacy row. Current builds do not execute that helper or manage its launchd registration. If System Settings offers a remove control for a stale entry, remove that entry manually; OJD never resets TCC.
+An older alpha may leave an `OpenJoystickDriverDaemon` entry or stale privacy row. Current builds do
+not use that helper or its launchd registration. If System Settings offers a remove control for the
+stale entry, remove it manually. OpenJoystickDriver does not reset macOS privacy records.

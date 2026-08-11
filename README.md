@@ -1,7 +1,7 @@
 # OpenJoystickDriver
 
 > [!WARNING]
-> All compiled 'releases' before 0.5.0-alpha.4 have been swooped due to [#23]([https://github.com/xsyetopz/OpenJoystickDriver/issues/](https://github.com/xsyetopz/OpenJoystickDriver/issues/23)). Please be patient (or compile a private version yourself) for `0.5.0-beta.1`. Thanks for your patience.
+> All compiled 'releases' before 0.5.0-alpha.4 have been swooped due to [#23](https://github.com/xsyetopz/OpenJoystickDriver/issues/23). Please be patient (or compile a private version yourself) for `0.5.0-beta.1`. Thanks for your patience.
 >
 > - Krystian, OJD's core maintainer.
 
@@ -28,7 +28,7 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
 
 ## Why OpenJoystickDriver
 
-OpenJoystickDriver normalizes physical controller input into virtual controller outputs that apps can understand. It provides compatibility modes for SDL, Apple GameController, Generic HID, and experimental Xbox HID targets, with common diagnostics and checks in one repo-controlled workflow.
+OpenJoystickDriver normalizes physical controller input into controller outputs that apps can understand. It provides compatibility modes for SDL, Apple GameController, Generic HID, and experimental Xbox HID targets, with common diagnostics and checks in one repo-controlled workflow.
 
 ## Status
 
@@ -40,14 +40,29 @@ deliberately does not publish a second consumer gamepad. Self-test reads the
 signed host entitlement. Relay delivery is required for an entitled host and
 reported as optional and inconclusive when the entitlement is absent.
 
+## Brand mark attribution
+
+The settings UI uses native SF Symbols and brand-referenced colors to identify
+Xbox and PlayStation protocol families; no brand image assets are bundled. Xbox
+and PlayStation marks and names remain the property of Microsoft and Sony
+Interactive Entertainment, respectively, and this project is not affiliated
+with or endorsed by either company. See [Microsoft Trademark and Brand
+Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks)
+and [PlayStation's copyright and trademark notice](https://www.playstation.com/en-us/legal/copyright-and-trademark-notice/).
+
 ## Quickstart
 
 1. Drag `OpenJoystickDriver.app` to `/Applications`.
 2. Open `OpenJoystickDriver.app`.
-3. The app intentionally has no visible UI. Start and inspect it with the installed bundle command below.
-4. Grant **Input Monitoring** and **Accessibility** to OpenJoystickDriver when macOS asks.
-5. Connect a supported controller.
-6. Run `controller state` or `controller watch` from the CLI to confirm buttons and sticks.
+3. Open the menu-bar item to review readiness and connected controllers. Choose `Settings…` (⌘,)
+   for Overview, Controllers, Profiles, and Debug.
+4. Grant **Input Monitoring** and **Accessibility** to OpenJoystickDriver when macOS asks. Use
+   the matching permission icon in the settings footer to start the native macOS flow. These
+   permissions enable physical controller input and controller output.
+5. If a profile sends keyboard, mouse, pointer, or scroll events, use the **Keyboard & pointer**
+   permission icon in the settings footer for its separate access check.
+6. Connect a supported controller, then choose **Open Profiles…** to create ordinary assignments and
+   adjust stick/trigger response. Use **Controllers…** or **Refresh** to update the menu-bar summary.
 
 Your target app should now see a compatible virtual controller.
 
@@ -84,7 +99,7 @@ To uninstall OpenJoystickDriver completely:
 
 | What you are trying to run | Recommended | Why |
 | --- | --- | --- |
-| Most games, Steam, emulators, SDL apps | Compatibility + `SDL 2/3` | Stable app-facing identity and mapping. |
+| Most games, Steam, emulators, SDL apps | Compatibility + `SDL2/3` | Stable app-facing identity and mapping. |
 | Native macOS apps using `GCController` | Compatibility + `Apple GameController` | Targets GameController.framework consumers. |
 | Apps that inspect HID descriptors | Compatibility + `Generic HID` | Descriptor-driven HID surface. |
 | A picky app expecting Microsoft HID | Compatibility + `Xbox 360 HID` or `Xbox One HID` | Experimental spoof identities for targeted testing. |

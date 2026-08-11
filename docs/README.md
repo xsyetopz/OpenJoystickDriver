@@ -23,6 +23,7 @@
 ## Develop and diagnose
 
 - [Architecture](development/architecture.md)
+- [Menu-bar and settings UI architecture](development/menu-bar-settings-architecture.md)
 - Generated DriverKit relay: run `./scripts/ojd driverkit generate` or
   `./scripts/ojd check driverkit`.
 - Repository command reference and supported command index: run `./scripts/ojd help`.

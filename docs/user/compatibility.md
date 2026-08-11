@@ -123,6 +123,6 @@ The normalized batch is delivered only to the active Compatibility `IOHIDUserDev
 
 Before marking a mapping verified, you must check the exact app and mode:
 
-1. SDL 2/3: `A2` and `A5` idle at zero, D-pad releases cleanly.
+1. SDL2/3: `A2` and `A5` idle at zero, D-pad releases cleanly.
 2. Parsec macOS to Windows: D-pad and A/B/X/Y stay stable on the Windows host.
 3. Rumble: app output report reaches the physical controller if the controller supports rumble.
