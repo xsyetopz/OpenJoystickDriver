@@ -7,12 +7,12 @@ import Foundation
 ///
 /// Report layout (15 bytes total):
 ///   Bytes 0–1  : Button bitmask, buttons 1–16 (LSB = button 1)
-///   Bytes 2–3  : Left Stick X  (Int16 LE, –32767…32767) — Usage: X  (0x30)
-///   Bytes 4–5  : Left Stick Y  (Int16 LE, –32767…32767) — Usage: Y  (0x31)
-///   Bytes 6–7  : Left Trigger  (Int16 LE, 0…32767)      — Usage: Z  (0x32)
-///   Bytes 8–9  : Right Stick X (Int16 LE, –32767…32767) — Usage: Rx (0x33)
-///   Bytes 10–11: Right Stick Y (Int16 LE, –32767…32767) — Usage: Ry (0x34)
-///   Bytes 12–13: Right Trigger (Int16 LE, 0…32767)      — Usage: Rz (0x35)
+///   Bytes 2–3  : Left Stick X  (Int16 LE, –32767...32767) — Usage: X  (0x30)
+///   Bytes 4–5  : Left Stick Y  (Int16 LE, –32767...32767) — Usage: Y  (0x31)
+///   Bytes 6–7  : Left Trigger  (Int16 LE, 0...32767)      — Usage: Z  (0x32)
+///   Bytes 8–9  : Right Stick X (Int16 LE, –32767...32767) — Usage: Rx (0x33)
+///   Bytes 10–11: Right Stick Y (Int16 LE, –32767...32767) — Usage: Ry (0x34)
+///   Bytes 12–13: Right Trigger (Int16 LE, 0...32767)      — Usage: Rz (0x35)
 ///   Byte  14   : Hat switch (low nibble, 1–8 = direction, 0 = neutral) + 4-bit pad
 public enum GamepadHIDDescriptor {
   // MARK: - Report descriptor bytes
@@ -109,7 +109,7 @@ public enum GamepadHIDDescriptor {
     0x91, 0x02,  // Output: Data, Variable, Absolute
 
     0xC0,  // End Collection (Physical)
-    0xC0,  // End Collection (Application)
+    0xC0  // End Collection (Application)
   ]
 
   // MARK: - Report size
