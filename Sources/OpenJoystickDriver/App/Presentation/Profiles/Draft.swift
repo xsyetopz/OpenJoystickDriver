@@ -105,8 +105,16 @@ enum RuntimeProfileDraftError: Error, LocalizedError, Equatable, Sendable {
 
   var errorDescription: String? {
     switch self {
-    case .bindingNotFound: return "The selected assignment is no longer available."
-    case .validation: return "Review the assignments before saving this profile."
+    case .bindingNotFound:
+      return OJDLocalized.string(
+        "error.selectedAssignmentMissing",
+        fallback: "The selected assignment is no longer available."
+      )
+    case .validation:
+      return OJDLocalized.string(
+        "error.reviewAssignmentsBeforeSave",
+        fallback: "Review the assignments before saving this profile."
+      )
     }
   }
 }

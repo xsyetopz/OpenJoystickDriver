@@ -87,6 +87,16 @@ build_app_bundle() {
   for bundle in "$BUILD_DIR"/OpenJoystickDriver_*.bundle; do
     [[ -d "$bundle" ]] && cp -R "$bundle" "$GUI_RESOURCES/"
   done
+  # SwiftUI's literal-based controls resolve Localizable.strings from the
+  # process main bundle. Keep the Kit bundle as the single source of truth,
+  # then mirror only its locale directories into the app bundle so AppKit,
+  # SwiftUI, and accessibility text share the same translations.
+  local kit_bundle="$GUI_RESOURCES/OpenJoystickDriver_OpenJoystickDriverKit.bundle"
+  if [[ -d "$kit_bundle/Contents/Resources" ]]; then
+    for localization in "$kit_bundle/Contents/Resources"/*.lproj; do
+      [[ -d "$localization" ]] && cp -R "$localization" "$GUI_RESOURCES/"
+    done
+  fi
   cp "$GUI_PROFILE" "$GUI_CONTENTS/embedded.provisionprofile"
   xattr -d com.apple.quarantine "$GUI_CONTENTS/embedded.provisionprofile" 2>/dev/null || true
 
@@ -113,6 +123,8 @@ build_app_bundle() {
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
     <string>10.15</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en-US</string>
     <key>LSUIElement</key>
     <true/>
     <key>NSHighResolutionCapable</key>

@@ -147,7 +147,14 @@ import OpenJoystickDriverKit
     guard generation == refreshGeneration else { return }
     loadState =
       loadedAny
-      ? .available : .unavailable(lastError ?? "OpenJoystickDriver isn’t available right now.")
+      ? .available
+      : .unavailable(
+        lastError
+          ?? OJDLocalized.string(
+            "error.notAvailable",
+            fallback: "OpenJoystickDriver isn’t available right now."
+          )
+      )
   }
 
   func refreshPermissions() async {
@@ -281,7 +288,13 @@ import OpenJoystickDriverKit
       let state = try await gateway.deviceInputState(for: selector)
       guard generation == inputGeneration else { return }
       guard let state else {
-        inputCaptureState = .unavailable(selector, "No controller input is available yet.")
+        inputCaptureState = .unavailable(
+          selector,
+          OJDLocalized.string(
+            "error.noControllerInput",
+            fallback: "No controller input is available yet."
+          )
+        )
         return
       }
       inputStates[selector] = state
@@ -339,7 +352,13 @@ import OpenJoystickDriverKit
     }
 
     guard generation == inputGeneration else { return }
-    inputCaptureState = .unavailable(selector, "No new controller control was detected.")
+    inputCaptureState = .unavailable(
+      selector,
+      OJDLocalized.string(
+        "error.noDetectedControl",
+        fallback: "No new controller control was detected."
+      )
+    )
   }
 
   func cancelInputCapture() {
@@ -559,7 +578,10 @@ import OpenJoystickDriverKit
 
   private func rejectMutation(_ operation: RuntimeMutationOperation) {
     lastMutationOperation = operation
-    let message = "Another profile action is already in progress."
+    let message = OJDLocalized.string(
+      "error.actionInProgress",
+      fallback: "Another profile action is already in progress."
+    )
     mutationState = .error(message)
     lastError = message
   }

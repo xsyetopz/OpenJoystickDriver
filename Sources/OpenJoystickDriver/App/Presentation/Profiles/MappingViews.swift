@@ -34,17 +34,24 @@
         }
       }.sheet(isPresented: $isCreatingProfile) {
         ProfileNameSheet(
-          title: "New profile",
-          initialName: "My controller",
+          title: OJDLocalized.string("profiles.new", fallback: "New profile"),
+          initialName: OJDLocalized.string("profiles.defaultName", fallback: "My controller"),
           devices: connectedDevices
         ) { name, device in createProfile(named: name, for: device) }
       }.alert(item: $activeAlert) { alert in
         switch alert {
         case .delete(let id):
           Alert(
-            title: Text("Delete profile?"),
-            message: Text("This removes the profile from OpenJoystickDriver."),
-            primaryButton: .destructive(Text("Delete")) {
+            title: Text(OJDLocalized.string("profiles.deleteTitle", fallback: "Delete profile?")),
+            message: Text(
+              OJDLocalized.string(
+                "profiles.deleteMessage",
+                fallback: "This removes the profile from OpenJoystickDriver."
+              )
+            ),
+            primaryButton: .destructive(
+              Text(OJDLocalized.string("common.delete", fallback: "Delete"))
+            ) {
               Task { @MainActor in await viewModel.deleteRemappingProfile(id: id) }
               activeAlert = nil
             },
@@ -52,9 +59,18 @@
           )
         case .discard(let id):
           Alert(
-            title: Text("Discard unsaved changes?"),
-            message: Text("Your changes to this profile have not been saved."),
-            primaryButton: .destructive(Text("Discard Changes")) {
+            title: Text(
+              OJDLocalized.string("settings.discardTitle", fallback: "Discard unsaved changes?")
+            ),
+            message: Text(
+              OJDLocalized.string(
+                "profiles.discardMessage",
+                fallback: "Your changes to this profile have not been saved."
+              )
+            ),
+            primaryButton: .destructive(
+              Text(OJDLocalized.string("settings.discardAction", fallback: "Discard Changes"))
+            ) {
               setEditorDirty(false)
               activeAlert = nil
               selectedProfileID = id
@@ -113,13 +129,14 @@
     private var profileList: some View {
       VStack(alignment: .leading, spacing: 8) {
         HStack {
-          Text("Profiles").font(.headline)
+          Text(OJDLocalized.string("common.profiles", fallback: "Profiles")).font(.headline)
           Spacer()
           Button(
             action: { isCreatingProfile = true },
             label: {
-              OJDSystemSymbol(name: "plus", fallback: "+").ojdAccessibilityLabel("New profile")
-                .frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
+              OJDSystemSymbol(name: "plus", fallback: "+").ojdAccessibilityLabel(
+                OJDLocalized.string("profiles.new", fallback: "New profile")
+              ).frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
             }
           ).buttonStyle(BorderlessButtonStyle()).disabled(
             connectedDevices.isEmpty || isMutationActive
@@ -127,13 +144,21 @@
         }.padding(.horizontal, 14).padding(.top, 18)
 
         switch viewModel.remappingState {
-        case .loading: LoadingStateView(message: "Loading profiles…").padding(.horizontal, 14)
+        case .loading:
+          LoadingStateView(
+            message: OJDLocalized.string("profiles.loading", fallback: "Loading profiles…")
+          ).padding(.horizontal, 14)
         case .unavailable(let message), .error(let message):
           VStack(alignment: .leading, spacing: 6) {
-            Text("Profiles could not be loaded.").font(.caption.weight(.semibold))
+            Text(
+              OJDLocalized.string("profiles.loadError", fallback: "Profiles could not be loaded.")
+            ).font(.caption.weight(.semibold))
             Text(message).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
               .fixedSize(horizontal: false, vertical: true)
-            Button("Try again", action: refreshProfiles)
+            Button(
+              OJDLocalized.string("common.tryAgain", fallback: "Try again"),
+              action: refreshProfiles
+            )
           }.padding(.horizontal, 14)
         case .available:
           if profiles.isEmpty { noProfilesState.padding(.horizontal, 14) } else { profileListRows }
@@ -152,13 +177,13 @@
                 HStack(spacing: 8) {
                   OJDSystemSymbol(
                     name: isActive(profile) ? "checkmark.circle.fill" : "circle",
-                    fallback: isActive(profile) ? "Active" : "○"
+                    fallback: isActive(profile)
+                      ? OJDLocalized.string("profiles.active", fallback: "Active") : "○"
                   ).foregroundColor(Color(NSColor.controlAccentColor))
                   VStack(alignment: .leading, spacing: 2) {
                     Text(profile.name).lineLimit(1)
-                    Text("\(profile.bindings.count) assignments").font(.caption).foregroundColor(
-                      Color(NSColor.secondaryLabelColor)
-                    )
+                    Text(assignmentCountLabel(profile.bindings.count)).font(.caption)
+                      .foregroundColor(Color(NSColor.secondaryLabelColor))
                   }
                   Spacer(minLength: 0)
                 }.padding(.horizontal, 10).padding(.vertical, 8).contentShape(Rectangle())
@@ -166,9 +191,7 @@
             ).buttonStyle(ProfileListButtonStyle(selected: selectedProfile?.id == profile.id))
               .ojdAccessibilityLabel(profile.name).ojdAccessibilitySelection(
                 selectedProfile?.id == profile.id
-              ).ojdAccessibilityValue(
-                "\(profile.bindings.count) assignments\(isActive(profile) ? ", active" : "")"
-              )
+              ).ojdAccessibilityValue(profileAccessibilityValue(profile))
           }
         }.padding(.horizontal, 8)
       }
@@ -188,16 +211,22 @@
         }
       } else {
         switch viewModel.remappingState {
-        case .loading: LoadingStateView(message: "Loading profiles…").padding(28)
+        case .loading:
+          LoadingStateView(
+            message: OJDLocalized.string("profiles.loading", fallback: "Loading profiles…")
+          ).padding(28)
         case .unavailable(let message):
           ServiceFailureStateView(
-            title: "Profiles unavailable",
+            title: OJDLocalized.string("profiles.unavailable", fallback: "Profiles unavailable"),
             message: message,
             retry: refreshProfiles
           ).padding(28)
         case .error(let message):
           ServiceFailureStateView(
-            title: "Could not load profiles",
+            title: OJDLocalized.string(
+              "profiles.loadError",
+              fallback: "Profiles could not be loaded."
+            ),
             message: message,
             retry: refreshProfiles
           ).padding(28)
@@ -210,15 +239,31 @@
       VStack(alignment: .leading, spacing: 12) {
         EmptyStateView(
           symbol: "plus.circle",
-          title: "No profiles",
+          title: OJDLocalized.string("profiles.none", fallback: "No profiles"),
           message: connectedDevices.isEmpty
-            ? "Connect a controller to create a profile."
-            : "Create a profile to start assigning controls."
+            ? OJDLocalized.string(
+              "profiles.noneMessage",
+              fallback: "Connect a controller to create a profile."
+            )
+            : OJDLocalized.string(
+              "profiles.createMessage",
+              fallback: "Create a profile to start assigning controls."
+            )
         )
-        Button("Create profile…") { isCreatingProfile = true }.disabled(
-          connectedDevices.isEmpty || isMutationActive
-        )
+        Button(OJDLocalized.string("profiles.create", fallback: "Create profile...")) {
+          isCreatingProfile = true
+        }.disabled(connectedDevices.isEmpty || isMutationActive)
       }
+    }
+
+    private func assignmentCountLabel(_ count: Int) -> String {
+      OJDLocalized.plural("profiles.assignments", count: count, fallback: "%d assignments")
+    }
+
+    private func profileAccessibilityValue(_ profile: RemappingProfile) -> String {
+      let count = assignmentCountLabel(profile.bindings.count)
+      guard isActive(profile) else { return count }
+      return OJDLocalized.formatted("profiles.activeAssignmentCount", fallback: "%@, active", count)
     }
 
     @ViewBuilder private var refreshStatus: some View {
@@ -226,18 +271,33 @@
       case .loading:
         HStack(spacing: 8) {
           OJDLoadingIndicator()
-          Text("Refreshing profile state…").foregroundColor(Color(NSColor.secondaryLabelColor))
+          Text(OJDLocalized.string("profiles.refreshing", fallback: "Refreshing profile state..."))
+            .foregroundColor(Color(NSColor.secondaryLabelColor))
         }.padding(.horizontal, 28).padding(.top, 14)
       case .unavailable(let message):
         ServiceFailureStateView(
-          title: "Profile state is unavailable",
-          message: "Your current draft is preserved. \(message)",
+          title: OJDLocalized.string(
+            "profiles.stateUnavailable",
+            fallback: "Profile state is unavailable"
+          ),
+          message: OJDLocalized.formatted(
+            "profiles.draftPreserved",
+            fallback: "Your current draft is preserved. %@",
+            message
+          ),
           retry: refreshProfiles
         ).padding(.horizontal, 28).padding(.top, 14)
       case .error(let message):
         ServiceFailureStateView(
-          title: "Could not refresh profile state",
-          message: "Your current draft is preserved. \(message)",
+          title: OJDLocalized.string(
+            "profiles.refreshError",
+            fallback: "Could not refresh profile state"
+          ),
+          message: OJDLocalized.formatted(
+            "profiles.draftPreserved",
+            fallback: "Your current draft is preserved. %@",
+            message
+          ),
           retry: refreshProfiles
         ).padding(.horizontal, 28).padding(.top, 14)
       case .available: EmptyView()
@@ -301,7 +361,11 @@
       case .error(let message) where isProfileAction(operation): profileActionError = message
       case .conflict where isProfileAction(operation):
         profileActionError =
-          viewModel.lastError ?? "This profile action could not be completed. Try again."
+          viewModel.lastError
+          ?? OJDLocalized.string(
+            "profiles.actionError",
+            fallback: "This profile action could not be completed. Try again."
+          )
       default: break
       }
     }

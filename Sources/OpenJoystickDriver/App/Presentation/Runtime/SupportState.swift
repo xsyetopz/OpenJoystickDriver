@@ -33,26 +33,36 @@ struct SupportDiagnosticsPresentation: Sendable, Equatable {
 
   var virtualControllerOutputLabel: String {
     switch virtualControllerOutputState {
-    case .available: return "Available"
-    case .unavailable: return "Unavailable"
-    case .needsAttention: return "Needs attention"
+    case .available: return OJDLocalized.string("common.available", fallback: "Available")
+    case .unavailable: return OJDLocalized.string("common.unavailable", fallback: "Unavailable")
+    case .needsAttention:
+      return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
     }
   }
 
   var virtualControllerOutputDetail: String {
     switch virtualControllerOutputState {
-    case .available: return "Controller output is available."
-    case .unavailable: return "Controller output is turned off."
-    case .needsAttention: return "Controller output needs attention."
+    case .available:
+      return OJDLocalized.string(
+        "debug.outputAvailable",
+        fallback: "Controller output is available."
+      )
+    case .unavailable:
+      return OJDLocalized.string("debug.outputOff", fallback: "Controller output is turned off.")
+    case .needsAttention:
+      return OJDLocalized.string(
+        "debug.outputNeedsAttention",
+        fallback: "Controller output needs attention."
+      )
     }
   }
 
   var virtualControllerCountLabel: String {
-    switch virtualControllerCount {
-    case 0: return "No controller output devices detected"
-    case 1: return "1 controller output device detected"
-    default: return "\(virtualControllerCount) controller output devices detected"
-    }
+    OJDLocalized.plural(
+      "debug.outputDevices",
+      count: virtualControllerCount,
+      fallback: "%d controller output devices detected"
+    )
   }
 }
 
@@ -120,7 +130,12 @@ enum RuntimeSupportLogsState: Sendable {
           SupportDiagnosticsPresentation(payload: virtualDiagnostics)
         )
       } else {
-        supportDiagnosticsState = .unavailable("Service diagnostics are unavailable right now.")
+        supportDiagnosticsState = .unavailable(
+          OJDLocalized.string(
+            "debug.serviceUnavailable",
+            fallback: "Service diagnostics are unavailable right now."
+          )
+        )
       }
     }
 
@@ -156,7 +171,10 @@ enum RuntimeSupportLogsState: Sendable {
         // Keep filesystem details out of the ordinary Debug pane.  The selected destination is
         // already visible in the save panel and the user can choose a new path on retry.
         supportReportState = .error(
-          "The support report couldn’t be saved. Choose another file and try again."
+          OJDLocalized.string(
+            "error.supportReportSave",
+            fallback: "The support report couldn’t be saved. Choose another file and try again."
+          )
         )
       }
     }
@@ -200,7 +218,12 @@ enum RuntimeSupportLogsState: Sendable {
       supportLogsState = .saved
     } catch {
       guard generation == supportLogsGeneration else { return }
-      supportLogsState = .error("The logs couldn’t be saved. Choose another file and try again.")
+      supportLogsState = .error(
+        OJDLocalized.string(
+          "error.logsSave",
+          fallback: "The logs couldn’t be saved. Choose another file and try again."
+        )
+      )
     }
   }
 

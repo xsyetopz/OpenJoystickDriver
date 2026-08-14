@@ -1,6 +1,7 @@
 #if canImport(SwiftUI)
 
   import AppKit
+  import OpenJoystickDriverKit
   import SwiftUI
 
   struct ProfileListButtonStyle: ButtonStyle {
@@ -54,16 +55,21 @@
           Color(NSColor.systemRed)
         )
         VStack(alignment: .leading, spacing: 4) {
-          Text("Profile action needs attention").font(.headline)
+          Text(
+            OJDLocalized.string(
+              "profiles.actionNeedsAttention",
+              fallback: "Profile action needs attention"
+            )
+          ).font(.headline)
           Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
             horizontal: false,
             vertical: true
           )
         }
         Spacer(minLength: 0)
-        Button("Dismiss", action: dismiss)
+        Button(OJDLocalized.string("common.dismiss", fallback: "Dismiss"), action: dismiss)
       }.padding(12).background(Color(NSColor.controlBackgroundColor)).ojdAccessibilityLabel(
-        "Profile action error"
+        OJDLocalized.string("profiles.actionErrorTitle", fallback: "Profile action error")
       ).ojdAccessibilityValue(message)
     }
   }

@@ -15,33 +15,61 @@
     var body: some View {
       VStack(alignment: .leading, spacing: 7) {
         HStack {
-          Text(isCleared ? "No key selected" : keyboardDestinationLabel).foregroundColor(
+          Text(
+            isCleared
+              ? OJDLocalized.string("keyboard.noKey", fallback: "No key selected")
+              : keyboardDestinationLabel
+          ).foregroundColor(
             isCleared ? Color(NSColor.secondaryLabelColor) : Color(NSColor.labelColor)
           )
           Spacer()
-          Button(isCapturing ? "Press a key…" : "Capture key") {
+          Button(
+            isCapturing
+              ? OJDLocalized.string("keyboard.pressKey", fallback: "Press a key...")
+              : OJDLocalized.string("keyboard.captureKey", fallback: "Capture key")
+          ) {
             isCapturing = true
             isCleared = false
-            Self.announce("Keyboard capture started. Press a key; press Escape to cancel.")
+            Self.announce(
+              OJDLocalized.string(
+                "keyboard.captureStarted",
+                fallback: "Keyboard capture started. Press a key; press Escape to cancel."
+              )
+            )
           }.disabled(isCapturing)
-          Button("Clear") {
+          Button(OJDLocalized.string("common.clear", fallback: "Clear")) {
             isCapturing = false
             isCleared = true
           }.disabled(isCleared)
         }
         if isCapturing {
-          Text("Press a key with any modifiers you want to preserve.").font(.caption)
-            .foregroundColor(Color(NSColor.secondaryLabelColor))
+          Text(
+            OJDLocalized.string(
+              "keyboard.instructions",
+              fallback: "Press a key with any modifiers you want to preserve."
+            )
+          ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
           KeyboardDestinationCaptureRepresentable(
             onCapture: { captured in
               destination = captured
               isCleared = false
               isCapturing = false
-              Self.announce("Captured \(RuntimePresentation.destinationLabel(captured)).")
+              Self.announce(
+                OJDLocalized.formatted(
+                  "keyboard.captured",
+                  fallback: "Captured %@.",
+                  RuntimePresentation.destinationLabel(captured)
+                )
+              )
             },
             onCancel: {
               isCapturing = false
-              Self.announce("Keyboard capture canceled.")
+              Self.announce(
+                OJDLocalized.string(
+                  "keyboard.captureCanceled",
+                  fallback: "Keyboard capture canceled."
+                )
+              )
             }
           ).frame(width: 1, height: 1)
         }
@@ -49,7 +77,9 @@
     }
 
     private var keyboardDestinationLabel: String {
-      guard case .keyboard = destination else { return "Keyboard key" }
+      guard case .keyboard = destination else {
+        return OJDLocalized.string("keyboard.key", fallback: "Keyboard key")
+      }
       return RuntimePresentation.destinationLabel(destination)
     }
 
@@ -87,7 +117,9 @@
       super.init(frame: .zero)
       setAccessibilityElement(true)
       setAccessibilityRole(.textField)
-      setAccessibilityLabel("Keyboard key capture")
+      setAccessibilityLabel(
+        OJDLocalized.string("keyboard.captureTitle", fallback: "Keyboard key capture")
+      )
     }
 
     @available(*, unavailable) required init?(coder: NSCoder) {

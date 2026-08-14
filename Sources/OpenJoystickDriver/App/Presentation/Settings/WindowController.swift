@@ -2,6 +2,7 @@
 
   import AppKit
   import Combine
+  import OpenJoystickDriverKit
   import SwiftUI
 
   @MainActor final class SettingsWindowController: NSWindowController, NSWindowDelegate {
@@ -23,12 +24,12 @@
       let rootView = SettingsRootView(navigation: navigation, viewModel: viewModel)
       let host = NSHostingView(rootView: rootView)
       let window = NSWindow(
-        contentRect: NSRect(x: 0, y: 0, width: 720, height: 420),
+        contentRect: NSRect(x: 0, y: 0, width: 760, height: 500),
         styleMask: [.titled, .closable, .resizable],
         backing: .buffered,
         defer: false
       )
-      window.minSize = NSSize(width: 680, height: 380)
+      window.minSize = NSSize(width: 700, height: 420)
       window.hidesOnDeactivate = false
       // Keep the production geometry separate from the retired oversized shell.
       window.setFrameAutosaveName("SettingsWindowGeometry")
@@ -124,9 +125,12 @@
         action: #selector(Self.selectPaneFromToolbar(_:))
       )
       group.controlRepresentation = .expanded
-      group.label = "Settings panes"
-      group.paletteLabel = "Settings panes"
-      group.toolTip = "Settings panes"
+      group.label = OJDLocalized.string("settings.navigation", fallback: "Settings navigation")
+      group.paletteLabel = OJDLocalized.string(
+        "settings.navigation",
+        fallback: "Settings navigation"
+      )
+      group.toolTip = OJDLocalized.string("settings.choosePane", fallback: "Choose a settings pane")
       group.visibilityPriority = .high
       group.selectedIndex = SettingsPane.primaryCases.firstIndex(of: navigation.selectedPane) ?? 0
       return group

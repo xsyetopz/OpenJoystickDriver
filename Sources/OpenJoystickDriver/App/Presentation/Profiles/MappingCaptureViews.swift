@@ -30,32 +30,46 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
-        Text("Adjust \(RuntimePresentation.sourceLabel(binding.source))").font(
-          .headline.weight(.semibold)
-        )
+        Text(
+          OJDLocalized.formatted(
+            "capture.adjust",
+            fallback: "Adjust %@",
+            RuntimePresentation.sourceLabel(binding.source)
+          )
+        ).font(.headline.weight(.semibold))
         SliderRow(
-          title: "Dead zone",
+          title: OJDLocalized.string("capture.deadZone", fallback: "Dead zone"),
           value: $deadzone,
           range: RemappingAxisTuning.deadzoneRange,
           suffix: "%"
         )
-        SliderRow(title: "Gain", value: $gain, range: RemappingAxisTuning.gainRange, suffix: "×")
-        Toggle("Invert axis", isOn: $inverted)
-        Picker("Response curve", selection: $curve) {
+        SliderRow(
+          title: OJDLocalized.string("capture.gain", fallback: "Gain"),
+          value: $gain,
+          range: RemappingAxisTuning.gainRange,
+          suffix: "×"
+        )
+        Toggle(OJDLocalized.string("capture.invertAxis", fallback: "Invert axis"), isOn: $inverted)
+        Picker(
+          OJDLocalized.string("capture.responseCurve", fallback: "Response curve"),
+          selection: $curve
+        ) {
           ForEach(RemappingResponseCurve.allCases, id: \.self) { value in
             Text(responseCurveLabel(value)).tag(value)
           }
         }
         SliderRow(
-          title: "Digital threshold",
+          title: OJDLocalized.string("capture.digitalThreshold", fallback: "Digital threshold"),
           value: $threshold,
           range: RemappingAxisTuning.digitalActivationThresholdRange,
           suffix: "%"
         )
         HStack {
           Spacer()
-          Button("Cancel") { presentationMode.wrappedValue.dismiss() }
-          Button("Save") {
+          Button(OJDLocalized.string("common.cancel", fallback: "Cancel")) {
+            presentationMode.wrappedValue.dismiss()
+          }
+          Button(OJDLocalized.string("common.save", fallback: "Save")) {
             onSave(
               RemappingAxisTuning(
                 deadzone: deadzone,
@@ -73,10 +87,10 @@
 
     private func responseCurveLabel(_ value: RemappingResponseCurve) -> String {
       switch value {
-      case .linear: return "Linear"
-      case .easeIn: return "Ease in"
-      case .easeOut: return "Ease out"
-      case .smoothStep: return "Smooth step"
+      case .linear: return OJDLocalized.string("capture.linear", fallback: "Linear")
+      case .easeIn: return OJDLocalized.string("capture.easeIn", fallback: "Ease in")
+      case .easeOut: return OJDLocalized.string("capture.easeOut", fallback: "Ease out")
+      case .smoothStep: return OJDLocalized.string("capture.smoothStep", fallback: "Smooth step")
       }
     }
   }
@@ -117,35 +131,59 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 15) {
-        Text("Press a controller control").font(.headline.weight(.semibold))
-        Text("Choose a control below, or listen briefly for the next input.").foregroundColor(
-          Color(NSColor.secondaryLabelColor)
-        ).fixedSize(horizontal: false, vertical: true)
-        Picker("Controller control", selection: sourceBinding) {
+        Text(OJDLocalized.string("capture.pressControl", fallback: "Press a controller control"))
+          .font(.headline.weight(.semibold))
+        Text(
+          OJDLocalized.string(
+            "capture.chooseControl",
+            fallback: "Choose a control below, or listen briefly for the next input."
+          )
+        ).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
+          horizontal: false,
+          vertical: true
+        )
+        Picker(
+          OJDLocalized.string("capture.controllerControl", fallback: "Controller control"),
+          selection: sourceBinding
+        ) {
           ForEach(SourceOption.options(including: source), id: \.source) { option in
             Text(option.title).tag(option.source)
           }
         }
         if !connectedDevices.isEmpty {
-          Picker("Controller", selection: selectedDeviceBinding) {
+          Picker(
+            OJDLocalized.string("common.controller", fallback: "Controller"),
+            selection: selectedDeviceBinding
+          ) {
             ForEach(connectedDevices, id: \.runtimeIdentifier) { device in
               Text(device.name).tag(device.runtimeIdentifier)
             }
           }
           if let selector = selectedDeviceSelector {
-            Button(isListening ? "Listening…" : "Listen for control") {
-              beginListening(for: selector)
-            }.disabled(isListening)
+            Button(
+              isListening
+                ? OJDLocalized.string("capture.listeningButton", fallback: "Listening…")
+                : OJDLocalized.string("capture.listen", fallback: "Listen for control")
+            ) { beginListening(for: selector) }.disabled(isListening)
           }
         } else {
-          Text("Connect a controller to enable live capture. Manual selection is still available.")
-            .font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+          Text(
+            OJDLocalized.string(
+              "capture.connectForLive",
+              fallback:
+                "Connect a controller to enable live capture. Manual selection is still available."
+            )
+          ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         captureStatus
-        Picker("Destination", selection: destinationBinding) {
+        Picker(
+          OJDLocalized.string("common.destination", fallback: "Destination"),
+          selection: destinationBinding
+        ) {
           ForEach(DestinationOption.options(for: source, including: destination), id: \.destination)
           { option in Text(option.title).tag(option.destination) }
-        }.ojdAccessibilityLabel("Destination").ojdAccessibilityValue(destinationAccessibilityValue)
+        }.ojdAccessibilityLabel(OJDLocalized.string("common.destination", fallback: "Destination"))
+          .ojdAccessibilityValue(destinationAccessibilityValue)
         if case .keyboard = destination {
           KeyboardDestinationCaptureView(
             destination: $destination,
@@ -155,21 +193,22 @@
         }
         HStack {
           Spacer()
-          Button("Cancel") { cancelCapture() }
-          Button("Add assignment") {
+          Button(OJDLocalized.string("common.cancel", fallback: "Cancel")) { cancelCapture() }
+          Button(OJDLocalized.string("common.addAssignment", fallback: "Add assignment")) {
             onAdd(source, destination)
             viewModel.cancelInputCapture()
           }.disabled(!canAddAssignment)
         }
-      }.padding(28).frame(width: 470).ojdAccessibilityLabel("Controller control capture")
-        .background(
-          EscapeKeyMonitor(isCapturing: { keyboardCaptureActive }, onEscape: { cancelCapture() })
-        ).onAppear { selectInitialDevice() }.onDisappear { stopListening() }.onReceive(
-          viewModel.$inputCaptureState
-        ) { captureState in
-          handleCaptureState(captureState)
-          announceCaptureState(captureState)
-        }
+      }.padding(28).frame(width: 470).ojdAccessibilityLabel(
+        OJDLocalized.string("capture.title", fallback: "Controller control capture")
+      ).background(
+        EscapeKeyMonitor(isCapturing: { keyboardCaptureActive }, onEscape: { cancelCapture() })
+      ).onAppear { selectInitialDevice() }.onDisappear { stopListening() }.onReceive(
+        viewModel.$inputCaptureState
+      ) { captureState in
+        handleCaptureState(captureState)
+        announceCaptureState(captureState)
+      }
     }
 
     private var canAddAssignment: Bool {
@@ -243,7 +282,7 @@
 
     private func cancelCapture() {
       stopListening()
-      announce("Controller capture canceled.")
+      announce(OJDLocalized.string("capture.canceled", fallback: "Controller capture canceled."))
       presentationMode.wrappedValue.dismiss()
     }
 
@@ -283,22 +322,42 @@
     }
 
     private var destinationAccessibilityValue: String {
-      if case .keyboard = destination, keyboardDestinationCleared { return "No key selected" }
+      if case .keyboard = destination, keyboardDestinationCleared {
+        return OJDLocalized.string("keyboard.noKey", fallback: "No key selected")
+      }
       return RuntimePresentation.destinationLabel(destination)
     }
 
     private var captureStatusAccessibilityValue: String {
       switch viewModel.inputCaptureState {
-      case .idle: return "Ready to listen."
-      case .listening: return "Listening for a controller control."
+      case .idle: return OJDLocalized.string("capture.ready", fallback: "Ready to listen.")
+      case .listening:
+        return OJDLocalized.string(
+          "capture.listening",
+          fallback: "Listening for a controller control."
+        )
       case .received(_, let state):
         if let detected = RuntimePresentation.detectedSource(from: state) {
-          return "Detected: \(RuntimePresentation.sourceLabel(detected))."
+          return OJDLocalized.formatted(
+            "capture.detected",
+            fallback: "Detected: %@.",
+            RuntimePresentation.sourceLabel(detected)
+          )
         }
-        return "Input received, but no supported control was identified."
+        return OJDLocalized.string(
+          "capture.noSupported",
+          fallback: "Input received, but no supported control was identified."
+        )
       case .detected(_, _, let detected):
-        return "Detected: \(RuntimePresentation.sourceLabel(detected)). "
-          + "Destination is ready for selection."
+        return OJDLocalized.formatted(
+          "capture.detectedWithDestination",
+          fallback: "Detected: %@. %@",
+          RuntimePresentation.sourceLabel(detected),
+          OJDLocalized.string(
+            "capture.destinationReady",
+            fallback: "Destination is ready for selection."
+          )
+        )
       case .unavailable(_, let message), .error(_, let message): return message
       }
     }
@@ -307,14 +366,25 @@
       let message: String
       switch captureState {
       case .idle, .received: return
-      case .listening: message = "Listening for a controller control. Press Escape to cancel."
+      case .listening:
+        message = OJDLocalized.string(
+          "capture.listeningCancel",
+          fallback: "Listening for a controller control. Press Escape to cancel."
+        )
       case .detected(let selector, _, let detected):
         guard selectedDeviceSelector == selector else { return }
-        message =
-          "Detected: \(RuntimePresentation.sourceLabel(detected)). "
-          + "Destination is ready for selection."
+        message = OJDLocalized.formatted(
+          "capture.detectedWithDestination",
+          fallback: "Detected: %@. %@",
+          RuntimePresentation.sourceLabel(detected),
+          OJDLocalized.string(
+            "capture.destinationReady",
+            fallback: "Destination is ready for selection."
+          )
+        )
       case .unavailable(_, let detail): message = detail
-      case .error(_, let detail): message = "Capture error. \(detail)"
+      case .error(_, let detail):
+        message = OJDLocalized.formatted("capture.error", fallback: "Capture error. %@", detail)
       }
       NSAccessibility.post(
         element: NSApp as Any,
@@ -327,41 +397,65 @@
       Group {
         switch viewModel.inputCaptureState {
         case .idle: EmptyView()
-        case .listening: Text("Listening for a controller control…")
+        case .listening:
+          Text(
+            OJDLocalized.string(
+              "capture.listeningEllipsis",
+              fallback: "Listening for a controller control..."
+            )
+          )
         case .received(_, let state):
           VStack(alignment: .leading, spacing: 3) {
             if let detected = RuntimePresentation.detectedSource(from: state) {
-              Text("Detected: \(RuntimePresentation.sourceLabel(detected))").font(
-                .subheadline.weight(.semibold)
-              )
+              Text(
+                OJDLocalized.formatted(
+                  "capture.detectedNoPeriod",
+                  fallback: "Detected: %@",
+                  RuntimePresentation.sourceLabel(detected)
+                )
+              ).font(.subheadline.weight(.semibold))
             } else {
-              Text("Input received, but no supported control was identified.").font(
-                .subheadline.weight(.semibold)
-              )
+              Text(
+                OJDLocalized.string(
+                  "capture.noSupported",
+                  fallback: "Input received, but no supported control was identified."
+                )
+              ).font(.subheadline.weight(.semibold))
             }
             Text(
               state.pressedButtons.isEmpty
-                ? "No button is currently held."
-                : "Buttons held: \(state.pressedButtons.joined(separator: ", "))"
+                ? OJDLocalized.string("capture.noButton", fallback: "No button is currently held.")
+                : OJDLocalized.formatted(
+                  "capture.buttonsHeld",
+                  fallback: "Buttons held: %@",
+                  state.pressedButtons.joined(separator: ", ")
+                )
             )
           }
         case .detected(_, let state, let detected):
           VStack(alignment: .leading, spacing: 3) {
-            Text("Detected: \(RuntimePresentation.sourceLabel(detected))").font(
-              .subheadline.weight(.semibold)
-            )
+            Text(
+              OJDLocalized.formatted(
+                "capture.detectedNoPeriod",
+                fallback: "Detected: %@",
+                RuntimePresentation.sourceLabel(detected)
+              )
+            ).font(.subheadline.weight(.semibold))
             Text(
               state.pressedButtons.isEmpty
-                ? "No button is currently held."
-                : "Buttons held: \(state.pressedButtons.joined(separator: ", "))"
+                ? OJDLocalized.string("capture.noButton", fallback: "No button is currently held.")
+                : OJDLocalized.formatted(
+                  "capture.buttonsHeld",
+                  fallback: "Buttons held: %@",
+                  state.pressedButtons.joined(separator: ", ")
+                )
             )
           }
         case .unavailable(_, let message), .error(_, let message):
           Text(message).foregroundColor(Color(NSColor.systemRed))
         }
-      }.ojdAccessibilityLabel("Capture status").ojdAccessibilityValue(
-        captureStatusAccessibilityValue
-      )
+      }.ojdAccessibilityLabel(OJDLocalized.string("capture.status", fallback: "Capture status"))
+        .ojdAccessibilityValue(captureStatusAccessibilityValue)
     }
   }
 
@@ -371,12 +465,17 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 7) {
-        Text("This profile changed elsewhere. Reload or keep editing.").font(
-          .subheadline.weight(.semibold)
-        )
+        Text(
+          OJDLocalized.string(
+            "error.profileChanged",
+            fallback: "This profile changed elsewhere. Reload or keep editing."
+          )
+        ).font(.subheadline.weight(.semibold))
         HStack(spacing: 10) {
-          Button("Reload") { reload() }
-          Button("Keep editing") { keepEditing() }
+          Button(OJDLocalized.string("common.reload", fallback: "Reload")) { reload() }
+          Button(OJDLocalized.string("common.keepEditing", fallback: "Keep editing")) {
+            keepEditing()
+          }
         }
       }.padding(10).background(
         RoundedRectangle(cornerRadius: 6).fill(Color(NSColor.controlBackgroundColor))
@@ -419,23 +518,32 @@
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(title).font(.headline.weight(.semibold))
-        TextField("Profile name", text: $name).textFieldStyle(RoundedBorderTextFieldStyle())
+        TextField(OJDLocalized.string("common.profileName", fallback: "Profile name"), text: $name)
+          .textFieldStyle(RoundedBorderTextFieldStyle())
         if !name.isEmpty && trimmedName.isEmpty {
-          Text("Enter a profile name.").font(.caption).foregroundColor(
-            Color(NSColor.systemRed)
-          ).fixedSize(horizontal: false, vertical: true).ojdAccessibilityLabel(
-            "Profile name validation"
+          Text(
+            OJDLocalized.string("capture.profileNameValidation", fallback: "Enter a profile name.")
+          ).font(.caption).foregroundColor(Color(NSColor.systemRed)).fixedSize(
+            horizontal: false,
+            vertical: true
+          ).ojdAccessibilityLabel(
+            OJDLocalized.string("capture.profileNameValidation", fallback: "Enter a profile name.")
           )
         }
-        Picker("Controller", selection: selectedDeviceBinding) {
+        Picker(
+          OJDLocalized.string("common.controller", fallback: "Controller"),
+          selection: selectedDeviceBinding
+        ) {
           ForEach(devices, id: \.runtimeIdentifier) { device in
             Text(device.name).tag(device.runtimeIdentifier)
           }
         }
         HStack {
           Spacer()
-          Button("Cancel") { presentationMode.wrappedValue.dismiss() }
-          Button("Create") {
+          Button(OJDLocalized.string("common.cancel", fallback: "Cancel")) {
+            presentationMode.wrappedValue.dismiss()
+          }
+          Button(OJDLocalized.string("common.create", fallback: "Create")) {
             guard canCreate, let device = selectedDevice else { return }
             onCreate(trimmedName, device)
             presentationMode.wrappedValue.dismiss()

@@ -46,9 +46,16 @@ enum ApplicationServiceGatewayError: Error, LocalizedError, Sendable, Equatable 
 
   var errorDescription: String? {
     switch self {
-    case .invalidCompatibilityIdentity: return "The selected controller output is unavailable."
+    case .invalidCompatibilityIdentity:
+      return OJDLocalized.string(
+        "error.selectedOutputUnavailable",
+        fallback: "The selected controller output is unavailable."
+      )
     case .compatibilityIdentityChangeRejected:
-      return "The selected controller output could not be enabled."
+      return OJDLocalized.string(
+        "error.selectedOutputEnableFailed",
+        fallback: "The selected controller output could not be enabled."
+      )
     }
   }
 }

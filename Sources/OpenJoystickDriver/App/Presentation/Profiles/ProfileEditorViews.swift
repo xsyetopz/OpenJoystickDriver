@@ -64,19 +64,25 @@
 
     private var editorHeader: some View {
       VStack(alignment: .leading, spacing: 10) {
-        TextField("Profile name", text: nameBinding).font(.headline.weight(.semibold))
-          .textFieldStyle(PlainTextFieldStyle()).frame(maxWidth: .infinity, alignment: .leading)
-          .ojdAccessibilityLabel("Profile name")
+        TextField(
+          OJDLocalized.string("common.profileName", fallback: "Profile name"),
+          text: nameBinding
+        ).font(.headline.weight(.semibold)).textFieldStyle(PlainTextFieldStyle()).frame(
+          maxWidth: .infinity,
+          alignment: .leading
+        ).ojdAccessibilityLabel(OJDLocalized.string("common.profileName", fallback: "Profile name"))
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-          Button("Duplicate") { duplicateProfile() }.disabled(isMutationActive)
+          Button(OJDLocalized.string("common.duplicate", fallback: "Duplicate")) {
+            duplicateProfile()
+          }.disabled(isMutationActive)
           if isActive {
-            Button("Deactivate") {
+            Button(OJDLocalized.string("common.deactivate", fallback: "Deactivate")) {
               guard !isMutationActive else { return }
               Task { @MainActor in await viewModel.deactivateRemappingProfile(profileID: profile.id)
               }
             }.disabled(isMutationActive)
           } else {
-            Button("Set active") {
+            Button(OJDLocalized.string("common.setActive", fallback: "Set active")) {
               guard !isMutationActive else { return }
               Task { @MainActor in await viewModel.activateRemappingProfile(id: profile.id) }
             }.disabled(isMutationActive)
@@ -88,9 +94,11 @@
             Color(NSColor.secondaryLabelColor)
           )
           Text("·").foregroundColor(Color(NSColor.tertiaryLabelColor))
-          Text(isActive ? "Active" : "Not active").foregroundColor(
-            Color(NSColor.secondaryLabelColor)
-          )
+          Text(
+            isActive
+              ? OJDLocalized.string("profiles.active", fallback: "Active")
+              : OJDLocalized.string("profiles.notActive", fallback: "Not active")
+          ).foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         if showingConflict {
           ConflictBanner(
@@ -118,15 +126,21 @@
       ScrollView {
         VStack(alignment: .leading, spacing: 18) {
           HStack(alignment: .firstTextBaseline) {
-            Text("Assignments").font(.headline)
+            Text(OJDLocalized.string("common.assignments", fallback: "Assignments")).font(.headline)
             Spacer()
-            Button("Add assignment") { activeSheet = .capture }
+            Button(OJDLocalized.string("common.addAssignment", fallback: "Add assignment")) {
+              activeSheet = .capture
+            }
           }
           if draft.profile.bindings.isEmpty {
             EmptyStateView(
               symbol: "plus.circle",
-              title: "No assignments yet",
-              message: "Add a controller control, then choose its keyboard or pointer destination."
+              title: OJDLocalized.string("profiles.noAssignments", fallback: "No assignments yet"),
+              message: OJDLocalized.string(
+                "profiles.assignmentInstructions",
+                fallback:
+                  "Add a controller control, then choose its keyboard or pointer destination."
+              )
             )
           } else {
             ForEach(bindingGroups, id: \.title) { group in
@@ -149,7 +163,9 @@
             Text(error).foregroundColor(Color(NSColor.systemRed)).fixedSize(
               horizontal: false,
               vertical: true
-            ).ojdAccessibilityLabel("Assignment error")
+            ).ojdAccessibilityLabel(
+              OJDLocalized.string("profiles.assignmentError", fallback: "Assignment error")
+            )
           }
         }.padding(28)
       }
@@ -164,10 +180,12 @@
           )
         }
         HStack(spacing: 10) {
-          OJDDestructiveButton(action: onDelete) { Text("Delete") }.disabled(isMutationActive)
+          OJDDestructiveButton(action: onDelete) {
+            Text(OJDLocalized.string("common.delete", fallback: "Delete"))
+          }.disabled(isMutationActive)
           Spacer(minLength: 8)
           saveStatusView
-          Button("Save") { save() }.disabled(
+          Button(OJDLocalized.string("common.save", fallback: "Save")) { save() }.disabled(
             draft.profile == expectedCurrent || saveInFlight || isMutationActive
           )
         }
@@ -178,9 +196,9 @@
       HStack(spacing: 6) {
         if saveStatus == .saving { OJDLoadingIndicator() }
         Text(saveStatus.label).foregroundColor(saveStatus.color)
-      }.frame(minHeight: 28).ojdAccessibilityLabel("Profile save status").ojdAccessibilityValue(
-        saveStatus.accessibilityValue
-      )
+      }.frame(minHeight: 28).ojdAccessibilityLabel(
+        OJDLocalized.string("profiles.saveStatus", fallback: "Profile save status")
+      ).ojdAccessibilityValue(saveStatus.accessibilityValue)
     }
 
     private var isMutationActive: Bool {
@@ -222,20 +240,22 @@
       switch source {
       case .button(let button):
         switch button {
-        case .leftShoulder, .rightShoulder: return "Shoulders"
-        case .leftStick, .rightStick: return "Stick clicks"
+        case .leftShoulder, .rightShoulder:
+          return OJDLocalized.string("profiles.sectionShoulders", fallback: "Shoulders")
+        case .leftStick, .rightStick:
+          return OJDLocalized.string("profiles.sectionStickClicks", fallback: "Stick clicks")
         case .start, .back, .guide, .share, .options, .touchpad, .auxiliary1, .auxiliary2,
           .auxiliary3, .auxiliary4, .auxiliary5, .auxiliary6, .auxiliary7, .auxiliary8:
-          return "System controls"
-        default: return "Face buttons"
+          return OJDLocalized.string("profiles.sectionSystemControls", fallback: "System controls")
+        default: return OJDLocalized.string("profiles.sectionFaceButtons", fallback: "Face buttons")
         }
-      case .dpad: return "D-pad"
+      case .dpad: return OJDLocalized.string("profiles.sectionDpad", fallback: "D-pad")
       case .axis, .axisDirection:
         switch source {
         case .axis(.leftTrigger), .axis(.rightTrigger), .axisDirection(.leftTrigger, _),
           .axisDirection(.rightTrigger, _):
-          return "Triggers"
-        default: return "Sticks"
+          return OJDLocalized.string("profiles.sectionTriggers", fallback: "Triggers")
+        default: return OJDLocalized.string("profiles.sectionSticks", fallback: "Sticks")
         }
       }
     }
@@ -299,7 +319,7 @@
       let source = draft.profile
       let duplicate = RemappingProfile(
         schemaVersion: source.schemaVersion,
-        name: "\(source.name) Copy",
+        name: OJDLocalized.formatted("profiles.copyName", fallback: "%@ Copy", source.name),
         device: source.device,
         applicationScope: source.applicationScope,
         bindings: source.bindings,
@@ -339,7 +359,10 @@
       case .conflict(let profileID) where profileID == profile.id:
         finishSave()
         showingConflict = true
-        saveError = "The profile changed elsewhere."
+        saveError = OJDLocalized.string(
+          "profiles.changedElsewhere",
+          fallback: "The profile changed elsewhere."
+        )
       case .error(let message):
         finishSave()
         localError = message
@@ -350,7 +373,10 @@
         guard case .available(let snapshot) = viewModel.remappingState,
           let latest = snapshot.profiles.first(where: { $0.id == profile.id })
         else {
-          localError = "The profile was saved, but its latest state is unavailable."
+          localError = OJDLocalized.string(
+            "profiles.savedButUnavailable",
+            fallback: "The profile was saved, but its latest state is unavailable."
+          )
           saveError = localError
           reportEditingState()
           return
@@ -375,7 +401,10 @@
         // if no mutation is active, report the unexpected result instead of silently dropping it.
         guard viewModel.activeMutationOperation == nil else { return }
         finishSave()
-        localError = "The profile could not be saved. Finish the current action and try again."
+        localError = OJDLocalized.string(
+          "profiles.saveUnavailable",
+          fallback: "The profile could not be saved. Finish the current action and try again."
+        )
         saveError = localError
         reportEditingState()
         return
@@ -395,7 +424,10 @@
       handleMutation(viewModel.mutationState)
       guard saveInFlight else { return }
       finishSave()
-      localError = "The profile save did not finish. Try again."
+      localError = OJDLocalized.string(
+        "profiles.saveIncomplete",
+        fallback: "The profile save did not finish. Try again."
+      )
       saveError = localError
       reportEditingState()
     }
@@ -421,10 +453,10 @@
 
     var label: String {
       switch self {
-      case .unsaved: return "Unsaved changes"
-      case .saving: return "Saving…"
-      case .saved: return "Saved"
-      case .error: return "Save failed"
+      case .unsaved: return OJDLocalized.string("profiles.unsaved", fallback: "Unsaved changes")
+      case .saving: return OJDLocalized.string("profiles.saving", fallback: "Saving...")
+      case .saved: return OJDLocalized.string("profiles.saved", fallback: "Saved")
+      case .error: return OJDLocalized.string("profiles.saveFailed", fallback: "Save failed")
       }
     }
 
@@ -443,16 +475,30 @@
     let title: String
     let bindings: [RemappingBinding]
 
-    enum Order: String, CaseIterable {
-      case face = "Face buttons"
-      case shoulders = "Shoulders"
-      case dpad = "D-pad"
-      case sticks = "Sticks"
-      case triggers = "Triggers"
-      case clicks = "Stick clicks"
-      case system = "System controls"
+    enum Order: CaseIterable {
+      case face
+      case shoulders
+      case dpad
+      case sticks
+      case triggers
+      case clicks
+      case system
 
-      var title: String { rawValue }
+      var title: String {
+        switch self {
+        case .face:
+          return OJDLocalized.string("profiles.sectionFaceButtons", fallback: "Face buttons")
+        case .shoulders:
+          return OJDLocalized.string("profiles.sectionShoulders", fallback: "Shoulders")
+        case .dpad: return OJDLocalized.string("profiles.sectionDpad", fallback: "D-pad")
+        case .sticks: return OJDLocalized.string("profiles.sectionSticks", fallback: "Sticks")
+        case .triggers: return OJDLocalized.string("profiles.sectionTriggers", fallback: "Triggers")
+        case .clicks:
+          return OJDLocalized.string("profiles.sectionStickClicks", fallback: "Stick clicks")
+        case .system:
+          return OJDLocalized.string("profiles.sectionSystemControls", fallback: "System controls")
+        }
+      }
     }
   }
 
@@ -495,26 +541,27 @@
 
     // Keep source and destination controls in separate full-width fields.  The profile detail
     // column is only about 500 points wide at the supported minimum once the profile list and
-    // editor insets are accounted for; a two-picker row cannot safely fit there with Adjust… and
+    // editor insets are accounted for; a two-picker row cannot safely fit there with Adjust... and
     // Remove controls, especially with larger text.
     var body: some View {
       VStack(alignment: .leading, spacing: 7) {
-        Text("Controller control").font(.caption).foregroundColor(
-          Color(NSColor.secondaryLabelColor)
-        )
+        Text(OJDLocalized.string("capture.controllerControl", fallback: "Controller control")).font(
+          .caption
+        ).foregroundColor(Color(NSColor.secondaryLabelColor))
         Picker("", selection: sourceBinding) {
           ForEach(SourceOption.options(including: binding.source), id: \.source) { option in
             Text(option.title).tag(option.source)
           }
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
-          "Controller control"
+          OJDLocalized.string("capture.controllerControl", fallback: "Controller control")
         ).ojdAccessibilityValue(RuntimePresentation.sourceLabel(binding.source))
 
         HStack(alignment: .firstTextBaseline, spacing: 7) {
           OJDSystemSymbol(name: "arrow.right", fallback: "→").foregroundColor(
             Color(NSColor.secondaryLabelColor)
           )
-          Text("Destination").font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+          Text(OJDLocalized.string("common.destination", fallback: "Destination")).font(.caption)
+            .foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         Picker("", selection: destinationBinding) {
           ForEach(
@@ -522,13 +569,19 @@
             id: \.destination
           ) { option in Text(option.title).tag(option.destination) }
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
-          "Destination"
+          OJDLocalized.string("common.destination", fallback: "Destination")
         ).ojdAccessibilityValue(RuntimePresentation.destinationLabel(binding.destination))
 
         HStack(spacing: 8) {
           if binding.axisTuning != nil {
-            Button("Adjust…") { onAdjust(binding) }.ojdAccessibilityLabel(
-              "Adjust \(RuntimePresentation.sourceLabel(binding.source))"
+            Button(OJDLocalized.string("common.adjust", fallback: "Adjust...")) {
+              onAdjust(binding)
+            }.ojdAccessibilityLabel(
+              OJDLocalized.formatted(
+                "capture.adjust",
+                fallback: "Adjust %@",
+                RuntimePresentation.sourceLabel(binding.source)
+              )
             )
           }
           Spacer(minLength: 0)
@@ -538,20 +591,32 @@
               OJDSystemSymbol(name: "minus.circle", fallback: "−").ojdAccessibilityHidden(true)
                 .frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
             }
-          ).buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel("Remove assignment").ojdHelp(
-            "Remove assignment"
-          )
+          ).buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(
+            OJDLocalized.string("common.removeAssignment", fallback: "Remove assignment")
+          ).ojdHelp(OJDLocalized.string("common.removeAssignment", fallback: "Remove assignment"))
         }
       }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 7).ojdAccessibilityLabel(
-        "Assignment"
+        OJDLocalized.string("common.assignment", fallback: "Assignment")
       ).ojdAccessibilityValue(assignmentAccessibilityValue)
     }
 
     private var assignmentAccessibilityValue: String {
       let source = RuntimePresentation.sourceLabel(binding.source)
       let destination = RuntimePresentation.destinationLabel(binding.destination)
-      if binding.axisTuning == nil { return "\(source) to \(destination)" }
-      return "\(source) to \(destination), Adjust available"
+      if binding.axisTuning == nil {
+        return OJDLocalized.formatted(
+          "profiles.assignmentSummary",
+          fallback: "%@ to %@",
+          source,
+          destination
+        )
+      }
+      return OJDLocalized.formatted(
+        "profiles.assignmentAdjustSummary",
+        fallback: "%@ to %@, Adjust available",
+        source,
+        destination
+      )
     }
 
     private var sourceBinding: Binding<RemappingSource> {

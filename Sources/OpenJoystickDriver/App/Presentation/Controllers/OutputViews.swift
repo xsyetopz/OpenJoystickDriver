@@ -27,44 +27,54 @@
 
     private var content: some View {
       VStack(alignment: .leading, spacing: 10) {
-        Text("Controller identity").font(.headline)
+        Text(OJDLocalized.string("common.controllerIdentity", fallback: "Controller identity"))
+          .font(.headline)
         if let outputError {
           HStack(alignment: .top, spacing: 8) {
             OJDSystemSymbol(name: "exclamationmark.triangle", fallback: "!").foregroundColor(
               Color(NSColor.systemRed)
             )
             VStack(alignment: .leading, spacing: 4) {
-              Text("Needs attention").font(.subheadline.weight(.semibold))
+              Text(OJDLocalized.string("common.needsAttention", fallback: "Needs attention")).font(
+                .subheadline.weight(.semibold)
+              )
               Text(outputError).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
                 horizontal: false,
                 vertical: true
               )
-              Button("Try again") { retryOutput() }
+              Button(OJDLocalized.string("common.tryAgain", fallback: "Try again")) {
+                retryOutput()
+              }
             }
-          }.ojdAccessibilityLabel("Controller identity error").ojdAccessibilityValue(outputError)
+          }.ojdAccessibilityLabel(
+            OJDLocalized.string("identity.error", fallback: "Controller identity error")
+          ).ojdAccessibilityValue(outputError)
         }
         Picker("", selection: selectedIdentityBinding) {
           ForEach(outputIdentities, id: \.rawValue) { identity in
             Text(RuntimePresentation.compatibilityLabel(identity))
               // Keep each native radio row comfortable for keyboard and pointer users while
               // allowing long labels to wrap at compact widths and larger text sizes.
-              .frame(minHeight: 28, alignment: .leading)
-              .fixedSize(horizontal: false, vertical: true)
-              .tag(identity.rawValue as String?)
+              .frame(minHeight: 28, alignment: .leading).fixedSize(
+                horizontal: false,
+                vertical: true
+              ).tag(identity.rawValue as String?)
           }
         }.labelsHidden().pickerStyle(.radioGroup).frame(maxWidth: .infinity, alignment: .leading)
-          .ojdAccessibilityLabel("Controller identity").ojdAccessibilityValue(
-            selectedIdentityAccessibilityValue
-          ).disabled(isOutputBusy)
+          .ojdAccessibilityLabel(
+            OJDLocalized.string("common.controllerIdentity", fallback: "Controller identity")
+          ).ojdAccessibilityValue(selectedIdentityAccessibilityValue).disabled(isOutputBusy)
         if isOutputBusy {
           HStack(spacing: 8) {
             OJDLoadingIndicator()
-            Text("Updating controller identity…").foregroundColor(
-              Color(NSColor.secondaryLabelColor)
-            )
-          }.ojdAccessibilityLabel("Updating controller identity")
+            Text(
+              OJDLocalized.string("identity.updating", fallback: "Updating controller identity...")
+            ).foregroundColor(Color(NSColor.secondaryLabelColor))
+          }.ojdAccessibilityLabel(
+            OJDLocalized.string("identity.updating", fallback: "Updating controller identity...")
+          )
         }
-        Button("Reset to recommended") {
+        Button(OJDLocalized.string("identity.reset", fallback: "Reset to recommended")) {
           // Keep the request scoped so a retry repeats the same identity mutation.
           retryIdentity = .sdl2_3
           Task { @MainActor in await viewModel.resetCompatibilityIdentity() }
@@ -96,9 +106,10 @@
         return RuntimePresentation.compatibilityLabel(selectedIdentity)
       }
       switch viewModel.compatibilityState {
-      case .loading: return "Checking"
-      case .error, .unavailable: return "Unavailable"
-      case .available: return "Not selected"
+      case .loading: return OJDLocalized.string("status.checking", fallback: "Checking")
+      case .error, .unavailable:
+        return OJDLocalized.string("common.unavailable", fallback: "Unavailable")
+      case .available: return OJDLocalized.string("common.notSelected", fallback: "Not selected")
       }
     }
 

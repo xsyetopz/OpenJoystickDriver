@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- English source plural catalog; locale copies may translate each category. -->
+<plist version="1.0">
+<dict>
+	<key>status.controllerConnected</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d controller connected</string>
+			<key>zero</key>
+			<string>%d controllers connected</string>
+			<key>two</key>
+			<string>%d controllers connected</string>
+			<key>few</key>
+			<string>%d controllers connected</string>
+			<key>many</key>
+			<string>%d controllers connected</string>
+			<key>other</key>
+			<string>%d controllers connected</string>
+		</dict>
+	</dict>
+	<key>status.activeProfilesCount</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d active profile</string>
+			<key>zero</key>
+			<string>%d active profiles</string>
+			<key>two</key>
+			<string>%d active profiles</string>
+			<key>few</key>
+			<string>%d active profiles</string>
+			<key>many</key>
+			<string>%d active profiles</string>
+			<key>other</key>
+			<string>%d active profiles</string>
+		</dict>
+	</dict>
+	<key>profiles.assignments</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d assignment</string>
+			<key>zero</key>
+			<string>%d assignments</string>
+			<key>two</key>
+			<string>%d assignments</string>
+			<key>few</key>
+			<string>%d assignments</string>
+			<key>many</key>
+			<string>%d assignments</string>
+			<key>other</key>
+			<string>%d assignments</string>
+		</dict>
+	</dict>
+	<key>debug.devices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>None detected</string>
+			<key>one</key>
+			<string>%d detected</string>
+			<key>two</key>
+			<string>%d detected</string>
+			<key>few</key>
+			<string>%d detected</string>
+			<key>many</key>
+			<string>%d detected</string>
+			<key>other</key>
+			<string>%d detected</string>
+		</dict>
+	</dict>
+	<key>debug.outputDevices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>No controller output devices detected</string>
+			<key>one</key>
+			<string>%d controller output device detected</string>
+			<key>two</key>
+			<string>%d controller output devices detected</string>
+			<key>few</key>
+			<string>%d controller output devices detected</string>
+			<key>many</key>
+			<string>%d controller output devices detected</string>
+			<key>other</key>
+			<string>%d controller output devices detected</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

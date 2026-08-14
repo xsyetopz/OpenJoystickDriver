@@ -107,7 +107,9 @@ struct RuntimeStatusPresentation: Sendable {
     self.permissions = permissions
     self.devices = payload.connectedDevices
     self.compatibilityIdentity = identity
-    self.compatibilityLabel = identity.map(RuntimePresentation.compatibilityLabel) ?? "Unavailable"
+    self.compatibilityLabel =
+      identity.map(RuntimePresentation.compatibilityLabel)
+      ?? OJDLocalized.string("common.unavailable", fallback: "Unavailable")
     self.outputState = outputState
     self.outputDetail = RuntimePresentation.outputDetail(
       enabled: payload.userSpaceVirtualDeviceEnabled,
@@ -169,7 +171,8 @@ struct RuntimeStatusPresentation: Sendable {
       permissions: permissions,
       devices: devices,
       compatibilityIdentity: identity,
-      compatibilityLabel: identity.map(RuntimePresentation.compatibilityLabel) ?? "Checking",
+      compatibilityLabel: identity.map(RuntimePresentation.compatibilityLabel)
+        ?? OJDLocalized.string("status.checking", fallback: "Checking"),
       outputState: outputState,
       outputDetail: outputDetail,
       postEventAccess: postEventAccess,

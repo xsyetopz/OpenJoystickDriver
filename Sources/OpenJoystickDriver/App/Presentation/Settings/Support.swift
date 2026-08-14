@@ -13,7 +13,7 @@
     var body: some View {
       ScrollView {
         VStack(alignment: .leading, spacing: 18) {
-          PageHeader(title: "Debug")
+          PageHeader(title: OJDLocalized.string("debug.title", fallback: "Debug"))
           VStack(alignment: .leading, spacing: 14) {
             statusSummary.frame(maxWidth: .infinity, alignment: .leading)
             debugReportCard.frame(maxWidth: .infinity, alignment: .leading)
@@ -29,31 +29,59 @@
     private var statusSummary: some View {
       GroupBox {
         VStack(alignment: .leading, spacing: 8) {
-          Text("Current status").font(.headline)
+          Text(OJDLocalized.string("debug.currentStatus", fallback: "Current status")).font(
+            .headline
+          )
           statusSummaryContent
         }.padding(4)
-      }.ojdAccessibilityLabel("Current status")
+      }.ojdAccessibilityLabel(
+        OJDLocalized.string("debug.currentStatus", fallback: "Current status")
+      )
     }
 
     @ViewBuilder private var statusSummaryContent: some View {
       switch viewModel.statusState {
-      case .loading: LoadingStateView(message: "Checking runtime status…")
+      case .loading:
+        LoadingStateView(
+          message: OJDLocalized.string(
+            "status.checkingRuntime",
+            fallback: "Checking runtime status…"
+          )
+        )
       case .available(let status):
         VStack(alignment: .leading, spacing: 8) {
           HStack(alignment: .top, spacing: 12) {
-            StatusMatrixCell(label: "Runtime", value: status.readinessLabel)
-            StatusMatrixCell(label: "Controllers", value: status.deviceCountLabel)
+            StatusMatrixCell(
+              label: OJDLocalized.string("debug.runtime", fallback: "Runtime"),
+              value: status.readinessLabel
+            )
+            StatusMatrixCell(
+              label: OJDLocalized.string("common.controllers", fallback: "Controllers"),
+              value: status.deviceCountLabel
+            )
           }
-          StatusMatrixCell(label: "Controller identity", value: status.compatibilityLabel)
+          StatusMatrixCell(
+            label: OJDLocalized.string(
+              "common.controllerIdentity",
+              fallback: "Controller identity"
+            ),
+            value: status.compatibilityLabel
+          )
         }
       case .unavailable(let message):
-        StatusMatrixCell(label: "Runtime", value: "Unavailable")
+        StatusMatrixCell(
+          label: OJDLocalized.string("debug.runtime", fallback: "Runtime"),
+          value: OJDLocalized.string("common.unavailable", fallback: "Unavailable")
+        )
         Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
           horizontal: false,
           vertical: true
         )
       case .error(let message):
-        StatusMatrixCell(label: "Runtime", value: "Needs attention")
+        StatusMatrixCell(
+          label: OJDLocalized.string("debug.runtime", fallback: "Runtime"),
+          value: OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+        )
         Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
           horizontal: false,
           vertical: true
@@ -64,13 +92,22 @@
     private var debugReportCard: some View {
       GroupBox {
         VStack(alignment: .leading, spacing: 8) {
-          Text("Diagnostics").font(.headline)
+          Text(OJDLocalized.string("debug.diagnostics", fallback: "Diagnostics")).font(.headline)
           diagnosticsContent
           HStack(spacing: 8) {
-            Button("Collect") { Task { @MainActor in await viewModel.loadSupportDiagnostics() } }
-              .ojdAccessibilityLabel("Collect diagnostics").disabled(isCollectingDiagnostics)
-            Button("Save report…", action: presentSavePanel).disabled(isSavingReport)
-            Button("Save logs…", action: presentSaveLogsPanel).disabled(isSavingLogs)
+            Button(OJDLocalized.string("debug.collect", fallback: "Collect")) {
+              Task { @MainActor in await viewModel.loadSupportDiagnostics() }
+            }.ojdAccessibilityLabel(
+              OJDLocalized.string("debug.collectAccessibility", fallback: "Collect diagnostics")
+            ).disabled(isCollectingDiagnostics)
+            Button(
+              OJDLocalized.string("debug.saveReport", fallback: "Save report..."),
+              action: presentSavePanel
+            ).disabled(isSavingReport)
+            Button(
+              OJDLocalized.string("debug.saveLogs", fallback: "Save logs..."),
+              action: presentSaveLogsPanel
+            ).disabled(isSavingLogs)
           }
           reportStatus
           logsStatus
@@ -81,43 +118,58 @@
     @ViewBuilder private var diagnosticsContent: some View {
       switch viewModel.supportDiagnosticsState {
       case .idle:
-        Text("No diagnostics collected yet.").foregroundColor(Color(NSColor.secondaryLabelColor))
-      case .loading: LoadingStateView(message: "Collecting diagnostics…")
+        Text(OJDLocalized.string("debug.noneYet", fallback: "No diagnostics collected yet."))
+          .foregroundColor(Color(NSColor.secondaryLabelColor))
+      case .loading:
+        LoadingStateView(
+          message: OJDLocalized.string("debug.collecting", fallback: "Collecting diagnostics...")
+        )
       case .available(let details):
         VStack(alignment: .leading, spacing: 6) {
-          KeyValueRow(label: "Service", value: details.virtualControllerOutputLabel)
           KeyValueRow(
-            label: "Devices",
+            label: OJDLocalized.string("common.service", fallback: "Service"),
+            value: details.virtualControllerOutputLabel
+          )
+          KeyValueRow(
+            label: OJDLocalized.string("common.devices", fallback: "Devices"),
             value: diagnosticDeviceCountLabel(details.virtualControllerCount)
           )
         }
       case .unavailable(let message):
-        ServiceFailureStateView(title: "Diagnostics unavailable", message: message) {
-          Task { @MainActor in await viewModel.loadSupportDiagnostics() }
-        }
+        ServiceFailureStateView(
+          title: OJDLocalized.string(
+            "debug.diagnosticsUnavailable",
+            fallback: "Diagnostics unavailable"
+          ),
+          message: message
+        ) { Task { @MainActor in await viewModel.loadSupportDiagnostics() } }
       case .error(let message):
-        ServiceFailureStateView(title: "Diagnostics need attention", message: message) {
-          Task { @MainActor in await viewModel.loadSupportDiagnostics() }
-        }
+        ServiceFailureStateView(
+          title: OJDLocalized.string(
+            "debug.diagnosticsNeedsAttention",
+            fallback: "Diagnostics need attention"
+          ),
+          message: message
+        ) { Task { @MainActor in await viewModel.loadSupportDiagnostics() } }
       }
     }
 
     private func diagnosticDeviceCountLabel(_ count: Int) -> String {
-      switch count {
-      case 0: return "None detected"
-      case 1: return "1 detected"
-      default: return "\(count) detected"
-      }
+      OJDLocalized.plural("debug.devices", count: count, fallback: "%d detected")
     }
 
     @ViewBuilder private var reportStatus: some View {
       switch viewModel.supportReportState {
       case .idle: EmptyView()
       case .saving:
-        LoadingStateView(message: "Saving debug report…").ojdAccessibilityLabel(
-          "Saving debug report"
+        LoadingStateView(
+          message: OJDLocalized.string("debug.savingReport", fallback: "Saving debug report...")
+        ).ojdAccessibilityLabel(
+          OJDLocalized.string("debug.savingReportAccessibility", fallback: "Saving debug report")
         )
-      case .saved: Text("Debug report saved.").foregroundColor(Color(NSColor.systemGreen))
+      case .saved:
+        Text(OJDLocalized.string("debug.reportSaved", fallback: "Debug report saved."))
+          .foregroundColor(Color(NSColor.systemGreen))
       case .error(let message):
         Text(message).foregroundColor(Color(NSColor.systemRed)).fixedSize(
           horizontal: false,
@@ -130,8 +182,15 @@
       switch viewModel.supportLogsState {
       case .idle: EmptyView()
       case .saving:
-        LoadingStateView(message: "Saving debug logs…").ojdAccessibilityLabel("Saving debug logs")
-      case .saved: Text("Logs saved.").foregroundColor(Color(NSColor.systemGreen))
+        LoadingStateView(
+          message: OJDLocalized.string("debug.savingLogs", fallback: "Saving debug logs...")
+        ).ojdAccessibilityLabel(
+          OJDLocalized.string("debug.savingLogsAccessibility", fallback: "Saving debug logs")
+        )
+      case .saved:
+        Text(OJDLocalized.string("debug.logsSaved", fallback: "Logs saved.")).foregroundColor(
+          Color(NSColor.systemGreen)
+        )
       case .error(let message):
         Text(message).foregroundColor(Color(NSColor.systemRed)).fixedSize(
           horizontal: false,
@@ -157,7 +216,7 @@
 
     private func presentSavePanel() {
       let panel = NSSavePanel()
-      panel.title = "Save Debug Report"
+      panel.title = OJDLocalized.string("debug.saveReportPanel", fallback: "Save Debug Report")
       panel.nameFieldStringValue = viewModel.defaultSupportReportFilename
       panel.canCreateDirectories = true
       let viewModel = viewModel
@@ -169,7 +228,7 @@
 
     private func presentSaveLogsPanel() {
       let panel = NSSavePanel()
-      panel.title = "Save Debug Logs"
+      panel.title = OJDLocalized.string("debug.saveLogsPanel", fallback: "Save Debug Logs")
       panel.nameFieldStringValue = viewModel.defaultSupportLogsFilename
       panel.canCreateDirectories = true
       let viewModel = viewModel
@@ -241,9 +300,10 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 8) {
-        OJDSystemSymbol(name: symbol, fallback: "Status").font(.title).foregroundColor(
-          Color(NSColor.controlAccentColor)
-        )
+        OJDSystemSymbol(
+          name: symbol,
+          fallback: OJDLocalized.string("common.status", fallback: "Status")
+        ).font(.title).foregroundColor(Color(NSColor.controlAccentColor))
         Text(title).font(.headline)
         Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
           horizontal: false,
@@ -258,7 +318,11 @@
 
     var body: some View {
       HStack(spacing: 8) {
-        if #available(macOS 11.0, *) { ProgressView() } else { Text("…") }
+        if #available(macOS 11.0, *) {
+          ProgressView()
+        } else {
+          Text(OJDLocalized.string("common.loadingEllipsis", fallback: "…"))
+        }
         Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
           horizontal: false,
           vertical: true
@@ -284,7 +348,7 @@
               horizontal: false,
               vertical: true
             )
-            Button("Try again", action: retry)
+            Button(OJDLocalized.string("common.tryAgain", fallback: "Try again"), action: retry)
           }
           Spacer(minLength: 0)
         }.padding(4)
@@ -293,7 +357,13 @@
   }
 
   struct OJDLoadingIndicator: View {
-    var body: some View { if #available(macOS 11.0, *) { ProgressView() } else { Text("…") } }
+    var body: some View {
+      if #available(macOS 11.0, *) {
+        ProgressView()
+      } else {
+        Text(OJDLocalized.string("common.loadingEllipsis", fallback: "…"))
+      }
+    }
   }
 
 #endif
