@@ -61,7 +61,7 @@ runtime checks:
 ```bash
 export DEVELOPER_DIR=/Applications/Xcode-26.6.0.app/Contents/Developer
 swift test
-swift test --filter LocalizationTests
+swift test --filter OpenJoystickDriverKitTests.LocalizationTests
 ./scripts/ojd catalog regenerate --check
 ./scripts/ojd check profiles
 ./scripts/ojd check scripts
