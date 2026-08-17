@@ -30,11 +30,18 @@ export OJD_ENV_FILE
 # points at Command Line Tools (avoids requiring sudo for local builds).
 XCODE_SELECT_PATH="$(xcode-select -p 2>/dev/null || true)"
 if [[ -z "${DEVELOPER_DIR:-}" ]] && [[ "$XCODE_SELECT_PATH" == "/Library/Developer/CommandLineTools" ]]; then
-  if [[ -d "/Applications/Xcode.app/Contents/Developer" ]]; then
-    export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
-  elif [[ -d "/Applications/Xcode_26.3.app/Contents/Developer" ]]; then
-    export DEVELOPER_DIR="/Applications/Xcode_26.3.app/Contents/Developer"
+  # Select the newest installed Xcode without requiring sudo or a fixed version.
+  latest_xcode=""
+  while IFS= read -r candidate; do
+    if [[ -x "$candidate/Contents/Developer/usr/bin/xcodebuild" ]]; then
+      latest_xcode="$candidate"
+      break
+    fi
+  done < <(find /Applications -maxdepth 1 -type d -name 'Xcode*.app' -print 2>/dev/null | sort -r)
+  if [[ -n "$latest_xcode" ]]; then
+    export DEVELOPER_DIR="$latest_xcode/Contents/Developer"
   fi
+  unset latest_xcode
 fi
 if [[ -n "${DEVELOPER_DIR:-}" ]]; then
   XCODE_SELECT_PATH="$DEVELOPER_DIR"
