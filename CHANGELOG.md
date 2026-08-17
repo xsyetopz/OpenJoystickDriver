@@ -4,6 +4,10 @@ All notable changes to OpenJoystickDriver are documented in this file.
 
 ## 0.5.0-beta.1
 
+### Fixed
+
+- Deduplicated wired Xbox controller discovery across HID and raw-USB paths when both paths report the same physical serial number, and expanded controller details to avoid cramped long-value columns.
+
 ### Changed
 
 - Consolidated the supported headless CLI around the current `map`, `compat`,
