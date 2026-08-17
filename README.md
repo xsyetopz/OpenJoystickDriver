@@ -3,6 +3,7 @@
 > [!WARNING]
 > All compiled 'releases' before 0.5.0-alpha.4 have been swooped due to [#23]([https://github.com/xsyetopz/OpenJoystickDriver/issues/](https://github.com/xsyetopz/OpenJoystickDriver/issues/23)). Please be patient (or compile a private version yourself) for `0.5.0-beta.1`. Thanks for your patience.
 >
+> UPDATE(2026-08-17): Apple needs to respond to request for Xbox provisioning, and VirtualHIDDevice provisioning changes, as the Jul 17 request is still "submitted" and went nowhere, plus various new fixes within `feat/new-gui` branch that were discovered as I got temp hands on an Xbox Series X controller at a relative's place. This requires lots of patience and waiting as Apple's not very keen to fast responses and resolute. Thanks for waiting!
 > - Krystian, OJD's core maintainer.
 
 English | [简体中文](README.zh.md)
