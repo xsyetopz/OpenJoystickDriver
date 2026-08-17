@@ -42,4 +42,42 @@ struct USBDetectionAdmissionTests {
     #expect(admission.identifier.locationID == 513)
     #expect(admission.productName == "Xbox Controller")
   }
+
+  @Test func duplicateTransportIdentityMatchesByModelAndSerialAcrossLocations() throws {
+    let hidIdentifier = DeviceIdentifier(
+      vendorID: 0x045E,
+      productID: 0x0B12,
+      serialNumber: "3039373130313939353733343337",
+      locationID: 17_825_792
+    )
+    let rawUSBIdentifier = DeviceIdentifier(
+      vendorID: 0x045E,
+      productID: 0x0B12,
+      serialNumber: "3039373130313939353733343337",
+      locationID: 257
+    )
+
+    let match = try #require(
+      DeviceManager.matchingPhysicalIdentifier(for: rawUSBIdentifier, among: [hidIdentifier])
+    )
+
+    #expect(match == hidIdentifier)
+  }
+
+  @Test func distinctControllerSerialsRemainSeparate() {
+    let first = DeviceIdentifier(
+      vendorID: 0x045E,
+      productID: 0x0B12,
+      serialNumber: "first",
+      locationID: 1
+    )
+    let second = DeviceIdentifier(
+      vendorID: 0x045E,
+      productID: 0x0B12,
+      serialNumber: "second",
+      locationID: 2
+    )
+
+    #expect(DeviceManager.matchingPhysicalIdentifier(for: second, among: [first]) == nil)
+  }
 }

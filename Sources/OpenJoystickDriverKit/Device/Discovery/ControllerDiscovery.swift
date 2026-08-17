@@ -20,10 +20,16 @@ let usbVendorSpecificClass: UInt8 = 0xFF
 /// Uses dual detection: SwiftUSB for class 0xFF (GIP) +
 /// IOKit HIDManager for class 0x03 (HID).
 public actor DeviceManager {
+  enum DiscoverySource {
+    case hid
+    case rawUSB
+  }
+
   struct DeviceInfo {
     let name: String
     let connection: String
     let serialNumber: String?
+    let discoverySource: DiscoverySource
   }
 
   let parserRegistry: ParserRegistry
@@ -235,6 +241,13 @@ public actor DeviceManager {
         && (runtimeIdentifier == nil || $0.runtimeIdentifier == runtimeIdentifier)
     }
     return matches.count == 1 ? matches.first : nil
+  }
+
+  static func matchingPhysicalIdentifier<Identifiers: Sequence>(
+    for candidate: DeviceIdentifier,
+    among identifiers: Identifiers
+  ) -> DeviceIdentifier? where Identifiers.Element == DeviceIdentifier {
+    identifiers.first { $0.exactlyMatches(candidate) }
   }
 
   private func enforcePhysicalHIDOutputInterval(

@@ -162,7 +162,9 @@ extension DeviceManager {
     let identifier = admission.identifier
     let serial = identifier.serialNumber
 
-    guard pipelines[identifier] == nil else {
+    guard pipelines[identifier] == nil,
+      Self.matchingPhysicalIdentifier(for: identifier, among: pipelines.keys) == nil
+    else {
       print("[DeviceManager] Pipeline already exists" + " for \(identifier)")
       return nil
     }
@@ -172,7 +174,12 @@ extension DeviceManager {
       vendorID: vendorID,
       productID: productID
     )
-    deviceInfos[identifier] = DeviceInfo(name: productName, connection: "USB", serialNumber: serial)
+    deviceInfos[identifier] = DeviceInfo(
+      name: productName,
+      connection: "USB",
+      serialNumber: serial,
+      discoverySource: .rawUSB
+    )
     print("[DeviceManager] USB device added: \(productName) (\(identifier))")
     let configuredTransport = parserRegistry.transportProfile(for: identifier)
     let transportProfile = USBDescriptorTransportResolver.resolve(

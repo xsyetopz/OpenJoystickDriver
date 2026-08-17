@@ -66,6 +66,17 @@ extension DeviceManager {
     )
 
     guard pipelines[identifier] == nil else { return }
+    if let existingIdentifier = Self.matchingPhysicalIdentifier(
+      for: identifier,
+      among: pipelines.keys
+    ) {
+      guard deviceInfos[existingIdentifier]?.discoverySource == .rawUSB else { return }
+      let replacedPipeline = pipelines.removeValue(forKey: existingIdentifier)
+      deviceInfos.removeValue(forKey: existingIdentifier)
+      lastPhysicalHIDOutputNanoseconds.removeValue(forKey: existingIdentifier)
+      Task { await replacedPipeline?.stop() }
+      print("[DeviceManager] Replacing duplicate raw USB pipeline with HID: \(identifier)")
+    }
 
     let name = controllerDisplayName(
       productName: productName,
@@ -76,7 +87,8 @@ extension DeviceManager {
     deviceInfos[identifier] = DeviceInfo(
       name: name,
       connection: connection,
-      serialNumber: serialNumber
+      serialNumber: serialNumber,
+      discoverySource: .hid
     )
     print("[DeviceManager] HID device connected:" + " \(name) (\(identifier))")
     let parser: any InputParser

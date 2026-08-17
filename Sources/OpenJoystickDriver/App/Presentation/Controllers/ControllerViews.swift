@@ -325,36 +325,32 @@
     }
 
     private var controllerDetails: some View {
-      HStack(alignment: .top, spacing: 18) {
-        VStack(alignment: .leading, spacing: 6) {
-          KeyValueRow(
-            label: OJDLocalized.string("common.protocol", fallback: "Protocol"),
-            value: device.protocolVariant.displayLabel
-          )
-          KeyValueRow(
-            label: OJDLocalized.string("common.parser", fallback: "Parser"),
-            value: reportedValue(device.parser)
-          )
-          KeyValueRow(
-            label: OJDLocalized.string("common.serialNumber", fallback: "Serial number"),
-            value: serialNumberLabel
-          )
-        }.frame(maxWidth: .infinity, alignment: .leading)
-        VStack(alignment: .leading, spacing: 6) {
-          KeyValueRow(
-            label: OJDLocalized.string("controllers.usbIdentifier", fallback: "USB VID/PID"),
-            value: usbIdentifier
-          )
-          KeyValueRow(
-            label: OJDLocalized.string("common.inputEndpoint", fallback: "Input endpoint"),
-            value: endpointLabel(device.inputEndpoint)
-          )
-          KeyValueRow(
-            label: OJDLocalized.string("common.outputEndpoint", fallback: "Output endpoint"),
-            value: endpointLabel(device.outputEndpoint)
-          )
-        }.frame(maxWidth: .infinity, alignment: .leading)
-      }
+      VStack(alignment: .leading, spacing: 6) {
+        KeyValueRow(
+          label: OJDLocalized.string("common.protocol", fallback: "Protocol"),
+          value: device.protocolVariant.displayLabel
+        )
+        KeyValueRow(
+          label: OJDLocalized.string("common.parser", fallback: "Parser"),
+          value: reportedValue(device.parser)
+        )
+        KeyValueRow(
+          label: OJDLocalized.string("common.serialNumber", fallback: "Serial number"),
+          value: serialNumberLabel
+        )
+        KeyValueRow(
+          label: OJDLocalized.string("controllers.usbIdentifier", fallback: "USB VID/PID"),
+          value: usbIdentifier
+        )
+        KeyValueRow(
+          label: OJDLocalized.string("common.inputEndpoint", fallback: "Input endpoint"),
+          value: endpointLabel(device.inputEndpoint)
+        )
+        KeyValueRow(
+          label: OJDLocalized.string("common.outputEndpoint", fallback: "Output endpoint"),
+          value: endpointLabel(device.outputEndpoint)
+        )
+      }.frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var serialNumberLabel: String {
