@@ -62,6 +62,16 @@ func runControllerRecordProbe(
       if let product = try? device.getProduct() { print("USB_STRING product=\(product)") }
 
       let handle = try device.open()
+      if plan.transportProfile.needsSetConfiguration {
+        let currentConfiguration = (try? handle.getConfiguration()) ?? 0
+        if currentConfiguration != 1 {
+          try handle.setConfiguration(1)
+          print("USB_CONFIGURATION value=1 result=set")
+        } else {
+          print("USB_CONFIGURATION value=1 result=already-set")
+        }
+      }
+
       let resolvedTransport = USBDescriptorTransportResolver.resolve(
         device: device,
         configured: plan.transportProfile
@@ -81,16 +91,6 @@ func runControllerRecordProbe(
         )
       }
 
-      if plan.transportProfile.needsSetConfiguration {
-        let currentConfiguration = (try? handle.getConfiguration()) ?? 0
-        if currentConfiguration != 1 {
-          try handle.setConfiguration(1)
-          print("USB_CONFIGURATION value=1 result=set")
-        } else {
-          print("USB_CONFIGURATION value=1 result=already-set")
-        }
-      }
-
       if detachKernel {
         do {
           try handle.detachKernelDriver(interface: interfaceNumber)
@@ -105,6 +105,16 @@ func runControllerRecordProbe(
       try handle.claimInterface(interfaceNumber)
       claimedInterface = true
       print("USB_CLAIM interface=\(interfaceNumber) result=claimed")
+      if resolvedTransport.alternateSetting != 0 {
+        try handle.setInterfaceAltSetting(
+          interface: interfaceNumber,
+          alternateSetting: Int(resolvedTransport.alternateSetting)
+        )
+        print(
+          "USB_ALTERNATE_SETTING interface=\(interfaceNumber)"
+            + " value=\(resolvedTransport.alternateSetting) result=set"
+        )
+      }
 
       try await parser.performHandshake(handle: handle)
       print("RECORD_HANDSHAKE driver=\(plan.driver.rawValue) result=complete")
