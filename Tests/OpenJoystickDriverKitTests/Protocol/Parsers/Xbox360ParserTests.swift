@@ -73,8 +73,8 @@ struct Xbox360ParserTests {
   }
   @Test func testAButtonPressRelease() throws {
     let parser = Xbox360Parser()
-    // Bit 8 = A
-    let press = makeXbox360ReportLE(buttons: 1 << 8)
+    // Bit 12 = A (Linux xpad data[3] & BIT(4))
+    let press = makeXbox360ReportLE(buttons: 1 << 12)
     let release = makeXbox360ReportLE(buttons: 0)
     let pressEvents = try parser.parse(data: press)
     #expect(pressEvents.contains(.buttonPressed(.a)))
@@ -83,7 +83,7 @@ struct Xbox360ParserTests {
   }
   @Test func testBxyButtons() throws {
     let parser = Xbox360Parser()
-    let packet = makeXbox360ReportLE(buttons: (1 << 9) | (1 << 10) | (1 << 11))
+    let packet = makeXbox360ReportLE(buttons: (1 << 13) | (1 << 14) | (1 << 15))
     let events = try parser.parse(data: packet)
     #expect(events.contains(.buttonPressed(.b)))
     #expect(events.contains(.buttonPressed(.x)))
@@ -91,8 +91,8 @@ struct Xbox360ParserTests {
   }
   @Test func testShoulderAndStickClicks() throws {
     let parser = Xbox360Parser()
-    // LB=bit12, RB=bit13, L3=bit6, R3=bit7
-    let packet = makeXbox360ReportLE(buttons: (1 << 12) | (1 << 13) | (1 << 6) | (1 << 7))
+    // LB=bit8, RB=bit9, L3=bit6, R3=bit7
+    let packet = makeXbox360ReportLE(buttons: (1 << 8) | (1 << 9) | (1 << 6) | (1 << 7))
     let events = try parser.parse(data: packet)
     #expect(events.contains(.buttonPressed(.leftBumper)))
     #expect(events.contains(.buttonPressed(.rightBumper)))
@@ -109,8 +109,8 @@ struct Xbox360ParserTests {
   }
   @Test func testGuideButton() throws {
     let parser = Xbox360Parser()
-    // GUIDE=bit14
-    let packet = makeXbox360ReportLE(buttons: 1 << 14)
+    // GUIDE=bit10 (Linux xpad data[3] & BIT(2))
+    let packet = makeXbox360ReportLE(buttons: 1 << 10)
     let events = try parser.parse(data: packet)
     #expect(events.contains(.buttonPressed(.guide)))
   }
@@ -246,7 +246,7 @@ struct Xbox360ParserTests {
   }
   @Test func testChangeDetectionButtons() throws {
     let parser = Xbox360Parser()
-    let press = makeXbox360ReportLE(buttons: 1 << 8)  // A
+    let press = makeXbox360ReportLE(buttons: 1 << 12)  // A
     _ = try parser.parse(data: press)
     let events2 = try parser.parse(data: press)
     #expect(!events2.contains(.buttonPressed(.a)))
@@ -276,7 +276,7 @@ struct Xbox360ParserTests {
   }
   @Test func testMultipleSimultaneousButtons() throws {
     let parser = Xbox360Parser()
-    let packet = makeXbox360ReportLE(buttons: (1 << 8) | (1 << 9) | (1 << 12))
+    let packet = makeXbox360ReportLE(buttons: (1 << 12) | (1 << 13) | (1 << 8))
     let events = try parser.parse(data: packet)
     #expect(events.contains(.buttonPressed(.a)))
     #expect(events.contains(.buttonPressed(.b)))
@@ -302,7 +302,7 @@ struct Xbox360ParserTests {
     var state = [UInt8](repeating: 0, count: 20)
     state[0] = 0x00
     state[1] = 0x14
-    state[3] = 0x01
+    state[3] = 0x10
     let events = try parser.parse(data: Data([0x00, 0x01, 0x00, 0x00] + state))
     #expect(events.contains(.buttonPressed(.a)))
     #expect(parser.consumeInputConnectionStateChange() == nil)

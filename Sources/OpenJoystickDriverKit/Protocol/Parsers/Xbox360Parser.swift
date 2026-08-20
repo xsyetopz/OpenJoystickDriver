@@ -48,15 +48,16 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
 /// ```
 ///   byte 0   : report type (0x00 = input; ignore others)
 ///   byte 1   : payload length (0x14 = 20)
-///   bytes 2-3: button bitmask (UInt16 LE)
-///              bit 0  DPAD_UP      bit 8  A
-///              bit 1  DPAD_DOWN    bit 9  B
-///              bit 2  DPAD_LEFT    bit 10 X
-///              bit 3  DPAD_RIGHT   bit 11 Y
-///              bit 4  START        bit 12 LB
-///              bit 5  BACK         bit 13 RB
-///              bit 6  L3           bit 14 GUIDE
-///              bit 7  R3
+///   bytes 2-3: button bitmask (UInt16 LE), matching Linux xpad
+///              xbox360_process_packet: byte2 | (byte3 << 8)
+///              bit 0  DPAD_UP      bit 8  LB
+///              bit 1  DPAD_DOWN    bit 9  RB
+///              bit 2  DPAD_LEFT    bit 10 GUIDE
+///              bit 3  DPAD_RIGHT   bit 11 unused
+///              bit 4  START        bit 12 A
+///              bit 5  BACK         bit 13 B
+///              bit 6  L3           bit 14 X
+///              bit 7  R3           bit 15 Y
 ///   byte 4   : LT (0–255)
 ///   byte 5   : RT (0–255)
 ///   bytes 6-7: Left stick X  (Int16 LE)
@@ -277,13 +278,13 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
     check(5, .back)
     check(6, .leftStick)
     check(7, .rightStick)
-    check(8, .a)
-    check(9, .b)
-    check(10, .x)
-    check(11, .y)
-    check(12, .leftBumper)
-    check(13, .rightBumper)
-    check(14, .guide)
+    check(8, .leftBumper)
+    check(9, .rightBumper)
+    check(10, .guide)
+    check(12, .a)
+    check(13, .b)
+    check(14, .x)
+    check(15, .y)
 
     return events
   }

@@ -8,7 +8,13 @@
     "variant": "xbox360"
   },
   "provenance": {
-    "source": "linux-xpad.c",
+    "source": "local-hardware",
     "verified": false
+  },
+  "usb": {
+    "endpoints": {
+      "in": 129,
+      "out": 2
+    }
   }
 }

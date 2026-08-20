@@ -230,7 +230,7 @@ struct DeviceTransportProfileTests {
       (DeviceIdentifier(vendorID: 1848, productID: 18198), 0x01),
       (DeviceIdentifier(vendorID: 1848, productID: 18214), 0x01),
       (DeviceIdentifier(vendorID: 3695, productID: 275), 0x01),
-      (DeviceIdentifier(vendorID: 3695, productID: 287), 0x01),
+      (DeviceIdentifier(vendorID: 3695, productID: 287), 0x02),
       (DeviceIdentifier(vendorID: 3695, productID: 307), 0x01),
     ]
 
