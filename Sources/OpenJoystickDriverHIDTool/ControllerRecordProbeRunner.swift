@@ -19,8 +19,6 @@ func runControllerRecordProbe(
 
     do {
       let plan = try ControllerRecordProbePlan(contentsOf: URL(fileURLWithPath: recordPath))
-      let inputEndpoint = plan.transportProfile.inputEndpoint
-      let outputEndpoint = plan.transportProfile.outputEndpoint
       let parser = plan.makeParser()
       let profileStartup = plan.startupPackets.map(\.rawValue).joined(separator: ",")
       let usbStartup = (parser as? any USBStartupOutputProvider)?.usbStartupOutputPackets() ?? []
@@ -28,7 +26,8 @@ func runControllerRecordProbe(
       print(
         "RECORD identity=\"\(plan.name)\"" + " vid=\(plan.vendorID) pid=\(plan.productID)"
           + " driver=\(plan.driver.rawValue)" + " interface=\(plan.interfaceNumber)"
-          + " in=\(hex(inputEndpoint)) out=\(hex(outputEndpoint))"
+          + " in=\(hex(plan.transportProfile.inputEndpoint))"
+          + " out=\(hex(plan.transportProfile.outputEndpoint))"
           + " configuration=\(plan.transportProfile.needsSetConfiguration ? "set1" : "current")"
           + " profile_startup=\(profileStartup.isEmpty ? "none" : profileStartup)"
           + " usb_startup=\(usbStartupBytes.isEmpty ? "none" : usbStartupBytes)"
@@ -63,8 +62,24 @@ func runControllerRecordProbe(
       if let product = try? device.getProduct() { print("USB_STRING product=\(product)") }
 
       let handle = try device.open()
+      let resolvedTransport = USBDescriptorTransportResolver.resolve(
+        device: device,
+        configured: plan.transportProfile
+      )
+      let inputEndpoint = resolvedTransport.inputEndpoint
+      let outputEndpoint = resolvedTransport.outputEndpoint
+      let interfaceNumber = Int(resolvedTransport.interfaceNumber)
       var claimedInterface = false
-      defer { if claimedInterface { try? handle.releaseInterface(plan.interfaceNumber) } }
+      defer { if claimedInterface { try? handle.releaseInterface(interfaceNumber) } }
+      if inputEndpoint != plan.transportProfile.inputEndpoint
+        || outputEndpoint != plan.transportProfile.outputEndpoint
+        || interfaceNumber != plan.interfaceNumber
+      {
+        print(
+          "USB_ENDPOINTS_DISCOVERED in=\(hex(inputEndpoint)) out=\(hex(outputEndpoint))"
+            + " interface=\(interfaceNumber)"
+        )
+      }
 
       if plan.transportProfile.needsSetConfiguration {
         let currentConfiguration = (try? handle.getConfiguration()) ?? 0
@@ -78,18 +93,18 @@ func runControllerRecordProbe(
 
       if detachKernel {
         do {
-          try handle.detachKernelDriver(interface: plan.interfaceNumber)
-          print("USB_DETACH interface=\(plan.interfaceNumber) result=detached")
+          try handle.detachKernelDriver(interface: interfaceNumber)
+          print("USB_DETACH interface=\(interfaceNumber) result=detached")
         } catch let error as USBError where error.isNotFound || error.isNotSupported {
           print(
-            "USB_DETACH interface=\(plan.interfaceNumber)" + " result=not-needed code=\(error.code)"
+            "USB_DETACH interface=\(interfaceNumber)" + " result=not-needed code=\(error.code)"
           )
         }
       }
 
-      try handle.claimInterface(plan.interfaceNumber)
+      try handle.claimInterface(interfaceNumber)
       claimedInterface = true
-      print("USB_CLAIM interface=\(plan.interfaceNumber) result=claimed")
+      print("USB_CLAIM interface=\(interfaceNumber) result=claimed")
 
       try await parser.performHandshake(handle: handle)
       print("RECORD_HANDSHAKE driver=\(plan.driver.rawValue) result=complete")

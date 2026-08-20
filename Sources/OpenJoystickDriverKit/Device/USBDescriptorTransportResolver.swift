@@ -51,8 +51,8 @@ struct USBInterfaceTransportFacts: Equatable, Sendable {
   }
 }
 
-enum USBDescriptorTransportResolver {
-  static func resolve(device: USBDevice, configured: DeviceTransportProfile)
+public enum USBDescriptorTransportResolver {
+  public static func resolve(device: USBDevice, configured: DeviceTransportProfile)
     -> DeviceTransportProfile
   {
     let configuration: USBConfigurationDescriptor
