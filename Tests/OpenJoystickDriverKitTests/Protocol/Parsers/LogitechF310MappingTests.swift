@@ -18,8 +18,8 @@ struct LogitechF310MappingTests {
 
   @Test func xinputButtonsReachNamedDiagnosticState() throws {
     let expected: [(Int, Button)] = [
-      (4, .start), (5, .back), (6, .leftStick), (7, .rightStick), (8, .a), (9, .b), (10, .x),
-      (11, .y), (12, .leftBumper), (13, .rightBumper), (14, .guide),
+      (4, .start), (5, .back), (6, .leftStick), (7, .rightStick), (8, .leftBumper),
+      (9, .rightBumper), (10, .guide), (12, .a), (13, .b), (14, .x), (15, .y),
     ]
 
     for (bit, button) in expected {
