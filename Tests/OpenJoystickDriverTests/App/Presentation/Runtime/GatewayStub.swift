@@ -29,9 +29,10 @@ func snapshot(
 }
 
 actor GatewayStub: ApplicationServiceGateway {
-  let statusPayload: ApplicationServiceStatusPayload
-  let snapshotPayload: ApplicationServiceRemappingSnapshotPayload
+  var statusPayload: ApplicationServiceStatusPayload
+  var snapshotPayload: ApplicationServiceRemappingSnapshotPayload
   let statusShouldFail: Bool
+  let statusReadDelayNanoseconds: UInt64
   let inputState: DeviceInputState?
   let inputSequence: [DeviceInputState]?
   let updateShouldConflict: Bool
@@ -62,6 +63,7 @@ actor GatewayStub: ApplicationServiceGateway {
         postEventAccess: .granted
       ),
     statusShouldFail: Bool = false,
+    statusReadDelayNanoseconds: UInt64 = 0,
     inputState: DeviceInputState? = nil,
     inputSequence: [DeviceInputState]? = nil,
     updateShouldConflict: Bool = false,
@@ -72,6 +74,7 @@ actor GatewayStub: ApplicationServiceGateway {
     self.statusPayload = statusPayload
     self.snapshotPayload = snapshotPayload
     self.statusShouldFail = statusShouldFail
+    self.statusReadDelayNanoseconds = statusReadDelayNanoseconds
     self.inputState = inputState
     self.inputSequence = inputSequence
     self.updateShouldConflict = updateShouldConflict
@@ -80,9 +83,18 @@ actor GatewayStub: ApplicationServiceGateway {
     self.compatibilityReadDelayNanoseconds = compatibilityReadDelayNanoseconds
   }
 
-  func status() throws -> ApplicationServiceStatusPayload {
+  func status() async throws -> ApplicationServiceStatusPayload {
+    if statusReadDelayNanoseconds > 0 {
+      try await Task.sleep(nanoseconds: statusReadDelayNanoseconds)
+    }
     if statusShouldFail { throw ApplicationServiceClientError.timeout }
     return statusPayload
+  }
+
+  func setStatusPayload(_ payload: ApplicationServiceStatusPayload) { statusPayload = payload }
+
+  func setSnapshotPayload(_ payload: ApplicationServiceRemappingSnapshotPayload) {
+    snapshotPayload = payload
   }
 
   func virtualDeviceDiagnostics() throws -> ApplicationServiceVirtualDeviceDiagnosticsPayload {

@@ -23,6 +23,7 @@ import OpenJoystickDriverKit
   @Published private(set) var lastMutationOperation: RuntimeMutationOperation?
 
   private var refreshGeneration = 0
+  private var liveStatusGeneration = 0
   private var permissionRefreshGeneration = 0
   private var postEventAccessGeneration = 0
   private var compatibilityGeneration = 0
@@ -34,12 +35,17 @@ import OpenJoystickDriverKit
   var supportReportGeneration = 0
   var supportLogsGeneration = 0
   private var mutationInFlight = false
+  private var fullRefreshInFlight = false
 
   init(gateway: any ApplicationServiceGateway) { self.gateway = gateway }
 
   func refresh() async {
     refreshGeneration += 1
     let generation = refreshGeneration
+    fullRefreshInFlight = true
+    defer { if generation == refreshGeneration { fullRefreshInFlight = false } }
+    liveStatusGeneration += 1
+    let statusGeneration = liveStatusGeneration
     loadState = .loading
     statusState = .loading
     remappingState = .loading
@@ -61,7 +67,9 @@ import OpenJoystickDriverKit
 
     do {
       let payload = try await gateway.status()
-      guard generation == refreshGeneration else { return }
+      guard generation == refreshGeneration, statusGeneration == liveStatusGeneration else {
+        return
+      }
       let permissions: RuntimePermissionSummary
       if permissionGeneration == permissionRefreshGeneration {
         permissions = RuntimePermissionSummary(status: payload)
@@ -155,6 +163,66 @@ import OpenJoystickDriverKit
             fallback: "OpenJoystickDriver isn’t available right now."
           )
       )
+  }
+
+  /// Refreshes connection- and profile-sensitive state without replacing the UI with loading state.
+  func refreshLiveStatus() async {
+    guard !fullRefreshInFlight, !mutationInFlight else { return }
+    liveStatusGeneration += 1
+    let generation = liveStatusGeneration
+    do {
+      let payload = try await gateway.status()
+      guard generation == liveStatusGeneration else { return }
+      let previousStatus: RuntimeStatusPresentation?
+      if case .available(let status) = statusState {
+        previousStatus = status
+      } else {
+        previousStatus = nil
+      }
+      let permissions: RuntimePermissionSummary
+      switch permissionState {
+      case .requesting:
+        permissions =
+          authoritativePermissionSummary
+          ?? RuntimePermissionSummary(inputMonitoring: .unknown, accessibility: .unknown)
+      case .loading, .available, .unavailable, .error:
+        permissions = RuntimePermissionSummary(status: payload)
+        authoritativePermissionSummary = permissions
+      }
+      statusState = .available(
+        RuntimeStatusPresentation(
+          payload: payload,
+          postEventAccess: authoritativePostEventAccess ?? previousStatus?.postEventAccess,
+          requiresPostEventAccess: previousStatus?.requiresPostEventAccess
+        ).applyingPermissions(permissions)
+      )
+      if case .requesting = permissionState {
+        // The explicit permission request remains authoritative until its response arrives.
+      } else {
+        permissionState = .available(permissions)
+      }
+      loadState = .available
+      lastError = nil
+    } catch {
+      guard generation == liveStatusGeneration else { return }
+      if case .loading = statusState {
+        let message = RuntimePresentation.userFacingError(error)
+        statusState =
+          RuntimePresentation.isUnavailable(error) ? .unavailable(message) : .error(message)
+        lastError = message
+      }
+    }
+
+    do {
+      let snapshot = try await gateway.remappingSnapshot()
+      guard generation == liveStatusGeneration else { return }
+      remappingState = .available(snapshot)
+      authoritativePostEventAccess = snapshot.postEventAccess
+      postEventAccessState = .available(snapshot.postEventAccess)
+      updateStatusRemappingSnapshot(snapshot, postEventAccess: snapshot.postEventAccess)
+    } catch {
+      // Keep the last known remapping state during an unobtrusive background refresh.
+    }
   }
 
   func refreshPermissions() async {

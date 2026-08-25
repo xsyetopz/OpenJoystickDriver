@@ -109,6 +109,89 @@ import Testing
     #expect(status.readiness == .needsAttention)
   }
 
+  @Test func liveStatusRefreshPublishesControllerDisconnectionWithoutLoadingTheUI() async {
+    let device = ApplicationServiceDeviceDescription(
+      name: "Test Pad",
+      vendorID: 0x1234,
+      productID: 0x5678,
+      parser: "GIP",
+      connection: "USB",
+      serialNumber: nil,
+      runtimeIdentifier: "session-device-live"
+    )
+    let connected = ApplicationServiceStatusPayload(
+      inputMonitoring: "granted",
+      accessibility: "granted",
+      connectedDevices: [device],
+      userSpaceVirtualDeviceEnabled: true,
+      userSpaceVirtualDeviceStatus: "ready",
+      compatibilityIdentity: CompatibilityIdentity.sdl2_3.rawValue
+    )
+    let disconnected = ApplicationServiceStatusPayload(
+      inputMonitoring: "granted",
+      accessibility: "granted",
+      connectedDevices: [],
+      userSpaceVirtualDeviceEnabled: true,
+      userSpaceVirtualDeviceStatus: "ready",
+      compatibilityIdentity: CompatibilityIdentity.sdl2_3.rawValue
+    )
+    let gateway = GatewayStub(statusPayload: connected)
+    let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
+    await viewModel.refresh()
+    await gateway.setStatusPayload(disconnected)
+
+    await viewModel.refreshLiveStatus()
+
+    let statusState = await MainActor.run { viewModel.statusState }
+    guard case .available(let status) = statusState else {
+      Issue.record("Expected live status to remain available")
+      return
+    }
+    #expect(status.devices.isEmpty)
+  }
+
+  @Test @MainActor func livePollingDoesNotCancelTheFullProfilesAndIdentityRefresh() async {
+    let gateway = GatewayStub(statusReadDelayNanoseconds: 100_000_000)
+    let viewModel = RuntimeViewModel(gateway: gateway)
+    let fullRefresh = Task { await viewModel.refresh() }
+    await Task.yield()
+
+    await viewModel.refreshLiveStatus()
+    await fullRefresh.value
+
+    guard case .available = viewModel.remappingState else {
+      Issue.record("Expected profiles to finish loading")
+      return
+    }
+    guard case .available = viewModel.compatibilityState else {
+      Issue.record("Expected controller identity to finish loading")
+      return
+    }
+  }
+
+  @Test @MainActor func liveStatusRefreshPublishesActiveProfileChanges() async {
+    let profile = makeProfile(name: "Desktop")
+    let gateway = GatewayStub(snapshotPayload: snapshot(profiles: [profile]))
+    let viewModel = RuntimeViewModel(gateway: gateway)
+    await viewModel.refresh()
+    let activeProfile = ApplicationServiceRemappingActiveProfilePayload(
+      vendorID: 0x1234,
+      productID: 0x5678,
+      profileID: profile.id,
+      profileName: profile.name,
+      applicationScope: .global
+    )
+    await gateway.setSnapshotPayload(snapshot(profiles: [profile], activeProfiles: [activeProfile]))
+
+    await viewModel.refreshLiveStatus()
+
+    guard case .available(let current) = viewModel.remappingState else {
+      Issue.record("Expected the remapping snapshot to remain available")
+      return
+    }
+    #expect(current.activeProfiles.map(\.profileID) == [profile.id])
+  }
+
   @Test func statusReadinessIgnoresPostEventAccessWithoutActiveMappings() async {
     let device = ApplicationServiceDeviceDescription(
       name: "Test Pad",
