@@ -62,7 +62,7 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     Task { await permissionManager.startPolling() }
     remappingRouter.startTicker()
     do { try applicationServiceServer.start() } catch {
-      serviceLog("[Service] RPC socket startup failed: \(error.localizedDescription)")
+      serviceError("[Service] RPC socket startup failed: \(error.localizedDescription)")
     }
     Task { await manager.start() }
   }
@@ -79,16 +79,15 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     applicationServiceServer.stop()
     await manager.stop()
     do { try await remappingRouter.shutdown() } catch {
-      serviceLog("[Service] Remapping shutdown failed: \(error.localizedDescription)")
+      serviceError("[Service] Remapping shutdown failed: \(error.localizedDescription)")
     }
     await permissionManager.stopPolling()
     serviceLog("[Service] Stopped")
   }
 
-  private func serviceLog(_ message: String) {
-    print(message)
-    NSLog("%@", message)
-  }
+  private func serviceLog(_ message: String) { print(message) }
+
+  private func serviceError(_ message: String) { fputs("\(message)\n", stderr) }
 
   private func setupGracefulShutdown() {
     stateLock.withLock {

@@ -8,7 +8,7 @@ func controllerDisplayName(productName: String?, vendorID: UInt16, productID: UI
   return String(format: "Controller %04x:%04x", vendorID, productID)
 }
 
-let usbDetectionPollNanoseconds: UInt64 = 2_000_000_000
+let usbDetectionPollNanoseconds: UInt64 = 500_000_000
 let devicePermissionWatchNanoseconds: UInt64 = 1_000_000_000
 private let nanosecondsPerMillisecond: UInt64 = 1_000_000
 let maxRumbleDurationMs = 5_000
