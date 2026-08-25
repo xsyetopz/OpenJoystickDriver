@@ -6,6 +6,14 @@ All notable changes to OpenJoystickDriver are documented in this file.
 
 ### Added
 
+- Added a compact native menu-bar and settings experience with Overview,
+  Controllers, Profiles, Console, and Settings panes, a standard About panel,
+  launch-at-login support, and direct GitHub access.
+- Added an 80-column wrapped application-service console with stream filtering,
+  refresh, and copy controls.
+- Added native controller and active-profile notifications with independent
+  event and sound preferences, a test action, foreground banner presentation,
+  and truthful macOS banner and sound status in Overview and Settings.
 - Added availability-selected HID wrappers: macOS 10.15–14 use IOHID for
   physical access and `IOHIDUserDevice` for consumer virtual devices, while
   macOS 15 and later use CoreHID for both roles.
@@ -21,6 +29,12 @@ All notable changes to OpenJoystickDriver are documented in this file.
 
 ### Fixed
 
+- Prevented live polling from cancelling full profile and controller-identity
+  refreshes, removed persistent loading states, and made controller connection,
+  disconnection, and active-profile changes update without replacing visible UI
+  state with loading placeholders.
+- Corrected console stream classification so ordinary application-service
+  startup output is not presented as an error.
 - Kept Compatibility virtual gamepads stable across foreground-application
   changes and made `sdl2-3` publish the hardware-verified ASTRO `9886:0024`
   identity with its exact Xbox 360 HIDAPI descriptor and reports. PCSX2 Nightly
@@ -52,6 +66,13 @@ All notable changes to OpenJoystickDriver are documented in this file.
 
 ### Changed
 
+- Made Apple GameController the recommended default compatibility identity,
+  presented identity choices in a compact grid, removed duplicate empty states
+  and redundant advanced shortcuts, and reduced unused space throughout the
+  settings window.
+- Reworked the menu-bar menu around Show, Refresh, Settings, connected
+  controllers, Help, About, and Quit, with native controller protocol icons and
+  the application icon as the preferred status-item image.
 - Folded the hardware-verified ASTRO Xbox 360 HIDAPI implementation into the
   SDL-specific `sdl2-3` profile and removed the now-redundant `x360-hid`
   selection and diagnostic spoof RPC/CLI surface. Hardware testing rejected
