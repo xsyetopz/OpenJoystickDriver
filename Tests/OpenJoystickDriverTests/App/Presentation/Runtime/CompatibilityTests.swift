@@ -27,7 +27,7 @@ import Testing
 
     await viewModel.resetCompatibilityIdentity()
 
-    #expect(await gateway.selectedIdentity == .sdl2_3)
+    #expect(await gateway.selectedIdentity == .appleGameController)
     #expect(await gateway.setIdentityCallCount == 1)
   }
 

@@ -59,7 +59,8 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     )
     self.userSpaceEnabled = false
     let savedCompat = UserDefaults.standard.string(forKey: Self.compatibilityIdentityDefaultsKey)
-    self.compatibilityIdentity = CompatibilityIdentity(rawValue: savedCompat ?? "") ?? .sdl2_3
+    self.compatibilityIdentity =
+      CompatibilityIdentity(rawValue: savedCompat ?? "") ?? .appleGameController
     super.init()
 
     // Consumer routing used to be selectable. Discard every stale selection and always

@@ -513,7 +513,7 @@ import OpenJoystickDriverKit
   func resetCompatibilityIdentity() async {
     // Reset only the compatibility selection. The broader service reset changes unrelated runtime
     // settings and remains CLI-only.
-    await setCompatibilityIdentity(.sdl2_3)
+    await setCompatibilityIdentity(.appleGameController)
   }
 
   private func locallyValid(_ profile: RemappingProfile, operation: RuntimeMutationOperation? = nil)

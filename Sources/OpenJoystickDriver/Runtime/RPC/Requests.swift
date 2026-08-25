@@ -327,7 +327,7 @@ extension ApplicationServiceServer {
       userSpaceStatus = "off"
     }
 
-    compatibilityIdentity = .sdl2_3
+    compatibilityIdentity = .appleGameController
     reply(initializeCompatibilityBackend())
   }
 
