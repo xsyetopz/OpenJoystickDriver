@@ -160,8 +160,7 @@
               action: refreshProfiles
             )
           }.padding(.horizontal, 14)
-        case .available:
-          if profiles.isEmpty { noProfilesState.padding(.horizontal, 14) } else { profileListRows }
+        case .available: if !profiles.isEmpty { profileListRows }
         }
         Spacer(minLength: 0)
       }.background(Color(NSColor.controlBackgroundColor))

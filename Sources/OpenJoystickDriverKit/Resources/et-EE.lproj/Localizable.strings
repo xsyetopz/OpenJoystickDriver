@@ -20,7 +20,7 @@
 "menu.minimize" = "Minimeeri";
 "menu.zoom" = "Suurenda";
 "menu.bringAllToFront" = "Too kõik esiplaanile";
-"menu.projectPage" = "Projekti leht";
+"menu.projectPage" = "GitHub";
 "common.ok" = "OK";
 "common.loadingEllipsis" = "…";
 "about.version" = "Versioon %@\nKontrollerisisend macOS-ile";

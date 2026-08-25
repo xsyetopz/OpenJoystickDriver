@@ -4,6 +4,7 @@
   import Combine
   import OpenJoystickDriverKit
   import SwiftUI
+  import UserNotifications
 
   @MainActor final class MenuBarCoordinator: NSObject, NSApplicationDelegate {
     let runtime: ApplicationServiceRuntime
@@ -13,6 +14,10 @@
     private var statusMenu: NSMenu?
     private var settingsWindowController: SettingsWindowController?
     private var refreshTimer: Timer?
+    private var liveStatusTimer: Timer?
+    private let notificationMonitor = RuntimeNotificationMonitor()
+    private let notificationPresenter = RuntimeNotificationCenterDelegate()
+    private var liveStatusRefreshInFlight = false
     private var isStopping = false
 
     init(runtime: ApplicationServiceRuntime, gateway: any ApplicationServiceGateway) {
@@ -35,10 +40,15 @@
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+      UNUserNotificationCenter.current().delegate = notificationPresenter
       refreshStatus()
       refreshTimer = Timer.scheduledTimer(withTimeInterval: 12, repeats: true) { [weak self] _ in
         guard let self else { return }
         Task { @MainActor in self.refreshStatus() }
+      }
+      liveStatusTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+        guard let self else { return }
+        Task { @MainActor in self.refreshLiveStatus() }
       }
     }
 
@@ -47,6 +57,8 @@
       isStopping = true
       refreshTimer?.invalidate()
       refreshTimer = nil
+      liveStatusTimer?.invalidate()
+      liveStatusTimer = nil
       Task { @MainActor [weak self, weak sender] in
         guard let self else { return }
         await self.runtime.stop()
@@ -55,7 +67,9 @@
       return .terminateLater
     }
 
-    @objc func openSettings(_ sender: Any?) { openSettings(pane: nil) }
+    @objc func openSettings(_ sender: Any?) { openSettings(pane: .settings) }
+
+    @objc func showApplication(_ sender: Any?) { openSettings(pane: nil) }
 
     @objc func openSettingsFromStatus(_ sender: Any?) {
       let item = sender as? NSMenuItem
@@ -81,7 +95,10 @@
         button.toolTip = OJDLocalized.string("app.name", fallback: "OpenJoystickDriver")
         button.target = self
         button.action = #selector(showStatusMenu(_:))
-        if #available(macOS 11.0, *) {
+        if let appIcon = NSImage(named: NSImage.applicationIconName)?.copy() as? NSImage {
+          appIcon.size = NSSize(width: 18, height: 18)
+          button.image = appIcon
+        } else if #available(macOS 11.0, *) {
           button.image = NSImage(
             systemSymbolName: "gamecontroller",
             accessibilityDescription: OJDLocalized.string(
@@ -89,9 +106,6 @@
               fallback: "OpenJoystickDriver"
             )
           )
-          button.image?.isTemplate = true
-        } else if let appIcon = NSImage(named: NSImage.applicationIconName) {
-          button.image = appIcon
           button.image?.isTemplate = true
         } else {
           // Text is an intentional final fallback for an unbundled debug executable.
@@ -116,7 +130,20 @@
       Task { @MainActor [weak self] in
         guard let self else { return }
         await viewModel.refresh()
+        notificationMonitor.observe(RuntimeNotificationSnapshot(viewModel: viewModel))
         updateStatusMenu()
+      }
+    }
+
+    private func refreshLiveStatus() {
+      guard !liveStatusRefreshInFlight else { return }
+      liveStatusRefreshInFlight = true
+      Task { @MainActor [weak self] in
+        guard let self else { return }
+        await viewModel.refreshLiveStatus()
+        notificationMonitor.observe(RuntimeNotificationSnapshot(viewModel: viewModel))
+        updateStatusMenu()
+        liveStatusRefreshInFlight = false
       }
     }
 
@@ -124,18 +151,13 @@
       guard let menu = statusMenu else { return }
       menu.removeAllItems()
 
-      let statusItem = NSMenuItem(title: statusTitle, action: nil, keyEquivalent: "")
-      statusItem.isEnabled = false
-      menu.addItem(statusItem)
-
-      let profileItem = NSMenuItem(
-        title: activeProfileTitle,
-        action: remappingNeedsRetry ? #selector(refreshFromStatus(_:)) : nil,
+      let show = NSMenuItem(
+        title: OJDLocalized.string("menu.show", fallback: "Show OpenJoystickDriver"),
+        action: #selector(showApplication(_:)),
         keyEquivalent: ""
       )
-      profileItem.target = remappingNeedsRetry ? self : nil
-      profileItem.isEnabled = remappingNeedsRetry
-      menu.addItem(profileItem)
+      show.target = self
+      menu.addItem(show)
       menu.addItem(.separator())
 
       if needsPermissionAttention {
@@ -158,33 +180,6 @@
       refresh.keyEquivalentModifierMask = [.command]
       refresh.image = menuImage(symbol: "arrow.clockwise")
       menu.addItem(refresh)
-      menu.addItem(.separator())
-
-      addNavigationItem(
-        title: OJDLocalized.string("menu.overview", fallback: "Overview..."),
-        pane: .overview,
-        symbol: "rectangle.grid.2x2",
-        to: menu
-      )
-      addNavigationItem(
-        title: OJDLocalized.string("menu.controllers", fallback: "Controllers..."),
-        pane: .controllers,
-        symbol: "gamecontroller",
-        to: menu
-      )
-      addNavigationItem(
-        title: OJDLocalized.string("menu.profiles", fallback: "Profiles..."),
-        pane: .profiles,
-        symbol: "slider.horizontal.3",
-        to: menu
-      )
-      addNavigationItem(
-        title: OJDLocalized.string("menu.debug", fallback: "Debug..."),
-        pane: .debug,
-        symbol: "ant",
-        to: menu
-      )
-      menu.addItem(.separator())
 
       let settings = NSMenuItem(
         title: OJDLocalized.string("menu.settings", fallback: "Settings..."),
@@ -192,10 +187,36 @@
         keyEquivalent: ","
       )
       settings.target = self
-      settings.representedObject = SettingsPane.overview.rawValue
+      settings.representedObject = SettingsPane.settings.rawValue
       settings.keyEquivalentModifierMask = [.command]
       settings.image = menuImage(symbol: "gearshape")
       menu.addItem(settings)
+      menu.addItem(.separator())
+
+      let controllers = NSMenuItem(
+        title: OJDLocalized.string("common.controllers", fallback: "Controllers"),
+        action: nil,
+        keyEquivalent: ""
+      )
+      controllers.submenu = makeControllersMenu()
+      menu.addItem(controllers)
+
+      let help = NSMenuItem(
+        title: OJDLocalized.string("menu.help", fallback: "Help"),
+        action: nil,
+        keyEquivalent: ""
+      )
+      help.submenu = makeHelpMenu()
+      menu.addItem(help)
+      menu.addItem(.separator())
+
+      let about = NSMenuItem(
+        title: OJDLocalized.string("menu.about", fallback: "About OpenJoystickDriver"),
+        action: #selector(showAbout(_:)),
+        keyEquivalent: ""
+      )
+      about.target = self
+      menu.addItem(about)
 
       let quit = NSMenuItem(
         title: OJDLocalized.string("menu.quit", fallback: "Quit OpenJoystickDriver"),
@@ -206,6 +227,73 @@
       quit.keyEquivalentModifierMask = [.command]
       quit.image = menuImage(symbol: "power")
       menu.addItem(quit)
+    }
+
+    private func makeControllersMenu() -> NSMenu {
+      let menu = NSMenu(title: OJDLocalized.string("common.controllers", fallback: "Controllers"))
+      if case .available(let status) = viewModel.statusState, !status.devices.isEmpty {
+        for device in status.devices {
+          let item = NSMenuItem(
+            title: device.name,
+            action: #selector(openSettingsFromStatus(_:)),
+            keyEquivalent: ""
+          )
+          item.target = self
+          item.representedObject = SettingsPane.controllers.rawValue
+          item.image = controllerMenuImage(for: device.protocolVariant)
+          menu.addItem(item)
+        }
+        menu.addItem(.separator())
+      } else {
+        let empty = NSMenuItem(
+          title: OJDLocalized.string("controllers.emptyTitle", fallback: "No controller connected"),
+          action: nil,
+          keyEquivalent: ""
+        )
+        empty.isEnabled = false
+        menu.addItem(empty)
+        menu.addItem(.separator())
+      }
+      addNavigationItem(
+        title: OJDLocalized.string("menu.controllers", fallback: "Open Controllers..."),
+        pane: .controllers,
+        symbol: "gamecontroller",
+        to: menu
+      )
+      return menu
+    }
+
+    private func makeHelpMenu() -> NSMenu {
+      let menu = NSMenu(title: OJDLocalized.string("menu.help", fallback: "Help"))
+      addNavigationItem(
+        title: OJDLocalized.string("menu.console", fallback: "Open Console..."),
+        pane: .console,
+        symbol: "terminal",
+        to: menu
+      )
+      let report = NSMenuItem(
+        title: OJDLocalized.string("debug.saveReport", fallback: "Save Debug Report..."),
+        action: #selector(saveSupportReport(_:)),
+        keyEquivalent: ""
+      )
+      report.target = self
+      menu.addItem(report)
+      let logs = NSMenuItem(
+        title: OJDLocalized.string("debug.saveLogs", fallback: "Save Logs..."),
+        action: #selector(saveSupportLogs(_:)),
+        keyEquivalent: ""
+      )
+      logs.target = self
+      menu.addItem(logs)
+      menu.addItem(.separator())
+      let project = NSMenuItem(
+        title: OJDLocalized.string("menu.projectPage", fallback: "GitHub"),
+        action: #selector(openProjectPage(_:)),
+        keyEquivalent: ""
+      )
+      project.target = self
+      menu.addItem(project)
+      return menu
     }
 
     private func addNavigationItem(
@@ -240,7 +328,7 @@
       case "slider.horizontal.3", "gearshape": legacyName = "NSPreferencesGeneral"
       case "gamecontroller": legacyName = "NSBluetoothTemplate"
       case "rectangle.grid.2x2": legacyName = "NSIconViewTemplate"
-      case "ant": legacyName = "NSInfo"
+      case "ant", "terminal": legacyName = "NSInfo"
       case "info.circle": legacyName = "NSInfo"
       case "lock.shield": legacyName = "NSLockLockedTemplate"
       case "arrow.clockwise": legacyName = "NSRefreshTemplate"
@@ -252,66 +340,9 @@
       return image
     }
 
-    private var statusTitle: String {
-      switch viewModel.statusState {
-      case .loading: return OJDLocalized.string("status.starting", fallback: "Starting…")
-      case .available(let status):
-        return OJDLocalized.formatted(
-          "status.availableSummary",
-          fallback: "%@ · %@",
-          status.readinessLabel,
-          status.deviceCountLabel
-        )
-      case .unavailable:
-        return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
-      case .error: return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
-      }
-    }
-
-    private var activeProfileTitle: String {
-      switch viewModel.remappingState {
-      case .loading:
-        return OJDLocalized.string(
-          "status.activeProfileChecking",
-          fallback: "Active profile: Checking…"
-        )
-      case .unavailable(let message):
-        return OJDLocalized.formatted(
-          "status.activeProfileUnavailable",
-          fallback: "Active profile unavailable · %@",
-          message
-        )
-      case .error(let message):
-        return OJDLocalized.formatted(
-          "status.activeProfileError",
-          fallback: "Active profile error · %@",
-          message
-        )
-      case .available(let snapshot):
-        let names = snapshot.activeProfiles.map(\.profileName)
-        guard !names.isEmpty else {
-          return OJDLocalized.string("status.noActiveProfile", fallback: "No active profile")
-        }
-        if names.count == 1 {
-          return OJDLocalized.formatted(
-            "status.activeProfileNamed",
-            fallback: "Active profile: %@",
-            names[0]
-          )
-        }
-        return OJDLocalized.plural(
-          "status.activeProfilesCount",
-          count: names.count,
-          fallback: "%d active profiles"
-        )
-      }
-    }
-
-    private var remappingNeedsRetry: Bool {
-      switch viewModel.remappingState {
-      case .unavailable, .error: return true
-      case .loading, .available: return false
-      }
+    private func controllerMenuImage(for protocolVariant: ControllerProtocolVariant) -> NSImage? {
+      if let image = menuImage(symbol: protocolVariant.controllerSymbolName) { return image }
+      return menuImage(symbol: "gamecontroller")
     }
 
     private var needsPermissionAttention: Bool {
@@ -433,22 +464,46 @@
       return menu
     }
 
-    @objc private func showAbout(_ sender: Any?) {
-      let alert = NSAlert()
-      alert.messageText = OJDLocalized.string("app.name", fallback: "OpenJoystickDriver")
-      alert.informativeText = OJDLocalized.formatted(
-        "about.version",
-        fallback: "Version %@\nController input for macOS",
-        ApplicationVersion.current
-      )
-      alert.alertStyle = .informational
-      alert.addButton(withTitle: OJDLocalized.string("menu.projectPage", fallback: "Project page"))
-      alert.addButton(withTitle: OJDLocalized.string("common.ok", fallback: "OK"))
-      if alert.runModal() == .alertFirstButtonReturn,
-        let url = URL(string: "https://github.com/xsyetopz/OpenJoystickDriver")
-      {
-        NSWorkspace.shared.open(url)
+    @objc private func saveSupportReport(_ sender: Any?) {
+      let panel = NSSavePanel()
+      panel.title = OJDLocalized.string("debug.saveReportPanel", fallback: "Save Debug Report")
+      panel.nameFieldStringValue = viewModel.defaultSupportReportFilename
+      panel.canCreateDirectories = true
+      panel.begin { [viewModel] response in
+        guard response == .OK, let outputURL = panel.url else { return }
+        Task { @MainActor in await viewModel.saveSupportReport(to: outputURL) }
       }
+    }
+
+    @objc private func saveSupportLogs(_ sender: Any?) {
+      let panel = NSSavePanel()
+      panel.title = OJDLocalized.string("debug.saveLogsPanel", fallback: "Save Debug Logs")
+      panel.nameFieldStringValue = viewModel.defaultSupportLogsFilename
+      panel.canCreateDirectories = true
+      panel.begin { [viewModel] response in
+        guard response == .OK, let outputURL = panel.url else { return }
+        Task { @MainActor in await viewModel.saveSupportLogs(to: outputURL) }
+      }
+    }
+
+    @objc private func openProjectPage(_ sender: Any?) {
+      guard let url = URL(string: "https://github.com/xsyetopz/OpenJoystickDriver") else { return }
+      NSWorkspace.shared.open(url)
+    }
+
+    @objc private func showAbout(_ sender: Any?) {
+      let repositoryTitle = OJDLocalized.string("menu.projectPage", fallback: "GitHub")
+      let credits = NSMutableAttributedString(string: repositoryTitle)
+      if let url = URL(string: "https://github.com/xsyetopz/OpenJoystickDriver") {
+        credits.addAttribute(.link, value: url, range: NSRange(location: 0, length: credits.length))
+      }
+      var options: [NSApplication.AboutPanelOptionKey: Any] = [
+        .applicationName: OJDLocalized.string("app.name", fallback: "OpenJoystickDriver"),
+        .applicationVersion: ApplicationVersion.current, .credits: credits
+      ]
+      if let icon = NSImage(named: NSImage.applicationIconName) { options[.applicationIcon] = icon }
+      NSApplication.shared.orderFrontStandardAboutPanel(options: options)
+      NSApplication.shared.activate(ignoringOtherApps: true)
     }
   }
 

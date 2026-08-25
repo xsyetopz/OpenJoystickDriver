@@ -97,22 +97,7 @@
             message: message,
             retry: refresh
           ).padding(.horizontal, 14)
-        case .available:
-          if devices.isEmpty {
-            EmptyStateView(
-              symbol: "gamecontroller",
-              title: OJDLocalized.string(
-                "controllers.emptyTitle",
-                fallback: "No controller connected"
-              ),
-              message: OJDLocalized.string(
-                "controllers.emptyMessage",
-                fallback: "Connect a controller, then choose Refresh."
-              )
-            ).padding(.horizontal, 14)
-          } else {
-            controllerListRows
-          }
+        case .available: if devices.isEmpty { EmptyView() } else { controllerListRows }
         }
         Spacer(minLength: 0)
       }.background(Color(NSColor.controlBackgroundColor))
@@ -190,22 +175,17 @@
             retry: refresh
           ).padding(28)
         case .available:
-          ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-              EmptyStateView(
-                symbol: "gamecontroller",
-                title: OJDLocalized.string(
-                  "controllers.emptyTitle",
-                  fallback: "No controller connected"
-                ),
-                message: OJDLocalized.string(
-                  "controllers.emptyMessage",
-                  fallback: "Connect a controller, then choose Refresh."
-                )
-              )
-              ControllerIdentityView(viewModel: viewModel)
-            }.padding(28).frame(maxWidth: .infinity, alignment: .leading)
-          }
+          EmptyStateView(
+            symbol: "gamecontroller",
+            title: OJDLocalized.string(
+              "controllers.emptyTitle",
+              fallback: "No controller connected"
+            ),
+            message: OJDLocalized.string(
+              "controllers.emptyMessage",
+              fallback: "Connect a controller, then choose Refresh."
+            )
+          ).padding(28).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
       }
     }

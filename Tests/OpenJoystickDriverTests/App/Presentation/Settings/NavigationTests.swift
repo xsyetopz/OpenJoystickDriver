@@ -6,7 +6,7 @@ import Testing
 @Suite struct SettingsNavigationTests {
   @Test func everySettingsPaneRemainsInThePrimaryRail() {
     #expect(SettingsPane.primaryCases == SettingsPane.allCases)
-    #expect(SettingsPane.primaryCases.count == 4)
+    #expect(SettingsPane.primaryCases == [.overview, .controllers, .profiles, .console, .settings])
   }
 
   @Test @MainActor func restoresTheLastAcceptedPane() {
@@ -39,20 +39,20 @@ import Testing
     let navigation = SettingsNavigationModel(persistence: persistence)
     navigation.requestPane(.controllers)
     navigation.setProfilesEditorDirty(true)
-    navigation.requestPane(.debug)
+    navigation.requestPane(.settings)
 
     #expect(navigation.selectedPane == .controllers)
-    #expect(navigation.pendingPane == .debug)
+    #expect(navigation.pendingPane == .settings)
     #expect(navigation.isDiscardConfirmationPresented)
     let beforeDiscard = SettingsNavigationModel(persistence: persistence)
     #expect(beforeDiscard.selectedPane == .controllers)
 
     navigation.discardPendingPane()
-    #expect(navigation.selectedPane == .debug)
+    #expect(navigation.selectedPane == .settings)
     #expect(navigation.pendingPane == nil)
     #expect(!navigation.isDiscardConfirmationPresented)
     let afterDiscard = SettingsNavigationModel(persistence: persistence)
-    #expect(afterDiscard.selectedPane == .debug)
+    #expect(afterDiscard.selectedPane == .settings)
   }
 
   @Test @MainActor func canceledDirtySelectionLeavesThePersistedPaneUnchanged() {
@@ -67,7 +67,7 @@ import Testing
     let navigation = SettingsNavigationModel(persistence: persistence)
     navigation.requestPane(.controllers)
     navigation.setProfilesEditorDirty(true)
-    navigation.requestPane(.debug)
+    navigation.requestPane(.console)
     navigation.cancelPendingPane()
 
     #expect(navigation.selectedPane == .controllers)

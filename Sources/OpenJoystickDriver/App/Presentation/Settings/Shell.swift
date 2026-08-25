@@ -55,6 +55,8 @@
       case "gamecontroller": name = "NSBluetoothTemplate"
       case "chevron.right": name = "NSRightFacingTriangleTemplate"
       case "slider.horizontal.3": name = "NSPreferencesGeneral"
+      case "gearshape": name = "NSPreferencesGeneral"
+      case "terminal": name = "NSInfo"
       case "clock": name = "NSStatusPartiallyAvailable"
       case "rectangle.grid.2x2": name = "NSIconViewTemplate"
       default: return nil
@@ -107,7 +109,8 @@
     case overview
     case controllers
     case profiles
-    case debug
+    case console
+    case settings
 
     var id: String { rawValue }
 
@@ -116,7 +119,8 @@
       case .overview: return OJDLocalized.string("settings.overview", fallback: "Overview")
       case .controllers: return OJDLocalized.string("common.controllers", fallback: "Controllers")
       case .profiles: return OJDLocalized.string("common.profiles", fallback: "Profiles")
-      case .debug: return OJDLocalized.string("debug.title", fallback: "Debug")
+      case .console: return OJDLocalized.string("console.title", fallback: "Console")
+      case .settings: return OJDLocalized.string("settings.title", fallback: "Settings")
       }
     }
 
@@ -125,7 +129,8 @@
       case .overview: return "rectangle.grid.2x2"
       case .controllers: return "gamecontroller"
       case .profiles: return "slider.horizontal.3"
-      case .debug: return "ant"
+      case .console: return "terminal"
+      case .settings: return "gearshape"
       }
     }
 
@@ -146,14 +151,15 @@
       case .overview: legacyName = "NSIconViewTemplate"
       case .controllers: legacyName = "NSBluetoothTemplate"
       case .profiles: legacyName = "NSPreferencesGeneral"
-      case .debug: legacyName = "NSInfo"
+      case .console: legacyName = "NSInfo"
+      case .settings: legacyName = "NSPreferencesGeneral"
       }
       if let image = NSImage(named: NSImage.Name(legacyName)) {
         image.isTemplate = true
         return image
       }
 
-      // All four symbols have AppKit template equivalents. Keep a valid image in the unlikely
+      // All pane symbols have AppKit template equivalents. Keep a valid image in the unlikely
       // event an unbundled debug environment omits one of those legacy names.
       return NSImage(size: NSSize(width: 16, height: 16))
     }
@@ -231,6 +237,9 @@
   struct SettingsRootView: View {
     @ObservedObject var navigation: SettingsNavigationModel
     @ObservedObject var viewModel: RuntimeViewModel
+    let notificationPermission: NotificationPermissionModel
+    let preferences: SettingsPreferencesModel
+    let console: ConsoleViewModel
 
     var body: some View {
       detail.frame(maxWidth: .infinity, minHeight: 0, maxHeight: .infinity).background(
@@ -258,10 +267,12 @@
 
     @ViewBuilder private var detail: some View {
       switch navigation.selectedPane {
-      case .overview: OverviewView(viewModel: viewModel)
+      case .overview:
+        OverviewView(viewModel: viewModel, notificationPermission: notificationPermission)
       case .controllers: ControllersView(viewModel: viewModel)
       case .profiles: ProfilesView(viewModel: viewModel, navigation: navigation)
-      case .debug: DebugView(viewModel: viewModel)
+      case .console: ConsoleView(model: console)
+      case .settings: ApplicationSettingsView(preferences: preferences)
       }
     }
 
@@ -356,6 +367,15 @@
 
   struct OverviewView: View {
     @ObservedObject var viewModel: RuntimeViewModel
+    @ObservedObject private var notificationPermission: NotificationPermissionModel
+
+    init(
+      viewModel: RuntimeViewModel,
+      notificationPermission: NotificationPermissionModel = NotificationPermissionModel()
+    ) {
+      self.viewModel = viewModel
+      self.notificationPermission = notificationPermission
+    }
 
     var body: some View {
       ScrollView {
@@ -364,13 +384,15 @@
           accessSummary
           statusCard
         }.padding(28).frame(maxWidth: .infinity, alignment: .leading)
-      }
+      }.onAppear { notificationPermission.refresh() }.onReceive(
+        NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)
+      ) { _ in notificationPermission.refresh() }
     }
 
     private var accessSummary: some View {
       GroupBox {
-        VStack(alignment: .leading, spacing: 0) {
-          AccessRequirementRow(
+        HStack(alignment: .top, spacing: 12) {
+          AccessRequirementCard(
             title: OJDLocalized.string("common.inputMonitoring", fallback: "Input Monitoring"),
             value: inputMonitoringStatus.value,
             symbol: "keyboard",
@@ -383,8 +405,7 @@
                 )
               } : nil
           )
-          Divider()
-          AccessRequirementRow(
+          AccessRequirementCard(
             title: OJDLocalized.string("common.accessibility", fallback: "Accessibility"),
             value: accessibilityStatus.value,
             symbol: "lock.shield",
@@ -397,8 +418,7 @@
                 )
               } : nil
           )
-          Divider()
-          AccessRequirementRow(
+          AccessRequirementCard(
             title: OJDLocalized.string("common.keyboardPointer", fallback: "Keyboard & pointer"),
             value: postEventStatus.value,
             symbol: "cursorarrow",
@@ -406,7 +426,15 @@
             action: postEventStatus.isActionable
               ? { PermissionAccessActions.requestPostEventAccess(viewModel: viewModel) } : nil
           )
-        }
+          AccessRequirementCard(
+            title: OJDLocalized.string("settings.notifications", fallback: "Notifications"),
+            value: notificationStatus.value,
+            symbol: "bell",
+            tone: notificationStatus.tone,
+            action: notificationStatus.isActionable
+              ? { notificationPermission.requestOrOpenSettings() } : nil
+          )
+        }.padding(4)
       } label: {
         Text(OJDLocalized.string("settings.accessReadiness", fallback: "Access & readiness")).font(
           .headline
@@ -420,9 +448,10 @@
     }
 
     private var accessSummaryValue: String {
-      [inputMonitoringStatus.value, accessibilityStatus.value, postEventStatus.value].joined(
-        separator: ", "
-      )
+      [
+        inputMonitoringStatus.value, accessibilityStatus.value, postEventStatus.value,
+        notificationStatus.value
+      ].joined(separator: ", ")
     }
 
     private var inputMonitoringStatus: OverviewAccessStatus {
@@ -472,6 +501,49 @@
         return OverviewAccessStatus(
           value: OJDLocalized.string("status.checking", fallback: "Checking..."),
           tone: .neutral,
+          isActionable: true
+        )
+      }
+    }
+
+    private var notificationStatus: OverviewAccessStatus {
+      switch notificationPermission.state {
+      case .checking:
+        return OverviewAccessStatus(
+          value: OJDLocalized.string("status.checking", fallback: "Checking…"),
+          tone: .neutral,
+          isActionable: false
+        )
+      case .allowed:
+        if notificationPermission.settings.alertStyle == .none {
+          return OverviewAccessStatus(
+            value: OJDLocalized.string("settings.notificationBannersOff", fallback: "Banners off"),
+            tone: .caution,
+            isActionable: true
+          )
+        }
+        if notificationPermission.settings.soundsEnabled == false {
+          return OverviewAccessStatus(
+            value: OJDLocalized.string("settings.notificationSoundOff", fallback: "Sound off"),
+            tone: .caution,
+            isActionable: true
+          )
+        }
+        return OverviewAccessStatus(
+          value: OJDLocalized.string("status.allowed", fallback: "Allowed"),
+          tone: .positive,
+          isActionable: false
+        )
+      case .notDetermined:
+        return OverviewAccessStatus(
+          value: OJDLocalized.string("common.notRequested", fallback: "Not requested"),
+          tone: .caution,
+          isActionable: true
+        )
+      case .denied:
+        return OverviewAccessStatus(
+          value: OJDLocalized.string("common.needsAttention", fallback: "Needs attention"),
+          tone: .caution,
           isActionable: true
         )
       }
@@ -592,7 +664,7 @@
     }
   }
 
-  private struct AccessRequirementRow: View {
+  private struct AccessRequirementCard: View {
     let title: String
     let value: String
     let symbol: String
@@ -600,22 +672,23 @@
     let action: (() -> Void)?
 
     var body: some View {
-      HStack(spacing: 10) {
+      VStack(alignment: .leading, spacing: 6) {
         OJDSystemSymbol(name: symbol, fallback: title).foregroundColor(tone.color).frame(
           width: 20,
           height: 20
         ).ojdAccessibilityHidden(true)
-        VStack(alignment: .leading, spacing: 2) {
-          Text(title).font(.body.weight(.medium))
-          Text(value).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
-        }.frame(maxWidth: .infinity, alignment: .leading)
+        Text(title).font(.body.weight(.medium)).fixedSize(horizontal: false, vertical: true)
+        Text(value).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         if let action {
           Button(OJDLocalized.string("common.request", fallback: "Request..."), action: action)
-            .frame(minWidth: 82, minHeight: 28).ojdAccessibilityLabel(
+            .frame(minHeight: 28).ojdAccessibilityLabel(
               OJDLocalized.formatted("settings.requestAccess", fallback: "Request %@ access", title)
             ).ojdAccessibilityValue(value)
         }
-      }.padding(.vertical, 8).contentShape(Rectangle()).ojdAccessibilityLabel(title)
+        Spacer(minLength: 0)
+      }.padding(8).frame(maxWidth: .infinity, minHeight: 112, alignment: .topLeading).background(
+        Color(NSColor.controlBackgroundColor)
+      ).cornerRadius(8).contentShape(Rectangle()).ojdAccessibilityLabel(title)
         .ojdAccessibilityValue(value)
     }
   }

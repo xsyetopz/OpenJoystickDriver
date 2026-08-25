@@ -50,20 +50,12 @@
             OJDLocalized.string("identity.error", fallback: "Controller identity error")
           ).ojdAccessibilityValue(outputError)
         }
-        Picker("", selection: selectedIdentityBinding) {
-          ForEach(outputIdentities, id: \.rawValue) { identity in
-            Text(RuntimePresentation.compatibilityLabel(identity))
-              // Keep each native radio row comfortable for keyboard and pointer users while
-              // allowing long labels to wrap at compact widths and larger text sizes.
-              .frame(minHeight: 28, alignment: .leading).fixedSize(
-                horizontal: false,
-                vertical: true
-              ).tag(identity.rawValue as String?)
-          }
-        }.labelsHidden().pickerStyle(.radioGroup).frame(maxWidth: .infinity, alignment: .leading)
-          .ojdAccessibilityLabel(
-            OJDLocalized.string("common.controllerIdentity", fallback: "Controller identity")
-          ).ojdAccessibilityValue(selectedIdentityAccessibilityValue).disabled(isOutputBusy)
+        VStack(alignment: .leading, spacing: 8) {
+          identityRow(Array(outputIdentities.prefix(2)))
+          identityRow(Array(outputIdentities.dropFirst(2)))
+        }.frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
+          OJDLocalized.string("common.controllerIdentity", fallback: "Controller identity")
+        ).ojdAccessibilityValue(selectedIdentityAccessibilityValue)
         if isOutputBusy {
           HStack(spacing: 8) {
             OJDLoadingIndicator()
@@ -76,7 +68,7 @@
         }
         Button(OJDLocalized.string("identity.reset", fallback: "Reset to recommended")) {
           // Keep the request scoped so a retry repeats the same identity mutation.
-          retryIdentity = .sdl2_3
+          retryIdentity = .appleGameController
           Task { @MainActor in await viewModel.resetCompatibilityIdentity() }
         }.disabled(isOutputBusy)
       }.onReceive(viewModel.$compatibilityState) { state in
@@ -99,6 +91,19 @@
           selectIdentity(identity)
         }
       )
+    }
+
+    private func identityRow(_ identities: [CompatibilityIdentity]) -> some View {
+      HStack(spacing: 18) {
+        ForEach(identities, id: \.rawValue) { identity in
+          IdentityRadioButton(
+            title: RuntimePresentation.compatibilityLabel(identity),
+            value: identity.rawValue,
+            selection: selectedIdentityBinding,
+            isEnabled: !isOutputBusy
+          ).frame(maxWidth: .infinity, minHeight: 28, alignment: .leading)
+        }
+      }
     }
 
     private var selectedIdentityAccessibilityValue: String {
@@ -137,6 +142,39 @@
       } else {
         Task { @MainActor in await viewModel.loadCompatibilityIdentity() }
       }
+    }
+  }
+
+  private struct IdentityRadioButton: NSViewRepresentable {
+    let title: String
+    let value: String
+    let selection: Binding<String?>
+    let isEnabled: Bool
+
+    func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
+
+    func makeNSView(context: Context) -> NSButton {
+      NSButton(
+        radioButtonWithTitle: title,
+        target: context.coordinator,
+        action: #selector(Coordinator.select(_:))
+      )
+    }
+
+    func updateNSView(_ button: NSButton, context: Context) {
+      context.coordinator.parent = self
+      button.title = title
+      button.state = selection.wrappedValue == value ? .on : .off
+      button.isEnabled = isEnabled
+      button.setAccessibilityLabel(title)
+    }
+
+    final class Coordinator: NSObject {
+      var parent: IdentityRadioButton
+
+      init(parent: IdentityRadioButton) { self.parent = parent }
+
+      @objc func select(_ sender: NSButton) { parent.selection.wrappedValue = parent.value }
     }
   }
 

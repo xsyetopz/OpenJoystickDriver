@@ -21,7 +21,7 @@
 "menu.minimize" = "Minimize";
 "menu.zoom" = "Zoom";
 "menu.bringAllToFront" = "Bring All to Front";
-"menu.projectPage" = "Project page";
+"menu.projectPage" = "GitHub";
 "common.ok" = "OK";
 "common.loadingEllipsis" = "…";
 "about.version" = "Version %@\nController input for macOS";

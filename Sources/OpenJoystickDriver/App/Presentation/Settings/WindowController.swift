@@ -14,6 +14,9 @@
     )
 
     private let navigation: SettingsNavigationModel
+    private let notificationPermission: NotificationPermissionModel
+    private let preferences: SettingsPreferencesModel
+    private let console: ConsoleViewModel
     private var navigationObservation: AnyCancellable?
 
     init(
@@ -21,15 +24,24 @@
       persistence: any SettingsPanePersistence = UserDefaultsSettingsPanePersistence()
     ) {
       navigation = SettingsNavigationModel(persistence: persistence)
-      let rootView = SettingsRootView(navigation: navigation, viewModel: viewModel)
+      notificationPermission = NotificationPermissionModel()
+      preferences = SettingsPreferencesModel()
+      console = ConsoleViewModel()
+      let rootView = SettingsRootView(
+        navigation: navigation,
+        viewModel: viewModel,
+        notificationPermission: notificationPermission,
+        preferences: preferences,
+        console: console
+      )
       let host = NSHostingView(rootView: rootView)
       let window = NSWindow(
-        contentRect: NSRect(x: 0, y: 0, width: 760, height: 500),
+        contentRect: NSRect(x: 0, y: 0, width: 700, height: 460),
         styleMask: [.titled, .closable, .resizable],
         backing: .buffered,
         defer: false
       )
-      window.minSize = NSSize(width: 700, height: 420)
+      window.minSize = NSSize(width: 640, height: 400)
       window.hidesOnDeactivate = false
       // Keep the production geometry separate from the retired oversized shell.
       window.setFrameAutosaveName("SettingsWindowGeometry")
@@ -125,7 +137,9 @@
         action: #selector(Self.selectPaneFromToolbar(_:))
       )
       group.controlRepresentation = .expanded
-      group.label = OJDLocalized.string("settings.navigation", fallback: "Settings navigation")
+      // Each segment already has an accessible pane label. Avoid repeating a visible group label
+      // below the toolbar controls.
+      group.label = ""
       group.paletteLabel = OJDLocalized.string(
         "settings.navigation",
         fallback: "Settings navigation"
