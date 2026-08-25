@@ -4,18 +4,25 @@ import Foundation
 struct DeviceCatalog: Sendable {
   private let profiles: [String: DeviceRuntimeProfile]
   private let rawUSBPipelineIdentifiers: Set<String>
+  let rawUSBProfileIdentifiers: [DeviceIdentifier]
   let hidProfileIdentifiers: [DeviceIdentifier]
 
   init() {
     do {
       var loaded: [String: DeviceRuntimeProfile] = [:]
       var hid: [DeviceIdentifier] = []
+      var rawUSB: [DeviceIdentifier] = []
       var rawUSBPipelineIdentifiers: Set<String> = []
       for record in try Self.loadRecords() {
         let key = "\(record.vendorID):\(record.productID)"
         guard loaded[key] == nil else { throw CatalogError("duplicate controller identity \(key)") }
         loaded[key] = try Self.makeRuntimeProfile(record)
-        if Self.supportsRawUSBPipeline(record) { rawUSBPipelineIdentifiers.insert(key) }
+        if Self.supportsRawUSBPipeline(record) {
+          rawUSBPipelineIdentifiers.insert(key)
+          rawUSB.append(
+            DeviceIdentifier(vendorID: UInt16(record.vendorID), productID: UInt16(record.productID))
+          )
+        }
         if record.transport == "hid" {
           hid.append(
             DeviceIdentifier(vendorID: UInt16(record.vendorID), productID: UInt16(record.productID))
@@ -24,6 +31,10 @@ struct DeviceCatalog: Sendable {
       }
       profiles = loaded
       self.rawUSBPipelineIdentifiers = rawUSBPipelineIdentifiers
+      self.rawUSBProfileIdentifiers = rawUSB.sorted {
+        if $0.vendorID != $1.vendorID { return $0.vendorID < $1.vendorID }
+        return $0.productID < $1.productID
+      }
       hidProfileIdentifiers = hid.sorted {
         if $0.vendorID != $1.vendorID { return $0.vendorID < $1.vendorID }
         return $0.productID < $1.productID
@@ -52,7 +63,7 @@ struct DeviceCatalog: Sendable {
         protocolVariant: .genericHID,
         mappingFlags: [],
         mappingOptions: [],
-        preferredBackends: [.driverKitHID, .userSpaceHID],
+        preferredBackends: [.userSpaceHID],
         gipStartupPackets: GIPStartupPacket.defaultSequence,
         gipKeepAlivePolicy: .enabled,
         hardwareVerified: false
@@ -102,9 +113,7 @@ struct DeviceCatalog: Sendable {
     }
     try requireKeys(
       root,
-      allowed: [
-        "$schema", "vendor_id", "product_id", "transport", "protocol", "usb", "provenance",
-      ],
+      allowed: ["$schema", "vendor_id", "product_id", "transport", "protocol", "usb", "provenance"],
       required: ["$schema", "vendor_id", "product_id", "transport", "protocol", "provenance"],
       path: path
     )
@@ -255,7 +264,7 @@ struct DeviceCatalog: Sendable {
       protocolVariant: variant,
       mappingFlags: flags,
       mappingOptions: mappingOptions(from: flags),
-      preferredBackends: [.driverKitHID, .userSpaceHID],
+      preferredBackends: [.userSpaceHID],
       gipStartupPackets: startupPackets.isEmpty ? GIPStartupPacket.defaultSequence : startupPackets,
       gipKeepAlivePolicy: keepAlivePolicy,
       hardwareVerified: record.provenance.verified
@@ -288,7 +297,7 @@ struct DeviceCatalog: Sendable {
       ["xboxOriginal", "xboxOne", "unknown"],
       [
         "dpadToButtons", "triggersToButtons", "sticksToNull", "shareButton", "paddles",
-        "profileButton", "shareOffset",
+        "profileButton", "shareOffset"
       ]
     ),
     "Xbox360": (
@@ -306,14 +315,14 @@ struct DeviceCatalog: Sendable {
       ["dualSense", "unknown"],
       [
         "touchpad", "gyro", "accelerometer", "battery", "lightbar", "microphoneMute",
-        "adaptiveTriggers", "experimental", "needsHardwareTest",
+        "adaptiveTriggers", "experimental", "needsHardwareTest"
       ]
     ),
     "SteamController": (
       ["steamController", "unknown"],
       [
         "lizardMode", "trackpads", "gyro", "battery", "wirelessReceiver", "experimental",
-        "needsHardwareTest",
+        "needsHardwareTest"
       ]
     ),
     "SwitchPro": (
@@ -323,13 +332,12 @@ struct DeviceCatalog: Sendable {
     "XboxAdaptiveJoystick": (
       ["xboxAdaptiveJoystick", "unknown"],
       ["rawUSBPackets", "genericHIDPackets", "experimental", "needsHardwareTest"]
-    ),
-    "GenericHID": (["genericHID"], []),
+    ), "GenericHID": (["genericHID"], [])
   ]
 
   private static let supportedSources: Set<String> = [
     "local-hardware", "linux-xpad.c", "linux-hid-steam.c", "linux-hid-playstation.c",
-    "linux-hid-sony.c", "linux-hid-nintendo.c", "tester-packets",
+    "linux-hid-sony.c", "linux-hid-nintendo.c", "tester-packets"
   ]
 
   private static let rawUSBParserNames: Set<String> = ["GIP", "Xbox360"]

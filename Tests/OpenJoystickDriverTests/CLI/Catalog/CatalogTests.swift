@@ -43,7 +43,7 @@ struct CommandCatalogTests {
 
     let families = [
       "status", "controller", "map", "app", "extension", "permissions", "compat", "test",
-      "diagnose", "update",
+      "diagnose", "update"
     ]
     for family in families { #expect(help.contains(family)) }
     #expect(help.contains("--timeout <seconds>"))

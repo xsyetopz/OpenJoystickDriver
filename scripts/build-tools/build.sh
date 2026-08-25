@@ -53,12 +53,12 @@ _codesign_identity_available() {
 # ---------------------------------------------------------------------------
 nuke_all() {
   local SELF_PID=$$
-  local DEXT_BUNDLE_ID="com.openjoystickdriver.VirtualHIDDevice"
+  local DEXT_BUNDLE_ID="com.openjoystickdriver.XboxUSBDevice"
   local APP_PATH="/Applications/OpenJoystickDriver.app"
 
   echo "=== NUKE: killing every OJD process ==="
   killall -9 OpenJoystickDriver 2>/dev/null && echo "  killed OpenJoystickDriver" || true
-  killall -9 OpenJoystickVirtualHID 2>/dev/null && echo "  killed OpenJoystickVirtualHID" || true
+  killall -9 XboxUSBDevice 2>/dev/null && echo "  killed XboxUSBDevice" || true
 
   for pid in $(pgrep -f "$DEXT_BUNDLE_ID" 2>/dev/null || true); do
     [[ "$pid" == "$SELF_PID" ]] && continue
@@ -331,7 +331,7 @@ next_dext_bundle_version() {
   local candidate
 
   candidate=$(plutil -extract CFBundleVersion raw \
-    /Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/com.openjoystickdriver.VirtualHIDDevice.dext/Info.plist \
+    /Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext/Info.plist \
     2>/dev/null || echo "")
   if [[ "$candidate" =~ ^[0-9]+$ && "$candidate" -gt "$max_version" ]]; then
     max_version="$candidate"
@@ -343,7 +343,7 @@ next_dext_bundle_version() {
     fi
   done < <(
     systemextensionsctl list 2>/dev/null \
-      | sed -n 's/.*com\.openjoystickdriver\.VirtualHIDDevice (1\.0\/\([0-9][0-9]*\)).*/\1/p'
+      | sed -n 's/.*com\.openjoystickdriver\.XboxUSBDevice ([^/][^/]*\/\([0-9][0-9]*\)).*/\1/p'
   )
 
   echo $((max_version + 1))
@@ -400,7 +400,7 @@ rebuild_fast() {
   echo "=== Step 3: Install app (without triggering sysext upgrade) ==="
   rm -rf "$APP_DST"
   cp -R "$APP_SRC" "$APP_DST"
-  xattr -dr com.apple.quarantine "$APP_DST" 2>/dev/null || true
+  find "$APP_DST" -exec xattr -d com.apple.quarantine {} + 2>/dev/null || true
   echo "  Copied to $APP_DST"
 
   echo ""
@@ -428,7 +428,7 @@ rebuild_full() {
   echo "=== Step 4: Verify bundle IDs ==="
   local APP_ID DEXT_ID
   APP_ID=$(plutil -extract CFBundleIdentifier raw .build/debug/OpenJoystickDriver.app/Contents/Info.plist 2>/dev/null || echo "MISSING")
-  DEXT_ID=$(plutil -extract CFBundleIdentifier raw ".build/debug/OpenJoystickDriver.app/Contents/Library/SystemExtensions/${APP_ID}.VirtualHIDDevice.dext/Info.plist" 2>/dev/null || echo "MISSING")
+  DEXT_ID=$(plutil -extract CFBundleIdentifier raw ".build/debug/OpenJoystickDriver.app/Contents/Library/SystemExtensions/${APP_ID}.XboxUSBDevice.dext/Info.plist" 2>/dev/null || echo "MISSING")
   echo "  App:  $APP_ID"
   echo "  Dext: $DEXT_ID"
   [[ "$DEXT_ID" == "$APP_ID"* ]] || die "PREFIX MISMATCH: dext will not be found in app bundle"
@@ -453,52 +453,60 @@ rebuild_full() {
   echo "=== Step 6: Wait for sysext activation ==="
   echo ""
 
-  local NEW_VERSION
-  NEW_VERSION=$(plutil -extract CFBundleVersion raw \
-    /Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/com.openjoystickdriver.VirtualHIDDevice.dext/Info.plist 2>/dev/null || echo "")
+  local INSTALLED_DEXT_INFO
+  INSTALLED_DEXT_INFO="/Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext/Info.plist"
+  local NEW_SHORT_VERSION NEW_BUILD_VERSION
+  NEW_SHORT_VERSION=$(plutil -extract CFBundleShortVersionString raw "$INSTALLED_DEXT_INFO" 2>/dev/null || echo "")
+  NEW_BUILD_VERSION=$(plutil -extract CFBundleVersion raw "$INSTALLED_DEXT_INFO" 2>/dev/null || echo "")
   local SYSEXT_TIMEOUT=30 SYSEXT_ELAPSED=0
   while (( SYSEXT_ELAPSED < SYSEXT_TIMEOUT )); do
     sleep 2
     SYSEXT_ELAPSED=$(( SYSEXT_ELAPSED + 2 ))
-    if systemextensionsctl list 2>&1 | grep -q "1.0/${NEW_VERSION}.*activated enabled"; then
-      echo "  ✓ Sysext v${NEW_VERSION} activated after ${SYSEXT_ELAPSED}s"
+    if systemextensionsctl list 2>&1 \
+      | grep -F "com.openjoystickdriver.XboxUSBDevice (${NEW_SHORT_VERSION}/${NEW_BUILD_VERSION})" \
+      | grep -q "activated enabled"; then
+      echo "  ✓ Sysext ${NEW_SHORT_VERSION} (${NEW_BUILD_VERSION}) activated after ${SYSEXT_ELAPSED}s"
       break
     fi
-    printf "  …waiting for sysext v%s (%ds)\n" "$NEW_VERSION" "$SYSEXT_ELAPSED"
+    printf "  …waiting for sysext %s (%s) (%ds)\n" "$NEW_SHORT_VERSION" "$NEW_BUILD_VERSION" "$SYSEXT_ELAPSED"
   done
   if (( SYSEXT_ELAPSED >= SYSEXT_TIMEOUT )); then
-    echo "  ⚠ Sysext v${NEW_VERSION} not activated after ${SYSEXT_TIMEOUT}s. Continuing anyway."
+    echo "  ⚠ Sysext ${NEW_SHORT_VERSION} (${NEW_BUILD_VERSION}) not activated after ${SYSEXT_TIMEOUT}s. Continuing anyway."
   fi
 
   echo ""
   echo "=== Step 7: Wait for dext start ==="
-  local TIMEOUT=60 ELAPSED=0
-  while (( ELAPSED < TIMEOUT )); do
-    sleep 3
-    ELAPSED=$(( ELAPSED + 3 ))
-    if $LOG show --last 10s --predicate 'process == "kernel" AND eventMessage CONTAINS "DK:"' --info --debug --style compact 2>/dev/null | grep -q "start fail"; then
-      echo "  ✗ Kernel DK log shows 'start fail' after ${ELAPSED}s"
-      break
+  if ! ojd_microsoft_driverkit_interface_connected; then
+    echo "  ✓ Dext is activated and idle; no entitled Microsoft USB interface is connected."
+  else
+    local TIMEOUT=60 ELAPSED=0
+    while (( ELAPSED < TIMEOUT )); do
+      sleep 3
+      ELAPSED=$(( ELAPSED + 3 ))
+      if $LOG show --last 10s --predicate 'process == "kernel" AND eventMessage CONTAINS "DK:"' --info --debug --style compact 2>/dev/null | grep -q "start fail"; then
+        echo "  ✗ Kernel DK log shows 'start fail' after ${ELAPSED}s"
+        break
+      fi
+      if $LOG show --last 10s --predicate 'process == "kernel" AND eventMessage CONTAINS "DK:"' --info --debug --style compact 2>/dev/null | grep -q "user server timeout"; then
+        echo "  ✗ Kernel DK log shows 'user server timeout' after ${ELAPSED}s"
+        break
+      fi
+      if pgrep -x XboxUSBDevice >/dev/null 2>&1; then
+        echo "  ✓ Dext process detected after ${ELAPSED}s"
+        break
+      fi
+      printf "  …%ds\n" "$ELAPSED"
+    done
+    if (( ELAPSED >= TIMEOUT )); then
+      echo "  ⚠ Timed out after ${TIMEOUT}s while an entitled Microsoft USB interface was connected."
     fi
-    if $LOG show --last 10s --predicate 'process == "kernel" AND eventMessage CONTAINS "DK:"' --info --debug --style compact 2>/dev/null | grep -q "user server timeout"; then
-      echo "  ✗ Kernel DK log shows 'user server timeout' after ${ELAPSED}s"
-      break
-    fi
-    if $LOG show --last 10s --predicate 'process == "OpenJoystickVirtualHID"' --info --debug --style compact 2>/dev/null | grep -q "OpenJoystickVirtualHID"; then
-      echo "  ✓ Dext logs detected after ${ELAPSED}s"
-      break
-    fi
-    printf "  …%ds\n" "$ELAPSED"
-  done
-  if (( ELAPSED >= TIMEOUT )); then
-    echo "  ⚠ Timed out after ${TIMEOUT}s. No dext logs or start failure detected."
   fi
 
   echo ""
   echo ""
   echo "=== Step 8: Diagnostics ==="
   echo "--- Dext os_log (last 60s) ---"
-  $LOG show --last 60s --predicate 'eventMessage CONTAINS "OpenJoystickVirtualHID"' --info --debug --style compact 2>/dev/null || echo "(none)"
+  $LOG show --last 60s --predicate 'eventMessage CONTAINS "XboxUSBDevice"' --info --debug --style compact 2>/dev/null || echo "(none)"
   echo ""
   echo "--- Kernel DK logs (last 60s) ---"
   $LOG show --last 60s --predicate 'process == "kernel" AND eventMessage CONTAINS "DK:"' --info --debug --style compact 2>/dev/null || echo "(none)"

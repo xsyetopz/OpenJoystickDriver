@@ -11,7 +11,7 @@ struct StatusConsumptionTests {
       connectedDevices: [],
       userSpaceVirtualDeviceEnabled: false,
       userSpaceVirtualDeviceStatus: "error: creation failed",
-      compatibilityIdentity: CompatibilityIdentity.x360HID.rawValue
+      compatibilityIdentity: CompatibilityIdentity.sdl2_3.rawValue
     )
     let snapshot = RuntimeStatusSnapshot(payload: payload)
 
@@ -21,7 +21,7 @@ struct StatusConsumptionTests {
     #expect(lines.contains("  Accessibility    : [DENIED] denied"))
     #expect(lines.contains("  backend   : error"))
     #expect(lines.contains("  status    : error: creation failed"))
-    #expect(lines.contains("  identity  : x360-hid"))
+    #expect(lines.contains("  identity  : sdl2-3"))
   }
 
   @Test func directModeRetainsLocallyObservedPermissionTruth() {

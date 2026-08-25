@@ -14,7 +14,7 @@ struct RemappingSequenceTests {
           sources: [.dpad(.up), .dpad(.up), .dpad(.down), .dpad(.down)],
           windowMs: 1000,
           destination: .keyboard(key: .space, modifiers: [])
-        ),
+        )
       ]
     )
     let start: UInt64 = 1_000_000_000

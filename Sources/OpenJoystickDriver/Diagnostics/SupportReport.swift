@@ -45,7 +45,7 @@ enum SupportReportService {
         code: NSFileWriteFileExistsError,
         userInfo: [
           NSLocalizedDescriptionKey:
-            "A file already exists at \(outputURL.path). Choose another output path.",
+            "A file already exists at \(outputURL.path). Choose another output path."
         ]
       )
     }

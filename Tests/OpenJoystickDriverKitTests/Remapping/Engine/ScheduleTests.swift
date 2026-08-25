@@ -30,7 +30,7 @@ struct RemappingScheduleTests {
     let engine = RemappingEventEngine(sink: RemappingTestSink())
     let currentProfile = profile(bindings: [
       turboBinding(source: .button(.south), key: .a, rate: 10, duty: 0.5),
-      turboBinding(source: .button(.east), key: .b, rate: 20, duty: 0.1), continuousBinding(),
+      turboBinding(source: .button(.east), key: .b, rate: 20, duty: 0.1), continuousBinding()
     ])
     let start: UInt64 = 2_000_000_000
 
@@ -82,7 +82,7 @@ struct RemappingScheduleTests {
     let currentProfile = profile(bindings: [
       RemappingBinding(source: .button(.east), destination: .keyboard(key: .b, modifiers: [])),
       RemappingBinding(source: .button(.west), destination: .mouseButton(.right)),
-      turboBinding(source: .button(.south), key: .a, rate: 10, duty: 0.5),
+      turboBinding(source: .button(.south), key: .a, rate: 10, duty: 0.5)
     ])
 
     #expect(await engine.hasScheduledOutput() == false)

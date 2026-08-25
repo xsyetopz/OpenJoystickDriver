@@ -1,3 +1,4 @@
+import CoreHID
 import Foundation
 import IOKit
 import IOKit.hid
@@ -9,8 +10,6 @@ extension ApplicationServiceServer {
 
   private final class SelfTestCounter {
     let lock = NSLock()
-    private(set) var driverKitValueEvents: Int = 0
-    private(set) var driverKitReportEvents: Int = 0
     private(set) var userSpaceValueEvents: Int = 0
     private(set) var userSpaceReportEvents: Int = 0
 
@@ -40,49 +39,18 @@ extension ApplicationServiceServer {
         return IOHIDDeviceGetProperty(device, key as CFString) as? Int ?? 0
       }
 
-      let ioUserClass = strProp("IOUserClass")
       let serial = strProp(kIOHIDSerialNumberKey as String) ?? strProp("SerialNumber")
       let location = intProp(kIOHIDLocationIDKey as String)
-      let vid = intProp(kIOHIDVendorIDKey as String)
-      let pid = intProp(kIOHIDProductIDKey as String)
-      let version = intProp(kIOHIDVersionNumberKey as String)
-      let transport = strProp(kIOHIDTransportKey as String)
-      let manufacturer = strProp(kIOHIDManufacturerKey as String)
-      let product = strProp(kIOHIDProductKey as String)
-      let primaryUsagePage = intProp(kIOHIDPrimaryUsagePageKey as String)
-      let primaryUsage = intProp(kIOHIDPrimaryUsageKey as String)
-
       let isUserSpace =
         UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial)
         || ((UInt32(truncatingIfNeeded: location) & 0xFFFF_0000)
           == VirtualDeviceIdentityConstants.userSpaceLocationIDNamespace)
 
-      let isDriverKit = DriverKitRelayIdentity.matches(
-        runtimeClass: ioUserClass,
-        transport: transport,
-        vendorID: UInt32(truncatingIfNeeded: vid),
-        productID: UInt32(truncatingIfNeeded: pid),
-        versionNumber: UInt32(truncatingIfNeeded: version),
-        locationID: UInt32(truncatingIfNeeded: location),
-        manufacturer: manufacturer,
-        product: product,
-        serialNumber: serial,
-        primaryUsagePage: UInt32(truncatingIfNeeded: primaryUsagePage),
-        primaryUsage: UInt32(truncatingIfNeeded: primaryUsage)
-      )
-
+      guard isUserSpace else { return }
       lock.withLock {
-        if isDriverKit {
-          switch kind {
-          case .value: driverKitValueEvents += 1
-          case .report: driverKitReportEvents += 1
-          }
-        }
-        if isUserSpace {
-          switch kind {
-          case .value: userSpaceValueEvents += 1
-          case .report: userSpaceReportEvents += 1
-          }
+        switch kind {
+        case .value: userSpaceValueEvents += 1
+        case .report: userSpaceReportEvents += 1
         }
       }
     }
@@ -91,9 +59,34 @@ extension ApplicationServiceServer {
   func runVirtualDeviceSelfTestInternal(seconds: Int) async
     -> ApplicationServiceVirtualDeviceSelfTestPayload
   {
-    let driverKitStartRuntimeStats = await driverKitDispatcher.runtimeStatisticsSnapshot()
-    let startStats = await driverKitDispatcher.outputStatsSnapshot()
+    if #available(macOS 15, *) { return await runCoreHIDSelfTest(seconds: seconds) }
+    return await runIOHIDSelfTest(seconds: seconds)
+  }
 
+  @available(macOS 15, *) private func runCoreHIDSelfTest(seconds: Int) async
+    -> ApplicationServiceVirtualDeviceSelfTestPayload
+  {
+    let observer = CoreHIDSelfTestObserver()
+    await observer.start()
+    try? await Task.sleep(for: .milliseconds(100))
+    let identifier = await selfTestIdentifier()
+    let userSpace = userSpaceLock.withLock { userSpaceDispatcher }
+    async let exercise: Void = exerciseUserSpaceSelfTest(userSpace, identifier: identifier)
+    async let window: Void = waitForSelfTestWindow(seconds: seconds)
+    _ = await (exercise, window)
+    let counts = await observer.stop()
+    return ApplicationServiceVirtualDeviceSelfTestPayload(
+      seconds: seconds,
+      userSpaceValueEvents: counts.values,
+      userSpaceReportEvents: counts.reports,
+      userSpaceRequired: true,
+      userSpaceStatus: currentUserSpaceStatus()
+    )
+  }
+
+  @available(macOS, introduced: 10.15, obsoleted: 15.0) private func runIOHIDSelfTest(seconds: Int)
+    async -> ApplicationServiceVirtualDeviceSelfTestPayload
+  {
     let counter = SelfTestCounter()
     let counterPtr = Unmanaged.passRetained(counter).toOpaque()
 
@@ -133,69 +126,35 @@ extension ApplicationServiceServer {
       print("[ApplicationServiceServer] Self-test IOHIDManagerOpen warning: \(code)")
     }
 
-    let connectedIdentifiers = await deviceManager.connectedDeviceIdentifiers()
-    let syntheticIdentifier =
-      connectedIdentifiers.first
-      ?? DeviceIdentifier(
-        vendorID: 0x4F4A,
-        productID: 0x5445,
-        serialNumber: "OpenJoystickDriver-SelfTest"
-      )
+    let syntheticIdentifier = await selfTestIdentifier()
     let userSpace = userSpaceLock.withLock { userSpaceDispatcher }
-    let driverKitRequired = DriverKitRelayRequirement.currentExecutableRequiresRelay()
-    async let driverKitProbe: Int = runDriverKitProbe(seconds: seconds)
     async let userSpaceExercise: Void = exerciseUserSpaceSelfTest(
       userSpace,
       identifier: syntheticIdentifier
     )
     async let observationWindow: Void = waitForSelfTestWindow(seconds: seconds)
-    _ = await (driverKitProbe, userSpaceExercise, observationWindow)
+    _ = await (userSpaceExercise, observationWindow)
 
     IOHIDManagerUnscheduleFromRunLoop(mgr, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
     IOHIDManagerClose(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
 
-    let driverKitEndRuntimeStats = await driverKitDispatcher.runtimeStatisticsSnapshot()
-    let endStats = await driverKitDispatcher.outputStatsSnapshot()
-    let driverKitDelta: Int? = {
-      guard let start = driverKitStartRuntimeStats, let end = driverKitEndRuntimeStats else {
-        return nil
-      }
-      let delta =
-        end.inputReportSuccesses >= start.inputReportSuccesses
-        ? end.inputReportSuccesses - start.inputReportSuccesses : 0
-      return Int(clamping: delta)
-    }()
-    let submissionSuccessDelta = max(0, endStats.successes - startStats.successes)
-    let submissionAttemptDelta = max(0, endStats.attempts - startStats.attempts)
-    let submissionFailureDelta = max(0, endStats.failures - startStats.failures)
-    let connectionAttemptDelta = max(0, endStats.connectionAttempts - startStats.connectionAttempts)
-    let connectionSuccessDelta = max(
-      0,
-      endStats.connectionSuccesses - startStats.connectionSuccesses
-    )
-    let connectionFailureDelta = max(0, endStats.connectionFailures - startStats.connectionFailures)
-
     let retained = Unmanaged<SelfTestCounter>.fromOpaque(counterPtr).takeRetainedValue()
     return ApplicationServiceVirtualDeviceSelfTestPayload(
       seconds: seconds,
-      driverKitValueEvents: retained.driverKitValueEvents,
-      driverKitReportEvents: retained.driverKitReportEvents,
       userSpaceValueEvents: retained.userSpaceValueEvents,
       userSpaceReportEvents: retained.userSpaceReportEvents,
       userSpaceRequired: true,
-      userSpaceStatus: currentUserSpaceStatus(),
-      driverKitRequired: driverKitRequired,
-      driverKitInputReportDelta: driverKitDelta,
-      driverKitSubmissionSuccessDelta: submissionSuccessDelta,
-      driverKitSubmissionAttemptDelta: submissionAttemptDelta,
-      driverKitSubmissionFailureDelta: submissionFailureDelta,
-      driverKitSubmissionLastErrorHex: endStats.lastErrorHex,
-      driverKitConnectionAttemptDelta: connectionAttemptDelta,
-      driverKitConnectionSuccessDelta: connectionSuccessDelta,
-      driverKitConnectionFailureDelta: connectionFailureDelta,
-      driverKitLastConnectionErrorHex: endStats.lastConnectionErrorHex,
-      driverKitDiscoverySummary: endStats.lastDiscoverySummary
+      userSpaceStatus: currentUserSpaceStatus()
     )
+  }
+
+  private func selfTestIdentifier() async -> DeviceIdentifier {
+    await deviceManager.connectedDeviceIdentifiers().first
+      ?? DeviceIdentifier(
+        vendorID: 0x4F4A,
+        productID: 0x5445,
+        serialNumber: "OpenJoystickDriver-SelfTest"
+      )
   }
 
   private func exerciseUserSpaceSelfTest(
@@ -208,22 +167,70 @@ extension ApplicationServiceServer {
     }
   }
 
-  private func runDriverKitProbe(seconds: Int) async -> Int {
-    await withTaskGroup(of: Int.self) { group in
-      group.addTask { await self.driverKitDispatcher.sendDiagnosticProbe() }
-      group.addTask {
-        try? await Task.sleep(nanoseconds: UInt64(seconds) * Self.nanosecondsPerSecond)
-        return 0
-      }
-      let result = await group.next() ?? 0
-      group.cancelAll()
-      while await group.next() != nil {}
-      return result
-    }
-  }
-
   private func waitForSelfTestWindow(seconds: Int) async {
     try? await Task.sleep(nanoseconds: UInt64(seconds) * Self.nanosecondsPerSecond)
   }
 
+}
+
+@available(macOS 15, *) private actor CoreHIDSelfTestObserver {
+  private var managerTask: Task<Void, Never>?
+  private var deviceTasks: [UInt64: Task<Void, Never>] = [:]
+  private var valueEvents = 0
+  private var reportEvents = 0
+
+  func start() {
+    let manager = HIDDeviceManager()
+    managerTask = Task { [weak self] in
+      let criteria = [
+        HIDDeviceManager.DeviceMatchingCriteria(primaryUsage: .genericDesktop(.gamepad)),
+        HIDDeviceManager.DeviceMatchingCriteria(primaryUsage: .genericDesktop(.joystick))
+      ]
+      do {
+        for try await notification in await manager.monitorNotifications(matchingCriteria: criteria)
+        {
+          if Task.isCancelled { break }
+          guard case .deviceMatched(let reference) = notification else { continue }
+          await self?.add(reference)
+        }
+      } catch {}
+    }
+  }
+
+  func stop() -> (values: Int, reports: Int) {
+    managerTask?.cancel()
+    managerTask = nil
+    deviceTasks.values.forEach { $0.cancel() }
+    deviceTasks.removeAll()
+    return (valueEvents, reportEvents)
+  }
+
+  private func add(_ reference: HIDDeviceClient.DeviceReference) async {
+    guard deviceTasks[reference.deviceID] == nil,
+      let client = HIDDeviceClient(deviceReference: reference),
+      UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(await client.serialNumber)
+    else { return }
+    let task = Task { [weak self] in
+      let elements = await client.elements.filter { $0.type == .input }
+      do {
+        for try await notification in await client.monitorNotifications(
+          reportIDsToMonitor: [HIDReportID.allReports],
+          elementsToMonitor: elements
+        ) {
+          if Task.isCancelled { break }
+          switch notification {
+          case .inputReport: await self?.recordReport()
+          case .elementUpdates(let values): await self?.recordValues(values.count)
+          case .deviceRemoved: return
+          case .deviceSeized, .deviceUnseized: break
+          @unknown default: break
+          }
+        }
+      } catch {}
+    }
+    deviceTasks[reference.deviceID] = task
+  }
+
+  private func recordReport() { reportEvents += 1 }
+  private func recordValues(_ count: Int) { valueEvents += count }
 }

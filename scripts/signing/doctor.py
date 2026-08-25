@@ -11,7 +11,6 @@ import re
 import subprocess
 import sys
 
-
 PROFILES = pathlib.Path(
     os.environ.get(
         "OJD_PROFILES_DIR",
@@ -19,15 +18,34 @@ PROFILES = pathlib.Path(
     )
 ).expanduser()
 HOST_DEVELOPMENT = PROFILES / "OpenJoystickDriver.provisionprofile"
-DRIVER_DEVELOPMENT = PROFILES / "OpenJoystickDriver_VirtualHIDDevice.provisionprofile"
+DRIVER_DEVELOPMENT = PROFILES / "OpenJoystickDriver_XboxUSBDevice.provisionprofile"
 HOST_RELEASE = PROFILES / "OpenJoystickDriver_DevID.provisionprofile"
-RELAY_BUNDLE_ID = "com.openjoystickdriver.VirtualHIDDevice"
+DRIVER_RELEASE = PROFILES / "OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile"
+DEXT_BUNDLE_ID = "com.openjoystickdriver.XboxUSBDevice"
+PRODUCTION_USB = [
+    {"idVendor": 1118, "idProduct": 721},
+    {"idVendor": 1118, "idProduct": 746},
+    {"idVendor": 1118, "idProduct": 2834},
+    {"idVendor": 1118, "idProduct": 2816},
+    {"idVendor": 1118, "idProduct": 739},
+    {"idVendor": 1118, "idProduct": 2826},
+    {"idVendor": 1118, "idProduct": 733},
+]
 
 
 def decode_profile(path: pathlib.Path) -> dict:
     for command in (
         ["security", "cms", "-D", "-i", str(path)],
-        ["openssl", "smime", "-inform", "der", "-verify", "-noverify", "-in", str(path)],
+        [
+            "openssl",
+            "smime",
+            "-inform",
+            "der",
+            "-verify",
+            "-noverify",
+            "-in",
+            str(path),
+        ],
     ):
         result = subprocess.run(command, capture_output=True, check=False)
         if result.returncode == 0 and result.stdout:
@@ -54,9 +72,7 @@ def identities(prefix: str) -> set[str]:
         text=True,
     )
     found: set[str] = set()
-    pattern = re.compile(
-        rf'^\s*\d+\)\s+([0-9A-Fa-f]{{40}})\s+"{re.escape(prefix)}:'
-    )
+    pattern = re.compile(rf'^\s*\d+\)\s+([0-9A-Fa-f]{{40}})\s+"{re.escape(prefix)}:')
     for line in result.stdout.splitlines():
         if match := pattern.search(line):
             found.add(match.group(1).lower())
@@ -64,18 +80,22 @@ def identities(prefix: str) -> set[str]:
 
 
 def entitlement_errors(
-    label: str, profile: dict, expected: dict[str, object]
+    label: str,
+    profile: dict,
+    expected: dict[str, object],
+    forbidden: tuple[str, ...] = (),
 ) -> list[str]:
     entitlements = profile.get("Entitlements", {})
     errors = []
     for key, value in expected.items():
         actual = entitlements.get(key)
         if actual != value:
-            errors.append(
-                f"{label}: {key} is {actual!r}; expected {value!r}"
-            )
+            errors.append(f"{label}: {key} is {actual!r}; expected {value!r}")
     if entitlements.get("com.apple.developer.driverkit.allow-any-userclient-access"):
         errors.append(f"{label}: remove DriverKit allow-any user-client access")
+    for key in forbidden:
+        if key in entitlements:
+            errors.append(f"{label}: remove forbidden entitlement {key}")
     return errors
 
 
@@ -112,9 +132,7 @@ def main() -> int:
                 {
                     "com.apple.developer.system-extension.install": True,
                     "com.apple.developer.hid.virtual.device": True,
-                    "com.apple.developer.driverkit.userclient-access": [
-                        RELAY_BUNDLE_ID
-                    ],
+                    "com.apple.developer.driverkit.userclient-access": [DEXT_BUNDLE_ID],
                 },
             )
         )
@@ -123,21 +141,25 @@ def main() -> int:
             entitlement_errors(
                 "DriverKit development profile",
                 driver,
-                {
-                    "com.apple.developer.driverkit": True,
-                    "com.apple.developer.driverkit.family.hid.device": True,
-                    "com.apple.developer.driverkit.transport.hid": True,
-                    "com.apple.developer.driverkit.family.hid.eventservice": True,
-                },
+                {"com.apple.developer.driverkit": True},
+                forbidden=(
+                    "com.apple.developer.hid.virtual.device",
+                    "com.apple.developer.driverkit.family.hid.device",
+                    "com.apple.developer.driverkit.transport.hid",
+                    "com.apple.developer.driverkit.family.hid.eventservice",
+                ),
+            )
+        )
+        errors.extend(
+            entitlement_errors(
+                "DriverKit development profile",
+                driver,
+                {"com.apple.developer.driverkit.transport.usb": PRODUCTION_USB},
             )
         )
 
     if host is not None and driver is not None:
-        common = (
-            certificate_sha1s(host)
-            & certificate_sha1s(driver)
-            & apple_development
-        )
+        common = certificate_sha1s(host) & certificate_sha1s(driver) & apple_development
         if not common:
             errors.append(
                 "host and DriverKit development profiles do not share an installed "
@@ -155,16 +177,22 @@ def main() -> int:
         return 1
 
     print("Development signing: READY")
-    print("  [OK] host and DriverKit profiles share an installed Apple Development identity")
+    print(
+        "  [OK] host and DriverKit profiles share an installed Apple Development identity"
+    )
     print("  [OK] host Compatibility and system-extension entitlements are present")
     print("  [OK] required DriverKit profile entitlements are present")
     print()
 
-    if not HOST_RELEASE.is_file():
+    if not HOST_RELEASE.is_file() and not DRIVER_RELEASE.is_file():
         print("Publisher release signing: NOT CONFIGURED (optional for development)")
-        print(f"  [SKIP] {HOST_RELEASE} is absent")
+        print("  [SKIP] both Developer ID profiles are absent")
     else:
         release, release_errors = load("host Developer ID profile", HOST_RELEASE)
+        driver_release, driver_release_errors = load(
+            "DriverKit Developer ID profile", DRIVER_RELEASE
+        )
+        release_errors.extend(driver_release_errors)
         if release is not None:
             release_errors.extend(
                 entitlement_errors(
@@ -173,7 +201,9 @@ def main() -> int:
                     {
                         "com.apple.developer.system-extension.install": True,
                         "com.apple.developer.hid.virtual.device": True,
-                        "com.apple.developer.driverkit.userclient-access": [RELAY_BUNDLE_ID],
+                        "com.apple.developer.driverkit.userclient-access": [
+                            DEXT_BUNDLE_ID
+                        ],
                     },
                 )
             )
@@ -182,14 +212,36 @@ def main() -> int:
                     "Developer ID profile does not match an installed Developer ID "
                     "Application identity/private key"
                 )
+        if driver_release is not None:
+            release_errors.extend(
+                entitlement_errors(
+                    "DriverKit Developer ID profile",
+                    driver_release,
+                    {
+                        "com.apple.developer.driverkit": True,
+                        "com.apple.developer.driverkit.transport.usb": PRODUCTION_USB,
+                    },
+                    forbidden=(
+                        "com.apple.developer.hid.virtual.device",
+                        "com.apple.developer.driverkit.family.hid.device",
+                        "com.apple.developer.driverkit.transport.hid",
+                        "com.apple.developer.driverkit.family.hid.eventservice",
+                    ),
+                )
+            )
+            if not certificate_sha1s(driver_release) & developer_id:
+                release_errors.append(
+                    "DriverKit Developer ID profile does not match an installed "
+                    "Developer ID Application identity/private key"
+                )
         if release_errors:
             print("Publisher release signing: BLOCKED (development remains ready)")
             for error in release_errors:
                 print(f"  [FAIL] {error}")
         else:
-            print("Publisher host signing: READY")
-            print("  [OK] Developer ID profile matches an installed signing identity")
-            print("  DriverKit distribution signing/notarization still requires its release gate")
+            print("Publisher release signing: READY")
+            print("  [OK] each profile matches an installed Developer ID identity")
+            print("  [OK] DriverKit profile contains Apple's exact seven-device grant")
 
     print()
     print("Next development command:")

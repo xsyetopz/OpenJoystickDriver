@@ -230,7 +230,7 @@ enum MappingProfileEditor {
     -> RemappingAxisTuning?
   {
     let tuningOptions = [
-      "--deadzone", "--gain", "--invert", "--response-curve", "--digital-threshold",
+      "--deadzone", "--gain", "--invert", "--response-curve", "--digital-threshold"
     ]
     let supplied = tuningOptions.contains(where: options.contains)
     let isAxis =

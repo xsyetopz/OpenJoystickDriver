@@ -2,14 +2,7 @@
 import Foundation
 import PackageDescription
 
-let useLocalSwiftUSB = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTUSB"] == "1"
 let packageDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
-let localSwiftUSBPath = packageDirectory.appendingPathComponent("../SwiftUSB").standardizedFileURL
-  .path
-let swiftUSBDependency: Package.Dependency =
-  useLocalSwiftUSB && FileManager.default.fileExists(atPath: localSwiftUSBPath)
-  ? .package(path: localSwiftUSBPath)
-  : .package(url: "https://github.com/xsyetopz/SwiftUSB.git", exact: "0.1.2")
 let useLocalSwifterKit = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTERKIT"] == "1"
 let localSwifterKitPath = packageDirectory.appendingPathComponent("../SwifterKit")
   .standardizedFileURL.path
@@ -31,49 +24,45 @@ let package = Package(
   defaultLocalization: "en-US",
   platforms: [.macOS(.v10_15)],
   products: [.library(name: "OpenJoystickDriverKit", targets: ["OpenJoystickDriverKit"])],
-  dependencies: [
-    swiftUSBDependency, swifterKitDependency,
-  ],
+  dependencies: [swifterKitDependency],
   targets: [
     .target(
       name: "OpenJoystickDriverKit",
-      dependencies: [.product(name: "SwiftUSB", package: "SwiftUSB")],
+      dependencies: [],
       path: "Sources/OpenJoystickDriverKit",
       resources: [.process("Resources/")],
-      linkerSettings: [.linkedFramework("ServiceManagement")]
+      linkerSettings: [
+        .linkedFramework("ServiceManagement"),
+        .unsafeFlags(["-Xlinker", "-weak_framework", "-Xlinker", "CoreHID"])
+      ]
     ),
 
     .target(
-      name: "OpenJoystickDriverRelay",
+      name: "OpenJoystickDriverUSB",
       dependencies: ["OpenJoystickDriverKit", .product(name: "SwifterKit", package: "SwifterKit")],
-      path: "Sources/OpenJoystickDriverRelay",
-      linkerSettings: [.linkedFramework("IOKit")]
+      path: "Sources/OpenJoystickDriverUSB",
+      linkerSettings: [.linkedFramework("IOKit"), .linkedFramework("IOUSBHost")]
     ),
 
     .executableTarget(
       name: "DriverKitGenerator",
-      dependencies: [
-        "OpenJoystickDriverRelay", .product(name: "SwifterKit", package: "SwifterKit"),
-      ],
-      path: "Sources/DriverKitGenerator"
+      dependencies: ["OpenJoystickDriverUSB", .product(name: "SwifterKit", package: "SwifterKit")],
+      path: "Sources/DriverKitGenerator",
+      exclude: ["Entitlements"]
     ),
 
     .executableTarget(
       name: "OpenJoystickDriver",
-      dependencies: [
-        "OpenJoystickDriverKit", "OpenJoystickDriverRelay",
-      ],
+      dependencies: ["OpenJoystickDriverKit", "OpenJoystickDriverUSB"],
       path: "Sources/OpenJoystickDriver",
       exclude: ["App/Host.entitlements", "App/Info.plist"],
       resources: [.copy("Resources")],
-      linkerSettings: [
-        .linkedFramework("GameController"), .linkedFramework("SystemExtensions"),
-      ]
+      linkerSettings: [.linkedFramework("GameController"), .linkedFramework("SystemExtensions")]
     ),
 
     .executableTarget(
       name: "OpenJoystickDriverHIDTool",
-      dependencies: ["OpenJoystickDriverKit", .product(name: "SwiftUSB", package: "SwiftUSB")],
+      dependencies: ["OpenJoystickDriverKit", "OpenJoystickDriverUSB"],
       path: "Sources/OpenJoystickDriverHIDTool"
     ),
 
@@ -85,18 +74,18 @@ let package = Package(
 
     .testTarget(
       name: "OpenJoystickDriverKitTests",
-      dependencies: ["OpenJoystickDriverKit", .product(name: "SwiftUSB", package: "SwiftUSB")],
+      dependencies: ["OpenJoystickDriverKit", "OpenJoystickDriverUSB"],
       path: "Tests/OpenJoystickDriverKitTests",
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
     ),
     .testTarget(
-      name: "OpenJoystickDriverRelayTests",
+      name: "OpenJoystickDriverUSBTests",
       dependencies: [
-        "OpenJoystickDriverKit", "OpenJoystickDriverRelay",
-        .product(name: "SwifterKit", package: "SwifterKit"),
+        "OpenJoystickDriverKit", "OpenJoystickDriverUSB",
+        .product(name: "SwifterKit", package: "SwifterKit")
       ],
-      path: "Tests/OpenJoystickDriverRelayTests",
+      path: "Tests/OpenJoystickDriverUSBTests",
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
     ),
@@ -106,6 +95,6 @@ let package = Package(
       path: "Tests/OpenJoystickDriverTests",
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
-    ),
+    )
   ]
 )

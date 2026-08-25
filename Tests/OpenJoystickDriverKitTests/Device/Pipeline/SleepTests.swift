@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -12,7 +11,6 @@ struct DevicePipelineSleepTests {
       transport: .hid(locationID: 1),
       parser: ScriptedInputParser(),
       dispatcher: dispatcher,
-      usbContext: nil,
       idleTimeoutNanoseconds: 5_000_000,
       idleMonitorIntervalNanoseconds: 10_000_000
     )
@@ -30,16 +28,13 @@ struct DevicePipelineSleepTests {
     #expect(abs(pipeline.inputState().leftStickX - 0.8) < 0.001)
   }
 
-  @Test
-
-  func testForegroundGateNeutralizesOutputAndWaitsForNeutralBeforeResuming() async {
+  @Test func testForegroundGateNeutralizesOutputAndWaitsForNeutralBeforeResuming() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: DeviceIdentifier(vendorID: 100, productID: 200),
       transport: .hid(locationID: 1),
       parser: ScriptedInputParser(),
       dispatcher: dispatcher,
-      usbContext: nil,
       idleTimeoutNanoseconds: 5_000_000_000,
       idleMonitorIntervalNanoseconds: 5_000_000_000
     )
@@ -68,7 +63,6 @@ struct DevicePipelineSleepTests {
       transport: .hid(locationID: 1),
       parser: ScriptedInputParser(),
       dispatcher: dispatcher,
-      usbContext: nil,
       idleTimeoutNanoseconds: 5_000_000_000,
       idleMonitorIntervalNanoseconds: 5_000_000_000
     )
@@ -79,23 +73,19 @@ struct DevicePipelineSleepTests {
 
     await pipeline.setExternalOutputAllowed(false)
     #expect(
-      dispatcher.flattenedEvents == [
-        .leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0),
-      ]
+      dispatcher.flattenedEvents == [.leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0)]
     )
 
     await pipeline.setExternalOutputAllowed(true)
     await pipeline.feedHIDData(Data([5]))
     #expect(
-      dispatcher.flattenedEvents == [
-        .leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0),
-      ]
+      dispatcher.flattenedEvents == [.leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0)]
     )
 
     await pipeline.feedHIDData(Data([4]))
     #expect(
       dispatcher.flattenedEvents == [
-        .leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0), .buttonPressed(.b),
+        .leftStickChanged(x: 0.8, y: 0), .leftStickChanged(x: 0, y: 0), .buttonPressed(.b)
       ]
     )
   }
@@ -107,7 +97,6 @@ struct DevicePipelineSleepTests {
       transport: .hid(locationID: 1),
       parser: ScriptedInputParser(),
       dispatcher: dispatcher,
-      usbContext: nil,
       idleTimeoutNanoseconds: 5_000_000_000,
       idleMonitorIntervalNanoseconds: 5_000_000_000
     )
@@ -126,7 +115,6 @@ struct DevicePipelineSleepTests {
       transport: .hid(locationID: 1),
       parser: ScriptedInputParser(),
       dispatcher: dispatcher,
-      usbContext: nil,
       idleTimeoutNanoseconds: 5_000_000_000,
       idleMonitorIntervalNanoseconds: 5_000_000_000
     )
@@ -148,7 +136,6 @@ struct DevicePipelineSleepTests {
       transport: .hid(locationID: 1),
       parser: ScriptedInputParser(),
       dispatcher: dispatcher,
-      usbContext: nil,
       idleTimeoutNanoseconds: 5_000_000_000,
       idleMonitorIntervalNanoseconds: 5_000_000_000
     )
@@ -168,7 +155,6 @@ struct DevicePipelineSleepTests {
       transport: .hid(locationID: 1),
       parser: ScriptedInputParser(),
       dispatcher: dispatcher,
-      usbContext: nil,
       idleTimeoutNanoseconds: 5_000_000_000,
       idleMonitorIntervalNanoseconds: 5_000_000_000
     )
@@ -182,7 +168,7 @@ struct DevicePipelineSleepTests {
     #expect(
       dispatcher.flattenedEvents == [
         .dpadChanged(.north), .leftStickChanged(x: 0.8, y: 0), .dpadChanged(.neutral),
-        .leftStickChanged(x: 0, y: 0),
+        .leftStickChanged(x: 0, y: 0)
       ]
     )
   }
@@ -194,7 +180,6 @@ struct DevicePipelineSleepTests {
       transport: .hid(locationID: 1),
       parser: ScriptedLifecycleInputParser(),
       dispatcher: dispatcher,
-      usbContext: nil,
       idleTimeoutNanoseconds: 5_000_000_000,
       idleMonitorIntervalNanoseconds: 5_000_000_000
     )
@@ -224,7 +209,7 @@ struct DevicePipelineSleepTests {
 }
 
 private final class ScriptedInputParser: InputParser, @unchecked Sendable {
-  func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
+  func performHandshake(handle: (any USBTransportSession)?) async throws { await Task.yield() }
 
   func parse(data: Data) throws -> [ControllerEvent] {
     switch data.first {
@@ -264,7 +249,7 @@ private final class ScriptedLifecycleInputParser: InputParser, ControllerInputCo
     return state
   }
 
-  func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
+  func performHandshake(handle: (any USBTransportSession)?) async throws { await Task.yield() }
 
   func parse(data: Data) throws -> [ControllerEvent] {
     switch data.first {

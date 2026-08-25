@@ -22,7 +22,7 @@ struct PhysicalOutputValidationPlanTests {
       plan.steps.map(\.id) == [
         "left-main", "right-main", "left-trigger", "right-trigger", "player-indicators",
         "player-indicators-off", "color-red", "color-green", "color-blue", "brightness-low",
-        "brightness-high",
+        "brightness-high"
       ]
     )
     let firstCommand =

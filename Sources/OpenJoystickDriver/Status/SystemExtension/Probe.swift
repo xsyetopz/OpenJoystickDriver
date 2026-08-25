@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverUSB
 
 enum ExtensionBundleState: Sendable, Equatable {
   case present
@@ -8,9 +9,9 @@ enum ExtensionBundleState: Sendable, Equatable {
 }
 
 enum ExtensionProbe {
-  static let bundleIdentifier = "com.openjoystickdriver.VirtualHIDDevice"
+  static let bundleIdentifier = USBDriverKitExtensionConfiguration.bundleIdentifier
   static let relativePath =
-    "Contents/Library/SystemExtensions/com.openjoystickdriver.VirtualHIDDevice.dext"
+    "Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext"
 
   static func currentStatus(bundleURL: URL = Bundle.main.bundleURL) -> ExtensionStatus {
     let bundle = bundleState(in: bundleURL)

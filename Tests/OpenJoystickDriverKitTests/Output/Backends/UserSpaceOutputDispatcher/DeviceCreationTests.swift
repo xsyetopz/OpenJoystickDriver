@@ -11,7 +11,7 @@ struct UserSpaceDeviceCreationTests {
     let base: [String: Any] = [
       kIOHIDReportDescriptorKey as String: descriptor, kIOHIDVendorIDKey as String: 1,
       kIOHIDProductIDKey as String: 2, kIOHIDProductKey as String: "Test",
-      kIOHIDLocationIDKey as String: 3, kIOHIDMaxInputReportSizeKey as String: 15,
+      kIOHIDLocationIDKey as String: 3, kIOHIDMaxInputReportSizeKey as String: 15
     ]
 
     let attempts = UserSpaceOutputDispatcher.deviceCreationAttempts(

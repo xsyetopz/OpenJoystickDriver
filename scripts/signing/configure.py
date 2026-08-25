@@ -14,6 +14,10 @@ rel_env = pathlib.Path(os.environ.get("REL_ENV", str(script_dir / ".env.release"
 gui_dev_profile = os.path.expanduser(os.environ.get("GUI_DEV_PROFILE", ""))
 gui_devid_profile = os.path.expanduser(os.environ.get("GUI_DEVID_PROFILE", ""))
 dext_profile = os.path.expanduser(os.environ.get("DEXT_PROFILE", ""))
+dext_devid_profile = os.path.expanduser(os.environ.get("DEXT_DEVID_PROFILE", ""))
+signing_mode = os.environ.get("OJD_SIGNING_MODE", "all")
+if signing_mode not in {"all", "development", "release"}:
+    raise SystemExit("ERROR: OJD_SIGNING_MODE must be all, development, or release")
 
 
 def run(args, *, check=True):
@@ -125,57 +129,7 @@ def profile_name(path: str) -> str:
     return name if isinstance(name, str) else ""
 
 
-def profile_has_entitlement(path: str, key: str) -> bool:
-    obj = decode_profile(path)
-    ent = obj.get("Entitlements") or {}
-    return key in ent
-
-
-relay_bundle_id = "com.openjoystickdriver.VirtualHIDDevice"
-
-
-def require_development_host_profile_entitlements(path: str) -> None:
-    entitlements = decode_profile(path).get("Entitlements") or {}
-    actual = entitlements.get("com.apple.developer.driverkit.userclient-access")
-    if actual == [relay_bundle_id]:
-        return
-    print(
-        "WARN: Unsupported DriverKit user-client value in host development profile; "
-        "continuing for development.\n"
-        f"  profile: {path}\n"
-        f"  actual: {actual!r}\n"
-        f"  expected: {[relay_bundle_id]!r}",
-        file=sys.stderr,
-    )
-
-
-must_exist(gui_dev_profile, "GUI dev provisioning profile")
-must_exist(dext_profile, "DriverKit dext provisioning profile")
-
-
-def warn_missing_entitlement(profile_path: str, entitlement: str, label: str, why: str):
-    if profile_has_entitlement(profile_path, entitlement):
-        return
-    print(
-        "WARN: Missing entitlement in provisioning profile (feature will be disabled):\n"
-        f"  entitlement: {entitlement}\n"
-        f"  profile: {profile_path}\n"
-        f"  affects: {label}\n"
-        f"  why: {why}\n",
-        file=sys.stderr,
-    )
-
-
-# The main application creates the user-space virtual gamepad.
-hid_entitlement = "com.apple.developer.hid.virtual.device"
-warn_missing_entitlement(
-    gui_dev_profile,
-    hid_entitlement,
-    "Application development profile",
-    "Compatibility output requires this entitlement.",
-)
-dev_team = team_id_from_profile(gui_dev_profile)
-require_development_host_profile_entitlements(gui_dev_profile)
+dext_bundle_id = "com.openjoystickdriver.XboxUSBDevice"
 
 
 # Prefer exact certificate match with provisioning profiles (handles multiple teams/idents cleanly).
@@ -253,17 +207,6 @@ def pick_identity_matching_profile(prefix: str, profile_path: str) -> str:
     )
 
 
-# Match identities to the certs embedded in the relevant profiles (most reliable).
-#
-# Important: for building the DriverKit extension we must match the certificate
-# embedded in the DEXT provisioning profile (not the GUI provisioning profile).
-apple_dev_identity = pick_identity_matching_profile("Apple Development", dext_profile)
-
-dext_build_profile_name = (
-    profile_name(dext_profile) or "OpenJoystickDriver (VirtualHIDDevice)"
-)
-
-
 def shell_quote(value: str) -> str:
     return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
@@ -301,64 +244,121 @@ def update_env_file(
     path.write_text("\n".join(next_lines).rstrip() + "\n", encoding="utf-8")
 
 
-update_env_file(
-    dev_env,
-    "# Development signing (managed by ./scripts/ojd signing configure)",
-    {
-        "CODESIGN_IDENTITY": apple_dev_identity,
-        "DEVELOPMENT_TEAM": dev_team,
-        "DEXT_BUILD_PROFILE": dext_build_profile_name,
-        "GUI_PROVISIONING_PROFILE": f"$HOME/Library/MobileDevice/Provisioning Profiles/{pathlib.Path(gui_dev_profile).name}",
-    },
-)
+hid_entitlement = "com.apple.developer.hid.virtual.device"
+production_usb = [
+    {"idVendor": 1118, "idProduct": 721},
+    {"idVendor": 1118, "idProduct": 746},
+    {"idVendor": 1118, "idProduct": 2834},
+    {"idVendor": 1118, "idProduct": 2816},
+    {"idVendor": 1118, "idProduct": 739},
+    {"idVendor": 1118, "idProduct": 2826},
+    {"idVendor": 1118, "idProduct": 733},
+]
 
-print(f"Updated {dev_env}")
 
-if not os.path.isfile(gui_devid_profile):
-    print(
-        "WARN: Publisher release signing was not configured because the optional "
-        f"Developer ID profile is absent:\n  {gui_devid_profile}\n"
-        "Development signing is configured. The Developer ID profile and identity "
-        "are required only for release/notarization commands.",
-        file=sys.stderr,
+def require_host_profile(path: str, label: str) -> None:
+    entitlements = decode_profile(path).get("Entitlements") or {}
+    expected = {
+        "com.apple.developer.system-extension.install": True,
+        hid_entitlement: True,
+        "com.apple.developer.driverkit.userclient-access": [dext_bundle_id],
+    }
+    for key, value in expected.items():
+        if entitlements.get(key) != value:
+            raise SystemExit(
+                f"ERROR: {label} entitlement mismatch for {key}: "
+                f"expected {value!r}, got {entitlements.get(key)!r}"
+            )
+    if entitlements.get("com.apple.developer.driverkit.allow-any-userclient-access"):
+        raise SystemExit(f"ERROR: {label} grants allow-any DriverKit user-client access")
+
+
+def require_dext_profile(path: str, label: str) -> None:
+    entitlements = decode_profile(path).get("Entitlements") or {}
+    if entitlements.get("com.apple.developer.driverkit") is not True:
+        raise SystemExit(f"ERROR: {label} is missing the DriverKit base entitlement")
+    actual_usb = entitlements.get("com.apple.developer.driverkit.transport.usb")
+    if actual_usb != production_usb:
+        raise SystemExit(
+            f"ERROR: {label} USB entitlement does not match Apple's issued configuration: "
+            f"{actual_usb!r}"
+        )
+    forbidden = (
+        hid_entitlement,
+        "com.apple.developer.driverkit.family.hid.device",
+        "com.apple.developer.driverkit.transport.hid",
+        "com.apple.developer.driverkit.family.hid.eventservice",
+        "com.apple.developer.driverkit.allow-any-userclient-access",
     )
-    raise SystemExit(0)
+    for key in forbidden:
+        if key in entitlements:
+            raise SystemExit(f"ERROR: {label} contains forbidden entitlement {key}")
 
-warn_missing_entitlement(
-    gui_devid_profile,
-    hid_entitlement,
-    "Application Developer ID profile",
-    "Release compatibility output requires this entitlement.",
-)
-rel_team = team_id_from_profile(gui_devid_profile)
 
-try:
-    devid_app_identity = pick_identity_matching_profile(
+def configure_development() -> None:
+    must_exist(gui_dev_profile, "GUI development provisioning profile")
+    must_exist(dext_profile, "DriverKit development provisioning profile")
+    require_host_profile(gui_dev_profile, "GUI development profile")
+    require_dext_profile(dext_profile, "DriverKit development profile")
+    dev_team = team_id_from_profile(gui_dev_profile)
+    if team_id_from_profile(dext_profile) != dev_team:
+        raise SystemExit("ERROR: development host and DEXT profiles use different teams")
+    apple_dev_identity = pick_identity_matching_profile("Apple Development", dext_profile)
+    if pick_identity_matching_profile("Apple Development", gui_dev_profile) != apple_dev_identity:
+        raise SystemExit("ERROR: development host and DEXT profiles use different certificates")
+    update_env_file(
+        dev_env,
+        "# Development signing (managed by ./scripts/ojd signing configure)",
+        {
+            "CODESIGN_IDENTITY": apple_dev_identity,
+            "DEVELOPMENT_TEAM": dev_team,
+            "DEXT_BUILD_IDENTITY": apple_dev_identity,
+            "DEXT_BUILD_PROFILE": profile_name(dext_profile),
+            "DEXT_PROVISIONING_PROFILE": dext_profile,
+            "GUI_PROVISIONING_PROFILE": gui_dev_profile,
+        },
+    )
+    print(f"Updated {dev_env}")
+
+
+def configure_release(*, optional: bool) -> None:
+    if optional and (not os.path.isfile(gui_devid_profile) or not os.path.isfile(dext_devid_profile)):
+        print(
+            "WARN: Publisher release signing was not configured because both Developer ID "
+            "profiles are required. Development signing remains configured.",
+            file=sys.stderr,
+        )
+        return
+    must_exist(gui_devid_profile, "GUI Developer ID provisioning profile")
+    must_exist(dext_devid_profile, "DriverKit Developer ID provisioning profile")
+    require_host_profile(gui_devid_profile, "GUI Developer ID profile")
+    require_dext_profile(dext_devid_profile, "DriverKit Developer ID profile")
+    rel_team = team_id_from_profile(gui_devid_profile)
+    if team_id_from_profile(dext_devid_profile) != rel_team:
+        raise SystemExit("ERROR: Developer ID host and DEXT profiles use different teams")
+    gui_devid_identity = pick_identity_matching_profile(
         "Developer ID Application", gui_devid_profile
     )
-except SystemExit as e:
-    # Development builds can still proceed. Release signing is publisher-only.
-    print(file=sys.stderr)
-    print(
-        "WARN: Release signing is NOT configured; Developer ID identity/profile mismatch:",
-        file=sys.stderr,
+    dext_devid_identity = pick_identity_matching_profile(
+        "Developer ID Application", dext_devid_profile
     )
-    print(str(e), file=sys.stderr)
-    print(file=sys.stderr)
-    print(f"Updated {dev_env} (OK).", file=sys.stderr)
-    raise SystemExit(0)
+    update_env_file(
+        rel_env,
+        "# Release signing (managed by ./scripts/ojd signing configure)",
+        {
+            "CODESIGN_IDENTITY": gui_devid_identity,
+            "GUI_CODESIGN_IDENTITY": gui_devid_identity,
+            "DEVELOPMENT_TEAM": rel_team,
+            "DEXT_BUILD_IDENTITY": dext_devid_identity,
+            "DEXT_BUILD_PROFILE": profile_name(dext_devid_profile),
+            "DEXT_PROVISIONING_PROFILE": dext_devid_profile,
+            "GUI_PROVISIONING_PROFILE": gui_devid_profile,
+        },
+    )
+    print(f"Updated {rel_env}")
 
-update_env_file(
-    rel_env,
-    "# Release signing (managed by ./scripts/ojd signing configure)",
-    {
-        "CODESIGN_IDENTITY": devid_app_identity,
-        "GUI_CODESIGN_IDENTITY": devid_app_identity,
-        "DEVELOPMENT_TEAM": rel_team,
-        "DEXT_BUILD_IDENTITY": apple_dev_identity,
-        "DEXT_BUILD_PROFILE": dext_build_profile_name,
-        "GUI_PROVISIONING_PROFILE": f"$HOME/Library/MobileDevice/Provisioning Profiles/{pathlib.Path(gui_devid_profile).name}",
-    },
-)
 
-print(f"Updated {rel_env}")
+if signing_mode in {"all", "development"}:
+    configure_development()
+if signing_mode in {"all", "release"}:
+    configure_release(optional=signing_mode == "all")

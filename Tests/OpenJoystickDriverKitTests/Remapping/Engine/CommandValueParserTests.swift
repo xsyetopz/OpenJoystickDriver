@@ -21,7 +21,7 @@ struct CommandValueParserTests {
         RemappingBinding(
           source: .button(.south),
           destination: .keyboard(key: .space, modifiers: [])
-        ),
+        )
       ]
     )
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)

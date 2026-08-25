@@ -44,7 +44,7 @@ public struct PhysicalOutputValidationPlan: Codable, Equatable, Sendable {
     notes = [
       "Record pass/fail separately; generating this plan does not verify hardware.",
       "Stop testing and disconnect the controller if output behaves unexpectedly.",
-      "Serial values, HID locations, packet payloads, and filesystem paths are excluded.",
+      "Serial values, HID locations, packet payloads, and filesystem paths are excluded."
     ]
   }
 
@@ -121,7 +121,7 @@ public struct PhysicalOutputValidationPlan: Codable, Equatable, Sendable {
     if capabilities.lightingFeatures.contains(.programmableColor) {
       for (id, color, values) in [
         ("color-red", "red", "255 0 0"), ("color-green", "green", "0 255 0"),
-        ("color-blue", "blue", "0 0 255"),
+        ("color-blue", "blue", "0 0 255")
       ] {
         result.append(
           Step(

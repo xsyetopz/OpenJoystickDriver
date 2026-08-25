@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 private let switchProFullReportID: UInt8 = 0x30
 private let switchProFullReportMinLength = 12
@@ -37,12 +36,14 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
 
   public var minimumPhysicalOutputIntervalNanoseconds: UInt64 { 50_000_000 }
 
-  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
+  public func performHandshake(handle: (any USBTransportSession)?) async throws {
+    await Task.yield()
+  }
 
   public func hidStartupReports() -> [PhysicalHIDOutputReport] {
     [
       usbCommand(0x02), usbCommand(0x03), usbCommand(0x02), usbCommand(0x04),
-      subcommand(0x03, data: [0x30]), subcommand(0x48, data: [0x01]),
+      subcommand(0x03, data: [0x30]), subcommand(0x48, data: [0x01])
     ]
   }
 
@@ -74,7 +75,7 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
     -> PhysicalHIDOutputReport
   {
     let patterns: [PhysicalPlayerIndicator: UInt8] = [
-      .off: 0x00, .player1: 0x01, .player2: 0x03, .player3: 0x07, .player4: 0x0F,
+      .off: 0x00, .player1: 0x01, .player2: 0x03, .player3: 0x07, .player4: 0x0F
     ]
     return subcommand(0x30, data: [patterns[indicator] ?? 0])
   }
@@ -132,7 +133,7 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
         (0x0040_0000, .leftBumper), (0x0000_0040, .rightBumper), (0x0080_0000, .l2Digital),
         (0x0000_0080, .r2Digital), (0x0000_0100, .back), (0x0000_0200, .start),
         (0x0000_0800, .leftStick), (0x0000_0400, .rightStick), (0x0000_1000, .guide),
-        (0x0000_2000, .share),
+        (0x0000_2000, .share)
       ]
     )
   }

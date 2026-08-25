@@ -2,7 +2,8 @@ import Dispatch
 import Foundation
 import IOKit
 import IOKit.hid
-import SwiftUSB
+import OpenJoystickDriverKit
+import OpenJoystickDriverUSB
 
 let parsedArguments: HIDToolArguments
 do {
@@ -22,7 +23,6 @@ let serviceOpen = parsedArguments.flags.contains("--service-open")
 let setReport = parsedArguments.flags.contains("--set-report")
 let monitor = parsedArguments.mode == .monitor
 let usbMonitor = parsedArguments.mode == .usbMonitor
-let detachKernel = parsedArguments.flags.contains("--detach")
 
 func argValue(_ name: String) -> String? { parsedArguments.values[name] }
 
@@ -34,98 +34,71 @@ if let recordPath = argValue("--record-probe") {
   runControllerRecordProbe(
     recordPath: recordPath,
     seconds: intArg("--seconds", default: 30),
-    detachKernel: detachKernel,
     validateOnly: parsedArguments.flags.contains("--validate-only")
   )
 }
 
 func runRawUSBMonitor() {
-  let vid = UInt16(clamping: intArg("--vid", default: 0x045E))
-  let pid = UInt16(clamping: intArg("--pid", default: 0))
-  let interfaceNumber = intArg("--interface", default: 0)
+  let vendorID = UInt16(clamping: intArg("--vid", default: 0x045E))
+  let productID = UInt16(clamping: intArg("--pid", default: 0))
   let explicitEndpoint = argValue("--endpoint").flatMap(parseInt).map { UInt8(clamping: $0) }
   let endpoints = explicitEndpoint.map { [$0] } ?? Array(UInt8(0x81)...UInt8(0x8F))
   let length = min(max(intArg("--length", default: 64), 1), 1024)
   let seconds = min(max(intArg("--seconds", default: 20), 1), 300)
-  let timeoutMs: UInt32 = explicitEndpoint == nil ? 100 : 250
+  let timeout: UInt32 = explicitEndpoint == nil ? 100 : 250
   let exitCode = ExitCodeBox()
   let done = DispatchSemaphore(value: 0)
 
   Task {
     defer { done.signal() }
+    let provider = OpenJoystickDriverUSBTransportProvider()
     do {
-      let devices = try await USBDevice.findAll(vendorId: vid, productId: pid, deviceClass: nil)
-      let endpointDescription =
-        explicitEndpoint.map { "0x" + String($0, radix: 16) } ?? "sweep:0x81-0x8f"
+      let matches = try await provider.devices().filter {
+        $0.vendorID == vendorID && (productID == 0 || $0.productID == productID)
+      }
       print(
-        "USB_MONITOR devices=\(devices.count) vid=0x\(String(vid, radix: 16))"
-          + " pid=0x\(String(pid, radix: 16)) interface=\(interfaceNumber)"
-          + " endpoint=\(endpointDescription) length=\(length) seconds=\(seconds)"
+        "USB_MONITOR devices=\(matches.count) vid=0x\(String(vendorID, radix: 16))"
+          + " pid=0x\(String(productID, radix: 16)) length=\(length) seconds=\(seconds)"
       )
-      guard let device = devices.first else {
-        fputs("ERROR: no matching USB device found\n", stderr)
+      guard let device = matches.first else {
+        fputs("ERROR: no matching raw USB service found\n", stderr)
         exitCode.value = 2
         return
       }
-
       print(
-        "USB_DEVICE bus=\(device.bus) address=\(device.address)"
-          + " class=0x\(String(device.deviceClass, radix: 16))"
-          + " subclass=0x\(String(device.deviceSubClass, radix: 16))"
-          + " protocol=0x\(String(device.deviceProtocol, radix: 16))"
+        "USB_DEVICE service=\(device.serviceID) location=\(device.locationID)"
+          + " product=\(device.productName ?? "(unknown)")"
       )
-      if let manufacturer = try? device.getManufacturer() {
-        print("USB_STRING manufacturer=\(manufacturer)")
-      }
-      if let product = try? device.getProduct() { print("USB_STRING product=\(product)") }
-      if let serial = try? device.getSerialNumber() { print("USB_STRING serial=\(serial)") }
+      let session = try await provider.open(device, options: USBTransportOpenOptions())
 
-      let handle = try device.open()
-      if detachKernel {
-        do {
-          try handle.detachKernelDriver(interface: interfaceNumber)
-          print("USB_DETACH interface=\(interfaceNumber) result=detached")
-        } catch let error as USBError where error.isNotFound || error.isNotSupported {
-          print("USB_DETACH interface=\(interfaceNumber) result=not-needed code=\(error.code)")
-        }
-      }
-      try handle.claimInterface(interfaceNumber)
-      print("USB_CLAIM interface=\(interfaceNumber) result=claimed")
-      if explicitEndpoint == nil {
-        print("USB_ENDPOINT_SWEEP candidates=0x81...0x8f timeout_ms=\(timeoutMs)")
-      }
-
-      let end = Date().addingTimeInterval(TimeInterval(seconds))
+      let deadline = Date().addingTimeInterval(TimeInterval(seconds))
       var packets = 0
       var disabledEndpoints = Set<UInt8>()
-      while Date() < end {
-        for endpoint in endpoints where Date() < end && !disabledEndpoints.contains(endpoint) {
+      while Date() < deadline {
+        for endpoint in endpoints where Date() < deadline && !disabledEndpoints.contains(endpoint) {
           do {
-            let bytes = try handle.readInterrupt(
+            let bytes = try await session.readInterruptPacket(
               endpoint: endpoint,
               length: length,
-              timeout: timeoutMs
+              timeout: timeout
             )
             packets += 1
-            let hex = bytes.map { String(format: "%02x", $0) }.joined(separator: " ")
             print(
               "USB_REPORT endpoint=0x\(String(endpoint, radix: 16))"
-                + " len=\(bytes.count) bytes=\(hex)"
+                + " len=\(bytes.count) bytes=\(bytes.hexBytes)"
             )
             fflush(stdout)
-          } catch let error as USBError where error.isTimeout { continue } catch let error
-            as USBError
-          {
+          } catch USBTransportError.timeout { continue } catch {
             if explicitEndpoint == nil { disabledEndpoints.insert(endpoint) }
             print(
               "USB_ENDPOINT endpoint=0x\(String(endpoint, radix: 16))"
-                + " result=error code=\(error.code)"
+                + " result=error detail=\(error.localizedDescription)"
             )
-            fflush(stdout)
           }
         }
         if disabledEndpoints.count == endpoints.count { break }
       }
+      await session.close()
       print("USB_SUMMARY packets=\(packets) disabled_endpoints=\(disabledEndpoints.count)")
       exitCode.value = packets > 0 ? 0 : 3
     } catch {
@@ -137,7 +110,6 @@ func runRawUSBMonitor() {
   done.wait()
   exit(exitCode.value)
 }
-
 if usbMonitor { runRawUSBMonitor() }
 
 if monitor {
@@ -291,7 +263,7 @@ if open {
   let vid = intArg("--vid", default: 0x045E)
   let pid = intArg("--pid", default: 0x028E)
   let devs = enumerateDevices(matching: [
-    kIOHIDVendorIDKey as String: vid, kIOHIDProductIDKey as String: pid,
+    kIOHIDVendorIDKey as String: vid, kIOHIDProductIDKey as String: pid
   ])
   print(
     "Opening \(devs.count) device(s), VID:0x\(String(vid, radix: 16))"
@@ -361,7 +333,7 @@ if dump {
     exit(2)
   }
   let devs = enumerateDevices(matching: [
-    kIOHIDVendorIDKey as String: vid, kIOHIDProductIDKey as String: pid,
+    kIOHIDVendorIDKey as String: vid, kIOHIDProductIDKey as String: pid
   ])
   guard let dev = devs.first else {
     fputs("ERROR: Device not found. Is it connected?\n", stderr)

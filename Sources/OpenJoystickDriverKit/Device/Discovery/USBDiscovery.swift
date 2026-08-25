@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 struct RawUSBAdmission {
   let identifier: DeviceIdentifier
@@ -29,170 +28,103 @@ func resolveRawUSBAdmission(
 }
 
 extension DeviceManager {
-  // MARK: - USB detection (class 0xFF)
+  // MARK: - Raw USB detection
 
   func runUSBDetection() async {
-    print("[DeviceManager] USB detection started" + " (class 0xFF)")
-    ensureUSBContext()
-    guard let context = usbContext else {
-      print("[DeviceManager] Failed to create USBContext")
-      return
-    }
+    guard let provider = usbTransportProvider else { return }
+    print("[DeviceManager] Raw USB detection started")
 
-    var knownLocations: Set<String> = []
-    var locationToIdentifier: [String: DeviceIdentifier] = [:]
+    var knownServiceIDs: Set<USBTransportServiceIdentity> = []
+    var serviceToIdentifier: [USBTransportServiceIdentity: DeviceIdentifier] = [:]
 
     while !Task.isCancelled {
-      let (currentKeys, addedDevices) = await usbDetectCurrentDevices(
-        context: context,
-        knownLocations: knownLocations
-      )
-
-      updateUSBKnownLocations(
-        &knownLocations,
-        currentKeys: currentKeys,
-        addedDevices: addedDevices,
-        locationToIdentifier: &locationToIdentifier
-      )
-
-      await removeUSBLostDevices(
-        knownLocations: &knownLocations,
-        currentKeys: currentKeys,
-        locationToIdentifier: &locationToIdentifier
-      )
-
+      do {
+        let devices = try await provider.devices()
+        let currentServiceIDs = Set(devices.map(\.serviceIdentity))
+        for device in devices where !knownServiceIDs.contains(device.serviceIdentity) {
+          knownServiceIDs.insert(device.serviceIdentity)
+          if let identifier = handleUSBDeviceAdded(device, provider: provider) {
+            serviceToIdentifier[device.serviceIdentity] = identifier
+          }
+        }
+        await removeUSBLostDevices(
+          knownServiceIDs: &knownServiceIDs,
+          currentServiceIDs: currentServiceIDs,
+          serviceToIdentifier: &serviceToIdentifier
+        )
+      } catch { print("[DeviceManager] Raw USB discovery failed: \(error)") }
       try? await Task.sleep(nanoseconds: usbDetectionPollNanoseconds)
     }
   }
 
-  private func usbDetectCurrentDevices(context: USBContext, knownLocations: Set<String>) async -> (
-    Set<String>, [(device: USBDevice, key: String)]
-  ) {
-    var currentKeys: Set<String> = []
-    var addedDevices: [(device: USBDevice, key: String)] = []
-    let stream = context.findDevices(deviceClass: usbVendorSpecificClass, findAll: true)
-    for await device in stream {
-      let key = "\(device.bus):\(device.address)"
-      currentKeys.insert(key)
-      if !knownLocations.contains(key) { addedDevices.append((device, key)) }
-    }
-
-    // #22: some controllers declare vendor-specific class only on interfaces,
-    // so the device-class filter misses them entirely.
-    let classZeroStream = context.findDevices(deviceClass: 0, findAll: true)
-    for await device in classZeroStream {
-      let key = "\(device.bus):\(device.address)"
-      if currentKeys.contains(key) { continue }
-      if Self.hasVendorSpecificInterface(device) {
-        currentKeys.insert(key)
-        if !knownLocations.contains(key) { addedDevices.append((device, key)) }
-      }
-    }
-
-    return (currentKeys, addedDevices)
-  }
-
-  /// Returns `true` when any interface on the device declares `bInterfaceClass == 0xFF`.
-  private static func hasVendorSpecificInterface(_ device: USBDevice) -> Bool {
-    let config: USBConfigurationDescriptor
-    do { config = try device.getActiveConfigurationDescriptor() } catch {
-      do { config = try device.getConfigurationDescriptor(index: 0) } catch { return false }
-    }
-    return config.interfaces.contains { $0.bInterfaceClass == usbVendorSpecificClass }
-  }
-
-  private func updateUSBKnownLocations(
-    _ knownLocations: inout Set<String>,
-    currentKeys: Set<String>,
-    addedDevices: [(device: USBDevice, key: String)],
-    locationToIdentifier: inout [String: DeviceIdentifier]
-  ) {
-    for (device, key) in addedDevices {
-      knownLocations.insert(key)
-      if let id = handleUSBDeviceAdded(device) { locationToIdentifier[key] = id }
-    }
-  }
-
   private func removeUSBLostDevices(
-    knownLocations: inout Set<String>,
-    currentKeys: Set<String>,
-    locationToIdentifier: inout [String: DeviceIdentifier]
+    knownServiceIDs: inout Set<USBTransportServiceIdentity>,
+    currentServiceIDs: Set<USBTransportServiceIdentity>,
+    serviceToIdentifier: inout [USBTransportServiceIdentity: DeviceIdentifier]
   ) async {
-    let removedKeys = knownLocations.subtracting(currentKeys)
-    for key in removedKeys {
-      knownLocations.remove(key)
-      if let id = locationToIdentifier.removeValue(forKey: key) {
-        let pipeline = pipelines.removeValue(forKey: id)
-        deviceInfos.removeValue(forKey: id)
-        lastPhysicalHIDOutputNanoseconds.removeValue(forKey: id)
+    for serviceID in knownServiceIDs.subtracting(currentServiceIDs) {
+      knownServiceIDs.remove(serviceID)
+      if let identifier = serviceToIdentifier.removeValue(forKey: serviceID) {
+        let pipeline = pipelines.removeValue(forKey: identifier)
+        deviceInfos.removeValue(forKey: identifier)
+        lastPhysicalHIDOutputNanoseconds.removeValue(forKey: identifier)
         await pipeline?.stop()
-        print("[DeviceManager] USB device removed: \(id)")
+        print("[DeviceManager] USB device removed: \(identifier)")
       }
     }
   }
 
-  func ensureUSBContext() {
-    if usbContext != nil { return }
-    do { usbContext = try USBContext() } catch {
-      usbContext = nil
-      print("[DeviceManager] Failed to create USBContext: \(error)")
-    }
-  }
-
-  @discardableResult private func handleUSBDeviceAdded(_ device: USBDevice) -> DeviceIdentifier? {
-    let vendorID = device.idVendor
-    let productID = device.idProduct
-    let locationID = UInt32((UInt32(device.bus) << 8) | UInt32(device.address))
+  @discardableResult private func handleUSBDeviceAdded(
+    _ device: USBTransportDevice,
+    provider: any USBTransportProvider
+  ) -> DeviceIdentifier? {
     guard
       let admission = resolveRawUSBAdmission(
         parserRegistry: parserRegistry,
-        vendorID: vendorID,
-        productID: productID,
-        locationID: locationID,
+        vendorID: device.vendorID,
+        productID: device.productID,
+        locationID: device.locationID,
         loadDescriptorStrings: {
-          (serialNumber: try? device.getSerialNumber(), productName: try? device.getProduct())
+          (serialNumber: device.serialNumber, productName: device.productName)
         }
       )
     else {
-      let modelIdentifier = DeviceIdentifier(vendorID: vendorID, productID: productID)
-      print("[DeviceManager] Raw USB device observed but left unclaimed: \(modelIdentifier)")
+      let modelIdentifier = DeviceIdentifier(vendorID: device.vendorID, productID: device.productID)
+      print(
+        "[DeviceManager] \(device.route.rawValue) service observed but left unclaimed:"
+          + " \(modelIdentifier)"
+      )
       return nil
     }
 
     let identifier = admission.identifier
-    let serial = identifier.serialNumber
-
     guard pipelines[identifier] == nil,
       Self.matchingPhysicalIdentifier(for: identifier, among: pipelines.keys) == nil
     else {
-      print("[DeviceManager] Pipeline already exists" + " for \(identifier)")
+      print("[DeviceManager] Pipeline already exists for \(identifier)")
       return nil
     }
 
     let productName = controllerDisplayName(
       productName: admission.productName,
-      vendorID: vendorID,
-      productID: productID
+      vendorID: device.vendorID,
+      productID: device.productID
     )
     deviceInfos[identifier] = DeviceInfo(
       name: productName,
       connection: "USB",
-      serialNumber: serial,
+      serialNumber: identifier.serialNumber,
       discoverySource: .rawUSB
     )
     print("[DeviceManager] USB device added: \(productName) (\(identifier))")
-    let configuredTransport = parserRegistry.transportProfile(for: identifier)
-    let transportProfile = USBDescriptorTransportResolver.resolve(
-      device: device,
-      configured: configuredTransport
-    )
+    let transportProfile = parserRegistry.transportProfile(for: identifier)
     let parser = parserRegistry.parser(for: identifier, transportProfile: transportProfile)
     let pipeline = DevicePipeline(
       identifier: identifier,
-      transport: .usb(vendorID: vendorID, productID: productID),
+      transport: .usb(device: device),
       parser: parser,
       dispatcher: dispatcher,
-      usbContext: usbContext,
+      usbTransportProvider: provider,
       transportProfile: transportProfile,
       externalOutputAllowed: externalOutputAllowed
     )

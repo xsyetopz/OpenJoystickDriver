@@ -1,5 +1,5 @@
 {
-  "originHash" : "6addb9d5cafcd068f5a93438921282c18183c5e99d2f5e00cfa6b980cafd4c90",
+  "originHash" : "42a5b453a038c1c8d6487e579d745bdf269d48c2227231a9261c916e8f9e30be",
   "pins" : [
     {
       "identity" : "swifterkit",
@@ -8,15 +8,6 @@
       "state" : {
         "branch" : "main",
         "revision" : "564a77c050561c286ba81198ad56518dad069c17"
-      }
-    },
-    {
-      "identity" : "swiftusb",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/xsyetopz/SwiftUSB.git",
-      "state" : {
-        "revision" : "2bdafcba623e437c02b669eb9ddcb794d94ba1fb",
-        "version" : "0.1.2"
       }
     }
   ],

@@ -26,9 +26,7 @@ struct SupportDiagnosticsPresentation: Sendable, Equatable {
     } else {
       virtualControllerOutputState = .unavailable
     }
-    virtualControllerCount = diagnostics.hidGamepads.count {
-      $0.isOJDDriverKit || $0.isOJDUserSpace
-    }
+    virtualControllerCount = diagnostics.hidGamepads.count(where: \.isOJDUserSpace)
   }
 
   var virtualControllerOutputLabel: String {

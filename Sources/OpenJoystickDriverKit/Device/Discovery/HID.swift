@@ -17,10 +17,11 @@ extension DeviceManager {
 
   private func runHIDDetection() async {
     print("[DeviceManager] HID detection started" + " (class 0x03)")
-    for await event in hidManager.deviceEvents() {
+    let events = await hidManager.deviceEvents()
+    for await event in events {
       switch event {
       case .connected(let vid, let pid, let serial, let loc, let productName, let transport):
-        handleHIDDeviceConnected(
+        await handleHIDDeviceConnected(
           vendorID: vid,
           productID: pid,
           serialNumber: serial,
@@ -57,7 +58,7 @@ extension DeviceManager {
     locationID: UInt32,
     productName: String?,
     transport: String?
-  ) {
+  ) async {
     let identifier = DeviceIdentifier(
       vendorID: vendorID,
       productID: productID,
@@ -104,7 +105,6 @@ extension DeviceManager {
       transport: .hid(locationID: locationID),
       parser: parser,
       dispatcher: dispatcher,
-      usbContext: nil,
       externalOutputAllowed: externalOutputAllowed
     )
     pipelines[identifier] = pipeline
@@ -112,34 +112,34 @@ extension DeviceManager {
     if !pipeline.requiresInputConnectionBeforeOutput() {
       Task { await dispatcher.dispatch(events: [], from: identifier) }
     }
-    sendHIDStartupFeatureReadRequestsIfNeeded(
+    await sendHIDStartupFeatureReadRequestsIfNeeded(
       parser: parser,
       locationID: locationID,
       transport: transport
     )
     if !pipeline.requiresInputConnectionBeforeOutput() {
-      sendHIDStartupFeatureReportsIfNeeded(
+      await sendHIDStartupFeatureReportsIfNeeded(
         parser: parser,
         locationID: locationID,
         transport: transport
       )
     }
-    sendHIDStartupOutputReportsIfNeeded(
+    await sendHIDStartupOutputReportsIfNeeded(
       parser: parser,
       locationID: locationID,
       transport: transport
     )
-    requestHIDInputConnectionStatusIfNeeded(parser: parser, locationID: locationID)
+    await requestHIDInputConnectionStatusIfNeeded(parser: parser, locationID: locationID)
   }
 
   private func sendHIDStartupFeatureReadRequestsIfNeeded(
     parser: any InputParser,
     locationID: UInt32,
     transport: String?
-  ) {
+  ) async {
     guard let provider = parser as? any HIDStartupFeatureReadRequestProvider else { return }
     for request in provider.hidStartupFeatureReadRequests(transport: transport)
-    where hidManager.getFeatureReport(locationID: locationID, request: request) == nil {
+    where await hidManager.getFeatureReport(locationID: locationID, request: request) == nil {
       print("[DeviceManager] HID startup feature report read failed for loc=\(locationID)")
     }
   }
@@ -148,10 +148,10 @@ extension DeviceManager {
     parser: any InputParser,
     locationID: UInt32,
     transport: String?
-  ) {
+  ) async {
     guard let provider = parser as? any HIDStartupFeatureReportProvider else { return }
     for report in provider.hidStartupFeatureReports(transport: transport) {
-      let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
+      let sent = await hidManager.setFeatureReport(locationID: locationID, report: report)
       if !sent { print("[DeviceManager] HID startup feature report failed for loc=\(locationID)") }
     }
   }
@@ -160,13 +160,13 @@ extension DeviceManager {
     parser: any InputParser,
     locationID: UInt32,
     transport: String?
-  ) {
+  ) async {
     guard let provider = parser as? any HIDStartupOutputReportProvider else { return }
     let reports = provider.hidStartupReports(transport: transport)
     let interval = provider.hidStartupReportIntervalNanoseconds(transport: transport)
     if interval == 0 {
       for report in reports {
-        let sent = hidManager.setOutputReport(locationID: locationID, report: report)
+        let sent = await hidManager.setOutputReport(locationID: locationID, report: report)
         if !sent { print("[DeviceManager] HID startup output report failed for loc=\(locationID)") }
       }
       return
@@ -174,18 +174,19 @@ extension DeviceManager {
     Task { [hidManager] in
       for (index, report) in reports.enumerated() {
         if index > 0 { try? await Task.sleep(nanoseconds: interval) }
-        let sent = hidManager.setOutputReport(locationID: locationID, report: report)
+        let sent = await hidManager.setOutputReport(locationID: locationID, report: report)
         if !sent { print("[DeviceManager] HID startup output report failed for loc=\(locationID)") }
       }
     }
   }
 
   private func requestHIDInputConnectionStatusIfNeeded(parser: any InputParser, locationID: UInt32)
+    async
   {
     guard let requester = parser as? any HIDInputConnectionStatusRequester,
       let report = requester.inputConnectionStatusRequestReport()
     else { return }
-    let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
+    let sent = await hidManager.setFeatureReport(locationID: locationID, report: report)
     if !sent {
       print("[DeviceManager] HID input connection status request failed for loc=\(locationID)")
     }
@@ -210,7 +211,7 @@ extension DeviceManager {
   func sendHIDShutdownFeatureReportsIfNeeded(pipeline: DevicePipeline?, locationID: UInt32) async {
     guard let pipeline else { return }
     for report in await pipeline.hidShutdownFeatureReports() {
-      let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
+      let sent = await hidManager.setFeatureReport(locationID: locationID, report: report)
       if !sent { print("[DeviceManager] HID shutdown feature report failed for loc=\(locationID)") }
     }
   }
@@ -227,7 +228,7 @@ extension DeviceManager {
       let featureReports = await pipelines[key]?.feedHIDData(data)
     {
       for report in featureReports {
-        let sent = hidManager.setFeatureReport(locationID: locationID, report: report)
+        let sent = await hidManager.setFeatureReport(locationID: locationID, report: report)
         if !sent {
           print("[DeviceManager] HID lifecycle feature report failed for loc=\(locationID)")
         }

@@ -13,14 +13,14 @@
     <key>com.apple.developer.system-extension.install</key>
     <true/>
 
-    <!-- Limits DriverKit user-client access to the generated OpenJoystickDriver relay. -->
+    <!-- Limits DriverKit user-client access to the generated USB transport DEXT. -->
     <key>com.apple.developer.driverkit.userclient-access</key>
     <array>
-        <string>com.openjoystickdriver.VirtualHIDDevice</string>
+        <string>com.openjoystickdriver.XboxUSBDevice</string>
     </array>
 
-    <!-- Required because the main application executable creates IOHIDUserDevice
-         compatibility profiles from the persistent main app. -->
+    <!-- Required because the main application executable creates CoreHID virtual
+         devices on macOS 15+ (with the IOKit implementation scoped to 10.15–14). -->
     <key>com.apple.developer.hid.virtual.device</key>
     <true/>
 

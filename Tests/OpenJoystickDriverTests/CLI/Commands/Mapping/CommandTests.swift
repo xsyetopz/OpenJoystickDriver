@@ -8,7 +8,7 @@ import Testing
   @Test(arguments: [
     ("button:south", RemappingSource.button(.south)), ("dpad:left", RemappingSource.dpad(.left)),
     ("axis:left_stick_x", RemappingSource.axis(.leftStickX)),
-    ("axis:right_trigger:positive", RemappingSource.axisDirection(.rightTrigger, .positive)),
+    ("axis:right_trigger:positive", RemappingSource.axisDirection(.rightTrigger, .positive))
   ]) func parsesEverySourceFamily(raw: String, expected: RemappingSource) throws {
     #expect(try MappingSyntax.source(raw) == expected)
   }
@@ -17,7 +17,7 @@ import Testing
     ("key:a", RemappingDestination.keyboard(key: .a, modifiers: [])),
     ("mouse:forward", RemappingDestination.mouseButton(.forward)),
     ("move:x", RemappingDestination.mouseMovement(.x)),
-    ("scroll:y", RemappingDestination.scroll(.y)),
+    ("scroll:y", RemappingDestination.scroll(.y))
   ]) func parsesEveryDestinationFamily(raw: String, expected: RemappingDestination) throws {
     #expect(try MappingSyntax.destination(raw) == expected)
   }
@@ -44,7 +44,7 @@ import Testing
   @Test func applicationScopeAndDeviceIdentifiersAreEditable() throws {
     let profile = makeProfile()
     let options = try MappingOptions([
-      "--vid", "0x054c", "--pid", "3302", "--target-app", "com.example.Game",
+      "--vid", "0x054c", "--pid", "3302", "--target-app", "com.example.Game"
     ])
     let updated = try MappingProfileEditor.updating(profile, options: options)
     #expect(updated.device.vendorID == 1356)
@@ -56,7 +56,7 @@ import Testing
     let options = try MappingOptions(
       [
         "--deadzone", "0.2", "--gain", "1.5", "--invert", "--response-curve", "smooth_step",
-        "--digital-threshold", "0.7", "--source", "axis:left_stick_x", "--target", "move:x",
+        "--digital-threshold", "0.7", "--source", "axis:left_stick_x", "--target", "move:x"
       ],
       flags: ["--invert"]
     )
@@ -109,7 +109,7 @@ import Testing
         id: bindingID,
         source: .button(.south),
         destination: .keyboard(key: .a, modifiers: [])
-      ),
+      )
     ])
     let replaced = try MappingProfileEditor.replacingBinding(
       in: profile,
@@ -144,7 +144,7 @@ import Testing
     await #expect(throws: MappingCommandError.self) {
       try await MappingInvocation(arguments: [
         "bind", profile.id.uuidString, "--source", "axis:left_stick_x", "--target", "move:x",
-        "--sensitivity", "1.5",
+        "--sensitivity", "1.5"
       ]).execute(client: client)
     }
     #expect(await client.mutationCount == 0)
@@ -192,7 +192,7 @@ import Testing
       ["update", profile.id.uuidString, "--name", "Renamed"],
       ["bind", profile.id.uuidString, "--source", "button:south", "--target", "key:a"],
       ["delete", profile.id.uuidString], ["enable", profile.id.uuidString],
-      ["disable", "--vid", "1118", "--pid", "654"],
+      ["disable", "--vid", "1118", "--pid", "654"]
     ]
     for arguments in commands {
       _ = try await MappingInvocation(arguments: arguments).execute(client: client)
@@ -218,7 +218,7 @@ import Testing
 
     await #expect(throws: conflict) {
       try await MappingInvocation(arguments: [
-        "update", profile.id.uuidString, "--name", "Stale edit",
+        "update", profile.id.uuidString, "--name", "Stale edit"
       ]).execute(client: client)
     }
 
@@ -234,7 +234,7 @@ import Testing
         RemappingBinding(
           source: .button(.south),
           destination: .keyboard(key: .space, modifiers: [])
-        ),
+        )
       ]
     )
     let client = MockMappingClient(snapshotValue: snapshot([profile]))
@@ -242,9 +242,8 @@ import Testing
       ["update", profile.id.uuidString, "--name", "Renamed"],
       [
         "bind", profile.id.uuidString, "--source", "axis:left_stick_x", "--target", "move:x",
-        "--deadzone", "0.2",
-      ],
-      ["unbind", profile.id.uuidString, "--source", "button:south"],
+        "--deadzone", "0.2"
+      ], ["unbind", profile.id.uuidString, "--source", "button:south"]
     ]
 
     for arguments in commands {
@@ -294,7 +293,7 @@ import Testing
     let client = MockMappingClient(snapshotValue: snapshot([profile]))
     _ = try await MappingInvocation(arguments: ["import", input.path]).execute(client: client)
     _ = try await MappingInvocation(arguments: [
-      "export", profile.id.uuidString, "--output", output.path,
+      "export", profile.id.uuidString, "--output", output.path
     ]).execute(client: client)
     #expect(await client.mutationCount == 1)
     #expect(

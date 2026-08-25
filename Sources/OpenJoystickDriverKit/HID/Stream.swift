@@ -7,6 +7,7 @@ import IOKit.hid
 /// Creates an `AsyncStream` of device connect, disconnect, and input report
 /// events. IOKit delivers callbacks on the main run loop, and this class
 /// forwards them into the stream for safe async consumption.
+@available(macOS, introduced: 10.15, obsoleted: 15.0)
 public final class HIDDeviceStream: @unchecked Sendable {
 
   // MARK: - Thread safety
@@ -33,8 +34,8 @@ public final class HIDDeviceStream: @unchecked Sendable {
     var matches: [[String: Any]] = [
       [
         kIOHIDDeviceUsagePageKey: kHIDPage_GenericDesktop,
-        kIOHIDDeviceUsageKey: kHIDUsage_GD_GamePad,
-      ],
+        kIOHIDDeviceUsageKey: kHIDUsage_GD_GamePad
+      ]
     ]
     matches += additionalProfileIdentifiers.map {
       [kIOHIDVendorIDKey: Int($0.vendorID), kIOHIDProductIDKey: Int($0.productID)]
@@ -174,17 +175,11 @@ public final class HIDDeviceStream: @unchecked Sendable {
     let pid = deviceProperty(device, kIOHIDProductIDKey)
     let serial = IOHIDDeviceGetProperty(device, kIOHIDSerialNumberKey as CFString) as? String
     let productName = IOHIDDeviceGetProperty(device, kIOHIDProductKey as CFString) as? String
-    let ioUserClass = IOHIDDeviceGetProperty(device, "IOUserClass" as CFString) as? String
-
     let transport = IOHIDDeviceGetProperty(device, kIOHIDTransportKey as CFString) as? String ?? ""
     // Skip virtual HID gamepads entirely. Compatibility modes may intentionally spoof
     // third-party VID/PID values, so matching only the current OJD profile is not enough:
     // re-ingesting any virtual gamepad creates duplicate outputs and feedback latency.
     if transport == "Virtual" { return }
-
-    // Some macOS versions report our DriverKit virtual HID device as Transport="USB".
-    // Exclude it by its IOUserClass to avoid a feedback loop.
-    if ioUserClass == "SwifterKitRuntimeService" { return }
 
     // Also skip our user-space virtual gamepad (IOHIDUserDevice), which intentionally
     // uses Transport="USB" for compatibility.

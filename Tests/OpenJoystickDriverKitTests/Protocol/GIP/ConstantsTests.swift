@@ -27,20 +27,20 @@ struct GIPConstantsTests {
     // Device -> Host states (rawValue < 0x20)
     let deviceStates: [GIPAuthState] = [
       .devInit, .devCertificate, .devIntermediate, .devData1, .devData2, .devFinal, .devComplete,
-      .devStatus, .devAck1, .devAck2,
+      .devStatus, .devAck1, .devAck2
     ]
     for state in deviceStates { #expect(state.isDeviceToHost) }
 
     // Host -> Device states (rawValue >= 0x20)
     let hostStates: [GIPAuthState] = [
       .hostInit, .hostResponse1, .hostResponse2, .hostResponse3, .hostResponse4, .hostResponse5,
-      .hostComplete,
+      .hostComplete
     ]
     for state in hostStates { #expect(!state.isDeviceToHost) }
   }
   @Test func test_deviceState_has_all_8_states() {
     let allStates: [GIPDeviceState] = [
-      .start, .stop, .standby, .fullPower, .off, .quiesce, .enroll, .reset,
+      .start, .stop, .standby, .fullPower, .off, .quiesce, .enroll, .reset
     ]
     #expect(allStates.count == 8)
     let rawValues = Set(allStates.map(\.rawValue))
@@ -49,7 +49,7 @@ struct GIPConstantsTests {
   @Test func test_deviceState_expectedPayloadSize_nil_for_device_states() {
     let deviceStates: [GIPAuthState] = [
       .devInit, .devCertificate, .devIntermediate, .devData1, .devData2, .devFinal, .devComplete,
-      .devStatus, .devAck1, .devAck2,
+      .devStatus, .devAck1, .devAck2
     ]
     for state in deviceStates { #expect(state.expectedPayloadSize == nil) }
   }

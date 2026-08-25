@@ -18,7 +18,6 @@ import Testing
           locationID: 42,
           serialKind: .ojdUserSpace,
           ioUserClass: "IOHIDUserDevice",
-          isOJDDriverKit: false,
           isOJDUserSpace: true
         ),
         ApplicationServiceHIDGamepadSnapshot(
@@ -29,9 +28,8 @@ import Testing
           locationID: 99,
           serialKind: .present,
           ioUserClass: "IOHIDDevice",
-          isOJDDriverKit: false,
           isOJDUserSpace: false
-        ),
+        )
       ]
     )
     let gateway = SupportDiagnosticsGatewayStub(diagnosticsPayloads: [diagnostics])
@@ -60,7 +58,7 @@ import Testing
           userSpaceVirtualDeviceEnabled: true,
           userSpaceVirtualDeviceStatus: "ready",
           hidGamepads: []
-        ),
+        )
       ],
       diagnosticsDelayNanoseconds: [100_000_000, 0]
     )
@@ -115,9 +113,8 @@ import Testing
           locationID: 42,
           serialKind: .ojdUserSpace,
           ioUserClass: "IOHIDUserDevice",
-          isOJDDriverKit: false,
           isOJDUserSpace: true
-        ),
+        )
       ]
     )
     let gateway = SupportDiagnosticsGatewayStub(
@@ -161,9 +158,7 @@ import Testing
   }
 
   @Test func collectingDiagnosticsDoesNotLeaveReportSaving() async throws {
-    let gateway = SupportDiagnosticsGatewayStub(
-      diagnosticsDelayNanoseconds: [100_000_000, 0]
-    )
+    let gateway = SupportDiagnosticsGatewayStub(diagnosticsDelayNanoseconds: [100_000_000, 0])
     let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
     let outputURL = FileManager.default.temporaryDirectory.appendingPathComponent(
       "OpenJoystickDriver-support-race-\(UUID().uuidString).json"
@@ -205,7 +200,7 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
         userSpaceVirtualDeviceEnabled: true,
         userSpaceVirtualDeviceStatus: "ready",
         hidGamepads: []
-      ),
+      )
     ],
     diagnosticsDelayNanoseconds: [UInt64] = [],
     diagnosticsShouldFail: Bool = false
@@ -218,7 +213,7 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
           userSpaceVirtualDeviceEnabled: true,
           userSpaceVirtualDeviceStatus: "ready",
           hidGamepads: []
-        ),
+        )
       ] : diagnosticsPayloads
     self.diagnosticsDelayNanoseconds = diagnosticsDelayNanoseconds
     self.diagnosticsShouldFail = diagnosticsShouldFail

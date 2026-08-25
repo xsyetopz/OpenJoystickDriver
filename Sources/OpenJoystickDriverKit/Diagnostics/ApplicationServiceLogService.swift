@@ -59,7 +59,7 @@ public enum ApplicationServiceLogService {
     )
     for (stream, target) in [
       (ApplicationServiceLogStream.standardOutput, STDOUT_FILENO),
-      (ApplicationServiceLogStream.standardError, STDERR_FILENO),
+      (ApplicationServiceLogStream.standardError, STDERR_FILENO)
     ] {
       let path = url(for: stream).path
       let descriptor = open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)

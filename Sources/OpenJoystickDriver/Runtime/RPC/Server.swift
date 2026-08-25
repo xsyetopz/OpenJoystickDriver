@@ -2,7 +2,6 @@ import Foundation
 import IOKit
 import IOKit.hid
 import OpenJoystickDriverKit
-import OpenJoystickDriverRelay
 import Security
 
 /// Wraps a non-Sendable asynchronous reply closure so it can cross Task boundary.
@@ -21,14 +20,12 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
   let deviceManager: DeviceManager
   let permissionManager: PermissionManager
   let dispatcher: CompatibilityOutputDispatcher
-  let driverKitDispatcher: DriverKitOutputDispatcher
   let remappingProfileLibrary: RemappingProfileLibrary
   let remappingRouter: RemappingOutputRouter
   let postEventAccess: CoreGraphicsPostEventAccess
   let remappingRequests: RemappingRequestCoordinator
   let userSpaceLock = NSLock()
   var userSpaceDispatcher: (any CompatibilityUserSpaceOutputDispatching)?
-  var foregroundConsumerDispatcherPool: ForegroundConsumerCompatibilityDispatcherPool?
   var userSpaceEnabled: Bool
   var userSpaceStatus: String = "off"
   var compatibilityIdentity: CompatibilityIdentity
@@ -37,7 +34,6 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
 
   struct UserSpaceDispatcherBuild {
     let dispatcher: any CompatibilityUserSpaceOutputDispatching
-    let foregroundConsumerPool: ForegroundConsumerCompatibilityDispatcherPool?
     let status: String
   }
 
@@ -46,7 +42,6 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     deviceManager: DeviceManager,
     permissionManager: PermissionManager,
     dispatcher: CompatibilityOutputDispatcher,
-    driverKitDispatcher: DriverKitOutputDispatcher,
     remappingProfileLibrary: RemappingProfileLibrary,
     remappingRouter: RemappingOutputRouter,
     postEventAccess: CoreGraphicsPostEventAccess
@@ -54,7 +49,6 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     self.deviceManager = deviceManager
     self.permissionManager = permissionManager
     self.dispatcher = dispatcher
-    self.driverKitDispatcher = driverKitDispatcher
     self.remappingProfileLibrary = remappingProfileLibrary
     self.remappingRouter = remappingRouter
     self.postEventAccess = postEventAccess
@@ -139,40 +133,29 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
 
   func buildUserSpaceDispatcher(identity: CompatibilityIdentity) throws -> UserSpaceDispatcherBuild
   {
-    enum CompatError: Swift.Error, CustomStringConvertible, Sendable {
-      case unsupported(String)
-      var description: String {
-        switch self {
-        case .unsupported(let msg): return msg
-        }
-      }
-    }
-
     let compatibilityProfile = CompatibilityOutputProfileCatalog.profile(for: identity)
     let profile = compatibilityProfile.deviceProfile
     let format: any VirtualGamepadReportFormat
-    let primaryUsage: Int?
     switch identity {
-    case .genericHID:
-      format = OJDSDLGamepadFormat()
-      primaryUsage = nil
-    case .sdl2_3:
-      format = OJDSDLGamepadFormat()
-      primaryUsage = nil
+    case .genericHID: format = OJDSDLGamepadFormat()
+    case .sdl2_3: format = Xbox360MacHIDReportFormat()
     case .appleGameController:
       format = Xbox360MacHIDReportFormat(topLevelUsage: UInt8(kHIDUsage_GD_GamePad))
-      primaryUsage = Int(kHIDUsage_GD_GamePad)
     case .xoneHID:
-      primaryUsage = nil
-      // Xbox One identity for SDL consumers:
+      // Xbox One identity for XInput/XUSB-style consumers:
       // - Prefer the physical HID report descriptor exposed by macOS for 045E:02EA (USB).
-      //   This makes SDL treat the virtual device as a real Xbox controller.
       // - Fall back to a built-in descriptor if the physical device is not present.
-      if let physical = HIDDescriptorReportFormat.copyPhysicalReportDescriptor(
-        vendorID: profile.vendorID,
-        productID: profile.productID,
-        preferredTransport: "USB"
-      ) {
+      let physicalDescriptor: [UInt8]?
+      if #available(macOS 15, *) {
+        physicalDescriptor = nil
+      } else {
+        physicalDescriptor = HIDDescriptorReportFormat.copyPhysicalReportDescriptor(
+          vendorID: profile.vendorID,
+          productID: profile.productID,
+          preferredTransport: "USB"
+        )
+      }
+      if let physical = physicalDescriptor {
         do {
           format = try HIDDescriptorReportFormat(
             descriptor: physical,
@@ -181,7 +164,6 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
               .xboxGIPReportPayloadSizeWithoutReportID
           )
         } catch {
-          // If parsing fails on this OS build, fall back to the built-in descriptor.
           format = try HIDDescriptorReportFormat(
             descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
             outputReportID: VirtualRumbleOutputReportParser.xboxOneReportID,
@@ -195,9 +177,6 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
           outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize
         )
       }
-    case .x360HID:
-      format = Xbox360MacHIDReportFormat()
-      primaryUsage = nil
     }
 
     let rumbleHandler: UserSpaceOutputDispatcher.RumbleCommandHandler = {
@@ -215,21 +194,13 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
       }
     }
 
-    let pool = try ForegroundConsumerCompatibilityDispatcherPool { routeToken in
-      try UserSpaceOutputDispatcher(
-        profile: profile,
-        format: format,
-        primaryUsage: primaryUsage,
-        emitsXboxGuideReport: compatibilityProfile.emitsXboxGuideReport,
-        routeToken: routeToken,
-        onRumbleCommand: rumbleHandler
-      )
-    }
-    return UserSpaceDispatcherBuild(
-      dispatcher: pool,
-      foregroundConsumerPool: pool,
-      status: pool.status
+    let output = try UserSpaceOutputDispatcher(
+      profile: profile,
+      format: format,
+      emitsXboxGuideReport: compatibilityProfile.emitsXboxGuideReport,
+      onRumbleCommand: rumbleHandler
     )
+    return UserSpaceDispatcherBuild(dispatcher: output, status: output.status)
   }
 
   func initializeCompatibilityBackend() -> Bool {
@@ -238,7 +209,6 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
       let build = try buildUserSpaceDispatcher(identity: compatibilityIdentity)
       userSpaceLock.withLock {
         userSpaceDispatcher = build.dispatcher
-        foregroundConsumerDispatcherPool = build.foregroundConsumerPool
         dispatcher.setBackend(build.dispatcher)
         userSpaceEnabled = true
         userSpaceStatus = build.status
@@ -250,7 +220,6 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
       userSpaceLock.withLock {
         dispatcher.setBackend(nil)
         userSpaceDispatcher = nil
-        foregroundConsumerDispatcherPool = nil
         userSpaceEnabled = false
         userSpaceStatus = "error: \(error)"
       }
@@ -282,33 +251,4 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     }
   }
 
-  func applyForegroundCompatibilityRoutingUpdate(
-    frontmostBundleRootPath: String?,
-    effectiveConsumerBundleRoots: Set<String>,
-    observedConsumerBundleRoots: Set<String>,
-    activeRouteToken: String?
-  ) async {
-    guard userSpaceEnabled else { return }
-    guard let pool = userSpaceLock.withLock({ foregroundConsumerDispatcherPool }) else { return }
-
-    let retainedBundleRoots = ForegroundConsumerRouteSelection.retainedDedicatedBundleRootPaths(
-      frontmostBundleRootPath: frontmostBundleRootPath,
-      effectiveConsumerBundleRoots: effectiveConsumerBundleRoots,
-      observedConsumerBundleRoots: observedConsumerBundleRoots,
-      activeRouteToken: activeRouteToken
-    )
-
-    if let activeBundleRootPath = retainedBundleRoots.first {
-      do { try pool.ensureDedicatedRoute(forConsumerBundleRootPath: activeBundleRootPath) } catch {
-        print(
-          "[ApplicationServiceServer] Failed to create dedicated Compatibility route for "
-            + "\(URL(fileURLWithPath: activeBundleRootPath).lastPathComponent): \(error)"
-        )
-      }
-    }
-
-    await pool.setActiveRouteToken(activeRouteToken)
-    pool.retainDedicatedRoutes(forConsumerBundleRootPaths: retainedBundleRoots)
-    userSpaceLock.withLock { userSpaceStatus = pool.status }
-  }
 }

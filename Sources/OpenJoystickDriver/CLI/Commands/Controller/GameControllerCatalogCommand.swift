@@ -110,7 +110,7 @@ struct GameControllerCatalogCommand {
       [
         "Usage: OpenJoystickDriver --headless diagnose catalog " + "[--all-apple] [--json]", "",
         "Compares OJD profiles with Apple's private current-system GameController "
-          + "mapping MobileAsset. Catalog presence is evidence, not a support guarantee.",
+          + "mapping MobileAsset. Catalog presence is evidence, not a support guarantee."
       ].joined(separator: "\n")
     )
   }

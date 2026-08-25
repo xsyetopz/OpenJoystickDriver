@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 let gipReadPacketLength = 64
 let gipReadTimeoutMs: UInt32 = 100
@@ -7,8 +6,8 @@ let usbOpenRetryDelays: [UInt64] = [1_000_000_000, 2_000_000_000, 4_000_000_000]
 let keepAliveIntervalNs: UInt64 = 4_000_000_000
 /// Target input loop cadence in nanoseconds.
 ///
-/// If libusb returns timeouts immediately (instead of waiting for timeout),
-/// this prevents a hot loop that can trigger launchd "inefficient" kills.
+/// Defensive pacing prevents a transport that completes timeouts immediately from
+/// creating a hot loop that can trigger launchd "inefficient" kills.
 let usbIdleLoopCadenceNs: UInt64 = UInt64(gipReadTimeoutMs) * 1_000_000
 let usbIOErrorReconnectThreshold = 10
 let usbIOErrorBackoffBaseNs: UInt64 = 250_000_000  // 250ms
@@ -43,8 +42,8 @@ private final class DevicePipelineSnapshots: @unchecked Sendable {
 /// failure never affects others.
 actor DevicePipeline {
   enum Transport {
-    /// Class 0xFF via SwiftUSB
-    case usb(vendorID: UInt16, productID: UInt16)
+    /// Vendor-specific interface owned by the selected Apple USB transport backend.
+    case usb(device: USBTransportDevice)
     /// Class 0x03 via IOKit
     case hid(locationID: UInt32)
   }
@@ -53,11 +52,11 @@ actor DevicePipeline {
   let transport: Transport
   let parser: any InputParser
   let dispatcher: any OutputDispatcher
-  let usbContext: USBContext?
+  let usbTransportProvider: (any USBTransportProvider)?
   let transportProfile: DeviceTransportProfile
   let idleMonitorIntervalNanoseconds: UInt64
   var isActive = false
-  var usbHandle: USBDeviceHandle?
+  var usbHandle: (any USBTransportSession)?
   var currentInputState: DeviceInputState
   var outputState: DeviceInputState
   let maxPacketLogEntries = 200
@@ -75,7 +74,7 @@ actor DevicePipeline {
     transport: Transport,
     parser: any InputParser,
     dispatcher: any OutputDispatcher,
-    usbContext: USBContext?,
+    usbTransportProvider: (any USBTransportProvider)? = nil,
     transportProfile: DeviceTransportProfile = .gipDefault,
     externalOutputAllowed: Bool = true,
     idleTimeoutNanoseconds: UInt64 = defaultControllerIdleTimeoutNanoseconds,
@@ -85,7 +84,7 @@ actor DevicePipeline {
     self.transport = transport
     self.parser = parser
     self.dispatcher = dispatcher
-    self.usbContext = usbContext
+    self.usbTransportProvider = usbTransportProvider
     self.transportProfile = transportProfile
     self.idleMonitorIntervalNanoseconds = idleMonitorIntervalNanoseconds
     self.externalOutputAllowed = externalOutputAllowed
@@ -111,7 +110,7 @@ actor DevicePipeline {
     startIdleMonitor()
 
     switch transport {
-    case .usb(let vid, let pid): await startUSBPipeline(vendorID: vid, productID: pid)
+    case .usb(let device): await startUSBPipeline(device: device)
     case .hid:
       // HID pipeline: data fed via feedHIDData(); no separate startup loop needed
       print("[DevicePipeline] HID pipeline ready" + " for \(identifier)")
@@ -128,7 +127,7 @@ actor DevicePipeline {
       listener.controllerDidStop(identifier)
     }
     if let handle = usbHandle {
-      try? handle.releaseInterface(0)
+      await handle.close()
       usbHandle = nil
     }
     print("[DevicePipeline] Stopped: \(identifier)")
@@ -258,7 +257,7 @@ actor DevicePipeline {
     if let output = parser as? any USBInputConnectionOutputProvider, let handle = usbHandle {
       for packet in output.usbInputConnectionOutputPackets(for: state) {
         do {
-          _ = try handle.interruptTransfer(
+          _ = try await handle.writeInterruptPacket(
             endpoint: transportProfile.outputEndpoint,
             data: packet,
             timeout: 2_000
@@ -296,12 +295,18 @@ actor DevicePipeline {
 
   // MARK: - Rumble
 
-  func sendRumble(left: UInt8, right: UInt8, lt: UInt8, rt: UInt8) -> Bool {
+  func sendRumble(left: UInt8, right: UInt8, lt: UInt8, rt: UInt8) async -> Bool {
     guard let handle = usbHandle, let rumbleOutput = parser as? PhysicalRumbleOutput else {
       return false
     }
     do {
-      try rumbleOutput.sendPhysicalRumble(handle: handle, left: left, right: right, lt: lt, rt: rt)
+      try await rumbleOutput.sendPhysicalRumble(
+        handle: handle,
+        left: left,
+        right: right,
+        lt: lt,
+        rt: rt
+      )
       return true
     } catch {
       print("[DevicePipeline] Rumble send failed for \(identifier): \(error)")
@@ -341,11 +346,11 @@ actor DevicePipeline {
     (parser as? PhysicalHIDPlayerIndicatorOutput)?.physicalPlayerIndicatorReport(indicator)
   }
 
-  func sendPlayerIndicator(_ indicator: PhysicalPlayerIndicator) -> Bool {
+  func sendPlayerIndicator(_ indicator: PhysicalPlayerIndicator) async -> Bool {
     guard let handle = usbHandle, let lightingOutput = parser as? PhysicalPlayerIndicatorOutput
     else { return false }
     do {
-      try lightingOutput.sendPhysicalPlayerIndicator(handle: handle, indicator: indicator)
+      try await lightingOutput.sendPhysicalPlayerIndicator(handle: handle, indicator: indicator)
       return true
     } catch {
       print("[DevicePipeline] Player indicator send failed for \(identifier): \(error)")

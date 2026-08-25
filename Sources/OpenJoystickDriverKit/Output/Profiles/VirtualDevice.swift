@@ -1,46 +1,4 @@
 import Foundation
-/// Stable identity shared by DriverKit relay configuration, discovery, and diagnostics.
-package enum DriverKitRelayIdentity {
-  package static let runtimeServiceClass = "SwifterKitRuntimeService"
-  package static let bundleIdentifier = "com.openjoystickdriver.VirtualHIDDevice"
-  package static let transport = "USB"
-  package static let vendorID: UInt32 = 0x4F4A
-  package static let productID: UInt32 = 0x4447
-  package static let versionNumber: UInt32 = 0x0408
-  package static let locationID: UInt32 = 0x4F4A_4401
-  package static let manufacturer = "OpenJoystickDriver"
-  package static let product = "OpenJoystickDriver DriverKit Relay"
-  package static let serialNumber = "OpenJoystickDriver-DriverKit"
-  package static let primaryUsagePage: UInt32 = 0xFF00
-  package static let primaryUsage: UInt32 = 1
-  package static let reportSize = 15
-
-  package static let reportDescriptor: [UInt8] = [
-    0x06, 0x00, 0xFF, 0x09, 0x01, 0xA1, 0x01, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95, 0x0F,
-    0x09, 0x02, 0x91, 0x02, 0x09, 0x03, 0x81, 0x02, 0xC0,
-  ]
-
-  package static func matches(
-    runtimeClass: String?,
-    transport: String?,
-    vendorID: UInt32,
-    productID: UInt32,
-    versionNumber: UInt32,
-    locationID: UInt32,
-    manufacturer: String?,
-    product: String?,
-    serialNumber: String?,
-    primaryUsagePage: UInt32,
-    primaryUsage: UInt32
-  ) -> Bool {
-    runtimeClass == Self.runtimeServiceClass && transport == Self.transport
-      && vendorID == Self.vendorID && productID == Self.productID
-      && versionNumber == Self.versionNumber && locationID == Self.locationID
-      && manufacturer == Self.manufacturer && product == Self.product
-      && serialNumber == Self.serialNumber && primaryUsagePage == Self.primaryUsagePage
-      && primaryUsage == Self.primaryUsage
-  }
-}
 
 /// Constants used to identify and exclude OpenJoystickDriver-created virtual devices
 /// from the input detection pipeline.
@@ -58,12 +16,6 @@ public enum UserSpaceVirtualDeviceConstants {
   /// Manufacturer string used for the user-space virtual gamepad (IOHIDUserDevice).
   public static let manufacturer = "OpenJoystickDriver"
 
-  /// Logical route token used by the bootstrap/shared Compatibility device.
-  ///
-  /// Dedicated per-consumer devices encode a different token in their serial
-  /// number so the foreground monitor can distinguish them in IORegistry.
-  public static let sharedRouteToken = "shared"
-
   /// Returns true when a SerialNumber belongs to an OpenJoystickDriver user-space device.
   public static func isOJDUserSpaceSerial(_ serial: String?) -> Bool {
     guard let serial else { return false }
@@ -73,41 +25,19 @@ public enum UserSpaceVirtualDeviceConstants {
   /// Builds a stable, non-sensitive serial number for a virtual device.
   ///
   /// We hash the physical identifier so we don't leak hardware serial numbers.
-  public static func serialNumber(for identifier: DeviceIdentifier, routeToken: String? = nil)
-    -> String
-  {
+  public static func serialNumber(for identifier: DeviceIdentifier) -> String {
     let physicalHash = hex64(fnv1a64(stableKey(for: identifier)))
-    let encodedRouteToken = routeToken ?? sharedRouteToken
-    return serialPrefix + encodedRouteToken + ":" + physicalHash
+    return serialPrefix + physicalHash
   }
 
   /// Computes a stable LocationID in the OJD namespace for this physical identifier.
-  public static func locationID(for identifier: DeviceIdentifier, routeToken: String? = nil)
-    -> UInt32
-  {
-    let routeKey =
-      (routeToken == nil || routeToken == sharedRouteToken) ? "" : "\(routeToken ?? ""):"
-    let h = fnv1a64(routeKey + stableKey(for: identifier))
+  public static func locationID(for identifier: DeviceIdentifier) -> UInt32 {
+    let h = fnv1a64(stableKey(for: identifier))
     let low16 = UInt32(truncatingIfNeeded: h & 0xFFFF)
     // Avoid 0/1 because some consumers treat these as special/invalid.
     let safeLow16 = (low16 <= 1) ? (low16 &+ 2) : low16
     return VirtualDeviceIdentityConstants.userSpaceLocationIDNamespace | safeLow16
   }
-
-  /// Returns the encoded route token carried by an OJD user-space serial.
-  public static func routeToken(from serial: String?) -> String? {
-    guard let serial, serial.hasPrefix(serialPrefix) else { return nil }
-    let suffix = String(serial.dropFirst(serialPrefix.count))
-    let parts = suffix.split(separator: ":", omittingEmptySubsequences: false)
-    guard parts.count == 2, !parts[0].isEmpty, parts[1].count == 16,
-      parts[1].allSatisfy(\.isHexDigit)
-    else { return nil }
-    return String(parts[0])
-  }
-
-  /// Returns the stable dedicated route token for one consumer bundle root.
-  public static func dedicatedRouteToken(forConsumerBundleRootPath bundleRootPath: String) -> String
-  { "consumer-" + hex64(fnv1a64(bundleRootPath)) }
 
   // MARK: - Private helpers
 
@@ -173,14 +103,6 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
     manufacturer: "OpenJoystickDriver"
   )
 
-  public static let openJoystickDriverSDL2_3 = Self(
-    vendorID: 0x4F4A,
-    productID: 0x4448,
-    versionNumber: 0x0408,
-    productName: "OpenJoystickDriver Virtual Gamepad",
-    manufacturer: "OpenJoystickDriver"
-  )
-
   public static let openJoystickDriverGenericHID = Self(
     vendorID: 0x4F4A,
     productID: 0x4449,
@@ -225,19 +147,6 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
     versionNumber: 0x0000,
     productName: "ASTRO C40 TR Controller",
     manufacturer: "ASTRO Gaming"
-  )
-
-  /// SDL 2/3 compatibility identity.
-  ///
-  /// This profile is not exposed in the Compatibility UI. macOS GameController claims
-  /// SDL-known third-party controller identities before SDL's IOKit backend can use them.
-  /// Consumers use the generic OpenJoystickDriver user-space identity instead.
-  public static let sdlGamepad = Self(
-    vendorID: 0x1BAD,
-    productID: 0xF901,
-    versionNumber: 0x0000,
-    productName: "Gamestop BB070 X360 Controller",
-    manufacturer: "GameStop"
   )
 
   /// Default profile used when no protocol-specific profile is configured.

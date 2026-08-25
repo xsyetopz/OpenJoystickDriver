@@ -36,19 +36,18 @@ extension UserSpaceOutputDispatcher {
       kIOHIDDeviceUsagePairsKey as String: [
         [
           kIOHIDDeviceUsagePageKey as String: Int(kHIDPage_GenericDesktop),
-          kIOHIDDeviceUsageKey as String: primaryUsage,
-        ],
-      ],
+          kIOHIDDeviceUsageKey as String: primaryUsage
+        ]
+      ]
     ]
     let noPairsUsageProperties: [String: Any] = [
       kIOHIDPrimaryUsagePageKey as String: Int(kHIDPage_GenericDesktop),
-      kIOHIDPrimaryUsageKey as String: primaryUsage,
+      kIOHIDPrimaryUsageKey as String: primaryUsage
     ]
     let identityKeys = [
       kIOHIDReportDescriptorKey as String, kIOHIDVendorIDKey as String,
       kIOHIDProductIDKey as String, kIOHIDVersionNumberKey as String, kIOHIDProductKey as String,
-      kIOHIDManufacturerKey as String, kIOHIDSerialNumberKey as String,
-      kIOHIDTransportKey as String,
+      kIOHIDManufacturerKey as String, kIOHIDSerialNumberKey as String, kIOHIDTransportKey as String
     ]
     let identityProperties = baseProperties.filter { identityKeys.contains($0.key) }
     let descriptorProperties = baseProperties.filter {
@@ -87,7 +86,7 @@ extension UserSpaceOutputDispatcher {
         label: "descriptor/default",
         properties: descriptorProperties,
         options: defaultOptions
-      ),
+      )
     ]
   }
 }

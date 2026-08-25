@@ -15,9 +15,8 @@ Examples:
   ./scripts/ojd bump-version 0.1.0
 
 Updates:
-  - justfile release-local-install default
+  - Sources/OpenJoystickDriver/App/Info.plist canonical app/package version
   - scripts/README.md release examples
-  - scripts/platform/environment.sh app and generated DriverKit default version
 
 The target version must already have a CHANGELOG.md heading.
 USAGE
@@ -38,42 +37,41 @@ if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+
   die "Version must be SemVer, for example 0.1.0-rc.2"
 fi
 
-justfile="$PROJECT_DIR/justfile"
+app_info="$PROJECT_DIR/Sources/OpenJoystickDriver/App/Info.plist"
 scripts_readme="$PROJECT_DIR/scripts/README.md"
-build_defaults="$PROJECT_DIR/scripts/platform/environment.sh"
 changelog="$PROJECT_DIR/CHANGELOG.md"
 
-[[ -f "$justfile" ]] || die "Missing $justfile"
+[[ -f "$app_info" ]] || die "Missing $app_info"
 [[ -f "$scripts_readme" ]] || die "Missing $scripts_readme"
-[[ -f "$build_defaults" ]] || die "Missing $build_defaults"
 [[ -f "$changelog" ]] || die "Missing $changelog"
 
 if ! grep -Fxq "## $version" "$changelog"; then
   die "CHANGELOG.md must contain heading: ## $version"
 fi
 
-python3 - "$version" "$justfile" "$scripts_readme" "$build_defaults" <<'PY'
+python3 - "$version" "$app_info" "$scripts_readme" <<'PY'
 import re
 import sys
 from pathlib import Path
 
 (
     version,
-    justfile_path,
+    app_info_path,
     readme_path,
-    build_defaults_path,
 ) = sys.argv[1:]
 
 replacements = [
     (
-        Path(justfile_path),
+        Path(app_info_path),
         [
             (
-                "justfile release-local-install default",
+                "canonical app/package short version",
                 re.compile(
-                    r'release-local-install version="\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?":'
+                    r'(<key>CFBundleShortVersionString</key>\s*<string>)'
+                    r'\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?'
+                    r'(</string>)'
                 ),
-                f'release-local-install version="{version}":',
+                rf'\g<1>{version}\g<2>',
                 1,
             ),
         ],
@@ -84,9 +82,9 @@ replacements = [
             (
                 "scripts README package release example",
                 re.compile(
-                    r"\./scripts/ojd package release \d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?"
+                    r"\./scripts/ojd release package \d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?"
                 ),
-                f"./scripts/ojd package release {version}",
+                f"./scripts/ojd release package {version}",
                 1,
             ),
             (
@@ -95,19 +93,6 @@ replacements = [
                     r"`\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?` and by manual dispatch"
                 ),
                 f"`{version}` and by manual dispatch",
-                1,
-            ),
-        ],
-    ),
-    (
-        Path(build_defaults_path),
-        [
-            (
-                "shared app and DriverKit default short version",
-                re.compile(
-                    r'(OJD_DEFAULT_BUNDLE_SHORT_VERSION=")\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(")'
-                ),
-                rf"\g<1>{version}\g<2>",
                 1,
             ),
         ],

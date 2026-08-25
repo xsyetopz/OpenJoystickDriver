@@ -11,14 +11,13 @@ DRIVERKIT_GENERATED="$DRIVERKIT_ROOT/generated"
 DRIVERKIT_DERIVED_DATA="$DRIVERKIT_ROOT/derived-data"
 DRIVERKIT_PROJECT="$DRIVERKIT_GENERATED/SwifterKitRuntime.xcodeproj"
 DRIVERKIT_SCHEME="SwifterKitRuntime"
-DRIVERKIT_BUNDLE_ID="com.openjoystickdriver.VirtualHIDDevice"
-DRIVERKIT_PRODUCT_NAME="OpenJoystickVirtualHID"
+DRIVERKIT_BUNDLE_ID="com.openjoystickdriver.XboxUSBDevice"
+DRIVERKIT_PRODUCT_NAME="XboxUSBDevice"
 DRIVERKIT_ENTITLEMENTS="$DRIVERKIT_GENERATED/SwifterKitRuntime.entitlements"
+DRIVERKIT_SIGNING_ENTITLEMENTS="$PROJECT_DIR/Sources/DriverKitGenerator/Entitlements/XboxUSBDevice.entitlements"
 DRIVERKIT_REQUIRED_ENTITLEMENTS=(
   com.apple.developer.driverkit
-  com.apple.developer.driverkit.family.hid.device
-  com.apple.developer.driverkit.transport.hid
-  com.apple.developer.driverkit.family.hid.eventservice
+  com.apple.developer.driverkit.transport.usb
 )
 _reject_local_swifterkit() {
   if [[ "${OJD_USE_LOCAL_SWIFTERKIT:-0}" == "1" ]] \
@@ -67,9 +66,7 @@ info = plistlib.loads((root / "Info.plist").read_bytes())
 entitlements = plistlib.loads((root / "SwifterKitRuntime.entitlements").read_bytes())
 expected = {
     "com.apple.developer.driverkit",
-    "com.apple.developer.driverkit.family.hid.device",
-    "com.apple.developer.driverkit.transport.hid",
-    "com.apple.developer.driverkit.family.hid.eventservice",
+    "com.apple.developer.driverkit.transport.usb",
 }
 if info.get("CFBundleIdentifier") != "$(PRODUCT_BUNDLE_IDENTIFIER)":
     raise SystemExit("generated plist does not delegate bundle identity to Xcode")
@@ -82,12 +79,34 @@ if personality.get("IOUserClass") != "SwifterKitRuntimeService":
     raise SystemExit("generated runtime service class mismatch")
 if personality.get("IOUserServerName") != "$(PRODUCT_BUNDLE_IDENTIFIER)":
     raise SystemExit("generated user-server identity mismatch")
-if set(entitlements) != expected or any(entitlements[key] is not True for key in expected):
+if set(entitlements) != expected or entitlements.get("com.apple.developer.driverkit") is not True:
     raise SystemExit(f"generated DriverKit entitlements mismatch: {sorted(entitlements)}")
+expected_usb = [{"idVendor": 1118, "idProductArray": [721, 733, 739, 746, 2816, 2826, 2834]}]
+if entitlements.get("com.apple.developer.driverkit.transport.usb") != expected_usb:
+    raise SystemExit("generated USB entitlement does not match the selected personality")
+for key in (
+    "com.apple.developer.hid.virtual.device",
+    "com.apple.developer.driverkit.family.hid.device",
+    "com.apple.developer.driverkit.transport.hid",
+    "com.apple.developer.driverkit.family.hid.eventservice",
+):
+    if key in entitlements:
+        raise SystemExit(f"forbidden HID entitlement in USB DEXT: {key}")
 if "com.apple.developer.driverkit.allow-any-userclient-access" in entitlements:
     raise SystemExit("allow-any DriverKit user-client access is forbidden")
-if bundle_id != "com.openjoystickdriver.VirtualHIDDevice":
+if bundle_id != "com.openjoystickdriver.XboxUSBDevice":
     raise SystemExit("tooling bundle identity changed")
+if personality.get("idVendor") != 1118:
+    raise SystemExit("generated USB personality vendor mismatch")
+expected_interface = {
+    "bConfigurationValue": 1,
+    "bInterfaceNumber": 0,
+    "bInterfaceClass": 255,
+    "bInterfaceSubClass": 71,
+    "bInterfaceProtocol": 208,
+}
+if any(personality.get(key) != value for key, value in expected_interface.items()):
+    raise SystemExit("generated USB interface personality mismatch")
 PY
 }
 
@@ -159,14 +178,10 @@ entitlements = plistlib.loads(open(profile, "rb").read()).get("Entitlements", {}
 value = entitlements.get("com.apple.developer.driverkit.userclient-access")
 expected = [bundle_id]
 if value != expected:
-    message = (
+    raise SystemExit(
         "GUI provisioning profile has an incorrect DriverKit user-client value: "
         f"expected {expected!r}, got {value!r}"
     )
-    if environment == "dev":
-        print(f"WARNING: {message}; continuing for development", file=sys.stderr)
-    else:
-        raise SystemExit(message)
 if entitlements.get("com.apple.developer.driverkit.allow-any-userclient-access"):
     raise SystemExit("GUI provisioning profile grants forbidden allow-any DriverKit access")
 PY
@@ -176,28 +191,6 @@ _resolve_host_entitlements() {
   local profile="$1" output="$2"
   _require_host_access_profile "$profile"
   resolve_entitlements "$GUI_ENTITLEMENTS_TEMPLATE" "$output"
-  if [[ "${OJD_ENV:-dev}" == "dev" ]]; then
-    # Development profiles may contain an additional relay entry. Match the
-    # profile so AMFI accepts the host while keeping the authored allowlist strict.
-    local profile_entitlements="$DRIVERKIT_ROOT/profile-entitlements.plist"
-    decode_provisioning_profile "$profile" > "$profile_entitlements"
-    python3 - "$output" "$profile_entitlements" <<'PY'
-import plistlib
-import sys
-
-output, profile_path = sys.argv[1:]
-profile = plistlib.loads(open(profile_path, "rb").read()).get("Entitlements", {})
-entitlements = plistlib.loads(open(output, "rb").read())
-value = profile.get("com.apple.developer.driverkit.userclient-access")
-if isinstance(value, list):
-    # The development profile currently carries an invalid newline-packed
-    # user-client value. Omit the restricted host entitlement so AMFI can
-    # launch the app; DriverKit access is exercised by the signed dext path.
-    entitlements.pop("com.apple.developer.driverkit.userclient-access", None)
-with open(output, "wb") as handle:
-    plistlib.dump(entitlements, handle)
-PY
-  fi
 }
 
 _require_driverkit_profile() {
@@ -210,15 +203,31 @@ import plistlib
 import sys
 
 entitlements = plistlib.loads(open(sys.argv[1], "rb").read()).get("Entitlements", {})
-required = {
-    "com.apple.developer.driverkit",
+if entitlements.get("com.apple.developer.driverkit") is not True:
+    raise SystemExit("DriverKit provisioning profile is missing the DriverKit base entitlement")
+production_usb = [
+    {"idVendor": 1118, "idProduct": 721},
+    {"idVendor": 1118, "idProduct": 746},
+    {"idVendor": 1118, "idProduct": 2834},
+    {"idVendor": 1118, "idProduct": 2816},
+    {"idVendor": 1118, "idProduct": 739},
+    {"idVendor": 1118, "idProduct": 2826},
+    {"idVendor": 1118, "idProduct": 733},
+]
+actual_usb = entitlements.get("com.apple.developer.driverkit.transport.usb")
+if actual_usb != production_usb:
+    raise SystemExit(
+        "DriverKit profile USB entitlement differs from Apple's exact seven-device grant: "
+        f"{actual_usb!r}"
+    )
+for key in (
+    "com.apple.developer.hid.virtual.device",
     "com.apple.developer.driverkit.family.hid.device",
     "com.apple.developer.driverkit.transport.hid",
     "com.apple.developer.driverkit.family.hid.eventservice",
-}
-missing = sorted(key for key in required if entitlements.get(key) is not True)
-if missing:
-    raise SystemExit(f"DriverKit provisioning profile is missing entitlements: {missing}")
+):
+    if key in entitlements:
+        raise SystemExit(f"USB DEXT profile contains forbidden HID entitlement: {key}")
 if entitlements.get("com.apple.developer.driverkit.allow-any-userclient-access"):
     raise SystemExit("DriverKit provisioning profile grants forbidden allow-any access")
 PY
@@ -242,14 +251,10 @@ signed = plistlib.loads(open(signed_path, "rb").read())
 profile = plistlib.loads(open(profile_path, "rb").read()).get("Entitlements", {})
 key = "com.apple.developer.driverkit.userclient-access"
 if signed.get(key) != profile.get(key):
-    message = (
+    raise SystemExit(
         f"signed host {key} does not match the selected profile: "
         f"signed={signed.get(key)!r}, profile={profile.get(key)!r}"
     )
-    if environment == "dev":
-        print(f"WARNING: {message}; continuing for development", file=sys.stderr)
-    else:
-        raise SystemExit(message)
 if signed.get("com.apple.developer.driverkit.allow-any-userclient-access"):
     raise SystemExit("signed app grants forbidden allow-any DriverKit access")
 PY
@@ -259,21 +264,24 @@ _require_signed_driverkit_entitlements() {
   local dext="$1" decoded="$DRIVERKIT_ROOT/signed-dext-entitlements.plist"
   codesign -d --entitlements - --xml "$dext" > "$decoded" 2>/dev/null \
     || die "Could not read signed DriverKit entitlements"
-  python3 - "$decoded" <<'PY'
+  python3 - "$decoded" "$DRIVERKIT_SIGNING_ENTITLEMENTS" <<'PY'
 import plistlib
 import sys
 
-value = plistlib.loads(open(sys.argv[1], "rb").read())
-required = {
-    "com.apple.developer.driverkit",
+signed = plistlib.loads(open(sys.argv[1], "rb").read())
+expected = plistlib.loads(open(sys.argv[2], "rb").read())
+for key, value in expected.items():
+    if signed.get(key) != value:
+        raise SystemExit(f"signed DriverKit entitlement mismatch for {key}: {signed.get(key)!r}")
+for key in (
+    "com.apple.developer.hid.virtual.device",
     "com.apple.developer.driverkit.family.hid.device",
     "com.apple.developer.driverkit.transport.hid",
     "com.apple.developer.driverkit.family.hid.eventservice",
-}
-actual = {key for key, item in value.items() if item is True and key in required}
-if actual != required:
-    raise SystemExit(f"signed DriverKit entitlements mismatch: {sorted(value)}")
-if value.get("com.apple.developer.driverkit.allow-any-userclient-access"):
+):
+    if key in signed:
+        raise SystemExit(f"signed USB DEXT contains forbidden HID entitlement: {key}")
+if signed.get("com.apple.developer.driverkit.allow-any-userclient-access"):
     raise SystemExit("signed dext grants forbidden allow-any DriverKit access")
 PY
 }
@@ -291,6 +299,7 @@ _driverkit_xcodebuild() {
     PRODUCT_NAME="$DRIVERKIT_PRODUCT_NAME" \
     EXECUTABLE_NAME="$DRIVERKIT_PRODUCT_NAME" \
     DRIVERKIT_DEPLOYMENT_TARGET=19.0 \
+    CLANG_CXX_LANGUAGE_STANDARD=gnu++20 \
     "$@" clean build
 }
 
@@ -301,7 +310,11 @@ build_dext_bundle() {
     || die "DEVELOPMENT_TEAM not set; run ./scripts/ojd signing configure"
   local configuration="Debug"
   [[ "$OJD_ENV" == "release" ]] && configuration="Release"
-  local profile="${DEXT_PROVISIONING_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_VirtualHIDDevice.provisionprofile}"
+  local default_profile="$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice.provisionprofile"
+  if [[ "$OJD_ENV" == "release" ]]; then
+    default_profile="$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile"
+  fi
+  local profile="${DEXT_PROVISIONING_PROFILE:-$default_profile}"
   [[ -f "$profile" ]] || die "DriverKit provisioning profile not found: $profile"
   _require_driverkit_profile "$profile"
 
@@ -311,13 +324,14 @@ build_dext_bundle() {
     "$DRIVERKIT_GENERATED" "$DRIVERKIT_SHORT_VERSION" "$DRIVERKIT_BUILD_VERSION"
 
   local identity="${DEXT_BUILD_IDENTITY:-$CODESIGN_IDENTITY}"
-  local profile_name="${DEXT_BUILD_PROFILE:-OpenJoystickDriver (VirtualHIDDevice)}"
+  local profile_name="${DEXT_BUILD_PROFILE:-OpenJoystickDriver (XboxUSBDevice)}"
   verify_profile_cert "$profile" "$identity"
   local signing=(
     CODE_SIGN_IDENTITY="$identity"
     DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM"
     PROVISIONING_PROFILE_SPECIFIER="$profile_name"
     CODE_SIGN_STYLE=Manual
+    CODE_SIGN_ENTITLEMENTS="$DRIVERKIT_SIGNING_ENTITLEMENTS"
   )
   if [[ "$OJD_ENV" == "release" ]]; then
     signing=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=)
@@ -335,7 +349,7 @@ build_dext_bundle() {
   cp -R "$product" "$embedded"
   cp "$profile" "$embedded/embedded.provisionprofile"
 
-  local sign_args=(--force --sign "$identity" --generate-entitlement-der --entitlements "$DRIVERKIT_ENTITLEMENTS")
+  local sign_args=(--force --sign "$identity" --generate-entitlement-der --entitlements "$DRIVERKIT_SIGNING_ENTITLEMENTS")
   [[ "$OJD_ENV" == "release" ]] && sign_args+=(--options runtime --timestamp)
   codesign "${sign_args[@]}" "$embedded"
   _require_signed_driverkit_entitlements "$embedded"
@@ -363,7 +377,26 @@ validate_driverkit() {
   generate_driverkit_project "$second"
   diff -qr "$first" "$second" >/dev/null \
     || die "two fresh SwifterKit generations are not byte-for-byte identical"
-  _validate_driverkit_metadata "$first" "$DRIVERKIT_SHORT_VERSION" "$DRIVERKIT_BUILD_VERSION"
+  _validate_driverkit_metadata \
+    "$first" "$DRIVERKIT_SHORT_VERSION" "$DRIVERKIT_BUILD_VERSION"
+  python3 - "$DRIVERKIT_SIGNING_ENTITLEMENTS" <<'PY'
+import plistlib
+import sys
+
+entitlements = plistlib.loads(open(sys.argv[1], "rb").read())
+key = "com.apple.developer.driverkit.transport.usb"
+expected = [
+    {"idVendor": 1118, "idProduct": 721},
+    {"idVendor": 1118, "idProduct": 746},
+    {"idVendor": 1118, "idProduct": 2834},
+    {"idVendor": 1118, "idProduct": 2816},
+    {"idVendor": 1118, "idProduct": 739},
+    {"idVendor": 1118, "idProduct": 2826},
+    {"idVendor": 1118, "idProduct": 733},
+]
+if entitlements.get(key) != expected:
+    raise SystemExit("authored USB entitlement differs from Apple's exact seven-device grant")
+PY
   if generate_driverkit_project "$first" >/dev/null 2>&1; then
     die "generator overwrote an existing destination"
   fi
@@ -385,7 +418,7 @@ import sys
 from pathlib import Path
 
 root = Path(sys.argv[1])
-allowed = {"DriverKitGenerator", "OpenJoystickDriverRelay"}
+allowed = {"DriverKitGenerator", "OpenJoystickDriverUSB"}
 violations = []
 for path in root.rglob("*.swift"):
     if "import SwifterKit" in path.read_text() and path.relative_to(root).parts[0] not in allowed:

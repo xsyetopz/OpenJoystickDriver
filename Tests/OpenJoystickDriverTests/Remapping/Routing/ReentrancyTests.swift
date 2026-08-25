@@ -48,7 +48,7 @@ import Testing
     let transaction = try await begin.value
     #expect(
       harness.recorder.snapshot() == [
-        .compatibility([.buttonPressed(.b)], compatibility), .compatibilityStop(compatibility),
+        .compatibility([.buttonPressed(.b)], compatibility), .compatibilityStop(compatibility)
       ]
     )
 
@@ -232,7 +232,7 @@ import Testing
     try await shutdown.value
     #expect(
       harness.recorder.snapshot() == [
-        .compatibility([.buttonPressed(.b)], compatibility), .compatibilityStop(compatibility),
+        .compatibility([.buttonPressed(.b)], compatibility), .compatibilityStop(compatibility)
       ]
     )
     await #expect(throws: RemappingOutputRoutingError.shutDown) {

@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 private let steamControllerReportPrefix0: UInt8 = 0x01
 private let steamControllerReportPrefix1: UInt8 = 0x00
@@ -88,22 +87,22 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
       steamFeatureReport([
         steamControllerSetSettingsValuesCommand, 6, steamControllerLeftTrackpadModeSetting,
         steamControllerTrackpadNone, 0, steamControllerRightTrackpadModeSetting,
-        steamControllerTrackpadNone, 0,
-      ]),
+        steamControllerTrackpadNone, 0
+      ])
     ]
   }
 
   public func hidShutdownFeatureReports() -> [PhysicalHIDOutputReport] {
     [
       steamFeatureReport([steamControllerSetDefaultDigitalMappingsCommand]),
-      steamFeatureReport([steamControllerLoadDefaultSettingsCommand]),
+      steamFeatureReport([steamControllerLoadDefaultSettingsCommand])
     ]
   }
 
   public func physicalBrightnessReport(_ brightness: UInt8) -> PhysicalHIDOutputReport {
     steamFeatureReport([
       steamControllerSetSettingsValuesCommand, 3, steamControllerUserLEDBrightnessSetting,
-      brightness, 0,
+      brightness, 0
     ])
   }
 
@@ -145,7 +144,9 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
   }
 
   /// No-op for the current experimental input slice.
-  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
+  public func performHandshake(handle: (any USBTransportSession)?) async throws {
+    await Task.yield()
+  }
 
   /// Parses one Steam Controller state report and returns controller events.
   public func parse(data: Data) throws -> [ControllerEvent] {
@@ -235,7 +236,7 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
       steamControllerHapticPulseCommand, steamControllerHapticPulsePayloadLength, pad,
       UInt8(truncatingIfNeeded: durationMicroseconds),
       UInt8(truncatingIfNeeded: durationMicroseconds >> 8), 0, 0, UInt8(truncatingIfNeeded: count),
-      UInt8(truncatingIfNeeded: count >> 8), gain,
+      UInt8(truncatingIfNeeded: count >> 8), gain
     ])
   }
 
@@ -270,7 +271,7 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
         curr: b0,
         mapping: [
           (0x01, .r2Digital), (0x02, .l2Digital), (0x04, .rightBumper), (0x08, .leftBumper),
-          (0x10, .y), (0x20, .b), (0x40, .x), (0x80, .a),
+          (0x10, .y), (0x20, .b), (0x40, .x), (0x80, .a)
         ]
       )
     )
@@ -287,7 +288,7 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
         curr: b2,
         mapping: [
           (0x01, .genericButton2), (0x02, .genericButton3), (0x04, .rightStick),
-          (0x10, .genericButton5), (0x40, .leftStick),
+          (0x10, .genericButton5), (0x40, .leftStick)
         ]
       )
     )

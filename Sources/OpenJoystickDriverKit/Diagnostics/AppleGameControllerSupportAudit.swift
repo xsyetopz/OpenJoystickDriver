@@ -135,7 +135,7 @@ public enum AppleGameControllerSupportAuditor {
         fileURLWithPath: "/System/Library/AssetsV2/PreinstalledAssetsV2/RequiredByOs/"
           + "com_apple_MobileAsset_GameController_DB1"
       )
-    ),
+    )
   ]
 
   public static func auditCurrentSystem() -> AppleGameControllerSupportAudit {

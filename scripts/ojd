@@ -44,7 +44,7 @@ Commands:
                                Write/import GitHub Actions release secrets
 
   diagnose dext               Run dext diagnostics (activation, codesign, IORegistry, application service connection)
-  diagnose record <json>     Validate/probe a raw-USB record without app signing
+  diagnose record <json>     Validate a record or probe through the USB DEXT
   diagnose sdl3 [--seconds N] Run SDL3 probe against the virtual device
   diagnose sdl3-gamecontroller [--seconds N]
                               Run SDL3 through GameController/MFI and test rumble
@@ -309,9 +309,8 @@ case "$cmd" in
           record_path="$PWD/$record_path"
         fi
         source "$SCRIPT_DIR/platform/environment.sh"
-        setup_libusb_pkgconfig
         cd "$PROJECT_DIR"
-        exec env OJD_USE_LOCAL_SWIFTUSB=1 "$SWIFT_BIN" run \
+        exec "$SWIFT_BIN" run \
           OpenJoystickDriverHIDTool --record-probe "$record_path" "$@"
         ;;
       dext)

@@ -97,8 +97,8 @@ configure_ojd_hidapi_x360_route() {
 
   [[ -x "$CLI_BIN" ]] || die "OpenJoystickDriver CLI not found at $CLI_BIN or $APP_BIN"
 
-  run_limited_command 8 "$CLI_BIN" --headless compat set x360-hid >/dev/null || {
-    echo "WARN: could not set OJD compatibility identity to x360-hid" >&2
+  run_limited_command 8 "$CLI_BIN" --headless compat set sdl2-3 >/dev/null || {
+    echo "WARN: could not set OJD compatibility identity to sdl2-3" >&2
   }
 }
 
@@ -230,7 +230,6 @@ run_backend_acceptance_loop() {
 
   echo "4) SDL3 consumer probe:"
   run_limited "$step_timeout" /usr/bin/env bash "$0" sdl3 --seconds "$seconds" \
-    --mappings-file "$ROOT/Resources/SDL/openjoystickdriver.gamecontrollerdb.txt" \
     --expect-single-neutral-ojd || true
   echo
 
@@ -326,16 +325,19 @@ info() {
   echo -e "      $1"
 }
 
-BUNDLE_ID="com.openjoystickdriver.VirtualHIDDevice"
-DEXT_PROCESS="OpenJoystickVirtualHID"
+BUNDLE_ID="com.openjoystickdriver.XboxUSBDevice"
+DEXT_PROCESS="XboxUSBDevice"
 APP_DEXT_DIR="/Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/${BUNDLE_ID}.dext"
-SERVICE_LOG="$HOME/Library/Logs/OpenJoystickDriver/OpenJoystickDriver.out.log"
+DRIVERKIT_INTERFACE_CONNECTED=0
+if ojd_microsoft_driverkit_interface_connected; then
+  DRIVERKIT_INTERFACE_CONNECTED=1
+fi
 
 echo -e "${BOLD}=== OpenJoystickDriver Dext Diagnostics ===${RESET}"
 echo ""
 
 # --- 1. Sysext status ---
-sysext_output=$(systemextensionsctl list 2>&1 | grep -i openjoystick || true)
+sysext_output=$(systemextensionsctl list 2>&1 | grep -F "$BUNDLE_ID" || true)
 if [[ -n "$sysext_output" ]]; then
   if echo "$sysext_output" | grep -q "activated enabled"; then
     pass "Sysext activated and enabled"
@@ -437,7 +439,7 @@ if [[ -d "$APP_DEXT_DIR" ]]; then
   check_entitlements "App bundle dext" "$APP_DEXT_DIR"
 fi
 
-# --- 7. Dext process running ---
+# --- 7. Dext process state ---
 if pgrep -x "$DEXT_PROCESS" >/dev/null 2>&1; then
   pid=$(pgrep -x "$DEXT_PROCESS")
   pass "Dext process running (PID $pid)"
@@ -451,46 +453,24 @@ if pgrep -x "$DEXT_PROCESS" >/dev/null 2>&1; then
     fi
   fi
 else
-  fail "Dext process not running"
+  if (( DRIVERKIT_INTERFACE_CONNECTED == 0 )); then
+    pass "Dext is ready and idle; no entitled Microsoft USB interface is connected"
+  else
+    fail "Dext process not running while an entitled Microsoft USB interface is connected"
+  fi
 fi
 
-# --- 8. IORegistry HID device ---
-ioreg_hid=$(ioreg -r -c IOUserHIDDevice 2>/dev/null | grep -i OpenJoystick || true)
-if [[ -n "$ioreg_hid" ]]; then
-  pass "IORegistry IOUserHIDDevice present"
-else
-  fail "IORegistry IOUserHIDDevice not found. Dext is not providing a HID service."
-fi
-
-# --- 9. IOUserService presence ---
+# --- 8. IOUserService presence ---
 ioreg_service=$(ioreg -l -c IOUserService 2>/dev/null | grep -i openjoystick || true)
 if [[ -n "$ioreg_service" ]]; then
   pass "IORegistry IOUserService proxy node present"
+elif (( DRIVERKIT_INTERFACE_CONNECTED == 0 )); then
+  pass "IORegistry IOUserService is absent while the dext is idle, as expected"
 else
-  fail "IORegistry IOUserService proxy node not found"
+  fail "IORegistry IOUserService proxy node not found for an entitled Microsoft USB interface"
 fi
 
-# --- 10. Application service connection ---
-if [[ -f "$SERVICE_LOG" ]]; then
-  service_session=$(awk '
-    /\[Service\] DriverKit integrity relay:/ { session = "" }
-    { session = session $0 ORS }
-    END { printf "%s", session }
-  ' "$SERVICE_LOG")
-  if echo "$service_session" | grep -qE "not yet available|not found.*not installed|not approved"; then
-    fail "Application service reports dext not yet available"
-  elif echo "$service_session" | grep -qE "Connected|Auto-retry connected"; then
-    pass "Application service reports connected to dext"
-  elif echo "$service_session" | grep -q "DriverKit integrity relay: diagnostic probes only"; then
-    pass "Application service reserves the dext for diagnostic probes"
-  else
-    warn "Current application service session has no dext connection status"
-  fi
-else
-  warn "Application service log not found ($SERVICE_LOG)"
-fi
-
-# --- 11. Dext os_log (last 2 minutes) ---
+# --- 9. Dext os_log (last 2 minutes) ---
 echo ""
 echo -e "${BOLD}--- Recent dext logs (last 2m) ---${RESET}"
 dext_logs=$($LOG show --last 2m --predicate "process == \"$DEXT_PROCESS\"" --style compact 2>/dev/null | tail -10 || true)
@@ -500,7 +480,7 @@ else
   echo "  (no dext log entries in the last 2 minutes)"
 fi
 
-# --- 12. Kernel DK logs (last 2 minutes) ---
+# --- 10. Kernel DK logs (last 2 minutes) ---
 echo ""
 echo -e "${BOLD}--- Recent DK kernel logs (last 2m) ---${RESET}"
 dk_logs=$($LOG show --last 2m --predicate 'eventMessage contains "DK:"' --style compact 2>/dev/null | tail -10 || true)

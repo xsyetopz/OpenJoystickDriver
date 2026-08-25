@@ -17,7 +17,7 @@ struct RemappingOutputRouterTests {
 
     #expect(
       harness.recorder.snapshot() == [
-        .system(.keyDown(.space)), .compatibility([.buttonPressed(.b)], compatibility),
+        .system(.keyDown(.space)), .compatibility([.buttonPressed(.b)], compatibility)
       ]
     )
     #expect(
@@ -45,7 +45,7 @@ struct RemappingOutputRouterTests {
       harness.recorder.snapshot() == [
         .compatibility([.buttonPressed(.b)], device), .compatibilityStop(device),
         .system(.keyDown(.space)), .system(.keyUp(.space)),
-        .compatibility([.buttonPressed(.x)], device),
+        .compatibility([.buttonPressed(.x)], device)
       ]
     )
   }
@@ -97,7 +97,7 @@ struct RemappingOutputRouterTests {
     #expect(
       harness.recorder.snapshot() == [
         .compatibility([.buttonPressed(.b)], compatibility), .compatibilityStop(compatibility),
-        .system(.keyDown(.space)),
+        .system(.keyDown(.space))
       ]
     )
     #expect(
@@ -119,7 +119,7 @@ struct RemappingOutputRouterTests {
 
     #expect(
       harness.recorder.snapshot() == [
-        .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.space)),
+        .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.space))
       ]
     )
     #expect(await harness.router.status(for: device)?.eligibility == .eligible)
@@ -206,7 +206,7 @@ struct RemappingOutputRouterTests {
     #expect(restoredStatus.postEventAccessState == .granted)
     #expect(
       harness.recorder.snapshot() == [
-        .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.space)),
+        .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.space))
       ]
     )
   }
@@ -235,7 +235,7 @@ struct RemappingOutputRouterTests {
     #expect(
       harness.recorder.snapshot() == [
         .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.returnKey)),
-        .system(.keyUp(.returnKey)),
+        .system(.keyUp(.returnKey))
       ]
     )
     #expect(
@@ -258,7 +258,7 @@ struct RemappingOutputRouterTests {
     #expect(
       harness.recorder.snapshot() == [
         .system(.keyDown(.space)), .compatibility([.buttonPressed(.b)], compatibility),
-        .compatibilityStop(compatibility), .system(.keyUp(.space)),
+        .compatibilityStop(compatibility), .system(.keyUp(.space))
       ]
     )
     #expect(await harness.router.status(for: device)?.selection != .compatibility)
@@ -318,7 +318,7 @@ struct RemappingOutputRouterTests {
           source: .axis(.rightStickX),
           destination: .mouseMovement(.x),
           axisTuning: RemappingAxisTuning(deadzone: 0, gain: 1)
-        ),
+        )
       ]
     )
     let harness = try await RemappingRouterHarness.make(profile: profile)
@@ -336,7 +336,7 @@ struct RemappingOutputRouterTests {
 
     #expect(
       harness.recorder.snapshot() == [
-        .system(.mouseMoved(axis: .x, amount: 0.75)), .system(.mouseMoved(axis: .x, amount: 0)),
+        .system(.mouseMoved(axis: .x, amount: 0.75)), .system(.mouseMoved(axis: .x, amount: 0))
       ]
     )
   }
@@ -356,7 +356,7 @@ struct RemappingOutputRouterTests {
     #expect(
       harness.recorder.snapshot() == [
         .system(.keyDown(.space)), .compatibility([.buttonPressed(.b)], compatibility),
-        .system(.keyUp(.space)), .compatibilityStop(compatibility),
+        .system(.keyUp(.space)), .compatibilityStop(compatibility)
       ]
     )
     #expect(await harness.router.statuses().isEmpty)

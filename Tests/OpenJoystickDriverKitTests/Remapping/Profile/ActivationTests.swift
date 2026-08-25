@@ -12,7 +12,7 @@ struct RemappingActivationTests {
         source: .button(.south),
         destination: .keyboard(key: .a, modifiers: []),
         longHold: RemappingLongHold(durationMs: 500, destination: .keyboard(key: .b, modifiers: []))
-      ),
+      )
     ])
     let start: UInt64 = 1_000_000_000
 
@@ -47,7 +47,7 @@ struct RemappingActivationTests {
         source: .button(.south),
         destination: .keyboard(key: .a, modifiers: []),
         longHold: RemappingLongHold(durationMs: 500, destination: .keyboard(key: .b, modifiers: []))
-      ),
+      )
     ])
     let start: UInt64 = 1_000_000_000
 
@@ -76,7 +76,7 @@ struct RemappingActivationTests {
         source: .button(.south),
         destination: .keyboard(key: .a, modifiers: []),
         doubleTap: RemappingDoubleTap(windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
-      ),
+      )
     ])
     let start: UInt64 = 1_000_000_000
 
@@ -121,7 +121,7 @@ struct RemappingActivationTests {
         source: .button(.south),
         destination: .keyboard(key: .a, modifiers: []),
         doubleTap: RemappingDoubleTap(windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
-      ),
+      )
     ])
     let start: UInt64 = 1_000_000_000
 
@@ -170,7 +170,7 @@ struct RemappingActivationTests {
           destination: .keyboard(key: .b, modifiers: [])
         ),
         doubleTap: RemappingDoubleTap(windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
-      ),
+      )
     ])
     let start: UInt64 = 1_000_000_000
 

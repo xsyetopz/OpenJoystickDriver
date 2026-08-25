@@ -183,7 +183,7 @@ enum RuntimeStatusText {
     [
       "Permissions:", "  Input Monitoring : \(permissionText(permissions.inputMonitoring))",
       "  Accessibility    : \(permissionText(permissions.accessibility))",
-      "  Overall          : \(overallPermissionText(permissions))",
+      "  Overall          : \(overallPermissionText(permissions))"
     ]
   }
 

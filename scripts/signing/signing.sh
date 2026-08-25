@@ -47,26 +47,33 @@ cmd_install_profiles() {
   local DST="$HOME/Library/MobileDevice/Provisioning Profiles"
   [[ -d "$SRC" ]] || die "Source directory not found: $SRC (expected ~/Documents/Profiles)"
   mkdir -p "$DST"
+  local installed=()
 
   copy_one() {
     local name="$1"
     local src_path="$SRC/$name"
     [[ -f "$src_path" ]] || die "Missing profile: $src_path"
     cp -f "$src_path" "$DST/"
+    installed+=("$name")
   }
 
   copy_one "OpenJoystickDriver.provisionprofile"
-  copy_one "OpenJoystickDriver_VirtualHIDDevice.provisionprofile"
+  copy_one "OpenJoystickDriver_XboxUSBDevice.provisionprofile"
 
-  local release_name="OpenJoystickDriver_DevID.provisionprofile"
-  if [[ -f "$SRC/$release_name" ]]; then
-    cp -f "$SRC/$release_name" "$DST/"
-  else
-    echo "Skipping optional publisher release profile: $SRC/$release_name"
-  fi
+  local release_name
+  for release_name in \
+    "OpenJoystickDriver_DevID.provisionprofile" \
+    "OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile"; do
+    if [[ -f "$SRC/$release_name" ]]; then
+      cp -f "$SRC/$release_name" "$DST/"
+      installed+=("$release_name")
+    else
+      echo "Skipping optional publisher release profile: $SRC/$release_name"
+    fi
+  done
 
   echo "Installed profiles to: $DST"
-  ls -la "$DST" | awk '/OpenJoystickDriver/ {print "  " $9}'
+  printf '  %s\n' "${installed[@]}"
 }
 
 cmd_ci_release_setup() {
@@ -76,13 +83,12 @@ cmd_ci_release_setup() {
   #   ./scripts/ojd signing ci-release-setup
   #
   # Required environment variables:
-  #   APPLE_DEVELOPMENT_CERT_BASE64
   #   DEVELOPER_ID_APPLICATION_CERT_BASE64
   #   CERTIFICATE_SECRET
   #   KEYCHAIN_SECRET
   #   RUNNER_TEMP
   #   OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64
-  #   OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64
+  #   OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64
 
   require_var() {
     local name="$1"
@@ -95,13 +101,12 @@ cmd_ci_release_setup() {
     printf '%s' "${!name}" | base64 --decode >"$out"
   }
 
-  require_var APPLE_DEVELOPMENT_CERT_BASE64
   require_var DEVELOPER_ID_APPLICATION_CERT_BASE64
   require_var CERTIFICATE_SECRET
   require_var KEYCHAIN_SECRET
   require_var RUNNER_TEMP
   require_var OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64
-  require_var OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64
+  require_var OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64
 
   local keychain_path="$RUNNER_TEMP/openjoystickdriver-release.keychain-db"
   local profiles_dir="$HOME/Library/MobileDevice/Provisioning Profiles"
@@ -115,24 +120,21 @@ cmd_ci_release_setup() {
   security unlock-keychain -p "$KEYCHAIN_SECRET" "$keychain_path"
   security list-keychains -d user -s "$keychain_path" "$HOME/Library/Keychains/login.keychain-db"
 
-  local apple_dev_payload="$payload_dir/apple-development-cert.blob"
   local developer_id_payload="$payload_dir/developer-id-application-cert.blob"
-  write_base64_file APPLE_DEVELOPMENT_CERT_BASE64 "$apple_dev_payload"
   write_base64_file DEVELOPER_ID_APPLICATION_CERT_BASE64 "$developer_id_payload"
 
-  echo "Importing signing certificates..."
-  security import "$apple_dev_payload" -f pkcs12 -k "$keychain_path" -P "$CERTIFICATE_SECRET" -T /usr/bin/codesign -T /usr/bin/security
+  echo "Importing release signing certificate..."
   security import "$developer_id_payload" -f pkcs12 -k "$keychain_path" -P "$CERTIFICATE_SECRET" -T /usr/bin/codesign -T /usr/bin/security
   security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_SECRET" "$keychain_path"
 
   echo "Installing provisioning profiles..."
   write_base64_file OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64 "$profiles_dir/OpenJoystickDriver_DevID.provisionprofile"
-  write_base64_file OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64 "$profiles_dir/OpenJoystickDriver_VirtualHIDDevice.provisionprofile"
+  write_base64_file OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64 "$profiles_dir/OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile"
 
   echo "Generating release signing environment..."
   (
     cd "$PROJECT_DIR"
-    GUI_DEV_PROFILE="$profiles_dir/OpenJoystickDriver_DevID.provisionprofile" \
+    OJD_SIGNING_MODE=release \
       ./scripts/ojd signing configure
   )
 
@@ -145,7 +147,7 @@ cmd_ci_release_setup() {
 
   echo "Release signing setup complete."
   echo "Safe identity summary:"
-  security find-identity -v -p codesigning "$keychain_path" | awk '/Apple Development:|Developer ID Application:/ {print "  " $2}'
+  security find-identity -v -p codesigning "$keychain_path" | awk '/Developer ID Application:/ {print "  " $2}'
 }
 
 cmd_audit() {
@@ -409,7 +411,8 @@ REL_ENV="${REL_ENV:-$PROJECT_DIR/.env.release}"
 
 GUI_DEV_PROFILE="${GUI_DEV_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver.provisionprofile}"
 GUI_DEVID_PROFILE="${GUI_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_DevID.provisionprofile}"
-DEXT_PROFILE="${DEXT_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_VirtualHIDDevice.provisionprofile}"
+DEXT_PROFILE="${DEXT_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice.provisionprofile}"
+DEXT_DEVID_PROFILE="${DEXT_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile}"
 APPLE_DEV_IDENTITY="${APPLE_DEV_IDENTITY:-}"
 DEVID_APP_IDENTITY="${DEVID_APP_IDENTITY:-}"
 
@@ -420,7 +423,7 @@ Usage:
 
 Reads:
   - Apple Development identity and the two development provisioning profiles
-  - Optional publisher-only Developer ID Application identity/profile
+  - Optional publisher-only Developer ID Application identity and two profiles
   - Provisioning profiles from ~/Library/MobileDevice/Provisioning Profiles/
 
 Writes:
@@ -428,7 +431,8 @@ Writes:
   - .env.release when publisher release assets are installed
 
 Environment overrides (optional):
-  GUI_DEV_PROFILE, GUI_DEVID_PROFILE, DEXT_PROFILE
+  GUI_DEV_PROFILE, GUI_DEVID_PROFILE, DEXT_PROFILE, DEXT_DEVID_PROFILE
+  OJD_SIGNING_MODE (all, development, or release)
   APPLE_DEV_IDENTITY, DEVID_APP_IDENTITY
 TXT
 }
@@ -445,6 +449,7 @@ export REL_ENV
 export GUI_DEV_PROFILE
 export GUI_DEVID_PROFILE
 export DEXT_PROFILE
+export DEXT_DEVID_PROFILE
 export APPLE_DEV_IDENTITY
 export DEVID_APP_IDENTITY
 

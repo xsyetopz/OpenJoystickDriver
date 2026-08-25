@@ -93,7 +93,7 @@ struct RemappingOutputSchedulerTests {
 
     #expect(
       Array(harness.recorder.snapshot().prefix(3)) == [
-        .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.space)),
+        .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.space))
       ]
     )
   }
@@ -109,7 +109,7 @@ struct RemappingOutputSchedulerTests {
           source: .axis(.rightStickX),
           destination: .mouseMovement(.x),
           axisTuning: RemappingAxisTuning(deadzone: 0, gain: 1)
-        ),
+        )
       ]
     )
     let harness = try await RemappingRouterHarness.make(

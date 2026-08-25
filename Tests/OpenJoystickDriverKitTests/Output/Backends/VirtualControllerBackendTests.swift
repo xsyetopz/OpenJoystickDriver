@@ -12,62 +12,47 @@ struct VirtualControllerBackendTests {
     #expect(capabilities.isSystemWide)
     #expect(capabilities.notes.contains("apple-gamecontroller"))
   }
+
   @Test func testCompatibilityIdentityIDs() {
     #expect(CompatibilityIdentity(rawValue: "generic-hid") == .genericHID)
     #expect(CompatibilityIdentity(rawValue: "sdl2-3") == .sdl2_3)
     #expect(CompatibilityIdentity(rawValue: "apple-gamecontroller") == .appleGameController)
-    #expect(CompatibilityIdentity(rawValue: "x360-hid") == .x360HID)
     #expect(CompatibilityIdentity(rawValue: "xone-hid") == .xoneHID)
 
     #expect(CompatibilityIdentity(rawValue: "not-a-profile") == nil)
   }
-  @Test func testUserSpaceSerialRequiresEncodedRouteIdentity() {
+
+  @Test func testUserSpaceSerialUsesStableHashedPhysicalIdentity() {
     let identifier = DeviceIdentifier(
       vendorID: 13623,
       productID: 4112,
       serialNumber: "physical-serial"
     )
-    let sharedSerial = UserSpaceVirtualDeviceConstants.serialNumber(for: identifier)
-    let dedicatedRoute = UserSpaceVirtualDeviceConstants.dedicatedRouteToken(
-      forConsumerBundleRootPath: "/Applications/Consumer.app"
-    )
-    let dedicatedSerial = UserSpaceVirtualDeviceConstants.serialNumber(
-      for: identifier,
-      routeToken: dedicatedRoute
-    )
+    let serial = UserSpaceVirtualDeviceConstants.serialNumber(for: identifier)
 
-    #expect(
-      UserSpaceVirtualDeviceConstants.routeToken(from: sharedSerial)
-        == UserSpaceVirtualDeviceConstants.sharedRouteToken
-    )
-    #expect(UserSpaceVirtualDeviceConstants.routeToken(from: dedicatedSerial) == dedicatedRoute)
-
-    let legacySerial = sharedSerial.replacingOccurrences(of: "shared:", with: "")
-    #expect(UserSpaceVirtualDeviceConstants.routeToken(from: legacySerial) == nil)
-    #expect(
-      UserSpaceVirtualDeviceConstants.routeToken(
-        from: UserSpaceVirtualDeviceConstants.serialPrefix + "shared:not-a-hash"
-      ) == nil
-    )
+    #expect(serial.hasPrefix(UserSpaceVirtualDeviceConstants.serialPrefix))
+    #expect(serial.count == UserSpaceVirtualDeviceConstants.serialPrefix.count + 16)
+    #expect(serial.suffix(16).allSatisfy { $0.isHexDigit })
+    #expect(serial == UserSpaceVirtualDeviceConstants.serialNumber(for: identifier))
   }
+
   @Test func testCompatibilityProfileCatalog() {
     let generic = CompatibilityOutputProfileCatalog.profile(for: .genericHID)
     let sdl = CompatibilityOutputProfileCatalog.profile(for: .sdl2_3)
     let apple = CompatibilityOutputProfileCatalog.profile(for: .appleGameController)
-    let x360 = CompatibilityOutputProfileCatalog.profile(for: .x360HID)
     let xone = CompatibilityOutputProfileCatalog.profile(for: .xoneHID)
 
     #expect(generic.deviceProfile.productID == 0x4449)
-    #expect(sdl.deviceProfile.productID == 0x4448)
+    #expect(sdl.deviceProfile == .sdlHIDAPIXbox360)
     #expect(apple.deviceProfile.productID == 0x028E)
     #expect(!generic.isHardwareSpoof)
-    #expect(!sdl.isHardwareSpoof)
+    #expect(sdl.isHardwareSpoof)
     #expect(apple.isHardwareSpoof)
-    #expect(x360.isHardwareSpoof)
-    #expect(x360.deviceProfile.productName == "ASTRO C40 TR Controller")
+    #expect(sdl.deviceProfile.productName == "ASTRO C40 TR Controller")
     #expect(xone.isHardwareSpoof)
     #expect(xone.emitsXboxGuideReport)
   }
+
   @Test func testGenericReportDpadButtonPolicy() {
     let state = VirtualGamepadState(
       buttons: GamepadHIDDescriptor.dpadButtonBits(for: .north)
@@ -86,6 +71,7 @@ struct VirtualControllerBackendTests {
     #expect((UInt16(sdl2_3[1]) & 0x80) == 0x80)
     #expect((sdl2_3[14] & 0x0F) == GamepadHIDDescriptor.Hat.north.rawValue)
   }
+
   @Test func testSdlReportUsesButtonDpadAndNeutralTriggers() throws {
     let parsed = try HIDDescriptorReportFormat(descriptor: OJDSDLGamepadFormat().descriptor)
     let neutral = OJDSDLGamepadFormat().buildInputReport(from: VirtualGamepadState())
@@ -106,14 +92,14 @@ struct VirtualControllerBackendTests {
       OJDSDLGamepadFormat().descriptor.containsSequence([
         0x09, 0x32,  // LT/Z
         0x15, 0x00,  // Logical Minimum: 0
-        0x26, 0xFF, 0x7F,
+        0x26, 0xFF, 0x7F
       ])
     )
     #expect(
       OJDSDLGamepadFormat().descriptor.containsSequence([
         0x09, 0x35,  // RT/Rz
         0x15, 0x00,  // Logical Minimum: 0
-        0x26, 0xFF, 0x7F,
+        0x26, 0xFF, 0x7F
       ])
     )
     #expect(neutral[6] == 0x00)
@@ -126,31 +112,45 @@ struct VirtualControllerBackendTests {
     #expect(triggers[12] == 0x00)
     #expect(triggers[13] == 0x40)
   }
+
   @Test func testSdlRumbleOutputReportUsesVendorPayload() {
     #expect(SDLGamepadHIDDescriptor.maxOutputReportPayloadSize == 7)
     #expect(OJDSDLGamepadFormat().outputReportPayloadSize == 7)
     #expect(
       OJDSDLGamepadFormat().descriptor.containsSequence([
         0x06, 0x00, 0xFF,  // vendor-defined output page
-        0x09, 0x01, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95, 0x07, 0x91, 0x02,
+        0x09, 0x01, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95, 0x07, 0x91, 0x02
       ])
     )
   }
 
-  @Test
-
-  func testUserSpaceSDLIdentityAdvertisesReportSizes() {
+  @Test func testUserSpaceSDLIdentityAdvertisesXbox360HIDAPIReportSizes() {
+    let format = Xbox360MacHIDReportFormat()
     let properties = UserSpaceOutputDispatcher.deviceProperties(
-      profile: .openJoystickDriverSDL2_3,
-      format: OJDSDLGamepadFormat(),
+      profile: .sdlHIDAPIXbox360,
+      format: format,
       identifier: DeviceIdentifier(vendorID: 13623, productID: 4112)
     )
 
     let inputSize = properties[kIOHIDMaxInputReportSizeKey as String] as? Int
     let outputSize = properties[kIOHIDMaxOutputReportSizeKey as String] as? Int
-    #expect(inputSize == SDLGamepadHIDDescriptor.reportSize)
-    #expect(outputSize == SDLGamepadHIDDescriptor.maxOutputReportPayloadSize)
+    #expect(inputSize == format.inputReportPayloadSize)
+    #expect(outputSize == format.outputReportPayloadSize)
   }
+
+  @available(macOS 15, *) @Test func testCoreHIDPropertiesPreserveDescriptorAndIdentity() {
+    let format = Xbox360MacHIDReportFormat()
+    let properties = UserSpaceOutputDispatcher.virtualDeviceProperties(
+      profile: .sdlHIDAPIXbox360,
+      format: format,
+      identifier: DeviceIdentifier(vendorID: 13623, productID: 4112)
+    )
+
+    #expect(properties.descriptor == Data(format.descriptor))
+    #expect(properties.vendorID == UInt32(VirtualDeviceProfile.sdlHIDAPIXbox360.vendorID))
+    #expect(properties.productID == UInt32(VirtualDeviceProfile.sdlHIDAPIXbox360.productID))
+  }
+
   @Test func testUserSpaceDispatcherFailsFastWithoutVirtualDeviceEntitlement() throws {
     guard !UserSpaceOutputDispatcher.hasRequiredVirtualDeviceEntitlement else { return }
 
@@ -168,6 +168,7 @@ struct VirtualControllerBackendTests {
         == kHIDUsage_GD_Joystick
     )
   }
+
   @Test func testXbox360GamePadFormatDefaultsToGamePadPrimaryUsage() {
     #expect(
       UserSpaceOutputDispatcher.defaultPrimaryUsage(
@@ -175,6 +176,7 @@ struct VirtualControllerBackendTests {
       ) == kHIDUsage_GD_GamePad
     )
   }
+
   @Test func testXboxOneCompatibilityFormatDeclaresRumbleOutputSize() throws {
     let format = try HIDDescriptorReportFormat(
       descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
@@ -188,6 +190,7 @@ struct VirtualControllerBackendTests {
       format.outputReportPayloadSize == VirtualRumbleOutputReportParser.xboxOneReportPayloadSize
     )
   }
+
   @Test func testXboxGIPCompatibilityFormatAdvertisesFullOutputSize() throws {
     let format = try HIDDescriptorReportFormat(
       descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
@@ -204,6 +207,7 @@ struct VirtualControllerBackendTests {
     let outputSize = properties[kIOHIDMaxOutputReportSizeKey as String] as? Int
     #expect(outputSize == 13)
   }
+
   @Test func testFixedCompatibilityReportHasNoHatAxis() throws {
     let parsed = try HIDDescriptorReportFormat(descriptor: OJDSDLGamepadFormat().descriptor)
     let full = OJDSDLGamepadFormat().buildInputReport(
@@ -252,15 +256,15 @@ struct VirtualControllerBackendTests {
   @Test func userSpaceCreationErrorsDistinguishPermissionFromEntitlementAndCreation() {
     #expect(
       String(describing: UserSpaceOutputDispatcher.CreationError.inputMonitoringDenied)
-        == "Input Monitoring denied for main app"
+        == "Input Monitoring denied for IOKit virtual device"
     )
     #expect(
       String(describing: UserSpaceOutputDispatcher.CreationError.accessibilityDenied)
-        == "Accessibility denied for main app virtual device"
+        == "Accessibility denied for IOKit virtual device"
     )
     #expect(
       String(describing: UserSpaceOutputDispatcher.CreationError.createFailed)
-        == "Failed to create IOHIDUserDevice"
+        == "Failed to create virtual HID device"
     )
   }
 

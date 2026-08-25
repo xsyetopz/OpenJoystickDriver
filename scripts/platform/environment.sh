@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# macOS toolchain, environment, signing, and libusb contract for repository scripts.
+# macOS toolchain, environment, and signing contract for repository scripts.
 # Source this file from an implementation script; do not execute it directly.
 
 LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -68,7 +68,11 @@ IDENTITY="${CODESIGN_IDENTITY:--}"
 GUI_IDENTITY="${GUI_CODESIGN_IDENTITY:-$IDENTITY}"
 GUI_DEBUG="$PROJECT_DIR/.build/debug/OpenJoystickDriver"
 GUI_RELEASE="$PROJECT_DIR/.build/apple/Products/Release/OpenJoystickDriver"
-OJD_DEFAULT_BUNDLE_SHORT_VERSION="0.5.0-beta.1"
+OJD_APP_INFO_PLIST="$PROJECT_DIR/Sources/OpenJoystickDriver/App/Info.plist"
+OJD_DEFAULT_BUNDLE_SHORT_VERSION="$(/usr/bin/plutil -extract CFBundleShortVersionString raw -o - "$OJD_APP_INFO_PLIST" 2>/dev/null)"
+if [[ ! "$OJD_DEFAULT_BUNDLE_SHORT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?([+][0-9A-Za-z.-]+)?$ ]]; then
+  die "Invalid or missing CFBundleShortVersionString in $OJD_APP_INFO_PLIST"
+fi
 
 # Active binary paths (selected by OJD_ENV)
 if [[ "$OJD_ENV" == "release" ]]; then
@@ -82,97 +86,6 @@ GUI_ENTITLEMENTS_TEMPLATE="$PROJECT_DIR/Sources/OpenJoystickDriver/App/Host.enti
 
 # Resolved paths (generated at build time into .build/)
 GUI_ENTITLEMENTS="$PROJECT_DIR/.build/OpenJoystickDriver.entitlements"
-
-# ---------------------------------------------------------------------------
-# Universal (fat) static libusb
-# Homebrew only ships arm64 on Apple Silicon. For release builds we
-# cross-compile x86_64 from source and lipo both slices into one .a
-# so swift build links statically instead of against Homebrew's dylib.
-# ---------------------------------------------------------------------------
-LIBUSB_VERSION="1.0.29"
-LIBUSB_CACHE_DIR="$PROJECT_DIR/.build/libusb-universal"
-LIBUSB_UNIVERSAL_A="$LIBUSB_CACHE_DIR/lib/libusb-1.0.a"
-LIBUSB_PC="$LIBUSB_CACHE_DIR/libusb-1.0.pc"
-
-build_universal_libusb() (
-  local SDK_PATH="$SDKROOT"
-  echo "Building universal libusb ${LIBUSB_VERSION} (arm64 + x86_64)..."
-  local tmpdir
-  tmpdir="$(mktemp -d)"
-  trap 'rm -rf "$tmpdir"' EXIT
-
-  local tarball="$tmpdir/libusb.tar.bz2"
-  echo "  Downloading libusb ${LIBUSB_VERSION}..."
-  curl -fsSL \
-    "https://github.com/libusb/libusb/releases/download/v${LIBUSB_VERSION}/libusb-${LIBUSB_VERSION}.tar.bz2" \
-    -o "$tarball"
-
-  local ncpu
-  ncpu="$(sysctl -n hw.ncpu)"
-
-  echo "  Configuring arm64..."
-  mkdir -p "$tmpdir/src-arm64"
-  tar -xjf "$tarball" -C "$tmpdir/src-arm64" --strip-components=1
-  (
-    cd "$tmpdir/src-arm64" || exit
-    LT_MULTI_MODULE=1 ./configure \
-      CC="clang" \
-      CFLAGS="-arch arm64 -target arm64-apple-macos10.15 -isysroot $SDK_PATH" \
-      LDFLAGS="-arch arm64 -target arm64-apple-macos10.15" \
-      --host=aarch64-apple-darwin \
-      --prefix="$tmpdir/install-arm64" \
-      --disable-shared --enable-static \
-      --quiet 2>&1 | tail -5
-    make -j"$ncpu" install --quiet
-  )
-
-  echo "  Configuring x86_64..."
-  mkdir -p "$tmpdir/src-x86_64"
-  tar -xjf "$tarball" -C "$tmpdir/src-x86_64" --strip-components=1
-  (
-    cd "$tmpdir/src-x86_64" || exit
-    LT_MULTI_MODULE=1 ./configure \
-      CC="clang" \
-      CFLAGS="-arch x86_64 -target x86_64-apple-macos10.15 -isysroot $SDK_PATH" \
-      LDFLAGS="-arch x86_64 -target x86_64-apple-macos10.15" \
-      --host=x86_64-apple-darwin \
-      --prefix="$tmpdir/install-x86_64" \
-      --disable-shared --enable-static \
-      --quiet 2>&1 | tail -5
-    make -j"$ncpu" install --quiet
-  )
-
-  mkdir -p "$LIBUSB_CACHE_DIR/lib" "$LIBUSB_CACHE_DIR/include"
-  lipo -create \
-    "$tmpdir/install-arm64/lib/libusb-1.0.a" \
-    "$tmpdir/install-x86_64/lib/libusb-1.0.a" \
-    -output "$LIBUSB_UNIVERSAL_A"
-  cp -r "$tmpdir/install-arm64/include/libusb-1.0" "$LIBUSB_CACHE_DIR/include/"
-
-  echo "  Universal libusb ready: $(lipo -info "$LIBUSB_UNIVERSAL_A")"
-)
-
-setup_libusb_pkgconfig() {
-  if [[ ! -f "$LIBUSB_UNIVERSAL_A" ]]; then
-    build_universal_libusb
-  else
-    echo "Universal libusb cache hit: $LIBUSB_UNIVERSAL_A"
-  fi
-
-  cat > "$LIBUSB_PC" << EOF
-prefix=$LIBUSB_CACHE_DIR
-libdir=\${prefix}/lib
-includedir=\${prefix}/include
-
-Name: libusb-1.0
-Description: C API for USB device access (universal binary)
-Version: $LIBUSB_VERSION
-Libs: -L\${libdir} -lusb-1.0
-Cflags: -I\${includedir}/libusb-1.0
-EOF
-
-  export PKG_CONFIG_PATH="$LIBUSB_CACHE_DIR${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
-}
 
 # Provisioning profiles (selected by OJD_ENV)
 if [[ "$OJD_ENV" == "release" ]]; then
@@ -237,6 +150,45 @@ verify_profile_cert() (
     return 1
   fi
 )
+
+# The restricted DriverKit extension is eligible to start only when one of the
+# Apple-approved Microsoft GIP interfaces is present. Third-party GIP devices
+# remain on the app-owned IOUSBHost path.
+ojd_microsoft_driverkit_interface_connected() {
+  ioreg -r -c IOUSBHostInterface -a 2>/dev/null | python3 -c '
+import plistlib
+import sys
+
+products = {0x02D1, 0x02DD, 0x02E3, 0x02EA, 0x0B00, 0x0B0A, 0x0B12}
+
+def dictionaries(value):
+    if isinstance(value, dict):
+        yield value
+        for child in value.values():
+            yield from dictionaries(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from dictionaries(child)
+
+try:
+    root = plistlib.load(sys.stdin.buffer)
+except Exception:
+    raise SystemExit(1)
+
+for item in dictionaries(root):
+    if (
+        item.get("idVendor") == 0x045E
+        and item.get("idProduct") in products
+        and item.get("bConfigurationValue") == 1
+        and item.get("bInterfaceNumber") == 0
+        and item.get("bInterfaceClass") == 0xFF
+        and item.get("bInterfaceSubClass") == 0x47
+        and item.get("bInterfaceProtocol") == 0xD0
+    ):
+        raise SystemExit(0)
+raise SystemExit(1)
+'
+}
 
 # Sign binary with configured identity.
 # Usage: ojd_sign <binary> [--entitlements <path>]

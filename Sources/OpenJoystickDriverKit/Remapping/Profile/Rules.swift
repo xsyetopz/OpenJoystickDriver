@@ -273,7 +273,7 @@ extension RemappingProfile {
       (
         "digital activation threshold", tuning.digitalActivationThreshold,
         RemappingAxisTuning.digitalActivationThresholdRange
-      ),
+      )
     ]
     for (field, value, range) in fields {
       guard value.isFinite else {
@@ -288,7 +288,7 @@ extension RemappingProfile {
   private static func validate(_ turbo: RemappingTurbo, at index: Int) throws {
     let fields = [
       ("repeat rate", turbo.repeatRateHz, RemappingTurbo.repeatRateHzRange),
-      ("duty cycle", turbo.dutyCycle, RemappingTurbo.dutyCycleRange),
+      ("duty cycle", turbo.dutyCycle, RemappingTurbo.dutyCycleRange)
     ]
     for (field, value, range) in fields {
       guard value.isFinite else {

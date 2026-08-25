@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 func controllerDisplayName(productName: String?, vendorID: UInt16, productID: UInt16) -> String {
   if let productName {
@@ -15,10 +14,30 @@ private let nanosecondsPerMillisecond: UInt64 = 1_000_000
 let maxRumbleDurationMs = 5_000
 let usbVendorSpecificClass: UInt8 = 0xFF
 
+struct RumbleStopTokenRegistry {
+  private var generations: [DeviceIdentifier: UInt64] = [:]
+
+  mutating func replace(for identifier: DeviceIdentifier) -> UInt64 {
+    let generation = (generations[identifier] ?? 0) &+ 1
+    generations[identifier] = generation
+    return generation
+  }
+
+  func isCurrent(_ generation: UInt64, for identifier: DeviceIdentifier) -> Bool {
+    generations[identifier] == generation
+  }
+
+  mutating func remove(_ identifier: DeviceIdentifier) {
+    generations.removeValue(forKey: identifier)
+  }
+
+  mutating func removeAll() { generations.removeAll() }
+}
+
 /// Manages device detection and pipeline lifecycle for all
 /// connected controllers.
-/// Uses dual detection: SwiftUSB for class 0xFF (GIP) +
-/// IOKit HIDManager for class 0x03 (HID).
+/// Uses dual detection: an Apple USB transport provider for raw interfaces and
+/// the OS-generation HID wrapper for HID-class controllers.
 public actor DeviceManager {
   enum DiscoverySource {
     case hid
@@ -36,11 +55,7 @@ public actor DeviceManager {
   let dispatcher: any OutputDispatcher
   let permissionManager: PermissionManager
   let hidManager: HIDManager
-  /// Single libusb context shared across the entire application service process.
-  ///
-  /// Creating multiple libusb contexts spins up multiple event threads and can
-  /// trigger OS process-throttling for background applications.
-  var usbContext: USBContext?
+  let usbTransportProvider: (any USBTransportProvider)?
   var pipelines: [DeviceIdentifier: DevicePipeline] = [:]
   var deviceInfos: [DeviceIdentifier: DeviceInfo] = [:]
   var detectionTasks: [Task<Void, Never>] = []
@@ -48,14 +63,22 @@ public actor DeviceManager {
   var permissionWatchTask: Task<Void, Never>?
   var externalOutputAllowed = true
   var lastPhysicalHIDOutputNanoseconds: [DeviceIdentifier: UInt64] = [:]
+  var rumbleStopTasks: [DeviceIdentifier: Task<Void, Never>] = [:]
+  var rumbleStopTokens = RumbleStopTokenRegistry()
 
   /// Creates a manager that sends all output to `dispatcher`.
   ///
   /// - Parameters:
   ///   - dispatcher: Output dispatcher for sending HID reports.
   ///   - virtualProfile: Virtual device profile for self-exclusion filtering.
-  public init(dispatcher: any OutputDispatcher, virtualProfile: VirtualDeviceProfile = .default) {
+  ///   - usbTransportProvider: Native raw-USB transport provider, or nil to disable raw USB discovery.
+  public init(
+    dispatcher: any OutputDispatcher,
+    virtualProfile: VirtualDeviceProfile = .default,
+    usbTransportProvider: (any USBTransportProvider)? = nil
+  ) {
     self.dispatcher = dispatcher
+    self.usbTransportProvider = usbTransportProvider
     let registry = ParserRegistry()
     self.parserRegistry = registry
     self.permissionManager = PermissionManager()
@@ -85,10 +108,11 @@ public actor DeviceManager {
     case .granted: print("[DeviceManager] Input Monitoring granted")
     }
 
-    ensureUSBContext()
-
-    let usbTask = Task { await self.runUSBDetection() }
-    detectionTasks = [usbTask]
+    if usbTransportProvider != nil {
+      detectionTasks = [Task { await self.runUSBDetection() }]
+    } else {
+      detectionTasks = []
+    }
     await ensureHIDDetectionState(for: state)
     permissionWatchTask = Task { [weak self] in
       guard let self else { return }
@@ -143,9 +167,11 @@ public actor DeviceManager {
       durationMs: durationMs
     )
     if !featureHaptics.isEmpty, let locationID = key.locationID {
-      return featureHaptics.allSatisfy {
-        hidManager.setFeatureReport(locationID: locationID, report: $0)
+      for report in featureHaptics
+      where !(await hidManager.setFeatureReport(locationID: locationID, report: report)) {
+        return false
       }
+      return true
     }
 
     let didStartUSB = await pipeline.sendRumble(left: left, right: right, lt: lt, rt: rt)
@@ -153,25 +179,64 @@ public actor DeviceManager {
     let didStartHID =
       didStartUSB
       ? false
-      : sendHIDRumbleReport(
+      : await sendHIDRumbleReport(
         await pipeline.hidRumbleReport(left: left, right: right, lt: lt, rt: rt),
         locationID: key.locationID
       )
     let didStart = didStartUSB || didStartHID
     guard didStart else { return false }
     let clampedDurationMs = max(0, min(durationMs, maxRumbleDurationMs))
-    if clampedDurationMs > 0 {
-      try? await Task.sleep(nanoseconds: UInt64(clampedDurationMs) * nanosecondsPerMillisecond)
-      let didStopUSB = await pipeline.sendRumble(left: 0, right: 0, lt: 0, rt: 0)
-      if !didStopUSB {
-        await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline)
-        _ = sendHIDRumbleReport(
-          await pipeline.hidRumbleReport(left: 0, right: 0, lt: 0, rt: 0),
-          locationID: key.locationID
-        )
-      }
-    }
+    scheduleRumbleStop(
+      for: key,
+      pipeline: pipeline,
+      durationMs: clampedDurationMs,
+      hasActiveMotor: left != 0 || right != 0 || lt != 0 || rt != 0
+    )
     return true
+  }
+
+  private func scheduleRumbleStop(
+    for identifier: DeviceIdentifier,
+    pipeline: DevicePipeline,
+    durationMs: Int,
+    hasActiveMotor: Bool
+  ) {
+    rumbleStopTasks.removeValue(forKey: identifier)?.cancel()
+    let generation = rumbleStopTokens.replace(for: identifier)
+    guard durationMs > 0, hasActiveMotor else {
+      rumbleStopTokens.remove(identifier)
+      return
+    }
+    rumbleStopTasks[identifier] = Task { [weak self] in
+      do { try await Task.sleep(nanoseconds: UInt64(durationMs) * nanosecondsPerMillisecond) } catch
+      { return }
+      await self?.finishScheduledRumbleStop(
+        for: identifier,
+        pipeline: pipeline,
+        generation: generation
+      )
+    }
+  }
+
+  private func finishScheduledRumbleStop(
+    for identifier: DeviceIdentifier,
+    pipeline: DevicePipeline,
+    generation: UInt64
+  ) async {
+    guard rumbleStopTokens.isCurrent(generation, for: identifier),
+      pipelines[identifier] === pipeline
+    else { return }
+    let didStopUSB = await pipeline.sendRumble(left: 0, right: 0, lt: 0, rt: 0)
+    if !didStopUSB {
+      await enforcePhysicalHIDOutputInterval(for: identifier, pipeline: pipeline)
+      _ = await sendHIDRumbleReport(
+        await pipeline.hidRumbleReport(left: 0, right: 0, lt: 0, rt: 0),
+        locationID: identifier.locationID
+      )
+    }
+    guard rumbleStopTokens.isCurrent(generation, for: identifier) else { return }
+    rumbleStopTasks.removeValue(forKey: identifier)
+    rumbleStopTokens.remove(identifier)
   }
 
   /// Sets an RGB physical lightbar when the active protocol supports it.
@@ -187,7 +252,7 @@ public actor DeviceManager {
       let report = await pipeline.hidColorReport(red: red, green: green, blue: blue)
     else { return false }
     await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline)
-    return hidManager.setOutputReport(locationID: locationID, report: report)
+    return await hidManager.setOutputReport(locationID: locationID, report: report)
   }
 
   /// Sets scalar physical LED brightness when the active protocol supports it.
@@ -200,7 +265,7 @@ public actor DeviceManager {
       let pipeline = pipelines[key], let locationID = key.locationID,
       let report = await pipeline.hidBrightnessReport(brightness)
     else { return false }
-    return hidManager.setFeatureReport(locationID: locationID, report: report)
+    return await hidManager.setFeatureReport(locationID: locationID, report: report)
   }
 
   /// Sets the physical numbered player indicator when the active protocol supports it.
@@ -218,7 +283,7 @@ public actor DeviceManager {
       let report = await pipeline.hidPlayerIndicatorReport(indicator)
     else { return false }
     await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline)
-    return hidManager.setOutputReport(locationID: locationID, report: report)
+    return await hidManager.setOutputReport(locationID: locationID, report: report)
   }
 
   private func connectedIdentifier(matching model: DeviceIdentifier, runtimeIdentifier: String?)
@@ -268,10 +333,11 @@ public actor DeviceManager {
     }
   }
 
-  private func sendHIDRumbleReport(_ report: PhysicalHIDOutputReport?, locationID: UInt32?) -> Bool
+  private func sendHIDRumbleReport(_ report: PhysicalHIDOutputReport?, locationID: UInt32?) async
+    -> Bool
   {
     guard let report, let locationID else { return false }
-    return hidManager.setOutputReport(locationID: locationID, report: report)
+    return await hidManager.setOutputReport(locationID: locationID, report: report)
   }
 
   /// Returns structured descriptions for all connected controllers.
@@ -309,6 +375,9 @@ public actor DeviceManager {
 
   /// Stop all detection and pipelines.
   public func stop() async {
+    for task in rumbleStopTasks.values { task.cancel() }
+    rumbleStopTasks = [:]
+    rumbleStopTokens.removeAll()
     for task in detectionTasks { task.cancel() }
     detectionTasks = []
     hidDetectionTask?.cancel()
@@ -327,6 +396,7 @@ public actor DeviceManager {
     print("[DeviceManager] Stopped")
   }
 
+  /// Enables or suppresses application-facing compatibility output for every active pipeline.
   public func setExternalOutputAllowed(_ allowed: Bool) async {
     guard externalOutputAllowed != allowed else { return }
     externalOutputAllowed = allowed

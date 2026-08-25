@@ -13,7 +13,7 @@
     @State private var retryIdentity: CompatibilityIdentity?
 
     private let outputIdentities: [CompatibilityIdentity] = [
-      .genericHID, .x360HID, .xoneHID, .sdl2_3, .appleGameController
+      .genericHID, .xoneHID, .sdl2_3, .appleGameController
     ]
 
     init(viewModel: RuntimeViewModel, embedded: Bool = false) {

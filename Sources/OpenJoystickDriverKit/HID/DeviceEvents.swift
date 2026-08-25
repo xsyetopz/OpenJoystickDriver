@@ -1,7 +1,7 @@
 import Foundation
 import IOKit.hid
 
-/// A semantic value decoded by IOKit from one HID input element.
+/// A semantic value decoded by the active app HID backend from one input element.
 public struct HIDElementValue: Sendable, Equatable {
   public let usagePage: UInt32
   public let usage: UInt32
@@ -24,7 +24,7 @@ public struct HIDElementValue: Sendable, Equatable {
   }
 }
 
-/// An event from the IOKit HID subsystem for a class-0x03 controller.
+/// An event from the active app HID backend for a class-0x03 controller.
 ///
 /// ``HIDManager`` sends these to ``DeviceManager`` to report when a
 /// HID controller is plugged in, unplugged, or sends an input report.

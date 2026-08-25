@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverUSB
 
 struct ListCommand {
   func run() {
@@ -44,9 +45,13 @@ struct ListCommand {
   private func listUSBDevices() {
     print("USB Controllers (class 0xFF / GIP):")
     let result: Result<[USBControllerDescription], USBScanFailure> = runSyncResult {
-      do { return .success(try await USBControllerScanner.scanVendorSpecific()) } catch {
-        return .failure(USBScanFailure(message: error.localizedDescription))
-      }
+      do {
+        return .success(
+          try await USBControllerScanner.scanVendorSpecific(
+            using: OpenJoystickDriverUSBTransportProvider()
+          )
+        )
+      } catch { return .failure(USBScanFailure(message: error.localizedDescription)) }
     }
     guard let devices = try? result.get() else {
       if case .failure(let error) = result {

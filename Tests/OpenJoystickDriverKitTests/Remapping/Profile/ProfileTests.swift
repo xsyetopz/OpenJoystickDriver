@@ -33,7 +33,7 @@ struct RemappingProfileTests {
             responseCurve: .smoothStep,
             digitalActivationThreshold: 0.6
           )
-        ),
+        )
       ]
     )
 
@@ -55,7 +55,7 @@ struct RemappingProfileTests {
           id: fixedUUID(1),
           source: .dpad(.up),
           destination: .keyboard(key: .w, modifiers: [.command, .shift])
-        ),
+        )
       ]
     )
 
@@ -64,7 +64,7 @@ struct RemappingProfileTests {
     #expect(
       Set(root.keys) == [
         "schema_version", "id", "name", "device", "application_scope", "bindings", "chords",
-        "sequences", "layers",
+        "sequences", "layers"
       ]
     )
 
@@ -102,7 +102,7 @@ struct RemappingProfileTests {
   @Test func symbolicKeyboardSurfaceHasStableExtendedAndKeypadValues() throws {
     let keys: [RemappingKeyboardKey] = [
       .capsLock, .help, .insert, .f13, .f20, .keypad0, .keypad9, .keypadDecimal, .keypadMultiply,
-      .keypadPlus, .keypadClear, .keypadDivide, .keypadEnter, .keypadMinus, .keypadEqual,
+      .keypadPlus, .keypadClear, .keypadDivide, .keypadEnter, .keypadMinus, .keypadEqual
     ]
     let data = try JSONEncoder().encode(keys)
     let rawValues = try JSONDecoder().decode([String].self, from: data)
@@ -111,7 +111,7 @@ struct RemappingProfileTests {
       rawValues == [
         "caps_lock", "help", "insert", "f13", "f20", "keypad_0", "keypad_9", "keypad_decimal",
         "keypad_multiply", "keypad_plus", "keypad_clear", "keypad_divide", "keypad_enter",
-        "keypad_minus", "keypad_equal",
+        "keypad_minus", "keypad_equal"
       ]
     )
     #expect(Set(RemappingKeyboardKey.allCases).isSuperset(of: keys))

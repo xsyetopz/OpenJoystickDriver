@@ -66,13 +66,14 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
   /// optionally preferring a specific transport ("USB", "Bluetooth", ...).
   ///
   /// This function explicitly filters out OpenJoystickDriver-created virtual devices.
+  @available(macOS, introduced: 10.15, obsoleted: 15.0)
   public static func copyPhysicalReportDescriptor(
     vendorID: Int,
     productID: Int,
     preferredTransport: String?
   ) -> [UInt8]? {
     let matching: [String: Any] = [
-      kIOHIDVendorIDKey as String: vendorID, kIOHIDProductIDKey as String: productID,
+      kIOHIDVendorIDKey as String: vendorID, kIOHIDProductIDKey as String: productID
     ]
     let mgr = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
     IOHIDManagerSetDeviceMatching(mgr, matching as CFDictionary)
@@ -87,14 +88,10 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
 
     func score(_ dev: IOHIDDevice) -> Int {
       let transport = strProp(dev, kIOHIDTransportKey as String)
-      let ioUserClass = strProp(dev, "IOUserClass")
       let serial = strProp(dev, kIOHIDSerialNumberKey as String) ?? strProp(dev, "SerialNumber")
 
       // Exclude OJD virtual devices.
-      if ioUserClass == "SwifterKitRuntimeService" { return Int.min / 2 }
-      if ioUserClass == "IOHIDUserDevice" { return Int.min / 2 }
       if UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial) { return Int.min / 2 }
-      if serial == DriverKitRelayIdentity.serialNumber { return Int.min / 2 }
 
       var s = 0
       if let preferredTransport, let transport, transport == preferredTransport { s += 10_000 }

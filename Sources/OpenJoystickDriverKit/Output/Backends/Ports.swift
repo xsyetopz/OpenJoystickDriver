@@ -1,6 +1,6 @@
 import Foundation
 
-/// Common interface for Compatibility user-space HID outputs.
+/// Common interface for Compatibility virtual HID outputs.
 public protocol CompatibilityUserSpaceOutputDispatching: OutputDispatcher {
   /// Human-readable backend status for UI/CLI reporting.
   var status: String { get }
@@ -13,8 +13,7 @@ public protocol CompatibilityUserSpaceOutputDispatching: OutputDispatcher {
 /// Optional output-dispatcher hook for controller lifecycle events.
 ///
 /// `DevicePipeline` calls this when a physical controller pipeline stops so output backends
-/// can tear down any per-controller virtual devices (for example, a per-controller
-/// IOHIDUserDevice in Compatibility mode).
+/// can tear down any per-controller virtual devices.
 public protocol ControllerLifecycleListener: AnyObject, Sendable {
   func controllerDidStop(_ identifier: DeviceIdentifier)
 }

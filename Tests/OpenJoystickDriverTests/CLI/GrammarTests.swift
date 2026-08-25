@@ -11,8 +11,7 @@ struct CLIGrammarTests {
     (
       "controller watch --device device-1",
       CLIInvocation.controllerInput(["watch", "--device", "device-1"])
-    ),
-    ("controller output plan 1 2", CLIInvocation.controllerOutput(["plan", "1", "2"])),
+    ), ("controller output plan 1 2", CLIInvocation.controllerOutput(["plan", "1", "2"])),
     ("map list --json", CLIInvocation.mapping(["list", "--json"])),
     ("app status", CLIInvocation.appStatus([])),
     ("app login enable", CLIInvocation.appLogin(enable: true)),
@@ -25,8 +24,7 @@ struct CLIGrammarTests {
     (
       "diagnose report --output report.json",
       CLIInvocation.diagnose(.report(["--output", "report.json"]))
-    ),
-    ("update check --json", CLIInvocation.updateCheck(["--json"])),
+    ), ("update check --json", CLIInvocation.updateCheck(["--json"]))
   ]) func parsesApprovedGrammar(raw: String, expected: CLIInvocation) throws {
     let arguments = raw.split(separator: " ").map(String.init)
     #expect(try CLIGrammar(arguments: arguments).invocation == expected)
@@ -35,7 +33,7 @@ struct CLIGrammarTests {
   @Test(arguments: [
     [], ["run"], ["list"], ["input"], ["logs"], ["updates"], ["report"], ["physical-output"],
     ["compatibility"], ["selftest"], ["sysext"], ["install"], ["uninstall"], ["start"], ["restart"],
-    ["reset-settings"],
+    ["reset-settings"]
   ]) func rejectsRemovedTopLevelSpellings(arguments: [String]) {
     #expect(throws: CLIParseError.self) { try CLIGrammar(arguments: arguments) }
   }
@@ -54,7 +52,7 @@ struct CLIGrammarTests {
       ["controller", "input"], ["mapping", "list"], ["compatibility", "get"],
       ["extension", "activate"], ["extension", "deactivate"], ["permissions", "open-settings"],
       ["diagnose", "self-test"], ["diagnose", "gamecontroller-catalog"], ["diagnose", "summary"],
-      ["app", "start"], ["app", "restart"],
+      ["app", "start"], ["app", "restart"]
     ] { #expect(throws: CLIParseError.self) { try CLIGrammar(arguments: arguments) } }
   }
 

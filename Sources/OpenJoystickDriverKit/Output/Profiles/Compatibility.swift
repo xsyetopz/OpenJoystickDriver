@@ -39,10 +39,10 @@ public enum CompatibilityOutputProfileCatalog {
     case .sdl2_3:
       CompatibilityOutputProfile(
         identity: identity,
-        deviceProfile: .openJoystickDriverSDL2_3,
+        deviceProfile: .sdlHIDAPIXbox360,
         displayName: "SDL 2/3",
-        notes: "OJD-owned SDL identity backed by an explicit SDL mapping.",
-        isHardwareSpoof: false,
+        notes: "Hardware-verified SDL HIDAPI identity with Xbox 360 input and rumble reports.",
+        isHardwareSpoof: true,
         emitsXboxGuideReport: false
       )
     case .appleGameController:
@@ -52,15 +52,6 @@ public enum CompatibilityOutputProfileCatalog {
         displayName: "Apple GameController",
         notes: "Xbox-compatible HID surface accepted by Apple's "
           + "GameController.framework as a native GCController.",
-        isHardwareSpoof: true,
-        emitsXboxGuideReport: false
-      )
-    case .x360HID:
-      CompatibilityOutputProfile(
-        identity: identity,
-        deviceProfile: .sdlHIDAPIXbox360,
-        displayName: "Xbox 360 HID",
-        notes: "SDL macOS Xbox 360 HIDAPI identity for output-report rumble.",
         isHardwareSpoof: true,
         emitsXboxGuideReport: false
       )

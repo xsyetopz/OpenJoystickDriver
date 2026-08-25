@@ -120,10 +120,9 @@ struct ControllerRecordProbePlanTests {
 
     var record: [String: Any] = [
       "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
-        + "Resources/Schemas/controller.schema.json",
-      "vendor_id": 5_426, "product_id": 2_627,
+        + "Resources/Schemas/controller.schema.json", "vendor_id": 5_426, "product_id": 2_627,
       "transport": transport, "protocol": protocolConfig,
-      "provenance": ["source": "local-hardware", "verified": false],
+      "provenance": ["source": "local-hardware", "verified": false]
     ]
     if !usb.isEmpty { record["usb"] = usb }
     return try JSONSerialization.data(withJSONObject: record)

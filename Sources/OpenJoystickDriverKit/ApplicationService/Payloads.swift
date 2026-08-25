@@ -17,9 +17,7 @@ public struct ApplicationServiceHIDGamepadSnapshot: Codable, Sendable, Hashable 
   public let serialKind: ApplicationServiceSerialKind
   public let ioUserClass: String?
 
-  /// True if this looks like our DriverKit virtual device.
-  public let isOJDDriverKit: Bool
-  /// True if this looks like our user-space IOHIDUserDevice.
+  /// True if this looks like an OJD app-owned virtual HID device.
   public let isOJDUserSpace: Bool
   /// True if Apple's GameController.framework says this HID device gets a GCController.
   public let isGameControllerSupported: Bool?
@@ -32,7 +30,6 @@ public struct ApplicationServiceHIDGamepadSnapshot: Codable, Sendable, Hashable 
     locationID: UInt32?,
     serialKind: ApplicationServiceSerialKind,
     ioUserClass: String?,
-    isOJDDriverKit: Bool,
     isOJDUserSpace: Bool,
     isGameControllerSupported: Bool? = nil
   ) {
@@ -43,7 +40,6 @@ public struct ApplicationServiceHIDGamepadSnapshot: Codable, Sendable, Hashable 
     self.locationID = locationID
     self.serialKind = serialKind
     self.ioUserClass = ioUserClass
-    self.isOJDDriverKit = isOJDDriverKit
     self.isOJDUserSpace = isOJDUserSpace
     self.isGameControllerSupported = isGameControllerSupported
   }
@@ -54,57 +50,15 @@ public struct ApplicationServiceVirtualDeviceDiagnosticsPayload: Codable, Sendab
   public let userSpaceVirtualDeviceEnabled: Bool
   public let userSpaceVirtualDeviceStatus: String
   public let hidGamepads: [ApplicationServiceHIDGamepadSnapshot]
-  /// DriverKit output injection stats using stable application-service payload keys.
-  ///
-  /// Present only when the application service is new enough to report it.
-  public let driverKitOutputStats: ApplicationServiceDriverKitOutputStats?
 
   public init(
     userSpaceVirtualDeviceEnabled: Bool,
     userSpaceVirtualDeviceStatus: String,
-    hidGamepads: [ApplicationServiceHIDGamepadSnapshot],
-    driverKitOutputStats: ApplicationServiceDriverKitOutputStats? = nil
+    hidGamepads: [ApplicationServiceHIDGamepadSnapshot]
   ) {
     self.userSpaceVirtualDeviceEnabled = userSpaceVirtualDeviceEnabled
     self.userSpaceVirtualDeviceStatus = userSpaceVirtualDeviceStatus
     self.hidGamepads = hidGamepads
-    self.driverKitOutputStats = driverKitOutputStats
-  }
-}
-
-/// Stats for commands submitted through the SwifterKit DriverKit runtime.
-public struct ApplicationServiceDriverKitOutputStats: Codable, Sendable {
-  public let attempts: Int
-  public let successes: Int
-  public let failures: Int
-  /// Stable payload key; SwifterKit command failures without a platform code report nil.
-  public let lastErrorHex: String?
-  public let connectionAttempts: Int
-  public let connectionSuccesses: Int
-  public let connectionFailures: Int
-  public let lastConnectionErrorHex: String?
-  public let lastDiscoverySummary: String?
-
-  public init(
-    attempts: Int,
-    successes: Int,
-    failures: Int,
-    lastErrorHex: String?,
-    connectionAttempts: Int = 0,
-    connectionSuccesses: Int = 0,
-    connectionFailures: Int = 0,
-    lastConnectionErrorHex: String? = nil,
-    lastDiscoverySummary: String? = nil
-  ) {
-    self.attempts = attempts
-    self.successes = successes
-    self.failures = failures
-    self.lastErrorHex = lastErrorHex
-    self.connectionAttempts = connectionAttempts
-    self.connectionSuccesses = connectionSuccesses
-    self.connectionFailures = connectionFailures
-    self.lastConnectionErrorHex = lastConnectionErrorHex
-    self.lastDiscoverySummary = lastDiscoverySummary
   }
 }
 
@@ -118,47 +72,10 @@ public enum ApplicationServiceVirtualDeviceSelfTestVerdict: String, Codable, Sen
 /// Result of a short "press buttons now" self-test for virtual device input delivery.
 public struct ApplicationServiceVirtualDeviceSelfTestPayload: Codable, Sendable {
   public let seconds: Int
-  public let driverKitValueEvents: Int
-  public let driverKitReportEvents: Int
   public let userSpaceValueEvents: Int
   public let userSpaceReportEvents: Int
   public let userSpaceRequired: Bool
   public let userSpaceStatus: String
-  /// Whether the signed host is entitled to open the DriverKit relay user client.
-  public let driverKitRequired: Bool
-  /// DriverKit-only self-test delta based on extension-side input delivery counters.
-  public let driverKitInputReportDelta: Int?
-  /// DriverKit-only self-test delta based on successful SwifterKit input submissions.
-  public let driverKitSubmissionSuccessDelta: Int?
-  /// Number of SwifterKit input submissions attempted during the self-test.
-  public let driverKitSubmissionAttemptDelta: Int?
-  /// Number of SwifterKit input submissions rejected during the self-test.
-  public let driverKitSubmissionFailureDelta: Int?
-  /// Stable payload key; nil when no platform error code is available.
-  public let driverKitSubmissionLastErrorHex: String?
-  public let driverKitConnectionAttemptDelta: Int?
-  public let driverKitConnectionSuccessDelta: Int?
-  public let driverKitConnectionFailureDelta: Int?
-  public let driverKitLastConnectionErrorHex: String?
-  public let driverKitDiscoverySummary: String?
-
-  /// End-to-end DriverKit relay assessment.
-  ///
-  /// SwifterKit completes `submitHIDInputReport` only after native HID delivery, so a
-  /// successful submission is authoritative even when callbacks or registry counters are absent.
-  public var driverKitRelayVerdict: ApplicationServiceVirtualDeviceSelfTestVerdict {
-    if let inputDelta = driverKitInputReportDelta, inputDelta > 0 { return .passed }
-    if driverKitReportEvents > 0 || driverKitValueEvents > 0 { return .passed }
-    guard driverKitRequired else { return .inconclusive }
-    if driverKitInputReportDelta != nil { return .failed }
-
-    let attempts = driverKitSubmissionAttemptDelta ?? 0
-    guard attempts > 0 else { return .failed }
-    let successes = driverKitSubmissionSuccessDelta ?? 0
-    let failures = driverKitSubmissionFailureDelta ?? 0
-    if successes == 0 || failures >= attempts { return .failed }
-    return .passed
-  }
 
   public var userSpaceVerdict: ApplicationServiceVirtualDeviceSelfTestVerdict {
     guard userSpaceRequired else { return .inconclusive }
@@ -167,127 +84,20 @@ public struct ApplicationServiceVirtualDeviceSelfTestPayload: Codable, Sendable 
     return .failed
   }
 
-  /// True only when every required self-test assertion passed.
-  public var isSuccessful: Bool {
-    if driverKitRequired {
-      return driverKitRelayVerdict == .passed && (!userSpaceRequired || userSpaceVerdict == .passed)
-    }
-    return userSpaceVerdict == .passed
-  }
+  public var isSuccessful: Bool { userSpaceVerdict == .passed }
 
   public init(
     seconds: Int,
-    driverKitValueEvents: Int,
-    driverKitReportEvents: Int,
     userSpaceValueEvents: Int,
     userSpaceReportEvents: Int,
-    userSpaceRequired: Bool = false,
-    userSpaceStatus: String = "off",
-    driverKitRequired: Bool = true,
-    driverKitInputReportDelta: Int? = nil,
-    driverKitSubmissionSuccessDelta: Int? = nil,
-    driverKitSubmissionAttemptDelta: Int? = nil,
-    driverKitSubmissionFailureDelta: Int? = nil,
-    driverKitSubmissionLastErrorHex: String? = nil,
-    driverKitConnectionAttemptDelta: Int? = nil,
-    driverKitConnectionSuccessDelta: Int? = nil,
-    driverKitConnectionFailureDelta: Int? = nil,
-    driverKitLastConnectionErrorHex: String? = nil,
-    driverKitDiscoverySummary: String? = nil
+    userSpaceRequired: Bool = true,
+    userSpaceStatus: String = "off"
   ) {
     self.seconds = seconds
-    self.driverKitValueEvents = driverKitValueEvents
-    self.driverKitReportEvents = driverKitReportEvents
     self.userSpaceValueEvents = userSpaceValueEvents
     self.userSpaceReportEvents = userSpaceReportEvents
     self.userSpaceRequired = userSpaceRequired
     self.userSpaceStatus = userSpaceStatus
-    self.driverKitRequired = driverKitRequired
-    self.driverKitInputReportDelta = driverKitInputReportDelta
-    self.driverKitSubmissionSuccessDelta = driverKitSubmissionSuccessDelta
-    self.driverKitSubmissionAttemptDelta = driverKitSubmissionAttemptDelta
-    self.driverKitSubmissionFailureDelta = driverKitSubmissionFailureDelta
-    self.driverKitSubmissionLastErrorHex = driverKitSubmissionLastErrorHex
-    self.driverKitConnectionAttemptDelta = driverKitConnectionAttemptDelta
-    self.driverKitConnectionSuccessDelta = driverKitConnectionSuccessDelta
-    self.driverKitConnectionFailureDelta = driverKitConnectionFailureDelta
-    self.driverKitLastConnectionErrorHex = driverKitLastConnectionErrorHex
-    self.driverKitDiscoverySummary = driverKitDiscoverySummary
-  }
-
-  private enum CodingKeys: String, CodingKey {
-    case seconds
-    case driverKitValueEvents
-    case driverKitReportEvents
-    case userSpaceValueEvents
-    case userSpaceReportEvents
-    case userSpaceRequired
-    case userSpaceStatus
-    case driverKitRequired
-    case driverKitInputReportDelta
-    case driverKitSubmissionSuccessDelta
-    case driverKitSubmissionAttemptDelta
-    case driverKitSubmissionFailureDelta
-    case driverKitSubmissionLastErrorHex
-    case driverKitConnectionAttemptDelta
-    case driverKitConnectionSuccessDelta
-    case driverKitConnectionFailureDelta
-    case driverKitLastConnectionErrorHex
-    case driverKitDiscoverySummary
-  }
-
-  public init(from decoder: any Decoder) throws {
-    let values = try decoder.container(keyedBy: CodingKeys.self)
-    self.init(
-      seconds: try values.decode(Int.self, forKey: .seconds),
-      driverKitValueEvents: try values.decode(Int.self, forKey: .driverKitValueEvents),
-      driverKitReportEvents: try values.decode(Int.self, forKey: .driverKitReportEvents),
-      userSpaceValueEvents: try values.decode(Int.self, forKey: .userSpaceValueEvents),
-      userSpaceReportEvents: try values.decode(Int.self, forKey: .userSpaceReportEvents),
-      userSpaceRequired: try values.decode(Bool.self, forKey: .userSpaceRequired),
-      userSpaceStatus: try values.decode(String.self, forKey: .userSpaceStatus),
-      driverKitRequired: try values.decode(Bool.self, forKey: .driverKitRequired),
-      driverKitInputReportDelta: try values.decodeIfPresent(
-        Int.self,
-        forKey: .driverKitInputReportDelta
-      ),
-      driverKitSubmissionSuccessDelta: try values.decodeIfPresent(
-        Int.self,
-        forKey: .driverKitSubmissionSuccessDelta
-      ),
-      driverKitSubmissionAttemptDelta: try values.decodeIfPresent(
-        Int.self,
-        forKey: .driverKitSubmissionAttemptDelta
-      ),
-      driverKitSubmissionFailureDelta: try values.decodeIfPresent(
-        Int.self,
-        forKey: .driverKitSubmissionFailureDelta
-      ),
-      driverKitSubmissionLastErrorHex: try values.decodeIfPresent(
-        String.self,
-        forKey: .driverKitSubmissionLastErrorHex
-      ),
-      driverKitConnectionAttemptDelta: try values.decodeIfPresent(
-        Int.self,
-        forKey: .driverKitConnectionAttemptDelta
-      ),
-      driverKitConnectionSuccessDelta: try values.decodeIfPresent(
-        Int.self,
-        forKey: .driverKitConnectionSuccessDelta
-      ),
-      driverKitConnectionFailureDelta: try values.decodeIfPresent(
-        Int.self,
-        forKey: .driverKitConnectionFailureDelta
-      ),
-      driverKitLastConnectionErrorHex: try values.decodeIfPresent(
-        String.self,
-        forKey: .driverKitLastConnectionErrorHex
-      ),
-      driverKitDiscoverySummary: try values.decodeIfPresent(
-        String.self,
-        forKey: .driverKitDiscoverySummary
-      )
-    )
   }
 }
 

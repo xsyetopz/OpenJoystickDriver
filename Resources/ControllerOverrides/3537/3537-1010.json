@@ -11,6 +11,9 @@
         "shareButton"
       ]
     },
+    "usb": {
+      "configuration": "set1-before-claim"
+    },
     "provenance": {
       "source": "local-hardware",
       "verified": true

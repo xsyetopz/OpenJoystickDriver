@@ -16,6 +16,9 @@ public final class ParserRegistry: Sendable {
   /// Exact profile-backed HID devices that may not advertise GamePad usage.
   public func hidProfileIdentifiers() -> [DeviceIdentifier] { catalog.hidProfileIdentifiers }
 
+  /// Exact catalog models admitted to the raw USB pipeline.
+  public func rawUSBProfileIdentifiers() -> [DeviceIdentifier] { catalog.rawUSBProfileIdentifiers }
+
   /// Returns parser for given device identifier.
   public func parser(for identifier: DeviceIdentifier) -> any InputParser {
     parser(for: identifier, transportProfile: catalog.transportProfile(for: identifier))

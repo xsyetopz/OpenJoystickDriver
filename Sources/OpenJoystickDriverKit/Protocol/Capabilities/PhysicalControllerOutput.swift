@@ -1,5 +1,3 @@
-import SwiftUSB
-
 /// A physical rumble actuator that the active protocol implementation can address.
 public enum PhysicalRumbleMotor: String, Codable, CaseIterable, Hashable, Sendable {
   case leftMain
@@ -141,8 +139,13 @@ public protocol PhysicalRumbleOutput: AnyObject, Sendable {
   /// Sends physical rumble to the source controller.
   ///
   /// Values are 0...255. Unsupported actuator values must be ignored.
-  func sendPhysicalRumble(handle: USBDeviceHandle, left: UInt8, right: UInt8, lt: UInt8, rt: UInt8)
-    throws
+  func sendPhysicalRumble(
+    handle: any USBTransportSession,
+    left: UInt8,
+    right: UInt8,
+    lt: UInt8,
+    rt: UInt8
+  ) async throws
 }
 
 extension PhysicalRumbleOutput {
@@ -215,8 +218,10 @@ extension PhysicalHIDPlayerIndicatorOutput {
 public protocol PhysicalPlayerIndicatorOutput: AnyObject, Sendable {
   var physicalLightingFeatures: [PhysicalLightingFeature] { get }
 
-  func sendPhysicalPlayerIndicator(handle: USBDeviceHandle, indicator: PhysicalPlayerIndicator)
-    throws
+  func sendPhysicalPlayerIndicator(
+    handle: any USBTransportSession,
+    indicator: PhysicalPlayerIndicator
+  ) async throws
 }
 
 extension PhysicalPlayerIndicatorOutput {

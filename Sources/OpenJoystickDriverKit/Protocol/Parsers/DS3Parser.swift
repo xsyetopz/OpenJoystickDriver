@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 private let ds3InputReportID: UInt8 = 0x01
 private let ds3InputReportLength = 49
@@ -60,7 +59,9 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
 
   public var physicalBinaryRumbleMotors: [PhysicalRumbleMotor] { [.rightMain] }
 
-  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
+  public func performHandshake(handle: (any USBTransportSession)?) async throws {
+    await Task.yield()
+  }
 
   public func hidStartupFeatureReadRequests() -> [PhysicalHIDFeatureReadRequest] {
     [
@@ -71,7 +72,7 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
       PhysicalHIDFeatureReadRequest(
         reportID: ds3OperationalReportF5,
         length: ds3OperationalReportF5Length
-      ),
+      )
     ]
   }
 
@@ -88,7 +89,7 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
       PhysicalHIDOutputReport(
         reportID: ds3BluetoothOperationalReportID,
         bytes: [ds3BluetoothOperationalReportID, 0x42, 0x03, 0x00, 0x00]
-      ),
+      )
     ]
   }
 
@@ -111,7 +112,7 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
     var bytes: [UInt8] = [
       0x01, 0x01, 0xFF, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x27, 0x10, 0x00,
       0x32, 0xFF, 0x27, 0x10, 0x00, 0x32, 0xFF, 0x27, 0x10, 0x00, 0x32, 0xFF, 0x27, 0x10, 0x00,
-      0x32, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x32, 0x00, 0x00, 0x00, 0x00, 0x00
     ]
     precondition(bytes.count == ds3OutputReportLength)
     bytes[3] = physicalRumbleRightOn ? 1 : 0
@@ -179,7 +180,7 @@ public final class DS3Parser: InputParser, HIDStartupFeatureReadRequestProvider,
         curr: b1,
         mapping: [
           (0x01, .l2Digital), (0x02, .r2Digital), (0x04, .l1), (0x08, .r1), (0x10, .triangle),
-          (0x20, .circle), (0x40, .cross), (0x80, .square),
+          (0x20, .circle), (0x40, .cross), (0x80, .square)
         ]
       )
     )

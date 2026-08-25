@@ -33,7 +33,7 @@ struct GIPAuthHandlerTests {
     let handler = GIPAuthHandler()
     let expected: [(GIPAuthState, Int)] = [
       (.hostInit, 40), (.hostResponse1, 176), (.hostResponse2, 772), (.hostResponse3, 132),
-      (.hostResponse4, 68), (.hostResponse5, 36), (.hostComplete, 68),
+      (.hostResponse4, 68), (.hostResponse5, 36), (.hostComplete, 68)
     ]
     for (state, size) in expected {
       let response = handler.buildAuthResponse(state: state)

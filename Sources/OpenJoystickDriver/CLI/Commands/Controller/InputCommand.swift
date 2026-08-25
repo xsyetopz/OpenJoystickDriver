@@ -322,7 +322,7 @@ struct InputCommand {
         "  state   [--device <id>] [--json]",
         "  packets [--device <id>] [--limit 1...200] [--json]",
         "  watch   [--device <id>] [--seconds 1...3600]",
-        "          [--interval-ms 8...1000] [--json-lines]",
+        "          [--interval-ms 8...1000] [--json-lines]"
       ].joined(separator: "\n")
     )
   }

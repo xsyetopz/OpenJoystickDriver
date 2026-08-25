@@ -3,8 +3,8 @@
 
 set -euo pipefail
 
-DEXT_ID="com.openjoystickdriver.VirtualHIDDevice"
-PROCESS_NAME="OpenJoystickVirtualHID"
+DEXT_ID="com.openjoystickdriver.XboxUSBDevice"
+PROCESS_NAME="XboxUSBDevice"
 
 die() { echo "ERROR: $*" >&2; exit 2; }
 

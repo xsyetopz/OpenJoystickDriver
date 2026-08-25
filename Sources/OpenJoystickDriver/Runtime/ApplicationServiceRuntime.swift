@@ -1,23 +1,20 @@
 import Darwin
 import Foundation
 import OpenJoystickDriverKit
-import OpenJoystickDriverRelay
+import OpenJoystickDriverUSB
 
 final class ApplicationServiceRuntime: @unchecked Sendable {
   private let permissionManager: PermissionManager
-  private let driverKitDispatcher: DriverKitOutputDispatcher
   private let dispatcher: CompatibilityOutputDispatcher
   private let remappingRouter: RemappingOutputRouter
   private let manager: DeviceManager
   private let applicationServiceServer: ApplicationServiceServer
-  private let foregroundConsumerOutputMonitor: ForegroundConsumerOutputMonitor
   private let stateLock = NSLock()
   private var started = false
   private var shutdownSignalSources: [DispatchSourceSignal] = []
 
   init() {
     let permissionManager = PermissionManager()
-    let driverKitDispatcher = DriverKitOutputDispatcher()
     let dispatcher = CompatibilityOutputDispatcher()
     let remappingProfileLibrary = RemappingProfileLibrary()
     let postEventAccess = CoreGraphicsPostEventAccess()
@@ -31,44 +28,24 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
       foregroundApplication: WorkspaceRemappingForegroundApplication(),
       postEventAccess: postEventAccess
     )
-    let manager = DeviceManager(dispatcher: remappingRouter)
+    let manager = DeviceManager(
+      dispatcher: remappingRouter,
+      usbTransportProvider: OpenJoystickDriverUSBTransportProvider()
+    )
     let applicationServiceServer = ApplicationServiceServer(
       deviceManager: manager,
       permissionManager: permissionManager,
       dispatcher: dispatcher,
-      driverKitDispatcher: driverKitDispatcher,
       remappingProfileLibrary: remappingProfileLibrary,
       remappingRouter: remappingRouter,
       postEventAccess: postEventAccess
     )
 
     self.permissionManager = permissionManager
-    self.driverKitDispatcher = driverKitDispatcher
     self.dispatcher = dispatcher
     self.remappingRouter = remappingRouter
     self.manager = manager
     self.applicationServiceServer = applicationServiceServer
-    self.foregroundConsumerOutputMonitor = ForegroundConsumerOutputMonitor(
-      compatibilityOutputGate: { allowed in
-        do {
-          try await remappingRouter.foregroundStateDidChange(compatibilityOutputAllowed: allowed)
-        } catch {
-          NSLog("%@", "[Service] Compatibility output gate failed: \(error.localizedDescription)")
-        }
-      },
-      compatibilityRouteHandler: {
-        frontmostBundleRootPath,
-        effectiveConsumerBundleRoots,
-        observedConsumerBundleRoots,
-        activeRouteToken in
-        await applicationServiceServer.applyForegroundCompatibilityRoutingUpdate(
-          frontmostBundleRootPath: frontmostBundleRootPath,
-          effectiveConsumerBundleRoots: effectiveConsumerBundleRoots,
-          observedConsumerBundleRoots: observedConsumerBundleRoots,
-          activeRouteToken: activeRouteToken
-        )
-      }
-    )
   }
 
   func start() {
@@ -80,7 +57,6 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     guard shouldStart else { return }
 
     setbuf(stdout, nil)
-    serviceLog("[Service] DriverKit integrity relay: diagnostic probes only")
     serviceLog("[Service] Starting main-app service runtime")
     setupGracefulShutdown()
     Task { await permissionManager.startPolling() }
@@ -88,7 +64,6 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     do { try applicationServiceServer.start() } catch {
       serviceLog("[Service] RPC socket startup failed: \(error.localizedDescription)")
     }
-    foregroundConsumerOutputMonitor.start()
     Task { await manager.start() }
   }
 
@@ -101,13 +76,11 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     guard shouldStop else { return }
 
     cancelGracefulShutdown()
-    foregroundConsumerOutputMonitor.stop()
     applicationServiceServer.stop()
     await manager.stop()
     do { try await remappingRouter.shutdown() } catch {
       serviceLog("[Service] Remapping shutdown failed: \(error.localizedDescription)")
     }
-    await driverKitDispatcher.stopBackend()
     await permissionManager.stopPolling()
     serviceLog("[Service] Stopped")
   }

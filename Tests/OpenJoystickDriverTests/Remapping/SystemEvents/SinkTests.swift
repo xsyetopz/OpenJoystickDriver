@@ -33,7 +33,7 @@ struct CoreGraphicsSinkTests {
         .keyboard(virtualKey: CGKeyCode(kVK_ANSI_A), isDown: true, flags: [.shift, .command]),
         .keyboard(virtualKey: CGKeyCode(kVK_ANSI_A), isDown: false, flags: [.shift, .command]),
         .modifier(virtualKey: CGKeyCode(kVK_Command), flags: [.shift]),
-        .modifier(virtualKey: CGKeyCode(kVK_Shift), flags: []),
+        .modifier(virtualKey: CGKeyCode(kVK_Shift), flags: [])
       ]
     )
   }
@@ -41,7 +41,7 @@ struct CoreGraphicsSinkTests {
   @Test func everyModifierUsesItsPlatformKeyAndFlag() throws {
     let cases: [(RemappingKeyModifier, CGKeyCode, CoreGraphicsModifierFlags)] = [
       (.command, CGKeyCode(kVK_Command), .command), (.control, CGKeyCode(kVK_Control), .control),
-      (.option, CGKeyCode(kVK_Option), .option), (.shift, CGKeyCode(kVK_Shift), .shift),
+      (.option, CGKeyCode(kVK_Option), .option), (.shift, CGKeyCode(kVK_Shift), .shift)
     ]
     for (modifier, virtualKey, flag) in cases {
       let poster = RecordingPoster()
@@ -51,7 +51,7 @@ struct CoreGraphicsSinkTests {
       #expect(
         poster.events == [
           .modifier(virtualKey: virtualKey, flags: flag),
-          .modifier(virtualKey: virtualKey, flags: []),
+          .modifier(virtualKey: virtualKey, flags: [])
         ]
       )
     }
@@ -78,7 +78,7 @@ struct CoreGraphicsSinkTests {
           button: button,
           isDown: false,
           location: CGPoint(x: 12, y: 34)
-        ),
+        )
       ]
     }
     #expect(poster.events == expected)
@@ -95,7 +95,7 @@ struct CoreGraphicsSinkTests {
     #expect(
       poster.events == [
         .pointer(location: CGPoint(x: 132, y: 200), deltaX: 32, deltaY: 0),
-        .pointer(location: CGPoint(x: 140, y: 178), deltaX: 0, deltaY: -32),
+        .pointer(location: CGPoint(x: 140, y: 178), deltaX: 0, deltaY: -32)
       ]
     )
     #expect(poster.pointerReadCount == 2)

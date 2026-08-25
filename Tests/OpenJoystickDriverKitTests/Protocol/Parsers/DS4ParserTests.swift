@@ -49,7 +49,7 @@ private func makeDS4BluetoothReport(
   report.append(contentsOf: [0xC0, 0x00])
   report.append(contentsOf: [
     leftStickX, leftStickY, rightStickX, rightStickY, buttons0, buttons1, buttons2, leftTrigger,
-    rightTrigger,
+    rightTrigger
   ])
   report.append(contentsOf: [UInt8](repeating: 0, count: 64))
   report.append(contentsOf: [0x7D, 0x0A, 0x5D, 0x0B])
@@ -136,7 +136,7 @@ struct DS4ParserTests {
     let parser = DS4Parser(prefersBluetooth: true)
     let observedPrefix: [UInt8] = [
       0x11, 0xC0, 0x00, 0x7A, 0x81, 0x81, 0x82, 0x08, 0x00, 0xCC, 0x00, 0x00, 0xF5, 0xD1, 0x0C,
-      0xF6, 0xFF, 0x0B, 0x00, 0xF3, 0xFF, 0x78, 0x00, 0x8E,
+      0xF6, 0xFF, 0x0B, 0x00, 0xF3, 0xFF, 0x78, 0x00, 0x8E
     ]
     let observedReport = Data(observedPrefix + [UInt8](repeating: 0, count: 54))
 
@@ -245,8 +245,7 @@ struct DS4ParserTests {
       identifier: DeviceIdentifier(vendorID: 1356, productID: 2508),
       transport: .hid(locationID: 1),
       parser: DS4Parser(),
-      dispatcher: dispatcher,
-      usbContext: nil
+      dispatcher: dispatcher
     )
     await pipeline.start()
     await pipeline.feedHIDData(makeDS4Report())

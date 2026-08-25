@@ -141,7 +141,7 @@ struct UpdatesCommand {
         "  --prerelease  Include SemVer prerelease tags",
         "  --json        Emit machine-readable JSON",
         "  --open        Open the release page only when an update is available", "",
-        "This command checks GitHub tags; it does not download or install an update.",
+        "This command checks GitHub tags; it does not download or install an update."
       ].joined(separator: "\n")
     )
   }

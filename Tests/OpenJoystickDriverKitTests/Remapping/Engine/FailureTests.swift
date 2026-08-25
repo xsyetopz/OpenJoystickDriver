@@ -26,7 +26,7 @@ struct RemappingFailureTests {
       applicationScope: .global,
       bindings: [
         RemappingBinding(source: .button(.south), destination: .keyboard(key: .a, modifiers: [])),
-        RemappingBinding(source: .button(.east), destination: .keyboard(key: .b, modifiers: [])),
+        RemappingBinding(source: .button(.east), destination: .keyboard(key: .b, modifiers: []))
       ]
     )
 
@@ -111,7 +111,7 @@ struct RemappingFailureTests {
         RemappingBinding(
           source: .button(.south),
           destination: .keyboard(key: .a, modifiers: [.shift])
-        ),
+        )
       ]
     )
     let identifier = DeviceIdentifier(vendorID: 1, productID: 2, locationID: 1)
@@ -144,7 +144,7 @@ struct RemappingFailureTests {
     #expect(
       sink.actions() == [
         .modifierDown(.shift), .keyUp(.a), .modifierUp(.shift), .modifierDown(.shift), .keyDown(.a),
-        .keyUp(.a), .modifierUp(.shift),
+        .keyUp(.a), .modifierUp(.shift)
       ]
     )
   }
@@ -158,7 +158,7 @@ struct RemappingFailureTests {
         RemappingBinding(
           source: .button(.south),
           destination: .keyboard(key: .a, modifiers: [.shift])
-        ),
+        )
       ]
     )
   }

@@ -9,13 +9,13 @@ struct RemappingChordTests {
     let engine = RemappingEventEngine(sink: sink)
     let currentProfile = profile(
       bindings: [
-        binding(source: .button(.south), key: .a), binding(source: .button(.east), key: .b),
+        binding(source: .button(.south), key: .a), binding(source: .button(.east), key: .b)
       ],
       chords: [
         RemappingChord(
           sources: [.button(.south), .button(.east)],
           destination: .keyboard(key: .c, modifiers: [])
-        ),
+        )
       ]
     )
 

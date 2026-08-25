@@ -1,4 +1,3 @@
-import SwiftUSB
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -6,7 +5,7 @@ import Testing
 struct USBStartupOutputPolicyTests {
   @Test func ignoresIOErrorForXbox360RingLED() {
     let parser = Xbox360Parser()
-    let error = USBError(code: USBError.errorIO, log: false)
+    let error = USBTransportError.inputOutput
 
     #expect(
       isIgnorableUSBStartupOutputError(parser: parser, packet: [0x01, 0x03, 0x06], error: error)
@@ -15,12 +14,9 @@ struct USBStartupOutputPolicyTests {
 
   @Test func preservesOtherXbox360StartupOutputFailures() {
     let parser = Xbox360Parser()
-    let errors = [
-      USBError.errorNoDevice, USBError.errorAccess, USBError.errorTimeout, USBError.errorPipe,
-    ]
+    let errors: [USBTransportError] = [.disconnected, .accessDenied, .timeout, .notSupported]
 
-    for code in errors {
-      let error = USBError(code: code, log: false)
+    for error in errors {
       #expect(
         !isIgnorableUSBStartupOutputError(parser: parser, packet: [0x01, 0x03, 0x06], error: error)
       )
@@ -30,7 +26,7 @@ struct USBStartupOutputPolicyTests {
   @Test func preservesIOErrorForOtherStartupPacketsAndParsers() {
     let parser = Xbox360Parser()
     let genericParser = GenericHIDParser(identifier: DeviceIdentifier(vendorID: 1, productID: 2))
-    let error = USBError(code: USBError.errorIO, log: false)
+    let error = USBTransportError.inputOutput
 
     #expect(!isIgnorableUSBStartupOutputError(parser: parser, packet: [0x00, 0x01], error: error))
     #expect(

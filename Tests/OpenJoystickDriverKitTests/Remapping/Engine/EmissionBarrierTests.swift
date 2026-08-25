@@ -131,7 +131,7 @@ struct RemappingEmissionBarrierTests {
         RemappingBinding(
           source: .button(.south),
           destination: .keyboard(key: .space, modifiers: [])
-        ),
+        )
       ]
     )
   }

@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 private let gipDpadMask: UInt8 = 0x0F
 private let gipGuideButtonMask: UInt8 = 0x03
@@ -40,7 +39,9 @@ public enum GIPError: Error, Sendable {
 /// Sends the three-packet GIP init sequence on connection, then parses
 /// incoming interrupt-transfer packets into ``ControllerEvent`` values.
 /// Sends a keep-alive ping every ~4 seconds when the device profile permits it.
-public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Sendable {
+public final class GIPParser: InputParser, PhysicalRumbleOutput, USBDeferredOutputProvider,
+  @unchecked Sendable
+{
 
   // MARK: - Thread safety
   //
@@ -55,8 +56,8 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
 
   private var sequencer = GIPSequencer()
   private let authHandler: GIPAuthHandler
-  private var handle: USBDeviceHandle?
   private var pendingInput = Data()
+  private var pendingUSBOutputPackets: [[UInt8]] = []
 
   /// Current device state, driven by auth progress.
   public var deviceState: GIPDeviceState { authHandler.deviceState }
@@ -80,17 +81,16 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
     self.outEndpoint = transportProfile.outputEndpoint
     self.startupPackets = startupPackets
     self.keepAlivePolicy = keepAlivePolicy
-    self.authHandler = GIPAuthHandler(outEndpoint: transportProfile.outputEndpoint)
+    self.authHandler = GIPAuthHandler()
   }
 
   // MARK: - InputParser
 
   /// Sends the GIP init sequence to the controller.
-  public func performHandshake(handle: USBDeviceHandle?) async throws {
+  public func performHandshake(handle: (any USBTransportSession)?) async throws {
     guard let handle else {
       throw GIPError.handshakeFailed("No USB handle provided for GIP handshake")
     }
-    self.handle = handle
     for attempt in 0..<gipHandshakeMaxAttempts {
       do {
         try await sendInitSequence(handle: handle)
@@ -108,14 +108,14 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
   }
 
   /// Sends the periodic host-side GIP status packet (CMD=0x03).
-  public func keepAlive(handle: USBDeviceHandle?) throws {
+  public func keepAlive(handle: (any USBTransportSession)?) async throws {
     guard keepAlivePolicy == .enabled else { return }
     guard let handle else { return }
     let seq = sequencer.next(for: GIPCommand.status)
     let packet: [UInt8] = [
       GIPCommand.status, GIPOption.internal, seq, gipStatusSubCommandLength, 0x00, 0x00, 0x00
     ]
-    _ = try handle.interruptTransfer(
+    _ = try await handle.writeInterruptPacket(
       endpoint: outEndpoint,
       data: packet,
       timeout: gipRumbleTransferTimeoutMs
@@ -201,14 +201,8 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
     case GIPCommand.input: return parseMainInput(payload: frame.payload)
     case GIPCommand.virtualKey: return parseGuideButton(payload: frame.payload)
     case GIPCommand.authenticate:
-      if let handle {
-        do {
-          try authHandler.handleAuthMessage(
-            payload: frame.payload,
-            handle: handle,
-            sequencer: &sequencer
-          )
-        } catch { print("[GIPParser] Auth error: \(error)") }
+      if let packet = authHandler.handleAuthMessage(payload: frame.payload, sequencer: &sequencer) {
+        pendingUSBOutputPackets.append(packet)
       }
       return []
     default: return []
@@ -216,16 +210,19 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
   }
 
   private func sendAcknowledgement(for frame: GIPFrame, totalLength: Int) {
-    guard let handle, let length = UInt16(exactly: totalLength) else { return }
+    guard let length = UInt16(exactly: totalLength) else { return }
     let packet = Self.acknowledgementPacket(
       command: frame.command,
       options: frame.options,
       sequence: frame.sequence,
       totalLength: length
     )
-    do {
-      _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
-    } catch { print("[GIPParser] Acknowledgement error: \(error)") }
+    pendingUSBOutputPackets.append(packet)
+  }
+
+  public func consumeUSBOutputPackets() -> [[UInt8]] {
+    defer { pendingUSBOutputPackets.removeAll(keepingCapacity: true) }
+    return pendingUSBOutputPackets
   }
 
   /// Sends a GIP rumble command (CMD=0x09) to the physical controller.
@@ -237,12 +234,12 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
   ///   - ltMotor: Left trigger motor intensity (0–255).
   ///   - rtMotor: Right trigger motor intensity (0–255).
   public func sendRumble(
-    handle: USBDeviceHandle,
+    handle: any USBTransportSession,
     left: UInt8,
     right: UInt8,
     ltMotor: UInt8,
     rtMotor: UInt8
-  ) throws {
+  ) async throws {
     let seq = sequencer.next(for: GIPCommand.rumble)
     let activation: UInt8 = gipRumbleAllMotors
     // The options byte must be 0x00: controllers silently discard rumble frames
@@ -252,7 +249,7 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
       GIPCommand.rumble, 0x00, seq, gipRumbleSubCommandLength, 0x00, activation, ltMotor, rtMotor,
       left, right, gipRumbleDefaultDuration, 0x00, 0xFF  // on=255, off=0, repeat=255
     ]
-    _ = try handle.interruptTransfer(
+    _ = try await handle.writeInterruptPacket(
       endpoint: outEndpoint,
       data: packet,
       timeout: gipRumbleTransferTimeoutMs
@@ -264,22 +261,24 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
   }
 
   public func sendPhysicalRumble(
-    handle: USBDeviceHandle,
+    handle: any USBTransportSession,
     left: UInt8,
     right: UInt8,
     lt: UInt8,
     rt: UInt8
-  ) throws { try sendRumble(handle: handle, left: left, right: right, ltMotor: lt, rtMotor: rt) }
+  ) async throws {
+    try await sendRumble(handle: handle, left: left, right: right, ltMotor: lt, rtMotor: rt)
+  }
 
   // MARK: - Private
 
   /// Send the profile-selected GIP init sequence with a short delay between packets.
-  private func sendInitSequence(handle: USBDeviceHandle) async throws {
+  private func sendInitSequence(handle: any USBTransportSession) async throws {
     let initDelay = gipInitDelayNanoseconds
 
     for (index, startupPacket) in startupPackets.enumerated() {
       let seq = sequencer.next(for: startupPacket.command)
-      _ = try handle.interruptTransfer(
+      _ = try await handle.writeInterruptPacket(
         endpoint: outEndpoint,
         data: startupPacket.packet(sequence: seq),
         timeout: 2000

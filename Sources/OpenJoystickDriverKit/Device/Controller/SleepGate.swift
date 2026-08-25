@@ -186,7 +186,7 @@ extension DeviceInputState {
   private mutating func applyDpad(_ direction: DpadDirection) {
     let dpadButtons = Set([
       Button.dpadUp.rawValue, Button.dpadDown.rawValue, Button.dpadLeft.rawValue,
-      Button.dpadRight.rawValue,
+      Button.dpadRight.rawValue
     ])
     pressedButtons.removeAll { dpadButtons.contains($0) }
 

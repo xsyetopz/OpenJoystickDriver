@@ -42,17 +42,15 @@ build_app_bundle() {
   _require_profile_entitlement \
     "$GUI_PROFILE" \
     "com.apple.developer.hid.virtual.device" \
-    "GUI app (Compatibility / embedded backend IOHIDUserDevice)" \
+    "GUI app (virtual HID backend)" \
     "Fix: regenerate the GUI provisioning profile for Identifier com.openjoystickdriver with entitlement com.apple.developer.hid.virtual.device, then reinstall profiles (./scripts/ojd signing install-profiles)."
 
   if [[ "$OJD_ENV" == "release" ]]; then
-    setup_libusb_pkgconfig
     echo "Building release binaries (universal)..."
     cd "$PROJECT_DIR" || exit
     "$SWIFT_BIN" build -c release --product OpenJoystickDriver --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
     local gui_bin="$GUI_RELEASE"
   else
-    setup_libusb_pkgconfig
     echo "Building debug binaries (universal)..."
     cd "$PROJECT_DIR" || exit
     "$SWIFT_BIN" build --product OpenJoystickDriver --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors
@@ -100,42 +98,7 @@ build_app_bundle() {
   cp "$GUI_PROFILE" "$GUI_CONTENTS/embedded.provisionprofile"
   xattr -d com.apple.quarantine "$GUI_CONTENTS/embedded.provisionprofile" 2>/dev/null || true
 
-  cat > "$GUI_CONTENTS/Info.plist" << 'PLIST'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>CFBundleIdentifier</key>
-    <string>com.openjoystickdriver</string>
-    <key>CFBundleName</key>
-    <string>OpenJoystickDriver</string>
-    <key>CFBundleDisplayName</key>
-    <string>OpenJoystickDriver</string>
-    <key>CFBundleExecutable</key>
-    <string>OpenJoystickDriver</string>
-    <key>CFBundleIconFile</key>
-    <string>OpenJoystickDriver</string>
-    <key>CFBundlePackageType</key>
-    <string>APPL</string>
-    <key>CFBundleShortVersionString</key>
-    <string>0</string>
-    <key>CFBundleVersion</key>
-    <string>1</string>
-    <key>LSMinimumSystemVersion</key>
-    <string>10.15</string>
-    <key>CFBundleDevelopmentRegion</key>
-    <string>en-US</string>
-    <key>LSUIElement</key>
-    <true/>
-    <key>NSHighResolutionCapable</key>
-    <true/>
-    <key>NSInputMonitoringUsageDescription</key>
-    <string>OpenJoystickDriver needs Input Monitoring to read physical controller reports.</string>
-    <key>NSSystemExtensionUsageDescription</key>
-    <string>OpenJoystickDriver uses this extension to publish an optional DriverKit virtual HID relay.</string>
-</dict>
-</plist>
-PLIST
+  cp "$OJD_APP_INFO_PLIST" "$GUI_CONTENTS/Info.plist"
   /usr/bin/plutil -replace CFBundleShortVersionString -string "$bundle_short_version" \
     "$GUI_CONTENTS/Info.plist"
   /usr/bin/plutil -replace CFBundleVersion -string "$bundle_version" "$GUI_CONTENTS/Info.plist"

@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 private let dualSenseAxisCenter: Float = 128
 private let dualSenseAxisPositiveMax: Float = 127
@@ -77,7 +76,9 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
   }
 
   /// No-op for the current experimental HID input slice.
-  public func performHandshake(handle: USBDeviceHandle?) async throws { await Task.yield() }
+  public func performHandshake(handle: (any USBTransportSession)?) async throws {
+    await Task.yield()
+  }
 
   /// Parses one DualSense HID input report and returns controller events.
   public func parse(data: Data) throws -> [ControllerEvent] {
@@ -133,7 +134,7 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
     -> PhysicalHIDOutputReport
   {
     let patterns: [PhysicalPlayerIndicator: UInt8] = [
-      .off: 0, .player1: 0x04, .player2: 0x0A, .player3: 0x15, .player4: 0x1B,
+      .off: 0, .player1: 0x04, .player2: 0x0A, .player3: 0x15, .player4: 0x1B
     ]
     return outputReport(
       validFlag1: dualSensePlayerIndicatorFlag,
@@ -294,7 +295,7 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
       curr: shoulders,
       mapping: [
         (0x01, .l1), (0x02, .r1), (0x04, .l2Digital), (0x08, .r2Digital), (0x10, .share),
-        (0x20, .options), (0x40, .leftStick), (0x80, .rightStick),
+        (0x20, .options), (0x40, .leftStick), (0x80, .rightStick)
       ]
     )
     return (events, shoulders)

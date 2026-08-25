@@ -37,11 +37,7 @@ private final class RecordingRegistration: ApplicationServiceRegistration, @unch
 
   init(status: ApplicationServiceRegistrationStatus) { self.status = status }
 
-  func register() {
-    registerCount += 1
-  }
+  func register() { registerCount += 1 }
 
-  func unregister() {
-    unregisterCount += 1
-  }
+  func unregister() { unregisterCount += 1 }
 }

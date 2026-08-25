@@ -63,20 +63,8 @@ public struct SupportReport: Codable, Sendable {
     public let transport: String?
     public let serialKind: ApplicationServiceSerialKind
     public let ioUserClass: String?
-    public let isOJDDriverKit: Bool
     public let isOJDUserSpace: Bool
     public let isGameControllerSupported: Bool?
-  }
-
-  public struct DriverKitOutput: Codable, Sendable {
-    public let attempts: Int
-    public let successes: Int
-    public let failures: Int
-    public let lastErrorHex: String?
-    public let connectionAttempts: Int
-    public let connectionSuccesses: Int
-    public let connectionFailures: Int
-    public let lastConnectionErrorHex: String?
   }
 
   public let schemaVersion: Int
@@ -89,7 +77,6 @@ public struct SupportReport: Codable, Sendable {
   public let controllers: [Controller]
   public let outputValidationPlans: [PhysicalOutputValidationPlan]
   public let hidGamepads: [HIDGamepad]
-  public let driverKitOutput: DriverKitOutput?
   public let appleGameControllerAudit: AppleGameControllerSupportAudit?
   public let notes: [String]
 
@@ -168,7 +155,6 @@ public struct SupportReport: Codable, Sendable {
         transport: $0.transport,
         serialKind: $0.serialKind,
         ioUserClass: $0.ioUserClass,
-        isOJDDriverKit: $0.isOJDDriverKit,
         isOJDUserSpace: $0.isOJDUserSpace,
         isGameControllerSupported: $0.isGameControllerSupported
       )
@@ -177,24 +163,9 @@ public struct SupportReport: Codable, Sendable {
       if $0.productID != $1.productID { return $0.productID < $1.productID }
       return ($0.product ?? "") < ($1.product ?? "")
     }
-    if let stats = virtualDiagnostics?.driverKitOutputStats {
-      driverKitOutput = DriverKitOutput(
-        attempts: stats.attempts,
-        successes: stats.successes,
-        failures: stats.failures,
-        lastErrorHex: stats.lastErrorHex,
-        connectionAttempts: stats.connectionAttempts,
-        connectionSuccesses: stats.connectionSuccesses,
-        connectionFailures: stats.connectionFailures,
-        lastConnectionErrorHex: stats.lastConnectionErrorHex
-      )
-    } else {
-      driverKitOutput = nil
-    }
-
     var reportNotes = [
       "Review this file before sharing. Device product names are included.",
-      "Serial values, paths, packet payloads, HID locations, and discovery text are excluded.",
+      "Serial values, paths, packet payloads, HID locations, and discovery text are excluded."
     ]
     if status == nil { reportNotes.append("Application service status was unavailable.") }
     if virtualDiagnostics == nil {

@@ -66,7 +66,7 @@ struct SteamControllerParserTests {
     let registry = ParserRegistry()
     let identifiers = [
       DeviceIdentifier(vendorID: 10462, productID: 4354),
-      DeviceIdentifier(vendorID: 10462, productID: 4418),
+      DeviceIdentifier(vendorID: 10462, productID: 4418)
     ]
 
     let wired = registry.runtimeProfile(for: identifiers[0])
@@ -79,7 +79,7 @@ struct SteamControllerParserTests {
     #expect(wireless.protocolVariant == .steamController)
     #expect(
       wireless.mappingFlags == [
-        "lizardMode", "trackpads", "wirelessReceiver", "experimental", "needsHardwareTest",
+        "lizardMode", "trackpads", "wirelessReceiver", "experimental", "needsHardwareTest"
       ]
     )
   }

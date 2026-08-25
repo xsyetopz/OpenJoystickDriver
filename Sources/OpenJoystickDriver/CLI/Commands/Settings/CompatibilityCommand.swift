@@ -6,7 +6,7 @@ struct CompatibilityCommand {
     let usage = """
       Usage: OpenJoystickDriver --headless compat show
              OpenJoystickDriver --headless compat set \
-      <generic-hid|sdl2-3|apple-gamecontroller|x360-hid|xone-hid>
+      <generic-hid|sdl2-3|apple-gamecontroller|xone-hid>
       """
     guard let sub = arguments.first else {
       print(usage)

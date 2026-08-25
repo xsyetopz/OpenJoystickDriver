@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 /// Turns raw bytes from a controller into ``ControllerEvent`` values.
 ///
@@ -59,6 +58,14 @@ public protocol USBStartupOutputProvider: AnyObject, Sendable {
   func usbStartupOutputPackets() -> [[UInt8]]
 }
 
+/// Optional parser hook for transport packets produced while parsing input.
+///
+/// Protocol parsing remains synchronous and deterministic. The owning pipeline
+/// drains these packets and performs the asynchronous USB writes in order.
+public protocol USBDeferredOutputProvider: AnyObject, Sendable {
+  func consumeUSBOutputPackets() -> [[UInt8]]
+}
+
 /// Optional parser hook for startup feature reports sent through a HID transport.
 public protocol HIDStartupFeatureReportProvider: AnyObject, Sendable {
   /// Source-backed feature reports needed when OJD starts consuming the physical input.
@@ -101,9 +108,9 @@ public protocol InputParser: AnyObject, Sendable {
   ///
   /// For example, GIP controllers require a power-on packet. Protocols that
   /// have no handshake (DS4, GenericHID) leave this as a no-op.
-  /// - Parameter handle: The USB device handle. Pass `nil` for HID devices.
+  /// - Parameter handle: The physical USB transport session. Pass `nil` for HID devices.
   /// - Throws: A protocol-specific error if the handshake fails.
-  func performHandshake(handle: USBDeviceHandle?) async throws
+  func performHandshake(handle: (any USBTransportSession)?) async throws
 
   /// Reads one raw data packet and returns zero or more controller events.
   ///
@@ -117,10 +124,10 @@ public protocol InputParser: AnyObject, Sendable {
   /// loop. The default implementation does nothing; protocol profiles may
   /// override it when periodic output is supported and hardware evidence
   /// requires it.
-  func keepAlive(handle: USBDeviceHandle?) throws
+  func keepAlive(handle: (any USBTransportSession)?) async throws
 }
 
 extension InputParser {
   /// Default no-op keep-alive implementation.
-  public func keepAlive(handle: USBDeviceHandle?) throws {}
+  public func keepAlive(handle: (any USBTransportSession)?) async throws { await Task.yield() }
 }

@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverUSB
 
 struct DiagnoseCommand {
   func run(arguments: [String] = []) {
@@ -43,8 +44,8 @@ struct DiagnoseCommand {
   private func printSystemExtensionBundle() {
     let appPath = "/Applications/OpenJoystickDriver.app"
     let sysextDir = appPath + "/Contents/Library/SystemExtensions"
-    let expectedID = "com.openjoystickdriver.VirtualHIDDevice"
-    let expectedDextPath = sysextDir + "/com.openjoystickdriver.VirtualHIDDevice.dext"
+    let expectedID = USBDriverKitExtensionConfiguration.bundleIdentifier
+    let expectedDextPath = sysextDir + "/com.openjoystickdriver.XboxUSBDevice.dext"
 
     CLIOutput.diagnostic("DriverKit System Extension (in /Applications):")
 
@@ -114,9 +115,13 @@ struct DiagnoseCommand {
   private func printUSBDevices() {
     CLIOutput.diagnostic("USB Game Controllers (class 0xFF):")
     let result: Result<[USBControllerDescription], DiagnoseUSBScanFailure> = runSyncResult {
-      do { return .success(try await USBControllerScanner.scanVendorSpecific()) } catch {
-        return .failure(DiagnoseUSBScanFailure(message: error.localizedDescription))
-      }
+      do {
+        return .success(
+          try await USBControllerScanner.scanVendorSpecific(
+            using: OpenJoystickDriverUSBTransportProvider()
+          )
+        )
+      } catch { return .failure(DiagnoseUSBScanFailure(message: error.localizedDescription)) }
     }
     guard let devices = try? result.get() else {
       if case .failure(let error) = result {

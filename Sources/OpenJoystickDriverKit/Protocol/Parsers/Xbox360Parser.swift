@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 /// Report type byte for Xbox 360 input reports.
 private let xbox360InputReportType: UInt8 = 0x00
@@ -126,7 +125,7 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
   // MARK: - InputParser
 
   /// Xbox 360 starts input without a handshake; startup output only sets the ring LED.
-  public func performHandshake(handle: USBDeviceHandle?) throws {
+  public func performHandshake(handle: (any USBTransportSession)?) throws {
     // Xbox 360 starts sending input reports immediately after interface claim.
   }
 
@@ -194,27 +193,27 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
   ///   - handle: Active USB device handle.
   ///   - left: Left (strong) motor intensity (0–255).
   ///   - right: Right (weak) motor intensity (0–255).
-  public func sendRumble(handle: USBDeviceHandle, left: UInt8, right: UInt8) throws {
+  public func sendRumble(handle: any USBTransportSession, left: UInt8, right: UInt8) async throws {
     let packet = rumblePacket(left: left, right: right)
-    _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
+    _ = try await handle.writeInterruptPacket(endpoint: outEndpoint, data: packet, timeout: 2000)
   }
 
   public func sendPhysicalRumble(
-    handle: USBDeviceHandle,
+    handle: any USBTransportSession,
     left: UInt8,
     right: UInt8,
     lt: UInt8,
     rt: UInt8
-  ) throws { try sendRumble(handle: handle, left: left, right: right) }
+  ) async throws { try await sendRumble(handle: handle, left: left, right: right) }
 
   /// Sets the ring-of-light LED pattern on the physical controller.
   ///
   /// - Parameters:
   ///   - handle: Active USB device handle.
   ///   - pattern: One of the ``Xbox360LEDPattern`` values.
-  public func sendLED(handle: USBDeviceHandle, pattern: Xbox360LEDPattern) throws {
+  public func sendLED(handle: any USBTransportSession, pattern: Xbox360LEDPattern) async throws {
     let packet = ledPacket(pattern: pattern)
-    _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
+    _ = try await handle.writeInterruptPacket(endpoint: outEndpoint, data: packet, timeout: 2000)
   }
 
   func rumblePacket(left: UInt8, right: UInt8) -> [UInt8] {
@@ -258,9 +257,9 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
   }
 
   public func sendPhysicalPlayerIndicator(
-    handle: USBDeviceHandle,
+    handle: any USBTransportSession,
     indicator: PhysicalPlayerIndicator
-  ) throws { try sendLED(handle: handle, pattern: Self.ledPattern(for: indicator)) }
+  ) async throws { try await sendLED(handle: handle, pattern: Self.ledPattern(for: indicator)) }
 
   // MARK: - Private parsing
 

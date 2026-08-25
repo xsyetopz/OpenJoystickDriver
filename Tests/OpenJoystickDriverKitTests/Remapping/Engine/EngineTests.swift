@@ -10,7 +10,7 @@ struct RemappingEngineTests {
     let aliases: [(Button, Button, RemappingSource)] = [
       (.a, .cross, .button(.south)), (.b, .circle, .button(.east)), (.x, .square, .button(.west)),
       (.y, .triangle, .button(.north)), (.leftBumper, .l1, .button(.leftShoulder)),
-      (.rightBumper, .r1, .button(.rightShoulder)), (.guide, .ps, .button(.guide)),
+      (.rightBumper, .r1, .button(.rightShoulder)), (.guide, .ps, .button(.guide))
     ]
 
     for (first, second, source) in aliases {
@@ -42,8 +42,7 @@ struct RemappingEngineTests {
       (.share, .share), (.options, .options), (.genericButton1, .auxiliary1),
       (.genericButton2, .auxiliary2), (.genericButton3, .auxiliary3),
       (.genericButton4, .auxiliary4), (.genericButton5, .auxiliary5),
-      (.genericButton6, .auxiliary6), (.genericButton7, .auxiliary7),
-      (.genericButton8, .auxiliary8),
+      (.genericButton6, .auxiliary6), (.genericButton7, .auxiliary7), (.genericButton8, .auxiliary8)
     ]
 
     for (button, source) in cases {
@@ -67,7 +66,7 @@ struct RemappingEngineTests {
     let sink = RemappingTestSink()
     let engine = RemappingEventEngine(sink: sink)
     let currentProfile = profile(bindings: [
-      binding(source: .dpad(.up), key: .w), binding(source: .dpad(.right), key: .d),
+      binding(source: .dpad(.up), key: .w), binding(source: .dpad(.right), key: .d)
     ])
 
     try await engine.process(
@@ -101,7 +100,7 @@ struct RemappingEngineTests {
         source: .axisDirection(.leftStickX, .positive),
         destination: .keyboard(key: .arrowRight, modifiers: []),
         axisTuning: tuning
-      ),
+      )
     ])
 
     for value: Float in [0.6, 0.6, 0.47, 0.45, 0.45] {
@@ -134,7 +133,7 @@ struct RemappingEngineTests {
           inverted: true,
           responseCurve: .easeIn
         )
-      ),
+      )
     ])
 
     try await engine.process(
@@ -163,7 +162,7 @@ struct RemappingEngineTests {
       sink.actions() == [
         .scrolled(axis: .y, amount: -0.125), .mouseMoved(axis: .x, amount: 1),
         .scrolled(axis: .y, amount: -0.125), .mouseMoved(axis: .x, amount: 0),
-        .scrolled(axis: .y, amount: 0),
+        .scrolled(axis: .y, amount: 0)
       ]
     )
   }
@@ -176,7 +175,7 @@ struct RemappingEngineTests {
         source: .button(.south),
         destination: .mouseButton(.left),
         turbo: RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.25)
-      ),
+      )
     ])
     let start: UInt64 = 1_000_000_000
 
@@ -206,7 +205,7 @@ struct RemappingEngineTests {
     #expect(
       sink.actions() == [
         .mouseButtonDown(.left), .mouseButtonUp(.left), .mouseButtonDown(.left),
-        .mouseButtonUp(.left),
+        .mouseButtonUp(.left)
       ]
     )
   }
@@ -215,7 +214,7 @@ struct RemappingEngineTests {
     let sink = RemappingTestSink()
     let engine = RemappingEventEngine(sink: sink)
     let currentProfile = profile(bindings: [
-      binding(source: .button(.south), key: .space), binding(source: .button(.east), key: .space),
+      binding(source: .button(.south), key: .space), binding(source: .button(.east), key: .space)
     ])
 
     try await engine.process(
@@ -251,7 +250,7 @@ struct RemappingEngineTests {
     let engine = RemappingEventEngine(sink: sink)
     let currentProfile = profile(bindings: [
       binding(source: .button(.south), key: .a, modifiers: [.shift, .command]),
-      binding(source: .button(.east), key: .b, modifiers: [.shift]),
+      binding(source: .button(.east), key: .b, modifiers: [.shift])
     ])
 
     try await engine.process(
@@ -270,7 +269,7 @@ struct RemappingEngineTests {
     #expect(
       sink.actions() == [
         .modifierDown(.command), .modifierDown(.shift), .keyDown(.a), .keyDown(.b), .keyUp(.a),
-        .modifierUp(.command), .keyUp(.b), .modifierUp(.shift),
+        .modifierUp(.command), .keyUp(.b), .modifierUp(.shift)
       ]
     )
   }

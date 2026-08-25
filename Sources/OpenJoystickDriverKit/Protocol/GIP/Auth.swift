@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 /// Handles the GIP authentication sub-protocol (CMD 0x06).
 ///
@@ -8,31 +7,24 @@ import SwiftUSB
 /// empty responses let the device reach FULL_POWER through xboxgip.sys
 /// retry/timeout logic.
 final class GIPAuthHandler: @unchecked Sendable {
-
-  private let outEndpoint: UInt8
-
   /// Current device power state, driven by auth progress.
   private(set) var deviceState: GIPDeviceState = .start
-
-  init(outEndpoint: UInt8 = 0x02) { self.outEndpoint = outEndpoint }
 
   /// Maps device auth states to the host response state we should send.
   private static let responseMap: [GIPAuthState: GIPAuthState] = [
     .devInit: .hostInit, .devCertificate: .hostResponse1, .devIntermediate: .hostResponse2,
     .devData1: .hostResponse3, .devData2: .hostResponse4, .devFinal: .hostResponse5,
-    .devComplete: .hostComplete,
+    .devComplete: .hostComplete
   ]
 
   /// Handle an incoming CMD 0x06 auth message from the device.
   ///
   /// Parses the auth sub-header, determines the appropriate response,
-  /// and sends it. Updates `deviceState` on key transitions.
-  func handleAuthMessage(payload: Data, handle: USBDeviceHandle, sequencer: inout GIPSequencer)
-    throws
-  {
+  /// and returns it for the transport owner to send. Updates `deviceState` on key transitions.
+  func handleAuthMessage(payload: Data, sequencer: inout GIPSequencer) -> [UInt8]? {
     guard payload.count >= 6 else {
       print("[GIPAuth] Auth payload too short: \(payload.count) bytes")
-      return
+      return nil
     }
 
     let type = payload[0]
@@ -40,12 +32,12 @@ final class GIPAuthHandler: @unchecked Sendable {
 
     guard type == GIPAuthType.device else {
       print("[GIPAuth] Unexpected auth type: 0x\(String(type, radix: 16))")
-      return
+      return nil
     }
 
     guard let deviceAuthState = GIPAuthState(rawValue: state) else {
       print("[GIPAuth] Unknown auth state: 0x\(String(state, radix: 16))")
-      return
+      return nil
     }
 
     print("[GIPAuth] Received \(deviceAuthState)")
@@ -64,15 +56,16 @@ final class GIPAuthHandler: @unchecked Sendable {
       }
     }
 
-    // Send response if one is expected for this device state
+    // Return a response if one is expected for this device state.
     guard let responseState = Self.responseMap[deviceAuthState] else {
       print("[GIPAuth] No response needed for \(deviceAuthState)")
-      return
+      return nil
     }
 
     let responsePayload = buildAuthResponse(state: responseState)
-    try sendAuthPacket(payload: responsePayload, handle: handle, sequencer: &sequencer)
-    print("[GIPAuth] Sent \(responseState)")
+    let packet = authPacket(payload: responsePayload, sequencer: &sequencer)
+    print("[GIPAuth] Prepared \(responseState)")
+    return packet
   }
 
   /// Build a complete auth sub-protocol payload for a host->device response.
@@ -82,18 +75,14 @@ final class GIPAuthHandler: @unchecked Sendable {
     guard let size = state.expectedPayloadSize else { return [] }
     var response: [UInt8] = [
       GIPAuthType.host, GIPAuthType.version, state.rawValue, 0x00, UInt8((size >> 8) & 0xFF),
-      UInt8(size & 0xFF),
+      UInt8(size & 0xFF)
     ]
     response += [UInt8](repeating: 0, count: size)
     return response
   }
 
-  /// Wrap an auth sub-protocol payload in a GIP CMD 0x06 packet and send it.
-  private func sendAuthPacket(
-    payload: [UInt8],
-    handle: USBDeviceHandle,
-    sequencer: inout GIPSequencer
-  ) throws {
+  /// Wrap an auth sub-protocol payload in a GIP CMD 0x06 packet.
+  private func authPacket(payload: [UInt8], sequencer: inout GIPSequencer) -> [UInt8] {
     let seq = sequencer.next(for: GIPCommand.authenticate)
     var packet: [UInt8] = [GIPCommand.authenticate, GIPOption.internal, seq]
 
@@ -107,6 +96,6 @@ final class GIPAuthHandler: @unchecked Sendable {
     }
 
     packet += payload
-    _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
+    return packet
   }
 }

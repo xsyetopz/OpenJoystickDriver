@@ -13,5 +13,8 @@
   "provenance": {
     "source": "local-hardware",
     "verified": true
+  },
+  "usb": {
+    "configuration": "set1-before-claim"
   }
 }

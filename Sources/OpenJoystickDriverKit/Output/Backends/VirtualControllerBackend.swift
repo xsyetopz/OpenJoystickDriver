@@ -2,7 +2,6 @@ import Foundation
 
 /// Stable identifiers for virtual controller output backends.
 public enum VirtualControllerBackendID: String, CaseIterable, Sendable {
-  case driverKitHID
   case userSpaceHID
   case gameControllerHID
 }
@@ -77,7 +76,7 @@ extension UserSpaceOutputDispatcher: VirtualControllerBackend {
       supportsMultiplePhysicalControllers: true,
       requiresEntitlement: true,
       isImplemented: true,
-      notes: "IOHIDUserDevice compatibility output path."
+      notes: "CoreHID output on macOS 15+ with an IOKit output path on macOS 10.15–14."
     )
   }
 

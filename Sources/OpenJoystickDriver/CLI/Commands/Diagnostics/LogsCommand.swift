@@ -145,7 +145,7 @@ struct LogsCommand {
         "  --stream stdout|stderr|both",
         "  --lines 1...10000       Tail limit for show (default 100)",
         "  --json                   Emit typed snapshots for show", "",
-        "Log reads retain at most 256 KiB per file and warn before sharing.",
+        "Log reads retain at most 256 KiB per file and warn before sharing."
       ].joined(separator: "\n")
     )
   }

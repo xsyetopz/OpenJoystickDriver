@@ -2,7 +2,6 @@ import Dispatch
 import Foundation
 import IOKit
 import IOKit.hid
-import SwiftUSB
 
 func parseInt(_ s: String) -> Int? {
   if s.hasPrefix("0x") || s.hasPrefix("0X") { return Int(s.dropFirst(2), radix: 16) }
@@ -41,8 +40,8 @@ enum HIDToolArgumentError: Error, CustomStringConvertible {
 func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
   if arguments == ["-h"] || arguments == ["--help"] { return nil }
 
-  let valueOptions = Set(["--vid", "--pid", "--interface", "--endpoint", "--length", "--seconds"])
-  let booleanOptions = Set(["--service-open", "--set-report", "--detach", "--validate-only"])
+  let valueOptions = Set(["--vid", "--pid", "--endpoint", "--length", "--seconds"])
+  let booleanOptions = Set(["--service-open", "--set-report", "--validate-only"])
   let knownOptions = valueOptions.union(booleanOptions).union(HIDToolMode.allCases.map(\.rawValue))
   var values: [String: String] = [:]
   var flags = Set<String>()
@@ -94,9 +93,8 @@ func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
   case .dump: owned = ["--vid", "--pid"]
   case .open: owned = ["--vid", "--pid", "--service-open", "--set-report"]
   case .monitor: owned = ["--vid", "--pid", "--seconds"]
-  case .usbMonitor:
-    owned = ["--vid", "--pid", "--interface", "--endpoint", "--length", "--seconds", "--detach"]
-  case .recordProbe: owned = ["--seconds", "--detach", "--validate-only"]
+  case .usbMonitor: owned = ["--vid", "--pid", "--endpoint", "--length", "--seconds"]
+  case .recordProbe: owned = ["--seconds", "--validate-only"]
   }
   let suppliedOptions = Set(values.keys).union(flags).subtracting([mode.rawValue])
   if let option = suppliedOptions.subtracting(owned).min() {
@@ -119,7 +117,6 @@ func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
   if mode == .monitor { try validate("--seconds", range: 1...60) }
   if mode == .usbMonitor || mode == .recordProbe { try validate("--seconds", range: 1...300) }
   if mode == .usbMonitor {
-    try validate("--interface", range: 0...255)
     try validate("--endpoint", range: 0...255)
     try validate("--length", range: 1...1024)
   }
@@ -230,9 +227,9 @@ func printMonitorNoDeviceHint(vid: Int, pid: Int) {
     )
   }
   print(
-    "HINT raw USB fallback: OJD_USE_LOCAL_SWIFTUSB=1 swift run "
+    "HINT raw USB diagnostics: swift run "
       + "OpenJoystickDriverHIDTool --usb-monitor --vid 0x\(String(vid, radix: 16))"
-      + " --pid 0x\(String(pid, radix: 16)) --interface 0 --length 64 --seconds 20"
+      + " --pid 0x\(String(pid, radix: 16)) --length 64 --seconds 20"
   )
 }
 
@@ -250,9 +247,9 @@ func printUsageAndExit(_ code: Int32) -> Never {
       OpenJoystickDriverHIDTool --open --vid 0x045e --pid 0x028e [--service-open] [--set-report]
       OpenJoystickDriverHIDTool --monitor [--vid 0x4f4a --pid 0x4447] [--seconds 10]
       OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000
-        [--endpoint 0x81] [--interface 0] [--length 64] [--seconds 20] [--detach]
+        [--endpoint 0x81] [--length 64] [--seconds 20]
       OpenJoystickDriverHIDTool --record-probe <record.json>
-        [--seconds 30] [--detach] [--validate-only]
+        [--seconds 30] [--validate-only]
 
     Options:
       --list           List HID devices (vid/pid/product/transport + report sizes).
@@ -261,13 +258,11 @@ func printUsageAndExit(_ code: Int32) -> Never {
       --service-open   With --open, recreate the device from IOHIDDeviceGetService first.
       --set-report     With --open, send one Xbox 360-style rumble output report.
       --monitor        Open matching HID devices and print input value/report callbacks.
-      --usb-monitor    Claim one USB interface and print raw interrupt IN packets.
-      --record-probe  Validate and exercise one GIP or Xbox 360 JSON record over raw USB.
+      --usb-monitor    Open one raw USB service and print interrupt IN packets.
+      --record-probe  Validate and exercise one controller record through the USB facade.
       --validate-only  Validate --record-probe input without opening physical hardware.
-      --detach         With a raw USB mode, try detaching the kernel driver first.
       --vid <int>      Vendor ID (decimal or 0x... hex).
       --pid <int>      Product ID (decimal or 0x... hex).
-      --interface <n>  USB interface number for --usb-monitor (default: 0).
       --endpoint <n>   Interrupt IN endpoint for --usb-monitor; omitted sweeps 0x81...0x8f.
       --length <n>     Read length for --usb-monitor (default: 64, max: 1024).
       --seconds <int>  Monitor duration in seconds (default varies, max: 300).

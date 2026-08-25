@@ -25,9 +25,9 @@ struct SupportReportTests {
           postHandshakeSettleMs: 50,
           preferredBackends: ["driverKit"],
           physicalOutputCapabilities: PhysicalControllerOutputCapabilities(rumbleMotors: [
-            .leftMain, .rightMain, .leftTrigger, .rightTrigger,
+            .leftMain, .rightMain, .leftTrigger, .rightTrigger
           ]),
-        ),
+        )
       ],
       userSpaceVirtualDeviceEnabled: true,
       userSpaceVirtualDeviceStatus: "error: \(secretPath)",
@@ -45,22 +45,10 @@ struct SupportReportTests {
           locationID: 3_735_928_559,
           serialKind: .present,
           ioUserClass: "IOHIDDevice",
-          isOJDDriverKit: false,
           isOJDUserSpace: false,
           isGameControllerSupported: true
-        ),
-      ],
-      driverKitOutputStats: ApplicationServiceDriverKitOutputStats(
-        attempts: 4,
-        successes: 3,
-        failures: 1,
-        lastErrorHex: "0xe00002cd",
-        connectionAttempts: 2,
-        connectionSuccesses: 1,
-        connectionFailures: 1,
-        lastConnectionErrorHex: "0xe00002c0",
-        lastDiscoverySummary: secretPath
-      )
+        )
+      ]
     )
     let health = ApplicationServiceManager.ApplicationServiceHealth(
       installed: true,
@@ -76,7 +64,7 @@ struct SupportReportTests {
             vendorID: 1_234,
             productID: 5_678,
             identifiers: ["test.controller"]
-          ),
+          )
         ]
       ),
       records: [
@@ -111,7 +99,6 @@ struct SupportReportTests {
     #expect(report.outputValidationPlans.count == 1)
     #expect(report.outputValidationPlans.first?.steps.map(\.id).contains("left-trigger") == true)
     #expect(report.hidGamepads.first?.product == "Test Controller")
-    #expect(report.driverKitOutput?.successes == 3)
     #expect(report.appleGameControllerAudit?.catalogListedOJDRecordCount == 1)
   }
 

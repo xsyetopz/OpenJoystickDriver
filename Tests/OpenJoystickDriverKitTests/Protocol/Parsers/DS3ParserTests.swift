@@ -95,7 +95,7 @@ struct DS3ParserTests {
     #expect(
       requests == [
         PhysicalHIDFeatureReadRequest(reportID: 0xF2, length: 17),
-        PhysicalHIDFeatureReadRequest(reportID: 0xF5, length: 8),
+        PhysicalHIDFeatureReadRequest(reportID: 0xF5, length: 8)
       ]
     )
   }
@@ -106,7 +106,7 @@ struct DS3ParserTests {
     #expect(
       parser.hidStartupFeatureReadRequests(transport: "USB") == [
         PhysicalHIDFeatureReadRequest(reportID: 0xF2, length: 17),
-        PhysicalHIDFeatureReadRequest(reportID: 0xF5, length: 8),
+        PhysicalHIDFeatureReadRequest(reportID: 0xF5, length: 8)
       ]
     )
     #expect(parser.hidStartupFeatureReadRequests(transport: "Bluetooth").isEmpty)

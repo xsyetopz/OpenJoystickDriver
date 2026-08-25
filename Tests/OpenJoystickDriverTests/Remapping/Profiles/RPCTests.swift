@@ -58,7 +58,7 @@ import Testing
     _ = try await harness.coordinator.update(updated, expectedCurrent: original).get()
     #expect(
       harness.routerHarness.recorder.snapshot() == [
-        .system(.keyDown(.space)), .system(.keyUp(.space)),
+        .system(.keyDown(.space)), .system(.keyUp(.space))
       ]
     )
 
@@ -70,7 +70,7 @@ import Testing
     #expect(
       harness.routerHarness.recorder.snapshot() == [
         .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.b)),
-        .system(.keyUp(.b)),
+        .system(.keyUp(.b))
       ]
     )
     #expect(await harness.routerHarness.router.status(for: device)?.selection == .compatibility)
@@ -131,7 +131,7 @@ import Testing
     #expect(snapshot.activeProfiles.isEmpty)
     #expect(
       harness.routerHarness.recorder.snapshot() == [
-        .system(.keyDown(.space)), .system(.keyUp(.space)),
+        .system(.keyDown(.space)), .system(.keyUp(.space))
       ]
     )
     #expect(await harness.routerHarness.router.status(for: device)?.selection == .compatibility)
@@ -152,7 +152,7 @@ import Testing
     #expect(snapshot.routes.count == 2)
     #expect(
       Set(snapshot.routes.map(\.runtimeIdentifier)) == [
-        first.runtimeIdentifier, second.runtimeIdentifier,
+        first.runtimeIdentifier, second.runtimeIdentifier
       ]
     )
     #expect(snapshot.routes.allSatisfy { $0.selection == .remapping })

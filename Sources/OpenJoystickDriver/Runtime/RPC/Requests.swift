@@ -252,7 +252,6 @@ extension ApplicationServiceServer {
           let build = try buildUserSpaceDispatcher(identity: id)
           dispatcher.setBackend(build.dispatcher)
           userSpaceDispatcher = build.dispatcher
-          foregroundConsumerDispatcherPool = build.foregroundConsumerPool
           userSpaceStatus = build.status
           compatibilityIdentity = id
           UserDefaults.standard.set(id.rawValue, forKey: Self.compatibilityIdentityDefaultsKey)
@@ -288,13 +287,11 @@ extension ApplicationServiceServer {
     Task {
       let enabled = userSpaceEnabled
       let status = currentUserSpaceStatus()
-      let devices = VirtualDeviceDiagnostics.enumerateHIDGamepads()
-      let stats = await driverKitDispatcher.outputStatsSnapshot()
+      let devices = await VirtualDeviceDiagnostics.enumerateHIDGamepads()
       let payload = ApplicationServiceVirtualDeviceDiagnosticsPayload(
         userSpaceVirtualDeviceEnabled: enabled,
         userSpaceVirtualDeviceStatus: status,
-        hidGamepads: devices,
-        driverKitOutputStats: stats
+        hidGamepads: devices
       )
       do { callback.call(try JSONEncoder().encode(payload)) } catch {
         print("[ApplicationServiceServer] getVirtualDeviceDiagnostics encode error: \(error)")
@@ -326,7 +323,6 @@ extension ApplicationServiceServer {
       dispatcher.setBackend(nil)
       userSpaceDispatcher?.close()
       userSpaceDispatcher = nil
-      foregroundConsumerDispatcherPool = nil
       userSpaceEnabled = false
       userSpaceStatus = "off"
     }

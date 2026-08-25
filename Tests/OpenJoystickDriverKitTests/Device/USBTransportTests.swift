@@ -64,7 +64,7 @@ struct USBDescriptorTransportResolverTests {
           number: 2,
           alternate: 1,
           endpoints: [endpoint(0x84, input: true), endpoint(0x04, input: false)]
-        ),
+        )
       ],
       preferredInterface: 0,
       requirePreferredInterface: false
@@ -84,7 +84,7 @@ struct USBDescriptorTransportResolverTests {
         interface(
           number: 2,
           endpoints: [endpoint(0x82, input: true), endpoint(0x02, input: false, interrupt: false)]
-        ),
+        )
       ],
       preferredInterface: 0,
       requirePreferredInterface: false
@@ -105,10 +105,7 @@ struct USBDescriptorTransportResolverTests {
           number: 2,
           endpoints: [endpoint(0x82, input: true), endpoint(0x02, input: false)]
         ),
-        interface(
-          number: 3,
-          endpoints: [endpoint(0x83, input: true), endpoint(0x03, input: false)]
-        ),
+        interface(number: 3, endpoints: [endpoint(0x83, input: true), endpoint(0x03, input: false)])
       ],
       preferredInterface: 3,
       requirePreferredInterface: true
@@ -123,10 +120,7 @@ struct USBDescriptorTransportResolverTests {
   @Test func descriptorSelectionReturnsNilWhenExplicitInterfaceHasNoPair() {
     let selected = USBDescriptorTransportResolver.discover(
       interfaces: [
-        interface(
-          number: 2,
-          endpoints: [endpoint(0x82, input: true), endpoint(0x02, input: false)]
-        ),
+        interface(number: 2, endpoints: [endpoint(0x82, input: true), endpoint(0x02, input: false)])
       ],
       preferredInterface: 3,
       requirePreferredInterface: true

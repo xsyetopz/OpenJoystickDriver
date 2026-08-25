@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUSB
 
 private let ds4AxisCenter: Float = 128
 private let ds4AxisDeadzone: Float = 0.08
@@ -64,7 +63,7 @@ public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDC
   }
 
   /// No-op because DS4 requires no handshake.
-  public func performHandshake(handle: USBDeviceHandle?) throws {
+  public func performHandshake(handle: (any USBTransportSession)?) throws {
     // Required by InputParser; DS4 needs no handshake.
   }
 
@@ -251,7 +250,7 @@ public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDC
       curr: shoulders,
       mapping: [
         (0x01, .l1), (0x02, .r1), (0x10, .share), (0x20, .options), (0x40, .leftStick),
-        (0x80, .rightStick),
+        (0x80, .rightStick)
       ]
     )
     return (events, shoulders)

@@ -5,7 +5,7 @@ import Testing
 struct RemappingTransformTests {
   @Test(arguments: [
     (RemappingResponseCurve.linear, 0.5), (RemappingResponseCurve.easeIn, 0.25),
-    (RemappingResponseCurve.easeOut, 0.75), (RemappingResponseCurve.smoothStep, 0.5),
+    (RemappingResponseCurve.easeOut, 0.75), (RemappingResponseCurve.smoothStep, 0.5)
   ]) func responseCurvesAreAppliedAfterDeadzone(curve: RemappingResponseCurve, expected: Double) {
     let tuning = RemappingAxisTuning(deadzone: 0, gain: 1, responseCurve: curve)
 

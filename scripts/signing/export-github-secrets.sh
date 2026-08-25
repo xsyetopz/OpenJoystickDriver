@@ -16,20 +16,17 @@ Options:
   --apply                              Run gh secret set after writing files
   --repo owner/name                     Repository for gh secret set
   --out <dir>                          Output directory
-  --apple-development-identity <path>   Apple Development identity export
-  --developer-id-identity <path>        Developer ID Application identity export
+  --developer-id-identity <path>        Developer ID Application identity export (required;
+                                        include both profile-selected identities)
 
 Environment overrides:
-  APPLE_DEVELOPMENT_IDENTITY_EXPORT
   DEVELOPER_ID_APPLICATION_IDENTITY_EXPORT
   CERTIFICATE_SECRET
   KEYCHAIN_SECRET
   NOTARIZE_APPLE_ID
   NOTARIZE_PASSWORD
 
-If identity export paths are omitted, the script exports signing identities from
-your login keychain into the private output directory. Keychain may prompt for
-permission. The script writes one private file per secret and an
+The script writes one private file per secret and an
 apply-github-secrets.sh helper that imports them with GitHub CLI without
 printing secret values.
 TXT
@@ -38,7 +35,6 @@ TXT
 repo_arg=()
 apply=0
 out_dir="$PROJECT_DIR/.build/github-actions-secrets"
-apple_development_identity="${APPLE_DEVELOPMENT_IDENTITY_EXPORT:-}"
 developer_id_identity="${DEVELOPER_ID_APPLICATION_IDENTITY_EXPORT:-}"
 
 while [[ $# -gt 0 ]]; do
@@ -59,11 +55,6 @@ while [[ $# -gt 0 ]]; do
     --out)
       [[ -n "${2:-}" ]] || die "Missing value for --out"
       out_dir="$2"
-      shift 2
-      ;;
-    --apple-development-identity)
-      [[ -n "${2:-}" ]] || die "Missing value for --apple-development-identity"
-      apple_development_identity="$2"
       shift 2
       ;;
     --developer-id-identity)
@@ -115,7 +106,7 @@ display_path() {
 }
 
 gui_devid_profile="${OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_DevID.provisionprofile}"
-dext_profile="${OPENJOYSTICKDRIVER_DEXT_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_VirtualHIDDevice.provisionprofile}"
+dext_profile="${OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile}"
 
 [[ -f "$gui_devid_profile" ]] || die "Missing GUI Developer ID profile: $gui_devid_profile"
 [[ -f "$dext_profile" ]] || die "Missing DriverKit profile: $dext_profile"
@@ -129,30 +120,14 @@ values_dir="$out_dir/values"
 mkdir -p "$values_dir"
 chmod 700 "$out_dir" "$values_dir"
 
-if [[ -z "$apple_development_identity" || -z "$developer_id_identity" ]]; then
-  auto_identity="$out_dir/signing-identities-export"
-  echo "No identity export paths supplied; exporting signing identities from login keychain."
-  echo "Keychain may prompt for permission."
-  security export \
-    -k "$HOME/Library/Keychains/login.keychain-db" \
-    -t identities \
-    -f pkcs12 \
-    -P "$certificate_secret" \
-    -o "$auto_identity" >/dev/null
-  chmod 600 "$auto_identity"
-  apple_development_identity="${apple_development_identity:-$auto_identity}"
-  developer_id_identity="${developer_id_identity:-$auto_identity}"
-fi
-
-[[ -f "$apple_development_identity" ]] || die "Missing Apple Development identity export: $apple_development_identity"
+[[ -n "$developer_id_identity" ]] || die "Pass --developer-id-identity with the Developer ID Application .p12 export"
 [[ -f "$developer_id_identity" ]] || die "Missing Developer ID Application identity export: $developer_id_identity"
 
-write_secret_file APPLE_DEVELOPMENT_CERT_BASE64 "$(base64_file "$apple_development_identity")"
 write_secret_file DEVELOPER_ID_APPLICATION_CERT_BASE64 "$(base64_file "$developer_id_identity")"
 write_secret_file CERTIFICATE_SECRET "$certificate_secret"
 write_secret_file KEYCHAIN_SECRET "$keychain_secret"
 write_secret_file OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64 "$(base64_file "$gui_devid_profile")"
-write_secret_file OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64 "$(base64_file "$dext_profile")"
+write_secret_file OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64 "$(base64_file "$dext_profile")"
 write_secret_file NOTARIZE_APPLE_ID "$notarize_apple_id"
 write_secret_file NOTARIZE_PASSWORD "$notarize_password"
 chmod 600 "$values_dir"/*.txt

@@ -189,7 +189,7 @@ public struct OJDPermissionRequirement: Sendable, Equatable {
   public static let driverExtensionApproval = Self(
     name: "Driver Extension approval",
     owner: "OpenJoystickDriver app",
-    purpose: "Optional DriverKit integrity relay; not a TCC privacy permission",
+    purpose: "Own entitlement-restricted raw USB interfaces; not a TCC privacy permission",
     requested: true
   )
 

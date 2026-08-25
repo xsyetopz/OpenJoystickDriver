@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverRelay
+import OpenJoystickDriverUSB
 import SwifterKit
 
 private struct Arguments {
@@ -48,7 +48,7 @@ private enum ArgumentError: Error, CustomStringConvertible {
 do {
   let arguments = try Arguments(Array(CommandLine.arguments.dropFirst()))
   try DriverExtensionGenerator.generate(
-    configuration: OpenJoystickDriverRelayConfiguration.driver,
+    configuration: USBDriverKitExtensionConfiguration.driver,
     options: DriverExtensionGenerationOptions(
       shortVersion: arguments.shortVersion,
       buildVersion: arguments.buildVersion,

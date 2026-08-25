@@ -33,7 +33,7 @@ struct MappingCommand {
 struct MappingInvocation {
   private static let bindingOptions: Set<String> = [
     "--source", "--target", "--deadzone", "--gain", "--invert", "--response-curve",
-    "--digital-threshold", "--turbo-rate", "--turbo-duty", "--long-hold", "--double-tap",
+    "--digital-threshold", "--turbo-rate", "--turbo-duty", "--long-hold", "--double-tap"
   ]
   private let command: String
   private let arguments: [String]

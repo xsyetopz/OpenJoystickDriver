@@ -14,8 +14,7 @@ struct AppleGameControllerSupportAuditTests {
           productID: 49_695,
           versionNumber: 773,
           transport: "USB"
-        ),
-        device(identifier: "missing.pid", vendorID: 1_133, productID: nil),
+        ), device(identifier: "missing.pid", vendorID: 1_133, productID: nil)
       ]
     )
     let second = try bundleInfo(
@@ -27,7 +26,7 @@ struct AppleGameControllerSupportAuditTests {
           productID: 49_695,
           versionNumber: 774,
           transport: "Bluetooth"
-        ),
+        )
       ]
     )
 
@@ -57,7 +56,7 @@ struct AppleGameControllerSupportAuditTests {
       snapshot: snapshot,
       records: [
         OJDControllerRecordIdentity(vendorID: 1, productID: 2, name: "Listed"),
-        OJDControllerRecordIdentity(vendorID: 1, productID: 3, name: "Not listed"),
+        OJDControllerRecordIdentity(vendorID: 1, productID: 3, name: "Not listed")
       ]
     )
 

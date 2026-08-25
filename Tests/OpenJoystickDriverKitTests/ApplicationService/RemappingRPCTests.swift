@@ -256,7 +256,7 @@ import Testing
           profileID: profile.id,
           profileName: profile.name,
           applicationScope: profile.applicationScope
-        ),
+        )
       ],
       routes: [
         ApplicationServiceRemappingRoutePayload(
@@ -271,7 +271,7 @@ import Testing
           frontmostBundleIdentifier: "com.example.Game",
           postEventAccess: .granted,
           failure: nil
-        ),
+        )
       ],
       postEventAccess: .granted
     )

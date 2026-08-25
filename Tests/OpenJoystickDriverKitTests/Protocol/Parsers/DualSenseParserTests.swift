@@ -175,7 +175,7 @@ struct DualSenseParserTests {
     let registry = ParserRegistry()
     let identifiers = [
       DeviceIdentifier(vendorID: 1356, productID: 3302),
-      DeviceIdentifier(vendorID: 1356, productID: 3570),
+      DeviceIdentifier(vendorID: 1356, productID: 3570)
     ]
 
     for identifier in identifiers {

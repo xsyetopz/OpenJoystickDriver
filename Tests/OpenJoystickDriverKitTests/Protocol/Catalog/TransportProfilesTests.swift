@@ -11,7 +11,7 @@ struct DeviceTransportProfileTests {
 
     #expect(profile.inputEndpoint == 0x82)
     #expect(profile.outputEndpoint == 0x02)
-    #expect(!profile.needsSetConfiguration)
+    #expect(profile.needsSetConfiguration)
     #expect(profile.postHandshakeSettleNanoseconds == 0)
   }
   @Test func testGamesirG7SERuntimeProfile() {
@@ -140,7 +140,7 @@ struct DeviceTransportProfileTests {
     let registry = ParserRegistry()
     let identifiers = [
       DeviceIdentifier(vendorID: 1356, productID: 3302),
-      DeviceIdentifier(vendorID: 1356, productID: 3570),
+      DeviceIdentifier(vendorID: 1356, productID: 3570)
     ]
 
     for identifier in identifiers {
@@ -159,7 +159,7 @@ struct DeviceTransportProfileTests {
     let registry = ParserRegistry()
     let identifiers = [
       DeviceIdentifier(vendorID: 10462, productID: 4354),
-      DeviceIdentifier(vendorID: 10462, productID: 4418),
+      DeviceIdentifier(vendorID: 10462, productID: 4418)
     ]
 
     let wired = registry.runtimeProfile(for: identifiers[0])
@@ -172,7 +172,7 @@ struct DeviceTransportProfileTests {
     #expect(wireless.protocolVariant == .steamController)
     #expect(
       wireless.mappingFlags == [
-        "lizardMode", "trackpads", "wirelessReceiver", "experimental", "needsHardwareTest",
+        "lizardMode", "trackpads", "wirelessReceiver", "experimental", "needsHardwareTest"
       ]
     )
 
@@ -199,7 +199,7 @@ struct DeviceTransportProfileTests {
     let identifiers = [
       DeviceIdentifier(vendorID: 1_118, productID: 657),
       DeviceIdentifier(vendorID: 1_118, productID: 681),
-      DeviceIdentifier(vendorID: 1_118, productID: 1_817),
+      DeviceIdentifier(vendorID: 1_118, productID: 1_817)
     ]
 
     for identifier in identifiers {
@@ -231,7 +231,7 @@ struct DeviceTransportProfileTests {
       (DeviceIdentifier(vendorID: 1848, productID: 18214), 0x01),
       (DeviceIdentifier(vendorID: 3695, productID: 275), 0x01),
       (DeviceIdentifier(vendorID: 3695, productID: 287), 0x02),
-      (DeviceIdentifier(vendorID: 3695, productID: 307), 0x01),
+      (DeviceIdentifier(vendorID: 3695, productID: 307), 0x01)
     ]
 
     for (identifier, outputEndpoint) in cases {
@@ -256,8 +256,7 @@ struct DeviceTransportProfileTests {
       (
         DeviceIdentifier(vendorID: 3853, productID: 103), [.horiAck, .powerOn, .ledOn, .authDone],
         []
-      ),
-      (DeviceIdentifier(vendorID: 3695, productID: 676), defaultSequence, []),
+      ), (DeviceIdentifier(vendorID: 3695, productID: 676), defaultSequence, []),
       (DeviceIdentifier(vendorID: 3695, productID: 678), defaultSequence, []),
       (DeviceIdentifier(vendorID: 3695, productID: 683), defaultSequence, []),
       (
@@ -271,7 +270,7 @@ struct DeviceTransportProfileTests {
       (
         DeviceIdentifier(vendorID: 9414, productID: 21562),
         [.powerOn, .ledOn, .authDone, .rumbleBegin, .rumbleEnd], []
-      ),
+      )
     ]
 
     for (identifier, startupPackets, mappingFlags) in cases {

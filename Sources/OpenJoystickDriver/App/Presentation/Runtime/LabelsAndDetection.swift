@@ -52,7 +52,6 @@ enum RuntimePresentation {
     case .genericHID: return "Generic HID"
     case .sdl2_3: return "SDL2/3"
     case .appleGameController: return "Apple GameController"
-    case .x360HID: return "Xbox 360 HID"
     case .xoneHID: return "Xbox One HID"
     }
   }

@@ -41,7 +41,7 @@ struct ControllerEventNormalizerTests {
     let result = ControllerEventNormalizer.normalize(
       [
         .leftStickChanged(x: 0.2, y: 0.3), .leftStickChanged(x: 2, y: .nan),
-        .leftStickChanged(x: 0.8, y: -2), .leftTriggerChanged(.infinity), .rightTriggerChanged(1.5),
+        .leftStickChanged(x: 0.8, y: -2), .leftTriggerChanged(.infinity), .rightTriggerChanged(1.5)
       ],
       from: state
     )
@@ -67,14 +67,14 @@ struct ControllerEventNormalizerTests {
     let first = ControllerEventNormalizer.normalize(
       [
         .rightTriggerChanged(0.5), .buttonPressed(.b), .leftStickChanged(x: 0.4, y: -0.2),
-        .buttonPressed(.a),
+        .buttonPressed(.a)
       ],
       from: state
     )
     let second = ControllerEventNormalizer.normalize(
       [
         .buttonPressed(.a), .leftStickChanged(x: 0.4, y: -0.2), .buttonPressed(.b),
-        .rightTriggerChanged(0.5),
+        .rightTriggerChanged(0.5)
       ],
       from: state
     )
@@ -83,7 +83,7 @@ struct ControllerEventNormalizerTests {
     #expect(
       first.events == [
         .buttonPressed(.a), .buttonPressed(.b), .leftStickChanged(x: 0.4, y: -0.2),
-        .rightTriggerChanged(0.5),
+        .rightTriggerChanged(0.5)
       ]
     )
   }

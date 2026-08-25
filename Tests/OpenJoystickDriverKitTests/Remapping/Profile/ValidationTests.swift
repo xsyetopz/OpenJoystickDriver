@@ -11,8 +11,7 @@ struct RemappingValidationTests {
         source: .button(.south),
         destination: .keyboard(key: .space, modifiers: []),
         turbo: turbo
-      ),
-      RemappingBinding(source: .button(.east), destination: .mouseButton(.left), turbo: turbo),
+      ), RemappingBinding(source: .button(.east), destination: .mouseButton(.left), turbo: turbo)
     ])
 
     try profile.validate()
@@ -26,7 +25,7 @@ struct RemappingValidationTests {
         destination: destination,
         axisTuning: .default,
         turbo: RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.5)
-      ),
+      )
     ])
 
     #expect(throws: RemappingValidationError.turboNotSupported(index: 0)) { try profile.validate() }
@@ -36,7 +35,7 @@ struct RemappingValidationTests {
     RemappingAxisTuning(deadzone: -0.01), RemappingAxisTuning(deadzone: 0.951),
     RemappingAxisTuning(gain: 0.09), RemappingAxisTuning(gain: 10.01),
     RemappingAxisTuning(digitalActivationThreshold: 0),
-    RemappingAxisTuning(digitalActivationThreshold: 1.01),
+    RemappingAxisTuning(digitalActivationThreshold: 1.01)
   ]) func tuningRejectsOutOfRangeValues(tuning: RemappingAxisTuning) {
     let profile = axisProfile(tuning: tuning)
     #expect(throws: RemappingValidationError.self) { try profile.validate() }
@@ -44,7 +43,7 @@ struct RemappingValidationTests {
 
   @Test(arguments: [
     RemappingAxisTuning(deadzone: .nan), RemappingAxisTuning(gain: .infinity),
-    RemappingAxisTuning(digitalActivationThreshold: -.infinity),
+    RemappingAxisTuning(digitalActivationThreshold: -.infinity)
   ]) func tuningRejectsNonFiniteValues(tuning: RemappingAxisTuning) {
     let profile = axisProfile(tuning: tuning)
     #expect(throws: RemappingValidationError.self) { try profile.validate() }
@@ -65,14 +64,14 @@ struct RemappingValidationTests {
     RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.049),
     RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.951),
     RemappingTurbo(repeatRateHz: .nan, dutyCycle: 0.5),
-    RemappingTurbo(repeatRateHz: 10, dutyCycle: .infinity),
+    RemappingTurbo(repeatRateHz: 10, dutyCycle: .infinity)
   ]) func turboRejectsInvalidNumericalValues(turbo: RemappingTurbo) {
     let profile = makeProfile(bindings: [
       RemappingBinding(
         source: .button(.south),
         destination: .keyboard(key: .space, modifiers: []),
         turbo: turbo
-      ),
+      )
     ])
     #expect(throws: RemappingValidationError.self) { try profile.validate() }
   }
@@ -89,7 +88,7 @@ struct RemappingValidationTests {
         id: id,
         source: .button(.east),
         destination: .keyboard(key: .b, modifiers: [])
-      ),
+      )
     ])
     #expect(throws: RemappingValidationError.duplicateBindingID(id)) { try profile.validate() }
   }
@@ -106,14 +105,14 @@ struct RemappingValidationTests {
         source: source,
         destination: .keyboard(key: .arrowUp, modifiers: []),
         axisTuning: .default
-      ),
+      )
     ])
     #expect(throws: RemappingValidationError.duplicateSource(source)) { try profile.validate() }
   }
 
   @Test(arguments: [
     "Game", "com..example", ".com.example", "com.example.", "com.example.bad_value",
-    "com.-example.Game",
+    "com.-example.Game"
   ]) func applicationScopeRequiresValidBundleIdentifier(identifier: String) {
     let profile = RemappingProfile(
       name: "Invalid scope",
@@ -139,7 +138,7 @@ struct RemappingValidationTests {
         source: .axis(.leftStickX),
         destination: .keyboard(key: .a, modifiers: []),
         axisTuning: .default
-      ),
+      )
     ])
     #expect(throws: RemappingValidationError.incompatibleSourceAndDestination(index: 0)) {
       try analogToKey.validate()
@@ -200,7 +199,7 @@ struct RemappingValidationTests {
         source: .axis(.leftStickX),
         destination: .mouseMovement(.x),
         axisTuning: tuning
-      ),
+      )
     ])
   }
 }
