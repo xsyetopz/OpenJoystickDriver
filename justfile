@@ -59,9 +59,9 @@ lint:
     framework_path="$(xcrun --show-sdk-path 2>/dev/null)/../../usr/lib"
     [ -d "$framework_path/sourcekitdInProc.framework" ] || framework_path=""
     if [ -n "$framework_path" ]; then
-      DYLD_FRAMEWORK_PATH="$framework_path" swiftlint lint --no-cache --strict
+      DYLD_FRAMEWORK_PATH="$framework_path" swiftlint lint --no-cache --strict Sources Tests Package.swift
     else
-      swiftlint lint --no-cache --strict
+      swiftlint lint --no-cache --strict Sources Tests Package.swift
     fi
 
 # Format Swift sources in-place
@@ -236,8 +236,8 @@ release-package *args:
     ./scripts/ojd release package {{args}}
 
 # Package and install the release app locally
-release-local-install version="0.5.0-beta.1":
-    ./scripts/ojd release install-local "{{version}}"
+release-local-install *args:
+    ./scripts/ojd release install-local {{args}}
 
 # Submit the current release build for notarization
 release-notarize-submit:

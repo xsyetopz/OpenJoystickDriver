@@ -22,6 +22,10 @@ disabled_rules:
   - fallthrough # Google allows fallthrough if block is not empty; SwiftLint forbids it completely
   - todo
   - file_header
+  # swift-format owns these styles and intentionally emits output that conflicts
+  # with SwiftLint's corresponding rules.
+  - collection_alignment
+  - trailing_comma
 
 opt_in_rules:
   - array_init
@@ -29,7 +33,6 @@ opt_in_rules:
   - attributes
   - closure_end_indentation
   - closure_spacing
-  - collection_alignment
   - compiler_protocol_init
   - contains_over_filter_count
   - contains_over_filter_is_empty
@@ -86,7 +89,6 @@ opt_in_rules:
   - switch_case_alignment
   - toggle_bool
   - trailing_closure
-  - trailing_comma
   - unavailable_function
   - unhandled_throwing_task
   - unneeded_parentheses_in_closure_argument
@@ -105,10 +107,6 @@ line_length:
   error: 100
   ignores_comments: true
   ignores_urls: true
-
-# Google enforces trailing commas on multi-line elements
-trailing_comma:
-  mandatory_comma: true
 
 # Google requires cases to NOT be indented relative to their switch statements
 switch_case_alignment:
