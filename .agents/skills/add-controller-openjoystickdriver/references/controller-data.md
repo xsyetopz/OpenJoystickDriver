@@ -34,7 +34,7 @@ schema/profile validity; it does not prove macOS permissions, physical input,
 reconnect, rumble, LEDs, or every control. Keep these evidence classes separate:
 
 | Class | Establishes | Does not establish |
-|---|---|---|
+| --- | --- | --- |
 | Source-backed | upstream identity and driver classification | macOS device-open or hardware behavior |
 | Packet/parser-backed | parser mapping for supplied reports | physical descriptors, reconnect, permissions |
 | Record-probe-backed | candidate record opens/decodes in the probe | all controls, output actuators, consumer support |

@@ -14,7 +14,7 @@ identifiers, events, and payload structure.
 Choose the smallest owning target and test first:
 
 | Change | First proof |
-|---|---|
+| --- | --- |
 | Parser/protocol/HID | The affected `OpenJoystickDriverKitTests` filter, then `./scripts/ojd test parsers-macos14`. |
 | Controller record/catalog | The relevant Kit test filter, then `./scripts/ojd catalog regenerate --check` and `./scripts/ojd check profiles`. |
 | App CLI/remapping/runtime/status | The affected `OpenJoystickDriverTests` filter; exercise the public or `@testable` product seam. |
