@@ -24,7 +24,7 @@ jobs:
       OJD_USE_LOCAL_SWIFTERKIT: "0"
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Toolchain
         run: |
@@ -41,14 +41,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew list --versions libusb >/dev/null 2>&1 || brew install libusb
           brew list --versions swiftlint >/dev/null 2>&1 || brew install swiftlint
-
-      - name: Prepare universal libusb
-        run: |
-          source scripts/platform/environment.sh
-          setup_libusb_pkgconfig
-          echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH" >> "$GITHUB_ENV"
 
       - name: Verify generated controller catalog
         env:
