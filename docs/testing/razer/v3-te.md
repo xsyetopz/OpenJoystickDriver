@@ -4,7 +4,10 @@ This test covers [OpenJoystickDriver issue #14](https://github.com/xsyetopz/Open
 
 The candidate record selects OJD's wired Xbox One GIP parser instead of `GenericHID` and uses the parser defaults. It declares no `shareButton` or `paddles` flags. The request proposed those flags without packet evidence, and OJD has no paddle packet decoder.
 
-The endpoint, input mapping, and output details remain unverified. This test does not need a paid Apple Developer Program account, app signing, application service installation, or DriverKit provisioning.
+The endpoint, input mapping, and output details remain unverified. Validation is
+signing-free. This pair is not in the current production Apple USB entitlement,
+so the USB facade tries direct IOUSBHost. Use an exact development DEXT experiment
+only if live ownership evidence requires it.
 
 ## Validate the bundled record
 
@@ -34,14 +37,12 @@ Quit Steam, games, and controller utilities. Connect the controller directly by 
 
 Press and release one control at a time. Confirm that the controller stays powered, `PROFILE_HANDSHAKE` succeeds, `USB_RX` packets arrive, and `EVENT` lines match each control.
 
-If the interface is busy, repeat once with `--detach`, then unplug and reconnect the controller afterward:
+If the interface is unavailable, preserve the selected route and registry owner;
+there is no detach or cross-transport fallback.
 
-```bash
-./scripts/ojd diagnose record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a43.json \
-  --seconds 30 --detach
-```
-
-Attach the complete output to issue #14 with the macOS version, Mac model, controller firmware if known, exact OJD commit, whether `--detach` was needed, and any missing or incorrect controls. The output can contain raw controller packets; inspect it before publishing.
+Attach the complete output to issue #14 with the macOS version, Mac model,
+controller firmware if known, exact OJD commit, selected USB route, and any missing or
+incorrect controls. The output can contain raw controller packets; inspect it
+before publishing.
 
 Passing schema validation alone does not make the record hardware-verified. The record retains `verified: false` until handshake, every input, reconnect, rumble, and lighting behavior claimed by OJD are observed on the device.

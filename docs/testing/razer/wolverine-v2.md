@@ -6,7 +6,9 @@ The bundled record comes from Linux xpad, patched with the locally captured inte
 
 The record also omits `set1-before-claim` and a 200 ms post-handshake delay. Enumeration reports configuration 1 but does not establish that OJD must select it, and no timing evidence supports the delay. The GIP parser, Xbox One defaults, input mapping, reconnect, LED, and rumble remain unverified.
 
-Validation and the USB probe need no paid Apple Developer Program account, app signing, application-service installation, or DriverKit provisioning. Testing physical output requires a separately installed current app.
+Validation is signing-free. This pair is not in the current production Apple USB
+entitlement, so the USB facade tries direct IOUSBHost. Use an exact development
+DEXT experiment only if live ownership evidence requires it.
 
 ## Validate the bundled record
 
@@ -24,7 +26,7 @@ Expected result:
 RECORD_VALIDATION result=valid
 ```
 
-## Run the signing-free USB probe
+## Run the raw USB probe
 
 Quit Steam, games, and controller utilities. Connect the controller directly by USB. Then run:
 
@@ -34,15 +36,14 @@ Quit Steam, games, and controller utilities. Connect the controller directly by 
   --seconds 45
 ```
 
-Confirm the controller remains powered, `RECORD_HANDSHAKE` succeeds, and `USB_RX` packets arrive on the captured endpoint. Test neutral plus press/release for every button, D-pad direction, trigger, stick axis, stick click, and any extra control exposed by the device. Unplug and reconnect the controller, then repeat the handshake and a representative control check. This signing-free probe does not exercise LED or physical output.
+Confirm the controller remains powered, `RECORD_HANDSHAKE` succeeds, and `USB_RX`
+packets arrive on the captured endpoint. Test neutral plus press/release for every
+button, D-pad direction, trigger, stick axis, stick click, and any extra control
+exposed by the device. Unplug and reconnect the controller, then repeat the
+handshake and a representative control check.
 
-If the interface is busy, repeat once with `--detach`, then unplug and reconnect the controller afterward:
-
-```bash
-./scripts/ojd diagnose record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a29.json \
-  --seconds 45 --detach
-```
+If the interface is unavailable, preserve the selected route and registry owner;
+there is no detach or cross-transport fallback.
 
 ## Check physical output with an installed app
 
@@ -53,8 +54,14 @@ OpenJoystickDriver --headless controller output list
 OpenJoystickDriver --headless controller output plan 5426 2601
 ```
 
-Run each generated step individually. Record the player-indicator result and, where the plan exposes them, left and right main rumble plus left and right trigger rumble. This output check is separate from the signing-free record probe and does not establish support by itself.
+Run each generated step individually. Record the player-indicator result and,
+where the plan exposes them, left and right main rumble plus left and right
+trigger rumble. This output check does not establish support by itself.
 
-Attach the probe output and physical-output results to issue #19 with macOS version, Mac model, controller firmware if known, exact OJD commit, whether `--detach` was needed, and results for handshake, every control, reconnect, the indicator, and each exposed actuator. Probe output can contain raw controller packets; inspect and redact it before publication.
+Attach the probe output and physical-output results to issue #19 with macOS
+version, Mac model, controller firmware if known, exact OJD commit, selected USB route,
+and results for handshake, every control, reconnect, the indicator, and each
+exposed actuator. Probe output can contain raw controller packets; inspect and
+redact it before publication.
 
 The endpoint capture, passing validation, or generating an output plan do not make the record hardware-verified. Keep `verified: false` until accepted physical evidence covers input, reconnect, indicator, and output behavior.

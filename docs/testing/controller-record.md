@@ -1,27 +1,28 @@
 # Test a controller record
 
-You can test a candidate OJD JSON record without an Apple Developer Program membership. The test builds only a Swift command-line executable, not the app, application service, virtual HID device, or generated DriverKit relay.
+You can validate a candidate OJD JSON record without an Apple Developer Program membership. A raw
+USB probe uses direct IOUSBHost when macOS permits app ownership. A device claimed by OJD's
+restricted USBDriverKit route also requires the signed application and extension.
 
 The probe supports raw-USB `GIP` records and wired or wireless-receiver `Xbox360` records. HID, Bluetooth, and unknown protocols need their own tools.
 
 ## Prerequisites
 
-Install the Xcode command-line tools and libusb. Then clone OJD:
+Install the Xcode command-line tools, then clone OJD:
 
 ```bash
 xcode-select --install
-brew install libusb
 git clone https://github.com/xsyetopz/OpenJoystickDriver.git
 cd OpenJoystickDriver
 ```
 
-You do not need a paid Apple account, provisioning record, application signing, or system extension approval.
-
-The diagnostic does not link the Homebrew libusb dynamic library. On first use,
-it downloads the libusb 1.0.29 source and builds the same cached universal static
-library used by signed app builds. Later runs reuse `.build/libusb-universal/`,
-so only the first run needs network access. `--validate-only` uses the same
-linkage path but does not open USB hardware.
+`--validate-only` needs no paid Apple account, provisioning profile, application
+signing, or system-extension approval. A physical probe through the restricted
+DEXT route requires the development signing assets described in
+[Signing assets](../development/signing.md), an installed and approved
+`com.openjoystickdriver.XboxUSBDevice` extension, and a host authorized to open
+its user client. Direct IOUSBHost probes do not use that user client. OJD does
+not use libusb.
 
 ## 1. Save the candidate record
 
@@ -59,7 +60,8 @@ Validation rejects unsupported protocol drivers, HID transports, invalid endpoin
 
 ## 3. Probe the physical controller
 
-Quit games, Steam, and other controller tools first. Connect the controller directly by USB, then run:
+Quit games, Steam, and other controller tools first. Install and approve a signed
+development build, connect the controller directly by USB, then run:
 
 ```bash
 ./scripts/ojd diagnose record /tmp/controller-candidate.json --seconds 30
@@ -75,13 +77,9 @@ During the capture, press one control at a time and return it to neutral. The pr
 - `EVENT`: OJD parser output for changed controls.
 - `RECORD_SUMMARY`: packet, parsed-event, and parse-error counts.
 
-If claiming the interface reports that it is busy, repeat once with:
-
-```bash
-./scripts/ojd diagnose record /tmp/controller-candidate.json --seconds 30 --detach
-```
-
-Do not add `--detach` by default. It asks libusb to detach the current kernel owner for that interface. Unplug and reconnect the controller after the probe so macOS can reclaim it.
+If the interface is unavailable, preserve the selected route and live registry
+owner. Use `./scripts/ojd diagnose dext` when the selected model requires the
+restricted extension. There is no detach or cross-transport fallback.
 
 ## 4. Report results
 
@@ -91,7 +89,7 @@ Attach the complete command and output to the controller's GitHub issue. Include
 - controller name and connection mode
 - exact OJD commit
 - exact record JSON
-- whether `--detach` was needed
+- selected USB route; include DriverKit extension version and activation state when applicable
 - whether the controller stayed powered on
 - neutral plus one press/release for every control
 - any missing, duplicated, delayed, or incorrect `EVENT` lines

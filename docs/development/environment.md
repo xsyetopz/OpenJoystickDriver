@@ -29,12 +29,11 @@ publisher keys. Never commit actual `.env.dev` or `.env.release` files.
 
 `.github/workflows/release.yml` remains the source of truth for GitHub Secret names. Only inputs used by the single-app release remain:
 
-- `APPLE_DEVELOPMENT_CERT_BASE64`
 - `DEVELOPER_ID_APPLICATION_CERT_BASE64`
 - `CERTIFICATE_SECRET`
 - `KEYCHAIN_SECRET`
 - `OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64`
-- `OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64`
+- `OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64`
 - `NOTARIZE_APPLE_ID`
 - `NOTARIZE_PASSWORD`
 
@@ -42,6 +41,6 @@ Workflow secrets are injected directly by GitHub; CI does not create or depend o
 
 The GUI provisioning profile must authorize the host app's exact
 `com.apple.developer.driverkit.userclient-access` allowlist for
-`com.openjoystickdriver.VirtualHIDDevice`. The DriverKit profile authorizes the
-generated relay. The build rejects an allow-any user-client entitlement in either
-artifact.
+`com.openjoystickdriver.XboxUSBDevice`. The DriverKit profile authorizes the USB
+system extension. The build rejects an allow-any user-client entitlement in
+either artifact.

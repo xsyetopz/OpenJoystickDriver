@@ -43,7 +43,7 @@ Record these fields if visible:
 From the repository root:
 
 ```bash
-OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --list
+swift run OpenJoystickDriverHIDTool --list
 ```
 
 Paste any `VID:0x45e` or Microsoft-looking lines. If the joystick appears under a different VID/PID, use that exact pair in the commands below.
@@ -53,34 +53,34 @@ Paste any `VID:0x45e` or Microsoft-looking lines. If the joystick appears under 
 If `--list` shows the joystick as an IOHID device, run the HID monitor with the observed VID/PID:
 
 ```bash
-OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --monitor --vid 0x045e --pid 0x0000 --seconds 30
+swift run OpenJoystickDriverHIDTool --monitor --vid 0x045e --pid 0x0000 --seconds 30
 ```
 
 Replace `0x0000` with the observed PID. Paste every `REPORT ... bytes=...`, `VALUE ...`, and `POLL ...` line. If the monitor prints `Monitoring 0 device(s)` or no reports, keep the full output and continue to raw USB.
 
 ## 4. Raw USB monitor
 
-Run a raw USB endpoint sweep with the observed VID/PID:
+Run the controller-neutral USB facade first. It uses direct IOUSBHost when the
+interface is accessible. If live registry evidence instead proves an exclusive
+owner, a USBDriverKit experiment requires a development configuration whose exact
+personality matches the observed VID/PID, a signed host, and an installed and
+approved development DEXT. Do not broaden the production personality. Run an
+endpoint sweep:
 
 ```bash
-OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --interface 0 --length 64 --seconds 20
+swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --length 64 --seconds 20
 ```
 
-If interface 0 produces no packets, try interface 1:
-
-```bash
-OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --interface 1 --length 64 --seconds 20
-```
-
-If libusb reports access denied or busy, rerun the same command with `--detach` and paste both outputs.
+The tool reports the selected route. If a required DEXT service does not appear,
+capture `./scripts/ojd diagnose dext`; there is no interface-detach fallback.
 
 If the sweep finds an endpoint, repeat with that endpoint while pressing one control at a time:
 
 ```bash
-OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --interface 0 --endpoint 0x81 --length 64 --seconds 30
+swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --endpoint 0x81 --length 64 --seconds 30
 ```
 
-Replace the VID, PID, interface, and endpoint with the values from the sweep.
+Replace the VID, PID, and endpoint with the values from the sweep.
 
 ## 5. Packets to capture
 
@@ -157,7 +157,7 @@ Raw USB:
 - endpoint:
 - USB_REPORT lines captured: yes/no, excerpts:
 - access denied/busy: yes/no
-- --detach tried: yes/no, result:
+- DEXT identity/version and activation state:
 
 Packet labels:
 - neutral:

@@ -8,7 +8,9 @@ to named controls. Check the reported labels in Controller Settings Live or with
 `OpenJoystickDriver --headless controller state`. Keep `verified: false` until
 the reporter confirms the complete mapping.
 
-Raw-input verification does not require a paid Apple Developer Program account, app signing, application service installation, or DriverKit provisioning.
+Record validation is signing-free. Raw-input verification requires a development
+USBDriverKit build with an exact `046D:C21D` personality; this pair is not in the
+current production Apple USB entitlement.
 
 ## Validate and capture
 
@@ -30,12 +32,17 @@ Press and release one control at a time in this order:
 6. Both triggers from rest to fully pressed
 7. Both sticks through their full range
 
-Verify that each `USB_RX` packet produces only the matching `EVENT` output. If the interface is busy, repeat the test once with `--detach`. Unplug and reconnect the controller afterward.
+Verify that each `USB_RX` packet produces only the matching `EVENT` output. If
+the interface is unavailable, capture `./scripts/ojd diagnose dext`; there is no
+detach fallback.
 
 ## Verify the app and consumers
 
 In Controller Settings, enable Live. Confirm that the LB and RB labels and every active control match the physical input. Use `controller watch` if the Settings window is unavailable.
 
-Attach these details to issue #11: the complete record-probe output, macOS version, Mac model, exact OJD commit, F310 mode-switch position, whether `--detach` was required, and Controller Settings Live or CLI state results. Raw packets are included, so inspect the output before publishing.
+Attach these details to issue #11: the complete record-probe output, macOS
+version, Mac model, exact OJD commit, F310 mode-switch position, DEXT activation
+state, and Controller Settings Live or CLI state results. Raw packets are
+included, so inspect the output before publishing.
 
 Schema validation and deterministic fixtures do not replace this physical mapping test.

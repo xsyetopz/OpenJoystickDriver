@@ -7,13 +7,12 @@ For Swift package work on parsers, records, or tests, no signing is required:
 ```bash
 git clone https://github.com/xsyetopz/OpenJoystickDriver.git
 cd OpenJoystickDriver
-brew install libusb
 swift build
 swift test
 ```
 
-Application and generated DriverKit relay work requires signing and provisioning.
-Use the `./scripts/ojd` signing flow. SwifterKit generates the relay project under
+Application and generated USB DriverKit work requires signing and provisioning.
+Use the `./scripts/ojd` signing flow. SwifterKit generates the DEXT project under
 `.build/driverkit/generated/`; do not hand-run Xcode signing, edit generated
 files, or patch generation output.
 
@@ -24,17 +23,18 @@ The DriverKit generator and runtime use the exact `SwifterKit` version pinned in
 `Package.resolved`. `OJD_USE_LOCAL_SWIFTERKIT=1` is useful only for local package
 development and is rejected by reproducible DriverKit build and validation routes.
 
-Candidate GIP and wired Xbox 360 records can be validated and exercised against
-physical USB hardware without building or signing the app:
+Candidate GIP and wired Xbox 360 records can be validated without signing. A physical probe uses
+direct IOUSBHost when macOS permits app ownership; the restricted route additionally requires the
+signed app and `XboxUSBDevice` development DEXT:
 
 ```bash
 ./scripts/ojd diagnose record /tmp/controller-candidate.json --validate-only
 ./scripts/ojd diagnose record /tmp/controller-candidate.json --seconds 30
 ```
 
-See `docs/testing/controller-record.md` for the capture and
-reporting procedure. This path does not require Apple Developer Program
-membership, provisioning profiles, DriverKit approval, or app installation.
+See `docs/testing/controller-record.md` for the capture and reporting procedure.
+`--validate-only` always works without Apple Developer Program membership or app installation.
+Whether a physical probe needs DriverKit provisioning depends on the selected ownership route.
 
 Hardware-facing tests and diagnostics require a USB controller plugged in. Use
 the focused diagnostics that match your change, for example:
@@ -137,15 +137,15 @@ swift test
   do not propagate them upward.
 - The runtime target is macOS 10.15. Avoid broad availability rewrites unless the
   touched API requires it.
-- Keep `OpenJoystickDriverKit` free of SwifterKit. Put SwifterKit runtime policy
-  and adapters in `Sources/OpenJoystickDriverRelay/`. Put generated-project
+- Keep `OpenJoystickDriverKit` free of SwifterKit. Put the host USBDriverKit adapter
+  in `Sources/OpenJoystickDriverUSB/`. Put generated-project
   invocation only in `Sources/DriverKitGenerator/` and
   `scripts/build-tools/driverkit.sh`.
 - Never add a manual DriverKit native build path, compatibility wrapper, or
   post-generation patch. Generate fresh output and check it with
   `./scripts/ojd check driverkit`.
 - The host app's `com.apple.developer.driverkit.userclient-access` entitlement
-  must contain only `com.openjoystickdriver.VirtualHIDDevice`. Do not use an
+  must contain only `com.openjoystickdriver.XboxUSBDevice`. Do not use an
   allow-any entitlement.
 - Do not assert human-readable message text in tests. Check return codes,
   exit statuses, command routes, identifiers, file paths, and structural
@@ -183,7 +183,7 @@ There is no formal PR template. Be clear about what changed and why.
 
 ```text
 Sources/OpenJoystickDriverKit/       Shared parsers, device management, output, and application-service RPC
-Sources/OpenJoystickDriverRelay/     SwifterKit DriverKit relay adapter and runtime lifecycle
+Sources/OpenJoystickDriverUSB/       USBDriverKit host wrapper and generated DEXT configuration
 Sources/OpenJoystickDriver/          App host, presentation, runtime, CLI, remapping, and status
 Sources/OpenJoystickDriver/App/Presentation/  AppKit shell and SwiftUI settings/presentation capabilities
 Sources/OpenJoystickDriver/CLI/       Installed CLI grammar, catalog, and capability commands
@@ -192,7 +192,7 @@ Sources/OpenJoystickDriver/Remapping/ App-side profile storage, routing, and Cor
 Sources/OpenJoystickDriverHIDTool/  Internal hardware investigation tool (not a user surface)
 Sources/DriverKitGenerator/          Build-time SwifterKit native-project generator
 Tests/OpenJoystickDriverKitTests/    Unit tests that do not require hardware
-Tests/OpenJoystickDriverRelayTests/  Relay configuration, transport, and lifecycle tests
+Tests/OpenJoystickDriverUSBTests/    USB configuration and host-adapter contract tests
 Tests/OpenJoystickDriverTests/App/Presentation/ App-level presentation product tests matching `Sources/OpenJoystickDriver/App/Presentation/`
 Resources/Schemas/                   Canonical record and override schemas
 Resources/ControllerOverrides/       Source omissions and evidence-backed corrections
@@ -214,6 +214,6 @@ hardware-investigation tool, not a supported user or contributor surface; route
 new user-facing diagnostics through the installed CLI or `./scripts/ojd`
 instead.
 
-`OpenJoystickDriverRelay` depends inward on `OpenJoystickDriverKit` and SwifterKit.
+`OpenJoystickDriverUSB` depends inward on `OpenJoystickDriverKit` and SwifterKit.
 The app and `DriverKitGenerator` are composition/build roots. DriverKit native
 artifacts under `.build/driverkit/` are generated outputs, not source.

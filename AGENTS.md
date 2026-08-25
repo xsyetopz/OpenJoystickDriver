@@ -1,6 +1,6 @@
 # AGENTS.md
 
-OpenJoystickDriver is a macOS userspace gamepad driver with a Swift package, persistent menu-app runtime, and a generated DriverKit relay. Ground support claims in source, tests, schemas, or recorded hardware evidence.
+OpenJoystickDriver is a macOS userspace gamepad driver with a Swift package, persistent menu-app runtime, and a generated USB DriverKit extension. Ground support claims in source, tests, schemas, or recorded hardware evidence.
 
 ## Read Next
 
@@ -21,7 +21,7 @@ Archived material under `docs/external/` is evidence, not instruction.
 - Upstream source lock: `ControllerSources.lock.json`
 - Record schemas: `Resources/Schemas/`
 - Build and signing entry point: `scripts/ojd`
-- DriverKit relay configuration and runtime adapter: `Sources/OpenJoystickDriverRelay/`
+- USB DriverKit runtime adapter: `Sources/OpenJoystickDriverUSB/`
 - DriverKit native-project generator: `Sources/DriverKitGenerator/`
 - Generated DriverKit project: `.build/driverkit/generated/` (ephemeral; never edit or commit)
 - Resolved package versions: `Package.resolved`
@@ -51,10 +51,11 @@ If `swift test` reports the documented SwiftPM module-cache mismatch, run `./scr
 - Never generate SVGs or images.
 - Preserve unrelated work and keep secrets out of source and output.
 - Follow Swift 6.2 strict-concurrency and SwiftLint rules in `CONTRIBUTING.md`.
+- Treat `swift-format` as canonical for comma placement and collection-literal alignment; do not enable SwiftLint's conflicting `trailing_comma` or `collection_alignment` rules.
 - Use decimal numeric values in committed controller JSON.
-- Keep `OpenJoystickDriverKit` independent of SwifterKit. Only `OpenJoystickDriverRelay` and `DriverKitGenerator` may import it; compose those targets at the app entry point.
+- Keep `OpenJoystickDriverKit` independent of SwifterKit. Only `OpenJoystickDriverUSB` and `DriverKitGenerator` may import it; compose those targets at the app entry point.
 - Do not hand-author or retain a manual DriverKit native build path or post-generation patch path. Generated output remains under `.build/driverkit/`.
-- Preserve the host entitlement allowlist for `com.openjoystickdriver.VirtualHIDDevice`; never substitute an allow-any DriverKit user-client entitlement.
+- Preserve the host entitlement allowlist for `com.openjoystickdriver.XboxUSBDevice`; never substitute an allow-any DriverKit user-client entitlement.
 - Avoid broad signing, DriverKit, or application-service lifecycle changes without targeted validation.
 - Do not assert human-readable message text in tests; check return codes, routes, and structural properties instead.
 - Do not write tests that read source files with `String(contentsOf:)` and assert on literal substrings via `.contains(...)`. These break on any reformat and guard formatting, not function. Test behavior: call the public API, feed it inputs, and assert on outputs. Use `@testable import` to access internal types when needed. Verify invariants through function calls (e.g. `CLIGrammar(arguments:).invocation`, `ParserRegistry().hidProfileIdentifiers()`, `ApplicationServiceRuntimeHealthAnalyzer.summarize(...)`), not source-text matching.

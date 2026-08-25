@@ -1,10 +1,5 @@
 # OpenJoystickDriver
 
-> [!WARNING]
-> All compiled 'releases' before 0.5.0-alpha.4 have been swooped due to [#23](https://github.com/xsyetopz/OpenJoystickDriver/issues/23). Please be patient (or compile a private version yourself) for `0.5.0-beta.1`. Thanks for your patience.
->
-> - Krystian, OJD's core maintainer.
-
 English | [简体中文](README.zh.md)
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/xsyetopz/OpenJoystickDriver?style=social)](https://github.com/xsyetopz/OpenJoystickDriver/stargazers)
@@ -31,17 +26,17 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
 
 ## Why OpenJoystickDriver
 
-OpenJoystickDriver normalizes physical controller input into controller outputs that apps can understand. It provides compatibility modes for SDL, Apple GameController, Generic HID, and experimental Xbox HID targets, with common diagnostics and checks in one repo-controlled workflow.
+OpenJoystickDriver normalizes physical controller input into controller outputs that apps can understand. It provides compatibility modes for SDL, Apple GameController, Generic HID, and an experimental Xbox One HID target, with common diagnostics and checks in one repo-controlled workflow.
 
 ## Status
 
 See [docs/user/compatibility.md](docs/user/compatibility.md) for current backend, output-mode, and device-support status.
 
-Compatibility mode does not require DriverKit. The generated SwifterKit system
-extension is a vendor-defined integrity relay for self-test and diagnostics. It
-deliberately does not publish a second consumer gamepad. Self-test reads the
-signed host entitlement. Relay delivery is required for an entitled host and
-reported as optional and inconclusive when the entitlement is absent.
+Vendor-specific/raw USB controllers use direct IOUSBHost when macOS permits app ownership.
+Apple-entitled exclusive Xbox GIP models use the generated
+`com.openjoystickdriver.XboxUSBDevice` USBDriverKit system extension. The app publishes
+consumer-facing virtual controllers with CoreHID on macOS 15+ and the IOKit backend on
+macOS 10.15–14. The DEXT never publishes virtual HID devices.
 
 ## Brand mark attribution
 
@@ -102,10 +97,10 @@ To uninstall OpenJoystickDriver completely:
 
 | What you are trying to run | Recommended | Why |
 | --- | --- | --- |
-| Most games, Steam, emulators, SDL apps | Compatibility + `SDL2/3` | Stable app-facing identity and mapping. |
+| Steam, PCSX2, and other SDL 2/3 apps | Compatibility + `SDL2/3` | Hardware-verified ASTRO HIDAPI identity with Xbox 360-style input and rumble. |
 | Native macOS apps using `GCController` | Compatibility + `Apple GameController` | Targets GameController.framework consumers. |
 | Apps that inspect HID descriptors | Compatibility + `Generic HID` | Descriptor-driven HID surface. |
-| A picky app expecting Microsoft HID | Compatibility + `Xbox 360 HID` or `Xbox One HID` | Experimental spoof identities for targeted testing. |
+| A picky app expecting Xbox One HID | Compatibility + `Xbox One HID` | Experimental spoof identity for targeted testing; it is not a general fallback. |
 
 CLI equivalents from the installed app bundle:
 
@@ -119,7 +114,7 @@ CLI equivalents from the installed app bundle:
 | --- | --- |
 | The runtime is disconnected | Launch the installed app, then check `--headless status`. |
 | SDL sees 0 controllers | Ensure Input Monitoring and Accessibility are granted, then restart the host and re-test. |
-| DriverKit relay installation fails | Compatibility output still works. `--headless test` tests Compatibility and reports relay diagnostics as optional when the signed host lacks relay access. |
+| XboxUSBDevice installation fails | Entitlement-restricted USB controllers remain unavailable; accessible raw controllers can still use direct IOUSBHost. Rebuild the signed app and run `--headless extension enable`. |
 
 Useful diagnostics:
 
@@ -161,7 +156,6 @@ Installed app bundle commands:
 Parser, record, and test changes do not require signing:
 
 ```bash
-brew install libusb
 ./scripts/ojd catalog regenerate --check
 ./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
@@ -169,7 +163,7 @@ brew install libusb
 swift build
 ```
 
-For application, generated DriverKit relay, signing, and notarization work, start here:
+For application, generated USB DriverKit, signing, and notarization work, start here:
 
 - [Signing assets and Apple Developer portal setup](docs/development/signing.md)
 - [scripts/README.md](scripts/README.md)

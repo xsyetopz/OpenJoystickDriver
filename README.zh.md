@@ -29,7 +29,7 @@ OpenJoystickDriver 会把物理控制器输入规范化为 app 能理解的虚�
 
 当前后端、输出模式和设备支持状态请参阅 [docs/user/compatibility.md](docs/user/compatibility.md)。
 
-兼容模式不需要 DriverKit。生成的 SwifterKit system extension 是一个由供应商定义的完整性 relay，用于自检和诊断。它有意不发布第二个面向用户的游戏手柄。自检会读取已签名 host entitlement。对于拥有 entitlement 的 host，必须完成 relay delivery；缺少 entitlement 时，它会被报告为可选且无法得出结论。
+macOS 10.15–14 使用 IOHID，macOS 15 及更高版本使用 CoreHID。原始或供应商特定的 USB 控制器通过生成的 `com.openjoystickdriver.XboxUSBDevice` USBDriverKit system extension 访问；OJD 不再使用 libusb。虚拟游戏手柄仍由 app 创建，DEXT 不会发布第二个游戏手柄。
 
 ## 快速开始
 
@@ -75,10 +75,10 @@ OpenJoystickDriver 在 `/Applications` 中只有一个 app bundle：
 
 | 你要运行的内容 | 推荐选项 | 原因 |
 | --- | --- | --- |
-| 大多数游戏、Steam、模拟器、SDL app | Compatibility + `SDL 2/3` | 提供稳定的 app 侧身份和映射。 |
+| Steam、PCSX2 和其他 SDL 2/3 app | Compatibility + `SDL 2/3` | 使用已通过硬件验证的 ASTRO HIDAPI 身份，提供 Xbox 360 风格输入与震动。 |
 | 使用 `GCController` 的原生 macOS app | Compatibility + `Apple GameController` | 面向 GameController.framework 使用方。 |
 | 检查 HID descriptor 的 app | Compatibility + `Generic HID` | 提供由 descriptor 驱动的 HID 接口。 |
-| 需要 Microsoft HID 的挑剔 app | Compatibility + `Xbox 360 HID` 或 `Xbox One HID` | 用于定向测试的实验性伪装身份。 |
+| 需要 Xbox One HID 的挑剔 app | Compatibility + `Xbox One HID` | 仅用于定向测试的实验性伪装身份；它不是通用回退。 |
 
 使用已安装 app bundle 时，对应的 CLI 命令如下：
 
@@ -92,7 +92,7 @@ OpenJoystickDriver 在 `/Applications` 中只有一个 app bundle：
 | --- | --- |
 | 运行时已断开连接 | 启动已安装的 app，然后检查 `--headless status`。 |
 | SDL 看到 0 个控制器 | 确保已授予输入监控和辅助功能权限，然后重启 host 并重新测试。 |
-| DriverKit relay 安装失败 | 兼容性输出仍可工作。`--headless test` 会测试 Compatibility；当签名 host 没有 relay 访问权限时，会将 relay 诊断报告为可选。 |
+| USB DriverKit extension 安装失败 | 原始或供应商特定的 USB 控制器不可用。运行 `./scripts/ojd diagnose dext`，并检查 app 和 `XboxUSBDevice` provisioning profile。 |
 
 实用诊断命令：
 
@@ -131,7 +131,6 @@ OpenJoystickDriver 在 `/Applications` 中只有一个 app bundle：
 修改 parser、record 和测试不需要签名：
 
 ```bash
-brew install libusb
 ./scripts/ojd catalog regenerate --check
 ./scripts/ojd check profiles
 ./scripts/ojd test parsers-macos14
@@ -139,7 +138,7 @@ brew install libusb
 swift build
 ```
 
-涉及应用程序、生成的 DriverKit relay、签名和 notarization 的工作，请从这里开始：
+涉及应用程序、生成的 USB DriverKit extension、签名和 notarization 的工作，请从这里开始：
 
 - [签名资源和 Apple Developer portal 设置](docs/development/signing.md)
 - [scripts/README.md](scripts/README.md)

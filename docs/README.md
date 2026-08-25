@@ -9,7 +9,8 @@
 ## Test hardware
 
 - [Test physical output](testing/physical-output.md)
-- [Test a controller record without a signed installation](testing/controller-record.md)
+- [Probe macOS haptics backends](testing/haptics-backends.md)
+- [Validate and test a controller record](testing/controller-record.md)
 - [Check Logitech F310 mapping](testing/logitech-f310.md)
 - [Check Microsoft Xbox One Controller (model 1537)](testing/xbox/1537.md)
 - [Check Razer Wolverine V2](testing/razer/wolverine-v2.md)
@@ -23,9 +24,10 @@
 ## Develop and diagnose
 
 - [Architecture](development/architecture.md)
+- [Apple controller ownership and transport evidence](development/apple-controller-ownership.md)
 - [Source topology](development/source-topology.md)
 - [Menu-bar and settings UI architecture](development/menu-bar-settings-architecture.md)
-- Generated DriverKit relay: run `./scripts/ojd driverkit generate` or
+- Generated USB DriverKit extension: run `./scripts/ojd driverkit generate` or
   `./scripts/ojd check driverkit`.
 - Repository command reference and supported command index: run `./scripts/ojd help`.
   Its output is catalog-backed, non-color, and keyboard-readable.

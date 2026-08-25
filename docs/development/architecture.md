@@ -1,73 +1,96 @@
 # Architecture
 
-OpenJoystickDriver ships one application bundle and one host process identity. The host owns the
-physical-controller pipeline, virtual-output dispatch, authenticated local command endpoint, and the
-AppKit menu-bar/settings facade. The same executable exposes the expert CLI through `--headless`; there
-is no second UI or daemon identity.
+OpenJoystickDriver ships one application bundle, one persistent host process, and one generated
+USBDriverKit system extension. The app owns controller semantics, virtual output, authenticated
+local commands, and the AppKit menu/settings UI. Most accessible raw USB interfaces are opened
+directly by the app. The DEXT is a restricted owner for devices covered by OJD's Apple-issued USB
+transport entitlement.
 
 ```mermaid
 flowchart LR
-  A[Physical controller] --> B[DeviceManager]
-  B --> C[Parser and normalizer]
-  C --> D[Composite output dispatcher]
-  D --> E[Generated DriverKit integrity relay]
-  D --> F[IOHIDUserDevice compatibility HID]
-  G[Signed app host] --> H[In-process application service]
-  I[Headless CLI] <--> J[Authenticated local RPC socket]
-  J <--> H
-  H --> B
-  H --> D
+  A[HID controller] --> B[HID access wrapper]
+  C[Accessible raw USB controller] --> E[OpenJoystickDriverUSB wrapper]
+  D[Entitled exclusive USB controller] --> K[XboxUSBDevice.dext]
+  K --> E
+  B --> F[DeviceManager]
+  E --> F
+  F --> G[Parser and normalizer]
+  G --> H[Mapping and output policy]
+  H --> I[Virtual HID wrapper]
+  I --> J[Consumer applications]
 ```
 
-## Process lifecycle
+## Platform split
 
-Launching the signed app starts the main runtime, one status-item menu, and one reusable settings
-window controller. Closing the settings window hides it without stopping the runtime. Sending `SIGTERM`
-or `SIGINT` stops the runtime cleanly. The CLI is an explicit invocation of the same executable; it
-is a separate process invocation but never starts a second runtime/service host or socket owner.
+The package deployment floor remains macOS 10.15. Availability selection happens once inside each
+HID wrapper; callers do not repeat OS checks.
 
-On macOS 13 and later, `SMAppService.mainApp` registers the same app as a login item. There is no bundled helper, LaunchAgent plist, daemon executable, or second privacy identity. Current builds do not manage legacy launchd jobs or reset TCC.
+| Capability | macOS 10.15–14 | macOS 15+ |
+| --- | --- | --- |
+| Physical HID discovery and reports | `IOHIDManager` / `IOHIDDevice` | CoreHID `HIDDeviceManager` / `HIDDeviceClient` |
+| Consumer virtual HID | `IOHIDUserDevice` | CoreHID `HIDVirtualDevice` |
+| Raw/custom USB | app-side IOUSBHost or restricted USBDriverKit DEXT | app-side IOUSBHost or restricted USBDriverKit DEXT |
+| HID DEXT implementation | HIDDriverKit when needed | HIDDriverKit when needed |
 
-Headless commands invoke the installed executable with `--headless`. Commands that need live state use a user-private Unix-domain socket at `/tmp/com.openjoystickdriver.<uid>.rpc`. The socket is mode `0600`; the server requires the same user, signing identifier, and team identifier. Frames and deadlines are bounded.
+The older implementations are marked
+`@available(macOS, introduced: 10.15, obsoleted: 15.0)`. CoreHID implementations are marked
+`@available(macOS 15.0, *)`, CoreHID is weak-linked, and the wrapper selects with `#available`.
+The macOS 10.15–14 implementation is an active platform variant, not a fallback on macOS 15+.
 
-## DriverKit ownership and generation
+## USB transport boundary
 
-The repository is a modular monolith. `OpenJoystickDriverKit` owns controller
-protocol and output policy and does not import SwifterKit. `OpenJoystickDriverRelay`
-is the sole SwifterKit adapter: it owns the vendor-defined HID relay configuration,
-runtime connection lifecycle, and report forwarding. `OpenJoystickDriver` is the
-composition root. `DriverKitGenerator` is a separate build-time executable that
-uses the same relay configuration to invoke SwifterKit generation.
+`OpenJoystickDriverKit` owns the asynchronous `USBTransportProvider` and `USBTransportSession`
+ports plus all parsing and controller policy. It never imports SwifterKit.
+`OpenJoystickDriverUSB` is the app-side platform facade. Its direct backend opens accessible
+vendor-specific interfaces with IOUSBHost. Its USBDriverKit backend talks to OJD's restricted DEXT.
+The facade owns discovery, session lifetimes, transfers, configuration/alternate-setting requests,
+and platform error translation. Parsers and application callers receive one route-tagged API and
+never handle IOUSBHost, DriverKit, or SwifterKit types.
 
-SwifterKit is the only owner of the native DriverKit project. Every DriverKit build
-generates a fresh project under `.build/driverkit/generated/` and builds it into
-`.build/driverkit/derived-data/`. Neither directory is source or an interface for
-manual edits. No manual native build path or post-generation patch is retained.
+Selection follows ownership evidence, not controller brand. A service exposed by the DEXT stays on
+that route. Models covered by the production USB transport entitlement never silently fall back to
+direct app-side access. Other raw USB controllers use IOUSBHost when macOS permits the app to own
+their interface. Failure to open one route is reported instead of retried through another route.
 
-Until the host-report policy is released, SwiftPM follows SwifterKit's `main`
-branch. `Package.resolved` locks the exact reviewed revision used by a reproducible
-build.
+`DriverKitGenerator` consumes the sole `USBDriverKitExtensionConfiguration`. Development and
+production generation both match only Apple's approved Microsoft pairs:
+`045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, and `045E:0B12`.
+The configuration uses bundle identifier `com.openjoystickdriver.XboxUSBDevice`, provider
+`IOUSBHostInterface`, configuration 1, interface 0, class `0xFF`, subclass `0x47`, and protocol
+`0xD0`. Accessible third-party GIP controllers such as `3537:1010` stay on the direct IOUSBHost
+route; their catalog profile may request configuration 1 before the facade resolves an interface.
 
-The generated relay preserves the stable bundle identifier
-`com.openjoystickdriver.VirtualHIDDevice`, targets DriverKit 19.0, and exposes a
-vendor-defined relay rather than a consumer gamepad. The host app is the only
-client: its `com.apple.developer.driverkit.userclient-access` entitlement is an
-exact allowlist containing that bundle identifier; allow-any access is forbidden.
+The DEXT does not parse controller protocols and does not create virtual HID devices. Its
+entitlements contain only the DriverKit base entitlement and the appropriate USB transport value.
+`com.apple.developer.hid.virtual.device` belongs only to the app. The app's DriverKit user-client
+allowlist contains exactly `com.openjoystickdriver.XboxUSBDevice`; allow-any access is forbidden.
+The external XboxUSBDevice identity remains unchanged because it is the identity Apple approved;
+the internal transport abstractions are controller-neutral.
+
+See [Apple controller ownership evidence](apple-controller-ownership.md) for the installed-system
+observations, entitlement scope, and why an Apple personality list is not OJD's support catalog.
+
+Every DriverKit build generates a fresh native project under `.build/driverkit/generated/` and
+builds under `.build/driverkit/derived-data/`. Generated output is ephemeral and is never edited or
+committed. `./scripts/ojd check driverkit` checks the entitlement, personality, determinism,
+dependency direction, and an unsigned universal build.
+
+## Process and command lifecycle
+
+Launching the signed app starts the runtime, one status item, and one reusable settings window.
+Closing settings does not stop controller processing. `SIGTERM` and `SIGINT` stop the runtime
+cleanly. Headless commands invoke the same executable and reach live state through the private
+Unix-domain socket at `/tmp/com.openjoystickdriver.<uid>.rpc`. The socket is mode `0600`; the server
+requires the same user, signing identifier, and team identifier. Frames and deadlines are bounded.
 
 ## Permissions
 
-`OpenJoystickDriver.app` owns both required HID privacy decisions:
+- The app carries `com.apple.developer.hid.virtual.device` for CoreHID virtual devices.
+- The macOS 10.15–14 IOKit HID implementation retains its evidenced Input Monitoring and
+  Accessibility checks.
+- CoreGraphics post-event access independently authorizes remapped keyboard, pointer, and scroll
+  events.
+- The USB DEXT uses DriverKit/USB provisioning and has no virtual-HID entitlement.
 
-- Input Monitoring authorizes physical `IOHIDManager` and `IOHIDDevice` input.
-- Accessibility, represented by `kIOHIDRequestTypePostEvent`, authorizes compatibility `IOHIDUserDevice` publication.
-- CoreGraphics post-event access separately authorizes remapped keyboard, pointer, and scroll events.
-
-The application reports authoritative `IOHIDCheckAccess` results. Registration and `IOHIDRequestAccess` return values are not treated as grants. The generated DriverKit relay has a separate extension identity but is not a TCC input owner.
-
-## Diagnostics
-
-Host process output is captured per launch under `~/Library/Logs/OpenJoystickDriver/`. Headless commands retain terminal output. Runtime health uses the authenticated socket PID rather than a launchd job. DriverKit diagnostics remain separate because the generated extension has its own lifecycle and registry state.
-
-`./scripts/ojd check driverkit` proves deterministic generation, native-project metadata and
-entitlement constraints, dependency direction, and an unsigned build. It cannot prove signing,
-activation, OS approval, or hardware delivery.
+Hardware access, signing, activation, and permission behavior still require focused signed-device
+validation; an unsigned build cannot prove those boundaries.

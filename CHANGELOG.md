@@ -4,12 +4,66 @@ All notable changes to OpenJoystickDriver are documented in this file.
 
 ## 0.5.0-beta.1
 
+### Added
+
+- Added availability-selected HID wrappers: macOS 10.15–14 use IOHID for
+  physical access and `IOHIDUserDevice` for consumer virtual devices, while
+  macOS 15 and later use CoreHID for both roles.
+- Added a controller-neutral `OpenJoystickDriverUSB` facade with direct
+  app-side IOUSBHost access for available raw/vendor interfaces and a separate
+  USBDriverKit route for interfaces owned by OJD's restricted system extension.
+- Added evidence-based USB route selection, stable route-qualified service
+  identities, pre-open configuration and alternate-setting options, and focused
+  no-fallback/ownership contract tests.
+- Added documentation for Apple's installed controller personalities, USB
+  ownership boundaries, CoreHID virtual-device entitlement ownership, and the
+  separate development and Developer ID signing requirements.
+
 ### Fixed
 
-- Deduplicated wired Xbox controller discovery across HID and raw-USB paths when both paths report the same physical serial number, and expanded controller details to avoid cramped long-value columns.
+- Kept Compatibility virtual gamepads stable across foreground-application
+  changes and made `sdl2-3` publish the hardware-verified ASTRO `9886:0024`
+  identity with its exact Xbox 360 HIDAPI descriptor and reports. PCSX2 Nightly
+  accepted input and sent working rumble through this SDL route.
+- Prevented superseded delayed rumble stops from silencing newer accepted
+  output commands when applications rapidly replace motor strengths. This is
+  scheduling hardening; it does not add an SDL output protocol to identities
+  for which an application emits no rumble report.
+- Fixed an IOUSBHost crash caused by attempting to resize kernel-backed transfer
+  buffers; interrupt transfers now use bounded memory copies and the required
+  zero completion timeout.
+- Deduplicated wired controller discovery across HID and raw-USB paths when both
+  paths report the same physical device, and expanded controller details to
+  avoid cramped long-value columns.
+- Corrected DriverKit signing diagnostics to require the USB transport
+  entitlement and reject HIDDriverKit, virtual-device, and allow-any
+  entitlements in the USB DEXT.
+- Restricted development and production USBDriverKit configuration to Apple's approved
+  Microsoft GIP family: `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`,
+  `045E:0B00`, `045E:0B0A`, and `045E:0B12`.
+- Made direct IOUSBHost discovery start from catalog-supported device services,
+  so controllers such as the GameSir G7 SE can select configuration 1 before
+  their GIP interface exists.
+- Made install and DEXT diagnostics accept an activated, idle extension when no
+  entitled Microsoft device is connected and compare the actual packaged short
+  and build versions instead of assuming `1.0`.
+- Resolved all SwiftLint findings in repository-owned Swift sources, tests, and
+  `Package.swift`; `just lint` now checks only those paths.
 
 ### Changed
 
+- Folded the hardware-verified ASTRO Xbox 360 HIDAPI implementation into the
+  SDL-specific `sdl2-3` profile and removed the now-redundant `x360-hid`
+  selection and diagnostic spoof RPC/CLI surface. Hardware testing rejected
+  the former GameStop `1BAD:F901` SDL identity because rumble was absent or a
+  rare faint pulse, and rejected Microsoft Bluetooth `045E:02E0` and
+  `045E:02FD` spoof variants because neither delivered input. `xone-hid`
+  remains an experimental XInput/XUSB-style identity after its GameSir G7 SE
+  input and rumble failure.
+- Defined compatibility profiles by the consumer API they target: `sdl2-3`
+  for SDL 2/3 applications, `apple-gamecontroller` for `GCController`
+  applications, `generic-hid` as the unsupported/unknown-consumer fallback,
+  and `xone-hid` for experimental XInput/XUSB-style compatibility.
 - Consolidated the supported headless CLI around the current `map`, `compat`,
   `extension`, `permissions`, and `diagnose` command surfaces.
 - Removed browser diagnostics and obsolete application-service start/restart
@@ -17,8 +71,30 @@ All notable changes to OpenJoystickDriver are documented in this file.
 - Removed active backwards-compatibility aliases, legacy DriverKit signing
   fallbacks, legacy virtual-device serial decoding, and permissive self-test
   payload decoding.
-- Kept Compatibility output behavior current while requiring exact relay
-  entitlements and current route identities.
+- Removed foreground-consumer HID routing, per-application virtual-device
+  replacement, and the obsolete bundled SDL mapping file.
+- Removed SwiftUSB and libusb. Raw/custom USB now uses Apple's IOUSBHost family
+  directly or through the restricted USBDriverKit extension on macOS 10.15 and
+  later.
+- Preserved the Apple-approved external identity
+  `com.openjoystickdriver.XboxUSBDevice` while renaming internal transport and
+  configuration abstractions so controller brands do not determine routing.
+- Reserved the USB DEXT for an observed DEXT-owned service or an exact
+  Apple-entitled model. Direct-open failures never silently retry through
+  another backend.
+- Kept `com.apple.developer.hid.virtual.device` on the standard application
+  process only. The USB DEXT contains only its DriverKit base and exact USB
+  transport entitlements and never publishes virtual HID devices.
+- Split local Apple Development and CI Developer ID signing assets. Release CI
+  now imports only the Developer ID Application identity and separate host and
+  `XboxUSBDevice` Developer ID profiles, and no longer installs libusb.
+- Matched the USB entitlement to Apple's issued seven-dictionary
+  provisioning payload rather than an `idProductArray` shorthand.
+- Made the app's source `Info.plist` the canonical package version declaration;
+  app, DEXT, package, and local-install defaults now inherit it.
+- Removed the daemon and relay architecture, including
+  `com.openjoystickdriver.daemon`; the persistent application owns controller
+  semantics, virtual output, and its authenticated local command service.
 
 ## 0.5.0-alpha.5
 

@@ -8,7 +8,10 @@ This request covers [OpenJoystickDriver issue #9](https://github.com/xsyetopz/Op
 
 The parser handles Linux's four-byte receiver envelope, controller presence transitions, wrapped 20-byte state reports, two-motor rumble, and ring-light commands. These paths are source-backed but not hardware-verified.
 
-No paid Apple Developer Program account, application signing, application service installation, or DriverKit provisioning is required.
+Record validation is signing-free. These receiver pairs are not in the current
+production Apple USB entitlement, so physical capture tries direct IOUSBHost.
+Use an exact development DEXT experiment only if live ownership evidence proves
+direct access is unavailable.
 
 ## Find and validate the receiver record
 
@@ -36,8 +39,12 @@ The useful evidence is:
 - `CONTROLLER_CONNECTION state=disconnected` after powering off the controller.
 - No stale held buttons after disconnect and reconnect.
 
-If claiming the USB interface is busy, repeat once with `--detach` and unplug/reconnect the receiver afterward.
+If the USB interface is unavailable, preserve the selected route and registry
+owner. There is no detach or cross-transport fallback.
 
-Attach the complete command output to issue #9 with macOS version, Mac model, receiver VID/PID and branding, controller model, exact OJD commit, whether `--detach` was required, reconnect results, and any missing or incorrect inputs. Raw packet output is included; inspect it before publishing.
+Attach the complete command output to issue #9 with macOS version, Mac model,
+receiver VID/PID and branding, controller model, exact OJD commit, selected route,
+reconnect results, and any missing or incorrect inputs. Raw packet output is
+included; inspect it before publishing.
 
 After input passes, use the app or application service-backed `physical-output plan` workflow to verify both rumble motors and all four ring-light player patterns. Do not mark these records hardware-verified until receiver presence, input, reconnect, rumble, and LEDs pass on physical hardware.

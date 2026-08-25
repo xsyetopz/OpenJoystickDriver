@@ -21,11 +21,11 @@ aliases.
 | Path | Responsibility |
 | --- | --- |
 | `scripts/ojd` | Stable command dispatcher and help |
-| `scripts/build-tools/` | Application, generated DriverKit relay, and bundle construction |
+| `scripts/build-tools/` | Application, generated USB DriverKit extension, and bundle construction |
 | `scripts/catalog/` | Controller-source import and record validation |
 | `scripts/diagnostics/` | Runtime probes, focused launch helpers, and repairs |
 | `scripts/docs/` | Archived external-evidence refresh |
-| `scripts/platform/` | macOS toolchain, environment, signing, and libusb contract |
+| `scripts/platform/` | macOS toolchain, environment, signing, and packaging contract |
 | `scripts/quality/` | Repository validators and compatibility test harnesses |
 | `scripts/release/` | Versioning, notarization, and DMG packaging |
 | `scripts/signing/` | Local and CI signing setup |
@@ -47,7 +47,7 @@ All implementation paths are internal to the dispatcher.
 | `ojd` | Developers and CI | Dispatches commands; fixed routes reject extra arguments | CLI and script-layout tests |
 | `build-tools/build.sh` | `build`, `build install`, `build install-fast`, `lint` | Writes `.build/`; install routes replace installed components | Swift packaging contracts; shell syntax |
 | `build-tools/bundles.sh` | Build implementation | Constructs and signs the application bundle | Swift packaging contracts; shell syntax |
-| `build-tools/driverkit.sh` | `driverkit`, `build dext`, and install implementation | Generates, validates, builds, signs, and embeds the SwifterKit DriverKit relay | Deterministic generation, metadata/entitlement checks, unsigned native build, shell syntax |
+| `build-tools/driverkit.sh` | `driverkit`, `build dext`, and install implementation | Generates, validates, builds, signs, and embeds the SwifterKit USB DriverKit extension | Deterministic generation, metadata/entitlement checks, unsigned native build, shell syntax |
 | `catalog/generate-controller-catalog.py` | `catalog regenerate` | Reads locked sources; check is read-only, write replaces generated records | Catalog unit tests and regeneration check |
 | `catalog/generate-xpad-records.py` | `catalog xpad` | Reads local or GitHub Linux source and writes review output | xpad unit tests |
 | `catalog/validate-profiles.py` | `check profiles` and catalog generator | Reads and validates controller records | Catalog unit tests and profile gate |
@@ -56,7 +56,7 @@ All implementation paths are internal to the dispatcher.
 | `diagnostics/sdl/gamecontroller.sh` | `launch sdl-gamecontroller` | Selects a compatibility route and launches the requested app | Shell syntax; manual SDL check |
 | `diagnostics/dext/repair.sh` | repair route | Finds and terminates stale generated DriverKit processes | Shell syntax; focused local repair |
 | `docs/issues/export.py` | `docs export-external-issues` | Reads GitHub through `gh` and replaces archived issue evidence | Path validation; explicit manual refresh |
-| `platform/environment.sh` | Build, diagnostics, notarization, and packaging implementations | Loads one root environment file; may build cached universal libusb artifacts | Environment and packaging checks; shell syntax |
+| `platform/environment.sh` | Build, diagnostics, notarization, and packaging implementations | Loads one root environment file | Environment and packaging checks; shell syntax |
 | `quality/env-audit.py` | `env audit` | Reads environment-file keys without printing values | Environment contract validation |
 | `quality/test-parsers-macos14.sh` | `test parsers-macos14` | Creates isolated harness and cache directories under `/tmp` | Parser harness gate |
 | `quality/validate-scripts.py` | `check scripts` | Reads repository paths and runs `bash -n` | Script-layout validation |
@@ -81,8 +81,8 @@ All implementation paths are internal to the dispatcher.
 | Build signed dev app | `./scripts/ojd build dev` | Output to `.build/` |
 | Generate DriverKit project | `./scripts/ojd driverkit generate` | Writes a fresh ephemeral SwifterKit project under `.build/driverkit/generated/` |
 | Check DriverKit generation | `./scripts/ojd check driverkit` | Double-generates, checks metadata/boundaries, and performs an unsigned native build |
-| Install signed dev build | `./scripts/ojd build install dev` | Application and generated DriverKit relay; the app embeds its service registration |
-| Fast install (app only) | `./scripts/ojd build install-fast dev` | Skips a generated relay upgrade |
+| Install signed dev build | `./scripts/ojd build install dev` | Application and generated USB DriverKit extension; the app embeds its service registration |
+| Fast install (app only) | `./scripts/ojd build install-fast dev` | Skips a generated system-extension upgrade |
 | Bump release version | `./scripts/ojd release bump-version <version>` | Verifies the changelog heading and updates version references |
 | Package release DMG | `./scripts/ojd release package [version]` | Builds, notarizes, and staples; version defaults to the package version |
 | Package and install locally | `./scripts/ojd release install-local [version]` | Replaces the app in `/Applications` after packaging |
@@ -109,11 +109,12 @@ Install (copies from `~/Documents/Profiles/` or `~/Documents/profiles/`):
 Required development filenames:
 
 - `OpenJoystickDriver.provisionprofile` (GUI, Apple Development)
-- `OpenJoystickDriver_VirtualHIDDevice.provisionprofile` (DriverKit dext, Apple Development)
+- `OpenJoystickDriver_XboxUSBDevice.provisionprofile` (DriverKit dext, Apple Development)
 
-Optional publisher-only release filename:
+Optional publisher-only release filenames:
 
 - `OpenJoystickDriver_DevID.provisionprofile` (GUI, Developer ID)
+- `OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile` (DriverKit dext, Developer ID)
 
 `signing install-profiles` succeeds with the two development profiles and
 reports that it skipped the optional release profile when it is absent.
@@ -188,10 +189,10 @@ open /Applications/OpenJoystickDriver.app
 ./scripts/ojd build dev
 ```
 
-## Generated DriverKit relay
+## Generated USB DriverKit extension
 
-SwifterKit is the sole generator and native-project owner for the optional
-DriverKit relay. `DriverKitGenerator` consumes the repository's authored relay
+SwifterKit is the sole generator and native-project owner for the USB DriverKit
+extension. `DriverKitGenerator` consumes the repository's authored USB
 configuration and writes a fresh native project at
 `.build/driverkit/generated/`; Xcode derived data is kept under
 `.build/driverkit/derived-data/`. Both directories are disposable build output.
@@ -204,7 +205,7 @@ Generate for local inspection only:
 ```
 
 Prove the supported generated path before changing generation, signing, or
-relay configuration:
+USB configuration:
 
 ```bash
 ./scripts/ojd check driverkit
@@ -226,11 +227,11 @@ runtime.
 ```
 
 This route regenerates the project before building it, then embeds the resulting
-`com.openjoystickdriver.VirtualHIDDevice.dext` in the app. The host application
+`com.openjoystickdriver.XboxUSBDevice.dext` in the app. The host application
 must be signed with the exact
 `com.apple.developer.driverkit.userclient-access` allowlist for that bundle ID;
 allow-any user-client access is rejected. `signing configure` and the build
-pipeline require the exact single-relay grant. If this build fails due to
+pipeline require the exact single-DEXT grant. If this build fails due to
 certificate or profile matching, see the Troubleshooting section below.
 
 ## Notarization
@@ -261,7 +262,7 @@ For a release build that does not install anything on the build machine:
 ./scripts/ojd release package 0.5.0-beta.1
 ```
 
-This command uses release signing, regenerates and embeds the DriverKit relay into the app
+This command uses release signing, regenerates and embeds the USB DriverKit extension into the app
 bundle, submits the app for notarization, staples the accepted ticket, verifies
 the result, and writes a drag-and-drop DMG containing `OpenJoystickDriver.app`
 and an `Applications` symlink:
@@ -279,18 +280,17 @@ creation do not prove activation or HID delivery on a tester's Mac.
 
 `.github/workflows/release.yml` runs on SemVer tags such as `0.1.0` or
 `0.5.0-beta.1` and by manual dispatch.
-It installs `libusb`, validates profiles, imports signing material, builds a
-release app, notarizes it, uploads the release DMG as a workflow artifact, and
+It validates profiles, imports signing material, builds a release app, notarizes
+it, uploads the release DMG as a workflow artifact, and
 publishes the GitHub Release.
 
 ### Required repository secrets
 
-- `APPLE_DEVELOPMENT_CERT_BASE64`
 - `DEVELOPER_ID_APPLICATION_CERT_BASE64`
 - `CERTIFICATE_SECRET`
 - `KEYCHAIN_SECRET`
 - `OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64`
-- `OPENJOYSTICKDRIVER_DEXT_PROFILE_BASE64`
+- `OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64`
 - `NOTARIZE_APPLE_ID`
 - `NOTARIZE_PASSWORD`
 
@@ -302,12 +302,12 @@ The profile secrets are base64-encoded `.provisionprofile` files.
 To collect all release secrets in one local step:
 
 ```bash
-./scripts/ojd signing export-github-secrets --repo xsyetopz/OpenJoystickDriver
+./scripts/ojd signing export-github-secrets \
+  --developer-id-identity /path/to/DeveloperIDApplication.p12 \
+  --repo xsyetopz/OpenJoystickDriver
 ```
 
-If identity export paths are not supplied, the script exports signing identities
-from your login keychain into the private output directory. Keychain may prompt
-for permission. The script reads the two installed release provisioning
+The script reads the two installed release provisioning
 profiles, prompts for the identity export password and notarization credentials,
 generates a temporary CI keychain password, then writes:
 
@@ -326,14 +326,18 @@ To import them into GitHub with `gh`:
 Or do both steps in one command:
 
 ```bash
-./scripts/ojd signing export-github-secrets --repo xsyetopz/OpenJoystickDriver --apply
+./scripts/ojd signing export-github-secrets \
+  --developer-id-identity /path/to/DeveloperIDApplication.p12 \
+  --repo xsyetopz/OpenJoystickDriver \
+  --apply
 ```
 
 Keep `.build/github-actions-secrets/` private. It contains raw secret values.
 
-If you already exported separate signing identity files from Keychain Access,
-pass them explicitly with `--apple-development-identity` and
-`--developer-id-identity`.
+Export the Developer ID Application identities selected by both release profiles
+into one password-protected `.p12` and pass it with
+`--developer-id-identity`. The profiles may use different certificates from the
+same team. The release workflow does not accept an Apple Development identity.
 
 ## Troubleshooting
 
@@ -373,7 +377,7 @@ openssl x509 -inform DER -in "$HOME/Documents/Certificates/development.cer" -noo
 
 # Team ID inside the DriverKit provisioning profile
 openssl smime -inform der -verify -noverify \
-  -in "$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_VirtualHIDDevice.provisionprofile" 2>/dev/null \
+  -in "$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice.provisionprofile" 2>/dev/null \
   | plutil -extract TeamIdentifier.0 raw -o - -
 ```
 
@@ -381,20 +385,20 @@ If those Team IDs differ:
 
 1. Create an **Apple Development** certificate for the **same team** as the provisioning profiles.
 2. Import the downloaded `.cer` into Keychain Access (it must include a private key).
-3. Regenerate the Apple Development provisioning profiles (application and generated DriverKit relay) selecting that certificate.
+3. Regenerate the Apple Development provisioning profiles (application and generated USB DriverKit extension) selecting that certificate.
 4. Reinstall profiles: `./scripts/ojd signing install-profiles`
 5. Re-generate env files: `./scripts/ojd signing configure`
 
 Entitlement note for `com.apple.developer.hid.virtual.device`:
 
-- It must be present on the identifier that creates the user-space virtual device (IOHIDUserDevice).
+- It must be present on the application identifier that creates the virtual device.
 - In this repo it belongs to the main application executable.
-- The DriverKit `.dext` does not use IOHIDUserDevice and does not need this entitlement.
+- The DriverKit `.dext` must not contain this app-only entitlement.
 
 The same host profile must contain exactly this DriverKit user-client entitlement:
 
 ```text
-com.apple.developer.driverkit.userclient-access = [com.openjoystickdriver.VirtualHIDDevice]
+com.apple.developer.driverkit.userclient-access = [com.openjoystickdriver.XboxUSBDevice]
 ```
 
 Do not replace it with `com.apple.developer.driverkit.allow-any-userclient-access`.

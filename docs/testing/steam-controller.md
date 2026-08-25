@@ -44,7 +44,7 @@ For wired testing, click in a plain Terminal window and press a few Steam Contro
 From the repository root:
 
 ```bash
-OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --list
+swift run OpenJoystickDriverHIDTool --list
 ```
 
 Paste every `VID:0x28de` line. If there is no `VID:0x28de` line, say that and paste any nearby keyboard, mouse, or game controller lines that appear only while the controller is plugged in.
@@ -54,17 +54,21 @@ Paste every `VID:0x28de` line. If there is no `VID:0x28de` line, say that and pa
 Run the HID monitor for the expected wired PID:
 
 ```bash
-OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --monitor --vid 0x28de --pid 0x1102 --seconds 30
+swift run OpenJoystickDriverHIDTool --monitor --vid 0x28de --pid 0x1102 --seconds 30
 ```
 
-If it still prints `Monitoring 0 device(s)`, keep that output and also report whether Controller Settings lists the controller; production discovery now has the record-backed exact match. Then try raw USB:
+If it still prints `Monitoring 0 device(s)`, keep that output and also report
+whether Controller Settings lists the controller. Try the controller-neutral raw
+USB facade next; an accessible interface uses direct IOUSBHost:
 
 ```bash
-OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x28de --pid 0x1102 --interface 0 --length 64 --seconds 20
-OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x28de --pid 0x1102 --interface 1 --length 64 --seconds 20
+swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x28de --pid 0x1102 --length 64 --seconds 20
 ```
 
-If either command reports access denied or busy, run the same command again with `--detach` at the end and paste both outputs.
+If direct open reports exclusive ownership, preserve the registry owner as
+evidence. A development DEXT experiment then requires an exact Valve personality;
+these pairs are not in the current production Apple USB entitlement. Do not add a
+silent detach or transport fallback.
 
 If you get `REPORT` or `USB_REPORT` lines, collect one neutral packet and one packet for each action:
 
@@ -87,8 +91,8 @@ One action per capture is enough. Return to neutral between captures.
 Plug in only the receiver. Keep the controller off at first.
 
 ```bash
-OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --list
-OJD_USE_LOCAL_SWIFTUSB=1 swift run OpenJoystickDriverHIDTool --monitor --vid 0x28de --pid 0x1142 --seconds 60
+swift run OpenJoystickDriverHIDTool --list
+swift run OpenJoystickDriverHIDTool --monitor --vid 0x28de --pid 0x1142 --seconds 60
 ```
 
 During the 60 second monitor run:

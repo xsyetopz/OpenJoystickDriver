@@ -29,7 +29,7 @@ not turn a passing schema check or parser fixture into a hardware claim.
   or RGB lighting.
 - A maintainer needs to classify a path as `sourceBacked`, `hardwareVerified`,
   or `unavailable`, and distinguish external packet evidence from an OJD
-  SwiftUSB/libusb acceptance run.
+  native IOUSBHost/USBDriverKit acceptance run.
 - An experimental controller record needs a repeatable request, exact command,
   redacted packet evidence, and a report that can support or reject a future
   catalog decision.
@@ -83,7 +83,7 @@ not turn a passing schema check or parser fixture into a hardware claim.
    `docs/testing/controller-record.md`, `docs/user/compatibility.md`, and
    `docs/development/experimental-controllers.md`. Capture VID/PID (decimal
    and hexadecimal), connection mode, expected protocol/parser, record path,
-   provenance status, OJD/SwiftUSB commits, macOS version, Mac model, and
+   provenance status, OJD commit, macOS version, Mac model, and
    firmware if known. Decide whether this is discovery, input/parser,
    reconnect, or output evidence; do not silently expand the request.
 2. **Establish discovery.** Use native evidence (`system_profiler`, `ioreg`,
@@ -106,7 +106,7 @@ not turn a passing schema check or parser fixture into a hardware claim.
 4. **Exercise protocol/parser evidence.** Compare observed packet bytes with
    report IDs, lengths, sequence/framing, checksums, startup and output rules.
    Run the supported `test parsers-macos14` route for the macOS-14 parser
-   harness (it requires the sibling SwiftUSB checkout). Route new or changed
+   harness. Route new or changed
    product tests to `$test-openjoystickdriver`; do not create source-text or
    `Tests/Scripts` fixtures.
 5. **Probe the physical record.** Quit competing tools, connect directly, and
@@ -147,7 +147,7 @@ not turn a passing schema check or parser fixture into a hardware claim.
    environment and commits, record JSON, detach use, control matrix, packet
    excerpts, parse counts/errors, reconnect result, output plan/results, and
    remaining limits. Keep external IOUSBHost/WebUSB or Linux evidence labeled
-   external; it cannot silently become OJD SwiftUSB transport acceptance.
+   external; it cannot silently become OJD native USB transport acceptance.
 
 ## Reference map
 
@@ -164,7 +164,7 @@ not turn a passing schema check or parser fixture into a hardware claim.
 ## Completion criteria
 
 - The investigation names one physical identity and transport, records the
-  discovery/interface/endpoint result, and states the exact OJD/SwiftUSB and
+  discovery/interface/endpoint result, and states the exact OJD commit and
   host environment used.
 - Record validation and parser evidence were run through supported commands
   where applicable; parser/fixture success is explicitly separate from
@@ -195,8 +195,8 @@ routes in the order documented above. Run the `ojd diagnose record <record>
 --validate-only` route before opening hardware and the `ojd test parsers-macos14`
 route for parser evidence. Route product Swift
 changes/tests and broad repository gates to `$test-openjoystickdriver` or the
-owning implementation skill. If libusb, SwiftUSB, macOS permissions, signing,
-physical hardware, or the sibling parser-harness checkout is unavailable,
+owning implementation skill. If IOUSBHost, USBDriverKit, macOS permissions,
+signing, or physical hardware is unavailable,
 report the exact command, status, and limitation rather than claiming a pass.
 Do not add a repo-local validator, pycache, product Sources, or Tests.
 

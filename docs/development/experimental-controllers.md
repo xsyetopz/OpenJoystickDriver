@@ -72,7 +72,11 @@ The bundled GIP record replaces the ineffective Generic HID fallback for `1532:0
 
 ## Microsoft Xbox One Controller (model 1537)
 
-Reporter packet evidence from an IOUSBHost harness verifies the GIP handshake, player LED, every input including Guide, and rumble for `045E:02D1`. The record carries the observed `0x81`/`0x01` endpoints, configuration-1-before-claim requirement, and verified provenance. OJD's libusb/SwiftUSB device-open path has not passed on this hardware. It remains pending the [model 1537 regression test](../testing/xbox/1537.md) after the upstream lifetime fix.
+Reporter packet evidence from an IOUSBHost harness verifies the GIP handshake,
+player LED, every input including Guide, and rumble for `045E:02D1`. The record
+carries the observed `0x81`/`0x01` endpoints, configuration-1-before-claim
+requirement, and verified provenance. OJD's generated USBDriverKit extension and
+host wrapper have not passed on this hardware. Complete the [model 1537 test](../testing/xbox/1537.md).
 
 ## Razer Wolverine V2
 
@@ -91,7 +95,7 @@ implemented because no issue capture requires a multi-chunk input report.
 
 Current Linux `xpad.c` supports the Nacon vendor and Xbox One fallback, but does
 not name this exact PID. That supports classification only; it does not prove
-the captured endpoint addresses or the native SwiftUSB session. Keep
+the captured endpoint addresses or the OJD USBDriverKit session. Keep
 `provenance.verified` false until the [Nacon hardware procedure](../testing/nacon-revolution-x.md)
 passes input, continuous-read, reconnect, and no-host-keep-alive checks.
 

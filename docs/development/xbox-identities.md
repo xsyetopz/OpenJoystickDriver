@@ -13,7 +13,9 @@ Linux `xpad.c` identifies physical devices for Linux. It does not prove that a m
 
 ### Xbox Wireless Controller
 
-OJD has the experimental `xone-hid` path at `045e:02ea`. It still lacks a live descriptor/runtime match.
+OJD has the experimental `xone-hid` path at `045e:02ea`. A GameSir G7 SE live
+test published the identity without crashing PCSX2 Nightly, but input and
+rumble did not work. It still lacks a usable live descriptor/runtime match.
 
 ### Xbox Wired Controller
 
@@ -25,7 +27,14 @@ Linux source lists receiver devices, and OJD parses the physical receiver transp
 
 ### Xbox 360 Wired Controller
 
-`apple-gamecontroller` uses `045e:028e`; `x360-hid` uses ASTRO `9886:0024`. OJD implements Xbox 360-style reports. A signed live test on 2026-07-13 accepted the `045e:028e` virtual device through `GCController.supportsHIDDevice` and exposed an extended controller. That pair was absent from the audited private catalog.
+`apple-gamecontroller` uses `045e:028e`; the SDL-specific `sdl2-3` profile uses
+ASTRO `9886:0024`. OJD implements the exact Xbox 360-style HIDAPI reports for
+the ASTRO identity. That SDL route is hardware-verified for input and physical
+rumble with the GameSir G7 SE. A signed live test on
+2026-07-13 accepted the `045e:028e` virtual device through
+`GCController.supportsHIDDevice` and exposed an extended controller, but the
+August 25 test exposed neither input nor a public haptics engine. That pair was
+absent from the audited private catalog.
 
 ## Apple audit
 
@@ -41,4 +50,6 @@ The developer CLI and support report use the same audit.
 
 After recording the required identity evidence, verify that SDL and GameController probes identify a useful consumer. Hardware tests must cover input, reconnect, rumble, and lights where claimed.
 
-Use `generic-hid` as the non-spoof fallback and `sdl2-3` as the default mapped identity until those checks pass.
+Use `generic-hid` as the fallback when no specialized consumer profile applies.
+Use `sdl2-3` only for SDL 2/3 consumers; its ASTRO HIDAPI implementation is the
+verified replacement for the removed separate Xbox 360 HID profile.

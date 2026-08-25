@@ -13,23 +13,33 @@ Status marks appear only in the support lists below:
 
 ### `sdl2-3`
 
-Use for most games, Steam, emulators, Moonlight, and other SDL software. OJD owns the VID/PID and ships an SDL mapping.
+Use for applications that consume SDL 2 or SDL 3, including Steam and PCSX2.
+The virtual device publishes the ASTRO C40 `9886:0024` identity with its exact
+Xbox 360 HIDAPI descriptor and report format. PCSX2 Nightly accepted input and
+sent working physical rumble through this route on the tested GameSir G7 SE.
+The previous GameStop `1BAD:F901` mapping identity was removed after it produced
+input but no dependable rumble.
 
 ### `apple-gamecontroller`
 
-Use for native applications that read `GCController`. The identity publishes an Xbox-style HID surface with GameController haptics. SDL MFI enumeration still needs targeted testing.
+Use only to test native applications that read `GCController`. CoreHID virtual
+device access does not itself create `GCController.haptics`. On the tested
+GameSir G7 SE setup, GameController exposed neither input nor a public haptics
+engine for this identity.
 
 ### `generic-hid`
 
-Use for direct HID testing or as a non-spoof fallback. The descriptor exposes a plain gamepad under OJD VID/PID. Vendor-specific controls may be absent.
-
-### `x360-hid`
-
-Use only when software expects an Xbox 360-style HID report. The identity is experimental and does not implement Windows XInput or XUSB. Test SDL output reports with `./scripts/ojd diagnose sdl3-hidapi-x360 --seconds 5`.
+Use for unknown or unsupported consumers that fit none of the specialized
+profiles. The descriptor exposes a plain gamepad under OJD VID/PID.
+Vendor-specific controls may be absent.
 
 ### `xone-hid`
 
-Use only when software expects an Xbox One-style HID identity. The identity is experimental and does not turn macOS into an Xbox transport host.
+Use only when software expects an Xbox One-style XInput/XUSB-compatible HID
+identity. The identity is experimental and does not turn macOS into an Xbox
+transport host. The tested
+GameSir G7 SE published the virtual identity and kept its LED on, but PCSX2
+Nightly received no input; do not use it as a fallback.
 
 Set an identity from the installed CLI:
 
@@ -58,7 +68,8 @@ Set an identity from the installed CLI:
 ### ⚠️ Fallback and consumer limits
 
 - Generic HID maps descriptor-defined controls but cannot infer vendor protocols.
-- The DriverKit relay is an integrity-test transport, not a consumer gamepad.
+- Raw and vendor-specific USB controllers use direct IOUSBHost when macOS permits app ownership.
+  Entitlement-restricted models require OJD's signed USB DriverKit extension.
 
 ### ❌ Not implemented
 
@@ -68,13 +79,15 @@ Bluetooth support does not extend to arbitrary controllers. Only the named DS3, 
 
 Use live detection by `GCController.supportsHIDDevice` and a hardware test to determine whether the active virtual controller works with GameController.framework. The private current-system mapping catalog is optional. Developers can use it to compare exact physical OJD record VID/PID pairs, but a missing pair does not prove incompatibility. See [Xbox fallback identity evidence](../development/xbox-identities.md).
 
-## DriverKit relay
+## USB DriverKit extension
 
-The generated SwifterKit DriverKit relay publishes a vendor-defined HID device,
-not a Generic Desktop GamePad. This prevents a stale or duplicate controller from
-appearing beside the Compatibility `IOHIDUserDevice`. The relay provides an integrity
-path between the application service, the host-side relay, and DriverKit HID
-delivery. It is not an alternative consumer output mode.
+`OpenJoystickDriverUSB` selects between direct app-side IOUSBHost and
+`com.openjoystickdriver.XboxUSBDevice`. The DEXT is used only for an observed
+DEXT-owned service or an Apple-entitled Microsoft Xbox GIP model; it is not
+the generic path for every controller. OJD does not use libusb or publish a
+second controller. Development and production DEXT matching are both limited
+to the VID/PID pairs in OJD's Apple-issued entitlement. Accessible third-party
+controllers, including the GameSir G7 SE, use direct app-side IOUSBHost instead.
 
 Run the shared CLI self-test even while Compatibility mode is active:
 
@@ -82,42 +95,24 @@ Run the shared CLI self-test even while Compatibility mode is active:
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless test 5
 ```
 
-A passed relay verdict is based on observed relay input delivery when macOS exposes
-it, or on a successful SwifterKit HID submission when those observations are not
-available. The command reads the signed host's
-`com.apple.developer.driverkit.userclient-access` entitlement. An entitled host
-must pass the relay check. Without that entitlement, relay diagnostics are optional
-and inconclusive, while the Compatibility check still controls command success.
-The Compatibility probe uses neutral reports and does not change controller state.
-A self-test does not prove system-extension approval, signing validity, or behavior
-on a different macOS version or hardware configuration.
+The self-test checks the persistent Compatibility virtual-HID backend. On macOS 10.15–14
+that backend uses `IOHIDUserDevice`; on macOS 15 and later it uses CoreHID
+`HIDVirtualDevice`. A self-test does not prove USB system-extension approval,
+signing validity, or behavior on a different macOS version or hardware.
 
 ## App rumble
 
 OJD forwards app rumble only when the virtual report and physical parser agree on an output format. Supported inputs are Xbox One report ID `3`, the eight-byte Xbox 360 packet, OJD compact report `0x4F`, and DualShock 4 Bluetooth report `0x11`.
 
-Xbox 360 and DualShock 4 use their two main motors. GIP controllers may also use trigger motors. DualShock 4 ignores trigger values. DriverKit relay bytes that do not match a supported report are ignored.
+Xbox 360 and DualShock 4 use their two main motors. GIP controllers may also use trigger motors. DualShock 4 ignores trigger values.
 
 ## Input integrity
 
 Before a parsed packet reaches an output backend, OJD reduces its events to the packet’s final net controller state. It drops duplicate transitions and contradictory press/release pulses that end unchanged. It also emits one canonical D-pad direction, rejects non-finite analog values by retaining the prior component, and clamps sticks to `-1...1` and triggers to `0...1`. This integrity gate does not add a timing delay or a new global deadzone. Protocol-specific deadzones remain in their parsers.
 
-The normalized batch is delivered only to the active Compatibility `IOHIDUserDevice` backend.
-
-## SDL mapping
-
-`Resources/SDL/openjoystickdriver.gamecontrollerdb.txt` maps `sdl2-3` like this:
-
-- `a` / `b` / `x` / `y` use HID sources `b0` / `b1` / `b2` / `b3`.
-- `leftshoulder` / `rightshoulder` use HID sources `b4` / `b5`.
-- `leftstick` / `rightstick` use HID sources `b6` / `b7`.
-- `start` / `back` / `guide` use HID sources `b8` / `b9` / `b10`.
-- `dpup` / `dpdown` / `dpleft` / `dpright` use HID sources `b11` / `b12` / `b13` / `b14`.
-- `misc1` uses HID source `b15`.
-- `leftx` / `lefty` use HID sources `a0` / `a1`.
-- `lefttrigger` uses HID source `a2`.
-- `rightx` / `righty` use HID sources `a3` / `a4`.
-- `righttrigger` uses HID source `a5`.
+The normalized batch is delivered to one persistent virtual-HID device per
+physical controller. Focusing or opening a consumer does not replace that
+device, so SDL hot-plug state remains stable.
 
 ## Manual checks
 

@@ -33,7 +33,7 @@ A green validation or harness node never by itself reaches `hardwareVerified`.
 Record one row per claim, not one status for an entire controller:
 
 | Claim | Source/upstream basis | OJD run | Physical observation | Status |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | discovery and identity | record, descriptor, or native listing | list/monitor result | device stayed present | source-backed or hardware-verified |
 | input control | parser and packet layout | `EVENT` lines and summary | neutral + press/release or axis sweep | source-backed or hardware-verified |
 | reconnect/lifecycle | parser state machine or record procedure | handshake/connection lines | disconnect and reconnect | source-backed or hardware-verified |
@@ -126,10 +126,10 @@ Use the supported parser harness for source-level regression evidence:
 ./scripts/ojd test parsers-macos14
 ```
 
-The harness builds an isolated macOS-14 executable from the sibling SwiftUSB
-checkout and checks parser registry/transport/input behavior. A passing harness
-means the checked fixtures and parser code behave as expected; it does not
-prove the connected controller, native SwiftUSB session, permissions, output,
+The harness builds an isolated macOS-14 executable against the local OJD package
+and checks parser registry/transport/input behavior. A passing harness means
+the checked fixtures and parser code behave as expected; it does not prove the
+connected controller, native IOUSBHost session, permissions, output,
 or reconnect behavior. New Swift tests belong to `$test-openjoystickdriver`.
 
 ## Output plan and physical evidence
@@ -153,7 +153,7 @@ actuator. `sourceBacked` and `hardwareVerified` are capability-specific.
 ## Failure interpretation
 
 | Observation | Safe conclusion | Next action |
-|---|---|---|
+| --- | --- | --- |
 | no native/OJD listing | no discovery evidence in this session | check cable, mode, native inventory, permissions, and exact PID |
 | listing but busy claim | another owner may hold the interface | quit owner; retry once with `--detach`; reconnect afterward |
 | validation invalid | candidate does not satisfy record contract | report field/protocol/endpoint error; route edits to catalog owner |
@@ -170,7 +170,7 @@ actuator. `sourceBacked` and `hardwareVerified` are capability-specific.
 ```text
 Controller / VID:PID (decimal + hex):
 Transport and connection mode:
-OJD commit / SwiftUSB commit:
+OJD commit:
 macOS / Mac model / firmware:
 Record path and provenance before run:
 

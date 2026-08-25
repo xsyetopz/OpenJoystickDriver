@@ -3,91 +3,83 @@
 ## Project Purpose
 
 OpenJoystickDriver is a macOS userspace gamepad driver. It reads physical USB
-and HID controllers, normalizes their reports, and exposes compatibility
-controllers for games, emulators, browsers, and engine integration testing.
-
-Primary users are macOS players with unsupported controllers, emulator users,
-game and engine integrators, and contributors adding controller records or
-protocol support.
+and HID controllers, normalizes their reports, and exposes virtual controllers
+for games, emulators, browsers, and engine integration testing.
 
 ## Architecture
 
-Input:
-
 ```text
-USB vendor-specific class 0xff -> SwiftUSB -> GIPParser
-USB/Bluetooth HID class 0x03   -> IOHIDManager -> protocol parser or GenericHIDParser
+Physical HID, macOS 10.15–14 -> IOHIDManager/IOHIDDevice -> parser
+Physical HID, macOS 15+      -> CoreHID manager/client    -> parser
+Raw/custom USB, all versions -> USBDriverKit/IOUSBHost    -> OpenJoystickDriverUSB -> parser
+
+Virtual HID, macOS 10.15–14  -> IOHIDUserDevice
+Virtual HID, macOS 15+       -> CoreHID HIDVirtualDevice
 ```
 
-Output:
+Each controller is processed by an isolated `DevicePipeline` actor. The signed
+application owns runtime input/output. Headless commands use authenticated local
+RPC when they need the persistent runtime.
 
-```text
-Compatibility IOHIDUserDevice backend -> consumer-facing virtual controllers
-Generated SwifterKit DriverKit relay  -> vendor-defined integrity path and diagnostics
-```
+The repository is a modular monolith with ports at platform boundaries:
 
-Each controller is processed by an isolated `DevicePipeline` actor. One
-controller failure must not stop another pipeline. The signed app host owns
-runtime input/output. Separately invoked headless commands use authenticated
-local RPC.
+- `OpenJoystickDriverKit` owns controller protocols, normalized output policy,
+  application-service contracts, HID platform wrappers, and USB transport ports.
+  It must not import SwifterKit.
+- `OpenJoystickDriverUSB` is the SwifterKit host adapter. It hides DriverClient,
+  service discovery, IOUSBHost transfers, and DEXT lifecycle details behind the
+  Kit transport port.
+- `OpenJoystickDriver` composes the persistent app/runtime and USB adapter.
+- `DriverKitGenerator` generates the development or production USB DEXT project.
 
-The repository is a modular monolith with ports at platform and transport
-boundaries:
-
-- `OpenJoystickDriverKit` owns controller protocol, normalized output policy,
-  application-service data contracts, and compatibility interfaces. It must not
-  import SwifterKit.
-- `OpenJoystickDriverRelay` is the sole SwifterKit adapter. It owns the
-  vendor-defined HID relay configuration, host lifecycle, and relay report
-  forwarding while depending inward on `OpenJoystickDriverKit`.
-- `OpenJoystickDriver` composes the persistent app/runtime and relay adapter.
-- `DriverKitGenerator` is a build-time executable that reuses the authored relay
-  configuration to call SwifterKit generation.
-
-SwifterKit is the only native DriverKit-project owner. Its generated project is
-an output under `.build/driverkit/generated/`, with derived data under
-`.build/driverkit/derived-data/`. Those paths are disposable and excluded from
-source control. Do not add a manual native build path, compatibility wrapper, or
-post-generation patch.
+SwifterKit is the only native DriverKit-project owner. Generated output lives
+under `.build/driverkit/generated/`, with derived data under
+`.build/driverkit/derived-data/`. Never add a manual native project, generated
+source patch, libusb fallback, or duplicate USB transport.
 
 ## Package and Runtime Surfaces
 
-- `Package.swift`: Swift tools 6.2; macOS 10.15 app runtime minimum.
-- `Package.resolved`: committed pin for SwiftUSB, SwifterKit, and other package
-  dependencies. Reproducible DriverKit commands reject `OJD_USE_LOCAL_SWIFTERKIT=1`.
-- `Sources/OpenJoystickDriverKit/`: parser, record, compatibility backend,
+- `Package.swift`: Swift tools 6.2; macOS 10.15 runtime minimum.
+- `Package.resolved`: committed package pins. Reproducible DriverKit commands
+  reject `OJD_USE_LOCAL_SWIFTERKIT=1`.
+- `Sources/OpenJoystickDriverKit/`: parser, record, transport ports, HID wrappers,
   permissions, diagnostics, and shared application-service logic.
-- `Sources/OpenJoystickDriverRelay/`: generated DriverKit relay adapter.
+- `Sources/OpenJoystickDriverUSB/`: USBDriverKit host adapter and configuration.
 - `Sources/DriverKitGenerator/`: command-line native-project generator.
-- `Sources/OpenJoystickDriver/`: headless app host plus `--headless` CLI.
+- `Sources/OpenJoystickDriver/`: app host plus `--headless` CLI.
 - `Sources/OpenJoystickDriverGameControllerProbe/`: GameController consumer probe.
-- `Sources/OpenJoystickDriverHIDTool/`: HID diagnostic tool.
+- `Sources/OpenJoystickDriverHIDTool/`: focused HID/USB diagnostic tool.
 - `Tests/OpenJoystickDriverKitTests/`: core package tests.
-- `Tests/OpenJoystickDriverRelayTests/`: relay configuration, framing, and
-  lifecycle tests.
-- `Resources/SDL/openjoystickdriver.gamecontrollerdb.txt`: SDL mapping for the
-  generic user-space OJD device. SDL3 needs `platform:macOS`.
+- `Tests/OpenJoystickDriverUSBTests/`: USB adapter/configuration tests.
 
-## Generated DriverKit Contract
+## Generated USB DriverKit Contract
 
-The generated relay preserves bundle identifier
-`com.openjoystickdriver.VirtualHIDDevice`, DriverKit deployment target 19.0,
-and a vendor-defined HID relay identity. The generated service class is a
-SwifterKit runtime detail; source-of-truth configuration is
-`OpenJoystickDriverRelayConfiguration`, not generated native files.
-
-The host app entitlement
-`com.apple.developer.driverkit.userclient-access` must be the exact array:
+The generated extension bundle identifier is
+`com.openjoystickdriver.XboxUSBDevice`. Production configuration contains exactly
+Apple's approved Microsoft Xbox GIP pairs:
 
 ```text
-[com.openjoystickdriver.VirtualHIDDevice]
+045E:02D1  045E:02DD  045E:02E3  045E:02EA
+045E:0B00  045E:0B0A  045E:0B12
 ```
 
-Allow-any DriverKit user-client access is forbidden. The build validates generated
-and signed entitlement sets. The app retains its separate virtual-HID entitlement
-for compatibility `IOHIDUserDevice` publication.
+The development entitlement may use Apple's granted wildcard, but the generated
+development personality remains exact. The current development personality is
+GameSir G7 SE `3537:1010`. Development hardware identities must never leak into
+the production personality or entitlement.
 
-Use these commands:
+The host app entitlement
+`com.apple.developer.driverkit.userclient-access` must be exactly:
+
+```text
+[com.openjoystickdriver.XboxUSBDevice]
+```
+
+Allow-any user-client access is forbidden. The app separately owns
+`com.apple.developer.hid.virtual.device`; that entitlement must never appear in
+the DEXT.
+
+Use:
 
 ```bash
 ./scripts/ojd driverkit generate
@@ -95,65 +87,38 @@ Use these commands:
 ./scripts/ojd build dext
 ```
 
-`validate driverkit` rejects local SwifterKit resolution, checks two fresh output
-trees for determinism, validates generated metadata and entitlements, verifies
-that the core target does not import SwifterKit, and runs an unsigned native
-build. It does not prove Apple profile validity, signed activation, system
-extension approval, or physical HID delivery. Those require a configured Apple
-Developer environment and recorded local evidence.
+The DriverKit gate checks deterministic development and production generation,
+metadata, personalities, entitlements, dependency direction, and an unsigned
+universal native build. It does not prove profile validity, signed activation,
+system-extension approval, or physical USB delivery.
 
 ## Controller Record Model
 
-Runtime records are independent generated files under:
+Runtime records are generated under:
 
 ```text
 Sources/OpenJoystickDriverKit/Resources/Controllers/<vid>/<vid>-<pid>.json
 ```
 
-Generator inputs are `ControllerSources.lock.json` and minimal add/patch files
-under `Resources/ControllerOverrides/`. JSON schemas live in `Resources/Schemas/`.
-
-Rules:
-
-- use the canonical controller schema;
-- keep raw GitHub schema URLs and decimal JSON numbers;
-- do not store controller names; use live USB/HID product strings;
-- keep protocol defaults in code and omit them from records;
-- update pinned importers rather than transcribing upstream tables;
-- reject conflicts, duplicates, orphan/redundant patches, unknown fields, and
-  unreviewed source hash changes.
-
-Validate with:
-
-```bash
-./scripts/ojd catalog regenerate --check
-./scripts/ojd check profiles
-```
+Generator inputs are `ControllerSources.lock.json` and minimal overrides under
+`Resources/ControllerOverrides/`. JSON schemas live in `Resources/Schemas/`.
+Use decimal JSON numbers, keep shared protocol defaults in code, and do not hand
+edit generated runtime records.
 
 ## Documentation and Agent Files
 
 - `README.md`: human entry point and user workflow.
-- `docs/development/architecture.md`: runtime, package-boundary, generated relay,
-  and validation contract.
-- `docs/user/compatibility.md`: authoritative user-facing device and output status.
+- `docs/development/architecture.md`: runtime and package boundaries.
+- `docs/development/signing.md`: Apple asset and entitlement contract.
+- `docs/user/compatibility.md`: authoritative user-facing status.
 - `scripts/README.md`: signing, generation, install, and release procedure.
 - `AGENTS.md`: coding-agent instructions and mandatory validation.
-- `llms.txt` / `llms-full.txt`: repository orientation only; do not duplicate
-  controller support status here.
+- `llms.txt` / `llms-full.txt`: repository orientation only.
 
 `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` are symlinks to
 `AGENTS.md`; leave them intact.
 
 ## Build, Test, and Evidence
-
-Install prerequisites:
-
-```bash
-brew install libusb
-xcode-select --install
-```
-
-Core checks:
 
 ```bash
 swift build
@@ -166,20 +131,16 @@ swift test
 ./scripts/ojd check driverkit
 ```
 
-The macOS 14 parser harness covers parser behavior below the local Swift Testing
-runtime target. Hardware-facing probes and signed DriverKit activation need a
-connected controller and a provisioned macOS host. CI and unsigned generation
-validation do not establish those runtime facts.
+The macOS 14 parser harness covers behavior below the local Swift Testing runtime
+target. Hardware probes and signed DriverKit activation require an appropriately
+provisioned Mac and recorded local evidence. CI and unsigned generation do not
+establish runtime facts.
 
 ## Signing and Release
 
-`scripts/ojd` is the supported signing, build, and release interface. Provisioning
-profiles and Keychain identities are set up through `./scripts/ojd signing ...`.
-Development requires an Apple Development identity; release packaging requires a
-Developer ID Application identity and notarization credentials. The DriverKit
-profile and host profile must both authorize the generated relay's expected
-entitlements.
-
-The release package regenerates and embeds the relay before signing and
-notarization. Packaging does not submit a system-extension activation request;
-testers must approve the app and extension on their own Mac.
+Development requires refreshed application and
+`com.openjoystickdriver.XboxUSBDevice` development profiles plus an Apple
+Development identity. Publisher release requires the corresponding Developer ID
+host profile, DEXT profile, Developer ID Application identity, and notarization
+credentials. Packaging regenerates and embeds the production USB extension but
+does not activate it on the build machine.

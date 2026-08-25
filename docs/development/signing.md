@@ -1,279 +1,121 @@
-# Signing assets
+# Signing the app and XboxUSBDevice DEXT
 
-OpenJoystickDriver contains a DriverKit system extension and uses restricted HID
-entitlements. Apple issues the certificates and provisioning profiles through
-[Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/).
+OpenJoystickDriver has two independently provisioned code items:
 
-## Who needs signing assets
+- host app: `com.openjoystickdriver`
+- USB DriverKit extension: `com.openjoystickdriver.XboxUSBDevice`
 
-### End user
+Follow [Kevin Elliott's DEXT signing guide](https://developer.apple.com/forums/thread/809202).
+DriverKit entitlement values are customized provisioning data; do not infer, broaden, or repair a
+profile in source.
 
-Install a signed, notarized OpenJoystickDriver release from the project
-publisher. Do not create certificates or provisioning profiles, and never accept
-a publisher's private signing key or `.p12` file.
+## Entitlement ownership
 
-### Parser or controller-record contributor
+The host app requires:
 
-You do not need signing assets. `swift test` and
-`./scripts/ojd diagnose record` cover the source and raw-USB paths documented in
-`CONTRIBUTING.md`.
+- `com.apple.developer.system-extension.install = true`
+- `com.apple.developer.driverkit.userclient-access = ["com.openjoystickdriver.XboxUSBDevice"]`
+- `com.apple.developer.hid.virtual.device = true`
+- its profile's application and team identifiers
 
-### Full-app developer
+The host allowlist must never use `com.apple.developer.driverkit.allow-any-userclient-access`.
 
-You must belong to the Apple Developer Program team that owns both exact App
-IDs:
+The DEXT always requires `com.apple.developer.driverkit = true`. Development and Developer ID
+signing use the same Apple-issued restricted USB value:
 
-- host application: `com.openjoystickdriver`;
-- generated DriverKit extension: `com.openjoystickdriver.VirtualHIDDevice`.
+```xml
+<key>com.apple.developer.driverkit.transport.usb</key>
+<array>
+  <dict><key>idVendor</key><integer>1118</integer><key>idProduct</key><integer>721</integer></dict>
+  <dict><key>idVendor</key><integer>1118</integer><key>idProduct</key><integer>746</integer></dict>
+  <dict><key>idVendor</key><integer>1118</integer><key>idProduct</key><integer>2834</integer></dict>
+  <dict><key>idVendor</key><integer>1118</integer><key>idProduct</key><integer>2816</integer></dict>
+  <dict><key>idVendor</key><integer>1118</integer><key>idProduct</key><integer>739</integer></dict>
+  <dict><key>idVendor</key><integer>1118</integer><key>idProduct</key><integer>2826</integer></dict>
+  <dict><key>idVendor</key><integer>1118</integer><key>idProduct</key><integer>733</integer></dict>
+</array>
+```
 
-App IDs are globally registered. Membership in a different Apple developer team
-does not let you generate profiles for these identifiers. A fork would need its
-own configurable identifiers and matching entitlement approval. The current
-build contract intentionally uses the publisher identifiers.
+These are `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`,
+`045E:0B0A`, and `045E:0B12`. The USB DEXT must not contain CoreHID's virtual-device entitlement or
+any HIDDriverKit family/transport entitlement.
 
-### Release publisher
+The canonical authored DEXT entitlement input is
+`Sources/DriverKitGenerator/Entitlements/XboxUSBDevice.entitlements`.
 
-Release signing also requires the publisher's Developer ID Application identity,
-Developer ID provisioning, and notarization credentials. Do not distribute these
-secrets to contributors or end users.
+## Development profiles
 
-## Development setup
-
-### 1. Obtain entitlement access
-
-Before creating profiles, the team's Account Holder must request or enable the
-capabilities through [Requesting Entitlements for DriverKit Development](https://developer.apple.com/documentation/driverkit/requesting-entitlements-for-driverkit-development)
-and [Capability Requests](https://developer.apple.com/help/account/capabilities/capability-requests).
-
-The host App ID must authorize:
-
-| Entitlement | Portal capability or purpose |
-| --- | --- |
-| `com.apple.developer.system-extension.install` | System Extension |
-| `com.apple.developer.driverkit.userclient-access` containing only `com.openjoystickdriver.VirtualHIDDevice` | Communicates with Drivers / exact DriverKit client allowlist |
-| `com.apple.developer.hid.virtual.device` | Compatibility virtual HID device; request it as a managed capability if it is not available for the team |
-
-The DriverKit App ID and its selected entitlement group must authorize exactly:
+Use Apple Development signing and separate profiles for the app and DEXT. The default local paths
+are:
 
 ```text
-com.apple.developer.driverkit
-com.apple.developer.driverkit.family.hid.device
-com.apple.developer.driverkit.transport.hid
-com.apple.developer.driverkit.family.hid.eventservice
+~/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver.provisionprofile
+~/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice.provisionprofile
 ```
 
-Do not enable `com.apple.developer.driverkit.allow-any-userclient-access`.
-OpenJoystickDriver uses the host's exact user-client allowlist by design.
+Regenerate profiles after changing capabilities. Xcode may otherwise reuse a stale profile. The
+development DEXT profile must contain exactly the seven approved Microsoft pairs; a wildcard or a
+GameSir dictionary is a mismatch and the signing gate rejects it. The connected GameSir G7 SE
+(`3537:1010`) uses the app's direct IOUSBHost route and does not require a DriverKit grant.
 
-Apple ties approved DriverKit entitlements to the development team. If the
-DriverKit App ID or entitlement group is unavailable in the portal, the Account
-Holder must complete the request at
-[Apple's system-extension entitlement page](https://developer.apple.com/system-extensions/)
-or contact Apple Developer Support. A repository change cannot grant the
-entitlement.
-
-### 2. Create an Apple Development identity
-
-On the Mac that will build the app:
-
-1. Open **Xcode > Settings > Accounts**.
-2. Select the correct Apple Developer Program team.
-3. Open **Manage Certificates** and create an **Apple Development** certificate.
-4. In Keychain Access, confirm it appears under **My Certificates** with a
-   private key nested beneath it.
-
-Create the identity on the build Mac. A downloaded `.cer` does not contain the
-private key required by `codesign`. Apple lists the certificate types in its
-[certificate overview](https://developer.apple.com/help/account/create-certificates/certificates-overview).
-
-Verify locally:
-
-```bash
-security find-identity -v -p codesigning
-```
-
-The output must include at least one valid `Apple Development` identity.
-
-### 3. Create the two development profiles
-
-An Account Holder or Admin creates these in **Certificates, Identifiers &
-Profiles > Profiles**. A team member with access can then download them:
-
-| Local filename | Portal profile type | App ID | Certificate/device |
-| --- | --- | --- | --- |
-| `OpenJoystickDriver.provisionprofile` | **Mac App Development** | `com.openjoystickdriver` | Select the Apple Development identity above and the target Mac |
-| `OpenJoystickDriver_VirtualHIDDevice.provisionprofile` | **DriverKit Development** | `com.openjoystickdriver.VirtualHIDDevice` | Select the same Apple Development identity, target Mac, and approved DriverKit entitlement group |
-
-Apple's current profile workflow is documented in
-[Create a development provisioning profile](https://developer.apple.com/help/account/provisioning-profiles/create-a-development-provisioning-profile)
-and
-[Create a DriverKit development provisioning profile](https://developer.apple.com/help/account/provisioning-profiles/create-a-driverkit-development-provisioning-profile).
-
-Download the profiles, rename them to the exact local filenames above, and put
-them in:
-
-```text
-~/Documents/Profiles/
-```
-
-The portal's profile display name may differ from the local filename. The
-repository reads the embedded display name for `DEXT_BUILD_PROFILE`.
-
-### 4. Install, configure, and verify
+Run:
 
 ```bash
 ./scripts/ojd signing install-profiles
 ./scripts/ojd signing configure
-./scripts/ojd signing audit \
-  "$HOME/Library/MobileDevice/Provisioning Profiles"/*.provisionprofile
 ./scripts/ojd signing doctor
-```
-
-`signing configure` generates `.env.dev`. It matches each profile's embedded
-certificate to a Keychain identity, then reads the Team ID and profile name.
-
-Build and install:
-
-```bash
 ./scripts/ojd build install dev
 ```
 
-macOS must approve the system extension and the app's requested privacy access
-before live relay and controller checks can pass.
+The doctor fails closed if the DEXT profile is missing, the host allowlist names the deleted
+`VirtualHIDDevice` configuration, the USB entitlement shape differs, or forbidden entitlements are
+present.
 
-## Where each development variable comes from
+## Developer ID / distribution
 
-| Variable | Source |
-| --- | --- |
-| `CODESIGN_IDENTITY` | SHA-1 of the Apple Development identity whose certificate is embedded in the DriverKit development profile |
-| `DEVELOPMENT_TEAM` | `TeamIdentifier` in the host development profile |
-| `GUI_PROVISIONING_PROFILE` | Installed path of `OpenJoystickDriver.provisionprofile` |
-| `DEXT_BUILD_PROFILE` | `Name` embedded in `OpenJoystickDriver_VirtualHIDDevice.provisionprofile` |
-| `OJD_USE_LOCAL_SWIFTERKIT` | Developer choice; leave `0` unless intentionally testing the sibling checkout |
+The Developer ID profiles are installed separately as
+`OpenJoystickDriver_DevID.provisionprofile` and
+`OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile`. GitHub Actions consumes the latter from
+`OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64`; development profiles and Apple Development
+identities never enter the release job.
 
-The first four values are generated by `./scripts/ojd signing configure`.
+USB and PCI DEXT distribution export is the exception to Xcode's normal automatic flow. For every
+distribution environment:
 
-## Replace invalid profile entitlements
+1. Build the final DEXT.
+2. Generate and download separate app and DEXT profiles for that environment.
+3. Rename the DEXT profile to `embedded.provisionprofile` and replace the profile inside the built
+   DEXT.
+4. Re-sign the DEXT with the distribution identity, timestamp, hardened runtime, and the production
+   canonical entitlement plist.
+5. Configure the app archive for manual signing with its separate app profile.
+6. Embed the already signed DEXT using the System Extensions copy phase.
+7. Archive and export for the same environment.
+8. Compare the signed entitlements of both code items with their decoded profiles exactly.
 
-Profiles created for older OpenJoystickDriver builds may still name
-`com.openjoystickdriver.daemon` or grant allow-any DriverKit access. Do not edit
-the downloaded profile. Apple signs it, so any local edit invalidates it.
-
-`signing configure`, `signing doctor`, and DriverKit builds reject profiles
-unless the host entitlement is exactly
-`["com.openjoystickdriver.VirtualHIDDevice"]`. Replace the Apple capability
-grant and regenerate the profiles before building.
-
-### Host App ID
-
-1. Open [Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/identifiers/list).
-2. Select the App ID `com.openjoystickdriver`.
-3. Open **Capability Requests**.
-4. Submit a replacement **DriverKit UserClient Access** request containing one
-   bundle ID entry:
-
-   ```text
-   com.openjoystickdriver.VirtualHIDDevice
-   ```
-
-   Do not include `com.openjoystickdriver.daemon`. Do not paste several bundle
-   IDs into one field separated by newlines. The entitlement must be an array
-   with one string element.
-5. If the portal refuses a replacement because an older request is still
-   active, contact Apple Developer Support. Ask them to remove the existing
-   DriverKit UserClient Access grant and replace it with the single bundle ID
-   above. Include the existing capability request ID.
-6. After approval, open the App ID's **Capabilities** tab and confirm DriverKit
-   UserClient Access is enabled.
-
-Regenerate both host profiles after the App ID changes:
-
-- **Mac App Development** to `OpenJoystickDriver.provisionprofile`;
-- **Developer ID** to `OpenJoystickDriver_DevID.provisionprofile`.
-
-Select the installed certificate of the corresponding type when generating
-each profile.
-
-### DriverKit App ID
-
-1. Select `com.openjoystickdriver.VirtualHIDDevice` under **Identifiers**.
-2. Disable **DriverKit Allow Any UserClient Access** and its development
-   variant if either is enabled.
-3. Keep the base DriverKit and required HID family capabilities enabled.
-4. If allow-any belongs to an Apple-assigned DriverKit entitlement group rather
-   than a visible toggle, request a replacement group without
-   `com.apple.developer.driverkit.allow-any-userclient-access`.
-5. Create a new **DriverKit Development** profile. Select the entitlement group
-   that contains the required HID entitlements and does not contain allow-any.
-6. Download it as
-   `OpenJoystickDriver_VirtualHIDDevice.provisionprofile`.
-
-The host and dext belong to the same team. The dext does not need allow-any
-access. The host profile names the one dext it can open.
-
-Replace the files under `~/Documents/Profiles/`, then run:
+Representative DEXT signing command:
 
 ```bash
-./scripts/ojd signing install-profiles
-./scripts/ojd signing configure
+codesign -s "Developer ID Application: …" -f --timestamp -o runtime \
+  --entitlements Sources/DriverKitGenerator/Entitlements/XboxUSBDevice.entitlements \
+  /path/to/com.openjoystickdriver.XboxUSBDevice.dext
+```
+
+Do not change the provisioning profile to silence an entitlement mismatch. Kevin's guide notes that
+these failures normally mean the signing entitlement plist does not exactly match the selected
+profile. Inspect Organizer's distribution log and the archived signing configuration.
+
+## Verification
+
+```bash
+./scripts/ojd check driverkit
 ./scripts/ojd signing doctor
+codesign -d --entitlements - --xml /path/to/OpenJoystickDriver.app
+codesign -d --entitlements - --xml \
+  /path/to/OpenJoystickDriver.app/Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext
+security cms -D -i /path/to/profile.provisionprofile
 ```
 
-The doctor must report this host value:
-
-```text
-com.apple.developer.driverkit.userclient-access =
-  ["com.openjoystickdriver.VirtualHIDDevice"]
-```
-
-The DriverKit profile must not contain
-`com.apple.developer.driverkit.allow-any-userclient-access`.
-
-## Publisher release assets
-
-The Account Holder creates a **Developer ID Application** certificate from
-[Apple's Developer ID certificate page](https://developer.apple.com/help/account/certificates/create-developer-id-certificates).
-It must be installed with its private key. A Developer ID Installer certificate
-is not used because OpenJoystickDriver distributes an application/DMG, not a
-signed installer package.
-
-Create or regenerate the Developer ID provisioning profile for
-`com.openjoystickdriver`, selecting that Developer ID Application certificate
-and the host capabilities listed above. Download it as:
-
-```text
-~/Documents/Profiles/OpenJoystickDriver_DevID.provisionprofile
-```
-
-When that optional profile is present, `signing install-profiles` installs it
-and `signing configure` writes `.env.release`. Without it, development setup
-still succeeds and release configuration is skipped explicitly.
-
-Notarization should use a Keychain profile rather than a plaintext password:
-
-```bash
-xcrun notarytool store-credentials "openjoystickdriver-notary" \
-  --apple-id "PUBLISHER_ACCOUNT" \
-  --team-id "TEAM_ID"
-```
-
-Set `NOTARIZE_KEYCHAIN_PROFILE` to `openjoystickdriver-notary`. Apple documents
-this flow in
-[Customizing the notarization workflow](https://developer.apple.com/documentation/security/customizing-the-notarization-workflow).
-
-A dev-signed dext does not prove that the Developer ID build can be distributed
-or notarized. Apple requires a distribution profile for the release target.
-
-## Safe diagnostics
-
-These commands omit private values from their normal output:
-
-```bash
-./scripts/ojd env audit
-./scripts/ojd signing audit \
-  "$HOME/Library/MobileDevice/Provisioning Profiles"/*.provisionprofile
-./scripts/ojd signing doctor
-```
-
-Never commit `.env.dev`, `.env.release`, certificates, provisioning profiles,
-notarization passwords, or `.p12` files.
+For both development and production artifacts, verify the seven Microsoft product IDs and confirm
+the wildcard is absent. Verify the host allowlist contains only
+`com.openjoystickdriver.XboxUSBDevice` and the DEXT has no virtual-HID entitlement.
