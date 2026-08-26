@@ -74,4 +74,30 @@
     }
   }
 
+  enum ProfileSaveStatus: Equatable {
+    case unsaved
+    case saving
+    case saved
+    case error
+
+    var label: String {
+      switch self {
+      case .unsaved: return OJDLocalized.string("profiles.unsaved", fallback: "Unsaved changes")
+      case .saving: return OJDLocalized.string("profiles.saving", fallback: "Saving...")
+      case .saved: return OJDLocalized.string("profiles.saved", fallback: "Saved")
+      case .error: return OJDLocalized.string("profiles.saveFailed", fallback: "Save failed")
+      }
+    }
+
+    var accessibilityValue: String { label }
+
+    var color: Color {
+      switch self {
+      case .unsaved, .saving: return Color(NSColor.secondaryLabelColor)
+      case .saved: return Color(NSColor.systemGreen)
+      case .error: return Color(NSColor.systemRed)
+      }
+    }
+  }
+
 #endif

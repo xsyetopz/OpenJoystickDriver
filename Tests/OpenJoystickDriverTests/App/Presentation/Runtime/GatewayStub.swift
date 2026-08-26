@@ -42,6 +42,8 @@ actor GatewayStub: ApplicationServiceGateway {
   var lastExpectedCurrent: RemappingProfile?
   var lastInputSelector: RuntimeDeviceSelector?
   var updateCallCount = 0
+  var deleteCallCount = 0
+  var lastDeletedProfileID: UUID?
   var inputReadCount = 0
   var setIdentityCallCount = 0
   var selectedIdentity: CompatibilityIdentity = .sdl2_3
@@ -130,7 +132,14 @@ actor GatewayStub: ApplicationServiceGateway {
 
   func createRemappingProfile(_ profile: RemappingProfile) throws
     -> ApplicationServiceRemappingSnapshotPayload
-  { snapshotPayload }
+  {
+    snapshotPayload = snapshot(
+      profiles: snapshotPayload.profiles + [profile],
+      activeProfiles: snapshotPayload.activeProfiles,
+      postEventAccess: snapshotPayload.postEventAccess
+    )
+    return snapshotPayload
+  }
 
   func updateRemappingProfile(_ profile: RemappingProfile, expectedCurrent: RemappingProfile)
     async throws -> ApplicationServiceRemappingSnapshotPayload
@@ -144,15 +153,42 @@ actor GatewayStub: ApplicationServiceGateway {
         message: "stale profile"
       )
     }
+    var profiles = snapshotPayload.profiles
+    if let index = profiles.firstIndex(where: { $0.id == profile.id }) { profiles[index] = profile }
+    snapshotPayload = snapshot(
+      profiles: profiles,
+      activeProfiles: snapshotPayload.activeProfiles,
+      postEventAccess: snapshotPayload.postEventAccess
+    )
     return snapshotPayload
   }
 
   func importRemappingProfile(_ profile: RemappingProfile) throws
     -> ApplicationServiceRemappingSnapshotPayload
-  { snapshotPayload }
+  {
+    var profiles = snapshotPayload.profiles
+    if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
+      profiles[index] = profile
+    } else {
+      profiles.append(profile)
+    }
+    snapshotPayload = snapshot(
+      profiles: profiles,
+      activeProfiles: snapshotPayload.activeProfiles,
+      postEventAccess: snapshotPayload.postEventAccess
+    )
+    return snapshotPayload
+  }
 
   func deleteRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
-    snapshotPayload
+    deleteCallCount += 1
+    lastDeletedProfileID = id
+    snapshotPayload = snapshot(
+      profiles: snapshotPayload.profiles.filter { $0.id != id },
+      activeProfiles: snapshotPayload.activeProfiles.filter { $0.profileID != id },
+      postEventAccess: snapshotPayload.postEventAccess
+    )
+    return snapshotPayload
   }
 
   func activateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {

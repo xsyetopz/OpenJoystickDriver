@@ -4,6 +4,7 @@
   import Foundation
   import OpenJoystickDriverKit
   import SwiftUI
+  import UniformTypeIdentifiers
 
   struct ProfilesView: View {
     @ObservedObject var viewModel: RuntimeViewModel
@@ -16,6 +17,7 @@
     @State private var observedDiscardGeneration = 0
     @State private var lastKnownSnapshot: ApplicationServiceRemappingSnapshotPayload?
     @State private var preservedEditorProfile: RemappingProfile?
+    @State private var profileEditorGeneration = 0
 
     var body: some View {
       VStack(alignment: .leading, spacing: 0) {
@@ -37,7 +39,7 @@
           title: OJDLocalized.string("profiles.new", fallback: "New profile"),
           initialName: OJDLocalized.string("profiles.defaultName", fallback: "My controller"),
           devices: connectedDevices
-        ) { name, device in createProfile(named: name, for: device) }
+        ) { name, device, scope in createProfile(named: name, for: device, scope: scope) }
       }.alert(item: $activeAlert) { alert in
         switch alert {
         case .delete(let id):
@@ -51,10 +53,7 @@
             ),
             primaryButton: .destructive(
               Text(OJDLocalized.string("common.delete", fallback: "Delete"))
-            ) {
-              Task { @MainActor in await viewModel.deleteRemappingProfile(id: id) }
-              activeAlert = nil
-            },
+            ) { deleteProfile(id) },
             secondaryButton: .cancel { activeAlert = nil }
           )
         case .discard(let id):
@@ -93,6 +92,12 @@
         if editorHasUnsavedChanges { setEditorDirty(false) }
       }.onReceive(viewModel.$remappingState) { state in
         if case .available(let snapshot) = state {
+          if !editorHasUnsavedChanges, let selectedProfileID,
+            lastKnownSnapshot?.profiles.first(where: { $0.id == selectedProfileID })
+              != snapshot.profiles.first(where: { $0.id == selectedProfileID })
+          {
+            profileEditorGeneration += 1
+          }
           if editorHasUnsavedChanges, let selectedProfileID,
             !snapshot.profiles.contains(where: { $0.id == selectedProfileID }),
             let previous = lastKnownSnapshot?.profiles.first(where: { $0.id == selectedProfileID })
@@ -138,9 +143,13 @@
                 OJDLocalized.string("profiles.new", fallback: "New profile")
               ).frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
             }
-          ).buttonStyle(BorderlessButtonStyle()).disabled(
-            connectedDevices.isEmpty || isMutationActive
-          )
+          ).buttonStyle(BorderlessButtonStyle()).disabled(isMutationActive)
+          Button(action: importProfile) {
+            OJDSystemSymbol(name: "square.and.arrow.down", fallback: "Import")
+              .ojdAccessibilityLabel(
+                OJDLocalized.string("profiles.import", fallback: "Import profile")
+              ).frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
+          }.buttonStyle(BorderlessButtonStyle()).disabled(isMutationActive)
         }.padding(.horizontal, 14).padding(.top, 18)
 
         switch viewModel.remappingState {
@@ -205,8 +214,12 @@
             viewModel: viewModel,
             isActive: isActive(selectedProfile),
             onDelete: { activeAlert = .delete(selectedProfile.id) },
+            onExport: { exportProfile($0) },
             onEditingStateChanged: { setEditorDirty($0) }
-          ).id("\(selectedProfile.id.uuidString)-\(navigation.discardGeneration)")
+          ).id(
+            selectedProfile.id.uuidString + "-\(navigation.discardGeneration)"
+              + "-\(profileEditorGeneration)"
+          )
         }
       } else {
         switch viewModel.remappingState {
@@ -239,19 +252,14 @@
         EmptyStateView(
           symbol: "plus.circle",
           title: OJDLocalized.string("profiles.none", fallback: "No profiles"),
-          message: connectedDevices.isEmpty
-            ? OJDLocalized.string(
-              "profiles.noneMessage",
-              fallback: "Connect a controller to create a profile."
-            )
-            : OJDLocalized.string(
-              "profiles.createMessage",
-              fallback: "Create a profile to start assigning controls."
-            )
+          message: OJDLocalized.string(
+            "profiles.createMessage",
+            fallback: "Create a profile to start assigning controls."
+          )
         )
         Button(OJDLocalized.string("profiles.create", fallback: "Create profile...")) {
           isCreatingProfile = true
-        }.disabled(connectedDevices.isEmpty || isMutationActive)
+        }.disabled(isMutationActive)
       }
     }
 
@@ -335,15 +343,71 @@
       return snapshot.activeProfiles.contains { $0.profileID == profile.id }
     }
 
-    private func createProfile(named name: String, for device: ApplicationServiceDeviceDescription)
-    {
+    private func createProfile(
+      named name: String,
+      for device: RemappingDeviceScope,
+      scope: RemappingApplicationScope
+    ) {
       let profile = RemappingProfile(
         name: name,
-        device: RemappingDeviceScope(vendorID: device.vendorID, productID: device.productID),
-        applicationScope: .global,
+        device: device,
+        applicationScope: scope,
         bindings: []
       )
       Task { @MainActor in await viewModel.createRemappingProfile(profile) }
+    }
+
+    private func deleteProfile(_ profileID: UUID) {
+      activeAlert = nil
+      let restoreDirtyStateOnFailure = selectedProfileID == profileID && editorHasUnsavedChanges
+      if selectedProfileID == profileID {
+        setEditorDirty(false)
+        preservedEditorProfile = nil
+      }
+      Task { @MainActor in
+        await viewModel.deleteRemappingProfile(id: profileID)
+        guard restoreDirtyStateOnFailure else { return }
+        guard case .completed(.delete(let deletedID)) = viewModel.mutationState,
+          deletedID == profileID
+        else {
+          setEditorDirty(true)
+          return
+        }
+      }
+    }
+
+    private func importProfile() {
+      let panel = NSOpenPanel()
+      panel.allowsMultipleSelection = false
+      panel.canChooseDirectories = false
+      panel.canChooseFiles = true
+      panel.title = OJDLocalized.string("profiles.import", fallback: "Import profile")
+      configureJSONTypes(panel)
+      guard panel.runModal() == .OK, let url = panel.url else { return }
+      do {
+        let profile = try RemappingProfileFileStore.load(from: url)
+        Task { @MainActor in await viewModel.importRemappingProfile(profile) }
+      } catch { profileActionError = RuntimePresentation.userFacingError(error) }
+    }
+
+    private func exportProfile(_ profile: RemappingProfile) {
+      let panel = NSSavePanel()
+      panel.title = OJDLocalized.string("profiles.export", fallback: "Export profile")
+      panel.nameFieldStringValue = "\(profile.name).json"
+      configureJSONTypes(panel)
+      guard panel.runModal() == .OK, let url = panel.url else { return }
+      do {
+        try RemappingProfileFileStore.write(profile, to: url)
+        profileActionError = nil
+      } catch { profileActionError = RuntimePresentation.userFacingError(error) }
+    }
+
+    private func configureJSONTypes(_ panel: NSSavePanel) {
+      if #available(macOS 11.0, *) {
+        panel.allowedContentTypes = [.json]
+      } else {
+        panel.allowedFileTypes = ["json"]
+      }
     }
 
     private func handleProfileMutation(_ mutation: RuntimeMutationState) {
@@ -353,6 +417,12 @@
         profileActionError = nil
         switch completedOperation {
         case .create(let profileID): selectProfile(profileID)
+        case .importProfile(let profileID):
+          let importedOverDirtySelection = editorHasUnsavedChanges && selectedProfileID == profileID
+          setEditorDirty(false)
+          preservedEditorProfile = nil
+          selectedProfileID = profileID
+          if importedOverDirtySelection { profileEditorGeneration += 1 }
         case .delete(let profileID) where selectedProfileID == profileID:
           selectedProfileID = profiles.first?.id
         default: break
@@ -371,8 +441,8 @@
 
     private func isProfileAction(_ operation: RuntimeMutationOperation) -> Bool {
       switch operation {
-      case .create, .delete, .activate, .deactivate: return true
-      case .update, .importProfile: return false
+      case .create, .delete, .activate, .deactivate, .importProfile: return true
+      case .update: return false
       }
     }
 

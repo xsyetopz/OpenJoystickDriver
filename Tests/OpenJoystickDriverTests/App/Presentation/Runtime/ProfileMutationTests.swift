@@ -52,6 +52,52 @@ import Testing
     #expect(activatedID == original.id)
   }
 
+  @Test func deleteCallsGatewayAndImmediatelyPublishesTheReturnedProfileList() async {
+    let deleted = makeProfile(name: "Delete Me")
+    let retained = makeProfile(name: "Keep Me")
+    let gateway = GatewayStub(snapshotPayload: snapshot(profiles: [deleted, retained]))
+    let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
+
+    await viewModel.deleteRemappingProfile(id: deleted.id)
+
+    #expect(await gateway.deleteCallCount == 1)
+    #expect(await gateway.lastDeletedProfileID == deleted.id)
+    let state = await MainActor.run { viewModel.remappingState }
+    guard case .available(let updated) = state else {
+      Issue.record("Expected deletion to publish an available remapping snapshot")
+      return
+    }
+    #expect(updated.profiles == [retained])
+    let mutationState = await MainActor.run { viewModel.mutationState }
+    guard case .completed(.delete(let profileID)) = mutationState else {
+      Issue.record("Expected a completed delete mutation")
+      return
+    }
+    #expect(profileID == deleted.id)
+  }
+
+  @Test func importOverExistingIdentifierPublishesReplacementProfile() async {
+    let original = makeProfile(name: "Original")
+    let replacement = makeProfile(id: original.id, name: "Imported")
+    let gateway = GatewayStub(snapshotPayload: snapshot(profiles: [original]))
+    let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
+
+    await viewModel.importRemappingProfile(replacement)
+
+    let state = await MainActor.run { viewModel.remappingState }
+    guard case .available(let updated) = state else {
+      Issue.record("Expected import to publish an available remapping snapshot")
+      return
+    }
+    #expect(updated.profiles == [replacement])
+    let mutationState = await MainActor.run { viewModel.mutationState }
+    guard case .completed(.importProfile(let profileID)) = mutationState else {
+      Issue.record("Expected a completed import mutation")
+      return
+    }
+    #expect(profileID == original.id)
+  }
+
   @Test func overlappingMutationsRejectTheSecondRequestWhileSaving() async {
     let original = makeProfile(name: "Original")
     let proposed = makeProfile(id: original.id, name: "Proposed")

@@ -487,26 +487,26 @@
     static func trimmedName(_ name: String) -> String {
       name.trimmingCharacters(in: .whitespacesAndNewlines)
     }
-
-    static func canCreate(name: String, hasSelectedDevice: Bool) -> Bool {
-      hasSelectedDevice && !trimmedName(name).isEmpty
-    }
   }
 
   struct ProfileNameSheet: View {
     let title: String
     let initialName: String
     let devices: [ApplicationServiceDeviceDescription]
-    let onCreate: (String, ApplicationServiceDeviceDescription) -> Void
+    let onCreate: (String, RemappingDeviceScope, RemappingApplicationScope) -> Void
     @Environment(\.presentationMode) private var presentationMode
     @State private var name: String
     @State private var selectedRuntimeIdentifier: String?
+    @State private var vendorID = ""
+    @State private var productID = ""
+    @State private var scopeKind = ProfileScopeKind.global
+    @State private var bundleIdentifier = ""
 
     init(
       title: String,
       initialName: String,
       devices: [ApplicationServiceDeviceDescription],
-      onCreate: @escaping (String, ApplicationServiceDeviceDescription) -> Void
+      onCreate: @escaping (String, RemappingDeviceScope, RemappingApplicationScope) -> Void
     ) {
       self.title = title
       self.initialName = initialName
@@ -530,13 +530,59 @@
             OJDLocalized.string("capture.profileNameValidation", fallback: "Enter a profile name.")
           )
         }
-        Picker(
-          OJDLocalized.string("common.controller", fallback: "Controller"),
-          selection: selectedDeviceBinding
-        ) {
-          ForEach(devices, id: \.runtimeIdentifier) { device in
-            Text(device.name).tag(device.runtimeIdentifier)
+        if !devices.isEmpty {
+          Picker(
+            OJDLocalized.string("common.controller", fallback: "Controller"),
+            selection: selectedDeviceBinding
+          ) {
+            Text(OJDLocalized.string("profiles.manualDevice", fallback: "Manual identifiers")).tag(
+              Self.manualDeviceIdentifier
+            )
+            ForEach(devices, id: \.runtimeIdentifier) { device in
+              Text(device.name).tag(device.runtimeIdentifier)
+            }
           }
+        }
+        HStack(spacing: 12) {
+          TextField(
+            OJDLocalized.string("profiles.vendorID", fallback: "Vendor ID"),
+            text: $vendorID
+          )
+          TextField(
+            OJDLocalized.string("profiles.productID", fallback: "Product ID"),
+            text: $productID
+          )
+        }
+        Text(
+          OJDLocalized.string(
+            "profiles.identifierHint",
+            fallback: "Use decimal or 0x-prefixed hexadecimal identifiers."
+          )
+        ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+        Picker(OJDLocalized.string("profiles.target", fallback: "Target"), selection: $scopeKind) {
+          Text(OJDLocalized.string("profiles.targetGlobal", fallback: "All applications")).tag(
+            ProfileScopeKind.global
+          )
+          Text(OJDLocalized.string("profiles.targetApplication", fallback: "One application")).tag(
+            ProfileScopeKind.application
+          )
+        }
+        if scopeKind == .application {
+          TextField(
+            OJDLocalized.string("profiles.bundleIdentifier", fallback: "Bundle identifier"),
+            text: $bundleIdentifier
+          )
+        }
+        if !fieldsAreEmpty && proposedProfile == nil {
+          Text(
+            OJDLocalized.string(
+              "profiles.creationValidation",
+              fallback: "Review the profile name, controller identifiers, and application target."
+            )
+          ).font(.caption).foregroundColor(Color(NSColor.systemRed)).fixedSize(
+            horizontal: false,
+            vertical: true
+          )
         }
         HStack {
           Spacer()
@@ -544,34 +590,61 @@
             presentationMode.wrappedValue.dismiss()
           }
           Button(OJDLocalized.string("common.create", fallback: "Create")) {
-            guard canCreate, let device = selectedDevice else { return }
-            onCreate(trimmedName, device)
+            guard let proposedProfile else { return }
+            onCreate(proposedProfile.name, proposedProfile.device, proposedProfile.applicationScope)
             presentationMode.wrappedValue.dismiss()
           }.disabled(!canCreate)
         }
       }.padding(28).frame(width: 390).onAppear {
         selectedRuntimeIdentifier = devices.first?.runtimeIdentifier
+        applySelectedDevice(devices.first)
       }
     }
 
     private var trimmedName: String { ProfileNameValidation.trimmedName(name) }
 
-    private var canCreate: Bool {
-      ProfileNameValidation.canCreate(name: name, hasSelectedDevice: selectedDevice != nil)
+    private var canCreate: Bool { proposedProfile != nil }
+
+    private var fieldsAreEmpty: Bool {
+      name.isEmpty && vendorID.isEmpty && productID.isEmpty && bundleIdentifier.isEmpty
+    }
+
+    private var proposedProfile: RemappingProfile? {
+      guard let vendorID = ProfileIdentifierInput.parse(vendorID),
+        let productID = ProfileIdentifierInput.parse(productID)
+      else { return nil }
+      let applicationScope: RemappingApplicationScope
+      switch scopeKind {
+      case .global: applicationScope = .global
+      case .application: applicationScope = .application(bundleIdentifier: bundleIdentifier)
+      }
+      let profile = RemappingProfile(
+        name: trimmedName,
+        device: RemappingDeviceScope(vendorID: vendorID, productID: productID),
+        applicationScope: applicationScope,
+        bindings: []
+      )
+      guard (try? profile.validate()) != nil else { return nil }
+      return profile
     }
 
     private var selectedDeviceBinding: Binding<String> {
       Binding(
-        get: { selectedRuntimeIdentifier ?? devices.first?.runtimeIdentifier ?? "" },
-        set: { selectedRuntimeIdentifier = $0 }
+        get: { selectedRuntimeIdentifier ?? Self.manualDeviceIdentifier },
+        set: { identifier in
+          selectedRuntimeIdentifier = identifier
+          applySelectedDevice(devices.first { $0.runtimeIdentifier == identifier })
+        }
       )
     }
 
-    private var selectedDevice: ApplicationServiceDeviceDescription? {
-      devices.first {
-        $0.runtimeIdentifier == (selectedRuntimeIdentifier ?? devices.first?.runtimeIdentifier)
-      }
+    private func applySelectedDevice(_ device: ApplicationServiceDeviceDescription?) {
+      guard let device else { return }
+      vendorID = ProfileIdentifierInput.formatted(device.vendorID)
+      productID = ProfileIdentifierInput.formatted(device.productID)
     }
+
+    private static let manualDeviceIdentifier = "manual"
   }
 
 #endif

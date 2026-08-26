@@ -148,6 +148,82 @@ import Testing
     #expect(SourceOption.options(including: .button(.south)).count == ordinary.count)
   }
 
+  @Test func identifierInputAcceptsTheSameDecimalAndHexFormsAsTheCLI() {
+    #expect(ProfileIdentifierInput.parse("4660") == 0x1234)
+    #expect(ProfileIdentifierInput.parse(" 0x1234 ") == 0x1234)
+    #expect(ProfileIdentifierInput.parse("0XFFFF") == UInt16.max)
+    #expect(ProfileIdentifierInput.parse("65536") == nil)
+    #expect(ProfileIdentifierInput.parse("controller") == nil)
+  }
+
+  @Test func profileDraftSupportsCLIMetadataAndAdvancedBindingParity() throws {
+    let original = makeProfile()
+    let binding = try #require(original.bindings.first)
+    var draft = RuntimeProfileDraft(profile: original)
+
+    draft = try draft.settingMetadata(
+      name: "Application Profile",
+      device: RemappingDeviceScope(vendorID: 0x045E, productID: 0x02EA),
+      applicationScope: .application(bundleIdentifier: "com.example.Game")
+    )
+    draft = try draft.settingBindingBehaviors(
+      turbo: nil,
+      longHold: RemappingLongHold(durationMs: 500, destination: .keyboard(key: .b, modifiers: [])),
+      doubleTap: RemappingDoubleTap(windowMs: 250, destination: .keyboard(key: .c, modifiers: [])),
+      for: binding.id
+    )
+
+    #expect(draft.profile.name == "Application Profile")
+    #expect(draft.profile.device == RemappingDeviceScope(vendorID: 0x045E, productID: 0x02EA))
+    #expect(draft.profile.applicationScope == .application(bundleIdentifier: "com.example.Game"))
+    #expect(draft.profile.bindings[0].longHold?.durationMs == 500)
+    #expect(draft.profile.bindings[0].doubleTap?.windowMs == 250)
+  }
+
+  @Test func profileDraftSupportsCLIChordSequenceAndLayerParity() throws {
+    var draft = RuntimeProfileDraft(profile: makeProfile())
+    draft = try draft.addingChord(
+      sources: [.button(.east), .button(.west)],
+      destination: .keyboard(key: .b, modifiers: [])
+    )
+    draft = try draft.addingSequence(
+      sources: [.button(.north), .dpad(.up)],
+      windowMs: 750,
+      destination: .keyboard(key: .c, modifiers: [])
+    )
+    draft = try draft.addingLayer(
+      name: "Precision",
+      activator: .button(.leftShoulder),
+      activationMode: .hold
+    )
+    let layer = try #require(draft.profile.layers.first)
+    draft = try draft.settingLayerBinding(
+      layerID: layer.id,
+      source: .axis(.leftStickX),
+      destination: .mouseMovement(.x)
+    )
+    let layerBinding = try #require(draft.profile.layers.first?.bindings.first)
+    let tuning = RemappingAxisTuning(deadzone: 0.2, gain: 1.5)
+    draft = try draft.settingLayerBindingAxisTuning(
+      layerID: layer.id,
+      bindingID: layerBinding.id,
+      axisTuning: tuning
+    )
+
+    #expect(draft.profile.chords.count == 1)
+    #expect(draft.profile.sequences.count == 1)
+    #expect(draft.profile.layers.count == 1)
+    #expect(draft.profile.layers[0].bindings[0].axisTuning == tuning)
+
+    draft = try draft.removingChord(draft.profile.chords[0].id)
+    draft = try draft.removingSequence(draft.profile.sequences[0].id)
+    draft = try draft.removingLayerBinding(layerID: layer.id, bindingID: layerBinding.id)
+    draft = try draft.removingLayer(layer.id)
+    #expect(draft.profile.chords.isEmpty)
+    #expect(draft.profile.sequences.isEmpty)
+    #expect(draft.profile.layers.isEmpty)
+  }
+
   private func makeProfile(id: UUID = UUID(), name: String = "Test Profile") -> RemappingProfile {
     RemappingProfile(
       id: id,
