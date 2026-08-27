@@ -193,6 +193,8 @@
 
     private let persistence: any SettingsPanePersistence
     private var profilesEditorIsDirty = false
+    private var activeProfilesEditorMutation: RuntimeMutationRequest?
+    private var activeProfilesEditorMutationIsRuntimeBound = false
 
     init(persistence: any SettingsPanePersistence = UserDefaultsSettingsPanePersistence()) {
       self.persistence = persistence
@@ -201,6 +203,7 @@
 
     func requestPane(_ pane: SettingsPane) {
       guard pane != selectedPane else { return }
+      guard activeProfilesEditorMutation == nil else { return }
       guard profilesEditorIsDirty else {
         selectAcceptedPane(pane)
         return
@@ -210,6 +213,40 @@
     }
 
     func setProfilesEditorDirty(_ dirty: Bool) { profilesEditorIsDirty = dirty }
+
+    @discardableResult
+    func beginProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
+      guard activeProfilesEditorMutation == nil else { return false }
+      activeProfilesEditorMutation = request
+      activeProfilesEditorMutationIsRuntimeBound = false
+      cancelPendingPane()
+      return true
+    }
+
+    func ownsProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
+      activeProfilesEditorMutation == request
+    }
+
+    @discardableResult
+    func finishProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
+      guard activeProfilesEditorMutation == request else { return false }
+      activeProfilesEditorMutation = nil
+      activeProfilesEditorMutationIsRuntimeBound = false
+      return true
+    }
+
+    @discardableResult
+    func reconcileProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
+      guard activeProfilesEditorMutation == nil
+        || activeProfilesEditorMutation == request
+        || (activeProfilesEditorMutation?.operation == request.operation
+          && !activeProfilesEditorMutationIsRuntimeBound)
+      else { return false }
+      activeProfilesEditorMutation = request
+      activeProfilesEditorMutationIsRuntimeBound = true
+      cancelPendingPane()
+      return true
+    }
 
     func discardPendingPane() {
       guard let pendingPane else {

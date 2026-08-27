@@ -259,7 +259,7 @@ Then:
 For a release build that does not install anything on the build machine:
 
 ```bash
-./scripts/ojd release package 0.5.0-beta.1
+./scripts/ojd release package 0.5.0-beta.2
 ```
 
 This command uses release signing, regenerates and embeds the USB DriverKit extension into the app
@@ -279,7 +279,7 @@ creation do not prove activation or HID delivery on a tester's Mac.
 ## GitHub Actions release
 
 `.github/workflows/release.yml` runs on SemVer tags such as `0.1.0` or
-`0.5.0-beta.1` and by manual dispatch.
+`0.5.0-beta.2` and by manual dispatch.
 It validates profiles, imports signing material, builds a release app, notarizes
 it, uploads the release DMG as a workflow artifact, and
 publishes the GitHub Release.

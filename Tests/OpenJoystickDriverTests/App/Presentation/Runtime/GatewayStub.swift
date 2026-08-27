@@ -37,6 +37,7 @@ actor GatewayStub: ApplicationServiceGateway {
   let inputSequence: [DeviceInputState]?
   let updateShouldConflict: Bool
   let updateDelayNanoseconds: UInt64
+  let deleteShouldFail: Bool
   let setIdentityResult: Bool
   let compatibilityReadDelayNanoseconds: UInt64
   var lastExpectedCurrent: RemappingProfile?
@@ -70,6 +71,7 @@ actor GatewayStub: ApplicationServiceGateway {
     inputSequence: [DeviceInputState]? = nil,
     updateShouldConflict: Bool = false,
     updateDelayNanoseconds: UInt64 = 0,
+    deleteShouldFail: Bool = false,
     setIdentityResult: Bool = true,
     compatibilityReadDelayNanoseconds: UInt64 = 0
   ) {
@@ -81,6 +83,7 @@ actor GatewayStub: ApplicationServiceGateway {
     self.inputSequence = inputSequence
     self.updateShouldConflict = updateShouldConflict
     self.updateDelayNanoseconds = updateDelayNanoseconds
+    self.deleteShouldFail = deleteShouldFail
     self.setIdentityResult = setIdentityResult
     self.compatibilityReadDelayNanoseconds = compatibilityReadDelayNanoseconds
   }
@@ -181,6 +184,7 @@ actor GatewayStub: ApplicationServiceGateway {
   }
 
   func deleteRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+    if deleteShouldFail { throw ApplicationServiceClientError.timeout }
     deleteCallCount += 1
     lastDeletedProfileID = id
     snapshotPayload = snapshot(

@@ -11,7 +11,7 @@
     @ObservedObject var navigation: SettingsNavigationModel
     @State private var selectedProfileID: UUID?
     @State private var isCreatingProfile = false
-    @State private var editorHasUnsavedChanges = false
+    @State private var profileEditorTransition = ProfileEditorTransitionState()
     @State private var activeAlert: ProfilesAlert?
     @State private var profileActionError: String?
     @State private var observedDiscardGeneration = 0
@@ -56,7 +56,7 @@
             ) { deleteProfile(id) },
             secondaryButton: .cancel { activeAlert = nil }
           )
-        case .discard(let id):
+        case .discard:
           Alert(
             title: Text(
               OJDLocalized.string("settings.discardTitle", fallback: "Discard unsaved changes?")
@@ -70,21 +70,26 @@
             primaryButton: .destructive(
               Text(OJDLocalized.string("settings.discardAction", fallback: "Discard Changes"))
             ) {
+              guard let action = profileEditorTransition.discardPendingAction() else {
+                activeAlert = nil
+                return
+              }
               setEditorDirty(false)
               activeAlert = nil
-              selectedProfileID = id
+              performProfileAction(action)
             },
-            secondaryButton: .cancel { activeAlert = nil }
+            secondaryButton: .cancel { cancelPendingProfileAction() }
           )
         }
       }.onAppear {
         if case .available(let snapshot) = viewModel.remappingState { lastKnownSnapshot = snapshot }
         if observedDiscardGeneration != navigation.discardGeneration {
-          editorHasUnsavedChanges = false
+          profileEditorTransition.setDirty(false)
           observedDiscardGeneration = navigation.discardGeneration
         }
         selectFirstProfileIfNeeded()
         navigation.setProfilesEditorDirty(editorHasUnsavedChanges)
+        handleProfileMutation(viewModel.mutationState)
       }.onReceive(viewModel.$mutationState) { handleProfileMutation($0) }.onReceive(
         navigation.$discardGeneration
       ) { generation in
@@ -143,13 +148,13 @@
                 OJDLocalized.string("profiles.new", fallback: "New profile")
               ).frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
             }
-          ).buttonStyle(BorderlessButtonStyle()).disabled(isMutationActive)
+          ).buttonStyle(BorderlessButtonStyle()).disabled(isProfileActionBlocked)
           Button(action: importProfile) {
             OJDSystemSymbol(name: "square.and.arrow.down", fallback: "Import")
               .ojdAccessibilityLabel(
                 OJDLocalized.string("profiles.import", fallback: "Import profile")
               ).frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
-          }.buttonStyle(BorderlessButtonStyle()).disabled(isMutationActive)
+          }.buttonStyle(BorderlessButtonStyle()).disabled(isProfileActionBlocked)
         }.padding(.horizontal, 14).padding(.top, 18)
 
         switch viewModel.remappingState {
@@ -201,7 +206,7 @@
                 selectedProfile?.id == profile.id
               ).ojdAccessibilityValue(profileAccessibilityValue(profile))
           }
-        }.padding(.horizontal, 8)
+        }.padding(.horizontal, 8).disabled(isProfileActionBlocked)
       }
     }
 
@@ -213,9 +218,12 @@
             profile: selectedProfile,
             viewModel: viewModel,
             isActive: isActive(selectedProfile),
+            isEditingBlocked: profileEditorTransition.isEditingBlocked,
             onDelete: { activeAlert = .delete(selectedProfile.id) },
             onExport: { exportProfile($0) },
-            onEditingStateChanged: { setEditorDirty($0) }
+            onEditingStateChanged: { setEditorDirty($0) },
+            onMutationStarted: { beginProfileMutation($0) },
+            onMutationResult: { handleProfileMutationResult($0) }
           ).id(
             selectedProfile.id.uuidString + "-\(navigation.discardGeneration)"
               + "-\(profileEditorGeneration)"
@@ -259,7 +267,7 @@
         )
         Button(OJDLocalized.string("profiles.create", fallback: "Create profile...")) {
           isCreatingProfile = true
-        }.disabled(isMutationActive)
+        }.disabled(isProfileActionBlocked)
       }
     }
 
@@ -319,18 +327,51 @@
 
     private func selectProfile(_ profileID: UUID) {
       guard profileID != selectedProfileID else { return }
-      guard editorHasUnsavedChanges else {
-        preservedEditorProfile = nil
-        selectedProfileID = profileID
-        return
-      }
-      activeAlert = .discard(profileID)
+      requestProfileAction(.select(profileID))
     }
 
     private func setEditorDirty(_ dirty: Bool) {
-      editorHasUnsavedChanges = dirty
+      profileEditorTransition.setDirty(dirty)
       if !dirty { preservedEditorProfile = nil }
       navigation.setProfilesEditorDirty(dirty)
+    }
+
+    private var editorHasUnsavedChanges: Bool { profileEditorTransition.isDirty }
+
+    private func requestProfileAction(_ action: ProfileEditorAction) {
+      guard !isProfileActionBlocked else { return }
+      switch profileEditorTransition.request(action) {
+      case .perform(let action): performProfileAction(action)
+      case .confirmDiscard: activeAlert = .discard(action.profileID)
+      case .blocked: break
+      }
+    }
+
+    private func performProfileAction(_ action: ProfileEditorAction) {
+      guard !isProfileActionBlocked else { return }
+      switch action {
+      case .select(let profileID):
+        preservedEditorProfile = nil
+        selectedProfileID = profileID
+      case .importProfile(let profile):
+        let request = RuntimeMutationRequest(operation: .importProfile(profileID: profile.id))
+        guard beginProfileMutation(request) else { return }
+        Task { @MainActor in
+          let result = await viewModel.importRemappingProfile(profile, request: request)
+          handleProfileMutationResult(result)
+        }
+      }
+    }
+
+    private func selectCompletedProfile(_ profileID: UUID) {
+      guard profileID != selectedProfileID else { return }
+      preservedEditorProfile = nil
+      selectedProfileID = profileID
+    }
+
+    private func cancelPendingProfileAction() {
+      profileEditorTransition.cancelPendingAction()
+      activeAlert = nil
     }
 
     private func isActive(_ profile: RemappingProfile) -> Bool {
@@ -348,35 +389,42 @@
       for device: RemappingDeviceScope,
       scope: RemappingApplicationScope
     ) {
+      guard !isProfileActionBlocked else { return }
       let profile = RemappingProfile(
         name: name,
         device: device,
         applicationScope: scope,
         bindings: []
       )
-      Task { @MainActor in await viewModel.createRemappingProfile(profile) }
+      let request = RuntimeMutationRequest(operation: .create(profileID: profile.id))
+      guard beginProfileMutation(request) else { return }
+      Task { @MainActor in
+        let result = await viewModel.createRemappingProfile(profile, request: request)
+        handleProfileMutationResult(result)
+      }
     }
 
     private func deleteProfile(_ profileID: UUID) {
+      guard !isProfileActionBlocked else { return }
       activeAlert = nil
       let restoreDirtyStateOnFailure = selectedProfileID == profileID && editorHasUnsavedChanges
+      let request = RuntimeMutationRequest(operation: .delete(profileID: profileID))
+      guard beginProfileMutation(
+        request,
+        restoresDirtyOnFailure: restoreDirtyStateOnFailure
+      ) else { return }
       if selectedProfileID == profileID {
         setEditorDirty(false)
         preservedEditorProfile = nil
       }
       Task { @MainActor in
-        await viewModel.deleteRemappingProfile(id: profileID)
-        guard restoreDirtyStateOnFailure else { return }
-        guard case .completed(.delete(let deletedID)) = viewModel.mutationState,
-          deletedID == profileID
-        else {
-          setEditorDirty(true)
-          return
-        }
+        let result = await viewModel.deleteRemappingProfile(id: profileID, request: request)
+        handleProfileMutationResult(result)
       }
     }
 
     private func importProfile() {
+      guard !isProfileActionBlocked else { return }
       let panel = NSOpenPanel()
       panel.allowsMultipleSelection = false
       panel.canChooseDirectories = false
@@ -386,7 +434,7 @@
       guard panel.runModal() == .OK, let url = panel.url else { return }
       do {
         let profile = try RemappingProfileFileStore.load(from: url)
-        Task { @MainActor in await viewModel.importRemappingProfile(profile) }
+        requestProfileAction(.importProfile(profile))
       } catch { profileActionError = RuntimePresentation.userFacingError(error) }
     }
 
@@ -411,32 +459,114 @@
     }
 
     private func handleProfileMutation(_ mutation: RuntimeMutationState) {
-      guard let operation = viewModel.lastMutationOperation else { return }
+      reconcileActiveProfileMutation()
+      if case .saving = mutation {
+        return
+      }
+      guard let operation = viewModel.lastMutationOperation,
+        let mutationID = viewModel.lastMutationID
+      else { return }
+      let request = RuntimeMutationRequest(operation: operation, id: mutationID)
       switch mutation {
-      case .completed(let completedOperation) where completedOperation == operation:
+      case .succeeded, .completed:
+        handleProfileMutationResult(.succeeded(id: request.id, operation: request.operation))
+      case .error(let message):
+        handleProfileMutationResult(
+          .failed(id: request.id, operation: request.operation, message: message)
+        )
+      case .conflict:
+        handleProfileMutationResult(.conflict(id: request.id, operation: request.operation))
+      default: break
+      }
+    }
+
+    private func handleProfileMutationResult(_ result: RuntimeMutationResult) {
+      switch result {
+      case .succeeded(let mutationID, let operation):
+        let finish = finishProfileMutation(
+          RuntimeMutationRequest(operation: operation, id: mutationID), succeeded: true
+        )
+        guard finish.didRelease else { return }
         profileActionError = nil
-        switch completedOperation {
-        case .create(let profileID): selectProfile(profileID)
-        case .importProfile(let profileID):
-          let importedOverDirtySelection = editorHasUnsavedChanges && selectedProfileID == profileID
-          setEditorDirty(false)
-          preservedEditorProfile = nil
-          selectedProfileID = profileID
-          if importedOverDirtySelection { profileEditorGeneration += 1 }
+        switch operation {
+        case .create, .importProfile:
+          switch ProfileEditorMutationCompletion.action(
+            for: operation,
+            selectedProfileID: selectedProfileID,
+            shouldRefreshEditor: finish.shouldRefreshEditor
+          ) {
+          case .none: break
+          case .select(let profileID): selectCompletedProfile(profileID)
+          case .refreshEditor: profileEditorGeneration += 1
+          }
         case .delete(let profileID) where selectedProfileID == profileID:
           selectedProfileID = profiles.first?.id
         default: break
         }
-      case .error(let message) where isProfileAction(operation): profileActionError = message
-      case .conflict where isProfileAction(operation):
-        profileActionError =
-          viewModel.lastError
-          ?? OJDLocalized.string(
-            "profiles.actionError",
-            fallback: "This profile action could not be completed. Try again."
-          )
-      default: break
+      case .conflict(let mutationID, let operation):
+        _ = finishProfileMutation(
+          RuntimeMutationRequest(operation: operation, id: mutationID), succeeded: false
+        )
+        if isProfileAction(operation) {
+          profileActionError =
+            viewModel.lastError
+            ?? OJDLocalized.string(
+              "profiles.actionError",
+              fallback: "This profile action could not be completed. Try again."
+            )
+        }
+      case .failed(let mutationID, let operation, let message),
+        .rejected(let mutationID, let operation, let message):
+        _ = finishProfileMutation(
+          RuntimeMutationRequest(operation: operation, id: mutationID), succeeded: false
+        )
+        if isProfileAction(operation) { profileActionError = message }
       }
+    }
+
+    private func finishProfileMutation(
+      _ request: RuntimeMutationRequest,
+      succeeded: Bool
+    ) -> ProfileEditorMutationFinish {
+      guard profileEditorTransition.ownsMutation(request) else { return .ignored }
+      guard navigation.ownsProfilesEditorMutation(request) else { return .ignored }
+      let finish = profileEditorTransition.finishMutationIfOwned(
+        request, succeeded: succeeded
+      )
+      guard finish.didRelease else { return .ignored }
+      guard navigation.finishProfilesEditorMutation(request) else { return .ignored }
+      navigation.setProfilesEditorDirty(editorHasUnsavedChanges)
+      return finish
+    }
+
+    private func beginProfileMutation(
+      _ request: RuntimeMutationRequest,
+      restoresDirtyOnFailure: Bool = false
+    ) -> Bool {
+      let start = profileEditorTransition.beginMutation(
+        request,
+        restoresDirtyOnFailure: restoresDirtyOnFailure
+      )
+      guard start == .acquired else { return false }
+      if !navigation.ownsProfilesEditorMutation(request),
+        !navigation.beginProfilesEditorMutation(request)
+      {
+        _ = profileEditorTransition.finishMutationIfOwned(request)
+        return false
+      }
+      return true
+    }
+
+    private func reconcileActiveProfileMutation() {
+      guard let operation = viewModel.activeMutationOperation,
+        let mutationID = viewModel.activeMutationID
+      else { return }
+      _ = reconcileProfileMutation(RuntimeMutationRequest(operation: operation, id: mutationID))
+    }
+
+    private func reconcileProfileMutation(_ request: RuntimeMutationRequest) -> Bool {
+      guard navigation.reconcileProfilesEditorMutation(request) else { return false }
+      return profileEditorTransition.reconcileRuntimeMutation(request).isAccepted
     }
 
     private func isProfileAction(_ operation: RuntimeMutationOperation) -> Bool {
@@ -447,9 +577,11 @@
     }
 
     private var isMutationActive: Bool {
-      if viewModel.activeMutationOperation != nil { return true }
-      if case .saving = viewModel.mutationState { return true }
-      return false
+      viewModel.activeMutationOperation != nil || profileEditorTransition.isEditingBlocked
+    }
+
+    private var isProfileActionBlocked: Bool {
+      isMutationActive || profileEditorTransition.isEditingBlocked
     }
 
     private var connectedDevices: [ApplicationServiceDeviceDescription] {

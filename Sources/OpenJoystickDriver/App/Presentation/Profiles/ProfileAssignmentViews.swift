@@ -40,6 +40,7 @@
     let title: String
     let bindings: [RemappingBinding]
     @Binding var draft: RuntimeProfileDraft
+    let isEditingDisabled: Bool
     let onRemove: (UUID) -> Void
     let onError: (String) -> Void
     let onAdjust: (RemappingBinding) -> Void
@@ -54,6 +55,7 @@
             AssignmentRow(
               binding: binding,
               draft: $draft,
+              isEditingDisabled: isEditingDisabled,
               onRemove: onRemove,
               onError: onError,
               onAdjust: onAdjust,
@@ -70,6 +72,7 @@
   private struct AssignmentRow: View {
     let binding: RemappingBinding
     @Binding var draft: RuntimeProfileDraft
+    let isEditingDisabled: Bool
     let onRemove: (UUID) -> Void
     let onError: (String) -> Void
     let onAdjust: (RemappingBinding) -> Void
@@ -135,7 +138,10 @@
             OJDLocalized.string("common.removeAssignment", fallback: "Remove assignment")
           ).ojdHelp(OJDLocalized.string("common.removeAssignment", fallback: "Remove assignment"))
         }
-      }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 7).ojdAccessibilityLabel(
+      }.disabled(isEditingDisabled).frame(maxWidth: .infinity, alignment: .leading).padding(
+        .vertical,
+        7
+      ).ojdAccessibilityLabel(
         OJDLocalized.string("common.assignment", fallback: "Assignment")
       ).ojdAccessibilityValue(assignmentAccessibilityValue)
     }
@@ -167,6 +173,7 @@
       Binding(
         get: { binding.destination },
         set: { destination in
+          guard !isEditingDisabled else { return }
           do {
             draft = try draft.settingDestination(destination, for: binding.id)
             onEditingStateChanged()
@@ -176,6 +183,7 @@
     }
 
     private func setSource(_ source: RemappingSource) {
+      guard !isEditingDisabled else { return }
       do {
         draft = try draft.settingSource(source, for: binding.id)
         onEditingStateChanged()

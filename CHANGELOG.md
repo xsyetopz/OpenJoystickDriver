@@ -2,6 +2,24 @@
 
 All notable changes to OpenJoystickDriver are documented in this file.
 
+## 0.5.0-beta.2
+
+Released: 2026-08-27
+
+### Added
+
+- Added complete GUI profile management for creating, editing, importing,
+  deleting, activating, and deactivating profiles, including device and
+  application scope, binding capture, turbo/long-hold/double-tap behaviors,
+  chords, sequences, layers, and axis tuning.
+
+### Fixed
+
+- Tolerated optional Xbox 360 player-1 ring LED startup output rejections when
+  the transport reports an input/output or unsupported result, while keeping
+  required output and unrelated packets or parsers on the failure path. The
+  CLI record probe and application USB pipeline now share this policy.
+
 ## 0.5.0-beta.1
 
 ### Added

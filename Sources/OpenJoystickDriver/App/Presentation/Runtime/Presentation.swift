@@ -330,6 +330,41 @@ enum RuntimeMutationState: Sendable {
   case error(String)
 }
 
+struct RuntimeMutationRequest: Equatable, Sendable {
+  let operation: RuntimeMutationOperation
+  let id: UUID
+
+  init(operation: RuntimeMutationOperation, id: UUID = UUID()) {
+    self.operation = operation
+    self.id = id
+  }
+}
+
+enum RuntimeMutationResult: Equatable, Sendable {
+  case succeeded(id: UUID, operation: RuntimeMutationOperation)
+  case conflict(id: UUID, operation: RuntimeMutationOperation)
+  case failed(id: UUID, operation: RuntimeMutationOperation, message: String)
+  case rejected(id: UUID, operation: RuntimeMutationOperation, message: String)
+
+  var id: UUID {
+    switch self {
+    case .succeeded(let id, _), .conflict(let id, _), .failed(let id, _, _),
+      .rejected(let id, _, _):
+      return id
+    }
+  }
+
+  var operation: RuntimeMutationOperation {
+    switch self {
+    case .succeeded(_, let operation), .conflict(_, let operation), .failed(_, let operation, _),
+      .rejected(_, let operation, _):
+      return operation
+    }
+  }
+
+  var request: RuntimeMutationRequest { RuntimeMutationRequest(operation: operation, id: id) }
+}
+
 enum RuntimeMutationOperation: Sendable, Equatable {
   case create(profileID: UUID)
   case update(profileID: UUID)

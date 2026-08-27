@@ -11,9 +11,12 @@
     let profile: RemappingProfile
     @ObservedObject var viewModel: RuntimeViewModel
     let isActive: Bool
+    let isEditingBlocked: Bool
     let onDelete: () -> Void
     let onExport: (RemappingProfile) -> Void
     let onEditingStateChanged: (Bool) -> Void
+    let onMutationStarted: (RuntimeMutationRequest) -> Bool
+    let onMutationResult: (RuntimeMutationResult) -> Void
 
     @State private var draft: RuntimeProfileDraft
     @State private var expectedCurrent: RemappingProfile
@@ -21,23 +24,28 @@
     @State private var showingConflict = false
     @State private var localError: String?
     @State private var saveError: String?
-    @State private var saveInFlight = false
-    @State private var pendingUpdateOperation: RuntimeMutationOperation?
+    @State private var saveState = ProfileEditorSaveState()
 
     init(
       profile: RemappingProfile,
       viewModel: RuntimeViewModel,
       isActive: Bool,
+      isEditingBlocked: Bool,
       onDelete: @escaping () -> Void,
       onExport: @escaping (RemappingProfile) -> Void,
-      onEditingStateChanged: @escaping (Bool) -> Void
+      onEditingStateChanged: @escaping (Bool) -> Void,
+      onMutationStarted: @escaping (RuntimeMutationRequest) -> Bool,
+      onMutationResult: @escaping (RuntimeMutationResult) -> Void
     ) {
       self.profile = profile
       self.viewModel = viewModel
       self.isActive = isActive
+      self.isEditingBlocked = isEditingBlocked
       self.onDelete = onDelete
       self.onExport = onExport
       self.onEditingStateChanged = onEditingStateChanged
+      self.onMutationStarted = onMutationStarted
+      self.onMutationResult = onMutationResult
       _draft = State(initialValue: RuntimeProfileDraft(profile: profile))
       _expectedCurrent = State(initialValue: profile)
     }
@@ -49,18 +57,19 @@
         assignmentContent
         Divider()
         editorFooter
-      }.sheet(item: $activeSheet) { sheet in
-        switch sheet {
-        case .metadata: ProfileMetadataSheet(profile: draft.profile) { updateMetadata($0) }
-        case .capture:
+      }.disabled(isEditingDisabled).sheet(item: $activeSheet) { sheet in
+        Group {
+          switch sheet {
+          case .metadata: ProfileMetadataSheet(profile: draft.profile) { updateMetadata($0) }
+          case .capture:
           CaptureAssignmentSheet(viewModel: viewModel) { source, destination in
             addBinding(source: source, destination: destination)
           }
-        case .adjustment(let binding):
+          case .adjustment(let binding):
           AxisAdjustmentSheet(binding: binding) { tuning in
             updateAxisTuning(tuning, for: binding.id)
           }
-        case .behavior(let binding):
+          case .behavior(let binding):
           BindingBehaviorSheet(binding: binding) { turbo, longHold, doubleTap in
             updateBindingBehaviors(
               turbo: turbo,
@@ -69,27 +78,27 @@
               for: binding.id
             )
           }
-        case .chord:
+          case .chord:
           ProfileCombinationSheet(kind: .chord) { sources, _, destination in
             addChord(sources: sources, destination: destination)
           }
-        case .sequence:
+          case .sequence:
           ProfileCombinationSheet(kind: .sequence) { sources, windowMs, destination in
             addSequence(sources: sources, windowMs: windowMs, destination: destination)
           }
-        case .layer:
+          case .layer:
           ProfileLayerSheet { name, activator, mode in
             addLayer(name: name, activator: activator, mode: mode)
           }
-        case .layerBinding(let layer):
+          case .layerBinding(let layer):
           ProfileLayerBindingSheet(layer: layer) { source, destination in
             setLayerBinding(layerID: layer.id, source: source, destination: destination)
           }
-        case .layerAdjustment(let layerID, let binding):
+          case .layerAdjustment(let layerID, let binding):
           AxisAdjustmentSheet(binding: binding) { tuning in
             updateLayerAxisTuning(tuning, layerID: layerID, bindingID: binding.id)
           }
-        case .layerBehavior(let layerID, let binding):
+          case .layerBehavior(let layerID, let binding):
           BindingBehaviorSheet(binding: binding) { turbo, longHold, doubleTap in
             updateLayerBindingBehaviors(
               layerID: layerID,
@@ -99,7 +108,8 @@
               doubleTap: doubleTap
             )
           }
-        }
+          }
+        }.disabled(isEditingDisabled)
       }.onReceive(viewModel.$mutationState) { mutation in handleMutation(mutation) }.onAppear {
         reportEditingState()
       }
@@ -129,23 +139,44 @@
           if isActive {
             Button(OJDLocalized.string("common.deactivate", fallback: "Deactivate")) {
               guard !isMutationActive else { return }
-              Task { @MainActor in await viewModel.deactivateRemappingProfile(profileID: profile.id)
+              let request = RuntimeMutationRequest(
+                operation: .deactivate(profileID: profile.id)
+              )
+              guard onMutationStarted(request) else { return }
+              Task { @MainActor in
+                let result = await viewModel.deactivateRemappingProfile(
+                  profileID: profile.id,
+                  request: request
+                )
+                onMutationResult(result)
               }
             }.disabled(isMutationActive)
             Button(OJDLocalized.string("profiles.deactivateController", fallback: "Deactivate all"))
             {
               guard !isMutationActive else { return }
+              let request = RuntimeMutationRequest(operation: .deactivate(profileID: nil))
+              guard onMutationStarted(request) else { return }
               Task { @MainActor in
-                await viewModel.deactivateRemappingProfile(
+                let result = await viewModel.deactivateRemappingProfile(
                   vendorID: profile.device.vendorID,
-                  productID: profile.device.productID
+                  productID: profile.device.productID,
+                  request: request
                 )
+                onMutationResult(result)
               }
             }.disabled(isMutationActive)
           } else {
             Button(OJDLocalized.string("common.setActive", fallback: "Set active")) {
               guard !isMutationActive else { return }
-              Task { @MainActor in await viewModel.activateRemappingProfile(id: profile.id) }
+              let request = RuntimeMutationRequest(operation: .activate(profileID: profile.id))
+              guard onMutationStarted(request) else { return }
+              Task { @MainActor in
+                let result = await viewModel.activateRemappingProfile(
+                  id: profile.id,
+                  request: request
+                )
+                onMutationResult(result)
+              }
             }.disabled(isMutationActive)
           }
           Spacer(minLength: 0)
@@ -208,6 +239,7 @@
                 title: group.title,
                 bindings: group.bindings,
                 draft: $draft,
+                isEditingDisabled: isEditingDisabled,
                 onRemove: removeBinding,
                 onError: { localError = $0 },
                 onAdjust: { activeSheet = .adjustment($0) },
@@ -272,6 +304,8 @@
       return false
     }
 
+    private var isEditingDisabled: Bool { isEditingBlocked || isMutationActive }
+
     private var saveStatus: ProfileSaveStatus {
       if saveInFlight { return .saving }
       if saveError != nil { return .error }
@@ -283,6 +317,7 @@
       Binding(
         get: { draft.profile.name },
         set: { newValue in
+          guard !isEditingDisabled else { return }
           draft = replacingName(newValue)
           saveError = nil
           reportEditingState()
@@ -340,6 +375,7 @@
     }
 
     private func addBinding(source: RemappingSource, destination: RemappingDestination) {
+      guard !isEditingDisabled else { return }
       do {
         draft = try draft.addingBinding(source: source, destination: destination)
         activeSheet = nil
@@ -349,6 +385,7 @@
     }
 
     private func removeBinding(_ id: UUID) {
+      guard !isEditingDisabled else { return }
       do {
         draft = try draft.removingBinding(id)
         saveError = nil
@@ -357,6 +394,7 @@
     }
 
     private func updateAxisTuning(_ tuning: RemappingAxisTuning, for id: UUID) {
+      guard !isEditingDisabled else { return }
       do {
         draft = try draft.settingAxisTuning(tuning, for: id)
         saveError = nil
@@ -365,6 +403,7 @@
     }
 
     private func updateMetadata(_ profile: RemappingProfile) {
+      guard !isEditingDisabled else { return }
       draft = RuntimeProfileDraft(profile: profile)
       localError = nil
       saveError = nil
@@ -461,6 +500,7 @@
     }
 
     private func applyDraftChange(_ change: () throws -> RuntimeProfileDraft) {
+      guard !isEditingDisabled else { return }
       do {
         draft = try change()
         localError = nil
@@ -600,21 +640,30 @@
     }
 
     private func save() {
-      guard draft.profile != expectedCurrent, !saveInFlight, !isMutationActive else { return }
+      guard draft.profile != expectedCurrent, !saveInFlight, !isEditingDisabled else { return }
       let operation = RuntimeMutationOperation.update(profileID: profile.id)
-      pendingUpdateOperation = operation
-      saveInFlight = true
+      let request = RuntimeMutationRequest(operation: operation)
+      guard saveState.begin(request) else { return }
       saveError = nil
       localError = nil
+      guard onMutationStarted(request) else {
+        finishSave()
+        return
+      }
       reportEditingState()
       Task { @MainActor in
-        await viewModel.updateRemappingProfile(draft.profile, expectedCurrent: expectedCurrent)
-        reconcileSave(operation: operation)
+        let result = await viewModel.updateRemappingProfile(
+          draft.profile,
+          expectedCurrent: expectedCurrent,
+          request: request
+        )
+        reconcileSave(request: request, result: result)
+        onMutationResult(result)
       }
     }
 
     private func duplicateProfile() {
-      guard !isMutationActive else { return }
+      guard !isEditingDisabled else { return }
       let source = draft.profile
       let duplicate = RemappingProfile(
         schemaVersion: source.schemaVersion,
@@ -626,7 +675,12 @@
         sequences: source.sequences,
         layers: source.layers
       )
-      Task { @MainActor in await viewModel.createRemappingProfile(duplicate) }
+      let request = RuntimeMutationRequest(operation: .create(profileID: duplicate.id))
+      guard onMutationStarted(request) else { return }
+      Task { @MainActor in
+        let result = await viewModel.createRemappingProfile(duplicate, request: request)
+        onMutationResult(result)
+      }
     }
 
     private func reportEditingState() {
@@ -635,101 +689,77 @@
 
     private func handleMutation(_ mutation: RuntimeMutationState) {
       guard saveInFlight, pendingUpdateOperation == .update(profileID: profile.id),
-        viewModel.lastMutationOperation == pendingUpdateOperation
+        viewModel.lastMutationOperation == pendingUpdateOperation,
+        viewModel.lastMutationID == pendingUpdateMutationID
       else { return }
-
-      // ``updateRemappingProfile`` can be rejected before it starts when another profile action
-      // wins the serialization race. That rejection is still this editor's result, even though
-      // the unrelated operation remains active; do not leave the save spinner stuck. A rejection
-      // for a different operation has a different lastMutationOperation and is ignored here.
-      if let activeOperation = viewModel.activeMutationOperation,
-        activeOperation != .update(profileID: profile.id)
-      {
-        guard case .error(let message) = mutation else { return }
-        finishSave()
-        localError = message
-        saveError = message
-        reportEditingState()
-        return
-      }
-      guard viewModel.activeMutationOperation == nil else { return }
 
       switch mutation {
       case .conflict(let profileID) where profileID == profile.id:
-        finishSave()
-        showingConflict = true
-        saveError = OJDLocalized.string(
-          "profiles.changedElsewhere",
-          fallback: "The profile changed elsewhere."
-        )
+        applySaveConflict()
       case .error(let message):
         finishSave()
         localError = message
         saveError = message
       case .succeeded(let profileID) where profileID == profile.id:
-        finishSave()
-        saveError = nil
-        guard case .available(let snapshot) = viewModel.remappingState,
-          let latest = snapshot.profiles.first(where: { $0.id == profile.id })
-        else {
-          localError = OJDLocalized.string(
-            "profiles.savedButUnavailable",
-            fallback: "The profile was saved, but its latest state is unavailable."
-          )
-          saveError = localError
-          reportEditingState()
-          return
-        }
-        expectedCurrent = latest
-        draft = RuntimeProfileDraft(profile: latest)
+        applySaveSuccess()
       default: return
       }
       reportEditingState()
     }
 
     private func finishSave() {
-      saveInFlight = false
-      pendingUpdateOperation = nil
+      saveState.cancel()
     }
 
-    private func reconcileSave(operation: RuntimeMutationOperation) {
-      guard saveInFlight, pendingUpdateOperation == operation else { return }
-      guard viewModel.lastMutationOperation == operation else {
-        // A same-profile overlap rejection belongs to another editor and must not clear this
-        // editor's in-flight save. Leave reconciliation to the operation that owns this editor;
-        // if no mutation is active, report the unexpected result instead of silently dropping it.
-        guard viewModel.activeMutationOperation == nil else { return }
-        finishSave()
-        localError = OJDLocalized.string(
-          "profiles.saveUnavailable",
-          fallback: "The profile could not be saved. Finish the current action and try again."
-        )
-        saveError = localError
-        reportEditingState()
-        return
-      }
-      // Our own request may have been rejected while a different operation is still active. Its
-      // correlated error is actionable now; waiting for the unrelated operation would overwrite
-      // lastMutationOperation and strand this editor in a saving state.
-      if let activeOperation = viewModel.activeMutationOperation, activeOperation != operation {
-        guard case .error(let message) = viewModel.mutationState else { return }
+    private func reconcileSave(request: RuntimeMutationRequest, result: RuntimeMutationResult) {
+      guard saveInFlight, pendingUpdateOperation == request.operation,
+        pendingUpdateMutationID == request.id
+      else { return }
+      switch saveState.resolve(result) {
+      case .succeeded:
+        applySaveSuccess()
+      case .conflict:
+        applySaveConflict()
+      case .failed(let message):
         finishSave()
         localError = message
         saveError = message
-        reportEditingState()
-        return
+      case .ignored: return
       }
-      guard viewModel.activeMutationOperation == nil else { return }
-      handleMutation(viewModel.mutationState)
-      guard saveInFlight else { return }
-      finishSave()
-      localError = OJDLocalized.string(
-        "profiles.saveIncomplete",
-        fallback: "The profile save did not finish. Try again."
-      )
-      saveError = localError
       reportEditingState()
     }
+
+    private func applySaveConflict() {
+      finishSave()
+      showingConflict = true
+      saveError = OJDLocalized.string(
+        "profiles.changedElsewhere",
+        fallback: "The profile changed elsewhere."
+      )
+    }
+
+    private func applySaveSuccess() {
+      finishSave()
+      saveError = nil
+      guard case .available(let snapshot) = viewModel.remappingState,
+        let latest = snapshot.profiles.first(where: { $0.id == profile.id })
+      else {
+        localError = OJDLocalized.string(
+          "profiles.savedButUnavailable",
+          fallback: "The profile was saved, but its latest state is unavailable."
+        )
+        saveError = localError
+        return
+      }
+      expectedCurrent = latest
+      draft = RuntimeProfileDraft(profile: latest)
+    }
+
+    private var saveInFlight: Bool { saveState.isInFlight }
+
+    private var pendingUpdateOperation: RuntimeMutationOperation? { saveState.operation }
+
+    private var pendingUpdateMutationID: UUID? { saveState.mutationID }
   }
 
   private enum ProfileEditorSheet: Identifiable {

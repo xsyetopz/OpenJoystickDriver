@@ -1,9 +1,15 @@
+import IOKit
 import OpenJoystickDriverKit
 import Testing
 
 @testable import OpenJoystickDriverUSB
 
 struct TransportFacadeTests {
+  @Test func mapsUnsupportedAndBadArgumentToEquivalentUnsupportedTransportErrors() {
+    #expect(IOUSBHostTransportProvider.transportError(kIOReturnUnsupported) == .notSupported)
+    #expect(IOUSBHostTransportProvider.transportError(kIOReturnBadArgument) == .notSupported)
+  }
+
   @Test func accessibleThirdPartyDeviceUsesDirectIOUSBHost() {
     let direct = device(route: .ioUSBHost, serviceID: 1, vendorID: 0x054C, productID: 0x0268)
 

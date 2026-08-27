@@ -100,4 +100,230 @@
     }
   }
 
+  enum ProfileEditorAction: Equatable, Sendable {
+    case select(UUID)
+    case importProfile(RemappingProfile)
+
+    var profileID: UUID {
+      switch self {
+      case .select(let profileID): return profileID
+      case .importProfile(let profile): return profile.id
+      }
+    }
+  }
+
+  enum ProfileEditorTransition: Equatable, Sendable {
+    case perform(ProfileEditorAction)
+    case confirmDiscard
+    case blocked
+  }
+
+  enum ProfileEditorMutationCompletion: Equatable, Sendable {
+    case none
+    case select(UUID)
+    case refreshEditor
+
+    static func action(
+      for operation: RuntimeMutationOperation,
+      selectedProfileID: UUID?,
+      shouldRefreshEditor: Bool
+    ) -> Self {
+      switch operation {
+      case .create(let profileID): return .select(profileID)
+      case .importProfile(let profileID):
+        if selectedProfileID == profileID, shouldRefreshEditor { return .refreshEditor }
+        if selectedProfileID != profileID { return .select(profileID) }
+        return .none
+      default: return .none
+      }
+    }
+  }
+
+  enum ProfileEditorMutationStart: Equatable, Sendable {
+    case acquired
+    case alreadyOwned
+    case rejected
+  }
+
+  enum ProfileEditorMutationReconciliation: Equatable, Sendable {
+    case acquired
+    case retained
+    case replaced
+    case rejected
+
+    var isAccepted: Bool {
+      switch self {
+      case .acquired, .retained, .replaced: return true
+      case .rejected: return false
+      }
+    }
+  }
+
+  enum ProfileEditorMutationFinish: Equatable, Sendable {
+    case ignored
+    case released(shouldRefreshEditor: Bool)
+
+    var didRelease: Bool {
+      if case .released = self { return true }
+      return false
+    }
+
+    var shouldRefreshEditor: Bool {
+      if case .released(let shouldRefreshEditor) = self { return shouldRefreshEditor }
+      return false
+    }
+  }
+
+  enum ProfileEditorSaveResolution: Equatable, Sendable {
+    case ignored
+    case succeeded
+    case conflict
+    case failed(String)
+  }
+
+  struct ProfileEditorSaveState: Equatable, Sendable {
+    private(set) var operation: RuntimeMutationOperation?
+    private(set) var mutationID: UUID?
+
+    var isInFlight: Bool { operation != nil && mutationID != nil }
+
+    mutating func begin(_ request: RuntimeMutationRequest) -> Bool {
+      guard case .update = request.operation, !isInFlight else { return false }
+      operation = request.operation
+      mutationID = request.id
+      return true
+    }
+
+    mutating func cancel() {
+      operation = nil
+      mutationID = nil
+    }
+
+    mutating func resolve(_ result: RuntimeMutationResult) -> ProfileEditorSaveResolution {
+      guard isInFlight, operation == result.operation, mutationID == result.id else {
+        return .ignored
+      }
+      cancel()
+      switch result {
+      case .succeeded: return .succeeded
+      case .conflict: return .conflict
+      case .failed(_, _, let message), .rejected(_, _, let message): return .failed(message)
+      }
+    }
+  }
+
+  struct ProfileEditorTransitionState: Equatable, Sendable {
+    private(set) var isDirty = false
+    private(set) var pendingAction: ProfileEditorAction?
+    private(set) var activeMutationRequest: RuntimeMutationRequest?
+    private(set) var activeRuntimeMutationID: UUID?
+    private var restoreDirtyAfterMutationFailure = false
+
+    var activeMutationOperation: RuntimeMutationOperation? { activeMutationRequest?.operation }
+    var isEditingBlocked: Bool { activeMutationRequest != nil }
+
+    mutating func setDirty(_ dirty: Bool) {
+      isDirty = dirty
+      if !dirty { pendingAction = nil }
+    }
+
+    mutating func request(_ action: ProfileEditorAction) -> ProfileEditorTransition {
+      guard !isEditingBlocked else { return .blocked }
+      guard isDirty else { return .perform(action) }
+      pendingAction = action
+      return .confirmDiscard
+    }
+
+    mutating func discardPendingAction() -> ProfileEditorAction? {
+      guard let pendingAction else { return nil }
+      self.pendingAction = nil
+      let wasDirty = isDirty
+      if case .importProfile = pendingAction {
+        restoreDirtyAfterMutationFailure = wasDirty
+      } else {
+        restoreDirtyAfterMutationFailure = false
+      }
+      isDirty = false
+      return pendingAction
+    }
+
+    mutating func cancelPendingAction() {
+      pendingAction = nil
+      restoreDirtyAfterMutationFailure = false
+    }
+
+    @discardableResult
+    mutating func beginMutation(
+      _ request: RuntimeMutationRequest,
+      restoresDirtyOnFailure: Bool = false
+    ) -> ProfileEditorMutationStart {
+      if let activeMutationRequest {
+        guard activeMutationRequest == request else { return .rejected }
+        restoreDirtyAfterMutationFailure =
+          restoreDirtyAfterMutationFailure || restoresDirtyOnFailure
+        return .alreadyOwned
+      }
+      activeMutationRequest = request
+      restoreDirtyAfterMutationFailure =
+        restoreDirtyAfterMutationFailure || restoresDirtyOnFailure
+      activeRuntimeMutationID = nil
+      return .acquired
+    }
+
+    func ownsMutation(_ request: RuntimeMutationRequest) -> Bool {
+      guard activeMutationRequest == request else { return false }
+      return activeRuntimeMutationID == nil || activeRuntimeMutationID == request.id
+    }
+
+    mutating func bindRuntimeMutation(_ request: RuntimeMutationRequest) -> Bool {
+      guard activeMutationRequest == request else { return false }
+      if let activeRuntimeMutationID, activeRuntimeMutationID != request.id {
+        return false
+      }
+      activeRuntimeMutationID = request.id
+      return true
+    }
+
+    mutating func reconcileRuntimeMutation(
+      _ request: RuntimeMutationRequest
+    ) -> ProfileEditorMutationReconciliation {
+      if activeMutationRequest == nil {
+        guard beginMutation(request) == .acquired else { return .rejected }
+        guard bindRuntimeMutation(request) else { return .rejected }
+        return .acquired
+      }
+      if activeMutationRequest == request {
+        guard bindRuntimeMutation(request) else { return .rejected }
+        return .retained
+      }
+      guard activeMutationRequest?.operation == request.operation,
+        activeRuntimeMutationID == nil
+      else { return .rejected }
+      activeMutationRequest = request
+      guard bindRuntimeMutation(request) else { return .rejected }
+      return .replaced
+    }
+
+    @discardableResult
+    mutating func finishMutationIfOwned(
+      _ request: RuntimeMutationRequest,
+      succeeded: Bool = true
+    ) -> ProfileEditorMutationFinish {
+      guard ownsMutation(request) else { return .ignored }
+      activeMutationRequest = nil
+      activeRuntimeMutationID = nil
+      if !succeeded, restoreDirtyAfterMutationFailure { isDirty = true }
+      restoreDirtyAfterMutationFailure = false
+      return .released(shouldRefreshEditor: succeeded && !isDirty)
+    }
+
+    @discardableResult
+    mutating func finishMutation(
+      _ request: RuntimeMutationRequest,
+      succeeded: Bool = true
+    ) -> Bool {
+      finishMutationIfOwned(request, succeeded: succeeded).shouldRefreshEditor
+    }
+  }
+
 #endif

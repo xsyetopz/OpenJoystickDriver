@@ -112,7 +112,7 @@ private func sendStartupPackets(
       _ = try await session.writeInterruptPacket(endpoint: endpoint, data: packet, timeout: 2_000)
       print("USB_TX endpoint=\(hex(endpoint)) bytes=\(packet.hexBytes)")
     } catch let error as USBTransportError
-      where parser is Xbox360Parser && packet == [0x01, 0x03, 0x06] && error.isInputOutput
+      where isIgnorableUSBStartupOutputError(parser: parser, packet: packet, error: error)
     {
       print(
         "USB_TX endpoint=\(hex(endpoint)) result=ignored"

@@ -20,7 +20,9 @@ import OpenJoystickDriverKit
   @Published var supportLogsState: RuntimeSupportLogsState = .idle
   @Published private(set) var lastError: String?
   @Published private(set) var activeMutationOperation: RuntimeMutationOperation?
+  @Published private(set) var activeMutationID: UUID?
   @Published private(set) var lastMutationOperation: RuntimeMutationOperation?
+  @Published private(set) var lastMutationID: UUID?
 
   private var refreshGeneration = 0
   private var liveStatusGeneration = 0
@@ -434,92 +436,133 @@ import OpenJoystickDriverKit
     inputCaptureState = .idle
   }
 
-  func createRemappingProfile(_ profile: RemappingProfile) async {
-    let operation = RuntimeMutationOperation.create(profileID: profile.id)
+  @discardableResult
+  func createRemappingProfile(_ profile: RemappingProfile, request: RuntimeMutationRequest) async
+    -> RuntimeMutationResult
+  {
     guard !mutationInFlight else {
-      rejectMutation(operation)
-      return
+      return rejectMutation(request)
     }
-    guard locallyValid(profile, operation: operation) else { return }
+    if let failure = locallyValid(profile, request: request) {
+      return failure
+    }
     let gateway = self.gateway
-    await performMutation(operation: operation, conflictProfileID: nil) {
+    return await performMutation(
+      request: request,
+      conflictProfileID: nil
+    ) {
       try await gateway.createRemappingProfile(profile)
     }
   }
 
-  func updateRemappingProfile(_ profile: RemappingProfile, expectedCurrent: RemappingProfile) async
+  @discardableResult
+  func updateRemappingProfile(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile,
+    request: RuntimeMutationRequest
+  ) async
+    -> RuntimeMutationResult
   {
-    let operation = RuntimeMutationOperation.update(profileID: profile.id)
     guard !mutationInFlight else {
-      rejectMutation(operation)
-      return
+      return rejectMutation(request)
     }
-    guard locallyValid(profile, operation: operation) else { return }
+    if let failure = locallyValid(profile, request: request) {
+      return failure
+    }
     let gateway = self.gateway
     // Keep the expected snapshot exactly as supplied.  The service's compare-and-swap operation
     // owns conflict detection; the view model never fetches and silently overwrites it.
-    await performMutation(operation: operation, conflictProfileID: profile.id) {
+    return await performMutation(
+      request: request,
+      conflictProfileID: profile.id
+    ) {
       try await gateway.updateRemappingProfile(profile, expectedCurrent: expectedCurrent)
     }
   }
 
-  func importRemappingProfile(_ profile: RemappingProfile) async {
-    let operation = RuntimeMutationOperation.importProfile(profileID: profile.id)
+  @discardableResult
+  func importRemappingProfile(_ profile: RemappingProfile, request: RuntimeMutationRequest) async
+    -> RuntimeMutationResult
+  {
     guard !mutationInFlight else {
-      rejectMutation(operation)
-      return
+      return rejectMutation(request)
     }
-    guard locallyValid(profile, operation: operation) else { return }
+    if let failure = locallyValid(profile, request: request) {
+      return failure
+    }
     let gateway = self.gateway
-    await performMutation(operation: operation, conflictProfileID: nil) {
+    return await performMutation(
+      request: request,
+      conflictProfileID: nil
+    ) {
       try await gateway.importRemappingProfile(profile)
     }
   }
 
-  func deleteRemappingProfile(id: UUID) async {
-    let operation = RuntimeMutationOperation.delete(profileID: id)
+  @discardableResult
+  func deleteRemappingProfile(
+    id: UUID,
+    request: RuntimeMutationRequest
+  ) async -> RuntimeMutationResult {
     guard !mutationInFlight else {
-      rejectMutation(operation)
-      return
+      return rejectMutation(request)
     }
     let gateway = self.gateway
-    await performMutation(operation: operation, conflictProfileID: id) {
+    return await performMutation(
+      request: request,
+      conflictProfileID: id
+    ) {
       try await gateway.deleteRemappingProfile(id: id)
     }
   }
 
-  func activateRemappingProfile(id: UUID) async {
-    let operation = RuntimeMutationOperation.activate(profileID: id)
+  @discardableResult
+  func activateRemappingProfile(
+    id: UUID,
+    request: RuntimeMutationRequest
+  ) async -> RuntimeMutationResult {
     guard !mutationInFlight else {
-      rejectMutation(operation)
-      return
+      return rejectMutation(request)
     }
     let gateway = self.gateway
-    await performMutation(operation: operation, conflictProfileID: id) {
+    return await performMutation(
+      request: request,
+      conflictProfileID: id
+    ) {
       try await gateway.activateRemappingProfile(id: id)
     }
   }
 
-  func deactivateRemappingProfile(vendorID: UInt16, productID: UInt16) async {
-    let operation = RuntimeMutationOperation.deactivate(profileID: nil)
+  @discardableResult
+  func deactivateRemappingProfile(
+    vendorID: UInt16,
+    productID: UInt16,
+    request: RuntimeMutationRequest
+  ) async -> RuntimeMutationResult {
     guard !mutationInFlight else {
-      rejectMutation(operation)
-      return
+      return rejectMutation(request)
     }
     let gateway = self.gateway
-    await performMutation(operation: operation, conflictProfileID: nil) {
+    return await performMutation(
+      request: request,
+      conflictProfileID: nil
+    ) {
       try await gateway.deactivateRemappingProfile(vendorID: vendorID, productID: productID)
     }
   }
 
-  func deactivateRemappingProfile(profileID: UUID) async {
-    let operation = RuntimeMutationOperation.deactivate(profileID: profileID)
+  @discardableResult
+  func deactivateRemappingProfile(profileID: UUID, request: RuntimeMutationRequest) async
+    -> RuntimeMutationResult
+  {
     guard !mutationInFlight else {
-      rejectMutation(operation)
-      return
+      return rejectMutation(request)
     }
     let gateway = self.gateway
-    await performMutation(operation: operation, conflictProfileID: profileID) {
+    return await performMutation(
+      request: request,
+      conflictProfileID: profileID
+    ) {
       try await gateway.deactivateRemappingProfile(profileID: profileID)
     }
   }
@@ -584,37 +627,44 @@ import OpenJoystickDriverKit
     await setCompatibilityIdentity(.appleGameController)
   }
 
-  private func locallyValid(_ profile: RemappingProfile, operation: RuntimeMutationOperation? = nil)
-    -> Bool
+  private func locallyValid(
+    _ profile: RemappingProfile,
+    request: RuntimeMutationRequest
+  ) -> RuntimeMutationResult?
   {
     do {
       try profile.validate()
-      return true
+      return nil
     } catch {
-      lastMutationOperation = operation
+      lastMutationID = request.id
+      lastMutationOperation = request.operation
       let message = RuntimePresentation.userFacingError(error)
       mutationState = .error(message)
       lastError = message
-      return false
+      return .failed(id: request.id, operation: request.operation, message: message)
     }
   }
 
   private func performMutation(
-    operation: RuntimeMutationOperation,
+    request mutationRequest: RuntimeMutationRequest,
     conflictProfileID: UUID?,
     request: @escaping @Sendable () async throws -> ApplicationServiceRemappingSnapshotPayload
-  ) async {
+  ) async -> RuntimeMutationResult {
     guard !mutationInFlight else {
-      rejectMutation(operation)
-      return
+      return rejectMutation(mutationRequest)
     }
+    let operation = mutationRequest.operation
+    let mutationID = mutationRequest.id
     mutationInFlight = true
     activeMutationOperation = operation
+    activeMutationID = mutationID
     lastMutationOperation = nil
+    lastMutationID = nil
     mutationState = .saving
     defer {
       mutationInFlight = false
       activeMutationOperation = nil
+      activeMutationID = nil
     }
     do {
       let snapshot = try await request()
@@ -624,34 +674,43 @@ import OpenJoystickDriverKit
       authoritativePostEventAccess = snapshot.postEventAccess
       updateStatusRemappingSnapshot(snapshot, postEventAccess: snapshot.postEventAccess)
       lastMutationOperation = operation
+      lastMutationID = mutationID
       switch operation {
       case .update(let profileID): mutationState = .succeeded(profileID: profileID)
       default: mutationState = .completed(operation)
       }
       lastError = nil
+      return .succeeded(id: mutationID, operation: operation)
     } catch {
       let message = RuntimePresentation.userFacingError(error)
       if let rpcError = error as? ApplicationServiceRemappingRPCError,
         rpcError.code == .profileUpdateConflict
       {
         lastMutationOperation = operation
+        lastMutationID = mutationID
         mutationState = .conflict(profileID: conflictProfileID)
-      } else {
-        lastMutationOperation = operation
-        mutationState = .error(message)
+        lastError = message
+        return .conflict(id: mutationID, operation: operation)
       }
+      lastMutationOperation = operation
+      lastMutationID = mutationID
+      mutationState = .error(message)
       lastError = message
+      return .failed(id: mutationID, operation: operation, message: message)
     }
   }
 
-  private func rejectMutation(_ operation: RuntimeMutationOperation) {
-    lastMutationOperation = operation
+  @discardableResult
+  private func rejectMutation(_ request: RuntimeMutationRequest) -> RuntimeMutationResult {
+    lastMutationOperation = request.operation
+    lastMutationID = request.id
     let message = OJDLocalized.string(
       "error.actionInProgress",
       fallback: "Another profile action is already in progress."
     )
     mutationState = .error(message)
     lastError = message
+    return .rejected(id: request.id, operation: request.operation, message: message)
   }
 
   private func updateStatusPermissions(_ permissions: RuntimePermissionSummary) {
