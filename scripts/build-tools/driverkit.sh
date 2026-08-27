@@ -31,9 +31,60 @@ _require_pinned_swifterkit() {
     || die "validate driverkit requires the resolved SwifterKit dependency"
 }
 
+# DriverKit bundle versions are validated by kernelmanagerd as kext versions:
+# `major.minor.revision` with major <= 65535 and minor/revision <= 99, plus an
+# optional d/a/b/fc prerelease stage. Release packaging derives the app's
+# CFBundleVersion from the tag as a single large integer (0.5.0-beta.1 -> 500001),
+# which is not a legal kext version, so the staged dext fails validation with
+# "Property 'CFBundleVersion' must be a valid kext version" and sysextd
+# immediately uninstalls it. Derive the dext build version from the semantic
+# version instead: 0.5.0-beta.1 -> 0.5.0b1, which stays ordered below 0.5.0.
+_kext_build_version() {
+  python3 - "$1" <<'PY'
+import re
+import sys
+
+version = sys.argv[1]
+match = re.match(r"^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?$", version)
+if not match:
+    print("ERROR: DriverKit version must be SemVer without build metadata", file=sys.stderr)
+    sys.exit(2)
+
+major, minor, revision = (int(match.group(index)) for index in range(1, 4))
+if major > 65535 or minor > 99 or revision > 99:
+    print("ERROR: DriverKit version components exceed the kext version range", file=sys.stderr)
+    sys.exit(2)
+
+stages = {"dev": "d", "alpha": "a", "beta": "b", "rc": "fc"}
+prerelease = match.group(4) or ""
+suffix = ""
+if prerelease:
+    name = re.split(r"[.-]", prerelease)[0].lower()
+    stage = stages.get(name)
+    if stage is None:
+        print(f"ERROR: unsupported DriverKit prerelease stage '{name}'", file=sys.stderr)
+        sys.exit(2)
+    numbers = re.findall(r"\d+", prerelease)
+    level = int(numbers[-1]) if numbers else 1
+    if not 1 <= level <= 255:
+        print("ERROR: DriverKit prerelease level must be 1...255", file=sys.stderr)
+        sys.exit(2)
+    suffix = f"{stage}{level}"
+
+print(f"{major}.{minor}.{revision}{suffix}")
+PY
+}
+
+_require_kext_build_version() {
+  local value="$1"
+  [[ "$value" =~ ^[0-9]{1,5}(\.[0-9]{1,2}){0,2}((d|a|b|fc)[0-9]{1,3})?$ ]] \
+    || die "DriverKit CFBundleVersion '$value' is not a valid kext version"
+}
+
 _driverkit_versions() {
   DRIVERKIT_SHORT_VERSION="${OJD_BUNDLE_SHORT_VERSION:-$OJD_DEFAULT_BUNDLE_SHORT_VERSION}"
-  DRIVERKIT_BUILD_VERSION="${DEXT_BUNDLE_VERSION:-${OJD_BUNDLE_VERSION:-1}}"
+  DRIVERKIT_BUILD_VERSION="${DEXT_BUNDLE_VERSION:-$(_kext_build_version "$DRIVERKIT_SHORT_VERSION")}"
+  _require_kext_build_version "$DRIVERKIT_BUILD_VERSION"
 }
 
 generate_driverkit_project() {
