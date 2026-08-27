@@ -27,11 +27,7 @@ struct USBStartupOutputPolicyTests {
   @Test func preservesOtherXbox360StartupOutputFailures() {
     let parser = Xbox360Parser()
     let errors: [USBTransportError] = [
-      .disconnected,
-      .accessDenied,
-      .timeout,
-      .notFound,
-      .platform(code: 1, message: "unexpected")
+      .disconnected, .accessDenied, .timeout, .notFound, .platform(code: 1, message: "unexpected")
     ]
 
     for error in errors {

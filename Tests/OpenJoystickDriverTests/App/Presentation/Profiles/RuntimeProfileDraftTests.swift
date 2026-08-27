@@ -322,9 +322,7 @@ import Testing
     let shouldRefreshEditor = state.finishMutation(request)
     #expect(shouldRefreshEditor)
     #expect(!state.isDirty)
-    #expect(
-      state.request(.select(UUID())) != .confirmDiscard
-    )
+    #expect(state.request(.select(UUID())) != .confirmDiscard)
   }
 
   @Test func dirtyDeleteBlocksSelectionAndFailureRestoresDraftProtection() {
@@ -434,16 +432,9 @@ import Testing
     let didBind = state.bindRuntimeMutation(owner)
     #expect(didBind)
 
-    #expect(
-      state.finishMutationIfOwned(
-        unrelated,
-        succeeded: false
-      ) == .ignored
-    )
+    #expect(state.finishMutationIfOwned(unrelated, succeeded: false) == .ignored)
     #expect(state.isEditingBlocked)
-    #expect(state.finishMutationIfOwned(owner) == .released(
-      shouldRefreshEditor: true
-    ))
+    #expect(state.finishMutationIfOwned(owner) == .released(shouldRefreshEditor: true))
     #expect(!state.isEditingBlocked)
   }
 
@@ -466,9 +457,10 @@ import Testing
       operation: request.operation,
       message: "validation"
     )
-    #expect(state.finishMutationIfOwned(result.request, succeeded: false) == .released(
-      shouldRefreshEditor: false
-    ))
+    #expect(
+      state.finishMutationIfOwned(result.request, succeeded: false)
+        == .released(shouldRefreshEditor: false)
+    )
     #expect(state.isDirty)
     #expect(!state.isEditingBlocked)
   }
@@ -510,9 +502,7 @@ import Testing
     let didBegin = state.begin(request)
     #expect(didBegin)
 
-    #expect(
-      state.resolve(.succeeded(id: winner.id, operation: operation)) == .ignored
-    )
+    #expect(state.resolve(.succeeded(id: winner.id, operation: operation)) == .ignored)
     #expect(state.isInFlight)
 
     let resolution = state.resolve(
@@ -532,9 +522,7 @@ import Testing
     let didBegin = state.begin(request)
     #expect(didBegin)
 
-    #expect(
-      state.resolve(.succeeded(id: request.id, operation: operation)) == .succeeded
-    )
+    #expect(state.resolve(.succeeded(id: request.id, operation: operation)) == .succeeded)
     #expect(!state.isInFlight)
   }
 

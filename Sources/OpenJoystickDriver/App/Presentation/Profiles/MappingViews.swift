@@ -409,10 +409,9 @@
       activeAlert = nil
       let restoreDirtyStateOnFailure = selectedProfileID == profileID && editorHasUnsavedChanges
       let request = RuntimeMutationRequest(operation: .delete(profileID: profileID))
-      guard beginProfileMutation(
-        request,
-        restoresDirtyOnFailure: restoreDirtyStateOnFailure
-      ) else { return }
+      guard beginProfileMutation(request, restoresDirtyOnFailure: restoreDirtyStateOnFailure) else {
+        return
+      }
       if selectedProfileID == profileID {
         setEditorDirty(false)
         preservedEditorProfile = nil
@@ -460,9 +459,7 @@
 
     private func handleProfileMutation(_ mutation: RuntimeMutationState) {
       reconcileActiveProfileMutation()
-      if case .saving = mutation {
-        return
-      }
+      if case .saving = mutation { return }
       guard let operation = viewModel.lastMutationOperation,
         let mutationID = viewModel.lastMutationID
       else { return }
@@ -484,7 +481,8 @@
       switch result {
       case .succeeded(let mutationID, let operation):
         let finish = finishProfileMutation(
-          RuntimeMutationRequest(operation: operation, id: mutationID), succeeded: true
+          RuntimeMutationRequest(operation: operation, id: mutationID),
+          succeeded: true
         )
         guard finish.didRelease else { return }
         profileActionError = nil
@@ -505,7 +503,8 @@
         }
       case .conflict(let mutationID, let operation):
         _ = finishProfileMutation(
-          RuntimeMutationRequest(operation: operation, id: mutationID), succeeded: false
+          RuntimeMutationRequest(operation: operation, id: mutationID),
+          succeeded: false
         )
         if isProfileAction(operation) {
           profileActionError =
@@ -518,21 +517,19 @@
       case .failed(let mutationID, let operation, let message),
         .rejected(let mutationID, let operation, let message):
         _ = finishProfileMutation(
-          RuntimeMutationRequest(operation: operation, id: mutationID), succeeded: false
+          RuntimeMutationRequest(operation: operation, id: mutationID),
+          succeeded: false
         )
         if isProfileAction(operation) { profileActionError = message }
       }
     }
 
-    private func finishProfileMutation(
-      _ request: RuntimeMutationRequest,
-      succeeded: Bool
-    ) -> ProfileEditorMutationFinish {
+    private func finishProfileMutation(_ request: RuntimeMutationRequest, succeeded: Bool)
+      -> ProfileEditorMutationFinish
+    {
       guard profileEditorTransition.ownsMutation(request) else { return .ignored }
       guard navigation.ownsProfilesEditorMutation(request) else { return .ignored }
-      let finish = profileEditorTransition.finishMutationIfOwned(
-        request, succeeded: succeeded
-      )
+      let finish = profileEditorTransition.finishMutationIfOwned(request, succeeded: succeeded)
       guard finish.didRelease else { return .ignored }
       guard navigation.finishProfilesEditorMutation(request) else { return .ignored }
       navigation.setProfilesEditorDirty(editorHasUnsavedChanges)

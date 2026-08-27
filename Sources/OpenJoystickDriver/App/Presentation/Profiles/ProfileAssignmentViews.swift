@@ -141,9 +141,8 @@
       }.disabled(isEditingDisabled).frame(maxWidth: .infinity, alignment: .leading).padding(
         .vertical,
         7
-      ).ojdAccessibilityLabel(
-        OJDLocalized.string("common.assignment", fallback: "Assignment")
-      ).ojdAccessibilityValue(assignmentAccessibilityValue)
+      ).ojdAccessibilityLabel(OJDLocalized.string("common.assignment", fallback: "Assignment"))
+        .ojdAccessibilityValue(assignmentAccessibilityValue)
     }
 
     private var assignmentAccessibilityValue: String {

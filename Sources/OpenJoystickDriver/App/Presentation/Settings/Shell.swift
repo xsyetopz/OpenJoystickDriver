@@ -214,8 +214,7 @@
 
     func setProfilesEditorDirty(_ dirty: Bool) { profilesEditorIsDirty = dirty }
 
-    @discardableResult
-    func beginProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
+    @discardableResult func beginProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
       guard activeProfilesEditorMutation == nil else { return false }
       activeProfilesEditorMutation = request
       activeProfilesEditorMutationIsRuntimeBound = false
@@ -227,20 +226,21 @@
       activeProfilesEditorMutation == request
     }
 
-    @discardableResult
-    func finishProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
+    @discardableResult func finishProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool
+    {
       guard activeProfilesEditorMutation == request else { return false }
       activeProfilesEditorMutation = nil
       activeProfilesEditorMutationIsRuntimeBound = false
       return true
     }
 
-    @discardableResult
-    func reconcileProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
-      guard activeProfilesEditorMutation == nil
-        || activeProfilesEditorMutation == request
-        || (activeProfilesEditorMutation?.operation == request.operation
-          && !activeProfilesEditorMutationIsRuntimeBound)
+    @discardableResult func reconcileProfilesEditorMutation(_ request: RuntimeMutationRequest)
+      -> Bool
+    {
+      guard
+        activeProfilesEditorMutation == nil || activeProfilesEditorMutation == request
+          || (activeProfilesEditorMutation?.operation == request.operation
+            && !activeProfilesEditorMutationIsRuntimeBound)
       else { return false }
       activeProfilesEditorMutation = request
       activeProfilesEditorMutationIsRuntimeBound = true

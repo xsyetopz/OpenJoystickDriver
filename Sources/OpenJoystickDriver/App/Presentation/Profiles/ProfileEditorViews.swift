@@ -62,52 +62,52 @@
           switch sheet {
           case .metadata: ProfileMetadataSheet(profile: draft.profile) { updateMetadata($0) }
           case .capture:
-          CaptureAssignmentSheet(viewModel: viewModel) { source, destination in
-            addBinding(source: source, destination: destination)
-          }
+            CaptureAssignmentSheet(viewModel: viewModel) { source, destination in
+              addBinding(source: source, destination: destination)
+            }
           case .adjustment(let binding):
-          AxisAdjustmentSheet(binding: binding) { tuning in
-            updateAxisTuning(tuning, for: binding.id)
-          }
+            AxisAdjustmentSheet(binding: binding) { tuning in
+              updateAxisTuning(tuning, for: binding.id)
+            }
           case .behavior(let binding):
-          BindingBehaviorSheet(binding: binding) { turbo, longHold, doubleTap in
-            updateBindingBehaviors(
-              turbo: turbo,
-              longHold: longHold,
-              doubleTap: doubleTap,
-              for: binding.id
-            )
-          }
+            BindingBehaviorSheet(binding: binding) { turbo, longHold, doubleTap in
+              updateBindingBehaviors(
+                turbo: turbo,
+                longHold: longHold,
+                doubleTap: doubleTap,
+                for: binding.id
+              )
+            }
           case .chord:
-          ProfileCombinationSheet(kind: .chord) { sources, _, destination in
-            addChord(sources: sources, destination: destination)
-          }
+            ProfileCombinationSheet(kind: .chord) { sources, _, destination in
+              addChord(sources: sources, destination: destination)
+            }
           case .sequence:
-          ProfileCombinationSheet(kind: .sequence) { sources, windowMs, destination in
-            addSequence(sources: sources, windowMs: windowMs, destination: destination)
-          }
+            ProfileCombinationSheet(kind: .sequence) { sources, windowMs, destination in
+              addSequence(sources: sources, windowMs: windowMs, destination: destination)
+            }
           case .layer:
-          ProfileLayerSheet { name, activator, mode in
-            addLayer(name: name, activator: activator, mode: mode)
-          }
+            ProfileLayerSheet { name, activator, mode in
+              addLayer(name: name, activator: activator, mode: mode)
+            }
           case .layerBinding(let layer):
-          ProfileLayerBindingSheet(layer: layer) { source, destination in
-            setLayerBinding(layerID: layer.id, source: source, destination: destination)
-          }
+            ProfileLayerBindingSheet(layer: layer) { source, destination in
+              setLayerBinding(layerID: layer.id, source: source, destination: destination)
+            }
           case .layerAdjustment(let layerID, let binding):
-          AxisAdjustmentSheet(binding: binding) { tuning in
-            updateLayerAxisTuning(tuning, layerID: layerID, bindingID: binding.id)
-          }
+            AxisAdjustmentSheet(binding: binding) { tuning in
+              updateLayerAxisTuning(tuning, layerID: layerID, bindingID: binding.id)
+            }
           case .layerBehavior(let layerID, let binding):
-          BindingBehaviorSheet(binding: binding) { turbo, longHold, doubleTap in
-            updateLayerBindingBehaviors(
-              layerID: layerID,
-              bindingID: binding.id,
-              turbo: turbo,
-              longHold: longHold,
-              doubleTap: doubleTap
-            )
-          }
+            BindingBehaviorSheet(binding: binding) { turbo, longHold, doubleTap in
+              updateLayerBindingBehaviors(
+                layerID: layerID,
+                bindingID: binding.id,
+                turbo: turbo,
+                longHold: longHold,
+                doubleTap: doubleTap
+              )
+            }
           }
         }.disabled(isEditingDisabled)
       }.onReceive(viewModel.$mutationState) { mutation in handleMutation(mutation) }.onAppear {
@@ -139,9 +139,7 @@
           if isActive {
             Button(OJDLocalized.string("common.deactivate", fallback: "Deactivate")) {
               guard !isMutationActive else { return }
-              let request = RuntimeMutationRequest(
-                operation: .deactivate(profileID: profile.id)
-              )
+              let request = RuntimeMutationRequest(operation: .deactivate(profileID: profile.id))
               guard onMutationStarted(request) else { return }
               Task { @MainActor in
                 let result = await viewModel.deactivateRemappingProfile(
@@ -694,32 +692,26 @@
       else { return }
 
       switch mutation {
-      case .conflict(let profileID) where profileID == profile.id:
-        applySaveConflict()
+      case .conflict(let profileID) where profileID == profile.id: applySaveConflict()
       case .error(let message):
         finishSave()
         localError = message
         saveError = message
-      case .succeeded(let profileID) where profileID == profile.id:
-        applySaveSuccess()
+      case .succeeded(let profileID) where profileID == profile.id: applySaveSuccess()
       default: return
       }
       reportEditingState()
     }
 
-    private func finishSave() {
-      saveState.cancel()
-    }
+    private func finishSave() { saveState.cancel() }
 
     private func reconcileSave(request: RuntimeMutationRequest, result: RuntimeMutationResult) {
       guard saveInFlight, pendingUpdateOperation == request.operation,
         pendingUpdateMutationID == request.id
       else { return }
       switch saveState.resolve(result) {
-      case .succeeded:
-        applySaveSuccess()
-      case .conflict:
-        applySaveConflict()
+      case .succeeded: applySaveSuccess()
+      case .conflict: applySaveConflict()
       case .failed(let message):
         finishSave()
         localError = message

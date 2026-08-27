@@ -158,9 +158,9 @@ import Testing
     #expect(navigation.selectedPane == .overview)
     #expect(navigation.pendingPane == nil)
 
-    #expect(!navigation.finishProfilesEditorMutation(
-      RuntimeMutationRequest(operation: request.operation)
-    ))
+    #expect(
+      !navigation.finishProfilesEditorMutation(RuntimeMutationRequest(operation: request.operation))
+    )
     #expect(navigation.ownsProfilesEditorMutation(request))
     #expect(navigation.finishProfilesEditorMutation(request))
 
