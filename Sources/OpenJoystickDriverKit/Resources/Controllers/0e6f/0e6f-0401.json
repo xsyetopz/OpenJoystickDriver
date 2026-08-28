@@ -12,6 +12,10 @@
     "verified": true
   },
   "usb": {
-    "configuration": "set1-before-claim"
+    "configuration": "set1-before-claim",
+    "endpoints": {
+      "in": 129,
+      "out": 2
+    }
   }
 }

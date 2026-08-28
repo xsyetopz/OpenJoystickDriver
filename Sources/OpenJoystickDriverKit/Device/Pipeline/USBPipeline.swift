@@ -8,7 +8,7 @@ public func isIgnorableUSBStartupOutputError(
 ) -> Bool {
   guard parser is Xbox360Parser, packet == [0x01, 0x03, 0x06] else { return false }
   switch error {
-  case .inputOutput, .notFound, .notSupported: return true
+  case .inputOutput, .notSupported: return true
   default: return false
   }
 }
