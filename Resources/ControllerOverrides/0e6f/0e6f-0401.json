@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+  "operation": "patch",
+  "vendor_id": 3695,
+  "product_id": 1025,
+  "set": {
+    "usb": {
+      "configuration": "set1-before-claim"
+    },
+    "provenance": {
+      "source": "local-hardware",
+      "verified": true
+    }
+  }
+}

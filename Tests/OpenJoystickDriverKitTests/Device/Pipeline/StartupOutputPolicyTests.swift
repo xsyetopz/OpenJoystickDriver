@@ -24,10 +24,22 @@ struct USBStartupOutputPolicyTests {
     )
   }
 
+  @Test func ignoresMissingOutputPipeForXbox360RingLED() {
+    let parser = Xbox360Parser()
+
+    #expect(
+      isIgnorableUSBStartupOutputError(
+        parser: parser,
+        packet: [0x01, 0x03, 0x06],
+        error: .notFound
+      )
+    )
+  }
+
   @Test func preservesOtherXbox360StartupOutputFailures() {
     let parser = Xbox360Parser()
     let errors: [USBTransportError] = [
-      .disconnected, .accessDenied, .timeout, .notFound, .platform(code: 1, message: "unexpected")
+      .disconnected, .accessDenied, .timeout, .platform(code: 1, message: "unexpected")
     ]
 
     for error in errors {

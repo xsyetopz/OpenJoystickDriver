@@ -8,7 +8,10 @@
     "variant": "xbox360"
   },
   "provenance": {
-    "source": "linux-xpad.c",
-    "verified": false
+    "source": "local-hardware",
+    "verified": true
+  },
+  "usb": {
+    "configuration": "set1-before-claim"
   }
 }
