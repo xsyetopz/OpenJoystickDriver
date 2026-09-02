@@ -112,19 +112,6 @@ struct PhysicalRumbleOutputTests {
     #expect(decoded.physicalOutputCapabilities == capabilities)
   }
 
-  @Test func testCapabilitiesRejectLegacyPayloadWithoutEvidence() throws {
-    let json = #"{"rumbleMotors":["leftMain","rightMain"],"lightingFeatures":[]}"#
-    #expect(throws: DecodingError.self) {
-      try JSONDecoder().decode(PhysicalControllerOutputCapabilities.self, from: Data(json.utf8))
-    }
-  }
-
-  @Test func testEmptyCapabilitiesCannotClaimOutputEvidence() {
-    let capabilities = PhysicalControllerOutputCapabilities(evidence: .hardwareVerified)
-
-    #expect(capabilities.evidence == .unavailable)
-  }
-
   @Test func testXbox360PlayerIndicatorsMapToSteadyRingPatterns() {
     #expect(Xbox360Parser.ledPattern(for: .off) == .allOff)
     #expect(Xbox360Parser.ledPattern(for: .player1) == .player1On)
@@ -150,6 +137,25 @@ struct PhysicalRumbleOutputTests {
     #expect(command == expected)
   }
 
+  @Test func testVirtualParserAcceptsXboxOneRumbleReportWithCallbackReportIDPrefix() {
+    let command = VirtualRumbleOutputReportParser.parse(
+      type: kIOHIDReportTypeOutput,
+      reportID: 3,
+      bytes: [0x03, 0x0F, 10, 20, 30, 40, 5, 0, 0]
+    )
+
+    #expect(
+      command
+        == VirtualRumbleCommand(
+          left: 30,
+          right: 40,
+          leftTrigger: 10,
+          rightTrigger: 20,
+          durationMs: 50
+        )
+    )
+  }
+
   @Test func testVirtualParserAcceptsXboxGIPRumbleReports() {
     let reportIDZeroCommand = VirtualRumbleOutputReportParser.parse(
       type: kIOHIDReportTypeOutput,
@@ -171,6 +177,25 @@ struct PhysicalRumbleOutputTests {
     )
     #expect(reportIDZeroCommand == expected)
     #expect(reportIDNineCommand == expected)
+  }
+
+  @Test func testVirtualParserAcceptsXboxGIPRumbleReportWithCallbackReportIDPrefix() {
+    let command = VirtualRumbleOutputReportParser.parse(
+      type: kIOHIDReportTypeOutput,
+      reportID: 9,
+      bytes: [0x09, 0x09, 0x00, 0x12, 0x09, 0x00, 0x0F, 10, 20, 30, 40, 5, 0, 0]
+    )
+
+    #expect(
+      command
+        == VirtualRumbleCommand(
+          left: 30,
+          right: 40,
+          leftTrigger: 10,
+          rightTrigger: 20,
+          durationMs: 50
+        )
+    )
   }
 
   @Test func testVirtualParserAcceptsXbox360RumbleReports() {

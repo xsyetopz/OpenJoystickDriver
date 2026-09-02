@@ -13,7 +13,7 @@
     @State private var retryIdentity: CompatibilityIdentity?
 
     private let outputIdentities: [CompatibilityIdentity] = [
-      .genericHID, .xoneHID, .sdl2_3, .appleGameController
+      .automatic, .genericHID, .xbox360HID, .sdl2_3, .appleGameController
     ]
 
     init(viewModel: RuntimeViewModel, embedded: Bool = false) {
@@ -68,7 +68,7 @@
         }
         Button(OJDLocalized.string("identity.reset", fallback: "Reset to recommended")) {
           // Keep the request scoped so a retry repeats the same identity mutation.
-          retryIdentity = .appleGameController
+          retryIdentity = .automatic
           Task { @MainActor in await viewModel.resetCompatibilityIdentity() }
         }.disabled(isOutputBusy)
       }.onReceive(viewModel.$compatibilityState) { state in

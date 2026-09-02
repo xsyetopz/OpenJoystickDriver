@@ -21,21 +21,16 @@ jobs:
     timeout-minutes: 360
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
-      DEVELOPER_ID_APPLICATION_CERT_BASE64: ${{ secrets.DEVELOPER_ID_APPLICATION_CERT_BASE64 }}
-      CERTIFICATE_SECRET: ${{ secrets.CERTIFICATE_SECRET }}
-      KEYCHAIN_SECRET: ${{ secrets.KEYCHAIN_SECRET }}
-      OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64 }}
-      OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64 }}
-      NOTARIZE_APPLE_ID: ${{ secrets.NOTARIZE_APPLE_ID }}
-      NOTARIZE_PASSWORD: ${{ secrets.NOTARIZE_PASSWORD }}
       OJD_USE_LOCAL_SWIFTERKIT: "0"
     steps:
       - name: Resolve release tag
         id: release
+        env:
+          RELEASE_TAG_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
         run: |
-          tag="${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}"
-          if [[ ! "$tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
-            echo "ERROR: release tag must be SemVer, for example 0.1.0 or 0.1.0-rc.1"
+          tag="$RELEASE_TAG_INPUT"
+          if [[ ! "$tag" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-(alpha|beta|rc)\.[1-9][0-9]*)?$ ]]; then
+            echo "ERROR: release tag must be MAJOR.MINOR.PATCH with optional -alpha.N, -beta.N, or -rc.N"
             exit 1
           fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
@@ -45,10 +40,25 @@ jobs:
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Checkout
+      - name: Checkout selected release tag
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || steps.release.outputs.tag }}
+          ref: refs/tags/${{ steps.release.outputs.tag }}
+          fetch-depth: 0
+
+      - name: Verify checkout matches release tag
+        env:
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          expected="$(git rev-list -n 1 "refs/tags/$RELEASE_TAG^{commit}")"
+          actual="$(git rev-parse HEAD)"
+          if [[ -z "$expected" || "$actual" != "$expected" ]]; then
+            echo "ERROR: checkout does not match refs/tags/$RELEASE_TAG"
+            echo "  expected commit: ${expected:-<missing>}"
+            echo "  actual commit:   $actual"
+            exit 1
+          fi
+          echo "Release tag $RELEASE_TAG resolved to commit $actual"
 
       - name: Remove unused untrusted Homebrew taps
         run: |
@@ -59,6 +69,9 @@ jobs:
       - name: Install dependencies
         run: |
           brew list --versions swiftlint >/dev/null 2>&1 || brew install swiftlint
+          python3 -m venv .build/schema-validator
+          .build/schema-validator/bin/python -m pip install -r scripts/quality/requirements.txt
+          echo "$PWD/.build/schema-validator/bin" >> "$GITHUB_PATH"
 
       - name: Verify generated controller catalog
         env:
@@ -70,6 +83,9 @@ jobs:
 
       - name: Check scripts
         run: ./scripts/ojd check scripts
+
+      - name: Check schemas
+        run: ./scripts/ojd check schemas
 
       - name: Check Swift structure
         run: ./scripts/ojd check swift-structure
@@ -86,11 +102,21 @@ jobs:
         run: swift test --no-parallel
 
       - name: Set up release signing
+        env:
+          DEVELOPER_ID_APPLICATION_CERT_BASE64: ${{ secrets.DEVELOPER_ID_APPLICATION_CERT_BASE64 }}
+          CERTIFICATE_SECRET: ${{ secrets.CERTIFICATE_SECRET }}
+          KEYCHAIN_SECRET: ${{ secrets.KEYCHAIN_SECRET }}
+          OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64 }}
+          OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64 }}
         run: ./scripts/ojd signing ci-release-setup
 
       - name: Package release build
+        env:
+          NOTARIZE_APPLE_ID: ${{ secrets.NOTARIZE_APPLE_ID }}
+          NOTARIZE_PASSWORD: ${{ secrets.NOTARIZE_PASSWORD }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
         run: |
-          ./scripts/ojd package release "${{ steps.release.outputs.tag }}"
+          ./scripts/ojd package release "$RELEASE_TAG"
 
       - name: Upload release artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

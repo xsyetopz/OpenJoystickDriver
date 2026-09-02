@@ -4,11 +4,11 @@
 
 - **Repository:** `xsyetopz/OpenJoystickDriver`
 - **Source:** https://github.com/xsyetopz/OpenJoystickDriver/issues/10
-- **State:** OPEN
+- **State:** CLOSED
 - **Author:** Jottle
 - **Created:** 2026-06-09T18:38:23Z
-- **Updated:** 2026-07-18T22:25:21Z
-- **Closed:** —
+- **Updated:** 2026-08-25T19:14:08Z
+- **Closed:** 2026-08-25T19:14:08Z
 - **Labels:** bug, help wanted
 
 ## Report
@@ -301,3 +301,47 @@ Any luck with the new alpha?
 > Any luck with the new alpha?
 
 Stale. I've been doing other things && waiting for a few people to report back on previous things first. Seems like we're on a stale so far.
+
+### xsyetopz — 2026-08-25T16:21:59Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/10#issuecomment-5413409729)
+
+Try [0.5.0-beta.1](https://github.com/xsyetopz/OpenJoystickDriver/releases/tag/0.5.0-beta.1) and tell me if it works!
+
+### Jottle — 2026-08-25T16:52:25Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/10#issuecomment-5413764731)
+
+> Try [0.5.0-beta.1](https://github.com/xsyetopz/OpenJoystickDriver/releases/tag/0.5.0-beta.1) and tell me if it works!
+
+Love the new interface, but I can't find the input testing anymore, for testing purposes. So far, it looks like it works (console verifies correct wired 360 controller, and light ring lights up correctly).
+
+Where did the button tester go? I tried testing the face buttons: d-pad, start, select, and ABXY in a game, and they did work correctly!
+
+Also note, it looks like the "delete" profile button doesn't do anything.
+
+### xsyetopz — 2026-08-25T17:14:05Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/10#issuecomment-5414025172)
+
+> Where did the button tester go? I tried testing the face buttons: d-pad, start, select, and ABXY in a game, and they did work correctly!
+
+The input tester was kind of a hassle to keep from the old one, and I couldn't figure out a decently clean UI for it. I usually use live games/apps to test inputs on.
+
+> Also note, it looks like the "delete" profile button doesn't do anything.
+
+Noted.
+
+### xsyetopz — 2026-08-25T17:14:57Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/10#issuecomment-5414034987)
+
+If everything is resolved with the issue itself, I may close this issue?
+
+### Jottle — 2026-08-25T18:35:49Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/10#issuecomment-5414987100)
+
+> If everything is resolved with the issue itself, I may close this issue?
+
+I wasn't able to test ruble, but I'm pretty sure all the other inputs are working correctly! Thanks so much. I'll report back if I find anything else.

@@ -363,8 +363,7 @@ public actor DeviceManager {
           profile.transportProfile.postHandshakeSettleNanoseconds / nanosecondsPerMillisecond
         ),
         preferredBackends: profile.preferredBackends.map(\.rawValue),
-        physicalOutputCapabilities: (pipelines[id]?.physicalOutputCapabilities() ?? .none)
-          .withEvidence(profile.hardwareVerified ? .hardwareVerified : .sourceBacked),
+        physicalOutputCapabilities: pipelines[id]?.physicalOutputCapabilities() ?? .none,
         runtimeIdentifier: id.runtimeIdentifier
       )
     }

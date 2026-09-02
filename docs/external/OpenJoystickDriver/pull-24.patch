@@ -1,0 +1,268 @@
+diff --git a/Resources/ControllerOverrides/0e6f/0e6f-011f.json b/Resources/ControllerOverrides/0e6f/0e6f-011f.json
+new file mode 100644
+index 0000000..40e3688
+--- /dev/null
++++ b/Resources/ControllerOverrides/0e6f/0e6f-011f.json
+@@ -0,0 +1,18 @@
++{
++  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
++  "operation": "patch",
++  "vendor_id": 3695,
++  "product_id": 287,
++  "set": {
++    "usb": {
++      "endpoints": {
++        "in": 129,
++        "out": 2
++      }
++    },
++    "provenance": {
++      "source": "local-hardware",
++      "verified": false
++    }
++  }
++}
+diff --git a/Sources/OpenJoystickDriverHIDTool/ControllerRecordProbeRunner.swift b/Sources/OpenJoystickDriverHIDTool/ControllerRecordProbeRunner.swift
+index 2de6b8c..5db6365 100644
+--- a/Sources/OpenJoystickDriverHIDTool/ControllerRecordProbeRunner.swift
++++ b/Sources/OpenJoystickDriverHIDTool/ControllerRecordProbeRunner.swift
+@@ -19,8 +19,6 @@ func runControllerRecordProbe(
+ 
+     do {
+       let plan = try ControllerRecordProbePlan(contentsOf: URL(fileURLWithPath: recordPath))
+-      let inputEndpoint = plan.transportProfile.inputEndpoint
+-      let outputEndpoint = plan.transportProfile.outputEndpoint
+       let parser = plan.makeParser()
+       let profileStartup = plan.startupPackets.map(\.rawValue).joined(separator: ",")
+       let usbStartup = (parser as? any USBStartupOutputProvider)?.usbStartupOutputPackets() ?? []
+@@ -28,7 +26,8 @@ func runControllerRecordProbe(
+       print(
+         "RECORD identity=\"\(plan.name)\"" + " vid=\(plan.vendorID) pid=\(plan.productID)"
+           + " driver=\(plan.driver.rawValue)" + " interface=\(plan.interfaceNumber)"
+-          + " in=\(hex(inputEndpoint)) out=\(hex(outputEndpoint))"
++          + " in=\(hex(plan.transportProfile.inputEndpoint))"
++          + " out=\(hex(plan.transportProfile.outputEndpoint))"
+           + " configuration=\(plan.transportProfile.needsSetConfiguration ? "set1" : "current")"
+           + " profile_startup=\(profileStartup.isEmpty ? "none" : profileStartup)"
+           + " usb_startup=\(usbStartupBytes.isEmpty ? "none" : usbStartupBytes)"
+@@ -63,8 +62,24 @@ func runControllerRecordProbe(
+       if let product = try? device.getProduct() { print("USB_STRING product=\(product)") }
+ 
+       let handle = try device.open()
++      let resolvedTransport = USBDescriptorTransportResolver.resolve(
++        device: device,
++        configured: plan.transportProfile
++      )
++      let inputEndpoint = resolvedTransport.inputEndpoint
++      let outputEndpoint = resolvedTransport.outputEndpoint
++      let interfaceNumber = Int(resolvedTransport.interfaceNumber)
+       var claimedInterface = false
+-      defer { if claimedInterface { try? handle.releaseInterface(plan.interfaceNumber) } }
++      defer { if claimedInterface { try? handle.releaseInterface(interfaceNumber) } }
++      if inputEndpoint != plan.transportProfile.inputEndpoint
++        || outputEndpoint != plan.transportProfile.outputEndpoint
++        || interfaceNumber != plan.interfaceNumber
++      {
++        print(
++          "USB_ENDPOINTS_DISCOVERED in=\(hex(inputEndpoint)) out=\(hex(outputEndpoint))"
++            + " interface=\(interfaceNumber)"
++        )
++      }
+ 
+       if plan.transportProfile.needsSetConfiguration {
+         let currentConfiguration = (try? handle.getConfiguration()) ?? 0
+@@ -78,18 +93,18 @@ func runControllerRecordProbe(
+ 
+       if detachKernel {
+         do {
+-          try handle.detachKernelDriver(interface: plan.interfaceNumber)
+-          print("USB_DETACH interface=\(plan.interfaceNumber) result=detached")
++          try handle.detachKernelDriver(interface: interfaceNumber)
++          print("USB_DETACH interface=\(interfaceNumber) result=detached")
+         } catch let error as USBError where error.isNotFound || error.isNotSupported {
+           print(
+-            "USB_DETACH interface=\(plan.interfaceNumber)" + " result=not-needed code=\(error.code)"
++            "USB_DETACH interface=\(interfaceNumber)" + " result=not-needed code=\(error.code)"
+           )
+         }
+       }
+ 
+-      try handle.claimInterface(plan.interfaceNumber)
++      try handle.claimInterface(interfaceNumber)
+       claimedInterface = true
+-      print("USB_CLAIM interface=\(plan.interfaceNumber) result=claimed")
++      print("USB_CLAIM interface=\(interfaceNumber) result=claimed")
+ 
+       try await parser.performHandshake(handle: handle)
+       print("RECORD_HANDSHAKE driver=\(plan.driver.rawValue) result=complete")
+diff --git a/Sources/OpenJoystickDriverKit/Device/USBDescriptorTransportResolver.swift b/Sources/OpenJoystickDriverKit/Device/USBDescriptorTransportResolver.swift
+index 9072cc4..9d96e4b 100644
+--- a/Sources/OpenJoystickDriverKit/Device/USBDescriptorTransportResolver.swift
++++ b/Sources/OpenJoystickDriverKit/Device/USBDescriptorTransportResolver.swift
+@@ -51,8 +51,8 @@ struct USBInterfaceTransportFacts: Equatable, Sendable {
+   }
+ }
+ 
+-enum USBDescriptorTransportResolver {
+-  static func resolve(device: USBDevice, configured: DeviceTransportProfile)
++public enum USBDescriptorTransportResolver {
++  public static func resolve(device: USBDevice, configured: DeviceTransportProfile)
+     -> DeviceTransportProfile
+   {
+     let configuration: USBConfigurationDescriptor
+diff --git a/Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift b/Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift
+index a2546c3..491b5c4 100644
+--- a/Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift
++++ b/Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift
+@@ -48,15 +48,16 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
+ /// ```
+ ///   byte 0   : report type (0x00 = input; ignore others)
+ ///   byte 1   : payload length (0x14 = 20)
+-///   bytes 2-3: button bitmask (UInt16 LE)
+-///              bit 0  DPAD_UP      bit 8  A
+-///              bit 1  DPAD_DOWN    bit 9  B
+-///              bit 2  DPAD_LEFT    bit 10 X
+-///              bit 3  DPAD_RIGHT   bit 11 Y
+-///              bit 4  START        bit 12 LB
+-///              bit 5  BACK         bit 13 RB
+-///              bit 6  L3           bit 14 GUIDE
+-///              bit 7  R3
++///   bytes 2-3: button bitmask (UInt16 LE), matching Linux xpad
++///              xbox360_process_packet: byte2 | (byte3 << 8)
++///              bit 0  DPAD_UP      bit 8  LB
++///              bit 1  DPAD_DOWN    bit 9  RB
++///              bit 2  DPAD_LEFT    bit 10 GUIDE
++///              bit 3  DPAD_RIGHT   bit 11 unused
++///              bit 4  START        bit 12 A
++///              bit 5  BACK         bit 13 B
++///              bit 6  L3           bit 14 X
++///              bit 7  R3           bit 15 Y
+ ///   byte 4   : LT (0–255)
+ ///   byte 5   : RT (0–255)
+ ///   bytes 6-7: Left stick X  (Int16 LE)
+@@ -277,13 +278,13 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
+     check(5, .back)
+     check(6, .leftStick)
+     check(7, .rightStick)
+-    check(8, .a)
+-    check(9, .b)
+-    check(10, .x)
+-    check(11, .y)
+-    check(12, .leftBumper)
+-    check(13, .rightBumper)
+-    check(14, .guide)
++    check(8, .leftBumper)
++    check(9, .rightBumper)
++    check(10, .guide)
++    check(12, .a)
++    check(13, .b)
++    check(14, .x)
++    check(15, .y)
+ 
+     return events
+   }
+diff --git a/Sources/OpenJoystickDriverKit/Resources/Controllers/0e6f/0e6f-011f.json b/Sources/OpenJoystickDriverKit/Resources/Controllers/0e6f/0e6f-011f.json
+index 41ddb4c..78b51d0 100644
+--- a/Sources/OpenJoystickDriverKit/Resources/Controllers/0e6f/0e6f-011f.json
++++ b/Sources/OpenJoystickDriverKit/Resources/Controllers/0e6f/0e6f-011f.json
+@@ -8,7 +8,13 @@
+     "variant": "xbox360"
+   },
+   "provenance": {
+-    "source": "linux-xpad.c",
++    "source": "local-hardware",
+     "verified": false
++  },
++  "usb": {
++    "endpoints": {
++      "in": 129,
++      "out": 2
++    }
+   }
+ }
+diff --git a/Tests/OpenJoystickDriverKitTests/Protocol/Catalog/DeviceTransportProfileTests.swift b/Tests/OpenJoystickDriverKitTests/Protocol/Catalog/DeviceTransportProfileTests.swift
+index f190ed7..1239a98 100644
+--- a/Tests/OpenJoystickDriverKitTests/Protocol/Catalog/DeviceTransportProfileTests.swift
++++ b/Tests/OpenJoystickDriverKitTests/Protocol/Catalog/DeviceTransportProfileTests.swift
+@@ -230,7 +230,7 @@ struct DeviceTransportProfileTests {
+       (DeviceIdentifier(vendorID: 1848, productID: 18198), 0x01),
+       (DeviceIdentifier(vendorID: 1848, productID: 18214), 0x01),
+       (DeviceIdentifier(vendorID: 3695, productID: 275), 0x01),
+-      (DeviceIdentifier(vendorID: 3695, productID: 287), 0x01),
++      (DeviceIdentifier(vendorID: 3695, productID: 287), 0x02),
+       (DeviceIdentifier(vendorID: 3695, productID: 307), 0x01),
+     ]
+ 
+diff --git a/Tests/OpenJoystickDriverKitTests/Protocol/Parsers/Xbox360ParserTests.swift b/Tests/OpenJoystickDriverKitTests/Protocol/Parsers/Xbox360ParserTests.swift
+index 84f9737..c88bca1 100644
+--- a/Tests/OpenJoystickDriverKitTests/Protocol/Parsers/Xbox360ParserTests.swift
++++ b/Tests/OpenJoystickDriverKitTests/Protocol/Parsers/Xbox360ParserTests.swift
+@@ -73,8 +73,8 @@ struct Xbox360ParserTests {
+   }
+   @Test func testAButtonPressRelease() throws {
+     let parser = Xbox360Parser()
+-    // Bit 8 = A
+-    let press = makeXbox360ReportLE(buttons: 1 << 8)
++    // Bit 12 = A (Linux xpad data[3] & BIT(4))
++    let press = makeXbox360ReportLE(buttons: 1 << 12)
+     let release = makeXbox360ReportLE(buttons: 0)
+     let pressEvents = try parser.parse(data: press)
+     #expect(pressEvents.contains(.buttonPressed(.a)))
+@@ -83,7 +83,7 @@ struct Xbox360ParserTests {
+   }
+   @Test func testBxyButtons() throws {
+     let parser = Xbox360Parser()
+-    let packet = makeXbox360ReportLE(buttons: (1 << 9) | (1 << 10) | (1 << 11))
++    let packet = makeXbox360ReportLE(buttons: (1 << 13) | (1 << 14) | (1 << 15))
+     let events = try parser.parse(data: packet)
+     #expect(events.contains(.buttonPressed(.b)))
+     #expect(events.contains(.buttonPressed(.x)))
+@@ -91,8 +91,8 @@ struct Xbox360ParserTests {
+   }
+   @Test func testShoulderAndStickClicks() throws {
+     let parser = Xbox360Parser()
+-    // LB=bit12, RB=bit13, L3=bit6, R3=bit7
+-    let packet = makeXbox360ReportLE(buttons: (1 << 12) | (1 << 13) | (1 << 6) | (1 << 7))
++    // LB=bit8, RB=bit9, L3=bit6, R3=bit7
++    let packet = makeXbox360ReportLE(buttons: (1 << 8) | (1 << 9) | (1 << 6) | (1 << 7))
+     let events = try parser.parse(data: packet)
+     #expect(events.contains(.buttonPressed(.leftBumper)))
+     #expect(events.contains(.buttonPressed(.rightBumper)))
+@@ -109,8 +109,8 @@ struct Xbox360ParserTests {
+   }
+   @Test func testGuideButton() throws {
+     let parser = Xbox360Parser()
+-    // GUIDE=bit14
+-    let packet = makeXbox360ReportLE(buttons: 1 << 14)
++    // GUIDE=bit10 (Linux xpad data[3] & BIT(2))
++    let packet = makeXbox360ReportLE(buttons: 1 << 10)
+     let events = try parser.parse(data: packet)
+     #expect(events.contains(.buttonPressed(.guide)))
+   }
+@@ -246,7 +246,7 @@ struct Xbox360ParserTests {
+   }
+   @Test func testChangeDetectionButtons() throws {
+     let parser = Xbox360Parser()
+-    let press = makeXbox360ReportLE(buttons: 1 << 8)  // A
++    let press = makeXbox360ReportLE(buttons: 1 << 12)  // A
+     _ = try parser.parse(data: press)
+     let events2 = try parser.parse(data: press)
+     #expect(!events2.contains(.buttonPressed(.a)))
+@@ -276,7 +276,7 @@ struct Xbox360ParserTests {
+   }
+   @Test func testMultipleSimultaneousButtons() throws {
+     let parser = Xbox360Parser()
+-    let packet = makeXbox360ReportLE(buttons: (1 << 8) | (1 << 9) | (1 << 12))
++    let packet = makeXbox360ReportLE(buttons: (1 << 12) | (1 << 13) | (1 << 8))
+     let events = try parser.parse(data: packet)
+     #expect(events.contains(.buttonPressed(.a)))
+     #expect(events.contains(.buttonPressed(.b)))
+@@ -302,7 +302,7 @@ struct Xbox360ParserTests {
+     var state = [UInt8](repeating: 0, count: 20)
+     state[0] = 0x00
+     state[1] = 0x14
+-    state[3] = 0x01
++    state[3] = 0x10
+     let events = try parser.parse(data: Data([0x00, 0x01, 0x00, 0x00] + state))
+     #expect(events.contains(.buttonPressed(.a)))
+     #expect(parser.consumeInputConnectionStateChange() == nil)

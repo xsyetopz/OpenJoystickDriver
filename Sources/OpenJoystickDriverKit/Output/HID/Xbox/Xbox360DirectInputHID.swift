@@ -1,10 +1,10 @@
 import Foundation
 
-/// HID surface for Xbox 360 XUSB controllers as seen by DirectInput-era consumers.
+/// HID surface for Xbox 360-family DirectInput-era consumers.
 ///
-/// Microsoft documents that XUSB controllers expose a HID-compatible DirectInput
-/// surface for older applications. This is still HID, not true XInput/XUSB:
-/// macOS IOHIDUserDevice cannot publish Windows XUSB interfaces or XInput IOCTLs.
+/// OJD's Xbox 360-family HID surface for DirectInput-era consumers. This is
+/// generic HID only, not XInputHID or Windows XUSB: macOS IOHIDUserDevice
+/// cannot publish Windows XUSB interfaces or XInput IOCTLs.
 ///
 /// Report layout (13 bytes):
 ///   Bytes 0-1  : 10 digital buttons, Button 1 = A through Button 10 = R3
@@ -14,7 +14,7 @@ import Foundation
 ///   Bytes 7-8  : Combined trigger Z axis, Int16 LE (LT positive, RT negative)
 ///   Bytes 9-10 : Right stick X, Int16 LE
 ///   Bytes 11-12: Right stick Y, Int16 LE
-public enum Xbox360XUSBDirectInputHIDDescriptor {
+public enum Xbox360DirectInputHIDDescriptor {
   public static let descriptor: [UInt8] = [
     0x05, 0x01,  // Usage Page: Generic Desktop
     0x09, 0x05,  // Usage: Game Pad
@@ -60,9 +60,15 @@ public enum Xbox360XUSBDirectInputHIDDescriptor {
   ]
 }
 
-/// Report formatter for Microsoft XUSB DirectInput compatibility.
-public struct Xbox360XUSBDirectInputReportFormat: VirtualGamepadReportFormat {
-  public let descriptor: [UInt8] = Xbox360XUSBDirectInputHIDDescriptor.descriptor
+@available(
+  *, deprecated, renamed: "Xbox360DirectInputHIDDescriptor",
+  message: "Use Xbox360DirectInputHIDDescriptor; generic HID, not XUSB."
+)
+public typealias Xbox360XUSBDirectInputHIDDescriptor = Xbox360DirectInputHIDDescriptor
+
+/// Report formatter for Xbox 360-family DirectInput HID compatibility.
+public struct Xbox360DirectInputReportFormat: VirtualGamepadReportFormat {
+  public let descriptor: [UInt8] = Xbox360DirectInputHIDDescriptor.descriptor
   public let inputReportPayloadSize: Int = 13
   public let inputReportID: UInt8? = nil
 
@@ -117,3 +123,9 @@ public struct Xbox360XUSBDirectInputReportFormat: VirtualGamepadReportFormat {
     report[offset + 1] = b.1
   }
 }
+
+@available(
+  *, deprecated, renamed: "Xbox360DirectInputReportFormat",
+  message: "Use Xbox360DirectInputReportFormat; generic HID, not XUSB."
+)
+public typealias Xbox360XUSBDirectInputReportFormat = Xbox360DirectInputReportFormat

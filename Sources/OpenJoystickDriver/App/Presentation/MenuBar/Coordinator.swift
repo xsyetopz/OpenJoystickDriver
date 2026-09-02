@@ -42,6 +42,7 @@
     func applicationDidFinishLaunching(_ notification: Notification) {
       UNUserNotificationCenter.current().delegate = notificationPresenter
       refreshStatus()
+      Task { @MainActor in await viewModel.startSystemExtensionSetup() }
       refreshTimer = Timer.scheduledTimer(withTimeInterval: 12, repeats: true) { [weak self] _ in
         guard let self else { return }
         Task { @MainActor in self.refreshStatus() }
@@ -50,6 +51,10 @@
         guard let self else { return }
         Task { @MainActor in self.refreshLiveStatus() }
       }
+    }
+
+    func applicationDidBecomeActive(_ notification: Notification) {
+      Task { @MainActor in await viewModel.refreshSystemExtensionSetup() }
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -129,6 +134,7 @@
       updateStatusMenu()
       Task { @MainActor [weak self] in
         guard let self else { return }
+        await viewModel.refreshSystemExtensionSetup()
         await viewModel.refresh()
         notificationMonitor.observe(RuntimeNotificationSnapshot(viewModel: viewModel))
         updateStatusMenu()

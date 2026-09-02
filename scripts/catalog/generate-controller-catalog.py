@@ -26,27 +26,22 @@ OUTPUT_DIR = ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Control
 
 HID_RECORDS = (
     ("hid_sony", "USB_VENDOR_ID_SONY", "USB_DEVICE_ID_SONY_PS3_CONTROLLER",
-     "DS3", "dualShock3", ["experimental", "needsHardwareTest"], "linux-hid-sony.c"),
+     "DS3", "dualShock3", []),
     ("hid_playstation", "USB_VENDOR_ID_SONY", "USB_DEVICE_ID_SONY_PS4_CONTROLLER",
-     "DS4", "dualShock4", [], "linux-hid-playstation.c"),
+     "DS4", "dualShock4", []),
     ("hid_playstation", "USB_VENDOR_ID_SONY", "USB_DEVICE_ID_SONY_PS4_CONTROLLER_2",
-     "DS4", "dualShock4", [], "linux-hid-playstation.c"),
+     "DS4", "dualShock4", []),
     ("hid_playstation", "USB_VENDOR_ID_SONY", "USB_DEVICE_ID_SONY_PS5_CONTROLLER",
-     "DualSense", "dualSense", ["touchpad", "microphoneMute", "experimental", "needsHardwareTest"],
-     "linux-hid-playstation.c"),
+     "DualSense", "dualSense", ["touchpad", "microphoneMute"]),
     ("hid_playstation", "USB_VENDOR_ID_SONY", "USB_DEVICE_ID_SONY_PS5_CONTROLLER_2",
-     "DualSense", "dualSense", ["touchpad", "microphoneMute", "experimental", "needsHardwareTest"],
-     "linux-hid-playstation.c"),
+     "DualSense", "dualSense", ["touchpad", "microphoneMute"]),
     ("hid_nintendo", "USB_VENDOR_ID_NINTENDO", "USB_DEVICE_ID_NINTENDO_PROCON",
-     "SwitchPro", "switchPro", ["usbHandshake", "experimental", "needsHardwareTest"],
-     "linux-hid-nintendo.c"),
+     "SwitchPro", "switchPro", ["usbHandshake"]),
     ("hid_steam", "USB_VENDOR_ID_VALVE", "USB_DEVICE_ID_STEAM_CONTROLLER",
-     "SteamController", "steamController", ["lizardMode", "trackpads", "experimental", "needsHardwareTest"],
-     "linux-hid-steam.c"),
+     "SteamController", "steamController", ["lizardMode", "trackpads"]),
     ("hid_steam", "USB_VENDOR_ID_VALVE", "USB_DEVICE_ID_STEAM_CONTROLLER_WIRELESS",
      "SteamController", "steamController",
-     ["lizardMode", "trackpads", "wirelessReceiver", "experimental", "needsHardwareTest"],
-     "linux-hid-steam.c"),
+     ["lizardMode", "trackpads", "wirelessReceiver"]),
 )
 
 
@@ -94,7 +89,7 @@ def parse_defines(source: str) -> dict[str, int]:
 def build_hid_records(sources: dict[str, str]) -> list[dict[str, Any]]:
     defines = parse_defines(sources["hid_ids"])
     records: list[dict[str, Any]] = []
-    for source_key, vendor_macro, product_macro, driver, variant, flags, provenance in HID_RECORDS:
+    for source_key, vendor_macro, product_macro, driver, variant, flags in HID_RECORDS:
         source = sources[source_key]
         pattern = (
             r"HID_(?:USB|BLUETOOTH)_DEVICE\s*\(\s*"
@@ -124,7 +119,6 @@ def build_hid_records(sources: dict[str, str]) -> list[dict[str, Any]]:
             "product_id": product_id,
             "transport": "hid",
             "protocol": protocol,
-            "provenance": {"source": provenance, "verified": False},
         })
     return records
 
@@ -202,7 +196,7 @@ def load_overrides(
         else:
             key = (int(document["vendor_id"]), int(document["product_id"]))
             payload = document["set"]
-            if not payload or not set(payload) <= {"transport", "protocol", "usb", "provenance"}:
+            if not payload or not set(payload) <= {"transport", "protocol", "usb"}:
                 raise CatalogError(f"{path}: invalid patch fields")
         expected = record_path(override_dir, key)
         if path != expected:
@@ -230,9 +224,6 @@ def apply_overrides(
         merged = {**upstream, **payload}
         if merged == upstream:
             raise CatalogError(f"redundant patch override for {key}")
-        source_name = merged["provenance"]["source"]
-        if source_name not in {"local-hardware", "tester-packets"}:
-            raise CatalogError(f"patch override for {key} requires local evidence")
         records[key] = merged
 
 

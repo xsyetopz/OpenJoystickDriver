@@ -39,7 +39,6 @@
 - [Implementation status](development/implementation-status.md)
 - [Eight-issue and DriverKit audit](development/issue-audit.md)
 - [Experimental controller status](development/experimental-controllers.md)
-- [Physical output evidence](development/physical-output-evidence.md)
 - [Import controller identities from Linux xpad](development/xpad-import.md)
 - [Compatibility source notes](development/compatibility-sources.md)
 - [Xbox fallback identity evidence](development/xbox-identities.md)

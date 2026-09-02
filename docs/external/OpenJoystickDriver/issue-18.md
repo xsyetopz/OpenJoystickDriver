@@ -7,7 +7,7 @@
 - **State:** OPEN
 - **Author:** cooltune
 - **Created:** 2026-07-18T19:56:50Z
-- **Updated:** 2026-07-20T14:56:15Z
+- **Updated:** 2026-08-27T17:42:04Z
 - **Closed:** —
 - **Labels:** enhancement, help wanted
 
@@ -319,3 +319,42 @@ int main(int argc, char **argv) {
 Currently 0.5.0-alpha.5 is undergoing a major UI/flow rewrite, so there's some patience needed.
 
 But, in the meantime, being able to try the current upstream code may help, as a lot of the "needs x or y" for apple dev account issues were mostly removed.
+
+### xsyetopz — 2026-08-25T16:21:16Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/18#issuecomment-5413401373)
+
+Try [0.5.0-beta.1](https://github.com/xsyetopz/OpenJoystickDriver/releases/tag/0.5.0-beta.1) and tell me if it works!
+
+### cooltune — 2026-08-27T17:42:04Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/18#issuecomment-5442944472)
+
+Tried 0.5.0-beta.1 (and 0.5.0-beta.2) on macOS 26 / Apple Silicon with the wired Xbox One 1537 (045E:02D1). The app itself comes up fine — permissions granted, `[ApplicationServiceServer] Compatibility virtual gamepad ready`, compat backend enabled — but no controller is ever detected, because the bundled dext never installs.
+
+`--headless extension enable`:
+
+```
+ERROR: System extension request failed: OSSystemExtensionErrorDomain code=9 extension category returned error
+```
+
+`kernelmanagerd` gives the real reason:
+
+```
+[DextValidation] Extension com.openjoystickdriver.XboxUSBDevice is not valid, error:
+  Extension 'com.openjoystickdriver.XboxUSBDevice' has invalid properties:
+  ["Property 'CFBundleVersion' must be a valid kext version"]
+```
+
+and `sysextd` uninstalls the staged bundle immediately.
+
+Cause: `bundle_version_from_semver()` in `scripts/release/package.sh` encodes the tag as one big integer (`0.5.0-beta.1` -> `500001`, `0.5.0-beta.2` -> `500002`) and `_driverkit_versions()` stamps that on the dext. Kext versions must be `major.minor.revision` with `major <= 65535` and `minor`/`revision <= 99`, so it is rejected. Local `rebuild_full` builds escape this because `next_dext_bundle_version()` returns small integers, which are legal — that is probably why it never showed up in testing.
+
+PR with a fix: #26 — derives `0.5.0b1` style versions for the dext (ordered below the final release) and fails the build if the value is not a legal kext version.
+
+Two small things I noticed while digging, both harmless:
+
+- The error string for `OSSystemExtensionError` code 9 prints as "extension category returned error"; code 9 is `validationFailed` (7 is `unknownExtensionCategory`), so the map looks shifted by one.
+- Upgrading from alpha.4 left stale TCC rows: Input Monitoring and Accessibility both reported `[DENIED]` with no prompt until I ran `tccutil reset ListenEvent com.openjoystickdriver` / `tccutil reset Accessibility com.openjoystickdriver` and relaunched.
+
+Happy to test a build once the version lands.

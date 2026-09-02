@@ -1,17 +1,28 @@
-#!/usr/bin/env bash
-# OpenJoystickDriver developer entrypoint.
-#
-# Provides one command for common tasks and clear errors.
-#
-# Use this instead of running individual scripts.
-set -euo pipefail
+#!/usr/bin/env python3
+"""OpenJoystickDriver repository command dispatcher."""
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+from __future__ import annotations
 
-usage() {
-  cat <<'USAGE'
-OpenJoystickDriver dev helper
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+from typing import NoReturn
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = SCRIPT_DIR.parent
+ENVIRONMENT = SCRIPT_DIR / "platform/environment.sh"
+SCHEMA_PYTHON = PROJECT_DIR / ".build" / "schema-validator" / "bin" / "python"
+
+
+def die(message: str) -> NoReturn:
+    print(f"ERROR: {message}", file=sys.stderr)
+    raise SystemExit(2)
+
+
+def usage() -> None:
+    print("""OpenJoystickDriver dev helper
 
 Usage:
   ./scripts/ojd <command> [args]
@@ -23,6 +34,7 @@ Commands:
   build install dev|release   Full rebuild and install (alias: rebuild)
   build install-fast dev      App-only rebuild and install (alias: rebuild-fast)
   driverkit generate [path]   Generate a fresh SwifterKit DriverKit project
+  package tester               Build a private, shareable Developer ID DMG
   release bump-version <version>
                               Update release version references
   release package [version]  Build, notarize, staple, and package a release DMG
@@ -44,7 +56,7 @@ Commands:
                                Write/import GitHub Actions release secrets
 
   diagnose dext               Run dext diagnostics (activation, codesign, IORegistry, application service connection)
-  diagnose record <json>     Validate a record or probe through the USB DEXT
+  diagnose record <json>      Validate a record or probe through the USB DEXT
   diagnose sdl3 [--seconds N] Run SDL3 probe against the virtual device
   diagnose sdl3-gamecontroller [--seconds N]
                               Run SDL3 through GameController/MFI and test rumble
@@ -59,6 +71,7 @@ Commands:
   catalog regenerate --write Rebuild the runtime catalog from pinned sources and overrides
   catalog xpad [options]      Generate review-only records from a pinned Linux xpad.c
   check profiles              Check canonical controller records
+  check schemas               Validate canonical schemas and a live support report
   check scripts               Check script ownership, paths, modes, and syntax
   check swift-structure       Check Swift file sizes and ownership layout
   check driverkit             Verify generated DriverKit reproducibility and build
@@ -85,449 +98,353 @@ Examples:
 
 Notes:
   - Most commands expect the app to be installed to /Applications.
-  - DriverKit upgrades can require a reboot; use build install-fast while streaming.
-USAGE
-}
+  - DriverKit upgrades can require a reboot; use build install-fast while streaming.""")
 
-die() { echo "ERROR: $*" >&2; exit 2; }
 
-require_no_args() {
-  local command_name="$1"
-  shift
-  [[ $# -eq 0 ]] || die "$command_name does not accept arguments"
-}
+def package_usage() -> None:
+    print("""OpenJoystickDriver packaging
 
-require_one_arg() {
-  local command_name="$1"
-  shift
-  [[ $# -eq 1 ]] || die "$command_name requires exactly one argument"
-}
+Usage:
+  ./scripts/ojd package <subcommand> [args]
 
-require_at_most_one_arg() {
-  local command_name="$1"
-  shift
-  [[ $# -le 1 ]] || die "$command_name accepts at most one argument"
-}
+Subcommands:
+  tester                      Build a private Developer ID-signed, unnotarized DMG
+  release [version]           Build, notarize, staple, and package a release DMG
 
-cmd="${1:-}"
-shift || true
+The tester path does not install, publish, or notarize. The release path is
+also available as ./scripts/ojd release package [version].""")
 
-case "$cmd" in
-  ""|-h|--help|help)
-    usage
-    exit 0
-    ;;
 
-  build)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      ""|-h|--help|help)
-        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" help
-        ;;
-      dev)
-        require_no_args "build dev" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" build dev
-        ;;
-      dext)
-        require_no_args "build dext" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" build dext
-        ;;
-      release)
-        require_no_args "build release" "$@"
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" build release
-        ;;
-      install)
-        configuration="${1:-}"; shift || true
-        case "$configuration" in
-          dev)
-            require_no_args "build install dev" "$@"
-            exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild dev
-            ;;
-          release)
-            require_no_args "build install release" "$@"
-            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild release
-            ;;
-          *) die "Unknown: build install $configuration (expected: dev | release)" ;;
-        esac
-        ;;
-      install-fast)
-        configuration="${1:-}"; shift || true
-        case "$configuration" in
-          dev)
-            require_no_args "build install-fast dev" "$@"
-            exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild-fast dev
-            ;;
-          *) die "Unknown: build install-fast $configuration (expected: dev)" ;;
-        esac
-        ;;
-      *)
-        die "Unknown: build $sub (expected: dev | dext | release | install | install-fast)"
-        ;;
-    esac
-    ;;
-
-  rebuild)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      dev)
-        require_no_args "rebuild dev" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild dev
-        ;;
-      release)
-        require_no_args "rebuild release" "$@"
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild release
-        ;;
-      *)
-        die "Unknown: rebuild $sub (expected: dev | release)"
-        ;;
-    esac
-    ;;
-
-  rebuild-fast)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      dev)
-        require_no_args "rebuild-fast dev" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" rebuild-fast dev
-        ;;
-      *)
-        die "Unknown: rebuild-fast $sub (expected: dev)"
-        ;;
-    esac
-    ;;
-
-  bump-version)
-    require_one_arg "bump-version" "$@"
-    exec /usr/bin/env bash "$SCRIPT_DIR/release/bump-version.sh" "$@"
-    ;;
-
-  driverkit)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      generate)
-        require_at_most_one_arg "driverkit generate" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/driverkit.sh" generate "$@"
-        ;;
-      *) die "Unknown: driverkit $sub (expected: generate)" ;;
-    esac
-    ;;
-
-  env)
-    sub="${1:-}"
-    shift || true
-    case "$sub" in
-      audit)
-        require_no_args "env audit" "$@"
-        exec python3 "$SCRIPT_DIR/quality/env-audit.py"
-        ;;
-      *) die "Unknown: env $sub (expected: audit)" ;;
-    esac
-    ;;
-
-  docs)
-    sub="${1:-}"
-    shift || true
-    case "$sub" in
-      export-external-issues)
-        require_no_args "docs export-external-issues" "$@"
-        exec /usr/bin/env python3 "$SCRIPT_DIR/docs/issues/export.py"
-        ;;
-      *)
-        die "Unknown: docs $sub (expected: export-external-issues)"
-        ;;
-    esac
-    ;;
-  signing)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      ""|-h|--help|help)
-        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" help
-        ;;
-      install-profiles)
-        require_at_most_one_arg "signing install-profiles" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" install-profiles "${1:-}"
-        ;;
-      configure)
-        require_no_args "signing configure" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" configure
-        ;;
-      doctor)
-        require_no_args "signing doctor" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" doctor
-        ;;
-      audit)
-        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" audit "$@"
-        ;;
-      cert-info)
-        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" cert-info "$@"
-        ;;
-      profile-info)
-        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" profile-info "$@"
-        ;;
-      import-embedded)
-        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" import-embedded "$@"
-        ;;
-      ci-release-setup)
-        require_no_args "signing ci-release-setup" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/signing/signing.sh" ci-release-setup
-        ;;
-      export-github-secrets)
-        exec /usr/bin/env bash "$SCRIPT_DIR/signing/export-github-secrets.sh" "$@"
-        ;;
-      *)
-        die "Unknown: signing $sub (expected: install-profiles | configure | doctor | audit | cert-info | profile-info | import-embedded | ci-release-setup | export-github-secrets)"
-        ;;
-    esac
-    ;;
-
-  catalog)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      regenerate)
-        exec /usr/bin/env python3 "$SCRIPT_DIR/catalog/generate-controller-catalog.py" "$@"
-        ;;
-      xpad)
-        exec /usr/bin/env python3 "$SCRIPT_DIR/catalog/generate-xpad-records.py" "$@"
-        ;;
-      *)
-        die "Unknown: catalog $sub (expected: regenerate | xpad)"
-        ;;
-    esac
-    ;;
-
-  diagnose)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      ""|-h|--help|help)
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" help
-        ;;
-      record)
-        record_path="${1:-}"
-        [[ -n "$record_path" ]] || die "diagnose record requires a canonical controller JSON path"
-        shift
-        if [[ "$record_path" != /* ]]; then
-          record_path="$PWD/$record_path"
-        fi
-        source "$SCRIPT_DIR/platform/environment.sh"
-        cd "$PROJECT_DIR"
-        exec "$SWIFT_BIN" run \
-          OpenJoystickDriverHIDTool --record-probe "$record_path" "$@"
-        ;;
-      dext)
-        require_no_args "diagnose dext" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" dext
-        ;;
-      sdl3)
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" sdl3 "$@"
-        ;;
-      sdl3-gamecontroller)
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" sdl3-gamecontroller "$@"
-        ;;
-      sdl3-hidapi-x360)
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" sdl3-hidapi-x360 "$@"
-        ;;
-      gamecontroller)
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" gamecontroller "$@"
-        ;;
-      catalina)
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/catalina-smoke.sh" "$@"
-        ;;
-      backends)
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/diagnose.sh" backends "$@"
-        ;;
-      *)
-        die "Unknown: diagnose $sub (expected: record | dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | catalina | backends)"
-        ;;
-    esac
-    ;;
-
-  check)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      profiles)
-        require_no_args "check profiles" "$@"
-        exec /usr/bin/env python3 "$SCRIPT_DIR/catalog/validate-profiles.py"
-        ;;
-      scripts)
-        require_no_args "check scripts" "$@"
-        exec /usr/bin/env python3 "$SCRIPT_DIR/quality/validate-scripts.py"
-        ;;
-      swift-structure)
-        require_no_args "check swift-structure" "$@"
-        exec /usr/bin/env python3 "$SCRIPT_DIR/quality/validate-swift-structure.py"
-        ;;
-      driverkit)
-        require_no_args "check driverkit" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/driverkit.sh" validate
-        ;;
-      *)
-        die "Unknown: check $sub (expected: profiles | scripts | swift-structure | driverkit)"
-        ;;
-    esac
-    ;;
-
-  test)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      parsers-macos14)
-        require_no_args "test parsers-macos14" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/quality/test-parsers-macos14.sh"
-        ;;
-      *)
-        die "Unknown: test $sub (expected: parsers-macos14)"
-        ;;
-    esac
-    ;;
-
-  repair)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      stale-dext)
-        require_no_args "repair stale-dext" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/dext/repair.sh"
-        ;;
-      swiftpm-module-cache)
-        require_no_args "repair swiftpm-module-cache" "$@"
-        (
-          cd "$PROJECT_DIR"
-          if [[ ! -d ".build" ]]; then
-            echo "No .build directory; nothing to clean."
-            exit 0
-          fi
-
-          swift_package="${SWIFT_PACKAGE_BIN:-}"
-          if [[ -z "$swift_package" ]]; then
-            swift_package="$(xcrun --find swift-package 2>/dev/null || command -v swift-package)"
-          fi
-          "$swift_package" clean
-          echo "Cleaned SwiftPM build products."
+def require(
+    command: str,
+    args: list[str],
+    *,
+    count: int | None = None,
+    maximum: int | None = None,
+) -> None:
+    if count is not None and len(args) != count:
+        die(
+            f"{command} requires exactly one argument"
+            if count == 1
+            else f"{command} does not accept arguments"
         )
-        ;;
-      *)
-        die "Unknown: repair $sub (expected: stale-dext | swiftpm-module-cache)"
-        ;;
-    esac
-    ;;
+    if maximum is not None and len(args) > maximum:
+        die(f"{command} accepts at most one argument")
 
-  launch)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      sdl-gamecontroller)
-        exec /usr/bin/env bash "$SCRIPT_DIR/diagnostics/sdl/gamecontroller.sh" "$@"
-        ;;
-      *)
-        die "Unknown: launch $sub (expected: sdl-gamecontroller)"
-        ;;
-    esac
-    ;;
 
-  lint)
-    require_no_args "lint" "$@"
-    exec /usr/bin/env bash "$SCRIPT_DIR/build-tools/build.sh" lint
-    ;;
+def env_with(overrides: dict[str, str] | None = None) -> dict[str, str]:
+    env = os.environ.copy()
+    env.update(overrides or {})
+    return env
 
-  release)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      ""|help|-h|--help)
-        usage
-        ;;
-      bump-version)
-        require_one_arg "release bump-version" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/release/bump-version.sh" "$@"
-        ;;
-      package)
-        require_at_most_one_arg "release package" "$@"
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/package.sh" release "$@"
-        ;;
-      install-local)
-        require_at_most_one_arg "release install-local" "$@"
-        exec /usr/bin/env bash "$SCRIPT_DIR/release/install-local.sh" "$@"
-        ;;
-      notarize)
-        action="${1:-}"; shift || true
-        case "$action" in
-          submit|"")
-            require_no_args "release notarize submit" "$@"
-            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" submit
-            ;;
-          help|-h|--help)
-            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" help
-            ;;
-          status)
-            require_at_most_one_arg "release notarize status" "$@"
-            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" status "$@"
-            ;;
-          history)
-            require_no_args "release notarize history" "$@"
-            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" history
-            ;;
-          log)
-            require_one_arg "release notarize log" "$@"
-            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" log "$@"
-            ;;
-          store-credentials)
-            require_at_most_one_arg "release notarize store-credentials" "$@"
-            exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" store-credentials "$@"
-            ;;
-          *)
-            die "Unknown: release notarize $action (expected: submit | status | history | log | store-credentials)"
-            ;;
-        esac
-        ;;
-      *) die "Unknown: release $sub (expected: bump-version | package | install-local | notarize)" ;;
-    esac
-    ;;
 
-  notarize)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      submit|"")
-        require_no_args "notarize submit" "$@"
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" submit
-        ;;
-      help|-h|--help)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" help
-        ;;
-      status)
-        require_at_most_one_arg "notarize status" "$@"
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" status "$@"
-        ;;
-      history)
-        require_no_args "notarize history" "$@"
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" history
-        ;;
-      log)
-        require_one_arg "notarize log" "$@"
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" log "$@"
-        ;;
-      store-credentials)
-        require_at_most_one_arg "notarize store-credentials" "$@"
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/notarize.sh" store-credentials "$@"
-        ;;
-      *)
-        die "Unknown: notarize $sub (expected: submit | status | history | log | store-credentials)"
-        ;;
-    esac
-    ;;
+def exec_target(
+    relative: str,
+    args: list[str],
+    *,
+    env: dict[str, str] | None = None,
+    python: bool = False,
+    schema_python: bool = False,
+) -> NoReturn:
+    path = SCRIPT_DIR / relative
+    python_executable = str(SCHEMA_PYTHON) if schema_python and SCHEMA_PYTHON.is_file() else sys.executable
+    command = (
+        [python_executable, str(path), *args]
+        if python
+        else ["/usr/bin/env", "bash", str(path), *args]
+    )
+    os.execvpe(command[0], command, env_with(env))
 
-  package)
-    sub="${1:-}"; shift || true
-    case "$sub" in
-      ""|-h|--help|help)
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/package.sh" help
-        ;;
-      release)
-        require_at_most_one_arg "package release" "$@"
-        exec env OJD_ENV=release /usr/bin/env bash "$SCRIPT_DIR/release/package.sh" release "$@"
-        ;;
-      *)
-        die "Unknown: package $sub (expected: release)"
-        ;;
-    esac
-    ;;
 
-  *)
-    die "Unknown command: $cmd (run: ./scripts/ojd --help)"
-    ;;
-esac
+def exec_python_with_environment(relative: str, args: list[str]) -> NoReturn:
+    script = SCRIPT_DIR / relative
+    command = [
+        "/bin/bash",
+        "-c",
+        'source "$1"; exec "$3" "$2" "${@:4}"',
+        "ojd",
+        str(ENVIRONMENT),
+        str(script),
+        sys.executable,
+        *args,
+    ]
+    os.execvpe(command[0], command, env_with({"OJD_ENV": "release"}))
+
+
+def run_record(args: list[str]) -> int:
+    if not args:
+        die("diagnose record requires a canonical controller JSON path")
+    record = Path(args[0]).expanduser()
+    if not record.is_absolute():
+        record = Path.cwd() / record
+    command = [
+        "/bin/bash",
+        "-c",
+        'source "$1"; cd "$2"; exec "$SWIFT_BIN" run OpenJoystickDriverHIDTool --record-probe "$3" "${@:4}"',
+        "ojd",
+        str(ENVIRONMENT),
+        str(PROJECT_DIR),
+        str(record),
+        *args[1:],
+    ]
+    return subprocess.run(command, env=env_with(), check=False).returncode
+
+
+def repair_swiftpm_cache() -> int:
+    if not (PROJECT_DIR / ".build").is_dir():
+        print("No .build directory; nothing to clean.")
+        return 0
+    swift_package = os.environ.get("SWIFT_PACKAGE_BIN") or shutil.which("swift-package")
+    if not swift_package:
+        result = subprocess.run(
+            ["xcrun", "--find", "swift-package"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        swift_package = result.stdout.strip() if result.returncode == 0 else ""
+    if not swift_package:
+        die("swift-package not found")
+    result = subprocess.run([swift_package, "clean"], cwd=PROJECT_DIR, check=False)
+    if result.returncode == 0:
+        print("Cleaned SwiftPM build products.")
+    return result.returncode
+
+
+def dispatch(argv: list[str]) -> int:
+    command = argv[0] if argv else ""
+    rest = argv[1:]
+    match command:
+        case "" | "-h" | "--help" | "help":
+            usage()
+            return 0
+        case "build":
+            sub, tail = (rest[0], rest[1:]) if rest else ("", [])
+            if sub in {"", "-h", "--help", "help"}:
+                exec_target("build-tools/build.sh", ["help"])
+            if sub in {"dev", "dext", "release"}:
+                require(f"build {sub}", tail, count=0)
+                exec_target(
+                    "build-tools/build.sh",
+                    ["build", sub],
+                    env={"OJD_ENV": "release"} if sub == "release" else None,
+                )
+            if sub in {"install", "install-fast"}:
+                config, tail = (tail[0], tail[1:]) if tail else ("", [])
+                if sub == "install-fast" and config != "dev":
+                    die(f"Unknown: build install-fast {config} (expected: dev)")
+                if sub == "install" and config not in {"dev", "release"}:
+                    die(f"Unknown: build install {config} (expected: dev | release)")
+                require(f"build {sub} {config}", tail, count=0)
+                exec_target(
+                    "build-tools/build.sh",
+                    ["rebuild-fast" if sub == "install-fast" else "rebuild", config],
+                    env={"OJD_ENV": "release"} if config == "release" else None,
+                )
+            die(
+                f"Unknown: build {sub} (expected: dev | dext | release | install | install-fast)"
+            )
+        case "rebuild" | "rebuild-fast":
+            config, tail = (rest[0], rest[1:]) if rest else ("", [])
+            allowed = {"dev", "release"} if command == "rebuild" else {"dev"}
+            if config not in allowed:
+                die(
+                    f"Unknown: {command} {config} (expected: {'dev | release' if command == 'rebuild' else 'dev'})"
+                )
+            require(f"{command} {config}", tail, count=0)
+            exec_target(
+                "build-tools/build.sh",
+                [command, config],
+                env={"OJD_ENV": "release"} if config == "release" else None,
+            )
+        case "bump-version":
+            require(command, rest, count=1)
+            exec_target("release/bump_version.py", rest, python=True)
+        case "driverkit":
+            sub, tail = (rest[0], rest[1:]) if rest else ("", [])
+            if sub != "generate":
+                die(f"Unknown: driverkit {sub} (expected: generate)")
+            require("driverkit generate", tail, maximum=1)
+            exec_target("build-tools/driverkit.sh", [sub, *tail])
+        case "env":
+            if rest != ["audit"]:
+                die(f"Unknown: env {rest[0] if rest else ''} (expected: audit)")
+            exec_target("quality/env-audit.py", [], python=True)
+        case "docs":
+            if rest != ["export-external-issues"]:
+                die(
+                    f"Unknown: docs {rest[0] if rest else ''} (expected: export-external-issues)"
+                )
+            exec_target("docs/issues/export.py", [], python=True)
+        case "signing":
+            sub, tail = (rest[0], rest[1:]) if rest else ("", [])
+            if sub in {"", "-h", "--help", "help"}:
+                exec_target("signing/signing.sh", ["help"])
+            if sub == "export-github-secrets":
+                exec_target("signing/export-github-secrets.sh", tail)
+            if sub in {
+                "install-profiles",
+                "configure",
+                "doctor",
+                "audit",
+                "cert-info",
+                "profile-info",
+                "import-embedded",
+                "ci-release-setup",
+            }:
+                if sub in {"configure", "doctor", "ci-release-setup"}:
+                    require(f"signing {sub}", tail, count=0)
+                if sub == "install-profiles":
+                    require(f"signing {sub}", tail, maximum=1)
+                exec_target("signing/signing.sh", [sub, *tail])
+            die(
+                f"Unknown: signing {sub} (expected: install-profiles | configure | doctor | audit | cert-info | profile-info | import-embedded | ci-release-setup | export-github-secrets)"
+            )
+        case "catalog":
+            sub, tail = (rest[0], rest[1:]) if rest else ("", [])
+            if sub not in {"regenerate", "xpad"}:
+                die(f"Unknown: catalog {sub} (expected: regenerate | xpad)")
+            target = (
+                "catalog/generate-controller-catalog.py"
+                if sub == "regenerate"
+                else "catalog/generate-xpad-records.py"
+            )
+            exec_target(target, tail, python=True, schema_python=sub == "regenerate")
+        case "diagnose":
+            sub, tail = (rest[0], rest[1:]) if rest else ("", [])
+            if sub in {"", "-h", "--help", "help"}:
+                exec_target("diagnostics/diagnose.sh", ["help"])
+            if sub == "record":
+                return run_record(tail)
+            if sub == "catalina":
+                exec_target("diagnostics/catalina_smoke.py", tail, python=True)
+            if sub in {
+                "dext",
+                "sdl3",
+                "sdl3-gamecontroller",
+                "sdl3-hidapi-x360",
+                "gamecontroller",
+                "backends",
+            }:
+                if sub == "dext":
+                    require("diagnose dext", tail, count=0)
+                exec_target("diagnostics/diagnose.sh", [sub, *tail])
+            die(
+                f"Unknown: diagnose {sub} (expected: record | dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | catalina | backends)"
+            )
+        case "check":
+            sub, tail = (rest[0], rest[1:]) if rest else ("", [])
+            if sub in {"profiles", "schemas", "scripts", "swift-structure"}:
+                require(f"check {sub}", tail, count=0)
+                target = {
+                    "profiles": "catalog/validate-profiles.py",
+                    "schemas": "quality/validate-schemas.py",
+                    "scripts": "quality/validate-scripts.py",
+                    "swift-structure": "quality/validate-swift-structure.py",
+                }[sub]
+                exec_target(
+                    target,
+                    [],
+                    python=True,
+                    schema_python=sub in {"profiles", "schemas"},
+                )
+            if sub == "driverkit":
+                require("check driverkit", tail, count=0)
+                exec_target("build-tools/driverkit.sh", ["validate"])
+            die(
+                f"Unknown: check {sub} (expected: profiles | schemas | scripts | swift-structure | driverkit)"
+            )
+        case "test":
+            if rest != ["parsers-macos14"]:
+                die(
+                    f"Unknown: test {rest[0] if rest else ''} (expected: parsers-macos14)"
+                )
+            exec_target("quality/test-parsers-macos14.sh", [])
+        case "repair":
+            sub, tail = (rest[0], rest[1:]) if rest else ("", [])
+            if sub == "stale-dext":
+                require("repair stale-dext", tail, count=0)
+                exec_target("diagnostics/dext/repair.py", [], python=True)
+            if sub == "swiftpm-module-cache":
+                require("repair swiftpm-module-cache", tail, count=0)
+                return repair_swiftpm_cache()
+            die(f"Unknown: repair {sub} (expected: stale-dext | swiftpm-module-cache)")
+        case "launch":
+            if not rest or rest[0] != "sdl-gamecontroller":
+                die(
+                    f"Unknown: launch {rest[0] if rest else ''} (expected: sdl-gamecontroller)"
+                )
+            exec_target("diagnostics/sdl/gamecontroller.sh", rest[1:])
+        case "lint":
+            require("lint", rest, count=0)
+            exec_target("build-tools/build.sh", ["lint"])
+        case "package":
+            sub, tail = (rest[0], rest[1:]) if rest else ("", [])
+            if sub in {"", "-h", "--help", "help"}:
+                package_usage()
+                return 0
+            if sub not in {"release", "tester"}:
+                die(f"Unknown: package {sub} (expected: tester | release)")
+            if sub == "tester" and tail in (["-h"], ["--help"], ["help"]):
+                exec_python_with_environment("release/package_tester.py", [sub, *tail])
+            require(f"package {sub}", tail, maximum=1)
+            target = (
+                "release/package.py"
+                if sub == "release"
+                else "release/package_tester.py"
+            )
+            exec_python_with_environment(target, [sub, *tail])
+        case "release":
+            sub, tail = (rest[0], rest[1:]) if rest else ("", [])
+            if sub in {"", "help", "-h", "--help"}:
+                usage()
+                return 0
+            if sub == "bump-version":
+                require("release bump-version", tail, count=1)
+                exec_target("release/bump_version.py", tail, python=True)
+            if sub == "package":
+                require("release package", tail, maximum=1)
+                exec_python_with_environment("release/package.py", ["release", *tail])
+            if sub == "install-local":
+                require("release install-local", tail, maximum=1)
+                exec_python_with_environment("release/install_local.py", tail)
+            if sub == "notarize":
+                action, args = (tail[0], tail[1:]) if tail else ("submit", [])
+                limits = {
+                    "submit": 0,
+                    "history": 0,
+                    "status": 1,
+                    "log": 1,
+                    "store-credentials": 1,
+                }
+                if action in {"help", "-h", "--help"}:
+                    exec_target(
+                        "release/notarize.sh", ["help"], env={"OJD_ENV": "release"}
+                    )
+                if action not in limits:
+                    die(
+                        f"Unknown: release notarize {action} (expected: submit | status | history | log | store-credentials)"
+                    )
+                if len(args) > limits[action]:
+                    die(
+                        f"release notarize {action} accepts at most one argument"
+                        if limits[action]
+                        else f"release notarize {action} does not accept arguments"
+                    )
+                if action == "log" and len(args) != 1:
+                    die("release notarize log requires exactly one argument")
+                exec_target(
+                    "release/notarize.sh", [action, *args], env={"OJD_ENV": "release"}
+                )
+            die(
+                f"Unknown: release {sub} (expected: bump-version | package | install-local | notarize)"
+            )
+        case "notarize":
+            return dispatch(["release", "notarize", *rest])
+        case _:
+            die(f"Unknown command: {command} (run: ./scripts/ojd --help)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(dispatch(sys.argv[1:]))

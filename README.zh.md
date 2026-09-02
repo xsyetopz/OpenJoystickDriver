@@ -78,13 +78,16 @@ OpenJoystickDriver 在 `/Applications` 中只有一个 app bundle：
 | Steam、PCSX2 和其他 SDL 2/3 app | Compatibility + `SDL 2/3` | 使用已通过硬件验证的 ASTRO HIDAPI 身份，提供 Xbox 360 风格输入与震动。 |
 | 使用 `GCController` 的原生 macOS app | Compatibility + `Apple GameController` | 面向 GameController.framework 使用方。 |
 | 检查 HID descriptor 的 app | Compatibility + `Generic HID` | 提供由 descriptor 驱动的 HID 接口。 |
-| 需要 Xbox One HID 的挑剔 app | Compatibility + `Xbox One HID` | 仅用于定向测试的实验性伪装身份；它不是通用回退。 |
+| 需要 Xbox 360 系列通用 HID 的 app | Compatibility + `Xbox 360 HID` | 面向特定消费者的通用 HID descriptor；不是 XInputHID、XUSB 或 GIP 模拟。 |
 
 使用已安装 app bundle 时，对应的 CLI 命令如下：
 
 ```bash
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat set sdl2-3
 ```
+
+`xone-hid` 是保留给既有配置的旧版 Xbox One 蓝牙形状通用 HID 身份，
+不会作为新选项提供，也不是 XInputHID、XUSB 或 GIP 模拟。
 
 ## 故障排查
 
@@ -144,6 +147,22 @@ swift build
 - [scripts/README.md](scripts/README.md)
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [docs/development/architecture.md](docs/development/architecture.md)
+
+### 测试版和正式版分发
+
+支持的分发路径明确分开，并按以下顺序使用：
+
+1. 私下分享测试版时，维护者配置本地 Developer ID app 和 DEXT 签名资源后运行
+   `./scripts/ojd package tester`。该命令会在 `.build/tester-artifacts/`
+   生成带名称的、未 notarize 的 DMG，其中包含 app、嵌入的 DriverKit extension、
+   源代码提交和唯一的数字 bundle 构建版本元数据。它不会安装或发布任何内容，接收者也不需要源代码仓库。
+   该 artifact 使用 Developer ID 签名但未 notarize；测试者可能需要明确允许 Gatekeeper。
+   不支持将 Apple Development artifact 分发给任意社区测试者。
+2. 发布正式版本时，推送 SemVer tag，或手动运行
+   `.github/workflows/release.yml` 并指定一个已存在的 SemVer tag。GitHub Actions 会检出该 tag，
+   使用 Developer ID 签名，完成 notarize 和 staple，然后发布 release DMG。
+
+详见 [scripts/README.md](scripts/README.md) 中的签名前提和报告要求。
 
 ## 参与贡献
 

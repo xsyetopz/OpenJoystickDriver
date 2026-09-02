@@ -21,8 +21,8 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
   public init(contentsOf url: URL) throws { try self.init(data: Data(contentsOf: url)) }
 
   public init(data: Data) throws {
-    let document: RecordDocument
-    do { document = try JSONDecoder().decode(RecordDocument.self, from: data) } catch {
+    let document: ControllerRecordDocument
+    do { document = try JSONDecoder().decode(ControllerRecordDocument.self, from: data) } catch {
       throw ControllerRecordProbeError.invalidProfile(
         "Could not decode controller record: \(error)"
       )
@@ -39,9 +39,9 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
         "transport must be usb for the signing-free record probe"
       )
     }
-    guard let parsedDriver = ControllerRecordProbeDriver(rawValue: document.protocolConfig.driver)
-    else { throw ControllerRecordProbeError.unsupportedProtocol(document.protocolConfig.driver) }
-    try Self.validateVariant(document.protocolConfig.variant, for: parsedDriver)
+    guard let parsedDriver = ControllerRecordProbeDriver(rawValue: document.protocolInfo.driver)
+    else { throw ControllerRecordProbeError.unsupportedProtocol(document.protocolInfo.driver) }
+    try Self.validateVariant(document.protocolInfo.variant, for: parsedDriver)
 
     let defaults = parsedDriver == .xbox360 ? (input: 129, output: 1) : (input: 130, output: 2)
     let inputEndpoint = document.usb?.endpoints?.input ?? defaults.input
@@ -57,7 +57,7 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
       )
     }
 
-    let interfaceNumber = document.usb?.interfaceNumber ?? 0
+    let interfaceNumber = document.usb?.interface ?? 0
     guard DeviceTransportProfile.interfaceNumberRange.contains(interfaceNumber) else {
       throw ControllerRecordProbeError.invalidProfile("usb.interface must be in 0...255")
     }
@@ -81,11 +81,11 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     }
 
     let parsedStartupPackets = try Self.parseStartupPackets(
-      names: document.protocolConfig.startupPackets,
+      names: document.protocolInfo.startupPackets,
       driver: parsedDriver
     )
     let parsedKeepAlivePolicy = try Self.parseKeepAlivePolicy(
-      enabled: document.protocolConfig.keepAliveEnabled,
+      enabled: document.protocolInfo.keepAliveEnabled,
       driver: parsedDriver
     )
 
@@ -102,7 +102,7 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     )
     driver = parsedDriver
     isWirelessReceiver =
-      parsedDriver == .xbox360 && document.protocolConfig.variant == "xbox360Wireless"
+      parsedDriver == .xbox360 && document.protocolInfo.variant == "xbox360Wireless"
     startupPackets = parsedStartupPackets
     keepAlivePolicy = parsedKeepAlivePolicy
   }
@@ -175,59 +175,6 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     return enabled.map { $0 ? .enabled : .disabled } ?? .enabled
   }
 
-  private struct RecordDocument: Decodable {
-    let vendorID: Int
-    let productID: Int
-    let transport: String
-    let protocolConfig: ProtocolConfig
-    let usb: USB?
-
-    enum CodingKeys: String, CodingKey {
-      case vendorID = "vendor_id"
-      case productID = "product_id"
-      case transport
-      case protocolConfig = "protocol"
-      case usb
-    }
-
-    struct USB: Decodable {
-      let interfaceNumber: Int?
-      let configuration: String?
-      let postHandshakeSettleMilliseconds: Int?
-      let endpoints: Endpoints?
-
-      enum CodingKeys: String, CodingKey {
-        case interfaceNumber = "interface"
-        case configuration
-        case postHandshakeSettleMilliseconds = "post_handshake_settle_ms"
-        case endpoints
-      }
-    }
-
-    struct Endpoints: Decodable {
-      let input: Int
-      let output: Int
-
-      enum CodingKeys: String, CodingKey {
-        case input = "in"
-        case output = "out"
-      }
-    }
-
-    struct ProtocolConfig: Decodable {
-      let driver: String
-      let variant: String
-      let startupPackets: [String]?
-      let keepAliveEnabled: Bool?
-
-      enum CodingKeys: String, CodingKey {
-        case driver
-        case variant
-        case startupPackets = "startup_packets"
-        case keepAliveEnabled = "keep_alive"
-      }
-    }
-  }
 }
 
 /// Errors reported before the probe opens or writes to a physical device.

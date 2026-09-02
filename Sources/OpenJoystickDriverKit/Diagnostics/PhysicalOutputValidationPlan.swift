@@ -1,8 +1,8 @@
 import Foundation
 
 /// Redacted, capability-driven manual validation instructions for physical controller output.
-public struct PhysicalOutputValidationPlan: Codable, Equatable, Sendable {
-  public struct Step: Codable, Equatable, Sendable, Identifiable {
+public struct PhysicalOutputValidationPlan: Equatable, Sendable {
+  public struct Step: Equatable, Sendable, Identifiable {
     public let id: String
     public let command: String
     public let expectedObservation: String
@@ -17,7 +17,6 @@ public struct PhysicalOutputValidationPlan: Codable, Equatable, Sendable {
   public let vendorID: UInt16
   public let productID: UInt16
   public let parser: String
-  public let evidence: PhysicalOutputEvidence
   public let steps: [Step]
   public let notes: [String]
 
@@ -39,19 +38,12 @@ public struct PhysicalOutputValidationPlan: Codable, Equatable, Sendable {
     self.vendorID = vendorID
     self.productID = productID
     self.parser = parser
-    evidence = capabilities.evidence
     steps = Self.steps(vendorID: vendorID, productID: productID, capabilities: capabilities)
     notes = [
       "Record pass/fail separately; generating this plan does not verify hardware.",
       "Stop testing and disconnect the controller if output behaves unexpectedly.",
       "Serial values, HID locations, packet payloads, and filesystem paths are excluded."
     ]
-  }
-
-  public func encodedJSON() throws -> Data {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-    return try encoder.encode(self)
   }
 
   private static func steps(

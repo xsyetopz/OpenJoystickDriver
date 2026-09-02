@@ -130,9 +130,6 @@ extension DeviceManager {
     )
     pipelines[identifier] = pipeline
     Task { await pipeline.start() }
-    if !pipeline.requiresInputConnectionBeforeOutput() {
-      Task { await dispatcher.dispatch(events: [], from: identifier) }
-    }
     return identifier
   }
 }

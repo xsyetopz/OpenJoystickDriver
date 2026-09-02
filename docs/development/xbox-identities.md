@@ -7,15 +7,28 @@ A product name is not enough to create a safe spoof identity. Each selectable id
 3. a live `GCController.supportsHIDDevice` result;
 4. hardware evidence for GameController.framework claims.
 
+The consumer family is part of the identity contract: SDL/HIDAPI, Apple
+GameController, Xbox One-shaped generic HID, and generic HID are not interchangeable. A
+successful enumeration or identity lookup never promotes a route to working.
+
 Linux `xpad.c` identifies physical devices for Linux. It does not prove that a macOS virtual HID device can impersonate them.
+
+The full selection key is physical protocol family × target consumer family ×
+evidence level. Normalized input is internal only; the published identity,
+transport, descriptor, packer, and output tuple remains atomic. There is no
+Xbox-to-PlayStation, Nintendo-to-Xbox, or PlayStation-to-Xbox shortcut.
 
 ## Evidence by family
 
 ### Xbox Wireless Controller
 
-OJD has the experimental `xone-hid` path at `045e:02ea`. A GameSir G7 SE live
-test published the identity without crashing PCSX2 Nightly, but input and
-rumble did not work. It still lacks a usable live descriptor/runtime match.
+OJD has the source-backed `xone-hid` path at `045e:02fd`, matching the Xbox One
+S Bluetooth identity, product name, Bluetooth transport metadata, descriptor,
+input report, Guide report, and report-3 decoder. It remains subject to live
+consumer and hardware checks.
+The reported Xbox One Bluetooth BT1/BT2 attempts produced no usable SDL
+HIDAPI input; record this as reported failure for SDL, while keeping Apple
+GameController separately testable.
 
 ### Xbox Wired Controller
 
@@ -27,14 +40,20 @@ Linux source lists receiver devices, and OJD parses the physical receiver transp
 
 ### Xbox 360 Wired Controller
 
-`apple-gamecontroller` uses `045e:028e`; the SDL-specific `sdl2-3` profile uses
+The explicit `xbox360-hid` profile uses the OJD Xbox 360-family HID report
+format and `045e:028e`-shaped USB identity. It is generic HID compatibility,
+not Windows XUSB or XInputHID emulation. The SDL-specific `sdl2-3` profile uses
 ASTRO `9886:0024`. OJD implements the exact Xbox 360-style HIDAPI reports for
 the ASTRO identity. That SDL route is hardware-verified for input and physical
 rumble with the GameSir G7 SE. A signed live test on
 2026-07-13 accepted the `045e:028e` virtual device through
-`GCController.supportsHIDDevice` and exposed an extended controller, but the
-August 25 test exposed neither input nor a public haptics engine. That pair was
-absent from the audited private catalog.
+`GCController.supportsHIDDevice` and exposed an extended controller, but those
+observations do not establish input, reconnect, or haptics for the new tuple.
+Those checks must be repeated on the target macOS/runtime.
+
+ASTRO C40 PS4 mode `9886:0025` remains an experimental research candidate only;
+the required complete descriptor, feature/calibration, input, and output
+evidence is absent, so no supported spoof is provided.
 
 ## Apple audit
 
@@ -45,6 +64,17 @@ OpenJoystickDriver --headless diagnose catalog --json
 ```
 
 The developer CLI and support report use the same audit.
+
+Automatic routing does not persist a consumer-derived identity. The explicit
+`CompatibilityIdentity` is persisted under the `CompatibilityIdentity`
+UserDefaults key; startup reads that value and reset removes it before
+returning to `.automatic`. While `.automatic` is active, the runtime resolves
+the current foreground consumer and may replace/retire its backend. It falls
+back to Generic HID when no adjacent identity has the required
+descriptor/report/output evidence. Automatic routing does not currently
+substitute C40 for any physical family. The C40 Xbox-mode evidence remains an
+explicit SDL/PCSX2/Steam-like route only; the GIP record is not evidence for an
+automatic C40 substitution.
 
 ## Promotion checks
 

@@ -305,7 +305,11 @@
     @ViewBuilder private var detail: some View {
       switch navigation.selectedPane {
       case .overview:
-        OverviewView(viewModel: viewModel, notificationPermission: notificationPermission)
+        OverviewView(
+          viewModel: viewModel,
+          navigation: navigation,
+          notificationPermission: notificationPermission
+        )
       case .controllers: ControllersView(viewModel: viewModel)
       case .profiles: ProfilesView(viewModel: viewModel, navigation: navigation)
       case .console: ConsoleView(model: console)
@@ -404,13 +408,16 @@
 
   struct OverviewView: View {
     @ObservedObject var viewModel: RuntimeViewModel
+    @ObservedObject var navigation: SettingsNavigationModel
     @ObservedObject private var notificationPermission: NotificationPermissionModel
 
     init(
       viewModel: RuntimeViewModel,
+      navigation: SettingsNavigationModel,
       notificationPermission: NotificationPermissionModel = NotificationPermissionModel()
     ) {
       self.viewModel = viewModel
+      self.navigation = navigation
       self.notificationPermission = notificationPermission
     }
 
@@ -418,6 +425,7 @@
       ScrollView {
         VStack(alignment: .leading, spacing: 20) {
           PageHeader(title: OJDLocalized.string("settings.overview", fallback: "Overview"))
+          SystemExtensionSetupCard(viewModel: viewModel, navigation: navigation)
           accessSummary
           statusCard
         }.padding(28).frame(maxWidth: .infinity, alignment: .leading)

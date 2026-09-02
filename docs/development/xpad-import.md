@@ -28,10 +28,11 @@ Supported Linux inputs map as follows:
 - Supported PlayStation, Sony, Nintendo, and Steam HID registrations become HID records from their driver tables and hid-ids.h.
 - Non-default xboxone_init_packets become protocol.startup_packets.
 
-Protocol-default endpoints and startup packets are omitted. Imported records use
-linux-xpad.c provenance and verified=false. Unknown types, flags, mappings, or
-startup macros are skipped with an explicit count. Partial source-table parsing
-fails generation.
+Protocol-default endpoints and startup packets are omitted. The pinned source
+revision and hashes remain in `ControllerSources.lock.json`; generated runtime
+records contain only operational controller facts. Unknown types, flags,
+mappings, or startup macros are skipped with an explicit count. Partial
+source-table parsing fails generation.
 
 ## Local source overrides
 
@@ -41,15 +42,16 @@ Override inputs live at:
 
 An add operation supplies a complete canonical record missing from the pinned
 source. A patch operation changes only selected top-level sections of an
-existing imported record and must carry local-hardware or tester-packets
-provenance. The generator rejects:
+existing imported record. The generator rejects:
 
 - add operations that collide with upstream;
 - patch operations without an upstream record;
 - duplicate override identities;
 - redundant patches;
-- patches without local evidence;
 - malformed or misplaced override files.
+
+Review evidence belongs in the controller's testing document, upstream issue,
+and Git history. It is deliberately not copied into runtime controller records.
 
 ## Review-only source inspection
 

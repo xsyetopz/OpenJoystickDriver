@@ -6,12 +6,11 @@ import Testing
 struct LogitechF310MappingTests {
   private let identifier = DeviceIdentifier(vendorID: 1_133, productID: 49_693)
 
-  @Test func profileSelectsUnverifiedXbox360Parser() {
+  @Test func profileSelectsXbox360Parser() {
     let profile = ParserRegistry().runtimeProfile(for: identifier)
 
     #expect(profile.parserName == "Xbox360")
     #expect(profile.protocolVariant == .xbox360)
-    #expect(!profile.hardwareVerified)
     #expect(profile.transportProfile.inputEndpoint == 0x81)
     #expect(profile.transportProfile.outputEndpoint == 0x02)
   }

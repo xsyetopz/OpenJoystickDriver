@@ -40,5 +40,6 @@ reconnect, rumble, LEDs, or every control. Keep these evidence classes separate:
 | Record-probe-backed | candidate record opens/decodes in the probe | all controls, output actuators, consumer support |
 | Hardware-verified | observed physical input/output/reconnect evidence | unrelated OS versions or other models |
 
-When evidence is incomplete, keep `verified` false and state the next focused
-probe. Never promote support status from a generated diff alone.
+Controller records contain operational facts only. Keep source revisions in
+`ControllerSources.lock.json` and record evidence status in testing documents,
+issues, and Git history. Never promote support status from a generated diff alone.

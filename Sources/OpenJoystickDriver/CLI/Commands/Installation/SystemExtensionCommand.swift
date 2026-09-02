@@ -106,7 +106,50 @@ struct SystemExtensionCommand {
 
 }
 
-private final class SystemExtensionSubmission: NSObject, OSSystemExtensionRequestDelegate {
+final class SystemExtensionSubmissionCompletionGate: @unchecked Sendable {
+  private let lock = NSLock()
+  private var finished = false
+
+  func accept() -> Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    guard !finished else { return false }
+    finished = true
+    return true
+  }
+}
+
+protocol SystemExtensionSubmissionControlling: AnyObject, Sendable {
+  func start()
+  func cancel()
+}
+
+final class SystemExtensionRequestState: @unchecked Sendable {
+  private let lock = NSLock()
+  private var cancelled = false
+  private var submission: (any SystemExtensionSubmissionControlling)?
+
+  func start(_ submission: any SystemExtensionSubmissionControlling) -> Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    guard !cancelled else { return false }
+    self.submission = submission
+    submission.start()
+    return true
+  }
+
+  func cancel() {
+    lock.lock()
+    cancelled = true
+    let submission = self.submission
+    lock.unlock()
+    submission?.cancel()
+  }
+}
+
+final class SystemExtensionSubmission: NSObject, OSSystemExtensionRequestDelegate,
+  SystemExtensionSubmissionControlling, @unchecked Sendable
+{
   enum Mode {
     case activation
     case deactivation
@@ -120,9 +163,16 @@ private final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
   }
 
   private let mode: Mode
+  private let resultLock = NSLock()
   private var result: Result?
 
-  init(mode: Mode) { self.mode = mode }
+  private let completion: ((SystemExtensionSetupRequestResult) -> Void)?
+  private let completionGate = SystemExtensionSubmissionCompletionGate()
+
+  init(mode: Mode, completion: ((SystemExtensionSetupRequestResult) -> Void)? = nil) {
+    self.mode = mode
+    self.completion = completion
+  }
 
   func start() {
     let request: OSSystemExtensionRequest
@@ -144,28 +194,43 @@ private final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
 
   func wait(timeout seconds: TimeInterval) -> Result {
     let deadline = Date().addingTimeInterval(seconds)
-    while result == nil && Date() < deadline {
+    while currentResult == nil && Date() < deadline {
       RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.1))
     }
-    return result ?? .timedOut
+    if currentResult == nil { timeout() }
+    return currentResult ?? .timedOut
+  }
+
+  private var currentResult: Result? {
+    resultLock.lock()
+    defer { resultLock.unlock() }
+    return result
   }
 
   func request(
     _ request: OSSystemExtensionRequest,
     didFinishWithResult result: OSSystemExtensionRequest.Result
   ) {
-    self.result = .completed("System extension request finished with result \(result.rawValue).")
+    guard completionGate.accept() else { return }
+    setResult(.completed("System extension request finished with result \(result.rawValue)."))
+    finish(.active)
   }
 
   func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
+    guard completionGate.accept() else { return }
     let nsError = error as NSError
-    result = .failed(
+    setResult(.failed(
       "System extension request failed: \(nsError.domain) "
         + "code=\(nsError.code) \(nsError.localizedDescription)"
-    )
+    ))
+    finish(.failed)
   }
 
-  func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) { result = .requiresApproval }
+  func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
+    guard completionGate.accept() else { return }
+    setResult(.requiresApproval)
+    finish(.awaitingApproval)
+  }
 
   func request(
     _ request: OSSystemExtensionRequest,
@@ -177,5 +242,38 @@ private final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
         + "with v\(ext.bundleVersion)."
     )
     return .replace
+  }
+
+  private func finish(_ result: SystemExtensionSetupRequestResult) {
+    completion?(result)
+  }
+
+  private func setResult(_ result: Result) {
+    resultLock.lock()
+    self.result = result
+    resultLock.unlock()
+  }
+
+  func timeout() {
+    guard completionGate.accept() else { return }
+    setResult(.timedOut)
+    completion?(.timedOut)
+  }
+
+  func cancel() {
+    guard completionGate.accept() else { return }
+    setResult(.failed("System extension request cancelled."))
+    completion?(.cancelled)
+  }
+
+  func completeForTesting(_ outcome: SystemExtensionSetupRequestResult) {
+    guard completionGate.accept() else { return }
+    switch outcome {
+    case .active: setResult(.completed("test"))
+    case .awaitingApproval: setResult(.requiresApproval)
+    case .failed, .cancelled: setResult(.failed("test"))
+    case .timedOut: setResult(.timedOut)
+    }
+    completion?(outcome)
   }
 }

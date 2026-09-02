@@ -83,11 +83,31 @@ restricted extension. There is no detach or cross-transport fallback.
 
 ## 4. Report results
 
+First identify which distribution path produced the behavior. An installed app
+and a source-built record probe are different test subjects:
+
+- **Installed app / shared DMG:** report the exact DMG filename and attach
+  `OpenJoystickDriver-TESTER-BUILD.txt` from the DMG. For an installed copy,
+  also run `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless diagnose report`.
+  This exercises the packaged Developer ID-signed app and its embedded DEXT; it
+  does not use the Swift sources in a checkout. The community tester package is
+  intentionally unnotarized and may require an explicit Gatekeeper override.
+- **Source-built record probe:** report the checkout commit and working-tree
+  state, the record path, and the complete `./scripts/ojd diagnose record ...`
+  command and output. This route builds/runs the probe from the current source
+  checkout and is not evidence about the installed app or a shared DMG.
+
+Do not mix these reports: a source probe can validate a record while an older
+installed app or DEXT is still the behavior being observed, and an installed
+DMG cannot prove that an uncommitted source change was included.
+
 Attach the complete command and output to the controller's GitHub issue. Include:
 
 - macOS version and Mac model
 - controller name and connection mode
 - exact OJD commit
+- shared tester DMG filename and build-info file when testing an installed artifact
+- tester bundle build version from the build-info file when testing an installed artifact
 - exact record JSON
 - selected USB route; include DriverKit extension version and activation state when applicable
 - whether the controller stayed powered on
@@ -95,4 +115,6 @@ Attach the complete command and output to the controller's GitHub issue. Include
 - any missing, duplicated, delayed, or incorrect `EVENT` lines
 - any `PARSE_ERROR` or zero-packet summary
 
-Do not mark the record hardware-verified merely because validation passes. A hardware-verified record needs correct input for every control, stable reconnect, and any claimed rumble or LED behavior checked on the physical controller.
+Schema validation proves only that the operational record is well formed. Record correct input,
+stable reconnect, and any claimed rumble or LED observations in the matching testing document and
+issue; do not add verification metadata to the runtime record.

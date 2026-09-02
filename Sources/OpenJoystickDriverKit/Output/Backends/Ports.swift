@@ -7,7 +7,8 @@ public protocol CompatibilityUserSpaceOutputDispatching: OutputDispatcher {
   /// Most recent app-originated rumble report summary, or `"none"`.
   var lastRumbleStatus: String { get }
   /// Tears down any user-space virtual HID devices owned by this output.
-  func close()
+  func setOutputSuppressed(_ suppressed: Bool) async
+  func close() async
 }
 
 /// Optional output-dispatcher hook for controller lifecycle events.
@@ -15,7 +16,11 @@ public protocol CompatibilityUserSpaceOutputDispatching: OutputDispatcher {
 /// `DevicePipeline` calls this when a physical controller pipeline stops so output backends
 /// can tear down any per-controller virtual devices.
 public protocol ControllerLifecycleListener: AnyObject, Sendable {
-  func controllerDidStop(_ identifier: DeviceIdentifier)
+  func controllerDidStop(_ identifier: DeviceIdentifier) async
+}
+
+public extension CompatibilityUserSpaceOutputDispatching {
+  func setOutputSuppressed(_ suppressed: Bool) { suppressOutput = suppressed }
 }
 
 /// Takes parsed controller events and sends them to an output target.
@@ -27,6 +32,7 @@ public protocol OutputDispatcher: AnyObject, Sendable {
   /// When `true`, all report/event output is suppressed (e.g. during developer
   /// packet capture). Implementations should invalidate any cached state on change.
   var suppressOutput: Bool { get set }
+  func setOutputSuppressed(_ suppressed: Bool) async
 
   /// Receives a batch of events from one controller and writes them to the output.
   ///
@@ -35,6 +41,10 @@ public protocol OutputDispatcher: AnyObject, Sendable {
   ///   - events: The controller events to process.
   ///   - identifier: Which controller the events came from.
   func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async
+}
+
+public extension OutputDispatcher {
+  func setOutputSuppressed(_ suppressed: Bool) { suppressOutput = suppressed }
 }
 
 /// OutputDispatcher that logs controller events to debug output.

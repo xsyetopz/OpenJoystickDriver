@@ -1,0 +1,326 @@
+diff --git a/README.md b/README.md
+index b927b88..8b364d7 100644
+--- a/README.md
++++ b/README.md
+@@ -18,8 +18,9 @@ OpenJoystickDriver is to gamepads what [OpenTabletDriver](https://opentabletdriv
+ 
+ | Feature | Status |
+ |---------|--------|
+-| Xbox One / Series controllers (GIP protocol) | Working - hardware verified on Gamesir G7 SE |
++| Xbox One / Series controllers (GIP protocol) | Working - hardware verified on Gamesir G7 SE, Flydigi Vader 5S |
+ | GIP authentication (CMD 0x06 sub-protocol) | Working - state machine with dummy auth payloads |
++| Flydigi Vader 5S (USB, GIP) | Working - per-device endpoint config, setConfiguration quirk |
+ | Virtual HID gamepad (DriverKit extension) | Working - production output path on macOS 13+ |
+ | Virtual HID gamepad (IOHIDUserDevice user-space) | Working - optional compatibility mode (no reboot) |
+ | DualShock 4 (USB) | Implemented, untested (no PS4 hardware) |
+@@ -248,6 +249,16 @@ To add a new controller:
+ 
+ VID and PID values in JSON must be **decimal** integers, not hex strings.
+ 
++Optional `devices.json` fields for USB quirks:
++
++| Field | Type | Default | Description |
++|-------|------|---------|-------------|
++| `input_endpoint` | int | 0x82 (130) | Interrupt IN endpoint address |
++| `output_endpoint` | int | 0x02 (2) | Interrupt OUT endpoint address |
++| `needs_set_configuration` | bool | false | Call `setConfiguration(1)` before claiming interface (for devices that enumerate unconfigured) |
++
++Both `input_endpoint` and `output_endpoint` must be present together; if only one is set, the override is ignored and GIP defaults apply.
++
+ ---
+ 
+ ## Development
+diff --git a/Sources/OpenJoystickDriverKit/Device/DeviceManager.swift b/Sources/OpenJoystickDriverKit/Device/DeviceManager.swift
+index f9f3e17..e301642 100644
+--- a/Sources/OpenJoystickDriverKit/Device/DeviceManager.swift
++++ b/Sources/OpenJoystickDriverKit/Device/DeviceManager.swift
+@@ -220,12 +220,14 @@ public actor DeviceManager {
+     deviceInfos[identifier] = DeviceInfo(name: productName, connection: "USB", serialNumber: serial)
+     print("[DeviceManager] USB device added: \(productName) (\(identifier))")
+     let parser = parserRegistry.parser(for: identifier)
++    let endpoints = parserRegistry.endpointConfig(for: identifier)
+     let pipeline = DevicePipeline(
+       identifier: identifier,
+       transport: .usb(vendorID: device.idVendor, productID: device.idProduct),
+       parser: parser,
+       dispatcher: dispatcher,
+-      usbContext: usbContext
++      usbContext: usbContext,
++      endpointConfig: endpoints
+     )
+     pipelines[identifier] = pipeline
+     Task { await pipeline.start() }
+diff --git a/Sources/OpenJoystickDriverKit/Device/DevicePipeline.swift b/Sources/OpenJoystickDriverKit/Device/DevicePipeline.swift
+index 9968f62..806b29d 100644
+--- a/Sources/OpenJoystickDriverKit/Device/DevicePipeline.swift
++++ b/Sources/OpenJoystickDriverKit/Device/DevicePipeline.swift
+@@ -1,7 +1,6 @@
+ import Foundation
+ import SwiftUSB
+ 
+-private let gipInputEndpointAddress: UInt8 = 0x82
+ private let gipReadPacketLength = 64
+ private let gipReadTimeoutMs: UInt32 = 100
+ private let usbOpenRetryDelays: [UInt64] = [1_000_000_000, 2_000_000_000, 4_000_000_000]
+@@ -16,6 +15,9 @@ private let usbIOErrorReconnectThreshold = 10
+ private let usbIOErrorBackoffBaseNs: UInt64 = 250_000_000  // 250ms
+ private let usbIOErrorBackoffMaxNs: UInt64 = 2_000_000_000  // 2s
+ private let usbIOErrorLogIntervalNs: UInt64 = 5_000_000_000  // 5s
++/// Post-handshake settling delay before first IN read.
++/// Some controllers (e.g. Vader 5S) need time to activate endpoints after init.
++private let usbPostHandshakeSettleNs: UInt64 = 200_000_000  // 200ms
+ 
+ /// Manages full lifecycle of single connected controller.
+ /// Each controller gets its own DevicePipeline actor - one
+@@ -33,6 +35,7 @@ actor DevicePipeline {
+   private let parser: any InputParser
+   private let dispatcher: any OutputDispatcher
+   private let usbContext: USBContext?
++  private let endpointConfig: USBEndpointConfig
+   private var isActive = false
+   private var usbHandle: USBDeviceHandle?
+   private var currentInputState: DeviceInputState
+@@ -46,13 +49,15 @@ actor DevicePipeline {
+     transport: Transport,
+     parser: any InputParser,
+     dispatcher: any OutputDispatcher,
+-    usbContext: USBContext?
++    usbContext: USBContext?,
++    endpointConfig: USBEndpointConfig = .gipDefault
+   ) {
+     self.identifier = identifier
+     self.transport = transport
+     self.parser = parser
+     self.dispatcher = dispatcher
+     self.usbContext = usbContext
++    self.endpointConfig = endpointConfig
+     self.currentInputState = DeviceInputState(
+       vendorID: identifier.vendorID,
+       productID: identifier.productID
+@@ -242,6 +247,12 @@ actor DevicePipeline {
+ 
+   private func openAndClaimDevice(_ device: USBDevice) throws -> USBDeviceHandle {
+     let handle = try device.open()
++    if endpointConfig.needsSetConfiguration {
++      let cfg = (try? handle.getConfiguration()) ?? 0
++      if cfg != 1 {
++        try handle.setConfiguration(1)
++      }
++    }
+     try handle.claimInterface(0)
+     return handle
+   }
+@@ -255,9 +266,12 @@ actor DevicePipeline {
+   }
+ 
+   private func runUSBInputLoop(handle: USBDeviceHandle) async {
+-    let inEndpoint = gipInputEndpointAddress
++    let inEndpoint = endpointConfig.inputEndpoint
+     var keepAliveCycle: UInt = 0
+-    print("[DevicePipeline] Starting USB input loop:" + " \(identifier)")
++    print("[DevicePipeline] Starting USB input loop:" + " \(identifier)"
++          + " inEP=0x\(String(inEndpoint, radix: 16))")
++
++    try? await Task.sleep(nanoseconds: usbPostHandshakeSettleNs)
+ 
+     while isActive {
+       let loopStartNs = DispatchTime.now().uptimeNanoseconds
+diff --git a/Sources/OpenJoystickDriverKit/Protocol/DeviceCatalog.swift b/Sources/OpenJoystickDriverKit/Protocol/DeviceCatalog.swift
+index 1368c42..abaa46e 100644
+--- a/Sources/OpenJoystickDriverKit/Protocol/DeviceCatalog.swift
++++ b/Sources/OpenJoystickDriverKit/Protocol/DeviceCatalog.swift
+@@ -1,5 +1,17 @@
+ import Foundation
+ 
++/// Per-device USB configuration resolved from devices.json.
++public struct USBEndpointConfig: Sendable {
++  public let inputEndpoint: UInt8
++  public let outputEndpoint: UInt8
++  /// When true, pipeline calls setConfiguration(1) before claiming interface.
++  /// Required for controllers that enumerate unconfigured (e.g. Vader 5S).
++  public let needsSetConfiguration: Bool
++
++  public static let gipDefault = USBEndpointConfig(
++    inputEndpoint: 0x82, outputEndpoint: 0x02, needsSetConfiguration: false)
++}
++
+ /// Loads and caches VID:PID -> parser name mapping
+ /// from bundled devices.json resource.
+ struct DeviceCatalog: Sendable {
+@@ -9,23 +21,34 @@ struct DeviceCatalog: Sendable {
+   /// Maps "VID:PID" strings to virtual profile keys (e.g. "xboxOneS").
+   let profileEntries: [String: String]
+ 
++  /// Maps "VID:PID" strings to per-device endpoint overrides.
++  let endpointEntries: [String: USBEndpointConfig]
++
+   init() {
+     if let data = Self.loadJSON(),
+       let decoded = try? JSONDecoder().decode(DeviceList.self, from: data)
+     {
+       var map: [String: String] = [:]
+       var profiles: [String: String] = [:]
++      var endpoints: [String: USBEndpointConfig] = [:]
+       for entry in decoded.devices {
+         let key = "\(entry.vendorId):\(entry.productId)"
+         map[key] = entry.parser
+         if let vp = entry.virtualProfile { profiles[key] = vp }
++        if let inEP = entry.inputEndpoint, let outEP = entry.outputEndpoint {
++          endpoints[key] = USBEndpointConfig(
++            inputEndpoint: UInt8(inEP), outputEndpoint: UInt8(outEP),
++            needsSetConfiguration: entry.needsSetConfiguration ?? false)
++        }
+       }
+       entries = map
+       profileEntries = profiles
++      endpointEntries = endpoints
+     } else {
+       print("[DeviceCatalog] Could not load devices.json - using built-in fallbacks")
+       entries = ["13623:4112": "GIP", "1356:1476": "DS4", "1356:2508": "DS4"]
+       profileEntries = [:]
++      endpointEntries = [:]
+     }
+   }
+ 
+@@ -47,6 +70,12 @@ struct DeviceCatalog: Sendable {
+     }
+   }
+ 
++  /// Returns USB endpoint config for a device, falling back to GIP defaults.
++  func endpointConfig(for identifier: DeviceIdentifier) -> USBEndpointConfig {
++    let key = "\(identifier.vendorID):\(identifier.productID)"
++    return endpointEntries[key] ?? .gipDefault
++  }
++
+   private static func loadJSON() -> Data? {
+     Bundle.module.url(forResource: "devices", withExtension: "json").flatMap {
+       try? Data(contentsOf: $0)
+@@ -60,12 +89,18 @@ struct DeviceCatalog: Sendable {
+     let productId: Int
+     let parser: String
+     let virtualProfile: String?
++    let inputEndpoint: Int?
++    let outputEndpoint: Int?
++    let needsSetConfiguration: Bool?
+ 
+     enum CodingKeys: String, CodingKey {
+       case vendorId = "vendor_id"
+       case productId = "product_id"
+       case parser
+       case virtualProfile = "virtual_profile"
++      case inputEndpoint = "input_endpoint"
++      case outputEndpoint = "output_endpoint"
++      case needsSetConfiguration = "needs_set_configuration"
+     }
+   }
+ 
+diff --git a/Sources/OpenJoystickDriverKit/Protocol/GIPAuthHandler.swift b/Sources/OpenJoystickDriverKit/Protocol/GIPAuthHandler.swift
+index 9bed5d8..e9e8efb 100644
+--- a/Sources/OpenJoystickDriverKit/Protocol/GIPAuthHandler.swift
++++ b/Sources/OpenJoystickDriverKit/Protocol/GIPAuthHandler.swift
+@@ -9,11 +9,15 @@ import SwiftUSB
+ /// transition to FULL_POWER via xboxgip.sys retry/timeout logic.
+ final class GIPAuthHandler: @unchecked Sendable {
+ 
+-  private let outEndpoint: UInt8 = 0x02
++  private let outEndpoint: UInt8
+ 
+   /// Current device power state, driven by auth progress.
+   private(set) var deviceState: GIPDeviceState = .start
+ 
++  init(outEndpoint: UInt8 = 0x02) {
++    self.outEndpoint = outEndpoint
++  }
++
+   /// Maps device auth states to the host response state we should send.
+   private static let responseMap: [GIPAuthState: GIPAuthState] = [
+     .devInit: .hostInit, .devCertificate: .hostResponse1, .devIntermediate: .hostResponse2,
+diff --git a/Sources/OpenJoystickDriverKit/Protocol/GIPParser.swift b/Sources/OpenJoystickDriverKit/Protocol/GIPParser.swift
+index cf4b55e..66050f8 100644
+--- a/Sources/OpenJoystickDriverKit/Protocol/GIPParser.swift
++++ b/Sources/OpenJoystickDriverKit/Protocol/GIPParser.swift
+@@ -36,10 +36,10 @@ public final class GIPParser: InputParser, @unchecked Sendable {
+   //   is accessed exclusively from the owning DevicePipeline actor's
+   //   feedHIDData/feedUSBData methods — no concurrent access occurs
+ 
+-  private let outEndpoint: UInt8 = 0x02
++  private let outEndpoint: UInt8
+ 
+   private var sequencer = GIPSequencer()
+-  private let authHandler = GIPAuthHandler()
++  private let authHandler: GIPAuthHandler
+   private var handle: USBDeviceHandle?
+ 
+   /// Current device state, driven by auth progress.
+@@ -54,8 +54,11 @@ public final class GIPParser: InputParser, @unchecked Sendable {
+   private var prevRSX: Int16 = 0
+   private var prevRSY: Int16 = 0
+ 
+-  /// Creates a new GIPParser.
+-  public init() {}
++  /// Creates a new GIPParser with the given endpoint configuration.
++  public init(endpointConfig: USBEndpointConfig = .gipDefault) {
++    self.outEndpoint = endpointConfig.outputEndpoint
++    self.authHandler = GIPAuthHandler(outEndpoint: endpointConfig.outputEndpoint)
++  }
+ 
+   // MARK: - InputParser
+ 
+@@ -68,7 +71,8 @@ public final class GIPParser: InputParser, @unchecked Sendable {
+     for attempt in 0..<gipHandshakeMaxAttempts {
+       do {
+         try await sendInitSequence(handle: handle)
+-        print("[GIPParser] Init sequence sent" + " (attempt \(attempt + 1))")
++        print("[GIPParser] Init sequence sent" + " (attempt \(attempt + 1))"
++              + " outEP=0x\(String(outEndpoint, radix: 16))")
+         return
+       } catch {
+         print("[GIPParser] Init attempt \(attempt + 1) " + "failed: \(error)")
+diff --git a/Sources/OpenJoystickDriverKit/Protocol/ParserRegistry.swift b/Sources/OpenJoystickDriverKit/Protocol/ParserRegistry.swift
+index c5cb12e..04b2721 100644
+--- a/Sources/OpenJoystickDriverKit/Protocol/ParserRegistry.swift
++++ b/Sources/OpenJoystickDriverKit/Protocol/ParserRegistry.swift
+@@ -15,13 +15,19 @@ public final class ParserRegistry: Sendable {
+ 
+   /// Returns parser for given device identifier.
+   public func parser(for identifier: DeviceIdentifier) -> any InputParser {
++    let endpoints = catalog.endpointConfig(for: identifier)
+     switch catalog.parserName(for: identifier) {
+-    case "GIP": return GIPParser()
++    case "GIP": return GIPParser(endpointConfig: endpoints)
+     case "DS4": return DS4Parser()
+     default: return GenericHIDParser(identifier: identifier)
+     }
+   }
+ 
++  /// Returns USB endpoint config for given device identifier.
++  public func endpointConfig(for identifier: DeviceIdentifier) -> USBEndpointConfig {
++    catalog.endpointConfig(for: identifier)
++  }
++
+   /// Returns the suggested virtual device identity for compatibility mode.
+   ///
+   /// Used only when the user explicitly opts into spoofing IDs for picky consumers.
+diff --git a/Sources/OpenJoystickDriverKit/Resources/devices.json b/Sources/OpenJoystickDriverKit/Resources/devices.json
+index fd22d34..c029589 100644
+--- a/Sources/OpenJoystickDriverKit/Resources/devices.json
++++ b/Sources/OpenJoystickDriverKit/Resources/devices.json
+@@ -28,6 +28,18 @@
+ 			"parser": "DS4",
+ 			"usb_class": 3,
+ 			"virtual_profile": "xboxOneS"
++		},
++		{
++			"vendor_id": 14295,
++			"product_id": 10241,
++			"name": "Flydigi Vader 5S",
++			"short_name": "Vader5S",
++			"parser": "GIP",
++			"usb_class": 255,
++			"virtual_profile": "xboxOneS",
++			"input_endpoint": 129,
++			"output_endpoint": 1,
++			"needs_set_configuration": true
+ 		}
+ 	]
+ }

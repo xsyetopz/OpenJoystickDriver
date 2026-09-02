@@ -10,6 +10,7 @@ enum VirtualDeviceDiagnostics {
     if #available(macOS 15, *) { return await CoreHIDVirtualDeviceDiagnostics.enumerate() }
     return IOHIDVirtualDeviceDiagnostics.enumerate()
   }
+
 }
 
 @available(macOS, introduced: 10.15, obsoleted: 15.0) private enum IOHIDVirtualDeviceDiagnostics {

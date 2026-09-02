@@ -27,7 +27,7 @@ extension RemappingOutputRouter {
   var tickerIsRunning: Bool { lock.withLock { tickerTask != nil } }
 
   func shutdown() async throws {
-    setProfileTransactionGateActive(true)
+    await setProfileTransactionGateActive(true)
     stopTicker()
     let attempt = lock.withLock { () -> (id: UUID, task: Task<Void, any Error>)? in
       guard !terminalCleanupComplete else { return nil }
@@ -146,17 +146,19 @@ extension RemappingOutputRouter {
     }
   }
 
-  func setProfileTransactionGateActive(_ active: Bool) {
+  func setProfileTransactionGateActive(_ active: Bool) async {
     let snapshot = lock.withLock { () -> RemappingRoutingControls in
       profileTransactionGateActive = active
       return controls
     }
-    updateCompatibilitySuppression(controls: snapshot)
+    await updateCompatibilitySuppression(controls: snapshot)
   }
 
-  func updateCompatibilitySuppression(controls snapshot: RemappingRoutingControls) {
+  func updateCompatibilitySuppression(controls snapshot: RemappingRoutingControls) async {
     let transactionSuppressed = lock.withLock { profileTransactionGateActive }
-    compatibility.suppressOutput = Self.compatibilityIsSuppressed(snapshot) || transactionSuppressed
+    await compatibility.setOutputSuppressed(
+      Self.compatibilityIsSuppressed(snapshot) || transactionSuppressed
+    )
   }
 
   private static func compatibilityIsSuppressed(_ controls: RemappingRoutingControls) -> Bool {

@@ -9,10 +9,6 @@
         "in": 129,
         "out": 2
       }
-    },
-    "provenance": {
-      "source": "local-hardware",
-      "verified": false
     }
   }
 }

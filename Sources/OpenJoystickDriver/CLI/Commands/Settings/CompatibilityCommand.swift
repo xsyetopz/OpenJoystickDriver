@@ -6,7 +6,7 @@ struct CompatibilityCommand {
     let usage = """
       Usage: OpenJoystickDriver --headless compat show
              OpenJoystickDriver --headless compat set \
-      <generic-hid|sdl2-3|apple-gamecontroller|xone-hid>
+      <generic-hid|sdl2-3|apple-gamecontroller|xbox360-hid>
       """
     guard let sub = arguments.first else {
       print(usage)
@@ -27,7 +27,7 @@ struct CompatibilityCommand {
       return
     }
 
-    guard CompatibilityIdentity(rawValue: sub) != nil else {
+    guard case .accepted = CompatibilityIdentity.mutationDecision(for: sub) else {
       CLIOutput.error(usage)
       exit(1)
     }

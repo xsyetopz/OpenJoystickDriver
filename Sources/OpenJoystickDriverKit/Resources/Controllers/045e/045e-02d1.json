@@ -7,10 +7,6 @@
     "driver": "GIP",
     "variant": "xboxOne"
   },
-  "provenance": {
-    "source": "tester-packets",
-    "verified": true
-  },
   "usb": {
     "endpoints": {
       "in": 129,

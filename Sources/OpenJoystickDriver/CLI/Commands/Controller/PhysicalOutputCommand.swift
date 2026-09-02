@@ -66,7 +66,6 @@ struct PhysicalOutputCommand {
       print("    motors   : \(names(capabilities.rumbleMotors.map(\.rawValue)))")
       print("    lighting : \(names(capabilities.lightingFeatures.map(\.rawValue)))")
       print("    binary   : \(names(capabilities.binaryRumbleMotors.map(\.rawValue)))")
-      print("    evidence : \(capabilities.evidence.rawValue)")
     }
   }
 
@@ -123,20 +122,35 @@ struct PhysicalOutputCommand {
     let rumbleLT = lt
     let rumbleRT = rt
     let rumbleDurationMs = durationMs
+    let hasActiveMotor = left != 0 || right != 0 || lt != 0 || rt != 0
     let client = ApplicationServiceClient()
     client.connect()
     defer { client.disconnect() }
     let sent: Bool? = runSyncOptionalResult(timeout: applicationServiceCallTimeoutSeconds + 5.0) {
-      try? await client.sendPhysicalRumble(
+      guard
+        (try? await client.sendPhysicalRumble(
+          vendorID: vendorID,
+          productID: productID,
+          runtimeIdentifier: device.runtimeIdentifier,
+          left: rumbleLeft,
+          right: rumbleRight,
+          lt: rumbleLT,
+          rt: rumbleRT,
+          durationMs: rumbleDurationMs
+        )) == true
+      else { return false }
+      guard hasActiveMotor, rumbleDurationMs > 0 else { return true }
+      try? await Task.sleep(nanoseconds: UInt64(rumbleDurationMs) * 1_000_000)
+      return (try? await client.sendPhysicalRumble(
         vendorID: vendorID,
         productID: productID,
         runtimeIdentifier: device.runtimeIdentifier,
-        left: rumbleLeft,
-        right: rumbleRight,
-        lt: rumbleLT,
-        rt: rumbleRT,
-        durationMs: rumbleDurationMs
-      )
+        left: 0,
+        right: 0,
+        lt: 0,
+        rt: 0,
+        durationMs: 0
+      )) == true
     }
     guard sent == true else {
       fail("The application service could not send the physical rumble command.")
@@ -192,8 +206,7 @@ struct PhysicalOutputCommand {
 
   private func plan(arguments: [String]) {
     let parsed = parseDeviceOption(arguments)
-    let json = parsed.arguments.last == "--json"
-    let values = json ? Array(parsed.arguments.dropLast()) : parsed.arguments
+    let values = parsed.arguments
     guard values.count == 2 else {
       printHelp()
       exit(1)
@@ -206,17 +219,7 @@ struct PhysicalOutputCommand {
       runtimeIdentifier: parsed.runtimeIdentifier
     )
     let plan = PhysicalOutputValidationPlan(device: device)
-    if json {
-      do {
-        let data = try plan.encodedJSON()
-        print(String(data: data, encoding: .utf8) ?? "{}")
-      } catch {
-        fail("Could not encode physical output validation plan: \(error.localizedDescription)")
-      }
-      return
-    }
     print("Physical output validation plan for \(hex(vendorID)):\(hex(productID))")
-    print("Evidence: \(plan.evidence.rawValue)")
     if plan.steps.isEmpty { print("No source-backed physical output steps are available.") }
     for (index, step) in plan.steps.enumerated() {
       print("\(index + 1). \(step.id)")
@@ -398,7 +401,7 @@ struct PhysicalOutputCommand {
         player <vid> <pid> off|1|2|3|4 [--device <id>]
         brightness <vid> <pid> 0...255 [--device <id>]
         color <vid> <pid> <red 0...255> <green 0...255> <blue 0...255> [--device <id>]
-        plan <vid> <pid> [--device <id>] [--json]
+        plan <vid> <pid> [--device <id>]
 
       VID and PID accept decimal values or a 0x prefix. Output commands write to
       connected physical hardware and reject capabilities the active parser does

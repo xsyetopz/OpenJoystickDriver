@@ -51,6 +51,36 @@ import Testing
     }
   }
 
+  @Test func secondServerCannotDisplaceLiveSocketOwner() throws {
+    let socketPath = temporarySocketPath()
+    let first = LocalServiceRPCServer(
+      socketPath: socketPath,
+      authentication: { _ in true },
+      handler: { _, completion in
+        completion(LocalServiceRPCResponse(result: Data(), error: nil))
+      }
+    )
+    let second = LocalServiceRPCServer(
+      socketPath: socketPath,
+      authentication: { _ in true },
+      handler: { _, completion in
+        completion(LocalServiceRPCResponse(result: Data(), error: nil))
+      }
+    )
+    try first.start()
+    defer { first.stop() }
+
+    do {
+      try second.start()
+      Issue.record("Expected the live RPC socket owner to reject a second server.")
+      second.stop()
+    } catch LocalServiceRPCError.alreadyRunning {
+      #expect(LocalServiceRPCClient.serverProcessIdentifier(socketPath: socketPath) == getpid())
+    } catch {
+      Issue.record("Unexpected second-server error: \(error)")
+    }
+  }
+
   @Test func oversizedFrameIsRejectedBeforeWrite() throws {
     let descriptor = socket(AF_UNIX, SOCK_STREAM, 0)
     try #require(descriptor >= 0)

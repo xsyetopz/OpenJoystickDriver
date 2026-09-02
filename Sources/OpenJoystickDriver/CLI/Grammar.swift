@@ -53,6 +53,9 @@ enum CLIDiagnosticAction: Equatable {
   case summary
   case runtime([String])
   case gameControllerCatalog([String])
+  #if DEBUG
+    case usbPassive([String])
+  #endif
   case report([String])
 }
 
@@ -103,6 +106,9 @@ struct CLIGrammar {
       case .runtime(let arguments): DiagnoseCommand().run(arguments: ["runtime"] + arguments)
       case .gameControllerCatalog(let arguments):
         DiagnoseCommand().run(arguments: ["catalog"] + arguments)
+      #if DEBUG
+        case .usbPassive(let arguments): try PassiveUSBCommand().run(arguments: arguments)
+      #endif
       case .report(let arguments): ReportCommand().run(arguments: ["create"] + arguments)
       }
     case .updateCheck(let arguments): UpdatesCommand().run(arguments: ["check"] + arguments)
@@ -222,7 +228,9 @@ struct CLIGrammar {
     let trailing = Array(arguments.dropFirst())
     switch command {
     case "runtime": return .diagnose(.runtime(trailing))
-    case "catalog": return .diagnose(.gameControllerCatalog(trailing))
+    case "catalog": return .diagnose(.gameControllerCatalog(trailing)) #if DEBUG
+      case "usb-passive": return .diagnose(.usbPassive(trailing))
+    #endif
     case "report": return .diagnose(.report(trailing))
     default: throw CLIParseError.unknownCommand("diagnose \(command)")
     }

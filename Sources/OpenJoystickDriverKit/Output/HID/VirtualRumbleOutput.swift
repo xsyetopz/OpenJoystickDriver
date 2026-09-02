@@ -58,7 +58,9 @@ public enum VirtualRumbleOutputReportParser {
   {
     let payload: [UInt8]
     if reportID == UInt32(xboxOneReportID) {
-      payload = bytes
+      payload =
+        bytes.count >= xboxOneReportPayloadSize + 1 && bytes.first == xboxOneReportID
+        ? Array(bytes.dropFirst()) : bytes
     } else if reportID == 0, bytes.first == Self.xboxOneReportTypeByte {
       payload = Array(bytes.dropFirst())
     } else {
@@ -86,7 +88,12 @@ public enum VirtualRumbleOutputReportParser {
   {
     let payload: [UInt8]
     if reportID == UInt32(xboxGIPReportID) {
-      payload = bytes.first == GIPCommand.rumble ? bytes : [GIPCommand.rumble] + bytes
+      let normalized =
+        bytes.count >= xboxGIPReportPayloadSizeWithoutReportID + 1 && bytes.first == xboxGIPReportID
+        ? Array(bytes.dropFirst()) : bytes
+      payload =
+        normalized.first == GIPCommand.rumble
+        ? normalized : [GIPCommand.rumble] + normalized
     } else if reportID == 0, bytes.first == GIPCommand.rumble {
       payload = bytes
     } else {

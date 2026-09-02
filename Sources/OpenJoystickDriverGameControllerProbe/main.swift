@@ -3,6 +3,7 @@ import Foundation
 import GameController
 import IOKit
 import IOKit.hid
+import OpenJoystickDriverKit
 
 func hasArg(_ name: String) -> Bool { CommandLine.arguments.dropFirst().contains(name) }
 
@@ -80,7 +81,7 @@ func looksLikeGamepad(_ device: IOHIDDevice) -> Bool {
   }
 }
 
-func printHIDSupport() {
+func printHIDSupport() -> Bool? {
   let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
   IOHIDManagerSetDeviceMatching(manager, nil)
   IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
@@ -95,6 +96,7 @@ func printHIDSupport() {
 
   print("HID GamePad support:")
   if devices.isEmpty { print("- none") }
+  var observedSupport: [Bool] = []
   for device in devices {
     let vid = intProp(device, kIOHIDVendorIDKey)
     let pid = intProp(device, kIOHIDProductIDKey)
@@ -102,7 +104,9 @@ func printHIDSupport() {
     let transport = strProp(device, kIOHIDTransportKey) ?? "(unknown)"
     let supported: String
     if #available(macOS 11.0, *) {
-      supported = GCController.supportsHIDDevice(device) ? "yes" : "no"
+      let value = GCController.supportsHIDDevice(device)
+      observedSupport.append(value)
+      supported = value ? "yes" : "no"
     } else {
       supported = "unavailable"
     }
@@ -118,9 +122,47 @@ func printHIDSupport() {
     )
   }
   IOHIDManagerClose(manager, IOOptionBits(kIOHIDOptionsTypeNone))
+  return observedSupport.isEmpty ? nil : observedSupport.contains(true)
 }
 
-let seconds = argValue("--seconds", default: 5)
+final class ProbeEvidence: @unchecked Sendable {
+  private let lock = NSLock()
+  private var values = (
+    connected: false,
+    extended: false,
+    input: false,
+    disconnected: false,
+    reconnected: false,
+    sawDisconnect: false
+  )
+  func markConnected(_ controller: GCController) {
+    lock.lock(); defer { lock.unlock() }
+    values.connected = true
+    if values.sawDisconnect { values.reconnected = true }
+    if controller.extendedGamepad != nil { values.extended = true }
+  }
+  func markInput() { lock.lock(); values.input = true; lock.unlock() }
+  func markDisconnected() {
+    lock.lock()
+    values.disconnected = true
+    values.sawDisconnect = true
+    lock.unlock()
+  }
+  func snapshot() -> (Bool, Bool, Bool, Bool, Bool) {
+    lock.lock(); defer { lock.unlock() }
+    return (
+      values.connected,
+      values.extended,
+      values.input,
+      values.disconnected,
+      values.reconnected
+    )
+  }
+}
+
+let seconds = GameControllerProbeConfiguration.boundedSeconds(
+  argValue("--seconds", default: GameControllerProbeConfiguration.defaultSeconds)
+)
 let shouldRumble = hasArg("--rumble")
 
 print("GameController probe")
@@ -128,25 +170,38 @@ print("Listening for \(seconds)s")
 if shouldRumble { print("Rumble pulse requested") }
 print("")
 if #available(macOS 11.3, *) { GCController.shouldMonitorBackgroundEvents = true }
-printHIDSupport()
+let supportsHID = printHIDSupport()
 print("")
 
 let center = NotificationCenter.default
 var observerTokens: [NSObjectProtocol] = []
+let controllers = GCController.controllers()
+let evidence = ProbeEvidence()
+
+func observeInput(on controller: GCController) {
+  evidence.markConnected(controller)
+  guard let gamepad = controller.extendedGamepad else { return }
+  gamepad.valueChangedHandler = { _, _ in
+    evidence.markInput()
+  }
+}
+
+for controller in controllers { observeInput(on: controller) }
 observerTokens.append(
   center.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { note in
     guard let controller = note.object as? GCController else { return }
+    observeInput(on: controller)
     print("connect: \(describe(controller))")
   }
 )
 observerTokens.append(
   center.addObserver(forName: .GCControllerDidDisconnect, object: nil, queue: .main) { note in
     guard let controller = note.object as? GCController else { return }
+    evidence.markDisconnected()
     print("disconnect: \(describe(controller))")
   }
 )
 
-let controllers = GCController.controllers()
 print("Initial controllers: \(controllers.count)")
 for controller in controllers { print("- \(describe(controller))") }
 
@@ -154,6 +209,14 @@ let end = Date().addingTimeInterval(TimeInterval(seconds))
 while Date() < end { RunLoop.main.run(mode: .default, before: Date().addingTimeInterval(0.1)) }
 
 for token in observerTokens { center.removeObserver(token) }
+
+let evidenceResult = evidence.snapshot()
+let supportsHIDDescription = supportsHID.map { String($0) } ?? "unknown"
+print(
+  "evidence supports_hid=\(supportsHIDDescription) connect=\(evidenceResult.0) "
+    + "extended_profile=\(evidenceResult.1) live_input=\(evidenceResult.2) "
+    + "disconnect=\(evidenceResult.3) reconnect=\(evidenceResult.4) haptics=unclaimed"
+)
 
 if shouldRumble {
   let controllers = GCController.controllers()

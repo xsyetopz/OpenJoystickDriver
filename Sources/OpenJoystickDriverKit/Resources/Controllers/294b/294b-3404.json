@@ -6,9 +6,5 @@
   "protocol": {
     "driver": "GIP",
     "variant": "xboxOne"
-  },
-  "provenance": {
-    "source": "linux-xpad.c",
-    "verified": false
   }
 }

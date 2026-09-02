@@ -9,9 +9,5 @@
     "flags": [
       "shareButton"
     ]
-  },
-  "provenance": {
-    "source": "linux-xpad.c",
-    "verified": false
   }
 }

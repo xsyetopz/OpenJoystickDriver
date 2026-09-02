@@ -7,13 +7,7 @@
     "driver": "SwitchPro",
     "variant": "switchPro",
     "flags": [
-      "usbHandshake",
-      "experimental",
-      "needsHardwareTest"
+      "usbHandshake"
     ]
-  },
-  "provenance": {
-    "source": "linux-hid-nintendo.c",
-    "verified": false
   }
 }

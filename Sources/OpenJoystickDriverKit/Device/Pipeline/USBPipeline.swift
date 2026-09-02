@@ -8,12 +8,17 @@ public func isIgnorableUSBStartupOutputError(
 ) -> Bool {
   guard parser is Xbox360Parser, packet == [0x01, 0x03, 0x06] else { return false }
   switch error {
-  case .inputOutput, .notSupported: return true
+  case .inputOutput, .notFound, .notSupported: return true
   default: return false
   }
 }
 
 extension DevicePipeline {
+  enum USBOpenResult {
+    case opened(any USBTransportSession)
+    case unavailable(USBTransportError)
+  }
+
   // MARK: - Private USB pipeline
 
   func startUSBPipeline(device: USBTransportDevice) async {
@@ -25,9 +30,29 @@ extension DevicePipeline {
 
     var openAttempt: Int = 0
     while isActive {
-      guard let handle = await openDeviceWithRetry(provider: provider, device: device) else {
-        print("[DevicePipeline] Could not open USB device" + " \(identifier) after retries")
-        isActive = false
+      let openResult = await openDeviceWithRetry(provider: provider, device: device)
+      guard case .opened(let handle) = openResult else {
+        openAttempt += 1
+        let delay: UInt64
+        if case .unavailable(.accessDenied) = openResult {
+          if openAttempt == 1 {
+            print(
+              "[DevicePipeline] USB device is exclusively owned by another process; waiting:"
+                + " \(identifier)"
+            )
+          }
+          delay = usbRecoveryPolicy.accessContentionDelayNanoseconds
+        } else {
+          print("[DevicePipeline] USB device unavailable; retrying: \(identifier)")
+          delay = usbRecoveryPolicy.reconnectDelayNanoseconds(after: openAttempt)
+        }
+        try? await Task.sleep(
+          nanoseconds: delay
+        )
+        continue
+      }
+      guard isActive else {
+        await handle.close()
         return
       }
       usbHandle = handle
@@ -37,9 +62,20 @@ extension DevicePipeline {
         // Try again while active, but slow down to avoid hot loops that launchd may kill
         // as "inefficient".
         openAttempt += 1
-        let delay = min(UInt64(4_000_000_000), UInt64(250_000_000) << min(openAttempt, 4))
+        let delay = usbRecoveryPolicy.reconnectDelayNanoseconds(after: openAttempt)
         try? await Task.sleep(nanoseconds: delay)
         continue
+      }
+
+      guard isActive else {
+        await handle.close()
+        usbHandle = nil
+        return
+      }
+
+      openAttempt = 0
+      if !requiresInputConnectionBeforeOutput() {
+        await dispatcher.dispatch(events: [], from: identifier)
       }
 
       await runUSBInputLoop(handle: handle)
@@ -48,7 +84,7 @@ extension DevicePipeline {
 
       // Prevent immediate reopen loops.
       openAttempt += 1
-      let delay = min(UInt64(4_000_000_000), UInt64(250_000_000) << min(openAttempt, 4))
+      let delay = usbRecoveryPolicy.reconnectDelayNanoseconds(after: openAttempt)
       try? await Task.sleep(nanoseconds: delay)
     }
   }
@@ -88,22 +124,34 @@ extension DevicePipeline {
   }
 
   func openDeviceWithRetry(provider: any USBTransportProvider, device: USBTransportDevice) async
-    -> (any USBTransportSession)?
+    -> USBOpenResult
   {
-    for attempt in 0..<usbOpenRetryDelays.count {
+    var lastError = USBTransportError.notFound
+    for attempt in 0..<usbRecoveryPolicy.openRetryDelays.count {
       do {
-        return try await provider.open(
-          device,
-          options: USBTransportOpenOptions(transportProfile: transportProfile)
+        return .opened(
+          try await provider.open(
+            device,
+            options: USBTransportOpenOptions(transportProfile: transportProfile)
+          )
         )
-      } catch {
+      } catch let error as USBTransportError {
+        lastError = error
+        if error == .accessDenied { return .unavailable(error) }
         handleOpenDeviceError(error, attempt: attempt)
-        if attempt < usbOpenRetryDelays.count - 1 {
-          try? await Task.sleep(nanoseconds: usbOpenRetryDelays[attempt])
+        if attempt < usbRecoveryPolicy.openRetryDelays.count - 1 {
+          try? await Task.sleep(nanoseconds: usbRecoveryPolicy.openRetryDelays[attempt])
+        }
+      } catch {
+        let transportError = USBTransportError.platform(code: 0, message: String(describing: error))
+        lastError = transportError
+        handleOpenDeviceError(transportError, attempt: attempt)
+        if attempt < usbRecoveryPolicy.openRetryDelays.count - 1 {
+          try? await Task.sleep(nanoseconds: usbRecoveryPolicy.openRetryDelays[attempt])
         }
       }
     }
-    return nil
+    return .unavailable(lastError)
   }
 
   func handleOpenDeviceError(_ error: Error, attempt: Int) {

@@ -7,8 +7,8 @@ description: >
 # Add Controller Support
 
 Use this action skill when a new VID/PID or factual controller deviation must
-enter OpenJoystickDriver. It owns canonical catalog inputs, provenance, schema
-shape, deterministic regeneration, and review evidence. `$debug-controller-openjoystickdriver`
+enter OpenJoystickDriver. It owns canonical catalog inputs, schema shape,
+deterministic regeneration, and review evidence. `$debug-controller-openjoystickdriver`
 owns physical packet and hardware diagnosis; `$test-openjoystickdriver` owns
 product-test evidence.
 
@@ -18,8 +18,8 @@ product-test evidence.
   exact review-only revision.
 - Adding a complete local controller record under `Resources/ControllerOverrides`
   or patching selected sections with local-hardware/tester-packets evidence.
-- Updating catalog translation, controller transport metadata, or controller
-  record provenance while preserving shared parser behavior.
+- Updating catalog translation or controller transport facts while preserving
+  shared parser behavior.
 - Regenerating and reviewing `Sources/OpenJoystickDriverKit/Resources/Controllers`
   after an intentional lockfile or override change.
 - Checking VID/PID collisions, decimal JSON values, schema validity, and
@@ -48,15 +48,14 @@ product-test evidence.
 - Never hand-edit or retain a generated-record patch path. Change the lock,
   override, schema, or generator source, then regenerate and inspect the diff.
 - An override `add` must not collide with an upstream identity. A `patch` must
-  target an upstream record, change only intended top-level sections, and carry
-  local-hardware or tester-packets provenance. Redundant or malformed overrides
-  fail closed.
+  target an upstream record and change only intended top-level sections.
+  Redundant or malformed overrides fail closed.
 - Keep shared protocol behavior in Kit code. Controller data contains factual
-  deviations, endpoints, startup packets, mappings, and provenance—not a second
-  parser implementation or a compatibility shim.
+  deviations, endpoints, startup packets, and mappings—not provenance, a second
+  parser implementation, or a compatibility shim.
 - Use decimal numeric values in committed JSON, stable lowercase VID/PID paths,
-  canonical schema shape, and truthful `verified` status. Linux recognition or
-  record validation is not macOS hardware verification.
+  and the canonical schema shape. Linux recognition or record validation is not
+  macOS hardware verification; keep review status in testing documents and issues.
 - Scripts are support tooling. Run the repository dispatcher’s catalog/profile
   checks; do not add `Tests/Scripts`, script fixtures, or prose assertions.
 
@@ -67,13 +66,13 @@ product-test evidence.
    relevant schema, lock entry, parser registry, and nearest product tests.
 2. **Classify the evidence.** Decide whether the identity is pinned-source
    import, complete local add, or evidence-backed patch. Record the exact VID/PID,
-   connection mode, protocol, provenance, and what is not yet known.
+   connection mode, protocol, and what is not yet known in the testing document.
 3. **Edit one canonical input.** Update the lock/override/generator input only;
    preserve generated records and `.build` output. Use the smallest factual
    override instead of copying shared parser logic into data.
 4. **Regenerate deterministically.** Run the catalog write route only after the
    input is intentional, then run read-only catalog/profile checks. Inspect
-   generated paths, decimal values, provenance, and unrelated record churn.
+   generated paths, decimal values, and unrelated record churn.
 5. **Prove the product seam.** Route parser/record behavior to
    `$test-openjoystickdriver`; route physical packet or hardware claims to
    `$debug-controller-openjoystickdriver`. Do not mark hardware support from a
@@ -85,7 +84,7 @@ product-test evidence.
 
 | Need | Load |
 |---|---|
-| Canonical inputs, generated output, provenance, and evidence flow | `references/controller-data.md` |
+| Canonical inputs, generated output, and evidence flow | `references/controller-data.md` |
 | Linux xpad translation and override rules | `docs/development/xpad-import.md` |
 | Candidate record validation and physical probe procedure | `docs/testing/controller-record.md` |
 | Support status and compatibility limits | `docs/user/compatibility.md`, `docs/development/experimental-controllers.md` |
@@ -97,11 +96,11 @@ product-test evidence.
 
 - The change edits the correct canonical input and regenerates deterministic
   records; no generated record or build output was hand-edited.
-- Schema, VID/PID collision, provenance, decimal-value, parser mapping, and
+- Schema, VID/PID collision, decimal-value, parser mapping, and
   catalog/profile checks pass with no unrelated generated churn.
 - Product behavior evidence is routed through matching Tests, while physical
   claims have the separate diagnosis/hardware evidence required by the docs.
-- `verified` status and user-facing support claims are truthful; unresolved
+- User-facing support claims are truthful; unresolved
   hardware, permission, signing, or platform gaps are named explicitly.
 - The final handoff lists input paths, generated outputs, commands/results,
   source/packet/hardware evidence class, and rollback steps.

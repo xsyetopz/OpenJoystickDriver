@@ -27,8 +27,8 @@ not turn a passing schema check or parser fixture into a hardware claim.
 - A physical controller needs input coverage (neutral plus every control),
   reconnect evidence, or output checks for rumble, trigger motors, player LEDs,
   or RGB lighting.
-- A maintainer needs to classify a path as `sourceBacked`, `hardwareVerified`,
-  or `unavailable`, and distinguish external packet evidence from an OJD
+- A maintainer needs to classify a path as source-backed, hardware-verified,
+  or unavailable, and distinguish external packet evidence from an OJD
   native IOUSBHost/USBDriverKit acceptance run.
 - An experimental controller record needs a repeatable request, exact command,
   redacted packet evidence, and a report that can support or reject a future
@@ -66,9 +66,9 @@ not turn a passing schema check or parser fixture into a hardware claim.
   decimal VID/PID and other numeric values in JSON. Catalog authoring belongs to
   `$add-controller-openjoystickdriver`.
 - A parser harness, `--validate-only`, successful handshake, packet count, or
-  generated output plan is not hardware verification. Do not change
-  `provenance.verified` from evidence that does not satisfy the documented
-  physical checks.
+  generated output plan is not hardware verification. Record physical results
+  in the matching testing document and issue; never add verification metadata
+  to a runtime controller record.
 - Never add tests that read Swift, shell, or documentation and assert literal substrings or
   human-readable messages. Observe typed events, packet structure, return
   codes, routes, and physical behavior; raw captures must be redacted before
@@ -83,7 +83,7 @@ not turn a passing schema check or parser fixture into a hardware claim.
    `docs/testing/controller-record.md`, `docs/user/compatibility.md`, and
    `docs/development/experimental-controllers.md`. Capture VID/PID (decimal
    and hexadecimal), connection mode, expected protocol/parser, record path,
-   provenance status, OJD commit, macOS version, Mac model, and
+   documented support status, OJD commit, macOS version, Mac model, and
    firmware if known. Decide whether this is discovery, input/parser,
    reconnect, or output evidence; do not silently expand the request.
 2. **Establish discovery.** Use native evidence (`system_profiler`, `ioreg`,
@@ -129,8 +129,8 @@ not turn a passing schema check or parser fixture into a hardware claim.
    ```bash
    OpenJoystickDriver --headless controller output list
    OpenJoystickDriver --headless controller output plan <vid> <pid>
-   # add --json for a machine-readable plan; add --device <opaque-id> only
-   # for the current session when identical devices are ambiguous
+   # add --device <opaque-id> only for the current session when identical
+   # devices are ambiguous
    ```
 
    Execute each generated rumble, trigger, player-light, or RGB step one at a
@@ -177,7 +177,7 @@ not turn a passing schema check or parser fixture into a hardware claim.
   source-backed/unavailable rather than being inferred.
 - The handoff classifies every claim as source-backed, hardware-verified, or
   unavailable, labels external evidence, redacts sensitive packet details, and
-  names exact remaining risks. No catalog record or provenance flag was edited
+  names exact remaining risks. No catalog record was edited
   by this diagnostic slice.
 
 ## Validation instructions

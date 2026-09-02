@@ -32,17 +32,7 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
 
   var suppressOutput: Bool {
     get { lock.withLock { controls.outputSuppressed } }
-    set {
-      let snapshot = updateControls(outputSuppressed: newValue)
-      updateCompatibilitySuppression(controls: snapshot)
-      Task { [weak self] in
-        guard let self else { return }
-        guard let lease = try? outputLeaseIfOpen() else { return }
-        defer { lease.finish() }
-        try? await core.apply(snapshot, requiring: lease.permit)
-        await reconcileTickerWithEngine()
-      }
-    }
+    set { _ = updateControls(outputSuppressed: newValue) }
   }
 
   init(
@@ -136,7 +126,7 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
 
   func beginProfileTransaction() async throws -> RemappingProfileTransaction {
     let transaction = RemappingProfileTransaction()
-    setProfileTransactionGateActive(true)
+    await setProfileTransactionGateActive(true)
     let permit: RemappingEmissionPermit
     switch await emissionBarrier.suspend(owner: transaction.id) {
     case .admitted(let admittedPermit): permit = admittedPermit
@@ -169,7 +159,9 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
         await reconcileTickerWithEngine()
         throw unreconciled
       }
-      if emissionBarrier.resume(owner: transaction.id) { setProfileTransactionGateActive(false) }
+      if emissionBarrier.resume(owner: transaction.id) {
+        await setProfileTransactionGateActive(false)
+      }
       await reconcileTickerWithEngine()
       throw beginError
     }
@@ -183,7 +175,9 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
       await reconcileTickerWithEngine()
       throw error
     }
-    if emissionBarrier.resume(owner: transaction.id) { setProfileTransactionGateActive(false) }
+    if emissionBarrier.resume(owner: transaction.id) {
+      await setProfileTransactionGateActive(false)
+    }
     await reconcileTickerWithEngine()
   }
 
@@ -201,7 +195,9 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
       await reconcileTickerWithEngine()
       throw unreconciled
     }
-    if emissionBarrier.resume(owner: transaction.id) { setProfileTransactionGateActive(false) }
+    if emissionBarrier.resume(owner: transaction.id) {
+      await setProfileTransactionGateActive(false)
+    }
     await reconcileTickerWithEngine()
   }
 
@@ -221,7 +217,7 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
       await reconcileTickerWithEngine()
       throw error
     }
-    if let permit, emissionBarrier.resume(permit) { setProfileTransactionGateActive(false) }
+    if let permit, emissionBarrier.resume(permit) { await setProfileTransactionGateActive(false) }
     await reconcileTickerWithEngine()
   }
 
@@ -260,7 +256,7 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
     _ snapshot: RemappingRoutingControls,
     refreshEligibilityWhenUnchanged: Bool = false
   ) async throws {
-    updateCompatibilitySuppression(controls: snapshot)
+    await updateCompatibilitySuppression(controls: snapshot)
     guard let lease = try outputLeaseIfOpen() else { return }
     defer { lease.finish() }
     let permit = lease.permit
@@ -315,12 +311,9 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
     return snapshot
   }
 
-  func controllerDidStop(_ identifier: DeviceIdentifier) {
-    Task { [weak self] in
-      guard let self else { return }
-      try? await core.stopController(identifier, requiring: emissionBarrier.currentPermit())
-      await reconcileTickerWithEngine()
-    }
+  func controllerDidStop(_ identifier: DeviceIdentifier) async {
+    try? await core.stopController(identifier, requiring: emissionBarrier.currentPermit())
+    await reconcileTickerWithEngine()
   }
 
   func stopController(_ identifier: DeviceIdentifier) async throws {

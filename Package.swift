@@ -68,6 +68,7 @@ let package = Package(
 
     .executableTarget(
       name: "OpenJoystickDriverGameControllerProbe",
+      dependencies: ["OpenJoystickDriverKit"],
       path: "Sources/OpenJoystickDriverGameControllerProbe",
       linkerSettings: [.linkedFramework("CoreHaptics"), .linkedFramework("GameController")]
     ),

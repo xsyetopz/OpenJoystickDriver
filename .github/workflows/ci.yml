@@ -42,6 +42,9 @@ jobs:
       - name: Install dependencies
         run: |
           brew list --versions swiftlint >/dev/null 2>&1 || brew install swiftlint
+          python3 -m venv .build/schema-validator
+          .build/schema-validator/bin/python -m pip install -r scripts/quality/requirements.txt
+          echo "$PWD/.build/schema-validator/bin" >> "$GITHUB_PATH"
 
       - name: Verify generated controller catalog
         env:
@@ -54,6 +57,9 @@ jobs:
 
       - name: Check scripts
         run: ./scripts/ojd check scripts
+
+      - name: Check schemas
+        run: ./scripts/ojd check schemas
 
       - name: Check Swift structure
         run: ./scripts/ojd check swift-structure

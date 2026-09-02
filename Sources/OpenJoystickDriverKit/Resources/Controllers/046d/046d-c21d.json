@@ -7,10 +7,6 @@
     "driver": "Xbox360",
     "variant": "xbox360"
   },
-  "provenance": {
-    "source": "tester-packets",
-    "verified": false
-  },
   "usb": {
     "endpoints": {
       "in": 129,

@@ -26,7 +26,7 @@ flowchart TD
 ```
 
 The flow deliberately separates fixture/parser results from physical results.
-A green validation or harness node never by itself reaches `hardwareVerified`.
+A green validation or harness node never by itself establishes hardware verification.
 
 ## Evidence ledger
 
@@ -42,10 +42,9 @@ Record one row per claim, not one status for an entire controller:
 
 Use `unavailable` only when no implemented path or physical capability is
 exposed. Use `sourceBacked` when implementation/upstream evidence exists but the
-project has no accepted physical result. Use `hardwareVerified` only after
-maintainer-accepted physical evidence covers the specific claim. Keep a record's
-`provenance.verified` false unless the repository's acceptance process says the
-whole record is verified.
+project has no accepted physical result. Use `hardware-verified` only in the
+human-readable evidence ledger after maintainer-accepted physical evidence
+covers the specific claim; controller records contain no verification metadata.
 
 ## Discovery and ownership checks
 
@@ -140,7 +139,6 @@ current installed app:
 ```bash
 OpenJoystickDriver --headless controller output list
 OpenJoystickDriver --headless controller output plan <vid> <pid>
-OpenJoystickDriver --headless controller output plan <vid> <pid> --json
 ```
 
 When identical devices are present, use the current-session opaque `--device`
@@ -148,7 +146,7 @@ identifier; do not record it as a durable identity. Run each plan step
 individually and stop if a controller behaves unexpectedly. Log requested
 actuator, result, firmware if known, and recovery. Never infer rumble, trigger,
 player LED, or RGB success from a generated plan, a packet write, or one other
-actuator. `sourceBacked` and `hardwareVerified` are capability-specific.
+actuator. Source-backed and hardware-verified conclusions are capability-specific.
 
 ## Failure interpretation
 
@@ -172,7 +170,7 @@ Controller / VID:PID (decimal + hex):
 Transport and connection mode:
 OJD commit:
 macOS / Mac model / firmware:
-Record path and provenance before run:
+Record path and documented support status before run:
 
 Discovery commands and result:
 Validation command and result:
@@ -190,5 +188,5 @@ Remaining risks and next owner:
 ```
 
 Do not publish raw serials, stable filesystem paths, opaque session IDs, or
-unredacted captures. Do not edit generated runtime records or provenance while
+unredacted captures. Do not edit generated runtime records while
 running this diagnostic.

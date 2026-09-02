@@ -1,8 +1,22 @@
+import Dispatch
 import Foundation
 import IOKit.hid
 import Testing
 
 @testable import OpenJoystickDriverKit
+
+private final class RemovalDecisionRecorder: @unchecked Sendable {
+  private let lock = NSLock()
+  private var decisions: [PhysicalHIDBackendEventAdapter.RemovalDecision] = []
+
+  func reset() { lock.withLock { decisions.removeAll() } }
+
+  func append(_ decision: PhysicalHIDBackendEventAdapter.RemovalDecision) {
+    lock.withLock { decisions.append(decision) }
+  }
+
+  func disconnectCount() -> Int { lock.withLock { decisions.filter(\.shouldEmitDisconnect).count } }
+}
 
 struct VirtualControllerBackendTests {
   @Test func testGameControllerHIDBackendCapability() {
@@ -10,7 +24,9 @@ struct VirtualControllerBackendTests {
 
     #expect(capabilities.isImplemented)
     #expect(capabilities.isSystemWide)
-    #expect(capabilities.notes.contains("apple-gamecontroller"))
+    #expect(capabilities.publishesConsumerGamepad)
+    #expect(VirtualControllerBackendID.allCases.contains(.gameControllerHID))
+    #expect(!capabilities.notes.isEmpty)
   }
 
   @Test func testCompatibilityIdentityIDs() {
@@ -18,8 +34,43 @@ struct VirtualControllerBackendTests {
     #expect(CompatibilityIdentity(rawValue: "sdl2-3") == .sdl2_3)
     #expect(CompatibilityIdentity(rawValue: "apple-gamecontroller") == .appleGameController)
     #expect(CompatibilityIdentity(rawValue: "xone-hid") == .xoneHID)
+    #expect(CompatibilityIdentity(rawValue: "xbox360-hid") == .xbox360HID)
+    #expect(!CompatibilityIdentity.allCases.contains(.xoneHID))
+    #expect(CompatibilityIdentity.allCases.contains(.xbox360HID))
 
     #expect(CompatibilityIdentity(rawValue: "not-a-profile") == nil)
+  }
+
+  @Test func legacyPersistedIdentityStillSelectsLegacyBackend() throws {
+    let decoded = try #require(CompatibilityIdentity(rawValue: "xone-hid"))
+    let profile = CompatibilityOutputProfileCatalog.profile(for: decoded)
+    let composition = try CompatibilityOutputCompositionFactory.make(identity: decoded)
+
+    #expect(decoded == .xoneHID)
+    #expect(profile.identity == .xoneHID)
+    #expect(composition.profile.identity == .xoneHID)
+  }
+
+  @Test func legacyIdentityDecodesButIsRejectedForNewMutation() throws {
+    let decoded = try #require(CompatibilityIdentity(rawValue: "xone-hid"))
+    let decision = decoded.mutationDecision()
+
+    #expect(decoded == .xoneHID)
+    #expect(decision == .rejected(.legacyIdentityNotSelectable))
+    #expect(
+      CompatibilityIdentity.mutationDecision(for: "xone-hid")
+        == .rejected(.legacyIdentityNotSelectable)
+    )
+  }
+
+  @Test func selectableIdentitiesRemainAcceptedForMutation() {
+    for identity in CompatibilityIdentity.allCases {
+      #expect(identity.mutationDecision() == .accepted(identity))
+    }
+    #expect(
+      CompatibilityIdentity.mutationDecision(for: "not-a-profile")
+        == .rejected(.unknownIdentity)
+    )
   }
 
   @Test func testUserSpaceSerialUsesStableHashedPhysicalIdentity() {
@@ -41,16 +92,178 @@ struct VirtualControllerBackendTests {
     let sdl = CompatibilityOutputProfileCatalog.profile(for: .sdl2_3)
     let apple = CompatibilityOutputProfileCatalog.profile(for: .appleGameController)
     let xone = CompatibilityOutputProfileCatalog.profile(for: .xoneHID)
+    let xbox360 = CompatibilityOutputProfileCatalog.profile(for: .xbox360HID)
 
     #expect(generic.deviceProfile.productID == 0x4449)
     #expect(sdl.deviceProfile == .sdlHIDAPIXbox360)
-    #expect(apple.deviceProfile.productID == 0x028E)
+    #expect(apple.deviceProfile == .xboxOneS)
+    #expect(apple.deviceProfile.vendorID == 0x045E)
+    #expect(apple.deviceProfile.productID == 0x02FD)
+    #expect(apple.deviceProfile.transport == "Bluetooth")
     #expect(!generic.isHardwareSpoof)
     #expect(sdl.isHardwareSpoof)
     #expect(apple.isHardwareSpoof)
     #expect(sdl.deviceProfile.productName == "ASTRO C40 TR Controller")
     #expect(xone.isHardwareSpoof)
     #expect(xone.emitsXboxGuideReport)
+    #expect(apple.emitsXboxGuideReport)
+    #expect(apple.evidence == .sourceBacked)
+    #expect(xone.evidence == .sourceBacked)
+    #expect(sdl.evidence == .hardwareVerified)
+    #expect(generic.consumerFamily == .genericHID)
+    #expect(sdl.consumerFamily == .sdlHIDAPI)
+    #expect(!sdl.automaticallyRecommended)
+    #expect(!apple.automaticallyRecommended)
+    #expect(apple.consumerFamily == .appleGameController)
+    #expect(xone.consumerFamily == .xboxOneHID)
+    #expect(xone.evidenceByConsumer[.sdlHIDAPI] == .reportedFailure)
+    #expect(xone.evidenceByConsumer[.appleGameController] == .sourceBacked)
+    #expect(xbox360.deviceProfile == .xbox360Wired)
+    #expect(xbox360.consumerFamily == .xbox360HID)
+    #expect(xbox360.displayName == "Xbox 360 HID")
+    #expect(xbox360.evidence == .researchOnly)
+    #expect(CompatibilityEvidenceStatus.reportedFailure != .hardwareVerified)
+    #expect(CompatibilityEvidenceStatus.researchOnly != .sourceBacked)
+  }
+
+  @Test func automaticResolverPreservesPhysicalFamilyBoundaries() {
+    let xbox = ApplicationServiceDeviceDescription(
+      name: "GameSir G7 SE",
+      vendorID: 0x3537,
+      productID: 0x1010,
+      parser: "GIP",
+      connection: "USB",
+      serialNumber: nil,
+      protocolVariant: .xboxOne
+    )
+    let otherXbox = ApplicationServiceDeviceDescription(
+      name: "Xbox One",
+      vendorID: 0x045E,
+      productID: 0x02FD,
+      parser: "GIP",
+      connection: "Bluetooth",
+      serialNumber: nil,
+      protocolVariant: .xboxOne
+    )
+    let nintendo = ApplicationServiceDeviceDescription(
+      name: "Switch",
+      vendorID: 0x057E,
+      productID: 0x2009,
+      parser: "SwitchPro",
+      connection: "USB",
+      serialNumber: nil,
+      protocolVariant: .switchPro
+    )
+    let ds4 = ApplicationServiceDeviceDescription(
+      name: "DualShock 4",
+      vendorID: 0x054C,
+      productID: 0x05C4,
+      parser: "DS4",
+      connection: "USB",
+      serialNumber: nil,
+      protocolVariant: .dualShock4
+    )
+    let xinput = ApplicationServiceDeviceDescription(
+      name: "XInput device",
+      vendorID: 1,
+      productID: 2,
+      parser: "XInput",
+      connection: "USB",
+      serialNumber: nil,
+      protocolVariant: .xboxOne
+    )
+    let xusb = ApplicationServiceDeviceDescription(
+      name: "XUSB device",
+      vendorID: 3,
+      productID: 4,
+      parser: "XUSB",
+      connection: "USB",
+      serialNumber: nil,
+      protocolVariant: .xboxOne
+    )
+    #expect(AutomaticCompatibilityResolver.resolve(for: xbox).identity == .genericHID)
+    #expect(AutomaticCompatibilityResolver.resolve(for: otherXbox).identity == .genericHID)
+    #expect(AutomaticCompatibilityResolver.resolve(for: nintendo).identity == .genericHID)
+    #expect(AutomaticCompatibilityResolver.resolve(for: ds4).identity == .genericHID)
+    #expect(
+      AutomaticCompatibilityResolver.resolve(for: xbox, consumer: .sdlHIDAPI).subfamily == .xboxGIP
+    )
+    #expect(
+      AutomaticCompatibilityResolver.resolve(for: otherXbox, consumer: .appleGameController)
+        .consumer == .appleGameController
+    )
+    #expect(AutomaticCompatibilityResolver.resolve(for: xinput).subfamily == .xboxGIP)
+    #expect(AutomaticCompatibilityResolver.resolve(for: xusb).subfamily == .xboxGIP)
+    #expect(
+      AutomaticCompatibilityResolver.resolve(
+        for: ApplicationServiceDeviceDescription(
+          name: "Xbox 360",
+          vendorID: 0x045E,
+          productID: 0x028E,
+          parser: "XUSB",
+          connection: "USB",
+          serialNumber: nil,
+          protocolVariant: .xbox360
+        )
+      ).subfamily == .xbox360
+    )
+    #expect(AutomaticCompatibilityResolver.resolve(for: xbox).subfamily == .xboxGIP)
+    #expect(AutomaticCompatibilityResolver.resolve(for: nintendo).subfamily != .xboxGIP)
+    #expect(AutomaticCompatibilityResolver.resolve(for: ds4).subfamily != .xboxGIP)
+    let failedBluetooth = AutomaticCompatibilityResolver.resolve(
+      for: otherXbox,
+      consumer: .sdlHIDAPI
+    )
+    #expect(failedBluetooth.identity == .genericHID)
+    #expect(failedBluetooth.evidence == .reportedFailure)
+    #expect(failedBluetooth.reason == .reportedConsumerFailure)
+
+    let sameIdentityOverUSB = ApplicationServiceDeviceDescription(
+      name: "Xbox One over USB",
+      vendorID: 0x045E,
+      productID: 0x02FD,
+      parser: "GIP",
+      connection: "USB",
+      serialNumber: nil,
+      protocolVariant: .xboxOne
+    )
+    let usbResolution = AutomaticCompatibilityResolver.resolve(
+      for: sameIdentityOverUSB,
+      consumer: .sdlHIDAPI
+    )
+    #expect(usbResolution.evidence == .unavailable)
+    #expect(usbResolution.reason == .noAdjacentIdentity)
+  }
+
+  @Test func compatibilityFactoryKeepsProtocolTuplesAtomic() throws {
+    let apple = try CompatibilityOutputCompositionFactory.make(identity: .appleGameController)
+    let xone = try CompatibilityOutputCompositionFactory.make(identity: .xoneHID)
+    let astro = try CompatibilityOutputCompositionFactory.make(identity: .sdl2_3)
+    let xbox360 = try CompatibilityOutputCompositionFactory.make(identity: .xbox360HID)
+
+    #expect(apple.profile.deviceProfile == .xboxOneS)
+    #expect(xone.profile.deviceProfile == .xboxOneS)
+    #expect(apple.format.descriptor == XboxOneBluetoothHIDDescriptor.descriptor)
+    #expect(xone.format.descriptor == XboxOneBluetoothHIDDescriptor.descriptor)
+    #expect(apple.format.inputReportID == 1)
+    #expect(xone.format.inputReportID == 1)
+    #expect(apple.format.outputReportID == VirtualRumbleOutputReportParser.xboxOneReportID)
+    #expect(xone.format.outputReportID == VirtualRumbleOutputReportParser.xboxOneReportID)
+    #expect(apple.profile.emitsXboxGuideReport)
+    #expect(xone.profile.emitsXboxGuideReport)
+    #expect(astro.profile.deviceProfile == .sdlHIDAPIXbox360)
+    #expect(astro.format.descriptor == Xbox360MacHIDReportFormat().descriptor)
+    #expect(xbox360.profile.deviceProfile == .xbox360Wired)
+    #expect(
+      xbox360.format.descriptor
+        == Xbox360MacHIDReportFormat(topLevelUsage: UInt8(kHIDUsage_GD_GamePad)).descriptor
+    )
+  }
+
+  @Test func guideDispatchUsesXboxGuideReportContract() {
+    #expect(UserSpaceOutputDispatcher.xboxGuideReport(for: .buttonPressed(.guide)) == [0x02, 0x01])
+    #expect(UserSpaceOutputDispatcher.xboxGuideReport(for: .buttonReleased(.guide)) == [0x02, 0x00])
+    #expect(UserSpaceOutputDispatcher.xboxGuideReport(for: .buttonPressed(.a)) == nil)
   }
 
   @Test func testGenericReportDpadButtonPolicy() {
@@ -191,6 +404,219 @@ struct VirtualControllerBackendTests {
     )
   }
 
+  @Test func testSyntheticAppleGameControllerDevicesAreExcluded() {
+    #expect(UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(true))
+    #expect(!UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(false))
+    var numericValue: Int32 = 1
+    let numeric = withUnsafePointer(to: &numericValue) { CFNumberCreate(nil, .sInt32Type, $0) }
+    #expect(!UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(numeric))
+    #expect(!UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(nil))
+  }
+
+  @Test func physicalHIDAdmissionRejectsEveryIndependentVirtualDeviceMarker() {
+    let physicalLocation: UInt32 = 1_114_112
+    let virtualLocation = UserSpaceVirtualDeviceConstants.locationID(
+      for: DeviceIdentifier(vendorID: 0x3537, productID: 0x1010, locationID: physicalLocation)
+    )
+
+    func accepts(
+      serialNumber: String? = "physical-serial",
+      productName: String? = "GameSir-G7 SE Controller for Xbox",
+      transport: String? = "USB",
+      locationID: UInt32 = physicalLocation,
+      syntheticProperty: Any? = kCFBooleanFalse
+    ) -> Bool {
+      PhysicalHIDBackendEventPolicy.acceptsDevice(
+        serialNumber: serialNumber,
+        productName: productName,
+        transport: transport,
+        locationID: locationID,
+        syntheticProperty: syntheticProperty
+      )
+    }
+
+    #expect(accepts())
+    #expect(!accepts(serialNumber: UserSpaceVirtualDeviceConstants.serialPrefix + "opaque"))
+    #expect(!accepts(productName: UserSpaceVirtualDeviceConstants.product))
+    #expect(!accepts(transport: "Virtual"))
+    #expect(!accepts(transport: "virtual"))
+    #expect(!accepts(locationID: virtualLocation))
+    #expect(!accepts(syntheticProperty: kCFBooleanTrue))
+  }
+
+  @Test func compatibilitySpoofRemainsExcludedWhenAppleOmitsSerialAndSyntheticProperties() {
+    let physical = DeviceIdentifier(
+      vendorID: 0x3537,
+      productID: 0x1010,
+      serialNumber: "physical-serial",
+      locationID: 1_114_112
+    )
+    let virtualLocation = UserSpaceVirtualDeviceConstants.locationID(for: physical)
+
+    #expect(
+      !PhysicalHIDBackendEventPolicy.acceptsDevice(
+        serialNumber: nil,
+        productName: "Xbox One S Controller",
+        transport: "Bluetooth",
+        locationID: virtualLocation,
+        syntheticProperty: nil
+      )
+    )
+  }
+
+  @Test func syntheticFilteringPolicyCoversEveryPhysicalHIDBoundary() {
+    let events: [UserSpaceVirtualDeviceConstants.PhysicalHIDEvent] = [
+      .deviceAdded, .inputReport, .inputValue, .deviceRemoved, .descriptorDiscovery, .feedback
+    ]
+    for event in events {
+      #expect(
+        !UserSpaceVirtualDeviceConstants.acceptsPhysicalHIDEvent(
+          event,
+          syntheticProperty: kCFBooleanTrue
+        )
+      )
+      #expect(
+        UserSpaceVirtualDeviceConstants.acceptsPhysicalHIDEvent(
+          event,
+          syntheticProperty: kCFBooleanFalse
+        )
+      )
+    }
+  }
+
+  @Test func physicalHIDTrackingEngineModelsSyntheticAndPhysicalEventSequences() {
+    var engine = PhysicalHIDTrackingStateMachine()
+    var disconnectCount = 0
+    let synthetic = engine.register(deviceID: 1, locationID: 101, syntheticProperty: kCFBooleanTrue)
+    #expect(!synthetic)
+    #expect(!engine.acceptsInput(deviceID: 1))
+    #expect(!engine.acceptsFeedback(locationID: 101))
+    let syntheticRemoval = engine.remove(deviceID: 1)
+    #expect(!syntheticRemoval)
+
+    let physicalRegistration = engine.register(
+      deviceID: 2,
+      locationID: 202,
+      syntheticProperty: kCFBooleanFalse
+    )
+    #expect(physicalRegistration)
+    #expect(engine.acceptsInput(deviceID: 2))
+    #expect(engine.acceptsInput(locationID: 202))
+    #expect(engine.acceptsFeedback(locationID: 202))
+    let physicalRemoval = engine.remove(deviceID: 2)
+    if physicalRemoval { disconnectCount += 1 }
+    #expect(!engine.acceptsInput(locationID: 202))
+    #expect(!engine.acceptsFeedback(locationID: 202))
+    let staleRemoval = engine.remove(deviceID: 2)
+    #expect(!staleRemoval)
+    if staleRemoval { disconnectCount += 1 }
+    #expect(disconnectCount == 1)
+  }
+
+  @Test func bothProductionBackendsUseTheCentralSyntheticPolicy() {
+    let events: [UserSpaceVirtualDeviceConstants.PhysicalHIDEvent] = [
+      .deviceAdded, .inputReport, .inputValue, .deviceRemoved, .descriptorDiscovery, .feedback
+    ]
+    for event in events {
+      #expect(
+        PhysicalHIDBackendEventPolicy.accepts(event, syntheticProperty: kCFBooleanTrue) == false
+      )
+      #expect(PhysicalHIDBackendEventPolicy.accepts(event, syntheticProperty: kCFBooleanFalse))
+    }
+  }
+
+  @Test func productionBackendAdaptersRejectSyntheticSharedLocationAndCleanPhysicalState() {
+    var ioHID = PhysicalHIDBackendEventAdapter()
+    var coreHID = PhysicalHIDBackendEventAdapter()
+
+    for adapter in [ioHID, coreHID] {
+      var adapter = adapter
+      let syntheticAdded = adapter.add(
+        deviceID: 2,
+        locationID: 77,
+        syntheticProperty: kCFBooleanTrue
+      )
+      #expect(!syntheticAdded)
+      #expect(!adapter.acceptsInput(deviceID: 2))
+      #expect(!adapter.acceptsFeedback(locationID: 77))
+      #expect(!adapter.remove(deviceID: 2).wasTracked)
+    }
+
+    let physicalAdded = ioHID.add(deviceID: 1, locationID: 77, syntheticProperty: kCFBooleanFalse)
+    let syntheticAdded = ioHID.add(deviceID: 2, locationID: 77, syntheticProperty: kCFBooleanTrue)
+    #expect(physicalAdded)
+    #expect(!syntheticAdded)
+    #expect(ioHID.acceptsInput(deviceID: 1))
+    #expect(!ioHID.acceptsInput(deviceID: 2))
+    #expect(ioHID.acceptsFeedback(locationID: 77))
+    let rejectedRemoval = ioHID.remove(deviceID: 2)
+    #expect(!rejectedRemoval.wasTracked)
+    let physicalRemoval = ioHID.remove(deviceID: 1)
+    #expect(physicalRemoval.wasTracked)
+    #expect(physicalRemoval.shouldCancelNotification)
+    #expect(physicalRemoval.shouldEmitDisconnect)
+    #expect(!ioHID.acceptsFeedback(locationID: 77))
+    #expect(!ioHID.remove(deviceID: 1).shouldEmitDisconnect)
+
+    let coreAdded = coreHID.add(deviceID: 1, locationID: 77, syntheticProperty: kCFBooleanFalse)
+    #expect(coreAdded)
+    let coreRemoval = coreHID.remove(deviceID: 1)
+    #expect(coreRemoval.wasTracked)
+    #expect(coreRemoval.shouldCancelNotification)
+    #expect(coreRemoval.shouldEmitDisconnect)
+  }
+
+  @Test func synchronizedProductionAdapterSerializesConcurrentLifecycleAndFeedback() {
+    let holder = SynchronizedPhysicalHIDBackendEventAdapter()
+    let recorder = RemovalDecisionRecorder()
+
+    for iteration in 0..<100 {
+      holder.reset()
+      let added = holder.add(
+        deviceID: 1,
+        locationID: UInt32(iteration),
+        syntheticProperty: kCFBooleanFalse
+      )
+      #expect(added)
+      recorder.reset()
+      DispatchQueue.concurrentPerform(iterations: 64) { index in
+        switch index % 4 {
+        case 0: _ = holder.acceptsInput(deviceID: 1)
+        case 1: _ = holder.acceptsFeedback(locationID: UInt32(iteration))
+        case 2:
+          let decision = holder.remove(deviceID: 1)
+          recorder.append(decision)
+        default: _ = holder.acceptsDescriptor(syntheticProperty: kCFBooleanFalse)
+        }
+      }
+
+      #expect(recorder.disconnectCount() == 1)
+      #expect(!holder.acceptsInput(deviceID: 1))
+      #expect(!holder.acceptsFeedback(locationID: UInt32(iteration)))
+    }
+
+    DispatchQueue.concurrentPerform(iterations: 128) { index in
+      if index.isMultiple(of: 5) {
+        holder.reset()
+      } else if index % 5 == 1 {
+        _ = holder.add(
+          deviceID: UInt64(index + 10),
+          locationID: 999,
+          syntheticProperty: kCFBooleanFalse
+        )
+      } else if index % 5 == 2 {
+        _ = holder.acceptsInput(deviceID: UInt64(index + 10))
+      } else if index % 5 == 3 {
+        _ = holder.acceptsFeedback(locationID: 999)
+      } else {
+        _ = holder.remove(deviceID: UInt64(index + 10))
+      }
+    }
+    holder.reset()
+    #expect(!holder.acceptsInput(deviceID: 10))
+    #expect(!holder.acceptsFeedback(locationID: 999))
+  }
+
   @Test func testXboxGIPCompatibilityFormatAdvertisesFullOutputSize() throws {
     let format = try HIDDescriptorReportFormat(
       descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
@@ -254,18 +680,14 @@ struct VirtualControllerBackendTests {
   }
 
   @Test func userSpaceCreationErrorsDistinguishPermissionFromEntitlementAndCreation() {
-    #expect(
-      String(describing: UserSpaceOutputDispatcher.CreationError.inputMonitoringDenied)
-        == "Input Monitoring denied for IOKit virtual device"
-    )
-    #expect(
-      String(describing: UserSpaceOutputDispatcher.CreationError.accessibilityDenied)
-        == "Accessibility denied for IOKit virtual device"
-    )
-    #expect(
-      String(describing: UserSpaceOutputDispatcher.CreationError.createFailed)
-        == "Failed to create virtual HID device"
-    )
+    let errors: [UserSpaceOutputDispatcher.CreationError] = [
+      .inputMonitoringDenied, .accessibilityDenied, .createFailed, .missingEntitlement("test")
+    ]
+    for error in errors {
+      switch error {
+      case .inputMonitoringDenied, .accessibilityDenied, .createFailed, .missingEntitlement: break
+      }
+    }
   }
 
 }

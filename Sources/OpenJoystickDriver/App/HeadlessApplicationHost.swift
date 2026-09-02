@@ -12,7 +12,13 @@ final class HeadlessApplicationHost {
 
   @MainActor func run() -> Never {
     registerForLoginIfNeeded()
-    runtime.start()
+    do { try runtime.start() } catch {
+      fputs(
+        "[OpenJoystickDriver] Main-app service startup failed: \(error.localizedDescription)\n",
+        stderr
+      )
+      exit(EXIT_FAILURE)
+    }
     #if canImport(AppKit) && canImport(SwiftUI)
       presentation = MenuBarCoordinator(
         runtime: runtime,

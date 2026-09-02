@@ -22,6 +22,7 @@ public final class HIDDeviceStream: @unchecked Sendable {
   private var continuation: AsyncStream<HIDDeviceEvent>.Continuation?
   private let seizeLock = NSLock()
   private var seizedByLocation: [UInt32: [IOHIDDevice]] = [:]
+  private let eventAdapter = SynchronizedPhysicalHIDBackendEventAdapter()
 
   /// Creates a new stream that matches HID gamepad devices.
   ///
@@ -88,6 +89,7 @@ public final class HIDDeviceStream: @unchecked Sendable {
       }
       seizedByLocation.removeAll()
     }
+    eventAdapter.reset()
     continuation?.finish()
     continuation = nil
   }
@@ -107,6 +109,7 @@ public final class HIDDeviceStream: @unchecked Sendable {
 
   public func getFeatureReport(locationID: UInt32, request: PhysicalHIDFeatureReadRequest) -> Data?
   {
+    guard eventAdapter.acceptsFeedback(locationID: locationID) else { return nil }
     let devices = seizeLock.withLock { seizedByLocation[locationID] ?? [] }
     guard !devices.isEmpty else { return nil }
 
@@ -140,6 +143,7 @@ public final class HIDDeviceStream: @unchecked Sendable {
     type: IOHIDReportType,
     label: String
   ) -> Bool {
+    guard eventAdapter.acceptsFeedback(locationID: locationID) else { return false }
     let devices = seizeLock.withLock { seizedByLocation[locationID] ?? [] }
     guard !devices.isEmpty else { return false }
 
@@ -176,21 +180,24 @@ public final class HIDDeviceStream: @unchecked Sendable {
     let serial = IOHIDDeviceGetProperty(device, kIOHIDSerialNumberKey as CFString) as? String
     let productName = IOHIDDeviceGetProperty(device, kIOHIDProductKey as CFString) as? String
     let transport = IOHIDDeviceGetProperty(device, kIOHIDTransportKey as CFString) as? String ?? ""
-    // Skip virtual HID gamepads entirely. Compatibility modes may intentionally spoof
-    // third-party VID/PID values, so matching only the current OJD profile is not enough:
-    // re-ingesting any virtual gamepad creates duplicate outputs and feedback latency.
-    if transport == "Virtual" { return }
-
-    // Also skip our user-space virtual gamepad (IOHIDUserDevice), which intentionally
-    // uses Transport="USB" for compatibility.
-    if UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial)
-      || productName == UserSpaceVirtualDeviceConstants.product
-    {
-      return
-    }
-
+    let syntheticProperty = IOHIDDeviceGetProperty(
+      device,
+      "kIOHIDGCSyntheticDeviceKey" as CFString
+    )
     let loc = deviceProperty(device, kIOHIDLocationIDKey)
     let locationID = UInt32(truncatingIfNeeded: loc)
+    guard PhysicalHIDBackendEventPolicy.acceptsDevice(
+      serialNumber: serial,
+      productName: productName,
+      transport: transport.isEmpty ? nil : transport,
+      locationID: locationID,
+      syntheticProperty: syntheticProperty
+    ) else { return }
+    guard eventAdapter.add(
+      deviceID: trackingID(for: device),
+      locationID: locationID,
+      syntheticProperty: syntheticProperty
+    ) else { return }
 
     // Try to take exclusive access so SDL sees only the virtual controller (no duplicates).
     // This is best-effort; if it fails we still function, but users may see SDL-0/SDL-1 conflicts.
@@ -219,12 +226,15 @@ public final class HIDDeviceStream: @unchecked Sendable {
 
   /// Yields a `.disconnected` event when IOKit reports a device removal.
   private func handleDeviceRemoved(_ device: IOHIDDevice) {
+    let deviceID = trackingID(for: device)
+    let removal = eventAdapter.remove(deviceID: deviceID)
+    guard removal.wasTracked else { return }
     let vid = deviceProperty(device, kIOHIDVendorIDKey)
     let pid = deviceProperty(device, kIOHIDProductIDKey)
     let loc = deviceProperty(device, kIOHIDLocationIDKey)
     let locationID = UInt32(truncatingIfNeeded: loc)
-    let locationRemoved = seizeLock.withLock { () -> Bool in
-      guard var devices = seizedByLocation[locationID] else { return true }
+    seizeLock.withLock {
+      guard var devices = seizedByLocation[locationID] else { return }
       let removed = devices.filter { CFEqual($0, device) }
       devices.removeAll { CFEqual($0, device) }
       for removedDevice in removed {
@@ -232,12 +242,11 @@ public final class HIDDeviceStream: @unchecked Sendable {
       }
       if devices.isEmpty {
         seizedByLocation.removeValue(forKey: locationID)
-        return true
+        return
       }
       seizedByLocation[locationID] = devices
-      return false
     }
-    if locationRemoved {
+    if removal.shouldEmitDisconnect {
       continuation?.yield(
         .disconnected(
           vendorID: UInt16(truncatingIfNeeded: vid),
@@ -250,11 +259,13 @@ public final class HIDDeviceStream: @unchecked Sendable {
 
   /// Copies raw report bytes and yields an `.inputReport` event.
   private func handleInputReport(
+    deviceID: UInt64,
     locationID: UInt32,
     reportID: UInt8,
     report: UnsafePointer<UInt8>,
     reportLength: CFIndex
   ) {
+    guard eventAdapter.acceptsInput(deviceID: deviceID) else { return }
     var bytes = [UInt8](UnsafeBufferPointer(start: report, count: reportLength))
     if reportID != 0, bytes.first != reportID { bytes.insert(reportID, at: 0) }
     continuation?.yield(.inputReport(locationID: locationID, reportID: reportID, data: Data(bytes)))
@@ -265,6 +276,8 @@ public final class HIDDeviceStream: @unchecked Sendable {
     let element = IOHIDValueGetElement(value)
     let device = IOHIDElementGetDevice(element)
     let loc = deviceProperty(device, kIOHIDLocationIDKey)
+    let deviceID = trackingID(for: device)
+    guard eventAdapter.acceptsInput(deviceID: deviceID) else { return }
     let semanticValue = HIDElementValue(
       usagePage: IOHIDElementGetUsagePage(element),
       usage: IOHIDElementGetUsage(element),
@@ -275,6 +288,10 @@ public final class HIDDeviceStream: @unchecked Sendable {
     continuation?.yield(
       .inputValue(locationID: UInt32(truncatingIfNeeded: loc), value: semanticValue)
     )
+  }
+
+  private func trackingID(for device: IOHIDDevice) -> UInt64 {
+    UInt64(UInt(bitPattern: Unmanaged.passUnretained(device).toOpaque()))
   }
 
   /// Reads an integer property from an IOKit HID device.
@@ -312,7 +329,9 @@ public final class HIDDeviceStream: @unchecked Sendable {
     guard let context, let sender else { return }
     let device = Unmanaged<IOHIDDevice>.fromOpaque(sender).takeUnretainedValue()
     let loc = IOHIDDeviceGetProperty(device, kIOHIDLocationIDKey as CFString) as? Int ?? 0
-    Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue().handleInputReport(
+    let stream = Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue()
+    stream.handleInputReport(
+      deviceID: stream.trackingID(for: device),
       locationID: UInt32(truncatingIfNeeded: loc),
       reportID: UInt8(truncatingIfNeeded: reportID),
       report: report,

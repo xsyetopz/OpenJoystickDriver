@@ -7,7 +7,7 @@
 - **State:** OPEN
 - **Author:** julesbravo
 - **Created:** 2026-06-03T23:26:22Z
-- **Updated:** 2026-07-18T22:25:00Z
+- **Updated:** 2026-08-25T16:22:15Z
 - **Closed:** —
 - **Labels:** enhancement, help wanted
 
@@ -274,3 +274,9 @@ wrote:
 > […](#)
 
 I initially had a discord server, but people didn't really use it, so I deleted it. I may bring it back soon...
+
+### xsyetopz — 2026-08-25T16:22:15Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/8#issuecomment-5413412717)
+
+Try [0.5.0-beta.1](https://github.com/xsyetopz/OpenJoystickDriver/releases/tag/0.5.0-beta.1) and tell me if it works!

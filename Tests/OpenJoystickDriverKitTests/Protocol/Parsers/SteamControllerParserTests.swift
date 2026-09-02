@@ -62,7 +62,7 @@ private func eventExists(_ events: [ControllerEvent], _ expected: ControllerEven
 }
 
 struct SteamControllerParserTests {
-  @Test func testSteamControllerProfilesAreExperimentalAndUnverified() {
+  @Test func testSteamControllerProfilesExposeOperationalFlags() {
     let registry = ParserRegistry()
     let identifiers = [
       DeviceIdentifier(vendorID: 10462, productID: 4354),
@@ -72,14 +72,14 @@ struct SteamControllerParserTests {
     let wired = registry.runtimeProfile(for: identifiers[0])
     #expect(wired.parserName == "SteamController")
     #expect(wired.protocolVariant == .steamController)
-    #expect(wired.mappingFlags == ["lizardMode", "trackpads", "experimental", "needsHardwareTest"])
+    #expect(wired.mappingFlags == ["lizardMode", "trackpads"])
 
     let wireless = registry.runtimeProfile(for: identifiers[1])
     #expect(wireless.parserName == "SteamController")
     #expect(wireless.protocolVariant == .steamController)
     #expect(
       wireless.mappingFlags == [
-        "lizardMode", "trackpads", "wirelessReceiver", "experimental", "needsHardwareTest"
+        "lizardMode", "trackpads", "wirelessReceiver"
       ]
     )
   }

@@ -7,7 +7,7 @@
 - **State:** OPEN
 - **Author:** zunium
 - **Created:** 2026-07-18T21:00:27Z
-- **Updated:** 2026-07-18T22:26:19Z
+- **Updated:** 2026-08-25T16:21:22Z
 - **Closed:** —
 - **Labels:** enhancement, help wanted
 
@@ -100,3 +100,9 @@ Happy to run any additional capture (`analyze_gamepad.py` diff, raw input dump o
 Latest `0.4.1` does not count right now. It's better to try it on current `0.5.0-alpha.4`, but I'm working on multiple issues on top of existing GH issues.
 
 Patience is key. There is a lot to do! 0.5.0 is to be huge.
+
+### xsyetopz — 2026-08-25T16:21:22Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/19#issuecomment-5413402604)
+
+Try [0.5.0-beta.1](https://github.com/xsyetopz/OpenJoystickDriver/releases/tag/0.5.0-beta.1) and tell me if it works!

@@ -6,9 +6,5 @@
   "protocol": {
     "driver": "DS4",
     "variant": "dualShock4"
-  },
-  "provenance": {
-    "source": "linux-hid-playstation.c",
-    "verified": false
   }
 }

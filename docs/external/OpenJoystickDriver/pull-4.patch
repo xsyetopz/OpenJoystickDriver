@@ -1,0 +1,13 @@
+diff --git a/.github/workflows/release.yml b/.github/workflows/release.yml
+index 2e4ca91..78bf10d 100644
+--- a/.github/workflows/release.yml
++++ b/.github/workflows/release.yml
+@@ -81,7 +81,7 @@ jobs:
+           retention-days: 14
+ 
+       - name: Publish GitHub Release
+-        uses: softprops/action-gh-release@v2
++        uses: softprops/action-gh-release@v3
+         with:
+           tag_name: ${{ steps.release.outputs.tag }}
+           name: OpenJoystickDriver ${{ steps.release.outputs.tag }}

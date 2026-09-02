@@ -1,5 +1,56 @@
 # Changelog
 
+## 0.5.0-beta.3
+
+_2026-08-27_
+
+- Corrected compatibility guidance to model consumer family and evidence
+  separately: ASTRO C40 `9886:0024` remains SDL/PCSX2/Steam-specific, Xbox One
+  Bluetooth `045E:02FD` is not an SDL recommendation after reported BT1/BT2
+  no-input results, and C40 PS4 `9886:0025` is research-only.
+- Automatic compatibility now persists an `automatic` intent and resolves only
+  catalog-backed physical modes with adjacent evidence; unrelated families and
+  unproven identities fall back to Generic HID.
+- Standardized every machine-readable contract on the repository's single live
+  JSON Schema Draft 2020-12 definition, with CloudEvents 1.0 as the support
+  report envelope. Controller records now contain operational driver facts only;
+  source lineage remains in the source lock, testing documents, issues, and Git
+  history instead of copied provenance or verification metadata.
+- Removed obsolete machine-authored evidence levels, verification claims,
+  output-validation plans, compatibility migrations, and schema-shaped JSON
+  documentation. Schema changes now update every producer, consumer, override,
+  and generated controller record atomically without versioned schemas,
+  upcasters, aliases, or fallback decoders.
+
+- Fixed release packaging so the DriverKit extension no longer receives the
+  invalid `500001`/`500002` build versions shipped by beta.1 and beta.2;
+  semantic prereleases now map to kext-legal versions with strict validation.
+- Added plug-and-play signed-DMG setup and bounded recovery/status guidance;
+  only macOS-owned approvals remain manual, with no privileged helper or
+  allow-any DriverKit access.
+- Added fail-closed inspection of historical `systemextensionsctl` versions,
+  one-shot stale-DEXT replacement, and cancellation-safe bounded activation
+  recovery; valid developer overrides remain available while release conflicts
+  are rejected.
+- Retained and exposed the fixed canonical GIP/DriverKit ownership for the
+  original wired Xbox One controller `045E:02D1`, while preserving direct-USB
+  exclusion for entitlement-owned Microsoft devices.
+- Kept Xbox 360 startup LED `.notFound` handling best-effort and covered it by
+  behavior tests.
+- Release/tester provenance now records app and DEXT build-version domains
+  separately; the release scripts were migrated to concise stdlib-only Python
+  with obsolete shell wrappers removed.
+- Retained the source-backed `045E:02FD` tuple for explicit Xbox/Apple research
+  routes, while recording the reported BT1/BT2 SDL HIDAPI no-input result as a
+  consumer-specific failure. Automatic SDL routing therefore returns Generic
+  HID; live Apple GameController checks remain separate.
+- Preserved the hardware-verified ASTRO C40 Xbox-mode `9886:0024` SDL default,
+  as an explicit SDL/PCSX2/Steam-like route only; automatic routing does not
+  substitute it for GIP, XInput, XUSB, Nintendo, or PlayStation families.
+  Filtered Apple GameController synthetic HID devices from physical discovery,
+  and documented `9886:0025` PS4 mode as research-only pending complete
+  descriptor, calibration, input, and output evidence.
+
 All notable changes to OpenJoystickDriver are documented in this file.
 
 ## 0.5.0-beta.2
@@ -97,12 +148,14 @@ Released: 2026-08-27
   the former GameStop `1BAD:F901` SDL identity because rumble was absent or a
   rare faint pulse, and rejected Microsoft Bluetooth `045E:02E0` and
   `045E:02FD` spoof variants because neither delivered input. `xone-hid`
-  remains an experimental XInput/XUSB-style identity after its GameSir G7 SE
+  remains a legacy Xbox One Bluetooth-shaped generic-HID identity after its GameSir G7 SE
   input and rumble failure.
 - Defined compatibility profiles by the consumer API they target: `sdl2-3`
   for SDL 2/3 applications, `apple-gamecontroller` for `GCController`
   applications, `generic-hid` as the unsupported/unknown-consumer fallback,
-  and `xone-hid` for experimental XInput/XUSB-style compatibility.
+  and `xone-hid` for experimental generic-HID compatibility. Neither profile
+  is XInputHID, XUSB, or GIP emulation; `xone-hid` is retained only for legacy
+  persisted configurations.
 - Consolidated the supported headless CLI around the current `map`, `compat`,
   `extension`, `permissions`, and `diagnose` command surfaces.
 - Removed browser diagnostics and obsolete application-service start/restart

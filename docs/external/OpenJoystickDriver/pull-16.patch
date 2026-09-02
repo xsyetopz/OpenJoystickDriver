@@ -1,0 +1,13 @@
+diff --git a/Sources/OpenJoystickDriverKit/Resources/Controllers/logitech-gamepad-f310.json b/Sources/OpenJoystickDriverKit/Resources/Controllers/logitech-gamepad-f310.json
+index 4cb1d49..364fd1a 100644
+--- a/Sources/OpenJoystickDriverKit/Resources/Controllers/logitech-gamepad-f310.json
++++ b/Sources/OpenJoystickDriverKit/Resources/Controllers/logitech-gamepad-f310.json
+@@ -14,7 +14,7 @@
+       "interface": 0,
+       "endpoints": {
+         "in": 129,
+-        "out": 1
++        "out": 2
+       }
+     }
+   },

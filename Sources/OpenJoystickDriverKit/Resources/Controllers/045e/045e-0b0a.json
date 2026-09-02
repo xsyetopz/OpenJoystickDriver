@@ -9,9 +9,5 @@
     "flags": [
       "profileButton"
     ]
-  },
-  "provenance": {
-    "source": "linux-xpad.c",
-    "verified": false
   }
 }

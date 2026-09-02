@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
 """Validate OJD env structure without reading secret values into output."""
+
 from __future__ import annotations
 
 import pathlib
@@ -9,19 +9,34 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 PROFILES = {
     "dev": {
-        "CODESIGN_IDENTITY", "DEVELOPMENT_TEAM", "DEXT_BUILD_PROFILE",
-        "APPLE_DEV_IDENTITY", "GUI_PROVISIONING_PROFILE",
+        "CODESIGN_IDENTITY",
+        "DEVELOPMENT_TEAM",
+        "DEXT_BUILD_IDENTITY",
+        "DEXT_BUILD_PROFILE",
+        "DEXT_PROVISIONING_PROFILE",
+        "APPLE_DEV_IDENTITY",
+        "GUI_PROVISIONING_PROFILE",
     },
     "release": {
-        "CODESIGN_IDENTITY", "GUI_CODESIGN_IDENTITY",
+        "CODESIGN_IDENTITY",
+        "GUI_CODESIGN_IDENTITY",
         "DEVELOPMENT_TEAM",
-        "DEXT_BUILD_IDENTITY", "DEXT_BUILD_PROFILE",
+        "DEXT_BUILD_IDENTITY",
+        "DEXT_BUILD_PROFILE",
+        "DEXT_PROVISIONING_PROFILE",
         "GUI_PROVISIONING_PROFILE",
-        "DEVID_APP_IDENTITY", "NOTARIZE_APPLE_ID",
-        "NOTARIZE_PASSWORD", "NOTARIZE_KEYCHAIN_PROFILE",
+        "DEVID_APP_IDENTITY",
+        "NOTARIZE_APPLE_ID",
+        "NOTARIZE_PASSWORD",
+        "NOTARIZE_KEYCHAIN_PROFILE",
     },
 }
-LEGACY = [ROOT / ".env", ROOT / "scripts/.env", ROOT / "scripts/.env.dev", ROOT / "scripts/.env.release"]
+LEGACY = [
+    ROOT / ".env",
+    ROOT / "scripts/.env",
+    ROOT / "scripts/.env.dev",
+    ROOT / "scripts/.env.release",
+]
 ASSIGNMENT = re.compile(r"^(?:export )?([A-Z][A-Z0-9_]*)=")
 
 
@@ -44,12 +59,16 @@ def main() -> int:
     failed = False
     for path in LEGACY:
         if path.exists():
-            print(f"[FAIL] legacy env file is no longer loaded: {path.relative_to(ROOT)}")
+            print(
+                f"[FAIL] legacy env file is no longer loaded: {path.relative_to(ROOT)}"
+            )
             failed = True
     for profile, allowed in PROFILES.items():
         path = ROOT / f".env.{profile}"
         if not path.exists():
-            print(f"[INFO] {path.name} absent; use {path.name}.example or signing configure")
+            print(
+                f"[INFO] {path.name} absent; use {path.name}.example or signing configure"
+            )
             continue
         found, malformed = keys(path)
         unknown = sorted(found - allowed)
@@ -57,11 +76,15 @@ def main() -> int:
             print(f"[FAIL] {path.name} has malformed non-comment lines: {malformed}")
             failed = True
         if unknown:
-            print(f"[FAIL] {path.name} has unsupported keys: {", ".join(unknown)}")
+            print(f"[FAIL] {path.name} has unsupported keys: {', '.join(unknown)}")
             failed = True
         if not malformed and not unknown:
-            print(f"[OK] {path.name}: {len(found)} recognized key(s); values suppressed")
-    print("[OK] GitHub Actions secret key names remain owned by .github/workflows/release.yml")
+            print(
+                f"[OK] {path.name}: {len(found)} recognized key(s); values suppressed"
+            )
+    print(
+        "[OK] GitHub Actions secret key names remain owned by .github/workflows/release.yml"
+    )
     return 1 if failed else 0
 
 

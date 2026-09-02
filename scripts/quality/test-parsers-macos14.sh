@@ -230,7 +230,7 @@ func runProfileMetadataChecks() {
   require(registry.parserName(for: ds3) == "DS3", "DS3 profile should select DS3 parser")
   require(ds3Profile.protocolVariant == .dualShock3, "DS3 profile should use dualShock3 variant")
   require(
-    ds3Profile.mappingFlags == ["experimental", "needsHardwareTest"],
+    ds3Profile.mappingFlags.isEmpty,
     "DS3 profile should not advertise unimplemented sensors or battery status"
   )
 
@@ -242,8 +242,8 @@ func runProfileMetadataChecks() {
     require(registry.parserName(for: id) == "DualSense", "DualSense profile should select parser")
     require(profile.protocolVariant == .dualSense, "DualSense profile should use dualSense variant")
     require(
-      profile.mappingFlags == ["touchpad", "microphoneMute", "experimental", "needsHardwareTest"],
-      "DualSense profile should expose source-backed experimental input flags"
+      profile.mappingFlags == ["touchpad", "microphoneMute"],
+      "DualSense profile should expose operational input flags"
     )
   }
 
@@ -252,8 +252,8 @@ func runProfileMetadataChecks() {
   require(registry.parserName(for: steamWired) == "SteamController", "Steam wired should select parser")
   require(steamWiredProfile.protocolVariant == .steamController, "Steam wired should use variant")
   require(
-    steamWiredProfile.mappingFlags == ["lizardMode", "trackpads", "experimental", "needsHardwareTest"],
-    "Steam wired profile should expose source-backed experimental flags"
+    steamWiredProfile.mappingFlags == ["lizardMode", "trackpads"],
+    "Steam wired profile should expose operational flags"
   )
 
   let steamWireless = DeviceIdentifier(vendorID: 10462, productID: 4418)
@@ -268,7 +268,7 @@ func runProfileMetadataChecks() {
   )
   require(
     steamWirelessProfile.mappingFlags == [
-      "lizardMode", "trackpads", "wirelessReceiver", "experimental", "needsHardwareTest",
+      "lizardMode", "trackpads", "wirelessReceiver",
     ],
     "Steam wireless receiver profile must retain wirelessReceiver lifecycle flag"
   )
@@ -278,7 +278,7 @@ func runProfileMetadataChecks() {
   require(registry.parserName(for: switchPro) == "SwitchPro", "Switch Pro profile should select parser")
   require(switchProfile.protocolVariant == .switchPro, "Switch Pro profile should use variant")
   require(
-    switchProfile.mappingFlags == ["usbHandshake", "experimental", "needsHardwareTest"],
+    switchProfile.mappingFlags == ["usbHandshake"],
     "Switch Pro profile should not advertise unimplemented calibration, rumble, or IMU"
   )
 }

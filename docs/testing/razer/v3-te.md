@@ -45,4 +45,6 @@ controller firmware if known, exact OJD commit, selected USB route, and any miss
 incorrect controls. The output can contain raw controller packets; inspect it
 before publishing.
 
-Passing schema validation alone does not make the record hardware-verified. The record retains `verified: false` until handshake, every input, reconnect, rumble, and lighting behavior claimed by OJD are observed on the device.
+Passing schema validation alone does not prove complete support. Keep the testing document explicit
+about missing handshake, input, reconnect, rumble, and lighting observations until they are observed
+on the device.

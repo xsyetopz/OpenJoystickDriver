@@ -64,4 +64,6 @@ and results for handshake, every control, reconnect, the indicator, and each
 exposed actuator. Probe output can contain raw controller packets; inspect and
 redact it before publication.
 
-The endpoint capture, passing validation, or generating an output plan do not make the record hardware-verified. Keep `verified: false` until accepted physical evidence covers input, reconnect, indicator, and output behavior.
+The endpoint capture, passing validation, or generating an output plan do not prove complete
+support. Keep the testing document explicit about missing input, reconnect, indicator, and output
+observations until accepted physical evidence covers them.

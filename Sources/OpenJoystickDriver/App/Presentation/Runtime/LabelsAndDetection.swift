@@ -49,10 +49,12 @@ enum RuntimePresentation {
 
   static func compatibilityLabel(_ identity: CompatibilityIdentity) -> String {
     switch identity {
+    case .automatic: return "Automatic"
     case .genericHID: return "Generic HID"
     case .sdl2_3: return "SDL2/3"
     case .appleGameController: return "Apple GameController"
-    case .xoneHID: return "Xbox One HID"
+    case .xoneHID: return "Xbox One HID (legacy generic HID)"
+    case .xbox360HID: return "Xbox 360 HID"
     }
   }
 

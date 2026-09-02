@@ -30,6 +30,15 @@ struct CLIGrammarTests {
     #expect(try CLIGrammar(arguments: arguments).invocation == expected)
   }
 
+  #if DEBUG
+    @Test func debugGrammarRecognizesPassiveCommand() throws {
+      let invocation = try CLIGrammar(arguments: [
+        "diagnose", "usb-passive", "--vid", "3537", "--pid", "1010"
+      ]).invocation
+      #expect(invocation == .diagnose(.usbPassive(["--vid", "3537", "--pid", "1010"])))
+    }
+  #endif
+
   @Test(arguments: [
     [], ["run"], ["list"], ["input"], ["logs"], ["updates"], ["report"], ["physical-output"],
     ["compatibility"], ["selftest"], ["sysext"], ["install"], ["uninstall"], ["start"], ["restart"],

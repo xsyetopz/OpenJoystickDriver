@@ -38,7 +38,7 @@ struct SwitchProParserTests {
 
     #expect(registry.parserName(for: identifier) == "SwitchPro")
     #expect(profile.protocolVariant == .switchPro)
-    #expect(profile.mappingFlags == ["usbHandshake", "experimental", "needsHardwareTest"])
+    #expect(profile.mappingFlags == ["usbHandshake"])
     #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
     #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
   }

@@ -38,8 +38,8 @@ extension RemappingRoutingCore {
     controls.outputSuppressed || !controls.compatibilityOutputAllowed
   }
 
-  func notifyCompatibilityStop(_ identifier: DeviceIdentifier) {
-    (compatibility as? any ControllerLifecycleListener)?.controllerDidStop(identifier)
+  func notifyCompatibilityStop(_ identifier: DeviceIdentifier) async {
+    await (compatibility as? any ControllerLifecycleListener)?.controllerDidStop(identifier)
   }
 
   func ensureRunning() throws {

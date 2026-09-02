@@ -95,6 +95,57 @@ struct ControllerRecordProbePlanTests {
     }
   }
 
+  @Test func rejectsMissingOrWrongCurrentSchemaIdentity() {
+    #expect(throws: ControllerRecordProbeError.self) {
+      try ControllerRecordProbePlan(data: try recordData(schemaID: nil))
+    }
+    #expect(throws: ControllerRecordProbeError.self) {
+      try ControllerRecordProbePlan(data: try recordData(schemaID: "controller-v1"))
+    }
+  }
+
+  @Test func rejectsRemovedOrUnknownFields() {
+    #expect(throws: ControllerRecordProbeError.self) {
+      try ControllerRecordProbePlan(data: try recordData(extraRootField: "provenance"))
+    }
+    #expect(throws: ControllerRecordProbeError.self) {
+      try ControllerRecordProbePlan(data: try recordData(extraProtocolField: "confidence"))
+    }
+  }
+
+  @Test func rejectsSchemaInvalidOptionalValues() {
+    for mutation in [
+      { (record: inout [String: Any]) in record["usb"] = [:] },
+      { (record: inout [String: Any]) in record["usb"] = ["interface": 0] },
+      { (record: inout [String: Any]) in
+        record["usb"] = ["post_handshake_settle_ms": 60_001]
+      },
+      { (record: inout [String: Any]) in record["usb"] = NSNull() },
+      { (record: inout [String: Any]) in
+        var protocolConfig = record["protocol"] as? [String: Any] ?? [:]
+        protocolConfig["flags"] = []
+        record["protocol"] = protocolConfig
+      },
+      { (record: inout [String: Any]) in
+        var protocolConfig = record["protocol"] as? [String: Any] ?? [:]
+        protocolConfig["startup_packets"] = ["powerOn", "powerOn"]
+        record["protocol"] = protocolConfig
+      },
+      { (record: inout [String: Any]) in
+        var protocolConfig = record["protocol"] as? [String: Any] ?? [:]
+        protocolConfig["flags"] = ["gyro"]
+        record["protocol"] = protocolConfig
+      },
+      { (record: inout [String: Any]) in
+        record["usb"] = ["endpoints": ["in": 130, "out": 2]]
+      }
+    ] {
+      #expect(throws: ControllerRecordProbeError.self) {
+        try ControllerRecordProbePlan(data: try mutatedRecord(mutation))
+      }
+    }
+  }
+
   private func recordData(
     driver: String = "GIP",
     variant: String = "xboxOne",
@@ -104,7 +155,10 @@ struct ControllerRecordProbePlanTests {
     configuration: String? = nil,
     settleMilliseconds: Int? = nil,
     startupPackets: [String]? = nil,
-    keepAliveEnabled: Bool? = nil
+    keepAliveEnabled: Bool? = nil,
+    schemaID: String? = ControllerRecordDocument.schemaID,
+    extraRootField: String? = nil,
+    extraProtocolField: String? = nil
   ) throws -> Data {
     let defaults = driver == "Xbox360" ? (129, 1) : (130, 2)
     var usb: [String: Any] = [:]
@@ -117,14 +171,22 @@ struct ControllerRecordProbePlanTests {
     var protocolConfig: [String: Any] = ["driver": driver, "variant": variant]
     if let startupPackets { protocolConfig["startup_packets"] = startupPackets }
     if let keepAliveEnabled { protocolConfig["keep_alive"] = keepAliveEnabled }
+    if let extraProtocolField { protocolConfig[extraProtocolField] = true }
 
     var record: [String: Any] = [
-      "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
-        + "Resources/Schemas/controller.schema.json", "vendor_id": 5_426, "product_id": 2_627,
-      "transport": transport, "protocol": protocolConfig,
-      "provenance": ["source": "local-hardware", "verified": false]
+      "vendor_id": 5_426, "product_id": 2_627, "transport": transport,
+      "protocol": protocolConfig
     ]
+    if let schemaID { record["$schema"] = schemaID }
+    if let extraRootField { record[extraRootField] = ["source": "legacy"] }
     if !usb.isEmpty { record["usb"] = usb }
+    return try JSONSerialization.data(withJSONObject: record)
+  }
+
+  private func mutatedRecord(_ mutation: (inout [String: Any]) -> Void) throws -> Data {
+    let data = try recordData()
+    var record = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+    mutation(&record)
     return try JSONSerialization.data(withJSONObject: record)
   }
 }

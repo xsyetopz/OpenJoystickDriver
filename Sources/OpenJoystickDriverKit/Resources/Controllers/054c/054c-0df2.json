@@ -8,13 +8,7 @@
     "variant": "dualSense",
     "flags": [
       "touchpad",
-      "microphoneMute",
-      "experimental",
-      "needsHardwareTest"
+      "microphoneMute"
     ]
-  },
-  "provenance": {
-    "source": "linux-hid-playstation.c",
-    "verified": false
   }
 }

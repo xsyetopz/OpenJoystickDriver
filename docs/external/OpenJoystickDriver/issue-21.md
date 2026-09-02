@@ -7,7 +7,7 @@
 - **State:** OPEN
 - **Author:** TanelLaas
 - **Created:** 2026-07-22T18:40:00Z
-- **Updated:** 2026-07-22T20:17:17Z
+- **Updated:** 2026-08-27T12:36:31Z
 - **Closed:** —
 - **Labels:** enhancement, help wanted
 
@@ -238,3 +238,17 @@ It's quite interesting how many users of macOS happen to actually find this appl
 "See a need, fill a need!" -- Bigweld, Robots (2005)
 
 Should I consider setting up a community discord for my projects, or is GitHub enough?
+
+### xsyetopz — 2026-08-25T16:21:08Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/21#issuecomment-5413399805)
+
+Try [0.5.0-beta.1](https://github.com/xsyetopz/OpenJoystickDriver/releases/tag/0.5.0-beta.1) and tell me if it works!
+
+### lunarephemera — 2026-08-27T12:36:20Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/21#issuecomment-5439225369)
+
+> Should I consider setting up a community discord for my projects
+
+Definitely

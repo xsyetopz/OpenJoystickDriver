@@ -67,5 +67,5 @@ OpenJoystickDriver --headless controller output plan 12933 1588
 
 Attach the probe and output results to issue #21. Include the macOS version,
 Mac model, controller firmware if known, exact OJD commit, selected USB route and
-ownership results, and any USB transfer error. Keep `verified: false` until input,
+ownership results, and any USB transfer error. Do not claim support until input,
 reconnect, and any claimed output behavior pass on physical hardware.

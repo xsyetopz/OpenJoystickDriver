@@ -26,7 +26,7 @@ Use it when a controller works in OpenJoystickDriver but not in a game, emulator
 
 ## Why OpenJoystickDriver
 
-OpenJoystickDriver normalizes physical controller input into controller outputs that apps can understand. It provides compatibility modes for SDL, Apple GameController, Generic HID, and an experimental Xbox One HID target, with common diagnostics and checks in one repo-controlled workflow.
+OpenJoystickDriver normalizes physical controller input into controller outputs that apps can understand. It provides compatibility modes for SDL, Apple GameController, Generic HID, and family-adjacent generic-HID targets, with common diagnostics and checks in one repo-controlled workflow.
 
 ## Status
 
@@ -100,13 +100,17 @@ To uninstall OpenJoystickDriver completely:
 | Steam, PCSX2, and other SDL 2/3 apps | Compatibility + `SDL2/3` | Hardware-verified ASTRO HIDAPI identity with Xbox 360-style input and rumble. |
 | Native macOS apps using `GCController` | Compatibility + `Apple GameController` | Targets GameController.framework consumers. |
 | Apps that inspect HID descriptors | Compatibility + `Generic HID` | Descriptor-driven HID surface. |
-| A picky app expecting Xbox One HID | Compatibility + `Xbox One HID` | Experimental spoof identity for targeted testing; it is not a general fallback. |
+| A consumer needing Xbox 360-family generic HID | Compatibility + `Xbox 360 HID` | Family-adjacent generic-HID descriptor; not XInputHID, XUSB, or GIP emulation. |
 
 CLI equivalents from the installed app bundle:
 
 ```bash
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat set sdl2-3
 ```
+
+`xone-hid` is a legacy persisted Xbox One Bluetooth-shaped generic-HID
+identity, retained only for existing configurations and not offered as a new
+selection. It is not XInputHID, XUSB, or GIP emulation.
 
 ## Troubleshooting
 
@@ -169,6 +173,26 @@ For application, generated USB DriverKit, signing, and notarization work, start 
 - [scripts/README.md](scripts/README.md)
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [docs/development/architecture.md](docs/development/architecture.md)
+
+### Tester and release distribution
+
+The supported distribution paths are intentionally separate and ordered:
+
+1. For private tester sharing, a maintainer with locally configured Developer ID
+   host and DEXT signing assets runs `./scripts/ojd package tester`. The command
+   creates a named, unnotarized DMG in `.build/tester-artifacts/` containing the
+   app, embedded DriverKit extension, source commit, and unique bundle build
+   metadata. It does not install or publish anything, and the recipient does not
+   need a source checkout. It is Developer ID signed but unnotarized; testers may need an
+   explicit Gatekeeper override. Apple Development artifacts are not supported
+   for arbitrary community tester distribution.
+2. For published releases, push a SemVer tag or manually dispatch
+   `.github/workflows/release.yml` with an existing SemVer tag. GitHub Actions
+   checks out that tag, builds with Developer ID signing, notarizes and staples
+   the app, and publishes the release DMG.
+
+See [scripts/README.md](scripts/README.md) for signing prerequisites and the
+exact artifact/reporting expectations.
 
 ## Contributing
 

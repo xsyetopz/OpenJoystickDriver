@@ -5,7 +5,7 @@ Use this test for [OpenJoystickDriver issue #11](https://github.com/xsyetopz/Ope
 The current record uses Linux's Xbox 360 packet layout with the hardware-observed
 interrupt endpoints `0x81`/`0x02`. OJD's parser maps the XInput button bitfield
 to named controls. Check the reported labels in Controller Settings Live or with
-`OpenJoystickDriver --headless controller state`. Keep `verified: false` until
+`OpenJoystickDriver --headless controller state`. Do not claim support until
 the reporter confirms the complete mapping.
 
 Record validation is signing-free. Raw-input verification requires a development

@@ -1,78 +1,62 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
-  "title": "OpenJoystickDriver controller source override",
-  "oneOf": [
-    {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "$schema",
-        "operation",
-        "record"
-      ],
-      "properties": {
-        "$schema": {
-          "const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json"
-        },
-        "operation": {
-          "const": "add"
-        },
-        "record": {
-          "$ref": "controller.schema.json"
-        }
-      }
-    },
-    {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "$schema",
-        "operation",
-        "vendor_id",
-        "product_id",
-        "set"
-      ],
-      "properties": {
-        "$schema": {
-          "const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json"
-        },
-        "operation": {
-          "const": "patch"
-        },
-        "vendor_id": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 65535
-        },
-        "product_id": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 65535
-        },
-        "set": {
-          "type": "object",
-          "minProperties": 1,
-          "additionalProperties": false,
-          "properties": {
-            "transport": {
-              "enum": [
-                "usb",
-                "hid"
-              ]
-            },
-            "protocol": {
-              "$ref": "controller.schema.json#/$defs/protocol"
-            },
-            "usb": {
-              "$ref": "controller.schema.json#/$defs/usbOverride"
-            },
-            "provenance": {
-              "$ref": "controller.schema.json#/$defs/provenance"
-            }
-          }
-        }
-      }
-    }
-  ]
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+	"title": "OpenJoystickDriver controller source override",
+	"oneOf": [
+		{
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["$schema", "operation", "record"],
+			"properties": {
+				"$schema": {
+					"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json"
+				},
+				"operation": {
+					"const": "add"
+				},
+				"record": {
+					"$ref": "controller.schema.json"
+				}
+			}
+		},
+		{
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["$schema", "operation", "vendor_id", "product_id", "set"],
+			"properties": {
+				"$schema": {
+					"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json"
+				},
+				"operation": {
+					"const": "patch"
+				},
+				"vendor_id": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 65535
+				},
+				"product_id": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"set": {
+					"type": "object",
+					"minProperties": 1,
+					"additionalProperties": false,
+					"properties": {
+						"transport": {
+							"enum": ["usb", "hid"]
+						},
+						"protocol": {
+							"$ref": "controller.schema.json#/$defs/protocol"
+						},
+						"usb": {
+							"$ref": "controller.schema.json#/$defs/usbOverride"
+						}
+					}
+				}
+			}
+		}
+	]
 }

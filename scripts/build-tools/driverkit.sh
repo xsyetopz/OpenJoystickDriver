@@ -33,7 +33,15 @@ _require_pinned_swifterkit() {
 
 _driverkit_versions() {
   DRIVERKIT_SHORT_VERSION="${OJD_BUNDLE_SHORT_VERSION:-$OJD_DEFAULT_BUNDLE_SHORT_VERSION}"
-  DRIVERKIT_BUILD_VERSION="${DEXT_BUNDLE_VERSION:-${OJD_BUNDLE_VERSION:-1}}"
+  if [[ -n "${DEXT_BUNDLE_VERSION:-}" ]]; then
+    local resolve_args=(--resolve-dext "$DRIVERKIT_SHORT_VERSION" "$DEXT_BUNDLE_VERSION")
+    [[ "${OJD_ENV:-}" == "release" ]] && resolve_args+=(--release)
+    DRIVERKIT_BUILD_VERSION="$(python3 "$PROJECT_DIR/scripts/release/bundle_version.py" \
+      "${resolve_args[@]}")" || exit 2
+  else
+    DRIVERKIT_BUILD_VERSION="$(python3 "$PROJECT_DIR/scripts/release/bundle_version.py" \
+      --resolve-dext "$DRIVERKIT_SHORT_VERSION")" || exit 2
+  fi
 }
 
 generate_driverkit_project() {

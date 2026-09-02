@@ -145,16 +145,16 @@ import Testing
       return
     }
     let report = try JSONDecoder().decode(SupportReport.self, from: Data(contentsOf: outputURL))
-    #expect(report.controllers.count == 1)
-    guard let controller = report.controllers.first else {
+    #expect(report.data.controllers.count == 1)
+    guard let controller = report.data.controllers.first else {
       Issue.record("Expected the report to contain the connected controller")
       return
     }
     #expect(controller.serialNumberPresent)
-    #expect(report.privacy.includesRawSerialNumbers == false)
-    #expect(report.privacy.includesFilesystemPaths == false)
-    #expect(report.privacy.includesHIDLocationIDs == false)
-    #expect(report.hidGamepads.count == 1)
+    #expect(report.data.privacy.includesRawSerialNumbers == false)
+    #expect(report.data.privacy.includesFilesystemPaths == false)
+    #expect(report.data.privacy.includesHIDLocationIDs == false)
+    #expect(report.data.hidGamepads.count == 1)
   }
 
   @Test func collectingDiagnosticsDoesNotLeaveReportSaving() async throws {

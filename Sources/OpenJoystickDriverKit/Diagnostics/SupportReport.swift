@@ -1,12 +1,25 @@
 import Foundation
 
+public enum GameControllerProbeConfiguration {
+  public static let defaultSeconds = 5
+  public static let minimumSeconds = 1
+  public static let maximumSeconds = 60
+
+  public static func boundedSeconds(_ value: Int) -> Int {
+    min(max(value, minimumSeconds), maximumSeconds)
+  }
+}
+
 /// A user-reviewable, machine-readable snapshot for controller support requests.
 ///
 /// Raw serial values, filesystem paths, packet payloads, HID location IDs, and
 /// free-form DriverKit discovery text are intentionally not represented.
 public struct SupportReport: Codable, Sendable {
-  /// Increment when the report's encoded contract changes incompatibly.
-  public static let currentSchemaVersion = 4
+  public static let supportDiagnosticType = "com.openjoystickdriver.support.diagnostic"
+  public static let source = "urn:openjoystickdriver:support"
+  public static let dataSchema =
+    "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/"
+    + "report.schema.json#/$defs/supportDiagnosticData"
 
   public struct Privacy: Codable, Sendable {
     public let includesRawSerialNumbers: Bool
@@ -35,7 +48,6 @@ public struct SupportReport: Codable, Sendable {
   }
 
   public struct Configuration: Codable, Sendable {
-    public let compatibilityIdentity: String?
     public let userSpaceVirtualDeviceEnabled: Bool?
   }
 
@@ -67,18 +79,30 @@ public struct SupportReport: Codable, Sendable {
     public let isGameControllerSupported: Bool?
   }
 
-  public let schemaVersion: Int
-  public let generatedAt: String
-  public let privacy: Privacy
-  public let system: System
-  public let permissions: Permissions
-  public let applicationService: ApplicationService
-  public let configuration: Configuration
-  public let controllers: [Controller]
-  public let outputValidationPlans: [PhysicalOutputValidationPlan]
-  public let hidGamepads: [HIDGamepad]
-  public let appleGameControllerAudit: AppleGameControllerSupportAudit?
-  public let notes: [String]
+  public struct Payload: Codable, Sendable {
+    public let privacy: Privacy
+    public let system: System
+    public let permissions: Permissions
+    public let applicationService: ApplicationService
+    public let configuration: Configuration
+    public let controllers: [Controller]
+    public let hidGamepads: [HIDGamepad]
+    public let appleGameControllerAudit: AppleGameControllerSupportAudit?
+    public let notes: [String]
+  }
+
+  public let specversion: String
+  public let id: String
+  public let source: String
+  public let type: String
+  public let time: String
+  public let datacontenttype: String
+  public let dataschema: String
+  public let data: Payload
+
+  private enum CodingKeys: String, CodingKey {
+    case specversion, id, source, type, time, datacontenttype, dataschema, data
+  }
 
   /// Creates a redacted report from application service and local diagnostic snapshots.
   public init(
@@ -94,32 +118,40 @@ public struct SupportReport: Codable, Sendable {
     status: ApplicationServiceStatusPayload?,
     virtualDiagnostics: ApplicationServiceVirtualDeviceDiagnosticsPayload?
   ) {
-    schemaVersion = Self.currentSchemaVersion
-    self.generatedAt = ISO8601DateFormatter().string(from: generatedAt)
-    privacy = Privacy(
+    let generatedAtString = ISO8601DateFormatter().string(from: generatedAt)
+    specversion = "1.0"
+    id = UUID().uuidString
+    self.source = Self.source
+    type = Self.supportDiagnosticType
+    time = generatedAtString
+    datacontenttype = "application/json"
+    dataschema = Self.dataSchema
+    let privacy = Privacy(
       includesRawSerialNumbers: false,
       includesFilesystemPaths: false,
       includesPacketPayloads: false,
       includesHIDLocationIDs: false,
       includesDeviceProductNames: true
     )
-    system = System(appVersion: appVersion, macOSVersion: macOSVersion, architecture: architecture)
-    permissions = Permissions(
+    let system = System(
+      appVersion: appVersion,
+      macOSVersion: macOSVersion,
+      architecture: architecture
+    )
+    let permissions = Permissions(
       inputMonitoring: inputMonitoring.description,
       accessibility: status?.accessibility ?? "unknown"
     )
-    applicationService = ApplicationService(
+    let applicationService = ApplicationService(
       installed: applicationServiceInstalled,
       connected: applicationServiceConnected,
       runtimeState: applicationServiceHealth?.state,
       activeCount: applicationServiceHealth?.activeCount
     )
-    self.appleGameControllerAudit = appleGameControllerAudit
-    configuration = Configuration(
-      compatibilityIdentity: status?.compatibilityIdentity,
+    let configuration = Configuration(
       userSpaceVirtualDeviceEnabled: status?.userSpaceVirtualDeviceEnabled
     )
-    controllers = (status?.connectedDevices ?? []).map {
+    let controllers = (status?.connectedDevices ?? []).map {
       Controller(
         name: $0.name,
         vendorID: $0.vendorID,
@@ -141,13 +173,7 @@ public struct SupportReport: Codable, Sendable {
       if $0.productID != $1.productID { return $0.productID < $1.productID }
       return $0.name < $1.name
     }
-    outputValidationPlans = (status?.connectedDevices ?? []).map(
-      PhysicalOutputValidationPlan.init(device:)
-    ).filter { !$0.steps.isEmpty }.sorted {
-      if $0.vendorID != $1.vendorID { return $0.vendorID < $1.vendorID }
-      return $0.productID < $1.productID
-    }
-    hidGamepads = (virtualDiagnostics?.hidGamepads ?? []).map {
+    let hidGamepads = (virtualDiagnostics?.hidGamepads ?? []).map {
       HIDGamepad(
         vendorID: $0.vendorID,
         productID: $0.productID,
@@ -174,11 +200,21 @@ public struct SupportReport: Codable, Sendable {
     if appleGameControllerAudit == nil {
       reportNotes.append("Apple GameController catalog audit was unavailable.")
     }
-    notes = reportNotes
+    data = Payload(
+      privacy: privacy,
+      system: system,
+      permissions: permissions,
+      applicationService: applicationService,
+      configuration: configuration,
+      controllers: controllers,
+      hidGamepads: hidGamepads,
+      appleGameControllerAudit: appleGameControllerAudit,
+      notes: reportNotes
+    )
   }
 
-  /// Encodes the report as stable, reviewable JSON.
-  public func encodedJSON() throws -> Data {
+  /// Encodes the report as stable, reviewable CloudEvents structured JSON.
+  public func encodedJSON() throws -> Foundation.Data {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     return try encoder.encode(self)

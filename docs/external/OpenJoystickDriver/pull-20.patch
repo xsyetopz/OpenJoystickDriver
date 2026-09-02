@@ -1,0 +1,31 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index fedebf8..c5cd061 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -54,6 +54,9 @@ All notable changes to OpenJoystickDriver are documented in this file.
+ 
+ ### Fixed
+ 
++- Cleared the internal option flag from GIP rumble frames, which Xbox One
++  controllers silently discard; physical rumble on all four motors verified on
++  045E:02D1 hardware.
+ - Made manual update checks select the greatest valid GitHub tag for the chosen
+   stable or prerelease channel and report that remote tag when the installed
+   build is already newer.
+diff --git a/Sources/OpenJoystickDriverKit/Protocol/GIP/GIPParser.swift b/Sources/OpenJoystickDriverKit/Protocol/GIP/GIPParser.swift
+index b1c5cf1..ea85dba 100644
+--- a/Sources/OpenJoystickDriverKit/Protocol/GIP/GIPParser.swift
++++ b/Sources/OpenJoystickDriverKit/Protocol/GIP/GIPParser.swift
+@@ -158,8 +158,11 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, @unchecked Send
+   ) throws {
+     let seq = sequencer.next(for: GIPCommand.rumble)
+     let activation: UInt8 = 0x0F  // all four motors
++    // The options byte must be 0x00: controllers silently discard rumble frames
++    // flagged with GIPOption.internal (verified on 045E:02D1 hardware), matching
++    // the unflagged rumble commands sent by the Linux xone and xpad drivers.
+     let packet: [UInt8] = [
+-      GIPCommand.rumble, GIPOption.internal, seq, 0x09, 0x00, activation, ltMotor, rtMotor, left,
++      GIPCommand.rumble, 0x00, seq, 0x09, 0x00, activation, ltMotor, rtMotor, left,
+       right, 0x20, 0x00, 0x00,  // duration=32, delay=0, repeat=0
+     ]
+     _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)

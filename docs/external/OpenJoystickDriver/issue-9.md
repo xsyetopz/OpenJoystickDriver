@@ -7,7 +7,7 @@
 - **State:** OPEN
 - **Author:** jonasw8
 - **Created:** 2026-06-09T07:59:30Z
-- **Updated:** 2026-07-19T07:11:36Z
+- **Updated:** 2026-08-25T16:22:08Z
 - **Closed:** —
 - **Labels:** enhancement, help wanted
 
@@ -118,3 +118,25 @@ jonas@192 OpenJoystickDriver-main %
 > jonas@192 OpenJoystickDriver-main % ./scripts/ojd diagnose record Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-0719.json --validate-only [1/1] Planning build Building for debugging... ld: warning: building for macOS-10.15, but linking with dylib '/usr/local/opt/libusb/lib/libusb-1.0.0.dylib' which was built for newer version 14.0 [107/107] Applying OpenJoystickDriverHIDTool Build of product 'OpenJoystickDriverHIDTool' complete! (14.52s) RECORD identity="Controller 045e:0719" vid=1118 pid=1817 driver=Xbox360 interface=0 in=0x81 out=0x1 configuration=current startup=none RECORD_VALIDATION result=valid jonas@192 OpenJoystickDriver-main %
 
 Interesting...
+
+### nabekhan — 2026-08-19T02:47:18Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/9#issuecomment-5336890395)
+
+Maybe this would help? https://github.com/nabekhan/X360MacOSReceiverBridge - warning: heavy AI but inputs work
+
+### xsyetopz — 2026-08-19T05:59:56Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/9#issuecomment-5338143800)
+
+> Maybe this would help? https://github.com/nabekhan/X360MacOSReceiverBridge - warning: heavy AI but inputs work
+
+I can start working on it again once Apple approves my provisioning updates because the old daemon-based solution is replaced due to memory leak persistence, and because Xbox Series X and a few other types of controllers need special provisioning *yet again*, for very specific Xbox controllers.
+
+*sigh*
+
+### xsyetopz — 2026-08-25T16:22:08Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/9#issuecomment-5413411478)
+
+Try [0.5.0-beta.1](https://github.com/xsyetopz/OpenJoystickDriver/releases/tag/0.5.0-beta.1) and tell me if it works!

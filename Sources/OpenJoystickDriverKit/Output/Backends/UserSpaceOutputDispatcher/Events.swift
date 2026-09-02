@@ -24,6 +24,10 @@ extension UserSpaceOutputDispatcher {
   }
 
   func xboxGuideReport(for event: ControllerEvent) -> [UInt8]? {
+    Self.xboxGuideReport(for: event)
+  }
+
+  static func xboxGuideReport(for event: ControllerEvent) -> [UInt8]? {
     switch event {
     case .buttonPressed(let button) where button == .guide || button == .ps: return [0x02, 0x01]
     case .buttonReleased(let button) where button == .guide || button == .ps: return [0x02, 0x00]
@@ -31,7 +35,7 @@ extension UserSpaceOutputDispatcher {
     }
   }
 
-  // MARK: - Button mapping (XInputHID order)
+  // MARK: - Button mapping (XInput semantic order)
 
   func buttonBit(for button: Button) -> UInt32? {
     switch button {

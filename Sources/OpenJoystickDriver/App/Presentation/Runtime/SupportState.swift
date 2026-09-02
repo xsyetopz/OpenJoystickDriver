@@ -1,5 +1,8 @@
 import Foundation
 import OpenJoystickDriverKit
+#if canImport(AppKit)
+  import AppKit
+#endif
 
 struct SupportDiagnosticsPresentation: Sendable, Equatable {
   enum VirtualControllerOutputState: String, Sendable, Equatable {
@@ -177,6 +180,20 @@ enum RuntimeSupportLogsState: Sendable {
       }
     }
   }
+
+  #if canImport(AppKit)
+    func copySupportReport() async -> Bool {
+      let outputURL = FileManager.default.temporaryDirectory
+        .appendingPathComponent("OpenJoystickDriver-support-\(UUID().uuidString).json")
+      await saveSupportReport(to: outputURL)
+      defer { try? FileManager.default.removeItem(at: outputURL) }
+      guard let data = try? Data(contentsOf: outputURL),
+        let report = String(data: data, encoding: .utf8)
+      else { return false }
+      NSPasteboard.general.clearContents()
+      return NSPasteboard.general.setString(report, forType: .string)
+    }
+  #endif
 
   var defaultSupportReportFilename: String { SupportReportService.defaultFilename() }
 

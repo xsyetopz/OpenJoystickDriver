@@ -10,9 +10,5 @@
       "shareButton",
       "shareOffset"
     ]
-  },
-  "provenance": {
-    "source": "linux-xpad.c",
-    "verified": false
   }
 }

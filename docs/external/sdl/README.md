@@ -12,4 +12,5 @@ Refresh from the repository root:
 | --- | --- | --- | --- |
 | Issue | [#15790](issue-15790.md) | CLOSED | macOS: Unable to use Logitech F310 in Xinput mode |
 | Issue | [#15663](issue-15663.md) | OPEN | DARWIN: virtual HID gamepad input works, but rumble isn't sent |
+| Issue | [#11002](issue-11002.md) | CLOSED | Wired Xbox 360 controller broken on macOS Sequoia |
 | Pull request | [#15183](pull-15183.md) | MERGED | extract capabilities for 360 controllers over libusb |

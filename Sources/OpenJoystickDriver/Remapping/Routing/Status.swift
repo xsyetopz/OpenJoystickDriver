@@ -26,7 +26,7 @@ extension RemappingRoutingCore {
       {
         for identifier in sortedIdentifiers {
           guard case .compatibility = routes[identifier]?.selection else { continue }
-          notifyCompatibilityStop(identifier)
+          await notifyCompatibilityStop(identifier)
         }
       }
     }

@@ -15,6 +15,7 @@ import Foundation
   private var managerTask: Task<Void, Never>?
   private var recordsByDeviceID: [UInt64: ClientRecord] = [:]
   private var deviceIDsByLocation: [UInt32: Set<UInt64>] = [:]
+  private let eventAdapter = SynchronizedPhysicalHIDBackendEventAdapter()
 
   init(virtualProfile _: VirtualDeviceProfile, additionalProfileIdentifiers: [DeviceIdentifier]) {
     var criteria = [
@@ -48,6 +49,7 @@ import Foundation
   }
 
   func getFeatureReport(locationID: UInt32, request: PhysicalHIDFeatureReadRequest) async -> Data? {
+    guard eventAdapter.acceptsFeedback(locationID: locationID) else { return nil }
     for client in clients(at: locationID) {
       do {
         let data = try await client.dispatchGetReportRequest(
@@ -63,6 +65,7 @@ import Foundation
   private func setReport(locationID: UInt32, report: PhysicalHIDOutputReport, type: HIDReportType)
     async -> Bool
   {
+    guard eventAdapter.acceptsFeedback(locationID: locationID) else { return false }
     for client in clients(at: locationID) {
       do {
         try await client.dispatchSetReportRequest(
@@ -89,7 +92,7 @@ import Foundation
         case .deviceMatched(let reference):
           await add(reference: reference, continuation: continuation)
         case .deviceRemoved(let reference):
-          remove(deviceID: reference.deviceID, continuation: continuation)
+          remove(reference: reference, continuation: continuation)
         @unknown default: break
         }
       }
@@ -110,9 +113,20 @@ import Foundation
     let serialNumber = await client.serialNumber
     let productName = await client.product
     let locationID = UInt32(truncatingIfNeeded: await client.locationID ?? reference.deviceID)
-    guard !UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serialNumber),
-      productName != UserSpaceVirtualDeviceConstants.product
-    else { return }
+    let syntheticProperty = await client["kIOHIDGCSyntheticDeviceKey"]?.unsafeObject
+    let transport = Self.transportName(await client.transport)
+    guard PhysicalHIDBackendEventPolicy.acceptsDevice(
+      serialNumber: serialNumber,
+      productName: productName,
+      transport: transport,
+      locationID: locationID,
+      syntheticProperty: syntheticProperty
+    ) else { return }
+    guard eventAdapter.add(
+      deviceID: reference.deviceID,
+      locationID: locationID,
+      syntheticProperty: syntheticProperty
+    ) else { return }
 
     do { try await client.seizeDevice() } catch {
       print("[CoreHIDAccessBackend] Non-exclusive access for \(vendorID):\(productID): \(error)")
@@ -120,7 +134,12 @@ import Foundation
 
     let task = Task { [weak self] in
       guard let self else { return }
-      await self.monitor(client: client, locationID: locationID, continuation: continuation)
+      await self.monitor(
+        client: client,
+        deviceID: reference.deviceID,
+        locationID: locationID,
+        continuation: continuation
+      )
     }
     recordsByDeviceID[reference.deviceID] = ClientRecord(
       client: client,
@@ -137,16 +156,18 @@ import Foundation
         serialNumber: serialNumber,
         locationID: locationID,
         productName: productName,
-        transport: Self.transportName(await client.transport)
+        transport: transport
       )
     )
   }
 
   private func monitor(
     client: HIDDeviceClient,
+    deviceID: UInt64,
     locationID: UInt32,
     continuation: AsyncStream<HIDDeviceEvent>.Continuation
   ) async {
+    guard eventAdapter.acceptsInput(deviceID: deviceID) else { return }
     let inputElements = await client.elements.filter { $0.type == .input }
     let notifications = await client.monitorNotifications(
       reportIDsToMonitor: [HIDReportID.allReports],
@@ -196,12 +217,27 @@ import Foundation
     }
   }
 
-  private func remove(deviceID: UInt64, continuation: AsyncStream<HIDDeviceEvent>.Continuation) {
-    guard let record = recordsByDeviceID.removeValue(forKey: deviceID) else { return }
-    record.notificationTask.cancel()
+  private func remove(
+    reference: HIDDeviceClient.DeviceReference,
+    continuation: AsyncStream<HIDDeviceEvent>.Continuation
+  ) {
+    let removal = eventAdapter.remove(deviceID: reference.deviceID)
+    guard let record = recordsByDeviceID.removeValue(forKey: reference.deviceID) else {
+      for locationID in Array(deviceIDsByLocation.keys) {
+        deviceIDsByLocation[locationID]?.remove(reference.deviceID)
+        if deviceIDsByLocation[locationID]?.isEmpty == true {
+          deviceIDsByLocation.removeValue(forKey: locationID)
+        }
+      }
+      return
+    }
+    let deviceID = reference.deviceID
+    if removal.shouldCancelNotification { record.notificationTask.cancel() }
     deviceIDsByLocation[record.locationID]?.remove(deviceID)
     if deviceIDsByLocation[record.locationID]?.isEmpty == true {
       deviceIDsByLocation.removeValue(forKey: record.locationID)
+    }
+    if removal.shouldEmitDisconnect {
       continuation.yield(
         .disconnected(
           vendorID: record.vendorID,
@@ -218,6 +254,7 @@ import Foundation
     recordsByDeviceID.values.forEach { $0.notificationTask.cancel() }
     recordsByDeviceID.removeAll()
     deviceIDsByLocation.removeAll()
+    eventAdapter.reset()
   }
 
   private static func transportName(_ transport: HIDDeviceTransport?) -> String? {

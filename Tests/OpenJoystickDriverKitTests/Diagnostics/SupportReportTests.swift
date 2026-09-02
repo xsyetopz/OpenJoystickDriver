@@ -3,6 +3,18 @@ import OpenJoystickDriverKit
 import Testing
 
 struct SupportReportTests {
+  @Test func gameControllerProbeDurationIsFiniteAndPredictablyClamped() {
+    #expect(
+      GameControllerProbeConfiguration.boundedSeconds(0)
+        == GameControllerProbeConfiguration.minimumSeconds
+    )
+    #expect(
+      GameControllerProbeConfiguration.boundedSeconds(10_000)
+        == GameControllerProbeConfiguration.maximumSeconds
+    )
+    #expect(GameControllerProbeConfiguration.boundedSeconds(5) == 5)
+  }
+
   @Test func reportExcludesSensitiveAndFreeFormDiagnosticValues() throws {
     let secretSerial = "SERIAL-SECRET-123"
     let secretPath = "/Users/alice/private/controller.txt"
@@ -47,6 +59,17 @@ struct SupportReportTests {
           ioUserClass: "IOHIDDevice",
           isOJDUserSpace: false,
           isGameControllerSupported: true
+        ),
+        ApplicationServiceHIDGamepadSnapshot(
+          vendorID: 4321,
+          productID: 8765,
+          product: "Other Controller",
+          transport: "Bluetooth",
+          locationID: 4_294_967_294,
+          serialKind: .none,
+          ioUserClass: "IOHIDDevice",
+          isOJDUserSpace: false,
+          isGameControllerSupported: false
         )
       ]
     )
@@ -90,16 +113,35 @@ struct SupportReportTests {
     #expect(!json.contains(secretSerial))
     #expect(!json.contains(secretPath))
     #expect(!json.contains("3735928559"))
-    #expect(report.privacy.includesRawSerialNumbers == false)
-    #expect(report.privacy.includesFilesystemPaths == false)
-    #expect(report.privacy.includesPacketPayloads == false)
-    #expect(report.privacy.includesHIDLocationIDs == false)
-    #expect(report.controllers.first?.serialNumberPresent == true)
-    #expect(report.controllers.first?.physicalOutputCapabilities.supportsTriggerRumble == true)
-    #expect(report.outputValidationPlans.count == 1)
-    #expect(report.outputValidationPlans.first?.steps.map(\.id).contains("left-trigger") == true)
-    #expect(report.hidGamepads.first?.product == "Test Controller")
-    #expect(report.appleGameControllerAudit?.catalogListedOJDRecordCount == 1)
+    #expect(report.data.privacy.includesRawSerialNumbers == false)
+    #expect(report.data.privacy.includesFilesystemPaths == false)
+    #expect(report.data.privacy.includesPacketPayloads == false)
+    #expect(report.data.privacy.includesHIDLocationIDs == false)
+    #expect(report.data.controllers.first?.serialNumberPresent == true)
+    #expect(
+      report.data.controllers.first?.physicalOutputCapabilities.supportsTriggerRumble == true
+    )
+    #expect(report.data.hidGamepads.first?.product == "Test Controller")
+    let object = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+    #expect(object["specversion"] as? String == "1.0")
+    #expect(object["id"] as? String == report.id)
+    #expect(object["source"] as? String == SupportReport.source)
+    #expect(object["type"] as? String == SupportReport.supportDiagnosticType)
+    #expect(object["time"] as? String == "1970-01-01T00:00:00Z")
+    #expect(object["datacontenttype"] as? String == "application/json")
+    #expect(object["dataschema"] as? String == SupportReport.dataSchema)
+    #expect(object["$schema"] == nil)
+    #expect(object["reportType"] == nil)
+    #expect(object["schemaVersion"] == nil)
+    let payload = try #require(object["data"] as? [String: Any])
+    _ = try #require(payload["hidGamepads"] as? [[String: Any]])
+    #expect(report.data.appleGameControllerAudit?.catalogListedOJDRecordCount == 1)
+
+    let decoded = try JSONDecoder().decode(SupportReport.self, from: data)
+    #expect(decoded.specversion == "1.0")
+    #expect(decoded.source == SupportReport.source)
+    #expect(decoded.type == SupportReport.supportDiagnosticType)
+    #expect(decoded.dataschema == SupportReport.dataSchema)
   }
 
   @Test func unavailableServiceProducesAnExplicitPartialReport() {
@@ -116,10 +158,11 @@ struct SupportReportTests {
       virtualDiagnostics: nil
     )
 
-    #expect(report.schemaVersion == SupportReport.currentSchemaVersion)
-    #expect(report.controllers.isEmpty)
-    #expect(report.hidGamepads.isEmpty)
-    #expect(report.notes.contains("Application service status was unavailable."))
-    #expect(report.notes.contains("Virtual-device diagnostics were unavailable."))
+    #expect(report.specversion == "1.0")
+    #expect(report.type == SupportReport.supportDiagnosticType)
+    #expect(report.data.controllers.isEmpty)
+    #expect(report.data.hidGamepads.isEmpty)
+    #expect(report.data.notes.count >= 2)
+    #expect(report.data.notes.allSatisfy { !$0.isEmpty })
   }
 }

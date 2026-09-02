@@ -1,0 +1,737 @@
+diff --git a/Resources/Schemas/Protocols/xbox360.schema.json b/Resources/Schemas/Protocols/xbox360.schema.json
+new file mode 100644
+index 0000000..ff15f80
+--- /dev/null
++++ b/Resources/Schemas/Protocols/xbox360.schema.json
+@@ -0,0 +1,37 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/Protocols/xbox360.schema.json",
++  "title": "OpenJoystickDriver Xbox 360 Protocol Profile",
++  "description": "Protocol-specific metadata for Xbox 360 wired controllers using the vendor-specific USB class 0xFF interface.",
++  "type": "object",
++  "required": [
++    "driver",
++    "variant"
++  ],
++  "additionalProperties": false,
++  "properties": {
++    "driver": {
++      "const": "Xbox360"
++    },
++    "variant": {
++      "type": "string",
++      "enum": [
++        "xbox360",
++        "unknown"
++      ]
++    },
++    "mapping_flags": {
++      "type": "array",
++      "uniqueItems": true,
++      "items": {
++        "type": "string",
++        "enum": [
++          "dpadToButtons",
++          "triggersToButtons",
++          "sticksToNull"
++        ]
++      },
++      "default": []
++    }
++  }
++}
+diff --git a/Resources/Schemas/controller-profile.schema.json b/Resources/Schemas/controller-profile.schema.json
+index 0de196f..91b5662 100644
+--- a/Resources/Schemas/controller-profile.schema.json
++++ b/Resources/Schemas/controller-profile.schema.json
+@@ -144,6 +144,9 @@
+         {
+           "$ref": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/Protocols/gip.schema.json"
+         },
++        {
++          "$ref": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/Protocols/xbox360.schema.json"
++        },
+         {
+           "$ref": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/Protocols/ds4.schema.json"
+         },
+diff --git a/Sources/OpenJoystickDriverKit/Device/DevicePipeline.swift b/Sources/OpenJoystickDriverKit/Device/DevicePipeline.swift
+index f54e316..c7cd0b2 100644
+--- a/Sources/OpenJoystickDriverKit/Device/DevicePipeline.swift
++++ b/Sources/OpenJoystickDriverKit/Device/DevicePipeline.swift
+@@ -140,9 +140,13 @@ actor DevicePipeline {
+ 
+   func sendRumble(left: UInt8, right: UInt8, lt: UInt8, rt: UInt8) {
+     guard let handle = usbHandle else { return }
+-    guard let gipParser = parser as? GIPParser else { return }
+     do {
+-      try gipParser.sendRumble(handle: handle, left: left, right: right, ltMotor: lt, rtMotor: rt)
++      if let gipParser = parser as? GIPParser {
++        try gipParser.sendRumble(handle: handle, left: left, right: right, ltMotor: lt, rtMotor: rt)
++      } else if let xbox360Parser = parser as? Xbox360Parser {
++        // Xbox 360 has left/right motors only; trigger motor values are ignored.
++        try xbox360Parser.sendRumble(handle: handle, left: left, right: right)
++      }
+     } catch { print("[DevicePipeline] Rumble send failed for \(identifier): \(error)") }
+   }
+ 
+diff --git a/Sources/OpenJoystickDriverKit/Protocol/Catalog/DeviceCatalog.swift b/Sources/OpenJoystickDriverKit/Protocol/Catalog/DeviceCatalog.swift
+index 1ffaba3..1e41c63 100644
+--- a/Sources/OpenJoystickDriverKit/Protocol/Catalog/DeviceCatalog.swift
++++ b/Sources/OpenJoystickDriverKit/Protocol/Catalog/DeviceCatalog.swift
+@@ -273,6 +273,7 @@ struct DeviceCatalog: Sendable {
+     switch parserName(for: identifier) {
+     case "GIP": return .xboxOne
+     case "DS4": return .dualShock4
++    case "Xbox360": return .xbox360
+     case "GenericHID": return .genericHID
+     default: return .unknown
+     }
+diff --git a/Sources/OpenJoystickDriverKit/Protocol/Catalog/ParserRegistry.swift b/Sources/OpenJoystickDriverKit/Protocol/Catalog/ParserRegistry.swift
+index 733d42b..78ea99b 100644
+--- a/Sources/OpenJoystickDriverKit/Protocol/Catalog/ParserRegistry.swift
++++ b/Sources/OpenJoystickDriverKit/Protocol/Catalog/ParserRegistry.swift
+@@ -19,6 +19,7 @@ public final class ParserRegistry: Sendable {
+     switch catalog.parserName(for: identifier) {
+     case "GIP": return GIPParser(endpointConfig: endpoints)
+     case "DS4": return DS4Parser()
++    case "Xbox360": return Xbox360Parser(outEndpoint: endpoints.outputEndpoint)
+     default: return GenericHIDParser(identifier: identifier)
+     }
+   }
+diff --git a/Sources/OpenJoystickDriverKit/Protocol/GIP/GIPParser.swift b/Sources/OpenJoystickDriverKit/Protocol/GIP/GIPParser.swift
+index 76d1571..0528998 100644
+--- a/Sources/OpenJoystickDriverKit/Protocol/GIP/GIPParser.swift
++++ b/Sources/OpenJoystickDriverKit/Protocol/GIP/GIPParser.swift
+@@ -136,6 +136,19 @@ public final class GIPParser: InputParser, @unchecked Sendable {
+     }
+   }
+ 
++  /// Sends a GIP LED command (CMD=0x0A) to the physical controller.
++  ///
++  /// - Parameters:
++  ///   - handle: Active USB device handle for the physical controller.
++  ///   - mode: LED mode byte.
++  ///     `0x00` = off, `0x01` = on (steady), `0x02` = blink, `0x03` = pulse.
++  ///   - brightness: Brightness level (0x00–0x14; 0x14 = full).
++  public func sendLED(handle: USBDeviceHandle, mode: UInt8, brightness: UInt8 = 0x14) throws {
++    let seq = sequencer.next(for: GIPCommand.led)
++    let packet: [UInt8] = [GIPCommand.led, GIPOption.internal, seq, 3, mode, brightness, 0x14]
++    _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
++  }
++
+   /// Sends a GIP rumble command (CMD=0x09) to the physical controller.
+   ///
+   /// - Parameters:
+diff --git a/Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift b/Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift
+new file mode 100644
+index 0000000..2e3e204
+--- /dev/null
++++ b/Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift
+@@ -0,0 +1,251 @@
++import Foundation
++import SwiftUSB
++
++/// Report type byte for Xbox 360 input reports.
++private let xbox360InputReportType: UInt8 = 0x00
++/// Minimum expected length of an Xbox 360 input report.
++private let xbox360InputReportMinLength = 14
++/// Maximum value for a trigger axis (UInt8).
++private let xbox360TriggerMax: Float = 255
++/// Maximum value for a signed stick axis (Int16.max).
++private let xbox360StickMax: Float = 32767
++
++/// Xbox 360 LED pattern constants for `sendLED(_:handle:pattern:)`.
++public enum Xbox360LEDPattern: UInt8, Sendable {
++  case allOff = 0x00
++  case allBlink = 0x01
++  /// Player 1: flash then hold.
++  case player1Flash = 0x02
++  /// Player 2: flash then hold.
++  case player2Flash = 0x03
++  /// Player 3: flash then hold.
++  case player3Flash = 0x04
++  /// Player 4: flash then hold.
++  case player4Flash = 0x05
++  /// Player 1: steady on.
++  case player1On = 0x06
++  /// Player 2: steady on.
++  case player2On = 0x07
++  /// Player 3: steady on.
++  case player3On = 0x08
++  /// Player 4: steady on.
++  case player4On = 0x09
++  case rotate = 0x0A
++  case blinkCurrent = 0x0B
++  case slowBlinkCurrent = 0x0C
++  case rotateTwo = 0x0D
++  case blinkAll = 0x0E
++  case blinkOnceThenRestore = 0x0F
++}
++
++/// Parser for Xbox 360 wired controllers (vendor-specific USB class 0xFF, interface 0).
++///
++/// No handshake is required: the controller begins sending 20-byte input reports
++/// immediately after the interface is claimed.
++///
++/// Input report layout (20 bytes, interrupt IN, EP 0x81):
++/// ```
++///   byte 0   : report type (0x00 = input; ignore others)
++///   byte 1   : payload length (0x14 = 20)
++///   bytes 2-3: button bitmask (UInt16 LE)
++///              bit 0  DPAD_UP      bit 8  A
++///              bit 1  DPAD_DOWN    bit 9  B
++///              bit 2  DPAD_LEFT    bit 10 X
++///              bit 3  DPAD_RIGHT   bit 11 Y
++///              bit 4  START        bit 12 LB
++///              bit 5  BACK         bit 13 RB
++///              bit 6  L3           bit 14 GUIDE
++///              bit 7  R3
++///   byte 4   : LT (0–255)
++///   byte 5   : RT (0–255)
++///   bytes 6-7: Left stick X  (Int16 LE)
++///   bytes 8-9: Left stick Y  (Int16 LE, positive = down; inverted on output)
++///   bytes 10-11: Right stick X (Int16 LE)
++///   bytes 12-13: Right stick Y (Int16 LE, positive = down; inverted on output)
++///   bytes 14-19: unused
++/// ```
++///
++/// Rumble output report (8 bytes, interrupt OUT, EP 0x01):
++/// ```
++///   byte 0 : 0x00 (report type)
++///   byte 1 : 0x08 (length)
++///   byte 2 : 0x00 (reserved)
++///   byte 3 : left motor (0–255)
++///   byte 4 : right motor (0–255)
++///   bytes 5-7 : 0x00 padding
++/// ```
++///
++/// LED output report (3 bytes, interrupt OUT, EP 0x01):
++/// ```
++///   byte 0 : 0x01 (LED command)
++///   byte 1 : 0x03 (length)
++///   byte 2 : LED pattern (see Xbox360LEDPattern)
++/// ```
++public final class Xbox360Parser: InputParser, @unchecked Sendable {
++
++  // MARK: - Thread safety
++  //
++  // @unchecked Sendable safety:
++  // - All mutable state (prevButtons, prevLT/RT, prevLS/RS) is accessed
++  //   exclusively from the owning DevicePipeline actor — no concurrent access.
++
++  private let outEndpoint: UInt8
++
++  private var prevButtons: UInt16 = 0
++  private var prevLT: UInt8 = 0
++  private var prevRT: UInt8 = 0
++  private var prevLSX: Int16 = 0
++  private var prevLSY: Int16 = 0
++  private var prevRSX: Int16 = 0
++  private var prevRSY: Int16 = 0
++
++  /// Creates a new Xbox360Parser.
++  /// - Parameter outEndpoint: Interrupt OUT endpoint address (default 0x01).
++  public init(outEndpoint: UInt8 = 0x01) {
++    self.outEndpoint = outEndpoint
++  }
++
++  // MARK: - InputParser
++
++  // swiftlint:disable async_without_await
++  /// No-op — Xbox 360 requires no handshake.
++  public func performHandshake(handle: USBDeviceHandle?) async throws {
++    // Xbox 360 starts sending input reports immediately after interface claim.
++  }
++  // swiftlint:enable async_without_await
++
++  /// Parses one Xbox 360 input report and returns zero or more controller events.
++  ///
++  /// Silently ignores non-input report types (e.g. connection/disconnection events
++  /// on the wireless receiver). Returns an empty array for reports that carry no
++  /// state change since the previous call.
++  public func parse(data: Data) throws -> [ControllerEvent] {
++    guard !data.isEmpty, data[0] == xbox360InputReportType else { return [] }
++    guard data.count >= xbox360InputReportMinLength else { return [] }
++    let bytes = Array(data)
++
++    let buttons = UInt16(bytes[2]) | (UInt16(bytes[3]) << 8)
++    let lt = bytes[4]
++    let rt = bytes[5]
++    let lsx = Int16(bitPattern: UInt16(bytes[6]) | (UInt16(bytes[7]) << 8))
++    let lsy = Int16(bitPattern: UInt16(bytes[8]) | (UInt16(bytes[9]) << 8))
++    let rsx = Int16(bitPattern: UInt16(bytes[10]) | (UInt16(bytes[11]) << 8))
++    let rsy = Int16(bitPattern: UInt16(bytes[12]) | (UInt16(bytes[13]) << 8))
++
++    var events: [ControllerEvent] = []
++    events += parseButtons(curr: buttons)
++    events += parseDpad(curr: buttons)
++    events += parseTriggers(lt: lt, rt: rt)
++    events += parseSticks(lsx: lsx, lsy: lsy, rsx: rsx, rsy: rsy)
++
++    prevButtons = buttons
++    prevLT = lt
++    prevRT = rt
++    prevLSX = lsx
++    prevLSY = lsy
++    prevRSX = rsx
++    prevRSY = rsy
++
++    return events
++  }
++
++  // MARK: - Output
++
++  /// Sends a rumble command to the physical controller.
++  ///
++  /// Xbox 360 has two motors only (no trigger haptics).
++  /// - Parameters:
++  ///   - handle: Active USB device handle.
++  ///   - left: Left (strong) motor intensity (0–255).
++  ///   - right: Right (weak) motor intensity (0–255).
++  public func sendRumble(handle: USBDeviceHandle, left: UInt8, right: UInt8) throws {
++    let packet: [UInt8] = [0x00, 0x08, 0x00, left, right, 0x00, 0x00, 0x00]
++    _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
++  }
++
++  /// Sets the ring-of-light LED pattern on the physical controller.
++  ///
++  /// - Parameters:
++  ///   - handle: Active USB device handle.
++  ///   - pattern: One of the ``Xbox360LEDPattern`` values.
++  public func sendLED(handle: USBDeviceHandle, pattern: Xbox360LEDPattern) throws {
++    let packet: [UInt8] = [0x01, 0x03, pattern.rawValue]
++    _ = try handle.interruptTransfer(endpoint: outEndpoint, data: packet, timeout: 2000)
++  }
++
++  // MARK: - Private parsing
++
++  private func parseButtons(curr: UInt16) -> [ControllerEvent] {
++    var events: [ControllerEvent] = []
++    let changed = curr ^ prevButtons
++
++    func check(_ bit: Int, _ button: Button) {
++      let mask = UInt16(1 << bit)
++      guard changed & mask != 0 else { return }
++      events.append((curr & mask) != 0 ? .buttonPressed(button) : .buttonReleased(button))
++    }
++
++    check(4, .start)
++    check(5, .back)
++    check(6, .leftStick)
++    check(7, .rightStick)
++    check(8, .a)
++    check(9, .b)
++    check(10, .x)
++    check(11, .y)
++    check(12, .leftBumper)
++    check(13, .rightBumper)
++    check(14, .guide)
++
++    return events
++  }
++
++  private func parseDpad(curr: UInt16) -> [ControllerEvent] {
++    let dpadMask: UInt16 = 0x000F
++    let currDpad = curr & dpadMask
++    let prevDpad = prevButtons & dpadMask
++    guard currDpad != prevDpad else { return [] }
++    return [.dpadChanged(mapDpad(currDpad))]
++  }
++
++  private func parseTriggers(lt: UInt8, rt: UInt8) -> [ControllerEvent] {
++    var events: [ControllerEvent] = []
++    if lt != prevLT {
++      events.append(.leftTriggerChanged(Float(lt) / xbox360TriggerMax))
++    }
++    if rt != prevRT {
++      events.append(.rightTriggerChanged(Float(rt) / xbox360TriggerMax))
++    }
++    return events
++  }
++
++  private func parseSticks(lsx: Int16, lsy: Int16, rsx: Int16, rsy: Int16) -> [ControllerEvent] {
++    var events: [ControllerEvent] = []
++    if lsx != prevLSX || lsy != prevLSY {
++      events.append(.leftStickChanged(x: normalizeStick(lsx), y: -normalizeStick(lsy)))
++    }
++    if rsx != prevRSX || rsy != prevRSY {
++      events.append(.rightStickChanged(x: normalizeStick(rsx), y: -normalizeStick(rsy)))
++    }
++    return events
++  }
++
++  private func normalizeStick(_ raw: Int16) -> Float {
++    Float(raw) / xbox360StickMax
++  }
++
++  private func mapDpad(_ value: UInt16) -> DpadDirection {
++    // bits: up=1, down=2, left=4, right=8
++    switch value {
++    case 1: .north
++    case 2: .south
++    case 4: .west
++    case 8: .east
++    case 9: .northEast   // up + right
++    case 5: .northWest   // up + left
++    case 10: .southEast  // down + right
++    case 6: .southWest   // down + left
++    default: .neutral
++    }
++  }
++}
+diff --git a/Sources/OpenJoystickDriverKit/Resources/Controllers/microsoft-xbox360-wired.json b/Sources/OpenJoystickDriverKit/Resources/Controllers/microsoft-xbox360-wired.json
+new file mode 100644
+index 0000000..9a8d736
+--- /dev/null
++++ b/Sources/OpenJoystickDriverKit/Resources/Controllers/microsoft-xbox360-wired.json
+@@ -0,0 +1,32 @@
++{
++  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-profile.schema.json",
++  "profile_version": "1.0.0",
++  "identity": {
++    "vendor_id": 1118,
++    "product_id": 654,
++    "name": "Microsoft Xbox 360 Controller",
++    "short_name": "Xbox360Wired"
++  },
++  "input": {
++    "transport": "usb",
++    "usb": {
++      "class": 255,
++      "interface": 0,
++      "endpoints": {
++        "in": 129,
++        "out": 1
++      }
++    }
++  },
++  "protocol": {
++    "driver": "Xbox360",
++    "variant": "xbox360"
++  },
++  "output": {
++    "virtual_profile": "xboxOneS",
++    "preferred_backends": [
++      "driverKitHID",
++      "userSpaceHID"
++    ]
++  }
++}
+diff --git a/Tests/OpenJoystickDriverKitTests/Xbox360ParserTests.swift b/Tests/OpenJoystickDriverKitTests/Xbox360ParserTests.swift
+new file mode 100644
+index 0000000..0d52ffc
+--- /dev/null
++++ b/Tests/OpenJoystickDriverKitTests/Xbox360ParserTests.swift
+@@ -0,0 +1,296 @@
++import Testing
++
++@testable import OpenJoystickDriverKit
++
++/// Builds a 20-byte Xbox 360 wired input report from explicit field values.
++private func makeXbox360Report(
++  buttons: UInt16 = 0,
++  lt: UInt8 = 0,
++  rt: UInt8 = 0,
++  lsx: Int16 = 0,
++  lsy: Int16 = 0,
++  rsx: Int16 = 0,
++  rsy: Int16 = 0
++) -> [UInt8] {
++  var r = [UInt8](repeating: 0, count: 20)
++  r[0] = 0x00  // input report type
++  r[1] = 0x14  // length = 20
++  r[2] = UInt8(buttons & 0xFF)
++  r[3] = UInt8(buttons >> 8)
++  r[4] = lt
++  r[5] = rt
++  r[6] = UInt8(bitPattern: Int8(truncatingIfNeeded: lsx))
++  r[7] = UInt8(bitPattern: Int8(truncatingIfNeeded: lsx >> 8))
++  r[8] = UInt8(bitPattern: Int8(truncatingIfNeeded: lsy))
++  r[9] = UInt8(bitPattern: Int8(truncatingIfNeeded: lsy >> 8))
++  r[10] = UInt8(bitPattern: Int8(truncatingIfNeeded: rsx))
++  r[11] = UInt8(bitPattern: Int8(truncatingIfNeeded: rsx >> 8))
++  r[12] = UInt8(bitPattern: Int8(truncatingIfNeeded: rsy))
++  r[13] = UInt8(bitPattern: Int8(truncatingIfNeeded: rsy >> 8))
++  return r
++}
++
++private func le16(_ value: Int16) -> (UInt8, UInt8) {
++  let u = UInt16(bitPattern: value)
++  return (UInt8(u & 0xFF), UInt8(u >> 8))
++}
++
++private func makeXbox360ReportLE(
++  buttons: UInt16 = 0,
++  lt: UInt8 = 0,
++  rt: UInt8 = 0,
++  lsx: Int16 = 0,
++  lsy: Int16 = 0,
++  rsx: Int16 = 0,
++  rsy: Int16 = 0
++) -> Data {
++  var r = [UInt8](repeating: 0, count: 20)
++  r[0] = 0x00
++  r[1] = 0x14
++  r[2] = UInt8(buttons & 0xFF)
++  r[3] = UInt8(buttons >> 8)
++  r[4] = lt
++  r[5] = rt
++  let (lsxL, lsxH) = le16(lsx)
++  let (lsyL, lsyH) = le16(lsy)
++  let (rsxL, rsxH) = le16(rsx)
++  let (rsyL, rsyH) = le16(rsy)
++  r[6] = lsxL; r[7] = lsxH
++  r[8] = lsyL; r[9] = lsyH
++  r[10] = rsxL; r[11] = rsxH
++  r[12] = rsyL; r[13] = rsyH
++  return Data(r)
++}
++
++@Suite("Xbox360 Parser Tests") struct Xbox360ParserTests {
++
++  @Test("Non-input report type returns empty array")
++  func ignoresNonInputReportType() throws {
++    let parser = Xbox360Parser()
++    // Type 0x08 = device connected notification on the wireless receiver
++    let packet = Data([0x08, 0x14] + [UInt8](repeating: 0, count: 18))
++    let events = try parser.parse(data: packet)
++    #expect(events.isEmpty)
++  }
++
++  @Test("Empty data returns empty array")
++  func emptyDataReturnsEmpty() throws {
++    let parser = Xbox360Parser()
++    let events = try parser.parse(data: Data())
++    #expect(events.isEmpty)
++  }
++
++  @Test("Report shorter than minimum returns empty array")
++  func shortReportReturnsEmpty() throws {
++    let parser = Xbox360Parser()
++    let packet = Data([0x00, 0x14, 0x00, 0x00, 0x00])
++    let events = try parser.parse(data: packet)
++    #expect(events.isEmpty)
++  }
++
++  @Test("All-zero input report fires initial left stick event")
++  func allZeroReportFiresSticks() throws {
++    let parser = Xbox360Parser()
++    let packet = makeXbox360ReportLE()
++    let events = try parser.parse(data: packet)
++    let hasLeft = events.contains {
++      if case .leftStickChanged = $0 { return true }
++      return false
++    }
++    #expect(hasLeft)
++  }
++
++  @Test("A button pressed and released")
++  func aButtonPressRelease() throws {
++    let parser = Xbox360Parser()
++    // Bit 8 = A
++    let press = makeXbox360ReportLE(buttons: 1 << 8)
++    let release = makeXbox360ReportLE(buttons: 0)
++    let pressEvents = try parser.parse(data: press)
++    #expect(pressEvents.contains(.buttonPressed(.a)))
++    let releaseEvents = try parser.parse(data: release)
++    #expect(releaseEvents.contains(.buttonReleased(.a)))
++  }
++
++  @Test("B, X, Y buttons")
++  func bxyButtons() throws {
++    let parser = Xbox360Parser()
++    let packet = makeXbox360ReportLE(buttons: (1 << 9) | (1 << 10) | (1 << 11))
++    let events = try parser.parse(data: packet)
++    #expect(events.contains(.buttonPressed(.b)))
++    #expect(events.contains(.buttonPressed(.x)))
++    #expect(events.contains(.buttonPressed(.y)))
++  }
++
++  @Test("Shoulder buttons and stick clicks")
++  func shoulderAndStickClicks() throws {
++    let parser = Xbox360Parser()
++    // LB=bit12, RB=bit13, L3=bit6, R3=bit7
++    let packet = makeXbox360ReportLE(buttons: (1 << 12) | (1 << 13) | (1 << 6) | (1 << 7))
++    let events = try parser.parse(data: packet)
++    #expect(events.contains(.buttonPressed(.leftBumper)))
++    #expect(events.contains(.buttonPressed(.rightBumper)))
++    #expect(events.contains(.buttonPressed(.leftStick)))
++    #expect(events.contains(.buttonPressed(.rightStick)))
++  }
++
++  @Test("Start and Back buttons")
++  func startBackButtons() throws {
++    let parser = Xbox360Parser()
++    // START=bit4, BACK=bit5
++    let packet = makeXbox360ReportLE(buttons: (1 << 4) | (1 << 5))
++    let events = try parser.parse(data: packet)
++    #expect(events.contains(.buttonPressed(.start)))
++    #expect(events.contains(.buttonPressed(.back)))
++  }
++
++  @Test("Guide button")
++  func guideButton() throws {
++    let parser = Xbox360Parser()
++    // GUIDE=bit14
++    let packet = makeXbox360ReportLE(buttons: 1 << 14)
++    let events = try parser.parse(data: packet)
++    #expect(events.contains(.buttonPressed(.guide)))
++  }
++
++  @Test("D-pad directions")
++  func dpadDirections() throws {
++    let parser = Xbox360Parser()
++    // up=bit0, down=bit1, left=bit2, right=bit3
++    func dpadEvent(bits: UInt16) throws -> ControllerEvent? {
++      let events = try parser.parse(data: makeXbox360ReportLE(buttons: bits))
++      // Reset to neutral for next test
++      _ = try parser.parse(data: makeXbox360ReportLE(buttons: 0))
++      return events.first { if case .dpadChanged = $0 { return true }; return false }
++    }
++    guard case .dpadChanged(let n) = try dpadEvent(bits: 1) else { Issue.record("no dpad"); return }
++    #expect(n == .north)
++    guard case .dpadChanged(let s) = try dpadEvent(bits: 2) else { Issue.record("no dpad"); return }
++    #expect(s == .south)
++    guard case .dpadChanged(let w) = try dpadEvent(bits: 4) else { Issue.record("no dpad"); return }
++    #expect(w == .west)
++    guard case .dpadChanged(let e) = try dpadEvent(bits: 8) else { Issue.record("no dpad"); return }
++    #expect(e == .east)
++    // northEast = up + right
++    guard case .dpadChanged(let ne) = try dpadEvent(bits: 9) else { Issue.record("no dpad"); return }
++    #expect(ne == .northEast)
++  }
++
++  @Test("D-pad bits are not reported as face-button events")
++  func dpadBitsNotFaceButtons() throws {
++    let parser = Xbox360Parser()
++    let packet = makeXbox360ReportLE(buttons: 0x000F)  // all four dpad bits set
++    let events = try parser.parse(data: packet)
++    #expect(!events.contains(.buttonPressed(.a)))
++    #expect(!events.contains(.buttonPressed(.b)))
++    #expect(!events.contains(.buttonPressed(.x)))
++    #expect(!events.contains(.buttonPressed(.y)))
++  }
++
++  @Test("Trigger normalization: full press = 1.0")
++  func triggerNormalization() throws {
++    let parser = Xbox360Parser()
++    let packet = makeXbox360ReportLE(lt: 255, rt: 255)
++    let events = try parser.parse(data: packet)
++    let lt = events.first { if case .leftTriggerChanged = $0 { return true }; return false }
++    let rt = events.first { if case .rightTriggerChanged = $0 { return true }; return false }
++    guard case .leftTriggerChanged(let ltVal) = lt else { Issue.record("no LT event"); return }
++    guard case .rightTriggerChanged(let rtVal) = rt else { Issue.record("no RT event"); return }
++    #expect(abs(ltVal - 1.0) < 0.01)
++    #expect(abs(rtVal - 1.0) < 0.01)
++  }
++
++  @Test("Trigger normalization: half press ~= 0.5")
++  func triggerHalfPress() throws {
++    let parser = Xbox360Parser()
++    let packet = makeXbox360ReportLE(lt: 128, rt: 128)
++    let events = try parser.parse(data: packet)
++    let lt = events.first { if case .leftTriggerChanged = $0 { return true }; return false }
++    guard case .leftTriggerChanged(let ltVal) = lt else { Issue.record("no LT event"); return }
++    #expect(abs(ltVal - (128.0 / 255.0)) < 0.01)
++  }
++
++  @Test("Left stick full right = +1.0 X")
++  func leftStickFullRight() throws {
++    let parser = Xbox360Parser()
++    let packet = makeXbox360ReportLE(lsx: Int16.max)
++    let events = try parser.parse(data: packet)
++    let ls = events.first { if case .leftStickChanged = $0 { return true }; return false }
++    guard case .leftStickChanged(let lx, _) = ls else { Issue.record("no LS event"); return }
++    #expect(abs(lx - 1.0) < 0.01)
++  }
++
++  @Test("Left stick full up = +1.0 Y (raw negative because Y is inverted)")
++  func leftStickFullUp() throws {
++    let parser = Xbox360Parser()
++    // Raw negative LSY = stick pushed up; normalized output should be positive Y
++    let packet = makeXbox360ReportLE(lsy: Int16.min)
++    let events = try parser.parse(data: packet)
++    let ls = events.first { if case .leftStickChanged = $0 { return true }; return false }
++    guard case .leftStickChanged(_, let ly) = ls else { Issue.record("no LS event"); return }
++    // -(-32768 / 32767) ≈ +1.0003
++    #expect(ly > 0.99)
++  }
++
++  @Test("Right stick normalization")
++  func rightStickNormalization() throws {
++    let parser = Xbox360Parser()
++    let packet = makeXbox360ReportLE(rsx: Int16.min, rsy: Int16.max)
++    let events = try parser.parse(data: packet)
++    let rs = events.first { if case .rightStickChanged = $0 { return true }; return false }
++    guard case .rightStickChanged(let rx, let ry) = rs else { Issue.record("no RS event"); return }
++    // RSX full left ≈ -1.0
++    #expect(rx < -0.99)
++    // RSY raw positive = stick down → normalized output negative
++    #expect(ry < -0.99)
++  }
++
++  @Test("Change detection suppresses duplicate button events")
++  func changeDetectionButtons() throws {
++    let parser = Xbox360Parser()
++    let press = makeXbox360ReportLE(buttons: 1 << 8)  // A
++    _ = try parser.parse(data: press)
++    let events2 = try parser.parse(data: press)
++    #expect(!events2.contains(.buttonPressed(.a)))
++    #expect(!events2.contains(.buttonReleased(.a)))
++  }
++
++  @Test("Change detection suppresses duplicate trigger events")
++  func changeDetectionTriggers() throws {
++    let parser = Xbox360Parser()
++    let first = makeXbox360ReportLE(lt: 200)
++    _ = try parser.parse(data: first)
++    let events2 = try parser.parse(data: first)
++    let hasLT = events2.contains { if case .leftTriggerChanged = $0 { return true }; return false }
++    #expect(!hasLT)
++  }
++
++  @Test("Change detection suppresses duplicate stick events")
++  func changeDetectionSticks() throws {
++    let parser = Xbox360Parser()
++    let first = makeXbox360ReportLE(lsx: 10_000)
++    _ = try parser.parse(data: first)
++    let events2 = try parser.parse(data: first)
++    let hasLS = events2.contains { if case .leftStickChanged = $0 { return true }; return false }
++    #expect(!hasLS)
++  }
++
++  @Test("Multiple simultaneous button changes are all reported")
++  func multipleSimultaneousButtons() throws {
++    let parser = Xbox360Parser()
++    let packet = makeXbox360ReportLE(buttons: (1 << 8) | (1 << 9) | (1 << 12))
++    let events = try parser.parse(data: packet)
++    #expect(events.contains(.buttonPressed(.a)))
++    #expect(events.contains(.buttonPressed(.b)))
++    #expect(events.contains(.buttonPressed(.leftBumper)))
++  }
++
++  @Test("Parser ignores reports of type != 0x00")
++  func ignoresConnectionReport() throws {
++    let parser = Xbox360Parser()
++    var bytes = [UInt8](repeating: 0, count: 20)
++    bytes[0] = 0x08  // connection notification
++    let events = try parser.parse(data: Data(bytes))
++    #expect(events.isEmpty)
++  }
++}
+diff --git a/scripts/ojd-validate-profiles.py b/scripts/ojd-validate-profiles.py
+index 1b714e5..d2ecdf6 100644
+--- a/scripts/ojd-validate-profiles.py
++++ b/scripts/ojd-validate-profiles.py
+@@ -34,6 +34,10 @@
+             "shareOffset",
+         },
+     },
++    "Xbox360": {
++        "variants": {"xbox360", "unknown"},
++        "mapping_flags": {"dpadToButtons", "triggersToButtons", "sticksToNull"},
++    },
+     "DS3": {
+         "variants": {"dualShock3", "unknown"},
+         "mapping_flags": {"gyro", "accelerometer", "battery"},

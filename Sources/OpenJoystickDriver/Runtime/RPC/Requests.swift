@@ -239,43 +239,17 @@ extension ApplicationServiceServer {
   }
 
   public func setCompatibilityIdentity(_ raw: String, reply: @escaping (Bool) -> Void) {
-    guard let id = CompatibilityIdentity(rawValue: raw) else {
+    guard case .accepted(let id) = CompatibilityIdentity.mutationDecision(for: raw) else {
       reply(false)
       return
     }
-    // Transactional switch:
-    // - If user-space is enabled, do not tear down the current device until the new one is ready.
-    // - If creation fails, keep the existing device alive and do not change the persisted identity.
-    let ok = userSpaceLock.withLock { () -> Bool in
-      if userSpaceEnabled, let old = userSpaceDispatcher {
-        do {
-          let build = try buildUserSpaceDispatcher(identity: id)
-          dispatcher.setBackend(build.dispatcher)
-          userSpaceDispatcher = build.dispatcher
-          userSpaceStatus = build.status
-          compatibilityIdentity = id
-          UserDefaults.standard.set(id.rawValue, forKey: Self.compatibilityIdentityDefaultsKey)
-          old.close()
-          primeUserSpaceDevices(build.dispatcher)
-          return true
-        } catch {
-          if !userSpaceStatus.hasPrefix("error:") {
-            userSpaceStatus =
-              "error: Failed to switch Compatibility identity (\(id.rawValue)). Kept "
-              + "previous Compatibility device running. \(error)"
-          } else {
-            userSpaceStatus += " (kept previous Compatibility device running)"
-          }
-          return false
-        }
-      }
-
-      // A failed backend remains explicit; persist the chosen identity for the next service start.
-      compatibilityIdentity = id
-      UserDefaults.standard.set(id.rawValue, forKey: Self.compatibilityIdentityDefaultsKey)
-      return true
+    let callback = SendableReply(call: reply)
+    // The RPC bridge is callback-shaped, so this is the single request-scoped task.  The
+    // asynchronous transaction itself owns the ordering: close, then publish, then reply.
+    Task { [weak self] in
+      guard let self else { return }
+      callback.call(await self.setCompatibilityIdentityAsync(id))
     }
-    reply(ok)
   }
 
   public func getCompatibilityIdentity(reply: @escaping (String) -> Void) {
@@ -313,22 +287,75 @@ extension ApplicationServiceServer {
   }
 
   public func resetSettings(reply: @escaping (Bool) -> Void) {
-    // Clear persisted keys so the application service comes up in a known-good baseline.
+    let callback = SendableReply(call: reply)
+    Task { [weak self] in
+      guard let self else { return }
+      callback.call(await self.resetSettingsAsync())
+    }
+  }
+
+  private func setCompatibilityIdentityAsync(_ id: CompatibilityIdentity) async -> Bool {
+    let state = userSpaceLock.withLock { (userSpaceEnabled, userSpaceDispatcher) }
+    if state.0, state.1 != nil, compatibilityIdentity == id {
+      UserDefaults.standard.set(id.rawValue, forKey: Self.compatibilityIdentityDefaultsKey)
+      return true
+    }
+    if state.0, let old = state.1 {
+      do {
+        await closeUserSpaceDispatcher(old)
+        let build = try buildUserSpaceDispatcher(identity: id)
+        userSpaceLock.withLock {
+          dispatcher.setBackend(build.dispatcher)
+          userSpaceDispatcher = build.dispatcher
+          userSpaceStatus = build.status
+          compatibilityIdentity = id
+          UserDefaults.standard.set(id.rawValue, forKey: Self.compatibilityIdentityDefaultsKey)
+        }
+        primeUserSpaceDevices(build.dispatcher)
+        return true
+      } catch {
+        userSpaceLock.withLock {
+          if !userSpaceStatus.hasPrefix("error:") {
+            userSpaceStatus =
+              "error: Failed to switch Compatibility identity (\(id.rawValue)). Kept "
+              + "previous Compatibility device running. \(error)"
+          } else {
+            userSpaceStatus += " (kept previous Compatibility device running)"
+          }
+        }
+        return false
+      }
+    }
+
+    userSpaceLock.withLock {
+      compatibilityIdentity = id
+      UserDefaults.standard.set(id.rawValue, forKey: Self.compatibilityIdentityDefaultsKey)
+    }
+    return true
+  }
+
+  private func resetSettingsAsync() async -> Bool {
+    let old = userSpaceLock.withLock { userSpaceDispatcher }
+    if let old { await closeUserSpaceDispatcher(old) }
+
     UserDefaults.standard.removeObject(forKey: Self.compatibilityIdentityDefaultsKey)
     UserDefaults.standard.removeObject(forKey: "UserSpaceVirtualDeviceEnabled")
     UserDefaults.standard.removeObject(forKey: "OutputMode")
     UserDefaults.standard.removeObject(forKey: "VirtualDeviceMode")
-
     userSpaceLock.withLock {
       dispatcher.setBackend(nil)
-      userSpaceDispatcher?.close()
       userSpaceDispatcher = nil
       userSpaceEnabled = false
       userSpaceStatus = "off"
+      compatibilityIdentity = .automatic
     }
+    return initializeCompatibilityBackend()
+  }
 
-    compatibilityIdentity = .appleGameController
-    reply(initializeCompatibilityBackend())
+  private func closeUserSpaceDispatcher(
+    _ dispatcher: any CompatibilityUserSpaceOutputDispatching
+  ) async {
+    await dispatcher.close()
   }
 
   func getRemappingSnapshot(

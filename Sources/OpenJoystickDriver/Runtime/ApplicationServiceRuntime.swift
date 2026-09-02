@@ -48,7 +48,7 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     self.applicationServiceServer = applicationServiceServer
   }
 
-  func start() {
+  func start() throws {
     let shouldStart = stateLock.withLock {
       guard !started else { return false }
       started = true
@@ -59,11 +59,13 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     setbuf(stdout, nil)
     serviceLog("[Service] Starting main-app service runtime")
     setupGracefulShutdown()
+    do { try applicationServiceServer.start() } catch {
+      cancelGracefulShutdown()
+      stateLock.withLock { started = false }
+      throw error
+    }
     Task { await permissionManager.startPolling() }
     remappingRouter.startTicker()
-    do { try applicationServiceServer.start() } catch {
-      serviceError("[Service] RPC socket startup failed: \(error.localizedDescription)")
-    }
     Task { await manager.start() }
   }
 

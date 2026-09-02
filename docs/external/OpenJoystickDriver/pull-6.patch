@@ -1,0 +1,965 @@
+diff --git a/.github/workflows/release.yml b/.github/workflows/release.yml
+index 78bf10d..0bbbbdc 100644
+--- a/.github/workflows/release.yml
++++ b/.github/workflows/release.yml
+@@ -76,7 +76,7 @@ jobs:
+         uses: actions/upload-artifact@v7
+         with:
+           name: OpenJoystickDriver-${{ steps.release.outputs.tag }}
+-          path: .build/release-artifacts/*.zip
++          path: .build/release-artifacts/*.dmg
+           if-no-files-found: error
+           retention-days: 14
+ 
+@@ -85,7 +85,7 @@ jobs:
+         with:
+           tag_name: ${{ steps.release.outputs.tag }}
+           name: OpenJoystickDriver ${{ steps.release.outputs.tag }}
+-          files: .build/release-artifacts/*.zip
++          files: .build/release-artifacts/*.dmg
+           fail_on_unmatched_files: true
+           generate_release_notes: true
+           prerelease: ${{ steps.release.outputs.prerelease }}
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index b65436b..3de879c 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -2,6 +2,17 @@
+ 
+ All notable changes to OpenJoystickDriver are documented in this file.
+ 
++## 0.2.0
++
++### Added
++
++- Added stock SDL HIDAPI-compatible Xbox 360 rumble path for PCSX2 and SDL apps.
++- Added release automation for app bundle versions and drag-and-drop DMG packaging.
++
++### Changed
++
++- Switched release packaging from zip-only distribution to a standard macOS DMG.
++
+ ## 0.1.0-rc.2
+ 
+ ### Added
+diff --git a/DriverKitExtension/Info.plist b/DriverKitExtension/Info.plist
+index 4630934..39598d2 100644
+--- a/DriverKitExtension/Info.plist
++++ b/DriverKitExtension/Info.plist
+@@ -11,7 +11,7 @@
+ 	<key>CFBundlePackageType</key>
+ 	<string>DEXT</string>
+ 	<key>CFBundleShortVersionString</key>
+-	<string>1.0</string>
++	<string>0.2.0</string>
+ 	<key>CFBundleVersion</key>
+ 	<string>107</string>
+ 	<key>IOKitPersonalities</key>
+diff --git a/Sources/OpenJoystickDriver/App/AppModel.swift b/Sources/OpenJoystickDriver/App/AppModel.swift
+index 91b1ff3..f75f0f1 100644
+--- a/Sources/OpenJoystickDriver/App/AppModel.swift
++++ b/Sources/OpenJoystickDriver/App/AppModel.swift
+@@ -1,3 +1,4 @@
++import AppKit
+ import Foundation
+ import OpenJoystickDriverKit
+ 
+@@ -48,11 +49,17 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
+   @Published var compatibilityIdentity: String = CompatibilityIdentity.sdl2_3.rawValue
+   @Published var virtualDeviceDiagnostics: XPCVirtualDeviceDiagnosticsPayload?
+   @Published var virtualDeviceSelfTest: XPCVirtualDeviceSelfTestPayload?
++  @Published var updateCheckState: UpdateCheckState = .idle
+ 
+   var developerMode: Bool
+ 
++  var appVersion: String {
++    Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.2.0"
++  }
++
+   private let client = XPCClient()
+   private let permissionManager = PermissionManager()
++  private let updateChecker = UpdateChecker()
+   private var pollTask: Task<Void, Never>?
+ 
+   init(developerMode: Bool = false) { self.developerMode = developerMode }
+@@ -65,6 +72,7 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
+     await refreshVirtualDeviceDiagnostics()
+     extensionManager.refreshInstallState()
+     startPolling()
++    Task { await checkForUpdates() }
+   }
+ 
+   func refreshDaemonStatus() { daemonInstalled = DaemonManager.isInstalled }
+@@ -261,6 +269,17 @@ struct DeviceViewModel: Identifiable, Hashable, Sendable {
+     }
+   }
+ 
++  func checkForUpdates() async {
++    updateCheckState = .checking
++    updateCheckState = await updateChecker.check(currentVersion: appVersion)
++  }
++
++  func openLatestRelease() {
++    if case .available(let info) = updateCheckState {
++      NSWorkspace.shared.open(info.htmlURL)
++    }
++  }
++
+   // MARK: - Private
+ 
+   private func formatDaemonError(_ error: Error) -> String {
+diff --git a/Sources/OpenJoystickDriver/App/UpdateChecker.swift b/Sources/OpenJoystickDriver/App/UpdateChecker.swift
+new file mode 100644
+index 0000000..c27860b
+--- /dev/null
++++ b/Sources/OpenJoystickDriver/App/UpdateChecker.swift
+@@ -0,0 +1,86 @@
++import Foundation
++import OpenJoystickDriverKit
++
++struct UpdateInfo: Equatable, Sendable {
++  let tagName: String
++  let version: SemanticVersion
++  let htmlURL: URL
++}
++
++enum UpdateCheckState: Equatable, Sendable {
++  case idle
++  case checking
++  case upToDate(String)
++  case available(UpdateInfo)
++  case failed(String)
++}
++
++struct UpdateChecker {
++  private struct GitHubRelease: Decodable {
++    let tagName: String
++    let htmlURL: URL
++    let draft: Bool
++
++    enum CodingKeys: String, CodingKey {
++      case tagName = "tag_name"
++      case htmlURL = "html_url"
++      case draft
++    }
++  }
++
++  let latestReleaseURL: URL
++  let session: URLSession
++
++  init(
++    latestReleaseURL: URL = URL(string: "https://api.github.com/repos/xsyetopz/OpenJoystickDriver/releases/latest")!,
++    session: URLSession = .shared
++  ) {
++    self.latestReleaseURL = latestReleaseURL
++    self.session = session
++  }
++
++  func check(currentVersion rawCurrentVersion: String) async -> UpdateCheckState {
++    guard let currentVersion = SemanticVersion(rawCurrentVersion) else {
++      return .failed("Current app version is not SemVer: \(rawCurrentVersion)")
++    }
++
++    do {
++      var request = URLRequest(url: latestReleaseURL)
++      request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
++      request.setValue("OpenJoystickDriver", forHTTPHeaderField: "User-Agent")
++
++      let (data, response) = try await data(for: request)
++      if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
++        return .failed("GitHub returned HTTP \(http.statusCode)")
++      }
++
++      let release = try JSONDecoder().decode(GitHubRelease.self, from: data)
++      guard !release.draft else { return .failed("Latest GitHub release is a draft") }
++      guard let latestVersion = SemanticVersion(release.tagName) else {
++        return .failed("Latest GitHub release tag is not SemVer: \(release.tagName)")
++      }
++
++      let info = UpdateInfo(tagName: release.tagName, version: latestVersion, htmlURL: release.htmlURL)
++      return latestVersion > currentVersion ? .available(info) : .upToDate(rawCurrentVersion)
++    } catch {
++      return .failed(error.localizedDescription)
++    }
++  }
++
++  private func data(for request: URLRequest) async throws -> (Data, URLResponse) {
++    try await withCheckedThrowingContinuation { continuation in
++      let task = session.dataTask(with: request) { data, response, error in
++        if let error {
++          continuation.resume(throwing: error)
++          return
++        }
++        guard let data, let response else {
++          continuation.resume(throwing: URLError(.badServerResponse))
++          return
++        }
++        continuation.resume(returning: (data, response))
++      }
++      task.resume()
++    }
++  }
++}
+diff --git a/Sources/OpenJoystickDriver/CLI.swift b/Sources/OpenJoystickDriver/CLI.swift
+index 76f2b49..9521a01 100644
+--- a/Sources/OpenJoystickDriver/CLI.swift
++++ b/Sources/OpenJoystickDriver/CLI.swift
+@@ -22,7 +22,7 @@ struct CLI {
+     case "uninstall": UninstallCommand().run()
+     case "run": RunCommand().run()
+     case "--help", "-h", "help": printHelp()
+-    case "--version", "-v", "version": print("OpenJoystickDriver v0.1.0-rc.2")
++    case "--version", "-v", "version": print("OpenJoystickDriver v0.2.0")
+     default:
+       print("Unknown command: \(command)")
+       printHelp()
+@@ -33,7 +33,7 @@ struct CLI {
+   private func printHelp() {
+     print(
+       """
+-      OpenJoystickDriver v0.1.0-rc.2 \
++      OpenJoystickDriver v0.2.0 \
+       - macOS gamepad driver
+ 
+       Usage: OpenJoystickDriver \
+diff --git a/Sources/OpenJoystickDriver/Views/MenuBarPopoverView.swift b/Sources/OpenJoystickDriver/Views/MenuBarPopoverView.swift
+index 30c51cd..904e2cd 100644
+--- a/Sources/OpenJoystickDriver/Views/MenuBarPopoverView.swift
++++ b/Sources/OpenJoystickDriver/Views/MenuBarPopoverView.swift
+@@ -34,6 +34,8 @@ struct MenuBarPopoverView: View {
+         inputTestRow
+         selfTestRow
+         Divider()
++        updateRow
++        Divider()
+         footerRow
+       }
+       .padding(12)
+@@ -367,6 +369,49 @@ struct MenuBarPopoverView: View {
+     }
+     .font(.caption)
+   }
++
++  private var updateRow: some View {
++    VStack(alignment: .leading, spacing: 6) {
++      HStack(spacing: 8) {
++        Text("Updates").font(.subheadline)
++        Spacer()
++        SwiftUI.Button(updateButtonTitle) {
++          Task { await model.checkForUpdates() }
++        }
++        .buttonStyle(.borderless)
++        .controlSize(.small)
++        .disabled(model.updateCheckState == .checking)
++      }
++
++      switch model.updateCheckState {
++      case .idle:
++        Text("Current version: \(model.appVersion)").font(.caption).foregroundColor(.secondary)
++      case .checking:
++        Text("Checking GitHub releases…").font(.caption).foregroundColor(.secondary)
++      case .upToDate(let version):
++        Text("OpenJoystickDriver \(version) is current.").font(.caption).foregroundColor(.green)
++      case .available(let info):
++        HStack(spacing: 8) {
++          Text("OpenJoystickDriver \(info.tagName) is available.")
++            .font(.caption)
++            .foregroundColor(.orange)
++          Spacer()
++          SwiftUI.Button("Open") { model.openLatestRelease() }
++            .buttonStyle(.borderless)
++            .controlSize(.small)
++        }
++      case .failed(let message):
++        Text("Update check failed: \(message)")
++          .font(.caption)
++          .foregroundColor(.orange)
++          .fixedSize(horizontal: false, vertical: true)
++      }
++    }
++  }
++
++  private var updateButtonTitle: String {
++    model.updateCheckState == .checking ? "Checking…" : "Check"
++  }
+ }
+ 
+ @MainActor private final class InputTestWindowController {
+diff --git a/Sources/OpenJoystickDriverKit/Update/SemanticVersion.swift b/Sources/OpenJoystickDriverKit/Update/SemanticVersion.swift
+new file mode 100644
+index 0000000..fc1000e
+--- /dev/null
++++ b/Sources/OpenJoystickDriverKit/Update/SemanticVersion.swift
+@@ -0,0 +1,129 @@
++import Foundation
++
++public struct SemanticVersion: Comparable, Equatable, Sendable {
++  public let major: Int
++  public let minor: Int
++  public let patch: Int
++  public let prerelease: [String]
++
++  public init?(_ value: String) {
++    var version = value
++    if version.first == "v" || version.first == "V" {
++      version.removeFirst()
++    }
++
++    if let buildStart = version.firstIndex(of: "+") {
++      let build = String(version[version.index(after: buildStart)...])
++      guard Self.isValidBuildMetadata(build) else { return nil }
++      version = String(version[..<buildStart])
++    }
++
++    let versionAndPrerelease = version.split(separator: "-", maxSplits: 1, omittingEmptySubsequences: false)
++    guard let core = versionAndPrerelease.first else { return nil }
++
++    let numbers = core.split(separator: ".", omittingEmptySubsequences: false)
++    guard numbers.count == 3,
++          Self.isValidNumericIdentifier(String(numbers[0])),
++          Self.isValidNumericIdentifier(String(numbers[1])),
++          Self.isValidNumericIdentifier(String(numbers[2])),
++          let major = Int(numbers[0]),
++          let minor = Int(numbers[1]),
++          let patch = Int(numbers[2]),
++          major >= 0,
++          minor >= 0,
++          patch >= 0 else {
++      return nil
++    }
++
++    let prerelease: [String]
++    if versionAndPrerelease.count == 2 {
++      prerelease = versionAndPrerelease[1].split(separator: ".", omittingEmptySubsequences: false).map(String.init)
++      guard !prerelease.isEmpty, prerelease.allSatisfy(Self.isValidIdentifier) else { return nil }
++    } else {
++      prerelease = []
++    }
++
++    self.major = major
++    self.minor = minor
++    self.patch = patch
++    self.prerelease = prerelease
++  }
++
++  public static func < (lhs: SemanticVersion, rhs: SemanticVersion) -> Bool {
++    if lhs.major != rhs.major { return lhs.major < rhs.major }
++    if lhs.minor != rhs.minor { return lhs.minor < rhs.minor }
++    if lhs.patch != rhs.patch { return lhs.patch < rhs.patch }
++    return comparePrerelease(lhs.prerelease, rhs.prerelease) == .orderedAscending
++  }
++
++  private static func comparePrerelease(_ lhs: [String], _ rhs: [String]) -> ComparisonResult {
++    if lhs.isEmpty && rhs.isEmpty { return .orderedSame }
++    if lhs.isEmpty { return .orderedDescending }
++    if rhs.isEmpty { return .orderedAscending }
++
++    for index in 0..<min(lhs.count, rhs.count) {
++      let comparison = compareIdentifier(lhs[index], rhs[index])
++      if comparison != .orderedSame { return comparison }
++    }
++
++    if lhs.count == rhs.count { return .orderedSame }
++    return lhs.count < rhs.count ? .orderedAscending : .orderedDescending
++  }
++
++  private static func compareIdentifier(_ lhs: String, _ rhs: String) -> ComparisonResult {
++    let lhsIsNumber = Self.isNumericIdentifier(lhs)
++    let rhsIsNumber = Self.isNumericIdentifier(rhs)
++
++    switch (lhsIsNumber, rhsIsNumber) {
++    case (true, true):
++      if lhs.count != rhs.count {
++        return lhs.count < rhs.count ? .orderedAscending : .orderedDescending
++      }
++      let comparison = lhs.compare(rhs, options: [], range: nil, locale: Locale(identifier: "en_US_POSIX"))
++      if comparison == .orderedSame { return .orderedSame }
++      return comparison == .orderedAscending ? .orderedAscending : .orderedDescending
++    case (true, false):
++      return .orderedAscending
++    case (false, true):
++      return .orderedDescending
++    case (false, false):
++      let comparison = lhs.compare(rhs, options: [], range: nil, locale: Locale(identifier: "en_US_POSIX"))
++      if comparison == .orderedSame { return .orderedSame }
++      return comparison == .orderedAscending ? .orderedAscending : .orderedDescending
++    }
++  }
++
++  private static func isValidIdentifier(_ identifier: String) -> Bool {
++    guard !identifier.isEmpty else { return false }
++    guard identifier.unicodeScalars.allSatisfy(Self.isValidIdentifierScalar) else { return false }
++    return !Self.isNumericIdentifierWithLeadingZero(identifier)
++  }
++
++  private static func isValidBuildMetadata(_ buildMetadata: String) -> Bool {
++    let identifiers = buildMetadata.split(separator: ".", omittingEmptySubsequences: false).map(String.init)
++    return !identifiers.isEmpty && identifiers.allSatisfy { identifier in
++      !identifier.isEmpty && identifier.unicodeScalars.allSatisfy(Self.isValidIdentifierScalar)
++    }
++  }
++
++  private static func isValidNumericIdentifier(_ identifier: String) -> Bool {
++    Self.isNumericIdentifier(identifier) && !Self.isNumericIdentifierWithLeadingZero(identifier)
++  }
++
++  private static func isNumericIdentifier(_ identifier: String) -> Bool {
++    !identifier.isEmpty && identifier.unicodeScalars.allSatisfy { scalar in
++      ("0"..."9").contains(scalar)
++    }
++  }
++
++  private static func isNumericIdentifierWithLeadingZero(_ identifier: String) -> Bool {
++    identifier.count > 1 && identifier.first == "0" && Self.isNumericIdentifier(identifier)
++  }
++
++  private static func isValidIdentifierScalar(_ scalar: Unicode.Scalar) -> Bool {
++      ("0"..."9").contains(scalar) ||
++      ("A"..."Z").contains(scalar) ||
++      ("a"..."z").contains(scalar) ||
++      scalar == "-"
++  }
++}
+diff --git a/Tests/OpenJoystickDriverKitTests/SemanticVersionTests.swift b/Tests/OpenJoystickDriverKitTests/SemanticVersionTests.swift
+new file mode 100644
+index 0000000..6ebb37b
+--- /dev/null
++++ b/Tests/OpenJoystickDriverKitTests/SemanticVersionTests.swift
+@@ -0,0 +1,106 @@
++import XCTest
++@testable import OpenJoystickDriverKit
++
++final class SemanticVersionTests: XCTestCase {
++  func testParsesVersionWithLeadingVAndPrerelease() throws {
++    let version = try XCTUnwrap(SemanticVersion("v0.2.0-rc.1"))
++    XCTAssertEqual(version.major, 0)
++    XCTAssertEqual(version.minor, 2)
++    XCTAssertEqual(version.patch, 0)
++    XCTAssertEqual(version.prerelease, ["rc", "1"])
++  }
++
++  func testParsesVersionWithUppercaseLeadingV() throws {
++    let version = try XCTUnwrap(SemanticVersion("V0.2.0"))
++    XCTAssertEqual(version.major, 0)
++    XCTAssertEqual(version.minor, 2)
++    XCTAssertEqual(version.patch, 0)
++    XCTAssertEqual(version.prerelease, [])
++  }
++
++  func testBuildMetadataIsIgnoredForComparison() throws {
++    let plain = try XCTUnwrap(SemanticVersion("0.2.0"))
++    let withBuild = try XCTUnwrap(SemanticVersion("0.2.0+20260521"))
++    XCTAssertEqual(plain, withBuild)
++  }
++
++  func testSemVerPrecedenceExamples() throws {
++    let versions = try [
++      "1.0.0-alpha",
++      "1.0.0-alpha.1",
++      "1.0.0-alpha.beta",
++      "1.0.0-beta",
++      "1.0.0-beta.2",
++      "1.0.0-beta.11",
++      "1.0.0-rc.1",
++      "1.0.0"
++    ].map { try XCTUnwrap(SemanticVersion($0)) }
++
++    for (older, newer) in zip(versions, versions.dropFirst()) {
++      XCTAssertLessThan(older, newer)
++      XCTAssertFalse(newer < older)
++      XCTAssertNotEqual(older, newer)
++    }
++  }
++
++  func testNumericPrereleaseIdentifiersSortBeforeAlphanumericIdentifiers() throws {
++    let numeric = try XCTUnwrap(SemanticVersion("1.0.0-1"))
++    let alphanumeric = try XCTUnwrap(SemanticVersion("1.0.0-alpha"))
++    XCTAssertLessThan(numeric, alphanumeric)
++  }
++
++  func testNumericPrereleaseIdentifiersSortNumerically() throws {
++    let rc2 = try XCTUnwrap(SemanticVersion("0.2.0-rc.2"))
++    let rc10 = try XCTUnwrap(SemanticVersion("0.2.0-rc.10"))
++    XCTAssertLessThan(rc2, rc10)
++  }
++
++  func testStableReleaseSortsAfterPrerelease() throws {
++    let rc = try XCTUnwrap(SemanticVersion("0.2.0-rc.1"))
++    let stable = try XCTUnwrap(SemanticVersion("0.2.0"))
++    XCTAssertLessThan(rc, stable)
++  }
++
++  func testPatchReleaseSortsAfterOlderMinor() throws {
++    let old = try XCTUnwrap(SemanticVersion("0.1.9"))
++    let new = try XCTUnwrap(SemanticVersion("0.2.0"))
++    XCTAssertLessThan(old, new)
++  }
++
++  func testInvalidVersionsReturnNil() {
++    XCTAssertNil(SemanticVersion("latest"))
++    XCTAssertNil(SemanticVersion("0.2"))
++  }
++
++  func testRejectsNumericIdentifiersWithLeadingZeroes() {
++    XCTAssertNil(SemanticVersion("01.2.3"))
++    XCTAssertNil(SemanticVersion("1.02.3"))
++    XCTAssertNil(SemanticVersion("1.2.03"))
++    XCTAssertNil(SemanticVersion("1.0.0-01"))
++    XCTAssertNil(SemanticVersion("1.0.0-alpha.01"))
++  }
++
++  func testRejectsInvalidPrereleaseIdentifiers() {
++    XCTAssertNil(SemanticVersion("1.0.0-"))
++    XCTAssertNil(SemanticVersion("1.0.0-alpha..1"))
++    XCTAssertNil(SemanticVersion("1.0.0-alpha."))
++    XCTAssertNil(SemanticVersion("1.0.0-.alpha"))
++    XCTAssertNil(SemanticVersion("1.0.0-alpha_beta"))
++  }
++
++  func testRejectsInvalidBuildMetadataIdentifiers() {
++    XCTAssertNil(SemanticVersion("1.0.0+"))
++    XCTAssertNil(SemanticVersion("1.0.0+build..1"))
++    XCTAssertNil(SemanticVersion("1.0.0+build."))
++    XCTAssertNil(SemanticVersion("1.0.0+.build"))
++    XCTAssertNil(SemanticVersion("1.0.0+build_1"))
++  }
++
++  func testComparatorConsistencyWithEquatable() throws {
++    let lhs = try XCTUnwrap(SemanticVersion("1.0.0+build.1"))
++    let rhs = try XCTUnwrap(SemanticVersion("1.0.0+build.2"))
++    XCTAssertEqual(lhs, rhs)
++    XCTAssertFalse(lhs < rhs)
++    XCTAssertFalse(rhs < lhs)
++  }
++}
+diff --git a/scripts/README.md b/scripts/README.md
+index 9271836..474baf0 100644
+--- a/scripts/README.md
++++ b/scripts/README.md
+@@ -195,15 +195,16 @@ OJD_ENV=release ./scripts/ojd notarize status
+ For a release build that does not install anything on the build machine:
+ 
+ ```bash
+-./scripts/ojd package release 0.1.0-rc.2
++./scripts/ojd package release 0.2.0
+ ```
+ 
+ This command uses release signing, embeds the DriverKit extension into the app
+ bundle, submits the app for notarization, staples the accepted ticket, verifies
+-the result, and writes:
++the result, and writes a drag-and-drop DMG containing `OpenJoystickDriver.app`
++and an `Applications` symlink:
+ 
+ ```text
+-.build/release-artifacts/OpenJoystickDriver-<version>-macOS.zip
++.build/release-artifacts/OpenJoystickDriver-<version>-macOS.dmg
+ ```
+ 
+ The package command does not register the LaunchAgent and does not submit a
+@@ -213,9 +214,9 @@ install and approve the app/system extension locally.
+ ## GitHub Actions release
+ 
+ `.github/workflows/release.yml` runs on SemVer tags such as `0.1.0` or
+-`0.1.0-rc.2` and by manual dispatch.
++`0.2.0` and by manual dispatch.
+ It installs `libusb`, validates profiles, imports signing material, builds a
+-release app, notarizes it, uploads the release zip as a workflow artifact, and
++release app, notarizes it, uploads the release DMG as a workflow artifact, and
+ publishes the GitHub Release.
+ 
+ Required repository secrets:
+diff --git a/scripts/bump-version.sh b/scripts/bump-version.sh
+index 4009550..9c4d4aa 100755
+--- a/scripts/bump-version.sh
++++ b/scripts/bump-version.sh
+@@ -18,6 +18,8 @@ Examples:
+ Updates:
+   - Sources/OpenJoystickDriver/CLI.swift
+   - scripts/README.md release examples
++  - scripts/ojd-build.sh generated GUI/daemon bundle versions
++  - DriverKitExtension/Info.plist short version
+ 
+ The target version must already have a CHANGELOG.md heading.
+ USAGE
+@@ -40,32 +42,38 @@ fi
+ 
+ cli_file="$PROJECT_DIR/Sources/OpenJoystickDriver/CLI.swift"
+ scripts_readme="$PROJECT_DIR/scripts/README.md"
++build_script="$PROJECT_DIR/scripts/ojd-build.sh"
++dext_plist="$PROJECT_DIR/DriverKitExtension/Info.plist"
+ changelog="$PROJECT_DIR/CHANGELOG.md"
+ 
+ [[ -f "$cli_file" ]] || die "Missing $cli_file"
+ [[ -f "$scripts_readme" ]] || die "Missing $scripts_readme"
++[[ -f "$build_script" ]] || die "Missing $build_script"
++[[ -f "$dext_plist" ]] || die "Missing $dext_plist"
+ [[ -f "$changelog" ]] || die "Missing $changelog"
+ 
+-if ! grep -Eq "^## ${version//./\\.}($|[[:space:]])" "$changelog"; then
++if ! grep -Fxq "## $version" "$changelog"; then
+   die "CHANGELOG.md must contain heading: ## $version"
+ fi
+ 
+-python3 - "$version" "$cli_file" "$scripts_readme" <<'PY'
++python3 - "$version" "$cli_file" "$scripts_readme" "$build_script" "$dext_plist" <<'PY'
+ import re
+ import sys
+ from pathlib import Path
+ 
+-version, cli_path, readme_path = sys.argv[1:]
++version, cli_path, readme_path, build_script_path, dext_plist_path = sys.argv[1:]
+ 
+ replacements = [
+     (
+         Path(cli_path),
+         [
+             (
++                "CLI version strings",
+                 re.compile(
+                     r"OpenJoystickDriver v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?"
+                 ),
+                 f"OpenJoystickDriver v{version}",
++                2,
+             ),
+         ],
+     ),
+@@ -73,30 +81,74 @@ replacements = [
+         Path(readme_path),
+         [
+             (
++                "scripts README package release example",
+                 re.compile(
+                     r"\./scripts/ojd package release \d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?"
+                 ),
+                 f"./scripts/ojd package release {version}",
++                1,
+             ),
+             (
++                "scripts README manual dispatch version example",
+                 re.compile(
+                     r"`\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?` and by manual dispatch"
+                 ),
+                 f"`{version}` and by manual dispatch",
++                1,
++            ),
++        ],
++    ),
++    (
++        Path(build_script_path),
++        [
++            (
++                "ojd-build GUI/daemon short versions",
++                re.compile(
++                    r"(<key>CFBundleShortVersionString</key>\n[ \t]*<string>)\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(</string>)"
++                ),
++                rf"\g<1>{version}\g<2>",
++                2,
++            ),
++        ],
++    ),
++    (
++        Path(dext_plist_path),
++        [
++            (
++                "DriverKit short version",
++                re.compile(
++                    r"(<key>CFBundleShortVersionString</key>\n[ \t]*<string>)\d+\.\d+(?:\.\d+)?(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?(</string>)"
++                ),
++                rf"\g<1>{version}\g<2>",
++                1,
+             ),
+         ],
+     ),
+ ]
+ 
+-changed = []
++missing = []
++updates = []
+ for path, patterns in replacements:
+     text = path.read_text()
+     updated = text
+-    for pattern, repl in patterns:
+-        updated = pattern.sub(repl, updated)
+-    if updated != text:
+-        path.write_text(updated)
+-        changed.append(str(path))
++    file_missing = False
++    for description, pattern, repl, minimum in patterns:
++        updated, count = pattern.subn(repl, updated)
++        if count < minimum:
++            missing.append(f"{path}: {description} (expected at least {minimum}, found {count})")
++            file_missing = True
++    if not file_missing and updated != text:
++        updates.append((path, updated))
++
++if missing:
++    for item in missing:
++        print(f"missing expected version reference: {item}", file=sys.stderr)
++    sys.exit(1)
++
++changed = []
++for path, updated in updates:
++    path.write_text(updated)
++    changed.append(str(path))
+ 
+ for path in changed:
+     print(f"updated {path}")
+diff --git a/scripts/ojd b/scripts/ojd
+index c418ec9..d10d574 100755
+--- a/scripts/ojd
++++ b/scripts/ojd
+@@ -68,7 +68,7 @@ Commands:
+   notarize log <id>           Fetch notarization log (release only)
+   notarize history            List notarization history (release only)
+   notarize store-credentials  Store notarytool credentials in Keychain
+-  package release             Build, notarize, staple, and zip a release app
++  package release             Build, notarize, staple, and package a release DMG
+ 
+   lint                        Run SwiftLint (requires swiftlint)
+ 
+diff --git a/scripts/ojd-build.sh b/scripts/ojd-build.sh
+index 496a1a2..685ea25 100644
+--- a/scripts/ojd-build.sh
++++ b/scripts/ojd-build.sh
+@@ -302,7 +302,7 @@ build_app_bundle() {
+     <key>CFBundlePackageType</key>
+     <string>APPL</string>
+     <key>CFBundleShortVersionString</key>
+-    <string>0.1.0</string>
++    <string>0.2.0</string>
+     <key>CFBundleVersion</key>
+     <string>1</string>
+     <key>LSMinimumSystemVersion</key>
+@@ -347,7 +347,7 @@ PLIST
+     <key>CFBundlePackageType</key>
+     <string>APPL</string>
+     <key>CFBundleShortVersionString</key>
+-    <string>0.1.0</string>
++    <string>0.2.0</string>
+     <key>CFBundleVersion</key>
+     <string>1</string>
+     <key>LSMinimumSystemVersion</key>
+diff --git a/scripts/ojd-dmg-background.py b/scripts/ojd-dmg-background.py
+new file mode 100644
+index 0000000..0f0b145
+--- /dev/null
++++ b/scripts/ojd-dmg-background.py
+@@ -0,0 +1,107 @@
++#!/usr/bin/env python3
++"""Generate the deterministic OpenJoystickDriver DMG background PNG."""
++
++import struct
++import sys
++import zlib
++
++WIDTH = 660
++HEIGHT = 400
++SCALE = 2
++
++FONT = {
++    "A": ("01110", "10001", "10001", "11111", "10001", "10001", "10001"),
++    "D": ("11110", "10001", "10001", "10001", "10001", "10001", "11110"),
++    "J": ("00111", "00010", "00010", "00010", "10010", "10010", "01100"),
++    "O": ("01110", "10001", "10001", "10001", "10001", "10001", "01110"),
++    "P": ("11110", "10001", "10001", "11110", "10000", "10000", "10000"),
++    "a": ("00000", "00000", "01110", "00001", "01111", "10001", "01111"),
++    "c": ("00000", "00000", "01110", "10000", "10000", "10001", "01110"),
++    "d": ("00001", "00001", "01111", "10001", "10001", "10001", "01111"),
++    "e": ("00000", "00000", "01110", "10001", "11111", "10000", "01110"),
++    "i": ("00100", "00000", "01100", "00100", "00100", "00100", "01110"),
++    "k": ("10000", "10010", "10100", "11000", "10100", "10010", "10001"),
++    "l": ("01100", "00100", "00100", "00100", "00100", "00100", "01110"),
++    "n": ("00000", "00000", "11110", "10001", "10001", "10001", "10001"),
++    "o": ("00000", "00000", "01110", "10001", "10001", "10001", "01110"),
++    "p": ("00000", "00000", "11110", "10001", "11110", "10000", "10000"),
++    "r": ("00000", "00000", "10110", "11001", "10000", "10000", "10000"),
++    "s": ("00000", "00000", "01111", "10000", "01110", "00001", "11110"),
++    "t": ("00100", "00100", "11111", "00100", "00100", "00101", "00010"),
++    "v": ("00000", "00000", "10001", "10001", "10001", "01010", "00100"),
++    "y": ("00000", "00000", "10001", "10001", "01111", "00001", "01110"),
++    ".": ("00000", "00000", "00000", "00000", "00000", "01100", "01100"),
++}
++
++
++def chunk(kind, data):
++    payload = kind + data
++    return (
++        struct.pack(">I", len(data))
++        + payload
++        + struct.pack(">I", zlib.crc32(payload) & 0xFFFFFFFF)
++    )
++
++
++def in_text(x, y, text, left, top):
++    cursor = left
++    for char in text:
++        if char == " ":
++            cursor += 4 * SCALE
++            continue
++        glyph = FONT.get(char)
++        if glyph is None:
++            cursor += 6 * SCALE
++            continue
++        gx = x - cursor
++        gy = y - top
++        if 0 <= gx < 5 * SCALE and 0 <= gy < 7 * SCALE:
++            if glyph[gy // SCALE][gx // SCALE] == "1":
++                return True
++        cursor += 6 * SCALE
++    return False
++
++
++def pixel(x, y):
++    bg = (245, 247, 250)
++    arrow = (45, 98, 180)
++    text = (40, 40, 40)
++
++    # Large right arrow shaft and head from app icon to Applications.
++    if 285 <= x <= 430 and 188 <= y <= 212:
++        return arrow
++    if 410 <= x <= 470 and abs(y - 200) <= (470 - x) * 0.55:
++        return arrow
++
++    # Text labels and simple underline blocks below Finder icon locations.
++    if in_text(x, y, "OpenJoystickDriver.app", 84, 310):
++        return text
++    if in_text(x, y, "Applications", 462, 310):
++        return text
++    if 100 <= x <= 220 and 285 <= y <= 292:
++        return text
++    if 465 <= x <= 585 and 285 <= y <= 292:
++        return text
++    return bg
++
++
++def main():
++    if len(sys.argv) != 2:
++        raise SystemExit("usage: ojd-dmg-background.py <output.png>")
++    rows = []
++    for y in range(HEIGHT):
++        row = bytearray([0])
++        for x in range(WIDTH):
++            row.extend(pixel(x, y))
++        rows.append(bytes(row))
++    raw = b"".join(rows)
++    png = b"\x89PNG\r\n\x1a\n"
++    png += chunk(b"IHDR", struct.pack(">IIBBBBB", WIDTH, HEIGHT, 8, 2, 0, 0, 0))
++    png += chunk(b"IDAT", zlib.compress(raw, 9))
++    png += chunk(b"IEND", b"")
++    with open(sys.argv[1], "wb") as fh:
++        fh.write(png)
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/scripts/ojd-package.sh b/scripts/ojd-package.sh
+index 42e9f1f..6111e72 100755
+--- a/scripts/ojd-package.sh
++++ b/scripts/ojd-package.sh
+@@ -15,7 +15,7 @@ Usage:
+ Builds a release-signed app, embeds the DriverKit extension, submits it for
+ notarization, staples the accepted ticket, and writes:
+ 
+-  .build/release-artifacts/OpenJoystickDriver-<version>-macOS.zip
++  .build/release-artifacts/OpenJoystickDriver-<version>-macOS.dmg
+ 
+ This does not install the app, register the LaunchAgent, or submit a sysext
+ activation request on the build machine.
+@@ -38,7 +38,30 @@ safe_version="$(printf '%s' "$version" | tr -c 'A-Za-z0-9._-' '-')"
+ artifact_dir="$PROJECT_DIR/.build/release-artifacts"
+ app_path="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
+ notary_zip="$PROJECT_DIR/.build/OpenJoystickDriver-notarize.zip"
+-artifact_zip="$artifact_dir/OpenJoystickDriver-${safe_version}-macOS.zip"
++artifact_dmg="$artifact_dir/OpenJoystickDriver-${safe_version}-macOS.dmg"
++staging_dir="$PROJECT_DIR/.build/dmg-staging"
++rw_dmg="$PROJECT_DIR/.build/OpenJoystickDriver-${safe_version}-rw.dmg"
++mount_dir="$PROJECT_DIR/.build/dmg-mount"
++
++mount_dir_is_mounted() {
++  /sbin/mount | /usr/bin/grep -F " on $1 " >/dev/null
++}
++
++detach_mount_dir_if_mounted() {
++  local dir="$1"
++  if [[ -d "$dir" ]] && mount_dir_is_mounted "$dir"; then
++    /usr/bin/hdiutil detach "$dir" -quiet
++  fi
++}
++
++cleanup_dmg_workdirs() {
++  detach_mount_dir_if_mounted "$mount_dir"
++  if mount_dir_is_mounted "$mount_dir"; then
++    echo "WARNING: Refusing to remove active DMG mount path: $mount_dir" >&2
++    return 0
++  fi
++  rm -rf "$staging_dir" "$rw_dmg" "$mount_dir"
++}
+ 
+ mkdir -p "$artifact_dir"
+ 
+@@ -67,10 +90,62 @@ echo "=== Verify notarized app ==="
+ /usr/sbin/spctl --assess --type execute --verbose=4 "$app_path"
+ 
+ echo ""
+-echo "=== Create release zip ==="
+-/usr/bin/ditto -c -k --keepParent "$app_path" "$artifact_zip"
++echo "=== Create drag-and-drop DMG ==="
++detach_mount_dir_if_mounted "$mount_dir"
++if mount_dir_is_mounted "$mount_dir"; then
++  die "Mount path is still active; refusing to remove: $mount_dir"
++fi
++rm -rf "$staging_dir" "$mount_dir" "$rw_dmg" "$artifact_dmg"
++mkdir -p "$staging_dir/.background" "$mount_dir"
++cp -R "$app_path" "$staging_dir/OpenJoystickDriver.app"
++ln -s /Applications "$staging_dir/Applications"
++python3 "$SCRIPT_DIR/ojd-dmg-background.py" "$staging_dir/.background/background.png"
++/usr/bin/hdiutil create -srcfolder "$staging_dir" -volname "OpenJoystickDriver" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW "$rw_dmg"
++/usr/bin/hdiutil attach "$rw_dmg" -mountpoint "$mount_dir" -nobrowse -quiet
++trap '/usr/bin/hdiutil detach "$mount_dir" -quiet 2>/dev/null || true' EXIT
++if ! OJD_DMG_MOUNT_DIR="$mount_dir" /usr/bin/osascript <<'OSA'
++on run argv
++  set mountPath to system attribute "OJD_DMG_MOUNT_DIR"
++  set volumeRoot to POSIX file mountPath as alias
++  set backgroundPath to POSIX file (mountPath & "/.background/background.png") as alias
++  tell application "Finder"
++    tell volumeRoot
++      open
++      set current view of container window to icon view
++      set toolbar visible of container window to false
++      set statusbar visible of container window to false
++      set the bounds of container window to {100, 100, 760, 500}
++      set viewOptions to the icon view options of container window
++      set arrangement of viewOptions to not arranged
++      set icon size of viewOptions to 96
++      set background picture of viewOptions to backgroundPath
++      set position of item "OpenJoystickDriver.app" of container window to {160, 205}
++      set position of item "Applications" of container window to {520, 205}
++      close
++      open
++      update without registering applications
++      delay 1
++    end tell
++  end tell
++end run
++OSA
++then
++  echo "WARNING: Finder DMG styling failed; continuing with unstyled DMG." >&2
++fi
++sync
++detach_mount_dir_if_mounted "$mount_dir"
++trap - EXIT
++/usr/bin/hdiutil convert "$rw_dmg" -format UDZO -imagekey zlib-level=9 -o "$artifact_dmg"
++cleanup_dmg_workdirs
++if [[ -n "${CODESIGN_IDENTITY:-}" && "${CODESIGN_IDENTITY:-}" != "-" ]]; then
++  /usr/bin/codesign --sign "$CODESIGN_IDENTITY" --timestamp "$artifact_dmg"
++  /usr/bin/codesign --verify --verbose=2 "$artifact_dmg"
++else
++  echo "WARNING: CODESIGN_IDENTITY not set; skipping DMG codesign." >&2
++fi
++/usr/bin/hdiutil verify "$artifact_dmg"
+ /usr/bin/codesign --verify --deep --strict --verbose=2 "$app_path"
+ 
+ echo ""
+ echo "Release artifact ready:"
+-echo "  $artifact_zip"
++echo "  $artifact_dmg"

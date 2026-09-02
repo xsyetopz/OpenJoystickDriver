@@ -12,9 +12,5 @@
       "ledOn",
       "authDone"
     ]
-  },
-  "provenance": {
-    "source": "linux-xpad.c",
-    "verified": false
   }
 }

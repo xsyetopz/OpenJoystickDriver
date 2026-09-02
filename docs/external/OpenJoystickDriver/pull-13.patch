@@ -1,0 +1,25 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 53c1daa..5f9085b 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -23,7 +23,7 @@ jobs:
+       DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+     steps:
+       - name: Checkout
+-        uses: actions/checkout@v6
++        uses: actions/checkout@v7
+ 
+       - name: Toolchain
+         run: |
+diff --git a/.github/workflows/release.yml b/.github/workflows/release.yml
+index a2f39da..e47c161 100644
+--- a/.github/workflows/release.yml
++++ b/.github/workflows/release.yml
+@@ -50,7 +50,7 @@ jobs:
+           fi
+ 
+       - name: Checkout
+-        uses: actions/checkout@v6
++        uses: actions/checkout@v7
+         with:
+           ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || steps.release.outputs.tag }}

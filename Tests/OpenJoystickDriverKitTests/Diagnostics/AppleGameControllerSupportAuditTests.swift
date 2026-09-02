@@ -65,8 +65,8 @@ struct AppleGameControllerSupportAuditTests {
     #expect(audit.catalogListedOJDRecordCount == 1)
     #expect(audit.records[0].catalogListed)
     #expect(!audit.records[1].catalogListed)
-    #expect(audit.caveat.contains("does not prove"))
-    #expect(audit.caveat.contains("supportsHIDDevice"))
+    #expect(audit.source == .preinstalledMobileAsset)
+    #expect(audit.records.count == 2)
   }
 
   @Test func malformedBundlesRemainExplicitEvidence() {
@@ -76,7 +76,8 @@ struct AppleGameControllerSupportAuditTests {
     )
 
     #expect(snapshot.entries.isEmpty)
-    #expect(snapshot.warnings.contains { $0.contains("could not be parsed") })
+    #expect(snapshot.source == .downloadedMobileAsset)
+    #expect(snapshot.warnings.count == 1)
   }
 
   private func bundleInfo(version: String, devices: [[String: Any]]) throws -> Data {

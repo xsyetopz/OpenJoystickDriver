@@ -7,7 +7,7 @@
 - **State:** OPEN
 - **Author:** cbandras
 - **Created:** 2026-07-06T23:14:27Z
-- **Updated:** 2026-07-18T22:25:39Z
+- **Updated:** 2026-08-25T16:21:37Z
 - **Closed:** —
 - **Labels:** enhancement, help wanted
 
@@ -105,3 +105,9 @@ Okey! Thank you.
 There's the `packet log` field. I'm thinking about trying to make this less of "Need Apple Dev account, or else not happening", if that's feasible for users trying to add new things to it.
 
 Apple's scenery is quite complicated, even for me. I'll try my best.
+
+### xsyetopz — 2026-08-25T16:21:37Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/14#issuecomment-5413405546)
+
+Try [0.5.0-beta.1](https://github.com/xsyetopz/OpenJoystickDriver/releases/tag/0.5.0-beta.1) and tell me if it works!

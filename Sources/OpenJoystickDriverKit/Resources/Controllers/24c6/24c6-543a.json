@@ -13,9 +13,5 @@
       "rumbleBegin",
       "rumbleEnd"
     ]
-  },
-  "provenance": {
-    "source": "linux-xpad.c",
-    "verified": false
   }
 }

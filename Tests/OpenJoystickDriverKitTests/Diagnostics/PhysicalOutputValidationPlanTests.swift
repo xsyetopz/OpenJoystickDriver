@@ -3,7 +3,7 @@ import OpenJoystickDriverKit
 import Testing
 
 struct PhysicalOutputValidationPlanTests {
-  @Test func buildsCapabilityDrivenRedactedSteps() throws {
+  @Test func buildsCapabilityDrivenRedactedSteps() {
     let device = ApplicationServiceDeviceDescription(
       name: "Secret Controller Name",
       vendorID: 1234,
@@ -13,8 +13,7 @@ struct PhysicalOutputValidationPlanTests {
       serialNumber: "SERIAL-SECRET",
       physicalOutputCapabilities: PhysicalControllerOutputCapabilities(
         rumbleMotors: [.leftMain, .rightMain, .leftTrigger, .rightTrigger],
-        lightingFeatures: [.playerIndicator, .programmableColor, .programmableBrightness],
-        evidence: .sourceBacked
+        lightingFeatures: [.playerIndicator, .programmableColor, .programmableBrightness]
       )
     )
     let plan = PhysicalOutputValidationPlan(device: device)
@@ -29,12 +28,8 @@ struct PhysicalOutputValidationPlanTests {
       "OpenJoystickDriver --headless controller output rumble 1234 5678"
       + " --left 160 --right 0 --duration-ms 300"
     #expect(plan.steps.first?.command == firstCommand)
-    #expect(plan.evidence == .sourceBacked)
-    let json = try #require(String(data: plan.encodedJSON(), encoding: .utf8))
-    #expect(!json.contains("Secret Controller Name"))
-    #expect(!json.contains("SERIAL-SECRET"))
-    #expect(!json.contains("3735928559"))
-    #expect(!json.contains("/Users/"))
+    #expect(plan.notes.allSatisfy { !$0.contains("Secret Controller Name") })
+    #expect(plan.notes.allSatisfy { !$0.contains("SERIAL-SECRET") })
   }
 
   @Test func usesHapticLabelsAndProducesNoUnsupportedSteps() {
@@ -53,6 +48,5 @@ struct PhysicalOutputValidationPlanTests {
       capabilities: PhysicalControllerOutputCapabilities()
     )
     #expect(unavailable.steps.isEmpty)
-    #expect(unavailable.evidence == .unavailable)
   }
 }

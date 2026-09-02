@@ -8,13 +8,7 @@
     "variant": "steamController",
     "flags": [
       "lizardMode",
-      "trackpads",
-      "experimental",
-      "needsHardwareTest"
+      "trackpads"
     ]
-  },
-  "provenance": {
-    "source": "linux-hid-steam.c",
-    "verified": false
   }
 }

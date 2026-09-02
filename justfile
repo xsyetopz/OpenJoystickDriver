@@ -74,7 +74,7 @@ format:
 
 # Verify (--check) or rebuild (--write) the runtime catalog from pinned sources
 catalog-regenerate *args:
-    python3 scripts/catalog/generate-controller-catalog.py {{args}}
+    ./scripts/ojd catalog regenerate {{args}}
 
 # Generate review-only records from a pinned Linux xpad.c
 catalog-xpad *args:
@@ -86,7 +86,7 @@ catalog-xpad *args:
 
 # Check canonical controller records
 check-profiles:
-    python3 scripts/catalog/validate-profiles.py
+    ./scripts/ojd check profiles
 
 # Check script ownership, paths, modes, and syntax
 check-scripts:
@@ -195,6 +195,41 @@ diagnose-catalina *args:
 # Run current backend acceptance loop
 diagnose-backends *args:
     ./scripts/ojd diagnose backends {{args}}
+
+# Interactively identify each physical rumble actuator, stopping between steps
+diagnose-rumble-motors vid pid intensity="160" duration_ms="500":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    app="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
+    if [[ ! -x "$app" ]]; then
+      app=".build/debug/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
+    fi
+    if [[ ! -x "$app" ]]; then
+      echo "OpenJoystickDriver is not installed or built." >&2
+      exit 1
+    fi
+
+    stop_rumble() {
+      "$app" --headless controller output rumble "{{vid}}" "{{pid}}" \
+        --left 0 --right 0 --lt 0 --rt 0 --duration-ms 0 >/dev/null 2>&1 || true
+    }
+    trap stop_rumble EXIT INT TERM
+
+    channels=(left-main right-main left-trigger right-trigger)
+    options=(--left --right --lt --rt)
+    echo "Testing {{vid}}:{{pid}} at intensity {{intensity}} for {{duration_ms}} ms."
+    echo "Hold the controller normally and note the exact location for each numbered step."
+    for index in "${!channels[@]}"; do
+      step=$((index + 1))
+      read -r -p "Press Return for $step/4 ${channels[$index]} (or Ctrl-C to stop)... "
+      stop_rumble
+      "$app" --headless controller output rumble "{{vid}}" "{{pid}}" \
+        --left 0 --right 0 --lt 0 --rt 0 "${options[$index]}" "{{intensity}}" \
+        --duration-ms "{{duration_ms}}"
+      stop_rumble
+      echo "Record $step: ${channels[$index]} -> left trigger / right trigger / left grip / right grip / none / other"
+    done
+    echo "Sequence complete; all rumble channels were explicitly stopped."
 
 # =========================================================================
 # Repair

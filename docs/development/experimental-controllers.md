@@ -1,6 +1,8 @@
 # Experimental controller status
 
-Experimental entries have implementation work but incomplete accepted hardware evidence. Do not set `provenance.verified` to `true` because a fixture passes.
+Experimental entries have implementation work but incomplete accepted hardware evidence. Runtime
+controller records contain operational facts only; record verification status in the matching
+testing document and issue instead of adding metadata to a controller record.
 
 For parser or record changes, run the parser validation gates in `AGENTS.md`.
 
@@ -75,7 +77,7 @@ The bundled GIP record replaces the ineffective Generic HID fallback for `1532:0
 Reporter packet evidence from an IOUSBHost harness verifies the GIP handshake,
 player LED, every input including Guide, and rumble for `045E:02D1`. The record
 carries the observed `0x81`/`0x01` endpoints, configuration-1-before-claim
-requirement, and verified provenance. OJD's generated USBDriverKit extension and
+requirement. OJD's generated USBDriverKit extension and
 host wrapper have not passed on this hardware. Complete the [model 1537 test](../testing/xbox/1537.md).
 
 ## Razer Wolverine V2
@@ -95,9 +97,9 @@ implemented because no issue capture requires a multi-chunk input report.
 
 Current Linux `xpad.c` supports the Nacon vendor and Xbox One fallback, but does
 not name this exact PID. That supports classification only; it does not prove
-the captured endpoint addresses or the OJD USBDriverKit session. Keep
-`provenance.verified` false until the [Nacon hardware procedure](../testing/nacon-revolution-x.md)
-passes input, continuous-read, reconnect, and no-host-keep-alive checks.
+the captured endpoint addresses or the OJD USBDriverKit session. The
+[Nacon hardware procedure](../testing/nacon-revolution-x.md) remains the human-readable
+acceptance record for input, continuous-read, reconnect, and no-host-keep-alive checks.
 
 ## Xbox Adaptive Joystick
 

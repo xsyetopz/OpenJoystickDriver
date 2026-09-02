@@ -29,6 +29,26 @@ CoreHID virtual-device access alone does not synthesize that engine.
 
 ## GameSir G7 SE observations
 
+On September 2, 2026, the four physical GIP output channels were isolated with:
+
+```bash
+just diagnose-rumble-motors 0x3537 0x1010 200 750
+```
+
+The connected GameSir G7 SE produced the following one-to-one actuator map:
+
+| Logical channel | Physical observation |
+| --- | --- |
+| `leftMain` | Left grip motor |
+| `rightMain` | Right grip motor |
+| `leftTrigger` | Left trigger motor |
+| `rightTrigger` | Right trigger motor |
+
+Every step explicitly stopped all four channels before and after its bounded
+pulse. This verifies independent addressing of all four motors through OJD's
+physical raw-USB GIP output path. It does not imply that every virtual consumer
+or API supplies four independent motor values.
+
 The following observations were recorded on August 25, 2026 for the connected
 GameSir G7 SE (`3537:1010`) using OJD's raw USB GIP transport:
 
@@ -40,7 +60,7 @@ GameSir G7 SE (`3537:1010`) using OJD's raw USB GIP transport:
 | Exact ASTRO SDL HIDAPI Xbox 360 | The `sdl2-3` profile published `9886:0024` and exposed its eight-byte output report | Input and physical rumble worked. |
 | Microsoft Xbox One S Bluetooth revision 1 | Probe published `045E:02E0` with Bluetooth transport and the matching descriptor | LED and application discovery worked, but input did not; rumble was unavailable. |
 | Microsoft Xbox One S Bluetooth revision 2 | Probe published `045E:02FD` with Bluetooth transport and the matching descriptor | LED and application discovery worked, but input did not; rumble was unavailable. |
-| Xbox One HID | `xone-hid` selected as `045E:02EA`; the virtual device exposed output report 3 | LED stayed on and PCSX2 Nightly no longer crashed, but input and rumble did not work. |
+| Historical Xbox One HID experiment | Pre-current `xone-hid` experiment published `045E:02EA` and exposed output report 3 | LED stayed on and PCSX2 Nightly no longer crashed, but input and rumble did not work. This is historical evidence, not the current `xone-hid` tuple. |
 
 These results apply to this controller, OS, consumer, and OJD build. They show
 that exact HIDAPI-compatible reports are the working cross-application path for

@@ -59,8 +59,7 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     )
     self.userSpaceEnabled = false
     let savedCompat = UserDefaults.standard.string(forKey: Self.compatibilityIdentityDefaultsKey)
-    self.compatibilityIdentity =
-      CompatibilityIdentity(rawValue: savedCompat ?? "") ?? .appleGameController
+    self.compatibilityIdentity = CompatibilityIdentity(rawValue: savedCompat ?? "") ?? .automatic
     super.init()
 
     // Consumer routing used to be selectable. Discard every stale selection and always
@@ -134,51 +133,20 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
 
   func buildUserSpaceDispatcher(identity: CompatibilityIdentity) throws -> UserSpaceDispatcherBuild
   {
-    let compatibilityProfile = CompatibilityOutputProfileCatalog.profile(for: identity)
-    let profile = compatibilityProfile.deviceProfile
-    let format: any VirtualGamepadReportFormat
-    switch identity {
-    case .genericHID: format = OJDSDLGamepadFormat()
-    case .sdl2_3: format = Xbox360MacHIDReportFormat()
-    case .appleGameController:
-      format = Xbox360MacHIDReportFormat(topLevelUsage: UInt8(kHIDUsage_GD_GamePad))
-    case .xoneHID:
-      // Xbox One identity for XInput/XUSB-style consumers:
-      // - Prefer the physical HID report descriptor exposed by macOS for 045E:02EA (USB).
-      // - Fall back to a built-in descriptor if the physical device is not present.
-      let physicalDescriptor: [UInt8]?
-      if #available(macOS 15, *) {
-        physicalDescriptor = nil
-      } else {
-        physicalDescriptor = HIDDescriptorReportFormat.copyPhysicalReportDescriptor(
-          vendorID: profile.vendorID,
-          productID: profile.productID,
-          preferredTransport: "USB"
-        )
+    if identity == .automatic {
+      let automatic = AutomaticUserSpaceOutputDispatcher(
+        deviceManager: deviceManager,
+        consumerProvider: CompatibilityConsumerRouting.current
+      ) { [weak self] identity in
+        guard let self else { throw UserSpaceOutputDispatcher.CreationError.createFailed }
+        return try self.buildUserSpaceDispatcher(identity: identity).dispatcher
       }
-      if let physical = physicalDescriptor {
-        do {
-          format = try HIDDescriptorReportFormat(
-            descriptor: physical,
-            outputReportID: VirtualRumbleOutputReportParser.xboxGIPReportID,
-            outputReportPayloadSize: VirtualRumbleOutputReportParser
-              .xboxGIPReportPayloadSizeWithoutReportID
-          )
-        } catch {
-          format = try HIDDescriptorReportFormat(
-            descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
-            outputReportID: VirtualRumbleOutputReportParser.xboxOneReportID,
-            outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize
-          )
-        }
-      } else {
-        format = try HIDDescriptorReportFormat(
-          descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
-          outputReportID: VirtualRumbleOutputReportParser.xboxOneReportID,
-          outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize
-        )
-      }
+      return UserSpaceDispatcherBuild(dispatcher: automatic, status: automatic.status)
     }
+    let composition = try CompatibilityOutputCompositionFactory.make(identity: identity)
+    let compatibilityProfile = composition.profile
+    let profile = compatibilityProfile.deviceProfile
+    let format = composition.format
 
     let rumbleHandler: UserSpaceOutputDispatcher.RumbleCommandHandler = {
       [weak self] identifier, command in

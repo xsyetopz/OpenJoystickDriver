@@ -2,7 +2,24 @@ import Foundation
 
 let gipReadPacketLength = 64
 let gipReadTimeoutMs: UInt32 = 100
-let usbOpenRetryDelays: [UInt64] = [1_000_000_000, 2_000_000_000, 4_000_000_000]
+struct USBPipelineRecoveryPolicy: Sendable {
+  static let standard = Self(
+    openRetryDelays: [1_000_000_000, 2_000_000_000, 4_000_000_000],
+    reconnectBaseDelayNanoseconds: 250_000_000,
+    reconnectMaximumDelayNanoseconds: 4_000_000_000,
+    accessContentionDelayNanoseconds: 30_000_000_000
+  )
+
+  let openRetryDelays: [UInt64]
+  let reconnectBaseDelayNanoseconds: UInt64
+  let reconnectMaximumDelayNanoseconds: UInt64
+  let accessContentionDelayNanoseconds: UInt64
+
+  func reconnectDelayNanoseconds(after attempt: Int) -> UInt64 {
+    let exponent = min(max(0, attempt), 4)
+    return min(reconnectMaximumDelayNanoseconds, reconnectBaseDelayNanoseconds << exponent)
+  }
+}
 let keepAliveIntervalNs: UInt64 = 4_000_000_000
 /// Target input loop cadence in nanoseconds.
 ///
@@ -54,6 +71,7 @@ actor DevicePipeline {
   let dispatcher: any OutputDispatcher
   let usbTransportProvider: (any USBTransportProvider)?
   let transportProfile: DeviceTransportProfile
+  let usbRecoveryPolicy: USBPipelineRecoveryPolicy
   let idleMonitorIntervalNanoseconds: UInt64
   var isActive = false
   var usbHandle: (any USBTransportSession)?
@@ -76,6 +94,7 @@ actor DevicePipeline {
     dispatcher: any OutputDispatcher,
     usbTransportProvider: (any USBTransportProvider)? = nil,
     transportProfile: DeviceTransportProfile = .gipDefault,
+    usbRecoveryPolicy: USBPipelineRecoveryPolicy = .standard,
     externalOutputAllowed: Bool = true,
     idleTimeoutNanoseconds: UInt64 = defaultControllerIdleTimeoutNanoseconds,
     idleMonitorIntervalNanoseconds: UInt64 = defaultIdleMonitorIntervalNanoseconds
@@ -86,6 +105,7 @@ actor DevicePipeline {
     self.dispatcher = dispatcher
     self.usbTransportProvider = usbTransportProvider
     self.transportProfile = transportProfile
+    self.usbRecoveryPolicy = usbRecoveryPolicy
     self.idleMonitorIntervalNanoseconds = idleMonitorIntervalNanoseconds
     self.externalOutputAllowed = externalOutputAllowed
     let inputLifecycle = parser as? any ControllerInputConnectionLifecycle
@@ -124,7 +144,7 @@ actor DevicePipeline {
     idleMonitorTask = nil
     await neutralizeOutput()
     if let listener = dispatcher as? any ControllerLifecycleListener {
-      listener.controllerDidStop(identifier)
+      await listener.controllerDidStop(identifier)
     }
     if let handle = usbHandle {
       await handle.close()
@@ -280,7 +300,7 @@ actor DevicePipeline {
       resetObservedInputState()
       await neutralizeOutput()
       if inputConnectionActive, let listener = dispatcher as? any ControllerLifecycleListener {
-        listener.controllerDidStop(identifier)
+        await listener.controllerDidStop(identifier)
       }
       inputConnectionActive = false
       waitingForExternalNeutral = false

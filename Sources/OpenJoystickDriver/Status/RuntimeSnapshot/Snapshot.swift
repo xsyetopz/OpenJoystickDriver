@@ -260,7 +260,6 @@ enum RuntimeStatusText {
         "    physical-output motors=\(motors.isEmpty ? "none" : motors.joined(separator: ","))"
           + " lighting=\(lighting.isEmpty ? "none" : lighting.joined(separator: ","))"
           + " binary=\(binaryMotors.isEmpty ? "none" : binaryMotors.joined(separator: ","))"
-          + " evidence=\(capabilities.evidence.rawValue)"
       )
     }
     return lines

@@ -9,13 +9,7 @@
     "flags": [
       "lizardMode",
       "trackpads",
-      "wirelessReceiver",
-      "experimental",
-      "needsHardwareTest"
+      "wirelessReceiver"
     ]
-  },
-  "provenance": {
-    "source": "linux-hid-steam.c",
-    "verified": false
   }
 }

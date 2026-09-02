@@ -35,6 +35,44 @@ struct ProbeTests {
     }
   }
 
+  @Test func parsesInstalledShortAndBuildVersions() {
+    let output = "* * \(ExtensionProbe.bundleIdentifier) (0.5.0-beta.2/0.5.0b2) [activated enabled]"
+    let facts = ExtensionProbe.installedFacts(from: output)
+
+    #expect(
+      facts == ExtensionVersionFacts(
+        bundleIdentifier: ExtensionProbe.bundleIdentifier,
+        shortVersion: "0.5.0-beta.2",
+        buildVersion: "0.5.0b2"
+      )
+    )
+    #expect(
+      ExtensionProbe.installedFacts(
+        from: "* * \(ExtensionProbe.bundleIdentifier) (0.5.0-beta.1/0.5.0b1)"
+      )?.buildVersion == "0.5.0b1"
+    )
+    #expect(
+      ExtensionProbe.installedFacts(
+        from: "* * \(ExtensionProbe.bundleIdentifier) (0.5.0-beta.3/0.5.0b3)"
+      )?.shortVersion == "0.5.0-beta.3"
+    )
+    for build in ["13", "500001", "500002"] {
+      #expect(
+        ExtensionProbe.installedFacts(
+          from: "* * \(ExtensionProbe.bundleIdentifier) (0.5.0-beta.1/\(build))"
+        )?.buildVersion == build
+      )
+    }
+    #expect(
+      ExtensionProbe.installedFacts(from: "malformed (ExtensionProbe.bundleIdentifier)") == nil
+    )
+    #expect(
+      ExtensionProbe.installedFacts(
+        from: "* * \(ExtensionProbe.bundleIdentifier) (0.5.0-beta.3 0.5.0b3)"
+      ) == nil
+    )
+  }
+
   @Test func missingEmbeddedBundleRemainsSeparateFromOSRegistration() throws {
     let temporary = FileManager.default.temporaryDirectory.appendingPathComponent(
       UUID().uuidString,

@@ -48,5 +48,6 @@ struct CommandCatalogTests {
     for family in families { #expect(help.contains(family)) }
     #expect(help.contains("--timeout <seconds>"))
     #expect(help.contains("compat set <identity>"))
+    #expect(!help.contains("xone-hid"))
   }
 }

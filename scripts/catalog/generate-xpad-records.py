@@ -287,7 +287,6 @@ def build_profile(
         "product_id": device.product_id,
         "transport": "usb",
         "protocol": protocol,
-        "provenance": {"source": "linux-xpad.c", "verified": False},
     }
 
 
@@ -436,7 +435,6 @@ def write_output(path: pathlib.Path, content: str, force: bool) -> None:
 def write_catalog(
     output_dir: pathlib.Path,
     candidates: list[Candidate],
-    manifest: dict[str, Any],
     force: bool,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -444,7 +442,6 @@ def write_catalog(
         output_dir / candidate.filename: json_text(candidate.profile)
         for candidate in candidates
     }
-    planned[output_dir / "manifest.json"] = json_text(manifest)
 
     if not force:
         conflicts = [
@@ -522,41 +519,7 @@ def main() -> int:
             product_id=args.pid,
         )
         source_info["sha256"] = hashlib.sha256(source.encode()).hexdigest()
-        manifest = {
-            "schema_version": 1,
-            "source": source_info,
-            "selection": {
-                "type": args.type,
-                "vendor_id": args.vid,
-                "product_id": args.pid,
-                "include_existing": args.include_existing,
-            },
-            "counts": {
-                "source_devices": len(devices),
-                "filtered_out": filtered_out,
-                "profiles": len(candidates),
-                "skipped": len(skipped),
-            },
-            "assumptions": [
-                "Generated records are review-only and provenance.verified is false.",
-                "Xbox 360 wired and wireless-receiver endpoints default to IN 129 and OUT 1.",
-                "Xbox One wired endpoints default to IN 130 and OUT 2.",
-                "Endpoint, interface, startup, input, rumble, and LED behavior require hardware validation.",
-                "Original Xbox, unknown types, delayed init, and unknown source macros are skipped.",
-            ],
-            "profiles": [
-                {
-                    "file": item.filename,
-                    "vendor_id": item.device.vendor_id,
-                    "product_id": item.device.product_id,
-                    "name": item.device.name,
-                    "xtype": item.device.xtype,
-                }
-                for item in candidates
-            ],
-            "skipped": skipped,
-        }
-        write_catalog(args.output_dir, candidates, manifest, force=args.force)
+        write_catalog(args.output_dir, candidates, force=args.force)
     except (GenerationError, OSError, KeyError, json.JSONDecodeError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1

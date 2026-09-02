@@ -48,6 +48,69 @@ _codesign_identity_available() {
   security find-identity -v -p codesigning 2>/dev/null | grep -Fi "$identity" >/dev/null
 }
 
+_ojd_application_job_labels() {
+  launchctl print "gui/$(id -u)" 2>/dev/null \
+    | sed -n 's/.*\(application\.com\.openjoystickdriver\.[A-Za-z0-9.-]*\).*/\1/p' \
+    | sort -u
+}
+
+_ojd_application_job_is_running() {
+  local label="$1"
+  launchctl print "gui/$(id -u)/$label" 2>/dev/null \
+    | grep -Eq '^[[:space:]]*(pid = [1-9][0-9]*|state = running)$'
+}
+
+_retire_ojd_application_jobs() {
+  local domain="gui/$(id -u)"
+  local labels=() label
+  while IFS= read -r label; do
+    [[ -n "$label" ]] && labels+=("$label")
+  done < <(_ojd_application_job_labels)
+  ((${#labels[@]} > 0)) || return 0
+
+  echo "  Retiring ${#labels[@]} OJD LaunchServices application job(s)"
+  for label in "${labels[@]}"; do
+    launchctl kill SIGTERM "$domain/$label" 2>/dev/null || true
+  done
+  for _ in {1..50}; do
+    local running=0
+    for label in "${labels[@]}"; do
+      _ojd_application_job_is_running "$label" && running=1
+    done
+    ((running == 0)) && return 0
+    sleep 0.1
+  done
+
+  for label in "${labels[@]}"; do
+    _ojd_application_job_is_running "$label" || continue
+    echo "  OJD application job did not stop after SIGTERM; forcing $label"
+    launchctl kill SIGKILL "$domain/$label" 2>/dev/null || true
+  done
+  for _ in {1..20}; do
+    local running=0
+    for label in "${labels[@]}"; do
+      _ojd_application_job_is_running "$label" && running=1
+    done
+    ((running == 0)) && return 0
+    sleep 0.1
+  done
+
+  for label in "${labels[@]}"; do
+    _ojd_application_job_is_running "$label" || continue
+    echo "  OJD application job survived SIGKILL; booting out $label"
+    launchctl bootout "$domain/$label" 2>/dev/null || true
+  done
+  for _ in {1..20}; do
+    local running=0
+    for label in "${labels[@]}"; do
+      _ojd_application_job_is_running "$label" && running=1
+    done
+    ((running == 0)) && return 0
+    sleep 0.1
+  done
+  die "macOS left an unkillable OJD application job. Reboot once; OJD will recreate its app service automatically at login."
+}
+
 # ---------------------------------------------------------------------------
 # Rebuild cleanup
 # ---------------------------------------------------------------------------
@@ -57,6 +120,7 @@ nuke_all() {
   local APP_PATH="/Applications/OpenJoystickDriver.app"
 
   echo "=== NUKE: killing every OJD process ==="
+  _retire_ojd_application_jobs
   killall -9 OpenJoystickDriver 2>/dev/null && echo "  killed OpenJoystickDriver" || true
   killall -9 XboxUSBDevice 2>/dev/null && echo "  killed XboxUSBDevice" || true
 
@@ -77,7 +141,7 @@ nuke_all() {
     "$APP_PATH/Contents/MacOS/OpenJoystickDriver" --headless app login disable \
       && echo "  main app login item removed" || true
   fi
-  echo "  legacy launchd registrations are not modified; remove stale entries manually if present"
+  echo "  OJD LaunchServices application jobs reconciled"
 
   echo ""
   echo "=== NUKE: removing app from /Applications ==="
@@ -384,17 +448,7 @@ rebuild_fast() {
 
   echo ""
   echo "=== Step 2.75: Stop the installed main app ==="
-  local RUNNING_PID
-  RUNNING_PID="$(pgrep -x OpenJoystickDriver | head -1 || true)"
-  if [[ -n "$RUNNING_PID" ]]; then
-    kill -TERM "$RUNNING_PID"
-    for _ in {1..50}; do
-      pgrep -x OpenJoystickDriver >/dev/null || break
-      sleep 0.1
-    done
-    pgrep -x OpenJoystickDriver >/dev/null \
-      && die "Installed main app did not stop within 5 seconds."
-  fi
+  _retire_ojd_application_jobs
 
   echo ""
   echo "=== Step 3: Install app (without triggering sysext upgrade) ==="
@@ -405,8 +459,14 @@ rebuild_fast() {
 
   echo ""
   echo "=== Step 4: Launch app ==="
-  open "$APP_DST" || true
-  echo "  Launched OpenJoystickDriver"
+  if ! open "$APP_DST"; then
+    echo "  LaunchServices rejected the first launch; reconciling OJD application jobs once"
+    _retire_ojd_application_jobs
+    open "$APP_DST" || die "LaunchServices could not launch the installed app after reconciliation."
+  fi
+  "$APP_DST/Contents/MacOS/OpenJoystickDriver" --headless app status --json >/dev/null \
+    || die "Installed app launched but its authenticated RPC service did not become ready."
+  echo "  Launched OpenJoystickDriver and verified application-service readiness"
 }
 
 rebuild_full() {

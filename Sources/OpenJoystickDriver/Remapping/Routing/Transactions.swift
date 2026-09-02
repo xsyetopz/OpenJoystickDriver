@@ -20,7 +20,7 @@ extension RemappingRoutingCore {
         guard let route = routes[identifier] else { continue }
         switch route.selection {
         case .compatibility:
-          if route.eligibility == .eligible { notifyCompatibilityStop(identifier) }
+          if route.eligibility == .eligible { await notifyCompatibilityStop(identifier) }
         case .remapping, .unavailable:
           try await engine.releaseAll(for: identifier, requiring: permit)
         }

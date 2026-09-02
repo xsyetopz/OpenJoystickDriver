@@ -23,6 +23,7 @@ import OpenJoystickDriverKit
   @Published private(set) var activeMutationID: UUID?
   @Published private(set) var lastMutationOperation: RuntimeMutationOperation?
   @Published private(set) var lastMutationID: UUID?
+  @Published private(set) var systemExtensionSetupState: SystemExtensionSetupState = .checking
 
   private var refreshGeneration = 0
   private var liveStatusGeneration = 0
@@ -38,10 +39,33 @@ import OpenJoystickDriverKit
   var supportLogsGeneration = 0
   private var mutationInFlight = false
   private var fullRefreshInFlight = false
+  private let systemExtensionSetup: SystemExtensionSetupCoordinator
 
-  init(gateway: any ApplicationServiceGateway) { self.gateway = gateway }
+  init(
+    gateway: any ApplicationServiceGateway,
+    systemExtensionSetup: SystemExtensionSetupCoordinator = SystemExtensionSetupCoordinator()
+  ) {
+    self.gateway = gateway
+    self.systemExtensionSetup = systemExtensionSetup
+  }
+
+  func startSystemExtensionSetup() async {
+    await systemExtensionSetup.launch()
+    systemExtensionSetupState = systemExtensionSetup.state
+  }
+
+  func refreshSystemExtensionSetup() async {
+    await systemExtensionSetup.refresh()
+    systemExtensionSetupState = systemExtensionSetup.state
+  }
+
+  func repairSystemExtension() async {
+    await systemExtensionSetup.repair()
+    systemExtensionSetupState = systemExtensionSetup.state
+  }
 
   func refresh() async {
+    await refreshSystemExtensionSetup()
     refreshGeneration += 1
     let generation = refreshGeneration
     fullRefreshInFlight = true
@@ -382,6 +406,11 @@ import OpenJoystickDriverKit
     }
   }
 
+  func stopInputCapture() {
+    inputGeneration += 1
+    inputCaptureState = .idle
+  }
+
   func listenForInput(for selector: RuntimeDeviceSelector) async {
     inputGeneration += 1
     let generation = inputGeneration
@@ -575,7 +604,7 @@ import OpenJoystickDriverKit
   func resetCompatibilityIdentity() async {
     // Reset only the compatibility selection. The broader service reset changes unrelated runtime
     // settings and remains CLI-only.
-    await setCompatibilityIdentity(.appleGameController)
+    await setCompatibilityIdentity(.automatic)
   }
 
   private func locallyValid(_ profile: RemappingProfile, request: RuntimeMutationRequest)

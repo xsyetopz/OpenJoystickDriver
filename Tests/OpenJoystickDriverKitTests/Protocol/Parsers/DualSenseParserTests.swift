@@ -183,7 +183,7 @@ struct DualSenseParserTests {
       #expect(profile.parserName == "DualSense")
       #expect(profile.protocolVariant.rawValue == "dualSense")
       #expect(
-        profile.mappingFlags == ["touchpad", "microphoneMute", "experimental", "needsHardwareTest"]
+        profile.mappingFlags == ["touchpad", "microphoneMute"]
       )
     }
   }

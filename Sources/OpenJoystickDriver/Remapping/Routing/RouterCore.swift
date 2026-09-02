@@ -58,7 +58,7 @@ actor RemappingRoutingCore {
     if compatibilityBecameSuppressed && !profileTransactionState.blocksOutput {
       for identifier in sortedIdentifiers {
         guard case .compatibility = routes[identifier]?.selection else { continue }
-        notifyCompatibilityStop(identifier)
+        await notifyCompatibilityStop(identifier)
       }
     }
     guard
@@ -237,7 +237,7 @@ actor RemappingRoutingCore {
       return
     }
     switch route.selection {
-    case .compatibility: notifyCompatibilityStop(identifier)
+    case .compatibility: await notifyCompatibilityStop(identifier)
     case .remapping, .unavailable:
       try await releaseAllSafely(for: identifier, requiring: proposedPermit)
     }
@@ -255,7 +255,7 @@ actor RemappingRoutingCore {
     }
     for identifier in sortedIdentifiers {
       guard case .compatibility = routes[identifier]?.selection else { continue }
-      notifyCompatibilityStop(identifier)
+      await notifyCompatibilityStop(identifier)
     }
     routes.removeAll()
     connectedIdentifiers.removeAll()
@@ -312,7 +312,7 @@ actor RemappingRoutingCore {
       // The transaction entry already stopped compatibility output once.
     } else if case .compatibility = oldRoute?.selection, case .compatibility = selection {
     } else if case .compatibility = oldRoute?.selection {
-      notifyCompatibilityStop(identifier)
+      await notifyCompatibilityStop(identifier)
     }
 
     switch selection {

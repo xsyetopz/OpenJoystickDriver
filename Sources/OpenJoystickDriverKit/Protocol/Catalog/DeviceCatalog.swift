@@ -65,8 +65,7 @@ struct DeviceCatalog: Sendable {
         mappingOptions: [],
         preferredBackends: [.userSpaceHID],
         gipStartupPackets: GIPStartupPacket.defaultSequence,
-        gipKeepAlivePolicy: .enabled,
-        hardwareVerified: false
+        gipKeepAlivePolicy: .enabled
       )
   }
 
@@ -78,7 +77,7 @@ struct DeviceCatalog: Sendable {
     "\(identifier.vendorID):\(identifier.productID)"
   }
 
-  private static func loadRecords() throws -> [ControllerRecord] {
+  private static func loadRecords() throws -> [ControllerRecordDocument] {
     let urls = (Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: nil) ?? [])
       .filter { isControllerRecordFilename($0.lastPathComponent) }.sorted {
         $0.lastPathComponent < $1.lastPathComponent
@@ -88,9 +87,8 @@ struct DeviceCatalog: Sendable {
     let decoder = JSONDecoder()
     return try urls.map { url in
       let data = try Data(contentsOf: url)
-      try validateShape(JSONSerialization.jsonObject(with: data), path: url.path)
       do {
-        let record = try decoder.decode(ControllerRecord.self, from: data)
+        let record = try decoder.decode(ControllerRecordDocument.self, from: data)
         let expectedName = String(format: "%04x-%04x.json", record.vendorID, record.productID)
         guard url.lastPathComponent == expectedName else {
           throw CatalogError("\(url.path): filename must be \(expectedName)")
@@ -107,73 +105,8 @@ struct DeviceCatalog: Sendable {
     return stem.enumerated().allSatisfy { offset, character in offset == 4 || character.isHexDigit }
   }
 
-  private static func validateShape(_ value: Any, path: String) throws {
-    guard let root = value as? [String: Any] else {
-      throw CatalogError("\(path): root must be an object")
-    }
-    try requireKeys(
-      root,
-      allowed: ["$schema", "vendor_id", "product_id", "transport", "protocol", "usb", "provenance"],
-      required: ["$schema", "vendor_id", "product_id", "transport", "protocol", "provenance"],
-      path: path
-    )
-    guard root["$schema"] as? String == ControllerRecord.schemaID else {
-      throw CatalogError("\(path): invalid $schema")
-    }
-    guard let protocolObject = root["protocol"] as? [String: Any] else {
-      throw CatalogError("\(path): protocol must be an object")
-    }
-    try requireKeys(
-      protocolObject,
-      allowed: ["driver", "variant", "flags", "startup_packets", "keep_alive"],
-      required: ["driver", "variant"],
-      path: "\(path).protocol"
-    )
-    guard let provenance = root["provenance"] as? [String: Any] else {
-      throw CatalogError("\(path): provenance must be an object")
-    }
-    try requireKeys(
-      provenance,
-      allowed: ["source", "revision", "verified"],
-      required: ["source", "verified"],
-      path: "\(path).provenance"
-    )
-    if let usb = root["usb"] as? [String: Any] {
-      try requireKeys(
-        usb,
-        allowed: ["interface", "configuration", "post_handshake_settle_ms", "endpoints"],
-        required: [],
-        path: "\(path).usb"
-      )
-      if let endpoints = usb["endpoints"] as? [String: Any] {
-        try requireKeys(
-          endpoints,
-          allowed: ["in", "out"],
-          required: ["in", "out"],
-          path: "\(path).usb.endpoints"
-        )
-      }
-    }
-  }
-
-  private static func requireKeys(
-    _ object: [String: Any],
-    allowed: Set<String>,
-    required: Set<String>,
-    path: String
-  ) throws {
-    let keys = Set(object.keys)
-    let unknown = keys.subtracting(allowed).sorted()
-    let missing = required.subtracting(keys).sorted()
-    if !unknown.isEmpty {
-      throw CatalogError("\(path): unknown fields \(unknown.joined(separator: ", "))")
-    }
-    if !missing.isEmpty {
-      throw CatalogError("\(path): missing fields \(missing.joined(separator: ", "))")
-    }
-  }
-
-  private static func makeRuntimeProfile(_ record: ControllerRecord) throws -> DeviceRuntimeProfile
+  private static func makeRuntimeProfile(_ record: ControllerRecordDocument) throws
+    -> DeviceRuntimeProfile
   {
     guard (1...65_535).contains(record.vendorID), (0...65_535).contains(record.productID) else {
       throw CatalogError("invalid controller identity \(record.vendorID):\(record.productID)")
@@ -182,25 +115,13 @@ struct DeviceCatalog: Sendable {
       throw CatalogError("unsupported transport \(record.transport)")
     }
     let driver = record.protocolInfo.driver
-    guard let contract = protocolContracts[driver] else {
-      throw CatalogError("unsupported parser \(driver)")
-    }
-    guard contract.variants.contains(record.protocolInfo.variant),
-      let variant = ControllerProtocolVariant(rawValue: record.protocolInfo.variant)
-    else {
+    guard let variant = ControllerProtocolVariant(rawValue: record.protocolInfo.variant) else {
       throw CatalogError(
         "unsupported protocol variant \(record.protocolInfo.variant) for \(driver)"
       )
     }
 
     let flags = record.protocolInfo.flags ?? []
-    let unknownFlags = Set(flags).subtracting(contract.flags).sorted()
-    guard unknownFlags.isEmpty else {
-      throw CatalogError("unsupported flags \(unknownFlags.joined(separator: ", "))")
-    }
-    guard Set(flags).count == flags.count else {
-      throw CatalogError("duplicate flags for \(record.vendorID):\(record.productID)")
-    }
 
     let defaultEndpoints = driver == "Xbox360" ? (input: 129, output: 1) : (input: 130, output: 2)
     let inputEndpoint = record.usb?.endpoints?.input ?? defaultEndpoints.input
@@ -225,9 +146,6 @@ struct DeviceCatalog: Sendable {
       usb.postHandshakeSettleMilliseconds == nil, usb.endpoints == nil
     {
       throw CatalogError("empty USB override")
-    }
-    guard supportedSources.contains(record.provenance.source) else {
-      throw CatalogError("unsupported provenance source \(record.provenance.source)")
     }
     guard DeviceTransportProfile.inputEndpointRange.contains(inputEndpoint),
       DeviceTransportProfile.outputEndpointRange.contains(outputEndpoint),
@@ -266,12 +184,11 @@ struct DeviceCatalog: Sendable {
       mappingOptions: mappingOptions(from: flags),
       preferredBackends: [.userSpaceHID],
       gipStartupPackets: startupPackets.isEmpty ? GIPStartupPacket.defaultSequence : startupPackets,
-      gipKeepAlivePolicy: keepAlivePolicy,
-      hardwareVerified: record.provenance.verified
+      gipKeepAlivePolicy: keepAlivePolicy
     )
   }
 
-  private static func supportsRawUSBPipeline(_ record: ControllerRecord) -> Bool {
+  private static func supportsRawUSBPipeline(_ record: ControllerRecordDocument) -> Bool {
     record.transport == "usb" && rawUSBParserNames.contains(record.protocolInfo.driver)
   }
 
@@ -292,123 +209,7 @@ struct DeviceCatalog: Sendable {
     return result
   }
 
-  private static let protocolContracts: [String: (variants: Set<String>, flags: Set<String>)] = [
-    "GIP": (
-      ["xboxOriginal", "xboxOne", "unknown"],
-      [
-        "dpadToButtons", "triggersToButtons", "sticksToNull", "shareButton", "paddles",
-        "profileButton", "shareOffset"
-      ]
-    ),
-    "Xbox360": (
-      ["xbox360", "xbox360Wireless", "unknown"],
-      ["dpadToButtons", "triggersToButtons", "sticksToNull"]
-    ),
-    "DS3": (
-      ["dualShock3", "unknown"],
-      ["gyro", "accelerometer", "battery", "experimental", "needsHardwareTest"]
-    ),
-    "DS4": (
-      ["dualShock4", "unknown"], ["touchpad", "gyro", "accelerometer", "battery", "lightbar"]
-    ),
-    "DualSense": (
-      ["dualSense", "unknown"],
-      [
-        "touchpad", "gyro", "accelerometer", "battery", "lightbar", "microphoneMute",
-        "adaptiveTriggers", "experimental", "needsHardwareTest"
-      ]
-    ),
-    "SteamController": (
-      ["steamController", "unknown"],
-      [
-        "lizardMode", "trackpads", "gyro", "battery", "wirelessReceiver", "experimental",
-        "needsHardwareTest"
-      ]
-    ),
-    "SwitchPro": (
-      ["switchPro", "unknown"],
-      ["usbHandshake", "calibration", "imu", "rumble", "experimental", "needsHardwareTest"]
-    ),
-    "XboxAdaptiveJoystick": (
-      ["xboxAdaptiveJoystick", "unknown"],
-      ["rawUSBPackets", "genericHIDPackets", "experimental", "needsHardwareTest"]
-    ), "GenericHID": (["genericHID"], [])
-  ]
-
-  private static let supportedSources: Set<String> = [
-    "local-hardware", "linux-xpad.c", "linux-hid-steam.c", "linux-hid-playstation.c",
-    "linux-hid-sony.c", "linux-hid-nintendo.c", "tester-packets"
-  ]
-
   private static let rawUSBParserNames: Set<String> = ["GIP", "Xbox360"]
-
-  private struct ControllerRecord: Decodable {
-    static let schemaID =
-      "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
-      + "Resources/Schemas/controller.schema.json"
-
-    let vendorID: Int
-    let productID: Int
-    let transport: String
-    let protocolInfo: ProtocolInfo
-    let usb: USBOverride?
-    let provenance: Provenance
-
-    enum CodingKeys: String, CodingKey {
-      case vendorID = "vendor_id"
-      case productID = "product_id"
-      case transport
-      case protocolInfo = "protocol"
-      case usb
-      case provenance
-    }
-
-    struct ProtocolInfo: Decodable {
-      let driver: String
-      let variant: String
-      let flags: [String]?
-      let startupPackets: [String]?
-      let keepAliveEnabled: Bool?
-
-      enum CodingKeys: String, CodingKey {
-        case driver
-        case variant
-        case flags
-        case startupPackets = "startup_packets"
-        case keepAliveEnabled = "keep_alive"
-      }
-    }
-
-    struct USBOverride: Decodable {
-      let interface: Int?
-      let configuration: String?
-      let postHandshakeSettleMilliseconds: Int?
-      let endpoints: Endpoints?
-
-      enum CodingKeys: String, CodingKey {
-        case interface
-        case configuration
-        case postHandshakeSettleMilliseconds = "post_handshake_settle_ms"
-        case endpoints
-      }
-    }
-
-    struct Endpoints: Decodable {
-      let input: Int
-      let output: Int
-
-      enum CodingKeys: String, CodingKey {
-        case input = "in"
-        case output = "out"
-      }
-    }
-
-    struct Provenance: Decodable {
-      let source: String
-      let revision: String?
-      let verified: Bool
-    }
-  }
 
   private struct CatalogError: Error, CustomStringConvertible {
     let description: String

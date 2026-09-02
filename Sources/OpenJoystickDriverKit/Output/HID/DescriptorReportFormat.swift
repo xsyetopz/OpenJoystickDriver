@@ -89,9 +89,17 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
     func score(_ dev: IOHIDDevice) -> Int {
       let transport = strProp(dev, kIOHIDTransportKey as String)
       let serial = strProp(dev, kIOHIDSerialNumberKey as String) ?? strProp(dev, "SerialNumber")
-
       // Exclude OJD virtual devices.
-      if UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial) { return Int.min / 2 }
+      if UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial)
+        || !PhysicalHIDBackendEventAdapter().acceptsDescriptor(
+          syntheticProperty: IOHIDDeviceGetProperty(
+            dev,
+            "kIOHIDGCSyntheticDeviceKey" as CFString
+          )
+        )
+      {
+        return Int.min / 2
+      }
 
       var s = 0
       if let preferredTransport, let transport, transport == preferredTransport { s += 10_000 }

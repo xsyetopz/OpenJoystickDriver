@@ -7,7 +7,7 @@
 - **State:** OPEN
 - **Author:** qwertychouskie
 - **Created:** 2026-06-11T01:24:28Z
-- **Updated:** 2026-07-18T22:25:30Z
+- **Updated:** 2026-08-25T16:21:50Z
 - **Closed:** —
 - **Labels:** bug, help wanted
 
@@ -28,3 +28,9 @@ Now that I think about it, overall, now that SDL3 supports controllers that requ
 > Now that I think about it, overall, now that SDL3 supports controllers that require libusb on macOS out-of-the-box, maybe OpenJoystickDriver could use SDL3 to access the real gamepad(s)? That would probably both be easier to maintain, and give better results across a wide variety of gamepads.
 
 I'll look into this! Thanks for your first issue. It's very helpful that people test my programme out when I lack the physical devices to find further edge cases like this.
+
+### xsyetopz — 2026-08-25T16:21:50Z
+
+[Source comment](https://github.com/xsyetopz/OpenJoystickDriver/issues/11#issuecomment-5413407937)
+
+Try [0.5.0-beta.1](https://github.com/xsyetopz/OpenJoystickDriver/releases/tag/0.5.0-beta.1) and tell me if it works!

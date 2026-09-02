@@ -1,0 +1,446 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/report.schema.json",
+	"title": "OpenJoystickDriver support report",
+	"type": "object",
+	"required": [
+		"specversion",
+		"id",
+		"source",
+		"type",
+		"time",
+		"datacontenttype",
+		"dataschema",
+		"data"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"specversion": {
+			"const": "1.0"
+		},
+		"id": {
+			"type": "string"
+		},
+		"source": {
+			"const": "urn:openjoystickdriver:support"
+		},
+		"type": {
+			"const": "com.openjoystickdriver.support.diagnostic"
+		},
+		"time": {
+			"type": "string",
+			"format": "date-time"
+		},
+		"datacontenttype": {
+			"const": "application/json"
+		},
+		"dataschema": {
+			"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/report.schema.json#/$defs/supportDiagnosticData"
+		},
+		"data": {
+			"$ref": "#/$defs/supportDiagnosticData"
+		}
+	},
+	"$defs": {
+		"supportDiagnosticData": {
+			"type": "object",
+			"required": [
+				"privacy",
+				"system",
+				"permissions",
+				"applicationService",
+				"configuration",
+				"controllers",
+				"hidGamepads",
+				"notes"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"privacy": {
+					"$ref": "#/$defs/privacy"
+				},
+				"system": {
+					"$ref": "#/$defs/system"
+				},
+				"permissions": {
+					"$ref": "#/$defs/permissions"
+				},
+				"applicationService": {
+					"$ref": "#/$defs/applicationService"
+				},
+				"configuration": {
+					"$ref": "#/$defs/configuration"
+				},
+				"controllers": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/controller"
+					}
+				},
+				"hidGamepads": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/hidGamepad"
+					}
+				},
+				"appleGameControllerAudit": {
+					"$ref": "#/$defs/appleGameControllerAudit"
+				},
+				"notes": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"privacy": {
+			"type": "object",
+			"required": [
+				"includesRawSerialNumbers",
+				"includesFilesystemPaths",
+				"includesPacketPayloads",
+				"includesHIDLocationIDs",
+				"includesDeviceProductNames"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"includesRawSerialNumbers": {
+					"const": false
+				},
+				"includesFilesystemPaths": {
+					"const": false
+				},
+				"includesPacketPayloads": {
+					"const": false
+				},
+				"includesHIDLocationIDs": {
+					"const": false
+				},
+				"includesDeviceProductNames": {
+					"type": "boolean"
+				}
+			}
+		},
+		"system": {
+			"type": "object",
+			"required": ["appVersion", "macOSVersion", "architecture"],
+			"additionalProperties": false,
+			"properties": {
+				"appVersion": {
+					"type": "string"
+				},
+				"macOSVersion": {
+					"type": "string"
+				},
+				"architecture": {
+					"type": "string"
+				}
+			}
+		},
+		"permissions": {
+			"type": "object",
+			"required": ["inputMonitoring", "accessibility"],
+			"additionalProperties": false,
+			"properties": {
+				"inputMonitoring": {
+					"type": "string"
+				},
+				"accessibility": {
+					"type": "string"
+				}
+			}
+		},
+		"applicationService": {
+			"type": "object",
+			"required": ["installed", "connected"],
+			"additionalProperties": false,
+			"properties": {
+				"installed": {
+					"type": "boolean"
+				},
+				"connected": {
+					"type": "boolean"
+				},
+				"runtimeState": {
+					"type": "string"
+				},
+				"activeCount": {
+					"type": "integer"
+				}
+			}
+		},
+		"configuration": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"userSpaceVirtualDeviceEnabled": {
+					"type": "boolean"
+				}
+			}
+		},
+		"controller": {
+			"type": "object",
+			"required": [
+				"name",
+				"vendorID",
+				"productID",
+				"parser",
+				"connection",
+				"serialNumberPresent",
+				"protocolVariant",
+				"mappingFlags",
+				"inputEndpoint",
+				"outputEndpoint",
+				"needsSetConfiguration",
+				"postHandshakeSettleMs",
+				"preferredBackends",
+				"physicalOutputCapabilities"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"vendorID": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"productID": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"parser": {
+					"type": "string"
+				},
+				"connection": {
+					"type": "string"
+				},
+				"serialNumberPresent": {
+					"type": "boolean"
+				},
+				"protocolVariant": {
+					"type": "string"
+				},
+				"mappingFlags": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"inputEndpoint": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 255
+				},
+				"outputEndpoint": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 255
+				},
+				"needsSetConfiguration": {
+					"type": "boolean"
+				},
+				"postHandshakeSettleMs": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"preferredBackends": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"physicalOutputCapabilities": {
+					"$ref": "#/$defs/physicalOutputCapabilities"
+				}
+			}
+		},
+		"physicalOutputCapabilities": {
+			"type": "object",
+			"required": ["rumbleMotors", "lightingFeatures", "binaryRumbleMotors"],
+			"additionalProperties": false,
+			"properties": {
+				"rumbleMotors": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/rumbleMotor"
+					}
+				},
+				"lightingFeatures": {
+					"type": "array",
+					"items": {
+						"enum": [
+							"playerIndicator",
+							"programmableColor",
+							"programmableBrightness"
+						]
+					}
+				},
+				"binaryRumbleMotors": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/rumbleMotor"
+					}
+				}
+			}
+		},
+		"rumbleMotor": {
+			"enum": [
+				"leftMain",
+				"rightMain",
+				"leftTrigger",
+				"rightTrigger",
+				"leftHaptic",
+				"rightHaptic"
+			]
+		},
+		"hidGamepad": {
+			"type": "object",
+			"required": ["vendorID", "productID", "serialKind", "isOJDUserSpace"],
+			"additionalProperties": false,
+			"properties": {
+				"vendorID": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"productID": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"product": {
+					"type": "string"
+				},
+				"transport": {
+					"type": "string"
+				},
+				"serialKind": {
+					"enum": ["none", "ojdUserSpace", "present"]
+				},
+				"ioUserClass": {
+					"type": "string"
+				},
+				"isOJDUserSpace": {
+					"type": "boolean"
+				},
+				"isGameControllerSupported": {
+					"type": "boolean"
+				}
+			}
+		},
+		"appleGameControllerAudit": {
+			"type": "object",
+			"required": [
+				"source",
+				"bundleVersions",
+				"appleExactDeviceCount",
+				"skippedAppleDeviceCount",
+				"ojdRecordCount",
+				"catalogListedOJDRecordCount",
+				"records",
+				"warnings",
+				"caveat"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"source": {
+					"enum": [
+						"downloadedMobileAsset",
+						"preinstalledMobileAsset",
+						"unavailable"
+					]
+				},
+				"bundleVersions": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"appleExactDeviceCount": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"skippedAppleDeviceCount": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"ojdRecordCount": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"catalogListedOJDRecordCount": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"records": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/appleRecord"
+					}
+				},
+				"warnings": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"caveat": {
+					"type": "string"
+				}
+			}
+		},
+		"appleRecord": {
+			"type": "object",
+			"required": [
+				"vendorID",
+				"productID",
+				"name",
+				"catalogListed",
+				"appleIdentifiers",
+				"transportConstraints",
+				"versionConstraints"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"vendorID": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"productID": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"name": {
+					"type": "string"
+				},
+				"catalogListed": {
+					"type": "boolean"
+				},
+				"appleIdentifiers": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"transportConstraints": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"versionConstraints": {
+					"type": "array",
+					"items": {
+						"type": "integer"
+					}
+				}
+			}
+		}
+	}
+}

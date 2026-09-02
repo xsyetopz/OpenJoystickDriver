@@ -32,8 +32,10 @@ public final class CompatibilityOutputDispatcher: OutputDispatcher, @unchecked S
 }
 
 extension CompatibilityOutputDispatcher: ControllerLifecycleListener {
-  public func controllerDidStop(_ identifier: DeviceIdentifier) {
+  public func controllerDidStop(_ identifier: DeviceIdentifier) async {
     let target = lock.withLock { backend }
-    (target as? any ControllerLifecycleListener)?.controllerDidStop(identifier)
+    if let listener = target as? any ControllerLifecycleListener {
+      await listener.controllerDidStop(identifier)
+    }
   }
 }

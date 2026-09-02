@@ -229,9 +229,18 @@
           Divider()
           controllerDetails
           Divider()
+          ControllerInputTestView(device: device, viewModel: viewModel)
+          Divider()
           ControllerIdentityView(viewModel: viewModel)
         }.padding(28).frame(maxWidth: .infinity, alignment: .leading)
-      }.ojdAccessibilityLabel(device.name).ojdAccessibilityValue(accessibilityValue)
+      }.onAppear { refreshInput() }
+        .ojdAccessibilityLabel(device.name).ojdAccessibilityValue(accessibilityValue)
+    }
+
+    private func refreshInput() {
+      Task { @MainActor in
+        await viewModel.readInputState(for: RuntimeDeviceSelector(device: device))
+      }
     }
 
     private var controllerHeader: some View {
@@ -406,6 +415,55 @@
           message
         )
       }
+    }
+  }
+
+  private struct ControllerInputTestView: View {
+    let device: ApplicationServiceDeviceDescription
+    @ObservedObject var viewModel: RuntimeViewModel
+
+    private var selector: RuntimeDeviceSelector { RuntimeDeviceSelector(device: device) }
+
+    var body: some View {
+      VStack(alignment: .leading, spacing: 8) {
+        HStack {
+          Text("Controller Test").font(.headline)
+          Spacer()
+          Button("Refresh") { refresh() }
+          Button("Stop") { viewModel.stopInputCapture() }
+        }
+        inputSummary
+      }
+    }
+
+    @ViewBuilder private var inputSummary: some View {
+      switch viewModel.inputCaptureState {
+      case .idle: Text("Press Refresh to observe controller input.")
+      case .listening: Text("Listening for controller input…")
+      case .received(_, let state), .detected(_, let state, _):
+        VStack(alignment: .leading, spacing: 4) {
+          Text(
+            state.pressedButtons.isEmpty
+              ? "No buttons pressed" : state.pressedButtons.joined(separator: ", ")
+          )
+          Text(
+            String(
+              format: "Sticks %.2f, %.2f / %.2f, %.2f",
+              state.leftStickX,
+              state.leftStickY,
+              state.rightStickX,
+              state.rightStickY
+            )
+          )
+            .font(.caption)
+        }
+      case .unavailable(_, let message), .error(_, let message):
+        Text(message).foregroundColor(Color(NSColor.secondaryLabelColor))
+      }
+    }
+
+    private func refresh() {
+      Task { @MainActor in await viewModel.readInputState(for: selector) }
     }
   }
 

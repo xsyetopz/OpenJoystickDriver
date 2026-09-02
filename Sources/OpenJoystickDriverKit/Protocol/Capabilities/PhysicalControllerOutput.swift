@@ -15,13 +15,6 @@ public enum PhysicalLightingFeature: String, Codable, CaseIterable, Hashable, Se
   case programmableBrightness
 }
 
-/// Strength of the evidence behind a physical output capability claim.
-public enum PhysicalOutputEvidence: String, Codable, CaseIterable, Hashable, Sendable {
-  case unavailable
-  case sourceBacked
-  case hardwareVerified
-}
-
 /// Generic player indicator selection for protocols with numbered controller LEDs.
 public enum PhysicalPlayerIndicator: Int, Codable, CaseIterable, Hashable, Sendable {
   case off = 0
@@ -31,19 +24,16 @@ public enum PhysicalPlayerIndicator: Int, Codable, CaseIterable, Hashable, Senda
   case player4 = 4
 }
 
-/// Source-backed physical output capabilities of the active controller protocol.
+/// Physical output capabilities implemented by the active controller protocol.
 public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable, Sendable {
   public let rumbleMotors: [PhysicalRumbleMotor]
   public let lightingFeatures: [PhysicalLightingFeature]
   /// Motors whose hardware accepts only off/on rather than variable intensity.
   public let binaryRumbleMotors: [PhysicalRumbleMotor]
-  public let evidence: PhysicalOutputEvidence
-
   public init(
     rumbleMotors: [PhysicalRumbleMotor] = [],
     lightingFeatures: [PhysicalLightingFeature] = [],
-    binaryRumbleMotors: [PhysicalRumbleMotor] = [],
-    evidence: PhysicalOutputEvidence? = nil
+    binaryRumbleMotors: [PhysicalRumbleMotor] = []
   ) {
     self.rumbleMotors = Array(Set(rumbleMotors)).sorted { $0.rawValue < $1.rawValue }
     self.lightingFeatures = Array(Set(lightingFeatures)).sorted { $0.rawValue < $1.rawValue }
@@ -51,46 +41,6 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
     self.binaryRumbleMotors = Array(Set(binaryRumbleMotors).intersection(supportedMotors)).sorted {
       $0.rawValue < $1.rawValue
     }
-    let hasCapabilities = !self.rumbleMotors.isEmpty || !self.lightingFeatures.isEmpty
-    self.evidence = hasCapabilities ? (evidence ?? .sourceBacked) : .unavailable
-  }
-
-  private enum CodingKeys: String, CodingKey {
-    case rumbleMotors
-    case lightingFeatures
-    case binaryRumbleMotors
-    case evidence
-  }
-
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    let motors = try container.decode([PhysicalRumbleMotor].self, forKey: .rumbleMotors)
-    let lighting = try container.decode([PhysicalLightingFeature].self, forKey: .lightingFeatures)
-    let binaryMotors = try container.decode([PhysicalRumbleMotor].self, forKey: .binaryRumbleMotors)
-    let decodedEvidence = try container.decode(PhysicalOutputEvidence.self, forKey: .evidence)
-    self.init(
-      rumbleMotors: motors,
-      lightingFeatures: lighting,
-      binaryRumbleMotors: binaryMotors,
-      evidence: decodedEvidence
-    )
-  }
-
-  public func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(rumbleMotors, forKey: .rumbleMotors)
-    try container.encode(lightingFeatures, forKey: .lightingFeatures)
-    try container.encode(binaryRumbleMotors, forKey: .binaryRumbleMotors)
-    try container.encode(evidence, forKey: .evidence)
-  }
-
-  public func withEvidence(_ evidence: PhysicalOutputEvidence) -> Self {
-    Self(
-      rumbleMotors: rumbleMotors,
-      lightingFeatures: lightingFeatures,
-      binaryRumbleMotors: binaryRumbleMotors,
-      evidence: evidence
-    )
   }
 
   public static let none = Self()

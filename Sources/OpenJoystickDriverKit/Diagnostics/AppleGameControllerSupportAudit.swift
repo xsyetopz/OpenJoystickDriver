@@ -96,7 +96,8 @@ public struct AppleGameControllerSupportAudit: Codable, Sendable {
   public let caveat: String
 }
 
-/// Reads Apple's private mapping asset without treating it as a supported API.
+/// Deserializes Apple's private mapping plists, extracting only selected
+/// redacted keys without treating the asset as a supported API.
 public enum AppleGameControllerSupportAuditor {
   private struct DeviceKey: Hashable {
     let vendorID: UInt16

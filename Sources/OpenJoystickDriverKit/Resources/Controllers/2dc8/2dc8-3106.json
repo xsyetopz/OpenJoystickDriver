@@ -6,9 +6,5 @@
   "protocol": {
     "driver": "Xbox360",
     "variant": "xbox360"
-  },
-  "provenance": {
-    "source": "linux-xpad.c",
-    "verified": false
   }
 }

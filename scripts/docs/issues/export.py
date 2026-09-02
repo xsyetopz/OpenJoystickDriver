@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Export GitHub issues referenced by OpenJoystickDriver design work."""
 
 from __future__ import annotations
@@ -46,7 +45,9 @@ def sanitize_external_text(text: str) -> str:
 
 def gh_json(args: list[str]) -> Any:
     command = ["gh", *args]
-    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+    result = subprocess.run(
+        command, cwd=ROOT, capture_output=True, text=True, check=False
+    )
     if result.returncode:
         detail = result.stderr.strip() or result.stdout.strip()
         raise ExportError(f"{' '.join(command)} failed: {detail}")
@@ -54,6 +55,37 @@ def gh_json(args: list[str]) -> Any:
         return json.loads(result.stdout)
     except json.JSONDecodeError as error:
         raise ExportError(f"{' '.join(command)} returned invalid JSON") from error
+
+
+def gh_text(args: list[str]) -> str:
+    command = ["gh", *args]
+    result = subprocess.run(
+        command, cwd=ROOT, capture_output=True, text=True, check=False
+    )
+    if result.returncode:
+        detail = result.stderr.strip() or result.stdout.strip()
+        raise ExportError(f"{' '.join(command)} failed: {detail}")
+    return result.stdout
+
+
+def gh_api_pages(endpoint: str) -> list[Any]:
+    output = gh_text(
+        [
+            "api",
+            "--paginate",
+            "--slurp",
+            "-H",
+            "Accept: application/vnd.github+json",
+            "-H",
+            "X-GitHub-Api-Version: 2022-11-28",
+            endpoint,
+        ]
+    )
+    try:
+        pages = json.loads(output)
+    except json.JSONDecodeError as error:
+        raise ExportError(f"gh api {endpoint} returned invalid JSON") from error
+    return [item for page in pages for item in page]
 
 
 def login(author: Any) -> str:
@@ -125,6 +157,18 @@ def render_pull(repo: str, pull: dict[str, Any]) -> str:
             f"Submitted: {value(item.get('submittedAt'))}\n\n"
             f"{body(item.get('body'))}\n"
         )
+    inline_review_blocks = []
+    for item in pull.get("reviewComments") or []:
+        location = str(item.get("path") or "(unknown path)")
+        line = item.get("line") or item.get("original_line")
+        if line is not None:
+            location += f":{line}"
+        inline_review_blocks.append(
+            f"### {login(item.get('user'))} — {value(item.get('created_at'))}\n\n"
+            f"Location: `{location}`\n\n"
+            f"[Source review comment]({value(item.get('html_url'))})\n\n"
+            f"{body(item.get('body'))}\n"
+        )
     return (
         f"# PR #{pull['number']}: {pull['title']}\n\n"
         "> External GitHub snapshot. GitHub is authoritative if this file is stale.\n\n"
@@ -141,7 +185,10 @@ def render_pull(repo: str, pull: dict[str, Any]) -> str:
         f"## Files\n\n{chr(10).join(file_lines) or '_No files reported._'}\n\n"
         f"## Commits\n\n{chr(10).join(commit_lines) or '_No commits reported._'}\n\n"
         f"## Conversation\n\n{comments(pull.get('comments'))}\n"
-        f"## Reviews\n\n{chr(10).join(review_blocks) or '_No reviews._'}\n"
+        f"## Reviews\n\n{chr(10).join(review_blocks) or '_No reviews._'}\n\n"
+        f"## Inline review comments\n\n"
+        f"{chr(10).join(inline_review_blocks) or '_No inline review comments._'}\n\n"
+        f"## Patch\n\n[Full patch](pull-{pull['number']}.patch)\n"
     )
 
 
@@ -171,25 +218,62 @@ def export_ojd() -> None:
         )
         for number in sorted(int(item["number"]) for item in summaries)
     ]
+    pull_summaries = gh_json(
+        [
+            "pr",
+            "list",
+            "--repo",
+            OJD_REPO,
+            "--state",
+            "all",
+            "--limit",
+            "200",
+            "--json",
+            "number",
+        ]
+    )
+    pulls = []
+    for number in sorted(int(item["number"]) for item in pull_summaries):
+        pull = gh_json(
+            ["pr", "view", str(number), "--repo", OJD_REPO, "--json", PR_FIELDS]
+        )
+        pull["reviewComments"] = gh_api_pages(
+            f"repos/{OJD_REPO}/pulls/{number}/comments?per_page=100"
+        )
+        pull["patch"] = gh_text(["pr", "diff", str(number), "--repo", OJD_REPO])
+        pulls.append(pull)
     destination = DOCS / "OpenJoystickDriver"
     for issue in issues:
         write(
             destination / f"issue-{issue['number']}.md", render_issue(OJD_REPO, issue)
         )
-    rows = [
+    for pull in pulls:
+        write(destination / f"pull-{pull['number']}.md", render_pull(OJD_REPO, pull))
+        write(destination / f"pull-{pull['number']}.patch", pull["patch"])
+    issue_rows = [
         f"| [#{issue['number']}](issue-{issue['number']}.md) | {issue['state']} | "
         f"{str(issue['title']).replace('|', '&#124;')} |"
         for issue in issues
     ]
+    pull_rows = [
+        f"| [#{pull['number']}](pull-{pull['number']}.md) | {pull['state']} | "
+        f"{str(pull['title']).replace('|', '&#124;')} |"
+        for pull in pulls
+    ]
     write(
         destination / "README.md",
-        "# OpenJoystickDriver GitHub Issues\n\n"
-        "Snapshot of every issue returned by the GitHub CLI for "
-        f"[{OJD_REPO}](https://github.com/{OJD_REPO}/issues). GitHub remains the source of truth. "
+        "# OpenJoystickDriver GitHub Issues and Pull Requests\n\n"
+        "Snapshot of every issue and pull request returned by the GitHub CLI for "
+        f"[{OJD_REPO}](https://github.com/{OJD_REPO}). GitHub remains the source of truth. "
         "Expiring authentication query parameters are stripped from quoted links.\n\n"
         "Refresh from the repository root:\n\n"
         "```bash\n./scripts/ojd docs export-external-issues\n```\n\n"
-        "| Issue | State | Title |\n| --- | --- | --- |\n" + "\n".join(rows),
+        "## Issues\n\n"
+        "| Issue | State | Title |\n| --- | --- | --- |\n"
+        + "\n".join(issue_rows)
+        + "\n\n## Pull requests\n\n"
+        "| Pull request | State | Title |\n| --- | --- | --- |\n"
+        + "\n".join(pull_rows),
     )
 
 
@@ -198,7 +282,7 @@ def export_sdl() -> None:
         gh_json(
             ["issue", "view", str(number), "--repo", SDL_REPO, "--json", ISSUE_FIELDS]
         )
-        for number in (15_790, 15_663)
+        for number in (15_790, 15_663, 11_002)
     ]
     pulls = [
         gh_json(["pr", "view", str(number), "--repo", SDL_REPO, "--json", PR_FIELDS])

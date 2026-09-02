@@ -106,5 +106,4 @@ public struct DeviceRuntimeProfile: Sendable {
   public let preferredBackends: [VirtualControllerBackendID]
   public let gipStartupPackets: [GIPStartupPacket]
   public let gipKeepAlivePolicy: GIPKeepAlivePolicy
-  public let hardwareVerified: Bool
 }
