@@ -41,7 +41,7 @@ struct DeviceTransportProfileTests {
     #expect(!transport.needsSetConfiguration)
   }
 
-  @Test func testRazerWolverineV3ProUsesDescriptorEndpointsAfterConfiguration() {
+  @Test func testRazerWolverineV3ProProfileLeavesEndpointsUnpinned() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 5_426, productID: 2_623)
 

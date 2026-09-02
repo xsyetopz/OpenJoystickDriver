@@ -110,12 +110,19 @@ extension DeviceManager {
       vendorID: device.vendorID,
       productID: device.productID
     )
-    print("[DeviceManager] USB device added: \(productName) (\(identifier))")
     let configuredTransportProfile = parserRegistry.transportProfile(for: identifier)
     let transportProfile = await provider.resolveTransportProfile(
       for: device,
       configured: configuredTransportProfile
     )
+    guard pipelines[identifier] == nil,
+      Self.matchingPhysicalIdentifier(for: identifier, among: pipelines.keys) == nil
+    else {
+      print("[DeviceManager] Pipeline already exists for \(identifier)")
+      return nil
+    }
+
+    print("[DeviceManager] USB device added: \(productName) (\(identifier))")
     deviceInfos[identifier] = DeviceInfo(
       name: productName,
       connection: "USB",
