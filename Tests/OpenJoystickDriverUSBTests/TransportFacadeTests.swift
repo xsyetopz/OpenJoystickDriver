@@ -117,6 +117,32 @@ struct TransportFacadeTests {
     #expect(await driverKit.openCount == 0)
   }
 
+  @Test func descriptorResolutionDispatchesByRecordedRoute() async {
+    let configured = DeviceTransportProfile.gipDefault
+    let discovered = DeviceTransportProfile(
+      inputEndpoint: 0x84,
+      outputEndpoint: 0x05,
+      needsSetConfiguration: true
+    )
+    let direct = FakeUSBTransportProvider(resolvedTransportProfile: discovered)
+    let driverKit = FakeUSBTransportProvider()
+    let provider = OpenJoystickDriverUSBTransportProvider(
+      ioUSBHostProvider: direct,
+      usbDriverKitProvider: driverKit,
+      supportedRawUSBModels: [USBTransportModel(vendorID: 0x1532, productID: 0x0A3F)],
+      requiredDriverKitModels: []
+    )
+
+    let resolved = await provider.resolveTransportProfile(
+      for: device(route: .ioUSBHost, serviceID: 1, vendorID: 0x1532, productID: 0x0A3F),
+      configured: configured
+    )
+
+    #expect(resolved == discovered)
+    #expect(await direct.resolveCount == 1)
+    #expect(await driverKit.resolveCount == 0)
+  }
+
   @Test func directDiscoveryUsesDeviceServiceBeforeInterfacesExist() {
     let devices = IOUSBHostTransportProvider.devices(from: [
       IOUSBHostDeviceFacts(
@@ -168,19 +194,30 @@ struct TransportFacadeTests {
 private actor FakeUSBTransportProvider: USBTransportProvider {
   private let devicesResult: Result<[USBTransportDevice], USBTransportError>
   private let openResult: Result<any USBTransportSession, USBTransportError>
+  private let resolvedTransportProfile: DeviceTransportProfile?
   private(set) var openCount = 0
+  private(set) var resolveCount = 0
 
   init(
     devicesResult: Result<[USBTransportDevice], USBTransportError> = .success([]),
     openResult: Result<any USBTransportSession, USBTransportError> = .success(
       FakeUSBTransportSession()
-    )
+    ),
+    resolvedTransportProfile: DeviceTransportProfile? = nil
   ) {
     self.devicesResult = devicesResult
     self.openResult = openResult
+    self.resolvedTransportProfile = resolvedTransportProfile
   }
 
   func devices() throws -> [USBTransportDevice] { try devicesResult.get() }
+
+  func resolveTransportProfile(for device: USBTransportDevice, configured: DeviceTransportProfile)
+    -> DeviceTransportProfile
+  {
+    resolveCount += 1
+    return resolvedTransportProfile ?? configured
+  }
 
   func open(_ device: USBTransportDevice, options: USBTransportOpenOptions) throws
     -> any USBTransportSession

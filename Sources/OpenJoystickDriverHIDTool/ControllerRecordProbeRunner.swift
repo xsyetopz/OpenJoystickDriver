@@ -13,8 +13,8 @@ func runControllerRecordProbe(recordPath: String, seconds: Int, validateOnly: Bo
     defer { done.signal() }
     do {
       let plan = try ControllerRecordProbePlan(contentsOf: URL(fileURLWithPath: recordPath))
-      let parser = plan.makeParser()
-      printRecord(plan: plan, parser: parser)
+      let configuredParser = plan.makeParser()
+      printRecord(plan: plan, parser: configuredParser)
       if validateOnly {
         print("RECORD_VALIDATION result=valid")
         return
@@ -33,15 +33,24 @@ func runControllerRecordProbe(recordPath: String, seconds: Int, validateOnly: Bo
 
       print("USB_DEVICE service=\(device.serviceID) location=\(device.locationID)")
       if let product = device.productName { print("USB_STRING product=\(product)") }
+      let transport = await provider.resolveTransportProfile(
+        for: device,
+        configured: plan.transportProfile
+      )
+      let parser = plan.makeParser(transportProfile: transport)
+      print(
+        "USB_RESOLVED interface=\(transport.interfaceNumber)"
+          + " alternate=\(transport.alternateSetting)"
+          + " in=\(hex(transport.inputEndpoint)) out=\(hex(transport.outputEndpoint))"
+      )
       let session = try await provider.open(
         device,
-        options: USBTransportOpenOptions(transportProfile: plan.transportProfile)
+        options: USBTransportOpenOptions(transportProfile: transport)
       )
 
       if plan.transportProfile.needsSetConfiguration {
         print("USB_CONFIGURATION value=1 result=set")
       }
-      let transport = plan.transportProfile
       if transport.alternateSetting != 0 {
         print(
           "USB_ALTERNATE_SETTING interface=\(transport.interfaceNumber)"
@@ -67,6 +76,7 @@ func runControllerRecordProbe(recordPath: String, seconds: Int, validateOnly: Bo
       let summary = try await monitor(
         parser: parser,
         plan: plan,
+        transportProfile: transport,
         session: session,
         seconds: seconds
       )
@@ -125,6 +135,7 @@ private func sendStartupPackets(
 private func monitor(
   parser: any InputParser,
   plan: ControllerRecordProbePlan,
+  transportProfile: DeviceTransportProfile,
   session: any USBTransportSession,
   seconds: Int
 ) async throws -> (packets: Int, events: Int, parseErrors: Int) {
@@ -150,18 +161,22 @@ private func monitor(
 
     do {
       let bytes = try await session.readInterruptPacket(
-        endpoint: plan.transportProfile.inputEndpoint,
+        endpoint: transportProfile.inputEndpoint,
         length: 64,
         timeout: 250
       )
       packetCount += 1
       print(
-        "USB_RX endpoint=\(hex(plan.transportProfile.inputEndpoint))"
+        "USB_RX endpoint=\(hex(transportProfile.inputEndpoint))"
           + " len=\(bytes.count) bytes=\(bytes.hexBytes)"
       )
       do {
         let events = try parser.parse(data: Data(bytes))
-        try await sendLifecyclePackets(parser: parser, session: session, plan: plan)
+        try await sendLifecyclePackets(
+          parser: parser,
+          session: session,
+          transportProfile: transportProfile
+        )
         eventCount += events.count
         for event in events { print("EVENT \(String(describing: event))") }
       } catch {
@@ -177,7 +192,7 @@ private func monitor(
 private func sendLifecyclePackets(
   parser: any InputParser,
   session: any USBTransportSession,
-  plan: ControllerRecordProbePlan
+  transportProfile: DeviceTransportProfile
 ) async throws {
   guard let lifecycle = parser as? any ControllerInputConnectionLifecycle,
     let state = lifecycle.consumeInputConnectionStateChange()
@@ -186,11 +201,11 @@ private func sendLifecyclePackets(
   guard let output = parser as? any USBInputConnectionOutputProvider else { return }
   for packet in output.usbInputConnectionOutputPackets(for: state) {
     _ = try await session.writeInterruptPacket(
-      endpoint: plan.transportProfile.outputEndpoint,
+      endpoint: transportProfile.outputEndpoint,
       data: packet,
       timeout: 2_000
     )
-    print("USB_TX endpoint=\(hex(plan.transportProfile.outputEndpoint)) bytes=\(packet.hexBytes)")
+    print("USB_TX endpoint=\(hex(transportProfile.outputEndpoint)) bytes=\(packet.hexBytes)")
   }
 }
 

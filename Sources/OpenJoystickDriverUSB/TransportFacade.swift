@@ -87,6 +87,19 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     }
   }
 
+  /// Resolves transport facts through the backend selected during discovery.
+  public func resolveTransportProfile(
+    for device: USBTransportDevice,
+    configured: DeviceTransportProfile
+  ) async -> DeviceTransportProfile {
+    switch device.route {
+    case .ioUSBHost:
+      return await ioUSBHostProvider.resolveTransportProfile(for: device, configured: configured)
+    case .usbDriverKit:
+      return await usbDriverKitProvider.resolveTransportProfile(for: device, configured: configured)
+    }
+  }
+
   public func transportObservations() async throws -> [ControllerTransportObservation] {
     // Observation is deliberately best-effort. A descriptor read failure must
     // not change the exact supported-device selection or prevent diagnostics

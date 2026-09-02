@@ -97,6 +97,8 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
       inputEndpoint: UInt8(inputEndpoint),
       outputEndpoint: UInt8(outputEndpoint),
       interfaceNumber: UInt8(interfaceNumber),
+      hasInterfaceOverride: document.usb?.interface != nil,
+      hasEndpointOverride: document.usb?.endpoints != nil,
       needsSetConfiguration: configuration == "set1-before-claim",
       postHandshakeSettleNanoseconds: settleNanoseconds
     )
@@ -107,16 +109,18 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     keepAlivePolicy = parsedKeepAlivePolicy
   }
 
-  public func makeParser() -> any InputParser {
+  /// Creates the record's parser with an optional live-resolved USB profile.
+  public func makeParser(transportProfile: DeviceTransportProfile? = nil) -> any InputParser {
+    let transportProfile = transportProfile ?? self.transportProfile
     switch driver {
     case .gip:
-      GIPParser(
+      return GIPParser(
         transportProfile: transportProfile,
         startupPackets: startupPackets,
         keepAlivePolicy: keepAlivePolicy
       )
     case .xbox360:
-      Xbox360Parser(
+      return Xbox360Parser(
         outEndpoint: transportProfile.outputEndpoint,
         isWirelessReceiver: isWirelessReceiver
       )

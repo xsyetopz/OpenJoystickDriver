@@ -15,6 +15,47 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     try Self.devices(from: Self.deviceFacts())
   }
 
+  /// Fills protocol-default interface and endpoint values from the connected
+  /// device's USB configuration descriptor.
+  public func resolveTransportProfile(
+    for device: USBTransportDevice,
+    configured: DeviceTransportProfile
+  ) -> DeviceTransportProfile {
+    guard device.route == .ioUSBHost else { return configured }
+    do {
+      let service = try Self.deviceService(for: device)
+      defer { IOObjectRelease(service) }
+      let hostDevice = try IOUSBHostDevice(
+        __ioService: service,
+        options: [],
+        queue: nil,
+        interestHandler: nil
+      )
+      defer { hostDevice.destroy() }
+      let configuration: UnsafePointer<IOUSBConfigurationDescriptor>
+      if configured.needsSetConfiguration {
+        configuration = try hostDevice.configurationDescriptor(withConfigurationValue: 1)
+      } else if let activeConfiguration = hostDevice.configurationDescriptor {
+        configuration = activeConfiguration
+      } else {
+        configuration = try hostDevice.configurationDescriptor(with: 0)
+      }
+      let discovered = USBDescriptorTransportResolver.discover(
+        interfaces: Self.transportFacts(configuration: configuration),
+        preferredInterface: configured.interfaceNumber,
+        requirePreferredInterface: configured.hasInterfaceOverride
+      )
+      return USBDescriptorTransportResolver.resolve(configured: configured, discovered: discovered)
+    } catch {
+      print(
+        "[IOUSBHost] Descriptor discovery failed for"
+          + " \(device.vendorID):\(device.productID): \(error);"
+          + " using protocol defaults/record overrides"
+      )
+      return configured
+    }
+  }
+
   public func open(_ device: USBTransportDevice, options: USBTransportOpenOptions) async throws
     -> any USBTransportSession
   {
@@ -108,6 +149,47 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
       )
     }
   }
+
+  static func transportFacts(configuration: UnsafePointer<IOUSBConfigurationDescriptor>)
+    -> [USBInterfaceTransportFacts]
+  {
+    var result: [USBInterfaceTransportFacts] = []
+    var interface = IOUSBGetNextInterfaceDescriptor(configuration, nil)
+    while let currentInterface = interface {
+      var endpoints: [USBEndpointTransportFacts] = []
+      var endpoint = IOUSBGetNextEndpointDescriptor(configuration, currentInterface, nil)
+      while let currentEndpoint = endpoint {
+        let address = currentEndpoint.pointee.bEndpointAddress
+        endpoints.append(
+          USBEndpointTransportFacts(
+            address: address,
+            isInterrupt: IOUSBGetEndpointType(currentEndpoint)
+              == UInt8(kIOUSBEndpointTypeInterrupt.rawValue),
+            isInput: address & 0x80 != 0
+          )
+        )
+        endpoint = IOUSBGetNextEndpointDescriptor(
+          configuration,
+          currentInterface,
+          descriptorHeader(currentEndpoint)
+        )
+      }
+      result.append(
+        USBInterfaceTransportFacts(
+          interfaceNumber: currentInterface.pointee.bInterfaceNumber,
+          alternateSetting: currentInterface.pointee.bAlternateSetting,
+          interfaceClass: currentInterface.pointee.bInterfaceClass,
+          endpoints: endpoints
+        )
+      )
+      interface = IOUSBGetNextInterfaceDescriptor(configuration, descriptorHeader(currentInterface))
+    }
+    return result
+  }
+
+  private static func descriptorHeader<T>(_ descriptor: UnsafePointer<T>) -> UnsafePointer<
+    IOUSBDescriptorHeader
+  > { UnsafeRawPointer(descriptor).assumingMemoryBound(to: IOUSBDescriptorHeader.self) }
 
   private static func interfaceService(for device: USBTransportDevice, interfaceNumber: UInt8)
     throws -> io_service_t?

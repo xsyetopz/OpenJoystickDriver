@@ -389,6 +389,12 @@ public actor DeviceManager {
       let info = deviceInfos[id]
       let profile = parserRegistry.runtimeProfile(for: id)
       let ownership = info?.ownershipObservation ?? .unknown
+      let transportProfile: DeviceTransportProfile
+      if case .rawUSB = info?.discoverySource {
+        transportProfile = pipelines[id]?.transportProfile ?? profile.transportProfile
+      } else {
+        transportProfile = profile.transportProfile
+      }
       return ApplicationServiceDeviceDescription(
         name: info?.name ?? "Controller",
         vendorID: id.vendorID,
@@ -404,11 +410,11 @@ public actor DeviceManager {
         serialNumber: info?.serialNumber,
         protocolVariant: profile.protocolVariant,
         mappingFlags: profile.mappingFlags,
-        inputEndpoint: profile.transportProfile.inputEndpoint,
-        outputEndpoint: profile.transportProfile.outputEndpoint,
-        needsSetConfiguration: profile.transportProfile.needsSetConfiguration,
+        inputEndpoint: transportProfile.inputEndpoint,
+        outputEndpoint: transportProfile.outputEndpoint,
+        needsSetConfiguration: transportProfile.needsSetConfiguration,
         postHandshakeSettleMs: Int(
-          profile.transportProfile.postHandshakeSettleNanoseconds / nanosecondsPerMillisecond
+          transportProfile.postHandshakeSettleNanoseconds / nanosecondsPerMillisecond
         ),
         preferredBackends: profile.preferredBackends.map(\.rawValue),
         physicalOutputCapabilities: pipelines[id]?.physicalOutputCapabilities() ?? .none,

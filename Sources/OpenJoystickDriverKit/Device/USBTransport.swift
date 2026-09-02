@@ -97,8 +97,21 @@ public struct USBTransportDevice: Hashable, Sendable {
 /// Discovers and opens physical USB interfaces without exposing a transport framework to Kit.
 public protocol USBTransportProvider: Sendable {
   func devices() async throws -> [USBTransportDevice]
+  /// Resolves interface and endpoint facts from the connected device when the
+  /// controller record leaves them at protocol defaults.
+  func resolveTransportProfile(for device: USBTransportDevice, configured: DeviceTransportProfile)
+    async -> DeviceTransportProfile
   func open(_ device: USBTransportDevice, options: USBTransportOpenOptions) async throws
     -> any USBTransportSession
+}
+
+extension USBTransportProvider {
+  /// Keeps the catalog transport profile unchanged when a backend does not
+  /// support live USB descriptor inspection.
+  public func resolveTransportProfile(
+    for device: USBTransportDevice,
+    configured: DeviceTransportProfile
+  ) -> DeviceTransportProfile { configured }
 }
 
 /// Stable failure categories shared by USB transport implementations.
@@ -116,11 +129,23 @@ public enum USBTransportError: Error, Equatable, Sendable {
   public var isInputOutput: Bool { self == .inputOutput }
 }
 
-struct DiscoveredUSBTransport: Equatable, Sendable {
-  let interfaceNumber: UInt8
-  let alternateSetting: UInt8
-  let inputEndpoint: UInt8
-  let outputEndpoint: UInt8
+package struct DiscoveredUSBTransport: Equatable, Sendable {
+  package let interfaceNumber: UInt8
+  package let alternateSetting: UInt8
+  package let inputEndpoint: UInt8
+  package let outputEndpoint: UInt8
+
+  package init(
+    interfaceNumber: UInt8,
+    alternateSetting: UInt8,
+    inputEndpoint: UInt8,
+    outputEndpoint: UInt8
+  ) {
+    self.interfaceNumber = interfaceNumber
+    self.alternateSetting = alternateSetting
+    self.inputEndpoint = inputEndpoint
+    self.outputEndpoint = outputEndpoint
+  }
 }
 
 public struct USBEndpointTransportFacts: Equatable, Sendable {
@@ -198,7 +223,7 @@ public struct USBInterfaceTransportFacts: Equatable, Sendable {
 }
 
 public enum USBDescriptorTransportResolver {
-  static func discover(
+  package static func discover(
     interfaces: [USBInterfaceTransportFacts],
     preferredInterface: UInt8,
     requirePreferredInterface: Bool
@@ -219,9 +244,10 @@ public enum USBDescriptorTransportResolver {
     return nil
   }
 
-  static func resolve(configured: DeviceTransportProfile, discovered: DiscoveredUSBTransport?)
-    -> DeviceTransportProfile
-  {
+  package static func resolve(
+    configured: DeviceTransportProfile,
+    discovered: DiscoveredUSBTransport?
+  ) -> DeviceTransportProfile {
     guard let discovered else { return configured }
     return DeviceTransportProfile(
       inputEndpoint: configured.hasEndpointOverride

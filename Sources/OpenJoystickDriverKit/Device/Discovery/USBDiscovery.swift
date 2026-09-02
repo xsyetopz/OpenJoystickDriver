@@ -43,7 +43,7 @@ extension DeviceManager {
         let currentServiceIDs = Set(devices.map(\.serviceIdentity))
         for device in devices where !knownServiceIDs.contains(device.serviceIdentity) {
           knownServiceIDs.insert(device.serviceIdentity)
-          if let identifier = handleUSBDeviceAdded(device, provider: provider) {
+          if let identifier = await handleUSBDeviceAdded(device, provider: provider) {
             serviceToIdentifier[device.serviceIdentity] = identifier
           }
         }
@@ -77,7 +77,7 @@ extension DeviceManager {
   @discardableResult private func handleUSBDeviceAdded(
     _ device: USBTransportDevice,
     provider: any USBTransportProvider
-  ) -> DeviceIdentifier? {
+  ) async -> DeviceIdentifier? {
     guard
       let admission = resolveRawUSBAdmission(
         parserRegistry: parserRegistry,
@@ -110,14 +110,18 @@ extension DeviceManager {
       vendorID: device.vendorID,
       productID: device.productID
     )
+    print("[DeviceManager] USB device added: \(productName) (\(identifier))")
+    let configuredTransportProfile = parserRegistry.transportProfile(for: identifier)
+    let transportProfile = await provider.resolveTransportProfile(
+      for: device,
+      configured: configuredTransportProfile
+    )
     deviceInfos[identifier] = DeviceInfo(
       name: productName,
       connection: "USB",
       serialNumber: identifier.serialNumber,
       discoverySource: .rawUSB(route: device.route)
     )
-    print("[DeviceManager] USB device added: \(productName) (\(identifier))")
-    let transportProfile = parserRegistry.transportProfile(for: identifier)
     let parser = parserRegistry.parser(for: identifier, transportProfile: transportProfile)
     let pipeline = DevicePipeline(
       identifier: identifier,

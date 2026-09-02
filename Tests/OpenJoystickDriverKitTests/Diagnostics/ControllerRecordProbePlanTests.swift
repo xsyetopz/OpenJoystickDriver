@@ -13,6 +13,8 @@ struct ControllerRecordProbePlanTests {
     #expect(plan.interfaceNumber == 0)
     #expect(plan.transportProfile.inputEndpoint == 130)
     #expect(plan.transportProfile.outputEndpoint == 2)
+    #expect(!plan.transportProfile.hasInterfaceOverride)
+    #expect(!plan.transportProfile.hasEndpointOverride)
     #expect(!plan.transportProfile.needsSetConfiguration)
     #expect(plan.startupPackets == GIPStartupPacket.defaultSequence)
     #expect(plan.keepAlivePolicy == .enabled)
@@ -22,6 +24,8 @@ struct ControllerRecordProbePlanTests {
   @Test func loadsRecordSelectedStartupAndTransportOptions() throws {
     let plan = try ControllerRecordProbePlan(
       data: try recordData(
+        inputEndpoint: 132,
+        outputEndpoint: 5,
         configuration: "set1-before-claim",
         settleMilliseconds: 200,
         startupPackets: ["powerOn", "xboxOneSInit", "ledOn", "authDone"]
@@ -29,6 +33,7 @@ struct ControllerRecordProbePlanTests {
     )
 
     #expect(plan.transportProfile.needsSetConfiguration)
+    #expect(plan.transportProfile.hasEndpointOverride)
     #expect(plan.transportProfile.postHandshakeSettleNanoseconds == 200_000_000)
     #expect(plan.startupPackets == [.powerOn, .xboxOneSInit, .ledOn, .authDone])
   }

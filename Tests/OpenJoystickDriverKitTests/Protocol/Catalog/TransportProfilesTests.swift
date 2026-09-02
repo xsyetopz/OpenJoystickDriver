@@ -41,6 +41,22 @@ struct DeviceTransportProfileTests {
     #expect(!transport.needsSetConfiguration)
   }
 
+  @Test func testRazerWolverineV3ProUsesDescriptorEndpointsAfterConfiguration() {
+    let registry = ParserRegistry()
+    let identifier = DeviceIdentifier(vendorID: 5_426, productID: 2_623)
+
+    let runtime = registry.runtimeProfile(for: identifier)
+    let transport = registry.transportProfile(for: identifier)
+
+    #expect(runtime.parserName == "GIP")
+    #expect(runtime.protocolVariant == .xboxOne)
+    #expect(runtime.mappingFlags.isEmpty)
+    #expect(transport.inputEndpoint == 0x82)
+    #expect(transport.outputEndpoint == 0x02)
+    #expect(!transport.hasEndpointOverride)
+    #expect(transport.needsSetConfiguration)
+  }
+
   @Test func testRazerWolverineV2ProfileUsesCapturedEndpointsOnly() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 5_426, productID: 2_601)

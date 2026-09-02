@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+  "vendor_id": 5426,
+  "product_id": 2623,
+  "transport": "usb",
+  "protocol": {
+    "driver": "GIP",
+    "variant": "xboxOne"
+  },
+  "usb": {
+    "configuration": "set1-before-claim"
+  }
+}
