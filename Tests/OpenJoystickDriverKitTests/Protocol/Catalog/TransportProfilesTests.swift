@@ -25,6 +25,23 @@ struct DeviceTransportProfileTests {
     #expect(profile.mappingFlags == ["shareButton"])
     #expect(profile.mappingOptions.contains(.shareButton))
   }
+
+  @Test func testPDPGameStopBB070UsesHardwareVerifiedTransport() {
+    let registry = ParserRegistry()
+    let identifier = DeviceIdentifier(vendorID: 0x0E6F, productID: 0x0401)
+
+    let runtime = registry.runtimeProfile(for: identifier)
+    let transport = registry.transportProfile(for: identifier)
+
+    #expect(runtime.parserName == "Xbox360")
+    #expect(runtime.protocolVariant == .xbox360)
+    #expect(runtime.hardwareVerified)
+    #expect(transport.inputEndpoint == 0x81)
+    #expect(transport.outputEndpoint == 0x02)
+    #expect(transport.hasEndpointOverride)
+    #expect(transport.needsSetConfiguration)
+  }
+
   @Test func testRuntimeProfileCarriesHardwareVerificationProvenance() {
     let registry = ParserRegistry()
     let verified = registry.runtimeProfile(for: DeviceIdentifier(vendorID: 13623, productID: 4112))
