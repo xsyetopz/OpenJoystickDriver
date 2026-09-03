@@ -53,7 +53,7 @@ jobs:
 
       - name: Check controller records
         run: |
-          bash scripts/ojd check profiles
+          ./scripts/ojd check profiles
 
       - name: Check scripts
         run: ./scripts/ojd check scripts
@@ -71,7 +71,7 @@ jobs:
 
       - name: Lint Swift
         run: |
-          bash scripts/ojd lint
+          ./scripts/ojd lint
 
       - name: Build package
         run: |
