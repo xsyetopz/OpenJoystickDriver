@@ -182,9 +182,7 @@ struct DualSenseParserTests {
       let profile = registry.runtimeProfile(for: identifier)
       #expect(profile.parserName == "DualSense")
       #expect(profile.protocolVariant.rawValue == "dualSense")
-      #expect(
-        profile.mappingFlags == ["touchpad", "microphoneMute"]
-      )
+      #expect(profile.mappingFlags == ["touchpad", "microphoneMute"])
     }
   }
 }

@@ -38,9 +38,7 @@ public enum CompatibilityIdentity: Codable, CaseIterable, Sendable, Equatable {
   }
 
   public static func mutationDecision(for rawValue: String) -> MutationDecision {
-    guard let identity = Self(rawValue: rawValue) else {
-      return .rejected(.unknownIdentity)
-    }
+    guard let identity = Self(rawValue: rawValue) else { return .rejected(.unknownIdentity) }
     return identity.mutationDecision()
   }
 

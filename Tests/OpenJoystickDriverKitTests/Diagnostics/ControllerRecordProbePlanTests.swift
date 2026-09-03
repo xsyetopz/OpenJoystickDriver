@@ -117,9 +117,7 @@ struct ControllerRecordProbePlanTests {
     for mutation in [
       { (record: inout [String: Any]) in record["usb"] = [:] },
       { (record: inout [String: Any]) in record["usb"] = ["interface": 0] },
-      { (record: inout [String: Any]) in
-        record["usb"] = ["post_handshake_settle_ms": 60_001]
-      },
+      { (record: inout [String: Any]) in record["usb"] = ["post_handshake_settle_ms": 60_001] },
       { (record: inout [String: Any]) in record["usb"] = NSNull() },
       { (record: inout [String: Any]) in
         var protocolConfig = record["protocol"] as? [String: Any] ?? [:]
@@ -135,10 +133,7 @@ struct ControllerRecordProbePlanTests {
         var protocolConfig = record["protocol"] as? [String: Any] ?? [:]
         protocolConfig["flags"] = ["gyro"]
         record["protocol"] = protocolConfig
-      },
-      { (record: inout [String: Any]) in
-        record["usb"] = ["endpoints": ["in": 130, "out": 2]]
-      }
+      }, { (record: inout [String: Any]) in record["usb"] = ["endpoints": ["in": 130, "out": 2]] }
     ] {
       #expect(throws: ControllerRecordProbeError.self) {
         try ControllerRecordProbePlan(data: try mutatedRecord(mutation))
@@ -174,8 +169,7 @@ struct ControllerRecordProbePlanTests {
     if let extraProtocolField { protocolConfig[extraProtocolField] = true }
 
     var record: [String: Any] = [
-      "vendor_id": 5_426, "product_id": 2_627, "transport": transport,
-      "protocol": protocolConfig
+      "vendor_id": 5_426, "product_id": 2_627, "transport": transport, "protocol": protocolConfig
     ]
     if let schemaID { record["$schema"] = schemaID }
     if let extraRootField { record[extraRootField] = ["source": "legacy"] }

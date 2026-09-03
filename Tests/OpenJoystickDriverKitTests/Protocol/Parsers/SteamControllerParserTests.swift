@@ -77,11 +77,7 @@ struct SteamControllerParserTests {
     let wireless = registry.runtimeProfile(for: identifiers[1])
     #expect(wireless.parserName == "SteamController")
     #expect(wireless.protocolVariant == .steamController)
-    #expect(
-      wireless.mappingFlags == [
-        "lizardMode", "trackpads", "wirelessReceiver"
-      ]
-    )
+    #expect(wireless.mappingFlags == ["lizardMode", "trackpads", "wirelessReceiver"])
   }
 
   @Test func testSteamControllerReportParsesPrimaryControls() throws {

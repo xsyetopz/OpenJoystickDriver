@@ -17,9 +17,10 @@
               Task { @MainActor in await viewModel.refreshSystemExtensionSetup() }
             }
           }
-          Text(detail)
-            .foregroundColor(Color(NSColor.secondaryLabelColor))
-            .fixedSize(horizontal: false, vertical: true)
+          Text(detail).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
+            horizontal: false,
+            vertical: true
+          )
           HStack {
             if viewModel.systemExtensionSetupState == .awaitingApproval {
               Button("Open System Settings", action: openSettings)
@@ -40,8 +41,7 @@
         }.padding(4)
       } label: {
         Text("Xbox USB Driver").font(.headline)
-      }.ojdAccessibilityLabel("Xbox USB Driver setup")
-        .ojdAccessibilityValue(detail)
+      }.ojdAccessibilityLabel("Xbox USB Driver setup").ojdAccessibilityValue(detail)
     }
 
     private var statusLabel: String {

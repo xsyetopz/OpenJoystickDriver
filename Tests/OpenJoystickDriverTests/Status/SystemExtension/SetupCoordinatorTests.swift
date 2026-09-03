@@ -3,8 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriver
 
-@MainActor
-struct SetupCoordinatorTests {
+@MainActor struct SetupCoordinatorTests {
   @Test func activeExtensionDoesNotSubmit() async {
     let client = FakeSetupClient(status: Self.currentActiveStatus)
     let coordinator = SystemExtensionSetupCoordinator(client: client)
@@ -31,10 +30,7 @@ struct SetupCoordinatorTests {
   }
 
   @Test func repairRetriesAfterFailureAndReplacementUsesActivationRequest() async {
-    let client = FakeSetupClient(
-      status: Self.inactiveStatus,
-      results: [.failed, .active]
-    )
+    let client = FakeSetupClient(status: Self.inactiveStatus, results: [.failed, .active])
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
     await coordinator.launch()
@@ -128,10 +124,7 @@ struct SetupCoordinatorTests {
   }
 
   @Test func cancelledActivationIsTerminalUntilExplicitRepair() async {
-    let client = FakeSetupClient(
-      status: Self.inactiveStatus,
-      results: [.cancelled, .active]
-    )
+    let client = FakeSetupClient(status: Self.inactiveStatus, results: [.cancelled, .active])
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
     await coordinator.launch()

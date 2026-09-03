@@ -61,10 +61,11 @@ public enum Xbox360DirectInputHIDDescriptor {
 }
 
 @available(
-  *, deprecated, renamed: "Xbox360DirectInputHIDDescriptor",
+  *,
+  deprecated,
+  renamed: "Xbox360DirectInputHIDDescriptor",
   message: "Use Xbox360DirectInputHIDDescriptor; generic HID, not XUSB."
-)
-public typealias Xbox360XUSBDirectInputHIDDescriptor = Xbox360DirectInputHIDDescriptor
+) public typealias Xbox360XUSBDirectInputHIDDescriptor = Xbox360DirectInputHIDDescriptor
 
 /// Report formatter for Xbox 360-family DirectInput HID compatibility.
 public struct Xbox360DirectInputReportFormat: VirtualGamepadReportFormat {
@@ -125,7 +126,8 @@ public struct Xbox360DirectInputReportFormat: VirtualGamepadReportFormat {
 }
 
 @available(
-  *, deprecated, renamed: "Xbox360DirectInputReportFormat",
+  *,
+  deprecated,
+  renamed: "Xbox360DirectInputReportFormat",
   message: "Use Xbox360DirectInputReportFormat; generic HID, not XUSB."
-)
-public typealias Xbox360XUSBDirectInputReportFormat = Xbox360DirectInputReportFormat
+) public typealias Xbox360XUSBDirectInputReportFormat = Xbox360DirectInputReportFormat

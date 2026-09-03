@@ -47,9 +47,7 @@ public struct SupportReport: Codable, Sendable {
     public let activeCount: Int?
   }
 
-  public struct Configuration: Codable, Sendable {
-    public let userSpaceVirtualDeviceEnabled: Bool?
-  }
+  public struct Configuration: Codable, Sendable { public let userSpaceVirtualDeviceEnabled: Bool? }
 
   public struct Controller: Codable, Sendable {
     public let name: String

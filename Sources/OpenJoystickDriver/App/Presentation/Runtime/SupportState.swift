@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+
 #if canImport(AppKit)
   import AppKit
 #endif
@@ -183,8 +184,9 @@ enum RuntimeSupportLogsState: Sendable {
 
   #if canImport(AppKit)
     func copySupportReport() async -> Bool {
-      let outputURL = FileManager.default.temporaryDirectory
-        .appendingPathComponent("OpenJoystickDriver-support-\(UUID().uuidString).json")
+      let outputURL = FileManager.default.temporaryDirectory.appendingPathComponent(
+        "OpenJoystickDriver-support-\(UUID().uuidString).json"
+      )
       await saveSupportReport(to: outputURL)
       defer { try? FileManager.default.removeItem(at: outputURL) }
       guard let data = try? Data(contentsOf: outputURL),

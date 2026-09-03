@@ -130,9 +130,7 @@ struct DeviceTransportProfileTests {
       let profile = registry.runtimeProfile(for: identifier)
       #expect(registry.parserName(for: identifier) == "DualSense")
       #expect(profile.protocolVariant == .dualSense)
-      #expect(
-        profile.mappingFlags == ["touchpad", "microphoneMute"]
-      )
+      #expect(profile.mappingFlags == ["touchpad", "microphoneMute"])
       #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
       #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
     }
@@ -153,11 +151,7 @@ struct DeviceTransportProfileTests {
     let wireless = registry.runtimeProfile(for: identifiers[1])
     #expect(registry.parserName(for: identifiers[1]) == "SteamController")
     #expect(wireless.protocolVariant == .steamController)
-    #expect(
-      wireless.mappingFlags == [
-        "lizardMode", "trackpads", "wirelessReceiver"
-      ]
-    )
+    #expect(wireless.mappingFlags == ["lizardMode", "trackpads", "wirelessReceiver"])
 
     for identifier in identifiers {
       #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)

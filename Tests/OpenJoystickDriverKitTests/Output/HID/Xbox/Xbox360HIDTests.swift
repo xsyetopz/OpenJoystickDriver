@@ -3,8 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-@available(*, deprecated)
-private func legacyXbox360TypealiasesCompile() -> (Int, Int) {
+@available(*, deprecated) private func legacyXbox360TypealiasesCompile() -> (Int, Int) {
   (
     Xbox360XUSBDirectInputHIDDescriptor.descriptor.count,
     Xbox360XUSBDirectInputReportFormat().inputReportPayloadSize
@@ -20,9 +19,7 @@ struct Xbox360CompatibilityMigrationTests {
 }
 
 struct Xbox360HIDReportFormatTests {
-  private func format() -> Xbox360DirectInputReportFormat {
-    Xbox360DirectInputReportFormat()
-  }
+  private func format() -> Xbox360DirectInputReportFormat { Xbox360DirectInputReportFormat() }
 
   private func report(buttonBit: Int) -> [UInt8] {
     format().buildInputReport(from: VirtualGamepadState(buttons: 1 << UInt32(buttonBit)))

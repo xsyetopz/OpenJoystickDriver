@@ -40,11 +40,12 @@ struct ProbeTests {
     let facts = ExtensionProbe.installedFacts(from: output)
 
     #expect(
-      facts == ExtensionVersionFacts(
-        bundleIdentifier: ExtensionProbe.bundleIdentifier,
-        shortVersion: "0.5.0-beta.2",
-        buildVersion: "0.5.0b2"
-      )
+      facts
+        == ExtensionVersionFacts(
+          bundleIdentifier: ExtensionProbe.bundleIdentifier,
+          shortVersion: "0.5.0-beta.2",
+          buildVersion: "0.5.0b2"
+        )
     )
     #expect(
       ExtensionProbe.installedFacts(

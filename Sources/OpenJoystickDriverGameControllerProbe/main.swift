@@ -128,20 +128,21 @@ func printHIDSupport() -> Bool? {
 final class ProbeEvidence: @unchecked Sendable {
   private let lock = NSLock()
   private var values = (
-    connected: false,
-    extended: false,
-    input: false,
-    disconnected: false,
-    reconnected: false,
+    connected: false, extended: false, input: false, disconnected: false, reconnected: false,
     sawDisconnect: false
   )
   func markConnected(_ controller: GCController) {
-    lock.lock(); defer { lock.unlock() }
+    lock.lock()
+    defer { lock.unlock() }
     values.connected = true
     if values.sawDisconnect { values.reconnected = true }
     if controller.extendedGamepad != nil { values.extended = true }
   }
-  func markInput() { lock.lock(); values.input = true; lock.unlock() }
+  func markInput() {
+    lock.lock()
+    values.input = true
+    lock.unlock()
+  }
   func markDisconnected() {
     lock.lock()
     values.disconnected = true
@@ -149,13 +150,10 @@ final class ProbeEvidence: @unchecked Sendable {
     lock.unlock()
   }
   func snapshot() -> (Bool, Bool, Bool, Bool, Bool) {
-    lock.lock(); defer { lock.unlock() }
+    lock.lock()
+    defer { lock.unlock() }
     return (
-      values.connected,
-      values.extended,
-      values.input,
-      values.disconnected,
-      values.reconnected
+      values.connected, values.extended, values.input, values.disconnected, values.reconnected
     )
   }
 }
@@ -181,9 +179,7 @@ let evidence = ProbeEvidence()
 func observeInput(on controller: GCController) {
   evidence.markConnected(controller)
   guard let gamepad = controller.extendedGamepad else { return }
-  gamepad.valueChangedHandler = { _, _ in
-    evidence.markInput()
-  }
+  gamepad.valueChangedHandler = { _, _ in evidence.markInput() }
 }
 
 for controller in controllers { observeInput(on: controller) }

@@ -92,8 +92,7 @@ public enum VirtualRumbleOutputReportParser {
         bytes.count >= xboxGIPReportPayloadSizeWithoutReportID + 1 && bytes.first == xboxGIPReportID
         ? Array(bytes.dropFirst()) : bytes
       payload =
-        normalized.first == GIPCommand.rumble
-        ? normalized : [GIPCommand.rumble] + normalized
+        normalized.first == GIPCommand.rumble ? normalized : [GIPCommand.rumble] + normalized
     } else if reportID == 0, bytes.first == GIPCommand.rumble {
       payload = bytes
     } else {

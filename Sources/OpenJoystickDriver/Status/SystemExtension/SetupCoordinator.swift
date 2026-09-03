@@ -30,25 +30,26 @@ final class DefaultSystemExtensionSetupClient: Sendable, SystemExtensionSetupCli
 
   func requestActivation() async -> SystemExtensionSetupRequestResult {
     let requestState = SystemExtensionRequestState()
-    return await withTaskCancellationHandler(operation: {
-      await withCheckedContinuation { continuation in
-        guard !Task.isCancelled else {
-          continuation.resume(returning: SystemExtensionSetupRequestResult.cancelled)
-          return
+    return await withTaskCancellationHandler(
+      operation: {
+        await withCheckedContinuation { continuation in
+          guard !Task.isCancelled else {
+            continuation.resume(returning: SystemExtensionSetupRequestResult.cancelled)
+            return
+          }
+          let submission = SystemExtensionSubmission(mode: .activation) {
+            continuation.resume(returning: $0)
+          }
+          guard requestState.start(submission) else {
+            continuation.resume(returning: SystemExtensionSetupRequestResult.cancelled)
+            return
+          }
+          let timeout = DispatchWorkItem { [weak submission] in submission?.timeout() }
+          DispatchQueue.main.asyncAfter(deadline: .now() + 30, execute: timeout)
         }
-        let submission = SystemExtensionSubmission(mode: .activation) {
-          continuation.resume(returning: $0)
-        }
-        guard requestState.start(submission) else {
-          continuation.resume(returning: SystemExtensionSetupRequestResult.cancelled)
-          return
-        }
-        let timeout = DispatchWorkItem { [weak submission] in submission?.timeout() }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 30, execute: timeout)
-      }
-    }, onCancel: {
-      requestState.cancel()
-    })
+      },
+      onCancel: { requestState.cancel() }
+    )
   }
 }
 
@@ -76,8 +77,7 @@ final class DefaultSystemExtensionSetupClient: Sendable, SystemExtensionSetupCli
     status = client.inspect()
     state = Self.state(for: status)
     if (previousState == .awaitingApproval || previousState == .failed)
-      && (state == .needsActivation || state == .replacementNeeded)
-      && trigger != .repair
+      && (state == .needsActivation || state == .replacementNeeded) && trigger != .repair
     {
       state = previousState == .awaitingApproval ? .awaitingApproval : .failed
     }
@@ -102,9 +102,7 @@ final class DefaultSystemExtensionSetupClient: Sendable, SystemExtensionSetupCli
     }
     switch status.registration {
     case .active:
-      guard let embedded = status.embedded, let installed = status.installed else {
-        return .failed
-      }
+      guard let embedded = status.embedded, let installed = status.installed else { return .failed }
       return embedded == installed ? .active : .replacementNeeded
     case .inactive, .absent: return .needsActivation
     case .unavailable: return .failed

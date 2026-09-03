@@ -180,24 +180,25 @@ public final class HIDDeviceStream: @unchecked Sendable {
     let serial = IOHIDDeviceGetProperty(device, kIOHIDSerialNumberKey as CFString) as? String
     let productName = IOHIDDeviceGetProperty(device, kIOHIDProductKey as CFString) as? String
     let transport = IOHIDDeviceGetProperty(device, kIOHIDTransportKey as CFString) as? String ?? ""
-    let syntheticProperty = IOHIDDeviceGetProperty(
-      device,
-      "kIOHIDGCSyntheticDeviceKey" as CFString
-    )
+    let syntheticProperty = IOHIDDeviceGetProperty(device, "kIOHIDGCSyntheticDeviceKey" as CFString)
     let loc = deviceProperty(device, kIOHIDLocationIDKey)
     let locationID = UInt32(truncatingIfNeeded: loc)
-    guard PhysicalHIDBackendEventPolicy.acceptsDevice(
-      serialNumber: serial,
-      productName: productName,
-      transport: transport.isEmpty ? nil : transport,
-      locationID: locationID,
-      syntheticProperty: syntheticProperty
-    ) else { return }
-    guard eventAdapter.add(
-      deviceID: trackingID(for: device),
-      locationID: locationID,
-      syntheticProperty: syntheticProperty
-    ) else { return }
+    guard
+      PhysicalHIDBackendEventPolicy.acceptsDevice(
+        serialNumber: serial,
+        productName: productName,
+        transport: transport.isEmpty ? nil : transport,
+        locationID: locationID,
+        syntheticProperty: syntheticProperty
+      )
+    else { return }
+    guard
+      eventAdapter.add(
+        deviceID: trackingID(for: device),
+        locationID: locationID,
+        syntheticProperty: syntheticProperty
+      )
+    else { return }
 
     // Try to take exclusive access so SDL sees only the virtual controller (no duplicates).
     // This is best-effort; if it fails we still function, but users may see SDL-0/SDL-1 conflicts.

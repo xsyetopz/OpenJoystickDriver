@@ -141,16 +141,17 @@ struct PhysicalOutputCommand {
       else { return false }
       guard hasActiveMotor, rumbleDurationMs > 0 else { return true }
       try? await Task.sleep(nanoseconds: UInt64(rumbleDurationMs) * 1_000_000)
-      return (try? await client.sendPhysicalRumble(
-        vendorID: vendorID,
-        productID: productID,
-        runtimeIdentifier: device.runtimeIdentifier,
-        left: 0,
-        right: 0,
-        lt: 0,
-        rt: 0,
-        durationMs: 0
-      )) == true
+      return
+        (try? await client.sendPhysicalRumble(
+          vendorID: vendorID,
+          productID: productID,
+          runtimeIdentifier: device.runtimeIdentifier,
+          left: 0,
+          right: 0,
+          lt: 0,
+          rt: 0,
+          durationMs: 0
+        )) == true
     }
     guard sent == true else {
       fail("The application service could not send the physical rumble command.")

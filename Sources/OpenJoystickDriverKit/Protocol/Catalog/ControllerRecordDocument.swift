@@ -17,9 +17,9 @@ struct ControllerRecordDocument: Decodable {
 
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)
-    try container.rejectUnknown(
-      allowed: ["$schema", "vendor_id", "product_id", "transport", "protocol", "usb"]
-    )
+    try container.rejectUnknown(allowed: [
+      "$schema", "vendor_id", "product_id", "transport", "protocol", "usb"
+    ])
     let schema = try container.decode(String.self, for: "$schema")
     guard schema == Self.schemaID else {
       throw DecodingError.dataCorruptedError(
@@ -55,9 +55,9 @@ struct ControllerRecordDocument: Decodable {
 
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
-      try container.rejectUnknown(
-        allowed: ["driver", "variant", "flags", "startup_packets", "keep_alive"]
-      )
+      try container.rejectUnknown(allowed: [
+        "driver", "variant", "flags", "startup_packets", "keep_alive"
+      ])
       driver = try container.decode(String.self, for: "driver")
       variant = try container.decode(String.self, for: "variant")
       flags = try container.decodeOptional([String].self, for: "flags")
@@ -116,8 +116,7 @@ struct ControllerRecordDocument: Decodable {
       "Xbox360": (
         ["xbox360", "xbox360Wireless", "unknown"],
         ["dpadToButtons", "triggersToButtons", "sticksToNull"]
-      ),
-      "DS3": (["dualShock3", "unknown"], ["gyro", "accelerometer", "battery"]),
+      ), "DS3": (["dualShock3", "unknown"], ["gyro", "accelerometer", "battery"]),
       "DS4": (
         ["dualShock4", "unknown"], ["touchpad", "gyro", "accelerometer", "battery", "lightbar"]
       ),
@@ -131,14 +130,10 @@ struct ControllerRecordDocument: Decodable {
       "SteamController": (
         ["steamController", "unknown"],
         ["lizardMode", "trackpads", "gyro", "battery", "wirelessReceiver"]
-      ),
-      "SwitchPro": (
-        ["switchPro", "unknown"], ["usbHandshake", "calibration", "imu", "rumble"]
-      ),
+      ), "SwitchPro": (["switchPro", "unknown"], ["usbHandshake", "calibration", "imu", "rumble"]),
       "XboxAdaptiveJoystick": (
         ["xboxAdaptiveJoystick", "unknown"], ["rawUSBPackets", "genericHIDPackets"]
-      ),
-      "GenericHID": (["genericHID"], [])
+      ), "GenericHID": (["genericHID"], [])
     ]
   }
 
@@ -150,9 +145,9 @@ struct ControllerRecordDocument: Decodable {
 
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
-      try container.rejectUnknown(
-        allowed: ["interface", "configuration", "post_handshake_settle_ms", "endpoints"]
-      )
+      try container.rejectUnknown(allowed: [
+        "interface", "configuration", "post_handshake_settle_ms", "endpoints"
+      ])
       guard !container.allKeys.isEmpty else {
         throw DecodingError.dataCorrupted(
           .init(codingPath: decoder.codingPath, debugDescription: "usb must not be empty")

@@ -75,15 +75,16 @@ enum ExtensionProbe {
   }
 
   static func installedFacts(from output: String) -> ExtensionVersionFacts? {
-    guard let line = output.components(separatedBy: .newlines).first(where: {
-      $0.contains(bundleIdentifier)
-    }) else { return nil }
+    guard
+      let line = output.components(separatedBy: .newlines).first(where: {
+        $0.contains(bundleIdentifier)
+      })
+    else { return nil }
     let versionToken = line.split { $0 == " " || $0 == "\t" }.first { token in
       token.contains("/") && token.first == "("
     }
     guard let versionToken else { return nil }
-    let parts = String(versionToken)
-      .trimmingCharacters(in: CharacterSet(charactersIn: "()[],"))
+    let parts = String(versionToken).trimmingCharacters(in: CharacterSet(charactersIn: "()[],"))
       .split(separator: "/", maxSplits: 1, omittingEmptySubsequences: false)
     guard parts.count == 2 else { return nil }
     let short = String(parts[0])
@@ -98,12 +99,11 @@ enum ExtensionProbe {
 
   private static func isVersionComponent(_ value: String) -> Bool {
     if !value.isEmpty && value.allSatisfy({ $0.isNumber }) { return true }
-    let pattern = value.contains("-")
+    let pattern =
+      value.contains("-")
       ? "[0-9]+\\.[0-9]+\\.[0-9]+-(?:alpha|beta|rc)\\.[1-9][0-9]*"
       : "[0-9]+\\.[0-9]+\\.[0-9]+(?:(?:d|a|b|fc)[1-9][0-9]*)?"
-    guard let expression = try? NSRegularExpression(pattern: "^\(pattern)$") else {
-      return false
-    }
+    guard let expression = try? NSRegularExpression(pattern: "^\(pattern)$") else { return false }
     let range = NSRange(location: 0, length: value.utf16.count)
     return expression.firstMatch(in: value, range: range)?.range == range
   }

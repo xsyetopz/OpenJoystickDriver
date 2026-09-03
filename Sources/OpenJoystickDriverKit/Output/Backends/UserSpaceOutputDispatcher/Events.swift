@@ -23,9 +23,7 @@ extension UserSpaceOutputDispatcher {
     }
   }
 
-  func xboxGuideReport(for event: ControllerEvent) -> [UInt8]? {
-    Self.xboxGuideReport(for: event)
-  }
+  func xboxGuideReport(for event: ControllerEvent) -> [UInt8]? { Self.xboxGuideReport(for: event) }
 
   static func xboxGuideReport(for event: ControllerEvent) -> [UInt8]? {
     switch event {

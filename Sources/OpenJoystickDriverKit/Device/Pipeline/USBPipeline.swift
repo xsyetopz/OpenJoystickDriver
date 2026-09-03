@@ -46,9 +46,7 @@ extension DevicePipeline {
           print("[DevicePipeline] USB device unavailable; retrying: \(identifier)")
           delay = usbRecoveryPolicy.reconnectDelayNanoseconds(after: openAttempt)
         }
-        try? await Task.sleep(
-          nanoseconds: delay
-        )
+        try? await Task.sleep(nanoseconds: delay)
         continue
       }
       guard isActive else {

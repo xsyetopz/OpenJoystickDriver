@@ -62,10 +62,9 @@ public enum UserSpaceVirtualDeviceConstants {
     return CFBooleanGetValue(unsafeDowncast(cfValue, to: CFBoolean.self))
   }
 
-  public static func acceptsPhysicalHIDEvent(
-    _ event: PhysicalHIDEvent,
-    syntheticProperty: Any?
-  ) -> Bool {
+  public static func acceptsPhysicalHIDEvent(_ event: PhysicalHIDEvent, syntheticProperty: Any?)
+    -> Bool
+  {
     _ = event
     return !isAppleGameControllerSyntheticDevice(syntheticProperty)
   }
@@ -145,40 +144,31 @@ public struct PhysicalHIDTrackingStateMachine {
 
   public init() {}
 
-  @discardableResult
-  public mutating func register(
+  @discardableResult public mutating func register(
     deviceID: UInt64,
     locationID: UInt32,
     syntheticProperty: Any?
   ) -> Bool {
-    guard PhysicalHIDBackendEventPolicy.accepts(
-      .deviceAdded,
-      syntheticProperty: syntheticProperty
-    ), locationsByDeviceID[deviceID] == nil else { return false }
+    guard PhysicalHIDBackendEventPolicy.accepts(.deviceAdded, syntheticProperty: syntheticProperty),
+      locationsByDeviceID[deviceID] == nil
+    else { return false }
     locationsByDeviceID[deviceID] = locationID
     deviceIDsByLocation[locationID, default: []].insert(deviceID)
     return true
   }
 
-  public func acceptsInput(deviceID: UInt64) -> Bool {
-    locationsByDeviceID[deviceID] != nil
-  }
+  public func acceptsInput(deviceID: UInt64) -> Bool { locationsByDeviceID[deviceID] != nil }
 
-  public func isTracked(deviceID: UInt64) -> Bool {
-    locationsByDeviceID[deviceID] != nil
-  }
+  public func isTracked(deviceID: UInt64) -> Bool { locationsByDeviceID[deviceID] != nil }
 
   public func acceptsInput(locationID: UInt32) -> Bool {
     !(deviceIDsByLocation[locationID] ?? []).isEmpty
   }
 
-  public func acceptsFeedback(locationID: UInt32) -> Bool {
-    acceptsInput(locationID: locationID)
-  }
+  public func acceptsFeedback(locationID: UInt32) -> Bool { acceptsInput(locationID: locationID) }
 
   /// Removes one device and returns true only when its location is now fully disconnected.
-  @discardableResult
-  public mutating func remove(deviceID: UInt64) -> Bool {
+  @discardableResult public mutating func remove(deviceID: UInt64) -> Bool {
     guard let locationID = locationsByDeviceID.removeValue(forKey: deviceID) else { return false }
     deviceIDsByLocation[locationID]?.remove(deviceID)
     guard deviceIDsByLocation[locationID]?.isEmpty == true else { return false }
@@ -187,10 +177,8 @@ public struct PhysicalHIDTrackingStateMachine {
   }
 
   /// Removes all devices at a location and returns whether a tracked location existed.
-  @discardableResult
-  public mutating func remove(locationID: UInt32) -> Bool {
-    guard let deviceIDs = deviceIDsByLocation.removeValue(forKey: locationID),
-      !deviceIDs.isEmpty
+  @discardableResult public mutating func remove(locationID: UInt32) -> Bool {
+    guard let deviceIDs = deviceIDsByLocation.removeValue(forKey: locationID), !deviceIDs.isEmpty
     else { return false }
     deviceIDs.forEach { locationsByDeviceID.removeValue(forKey: $0) }
     return true
@@ -224,8 +212,7 @@ public struct PhysicalHIDBackendEventAdapter {
 
   public init() {}
 
-  @discardableResult
-  public mutating func add(
+  @discardableResult public mutating func add(
     deviceID: UInt64,
     locationID: UInt32,
     syntheticProperty: Any?
@@ -237,9 +224,7 @@ public struct PhysicalHIDBackendEventAdapter {
     )
   }
 
-  public func acceptsInput(deviceID: UInt64) -> Bool {
-    tracking.acceptsInput(deviceID: deviceID)
-  }
+  public func acceptsInput(deviceID: UInt64) -> Bool { tracking.acceptsInput(deviceID: deviceID) }
 
   public func acceptsFeedback(locationID: UInt32) -> Bool {
     tracking.acceptsFeedback(locationID: locationID)
@@ -271,9 +256,7 @@ public struct PhysicalHIDBackendEventAdapter {
     )
   }
 
-  public func isTracked(deviceID: UInt64) -> Bool {
-    tracking.isTracked(deviceID: deviceID)
-  }
+  public func isTracked(deviceID: UInt64) -> Bool { tracking.isTracked(deviceID: deviceID) }
 }
 
 /// Thread-safe holder for backend callbacks and feedback callers that may run
@@ -285,18 +268,11 @@ public final class SynchronizedPhysicalHIDBackendEventAdapter: @unchecked Sendab
 
   public init() {}
 
-  @discardableResult
-  public func add(
-    deviceID: UInt64,
-    locationID: UInt32,
-    syntheticProperty: Any?
-  ) -> Bool {
+  @discardableResult public func add(deviceID: UInt64, locationID: UInt32, syntheticProperty: Any?)
+    -> Bool
+  {
     lock.withLock {
-      adapter.add(
-        deviceID: deviceID,
-        locationID: locationID,
-        syntheticProperty: syntheticProperty
-      )
+      adapter.add(deviceID: deviceID, locationID: locationID, syntheticProperty: syntheticProperty)
     }
   }
 
@@ -320,9 +296,7 @@ public final class SynchronizedPhysicalHIDBackendEventAdapter: @unchecked Sendab
     lock.withLock { adapter.isTracked(deviceID: deviceID) }
   }
 
-  public func reset() {
-    lock.withLock { adapter = PhysicalHIDBackendEventAdapter() }
-  }
+  public func reset() { lock.withLock { adapter = PhysicalHIDBackendEventAdapter() } }
 }
 
 /// Stable identity constants for OpenJoystickDriver-created virtual HID devices.

@@ -118,9 +118,7 @@ struct SupportReportTests {
     #expect(report.data.privacy.includesPacketPayloads == false)
     #expect(report.data.privacy.includesHIDLocationIDs == false)
     #expect(report.data.controllers.first?.serialNumberPresent == true)
-    #expect(
-      report.data.controllers.first?.physicalOutputCapabilities.supportsTriggerRumble == true
-    )
+    #expect(report.data.controllers.first?.physicalOutputCapabilities.supportsTriggerRumble == true)
     #expect(report.data.hidGamepads.first?.product == "Test Controller")
     let object = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
     #expect(object["specversion"] as? String == "1.0")

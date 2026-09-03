@@ -91,8 +91,7 @@ import Foundation
         switch notification {
         case .deviceMatched(let reference):
           await add(reference: reference, continuation: continuation)
-        case .deviceRemoved(let reference):
-          remove(reference: reference, continuation: continuation)
+        case .deviceRemoved(let reference): remove(reference: reference, continuation: continuation)
         @unknown default: break
         }
       }
@@ -115,18 +114,22 @@ import Foundation
     let locationID = UInt32(truncatingIfNeeded: await client.locationID ?? reference.deviceID)
     let syntheticProperty = await client["kIOHIDGCSyntheticDeviceKey"]?.unsafeObject
     let transport = Self.transportName(await client.transport)
-    guard PhysicalHIDBackendEventPolicy.acceptsDevice(
-      serialNumber: serialNumber,
-      productName: productName,
-      transport: transport,
-      locationID: locationID,
-      syntheticProperty: syntheticProperty
-    ) else { return }
-    guard eventAdapter.add(
-      deviceID: reference.deviceID,
-      locationID: locationID,
-      syntheticProperty: syntheticProperty
-    ) else { return }
+    guard
+      PhysicalHIDBackendEventPolicy.acceptsDevice(
+        serialNumber: serialNumber,
+        productName: productName,
+        transport: transport,
+        locationID: locationID,
+        syntheticProperty: syntheticProperty
+      )
+    else { return }
+    guard
+      eventAdapter.add(
+        deviceID: reference.deviceID,
+        locationID: locationID,
+        syntheticProperty: syntheticProperty
+      )
+    else { return }
 
     do { try await client.seizeDevice() } catch {
       print("[CoreHIDAccessBackend] Non-exclusive access for \(vendorID):\(productID): \(error)")

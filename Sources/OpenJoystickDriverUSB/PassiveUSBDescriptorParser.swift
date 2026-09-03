@@ -7,9 +7,7 @@ public enum PassiveUSBConfigurationDescriptorParser {
     _ bytes: [UInt8],
     negotiatedSpeed: PassiveUSBNegotiatedSpeed? = nil,
     superSpeedPlusContext: PassiveUSBSuperSpeedPlusValidationContext? = nil
-  )
-    throws -> PassiveUSBConfigurationDescriptor
-  {
+  ) throws -> PassiveUSBConfigurationDescriptor {
     guard !bytes.isEmpty, bytes.count <= maxBlobSize else {
       throw PassiveUSBDescriptorBlobError.unsafeSize
     }
@@ -103,8 +101,7 @@ public enum PassiveUSBConfigurationDescriptorParser {
         if negotiatedSpeed != nil {
           if let negotiatedSpeed,
             negotiatedSpeed == .high || negotiatedSpeed == .superSpeed
-              || negotiatedSpeed == .superSpeedPlus,
-            transfer == 3 || transfer == 1, chunk[6] > 16
+              || negotiatedSpeed == .superSpeedPlus, transfer == 3 || transfer == 1, chunk[6] > 16
           {
             throw PassiveUSBDescriptorBlobError.invalidInterval
           }
@@ -146,8 +143,8 @@ public enum PassiveUSBConfigurationDescriptorParser {
         guard companionEligible else {
           throw PassiveUSBDescriptorBlobError.orphanCompanionDescriptor
         }
-        if let negotiatedSpeed,
-          negotiatedSpeed != .superSpeed && negotiatedSpeed != .superSpeedPlus {
+        if let negotiatedSpeed, negotiatedSpeed != .superSpeed && negotiatedSpeed != .superSpeedPlus
+        {
           throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
         }
         guard let transferName = value.endpoints.last?.transferType else {
@@ -175,8 +172,8 @@ public enum PassiveUSBConfigurationDescriptorParser {
         companionEligible = false
         sspCompanionRequired = transferName == "isochronous" && (chunk[3] & 0x80) != 0
       } else if type == 0x31 {
-        if let negotiatedSpeed,
-          negotiatedSpeed != .superSpeed && negotiatedSpeed != .superSpeedPlus {
+        if let negotiatedSpeed, negotiatedSpeed != .superSpeed && negotiatedSpeed != .superSpeedPlus
+        {
           throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
         }
         guard sspCompanionRequired, length == 8, var value = current, !value.endpoints.isEmpty
@@ -194,10 +191,9 @@ public enum PassiveUSBConfigurationDescriptorParser {
         let bytes =
           UInt32(chunk[4]) | (UInt32(chunk[5]) << 8) | (UInt32(chunk[6]) << 16)
           | (UInt32(chunk[7]) << 24)
-        guard let maximum = superSpeedPlusContext.maximumBytesPerInterval,
-          bytes > 49_152, bytes < maximum else {
-          throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-        }
+        guard let maximum = superSpeedPlusContext.maximumBytesPerInterval, bytes > 49_152,
+          bytes < maximum
+        else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
         value.endpoints.append(
           PassiveUSBDescriptorEndpoint(
             address: endpoint.address,
@@ -260,9 +256,7 @@ public enum PassiveUSBConfigurationDescriptorParser {
     }
     switch endpoint.transferType {
     case "bulk":
-      guard packet == 1_024 else {
-        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-      }
+      guard packet == 1_024 else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
       guard attributes & 0xE0 == 0, attributes & 0x1F <= 16, bytesPerInterval == 0 else {
         throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
       }
@@ -278,9 +272,7 @@ public enum PassiveUSBConfigurationDescriptorParser {
         throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
       }
     case "isochronous":
-      guard packet <= 1_024 else {
-        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-      }
+      guard packet <= 1_024 else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
       guard chunk[2] == 0 || packet == 1_024 else {
         throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
       }
@@ -305,7 +297,6 @@ public enum PassiveUSBConfigurationDescriptorParser {
     default: throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
     }
   }
-
 
   private static func makeInterface(
     _ value: (

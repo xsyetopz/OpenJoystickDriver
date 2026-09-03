@@ -219,10 +219,12 @@ final class SystemExtensionSubmission: NSObject, OSSystemExtensionRequestDelegat
   func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
     guard completionGate.accept() else { return }
     let nsError = error as NSError
-    setResult(.failed(
-      "System extension request failed: \(nsError.domain) "
-        + "code=\(nsError.code) \(nsError.localizedDescription)"
-    ))
+    setResult(
+      .failed(
+        "System extension request failed: \(nsError.domain) "
+          + "code=\(nsError.code) \(nsError.localizedDescription)"
+      )
+    )
     finish(.failed)
   }
 
@@ -244,9 +246,7 @@ final class SystemExtensionSubmission: NSObject, OSSystemExtensionRequestDelegat
     return .replace
   }
 
-  private func finish(_ result: SystemExtensionSetupRequestResult) {
-    completion?(result)
-  }
+  private func finish(_ result: SystemExtensionSetupRequestResult) { completion?(result) }
 
   private func setResult(_ result: Result) {
     resultLock.lock()
