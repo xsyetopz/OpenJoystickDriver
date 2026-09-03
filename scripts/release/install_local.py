@@ -1,10 +1,8 @@
-"""Package and atomically replace the local application installation."""
+"""Package a release and install it through the shared application lifecycle."""
 
 from __future__ import annotations
 
-import os
 import plistlib
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -38,35 +36,24 @@ def main(argv: list[str]) -> int:
         else str(plistlib.loads(info.read_bytes())["CFBundleShortVersionString"])
     )
     app_source = PROJECT_DIR / ".build/debug/OpenJoystickDriver.app"
-    destination = Path("/Applications/OpenJoystickDriver.app")
-    staged = destination.parent / f".OpenJoystickDriver.app.staged.{os.getpid()}"
-    backup = destination.parent / f".OpenJoystickDriver.app.backup.{os.getpid()}"
 
     try:
         run([sys.executable, str(SCRIPT_DIR / "package.py"), "release", version])
         if not app_source.is_dir():
             die(f"Release package did not produce {app_source}")
-        run(["/usr/bin/ditto", str(app_source), str(staged)])
-        run(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(staged)])
-        if destination.is_dir():
-            staged_backup = backup
-            destination.rename(staged_backup)
-        else:
-            staged_backup = None
-        staged.rename(destination)
-        run(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(destination)])
-        if staged_backup:
-            shutil.rmtree(staged_backup)
+        run(
+            [
+                sys.executable,
+                str(PROJECT_DIR / "scripts/build-tools/install_app.py"),
+                "--retire-driverkit",
+                str(app_source),
+            ]
+        )
     except CommandFailure as error:
         return error.returncode
-    finally:
-        if staged.exists():
-            shutil.rmtree(staged)
-        if backup.is_dir() and not destination.exists():
-            backup.rename(destination)
-        elif backup.exists():
-            shutil.rmtree(backup)
-    print(f"Installed OpenJoystickDriver {version} at {destination}")
+    print(
+        f"Installed OpenJoystickDriver {version} at /Applications/OpenJoystickDriver.app"
+    )
     return 0
 
 

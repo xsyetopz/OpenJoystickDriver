@@ -368,10 +368,6 @@ build_dext_bundle() {
   codesign "${sign_args[@]}" "$app"
   _require_signed_host_access "$app" "$GUI_PROFILE"
 
-  if [[ "${OJD_SKIP_INSTALL:-0}" != "1" ]]; then
-    rm -rf /Applications/OpenJoystickDriver.app
-    cp -R "$app" /Applications/
-  fi
   echo "DriverKit extension built and embedded: $embedded"
 }
 

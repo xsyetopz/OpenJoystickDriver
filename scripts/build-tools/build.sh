@@ -114,6 +114,15 @@ _retire_ojd_application_jobs() {
 # ---------------------------------------------------------------------------
 # Rebuild cleanup
 # ---------------------------------------------------------------------------
+clean_build_artifacts() {
+  echo "=== CLEAN: clearing build artifacts ==="
+  rm -rf "$PROJECT_DIR/.build/driverkit" 2>/dev/null || true
+  rm -rf "$PROJECT_DIR/.build/debug/OpenJoystickDriver.app" 2>/dev/null || true
+  rm -rf "$PROJECT_DIR/.build/arm64-apple-macosx" 2>/dev/null || true
+  rm -rf "$PROJECT_DIR/.build/x86_64-apple-macosx" 2>/dev/null || true
+  echo "  cleared generated DriverKit and application products"
+}
+
 nuke_all() {
   local SELF_PID=$$
   local DEXT_BUNDLE_ID="com.openjoystickdriver.XboxUSBDevice"
@@ -136,14 +145,6 @@ nuke_all() {
   done
 
   echo ""
-  echo "=== NUKE: removing main app login item ==="
-  if [[ -x "$APP_PATH/Contents/MacOS/OpenJoystickDriver" ]]; then
-    "$APP_PATH/Contents/MacOS/OpenJoystickDriver" --headless app login disable \
-      && echo "  main app login item removed" || true
-  fi
-  echo "  OJD LaunchServices application jobs reconciled"
-
-  echo ""
   echo "=== NUKE: removing app from /Applications ==="
   if [[ -d "$APP_PATH" ]]; then
     rm -rf "$APP_PATH" 2>/dev/null || sudo rm -rf "$APP_PATH"
@@ -158,17 +159,7 @@ nuke_all() {
   echo "  removed"
 
   echo ""
-  echo "=== NUKE: clearing build artifacts ==="
-  rm -rf "$PROJECT_DIR/.build/driverkit" 2>/dev/null || true
-  rm -rf "$PROJECT_DIR/.build/debug/OpenJoystickDriver.app" 2>/dev/null || true
-  rm -rf "$PROJECT_DIR/.build/arm64-apple-macosx" 2>/dev/null || true
-  rm -rf "$PROJECT_DIR/.build/x86_64-apple-macosx" 2>/dev/null || true
-  echo "  cleared .build/driverkit and .build/debug app"
-
-  echo ""
-  echo "=== NUKE: clearing Xcode derived data for dext ==="
-  rm -rf "$PROJECT_DIR/.build/driverkit/derived-data" 2>/dev/null || true
-  echo "  cleared"
+  clean_build_artifacts
 
   echo ""
   echo "=== NUKE: verification ==="
@@ -447,31 +438,13 @@ rebuild_fast() {
   echo "  ✓ Signature OK"
 
   echo ""
-  echo "=== Step 2.75: Stop the installed main app ==="
-  _retire_ojd_application_jobs
-
-  echo ""
   echo "=== Step 3: Install app (without triggering sysext upgrade) ==="
-  rm -rf "$APP_DST"
-  cp -R "$APP_SRC" "$APP_DST"
-  find "$APP_DST" -exec xattr -d com.apple.quarantine {} + 2>/dev/null || true
-  echo "  Copied to $APP_DST"
-
-  echo ""
-  echo "=== Step 4: Launch app ==="
-  if ! open "$APP_DST"; then
-    echo "  LaunchServices rejected the first launch; reconciling OJD application jobs once"
-    _retire_ojd_application_jobs
-    open "$APP_DST" || die "LaunchServices could not launch the installed app after reconciliation."
-  fi
-  "$APP_DST/Contents/MacOS/OpenJoystickDriver" --headless app status --json >/dev/null \
-    || die "Installed app launched but its authenticated RPC service did not become ready."
-  echo "  Launched OpenJoystickDriver and verified application-service readiness"
+  python3 "$PROJECT_DIR/scripts/build-tools/install_app.py" "$APP_SRC"
 }
 
 rebuild_full() {
-  echo "=== Step 1: Nuke all stale state ==="
-  nuke_all
+  echo "=== Step 1: Clean build products without stopping the installed app ==="
+  clean_build_artifacts
 
   echo ""
   echo "=== Step 2: Build app ==="
@@ -496,8 +469,15 @@ rebuild_full() {
   if [[ "$OJD_ENV" == "release" ]]; then
     echo ""
     echo "=== Notarizing ==="
-    /usr/bin/env bash "$SCRIPT_DIR/../release/notarize.sh" submit
+    OJD_NOTARIZE_APP="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app" \
+      /usr/bin/env bash "$SCRIPT_DIR/../release/notarize.sh" submit
   fi
+
+  echo ""
+  echo "=== Step 4.5: Install and verify app ==="
+  python3 "$PROJECT_DIR/scripts/build-tools/install_app.py" \
+    --retire-driverkit \
+    "$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
 
   echo ""
   echo "=== Step 5: Submit sysext activation ==="

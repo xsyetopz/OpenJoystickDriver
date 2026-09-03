@@ -90,7 +90,7 @@ def main(argv: list[str]) -> int:
             env=env,
         )
         print("\n=== Build and embed DriverKit extension ===")
-        dext_env = env | {"OJD_SKIP_INSTALL": "1", "DEXT_BUNDLE_VERSION": dext_version}
+        dext_env = env | {"DEXT_BUNDLE_VERSION": dext_version}
         run(
             [
                 "/usr/bin/env",

@@ -65,6 +65,7 @@ compatibility shims.
 | `build-tools/build.sh` | `build`, `build install`, `build install-fast`, `lint` | Writes `.build/`; install routes replace installed components | Swift packaging contracts; shell syntax |
 | `build-tools/bundles.sh` | Build implementation | Constructs and signs the application bundle | Swift packaging contracts; shell syntax |
 | `build-tools/driverkit.sh` | `driverkit`, `build dext`, and install implementation | Generates, validates, builds, signs, and embeds the SwifterKit USB DriverKit extension | Deterministic generation, metadata/entitlement checks, unsigned native build, shell syntax |
+| `build-tools/install_app.py` | Every local app installation route | Stages and verifies the app, retires stale instances, replaces and relaunches the bundle, verifies authenticated RPC readiness, and rolls back failed replacements | Python syntax; non-destructive script validation |
 | `catalog/generate-controller-catalog.py` | `catalog regenerate` | Reads locked sources; check is read-only, write replaces generated records | Catalog unit tests and regeneration check |
 | `catalog/generate-xpad-records.py` | `catalog xpad` | Reads local or GitHub Linux source and writes review output | xpad unit tests |
 | `catalog/validate-profiles.py` | `check profiles` and catalog generator | Reads and validates controller records | Catalog unit tests and profile gate |
@@ -115,6 +116,14 @@ dependencies from `.build/schema-validator` when that environment exists. See
 | Bump release version | `./scripts/ojd release bump-version <version>` | Verifies the changelog heading and updates version references |
 | Package release DMG | `./scripts/ojd release package [version]` | Builds, notarizes, and staples; version defaults to the package version |
 | Package and install locally | `./scripts/ojd release install-local [version]` | Replaces the app in `/Applications` after packaging |
+
+All installation routes verify the staged signature before stopping the current
+application. They retire LaunchServices jobs and directly launched app
+processes, replace the bundle, relaunch it, and require authenticated RPC
+readiness. A failed replacement restores and relaunches the previous bundle
+when one existed. Full and release-local installations also retire stale
+DriverKit processes before replacing an embedded extension; app-only fast
+installs preserve the existing extension and leave its process running.
 
 ## Distribution paths
 

@@ -144,7 +144,7 @@ def main(argv: list[str]) -> int:
                 "build",
                 "dext",
             ],
-            env=env | {"OJD_SKIP_INSTALL": "1"},
+            env=env,
         )
         if not app_path.is_dir():
             die(f"App bundle not found: {app_path}")
