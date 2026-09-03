@@ -5,8 +5,9 @@ import Testing
 struct XboxOneHIDReportFormatTests {
   private func format() throws -> HIDDescriptorReportFormat {
     try HIDDescriptorReportFormat(
-      descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
-      buttonUsageMap: XboxOneBluetoothHIDDescriptor.buttonUsageMap
+      descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor,
+      buttonUsageMap: XboxOneBluetoothHIDDescriptor.buttonUsageMap,
+      digitalUsageMap: XboxOneBluetoothHIDDescriptor.seriesDigitalUsageMap
     )
   }
 
@@ -17,7 +18,7 @@ struct XboxOneHIDReportFormatTests {
     let a = try report(buttonBit: 0)
     let rb = try report(buttonBit: 5)
 
-    #expect(a.count == 16)
+    #expect(a.count == 17)
     #expect(a[0] == 1)
     #expect(a[14] == 0x01)
     #expect(rb[14] == 0x20)
@@ -70,7 +71,7 @@ struct XboxOneHIDReportFormatTests {
   }
   @Test func testPreservesPrimaryButtonCountAndGuideMapping() throws {
     let parsed = try #require(
-      HIDReportDescriptorParser.parse(descriptor: XboxOneBluetoothHIDDescriptor.descriptor)
+      HIDReportDescriptorParser.parse(descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor)
     )
     let buttonUsages = parsed.fields.filter { $0.reportID == 1 && $0.usagePage == 0x09 }.sorted {
       $0.bitOffset < $1.bitOffset
@@ -83,7 +84,33 @@ struct XboxOneHIDReportFormatTests {
     #expect(XboxOneBluetoothHIDDescriptor.buttonUsageMap[7] == 10)
     #expect(XboxOneBluetoothHIDDescriptor.buttonUsageMap[10] == 11)
     #expect(parsed.fields.contains { $0.reportID == 2 && $0.usagePage == 0x01 && $0.usage == 0x85 })
+    #expect(parsed.fields.contains { $0.reportID == 1 && $0.usagePage == 0x0C && $0.usage == 0xB2 })
     #expect(buttonUsages.count == 15)
+  }
+  @Test func testLegacyXboxOneDescriptorDoesNotAdvertiseShare() throws {
+    let parsed = try #require(
+      HIDReportDescriptorParser.parse(descriptor: XboxOneBluetoothHIDDescriptor.descriptor)
+    )
+    let format = try HIDDescriptorReportFormat(
+      descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
+      buttonUsageMap: XboxOneBluetoothHIDDescriptor.buttonUsageMap
+    )
+
+    #expect(!parsed.fields.contains { $0.usagePage == 0x0C && $0.usage == 0xB2 })
+    #expect(format.buildInputReport(from: VirtualGamepadState()).count == 16)
+  }
+  @Test func testMapsShareIndependentlyFromView() throws {
+    let neutral = try format().buildInputReport(from: VirtualGamepadState())
+    let view = try report(buttonBit: GamepadHIDDescriptor.ButtonBit.back.rawValue)
+    let share = try report(buttonBit: GamepadHIDDescriptor.ButtonBit.share.rawValue)
+
+    #expect(view[14] == 0x40)
+    #expect(view[16] == 0x00)
+    #expect(share[14] == 0x00)
+    #expect(share[16] == 0x01)
+    #expect(
+      share.enumerated().allSatisfy { index, value in index == 16 || value == neutral[index] }
+    )
   }
   @Test func testPacksDpadAsHatSwitch() throws {
     let north = try format().buildInputReport(from: VirtualGamepadState(hat: .north))

@@ -28,11 +28,17 @@ input but no dependable rumble.
 ### `apple-gamecontroller`
 
 Use only to test native applications that read `GCController`. This selectable
-route uses the source-backed Xbox One S Bluetooth tuple `045E:02FD`, with the
-matching Bluetooth descriptor, input packing, Guide report, and report-3
-output decoder. It is a separate consumer intent from the legacy `xone-hid`
-generic-HID profile; selecting it does not republish the foreground identity or
-create a second virtual device.
+route uses the Xbox Series Bluetooth tuple `045E:0B13`. Its primary input report
+includes the Consumer Record usage that GameController.framework exposes as
+`GCXboxGamepad.buttonShare`. View and Share remain separate inputs. It is a
+separate consumer intent from the legacy `xone-hid` generic-HID profile;
+selecting it does not republish the foreground identity or create a second
+virtual device.
+
+GameController clients control macOS controller gestures. If an app leaves a
+gesture enabled, macOS may delay View or reserve Guide and Share. The OJD probe
+can disable those gestures for its own test, but OJD cannot change another
+app's gesture settings.
 `GCController.supportsHIDDevice`, connect, extended-profile, input, and
 reconnect results are diagnostic evidence, not guarantees. Do not claim
 haptics without a physical/runtime observation.
@@ -96,8 +102,9 @@ persist that temporary choice.
 - Generic HID maps descriptor-defined controls but cannot infer vendor protocols.
 - Raw and vendor-specific USB controllers use direct IOUSBHost when macOS permits app ownership.
   Entitlement-restricted models require OJD's signed USB DriverKit extension.
-- `045E:02FD` is source-backed for explicit Xbox/Apple candidate routes, but
-  its SDL BT1/BT2 attempts are a reported failure;
+- `045E:0B13` is used only for the explicit Apple GameController route.
+- The legacy `xone-hid` route keeps `045E:02FD`; its SDL BT1/BT2 attempts are a
+  reported failure.
   `9886:0024` is hardware-verified only for SDL HIDAPI-style consumers.
 - No virtual HID VID/PID universally supplies Windows XInput/GIP semantics on
   macOS. Consumer identity, descriptor, transport, and report behavior must
@@ -141,18 +148,26 @@ the same family differently.
 
 | Physical family/mode | SDL/HIDAPI | Apple GameController | Automatic result |
 | --- | --- | --- | --- |
-| Xbox GIP, exact GameSir G7 SE mode | ❌ Generic HID (no adjacent tuple) | ⚠️ separate test | Do not substitute ASTRO C40 automatically |
-| Xbox GIP, other modes | 🔬 no verified adjacent tuple | ⚠️ separate test | Generic HID; no ASTRO substitution |
+| Xbox GIP, exact GameSir G7 SE mode | ❌ Generic HID (no adjacent tuple) | ⚠️ Xbox Series profile exposes Share separately | Do not substitute ASTRO C40 automatically |
+| Xbox GIP, other modes | 🔬 no verified adjacent tuple | ⚠️ Xbox Series profile; test each controller | Generic HID; no ASTRO substitution |
 | Xbox 360 physical family | 🔬 no verified adjacent tuple | ⚠️ separate test | Generic HID |
 | XInputHID/XUSB wire protocol | ❌ no macOS emulation claim | ❌ no macOS emulation claim | Generic HID |
-| Xbox One Bluetooth `045E:02FD` | 🧪 BT1/BT2 reported no SDL input | ⚠️ source-backed candidate | Generic HID for automatic SDL |
+| Xbox One Bluetooth `045E:02FD` | 🧪 BT1/BT2 reported no SDL input | 🔬 legacy `xone-hid` only | Generic HID for automatic SDL |
 | Nintendo Switch Pro | 🔬 no adjacent verified route | 🔬 no adjacent verified route | Generic HID |
 | PlayStation DS4/DS5 | 🔬 official tuple required | 🔬 official tuple required | Generic HID unless tuple is proven |
 | Other | 🔬 no cross-family spoof | 🔬 no cross-family spoof | Generic HID |
 
 ## Apple GameController support
 
-Use live detection by `GCController.supportsHIDDevice` and a hardware test to determine whether the active virtual controller works with GameController.framework. The private current-system mapping catalog is optional. Developers can use it to compare exact physical OJD record VID/PID pairs, but a missing pair does not prove incompatibility. See [Xbox fallback identity evidence](../development/xbox-identities.md).
+Use live detection by `GCController.supportsHIDDevice` and a hardware test to
+determine whether the active virtual controller works with
+GameController.framework. The `apple-gamecontroller` profile publishes
+`045E:0B13`; the OJD probe confirms whether macOS created `GCXboxGamepad`,
+`buttonShare`, and any paddle inputs. Browser Gamepad API results are separate:
+a browser may omit Share even when native GameController.framework exposes it.
+The private current-system mapping catalog is optional. A missing pair does not
+prove incompatibility. See
+[Xbox fallback identity evidence](../development/xbox-identities.md).
 
 ## USB DriverKit extension
 

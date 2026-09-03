@@ -37,7 +37,7 @@ The following nine rows are **user-reported observations**, not verified facts. 
 
 | Row | Engine | Virtual identity | User-reported beta.3 observation | Required manual disposition |
 | --- | --- | --- | --- | --- |
-| 1 | Chromium | Apple GameController | Enumerates as `Xbox Wireless Controller` with `mapping: standard`; Back/View B8 is delayed by the macOS system-gesture recognizer and may require a long press; Guide/Home B16 does not fire | Retain as a Chromium limitation unless the browser disables the GameController system gesture for its Options/Home elements; verify Generic HID separately for immediate unreserved input |
+| 1 | Chromium | Apple GameController | Enumerates as `Xbox Wireless Controller` with `mapping: standard`; Back/View B8 is delayed by the macOS system-gesture recognizer and may require a long press; Guide/Home B16 and Share do not fire | Retain as a Chromium limitation unless the browser disables the relevant GameController system gestures and maps the controls; verify native `GCXboxGamepad.buttonShare` and Generic HID separately |
 | 2 | Chromium | Generic HID | LT Axis5 and RT Axis2 become stuck at -1 after first actuation; expected 0 | Check release to the same valid clean neutral; for raw axes use descriptor-consistent range, for standard mapping use B6/B7 neutral 0 |
 | 3 | Chromium | X360 HID | Rumble works; no buttons work | Input and claimed output must both work; rumble-only is a failure |
 | 4 | Chromium | SDL2/3 | Prior X360 identity appears stale; GameSir G7 SE appears as ASTRO C40 TR; no buttons work | Confirm old identity retires and no cross-family physical/virtual relabeling or stale reports remain |
@@ -48,6 +48,11 @@ The following nine rows are **user-reported observations**, not verified facts. 
 | 9 | Firefox/Gecko | Apple GameController, Generic HID, X360 HID, SDL2/3 | No recognition for all four identities | Run each identity independently; separate OJD, Gecko, permission, and harness causes |
 
 Do not merge rows into a generic browser-support result. Enumeration alone, rumble alone, or a contaminated post-switch result does not verify a row. Distinguish the report from the observation: label each record **user-reported** until a clean-state manual observation exists, then describe only what was observed and the exact environment.
+
+The Apple GameController profile can expose Share to native apps as
+`GCXboxGamepad.buttonShare` while the browser Gamepad API omits it. Treat those
+as separate consumer results. OJD cannot change a browser's controller-gesture
+settings or standard-layout mapping.
 
 ## Evidence boundary
 

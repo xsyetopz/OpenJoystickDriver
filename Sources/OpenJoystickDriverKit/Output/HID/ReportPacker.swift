@@ -2,6 +2,20 @@ import Foundation
 
 // MARK: - Packing
 
+/// Identifies one HID input by its usage page and usage.
+///
+/// Usage numbers are scoped to their page. Keeping both values prevents a
+/// controller-specific input from colliding with a standard Button-page input.
+public struct HIDInputUsage: Hashable, Sendable {
+  public let page: Int
+  public let usage: Int
+
+  public init(page: Int, usage: Int) {
+    self.page = page
+    self.usage = usage
+  }
+}
+
 struct HIDReportPacker: @unchecked Sendable {
   private static let buttonUsagePage = 0x09
   private static let genericDesktopUsagePage = 0x01
@@ -12,20 +26,55 @@ struct HIDReportPacker: @unchecked Sendable {
   let reportID: UInt8
   let payloadSizeBytes: Int
 
-  let buttonFields: [Int: HIDField]  // usage -> field
+  let digitalFields: [HIDInputUsage: HIDField]
   /// Maps normalized button bits to descriptor usages for profile-specific layouts.
   let buttonUsageMap: [Int: Int]
+  /// Maps normalized button bits to inputs outside the standard Button page.
+  let digitalUsageMap: [Int: HIDInputUsage]
   let axisFields: [Int: HIDField]  // usage -> field (Generic Desktop)
   let hatField: HIDField?
 
+  enum Error: Swift.Error, Equatable, Sendable {
+    case duplicateExplicitUsage(HIDInputUsage)
+    case missingExplicitUsage(HIDInputUsage)
+    case ambiguousExplicitUsage(HIDInputUsage)
+    case explicitUsagesSpanReports
+  }
+
   static func bestEffortGamepadPacker(
     from parsed: HIDParsedDescriptor,
-    buttonUsageMap: [Int: Int] = [:]
-  ) -> Self? {
+    buttonUsageMap: [Int: Int] = [:],
+    digitalUsageMap: [Int: HIDInputUsage] = [:]
+  ) throws -> Self? {
+    let explicitUsages = Array(digitalUsageMap.values)
+    for (bitIndex, usage) in digitalUsageMap {
+      let duplicatesAnotherButton = (0..<32).contains { otherBitIndex in
+        guard otherBitIndex != bitIndex else { return false }
+        let otherUsage =
+          digitalUsageMap[otherBitIndex]
+          ?? HIDInputUsage(
+            page: Self.buttonUsagePage,
+            usage: buttonUsageMap[otherBitIndex] ?? (otherBitIndex + 1)
+          )
+        return otherUsage == usage
+      }
+      if duplicatesAnotherButton { throw Error.duplicateExplicitUsage(usage) }
+    }
+
+    for usage in explicitUsages {
+      let matches = parsed.fields.filter(usage.matches)
+      if matches.isEmpty { throw Error.missingExplicitUsage(usage) }
+      let matchesByReport = Dictionary(grouping: matches, by: \.reportID)
+      if matchesByReport.count > 1 || matchesByReport.values.contains(where: { $0.count > 1 }) {
+        throw Error.ambiguousExplicitUsage(usage)
+      }
+    }
+
     // Score each report ID by how many "gamepad-ish" fields it contains.
     let grouped = Dictionary(grouping: parsed.fields) { $0.reportID }
     var best: (UInt8, Int)?
-    for (rid, fields) in grouped {
+    for (rid, fields) in grouped
+    where explicitUsages.allSatisfy({ usage in fields.count(where: usage.matches) == 1 }) {
       let hasButtons = fields.contains {
         $0.usagePage == Self.buttonUsagePage && Self.buttonUsageRange.contains($0.usage)
       }
@@ -46,16 +95,18 @@ struct HIDReportPacker: @unchecked Sendable {
         best = (rid, score)
       }
     }
-    guard let (rid, _) = best else { return nil }
+    guard let (rid, _) = best else {
+      if !explicitUsages.isEmpty { throw Error.explicitUsagesSpanReports }
+      return nil
+    }
     let fields = grouped[rid] ?? []
-    var buttons: [Int: HIDField] = [:]
+    var digitalFields: [HIDInputUsage: HIDField] = [:]
     var axes: [Int: HIDField] = [:]
     var hat: HIDField?
     for f in fields {
-      if f.usagePage == Self.buttonUsagePage {
-        buttons[f.usage] = f
-      } else if f.usagePage == Self.genericDesktopUsagePage && Self.axisUsageRange.contains(f.usage)
-      {
+      let usage = HIDInputUsage(page: f.usagePage, usage: f.usage)
+      digitalFields[usage] = f
+      if f.usagePage == Self.genericDesktopUsagePage && Self.axisUsageRange.contains(f.usage) {
         axes[f.usage] = f
       } else if f.usagePage == Self.genericDesktopUsagePage && f.usage == Self.hatSwitchUsage {
         hat = f
@@ -64,8 +115,9 @@ struct HIDReportPacker: @unchecked Sendable {
     return Self(
       reportID: rid,
       payloadSizeBytes: parsed.payloadSizeBytesByReportID[rid] ?? 0,
-      buttonFields: buttons,
+      digitalFields: digitalFields,
       buttonUsageMap: buttonUsageMap,
+      digitalUsageMap: digitalUsageMap,
       axisFields: axes,
       hatField: hat
     )
@@ -136,8 +188,13 @@ struct HIDReportPacker: @unchecked Sendable {
     // Buttons use stable OJD normalized bits; profiles may map them to different
     // descriptor usages without changing the global normalized ordering.
     for bitIndex in 0..<32 {
-      let usage = buttonUsageMap[bitIndex] ?? (bitIndex + 1)
-      guard let field = buttonFields[usage] else { continue }
+      let usage =
+        digitalUsageMap[bitIndex]
+        ?? HIDInputUsage(
+          page: Self.buttonUsagePage,
+          usage: buttonUsageMap[bitIndex] ?? (bitIndex + 1)
+        )
+      guard let field = digitalFields[usage] else { continue }
       let pressed = ((state.buttons >> bitIndex) & 1) != 0
       setBits(bitOffset: field.bitOffset, bitSize: field.bitSize, value: pressed ? 1 : 0)
     }
@@ -193,4 +250,8 @@ struct HIDReportPacker: @unchecked Sendable {
     if reportID != 0 { return [reportID] + payload }
     return payload
   }
+}
+
+extension HIDInputUsage {
+  func matches(_ field: HIDField) -> Bool { field.usagePage == page && field.usage == usage }
 }

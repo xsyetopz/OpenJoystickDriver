@@ -264,11 +264,11 @@ public enum CompatibilityOutputProfileCatalog {
     case .appleGameController:
       return CompatibilityOutputProfile(
         identity: identity,
-        deviceProfile: .xboxOneS,
+        deviceProfile: .xboxSeries,
         displayName: "Apple GameController",
-        notes: "Apple GameController candidate using the Xbox One S Bluetooth HID tuple. "
-          + "Clients that leave macOS system gestures enabled can receive View late and may not "
-          + "receive Guide/Home.",
+        notes: "Apple GameController profile using the Xbox Series Bluetooth layout. "
+          + "macOS controller gestures can delay View or reserve Guide and Share unless the "
+          + "client disables those gestures.",
         isHardwareSpoof: true,
         emitsXboxGuideReport: false,
         evidence: .sourceBacked,
@@ -329,7 +329,15 @@ public enum CompatibilityOutputCompositionFactory {
     case .automatic: format = OJDSDLGamepadFormat()
     case .genericHID: format = OJDSDLGamepadFormat()
     case .sdl2_3: format = Xbox360MacHIDReportFormat()
-    case .appleGameController, .xoneHID:
+    case .appleGameController:
+      format = try HIDDescriptorReportFormat(
+        descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor,
+        outputReportID: VirtualRumbleOutputReportParser.xboxOneReportID,
+        outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize,
+        buttonUsageMap: XboxOneBluetoothHIDDescriptor.buttonUsageMap,
+        digitalUsageMap: XboxOneBluetoothHIDDescriptor.seriesDigitalUsageMap
+      )
+    case .xoneHID:
       format = try HIDDescriptorReportFormat(
         descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
         outputReportID: VirtualRumbleOutputReportParser.xboxOneReportID,

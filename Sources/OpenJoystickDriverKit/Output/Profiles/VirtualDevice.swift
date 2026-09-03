@@ -365,6 +365,17 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
     transport: "Bluetooth"
   )
 
+  /// Xbox Series Bluetooth identity used by Apple GameController compatibility.
+  /// The Series profile adds the Consumer Record input used for Share.
+  public static let xboxSeries = Self(
+    vendorID: 0x045E,
+    productID: 0x0B13,
+    versionNumber: 0x0000,
+    productName: "Xbox Wireless Controller",
+    manufacturer: "Microsoft",
+    transport: "Bluetooth"
+  )
+
   /// Xbox 360 Controller (Wired), experimental on macOS.
   ///
   /// Many macOS stacks do not treat 045E:028E as a standard HID gamepad.

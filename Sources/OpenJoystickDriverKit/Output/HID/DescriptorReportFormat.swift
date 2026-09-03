@@ -16,15 +16,27 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
 
   private let packer: HIDReportPacker
 
-  public enum Error: Swift.Error, CustomStringConvertible, Sendable {
+  public enum Error: Swift.Error, CustomStringConvertible, Equatable, Sendable {
     case noSuitableInputReport
     case cannotParseDescriptor
+    case duplicateExplicitInputUsage(HIDInputUsage)
+    case missingExplicitInputUsage(HIDInputUsage)
+    case ambiguousExplicitInputUsage(HIDInputUsage)
+    case explicitInputUsagesSpanReports
 
     public var description: String {
       switch self {
       case .noSuitableInputReport:
         return "Descriptor does not contain a usable GamePad-style input report (buttons/axes/hat)."
       case .cannotParseDescriptor: return "Failed to parse HID report descriptor."
+      case .duplicateExplicitInputUsage(let usage):
+        return "More than one normalized button maps to HID usage \(usage.page):\(usage.usage)."
+      case .missingExplicitInputUsage(let usage):
+        return "HID usage \(usage.page):\(usage.usage) is not present in an input report."
+      case .ambiguousExplicitInputUsage(let usage):
+        return "HID usage \(usage.page):\(usage.usage) appears in more than one input field or report."
+      case .explicitInputUsagesSpanReports:
+        return "Explicit button usages must belong to one input report."
       }
     }
   }
@@ -33,18 +45,31 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
     descriptor: [UInt8],
     outputReportID: UInt8? = nil,
     outputReportPayloadSize: Int? = nil,
-    buttonUsageMap: [Int: Int] = [:]
+    buttonUsageMap: [Int: Int] = [:],
+    digitalUsageMap: [Int: HIDInputUsage] = [:]
   ) throws {
     self.descriptor = descriptor
     guard let parsed = HIDReportDescriptorParser.parse(descriptor: descriptor) else {
       throw Error.cannotParseDescriptor
     }
-    guard
-      let packer = HIDReportPacker.bestEffortGamepadPacker(
-        from: parsed,
-        buttonUsageMap: buttonUsageMap
-      )
-    else { throw Error.noSuitableInputReport }
+    let packer: HIDReportPacker
+    do {
+      guard
+        let candidate = try HIDReportPacker.bestEffortGamepadPacker(
+          from: parsed,
+          buttonUsageMap: buttonUsageMap,
+          digitalUsageMap: digitalUsageMap
+        )
+      else { throw Error.noSuitableInputReport }
+      packer = candidate
+    } catch let error as HIDReportPacker.Error {
+      switch error {
+      case .duplicateExplicitUsage(let usage): throw Error.duplicateExplicitInputUsage(usage)
+      case .missingExplicitUsage(let usage): throw Error.missingExplicitInputUsage(usage)
+      case .ambiguousExplicitUsage(let usage): throw Error.ambiguousExplicitInputUsage(usage)
+      case .explicitUsagesSpanReports: throw Error.explicitInputUsagesSpanReports
+      }
+    }
     self.packer = packer
     self.inputReportID = packer.reportID == 0 ? nil : packer.reportID
     self.inputReportPayloadSize = packer.payloadSizeBytes

@@ -95,9 +95,9 @@ struct VirtualControllerBackendTests {
 
     #expect(generic.deviceProfile.productID == 0x4449)
     #expect(sdl.deviceProfile == .sdlHIDAPIXbox360)
-    #expect(apple.deviceProfile == .xboxOneS)
+    #expect(apple.deviceProfile == .xboxSeries)
     #expect(apple.deviceProfile.vendorID == 0x045E)
-    #expect(apple.deviceProfile.productID == 0x02FD)
+    #expect(apple.deviceProfile.productID == 0x0B13)
     #expect(apple.deviceProfile.transport == "Bluetooth")
     #expect(!generic.isHardwareSpoof)
     #expect(sdl.isHardwareSpoof)
@@ -241,9 +241,9 @@ struct VirtualControllerBackendTests {
     let astro = try CompatibilityOutputCompositionFactory.make(identity: .sdl2_3)
     let xbox360 = try CompatibilityOutputCompositionFactory.make(identity: .xbox360HID)
 
-    #expect(apple.profile.deviceProfile == .xboxOneS)
+    #expect(apple.profile.deviceProfile == .xboxSeries)
     #expect(xone.profile.deviceProfile == .xboxOneS)
-    #expect(apple.format.descriptor == XboxOneBluetoothHIDDescriptor.descriptor)
+    #expect(apple.format.descriptor == XboxOneBluetoothHIDDescriptor.seriesDescriptor)
     #expect(xone.format.descriptor == XboxOneBluetoothHIDDescriptor.descriptor)
     #expect(apple.format.inputReportID == 1)
     #expect(xone.format.inputReportID == 1)
@@ -264,6 +264,22 @@ struct VirtualControllerBackendTests {
     #expect(UserSpaceOutputDispatcher.xboxGuideReport(for: .buttonPressed(.guide)) == [0x02, 0x01])
     #expect(UserSpaceOutputDispatcher.xboxGuideReport(for: .buttonReleased(.guide)) == [0x02, 0x00])
     #expect(UserSpaceOutputDispatcher.xboxGuideReport(for: .buttonPressed(.a)) == nil)
+  }
+
+  @Test func nonStandardButtonsKeepDistinctNormalizedBits() {
+    let dispatcher = UserSpaceOutputDispatcher { _ in
+      throw UserSpaceOutputDispatcher.CreationError.createFailed
+    }
+
+    #expect(dispatcher.buttonBit(for: .share) == 15)
+    #expect(dispatcher.buttonBit(for: .genericButton1) == 16)
+    #expect(dispatcher.buttonBit(for: .genericButton2) == 17)
+    #expect(dispatcher.buttonBit(for: .genericButton3) == 18)
+    #expect(dispatcher.buttonBit(for: .genericButton4) == 19)
+    #expect(dispatcher.buttonBit(for: .genericButton5) == 20)
+    #expect(dispatcher.buttonBit(for: .genericButton6) == 21)
+    #expect(dispatcher.buttonBit(for: .genericButton7) == 22)
+    #expect(dispatcher.buttonBit(for: .genericButton8) == 23)
   }
 
   @Test func testGenericReportDpadButtonPolicy() {
@@ -677,6 +693,7 @@ struct VirtualControllerBackendTests {
     #expect(xone[13] == 0x00)
     #expect(xone[14] == 0x00)
     #expect(xone[15] == 0x00)
+    #expect(xone.count == 16)
   }
 
   @Test func userSpaceCreationErrorsDistinguishPermissionFromEntitlementAndCreation() {

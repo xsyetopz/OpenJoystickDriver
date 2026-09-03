@@ -43,4 +43,23 @@ struct UserSpaceInputReportStateTests {
     #expect(Array(neutral[6...7]) == [0, 0])
     #expect(Array(neutral[12...13]) == [0, 0])
   }
+
+  @Test func appleCompatibilityTracksShareSeparatelyFromView() throws {
+    let format = try HIDDescriptorReportFormat(
+      descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor,
+      buttonUsageMap: XboxOneBluetoothHIDDescriptor.buttonUsageMap,
+      digitalUsageMap: XboxOneBluetoothHIDDescriptor.seriesDigitalUsageMap
+    )
+    let state = UserSpaceInputReportState(format: format)
+    let neutral = state.currentReport()
+
+    let share = state.update { $0.buttons = 1 << GamepadHIDDescriptor.ButtonBit.share.rawValue }
+    let view = state.update { $0.buttons = 1 << GamepadHIDDescriptor.ButtonBit.back.rawValue }
+
+    #expect(share[14] == 0)
+    #expect(share[16] == 1)
+    #expect(view[14] == 0x40)
+    #expect(view[16] == 0)
+    #expect(state.update { $0 = VirtualGamepadState() } == neutral)
+  }
 }

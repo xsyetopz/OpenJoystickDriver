@@ -24,6 +24,18 @@ func describe(_ controller: GCController) -> String {
     + " extended=\(hasExtended) micro=\(hasMicro) \(haptics)"
 }
 
+func describeInputs(_ controller: GCController) -> String {
+  guard #available(macOS 11.0, *) else { return "buttons=unavailable" }
+  let names = controller.physicalInputProfile.buttons.keys.sorted().joined(separator: ",")
+  guard let xbox = controller.extendedGamepad as? GCXboxGamepad else {
+    return "buttons=[\(names)] xbox=false"
+  }
+  let share = if #available(macOS 12.0, *) { xbox.buttonShare != nil } else { false }
+  let paddles = [xbox.paddleButton1, xbox.paddleButton2, xbox.paddleButton3, xbox.paddleButton4]
+    .compactMap { $0 }.count
+  return "buttons=[\(names)] xbox=true share=\(share) paddles=\(paddles)"
+}
+
 func controllerHapticsDescription(_ controller: GCController) -> String {
   if #available(macOS 11.0, *) {
     guard let haptics = controller.haptics else { return "haptics=false" }
@@ -162,10 +174,12 @@ let seconds = GameControllerProbeConfiguration.boundedSeconds(
   argValue("--seconds", default: GameControllerProbeConfiguration.defaultSeconds)
 )
 let shouldRumble = hasArg("--rumble")
+let shouldDisableSystemGestures = hasArg("--disable-system-gestures")
 
 print("GameController probe")
 print("Listening for \(seconds)s")
 if shouldRumble { print("Rumble pulse requested") }
+if shouldDisableSystemGestures { print("System controller gestures disabled for this test") }
 print("")
 if #available(macOS 11.3, *) { GCController.shouldMonitorBackgroundEvents = true }
 let supportsHID = printHIDSupport()
@@ -176,18 +190,35 @@ var observerTokens: [NSObjectProtocol] = []
 let controllers = GCController.controllers()
 let evidence = ProbeEvidence()
 
-func observeInput(on controller: GCController) {
+func observeInput(on controller: GCController, disableSystemGestures: Bool) {
   evidence.markConnected(controller)
   guard let gamepad = controller.extendedGamepad else { return }
+  if disableSystemGestures, #available(macOS 11.0, *) {
+    gamepad.buttonOptions?.preferredSystemGestureState = .disabled
+    gamepad.buttonHome?.preferredSystemGestureState = .disabled
+    if #available(macOS 12.0, *), let xbox = gamepad as? GCXboxGamepad {
+      xbox.buttonShare?.preferredSystemGestureState = .disabled
+    }
+  }
   gamepad.valueChangedHandler = { _, _ in evidence.markInput() }
+  if #available(macOS 13.0, *) {
+    controller.physicalInputProfile.valueDidChangeHandler = { _, element in
+      guard let button = element as? GCControllerButtonInput else { return }
+      let name = button.aliases.min() ?? button.localizedName ?? "Button"
+      print("button: \(name) value=\(button.value) pressed=\(button.isPressed)")
+    }
+  }
 }
 
-for controller in controllers { observeInput(on: controller) }
+for controller in controllers {
+  observeInput(on: controller, disableSystemGestures: shouldDisableSystemGestures)
+}
 observerTokens.append(
   center.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { note in
     guard let controller = note.object as? GCController else { return }
-    observeInput(on: controller)
+    observeInput(on: controller, disableSystemGestures: shouldDisableSystemGestures)
     print("connect: \(describe(controller))")
+    print("inputs: \(describeInputs(controller))")
   }
 )
 observerTokens.append(
@@ -199,7 +230,10 @@ observerTokens.append(
 )
 
 print("Initial controllers: \(controllers.count)")
-for controller in controllers { print("- \(describe(controller))") }
+for controller in controllers {
+  print("- \(describe(controller))")
+  print("  \(describeInputs(controller))")
+}
 
 let end = Date().addingTimeInterval(TimeInterval(seconds))
 while Date() < end { RunLoop.main.run(mode: .default, before: Date().addingTimeInterval(0.1)) }
