@@ -8,6 +8,7 @@ struct InputCommand {
   private enum Action {
     case state
     case packets
+    case trace
     case watch
   }
 
@@ -46,6 +47,14 @@ struct InputCommand {
       case .state: try await printState(device, json: options.json, service: service)
       case .packets:
         try await printPackets(device, limit: options.limit, json: options.json, service: service)
+      case .trace:
+        try await tracePackets(
+          device,
+          seconds: options.seconds,
+          intervalMilliseconds: options.intervalMilliseconds,
+          jsonLines: options.jsonLines,
+          service: service
+        )
       case .watch:
         try await watch(
           device,
@@ -169,6 +178,55 @@ struct InputCommand {
     if !observedState && !jsonLines { print("No input state was observed.") }
   }
 
+  private func tracePackets(
+    _ device: ApplicationServiceDeviceDescription,
+    seconds: Int,
+    intervalMilliseconds: Int,
+    jsonLines: Bool,
+    service: ControllerInputDiagnosticService
+  ) async throws {
+    let initialEntries = try await service.packetLog(
+      vendorID: device.vendorID,
+      productID: device.productID,
+      runtimeIdentifier: device.runtimeIdentifier
+    )
+    var cursor = PacketLogCursor(snapshot: initialEntries)
+    let deadline =
+      DispatchTime.now().uptimeNanoseconds + UInt64(seconds) * Self.nanosecondsPerSecond
+    let interval = UInt64(intervalMilliseconds) * Self.nanosecondsPerMillisecond
+    var observedPacket = false
+
+    warnAboutRawPackets()
+    if !jsonLines {
+      print(
+        "Tracing raw packets for \(hex(device.vendorID)):\(hex(device.productID)) "
+          + "for \(seconds)s every \(intervalMilliseconds)ms. Press controls now."
+      )
+    }
+
+    while DispatchTime.now().uptimeNanoseconds < deadline {
+      let entries = try await service.packetLog(
+        vendorID: device.vendorID,
+        productID: device.productID,
+        runtimeIdentifier: device.runtimeIdentifier
+      )
+      for entry in cursor.consume(snapshot: entries) {
+        observedPacket = true
+        if jsonLines {
+          try printJSON(entry, pretty: false)
+        } else {
+          print(
+            "  \(String(format: "%.3f", entry.timestamp)) "
+              + "\(entry.direction) len=\(entry.length) \(entry.hex)"
+          )
+        }
+      }
+      try await Task.sleep(nanoseconds: interval)
+    }
+
+    if !observedPacket && !jsonLines { print("No new raw packets were observed.") }
+  }
+
   private func formatted(_ state: DeviceInputState) -> String {
     let buttons =
       state.pressedButtons.isEmpty ? "none" : state.pressedButtons.sorted().joined(separator: ",")
@@ -213,6 +271,7 @@ struct InputCommand {
     switch command {
     case "state": action = .state
     case "packets": action = .packets
+    case "trace": action = .trace
     case "watch": action = .watch
     default:
       CLIOutput.error("Unknown controller command: \(command)")
@@ -226,10 +285,10 @@ struct InputCommand {
     while index < arguments.count {
       let argument = arguments[index]
       switch argument {
-      case "--json" where action != .watch:
+      case "--json" where action == .state || action == .packets:
         options.json = true
         index += 1
-      case "--json-lines" where action == .watch:
+      case "--json-lines" where action == .watch || action == .trace:
         options.jsonLines = true
         index += 1
       case "--limit" where action == .packets:
@@ -239,14 +298,14 @@ struct InputCommand {
           option: argument,
           range: 1...200
         )
-      case "--seconds" where action == .watch:
+      case "--seconds" where action == .watch || action == .trace:
         options.seconds = parseIntegerOption(
           arguments,
           index: &index,
           option: argument,
           range: 1...3_600
         )
-      case "--interval-ms" where action == .watch:
+      case "--interval-ms" where action == .watch || action == .trace:
         options.intervalMilliseconds = parseIntegerOption(
           arguments,
           index: &index,
@@ -312,19 +371,43 @@ struct InputCommand {
   private func printHelp() {
     print(
       [
-        "Usage: OpenJoystickDriver --headless controller <state|packets|watch> [options]", "",
+        "Usage: OpenJoystickDriver --headless controller <state|packets|trace|watch> [options]", "",
         "Commands:", "  state    Print the latest normalized buttons, sticks, and triggers",
         "  packets  Print recent raw controller packets",
+        "  trace    Stream newly captured raw controller packets for a bounded duration",
         "  watch    Print normalized state changes for a bounded duration", "",
         "VID and PID accept decimal or 0x-prefixed hexadecimal. Omit both when",
         "exactly one controller is connected. Use --device with the opaque ID",
         "reported by controller output list when identical models are connected.", "", "Options:",
         "  state   [--device <id>] [--json]",
         "  packets [--device <id>] [--limit 1...200] [--json]",
+        "  trace   [--device <id>] [--seconds 1...3600]",
+        "          [--interval-ms 8...1000] [--json-lines]",
         "  watch   [--device <id>] [--seconds 1...3600]",
         "          [--interval-ms 8...1000] [--json-lines]"
       ].joined(separator: "\n")
     )
+  }
+}
+
+struct PacketLogCursor {
+  private var previous: [PacketLogEntry]
+
+  init(snapshot: [PacketLogEntry] = []) { previous = snapshot }
+
+  mutating func consume(snapshot: [PacketLogEntry]) -> [PacketLogEntry] {
+    let maximumOverlap = min(previous.count, snapshot.count)
+    let overlap =
+      stride(from: maximumOverlap, through: 0, by: -1).first { count in
+        count == 0 || zip(previous.suffix(count), snapshot.prefix(count)).allSatisfy(Self.matches)
+      } ?? 0
+    previous = snapshot
+    return Array(snapshot.dropFirst(overlap))
+  }
+
+  private static func matches(_ pair: (PacketLogEntry, PacketLogEntry)) -> Bool {
+    pair.0.timestamp == pair.1.timestamp && pair.0.direction == pair.1.direction
+      && pair.0.length == pair.1.length && pair.0.hex == pair.1.hex
   }
 }
 

@@ -15,7 +15,8 @@
           HStack(alignment: .top, spacing: 16) {
             InputTestLiveInputView(
               liveState: model.liveState,
-              protocolVariant: model.device?.protocolVariant ?? .unknown
+              protocolVariant: model.device?.protocolVariant ?? .unknown,
+              mappingFlags: model.device?.mappingFlags ?? []
             ).frame(minWidth: 460, maxWidth: .infinity, alignment: .topLeading)
             diagnosticsColumn.frame(width: 330, alignment: .topLeading)
           }

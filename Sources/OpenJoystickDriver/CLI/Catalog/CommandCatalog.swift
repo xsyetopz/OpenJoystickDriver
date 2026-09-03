@@ -41,6 +41,11 @@ enum InstalledCommandCatalog {
       "Show application-service status",
       group: "Overview",
       outputs: [.text, .json]
+    ), command(
+      "app ready",
+      "Check authenticated application-service readiness",
+      group: "Overview",
+      audience: .support
     ), command("controller list", "List connected controllers", group: "Controllers"),
     command(
       "controller state [options]",
@@ -54,6 +59,14 @@ enum InstalledCommandCatalog {
       group: "Controllers",
       audience: .advanced,
       outputs: [.text, .json]
+    ),
+    command(
+      "controller trace [options]",
+      "Watch newly captured raw controller packets",
+      group: "Controllers",
+      audience: .advanced,
+      sideEffect: .streamingRead,
+      outputs: [.text, .jsonLines]
     ),
     command(
       "controller watch [options]",

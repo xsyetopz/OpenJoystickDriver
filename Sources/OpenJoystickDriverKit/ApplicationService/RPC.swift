@@ -9,10 +9,12 @@ public struct LocalServiceRPCRequest: Codable, Sendable {
 public struct LocalServiceRPCResponse: Codable, Sendable {
   public let result: Data?
   public let error: String?
+  public let errorCode: String?
 
-  public init(result: Data?, error: String?) {
+  public init(result: Data?, error: String?, errorCode: String? = nil) {
     self.result = result
     self.error = error
+    self.errorCode = errorCode
   }
 }
 
@@ -117,7 +119,7 @@ public struct LocalServiceRPCBrightnessArguments: Codable, Sendable {
   }
 }
 
-enum LocalServiceRPCError: Error, LocalizedError, Sendable {
+enum LocalServiceRPCError: Error, Equatable, LocalizedError, Sendable {
   case alreadyRunning
   case connectionFailed(Int32)
   case invalidFrame
@@ -131,7 +133,9 @@ enum LocalServiceRPCError: Error, LocalizedError, Sendable {
     case .connectionFailed(let code):
       return "Could not connect to main application (errno \(code))."
     case .invalidFrame: return "Main application returned an invalid RPC frame."
-    case .peerRejected: return "Main application rejected the RPC peer."
+    case .peerRejected:
+      return "The running main application rejected this CLI executable. Use the CLI inside "
+        + "/Applications/OpenJoystickDriver.app, or install and relaunch a matching signed build."
     case .remote(let message): return message
     case .timeout: return "Main application RPC timed out."
     }
@@ -202,13 +206,20 @@ enum LocalServiceRPCTransport {
     try data.withUnsafeBytes { try sendAll($0, to: descriptor) }
   }
 
-  static func receiveFrame(from descriptor: Int32) throws -> Data {
+  static func receiveFrame(
+    from descriptor: Int32,
+    closedBeforeFrameError: LocalServiceRPCError = .invalidFrame
+  ) throws -> Data {
     var header = [UInt8](repeating: 0, count: 4)
-    try header.withUnsafeMutableBytes { try receiveAll($0, from: descriptor) }
+    try header.withUnsafeMutableBytes {
+      try receiveAll($0, from: descriptor, closedBeforeAnyBytesError: closedBeforeFrameError)
+    }
     let length = header.reduce(UInt32(0)) { ($0 << 8) | UInt32($1) }
     guard length <= maximumFrameBytes else { throw LocalServiceRPCError.invalidFrame }
     var data = Data(count: Int(length))
-    try data.withUnsafeMutableBytes { try receiveAll($0, from: descriptor) }
+    try data.withUnsafeMutableBytes {
+      try receiveAll($0, from: descriptor, closedBeforeAnyBytesError: .invalidFrame)
+    }
     return data
   }
 
@@ -227,9 +238,11 @@ enum LocalServiceRPCTransport {
     }
   }
 
-  private static func receiveAll(_ bytes: UnsafeMutableRawBufferPointer, from descriptor: Int32)
-    throws
-  {
+  private static func receiveAll(
+    _ bytes: UnsafeMutableRawBufferPointer,
+    from descriptor: Int32,
+    closedBeforeAnyBytesError: LocalServiceRPCError
+  ) throws {
     var offset = 0
     while offset < bytes.count {
       guard let base = bytes.baseAddress else { return }
@@ -238,7 +251,7 @@ enum LocalServiceRPCTransport {
         if received < 0, errno == EAGAIN || errno == EWOULDBLOCK {
           throw LocalServiceRPCError.timeout
         }
-        throw LocalServiceRPCError.invalidFrame
+        throw offset == 0 ? closedBeforeAnyBytesError : LocalServiceRPCError.invalidFrame
       }
       offset += received
     }
@@ -337,15 +350,23 @@ public enum LocalServiceRPCClient {
               method: method,
               arguments: try JSONEncoder().encode(arguments)
             )
-            try LocalServiceRPCTransport.sendFrame(
-              try JSONEncoder().encode(request),
-              to: descriptor
+            do {
+              try LocalServiceRPCTransport.sendFrame(
+                try JSONEncoder().encode(request),
+                to: descriptor
+              )
+            } catch LocalServiceRPCError.connectionFailed(let code)
+              where code == EPIPE || code == ECONNRESET
+            { throw LocalServiceRPCError.peerRejected }
+            let responseData = try LocalServiceRPCTransport.receiveFrame(
+              from: descriptor,
+              closedBeforeFrameError: .peerRejected
             )
-            let responseData = try LocalServiceRPCTransport.receiveFrame(from: descriptor)
             let response = try JSONDecoder().decode(
               LocalServiceRPCResponse.self,
               from: responseData
             )
+            if response.errorCode == "peerRejected" { throw LocalServiceRPCError.peerRejected }
             if let error = response.error { throw LocalServiceRPCError.remote(error) }
             guard let result = response.result else { throw LocalServiceRPCError.invalidFrame }
             let value = try JSONDecoder().decode(type, from: result)
@@ -451,12 +472,22 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
   }
 
   private func handleConnection(_ descriptor: Int32) {
-    guard let peerPID = authenticatedPeerPID(descriptor), authentication(peerPID) else {
+    guard let peerPID = authenticatedPeerPID(descriptor) else {
       Darwin.close(descriptor)
       return
     }
     do {
       try LocalServiceRPCTransport.setTimeout(descriptor, seconds: 35)
+      guard authentication(peerPID) else {
+        let response = LocalServiceRPCResponse(
+          result: nil,
+          error: LocalServiceRPCError.peerRejected.localizedDescription,
+          errorCode: "peerRejected"
+        )
+        try LocalServiceRPCTransport.sendFrame(try JSONEncoder().encode(response), to: descriptor)
+        Darwin.close(descriptor)
+        return
+      }
       let data = try LocalServiceRPCTransport.receiveFrame(from: descriptor)
       let request = try JSONDecoder().decode(LocalServiceRPCRequest.self, from: data)
       handler(request) { response in

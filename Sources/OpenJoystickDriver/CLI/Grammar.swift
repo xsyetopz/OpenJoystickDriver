@@ -27,6 +27,7 @@ enum CLIInvocation: Equatable {
   case controllerOutput([String])
   case mapping([String])
   case appStatus([String])
+  case appReady
   case appLogin(enable: Bool)
   case appLogs([String])
   case `extension`(CLIExtensionAction)
@@ -79,6 +80,7 @@ struct CLIGrammar {
     case .version: print("OpenJoystickDriver v\(ApplicationVersion.current)")
     case .status(let arguments), .appStatus(let arguments):
       StatusCommand().run(arguments: arguments)
+    case .appReady: ApplicationServiceReadyCommand().run()
     case .controllerList: ListCommand().run()
     case .controllerInput(let arguments): InputCommand().run(arguments: arguments)
     case .controllerOutput(let arguments): PhysicalOutputCommand().run(arguments: arguments)
@@ -158,7 +160,7 @@ struct CLIGrammar {
       try requireEmpty(trailing, command: "controller list")
       return .controllerList
     case "state": return .controllerInput(["state"] + trailing)
-    case "packets", "watch": return .controllerInput([command] + trailing)
+    case "packets", "trace", "watch": return .controllerInput([command] + trailing)
     case "output": return .controllerOutput(trailing)
     default: throw CLIParseError.unknownCommand("controller \(command)")
     }
@@ -171,6 +173,9 @@ struct CLIGrammar {
     case "status":
       try requireStatusOptions(trailing, command: "app status")
       return .appStatus(trailing)
+    case "ready":
+      try requireEmpty(trailing, command: "app ready")
+      return .appReady
     case "logs": return .appLogs(trailing)
     case "login":
       guard let action = trailing.first else { throw CLIParseError.missingSubcommand("app login") }

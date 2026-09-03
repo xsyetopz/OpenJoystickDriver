@@ -9,11 +9,16 @@ struct CLIGrammarTests {
     ("controller state --json", CLIInvocation.controllerInput(["state", "--json"])),
     ("controller packets --limit 10", CLIInvocation.controllerInput(["packets", "--limit", "10"])),
     (
+      "controller trace --seconds 30 --json-lines",
+      CLIInvocation.controllerInput(["trace", "--seconds", "30", "--json-lines"])
+    ),
+    (
       "controller watch --device device-1",
       CLIInvocation.controllerInput(["watch", "--device", "device-1"])
     ), ("controller output plan 1 2", CLIInvocation.controllerOutput(["plan", "1", "2"])),
     ("map list --json", CLIInvocation.mapping(["list", "--json"])),
     ("app status", CLIInvocation.appStatus([])),
+    ("app ready", CLIInvocation.appReady),
     ("app login enable", CLIInvocation.appLogin(enable: true)),
     ("extension enable", CLIInvocation.extension(.enable)),
     ("permissions open input", CLIInvocation.permissions(["open", "input"])),

@@ -35,17 +35,21 @@ private func waitForSemaphore(_ semaphore: DispatchSemaphore, timeout: DispatchT
     #expect(attributes[.posixPermissions] as? Int == 0o600)
   }
 
-  @Test func rejectedPeerReceivesNoApplicationResponse() async throws {
+  @Test func rejectedPeerIsReportedAsAuthenticationFailure() async throws {
     let socketPath = temporarySocketPath()
+    let handlerCalled = DispatchSemaphore(value: 0)
     let server = LocalServiceRPCServer(
       socketPath: socketPath,
       authentication: { _ in false },
-      handler: { _, completion in completion(LocalServiceRPCResponse(result: Data(), error: nil)) }
+      handler: { _, completion in
+        handlerCalled.signal()
+        completion(LocalServiceRPCResponse(result: Data(), error: nil))
+      }
     )
     try server.start()
     defer { server.stop() }
 
-    await #expect(throws: (any Error).self) {
+    await #expect(throws: LocalServiceRPCError.peerRejected) {
       let _: Data = try await LocalServiceRPCClient.call(
         method: "rejected",
         arguments: LocalServiceRPCEmptyArguments(),
@@ -53,6 +57,7 @@ private func waitForSemaphore(_ semaphore: DispatchSemaphore, timeout: DispatchT
         socketPath: socketPath
       )
     }
+    #expect(waitForSemaphore(handlerCalled, timeout: .now()) == .timedOut)
   }
 
   @Test func secondServerCannotDisplaceLiveSocketOwner() throws {
@@ -87,6 +92,37 @@ private func waitForSemaphore(_ semaphore: DispatchSemaphore, timeout: DispatchT
 
     #expect(throws: (any Error).self) {
       try LocalServiceRPCTransport.sendFrame(data, to: descriptor)
+    }
+  }
+
+  @Test func legacyResponseWithoutErrorCodeStillDecodes() throws {
+    let response = try JSONDecoder().decode(
+      LocalServiceRPCResponse.self,
+      from: Data(#"{"result":null,"error":"legacy"}"#.utf8)
+    )
+
+    #expect(response.result == nil)
+    #expect(response.error == "legacy")
+    #expect(response.errorCode == nil)
+  }
+
+  @Test func partialFrameRemainsInvalidInsteadOfLookingLikePeerRejection() throws {
+    var descriptors = [Int32](repeating: -1, count: 2)
+    try #require(socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors) == 0)
+    defer {
+      Darwin.close(descriptors[0])
+      Darwin.close(descriptors[1])
+    }
+
+    var byte: UInt8 = 0
+    try #require(Darwin.write(descriptors[0], &byte, 1) == 1)
+    try #require(shutdown(descriptors[0], SHUT_WR) == 0)
+
+    #expect(throws: LocalServiceRPCError.invalidFrame) {
+      try LocalServiceRPCTransport.receiveFrame(
+        from: descriptors[1],
+        closedBeforeFrameError: .peerRejected
+      )
     }
   }
 

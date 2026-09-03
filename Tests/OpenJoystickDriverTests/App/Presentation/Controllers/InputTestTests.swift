@@ -308,6 +308,24 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
     #expect(generic.guide.symbol == "house.fill")
   }
 
+  @Test func xboxShareMappingUsesSeparateCenteredShareControl() {
+    let layout = InputTestSystemClusterLayout.resolve(for: .xboxOne, mappingFlags: ["shareButton"])
+    #expect(layout == .xboxWithShare)
+    #expect(layout.rows == [[.view, .guide, .menu], [.empty, .share, .empty]])
+    #expect(InputTestSystemClusterLayout.viewButtons(for: .xboxOne) == [.back])
+    #expect(InputTestSystemClusterLayout.shareButtons == [.share])
+  }
+
+  @Test func playStationLeftSystemControlRemainsShare() {
+    let layout = InputTestSystemClusterLayout.resolve(
+      for: .dualSense,
+      mappingFlags: ["shareButton"]
+    )
+    #expect(layout == .standard)
+    #expect(layout.rows == [[.view, .guide, .menu]])
+    #expect(InputTestSystemClusterLayout.viewButtons(for: .dualSense) == [.share])
+  }
+
   @Test @MainActor func samplingNeverOverlapsInputRequests() async {
     let snapshot = DeviceInputState(vendorID: 0x1234, productID: 0x5678)
     let gateway = InputTestGatewayStub(

@@ -7,6 +7,7 @@
   struct InputTestLiveInputView: View {
     @ObservedObject var liveState: InputTestLiveState
     let protocolVariant: ControllerProtocolVariant
+    let mappingFlags: [String]
 
     var body: some View {
       let snapshot = liveState.snapshot
@@ -18,9 +19,12 @@
           Divider()
           HStack(alignment: .center, spacing: 18) {
             dpadCluster(pressedButtons: pressedButtons).frame(maxWidth: .infinity)
-            systemCluster(pressedButtons: pressedButtons, symbols: symbols).frame(
-              maxWidth: .infinity
-            )
+            systemCluster(
+              pressedButtons: pressedButtons,
+              symbols: symbols,
+              protocolVariant: protocolVariant,
+              mappingFlags: mappingFlags
+            ).frame(maxWidth: .infinity)
             faceButtonCluster(pressedButtons: pressedButtons, symbols: symbols).frame(
               maxWidth: .infinity
             )
@@ -120,15 +124,45 @@
       }
     }
 
-    private func systemCluster(pressedButtons: Set<String>, symbols: InputTestControllerSymbolSet)
-      -> some View
-    {
-      VStack(spacing: 6) {
-        indicator(symbols.view, buttons: [.back, .share], pressedButtons: pressedButtons)
-        indicator(symbols.guide, active: isPressed([.guide, .ps], in: pressedButtons))
-        indicator(symbols.menu, buttons: [.start, .options], pressedButtons: pressedButtons)
+    @ViewBuilder private func systemCluster(
+      pressedButtons: Set<String>,
+      symbols: InputTestControllerSymbolSet,
+      protocolVariant: ControllerProtocolVariant,
+      mappingFlags: [String]
+    ) -> some View {
+      switch InputTestSystemClusterLayout.resolve(for: protocolVariant, mappingFlags: mappingFlags)
+      {
+      case .standard:
+        HStack(spacing: 6) {
+          indicator(
+            symbols.view,
+            buttons: InputTestSystemClusterLayout.viewButtons(for: protocolVariant),
+            pressedButtons: pressedButtons
+          )
+          indicator(symbols.guide, active: isPressed([.guide, .ps], in: pressedButtons))
+          indicator(symbols.menu, buttons: [.start, .options], pressedButtons: pressedButtons)
+        }
+      case .xboxWithShare:
+        VStack(spacing: 6) {
+          HStack(spacing: 6) {
+            indicator(symbols.view, buttons: [.back], pressedButtons: pressedButtons)
+            indicator(symbols.guide, active: isPressed([.guide], in: pressedButtons))
+            indicator(symbols.menu, buttons: [.start], pressedButtons: pressedButtons)
+          }
+          HStack(spacing: 6) {
+            systemPlaceholder
+            indicator(
+              InputTestSystemClusterLayout.shareControl,
+              buttons: InputTestSystemClusterLayout.shareButtons,
+              pressedButtons: pressedButtons
+            )
+            systemPlaceholder
+          }
+        }
       }
     }
+
+    private var systemPlaceholder: some View { Color.clear.frame(width: 54, height: 30) }
 
     private func faceButtonCluster(
       pressedButtons: Set<String>,
@@ -182,6 +216,63 @@
       in pressedButtons: Set<String>
     ) -> Bool { InputTestButtonPresentation.isPressed(buttons, in: pressedButtons) }
 
+  }
+
+  enum InputTestSystemClusterLayout: Equatable {
+    case standard
+    case xboxWithShare
+
+    enum Slot: Equatable {
+      case view
+      case guide
+      case menu
+      case share
+      case empty
+    }
+
+    var rows: [[Slot]] {
+      switch self {
+      case .standard: return [[.view, .guide, .menu]]
+      case .xboxWithShare: return [[.view, .guide, .menu], [.empty, .share, .empty]]
+      }
+    }
+
+    static let shareControl = InputTestControllerSymbolSet.Control(
+      "Share",
+      symbol: "square.and.arrow.up",
+      fallbackSymbol: "square.and.arrow.up"
+    )
+
+    static func resolve(for protocolVariant: ControllerProtocolVariant, mappingFlags: [String])
+      -> Self
+    {
+      if protocolVariant.isXboxFamily && mappingFlags.contains("shareButton") {
+        return .xboxWithShare
+      }
+      return .standard
+    }
+
+    static func viewButtons(for protocolVariant: ControllerProtocolVariant)
+      -> [OpenJoystickDriverKit.Button]
+    { protocolVariant.isPlayStationFamily ? [.share] : [.back] }
+
+    static let shareButtons: [OpenJoystickDriverKit.Button] = [.share]
+  }
+
+  extension ControllerProtocolVariant {
+    var isXboxFamily: Bool {
+      switch self {
+      case .xboxOriginal, .xbox360, .xbox360Wireless, .xboxOne, .xboxAdaptiveJoystick: return true
+      default: return false
+      }
+    }
+
+    var isPlayStationFamily: Bool {
+      switch self {
+      case .dualShock3, .dualShock4, .dualSense: return true
+      default: return false
+      }
+    }
   }
 
   struct InputTestAxisValuesView: View {
