@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Local Gamepad API Probe</title>
+<style>
+:root { color-scheme: dark; --bg:#101318; --panel:#191e27; --panel2:#222936; --text:#f5f7fa; --muted:#b7c0cc; --line:#596577; --accent:#72d6b2; --warn:#ffd166; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+main { max-width:1100px; margin:0 auto; padding:28px 20px 56px; }
+h1,h2 { line-height:1.15; letter-spacing:-.02em; } h1 { margin:0 0 8px; font-size:clamp(2rem,5vw,3.5rem); } h2 { margin-top:28px; }
+.lede,.small { color:var(--muted); } .lede { font-size:1.08rem; } p { max-width:78ch; }
+.panel { margin-top:20px; padding:20px; background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+.notice { border-color:var(--accent); } .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
+label { display:grid; gap:6px; color:var(--muted); font-weight:650; } input,button { font:inherit; }
+input { width:100%; padding:10px 12px; color:var(--text); background:var(--bg); border:1px solid var(--line); border-radius:7px; }
+input:focus,button:focus-visible { outline:3px solid var(--warn); outline-offset:2px; } .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+button { padding:10px 16px; border:2px solid var(--accent); border-radius:7px; color:#06130e; background:var(--accent); font-weight:800; cursor:pointer; }
+button.secondary { color:var(--text); background:transparent; border-color:var(--line); } button:disabled { cursor:not-allowed; opacity:.5; }
+.status { margin:16px 0 0; padding:10px 12px; border:1px solid var(--warn); border-radius:7px; background:var(--panel2); } .status.running { border-color:var(--accent); }
+a { color:var(--accent); text-underline-offset:.18em; } a:focus-visible { outline:3px solid var(--warn); outline-offset:3px; border-radius:2px; }
+.table-wrap { overflow-x:auto; } table { width:100%; border-collapse:collapse; min-width:680px; } th,td { padding:10px 9px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; } th { color:var(--muted); font-size:.9rem; }
+pre { margin:0; max-height:420px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; background:#0a0d11; border:1px solid var(--line); border-radius:7px; padding:14px; font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; }
+@media (max-width:600px) { main { padding:20px 14px 40px; } .panel { padding:15px; } }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; animation:none !important; } }
+</style>
+</head>
+<body><main>
+<h1>Local Gamepad API Probe</h1>
+<p class="lede">A local manual diagnostic for one clean browser document lifecycle. It records observed Gamepad API state only; it does not diagnose or claim support.</p>
+<div class="panel notice"><strong>Canonical site:</strong> use <a href="https://hardwaretester.com/gamepad">Hardwaretester Gamepad</a> as the canonical external manual site. Use this probe when event, slot, timestamp, or actuator detail is needed.</div>
+<section class="panel" aria-labelledby="setup"><h2 id="setup">Test setup</h2><div class="grid">
+<label>Browser<input id="browser" value="Chromium" autocomplete="off"></label>
+<label>Browser version entered by user<input id="browserVersion" placeholder="e.g. 140.0.7339.80" autocomplete="off"></label>
+<label>macOS version<input id="macOSVersion" placeholder="e.g. 15.6" autocomplete="off"></label>
+<label>Publication backend<input id="backend" placeholder="IOHIDUserDevice or CoreHID" autocomplete="off"></label>
+<label>Physical controller / mode<input id="physicalController" placeholder="e.g. GameSir G7 SE / GIP" autocomplete="off"></label>
+<label>Selected OJD identity<input id="selectedIdentity" placeholder="e.g. generic-hid" autocomplete="off"></label>
+</div><div class="actions"><button id="start">Start capture</button><button id="stop" class="secondary" disabled>Stop capture</button><button id="clear" class="secondary">Clear observation</button><button id="copy" class="secondary" disabled>Copy JSON</button><button id="download" class="secondary" disabled>Download JSON</button></div>
+<p id="status" class="status" role="status" aria-live="polite">Stopped. Press Start capture to begin.</p><p class="small">Start is a user gesture. Polling and event capture do not begin automatically. Stop before changing identity; then open a fresh browser document for the next row.</p></section>
+<section class="panel" aria-labelledby="summary"><h2 id="summary">Observed gamepads</h2><div class="table-wrap"><table><thead><tr><th>Slot</th><th>Count</th><th>id</th><th>mapping</th><th>timestamp</th><th>Buttons</th><th>Axes</th><th>Haptics</th></tr></thead><tbody id="gamepads"><tr><td colspan="8">No observation yet.</td></tr></tbody></table></div></section>
+<section class="panel" aria-labelledby="events-heading"><h2 id="events-heading">Connection events</h2><pre id="events">No events captured.</pre></section>
+<section class="panel" aria-labelledby="json-heading"><h2 id="json-heading">Redacted JSON observation</h2><p class="small">Only setup fields, observed Gamepad API arrays, timestamps, and connection events are exported. No serials, filesystem paths, user-agent string, or automatic support/evidence labels are collected.</p><pre id="json">Start capture to create an observation.</pre></section>
+</main><script>
+(() => { 'use strict';
+const $ = id => document.getElementById(id), fields = ['browser','browserVersion','macOSVersion','backend','physicalController','selectedIdentity'];
+const state = { running:false, timer:null, startedAt:null, stoppedAt:null, events:[], snapshots:[], latest:[] };
+const now = () => new Date().toISOString(), finite = v => Number.isFinite(v) ? v : null;
+function actuator(a) { return a ? { type:a.type ?? null, effects:a.effects ?? null, supportedEffects:a.supportedEffects ?? null, pulse:typeof a.pulse === 'function', playEffect:typeof a.playEffect === 'function' } : null; }
+function readGamepad(g, slot) { if (!g) return null; return { slot, connected:Boolean(g.connected), id:String(g.id || ''), mapping:String(g.mapping || ''), timestamp:finite(g.timestamp), buttons:Array.from(g.buttons || [], b => ({value:finite(b.value),pressed:Boolean(b.pressed),touched:Boolean(b.touched)})), axes:Array.from(g.axes || [], finite), hapticActuators:Array.from(g.hapticActuators || [], actuator), vibrationActuator:actuator(g.vibrationActuator) }; }
+function pads() { return Array.from(navigator.getGamepads ? navigator.getGamepads() : [], (g,i) => readGamepad(g,i)).filter(Boolean); }
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function observation() { return { testSetup:Object.fromEntries(fields.map(id => [id,$(id).value.trim()])), startedAt:state.startedAt, stoppedAt:state.stoppedAt, connectionEvents:state.events, gamepadSnapshots:state.snapshots }; }
+function render() { const rows = state.latest.length ? state.latest.map(g => `<tr><td>${g.slot}</td><td>${state.latest.length}</td><td>${esc(g.id) || '(empty)'}</td><td>${esc(g.mapping) || '(empty)'}</td><td>${g.timestamp ?? 'null'}</td><td>${g.buttons.length}: ${esc(JSON.stringify(g.buttons))}</td><td>${g.axes.length}: ${esc(JSON.stringify(g.axes))}</td><td>${esc(JSON.stringify({hapticActuators:g.hapticActuators,vibrationActuator:g.vibrationActuator}))}</td></tr>`).join('') : '<tr><td colspan="8">No connected gamepads in the latest poll.</td></tr>'; $('gamepads').innerHTML=rows; $('events').textContent=state.events.length ? state.events.map(e => JSON.stringify(e)).join('\n') : 'No events captured.'; $('json').textContent=JSON.stringify(observation(),null,2); ['copy','download'].forEach(id => $(id).disabled=!(state.snapshots.length || state.events.length)); }
+function poll() { state.latest=pads(); state.snapshots.push({capturedAt:now(),count:state.latest.length,gamepads:state.latest}); render(); }
+function captureEvent(type,e) { if (!state.running) return; state.events.push({capturedAt:now(),type,slot:e.gamepad?.index ?? null,gamepad:readGamepad(e.gamepad,e.gamepad?.index ?? null)}); poll(); }
+function start() { if (state.running) return; state.running=true; state.startedAt=now(); state.stoppedAt=null; state.events.push({capturedAt:state.startedAt,type:'capture-started'}); $('start').disabled=true; $('stop').disabled=false; $('status').textContent='Capturing. Exercise controls and disconnect/reconnect manually.'; $('status').className='status running'; poll(); state.timer=setInterval(poll,250); }
+function stop() { if (!state.running) return; poll(); state.running=false; state.stoppedAt=now(); state.events.push({capturedAt:state.stoppedAt,type:'capture-stopped'}); clearInterval(state.timer); state.timer=null; $('start').disabled=false; $('stop').disabled=true; $('status').textContent='Stopped. Export or clear this observation before the next clean-state row.'; $('status').className='status'; render(); }
+function clearObservation() { stop(); Object.assign(state,{startedAt:null,stoppedAt:null,events:[],snapshots:[],latest:[]}); $('status').textContent='Stopped. Press Start capture to begin.'; render(); }
+async function copy() { await navigator.clipboard.writeText(JSON.stringify(observation(),null,2)); $('status').textContent='JSON copied to the clipboard.'; }
+function download() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(observation(),null,2)],{type:'application/json'})); a.download='gamepad-observation.json'; a.click(); URL.revokeObjectURL(a.href); }
+$('start').addEventListener('click',start); $('stop').addEventListener('click',stop); $('clear').addEventListener('click',clearObservation); $('copy').addEventListener('click',copy); $('download').addEventListener('click',download); window.addEventListener('gamepadconnected',e => captureEvent('gamepadconnected',e)); window.addEventListener('gamepaddisconnected',e => captureEvent('gamepaddisconnected',e)); render();
+})();
+</script></body></html>

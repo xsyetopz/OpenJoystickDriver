@@ -109,15 +109,18 @@ remain preferred when their exact protocol tuples are proven.
 
 ## Browser Gamepad API testing
 
-For manual browser testing, use the established external tester:
+For manual browser testing, **Hardwaretester remains the canonical external manual site**:
 
 **<https://hardwaretester.com/gamepad>**
 
-Run it separately in Chromium and Safari. Record the browser name and exact
-version, Gamepad `id`, mapping, button/axis order and ranges, duplicate count,
-disconnect/reconnect behavior, and any measured latency. The site is an
-independent consumer test; a result in one browser does not establish support
-in another. Do not use device enumeration alone as a support claim.
+Run each matrix row from a clean browser document and record the exact browser
+version, Gamepad `id`, mapping, slot/count, every button and axis, timestamps,
+disconnect/reconnect behavior, and exposed actuator fields. The optional
+[local Gamepad API probe](../testing/browser-gamepad-api.md) runs only through
+localhost and requires explicit Start/Stop; it exports redacted observed state
+for deeper event and polling detail. A result in one browser does not establish
+support in another, and enumeration or rumble alone is not a support claim.
+See the [Plan 06 browser matrix](../testing/browser-gamepad-api.md#exact-beta3-matrix).
 
 ### ❌ Not implemented
 

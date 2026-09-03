@@ -10,6 +10,7 @@
 
 - [Test physical output](testing/physical-output.md)
 - [Probe macOS haptics backends](testing/haptics-backends.md)
+- [Run the Browser Gamepad API manual-evidence probe](testing/browser-gamepad-api.md)
 - [Validate and test a controller record](testing/controller-record.md)
 - [Check Logitech F310 mapping](testing/logitech-f310.md)
 - [Check Microsoft Xbox One Controller (model 1537)](testing/xbox/1537.md)
