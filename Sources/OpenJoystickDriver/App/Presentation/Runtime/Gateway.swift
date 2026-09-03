@@ -9,6 +9,7 @@ protocol ApplicationServiceGateway: Sendable {
   func requestPermission(_ requirement: PermissionManager.Requirement) async throws
     -> PermissionManager.Snapshot
   func deviceInputState(for selector: RuntimeDeviceSelector) async throws -> DeviceInputState?
+  func packetLog(for selector: RuntimeDeviceSelector) async throws -> [PacketLogEntry]
 
   func remappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload
   func remappingProfile(id: UUID) async throws -> RemappingProfile
@@ -38,6 +39,8 @@ extension ApplicationServiceGateway {
   func requestPermission(_ requirement: PermissionManager.Requirement) async throws
     -> PermissionManager.Snapshot
   { try await requestPermissions() }
+
+  func packetLog(for selector: RuntimeDeviceSelector) throws -> [PacketLogEntry] { [] }
 }
 
 enum ApplicationServiceGatewayError: Error, LocalizedError, Sendable, Equatable {
@@ -91,6 +94,15 @@ final class ApplicationServiceClientGateway: @unchecked Sendable, ApplicationSer
   func deviceInputState(for selector: RuntimeDeviceSelector) async throws -> DeviceInputState? {
     await ensureConnection()
     return try await client.deviceInputState(
+      vendorID: selector.vendorID,
+      productID: selector.productID,
+      runtimeIdentifier: selector.runtimeIdentifier
+    )
+  }
+
+  func packetLog(for selector: RuntimeDeviceSelector) async throws -> [PacketLogEntry] {
+    await ensureConnection()
+    return try await client.packetLog(
       vendorID: selector.vendorID,
       productID: selector.productID,
       runtimeIdentifier: selector.runtimeIdentifier

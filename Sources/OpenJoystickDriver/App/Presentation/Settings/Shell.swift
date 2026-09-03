@@ -110,6 +110,7 @@
     case controllers
     case profiles
     case console
+    case developer
     case settings
 
     var id: String { rawValue }
@@ -120,6 +121,7 @@
       case .controllers: return OJDLocalized.string("common.controllers", fallback: "Controllers")
       case .profiles: return OJDLocalized.string("common.profiles", fallback: "Profiles")
       case .console: return OJDLocalized.string("console.title", fallback: "Console")
+      case .developer: return OJDLocalized.string("developer.title", fallback: "Developer")
       case .settings: return OJDLocalized.string("settings.title", fallback: "Settings")
       }
     }
@@ -130,11 +132,14 @@
       case .controllers: return "gamecontroller"
       case .profiles: return "slider.horizontal.3"
       case .console: return "terminal"
+      case .developer: return "wrench.and.screwdriver"
       case .settings: return "gearshape"
       }
     }
 
-    static let primaryCases = Self.allCases
+    static func primaryCases(developerToolsEnabled: Bool) -> [Self] {
+      developerToolsEnabled ? Self.allCases : Self.allCases.filter { $0 != Self.developer }
+    }
 
     /// Toolbar images keep category navigation recognizable on supported macOS releases while
     /// retaining template-image fallbacks for the 10.15 deployment floor.
@@ -152,6 +157,7 @@
       case .controllers: legacyName = "NSBluetoothTemplate"
       case .profiles: legacyName = "NSPreferencesGeneral"
       case .console: legacyName = "NSInfo"
+      case .developer: legacyName = "NSAdvanced"
       case .settings: legacyName = "NSPreferencesGeneral"
       }
       if let image = NSImage(named: NSImage.Name(legacyName)) {
@@ -192,16 +198,23 @@
     @Published var isDiscardConfirmationPresented = false
 
     private let persistence: any SettingsPanePersistence
+    private var developerToolsEnabled: Bool
     private var profilesEditorIsDirty = false
     private var activeProfilesEditorMutation: RuntimeMutationRequest?
     private var activeProfilesEditorMutationIsRuntimeBound = false
 
-    init(persistence: any SettingsPanePersistence = UserDefaultsSettingsPanePersistence()) {
+    init(
+      persistence: any SettingsPanePersistence = UserDefaultsSettingsPanePersistence(),
+      developerToolsEnabled: Bool = false
+    ) {
       self.persistence = persistence
-      selectedPane = persistence.loadPane() ?? .overview
+      self.developerToolsEnabled = developerToolsEnabled
+      let restored = persistence.loadPane() ?? .overview
+      selectedPane = restored == .developer && !developerToolsEnabled ? .overview : restored
     }
 
     func requestPane(_ pane: SettingsPane) {
+      guard pane != .developer || developerToolsEnabled else { return }
       guard pane != selectedPane else { return }
       guard activeProfilesEditorMutation == nil else { return }
       guard profilesEditorIsDirty else {
@@ -213,6 +226,12 @@
     }
 
     func setProfilesEditorDirty(_ dirty: Bool) { profilesEditorIsDirty = dirty }
+
+    func setDeveloperToolsEnabled(_ enabled: Bool) {
+      developerToolsEnabled = enabled
+      guard !enabled, selectedPane == .developer else { return }
+      selectAcceptedPane(.settings)
+    }
 
     @discardableResult func beginProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
       guard activeProfilesEditorMutation == nil else { return false }
@@ -277,12 +296,18 @@
     let notificationPermission: NotificationPermissionModel
     let preferences: SettingsPreferencesModel
     let console: ConsoleViewModel
+    let developerTools: DeveloperToolsViewModel
     let openInputTest: @MainActor (ApplicationServiceDeviceDescription) -> Void
 
     var body: some View {
-      detail.frame(maxWidth: .infinity, minHeight: 0, maxHeight: .infinity).background(
-        Color(NSColor.windowBackgroundColor)
-      ).frame(maxWidth: .infinity, maxHeight: .infinity).onAppear { refreshIfNeeded() }.alert(
+      detail.id(navigation.selectedPane).frame(
+        maxWidth: .infinity,
+        minHeight: 0,
+        maxHeight: .infinity
+      ).background(Color(NSColor.windowBackgroundColor)).frame(
+        maxWidth: .infinity,
+        maxHeight: .infinity
+      ).onAppear { refreshIfNeeded() }.alert(
         isPresented: $navigation.isDiscardConfirmationPresented
       ) {
         Alert(
@@ -314,6 +339,7 @@
       case .controllers: ControllersView(viewModel: viewModel, openInputTest: openInputTest)
       case .profiles: ProfilesView(viewModel: viewModel, navigation: navigation)
       case .console: ConsoleView(model: console)
+      case .developer: DeveloperToolsView(model: developerTools)
       case .settings: ApplicationSettingsView(preferences: preferences)
       }
     }

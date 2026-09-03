@@ -35,6 +35,11 @@ actor GatewayStub: ApplicationServiceGateway {
   let statusReadDelayNanoseconds: UInt64
   let inputState: DeviceInputState?
   let inputSequence: [DeviceInputState]?
+  let inputStatesByRuntimeIdentifier: [String: DeviceInputState]
+  var packetEntries: [PacketLogEntry]
+  let packetSequence: [[PacketLogEntry]]?
+  let packetEntriesByRuntimeIdentifier: [String: [PacketLogEntry]]
+  let deviceReadDelaysNanoseconds: [String: UInt64]
   let updateShouldConflict: Bool
   let updateDelayNanoseconds: UInt64
   let deleteShouldFail: Bool
@@ -46,6 +51,7 @@ actor GatewayStub: ApplicationServiceGateway {
   var deleteCallCount = 0
   var lastDeletedProfileID: UUID?
   var inputReadCount = 0
+  var packetReadCount = 0
   var statusCallCount = 0
   var activeStatusCalls = 0
   var maximumConcurrentStatusCalls = 0
@@ -73,6 +79,11 @@ actor GatewayStub: ApplicationServiceGateway {
     statusReadDelayNanoseconds: UInt64 = 0,
     inputState: DeviceInputState? = nil,
     inputSequence: [DeviceInputState]? = nil,
+    inputStatesByRuntimeIdentifier: [String: DeviceInputState] = [:],
+    packetEntries: [PacketLogEntry] = [],
+    packetSequence: [[PacketLogEntry]]? = nil,
+    packetEntriesByRuntimeIdentifier: [String: [PacketLogEntry]] = [:],
+    deviceReadDelaysNanoseconds: [String: UInt64] = [:],
     updateShouldConflict: Bool = false,
     updateDelayNanoseconds: UInt64 = 0,
     deleteShouldFail: Bool = false,
@@ -85,6 +96,11 @@ actor GatewayStub: ApplicationServiceGateway {
     self.statusReadDelayNanoseconds = statusReadDelayNanoseconds
     self.inputState = inputState
     self.inputSequence = inputSequence
+    self.inputStatesByRuntimeIdentifier = inputStatesByRuntimeIdentifier
+    self.packetEntries = packetEntries
+    self.packetSequence = packetSequence
+    self.packetEntriesByRuntimeIdentifier = packetEntriesByRuntimeIdentifier
+    self.deviceReadDelaysNanoseconds = deviceReadDelaysNanoseconds
     self.updateShouldConflict = updateShouldConflict
     self.updateDelayNanoseconds = updateDelayNanoseconds
     self.deleteShouldFail = deleteShouldFail
@@ -124,8 +140,14 @@ actor GatewayStub: ApplicationServiceGateway {
     PermissionManager.Snapshot(inputMonitoring: .granted, accessibility: .granted)
   }
 
-  func deviceInputState(for selector: RuntimeDeviceSelector) throws -> DeviceInputState? {
+  func deviceInputState(for selector: RuntimeDeviceSelector) async throws -> DeviceInputState? {
     lastInputSelector = selector
+    if let runtimeIdentifier = selector.runtimeIdentifier {
+      if let delay = deviceReadDelaysNanoseconds[runtimeIdentifier] {
+        try await Task.sleep(nanoseconds: delay)
+      }
+      if let mapped = inputStatesByRuntimeIdentifier[runtimeIdentifier] { return mapped }
+    }
     if let inputSequence, !inputSequence.isEmpty {
       let index = min(inputReadCount, inputSequence.count - 1)
       inputReadCount += 1
@@ -133,6 +155,24 @@ actor GatewayStub: ApplicationServiceGateway {
     }
     return inputState
   }
+
+  func packetLog(for selector: RuntimeDeviceSelector) async throws -> [PacketLogEntry] {
+    lastInputSelector = selector
+    if let runtimeIdentifier = selector.runtimeIdentifier {
+      if let delay = deviceReadDelaysNanoseconds[runtimeIdentifier] {
+        try await Task.sleep(nanoseconds: delay)
+      }
+      if let mapped = packetEntriesByRuntimeIdentifier[runtimeIdentifier] { return mapped }
+    }
+    if let packetSequence, !packetSequence.isEmpty {
+      let index = min(packetReadCount, packetSequence.count - 1)
+      packetReadCount += 1
+      return packetSequence[index]
+    }
+    return packetEntries
+  }
+
+  func setPacketEntries(_ entries: [PacketLogEntry]) { packetEntries = entries }
 
   func remappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
     remappingSnapshotCallCount += 1

@@ -93,8 +93,7 @@ struct InputCommand {
       )
     else {
       throw InputCommandFailure(
-        "No input state has been received for \(hex(device.vendorID)) "
-          + "\(hex(device.productID))."
+        "No input received from \(hex(device.vendorID)):\(hex(device.productID))."
       )
     }
 
@@ -130,7 +129,7 @@ struct InputCommand {
         + "(\(selected.count)/\(entries.count))"
     )
     if selected.isEmpty {
-      print("  (none captured)")
+      print("  (no packets)")
       return
     }
     for entry in selected {
@@ -156,8 +155,8 @@ struct InputCommand {
 
     if !jsonLines {
       print(
-        "Watching \(hex(device.vendorID)):\(hex(device.productID)) "
-          + "for \(seconds)s every \(intervalMilliseconds)ms. Press controls now."
+        "Reading input from \(hex(device.vendorID)):\(hex(device.productID)) "
+          + "for \(seconds) seconds. Press controller buttons."
       )
     }
 
@@ -175,7 +174,7 @@ struct InputCommand {
       try await Task.sleep(nanoseconds: interval)
     }
 
-    if !observedState && !jsonLines { print("No input state was observed.") }
+    if !observedState && !jsonLines { print("No input received.") }
   }
 
   private func tracePackets(
@@ -190,19 +189,17 @@ struct InputCommand {
       productID: device.productID,
       runtimeIdentifier: device.runtimeIdentifier
     )
-    var cursor = PacketLogCursor(snapshot: initialEntries)
+    var cursor = PacketLogSnapshotCursor(snapshot: initialEntries)
     let deadline =
       DispatchTime.now().uptimeNanoseconds + UInt64(seconds) * Self.nanosecondsPerSecond
     let interval = UInt64(intervalMilliseconds) * Self.nanosecondsPerMillisecond
     var observedPacket = false
 
     warnAboutRawPackets()
-    if !jsonLines {
-      print(
-        "Tracing raw packets for \(hex(device.vendorID)):\(hex(device.productID)) "
-          + "for \(seconds)s every \(intervalMilliseconds)ms. Press controls now."
-      )
-    }
+    let traceStatus =
+      "Capturing packets from \(hex(device.vendorID)):\(hex(device.productID)) "
+      + "for \(seconds) seconds. Press controller buttons."
+    if jsonLines { CLIOutput.diagnostic(traceStatus) } else { print(traceStatus) }
 
     while DispatchTime.now().uptimeNanoseconds < deadline {
       let entries = try await service.packetLog(
@@ -224,7 +221,13 @@ struct InputCommand {
       try await Task.sleep(nanoseconds: interval)
     }
 
-    if !observedPacket && !jsonLines { print("No new raw packets were observed.") }
+    if !observedPacket {
+      if jsonLines {
+        CLIOutput.diagnostic("No packets received.")
+      } else {
+        print("No packets received.")
+      }
+    }
   }
 
   private func formatted(_ state: DeviceInputState) -> String {
@@ -253,7 +256,7 @@ struct InputCommand {
   }
 
   private func warnAboutRawPackets() {
-    let warning = "Raw controller packets may contain device-specific data. Review before sharing."
+    let warning = "Packet contents vary by controller. Check them before sharing."
     CLIOutput.warning(warning)
   }
 
@@ -374,7 +377,7 @@ struct InputCommand {
         "Usage: OpenJoystickDriver --headless controller <state|packets|trace|watch> [options]", "",
         "Commands:", "  state    Print the latest normalized buttons, sticks, and triggers",
         "  packets  Print recent raw controller packets",
-        "  trace    Stream newly captured raw controller packets for a bounded duration",
+        "  trace    Capture raw controller packets for a set duration",
         "  watch    Print normalized state changes for a bounded duration", "",
         "VID and PID accept decimal or 0x-prefixed hexadecimal. Omit both when",
         "exactly one controller is connected. Use --device with the opaque ID",
@@ -387,27 +390,6 @@ struct InputCommand {
         "          [--interval-ms 8...1000] [--json-lines]"
       ].joined(separator: "\n")
     )
-  }
-}
-
-struct PacketLogCursor {
-  private var previous: [PacketLogEntry]
-
-  init(snapshot: [PacketLogEntry] = []) { previous = snapshot }
-
-  mutating func consume(snapshot: [PacketLogEntry]) -> [PacketLogEntry] {
-    let maximumOverlap = min(previous.count, snapshot.count)
-    let overlap =
-      stride(from: maximumOverlap, through: 0, by: -1).first { count in
-        count == 0 || zip(previous.suffix(count), snapshot.prefix(count)).allSatisfy(Self.matches)
-      } ?? 0
-    previous = snapshot
-    return Array(snapshot.dropFirst(overlap))
-  }
-
-  private static func matches(_ pair: (PacketLogEntry, PacketLogEntry)) -> Bool {
-    pair.0.timestamp == pair.1.timestamp && pair.0.direction == pair.1.direction
-      && pair.0.length == pair.1.length && pair.0.hex == pair.1.hex
   }
 }
 

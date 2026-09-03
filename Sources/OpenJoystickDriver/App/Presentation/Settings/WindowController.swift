@@ -12,6 +12,7 @@
     static func minimumContentSize(for pane: SettingsPane) -> NSSize {
       switch pane {
       case .controllers: return NSSize(width: 900, height: 500)
+      case .developer: return NSSize(width: 900, height: 620)
       case .overview, .profiles, .console, .settings: return defaultMinimumContentSize
       }
     }
@@ -33,23 +34,30 @@
     private let notificationPermission: NotificationPermissionModel
     private let preferences: SettingsPreferencesModel
     private let console: ConsoleViewModel
+    private let developerTools: DeveloperToolsViewModel
     private var navigationObservation: AnyCancellable?
+    private var developerToolsObservation: AnyCancellable?
 
     init(
       viewModel: RuntimeViewModel,
       openInputTest: @escaping @MainActor (ApplicationServiceDeviceDescription) -> Void,
       persistence: any SettingsPanePersistence = UserDefaultsSettingsPanePersistence()
     ) {
-      navigation = SettingsNavigationModel(persistence: persistence)
       notificationPermission = NotificationPermissionModel()
       preferences = SettingsPreferencesModel()
+      navigation = SettingsNavigationModel(
+        persistence: persistence,
+        developerToolsEnabled: preferences.developerToolsEnabled
+      )
       console = ConsoleViewModel()
+      developerTools = DeveloperToolsViewModel(gateway: viewModel.gateway)
       let rootView = SettingsRootView(
         navigation: navigation,
         viewModel: viewModel,
         notificationPermission: notificationPermission,
         preferences: preferences,
         console: console,
+        developerTools: developerTools,
         openInputTest: openInputTest
       )
       let host = NSHostingView(rootView: rootView)
@@ -91,6 +99,13 @@
         // Combine publishes this property in its willSet phase. Use the emitted pane rather than
         // reading navigation.selectedPane, which still contains the previous value here.
         self.updateToolbarSelection(for: pane)
+      }
+      developerToolsObservation = preferences.$developerToolsEnabled.dropFirst().sink {
+        [weak self] enabled in
+        guard let self else { return }
+        self.navigation.setDeveloperToolsEnabled(enabled)
+        if let window = self.window { self.configureToolbar(for: window) }
+        self.updateToolbarSelection()
       }
     }
 
@@ -134,24 +149,29 @@
     }
 
     private func updateToolbarSelection(for pane: SettingsPane? = nil) {
+      let panes = visiblePanes
       guard
         let group = window?.toolbar?.items.first(where: {
           $0.itemIdentifier == Self.paneGroupIdentifier
-        }) as? NSToolbarItemGroup,
-        let index = SettingsPane.primaryCases.firstIndex(of: pane ?? navigation.selectedPane)
+        }) as? NSToolbarItemGroup, let index = panes.firstIndex(of: pane ?? navigation.selectedPane)
       else { return }
       group.selectedIndex = index
     }
 
     @objc private func selectPaneFromToolbar(_ sender: NSToolbarItemGroup) {
-      guard SettingsPane.primaryCases.indices.contains(sender.selectedIndex) else {
+      let panes = visiblePanes
+      guard panes.indices.contains(sender.selectedIndex) else {
         updateToolbarSelection()
         return
       }
-      navigation.requestPane(SettingsPane.primaryCases[sender.selectedIndex])
+      navigation.requestPane(panes[sender.selectedIndex])
       // A dirty profile editor may reject the request pending confirmation. Restore the current
       // selection immediately; accepted requests are applied again by the navigation observer.
       updateToolbarSelection()
+    }
+
+    private var visiblePanes: [SettingsPane] {
+      SettingsPane.primaryCases(developerToolsEnabled: preferences.developerToolsEnabled)
     }
   }
 
@@ -172,11 +192,12 @@
       willBeInsertedIntoToolbar flag: Bool
     ) -> NSToolbarItem? {
       guard itemIdentifier == Self.paneGroupIdentifier else { return nil }
+      let panes = visiblePanes
       let group = NSToolbarItemGroup(
         itemIdentifier: Self.paneGroupIdentifier,
-        images: SettingsPane.primaryCases.map(\.toolbarImage),
+        images: panes.map(\.toolbarImage),
         selectionMode: .selectOne,
-        labels: SettingsPane.primaryCases.map(\.title),
+        labels: panes.map(\.title),
         target: self,
         action: #selector(Self.selectPaneFromToolbar(_:))
       )
@@ -190,7 +211,7 @@
       )
       group.toolTip = OJDLocalized.string("settings.choosePane", fallback: "Choose a settings pane")
       group.visibilityPriority = .high
-      group.selectedIndex = SettingsPane.primaryCases.firstIndex(of: navigation.selectedPane) ?? 0
+      group.selectedIndex = panes.firstIndex(of: navigation.selectedPane) ?? 0
       return group
     }
   }

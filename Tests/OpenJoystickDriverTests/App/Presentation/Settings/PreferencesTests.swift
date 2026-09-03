@@ -148,6 +148,22 @@ import Testing
     #expect(await checker.includePrereleaseArguments == [true])
   }
 
+  @Test @MainActor func developerToolsChoicePersists() throws {
+    let suiteName = "PreferencesTests.\(UUID().uuidString)"
+    let defaults = try #require(UserDefaults(suiteName: suiteName))
+    defer { defaults.removePersistentDomain(forName: suiteName) }
+    let model = SettingsPreferencesModel(
+      defaults: defaults,
+      launchAtLogin: LaunchAtLoginStub(isEnabled: false),
+      notificationAuthorization: NotificationAuthorizationStub(state: .denied)
+    )
+
+    model.setDeveloperToolsEnabled(true)
+
+    #expect(model.developerToolsEnabled)
+    #expect(defaults.bool(forKey: ApplicationPreferenceKeys.developerTools))
+  }
+
   @MainActor private func waitUntil(_ condition: @escaping @MainActor () -> Bool) async {
     for _ in 0..<100 where !condition() { await Task.yield() }
   }

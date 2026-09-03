@@ -25,9 +25,27 @@ import Testing
     )
   }
 
-  @Test func everySettingsPaneRemainsInThePrimaryRail() {
-    #expect(SettingsPane.primaryCases == SettingsPane.allCases)
-    #expect(SettingsPane.primaryCases == [.overview, .controllers, .profiles, .console, .settings])
+  @Test func developerPaneIsProgressivelyDisclosed() {
+    #expect(
+      SettingsPane.primaryCases(developerToolsEnabled: false) == [
+        .overview, .controllers, .profiles, .console, .settings
+      ]
+    )
+    #expect(
+      SettingsPane.primaryCases(developerToolsEnabled: true) == [
+        .overview, .controllers, .profiles, .console, .developer, .settings
+      ]
+    )
+  }
+
+  @Test @MainActor func disablingDeveloperToolsLeavesTheHiddenPane() {
+    let navigation = SettingsNavigationModel(developerToolsEnabled: true)
+    navigation.requestPane(.developer)
+    #expect(navigation.selectedPane == .developer)
+
+    navigation.setDeveloperToolsEnabled(false)
+
+    #expect(navigation.selectedPane == .settings)
   }
 
   @Test @MainActor func restoresTheLastAcceptedPane() {

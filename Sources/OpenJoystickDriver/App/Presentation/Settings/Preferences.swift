@@ -13,6 +13,7 @@
       "OpenJoystickDriver.notifications.profileDeactivated"
     static let notificationSounds = "OpenJoystickDriver.notifications.sounds"
     static let includePrereleaseUpdates = "OpenJoystickDriver.updates.includePrereleases"
+    static let developerTools = "OpenJoystickDriver.developerTools.enabled"
   }
 
   protocol ApplicationUpdateChecking: Sendable {
@@ -31,6 +32,7 @@
     @Published private(set) var notificationAuthorization: RuntimeNotificationAuthorizationState
     @Published private(set) var notificationSystemSettings: RuntimeNotificationSettings
     @Published private(set) var includePrereleaseUpdates: Bool
+    @Published private(set) var developerToolsEnabled: Bool
     @Published private(set) var updateState: UpdateCheckState = .idle
     @Published private(set) var errorMessage: String?
 
@@ -85,6 +87,7 @@
       self.includePrereleaseUpdates = defaults.bool(
         forKey: ApplicationPreferenceKeys.includePrereleaseUpdates
       )
+      self.developerToolsEnabled = defaults.bool(forKey: ApplicationPreferenceKeys.developerTools)
       refreshNotificationAuthorization()
     }
 
@@ -132,6 +135,11 @@
     func setIncludePrereleaseUpdates(_ enabled: Bool) {
       defaults.set(enabled, forKey: ApplicationPreferenceKeys.includePrereleaseUpdates)
       includePrereleaseUpdates = enabled
+    }
+
+    func setDeveloperToolsEnabled(_ enabled: Bool) {
+      defaults.set(enabled, forKey: ApplicationPreferenceKeys.developerTools)
+      developerToolsEnabled = enabled
     }
 
     func checkForUpdates() {
@@ -315,6 +323,7 @@
           }
 
           updateSettings
+          developerSettings
 
           if let errorMessage = preferences.errorMessage {
             HStack(alignment: .top, spacing: 8) {
@@ -514,6 +523,36 @@
         }.padding(4)
       } label: {
         Text(OJDLocalized.string("settings.updates", fallback: "Updates")).font(.headline)
+      }
+    }
+
+    private var developerSettings: some View {
+      GroupBox {
+        VStack(alignment: .leading, spacing: 10) {
+          Toggle(
+            OJDLocalized.string(
+              "settings.enableDeveloperTools",
+              fallback: "Enable Developer Tools"
+            ),
+            isOn: Binding(
+              get: { preferences.developerToolsEnabled },
+              set: { preferences.setDeveloperToolsEnabled($0) }
+            )
+          )
+          Text(
+            OJDLocalized.string(
+              "settings.developerToolsDescription",
+              fallback: "Show controller input and USB packet tools."
+            )
+          ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
+            horizontal: false,
+            vertical: true
+          )
+        }.padding(4).frame(maxWidth: .infinity, alignment: .leading)
+      } label: {
+        Text(OJDLocalized.string("settings.developerTools", fallback: "Developer Tools")).font(
+          .headline
+        )
       }
     }
 

@@ -7,7 +7,7 @@ import Testing
 struct PacketLogCursorTests {
   @Test func ignoresTheSnapshotThatExistedWhenTracingStarted() throws {
     let existing = try entry(timestamp: 1, hex: "01")
-    var cursor = PacketLogCursor(snapshot: [existing])
+    var cursor = PacketLogSnapshotCursor(snapshot: [existing])
 
     #expect(cursor.consume(snapshot: [existing]).isEmpty)
   }
@@ -16,7 +16,7 @@ struct PacketLogCursorTests {
     let first = try entry(timestamp: 1, hex: "01")
     let second = try entry(timestamp: 2, hex: "02")
     let third = try entry(timestamp: 3, hex: "03")
-    var cursor = PacketLogCursor(snapshot: [first])
+    var cursor = PacketLogSnapshotCursor(snapshot: [first])
 
     #expect(cursor.consume(snapshot: [first, second]).map(\.hex) == ["02"])
     #expect(cursor.consume(snapshot: [first, second, third]).map(\.hex) == ["03"])
@@ -26,7 +26,7 @@ struct PacketLogCursorTests {
     let first = try entry(timestamp: 1, hex: "01")
     let second = try entry(timestamp: 2, hex: "02")
     let third = try entry(timestamp: 3, hex: "03")
-    var cursor = PacketLogCursor(snapshot: [first, second])
+    var cursor = PacketLogSnapshotCursor(snapshot: [first, second])
 
     #expect(cursor.consume(snapshot: [second, third]).map(\.hex) == ["03"])
   }
@@ -34,7 +34,7 @@ struct PacketLogCursorTests {
   @Test func treatsSamePayloadAtDifferentTimesAsNewPackets() throws {
     let first = try entry(timestamp: 1, hex: "AA")
     let second = try entry(timestamp: 2, hex: "AA")
-    var cursor = PacketLogCursor(snapshot: [first])
+    var cursor = PacketLogSnapshotCursor(snapshot: [first])
 
     #expect(cursor.consume(snapshot: [first, second]).map(\.timestamp) == [2])
   }
