@@ -124,6 +124,10 @@ readiness. A failed replacement restores and relaunches the previous bundle
 when one existed. Full and release-local installations also retire stale
 DriverKit processes before replacing an embedded extension; app-only fast
 installs preserve the existing extension and leave its process running.
+Every supported install and reinstall command uses `build-tools/install_app.py`.
+Full development installs, fast installs, release installs, and legacy aliases
+therefore install the same signed CLI. After changing repository sources, run an
+install command again before using CLI diagnostics that connect to the app.
 
 ## Distribution paths
 

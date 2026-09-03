@@ -29,6 +29,16 @@ The installed `OpenJoystickDriver --headless` CLI remains the supported expert
 interface for automation, complete mapping operations, streaming input, and
 diagnostics. The menu-bar/settings facade is the supported consumer interface for
 readiness, permissions, connected controllers, profiles, and ordinary remapping.
+When `swift run OpenJoystickDriver` or `.build/debug/OpenJoystickDriver` receives
+CLI arguments, it uses the installed signed executable if one is available. The
+server still checks the user, signing identifier, and team identifier. If the
+repository sources are newer than the installed executable, the command stops
+and asks for a new install instead of running stale code.
+
+Run `./scripts/ojd build install-fast dev` after source changes. Set
+`OJD_RUN_REPOSITORY_CLI=1` only to run a local command that does not use the
+application service. An unsigned repository executable cannot connect to the
+running service.
 Repository development, build, validation, and release tasks use the separate
 maintainer command, `./scripts/ojd`. Direct use of `OpenJoystickDriverHIDTool` is
 internal and supported only for focused hardware investigation.

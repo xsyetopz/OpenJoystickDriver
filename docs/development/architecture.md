@@ -82,6 +82,10 @@ Closing settings does not stop controller processing. `SIGTERM` and `SIGINT` sto
 cleanly. Headless commands invoke the same executable and reach live state through the private
 Unix-domain socket at `/tmp/com.openjoystickdriver.<uid>.rpc`. The socket is mode `0600`; the server
 requires the same user, signing identifier, and team identifier. Frames and deadlines are bounded.
+Repository-built CLI commands use the installed signed executable when it is available. This keeps
+`swift run` and direct `.build` commands within the same RPC authentication boundary; the server does
+not need to trust unsigned development clients. Forwarding stops when the installed executable is
+older than the repository sources, so validation cannot silently run stale CLI code.
 
 ## Permissions
 

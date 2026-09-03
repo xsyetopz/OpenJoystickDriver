@@ -5,6 +5,7 @@ import OpenJoystickDriverKit
 private var applicationHost: HeadlessApplicationHost?
 
 let args = Array(CommandLine.arguments.dropFirst())
+InstalledCLIForwarder.forwardIfNeeded(arguments: args)
 if args.contains("--headless") {
   let filtered = args.filter { $0 != "--headless" }
   CLI().run(arguments: filtered[...])
