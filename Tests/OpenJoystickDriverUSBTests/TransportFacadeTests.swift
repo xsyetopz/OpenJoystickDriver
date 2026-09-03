@@ -18,6 +18,74 @@ struct TransportFacadeTests {
     )
   }
 
+  @Test func defaultProviderResolutionHookRetainsConfiguredProfile() async {
+    let provider = FakeUSBTransportProvider()
+    let configured = DeviceTransportProfile.gipDefault
+
+    #expect(
+      await provider.resolveTransportProfile(
+        for: device(route: .ioUSBHost, serviceID: 1),
+        configured: configured
+      ) == configured
+    )
+  }
+
+  @Test func driverKitResolutionDoesNotUseDescriptorRouteFallback() {
+    let configured = DeviceTransportProfile.gipDefault
+    let observation = ControllerTransportObservation(
+      vendorID: 0x045E,
+      productID: 0x0B12,
+      interfaces: [
+        USBInterfaceTransportFacts(
+          interfaceNumber: 3,
+          interfaceClass: 0xFF,
+          endpoints: [
+            USBEndpointTransportFacts(address: 0x84, isInterrupt: true, isInput: true),
+            USBEndpointTransportFacts(address: 0x04, isInterrupt: true, isInput: false)
+          ]
+        )
+      ]
+    )
+
+    #expect(
+      OpenJoystickDriverUSBTransportProvider.resolveTransportProfile(
+        route: .usbDriverKit,
+        configured: configured,
+        observation: observation
+      ) == configured
+    )
+  }
+
+  @Test func facadeResolutionUsesCompletePassiveInterruptPair() {
+    let configured = DeviceTransportProfile.gipDefault
+    let observation = ControllerTransportObservation(
+      vendorID: 0x3537,
+      productID: 0x1010,
+      interfaces: [
+        USBInterfaceTransportFacts(
+          interfaceNumber: 2,
+          alternateSetting: 1,
+          interfaceClass: 0xFF,
+          endpoints: [
+            USBEndpointTransportFacts(address: 0x84, isInterrupt: true, isInput: true),
+            USBEndpointTransportFacts(address: 0x04, isInterrupt: true, isInput: false)
+          ]
+        )
+      ]
+    )
+
+    let resolved = OpenJoystickDriverUSBTransportProvider.resolveTransportProfile(
+      route: .ioUSBHost,
+      configured: configured,
+      observation: observation
+    )
+
+    #expect(resolved.interfaceNumber == 2)
+    #expect(resolved.alternateSetting == 1)
+    #expect(resolved.inputEndpoint == 0x84)
+    #expect(resolved.outputEndpoint == 0x04)
+  }
+
   @Test func mapsUnsupportedAndBadArgumentToEquivalentUnsupportedTransportErrors() {
     #expect(IOUSBHostTransportProvider.transportError(kIOReturnUnsupported) == .notSupported)
     #expect(IOUSBHostTransportProvider.transportError(kIOReturnBadArgument) == .notSupported)

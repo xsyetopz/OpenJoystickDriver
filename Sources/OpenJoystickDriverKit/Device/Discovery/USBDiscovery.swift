@@ -5,6 +5,12 @@ struct RawUSBAdmission {
   let productName: String?
 }
 
+enum USBDeviceHandlingOutcome: Equatable {
+  case claimed(DeviceIdentifier)
+  case ignored
+  case retry
+}
+
 func resolveRawUSBAdmission(
   parserRegistry: ParserRegistry,
   vendorID: UInt16,
@@ -42,9 +48,14 @@ extension DeviceManager {
         let devices = try await provider.devices()
         let currentServiceIDs = Set(devices.map(\.serviceIdentity))
         for device in devices where !knownServiceIDs.contains(device.serviceIdentity) {
-          knownServiceIDs.insert(device.serviceIdentity)
-          if let identifier = handleUSBDeviceAdded(device, provider: provider) {
+          switch await handleUSBDeviceAdded(device, provider: provider) {
+          case .claimed(let identifier):
+            knownServiceIDs.insert(device.serviceIdentity)
             serviceToIdentifier[device.serviceIdentity] = identifier
+          case .ignored: knownServiceIDs.insert(device.serviceIdentity)
+          case .retry:
+            // Keep the service unacknowledged so the next poll retries it.
+            break
           }
         }
         await removeUSBLostDevices(
@@ -74,10 +85,10 @@ extension DeviceManager {
     }
   }
 
-  @discardableResult private func handleUSBDeviceAdded(
+  @discardableResult func handleUSBDeviceAdded(
     _ device: USBTransportDevice,
     provider: any USBTransportProvider
-  ) -> DeviceIdentifier? {
+  ) async -> USBDeviceHandlingOutcome {
     guard
       let admission = resolveRawUSBAdmission(
         parserRegistry: parserRegistry,
@@ -94,15 +105,30 @@ extension DeviceManager {
         "[DeviceManager] \(device.route.rawValue) service observed but left unclaimed:"
           + " \(modelIdentifier)"
       )
-      return nil
+      return .ignored
     }
 
     let identifier = admission.identifier
-    guard pipelines[identifier] == nil,
-      Self.matchingPhysicalIdentifier(for: identifier, among: pipelines.keys) == nil
-    else {
+    guard !hasUSBPipelineConflict(for: identifier) else {
       print("[DeviceManager] Pipeline already exists for \(identifier)")
-      return nil
+      return .retry
+    }
+
+    let configuredProfile = parserRegistry.transportProfile(for: identifier)
+    let transportProfile = await provider.resolveTransportProfile(
+      for: device,
+      configured: configuredProfile
+    )
+
+    // Revalidate the service after the suspension. A removed/replaced service
+    // must not be acknowledged from the earlier device snapshot.
+    guard (try? await provider.devices())?.contains(device) == true else { return .retry }
+
+    // Descriptor resolution suspends the actor. The device may have been
+    // replaced or exposed through another route while it was suspended.
+    guard !hasUSBPipelineConflict(for: identifier) else {
+      print("[DeviceManager] Pipeline already exists for \(identifier)")
+      return .retry
     }
 
     let productName = controllerDisplayName(
@@ -117,7 +143,6 @@ extension DeviceManager {
       discoverySource: .rawUSB(route: device.route)
     )
     print("[DeviceManager] USB device added: \(productName) (\(identifier))")
-    let transportProfile = parserRegistry.transportProfile(for: identifier)
     let parser = parserRegistry.parser(for: identifier, transportProfile: transportProfile)
     let pipeline = DevicePipeline(
       identifier: identifier,
@@ -130,6 +155,11 @@ extension DeviceManager {
     )
     pipelines[identifier] = pipeline
     Task { await pipeline.start() }
-    return identifier
+    return .claimed(identifier)
+  }
+
+  private func hasUSBPipelineConflict(for identifier: DeviceIdentifier) -> Bool {
+    pipelines[identifier] != nil
+      || Self.matchingPhysicalIdentifier(for: identifier, among: pipelines.keys) != nil
   }
 }

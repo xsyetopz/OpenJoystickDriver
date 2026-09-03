@@ -87,6 +87,43 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     }
   }
 
+  public func resolveTransportProfile(
+    for device: USBTransportDevice,
+    configured: DeviceTransportProfile
+  ) async -> DeviceTransportProfile {
+    await Task.yield()
+    // DriverKit ownership is fixed to interface 0 by the extension personality;
+    // descriptor discovery must never broaden that route.
+    guard device.route == .ioUSBHost else { return configured }
+    do {
+      guard let observation = try PassiveUSBDescriptorProbe.transportObservation(for: device) else {
+        return configured
+      }
+      return Self.resolveTransportProfile(
+        route: device.route,
+        configured: configured,
+        observation: observation
+      )
+    } catch {
+      // Descriptor access is passive and best-effort. Opening continues with
+      // the configured catalog profile when observation fails.
+      return configured
+    }
+  }
+  static func resolveTransportProfile(
+    route: USBTransportRoute,
+    configured: DeviceTransportProfile,
+    observation: ControllerTransportObservation?
+  ) -> DeviceTransportProfile {
+    guard route == .ioUSBHost, let observation else { return configured }
+    let discovered = USBDescriptorTransportResolver.discover(
+      interfaces: observation.interfaces,
+      preferredInterface: configured.interfaceNumber,
+      requirePreferredInterface: configured.hasInterfaceOverride
+    )
+    return USBDescriptorTransportResolver.resolve(configured: configured, discovered: discovered)
+  }
+
   public func transportObservations() async throws -> [ControllerTransportObservation] {
     // Observation is deliberately best-effort. A descriptor read failure must
     // not change the exact supported-device selection or prevent diagnostics

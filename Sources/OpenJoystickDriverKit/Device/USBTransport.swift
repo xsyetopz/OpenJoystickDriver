@@ -99,6 +99,22 @@ public protocol USBTransportProvider: Sendable {
   func devices() async throws -> [USBTransportDevice]
   func open(_ device: USBTransportDevice, options: USBTransportOpenOptions) async throws
     -> any USBTransportSession
+
+  /// Resolves descriptor-backed transport facts without claiming the device.
+  /// Providers that do not expose passive descriptor observations retain the
+  /// catalog profile by default.
+  func resolveTransportProfile(for device: USBTransportDevice, configured: DeviceTransportProfile)
+    async -> DeviceTransportProfile
+}
+
+extension USBTransportProvider {
+  public func resolveTransportProfile(
+    for device: USBTransportDevice,
+    configured: DeviceTransportProfile
+  ) async -> DeviceTransportProfile {
+    await Task.yield()
+    return configured
+  }
 }
 
 /// Stable failure categories shared by USB transport implementations.
@@ -116,11 +132,23 @@ public enum USBTransportError: Error, Equatable, Sendable {
   public var isInputOutput: Bool { self == .inputOutput }
 }
 
-struct DiscoveredUSBTransport: Equatable, Sendable {
-  let interfaceNumber: UInt8
-  let alternateSetting: UInt8
-  let inputEndpoint: UInt8
-  let outputEndpoint: UInt8
+public struct DiscoveredUSBTransport: Equatable, Sendable {
+  public let interfaceNumber: UInt8
+  public let alternateSetting: UInt8
+  public let inputEndpoint: UInt8
+  public let outputEndpoint: UInt8
+
+  public init(
+    interfaceNumber: UInt8,
+    alternateSetting: UInt8,
+    inputEndpoint: UInt8,
+    outputEndpoint: UInt8
+  ) {
+    self.interfaceNumber = interfaceNumber
+    self.alternateSetting = alternateSetting
+    self.inputEndpoint = inputEndpoint
+    self.outputEndpoint = outputEndpoint
+  }
 }
 
 public struct USBEndpointTransportFacts: Equatable, Sendable {
@@ -198,7 +226,7 @@ public struct USBInterfaceTransportFacts: Equatable, Sendable {
 }
 
 public enum USBDescriptorTransportResolver {
-  static func discover(
+  public static func discover(
     interfaces: [USBInterfaceTransportFacts],
     preferredInterface: UInt8,
     requirePreferredInterface: Bool
@@ -219,9 +247,10 @@ public enum USBDescriptorTransportResolver {
     return nil
   }
 
-  static func resolve(configured: DeviceTransportProfile, discovered: DiscoveredUSBTransport?)
-    -> DeviceTransportProfile
-  {
+  public static func resolve(
+    configured: DeviceTransportProfile,
+    discovered: DiscoveredUSBTransport?
+  ) -> DeviceTransportProfile {
     guard let discovered else { return configured }
     return DeviceTransportProfile(
       inputEndpoint: configured.hasEndpointOverride
