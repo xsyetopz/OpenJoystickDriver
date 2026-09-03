@@ -1,21 +1,21 @@
 import Foundation
 import OpenJoystickDriverKit
 
-enum RuntimeLoadState: Sendable {
+enum RuntimeLoadState: Sendable, Equatable {
   case loading
   case available
   case unavailable(String)
   case error(String)
 }
 
-enum RuntimePermissionState: String, Sendable {
+enum RuntimePermissionState: String, Sendable, Equatable {
   case granted
   case denied
   case unknown
   case unavailable
 }
 
-struct RuntimePermissionSummary: Sendable {
+struct RuntimePermissionSummary: Sendable, Equatable {
   let inputMonitoring: RuntimePermissionState
   let accessibility: RuntimePermissionState
 
@@ -62,20 +62,20 @@ struct RuntimePermissionSummary: Sendable {
   }
 }
 
-enum RuntimeOutputState: String, Sendable {
+enum RuntimeOutputState: String, Sendable, Equatable {
   case ready
   case unavailable
   case error
   case unknown
 }
 
-enum RuntimeReadiness: String, Sendable {
+enum RuntimeReadiness: String, Sendable, Equatable {
   case ready
   case needsAttention
   case noController
 }
 
-struct RuntimeStatusPresentation: Sendable {
+struct RuntimeStatusPresentation: Sendable, Equatable {
   let permissions: RuntimePermissionSummary
   let devices: [ApplicationServiceDeviceDescription]
   let compatibilityIdentity: CompatibilityIdentity?
@@ -217,6 +217,34 @@ struct RuntimeStatusPresentation: Sendable {
 
   var deviceCountLabel: String { RuntimePresentation.deviceCountLabel(devices.count) }
 
+  static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.permissions == rhs.permissions
+      && lhs.devices.elementsEqual(rhs.devices, by: deviceDescriptionsEqual)
+      && lhs.compatibilityIdentity == rhs.compatibilityIdentity
+      && lhs.compatibilityLabel == rhs.compatibilityLabel && lhs.outputState == rhs.outputState
+      && lhs.outputDetail == rhs.outputDetail && lhs.postEventAccess == rhs.postEventAccess
+      && lhs.requiresPostEventAccess == rhs.requiresPostEventAccess
+      && lhs.readiness == rhs.readiness
+  }
+
+  private static func deviceDescriptionsEqual(
+    _ lhs: ApplicationServiceDeviceDescription,
+    _ rhs: ApplicationServiceDeviceDescription
+  ) -> Bool {
+    lhs.runtimeIdentifier == rhs.runtimeIdentifier && lhs.name == rhs.name
+      && lhs.vendorID == rhs.vendorID && lhs.productID == rhs.productID && lhs.parser == rhs.parser
+      && lhs.connection == rhs.connection && lhs.discoverySource == rhs.discoverySource
+      && lhs.physicalOwnership == rhs.physicalOwnership
+      && lhs.duplicateExposureRisk == rhs.duplicateExposureRisk
+      && lhs.serialNumber == rhs.serialNumber && lhs.protocolVariant == rhs.protocolVariant
+      && lhs.mappingFlags == rhs.mappingFlags && lhs.inputEndpoint == rhs.inputEndpoint
+      && lhs.outputEndpoint == rhs.outputEndpoint
+      && lhs.needsSetConfiguration == rhs.needsSetConfiguration
+      && lhs.postHandshakeSettleMs == rhs.postHandshakeSettleMs
+      && lhs.preferredBackends == rhs.preferredBackends
+      && lhs.physicalOutputCapabilities == rhs.physicalOutputCapabilities
+  }
+
   private init(
     permissions: RuntimePermissionSummary,
     devices: [ApplicationServiceDeviceDescription],
@@ -276,14 +304,14 @@ extension RemappingProfile {
   }
 }
 
-enum RuntimeStatusState: Sendable {
+enum RuntimeStatusState: Sendable, Equatable {
   case loading
   case available(RuntimeStatusPresentation)
   case unavailable(String)
   case error(String)
 }
 
-enum RuntimeRemappingState: Sendable {
+enum RuntimeRemappingState: Sendable, Equatable {
   case loading
   case available(ApplicationServiceRemappingSnapshotPayload)
   case unavailable(String)
@@ -298,7 +326,7 @@ enum RuntimeActiveProfileState: Sendable, Equatable {
   case error(String)
 }
 
-enum RuntimePermissionLoadState: Sendable {
+enum RuntimePermissionLoadState: Sendable, Equatable {
   case loading
   case unavailable
   case requesting
@@ -306,7 +334,7 @@ enum RuntimePermissionLoadState: Sendable {
   case error(String)
 }
 
-enum RuntimePostEventAccessLoadState: Sendable {
+enum RuntimePostEventAccessLoadState: Sendable, Equatable {
   case loading
   case requesting
   case available(RemappingPostEventAccessState)
@@ -314,7 +342,7 @@ enum RuntimePostEventAccessLoadState: Sendable {
   case error(String)
 }
 
-enum RuntimeCompatibilityState: Sendable {
+enum RuntimeCompatibilityState: Sendable, Equatable {
   case loading
   case available(CompatibilityIdentity)
   case unavailable(String)

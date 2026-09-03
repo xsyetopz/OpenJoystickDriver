@@ -24,17 +24,46 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
   let remappingRouter: RemappingOutputRouter
   let postEventAccess: CoreGraphicsPostEventAccess
   let remappingRequests: RemappingRequestCoordinator
+  let compatibilityTransitionCoordinator = CompatibilityTransitionCoordinator()
+  let compatibilityTransitionTimeouts: CompatibilityTransitionTimeouts
+  let compatibilityTransitionClock: CompatibilityTransitionClock
+  let connectedIdentifierProvider: @Sendable () async -> [DeviceIdentifier]
+  let feedbackGate: CompatibilityFeedbackGate
+  let userSpaceDispatcherBuilder:
+    (@Sendable (CompatibilityIdentity) throws -> any CompatibilityUserSpaceOutputDispatching)?
   let userSpaceLock = NSLock()
   var userSpaceDispatcher: (any CompatibilityUserSpaceOutputDispatching)?
   var userSpaceEnabled: Bool
   var userSpaceStatus: String = "off"
   var compatibilityIdentity: CompatibilityIdentity
+  var persistedCompatibilityIdentity: CompatibilityIdentity
+  var compatibilityLiveIdentity: CompatibilityIdentity?
+  var compatibilityRetrySnapshot: CompatibilityRetrySnapshot?
+  var userSpaceCloseSlot: CompatibilityBackendCloseSlot?
+  var userSpaceAutomaticGeneration: UUID?
+  var pendingAutomaticTransitionGeneration: UUID?
   var rpcServer: LocalServiceRPCServer?
+  var compatibilityServerStopped = false
   static let compatibilityIdentityDefaultsKey = "CompatibilityIdentity"
+  static let compatibilityRetrySnapshotDefaultsKey = "CompatibilityRetrySnapshot"
 
-  struct UserSpaceDispatcherBuild {
+  struct UserSpaceDispatcherBuild: Sendable {
     let dispatcher: any CompatibilityUserSpaceOutputDispatching
     let status: String
+    let closeSlot: CompatibilityBackendCloseSlot
+    let automaticGeneration: UUID?
+
+    init(
+      dispatcher: any CompatibilityUserSpaceOutputDispatching,
+      status: String,
+      closeSlot: CompatibilityBackendCloseSlot? = nil,
+      automaticGeneration: UUID? = nil
+    ) {
+      self.dispatcher = dispatcher
+      self.status = status
+      self.closeSlot = closeSlot ?? CompatibilityBackendCloseSlot(dispatcher)
+      self.automaticGeneration = automaticGeneration
+    }
   }
 
   /// Creates a server backed by the device manager, permissions, and output dispatchers.
@@ -44,7 +73,14 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     dispatcher: CompatibilityOutputDispatcher,
     remappingProfileLibrary: RemappingProfileLibrary,
     remappingRouter: RemappingOutputRouter,
-    postEventAccess: CoreGraphicsPostEventAccess
+    postEventAccess: CoreGraphicsPostEventAccess,
+    userSpaceDispatcherBuilder: (
+      @Sendable (CompatibilityIdentity) throws -> any CompatibilityUserSpaceOutputDispatching
+    )? = nil,
+    connectedIdentifierProvider: (@Sendable () async -> [DeviceIdentifier])? = nil,
+    compatibilityTransitionTimeouts: CompatibilityTransitionTimeouts = .standard,
+    compatibilityTransitionClock: CompatibilityTransitionClock = .system,
+    initializeCompatibilityBackend: Bool = true
   ) {
     self.deviceManager = deviceManager
     self.permissionManager = permissionManager
@@ -57,9 +93,22 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
       router: remappingRouter,
       postEventAccess: postEventAccess
     )
+    self.userSpaceDispatcherBuilder = userSpaceDispatcherBuilder
+    self.connectedIdentifierProvider =
+      connectedIdentifierProvider ?? { await deviceManager.connectedDeviceIdentifiers() }
+    self.compatibilityTransitionTimeouts = compatibilityTransitionTimeouts
+    self.compatibilityTransitionClock = compatibilityTransitionClock
+    self.feedbackGate = CompatibilityFeedbackGate(deviceManager: deviceManager)
     self.userSpaceEnabled = false
     let savedCompat = UserDefaults.standard.string(forKey: Self.compatibilityIdentityDefaultsKey)
-    self.compatibilityIdentity = CompatibilityIdentity(rawValue: savedCompat ?? "") ?? .automatic
+    let persistedIdentity = CompatibilityIdentity(rawValue: savedCompat ?? "") ?? .automatic
+    self.compatibilityIdentity = persistedIdentity
+    self.persistedCompatibilityIdentity = persistedIdentity
+    self.compatibilityLiveIdentity = nil
+    self.compatibilityRetrySnapshot = Self.loadCompatibilityRetrySnapshot()
+    self.userSpaceCloseSlot = nil
+    self.userSpaceAutomaticGeneration = nil
+    self.pendingAutomaticTransitionGeneration = nil
     super.init()
 
     // Consumer routing used to be selectable. Discard every stale selection and always
@@ -67,7 +116,7 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     UserDefaults.standard.removeObject(forKey: "UserSpaceVirtualDeviceEnabled")
     UserDefaults.standard.removeObject(forKey: "OutputMode")
     UserDefaults.standard.removeObject(forKey: "VirtualDeviceMode")
-    _ = initializeCompatibilityBackend()
+    if initializeCompatibilityBackend { _ = self.initializeCompatibilityBackend() }
   }
 
   /// Starts the authenticated local RPC server used by the headless host and CLI.
@@ -85,9 +134,34 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     print("[ApplicationServiceServer] Listening on authenticated local RPC socket")
   }
 
-  public func stop() {
+  public func stop() async {
     rpcServer?.stop()
     rpcServer = nil
+    userSpaceLock.withLock { compatibilityServerStopped = true }
+    await compatibilityTransitionCoordinator.stop()
+    let identifiers = await connectedIdentifierProvider()
+    _ = await feedbackGate.quiesceAndNeutralize(
+      identifiers,
+      timeout: compatibilityTransitionTimeouts.feedbackNanoseconds,
+      clock: compatibilityTransitionClock
+    )
+    typealias RetiredBackend = (
+      backend: (any CompatibilityUserSpaceOutputDispatching)?, slot: CompatibilityBackendCloseSlot?
+    )
+    let old = userSpaceLock.withLock { () -> RetiredBackend in
+      dispatcher.setBackend(nil)
+      let old = userSpaceDispatcher
+      let slot = userSpaceCloseSlot
+      userSpaceDispatcher = nil
+      userSpaceCloseSlot = nil
+      userSpaceAutomaticGeneration = nil
+      pendingAutomaticTransitionGeneration = nil
+      userSpaceEnabled = false
+      compatibilityLiveIdentity = nil
+      userSpaceStatus = "off"
+      return (old, slot)
+    }
+    _ = await closeCompatibilityBackend(old.backend, slot: old.slot)
   }
 
   private static func isTrustedClient(processIdentifier: Int32) -> Bool {
@@ -133,15 +207,28 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
 
   func buildUserSpaceDispatcher(identity: CompatibilityIdentity) throws -> UserSpaceDispatcherBuild
   {
+    if let userSpaceDispatcherBuilder {
+      let dispatcher = try userSpaceDispatcherBuilder(identity)
+      return UserSpaceDispatcherBuild(dispatcher: dispatcher, status: dispatcher.status)
+    }
     if identity == .automatic {
+      let generation = UUID()
       let automatic = AutomaticUserSpaceOutputDispatcher(
         deviceManager: deviceManager,
-        consumerProvider: CompatibilityConsumerRouting.current
-      ) { [weak self] identity in
-        guard let self else { throw UserSpaceOutputDispatcher.CreationError.createFailed }
-        return try self.buildUserSpaceDispatcher(identity: identity).dispatcher
-      }
-      return UserSpaceDispatcherBuild(dispatcher: automatic, status: automatic.status)
+        consumerProvider: CompatibilityConsumerRouting.current,
+        builder: { [weak self] identity in
+          guard let self else { throw UserSpaceOutputDispatcher.CreationError.createFailed }
+          return try self.buildUserSpaceDispatcher(identity: identity).dispatcher
+        },
+        transitionRequester: { [weak self] in
+          self?.requestAutomaticCompatibilityTransition(generation: generation)
+        }
+      )
+      return UserSpaceDispatcherBuild(
+        dispatcher: automatic,
+        status: automatic.status,
+        automaticGeneration: generation
+      )
     }
     let composition = try CompatibilityOutputCompositionFactory.make(identity: identity)
     let compatibilityProfile = composition.profile
@@ -151,16 +238,7 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     let rumbleHandler: UserSpaceOutputDispatcher.RumbleCommandHandler = {
       [weak self] identifier, command in
       guard let self else { return }
-      Task {
-        _ = await self.deviceManager.sendRumble(
-          for: identifier,
-          left: command.left,
-          right: command.right,
-          lt: command.leftTrigger,
-          rt: command.rightTrigger,
-          durationMs: command.durationMs
-        )
-      }
+      self.feedbackGate.submit(identifier: identifier, command: command)
     }
 
     let output = try UserSpaceOutputDispatcher(
@@ -168,8 +246,21 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
       format: format,
       emitsXboxGuideReport: compatibilityProfile.emitsXboxGuideReport,
       onRumbleCommand: rumbleHandler
-    )
-    return UserSpaceDispatcherBuild(dispatcher: output, status: output.status)
+    ) { [weak self] identifier in
+      _ = await self?.feedbackGate.quiesceAndNeutralize(
+        [identifier],
+        timeout: self?.compatibilityTransitionTimeouts.feedbackNanoseconds
+          ?? CompatibilityTransitionTimeouts.standard.feedbackNanoseconds,
+        clock: self?.compatibilityTransitionClock ?? .system,
+        resumeWhenComplete: true
+      )
+    }
+    let gated = CompatibilityUserSpaceOutputDispatchingAdapter(
+      backend: output,
+      deviceManager: deviceManager,
+      identity: identity
+    ) { [weak self] in await self?.deviceManager.connectedDeviceDescriptions() ?? [] }
+    return UserSpaceDispatcherBuild(dispatcher: gated, status: gated.status)
   }
 
   func initializeCompatibilityBackend() -> Bool {
@@ -178,12 +269,14 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
       let build = try buildUserSpaceDispatcher(identity: compatibilityIdentity)
       userSpaceLock.withLock {
         userSpaceDispatcher = build.dispatcher
+        userSpaceCloseSlot = build.closeSlot
+        userSpaceAutomaticGeneration = build.automaticGeneration
         dispatcher.setBackend(build.dispatcher)
         userSpaceEnabled = true
         userSpaceStatus = build.status
+        compatibilityLiveIdentity = compatibilityIdentity
       }
       print("[ApplicationServiceServer] Compatibility virtual gamepad ready")
-      primeUserSpaceDevices(build.dispatcher)
       return true
     } catch {
       userSpaceLock.withLock {
@@ -210,14 +303,126 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     }
   }
 
-  func primeUserSpaceDevices(_ ud: any CompatibilityUserSpaceOutputDispatching) {
-    let dm = deviceManager
-    Task {
-      let identifiers = await dm.connectedDeviceIdentifiers()
-      guard !identifiers.isEmpty else { return }
-      for identifier in identifiers { await ud.dispatch(events: [], from: identifier) }
-      userSpaceLock.withLock { if userSpaceDispatcher != nil { userSpaceStatus = ud.status } }
+  struct UserSpaceStatusSnapshot: Sendable {
+    let enabled: Bool
+    let status: String
+    let requestedIdentity: CompatibilityIdentity
+    let liveIdentity: CompatibilityIdentity?
+    let retrySnapshot: CompatibilityRetrySnapshot?
+  }
+
+  func userSpaceStatusSnapshot() -> UserSpaceStatusSnapshot {
+    userSpaceLock.withLock {
+      let status: String
+      if let userSpaceDispatcher, userSpaceDispatcher.lastRumbleStatus != "none" {
+        status = "\(userSpaceDispatcher.status), rumble: \(userSpaceDispatcher.lastRumbleStatus)"
+      } else if let userSpaceDispatcher {
+        status = userSpaceDispatcher.status
+      } else {
+        status = userSpaceStatus
+      }
+      return UserSpaceStatusSnapshot(
+        enabled: userSpaceEnabled,
+        status: status,
+        requestedIdentity: compatibilityIdentity,
+        liveIdentity: compatibilityLiveIdentity,
+        retrySnapshot: compatibilityRetrySnapshot
+      )
     }
+  }
+
+  func compatibilityTransitionSnapshot() -> CompatibilityTransitionSnapshot {
+    userSpaceLock.withLock {
+      if userSpaceCloseSlot == nil, let userSpaceDispatcher {
+        userSpaceCloseSlot = CompatibilityBackendCloseSlot(userSpaceDispatcher)
+      }
+      return CompatibilityTransitionSnapshot(
+        requestedIdentity: compatibilityIdentity,
+        persistedIdentity: persistedCompatibilityIdentity,
+        liveIdentity: compatibilityLiveIdentity,
+        enabled: userSpaceEnabled,
+        dispatcher: userSpaceDispatcher,
+        closeSlot: userSpaceCloseSlot
+      )
+    }
+  }
+
+  func isCompatibilityServerStopped() -> Bool {
+    userSpaceLock.withLock { compatibilityServerStopped }
+  }
+
+  func closeCompatibilityBackend(
+    _ backend: (any CompatibilityUserSpaceOutputDispatching)?,
+    slot: CompatibilityBackendCloseSlot? = nil,
+    timeout: UInt64? = nil,
+    error: CompatibilityTransitionError = .candidateCloseTimedOut
+  ) async -> Bool {
+    guard let backend else { return true }
+    let closeSlot = userSpaceLock.withLock { () -> CompatibilityBackendCloseSlot in
+      if let slot { return slot }
+      if let userSpaceCloseSlot, userSpaceCloseSlot.backend === (backend as AnyObject) {
+        return userSpaceCloseSlot
+      }
+      let slot = CompatibilityBackendCloseSlot(backend)
+      if userSpaceDispatcher === backend { userSpaceCloseSlot = slot }
+      return slot
+    }
+    return await closeSlot.close(
+      timeout: timeout ?? compatibilityTransitionTimeouts.candidateCloseNanoseconds,
+      clock: compatibilityTransitionClock,
+      error: error
+    )
+  }
+
+  func requestAutomaticCompatibilityTransition(generation: UUID) {
+    let shouldSchedule = userSpaceLock.withLock { () -> Bool in
+      guard compatibilityIdentity == .automatic, userSpaceAutomaticGeneration == generation,
+        pendingAutomaticTransitionGeneration != generation
+      else { return false }
+      pendingAutomaticTransitionGeneration = generation
+      return true
+    }
+    guard shouldSchedule else { return }
+    Task { [weak self] in
+      guard let self else { return }
+      _ = await compatibilityTransitionCoordinator.enqueue { [weak self] in
+        guard let self else { return false }
+        defer {
+          self.userSpaceLock.withLock {
+            if self.pendingAutomaticTransitionGeneration == generation {
+              self.pendingAutomaticTransitionGeneration = nil
+            }
+          }
+        }
+        guard
+          self.userSpaceLock.withLock({
+            self.compatibilityIdentity == .automatic
+              && self.userSpaceAutomaticGeneration == generation
+          })
+        else { return false }
+        return await self.performCompatibilityIdentityTransition(to: .automatic, force: true)
+      }
+    }
+  }
+
+  static func loadCompatibilityRetrySnapshot(defaults: UserDefaults = .standard)
+    -> CompatibilityRetrySnapshot?
+  {
+    guard let data = defaults.data(forKey: compatibilityRetrySnapshotDefaultsKey) else {
+      return nil
+    }
+    return try? JSONDecoder().decode(CompatibilityRetrySnapshot.self, from: data)
+  }
+
+  static func persistCompatibilityRetrySnapshot(
+    _ snapshot: CompatibilityRetrySnapshot?,
+    defaults: UserDefaults = .standard
+  ) {
+    guard let snapshot, let data = try? JSONEncoder().encode(snapshot) else {
+      defaults.removeObject(forKey: compatibilityRetrySnapshotDefaultsKey)
+      return
+    }
+    defaults.set(data, forKey: compatibilityRetrySnapshotDefaultsKey)
   }
 
 }

@@ -12,19 +12,40 @@ public struct Localization: @unchecked Sendable {
   /// The package resource bundle, exposed for deterministic product/resource tests.
   public static var moduleBundle: Bundle { .module }
 
-  private let bundle: Bundle
-  private let preferredLanguages: [String]
+  private let localizationNames: [String]
+  private let localizedLanguage: String?
+  private let preferredBundle: Bundle?
+  private let sourceEnglishBundle: Bundle?
+  private let isSourceLanguage: Bool
+  private let formattingLocale: Locale
 
   public init(bundle: Bundle? = nil, preferredLanguages: [String] = Locale.preferredLanguages) {
-    self.bundle = bundle ?? Self.moduleBundle
-    self.preferredLanguages = preferredLanguages
+    let bundle = bundle ?? Self.moduleBundle
+    let localizationNames = Self.availableLocalizations(in: bundle)
+    let localizedLanguage = Self.localizedLanguage(
+      among: localizationNames,
+      preferredLanguages: preferredLanguages
+    )
+    self.localizationNames = localizationNames
+    self.localizedLanguage = localizedLanguage
+    self.preferredBundle = Self.localizedBundle(for: localizedLanguage, in: bundle)
+    self.sourceEnglishBundle = Self.sourceEnglishBundle(in: bundle)
+    self.isSourceLanguage =
+      localizedLanguage?.caseInsensitiveCompare(Self.sourceLocalization) == .orderedSame
+    if let localizedLanguage {
+      self.formattingLocale = Locale(
+        identifier: localizedLanguage.replacingOccurrences(of: "-", with: "_")
+      )
+    } else {
+      self.formattingLocale = .current
+    }
   }
 
   /// Returns the best available translation, falling back to `defaultValue`
   /// (or the key itself) when a table does not contain the requested entry.
   public func string(_ key: String, defaultValue: String? = nil, comment: String = "") -> String {
     let fallback = defaultValue ?? key
-    guard let preferredBundle = localizedBundle() else { return fallback }
+    guard let preferredBundle else { return fallback }
 
     let value = NSLocalizedString(
       key,
@@ -37,7 +58,7 @@ public struct Localization: @unchecked Sendable {
 
     // A partially translated locale should fall back to the source English
     // resource rather than exposing a key or an empty label.
-    guard let sourceBundle = sourceEnglishBundle(), sourceBundle !== preferredBundle else {
+    guard let sourceBundle = sourceEnglishBundle, sourceBundle !== preferredBundle else {
       return value
     }
     return NSLocalizedString(
@@ -59,7 +80,7 @@ public struct Localization: @unchecked Sendable {
     -> String
   {
     let fallback = defaultValue ?? key
-    guard let preferredBundle = localizedBundle() else {
+    guard let preferredBundle else {
       return Self.format(fallback, count: count, locale: formattingLocale)
     }
 
@@ -77,7 +98,7 @@ public struct Localization: @unchecked Sendable {
     // A partially translated locale may omit the plural entry. Resolve the
     // source-English resource before formatting so the caller never receives
     // a key or a raw `%#@count@` format string.
-    guard let sourceBundle = sourceEnglishBundle() else {
+    guard let sourceBundle = sourceEnglishBundle else {
       return Self.format(value, count: count, locale: formattingLocale)
     }
     let sourceValue = NSLocalizedString(
@@ -109,7 +130,7 @@ public struct Localization: @unchecked Sendable {
   public var resolvedLanguage: String? { localizedLanguage }
 
   /// All locale directories that SwiftPM packaged for this resource bundle.
-  public var availableLocalizations: [String] { Self.availableLocalizations(in: bundle) }
+  public var availableLocalizations: [String] { localizationNames }
 
   /// Returns locale directories present in a bundle, excluding Base resources.
   public static func availableLocalizations(in bundle: Bundle? = nil) -> [String] {
@@ -171,8 +192,9 @@ public struct Localization: @unchecked Sendable {
     parseStringsDictCategories(for: localization, in: bundle ?? moduleBundle)
   }
 
-  private var localizedLanguage: String? {
-    let localizations = Self.availableLocalizations(in: bundle)
+  private static func localizedLanguage(among localizations: [String], preferredLanguages: [String])
+    -> String?
+  {
     guard
       let preferred = Bundle.preferredLocalizations(
         from: localizations,
@@ -182,23 +204,14 @@ public struct Localization: @unchecked Sendable {
     return localizations.first { $0.caseInsensitiveCompare(preferred) == .orderedSame }
   }
 
-  private var isSourceLanguage: Bool {
-    localizedLanguage?.caseInsensitiveCompare(Self.sourceLocalization) == .orderedSame
-  }
-
-  private var formattingLocale: Locale {
-    guard let localizedLanguage else { return .current }
-    return Locale(identifier: localizedLanguage.replacingOccurrences(of: "-", with: "_"))
-  }
-
-  private func localizedBundle() -> Bundle? {
-    guard let language = localizedLanguage,
-      let path = bundle.path(forResource: language, ofType: "lproj")
-    else { return nil }
+  private static func localizedBundle(for language: String?, in bundle: Bundle) -> Bundle? {
+    guard let language, let path = bundle.path(forResource: language, ofType: "lproj") else {
+      return nil
+    }
     return Bundle(path: path)
   }
 
-  private func sourceEnglishBundle() -> Bundle? {
+  private static func sourceEnglishBundle(in bundle: Bundle) -> Bundle? {
     for language in [Self.sourceLocalization, "en", "C"] {
       guard let path = bundle.path(forResource: language, ofType: "lproj"),
         let candidate = Bundle(path: path)

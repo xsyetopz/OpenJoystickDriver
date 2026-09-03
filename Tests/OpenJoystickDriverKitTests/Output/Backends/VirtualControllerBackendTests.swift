@@ -68,8 +68,7 @@ struct VirtualControllerBackendTests {
       #expect(identity.mutationDecision() == .accepted(identity))
     }
     #expect(
-      CompatibilityIdentity.mutationDecision(for: "not-a-profile")
-        == .rejected(.unknownIdentity)
+      CompatibilityIdentity.mutationDecision(for: "not-a-profile") == .rejected(.unknownIdentity)
     )
   }
 
@@ -106,7 +105,7 @@ struct VirtualControllerBackendTests {
     #expect(sdl.deviceProfile.productName == "ASTRO C40 TR Controller")
     #expect(xone.isHardwareSpoof)
     #expect(xone.emitsXboxGuideReport)
-    #expect(apple.emitsXboxGuideReport)
+    #expect(!apple.emitsXboxGuideReport)
     #expect(apple.evidence == .sourceBacked)
     #expect(xone.evidence == .sourceBacked)
     #expect(sdl.evidence == .hardwareVerified)
@@ -249,7 +248,7 @@ struct VirtualControllerBackendTests {
     #expect(xone.format.inputReportID == 1)
     #expect(apple.format.outputReportID == VirtualRumbleOutputReportParser.xboxOneReportID)
     #expect(xone.format.outputReportID == VirtualRumbleOutputReportParser.xboxOneReportID)
-    #expect(apple.profile.emitsXboxGuideReport)
+    #expect(!apple.profile.emitsXboxGuideReport)
     #expect(xone.profile.emitsXboxGuideReport)
     #expect(astro.profile.deviceProfile == .sdlHIDAPIXbox360)
     #expect(astro.format.descriptor == Xbox360MacHIDReportFormat().descriptor)

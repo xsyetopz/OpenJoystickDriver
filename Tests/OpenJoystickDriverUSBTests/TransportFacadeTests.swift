@@ -5,6 +5,19 @@ import Testing
 @testable import OpenJoystickDriverUSB
 
 struct TransportFacadeTests {
+  @Test func facadeExposesPassiveObservationCapabilityWithoutChangingAdmissionOwnership() {
+    let provider: any USBTransportObservationProvider = OpenJoystickDriverUSBTransportProvider()
+    _ = provider
+    #expect(
+      OpenJoystickDriverUSBTransportProvider.selectDevices(
+        direct: [device(route: .ioUSBHost, serviceID: 1, vendorID: 0xFFFF, productID: 1)],
+        driverKit: [],
+        supportedRawUSBModels: [],
+        requiredDriverKitModels: []
+      ).isEmpty
+    )
+  }
+
   @Test func mapsUnsupportedAndBadArgumentToEquivalentUnsupportedTransportErrors() {
     #expect(IOUSBHostTransportProvider.transportError(kIOReturnUnsupported) == .notSupported)
     #expect(IOUSBHostTransportProvider.transportError(kIOReturnBadArgument) == .notSupported)

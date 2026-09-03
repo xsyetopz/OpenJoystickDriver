@@ -21,4 +21,26 @@ struct UserSpaceInputReportStateTests {
     #expect(released == neutral)
     #expect(state.currentReport() == neutral)
   }
+
+  @Test func genericCompatibilityTriggersReturnToTheirExactPreActuationReport() {
+    let format = OJDSDLGamepadFormat()
+    let firstSession = UserSpaceInputReportState(format: format)
+    let neutral = firstSession.currentReport()
+
+    let actuated = firstSession.update {
+      $0.leftTrigger = 32_767
+      $0.rightTrigger = 32_767
+    }
+    let released = firstSession.update {
+      $0.leftTrigger = 0
+      $0.rightTrigger = 0
+    }
+    let recreatedSession = UserSpaceInputReportState(format: format)
+
+    #expect(actuated != neutral)
+    #expect(released == neutral)
+    #expect(recreatedSession.currentReport() == neutral)
+    #expect(Array(neutral[6...7]) == [0, 0])
+    #expect(Array(neutral[12...13]) == [0, 0])
+  }
 }

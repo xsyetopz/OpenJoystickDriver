@@ -117,6 +117,42 @@ struct LocalizationTests {
     #expect(resolver.string("missing", defaultValue: "Caller fallback") == "Caller fallback")
   }
 
+  @Test func resolverCachesLocaleDiscoveryAtInitialization() throws {
+    let root = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "OpenJoystickDriverLocalizationCache-\(UUID().uuidString).bundle"
+    )
+    let resources = root.appendingPathComponent("Contents/Resources")
+    try FileManager.default.createDirectory(
+      at: root.appendingPathComponent("Contents"),
+      withIntermediateDirectories: true
+    )
+    for localization in ["en-US", "fr-FR"] {
+      try FileManager.default.createDirectory(
+        at: resources.appendingPathComponent("\(localization).lproj"),
+        withIntermediateDirectories: true
+      )
+    }
+    defer { try? FileManager.default.removeItem(at: root) }
+
+    let info = """
+      <?xml version="1.0" encoding="UTF-8"?>
+      <plist version="1.0"><dict><key>CFBundleIdentifier</key>
+      <string>test.localization.cache</string></dict></plist>
+      """
+    try Data(info.utf8).write(to: root.appendingPathComponent("Contents/Info.plist"))
+
+    let bundle = try #require(Bundle(path: root.path))
+    let resolver = Localization(bundle: bundle, preferredLanguages: ["fr-FR"])
+    try FileManager.default.createDirectory(
+      at: resources.appendingPathComponent("de-DE.lproj"),
+      withIntermediateDirectories: true
+    )
+
+    #expect(resolver.availableLocalizations == ["en-US", "fr-FR"])
+    #expect(resolver.resolvedLanguage == "fr-FR")
+    #expect(Localization.availableLocalizations(in: bundle) == ["de-DE", "en-US", "fr-FR"])
+  }
+
   @Test func formattedValuesPreserveCatalogPlaceholders() {
     let resolver = Localization(preferredLanguages: ["en-US"])
     let value = resolver.plural(

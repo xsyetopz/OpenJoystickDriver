@@ -57,9 +57,12 @@ public enum GamepadHIDDescriptor {
     0x95, 0x02,  // Report Count: 2
     0x81, 0x02,  // Input: Data, Variable, Absolute
 
-    // Left trigger: Z(0x32) — unsigned
+    // Left trigger: Z(0x32) — positive half of a signed axis.
+    // Chromium normalizes HID axes from their declared logical range. Declaring
+    // 0...32767 makes a released trigger appear as -1; the signed range keeps
+    // the OJD zero-idle report at browser axis 0 while preserving 0...1 travel.
     0x09, 0x32,  // Usage: Z  (left trigger)
-    0x15, 0x00,  // Logical Minimum: 0
+    0x16, 0x01, 0x80,  // Logical Minimum: -32767
     0x26, 0xFF, 0x7F,  // Logical Maximum: 32767
     0x75, 0x10,  // Report Size: 16
     0x95, 0x01,  // Report Count: 1
@@ -74,9 +77,9 @@ public enum GamepadHIDDescriptor {
     0x95, 0x02,  // Report Count: 2
     0x81, 0x02,  // Input: Data, Variable, Absolute
 
-    // Right trigger: Rz(0x35) — unsigned
+    // Right trigger: Rz(0x35) — positive half of a signed axis.
     0x09, 0x35,  // Usage: Rz (right trigger)
-    0x15, 0x00,  // Logical Minimum: 0
+    0x16, 0x01, 0x80,  // Logical Minimum: -32767
     0x26, 0xFF, 0x7F,  // Logical Maximum: 32767
     0x75, 0x10,  // Report Size: 16
     0x95, 0x01,  // Report Count: 1

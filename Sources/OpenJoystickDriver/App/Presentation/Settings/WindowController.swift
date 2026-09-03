@@ -5,6 +5,22 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  enum SettingsWindowSizingPolicy {
+    static let defaultContentSize = NSSize(width: 700, height: 460)
+    static let defaultMinimumContentSize = NSSize(width: 640, height: 400)
+
+    static func minimumContentSize(for pane: SettingsPane) -> NSSize {
+      switch pane {
+      case .controllers: return NSSize(width: 900, height: 500)
+      case .overview, .profiles, .console, .settings: return defaultMinimumContentSize
+      }
+    }
+
+    static func fittingContentSize(current: NSSize, minimum: NSSize) -> NSSize {
+      NSSize(width: max(current.width, minimum.width), height: max(current.height, minimum.height))
+    }
+  }
+
   @MainActor final class SettingsWindowController: NSWindowController, NSWindowDelegate {
     private static let toolbarIdentifier = NSToolbar.Identifier(
       "OpenJoystickDriver.SettingsToolbar"
@@ -21,6 +37,7 @@
 
     init(
       viewModel: RuntimeViewModel,
+      openInputTest: @escaping @MainActor (ApplicationServiceDeviceDescription) -> Void,
       persistence: any SettingsPanePersistence = UserDefaultsSettingsPanePersistence()
     ) {
       navigation = SettingsNavigationModel(persistence: persistence)
@@ -32,22 +49,37 @@
         viewModel: viewModel,
         notificationPermission: notificationPermission,
         preferences: preferences,
-        console: console
+        console: console,
+        openInputTest: openInputTest
       )
       let host = NSHostingView(rootView: rootView)
+      let initialMinimumSize = SettingsWindowSizingPolicy.minimumContentSize(
+        for: navigation.selectedPane
+      )
+      let initialContentSize = SettingsWindowSizingPolicy.fittingContentSize(
+        current: SettingsWindowSizingPolicy.defaultContentSize,
+        minimum: initialMinimumSize
+      )
       let window = NSWindow(
-        contentRect: NSRect(x: 0, y: 0, width: 700, height: 460),
+        contentRect: NSRect(origin: .zero, size: initialContentSize),
         styleMask: [.titled, .closable, .resizable],
         backing: .buffered,
         defer: false
       )
-      window.minSize = NSSize(width: 640, height: 400)
+      window.contentMinSize = initialMinimumSize
       window.hidesOnDeactivate = false
       // Keep the production geometry separate from the retired oversized shell.
       window.setFrameAutosaveName("SettingsWindowGeometry")
       window.title = navigation.selectedPane.title
       window.isReleasedWhenClosed = false
       window.contentView = host
+      let restoredContentSize = window.contentView?.bounds.size ?? initialContentSize
+      window.setContentSize(
+        SettingsWindowSizingPolicy.fittingContentSize(
+          current: restoredContentSize,
+          minimum: initialMinimumSize
+        )
+      )
       window.center()
       super.init(window: window)
       window.delegate = self
@@ -55,6 +87,7 @@
       navigationObservation = navigation.$selectedPane.sink { [weak self] pane in
         guard let self, let window = self.window else { return }
         window.title = pane.title
+        self.updateWindowSizing(for: pane)
         // Combine publishes this property in its willSet phase. Use the emitted pane rather than
         // reading navigation.selectedPane, which still contains the previous value here.
         self.updateToolbarSelection(for: pane)
@@ -67,6 +100,7 @@
 
     func show(pane: SettingsPane?) {
       if let pane { navigation.requestPane(pane) }
+      updateWindowSizing(for: navigation.selectedPane)
       window?.toolbar?.isVisible = true
       updateToolbarSelection()
       window?.makeKeyAndOrderFront(nil)
@@ -77,6 +111,16 @@
       // Hiding, rather than releasing, preserves the selected pane and the user's window geometry.
       sender.orderOut(nil)
       return false
+    }
+
+    private func updateWindowSizing(for pane: SettingsPane) {
+      guard let window else { return }
+      let minimum = SettingsWindowSizingPolicy.minimumContentSize(for: pane)
+      window.contentMinSize = minimum
+      let current = window.contentView?.bounds.size ?? minimum
+      let fitted = SettingsWindowSizingPolicy.fittingContentSize(current: current, minimum: minimum)
+      guard fitted != current else { return }
+      window.setContentSize(fitted)
     }
 
     private func configureToolbar(for window: NSWindow) {

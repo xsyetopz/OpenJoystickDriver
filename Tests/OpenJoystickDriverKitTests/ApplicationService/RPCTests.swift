@@ -4,6 +4,10 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
+private func waitForSemaphore(_ semaphore: DispatchSemaphore, timeout: DispatchTime)
+  -> DispatchTimeoutResult
+{ semaphore.wait(timeout: timeout) }
+
 @Suite(.serialized) struct LocalServiceRPCTests {
   @Test func roundTripUsesPrivateSocketAndBoundedJSONFrame() async throws {
     let socketPath = temporarySocketPath()
@@ -56,16 +60,12 @@ import Testing
     let first = LocalServiceRPCServer(
       socketPath: socketPath,
       authentication: { _ in true },
-      handler: { _, completion in
-        completion(LocalServiceRPCResponse(result: Data(), error: nil))
-      }
+      handler: { _, completion in completion(LocalServiceRPCResponse(result: Data(), error: nil)) }
     )
     let second = LocalServiceRPCServer(
       socketPath: socketPath,
       authentication: { _ in true },
-      handler: { _, completion in
-        completion(LocalServiceRPCResponse(result: Data(), error: nil))
-      }
+      handler: { _, completion in completion(LocalServiceRPCResponse(result: Data(), error: nil)) }
     )
     try first.start()
     defer { first.stop() }
@@ -76,9 +76,7 @@ import Testing
       second.stop()
     } catch LocalServiceRPCError.alreadyRunning {
       #expect(LocalServiceRPCClient.serverProcessIdentifier(socketPath: socketPath) == getpid())
-    } catch {
-      Issue.record("Unexpected second-server error: \(error)")
-    }
+    } catch { Issue.record("Unexpected second-server error: \(error)") }
   }
 
   @Test func oversizedFrameIsRejectedBeforeWrite() throws {
@@ -127,6 +125,54 @@ import Testing
       try await client.requestAccess(.inputMonitoring)
         == PermissionManager.Snapshot(inputMonitoring: .denied, accessibility: .granted)
     )
+  }
+
+  @Test func cancellingHeldRequestClosesConnectionBeforeTimeoutAndNextCallWorks() async throws {
+    let socketPath = temporarySocketPath()
+    let requestReceived = DispatchSemaphore(value: 0)
+    let releaseHeldRequest = DispatchSemaphore(value: 0)
+    let server = LocalServiceRPCServer(
+      socketPath: socketPath,
+      authentication: { _ in true },
+      handler: { request, completion in
+        if request.method == "held" {
+          requestReceived.signal()
+          releaseHeldRequest.wait()
+        }
+        completion(LocalServiceRPCResponse(result: try? JSONEncoder().encode("ok"), error: nil))
+      }
+    )
+    try server.start()
+    defer {
+      releaseHeldRequest.signal()
+      server.stop()
+    }
+
+    let task = Task {
+      let _: String = try await LocalServiceRPCClient.call(
+        method: "held",
+        arguments: LocalServiceRPCEmptyArguments(),
+        timeoutSeconds: 10,
+        socketPath: socketPath
+      )
+    }
+    let received = await Task.detached { waitForSemaphore(requestReceived, timeout: .now() + 1) }
+      .value
+    #expect(received == .success)
+
+    let cancellationStart = ContinuousClock.now
+    task.cancel()
+    await #expect(throws: CancellationError.self) { try await task.value }
+    #expect(ContinuousClock.now - cancellationStart < .seconds(1))
+
+    let result: String = try await LocalServiceRPCClient.call(
+      method: "afterCancellation",
+      arguments: LocalServiceRPCEmptyArguments(),
+      timeoutSeconds: 1,
+      socketPath: socketPath
+    )
+    #expect(result == "ok")
+    releaseHeldRequest.signal()
   }
 
   private func temporarySocketPath() -> String {

@@ -14,7 +14,6 @@ import OpenJoystickDriverKit
   @Published private(set) var compatibilityError: String?
   @Published private(set) var mutationState: RuntimeMutationState = .idle
   @Published private(set) var inputCaptureState: RuntimeInputCaptureState = .idle
-  @Published private(set) var inputStates: [RuntimeDeviceSelector: DeviceInputState] = [:]
   @Published var supportDiagnosticsState: RuntimeSupportDiagnosticsState = .idle
   @Published var supportReportState: RuntimeSupportReportState = .idle
   @Published var supportLogsState: RuntimeSupportLogsState = .idle
@@ -39,6 +38,7 @@ import OpenJoystickDriverKit
   var supportLogsGeneration = 0
   private var mutationInFlight = false
   private var fullRefreshInFlight = false
+  private var scopedRefreshInFlight = false
   private let systemExtensionSetup: SystemExtensionSetupCoordinator
 
   init(
@@ -192,10 +192,52 @@ import OpenJoystickDriverKit
   }
 
   /// Refreshes connection- and profile-sensitive state without replacing the UI with loading state.
-  func refreshLiveStatus() async {
-    guard !fullRefreshInFlight, !mutationInFlight else { return }
+  @discardableResult func refreshLiveStatus() async -> Bool {
+    guard !fullRefreshInFlight, !mutationInFlight, !scopedRefreshInFlight else { return false }
+    let previousStatusState = statusState
+    let previousRemappingState = remappingState
+    let previousPermissionState = permissionState
+    let previousPostEventAccessState = postEventAccessState
+    let previousLoadState = loadState
+    let previousLastError = lastError
+    scopedRefreshInFlight = true
+    defer { scopedRefreshInFlight = false }
     liveStatusGeneration += 1
     let generation = liveStatusGeneration
+    await refreshStatusRetainingPresentation(generation: generation)
+
+    do {
+      let snapshot = try await gateway.remappingSnapshot()
+      guard generation == liveStatusGeneration else { return false }
+      let nextRemappingState = RuntimeRemappingState.available(snapshot)
+      if remappingState != nextRemappingState { remappingState = nextRemappingState }
+      authoritativePostEventAccess = snapshot.postEventAccess
+      let nextPostEventAccessState = RuntimePostEventAccessLoadState.available(
+        snapshot.postEventAccess
+      )
+      if postEventAccessState != nextPostEventAccessState {
+        postEventAccessState = nextPostEventAccessState
+      }
+      updateStatusRemappingSnapshot(snapshot, postEventAccess: snapshot.postEventAccess)
+    } catch {
+      // Keep the last known remapping state during an unobtrusive background refresh.
+    }
+    return previousStatusState != statusState || previousRemappingState != remappingState
+      || previousPermissionState != permissionState
+      || previousPostEventAccessState != postEventAccessState || previousLoadState != loadState
+      || previousLastError != lastError
+  }
+
+  /// Refreshes controller inventory and permission observations without touching unrelated panes.
+  func refreshControllerInventory() async {
+    guard !fullRefreshInFlight, !mutationInFlight, !scopedRefreshInFlight else { return }
+    scopedRefreshInFlight = true
+    defer { scopedRefreshInFlight = false }
+    liveStatusGeneration += 1
+    await refreshStatusRetainingPresentation(generation: liveStatusGeneration)
+  }
+
+  private func refreshStatusRetainingPresentation(generation: Int) async {
     do {
       let payload = try await gateway.status()
       guard generation == liveStatusGeneration else { return }
@@ -215,20 +257,22 @@ import OpenJoystickDriverKit
         permissions = RuntimePermissionSummary(status: payload)
         authoritativePermissionSummary = permissions
       }
-      statusState = .available(
+      let nextStatusState = RuntimeStatusState.available(
         RuntimeStatusPresentation(
           payload: payload,
           postEventAccess: authoritativePostEventAccess ?? previousStatus?.postEventAccess,
           requiresPostEventAccess: previousStatus?.requiresPostEventAccess
         ).applyingPermissions(permissions)
       )
+      if statusState != nextStatusState { statusState = nextStatusState }
       if case .requesting = permissionState {
         // The explicit permission request remains authoritative until its response arrives.
       } else {
-        permissionState = .available(permissions)
+        let nextPermissionState = RuntimePermissionLoadState.available(permissions)
+        if permissionState != nextPermissionState { permissionState = nextPermissionState }
       }
-      loadState = .available
-      lastError = nil
+      if loadState != .available { loadState = .available }
+      if lastError != nil { lastError = nil }
     } catch {
       guard generation == liveStatusGeneration else { return }
       if case .loading = statusState {
@@ -237,17 +281,6 @@ import OpenJoystickDriverKit
           RuntimePresentation.isUnavailable(error) ? .unavailable(message) : .error(message)
         lastError = message
       }
-    }
-
-    do {
-      let snapshot = try await gateway.remappingSnapshot()
-      guard generation == liveStatusGeneration else { return }
-      remappingState = .available(snapshot)
-      authoritativePostEventAccess = snapshot.postEventAccess
-      postEventAccessState = .available(snapshot.postEventAccess)
-      updateStatusRemappingSnapshot(snapshot, postEventAccess: snapshot.postEventAccess)
-    } catch {
-      // Keep the last known remapping state during an unobtrusive background refresh.
     }
   }
 
@@ -374,43 +407,6 @@ import OpenJoystickDriverKit
     }
   }
 
-  func readInputState(for selector: RuntimeDeviceSelector) async {
-    inputGeneration += 1
-    let generation = inputGeneration
-    inputCaptureState = .listening(selector)
-    do {
-      let state = try await gateway.deviceInputState(for: selector)
-      guard generation == inputGeneration else { return }
-      guard let state else {
-        inputCaptureState = .unavailable(
-          selector,
-          OJDLocalized.string(
-            "error.noControllerInput",
-            fallback: "No controller input is available yet."
-          )
-        )
-        return
-      }
-      inputStates[selector] = state
-      inputCaptureState = .received(selector, state)
-    } catch is CancellationError {
-      guard generation == inputGeneration else { return }
-      inputCaptureState = .idle
-    } catch {
-      guard generation == inputGeneration else { return }
-      let message = RuntimePresentation.userFacingError(error)
-      inputCaptureState =
-        RuntimePresentation.isUnavailable(error)
-        ? .unavailable(selector, message) : .error(selector, message)
-      lastError = message
-    }
-  }
-
-  func stopInputCapture() {
-    inputGeneration += 1
-    inputCaptureState = .idle
-  }
-
   func listenForInput(for selector: RuntimeDeviceSelector) async {
     inputGeneration += 1
     let generation = inputGeneration
@@ -422,7 +418,6 @@ import OpenJoystickDriverKit
       do {
         if let state = try await gateway.deviceInputState(for: selector) {
           guard generation == inputGeneration else { return }
-          inputStates[selector] = state
           if let baselineState,
             let detectedSource = RuntimePresentation.detectedTransition(
               from: baselineState,
@@ -692,17 +687,20 @@ import OpenJoystickDriverKit
 
   private func updateStatusPermissions(_ permissions: RuntimePermissionSummary) {
     guard case .available(let status) = statusState else { return }
-    statusState = .available(status.applyingPermissions(permissions))
+    let nextState = RuntimeStatusState.available(status.applyingPermissions(permissions))
+    if statusState != nextState { statusState = nextState }
   }
 
   private func updateStatusPostEventAccess(_ state: RemappingPostEventAccessState?) {
     guard case .available(let status) = statusState else { return }
-    statusState = .available(status.applyingPostEventAccess(state))
+    let nextState = RuntimeStatusState.available(status.applyingPostEventAccess(state))
+    if statusState != nextState { statusState = nextState }
   }
 
   private func updateStatusCompatibilityIdentity(_ identity: CompatibilityIdentity?) {
     guard case .available(let status) = statusState else { return }
-    statusState = .available(status.applyingCompatibilityIdentity(identity))
+    let nextState = RuntimeStatusState.available(status.applyingCompatibilityIdentity(identity))
+    if statusState != nextState { statusState = nextState }
   }
 
   private func updateStatusRemappingSnapshot(
@@ -710,8 +708,9 @@ import OpenJoystickDriverKit
     postEventAccess: RemappingPostEventAccessState?
   ) {
     guard case .available(let status) = statusState else { return }
-    statusState = .available(
+    let nextState = RuntimeStatusState.available(
       status.applyingRemappingSnapshot(snapshot, postEventAccess: postEventAccess)
     )
+    if statusState != nextState { statusState = nextState }
   }
 }

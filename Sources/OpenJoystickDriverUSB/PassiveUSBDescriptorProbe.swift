@@ -1,5 +1,6 @@
 import Foundation
 import IOKit
+import OpenJoystickDriverKit
 
 public struct PassiveUSBDescriptorTuple: Equatable, Sendable, Codable, Hashable {
   public let vendorID: UInt16
@@ -215,8 +216,9 @@ public struct PassiveUSBSuperSpeedPlusValidationContext: Equatable, Sendable, Co
 
   public var maximumBytesPerInterval: UInt32? {
     guard numberOfLanes > 0, laneSpeedMantissaGen1 > 0 else { return nil }
-    let product = UInt64(maxIsoBytesPerBiGen1)
-      .multipliedReportingOverflow(by: UInt64(numberOfLanes))
+    let product = UInt64(maxIsoBytesPerBiGen1).multipliedReportingOverflow(
+      by: UInt64(numberOfLanes)
+    )
     guard !product.overflow else { return nil }
     let scaled = product.partialValue.multipliedReportingOverflow(by: UInt64(laneSpeedMantissa))
     guard !scaled.overflow else { return nil }
@@ -604,6 +606,68 @@ public enum PassiveUSBDescriptorProbe {
     )
   }
 
+  /// Reads descriptor-backed transport facts without claiming an interface or
+  /// issuing a USB transfer. This path is intentionally independent of the
+  /// contributor gate and does not participate in raw-USB admission.
+  static func transportObservation(for device: USBTransportDevice) throws
+    -> ControllerTransportObservation?
+  {
+    let tuple = PassiveUSBDescriptorTuple(vendorID: device.vendorID, productID: device.productID)
+    let roots = try IOUSBHostPassiveUSBRegistrySource().matchingServices(
+      className: "IOUSBHostDevice",
+      numericProperties: ["idVendor": UInt64(tuple.vendorID), "idProduct": UInt64(tuple.productID)]
+    )
+    guard
+      let root = roots.first(where: { node in
+        guard case .unsignedInteger(let location) = node.properties["locationID"] else {
+          return false
+        }
+        return UInt32(exactly: location) == device.locationID
+      })
+    else { return nil }
+
+    let result = PassiveUSBRegistryFactParser.parse(
+      root: root,
+      tuple: tuple,
+      catalogInference: PassiveUSBCatalogInference(
+        source: "descriptor observation",
+        record: "not resolved",
+        parser: "not selected",
+        endpoints: [:]
+      )
+    )
+    let interfaces = (result.parsedDescriptorFacts.configuration?.interfaces ?? []).map {
+      USBInterfaceTransportFacts(
+        interfaceNumber: $0.number,
+        alternateSetting: $0.alternateSetting,
+        interfaceClass: $0.interfaceClass,
+        interfaceSubclass: $0.interfaceSubclass,
+        interfaceProtocol: $0.interfaceProtocol,
+        configurationValue: result.observedUSBFacts.activeConfiguration,
+        endpoints: $0.endpoints.map {
+          USBEndpointTransportFacts(
+            address: $0.address,
+            transferType: endpointTransferType($0.transferType),
+            direction: $0.address & 0x80 == 0 ? .out : .in,
+            maxPacketSize: $0.maxPacketSize,
+            interval: $0.interval
+          )
+        }
+      )
+    }
+    return ControllerTransportObservation(device: device, interfaces: interfaces)
+  }
+
+  private static func endpointTransferType(_ value: String) -> USBEndpointTransferType {
+    switch value.lowercased() {
+    case "control": return .control
+    case "isochronous", "isochronous-adaptive", "isochronous-synchronous": return .isochronous
+    case "bulk": return .bulk
+    case "interrupt": return .interrupt
+    default: return .unknown
+    }
+  }
+
   #if DEBUG
     public static func scanUsingContributorSource(
       authorizedTuple tuple: PassiveUSBDescriptorTuple,
@@ -613,128 +677,4 @@ public enum PassiveUSBDescriptorProbe {
       return try scanWithoutGate(authorizedTuple: tuple, source: source)
     }
   #endif
-}
-
-private struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
-  func matchingServices(className: String, numericProperties: [String: UInt64]) throws
-    -> [PassiveUSBRegistryNode]
-  {
-    try enumerate(className: className, numericProperties: numericProperties, includeChildren: true)
-  }
-
-  private func enumerate(
-    className: String,
-    numericProperties: [String: UInt64],
-    includeChildren: Bool = false
-  ) throws -> [PassiveUSBRegistryNode] {
-    let matching = IOServiceMatching(className)
-    numericProperties.forEach { key, value in
-      var value = Int64(bitPattern: value)
-      if let number = CFNumberCreate(kCFAllocatorDefault, .sInt64Type, &value) {
-        let cfKey = key as CFString
-        CFDictionarySetValue(
-          matching,
-          Unmanaged.passUnretained(cfKey).toOpaque(),
-          Unmanaged.passUnretained(number).toOpaque()
-        )
-      }
-    }
-    var iterator: io_iterator_t = 0
-    let result = IOServiceGetMatchingServices(kIOMasterPortDefault, matching, &iterator)
-    guard result == kIOReturnSuccess else {
-      throw PassiveUSBDescriptorProbeError.matchingFailed(result)
-    }
-    defer { IOObjectRelease(iterator) }
-    var nodes: [PassiveUSBRegistryNode] = []
-    while let service = next(iterator) {
-      defer { IOObjectRelease(service) }
-      nodes.append(try node(service, className: className, includeChildren: includeChildren))
-    }
-    return nodes
-  }
-
-  private func node(_ service: io_service_t, className: String, includeChildren: Bool) throws
-    -> PassiveUSBRegistryNode
-  {
-    let numericKeys = [
-      "idVendor", "idProduct", "locationID", "bDeviceClass", "bDeviceSubClass", "bDeviceProtocol",
-      "bNumConfigurations", "kUSBCurrentConfiguration", "bInterfaceNumber", "bAlternateSetting",
-      "bInterfaceClass", "bInterfaceSubClass", "bInterfaceProtocol", "bEndpointAddress",
-      "wMaxPacketSize", "bInterval", "USBSpeed", "Device Speed", "UsbLinkSpeed", "USB Speed"
-    ]
-    let stringKeys = [
-      "USB Product Name", "Product Name", "transferType", "USBSpeed", "Device Speed",
-      "UsbLinkSpeed", "USB Speed"
-    ]
-    let byteKeys = [
-      "Configuration Descriptor", "kUSBConfigurationDescriptor", "USB Configuration Descriptor",
-      "DescriptorBytes", "descriptorBytes"
-    ]
-    var properties: [String: PassiveUSBRegistryNode.Value] = [:]
-    for key in numericKeys {
-      if let value = property(service, key: key), CFGetTypeID(value) == CFNumberGetTypeID() {
-        var raw: Int64 = 0
-        let number = unsafeDowncast(value, to: CFNumber.self)
-        if CFNumberGetValue(number, .sInt64Type, &raw) {
-          properties[key] = .unsignedInteger(UInt64(bitPattern: raw))
-        }
-      }
-    }
-    for key in stringKeys {
-      if let value = property(service, key: key) as? String { properties[key] = .string(value) }
-    }
-    for key in byteKeys {
-      if let value = property(service, key: key) as? Data { properties[key] = .bytes(Array(value)) }
-    }
-    var children: [PassiveUSBRegistryNode] = []
-    if includeChildren {
-      var iterator: io_iterator_t = 0
-      let result = IORegistryEntryGetChildIterator(service, kIOServicePlane, &iterator)
-      guard result == kIOReturnSuccess else {
-        throw PassiveUSBDescriptorProbeError.matchingFailed(result)
-      }
-      defer { IOObjectRelease(iterator) }
-      while let child = next(iterator) {
-        defer { IOObjectRelease(child) }
-        children.append(try node(child, className: registryClass(child), includeChildren: true))
-      }
-    }
-    return PassiveUSBRegistryNode(
-      serviceClass: className,
-      properties: properties,
-      children: children,
-      registryPath: registryPath(service)
-    )
-  }
-
-  private func registryPath(_ service: io_service_t) -> String {
-    var buffer = [CChar](repeating: 0, count: 4_096)
-    guard IORegistryEntryGetPath(service, kIOServicePlane, &buffer) == kIOReturnSuccess else {
-      return ""
-    }
-    let bytes = buffer.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }
-    return String(bytes: bytes, encoding: .utf8) ?? ""
-  }
-
-  private func property(_ service: io_service_t, key: String) -> AnyObject? {
-    IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?
-      .takeRetainedValue()
-  }
-
-  private func uint64(_ node: PassiveUSBRegistryNode, _ key: String) -> UInt64? {
-    guard case .unsignedInteger(let value) = node.properties[key] else { return nil }
-    return value
-  }
-
-  private func next(_ iterator: io_iterator_t) -> io_service_t? {
-    let service = IOIteratorNext(iterator)
-    return service == 0 ? nil : service
-  }
-
-  private func registryClass(_ service: io_service_t) -> String {
-    var buffer = [CChar](repeating: 0, count: 128)
-    guard IOObjectGetClass(service, &buffer) == kIOReturnSuccess else { return "IORegistryEntry" }
-    let bytes = buffer.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }
-    return String(bytes: bytes, encoding: .utf8) ?? "IORegistryEntry"
-  }
 }

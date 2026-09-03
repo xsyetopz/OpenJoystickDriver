@@ -101,6 +101,13 @@ public struct ApplicationServiceVirtualDeviceSelfTestPayload: Codable, Sendable 
   }
 }
 
+/// Discovery route that owns a connected controller pipeline.
+public enum ApplicationServiceDeviceDiscoverySource: String, Codable, Sendable {
+  case hid
+  case rawUSB = "raw-usb"
+  case unknown
+}
+
 /// Structured description of a connected controller, used in ``ApplicationServiceStatusPayload``.
 public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// Opaque selector for one connected controller during the current runtime session.
@@ -115,6 +122,12 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   public let parser: String
   /// Connection type (e.g. "USB", "HID").
   public let connection: String
+  /// Discovery route that owns the live controller pipeline.
+  public let discoverySource: ApplicationServiceDeviceDiscoverySource
+  /// Observed physical ownership route used by virtual exposure policy.
+  public let physicalOwnership: ControllerOwnershipObservation
+  /// Duplicate-device risk implied by the current physical ownership observation.
+  public let duplicateExposureRisk: DuplicateExposureRisk
   /// USB serial number, or nil if not reported.
   public let serialNumber: String?
   /// Source-backed protocol variant selected from the generated controller record.
@@ -141,6 +154,9 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case productID
     case parser
     case connection
+    case discoverySource
+    case physicalOwnership
+    case duplicateExposureRisk
     case serialNumber
     case protocolVariant
     case mappingFlags
@@ -159,6 +175,9 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     productID: UInt16,
     parser: String,
     connection: String,
+    discoverySource: ApplicationServiceDeviceDiscoverySource = .unknown,
+    physicalOwnership: ControllerOwnershipObservation = .unknown,
+    duplicateExposureRisk: DuplicateExposureRisk = .unknownOwnership,
     serialNumber: String?,
     protocolVariant: ControllerProtocolVariant = .unknown,
     mappingFlags: [String] = [],
@@ -176,6 +195,9 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.productID = productID
     self.parser = parser
     self.connection = connection
+    self.discoverySource = discoverySource
+    self.physicalOwnership = physicalOwnership
+    self.duplicateExposureRisk = duplicateExposureRisk
     self.serialNumber = serialNumber
     self.protocolVariant = protocolVariant
     self.mappingFlags = mappingFlags
@@ -195,6 +217,17 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.productID = try container.decode(UInt16.self, forKey: .productID)
     self.parser = try container.decode(String.self, forKey: .parser)
     self.connection = try container.decode(String.self, forKey: .connection)
+    self.discoverySource =
+      try container.decodeIfPresent(
+        ApplicationServiceDeviceDiscoverySource.self,
+        forKey: .discoverySource
+      ) ?? .unknown
+    self.physicalOwnership =
+      try container.decodeIfPresent(ControllerOwnershipObservation.self, forKey: .physicalOwnership)
+      ?? .unknown
+    self.duplicateExposureRisk =
+      try container.decodeIfPresent(DuplicateExposureRisk.self, forKey: .duplicateExposureRisk)
+      ?? .unknownOwnership
     self.serialNumber = try container.decodeIfPresent(String.self, forKey: .serialNumber)
     self.protocolVariant = try container.decode(
       ControllerProtocolVariant.self,
@@ -220,6 +253,18 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
 ///
 /// Contains the current macOS permission states (as human-readable strings like
 /// "granted" or "denied") and descriptions of all connected controllers.
+public struct ApplicationServiceCompatibilityRetryPayload: Codable, Sendable, Equatable {
+  public let requestedIdentity: String
+  public let priorProfileIdentity: String
+  public let phase: String
+
+  public init(requestedIdentity: String, priorProfileIdentity: String, phase: String) {
+    self.requestedIdentity = requestedIdentity
+    self.priorProfileIdentity = priorProfileIdentity
+    self.phase = phase
+  }
+}
+
 public struct ApplicationServiceStatusPayload: Codable, Sendable {
   /// Input Monitoring permission state (e.g. "granted", "denied").
   public let inputMonitoring: String
@@ -233,6 +278,10 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
   public let userSpaceVirtualDeviceStatus: String?
   /// Compatibility mode identity/protocol selection.
   public let compatibilityIdentity: String?
+  /// Identity currently published by the live compatibility backend, if any.
+  public let compatibilityLiveIdentity: String?
+  /// Persisted transition context available for an explicit retry after rollback failure.
+  public let compatibilityRetry: ApplicationServiceCompatibilityRetryPayload?
 
   /// Creates a new ApplicationServiceStatusPayload.
   public init(
@@ -241,7 +290,9 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     connectedDevices: [ApplicationServiceDeviceDescription],
     userSpaceVirtualDeviceEnabled: Bool? = nil,
     userSpaceVirtualDeviceStatus: String? = nil,
-    compatibilityIdentity: String? = nil
+    compatibilityIdentity: String? = nil,
+    compatibilityLiveIdentity: String? = nil,
+    compatibilityRetry: ApplicationServiceCompatibilityRetryPayload? = nil
   ) {
     self.inputMonitoring = inputMonitoring
     self.accessibility = accessibility
@@ -249,5 +300,7 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     self.userSpaceVirtualDeviceEnabled = userSpaceVirtualDeviceEnabled
     self.userSpaceVirtualDeviceStatus = userSpaceVirtualDeviceStatus
     self.compatibilityIdentity = compatibilityIdentity
+    self.compatibilityLiveIdentity = compatibilityLiveIdentity
+    self.compatibilityRetry = compatibilityRetry
   }
 }

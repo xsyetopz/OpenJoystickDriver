@@ -40,7 +40,9 @@ extension DeviceManager {
   }
 
   private func removeHIDPipelines() async {
-    let hidIdentifiers = pipelines.keys.filter { (deviceInfos[$0]?.connection ?? "") != "USB" }
+    let hidIdentifiers = pipelines.keys.filter {
+      deviceInfos[$0]?.discoverySource.requiresInputMonitoring == true
+    }
 
     for identifier in hidIdentifiers {
       guard let pipeline = pipelines.removeValue(forKey: identifier) else { continue }
@@ -71,7 +73,7 @@ extension DeviceManager {
       for: identifier,
       among: pipelines.keys
     ) {
-      guard deviceInfos[existingIdentifier]?.discoverySource == .rawUSB else { return }
+      guard case .rawUSB = deviceInfos[existingIdentifier]?.discoverySource else { return }
       let replacedPipeline = pipelines.removeValue(forKey: existingIdentifier)
       deviceInfos.removeValue(forKey: existingIdentifier)
       lastPhysicalHIDOutputNanoseconds.removeValue(forKey: existingIdentifier)

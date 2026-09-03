@@ -32,15 +32,22 @@ extension ApplicationServiceServer {
     Task {
       let permissions = await pm.refreshAccessState()
       let devices = await dm.connectedDeviceDescriptions()
-      let userEnabled = userSpaceEnabled
-      let userStatus = currentUserSpaceStatus()
+      let userSnapshot = userSpaceStatusSnapshot()
       let payload = ApplicationServiceStatusPayload(
         inputMonitoring: "\(permissions.inputMonitoring)",
         accessibility: "\(permissions.accessibility)",
         connectedDevices: devices,
-        userSpaceVirtualDeviceEnabled: userEnabled,
-        userSpaceVirtualDeviceStatus: userStatus,
-        compatibilityIdentity: compatibilityIdentity.rawValue
+        userSpaceVirtualDeviceEnabled: userSnapshot.enabled,
+        userSpaceVirtualDeviceStatus: userSnapshot.status,
+        compatibilityIdentity: userSnapshot.requestedIdentity.rawValue,
+        compatibilityLiveIdentity: userSnapshot.liveIdentity?.rawValue,
+        compatibilityRetry: userSnapshot.retrySnapshot.map {
+          ApplicationServiceCompatibilityRetryPayload(
+            requestedIdentity: $0.requestedIdentity.rawValue,
+            priorProfileIdentity: $0.priorProfileIdentity.rawValue,
+            phase: $0.phase.rawValue
+          )
+        }
       )
       do {
         let data = try JSONEncoder().encode(payload)
@@ -253,18 +260,17 @@ extension ApplicationServiceServer {
   }
 
   public func getCompatibilityIdentity(reply: @escaping (String) -> Void) {
-    reply(compatibilityIdentity.rawValue)
+    reply(userSpaceStatusSnapshot().requestedIdentity.rawValue)
   }
 
   public func getVirtualDeviceDiagnostics(reply: @escaping (Data) -> Void) {
     let callback = SendableReply(call: reply)
     Task {
-      let enabled = userSpaceEnabled
-      let status = currentUserSpaceStatus()
+      let userSnapshot = userSpaceStatusSnapshot()
       let devices = await VirtualDeviceDiagnostics.enumerateHIDGamepads()
       let payload = ApplicationServiceVirtualDeviceDiagnosticsPayload(
-        userSpaceVirtualDeviceEnabled: enabled,
-        userSpaceVirtualDeviceStatus: status,
+        userSpaceVirtualDeviceEnabled: userSnapshot.enabled,
+        userSpaceVirtualDeviceStatus: userSnapshot.status,
         hidGamepads: devices
       )
       do { callback.call(try JSONEncoder().encode(payload)) } catch {
@@ -295,67 +301,31 @@ extension ApplicationServiceServer {
   }
 
   private func setCompatibilityIdentityAsync(_ id: CompatibilityIdentity) async -> Bool {
-    let state = userSpaceLock.withLock { (userSpaceEnabled, userSpaceDispatcher) }
-    if state.0, state.1 != nil, compatibilityIdentity == id {
-      UserDefaults.standard.set(id.rawValue, forKey: Self.compatibilityIdentityDefaultsKey)
-      return true
+    await compatibilityTransitionCoordinator.enqueue { [weak self] in
+      guard let self else { return false }
+      return await self.performCompatibilityIdentityTransition(to: id)
     }
-    if state.0, let old = state.1 {
-      do {
-        await closeUserSpaceDispatcher(old)
-        let build = try buildUserSpaceDispatcher(identity: id)
-        userSpaceLock.withLock {
-          dispatcher.setBackend(build.dispatcher)
-          userSpaceDispatcher = build.dispatcher
-          userSpaceStatus = build.status
-          compatibilityIdentity = id
-          UserDefaults.standard.set(id.rawValue, forKey: Self.compatibilityIdentityDefaultsKey)
-        }
-        primeUserSpaceDevices(build.dispatcher)
-        return true
-      } catch {
-        userSpaceLock.withLock {
-          if !userSpaceStatus.hasPrefix("error:") {
-            userSpaceStatus =
-              "error: Failed to switch Compatibility identity (\(id.rawValue)). Kept "
-              + "previous Compatibility device running. \(error)"
-          } else {
-            userSpaceStatus += " (kept previous Compatibility device running)"
-          }
-        }
-        return false
-      }
-    }
-
-    userSpaceLock.withLock {
-      compatibilityIdentity = id
-      UserDefaults.standard.set(id.rawValue, forKey: Self.compatibilityIdentityDefaultsKey)
-    }
-    return true
   }
 
   private func resetSettingsAsync() async -> Bool {
-    let old = userSpaceLock.withLock { userSpaceDispatcher }
-    if let old { await closeUserSpaceDispatcher(old) }
-
-    UserDefaults.standard.removeObject(forKey: Self.compatibilityIdentityDefaultsKey)
-    UserDefaults.standard.removeObject(forKey: "UserSpaceVirtualDeviceEnabled")
-    UserDefaults.standard.removeObject(forKey: "OutputMode")
-    UserDefaults.standard.removeObject(forKey: "VirtualDeviceMode")
-    userSpaceLock.withLock {
-      dispatcher.setBackend(nil)
-      userSpaceDispatcher = nil
-      userSpaceEnabled = false
-      userSpaceStatus = "off"
-      compatibilityIdentity = .automatic
+    await compatibilityTransitionCoordinator.enqueue { [weak self] in
+      guard let self else { return false }
+      return await self.performResetSettingsAsync()
     }
-    return initializeCompatibilityBackend()
   }
 
-  private func closeUserSpaceDispatcher(
-    _ dispatcher: any CompatibilityUserSpaceOutputDispatching
-  ) async {
-    await dispatcher.close()
+  private func performResetSettingsAsync() async -> Bool {
+    let accepted = await performCompatibilityIdentityTransition(
+      to: .automatic,
+      force: true,
+      removePersistedIdentityOnCommit: true
+    )
+    if accepted {
+      UserDefaults.standard.removeObject(forKey: "UserSpaceVirtualDeviceEnabled")
+      UserDefaults.standard.removeObject(forKey: "OutputMode")
+      UserDefaults.standard.removeObject(forKey: "VirtualDeviceMode")
+    }
+    return accepted
   }
 
   func getRemappingSnapshot(

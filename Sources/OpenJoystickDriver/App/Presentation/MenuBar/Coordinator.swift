@@ -13,7 +13,7 @@
     private var statusItem: NSStatusItem?
     private var statusMenu: NSMenu?
     private var settingsWindowController: SettingsWindowController?
-    private var refreshTimer: Timer?
+    private var inputTestWindowController: InputTestWindowController?
     private var liveStatusTimer: Timer?
     private let notificationMonitor = RuntimeNotificationMonitor()
     private let notificationPresenter = RuntimeNotificationCenterDelegate()
@@ -43,10 +43,6 @@
       UNUserNotificationCenter.current().delegate = notificationPresenter
       refreshStatus()
       Task { @MainActor in await viewModel.startSystemExtensionSetup() }
-      refreshTimer = Timer.scheduledTimer(withTimeInterval: 12, repeats: true) { [weak self] _ in
-        guard let self else { return }
-        Task { @MainActor in self.refreshStatus() }
-      }
       liveStatusTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
         guard let self else { return }
         Task { @MainActor in self.refreshLiveStatus() }
@@ -60,10 +56,9 @@
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
       guard !isStopping else { return .terminateNow }
       isStopping = true
-      refreshTimer?.invalidate()
-      refreshTimer = nil
       liveStatusTimer?.invalidate()
       liveStatusTimer = nil
+      inputTestWindowController?.stop()
       Task { @MainActor [weak self, weak sender] in
         guard let self else { return }
         await self.runtime.stop()
@@ -82,15 +77,27 @@
       openSettings(pane: pane ?? .overview)
     }
 
-    @objc func refreshFromStatus(_ sender: Any?) { refreshStatus() }
+    @objc func refreshFromStatus(_ sender: Any?) { refreshLiveStatus() }
 
     @objc func quit(_ sender: Any?) { NSApplication.shared.terminate(sender) }
 
     private func openSettings(pane: SettingsPane?) {
       if settingsWindowController == nil {
-        settingsWindowController = SettingsWindowController(viewModel: viewModel)
+        settingsWindowController = SettingsWindowController(viewModel: viewModel) {
+          [weak self] device in self?.openInputTest(for: device)
+        }
       }
       settingsWindowController?.show(pane: pane)
+    }
+
+    private func openInputTest(for device: ApplicationServiceDeviceDescription) {
+      if inputTestWindowController == nil {
+        inputTestWindowController = InputTestWindowController(
+          runtime: runtime,
+          runtimeViewModel: viewModel
+        )
+      }
+      inputTestWindowController?.show(device: device)
     }
 
     private func installStatusItem() {
@@ -124,7 +131,7 @@
     }
 
     @objc private func showStatusMenu(_ sender: Any?) {
-      refreshStatus()
+      refreshLiveStatus()
       guard let menu = statusMenu, let button = statusItem?.button else { return }
       // Pop up the same native menu on every click after the asynchronous status refresh starts.
       menu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height), in: button)
@@ -146,9 +153,9 @@
       liveStatusRefreshInFlight = true
       Task { @MainActor [weak self] in
         guard let self else { return }
-        await viewModel.refreshLiveStatus()
+        let statusChanged = await viewModel.refreshLiveStatus()
         notificationMonitor.observe(RuntimeNotificationSnapshot(viewModel: viewModel))
-        updateStatusMenu()
+        if statusChanged { updateStatusMenu() }
         liveStatusRefreshInFlight = false
       }
     }

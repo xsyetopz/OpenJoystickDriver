@@ -123,17 +123,78 @@ struct DiscoveredUSBTransport: Equatable, Sendable {
   let outputEndpoint: UInt8
 }
 
-struct USBEndpointTransportFacts: Equatable, Sendable {
-  let address: UInt8
-  let isInterrupt: Bool
-  let isInput: Bool
+public struct USBEndpointTransportFacts: Equatable, Sendable {
+  public let address: UInt8
+  public let isInterrupt: Bool
+  public let isInput: Bool
+  public let transferType: USBEndpointTransferType
+  public let direction: USBEndpointDirection
+  public let maxPacketSize: UInt16?
+  public let interval: UInt8?
+
+  public init(
+    address: UInt8,
+    isInterrupt: Bool,
+    isInput: Bool,
+    transferType: USBEndpointTransferType? = nil,
+    direction: USBEndpointDirection? = nil,
+    maxPacketSize: UInt16? = nil,
+    interval: UInt8? = nil
+  ) {
+    self.address = address
+    self.isInterrupt = isInterrupt
+    self.isInput = isInput
+    self.transferType = transferType ?? (isInterrupt ? .interrupt : .unknown)
+    self.direction = direction ?? (isInput ? .in : .out)
+    self.maxPacketSize = maxPacketSize
+    self.interval = interval
+  }
+
+  public init(
+    address: UInt8,
+    transferType: USBEndpointTransferType,
+    direction: USBEndpointDirection,
+    maxPacketSize: UInt16? = nil,
+    interval: UInt8? = nil
+  ) {
+    self.init(
+      address: address,
+      isInterrupt: transferType == .interrupt,
+      isInput: direction == .in,
+      transferType: transferType,
+      direction: direction,
+      maxPacketSize: maxPacketSize,
+      interval: interval
+    )
+  }
 }
 
-struct USBInterfaceTransportFacts: Equatable, Sendable {
-  let interfaceNumber: UInt8
-  let alternateSetting: UInt8
-  let interfaceClass: UInt8
-  let endpoints: [USBEndpointTransportFacts]
+public struct USBInterfaceTransportFacts: Equatable, Sendable {
+  public let interfaceNumber: UInt8
+  public let alternateSetting: UInt8
+  public let interfaceClass: UInt8
+  public let interfaceSubclass: UInt8?
+  public let interfaceProtocol: UInt8?
+  public let configurationValue: UInt8?
+  public let endpoints: [USBEndpointTransportFacts]
+
+  public init(
+    interfaceNumber: UInt8,
+    alternateSetting: UInt8 = 0,
+    interfaceClass: UInt8,
+    interfaceSubclass: UInt8? = nil,
+    interfaceProtocol: UInt8? = nil,
+    configurationValue: UInt8? = nil,
+    endpoints: [USBEndpointTransportFacts]
+  ) {
+    self.interfaceNumber = interfaceNumber
+    self.alternateSetting = alternateSetting
+    self.interfaceClass = interfaceClass
+    self.interfaceSubclass = interfaceSubclass
+    self.interfaceProtocol = interfaceProtocol
+    self.configurationValue = configurationValue
+    self.endpoints = endpoints
+  }
 }
 
 public enum USBDescriptorTransportResolver {

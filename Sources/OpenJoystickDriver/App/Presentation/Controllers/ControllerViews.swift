@@ -9,6 +9,7 @@
 
   struct ControllersView: View {
     @ObservedObject var viewModel: RuntimeViewModel
+    let openInputTest: @MainActor (ApplicationServiceDeviceDescription) -> Void
     @State private var selectedRuntimeIdentifier: String?
 
     var body: some View {
@@ -145,7 +146,8 @@
           device: selectedDevice,
           activeProfile: activeProfileState(for: selectedDevice),
           retry: refresh,
-          viewModel: viewModel
+          viewModel: viewModel,
+          openInputTest: openInputTest
         )
       } else {
         switch viewModel.statusState {
@@ -195,7 +197,7 @@
       selectedRuntimeIdentifier = devices.first?.runtimeIdentifier
     }
 
-    private func refresh() { Task { @MainActor in await viewModel.refresh() } }
+    private func refresh() { Task { @MainActor in await viewModel.refreshControllerInventory() } }
 
     private func activeProfileState(for device: ApplicationServiceDeviceDescription)
       -> RuntimeActiveProfileState
@@ -220,6 +222,7 @@
     let activeProfile: RuntimeActiveProfileState
     let retry: () -> Void
     @ObservedObject var viewModel: RuntimeViewModel
+    let openInputTest: @MainActor (ApplicationServiceDeviceDescription) -> Void
 
     var body: some View {
       ScrollView {
@@ -229,17 +232,31 @@
           Divider()
           controllerDetails
           Divider()
-          ControllerInputTestView(device: device, viewModel: viewModel)
+          inputTestAction
           Divider()
           ControllerIdentityView(viewModel: viewModel)
         }.padding(28).frame(maxWidth: .infinity, alignment: .leading)
-      }.onAppear { refreshInput() }
-        .ojdAccessibilityLabel(device.name).ojdAccessibilityValue(accessibilityValue)
+      }.ojdAccessibilityLabel(device.name).ojdAccessibilityValue(accessibilityValue)
     }
 
-    private func refreshInput() {
-      Task { @MainActor in
-        await viewModel.readInputState(for: RuntimeDeviceSelector(device: device))
+    private var inputTestAction: some View {
+      HStack(alignment: .center, spacing: 12) {
+        VStack(alignment: .leading, spacing: 3) {
+          Text(OJDLocalized.string("inputTest.title", fallback: "Input Test")).font(.headline)
+          Text(
+            OJDLocalized.string(
+              "inputTest.summary",
+              fallback: "Test buttons, sticks, triggers, rumble, and controller lighting."
+            )
+          ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
+            horizontal: false,
+            vertical: true
+          )
+        }
+        Spacer(minLength: 12)
+        Button(OJDLocalized.string("inputTest.open", fallback: "Open Input Test…")) {
+          openInputTest(device)
+        }
       }
     }
 
@@ -415,55 +432,6 @@
           message
         )
       }
-    }
-  }
-
-  private struct ControllerInputTestView: View {
-    let device: ApplicationServiceDeviceDescription
-    @ObservedObject var viewModel: RuntimeViewModel
-
-    private var selector: RuntimeDeviceSelector { RuntimeDeviceSelector(device: device) }
-
-    var body: some View {
-      VStack(alignment: .leading, spacing: 8) {
-        HStack {
-          Text("Controller Test").font(.headline)
-          Spacer()
-          Button("Refresh") { refresh() }
-          Button("Stop") { viewModel.stopInputCapture() }
-        }
-        inputSummary
-      }
-    }
-
-    @ViewBuilder private var inputSummary: some View {
-      switch viewModel.inputCaptureState {
-      case .idle: Text("Press Refresh to observe controller input.")
-      case .listening: Text("Listening for controller input…")
-      case .received(_, let state), .detected(_, let state, _):
-        VStack(alignment: .leading, spacing: 4) {
-          Text(
-            state.pressedButtons.isEmpty
-              ? "No buttons pressed" : state.pressedButtons.joined(separator: ", ")
-          )
-          Text(
-            String(
-              format: "Sticks %.2f, %.2f / %.2f, %.2f",
-              state.leftStickX,
-              state.leftStickY,
-              state.rightStickX,
-              state.rightStickY
-            )
-          )
-            .font(.caption)
-        }
-      case .unavailable(_, let message), .error(_, let message):
-        Text(message).foregroundColor(Color(NSColor.secondaryLabelColor))
-      }
-    }
-
-    private func refresh() {
-      Task { @MainActor in await viewModel.readInputState(for: selector) }
     }
   }
 

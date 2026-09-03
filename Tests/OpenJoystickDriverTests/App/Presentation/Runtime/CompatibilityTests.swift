@@ -7,18 +7,32 @@ import Testing
 private final class AutomaticBackendProbe: CompatibilityUserSpaceOutputDispatching,
   ControllerLifecycleListener, @unchecked Sendable
 {
+  struct ActivationFailure: Error, Sendable {}
+
+  let failsActivation: Bool
   private(set) var closed = false
+  private(set) var activations: [[DeviceIdentifier]] = []
   var suppressOutput = false
   var status: String { "probe" }
   var lastRumbleStatus: String { "none" }
+  init(failsActivation: Bool = false) { self.failsActivation = failsActivation }
+  func activate(for identifiers: [DeviceIdentifier]) throws {
+    activations.append(identifiers)
+    if failsActivation { throw ActivationFailure() }
+  }
   func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) {}
   func controllerDidStop(_ identifier: DeviceIdentifier) {}
   func close() { closed = true }
 }
 
 private final class AutomaticConsumerBox: @unchecked Sendable {
+  private let lock = NSLock()
   var value = CompatibilityConsumerFamily.sdlHIDAPI
   var created: [AutomaticBackendProbe] = []
+  private var transitionRequests = 0
+
+  func requestTransition() { lock.withLock { transitionRequests += 1 } }
+  func transitionRequestCount() -> Int { lock.withLock { transitionRequests } }
 }
 
 private final class ConcurrentBackendProbe: CompatibilityUserSpaceOutputDispatching,
@@ -30,6 +44,7 @@ private final class ConcurrentBackendProbe: CompatibilityUserSpaceOutputDispatch
   var suppressOutput = false
   var status: String { "probe" }
   var lastRumbleStatus: String { "none" }
+  func activate(for identifiers: [DeviceIdentifier]) throws {}
   func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) {
     lock.withLock { dispatchCount += 1 }
   }
@@ -87,12 +102,177 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     )
   }
 
+  @Test func automaticConsumerChangesWithSameEffectiveIdentityDoNotRebuild() async {
+    let identifier = DeviceIdentifier(vendorID: 0x057E, productID: 0x2009)
+    let probe = ConcurrentFactoryProbe()
+    let box = AutomaticConsumerBox()
+    let description = ApplicationServiceDeviceDescription(
+      name: "Switch",
+      vendorID: identifier.vendorID,
+      productID: identifier.productID,
+      parser: "SwitchPro",
+      connection: "USB",
+      serialNumber: nil,
+      protocolVariant: .switchPro,
+      runtimeIdentifier: identifier.runtimeIdentifier
+    )
+    let descriptionsProvider: @Sendable () -> [ApplicationServiceDeviceDescription] = {
+      [description]
+    }
+    let dispatcher = AutomaticUserSpaceOutputDispatcher(
+      deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
+      consumerProvider: { box.value },
+      builder: { _ in probe.make() },
+      observeConsumerChanges: false,
+      descriptionsProvider: descriptionsProvider
+    )
+
+    await dispatcher.dispatch(events: [], from: identifier)
+    box.value = .appleGameController
+    await dispatcher.refreshForCurrentConsumer()
+
+    #expect(probe.snapshot().0 == 1)
+    #expect(probe.snapshot().2.first?.counts().1 == 0)
+    await dispatcher.close()
+  }
+
+  @Test func automaticActivationBuildsOneCoherentChildPerController() async throws {
+    let identifiers = [
+      DeviceIdentifier(vendorID: 1, productID: 2), DeviceIdentifier(vendorID: 3, productID: 4)
+    ]
+    let created = AutomaticConsumerBox()
+    let descriptions = identifiers.map { description($0) }
+    let descriptionsProvider: @Sendable () -> [ApplicationServiceDeviceDescription] = {
+      descriptions
+    }
+    let dispatcher = AutomaticUserSpaceOutputDispatcher(
+      deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
+      consumerProvider: { .sdlHIDAPI },
+      builder: { _ in
+        let backend = AutomaticBackendProbe()
+        created.created.append(backend)
+        return backend
+      },
+      observeConsumerChanges: false,
+      descriptionsProvider: descriptionsProvider
+    )
+
+    try await dispatcher.activate(for: identifiers)
+    #expect(created.created.count == identifiers.count)
+    #expect(created.created.map(\.activations) == identifiers.map { [[$0]] })
+    await dispatcher.dispatch(events: [], from: identifiers[0])
+    await dispatcher.close()
+    #expect(created.created.allSatisfy { $0.closed })
+  }
+
+  @Test func automaticActivationFailureClosesTheEntireChildSet() async {
+    let identifiers = [
+      DeviceIdentifier(vendorID: 1, productID: 2), DeviceIdentifier(vendorID: 3, productID: 4)
+    ]
+    let created = AutomaticConsumerBox()
+    let descriptions = identifiers.map { description($0) }
+    let descriptionsProvider: @Sendable () -> [ApplicationServiceDeviceDescription] = {
+      descriptions
+    }
+    let dispatcher = AutomaticUserSpaceOutputDispatcher(
+      deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
+      consumerProvider: { .sdlHIDAPI },
+      builder: { _ in
+        let backend = AutomaticBackendProbe(failsActivation: created.created.count == 1)
+        created.created.append(backend)
+        return backend
+      },
+      observeConsumerChanges: false,
+      descriptionsProvider: descriptionsProvider
+    )
+
+    do {
+      try await dispatcher.activate(for: identifiers)
+      Issue.record("Activation unexpectedly succeeded")
+    } catch {}
+    #expect(created.created.count == identifiers.count)
+    #expect(created.created.allSatisfy { $0.closed })
+    await dispatcher.close()
+  }
+
+  @Test func automaticEffectiveIdentityChangeDelegatesWithoutOverlappingChildren() async throws {
+    let identifiers = [
+      DeviceIdentifier(vendorID: 1, productID: 2), DeviceIdentifier(vendorID: 3, productID: 4)
+    ]
+    let created = AutomaticConsumerBox()
+    let box = AutomaticConsumerBox()
+    let descriptions = identifiers.map { description($0) }
+    let dispatcher = AutomaticUserSpaceOutputDispatcher(
+      deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
+      consumerProvider: { box.value },
+      builder: { _ in
+        let backend = AutomaticBackendProbe()
+        created.created.append(backend)
+        return backend
+      },
+      observeConsumerChanges: false,
+      descriptionsProvider: { descriptions },
+      identityProvider: { _, consumer in consumer == .sdlHIDAPI ? .genericHID : .appleGameController
+      },
+      transitionRequester: { box.requestTransition() }
+    )
+
+    try await dispatcher.activate(for: identifiers)
+    box.value = .appleGameController
+    await dispatcher.refreshForCurrentConsumer()
+
+    #expect(box.transitionRequestCount() == 1)
+    #expect(created.created.count == 2)
+    #expect(created.created.allSatisfy { !$0.closed })
+    await dispatcher.close()
+  }
+
+  @Test func repeatedChangedIdentityRefreshRequestsTheOwningTransition() async throws {
+    let identifiers = [
+      DeviceIdentifier(vendorID: 1, productID: 2), DeviceIdentifier(vendorID: 3, productID: 4)
+    ]
+    let created = AutomaticConsumerBox()
+    let box = AutomaticConsumerBox()
+    let descriptions = identifiers.map { description($0) }
+    let dispatcher = AutomaticUserSpaceOutputDispatcher(
+      deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
+      consumerProvider: { box.value },
+      builder: { _ in
+        let backend = AutomaticBackendProbe()
+        created.created.append(backend)
+        return backend
+      },
+      observeConsumerChanges: false,
+      descriptionsProvider: { descriptions },
+      identityProvider: { _, consumer in consumer == .sdlHIDAPI ? .genericHID : .appleGameController
+      },
+      transitionRequester: { box.requestTransition() }
+    )
+
+    try await dispatcher.activate(for: identifiers)
+    let original = created.created
+    box.value = .appleGameController
+    await dispatcher.refreshForCurrentConsumer()
+    await dispatcher.refreshForCurrentConsumer()
+
+    #expect(box.transitionRequestCount() == 2)
+    #expect(created.created.count == 2)
+    #expect(original.allSatisfy { !$0.closed })
+    await dispatcher.close()
+  }
+
   @Test func concurrentFirstDispatchCoalescesAndKeepsBothEvents() async {
     let id = DeviceIdentifier(vendorID: 0x3537, productID: 0x1010)
     let probe = ConcurrentFactoryProbe()
     probe.gate = DispatchSemaphore(value: 0)
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
       deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
       consumerProvider: { .sdlHIDAPI },
       builder: { _ in probe.make() },
       observeConsumerChanges: false,
@@ -119,6 +299,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     probe.gate = DispatchSemaphore(value: 0)
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
       deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
       consumerProvider: { .sdlHIDAPI },
       builder: { _ in probe.make() },
       observeConsumerChanges: false,
@@ -143,6 +324,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     probe.gate = DispatchSemaphore(value: 0)
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
       deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
       consumerProvider: { .sdlHIDAPI },
       builder: { _ in probe.make() },
       observeConsumerChanges: false,
@@ -167,6 +349,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     probe.gate = DispatchSemaphore(value: 0)
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
       deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
       consumerProvider: { .sdlHIDAPI },
       builder: { _ in probe.make() },
       observeConsumerChanges: false,
@@ -198,6 +381,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     let probe = ConcurrentFactoryProbe()
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
       deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
       consumerProvider: { .sdlHIDAPI },
       builder: { _ in probe.make() },
       observeConsumerChanges: false,
@@ -217,6 +401,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     let box = AutomaticConsumerBox()
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
       deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
       consumerProvider: { box.value },
       builder: { _ in probe.make() },
       observeConsumerChanges: false,
@@ -225,7 +410,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     await dispatcher.dispatch(events: [], from: id)
     box.value = .appleGameController
     for _ in 0..<3 { await dispatcher.refreshForCurrentConsumer() }
-    #expect(probe.snapshot().0 == 2)
+    #expect(probe.snapshot().0 == 1)
     await dispatcher.close()
   }
 
@@ -234,6 +419,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     let probe = ConcurrentFactoryProbe()
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
       deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
       consumerProvider: { .sdlHIDAPI },
       builder: { _ in probe.make() },
       observeConsumerChanges: false,
@@ -253,6 +439,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     let box = AutomaticConsumerBox()
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
       deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
       consumerProvider: { box.value },
       builder: { _ in probe.make() },
       observeConsumerChanges: false,
@@ -262,7 +449,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     box.value = .appleGameController
     await dispatcher.refreshForCurrentConsumer()
     await dispatcher.dispatch(events: [], from: id)
-    #expect(probe.snapshot().2.map { $0.counts().0 } == [1, 1])
+    #expect(probe.snapshot().2.map { $0.counts().0 } == [2])
     await dispatcher.close()
   }
 
@@ -272,6 +459,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     let probe = ConcurrentFactoryProbe()
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
       deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
       consumerProvider: { .sdlHIDAPI },
       builder: { _ in probe.make() },
       observeConsumerChanges: false,
@@ -311,6 +499,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     }
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
       deviceManager: manager,
+      ownershipProvider: { _ in .exclusiveRawUSB },
       consumerProvider: consumerProvider,
       builder: builder,
       observeConsumerChanges: false,
@@ -321,8 +510,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     await dispatcher.refreshForCurrentConsumer()
     box.value = .unknown
     await dispatcher.refreshForCurrentConsumer()
-    #expect(box.created.count == 3)
-    #expect(box.created.dropLast().allSatisfy { $0.closed })
+    #expect(box.created.count == 1)
     await dispatcher.controllerDidStop(identifier)
     #expect(box.created.last?.closed == true)
     await dispatcher.close()
@@ -334,6 +522,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
       let probe = ConcurrentFactoryProbe()
       let dispatcher = AutomaticUserSpaceOutputDispatcher(
         deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+        ownershipProvider: { _ in .exclusiveRawUSB },
         consumerProvider: { .sdlHIDAPI },
         builder: { _ in probe.make() },
         observeConsumerChanges: false,
@@ -460,8 +649,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     let priorRuntimeStatus = server.currentUserSpaceStatus()
 
     let accepted = await withCheckedContinuation { continuation in
-      server.setCompatibilityIdentity("xone-hid") { result in
-        continuation.resume(returning: result)
+      server.setCompatibilityIdentity("xone-hid") { result in continuation.resume(returning: result)
       }
     }
 
@@ -500,6 +688,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
       server.compatibilityIdentity = .appleGameController
       server.userSpaceDispatcher = backend
       server.userSpaceEnabled = true
+      server.compatibilityLiveIdentity = .appleGameController
       compatibilityDispatcher.setBackend(backend)
     }
 

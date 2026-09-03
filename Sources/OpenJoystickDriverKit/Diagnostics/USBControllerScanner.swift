@@ -8,6 +8,9 @@ public struct USBControllerDescription: Equatable, Sendable {
   public let inputEndpoint: String
   public let outputEndpoint: String
   public let mappings: [String]
+  public let transportObservation: ControllerTransportObservation?
+  public let classification: ProtocolClassification?
+  public let reconciliation: ProtocolReconciliation?
 
   public init(
     vendorID: UInt16,
@@ -18,7 +21,10 @@ public struct USBControllerDescription: Equatable, Sendable {
     protocolVariant: String,
     inputEndpoint: String,
     outputEndpoint: String,
-    mappings: [String]
+    mappings: [String],
+    transportObservation: ControllerTransportObservation? = nil,
+    classification: ProtocolClassification? = nil,
+    reconciliation: ProtocolReconciliation? = nil
   ) {
     self.vendorID = vendorID
     self.productID = productID
@@ -29,17 +35,45 @@ public struct USBControllerDescription: Equatable, Sendable {
     self.inputEndpoint = inputEndpoint
     self.outputEndpoint = outputEndpoint
     self.mappings = mappings
+    self.transportObservation = transportObservation
+    self.classification = classification
+    self.reconciliation = reconciliation
   }
+}
+
+public protocol USBTransportObservationProvider: USBTransportProvider {
+  func transportObservations() async throws -> [ControllerTransportObservation]
 }
 
 public enum USBControllerScanner {
   public static func scanVendorSpecific(using provider: any USBTransportProvider) async throws
     -> [USBControllerDescription]
-  { try await provider.devices().map(description) }
+  {
+    let devices = try await provider.devices()
+    let observations: [ControllerTransportObservation]
+    if let observingProvider = provider as? any USBTransportObservationProvider {
+      observations = try await observingProvider.transportObservations()
+    } else {
+      observations = []
+    }
+    return devices.map { device in
+      let observation = observations.first {
+        $0.vendorID == device.vendorID && $0.productID == device.productID
+      }
+      return description(for: device, observation: observation)
+    }
+  }
 
-  private static func description(for device: USBTransportDevice) -> USBControllerDescription {
+  private static func description(
+    for device: USBTransportDevice,
+    observation: ControllerTransportObservation? = nil
+  ) -> USBControllerDescription {
     let identifier = DeviceIdentifier(vendorID: device.vendorID, productID: device.productID)
     let profile = ParserRegistry().runtimeProfile(for: identifier)
+    let classification = observation.map(USBProtocolClassifier.classify)
+    let reconciliation = observation.map {
+      KnownRecordProtocolReconciler.reconcile(observation: $0, profile: profile)
+    }
     return USBControllerDescription(
       vendorID: device.vendorID,
       productID: device.productID,
@@ -49,7 +83,10 @@ public enum USBControllerScanner {
       protocolVariant: profile.protocolVariant.rawValue,
       inputEndpoint: String(profile.transportProfile.inputEndpoint, radix: 16),
       outputEndpoint: String(profile.transportProfile.outputEndpoint, radix: 16),
-      mappings: profile.mappingFlags
+      mappings: profile.mappingFlags,
+      transportObservation: observation,
+      classification: classification,
+      reconciliation: reconciliation
     )
   }
 }

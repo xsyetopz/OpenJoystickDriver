@@ -41,7 +41,27 @@ struct RumbleStopTokenRegistry {
 public actor DeviceManager {
   enum DiscoverySource {
     case hid
-    case rawUSB
+    case rawUSB(route: USBTransportRoute)
+
+    var requiresInputMonitoring: Bool {
+      if case .hid = self { return true }
+      return false
+    }
+
+    var applicationServiceValue: ApplicationServiceDeviceDiscoverySource {
+      switch self {
+      case .hid: .hid
+      case .rawUSB: .rawUSB
+      }
+    }
+
+    var ownershipObservation: ControllerOwnershipObservation {
+      switch self {
+      case .hid: .nativeHIDVisible
+      case .rawUSB(.ioUSBHost): .exclusiveRawUSB
+      case .rawUSB(.usbDriverKit): .driverKitOwnedUSB
+      }
+    }
   }
 
   struct DeviceInfo {
@@ -49,6 +69,10 @@ public actor DeviceManager {
     let connection: String
     let serialNumber: String?
     let discoverySource: DiscoverySource
+
+    var ownershipObservation: ControllerOwnershipObservation {
+      discoverySource.ownershipObservation
+    }
   }
 
   let parserRegistry: ParserRegistry
@@ -137,6 +161,13 @@ public actor DeviceManager {
     return pipelines[key]?.inputState()
   }
 
+  /// Returns the ownership evidence for the exact connected device identifier.
+  ///
+  /// Missing identifiers intentionally fail closed to unknown ownership.
+  public func ownershipObservation(for identifier: DeviceIdentifier)
+    -> ControllerOwnershipObservation
+  { deviceInfos[identifier]?.ownershipObservation ?? .unknown }
+
   /// Returns recent raw USB packets for a device matched by vendor and product ID.
   ///
   /// Returns an empty array if no pipeline is active for the device.
@@ -175,7 +206,11 @@ public actor DeviceManager {
     }
 
     let didStartUSB = await pipeline.sendRumble(left: left, right: right, lt: lt, rt: rt)
-    if !didStartUSB { await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline) }
+    if !didStartUSB {
+      do { try await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline) } catch {
+        return false
+      }
+    }
     let didStartHID =
       didStartUSB
       ? false
@@ -228,7 +263,9 @@ public actor DeviceManager {
     else { return }
     let didStopUSB = await pipeline.sendRumble(left: 0, right: 0, lt: 0, rt: 0)
     if !didStopUSB {
-      await enforcePhysicalHIDOutputInterval(for: identifier, pipeline: pipeline)
+      do { try await enforcePhysicalHIDOutputInterval(for: identifier, pipeline: pipeline) } catch {
+        return
+      }
       _ = await sendHIDRumbleReport(
         await pipeline.hidRumbleReport(left: 0, right: 0, lt: 0, rt: 0),
         locationID: identifier.locationID
@@ -251,7 +288,9 @@ public actor DeviceManager {
       let pipeline = pipelines[key], let locationID = key.locationID,
       let report = await pipeline.hidColorReport(red: red, green: green, blue: blue)
     else { return false }
-    await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline)
+    do { try await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline) } catch {
+      return false
+    }
     return await hidManager.setOutputReport(locationID: locationID, report: report)
   }
 
@@ -282,7 +321,9 @@ public actor DeviceManager {
     guard let locationID = key.locationID,
       let report = await pipeline.hidPlayerIndicatorReport(indicator)
     else { return false }
-    await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline)
+    do { try await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline) } catch {
+      return false
+    }
     return await hidManager.setOutputReport(locationID: locationID, report: report)
   }
 
@@ -318,7 +359,7 @@ public actor DeviceManager {
   private func enforcePhysicalHIDOutputInterval(
     for identifier: DeviceIdentifier,
     pipeline: DevicePipeline
-  ) async {
+  ) async throws {
     let minimum = pipeline.minimumPhysicalOutputIntervalNanoseconds()
     guard minimum > 0 else { return }
     while true {
@@ -329,7 +370,7 @@ public actor DeviceManager {
         lastPhysicalHIDOutputNanoseconds[identifier] = now
         return
       }
-      try? await Task.sleep(nanoseconds: minimum - elapsed)
+      try await Task.sleep(nanoseconds: minimum - elapsed)
     }
   }
 
@@ -347,12 +388,19 @@ public actor DeviceManager {
     pipelines.keys.map { id in
       let info = deviceInfos[id]
       let profile = parserRegistry.runtimeProfile(for: id)
+      let ownership = info?.ownershipObservation ?? .unknown
       return ApplicationServiceDeviceDescription(
         name: info?.name ?? "Controller",
         vendorID: id.vendorID,
         productID: id.productID,
         parser: profile.parserName,
         connection: info?.connection ?? "USB",
+        discoverySource: info?.discoverySource.applicationServiceValue ?? .unknown,
+        physicalOwnership: ownership,
+        duplicateExposureRisk: ControllerExposureDecision.decide(
+          ownership: ownership,
+          intent: .outputDisabled
+        ).duplicateRisk,
         serialNumber: info?.serialNumber,
         protocolVariant: profile.protocolVariant,
         mappingFlags: profile.mappingFlags,

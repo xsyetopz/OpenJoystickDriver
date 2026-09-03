@@ -7,6 +7,17 @@ import Foundation
 /// Note:
 /// - This descriptor uses Report IDs. The primary gamepad input report is Report ID 1.
 public enum XboxOneBluetoothHIDDescriptor {
+  /// Maps stable OJD button bits to the Apple GameController-facing usages in
+  /// the primary Xbox Bluetooth report. Guide remains on its existing path.
+  public static let buttonUsageMap: [Int: Int] = [
+    6: 9,  // L3 -> usage 9 (B10)
+    7: 10,  // R3 -> usage 10 (B11)
+    8: 8,  // Start/Menu -> usage 8 (B9)
+    9: 7,  // Back/View -> usage 7 (B8)
+    10: 11,  // Guide/Home -> usage 11
+    11: 12, 12: 13, 13: 14, 14: 15
+  ]
+
   public static let descriptor: [UInt8] = [
     0x05, 0x01, 0x09, 0x05, 0xA1, 0x01, 0x85, 0x01, 0x09, 0x01, 0xA1, 0x00, 0x09, 0x30, 0x09, 0x31,
     0x15, 0x00, 0x27, 0xFF, 0xFF, 0x00, 0x00, 0x95, 0x02, 0x75, 0x10, 0x81, 0x02, 0xC0, 0x09, 0x01,

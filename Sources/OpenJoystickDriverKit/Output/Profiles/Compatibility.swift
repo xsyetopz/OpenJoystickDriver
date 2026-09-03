@@ -69,6 +69,68 @@ public enum PhysicalProtocolSubfamily: String, Codable, Sendable {
 
 }
 
+/// Why a compatibility identity is unavailable for a physical protocol family.
+public enum CompatibilityProfileAvailabilityReason: String, Codable, Sendable {
+  case automaticRequiresResolution
+  case xbox360IdentityRequiresXbox360Family
+  case xboxOneIdentityRequiresXboxGIPFamily
+}
+
+/// The result of the pure physical-family and explicit-identity compatibility policy.
+public enum CompatibilityProfileAvailabilityDecision: Equatable, Sendable {
+  case available
+  case unavailable(reason: CompatibilityProfileAvailabilityReason)
+
+  /// Whether this identity can be passed as `ControllerExposureDecision.profileAvailable`.
+  public var isAvailable: Bool {
+    if case .available = self { return true }
+    return false
+  }
+
+  /// The boolean projection named for `ControllerExposureDecision.profileAvailable`.
+  public var profileAvailable: Bool { isAvailable }
+
+  /// The policy reason when the identity is unavailable.
+  public var reason: CompatibilityProfileAvailabilityReason? {
+    if case .unavailable(let reason) = self { return reason }
+    return nil
+  }
+}
+
+/// Pure Kit-owned policy for physical-family to explicit virtual-identity compatibility.
+public enum CompatibilityProfileAvailabilityPolicy {
+  /// Evaluates one explicit identity for a connected physical device.
+  public static func decision(
+    for device: ApplicationServiceDeviceDescription,
+    identity: CompatibilityIdentity
+  ) -> CompatibilityProfileAvailabilityDecision {
+    decision(for: AutomaticCompatibilityResolver.subfamily(for: device), identity: identity)
+  }
+
+  /// Evaluates one explicit identity against one physical protocol subfamily.
+  public static func decision(
+    for subfamily: PhysicalProtocolSubfamily,
+    identity: CompatibilityIdentity
+  ) -> CompatibilityProfileAvailabilityDecision {
+    switch identity {
+    case .automatic: return .unavailable(reason: .automaticRequiresResolution)
+    case .genericHID: return .available
+    case .sdl2_3, .xbox360HID:
+      return subfamily == .xbox360
+        ? .available : .unavailable(reason: .xbox360IdentityRequiresXbox360Family)
+    case .appleGameController, .xoneHID:
+      return subfamily == .xboxGIP
+        ? .available : .unavailable(reason: .xboxOneIdentityRequiresXboxGIPFamily)
+    }
+  }
+
+  /// Returns the boolean projection consumed by exposure policy.
+  public static func isAvailable(
+    _ identity: CompatibilityIdentity,
+    for subfamily: PhysicalProtocolSubfamily
+  ) -> Bool { decision(for: subfamily, identity: identity).isAvailable }
+}
+
 public enum AutomaticCompatibilityDecisionReason: String, Codable, Sendable {
   case selectedCatalogTuple
   case reportedConsumerFailure
@@ -143,7 +205,7 @@ public enum CompatibilityEvidenceCatalog {
 }
 
 public enum AutomaticCompatibilityResolver {
-  static func subfamily(for device: ApplicationServiceDeviceDescription)
+  public static func subfamily(for device: ApplicationServiceDeviceDescription)
     -> PhysicalProtocolSubfamily
   {
     let subfamily: PhysicalProtocolSubfamily
@@ -204,10 +266,11 @@ public enum CompatibilityOutputProfileCatalog {
         identity: identity,
         deviceProfile: .xboxOneS,
         displayName: "Apple GameController",
-        notes: "Source-backed Apple GameController candidate using the Xbox One S "
-          + "Bluetooth HID tuple; live input and haptics remain unverified.",
+        notes: "Apple GameController candidate using the Xbox One S Bluetooth HID tuple. "
+          + "Guide is carried in the primary gamepad report so macOS does not consume a "
+          + "separate System Main Menu event before browser clients can observe it.",
         isHardwareSpoof: true,
-        emitsXboxGuideReport: true,
+        emitsXboxGuideReport: false,
         evidence: .sourceBacked,
         consumerFamily: .appleGameController,
         evidenceByConsumer: [.appleGameController: .sourceBacked]
@@ -268,7 +331,8 @@ public enum CompatibilityOutputCompositionFactory {
       format = try HIDDescriptorReportFormat(
         descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
         outputReportID: VirtualRumbleOutputReportParser.xboxOneReportID,
-        outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize
+        outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize,
+        buttonUsageMap: XboxOneBluetoothHIDDescriptor.buttonUsageMap
       )
     case .xbox360HID: format = Xbox360MacHIDReportFormat(topLevelUsage: 0x05)
     }

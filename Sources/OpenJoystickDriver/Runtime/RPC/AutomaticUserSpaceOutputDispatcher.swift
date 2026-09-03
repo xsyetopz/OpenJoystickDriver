@@ -21,12 +21,11 @@ final class AutomaticBackendSlot: @unchecked Sendable {
   }
   func retire() async { await retireAndWait() }
   func retireAndWait() async {
-    let shouldClose = lock.withLock { retired = true; return leases == 0 }
-    if shouldClose {
-      await closeOnce()
-    } else {
-      await waitForCloseCompletion()
+    let shouldClose = lock.withLock {
+      retired = true
+      return leases == 0
     }
+    if shouldClose { await closeOnce() } else { await waitForCloseCompletion() }
   }
   func release() async {
     let shouldClose = lock.withLock { () -> Bool in
@@ -38,7 +37,10 @@ final class AutomaticBackendSlot: @unchecked Sendable {
   func closeOnce() async {
     let owner = lock.withLock { () -> Int in
       if closeCompleted { return 0 }
-      if !closed { closed = true; return 1 }
+      if !closed {
+        closed = true
+        return 1
+      }
       return 2
     }
     if owner == 1 {
@@ -51,7 +53,9 @@ final class AutomaticBackendSlot: @unchecked Sendable {
         return result
       }
       waiters.forEach { $0.resume() }
-    } else if owner == 2 { await waitForCloseCompletion() }
+    } else if owner == 2 {
+      await waitForCloseCompletion()
+    }
   }
   private func waitForCloseCompletion() async {
     await withCheckedContinuation { continuation in
@@ -108,15 +112,88 @@ private actor AutomaticDispatcherCoordinator {
   var currentConsumer: CompatibilityConsumerFamily = .unknown
   var entries: [DeviceIdentifier: Entry] = [:]
 
+  func activateOne(
+    identifier: DeviceIdentifier,
+    descriptions: [ApplicationServiceDeviceDescription],
+    consumer: CompatibilityConsumerFamily,
+    isEligible: @escaping @Sendable (DeviceIdentifier, CompatibilityIdentity) async -> Bool,
+    identityProvider:
+      @escaping @Sendable (ApplicationServiceDeviceDescription, CompatibilityConsumerFamily) ->
+      CompatibilityIdentity,
+    factory:
+      @escaping @Sendable (CompatibilityIdentity) throws ->
+      any CompatibilityUserSpaceOutputDispatching
+  ) async throws {
+    guard !closed else { throw UserSpaceOutputDispatcher.CreationError.createFailed }
+    let description = descriptions.first { $0.runtimeIdentifier == identifier.runtimeIdentifier }
+    let identity = description.map { identityProvider($0, consumer) } ?? .genericHID
+    guard await isEligible(identifier, identity) else { return }
+    let slot = AutomaticBackendSlot(try factory(identity))
+    do {
+      try await slot.backend.activate(for: [identifier])
+      guard !closed else { throw CancellationError() }
+      await slot.backend.setOutputSuppressed(suppressedOutput)
+      var entry = Entry()
+      entry.consumer = consumer
+      entry.identity = identity
+      entry.installed = slot
+      entries[identifier] = entry
+      currentConsumer = consumer
+    } catch {
+      await slot.closeOnce()
+      throw error
+    }
+  }
+
+  func activate(
+    identifiers: [DeviceIdentifier],
+    descriptions: [ApplicationServiceDeviceDescription],
+    consumer: CompatibilityConsumerFamily,
+    isEligible: @escaping @Sendable (DeviceIdentifier, CompatibilityIdentity) async -> Bool,
+    identityProvider:
+      @escaping @Sendable (ApplicationServiceDeviceDescription, CompatibilityConsumerFamily) ->
+      CompatibilityIdentity,
+    factory:
+      @escaping @Sendable (CompatibilityIdentity) throws ->
+      any CompatibilityUserSpaceOutputDispatching
+  ) async throws {
+    guard !closed, entries.isEmpty else {
+      throw UserSpaceOutputDispatcher.CreationError.createFailed
+    }
+
+    var seen = Set<DeviceIdentifier>()
+    let identifiers = identifiers.filter { seen.insert($0).inserted }
+    do {
+      for identifier in identifiers {
+        try await activateOne(
+          identifier: identifier,
+          descriptions: descriptions,
+          consumer: consumer,
+          isEligible: isEligible,
+          identityProvider: identityProvider,
+          factory: factory
+        )
+      }
+    } catch {
+      let installed = entries.values.compactMap(\.installed)
+      entries.removeAll()
+      for slot in installed { await slot.closeOnce() }
+      throw error
+    }
+  }
+
   func leaseForDispatch(
     controller: DeviceIdentifier,
     consumer: CompatibilityConsumerFamily,
     identity: CompatibilityIdentity,
+    isEligible: @escaping @Sendable (DeviceIdentifier, CompatibilityIdentity) async -> Bool,
     factory:
       @escaping @Sendable (CompatibilityIdentity) throws ->
       any CompatibilityUserSpaceOutputDispatching
   ) async -> AutomaticBackendLease? {
     if closed { return nil }
+    guard await isEligible(controller, identity) else { return nil }
+    guard currentConsumer == consumer || currentConsumer == .unknown else { return nil }
     if currentConsumer != consumer {
       currentConsumer = consumer
       foregroundGeneration &+= 1
@@ -127,16 +204,17 @@ private actor AutomaticDispatcherCoordinator {
     }
     var entry = entries[controller] ?? Entry()
     entries[controller] = entry
-    if let installed = entry.installed, entry.consumer == consumer, entry.identity == identity,
-      let lease = installed.acquire()
+    if let installed = entry.installed, entry.identity == identity, let lease = installed.acquire()
     {
+      entry.consumer = consumer
+      entries[controller] = entry
       return lease
     }
     let generation = entry.generation
     let pending: Pending
     if let old = entry.pending, old.controllerGeneration == generation,
-      old.foregroundGeneration == foregroundGeneration, old.consumer == consumer
-        && old.identity == identity
+      old.foregroundGeneration == foregroundGeneration,
+      old.consumer == consumer && old.identity == identity
     {
       pending = old
     } else {
@@ -187,12 +265,12 @@ private actor AutomaticDispatcherCoordinator {
       {
         return lease
       }
-      if let installed = current.installed, current.consumer == consumer,
-        current.identity == identity,
+      if let installed = current.installed, current.identity == identity,
         let lease = installed.acquire()
       {
         if installed === candidate { return lease }
         await candidate.closeOnce()
+        current.consumer = consumer
         entries[controller] = current
         return lease
       }
@@ -227,90 +305,35 @@ private actor AutomaticDispatcherCoordinator {
     }
   }
 
-  func setSuppressed(_ value: Bool) async {
-    suppressedOutput = value
-    for entry in entries.values {
-      if let backend = entry.installed?.backend {
-        await backend.setOutputSuppressed(value)
-      }
-    }
-  }
-
-  func refresh(
-    consumer: CompatibilityConsumerFamily,
+  func canAdoptConsumer(
+    _ consumer: CompatibilityConsumerFamily,
     descriptions: [ApplicationServiceDeviceDescription],
-    factory:
-      @escaping @Sendable (CompatibilityIdentity) throws ->
-      any CompatibilityUserSpaceOutputDispatching
-  ) async {
-    guard !closed else { return }
-    setConsumer(consumer)
-    let foreground = foregroundGeneration
-    for (controller, entry) in entries where entry.alive {
+    isEligible: @escaping @Sendable (DeviceIdentifier, CompatibilityIdentity) async -> Bool,
+    identityProvider:
+      @escaping @Sendable (ApplicationServiceDeviceDescription, CompatibilityConsumerFamily) ->
+      CompatibilityIdentity
+  ) async -> Bool {
+    for (controller, entry) in entries where entry.alive && entry.installed != nil {
       guard
         let description = descriptions.first(where: {
           $0.runtimeIdentifier == controller.runtimeIdentifier
         })
-      else { continue }
-      let identity = AutomaticCompatibilityResolver.resolve(for: description, consumer: consumer)
-        .identity
-      if entry.consumer == consumer, entry.identity == identity, entry.installed != nil {
-        continue
-      }
-      let task = Task { () throws -> AutomaticBackendSlot in
-        try Task.checkCancellation()
-        let slot = AutomaticBackendSlot(try factory(identity))
-        do { try Task.checkCancellation() } catch {
-          await slot.closeOnce()
-          throw error
-        }
-        return slot
-      }
-      let pending = Pending(
-        controller: controller,
-        token: UUID(),
-        controllerGeneration: entry.generation,
-        foregroundGeneration: foreground,
-        consumer: consumer,
-        identity: identity,
-        task: task
-      )
-      guard var current = entries[controller] else { continue }
-      current.pending?.task.cancel()
-      current.pending = pending
-      current.pendingTasks[pending.token] = pending
-      entries[controller] = current
-      do {
-        let candidate = try await task.value
-        guard var latest = entries[controller], latest.alive, !closed,
-          latest.generation == pending.controllerGeneration, foregroundGeneration == foreground,
-          currentConsumer == consumer, latest.pending?.token == pending.token
-        else {
-          if var finished = entries[controller] {
-            finished.pendingTasks[pending.token] = nil
-            if finished.pending?.token == pending.token { finished.pending = nil }
-            entries[controller] = finished
-          }
-          await candidate.closeOnce()
-          continue
-        }
-        latest.pendingTasks[pending.token] = nil
-        latest.pending = nil
-        if let old = latest.installed { await old.retireAndWait() }
-        latest.installed = candidate
-        latest.consumer = consumer
-        latest.identity = identity
-        latest.installedToken = pending.token
-        await candidate.backend.setOutputSuppressed(suppressedOutput)
-        entries[controller] = latest
-      } catch {
-        if var finished = entries[controller] {
-          finished.pendingTasks[pending.token] = nil
-          if finished.pending?.token == pending.token { finished.pending = nil }
-          entries[controller] = finished
-        }
-        continue
-      }
+      else { return false }
+      let identity = identityProvider(description, consumer)
+      guard identity == entry.identity, await isEligible(controller, identity) else { return false }
+    }
+    return true
+  }
+
+  func adoptConsumer(_ consumer: CompatibilityConsumerFamily) {
+    setConsumer(consumer)
+    for key in entries.keys { entries[key]?.consumer = consumer }
+  }
+
+  func setSuppressed(_ value: Bool) async {
+    suppressedOutput = value
+    for entry in entries.values {
+      if let backend = entry.installed?.backend { await backend.setOutputSuppressed(value) }
     }
   }
 
@@ -367,30 +390,49 @@ private actor AutomaticDispatcherCoordinator {
 }
 
 final class AutomaticUserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispatching,
-  ControllerLifecycleListener, @unchecked Sendable
+  CompatibilityUserSpaceOutputControllerActivating, ControllerLifecycleListener, @unchecked Sendable
 {
   private let deviceManager: DeviceManager
+  private let ownershipProvider:
+    @Sendable (DeviceIdentifier) async -> ControllerOwnershipObservation
   private let descriptionsProvider: @Sendable () async -> [ApplicationServiceDeviceDescription]
   private let consumerProvider: @Sendable () -> CompatibilityConsumerFamily
+  private let identityProvider:
+    @Sendable (ApplicationServiceDeviceDescription, CompatibilityConsumerFamily) ->
+      CompatibilityIdentity
   private let builder:
     @Sendable (CompatibilityIdentity) throws -> any CompatibilityUserSpaceOutputDispatching
+  private let transitionRequester: @Sendable () -> Void
   private let coordinator = AutomaticDispatcherCoordinator()
   private var observation: NSObjectProtocol?
   private var observationTask: Task<Void, Never>?
   init(
     deviceManager: DeviceManager,
+    ownershipProvider: (@Sendable (DeviceIdentifier) async -> ControllerOwnershipObservation)? =
+      nil,
     consumerProvider: @escaping @Sendable () -> CompatibilityConsumerFamily,
     builder:
       @escaping @Sendable (CompatibilityIdentity) throws ->
       any CompatibilityUserSpaceOutputDispatching,
     observeConsumerChanges: Bool = true,
-    descriptionsProvider: (@Sendable () async -> [ApplicationServiceDeviceDescription])? = nil
+    descriptionsProvider: (@Sendable () async -> [ApplicationServiceDeviceDescription])? = nil,
+    identityProvider:
+      @escaping @Sendable (ApplicationServiceDeviceDescription, CompatibilityConsumerFamily) ->
+      CompatibilityIdentity = { description, consumer in
+        AutomaticCompatibilityResolver.resolve(for: description, consumer: consumer).identity
+      },
+    transitionRequester: @escaping @Sendable () -> Void = {}
   ) {
     self.deviceManager = deviceManager
+    self.ownershipProvider =
+      ownershipProvider ?? { identifier in await deviceManager.ownershipObservation(for: identifier)
+      }
     self.descriptionsProvider =
       descriptionsProvider ?? { await deviceManager.connectedDeviceDescriptions() }
     self.consumerProvider = consumerProvider
+    self.identityProvider = identityProvider
     self.builder = builder
+    self.transitionRequester = transitionRequester
     if observeConsumerChanges {
       observationTask = Task { [weak self] in
         guard let self else { return }
@@ -401,6 +443,32 @@ final class AutomaticUserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDisp
     }
   }
   var suppressOutput: Bool = false
+  func activate(controller identifier: DeviceIdentifier) async throws {
+    try await coordinator.activateOne(
+      identifier: identifier,
+      descriptions: await descriptionsProvider(),
+      consumer: consumerProvider(),
+      isEligible: { [weak self] identifier, identity in
+        await self?.isEligible(identifier, identity: identity) ?? false
+      },
+      identityProvider: identityProvider,
+      factory: builder
+    )
+  }
+
+  func activate(for identifiers: [DeviceIdentifier]) async throws {
+    try await coordinator.activate(
+      identifiers: identifiers,
+      descriptions: await descriptionsProvider(),
+      consumer: consumerProvider(),
+      isEligible: { [weak self] identifier, identity in
+        await self?.isEligible(identifier, identity: identity) ?? false
+      },
+      identityProvider: identityProvider,
+      factory: builder
+    )
+  }
+
   func setOutputSuppressed(_ suppressed: Bool) async {
     suppressOutput = suppressed
     await coordinator.setSuppressed(suppressed)
@@ -413,15 +481,15 @@ final class AutomaticUserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDisp
       $0.runtimeIdentifier == identifier.runtimeIdentifier
     }
     let consumer = consumerProvider()
-    let identity =
-      description.map {
-        AutomaticCompatibilityResolver.resolve(for: $0, consumer: consumer).identity
-      } ?? .genericHID
+    let identity = description.map { identityProvider($0, consumer) } ?? .genericHID
     guard
       let lease = await coordinator.leaseForDispatch(
         controller: identifier,
         consumer: consumer,
         identity: identity,
+        isEligible: { [weak self] identifier, identity in
+          await self?.isEligible(identifier, identity: identity) ?? false
+        },
         factory: builder
       )
     else { return }
@@ -432,11 +500,41 @@ final class AutomaticUserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDisp
     await coordinator.stop(identifier)
   }
   func refreshForCurrentConsumer() async {
-    await coordinator.refresh(
-      consumer: consumerProvider(),
-      descriptions: await descriptionsProvider(),
-      factory: builder
+    let consumer = consumerProvider()
+    let descriptions = await descriptionsProvider()
+    if await coordinator.canAdoptConsumer(
+      consumer,
+      descriptions: descriptions,
+      isEligible: { [weak self] identifier, identity in
+        await self?.isEligible(identifier, identity: identity) ?? false
+      },
+      identityProvider: identityProvider
+    ) {
+      await coordinator.adoptConsumer(consumer)
+    } else {
+      transitionRequester()
+    }
+  }
+
+  private func isEligible(_ identifier: DeviceIdentifier, identity: CompatibilityIdentity) async
+    -> Bool
+  {
+    guard identity != .automatic else { return false }
+    guard
+      let description = await descriptionsProvider().first(where: {
+        $0.runtimeIdentifier == identifier.runtimeIdentifier
+      })
+    else { return false }
+    let ownership = await ownershipProvider(identifier)
+    let profileAvailable = CompatibilityProfileAvailabilityPolicy.isAvailable(
+      identity,
+      for: AutomaticCompatibilityResolver.resolve(for: description).subfamily
     )
+    return ControllerExposureDecision.decide(
+      ownership: ownership,
+      intent: .automatic(resolvedIdentity: identity),
+      profileAvailable: profileAvailable
+    ).eligibility == .eligible
   }
   func close() async {
     observation.map { NSWorkspace.shared.notificationCenter.removeObserver($0) }

@@ -1,9 +1,30 @@
+import AppKit
 import Foundation
 import Testing
 
 @testable import OpenJoystickDriver
 
 @Suite struct SettingsNavigationTests {
+  @Test func controllersPaneUsesAContentMinimumThatFitsTheThreeColumnIdentityGrid() {
+    let controllerMinimum = SettingsWindowSizingPolicy.minimumContentSize(for: .controllers)
+    let defaultMinimum = SettingsWindowSizingPolicy.minimumContentSize(for: .overview)
+
+    #expect(controllerMinimum == NSSize(width: 900, height: 500))
+    #expect(defaultMinimum == NSSize(width: 640, height: 400))
+    #expect(
+      SettingsWindowSizingPolicy.fittingContentSize(
+        current: NSSize(width: 1_100, height: 700),
+        minimum: controllerMinimum
+      ) == NSSize(width: 1_100, height: 700)
+    )
+    #expect(
+      SettingsWindowSizingPolicy.fittingContentSize(
+        current: NSSize(width: 700, height: 460),
+        minimum: controllerMinimum
+      ) == controllerMinimum
+    )
+  }
+
   @Test func everySettingsPaneRemainsInThePrimaryRail() {
     #expect(SettingsPane.primaryCases == SettingsPane.allCases)
     #expect(SettingsPane.primaryCases == [.overview, .controllers, .profiles, .console, .settings])

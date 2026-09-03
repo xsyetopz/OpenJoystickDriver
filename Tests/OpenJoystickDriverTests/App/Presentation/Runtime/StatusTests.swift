@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import OpenJoystickDriverKit
 import Testing
@@ -10,7 +11,7 @@ import Testing
     #expect(RuntimePresentation.permissionLabel(.denied) == "Needs attention")
   }
 
-  @Test func translatesStatusAndUsesOpaqueDeviceSelector() async throws {
+  @Test func translatesStatus() async throws {
     let device = ApplicationServiceDeviceDescription(
       name: "Test Pad",
       vendorID: 0x1234,
@@ -20,7 +21,6 @@ import Testing
       serialNumber: nil,
       runtimeIdentifier: "session-device-7"
     )
-    let input = DeviceInputState(vendorID: device.vendorID, productID: device.productID)
     let gateway = GatewayStub(
       statusPayload: ApplicationServiceStatusPayload(
         inputMonitoring: "granted",
@@ -29,8 +29,7 @@ import Testing
         userSpaceVirtualDeviceEnabled: true,
         userSpaceVirtualDeviceStatus: "ready",
         compatibilityIdentity: CompatibilityIdentity.sdl2_3.rawValue
-      ),
-      inputState: input
+      )
     )
     let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
 
@@ -48,17 +47,6 @@ import Testing
       RuntimePresentation.destinationLabel(.keyboard(key: .a, modifiers: [.command, .shift]))
         == "Command + Shift + A"
     )
-
-    let selector = RuntimeDeviceSelector(device: device)
-    await viewModel.readInputState(for: selector)
-    let captureState = await MainActor.run { viewModel.inputCaptureState }
-    guard case .received(let capturedSelector, let capturedState) = captureState else {
-      Issue.record("Expected a captured input state")
-      return
-    }
-    #expect(capturedSelector == selector)
-    #expect(capturedState == input)
-    #expect(await gateway.lastInputSelector == selector)
   }
 
   @Test func statusReadinessWaitsForPostEventAccess() async {
@@ -150,6 +138,68 @@ import Testing
     #expect(status.devices.isEmpty)
   }
 
+  @Test func liveStatusFailureRetainsLastKnownControllerState() async {
+    let device = ApplicationServiceDeviceDescription(
+      name: "Test Pad",
+      vendorID: 0x1234,
+      productID: 0x5678,
+      parser: "GIP",
+      connection: "USB",
+      serialNumber: nil,
+      runtimeIdentifier: "session-device-retained"
+    )
+    let gateway = GatewayStub(
+      statusPayload: ApplicationServiceStatusPayload(
+        inputMonitoring: "granted",
+        accessibility: "granted",
+        connectedDevices: [device],
+        userSpaceVirtualDeviceEnabled: true,
+        userSpaceVirtualDeviceStatus: "ready",
+        compatibilityIdentity: CompatibilityIdentity.sdl2_3.rawValue
+      )
+    )
+    let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
+    await viewModel.refresh()
+    await gateway.setStatusShouldFail(true)
+
+    await viewModel.refreshLiveStatus()
+
+    let statusState = await MainActor.run { viewModel.statusState }
+    guard case .available(let status) = statusState else {
+      Issue.record("Expected the last available status to remain visible")
+      return
+    }
+    #expect(status.devices.map(\.runtimeIdentifier) == [device.runtimeIdentifier])
+  }
+
+  @Test @MainActor func controllerInventoryRefreshIsScopedAndCoalescesConcurrentRequests() async {
+    let gateway = GatewayStub(statusReadDelayNanoseconds: 100_000_000)
+    let viewModel = RuntimeViewModel(gateway: gateway)
+
+    async let first: Void = viewModel.refreshControllerInventory()
+    try? await Task.sleep(nanoseconds: 10_000_000)
+    async let second: Void = viewModel.refreshControllerInventory()
+    _ = await (first, second)
+
+    #expect(await gateway.statusCallCount == 1)
+    #expect(await gateway.maximumConcurrentStatusCalls == 1)
+    #expect(await gateway.remappingSnapshotCallCount == 0)
+  }
+
+  @Test @MainActor func unchangedLiveStatusRefreshDoesNotRepublishObservableState() async {
+    let gateway = GatewayStub()
+    let viewModel = RuntimeViewModel(gateway: gateway)
+    await viewModel.refresh()
+    var invalidations = 0
+    let observation = viewModel.objectWillChange.sink { invalidations += 1 }
+
+    let statusChanged = await viewModel.refreshLiveStatus()
+
+    #expect(!statusChanged)
+    #expect(invalidations == 0)
+    withExtendedLifetime(observation) {}
+  }
+
   @Test @MainActor func livePollingDoesNotCancelTheFullProfilesAndIdentityRefresh() async {
     let gateway = GatewayStub(statusReadDelayNanoseconds: 100_000_000)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -183,12 +233,13 @@ import Testing
     )
     await gateway.setSnapshotPayload(snapshot(profiles: [profile], activeProfiles: [activeProfile]))
 
-    await viewModel.refreshLiveStatus()
+    let statusChanged = await viewModel.refreshLiveStatus()
 
     guard case .available(let current) = viewModel.remappingState else {
       Issue.record("Expected the remapping snapshot to remain available")
       return
     }
+    #expect(statusChanged)
     #expect(current.activeProfiles.map(\.profileID) == [profile.id])
   }
 

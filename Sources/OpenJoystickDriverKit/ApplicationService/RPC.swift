@@ -246,6 +246,44 @@ enum LocalServiceRPCTransport {
 }
 
 public enum LocalServiceRPCClient {
+  private final class CallState: @unchecked Sendable {
+    private let lock = NSLock()
+    private var descriptor: Int32?
+    private var cancelled = false
+
+    var isCancelled: Bool { lock.withLock { cancelled } }
+
+    func install(_ descriptor: Int32) -> Bool {
+      lock.withLock {
+        guard !cancelled else { return false }
+        self.descriptor = descriptor
+        return true
+      }
+    }
+
+    func cancel() {
+      let descriptor = lock.withLock { () -> Int32? in
+        cancelled = true
+        let descriptor = self.descriptor
+        self.descriptor = nil
+        return descriptor
+      }
+      guard let descriptor else { return }
+      shutdown(descriptor, SHUT_RDWR)
+      Darwin.close(descriptor)
+    }
+
+    func close(_ descriptor: Int32) {
+      let shouldClose = lock.withLock { () -> Bool in
+        guard self.descriptor == descriptor else { return false }
+        self.descriptor = nil
+        return true
+      }
+      guard shouldClose else { return }
+      Darwin.close(descriptor)
+    }
+  }
+
   public static func isAvailable() -> Bool { serverProcessIdentifier() != nil }
 
   public static func serverProcessIdentifier() -> Int32? {
@@ -275,23 +313,59 @@ public enum LocalServiceRPCClient {
     socketPath: String = LocalServiceRPCTransport.defaultSocketPath,
     as type: Value.Type = Value.self
   ) async throws -> Value {
-    try await Task.detached(priority: .userInitiated) {
-      let descriptor = try LocalServiceRPCTransport.openConnectedSocket(
-        timeoutSeconds: timeoutSeconds,
-        socketPath: socketPath
-      )
-      defer { Darwin.close(descriptor) }
-      let request = LocalServiceRPCRequest(
-        method: method,
-        arguments: try JSONEncoder().encode(arguments)
-      )
-      try LocalServiceRPCTransport.sendFrame(try JSONEncoder().encode(request), to: descriptor)
-      let responseData = try LocalServiceRPCTransport.receiveFrame(from: descriptor)
-      let response = try JSONDecoder().decode(LocalServiceRPCResponse.self, from: responseData)
-      if let error = response.error { throw LocalServiceRPCError.remote(error) }
-      guard let result = response.result else { throw LocalServiceRPCError.invalidFrame }
-      return try JSONDecoder().decode(type, from: result)
-    }.value
+    let state = CallState()
+    return try await withTaskCancellationHandler {
+      do {
+        return try await Task.detached(priority: .userInitiated) {
+          guard !state.isCancelled else { throw CancellationError() }
+          let descriptor: Int32
+          do {
+            descriptor = try LocalServiceRPCTransport.openConnectedSocket(
+              timeoutSeconds: timeoutSeconds,
+              socketPath: socketPath
+            )
+          } catch {
+            if state.isCancelled { throw CancellationError() }
+            throw error
+          }
+          guard state.install(descriptor) else {
+            Darwin.close(descriptor)
+            throw CancellationError()
+          }
+          do {
+            let request = LocalServiceRPCRequest(
+              method: method,
+              arguments: try JSONEncoder().encode(arguments)
+            )
+            try LocalServiceRPCTransport.sendFrame(
+              try JSONEncoder().encode(request),
+              to: descriptor
+            )
+            let responseData = try LocalServiceRPCTransport.receiveFrame(from: descriptor)
+            let response = try JSONDecoder().decode(
+              LocalServiceRPCResponse.self,
+              from: responseData
+            )
+            if let error = response.error { throw LocalServiceRPCError.remote(error) }
+            guard let result = response.result else { throw LocalServiceRPCError.invalidFrame }
+            let value = try JSONDecoder().decode(type, from: result)
+            state.close(descriptor)
+            try Task.checkCancellation()
+            guard !state.isCancelled else { throw CancellationError() }
+            return value
+          } catch {
+            state.close(descriptor)
+            if state.isCancelled { throw CancellationError() }
+            throw error
+          }
+        }.value
+      } catch {
+        if state.isCancelled || Task.isCancelled { throw CancellationError() }
+        throw error
+      }
+    } onCancel: {
+      state.cancel()
+    }
   }
 }
 

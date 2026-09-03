@@ -32,15 +32,19 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
   public init(
     descriptor: [UInt8],
     outputReportID: UInt8? = nil,
-    outputReportPayloadSize: Int? = nil
+    outputReportPayloadSize: Int? = nil,
+    buttonUsageMap: [Int: Int] = [:]
   ) throws {
     self.descriptor = descriptor
     guard let parsed = HIDReportDescriptorParser.parse(descriptor: descriptor) else {
       throw Error.cannotParseDescriptor
     }
-    guard let packer = HIDReportPacker.bestEffortGamepadPacker(from: parsed) else {
-      throw Error.noSuitableInputReport
-    }
+    guard
+      let packer = HIDReportPacker.bestEffortGamepadPacker(
+        from: parsed,
+        buttonUsageMap: buttonUsageMap
+      )
+    else { throw Error.noSuitableInputReport }
     self.packer = packer
     self.inputReportID = packer.reportID == 0 ? nil : packer.reportID
     self.inputReportPayloadSize = packer.payloadSizeBytes
@@ -92,10 +96,7 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
       // Exclude OJD virtual devices.
       if UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial)
         || !PhysicalHIDBackendEventAdapter().acceptsDescriptor(
-          syntheticProperty: IOHIDDeviceGetProperty(
-            dev,
-            "kIOHIDGCSyntheticDeviceKey" as CFString
-          )
+          syntheticProperty: IOHIDDeviceGetProperty(dev, "kIOHIDGCSyntheticDeviceKey" as CFString)
         )
       {
         return Int.min / 2

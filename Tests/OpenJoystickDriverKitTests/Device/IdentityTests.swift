@@ -93,6 +93,47 @@ struct DeviceIdentifierTests {
     }
   }
 
+  @Test func applicationServiceDeviceDescriptionRoundTripsDiscoverySource() throws {
+    let description = ApplicationServiceDeviceDescription(
+      name: "Controller",
+      vendorID: 0x045E,
+      productID: 0x028E,
+      parser: "Xbox360",
+      connection: "USB",
+      discoverySource: .hid,
+      serialNumber: nil
+    )
+
+    let decoded = try JSONDecoder().decode(
+      ApplicationServiceDeviceDescription.self,
+      from: JSONEncoder().encode(description)
+    )
+
+    #expect(decoded.discoverySource == .hid)
+  }
+
+  @Test func applicationServiceDeviceDescriptionDefaultsLegacyDiscoverySourceToUnknown() throws {
+    let description = ApplicationServiceDeviceDescription(
+      name: "Controller",
+      vendorID: 0x045E,
+      productID: 0x028E,
+      parser: "Xbox360",
+      connection: "USB",
+      discoverySource: .rawUSB,
+      serialNumber: nil
+    )
+    let encoded = try JSONEncoder().encode(description)
+    var object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+    object.removeValue(forKey: "discoverySource")
+
+    let decoded = try JSONDecoder().decode(
+      ApplicationServiceDeviceDescription.self,
+      from: JSONSerialization.data(withJSONObject: object)
+    )
+
+    #expect(decoded.discoverySource == .unknown)
+  }
+
   private func assertOpaqueExactToken(_ token: String, privateIdentity: String) throws {
     try assertExactTokenShape(token)
     #expect(!token.contains(privateIdentity))

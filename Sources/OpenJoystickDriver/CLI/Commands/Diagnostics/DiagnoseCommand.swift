@@ -140,6 +140,53 @@ struct DiagnoseCommand {
       CLIOutput.diagnostic(
         "  VID=0x\(vid)" + " PID=0x\(pid)" + " bus=\(device.bus)" + " addr=\(device.address)"
       )
+      printProtocolObservation(device)
+    }
+  }
+
+  private func printProtocolObservation(_ device: USBControllerDescription) {
+    guard let observation = device.transportObservation else {
+      CLIOutput.diagnostic("    Protocol observation: unavailable (catalog admission unchanged)")
+      return
+    }
+    for interface in observation.interfaces {
+      let subclass = interface.interfaceSubclass.map { String(format: "%02X", $0) } ?? "--"
+      let protocolValue = interface.interfaceProtocol.map { String(format: "%02X", $0) } ?? "--"
+      CLIOutput.diagnostic(
+        "    Interface \(interface.interfaceNumber)/\(interface.alternateSetting): "
+          + String(format: "%02X", interface.interfaceClass) + "/\(subclass)/\(protocolValue)"
+      )
+      for endpoint in interface.endpoints {
+        let packet = endpoint.maxPacketSize.map(String.init) ?? "unknown"
+        let interval = endpoint.interval.map(String.init) ?? "unknown"
+        CLIOutput.diagnostic(
+          "      endpoint 0x\(String(format: "%02X", endpoint.address)) "
+            + "\(endpoint.transferType.rawValue) \(endpoint.direction.rawValue) "
+            + "maxPacket=\(packet) interval=\(interval)"
+        )
+      }
+    }
+    guard let classification = device.classification else { return }
+    let candidate = classification.selected?.rawValue ?? classification.disposition.rawValue
+    CLIOutput.diagnostic("    Advisory protocol candidate: \(candidate)")
+    if !classification.matchedPredicates.isEmpty {
+      CLIOutput.diagnostic(
+        "      Matched: \(classification.matchedPredicates.map(\.rawValue).joined(separator: ", "))"
+      )
+    }
+    if !classification.rejectedPredicates.isEmpty {
+      let rejected = classification.rejectedPredicates.map(\.rawValue).joined(separator: ", ")
+      CLIOutput.diagnostic("      Rejected: \(rejected)")
+    }
+    if let reconciliation = device.reconciliation {
+      CLIOutput.diagnostic(
+        "      Catalog parser remains \(device.parser) (\(reconciliation.knownVariant.rawValue))"
+      )
+      if reconciliation.hasConflict {
+        CLIOutput.diagnostic(
+          "      Observation conflicts with the catalog family; parser unchanged"
+        )
+      }
     }
   }
 

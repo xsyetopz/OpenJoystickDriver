@@ -277,6 +277,7 @@
     let notificationPermission: NotificationPermissionModel
     let preferences: SettingsPreferencesModel
     let console: ConsoleViewModel
+    let openInputTest: @MainActor (ApplicationServiceDeviceDescription) -> Void
 
     var body: some View {
       detail.frame(maxWidth: .infinity, minHeight: 0, maxHeight: .infinity).background(
@@ -310,7 +311,7 @@
           navigation: navigation,
           notificationPermission: notificationPermission
         )
-      case .controllers: ControllersView(viewModel: viewModel)
+      case .controllers: ControllersView(viewModel: viewModel, openInputTest: openInputTest)
       case .profiles: ProfilesView(viewModel: viewModel, navigation: navigation)
       case .console: ConsoleView(model: console)
       case .settings: ApplicationSettingsView(preferences: preferences)

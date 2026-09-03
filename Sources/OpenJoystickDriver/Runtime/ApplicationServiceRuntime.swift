@@ -38,7 +38,8 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
       dispatcher: dispatcher,
       remappingProfileLibrary: remappingProfileLibrary,
       remappingRouter: remappingRouter,
-      postEventAccess: postEventAccess
+      postEventAccess: postEventAccess,
+      initializeCompatibilityBackend: false
     )
 
     self.permissionManager = permissionManager
@@ -66,7 +67,10 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     }
     Task { await permissionManager.startPolling() }
     remappingRouter.startTicker()
-    Task { await manager.start() }
+    Task {
+      await manager.start()
+      _ = await applicationServiceServer.activateCompatibilityBackendForCurrentDevices()
+    }
   }
 
   func stop() async {
@@ -78,7 +82,7 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     guard shouldStop else { return }
 
     cancelGracefulShutdown()
-    applicationServiceServer.stop()
+    await applicationServiceServer.stop()
     await manager.stop()
     do { try await remappingRouter.shutdown() } catch {
       serviceError("[Service] Remapping shutdown failed: \(error.localizedDescription)")
@@ -119,3 +123,69 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     for source in sources { source.cancel() }
   }
 }
+
+#if canImport(SwiftUI)
+  extension ApplicationServiceRuntime: InputTestDeviceGateway {
+    func inputState(for selector: RuntimeDeviceSelector) async throws -> DeviceInputState? {
+      let identifier = DeviceIdentifier(vendorID: selector.vendorID, productID: selector.productID)
+      return await manager.inputState(
+        for: identifier,
+        runtimeIdentifier: selector.runtimeIdentifier
+      )
+    }
+
+    func sendRumble(
+      for selector: RuntimeDeviceSelector,
+      left: UInt8,
+      right: UInt8,
+      leftTrigger: UInt8,
+      rightTrigger: UInt8,
+      durationMilliseconds: Int
+    ) async throws -> Bool {
+      let identifier = DeviceIdentifier(vendorID: selector.vendorID, productID: selector.productID)
+      return await manager.sendRumble(
+        for: identifier,
+        runtimeIdentifier: selector.runtimeIdentifier,
+        left: left,
+        right: right,
+        lt: leftTrigger,
+        rt: rightTrigger,
+        durationMs: durationMilliseconds
+      )
+    }
+
+    func setPlayerIndicator(for selector: RuntimeDeviceSelector, indicator: PhysicalPlayerIndicator)
+      async throws -> Bool
+    {
+      let identifier = DeviceIdentifier(vendorID: selector.vendorID, productID: selector.productID)
+      return await manager.sendPlayerIndicator(
+        for: identifier,
+        runtimeIdentifier: selector.runtimeIdentifier,
+        indicator: indicator
+      )
+    }
+
+    func setColor(for selector: RuntimeDeviceSelector, red: UInt8, green: UInt8, blue: UInt8)
+      async throws -> Bool
+    {
+      let identifier = DeviceIdentifier(vendorID: selector.vendorID, productID: selector.productID)
+      return await manager.setPhysicalColor(
+        for: identifier,
+        runtimeIdentifier: selector.runtimeIdentifier,
+        red: red,
+        green: green,
+        blue: blue
+      )
+    }
+
+    func setBrightness(for selector: RuntimeDeviceSelector, brightness: UInt8) async throws -> Bool
+    {
+      let identifier = DeviceIdentifier(vendorID: selector.vendorID, productID: selector.productID)
+      return await manager.setPhysicalBrightness(
+        for: identifier,
+        runtimeIdentifier: selector.runtimeIdentifier,
+        brightness: brightness
+      )
+    }
+  }
+#endif

@@ -6,7 +6,9 @@ import OpenJoystickDriverKit
 /// by OJD's restricted entitlement, or currently observed behind the DEXT, use
 /// USBDriverKit. An open failure never falls through to a
 /// different backend.
-public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider {
+public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
+  USBTransportObservationProvider
+{
   private let ioUSBHostProvider: any USBTransportProvider
   private let usbDriverKitProvider: any USBTransportProvider
   private let supportedRawUSBModels: Set<USBTransportModel>
@@ -82,6 +84,15 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider {
     switch device.route {
     case .ioUSBHost: return try await ioUSBHostProvider.open(device, options: options)
     case .usbDriverKit: return try await usbDriverKitProvider.open(device, options: options)
+    }
+  }
+
+  public func transportObservations() async throws -> [ControllerTransportObservation] {
+    // Observation is deliberately best-effort. A descriptor read failure must
+    // not change the exact supported-device selection or prevent diagnostics
+    // from reporting devices discovered by either backend.
+    try await devices().compactMap { device in
+      try? PassiveUSBDescriptorProbe.transportObservation(for: device)
     }
   }
 

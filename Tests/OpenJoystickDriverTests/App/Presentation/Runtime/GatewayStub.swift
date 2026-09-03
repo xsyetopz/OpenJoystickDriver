@@ -31,7 +31,7 @@ func snapshot(
 actor GatewayStub: ApplicationServiceGateway {
   var statusPayload: ApplicationServiceStatusPayload
   var snapshotPayload: ApplicationServiceRemappingSnapshotPayload
-  let statusShouldFail: Bool
+  var statusShouldFail: Bool
   let statusReadDelayNanoseconds: UInt64
   let inputState: DeviceInputState?
   let inputSequence: [DeviceInputState]?
@@ -46,6 +46,10 @@ actor GatewayStub: ApplicationServiceGateway {
   var deleteCallCount = 0
   var lastDeletedProfileID: UUID?
   var inputReadCount = 0
+  var statusCallCount = 0
+  var activeStatusCalls = 0
+  var maximumConcurrentStatusCalls = 0
+  var remappingSnapshotCallCount = 0
   var setIdentityCallCount = 0
   var selectedIdentity: CompatibilityIdentity = .sdl2_3
 
@@ -89,6 +93,10 @@ actor GatewayStub: ApplicationServiceGateway {
   }
 
   func status() async throws -> ApplicationServiceStatusPayload {
+    statusCallCount += 1
+    activeStatusCalls += 1
+    maximumConcurrentStatusCalls = max(maximumConcurrentStatusCalls, activeStatusCalls)
+    defer { activeStatusCalls -= 1 }
     if statusReadDelayNanoseconds > 0 {
       try await Task.sleep(nanoseconds: statusReadDelayNanoseconds)
     }
@@ -97,6 +105,8 @@ actor GatewayStub: ApplicationServiceGateway {
   }
 
   func setStatusPayload(_ payload: ApplicationServiceStatusPayload) { statusPayload = payload }
+
+  func setStatusShouldFail(_ shouldFail: Bool) { statusShouldFail = shouldFail }
 
   func setSnapshotPayload(_ payload: ApplicationServiceRemappingSnapshotPayload) {
     snapshotPayload = payload
@@ -124,7 +134,10 @@ actor GatewayStub: ApplicationServiceGateway {
     return inputState
   }
 
-  func remappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+  func remappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
+    remappingSnapshotCallCount += 1
+    return snapshotPayload
+  }
 
   func remappingProfile(id: UUID) throws -> RemappingProfile {
     guard let profile = snapshotPayload.profiles.first(where: { $0.id == id }) else {

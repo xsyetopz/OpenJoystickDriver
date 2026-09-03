@@ -114,7 +114,7 @@ extension DeviceManager {
       name: productName,
       connection: "USB",
       serialNumber: identifier.serialNumber,
-      discoverySource: .rawUSB
+      discoverySource: .rawUSB(route: device.route)
     )
     print("[DeviceManager] USB device added: \(productName) (\(identifier))")
     let transportProfile = parserRegistry.transportProfile(for: identifier)
