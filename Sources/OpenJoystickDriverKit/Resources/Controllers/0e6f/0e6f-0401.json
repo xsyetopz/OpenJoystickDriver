@@ -6,5 +6,12 @@
   "protocol": {
     "driver": "Xbox360",
     "variant": "xbox360"
+  },
+  "usb": {
+    "configuration": "set1-before-claim",
+    "endpoints": {
+      "in": 129,
+      "out": 2
+    }
   }
 }

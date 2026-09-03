@@ -25,6 +25,22 @@ struct DeviceTransportProfileTests {
     #expect(profile.mappingFlags == ["shareButton"])
     #expect(profile.mappingOptions.contains(.shareButton))
   }
+
+  @Test func testPDPGameStopBB070UsesCapturedTransport() {
+    let registry = ParserRegistry()
+    let identifier = DeviceIdentifier(vendorID: 3_695, productID: 1_025)
+
+    let runtime = registry.runtimeProfile(for: identifier)
+    let transport = registry.transportProfile(for: identifier)
+
+    #expect(runtime.parserName == "Xbox360")
+    #expect(runtime.protocolVariant == .xbox360)
+    #expect(transport.inputEndpoint == 0x81)
+    #expect(transport.outputEndpoint == 0x02)
+    #expect(transport.hasEndpointOverride)
+    #expect(transport.needsSetConfiguration)
+  }
+
   @Test func testRazerWolverineV3TournamentEditionProfile() {
     let registry = ParserRegistry()
     let identifier = DeviceIdentifier(vendorID: 5_426, productID: 2_627)
@@ -39,6 +55,22 @@ struct DeviceTransportProfileTests {
     #expect(transport.inputEndpoint == 0x82)
     #expect(transport.outputEndpoint == 0x02)
     #expect(!transport.needsSetConfiguration)
+  }
+
+  @Test func testRazerWolverineV3ProLeavesDescriptorEndpointsUnpinned() {
+    let registry = ParserRegistry()
+    let identifier = DeviceIdentifier(vendorID: 5_426, productID: 2_623)
+
+    let runtime = registry.runtimeProfile(for: identifier)
+    let transport = registry.transportProfile(for: identifier)
+
+    #expect(runtime.parserName == "GIP")
+    #expect(runtime.protocolVariant == .xboxOne)
+    #expect(runtime.mappingFlags.isEmpty)
+    #expect(transport.inputEndpoint == 0x82)
+    #expect(transport.outputEndpoint == 0x02)
+    #expect(!transport.hasEndpointOverride)
+    #expect(transport.needsSetConfiguration)
   }
 
   @Test func testRazerWolverineV2ProfileUsesCapturedEndpointsOnly() {
