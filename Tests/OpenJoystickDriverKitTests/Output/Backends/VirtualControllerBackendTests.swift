@@ -114,6 +114,7 @@ struct VirtualControllerBackendTests {
     #expect(!sdl.automaticallyRecommended)
     #expect(!apple.automaticallyRecommended)
     #expect(apple.consumerFamily == .appleGameController)
+    #expect(apple.evidenceByConsumer[.chromiumGamepad] == .reportedFailure)
     #expect(xone.consumerFamily == .xboxOneHID)
     #expect(xone.evidenceByConsumer[.sdlHIDAPI] == .reportedFailure)
     #expect(xone.evidenceByConsumer[.appleGameController] == .sourceBacked)

@@ -267,13 +267,15 @@ public enum CompatibilityOutputProfileCatalog {
         deviceProfile: .xboxOneS,
         displayName: "Apple GameController",
         notes: "Apple GameController candidate using the Xbox One S Bluetooth HID tuple. "
-          + "Guide is carried in the primary gamepad report so macOS does not consume a "
-          + "separate System Main Menu event before browser clients can observe it.",
+          + "Clients that leave macOS system gestures enabled can receive View late and may not "
+          + "receive Guide/Home.",
         isHardwareSpoof: true,
         emitsXboxGuideReport: false,
         evidence: .sourceBacked,
         consumerFamily: .appleGameController,
-        evidenceByConsumer: [.appleGameController: .sourceBacked]
+        evidenceByConsumer: [
+          .appleGameController: .sourceBacked, .chromiumGamepad: .reportedFailure
+        ]
       )
     case .xoneHID:
       return CompatibilityOutputProfile(
