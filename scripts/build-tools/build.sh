@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Consolidated build/rebuild script for OpenJoystickDriver.
+# Consolidated build/install script for OpenJoystickDriver.
 #
 # Human-facing entrypoint is: ./scripts/ojd
 #
-# Implements the build, rebuild, and lint routes exposed by scripts/ojd.
+# Implements the build, install, and lint routes exposed by scripts/ojd.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -19,13 +19,13 @@ Usage:
   ./scripts/ojd build release
   ./scripts/ojd build dext
 
-  ./scripts/ojd rebuild dev
-  ./scripts/ojd rebuild release
-  ./scripts/ojd rebuild-fast dev
+  ./scripts/ojd build install dev
+  ./scripts/ojd build install release
+  ./scripts/ojd build install-fast dev
 
 Notes:
-  - Full rebuild upgrades the DriverKit system extension (may require reboot).
-  - rebuild-fast preserves the already-installed sysext (safe while streaming).
+  - Full install upgrades the DriverKit system extension (may require reboot).
+  - install-fast preserves the already-installed sysext (safe while streaming).
 TXT
 }
 
@@ -404,11 +404,11 @@ next_dext_bundle_version() {
   echo $((max_version + 1))
 }
 
-rebuild_fast() {
+install_fast() {
   local APP_DST="/Applications/OpenJoystickDriver.app"
   local APP_SRC="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
 
-  [[ -d "$APP_DST" ]] || die "$APP_DST not found. Run ./scripts/ojd rebuild dev once first."
+  [[ -d "$APP_DST" ]] || die "$APP_DST not found. Run ./scripts/ojd build install dev once first."
 
   echo "=== Step 1: Build app (no dext) ==="
   build_app_bundle
@@ -442,7 +442,7 @@ rebuild_fast() {
   python3 "$PROJECT_DIR/scripts/build-tools/install_app.py" "$APP_SRC"
 }
 
-rebuild_full() {
+install_full() {
   echo "=== Step 1: Clean build products without stopping the installed app ==="
   clean_build_artifacts
 
@@ -614,23 +614,23 @@ case "$cmd" in
         ;;
     esac
     ;;
-  rebuild)
+  install)
     case "$sub" in
       dev|release)
-        rebuild_full
+        install_full
         ;;
       *)
-        die "Unknown: rebuild $sub (expected: dev | release)"
+        die "Unknown: install $sub (expected: dev | release)"
         ;;
     esac
     ;;
-  rebuild-fast)
+  install-fast)
     case "$sub" in
       dev)
-        rebuild_fast
+        install_fast
         ;;
       *)
-        die "Unknown: rebuild-fast $sub (expected: dev)"
+        die "Unknown: install-fast $sub (expected: dev)"
         ;;
     esac
     ;;

@@ -245,7 +245,7 @@ def main() -> int:
 
     print()
     print("Next development command:")
-    print("  ./scripts/ojd rebuild dev")
+    print("  ./scripts/ojd build install dev")
     return 0
 
 

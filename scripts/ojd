@@ -31,8 +31,8 @@ Commands:
   build dev                   Build + sign app bundle into `.build/` (no dext)
   build release               Build + sign app bundle for release (no dext)
   build dext                  Build DriverKit `.dext` and embed into `.build/` app
-  build install dev|release   Full rebuild and install (alias: rebuild)
-  build install-fast dev      App-only rebuild and install (alias: rebuild-fast)
+  build install dev|release   Full rebuild and install
+  build install-fast dev      App-only rebuild and install (keeps installed sysext)
   driverkit generate [path]   Generate a fresh SwifterKit DriverKit project
   package tester               Build a private, shareable Developer ID DMG
   release bump-version <version>
@@ -80,13 +80,6 @@ Commands:
                               Launch an SDL app through GameController/MFI rumble route
 
   lint                        Run SwiftLint (requires swiftlint)
-
-Compatibility aliases:
-  rebuild dev|release         Alias for build install dev|release
-  rebuild-fast dev            Alias for build install-fast dev
-  bump-version <version>      Alias for release bump-version
-  package release [version]  Alias for release package
-  notarize <command>         Alias for release notarize
 
 Examples:
   ./scripts/ojd signing install-profiles
@@ -238,28 +231,12 @@ def dispatch(argv: list[str]) -> int:
                 require(f"build {sub} {config}", tail, count=0)
                 exec_target(
                     "build-tools/build.sh",
-                    ["rebuild-fast" if sub == "install-fast" else "rebuild", config],
+                    [sub, config],
                     env={"OJD_ENV": "release"} if config == "release" else None,
                 )
             die(
                 f"Unknown: build {sub} (expected: dev | dext | release | install | install-fast)"
             )
-        case "rebuild" | "rebuild-fast":
-            config, tail = (rest[0], rest[1:]) if rest else ("", [])
-            allowed = {"dev", "release"} if command == "rebuild" else {"dev"}
-            if config not in allowed:
-                die(
-                    f"Unknown: {command} {config} (expected: {'dev | release' if command == 'rebuild' else 'dev'})"
-                )
-            require(f"{command} {config}", tail, count=0)
-            exec_target(
-                "build-tools/build.sh",
-                [command, config],
-                env={"OJD_ENV": "release"} if config == "release" else None,
-            )
-        case "bump-version":
-            require(command, rest, count=1)
-            exec_target("release/bump_version.py", rest, python=True)
         case "driverkit":
             sub, tail = (rest[0], rest[1:]) if rest else ("", [])
             if sub != "generate":
@@ -383,17 +360,12 @@ def dispatch(argv: list[str]) -> int:
             if sub in {"", "-h", "--help", "help"}:
                 package_usage()
                 return 0
-            if sub not in {"release", "tester"}:
-                die(f"Unknown: package {sub} (expected: tester | release)")
-            if sub == "tester" and tail in (["-h"], ["--help"], ["help"]):
+            if sub != "tester":
+                die(f"Unknown: package {sub} (expected: tester)")
+            if tail in (["-h"], ["--help"], ["help"]):
                 exec_python_with_environment("release/package_tester.py", [sub, *tail])
-            require(f"package {sub}", tail, maximum=1)
-            target = (
-                "release/package.py"
-                if sub == "release"
-                else "release/package_tester.py"
-            )
-            exec_python_with_environment(target, [sub, *tail])
+            require("package tester", tail, maximum=1)
+            exec_python_with_environment("release/package_tester.py", [sub, *tail])
         case "release":
             sub, tail = (rest[0], rest[1:]) if rest else ("", [])
             if sub in {"", "help", "-h", "--help"}:
@@ -439,8 +411,6 @@ def dispatch(argv: list[str]) -> int:
             die(
                 f"Unknown: release {sub} (expected: bump-version | package | install-local | notarize)"
             )
-        case "notarize":
-            return dispatch(["release", "notarize", *rest])
         case _:
             die(f"Unknown command: {command} (run: ./scripts/ojd --help)")
     return 0

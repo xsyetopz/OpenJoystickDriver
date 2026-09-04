@@ -12,9 +12,7 @@ commands. The `justfile` only delegates convenience commands to `./scripts/ojd`.
 
 The main repository routes are `build install dev|release`, `build install-fast
 dev`, `package tester`, `release bump-version`, `release package [version]`,
-`release install-local [version]`, and `release notarize ...`. The legacy `rebuild`, `rebuild-fast`,
-`bump-version`, `package release`, and `notarize` routes remain compatibility
-aliases.
+`release install-local [version]`, and `release notarize ...`.
 
 ## Layout
 
@@ -55,8 +53,8 @@ libraries for toolchain/keychain operations; `diagnostics/diagnose.sh` and
 `quality/test-parsers-macos14.sh` retain background-process, pipeline, and
 heredoc harness semantics; and `diagnostics/sdl/gamecontroller.sh`,
 `signing/export-github-secrets.sh`, and `release/notarize.sh` retain direct
-environment/CLI wrappers. The migrated Python routes do not retain shell
-compatibility shims.
+environment/CLI wrappers. Migrated Python routes use the canonical
+`./scripts/ojd` commands only.
 
 | File | Invoked by | Inputs and effects | Validation |
 | --- | --- | --- | --- |
@@ -125,7 +123,7 @@ when one existed. Full and release-local installations also retire stale
 DriverKit processes before replacing an embedded extension; app-only fast
 installs preserve the existing extension and leave its process running.
 Every supported install and reinstall command uses `build-tools/install_app.py`.
-Full development installs, fast installs, release installs, and legacy aliases
+Full development installs, fast installs, and release installs
 therefore install the same signed CLI. After changing repository sources, run an
 install command again before using CLI diagnostics that connect to the app.
 

@@ -25,6 +25,10 @@ _2026-09-04_
   `et-EE` translations of the prior key set.
 - Softened product-facing wording toward plain English (no agent-style
   self-narration in menus, settings, and CLI help/errors).
+- Removed remaining staging/compat shims: script `rebuild`/`rebuild-fast`/
+  top-level `bump-version`/`notarize`/`package release` aliases, stale
+  UserDefaults key discards, remapping schema v1 acceptance, soft
+  `discoverySource` decode default, and AppKit `NS*Template` icon fallback maps.
 - Corrected compatibility guidance to model consumer family and evidence
   separately: ASTRO C40 `9886:0024` remains SDL/PCSX2/Steam-specific, Xbox One
   Bluetooth `045E:02FD` is not an SDL recommendation after reported BT1/BT2

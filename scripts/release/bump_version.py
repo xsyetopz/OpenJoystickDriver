@@ -21,11 +21,11 @@ def die(message: str) -> NoReturn:
 
 def usage() -> None:
     print("""Usage:
-  ./scripts/ojd bump-version <version>
+  ./scripts/ojd release bump-version <version>
 
 Examples:
-  ./scripts/ojd bump-version 0.1.0-rc.2
-  ./scripts/ojd bump-version 0.1.0
+  ./scripts/ojd release bump-version 0.1.0-rc.2
+  ./scripts/ojd release bump-version 0.1.0
 
 Updates:
   - Sources/OpenJoystickDriver/App/Info.plist canonical app/package version

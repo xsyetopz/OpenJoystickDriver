@@ -2,7 +2,7 @@
 # Notarize helper for OpenJoystickDriver. Requires OJD_ENV=release.
 #
 # Human-facing entrypoint:
-#   ./scripts/ojd notarize <submit|status|history|log>
+#   ./scripts/ojd release notarize <submit|status|history|log>
 #
 # Prerequisites:
 #   1. Developer ID signing (.env.release)
@@ -15,7 +15,7 @@
 #   NOTARIZE_MAX_RETRIES      — consecutive transient failures before abort (default: 5)
 #
 # USAGE:
-#   ./scripts/ojd notarize submit
+#   ./scripts/ojd release notarize submit
 #
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -27,11 +27,11 @@ shift || true
 if [[ "$subcmd" == "-h" || "$subcmd" == "--help" || "$subcmd" == "help" ]]; then
   cat <<'TXT'
 Usage:
-  OJD_ENV=release ./scripts/ojd notarize submit
-  OJD_ENV=release ./scripts/ojd notarize status [submission-id]
-  OJD_ENV=release ./scripts/ojd notarize log <submission-id>
-  OJD_ENV=release ./scripts/ojd notarize history
-  OJD_ENV=release ./scripts/ojd notarize store-credentials [profile-name]
+  OJD_ENV=release ./scripts/ojd release notarize submit
+  OJD_ENV=release ./scripts/ojd release notarize status [submission-id]
+  OJD_ENV=release ./scripts/ojd release notarize log <submission-id>
+  OJD_ENV=release ./scripts/ojd release notarize history
+  OJD_ENV=release ./scripts/ojd release notarize store-credentials [profile-name]
 TXT
   exit 0
 fi
@@ -74,7 +74,7 @@ MAX_RETRIES="${NOTARIZE_MAX_RETRIES:-5}"
 
 if [[ ! -d "$APP" ]]; then
   echo "ERROR: App not found at $APP"
-  echo "Run: OJD_ENV=release ./scripts/ojd rebuild release"
+  echo "Run: OJD_ENV=release ./scripts/ojd build install release"
   exit 1
 fi
 
@@ -102,7 +102,7 @@ if [[ "$subcmd" == "status" ]]; then
     echo "Checking submission: $1"
     xcrun notarytool info "$1" "${AUTH_ARGS[@]}"
     echo ""
-    echo "To fetch the log: OJD_ENV=release ./scripts/ojd notarize log $1"
+    echo "To fetch the log: OJD_ENV=release ./scripts/ojd release notarize log $1"
   else
     echo "Recent notarization history:"
     xcrun notarytool history "${AUTH_ARGS[@]}"
@@ -111,7 +111,7 @@ if [[ "$subcmd" == "status" ]]; then
 fi
 
 if [[ "$subcmd" == "log" ]]; then
-  [[ -n "${1:-}" ]] || die "Missing submission id (Usage: ./scripts/ojd notarize log <id>)"
+  [[ -n "${1:-}" ]] || die "Missing submission id (Usage: ./scripts/ojd release notarize log <id>)"
   echo "Fetching log for: $1"
   xcrun notarytool log "$1" "${AUTH_ARGS[@]}"
   exit 0
@@ -168,8 +168,8 @@ while true; do
     echo "  Submission ID: $SUBMISSION_ID"
     echo ""
     echo "  Apple still has the submission queued. It may complete later."
-    echo "  Check status:  OJD_ENV=release ./scripts/ojd notarize status $SUBMISSION_ID"
-    echo "  View history:  OJD_ENV=release ./scripts/ojd notarize history"
+    echo "  Check status:  OJD_ENV=release ./scripts/ojd release notarize status $SUBMISSION_ID"
+    echo "  View history:  OJD_ENV=release ./scripts/ojd release notarize history"
     echo ""
     echo "  If it completes, staple manually:"
     echo "    xcrun stapler staple $APP"

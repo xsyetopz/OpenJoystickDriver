@@ -31,7 +31,7 @@ from package_common import (
 
 def usage() -> None:
     print("""Usage:
-  OJD_ENV=release ./scripts/ojd package release [version]
+  OJD_ENV=release ./scripts/ojd release package [version]
 
 Builds a release-signed app, embeds the DriverKit extension, submits it for
 notarization, staples the accepted ticket, and writes:
@@ -51,9 +51,9 @@ def main(argv: list[str]) -> int:
             f"Unknown package command: {argv[0] if argv else '<empty>'} (expected: release)"
         )
     if len(argv) > 2:
-        die("package release accepts at most one version")
+        die("release package accepts at most one version")
     if os.environ.get("OJD_ENV") != "release":
-        die("package release requires OJD_ENV=release")
+        die("release package requires OJD_ENV=release")
 
     release_ref = os.environ.get("GITHUB_REF_NAME", "")
     version = argv[1] if len(argv) == 2 else ""
