@@ -211,6 +211,40 @@ private func waitForSemaphore(_ semaphore: DispatchSemaphore, timeout: DispatchT
     releaseHeldRequest.signal()
   }
 
+  @Test func guiHostWaitsForTheLocalServerInsteadOfSpawning() {
+    #expect(
+      ApplicationServiceClient.launchPolicy(
+        commandLineArguments: [
+          "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
+        ],
+        bundlePathExtension: "app"
+      ) == .waitForLocalServer
+    )
+  }
+
+  @Test func cliProbeSpawnsTheBundleExecutableWhenTheSocketIsMissing() {
+    #expect(
+      ApplicationServiceClient.launchPolicy(
+        commandLineArguments: [
+          "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver",
+          "--headless",
+          "app",
+          "ready",
+        ],
+        bundlePathExtension: "app"
+      ) == .spawnBundleExecutable
+    )
+  }
+
+  @Test func unpackagedProcessDoesNotSpawnABundle() {
+    #expect(
+      ApplicationServiceClient.launchPolicy(
+        commandLineArguments: ["openjoystickdriver", "--headless", "app", "ready"],
+        bundlePathExtension: ""
+      ) == .unavailable
+    )
+  }
+
   private func temporarySocketPath() -> String {
     "/tmp/com.openjoystickdriver.test.\(UUID().uuidString).rpc"
   }

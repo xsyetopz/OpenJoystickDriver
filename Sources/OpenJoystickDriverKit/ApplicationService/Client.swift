@@ -1,4 +1,3 @@
-import AppKit
 import Foundation
 
 let applicationServiceDefaultReplyTimeoutSeconds: TimeInterval = 5
@@ -29,19 +28,25 @@ public final class ApplicationServiceClient: @unchecked Sendable {
 
   /// Connects to the running main app, launching the installed app when needed.
   public func connect(timeoutSeconds: TimeInterval = 5) {
-    if LocalServiceRPCClient.serverProcessIdentifier(socketPath: socketPath) != nil {
-      stateLock.withLock { connected = true }
-      return
+    if waitForLocalServer(until: Date()) { return }
+    let timeout = max(0, timeoutSeconds)
+    let deadline = Date().addingTimeInterval(timeout)
+    switch Self.launchPolicy(
+      commandLineArguments: CommandLine.arguments,
+      bundlePathExtension: Bundle.main.bundleURL.pathExtension
+    ) {
+    case .waitForLocalServer:
+      break
+    case .spawnBundleExecutable:
+      let grace = Date().addingTimeInterval(
+        min(Self.concurrentHostLaunchGraceSeconds, timeout)
+      )
+      if waitForLocalServer(until: grace) { return }
+      spawnMainApplicationExecutable()
+    case .unavailable:
+      break
     }
-    launchMainApplicationIfPossible()
-    let deadline = Date().addingTimeInterval(max(0, timeoutSeconds))
-    while Date() < deadline {
-      if LocalServiceRPCClient.serverProcessIdentifier(socketPath: socketPath) != nil {
-        stateLock.withLock { connected = true }
-        return
-      }
-      Thread.sleep(forTimeInterval: 0.1)
-    }
+    if waitForLocalServer(until: deadline) { return }
     stateLock.withLock { connected = false }
   }
 
@@ -346,22 +351,52 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     } catch LocalServiceRPCError.timeout { throw ApplicationServiceClientError.timeout }
   }
 
-  private func launchMainApplicationIfPossible() {
-    guard Bundle.main.bundleURL.pathExtension == "app" else { return }
-    let configuration = NSWorkspace.OpenConfiguration()
-    configuration.activates = false
-    NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration) {
-      _,
-      error in
-      if let error {
-        FileHandle.standardError.write(
-          Data(
-            "[ApplicationServiceClient] Could not launch main app: ".appending(
-              "\(error.localizedDescription)\n"
-            ).utf8
-          )
-        )
+  private func waitForLocalServer(until deadline: Date) -> Bool {
+    while true {
+      if LocalServiceRPCClient.serverProcessIdentifier(socketPath: socketPath) != nil {
+        stateLock.withLock { connected = true }
+        return true
       }
+      if Date() >= deadline { return false }
+      Thread.sleep(forTimeInterval: 0.1)
     }
+  }
+
+  private func spawnMainApplicationExecutable() {
+    guard let executable = Bundle.main.executableURL else { return }
+    let process = Process()
+    process.executableURL = executable
+    process.arguments = []
+    process.standardInput = FileHandle.nullDevice
+    process.standardOutput = FileHandle.nullDevice
+    process.standardError = FileHandle.nullDevice
+    do { try process.run() } catch {
+      FileHandle.standardError.write(
+        Data(
+          "[ApplicationServiceClient] Could not launch main app: ".appending(
+            "\(error.localizedDescription)\n"
+          ).utf8
+        )
+      )
+    }
+  }
+}
+
+extension ApplicationServiceClient {
+  enum LaunchPolicy: Equatable, Sendable {
+    case waitForLocalServer
+    case spawnBundleExecutable
+    case unavailable
+  }
+
+  static let concurrentHostLaunchGraceSeconds: TimeInterval = 0.5
+
+  static func launchPolicy(
+    commandLineArguments: [String],
+    bundlePathExtension: String
+  ) -> LaunchPolicy {
+    guard bundlePathExtension == "app" else { return .unavailable }
+    if commandLineArguments.dropFirst().isEmpty { return .waitForLocalServer }
+    return .spawnBundleExecutable
   }
 }

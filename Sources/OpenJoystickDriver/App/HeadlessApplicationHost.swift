@@ -2,6 +2,10 @@ import Dispatch
 import Foundation
 import OpenJoystickDriverKit
 
+#if canImport(AppKit) && canImport(SwiftUI)
+  import AppKit
+#endif
+
 /// Keeps the signed application bundle alive while its in-process runtime owns
 /// controller discovery, output, and the authenticated local RPC endpoint.
 final class HeadlessApplicationHost {
@@ -12,6 +16,18 @@ final class HeadlessApplicationHost {
 
   @MainActor func run() -> Never {
     registerForLoginIfNeeded()
+    #if canImport(AppKit) && canImport(SwiftUI)
+      runtime.handleShutdownSignal { [weak runtime] in
+        Task { @MainActor in
+          if NSApplication.shared.isRunning {
+            NSApplication.shared.terminate(nil)
+            return
+          }
+          await runtime?.stop()
+          exit(0)
+        }
+      }
+    #endif
     do { try runtime.start() } catch {
       fputs(
         "[OpenJoystickDriver] Main-app service startup failed: \(error.localizedDescription)\n",

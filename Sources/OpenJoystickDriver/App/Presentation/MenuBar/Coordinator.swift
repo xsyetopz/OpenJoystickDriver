@@ -6,6 +6,18 @@
   import SwiftUI
   import UserNotifications
 
+  enum MenuBarStatusItemImage {
+    static func make(accessibilityDescription: String) -> NSImage? {
+      guard #available(macOS 11.0, *) else { return nil }
+      let image = NSImage(
+        systemSymbolName: "gamecontroller",
+        accessibilityDescription: accessibilityDescription
+      )
+      image?.isTemplate = true
+      return image
+    }
+  }
+
   @MainActor final class MenuBarCoordinator: NSObject, NSApplicationDelegate {
     let runtime: ApplicationServiceRuntime
     let viewModel: RuntimeViewModel
@@ -56,8 +68,7 @@
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
       guard !isStopping else { return .terminateNow }
       isStopping = true
-      liveStatusTimer?.invalidate()
-      liveStatusTimer = nil
+      removeStatusItem()
       inputTestWindowController?.stop()
       Task { @MainActor [weak self, weak sender] in
         guard let self else { return }
@@ -66,6 +77,8 @@
       }
       return .terminateLater
     }
+
+    func applicationWillTerminate(_ notification: Notification) { removeStatusItem() }
 
     @objc func openSettings(_ sender: Any?) { openSettings(pane: .settings) }
 
@@ -107,19 +120,15 @@
         button.toolTip = OJDLocalized.string("app.name", fallback: "OpenJoystickDriver")
         button.target = self
         button.action = #selector(showStatusMenu(_:))
-        if let appIcon = NSImage(named: NSImage.applicationIconName)?.copy() as? NSImage {
-          appIcon.size = NSSize(width: 18, height: 18)
-          button.image = appIcon
-        } else if #available(macOS 11.0, *) {
-          button.image = NSImage(
-            systemSymbolName: "gamecontroller",
-            accessibilityDescription: OJDLocalized.string(
-              "app.name",
-              fallback: "OpenJoystickDriver"
-            )
+        if let image = MenuBarStatusItemImage.make(
+          accessibilityDescription: OJDLocalized.string(
+            "app.name",
+            fallback: "OpenJoystickDriver"
           )
-          button.image?.isTemplate = true
-        } else {
+        ) {
+          button.image = image
+        }
+        if button.image == nil {
           // Text is an intentional final fallback for an unbundled debug executable.
           button.title = "OJ"
         }
@@ -128,6 +137,15 @@
       // Use the action path rather than assigning a menu directly so each opening refreshes its
       // snapshot before the menu is shown.
       item.menu = nil
+    }
+
+    private func removeStatusItem() {
+      liveStatusTimer?.invalidate()
+      liveStatusTimer = nil
+      guard let item = statusItem else { return }
+      NSStatusBar.system.removeStatusItem(item)
+      statusItem = nil
+      statusMenu = nil
     }
 
     @objc private func showStatusMenu(_ sender: Any?) {

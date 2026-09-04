@@ -12,6 +12,7 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
   private let stateLock = NSLock()
   private var started = false
   private var shutdownSignalSources: [DispatchSourceSignal] = []
+  private var shutdownSignalHandler: (@Sendable () -> Void)?
 
   init() {
     let permissionManager = PermissionManager()
@@ -73,6 +74,14 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     }
   }
 
+  /// Replaces `stop()` + `exit(0)` on SIGTERM/SIGINT.
+  ///
+  /// The menu-bar host uses this so AppKit can remove the status item before the
+  /// process exits. Install the handler before `start()`.
+  func handleShutdownSignal(_ handler: @escaping @Sendable () -> Void) {
+    stateLock.withLock { shutdownSignalHandler = handler }
+  }
+
   func stop() async {
     let shouldStop = stateLock.withLock {
       guard started else { return false }
@@ -102,6 +111,10 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
         let source = DispatchSource.makeSignalSource(signal: signalNumber, queue: .main)
         source.setEventHandler { [weak self] in
           guard let self else { return }
+          if let handler = self.stateLock.withLock({ self.shutdownSignalHandler }) {
+            handler()
+            return
+          }
           serviceLog("[Service] Signal \(signalNumber) - stopping...")
           Task {
             await self.stop()

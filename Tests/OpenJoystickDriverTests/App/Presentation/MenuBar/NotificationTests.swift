@@ -1,9 +1,15 @@
+import AppKit
 import Foundation
 import Testing
 
 @testable import OpenJoystickDriver
 
 @Suite struct NotificationTests {
+  @Test func statusItemImageIsATemplateSymbol() {
+    let image = MenuBarStatusItemImage.make(accessibilityDescription: "OpenJoystickDriver")
+    #expect(image?.isTemplate == true)
+  }
+
   @Test @MainActor func permissionModelPublishesTheResolvedAuthorizationState() async {
     let authorization = NotificationPermissionAuthorizationStub(state: .allowed)
     let model = NotificationPermissionModel(authorization: authorization)
