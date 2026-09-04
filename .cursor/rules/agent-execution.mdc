@@ -1,0 +1,22 @@
+---
+description: Ship working code — fix root causes, verify with runs, no fallback theater
+alwaysApply: true
+---
+
+# Execute and verify
+
+Default: edit -> run the relevant check/test -> report result. Narration is secondary.
+
+**Root cause**
+- Fix the failing mechanism. Do not paper over with rollback-as-success, ignored errors, "continue anyway", or sleep/retry instead of correcting the step.
+- Fallbacks that hide a broken primary path are not a fix unless the user accepts that degraded design in writing.
+
+**Verification**
+- Trivial typo: syntax/lint as needed. Logic: exercise it. Install/CI: run the failing gate.
+- Prefer a failing->passing test or command over arguing in chat.
+- Honest status: "written, tests not run" when that is true.
+
+**Output**
+- Short: what changed, where, what passed/failed
+- No long plans for a small patch; no "let me know if you want..." padding after the work
+- Use tools; do not describe what you would do instead of doing it

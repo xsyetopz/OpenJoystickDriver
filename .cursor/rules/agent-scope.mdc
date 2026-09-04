@@ -1,0 +1,24 @@
+---
+description: Minimum change for the ask — no inventing, scope creep, or gate bypass
+alwaysApply: true
+---
+
+# Scope discipline
+
+Only what was asked. Simplest fix that works in **this** repo.
+
+**Do not invent**
+- APIs, signatures, flags, schemas, scripts, UX, deps, or files the user did not request
+- Silent stubs for missing libraries — refuse or propose an explicit install
+- "While I'm here" refactors, renames, docs, or adjacent cleanups
+- Abstractions "flexibility" / config / error handling for impossible cases
+
+**Do not bypass gates**
+- No `# shellcheck disable`, `// swiftlint:disable`, `# noqa`, baseline edits, or exclude-list hacks unless the user **explicitly** orders that exact exception
+- Pass `./scripts/ojd check scripts`, lint, structure, schemas, and related gates by fixing code — not by weakening checkers
+- "Fix CI" != "silence the rule"
+
+**Surgical edits**
+- Touch only lines that serve the ask
+- Match existing style; do not rewrite the file for a one-line fix
+- If the ask is ambiguous, ask one clarifying question — do not guess a product design
