@@ -67,7 +67,7 @@ product-only test rule and validation sequence into a repeatable contract.
   identifiers, typed state, return codes, or payload structure.
 - Repository scripts are support tooling. Validate them with their supported
   `ojd` repository checks; do not invoke script implementation from Swift tests.
-- Keep Swift 6.2 strict concurrency, package boundaries, generated DriverKit
+- Keep Swift 6.3.3 strict concurrency, package boundaries, generated DriverKit
   ownership, resources, entitlements, and hardware limitations explicit.
 
 ## Quick start

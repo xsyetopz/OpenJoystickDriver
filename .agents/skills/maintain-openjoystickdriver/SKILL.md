@@ -55,7 +55,7 @@ product-test evidence, and Apple UI design. `AGENTS.md` remains authoritative.
   `OpenJoystickDriverKit`; composition, AppKit/SwiftUI, CLI, runtime adapters,
   and CoreGraphics policy in `OpenJoystickDriver`; SwifterKit only in the relay
   and generator boundaries.
-- Preserve Swift 6.2 strict concurrency, SwiftLint, entitlements, resources,
+- Preserve Swift 6.3.3 strict concurrency, SwiftLint, entitlements, resources,
   RPC contracts, and the generated DriverKit boundary. Never hand-edit
   `.build/driverkit/generated/`.
 - Treat controller records as generated runtime data. Route catalog authoring to
