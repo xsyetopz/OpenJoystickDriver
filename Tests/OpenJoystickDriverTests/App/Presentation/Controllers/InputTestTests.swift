@@ -246,7 +246,7 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
     model.selectDevice(makeInputTestDevice())
 
     model.start()
-    try? await Task.sleep(nanoseconds: 15_000_000)
+    await waitUntil { model.sessionState == .unavailable }
     let callsAtStop = await gateway.counts().input
     try? await Task.sleep(nanoseconds: 5_000_000)
 
@@ -263,7 +263,7 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
     model.selectDevice(makeInputTestDevice())
 
     model.start()
-    try? await Task.sleep(nanoseconds: 15_000_000)
+    await waitUntil { model.sessionState == .stale }
 
     #expect(model.sessionState == .stale)
     #expect(model.latestInput == snapshot)
@@ -333,7 +333,7 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
     model.selectDevice(makeInputTestDevice())
 
     model.start()
-    try? await Task.sleep(nanoseconds: 40_000_000)
+    #expect(await gateway.waitForInputCalls(2))
     model.stop()
 
     #expect(await gateway.counts().input > 1)
@@ -597,5 +597,16 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
       physicalOutputCapabilities: capabilities,
       runtimeIdentifier: runtimeIdentifier
     )
+  }
+
+  @MainActor private func waitUntil(
+    timeoutNanoseconds: UInt64 = 500_000_000,
+    _ condition: @escaping @MainActor () -> Bool
+  ) async {
+    let deadline = DispatchTime.now().uptimeNanoseconds + timeoutNanoseconds
+    while !condition() {
+      if DispatchTime.now().uptimeNanoseconds >= deadline { return }
+      try? await Task.sleep(nanoseconds: 1_000_000)
+    }
   }
 }
