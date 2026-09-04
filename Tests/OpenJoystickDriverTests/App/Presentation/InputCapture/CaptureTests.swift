@@ -102,16 +102,16 @@ import Testing
     #expect(RuntimePresentation.detectedSource(from: state) == nil)
   }
 
-  @Test func detectedSourceIncludesGenericAndDigitalControllerAliases() {
+  @Test func detectedSourceIncludesNamedExtraAndDigitalControllerAliases() {
     var state = DeviceInputState(vendorID: 0x1234, productID: 0x5678)
-    state.pressedButtons = ["genericButton4"]
-    #expect(RuntimePresentation.detectedSource(from: state) == .button(.auxiliary4))
+    state.pressedButtons = ["share"]
+    #expect(RuntimePresentation.detectedSource(from: state) == .button(.share))
 
     state.pressedButtons = ["l2Digital"]
-    #expect(RuntimePresentation.detectedSource(from: state) == .button(.auxiliary1))
+    #expect(RuntimePresentation.detectedSource(from: state) == .button(.leftTriggerClick))
 
     state.pressedButtons = ["r2Digital"]
-    #expect(RuntimePresentation.detectedSource(from: state) == .button(.auxiliary2))
+    #expect(RuntimePresentation.detectedSource(from: state) == .button(.rightTriggerClick))
   }
 
   @Test func detectedSourceIgnoresReservedGuideAndHomeControls() {
@@ -126,9 +126,9 @@ import Testing
   @Test func detectedTransitionUsesCanonicalAliasesAndAxisThresholds() {
     let previous = DeviceInputState(vendorID: 0x1234, productID: 0x5678)
     var current = previous
-    current.pressedButtons = ["genericButton7"]
+    current.pressedButtons = ["mute"]
     #expect(
-      RuntimePresentation.detectedTransition(from: previous, to: current) == .button(.auxiliary7)
+      RuntimePresentation.detectedTransition(from: previous, to: current) == .button(.mute)
     )
 
     current.pressedButtons = []

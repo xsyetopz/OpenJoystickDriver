@@ -83,7 +83,10 @@
               OJDLocalized.string("developer.noExtraInputs", fallback: "No extra buttons detected.")
             ).foregroundColor(Color(NSColor.secondaryLabelColor))
           } else {
-            Text(model.observedExtraInputs.joined(separator: ", ")).font(
+            Text(
+              model.observedExtraInputs.map(InputTestButtonPresentation.localizedTitle(for:))
+                .joined(separator: ", ")
+            ).font(
               .system(.body, design: .monospaced)
             ).textSelectionIfAvailable()
           }
@@ -109,7 +112,7 @@
           }
           Button(
             OJDLocalized.string("developer.enterDiagnosticMode", fallback: "Enter Diagnostic Mode")
-          ) {}.disabled(true)
+          ) {}.disabled(!model.diagnosticRecipeAvailable)
         }.padding(4).frame(maxWidth: .infinity, alignment: .leading)
       } label: {
         Text(OJDLocalized.string("developer.diagnosticMode", fallback: "Diagnostic Mode")).font(

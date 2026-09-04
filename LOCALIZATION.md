@@ -24,12 +24,14 @@ old daemon-era or hard-coded localization paths.
 
 ## Catalog status
 
-The current catalog contains 342 ordinary keys and five native plural entries,
-packaged in 83 `.lproj` bundles (including `C` and `en-US`). `et-EE` contains
-the first complete non-English translation and is ready for Estonian review.
-The other locale files intentionally contain the current English source copy as
-an explicit fallback while human translations are added; do not describe them
-as completed translations or restore the removed legacy catalogs.
+The current catalog packages ordinary keys and five native plural entries across
+83 `.lproj` bundles (including `C` and `en-US`). GUI and CLI human-facing product
+copy resolve through `OJDLocalized` / `CLILocalized` against this catalog.
+`et-EE` remains the first reviewed non-English translation for the prior key set;
+newly added CLI/GUI keys currently carry English source text there pending
+Estonian review. Other locale files intentionally contain the current English
+source copy as an explicit fallback while human translations are added; do not
+describe them as completed translations or restore the removed legacy catalogs.
 
 ## Adding or reviewing a translation
 

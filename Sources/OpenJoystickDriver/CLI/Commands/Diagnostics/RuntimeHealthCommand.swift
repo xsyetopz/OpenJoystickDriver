@@ -6,7 +6,12 @@ struct RuntimeHealthCommand {
     let options = parse(arguments: arguments)
     let health = ApplicationServiceManager.health()
     guard let processID = health.pid else {
-      CLIOutput.error("OpenJoystickDriver application service is not running.")
+      CLIOutput.error(
+        CLILocalized.text(
+          "cli.runtime.not_running",
+          "OpenJoystickDriver application service is not running."
+        )
+      )
       exit(1)
     }
 
@@ -87,7 +92,11 @@ struct RuntimeHealthCommand {
       Int(ceil(Double(options.seconds * 1_000) / Double(options.intervalMilliseconds))) + 1
     guard estimatedSamples <= ApplicationServiceRuntimeHealthSampler.maximumSampleCount else {
       CLIOutput.error(
-        "Configuration would collect \(estimatedSamples) samples; increase --interval-ms."
+        CLILocalized.format(
+          "cli.runtime.sample_limit",
+          "Configuration would collect %d samples; increase --interval-ms.",
+          estimatedSamples
+        )
       )
       exit(1)
     }
@@ -108,13 +117,24 @@ struct RuntimeHealthCommand {
       let data = try encoder.encode(summary)
       print(String(data: data, encoding: .utf8) ?? "{}")
     } catch {
-      CLIOutput.error("Could not encode runtime summary: \(error.localizedDescription)")
+      CLIOutput.error(
+        CLILocalized.format(
+          "cli.runtime.json_error",
+          "Could not encode runtime summary: %@",
+          error.localizedDescription
+        )
+      )
       exit(1)
     }
   }
 
   private func printSummary(_ summary: RuntimeHealthSummary) {
-    print("OpenJoystickDriver Application Service Runtime Soak")
+    print(
+      CLILocalized.text(
+        "cli.runtime.heading",
+        "OpenJoystickDriver Application Service Runtime Soak"
+      )
+    )
     print("  Samples    : \(summary.sampleCount) over \(format(summary.durationSeconds))s")
     print(
       "  RSS        : \(mebibytes(summary.firstResidentBytes)) -> "
@@ -148,12 +168,19 @@ struct RuntimeHealthCommand {
     print("  Verdict    : \(summary.soakVerdict.rawValue)")
     if summary.soakVerdict == .insufficientData {
       print(
-        "Observation shorter than \(summary.minimumSoakSeconds)s is inconclusive; "
-          + "use a longer active-controller soak."
+        CLILocalized.format(
+          "cli.runtime.inconclusive",
+          "Observation shorter than %ds is inconclusive; use a longer active-controller soak.",
+          summary.minimumSoakSeconds
+        )
       )
     } else {
       print(
-        "A stable bounded soak is evidence for this workload, not proof that all leaks are absent."
+        CLILocalized.text(
+          "cli.runtime.stable_note",
+          "A stable bounded soak is evidence for this workload, "
+            + "not proof that all leaks are absent."
+        )
       )
     }
   }
@@ -165,16 +192,28 @@ struct RuntimeHealthCommand {
 
   private func printHelp() {
     print(
-      """
-      Usage: OpenJoystickDriver --headless diagnose runtime
-      [--seconds 1...86400] [--interval-ms 100...60000]
-      [--rss-limit-mib 0...65536] [--footprint-limit-mib 0...65536] [--json]
+      [
+        CLILocalized.text(
+          "cli.runtime.help",
+          """
+          Usage: OpenJoystickDriver --headless diagnose runtime \
+          [--seconds 1...86400] [--interval-ms 100...60000] \
+          [--rss-limit-mib 0...65536] [--footprint-limit-mib 0...65536] [--json]
 
-      Samples application service RSS, physical footprint, CPU, file descriptors, and threads.
-      Zero disables a high-water limit; footprint defaults to 512 MiB. Windows under 60 seconds
-      are explicitly inconclusive; use a longer soak while reproducing activity.
-      At most 100000 samples may be requested.
-      """
+          Samples application service RSS, physical footprint, CPU, file descriptors, and threads.
+          """
+        ),
+        CLILocalized.text(
+          "cli.runtime.help_limits",
+          "Zero disables a high-water limit; footprint defaults to 512 MiB. "
+            + "Windows under 60 seconds are explicitly inconclusive; "
+            + "use a longer soak while reproducing activity."
+        ),
+        CLILocalized.text(
+          "cli.runtime.help_max_samples",
+          "At most 100000 samples may be requested."
+        )
+      ].joined(separator: "\n")
     )
   }
 

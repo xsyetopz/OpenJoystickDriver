@@ -54,11 +54,32 @@
 
     @ViewBuilder private var captureStatus: some View {
       switch model.captureState {
-      case .idle: statusLabel("Ready", symbol: "circle")
-      case .starting: statusLabel("Starting…", symbol: "clock")
-      case .capturing: statusLabel("Capturing", symbol: "record.circle")
-      case .stopped: statusLabel("Stopped · \(model.packets.count) packets", symbol: "stop.circle")
-      case .noPackets: statusLabel("No packets captured", symbol: "tray")
+      case .idle:
+        statusLabel(OJDLocalized.string("developer.ready", fallback: "Ready"), symbol: "circle")
+      case .starting:
+        statusLabel(
+          OJDLocalized.string("developer.starting", fallback: "Starting…"),
+          symbol: "clock"
+        )
+      case .capturing:
+        statusLabel(
+          OJDLocalized.string("developer.capturing", fallback: "Capturing"),
+          symbol: "record.circle"
+        )
+      case .stopped:
+        statusLabel(
+          OJDLocalized.formatted(
+            "developer.stoppedPackets",
+            fallback: "Stopped · %d packets",
+            model.packets.count
+          ),
+          symbol: "stop.circle"
+        )
+      case .noPackets:
+        statusLabel(
+          OJDLocalized.string("developer.noPackets", fallback: "No packets captured"),
+          symbol: "tray"
+        )
       case .failed(let message):
         statusLabel(message, symbol: "exclamationmark.triangle").foregroundColor(
           Color(NSColor.systemRed)
@@ -93,9 +114,14 @@
         GeometryReader { geometry in
           ScrollView([.horizontal, .vertical]) {
             VStack(alignment: .leading, spacing: 3) {
-              Text("Time       Direction  Bytes  Data").font(
-                .system(.caption, design: .monospaced).weight(.semibold)
-              ).foregroundColor(Color(NSColor.secondaryLabelColor))
+              Text(
+                OJDLocalized.string(
+                  "developer.packetColumns",
+                  fallback: "Time       Direction  Bytes  Data"
+                )
+              ).font(.system(.caption, design: .monospaced).weight(.semibold)).foregroundColor(
+                Color(NSColor.secondaryLabelColor)
+              )
               ForEach(Array(model.packets.enumerated()), id: \.offset) { _, packet in
                 Text(packetLine(packet)).font(.system(.caption, design: .monospaced)).fixedSize(
                   horizontal: true,
@@ -127,7 +153,10 @@
 
     private func statusLabel(_ text: String, symbol: String) -> some View {
       HStack(spacing: 6) {
-        OJDSystemSymbol(name: symbol, fallback: "Status")
+        OJDSystemSymbol(
+          name: symbol,
+          fallback: OJDLocalized.string("common.status", fallback: "Status")
+        )
         Text(text)
       }.accessibilityElement(children: .combine)
     }
@@ -135,7 +164,11 @@
     private func copyAll() {
       let pasteboard = NSPasteboard.general
       pasteboard.clearContents()
-      let rows = ["Time       Direction  Bytes  Data"] + model.packets.map(packetLine)
+      let header = OJDLocalized.string(
+        "developer.packetColumns",
+        fallback: "Time       Direction  Bytes  Data"
+      )
+      let rows = [header] + model.packets.map(packetLine)
       pasteboard.setString(rows.joined(separator: "\n"), forType: .string)
     }
 

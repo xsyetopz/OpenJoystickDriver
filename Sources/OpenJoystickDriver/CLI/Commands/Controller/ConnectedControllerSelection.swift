@@ -9,7 +9,12 @@ enum ConnectedControllerSelection {
     runtimeIdentifier: String? = nil
   ) throws -> ApplicationServiceDeviceDescription {
     guard (vendorID == nil) == (productID == nil) else {
-      throw Failure("Pass both VID and PID, or omit both.")
+      throw Failure(
+        CLILocalized.text(
+          "cli.controller.selection.vid_pid_pair",
+          "Pass both VID and PID, or omit both."
+        )
+      )
     }
 
     let candidates = devices.filter { device in
@@ -21,9 +26,20 @@ enum ConnectedControllerSelection {
       let matches = candidates.filter { $0.runtimeIdentifier == runtimeIdentifier }
       guard matches.count == 1, let device = matches.first else {
         if matches.count > 1 {
-          throw Failure("The --device selector is ambiguous for multiple connected controllers.")
+          throw Failure(
+            CLILocalized.text(
+              "cli.controller.selection.device_ambiguous",
+              "The --device selector is ambiguous for multiple connected controllers."
+            )
+          )
         }
-        throw Failure("No connected controller matches --device \(runtimeIdentifier).")
+        throw Failure(
+          CLILocalized.format(
+            "cli.controller.selection.device_missing",
+            "No connected controller matches --device %@.",
+            runtimeIdentifier
+          )
+        )
       }
       return device
     }
@@ -32,15 +48,30 @@ enum ConnectedControllerSelection {
     case 1: return candidates[0]
     case 0:
       if let vendorID, let productID {
-        throw Failure("No connected controller matches \(hex(vendorID)):\(hex(productID)).")
+        throw Failure(
+          CLILocalized.format(
+            "cli.controller.selection.vid_pid_missing",
+            "No connected controller matches %@:%@.",
+            hex(vendorID),
+            hex(productID)
+          )
+        )
       }
-      throw Failure("No controller is connected.")
+      throw Failure(
+        CLILocalized.text("cli.controller.selection.none", "No controller is connected.")
+      )
     default:
       let choices = candidates.map { device in
         "\(hex(device.vendorID)) \(hex(device.productID)) "
           + "--device \(device.runtimeIdentifier) \(device.name)"
       }.joined(separator: "\n  ")
-      throw Failure("Multiple controllers match. Select one with --device:\n  \(choices)")
+      throw Failure(
+        CLILocalized.format(
+          "cli.controller.selection.multiple",
+          "Multiple controllers match. Select one with --device:\n  %@",
+          choices
+        )
+      )
     }
   }
 

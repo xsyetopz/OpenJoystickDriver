@@ -13,7 +13,13 @@ struct SystemExtensionCommand {
     case "disable": submitDeactivation()
     case "--help", "-h", "help": printHelp()
     default:
-      CLIOutput.error("Unknown extension command: \(subcommand)")
+      CLIOutput.error(
+        CLILocalized.format(
+          "cli.extension.unknown_command",
+          "Unknown extension command: %@",
+          subcommand
+        )
+      )
       printHelp()
       exit(1)
     }
@@ -21,36 +27,58 @@ struct SystemExtensionCommand {
 
   private func printHelp() {
     print(
-      """
-      Usage: OpenJoystickDriver --headless extension <status|enable|disable>
+      CLILocalized.text(
+        "cli.extension.help",
+        """
+        Usage: OpenJoystickDriver --headless extension <status|enable|disable>
 
-      Commands:
-        status     Show registered OpenJoystickDriver system extensions
-        enable     Submit DriverKit system extension activation request
-        disable    Submit DriverKit system extension deactivation request
-      """
+        Commands:
+          status     Show registered OpenJoystickDriver system extensions
+          enable     Submit DriverKit system extension activation request
+          disable    Submit DriverKit system extension deactivation request
+        """
+      )
     )
   }
 
   private func printStatus() {
     let status = ExtensionProbe.currentStatus()
     switch status.bundle {
-    case .present: print("Embedded DriverKit extension: present")
-    case .missing: print("Embedded DriverKit extension: missing")
+    case .present:
+      print(CLILocalized.text("cli.extension.present", "Embedded DriverKit extension: present"))
+    case .missing:
+      print(CLILocalized.text("cli.extension.missing", "Embedded DriverKit extension: missing"))
     case .invalid(let actualIdentifier):
-      print("Embedded DriverKit extension: invalid (\(actualIdentifier))")
+      print(
+        CLILocalized.format(
+          "cli.extension.invalid",
+          "Embedded DriverKit extension: invalid (%@)",
+          actualIdentifier
+        )
+      )
     }
 
     switch status.registration {
     case .active(let record):
-      print("OS registration: active")
+      print(CLILocalized.text("cli.extension.registration_active", "OS registration: active"))
       print(record)
     case .inactive(let record):
-      print("OS registration: registered but inactive")
+      print(
+        CLILocalized.text(
+          "cli.extension.registration_inactive",
+          "OS registration: registered but inactive"
+        )
+      )
       print(record)
-    case .absent: print("OS registration: absent")
+    case .absent:
+      print(CLILocalized.text("cli.extension.registration_absent", "OS registration: absent"))
     case .unavailable(let reason):
-      CLIOutput.diagnostic("OS registration: unavailable")
+      CLIOutput.diagnostic(
+        CLILocalized.text(
+          "cli.extension.registration_unavailable",
+          "OS registration: unavailable"
+        )
+      )
       CLIOutput.error(reason)
       exit(1)
     }
@@ -60,8 +88,19 @@ struct SystemExtensionCommand {
     requireApplicationsBundleOrExit()
     requireValidBundleSignatureOrExit(action: "Install system extension")
     guard bundleContainsSystemExtension() else {
-      CLIOutput.error("App bundle does not contain \(ojdSystemExtensionID).dext")
-      CLIOutput.diagnostic("Fix: run ./scripts/ojd rebuild dev, then retry from /Applications.")
+      CLIOutput.error(
+        CLILocalized.format(
+          "cli.extension.bundle_missing",
+          "App bundle does not contain %@.dext",
+          ojdSystemExtensionID
+        )
+      )
+      CLIOutput.diagnostic(
+        CLILocalized.text(
+          "cli.extension.bundle_missing_fix",
+          "Fix: run ./scripts/ojd build install dev, then retry from /Applications."
+        )
+      )
       exit(1)
     }
     submit(.activation)
@@ -81,15 +120,29 @@ struct SystemExtensionCommand {
     case .completed(let message): CLIOutput.diagnostic(message)
     case .requiresApproval:
       CLIOutput.diagnostic(
-        "System extension request submitted and requires approval in System Settings."
+        CLILocalized.text(
+          "cli.extension.approval_required",
+          "System extension request submitted and requires approval in System Settings."
+        )
       )
       CLIOutput.diagnostic(
-        "Open System Settings > General > Login Items & Extensions > Driver Extensions."
+        CLILocalized.text(
+          "cli.extension.open_approval",
+          "Open System Settings > General > Login Items & Extensions > Driver Extensions."
+        )
       )
     case .timedOut:
-      CLIOutput.error("System extension request did not finish within 60s.")
+      CLIOutput.error(
+        CLILocalized.text(
+          "cli.extension.timeout",
+          "System extension request did not finish within 60s."
+        )
+      )
       CLIOutput.diagnostic(
-        "Check System Settings for an approval prompt, then run extension status."
+        CLILocalized.text(
+          "cli.extension.timeout_recovery",
+          "Check System Settings for an approval prompt, then run extension status."
+        )
       )
       exit(2)
     case .failed(let error):
@@ -212,7 +265,15 @@ final class SystemExtensionSubmission: NSObject, OSSystemExtensionRequestDelegat
     didFinishWithResult result: OSSystemExtensionRequest.Result
   ) {
     guard completionGate.accept() else { return }
-    setResult(.completed("System extension request finished with result \(result.rawValue)."))
+    setResult(
+      .completed(
+        CLILocalized.format(
+          "cli.extension.completed",
+          "System extension request finished with result %@.",
+          String(result.rawValue)
+        )
+      )
+    )
     finish(.active)
   }
 
@@ -221,8 +282,13 @@ final class SystemExtensionSubmission: NSObject, OSSystemExtensionRequestDelegat
     let nsError = error as NSError
     setResult(
       .failed(
-        "System extension request failed: \(nsError.domain) "
-          + "code=\(nsError.code) \(nsError.localizedDescription)"
+        CLILocalized.format(
+          "cli.extension.failed",
+          "System extension request failed: %@ code=%d %@",
+          nsError.domain,
+          nsError.code,
+          nsError.localizedDescription
+        )
       )
     )
     finish(.failed)
@@ -240,8 +306,13 @@ final class SystemExtensionSubmission: NSObject, OSSystemExtensionRequestDelegat
     withExtension ext: OSSystemExtensionProperties
   ) -> OSSystemExtensionRequest.ReplacementAction {
     CLIOutput.diagnostic(
-      "Replacing \(existing.bundleIdentifier) v\(existing.bundleVersion) "
-        + "with v\(ext.bundleVersion)."
+      CLILocalized.format(
+        "cli.extension.replacing",
+        "Replacing %@ v%@ with v%@.",
+        existing.bundleIdentifier,
+        existing.bundleVersion,
+        ext.bundleVersion
+      )
     )
     return .replace
   }
@@ -262,7 +333,11 @@ final class SystemExtensionSubmission: NSObject, OSSystemExtensionRequestDelegat
 
   func cancel() {
     guard completionGate.accept() else { return }
-    setResult(.failed("System extension request cancelled."))
+    setResult(
+      .failed(
+        CLILocalized.text("cli.extension.cancelled", "System extension request cancelled.")
+      )
+    )
     completion?(.cancelled)
   }
 

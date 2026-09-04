@@ -166,7 +166,13 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
     PermissionManager.Snapshot(inputMonitoring: .granted, accessibility: .granted)
   }
 
+  func requestPermission(_ requirement: PermissionManager.Requirement) throws
+    -> PermissionManager.Snapshot
+  { try requestPermissions() }
+
   func deviceInputState(for selector: RuntimeDeviceSelector) throws -> DeviceInputState? { nil }
+
+  func packetLog(for selector: RuntimeDeviceSelector) throws -> [PacketLogEntry] { [] }
 
   func remappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
     if snapshotDelayNanoseconds > 0 { try await Task.sleep(nanoseconds: snapshotDelayNanoseconds) }

@@ -331,24 +331,8 @@
     }
 
     private func menuImage(symbol: String) -> NSImage? {
-      if #available(macOS 11.0, *) {
-        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
-        image?.isTemplate = true
-        return image
-      }
-      let legacyName: String
-      switch symbol {
-      case "slider.horizontal.3", "gearshape": legacyName = "NSPreferencesGeneral"
-      case "gamecontroller": legacyName = "NSBluetoothTemplate"
-      case "rectangle.grid.2x2": legacyName = "NSIconViewTemplate"
-      case "ant", "terminal": legacyName = "NSInfo"
-      case "info.circle": legacyName = "NSInfo"
-      case "lock.shield": legacyName = "NSLockLockedTemplate"
-      case "arrow.clockwise": legacyName = "NSRefreshTemplate"
-      case "power": legacyName = "NSStopProgressTemplate"
-      default: return nil
-      }
-      let image = NSImage(named: NSImage.Name(legacyName))
+      guard #available(macOS 11.0, *) else { return nil }
+      let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
       image?.isTemplate = true
       return image
     }

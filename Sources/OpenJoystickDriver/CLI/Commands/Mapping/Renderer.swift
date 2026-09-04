@@ -7,7 +7,9 @@ enum MappingRenderer {
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     let data = try encoder.encode(value)
     guard let result = String(data: data, encoding: .utf8) else {
-      throw MappingCommandError.invalidArguments("Could not encode UTF-8 JSON.")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.text("cli.mapping.jsonEncodeFailed", "Could not encode UTF-8 JSON.")
+      )
     }
     return result
   }
@@ -46,9 +48,16 @@ enum MappingRenderer {
   }
 
   static func snapshot(_ snapshot: ApplicationServiceRemappingSnapshotPayload) -> String {
-    var lines = ["Post-event access: \(snapshot.postEventAccess.rawValue)", "Profiles:"]
+    var lines = [
+      CLILocalized.format(
+        "cli.mapping.postEventAccess",
+        "Post-event access: %@",
+        snapshot.postEventAccess.rawValue
+      ),
+      CLILocalized.text("cli.mapping.profiles", "Profiles:"),
+    ]
     lines += snapshot.profiles.map(profile)
-    lines.append("Routes:")
+    lines.append(CLILocalized.text("cli.mapping.routes", "Routes:"))
     lines += snapshot.routes.map {
       "  \($0.vendorID):\($0.productID) \($0.runtimeIdentifier) "
         + "\($0.selection.rawValue)/\($0.eligibility.rawValue)"
@@ -86,7 +95,9 @@ enum MappingRenderer {
   }
 
   static func layers(_ profile: RemappingProfile) -> String {
-    if profile.layers.isEmpty { return "No layers." }
+    if profile.layers.isEmpty {
+      return CLILocalized.text("cli.mapping.noLayers", "No layers.")
+    }
     return profile.layers.enumerated().map { index, layer in
       let bindings = layer.bindings.map { b in
         "    \(b.id.uuidString) \(source(b.source)) -> \(destination(b.destination))"

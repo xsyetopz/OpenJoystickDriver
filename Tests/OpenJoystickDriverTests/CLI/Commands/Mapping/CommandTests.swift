@@ -135,7 +135,7 @@ import Testing
     #expect(await client.mutationCount == 0)
   }
 
-  @Test func retiredAliasesAreRejectedBeforeRPC() async throws {
+  @Test func obsoleteMappingAliasesAreRejectedBeforeRPC() async throws {
     let profile = makeProfile()
     let client = MockMappingClient(snapshotValue: snapshot([profile]))
     await #expect(throws: MappingCommandError.self) {

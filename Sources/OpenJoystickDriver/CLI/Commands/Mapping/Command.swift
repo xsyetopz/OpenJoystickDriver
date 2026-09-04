@@ -13,7 +13,12 @@ struct MappingCommand {
       client.connect()
       defer { client.disconnect() }
       guard client.isConnected else {
-        throw MappingCommandError.invalidArguments("Could not connect to the installed main app.")
+        throw MappingCommandError.invalidArguments(
+          CLILocalized.text(
+            "cli.mapping.app_unreachable",
+            "Could not connect to the installed main app."
+          )
+        )
       }
       let result: Result<String, any Error> = runSyncResult {
         do {
@@ -66,7 +71,10 @@ struct MappingInvocation {
     case "chord": return try await chord(client: client)
     case "sequence": return try await sequence(client: client)
     case "layer": return try await layer(client: client)
-    default: throw MappingCommandError.invalidArguments("Unknown map command '\(command)'.")
+    default:
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.format("cli.mapping.command_unknown", "Unknown map command '%@'.", command)
+      )
     }
   }
 
@@ -140,13 +148,17 @@ struct MappingInvocation {
   }
 
   private func delete(client: any MappingServiceClient) async throws -> String {
-    let selector = try soleArgument("map delete <uuid-or-name>")
+    let selector = try soleArgument(
+      CLILocalized.text("cli.mapping.usage.delete", "map delete <uuid-or-name>")
+    )
     let profile = try await resolve(selector, client: client)
     return MappingRenderer.snapshot(try await client.delete(id: profile.id))
   }
 
   private func importProfile(client: any MappingServiceClient) async throws -> String {
-    let path = try soleArgument("map import <file>")
+    let path = try soleArgument(
+      CLILocalized.text("cli.mapping.usage.import", "map import <file>")
+    )
     let profile = try RemappingProfileFileStore.load(from: URL(fileURLWithPath: path))
     return render(try await client.importProfile(profile), profileID: profile.id)
   }
@@ -165,7 +177,10 @@ struct MappingInvocation {
   }
 
   private func activate(client: any MappingServiceClient) async throws -> String {
-    let profile = try await resolve(soleArgument("map enable <uuid-or-name>"), client: client)
+    let profile = try await resolve(
+      soleArgument(CLILocalized.text("cli.mapping.usage.enable", "map enable <uuid-or-name>")),
+      client: client
+    )
     return MappingRenderer.snapshot(try await client.activate(id: profile.id))
   }
 
@@ -184,16 +199,22 @@ struct MappingInvocation {
   }
 
   private func permission(client: any MappingServiceClient) async throws -> String {
-    let operation = try soleArgument("map permission status|request")
+    let operation = try soleArgument(
+      CLILocalized.text("cli.mapping.usage.permission", "map permission status|request")
+    )
     guard operation == "status" || operation == "request" else {
-      throw MappingCommandError.invalidArguments("map permission status|request")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.text("cli.mapping.usage.permission", "map permission status|request")
+      )
     }
     return try await client.access(request: operation == "request").rawValue
   }
 
   private func chord(client: any MappingServiceClient) async throws -> String {
     guard let action = arguments.first, !action.hasPrefix("--") else {
-      throw MappingCommandError.invalidArguments("Usage: map chord <profile> add|delete ...")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.text("cli.mapping.usage.chord", "Usage: map chord <profile> add|delete ...")
+      )
     }
     switch action {
     case "add":
@@ -218,14 +239,23 @@ struct MappingInvocation {
       }
     default:
       throw MappingCommandError.invalidArguments(
-        "Unknown chord action '\(action)'. Expected: add | delete"
+        CLILocalized.format(
+          "cli.mapping.chord_action_unknown",
+          "Unknown chord action '%@'. Expected: add | delete",
+          action
+        )
       )
     }
   }
 
   private func sequence(client: any MappingServiceClient) async throws -> String {
     guard let action = arguments.first, !action.hasPrefix("--") else {
-      throw MappingCommandError.invalidArguments("Usage: map sequence <profile> add|delete ...")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.text(
+          "cli.mapping.usage.sequence",
+          "Usage: map sequence <profile> add|delete ..."
+        )
+      )
     }
     switch action {
     case "add":
@@ -255,7 +285,11 @@ struct MappingInvocation {
       }
     default:
       throw MappingCommandError.invalidArguments(
-        "Unknown sequence action '\(action)'. Expected: add | delete"
+        CLILocalized.format(
+          "cli.mapping.sequence_action_unknown",
+          "Unknown sequence action '%@'. Expected: add | delete",
+          action
+        )
       )
     }
   }
@@ -263,7 +297,10 @@ struct MappingInvocation {
   private func layer(client: any MappingServiceClient) async throws -> String {
     guard let action = arguments.first, !action.hasPrefix("--") else {
       throw MappingCommandError.invalidArguments(
-        "Usage: map layer <profile> create|delete|bind|unbind|list ..."
+        CLILocalized.text(
+          "cli.mapping.usage.layer",
+          "Usage: map layer <profile> create|delete|bind|unbind|list ..."
+        )
       )
     }
     switch action {
@@ -327,19 +364,27 @@ struct MappingInvocation {
         profileID: profile.id
       )
     case "list":
-      let selector = try soleArgument("map layer list <profile>")
+      let selector = try soleArgument(
+        CLILocalized.text("cli.mapping.usage.layer_list", "map layer list <profile>")
+      )
       let profile = try await resolve(selector, client: client)
       return MappingRenderer.layers(profile)
     default:
       throw MappingCommandError.invalidArguments(
-        "Unknown layer action '\(action)'. Expected: create | delete | bind | unbind | list"
+        CLILocalized.format(
+          "cli.mapping.layer_action_unknown",
+          "Unknown layer action '%@'. Expected: create | delete | bind | unbind | list",
+          action
+        )
       )
     }
   }
 
   private func layerMode(_ raw: String) throws -> RemappingLayerActivation {
     guard let mode = RemappingLayerActivation(rawValue: raw) else {
-      throw MappingCommandError.invalidArguments("--mode must be 'hold' or 'toggle'.")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.text("cli.mapping.mode_invalid", "--mode must be 'hold' or 'toggle'.")
+      )
     }
     return mode
   }
@@ -365,24 +410,36 @@ struct MappingInvocation {
       $0.name.caseInsensitiveCompare(selector) == .orderedSame
     }
     guard !matches.isEmpty else {
-      throw MappingCommandError.profileNotFound("No profile named '\(selector)'.")
+      throw MappingCommandError.profileNotFound(
+        CLILocalized.format("cli.mapping.profile_missing", "No profile named '%@'.", selector)
+      )
     }
     guard matches.count == 1, let profile = matches.first else {
-      throw MappingCommandError.ambiguousProfile("Profile name '\(selector)' is ambiguous.")
+      throw MappingCommandError.ambiguousProfile(
+        CLILocalized.format(
+          "cli.mapping.profile_ambiguous",
+          "Profile name '%@' is ambiguous.",
+          selector
+        )
+      )
     }
     return profile
   }
 
   private func selectorArguments() throws -> (String, [String]) {
     guard let selector = arguments.first, !selector.hasPrefix("--") else {
-      throw MappingCommandError.invalidArguments("A profile UUID or name is required.")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.text("cli.mapping.profile_required", "A profile UUID or name is required.")
+      )
     }
     return (selector, Array(arguments.dropFirst()))
   }
 
   private func soleArgument(_ usage: String) throws -> String {
     guard arguments.count == 1, let value = arguments.first else {
-      throw MappingCommandError.invalidArguments("Usage: \(usage)")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.format("cli.mapping.usage_prefix", "Usage: %@", usage)
+      )
     }
     return value
   }
@@ -396,7 +453,9 @@ struct MappingInvocation {
     return MappingRenderer.profile(profile)
   }
 
-  static let help = """
+  static let help = CLILocalized.text(
+    "cli.mapping.help",
+    """
     Usage: OpenJoystickDriver --headless map <command>
 
     Commands:
@@ -442,4 +501,5 @@ struct MappingInvocation {
     <profile> accepts a UUID or an exact, case-insensitive profile name.
     <id> accepts decimal or 0x-prefixed hexadecimal.
     """
+  )
 }

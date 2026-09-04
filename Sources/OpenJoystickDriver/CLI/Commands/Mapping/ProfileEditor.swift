@@ -31,7 +31,12 @@ enum MappingProfileEditor {
     -> RemappingProfile
   {
     guard profile.bindings.contains(where: { $0.source == source }) else {
-      throw MappingCommandError.invalidArguments("No binding exists for the requested source.")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.text(
+          "cli.mapping.binding_missing",
+          "No binding exists for the requested source."
+        )
+      )
     }
     return copy(profile, bindings: profile.bindings.filter { $0.source != source })
   }
@@ -53,7 +58,13 @@ enum MappingProfileEditor {
     -> RemappingProfile
   {
     guard profile.chords.contains(where: { $0.id == chordID }) else {
-      throw MappingCommandError.invalidArguments("No chord exists with ID \(chordID.uuidString).")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.format(
+          "cli.mapping.chord_missing",
+          "No chord exists with ID %@.",
+          chordID.uuidString
+        )
+      )
     }
     return try copyAndValidate(copy(profile, chords: profile.chords.filter { $0.id != chordID }))
   }
@@ -79,7 +90,11 @@ enum MappingProfileEditor {
   {
     guard profile.sequences.contains(where: { $0.id == sequenceID }) else {
       throw MappingCommandError.invalidArguments(
-        "No sequence exists with ID \(sequenceID.uuidString)."
+        CLILocalized.format(
+          "cli.mapping.sequence_missing",
+          "No sequence exists with ID %@.",
+          sequenceID.uuidString
+        )
       )
     }
     return try copyAndValidate(
@@ -107,7 +122,13 @@ enum MappingProfileEditor {
     -> RemappingProfile
   {
     guard profile.layers.contains(where: { $0.id == layerID }) else {
-      throw MappingCommandError.invalidArguments("No layer exists with ID \(layerID.uuidString).")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.format(
+          "cli.mapping.layer_missing",
+          "No layer exists with ID %@.",
+          layerID.uuidString
+        )
+      )
     }
     return try copyAndValidate(copy(profile, layers: profile.layers.filter { $0.id != layerID }))
   }
@@ -118,7 +139,13 @@ enum MappingProfileEditor {
     bindings: [RemappingBinding]? = nil
   ) throws -> RemappingProfile {
     guard let layerIndex = profile.layers.firstIndex(where: { $0.id == layerID }) else {
-      throw MappingCommandError.invalidArguments("No layer exists with ID \(layerID.uuidString).")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.format(
+          "cli.mapping.layer_missing",
+          "No layer exists with ID %@.",
+          layerID.uuidString
+        )
+      )
     }
     var layers = profile.layers
     let old = layers[layerIndex]
@@ -155,7 +182,13 @@ enum MappingProfileEditor {
       doubleTap: doubleTap
     )
     guard let layer = profile.layers.first(where: { $0.id == layerID }) else {
-      throw MappingCommandError.invalidArguments("No layer exists with ID \(layerID.uuidString).")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.format(
+          "cli.mapping.layer_missing",
+          "No layer exists with ID %@.",
+          layerID.uuidString
+        )
+      )
     }
     let bindings = layer.bindings.filter { $0.source != source } + [binding]
     return try replacingLayer(profile, layerID: layerID, bindings: bindings)
@@ -167,7 +200,13 @@ enum MappingProfileEditor {
     source: RemappingSource
   ) throws -> RemappingProfile {
     guard let layer = profile.layers.first(where: { $0.id == layerID }) else {
-      throw MappingCommandError.invalidArguments("No layer exists with ID \(layerID.uuidString).")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.format(
+          "cli.mapping.layer_missing",
+          "No layer exists with ID %@.",
+          layerID.uuidString
+        )
+      )
     }
     let bindings = layer.bindings.filter { $0.source != source }
     return try replacingLayer(profile, layerID: layerID, bindings: bindings)
@@ -204,12 +243,19 @@ enum MappingProfileEditor {
     let bundleID = options["--target-app"]
     let global = options.contains("--global")
     guard bundleID == nil || !global else {
-      throw MappingCommandError.invalidArguments("Pass only one of --target-app or --global.")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.text(
+          "cli.mapping.scope_conflict",
+          "Pass only one of --target-app or --global."
+        )
+      )
     }
     if let bundleID { return .application(bundleIdentifier: bundleID) }
     if global { return .global }
     guard let defaultValue else {
-      throw MappingCommandError.invalidArguments("Pass one of --target-app or --global.")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.text("cli.mapping.scope_required", "Pass one of --target-app or --global.")
+      )
     }
     return defaultValue
   }
@@ -239,7 +285,12 @@ enum MappingProfileEditor {
       default: false
       }
     guard isAxis || !supplied else {
-      throw MappingCommandError.invalidArguments("Axis options require an axis source.")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.text(
+          "cli.mapping.axis_options_source",
+          "Axis options require an axis source."
+        )
+      )
     }
     guard isAxis else { return nil }
     return RemappingAxisTuning(
@@ -263,12 +314,18 @@ enum MappingProfileEditor {
     guard rate != nil || duty != nil else { return nil }
     guard let rate, let duty else {
       throw MappingCommandError.invalidArguments(
-        "--turbo-rate and --turbo-duty must be supplied together."
+        CLILocalized.text(
+          "cli.mapping.turbo_pair",
+          "--turbo-rate and --turbo-duty must be supplied together."
+        )
       )
     }
     guard destination.acceptsTurbo else {
       throw MappingCommandError.invalidArguments(
-        "Turbo is not supported for pointer movement or scrolling."
+        CLILocalized.text(
+          "cli.mapping.turbo_unsupported",
+          "Turbo is not supported for pointer movement or scrolling."
+        )
       )
     }
     return RemappingTurbo(
@@ -284,7 +341,10 @@ enum MappingProfileEditor {
     )
     guard parts.count == 2 else {
       throw MappingCommandError.invalidArguments(
-        "--long-hold expects <ms>:<target>, e.g. --long-hold 500:key:b"
+        CLILocalized.text(
+          "cli.mapping.long_hold_format",
+          "--long-hold expects <ms>:<target>, e.g. --long-hold 500:key:b"
+        )
       )
     }
     let duration = try MappingSyntax.finiteDouble(parts[0], option: "--long-hold duration")
@@ -299,7 +359,10 @@ enum MappingProfileEditor {
     )
     guard parts.count == 2 else {
       throw MappingCommandError.invalidArguments(
-        "--double-tap expects <ms>:<target>, e.g. --double-tap 300:key:c"
+        CLILocalized.text(
+          "cli.mapping.double_tap_format",
+          "--double-tap expects <ms>:<target>, e.g. --double-tap 300:key:c"
+        )
       )
     }
     let window = try MappingSyntax.finiteDouble(parts[0], option: "--double-tap window")
@@ -315,7 +378,9 @@ enum MappingProfileEditor {
   private static func curve(_ raw: String?) throws -> RemappingResponseCurve {
     guard let raw else { return .linear }
     guard let value = RemappingResponseCurve(rawValue: raw) else {
-      throw MappingCommandError.invalidArguments("Unknown response curve '\(raw)'.")
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.format("cli.mapping.curve_unknown", "Unknown response curve '%@'.", raw)
+      )
     }
     return value
   }

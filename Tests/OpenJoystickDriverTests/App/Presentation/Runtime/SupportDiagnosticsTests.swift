@@ -237,7 +237,13 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
     PermissionManager.Snapshot(inputMonitoring: .granted, accessibility: .granted)
   }
 
+  func requestPermission(_ requirement: PermissionManager.Requirement) throws
+    -> PermissionManager.Snapshot
+  { try requestPermissions() }
+
   func deviceInputState(for _: RuntimeDeviceSelector) throws -> DeviceInputState? { nil }
+
+  func packetLog(for _: RuntimeDeviceSelector) throws -> [PacketLogEntry] { [] }
 
   func remappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
     ApplicationServiceRemappingSnapshotPayload(

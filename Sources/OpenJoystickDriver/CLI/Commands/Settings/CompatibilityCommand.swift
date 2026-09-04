@@ -3,11 +3,14 @@ import OpenJoystickDriverKit
 
 struct CompatibilityCommand {
   func run(arguments: [String]) {
-    let usage = """
+    let usage = CLILocalized.text(
+      "cli.compat.usage",
+      """
       Usage: OpenJoystickDriver --headless compat show
-             OpenJoystickDriver --headless compat set \
+             OpenJoystickDriver --headless compat set \\
       <generic-hid|sdl2-3|apple-gamecontroller|xbox360-hid>
       """
+    )
     guard let sub = arguments.first else {
       print(usage)
       return
@@ -20,9 +23,9 @@ struct CompatibilityCommand {
     if sub == "status" {
       let status = runSyncResult { try? await client.getStatus() }
       if let id = status?.compatibilityIdentity {
-        print("compatibility identity: \(id)")
+        print(CLILocalized.format("cli.compat.identity", "compatibility identity: %@", id))
       } else {
-        print("compatibility identity: unknown")
+        print(CLILocalized.text("cli.compat.identity_unknown", "compatibility identity: unknown"))
       }
       return
     }
@@ -38,14 +41,26 @@ struct CompatibilityCommand {
 
     if !ok {
       CLIOutput.error(
-        "Failed to set compatibility identity to \(sub). "
-          + "Launch the installed app and verify Input Monitoring and Accessibility access."
+        CLILocalized.format(
+          "cli.compat.set_failed",
+          "Failed to set compatibility identity to %@. "
+            + "Launch the installed app and verify Input Monitoring and Accessibility access.",
+          sub
+        )
       )
       exit(1)
     }
 
     let status = runSyncResult { try? await client.getStatus() }
-    print("compatibility identity: \(status?.compatibilityIdentity ?? sub)")
-    if let s = status?.userSpaceVirtualDeviceStatus { print("user-space status: \(s)") }
+    print(
+      CLILocalized.format(
+        "cli.compat.identity",
+        "compatibility identity: %@",
+        status?.compatibilityIdentity ?? sub
+      )
+    )
+    if let s = status?.userSpaceVirtualDeviceStatus {
+      print(CLILocalized.format("cli.compat.user_space_status", "user-space status: %@", s))
+    }
   }
 }

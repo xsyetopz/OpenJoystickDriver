@@ -13,6 +13,18 @@ _2026-09-04_
   host recipe; none are live until the exact packet is an operational fact.
 - Collapsed remapping profile/library contracts to a single live schema version
   (equality with `currentSchemaVersion` only; no supported-version sets).
+- Removed the obsolete `xone-hid` / Xbox One HID compatibility identity and its
+  probe route. Unknown persisted identity values sanitize to `automatic` on
+  load. Use `generic-hid`, `sdl2-3`, `apple-gamecontroller`, or `xbox360-hid`.
+- Removed leftover product compatibility shims: named retired-identity registry,
+  no-Share Xbox One Bluetooth descriptor fixture, Xbox360 deprecated-name
+  source-compatibility tests, and gateway protocol permission fallback defaults.
+- Routed human-facing GUI and CLI product copy through the shared localization
+  catalog (`OJDLocalized` / `CLILocalized`), expanded the packaged key set, and
+  kept non-English locales on explicit English fallbacks except reviewed
+  `et-EE` translations of the prior key set.
+- Softened product-facing wording toward plain English (no agent-style
+  self-narration in menus, settings, and CLI help/errors).
 - Corrected compatibility guidance to model consumer family and evidence
   separately: ASTRO C40 `9886:0024` remains SDL/PCSX2/Steam-specific, Xbox One
   Bluetooth `045E:02FD` is not an SDL recommendation after reported BT1/BT2

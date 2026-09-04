@@ -4,7 +4,9 @@ import OpenJoystickDriverKit
 struct StatusCommand {
   func run(arguments: [String] = []) {
     guard arguments.isEmpty || arguments == ["--json"] else {
-      fputs("error: status accepts only --json.\n", stderr)
+      CLIOutput.error(
+        CLILocalized.text("cli.status.json_only", "status accepts only --json.")
+      )
       exit(CLIParseError.exitCode)
     }
     let json = arguments.contains("--json")
@@ -34,7 +36,7 @@ struct StatusCommand {
   }
 
   private func printHeader() {
-    print("OpenJoystickDriver Status")
+    print(CLILocalized.text("cli.status.heading", "OpenJoystickDriver Status"))
     let divider = String(repeating: "\u{2500}", count: 25)
     print(divider)
     print("")
@@ -45,7 +47,12 @@ struct StatusCommand {
   }
 
   private func printUsageHint() {
-    print("Use '--headless controller list' to enumerate controllers.")
+    print(
+      CLILocalized.text(
+        "cli.status.usage_hint",
+        "Use '--headless controller list' to enumerate controllers."
+      )
+    )
   }
 
   private func runDirectMode() {
@@ -53,8 +60,11 @@ struct StatusCommand {
       if line.hasPrefix("  -> App recovery:") { CLIOutput.diagnostic(line) } else { print(line) }
     }
     CLIOutput.diagnostic(
-      "If access is denied, run --headless permissions request and approve "
-        + "Input Monitoring and Accessibility in System Settings."
+      CLILocalized.text(
+        "cli.status.access_denied",
+        "If access is denied, run --headless permissions request and approve "
+          + "Input Monitoring and Accessibility in System Settings."
+      )
     )
   }
 
@@ -64,12 +74,23 @@ struct StatusCommand {
     do {
       let data = try encoder.encode(payload)
       guard let text = String(bytes: data, encoding: .utf8) else {
-        fputs("error: could not encode status JSON as UTF-8.\n", stderr)
+        CLIOutput.error(
+          CLILocalized.text(
+            "cli.status.json_utf8_error",
+            "Could not encode status JSON as UTF-8."
+          )
+        )
         exit(1)
       }
       print(text)
     } catch {
-      fputs("error: could not encode status JSON: \(error.localizedDescription)\n", stderr)
+      CLIOutput.error(
+        CLILocalized.format(
+          "cli.status.json_error",
+          "Could not encode status JSON: %@",
+          error.localizedDescription
+        )
+      )
       exit(1)
     }
   }

@@ -32,7 +32,14 @@ struct PhysicalOutputCommand {
     case "color": color(arguments: Array(arguments.dropFirst()))
     case "plan": plan(arguments: Array(arguments.dropFirst()))
     case "--help", "-h", "help": printHelp()
-    default: fail("Unknown controller output command: \(subcommand)")
+    default:
+      fail(
+        CLILocalized.format(
+          "cli.controller.unknownOutputCommand",
+          "Unknown controller output command: %@",
+          subcommand
+        )
+      )
     }
   }
 
@@ -49,16 +56,33 @@ struct PhysicalOutputCommand {
         let data = try encoder.encode(devices.map(ListedDevice.init))
         print(String(data: data, encoding: .utf8) ?? "[]")
       } catch {
-        fail("Could not encode physical output capabilities: \(error.localizedDescription)")
+        fail(
+          CLILocalized.format(
+            "cli.controller.outputEncodeFailed",
+            "Could not encode physical output capabilities: %@",
+            error.localizedDescription
+          )
+        )
       }
       return
     }
 
     if devices.isEmpty {
-      print("Physical output devices: (none connected)")
+      print(
+        CLILocalized.text(
+          "cli.controller.noPhysicalOutputDevices",
+          "Physical output devices: (none connected)"
+        )
+      )
       return
     }
-    print("Physical output devices (\(devices.count)):")
+    print(
+      CLILocalized.format(
+        "cli.controller.physicalOutputDevices",
+        "Physical output devices (%d):",
+        devices.count
+      )
+    )
     for device in devices {
       let capabilities = device.physicalOutputCapabilities
       print("  \(device.name) (\(hex(device.vendorID)):\(hex(device.productID)))")
@@ -85,7 +109,15 @@ struct PhysicalOutputCommand {
     var durationMs = 450
     var index = 2
     while index < arguments.count {
-      guard index + 1 < arguments.count else { fail("Missing value for \(arguments[index])") }
+      guard index + 1 < arguments.count else {
+        fail(
+          CLILocalized.format(
+            "cli.controller.missingOptionValue",
+            "Missing value for %@",
+            arguments[index]
+          )
+        )
+      }
       let option = arguments[index]
       let value = parseInteger(arguments[index + 1], label: option)
       switch option {
@@ -94,9 +126,20 @@ struct PhysicalOutputCommand {
       case "--lt": lt = parseIntensity(value, label: option)
       case "--rt": rt = parseIntensity(value, label: option)
       case "--duration-ms":
-        guard (0...5_000).contains(value) else { fail("--duration-ms must be 0...5000") }
+        guard (0...5_000).contains(value) else {
+          fail(
+            CLILocalized.text("cli.controller.durationRange", "--duration-ms must be 0...5000")
+          )
+        }
         durationMs = value
-      default: fail("Unknown rumble option: \(option)")
+      default:
+        fail(
+          CLILocalized.format(
+            "cli.controller.unknownRumbleOption",
+            "Unknown rumble option: %@",
+            option
+          )
+        )
       }
       index += 2
     }
@@ -108,13 +151,28 @@ struct PhysicalOutputCommand {
     )
     let capabilities = device.physicalOutputCapabilities
     guard capabilities.supportsRumble else {
-      fail("The selected controller has no physical rumble implementation.")
+      fail(
+        CLILocalized.text(
+          "cli.controller.noRumble",
+          "The selected controller has no physical rumble implementation."
+        )
+      )
     }
     if lt > 0 && !capabilities.rumbleMotors.contains(.leftTrigger) {
-      fail("The selected controller does not expose a left trigger motor.")
+      fail(
+        CLILocalized.text(
+          "cli.controller.noLeftTriggerMotor",
+          "The selected controller does not expose a left trigger motor."
+        )
+      )
     }
     if rt > 0 && !capabilities.rumbleMotors.contains(.rightTrigger) {
-      fail("The selected controller does not expose a right trigger motor.")
+      fail(
+        CLILocalized.text(
+          "cli.controller.noRightTriggerMotor",
+          "The selected controller does not expose a right trigger motor."
+        )
+      )
     }
 
     let rumbleLeft = left
@@ -154,9 +212,21 @@ struct PhysicalOutputCommand {
         )) == true
     }
     guard sent == true else {
-      fail("The application service could not send the physical rumble command.")
+      fail(
+        CLILocalized.text(
+          "cli.controller.rumbleFailed",
+          "The application service could not send the physical rumble command."
+        )
+      )
     }
-    print("Physical rumble command sent to \(hex(vendorID)):\(hex(productID)).")
+    print(
+      CLILocalized.format(
+        "cli.controller.rumbleSent",
+        "Physical rumble command sent to %@:%@.",
+        hex(vendorID),
+        hex(productID)
+      )
+    )
   }
 
   private func player(arguments: [String]) {
@@ -174,7 +244,12 @@ struct PhysicalOutputCommand {
     } else {
       let rawValue = parseInteger(arguments[2], label: "player")
       guard let parsed = PhysicalPlayerIndicator(rawValue: rawValue), parsed != .off else {
-        fail("Player must be off, 1, 2, 3, or 4.")
+        fail(
+          CLILocalized.text(
+            "cli.controller.invalidPlayer",
+            "Player must be off, 1, 2, 3, or 4."
+          )
+        )
       }
       indicator = parsed
     }
@@ -185,7 +260,12 @@ struct PhysicalOutputCommand {
       runtimeIdentifier: parsed.runtimeIdentifier
     )
     guard device.physicalOutputCapabilities.supportsPlayerIndicator else {
-      fail("The selected controller has no source-backed player-indicator implementation.")
+      fail(
+        CLILocalized.text(
+          "cli.controller.noPlayerIndicator",
+          "The selected controller has no source-backed player-indicator implementation."
+        )
+      )
     }
 
     let client = ApplicationServiceClient()
@@ -200,9 +280,21 @@ struct PhysicalOutputCommand {
       )
     }
     guard sent == true else {
-      fail("The application service could not set the physical player indicator.")
+      fail(
+        CLILocalized.text(
+          "cli.controller.playerIndicatorFailed",
+          "The application service could not set the physical player indicator."
+        )
+      )
     }
-    print("Physical player indicator set on \(hex(vendorID)):\(hex(productID)).")
+    print(
+      CLILocalized.format(
+        "cli.controller.playerIndicatorSet",
+        "Physical player indicator set on %@:%@.",
+        hex(vendorID),
+        hex(productID)
+      )
+    )
   }
 
   private func plan(arguments: [String]) {
@@ -220,14 +312,32 @@ struct PhysicalOutputCommand {
       runtimeIdentifier: parsed.runtimeIdentifier
     )
     let plan = PhysicalOutputValidationPlan(device: device)
-    print("Physical output validation plan for \(hex(vendorID)):\(hex(productID))")
-    if plan.steps.isEmpty { print("No source-backed physical output steps are available.") }
+    print(
+      CLILocalized.format(
+        "cli.controller.outputPlan",
+        "Physical output validation plan for %@:%@",
+        hex(vendorID),
+        hex(productID)
+      )
+    )
+    if plan.steps.isEmpty {
+      print(
+        CLILocalized.text(
+          "cli.controller.noOutputSteps",
+          "No source-backed physical output steps are available."
+        )
+      )
+    }
     for (index, step) in plan.steps.enumerated() {
       print("\(index + 1). \(step.id)")
-      print("   Run: \(step.command)")
-      print("   Expect: \(step.expectedObservation)")
+      print(CLILocalized.format("cli.controller.planRun", "   Run: %@", step.command))
+      print(
+        CLILocalized.format("cli.controller.planExpect", "   Expect: %@", step.expectedObservation)
+      )
     }
-    for note in plan.notes { print("Note: \(note)") }
+    for note in plan.notes {
+      print(CLILocalized.format("cli.controller.planNote", "Note: %@", note))
+    }
   }
 
   private func color(arguments: [String]) {
@@ -241,7 +351,9 @@ struct PhysicalOutputCommand {
     let productID = parseIdentifier(arguments[1], label: "PID")
     let components = zip(["red", "green", "blue"], arguments.dropFirst(2)).map { label, value in
       let parsed = parseInteger(value, label: label)
-      guard (0...255).contains(parsed) else { fail("Color components must be 0...255.") }
+      guard (0...255).contains(parsed) else {
+        fail(CLILocalized.text("cli.controller.colorRange", "Color components must be 0...255."))
+      }
       return UInt8(parsed)
     }
 
@@ -251,7 +363,12 @@ struct PhysicalOutputCommand {
       runtimeIdentifier: parsed.runtimeIdentifier
     )
     guard device.physicalOutputCapabilities.lightingFeatures.contains(.programmableColor) else {
-      fail("The selected controller has no source-backed RGB implementation.")
+      fail(
+        CLILocalized.text(
+          "cli.controller.noRGB",
+          "The selected controller has no source-backed RGB implementation."
+        )
+      )
     }
 
     let client = ApplicationServiceClient()
@@ -267,8 +384,22 @@ struct PhysicalOutputCommand {
         blue: components[2]
       )
     }
-    guard sent == true else { fail("The application service could not set physical RGB color.") }
-    print("Physical RGB color set on \(hex(vendorID)):\(hex(productID)).")
+    guard sent == true else {
+      fail(
+        CLILocalized.text(
+          "cli.controller.rgbFailed",
+          "The application service could not set physical RGB color."
+        )
+      )
+    }
+    print(
+      CLILocalized.format(
+        "cli.controller.rgbSet",
+        "Physical RGB color set on %@:%@.",
+        hex(vendorID),
+        hex(productID)
+      )
+    )
   }
 
   private func brightness(arguments: [String]) {
@@ -281,7 +412,9 @@ struct PhysicalOutputCommand {
     let vendorID = parseIdentifier(arguments[0], label: "VID")
     let productID = parseIdentifier(arguments[1], label: "PID")
     let rawBrightness = parseInteger(arguments[2], label: "brightness")
-    guard (0...255).contains(rawBrightness) else { fail("Brightness must be 0...255.") }
+    guard (0...255).contains(rawBrightness) else {
+      fail(CLILocalized.text("cli.controller.brightnessRange", "Brightness must be 0...255."))
+    }
 
     let device = requireDevice(
       vendorID: vendorID,
@@ -289,7 +422,12 @@ struct PhysicalOutputCommand {
       runtimeIdentifier: parsed.runtimeIdentifier
     )
     guard device.physicalOutputCapabilities.supportsProgrammableBrightness else {
-      fail("The selected controller has no source-backed brightness implementation.")
+      fail(
+        CLILocalized.text(
+          "cli.controller.noBrightness",
+          "The selected controller has no source-backed brightness implementation."
+        )
+      )
     }
 
     let client = ApplicationServiceClient()
@@ -304,9 +442,21 @@ struct PhysicalOutputCommand {
       )
     }
     guard sent == true else {
-      fail("The application service could not set physical LED brightness.")
+      fail(
+        CLILocalized.text(
+          "cli.controller.brightnessFailed",
+          "The application service could not set physical LED brightness."
+        )
+      )
     }
-    print("Physical LED brightness set on \(hex(vendorID)):\(hex(productID)).")
+    print(
+      CLILocalized.format(
+        "cli.controller.brightnessSet",
+        "Physical LED brightness set on %@:%@.",
+        hex(vendorID),
+        hex(productID)
+      )
+    )
   }
 
   private func connectedDevices() -> [ApplicationServiceDeviceDescription] {
@@ -318,7 +468,14 @@ struct PhysicalOutputCommand {
         timeout: applicationServiceCallTimeoutSeconds,
         { try? await client.getStatus() }
       )
-    else { fail("The application service is unavailable.") }
+    else {
+      fail(
+        CLILocalized.text(
+          "cli.controller.serviceUnavailable",
+          "The application service is unavailable."
+        )
+      )
+    }
     return status.connectedDevices
   }
 
@@ -344,11 +501,21 @@ struct PhysicalOutputCommand {
     while index < arguments.count {
       if arguments[index] == "--device" {
         guard runtimeIdentifier == nil, index + 1 < arguments.count else {
-          fail("--device requires one unique identifier from controller output list.")
+          fail(
+            CLILocalized.text(
+              "cli.controller.deviceRequiredList",
+              "--device requires one unique identifier from controller output list."
+            )
+          )
         }
         let identifier = arguments[index + 1]
         guard !identifier.isEmpty, !identifier.hasPrefix("--") else {
-          fail("--device requires one unique identifier from controller output list.")
+          fail(
+            CLILocalized.text(
+              "cli.controller.deviceRequiredList",
+              "--device requires one unique identifier from controller output list."
+            )
+          )
         }
         runtimeIdentifier = identifier
         index += 2
@@ -364,18 +531,32 @@ struct PhysicalOutputCommand {
     let radix = value.lowercased().hasPrefix("0x") ? 16 : 10
     let digits = radix == 16 ? String(value.dropFirst(2)) : value
     guard let parsed = UInt16(digits, radix: radix) else {
-      fail("\(label) must be a decimal or 0x-prefixed 16-bit value.")
+      fail(
+        CLILocalized.format(
+          "cli.controller.labelInvalid16",
+          "%@ must be a decimal or 0x-prefixed 16-bit value.",
+          label
+        )
+      )
     }
     return parsed
   }
 
   private func parseInteger(_ value: String, label: String) -> Int {
-    guard let parsed = Int(value) else { fail("\(label) must be an integer.") }
+    guard let parsed = Int(value) else {
+      fail(
+        CLILocalized.format("cli.controller.labelInteger", "%@ must be an integer.", label)
+      )
+    }
     return parsed
   }
 
   private func parseIntensity(_ value: Int, label: String) -> UInt8 {
-    guard (0...255).contains(value) else { fail("\(label) must be 0...255.") }
+    guard (0...255).contains(value) else {
+      fail(
+        CLILocalized.format("cli.controller.labelRange255", "%@ must be 0...255.", label)
+      )
+    }
     return UInt8(value)
   }
 
@@ -392,23 +573,26 @@ struct PhysicalOutputCommand {
 
   private func printHelp() {
     print(
-      """
-      Usage: OpenJoystickDriver --headless controller output <command>
+      CLILocalized.text(
+        "cli.controller.output.help",
+        """
+        Usage: OpenJoystickDriver --headless controller output <command>
 
-      Commands:
-        list [--json]
-        rumble <vid> <pid> [--device <id>] [--left 0...255] [--right 0...255]
-               [--lt 0...255] [--rt 0...255] [--duration-ms 0...5000]
-        player <vid> <pid> off|1|2|3|4 [--device <id>]
-        brightness <vid> <pid> 0...255 [--device <id>]
-        color <vid> <pid> <red 0...255> <green 0...255> <blue 0...255> [--device <id>]
-        plan <vid> <pid> [--device <id>]
+        Commands:
+          list [--json]
+          rumble <vid> <pid> [--device <id>] [--left 0...255] [--right 0...255]
+                 [--lt 0...255] [--rt 0...255] [--duration-ms 0...5000]
+          player <vid> <pid> off|1|2|3|4 [--device <id>]
+          brightness <vid> <pid> 0...255 [--device <id>]
+          color <vid> <pid> <red 0...255> <green 0...255> <blue 0...255> [--device <id>]
+          plan <vid> <pid> [--device <id>]
 
-      VID and PID accept decimal values or a 0x prefix. Output commands write to
-      connected physical hardware and reject capabilities the active parser does
-      not implement. When identical models are connected, pass the opaque device
-      identifier printed by controller output list.
-      """
+        VID and PID accept decimal values or a 0x prefix. Output commands write to
+        connected physical hardware and reject capabilities the active parser does
+        not implement. When identical models are connected, pass the opaque device
+        identifier printed by controller output list.
+        """
+      )
     )
   }
 }

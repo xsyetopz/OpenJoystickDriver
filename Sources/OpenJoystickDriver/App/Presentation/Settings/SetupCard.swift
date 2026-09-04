@@ -13,7 +13,7 @@
           HStack {
             StatusBadge(status: statusLabel, symbol: symbol)
             Spacer()
-            Button("Refresh") {
+            Button(OJDLocalized.string("common.refresh", fallback: "Refresh")) {
               Task { @MainActor in await viewModel.refreshSystemExtensionSetup() }
             }
           }
@@ -23,34 +23,42 @@
           )
           HStack {
             if viewModel.systemExtensionSetupState == .awaitingApproval {
-              Button("Open System Settings", action: openSettings)
+              Button(
+                OJDLocalized.string("setup.openSystemSettings", fallback: "Open System Settings"),
+                action: openSettings
+              )
             }
             if viewModel.systemExtensionSetupState == .needsActivation
               || viewModel.systemExtensionSetupState == .failed
               || viewModel.systemExtensionSetupState == .invalid
             {
-              Button("Repair Xbox USB Driver") {
-                Task { @MainActor in await viewModel.repairSystemExtension() }
-              }
+              Button(OJDLocalized.string("setup.repairDriver", fallback: "Repair Xbox USB Driver"))
+              { Task { @MainActor in await viewModel.repairSystemExtension() } }
             }
-            Button("Controller Test") { navigation.requestPane(.controllers) }
-            Button("Copy Support Report") {
-              Task { @MainActor in _ = await viewModel.copySupportReport() }
+            Button(OJDLocalized.string("setup.controllerTest", fallback: "Controller Test")) {
+              navigation.requestPane(.controllers)
             }
+            Button(OJDLocalized.string("setup.copySupportReport", fallback: "Copy Support Report"))
+            { Task { @MainActor in _ = await viewModel.copySupportReport() } }
           }
         }.padding(4)
       } label: {
-        Text("Xbox USB Driver").font(.headline)
-      }.ojdAccessibilityLabel("Xbox USB Driver setup").ojdAccessibilityValue(detail)
+        Text(OJDLocalized.string("setup.driverTitle", fallback: "Xbox USB Driver")).font(.headline)
+      }.ojdAccessibilityLabel(
+        OJDLocalized.string("setup.driverAccessibility", fallback: "Xbox USB Driver setup")
+      ).ojdAccessibilityValue(detail)
     }
 
     private var statusLabel: String {
       switch viewModel.systemExtensionSetupState {
-      case .checking: return "Checking…"
-      case .missingEmbedded, .invalid, .failed: return "Needs attention"
-      case .needsActivation, .replacementNeeded: return "Activating…"
-      case .awaitingApproval: return "Approval needed"
-      case .active: return "Ready"
+      case .checking: return OJDLocalized.string("setup.checking", fallback: "Checking…")
+      case .missingEmbedded, .invalid, .failed:
+        return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+      case .needsActivation, .replacementNeeded:
+        return OJDLocalized.string("setup.activating", fallback: "Activating…")
+      case .awaitingApproval:
+        return OJDLocalized.string("setup.approvalNeeded", fallback: "Approval needed")
+      case .active: return OJDLocalized.string("status.ready", fallback: "Ready")
       }
     }
 
@@ -60,16 +68,37 @@
 
     private var detail: String {
       switch viewModel.systemExtensionSetupState {
-      case .checking: return "Checking the installed Xbox USB driver."
+      case .checking:
+        return OJDLocalized.string(
+          "setup.checkingDetail",
+          fallback: "Checking the installed Xbox USB driver."
+        )
       case .missingEmbedded:
-        return "This app does not contain the Xbox USB driver. Reinstall the signed app."
+        return OJDLocalized.string(
+          "setup.missingDetail",
+          fallback: "This app does not contain the Xbox USB driver. Reinstall the signed app."
+        )
       case .invalid:
-        return "The embedded Xbox USB driver is invalid. Repair by reinstalling this app."
+        return OJDLocalized.string(
+          "setup.invalidDetail",
+          fallback: "The embedded Xbox USB driver is invalid. Repair by reinstalling this app."
+        )
       case .needsActivation, .replacementNeeded, .failed:
-        return "OpenJoystickDriver will repair the Xbox USB driver without developer tools."
+        return OJDLocalized.string(
+          "setup.repairDetail",
+          fallback: "OpenJoystickDriver will repair the Xbox USB driver without developer tools."
+        )
       case .awaitingApproval:
-        return "Approve the driver in System Settings to use supported Microsoft USB controllers."
-      case .active: return "The restricted Xbox USB driver is installed and ready."
+        return OJDLocalized.string(
+          "setup.approvalDetail",
+          fallback:
+            "Approve the driver in System Settings to use supported Microsoft USB controllers."
+        )
+      case .active:
+        return OJDLocalized.string(
+          "setup.activeDetail",
+          fallback: "The restricted Xbox USB driver is installed and ready."
+        )
       }
     }
 

@@ -10,7 +10,9 @@ struct ReportCommand {
       printHelp()
       return
     } else if let first = arguments.first {
-      CLIOutput.error("Unknown report command: \(first)")
+      CLIOutput.error(
+        CLILocalized.format("cli.report.unknown_command", "Unknown report command: %@", first)
+      )
       printHelp()
       exit(1)
     }
@@ -43,8 +45,19 @@ struct ReportCommand {
 
     do {
       try SupportReportService.write(report, to: outputURL)
-      print("Support report written to \(outputURL.path)")
-      print("Review it before sharing; device product names are included.")
+      print(
+        CLILocalized.format(
+          "cli.report.written",
+          "Support report written to %@",
+          outputURL.path
+        )
+      )
+      print(
+        CLILocalized.text(
+          "cli.report.review",
+          "Review it before sharing; device product names are included."
+        )
+      )
     } catch {
       CLIOutput.error(error.localizedDescription)
       exit(1)
@@ -67,14 +80,21 @@ struct ReportCommand {
 
   private func printHelp() {
     print(
-      """
-      Usage: OpenJoystickDriver --headless diagnose report [--output <path>]
+      CLILocalized.text(
+        "cli.report.help",
+        """
+        Usage: OpenJoystickDriver --headless diagnose report [--output <path>]
 
-      Creates a JSON support report for controller issues. The report excludes
-      raw serial values, filesystem paths, packet payloads, HID location IDs,
-      and free-form DriverKit discovery text. Review it before sharing because
-      device product names are included.
-      """
+        Creates a JSON support report for controller issues. Review it before sharing because \
+        device product names are included.
+        """
+      )
+      + "\n\n"
+        + CLILocalized.text(
+          "cli.report.help_exclusions",
+          "The report excludes raw serial values, filesystem paths, packet payloads, "
+            + "HID location IDs, and free-form DriverKit discovery text."
+        )
     )
   }
 }

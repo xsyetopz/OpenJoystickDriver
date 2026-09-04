@@ -93,7 +93,12 @@ struct InputCommand {
       )
     else {
       throw InputCommandFailure(
-        "No input received from \(hex(device.vendorID)):\(hex(device.productID))."
+        CLILocalized.format(
+          "cli.controller.noInputFrom",
+          "No input received from %@:%@.",
+          hex(device.vendorID),
+          hex(device.productID)
+        )
       )
     }
 
@@ -101,7 +106,14 @@ struct InputCommand {
       try printJSON(state, pretty: true)
       return
     }
-    print("Controller state \(hex(device.vendorID)):\(hex(device.productID))")
+    print(
+      CLILocalized.format(
+        "cli.controller.state",
+        "Controller state %@:%@",
+        hex(device.vendorID),
+        hex(device.productID)
+      )
+    )
     print("  \(formatted(state))")
   }
 
@@ -125,11 +137,17 @@ struct InputCommand {
     }
 
     print(
-      "Recent packets \(hex(device.vendorID)):\(hex(device.productID)) "
-        + "(\(selected.count)/\(entries.count))"
+      CLILocalized.format(
+        "cli.controller.recentPackets",
+        "Recent packets %@:%@ (%d/%d)",
+        hex(device.vendorID),
+        hex(device.productID),
+        selected.count,
+        entries.count
+      )
     )
     if selected.isEmpty {
-      print("  (no packets)")
+      print("  \(CLILocalized.text("cli.controller.noPackets", "(no packets)"))")
       return
     }
     for entry in selected {
@@ -155,8 +173,13 @@ struct InputCommand {
 
     if !jsonLines {
       print(
-        "Reading input from \(hex(device.vendorID)):\(hex(device.productID)) "
-          + "for \(seconds) seconds. Press controller buttons."
+        CLILocalized.format(
+          "cli.controller.readingInput",
+          "Reading input from %@:%@ for %d seconds. Press controller buttons.",
+          hex(device.vendorID),
+          hex(device.productID),
+          seconds
+        )
       )
     }
 
@@ -174,7 +197,9 @@ struct InputCommand {
       try await Task.sleep(nanoseconds: interval)
     }
 
-    if !observedState && !jsonLines { print("No input received.") }
+    if !observedState && !jsonLines {
+      print(CLILocalized.text("cli.controller.noInput", "No input received."))
+    }
   }
 
   private func tracePackets(
@@ -196,9 +221,13 @@ struct InputCommand {
     var observedPacket = false
 
     warnAboutRawPackets()
-    let traceStatus =
-      "Capturing packets from \(hex(device.vendorID)):\(hex(device.productID)) "
-      + "for \(seconds) seconds. Press controller buttons."
+    let traceStatus = CLILocalized.format(
+      "cli.controller.capturingPackets",
+      "Capturing packets from %@:%@ for %d seconds. Press controller buttons.",
+      hex(device.vendorID),
+      hex(device.productID),
+      seconds
+    )
     if jsonLines { CLIOutput.diagnostic(traceStatus) } else { print(traceStatus) }
 
     while DispatchTime.now().uptimeNanoseconds < deadline {
@@ -222,10 +251,11 @@ struct InputCommand {
     }
 
     if !observedPacket {
+      let message = CLILocalized.text("cli.controller.noPacketsReceived", "No packets received.")
       if jsonLines {
-        CLIOutput.diagnostic("No packets received.")
+        CLIOutput.diagnostic(message)
       } else {
-        print("No packets received.")
+        print(message)
       }
     }
   }
@@ -250,14 +280,20 @@ struct InputCommand {
     encoder.outputFormatting = pretty ? [.prettyPrinted, .sortedKeys] : [.sortedKeys]
     let data = try encoder.encode(value)
     guard let output = String(data: data, encoding: .utf8) else {
-      throw InputCommandFailure("Could not encode UTF-8 JSON output.")
+      throw InputCommandFailure(
+        CLILocalized.text("cli.controller.jsonEncodeFailed", "Could not encode UTF-8 JSON output.")
+      )
     }
     print(output)
   }
 
   private func warnAboutRawPackets() {
-    let warning = "Packet contents vary by controller. Check them before sharing."
-    CLIOutput.warning(warning)
+    CLIOutput.warning(
+      CLILocalized.text(
+        "cli.controller.packetWarning",
+        "Packet contents vary by controller. Check them before sharing."
+      )
+    )
   }
 
   private func parse(_ arguments: [String]) -> Options {
@@ -277,7 +313,13 @@ struct InputCommand {
     case "trace": action = .trace
     case "watch": action = .watch
     default:
-      CLIOutput.error("Unknown controller command: \(command)")
+      CLIOutput.error(
+        CLILocalized.format(
+          "cli.controller.unknownCommand",
+          "Unknown controller command: %@",
+          command
+        )
+      )
       printHelp()
       exit(1)
     }
@@ -317,19 +359,35 @@ struct InputCommand {
         )
       case "--device":
         guard options.runtimeIdentifier == nil, index + 1 < arguments.count else {
-          CLIOutput.error("--device requires one unique identifier.")
+          CLIOutput.error(
+            CLILocalized.text(
+              "cli.controller.deviceRequired",
+              "--device requires one unique identifier."
+            )
+          )
           exit(1)
         }
         let identifier = arguments[index + 1]
         guard !identifier.isEmpty, !identifier.hasPrefix("--") else {
-          CLIOutput.error("--device requires one unique identifier.")
+          CLIOutput.error(
+            CLILocalized.text(
+              "cli.controller.deviceRequired",
+              "--device requires one unique identifier."
+            )
+          )
           exit(1)
         }
         options.runtimeIdentifier = identifier
         index += 2
       default:
         guard !argument.hasPrefix("--"), let value = parseIdentifier(argument) else {
-          CLIOutput.error("Invalid controller option or identifier: \(argument)")
+          CLIOutput.error(
+            CLILocalized.format(
+              "cli.controller.invalidOption",
+              "Invalid controller option or identifier: %@",
+              argument
+            )
+          )
           printHelp()
           exit(1)
         }
@@ -339,7 +397,12 @@ struct InputCommand {
     }
 
     guard identifiers.isEmpty || identifiers.count == 2 else {
-      CLIOutput.error("Pass both VID and PID, or omit both when one controller is connected.")
+      CLIOutput.error(
+        CLILocalized.text(
+          "cli.controller.vidPidOrSingle",
+          "Pass both VID and PID, or omit both when one controller is connected."
+        )
+      )
       exit(1)
     }
     if identifiers.count == 2 {
@@ -357,7 +420,15 @@ struct InputCommand {
   ) -> Int {
     guard index + 1 < arguments.count, let value = Int(arguments[index + 1]), range.contains(value)
     else {
-      CLIOutput.error("\(option) must be \(range.lowerBound)...\(range.upperBound).")
+      CLIOutput.error(
+        CLILocalized.format(
+          "cli.controller.optionRange",
+          "%@ must be %d...%d.",
+          option,
+          range.lowerBound,
+          range.upperBound
+        )
+      )
       exit(1)
     }
     index += 2
@@ -373,22 +444,30 @@ struct InputCommand {
 
   private func printHelp() {
     print(
-      [
-        "Usage: OpenJoystickDriver --headless controller <state|packets|trace|watch> [options]", "",
-        "Commands:", "  state    Print the latest normalized buttons, sticks, and triggers",
-        "  packets  Print recent raw controller packets",
-        "  trace    Capture raw controller packets for a set duration",
-        "  watch    Print normalized state changes for a bounded duration", "",
-        "VID and PID accept decimal or 0x-prefixed hexadecimal. Omit both when",
-        "exactly one controller is connected. Use --device with the opaque ID",
-        "reported by controller output list when identical models are connected.", "", "Options:",
-        "  state   [--device <id>] [--json]",
-        "  packets [--device <id>] [--limit 1...200] [--json]",
-        "  trace   [--device <id>] [--seconds 1...3600]",
-        "          [--interval-ms 8...1000] [--json-lines]",
-        "  watch   [--device <id>] [--seconds 1...3600]",
-        "          [--interval-ms 8...1000] [--json-lines]"
-      ].joined(separator: "\n")
+      CLILocalized.text(
+        "cli.controller.input.help",
+        """
+        Usage: OpenJoystickDriver --headless controller <state|packets|trace|watch> [options]
+
+        Commands:
+          state    Print the latest normalized buttons, sticks, and triggers
+          packets  Print recent raw controller packets
+          trace    Capture raw controller packets for a set duration
+          watch    Print normalized state changes for a bounded duration
+
+        VID and PID accept decimal or 0x-prefixed hexadecimal. Omit both when
+        exactly one controller is connected. Use --device with the opaque ID
+        reported by controller output list when identical models are connected.
+
+        Options:
+          state   [--device <id>] [--json]
+          packets [--device <id>] [--limit 1...200] [--json]
+          trace   [--device <id>] [--seconds 1...3600]
+                  [--interval-ms 8...1000] [--json-lines]
+          watch   [--device <id>] [--seconds 1...3600]
+                  [--interval-ms 8...1000] [--json-lines]
+        """
+      )
     )
   }
 }

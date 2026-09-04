@@ -10,10 +10,18 @@ enum CLIParseError: LocalizedError {
 
   var errorDescription: String? {
     switch self {
-    case .missingCommand: "A command is required."
-    case .unknownCommand(let command): "Unknown command '\(command)'."
-    case .missingSubcommand(let command): "'\(command)' requires a subcommand."
-    case .unexpectedArguments(let command): "'\(command)' does not accept additional arguments."
+    case .missingCommand:
+      CLILocalized.text("cli.error.missing_command", "A command is required.")
+    case .unknownCommand(let command):
+      CLILocalized.format("cli.error.unknown_command", "Unknown command '%@'.", command)
+    case .missingSubcommand(let command):
+      CLILocalized.format("cli.error.missing_subcommand", "'%@' requires a subcommand.", command)
+    case .unexpectedArguments(let command):
+      CLILocalized.format(
+        "cli.error.unexpected_arguments",
+        "'%@' does not accept additional arguments.",
+        command
+      )
     }
   }
 }
@@ -77,7 +85,14 @@ struct CLIGrammar {
 
     switch invocation {
     case .help: print(CLIHelp.text)
-    case .version: print("OpenJoystickDriver v\(ApplicationVersion.current)")
+    case .version:
+      print(
+        CLILocalized.format(
+          "cli.help.title",
+          "OpenJoystickDriver v%@ - macOS gamepad driver",
+          ApplicationVersion.current
+        )
+      )
     case .status(let arguments), .appStatus(let arguments):
       StatusCommand().run(arguments: arguments)
     case .appReady: ApplicationServiceReadyCommand().run()

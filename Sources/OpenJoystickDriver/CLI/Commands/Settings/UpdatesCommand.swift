@@ -41,21 +41,58 @@ struct UpdatesCommand {
   }
 
   private func printText(_ state: UpdateCheckState, currentVersion: String, options: Options) {
-    print("OpenJoystickDriver Update Check")
-    print("  Current     : \(currentVersion)")
-    print("  Prereleases : \(options.includePrereleases ? "included" : "excluded")")
+    print(CLILocalized.text("cli.updates.heading", "OpenJoystickDriver Update Check"))
+    print(CLILocalized.format("cli.updates.current_label", "  Current     : %@", currentVersion))
+    let prereleaseStatus =
+      options.includePrereleases
+      ? CLILocalized.text("cli.updates.included", "included")
+      : CLILocalized.text("cli.updates.excluded", "excluded")
+    print(
+      CLILocalized.format("cli.updates.prereleases_label", "  Prereleases : %@", prereleaseStatus)
+    )
     switch state {
     case .upToDate(let latestTag):
-      print("  Status      : no update available")
-      print("  Latest      : \(latestTag)")
+      print(
+        CLILocalized.format(
+          "cli.updates.status_none",
+          "  Status      : %@",
+          CLILocalized.text("cli.updates.none", "no update available")
+        )
+      )
+      print(CLILocalized.format("cli.updates.latest_label", "  Latest      : %@", latestTag))
     case .available(let info):
-      print("  Status      : update available")
-      print("  Latest      : \(info.tagName)")
-      print("  Release     : \(info.htmlURL.absoluteString)")
+      print(
+        CLILocalized.format(
+          "cli.updates.status_available",
+          "  Status      : %@",
+          CLILocalized.text("cli.updates.available", "update available")
+        )
+      )
+      print(CLILocalized.format("cli.updates.latest_label", "  Latest      : %@", info.tagName))
+      print(
+        CLILocalized.format(
+          "cli.updates.release_label",
+          "  Release     : %@",
+          info.htmlURL.absoluteString
+        )
+      )
     case .failed(let message):
-      print("  Status      : failed")
-      print("  Error       : \(message)")
-    case .idle, .checking: print("  Status      : incomplete")
+      print(
+        CLILocalized.format(
+          "cli.updates.status_failed",
+          "  Status      : %@",
+          CLILocalized.text("cli.updates.failed", "failed")
+        )
+      )
+      print(CLILocalized.format("cli.updates.error_label", "  Error       : %@", message))
+    case .idle, .checking:
+      print(
+        CLILocalized.format(
+          "cli.updates.status_incomplete",
+          "  Status      : %@",
+          CLILocalized.text("cli.updates.incomplete", "incomplete")
+        )
+      )
     }
   }
 
@@ -126,7 +163,9 @@ struct UpdatesCommand {
       case "--json": options.json = true
       case "--open": options.openRelease = true
       default:
-        CLIOutput.error("Unknown updates option: \(argument)")
+        CLIOutput.error(
+          CLILocalized.format("cli.updates.unknown_option", "Unknown updates option: %@", argument)
+        )
         printHelp()
         exit(1)
       }
@@ -136,13 +175,19 @@ struct UpdatesCommand {
 
   private func printHelp() {
     print(
-      [
-        "Usage: OpenJoystickDriver --headless update check [options]", "", "Options:",
-        "  --prerelease  Include SemVer prerelease tags",
-        "  --json        Emit machine-readable JSON",
-        "  --open        Open the release page only when an update is available", "",
-        "This command checks GitHub tags; it does not download or install an update."
-      ].joined(separator: "\n")
+      CLILocalized.text(
+        "cli.updates.help",
+        """
+        Usage: OpenJoystickDriver --headless update check [options]
+
+        Options:
+          --prerelease  Include SemVer prerelease tags
+          --json        Emit machine-readable JSON
+          --open        Open the release page only when an update is available
+
+        This command checks GitHub tags; it does not download or install an update.
+        """
+      )
     )
   }
 }

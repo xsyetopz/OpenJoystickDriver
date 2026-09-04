@@ -20,20 +20,44 @@ struct SelfTestCommand {
     )
     guard let payload else {
       CLIOutput.error(
-        "Virtual-device test failed. Launch the installed app and verify Input Monitoring "
-          + "and Accessibility access."
+        CLILocalized.text(
+          "cli.test.failed",
+          "The virtual-device test failed. Launch the installed app, then verify Input "
+            + "Monitoring and Accessibility access."
+        )
       )
       exit(1)
     }
 
-    CLIOutput.diagnostic("Virtual device test (\(payload.seconds)s)")
     CLIOutput.diagnostic(
-      "  User-space: value \(payload.userSpaceValueEvents), report \(payload.userSpaceReportEvents)"
+      CLILocalized.format(
+        "cli.test.heading",
+        "Virtual device test (%ds)",
+        payload.seconds
+      )
+    )
+    CLIOutput.diagnostic(
+      CLILocalized.format(
+        "cli.test.userspace_events",
+        "  User-space: value %d, report %d",
+        payload.userSpaceValueEvents,
+        payload.userSpaceReportEvents
+      )
     )
     if payload.userSpaceRequired {
-      CLIOutput.diagnostic("  User-space status: \(payload.userSpaceStatus)")
       CLIOutput.diagnostic(
-        "  User-space verdict: \(payload.userSpaceVerdict.rawValue.uppercased())"
+        CLILocalized.format(
+          "cli.test.userspace_status",
+          "  User-space status: %@",
+          payload.userSpaceStatus
+        )
+      )
+      CLIOutput.diagnostic(
+        CLILocalized.format(
+          "cli.test.userspace_verdict",
+          "  User-space verdict: %@",
+          payload.userSpaceVerdict.rawValue.uppercased()
+        )
       )
     }
     if !payload.isSuccessful { exit(1) }

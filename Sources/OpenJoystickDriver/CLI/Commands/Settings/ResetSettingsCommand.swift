@@ -13,12 +13,25 @@ struct ResetSettingsCommand {
 
     if !ok {
       CLIOutput.error(
-        "Failed to reset settings. Launch the installed app and verify its permissions."
+        CLILocalized.text(
+          "cli.settings.reset.failed",
+          "Failed to reset settings. Launch the installed app and verify its permissions."
+        )
       )
       exit(1)
     }
 
-    print("OK: reset application service settings.")
-    print("Next: run compat set <identity> to choose the compatibility identity.")
+    print(
+      CLILocalized.text(
+        "cli.settings.reset.success",
+        "OK: reset application service settings."
+      )
+    )
+    print(
+      CLILocalized.text(
+        "cli.settings.reset.next",
+        "Next: run compat set <identity> to choose the compatibility identity."
+      )
+    )
   }
 }

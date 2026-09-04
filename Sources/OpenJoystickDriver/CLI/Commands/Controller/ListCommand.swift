@@ -4,7 +4,9 @@ import OpenJoystickDriverUSB
 
 struct ListCommand {
   func run() {
-    CLIOutput.diagnostic("Scanning for game controllers...")
+    CLIOutput.diagnostic(
+      CLILocalized.text("cli.controller.scanning", "Scanning for game controllers...")
+    )
     CLIOutput.diagnostic("")
     if checkApplicationServiceAndListDevices() { return }
     handleDirectScan()
@@ -25,9 +27,14 @@ struct ListCommand {
     defer { client.disconnect() }
 
     guard serviceRunning, let devices = serviceDevices else { return false }
-    print("Controllers (from running application service):")
+    print(
+      CLILocalized.text(
+        "cli.controller.serviceControllers",
+        "Controllers (from running application service):"
+      )
+    )
     if devices.isEmpty {
-      print("  (none connected)")
+      print("  \(CLILocalized.text("cli.controller.noneConnected", "(none connected)"))")
     } else {
       for dev in devices { print("  \(dev)") }
     }
@@ -36,14 +43,24 @@ struct ListCommand {
   }
 
   private func handleDirectScan() {
-    CLIOutput.diagnostic("(direct scan - application service not running)")
+    CLIOutput.diagnostic(
+      CLILocalized.text(
+        "cli.controller.directScan",
+        "(direct scan - application service not running)"
+      )
+    )
     listUSBDevices()
     CLIOutput.diagnostic("")
-    CLIOutput.diagnostic("Note: HID controllers are shown when application service is running.")
+    CLIOutput.diagnostic(
+      CLILocalized.text(
+        "cli.controller.hidNote",
+        "Note: HID controllers are shown when application service is running."
+      )
+    )
   }
 
   private func listUSBDevices() {
-    print("USB Controllers (class 0xFF / GIP):")
+    print(CLILocalized.text("cli.controller.usbControllers", "USB Controllers (class 0xFF / GIP):"))
     let result: Result<[USBControllerDescription], USBScanFailure> = runSyncResult {
       do {
         return .success(
@@ -55,13 +72,24 @@ struct ListCommand {
     }
     guard let devices = try? result.get() else {
       if case .failure(let error) = result {
-        CLIOutput.error("USB access failed: \(error.message)")
+        CLIOutput.error(
+          CLILocalized.format(
+            "cli.controller.usbAccessFailed",
+            "USB access failed: %@",
+            error.message
+          )
+        )
       }
-      CLIOutput.diagnostic("Tip: grant the required entitlement and Input Monitoring access.")
+      CLIOutput.diagnostic(
+        CLILocalized.text(
+          "cli.controller.usbAccessTip",
+          "Tip: grant the required entitlement and Input Monitoring access."
+        )
+      )
       return
     }
     if devices.isEmpty {
-      print("  (none found)")
+      print("  \(CLILocalized.text("cli.controller.noneFound", "(none found)"))")
       return
     }
     for device in devices {

@@ -341,8 +341,8 @@
           return OJDLocalized.string("profiles.sectionShoulders", fallback: "Shoulders")
         case .leftStick, .rightStick:
           return OJDLocalized.string("profiles.sectionStickClicks", fallback: "Stick clicks")
-        case .start, .back, .guide, .share, .options, .touchpad, .auxiliary1, .auxiliary2,
-          .auxiliary3, .auxiliary4, .auxiliary5, .auxiliary6, .auxiliary7, .auxiliary8:
+        case .start, .back, .guide, .share, .options, .touchpad, .mute, .leftTriggerClick,
+          .rightTriggerClick:
           return OJDLocalized.string("profiles.sectionSystemControls", fallback: "System controls")
         default: return OJDLocalized.string("profiles.sectionFaceButtons", fallback: "Face buttons")
         }

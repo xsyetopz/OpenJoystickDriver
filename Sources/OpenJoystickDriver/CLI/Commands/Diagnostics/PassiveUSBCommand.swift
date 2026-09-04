@@ -2,6 +2,17 @@
   import Foundation
   import OpenJoystickDriverUSB
 
+  private enum PassiveUSBCommandError: LocalizedError {
+    case utf8EncodingFailed
+
+    var errorDescription: String? {
+      CLILocalized.text(
+        "cli.passive_usb.encode_failed",
+        "Could not encode USB probe results as UTF-8."
+      )
+    }
+  }
+
   struct PassiveUSBCommand {
     func run(arguments: [String]) throws {
       guard arguments.count == 4, arguments[0] == "--vid", arguments[2] == "--pid",
@@ -24,10 +35,7 @@
       encoder.keyEncodingStrategy = .convertToSnakeCase
       let data = try encoder.encode(facts)
       guard let output = String(data: data, encoding: .utf8) else {
-        throw EncodingError.invalidValue(
-          data,
-          .init(codingPath: [], debugDescription: "UTF-8 encoding failed")
-        )
+        throw PassiveUSBCommandError.utf8EncodingFailed
       }
       print(output)
     }

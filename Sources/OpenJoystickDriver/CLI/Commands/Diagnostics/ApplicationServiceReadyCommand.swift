@@ -34,7 +34,12 @@ struct ApplicationServiceReadyCommand {
     if !replied { probe.cancel() }
     client.disconnect()
     guard replied, let outcome = state.outcome else {
-      CLIOutput.error("The authenticated application service is not ready.")
+      CLIOutput.error(
+        CLILocalized.text(
+          "cli.app_ready.not_ready",
+          "The authenticated application service is not ready."
+        )
+      )
       exit(1)
     }
     switch outcome {

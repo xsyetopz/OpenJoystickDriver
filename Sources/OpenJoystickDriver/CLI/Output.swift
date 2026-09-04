@@ -12,9 +12,15 @@ enum CLIOutput {
     write(message, terminator: terminator, to: FileHandle.standardError)
   }
 
-  static func warning(_ message: String) { stderr("WARNING: \(message)") }
+  static func warning(_ message: String) {
+    stderr(
+      "\(CLILocalized.text("cli.output.warning_prefix", "WARNING")): \(message)"
+    )
+  }
 
-  static func error(_ message: String) { stderr("ERROR: \(message)") }
+  static func error(_ message: String) {
+    stderr("\(CLILocalized.text("cli.output.error_prefix", "ERROR")): \(message)")
+  }
 
   static func diagnostic(_ message: String = "", terminator: String = "\n") {
     stderr(message, terminator: terminator)
@@ -148,11 +154,21 @@ func runSyncOptionalResult<T: Sendable>(
 func requireApplicationsBundleOrExit() {
   let path = Bundle.main.bundlePath
   guard path.hasPrefix("/Applications/") else {
-    CLIOutput.error("This command must be run from the /Applications-installed app bundle.")
-    CLIOutput.diagnostic("Current bundle: \(path)")
+    CLIOutput.error(
+      CLILocalized.text(
+        "cli.error.applications_bundle",
+        "This command must be run from the /Applications-installed app bundle."
+      )
+    )
     CLIOutput.diagnostic(
-      "  Fix: run: " + "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver "
-        + "--headless <command>"
+      CLILocalized.format("cli.error.current_bundle", "Current bundle: %@", path)
+    )
+    CLIOutput.diagnostic(
+      CLILocalized.text(
+        "cli.error.applications_bundle_fix",
+        "  Fix: run: /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver "
+          + "--headless <command>"
+      )
     )
     exit(1)
   }
@@ -174,37 +190,75 @@ func requireValidBundleSignatureOrExit(action: String) {
     )
   } catch {
     CLIOutput.error(
-      "\(action) failed: could not run codesign verification: " + "\(error.localizedDescription)"
+      CLILocalized.format(
+        "cli.error.codesign_run_failed",
+        "%@ failed: could not run codesign verification: %@",
+        action,
+        error.localizedDescription
+      )
     )
     exit(1)
   }
   if result.timedOut {
-    CLIOutput.error("\(action) failed: codesign verification timed out after 15 seconds.")
+    CLIOutput.error(
+      CLILocalized.format(
+        "cli.error.codesign_timeout",
+        "%@ failed: codesign verification timed out after 15 seconds.",
+        action
+      )
+    )
     exit(1)
   }
   let out = result.output
   guard result.terminationStatus == 0 else {
     if out.contains("a sealed resource is missing or invalid") {
       CLIOutput.error(
-        "\(action) failed: this app bundle's signature is INVALID " + "(modified after signing)."
+        CLILocalized.format(
+          "cli.error.codesign_invalid_signature",
+          "%@ failed: this app bundle's signature is INVALID (modified after signing).",
+          action
+        )
       )
       CLIOutput.diagnostic("")
-      CLIOutput.diagnostic("Fix:")
-      CLIOutput.diagnostic("  1) Run: ./scripts/ojd rebuild-fast dev")
+      CLIOutput.diagnostic(CLILocalized.text("cli.error.fix_heading", "Fix:"))
       CLIOutput.diagnostic(
-        "  2) Then re-run: "
-          + "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver "
-          + "--headless \(action.lowercased())"
+        CLILocalized.text(
+          "cli.error.rebuild_fast_step",
+          "  1) Run: ./scripts/ojd build install-fast dev"
+        )
+      )
+      CLIOutput.diagnostic(
+        CLILocalized.format(
+          "cli.error.rerun_step",
+          "  2) Then re-run: "
+            + "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver "
+            + "--headless %@",
+          action.lowercased()
+        )
       )
       CLIOutput.diagnostic("")
-      CLIOutput.diagnostic("Diagnostic command:")
-      CLIOutput.diagnostic("  /usr/bin/codesign --verify --deep --strict --verbose=2 \(appPath)")
+      CLIOutput.diagnostic(
+        CLILocalized.text("cli.error.diagnostic_command_heading", "Diagnostic command:")
+      )
+      CLIOutput.diagnostic(
+        CLILocalized.format(
+          "cli.error.codesign_diagnostic",
+          "  /usr/bin/codesign --verify --deep --strict --verbose=2 %@",
+          appPath
+        )
+      )
       exit(1)
     }
     let trimmed = out.trimmingCharacters(in: .whitespacesAndNewlines)
-    CLIOutput.error("\(action) failed: app signature verification failed:")
+    CLIOutput.error(
+      CLILocalized.format(
+        "cli.error.signature_verification_failed",
+        "%@ failed: app signature verification failed:",
+        action
+      )
+    )
     if trimmed.isEmpty {
-      CLIOutput.diagnostic("  (no output)")
+      CLIOutput.diagnostic(CLILocalized.text("cli.error.no_output", "  (no output)"))
     } else {
       CLIOutput.diagnostic(trimmed)
     }

@@ -5,12 +5,25 @@ import OpenJoystickDriverKit
 struct UninstallCommand {
   func run() {
     requireApplicationsBundleOrExit()
-    requireValidBundleSignatureOrExit(action: "Uninstall")
+    requireValidBundleSignatureOrExit(
+      action: CLILocalized.text("cli.login.uninstall_action", "Uninstall")
+    )
     do {
       try ApplicationServiceManager.uninstall()
-      CLIOutput.stdout("Main application removed from login items.")
+      CLIOutput.stdout(
+        CLILocalized.text(
+          "cli.login.uninstall_success",
+          "Main application removed from login items."
+        )
+      )
     } catch {
-      CLIOutput.error("Uninstall failed: \(error.localizedDescription)")
+      CLIOutput.error(
+        CLILocalized.format(
+          "cli.login.uninstall_failed",
+          "Could not remove the login item: %@",
+          error.localizedDescription
+        )
+      )
       exit(1)
     }
   }

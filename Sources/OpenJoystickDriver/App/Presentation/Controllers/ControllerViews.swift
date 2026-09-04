@@ -481,18 +481,28 @@
 
     var displayLabel: String {
       switch self {
-      case .xboxOriginal: return "Xbox (original)"
-      case .xbox360: return "Xbox 360"
-      case .xbox360Wireless: return "Xbox 360 wireless"
-      case .xboxOne: return "Xbox One"
-      case .dualShock3: return "DualShock 3"
-      case .dualShock4: return "DualShock 4"
-      case .dualSense: return "DualSense"
-      case .steamController: return "Steam Controller"
-      case .switchPro: return "Switch Pro"
-      case .xboxAdaptiveJoystick: return "Xbox Adaptive Joystick"
-      case .genericHID: return "Generic HID"
-      case .unknown: return "Unknown"
+      case .xboxOriginal:
+        return OJDLocalized.string("controller.xboxOriginal", fallback: "Xbox (original)")
+      case .xbox360: return OJDLocalized.string("controller.xbox360", fallback: "Xbox 360")
+      case .xbox360Wireless:
+        return OJDLocalized.string("controller.xbox360Wireless", fallback: "Xbox 360 wireless")
+      case .xboxOne: return OJDLocalized.string("controller.xboxOne", fallback: "Xbox One")
+      case .dualShock3:
+        return OJDLocalized.string("controller.dualShock3", fallback: "DualShock 3")
+      case .dualShock4:
+        return OJDLocalized.string("controller.dualShock4", fallback: "DualShock 4")
+      case .dualSense: return OJDLocalized.string("controller.dualSense", fallback: "DualSense")
+      case .steamController:
+        return OJDLocalized.string("controller.steamController", fallback: "Steam Controller")
+      case .switchPro: return OJDLocalized.string("controller.switchPro", fallback: "Switch Pro")
+      case .xboxAdaptiveJoystick:
+        return OJDLocalized.string(
+          "controller.xboxAdaptiveJoystick",
+          fallback: "Xbox Adaptive Joystick"
+        )
+      case .genericHID:
+        return OJDLocalized.string("controller.genericHID", fallback: "Generic HID")
+      case .unknown: return OJDLocalized.string("common.unknown", fallback: "Unknown")
       }
     }
   }

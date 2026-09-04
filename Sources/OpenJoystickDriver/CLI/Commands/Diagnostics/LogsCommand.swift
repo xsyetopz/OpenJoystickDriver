@@ -40,13 +40,19 @@ struct LogsCommand {
       for snapshot in snapshots {
         CLIOutput.diagnostic("== \(snapshot.stream.rawValue): \(snapshot.path) ==")
         if !snapshot.exists {
-          CLIOutput.diagnostic("(log file does not exist)")
+          CLIOutput.diagnostic(
+            CLILocalized.text("cli.logs.missing", "(log file does not exist)")
+          )
         } else if snapshot.lines.isEmpty {
-          CLIOutput.diagnostic("(log file is empty)")
+          CLIOutput.diagnostic(CLILocalized.text("cli.logs.empty", "(log file is empty)"))
         } else {
           for line in snapshot.lines { CLIOutput.diagnostic(line) }
         }
-        if snapshot.truncated { CLIOutput.diagnostic("(earlier log content omitted)") }
+        if snapshot.truncated {
+          CLIOutput.diagnostic(
+            CLILocalized.text("cli.logs.truncated", "(earlier log content omitted)")
+          )
+        }
       }
     } catch {
       CLIOutput.error(error.localizedDescription)
@@ -84,8 +90,9 @@ struct LogsCommand {
 
   private func warnAboutLogs(json: Bool) {
     if json {
+      let prefix = CLILocalized.text("cli.output.warning_prefix", "WARNING")
       FileHandle.standardError.write(
-        Data("WARNING: \(ApplicationServiceLogService.sharingWarning)\n".utf8)
+        Data("\(prefix): \(ApplicationServiceLogService.sharingWarning)\n".utf8)
       )
     } else {
       CLIOutput.warning(ApplicationServiceLogService.sharingWarning)
@@ -109,7 +116,12 @@ struct LogsCommand {
       case "--stream":
         guard index + 1 < arguments.count, let selection = Selection(rawValue: arguments[index + 1])
         else {
-          CLIOutput.error("--stream must be stdout, stderr, or both.")
+          CLIOutput.error(
+            CLILocalized.text(
+              "cli.logs.stream_error",
+              "--stream must be stdout, stderr, or both."
+            )
+          )
           exit(1)
         }
         options.selection = selection
@@ -118,7 +130,9 @@ struct LogsCommand {
         guard index + 1 < arguments.count, let lines = Int(arguments[index + 1]),
           (1...10_000).contains(lines)
         else {
-          CLIOutput.error("--lines must be 1...10000.")
+          CLIOutput.error(
+            CLILocalized.text("cli.logs.lines_error", "--lines must be 1...10000.")
+          )
           exit(1)
         }
         options.maximumLines = lines
@@ -130,7 +144,9 @@ struct LogsCommand {
         printHelp()
         exit(0)
       default:
-        CLIOutput.error("Unknown logs option: \(argument)")
+        CLIOutput.error(
+          CLILocalized.format("cli.logs.unknown_option", "Unknown logs option: %@", argument)
+        )
         printHelp()
         exit(1)
       }
@@ -140,13 +156,19 @@ struct LogsCommand {
 
   private func printHelp() {
     print(
-      [
-        "Usage: OpenJoystickDriver --headless app logs <show|path|open> [options]", "", "Options:",
-        "  --stream stdout|stderr|both",
-        "  --lines 1...10000       Tail limit for show (default 100)",
-        "  --json                   Emit typed snapshots for show", "",
-        "Log reads retain at most 256 KiB per file and warn before sharing."
-      ].joined(separator: "\n")
+      CLILocalized.text(
+        "cli.logs.help",
+        """
+        Usage: OpenJoystickDriver --headless app logs <show|path|open> [options]
+
+        Options:
+          --stream stdout|stderr|both
+          --lines 1...10000       Tail limit for show (default 100)
+          --json                   Emit typed snapshots for show
+
+        Log reads retain at most 256 KiB per file and warn before sharing.
+        """
+      )
     )
   }
 }

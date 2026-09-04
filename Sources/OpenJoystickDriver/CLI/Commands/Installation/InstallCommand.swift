@@ -5,12 +5,25 @@ import OpenJoystickDriverKit
 struct InstallCommand {
   func run() {
     requireApplicationsBundleOrExit()
-    requireValidBundleSignatureOrExit(action: "Install")
+    requireValidBundleSignatureOrExit(
+      action: CLILocalized.text("cli.login.install_action", "Install")
+    )
     do {
       try ApplicationServiceManager.install()
-      CLIOutput.stdout("OpenJoystickDriver registered to launch at login.")
+      CLIOutput.stdout(
+        CLILocalized.text(
+          "cli.login.install_success",
+          "OpenJoystickDriver registered to launch at login."
+        )
+      )
     } catch {
-      CLIOutput.error("Install failed: \(error.localizedDescription)")
+      CLIOutput.error(
+        CLILocalized.format(
+          "cli.login.install_failed",
+          "Could not register the login item: %@",
+          error.localizedDescription
+        )
+      )
       exit(1)
     }
   }

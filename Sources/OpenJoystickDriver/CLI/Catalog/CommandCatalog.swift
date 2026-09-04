@@ -32,117 +32,134 @@ enum InstalledCommandCatalog {
   static let commands: [CommandDefinition] = [
     command(
       "status [--json]",
-      "Show driver and runtime status",
-      group: "Overview",
+      CLILocalized.text("cli.catalog.status.summary", "Show driver and runtime status"),
+      group: CLILocalized.text("cli.catalog.group.overview", "Overview"),
       outputs: [.text, .json]
     ),
     command(
       "app status [--json]",
-      "Show application-service status",
-      group: "Overview",
+      CLILocalized.text("cli.catalog.app_status.summary", "Show application-service status"),
+      group: CLILocalized.text("cli.catalog.group.overview", "Overview"),
       outputs: [.text, .json]
     ),
     command(
       "app ready",
-      "Check authenticated application-service readiness",
-      group: "Overview",
+      CLILocalized.text(
+        "cli.catalog.app_ready.summary",
+        "Check authenticated application-service readiness"
+      ),
+      group: CLILocalized.text("cli.catalog.group.overview", "Overview"),
       audience: .support
-    ), command("controller list", "List connected controllers", group: "Controllers"),
+    ),
+    command(
+      "controller list",
+      CLILocalized.text("cli.catalog.controller_list.summary", "List connected controllers"),
+      group: CLILocalized.text("cli.catalog.group.controllers", "Controllers")
+    ),
     command(
       "controller state [options]",
-      "Show current controller state",
-      group: "Controllers",
+      CLILocalized.text("cli.catalog.controller_state.summary", "Show current controller state"),
+      group: CLILocalized.text("cli.catalog.group.controllers", "Controllers"),
       outputs: [.text, .json]
     ),
     command(
       "controller packets [options]",
-      "Show recent controller packets",
-      group: "Controllers",
+      CLILocalized.text("cli.catalog.controller_packets.summary", "Show recent controller packets"),
+      group: CLILocalized.text("cli.catalog.group.controllers", "Controllers"),
       audience: .advanced,
       outputs: [.text, .json]
     ),
     command(
       "controller trace [options]",
-      "Watch raw controller packets",
-      group: "Controllers",
+      CLILocalized.text("cli.catalog.controller_trace.summary", "Watch raw controller packets"),
+      group: CLILocalized.text("cli.catalog.group.controllers", "Controllers"),
       audience: .advanced,
       sideEffect: .streamingRead,
       outputs: [.text, .jsonLines]
     ),
     command(
       "controller watch [options]",
-      "Watch controller input changes",
-      group: "Controllers",
+      CLILocalized.text("cli.catalog.controller_watch.summary", "Watch controller input changes"),
+      group: CLILocalized.text("cli.catalog.group.controllers", "Controllers"),
       audience: .advanced,
       sideEffect: .streamingRead,
       outputs: [.text, .jsonLines]
     ),
     command(
       "controller output <command> [options]",
-      "Test supported physical controller output",
-      group: "Controllers",
+      CLILocalized.text(
+        "cli.catalog.controller_output.summary",
+        "Test supported physical controller output"
+      ),
+      group: CLILocalized.text("cli.catalog.group.controllers", "Controllers"),
       audience: .advanced,
       sideEffect: .transientDeviceMutation
     ),
     command(
       "map <command> [options]",
-      "Manage controller mapping profiles",
-      group: "Configuration",
+      CLILocalized.text("cli.catalog.map.summary", "Manage controller mapping profiles"),
+      group: CLILocalized.text("cli.catalog.group.configuration", "Configuration"),
       audience: .advanced,
       sideEffect: .persistentConfiguration,
       outputs: [.text, .json]
     ),
     command(
       "compat show|reset | compat set <identity>",
-      "Manage virtual-controller compatibility",
-      group: "Configuration",
+      CLILocalized.text("cli.catalog.compat.summary", "Manage virtual-controller compatibility"),
+      group: CLILocalized.text("cli.catalog.group.configuration", "Configuration"),
       sideEffect: .persistentConfiguration
     ),
     command(
       "permissions [status|request|open|explain]",
-      "Review or request required permissions",
-      group: "System",
+      CLILocalized.text(
+        "cli.catalog.permissions.summary",
+        "Review or request required permissions"
+      ),
+      group: CLILocalized.text("cli.catalog.group.system", "System"),
       audience: .support,
       sideEffect: .systemMutation
     ),
     command(
       "app login enable|disable",
-      "Manage login-item registration",
-      group: "System",
+      CLILocalized.text("cli.catalog.login.summary", "Manage login-item registration"),
+      group: CLILocalized.text("cli.catalog.group.system", "System"),
       sideEffect: .systemMutation
     ),
     command(
       "app logs [show|path|open] [options]",
-      "Review application-service logs",
-      group: "Support",
+      CLILocalized.text("cli.catalog.logs.summary", "Review application-service logs"),
+      group: CLILocalized.text("cli.catalog.group.support", "Support"),
       audience: .support,
       outputs: [.text, .json]
     ),
     command(
       "extension status|enable|disable",
-      "Manage the DriverKit system extension",
-      group: "Support",
+      CLILocalized.text("cli.catalog.extension.summary", "Manage the DriverKit system extension"),
+      group: CLILocalized.text("cli.catalog.group.support", "Support"),
       audience: .support,
       sideEffect: .systemMutation
     ),
     command(
       "diagnose [runtime|catalog|report]",
-      "Run focused diagnostics or create a report",
-      group: "Support",
+      CLILocalized.text(
+        "cli.catalog.diagnose.summary",
+        "Run focused diagnostics or create a report"
+      ),
+      group: CLILocalized.text("cli.catalog.group.support", "Support"),
       audience: .support,
       outputs: [.text, .json]
     ),
     command(
       "test [positive-seconds]",
-      "Test virtual-controller input delivery",
-      group: "Support",
+      CLILocalized.text("cli.catalog.test.summary", "Test virtual-controller input delivery"),
+      group: CLILocalized.text("cli.catalog.group.support", "Support"),
       audience: .support,
       sideEffect: .transientDeviceMutation
     ),
     command(
       "update check [options]",
-      "Check GitHub for available updates",
-      group: "Support",
+      CLILocalized.text("cli.catalog.update.summary", "Check GitHub for available updates"),
+      group: CLILocalized.text("cli.catalog.group.support", "Support"),
       sideEffect: .networkRead,
       outputs: [.text, .json]
     )
@@ -170,8 +187,15 @@ enum InstalledCommandCatalog {
 enum InstalledCLIHelpRenderer {
   static func render(commands: [CommandDefinition] = InstalledCommandCatalog.commands) -> String {
     var lines = [
-      "OpenJoystickDriver v\(ApplicationVersion.current) - macOS gamepad driver", "",
-      "Usage: OpenJoystickDriver --headless [--timeout <seconds>] <command>", ""
+      CLILocalized.format(
+        "cli.help.title",
+        "OpenJoystickDriver v%@ - macOS gamepad driver",
+        ApplicationVersion.current
+      ), "",
+      CLILocalized.text(
+        "cli.help.usage",
+        "Usage: OpenJoystickDriver --headless [--timeout <seconds>] <command>"
+      ), ""
     ]
     var currentGroup: String?
     for command in commands {
@@ -184,10 +208,20 @@ enum InstalledCLIHelpRenderer {
       lines.append("    \(command.summary).")
     }
     lines += [
-      "", "Options:", "  --timeout <seconds>  Set the local application-service timeout",
-      "  -h, --help           Show this help", "  -v, --version        Show version", "",
-      "Use --json for machine-readable output where supported and --device <id>",
-      "for controller-scoped operations. Output never relies on color alone."
+      "", CLILocalized.text("cli.help.options.heading", "Options:"),
+      CLILocalized.text(
+        "cli.help.timeout",
+        "  --timeout <seconds>  Set the local application-service timeout"
+      ), CLILocalized.text("cli.help.help", "  -h, --help           Show this help"),
+      CLILocalized.text("cli.help.version", "  -v, --version        Show version"), "",
+      CLILocalized.text(
+        "cli.help.json",
+        "Use --json for machine-readable output where supported and --device <id>"
+      ),
+      CLILocalized.text(
+        "cli.help.device",
+        "for controller-scoped operations. Output never relies on color alone."
+      )
     ]
     return lines.joined(separator: "\n")
   }

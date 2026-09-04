@@ -27,43 +27,9 @@
         } else {
           Text(fallback).font(.caption)
         }
-      } else if let image = Self.legacyTemplateImage(for: name)
-        ?? fallbackSymbolName.flatMap(Self.legacyTemplateImage(for:))
-      {
-        Image(nsImage: image)
       } else {
         Text(fallback).font(.caption)
       }
-    }
-
-    private static func legacyTemplateImage(for symbolName: String) -> NSImage? {
-      let name: String
-      switch symbolName {
-      case "plus", "plus.circle", "plus.circle.fill": name = "NSAddTemplate"
-      case "minus.circle": name = "NSRemoveTemplate"
-      case "checkmark.circle", "checkmark.circle.fill": name = "NSStatusAvailable"
-      case "circle": name = "NSStatusNone"
-      case "lock.shield": name = "NSLockLockedTemplate"
-      case "arrow.up.forward", "arrow.right": name = "NSGoRightTemplate"
-      case "link": name = "NSLinkTemplate"
-      case "keyboard": name = "NSPreferencesGeneral"
-      case "gamecontroller.fill": name = "NSBluetoothTemplate"
-      case "cursorarrow", "cursorarrow.rays": name = "NSActionTemplate"
-      case "ant": name = "NSInfo"
-      case "questionmark.circle", "info.circle": name = "NSInfo"
-      case "exclamationmark.triangle", "exclamationmark.circle": name = "NSCaution"
-      case "gamecontroller": name = "NSBluetoothTemplate"
-      case "chevron.right": name = "NSRightFacingTriangleTemplate"
-      case "slider.horizontal.3": name = "NSPreferencesGeneral"
-      case "gearshape": name = "NSPreferencesGeneral"
-      case "terminal": name = "NSInfo"
-      case "clock": name = "NSStatusPartiallyAvailable"
-      case "rectangle.grid.2x2": name = "NSIconViewTemplate"
-      default: return nil
-      }
-      guard let image = NSImage(named: NSImage.Name(name)) else { return nil }
-      image.isTemplate = true
-      return image
     }
   }
 
@@ -141,8 +107,7 @@
       developerToolsEnabled ? Self.allCases : Self.allCases.filter { $0 != Self.developer }
     }
 
-    /// Toolbar images keep category navigation recognizable on supported macOS releases while
-    /// retaining template-image fallbacks for the 10.15 deployment floor.
+    /// Toolbar images use SF Symbols when available; otherwise a blank template slot.
     var toolbarImage: NSImage {
       if #available(macOS 11.0, *),
         let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: title)
@@ -150,23 +115,6 @@
         image.isTemplate = true
         return image
       }
-
-      let legacyName: String
-      switch self {
-      case .overview: legacyName = "NSIconViewTemplate"
-      case .controllers: legacyName = "NSBluetoothTemplate"
-      case .profiles: legacyName = "NSPreferencesGeneral"
-      case .console: legacyName = "NSInfo"
-      case .developer: legacyName = "NSAdvanced"
-      case .settings: legacyName = "NSPreferencesGeneral"
-      }
-      if let image = NSImage(named: NSImage.Name(legacyName)) {
-        image.isTemplate = true
-        return image
-      }
-
-      // All pane symbols have AppKit template equivalents. Keep a valid image in the unlikely
-      // event an unbundled debug environment omits one of those legacy names.
       return NSImage(size: NSSize(width: 16, height: 16))
     }
   }

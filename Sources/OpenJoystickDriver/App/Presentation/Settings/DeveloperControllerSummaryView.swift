@@ -48,20 +48,32 @@
     private func identityColumn(_ device: ApplicationServiceDeviceDescription) -> some View {
       VStack(alignment: .leading, spacing: 6) {
         DeveloperValueRow(
-          label: "USB ID",
+          label: OJDLocalized.string("developer.usbID", fallback: "USB ID"),
           value: String(format: "%04X:%04X", device.vendorID, device.productID)
         )
-        DeveloperValueRow(label: "Parser", value: device.parser)
-        DeveloperValueRow(label: "Protocol", value: protocolName(device.protocolVariant))
+        DeveloperValueRow(
+          label: OJDLocalized.string("common.parser", fallback: "Parser"),
+          value: device.parser
+        )
+        DeveloperValueRow(
+          label: OJDLocalized.string("common.protocol", fallback: "Protocol"),
+          value: protocolName(device.protocolVariant)
+        )
       }.frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func transportColumn(_ device: ApplicationServiceDeviceDescription) -> some View {
       VStack(alignment: .leading, spacing: 6) {
-        DeveloperValueRow(label: "Route", value: routeName(device.discoverySource))
-        DeveloperValueRow(label: "Connection", value: device.connection)
         DeveloperValueRow(
-          label: "USB endpoints",
+          label: OJDLocalized.string("developer.route", fallback: "Route"),
+          value: routeName(device.discoverySource)
+        )
+        DeveloperValueRow(
+          label: OJDLocalized.string("developer.connection", fallback: "Connection"),
+          value: device.connection
+        )
+        DeveloperValueRow(
+          label: OJDLocalized.string("developer.usbEndpoints", fallback: "USB endpoints"),
           value: String(
             format: "Input 0x%02X · Output 0x%02X",
             device.inputEndpoint,
@@ -73,13 +85,16 @@
 
     private var inputColumn: some View {
       VStack(alignment: .leading, spacing: 6) {
-        DeveloperValueRow(label: "Buttons", value: buttonValue(model.latestInput?.pressedButtons))
         DeveloperValueRow(
-          label: "Left stick",
+          label: OJDLocalized.string("developer.buttons", fallback: "Buttons"),
+          value: buttonValue(model.latestInput?.pressedButtons)
+        )
+        DeveloperValueRow(
+          label: OJDLocalized.string("developer.leftStick", fallback: "Left stick"),
           value: stickValue(x: model.latestInput?.leftStickX, y: model.latestInput?.leftStickY)
         )
         DeveloperValueRow(
-          label: "Right stick",
+          label: OJDLocalized.string("developer.rightStick", fallback: "Right stick"),
           value: stickValue(x: model.latestInput?.rightStickX, y: model.latestInput?.rightStickY)
         )
       }.frame(maxWidth: .infinity, alignment: .leading)
@@ -90,32 +105,49 @@
     }
 
     private func buttonValue(_ buttons: [String]?) -> String {
-      guard let buttons, !buttons.isEmpty else { return "None" }
+      guard let buttons, !buttons.isEmpty else {
+        return OJDLocalized.string("common.none", fallback: "None")
+      }
       return buttons.sorted().joined(separator: ", ")
     }
 
     private func protocolName(_ value: ControllerProtocolVariant) -> String {
       switch value {
-      case .xboxOriginal: return "Original Xbox"
-      case .xbox360: return "Xbox 360"
-      case .xbox360Wireless: return "Xbox 360 Wireless"
-      case .xboxOne: return "Xbox One"
-      case .dualShock3: return "DualShock 3"
-      case .dualShock4: return "DualShock 4"
-      case .dualSense: return "DualSense"
-      case .steamController: return "Steam Controller"
-      case .switchPro: return "Switch Pro Controller"
-      case .xboxAdaptiveJoystick: return "Xbox Adaptive Joystick"
-      case .genericHID: return "Standard HID"
-      case .unknown: return "Unknown"
+      case .xboxOriginal:
+        return OJDLocalized.string("controller.originalXbox", fallback: "Original Xbox")
+      case .xbox360: return OJDLocalized.string("controller.xbox360", fallback: "Xbox 360")
+      case .xbox360Wireless:
+        return OJDLocalized.string(
+          "controller.xbox360WirelessDeveloper",
+          fallback: "Xbox 360 Wireless"
+        )
+      case .xboxOne: return OJDLocalized.string("controller.xboxOne", fallback: "Xbox One")
+      case .dualShock3: return OJDLocalized.string("controller.dualShock3", fallback: "DualShock 3")
+      case .dualShock4: return OJDLocalized.string("controller.dualShock4", fallback: "DualShock 4")
+      case .dualSense: return OJDLocalized.string("controller.dualSense", fallback: "DualSense")
+      case .steamController:
+        return OJDLocalized.string("controller.steamController", fallback: "Steam Controller")
+      case .switchPro:
+        return OJDLocalized.string(
+          "controller.switchProController",
+          fallback: "Switch Pro Controller"
+        )
+      case .xboxAdaptiveJoystick:
+        return OJDLocalized.string(
+          "controller.xboxAdaptiveJoystick",
+          fallback: "Xbox Adaptive Joystick"
+        )
+      case .genericHID:
+        return OJDLocalized.string("controller.standardHID", fallback: "Standard HID")
+      case .unknown: return OJDLocalized.string("common.unknown", fallback: "Unknown")
       }
     }
 
     private func routeName(_ value: ApplicationServiceDeviceDiscoverySource) -> String {
       switch value {
-      case .hid: return "HID"
-      case .rawUSB: return "Raw USB"
-      case .unknown: return "Unknown"
+      case .hid: return OJDLocalized.string("developer.hid", fallback: "HID")
+      case .rawUSB: return OJDLocalized.string("developer.rawUSB", fallback: "Raw USB")
+      case .unknown: return OJDLocalized.string("common.unknown", fallback: "Unknown")
       }
     }
   }

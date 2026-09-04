@@ -49,12 +49,17 @@ enum RuntimePresentation {
 
   static func compatibilityLabel(_ identity: CompatibilityIdentity) -> String {
     switch identity {
-    case .automatic: return "Automatic"
-    case .genericHID: return "Generic HID"
-    case .sdl2_3: return "SDL2/3"
-    case .appleGameController: return "Apple GameController"
-    case .xoneHID: return "Xbox One HID (legacy generic HID)"
-    case .xbox360HID: return "Xbox 360 HID"
+    case .automatic: return OJDLocalized.string("mapping.automatic", fallback: "Automatic")
+    case .genericHID:
+      return OJDLocalized.string("compatibility.genericHID", fallback: "Generic HID")
+    case .sdl2_3: return OJDLocalized.string("compatibility.sdl2_3", fallback: "SDL2/3")
+    case .appleGameController:
+      return OJDLocalized.string(
+        "compatibility.appleGameController",
+        fallback: "Apple GameController"
+      )
+    case .xbox360HID:
+      return OJDLocalized.string("compatibility.xbox360HID", fallback: "Xbox 360 HID")
     }
   }
 
@@ -125,18 +130,9 @@ enum RuntimePresentation {
     buttons.append((Set(["share", "create"]), .share))
     buttons.append((Set(["options", "pause"]), .options))
     buttons.append((Set(["touchpad", "touchpadclick"]), .touchpad))
-    buttons.append(
-      (Set(["auxiliary1", "aux1", "genericbutton1", "button1", "l2digital"]), .auxiliary1)
-    )
-    buttons.append(
-      (Set(["auxiliary2", "aux2", "genericbutton2", "button2", "r2digital"]), .auxiliary2)
-    )
-    buttons.append((Set(["auxiliary3", "aux3", "genericbutton3", "button3"]), .auxiliary3))
-    buttons.append((Set(["auxiliary4", "aux4", "genericbutton4", "button4"]), .auxiliary4))
-    buttons.append((Set(["auxiliary5", "aux5", "genericbutton5", "button5"]), .auxiliary5))
-    buttons.append((Set(["auxiliary6", "aux6", "genericbutton6", "button6"]), .auxiliary6))
-    buttons.append((Set(["auxiliary7", "aux7", "genericbutton7", "button7"]), .auxiliary7))
-    buttons.append((Set(["auxiliary8", "aux8", "genericbutton8", "button8"]), .auxiliary8))
+    buttons.append((Set(["mute", "micmute", "microphonemute"]), .mute))
+    buttons.append((Set(["l2digital", "lefttriggerclick"]), .leftTriggerClick))
+    buttons.append((Set(["r2digital", "righttriggerclick"]), .rightTriggerClick))
     for (aliases, button) in buttons where !pressed.isDisjoint(with: aliases) {
       return .button(button)
     }
@@ -331,14 +327,11 @@ enum RuntimePresentation {
     case .share: return OJDLocalized.string("mapping.share", fallback: "Share")
     case .options: return OJDLocalized.string("mapping.options", fallback: "Options")
     case .touchpad: return OJDLocalized.string("mapping.touchpadClick", fallback: "Touchpad click")
-    case .auxiliary1: return OJDLocalized.string("mapping.auxiliary1", fallback: "Auxiliary 1")
-    case .auxiliary2: return OJDLocalized.string("mapping.auxiliary2", fallback: "Auxiliary 2")
-    case .auxiliary3: return OJDLocalized.string("mapping.auxiliary3", fallback: "Auxiliary 3")
-    case .auxiliary4: return OJDLocalized.string("mapping.auxiliary4", fallback: "Auxiliary 4")
-    case .auxiliary5: return OJDLocalized.string("mapping.auxiliary5", fallback: "Auxiliary 5")
-    case .auxiliary6: return OJDLocalized.string("mapping.auxiliary6", fallback: "Auxiliary 6")
-    case .auxiliary7: return OJDLocalized.string("mapping.auxiliary7", fallback: "Auxiliary 7")
-    case .auxiliary8: return OJDLocalized.string("mapping.auxiliary8", fallback: "Auxiliary 8")
+    case .mute: return OJDLocalized.string("mapping.mute", fallback: "Mute")
+    case .leftTriggerClick:
+      return OJDLocalized.string("mapping.leftTriggerClick", fallback: "Left trigger click")
+    case .rightTriggerClick:
+      return OJDLocalized.string("mapping.rightTriggerClick", fallback: "Right trigger click")
     }
   }
 
@@ -360,20 +353,20 @@ enum RuntimePresentation {
 
   private static func keyboardKeyLabel(_ key: RemappingKeyboardKey) -> String {
     switch key {
-    case .escape: return "Escape"
-    case .tab: return "Tab"
-    case .capsLock: return "Caps Lock"
-    case .space: return "Space"
-    case .returnKey: return "Return"
-    // Keyboard names are system terminology/data, not translated command copy.
-    case .deleteBackward: return "Delete"
-    case .deleteForward: return "Forward Delete"
-    case .arrowUp: return "Up Arrow"
-    case .arrowDown: return "Down Arrow"
-    case .arrowLeft: return "Left Arrow"
-    case .arrowRight: return "Right Arrow"
-    case .pageUp: return "Page Up"
-    case .pageDown: return "Page Down"
+    case .escape: return OJDLocalized.string("keyboard.escape", fallback: "Escape")
+    case .tab: return OJDLocalized.string("keyboard.tab", fallback: "Tab")
+    case .capsLock: return OJDLocalized.string("keyboard.capsLock", fallback: "Caps Lock")
+    case .space: return OJDLocalized.string("keyboard.space", fallback: "Space")
+    case .returnKey: return OJDLocalized.string("keyboard.return", fallback: "Return")
+    case .deleteBackward: return OJDLocalized.string("keyboard.delete", fallback: "Delete")
+    case .deleteForward:
+      return OJDLocalized.string("keyboard.forwardDelete", fallback: "Forward Delete")
+    case .arrowUp: return OJDLocalized.string("keyboard.upArrow", fallback: "Up Arrow")
+    case .arrowDown: return OJDLocalized.string("keyboard.downArrow", fallback: "Down Arrow")
+    case .arrowLeft: return OJDLocalized.string("keyboard.leftArrow", fallback: "Left Arrow")
+    case .arrowRight: return OJDLocalized.string("keyboard.rightArrow", fallback: "Right Arrow")
+    case .pageUp: return OJDLocalized.string("keyboard.pageUp", fallback: "Page Up")
+    case .pageDown: return OJDLocalized.string("keyboard.pageDown", fallback: "Page Down")
     default: return humanized(key.rawValue)
     }
   }
