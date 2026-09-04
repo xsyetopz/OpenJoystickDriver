@@ -26,7 +26,6 @@ struct RemappingProfileLibraryCheckpoint: Sendable {
 
 struct RemappingProfileLibraryState: Codable, Sendable {
   static let currentSchemaVersion = 2
-  static let supportedSchemaVersions: Set<Int> = [1, 2]
 
   var schemaVersion = Self.currentSchemaVersion
   var profiles: [RemappingProfile] = []

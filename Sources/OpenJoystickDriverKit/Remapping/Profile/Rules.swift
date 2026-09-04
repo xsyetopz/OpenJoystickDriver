@@ -99,7 +99,7 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
 extension RemappingProfile {
   /// Validates the complete persistence and dispatch contract for this profile.
   public func validate() throws {
-    guard Self.supportedSchemaVersions.contains(schemaVersion) else {
+    guard schemaVersion == Self.currentSchemaVersion else {
       throw RemappingValidationError.unsupportedSchemaVersion(schemaVersion)
     }
     try validateName()

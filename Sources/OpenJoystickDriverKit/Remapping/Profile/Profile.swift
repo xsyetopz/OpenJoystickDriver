@@ -186,7 +186,6 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
 /// A versioned, locally persisted controller-to-system-input mapping profile.
 public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
   public static let currentSchemaVersion = 2
-  public static let supportedSchemaVersions: Set<Int> = [1, 2]
   public static let maximumBindingCount = 512
   public static let maximumEncodedBytes = RemappingPayloadLimits.maximumEncodedBytes
   public static let profileNameLengthRange = 1...80
