@@ -31,7 +31,8 @@
     @Published private(set) var packets: [PacketLogEntry] = []
     @Published private(set) var observedExtraInputs: [String] = []
 
-    /// Packets shown in the capture console. Periodic GIP announce frames stay in ``packets`` for export.
+    /// Packets shown in the capture console. Periodic GIP announce frames stay in ``packets``
+    /// for export.
     var displayedPackets: [PacketLogEntry] { packets.filter { !$0.isPeriodicGIPAnnounce } }
 
     var hiddenAnnouncePacketCount: Int { packets.count - displayedPackets.count }

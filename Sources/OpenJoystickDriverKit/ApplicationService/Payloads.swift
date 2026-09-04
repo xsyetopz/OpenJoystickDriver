@@ -45,7 +45,8 @@ public struct ApplicationServiceHIDGamepadSnapshot: Codable, Sendable, Hashable 
   }
 }
 
-/// Diagnostics snapshot returned by ``ApplicationServiceProtocol/getVirtualDeviceDiagnostics(reply:)``.
+/// Diagnostics snapshot returned by
+/// ``ApplicationServiceProtocol/getVirtualDeviceDiagnostics(reply:)``.
 public struct ApplicationServiceVirtualDeviceDiagnosticsPayload: Codable, Sendable {
   public let userSpaceVirtualDeviceEnabled: Bool
   public let userSpaceVirtualDeviceStatus: String

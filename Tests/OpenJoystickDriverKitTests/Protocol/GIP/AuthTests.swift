@@ -7,7 +7,8 @@ struct GIPAuthHandlerTests {
   @Test func test_buildAuthResponse_hostInit_correct_framing() {
     let handler = GIPAuthHandler()
     let response = handler.buildAuthResponse(state: .hostInit)
-    // Header: [Type=0x41] [Version=0x01] [State=0x21] [0x00] [Length BE: 0x00, 0x28] + 40 zero bytes
+    // Header: [Type=0x41] [Version=0x01] [State=0x21] [0x00] [Length BE: 0x00, 0x28]
+    // + 40 zero bytes
     #expect(response.count == 6 + 40)
     #expect(response[0] == GIPAuthType.host)
     #expect(response[1] == GIPAuthType.version)

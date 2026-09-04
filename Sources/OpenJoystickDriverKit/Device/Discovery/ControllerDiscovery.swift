@@ -95,7 +95,8 @@ public actor DeviceManager {
   /// - Parameters:
   ///   - dispatcher: Output dispatcher for sending HID reports.
   ///   - virtualProfile: Virtual device profile for self-exclusion filtering.
-  ///   - usbTransportProvider: Native raw-USB transport provider, or nil to disable raw USB discovery.
+  ///   - usbTransportProvider: Native raw-USB transport provider, or nil to disable raw USB
+  ///     discovery.
   public init(
     dispatcher: any OutputDispatcher,
     virtualProfile: VirtualDeviceProfile = .default,

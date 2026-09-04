@@ -20,7 +20,8 @@ public struct RemappingChord: Codable, Equatable, Hashable, Identifiable, Sendab
   }
 }
 
-/// An ordered multi-button sequence that fires a destination when completed in order within a window.
+/// An ordered multi-button sequence that fires a destination when completed in order within a
+/// window.
 public struct RemappingSequence: Codable, Equatable, Hashable, Identifiable, Sendable {
   public static let windowRange = 200.0...10000.0
 

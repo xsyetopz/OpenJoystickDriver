@@ -93,7 +93,8 @@ extension ApplicationServiceServer {
     let mgr = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
     // IMPORTANT: do not match only "GamePad" usage here.
     //
-    // Some installed extension builds (especially during replacement/upgrade or when the app and runtime
+    // Some installed extension builds (especially during replacement/upgrade or when the app
+    // and runtime
     // are temporarily out of sync) may not expose the expected usage keys at the IOHIDManager
     // matching layer. Broad matching keeps the self-test reliable; we filter down to OJD devices
     // in the callback using IOUserClass / serial.

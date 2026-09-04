@@ -5,7 +5,8 @@ import IOKit
 import IOKit.hid
 import Security
 
-/// Owns the current virtual state and the exact report exposed through both push and get-report APIs.
+/// Owns the current virtual state and the exact report exposed through both push and get-report
+/// APIs.
 final class UserSpaceInputReportState: @unchecked Sendable {
   private let format: any VirtualGamepadReportFormat
   private let lock = NSLock()

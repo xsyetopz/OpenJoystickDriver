@@ -24,7 +24,8 @@ extension ApplicationServiceServer {
     }
   }
 
-  /// Returns the current application service status including input monitoring state and connected devices.
+  /// Returns the current application service status including input monitoring state and
+  /// connected devices.
   public func getStatus(reply: @escaping (Data) -> Void) {
     let callback = SendableReply(call: reply)
     let dm = deviceManager
