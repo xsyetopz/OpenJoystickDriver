@@ -47,6 +47,10 @@ import Testing
       RuntimePresentation.destinationLabel(.keyboard(key: .a, modifiers: [.command, .shift]))
         == "Command + Shift + A"
     )
+    #expect(RuntimePresentation.keyboardSystemSymbolName(.escape) == "escape")
+    #expect(RuntimePresentation.keyboardSystemSymbolName(.returnKey) == "return")
+    #expect(RuntimePresentation.keyboardSystemSymbolName(.a) == nil)
+    #expect(RuntimePresentation.modifierSystemSymbolName(.shift) == "shift")
   }
 
   @Test func statusReadinessWaitsForPostEventAccess() async {

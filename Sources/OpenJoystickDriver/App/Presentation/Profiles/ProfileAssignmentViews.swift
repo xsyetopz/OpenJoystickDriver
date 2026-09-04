@@ -107,7 +107,7 @@
           ForEach(
             DestinationOption.options(for: binding.source, including: binding.destination),
             id: \.destination
-          ) { option in Text(option.title).tag(option.destination) }
+          ) { option in KeyboardDestinationLabel(destination: option.destination).tag(option.destination) }
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
           OJDLocalized.string("common.destination", fallback: "Destination")
         ).ojdAccessibilityValue(RuntimePresentation.destinationLabel(binding.destination))

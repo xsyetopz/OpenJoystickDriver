@@ -5,6 +5,7 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  // SF Symbol via NSImage(systemSymbolName:), else fallback text.
   struct OJDSystemSymbol: View {
     let name: String
     let fallback: String

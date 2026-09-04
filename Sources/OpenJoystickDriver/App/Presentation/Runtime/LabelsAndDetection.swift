@@ -86,9 +86,8 @@ enum RuntimePresentation {
   static func destinationLabel(_ destination: RemappingDestination) -> String {
     switch destination {
     case .keyboard(let key, let modifiers):
-      let modifierLabel = modifiers.sorted { $0.rawValue < $1.rawValue }.map {
-        humanized($0.rawValue)
-      }.joined(separator: " + ")
+      let modifierLabel = modifiers.sorted { $0.rawValue < $1.rawValue }.map(Self.modifierLabel)
+        .joined(separator: " + ")
       let keyLabel = keyboardKeyLabel(key)
       return modifierLabel.isEmpty ? keyLabel : "\(modifierLabel) + \(keyLabel)"
     case .mouseButton(let button):
@@ -362,7 +361,56 @@ enum RuntimePresentation {
     }
   }
 
-  private static func keyboardKeyLabel(_ key: RemappingKeyboardKey) -> String {
+  static func modifierLabel(_ modifier: RemappingKeyModifier) -> String {
+    switch modifier {
+    case .command: return OJDLocalized.string("keyboard.command", fallback: "Command")
+    case .control: return OJDLocalized.string("keyboard.control", fallback: "Control")
+    case .option: return OJDLocalized.string("keyboard.option", fallback: "Option")
+    case .shift: return OJDLocalized.string("keyboard.shift", fallback: "Shift")
+    }
+  }
+
+  static func modifierSystemSymbolName(_ modifier: RemappingKeyModifier) -> String {
+    switch modifier {
+    case .command: return "command"
+    case .control: return "control"
+    case .option: return "option"
+    case .shift: return "shift"
+    }
+  }
+
+  static func keyboardSystemSymbolName(_ key: RemappingKeyboardKey) -> String? {
+    switch key {
+    case .escape: return "escape"
+    case .tab: return "tab"
+    case .capsLock: return "capslock"
+    case .space: return "space"
+    case .returnKey: return "return"
+    case .deleteBackward: return "delete.left"
+    case .deleteForward: return "delete.forward"
+    case .arrowUp: return "arrow.up"
+    case .arrowDown: return "arrow.down"
+    case .arrowLeft: return "arrow.left"
+    case .arrowRight: return "arrow.right"
+    case .pageUp: return "arrow.up.to.line"
+    case .pageDown: return "arrow.down.to.line"
+    case .home: return "arrow.up.to.line.compact"
+    case .end: return "arrow.down.to.line.compact"
+    default: return nil
+    }
+  }
+
+  static func keyboardSystemSymbolFallbackName(_ key: RemappingKeyboardKey) -> String? {
+    switch key {
+    case .deleteBackward: return "delete.backward"
+    case .deleteForward: return "delete.right"
+    case .returnKey: return "return.left"
+    case .capsLock: return "capslock.fill"
+    default: return nil
+    }
+  }
+
+  static func keyboardKeyLabel(_ key: RemappingKeyboardKey) -> String {
     switch key {
     case .escape: return OJDLocalized.string("keyboard.escape", fallback: "Escape")
     case .tab: return OJDLocalized.string("keyboard.tab", fallback: "Tab")

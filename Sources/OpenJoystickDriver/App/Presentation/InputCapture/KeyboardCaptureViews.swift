@@ -15,13 +15,14 @@
     var body: some View {
       VStack(alignment: .leading, spacing: 7) {
         HStack {
-          Text(
-            isCleared
-              ? OJDLocalized.string("keyboard.noKey", fallback: "No key selected")
-              : keyboardDestinationLabel
-          ).foregroundColor(
-            isCleared ? Color(NSColor.secondaryLabelColor) : Color(NSColor.labelColor)
-          )
+          Group {
+            if isCleared {
+              Text(OJDLocalized.string("keyboard.noKey", fallback: "No key selected"))
+                .foregroundColor(Color(NSColor.secondaryLabelColor))
+            } else {
+              KeyboardDestinationLabel(destination: destination)
+            }
+          }
           Spacer()
           Button(
             isCapturing
@@ -74,13 +75,6 @@
           ).frame(width: 1, height: 1)
         }
       }
-    }
-
-    private var keyboardDestinationLabel: String {
-      guard case .keyboard = destination else {
-        return OJDLocalized.string("keyboard.key", fallback: "Keyboard key")
-      }
-      return RuntimePresentation.destinationLabel(destination)
     }
 
     private static func announce(_ message: String) {

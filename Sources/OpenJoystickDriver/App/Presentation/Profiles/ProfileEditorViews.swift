@@ -527,7 +527,7 @@
                 chord.sources.map(RuntimePresentation.sourceLabel).sorted().joined(separator: " + ")
               )
               OJDSystemSymbol(name: "arrow.right", fallback: "->")
-              Text(RuntimePresentation.destinationLabel(chord.destination))
+              KeyboardDestinationLabel(destination: chord.destination)
               Spacer()
               removeButton { removeChord(chord.id) }
             }
@@ -557,7 +557,7 @@
                 Color(NSColor.secondaryLabelColor)
               )
               OJDSystemSymbol(name: "arrow.right", fallback: "->")
-              Text(RuntimePresentation.destinationLabel(sequence.destination))
+              KeyboardDestinationLabel(destination: sequence.destination)
               Spacer()
               removeButton { removeSequence(sequence.id) }
             }
@@ -600,7 +600,7 @@
                   HStack {
                     Text(RuntimePresentation.sourceLabel(binding.source))
                     OJDSystemSymbol(name: "arrow.right", fallback: "->")
-                    Text(RuntimePresentation.destinationLabel(binding.destination))
+                    KeyboardDestinationLabel(destination: binding.destination)
                     Spacer()
                     if binding.axisTuning != nil {
                       Button(OJDLocalized.string("common.adjust", fallback: "Adjust...")) {
