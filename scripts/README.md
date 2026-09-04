@@ -85,7 +85,7 @@ dependencies from `.build/schema-validator` when that environment exists. See
 | `quality/test-parsers-macos14.sh` | `test parsers-macos14` | Creates isolated harness and cache directories under `/tmp` | Parser harness gate |
 | `quality/validate-scripts.py` | `check scripts` | Reads repository paths and validates Bash and Python syntax | Script-layout validation |
 | `quality/validate-swift-structure.py` | `check swift-structure` | Reads Swift paths, sizes, names, and directives | Structural validation |
-| `release/bump_version.py` | `release bump-version` | Updates version references after verifying a changelog heading | Python syntax and diff review |
+| `release/bump_version.py` | `release bump-version` | Updates version references after verifying a Keep a Changelog heading (`## [<version>] - YYYY-MM-DD`) | Python syntax and diff review |
 | `release/bundle_version.py` | Release packaging implementations | Derives valid shared app/DEXT bundle versions from Git history and tester sequence state | Python syntax; bundle-version contract |
 | `release/dmg-background.py` | Release package implementation | Writes a deterministic PNG to the requested path | Packaging contract |
 | `release/install_local.py` | `release install-local` | Packages a release and replaces the local app in `/Applications` | Dispatcher argument checks; Swift packaging contract |
@@ -111,7 +111,7 @@ dependencies from `.build/schema-validator` when that environment exists. See
 | Install signed dev build | `./scripts/ojd build install dev` | Application and generated USB DriverKit extension; the app embeds its service registration |
 | Fast install (app only) | `./scripts/ojd build install-fast dev` | Skips a generated system-extension upgrade |
 | Package private tester build | `./scripts/ojd package tester` | Writes a Developer ID-signed, unnotarized DMG to `.build/tester-artifacts/`; does not install or publish |
-| Bump release version | `./scripts/ojd release bump-version <version>` | Verifies the changelog heading and updates version references |
+| Bump release version | `./scripts/ojd release bump-version <version>` | Verifies `## [<version>] - YYYY-MM-DD` in CHANGELOG.md and updates version references |
 | Package release DMG | `./scripts/ojd release package [version]` | Builds, notarizes, and staples; version defaults to the package version |
 | Package and install locally | `./scripts/ojd release install-local [version]` | Replaces the app in `/Applications` after packaging |
 

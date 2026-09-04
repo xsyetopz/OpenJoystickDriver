@@ -31,7 +31,8 @@ Updates:
   - Sources/OpenJoystickDriver/App/Info.plist canonical app/package version
   - scripts/README.md release examples
 
-    The target version must already have a CHANGELOG.md heading.""")
+    The target version must already have a Keep a Changelog heading:
+    ## [<version>] - YYYY-MM-DD""")
 
 
 class MissingReference(Exception):
@@ -62,8 +63,13 @@ def main(argv: list[str]) -> int:
     for path in (app_info, scripts_readme, changelog):
         if not path.is_file():
             die(f"Missing {path}")
-    if f"## {version}" not in changelog.read_text().splitlines():
-        die(f"CHANGELOG.md must contain heading: ## {version}")
+    changelog_heading = re.compile(
+        rf"^## \[{re.escape(version)}\] - \d{{4}}-\d{{2}}-\d{{2}}(?: \[YANKED\])?$"
+    )
+    if not any(
+        changelog_heading.fullmatch(line) for line in changelog.read_text().splitlines()
+    ):
+        die(f"CHANGELOG.md must contain heading: ## [{version}] - YYYY-MM-DD")
 
     app_pattern = re.compile(
         r"(<key>CFBundleShortVersionString</key>\s*<string>)"
