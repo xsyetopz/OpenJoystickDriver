@@ -7,7 +7,22 @@
   import UserNotifications
 
   enum MenuBarStatusItemImage {
-    static func make(accessibilityDescription: String) -> NSImage? {
+    static let statusItemSize = NSSize(width: 18, height: 18)
+
+    static func make(applicationIcon: NSImage?, accessibilityDescription: String) -> NSImage? {
+      if let icon = scaledApplicationIcon(applicationIcon) { return icon }
+      return templateSymbol(accessibilityDescription: accessibilityDescription)
+    }
+
+    static func scaledApplicationIcon(_ icon: NSImage?) -> NSImage? {
+      guard let icon, icon.isValid, !icon.representations.isEmpty else { return nil }
+      guard icon.size.width > 0, icon.size.height > 0 else { return nil }
+      guard let copy = icon.copy() as? NSImage else { return nil }
+      copy.size = statusItemSize
+      return copy
+    }
+
+    static func templateSymbol(accessibilityDescription: String) -> NSImage? {
       guard #available(macOS 11.0, *) else { return nil }
       let image = NSImage(
         systemSymbolName: "gamecontroller",
@@ -121,6 +136,7 @@
         button.target = self
         button.action = #selector(showStatusMenu(_:))
         if let image = MenuBarStatusItemImage.make(
+          applicationIcon: NSImage(named: NSImage.applicationIconName),
           accessibilityDescription: OJDLocalized.string(
             "app.name",
             fallback: "OpenJoystickDriver"
