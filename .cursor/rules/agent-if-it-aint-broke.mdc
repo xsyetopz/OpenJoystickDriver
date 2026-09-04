@@ -1,0 +1,28 @@
+---
+description: Do not change working product, UX, or branding unless the user explicitly asked
+alwaysApply: true
+---
+
+# If it ain't broke, don't fix it
+
+Working behavior, appearance, and contracts stay. A bugfix is not a license to
+redesign anything else. Diagnosis is not authorization.
+
+**Forbidden without an explicit user order this turn**
+- Icons, glyphs, branding, colors, layout, copy, defaults, shortcuts
+- Replacing a working branded/custom control with a "HIG-correct" system stand-in
+- Speculative fallbacks that displace a working primary path
+- Bundling an unrelated visual or UX change into a lifecycle, crash, or install fix
+- "This might also help", "while we're here", "more correct", "safer default"
+
+**Allowed**
+- The exact defect named in the ask
+- A change the user ordered in this turn, in those words
+- Restoring prior working behavior after an unauthorized change
+
+**Test**
+If the user did not name it, do not touch it. A hypothesis that X *could* cause Y
+is not permission to replace X when Y has a different root cause.
+
+Example: blank menu extra from SIGTERM skipping teardown → remove the extra on
+terminate. Do **not** swap the app icon for an SF Symbol.
