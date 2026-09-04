@@ -28,6 +28,14 @@
       .dpadUp, .dpadDown, .dpadLeft, .dpadRight
     ]
 
+    /// Classic face/shoulder/stick/dpad controls. Share/Mute/touchpad stay outside this set so
+    /// Developer Tools Extra Buttons can confirm packet-mapped non-core controls.
+    static let coreDiagnosticButtons: Set<Button> = [
+      .a, .b, .x, .y, .cross, .circle, .square, .triangle, .leftBumper, .rightBumper, .l1, .r1,
+      .l2Digital, .r2Digital, .back, .guide, .ps, .start, .leftStick, .rightStick, .dpadUp,
+      .dpadDown, .dpadLeft, .dpadRight
+    ]
+
     static func isPressed(_ buttons: [Button], in state: DeviceInputState) -> Bool {
       isPressed(buttons, in: Set(state.pressedButtons))
     }

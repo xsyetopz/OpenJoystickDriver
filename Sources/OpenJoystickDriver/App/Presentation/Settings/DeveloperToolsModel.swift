@@ -31,6 +31,11 @@
     @Published private(set) var packets: [PacketLogEntry] = []
     @Published private(set) var observedExtraInputs: [String] = []
 
+    /// Packets shown in the capture console. Periodic GIP announce frames stay in ``packets`` for export.
+    var displayedPackets: [PacketLogEntry] { packets.filter { !$0.isPeriodicGIPAnnounce } }
+
+    var hiddenAnnouncePacketCount: Int { packets.count - displayedPackets.count }
+
     var diagnosticRecipeAvailable: Bool {
       guard let device = selectedDevice else { return false }
       return ParserRegistry().runtimeProfile(
@@ -227,8 +232,10 @@
 
     private func updateObservedExtraInputs(from state: DeviceInputState?) {
       guard let state else { return }
-      let standardNames = Set(InputTestButtonPresentation.standardButtons.map(\.rawValue))
-      let observed = state.pressedButtons.filter { !standardNames.contains($0) }
+      // Core face/shoulder/stick/dpad set only. Share, Mute, touchpad, and future paddles
+      // must surface here so packet-mapped extras are visible in Developer Tools.
+      let coreNames = Set(InputTestButtonPresentation.coreDiagnosticButtons.map(\.rawValue))
+      let observed = state.pressedButtons.filter { !coreNames.contains($0) }
       observedExtraInputs = Array(Set(observedExtraInputs).union(observed)).sorted()
     }
   }

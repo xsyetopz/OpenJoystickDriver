@@ -30,6 +30,36 @@ import Testing
     #expect(model.observedExtraInputs == [Button.mute.rawValue])
   }
 
+  @Test @MainActor func sharePressIsListedAsAnExtraInput() async throws {
+    let gateway = GatewayStub(
+      statusPayload: statusPayload(device: device()),
+      inputState: inputState(button: .share),
+      packetEntries: []
+    )
+    let model = DeveloperToolsViewModel(gateway: gateway)
+
+    await model.refresh()
+
+    #expect(model.observedExtraInputs == [Button.share.rawValue])
+  }
+
+  @Test @MainActor func announcePacketsStayHiddenFromTheCaptureConsole() async throws {
+    let announce = try packetEntry(timestamp: 1, hex: "02 20 2A 1C 00")
+    let input = try packetEntry(timestamp: 2, hex: "20 00 47 20 00")
+    let gateway = GatewayStub(
+      statusPayload: statusPayload(device: device()),
+      inputState: inputState(button: nil),
+      packetEntries: [announce, input]
+    )
+    let model = DeveloperToolsViewModel(gateway: gateway)
+
+    await model.refresh()
+
+    #expect(model.packets.map(\.hex) == [announce.hex, input.hex])
+    #expect(model.displayedPackets.map(\.hex) == [input.hex])
+    #expect(model.hiddenAnnouncePacketCount == 1)
+  }
+
   @Test @MainActor func captureIgnoresTheBaselineAndAppendsNewPackets() async throws {
     let first = try packetEntry(timestamp: 1, hex: "01")
     let second = try packetEntry(timestamp: 2, hex: "02")

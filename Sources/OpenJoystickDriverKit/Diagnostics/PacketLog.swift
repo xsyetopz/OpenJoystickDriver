@@ -12,6 +12,14 @@ public struct PacketLogEntry: Codable, Sendable {
   public let hex: String
   /// Number of bytes in the packet.
   public let length: Int
+
+  /// GIP device announce frames (command `0x02`) arrive about twice a second and drown input captures.
+  public var isPeriodicGIPAnnounce: Bool {
+    guard let first = hex.split(whereSeparator: \.isWhitespace).first,
+      let command = UInt8(first, radix: 16)
+    else { return false }
+    return command == 0x02
+  }
 }
 
 /// Tracks newly appended entries across snapshots of a bounded packet ring.

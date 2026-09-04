@@ -326,6 +326,16 @@ actor RemappingProfileLibrary {
     do { decoded = try JSONDecoder().decode(RemappingProfileLibraryState.self, from: data) } catch {
       throw RemappingProfileLibraryError.corruptLibrary
     }
+    // Empty legacy libraries only declare a version stamp. Promote them to the
+    // live schema instead of failing the whole Profiles UI when nothing is stored.
+    if decoded.profiles.isEmpty, decoded.activeProfiles.isEmpty,
+      decoded.schemaVersion != RemappingProfileLibraryState.currentSchemaVersion
+    {
+      var promoted = decoded
+      promoted.schemaVersion = RemappingProfileLibraryState.currentSchemaVersion
+      try replace(with: promoted)
+      return promoted
+    }
     try validate(decoded)
     library = decoded
     return decoded

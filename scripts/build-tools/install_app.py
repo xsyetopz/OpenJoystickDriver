@@ -65,11 +65,32 @@ def application_job_is_running(label: str) -> bool:
     )
     if result.returncode:
         return False
-    return bool(
-        re.search(
-            r"^\s*(?:pid = [1-9][0-9]*|state = running)$", result.stdout, re.MULTILINE
-        )
+    pid_match = re.search(r"^\s*pid = ([0-9]+)\s*$", result.stdout, re.MULTILINE)
+    if pid_match:
+        process_identifier = int(pid_match.group(1))
+        # launchd can keep state=running on a zombie until bootout reaps it.
+        return process_identifier > 0 and process_is_alive(process_identifier)
+    return bool(re.search(r"^\s*state = running\s*$", result.stdout, re.MULTILINE))
+
+
+def process_is_alive(process_identifier: int) -> bool:
+    """True when the PID is a live process (zombies / exiting leftovers are not)."""
+    result = run(
+        ["/bin/ps", "-p", str(process_identifier), "-o", "state=,rss="],
+        capture=True,
+        check=False,
     )
+    parts = (result.stdout or "").split()
+    if result.returncode or len(parts) < 2:
+        return False
+    state = parts[0].upper()
+    # macOS reports exiting leftovers as Z, E, or ?E with rss 0.
+    if "Z" in state or "E" in state:
+        return False
+    try:
+        return int(parts[1]) > 0
+    except ValueError:
+        return False
 
 
 def application_process_identifiers() -> list[int]:
@@ -80,7 +101,11 @@ def application_process_identifiers() -> list[int]:
     )
     if result.returncode:
         return []
-    return [int(value) for value in result.stdout.split() if value.isdigit()]
+    return [
+        int(value)
+        for value in result.stdout.split()
+        if value.isdigit() and process_is_alive(int(value))
+    ]
 
 
 def signal_processes(
@@ -116,23 +141,41 @@ def retire_application_instances() -> None:
         )
     signal_processes(application_process_identifiers(), signal.SIGTERM)
 
-    if not wait_until_retired(labels, 5):
-        print("OpenJoystickDriver did not stop after SIGTERM; forcing termination")
-        for label in labels:
-            run(
-                ["/bin/launchctl", "kill", "SIGKILL", f"{domain}/{label}"],
-                check=False,
+    if wait_until_retired(labels, 5):
+        if application_process_identifiers():
+            raise InstallFailure(
+                "stale OpenJoystickDriver processes remain after retirement"
             )
-        signal_processes(application_process_identifiers(), signal.SIGKILL)
-        if not wait_until_retired(labels, 2):
-            raise InstallFailure("OpenJoystickDriver processes survived SIGKILL")
+        return
 
+    print("OpenJoystickDriver did not stop after SIGTERM; forcing termination")
+    for label in labels:
+        run(
+            ["/bin/launchctl", "kill", "SIGKILL", f"{domain}/{label}"],
+            check=False,
+        )
+    signal_processes(application_process_identifiers(), signal.SIGKILL)
+    if wait_until_retired(labels, 2):
+        return
+
+    # Last resort only: bootout clears a zombie PID stuck on an LS job.
+    # Do not bootout on the happy path — that breaks the next LaunchServices
+    # open of the replacement bundle (error -600).
+    print("OpenJoystickDriver LaunchServices job survived SIGKILL; booting out")
     for label in labels:
         run(["/bin/launchctl", "bootout", f"{domain}/{label}"], check=False)
-    if application_process_identifiers():
-        raise InstallFailure(
-            "stale OpenJoystickDriver processes remain after retirement"
+    if wait_until_retired(labels, 2):
+        return
+    if not application_process_identifiers():
+        print(
+            "LaunchServices still lists a retired OpenJoystickDriver job "
+            "with no live process; continuing install"
         )
+        return
+    raise InstallFailure(
+        "macOS left an unkillable OpenJoystickDriver application job. "
+        "Reboot once, then rerun the install."
+    )
 
 
 def retire_driverkit_instances() -> None:
@@ -179,7 +222,22 @@ def verify_signature(application: Path) -> None:
 
 
 def launch_application(application: Path) -> None:
-    run(["/usr/bin/open", str(application)])
+    """Start the installed GUI by spawning the signed executable.
+
+    Install replaces a just-stopped instance. ``open`` talks to LaunchServices /
+    RunningBoard and races that teardown (often error -600). Spawning the
+    verified Mach-O registers a fresh application job and is what install
+    readiness actually needs.
+    """
+    executable = application / "Contents/MacOS/OpenJoystickDriver"
+    if not executable.is_file():
+        raise InstallFailure(f"application executable is missing: {executable}")
+    subprocess.Popen(  # noqa: S603 — verified signed install path only
+        [str(executable)],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
 
 
 def launch_and_wait(application: Path, timeout_seconds: float) -> None:
@@ -188,6 +246,11 @@ def launch_and_wait(application: Path, timeout_seconds: float) -> None:
     deadline = time.monotonic() + timeout_seconds
     last_error = ""
     while time.monotonic() < deadline:
+        if not application_process_identifiers():
+            # First spawn can exit immediately on a broken bundle; surface that.
+            time.sleep(0.2)
+            if not application_process_identifiers():
+                launch_application(application)
         result = run(
             [str(executable), "--headless", "app", "ready"],
             capture=True,
@@ -277,7 +340,6 @@ def install(
                     remove_path(destination)
                 if backup.exists():
                     backup.rename(destination)
-                    launch_application(destination)
                     print(
                         "Restored the previous OpenJoystickDriver installation",
                         file=sys.stderr,

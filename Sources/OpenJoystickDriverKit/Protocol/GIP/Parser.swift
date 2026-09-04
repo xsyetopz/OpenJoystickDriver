@@ -360,9 +360,10 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, USBDeferredOutp
       guard index >= 0, index < bytes.count else { return 0 }
       return bytes[index]
     }
-    // 32-byte GIP payloads put Share at payload[15] (URB offset 19).
-    guard bytes.count > 15 else { return 0 }
-    return bytes[15]
+    // GameSir G7 SE and typical 32-byte GIP payloads put Share at payload[14]
+    // (URB offset 18 on a 4-byte header). Series X uses .shareOffset instead.
+    guard bytes.count > 14 else { return 0 }
+    return bytes[14]
   }
 
   private func parseDpad(curr: UInt8) -> [ControllerEvent] {

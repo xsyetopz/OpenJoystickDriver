@@ -54,10 +54,27 @@ _ojd_application_job_labels() {
     | sort -u
 }
 
+_ojd_process_is_alive() {
+  local pid="$1"
+  local state rss
+  # shellcheck disable=SC2034
+  read -r state rss < <(ps -p "$pid" -o state=,rss= 2>/dev/null) || return 1
+  [[ -n "$state" && -n "$rss" ]] || return 1
+  # macOS reports exiting leftovers as Z, E, or ?E with rss 0.
+  [[ "$state" == *Z* || "$state" == *E* ]] && return 1
+  ((rss > 0))
+}
+
 _ojd_application_job_is_running() {
   local label="$1"
-  launchctl print "gui/$(id -u)/$label" 2>/dev/null \
-    | grep -Eq '^[[:space:]]*(pid = [1-9][0-9]*|state = running)$'
+  local output pid
+  output="$(launchctl print "gui/$(id -u)/$label" 2>/dev/null)" || return 1
+  pid="$(printf '%s\n' "$output" | sed -n 's/^[[:space:]]*pid = \([0-9][0-9]*\)[[:space:]]*$/\1/p' | head -n1)"
+  if [[ -n "$pid" ]]; then
+    _ojd_process_is_alive "$pid"
+    return $?
+  fi
+  printf '%s\n' "$output" | grep -Eq '^[[:space:]]*state = running[[:space:]]*$'
 }
 
 _retire_ojd_application_jobs() {
@@ -108,6 +125,10 @@ _retire_ojd_application_jobs() {
     ((running == 0)) && return 0
     sleep 0.1
   done
+  if ! pgrep -x OpenJoystickDriver >/dev/null 2>&1; then
+    echo "  LaunchServices still lists a retired OJD job with no live process; continuing"
+    return 0
+  fi
   die "macOS left an unkillable OJD application job. Reboot once; OJD will recreate its app service automatically at login."
 }
 

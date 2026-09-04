@@ -5,12 +5,21 @@
 _2026-09-04_
 
 - Extra buttons are mapped from packets, not from a catalog of named roles.
-  GameSir-style 32-byte GIP reports emit Share from payload byte 15 (under
+  GameSir-style 32-byte GIP reports emit Share from payload byte 14 (under
   Guide). DualSense Mute stays packet-mapped. Unclassified extras stay omitted.
-  Renamed catalog/RPC `flags` / `mappingFlags` to `quirks` (encoding and
-  subsystem deviations only: `shareOffset`, d-pad/trigger/stick packing, and
-  parser-scoped capability markers). Diagnostic mode remains a catalog-backed
-  host recipe; none are live until the exact packet is an operational fact.
+  Developer Tools Extra Buttons use the core face/shoulder set so Share/Mute
+  can accumulate when pressed. Renamed catalog/RPC `flags` / `mappingFlags` to
+  `quirks` (encoding and subsystem deviations only: `shareOffset`,
+  d-pad/trigger/stick packing, and parser-scoped capability markers).
+  Diagnostic mode remains a catalog-backed host recipe; none are live until the
+  exact packet is an operational fact.
+- Raw packet capture hides periodic GIP announce frames (`0x02`, ~2 Hz) from the
+  console and Copy All so input stays readable; Export still includes them.
+- Empty remapping libraries on the retired schema version 1 promote to the live
+  schema on load so a blank Profiles store no longer fails as unsupported.
+- Local `install` / `install-fast` retirement ignores zombie/`?E` LaunchServices
+  leftovers, bootouts only as a last resort, and starts the signed app binary
+  directly after replace so LaunchServices `open` -600 cannot fail the install.
 - Collapsed remapping profile/library contracts to a single live schema version
   (equality with `currentSchemaVersion` only; no supported-version sets).
 - Removed the obsolete `xone-hid` / Xbox One HID compatibility identity and its

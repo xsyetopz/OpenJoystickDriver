@@ -161,6 +161,41 @@ struct ProfileLibraryTests {
     }
   }
 
+  @Test func emptyLegacyLibraryIsPromotedToCurrentSchemaVersion() async throws {
+    try await withLibrary { library, url in
+      let legacy = Data(#"{"profiles":[],"schema_version":1,"active_profiles":[]}"#.utf8)
+      try legacy.write(to: url)
+
+      let profiles = try await library.profiles()
+      #expect(profiles.isEmpty)
+
+      let persisted = try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
+      #expect(persisted?["schema_version"] as? Int == RemappingProfileLibraryState.currentSchemaVersion)
+      #expect((persisted?["profiles"] as? [Any])?.isEmpty == true)
+      #expect((persisted?["active_profiles"] as? [Any])?.isEmpty == true)
+    }
+  }
+
+  @Test func nonEmptyLegacyLibraryStillRejectsUnsupportedVersion() async throws {
+    try await withLibrary { library, url in
+      let profile = makeProfile(name: "Primary")
+      let encodedProfile = try JSONEncoder().encode(profile)
+      let profileObject = try #require(
+        JSONSerialization.jsonObject(with: encodedProfile) as? [String: Any]
+      )
+      let legacyObject: [String: Any] = [
+        "schema_version": 1,
+        "profiles": [profileObject],
+        "active_profiles": [],
+      ]
+      try JSONSerialization.data(withJSONObject: legacyObject).write(to: url)
+
+      await #expect(throws: RemappingProfileLibraryError.unsupportedLibraryVersion(1)) {
+        _ = try await library.profiles()
+      }
+    }
+  }
+
   @Test func listingUsesDeterministicNameThenIdentifierOrder() async throws {
     try await withLibrary { library, _ in
       let alphaLast = makeProfile(id: identifier(last: 255), name: "alpha")

@@ -29,7 +29,7 @@
               action: model.clearCapture
             ).disabled(model.packets.isEmpty && model.observedExtraInputs.isEmpty)
             Button(OJDLocalized.string("common.copyAll", fallback: "Copy All"), action: copyAll)
-              .disabled(model.packets.isEmpty)
+              .disabled(model.displayedPackets.isEmpty)
             Button(
               OJDLocalized.string("common.export", fallback: "Export…"),
               action: presentSavePanel
@@ -37,6 +37,16 @@
           }
 
           packetList
+
+          if model.hiddenAnnouncePacketCount > 0 {
+            Text(
+              OJDLocalized.formatted(
+                "developer.hiddenAnnouncePackets",
+                fallback: "Hidden %d idle announce packets (still included in Export).",
+                model.hiddenAnnouncePacketCount
+              )
+            ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+          }
 
           Text(
             OJDLocalized.string(
@@ -71,7 +81,7 @@
           OJDLocalized.formatted(
             "developer.stoppedPackets",
             fallback: "Stopped · %d packets",
-            model.packets.count
+            model.displayedPackets.count
           ),
           symbol: "stop.circle"
         )
@@ -88,7 +98,7 @@
     }
 
     @ViewBuilder private var packetList: some View {
-      if model.packets.isEmpty {
+      if model.displayedPackets.isEmpty {
         VStack(alignment: .leading, spacing: 6) {
           Text(
             model.isCapturing
@@ -105,7 +115,7 @@
             Text(
               OJDLocalized.string(
                 "developer.keepAliveNote",
-                fallback: "Some controllers send idle packets slowly."
+                fallback: "Idle announce packets are hidden so input frames stay visible."
               )
             ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
           }
@@ -122,7 +132,7 @@
               ).font(.system(.caption, design: .monospaced).weight(.semibold)).foregroundColor(
                 Color(NSColor.secondaryLabelColor)
               )
-              ForEach(Array(model.packets.enumerated()), id: \.offset) { _, packet in
+              ForEach(Array(model.displayedPackets.enumerated()), id: \.offset) { _, packet in
                 Text(packetLine(packet)).font(.system(.caption, design: .monospaced)).fixedSize(
                   horizontal: true,
                   vertical: false
@@ -136,7 +146,7 @@
     }
 
     private func packetLine(_ packet: PacketLogEntry) -> String {
-      let firstTimestamp = model.packets.first?.timestamp ?? packet.timestamp
+      let firstTimestamp = model.displayedPackets.first?.timestamp ?? packet.timestamp
       let direction = packet.direction.uppercased().padding(
         toLength: 9,
         withPad: " ",
@@ -168,7 +178,7 @@
         "developer.packetColumns",
         fallback: "Time       Direction  Bytes  Data"
       )
-      let rows = [header] + model.packets.map(packetLine)
+      let rows = [header] + model.displayedPackets.map(packetLine)
       pasteboard.setString(rows.joined(separator: "\n"), forType: .string)
     }
 
