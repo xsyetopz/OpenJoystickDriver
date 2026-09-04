@@ -19,8 +19,9 @@ final class HeadlessApplicationHost {
     #if canImport(AppKit) && canImport(SwiftUI)
       runtime.handleShutdownSignal { [weak runtime] in
         Task { @MainActor in
-          if NSApplication.shared.isRunning {
-            NSApplication.shared.terminate(nil)
+          if NSApplication.shared.isRunning,
+            MenuBarCoordinator.terminateFromShutdownSignalIfRunning()
+          {
             return
           }
           await runtime?.stop()

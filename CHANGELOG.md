@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-
 ## [0.5.0-beta.3] - 2026-09-04
 
 ### Added
@@ -39,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Relaunch the menu-bar extra after macOS Quit & Reopen from a permission grant.
 - Stop Launch Services from re-opening the menu-bar app during install probes,
   which showed “The application is not open anymore” and left a blank extra.
 - Start the signed app after local replace so LaunchServices `open` does not

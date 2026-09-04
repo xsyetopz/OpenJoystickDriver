@@ -33,6 +33,43 @@
     }
   }
 
+  enum MenuBarTerminateRelaunchPolicy {
+    static let logOutReason: OSType = 0x6C6F676F
+    static let reallyLogOutReason: OSType = 0x726C676F
+    static let shutDownReason: OSType = 0x73687574
+    static let restartReason: OSType = 0x72657374
+
+    static func shouldRelaunch(
+      userInitiatedQuit: Bool,
+      signalInitiatedQuit: Bool,
+      appleEventQuitReason: OSType?
+    ) -> Bool {
+      if userInitiatedQuit || signalInitiatedQuit { return false }
+      switch appleEventQuitReason {
+      case logOutReason, reallyLogOutReason, shutDownReason, restartReason: return false
+      default: return true
+      }
+    }
+
+    static func spawnBundleExecutable() {
+      guard Bundle.main.bundleURL.pathExtension == "app" else { return }
+      guard let executable = Bundle.main.executableURL else { return }
+      let process = Process()
+      process.executableURL = executable
+      process.arguments = []
+      process.standardInput = FileHandle.nullDevice
+      process.standardOutput = FileHandle.nullDevice
+      process.standardError = FileHandle.nullDevice
+      do { try process.run() } catch {
+        FileHandle.standardError.write(
+          Data(
+            "[OpenJoystickDriver] Could not relaunch: \(error.localizedDescription)\n".utf8
+          )
+        )
+      }
+    }
+  }
+
   @MainActor final class MenuBarCoordinator: NSObject, NSApplicationDelegate {
     let runtime: ApplicationServiceRuntime
     let viewModel: RuntimeViewModel
@@ -46,6 +83,9 @@
     private let notificationPresenter = RuntimeNotificationCenterDelegate()
     private var liveStatusRefreshInFlight = false
     private var isStopping = false
+    private var userInitiatedQuit = false
+    private var signalInitiatedQuit = false
+    private static weak var activeCoordinator: MenuBarCoordinator?
 
     init(runtime: ApplicationServiceRuntime, gateway: any ApplicationServiceGateway) {
       self.runtime = runtime
@@ -54,6 +94,7 @@
     }
 
     func run() -> Never {
+      Self.activeCoordinator = self
       let application = NSApplication.shared
       application.setActivationPolicy(.accessory)
       application.delegate = self
@@ -83,14 +124,39 @@
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
       guard !isStopping else { return .terminateNow }
       isStopping = true
+      let shouldRelaunch = MenuBarTerminateRelaunchPolicy.shouldRelaunch(
+        userInitiatedQuit: userInitiatedQuit,
+        signalInitiatedQuit: signalInitiatedQuit,
+        appleEventQuitReason: Self.currentAppleEventQuitReason()
+      )
       removeStatusItem()
       inputTestWindowController?.stop()
       Task { @MainActor [weak self, weak sender] in
         guard let self else { return }
         await self.runtime.stop()
+        if shouldRelaunch { MenuBarTerminateRelaunchPolicy.spawnBundleExecutable() }
         sender?.reply(toApplicationShouldTerminate: true)
       }
       return .terminateLater
+    }
+
+    func terminateFromShutdownSignal() {
+      signalInitiatedQuit = true
+      NSApplication.shared.terminate(nil)
+    }
+
+    @discardableResult static func terminateFromShutdownSignalIfRunning() -> Bool {
+      guard let activeCoordinator else { return false }
+      activeCoordinator.terminateFromShutdownSignal()
+      return true
+    }
+
+    private static func currentAppleEventQuitReason() -> OSType? {
+      let keyword: AEKeyword = 0x77687920
+      let code =
+        NSAppleEventManager.shared().currentAppleEvent?
+        .paramDescriptor(forKeyword: keyword)?.enumCodeValue ?? 0
+      return code == 0 ? nil : code
     }
 
     func applicationWillTerminate(_ notification: Notification) { removeStatusItem() }
@@ -107,7 +173,10 @@
 
     @objc func refreshFromStatus(_ sender: Any?) { refreshLiveStatus() }
 
-    @objc func quit(_ sender: Any?) { NSApplication.shared.terminate(sender) }
+    @objc func quit(_ sender: Any?) {
+      userInitiatedQuit = true
+      NSApplication.shared.terminate(sender)
+    }
 
     private func openSettings(pane: SettingsPane?) {
       if settingsWindowController == nil {
