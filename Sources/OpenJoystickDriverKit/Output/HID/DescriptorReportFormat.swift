@@ -34,7 +34,8 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
       case .missingExplicitInputUsage(let usage):
         return "HID usage \(usage.page):\(usage.usage) is not present in an input report."
       case .ambiguousExplicitInputUsage(let usage):
-        return "HID usage \(usage.page):\(usage.usage) appears in more than one input field or report."
+        return
+          "HID usage \(usage.page):\(usage.usage) appears in more than one input field or report."
       case .explicitInputUsagesSpanReports:
         return "Explicit button usages must belong to one input report."
       }

@@ -70,7 +70,7 @@
 						"unknown"
 					]
 				},
-				"flags": {
+				"quirks": {
 					"type": "array",
 					"uniqueItems": true,
 					"items": {
@@ -132,13 +132,10 @@
 							"variant": {
 								"enum": ["unknown", "xboxOne", "xboxOriginal"]
 							},
-							"flags": {
+							"quirks": {
 								"items": {
 									"enum": [
 										"dpadToButtons",
-										"paddles",
-										"profileButton",
-										"shareButton",
 										"shareOffset",
 										"sticksToNull",
 										"triggersToButtons"
@@ -163,7 +160,7 @@
 							"variant": {
 								"enum": ["unknown", "xbox360", "xbox360Wireless"]
 							},
-							"flags": {
+							"quirks": {
 								"items": {
 									"enum": ["dpadToButtons", "sticksToNull", "triggersToButtons"]
 								},
@@ -186,7 +183,7 @@
 							"variant": {
 								"enum": ["dualShock3", "unknown"]
 							},
-							"flags": {
+							"quirks": {
 								"items": {
 									"enum": [
 										"accelerometer",
@@ -213,7 +210,7 @@
 							"variant": {
 								"enum": ["dualShock4", "unknown"]
 							},
-							"flags": {
+							"quirks": {
 								"items": {
 									"enum": [
 										"accelerometer",
@@ -242,7 +239,7 @@
 							"variant": {
 								"enum": ["dualSense", "unknown"]
 							},
-							"flags": {
+							"quirks": {
 								"items": {
 									"enum": [
 										"accelerometer",
@@ -273,7 +270,7 @@
 							"variant": {
 								"enum": ["steamController", "unknown"]
 							},
-							"flags": {
+							"quirks": {
 								"items": {
 									"enum": [
 										"battery",
@@ -302,7 +299,7 @@
 							"variant": {
 								"enum": ["switchPro", "unknown"]
 							},
-							"flags": {
+							"quirks": {
 								"items": {
 									"enum": [
 										"calibration",
@@ -330,7 +327,7 @@
 							"variant": {
 								"enum": ["unknown", "xboxAdaptiveJoystick"]
 							},
-							"flags": {
+							"quirks": {
 								"items": {
 									"enum": [
 										"genericHIDPackets",
@@ -358,7 +355,7 @@
 							}
 						},
 						"not": {
-							"required": ["flags"]
+							"required": ["quirks"]
 						}
 					}
 				}

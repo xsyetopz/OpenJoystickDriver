@@ -176,17 +176,13 @@ struct GIPParserTests {
 
   @Test func testParseMainInputShareButton() throws {
     let parser = GIPParser()
-    var payload = Data(repeating: 0, count: 15)
-    payload[14] = 1
-    var packet = Data([0x20, 32, 0, 15])
-    packet += payload
-    let events = try parser.parse(data: packet)
+    var payload = Data(repeating: 0, count: 32)
+    payload[15] = 1
+    let events = try parser.parse(data: inputPacket(payload: payload))
     #expect(events.contains(.buttonPressed(.share)))
 
-    payload[14] = 0
-    packet = Data([0x20, 32, 1, 15])
-    packet += payload
-    let releaseEvents = try parser.parse(data: packet)
+    payload[15] = 0
+    let releaseEvents = try parser.parse(data: inputPacket(payload: payload, sequence: 1))
     #expect(releaseEvents.contains(.buttonReleased(.share)))
   }
 
@@ -332,8 +328,86 @@ struct GIPParserTests {
     #expect(repeatedNeutralEvents.isEmpty)
   }
 
-  private func inputPacket(payload: Data) -> Data {
-    Data([GIPCommand.input, 32, 0, UInt8(payload.count)]) + payload
+  @Test func testGamesirStyleThirtyTwoByteGIPReportMapsViewGuideMenuAndShareFromPacketBytes()
+    throws
+  {
+    let parser = GIPParser()
+    let view = try parser.parse(
+      data: Data([
+        0x20, 0x00, 0x03, 0x20, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      ])
+    )
+    #expect(view.contains(.buttonPressed(.back)))
+    #expect(!view.contains(.buttonPressed(.share)))
+    #expect(!view.contains(.buttonPressed(.start)))
+
+    _ = try parser.parse(
+      data: Data([
+        0x20, 0x00, 0x04, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      ])
+    )
+
+    let guidePress = try parser.parse(data: Data([0x07, 0x20, 0x00, 0x02, 0x01, 0x5B]))
+    #expect(guidePress.contains(.buttonPressed(.guide)))
+    let guideRelease = try parser.parse(data: Data([0x07, 0x20, 0x01, 0x02, 0x00, 0x5B]))
+    #expect(guideRelease.contains(.buttonReleased(.guide)))
+
+    let menu = try parser.parse(
+      data: Data([
+        0x20, 0x00, 0x05, 0x20, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      ])
+    )
+    #expect(menu.contains(.buttonPressed(.start)))
+    #expect(!menu.contains(.buttonPressed(.share)))
+
+    _ = try parser.parse(
+      data: Data([
+        0x20, 0x00, 0x06, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      ])
+    )
+
+    let share = try parser.parse(
+      data: Data([
+        0x20, 0x00, 0x07, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      ])
+    )
+    #expect(share.contains(.buttonPressed(.share)))
+    #expect(!share.contains(.buttonPressed(.back)))
+    #expect(!share.contains(.buttonPressed(.start)))
+  }
+
+  @Test func testShareOffsetReadsShareFromTheEndRelativeGIPPacking() throws {
+    let parser = GIPParser(mappingOptions: .shareOffset)
+    var payload = Data(repeating: 0, count: 30)
+    payload[8] = 1
+    let events = try parser.parse(data: inputPacket(payload: payload))
+    #expect(events.contains(.buttonPressed(.share)))
+  }
+
+  @Test func testFirmwareCommandDoesNotInventExtraButtons() throws {
+    let parser = GIPParser()
+    var payload = Data(repeating: 0, count: 16)
+    payload[14] = 0x05
+    let packet = Data([0x0C, 32, 0, UInt8(payload.count)]) + payload
+    #expect(try parser.parse(data: packet).isEmpty)
+  }
+
+  @Test func diagnosticHostRecipesStayEmptyUntilAVerifiedPacketExists() {
+    #expect(GIPStartupPacket.allCases.allSatisfy { !$0.isDiagnosticRecipe })
+  }
+
+  private func inputPacket(payload: Data, sequence: UInt8 = 0) -> Data {
+    Data([GIPCommand.input, 32, sequence, UInt8(payload.count)]) + payload
   }
 
 }

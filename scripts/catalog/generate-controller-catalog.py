@@ -109,7 +109,7 @@ def build_hid_records(sources: dict[str, str]) -> list[dict[str, Any]]:
             raise CatalogError(f"missing Linux HID ID definition: {error}") from error
         protocol: dict[str, Any] = {"driver": driver, "variant": variant}
         if flags:
-            protocol["flags"] = flags
+            protocol["quirks"] = flags
         records.append({
             "$schema": (
                 "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"

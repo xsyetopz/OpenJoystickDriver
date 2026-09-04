@@ -29,14 +29,7 @@ extension Button {
     case .l2Digital: "L2"
     case .r2Digital: "R2"
     case .touchpad: "TP"
-    case .genericButton1: "1"
-    case .genericButton2: "2"
-    case .genericButton3: "3"
-    case .genericButton4: "4"
-    case .genericButton5: "5"
-    case .genericButton6: "6"
-    case .genericButton7: "7"
-    case .genericButton8: "8"
+    case .mute: "Mute"
     }
   }
 
@@ -70,14 +63,7 @@ extension Button {
     case .options: "ellipsis.circle"
     case .ps: "logo.playstation"
     case .touchpad: "rectangle.roundedtop"
-    case .genericButton1: "1.circle"
-    case .genericButton2: "2.circle"
-    case .genericButton3: "3.circle"
-    case .genericButton4: "4.circle"
-    case .genericButton5: "5.circle"
-    case .genericButton6: "6.circle"
-    case .genericButton7: "7.circle"
-    case .genericButton8: "8.circle"
+    case .mute: "mic.slash.circle"
     }
   }
 
@@ -113,14 +99,7 @@ extension Button {
     case .options: "Options"
     case .ps: "PS Button"
     case .touchpad: "Touchpad Click"
-    case .genericButton1: "Button 1"
-    case .genericButton2: "Button 2"
-    case .genericButton3: "Button 3"
-    case .genericButton4: "Button 4"
-    case .genericButton5: "Button 5"
-    case .genericButton6: "Button 6"
-    case .genericButton7: "Button 7"
-    case .genericButton8: "Button 8"
+    case .mute: "Mute"
     }
   }
 }

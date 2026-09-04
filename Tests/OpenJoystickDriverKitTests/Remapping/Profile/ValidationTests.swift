@@ -184,6 +184,15 @@ struct RemappingValidationTests {
     ) { try oversized.validate() }
   }
 
+  @Test func persistedAuxiliaryButtonPayloadsAreRejected() {
+    #expect(throws: DecodingError.self) {
+      _ = try JSONDecoder().decode(
+        RemappingSource.self,
+        from: Data(#"{"type":"button","button":"auxiliary_1"}"#.utf8)
+      )
+    }
+  }
+
   private func makeProfile(bindings: [RemappingBinding]) -> RemappingProfile {
     RemappingProfile(
       name: "Test",

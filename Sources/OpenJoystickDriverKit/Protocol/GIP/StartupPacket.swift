@@ -13,6 +13,16 @@ public enum GIPStartupPacket: String, CaseIterable, Sendable {
 
   public static let defaultSequence: [Self] = [.powerOn, .ledOn, .authDone]
 
+  /// Host recipes that change packing after handshake. Recipes join this set
+  /// only when the exact packet is an operational fact in this parser.
+  public var isDiagnosticRecipe: Bool {
+    switch self {
+    case .powerOn, .xboxOneSInit, .extraInput, .horiAck, .ledOn, .authDone, .rumbleBegin,
+      .rumbleEnd:
+      false
+    }
+  }
+
   public var command: UInt8 {
     switch self {
     case .powerOn, .xboxOneSInit: GIPCommand.power

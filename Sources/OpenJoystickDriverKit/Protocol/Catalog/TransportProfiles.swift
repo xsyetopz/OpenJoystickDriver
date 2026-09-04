@@ -62,7 +62,10 @@ public enum ControllerProtocolVariant: String, Codable, Hashable, Sendable {
   case unknown
 }
 
-/// Stable mapping flags modeled after Linux xpad's per-device quirks.
+/// Stable encoding quirks modeled after Linux xpad packing deviations.
+///
+/// These quirks never mean that a named control exists. Presence is the parser
+/// emitting that named event.
 public struct ControllerMappingOptions: OptionSet, Sendable {
   public let rawValue: UInt8
 
@@ -71,19 +74,13 @@ public struct ControllerMappingOptions: OptionSet, Sendable {
   public static let dpadToButtons = Self(rawValue: 1 << 0)
   public static let triggersToButtons = Self(rawValue: 1 << 1)
   public static let sticksToNull = Self(rawValue: 1 << 2)
-  public static let shareButton = Self(rawValue: 1 << 3)
-  public static let paddles = Self(rawValue: 1 << 4)
-  public static let profileButton = Self(rawValue: 1 << 5)
-  public static let shareOffset = Self(rawValue: 1 << 6)
+  public static let shareOffset = Self(rawValue: 1 << 3)
 
   public var names: [String] {
     var result: [String] = []
     if contains(.dpadToButtons) { result.append("dpadToButtons") }
     if contains(.triggersToButtons) { result.append("triggersToButtons") }
     if contains(.sticksToNull) { result.append("sticksToNull") }
-    if contains(.shareButton) { result.append("shareButton") }
-    if contains(.paddles) { result.append("paddles") }
-    if contains(.profileButton) { result.append("profileButton") }
     if contains(.shareOffset) { result.append("shareOffset") }
     return result
   }
@@ -101,7 +98,7 @@ public struct DeviceRuntimeProfile: Sendable {
   public let virtualProfile: VirtualDeviceProfile
   public let transportProfile: DeviceTransportProfile
   public let protocolVariant: ControllerProtocolVariant
-  public let mappingFlags: [String]
+  public let quirks: [String]
   public let mappingOptions: ControllerMappingOptions
   public let preferredBackends: [VirtualControllerBackendID]
   public let gipStartupPackets: [GIPStartupPacket]

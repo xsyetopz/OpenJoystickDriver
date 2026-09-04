@@ -35,14 +35,11 @@ struct RemappingEngineTests {
     )
   }
 
-  @Test func modelSpecificButtonsAndGenericAuxiliariesRemainReachable() async throws {
+  @Test func packetMappedButtonsRemainReachable() async throws {
     let sink = RemappingTestSink()
     let engine = RemappingEventEngine(sink: sink)
     let cases: [(Button, RemappingButton)] = [
-      (.share, .share), (.options, .options), (.genericButton1, .auxiliary1),
-      (.genericButton2, .auxiliary2), (.genericButton3, .auxiliary3),
-      (.genericButton4, .auxiliary4), (.genericButton5, .auxiliary5),
-      (.genericButton6, .auxiliary6), (.genericButton7, .auxiliary7), (.genericButton8, .auxiliary8)
+      (.share, .share), (.options, .options), (.mute, .mute), (.touchpad, .touchpad)
     ]
 
     for (button, source) in cases {

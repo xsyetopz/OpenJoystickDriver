@@ -189,7 +189,7 @@
 				"connection",
 				"serialNumberPresent",
 				"protocolVariant",
-				"mappingFlags",
+				"quirks",
 				"inputEndpoint",
 				"outputEndpoint",
 				"needsSetConfiguration",
@@ -224,7 +224,7 @@
 				"protocolVariant": {
 					"type": "string"
 				},
-				"mappingFlags": {
+				"quirks": {
 					"type": "array",
 					"items": {
 						"type": "string"

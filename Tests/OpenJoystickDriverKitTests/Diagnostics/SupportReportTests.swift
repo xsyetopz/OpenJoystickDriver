@@ -30,7 +30,7 @@ struct SupportReportTests {
           connection: "USB",
           serialNumber: secretSerial,
           protocolVariant: .xboxOne,
-          mappingFlags: ["swapAB"],
+          quirks: ["swapAB"],
           inputEndpoint: 129,
           outputEndpoint: 2,
           needsSetConfiguration: true,

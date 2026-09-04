@@ -67,12 +67,12 @@ struct ListCommand {
     for device in devices {
       let vid = String(format: "%04X", device.vendorID)
       let pid = String(format: "%04X", device.productID)
-      let mappings = device.mappings.isEmpty ? "none" : device.mappings.joined(separator: ",")
+      let quirks = device.quirks.isEmpty ? "none" : device.quirks.joined(separator: ",")
       print(
         "  VID=0x\(vid)" + " PID=0x\(pid)" + " bus=\(device.bus)" + " addr=\(device.address)"
           + " parser=\(device.parser)" + " protocol=\(device.protocolVariant)"
           + " endpoints=in:0x\(device.inputEndpoint)" + " out:0x\(device.outputEndpoint)"
-          + " mappings=\(mappings)"
+          + " quirks=\(quirks)"
       )
     }
   }

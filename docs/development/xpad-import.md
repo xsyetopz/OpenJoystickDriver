@@ -24,13 +24,13 @@ Supported Linux inputs map as follows:
 - XTYPE_XBOX360 becomes Xbox360/xbox360.
 - XTYPE_XBOX360W becomes Xbox360/xbox360Wireless.
 - XTYPE_XBOXONE becomes GIP/xboxOne.
-- Known mapping macros become protocol.flags.
+- Known mapping macros become protocol.quirks.
 - Supported PlayStation, Sony, Nintendo, and Steam HID registrations become HID records from their driver tables and hid-ids.h.
 - Non-default xboxone_init_packets become protocol.startup_packets.
 
 Protocol-default endpoints and startup packets are omitted. The pinned source
 revision and hashes remain in `ControllerSources.lock.json`; generated runtime
-records contain only operational controller facts. Unknown types, flags,
+records contain only operational controller facts. Unknown types, quirks,
 mappings, or startup macros are skipped with an explicit count. Partial
 source-table parsing fails generation.
 

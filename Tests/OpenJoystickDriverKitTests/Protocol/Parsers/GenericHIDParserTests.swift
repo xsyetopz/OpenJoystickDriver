@@ -55,6 +55,10 @@ struct GenericHIDParserTests {
         == [.dpadChanged(.neutral)]
     )
     #expect(parser.parse(elementValue: axis(usage: 0x36, integer: 128)).isEmpty)
+    #expect(
+      parser.parse(elementValue: value(page: 0x09, usage: 12, minimum: 0, maximum: 1, integer: 1))
+        .isEmpty
+    )
   }
 
   @Test func rawReportsRemainUnusedForDescriptorDrivenFallback() throws {

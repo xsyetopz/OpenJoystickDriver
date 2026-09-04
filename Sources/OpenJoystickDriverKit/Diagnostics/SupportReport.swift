@@ -57,7 +57,7 @@ public struct SupportReport: Codable, Sendable {
     public let connection: String
     public let serialNumberPresent: Bool
     public let protocolVariant: String
-    public let mappingFlags: [String]
+    public let quirks: [String]
     public let inputEndpoint: UInt8
     public let outputEndpoint: UInt8
     public let needsSetConfiguration: Bool
@@ -158,7 +158,7 @@ public struct SupportReport: Codable, Sendable {
         connection: $0.connection,
         serialNumberPresent: $0.serialNumber?.isEmpty == false,
         protocolVariant: $0.protocolVariant.rawValue,
-        mappingFlags: $0.mappingFlags.sorted(),
+        quirks: $0.quirks.sorted(),
         inputEndpoint: $0.inputEndpoint,
         outputEndpoint: $0.outputEndpoint,
         needsSetConfiguration: $0.needsSetConfiguration,

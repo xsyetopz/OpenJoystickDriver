@@ -38,7 +38,7 @@ struct SwitchProParserTests {
 
     #expect(registry.parserName(for: identifier) == "SwitchPro")
     #expect(profile.protocolVariant == .switchPro)
-    #expect(profile.mappingFlags == ["usbHandshake"])
+    #expect(profile.quirks == ["usbHandshake"])
     #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
     #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
   }
@@ -67,9 +67,9 @@ struct SwitchProParserTests {
     #expect(eventExists(events, .dpadChanged(.northWest)))
   }
 
-  @Test func testSwitchDigitalTriggersNormalizeToAuxiliaryButtonSources() {
-    #expect(RemappingEngineState.source(for: .l2Digital) == .button(.auxiliary1))
-    #expect(RemappingEngineState.source(for: .r2Digital) == .button(.auxiliary2))
+  @Test func testSwitchDigitalTriggersNormalizeToNamedTriggerClicks() {
+    #expect(RemappingEngineState.source(for: .l2Digital) == .button(.leftTriggerClick))
+    #expect(RemappingEngineState.source(for: .r2Digital) == .button(.rightTriggerClick))
   }
 
   @Test func testSwitchProFaceButtonsUseLinuxPositionalMapping() throws {

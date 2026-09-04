@@ -49,21 +49,21 @@ struct ControllerRecordDocument: Decodable {
   struct ProtocolInfo: Decodable {
     let driver: String
     let variant: String
-    let flags: [String]?
+    let quirks: [String]?
     let startupPackets: [String]?
     let keepAliveEnabled: Bool?
 
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
-        "driver", "variant", "flags", "startup_packets", "keep_alive"
+        "driver", "variant", "quirks", "startup_packets", "keep_alive"
       ])
       driver = try container.decode(String.self, for: "driver")
       variant = try container.decode(String.self, for: "variant")
-      flags = try container.decodeOptional([String].self, for: "flags")
+      quirks = try container.decodeOptional([String].self, for: "quirks")
       startupPackets = try container.decodeOptional([String].self, for: "startup_packets")
       keepAliveEnabled = try container.decodeOptional(Bool.self, for: "keep_alive")
-      try Self.validateUniqueNonempty(flags, field: "flags", codingPath: decoder.codingPath)
+      try Self.validateUniqueNonempty(quirks, field: "quirks", codingPath: decoder.codingPath)
       try Self.validateUniqueNonempty(
         startupPackets,
         field: "startup_packets",
@@ -77,12 +77,12 @@ struct ControllerRecordDocument: Decodable {
           )
         )
       }
-      let unknownFlags = Set(flags ?? []).subtracting(contract.flags)
-      guard unknownFlags.isEmpty else {
+      let unknownQuirks = Set(quirks ?? []).subtracting(contract.quirks)
+      guard unknownQuirks.isEmpty else {
         throw DecodingError.dataCorrupted(
           .init(
-            codingPath: decoder.codingPath + [DocumentKey("flags")],
-            debugDescription: "flags must match the selected driver contract"
+            codingPath: decoder.codingPath + [DocumentKey("quirks")],
+            debugDescription: "quirks must match the selected driver contract"
           )
         )
       }
@@ -105,12 +105,11 @@ struct ControllerRecordDocument: Decodable {
       }
     }
 
-    private static let contracts: [String: (variants: Set<String>, flags: Set<String>)] = [
+    private static let contracts: [String: (variants: Set<String>, quirks: Set<String>)] = [
       "GIP": (
         ["xboxOriginal", "xboxOne", "unknown"],
         [
-          "dpadToButtons", "triggersToButtons", "sticksToNull", "shareButton", "paddles",
-          "profileButton", "shareOffset"
+          "dpadToButtons", "triggersToButtons", "sticksToNull", "shareOffset"
         ]
       ),
       "Xbox360": (

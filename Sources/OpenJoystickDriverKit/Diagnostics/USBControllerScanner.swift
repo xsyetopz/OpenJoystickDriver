@@ -7,7 +7,7 @@ public struct USBControllerDescription: Equatable, Sendable {
   public let protocolVariant: String
   public let inputEndpoint: String
   public let outputEndpoint: String
-  public let mappings: [String]
+  public let quirks: [String]
   public let transportObservation: ControllerTransportObservation?
   public let classification: ProtocolClassification?
   public let reconciliation: ProtocolReconciliation?
@@ -21,7 +21,7 @@ public struct USBControllerDescription: Equatable, Sendable {
     protocolVariant: String,
     inputEndpoint: String,
     outputEndpoint: String,
-    mappings: [String],
+    quirks: [String],
     transportObservation: ControllerTransportObservation? = nil,
     classification: ProtocolClassification? = nil,
     reconciliation: ProtocolReconciliation? = nil
@@ -34,7 +34,7 @@ public struct USBControllerDescription: Equatable, Sendable {
     self.protocolVariant = protocolVariant
     self.inputEndpoint = inputEndpoint
     self.outputEndpoint = outputEndpoint
-    self.mappings = mappings
+    self.quirks = quirks
     self.transportObservation = transportObservation
     self.classification = classification
     self.reconciliation = reconciliation
@@ -83,7 +83,7 @@ public enum USBControllerScanner {
       protocolVariant: profile.protocolVariant.rawValue,
       inputEndpoint: String(profile.transportProfile.inputEndpoint, radix: 16),
       outputEndpoint: String(profile.transportProfile.outputEndpoint, radix: 16),
-      mappings: profile.mappingFlags,
+      quirks: profile.quirks,
       transportObservation: observation,
       classification: classification,
       reconciliation: reconciliation

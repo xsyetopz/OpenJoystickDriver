@@ -33,8 +33,8 @@ public enum DualSenseParserError: Error, Equatable { case invalidBluetoothCRC }
 ///
 /// USB report ID `0x01` follows Linux `hid-playstation.c`'s
 /// `struct dualsense_input_report`: four stick axes, two trigger axes,
-/// sequence number, then button bytes, including the mic-mute button as a
-/// generic experimental button. Bluetooth report `0x31` carries the same
+/// sequence number, then button bytes, including the microphone mute button.
+/// Bluetooth report `0x31` carries the same
 /// common input report after its two-byte header and is accepted only when
 /// its Linux-compatible CRC32 validates.
 public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
@@ -306,7 +306,7 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
     let events = diffButtons(
       prev: prevSystem,
       curr: system,
-      mapping: [(0x01, .ps), (0x02, .touchpad), (0x04, .genericButton1)]
+      mapping: [(0x01, .ps), (0x02, .touchpad), (0x04, .mute)]
     )
     return (events, system)
   }

@@ -274,14 +274,14 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
     var state = DeviceInputState(vendorID: 1, productID: 2)
     state.pressedButtons = [
       Button.leftBumper.rawValue, Button.dpadUp.rawValue, Button.leftStick.rawValue,
-      Button.l2Digital.rawValue, Button.genericButton1.rawValue
+      Button.l2Digital.rawValue, Button.mute.rawValue
     ]
 
     #expect(InputTestButtonPresentation.isPressed([.leftBumper, .l1], in: state))
     #expect(InputTestButtonPresentation.isPressed([.dpadUp], in: state))
     #expect(InputTestButtonPresentation.isPressed([.leftStick], in: state))
     #expect(InputTestButtonPresentation.isPressed([.l2Digital], in: state))
-    #expect(InputTestButtonPresentation.additionalButtons(in: state) == ["genericButton1"])
+    #expect(InputTestButtonPresentation.additionalButtons(in: state) == ["mute"])
   }
 
   @Test func controllerFamiliesSelectProtocolAppropriateInputSymbols() {
@@ -309,7 +309,7 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
   }
 
   @Test func xboxShareMappingUsesSeparateCenteredShareControl() {
-    let layout = InputTestSystemClusterLayout.resolve(for: .xboxOne, mappingFlags: ["shareButton"])
+    let layout = InputTestSystemClusterLayout.resolve(for: .xboxOne)
     #expect(layout == .xboxWithShare)
     #expect(layout.rows == [[.view, .guide, .menu], [.empty, .share, .empty]])
     #expect(InputTestSystemClusterLayout.viewButtons(for: .xboxOne) == [.back])
@@ -317,10 +317,7 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
   }
 
   @Test func playStationLeftSystemControlRemainsShare() {
-    let layout = InputTestSystemClusterLayout.resolve(
-      for: .dualSense,
-      mappingFlags: ["shareButton"]
-    )
+    let layout = InputTestSystemClusterLayout.resolve(for: .dualSense)
     #expect(layout == .standard)
     #expect(layout.rows == [[.view, .guide, .menu]])
     #expect(InputTestSystemClusterLayout.viewButtons(for: .dualSense) == [.share])

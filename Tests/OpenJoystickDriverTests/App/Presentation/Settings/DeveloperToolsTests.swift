@@ -18,7 +18,7 @@ import Testing
     let packet = try packetEntry(timestamp: 1, hex: "01")
     let gateway = GatewayStub(
       statusPayload: statusPayload(device: device()),
-      inputState: inputState(button: .genericButton1),
+      inputState: inputState(button: .mute),
       packetEntries: [packet]
     )
     let model = DeveloperToolsViewModel(gateway: gateway)
@@ -27,7 +27,7 @@ import Testing
 
     #expect(model.loadState == .ready)
     #expect(model.packets.map(\.hex) == ["01"])
-    #expect(model.observedExtraInputs == [Button.genericButton1.rawValue])
+    #expect(model.observedExtraInputs == [Button.mute.rawValue])
   }
 
   @Test @MainActor func captureIgnoresTheBaselineAndAppendsNewPackets() async throws {
@@ -82,8 +82,8 @@ import Testing
     let gateway = GatewayStub(
       statusPayload: statusPayload(devices: [firstDevice, secondDevice]),
       inputStatesByRuntimeIdentifier: [
-        firstDevice.runtimeIdentifier: inputState(button: .genericButton1),
-        secondDevice.runtimeIdentifier: inputState(button: .genericButton2)
+        firstDevice.runtimeIdentifier: inputState(button: .mute),
+        secondDevice.runtimeIdentifier: inputState(button: .touchpad)
       ],
       packetEntriesByRuntimeIdentifier: [
         firstDevice.runtimeIdentifier: [firstPacket], secondDevice.runtimeIdentifier: [secondPacket]
@@ -101,7 +101,7 @@ import Testing
     await waitUntil { model.packets.map(\.hex) == ["02"] }
 
     #expect(model.selectedDevice?.runtimeIdentifier == secondDevice.runtimeIdentifier)
-    #expect(model.latestInput?.pressedButtons == [Button.genericButton2.rawValue])
+    #expect(model.latestInput?.pressedButtons == [Button.touchpad.rawValue])
     #expect(model.packets.map(\.hex) == ["02"])
   }
 

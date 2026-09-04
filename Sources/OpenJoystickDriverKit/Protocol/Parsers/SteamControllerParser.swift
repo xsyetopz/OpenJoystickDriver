@@ -279,26 +279,16 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
       contentsOf: diffButtons(
         prev: prevButtons1,
         curr: b1,
-        mapping: [(0x10, .back), (0x20, .guide), (0x40, .start), (0x80, .genericButton1)]
+        mapping: [(0x10, .back), (0x20, .guide), (0x40, .start)]
       )
     )
     events.append(
       contentsOf: diffButtons(
         prev: prevButtons2,
         curr: b2,
-        mapping: [
-          (0x01, .genericButton2), (0x02, .genericButton3), (0x04, .rightStick),
-          (0x10, .genericButton5), (0x40, .leftStick)
-        ]
+        mapping: [(0x04, .rightStick), (0x40, .leftStick)]
       )
     )
-    let wasLeftPadTouched = (prevButtons2 & 0x88) != 0
-    let isLeftPadTouched = (b2 & 0x88) != 0
-    if wasLeftPadTouched != isLeftPadTouched {
-      events.append(
-        isLeftPadTouched ? .buttonPressed(.genericButton4) : .buttonReleased(.genericButton4)
-      )
-    }
     return events
   }
 

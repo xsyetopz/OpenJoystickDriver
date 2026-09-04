@@ -6,7 +6,7 @@
   "protocol": {
     "driver": "DualSense",
     "variant": "dualSense",
-    "flags": [
+    "quirks": [
       "touchpad",
       "microphoneMute"
     ]

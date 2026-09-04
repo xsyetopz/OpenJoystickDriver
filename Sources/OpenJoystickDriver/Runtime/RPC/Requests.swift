@@ -10,7 +10,7 @@ extension ApplicationServiceServer {
       let devices = await dm.connectedDeviceDescriptions()
       let strings = devices.map { d in
         let sn = d.serialNumber ?? "none"
-        let mappings = d.mappingFlags.isEmpty ? "none" : d.mappingFlags.joined(separator: ",")
+        let quirks = d.quirks.isEmpty ? "none" : d.quirks.joined(separator: ",")
         let backends =
           d.preferredBackends.isEmpty ? "none" : d.preferredBackends.joined(separator: ",")
         return "\(d.name) (VID:\(d.vendorID)" + " PID:\(d.productID) \(d.parser)"
@@ -18,7 +18,7 @@ extension ApplicationServiceServer {
           + " endpoints=in:0x\(String(d.inputEndpoint, radix: 16))"
           + " out:0x\(String(d.outputEndpoint, radix: 16))"
           + " setConfig=\(d.needsSetConfiguration)" + " settleMs=\(d.postHandshakeSettleMs)"
-          + " mappings=\(mappings)" + " backends=\(backends)"
+          + " quirks=\(quirks)" + " backends=\(backends)"
       }
       callback.call(strings)
     }

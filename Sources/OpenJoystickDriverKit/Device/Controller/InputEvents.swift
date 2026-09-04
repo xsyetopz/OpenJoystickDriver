@@ -29,9 +29,9 @@ public enum ControllerEvent: Sendable, Equatable {
 
 /// A named button on a game controller.
 ///
-/// The first group uses Xbox-style names, the second uses PlayStation names,
-/// and the last group holds generic fallbacks for controllers that do not
-/// match either layout.
+/// Xbox-style names are the canonical identifiers. PlayStation names are aliases
+/// of the same identifiers. Extra buttons are emitted only when a parser maps
+/// them from a packet.
 public enum Button: String, Sendable, CaseIterable {
   case a, b, x, y
   case leftBumper, rightBumper
@@ -42,9 +42,7 @@ public enum Button: String, Sendable, CaseIterable {
   case cross, circle, square, triangle
   case l1, r1, l2Digital, r2Digital
   case share, options, ps, touchpad
-  // Generic fallbacks
-  case genericButton1, genericButton2, genericButton3, genericButton4
-  case genericButton5, genericButton6, genericButton7, genericButton8
+  case mute
 }
 
 /// One of eight compass directions, or neutral (center) for the D-pad.

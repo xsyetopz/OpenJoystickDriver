@@ -2,8 +2,15 @@
 
 ## 0.5.0-beta.3
 
-_2026-08-27_
+_2026-09-04_
 
+- Extra buttons are mapped from packets, not from a catalog of named roles.
+  GameSir-style 32-byte GIP reports emit Share from payload byte 15 (under
+  Guide). DualSense Mute stays packet-mapped. Unclassified extras stay omitted.
+  Renamed catalog/RPC `flags` / `mappingFlags` to `quirks` (encoding and
+  subsystem deviations only: `shareOffset`, d-pad/trigger/stick packing, and
+  parser-scoped capability markers). Diagnostic mode remains a catalog-backed
+  host recipe; none are live until the exact packet is an operational fact.
 - Corrected compatibility guidance to model consumer family and evidence
   separately: ASTRO C40 `9886:0024` remains SDL/PCSX2/Steam-specific, Xbox One
   Bluetooth `045E:02FD` is not an SDL recommendation after reported BT1/BT2

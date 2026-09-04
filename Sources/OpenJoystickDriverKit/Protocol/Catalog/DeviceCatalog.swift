@@ -61,7 +61,7 @@ struct DeviceCatalog: Sendable {
         virtualProfile: .default,
         transportProfile: .gipDefault,
         protocolVariant: .genericHID,
-        mappingFlags: [],
+        quirks: [],
         mappingOptions: [],
         preferredBackends: [.userSpaceHID],
         gipStartupPackets: GIPStartupPacket.defaultSequence,
@@ -121,7 +121,7 @@ struct DeviceCatalog: Sendable {
       )
     }
 
-    let flags = record.protocolInfo.flags ?? []
+    let quirks = record.protocolInfo.quirks ?? []
 
     let defaultEndpoints = driver == "Xbox360" ? (input: 129, output: 1) : (input: 130, output: 2)
     let inputEndpoint = record.usb?.endpoints?.input ?? defaultEndpoints.input
@@ -180,8 +180,8 @@ struct DeviceCatalog: Sendable {
           * DeviceTransportProfile.nanosecondsPerMillisecond
       ),
       protocolVariant: variant,
-      mappingFlags: flags,
-      mappingOptions: mappingOptions(from: flags),
+      quirks: quirks,
+      mappingOptions: mappingOptions(from: quirks),
       preferredBackends: [.userSpaceHID],
       gipStartupPackets: startupPackets.isEmpty ? GIPStartupPacket.defaultSequence : startupPackets,
       gipKeepAlivePolicy: keepAlivePolicy
@@ -192,16 +192,13 @@ struct DeviceCatalog: Sendable {
     record.transport == "usb" && rawUSBParserNames.contains(record.protocolInfo.driver)
   }
 
-  private static func mappingOptions(from flags: [String]) -> ControllerMappingOptions {
+  private static func mappingOptions(from quirks: [String]) -> ControllerMappingOptions {
     var result: ControllerMappingOptions = []
-    for flag in flags {
-      switch flag {
+    for quirk in quirks {
+      switch quirk {
       case "dpadToButtons": result.insert(.dpadToButtons)
       case "triggersToButtons": result.insert(.triggersToButtons)
       case "sticksToNull": result.insert(.sticksToNull)
-      case "shareButton": result.insert(.shareButton)
-      case "paddles": result.insert(.paddles)
-      case "profileButton": result.insert(.profileButton)
       case "shareOffset": result.insert(.shareOffset)
       default: break
       }

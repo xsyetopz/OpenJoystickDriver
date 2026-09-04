@@ -195,7 +195,7 @@ struct USBProtocolClassificationTests {
       virtualProfile: .default,
       transportProfile: .gipDefault,
       protocolVariant: variant,
-      mappingFlags: [],
+      quirks: [],
       mappingOptions: [],
       preferredBackends: [.userSpaceHID],
       gipStartupPackets: [],

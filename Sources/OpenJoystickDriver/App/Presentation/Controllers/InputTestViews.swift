@@ -15,8 +15,7 @@
           HStack(alignment: .top, spacing: 16) {
             InputTestLiveInputView(
               liveState: model.liveState,
-              protocolVariant: model.device?.protocolVariant ?? .unknown,
-              mappingFlags: model.device?.mappingFlags ?? []
+              protocolVariant: model.device?.protocolVariant ?? .unknown
             ).frame(minWidth: 460, maxWidth: .infinity, alignment: .topLeading)
             diagnosticsColumn.frame(width: 330, alignment: .topLeading)
           }
@@ -67,9 +66,13 @@
               HStack {
                 Text(OJDLocalized.string("inputTest.duration", fallback: "Duration"))
                 Spacer()
-                Text("\(Int(model.rumbleDurationMilliseconds)) ms").font(
-                  .system(.caption, design: .monospaced)
-                )
+                Text(
+                  OJDLocalized.formatted(
+                    "inputTest.durationValue",
+                    fallback: "%d ms",
+                    Int(model.rumbleDurationMilliseconds)
+                  )
+                ).font(.system(.caption, design: .monospaced))
               }
               Slider(value: rumbleDurationBinding, in: 100...2_000, step: 50)
             }.disabled(!model.canSendOutput || model.isOutputBusy)
@@ -111,7 +114,9 @@
               VStack(alignment: .leading, spacing: 6) {
                 Text(OJDLocalized.string("inputTest.playerIndicator", fallback: "Player indicator"))
                 Picker("", selection: playerIndicatorBinding) {
-                  Text("Off").tag(PhysicalPlayerIndicator.off)
+                  Text(OJDLocalized.string("inputTest.off", fallback: "Off")).tag(
+                    PhysicalPlayerIndicator.off
+                  )
                   Text("1").tag(PhysicalPlayerIndicator.player1)
                   Text("2").tag(PhysicalPlayerIndicator.player2)
                   Text("3").tag(PhysicalPlayerIndicator.player3)
@@ -287,12 +292,18 @@
 
     private func motorLabel(_ motor: PhysicalRumbleMotor) -> String {
       switch motor {
-      case .leftMain: return "Left main"
-      case .rightMain: return "Right main"
-      case .leftTrigger: return "Left trigger"
-      case .rightTrigger: return "Right trigger"
-      case .leftHaptic: return "Left haptic"
-      case .rightHaptic: return "Right haptic"
+      case .leftMain:
+        return OJDLocalized.string("inputTest.leftMain", fallback: "Left main")
+      case .rightMain:
+        return OJDLocalized.string("inputTest.rightMain", fallback: "Right main")
+      case .leftTrigger:
+        return OJDLocalized.string("inputTest.leftTrigger", fallback: "Left trigger")
+      case .rightTrigger:
+        return OJDLocalized.string("inputTest.rightTrigger", fallback: "Right trigger")
+      case .leftHaptic:
+        return OJDLocalized.string("inputTest.leftHaptic", fallback: "Left haptic")
+      case .rightHaptic:
+        return OJDLocalized.string("inputTest.rightHaptic", fallback: "Right haptic")
       }
     }
 

@@ -70,7 +70,7 @@ struct PhysicalRumbleOutputTests {
     }
   }
 
-  @Test func testServiceDescriptionRejectsLegacyRumbleFlag() throws {
+  @Test func testServiceDescriptionRejectsSupportsPhysicalRumbleFlag() throws {
     let json = """
       {
         "name": "Test",

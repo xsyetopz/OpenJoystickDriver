@@ -5,10 +5,7 @@
   "transport": "usb",
   "protocol": {
     "driver": "GIP",
-    "variant": "xboxOne",
-    "flags": [
-      "shareButton"
-    ]
+    "variant": "xboxOne"
   },
   "usb": {
     "configuration": "set1-before-claim"

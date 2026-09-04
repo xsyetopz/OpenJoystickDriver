@@ -6,9 +6,6 @@
   "protocol": {
     "driver": "GIP",
     "variant": "xboxOne",
-    "flags": [
-      "paddles"
-    ],
     "startup_packets": [
       "powerOn",
       "xboxOneSInit",

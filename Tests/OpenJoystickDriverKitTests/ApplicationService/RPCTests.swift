@@ -95,14 +95,14 @@ private func waitForSemaphore(_ semaphore: DispatchSemaphore, timeout: DispatchT
     }
   }
 
-  @Test func legacyResponseWithoutErrorCodeStillDecodes() throws {
+  @Test func responseWithoutErrorCodeStillDecodes() throws {
     let response = try JSONDecoder().decode(
       LocalServiceRPCResponse.self,
-      from: Data(#"{"result":null,"error":"legacy"}"#.utf8)
+      from: Data(#"{"result":null,"error":"peer-error"}"#.utf8)
     )
 
     #expect(response.result == nil)
-    #expect(response.error == "legacy")
+    #expect(response.error == "peer-error")
     #expect(response.errorCode == nil)
   }
 

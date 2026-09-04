@@ -6,8 +6,7 @@
   "protocol": {
     "driver": "GIP",
     "variant": "xboxOne",
-    "flags": [
-      "shareButton",
+    "quirks": [
       "shareOffset"
     ]
   }

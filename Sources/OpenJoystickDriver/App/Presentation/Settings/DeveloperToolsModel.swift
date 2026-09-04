@@ -31,6 +31,13 @@
     @Published private(set) var packets: [PacketLogEntry] = []
     @Published private(set) var observedExtraInputs: [String] = []
 
+    var diagnosticRecipeAvailable: Bool {
+      guard let device = selectedDevice else { return false }
+      return ParserRegistry().runtimeProfile(
+        for: DeviceIdentifier(vendorID: device.vendorID, productID: device.productID)
+      ).gipStartupPackets.contains(where: \.isDiagnosticRecipe)
+    }
+
     private let gateway: any ApplicationServiceGateway
     private let pollIntervalNanoseconds: UInt64
     private let sleep: Sleep

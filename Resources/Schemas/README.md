@@ -59,9 +59,9 @@ Git history. Runtime controller records therefore contain only the operational
 facts consumed by the driver, and support reports contain only observed state.
 
 Do not invent an embedded provenance, verification, confidence, evidence-level,
-test-plan, review-state, or migration vocabulary. This includes flags such as
-`experimental` and `needsHardwareTest`; operational feature flags describe only
-behavior consumed by the driver. If a future interoperability requirement needs
+test-plan, review-state, or migration vocabulary. This includes labels such as
+`experimental` and `needsHardwareTest`. Closed `protocol.quirks` values describe
+only driver-consumed behavior. If a future interoperability requirement needs
 provenance, adopt a complete external standard through a separately reviewed
 boundary rather than adding project-shaped fields to these contracts.
 
@@ -70,6 +70,27 @@ model and validate every instance against it, while keeping provenance in the
 system that owns derivation history rather than duplicating it into runtime
 records: arXiv:2307.10034, arXiv:2511.16935, arXiv:1902.06427, and
 arXiv:2211.13810.
+
+## Controller record layers
+
+Controller records keep a hard three-way split. Do not collapse these layers
+into presence lists or staged schema versions.
+
+1. **Encoding and subsystem quirks** (`protocol.quirks`) — closed,
+   parser-scoped enums for packing deviations and driver-consumed subsystems
+   (for example `shareOffset`, `dpadToButtons`, DualSense `touchpad`). Overrides
+   may patch them through `controller-override.schema.json`. Quirks never assert
+   that an unmapped extra button exists.
+2. **Host recipes** (`protocol.startup_packets`, `keep_alive`, USB overrides) —
+   exact host writes and transport facts. New recipe names join the live enum
+   only when the bytes are operational facts.
+3. **Packet-mapped controls** — parser events only (`share`, DualSense `mute`,
+   and future paddles or Mode bits when a verified report layout lands). Catalog
+   records do not predeclare paddle/mode/profile role vocabularies.
+
+Extending the live schema means changing `Resources/Schemas/` in place and
+updating every producer, consumer, override, generated record, and test in the
+same change.
 
 ## Prohibited formats
 

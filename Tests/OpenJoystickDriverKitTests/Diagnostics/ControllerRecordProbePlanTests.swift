@@ -121,7 +121,7 @@ struct ControllerRecordProbePlanTests {
       { (record: inout [String: Any]) in record["usb"] = NSNull() },
       { (record: inout [String: Any]) in
         var protocolConfig = record["protocol"] as? [String: Any] ?? [:]
-        protocolConfig["flags"] = []
+        protocolConfig["quirks"] = []
         record["protocol"] = protocolConfig
       },
       { (record: inout [String: Any]) in
@@ -131,7 +131,7 @@ struct ControllerRecordProbePlanTests {
       },
       { (record: inout [String: Any]) in
         var protocolConfig = record["protocol"] as? [String: Any] ?? [:]
-        protocolConfig["flags"] = ["gyro"]
+        protocolConfig["quirks"] = ["gyro"]
         record["protocol"] = protocolConfig
       }, { (record: inout [String: Any]) in record["usb"] = ["endpoints": ["in": 130, "out": 2]] }
     ] {

@@ -72,12 +72,12 @@ struct SteamControllerParserTests {
     let wired = registry.runtimeProfile(for: identifiers[0])
     #expect(wired.parserName == "SteamController")
     #expect(wired.protocolVariant == .steamController)
-    #expect(wired.mappingFlags == ["lizardMode", "trackpads"])
+    #expect(wired.quirks == ["lizardMode", "trackpads"])
 
     let wireless = registry.runtimeProfile(for: identifiers[1])
     #expect(wireless.parserName == "SteamController")
     #expect(wireless.protocolVariant == .steamController)
-    #expect(wireless.mappingFlags == ["lizardMode", "trackpads", "wirelessReceiver"])
+    #expect(wireless.quirks == ["lizardMode", "trackpads", "wirelessReceiver"])
   }
 
   @Test func testSteamControllerReportParsesPrimaryControls() throws {
@@ -115,6 +115,15 @@ struct SteamControllerParserTests {
     #expect(eventExists(events, .rightStickChanged(x: -1.0, y: -1.0)))
   }
 
+  @Test func testSteamGripBitsStayOmittedUntilMappedFromAKnownPacket() throws {
+    let parser = SteamControllerParser()
+    _ = try parser.parse(data: makeSteamControllerReport())
+
+    let events = try parser.parse(data: makeSteamControllerReport(b9: 0x80, b10: 0x01))
+
+    #expect(events.isEmpty)
+  }
+
   @Test func testLeftPadTouchDoesNotCreateVirtualLeftStickMotion() throws {
     let parser = SteamControllerParser()
     _ = try parser.parse(data: makeSteamControllerReport())
@@ -124,7 +133,6 @@ struct SteamControllerParserTests {
     )
 
     #expect(!eventExists(events, .leftStickChanged(x: 1.0, y: 1.0)))
-    #expect(eventExists(events, .buttonPressed(.genericButton4)))
   }
 
   @Test func testLeftPadAndJoyBitAllowsVirtualLeftStickMotion() throws {
@@ -138,13 +146,13 @@ struct SteamControllerParserTests {
     #expect(eventExists(events, .leftStickChanged(x: 1.0, y: 1.0)))
   }
 
-  @Test func testLeftPadAndJoyBitReportsLeftPadTouchButton() throws {
+  @Test func testLeftPadTouchStaysOmitted() throws {
     let parser = SteamControllerParser()
     _ = try parser.parse(data: makeSteamControllerReport())
 
     let events = try parser.parse(data: makeSteamControllerReport(b10: 0x80))
 
-    #expect(eventExists(events, .buttonPressed(.genericButton4)))
+    #expect(events.isEmpty)
   }
 
   @Test func testSteamControllerReportParsesDpadDirections() throws {

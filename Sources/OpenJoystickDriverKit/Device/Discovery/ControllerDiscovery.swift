@@ -403,7 +403,7 @@ public actor DeviceManager {
         ).duplicateRisk,
         serialNumber: info?.serialNumber,
         protocolVariant: profile.protocolVariant,
-        mappingFlags: profile.mappingFlags,
+        quirks: profile.quirks,
         inputEndpoint: profile.transportProfile.inputEndpoint,
         outputEndpoint: profile.transportProfile.outputEndpoint,
         needsSetConfiguration: profile.transportProfile.needsSetConfiguration,

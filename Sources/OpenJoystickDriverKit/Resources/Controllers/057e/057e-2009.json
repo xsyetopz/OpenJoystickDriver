@@ -6,7 +6,7 @@
   "protocol": {
     "driver": "SwitchPro",
     "variant": "switchPro",
-    "flags": [
+    "quirks": [
       "usbHandshake"
     ]
   }

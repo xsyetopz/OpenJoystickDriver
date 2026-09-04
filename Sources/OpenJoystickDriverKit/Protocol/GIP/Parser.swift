@@ -53,6 +53,7 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, USBDeferredOutp
   private let outEndpoint: UInt8
   private let startupPackets: [GIPStartupPacket]
   public let keepAlivePolicy: GIPKeepAlivePolicy
+  private let mappingOptions: ControllerMappingOptions
 
   private var sequencer = GIPSequencer()
   private let authHandler: GIPAuthHandler
@@ -76,11 +77,13 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, USBDeferredOutp
   public init(
     transportProfile: DeviceTransportProfile = .gipDefault,
     startupPackets: [GIPStartupPacket] = GIPStartupPacket.defaultSequence,
-    keepAlivePolicy: GIPKeepAlivePolicy = .enabled
+    keepAlivePolicy: GIPKeepAlivePolicy = .enabled,
+    mappingOptions: ControllerMappingOptions = []
   ) {
     self.outEndpoint = transportProfile.outputEndpoint
     self.startupPackets = startupPackets
     self.keepAlivePolicy = keepAlivePolicy
+    self.mappingOptions = mappingOptions
     self.authHandler = GIPAuthHandler()
   }
 
@@ -296,7 +299,7 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, USBDeferredOutp
 
     let buttons0 = bytes[0]
     let buttons1 = bytes[1]
-    let buttons2 = payload.count > 14 ? bytes[14] : 0
+    let share = shareByte(in: bytes)
     let lt = parseLT(from: bytes)
     let rt = parseRT(from: bytes)
     let (lsx, lsy, rsx, rsy) = parseSticks(from: bytes)
@@ -304,14 +307,14 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, USBDeferredOutp
     var events: [ControllerEvent] = []
     events += parseFaceButtons(curr: buttons0)
     events += parseShoulderButtons(curr: buttons1)
-    events += parseExtendedButtons(curr: buttons2)
+    events += parseExtendedButtons(curr: share)
     events += parseDpad(curr: buttons1)
     events += parseSticksEvents(lsx: lsx, lsy: lsy, rsx: rsx, rsy: rsy)
     events += parseTriggers(lt: lt, rt: rt)
 
     prevButtons0 = buttons0
     prevButtons1 = buttons1
-    prevButtons2 = buttons2
+    prevButtons2 = share
     prevLT = lt
     prevRT = rt
 
@@ -348,6 +351,18 @@ public final class GIPParser: InputParser, PhysicalRumbleOutput, USBDeferredOutp
 
   private func parseExtendedButtons(curr: UInt8) -> [ControllerEvent] {
     diffButtons(prev: prevButtons2, curr: curr, mapping: [(1, .share)])
+  }
+
+  private func shareByte(in bytes: [UInt8]) -> UInt8 {
+    if mappingOptions.contains(.shareOffset) {
+      // Linux xpad: data[len - 26] with a 4-byte GIP header.
+      let index = bytes.count - 22
+      guard index >= 0, index < bytes.count else { return 0 }
+      return bytes[index]
+    }
+    // 32-byte GIP payloads put Share at payload[15] (URB offset 19).
+    guard bytes.count > 15 else { return 0 }
+    return bytes[15]
   }
 
   private func parseDpad(curr: UInt8) -> [ControllerEvent] {

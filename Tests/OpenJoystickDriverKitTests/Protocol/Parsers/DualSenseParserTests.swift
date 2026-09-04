@@ -132,7 +132,7 @@ struct DualSenseParserTests {
     #expect(hasEvent(events, .buttonPressed(.options)))
     #expect(hasEvent(events, .buttonPressed(.ps)))
     #expect(hasEvent(events, .buttonPressed(.touchpad)))
-    #expect(hasEvent(events, .buttonPressed(.genericButton1)))
+    #expect(hasEvent(events, .buttonPressed(.mute)))
   }
 
   @Test func testDualSenseUnknownReportIDIsIgnored() throws {
@@ -162,13 +162,13 @@ struct DualSenseParserTests {
     }
   }
 
-  @Test func testDualSenseUSBReportParsesMicMuteButtonAsGenericInput() throws {
+  @Test func testDualSenseUSBReportParsesMicrophoneMute() throws {
     let parser = DualSenseParser()
     _ = try parser.parse(data: makeDualSenseUSBReport())
 
     let events = try parser.parse(data: makeDualSenseUSBReport(buttons2: 0x04))
 
-    #expect(hasEvent(events, .buttonPressed(.genericButton1)))
+    #expect(hasEvent(events, .buttonPressed(.mute)))
   }
 
   @Test func testDualSenseProfilesAreExperimentalAndUnverified() {
@@ -182,7 +182,7 @@ struct DualSenseParserTests {
       let profile = registry.runtimeProfile(for: identifier)
       #expect(profile.parserName == "DualSense")
       #expect(profile.protocolVariant.rawValue == "dualSense")
-      #expect(profile.mappingFlags == ["touchpad", "microphoneMute"])
+      #expect(profile.quirks == ["touchpad", "microphoneMute"])
     }
   }
 }

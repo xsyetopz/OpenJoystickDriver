@@ -5,9 +5,6 @@
   "transport": "usb",
   "protocol": {
     "driver": "GIP",
-    "variant": "xboxOne",
-    "flags": [
-      "profileButton"
-    ]
+    "variant": "xboxOne"
   }
 }

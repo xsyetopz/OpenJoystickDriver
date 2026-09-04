@@ -240,8 +240,8 @@ enum RuntimeStatusText {
         "  \(device.name) (VID:\(device.vendorID) PID:\(device.productID) "
           + "\(device.parser) [\(device.connection)] SN:\(serialNumber))"
       )
-      let mappings =
-        device.mappingFlags.isEmpty ? "none" : device.mappingFlags.joined(separator: ",")
+      let quirks =
+        device.quirks.isEmpty ? "none" : device.quirks.joined(separator: ",")
       let backends =
         device.preferredBackends.isEmpty ? "none" : device.preferredBackends.joined(separator: ",")
       lines.append(
@@ -251,7 +251,7 @@ enum RuntimeStatusText {
           + " setConfig=\(device.needsSetConfiguration)"
           + " settleMs=\(device.postHandshakeSettleMs)"
       )
-      lines.append("    mappings=\(mappings) backends=\(backends)")
+      lines.append("    quirks=\(quirks) backends=\(backends)")
       let capabilities = device.physicalOutputCapabilities
       let motors = capabilities.rumbleMotors.map(\.rawValue)
       let lighting = capabilities.lightingFeatures.map(\.rawValue)

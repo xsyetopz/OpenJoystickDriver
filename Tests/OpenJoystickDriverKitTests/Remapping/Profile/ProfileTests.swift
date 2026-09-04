@@ -19,7 +19,7 @@ struct RemappingProfileTests {
         binding(id: fixedUUID(2), source: .button(.touchpad), destination: .mouseButton(.middle)),
         binding(
           id: fixedUUID(3),
-          source: .button(.auxiliary1),
+          source: .button(.share),
           destination: .keyboard(key: .escape, modifiers: [])
         ),
         RemappingBinding(

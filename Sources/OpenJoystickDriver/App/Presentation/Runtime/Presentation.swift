@@ -237,7 +237,7 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
       && lhs.physicalOwnership == rhs.physicalOwnership
       && lhs.duplicateExposureRisk == rhs.duplicateExposureRisk
       && lhs.serialNumber == rhs.serialNumber && lhs.protocolVariant == rhs.protocolVariant
-      && lhs.mappingFlags == rhs.mappingFlags && lhs.inputEndpoint == rhs.inputEndpoint
+      && lhs.quirks == rhs.quirks && lhs.inputEndpoint == rhs.inputEndpoint
       && lhs.outputEndpoint == rhs.outputEndpoint
       && lhs.needsSetConfiguration == rhs.needsSetConfiguration
       && lhs.postHandshakeSettleMs == rhs.postHandshakeSettleMs

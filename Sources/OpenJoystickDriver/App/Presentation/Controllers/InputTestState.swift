@@ -38,7 +38,17 @@
 
     static func additionalButtons(in state: DeviceInputState) -> [String] {
       let known = Set(standardButtons.map(\.rawValue))
-      return state.pressedButtons.filter { !known.contains($0) }
+      return state.pressedButtons.filter { !known.contains($0) }.sorted()
+    }
+
+    static func localizedTitle(for rawName: String) -> String {
+      guard let button = Button(rawValue: rawName) else { return rawName }
+      switch button {
+      case .mute: return OJDLocalized.string("mapping.mute", fallback: "Mute")
+      case .touchpad:
+        return OJDLocalized.string("mapping.touchpadClick", fallback: "Touchpad click")
+      default: return button.displayName
+      }
     }
   }
 

@@ -6,7 +6,7 @@
   "protocol": {
     "driver": "Xbox360",
     "variant": "xbox360Wireless",
-    "flags": [
+    "quirks": [
       "dpadToButtons"
     ]
   }

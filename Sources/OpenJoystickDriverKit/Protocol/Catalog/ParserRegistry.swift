@@ -34,14 +34,15 @@ public final class ParserRegistry: Sendable {
       return GIPParser(
         transportProfile: transportProfile,
         startupPackets: runtimeProfile.gipStartupPackets,
-        keepAlivePolicy: runtimeProfile.gipKeepAlivePolicy
+        keepAlivePolicy: runtimeProfile.gipKeepAlivePolicy,
+        mappingOptions: runtimeProfile.mappingOptions
       )
     case "DS3": return DS3Parser()
     case "DS4": return DS4Parser()
     case "DualSense": return DualSenseParser()
     case "SteamController":
       return SteamControllerParser(
-        isWirelessReceiver: runtimeProfile.mappingFlags.contains("wirelessReceiver")
+        isWirelessReceiver: runtimeProfile.quirks.contains("wirelessReceiver")
       )
     case "SwitchPro": return SwitchProParser()
     case "Xbox360":

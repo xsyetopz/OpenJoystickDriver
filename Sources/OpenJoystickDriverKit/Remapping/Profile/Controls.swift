@@ -16,14 +16,9 @@ public enum RemappingButton: String, Codable, CaseIterable, Hashable, Sendable {
   case share
   case options
   case touchpad
-  case auxiliary1 = "auxiliary_1"
-  case auxiliary2 = "auxiliary_2"
-  case auxiliary3 = "auxiliary_3"
-  case auxiliary4 = "auxiliary_4"
-  case auxiliary5 = "auxiliary_5"
-  case auxiliary6 = "auxiliary_6"
-  case auxiliary7 = "auxiliary_7"
-  case auxiliary8 = "auxiliary_8"
+  case mute
+  case leftTriggerClick = "left_trigger_click"
+  case rightTriggerClick = "right_trigger_click"
 }
 
 public enum RemappingDpadDirection: String, Codable, CaseIterable, Hashable, Sendable {

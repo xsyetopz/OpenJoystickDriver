@@ -4,7 +4,9 @@ import Testing
 
 struct UserSpaceInputReportStateTests {
   @Test func currentInputReportTracksChangesForHostGetReportRequests() throws {
-    let format = try HIDDescriptorReportFormat(descriptor: XboxOneBluetoothHIDDescriptor.descriptor)
+    let format = try HIDDescriptorReportFormat(
+      descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor
+    )
     let state = UserSpaceInputReportState(format: format)
     let neutral = state.currentReport()
 

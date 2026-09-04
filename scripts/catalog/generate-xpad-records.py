@@ -48,11 +48,13 @@ MAPPING_ORDER = (
     ("MAP_DPAD_TO_BUTTONS", "dpadToButtons"),
     ("MAP_TRIGGERS_TO_BUTTONS", "triggersToButtons"),
     ("MAP_STICKS_TO_NULL", "sticksToNull"),
-    ("MAP_SHARE_BUTTON", "shareButton"),
-    ("MAP_PADDLES", "paddles"),
-    ("MAP_PROFILE_BUTTON", "profileButton"),
     ("MAP_SHARE_OFFSET", "shareOffset"),
 )
+PRESENCE_MAPPING_FLAGS = {
+    "MAP_SHARE_BUTTON",
+    "MAP_PADDLES",
+    "MAP_PROFILE_BUTTON",
+}
 DANCEPAD_FLAGS = {
     "MAP_DPAD_TO_BUTTONS",
     "MAP_TRIGGERS_TO_BUTTONS",
@@ -199,11 +201,13 @@ def parse_mapping_flags(expression: str) -> list[str]:
 
     for source_name, _ in MAPPING_ORDER:
         normalized = normalized.replace(source_name, "")
+    for source_name in PRESENCE_MAPPING_FLAGS:
+        normalized = normalized.replace(source_name, "")
     residual = re.sub(r"[\s|()]+", "", normalized)
     if residual:
         raise GenerationError(f"Unsupported mapping expression: {expression}")
 
-    known = {source for source, _ in MAPPING_ORDER}
+    known = {source for source, _ in MAPPING_ORDER} | PRESENCE_MAPPING_FLAGS
     unknown = source_flags - known
     if unknown:
         raise GenerationError(
@@ -263,8 +267,7 @@ def build_profile(
         {"dpadToButtons", "triggersToButtons", "sticksToNull"}
         if driver == "Xbox360"
         else {
-            "dpadToButtons", "triggersToButtons", "sticksToNull",
-            "shareButton", "paddles", "profileButton", "shareOffset",
+            "dpadToButtons", "triggersToButtons", "sticksToNull", "shareOffset",
         }
     )
     unsupported_flags = set(mapping_flags) - allowed_flags
@@ -275,7 +278,7 @@ def build_profile(
 
     protocol: dict[str, Any] = {"driver": driver, "variant": variant}
     if mapping_flags:
-        protocol["flags"] = mapping_flags
+        protocol["quirks"] = mapping_flags
     if driver == "GIP":
         startup_packets = startup_packets_for(device, init_rules)
         if startup_packets != ["powerOn", "ledOn", "authDone"]:

@@ -53,16 +53,7 @@ extension UserSpaceOutputDispatcher {
     case .dpadLeft: return 13
     case .dpadRight: return 14
     case .share: return 15
-    case .l2Digital, .r2Digital: return nil
-    case .touchpad: return nil
-    case .genericButton1: return 16
-    case .genericButton2: return 17
-    case .genericButton3: return 18
-    case .genericButton4: return 19
-    case .genericButton5: return 20
-    case .genericButton6: return 21
-    case .genericButton7: return 22
-    case .genericButton8: return 23
+    case .l2Digital, .r2Digital, .touchpad, .mute: return nil
     }
   }
 

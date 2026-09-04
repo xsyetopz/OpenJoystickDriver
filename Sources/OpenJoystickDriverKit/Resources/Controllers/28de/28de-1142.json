@@ -6,7 +6,7 @@
   "protocol": {
     "driver": "SteamController",
     "variant": "steamController",
-    "flags": [
+    "quirks": [
       "lizardMode",
       "trackpads",
       "wirelessReceiver"

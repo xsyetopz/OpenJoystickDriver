@@ -7,7 +7,6 @@
   struct InputTestLiveInputView: View {
     @ObservedObject var liveState: InputTestLiveState
     let protocolVariant: ControllerProtocolVariant
-    let mappingFlags: [String]
 
     var body: some View {
       let snapshot = liveState.snapshot
@@ -22,8 +21,7 @@
             systemCluster(
               pressedButtons: pressedButtons,
               symbols: symbols,
-              protocolVariant: protocolVariant,
-              mappingFlags: mappingFlags
+              protocolVariant: protocolVariant
             ).frame(maxWidth: .infinity)
             faceButtonCluster(pressedButtons: pressedButtons, symbols: symbols).frame(
               maxWidth: .infinity
@@ -54,8 +52,11 @@
                 OJDLocalized.string("inputTest.additionalButtons", fallback: "Additional buttons")
               ).font(.subheadline.weight(.semibold))
               VStack(alignment: .leading, spacing: 8) {
-                ForEach(additionalButtons, id: \.self) { title in
-                  InputTestIndicator(title: title, active: true)
+                ForEach(additionalButtons, id: \.self) { rawName in
+                  InputTestIndicator(
+                    title: InputTestButtonPresentation.localizedTitle(for: rawName),
+                    active: true
+                  )
                 }
               }
             }.frame(maxWidth: .infinity, alignment: .leading)
@@ -92,7 +93,7 @@
     private func dpadCluster(pressedButtons: Set<String>) -> some View {
       VStack(spacing: 6) {
         indicator(
-          "D-pad up",
+          OJDLocalized.string("inputTest.dpadUp", fallback: "D-pad up"),
           symbol: "dpad.up.filled",
           fallbackSymbol: "arrowtriangle.up.fill",
           buttons: [.dpadUp],
@@ -100,14 +101,14 @@
         )
         HStack(spacing: 6) {
           indicator(
-            "D-pad left",
+            OJDLocalized.string("inputTest.dpadLeft", fallback: "D-pad left"),
             symbol: "dpad.left.filled",
             fallbackSymbol: "arrowtriangle.left.fill",
             buttons: [.dpadLeft],
             pressedButtons: pressedButtons
           )
           indicator(
-            "D-pad right",
+            OJDLocalized.string("inputTest.dpadRight", fallback: "D-pad right"),
             symbol: "dpad.right.filled",
             fallbackSymbol: "arrowtriangle.right.fill",
             buttons: [.dpadRight],
@@ -115,7 +116,7 @@
           )
         }
         indicator(
-          "D-pad down",
+          OJDLocalized.string("inputTest.dpadDown", fallback: "D-pad down"),
           symbol: "dpad.down.filled",
           fallbackSymbol: "arrowtriangle.down.fill",
           buttons: [.dpadDown],
@@ -127,11 +128,9 @@
     @ViewBuilder private func systemCluster(
       pressedButtons: Set<String>,
       symbols: InputTestControllerSymbolSet,
-      protocolVariant: ControllerProtocolVariant,
-      mappingFlags: [String]
+      protocolVariant: ControllerProtocolVariant
     ) -> some View {
-      switch InputTestSystemClusterLayout.resolve(for: protocolVariant, mappingFlags: mappingFlags)
-      {
+      switch InputTestSystemClusterLayout.resolve(for: protocolVariant) {
       case .standard:
         HStack(spacing: 6) {
           indicator(
@@ -237,18 +236,16 @@
       }
     }
 
-    static let shareControl = InputTestControllerSymbolSet.Control(
-      "Share",
-      symbol: "square.and.arrow.up",
-      fallbackSymbol: "square.and.arrow.up"
-    )
+    static var shareControl: InputTestControllerSymbolSet.Control {
+      InputTestControllerSymbolSet.Control(
+        OJDLocalized.string("inputTest.share", fallback: "Share"),
+        symbol: "square.and.arrow.up",
+        fallbackSymbol: "square.and.arrow.up"
+      )
+    }
 
-    static func resolve(for protocolVariant: ControllerProtocolVariant, mappingFlags: [String])
-      -> Self
-    {
-      if protocolVariant.isXboxFamily && mappingFlags.contains("shareButton") {
-        return .xboxWithShare
-      }
+    static func resolve(for protocolVariant: ControllerProtocolVariant) -> Self {
+      if protocolVariant == .xboxOne { return .xboxWithShare }
       return .standard
     }
 
@@ -283,13 +280,29 @@
       GroupBox {
         HStack(alignment: .top, spacing: 14) {
           VStack(spacing: 8) {
-            InputTestAxisRow(label: "Left X", value: snapshot.leftStickX, signed: true)
-            InputTestAxisRow(label: "Left Y", value: snapshot.leftStickY, signed: true)
+            InputTestAxisRow(
+              label: OJDLocalized.string("inputTest.leftX", fallback: "Left X"),
+              value: snapshot.leftStickX,
+              signed: true
+            )
+            InputTestAxisRow(
+              label: OJDLocalized.string("inputTest.leftY", fallback: "Left Y"),
+              value: snapshot.leftStickY,
+              signed: true
+            )
             InputTestAxisRow(label: "LT", value: snapshot.leftTrigger, signed: false)
           }
           VStack(spacing: 8) {
-            InputTestAxisRow(label: "Right X", value: snapshot.rightStickX, signed: true)
-            InputTestAxisRow(label: "Right Y", value: snapshot.rightStickY, signed: true)
+            InputTestAxisRow(
+              label: OJDLocalized.string("inputTest.rightX", fallback: "Right X"),
+              value: snapshot.rightStickX,
+              signed: true
+            )
+            InputTestAxisRow(
+              label: OJDLocalized.string("inputTest.rightY", fallback: "Right Y"),
+              value: snapshot.rightStickY,
+              signed: true
+            )
             InputTestAxisRow(label: "RT", value: snapshot.rightTrigger, signed: false)
           }
         }.padding(4)
@@ -319,10 +332,12 @@
             radius: 1,
             y: 1
           ).offset(x: CGFloat(max(-1, min(1, x))) * 33, y: CGFloat(max(-1, min(1, y))) * 33)
-        }.ojdAccessibilityLabel(title).ojdAccessibilityValue(String(format: "X %.3f, Y %.3f", x, y))
+        }.ojdAccessibilityLabel(title).ojdAccessibilityValue(
+          OJDLocalized.formatted("inputTest.axisPair", fallback: "X %.3f, Y %.3f", x, y)
+        )
         HStack(spacing: 10) {
-          Text(String(format: "X %.3f", x))
-          Text(String(format: "Y %.3f", y))
+          Text(OJDLocalized.formatted("inputTest.axisX", fallback: "X %.3f", x))
+          Text(OJDLocalized.formatted("inputTest.axisY", fallback: "Y %.3f", y))
         }.font(.system(.caption, design: .monospaced)).foregroundColor(
           Color(NSColor.secondaryLabelColor)
         )
@@ -402,7 +417,9 @@
         HStack {
           Text(label)
           Spacer()
-          Text(String(format: "%.3f", value)).font(.system(.caption, design: .monospaced))
+          Text(OJDLocalized.formatted("inputTest.axisValue", fallback: "%.3f", value)).font(
+            .system(.caption, design: .monospaced)
+          )
         }
         GeometryReader { proxy in
           ZStack(alignment: .leading) {
@@ -425,7 +442,7 @@
           }
         }.frame(height: 10)
       }.font(.caption).ojdAccessibilityLabel(label).ojdAccessibilityValue(
-        String(format: "%.3f", value)
+        OJDLocalized.formatted("inputTest.axisValue", fallback: "%.3f", value)
       )
     }
   }

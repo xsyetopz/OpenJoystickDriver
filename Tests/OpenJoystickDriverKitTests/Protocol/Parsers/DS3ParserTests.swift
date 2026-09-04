@@ -41,7 +41,7 @@ struct DS3ParserTests {
 
     #expect(registry.parserName(for: identifier) == "DS3")
     #expect(profile.protocolVariant == .dualShock3)
-    #expect(profile.mappingFlags.isEmpty)
+    #expect(profile.quirks.isEmpty)
     #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
     #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
   }

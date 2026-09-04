@@ -22,8 +22,19 @@ struct DeviceTransportProfileTests {
 
     #expect(profile.parserName == "GIP")
     #expect(profile.protocolVariant == .xboxOne)
-    #expect(profile.mappingFlags == ["shareButton"])
-    #expect(profile.mappingOptions.contains(.shareButton))
+    #expect(profile.quirks.isEmpty)
+    #expect(profile.mappingOptions.isEmpty)
+  }
+
+  @Test func testXboxSeriesShareOffsetIsAnEncodingQuirkOnly() {
+    let registry = ParserRegistry()
+    let profile = registry.runtimeProfile(
+      for: DeviceIdentifier(vendorID: 1118, productID: 2834)
+    )
+
+    #expect(profile.parserName == "GIP")
+    #expect(profile.quirks == ["shareOffset"])
+    #expect(profile.mappingOptions == [.shareOffset])
   }
 
   @Test func testPDPGameStopBB070UsesCapturedTransport() {
@@ -50,7 +61,7 @@ struct DeviceTransportProfileTests {
 
     #expect(runtime.parserName == "GIP")
     #expect(runtime.protocolVariant == .xboxOne)
-    #expect(runtime.mappingFlags.isEmpty)
+    #expect(runtime.quirks.isEmpty)
     #expect(runtime.mappingOptions.isEmpty)
     #expect(transport.inputEndpoint == 0x82)
     #expect(transport.outputEndpoint == 0x02)
@@ -66,7 +77,7 @@ struct DeviceTransportProfileTests {
 
     #expect(runtime.parserName == "GIP")
     #expect(runtime.protocolVariant == .xboxOne)
-    #expect(runtime.mappingFlags.isEmpty)
+    #expect(runtime.quirks.isEmpty)
     #expect(transport.inputEndpoint == 0x82)
     #expect(transport.outputEndpoint == 0x02)
     #expect(!transport.hasEndpointOverride)
@@ -82,7 +93,7 @@ struct DeviceTransportProfileTests {
 
     #expect(runtime.parserName == "GIP")
     #expect(runtime.protocolVariant == .xboxOne)
-    #expect(runtime.mappingFlags.isEmpty)
+    #expect(runtime.quirks.isEmpty)
     #expect(runtime.gipStartupPackets == GIPStartupPacket.defaultSequence)
     #expect(transport.inputEndpoint == 0x81)
     #expect(transport.outputEndpoint == 0x01)
@@ -117,7 +128,7 @@ struct DeviceTransportProfileTests {
 
     #expect(runtime.parserName == "GIP")
     #expect(runtime.protocolVariant == .xboxOne)
-    #expect(runtime.mappingFlags.isEmpty)
+    #expect(runtime.quirks.isEmpty)
     #expect(runtime.gipStartupPackets == GIPStartupPacket.defaultSequence)
     #expect(!runtime.gipStartupPackets.contains(.xboxOneSInit))
     #expect(transport.inputEndpoint == 0x81)
@@ -146,7 +157,7 @@ struct DeviceTransportProfileTests {
 
     #expect(registry.parserName(for: identifier) == "DS3")
     #expect(profile.protocolVariant == .dualShock3)
-    #expect(profile.mappingFlags.isEmpty)
+    #expect(profile.quirks.isEmpty)
     #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
     #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
   }
@@ -162,7 +173,7 @@ struct DeviceTransportProfileTests {
       let profile = registry.runtimeProfile(for: identifier)
       #expect(registry.parserName(for: identifier) == "DualSense")
       #expect(profile.protocolVariant == .dualSense)
-      #expect(profile.mappingFlags == ["touchpad", "microphoneMute"])
+      #expect(profile.quirks == ["touchpad", "microphoneMute"])
       #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
       #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
     }
@@ -178,12 +189,12 @@ struct DeviceTransportProfileTests {
     let wired = registry.runtimeProfile(for: identifiers[0])
     #expect(registry.parserName(for: identifiers[0]) == "SteamController")
     #expect(wired.protocolVariant == .steamController)
-    #expect(wired.mappingFlags == ["lizardMode", "trackpads"])
+    #expect(wired.quirks == ["lizardMode", "trackpads"])
 
     let wireless = registry.runtimeProfile(for: identifiers[1])
     #expect(registry.parserName(for: identifiers[1]) == "SteamController")
     #expect(wireless.protocolVariant == .steamController)
-    #expect(wireless.mappingFlags == ["lizardMode", "trackpads", "wirelessReceiver"])
+    #expect(wireless.quirks == ["lizardMode", "trackpads", "wirelessReceiver"])
 
     for identifier in identifiers {
       #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
@@ -198,7 +209,7 @@ struct DeviceTransportProfileTests {
 
     #expect(registry.parserName(for: identifier) == "SwitchPro")
     #expect(profile.protocolVariant == .switchPro)
-    #expect(profile.mappingFlags == ["usbHandshake"])
+    #expect(profile.quirks == ["usbHandshake"])
     #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
     #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
   }
@@ -218,7 +229,7 @@ struct DeviceTransportProfileTests {
 
       #expect(runtime.parserName == "Xbox360")
       #expect(runtime.protocolVariant == .xbox360Wireless)
-      #expect(runtime.mappingFlags == ["dpadToButtons"])
+      #expect(runtime.quirks == ["dpadToButtons"])
       #expect(transport.inputEndpoint == 0x81)
       #expect(transport.outputEndpoint == 0x01)
       #expect(
@@ -259,7 +270,7 @@ struct DeviceTransportProfileTests {
       ),
       (
         DeviceIdentifier(vendorID: 1118, productID: 2816),
-        [.powerOn, .xboxOneSInit, .extraInput, .ledOn, .authDone], ["paddles"]
+        [.powerOn, .xboxOneSInit, .extraInput, .ledOn, .authDone], []
       ),
       (
         DeviceIdentifier(vendorID: 3853, productID: 103), [.horiAck, .powerOn, .ledOn, .authDone],
@@ -281,12 +292,12 @@ struct DeviceTransportProfileTests {
       )
     ]
 
-    for (identifier, startupPackets, mappingFlags) in cases {
+    for (identifier, startupPackets, quirks) in cases {
       let profile = registry.runtimeProfile(for: identifier)
       #expect(registry.parserName(for: identifier) == "GIP")
       #expect(profile.protocolVariant == .xboxOne)
       #expect(profile.gipStartupPackets == startupPackets)
-      #expect(profile.mappingFlags == mappingFlags)
+      #expect(profile.quirks == quirks)
       #expect(registry.transportProfile(for: identifier).inputEndpoint == 0x82)
       #expect(registry.transportProfile(for: identifier).outputEndpoint == 0x02)
     }

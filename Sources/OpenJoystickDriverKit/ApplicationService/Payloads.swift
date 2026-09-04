@@ -133,7 +133,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// Source-backed protocol variant selected from the generated controller record.
   public let protocolVariant: ControllerProtocolVariant
   /// Source-backed mapping quirks from the controller record.
-  public let mappingFlags: [String]
+  public let quirks: [String]
   /// Interrupt IN endpoint address used by USB transports.
   public let inputEndpoint: UInt8
   /// Interrupt OUT endpoint address used by USB transports.
@@ -159,7 +159,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case duplicateExposureRisk
     case serialNumber
     case protocolVariant
-    case mappingFlags
+    case quirks
     case inputEndpoint
     case outputEndpoint
     case needsSetConfiguration
@@ -180,7 +180,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     duplicateExposureRisk: DuplicateExposureRisk = .unknownOwnership,
     serialNumber: String?,
     protocolVariant: ControllerProtocolVariant = .unknown,
-    mappingFlags: [String] = [],
+    quirks: [String] = [],
     inputEndpoint: UInt8 = 0,
     outputEndpoint: UInt8 = 0,
     needsSetConfiguration: Bool = false,
@@ -200,7 +200,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.duplicateExposureRisk = duplicateExposureRisk
     self.serialNumber = serialNumber
     self.protocolVariant = protocolVariant
-    self.mappingFlags = mappingFlags
+    self.quirks = quirks
     self.inputEndpoint = inputEndpoint
     self.outputEndpoint = outputEndpoint
     self.needsSetConfiguration = needsSetConfiguration
@@ -217,11 +217,10 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.productID = try container.decode(UInt16.self, forKey: .productID)
     self.parser = try container.decode(String.self, forKey: .parser)
     self.connection = try container.decode(String.self, forKey: .connection)
-    self.discoverySource =
-      try container.decodeIfPresent(
-        ApplicationServiceDeviceDiscoverySource.self,
-        forKey: .discoverySource
-      ) ?? .unknown
+    self.discoverySource = try container.decode(
+      ApplicationServiceDeviceDiscoverySource.self,
+      forKey: .discoverySource
+    )
     self.physicalOwnership =
       try container.decodeIfPresent(ControllerOwnershipObservation.self, forKey: .physicalOwnership)
       ?? .unknown
@@ -233,7 +232,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
       ControllerProtocolVariant.self,
       forKey: .protocolVariant
     )
-    self.mappingFlags = try container.decodeIfPresent([String].self, forKey: .mappingFlags) ?? []
+    self.quirks = try container.decodeIfPresent([String].self, forKey: .quirks) ?? []
     self.inputEndpoint = try container.decodeIfPresent(UInt8.self, forKey: .inputEndpoint) ?? 0
     self.outputEndpoint = try container.decodeIfPresent(UInt8.self, forKey: .outputEndpoint) ?? 0
     self.needsSetConfiguration =

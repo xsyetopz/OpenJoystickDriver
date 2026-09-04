@@ -6,7 +6,7 @@
   "protocol": {
     "driver": "Xbox360",
     "variant": "xbox360",
-    "flags": [
+    "quirks": [
       "triggersToButtons"
     ]
   }
