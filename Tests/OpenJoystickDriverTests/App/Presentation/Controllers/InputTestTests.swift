@@ -263,7 +263,10 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
     model.selectDevice(makeInputTestDevice())
 
     model.start()
-    await waitUntil { model.sessionState == .stale }
+    // One live sample then three nils stops the loop. `.stale` is set on the first
+    // nil, so wait for call count / sampling end — not the first stale transition.
+    #expect(await gateway.waitForInputCalls(4))
+    await waitUntil { !model.isSampling }
 
     #expect(model.sessionState == .stale)
     #expect(model.latestInput == snapshot)
