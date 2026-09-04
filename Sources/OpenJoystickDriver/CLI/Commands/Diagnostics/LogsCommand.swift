@@ -40,9 +40,7 @@ struct LogsCommand {
       for snapshot in snapshots {
         CLIOutput.diagnostic("== \(snapshot.stream.rawValue): \(snapshot.path) ==")
         if !snapshot.exists {
-          CLIOutput.diagnostic(
-            CLILocalized.text("cli.logs.missing", "(log file does not exist)")
-          )
+          CLIOutput.diagnostic(CLILocalized.text("cli.logs.missing", "(log file does not exist)"))
         } else if snapshot.lines.isEmpty {
           CLIOutput.diagnostic(CLILocalized.text("cli.logs.empty", "(log file is empty)"))
         } else {
@@ -117,10 +115,7 @@ struct LogsCommand {
         guard index + 1 < arguments.count, let selection = Selection(rawValue: arguments[index + 1])
         else {
           CLIOutput.error(
-            CLILocalized.text(
-              "cli.logs.stream_error",
-              "--stream must be stdout, stderr, or both."
-            )
+            CLILocalized.text("cli.logs.stream_error", "--stream must be stdout, stderr, or both.")
           )
           exit(1)
         }
@@ -130,9 +125,7 @@ struct LogsCommand {
         guard index + 1 < arguments.count, let lines = Int(arguments[index + 1]),
           (1...10_000).contains(lines)
         else {
-          CLIOutput.error(
-            CLILocalized.text("cli.logs.lines_error", "--lines must be 1...10000.")
-          )
+          CLIOutput.error(CLILocalized.text("cli.logs.lines_error", "--lines must be 1...10000."))
           exit(1)
         }
         options.maximumLines = lines

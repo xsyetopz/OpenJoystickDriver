@@ -292,16 +292,13 @@
 
     private func motorLabel(_ motor: PhysicalRumbleMotor) -> String {
       switch motor {
-      case .leftMain:
-        return OJDLocalized.string("inputTest.leftMain", fallback: "Left main")
-      case .rightMain:
-        return OJDLocalized.string("inputTest.rightMain", fallback: "Right main")
+      case .leftMain: return OJDLocalized.string("inputTest.leftMain", fallback: "Left main")
+      case .rightMain: return OJDLocalized.string("inputTest.rightMain", fallback: "Right main")
       case .leftTrigger:
         return OJDLocalized.string("inputTest.leftTrigger", fallback: "Left trigger")
       case .rightTrigger:
         return OJDLocalized.string("inputTest.rightTrigger", fallback: "Right trigger")
-      case .leftHaptic:
-        return OJDLocalized.string("inputTest.leftHaptic", fallback: "Left haptic")
+      case .leftHaptic: return OJDLocalized.string("inputTest.leftHaptic", fallback: "Left haptic")
       case .rightHaptic:
         return OJDLocalized.string("inputTest.rightHaptic", fallback: "Right haptic")
       }

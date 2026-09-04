@@ -108,9 +108,7 @@ struct ControllerRecordDocument: Decodable {
     private static let contracts: [String: (variants: Set<String>, quirks: Set<String>)] = [
       "GIP": (
         ["xboxOriginal", "xboxOne", "unknown"],
-        [
-          "dpadToButtons", "triggersToButtons", "sticksToNull", "shareOffset"
-        ]
+        ["dpadToButtons", "triggersToButtons", "sticksToNull", "shareOffset"]
       ),
       "Xbox360": (
         ["xbox360", "xbox360Wireless", "unknown"],

@@ -28,9 +28,7 @@ struct DeviceTransportProfileTests {
 
   @Test func testXboxSeriesShareOffsetIsAnEncodingQuirkOnly() {
     let registry = ParserRegistry()
-    let profile = registry.runtimeProfile(
-      for: DeviceIdentifier(vendorID: 1118, productID: 2834)
-    )
+    let profile = registry.runtimeProfile(for: DeviceIdentifier(vendorID: 1118, productID: 2834))
 
     #expect(profile.parserName == "GIP")
     #expect(profile.quirks == ["shareOffset"])

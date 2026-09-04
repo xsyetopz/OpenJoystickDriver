@@ -487,10 +487,8 @@
       case .xbox360Wireless:
         return OJDLocalized.string("controller.xbox360Wireless", fallback: "Xbox 360 wireless")
       case .xboxOne: return OJDLocalized.string("controller.xboxOne", fallback: "Xbox One")
-      case .dualShock3:
-        return OJDLocalized.string("controller.dualShock3", fallback: "DualShock 3")
-      case .dualShock4:
-        return OJDLocalized.string("controller.dualShock4", fallback: "DualShock 4")
+      case .dualShock3: return OJDLocalized.string("controller.dualShock3", fallback: "DualShock 3")
+      case .dualShock4: return OJDLocalized.string("controller.dualShock4", fallback: "DualShock 4")
       case .dualSense: return OJDLocalized.string("controller.dualSense", fallback: "DualSense")
       case .steamController:
         return OJDLocalized.string("controller.steamController", fallback: "Steam Controller")
@@ -500,8 +498,7 @@
           "controller.xboxAdaptiveJoystick",
           fallback: "Xbox Adaptive Joystick"
         )
-      case .genericHID:
-        return OJDLocalized.string("controller.genericHID", fallback: "Generic HID")
+      case .genericHID: return OJDLocalized.string("controller.genericHID", fallback: "Generic HID")
       case .unknown: return OJDLocalized.string("common.unknown", fallback: "Unknown")
       }
     }

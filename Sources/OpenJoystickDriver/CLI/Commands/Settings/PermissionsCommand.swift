@@ -120,7 +120,8 @@ struct PermissionsCommand {
   private func printPermissionInventory() {
     print(CLILocalized.text("cli.permissions.inventory", "Permission inventory:"))
     for requirement in OJDPermissionRequirement.inventory {
-      let behavior = requirement.requested
+      let behavior =
+        requirement.requested
         ? CLILocalized.text("cli.permissions.may_request", "may request")
         : CLILocalized.text("cli.permissions.never_requests", "never requests")
       print("  \(requirement.name) - \(requirement.owner) [\(behavior)]")

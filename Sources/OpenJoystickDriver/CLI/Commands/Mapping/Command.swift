@@ -156,9 +156,7 @@ struct MappingInvocation {
   }
 
   private func importProfile(client: any MappingServiceClient) async throws -> String {
-    let path = try soleArgument(
-      CLILocalized.text("cli.mapping.usage.import", "map import <file>")
-    )
+    let path = try soleArgument(CLILocalized.text("cli.mapping.usage.import", "map import <file>"))
     let profile = try RemappingProfileFileStore.load(from: URL(fileURLWithPath: path))
     return render(try await client.importProfile(profile), profileID: profile.id)
   }

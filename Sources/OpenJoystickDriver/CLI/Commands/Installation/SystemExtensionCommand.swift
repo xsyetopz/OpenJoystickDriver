@@ -74,10 +74,7 @@ struct SystemExtensionCommand {
       print(CLILocalized.text("cli.extension.registration_absent", "OS registration: absent"))
     case .unavailable(let reason):
       CLIOutput.diagnostic(
-        CLILocalized.text(
-          "cli.extension.registration_unavailable",
-          "OS registration: unavailable"
-        )
+        CLILocalized.text("cli.extension.registration_unavailable", "OS registration: unavailable")
       )
       CLIOutput.error(reason)
       exit(1)
@@ -334,9 +331,7 @@ final class SystemExtensionSubmission: NSObject, OSSystemExtensionRequestDelegat
   func cancel() {
     guard completionGate.accept() else { return }
     setResult(
-      .failed(
-        CLILocalized.text("cli.extension.cancelled", "System extension request cancelled.")
-      )
+      .failed(CLILocalized.text("cli.extension.cancelled", "System extension request cancelled."))
     )
     completion?(.cancelled)
   }

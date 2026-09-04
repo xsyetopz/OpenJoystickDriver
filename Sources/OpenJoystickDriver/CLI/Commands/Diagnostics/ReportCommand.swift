@@ -46,11 +46,7 @@ struct ReportCommand {
     do {
       try SupportReportService.write(report, to: outputURL)
       print(
-        CLILocalized.format(
-          "cli.report.written",
-          "Support report written to %@",
-          outputURL.path
-        )
+        CLILocalized.format("cli.report.written", "Support report written to %@", outputURL.path)
       )
       print(
         CLILocalized.text(
@@ -88,8 +84,7 @@ struct ReportCommand {
         Creates a JSON support report for controller issues. Review it before sharing because \
         device product names are included.
         """
-      )
-      + "\n\n"
+      ) + "\n\n"
         + CLILocalized.text(
           "cli.report.help_exclusions",
           "The report excludes raw serial values, filesystem paths, packet payloads, "

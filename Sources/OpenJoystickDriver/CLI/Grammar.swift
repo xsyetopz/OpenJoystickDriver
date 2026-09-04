@@ -10,8 +10,7 @@ enum CLIParseError: LocalizedError {
 
   var errorDescription: String? {
     switch self {
-    case .missingCommand:
-      CLILocalized.text("cli.error.missing_command", "A command is required.")
+    case .missingCommand: CLILocalized.text("cli.error.missing_command", "A command is required.")
     case .unknownCommand(let command):
       CLILocalized.format("cli.error.unknown_command", "Unknown command '%@'.", command)
     case .missingSubcommand(let command):

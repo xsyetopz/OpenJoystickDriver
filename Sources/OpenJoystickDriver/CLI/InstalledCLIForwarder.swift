@@ -17,12 +17,13 @@ enum InstalledCLIForwarder {
     mainBundleURL: URL,
     arguments: [String],
     installedExecutableURL: URL = installedExecutableURL,
-    repositoryCLIOverride: Bool = ProcessInfo.processInfo.environment[
-      "OJD_RUN_REPOSITORY_CLI"
-    ] == "1",
+    repositoryCLIOverride: Bool = ProcessInfo.processInfo.environment["OJD_RUN_REPOSITORY_CLI"]
+      == "1",
     isExecutableFile: (String) -> Bool = FileManager.default.isExecutableFile(atPath:),
     installedCLIIsCurrent: (URL, URL) -> Bool = installedCLIIsCurrent(
-      sourceExecutableURL:installedExecutableURL:)
+      sourceExecutableURL:
+      installedExecutableURL:
+    )
   ) -> Resolution {
     guard !arguments.isEmpty, mainBundleURL.pathExtension != "app", !repositoryCLIOverride else {
       return .local
@@ -82,20 +83,17 @@ enum InstalledCLIForwarder {
   }
 
   private static func release(_ pointers: [UnsafeMutablePointer<CChar>?]) {
-    for pointer in pointers {
-      if let pointer { free(UnsafeMutableRawPointer(pointer)) }
-    }
+    for pointer in pointers { if let pointer { free(UnsafeMutableRawPointer(pointer)) } }
   }
 
-  private static func installedCLIIsCurrent(
-    sourceExecutableURL: URL,
-    installedExecutableURL: URL
-  ) -> Bool {
+  private static func installedCLIIsCurrent(sourceExecutableURL: URL, installedExecutableURL: URL)
+    -> Bool
+  {
     guard let repositoryRoot = repositoryRoot(containing: sourceExecutableURL) else { return true }
     guard
-      let installedDate = try? installedExecutableURL.resourceValues(
-        forKeys: [.contentModificationDateKey]
-      ).contentModificationDate
+      let installedDate = try? installedExecutableURL.resourceValues(forKeys: [
+        .contentModificationDateKey
+      ]).contentModificationDate
     else { return false }
 
     let packageManifest = repositoryRoot.appendingPathComponent("Package.swift")
@@ -109,9 +107,9 @@ enum InstalledCLIForwarder {
     else { return false }
     for case let file as URL in enumerator {
       guard
-        let values = try? file.resourceValues(
-          forKeys: [.contentModificationDateKey, .isRegularFileKey]
-        )
+        let values = try? file.resourceValues(forKeys: [
+          .contentModificationDateKey, .isRegularFileKey
+        ])
       else { return false }
       if values.isRegularFile == true, let date = values.contentModificationDate,
         date > installedDate
@@ -123,8 +121,9 @@ enum InstalledCLIForwarder {
   }
 
   private static func fileIsNotNewer(_ file: URL, than date: Date) -> Bool {
-    guard let modificationDate = try? file.resourceValues(forKeys: [.contentModificationDateKey])
-      .contentModificationDate
+    guard
+      let modificationDate = try? file.resourceValues(forKeys: [.contentModificationDateKey])
+        .contentModificationDate
     else { return false }
     return modificationDate <= date
   }
@@ -136,7 +135,9 @@ enum InstalledCLIForwarder {
       let applicationSources = directory.appendingPathComponent("Sources/OpenJoystickDriver")
       if FileManager.default.fileExists(atPath: packageManifest.path),
         FileManager.default.fileExists(atPath: applicationSources.path)
-      { return directory }
+      {
+        return directory
+      }
       directory.deleteLastPathComponent()
     }
     return nil

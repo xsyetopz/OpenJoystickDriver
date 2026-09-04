@@ -240,8 +240,7 @@ enum RuntimeStatusText {
         "  \(device.name) (VID:\(device.vendorID) PID:\(device.productID) "
           + "\(device.parser) [\(device.connection)] SN:\(serialNumber))"
       )
-      let quirks =
-        device.quirks.isEmpty ? "none" : device.quirks.joined(separator: ",")
+      let quirks = device.quirks.isEmpty ? "none" : device.quirks.joined(separator: ",")
       let backends =
         device.preferredBackends.isEmpty ? "none" : device.preferredBackends.joined(separator: ",")
       lines.append(

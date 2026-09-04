@@ -377,8 +377,9 @@ actor RemappingProfileLibrary {
   }
 
   private func validate(_ library: RemappingProfileLibraryState) throws {
-    guard library.schemaVersion == RemappingProfileLibraryState.currentSchemaVersion
-    else { throw RemappingProfileLibraryError.unsupportedLibraryVersion(library.schemaVersion) }
+    guard library.schemaVersion == RemappingProfileLibraryState.currentSchemaVersion else {
+      throw RemappingProfileLibraryError.unsupportedLibraryVersion(library.schemaVersion)
+    }
     guard library.profiles.count <= Self.maximumProfileCount else {
       throw RemappingProfileLibraryError.profileCountExceeded(library.profiles.count)
     }

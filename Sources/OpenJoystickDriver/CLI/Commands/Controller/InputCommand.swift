@@ -252,11 +252,7 @@ struct InputCommand {
 
     if !observedPacket {
       let message = CLILocalized.text("cli.controller.noPacketsReceived", "No packets received.")
-      if jsonLines {
-        CLIOutput.diagnostic(message)
-      } else {
-        print(message)
-      }
+      if jsonLines { CLIOutput.diagnostic(message) } else { print(message) }
     }
   }
 

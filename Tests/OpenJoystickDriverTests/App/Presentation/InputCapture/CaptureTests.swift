@@ -127,9 +127,7 @@ import Testing
     let previous = DeviceInputState(vendorID: 0x1234, productID: 0x5678)
     var current = previous
     current.pressedButtons = ["mute"]
-    #expect(
-      RuntimePresentation.detectedTransition(from: previous, to: current) == .button(.mute)
-    )
+    #expect(RuntimePresentation.detectedTransition(from: previous, to: current) == .button(.mute))
 
     current.pressedButtons = []
     current.leftStickX = 0.75

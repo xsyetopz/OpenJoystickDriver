@@ -32,7 +32,6 @@ protocol ApplicationServiceGateway: Sendable {
   func setCompatibilityIdentity(_ identity: CompatibilityIdentity) async throws -> Bool
 }
 
-
 enum ApplicationServiceGatewayError: Error, LocalizedError, Sendable, Equatable {
   case invalidCompatibilityIdentity(String)
   case compatibilityIdentityChangeRejected(CompatibilityIdentity)

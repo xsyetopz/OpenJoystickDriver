@@ -86,9 +86,7 @@
             Text(
               model.observedExtraInputs.map(InputTestButtonPresentation.localizedTitle(for:))
                 .joined(separator: ", ")
-            ).font(
-              .system(.body, design: .monospaced)
-            ).textSelectionIfAvailable()
+            ).font(.system(.body, design: .monospaced)).textSelectionIfAvailable()
           }
         }.padding(4).frame(maxWidth: .infinity, alignment: .leading)
       } label: {

@@ -53,8 +53,7 @@ enum MappingRenderer {
         "cli.mapping.postEventAccess",
         "Post-event access: %@",
         snapshot.postEventAccess.rawValue
-      ),
-      CLILocalized.text("cli.mapping.profiles", "Profiles:"),
+      ), CLILocalized.text("cli.mapping.profiles", "Profiles:")
     ]
     lines += snapshot.profiles.map(profile)
     lines.append(CLILocalized.text("cli.mapping.routes", "Routes:"))
@@ -95,9 +94,7 @@ enum MappingRenderer {
   }
 
   static func layers(_ profile: RemappingProfile) -> String {
-    if profile.layers.isEmpty {
-      return CLILocalized.text("cli.mapping.noLayers", "No layers.")
-    }
+    if profile.layers.isEmpty { return CLILocalized.text("cli.mapping.noLayers", "No layers.") }
     return profile.layers.enumerated().map { index, layer in
       let bindings = layer.bindings.map { b in
         "    \(b.id.uuidString) \(source(b.source)) -> \(destination(b.destination))"

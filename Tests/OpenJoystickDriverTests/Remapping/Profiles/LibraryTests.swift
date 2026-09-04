@@ -169,8 +169,11 @@ struct ProfileLibraryTests {
       let profiles = try await library.profiles()
       #expect(profiles.isEmpty)
 
-      let persisted = try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
-      #expect(persisted?["schema_version"] as? Int == RemappingProfileLibraryState.currentSchemaVersion)
+      let persisted =
+        try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
+      #expect(
+        persisted?["schema_version"] as? Int == RemappingProfileLibraryState.currentSchemaVersion
+      )
       #expect((persisted?["profiles"] as? [Any])?.isEmpty == true)
       #expect((persisted?["active_profiles"] as? [Any])?.isEmpty == true)
     }
@@ -184,9 +187,7 @@ struct ProfileLibraryTests {
         JSONSerialization.jsonObject(with: encodedProfile) as? [String: Any]
       )
       let legacyObject: [String: Any] = [
-        "schema_version": 1,
-        "profiles": [profileObject],
-        "active_profiles": [],
+        "schema_version": 1, "profiles": [profileObject], "active_profiles": []
       ]
       try JSONSerialization.data(withJSONObject: legacyObject).write(to: url)
 

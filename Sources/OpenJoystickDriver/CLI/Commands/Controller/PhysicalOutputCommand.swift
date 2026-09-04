@@ -127,9 +127,7 @@ struct PhysicalOutputCommand {
       case "--rt": rt = parseIntensity(value, label: option)
       case "--duration-ms":
         guard (0...5_000).contains(value) else {
-          fail(
-            CLILocalized.text("cli.controller.durationRange", "--duration-ms must be 0...5000")
-          )
+          fail(CLILocalized.text("cli.controller.durationRange", "--duration-ms must be 0...5000"))
         }
         durationMs = value
       default:
@@ -245,10 +243,7 @@ struct PhysicalOutputCommand {
       let rawValue = parseInteger(arguments[2], label: "player")
       guard let parsed = PhysicalPlayerIndicator(rawValue: rawValue), parsed != .off else {
         fail(
-          CLILocalized.text(
-            "cli.controller.invalidPlayer",
-            "Player must be off, 1, 2, 3, or 4."
-          )
+          CLILocalized.text("cli.controller.invalidPlayer", "Player must be off, 1, 2, 3, or 4.")
         )
       }
       indicator = parsed
@@ -544,18 +539,14 @@ struct PhysicalOutputCommand {
 
   private func parseInteger(_ value: String, label: String) -> Int {
     guard let parsed = Int(value) else {
-      fail(
-        CLILocalized.format("cli.controller.labelInteger", "%@ must be an integer.", label)
-      )
+      fail(CLILocalized.format("cli.controller.labelInteger", "%@ must be an integer.", label))
     }
     return parsed
   }
 
   private func parseIntensity(_ value: Int, label: String) -> UInt8 {
     guard (0...255).contains(value) else {
-      fail(
-        CLILocalized.format("cli.controller.labelRange255", "%@ must be 0...255.", label)
-      )
+      fail(CLILocalized.format("cli.controller.labelRange255", "%@ must be 0...255.", label))
     }
     return UInt8(value)
   }

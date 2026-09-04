@@ -13,9 +13,7 @@ enum CLIOutput {
   }
 
   static func warning(_ message: String) {
-    stderr(
-      "\(CLILocalized.text("cli.output.warning_prefix", "WARNING")): \(message)"
-    )
+    stderr("\(CLILocalized.text("cli.output.warning_prefix", "WARNING")): \(message)")
   }
 
   static func error(_ message: String) {

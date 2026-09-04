@@ -30,11 +30,7 @@ struct SelfTestCommand {
     }
 
     CLIOutput.diagnostic(
-      CLILocalized.format(
-        "cli.test.heading",
-        "Virtual device test (%ds)",
-        payload.seconds
-      )
+      CLILocalized.format("cli.test.heading", "Virtual device test (%ds)", payload.seconds)
     )
     CLIOutput.diagnostic(
       CLILocalized.format(

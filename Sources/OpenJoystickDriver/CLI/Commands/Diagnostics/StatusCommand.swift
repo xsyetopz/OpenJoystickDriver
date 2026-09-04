@@ -4,9 +4,7 @@ import OpenJoystickDriverKit
 struct StatusCommand {
   func run(arguments: [String] = []) {
     guard arguments.isEmpty || arguments == ["--json"] else {
-      CLIOutput.error(
-        CLILocalized.text("cli.status.json_only", "status accepts only --json.")
-      )
+      CLIOutput.error(CLILocalized.text("cli.status.json_only", "status accepts only --json."))
       exit(CLIParseError.exitCode)
     }
     let json = arguments.contains("--json")
@@ -75,10 +73,7 @@ struct StatusCommand {
       let data = try encoder.encode(payload)
       guard let text = String(bytes: data, encoding: .utf8) else {
         CLIOutput.error(
-          CLILocalized.text(
-            "cli.status.json_utf8_error",
-            "Could not encode status JSON as UTF-8."
-          )
+          CLILocalized.text("cli.status.json_utf8_error", "Could not encode status JSON as UTF-8.")
         )
         exit(1)
       }

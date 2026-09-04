@@ -49,9 +49,7 @@ struct VirtualControllerBackendTests {
   }
 
   @Test func unknownIdentityIsRejectedForNewMutation() {
-    #expect(
-      CompatibilityIdentity.mutationDecision(for: "xone-hid") == .rejected(.unknownIdentity)
-    )
+    #expect(CompatibilityIdentity.mutationDecision(for: "xone-hid") == .rejected(.unknownIdentity))
   }
 
   @Test func selectableIdentitiesRemainAcceptedForMutation() {
@@ -656,8 +654,7 @@ struct VirtualControllerBackendTests {
     let x360 = Xbox360MacHIDReportFormat().buildInputReport(from: VirtualGamepadState())
     let xone = try HIDDescriptorReportFormat(
       descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor
-    )
-    .buildInputReport(from: VirtualGamepadState())
+    ).buildInputReport(from: VirtualGamepadState())
 
     #expect(generic == [UInt8](repeating: 0, count: generic.count))
     #expect(sdl == [UInt8](repeating: 0, count: sdl.count))

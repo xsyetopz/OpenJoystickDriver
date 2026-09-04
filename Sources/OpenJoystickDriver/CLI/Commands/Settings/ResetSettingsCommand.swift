@@ -22,10 +22,7 @@ struct ResetSettingsCommand {
     }
 
     print(
-      CLILocalized.text(
-        "cli.settings.reset.success",
-        "OK: reset application service settings."
-      )
+      CLILocalized.text("cli.settings.reset.success", "OK: reset application service settings.")
     )
     print(
       CLILocalized.text(

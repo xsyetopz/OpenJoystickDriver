@@ -286,10 +286,7 @@ enum MappingProfileEditor {
       }
     guard isAxis || !supplied else {
       throw MappingCommandError.invalidArguments(
-        CLILocalized.text(
-          "cli.mapping.axis_options_source",
-          "Axis options require an axis source."
-        )
+        CLILocalized.text("cli.mapping.axis_options_source", "Axis options require an axis source.")
       )
     }
     guard isAxis else { return nil }

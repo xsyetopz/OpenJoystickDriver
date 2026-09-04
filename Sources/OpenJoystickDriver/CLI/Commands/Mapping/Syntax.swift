@@ -116,10 +116,7 @@ enum MappingSyntax {
     let entries = raw.split(separator: ",").map(String.init)
     guard !entries.isEmpty else {
       throw MappingCommandError.invalidArguments(
-        CLILocalized.text(
-          "cli.mapping.sources_required",
-          "--sources requires at least one source."
-        )
+        CLILocalized.text("cli.mapping.sources_required", "--sources requires at least one source.")
       )
     }
     return try entries.map { try source($0) }

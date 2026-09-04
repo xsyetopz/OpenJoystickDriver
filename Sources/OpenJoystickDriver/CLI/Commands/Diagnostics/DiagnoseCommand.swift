@@ -102,7 +102,10 @@ struct DiagnoseCommand {
         )
       )
       CLIOutput.diagnostic(
-        CLILocalized.text("cli.diagnose.fix_rebuild_dev", "  Fix: run: ./scripts/ojd build install dev")
+        CLILocalized.text(
+          "cli.diagnose.fix_rebuild_dev",
+          "  Fix: run: ./scripts/ojd build install dev"
+        )
       )
       return
     }
@@ -217,9 +220,7 @@ struct DiagnoseCommand {
       return
     }
     if devices.isEmpty {
-      CLIOutput.diagnostic(
-        CLILocalized.text("cli.diagnose.none_detected", "  (none detected)")
-      )
+      CLIOutput.diagnostic(CLILocalized.text("cli.diagnose.none_detected", "  (none detected)"))
       return
     }
     for device in devices {
@@ -359,10 +360,7 @@ struct DiagnoseCommand {
       )
     )
     CLIOutput.diagnostic(
-      CLILocalized.text(
-        "cli.diagnose.troubleshoot_reporting",
-        "  Reporting a controller issue?"
-      )
+      CLILocalized.text("cli.diagnose.troubleshoot_reporting", "  Reporting a controller issue?")
     )
     CLIOutput.diagnostic(
       CLILocalized.text(

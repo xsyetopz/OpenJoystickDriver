@@ -35,9 +35,7 @@ struct LocalizationTests {
       "cli.compat.usage", "cli.catalog.compat.summary", "cli.app_ready.not_ready",
       "inputTest.controls", "inputTest.additionalButtons", "compatibility.xbox360HID",
       "setup.openSystemSettings"
-    ] {
-      #expect(keys.contains(required))
-    }
+    ] { #expect(keys.contains(required)) }
     #expect(!keys.contains("compatibility.xboxOneLegacyHID"))
     #expect(keys.filter { $0.hasPrefix("cli.") }.count >= 200)
     #expect(keys.filter { $0.hasPrefix("inputTest.") }.count >= 20)
