@@ -57,7 +57,6 @@ _ojd_application_job_labels() {
 _ojd_process_is_alive() {
   local pid="$1"
   local state rss
-  # shellcheck disable=SC2034
   read -r state rss < <(ps -p "$pid" -o state=,rss= 2>/dev/null) || return 1
   [[ -n "$state" && -n "$rss" ]] || return 1
   # macOS reports exiting leftovers as Z, E, or ?E with rss 0.
