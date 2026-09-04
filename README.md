@@ -52,15 +52,15 @@ and [PlayStation's copyright and trademark notice](https://www.playstation.com/e
 
 1. Drag `OpenJoystickDriver.app` to `/Applications`.
 2. Open `OpenJoystickDriver.app`.
-3. Open the menu-bar item to review readiness and connected controllers. Choose `Settings…` (⌘,)
+3. Open the menu-bar item to review readiness and connected controllers. Choose `Settings...` (⌘,)
    for Overview, Controllers, Profiles, and Debug.
 4. Grant **Input Monitoring** and **Accessibility** to OpenJoystickDriver when macOS asks. Use
    the matching permission icon in the settings footer to start the native macOS flow. These
    permissions enable physical controller input and controller output.
 5. If a profile sends keyboard, mouse, pointer, or scroll events, use the **Keyboard & pointer**
    permission icon in the settings footer for its separate access check.
-6. Connect a supported controller, then choose **Open Profiles…** to create ordinary assignments and
-   adjust stick/trigger response. Use **Controllers…** or **Refresh** to update the menu-bar summary.
+6. Connect a supported controller, then choose **Open Profiles...** to create ordinary assignments and
+   adjust stick/trigger response. Use **Controllers...** or **Refresh** to update the menu-bar summary.
 
 Your target app should now see a compatible virtual controller.
 

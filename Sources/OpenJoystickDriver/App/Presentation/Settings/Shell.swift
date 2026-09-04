@@ -530,7 +530,7 @@
       switch notificationPermission.state {
       case .checking:
         return OverviewAccessStatus(
-          value: OJDLocalized.string("status.checking", fallback: "Checking…"),
+          value: OJDLocalized.string("status.checking", fallback: "Checking..."),
           tone: .neutral,
           isActionable: false
         )
@@ -635,7 +635,7 @@
 
     private var statusTitle: String {
       switch viewModel.statusState {
-      case .loading: return OJDLocalized.string("status.starting", fallback: "Starting…")
+      case .loading: return OJDLocalized.string("status.starting", fallback: "Starting...")
       case .available(let status): return status.readinessLabel
       case .unavailable, .error:
         return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
@@ -656,7 +656,7 @@
       case .loading:
         return OJDLocalized.string(
           "status.checkingControllerAccess",
-          fallback: "Checking controller access…"
+          fallback: "Checking controller access..."
         )
       case .unavailable(let message), .error(let message): return message
       case .available(let status): return status.deviceCountLabel

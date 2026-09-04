@@ -141,7 +141,7 @@ Use these paths in order:
    This writes a clearly named DMG under `.build/tester-artifacts/` containing
    the signed app and embedded `XboxUSBDevice.dext`, plus a build-info file with
    the full source commit, clean/dirty state, and unique bundle build version
-   (numeric release base, or that base with a `d1`…`d255` tester suffix). It
+   (numeric release base, or that base with a `d1`...`d255` tester suffix). It
    does not install, publish, or notarize anything. The app and
    DEXT use the local Developer ID
    identities/profiles; the artifact is intentionally **not notarized**, so a
@@ -200,11 +200,11 @@ Sanity-check what you installed (safe output; no identifiers printed):
 
 Development requires:
 
-- `Apple Development: …`
+- `Apple Development: ...`
 
 Publisher releases also require:
 
-- `Developer ID Application: …`
+- `Developer ID Application: ...`
 
 ```bash
 security find-identity -v -p codesigning
@@ -435,8 +435,8 @@ Then log out/in (or reboot) and try again.
 If you have a `Developer ID Application` cert for one team but your `Apple Development`
 cert is for a different team, `xcodebuild` will fail with:
 
-- “Provisioning profile … doesn’t include signing certificate …”
-- “No certificate for team … matching …”
+- "Provisioning profile ... doesn't include signing certificate ..."
+- "No certificate for team ... matching ..."
 
 Commands to see what you have (prints only Team IDs):
 
@@ -481,12 +481,12 @@ to replace the Apple capability grant and regenerate all three profiles.
 </details>
 
 <details>
-<summary>DriverKit build fails with “No certificate for team … matching …”</summary>
+<summary>DriverKit build fails with "No certificate for team ... matching ..."</summary>
 
 If you see an error like:
 
 ```text
-No certificate for team '9PQP6CDMQT' matching 'Apple Development: … (XXXXXXXXXX)' found
+No certificate for team '9PQP6CDMQT' matching 'Apple Development: ... (XXXXXXXXXX)' found
 ```
 
 This is often caused by Xcode matching based on the certificate display name suffix `(...)`.

@@ -254,7 +254,7 @@
           )
         }
         Spacer(minLength: 12)
-        Button(OJDLocalized.string("inputTest.open", fallback: "Open Input Test…")) {
+        Button(OJDLocalized.string("inputTest.open", fallback: "Open Input Test...")) {
           openInputTest(device)
         }
       }

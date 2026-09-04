@@ -30,7 +30,7 @@
         LoadingStateView(
           message: OJDLocalized.string(
             "developer.loadingControllers",
-            fallback: "Loading controller diagnostics…"
+            fallback: "Loading controller diagnostics..."
           )
         )
       case .noControllers:

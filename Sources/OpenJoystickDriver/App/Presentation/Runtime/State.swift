@@ -186,7 +186,7 @@ import OpenJoystickDriverKit
         lastError
           ?? OJDLocalized.string(
             "error.notAvailable",
-            fallback: "OpenJoystickDriver isn’t available right now."
+            fallback: "OpenJoystickDriver isn't available right now."
           )
       )
   }

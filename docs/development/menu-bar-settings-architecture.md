@@ -70,7 +70,7 @@ Menu items:
 - readiness and controller count;
 - active profile or `No active profile`;
 - direct links to Overview, Controllers, Profiles, and Debug;
-- `Request access…` when permissions need attention;
+- `Request access...` when permissions need attention;
 - Settings and Quit.
 
 Do not put packet streams, raw identifiers, catalog audits, support tests, or metrics dashboards in

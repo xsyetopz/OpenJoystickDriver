@@ -175,7 +175,7 @@ enum RuntimeSupportLogsState: Sendable {
         supportReportState = .error(
           OJDLocalized.string(
             "error.supportReportSave",
-            fallback: "The support report couldn’t be saved. Choose another file and try again."
+            fallback: "The support report couldn't be saved. Choose another file and try again."
           )
         )
       }
@@ -238,7 +238,7 @@ enum RuntimeSupportLogsState: Sendable {
       supportLogsState = .error(
         OJDLocalized.string(
           "error.logsSave",
-          fallback: "The logs couldn’t be saved. Choose another file and try again."
+          fallback: "The logs couldn't be saved. Choose another file and try again."
         )
       )
     }

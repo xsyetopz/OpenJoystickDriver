@@ -45,7 +45,7 @@
         LoadingStateView(
           message: OJDLocalized.string(
             "status.checkingRuntime",
-            fallback: "Checking runtime status…"
+            fallback: "Checking runtime status..."
           )
         )
       case .available(let status):
@@ -321,7 +321,7 @@
         if #available(macOS 11.0, *) {
           ProgressView()
         } else {
-          Text(OJDLocalized.string("common.loadingEllipsis", fallback: "…"))
+          Text(OJDLocalized.string("common.loadingEllipsis", fallback: "..."))
         }
         Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
           horizontal: false,
@@ -361,7 +361,7 @@
       if #available(macOS 11.0, *) {
         ProgressView()
       } else {
-        Text(OJDLocalized.string("common.loadingEllipsis", fallback: "…"))
+        Text(OJDLocalized.string("common.loadingEllipsis", fallback: "..."))
       }
     }
   }

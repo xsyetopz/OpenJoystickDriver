@@ -35,8 +35,8 @@ System Settings > Privacy & Security > Accessibility
 
 ## Request access
 
-Use the matching **Request…** action in Overview for Input Monitoring, controller publication, or
-Keyboard & pointer. The menu-bar **Request access…** action opens the same native macOS flow.
+Use the matching **Request...** action in Overview for Input Monitoring, controller publication, or
+Keyboard & pointer. The menu-bar **Request access...** action opens the same native macOS flow.
 
 If macOS asks for a relaunch, quit and reopen OpenJoystickDriver. The app checks the permission again
 after each request; a request result alone is not treated as approval.

@@ -265,7 +265,7 @@
     private var statusLabel: String {
       switch model.sessionState {
       case .idle: return OJDLocalized.string("inputTest.idle", fallback: "Ready")
-      case .starting: return OJDLocalized.string("inputTest.starting", fallback: "Starting…")
+      case .starting: return OJDLocalized.string("inputTest.starting", fallback: "Starting...")
       case .live: return OJDLocalized.string("inputTest.live", fallback: "Input active")
       case .stale: return OJDLocalized.string("inputTest.stale", fallback: "Input interrupted")
       case .disconnected:

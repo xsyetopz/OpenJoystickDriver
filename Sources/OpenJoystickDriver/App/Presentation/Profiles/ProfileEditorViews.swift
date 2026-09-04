@@ -526,7 +526,7 @@
               Text(
                 chord.sources.map(RuntimePresentation.sourceLabel).sorted().joined(separator: " + ")
               )
-              OJDSystemSymbol(name: "arrow.right", fallback: "→")
+              OJDSystemSymbol(name: "arrow.right", fallback: "->")
               Text(RuntimePresentation.destinationLabel(chord.destination))
               Spacer()
               removeButton { removeChord(chord.id) }
@@ -552,11 +552,11 @@
         } else {
           ForEach(draft.profile.sequences) { sequence in
             HStack {
-              Text(sequence.sources.map(RuntimePresentation.sourceLabel).joined(separator: " → "))
+              Text(sequence.sources.map(RuntimePresentation.sourceLabel).joined(separator: " -> "))
               Text(String(format: "(%.0f ms)", sequence.windowMs)).foregroundColor(
                 Color(NSColor.secondaryLabelColor)
               )
-              OJDSystemSymbol(name: "arrow.right", fallback: "→")
+              OJDSystemSymbol(name: "arrow.right", fallback: "->")
               Text(RuntimePresentation.destinationLabel(sequence.destination))
               Spacer()
               removeButton { removeSequence(sequence.id) }
@@ -599,7 +599,7 @@
                 ForEach(layer.bindings) { binding in
                   HStack {
                     Text(RuntimePresentation.sourceLabel(binding.source))
-                    OJDSystemSymbol(name: "arrow.right", fallback: "→")
+                    OJDSystemSymbol(name: "arrow.right", fallback: "->")
                     Text(RuntimePresentation.destinationLabel(binding.destination))
                     Spacer()
                     if binding.axisTuning != nil {

@@ -528,7 +528,7 @@ install_full() {
       echo "  ✓ Sysext ${NEW_SHORT_VERSION} (${NEW_BUILD_VERSION}) activated after ${SYSEXT_ELAPSED}s"
       break
     fi
-    printf "  …waiting for sysext %s (%s) (%ds)\n" "$NEW_SHORT_VERSION" "$NEW_BUILD_VERSION" "$SYSEXT_ELAPSED"
+    printf "  ...waiting for sysext %s (%s) (%ds)\n" "$NEW_SHORT_VERSION" "$NEW_BUILD_VERSION" "$SYSEXT_ELAPSED"
   done
   if (( SYSEXT_ELAPSED >= SYSEXT_TIMEOUT )); then
     echo "  ⚠ Sysext ${NEW_SHORT_VERSION} (${NEW_BUILD_VERSION}) not activated after ${SYSEXT_TIMEOUT}s. Continuing anyway."
@@ -555,7 +555,7 @@ install_full() {
         echo "  ✓ Dext process detected after ${ELAPSED}s"
         break
       fi
-      printf "  …%ds\n" "$ELAPSED"
+      printf "  ...%ds\n" "$ELAPSED"
     done
     if (( ELAPSED >= TIMEOUT )); then
       echo "  ⚠ Timed out after ${TIMEOUT}s while an entitled Microsoft USB interface was connected."

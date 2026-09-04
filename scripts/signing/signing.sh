@@ -250,7 +250,7 @@ cmd_cert_info() {
 import sys, subprocess
 full = int(sys.argv[1]); path = sys.argv[2]
 def short(s: str) -> str:
-    return s if len(s) <= 12 else (s[:8] + "…" + s[-4:])
+    return s if len(s) <= 12 else (s[:8] + "..." + s[-4:])
 serial = subprocess.run(["openssl","x509","-inform","DER","-in",path,"-noout","-serial"],
     stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, check=True).stdout.strip().split("=", 1)[1]
 fp = subprocess.run(["openssl","x509","-inform","DER","-in",path,"-noout","-fingerprint","-sha1"],
@@ -310,7 +310,7 @@ def subject_rfc2253_of_der(der: bytes) -> str:
         try: os.unlink(tmp)
         except OSError: pass
 def short(s: str) -> str:
-    return s if len(s) <= 12 else (s[:8] + "…" + s[-4:])
+    return s if len(s) <= 12 else (s[:8] + "..." + s[-4:])
 for path in profiles:
     path = os.path.expanduser(path)
     base = os.path.basename(path)
@@ -383,7 +383,7 @@ with open(out_path, "wb") as f:
     f.write(certs[0])
 PY
   echo "Extracted embedded certificate to: $tmp"
-  echo "Importing into login keychain (Keychain may prompt)…"
+  echo "Importing into login keychain (Keychain may prompt)..."
   security import "$tmp" -k "$HOME/Library/Keychains/login.keychain-db" >/dev/null
   echo "Done."
   echo "Now run:"

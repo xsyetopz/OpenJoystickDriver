@@ -160,7 +160,7 @@
         switch viewModel.remappingState {
         case .loading:
           LoadingStateView(
-            message: OJDLocalized.string("profiles.loading", fallback: "Loading profiles…")
+            message: OJDLocalized.string("profiles.loading", fallback: "Loading profiles...")
           ).padding(.horizontal, 14)
         case .unavailable(let message), .error(let message):
           VStack(alignment: .leading, spacing: 6) {
@@ -233,7 +233,7 @@
         switch viewModel.remappingState {
         case .loading:
           LoadingStateView(
-            message: OJDLocalized.string("profiles.loading", fallback: "Loading profiles…")
+            message: OJDLocalized.string("profiles.loading", fallback: "Loading profiles...")
           ).padding(28)
         case .unavailable(let message):
           ServiceFailureStateView(

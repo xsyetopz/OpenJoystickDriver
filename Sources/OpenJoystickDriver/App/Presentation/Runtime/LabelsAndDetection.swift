@@ -262,7 +262,7 @@ enum RuntimePresentation {
       default:
         return OJDLocalized.string(
           "error.generic",
-          fallback: "OpenJoystickDriver couldn’t complete that action."
+          fallback: "OpenJoystickDriver couldn't complete that action."
         )
       }
     }
@@ -276,7 +276,7 @@ enum RuntimePresentation {
     case ApplicationServiceClientError.notConnected:
       return OJDLocalized.string(
         "error.notAvailable",
-        fallback: "OpenJoystickDriver isn’t available right now."
+        fallback: "OpenJoystickDriver isn't available right now."
       )
     case ApplicationServiceClientError.timeout:
       return OJDLocalized.string(
@@ -297,7 +297,7 @@ enum RuntimePresentation {
     default:
       return OJDLocalized.string(
         "error.generic",
-        fallback: "OpenJoystickDriver couldn’t complete that action."
+        fallback: "OpenJoystickDriver couldn't complete that action."
       )
     }
   }

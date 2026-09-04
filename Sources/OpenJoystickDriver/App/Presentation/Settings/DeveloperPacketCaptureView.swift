@@ -31,7 +31,7 @@
             Button(OJDLocalized.string("common.copyAll", fallback: "Copy All"), action: copyAll)
               .disabled(model.displayedPackets.isEmpty)
             Button(
-              OJDLocalized.string("common.export", fallback: "Export…"),
+              OJDLocalized.string("common.export", fallback: "Export..."),
               action: presentSavePanel
             ).disabled(model.packets.isEmpty)
           }
@@ -68,7 +68,7 @@
         statusLabel(OJDLocalized.string("developer.ready", fallback: "Ready"), symbol: "circle")
       case .starting:
         statusLabel(
-          OJDLocalized.string("developer.starting", fallback: "Starting…"),
+          OJDLocalized.string("developer.starting", fallback: "Starting..."),
           symbol: "clock"
         )
       case .capturing:

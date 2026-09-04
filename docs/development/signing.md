@@ -96,7 +96,7 @@ distribution environment:
 Representative DEXT signing command:
 
 ```bash
-codesign -s "Developer ID Application: …" -f --timestamp -o runtime \
+codesign -s "Developer ID Application: ..." -f --timestamp -o runtime \
   --entitlements Sources/DriverKitGenerator/Entitlements/XboxUSBDevice.entitlements \
   /path/to/com.openjoystickdriver.XboxUSBDevice.dext
 ```

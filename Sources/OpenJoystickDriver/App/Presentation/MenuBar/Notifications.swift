@@ -338,7 +338,7 @@
       case (.some(let previous), .some(let current)):
         return OJDLocalized.formatted(
           "notifications.profileSwitchedBody",
-          fallback: "%@ → %@",
+          fallback: "%@ -> %@",
           previous,
           current
         )

@@ -97,7 +97,7 @@
         ).ojdAccessibilityValue(RuntimePresentation.sourceLabel(binding.source))
 
         HStack(alignment: .firstTextBaseline, spacing: 7) {
-          OJDSystemSymbol(name: "arrow.right", fallback: "→").foregroundColor(
+          OJDSystemSymbol(name: "arrow.right", fallback: "->").foregroundColor(
             Color(NSColor.secondaryLabelColor)
           )
           Text(OJDLocalized.string("common.destination", fallback: "Destination")).font(.caption)

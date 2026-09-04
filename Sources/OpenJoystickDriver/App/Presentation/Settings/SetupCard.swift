@@ -51,11 +51,11 @@
 
     private var statusLabel: String {
       switch viewModel.systemExtensionSetupState {
-      case .checking: return OJDLocalized.string("setup.checking", fallback: "Checking…")
+      case .checking: return OJDLocalized.string("setup.checking", fallback: "Checking...")
       case .missingEmbedded, .invalid, .failed:
         return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
       case .needsActivation, .replacementNeeded:
-        return OJDLocalized.string("setup.activating", fallback: "Activating…")
+        return OJDLocalized.string("setup.activating", fallback: "Activating...")
       case .awaitingApproval:
         return OJDLocalized.string("setup.approvalNeeded", fallback: "Approval needed")
       case .active: return OJDLocalized.string("status.ready", fallback: "Ready")

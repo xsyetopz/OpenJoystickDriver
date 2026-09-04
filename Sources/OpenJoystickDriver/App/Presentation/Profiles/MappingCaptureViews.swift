@@ -162,7 +162,7 @@
           if let selector = selectedDeviceSelector {
             Button(
               isListening
-                ? OJDLocalized.string("capture.listeningButton", fallback: "Listening…")
+                ? OJDLocalized.string("capture.listeningButton", fallback: "Listening...")
                 : OJDLocalized.string("capture.listen", fallback: "Listen for control")
             ) { beginListening(for: selector) }.disabled(isListening)
           }

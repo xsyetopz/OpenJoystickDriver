@@ -149,8 +149,8 @@ swift test
   allow-any entitlement.
 - Do not assert human-readable message text in tests. Check return codes,
   exit statuses, command routes, identifiers, file paths, and structural
-  properties. Prose-text assertions (`assertIn("Error: …")`,
-  `#expect(help.contains("Output never…"))`) break every time a message is
+  properties. Prose-text assertions (`assertIn("Error: ...")`,
+  `#expect(help.contains("Output never..."))`) break every time a message is
   reworded and add no coverage.
 - Do not read source files and assert on literal substrings. Tests that call
   `String(contentsOf:)` on a `.swift` file and then `.contains(...)`-match

@@ -559,7 +559,7 @@
     private var updateStatusTitle: String {
       switch preferences.updateState {
       case .idle: return OJDLocalized.string("settings.updateIdle", fallback: "Check for updates")
-      case .checking: return OJDLocalized.string("settings.updateChecking", fallback: "Checking…")
+      case .checking: return OJDLocalized.string("settings.updateChecking", fallback: "Checking...")
       case .upToDate: return OJDLocalized.string("settings.upToDate", fallback: "Up to date")
       case .available:
         return OJDLocalized.string("settings.updateAvailable", fallback: "Update available")
@@ -577,7 +577,7 @@
           ApplicationVersion.current
         )
       case .checking:
-        return OJDLocalized.string("settings.contactingGitHub", fallback: "Contacting GitHub…")
+        return OJDLocalized.string("settings.contactingGitHub", fallback: "Contacting GitHub...")
       case .upToDate(let tag): return tag
       case .available(let info): return info.tagName
       case .failed(let message): return message
