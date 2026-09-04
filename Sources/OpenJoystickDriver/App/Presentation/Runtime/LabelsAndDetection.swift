@@ -245,8 +245,8 @@ enum RuntimePresentation {
       case .unsupportedLibraryVersion:
         return OJDLocalized.string(
           "error.profileLibraryVersion",
-          fallback:
-            "This profile library needs an update. Create a new profile or remove the old library file."
+          fallback: "This profile library needs an update. Create a new profile or remove the old "
+            + "library file."
         )
       case .corruptLibrary:
         return OJDLocalized.string(
