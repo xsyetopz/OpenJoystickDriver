@@ -2,51 +2,45 @@
 
 ## Use the app
 
-- [Choose a compatibility mode](user/compatibility.md)
-- [Set up or repair permissions](user/permissions.md)
-- [Understand Generic HID fallback](user/generic-hid.md)
+- [Compatibility](user/compatibility.md)
+- [Permissions](user/permissions.md)
+- [Generic HID](user/generic-hid.md)
 
 ## Test hardware
 
-- [Test physical output](testing/physical-output.md)
-- [Probe macOS haptics backends](testing/haptics-backends.md)
-- [Run the Browser Gamepad API manual-evidence probe](testing/browser-gamepad-api.md)
-- [Validate and test a controller record](testing/controller-record.md)
-- [Check Logitech F310 mapping](testing/logitech-f310.md)
-- [Check Microsoft Xbox One Controller (model 1537)](testing/xbox/1537.md)
-- [Check Razer Wolverine V2](testing/razer/wolverine-v2.md)
-- [Check Razer Wolverine V3 Tournament Edition](testing/razer/v3-te.md)
-- [Check Nacon Revolution X Pro](testing/nacon-revolution-x.md)
-- [Check Steam Controller input and output](testing/steam-controller.md)
-- [Check an Xbox 360 wireless receiver](testing/xbox-360-wireless-receiver.md)
-- [Capture Xbox Adaptive Joystick packets](testing/xbox-adaptive-joystick.md)
-- [Run the macOS 10.15 compatibility kit](testing/catalina-testkit.md)
+- [Physical output](testing/physical-output.md)
+- [Haptics backends](testing/haptics-backends.md)
+- [Browser Gamepad API](testing/browser-gamepad-api.md)
+- [Controller record](testing/controller-record.md)
+- [Logitech F310](testing/logitech-f310.md)
+- [Xbox One 1537](testing/xbox/1537.md)
+- [Razer Wolverine V2](testing/razer/wolverine-v2.md)
+- [Razer Wolverine V3 TE](testing/razer/v3-te.md)
+- [Nacon Revolution X Pro](testing/nacon-revolution-x.md)
+- [Steam Controller](testing/steam-controller.md)
+- [Xbox 360 wireless receiver](testing/xbox-360-wireless-receiver.md)
+- [Xbox Adaptive Joystick](testing/xbox-adaptive-joystick.md)
+- [macOS 10.15 kit](testing/catalina-testkit.md)
 
-## Develop and diagnose
+## Develop
 
 - [Architecture](development/architecture.md)
-- [Apple controller ownership and transport evidence](development/apple-controller-ownership.md)
+- [Localization](../LOCALIZATION.md)
+- [Apple controller ownership](development/apple-controller-ownership.md)
 - [Source topology](development/source-topology.md)
-- [Menu-bar and settings UI architecture](development/menu-bar-settings-architecture.md)
-- Generated USB DriverKit extension: run `./scripts/ojd driverkit generate` or
-  `./scripts/ojd check driverkit`.
-- Repository command reference and supported command index: run `./scripts/ojd help`.
-  Its output is catalog-backed, non-color, and keyboard-readable.
-- [CLI and runtime coverage](development/cli-and-runtime.md)
-- [Application service runtime health](development/application-service-health.md)
-- [Application responsiveness](development/application-responsiveness.md)
+- [Menu-bar UI](development/menu-bar-settings-architecture.md)
+- [CLI and runtime](development/cli-and-runtime.md)
+- [Runtime health](development/application-service-health.md)
+- [Responsiveness](development/application-responsiveness.md)
 - [Environment files](development/environment.md)
-- [Obtain and configure signing assets](development/signing.md)
+- [Signing](development/signing.md)
 - [Implementation status](development/implementation-status.md)
-- [Eight-issue and DriverKit audit](development/issue-audit.md)
-- [Experimental controller status](development/experimental-controllers.md)
-- [Import controller identities from Linux xpad](development/xpad-import.md)
-- [Compatibility source notes](development/compatibility-sources.md)
-- [Xbox fallback identity evidence](development/xbox-identities.md)
+- [Issue audit](development/issue-audit.md)
+- [Experimental controllers](development/experimental-controllers.md)
+- [xpad import](development/xpad-import.md)
+- [Compatibility sources](development/compatibility-sources.md)
+- [Xbox identities](development/xbox-identities.md)
+- DriverKit: `./scripts/ojd driverkit generate` / `./scripts/ojd check driverkit`
+- Commands: `./scripts/ojd help`
 
-## Archived sources
-
-- `external/OpenJoystickDriver/` contains GitHub issue snapshots.
-- `external/sdl/` contains SDL issue and pull-request snapshots.
-
-Archived files preserve upstream text and formatting. They are evidence, not project instructions.
+Evidence, not instructions: `docs/external/`.

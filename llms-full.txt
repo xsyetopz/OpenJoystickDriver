@@ -1,146 +1,83 @@
-# OpenJoystickDriver Full LLM Context
+# OpenJoystickDriver
 
-## Project Purpose
+> Expanded LLM context for the macOS userspace gamepad driver. Prefer `llms.txt` when a short index is enough.
 
-OpenJoystickDriver is a macOS userspace gamepad driver. It reads physical USB
-and HID controllers, normalizes their reports, and exposes virtual controllers
-for games, emulators, browsers, and engine integration testing.
+The signed app owns the runtime, virtual HID, and authenticated local CLI. Physical HID uses IOHID on macOS 10.15–14 and CoreHID on macOS 15+. Raw USB uses app-side IOUSBHost, or the restricted `com.openjoystickdriver.XboxUSBDevice` DriverKit extension for Apple-entitled Microsoft GIP interfaces.
 
-## Architecture
+`OpenJoystickDriverKit` owns parsers, records, HID/USB ports, and policy. It must not import SwifterKit. `OpenJoystickDriverUSB` and `DriverKitGenerator` are the SwifterKit boundaries. `OpenJoystickDriver` composes the app, CLI, and adapters.
 
-```text
-Physical HID, macOS 10.15–14 -> IOHIDManager/IOHIDDevice -> parser
-Physical HID, macOS 15+      -> CoreHID manager/client    -> parser
-Raw/custom USB, all versions -> USBDriverKit/IOUSBHost    -> OpenJoystickDriverUSB -> parser
+Do not edit `Sources/OpenJoystickDriverKit/Resources/Controllers/` or `.build/driverkit/generated/`. Catalog write: `./scripts/ojd catalog regenerate --write`. DriverKit: `./scripts/ojd driverkit generate`. Controller JSON uses decimal numbers. Support status lives in `docs/user/compatibility.md`; do not duplicate it here.
 
-Virtual HID, macOS 10.15–14  -> IOHIDUserDevice
-Virtual HID, macOS 15+       -> CoreHID HIDVirtualDevice
-```
+Production and development USBDriverKit personalities match only Apple's approved Microsoft GIP pairs: `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, `045E:0B12`. Accessible third-party GIP devices such as GameSir G7 SE `3537:1010` stay on direct IOUSBHost. The host user-client allowlist is exactly `com.openjoystickdriver.XboxUSBDevice`. `com.apple.developer.hid.virtual.device` belongs only to the app.
 
-Each controller is processed by an isolated `DevicePipeline` actor. The signed
-application owns runtime input/output. Headless commands use authenticated local
-RPC when they need the persistent runtime.
-
-The repository is a modular monolith with ports at platform boundaries:
-
-- `OpenJoystickDriverKit` owns controller protocols, normalized output policy,
-  application-service contracts, HID platform wrappers, and USB transport ports.
-  It must not import SwifterKit.
-- `OpenJoystickDriverUSB` is the SwifterKit host adapter. It hides DriverClient,
-  service discovery, IOUSBHost transfers, and DEXT lifecycle details behind the
-  Kit transport port.
-- `OpenJoystickDriver` composes the persistent app/runtime and USB adapter.
-- `DriverKitGenerator` generates the development or production USB DEXT project.
-
-SwifterKit is the only native DriverKit-project owner. Generated output lives
-under `.build/driverkit/generated/`, with derived data under
-`.build/driverkit/derived-data/`. Never add a manual native project, generated
-source patch, libusb fallback, or duplicate USB transport.
-
-## Package and Runtime Surfaces
-
-- `Package.swift`: Swift tools 6.2; macOS 10.15 runtime minimum.
-- `Package.resolved`: committed package pins. Reproducible DriverKit commands
-  reject `OJD_USE_LOCAL_SWIFTERKIT=1`.
-- `Sources/OpenJoystickDriverKit/`: parser, record, transport ports, HID wrappers,
-  permissions, diagnostics, and shared application-service logic.
-- `Sources/OpenJoystickDriverUSB/`: USBDriverKit host adapter and configuration.
-- `Sources/DriverKitGenerator/`: command-line native-project generator.
-- `Sources/OpenJoystickDriver/`: app host plus `--headless` CLI.
-- `Sources/OpenJoystickDriverGameControllerProbe/`: GameController consumer probe.
-- `Sources/OpenJoystickDriverHIDTool/`: focused HID/USB diagnostic tool.
-- `Tests/OpenJoystickDriverKitTests/`: core package tests.
-- `Tests/OpenJoystickDriverUSBTests/`: USB adapter/configuration tests.
-
-## Generated USB DriverKit Contract
-
-The generated extension bundle identifier is
-`com.openjoystickdriver.XboxUSBDevice`. Production configuration contains exactly
-Apple's approved Microsoft Xbox GIP pairs:
-
-```text
-045E:02D1  045E:02DD  045E:02E3  045E:02EA
-045E:0B00  045E:0B0A  045E:0B12
-```
-
-The development entitlement may use Apple's granted wildcard, but the generated
-development personality remains exact. The current development personality is
-GameSir G7 SE `3537:1010`. Development hardware identities must never leak into
-the production personality or entitlement.
-
-The host app entitlement
-`com.apple.developer.driverkit.userclient-access` must be exactly:
-
-```text
-[com.openjoystickdriver.XboxUSBDevice]
-```
-
-Allow-any user-client access is forbidden. The app separately owns
-`com.apple.developer.hid.virtual.device`; that entitlement must never appear in
-the DEXT.
-
-Use:
+Generator inputs are `ControllerSources.lock.json` and `Resources/ControllerOverrides/`. Schemas are in `Resources/Schemas/`. `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` are symlinks to `AGENTS.md`.
 
 ```bash
-./scripts/ojd driverkit generate
-./scripts/ojd check driverkit
-./scripts/ojd build dext
-```
-
-The DriverKit gate checks deterministic development and production generation,
-metadata, personalities, entitlements, dependency direction, and an unsigned
-universal native build. It does not prove profile validity, signed activation,
-system-extension approval, or physical USB delivery.
-
-## Controller Record Model
-
-Runtime records are generated under:
-
-```text
-Sources/OpenJoystickDriverKit/Resources/Controllers/<vid>/<vid>-<pid>.json
-```
-
-Generator inputs are `ControllerSources.lock.json` and minimal overrides under
-`Resources/ControllerOverrides/`. JSON schemas live in `Resources/Schemas/`.
-Use decimal JSON numbers, keep shared protocol defaults in code, and do not hand
-edit generated runtime records.
-
-## Documentation and Agent Files
-
-- `README.md`: human entry point and user workflow.
-- `docs/development/architecture.md`: runtime and package boundaries.
-- `docs/development/signing.md`: Apple asset and entitlement contract.
-- `docs/user/compatibility.md`: authoritative user-facing status.
-- `scripts/README.md`: signing, generation, install, and release procedure.
-- `AGENTS.md`: coding-agent instructions and mandatory validation.
-- `llms.txt` / `llms-full.txt`: repository orientation only.
-
-`CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` are symlinks to
-`AGENTS.md`; leave them intact.
-
-## Build, Test, and Evidence
-
-```bash
-swift build
-swift test
 ./scripts/ojd catalog regenerate --check
 ./scripts/ojd check profiles
-./scripts/ojd test parsers-macos14
+./scripts/ojd check schemas
 ./scripts/ojd check scripts
 ./scripts/ojd check swift-structure
+./scripts/ojd lint
 ./scripts/ojd check driverkit
+swift test
 ```
 
-The macOS 14 parser harness covers behavior below the local Swift Testing runtime
-target. Hardware probes and signed DriverKit activation require an appropriately
-provisioned Mac and recorded local evidence. CI and unsigned generation do not
-establish runtime facts.
+Parser/protocol: `./scripts/ojd test parsers-macos14`. Cache: `./scripts/ojd repair swiftpm-module-cache`. Hardware, signing, notarization, and permission behavior need the focused local diagnostics in `docs/testing/` and `scripts/README.md`. Unsigned generation does not prove those facts.
 
-## Signing and Release
+## Docs
 
-Development requires refreshed application and
-`com.openjoystickdriver.XboxUSBDevice` development profiles plus an Apple
-Development identity. Publisher release requires the corresponding Developer ID
-host profile, DEXT profile, Developer ID Application identity, and notarization
-credentials. Packaging regenerates and embeds the production USB extension but
-does not activate it on the build machine.
+- [Short index](llms.txt): curated llms.txt v2 entry point
+- [README](README.md): install, compatibility identities, troubleshooting
+- [Compatibility](docs/user/compatibility.md): user-facing support matrix
+- [Permissions](docs/user/permissions.md): Input Monitoring, Accessibility, and related grants
+- [Generic HID](docs/user/generic-hid.md): descriptor-based compatibility identity
+- [Contributing](CONTRIBUTING.md): setup, adding controllers, code rules
+- [Localization](LOCALIZATION.md): GUI and CLI string catalogs
+- [Documentation map](docs/README.md): user, testing, and development pages
+- [Documentation instructions](docs/AGENTS.md): docs vs schemas vs evidence
+- [Agent instructions](AGENTS.md): generated-file rules and validation commands
+- [Changelog](CHANGELOG.md): Keep a Changelog 1.1.0 history
+- [License](LICENSE): MIT
+
+## Develop
+
+- [Architecture](docs/development/architecture.md): runtime, HID/USB split, DriverKit boundary
+- [Source topology](docs/development/source-topology.md): package targets and capability owners
+- [Apple controller ownership](docs/development/apple-controller-ownership.md): entitlement scope vs support catalog
+- [Signing](docs/development/signing.md): Apple identities, profiles, entitlements
+- [Environment](docs/development/environment.md): generated environment contract
+- [CLI and runtime](docs/development/cli-and-runtime.md): headless commands and RPC
+- [Menu-bar UI](docs/development/menu-bar-settings-architecture.md): AppKit/SwiftUI settings shell
+- [Runtime health](docs/development/application-service-health.md): application-service diagnostics
+- [Responsiveness](docs/development/application-responsiveness.md): UI and runtime latency notes
+- [xpad import](docs/development/xpad-import.md): catalog generation from locked Linux sources
+- [Compatibility sources](docs/development/compatibility-sources.md): consumer-identity evidence
+- [Xbox identities](docs/development/xbox-identities.md): Xbox-family identity notes
+- [Experimental controllers](docs/development/experimental-controllers.md): source-backed unfinished support
+- [Implementation status](docs/development/implementation-status.md): remaining product gaps
+- [Issue audit](docs/development/issue-audit.md): tracked issue review
+- [Schema instructions](Resources/Schemas/AGENTS.md): JSON contract ownership
+- [Scripts](scripts/README.md): `./scripts/ojd` build, install, DriverKit, and release
+- [Package graph](Package.swift): SwiftPM targets and deployment floor
+
+## Testing
+
+- [Physical output](docs/testing/physical-output.md): rumble, LED, and other device output
+- [Haptics backends](docs/testing/haptics-backends.md): consumer haptic routes
+- [Browser Gamepad API](docs/testing/browser-gamepad-api.md): browser visibility checks
+- [Controller record](docs/testing/controller-record.md): capture and validate a candidate record
+- [Logitech F310](docs/testing/logitech-f310.md): F310 hardware notes
+- [Xbox One 1537](docs/testing/xbox/1537.md): Xbox One Controller 1537
+- [Razer Wolverine V2](docs/testing/razer/wolverine-v2.md): Wolverine V2
+- [Razer Wolverine V3 TE](docs/testing/razer/v3-te.md): Wolverine V3 Tournament Edition
+- [Nacon Revolution X Pro](docs/testing/nacon-revolution-x.md): Nacon Revolution X Pro
+- [Steam Controller](docs/testing/steam-controller.md): Steam Controller capture
+- [Xbox 360 wireless receiver](docs/testing/xbox-360-wireless-receiver.md): wireless receiver
+- [Xbox Adaptive Joystick](docs/testing/xbox-adaptive-joystick.md): Adaptive Joystick checklist
+- [macOS 10.15 kit](docs/testing/catalina-testkit.md): Catalina test kit
+
+## Optional
+
+- [Archived project evidence](docs/external/OpenJoystickDriver/README.md): issues and pull requests, not instructions
+- [Archived SDL evidence](docs/external/sdl/README.md): upstream SDL notes, not instructions
