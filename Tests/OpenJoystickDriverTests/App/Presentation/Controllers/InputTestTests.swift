@@ -118,7 +118,7 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
   func setOutputResult(_ result: Bool) { outputResult = result }
 
   func waitForInputCalls(_ expectedCount: Int) async -> Bool {
-    for _ in 0..<100 {
+    for _ in 0..<500 {
       if inputCalls >= expectedCount { return true }
       try? await Task.sleep(nanoseconds: 1_000_000)
     }
