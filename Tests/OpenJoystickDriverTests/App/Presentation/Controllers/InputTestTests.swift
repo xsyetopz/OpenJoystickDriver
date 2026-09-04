@@ -606,7 +606,7 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
     timeoutNanoseconds: UInt64 = 500_000_000,
     _ condition: @escaping @MainActor () -> Bool
   ) async {
-    let deadline = DispatchTime.now().uptimeNanoseconds + timeoutNanoseconds
+    let deadline = DispatchTime.now().uptimeNanoseconds &+ timeoutNanoseconds
     while !condition() {
       if DispatchTime.now().uptimeNanoseconds >= deadline { return }
       try? await Task.sleep(nanoseconds: 1_000_000)
