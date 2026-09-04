@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>已连接 %d 个控制器</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>已连接 %d 个控制器</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>已连接 %d 个控制器</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>已连接 %d 个控制器</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>已连接 %d 个控制器</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>已连接 %d 个控制器</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d 个活跃配置文件</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d 个活跃配置文件</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d 个活跃配置文件</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d 个活跃配置文件</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d 个活跃配置文件</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d 个活跃配置文件</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d 个映射</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d 个映射</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d 个映射</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d 个映射</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d 个映射</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d 个映射</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>未检测到</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>已检测到 %d 个</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>已检测到 %d 个</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>已检测到 %d 个</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>已检测到 %d 个</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>已检测到 %d 个</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>未检测到控制器输出设备</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>已检测到 %d 个控制器输出设备</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>已检测到 %d 个控制器输出设备</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>已检测到 %d 个控制器输出设备</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>已检测到 %d 个控制器输出设备</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>已检测到 %d 个控制器输出设备</string>
 		</dict>
 	</dict>
 </dict>

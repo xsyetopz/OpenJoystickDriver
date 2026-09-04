@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d krmilnik povezan</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d krmilnikov povezanih</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d krmilnika povezana</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d krmilniki povezani</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d krmilnikov povezanih</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d krmilnikov povezanih</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d aktiven profil</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d aktivnih profilov</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d aktivna profila</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d aktivni profili</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d aktivnih profilov</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d aktivnih profilov</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d dodelitev</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d dodelitev</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d dodelitvi</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d dodelitve</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d dodelitev</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d dodelitev</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Nič ni zaznano</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>Zaznano: %d</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>Zaznano: %d</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>Zaznano: %d</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>Zaznano: %d</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>Zaznano: %d</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Ni zaznanih izhodnih naprav krmilnika</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>Zaznana je %d izhodna naprava krmilnika</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>Zaznani sta %d izhodni napravi krmilnika</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>Zaznane so %d izhodne naprave krmilnika</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>Zaznanih je %d izhodnih naprav krmilnika</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>Zaznanih je %d izhodnih naprav krmilnika</string>
 		</dict>
 	</dict>
 </dict>

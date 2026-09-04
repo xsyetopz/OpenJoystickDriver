@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d stýring tengd</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d stýringar tengdar</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d stýringar tengdar</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d stýringar tengdar</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d stýringar tengdar</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d stýringar tengdar</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d virkt snið</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d virk snið</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d virk snið</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d virk snið</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d virk snið</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d virk snið</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d úthlutun</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d úthlutanir</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d úthlutanir</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d úthlutanir</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d úthlutanir</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d úthlutanir</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Ekkert greint</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>%d greint</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>%d greind</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>%d greind</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>%d greind</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>%d greind</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Engin úttakstæki stýringar greind</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>%d úttakstæki stýringar greint</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>%d úttakstæki stýringar greind</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>%d úttakstæki stýringar greind</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>%d úttakstæki stýringar greind</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>%d úttakstæki stýringar greind</string>
 		</dict>
 	</dict>
 </dict>

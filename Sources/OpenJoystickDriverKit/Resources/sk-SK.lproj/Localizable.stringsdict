@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d ovládač pripojený</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d ovládačov pripojených</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d ovládače pripojené</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d ovládače pripojené</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d ovládača pripojeného</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d ovládačov pripojených</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d aktívny profil</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d aktívnych profilov</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d aktívne profily</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d aktívne profily</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d aktívneho profilu</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d aktívnych profilov</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d priradenie</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d priradení</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d priradenia</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d priradenia</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d priradenia</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d priradení</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Nič nezistené</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>Zistené: %d</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>Zistené: %d</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>Zistené: %d</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>Zistené: %d</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>Zistené: %d</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Neboli zistené žiadne výstupné zariadenia ovládača</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>Zistené %d výstupné zariadenie ovládača</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>Zistené %d výstupné zariadenia ovládača</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>Zistené %d výstupné zariadenia ovládača</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>Zistené %d výstupného zariadenia ovládača</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>Zistených %d výstupných zariadení ovládača</string>
 		</dict>
 	</dict>
 </dict>

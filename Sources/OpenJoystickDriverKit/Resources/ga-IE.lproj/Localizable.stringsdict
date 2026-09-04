@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d rialtóir ceangailte</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d rialtóir ceangailte</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d rialtóir ceangailte</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d rialtóirí ceangailte</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d rialtóir ceangailte</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d rialtóir ceangailte</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d phróifíl ghníomhach</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d próifíl ghníomhach</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d phróifíl ghníomhach</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d phróifíl ghníomhacha</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d próifíl ghníomhach</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d próifíl ghníomhach</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d sannadh</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d sannadh</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d shannadh</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d sannaidh</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d sannadh</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d sannadh</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Níor braitheadh dada</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>Braitheadh %d</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>Braitheadh %d</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>Braitheadh %d</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>Braitheadh %d</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>Braitheadh %d</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Níor braitheadh aon ghléas aschuir rialtóra</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>Braitheadh %d gléas aschuir rialtóra</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>Braitheadh %d ghléas aschuir rialtóra</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>Braitheadh %d ghléas aschuir rialtóra</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>Braitheadh %d ngléas aschuir rialtóra</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>Braitheadh %d gléas aschuir rialtóra</string>
 		</dict>
 	</dict>
 </dict>

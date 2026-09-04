@@ -1,15 +1,12 @@
 import Foundation
 
-/// Resolves user-facing strings from the Kit-owned localization resources.
+/// Resolves packaged `Localizable` strings and plurals for the app and CLI.
 ///
-/// The application target uses this bridge for AppKit-owned text, SwiftUI text
-/// that needs an eagerly resolved `String`, and accessibility/help copy. The
-/// bundle is deliberately owned by the Kit target so the app and its nested
-/// resource bundle cannot drift apart.
+/// Kit owns the resource bundle so the app cannot ship a second catalog.
 public struct Localization: @unchecked Sendable {
   public static let sourceLocalization = "en-US"
 
-  /// The package resource bundle, exposed for deterministic product/resource tests.
+  /// SwiftPM resource bundle. Tests pin this instead of `Bundle.main`.
   public static var moduleBundle: Bundle { .module }
 
   private let localizationNames: [String]
@@ -41,8 +38,7 @@ public struct Localization: @unchecked Sendable {
     }
   }
 
-  /// Returns the best available translation, falling back to `defaultValue`
-  /// (or the key itself) when a table does not contain the requested entry.
+  /// Best packaged translation for `key`, then `defaultValue`, then the key.
   public func string(_ key: String, defaultValue: String? = nil, comment: String = "") -> String {
     let fallback = defaultValue ?? key
     guard let preferredBundle else { return fallback }
@@ -56,8 +52,7 @@ public struct Localization: @unchecked Sendable {
     )
     guard value == fallback, !isSourceLanguage else { return value }
 
-    // A partially translated locale should fall back to the source English
-    // resource rather than exposing a key or an empty label.
+    // Incomplete locale: prefer source English over a raw key.
     guard let sourceBundle = sourceEnglishBundle, sourceBundle !== preferredBundle else {
       return value
     }
@@ -70,12 +65,8 @@ public struct Localization: @unchecked Sendable {
     )
   }
 
-  /// Resolves a native Foundation plural resource and formats it with `count`.
-  ///
-  /// The resource must be a `Localizable.stringsdict` entry whose format key
-  /// references a plural variable (for example `%#@count@`). Foundation then
-  /// selects the locale's CLDR category (`one`, `few`, `many`, `zero`, and so
-  /// on) instead of making the caller guess from `count == 1`.
+  /// Formats `count` through a `Localizable.stringsdict` plural (`%#@count@`).
+  /// Foundation picks the CLDR category; callers should not branch on `count == 1`.
   public func plural(_ key: String, count: Int, defaultValue: String? = nil, comment: String = "")
     -> String
   {
@@ -95,9 +86,7 @@ public struct Localization: @unchecked Sendable {
       return Self.format(value, count: count, locale: formattingLocale)
     }
 
-    // A partially translated locale may omit the plural entry. Resolve the
-    // source-English resource before formatting so the caller never receives
-    // a key or a raw `%#@count@` format string.
+    // Incomplete locale: format source English, not a raw `%#@count@` string.
     guard let sourceBundle = sourceEnglishBundle else {
       return Self.format(value, count: count, locale: formattingLocale)
     }
@@ -111,8 +100,7 @@ public struct Localization: @unchecked Sendable {
     return Self.format(sourceValue, count: count, locale: formattingLocale)
   }
 
-  /// Formats a localized string with the user's locale while preserving the
-  /// placeholder types authored in the source catalog.
+  /// Formats with the user's locale. Placeholder types stay those in the source catalog.
   public func string(_ key: String, _ arguments: CVarArg...) -> String {
     formatted(key, arguments: arguments)
   }
@@ -152,9 +140,7 @@ public struct Localization: @unchecked Sendable {
       .sorted()
   }
 
-  /// Returns the keys in a packaged `.strings` table. This is intentionally a
-  /// resource-level API for tests and release diagnostics, not a source-text
-  /// inspection path.
+  /// Keys in a packaged `.strings` table. For tests and diagnostics, not source inspection.
   public static func catalogKeys(
     for localization: String = sourceLocalization,
     bundle: Bundle? = nil
@@ -165,9 +151,7 @@ public struct Localization: @unchecked Sendable {
     return keys
   }
 
-  /// Returns placeholder signatures (`%@`, `%d`, and so on) for a packaged
-  /// table. Comparing signatures catches a translation that drops or changes
-  /// a value placeholder while allowing natural word order per locale.
+  /// Placeholder tokens (`%@`, `%d`, ...) per key. Word order may differ; signatures must not.
   public static func catalogPlaceholderSignatures(
     for localization: String = sourceLocalization,
     bundle: Bundle? = nil
@@ -183,8 +167,7 @@ public struct Localization: @unchecked Sendable {
     return result
   }
 
-  /// Returns the category keys in each packaged plural resource. This keeps
-  /// structural validation independent from the prose of a translation.
+  /// Plural category keys per resource. Structural check; ignores translation prose.
   public static func catalogPluralCategories(
     for localization: String = sourceLocalization,
     bundle: Bundle? = nil

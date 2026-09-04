@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d controller conectat</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d controllere conectate</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d controllere conectate</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d controllere conectate</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d de controllere conectate</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d de controllere conectate</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d profil activ</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d profiluri active</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d profiluri active</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d profiluri active</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d de profiluri active</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d de profiluri active</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d atribuire</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d atribuiri</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d atribuiri</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d atribuiri</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d de atribuiri</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d de atribuiri</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Niciunul detectat</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>%d detectat</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>%d detectate</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>%d detectate</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>%d detectate</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>%d detectate</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Nu s-a detectat niciun dispozitiv de ieșire de controller</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>%d dispozitiv de ieșire de controller detectat</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>%d dispozitive de ieșire de controller detectate</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>%d dispozitive de ieșire de controller detectate</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>%d de dispozitive de ieșire de controller detectate</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>%d de dispozitive de ieșire de controller detectate</string>
 		</dict>
 	</dict>
 </dict>

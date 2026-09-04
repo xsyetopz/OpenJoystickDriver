@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>컨트롤러 %d대 연결됨</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>컨트롤러 %d대 연결됨</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>컨트롤러 %d대 연결됨</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>컨트롤러 %d대 연결됨</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>컨트롤러 %d대 연결됨</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>컨트롤러 %d대 연결됨</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>활성 프로파일 %d개</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>활성 프로파일 %d개</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>활성 프로파일 %d개</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>활성 프로파일 %d개</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>활성 프로파일 %d개</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>활성 프로파일 %d개</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>할당 %d개</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>할당 %d개</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>할당 %d개</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>할당 %d개</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>할당 %d개</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>할당 %d개</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>감지된 항목 없음</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>%d개 감지됨</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>%d개 감지됨</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>%d개 감지됨</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>%d개 감지됨</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>%d개 감지됨</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>감지된 컨트롤러 출력 기기 없음</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>컨트롤러 출력 기기 %d대 감지됨</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>컨트롤러 출력 기기 %d대 감지됨</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>컨트롤러 출력 기기 %d대 감지됨</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>컨트롤러 출력 기기 %d대 감지됨</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>컨트롤러 출력 기기 %d대 감지됨</string>
 		</dict>
 	</dict>
 </dict>

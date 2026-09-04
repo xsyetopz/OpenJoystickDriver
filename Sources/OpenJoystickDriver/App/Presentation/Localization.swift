@@ -1,6 +1,7 @@
 import Foundation
 import OpenJoystickDriverKit
 
+// App UI lookup into Kit Localization. Catalog policy is in LOCALIZATION.md.
 enum OJDLocalized {
   private static let resolver = Localization()
 

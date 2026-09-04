@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d وحدة تحكم متصلة</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d وحدة تحكم متصلة</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d وحدتا تحكم متصلتان</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d وحدات تحكم متصلة</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d وحدة تحكم متصلة</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d وحدة تحكم متصلة</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d ملف تعريف نشط</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d ملف تعريف نشط</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d ملفا تعريف نشطان</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d ملفات تعريف نشطة</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d ملف تعريف نشطاً</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d ملف تعريف نشط</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d تعيين</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d تعيين</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d تعيينان</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d تعيينات</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d تعييناً</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d تعيين</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>لم يُكتشف شيء</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>اكتُشف %d</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>اكتُشف %d</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>اكتُشف %d</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>اكتُشف %d</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>اكتُشف %d</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>لم تُكتشف أجهزة إخراج لوحدة التحكم</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>اكتُشف %d جهاز إخراج لوحدة التحكم</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>اكتُشف %d جهازا إخراج لوحدة التحكم</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>اكتُشفت %d أجهزة إخراج لوحدة التحكم</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>اكتُشف %d جهاز إخراج لوحدة التحكم</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>اكتُشف %d جهاز إخراج لوحدة التحكم</string>
 		</dict>
 	</dict>
 </dict>

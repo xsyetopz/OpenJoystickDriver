@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>コントローラが%d台接続されています</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>コントローラが%d台接続されています</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>コントローラが%d台接続されています</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>コントローラが%d台接続されています</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>コントローラが%d台接続されています</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>コントローラが%d台接続されています</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>アクティブなプロファイル: %d</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>アクティブなプロファイル: %d</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>アクティブなプロファイル: %d</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>アクティブなプロファイル: %d</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>アクティブなプロファイル: %d</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>アクティブなプロファイル: %d</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>割り当て %d件</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>割り当て %d件</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>割り当て %d件</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>割り当て %d件</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>割り当て %d件</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>割り当て %d件</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>検出なし</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>%d件検出</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>%d件検出</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>%d件検出</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>%d件検出</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>%d件検出</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>コントローラ出力デバイスは検出されませんでした</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>コントローラ出力デバイスが%d台検出されました</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>コントローラ出力デバイスが%d台検出されました</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>コントローラ出力デバイスが%d台検出されました</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>コントローラ出力デバイスが%d台検出されました</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>コントローラ出力デバイスが%d台検出されました</string>
 		</dict>
 	</dict>
 </dict>

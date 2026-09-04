@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d կարգավորիչ միացված է</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d կարգավորիչ միացված է</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d կարգավորիչ միացված է</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d կարգավորիչ միացված է</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d կարգավորիչ միացված է</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d կարգավորիչ միացված է</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d ակտիվ պրոֆիլ</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d ակտիվ պրոֆիլ</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d ակտիվ պրոֆիլ</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d ակտիվ պրոֆիլ</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d ակտիվ պրոֆիլ</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d ակտիվ պրոֆիլ</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d նշանակում</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d նշանակում</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d նշանակում</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d նշանակում</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d նշանակում</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d նշանակում</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Ոչինչ չի հայտնաբերվել</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>Հայտնաբերվել է %d</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>Հայտնաբերվել է %d</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>Հայտնաբերվել է %d</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>Հայտնաբերվել է %d</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>Հայտնաբերվել է %d</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Կարգավորիչի ելքային սարքեր չեն հայտնաբերվել</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>Հայտնաբերվել է կարգավորիչի %d ելքային սարք</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>Հայտնաբերվել է կարգավորիչի %d ելքային սարք</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>Հայտնաբերվել է կարգավորիչի %d ելքային սարք</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>Հայտնաբերվել է կարգավորիչի %d ելքային սարք</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>Հայտնաբերվել է կարգավորիչի %d ելքային սարք</string>
 		</dict>
 	</dict>
 </dict>

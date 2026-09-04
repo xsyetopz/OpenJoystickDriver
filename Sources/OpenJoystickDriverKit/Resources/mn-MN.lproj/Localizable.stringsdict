@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d удирдлага холбогдсон</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d удирдлага холбогдсон</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d удирдлага холбогдсон</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d удирдлага холбогдсон</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d удирдлага холбогдсон</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d удирдлага холбогдсон</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d идэвхтэй профайл</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d идэвхтэй профайл</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d идэвхтэй профайл</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d идэвхтэй профайл</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d идэвхтэй профайл</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d идэвхтэй профайл</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d оноолт</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d оноолт</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d оноолт</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d оноолт</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d оноолт</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d оноолт</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Юу ч илрээгүй</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>%d илрүүлсэн</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>%d илрүүлсэн</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>%d илрүүлсэн</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>%d илрүүлсэн</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>%d илрүүлсэн</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Удирдлагын гаралтын төхөөрөмж илрээгүй</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>%d удирдлагын гаралтын төхөөрөмж илрүүлсэн</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>%d удирдлагын гаралтын төхөөрөмж илрүүлсэн</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>%d удирдлагын гаралтын төхөөрөмж илрүүлсэн</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>%d удирдлагын гаралтын төхөөрөмж илрүүлсэн</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>%d удирдлагын гаралтын төхөөрөмж илрүүлсэн</string>
 		</dict>
 	</dict>
 </dict>

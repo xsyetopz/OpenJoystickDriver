@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d kontroler podłączony</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d kontrolerów podłączonych</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d kontrolery podłączone</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d kontrolery podłączone</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d kontrolerów podłączonych</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d kontrolera podłączonego</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d aktywny profil</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d aktywnych profili</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d aktywne profile</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d aktywne profile</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d aktywnych profili</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d aktywnego profilu</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d przypisanie</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d przypisań</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d przypisania</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d przypisania</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d przypisań</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d przypisania</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Nic nie wykryto</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>Wykryto %d</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>Wykryto %d</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>Wykryto %d</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>Wykryto %d</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>Wykryto %d</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Nie wykryto urządzeń wyjściowych kontrolera</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>Wykryto %d urządzenie wyjściowe kontrolera</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>Wykryto %d urządzenia wyjściowe kontrolera</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>Wykryto %d urządzenia wyjściowe kontrolera</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>Wykryto %d urządzeń wyjściowych kontrolera</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>Wykryto %d urządzenia wyjściowego kontrolera</string>
 		</dict>
 	</dict>
 </dict>

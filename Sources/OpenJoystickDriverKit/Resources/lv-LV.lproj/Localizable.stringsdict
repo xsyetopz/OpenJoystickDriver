@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>Pievienots %d kontrolieris</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>Pievienoti %d kontrolieru</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>Pievienoti %d kontrolieri</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>Pievienoti %d kontrolieri</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>Pievienoti %d kontrolieru</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>Pievienoti %d kontrolieru</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d aktīvs profils</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d aktīvu profilu</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d aktīvi profili</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d aktīvi profili</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d aktīvu profilu</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d aktīvu profilu</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d piešķīrums</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d piešķīrumu</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d piešķīrumi</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d piešķīrumi</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d piešķīrumu</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d piešķīrumu</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Nekas nav noteikts</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>Noteikts %d</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>Noteikti %d</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>Noteikti %d</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>Noteikti %d</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>Noteikti %d</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Nav noteikta neviena kontroliera izvades ierīce</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>Noteikta %d kontroliera izvades ierīce</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>Noteiktas %d kontroliera izvades ierīces</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>Noteiktas %d kontroliera izvades ierīces</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>Noteiktas %d kontroliera izvades ierīču</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>Noteiktas %d kontroliera izvades ierīču</string>
 		</dict>
 	</dict>
 </dict>

@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>Aginte %d konektatuta</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d aginte konektatuta</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d aginte konektatuta</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d aginte konektatuta</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d aginte konektatuta</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d aginte konektatuta</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>Profil aktibo %d</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d profil aktibo</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d profil aktibo</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d profil aktibo</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d profil aktibo</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d profil aktibo</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>Esleipen %d</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d esleipen</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d esleipen</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d esleipen</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d esleipen</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d esleipen</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Ez da ezer detektatu</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>%d detektatu da</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>%d detektatu dira</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>%d detektatu dira</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>%d detektatu dira</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>%d detektatu dira</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Ez da aginte-irteerako gailurik detektatu</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>Aginte-irteerako gailu %d detektatu da</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>%d aginte-irteerako gailu detektatu dira</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>%d aginte-irteerako gailu detektatu dira</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>%d aginte-irteerako gailu detektatu dira</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>%d aginte-irteerako gailu detektatu dira</string>
 		</dict>
 	</dict>
 </dict>

@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d controller tilsluttet</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d controllere tilsluttet</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d controllere tilsluttet</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d controllere tilsluttet</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d controllere tilsluttet</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d controllere tilsluttet</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d aktiv profil</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d aktive profiler</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d aktive profiler</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d aktive profiler</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d aktive profiler</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d aktive profiler</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d tildeling</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d tildelinger</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d tildelinger</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d tildelinger</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d tildelinger</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d tildelinger</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Ingen registreret</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>%d registreret</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>%d registreret</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>%d registreret</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>%d registreret</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>%d registreret</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Ingen controlleroutputenheder registreret</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>%d controlleroutputenhed registreret</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>%d controlleroutputenheder registreret</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>%d controlleroutputenheder registreret</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>%d controlleroutputenheder registreret</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>%d controlleroutputenheder registreret</string>
 		</dict>
 	</dict>
 </dict>

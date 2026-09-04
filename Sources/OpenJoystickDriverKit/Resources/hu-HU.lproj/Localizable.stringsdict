@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d vezérlő csatlakoztatva</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d vezérlő csatlakoztatva</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d vezérlő csatlakoztatva</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d vezérlő csatlakoztatva</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d vezérlő csatlakoztatva</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d vezérlő csatlakoztatva</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d aktív profil</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d aktív profil</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d aktív profil</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d aktív profil</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d aktív profil</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d aktív profil</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d hozzárendelés</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d hozzárendelés</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d hozzárendelés</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d hozzárendelés</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d hozzárendelés</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d hozzárendelés</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Nincs észlelve</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>%d észlelve</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>%d észlelve</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>%d észlelve</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>%d észlelve</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>%d észlelve</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Nincs észlelt vezérlőkimeneti eszköz</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>%d vezérlőkimeneti eszköz észlelve</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>%d vezérlőkimeneti eszköz észlelve</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>%d vezérlőkimeneti eszköz észlelve</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>%d vezérlőkimeneti eszköz észlelve</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>%d vezérlőkimeneti eszköz észlelve</string>
 		</dict>
 	</dict>
 </dict>

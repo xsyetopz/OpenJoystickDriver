@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d کنترلر وصل است</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d کنترلر وصل است</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d کنترلر وصل است</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d کنترلر وصل است</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d کنترلر وصل است</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d کنترلر وصل است</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d نمایه فعال</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d نمایه فعال</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d نمایه فعال</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d نمایه فعال</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d نمایه فعال</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d نمایه فعال</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d تخصیص</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d تخصیص</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d تخصیص</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d تخصیص</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d تخصیص</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d تخصیص</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>چیزی شناسایی نشد</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>%d شناسایی شد</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>%d شناسایی شد</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>%d شناسایی شد</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>%d شناسایی شد</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>%d شناسایی شد</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>دستگاه خروجی کنترلری شناسایی نشد</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>%d دستگاه خروجی کنترلر شناسایی شد</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>%d دستگاه خروجی کنترلر شناسایی شد</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>%d دستگاه خروجی کنترلر شناسایی شد</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>%d دستگاه خروجی کنترلر شناسایی شد</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>%d دستگاه خروجی کنترلر شناسایی شد</string>
 		</dict>
 	</dict>
 </dict>

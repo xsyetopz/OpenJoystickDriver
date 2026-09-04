@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d कंट्रोलर कनेक्ट है</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d कंट्रोलर कनेक्ट हैं</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d कंट्रोलर कनेक्ट हैं</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d कंट्रोलर कनेक्ट हैं</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d कंट्रोलर कनेक्ट हैं</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d कंट्रोलर कनेक्ट हैं</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d सक्रिय प्रोफ़ाइल</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d सक्रिय प्रोफ़ाइल</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d सक्रिय प्रोफ़ाइल</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d सक्रिय प्रोफ़ाइल</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d सक्रिय प्रोफ़ाइल</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d सक्रिय प्रोफ़ाइल</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d असाइनमेंट</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d असाइनमेंट</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d असाइनमेंट</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d असाइनमेंट</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d असाइनमेंट</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d असाइनमेंट</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>कुछ नहीं मिला</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>%d पहचाना गया</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>%d पहचाने गए</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>%d पहचाने गए</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>%d पहचाने गए</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>%d पहचाने गए</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>कोई कंट्रोलर आउटपुट डिवाइस नहीं मिला</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>%d कंट्रोलर आउटपुट डिवाइस पहचाना गया</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>%d कंट्रोलर आउटपुट डिवाइस पहचाने गए</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>%d कंट्रोलर आउटपुट डिवाइस पहचाने गए</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>%d कंट्रोलर आउटपुट डिवाइस पहचाने गए</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>%d कंट्रोलर आउटपुट डिवाइस पहचाने गए</string>
 		</dict>
 	</dict>
 </dict>

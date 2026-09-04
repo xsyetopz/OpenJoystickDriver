@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d manette connectée</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d manettes connectées</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d manettes connectées</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d manettes connectées</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d manettes connectées</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d manettes connectées</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d profil actif</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d profils actifs</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d profils actifs</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d profils actifs</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d profils actifs</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d profils actifs</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d attribution</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d attributions</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d attributions</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d attributions</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d attributions</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d attributions</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Aucun détecté</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>%d détecté</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>%d détectés</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>%d détectés</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>%d détectés</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>%d détectés</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Aucun périphérique de sortie de manette détecté</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>%d périphérique de sortie de manette détecté</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>%d périphériques de sortie de manette détectés</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>%d périphériques de sortie de manette détectés</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>%d périphériques de sortie de manette détectés</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>%d périphériques de sortie de manette détectés</string>
 		</dict>
 	</dict>
 </dict>

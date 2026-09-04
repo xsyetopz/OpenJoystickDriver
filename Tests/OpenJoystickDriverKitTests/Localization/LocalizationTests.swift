@@ -89,6 +89,18 @@ struct LocalizationTests {
     #expect(missing == "Source fallback")
   }
 
+  @Test func translatedLocalesDoNotKeepTheSourceRefreshLabel() {
+    let source = Localization(preferredLanguages: ["en-US"]).string(
+      "common.refresh",
+      defaultValue: "Refresh"
+    )
+    for language in ["de-DE", "fr-FR", "es-ES", "ja-JP", "zh-CN", "ar-SA"] {
+      let resolver = Localization(preferredLanguages: [language, "en-US"])
+      #expect(resolver.resolvedLanguage?.lowercased() == language.lowercased())
+      #expect(resolver.string("common.refresh", defaultValue: "Refresh") != source)
+    }
+  }
+
   @Test func incompleteLocaleFallsBackToSourceEnglishResource() throws {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(
       "OpenJoystickDriverLocalization-\(UUID().uuidString).bundle"

@@ -1,6 +1,7 @@
 import Foundation
 import OpenJoystickDriverKit
 
+// Headless CLI lookup into the same Kit catalog as the app UI.
 enum CLILocalized {
   private static let resolver = Localization()
 

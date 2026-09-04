@@ -757,6 +757,10 @@
 "keyboard.space" = "Space";
 "keyboard.tab" = "Tab";
 "keyboard.upArrow" = "Up Arrow";
+"keyboard.command" = "Command";
+"keyboard.control" = "Control";
+"keyboard.option" = "Option";
+"keyboard.shift" = "Shift";
 "mapping.automatic" = "Automatic";
 "setup.activating" = "Activating...";
 "setup.activeDetail" = "The restricted Xbox USB driver is installed and ready.";

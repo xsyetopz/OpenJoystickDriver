@@ -13,17 +13,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d controller connected</string>
+			<string>%d контроллер подключён</string>
 			<key>zero</key>
-			<string>%d controllers connected</string>
+			<string>%d контроллеров подключено</string>
 			<key>two</key>
-			<string>%d controllers connected</string>
+			<string>%d контроллера подключено</string>
 			<key>few</key>
-			<string>%d controllers connected</string>
+			<string>%d контроллера подключено</string>
 			<key>many</key>
-			<string>%d controllers connected</string>
+			<string>%d контроллеров подключено</string>
 			<key>other</key>
-			<string>%d controllers connected</string>
+			<string>%d контроллера подключено</string>
 		</dict>
 	</dict>
 	<key>status.activeProfilesCount</key>
@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d active profile</string>
+			<string>%d активный профиль</string>
 			<key>zero</key>
-			<string>%d active profiles</string>
+			<string>%d активных профилей</string>
 			<key>two</key>
-			<string>%d active profiles</string>
+			<string>%d активных профиля</string>
 			<key>few</key>
-			<string>%d active profiles</string>
+			<string>%d активных профиля</string>
 			<key>many</key>
-			<string>%d active profiles</string>
+			<string>%d активных профилей</string>
 			<key>other</key>
-			<string>%d active profiles</string>
+			<string>%d активного профиля</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d assignment</string>
+			<string>%d назначение</string>
 			<key>zero</key>
-			<string>%d assignments</string>
+			<string>%d назначений</string>
 			<key>two</key>
-			<string>%d assignments</string>
+			<string>%d назначения</string>
 			<key>few</key>
-			<string>%d assignments</string>
+			<string>%d назначения</string>
 			<key>many</key>
-			<string>%d assignments</string>
+			<string>%d назначений</string>
 			<key>other</key>
-			<string>%d assignments</string>
+			<string>%d назначения</string>
 		</dict>
 	</dict>
 	<key>debug.devices</key>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>None detected</string>
+			<string>Ничего не обнаружено</string>
 			<key>one</key>
-			<string>%d detected</string>
+			<string>Обнаружено: %d</string>
 			<key>two</key>
-			<string>%d detected</string>
+			<string>Обнаружено: %d</string>
 			<key>few</key>
-			<string>%d detected</string>
+			<string>Обнаружено: %d</string>
 			<key>many</key>
-			<string>%d detected</string>
+			<string>Обнаружено: %d</string>
 			<key>other</key>
-			<string>%d detected</string>
+			<string>Обнаружено: %d</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,17 +109,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No controller output devices detected</string>
+			<string>Устройства вывода контроллера не обнаружены</string>
 			<key>one</key>
-			<string>%d controller output device detected</string>
+			<string>Обнаружено %d устройство вывода контроллера</string>
 			<key>two</key>
-			<string>%d controller output devices detected</string>
+			<string>Обнаружено %d устройства вывода контроллера</string>
 			<key>few</key>
-			<string>%d controller output devices detected</string>
+			<string>Обнаружено %d устройства вывода контроллера</string>
 			<key>many</key>
-			<string>%d controller output devices detected</string>
+			<string>Обнаружено %d устройств вывода контроллера</string>
 			<key>other</key>
-			<string>%d controller output devices detected</string>
+			<string>Обнаружено %d устройства вывода контроллера</string>
 		</dict>
 	</dict>
 </dict>
