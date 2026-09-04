@@ -16,7 +16,7 @@ mkdir -p "$CACHE_DIR"
 mkdir -p "$MODULE_CACHE_DIR"
 
 cat > "$HARNESS_DIR/Package.swift" <<PACKAGE_SWIFT
-// swift-tools-version:6.3
+// swift-tools-version:6.3.0
 import PackageDescription
 
 let package = Package(

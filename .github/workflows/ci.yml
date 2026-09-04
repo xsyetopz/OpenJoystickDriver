@@ -20,7 +20,7 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 45
     env:
-      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
       OJD_USE_LOCAL_SWIFTERKIT: "0"
     steps:
       - name: Checkout
@@ -32,6 +32,7 @@ jobs:
           xcrun --find swiftc
           swift --version
           xcodebuild -version || true
+          swift --version | grep -F "Swift version 6.3.3"
 
       - name: Remove unused untrusted Homebrew taps
         run: |

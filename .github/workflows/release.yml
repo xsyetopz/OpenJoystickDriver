@@ -20,7 +20,7 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 360
     env:
-      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
       OJD_USE_LOCAL_SWIFTERKIT: "0"
     steps:
       - name: Resolve release tag

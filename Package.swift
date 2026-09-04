@@ -1,4 +1,4 @@
-// swift-tools-version:6.3
+// swift-tools-version:6.3.0
 import Foundation
 import PackageDescription
 
