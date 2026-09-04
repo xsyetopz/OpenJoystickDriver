@@ -315,17 +315,11 @@ extension ApplicationServiceServer {
   }
 
   private func performResetSettingsAsync() async -> Bool {
-    let accepted = await performCompatibilityIdentityTransition(
+    await performCompatibilityIdentityTransition(
       to: .automatic,
       force: true,
       removePersistedIdentityOnCommit: true
     )
-    if accepted {
-      UserDefaults.standard.removeObject(forKey: "UserSpaceVirtualDeviceEnabled")
-      UserDefaults.standard.removeObject(forKey: "OutputMode")
-      UserDefaults.standard.removeObject(forKey: "VirtualDeviceMode")
-    }
-    return accepted
   }
 
   func getRemappingSnapshot(

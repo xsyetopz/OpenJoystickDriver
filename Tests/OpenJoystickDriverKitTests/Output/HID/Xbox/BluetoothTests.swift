@@ -87,18 +87,6 @@ struct XboxOneHIDReportFormatTests {
     #expect(parsed.fields.contains { $0.reportID == 1 && $0.usagePage == 0x0C && $0.usage == 0xB2 })
     #expect(buttonUsages.count == 15)
   }
-  @Test func testLegacyXboxOneDescriptorDoesNotAdvertiseShare() throws {
-    let parsed = try #require(
-      HIDReportDescriptorParser.parse(descriptor: XboxOneBluetoothHIDDescriptor.descriptor)
-    )
-    let format = try HIDDescriptorReportFormat(
-      descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
-      buttonUsageMap: XboxOneBluetoothHIDDescriptor.buttonUsageMap
-    )
-
-    #expect(!parsed.fields.contains { $0.usagePage == 0x0C && $0.usage == 0xB2 })
-    #expect(format.buildInputReport(from: VirtualGamepadState()).count == 16)
-  }
   @Test func testMapsShareIndependentlyFromView() throws {
     let neutral = try format().buildInputReport(from: VirtualGamepadState())
     let view = try report(buttonBit: GamepadHIDDescriptor.ButtonBit.back.rawValue)

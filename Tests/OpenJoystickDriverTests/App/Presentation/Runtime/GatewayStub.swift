@@ -140,6 +140,10 @@ actor GatewayStub: ApplicationServiceGateway {
     PermissionManager.Snapshot(inputMonitoring: .granted, accessibility: .granted)
   }
 
+  func requestPermission(_ requirement: PermissionManager.Requirement) throws
+    -> PermissionManager.Snapshot
+  { try requestPermissions() }
+
   func deviceInputState(for selector: RuntimeDeviceSelector) async throws -> DeviceInputState? {
     lastInputSelector = selector
     if let runtimeIdentifier = selector.runtimeIdentifier {

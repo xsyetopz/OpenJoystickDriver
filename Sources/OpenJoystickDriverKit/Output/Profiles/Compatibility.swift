@@ -51,7 +51,6 @@ public enum CompatibilityConsumerFamily: String, Codable, Sendable {
   case chromiumGamepad
   case webkitGamepad
   case geckoGamepad
-  case xboxOneHID
   case xbox360HID
   case unknown
 }
@@ -118,7 +117,7 @@ public enum CompatibilityProfileAvailabilityPolicy {
     case .sdl2_3, .xbox360HID:
       return subfamily == .xbox360
         ? .available : .unavailable(reason: .xbox360IdentityRequiresXbox360Family)
-    case .appleGameController, .xoneHID:
+    case .appleGameController:
       return subfamily == .xboxGIP
         ? .available : .unavailable(reason: .xboxOneIdentityRequiresXboxGIPFamily)
     }
@@ -277,22 +276,6 @@ public enum CompatibilityOutputProfileCatalog {
           .appleGameController: .sourceBacked, .chromiumGamepad: .reportedFailure
         ]
       )
-    case .xoneHID:
-      return CompatibilityOutputProfile(
-        identity: identity,
-        deviceProfile: .xboxOneS,
-        displayName: "Xbox One HID (legacy)",
-        notes: "Source-backed Xbox One Bluetooth-shaped generic-HID compatibility tuple; "
-          + "not XInputHID, XUSB, or GIP; consumer input and rumble require live testing.",
-        isHardwareSpoof: true,
-        emitsXboxGuideReport: true,
-        evidence: .sourceBacked,
-        consumerFamily: .xboxOneHID,
-        evidenceByConsumer: [
-          .xboxOneHID: .sourceBacked, .sdlHIDAPI: .reportedFailure,
-          .appleGameController: .sourceBacked
-        ]
-      )
     case .xbox360HID:
       return CompatibilityOutputProfile(
         identity: identity,
@@ -336,13 +319,6 @@ public enum CompatibilityOutputCompositionFactory {
         outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize,
         buttonUsageMap: XboxOneBluetoothHIDDescriptor.buttonUsageMap,
         digitalUsageMap: XboxOneBluetoothHIDDescriptor.seriesDigitalUsageMap
-      )
-    case .xoneHID:
-      format = try HIDDescriptorReportFormat(
-        descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
-        outputReportID: VirtualRumbleOutputReportParser.xboxOneReportID,
-        outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize,
-        buttonUsageMap: XboxOneBluetoothHIDDescriptor.buttonUsageMap
       )
     case .xbox360HID: format = Xbox360MacHIDReportFormat(topLevelUsage: 0x05)
     }

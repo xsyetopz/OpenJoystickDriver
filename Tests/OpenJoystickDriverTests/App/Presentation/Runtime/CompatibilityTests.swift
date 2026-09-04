@@ -608,7 +608,7 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     #expect(status.compatibilityLabel == "Apple GameController")
   }
 
-  @Test func rpcRejectsLegacyIdentityWithoutChangingRuntimeOrPersistence() async {
+  @Test func rpcRejectsUnknownIdentityWithoutChangingRuntimeOrPersistence() async {
     let defaults = UserDefaults.standard
     let key = ApplicationServiceServer.compatibilityIdentityDefaultsKey
     let priorRawValue = defaults.object(forKey: key)
@@ -658,6 +658,47 @@ private final class ConcurrentFactoryProbe: @unchecked Sendable {
     #expect(server.userSpaceEnabled == priorRuntimeEnabled)
     #expect(server.currentUserSpaceStatus() == priorRuntimeStatus)
     #expect(defaults.string(forKey: key) == CompatibilityIdentity.appleGameController.rawValue)
+  }
+
+  @Test func serverInitSanitizesUnknownPersistedIdentityToAutomatic() {
+    let defaults = UserDefaults.standard
+    let key = ApplicationServiceServer.compatibilityIdentityDefaultsKey
+    let priorRawValue = defaults.object(forKey: key)
+    defaults.set("xone-hid", forKey: key)
+    defer {
+      if let priorRawValue {
+        defaults.set(priorRawValue, forKey: key)
+      } else {
+        defaults.removeObject(forKey: key)
+      }
+    }
+
+    let permissionManager = PermissionManager()
+    let dispatcher = CompatibilityOutputDispatcher()
+    let profileLibrary = RemappingProfileLibrary()
+    let postEventAccess = CoreGraphicsPostEventAccess()
+    let remappingEngine = RemappingEventEngine(
+      sink: CoreGraphicsSystemInputSink(access: postEventAccess)
+    )
+    let remappingRouter = RemappingOutputRouter(
+      library: profileLibrary,
+      engine: remappingEngine,
+      compatibility: dispatcher,
+      foregroundApplication: WorkspaceRemappingForegroundApplication(),
+      postEventAccess: postEventAccess
+    )
+    let server = ApplicationServiceServer(
+      deviceManager: DeviceManager(dispatcher: remappingRouter),
+      permissionManager: permissionManager,
+      dispatcher: dispatcher,
+      remappingProfileLibrary: profileLibrary,
+      remappingRouter: remappingRouter,
+      postEventAccess: postEventAccess,
+      initializeCompatibilityBackend: false
+    )
+
+    #expect(server.compatibilityIdentity == .automatic)
+    #expect(defaults.string(forKey: key) == CompatibilityIdentity.automatic.rawValue)
   }
 
   @Test func rpcAcceptsCurrentIdentityWithoutReplacingTheLiveBackend() async {

@@ -30,10 +30,8 @@ input but no dependable rumble.
 Use only to test native applications that read `GCController`. This selectable
 route uses the Xbox Series Bluetooth tuple `045E:0B13`. Its primary input report
 includes the Consumer Record usage that GameController.framework exposes as
-`GCXboxGamepad.buttonShare`. View and Share remain separate inputs. It is a
-separate consumer intent from the legacy `xone-hid` generic-HID profile;
-selecting it does not republish the foreground identity or create a second
-virtual device.
+`GCXboxGamepad.buttonShare`. View and Share remain separate inputs. Selecting
+it does not republish the foreground identity or create a second virtual device.
 
 GameController clients control macOS controller gestures. If an app leaves a
 gesture enabled, macOS may delay View or reserve Guide and Share. The OJD probe
@@ -55,17 +53,6 @@ Use only for a consumer that needs the OJD Xbox 360-family HID descriptor and
 report shape. This is a generic HID compatibility profile, not Windows XUSB or
 XInputHID emulation. It uses the OJD Xbox 360 HID report format and remains
 research-only until a named consumer is tested.
-
-### `xone-hid` (legacy)
-
-Retained for persisted configurations and existing callers. It publishes the
-legacy Xbox One Bluetooth-shaped generic-HID tuple `045E:02FD`; it is not
-XInputHID, XUSB, or GIP emulation and is not recommended for new selections.
-Input, Guide, reconnect, and report-3 rumble remain live-test requirements.
-The Xbox One Bluetooth `045E:02FD` tuple is source-backed/experimental. The
-reported BT1/BT2 SDL HIDAPI attempts produced no usable input, so this route is
-not recommended for SDL. Apple GameController remains a separate live test,
-not an inference from enumeration.
 
 Set an explicit identity from the installed CLI:
 
@@ -103,8 +90,9 @@ persist that temporary choice.
 - Raw and vendor-specific USB controllers use direct IOUSBHost when macOS permits app ownership.
   Entitlement-restricted models require OJD's signed USB DriverKit extension.
 - `045E:0B13` is used only for the explicit Apple GameController route.
-- The legacy `xone-hid` route keeps `045E:02FD`; its SDL BT1/BT2 attempts are a
-  reported failure.
+- Earlier Xbox One Bluetooth `045E:02FD` spoof experiments reported no usable
+  SDL HIDAPI input and are gone from selectable identities; unknown persisted
+  identity strings sanitize to `automatic` on load.
   `9886:0024` is hardware-verified only for SDL HIDAPI-style consumers.
 - No virtual HID VID/PID universally supplies Windows XInput/GIP semantics on
   macOS. Consumer identity, descriptor, transport, and report behavior must
@@ -152,7 +140,7 @@ the same family differently.
 | Xbox GIP, other modes | 🔬 no verified adjacent tuple | ⚠️ Xbox Series profile; test each controller | Generic HID; no ASTRO substitution |
 | Xbox 360 physical family | 🔬 no verified adjacent tuple | ⚠️ separate test | Generic HID |
 | XInputHID/XUSB wire protocol | ❌ no macOS emulation claim | ❌ no macOS emulation claim | Generic HID |
-| Xbox One Bluetooth `045E:02FD` | 🧪 BT1/BT2 reported no SDL input | 🔬 legacy `xone-hid` only | Generic HID for automatic SDL |
+| Xbox One Bluetooth `045E:02FD` | 🧪 BT1/BT2 reported no SDL input; route retired | 🔬 use `apple-gamecontroller` or `generic-hid` | Generic HID |
 | Nintendo Switch Pro | 🔬 no adjacent verified route | 🔬 no adjacent verified route | Generic HID |
 | PlayStation DS4/DS5 | 🔬 official tuple required | 🔬 official tuple required | Generic HID unless tuple is proven |
 | Other | 🔬 no cross-family spoof | 🔬 no cross-family spoof | Generic HID |

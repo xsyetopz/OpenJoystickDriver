@@ -8,7 +8,7 @@ A product name is not enough to create a safe spoof identity. Each selectable id
 4. hardware evidence for GameController.framework claims.
 
 The consumer family is part of the identity contract: SDL/HIDAPI, Apple
-GameController, Xbox One-shaped generic HID, and generic HID are not interchangeable. A
+GameController, Xbox 360-family generic HID, and generic HID are not interchangeable. A
 successful enumeration or identity lookup never promotes a route to working.
 
 Linux `xpad.c` identifies physical devices for Linux. It does not prove that a macOS virtual HID device can impersonate them.
@@ -22,13 +22,10 @@ Xbox-to-PlayStation, Nintendo-to-Xbox, or PlayStation-to-Xbox shortcut.
 
 ### Xbox Wireless Controller
 
-OJD has the source-backed `xone-hid` path at `045e:02fd`, matching the Xbox One
-S Bluetooth identity, product name, Bluetooth transport metadata, descriptor,
-input report, Guide report, and report-3 decoder. It remains subject to live
-consumer and hardware checks.
-The reported Xbox One Bluetooth BT1/BT2 attempts produced no usable SDL
-HIDAPI input; record this as reported failure for SDL, while keeping Apple
-GameController separately testable.
+OJD does not ship a selectable Xbox One Bluetooth-shaped generic-HID spoof.
+Earlier `045e:02fd` / BT1/BT2 experiments produced no usable SDL HIDAPI input and
+were retired. Use `apple-gamecontroller` (`045e:0b13`) for GameController.framework
+tests, or `generic-hid` when no specialized adjacent identity applies.
 
 ### Xbox Wired Controller
 

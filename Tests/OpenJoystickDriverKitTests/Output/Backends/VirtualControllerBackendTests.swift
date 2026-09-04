@@ -33,33 +33,24 @@ struct VirtualControllerBackendTests {
     #expect(CompatibilityIdentity(rawValue: "generic-hid") == .genericHID)
     #expect(CompatibilityIdentity(rawValue: "sdl2-3") == .sdl2_3)
     #expect(CompatibilityIdentity(rawValue: "apple-gamecontroller") == .appleGameController)
-    #expect(CompatibilityIdentity(rawValue: "xone-hid") == .xoneHID)
+    #expect(CompatibilityIdentity(rawValue: "xone-hid") == nil)
     #expect(CompatibilityIdentity(rawValue: "xbox360-hid") == .xbox360HID)
-    #expect(!CompatibilityIdentity.allCases.contains(.xoneHID))
     #expect(CompatibilityIdentity.allCases.contains(.xbox360HID))
+    #expect(CompatibilityIdentity.allCases.count == 5)
 
     #expect(CompatibilityIdentity(rawValue: "not-a-profile") == nil)
   }
 
-  @Test func legacyPersistedIdentityStillSelectsLegacyBackend() throws {
-    let decoded = try #require(CompatibilityIdentity(rawValue: "xone-hid"))
-    let profile = CompatibilityOutputProfileCatalog.profile(for: decoded)
-    let composition = try CompatibilityOutputCompositionFactory.make(identity: decoded)
+  @Test func unknownPersistedIdentitySanitizesToAutomatic() {
+    let persistence = CompatibilityIdentity.persisted(from: "xone-hid")
 
-    #expect(decoded == .xoneHID)
-    #expect(profile.identity == .xoneHID)
-    #expect(composition.profile.identity == .xoneHID)
+    #expect(persistence.identity == .automatic)
+    #expect(persistence.didRewrite)
   }
 
-  @Test func legacyIdentityDecodesButIsRejectedForNewMutation() throws {
-    let decoded = try #require(CompatibilityIdentity(rawValue: "xone-hid"))
-    let decision = decoded.mutationDecision()
-
-    #expect(decoded == .xoneHID)
-    #expect(decision == .rejected(.legacyIdentityNotSelectable))
+  @Test func unknownIdentityIsRejectedForNewMutation() {
     #expect(
-      CompatibilityIdentity.mutationDecision(for: "xone-hid")
-        == .rejected(.legacyIdentityNotSelectable)
+      CompatibilityIdentity.mutationDecision(for: "xone-hid") == .rejected(.unknownIdentity)
     )
   }
 
@@ -90,7 +81,6 @@ struct VirtualControllerBackendTests {
     let generic = CompatibilityOutputProfileCatalog.profile(for: .genericHID)
     let sdl = CompatibilityOutputProfileCatalog.profile(for: .sdl2_3)
     let apple = CompatibilityOutputProfileCatalog.profile(for: .appleGameController)
-    let xone = CompatibilityOutputProfileCatalog.profile(for: .xoneHID)
     let xbox360 = CompatibilityOutputProfileCatalog.profile(for: .xbox360HID)
 
     #expect(generic.deviceProfile.productID == 0x4449)
@@ -103,11 +93,8 @@ struct VirtualControllerBackendTests {
     #expect(sdl.isHardwareSpoof)
     #expect(apple.isHardwareSpoof)
     #expect(sdl.deviceProfile.productName == "ASTRO C40 TR Controller")
-    #expect(xone.isHardwareSpoof)
-    #expect(xone.emitsXboxGuideReport)
     #expect(!apple.emitsXboxGuideReport)
     #expect(apple.evidence == .sourceBacked)
-    #expect(xone.evidence == .sourceBacked)
     #expect(sdl.evidence == .hardwareVerified)
     #expect(generic.consumerFamily == .genericHID)
     #expect(sdl.consumerFamily == .sdlHIDAPI)
@@ -115,9 +102,6 @@ struct VirtualControllerBackendTests {
     #expect(!apple.automaticallyRecommended)
     #expect(apple.consumerFamily == .appleGameController)
     #expect(apple.evidenceByConsumer[.chromiumGamepad] == .reportedFailure)
-    #expect(xone.consumerFamily == .xboxOneHID)
-    #expect(xone.evidenceByConsumer[.sdlHIDAPI] == .reportedFailure)
-    #expect(xone.evidenceByConsumer[.appleGameController] == .sourceBacked)
     #expect(xbox360.deviceProfile == .xbox360Wired)
     #expect(xbox360.consumerFamily == .xbox360HID)
     #expect(xbox360.displayName == "Xbox 360 HID")
@@ -237,20 +221,14 @@ struct VirtualControllerBackendTests {
 
   @Test func compatibilityFactoryKeepsProtocolTuplesAtomic() throws {
     let apple = try CompatibilityOutputCompositionFactory.make(identity: .appleGameController)
-    let xone = try CompatibilityOutputCompositionFactory.make(identity: .xoneHID)
     let astro = try CompatibilityOutputCompositionFactory.make(identity: .sdl2_3)
     let xbox360 = try CompatibilityOutputCompositionFactory.make(identity: .xbox360HID)
 
     #expect(apple.profile.deviceProfile == .xboxSeries)
-    #expect(xone.profile.deviceProfile == .xboxOneS)
     #expect(apple.format.descriptor == XboxOneBluetoothHIDDescriptor.seriesDescriptor)
-    #expect(xone.format.descriptor == XboxOneBluetoothHIDDescriptor.descriptor)
     #expect(apple.format.inputReportID == 1)
-    #expect(xone.format.inputReportID == 1)
     #expect(apple.format.outputReportID == VirtualRumbleOutputReportParser.xboxOneReportID)
-    #expect(xone.format.outputReportID == VirtualRumbleOutputReportParser.xboxOneReportID)
     #expect(!apple.profile.emitsXboxGuideReport)
-    #expect(xone.profile.emitsXboxGuideReport)
     #expect(astro.profile.deviceProfile == .sdlHIDAPIXbox360)
     #expect(astro.format.descriptor == Xbox360MacHIDReportFormat().descriptor)
     #expect(xbox360.profile.deviceProfile == .xbox360Wired)
@@ -272,14 +250,8 @@ struct VirtualControllerBackendTests {
     }
 
     #expect(dispatcher.buttonBit(for: .share) == 15)
-    #expect(dispatcher.buttonBit(for: .genericButton1) == 16)
-    #expect(dispatcher.buttonBit(for: .genericButton2) == 17)
-    #expect(dispatcher.buttonBit(for: .genericButton3) == 18)
-    #expect(dispatcher.buttonBit(for: .genericButton4) == 19)
-    #expect(dispatcher.buttonBit(for: .genericButton5) == 20)
-    #expect(dispatcher.buttonBit(for: .genericButton6) == 21)
-    #expect(dispatcher.buttonBit(for: .genericButton7) == 22)
-    #expect(dispatcher.buttonBit(for: .genericButton8) == 23)
+    #expect(dispatcher.buttonBit(for: .mute) == nil)
+    #expect(dispatcher.buttonBit(for: .touchpad) == nil)
   }
 
   @Test func testGenericReportDpadButtonPolicy() {
@@ -408,7 +380,7 @@ struct VirtualControllerBackendTests {
 
   @Test func testXboxOneCompatibilityFormatDeclaresRumbleOutputSize() throws {
     let format = try HIDDescriptorReportFormat(
-      descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
+      descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor,
       outputReportID: VirtualRumbleOutputReportParser.xboxOneReportID,
       outputReportPayloadSize: VirtualRumbleOutputReportParser.xboxOneReportPayloadSize
     )
@@ -635,7 +607,7 @@ struct VirtualControllerBackendTests {
 
   @Test func testXboxGIPCompatibilityFormatAdvertisesFullOutputSize() throws {
     let format = try HIDDescriptorReportFormat(
-      descriptor: XboxOneBluetoothHIDDescriptor.descriptor,
+      descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor,
       outputReportID: VirtualRumbleOutputReportParser.xboxGIPReportID,
       outputReportPayloadSize: VirtualRumbleOutputReportParser
         .xboxGIPReportPayloadSizeWithoutReportID
@@ -682,18 +654,19 @@ struct VirtualControllerBackendTests {
     let apple = Xbox360MacHIDReportFormat(topLevelUsage: UInt8(kHIDUsage_GD_GamePad))
       .buildInputReport(from: VirtualGamepadState())
     let x360 = Xbox360MacHIDReportFormat().buildInputReport(from: VirtualGamepadState())
-    let xone = try HIDDescriptorReportFormat(descriptor: XboxOneBluetoothHIDDescriptor.descriptor)
-      .buildInputReport(from: VirtualGamepadState())
+    let xone = try HIDDescriptorReportFormat(
+      descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor
+    )
+    .buildInputReport(from: VirtualGamepadState())
 
     #expect(generic == [UInt8](repeating: 0, count: generic.count))
     #expect(sdl == [UInt8](repeating: 0, count: sdl.count))
     #expect(Array(apple.dropFirst(2)) == [UInt8](repeating: 0, count: apple.count - 2))
     #expect(Array(x360.dropFirst(2)) == [UInt8](repeating: 0, count: x360.count - 2))
     #expect(xone[0] == 1)
-    #expect(xone[13] == 0x00)
     #expect(xone[14] == 0x00)
-    #expect(xone[15] == 0x00)
-    #expect(xone.count == 16)
+    #expect(xone[16] == 0x00)
+    #expect(xone.count == 17)
   }
 
   @Test func userSpaceCreationErrorsDistinguishPermissionFromEntitlementAndCreation() {

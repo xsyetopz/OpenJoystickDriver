@@ -8,7 +8,6 @@ behavior before changing identities:
 swift build --package-path tools/haptics-backend-probe
 swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try force-feedback
 swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try gamecontroller --pulse
-swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try xbox-one-hid
 swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try sdl2-3
 ```
 
@@ -60,7 +59,7 @@ GameSir G7 SE (`3537:1010`) using OJD's raw USB GIP transport:
 | Exact ASTRO SDL HIDAPI Xbox 360 | The `sdl2-3` profile published `9886:0024` and exposed its eight-byte output report | Input and physical rumble worked. |
 | Microsoft Xbox One S Bluetooth revision 1 | Probe published `045E:02E0` with Bluetooth transport and the matching descriptor | LED and application discovery worked, but input did not; rumble was unavailable. |
 | Microsoft Xbox One S Bluetooth revision 2 | Probe published `045E:02FD` with Bluetooth transport and the matching descriptor | LED and application discovery worked, but input did not; rumble was unavailable. |
-| Historical Xbox One HID experiment | Pre-current `xone-hid` experiment published `045E:02EA` and exposed output report 3 | LED stayed on and PCSX2 Nightly no longer crashed, but input and rumble did not work. This is historical evidence, not the current `xone-hid` tuple. |
+| Historical Xbox One HID experiment | Retired probe/identity experiments published `045E:02EA` / `045E:02FD` Bluetooth-shaped HID tuples | LED and discovery sometimes worked, but usable input and rumble did not. Historical evidence only; no live product route remains. |
 
 These results apply to this controller, OS, consumer, and OJD build. They show
 that exact HIDAPI-compatible reports are the working cross-application path for

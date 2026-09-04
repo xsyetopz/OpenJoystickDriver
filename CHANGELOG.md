@@ -4,14 +4,6 @@
 
 _2026-09-04_
 
-- Removed the obsolete `xone-hid` / Xbox One HID compatibility identity and its
-  probe route. Unknown persisted identity values sanitize to `automatic` on
-  load. Use `generic-hid`, `sdl2-3`, `apple-gamecontroller`, or `xbox360-hid`.
-- Removed leftover product compatibility shims: named retired-identity registry,
-  no-Share Xbox One Bluetooth descriptor fixture, Xbox360 deprecated-name
-  source-compatibility tests, and gateway protocol permission fallback defaults.
-- Collapsed remapping profile/library contracts to a single live schema version
-  (equality with `currentSchemaVersion` only; no supported-version sets).
 - Extra buttons are mapped from packets, not from a catalog of named roles.
   GameSir-style 32-byte GIP reports emit Share from payload byte 15 (under
   Guide). DualSense Mute stays packet-mapped. Unclassified extras stay omitted.
@@ -19,20 +11,11 @@ _2026-09-04_
   subsystem deviations only: `shareOffset`, d-pad/trigger/stick packing, and
   parser-scoped capability markers). Diagnostic mode remains a catalog-backed
   host recipe; none are live until the exact packet is an operational fact.
-- Removed remaining staging/compat shims: script `rebuild`/`rebuild-fast`/
-  top-level `bump-version`/`notarize`/`package release` aliases, stale
-  UserDefaults key discards, remapping schema v1 acceptance, soft
-  `discoverySource` decode default, and AppKit `NS*Template` icon fallback maps.
-- Routed human-facing GUI and CLI product copy through the shared localization
-  catalog (`OJDLocalized` / `CLILocalized`), expanded the packaged key set, and
-  kept non-English locales on explicit English fallbacks except reviewed
-  `et-EE` translations of the prior key set.
-- Softened product-facing wording toward plain English (no agent-style
-  self-narration in menus, settings, and CLI help/errors).
-
+- Collapsed remapping profile/library contracts to a single live schema version
+  (equality with `currentSchemaVersion` only; no supported-version sets).
 - Corrected compatibility guidance to model consumer family and evidence
   separately: ASTRO C40 `9886:0024` remains SDL/PCSX2/Steam-specific, Xbox One
-  Bluetooth `045E:02FD` spoof experiments are retired after reported BT1/BT2
+  Bluetooth `045E:02FD` is not an SDL recommendation after reported BT1/BT2
   no-input results, and C40 PS4 `9886:0025` is research-only.
 - Automatic compatibility now persists an `automatic` intent and resolves only
   catalog-backed physical modes with adjacent evidence; unrelated families and
@@ -66,10 +49,10 @@ _2026-09-04_
 - Release/tester provenance now records app and DEXT build-version domains
   separately; the release scripts were migrated to concise stdlib-only Python
   with obsolete shell wrappers removed.
-- Recorded historical Xbox One Bluetooth `045E:02FD` / BT1/BT2 SDL HIDAPI
-  no-input results as retired experiments. Automatic SDL routing returns Generic
-  HID; live Apple GameController checks remain separate via
-  `apple-gamecontroller`.
+- Retained the source-backed `045E:02FD` tuple for explicit Xbox/Apple research
+  routes, while recording the reported BT1/BT2 SDL HIDAPI no-input result as a
+  consumer-specific failure. Automatic SDL routing therefore returns Generic
+  HID; live Apple GameController checks remain separate.
 - Preserved the hardware-verified ASTRO C40 Xbox-mode `9886:0024` SDL default,
   as an explicit SDL/PCSX2/Steam-like route only; automatic routing does not
   substitute it for GIP, XInput, XUSB, Nintendo, or PlayStation families.

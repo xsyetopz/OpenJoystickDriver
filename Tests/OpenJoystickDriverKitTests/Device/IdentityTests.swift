@@ -112,7 +112,7 @@ struct DeviceIdentifierTests {
     #expect(decoded.discoverySource == .hid)
   }
 
-  @Test func applicationServiceDeviceDescriptionDefaultsLegacyDiscoverySourceToUnknown() throws {
+  @Test func applicationServiceDeviceDescriptionRequiresDiscoverySource() throws {
     let description = ApplicationServiceDeviceDescription(
       name: "Controller",
       vendorID: 0x045E,
@@ -126,12 +126,12 @@ struct DeviceIdentifierTests {
     var object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
     object.removeValue(forKey: "discoverySource")
 
-    let decoded = try JSONDecoder().decode(
-      ApplicationServiceDeviceDescription.self,
-      from: JSONSerialization.data(withJSONObject: object)
-    )
-
-    #expect(decoded.discoverySource == .unknown)
+    #expect(throws: DecodingError.self) {
+      try JSONDecoder().decode(
+        ApplicationServiceDeviceDescription.self,
+        from: JSONSerialization.data(withJSONObject: object)
+      )
+    }
   }
 
   private func assertOpaqueExactToken(_ token: String, privateIdentity: String) throws {

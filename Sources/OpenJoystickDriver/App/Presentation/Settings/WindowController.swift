@@ -76,7 +76,6 @@
       )
       window.contentMinSize = initialMinimumSize
       window.hidesOnDeactivate = false
-      // Keep the production geometry separate from the retired oversized shell.
       window.setFrameAutosaveName("SettingsWindowGeometry")
       window.title = navigation.selectedPane.title
       window.isReleasedWhenClosed = false

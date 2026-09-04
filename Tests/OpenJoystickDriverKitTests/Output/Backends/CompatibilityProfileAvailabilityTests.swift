@@ -8,7 +8,7 @@ struct CompatibilityProfileAvailabilityTests {
     .playStationDS5, .playStationOther, .other
   ]
   private let identities: [CompatibilityIdentity] = [
-    .automatic, .genericHID, .sdl2_3, .appleGameController, .xoneHID, .xbox360HID
+    .automatic, .genericHID, .sdl2_3, .appleGameController, .xbox360HID
   ]
 
   @Test func everyPhysicalFamilyHasTheExpectedIdentityMatrix() {
@@ -26,7 +26,7 @@ struct CompatibilityProfileAvailabilityTests {
           expected =
             subfamily == .xbox360
             ? .available : .unavailable(reason: .xbox360IdentityRequiresXbox360Family)
-        case .appleGameController, .xoneHID:
+        case .appleGameController:
           expected =
             subfamily == .xboxGIP
             ? .available : .unavailable(reason: .xboxOneIdentityRequiresXboxGIPFamily)

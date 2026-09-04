@@ -50,22 +50,4 @@ public enum XboxOneBluetoothHIDDescriptor {
     0x91, 0x02, 0xC0, 0x85, 0x04, 0x05, 0x06, 0x09, 0x20, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08,
     0x95, 0x01, 0x81, 0x02, 0xC0
   ]
-
-  /// Xbox One S Bluetooth descriptor used by the legacy `xone-hid` profile.
-  public static let descriptor: [UInt8] = {
-    var bytes = seriesDescriptor
-    guard
-      let start = bytes.indices.first(where: { index in
-        let end = index + seriesShareInput.count
-        return end <= bytes.count && Array(bytes[index..<end]) == seriesShareInput
-      })
-    else { preconditionFailure("Xbox Series Share input is missing from its HID descriptor") }
-    bytes.removeSubrange(start..<(start + seriesShareInput.count))
-    return bytes
-  }()
-
-  private static let seriesShareInput: [UInt8] = [
-    0x05, 0x0C, 0x0A, 0xB2, 0x00, 0x15, 0x00, 0x25, 0x01, 0x95, 0x01, 0x75, 0x01, 0x81, 0x02, 0x15,
-    0x00, 0x25, 0x00, 0x75, 0x07, 0x95, 0x01, 0x81, 0x03
-  ]
 }

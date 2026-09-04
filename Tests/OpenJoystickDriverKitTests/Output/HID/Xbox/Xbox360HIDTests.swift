@@ -3,21 +3,6 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-@available(*, deprecated) private func legacyXbox360TypealiasesCompile() -> (Int, Int) {
-  (
-    Xbox360XUSBDirectInputHIDDescriptor.descriptor.count,
-    Xbox360XUSBDirectInputReportFormat().inputReportPayloadSize
-  )
-}
-
-struct Xbox360CompatibilityMigrationTests {
-  @Test func deprecatedXbox360NamesRemainSourceCompatible() {
-    let (descriptorLength, reportLength) = legacyXbox360TypealiasesCompile()
-    #expect(descriptorLength > 0)
-    #expect(reportLength == 13)
-  }
-}
-
 struct Xbox360HIDReportFormatTests {
   private func format() -> Xbox360DirectInputReportFormat { Xbox360DirectInputReportFormat() }
 

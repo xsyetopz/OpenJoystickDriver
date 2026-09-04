@@ -32,16 +32,6 @@ protocol ApplicationServiceGateway: Sendable {
   func setCompatibilityIdentity(_ identity: CompatibilityIdentity) async throws -> Bool
 }
 
-extension ApplicationServiceGateway {
-  /// Compatibility fallback for lightweight test gateways and older in-process hosts.
-  ///
-  /// Production gateways override this with the typed RPC below.
-  func requestPermission(_ requirement: PermissionManager.Requirement) async throws
-    -> PermissionManager.Snapshot
-  { try await requestPermissions() }
-
-  func packetLog(for selector: RuntimeDeviceSelector) throws -> [PacketLogEntry] { [] }
-}
 
 enum ApplicationServiceGatewayError: Error, LocalizedError, Sendable, Equatable {
   case invalidCompatibilityIdentity(String)

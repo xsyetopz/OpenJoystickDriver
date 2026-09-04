@@ -289,13 +289,8 @@ import Testing
     let bytesBeforeReset = try Data(contentsOf: libraryURL)
 
     // The remapping profile library is owned by the coordinator, not by
-    // ApplicationServiceServer.resetSettings (which only clears UserDefaults
-    // and reinitializes the compatibility backend). The library file must
-    // survive any settings reset.
-    UserDefaults.standard.removeObject(forKey: "UserSpaceVirtualDeviceEnabled")
-    UserDefaults.standard.removeObject(forKey: "OutputMode")
-    UserDefaults.standard.removeObject(forKey: "VirtualDeviceMode")
-
+    // ApplicationServiceServer.resetSettings. The library file must survive any
+    // settings reset.
     #expect(FileManager.default.fileExists(atPath: libraryURL.path))
     #expect(try Data(contentsOf: libraryURL) == bytesBeforeReset)
     #expect(try await harness.coordinator.profile(id: original.id).get() == original)

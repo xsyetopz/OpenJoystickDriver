@@ -4,7 +4,6 @@ This isolated Swift package compares macOS controller-output discovery routes
 without adding an experimental backend to the shipping application:
 
 - exact SDL HIDAPI-compatible output reports through OJD's `sdl2-3` identity;
-- the experimental `xoneHID` descriptor/report pairing;
 - HID PID / Apple Force Feedback service acceptance and device creation;
 - public `GCController.haptics` discovery and an optional CoreHaptics pulse.
 
@@ -18,7 +17,6 @@ Run exactly one route, then stop and record physical behavior before running
 anything else:
 
 ```bash
-swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try xbox-one-hid
 swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try sdl2-3
 swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try force-feedback
 swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try gamecontroller --pulse

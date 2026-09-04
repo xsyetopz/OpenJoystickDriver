@@ -61,7 +61,7 @@ struct CLIGrammarTests {
     #expect(throws: CLIParseError.self) { try CLIGrammar(arguments: ["compat", "set"]) }
   }
 
-  @Test func rejectsRetiredPublicSpellingsAtGrammarLevel() {
+  @Test func rejectsObsoletePublicSpellingsAtGrammarLevel() {
     for arguments in [
       ["controller", "input"], ["mapping", "list"], ["compatibility", "get"],
       ["extension", "activate"], ["extension", "deactivate"], ["permissions", "open-settings"],

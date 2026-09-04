@@ -101,9 +101,15 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     self.feedbackGate = CompatibilityFeedbackGate(deviceManager: deviceManager)
     self.userSpaceEnabled = false
     let savedCompat = UserDefaults.standard.string(forKey: Self.compatibilityIdentityDefaultsKey)
-    let persistedIdentity = CompatibilityIdentity(rawValue: savedCompat ?? "") ?? .automatic
-    self.compatibilityIdentity = persistedIdentity
-    self.persistedCompatibilityIdentity = persistedIdentity
+    let persistence = CompatibilityIdentity.persisted(from: savedCompat)
+    if persistence.didRewrite {
+      UserDefaults.standard.set(
+        persistence.identity.rawValue,
+        forKey: Self.compatibilityIdentityDefaultsKey
+      )
+    }
+    self.compatibilityIdentity = persistence.identity
+    self.persistedCompatibilityIdentity = persistence.identity
     self.compatibilityLiveIdentity = nil
     self.compatibilityRetrySnapshot = Self.loadCompatibilityRetrySnapshot()
     self.userSpaceCloseSlot = nil
@@ -111,11 +117,6 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
     self.pendingAutomaticTransitionGeneration = nil
     super.init()
 
-    // Consumer routing used to be selectable. Discard every stale selection and always
-    // initialize the sole supported consumer backend.
-    UserDefaults.standard.removeObject(forKey: "UserSpaceVirtualDeviceEnabled")
-    UserDefaults.standard.removeObject(forKey: "OutputMode")
-    UserDefaults.standard.removeObject(forKey: "VirtualDeviceMode")
     if initializeCompatibilityBackend { _ = self.initializeCompatibilityBackend() }
   }
 
@@ -145,10 +146,11 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
       timeout: compatibilityTransitionTimeouts.feedbackNanoseconds,
       clock: compatibilityTransitionClock
     )
-    typealias RetiredBackend = (
-      backend: (any CompatibilityUserSpaceOutputDispatching)?, slot: CompatibilityBackendCloseSlot?
-    )
-    let old = userSpaceLock.withLock { () -> RetiredBackend in
+    let detached = userSpaceLock.withLock {
+      () -> (
+        backend: (any CompatibilityUserSpaceOutputDispatching)?,
+        slot: CompatibilityBackendCloseSlot?
+      ) in
       dispatcher.setBackend(nil)
       let old = userSpaceDispatcher
       let slot = userSpaceCloseSlot
@@ -161,7 +163,7 @@ struct SendableReply<T>: @unchecked Sendable { let call: (T) -> Void }
       userSpaceStatus = "off"
       return (old, slot)
     }
-    _ = await closeCompatibilityBackend(old.backend, slot: old.slot)
+    _ = await closeCompatibilityBackend(detached.backend, slot: detached.slot)
   }
 
   private static func isTrustedClient(processIdentifier: Int32) -> Bool {

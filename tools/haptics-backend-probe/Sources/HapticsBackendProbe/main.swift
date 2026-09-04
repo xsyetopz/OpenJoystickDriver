@@ -7,7 +7,6 @@ import IOKit.hid
 import OpenJoystickDriverKit
 
 private enum ProbeRoute: String {
-  case xboxOneHID = "xbox-one-hid"
   case sdl23 = "sdl2-3"
   case forceFeedback = "force-feedback"
   case gameController = "gamecontroller"
@@ -268,12 +267,10 @@ private func printUsage() {
     """
     HapticsBackendProbe
 
-      swift run HapticsBackendProbe try xbox-one-hid [--seconds N]
       swift run HapticsBackendProbe try sdl2-3 [--seconds N]
       swift run HapticsBackendProbe try force-feedback [--seconds N]
       swift run HapticsBackendProbe try gamecontroller [--pulse] [--seconds N]
 
-    xbox-one-hid selects the experimental XInput/XUSB-style Xbox One report route.
     sdl2-3 selects the hardware-verified 9886:0024 ASTRO identity and exact Xbox 360
     descriptor/report format that SDL2 and SDL3 special-case in their HIDAPI driver.
     force-feedback checks HID PID/Apple Force Feedback acceptance and device creation.
@@ -299,7 +296,6 @@ private func printUsage() {
       Report.inventory(snapshots)
 
       switch route {
-      case .xboxOneHID: try OJDService.select(.xoneHID, route: route)
       case .sdl23: try OJDService.select(.sdl2_3, route: route)
       case .forceFeedback: ForceFeedbackProbe.openCandidates(snapshots)
       case .gameController:
