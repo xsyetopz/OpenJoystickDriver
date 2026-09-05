@@ -150,8 +150,10 @@ Use these paths in order:
    The recipient only needs the DMG, not a source checkout.
 
 2. **GitHub Actions release (published).** Push a SemVer tag such as
-   `0.5.0-beta.3`, or manually dispatch the release workflow with an existing
-   SemVer tag. The workflow checks out that exact tag, uses Developer ID signing,
+   `0.5.0-beta.3`, or manually dispatch the release workflow with that SemVer
+   tag. Dispatch checks out the selected branch, runs the gates, then creates
+   the tag. If packaging or publish fails before a GitHub Release exists, the
+   workflow deletes the unpublished tag. The workflow uses Developer ID signing,
    notarizes and staples the app, then publishes the release DMG to GitHub.
    This path requires the configured GitHub signing and notarization secrets.
 
