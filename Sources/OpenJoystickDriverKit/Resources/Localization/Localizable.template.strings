@@ -660,6 +660,7 @@
 "controller.dualSense" = "DualSense";
 "controller.dualShock3" = "DualShock 3";
 "controller.dualShock4" = "DualShock 4";
+"controller.flydigi" = "Flydigi";
 "controller.genericHID" = "Generic HID";
 "controller.originalXbox" = "Original Xbox";
 "controller.standardHID" = "Standard HID";
