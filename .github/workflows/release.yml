@@ -90,20 +90,22 @@ jobs:
 
       - name: Create release tag
         env:
+          GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
         run: |
           actual="$(git rev-parse HEAD)"
-          if git rev-parse "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
-            expected="$(git rev-list -n 1 "refs/tags/$RELEASE_TAG^{commit}")"
-            if [[ "$expected" != "$actual" ]]; then
-              echo "ERROR: tag $RELEASE_TAG points at $expected, not $actual"
+          remote="$(git ls-remote origin "refs/tags/$RELEASE_TAG" | awk '{ print $1; exit }')"
+          if [[ -n "$remote" ]]; then
+            if [[ "$remote" != "$actual" ]]; then
+              echo "ERROR: tag $RELEASE_TAG points at $remote, not $actual"
               exit 1
             fi
             echo "Tag $RELEASE_TAG already points at $actual"
             exit 0
           fi
-          git tag "$RELEASE_TAG" HEAD
-          git push origin "refs/tags/$RELEASE_TAG"
+          gh api --method POST "/repos/${GITHUB_REPOSITORY}/git/refs" \
+            -f ref="refs/tags/${RELEASE_TAG}" \
+            -f sha="$actual"
           echo "Created tag $RELEASE_TAG at $actual"
 
       - name: Set up release signing
@@ -155,12 +157,15 @@ jobs:
             echo "Published GitHub Release $RELEASE_TAG exists; leaving the tag"
             exit 0
           fi
-          expected="$(git rev-list -n 1 "refs/tags/$RELEASE_TAG^{commit}" 2>/dev/null || true)"
+          remote="$(git ls-remote origin "refs/tags/$RELEASE_TAG" | awk '{ print $1; exit }')"
           actual="$(git rev-parse HEAD 2>/dev/null || true)"
-          if [[ -n "$expected" && -n "$actual" && "$expected" != "$actual" ]]; then
-            echo "Tag $RELEASE_TAG points at $expected, not $actual; leaving it"
+          if [[ -n "$remote" && -n "$actual" && "$remote" != "$actual" ]]; then
+            echo "Tag $RELEASE_TAG points at $remote, not $actual; leaving it"
             exit 0
           fi
-          git push origin ":refs/tags/$RELEASE_TAG" || true
-          git tag -d "$RELEASE_TAG" || true
+          if [[ -z "$remote" ]]; then
+            echo "No unpublished tag $RELEASE_TAG to remove"
+            exit 0
+          fi
+          gh api --method DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${RELEASE_TAG}"
           echo "Removed unpublished tag $RELEASE_TAG"
