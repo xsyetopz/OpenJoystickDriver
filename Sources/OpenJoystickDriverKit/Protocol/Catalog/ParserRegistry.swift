@@ -45,6 +45,7 @@ public final class ParserRegistry: Sendable {
         isWirelessReceiver: runtimeProfile.quirks.contains("wirelessReceiver")
       )
     case "SwitchPro": return SwitchProParser()
+    case "Flydigi": return FlydigiParser()
     case "Xbox360":
       return Xbox360Parser(
         outEndpoint: transportProfile.outputEndpoint,

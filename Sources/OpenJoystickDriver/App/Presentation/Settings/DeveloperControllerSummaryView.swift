@@ -127,6 +127,7 @@
       case .dualSense: return OJDLocalized.string("controller.dualSense", fallback: "DualSense")
       case .steamController:
         return OJDLocalized.string("controller.steamController", fallback: "Steam Controller")
+      case .flydigi: return OJDLocalized.string("controller.flydigi", fallback: "Flydigi")
       case .switchPro:
         return OJDLocalized.string(
           "controller.switchProController",
