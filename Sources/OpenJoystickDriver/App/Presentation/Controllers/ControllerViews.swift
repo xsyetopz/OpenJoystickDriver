@@ -441,7 +441,7 @@
       case .xboxOriginal, .xbox360, .xbox360Wireless, .xboxOne, .xboxAdaptiveJoystick:
         return "xbox.logo"
       case .dualShock3, .dualShock4, .dualSense: return "playstation.logo"
-      case .steamController, .switchPro, .genericHID, .unknown: return "gamecontroller"
+      case .steamController, .switchPro, .flydigi, .genericHID, .unknown: return "gamecontroller"
       }
     }
 
@@ -450,7 +450,7 @@
       case .xboxOriginal, .xbox360, .xbox360Wireless, .xboxOne, .xboxAdaptiveJoystick:
         return Color(Self.xboxBrandColor)
       case .dualShock3, .dualShock4, .dualSense: return Color(Self.playStationBrandColor)
-      case .steamController, .switchPro, .genericHID, .unknown:
+      case .steamController, .switchPro, .flydigi, .genericHID, .unknown:
         return Color(NSColor.secondaryLabelColor)
       }
     }
@@ -493,6 +493,7 @@
       case .steamController:
         return OJDLocalized.string("controller.steamController", fallback: "Steam Controller")
       case .switchPro: return OJDLocalized.string("controller.switchPro", fallback: "Switch Pro")
+      case .flydigi: return OJDLocalized.string("controller.flydigi", fallback: "Flydigi")
       case .xboxAdaptiveJoystick:
         return OJDLocalized.string(
           "controller.xboxAdaptiveJoystick",

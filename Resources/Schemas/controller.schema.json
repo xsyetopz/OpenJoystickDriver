@@ -51,6 +51,7 @@
 						"SteamController",
 						"SwitchPro",
 						"XboxAdaptiveJoystick",
+						"Flydigi",
 						"GenericHID"
 					]
 				},
@@ -66,6 +67,7 @@
 						"steamController",
 						"switchPro",
 						"xboxAdaptiveJoystick",
+						"flydigi",
 						"genericHID",
 						"unknown"
 					]
@@ -336,6 +338,26 @@
 								},
 								"type": "array"
 							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"driver": {
+								"const": "Flydigi"
+							}
+						},
+						"required": ["driver"]
+					},
+					"then": {
+						"properties": {
+							"variant": {
+								"enum": ["flydigi"]
+							}
+						},
+						"not": {
+							"required": ["quirks"]
 						}
 					}
 				},

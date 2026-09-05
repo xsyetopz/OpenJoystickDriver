@@ -130,7 +130,7 @@ struct ControllerRecordDocument: Decodable {
       ), "SwitchPro": (["switchPro", "unknown"], ["usbHandshake", "calibration", "imu", "rumble"]),
       "XboxAdaptiveJoystick": (
         ["xboxAdaptiveJoystick", "unknown"], ["rawUSBPackets", "genericHIDPackets"]
-      ), "GenericHID": (["genericHID"], [])
+      ), "Flydigi": (["flydigi"], []), "GenericHID": (["genericHID"], [])
     ]
   }
 

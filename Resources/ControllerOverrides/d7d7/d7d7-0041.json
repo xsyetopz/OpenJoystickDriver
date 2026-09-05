@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+  "operation": "add",
+  "record": {
+    "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+    "vendor_id": 55255,
+    "product_id": 65,
+    "transport": "hid",
+    "protocol": {
+      "driver": "Flydigi",
+      "variant": "flydigi"
+    }
+  }
+}

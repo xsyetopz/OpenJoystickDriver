@@ -211,7 +211,8 @@ public enum KnownRecordProtocolReconciler {
       case .xbox360, .xbox360Wireless, .xboxAdaptiveJoystick: .xusb
       case .xboxOriginal: nil
       case .xboxOne: .gip
-      case .genericHID, .dualShock3, .dualShock4, .dualSense, .steamController, .switchPro:
+      case .genericHID, .dualShock3, .dualShock4, .dualSense, .steamController, .switchPro,
+        .flydigi:
         .genericHID
       case .unknown: nil
       }

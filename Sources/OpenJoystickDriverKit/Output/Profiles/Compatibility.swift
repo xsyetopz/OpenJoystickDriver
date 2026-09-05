@@ -215,7 +215,7 @@ public enum AutomaticCompatibilityResolver {
     case .dualShock4: subfamily = .playStationDS4
     case .dualSense: subfamily = .playStationDS5
     case .switchPro: subfamily = .nintendoSwitchPro
-    case .genericHID, .dualShock3, .steamController, .unknown: subfamily = .other
+    case .genericHID, .dualShock3, .steamController, .flydigi, .unknown: subfamily = .other
     }
     return subfamily
   }

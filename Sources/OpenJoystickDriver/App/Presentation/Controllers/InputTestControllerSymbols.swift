@@ -42,6 +42,7 @@
       case .dualShock3, .dualShock4, .dualSense: return playStation
       case .switchPro: return switchController
       case .steamController: return steam
+      case .flydigi: return xbox
       case .genericHID, .unknown: return generic
       }
     }
