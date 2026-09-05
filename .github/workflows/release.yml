@@ -117,11 +117,11 @@ jobs:
 
       - name: Package release build
         env:
+          OJD_ENV: release
           NOTARIZE_APPLE_ID: ${{ secrets.NOTARIZE_APPLE_ID }}
           NOTARIZE_PASSWORD: ${{ secrets.NOTARIZE_PASSWORD }}
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
-        run: |
-          ./scripts/ojd package release "$RELEASE_TAG"
+        run: ./scripts/ojd release package "$RELEASE_TAG"
 
       - name: Upload release artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
