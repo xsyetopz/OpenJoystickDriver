@@ -526,10 +526,10 @@ final class AutomaticUserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDisp
       })
     else { return false }
     let ownership = await ownershipProvider(identifier)
-    let profileAvailable = CompatibilityProfileAvailabilityPolicy.isAvailable(
-      identity,
-      for: AutomaticCompatibilityResolver.resolve(for: description).subfamily
-    )
+    let profileAvailable = CompatibilityProfileAvailabilityPolicy.decision(
+      for: description,
+      identity: identity
+    ).isAvailable
     return ControllerExposureDecision.decide(
       ownership: ownership,
       intent: .automatic(resolvedIdentity: identity),

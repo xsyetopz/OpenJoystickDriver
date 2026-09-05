@@ -18,6 +18,7 @@
 - [Razer Wolverine V3 TE](testing/razer/v3-te.md)
 - [Nacon Revolution X Pro](testing/nacon-revolution-x.md)
 - [Flydigi Vader 4 Pro](testing/flydigi-vader-4-pro.md)
+- [WR-007](testing/wr-007.md)
 - [Steam Controller](testing/steam-controller.md)
 - [Xbox 360 wireless receiver](testing/xbox-360-wireless-receiver.md)
 - [Xbox Adaptive Joystick](testing/xbox-adaptive-joystick.md)

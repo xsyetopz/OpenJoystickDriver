@@ -90,10 +90,10 @@ final class CompatibilityUserSpaceOutputDispatchingAdapter: CompatibilityUserSpa
       })
     else { return false }
     let ownership = await ownershipProvider(identifier)
-    let available = CompatibilityProfileAvailabilityPolicy.isAvailable(
-      identity,
-      for: AutomaticCompatibilityResolver.resolve(for: description).subfamily
-    )
+    let available = CompatibilityProfileAvailabilityPolicy.decision(
+      for: description,
+      identity: identity
+    ).isAvailable
     return ControllerExposureDecision.decide(
       ownership: ownership,
       intent: .explicit(identity),

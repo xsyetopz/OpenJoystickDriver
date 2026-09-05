@@ -105,6 +105,14 @@ acceptance record for input, continuous-read, reconnect, and no-host-keep-alive 
 
 No parser claim exists. Product descriptions do not provide a packet layout. Capture neutral, every button, stick axes, stick click, report IDs, and checksums with [the packet request](../testing/xbox-adaptive-joystick.md) before adding a record.
 
+## Flydigi Vader 4 Pro (Bluetooth)
+
+The bundled HID record for `D7D7:0041` selects `FlydigiParser` instead of the Generic HID fallback. Input is packet-backed from captured 15-byte BLE reports. Consumer-visible virtual input, reconnect, rumble, and the 2.4 GHz/wired identities still need the [Vader 4 Pro hardware test](../testing/flydigi-vader-4-pro.md). See also [pull request #30](https://github.com/xsyetopz/OpenJoystickDriver/pull/30).
+
+## WR-007 USB HID receiver
+
+The bundled HID record for `11C1:5600` stays on Generic HID. The parser maps this tuple's sparse Xbox-style button usages, Z/Rz right stick, and Simulation Accelerator/Brake triggers. Apple GameController identity is available for the tuple. Physical rumble is unavailable: the receiver accepts its 4-byte output report but channel probes produced no motor or LED response. Run the [WR-007 hardware test](../testing/wr-007.md). See also [issue #31](https://github.com/xsyetopz/OpenJoystickDriver/issues/31).
+
 ## Generic HID
 
 Descriptor-driven fallback handles standard buttons, stick pairs, triggers, and an eight-way hat. Known protocol parsers still consume their raw reports. Vendor-defined layouts need a record and parser instead of more guesses in Generic HID.

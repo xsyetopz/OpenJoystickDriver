@@ -98,12 +98,20 @@ public enum CompatibilityProfileAvailabilityDecision: Equatable, Sendable {
 
 /// Pure Kit-owned policy for physical-family to explicit virtual-identity compatibility.
 public enum CompatibilityProfileAvailabilityPolicy {
+  private static let wr007VendorID: UInt16 = 0x11C1
+  private static let wr007ProductID: UInt16 = 0x5600
+
   /// Evaluates one explicit identity for a connected physical device.
   public static func decision(
     for device: ApplicationServiceDeviceDescription,
     identity: CompatibilityIdentity
   ) -> CompatibilityProfileAvailabilityDecision {
-    decision(for: AutomaticCompatibilityResolver.subfamily(for: device), identity: identity)
+    if device.vendorID == wr007VendorID, device.productID == wr007ProductID,
+      identity == .appleGameController
+    {
+      return .available
+    }
+    return decision(for: AutomaticCompatibilityResolver.subfamily(for: device), identity: identity)
   }
 
   /// Evaluates one explicit identity against one physical protocol subfamily.
@@ -160,6 +168,18 @@ public struct CompatibilityEvidenceRecord: Equatable, Sendable {
 
 public enum CompatibilityEvidenceCatalog {
   public static let records: [CompatibilityEvidenceRecord] = [
+    CompatibilityEvidenceRecord(
+      vendorID: 0x11C1,
+      productID: 0x5600,
+      subfamily: .other,
+      physicalTransport: "wired",
+      physicalMode: "generichid",
+      connection: "usb",
+      consumer: .unknown,
+      identity: .appleGameController,
+      evidence: .sourceBacked,
+      reason: .selectedCatalogTuple
+    ),
     CompatibilityEvidenceRecord(
       vendorID: 0x045E,
       productID: 0x02FD,

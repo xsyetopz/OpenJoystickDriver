@@ -67,9 +67,9 @@ struct CompatibilityProfileAvailabilityTests {
 
   @Test func connectedGIPDeviceRejectsXbox360FamilyIdentities() {
     let device = ApplicationServiceDeviceDescription(
-      name: "GameSir G7 SE",
-      vendorID: 0x3537,
-      productID: 0x1010,
+      name: "GIP",
+      vendorID: 1,
+      productID: 2,
       parser: "GIP",
       connection: "USB",
       serialNumber: nil,

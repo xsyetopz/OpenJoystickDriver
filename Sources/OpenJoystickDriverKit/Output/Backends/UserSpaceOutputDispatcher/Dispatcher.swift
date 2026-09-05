@@ -360,8 +360,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
 
     guard lifecycle.isOpen else { return }
 
+    let stickTransfer = Self.stickTransfer(for: identifier)
     let primaryReport = activeEntry.inputReportState.update { state in
-      for event in events { applyEvent(event, deadzone: 0.15, state: &state) }
+      for event in events { applyEvent(event, stickTransfer: stickTransfer, state: &state) }
     }
     let secondaryReports =
       emitsXboxGuideReport ? events.compactMap { xboxGuideReport(for: $0) } : []

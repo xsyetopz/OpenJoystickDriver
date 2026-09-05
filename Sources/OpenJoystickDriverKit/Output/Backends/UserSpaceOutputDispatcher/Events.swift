@@ -1,18 +1,34 @@
 import Foundation
 
 extension UserSpaceOutputDispatcher {
+  struct StickTransfer: Equatable, Sendable {
+    let deadzone: Float
+    let rescalesDeadzone: Bool
+  }
+
+  static func stickTransfer(for identifier: DeviceIdentifier) -> StickTransfer {
+    if identifier.vendorID == 0x11C1 && identifier.productID == 0x5600 {
+      return StickTransfer(deadzone: 0.02, rescalesDeadzone: true)
+    }
+    return StickTransfer(deadzone: 0.15, rescalesDeadzone: false)
+  }
+
   // MARK: - Event application (called inside reportLock.withLock)
 
-  func applyEvent(_ event: ControllerEvent, deadzone: Float, state: inout VirtualGamepadState) {
+  func applyEvent(
+    _ event: ControllerEvent,
+    stickTransfer: StickTransfer,
+    state: inout VirtualGamepadState
+  ) {
     switch event {
     case .buttonPressed(let btn): if let bit = buttonBit(for: btn) { state.buttons |= (1 << bit) }
     case .buttonReleased(let btn): if let bit = buttonBit(for: btn) { state.buttons &= ~(1 << bit) }
     case .leftStickChanged(let x, let y):
-      state.leftStickX = axisValue(x, deadzone: deadzone)
-      state.leftStickY = axisValue(y, deadzone: deadzone)
+      state.leftStickX = Self.axisValue(x, transfer: stickTransfer)
+      state.leftStickY = Self.axisValue(y, transfer: stickTransfer)
     case .rightStickChanged(let x, let y):
-      state.rightStickX = axisValue(x, deadzone: deadzone)
-      state.rightStickY = axisValue(y, deadzone: deadzone)
+      state.rightStickX = Self.axisValue(x, transfer: stickTransfer)
+      state.rightStickY = Self.axisValue(y, transfer: stickTransfer)
     case .leftTriggerChanged(let v): state.leftTrigger = Int16(v.clamped(to: 0...1) * 32_767)
     case .rightTriggerChanged(let v): state.rightTrigger = Int16(v.clamped(to: 0...1) * 32_767)
     case .dpadChanged(let dir):
@@ -59,10 +75,13 @@ extension UserSpaceOutputDispatcher {
 
   // MARK: - Axis + hat helpers
 
-  func axisValue(_ v: Float, deadzone: Float) -> Int16 {
+  static func axisValue(_ v: Float, transfer: StickTransfer) -> Int16 {
     let clamped = v.clamped(to: -1...1)
-    guard abs(clamped) > deadzone else { return 0 }
-    return Int16(clamped * 32_767)
+    let magnitude = abs(clamped)
+    guard magnitude > transfer.deadzone else { return 0 }
+    guard transfer.rescalesDeadzone else { return Int16(clamped * 32_767) }
+    let rescaled = (magnitude - transfer.deadzone) / (1 - transfer.deadzone)
+    return Int16(copysignf(rescaled, clamped) * 32_767)
   }
 
   func hatValue(for direction: DpadDirection) -> GamepadHIDDescriptor.Hat {

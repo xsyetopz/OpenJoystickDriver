@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0-beta.4] - 2026-09-05
+
+### Added
+
+- Decode Flydigi Vader 4 Pro over Bluetooth Low Energy (`D7D7:0041`). Face
+  buttons, D-pad, sticks, analog triggers, bumpers, Select, Start, stick
+  clicks, and Home map from the captured 15-byte report. C, Z, and M1–M4 stay
+  diagnostic-only. The 2.4 GHz dongle and wired identities are out of scope.
+- Map the WR-007 USB HID receiver (`11C1:5600`) through Generic HID: sparse
+  Xbox-style buttons, Z/Rz as the right stick, and Simulation Accelerator/Brake
+  as analog triggers. Apple GameController identity is available so
+  `GameController.framework` consumers can see the virtual device. Physical
+  rumble is not claimed.
+
+### Changed
+
+- Consult device-level compatibility availability when exposing a virtual
+  identity, instead of the physical-family overload alone.
+
 ## [0.5.0-beta.3] - 2026-09-04
 
 ### Added
@@ -263,6 +282,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix an output-dispatcher race when creating virtual devices.
 - Keep the menu-bar app alive after launch.
 
-[Unreleased]: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.5.0-beta.2...HEAD
+[Unreleased]: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.5.0-beta.4...HEAD
+[0.5.0-beta.4]: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.5.0-beta.3...0.5.0-beta.4
+[0.5.0-beta.3]: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.5.0-beta.2...0.5.0-beta.3
 [0.5.0-beta.2]: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.5.0-beta.1...0.5.0-beta.2
 [0.5.0-beta.1]: https://github.com/xsyetopz/OpenJoystickDriver/releases/tag/0.5.0-beta.1

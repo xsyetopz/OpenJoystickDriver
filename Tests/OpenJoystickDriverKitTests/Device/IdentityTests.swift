@@ -4,6 +4,16 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct DeviceIdentifierTests {
+  @Test func modelMatchesIgnoresSerialAndRejectsDifferentIdentities() {
+    let first = DeviceIdentifier(vendorID: 1, productID: 2, serialNumber: "ABC123")
+    let second = DeviceIdentifier(vendorID: 1, productID: 2, serialNumber: "XYZ789")
+    let other = DeviceIdentifier(vendorID: 3, productID: 4)
+
+    #expect(first.modelMatches(second))
+    #expect(!first.modelMatches(other))
+    #expect(!first.exactlyMatches(second))
+  }
+
   @Test func exactRuntimeIdentifiersAreOpaqueStableAndDistinct() throws {
     let serial = "Pad-Serial-42"
     let first = DeviceIdentifier(vendorID: 0x045E, productID: 0x028E, serialNumber: serial)
