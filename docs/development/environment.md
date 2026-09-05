@@ -21,6 +21,11 @@ creating either local file. Development configuration requires the two
 development profiles and an Apple Development identity; publisher-only
 Developer ID assets are optional and do not block `.env.dev` generation.
 
+Unsigned `swift build` and `./scripts/ojd check driverkit` do not load
+`.env.dev`. Signed local development installs require `.env.dev` from
+`./scripts/ojd signing configure`. Notarization keys belong only in
+`.env.release`; they are not inputs to unsigned or Apple Development builds.
+
 The signing configurator updates recognized signing keys in the appropriate root
 file (`.env.dev` or `.env.release`) while preserving unrelated recognized
 publisher keys. Never commit actual `.env.dev` or `.env.release` files.
@@ -38,6 +43,16 @@ publisher keys. Never commit actual `.env.dev` or `.env.release` files.
 - `NOTARIZE_PASSWORD`
 
 Workflow secrets are injected directly by GitHub; CI does not create or depend on a local `.env` file.
+GitHub does not allow reading those values back. The local analogues are:
+
+- certificate and profile secrets → Keychain identities plus the Developer ID
+  profiles consumed by `signing configure` (or `signing ci-release-setup` on the
+  runner);
+- `NOTARIZE_APPLE_ID` / `NOTARIZE_PASSWORD` → the same keys in `.env.release`,
+  or `NOTARIZE_KEYCHAIN_PROFILE` after storing credentials in Keychain.
+
+Do not copy the CI-only `*_BASE64` / `CERTIFICATE_SECRET` / `KEYCHAIN_SECRET`
+keys into `.env.dev` or `.env.release`; `./scripts/ojd env audit` rejects them.
 
 The GUI provisioning profile must authorize the host app's exact
 `com.apple.developer.driverkit.userclient-access` allowlist for

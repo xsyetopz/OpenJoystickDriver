@@ -12,9 +12,11 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
 from bundle_version import (
+    advance_tester_sequence,
     dext_bundle_version_from_semver,
     resolve_dext_bundle_version,
     tester_bundle_version,
+    tester_short_version,
     validate_dext_bundle_version,
 )
 from package_common import verify_bundle_versions
@@ -82,25 +84,42 @@ def main() -> int:
         assert tester_bundle_version("1.2.3", state).endswith("d2")
         assert tester_bundle_version("1.2.4", state).endswith("d1")
 
+        next_state = Path(directory) / "tester-next-state"
+        assert advance_tester_sequence("0.5.0-beta.4", next_state) == 1
+        assert advance_tester_sequence("0.5.0-beta.4", next_state) == 2
+        assert advance_tester_sequence("0.5.0-beta.5", next_state) == 1
+        assert tester_short_version("0.5.0-beta.4", 1) == "0.5.0-beta.4-next.1"
+        assert tester_short_version("0.5.0", 2) == "0.5.0-next.2"
+        expect_failure(tester_short_version, "0.5.0-beta.4-next.1", 1)
+        expect_failure(tester_short_version, "0.5.0-beta.4", 0)
+        expect_failure(advance_tester_sequence, "0.5.0-beta.4-next.1", next_state)
+
         app = Path(directory) / "app.plist"
         dext = Path(directory) / "dext.plist"
         for path, build in ((app, "1.2.3d1"), (dext, "0.5.0b3")):
             path.write_bytes(
                 plistlib.dumps(
                     {
-                        "CFBundleShortVersionString": "0.5.0-beta.3",
+                        "CFBundleShortVersionString": "0.5.0-beta.3-next.1",
                         "CFBundleVersion": build,
                     }
                 )
             )
-        verify_bundle_versions(app, dext, "1.2.3d1", "0.5.0b3", "0.5.0-beta.3")
+        verify_bundle_versions(app, dext, "1.2.3d1", "0.5.0b3", "0.5.0-beta.3-next.1")
         expect_failure(
-            verify_bundle_versions, app, dext, "wrong", "0.5.0b3", "0.5.0-beta.3"
+            verify_bundle_versions,
+            app,
+            dext,
+            "wrong",
+            "0.5.0b3",
+            "0.5.0-beta.3-next.1",
         )
-        metadata = tester_metadata("tester.dmg", "0.5.0-beta.3", "1.2.3d1", "0.5.0b3")
+        metadata = tester_metadata(
+            "tester.dmg", "0.5.0-beta.3-next.1", "1.2.3d1", "0.5.0b3"
+        )
         assert metadata == {
             "artifact": "tester.dmg",
-            "version": "0.5.0-beta.3",
+            "version": "0.5.0-beta.3-next.1",
             "app_bundle_build_version": "1.2.3d1",
             "dext_bundle_version": "0.5.0b3",
         }

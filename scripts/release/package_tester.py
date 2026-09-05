@@ -12,9 +12,10 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = SCRIPT_DIR.parents[1]
 sys.path.insert(0, str(SCRIPT_DIR))
 from bundle_version import (
+    advance_tester_sequence,
     current_commit_bundle_version,
     dext_bundle_version_from_semver,
-    tester_bundle_version,
+    tester_short_version,
 )
 from package_common import (
     CommandFailure,
@@ -42,7 +43,8 @@ def usage() -> None:
 
 Builds and packages the locally configured Developer ID app and its embedded
 DriverKit extension into a shareable DMG without installing, publishing, or
-notarizing it. The DMG includes source and bundle-build metadata.""")
+notarizing it. The app short version is the package SemVer plus a unique
+`-next.N` identifier. The DMG includes source and bundle-build metadata.""")
 
 
 def tester_metadata(
@@ -74,12 +76,13 @@ def main(argv: list[str]) -> int:
     if os.environ.get("OJD_ENV") != "release":
         die("package tester requires OJD_ENV=release")
 
-    version = default_bundle_short_version(PROJECT_DIR)
+    release_version = default_bundle_short_version(PROJECT_DIR)
     build_dir = PROJECT_DIR / ".build"
     state_file = build_dir / "tester-build-version"
-    base = current_commit_bundle_version(PROJECT_DIR)
-    build_version = tester_bundle_version(base, state_file)
-    dext_version = dext_bundle_version_from_semver(version)
+    sequence = advance_tester_sequence(release_version, state_file)
+    version = tester_short_version(release_version, sequence)
+    build_version = f"{current_commit_bundle_version(PROJECT_DIR)}d{sequence}"
+    dext_version = dext_bundle_version_from_semver(release_version)
     try:
         commit = command_output(
             ["git", "-C", str(PROJECT_DIR), "rev-parse", "--verify", "HEAD"]
@@ -193,6 +196,7 @@ def main(argv: list[str]) -> int:
 
 artifact: {artifact.name}
 version: {version}
+release_version: {release_version}
 app_bundle_build_version: {build_version}
 dext_bundle_version: {dext_version}
 commit: {commit}

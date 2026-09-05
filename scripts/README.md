@@ -110,7 +110,7 @@ dependencies from `.build/schema-validator` when that environment exists. See
 | Check DriverKit generation | `./scripts/ojd check driverkit` | Double-generates, checks metadata/boundaries, and performs an unsigned native build |
 | Install signed dev build | `./scripts/ojd build install dev` | Application and generated USB DriverKit extension; the app embeds its service registration |
 | Fast install (app only) | `./scripts/ojd build install-fast dev` | Skips a generated system-extension upgrade |
-| Package private tester build | `./scripts/ojd package tester` | Writes a Developer ID-signed, unnotarized DMG to `.build/tester-artifacts/`; does not install or publish |
+| Package private tester build | `./scripts/ojd package tester` | Writes a Developer ID-signed, unnotarized DMG to `.build/tester-artifacts/`; short version is `{SemVer}-next.N`; does not install or publish |
 | Bump release version | `./scripts/ojd release bump-version <version>` | Verifies `## [<version>] - YYYY-MM-DD` in CHANGELOG.md and updates version references |
 | Package release DMG | `./scripts/ojd release package [version]` | Builds, notarizes, and staples; version defaults to the package version |
 | Package and install locally | `./scripts/ojd release install-local [version]` | Replaces the app in `/Applications` after packaging |
@@ -140,8 +140,11 @@ Use these paths in order:
 
    This writes a clearly named DMG under `.build/tester-artifacts/` containing
    the signed app and embedded `XboxUSBDevice.dext`, plus a build-info file with
-   the full source commit, clean/dirty state, and unique bundle build version
-   (numeric release base, or that base with a `d1`...`d255` tester suffix). It
+   the full source commit, clean/dirty state, the unique tester short version
+   (`MAJOR.MINOR.PATCH[-alpha|beta|rc.N]-next.N`, for example
+   `0.5.0-beta.4-next.1`), and kext-legal bundle build versions (numeric
+   commit-count base with a `d1`...`d255` tester suffix; DriverKit stays on the
+   release mapping such as `0.5.0b4`). It
    does not install, publish, or notarize anything. The app and
    DEXT use the local Developer ID
    identities/profiles; the artifact is intentionally **not notarized**, so a
@@ -369,6 +372,11 @@ publishes the GitHub Release.
 
 The certificate payload secrets are base64-encoded certificate export files.
 The profile secrets are base64-encoded `.provisionprofile` files.
+GitHub does not expose those secret values to `gh` or to a checkout; export
+them once with `./scripts/ojd signing export-github-secrets`. Local
+`.env.release` uses the same `NOTARIZE_APPLE_ID` / `NOTARIZE_PASSWORD` names
+for notarized `release package`. Local unsigned and Apple Development builds
+do not use those keys.
 
 ### Generate GitHub secrets locally
 

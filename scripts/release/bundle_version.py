@@ -48,7 +48,12 @@ def current_commit_bundle_version(project_dir: Path) -> str:
     return bundle_version_from_commit_count(result.stdout.strip())
 
 
-def tester_bundle_version(base_version: str, state_file: Path) -> str:
+def advance_tester_sequence(release_version: str, state_file: Path) -> int:
+    if SEMANTIC_VERSION.fullmatch(release_version) is None:
+        die(
+            "Tester short version base must be MAJOR.MINOR.PATCH, -alpha.N, "
+            "-beta.N, or -rc.N with positive prerelease level"
+        )
     previous_base, sequence = "", 0
     if state_file.is_file():
         values = {}
@@ -61,12 +66,26 @@ def tester_bundle_version(base_version: str, state_file: Path) -> str:
             sequence = int(values.get("sequence", "0"))
         except ValueError:
             sequence = 0
-    sequence = sequence + 1 if previous_base == base_version else 1
+    sequence = sequence + 1 if previous_base == release_version else 1
     if not 1 <= sequence <= 255:
+        die(f"Tester build sequence exceeded 255 for {release_version}")
+    state_file.write_text(f"base={release_version}\nsequence={sequence}\n")
+    return sequence
+
+
+def tester_short_version(release_version: str, sequence: int) -> str:
+    if SEMANTIC_VERSION.fullmatch(release_version) is None:
         die(
-            f"Tester build sequence exceeded d255 for CFBundleVersion base {base_version}"
+            "Tester short version base must be MAJOR.MINOR.PATCH, -alpha.N, "
+            "-beta.N, or -rc.N with positive prerelease level"
         )
-    state_file.write_text(f"base={base_version}\nsequence={sequence}\n")
+    if not 1 <= sequence <= 255:
+        die(f"Tester short version sequence must be 1...255, got {sequence}")
+    return f"{release_version}-next.{sequence}"
+
+
+def tester_bundle_version(base_version: str, state_file: Path) -> str:
+    sequence = advance_tester_sequence(base_version, state_file)
     return f"{base_version}d{sequence}"
 
 
