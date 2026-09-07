@@ -7,6 +7,76 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Physical HID discovery no longer opens Apple GameController synthetic nodes
+  (`AppleGCSyntheticDevice` / `GamePad-1`). Matching now includes Apple's
+  documented `GCSyntheticDevice = false` exclusion so `IOHIDDeviceCreate` and
+  CoreHID `HIDDeviceClient` never `IOServiceOpen` that shim. The previous skip
+  looked up the C macro name instead of the IORegistry key and ran after the
+  open. Stock SDL `hid_init` match-all still hangs on a leftover wedged
+  GamePad-1 until reboot; OJD does not create that shim (gamecontrollerd does
+  when GameController binds an Xbox identity) and cannot drain stuck user
+  clients.
+
+### Changed
+
+- Name physical wire families XID, XUSB, GIP, and HID. Catalog driver
+  `Xbox360` is now `XUSB`. Automatic compatibility uses one spoof route per
+  family: XUSB publishes `045E:028E`, GIP publishes `045E:0B13`, matching HID
+  dialects publish DualShock 4 / DualSense / Switch Pro, and remaining HID and
+  XID stay Generic HID.
+- Menu extra, controller list, and Input Test glyphs follow the published
+  virtual identity (official USB product name and system symbol), not the
+  physical pad family. Controller list subtitle, detail, and Input Test
+  header/title show that published USB product name and VID/PID. GameSir
+  G7 SE USB GIP publishing `045E:0B13` is hardware-verified for Apple
+  GameController. The Series Bluetooth packer
+  emits unsigned stick rest `0x8000` so HIDAPI xboxone BLE idle is signed 0
+  (`raw - 0x8000`) without jitter hiding a −1 from `0x7FFF`. Explicit picker
+  DualShock 4 (`054C:09CC`), DualSense (`054C:0CE6`), Switch Pro
+  (`057E:2009` "Pro Controller"), and Xbox 360 Wired (`045E:028E`) published
+  those USB identities from the same GIP pad: `GCController.supportsHIDDevice`
+  yes (Switch Pro no longer hangs), and a custom SDL 3.4.16 HIDAPI+IOKit build
+  (no GameController.framework) opened them as ps4, ps5, switchpro, and
+  xbox360. Switch Pro USB handshake replies are published on the IOKit
+  interrupt path so HIDAPI can finish `0x80`/`0x81` setup; Xbox 360 Wired
+  uses `bcdDevice` `0x0114` so SDL does not ignore `045E:028E` as a Steam
+  virtual pad. GameSir G7 SE GIP init completes: Hello `0x02` then one rest
+  `0x20` (36-byte Share report). Later `0x20` is change-only, so a status-only
+  packet log is ring-buffer eviction, not missing handshake. No physical
+  button bit was captured this session. Steam `hid_init` still hangs.
+  Automatic GIP routing stays Series.
+
+### Added
+
+- Selectable DualShock 4 (`dualshock4`, `054C:09CC`), DualSense
+  (`dualsense`, `054C:0CE6`), and Switch Pro (`switchpro`, `057E:2009`)
+  USB HID packers. Automatic routing publishes the matching first-party
+  identity when the physical pad is that dialect. Other HID stays Generic HID.
+- Userspace XID parser for original Xbox pads from Linux `xpad`
+  `XTYPE_XBOX`. Virtual output stays Generic HID; XID is not a HID identity.
+- DualShock 4, DualSense, and Switch Pro virtual HID descriptors now follow
+  captured USB layouts (sticks/hat/buttons, not an opaque 63-byte input).
+  Switch Pro reports are padded to the 64-byte descriptor length.
+- Explicit picker/CLI may publish first-party packer identities on a GIP pad
+  for live consumer-bind. Automatic routing stays family-strict (GIP → Series).
+- macOS 15+ virtual-device diagnostics fill `GCController.supportsHIDDevice`
+  by matching CoreHID snapshots to IOHID devices.
+- Report when CoreHID virtual HID creation fails because the Apple Development
+  provisioning profile does not include this Mac.
+
+### Fixed
+
+- Development rebuilds keep Input Monitoring: the host is signed with a stable
+  team and bundle-id designated requirement instead of a unique-certificate pin.
+- After a TCC permission Quit & Reopen, a detached waiter waits until this
+  process is gone, boots out leftover Launch Services jobs whose pid is
+  dead, then opens the `.app` bundle via Launch Services. Menu Quit and
+  SIGTERM still exit without relaunch; they only retire a stale job so
+  Spotlight can open again. Do not spawn during terminate. Do not exec the
+  Mach-O.
+
 ## [0.5.0-beta.4] - 2026-09-05
 
 ### Added
@@ -25,6 +95,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Consult device-level compatibility availability when exposing a virtual
   identity, instead of the physical-family overload alone.
+- Automatic compatibility uses a protocol × backend catalog: if the physical
+  VID/PID is already a first-party device that backend knows, keep that
+  identity; otherwise spoof the closest official device for that protocol.
+  Xbox 360-family pads publish Microsoft `045E:028E`. GIP pads publish Xbox
+  Series `045E:0B13`. DualShock 3/4/5, Switch, Steam Controller, and Flydigi
+  wait for virtual report formats. DualShock 1/2 is not a USB HIDAPI protocol.
+
+### Fixed
+
+- Honor macOS Quit & Reopen from a permission grant. The menu-bar app no
+  longer relaunches itself during terminate, which left the extra running
+  and raced Launch Services (`open` error -600 / “not open anymore”).
+- Write rumble and player-indicator packets for ZD Ultimate Legend
+  (`413D:2104`) to interrupt OUT `0x02`. The Xbox 360 default OUT `0x01` is
+  absent on this pad, so those writes failed with `notFound`.
 
 ## [0.5.0-beta.3] - 2026-09-04
 

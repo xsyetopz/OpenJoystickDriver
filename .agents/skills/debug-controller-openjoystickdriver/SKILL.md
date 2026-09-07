@@ -99,7 +99,7 @@ not turn a passing schema check or parser fixture into a hardware claim.
    ./scripts/ojd diagnose record /tmp/controller-candidate.json --validate-only
    ```
 
-   A valid raw-USB GIP/Xbox360 record ends with
+   A valid raw-USB GIP/XUSB record ends with
    `RECORD_VALIDATION result=valid`. This checks schema, supported protocol,
    transport, variants, endpoint directions, and startup names; it says
    nothing about the physical device.

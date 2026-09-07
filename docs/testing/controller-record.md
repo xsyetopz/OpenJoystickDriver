@@ -4,7 +4,7 @@ You can validate a candidate OJD JSON record without an Apple Developer Program 
 USB probe uses direct IOUSBHost when macOS permits app ownership. A device claimed by OJD's
 restricted USBDriverKit route also requires the signed application and extension.
 
-The probe supports raw-USB `GIP` records and wired or wireless-receiver `Xbox360` records. HID, Bluetooth, and unknown protocols need their own tools.
+The probe supports raw-USB `GIP` records and wired or wireless-receiver `XUSB` records. HID, Bluetooth, and unknown protocols need their own tools.
 
 ## Prerequisites
 

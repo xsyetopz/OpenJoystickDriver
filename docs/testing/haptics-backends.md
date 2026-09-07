@@ -11,8 +11,8 @@ swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try gam
 swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try sdl2-3
 ```
 
-The `sdl2-3` route changes OJD to the exact ASTRO `9886:0024` Xbox 360 HIDAPI
-descriptor/report identity. OJD publishes it through CoreHID on macOS 15 and later and through
+The `sdl2-3` route changes OJD to first-party Microsoft Xbox 360 Wired
+`045E:028E` with the Xbox 360 HIDAPI descriptor/report format. OJD publishes it through CoreHID on macOS 15 and later and through
 `IOHIDUserDevice` on macOS 10.15 through 14. The probe uses the installed OJD
 CLI to change identities so its application-service protocol always matches
 the running installed app.
@@ -82,7 +82,7 @@ Separately, OJD now cancels a superseded delayed stop before scheduling a
 replacement command, so an older accepted request cannot silence a newer
 rumble request after 250 milliseconds. That scheduling hardening does not make
 an application emit reports for an identity whose output protocol it does not
-support. The verified ASTRO implementation is now the canonical `sdl2-3`
-route. The input-only GameStop implementation, the redundant `x360-hid`
+support. Current `sdl2-3` publishes first-party Microsoft `045E:028E`; the ASTRO
+`9886:0024` probe remains historical evidence only. The input-only GameStop implementation, the redundant `x360-hid`
 selection, and the two failed Microsoft Bluetooth probe variants were removed
 from live code; these observations remain as historical evidence.

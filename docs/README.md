@@ -42,6 +42,7 @@
 - [xpad import](development/xpad-import.md)
 - [Compatibility sources](development/compatibility-sources.md)
 - [Xbox identities](development/xbox-identities.md)
+- [Wire protocols](development/wire-protocols.md)
 - DriverKit: `./scripts/ojd driverkit generate` / `./scripts/ojd check driverkit`
 - Commands: `./scripts/ojd help`
 

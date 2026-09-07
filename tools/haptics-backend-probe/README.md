@@ -22,10 +22,9 @@ swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try for
 swift run --package-path tools/haptics-backend-probe HapticsBackendProbe try gamecontroller --pulse
 ```
 
-The `sdl2-3` route publishes OJD's exact `9886:0024` ASTRO identity and Xbox
-360 descriptor/report format. SDL2 and SDL3 explicitly select
-their Xbox 360 HIDAPI driver for that pair, including its eight-byte rumble
-report.
+The `sdl2-3` route publishes OJD's first-party Microsoft Xbox 360 Wired
+`045E:028E` identity and Xbox 360 descriptor/report format. SDL treats that
+tuple as `SDL_GAMEPAD_TYPE_XBOX360`. It is not ASTRO C40.
 
 For each run, report application discovery, input shape, rumble motors, trigger
 motors, LEDs, disconnect/reconnect, and any crash or disappearance. A positive

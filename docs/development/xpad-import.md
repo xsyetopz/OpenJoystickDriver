@@ -21,9 +21,10 @@ The generator downloads every locked Linux source and verifies each SHA-256. It 
 
 Supported Linux inputs map as follows:
 
-- XTYPE_XBOX360 becomes Xbox360/xbox360.
-- XTYPE_XBOX360W becomes Xbox360/xbox360Wireless.
-- XTYPE_XBOXONE becomes GIP/xboxOne.
+- `XTYPE_XBOX` becomes XID/xid (original Xbox USB).
+- `XTYPE_XBOX360` becomes XUSB/xbox360 (wired Krypton).
+- `XTYPE_XBOX360W` becomes XUSB/xbox360Wireless (Argon adapter/receiver).
+- `XTYPE_XBOXONE` becomes GIP/xboxOne.
 - Known mapping macros become protocol.quirks.
 - Supported PlayStation, Sony, Nintendo, and Steam HID registrations become HID records from their driver tables and hid-ids.h.
 - Non-default xboxone_init_packets become protocol.startup_packets.
@@ -31,7 +32,8 @@ Supported Linux inputs map as follows:
 Protocol-default endpoints and startup packets are omitted. The pinned source
 revision and hashes remain in `ControllerSources.lock.json`; generated runtime
 records contain only operational controller facts. Unknown types, quirks,
-mappings, or startup macros are skipped with an explicit count. Partial
+mappings, or startup macros are skipped with an explicit count. Linux xpad's
+`0xFFFF:0xFFFF` catch-all row is skipped; it is not a USB identity. Partial
 source-table parsing fails generation.
 
 ## Local source overrides

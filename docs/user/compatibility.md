@@ -2,9 +2,18 @@
 
 Choose the route for the actual consumer. Enumeration alone is not evidence that
 the consumer can read input; every route names its protocol family and evidence
-status. Automatic routing is conservative and selects only an exact,
-catalog-backed tuple. `sdl2-3` remains an explicit route for its ASTRO C40
-Xbox-mode evidence, specific to SDL/HIDAPI-style consumers.
+status. Automatic routing is conservative. It selects an exact catalog-backed tuple when
+one exists. Otherwise it follows the wire-family list: if the physical device is
+already a first-party identity that family can publish, keep it; else spoof the closest
+official device for that same protocol. XUSB clones publish Microsoft
+`045E:028E`. GIP clones publish Xbox Series `045E:0B13`. DualShock 4, DualSense,
+and Switch Pro physical HID pads publish their first-party USB identities
+automatically. Other HID stays Generic HID. Steam and Flydigi stay Generic HID.
+XID (original Xbox USB) is parsed in userspace and is not HID. DualShock 1/2 used the
+PlayStation controller port, not USB HID. Frontmost-app lists do not gate this.
+Never cross families automatically: GameSir G7 SE does not become an Xbox 360
+pad or ASTRO C40. Explicit picker/CLI may publish a first-party packer
+identity for live consumer-bind, then return to automatic.
 
 Status marks appear only in the support lists below:
 
@@ -18,12 +27,17 @@ Status marks appear only in the support lists below:
 
 ### `sdl2-3`
 
-Use for applications that consume SDL 2 or SDL 3, including Steam and PCSX2.
-The virtual device publishes the ASTRO C40 `9886:0024` identity with its exact
-Xbox 360 HIDAPI descriptor and report format. PCSX2 Nightly accepted input and
-sent working physical rumble through this route on the tested GameSir G7 SE.
-The previous GameStop `1BAD:F901` mapping identity was removed after it produced
-input but no dependable rumble.
+Use for applications that consume SDL 2 or SDL 3 HIDAPI. Stock Steam-bundled
+and Homebrew SDL `hid_init` still hang if an Apple `AppleGCSyntheticDevice`
+`GamePad-1` leftover is already wedged: SDL matches all HID devices, then
+`IOHIDDeviceCreate` `IOServiceOpen`s the GameController plugin. OJD no longer
+opens that node. A leftover shim outlives OJD and is not removed without
+reboot or `gamecontrollerd` restart. This is not a Steam bind result. The virtual device publishes Microsoft
+Xbox 360 Wired `045E:028E` with Xbox 360 HID reports. XUSB clones that are
+missing from SDL HIDAPI's device list use this first-party identity. ASTRO C40 `9886:0024` is a DualShock-style
+third-party pad and is not a spoof target. Automatic routing does not select
+this identity for GIP; use `apple-gamecontroller` for Series. Explicit
+picker/CLI may publish `045E:028E` from GIP for live bind.
 
 ### `apple-gamecontroller`
 
@@ -41,6 +55,27 @@ app's gesture settings.
 reconnect results are diagnostic evidence, not guarantees. Do not claim
 haptics without a physical/runtime observation.
 
+### `dualshock4`
+
+Use to test SDL HIDAPI PS4 and Apple GameController DualShock 4 consumers.
+Publishes Sony `054C:09CC` "Wireless Controller" with USB report `0x01`.
+Automatic when the physical pad is DualShock 4. Explicit picker may publish
+this identity from another family for live bind.
+
+### `dualsense`
+
+Use to test SDL HIDAPI PS5 and `GCDualSenseGamepad` consumers. Publishes Sony
+`054C:0CE6` "Wireless Controller" with USB report `0x01`. Automatic when the
+physical pad is DualSense. Explicit picker may publish this identity from
+another family for live bind. macOS 11.3+ for native DualSense GameController.
+
+### `switchpro`
+
+Use to test SDL HIDAPI Nintendo and Apple GameController Switch Pro consumers.
+Publishes Nintendo `057E:2009` "Pro Controller" with USB report `0x30` and the
+USB `0x80`/`0x81` handshake. Automatic when the physical pad is Switch Pro.
+Explicit picker may publish this identity from another family for live bind.
+
 ### `generic-hid`
 
 Use for unknown or unsupported consumers that fit none of the specialized
@@ -50,8 +85,8 @@ Vendor-specific controls may be absent.
 ### `xbox360-hid`
 
 Use only for a consumer that needs the OJD Xbox 360-family HID descriptor and
-report shape. This is a generic HID compatibility profile, not Windows XUSB or
-XInputHID emulation. It uses the OJD Xbox 360 HID report format and remains
+report shape. This is a generic HID compatibility profile, not Windows XUSB22.sys
+or XInput. It uses the OJD Xbox 360 HID report format and remains
 research-only until a named consumer is tested.
 
 Set an explicit identity from the installed CLI:
@@ -59,6 +94,7 @@ Set an explicit identity from the installed CLI:
 ```bash
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat set sdl2-3
 /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat set apple-gamecontroller
+/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless compat set dualshock4
 ```
 
 Only explicit identities are persistence guarantees: a successful selection is
@@ -89,11 +125,45 @@ persist that temporary choice.
 - Generic HID maps descriptor-defined controls but cannot infer vendor protocols.
 - Raw and vendor-specific USB controllers use direct IOUSBHost when macOS permits app ownership.
   Entitlement-restricted models require OJD's signed USB DriverKit extension.
-- `045E:0B13` is used only for the explicit Apple GameController route.
+- Automatic GIP and the explicit `apple-gamecontroller` route publish Xbox Series
+  `045E:0B13` "Xbox Wireless Controller". GameController.framework bound that
+  identity on GameSir G7 SE USB GIP. A custom SDL 3.4.16 HIDAPI+IOKit build
+  (no GameController.framework) bound the same identity as HIDAPI xboxone over
+  Bluetooth (`bus_type` 2) and took the 17-byte BLE path, not USB GIP.
+  Interrupt IN streams idle 17-byte Series reports (`0x01` plus 0x8000
+  sticks, official BLE rest). HIDAPI xboxone BLE `HandleStatePacket` maps
+  those to signed 0 (`raw - 0x8000`) before jitter. A 12s interrupt watch
+  saw 48 idle reports and no physical button bit. A packer-built A-pressed
+  17-byte Series report decodes SOUTH true through the same BLE layout; that
+  is not a physical press. Steam `hid_init` still hangs (Steam bundled SDL
+  3.5.0, 5s watchdog). sdlHIDAPI remains source-backed; this is not a Steam
+  HIDAPI result. Explicit picker DualShock 4 `054C:09CC` "Wireless Controller"
+  (USB, 64-byte report `0x01`, descriptor 114 bytes) and DualSense `054C:0CE6`
+  "Wireless Controller" (USB, 64-byte report `0x01`, descriptor 273 bytes)
+  both returned `GCController.supportsHIDDevice` yes and custom SDL HIDAPI
+  `SDL_OpenGamepad` as ps4/ps5. Explicit Switch Pro `057E:2009` "Pro Controller"
+  (USB Joystick, 64-byte reports, descriptor 203 bytes) returned
+  `supportsHIDDevice` yes without hang and custom HIDAPI `SDL_OpenGamepad` as
+  switchpro. Explicit `sdl2-3` `045E:028E` "Xbox 360 Wired Controller" (USB
+  Joystick, 14-byte reports, `bcdDevice` 0x0114, descriptor 201 bytes)
+  returned `supportsHIDDevice` yes and custom HIDAPI `SDL_OpenGamepad` as
+  xbox360. Ignore leftover IOHID `045E:028E` `AppleGCSyntheticDevice`
+  "GamePad-1" when it is not the OJD user-space device: GameController
+  creates that 360 HID shim when it binds an Xbox identity (`045E:0B13`
+  included). OJD skips it before any user-client open. Stock SDL match-all
+  still deadlocks on a leftover wedged shim. Physical GIP on this
+  GameSir G7 SE completes Hello (`0x02`) plus one rest input (`0x20`, 36-byte
+  Share report, all-zero payload). Further `0x20` frames follow the GIP
+  change-only rule, so a later packet-log window of 8-byte status (`0x03`)
+  keepalives is not a failed handshake; the 48-entry log ages out that rest
+  `0x20`. A 20s `controller trace` with no physical press saw only status.
+  Steam `hid_init` still hangs. Automatic GIP was restored to Series.
 - Earlier Xbox One Bluetooth `045E:02FD` spoof experiments reported no usable
   SDL HIDAPI input and are gone from selectable identities; unknown persisted
   identity strings sanitize to `automatic` on load.
-  `9886:0024` is hardware-verified only for SDL HIDAPI-style consumers.
+- ASTRO C40 `9886:0024` is not a spoof target. It is a DualShock-style
+  third-party pad; SDL HIDAPI's Xbox 360 driver special-cases it, but OJD does
+  not impersonate it.
 - No virtual HID VID/PID universally supplies Windows XInput/GIP semantics on
   macOS. Consumer identity, descriptor, transport, and report behavior must
   be tested separately.
@@ -125,24 +195,26 @@ complete descriptor, feature/calibration, input, and output contract, so it is
 not a supported spoof route.
 
 Compatibility selection is keyed by **physical protocol family × target
-consumer × evidence**. Xbox GIP/XInput/XUSB inputs may use an Xbox-adjacent
+consumer × evidence**. XUSB and GIP inputs may use an Xbox-adjacent
 identity only when that consumer evidence exists; the OJD `xbox360-hid` route
-is generic HID and is not XUSB/XInputHID emulation. Nintendo and PlayStation
-inputs require their own adjacent supported identity. The SDL ASTRO C40 route
-does not cross those family boundaries merely because SDL accepts it. When no
-verified adjacent identity exists, OJD uses generic HID rather than guessing.
+is generic HID and is not XUSB22.sys or XInput. Nintendo and PlayStation
+inputs require their own adjacent supported identity. Automatic `sdl2-3`
+publishes first-party Microsoft `045E:028E` for XUSB pads only. It does not
+cross into GIP, DualShock, or Nintendo merely because SDL HIDAPI also has
+drivers for those protocols. Explicit picker/CLI may publish a first-party
+packer identity on GIP for live bind. When no verified adjacent identity exists, OJD uses generic HID rather than guessing.
 Browser reports remain per-engine because Chromium, WebKit, and Gecko can map
 the same family differently.
 
 | Physical family/mode | SDL/HIDAPI | Apple GameController | Automatic result |
 | --- | --- | --- | --- |
-| Xbox GIP, exact GameSir G7 SE mode | ❌ Generic HID (no adjacent tuple) | ⚠️ Xbox Series profile exposes Share separately | Do not substitute ASTRO C40 automatically |
-| Xbox GIP, other modes | 🔬 no verified adjacent tuple | ⚠️ Xbox Series profile; test each controller | Generic HID; no ASTRO substitution |
-| Xbox 360 physical family | 🔬 no verified adjacent tuple | ⚠️ separate test | Generic HID |
+| Xbox GIP, exact GameSir G7 SE mode | ⚠️ Series `045E:0B13`; custom HIDAPI xboxone BLE idle rest `0x8000`→0; no physical button; not Steam | ✅ Xbox Series `045E:0B13` | `apple-gamecontroller` |
+| Xbox GIP, other modes | ⚠️ first-party Series unless a reported failure tuple exists | ⚠️ Xbox Series profile | first-party Series |
+| Xbox 360 physical family | ⚠️ `sdl2-3` (Microsoft `045E:028E`) | 🔬 Series BT not used for 360 | `sdl2-3` |
 | XInputHID/XUSB wire protocol | ❌ no macOS emulation claim | ❌ no macOS emulation claim | Generic HID |
 | Xbox One Bluetooth `045E:02FD` | 🧪 BT1/BT2 reported no SDL input; route retired | 🔬 use `apple-gamecontroller` or `generic-hid` | Generic HID |
-| Nintendo Switch Pro | 🔬 no adjacent verified route | 🔬 no adjacent verified route | Generic HID |
-| PlayStation DS4/DS5 | 🔬 official tuple required | 🔬 official tuple required | Generic HID unless tuple is proven |
+| Nintendo Switch Pro | ⚠️ automatic `switchpro` USB packer; explicit G7 SE publish: custom HIDAPI switchpro `SDL_OpenGamepad` ok, not Steam | ⚠️ automatic `switchpro`; explicit G7 SE `supportsHIDDevice` yes | `switchpro` |
+| PlayStation DS4/DS5 | ⚠️ automatic `dualshock4` / `dualsense`; explicit G7 SE publish: custom HIDAPI ps4/ps5 `SDL_OpenGamepad` ok, not Steam | ⚠️ automatic packers; explicit G7 SE `supportsHIDDevice` yes | matching first-party HID |
 | Other | 🔬 no cross-family spoof | 🔬 no cross-family spoof | Generic HID |
 
 ## Apple GameController support

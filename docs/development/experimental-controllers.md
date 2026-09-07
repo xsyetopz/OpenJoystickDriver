@@ -101,6 +101,16 @@ the captured endpoint addresses or the OJD USBDriverKit session. The
 [Nacon hardware procedure](../testing/nacon-revolution-x.md) remains the human-readable
 acceptance record for input, continuous-read, reconnect, and no-host-keep-alive checks.
 
+## ZD Ultimate Legend
+
+The Linux xpad XUSB record for `413D:2104` stays. A local-hardware patch pins
+interrupt endpoints `0x81`/`0x02` because rumble and player-indicator writes to
+the Xbox 360 default OUT `0x01` fail with `notFound`. Input on IN `0x81` was
+already working. Consumer identity (Generic HID vs `sdl2-3` vs Apple
+GameController) is separate; XUSB automatic routing selects `sdl2-3`,
+which publishes first-party Microsoft `045E:028E`. See
+[issue #22](https://github.com/xsyetopz/OpenJoystickDriver/issues/22).
+
 ## Xbox Adaptive Joystick
 
 No parser claim exists. Product descriptions do not provide a packet layout. Capture neutral, every button, stick axes, stick click, report IDs, and checksums with [the packet request](../testing/xbox-adaptive-joystick.md) before adding a record.
