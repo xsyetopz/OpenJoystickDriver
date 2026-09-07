@@ -159,7 +159,9 @@ if monitor {
   let mgr = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
   IOHIDManagerSetDeviceMatching(
     mgr,
-    [kIOHIDVendorIDKey as String: vid, kIOHIDProductIDKey as String: pid] as CFDictionary
+    AppleGameControllerSyntheticHID.ioHIDMatchingExcludingSynthetics([
+      kIOHIDVendorIDKey as String: vid, kIOHIDProductIDKey as String: pid
+    ]) as CFDictionary
   )
 
   let valueCallback: IOHIDValueCallback = { context, _, sender, value in

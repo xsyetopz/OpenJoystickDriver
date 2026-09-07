@@ -95,7 +95,10 @@ func looksLikeGamepad(_ device: IOHIDDevice) -> Bool {
 
 func printHIDSupport() -> Bool? {
   let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
-  IOHIDManagerSetDeviceMatching(manager, nil)
+  IOHIDManagerSetDeviceMatching(
+    manager,
+    AppleGameControllerSyntheticHID.allHIDDevicesExcludingSynthetics as CFDictionary
+  )
   IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
   let devices = ((IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice>) ?? []).filter(
     looksLikeGamepad

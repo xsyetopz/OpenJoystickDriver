@@ -32,5 +32,8 @@
     <string>OpenJoystickDriver needs Input Monitoring to read physical controller reports.</string>
     <key>NSSystemExtensionUsageDescription</key>
     <string>OpenJoystickDriver uses a DriverKit extension to communicate with supported Microsoft USB controllers.</string>
+    <!-- Apple HID plugin preflight: skip IOServiceOpen on AppleGCSyntheticDevice. -->
+    <key>GCSyntheticDevice</key>
+    <false/>
 </dict>
 </plist>

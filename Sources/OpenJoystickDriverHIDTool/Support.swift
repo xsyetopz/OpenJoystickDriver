@@ -2,6 +2,7 @@ import Dispatch
 import Foundation
 import IOKit
 import IOKit.hid
+import OpenJoystickDriverKit
 
 func parseInt(_ s: String) -> Int? {
   if s.hasPrefix("0x") || s.hasPrefix("0X") { return Int(s.dropFirst(2), radix: 16) }
@@ -159,9 +160,15 @@ final class ExitCodeBox: @unchecked Sendable {
 func enumerateDevices(matching: [String: Any]?) -> [IOHIDDevice] {
   let mgr = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
   if let matching {
-    IOHIDManagerSetDeviceMatching(mgr, matching as CFDictionary)
+    IOHIDManagerSetDeviceMatching(
+      mgr,
+      AppleGameControllerSyntheticHID.ioHIDMatchingExcludingSynthetics(matching) as CFDictionary
+    )
   } else {
-    IOHIDManagerSetDeviceMatching(mgr, nil)
+    IOHIDManagerSetDeviceMatching(
+      mgr,
+      AppleGameControllerSyntheticHID.allHIDDevicesExcludingSynthetics as CFDictionary
+    )
   }
   _ = IOHIDManagerOpen(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
   defer { IOHIDManagerClose(mgr, IOOptionBits(kIOHIDOptionsTypeNone)) }

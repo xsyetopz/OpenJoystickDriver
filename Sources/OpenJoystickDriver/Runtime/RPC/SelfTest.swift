@@ -98,7 +98,13 @@ extension ApplicationServiceServer {
     // are temporarily out of sync) may not expose the expected usage keys at the IOHIDManager
     // matching layer. Broad matching keeps the self-test reliable; we filter down to OJD devices
     // in the callback using IOUserClass / serial.
-    IOHIDManagerSetDeviceMatching(mgr, nil)
+    // Broad matching keeps the self-test reliable; we filter down to OJD devices
+    // in the callback using IOUserClass / serial. Exclude Apple GameController
+    // synthetics before IOHIDDeviceCreate — match-all hangs on a wedged GamePad-1.
+    IOHIDManagerSetDeviceMatching(
+      mgr,
+      AppleGameControllerSyntheticHID.allHIDDevicesExcludingSynthetics as CFDictionary
+    )
 
     let callback: IOHIDValueCallback = { context, _, sender, _ in
       guard let context else { return }
@@ -184,8 +190,12 @@ extension ApplicationServiceServer {
     let manager = HIDDeviceManager()
     managerTask = Task { [weak self] in
       let criteria = [
-        HIDDeviceManager.DeviceMatchingCriteria(primaryUsage: .genericDesktop(.gamepad)),
-        HIDDeviceManager.DeviceMatchingCriteria(primaryUsage: .genericDesktop(.joystick))
+        AppleGameControllerSyntheticHID.coreHIDMatchingCriteria(
+          primaryUsage: .genericDesktop(.gamepad)
+        ),
+        AppleGameControllerSyntheticHID.coreHIDMatchingCriteria(
+          primaryUsage: .genericDesktop(.joystick)
+        )
       ]
       do {
         for try await notification in await manager.monitorNotifications(matchingCriteria: criteria)
@@ -208,6 +218,7 @@ extension ApplicationServiceServer {
 
   private func add(_ reference: HIDDeviceClient.DeviceReference) async {
     guard deviceTasks[reference.deviceID] == nil,
+      !AppleGameControllerSyntheticHID.isSyntheticRegistryEntry(id: reference.deviceID),
       let client = HIDDeviceClient(deviceReference: reference),
       UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(await client.serialNumber)
     else { return }

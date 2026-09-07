@@ -41,6 +41,7 @@ public final class HIDDeviceStream: @unchecked Sendable {
     matches += additionalProfileIdentifiers.map {
       [kIOHIDVendorIDKey: Int($0.vendorID), kIOHIDProductIDKey: Int($0.productID)]
     }
+    matches = matches.map { AppleGameControllerSyntheticHID.ioHIDMatchingExcludingSynthetics($0) }
     IOHIDManagerSetDeviceMatchingMultiple(manager, matches as CFArray)
   }
 
@@ -175,12 +176,16 @@ public final class HIDDeviceStream: @unchecked Sendable {
 
   /// Reads device properties and yields a `.connected` event into the stream.
   private func handleDeviceAdded(_ device: IOHIDDevice) {
+    guard !AppleGameControllerSyntheticHID.isSynthetic(device: device) else { return }
     let vid = deviceProperty(device, kIOHIDVendorIDKey)
     let pid = deviceProperty(device, kIOHIDProductIDKey)
     let serial = IOHIDDeviceGetProperty(device, kIOHIDSerialNumberKey as CFString) as? String
     let productName = IOHIDDeviceGetProperty(device, kIOHIDProductKey as CFString) as? String
     let transport = IOHIDDeviceGetProperty(device, kIOHIDTransportKey as CFString) as? String ?? ""
-    let syntheticProperty = IOHIDDeviceGetProperty(device, "kIOHIDGCSyntheticDeviceKey" as CFString)
+    let syntheticProperty = IOHIDDeviceGetProperty(
+      device,
+      AppleGameControllerSyntheticHID.propertyKey as CFString
+    )
     let loc = deviceProperty(device, kIOHIDLocationIDKey)
     let locationID = UInt32(truncatingIfNeeded: loc)
     guard

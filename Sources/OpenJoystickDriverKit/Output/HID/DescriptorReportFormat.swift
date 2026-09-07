@@ -102,9 +102,9 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
     productID: Int,
     preferredTransport: String?
   ) -> [UInt8]? {
-    let matching: [String: Any] = [
+    let matching = AppleGameControllerSyntheticHID.ioHIDMatchingExcludingSynthetics([
       kIOHIDVendorIDKey as String: vendorID, kIOHIDProductIDKey as String: productID
-    ]
+    ])
     let mgr = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
     IOHIDManagerSetDeviceMatching(mgr, matching as CFDictionary)
     _ = IOHIDManagerOpen(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
@@ -122,7 +122,10 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, @unchecked 
       // Exclude OJD virtual devices.
       if UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial)
         || !PhysicalHIDBackendEventAdapter().acceptsDescriptor(
-          syntheticProperty: IOHIDDeviceGetProperty(dev, "kIOHIDGCSyntheticDeviceKey" as CFString)
+          syntheticProperty: IOHIDDeviceGetProperty(
+            dev,
+            AppleGameControllerSyntheticHID.propertyKey as CFString
+          )
         )
       {
         return Int.min / 2

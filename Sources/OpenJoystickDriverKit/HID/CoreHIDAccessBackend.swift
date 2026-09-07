@@ -19,12 +19,18 @@ import Foundation
 
   init(virtualProfile _: VirtualDeviceProfile, additionalProfileIdentifiers: [DeviceIdentifier]) {
     var criteria = [
-      HIDDeviceManager.DeviceMatchingCriteria(primaryUsage: .genericDesktop(.gamepad)),
-      HIDDeviceManager.DeviceMatchingCriteria(primaryUsage: .genericDesktop(.joystick)),
-      HIDDeviceManager.DeviceMatchingCriteria(primaryUsage: .genericDesktop(.multiAxisController))
+      AppleGameControllerSyntheticHID.coreHIDMatchingCriteria(
+        primaryUsage: .genericDesktop(.gamepad)
+      ),
+      AppleGameControllerSyntheticHID.coreHIDMatchingCriteria(
+        primaryUsage: .genericDesktop(.joystick)
+      ),
+      AppleGameControllerSyntheticHID.coreHIDMatchingCriteria(
+        primaryUsage: .genericDesktop(.multiAxisController)
+      )
     ]
     criteria += additionalProfileIdentifiers.map {
-      HIDDeviceManager.DeviceMatchingCriteria(
+      AppleGameControllerSyntheticHID.coreHIDMatchingCriteria(
         vendorID: UInt32($0.vendorID),
         productID: UInt32($0.productID)
       )
@@ -103,16 +109,18 @@ import Foundation
     reference: HIDDeviceClient.DeviceReference,
     continuation: AsyncStream<HIDDeviceEvent>.Continuation
   ) async {
-    guard recordsByDeviceID[reference.deviceID] == nil,
-      let client = HIDDeviceClient(deviceReference: reference)
-    else { return }
+    guard recordsByDeviceID[reference.deviceID] == nil else { return }
+    guard !AppleGameControllerSyntheticHID.isSyntheticRegistryEntry(id: reference.deviceID) else {
+      return
+    }
+    guard let client = HIDDeviceClient(deviceReference: reference) else { return }
 
     let vendorID = UInt16(truncatingIfNeeded: await client.vendorID)
     let productID = UInt16(truncatingIfNeeded: await client.productID)
     let serialNumber = await client.serialNumber
     let productName = await client.product
     let locationID = UInt32(truncatingIfNeeded: await client.locationID ?? reference.deviceID)
-    let syntheticProperty = await client["kIOHIDGCSyntheticDeviceKey"]?.unsafeObject
+    let syntheticProperty = await client[AppleGameControllerSyntheticHID.propertyKey]?.unsafeObject
     let transport = Self.transportName(await client.transport)
     guard
       PhysicalHIDBackendEventPolicy.acceptsDevice(
