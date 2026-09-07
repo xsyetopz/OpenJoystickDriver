@@ -288,42 +288,42 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
   }
 
   @Test func controllerFamiliesSelectProtocolAppropriateInputSymbols() {
-    let xbox = InputTestControllerSymbolSet.resolve(for: .xboxOne)
+    let xbox = InputTestControllerSymbolSet.resolve(for: .xbox)
     #expect(xbox.leftShoulder.symbol == "lb.button.roundedbottom.horizontal")
     #expect(xbox.leftTrigger.symbol == "lt.button.roundedtop.horizontal")
     #expect(xbox.guide.symbol == "xbox.logo")
     #expect(xbox.leftStickClick.symbol == "lsb.button.angledbottom.horizontal.left")
 
-    let playStation = InputTestControllerSymbolSet.resolve(for: .dualSense)
+    let playStation = InputTestControllerSymbolSet.resolve(for: .playstation)
     #expect(playStation.leftShoulder.symbol == "l1.button.roundedbottom.horizontal")
     #expect(playStation.leftTrigger.symbol == "l2.button.roundedtop.horizontal")
     #expect(playStation.guide.symbol == "playstation.logo")
     #expect(playStation.southFace.symbol == "xmark.circle")
 
-    let switchController = InputTestControllerSymbolSet.resolve(for: .switchPro)
+    let switchController = InputTestControllerSymbolSet.resolve(for: .nintendo)
     #expect(switchController.leftTrigger.symbol == "zl.button.roundedtop.horizontal")
     #expect(switchController.view.symbol == "minus.circle")
     #expect(switchController.menu.symbol == "plus.circle")
 
-    let generic = InputTestControllerSymbolSet.resolve(for: .genericHID)
+    let generic = InputTestControllerSymbolSet.resolve(for: .generic)
     #expect(generic.leftShoulder.symbol == nil)
     #expect(generic.leftShoulder.fallbackText == "LB / L1")
     #expect(generic.guide.symbol == "house.fill")
   }
 
   @Test func xboxShareMappingUsesSeparateCenteredShareControl() {
-    let layout = InputTestSystemClusterLayout.resolve(for: .xboxOne)
+    let layout = InputTestSystemClusterLayout.resolve(for: .xboxSeries)
     #expect(layout == .xboxWithShare)
     #expect(layout.rows == [[.view, .guide, .menu], [.empty, .share, .empty]])
-    #expect(InputTestSystemClusterLayout.viewButtons(for: .xboxOne) == [.back])
+    #expect(InputTestSystemClusterLayout.viewButtons(for: .xbox) == [.back])
     #expect(InputTestSystemClusterLayout.shareButtons == [.share])
   }
 
   @Test func playStationLeftSystemControlRemainsShare() {
-    let layout = InputTestSystemClusterLayout.resolve(for: .dualSense)
+    let layout = InputTestSystemClusterLayout.resolve(for: .dualSenseUSB)
     #expect(layout == .standard)
     #expect(layout.rows == [[.view, .guide, .menu]])
-    #expect(InputTestSystemClusterLayout.viewButtons(for: .dualSense) == [.share])
+    #expect(InputTestSystemClusterLayout.viewButtons(for: .playstation) == [.share])
   }
 
   @Test @MainActor func samplingNeverOverlapsInputRequests() async {

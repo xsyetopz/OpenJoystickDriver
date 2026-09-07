@@ -151,7 +151,11 @@ struct HIDReportPacker: @unchecked Sendable {
         let clamped = max(minV, min(maxV, scaled))
         return UInt32(bitPattern: Int32(clamped))
       }
-      let scaled = Int((Double(v) + 32767.0) / 65534.0 * Double(maxV - minV) + Double(minV))
+      // Unsigned sticks: Int16 0 maps to the unsigned center. Xbox Series BLE
+      // axes are 0...65535 with rest 0x8000 (SDL HIDAPI: raw - 0x8000).
+      let unsigned = Int(v) - Int(Int16.min)
+      let span = maxV - minV
+      let scaled = span == 0 ? minV : minV + unsigned * span / 65_535
       let clamped = max(minV, min(maxV, scaled))
       return UInt32(clamped)
     }

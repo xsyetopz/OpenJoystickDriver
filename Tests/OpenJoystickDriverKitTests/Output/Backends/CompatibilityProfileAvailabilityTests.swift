@@ -3,12 +3,10 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct CompatibilityProfileAvailabilityTests {
-  private let subfamilies: [PhysicalProtocolSubfamily] = [
-    .xboxOriginal, .xbox360, .xboxGIP, .nintendoSwitchPro, .nintendoOther, .playStationDS4,
-    .playStationDS5, .playStationOther, .other
-  ]
+  private let subfamilies: [PhysicalProtocolSubfamily] = [.xid, .xusb, .gip, .hid]
   private let identities: [CompatibilityIdentity] = [
-    .automatic, .genericHID, .sdl2_3, .appleGameController, .xbox360HID
+    .automatic, .genericHID, .sdl2_3, .appleGameController, .xbox360HID, .dualShock4, .dualSense,
+    .switchPro
   ]
 
   @Test func everyPhysicalFamilyHasTheExpectedIdentityMatrix() {
@@ -22,14 +20,12 @@ struct CompatibilityProfileAvailabilityTests {
         switch identity {
         case .automatic: expected = .unavailable(reason: .automaticRequiresResolution)
         case .genericHID: expected = .available
-        case .sdl2_3, .xbox360HID:
+        case .sdl2_3, .appleGameController, .dualShock4, .dualSense, .switchPro:
+          expected = .available
+        case .xbox360HID:
           expected =
-            subfamily == .xbox360
-            ? .available : .unavailable(reason: .xbox360IdentityRequiresXbox360Family)
-        case .appleGameController:
-          expected =
-            subfamily == .xboxGIP
-            ? .available : .unavailable(reason: .xboxOneIdentityRequiresXboxGIPFamily)
+            subfamily == .xusb
+            ? .available : .unavailable(reason: .xusbIdentityRequiresXUSBFamily)
         }
         #expect(decision == expected)
         #expect(
@@ -43,29 +39,27 @@ struct CompatibilityProfileAvailabilityTests {
 
   @Test func requestedBoundaryRowsRemainExplicit() {
     #expect(
-      CompatibilityProfileAvailabilityPolicy.decision(for: .xboxGIP, identity: .sdl2_3)
-        == .unavailable(reason: .xbox360IdentityRequiresXbox360Family)
+      CompatibilityProfileAvailabilityPolicy.decision(for: .gip, identity: .sdl2_3) == .available
     )
     #expect(
-      CompatibilityProfileAvailabilityPolicy.decision(for: .xboxGIP, identity: .appleGameController)
+      CompatibilityProfileAvailabilityPolicy.decision(for: .gip, identity: .appleGameController)
         == .available
     )
     #expect(
-      CompatibilityProfileAvailabilityPolicy.decision(for: .xbox360, identity: .sdl2_3)
+      CompatibilityProfileAvailabilityPolicy.decision(for: .xusb, identity: .sdl2_3)
         == .available
     )
-    for subfamily in [
-      PhysicalProtocolSubfamily.nintendoSwitchPro, .nintendoOther, .playStationDS4, .playStationDS5,
-      .playStationOther
-    ] {
-      #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.sdl2_3, for: subfamily) == false)
-      #expect(
-        CompatibilityProfileAvailabilityPolicy.isAvailable(.xbox360HID, for: subfamily) == false
-      )
-    }
+    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.sdl2_3, for: .hid) == true)
+    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.xbox360HID, for: .hid) == false)
+    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.xbox360HID, for: .gip) == false)
+    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.dualShock4, for: .hid) == true)
+    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.switchPro, for: .hid) == true)
+    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.dualSense, for: .gip) == true)
+    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.dualShock4, for: .gip) == true)
+    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.dualShock4, for: .xusb) == true)
   }
 
-  @Test func connectedGIPDeviceRejectsXbox360FamilyIdentities() {
+  @Test func connectedGIPDeviceAllowsExplicitFirstPartyIdentities() {
     let device = ApplicationServiceDeviceDescription(
       name: "GIP",
       vendorID: 1,
@@ -77,22 +71,25 @@ struct CompatibilityProfileAvailabilityTests {
     )
 
     #expect(
-      CompatibilityProfileAvailabilityPolicy.decision(for: device, identity: .sdl2_3)
-        == .unavailable(reason: .xbox360IdentityRequiresXbox360Family)
+      CompatibilityProfileAvailabilityPolicy.decision(for: device, identity: .sdl2_3) == .available
     )
     #expect(
       CompatibilityProfileAvailabilityPolicy.decision(for: device, identity: .xbox360HID)
-        == .unavailable(reason: .xbox360IdentityRequiresXbox360Family)
+        == .unavailable(reason: .xusbIdentityRequiresXUSBFamily)
     )
     #expect(
       CompatibilityProfileAvailabilityPolicy.decision(for: device, identity: .appleGameController)
+        == .available
+    )
+    #expect(
+      CompatibilityProfileAvailabilityPolicy.decision(for: device, identity: .dualShock4)
         == .available
     )
   }
 
   @Test func automaticMustBeResolvedBeforePolicyEvaluation() {
     let decision = CompatibilityProfileAvailabilityPolicy.decision(
-      for: .xbox360,
+      for: .xusb,
       identity: .automatic
     )
 

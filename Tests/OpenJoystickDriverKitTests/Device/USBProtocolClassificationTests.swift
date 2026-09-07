@@ -126,20 +126,74 @@ struct USBProtocolClassificationTests {
     #expect(result.hasConflict)
   }
 
-  @Test func originalXboxVariantDoesNotClaimXUSBWithoutAnAuthoritativeMapping() {
-    let result = KnownRecordProtocolReconciler.reconcile(
+  @Test func originalXboxXIDSignatureIsAdvisory() {
+    let result = USBProtocolClassifier.classify(
+      observation(
+        interfaceClass: 0x58,
+        subclass: 0x42,
+        protocol: 0x00,
+        endpoints: [endpoint(0x81, .in), endpoint(0x02, .out)]
+      )
+    )
+
+    #expect(result.selected == .xid)
+    #expect(result.disposition == .advisory)
+    #expect(result.matchedPredicates.contains(.xidInterfaceIdentity))
+  }
+
+  @Test func xbox360WirelessArgonAdapterUsesXUSBProtocol129() {
+    let result = USBProtocolClassifier.classify(
+      observation(
+        interfaceClass: 0xFF,
+        subclass: 0x5D,
+        protocol: 0x81,
+        endpoints: [endpoint(0x81, .in), endpoint(0x01, .out)]
+      )
+    )
+
+    #expect(result.selected == .xusb)
+    #expect(result.disposition == .advisory)
+  }
+
+  @Test func originalXboxVariantMatchesXIDAndConflictsWithXUSB() {
+    let xidMatch = KnownRecordProtocolReconciler.reconcile(
+      observation: observation(
+        interfaceClass: 0x58,
+        subclass: 0x42,
+        protocol: 0x00,
+        endpoints: [endpoint(0x81, .in), endpoint(0x02, .out)]
+      ),
+      profile: profile(variant: .xid)
+    )
+    let xusbConflict = KnownRecordProtocolReconciler.reconcile(
       observation: observation(
         interfaceClass: 0xFF,
         subclass: 0x5D,
         protocol: 0x01,
         endpoints: [endpoint(0x81, .in), endpoint(0x01, .out)]
       ),
-      profile: profile(variant: .xboxOriginal)
+      profile: profile(variant: .xid)
     )
 
-    #expect(result.knownVariant == .xboxOriginal)
+    #expect(xidMatch.knownVariant == .xid)
+    #expect(!xidMatch.hasConflict)
+    #expect(!xidMatch.matchingPredicates.isEmpty)
+    #expect(xusbConflict.hasConflict)
+  }
+
+  @Test func xboxAdaptiveJoystickReconcilesAsGIP() {
+    let result = KnownRecordProtocolReconciler.reconcile(
+      observation: observation(
+        interfaceClass: 0xFF,
+        subclass: 0x47,
+        protocol: 0xD0,
+        endpoints: [endpoint(0x81, .in), endpoint(0x02, .out)]
+      ),
+      profile: profile(variant: .xboxAdaptiveJoystick)
+    )
+
     #expect(!result.hasConflict)
-    #expect(result.matchingPredicates.isEmpty)
+    #expect(!result.matchingPredicates.isEmpty)
   }
 
   @Test func exactCatalogAdmissionSetRemainsCatalogOwned() {

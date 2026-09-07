@@ -53,11 +53,21 @@ public protocol VirtualGamepadReportFormat: Sendable {
   ///
   /// If `inputReportID` is non-nil, the returned bytes MUST begin with that Report ID byte.
   func buildInputReport(from state: VirtualGamepadState) -> [UInt8]
+
+  /// Optional interrupt-in reply to a host output report (USB handshake, ACK).
+  func inputReportRespondingToHostOutput(_ bytes: [UInt8]) -> [UInt8]?
+
+  /// Optional control-pipe GetReport reply. Returning bytes completes the host
+  /// request; returning nil lets the dispatcher serve the current input report
+  /// or an empty success buffer. Never used to block the HID stack.
+  func hostGetReport(reportID: UInt32, maxSize: Int) -> [UInt8]?
 }
 
 extension VirtualGamepadReportFormat {
   public var outputReportPayloadSize: Int? { nil }
   public var outputReportID: UInt8? { nil }
+  public func inputReportRespondingToHostOutput(_ bytes: [UInt8]) -> [UInt8]? { nil }
+  public func hostGetReport(reportID _: UInt32, maxSize _: Int) -> [UInt8]? { nil }
 }
 
 /// Generic OJD HID GamePad format (matches ``GamepadHIDDescriptor``).

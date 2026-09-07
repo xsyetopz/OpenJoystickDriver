@@ -123,7 +123,12 @@ struct DeviceCatalog: Sendable {
 
     let quirks = record.protocolInfo.quirks ?? []
 
-    let defaultEndpoints = driver == "Xbox360" ? (input: 129, output: 1) : (input: 130, output: 2)
+    let defaultEndpoints: (input: Int, output: Int)
+    switch driver {
+    case "XUSB": defaultEndpoints = (input: 129, output: 1)
+    case "XID": defaultEndpoints = (input: 129, output: 2)
+    default: defaultEndpoints = (input: 130, output: 2)
+    }
     let inputEndpoint = record.usb?.endpoints?.input ?? defaultEndpoints.input
     let outputEndpoint = record.usb?.endpoints?.output ?? defaultEndpoints.output
     if record.usb != nil && record.transport != "usb" {
@@ -206,7 +211,7 @@ struct DeviceCatalog: Sendable {
     return result
   }
 
-  private static let rawUSBParserNames: Set<String> = ["GIP", "Xbox360"]
+  private static let rawUSBParserNames: Set<String> = ["GIP", "XUSB", "XID"]
 
   private struct CatalogError: Error, CustomStringConvertible {
     let description: String

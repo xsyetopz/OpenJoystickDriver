@@ -24,6 +24,14 @@ import OpenJoystickDriverKit
   @Published private(set) var lastMutationID: UUID?
   @Published private(set) var systemExtensionSetupState: SystemExtensionSetupState = .checking
 
+  var requestedCompatibilityIdentity: CompatibilityIdentity {
+    if let authoritativeCompatibilityIdentity { return authoritativeCompatibilityIdentity }
+    guard case .available(let status) = statusState,
+      let identity = status.compatibilityIdentity
+    else { return .automatic }
+    return identity
+  }
+
   private var refreshGeneration = 0
   private var liveStatusGeneration = 0
   private var permissionRefreshGeneration = 0

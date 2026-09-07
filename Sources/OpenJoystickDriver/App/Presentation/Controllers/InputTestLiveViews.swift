@@ -6,12 +6,13 @@
 
   struct InputTestLiveInputView: View {
     @ObservedObject var liveState: InputTestLiveState
-    let protocolVariant: ControllerProtocolVariant
+    let publishedProfile: VirtualDeviceProfile
 
     var body: some View {
       let snapshot = liveState.snapshot
       let pressedButtons = Set(snapshot.pressedButtons)
-      let symbols = InputTestControllerSymbolSet.resolve(for: protocolVariant)
+      let presentation = publishedProfile.presentation
+      let symbols = InputTestControllerSymbolSet.resolve(for: presentation.glyphFamily)
       GroupBox {
         VStack(spacing: 10) {
           shoulderRow(snapshot: snapshot, pressedButtons: pressedButtons, symbols: symbols)
@@ -21,7 +22,7 @@
             systemCluster(
               pressedButtons: pressedButtons,
               symbols: symbols,
-              protocolVariant: protocolVariant
+              publishedProfile: publishedProfile
             ).frame(maxWidth: .infinity)
             faceButtonCluster(pressedButtons: pressedButtons, symbols: symbols).frame(
               maxWidth: .infinity
@@ -128,14 +129,15 @@
     @ViewBuilder private func systemCluster(
       pressedButtons: Set<String>,
       symbols: InputTestControllerSymbolSet,
-      protocolVariant: ControllerProtocolVariant
+      publishedProfile: VirtualDeviceProfile
     ) -> some View {
-      switch InputTestSystemClusterLayout.resolve(for: protocolVariant) {
+      let glyphFamily = publishedProfile.presentation.glyphFamily
+      switch InputTestSystemClusterLayout.resolve(for: publishedProfile) {
       case .standard:
         HStack(spacing: 6) {
           indicator(
             symbols.view,
-            buttons: InputTestSystemClusterLayout.viewButtons(for: protocolVariant),
+            buttons: InputTestSystemClusterLayout.viewButtons(for: glyphFamily),
             pressedButtons: pressedButtons
           )
           indicator(symbols.guide, active: isPressed([.guide, .ps], in: pressedButtons))
@@ -244,32 +246,16 @@
       )
     }
 
-    static func resolve(for protocolVariant: ControllerProtocolVariant) -> Self {
-      if protocolVariant == .xboxOne { return .xboxWithShare }
+    static func resolve(for profile: VirtualDeviceProfile) -> Self {
+      if profile.vendorID == 0x045E, profile.productID == 0x0B13 { return .xboxWithShare }
       return .standard
     }
 
-    static func viewButtons(for protocolVariant: ControllerProtocolVariant)
+    static func viewButtons(for glyphFamily: VirtualIdentityGlyphFamily)
       -> [OpenJoystickDriverKit.Button]
-    { protocolVariant.isPlayStationFamily ? [.share] : [.back] }
+    { glyphFamily == .playstation ? [.share] : [.back] }
 
     static let shareButtons: [OpenJoystickDriverKit.Button] = [.share]
-  }
-
-  extension ControllerProtocolVariant {
-    var isXboxFamily: Bool {
-      switch self {
-      case .xboxOriginal, .xbox360, .xbox360Wireless, .xboxOne, .xboxAdaptiveJoystick: return true
-      default: return false
-      }
-    }
-
-    var isPlayStationFamily: Bool {
-      switch self {
-      case .dualShock3, .dualShock4, .dualSense: return true
-      default: return false
-      }
-    }
   }
 
   struct InputTestAxisValuesView: View {

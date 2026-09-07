@@ -3,7 +3,7 @@ import Foundation
 /// Protocol families that the signing-free record probe can exercise over raw USB.
 public enum ControllerRecordProbeDriver: String, Sendable {
   case gip = "GIP"
-  case xbox360 = "Xbox360"
+  case xusb = "XUSB"
 }
 
 /// A validated raw-USB test plan loaded from a canonical controller record.
@@ -43,7 +43,7 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     else { throw ControllerRecordProbeError.unsupportedProtocol(document.protocolInfo.driver) }
     try Self.validateVariant(document.protocolInfo.variant, for: parsedDriver)
 
-    let defaults = parsedDriver == .xbox360 ? (input: 129, output: 1) : (input: 130, output: 2)
+    let defaults = parsedDriver == .xusb ? (input: 129, output: 1) : (input: 130, output: 2)
     let inputEndpoint = document.usb?.endpoints?.input ?? defaults.input
     let outputEndpoint = document.usb?.endpoints?.output ?? defaults.output
     guard DeviceTransportProfile.inputEndpointRange.contains(inputEndpoint) else {
@@ -102,7 +102,7 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     )
     driver = parsedDriver
     isWirelessReceiver =
-      parsedDriver == .xbox360 && document.protocolInfo.variant == "xbox360Wireless"
+      parsedDriver == .xusb && document.protocolInfo.variant == "xbox360Wireless"
     startupPackets = parsedStartupPackets
     keepAlivePolicy = parsedKeepAlivePolicy
   }
@@ -115,7 +115,7 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
         startupPackets: startupPackets,
         keepAlivePolicy: keepAlivePolicy
       )
-    case .xbox360:
+    case .xusb:
       Xbox360Parser(
         outEndpoint: transportProfile.outputEndpoint,
         isWirelessReceiver: isWirelessReceiver
@@ -129,7 +129,7 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     let supportedVariants: Set<String>
     switch driver {
     case .gip: supportedVariants = ["xboxOne", "unknown"]
-    case .xbox360: supportedVariants = ["xbox360", "xbox360Wireless", "unknown"]
+    case .xusb: supportedVariants = ["xbox360", "xbox360Wireless", "unknown"]
     }
     guard supportedVariants.contains(variant) else {
       throw ControllerRecordProbeError.invalidProfile(
@@ -154,7 +154,7 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
         )
       }
       return packets
-    case .xbox360:
+    case .xusb:
       guard names == nil || names?.isEmpty == true else {
         throw ControllerRecordProbeError.invalidProfile(
           "protocol.startup_packets is only valid for GIP records"

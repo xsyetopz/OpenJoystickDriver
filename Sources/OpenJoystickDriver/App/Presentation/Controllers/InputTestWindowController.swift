@@ -54,7 +54,10 @@
       window?.title = OJDLocalized.formatted(
         "inputTest.windowTitle",
         fallback: "Input Test — %@",
-        device.name
+        PublishedVirtualIdentity.profile(
+          for: device,
+          requested: runtimeViewModel.requestedCompatibilityIdentity
+        ).productName
       )
       updateToolbar(for: model.sessionState)
       window?.makeKeyAndOrderFront(nil)

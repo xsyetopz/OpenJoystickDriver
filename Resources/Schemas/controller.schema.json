@@ -44,7 +44,8 @@
 				"driver": {
 					"enum": [
 						"GIP",
-						"Xbox360",
+						"XUSB",
+						"XID",
 						"DS3",
 						"DS4",
 						"DualSense",
@@ -57,7 +58,7 @@
 				},
 				"variant": {
 					"enum": [
-						"xboxOriginal",
+						"xid",
 						"xbox360",
 						"xbox360Wireless",
 						"xboxOne",
@@ -132,7 +133,7 @@
 					"then": {
 						"properties": {
 							"variant": {
-								"enum": ["unknown", "xboxOne", "xboxOriginal"]
+								"enum": ["unknown", "xboxOne"]
 							},
 							"quirks": {
 								"items": {
@@ -152,7 +153,7 @@
 					"if": {
 						"properties": {
 							"driver": {
-								"const": "Xbox360"
+								"const": "XUSB"
 							}
 						},
 						"required": ["driver"]
@@ -161,6 +162,29 @@
 						"properties": {
 							"variant": {
 								"enum": ["unknown", "xbox360", "xbox360Wireless"]
+							},
+							"quirks": {
+								"items": {
+									"enum": ["dpadToButtons", "sticksToNull", "triggersToButtons"]
+								},
+								"type": "array"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"driver": {
+								"const": "XID"
+							}
+						},
+						"required": ["driver"]
+					},
+					"then": {
+						"properties": {
+							"variant": {
+								"enum": ["unknown", "xid"]
 							},
 							"quirks": {
 								"items": {
@@ -499,7 +523,7 @@
 					"protocol": {
 						"properties": {
 							"driver": {
-								"const": "Xbox360"
+								"const": "XUSB"
 							}
 						},
 						"required": ["driver"],

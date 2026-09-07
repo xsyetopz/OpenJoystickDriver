@@ -7,18 +7,76 @@ import OpenJoystickDriverKit
 
 enum VirtualDeviceDiagnostics {
   static func enumerateHIDGamepads() async -> [ApplicationServiceHIDGamepadSnapshot] {
-    if #available(macOS 15, *) { return await CoreHIDVirtualDeviceDiagnostics.enumerate() }
+    if #available(macOS 15, *) {
+      let snapshots = await CoreHIDVirtualDeviceDiagnostics.enumerate()
+      return HIDGameControllerSupport.attaching(
+        snapshots,
+        from: IOHIDGameControllerProbe.snapshots()
+      )
+    }
     return IOHIDVirtualDeviceDiagnostics.enumerate()
   }
-
 }
 
-@available(macOS, introduced: 10.15, obsoleted: 15.0) private enum IOHIDVirtualDeviceDiagnostics {
+/// Copies `GCController.supportsHIDDevice` onto CoreHID snapshots.
+///
+/// That Apple API takes `IOHIDDevice`, so the macOS 15+ CoreHID enumerator cannot
+/// fill it. Matching is by VID/PID, OJD ownership, and location ID.
+enum HIDGameControllerSupport {
+  static func attaching(
+    _ snapshots: [ApplicationServiceHIDGamepadSnapshot],
+    from probes: [ApplicationServiceHIDGamepadSnapshot]
+  ) -> [ApplicationServiceHIDGamepadSnapshot] {
+    snapshots.map { snapshot in
+      let supported = matchingSupport(snapshot, in: probes)
+      guard supported != snapshot.isGameControllerSupported else { return snapshot }
+      return ApplicationServiceHIDGamepadSnapshot(
+        vendorID: snapshot.vendorID,
+        productID: snapshot.productID,
+        product: snapshot.product,
+        transport: snapshot.transport,
+        locationID: snapshot.locationID,
+        serialKind: snapshot.serialKind,
+        ioUserClass: snapshot.ioUserClass,
+        isOJDUserSpace: snapshot.isOJDUserSpace,
+        isGameControllerSupported: supported ?? snapshot.isGameControllerSupported
+      )
+    }
+  }
+
+  static func matchingSupport(
+    _ snapshot: ApplicationServiceHIDGamepadSnapshot,
+    in probes: [ApplicationServiceHIDGamepadSnapshot]
+  ) -> Bool? {
+    let identity = probes.filter {
+      $0.vendorID == snapshot.vendorID
+        && $0.productID == snapshot.productID
+        && $0.isOJDUserSpace == snapshot.isOJDUserSpace
+    }
+    let exact = identity.filter { $0.locationID == snapshot.locationID }
+    if exact.count == 1 { return exact[0].isGameControllerSupported }
+    if identity.count == 1 { return identity[0].isGameControllerSupported }
+    return nil
+  }
+}
+
+/// IOHID snapshot used only to call `GCController.supportsHIDDevice`.
+/// Physical HID sessions stay on CoreHID for macOS 15+.
+enum IOHIDGameControllerProbe {
+  static func snapshots() -> [ApplicationServiceHIDGamepadSnapshot] {
+    IOHIDVirtualDeviceDiagnostics.enumerate()
+  }
+}
+
+@available(macOS, introduced: 10.15) private enum IOHIDVirtualDeviceDiagnostics {
   private static let ioUserClassKey = "IOUserClass"
 
   static func enumerate() -> [ApplicationServiceHIDGamepadSnapshot] {
     let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
-    IOHIDManagerSetDeviceMatching(manager, nil)
+    IOHIDManagerSetDeviceMatching(
+      manager,
+      AppleGameControllerSyntheticHID.allHIDDevicesExcludingSynthetics as CFDictionary
+    )
     let openResult = IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
     if openResult != kIOReturnSuccess {
       print("[VirtualDeviceDiagnostics] IOHIDManagerOpen warning: \(String(openResult, radix: 16))")
@@ -87,15 +145,22 @@ enum VirtualDeviceDiagnostics {
     let manager = HIDDeviceManager()
     let task = Task {
       let criteria = [
-        HIDDeviceManager.DeviceMatchingCriteria(primaryUsage: .genericDesktop(.gamepad)),
-        HIDDeviceManager.DeviceMatchingCriteria(primaryUsage: .genericDesktop(.joystick)),
-        HIDDeviceManager.DeviceMatchingCriteria(primaryUsage: .genericDesktop(.multiAxisController))
+        AppleGameControllerSyntheticHID.coreHIDMatchingCriteria(
+          primaryUsage: .genericDesktop(.gamepad)
+        ),
+        AppleGameControllerSyntheticHID.coreHIDMatchingCriteria(
+          primaryUsage: .genericDesktop(.joystick)
+        ),
+        AppleGameControllerSyntheticHID.coreHIDMatchingCriteria(
+          primaryUsage: .genericDesktop(.multiAxisController)
+        )
       ]
       do {
         for try await notification in await manager.monitorNotifications(matchingCriteria: criteria)
         {
           if Task.isCancelled { break }
           guard case .deviceMatched(let reference) = notification,
+            !AppleGameControllerSyntheticHID.isSyntheticRegistryEntry(id: reference.deviceID),
             let client = HIDDeviceClient(deviceReference: reference)
           else { continue }
           await collector.insert(snapshot: snapshot(client))

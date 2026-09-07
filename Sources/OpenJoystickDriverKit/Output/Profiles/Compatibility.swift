@@ -55,24 +55,21 @@ public enum CompatibilityConsumerFamily: String, Codable, Sendable {
   case unknown
 }
 
-public enum PhysicalProtocolSubfamily: String, Codable, Sendable {
-  case xboxOriginal
-  case xbox360
-  case xboxGIP
-  case nintendoSwitchPro
-  case nintendoOther
-  case playStationDS4
-  case playStationDS5
-  case playStationOther
-  case other
-
+/// Official wire families. Krypton vs Argon is XUSB transport, not a backend.
+public enum PhysicalProtocolSubfamily: String, Codable, CaseIterable, Sendable {
+  case xid
+  case xusb
+  case gip
+  case hid
 }
 
 /// Why a compatibility identity is unavailable for a physical protocol family.
 public enum CompatibilityProfileAvailabilityReason: String, Codable, Sendable {
   case automaticRequiresResolution
-  case xbox360IdentityRequiresXbox360Family
-  case xboxOneIdentityRequiresXboxGIPFamily
+  case xusbIdentityRequiresXUSBFamily
+  case gipIdentityRequiresGIPFamily
+  case hidIdentityRequiresHIDFamily
+  case firstPartyIdentityNotPublishable
 }
 
 /// The result of the pure physical-family and explicit-identity compatibility policy.
@@ -122,12 +119,13 @@ public enum CompatibilityProfileAvailabilityPolicy {
     switch identity {
     case .automatic: return .unavailable(reason: .automaticRequiresResolution)
     case .genericHID: return .available
-    case .sdl2_3, .xbox360HID:
-      return subfamily == .xbox360
-        ? .available : .unavailable(reason: .xbox360IdentityRequiresXbox360Family)
-    case .appleGameController:
-      return subfamily == .xboxGIP
-        ? .available : .unavailable(reason: .xboxOneIdentityRequiresXboxGIPFamily)
+    case .xbox360HID:
+      return subfamily == .xusb
+        ? .available : .unavailable(reason: .xusbIdentityRequiresXUSBFamily)
+    case .sdl2_3, .appleGameController, .dualShock4, .dualSense, .switchPro:
+      // Automatic routing stays family-strict. Explicit picker/CLI may publish
+      // a first-party packer identity so live consumer-bind can be collected.
+      return .available
     }
   }
 
@@ -140,6 +138,8 @@ public enum CompatibilityProfileAvailabilityPolicy {
 
 public enum AutomaticCompatibilityDecisionReason: String, Codable, Sendable {
   case selectedCatalogTuple
+  case selectedFamilyIdentity
+  case selectedExplicitIdentity
   case reportedConsumerFailure
   case noAdjacentIdentity
   case unknownConsumer
@@ -171,7 +171,7 @@ public enum CompatibilityEvidenceCatalog {
     CompatibilityEvidenceRecord(
       vendorID: 0x11C1,
       productID: 0x5600,
-      subfamily: .other,
+      subfamily: .hid,
       physicalTransport: "wired",
       physicalMode: "generichid",
       connection: "usb",
@@ -183,7 +183,7 @@ public enum CompatibilityEvidenceCatalog {
     CompatibilityEvidenceRecord(
       vendorID: 0x045E,
       productID: 0x02FD,
-      subfamily: .xboxGIP,
+      subfamily: .gip,
       physicalTransport: "bluetooth",
       physicalMode: "gip",
       connection: "bluetooth",
@@ -191,6 +191,30 @@ public enum CompatibilityEvidenceCatalog {
       identity: .genericHID,
       evidence: .reportedFailure,
       reason: .reportedConsumerFailure
+    ),
+    CompatibilityEvidenceRecord(
+      vendorID: 0x3537,
+      productID: 0x1010,
+      subfamily: .gip,
+      physicalTransport: "wired",
+      physicalMode: "gip",
+      connection: "usb",
+      consumer: .appleGameController,
+      identity: .appleGameController,
+      evidence: .hardwareVerified,
+      reason: .selectedCatalogTuple
+    ),
+    CompatibilityEvidenceRecord(
+      vendorID: 0x3537,
+      productID: 0x1010,
+      subfamily: .gip,
+      physicalTransport: "wired",
+      physicalMode: "gip",
+      connection: "usb",
+      consumer: .sdlHIDAPI,
+      identity: .appleGameController,
+      evidence: .sourceBacked,
+      reason: .selectedCatalogTuple
     )
   ]
   public static func resolution(
@@ -213,6 +237,34 @@ public enum CompatibilityEvidenceCatalog {
         reason: record.reason
       )
     }
+    if let route = CompatibilityProtocolBackendCatalog.route(for: subfamily) {
+      let explicit = route.containsExplicit(
+        vendorID: device.vendorID,
+        productID: device.productID
+      )
+      return AutomaticCompatibilityResolution(
+        identity: route.selectableIdentity,
+        subfamily: subfamily,
+        consumer: consumer,
+        evidence: route.evidence,
+        reason: explicit ? .selectedExplicitIdentity : .selectedFamilyIdentity
+      )
+    }
+    if subfamily == .hid,
+      let dialect = CompatibilityProtocolBackendCatalog.hidDialectRoute(for: device)
+    {
+      let explicit = dialect.containsExplicit(
+        vendorID: device.vendorID,
+        productID: device.productID
+      )
+      return AutomaticCompatibilityResolution(
+        identity: dialect.selectableIdentity,
+        subfamily: subfamily,
+        consumer: consumer,
+        evidence: dialect.evidence,
+        reason: explicit ? .selectedExplicitIdentity : .selectedFamilyIdentity
+      )
+    }
     return AutomaticCompatibilityResolution(
       identity: .genericHID,
       subfamily: subfamily,
@@ -227,17 +279,14 @@ public enum AutomaticCompatibilityResolver {
   public static func subfamily(for device: ApplicationServiceDeviceDescription)
     -> PhysicalProtocolSubfamily
   {
-    let subfamily: PhysicalProtocolSubfamily
     switch device.protocolVariant {
-    case .xboxOriginal: subfamily = .xboxOriginal
-    case .xbox360, .xbox360Wireless: subfamily = .xbox360
-    case .xboxOne, .xboxAdaptiveJoystick: subfamily = .xboxGIP
-    case .dualShock4: subfamily = .playStationDS4
-    case .dualSense: subfamily = .playStationDS5
-    case .switchPro: subfamily = .nintendoSwitchPro
-    case .genericHID, .dualShock3, .steamController, .flydigi, .unknown: subfamily = .other
+    case .xid: return .xid
+    case .xbox360, .xbox360Wireless: return .xusb
+    case .xboxOne, .xboxAdaptiveJoystick: return .gip
+    case .dualShock3, .dualShock4, .dualSense, .switchPro, .steamController, .flydigi, .genericHID,
+      .unknown:
+      return .hid
     }
-    return subfamily
   }
 
   public static func resolve(
@@ -270,15 +319,16 @@ public enum CompatibilityOutputProfileCatalog {
     case .sdl2_3:
       return CompatibilityOutputProfile(
         identity: identity,
-        deviceProfile: .sdlHIDAPIXbox360,
+        deviceProfile: .xbox360Wired,
         displayName: "SDL 2/3",
-        notes: "Hardware-verified SDL HIDAPI identity with Xbox 360 input and rumble reports.",
+        notes: "SDL HIDAPI first-party identity for the physical protocol. XUSB "
+          + "pads publish Microsoft 045E:028E. Other families use the protocol catalog.",
         isHardwareSpoof: true,
         emitsXboxGuideReport: false,
-        evidence: .hardwareVerified,
+        evidence: .sourceBacked,
         consumerFamily: .sdlHIDAPI,
-        automaticallyRecommended: false,
-        evidenceByConsumer: [.sdlHIDAPI: .hardwareVerified]
+        automaticallyRecommended: true,
+        evidenceByConsumer: [.sdlHIDAPI: .sourceBacked]
       )
     case .appleGameController:
       return CompatibilityOutputProfile(
@@ -301,12 +351,61 @@ public enum CompatibilityOutputProfileCatalog {
         identity: identity,
         deviceProfile: .xbox360Wired,
         displayName: "Xbox 360 HID",
-        notes: "Xbox 360-family generic-HID compatibility profile; not Windows XUSB.",
+        notes: "Xbox 360-family generic-HID compatibility profile; not Windows XUSB22.sys.",
         isHardwareSpoof: true,
         emitsXboxGuideReport: false,
         evidence: .researchOnly,
         consumerFamily: .xbox360HID,
         evidenceByConsumer: [.xbox360HID: .researchOnly]
+      )
+    case .dualShock4:
+      return CompatibilityOutputProfile(
+        identity: identity,
+        deviceProfile: .dualShock4USB,
+        displayName: "DualShock 4",
+        notes: "Sony DualShock 4 USB 054C:09CC. Custom SDL HIDAPI PS4 and "
+          + "GCController.supportsHIDDevice bound this identity from an explicit "
+          + "GIP picker publish. Automatic for DualShock 4 physical devices.",
+        isHardwareSpoof: true,
+        emitsXboxGuideReport: false,
+        evidence: .sourceBacked,
+        consumerFamily: .sdlHIDAPI,
+        evidenceByConsumer: [
+          .sdlHIDAPI: .sourceBacked, .appleGameController: .sourceBacked,
+        ]
+      )
+    case .dualSense:
+      return CompatibilityOutputProfile(
+        identity: identity,
+        deviceProfile: .dualSenseUSB,
+        displayName: "DualSense",
+        notes: "Sony DualSense USB 054C:0CE6. Custom SDL HIDAPI PS5 and "
+          + "GCController.supportsHIDDevice bound this identity from an explicit "
+          + "GIP picker publish. Automatic for DualSense physical devices.",
+        isHardwareSpoof: true,
+        emitsXboxGuideReport: false,
+        evidence: .sourceBacked,
+        consumerFamily: .sdlHIDAPI,
+        evidenceByConsumer: [
+          .sdlHIDAPI: .sourceBacked, .appleGameController: .sourceBacked,
+        ]
+      )
+    case .switchPro:
+      return CompatibilityOutputProfile(
+        identity: identity,
+        deviceProfile: .switchProUSB,
+        displayName: "Switch Pro",
+        notes: "Nintendo Switch Pro USB 057E:2009. Explicit GIP picker published "
+          + "Pro Controller; GCController.supportsHIDDevice bound and custom "
+          + "HIDAPI SDL_OpenGamepad opened switchpro. Automatic for Switch Pro "
+          + "physical devices.",
+        isHardwareSpoof: true,
+        emitsXboxGuideReport: false,
+        evidence: .sourceBacked,
+        consumerFamily: .sdlHIDAPI,
+        evidenceByConsumer: [
+          .sdlHIDAPI: .sourceBacked, .appleGameController: .sourceBacked,
+        ]
       )
     }
   }
@@ -341,6 +440,9 @@ public enum CompatibilityOutputCompositionFactory {
         digitalUsageMap: XboxOneBluetoothHIDDescriptor.seriesDigitalUsageMap
       )
     case .xbox360HID: format = Xbox360MacHIDReportFormat(topLevelUsage: 0x05)
+    case .dualShock4: format = DualShock4USBHIDReportFormat()
+    case .dualSense: format = DualSenseUSBHIDReportFormat()
+    case .switchPro: format = SwitchProUSBHIDReportFormat()
     }
     return CompatibilityOutputComposition(profile: profile, format: format)
   }

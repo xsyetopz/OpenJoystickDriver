@@ -71,12 +71,14 @@ INIT_PACKET_NAMES = {
     "xboxone_rumbleend_init": "rumbleEnd",
 }
 SUPPORTED_TYPES = {
-    "XTYPE_XBOX360": ("Xbox360", "xbox360", 129, 1),
-    "XTYPE_XBOX360W": ("Xbox360", "xbox360Wireless", 129, 1),
+    "XTYPE_XBOX": ("XID", "xid", 129, 2),
+    "XTYPE_XBOX360": ("XUSB", "xbox360", 129, 1),
+    "XTYPE_XBOX360W": ("XUSB", "xbox360Wireless", 129, 1),
     "XTYPE_XBOXONE": ("GIP", "xboxOne", 130, 2),
 }
 TYPE_FILTERS = {
     "all": None,
+    "xbox": "XTYPE_XBOX",
     "xbox360": "XTYPE_XBOX360",
     "xbox360Wireless": "XTYPE_XBOX360W",
     "xboxOne": "XTYPE_XBOXONE",
@@ -265,7 +267,7 @@ def build_profile(
     mapping_flags = parse_mapping_flags(device.mapping_expression)
     allowed_flags = (
         {"dpadToButtons", "triggersToButtons", "sticksToNull"}
-        if driver == "Xbox360"
+        if driver in {"XUSB", "XID"}
         else {
             "dpadToButtons", "triggersToButtons", "sticksToNull", "shareOffset",
         }
@@ -330,7 +332,9 @@ def generate_candidates(
             continue
 
         reason: str | None = None
-        if device.xtype not in SUPPORTED_TYPES:
+        if device.vendor_id == 0xFFFF and device.product_id == 0xFFFF:
+            reason = "linux_catchall_identity"
+        elif device.xtype not in SUPPORTED_TYPES:
             reason = f"unsupported_type:{device.xtype}"
         elif (
             not include_existing

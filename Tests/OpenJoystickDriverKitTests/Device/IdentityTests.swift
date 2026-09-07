@@ -108,7 +108,7 @@ struct DeviceIdentifierTests {
       name: "Controller",
       vendorID: 0x045E,
       productID: 0x028E,
-      parser: "Xbox360",
+      parser: "XUSB",
       connection: "USB",
       discoverySource: .hid,
       serialNumber: nil
@@ -127,7 +127,7 @@ struct DeviceIdentifierTests {
       name: "Controller",
       vendorID: 0x045E,
       productID: 0x028E,
-      parser: "Xbox360",
+      parser: "XUSB",
       connection: "USB",
       discoverySource: .rawUSB,
       serialNumber: nil

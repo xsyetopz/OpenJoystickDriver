@@ -1,3 +1,4 @@
+import CoreHID
 import Foundation
 import IOKit
 import IOKit.hid
@@ -44,6 +45,62 @@ struct UserSpaceDeviceCreationTests {
     #expect(policy.nextAttemptNanoseconds == UInt64.max)
     #expect(!policy.permitsAttempt(at: UInt64.max - 1))
     #expect(policy.permitsAttempt(at: UInt64.max))
+  }
+
+  @Test(
+    arguments: [
+      (VirtualDeviceProfile.xboxSeries, kIOHIDTransportBluetoothValue),
+      (VirtualDeviceProfile.xboxOneS, kIOHIDTransportBluetoothValue),
+      (VirtualDeviceProfile.xbox360Wired, kIOHIDTransportUSBValue),
+      (VirtualDeviceProfile.dualShock4USB, kIOHIDTransportUSBValue),
+      (VirtualDeviceProfile.dualSenseUSB, kIOHIDTransportUSBValue),
+      (VirtualDeviceProfile.switchProUSB, kIOHIDTransportUSBValue),
+      (VirtualDeviceProfile.openJoystickDriver, kIOHIDTransportUSBValue)
+    ]
+  )
+  func ioHIDTransportValueMatchesIdentity(
+    _ profile: VirtualDeviceProfile,
+    _ expected: String
+  ) {
+    #expect(UserSpaceOutputDispatcher.ioHIDTransportValue(for: profile) == expected)
+    let extra = UserSpaceOutputDispatcher.virtualDeviceExtraProperties(profile: profile)
+    #expect(extra[kIOHIDTransportKey as String] as? String == expected)
+    let properties = UserSpaceOutputDispatcher.deviceProperties(
+      profile: profile,
+      format: OJDGenericGamepadFormat(),
+      identifier: DeviceIdentifier(vendorID: 1, productID: 1)
+    )
+    #expect(properties[kIOHIDTransportKey as String] as? String == expected)
+  }
+
+  @available(macOS 15, *)
+  @Test(arguments: [VirtualDeviceProfile.xboxSeries, VirtualDeviceProfile.xboxOneS])
+  func coreHIDBluetoothProfilesPublishBluetoothTransport(_ profile: VirtualDeviceProfile) {
+    let properties = UserSpaceOutputDispatcher.virtualDeviceProperties(
+      profile: profile,
+      format: OJDGenericGamepadFormat(),
+      identifier: DeviceIdentifier(vendorID: 13623, productID: 4112)
+    )
+    #expect(properties.transport == HIDDeviceTransport.bluetooth)
+    #expect(UserSpaceOutputDispatcher.hidDeviceTransport(for: profile) == .bluetooth)
+    #expect(
+      UserSpaceOutputDispatcher.ioHIDTransportValue(for: profile) == kIOHIDTransportBluetoothValue
+    )
+    let extra = UserSpaceOutputDispatcher.virtualDeviceExtraProperties(profile: profile)
+    #expect(extra[kIOHIDTransportKey as String] as? String == kIOHIDTransportBluetoothValue)
+  }
+
+  @available(macOS 15, *) @Test func coreHIDUSBProfilePublishesUSBTransport() {
+    let properties = UserSpaceOutputDispatcher.virtualDeviceProperties(
+      profile: .xbox360Wired,
+      format: Xbox360MacHIDReportFormat(),
+      identifier: DeviceIdentifier(vendorID: 13623, productID: 4112)
+    )
+    #expect(properties.transport == HIDDeviceTransport.usb)
+    #expect(UserSpaceOutputDispatcher.hidDeviceTransport(for: .xbox360Wired) == .usb)
+    #expect(
+      UserSpaceOutputDispatcher.ioHIDTransportValue(for: .xbox360Wired) == kIOHIDTransportUSBValue
+    )
   }
 
 }

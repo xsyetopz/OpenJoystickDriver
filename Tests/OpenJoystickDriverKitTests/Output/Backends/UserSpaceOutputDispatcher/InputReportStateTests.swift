@@ -24,6 +24,18 @@ struct UserSpaceInputReportStateTests {
     #expect(state.currentReport() == neutral)
   }
 
+  @Test func seriesIdleReportMatchesInterruptGetReportLayout() throws {
+    let format = try HIDDescriptorReportFormat(
+      descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor,
+      buttonUsageMap: XboxOneBluetoothHIDDescriptor.buttonUsageMap,
+      digitalUsageMap: XboxOneBluetoothHIDDescriptor.seriesDigitalUsageMap
+    )
+    let report = UserSpaceInputReportState(format: format).currentReport()
+    #expect(report.count == 17)
+    #expect(report[0] == 1)
+    #expect(Array(report[1...8]) == [0x00, 0x80, 0x00, 0x80, 0x00, 0x80, 0x00, 0x80])
+  }
+
   @Test func genericCompatibilityTriggersReturnToTheirExactPreActuationReport() {
     let format = OJDSDLGamepadFormat()
     let firstSession = UserSpaceInputReportState(format: format)

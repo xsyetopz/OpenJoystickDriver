@@ -38,18 +38,26 @@ struct XboxOneHIDReportFormatTests {
     #expect(full[0] == 1)
     #expect(full[1] == 0xFF)
     #expect(full[2] == 0xFF)
-    #expect(full[3] == 0xFF)
-    #expect(full[4] == 0xBF)
-    #expect(full[5] == 0x00)
+    #expect(full[3] == 0x00)
+    #expect(full[4] == 0xC0)
+    #expect(full[5] == 0x01)
     #expect(full[6] == 0x00)
-    #expect(full[7] == 0xFF)
-    #expect(full[8] == 0x3F)
+    #expect(full[7] == 0x00)
+    #expect(full[8] == 0x40)
     #expect(full[9] == 0xFF)
     #expect(full[10] == 0x03)
     #expect(full[11] == 0xFF)
     #expect(full[12] == 0x01)
     #expect(full[13] == 0x00)
     #expect(full[14] == 0x00)
+  }
+
+  @Test func testPacksIdleSticksAtUnsignedCenter() throws {
+    let idle = try format().buildInputReport(from: VirtualGamepadState())
+
+    #expect(idle.count == 17)
+    #expect(idle[0] == 1)
+    #expect(Array(idle[1...8]) == [0x00, 0x80, 0x00, 0x80, 0x00, 0x80, 0x00, 0x80])
   }
   @Test func testMapsAppleGameControllerButtonsOneAtATime() throws {
     let neutral = try format().buildInputReport(from: VirtualGamepadState())

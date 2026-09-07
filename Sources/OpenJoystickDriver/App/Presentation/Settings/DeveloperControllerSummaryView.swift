@@ -113,7 +113,7 @@
 
     private func protocolName(_ value: ControllerProtocolVariant) -> String {
       switch value {
-      case .xboxOriginal:
+      case .xid:
         return OJDLocalized.string("controller.originalXbox", fallback: "Original Xbox")
       case .xbox360: return OJDLocalized.string("controller.xbox360", fallback: "Xbox 360")
       case .xbox360Wireless:

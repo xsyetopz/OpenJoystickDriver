@@ -3,16 +3,22 @@ import Foundation
 /// Which identity/protocol the user-space Compatibility virtual device should publish.
 ///
 /// IMPORTANT:
-/// - `sdl2-3` targets SDL 2/3 applications with an SDL HIDAPI-compatible identity and reports.
+/// - `sdl2-3` targets SDL 2/3 with the first-party HIDAPI identity for that
+///   physical protocol family (Xbox 360 Wired `045E:028E` today).
 /// - `generic-hid` is the fallback for consumers that inspect standard HID descriptors directly.
 /// - `apple-gamecontroller` publishes the HID surface accepted by Apple's GameController.framework.
-/// - `xbox360-hid` is a family-adjacent Xbox 360 HID profile. It is not Windows XUSB.
+/// - `xbox360-hid` is a family-adjacent XUSB HID profile. It is not Windows XUSB22.sys.
+/// - `dualshock4` / `dualsense` / `switchpro` are first-party USB HID identities.
+///   Automatic routing selects them when the physical pad is that dialect.
 public enum CompatibilityIdentity: Codable, CaseIterable, Sendable, Equatable {
   case automatic
   case genericHID
   case sdl2_3
   case appleGameController
   case xbox360HID
+  case dualShock4
+  case dualSense
+  case switchPro
 
   /// The result of validating a persisted/raw identity for a new mutation.
   public enum MutationDecision: Equatable, Sendable {
@@ -41,6 +47,9 @@ public enum CompatibilityIdentity: Codable, CaseIterable, Sendable, Equatable {
     case "sdl2-3": self = .sdl2_3
     case "apple-gamecontroller": self = .appleGameController
     case "xbox360-hid": self = .xbox360HID
+    case "dualshock4": self = .dualShock4
+    case "dualsense": self = .dualSense
+    case "switchpro": self = .switchPro
     default: return nil
     }
   }
@@ -52,6 +61,9 @@ public enum CompatibilityIdentity: Codable, CaseIterable, Sendable, Equatable {
     case .sdl2_3: "sdl2-3"
     case .appleGameController: "apple-gamecontroller"
     case .xbox360HID: "xbox360-hid"
+    case .dualShock4: "dualshock4"
+    case .dualSense: "dualsense"
+    case .switchPro: "switchpro"
     }
   }
 

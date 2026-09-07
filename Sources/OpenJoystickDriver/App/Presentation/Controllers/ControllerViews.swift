@@ -108,18 +108,22 @@
       ScrollView {
         VStack(alignment: .leading, spacing: 3) {
           ForEach(devices, id: \.runtimeIdentifier) { device in
+            let published = PublishedVirtualIdentity.profile(
+              for: device,
+              requested: viewModel.requestedCompatibilityIdentity
+            )
             Button(
               action: { selectedRuntimeIdentifier = device.runtimeIdentifier },
               label: {
                 HStack(spacing: 8) {
                   OJDSystemSymbol(
-                    name: device.protocolVariant.controllerSymbolName,
+                    name: published.presentation.controllerSymbolName,
                     fallback: OJDLocalized.string("common.controller", fallback: "Controller"),
-                    fallbackSymbolName: "gamecontroller"
-                  ).foregroundColor(device.protocolVariant.controllerSymbolColor)
+                    fallbackSymbolName: published.presentation.controllerSymbolFallback
+                  ).foregroundColor(published.presentation.glyphFamily.controllerSymbolColor)
                   VStack(alignment: .leading, spacing: 2) {
                     Text(device.name).lineLimit(1)
-                    Text(reportedValue(device.connection)).font(.caption).foregroundColor(
+                    Text(published.publishedUSBIdentityLabel).font(.caption).foregroundColor(
                       Color(NSColor.secondaryLabelColor)
                     ).lineLimit(1)
                   }
@@ -131,7 +135,7 @@
                 selected: selectedDevice?.runtimeIdentifier == device.runtimeIdentifier
               )
             ).ojdAccessibilityLabel(device.name).ojdAccessibilityValue(
-              "\(reportedValue(device.connection)). \(device.protocolVariant.displayLabel)"
+              "\(published.publishedUSBIdentityLabel). \(device.protocolVariant.displayLabel)"
             ).ojdAccessibilitySelection(
               selectedDevice?.runtimeIdentifier == device.runtimeIdentifier
             )
@@ -262,15 +266,21 @@
 
     private var controllerHeader: some View {
       HStack(alignment: .center, spacing: 10) {
+        let presentation = PublishedVirtualIdentity.presentation(
+          for: device,
+          requested: viewModel.requestedCompatibilityIdentity
+        )
         OJDSystemSymbol(
-          name: device.protocolVariant.controllerSymbolName,
+          name: presentation.controllerSymbolName,
           fallback: OJDLocalized.string("common.controller", fallback: "Controller"),
-          fallbackSymbolName: "gamecontroller"
-        ).font(.title).foregroundColor(device.protocolVariant.controllerSymbolColor)
+          fallbackSymbolName: presentation.controllerSymbolFallback
+        ).font(.title).foregroundColor(presentation.glyphFamily.controllerSymbolColor)
           .ojdAccessibilityHidden(true)
         VStack(alignment: .leading, spacing: 3) {
           Text(device.name).font(.headline.weight(.semibold)).lineLimit(1)
-          Text(reportedValue(device.connection)).foregroundColor(Color(NSColor.secondaryLabelColor))
+          Text(
+            "\(reportedValue(device.connection)) · \(publishedProfile.publishedUSBIdentityLabel)"
+          ).foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         Spacer(minLength: 0)
       }
@@ -330,8 +340,19 @@
       }
     }
 
+    private var publishedProfile: VirtualDeviceProfile {
+      PublishedVirtualIdentity.profile(
+        for: device,
+        requested: viewModel.requestedCompatibilityIdentity
+      )
+    }
+
     private var controllerDetails: some View {
       VStack(alignment: .leading, spacing: 6) {
+        KeyValueRow(
+          label: OJDLocalized.string("controllers.publishedAs", fallback: "Published as"),
+          value: publishedProfile.publishedUSBIdentityLabel
+        )
         KeyValueRow(
           label: OJDLocalized.string("common.protocol", fallback: "Protocol"),
           value: device.protocolVariant.displayLabel
@@ -435,23 +456,12 @@
     }
   }
 
-  extension ControllerProtocolVariant {
-    var controllerSymbolName: String {
-      switch self {
-      case .xboxOriginal, .xbox360, .xbox360Wireless, .xboxOne, .xboxAdaptiveJoystick:
-        return "xbox.logo"
-      case .dualShock3, .dualShock4, .dualSense: return "playstation.logo"
-      case .steamController, .switchPro, .flydigi, .genericHID, .unknown: return "gamecontroller"
-      }
-    }
-
+  extension VirtualIdentityGlyphFamily {
     var controllerSymbolColor: Color {
       switch self {
-      case .xboxOriginal, .xbox360, .xbox360Wireless, .xboxOne, .xboxAdaptiveJoystick:
-        return Color(Self.xboxBrandColor)
-      case .dualShock3, .dualShock4, .dualSense: return Color(Self.playStationBrandColor)
-      case .steamController, .switchPro, .flydigi, .genericHID, .unknown:
-        return Color(NSColor.secondaryLabelColor)
+      case .xbox: return Color(Self.xboxBrandColor)
+      case .playstation: return Color(Self.playStationBrandColor)
+      case .nintendo, .steam, .generic: return Color(NSColor.secondaryLabelColor)
       }
     }
 
@@ -478,10 +488,12 @@
         alpha: 1
       )
     }
+  }
 
+  extension ControllerProtocolVariant {
     var displayLabel: String {
       switch self {
-      case .xboxOriginal:
+      case .xid:
         return OJDLocalized.string("controller.xboxOriginal", fallback: "Xbox (original)")
       case .xbox360: return OJDLocalized.string("controller.xbox360", fallback: "Xbox 360")
       case .xbox360Wireless:

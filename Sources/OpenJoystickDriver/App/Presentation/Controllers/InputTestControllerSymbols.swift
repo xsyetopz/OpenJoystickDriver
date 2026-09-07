@@ -36,14 +36,13 @@
     let leftStickClick: Control
     let rightStickClick: Control
 
-    static func resolve(for protocolVariant: ControllerProtocolVariant) -> Self {
-      switch protocolVariant {
-      case .xboxOriginal, .xbox360, .xbox360Wireless, .xboxOne, .xboxAdaptiveJoystick: return xbox
-      case .dualShock3, .dualShock4, .dualSense: return playStation
-      case .switchPro: return switchController
-      case .steamController: return steam
-      case .flydigi: return xbox
-      case .genericHID, .unknown: return generic
+    static func resolve(for glyphFamily: VirtualIdentityGlyphFamily) -> Self {
+      switch glyphFamily {
+      case .xbox: return xbox
+      case .playstation: return playStation
+      case .nintendo: return switchController
+      case .steam: return steam
+      case .generic: return generic
       }
     }
 

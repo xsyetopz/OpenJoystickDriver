@@ -60,6 +60,12 @@ enum RuntimePresentation {
       )
     case .xbox360HID:
       return OJDLocalized.string("compatibility.xbox360HID", fallback: "Xbox 360 HID")
+    case .dualShock4:
+      return OJDLocalized.string("controller.dualShock4", fallback: "DualShock 4")
+    case .dualSense:
+      return OJDLocalized.string("controller.dualSense", fallback: "DualSense")
+    case .switchPro:
+      return OJDLocalized.string("controller.switchPro", fallback: "Switch Pro")
     }
   }
 

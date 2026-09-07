@@ -13,7 +13,8 @@
     @State private var retryIdentity: CompatibilityIdentity?
 
     private let outputIdentities: [CompatibilityIdentity] = [
-      .automatic, .genericHID, .xbox360HID, .sdl2_3, .appleGameController
+      .automatic, .genericHID, .xbox360HID, .sdl2_3, .appleGameController, .dualShock4, .dualSense,
+      .switchPro
     ]
 
     init(viewModel: RuntimeViewModel, embedded: Bool = false) {
@@ -119,7 +120,7 @@
         let spacing: CGFloat = 18
         let columnWidth = max(0, (proxy.size.width - spacing * 2) / 3)
         VStack(alignment: .leading, spacing: 8) {
-          ForEach(0..<2, id: \.self) { row in
+          ForEach(0..<3, id: \.self) { row in
             HStack(alignment: .top, spacing: spacing) {
               ForEach(0..<3, id: \.self) { column in
                 let index = row * 3 + column
@@ -134,7 +135,7 @@
             }
           }
         }.frame(maxWidth: .infinity, alignment: .leading)
-      }.frame(height: 64)
+      }.frame(height: 96)
     }
 
     private func identityChoice(_ identity: CompatibilityIdentity) -> some View {

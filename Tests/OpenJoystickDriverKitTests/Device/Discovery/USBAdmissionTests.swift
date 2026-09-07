@@ -12,8 +12,8 @@ struct USBDetectionAdmissionTests {
     let unknown = USBTransportDevice(
       route: .ioUSBHost,
       serviceID: 1,
-      vendorID: 65_535,
-      productID: 65_535,
+      vendorID: 0x0001,
+      productID: 0x0001,
       locationID: 1
     )
 
@@ -26,8 +26,8 @@ struct USBDetectionAdmissionTests {
 
     let admission = resolveRawUSBAdmission(
       parserRegistry: ParserRegistry(),
-      vendorID: 65_535,
-      productID: 65_535,
+      vendorID: 0x0001,
+      productID: 0x0001,
       locationID: 1
     ) {
       didReadDescriptorStrings = true

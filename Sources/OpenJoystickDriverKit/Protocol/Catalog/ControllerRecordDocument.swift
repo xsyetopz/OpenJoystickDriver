@@ -34,7 +34,12 @@ struct ControllerRecordDocument: Decodable {
     protocolInfo = try container.decode(ProtocolInfo.self, for: "protocol")
     usb = try container.decodeOptional(USBOverride.self, for: "usb")
     if let endpoints = usb?.endpoints {
-      let defaultEndpoints = protocolInfo.driver == "Xbox360" ? (129, 1) : (130, 2)
+      let defaultEndpoints: (Int, Int)
+      switch protocolInfo.driver {
+      case "XUSB": defaultEndpoints = (129, 1)
+      case "XID": defaultEndpoints = (129, 2)
+      default: defaultEndpoints = (130, 2)
+      }
       guard (endpoints.input, endpoints.output) != defaultEndpoints else {
         throw DecodingError.dataCorrupted(
           .init(
@@ -107,13 +112,15 @@ struct ControllerRecordDocument: Decodable {
 
     private static let contracts: [String: (variants: Set<String>, quirks: Set<String>)] = [
       "GIP": (
-        ["xboxOriginal", "xboxOne", "unknown"],
+        ["xboxOne", "unknown"],
         ["dpadToButtons", "triggersToButtons", "sticksToNull", "shareOffset"]
       ),
-      "Xbox360": (
+      "XUSB": (
         ["xbox360", "xbox360Wireless", "unknown"],
         ["dpadToButtons", "triggersToButtons", "sticksToNull"]
-      ), "DS3": (["dualShock3", "unknown"], ["gyro", "accelerometer", "battery"]),
+      ),
+      "XID": (["xid", "unknown"], ["dpadToButtons", "triggersToButtons", "sticksToNull"]),
+      "DS3": (["dualShock3", "unknown"], ["gyro", "accelerometer", "battery"]),
       "DS4": (
         ["dualShock4", "unknown"], ["touchpad", "gyro", "accelerometer", "battery", "lightbar"]
       ),

@@ -367,7 +367,7 @@
 "cli.compat.identity" = "compatibility identity: %@";
 "cli.compat.identity_unknown" = "compatibility identity: unknown";
 "cli.compat.set_failed" = "Failed to set compatibility identity to %@. Launch the installed app and verify Input Monitoring and Accessibility access.";
-"cli.compat.usage" = "Usage: OpenJoystickDriver --headless compat show\n       OpenJoystickDriver --headless compat set \\\n<generic-hid|sdl2-3|apple-gamecontroller|xbox360-hid>";
+"cli.compat.usage" = "Usage: OpenJoystickDriver --headless compat show\n       OpenJoystickDriver --headless compat set \\\n<generic-hid|sdl2-3|apple-gamecontroller|xbox360-hid|dualshock4|dualsense|switchpro>";
 "cli.compat.user_space_status" = "user-space status: %@";
 "cli.controller.allAppleEntries" = "All exact Apple catalog entries:";
 "cli.controller.appleIDs" = "    Apple IDs: %@";

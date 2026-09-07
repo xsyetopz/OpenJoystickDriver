@@ -271,8 +271,8 @@ private func printUsage() {
       swift run HapticsBackendProbe try force-feedback [--seconds N]
       swift run HapticsBackendProbe try gamecontroller [--pulse] [--seconds N]
 
-    sdl2-3 selects the hardware-verified 9886:0024 ASTRO identity and exact Xbox 360
-    descriptor/report format that SDL2 and SDL3 special-case in their HIDAPI driver.
+    sdl2-3 selects first-party Microsoft Xbox 360 Wired 045E:028E and the Xbox 360
+    descriptor/report format. It does not impersonate ASTRO C40.
     force-feedback checks HID PID/Apple Force Feedback acceptance and device creation.
     gamecontroller selects OJD's Apple GameController identity, reports public haptics,
     and optionally sends one CoreHaptics pulse when a GCController haptics engine exists.

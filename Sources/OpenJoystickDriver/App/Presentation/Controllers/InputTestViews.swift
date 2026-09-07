@@ -15,7 +15,7 @@
           HStack(alignment: .top, spacing: 16) {
             InputTestLiveInputView(
               liveState: model.liveState,
-              protocolVariant: model.device?.protocolVariant ?? .unknown
+              publishedProfile: publishedProfile
             ).frame(minWidth: 460, maxWidth: .infinity, alignment: .topLeading)
             diagnosticsColumn.frame(width: 330, alignment: .topLeading)
           }
@@ -34,13 +34,22 @@
         if let device = model.device {
           Text(
             "\(reported(device.connection)) · \(device.protocolVariant.displayLabel) · "
-              + "\(reported(device.parser)) · \(usbIdentifier(device))"
+              + "\(reported(device.parser)) · \(usbIdentifier(device)) · "
+              + publishedProfile.publishedUSBIdentityLabel
           ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         Spacer()
       }.accessibilityElement(children: .combine).ojdAccessibilityLabel(
         OJDLocalized.string("inputTest.status", fallback: "Input test status")
       ).ojdAccessibilityValue(statusLabel)
+    }
+
+    private var publishedProfile: VirtualDeviceProfile {
+      guard let device = model.device else { return .openJoystickDriverGenericHID }
+      return PublishedVirtualIdentity.profile(
+        for: device,
+        requested: runtimeViewModel.requestedCompatibilityIdentity
+      )
     }
 
     private var diagnosticsColumn: some View {

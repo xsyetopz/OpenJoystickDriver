@@ -8,7 +8,7 @@ struct CompatibilityCommand {
       """
       Usage: OpenJoystickDriver --headless compat show
              OpenJoystickDriver --headless compat set \\
-      <generic-hid|sdl2-3|apple-gamecontroller|xbox360-hid>
+      <generic-hid|sdl2-3|apple-gamecontroller|xbox360-hid|dualshock4|dualsense|switchpro>
       """
     )
     guard let sub = arguments.first else {

@@ -35,8 +35,11 @@ struct VirtualControllerBackendTests {
     #expect(CompatibilityIdentity(rawValue: "apple-gamecontroller") == .appleGameController)
     #expect(CompatibilityIdentity(rawValue: "xone-hid") == nil)
     #expect(CompatibilityIdentity(rawValue: "xbox360-hid") == .xbox360HID)
+    #expect(CompatibilityIdentity(rawValue: "dualshock4") == .dualShock4)
+    #expect(CompatibilityIdentity(rawValue: "dualsense") == .dualSense)
+    #expect(CompatibilityIdentity(rawValue: "switchpro") == .switchPro)
     #expect(CompatibilityIdentity.allCases.contains(.xbox360HID))
-    #expect(CompatibilityIdentity.allCases.count == 5)
+    #expect(CompatibilityIdentity.allCases.count == 8)
 
     #expect(CompatibilityIdentity(rawValue: "not-a-profile") == nil)
   }
@@ -82,7 +85,7 @@ struct VirtualControllerBackendTests {
     let xbox360 = CompatibilityOutputProfileCatalog.profile(for: .xbox360HID)
 
     #expect(generic.deviceProfile.productID == 0x4449)
-    #expect(sdl.deviceProfile == .sdlHIDAPIXbox360)
+    #expect(sdl.deviceProfile == .xbox360Wired)
     #expect(apple.deviceProfile == .xboxSeries)
     #expect(apple.deviceProfile.vendorID == 0x045E)
     #expect(apple.deviceProfile.productID == 0x0B13)
@@ -90,13 +93,15 @@ struct VirtualControllerBackendTests {
     #expect(!generic.isHardwareSpoof)
     #expect(sdl.isHardwareSpoof)
     #expect(apple.isHardwareSpoof)
-    #expect(sdl.deviceProfile.productName == "ASTRO C40 TR Controller")
+    #expect(sdl.deviceProfile.vendorID == 0x045E)
+    #expect(sdl.deviceProfile.productID == 0x028E)
+    #expect(sdl.deviceProfile.productName == "Xbox 360 Wired Controller")
     #expect(!apple.emitsXboxGuideReport)
     #expect(apple.evidence == .sourceBacked)
-    #expect(sdl.evidence == .hardwareVerified)
+    #expect(sdl.evidence == .sourceBacked)
     #expect(generic.consumerFamily == .genericHID)
     #expect(sdl.consumerFamily == .sdlHIDAPI)
-    #expect(!sdl.automaticallyRecommended)
+    #expect(sdl.automaticallyRecommended)
     #expect(!apple.automaticallyRecommended)
     #expect(apple.consumerFamily == .appleGameController)
     #expect(apple.evidenceByConsumer[.chromiumGamepad] == .reportedFailure)
@@ -104,6 +109,24 @@ struct VirtualControllerBackendTests {
     #expect(xbox360.consumerFamily == .xbox360HID)
     #expect(xbox360.displayName == "Xbox 360 HID")
     #expect(xbox360.evidence == .researchOnly)
+    let ds4 = CompatibilityOutputProfileCatalog.profile(for: .dualShock4)
+    let dualSense = CompatibilityOutputProfileCatalog.profile(for: .dualSense)
+    #expect(ds4.deviceProfile == .dualShock4USB)
+    #expect(ds4.deviceProfile.vendorID == 0x054C)
+    #expect(ds4.deviceProfile.productID == 0x09CC)
+    #expect(ds4.deviceProfile.productName == VirtualDeviceProfile.dualShock4USB.productName)
+    #expect(ds4.deviceProfile.productName == "Wireless Controller")
+    #expect(dualSense.deviceProfile == .dualSenseUSB)
+    #expect(dualSense.deviceProfile.productID == 0x0CE6)
+    #expect(dualSense.deviceProfile.productName == VirtualDeviceProfile.dualSenseUSB.productName)
+    #expect(dualSense.deviceProfile.productName == "Wireless Controller")
+    let switchPro = CompatibilityOutputProfileCatalog.profile(for: .switchPro)
+    #expect(switchPro.deviceProfile == .switchProUSB)
+    #expect(switchPro.deviceProfile.productID == 0x2009)
+    #expect(switchPro.deviceProfile.productName == VirtualDeviceProfile.switchProUSB.productName)
+    #expect(switchPro.deviceProfile.productName == "Pro Controller")
+    #expect(apple.deviceProfile.productName == VirtualDeviceProfile.xboxSeries.productName)
+    #expect(apple.deviceProfile.productName == "Xbox Wireless Controller")
     #expect(CompatibilityEvidenceStatus.reportedFailure != .hardwareVerified)
     #expect(CompatibilityEvidenceStatus.researchOnly != .sourceBacked)
   }
@@ -163,35 +186,97 @@ struct VirtualControllerBackendTests {
       serialNumber: nil,
       protocolVariant: .xboxOne
     )
-    #expect(AutomaticCompatibilityResolver.resolve(for: xbox).identity == .genericHID)
-    #expect(AutomaticCompatibilityResolver.resolve(for: otherXbox).identity == .genericHID)
-    #expect(AutomaticCompatibilityResolver.resolve(for: nintendo).identity == .genericHID)
-    #expect(AutomaticCompatibilityResolver.resolve(for: ds4).identity == .genericHID)
+    #expect(AutomaticCompatibilityResolver.resolve(for: xbox).identity == .appleGameController)
+    #expect(AutomaticCompatibilityResolver.resolve(for: otherXbox).identity == .appleGameController)
+    #expect(AutomaticCompatibilityResolver.resolve(for: nintendo).identity == .switchPro)
+    #expect(AutomaticCompatibilityResolver.resolve(for: ds4).identity == .dualShock4)
+    let steam = ApplicationServiceDeviceDescription(
+      name: "Steam Controller",
+      vendorID: 0x28DE,
+      productID: 0x1102,
+      parser: "SteamController",
+      connection: "USB",
+      serialNumber: nil,
+      protocolVariant: .steamController
+    )
+    let genericHID = ApplicationServiceDeviceDescription(
+      name: "Generic",
+      vendorID: 0x0001,
+      productID: 0x0001,
+      parser: "GenericHID",
+      connection: "USB",
+      serialNumber: nil,
+      protocolVariant: .genericHID
+    )
+    #expect(AutomaticCompatibilityResolver.resolve(for: steam).identity == .genericHID)
+    #expect(AutomaticCompatibilityResolver.resolve(for: genericHID).identity == .genericHID)
     #expect(
-      AutomaticCompatibilityResolver.resolve(for: xbox, consumer: .sdlHIDAPI).subfamily == .xboxGIP
+      AutomaticCompatibilityResolver.resolve(for: xbox, consumer: .sdlHIDAPI).subfamily == .gip
     )
     #expect(
       AutomaticCompatibilityResolver.resolve(for: otherXbox, consumer: .appleGameController)
         .consumer == .appleGameController
     )
-    #expect(AutomaticCompatibilityResolver.resolve(for: xinput).subfamily == .xboxGIP)
-    #expect(AutomaticCompatibilityResolver.resolve(for: xusb).subfamily == .xboxGIP)
-    #expect(
-      AutomaticCompatibilityResolver.resolve(
-        for: ApplicationServiceDeviceDescription(
-          name: "Xbox 360",
-          vendorID: 0x045E,
-          productID: 0x028E,
-          parser: "XUSB",
-          connection: "USB",
-          serialNumber: nil,
-          protocolVariant: .xbox360
-        )
-      ).subfamily == .xbox360
+    #expect(AutomaticCompatibilityResolver.resolve(for: xinput).subfamily == .gip)
+    #expect(AutomaticCompatibilityResolver.resolve(for: xusb).subfamily == .gip)
+    let wired360 = ApplicationServiceDeviceDescription(
+      name: "Xbox 360",
+      vendorID: 0x045E,
+      productID: 0x028E,
+      parser: "XUSB",
+      connection: "USB",
+      serialNumber: nil,
+      protocolVariant: .xbox360
     )
-    #expect(AutomaticCompatibilityResolver.resolve(for: xbox).subfamily == .xboxGIP)
-    #expect(AutomaticCompatibilityResolver.resolve(for: nintendo).subfamily != .xboxGIP)
-    #expect(AutomaticCompatibilityResolver.resolve(for: ds4).subfamily != .xboxGIP)
+    #expect(AutomaticCompatibilityResolver.resolve(for: wired360).subfamily == .xusb)
+    let idle360 = AutomaticCompatibilityResolver.resolve(for: wired360)
+    #expect(idle360.identity == .sdl2_3)
+    #expect(idle360.reason == .selectedExplicitIdentity)
+    #expect(idle360.evidence == .sourceBacked)
+    let steam360 = AutomaticCompatibilityResolver.resolve(for: wired360, consumer: .sdlHIDAPI)
+    #expect(steam360.identity == .sdl2_3)
+    #expect(steam360.reason == .selectedExplicitIdentity)
+    #expect(steam360.evidence == .sourceBacked)
+    for consumer: CompatibilityConsumerFamily in [
+      .chromiumGamepad, .webkitGamepad, .geckoGamepad, .genericHID, .appleGameController,
+    ] {
+      let resolved = AutomaticCompatibilityResolver.resolve(for: wired360, consumer: consumer)
+      #expect(resolved.identity == .sdl2_3)
+      #expect(resolved.reason == .selectedExplicitIdentity)
+    }
+    let clone360 = ApplicationServiceDeviceDescription(
+      name: "Xbox 360 clone",
+      vendorID: 0x413D,
+      productID: 0x2104,
+      parser: "XUSB",
+      connection: "USB",
+      serialNumber: nil,
+      protocolVariant: .xbox360
+    )
+    let clone = AutomaticCompatibilityResolver.resolve(for: clone360, consumer: .sdlHIDAPI)
+    #expect(clone.identity == .sdl2_3)
+    #expect(clone.subfamily == .xusb)
+    #expect(clone.reason == .selectedFamilyIdentity)
+    #expect(
+      CompatibilityOutputProfileCatalog.profile(for: clone.identity).deviceProfile == .xbox360Wired
+    )
+    let gipSDL = AutomaticCompatibilityResolver.resolve(for: xbox, consumer: .sdlHIDAPI)
+    #expect(gipSDL.identity == .appleGameController)
+    #expect(gipSDL.reason == .selectedCatalogTuple)
+    #expect(gipSDL.evidence == .sourceBacked)
+    #expect(
+      CompatibilityOutputProfileCatalog.profile(for: gipSDL.identity).deviceProfile == .xboxSeries
+    )
+    let g7Apple = AutomaticCompatibilityResolver.resolve(
+      for: xbox,
+      consumer: .appleGameController
+    )
+    #expect(g7Apple.identity == .appleGameController)
+    #expect(g7Apple.evidence == .hardwareVerified)
+    #expect(g7Apple.reason == .selectedCatalogTuple)
+    #expect(AutomaticCompatibilityResolver.resolve(for: xbox).subfamily == .gip)
+    #expect(AutomaticCompatibilityResolver.resolve(for: nintendo).subfamily != .gip)
+    #expect(AutomaticCompatibilityResolver.resolve(for: ds4).subfamily != .gip)
     let failedBluetooth = AutomaticCompatibilityResolver.resolve(
       for: otherXbox,
       consumer: .sdlHIDAPI
@@ -213,13 +298,15 @@ struct VirtualControllerBackendTests {
       for: sameIdentityOverUSB,
       consumer: .sdlHIDAPI
     )
-    #expect(usbResolution.evidence == .unavailable)
-    #expect(usbResolution.reason == .noAdjacentIdentity)
+    #expect(usbResolution.identity == .appleGameController)
+    #expect(usbResolution.evidence == .sourceBacked)
+    #expect(usbResolution.reason == .selectedFamilyIdentity)
+    #expect(usbResolution.subfamily == .gip)
   }
 
   @Test func compatibilityFactoryKeepsProtocolTuplesAtomic() throws {
     let apple = try CompatibilityOutputCompositionFactory.make(identity: .appleGameController)
-    let astro = try CompatibilityOutputCompositionFactory.make(identity: .sdl2_3)
+    let sdl = try CompatibilityOutputCompositionFactory.make(identity: .sdl2_3)
     let xbox360 = try CompatibilityOutputCompositionFactory.make(identity: .xbox360HID)
 
     #expect(apple.profile.deviceProfile == .xboxSeries)
@@ -227,8 +314,8 @@ struct VirtualControllerBackendTests {
     #expect(apple.format.inputReportID == 1)
     #expect(apple.format.outputReportID == VirtualRumbleOutputReportParser.xboxOneReportID)
     #expect(!apple.profile.emitsXboxGuideReport)
-    #expect(astro.profile.deviceProfile == .sdlHIDAPIXbox360)
-    #expect(astro.format.descriptor == Xbox360MacHIDReportFormat().descriptor)
+    #expect(sdl.profile.deviceProfile == .xbox360Wired)
+    #expect(sdl.format.descriptor == Xbox360MacHIDReportFormat().descriptor)
     #expect(xbox360.profile.deviceProfile == .xbox360Wired)
     #expect(
       xbox360.format.descriptor
@@ -326,7 +413,7 @@ struct VirtualControllerBackendTests {
   @Test func testUserSpaceSDLIdentityAdvertisesXbox360HIDAPIReportSizes() {
     let format = Xbox360MacHIDReportFormat()
     let properties = UserSpaceOutputDispatcher.deviceProperties(
-      profile: .sdlHIDAPIXbox360,
+      profile: .xbox360Wired,
       format: format,
       identifier: DeviceIdentifier(vendorID: 13623, productID: 4112)
     )
@@ -340,14 +427,16 @@ struct VirtualControllerBackendTests {
   @available(macOS 15, *) @Test func testCoreHIDPropertiesPreserveDescriptorAndIdentity() {
     let format = Xbox360MacHIDReportFormat()
     let properties = UserSpaceOutputDispatcher.virtualDeviceProperties(
-      profile: .sdlHIDAPIXbox360,
+      profile: .xbox360Wired,
       format: format,
       identifier: DeviceIdentifier(vendorID: 13623, productID: 4112)
     )
 
     #expect(properties.descriptor == Data(format.descriptor))
-    #expect(properties.vendorID == UInt32(VirtualDeviceProfile.sdlHIDAPIXbox360.vendorID))
-    #expect(properties.productID == UInt32(VirtualDeviceProfile.sdlHIDAPIXbox360.productID))
+    #expect(properties.vendorID == UInt32(VirtualDeviceProfile.xbox360Wired.vendorID))
+    #expect(properties.productID == UInt32(VirtualDeviceProfile.xbox360Wired.productID))
+    #expect(properties.versionNumber == UInt64(VirtualDeviceProfile.xbox360Wired.versionNumber))
+    #expect(properties.versionNumber != 0)
   }
 
   @Test func testUserSpaceDispatcherFailsFastWithoutVirtualDeviceEntitlement() throws {
@@ -428,6 +517,7 @@ struct VirtualControllerBackendTests {
     #expect(!accepts(transport: "virtual"))
     #expect(!accepts(locationID: virtualLocation))
     #expect(!accepts(syntheticProperty: kCFBooleanTrue))
+    #expect(!accepts(productName: "GamePad-1", syntheticProperty: nil))
   }
 
   @Test func compatibilitySpoofRemainsExcludedWhenAppleOmitsSerialAndSyntheticProperties() {
@@ -661,6 +751,7 @@ struct VirtualControllerBackendTests {
     #expect(Array(apple.dropFirst(2)) == [UInt8](repeating: 0, count: apple.count - 2))
     #expect(Array(x360.dropFirst(2)) == [UInt8](repeating: 0, count: x360.count - 2))
     #expect(xone[0] == 1)
+    #expect(Array(xone[1...8]) == [0x00, 0x80, 0x00, 0x80, 0x00, 0x80, 0x00, 0x80])
     #expect(xone[14] == 0x00)
     #expect(xone[16] == 0x00)
     #expect(xone.count == 17)
@@ -668,12 +759,54 @@ struct VirtualControllerBackendTests {
 
   @Test func userSpaceCreationErrorsDistinguishPermissionFromEntitlementAndCreation() {
     let errors: [UserSpaceOutputDispatcher.CreationError] = [
-      .inputMonitoringDenied, .accessibilityDenied, .createFailed, .missingEntitlement("test")
+      .inputMonitoringDenied, .accessibilityDenied, .createFailed, .missingEntitlement("test"),
+      .provisioningProfileExcludesHost
     ]
     for error in errors {
       switch error {
-      case .inputMonitoringDenied, .accessibilityDenied, .createFailed, .missingEntitlement: break
+      case .inputMonitoringDenied, .accessibilityDenied, .createFailed, .missingEntitlement,
+        .provisioningProfileExcludesHost:
+        break
       }
+    }
+  }
+
+  @Test func mapsCoreHIDNilCreateToAccessibilityDeniedWhenPostEventNotGranted() {
+    for accessibility: PermissionManager.AccessState in [.denied, .unknown] {
+      let error = UserSpaceOutputDispatcher.mappedCoreHIDCreationFailure(
+        provisioning: .includesHost,
+        accessibility: accessibility
+      )
+      guard case .accessibilityDenied = error else {
+        Issue.record("expected accessibilityDenied for accessibility \(accessibility)")
+        return
+      }
+    }
+  }
+
+  @Test func mapsCoreHIDNilCreateToCreateFailedWhenAccessibilityGranted() {
+    for provisioning: VirtualHIDProvisioningHost.Authorization in [
+      .includesHost, .unrestricted, .unavailable
+    ] {
+      let error = UserSpaceOutputDispatcher.mappedCoreHIDCreationFailure(
+        provisioning: provisioning,
+        accessibility: .granted
+      )
+      guard case .createFailed = error else {
+        Issue.record("expected createFailed for provisioning \(provisioning)")
+        return
+      }
+    }
+  }
+
+  @Test func mapsCoreHIDNilCreateToProvisioningExcludeBeforeAccessibility() {
+    let error = UserSpaceOutputDispatcher.mappedCoreHIDCreationFailure(
+      provisioning: .excludesHost,
+      accessibility: .denied
+    )
+    guard case .provisioningProfileExcludesHost = error else {
+      Issue.record("expected provisioningProfileExcludesHost")
+      return
     }
   }
 

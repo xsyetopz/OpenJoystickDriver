@@ -33,6 +33,7 @@ private final class UserSpaceDispatcherTestBackend: UserSpaceOutputDispatcher.Vi
   private var closed = false
   private(set) var closeCount = 0
   private(set) var sendCount = 0
+  private var reports: [[UInt8]] = []
   let sendGate: UserSpaceDispatcherTestGate?
   let failsSend: Bool
 
@@ -45,7 +46,10 @@ private final class UserSpaceDispatcherTestBackend: UserSpaceOutputDispatcher.Vi
     await sendGate?.wait()
     if failsSend { throw SendFailure() }
     guard lock.withLock({ !closed }) else { return }
-    lock.withLock { sendCount += 1 }
+    lock.withLock {
+      sendCount += 1
+      reports.append(report)
+    }
   }
 
   func close() {
@@ -57,6 +61,7 @@ private final class UserSpaceDispatcherTestBackend: UserSpaceOutputDispatcher.Vi
   }
 
   func counts() -> (close: Int, send: Int) { lock.withLock { (closeCount, sendCount) } }
+  func publishedReports() -> [[UInt8]] { lock.withLock { reports } }
 }
 
 struct UserSpaceOutputDispatcherLifecycleTests {
@@ -75,9 +80,34 @@ struct UserSpaceOutputDispatcherLifecycleTests {
     try await dispatcher.activate(for: identifiers)
 
     #expect(created.snapshot().count == identifiers.count)
-    #expect(created.snapshot().allSatisfy { $0.counts().send == 1 })
+    #expect(created.snapshot().allSatisfy { $0.counts().send >= 1 })
     #expect(dispatcher.status == "on (devices=3)")
     dispatcher.close()
+  }
+
+  @Test func idleKeepalivePublishesRepeatInterruptReportsAndStateChanges() async throws {
+    let backend = UserSpaceDispatcherTestBackend()
+    let dispatcher = UserSpaceOutputDispatcher { _ in backend }
+    let identifier = DeviceIdentifier(vendorID: 1, productID: 2)
+
+    try await dispatcher.activate(for: [identifier])
+    #expect(backend.counts().send >= 1)
+
+    let deadline = ContinuousClock.now.advanced(by: .milliseconds(250))
+    while backend.counts().send < 2, ContinuousClock.now < deadline {
+      try await Task.sleep(for: .milliseconds(8))
+    }
+    let idleSends = backend.counts().send
+    #expect(idleSends >= 2)
+
+    let idle = try #require(backend.publishedReports().last)
+    await dispatcher.dispatch(events: [.buttonPressed(.a)], from: identifier)
+    #expect(backend.counts().send > idleSends)
+    let pressed = try #require(backend.publishedReports().last)
+    #expect(pressed != idle)
+
+    dispatcher.close()
+    #expect(backend.counts().close == 1)
   }
 
   @Test func activationSendFailureClosesPartialDevicesForEveryFailurePosition() async {

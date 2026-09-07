@@ -35,12 +35,12 @@ struct ControllerRecordProbePlanTests {
 
   @Test func loadsXbox360RecordWithoutGIPStartup() throws {
     let plan = try ControllerRecordProbePlan(
-      data: try recordData(driver: "Xbox360", variant: "xbox360")
+      data: try recordData(driver: "XUSB", variant: "xbox360")
     )
 
     let parser = try #require(plan.makeParser() as? Xbox360Parser)
 
-    #expect(plan.driver == .xbox360)
+    #expect(plan.driver == .xusb)
     #expect(plan.startupPackets.isEmpty)
     #expect(parser.usbStartupOutputPackets() == [[0x01, 0x03, 0x06]])
   }
@@ -56,7 +56,7 @@ struct ControllerRecordProbePlanTests {
   @Test func loadsXbox360WirelessReceiverRecord() throws {
     let plan = try ControllerRecordProbePlan(
       data: try recordData(
-        driver: "Xbox360",
+        driver: "XUSB",
         variant: "xbox360Wireless",
         inputEndpoint: 129,
         outputEndpoint: 1
@@ -155,7 +155,7 @@ struct ControllerRecordProbePlanTests {
     extraRootField: String? = nil,
     extraProtocolField: String? = nil
   ) throws -> Data {
-    let defaults = driver == "Xbox360" ? (129, 1) : (130, 2)
+    let defaults = driver == "XUSB" ? (129, 1) : (130, 2)
     var usb: [String: Any] = [:]
     if (inputEndpoint, outputEndpoint) != defaults {
       usb["endpoints"] = ["in": inputEndpoint, "out": outputEndpoint]

@@ -4,7 +4,7 @@
   "product_id": 261,
   "transport": "usb",
   "protocol": {
-    "driver": "Xbox360",
+    "driver": "XUSB",
     "variant": "xbox360",
     "quirks": [
       "dpadToButtons"

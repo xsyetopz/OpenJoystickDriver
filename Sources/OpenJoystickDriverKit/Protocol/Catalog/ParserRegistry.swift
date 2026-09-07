@@ -46,11 +46,12 @@ public final class ParserRegistry: Sendable {
       )
     case "SwitchPro": return SwitchProParser()
     case "Flydigi": return FlydigiParser()
-    case "Xbox360":
+    case "XUSB":
       return Xbox360Parser(
         outEndpoint: transportProfile.outputEndpoint,
         isWirelessReceiver: runtimeProfile.protocolVariant == .xbox360Wireless
       )
+    case "XID": return XIDParser()
     default: return GenericHIDParser(identifier: identifier)
     }
   }

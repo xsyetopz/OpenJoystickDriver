@@ -230,7 +230,7 @@ func runProfileMetadataChecks() {
   require(registry.parserName(for: ds3) == "DS3", "DS3 profile should select DS3 parser")
   require(ds3Profile.protocolVariant == .dualShock3, "DS3 profile should use dualShock3 variant")
   require(
-    ds3Profile.mappingFlags.isEmpty,
+    ds3Profile.quirks.isEmpty,
     "DS3 profile should not advertise unimplemented sensors or battery status"
   )
 
@@ -242,7 +242,7 @@ func runProfileMetadataChecks() {
     require(registry.parserName(for: id) == "DualSense", "DualSense profile should select parser")
     require(profile.protocolVariant == .dualSense, "DualSense profile should use dualSense variant")
     require(
-      profile.mappingFlags == ["touchpad", "microphoneMute"],
+      profile.quirks == ["touchpad", "microphoneMute"],
       "DualSense profile should expose operational input flags"
     )
   }
@@ -252,7 +252,7 @@ func runProfileMetadataChecks() {
   require(registry.parserName(for: steamWired) == "SteamController", "Steam wired should select parser")
   require(steamWiredProfile.protocolVariant == .steamController, "Steam wired should use variant")
   require(
-    steamWiredProfile.mappingFlags == ["lizardMode", "trackpads"],
+    steamWiredProfile.quirks == ["lizardMode", "trackpads"],
     "Steam wired profile should expose operational flags"
   )
 
@@ -267,7 +267,7 @@ func runProfileMetadataChecks() {
     "Steam wireless receiver should use variant"
   )
   require(
-    steamWirelessProfile.mappingFlags == [
+    steamWirelessProfile.quirks == [
       "lizardMode", "trackpads", "wirelessReceiver",
     ],
     "Steam wireless receiver profile must retain wirelessReceiver lifecycle flag"
@@ -278,7 +278,7 @@ func runProfileMetadataChecks() {
   require(registry.parserName(for: switchPro) == "SwitchPro", "Switch Pro profile should select parser")
   require(switchProfile.protocolVariant == .switchPro, "Switch Pro profile should use variant")
   require(
-    switchProfile.mappingFlags == ["usbHandshake"],
+    switchProfile.quirks == ["usbHandshake"],
     "Switch Pro profile should not advertise unimplemented calibration, rumble, or IMU"
   )
 }
@@ -309,13 +309,11 @@ func runSteamInputAndFeatureChecks() throws {
   _ = try leftPadOnly.parse(data: makeSteamControllerReport())
   let leftPadOnlyEvents = try leftPadOnly.parse(data: makeSteamControllerReport(b10: 0x08, leftX: 32767, leftY: -32767))
   require(!hasEvent(leftPadOnlyEvents, .leftStickChanged(x: 1.0, y: 1.0)), "Steam left-pad-only coordinates should not create left-stick motion")
-  require(hasEvent(leftPadOnlyEvents, .buttonPressed(.genericButton4)), "Steam left pad touch should emit touch button")
 
   let leftPadAndJoy = SteamControllerParser()
   _ = try leftPadAndJoy.parse(data: makeSteamControllerReport())
   let leftPadAndJoyEvents = try leftPadAndJoy.parse(data: makeSteamControllerReport(b10: 0x88, leftX: 32767, leftY: -32767))
   require(hasEvent(leftPadAndJoyEvents, .leftStickChanged(x: 1.0, y: 1.0)), "Steam lpad+joy bit should allow left-stick motion")
-  require(hasEvent(leftPadAndJoyEvents, .buttonPressed(.genericButton4)), "Steam lpad+joy bit should emit touch button")
 
   let dpad = SteamControllerParser()
   _ = try dpad.parse(data: makeSteamControllerReport())
@@ -441,7 +439,7 @@ func runDualSenseUSBChecks() throws {
   let micParser = DualSenseParser()
   _ = try micParser.parse(data: makeDualSenseUSBReport())
   let micEvents = try micParser.parse(data: makeDualSenseUSBReport(buttons2: 0x04))
-  require(hasEvent(micEvents, .buttonPressed(.genericButton1)), "DualSense USB should parse mic mute")
+  require(hasEvent(micEvents, .buttonPressed(.mute)), "DualSense USB should parse mic mute")
 }
 
 func runDualSenseUnknownReportCheck() throws {
@@ -479,7 +477,7 @@ func runDualSenseBluetoothCRCCheck() throws {
   require(hasEvent(events, .buttonPressed(.options)), "DualSense Bluetooth should parse Options")
   require(hasEvent(events, .buttonPressed(.ps)), "DualSense Bluetooth should parse PS")
   require(hasEvent(events, .buttonPressed(.touchpad)), "DualSense Bluetooth should parse touchpad")
-  require(hasEvent(events, .buttonPressed(.genericButton1)), "DualSense Bluetooth should parse mic mute")
+  require(hasEvent(events, .buttonPressed(.mute)), "DualSense Bluetooth should parse mic mute")
 
   var badCRC = Array(makeDualSenseBluetoothReport(buttons0: 0x28))
   badCRC[77] ^= 0xFF
@@ -536,6 +534,29 @@ func runSwitchProTransportAndMappingCheck() throws {
   require(startupReports[5].bytes[11] == 0x01, "Switch Pro startup should enable IMU data")
 }
 
+func makeXIDReport(digital: UInt8 = 0, analogA: UInt8 = 0) -> Data {
+  var report = [UInt8](repeating: 0, count: 20)
+  report[1] = 0x14
+  report[2] = digital
+  report[4] = analogA
+  return Data(report)
+}
+
+func runXIDInputChecks() throws {
+  let identifier = DeviceIdentifier(vendorID: 0x045E, productID: 0x0202)
+  let registry = ParserRegistry()
+  require(registry.parserName(for: identifier) == "XID", "Original Xbox pad should select XID")
+  require(registry.runtimeProfile(for: identifier).protocolVariant == .xid, "XID profile should use xid")
+
+  let parser = XIDParser()
+  _ = try parser.parse(data: makeXIDReport())
+  let analog = try parser.parse(data: makeXIDReport(analogA: 0xFF))
+  require(hasEvent(analog, .buttonPressed(.a)), "XID analog A should become a digital press")
+  let digital = try parser.parse(data: makeXIDReport(digital: 0x11))
+  require(hasEvent(digital, .buttonPressed(.start)), "XID digital start should parse")
+  require(hasEvent(digital, .dpadChanged(.north)), "XID digital d-pad north should parse")
+}
+
 runProfileMetadataChecks()
 try runSteamInputAndFeatureChecks()
 try runSteamStatusFallbackCheck()
@@ -546,6 +567,7 @@ try runDualSenseUSBChecks()
 try runDualSenseUnknownReportCheck()
 try runDualSenseBluetoothCRCCheck()
 try runSwitchProTransportAndMappingCheck()
+try runXIDInputChecks()
 print("PASS: macOS-14-compatible parser harness")
 HARNESS_SWIFT
 

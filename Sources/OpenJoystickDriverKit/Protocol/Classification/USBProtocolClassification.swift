@@ -15,6 +15,7 @@ public enum USBEndpointDirection: String, Equatable, Sendable {
 
 public enum ProtocolFamilyCandidate: String, Equatable, Sendable {
   case genericHID
+  case xid
   case xusb
   case gip
   case unsupported
@@ -29,6 +30,7 @@ public enum ProtocolClassifierDisposition: String, Equatable, Sendable {
 public enum ProtocolPredicate: String, Equatable, Sendable {
   case interfaceZeroAlternateZero
   case vendorSpecificInterface
+  case xidInterfaceIdentity
   case xusbInterfaceIdentity
   case gipInterfaceIdentity
   case completeInterruptPair
@@ -117,12 +119,18 @@ public enum USBProtocolClassifier {
     -> ProtocolClassification
   {
     let interfaces = observation.interfaces
+    let xid = interfaces.first(where: isXID)
     let xusb = interfaces.first(where: isXUSB)
     let gip = interfaces.first(where: isGIP)
     let hid = interfaces.first(where: isHID)
     var matches: [ProtocolPredicate] = []
     var rejections: [ProtocolPredicate] = []
 
+    if xid != nil {
+      matches += [.xidInterfaceIdentity, .completeInterruptPair]
+    } else {
+      rejections += [.xidInterfaceIdentity]
+    }
     if xusb != nil {
       matches += [.interfaceZeroAlternateZero, .xusbInterfaceIdentity, .completeInterruptPair]
     } else {
@@ -144,17 +152,18 @@ public enum USBProtocolClassifier {
 
     // Conflicting vendor-family signatures fail closed; otherwise the order is
     // deterministic and keeps vendor families ahead of descriptor-only HID.
+    var vendorCandidates: [ProtocolFamilyCandidate] = []
+    if xid != nil { vendorCandidates.append(.xid) }
+    if xusb != nil { vendorCandidates.append(.xusb) }
+    if gip != nil { vendorCandidates.append(.gip) }
     let selected: ProtocolFamilyCandidate? =
-      xusb != nil && gip != nil
+      vendorCandidates.count > 1
       ? nil
-      : xusb != nil
-        ? .xusb
-        : gip != nil
-          ? .gip
-          : (hid != nil && observation.hidLayout?.hasGamePadOrJoystickCollection == true
-            && observation.hidLayout?.hasUsableElements == true ? .genericHID : nil)
+      : vendorCandidates.first
+        ?? (hid != nil && observation.hidLayout?.hasGamePadOrJoystickCollection == true
+          && observation.hidLayout?.hasUsableElements == true ? .genericHID : nil)
     let conflictingCandidates: [ProtocolFamilyCandidate] =
-      xusb != nil && gip != nil ? [.xusb, .gip] : []
+      vendorCandidates.count > 1 ? vendorCandidates : []
     return ProtocolClassification(
       selected: selected,
       conflictingCandidates: conflictingCandidates,
@@ -165,10 +174,18 @@ public enum USBProtocolClassifier {
     )
   }
 
+  /// Original Xbox XID: USB-IF class `'X'`, subclass `'B'`, protocol `0`.
+  private static func isXID(_ interface: USBInterfaceTransportFacts) -> Bool {
+    interface.interfaceClass == 0x58 && interface.interfaceSubclass == 0x42
+      && interface.interfaceProtocol == 0x00 && hasInterruptPair(interface)
+  }
+
+  /// Xbox 360 XUSB: wired Krypton uses protocol `1`; wireless Argon adapters use `129`.
   private static func isXUSB(_ interface: USBInterfaceTransportFacts) -> Bool {
     interface.interfaceNumber == 0 && interface.alternateSetting == 0
       && interface.interfaceClass == 0xFF && interface.interfaceSubclass == 0x5D
-      && interface.interfaceProtocol == 0x01 && hasInterruptPair(interface)
+      && (interface.interfaceProtocol == 0x01 || interface.interfaceProtocol == 0x81)
+      && hasInterruptPair(interface)
   }
 
   private static func isGIP(_ interface: USBInterfaceTransportFacts) -> Bool {
@@ -208,9 +225,9 @@ public enum KnownRecordProtocolReconciler {
     let classification = USBProtocolClassifier.classify(observation)
     let expected: ProtocolFamilyCandidate? =
       switch profile.protocolVariant {
-      case .xbox360, .xbox360Wireless, .xboxAdaptiveJoystick: .xusb
-      case .xboxOriginal: nil
-      case .xboxOne: .gip
+      case .xid: .xid
+      case .xbox360, .xbox360Wireless: .xusb
+      case .xboxOne, .xboxAdaptiveJoystick: .gip
       case .genericHID, .dualShock3, .dualShock4, .dualSense, .steamController, .switchPro,
         .flydigi:
         .genericHID
