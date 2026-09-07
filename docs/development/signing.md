@@ -53,6 +53,10 @@ are:
 ~/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice.provisionprofile
 ```
 
+The host development profile's device list must include this Mac. On macOS 15+ AMFI will
+otherwise ignore `com.apple.developer.hid.virtual.device` and `HIDVirtualDevice` returns
+nil. Regenerate the profile after adding the Mac, then `./scripts/ojd signing install-profiles`.
+
 Regenerate profiles after changing capabilities. Xcode may otherwise reuse a stale profile. The
 development DEXT profile must contain exactly the seven approved Microsoft pairs; a wildcard or a
 GameSir dictionary is a mismatch and the signing gate rejects it. The connected GameSir G7 SE

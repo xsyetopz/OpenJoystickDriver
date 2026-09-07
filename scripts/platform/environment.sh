@@ -190,10 +190,24 @@ raise SystemExit(1)
 '
 }
 
+# Apple Development host designated requirement: bundle id + team OU.
+# Leading "=" is required so codesign treats this as source, not a file path.
+# Do not pin cdhash or leaf CN: TCC Input Monitoring / Accessibility keys off
+# this requirement, and a unique pin goes stale on every re-sign.
+ojd_host_designated_requirement() {
+  if [[ -z "${DEVELOPMENT_TEAM:-}" ]]; then
+    die "DEVELOPMENT_TEAM not set (needed for a stable host designated requirement)"
+  fi
+  printf '=designated => identifier "com.openjoystickdriver" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.1] exists and certificate leaf[subject.OU] = "%s"' \
+    "$DEVELOPMENT_TEAM"
+}
+
 # Sign binary with configured identity.
 # Usage: ojd_sign <binary> [--entitlements <path>]
 # NOTE: --entitlements must be the first extra arg pair (before any other flags).
 # When OJD_ENV=release, adds hardened runtime (required for notarization).
+# Development host signing embeds ojd_host_designated_requirement so same-team
+# rebuilds keep TCC grants. Release keeps codesign's Developer ID default DR.
 ojd_sign() {
   local binary="$1"
   local identity="${OJD_ACTIVE_SIGN_IDENTITY:-$IDENTITY}"
@@ -203,6 +217,8 @@ ojd_sign() {
   fi
   if [[ "$OJD_ENV" == "release" ]]; then
     extra_args+=(--options runtime --timestamp)
+  else
+    extra_args+=(--requirements "$(ojd_host_designated_requirement)")
   fi
   codesign --sign "$identity" --force --generate-entitlement-der "${extra_args[@]+"${extra_args[@]}"}" "$binary"
 }

@@ -424,6 +424,11 @@ next_dext_bundle_version() {
   echo $((max_version + 1))
 }
 
+# App-only install. Not a TCC or permission probe: the copy-then-re-sign of the
+# host always rewrites the code signature. If that designated requirement is
+# cdhash-pinned or leaf-pinned, Input Monitoring and Accessibility rows go
+# stale and need a re-grant. Host signing uses a team+identifier DR so
+# same-team rebuilds keep those grants. xattr quarantine and ditto do not.
 install_fast() {
   local APP_DST="/Applications/OpenJoystickDriver.app"
   local APP_SRC="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"

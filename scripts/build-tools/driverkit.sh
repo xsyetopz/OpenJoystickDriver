@@ -363,9 +363,7 @@ build_dext_bundle() {
   _require_signed_driverkit_entitlements "$embedded"
 
   _resolve_host_entitlements "$GUI_PROFILE" "$GUI_ENTITLEMENTS"
-  sign_args=(--force --sign "$GUI_IDENTITY" --generate-entitlement-der --entitlements "$GUI_ENTITLEMENTS")
-  [[ "$OJD_ENV" == "release" ]] && sign_args+=(--options runtime --timestamp)
-  codesign "${sign_args[@]}" "$app"
+  OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign "$app" --entitlements "$GUI_ENTITLEMENTS"
   _require_signed_host_access "$app" "$GUI_PROFILE"
 
   echo "DriverKit extension built and embedded: $embedded"

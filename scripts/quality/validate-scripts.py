@@ -139,6 +139,78 @@ def validate_layout(root: Path = ROOT) -> list[str]:
     return errors
 
 
+def _shell_function_body(text: str, name: str) -> str | None:
+    marker = f"{name}() {{"
+    start = text.find(marker)
+    if start < 0:
+        return None
+    brace = text.find("{", start)
+    if brace < 0:
+        return None
+    depth = 0
+    for index, char in enumerate(text[brace:], start=brace):
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return text[brace : index + 1]
+    return None
+
+
+def validate_host_signing_requirement(root: Path = ROOT) -> list[str]:
+    """Development host signing must pin a team+identifier designated requirement."""
+    errors: list[str] = []
+    environment = root / "scripts" / "platform" / "environment.sh"
+    text = environment.read_text(encoding="utf-8")
+    sign_body = _shell_function_body(text, "ojd_sign")
+    if sign_body is None:
+        return ["scripts/platform/environment.sh: ojd_sign is missing"]
+    resource_body = _shell_function_body(text, "ojd_sign_resource_bundle")
+    required = (
+        '--requirements "$(ojd_host_designated_requirement)"',
+        'identifier "com.openjoystickdriver"',
+        "certificate leaf[subject.OU]",
+        '=designated =>',
+    )
+    helper = _shell_function_body(text, "ojd_host_designated_requirement")
+    if helper is None:
+        errors.append(
+            "scripts/platform/environment.sh: ojd_host_designated_requirement is missing"
+        )
+    else:
+        for token in required[1:]:
+            if token not in helper:
+                errors.append(
+                    "scripts/platform/environment.sh: host designated requirement "
+                    f"must include {token}"
+                )
+    if required[0] not in sign_body:
+        errors.append(
+            "scripts/platform/environment.sh: ojd_sign must pass "
+            "--requirements \"$(ojd_host_designated_requirement)\""
+        )
+    if "OJD_ENV" not in sign_body or "release" not in sign_body:
+        errors.append(
+            "scripts/platform/environment.sh: ojd_sign must keep release on "
+            "codesign's default Developer ID designated requirement"
+        )
+    if resource_body and "--requirements" in resource_body:
+        errors.append(
+            "scripts/platform/environment.sh: ojd_sign_resource_bundle must not "
+            "embed the host designated requirement"
+        )
+    driverkit = (root / "scripts" / "build-tools" / "driverkit.sh").read_text(
+        encoding="utf-8"
+    )
+    if 'ojd_sign "$app"' not in driverkit:
+        errors.append(
+            "scripts/build-tools/driverkit.sh: host re-sign after embedding the "
+            "DEXT must use ojd_sign"
+        )
+    return errors
+
+
 def validate_shell_syntax(root: Path = ROOT) -> list[str]:
     shell_files = sorted((root / "scripts").rglob("*.sh"))
     if not shell_files:
@@ -176,6 +248,7 @@ def main() -> int:
     errors = validate_layout()
     errors.extend(validate_shell_syntax())
     errors.extend(validate_python_syntax())
+    errors.extend(validate_host_signing_requirement())
     behavior = subprocess.run(
         [sys.executable, str(ROOT / "scripts/release/validate_versioning.py")],
         check=False,

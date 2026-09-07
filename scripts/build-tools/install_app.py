@@ -73,6 +73,26 @@ def application_job_is_running(label: str) -> bool:
     return bool(re.search(r"^\s*state = running\s*$", result.stdout, re.MULTILINE))
 
 
+def leftover_application_job_labels(labels: list[str] | None = None) -> list[str]:
+    """Launch Services jobs whose pid is gone, STAT E/Z, or rss 0."""
+    return [
+        label
+        for label in (labels if labels is not None else application_job_labels())
+        if not application_job_is_running(label)
+    ]
+
+
+def reap_leftover_application_jobs(labels: list[str] | None = None) -> None:
+    domain = f"gui/{os.getuid()}"
+    leftover = leftover_application_job_labels(labels)
+    if leftover:
+        print(
+            f"Reaping {len(leftover)} leftover OpenJoystickDriver LaunchServices job(s)"
+        )
+    for label in leftover:
+        run(["/bin/launchctl", "bootout", f"{domain}/{label}"], check=False)
+
+
 def process_is_alive(process_identifier: int) -> bool:
     """True when the PID is a live process (zombies / exiting leftovers are not)."""
     result = run(
@@ -129,6 +149,17 @@ def wait_until_retired(labels: list[str], timeout_seconds: float) -> bool:
     return False
 
 
+def wait_until_leftover_jobs_reaped(timeout_seconds: float) -> bool:
+    deadline = time.monotonic() + timeout_seconds
+    while time.monotonic() < deadline:
+        leftover = leftover_application_job_labels()
+        if not leftover:
+            return True
+        reap_leftover_application_jobs(leftover)
+        time.sleep(0.1)
+    return not leftover_application_job_labels()
+
+
 def retire_application_instances() -> None:
     labels = application_job_labels()
     domain = f"gui/{os.getuid()}"
@@ -146,7 +177,9 @@ def retire_application_instances() -> None:
             raise InstallFailure(
                 "stale OpenJoystickDriver processes remain after retirement"
             )
-        return
+        reap_leftover_application_jobs()
+        if wait_until_leftover_jobs_reaped(2):
+            return
 
     print("OpenJoystickDriver did not stop after SIGTERM; forcing termination")
     for label in labels:
@@ -155,22 +188,14 @@ def retire_application_instances() -> None:
             check=False,
         )
     signal_processes(application_process_identifiers(), signal.SIGKILL)
-    if wait_until_retired(labels, 2):
+    wait_until_retired(labels, 2)
+    reap_leftover_application_jobs()
+    if wait_until_leftover_jobs_reaped(2) and not application_process_identifiers():
         return
 
-    # Last resort only: bootout clears a zombie PID stuck on an LS job.
-    # Do not bootout on the happy path — that breaks the next LaunchServices
-    # open of the replacement bundle (error -600).
-    print("OpenJoystickDriver LaunchServices job survived SIGKILL; booting out")
-    for label in labels:
-        run(["/bin/launchctl", "bootout", f"{domain}/{label}"], check=False)
-    if wait_until_retired(labels, 2):
-        return
-    if not application_process_identifiers():
-        print(
-            "LaunchServices still lists a retired OpenJoystickDriver job "
-            "with no live process; continuing install"
-        )
+    print("OpenJoystickDriver LaunchServices leftover job survived SIGKILL; booting out")
+    reap_leftover_application_jobs()
+    if wait_until_leftover_jobs_reaped(2) and not application_process_identifiers():
         return
     raise InstallFailure(
         "macOS left an unkillable OpenJoystickDriver application job. "
@@ -222,22 +247,22 @@ def verify_signature(application: Path) -> None:
 
 
 def launch_application(application: Path) -> None:
-    """Start the installed GUI by spawning the signed executable.
+    """Start the installed GUI via Launch Services ``open`` of the ``.app``.
 
-    Install replaces a just-stopped instance. ``open`` talks to LaunchServices /
-    RunningBoard and races that teardown (often error -600). Spawning the
-    verified Mach-O registers a fresh application job and is what install
-    readiness actually needs.
+    Spawning the Mach-O creates a launchd job Spotlight does not own. A later
+    Spotlight or Finder ``open`` then talks to a leftover/dead job (error -600).
+    Reap leftover jobs first, then open the bundle so the extra and Spotlight
+    share one Launch Services job.
     """
-    executable = application / "Contents/MacOS/OpenJoystickDriver"
-    if not executable.is_file():
-        raise InstallFailure(f"application executable is missing: {executable}")
-    subprocess.Popen(  # noqa: S603 — verified signed install path only
-        [str(executable)],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        start_new_session=True,
-    )
+    if not (application / "Contents/MacOS/OpenJoystickDriver").is_file():
+        raise InstallFailure(f"application executable is missing: {application}")
+    reap_leftover_application_jobs()
+    if not wait_until_leftover_jobs_reaped(2):
+        raise InstallFailure(
+            "leftover OpenJoystickDriver LaunchServices jobs remain; "
+            "not opening the .app against a dead job"
+        )
+    run(["/usr/bin/open", "--", str(application)])
 
 
 def launch_and_wait(application: Path, timeout_seconds: float) -> None:
