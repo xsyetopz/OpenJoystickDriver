@@ -5,30 +5,6 @@ import IOKit
 import IOKit.hid
 import Security
 
-/// Owns the current virtual state and the exact report exposed through both push and get-report
-/// APIs.
-final class UserSpaceInputReportState: @unchecked Sendable {
-  private let format: any VirtualGamepadReportFormat
-  private let lock = NSLock()
-  private var state = VirtualGamepadState()
-  private var report: [UInt8]
-
-  init(format: any VirtualGamepadReportFormat) {
-    self.format = format
-    self.report = format.buildInputReport(from: VirtualGamepadState())
-  }
-
-  func update(_ body: (inout VirtualGamepadState) -> Void) -> [UInt8] {
-    lock.withLock {
-      body(&state)
-      report = format.buildInputReport(from: state)
-      return report
-    }
-  }
-
-  func currentReport() -> [UInt8] { lock.withLock { report } }
-}
-
 /// Publishes one virtual gamepad for each connected physical controller.
 ///
 /// macOS 15 and later use CoreHID. macOS 10.15 through 14 use the earlier
@@ -148,146 +124,6 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     func close() { lock.withLock { isClosed = true } }
   }
 
-  @available(macOS 15, *)
-  private final class CoreHIDDelegate: HIDVirtualDeviceDelegate, @unchecked Sendable {
-    private enum RequestError: Error {
-      case unsupportedReport
-    }
-
-    let identifier: DeviceIdentifier
-    let format: any VirtualGamepadReportFormat
-    let inputReportState: UserSpaceInputReportState
-    let onRumbleCommand: RumbleCommandHandler?
-    let onRumbleStatus: @Sendable (String) -> Void
-    let lifecycle: LifecycleState
-
-    init(
-      identifier: DeviceIdentifier,
-      format: any VirtualGamepadReportFormat,
-      inputReportState: UserSpaceInputReportState,
-      onRumbleCommand: RumbleCommandHandler?,
-      onRumbleStatus: @escaping @Sendable (String) -> Void,
-      lifecycle: LifecycleState
-    ) {
-      self.identifier = identifier
-      self.format = format
-      self.inputReportState = inputReportState
-      self.onRumbleCommand = onRumbleCommand
-      self.onRumbleStatus = onRumbleStatus
-      self.lifecycle = lifecycle
-    }
-
-    func hidVirtualDevice(
-      _ device: HIDVirtualDevice,
-      receivedSetReportRequestOfType type: HIDReportType,
-      id: HIDReportID?,
-      data: Data
-    ) throws {
-      guard lifecycle.isOpen else { throw CancellationError() }
-      let reportID = UInt32(id?.rawValue ?? 0)
-      let bytes = Array(data)
-      let normalized = UserSpaceOutputDispatcher.normalizedHostOutputReport(
-        reportID: reportID,
-        bytes: bytes
-      )
-      if let handshake = format.inputReportRespondingToHostOutput(normalized) {
-        if #available(macOS 26, *), let userDevice = device.hidDevice {
-          try UserSpaceOutputDispatcher.publishIOKitInputReport(userDevice, report: handshake)
-        }
-        Task {
-          try? await device.dispatchInputReport(
-            data: Data(handshake),
-            timestamp: SuspendingClock.now
-          )
-        }
-        return
-      }
-      guard let onRumbleCommand else { throw RequestError.unsupportedReport }
-      guard
-        let command = VirtualRumbleOutputReportParser.parse(
-          type: Self.ioReportType(type),
-          reportID: reportID,
-          bytes: bytes
-        )
-      else { throw RequestError.unsupportedReport }
-
-      let status =
-        "app report id=\(reportID) L=\(command.left) R=\(command.right) "
-        + "LT=\(command.leftTrigger) RT=\(command.rightTrigger)"
-      onRumbleStatus(status)
-      print("[UserSpaceOutputDispatcher] App rumble report: \(identifier) \(status)")
-      onRumbleCommand(identifier, command)
-    }
-
-    func hidVirtualDevice(
-      _ device: HIDVirtualDevice,
-      receivedGetReportRequestOfType type: HIDReportType,
-      id: HIDReportID?,
-      maxSize: Int
-    ) throws -> Data {
-      _ = device
-      let reportID = UInt32(id?.rawValue ?? 0)
-      if lifecycle.isOpen,
-        type == .input,
-        format.inputReportID == nil || id?.rawValue == format.inputReportID
-      {
-        return Data(inputReportState.currentReport().prefix(max(0, maxSize)))
-      }
-      if let handshake = format.hostGetReport(reportID: reportID, maxSize: maxSize) {
-        return Data(handshake.prefix(max(0, maxSize)))
-      }
-      return Data(count: min(max(0, maxSize), 64))
-    }
-
-    private static func ioReportType(_ type: HIDReportType) -> IOHIDReportType {
-      switch type {
-      case .input: kIOHIDReportTypeInput
-      case .output: kIOHIDReportTypeOutput
-      case .feature: kIOHIDReportTypeFeature
-      @unknown default: kIOHIDReportTypeFeature
-      }
-    }
-  }
-
-  final class Entry: @unchecked Sendable {
-    /// Matches IOHID `ReportInterval` (8 ms) so HIDAPI sees interrupt traffic while idle.
-    static let inputReportKeepaliveNanoseconds: UInt64 = 8_000_000
-
-    let backend: any VirtualDeviceBackend
-    let inputReportState: UserSpaceInputReportState
-    private let lock = NSLock()
-    private var keepaliveTask: Task<Void, Never>?
-
-    init(backend: any VirtualDeviceBackend, inputReportState: UserSpaceInputReportState) {
-      self.backend = backend
-      self.inputReportState = inputReportState
-    }
-
-    func startInputReportKeepalive(isActive: @escaping @Sendable () -> Bool) {
-      lock.withLock {
-        guard keepaliveTask == nil else { return }
-        let interval = Self.inputReportKeepaliveNanoseconds
-        keepaliveTask = Task { [inputReportState, backend] in
-          while !Task.isCancelled {
-            try? await Task.sleep(nanoseconds: interval)
-            guard !Task.isCancelled, isActive() else { return }
-            try? await backend.send(inputReportState.currentReport())
-          }
-        }
-      }
-    }
-
-    func close() {
-      let task = lock.withLock { () -> Task<Void, Never>? in
-        let task = keepaliveTask
-        keepaliveTask = nil
-        return task
-      }
-      task?.cancel()
-      backend.close()
-    }
-  }
-
   private let profile: VirtualDeviceProfile
   private let format: any VirtualGamepadReportFormat
   private let primaryUsage: Int
@@ -303,6 +139,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
   private var creationTasks: [DeviceIdentifier: Task<Entry, Error>] = [:]
   private var creationRetryPolicies: [DeviceIdentifier: UserSpaceDeviceCreationRetryPolicy] = [:]
   private var lifecycleGenerations: [DeviceIdentifier: UInt64] = [:]
+  private var shutdownTask: Task<Void, Never>?
   private var _suppressOutput = false
   private var _status = "off"
   private var _lastRumbleStatus = "none"
@@ -313,6 +150,13 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
   }
 
   public var status: String { registryLock.withLock { _status } }
+  public func setOutputSuppressed(_ suppressed: Bool) async {
+    let senders = registryLock.withLock {
+      _suppressOutput = suppressed
+      return entries.values.map(\.sender)
+    }
+    for sender in senders { _ = await sender.submit { [] }.result }
+  }
   public var lastRumbleStatus: String { registryLock.withLock { _lastRumbleStatus } }
 
   static let requiredVirtualDeviceEntitlement = "com.apple.developer.hid.virtual.device"
@@ -320,7 +164,8 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     hasEntitlement(requiredVirtualDeviceEntitlement)
   }
 
-  @preconcurrency public init(
+  @preconcurrency
+  public init(
     profile: VirtualDeviceProfile = .default,
     format: any VirtualGamepadReportFormat = OJDGenericGamepadFormat(),
     emitsXboxGuideReport: Bool = false,
@@ -357,9 +202,9 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     self.testBackendFactory = testBackendFactory
   }
 
-  deinit { closeResources() }
+  deinit { beginClose() }
 
-  public func close() { closeResources() }
+  public func close() async { await beginClose().value }
 
   /// Creates and neutrally activates one virtual device for each supplied controller.
   public func activate(for identifiers: [DeviceIdentifier]) async throws {
@@ -370,12 +215,12 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       for identifier in identifiers {
         let entry = try await entry(for: identifier)
         guard lifecycle.isOpen else { throw CancellationError() }
-        try await entry.backend.send(entry.inputReportState.currentReport())
+        try await entry.sender.submit { [entry] in [entry.inputReportState.currentReport()] }.value
         startInputReportKeepalive(entry)
       }
       registryLock.withLock { recomputeStatusLocked() }
     } catch {
-      closeResources()
+      await close()
       throw error
     }
   }
@@ -385,30 +230,37 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     do {
       let entry = try await entry(for: identifier)
       guard lifecycle.isOpen else { throw CancellationError() }
-      try await entry.backend.send(entry.inputReportState.currentReport())
+      try await entry.sender.submit { [entry] in [entry.inputReportState.currentReport()] }.value
       startInputReportKeepalive(entry)
       registryLock.withLock { recomputeStatusLocked() }
     } catch {
-      closeResources()
+      await close()
       throw error
     }
   }
 
-  private func closeResources() {
-    guard lifecycle.close() else { return }
-    let resources = registryLock.withLock { () -> ([Entry], [Task<Entry, Error>]) in
-      let entries = Array(entries.values)
-      let identifiers = Set(self.entries.keys).union(creationTasks.keys)
-      self.entries.removeAll()
+  @discardableResult
+  func beginClose() -> Task<Void, Never> {
+    registryLock.withLock {
+      if let shutdownTask { return shutdownTask }
+      _ = lifecycle.close()
+      let resources = Array(entries.values)
+      let identifiers = Set(entries.keys).union(creationTasks.keys)
       let tasks = Array(creationTasks.values)
+      entries.removeAll()
       for identifier in identifiers { lifecycleGenerations[identifier, default: 0] &+= 1 }
       creationTasks.removeAll()
       creationRetryPolicies.removeAll()
       _status = "off"
-      return (entries, tasks)
+      tasks.forEach { $0.cancel() }
+      let drains = resources.map { $0.beginClose() }
+      let shutdown = Task {
+        for drain in drains { await drain.value }
+        for task in tasks { if let entry = try? await task.value { await entry.close() } }
+      }
+      shutdownTask = shutdown
+      return shutdown
     }
-    resources.1.forEach { $0.cancel() }
-    resources.0.forEach { $0.close() }
   }
 
   private func startInputReportKeepalive(_ entry: Entry) {
@@ -432,18 +284,17 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     guard lifecycle.isOpen else { return }
 
     let stickTransfer = Self.stickTransfer(for: identifier)
-    let primaryReport = activeEntry.inputReportState.update { state in
-      for event in events { applyEvent(event, stickTransfer: stickTransfer, state: &state) }
-    }
-    let secondaryReports =
-      emitsXboxGuideReport ? events.compactMap { xboxGuideReport(for: $0) } : []
-    let reports = [primaryReport] + secondaryReports
-
+    let isActive: @Sendable () -> Bool = { [self] in lifecycle.isOpen && !suppressOutput }
     do {
-      for report in reports {
-        guard lifecycle.isOpen else { return }
-        try await activeEntry.backend.send(report)
-      }
+      try await activeEntry.sender.submit(whileActive: isActive) { [self, activeEntry] in
+        guard lifecycle.isOpen, !suppressOutput else { return [] }
+        let primaryReport = activeEntry.inputReportState.update { state in
+          for event in events { applyEvent(event, stickTransfer: stickTransfer, state: &state) }
+        }
+        let secondaryReports =
+          emitsXboxGuideReport ? events.compactMap { xboxGuideReport(for: $0) } : []
+        return [primaryReport] + secondaryReports
+      }.value
       startInputReportKeepalive(activeEntry)
       registryLock.withLock { recomputeStatusLocked() }
     } catch {
@@ -452,7 +303,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
         _status = "error: \(error)"
         return entries.removeValue(forKey: identifier)
       }
-      removed?.close()
+      await removed?.close()
     }
   }
 
@@ -486,7 +337,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
         return true
       }
       guard installed else {
-        entry.close()
+        await entry.close()
         throw CancellationError()
       }
       return entry
@@ -516,9 +367,8 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     return try createIOKitEntry(for: identifier)
   }
 
-  @available(macOS 15, *) private func createCoreHIDEntry(for identifier: DeviceIdentifier)
-    async throws -> Entry
-  {
+  @available(macOS 15, *)
+  private func createCoreHIDEntry(for identifier: DeviceIdentifier) async throws -> Entry {
     let properties = Self.virtualDeviceProperties(
       profile: profile,
       format: format,
@@ -532,29 +382,46 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     }
     Self.applyPublishedIOHIDTransport(Self.ioHIDTransportValue(for: profile), to: device)
     let inputReportState = UserSpaceInputReportState(format: format)
+    let sender = UserSpaceReportSender()
     let delegate = CoreHIDDelegate(
-      identifier: identifier,
-      format: format,
-      inputReportState: inputReportState,
-      onRumbleCommand: onRumbleCommand,
-      onRumbleStatus: { [weak self] status in
-        self?.registryLock.withLock { self?._lastRumbleStatus = status }
-      },
-      lifecycle: lifecycle
+      handler: hostReportHandler(identifier: identifier, input: inputReportState, sender: sender)
     )
-    guard lifecycle.isOpen else { throw CancellationError() }
+    let entry = Entry(
+      backend: CoreHIDBackend(device: device, delegate: delegate),
+      inputReportState: inputReportState,
+      sender: sender
+    )
+    guard lifecycle.isOpen else {
+      await entry.close()
+      throw CancellationError()
+    }
     await device.activate(delegate: delegate)
+    guard lifecycle.isOpen else {
+      await entry.close()
+      throw CancellationError()
+    }
     Self.applyPublishedIOHIDTransport(Self.ioHIDTransportValue(for: profile), to: device)
     print("[UserSpaceOutputDispatcher] Created CoreHID virtual device for \(identifier)")
-    return Entry(
-      backend: CoreHIDBackend(device: device, delegate: delegate),
-      inputReportState: inputReportState
-    )
+    return entry
   }
 
-  @available(macOS, introduced: 10.15, obsoleted: 15.0) private func createIOKitEntry(
-    for identifier: DeviceIdentifier
-  ) throws -> Entry {
+  private func hostReportHandler(
+    identifier: DeviceIdentifier,
+    input: UserSpaceInputReportState,
+    sender: UserSpaceReportSender
+  ) -> UserSpaceHostReportHandler {
+    let isOpen: @Sendable () -> Bool = { [lifecycle] in lifecycle.isOpen }
+    return UserSpaceHostReportHandler(
+      identifier: identifier,
+      input: input,
+      sender: sender,
+      isOpen: isOpen,
+      onRumble: onRumbleCommand
+    ) { [weak self] status in self?.registryLock.withLock { self?._lastRumbleStatus = status } }
+  }
+
+  @available(macOS, introduced: 10.15, obsoleted: 15.0)
+  private func createIOKitEntry(for identifier: DeviceIdentifier) throws -> Entry {
     guard PermissionManager.currentInputMonitoringAccessState() == .granted else {
       throw CreationError.inputMonitoringDenied
     }
@@ -573,7 +440,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       primaryUsage: primaryUsage
     )
     let candidateLocationIDs: [UInt32?] = [
-      UserSpaceVirtualDeviceConstants.locationID(for: identifier), 0x1000_0002, nil
+      UserSpaceVirtualDeviceConstants.locationID(for: identifier), 0x1000_0002, nil,
     ]
 
     var device: IOHIDUserDevice?
@@ -603,62 +470,49 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       label: "com.openjoystickdriver.iokit-hid.\(identifier.vendorID).\(identifier.productID)"
     )
     let inputReportState = UserSpaceInputReportState(format: format)
-    IOHIDUserDeviceRegisterGetReportBlock(device) {
-      [format, inputReportState, lifecycle] type, reportID, report, reportLength in
-      let capacity = max(0, Int(reportLength.pointee))
-      let currentReport: [UInt8]
-      if lifecycle.isOpen,
-        type == kIOHIDReportTypeInput,
-        format.inputReportID == nil || reportID == CFIndex(format.inputReportID ?? 0)
-      {
-        currentReport = inputReportState.currentReport()
-      } else if let handshake = format.hostGetReport(
-        reportID: UInt32(truncatingIfNeeded: reportID),
-        maxSize: capacity
-      ) {
-        currentReport = handshake
-      } else {
-        currentReport = [UInt8](repeating: 0, count: min(capacity, 64))
-      }
-      let toCopy = Array(currentReport.prefix(capacity))
-      for (index, byte) in toCopy.enumerated() { report[index] = byte }
-      reportLength.pointee = CFIndex(toCopy.count)
-      return kIOReturnSuccess
-    }
-    IOHIDUserDeviceRegisterSetReportBlock(device) {
-      [format, lifecycle, onRumbleCommand, weak self] type, reportID, report, reportLength in
-      guard lifecycle.isOpen else { return kIOReturnNotOpen }
-      let bytes = Array(UnsafeBufferPointer(start: report, count: max(0, Int(reportLength))))
-      let normalized = Self.normalizedHostOutputReport(reportID: reportID, bytes: bytes)
-      let handshake = format.inputReportRespondingToHostOutput(normalized)
-      if let handshake {
-        do { try Self.publishIOKitInputReport(device, report: handshake) } catch {
-          return (error as? IOKitReportError)?.code ?? kIOReturnError
+    let entry = Entry(
+      backend: IOHIDBackend(device: device, queue: queue),
+      inputReportState: inputReportState
+    )
+    let handler = hostReportHandler(
+      identifier: identifier,
+      input: inputReportState,
+      sender: entry.sender
+    )
+    IOHIDUserDeviceRegisterGetReportBlock(device) { type, reportID, report, reportLength in
+      do {
+        guard let identifier = UInt32(exactly: reportID) else {
+          throw VirtualHostReportError.malformed
         }
+        let bytes = try handler.getReport(
+          type: UserSpaceHostReportHandler.reportType(type),
+          reportID: identifier,
+          maxSize: Int(reportLength.pointee)
+        )
+        for (index, byte) in bytes.enumerated() { report[index] = byte }
+        reportLength.pointee = bytes.count
+        return kIOReturnSuccess
+      } catch {
+        reportLength.pointee = 0
+        return UserSpaceHostReportHandler.ioKitError(error)
       }
-      if let onRumbleCommand,
-        let command = VirtualRumbleOutputReportParser.parse(
-          type: type,
+    }
+    IOHIDUserDeviceRegisterSetReportBlock(device) { type, reportID, report, reportLength in
+      do {
+        guard reportLength >= 0 else { throw VirtualHostReportError.malformed }
+        let bytes = Array(UnsafeBufferPointer(start: report, count: Int(reportLength)))
+        _ = try handler.setReport(
+          type: UserSpaceHostReportHandler.reportType(type),
           reportID: reportID,
           bytes: bytes
         )
-      {
-        let status =
-          "app report id=\(reportID) L=\(command.left) R=\(command.right) "
-          + "LT=\(command.leftTrigger) RT=\(command.rightTrigger)"
-        self?.registryLock.withLock { self?._lastRumbleStatus = status }
-        onRumbleCommand(identifier, command)
         return kIOReturnSuccess
-      }
-      return handshake == nil ? kIOReturnUnsupported : kIOReturnSuccess
+      } catch { return UserSpaceHostReportHandler.ioKitError(error) }
     }
     IOHIDUserDeviceSetDispatchQueue(device, queue)
     IOHIDUserDeviceActivate(device)
     print("[UserSpaceOutputDispatcher] Created IOKit virtual device for \(identifier)")
-    return Entry(
-      backend: IOHIDBackend(device: device, queue: queue),
-      inputReportState: inputReportState
-    )
+    return entry
   }
 
   /// IOHID `Transport` string HIDAPI matches (`kIOHIDTransportBluetoothValue` prefix).
@@ -669,32 +523,27 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     switch profile.transport {
     case kIOHIDTransportBluetoothValue, kIOHIDTransportBluetoothLowEnergyValue:
       kIOHIDTransportBluetoothValue
-    default:
-      kIOHIDTransportUSBValue
+    default: kIOHIDTransportUSBValue
     }
   }
 
-  @available(macOS 15, *) static func hidDeviceTransport(for profile: VirtualDeviceProfile)
-    -> HIDDeviceTransport
-  {
+  @available(macOS 15, *)
+  static func hidDeviceTransport(for profile: VirtualDeviceProfile) -> HIDDeviceTransport {
     ioHIDTransportValue(for: profile) == kIOHIDTransportBluetoothValue ? .bluetooth : .usb
   }
 
   static func virtualDeviceExtraProperties(profile: VirtualDeviceProfile) -> [String: any AnyObject]
-  {
-    [kIOHIDTransportKey as String: ioHIDTransportValue(for: profile) as CFString]
-  }
+  { [kIOHIDTransportKey as String: ioHIDTransportValue(for: profile) as CFString] }
 
-  @available(macOS 15, *) static func applyPublishedIOHIDTransport(
-    _ value: String,
-    to device: HIDVirtualDevice
-  ) {
+  @available(macOS 15, *)
+  static func applyPublishedIOHIDTransport(_ value: String, to device: HIDVirtualDevice) {
     if #available(macOS 26, *), let userDevice = device.hidDevice {
       IOHIDUserDeviceSetProperty(userDevice, kIOHIDTransportKey as CFString, value as CFString)
     }
   }
 
-  @available(macOS 15, *) static func virtualDeviceProperties(
+  @available(macOS 15, *)
+  static func virtualDeviceProperties(
     profile: VirtualDeviceProfile,
     format: any VirtualGamepadReportFormat,
     identifier: DeviceIdentifier,
@@ -733,7 +582,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
       kIOHIDMaxInputReportSizeKey as String: reportBufferSize(
         payloadSize: format.inputReportPayloadSize,
         reportID: format.inputReportID
-      )
+      ),
     ]
     if let outputSize = format.outputReportPayloadSize {
       properties[kIOHIDMaxOutputReportSizeKey as String] = reportBufferSize(
@@ -756,13 +605,6 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     reportID == nil ? payloadSize : payloadSize + 1
   }
 
-  static func normalizedHostOutputReport(reportID: UInt32, bytes: [UInt8]) -> [UInt8] {
-    guard reportID != 0 else { return bytes }
-    let prefix = UInt8(truncatingIfNeeded: reportID)
-    if bytes.first == prefix { return bytes }
-    return [prefix] + bytes
-  }
-
   /// Classifies a nil CoreHID `HIDVirtualDevice` (macOS 15+ wraps IOHIDUserDevice;
   /// Accessibility / PostEvent deny surfaces as `IOServiceOpen` `kIOReturnNotPermitted`).
   /// Input Monitoring / ListenEvent is not mapped: it blocks `IOHIDDeviceOpen` and
@@ -771,16 +613,13 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     provisioning: VirtualHIDProvisioningHost.Authorization,
     accessibility: PermissionManager.AccessState
   ) -> CreationError {
-    if provisioning == .excludesHost {
-      return .provisioningProfileExcludesHost
-    }
-    if accessibility != .granted {
-      return .accessibilityDenied
-    }
+    if provisioning == .excludesHost { return .provisioningProfileExcludesHost }
+    if accessibility != .granted { return .accessibilityDenied }
     return .createFailed
   }
 
-  @available(macOS 15, *) private static func coreHIDCreationFailure() -> CreationError {
+  @available(macOS 15, *)
+  private static func coreHIDCreationFailure() -> CreationError {
     mappedCoreHIDCreationFailure(
       provisioning: VirtualHIDProvisioningHost.currentAuthorization(),
       accessibility: PermissionManager.currentAccessibilityAccessState()
@@ -810,10 +649,10 @@ extension UserSpaceOutputDispatcher: ControllerLifecycleListener {
       recomputeStatusLocked()
       return (removed, creationTask)
     }
-    resources.0?.close()
+    await resources.0?.close()
     resources.1?.cancel()
     if let creationTask = resources.1, let entry = try? await creationTask.value {
-      entry.close()
+      await entry.close()
     }
     await onControllerDidStop?(identifier)
   }

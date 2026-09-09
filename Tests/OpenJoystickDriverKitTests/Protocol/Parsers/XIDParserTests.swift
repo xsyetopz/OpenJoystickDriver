@@ -38,6 +38,18 @@ private func makeXIDReport(
 }
 
 struct XIDParserTests {
+  @Test(arguments: UInt8(0)...UInt8(15))
+  func allDpadMasks(mask: UInt8) throws {
+    let directions: [DpadDirection] = [
+      .neutral, .north, .south, .neutral, .west, .northWest, .southWest, .neutral, .east,
+      .northEast, .southEast, .neutral, .neutral, .neutral, .neutral, .neutral,
+    ]
+    let parser = XIDParser()
+    _ = try parser.parse(data: makeXIDReport(digital: mask == 1 ? 2 : 1))
+    let events = try parser.parse(data: makeXIDReport(digital: mask))
+    #expect(events == [.dpadChanged(directions[Int(mask)])])
+  }
+
   @Test func shortReportIsIgnored() throws {
     #expect(try XIDParser().parse(data: Data([0x00, 0x14, 0x00])).isEmpty)
   }

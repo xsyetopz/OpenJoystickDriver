@@ -6,10 +6,11 @@ struct CompatibilityProfileAvailabilityTests {
   private let subfamilies: [PhysicalProtocolSubfamily] = [.xid, .xusb, .gip, .hid]
   private let identities: [CompatibilityIdentity] = [
     .automatic, .genericHID, .sdl2_3, .appleGameController, .xbox360HID, .dualShock4, .dualSense,
-    .switchPro
+    .switchPro,
   ]
 
-  @Test func everyPhysicalFamilyHasTheExpectedIdentityMatrix() {
+  @Test
+  func everyPhysicalFamilyHasTheExpectedIdentityMatrix() {
     for subfamily in subfamilies {
       for identity in identities {
         let decision = CompatibilityProfileAvailabilityPolicy.decision(
@@ -24,20 +25,16 @@ struct CompatibilityProfileAvailabilityTests {
           expected = .available
         case .xbox360HID:
           expected =
-            subfamily == .xusb
-            ? .available : .unavailable(reason: .xusbIdentityRequiresXUSBFamily)
+            subfamily == .xusb ? .available : .unavailable(reason: .xusbIdentityRequiresXUSBFamily)
         }
         #expect(decision == expected)
-        #expect(
-          CompatibilityProfileAvailabilityPolicy.isAvailable(identity, for: subfamily)
-            == decision.isAvailable
-        )
-        #expect(decision.profileAvailable == decision.isAvailable)
+
       }
     }
   }
 
-  @Test func requestedBoundaryRowsRemainExplicit() {
+  @Test
+  func requestedBoundaryRowsRemainExplicit() {
     #expect(
       CompatibilityProfileAvailabilityPolicy.decision(for: .gip, identity: .sdl2_3) == .available
     )
@@ -46,20 +43,44 @@ struct CompatibilityProfileAvailabilityTests {
         == .available
     )
     #expect(
-      CompatibilityProfileAvailabilityPolicy.decision(for: .xusb, identity: .sdl2_3)
-        == .available
+      CompatibilityProfileAvailabilityPolicy.decision(for: .xusb, identity: .sdl2_3) == .available
     )
-    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.sdl2_3, for: .hid) == true)
-    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.xbox360HID, for: .hid) == false)
-    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.xbox360HID, for: .gip) == false)
-    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.dualShock4, for: .hid) == true)
-    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.switchPro, for: .hid) == true)
-    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.dualSense, for: .gip) == true)
-    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.dualShock4, for: .gip) == true)
-    #expect(CompatibilityProfileAvailabilityPolicy.isAvailable(.dualShock4, for: .xusb) == true)
+    #expect(
+      CompatibilityProfileAvailabilityPolicy.decision(for: .hid, identity: .sdl2_3).isAvailable
+        == true
+    )
+    #expect(
+      CompatibilityProfileAvailabilityPolicy.decision(for: .hid, identity: .xbox360HID).isAvailable
+        == false
+    )
+    #expect(
+      CompatibilityProfileAvailabilityPolicy.decision(for: .gip, identity: .xbox360HID).isAvailable
+        == false
+    )
+    #expect(
+      CompatibilityProfileAvailabilityPolicy.decision(for: .hid, identity: .dualShock4).isAvailable
+        == true
+    )
+    #expect(
+      CompatibilityProfileAvailabilityPolicy.decision(for: .hid, identity: .switchPro).isAvailable
+        == true
+    )
+    #expect(
+      CompatibilityProfileAvailabilityPolicy.decision(for: .gip, identity: .dualSense).isAvailable
+        == true
+    )
+    #expect(
+      CompatibilityProfileAvailabilityPolicy.decision(for: .gip, identity: .dualShock4).isAvailable
+        == true
+    )
+    #expect(
+      CompatibilityProfileAvailabilityPolicy.decision(for: .xusb, identity: .dualShock4).isAvailable
+        == true
+    )
   }
 
-  @Test func connectedGIPDeviceAllowsExplicitFirstPartyIdentities() {
+  @Test
+  func connectedGIPDeviceAllowsExplicitFirstPartyIdentities() {
     let device = ApplicationServiceDeviceDescription(
       name: "GIP",
       vendorID: 1,
@@ -87,11 +108,9 @@ struct CompatibilityProfileAvailabilityTests {
     )
   }
 
-  @Test func automaticMustBeResolvedBeforePolicyEvaluation() {
-    let decision = CompatibilityProfileAvailabilityPolicy.decision(
-      for: .xusb,
-      identity: .automatic
-    )
+  @Test
+  func automaticMustBeResolvedBeforePolicyEvaluation() {
+    let decision = CompatibilityProfileAvailabilityPolicy.decision(for: .xusb, identity: .automatic)
 
     #expect(decision == .unavailable(reason: .automaticRequiresResolution))
     #expect(decision.isAvailable == false)

@@ -3,7 +3,7 @@ import Foundation
 /// USB DualSense HID surface used by SDL HIDAPI PS5 and `GCDualSenseGamepad`.
 ///
 /// Input report `0x01` matches Linux `hid-playstation.c` / `DualSenseParser`.
-/// Live consumer bind evidence is still required before automatic promotion.
+/// Automatic selection uses this identity; live consumer binding needs separate verification.
 /// Bluetooth CRC reports are out of scope.
 public enum DualSenseUSBHIDDescriptor {
   public static let reportID: UInt8 = 0x01
@@ -11,7 +11,7 @@ public enum DualSenseUSBHIDDescriptor {
   public static let outputReportID: UInt8 = 0x02
   public static let outputReportLength = 48
 
-  /// USB DualSense HID report descriptor captured from `054C:0CE6`.
+  /// USB DualSense HID report descriptor for the `054C:0CE6` consumer shape.
   public static let descriptor: [UInt8] = [
     0x05, 0x01, 0x09, 0x05, 0xA1, 0x01, 0x85, 0x01, 0x09, 0x30, 0x09, 0x31,
     0x09, 0x32, 0x09, 0x35, 0x09, 0x33, 0x09, 0x34, 0x15, 0x00, 0x26, 0xFF,
@@ -55,17 +55,22 @@ public struct DualSenseUSBHIDReportFormat: VirtualGamepadReportFormat {
     report[2] = SonyHIDAxis.uint8Inverted(state.leftStickY)
     report[3] = SonyHIDAxis.uint8(state.rightStickX)
     report[4] = SonyHIDAxis.uint8Inverted(state.rightStickY)
-    report[5] = SonyHIDAxis.triggerByte(state.leftTrigger)
-    report[6] = SonyHIDAxis.triggerByte(state.rightTrigger)
+    report[5] = SonyHIDAxis.triggerByte(state.effectiveLeftTrigger)
+    report[6] = SonyHIDAxis.triggerByte(state.effectiveRightTrigger)
     report[8] = SonyHIDAxis.ds4Hat(state.hat) | SonyHIDAxis.ds4Face(state.buttons)
     report[9] = SonyHIDAxis.ds4Shoulders(
       state.buttons,
-      leftTrigger: state.leftTrigger,
-      rightTrigger: state.rightTrigger
+      leftTrigger: state.effectiveLeftTrigger,
+      rightTrigger: state.effectiveRightTrigger
     )
     if SonyHIDAxis.isSet(state.buttons, bit: GamepadHIDDescriptor.ButtonBit.guide.rawValue) {
       report[10] |= 0x01
     }
+    if state.touchpadPressed { report[10] |= 0x02 }
+    if state.mutePressed { report[10] |= 0x04 }
+    // Only the touchpad button is modeled; both touch contacts are inactive.
+    report[33] = 0x80
+    report[37] = 0x80
     return report
   }
 }

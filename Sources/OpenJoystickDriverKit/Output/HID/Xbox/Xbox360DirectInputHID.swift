@@ -56,7 +56,7 @@ public enum Xbox360DirectInputHIDDescriptor {
     0x26, 0xFF, 0x7F,  // Logical Maximum: 32767
     0x75, 0x10, 0x95, 0x05, 0x81, 0x02,
 
-    0xC0
+    0xC0,
   ]
 }
 
@@ -78,7 +78,11 @@ public struct Xbox360DirectInputReportFormat: VirtualGamepadReportFormat {
 
     write(state.leftStickX, to: &r, at: 3)
     write(state.leftStickY, to: &r, at: 5)
-    write(combinedTriggerAxis(left: state.leftTrigger, right: state.rightTrigger), to: &r, at: 7)
+    write(
+      combinedTriggerAxis(left: state.effectiveLeftTrigger, right: state.effectiveRightTrigger),
+      to: &r,
+      at: 7
+    )
     write(state.rightStickX, to: &r, at: 9)
     write(state.rightStickY, to: &r, at: 11)
     return r

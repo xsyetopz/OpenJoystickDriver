@@ -222,7 +222,7 @@ struct HIDReportPacker: @unchecked Sendable {
       setBits(
         bitOffset: f.bitOffset,
         bitSize: f.bitSize,
-        value: encodeTrigger(state.leftTrigger, field: f)
+        value: encodeTrigger(state.effectiveLeftTrigger, field: f)
       )
     }
     if let f = axisFields[0x33] {
@@ -243,7 +243,7 @@ struct HIDReportPacker: @unchecked Sendable {
       setBits(
         bitOffset: f.bitOffset,
         bitSize: f.bitSize,
-        value: encodeTrigger(state.rightTrigger, field: f)
+        value: encodeTrigger(state.effectiveRightTrigger, field: f)
       )
     }
 

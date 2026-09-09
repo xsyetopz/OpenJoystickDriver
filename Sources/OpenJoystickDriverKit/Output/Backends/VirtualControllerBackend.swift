@@ -84,7 +84,7 @@ extension UserSpaceOutputDispatcher: VirtualControllerBackend {
     VirtualControllerBackendStatus(id: backendID, isRunning: true, detail: status)
   }
 
-  public func stopBackend() { close() }
+  public func stopBackend() async { await close() }
 
   public func backendStatus() -> VirtualControllerBackendStatus {
     VirtualControllerBackendStatus(id: backendID, isRunning: status != "off", detail: status)

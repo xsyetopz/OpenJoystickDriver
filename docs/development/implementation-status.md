@@ -4,11 +4,20 @@ OpenJoystickDriver 0.5 uses a persistent application runtime. The signed app hos
 processing, virtual output, login registration, permission state, and the authenticated local RPC
 endpoint. No helper daemon or LaunchAgent is packaged.
 
+Quit requests share one asynchronous teardown and leave the app stopped. TCC
+reopen remains a native system action. Profile-library versions other than the
+current schema return a typed unsupported-version error; loading an empty
+unsupported library does not rewrite its bytes or discard unknown fields.
+
 The CLI and signed application runtime report authoritative Input Monitoring and Accessibility states for `OpenJoystickDriver.app`. Input Monitoring gates physical controller reads. Accessibility gates virtual-HID publication. OJD never resets TCC.
 
 Controller records remain generated data, while shared protocol behavior remains
 in code. Event normalization removes duplicate and contradictory input, and
-output dispatch is concurrent. Process and RPC calls have deadlines; buffers and
+output dispatch is concurrent across devices and ordered within each virtual device.
+Per-device host sessions validate control requests and decode Sony/Nintendo USB
+initialization and rumble. Codec tests do not establish signed consumer binding
+or hardware delivery; see [wire protocols](wire-protocols.md).
+Process and RPC calls have deadlines; buffers and
 frames are bounded; current-session logs have typed paths.
 
 `OpenJoystickDriverUSB` exposes one controller-neutral raw USB API. Accessible

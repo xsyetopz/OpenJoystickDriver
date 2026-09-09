@@ -33,7 +33,6 @@ struct AppleGameControllerSyntheticHIDTests {
     #expect(
       AppleGameControllerSyntheticHID.isSyntheticDevice(className: "AppleGCSyntheticDevice")
     )
-    #expect(AppleGameControllerSyntheticHID.isSyntheticDevice(productName: "GamePad-1"))
     #expect(
       AppleGameControllerSyntheticHID.isSyntheticDevice(deviceType: "Xbox360Controller")
     )
@@ -49,7 +48,6 @@ struct AppleGameControllerSyntheticHIDTests {
     #expect(
       !AppleGameControllerSyntheticHID.isSyntheticDevice(
         className: "IOHIDUserDevice",
-        productName: "Xbox Wireless Controller",
         syntheticProperty: kCFBooleanFalse
       )
     )
@@ -61,9 +59,9 @@ struct AppleGameControllerSyntheticHIDTests {
     #expect(!AppleGameControllerSyntheticHID.isSyntheticRegistryEntry(id: 1))
   }
 
-  @Test func physicalAdmissionRejectsGamePad1WithoutSyntheticBoolean() {
+  @Test func physicalAdmissionAcceptsGamePad1WithoutSyntheticMetadata() {
     #expect(
-      !PhysicalHIDBackendEventPolicy.acceptsDevice(
+      PhysicalHIDBackendEventPolicy.acceptsDevice(
         serialNumber: nil,
         productName: "GamePad-1",
         transport: "USB",

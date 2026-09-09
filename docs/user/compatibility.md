@@ -150,7 +150,8 @@ persist that temporary choice.
   xbox360. Ignore leftover IOHID `045E:028E` `AppleGCSyntheticDevice`
   "GamePad-1" when it is not the OJD user-space device: GameController
   creates that 360 HID shim when it binds an Xbox identity (`045E:0B13`
-  included). OJD skips it before any user-client open. Stock SDL match-all
+  included). OJD excludes synthetic registry markers before any user-client
+  open; the product name `GamePad-1` alone does not exclude a physical device. Stock SDL match-all
   still deadlocks on a leftover wedged shim. Physical GIP on this
   GameSir G7 SE completes Hello (`0x02`) plus one rest input (`0x20`, 36-byte
   Share report, all-zero payload). Further `0x20` frames follow the GIP

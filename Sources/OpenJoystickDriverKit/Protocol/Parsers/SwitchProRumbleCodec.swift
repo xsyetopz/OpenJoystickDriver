@@ -22,4 +22,19 @@ enum SwitchProRumbleCodec {
     // Default high frequency 320 Hz encodes as 0x0001; low frequency 160 Hz as 0x40.
     return [0x00, 0x01 &+ amplitudeHigh, 0x40 &+ amplitudeLowHigh, amplitudeLow]
   }
+
+  /// Maps both HD-rumble amplitudes to the strongest physical motor intensity.
+  /// Frequency bits are independent of the amplitude table.
+  static func decodeIntensity(_ bytes: ArraySlice<UInt8>) -> UInt8? {
+    guard bytes.count == 4 else { return nil }
+    let values = Array(bytes)
+    if values.allSatisfy({ $0 == 0 }) { return 0 }
+    let highIndex = Int(values[1] >> 1)
+    let lowIndex = (Int(values[3]) - 0x40) * 2 - (values[2] & 0x80 == 0 ? 0 : 1)
+    guard amplitudeThresholds.indices.contains(highIndex),
+      amplitudeThresholds.indices.contains(lowIndex)
+    else { return nil }
+    let amplitude = max(amplitudeThresholds[highIndex], amplitudeThresholds[lowIndex])
+    return UInt8((UInt32(amplitude) * 255 + 501) / 1003)
+  }
 }

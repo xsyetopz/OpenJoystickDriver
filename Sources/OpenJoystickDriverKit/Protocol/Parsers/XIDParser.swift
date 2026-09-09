@@ -121,7 +121,7 @@ public final class XIDParser: InputParser, @unchecked Sendable {
     case 4: .west
     case 8: .east
     case 9: .northEast
-    case 3: .southEast
+    case 10: .southEast
     case 6: .southWest
     case 5: .northWest
     default: .neutral

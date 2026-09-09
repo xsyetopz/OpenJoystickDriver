@@ -9,7 +9,19 @@ public struct VirtualGamepadState: Sendable {
   public var rightStickY: Int16
   public var leftTrigger: Int16
   public var rightTrigger: Int16
+  public var leftTriggerPressed: Bool
+  public var rightTriggerPressed: Bool
+  public var touchpadPressed: Bool
+  public var mutePressed: Bool
   public var hat: GamepadHIDDescriptor.Hat
+
+  /// Digital-only sources expose a full axis press without replacing analog pressure.
+  public var effectiveLeftTrigger: Int16 {
+    leftTrigger > 0 ? leftTrigger : (leftTriggerPressed ? Int16.max : 0)
+  }
+  public var effectiveRightTrigger: Int16 {
+    rightTrigger > 0 ? rightTrigger : (rightTriggerPressed ? Int16.max : 0)
+  }
 
   public init(
     buttons: UInt32 = 0,
@@ -19,6 +31,10 @@ public struct VirtualGamepadState: Sendable {
     rightStickY: Int16 = 0,
     leftTrigger: Int16 = 0,
     rightTrigger: Int16 = 0,
+    leftTriggerPressed: Bool = false,
+    rightTriggerPressed: Bool = false,
+    touchpadPressed: Bool = false,
+    mutePressed: Bool = false,
     hat: GamepadHIDDescriptor.Hat = .neutral
   ) {
     self.buttons = buttons
@@ -28,6 +44,10 @@ public struct VirtualGamepadState: Sendable {
     self.rightStickY = rightStickY
     self.leftTrigger = leftTrigger
     self.rightTrigger = rightTrigger
+    self.leftTriggerPressed = leftTriggerPressed
+    self.rightTriggerPressed = rightTriggerPressed
+    self.touchpadPressed = touchpadPressed
+    self.mutePressed = mutePressed
     self.hat = hat
   }
 }
@@ -54,20 +74,11 @@ public protocol VirtualGamepadReportFormat: Sendable {
   /// If `inputReportID` is non-nil, the returned bytes MUST begin with that Report ID byte.
   func buildInputReport(from state: VirtualGamepadState) -> [UInt8]
 
-  /// Optional interrupt-in reply to a host output report (USB handshake, ACK).
-  func inputReportRespondingToHostOutput(_ bytes: [UInt8]) -> [UInt8]?
-
-  /// Optional control-pipe GetReport reply. Returning bytes completes the host
-  /// request; returning nil lets the dispatcher serve the current input report
-  /// or an empty success buffer. Never used to block the HID stack.
-  func hostGetReport(reportID: UInt32, maxSize: Int) -> [UInt8]?
 }
 
 extension VirtualGamepadReportFormat {
   public var outputReportPayloadSize: Int? { nil }
   public var outputReportID: UInt8? { nil }
-  public func inputReportRespondingToHostOutput(_ bytes: [UInt8]) -> [UInt8]? { nil }
-  public func hostGetReport(reportID _: UInt32, maxSize _: Int) -> [UInt8]? { nil }
 }
 
 /// Generic OJD HID GamePad format (matches ``GamepadHIDDescriptor``).
@@ -95,7 +106,7 @@ public struct OJDGenericGamepadFormat: VirtualGamepadReportFormat {
     let lsyB = state.leftStickY.littleEndianBytes
     r[4] = lsyB.0
     r[5] = lsyB.1
-    let ltB = state.leftTrigger.littleEndianBytes
+    let ltB = state.effectiveLeftTrigger.littleEndianBytes
     r[6] = ltB.0
     r[7] = ltB.1
     let rsxB = state.rightStickX.littleEndianBytes
@@ -104,7 +115,7 @@ public struct OJDGenericGamepadFormat: VirtualGamepadReportFormat {
     let rsyB = state.rightStickY.littleEndianBytes
     r[10] = rsyB.0
     r[11] = rsyB.1
-    let rtB = state.rightTrigger.littleEndianBytes
+    let rtB = state.effectiveRightTrigger.littleEndianBytes
     r[12] = rtB.0
     r[13] = rtB.1
     r[14] = state.hat.rawValue & 0x0F
@@ -137,7 +148,7 @@ public struct OJDSDLGamepadFormat: VirtualGamepadReportFormat {
     let lsyB = state.leftStickY.littleEndianBytes
     r[4] = lsyB.0
     r[5] = lsyB.1
-    let ltB = state.leftTrigger.littleEndianBytes
+    let ltB = state.effectiveLeftTrigger.littleEndianBytes
     r[6] = ltB.0
     r[7] = ltB.1
     let rsxB = state.rightStickX.littleEndianBytes
@@ -146,7 +157,7 @@ public struct OJDSDLGamepadFormat: VirtualGamepadReportFormat {
     let rsyB = state.rightStickY.littleEndianBytes
     r[10] = rsyB.0
     r[11] = rsyB.1
-    let rtB = state.rightTrigger.littleEndianBytes
+    let rtB = state.effectiveRightTrigger.littleEndianBytes
     r[12] = rtB.0
     r[13] = rtB.1
     return r

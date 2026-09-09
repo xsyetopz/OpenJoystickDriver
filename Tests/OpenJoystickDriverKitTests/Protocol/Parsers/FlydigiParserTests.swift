@@ -43,6 +43,22 @@ private func settled(_ parser: FlydigiParser) {
 
 @Suite struct FlydigiParserTests {
 
+  @Test(arguments: [0, 1, 2])
+  func malformedReportsPreserveState(kind: Int) throws {
+    let parser = FlydigiParser()
+    let pressed = CapturedReport.with(hatAndFace: 0x10)
+    #expect(try parser.parse(data: pressed).contains(.buttonPressed(.a)))
+    var malformed = Data(CapturedReport.neutral)
+    switch kind {
+    case 0: malformed[0] = 0x02
+    case 1: malformed.removeLast()
+    default: malformed.append(0)
+    }
+    #expect(try parser.parse(data: malformed).isEmpty)
+    #expect(try parser.parse(data: pressed).isEmpty)
+    #expect(try parser.parse(data: Data(CapturedReport.neutral)).contains(.buttonReleased(.a)))
+  }
+
   @Test func testNeutralReportEmitsNoEvents() throws {
     let parser = FlydigiParser()
     settled(parser)

@@ -30,48 +30,6 @@ struct NintendoUSBHIDReportFormatTests {
     #expect(events.contains(.dpadChanged(.north)))
   }
 
-  @Test func switchProUSBHandshakeAndSubcommandAck() {
-    let format = SwitchProUSBHIDReportFormat()
-    let handshake = format.inputReportRespondingToHostOutput([0x80, 0x02])
-    #expect(handshake?.count == SwitchProUSBHIDDescriptor.inputReportLength)
-    #expect(handshake?.first == 0x81)
-    #expect(handshake?[1] == 0x02)
-
-    let stripped = UserSpaceOutputDispatcher.normalizedHostOutputReport(
-      reportID: 0x80,
-      bytes: [0x02]
-    )
-    #expect(format.inputReportRespondingToHostOutput(stripped)?.first == 0x81)
-
-    let ack = format.inputReportRespondingToHostOutput(
-      [0x01, 0x00] + [UInt8](repeating: 0, count: 8) + [0x03, 0x30]
-    )
-    #expect(ack?.first == 0x21)
-    #expect(ack?[13] == 0x80)
-    #expect(ack?[14] == 0x03)
-    #expect(format.inputReportRespondingToHostOutput([0x10, 0x00]) == nil)
-
-    let status = format.inputReportRespondingToHostOutput([0x80, 0x01])
-    #expect(status?.first == 0x81)
-    #expect(status?[1] == 0x01)
-    #expect(status?[3] == SwitchProUSBHIDDescriptor.proControllerDeviceType)
-
-    let spi = format.inputReportRespondingToHostOutput(
-      [0x01, 0x00] + [UInt8](repeating: 0, count: 8) + [0x10, 0x3D, 0x60, 0x00, 0x00, 0x12]
-    )
-    #expect(spi?.first == 0x21)
-    #expect(spi?[14] == 0x10)
-    #expect(spi?[15] == 0x3D)
-    #expect(spi?[16] == 0x60)
-    #expect(spi?[19] == 0x12)
-    #expect(spi?[20] != 0xFF)
-
-    #expect(format.hostGetReport(reportID: 0x81, maxSize: 64)?.first == 0x81)
-    #expect(format.hostGetReport(reportID: 0x21, maxSize: 64)?.first == 0x21)
-    #expect(format.hostGetReport(reportID: 0x30, maxSize: 64) == nil)
-    #expect(format.hostGetReport(reportID: 0x05, maxSize: 8)?.count == 8)
-  }
-
   @Test func switchProIdentityUsesNintendoPresentation() {
     #expect(VirtualDeviceProfile.switchProUSB.presentation == .nintendo)
     #expect(VirtualDeviceProfile.switchProUSB.productName == "Pro Controller")

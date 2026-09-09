@@ -8,8 +8,9 @@ public protocol CompatibilityUserSpaceOutputDispatching: OutputDispatcher {
   var lastRumbleStatus: String { get }
   /// Forces creation and neutral activation of every supplied virtual device.
   func activate(for identifiers: [DeviceIdentifier]) async throws
-  /// Tears down any user-space virtual HID devices owned by this output.
+  /// Updates suppression and waits for any required output barrier.
   func setOutputSuppressed(_ suppressed: Bool) async
+  /// Drains and tears down user-space virtual HID devices owned by this output.
   func close() async
 }
 
@@ -60,7 +61,12 @@ extension OutputDispatcher {
 public final class LoggingOutputDispatcher: OutputDispatcher, @unchecked Sendable {
   // Suppression is ignored because this dispatcher is only for development.
   /// Accepted but ignored; this dispatcher always logs.
-  public var suppressOutput = false
+  private let stateLock = NSLock()
+  private var storedSuppression = false
+  public var suppressOutput: Bool {
+    get { stateLock.withLock { storedSuppression } }
+    set { stateLock.withLock { storedSuppression = newValue } }
+  }
 
   /// Creates a new LoggingOutputDispatcher.
   public init() {}

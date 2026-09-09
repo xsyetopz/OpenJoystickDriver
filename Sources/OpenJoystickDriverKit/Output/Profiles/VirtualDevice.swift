@@ -40,7 +40,7 @@ public enum UserSpaceVirtualDeviceConstants {
   /// Compatibility devices intentionally spoof third-party product names, transports, and
   /// VID/PID tuples. Apple does not guarantee that every property is surfaced on every callback,
   /// so no single marker is sufficient. Any OJD-owned marker, Apple's synthetic marker
-  /// (`GCSyntheticDevice`, `AppleGCSyntheticDevice` / `GamePad-1`), or a
+  /// (`GCSyntheticDevice`), or a
   /// framework-reported virtual transport excludes the device from physical input discovery.
   public static func acceptsPhysicalHIDDevice(
     serialNumber: String?,
@@ -54,7 +54,6 @@ public enum UserSpaceVirtualDeviceConstants {
     if isOJDUserSpaceLocationID(locationID) { return false }
     if transport?.caseInsensitiveCompare("Virtual") == .orderedSame { return false }
     return !AppleGameControllerSyntheticHID.isSyntheticDevice(
-      productName: productName,
       syntheticProperty: syntheticProperty
     )
   }

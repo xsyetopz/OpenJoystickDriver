@@ -73,8 +73,10 @@ public final class FlydigiParser: InputParser, @unchecked Sendable {
 
   /// Parses one Flydigi input report and returns zero or more controller events.
   public func parse(data: Data) throws -> [ControllerEvent] {
-    let bytes = reportPayload(from: data)
-    guard bytes.count >= flydigiReportLength else { return [] }
+    let bytes = [UInt8](data)
+    guard bytes.count == flydigiReportLength, bytes.first == flydigiInputReportID else {
+      return []
+    }
 
     return stateLock.withLock {
       var events: [ControllerEvent] = []
@@ -95,15 +97,6 @@ public final class FlydigiParser: InputParser, @unchecked Sendable {
       prevRightStickY = bytes[ReportOffset.rightStickY]
       return events
     }
-  }
-
-  /// Strips the leading report ID when IOKit delivers it inline.
-  private func reportPayload(from data: Data) -> [UInt8] {
-    let bytes = [UInt8](data)
-    guard bytes.count == flydigiReportLength, bytes.first == flydigiInputReportID else {
-      return bytes
-    }
-    return bytes
   }
 
   /// Maps the A, B, X, and Y bits packed into the high nibble of byte 9.

@@ -67,9 +67,6 @@ public enum PhysicalProtocolSubfamily: String, Codable, CaseIterable, Sendable {
 public enum CompatibilityProfileAvailabilityReason: String, Codable, Sendable {
   case automaticRequiresResolution
   case xusbIdentityRequiresXUSBFamily
-  case gipIdentityRequiresGIPFamily
-  case hidIdentityRequiresHIDFamily
-  case firstPartyIdentityNotPublishable
 }
 
 /// The result of the pure physical-family and explicit-identity compatibility policy.
@@ -77,14 +74,11 @@ public enum CompatibilityProfileAvailabilityDecision: Equatable, Sendable {
   case available
   case unavailable(reason: CompatibilityProfileAvailabilityReason)
 
-  /// Whether this identity can be passed as `ControllerExposureDecision.profileAvailable`.
+  /// Whether the explicit identity is available for this physical family.
   public var isAvailable: Bool {
     if case .available = self { return true }
     return false
   }
-
-  /// The boolean projection named for `ControllerExposureDecision.profileAvailable`.
-  public var profileAvailable: Bool { isAvailable }
 
   /// The policy reason when the identity is unavailable.
   public var reason: CompatibilityProfileAvailabilityReason? {
@@ -95,19 +89,11 @@ public enum CompatibilityProfileAvailabilityDecision: Equatable, Sendable {
 
 /// Pure Kit-owned policy for physical-family to explicit virtual-identity compatibility.
 public enum CompatibilityProfileAvailabilityPolicy {
-  private static let wr007VendorID: UInt16 = 0x11C1
-  private static let wr007ProductID: UInt16 = 0x5600
-
   /// Evaluates one explicit identity for a connected physical device.
   public static func decision(
     for device: ApplicationServiceDeviceDescription,
     identity: CompatibilityIdentity
   ) -> CompatibilityProfileAvailabilityDecision {
-    if device.vendorID == wr007VendorID, device.productID == wr007ProductID,
-      identity == .appleGameController
-    {
-      return .available
-    }
     return decision(for: AutomaticCompatibilityResolver.subfamily(for: device), identity: identity)
   }
 
@@ -129,11 +115,7 @@ public enum CompatibilityProfileAvailabilityPolicy {
     }
   }
 
-  /// Returns the boolean projection consumed by exposure policy.
-  public static func isAvailable(
-    _ identity: CompatibilityIdentity,
-    for subfamily: PhysicalProtocolSubfamily
-  ) -> Bool { decision(for: subfamily, identity: identity).isAvailable }
+
 }
 
 public enum AutomaticCompatibilityDecisionReason: String, Codable, Sendable {

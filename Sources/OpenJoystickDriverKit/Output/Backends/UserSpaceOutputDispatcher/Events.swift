@@ -21,8 +21,8 @@ extension UserSpaceOutputDispatcher {
     state: inout VirtualGamepadState
   ) {
     switch event {
-    case .buttonPressed(let btn): if let bit = buttonBit(for: btn) { state.buttons |= (1 << bit) }
-    case .buttonReleased(let btn): if let bit = buttonBit(for: btn) { state.buttons &= ~(1 << bit) }
+    case .buttonPressed(let button): applyButton(button, pressed: true, state: &state)
+    case .buttonReleased(let button): applyButton(button, pressed: false, state: &state)
     case .leftStickChanged(let x, let y):
       state.leftStickX = Self.axisValue(x, transfer: stickTransfer)
       state.leftStickY = Self.axisValue(y, transfer: stickTransfer)
@@ -36,6 +36,19 @@ extension UserSpaceOutputDispatcher {
       let dpadMask: UInt32 = 0xF << 11
       state.buttons =
         (state.buttons & ~dpadMask) | GamepadHIDDescriptor.dpadButtonBits(for: state.hat)
+    }
+  }
+
+  private func applyButton(_ button: Button, pressed: Bool, state: inout VirtualGamepadState) {
+    switch button {
+    case .l2Digital: state.leftTriggerPressed = pressed
+    case .r2Digital: state.rightTriggerPressed = pressed
+    case .touchpad: state.touchpadPressed = pressed
+    case .mute: state.mutePressed = pressed
+    default:
+      if let bit = buttonBit(for: button) {
+        if pressed { state.buttons |= 1 << bit } else { state.buttons &= ~(1 << bit) }
+      }
     }
   }
 

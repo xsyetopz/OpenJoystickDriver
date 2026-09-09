@@ -70,19 +70,23 @@ private final class ExposureState: @unchecked Sendable {
     #expect(backend.dispatches == 1)
   }
 
-  @Test func explicitActivationAndLazyDispatchFailClosedWhenProfileOrDeviceIsUnavailable()
+  @Test func explicitActivationAndLazyDispatchRejectUnavailableProfile()
     async throws
   {
     let state = ExposureState()
     state.descriptions = [gipDescription()]
-    let (adapter, backend) = makeAdapter(identity: .sdl2_3, state: state)
+    let (adapter, backend) = makeAdapter(identity: .xbox360HID, state: state)
 
     try await adapter.activate(controller: identifier)
     await adapter.dispatch(events: [], from: identifier)
     #expect(backend.activations.isEmpty)
     #expect(backend.dispatches == 0)
 
-    state.descriptions.removeAll()
+  }
+
+  @Test func explicitActivationAndLazyDispatchRejectMissingDevice() async throws {
+    let state = ExposureState()
+    let (adapter, backend) = makeAdapter(identity: .appleGameController, state: state)
     try await adapter.activate(controller: identifier)
     await adapter.dispatch(events: [], from: identifier)
     #expect(backend.activations.isEmpty)

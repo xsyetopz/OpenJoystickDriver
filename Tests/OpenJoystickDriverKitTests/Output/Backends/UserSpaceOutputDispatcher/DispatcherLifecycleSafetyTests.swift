@@ -82,7 +82,7 @@ struct UserSpaceOutputDispatcherLifecycleTests {
     #expect(created.snapshot().count == identifiers.count)
     #expect(created.snapshot().allSatisfy { $0.counts().send >= 1 })
     #expect(dispatcher.status == "on (devices=3)")
-    dispatcher.close()
+    await dispatcher.close()
   }
 
   @Test func idleKeepalivePublishesRepeatInterruptReportsAndStateChanges() async throws {
@@ -106,7 +106,7 @@ struct UserSpaceOutputDispatcherLifecycleTests {
     let pressed = try #require(backend.publishedReports().last)
     #expect(pressed != idle)
 
-    dispatcher.close()
+    await dispatcher.close()
     #expect(backend.counts().close == 1)
   }
 
@@ -175,7 +175,7 @@ struct UserSpaceOutputDispatcherLifecycleTests {
     } catch { Issue.record("Unexpected activation error") }
   }
 
-  @Test func capturedDispatchDoesNotUseBackendAfterClose() async throws {
+  @Test func closeDrainsCapturedDispatchBeforeReleasingBackend() async throws {
     let sendGate = UserSpaceDispatcherTestGate()
     let backend = UserSpaceDispatcherTestBackend(sendGate: sendGate)
     let dispatcher = UserSpaceOutputDispatcher { _ in backend }
@@ -188,12 +188,14 @@ struct UserSpaceOutputDispatcherLifecycleTests {
     }
     await sendGate.waitUntilWaiting()
 
-    dispatcher.close()
+    let close = dispatcher.beginClose()
+    #expect(backend.counts().close == 0)
     await sendGate.open()
     await dispatchTask.value
+    await close.value
 
     let counts = backend.counts()
-    #expect(counts.send == 0)
+    #expect(counts.send == 1)
     #expect(counts.close == 1)
     #expect(dispatcher.status == "off")
   }
@@ -210,15 +212,16 @@ struct UserSpaceOutputDispatcherLifecycleTests {
     let dispatchTask = Task { await dispatcher.dispatch(events: [], from: identifier) }
     await creationGate.waitUntilWaiting()
 
-    dispatcher.close()
+    let close = dispatcher.beginClose()
     await creationGate.open()
     await dispatchTask.value
+    await close.value
 
     let counts = backend.counts()
     #expect(counts.send == 0)
     #expect(counts.close == 1)
     #expect(dispatcher.status == "off")
-    dispatcher.close()
+    await dispatcher.close()
     #expect(backend.counts().close == 1)
   }
 

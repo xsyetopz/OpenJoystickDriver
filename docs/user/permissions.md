@@ -41,6 +41,11 @@ Keyboard & pointer. The menu-bar **Request access...** action opens the same nat
 If macOS asks for a relaunch, quit and reopen OpenJoystickDriver. The app checks the permission again
 after each request; a request result alone is not treated as approval.
 
+Ordinary menu, signal, external, and session-end quits leave the app stopped.
+Repeated quit requests wait for runtime teardown. The app does not infer restart
+intent from a generic Apple Event or remove Launch Services jobs on exit.
+When TCC offers **Quit & Reopen**, macOS owns the reopen.
+
 ## Other approvals
 
 macOS may also ask for:

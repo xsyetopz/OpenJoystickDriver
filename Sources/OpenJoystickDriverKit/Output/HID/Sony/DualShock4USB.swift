@@ -4,8 +4,8 @@ import Foundation
 ///
 /// Input report `0x01` matches Linux hid-playstation / `DS4Parser` USB state:
 /// sticks, packed hat and face buttons, shoulders, PS/touchpad, analog L2/R2.
-/// Live `GCController` / SDL bind evidence is still required before automatic
-/// promotion. Bluetooth CRC reports are out of scope.
+/// Automatic selection uses this identity; live `GCController` / SDL binding needs
+/// separate verification. Bluetooth CRC reports are out of scope.
 public enum DualShock4USBHIDDescriptor {
   public static let reportID: UInt8 = 0x01
   public static let inputReportLength = 64
@@ -24,8 +24,8 @@ public enum DualShock4USBHIDDescriptor {
     0x01, 0x15, 0x00, 0x25, 0x7F, 0x81, 0x02, 0x05, 0x01, 0x09, 0x33, 0x09,
     0x34, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95, 0x02, 0x81, 0x02,
     0x06, 0x00, 0xFF, 0x09, 0x21, 0x95, 0x36, 0x81, 0x02, 0x85, 0x05, 0x09,
-    0x22, 0x95, 0x1F, 0x91, 0x02, 0xC0,
-  ]
+    0x22, 0x95, 0x1F, 0x91, 0x02,
+  ] + SonyUSBHostProtocol.featureDescriptor(dualSense: false) + [0xC0]
 }
 
 public struct DualShock4USBHIDReportFormat: VirtualGamepadReportFormat {
@@ -47,14 +47,18 @@ public struct DualShock4USBHIDReportFormat: VirtualGamepadReportFormat {
     report[5] = SonyHIDAxis.ds4Hat(state.hat) | SonyHIDAxis.ds4Face(state.buttons)
     report[6] = SonyHIDAxis.ds4Shoulders(
       state.buttons,
-      leftTrigger: state.leftTrigger,
-      rightTrigger: state.rightTrigger
+      leftTrigger: state.effectiveLeftTrigger,
+      rightTrigger: state.effectiveRightTrigger
     )
     if SonyHIDAxis.isSet(state.buttons, bit: GamepadHIDDescriptor.ButtonBit.guide.rawValue) {
       report[7] |= 0x01
     }
-    report[8] = SonyHIDAxis.triggerByte(state.leftTrigger)
-    report[9] = SonyHIDAxis.triggerByte(state.rightTrigger)
+    if state.touchpadPressed { report[7] |= 0x02 }
+    // Only the touchpad button is modeled; both touch contacts are inactive.
+    report[35] = 0x80
+    report[39] = 0x80
+    report[8] = SonyHIDAxis.triggerByte(state.effectiveLeftTrigger)
+    report[9] = SonyHIDAxis.triggerByte(state.effectiveRightTrigger)
     return report
   }
 }

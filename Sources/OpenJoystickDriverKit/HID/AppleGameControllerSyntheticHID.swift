@@ -18,7 +18,6 @@ public enum AppleGameControllerSyntheticHID: Sendable {
   public static let ioClassName = "AppleGCSyntheticDevice"
   public static let deviceTypePropertyKey = "_GCSyntheticDeviceType"
   public static let xbox360DeviceType = "Xbox360Controller"
-  public static let productName = "GamePad-1"
   public static let pluginPathToken = "AppleSyntheticGameController"
 
   /// IOHIDManager / IOService matching fragment that excludes synthetics before create/open.
@@ -68,14 +67,12 @@ public enum AppleGameControllerSyntheticHID: Sendable {
   /// Classifies a synthetic node from IORegistry properties. Does not open a user client.
   public static func isSyntheticDevice(
     className: String? = nil,
-    productName: String? = nil,
     syntheticProperty: Any? = nil,
     deviceType: String? = nil,
     pluginPath: String? = nil
   ) -> Bool {
     if isSyntheticProperty(syntheticProperty) { return true }
     if className == ioClassName { return true }
-    if productName == self.productName { return true }
     if deviceType == xbox360DeviceType { return true }
     if let deviceType, !deviceType.isEmpty { return true }
     return isSyntheticPluginPath(pluginPath)
@@ -94,7 +91,6 @@ public enum AppleGameControllerSyntheticHID: Sendable {
     }
     return isSyntheticDevice(
       className: resolvedClass,
-      productName: stringProperty(service, kIOHIDProductKey as String),
       syntheticProperty: cfProperty(service, propertyKey),
       deviceType: stringProperty(service, deviceTypePropertyKey),
       pluginPath: pluginPaths(service).first { isSyntheticPluginPath($0) }
@@ -114,7 +110,6 @@ public enum AppleGameControllerSyntheticHID: Sendable {
     let service = IOHIDDeviceGetService(device)
     if service != 0, isSynthetic(service: service) { return true }
     return isSyntheticDevice(
-      productName: IOHIDDeviceGetProperty(device, kIOHIDProductKey as CFString) as? String,
       syntheticProperty: IOHIDDeviceGetProperty(device, propertyKey as CFString)
     )
   }

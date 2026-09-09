@@ -34,194 +34,6 @@
     }
   }
 
-  enum MenuBarTerminateRelaunchPolicy {
-    static let logOutReason: OSType = 0x6C6F676F
-    static let reallyLogOutReason: OSType = 0x726C676F
-    static let shutDownReason: OSType = 0x73687574
-    static let restartReason: OSType = 0x72657374
-    static let waiterInterpreterPath = "/bin/sh"
-    static let openToolPath = "/usr/bin/open"
-
-    enum FollowUp: Equatable, Sendable {
-      case none
-      case retireStaleJob
-      case relaunch
-    }
-
-    struct TerminateWaiter: Equatable, Sendable {
-      var interpreterPath: String { MenuBarTerminateRelaunchPolicy.waiterInterpreterPath }
-      var openToolPath: String { MenuBarTerminateRelaunchPolicy.openToolPath }
-      var createsNewSession: Bool { true }
-      let parentProcessIdentifier: Int32
-      let bundleURL: URL
-      let openAfterParentExits: Bool
-
-      var arguments: [String] {
-        [
-          interpreterPath,
-          "-c",
-          MenuBarTerminateRelaunchPolicy.waiterScript,
-          "openjoystickdriver-terminate-waiter",
-          String(parentProcessIdentifier),
-          bundleURL.path,
-          openToolPath,
-          openAfterParentExits ? "1" : "0",
-        ]
-      }
-    }
-
-    /// TCC “Quit & Reopen” is a generic Apple Event quit with no session-end
-    /// reason. Menu Quit and SIGTERM must not relaunch. Session-end Apple Events
-    /// (log out / shut down / restart) must not spawn a waiter.
-    static func followUp(
-      userInitiatedQuit: Bool,
-      signalInitiatedQuit: Bool,
-      appleEventQuitReason: OSType?
-    ) -> FollowUp {
-      switch appleEventQuitReason {
-      case logOutReason, reallyLogOutReason, shutDownReason, restartReason: return .none
-      default: break
-      }
-      if userInitiatedQuit || signalInitiatedQuit { return .retireStaleJob }
-      return .relaunch
-    }
-
-    static func shouldRelaunch(
-      userInitiatedQuit: Bool,
-      signalInitiatedQuit: Bool,
-      appleEventQuitReason: OSType?
-    ) -> Bool {
-      followUp(
-        userInitiatedQuit: userInitiatedQuit,
-        signalInitiatedQuit: signalInitiatedQuit,
-        appleEventQuitReason: appleEventQuitReason
-      ) == .relaunch
-    }
-
-    static func terminateWaiter(
-      parentProcessIdentifier: Int32,
-      bundleURL: URL,
-      followUp: FollowUp
-    ) -> TerminateWaiter? {
-      guard followUp != .none else { return nil }
-      guard bundleURL.pathExtension == "app" else { return nil }
-      return TerminateWaiter(
-        parentProcessIdentifier: parentProcessIdentifier,
-        bundleURL: bundleURL,
-        openAfterParentExits: followUp == .relaunch
-      )
-    }
-
-    /// Spawns `/bin/sh` in a new session. The waiter waits until this PID is no
-    /// longer a live process (including zombie/exiting rss 0), boots out leftover
-    /// Launch Services jobs whose pid is dead, then optionally opens the `.app`
-    /// bundle via Launch Services. Do not exec the Mach-O. Do not spawn while
-    /// this process is still the Launch Services job.
-    static func spawnTerminateWaiter(followUp: FollowUp) {
-      guard
-        let waiter = terminateWaiter(
-          parentProcessIdentifier: ProcessInfo.processInfo.processIdentifier,
-          bundleURL: Bundle.main.bundleURL,
-          followUp: followUp
-        )
-      else { return }
-      spawn(waiter)
-    }
-
-    private static let waiterScript = """
-      trap "" HUP
-      parent="$1"
-      target="$2"
-      open_tool="$3"
-      should_open="$4"
-      process_is_live() {
-        /bin/ps -p "$1" -o state=,rss= 2>/dev/null | /usr/bin/awk '{
-          s=toupper($1); rss=$2+0;
-          if (index(s,"Z") || index(s,"E")) { print 0; exit }
-          if (rss<=0) { print 0; exit }
-          print 1
-        }'
-      }
-      while /bin/kill -0 "$parent" 2>/dev/null; do
-        [ "$(process_is_live "$parent")" = "1" ] || break
-        /bin/sleep 0.05
-      done
-      uid=$(/usr/bin/id -u)
-      /bin/launchctl print "gui/$uid" 2>/dev/null | /usr/bin/awk '
-        $NF ~ /^application\\.com\\.openjoystickdriver\\./ { print $NF }
-      ' | while IFS= read -r label; do
-        [ -n "$label" ] || continue
-        info=$(/bin/launchctl print "gui/$uid/$label" 2>/dev/null) || continue
-        pid=$(printf '%s\\n' "$info" | /usr/bin/awk '/^[[:space:]]*pid = / { print $3; exit }')
-        if [ -n "$pid" ] && [ "$(process_is_live "$pid")" = "1" ]; then
-          continue
-        fi
-        /bin/launchctl bootout "gui/$uid/$label" >/dev/null 2>&1
-      done
-      [ "$should_open" = "1" ] || exit 0
-      exec "$open_tool" -- "$target"
-      """
-
-    private static func spawn(_ waiter: TerminateWaiter) {
-      var spawnedProcessIdentifier: pid_t = 0
-      var attributes: posix_spawnattr_t?
-      guard posix_spawnattr_init(&attributes) == 0 else {
-        writeSpawnFailure(errno)
-        return
-      }
-      defer { posix_spawnattr_destroy(&attributes) }
-      posix_spawnattr_setflags(
-        &attributes,
-        Int16(POSIX_SPAWN_SETSID | POSIX_SPAWN_CLOEXEC_DEFAULT)
-      )
-
-      var fileActions: posix_spawn_file_actions_t?
-      guard posix_spawn_file_actions_init(&fileActions) == 0 else {
-        writeSpawnFailure(errno)
-        return
-      }
-      defer { posix_spawn_file_actions_destroy(&fileActions) }
-      posix_spawn_file_actions_addopen(&fileActions, 0, "/dev/null", O_RDONLY, 0)
-      posix_spawn_file_actions_addopen(&fileActions, 1, "/dev/null", O_WRONLY, 0)
-      posix_spawn_file_actions_addopen(&fileActions, 2, "/dev/null", O_WRONLY, 0)
-
-      var argv = waiter.arguments.map { argument in
-        argument.withCString { strdup($0) }
-      }
-      defer {
-        for pointer in argv {
-          if let pointer { free(pointer) }
-        }
-      }
-      guard argv.allSatisfy({ $0 != nil }) else {
-        writeSpawnFailure(ENOMEM)
-        return
-      }
-      argv.append(nil)
-
-      let status = waiter.interpreterPath.withCString { path in
-        argv.withUnsafeMutableBufferPointer { buffer in
-          posix_spawn(
-            &spawnedProcessIdentifier,
-            path,
-            &fileActions,
-            &attributes,
-            buffer.baseAddress,
-            environ
-          )
-        }
-      }
-      if status != 0 { writeSpawnFailure(status) }
-    }
-
-    private static func writeSpawnFailure(_ status: Int32) {
-      let detail = String(cString: strerror(status))
-      FileHandle.standardError.write(
-        Data("[OpenJoystickDriver] Could not relaunch: \(detail)\n".utf8)
-      )
-    }
-  }
-
   @MainActor final class MenuBarCoordinator: NSObject, NSApplicationDelegate {
     let runtime: ApplicationServiceRuntime
     let viewModel: RuntimeViewModel
@@ -234,9 +46,7 @@
     private let notificationMonitor = RuntimeNotificationMonitor()
     private let notificationPresenter = RuntimeNotificationCenterDelegate()
     private var liveStatusRefreshInFlight = false
-    private var isStopping = false
-    private var userInitiatedQuit = false
-    private var signalInitiatedQuit = false
+    private let termination = MenuBarTermination()
     private static weak var activeCoordinator: MenuBarCoordinator?
 
     init(runtime: ApplicationServiceRuntime, gateway: any ApplicationServiceGateway) {
@@ -274,26 +84,16 @@
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-      guard !isStopping else { return .terminateNow }
-      isStopping = true
-      let followUp = MenuBarTerminateRelaunchPolicy.followUp(
-        userInitiatedQuit: userInitiatedQuit,
-        signalInitiatedQuit: signalInitiatedQuit,
-        appleEventQuitReason: Self.currentAppleEventQuitReason()
-      )
-      removeStatusItem()
-      inputTestWindowController?.stop()
-      Task { @MainActor [weak self, weak sender] in
-        guard let self else { return }
+      termination.request {
+        self.removeStatusItem()
+        self.inputTestWindowController?.stop()
         await self.runtime.stop()
-        MenuBarTerminateRelaunchPolicy.spawnTerminateWaiter(followUp: followUp)
-        sender?.reply(toApplicationShouldTerminate: true)
+      } reply: {
+        sender.reply(toApplicationShouldTerminate: true)
       }
-      return .terminateLater
     }
 
     func terminateFromShutdownSignal() {
-      signalInitiatedQuit = true
       NSApplication.shared.terminate(nil)
     }
 
@@ -301,14 +101,6 @@
       guard let activeCoordinator else { return false }
       activeCoordinator.terminateFromShutdownSignal()
       return true
-    }
-
-    private static func currentAppleEventQuitReason() -> OSType? {
-      let keyword: AEKeyword = 0x77687920
-      let code =
-        NSAppleEventManager.shared().currentAppleEvent?
-        .paramDescriptor(forKeyword: keyword)?.enumCodeValue ?? 0
-      return code == 0 ? nil : code
     }
 
     func applicationWillTerminate(_ notification: Notification) { removeStatusItem() }
@@ -326,7 +118,6 @@
     @objc func refreshFromStatus(_ sender: Any?) { refreshLiveStatus() }
 
     @objc func quit(_ sender: Any?) {
-      userInitiatedQuit = true
       NSApplication.shared.terminate(sender)
     }
 
