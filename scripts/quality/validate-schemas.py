@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -20,7 +21,9 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMAS = ROOT / "Resources" / "Schemas"
-GENERATED_RECORDS = ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Controllers"
+GENERATED_RECORDS = (
+    ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Controllers"
+)
 CONTROLLER_OVERRIDES = ROOT / "Resources" / "ControllerOverrides"
 SCHEMA_PATHS = (
     SCHEMAS / "controller.schema.json",
@@ -103,6 +106,7 @@ def validate_live_support_report(schema: dict[str, object], registry: Registry) 
                 str(report_path),
             ],
             cwd=ROOT,
+            env={**os.environ, "OJD_RUN_REPOSITORY_CLI": "1"},
             check=True,
             capture_output=True,
             text=True,
@@ -120,8 +124,12 @@ def main() -> int:
         registry = schema_registry(documents)
         controller_records = sorted(GENERATED_RECORDS.glob("*/*.json"))
         overrides = sorted(CONTROLLER_OVERRIDES.glob("*/*.json"))
-        validate_documents(documents["controller.schema.json"], registry, controller_records)
-        validate_documents(documents["controller-override.schema.json"], registry, overrides)
+        validate_documents(
+            documents["controller.schema.json"], registry, controller_records
+        )
+        validate_documents(
+            documents["controller-override.schema.json"], registry, overrides
+        )
         validate_live_support_report(documents["report.schema.json"], registry)
     except (OSError, json.JSONDecodeError, SchemaError, ValidationError) as error:
         print(f"error: {error}", file=sys.stderr)

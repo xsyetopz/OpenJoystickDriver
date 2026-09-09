@@ -1,4 +1,5 @@
 {
+	"python.defaultInterpreterPath": "${workspaceFolder}/.build/schema-validator/bin/python",
 	"json.schemas": [
 		{
 			"fileMatch": ["**/OpenJoystickDriverKit/Resources/devices.json"],
