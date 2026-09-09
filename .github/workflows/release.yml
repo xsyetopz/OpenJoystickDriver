@@ -94,7 +94,12 @@ jobs:
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
         run: |
           actual="$(git rev-parse HEAD)"
-          remote="$(git ls-remote origin "refs/tags/$RELEASE_TAG" | awk '{ print $1; exit }')"
+          remote="$(git ls-remote origin "refs/tags/$RELEASE_TAG" "refs/tags/$RELEASE_TAG^{}" |
+            awk -v ref="refs/tags/$RELEASE_TAG" '
+              $2 == ref { direct = $1 }
+              $2 == ref "^{}" { peeled = $1 }
+              END { print (peeled != "" ? peeled : direct) }
+            ')"
           if [[ -n "$remote" ]]; then
             if [[ "$remote" != "$actual" ]]; then
               echo "ERROR: tag $RELEASE_TAG points at $remote, not $actual"
@@ -142,30 +147,3 @@ jobs:
           fail_on_unmatched_files: true
           generate_release_notes: true
           prerelease: ${{ steps.release.outputs.prerelease }}
-
-      - name: Delete unpublished release tag on failure
-        if: failure()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ steps.release.outputs.tag }}
-        run: |
-          if [[ -z "$RELEASE_TAG" ]]; then
-            echo "No release tag to clean up"
-            exit 0
-          fi
-          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            echo "Published GitHub Release $RELEASE_TAG exists; leaving the tag"
-            exit 0
-          fi
-          remote="$(git ls-remote origin "refs/tags/$RELEASE_TAG" | awk '{ print $1; exit }')"
-          actual="$(git rev-parse HEAD 2>/dev/null || true)"
-          if [[ -n "$remote" && -n "$actual" && "$remote" != "$actual" ]]; then
-            echo "Tag $RELEASE_TAG points at $remote, not $actual; leaving it"
-            exit 0
-          fi
-          if [[ -z "$remote" ]]; then
-            echo "No unpublished tag $RELEASE_TAG to remove"
-            exit 0
-          fi
-          gh api --method DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${RELEASE_TAG}"
-          echo "Removed unpublished tag $RELEASE_TAG"
