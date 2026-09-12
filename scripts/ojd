@@ -10,6 +10,9 @@ import sys
 from pathlib import Path
 from typing import NoReturn
 
+sys.path.insert(0, str(Path(__file__).resolve().parent / "platform"))
+from capabilities import CapabilityError, Resolver, requirements_for
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = SCRIPT_DIR.parent
 ENVIRONMENT = SCRIPT_DIR / "platform/environment.sh"
@@ -44,6 +47,7 @@ Commands:
 
   env audit                   Validate the single-file env contract without printing values
   docs export-external-issues Refresh archived GitHub issue and pull-request evidence
+  github ensure-auth          Install and authenticate GitHub CLI when needed
   signing install-profiles    Copy profiles from ~/Documents/Profiles into MobileDevice
   signing configure            Generate .env.dev + .env.release from Keychain + profiles
   signing doctor               Diagnose common cert/profile mismatch errors (safe output)
@@ -65,6 +69,8 @@ Commands:
   diagnose gamecontroller     Run GameController.framework probe
   diagnose catalina [app]     Check a macOS 10.15 test app bundle
   diagnose backends           Run current backend acceptance loop
+  diagnose rumble-motors <vid> <pid> [intensity] [duration-ms]
+                              Identify physical rumble actuators interactively
   repair stale-dext           Kill stale DriverKit process copies after upgrade
   repair swiftpm-module-cache Clean SwiftPM build products after toolchain/target changes
   catalog regenerate --check Verify the runtime catalog against pinned sources and overrides
@@ -75,11 +81,18 @@ Commands:
   check scripts               Check script ownership, paths, modes, and syntax
   check swift-structure       Check Swift file sizes and ownership layout
   check driverkit             Verify generated DriverKit reproducibility and build
+  check fast                  Run snapshot-safe local validation
+  check all                   Run the complete local validation suite
+  check capabilities          Test prerequisite detection and recovery
   test parsers-macos14        Run focused parser regressions without Swift Testing
+  test swift [args...]        Run Swift package tests
   launch sdl-gamecontroller <app>
                               Launch an SDL app through GameController/MFI rumble route
 
   lint                        Run SwiftLint (requires swiftlint)
+  format                      Format Swift sources in place
+  hooks install|validate      Install or validate repository Git hooks
+  setup                       Install required command runner and hooks
 
 Examples:
   ./scripts/ojd signing install-profiles
@@ -204,6 +217,36 @@ def repair_swiftpm_cache() -> int:
     return result.returncode
 
 
+def run_commands(commands: list[list[str]]) -> int:
+    for command in commands:
+        result = subprocess.run(command, cwd=PROJECT_DIR, env=env_with(), check=False)
+        if result.returncode:
+            return result.returncode
+    return 0
+
+
+def run_checks(*, complete: bool) -> int:
+    commands = [
+        [str(SCRIPT_DIR / "ojd"), "catalog", "regenerate", "--check"],
+        [str(SCRIPT_DIR / "ojd"), "check", "profiles"],
+        [str(SCRIPT_DIR / "ojd"), "check", "schemas"],
+        [str(SCRIPT_DIR / "ojd"), "check", "scripts"],
+        [str(SCRIPT_DIR / "ojd"), "check", "capabilities"],
+        [str(SCRIPT_DIR / "ojd"), "check", "swift-structure"],
+        [str(SCRIPT_DIR / "ojd"), "lint"],
+        ["git", "diff", "--check"],
+    ]
+    if complete:
+        commands.extend(
+            [
+                [str(SCRIPT_DIR / "ojd"), "check", "driverkit"],
+                [str(SCRIPT_DIR / "ojd"), "test", "parsers-macos14"],
+                [str(SCRIPT_DIR / "ojd"), "test", "swift", "--no-parallel"],
+            ]
+        )
+    return run_commands(commands)
+
+
 def dispatch(argv: list[str]) -> int:
     command = argv[0] if argv else ""
     rest = argv[1:]
@@ -253,6 +296,11 @@ def dispatch(argv: list[str]) -> int:
                     f"Unknown: docs {rest[0] if rest else ''} (expected: export-external-issues)"
                 )
             exec_target("docs/issues/export.py", [], python=True)
+        case "github":
+            if rest != ["ensure-auth"]:
+                die(f"Unknown: github {rest[0] if rest else ''} (expected: ensure-auth)")
+            print("GitHub CLI is installed and authenticated.")
+            return 0
         case "signing":
             sub, tail = (rest[0], rest[1:]) if rest else ("", [])
             if sub in {"", "-h", "--help", "help"}:
@@ -295,6 +343,10 @@ def dispatch(argv: list[str]) -> int:
                 return run_record(tail)
             if sub == "catalina":
                 exec_target("diagnostics/catalina_smoke.py", tail, python=True)
+            if sub == "rumble-motors":
+                if len(tail) not in {2, 3, 4}:
+                    die("diagnose rumble-motors requires vid pid [intensity] [duration-ms]")
+                exec_target("diagnostics/rumble-motors.sh", tail)
             if sub in {
                 "dext",
                 "sdl3",
@@ -307,10 +359,21 @@ def dispatch(argv: list[str]) -> int:
                     require("diagnose dext", tail, count=0)
                 exec_target("diagnostics/diagnose.sh", [sub, *tail])
             die(
-                f"Unknown: diagnose {sub} (expected: record | dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | catalina | backends)"
+                f"Unknown: diagnose {sub} (expected: record | dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | catalina | backends | rumble-motors)"
             )
         case "check":
             sub, tail = (rest[0], rest[1:]) if rest else ("", [])
+            if sub in {"fast", "all"}:
+                require(f"check {sub}", tail, count=0)
+                return run_checks(complete=sub == "all")
+            if sub == "capabilities":
+                require("check capabilities", tail, count=0)
+                return subprocess.run(
+                    [sys.executable, str(SCRIPT_DIR / "platform/test_capabilities.py")],
+                    cwd=PROJECT_DIR,
+                    env=env_with(),
+                    check=False,
+                ).returncode
             if sub in {"profiles", "schemas", "scripts", "swift-structure"}:
                 require(f"check {sub}", tail, count=0)
                 target = {
@@ -329,12 +392,16 @@ def dispatch(argv: list[str]) -> int:
                 require("check driverkit", tail, count=0)
                 exec_target("build-tools/driverkit.sh", ["validate"])
             die(
-                f"Unknown: check {sub} (expected: profiles | schemas | scripts | swift-structure | driverkit)"
+                f"Unknown: check {sub} (expected: fast | all | capabilities | profiles | schemas | scripts | swift-structure | driverkit)"
             )
         case "test":
+            if rest and rest[0] == "swift":
+                return subprocess.run(
+                    ["swift", "test", *rest[1:]], cwd=PROJECT_DIR, env=env_with(), check=False
+                ).returncode
             if rest != ["parsers-macos14"]:
                 die(
-                    f"Unknown: test {rest[0] if rest else ''} (expected: parsers-macos14)"
+                    f"Unknown: test {rest[0] if rest else ''} (expected: parsers-macos14 | swift)"
                 )
             exec_target("quality/test-parsers-macos14.sh", [])
         case "repair":
@@ -352,9 +419,23 @@ def dispatch(argv: list[str]) -> int:
                     f"Unknown: launch {rest[0] if rest else ''} (expected: sdl-gamecontroller)"
                 )
             exec_target("diagnostics/sdl/gamecontroller.sh", rest[1:])
+        case "format":
+            require("format", rest, count=0)
+            os.execvpe(
+                "xcrun",
+                ["xcrun", "swift-format", "format", "--recursive", "--in-place", "Sources", "Tests"],
+                env_with(),
+            )
         case "lint":
             require("lint", rest, count=0)
             exec_target("build-tools/build.sh", ["lint"])
+        case "hooks":
+            if rest not in (["install"], ["validate"]):
+                die(f"Unknown: hooks {rest[0] if rest else ''} (expected: install | validate)")
+            os.execvpe("lefthook", ["lefthook", rest[0]], env_with())
+        case "setup":
+            require("setup", rest, count=0)
+            return run_commands([["lefthook", "validate"], ["lefthook", "install"]])
         case "package":
             sub, tail = (rest[0], rest[1:]) if rest else ("", [])
             if sub in {"", "-h", "--help", "help"}:
@@ -417,4 +498,11 @@ def dispatch(argv: list[str]) -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(dispatch(sys.argv[1:]))
+    arguments = sys.argv[1:]
+    resolver = Resolver(PROJECT_DIR)
+    try:
+        resolver.resolve(requirements_for(arguments))
+    except CapabilityError as error:
+        die(error.outcome.detail)
+    os.environ.update(resolver.environ)
+    raise SystemExit(dispatch(arguments))

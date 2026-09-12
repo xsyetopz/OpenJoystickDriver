@@ -584,7 +584,6 @@ install_full() {
 }
 
 run_lint() {
-  command -v swiftlint >/dev/null 2>&1 || die "swiftlint not found (brew install swiftlint)"
   cd "$PROJECT_DIR"
 
   # SwiftLint's implicit recursive walk includes ignored working-tree paths

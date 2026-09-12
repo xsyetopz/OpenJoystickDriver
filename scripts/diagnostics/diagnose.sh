@@ -36,8 +36,6 @@ run_sdl3_probe_native() {
   local SDKROOT
   SDKROOT="$(select_macos_sdk)" || return $?
 
-  command -v pkg-config >/dev/null 2>&1 || die "pkg-config not found (brew install pkg-config)"
-  pkg-config --exists sdl3 || die "SDL3 not found (brew install sdl3)"
   [[ -f "$SRC" ]] || die "Missing probe source: $SRC"
 
   local -a sdl_flags
