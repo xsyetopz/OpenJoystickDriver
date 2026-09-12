@@ -208,6 +208,15 @@ def validate_host_signing_requirement(root: Path = ROOT) -> list[str]:
             "scripts/build-tools/driverkit.sh: host re-sign after embedding the "
             "DEXT must use ojd_sign"
         )
+    generator_body = _shell_function_body(driverkit, "generate_driverkit_project")
+    if (
+        generator_body is None
+        or '--scratch-path "$DRIVERKIT_ROOT/swiftpm"' not in generator_body
+    ):
+        errors.append(
+            "scripts/build-tools/driverkit.sh: DriverKit generator must use an isolated "
+            "SwiftPM scratch path so it cannot remove the assembled app bundle"
+        )
     return errors
 
 

@@ -50,9 +50,10 @@ generate_driverkit_project() {
   _driverkit_versions
   (
     cd "$PROJECT_DIR" || exit
-    "$SWIFT_BUILD_BIN" --product DriverKitGenerator
+    local swift_build=("$SWIFT_BUILD_BIN" --scratch-path "$DRIVERKIT_ROOT/swiftpm")
+    "${swift_build[@]}" --product DriverKitGenerator
     local generator_bin
-    generator_bin="$($SWIFT_BUILD_BIN --show-bin-path)/DriverKitGenerator"
+    generator_bin="$("${swift_build[@]}" --show-bin-path)/DriverKitGenerator"
     [[ -x "$generator_bin" ]] || die "DriverKitGenerator executable was not built"
     "$generator_bin" \
       --output "$output" \
