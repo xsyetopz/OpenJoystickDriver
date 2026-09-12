@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import runpy
 import subprocess
 import sys
 import tempfile
@@ -27,6 +28,17 @@ def completed(command: list[str], returncode: int = 0) -> subprocess.CompletedPr
 
 
 class CapabilityResolverTests(unittest.TestCase):
+    def test_swift_testing_helper_crash_is_recoverable(self) -> None:
+        dispatcher = runpy.run_path(str(Path(__file__).resolve().parents[1] / "ojd"))
+        crashed = dispatcher["swift_testing_helper_crashed"]
+        self.assertTrue(
+            crashed(
+                b"error: Process '/tmp/swiftpm-testing-helper' "
+                b"exited with unexpected signal code 11"
+            )
+        )
+        self.assertFalse(crashed(b"error: Test failed"))
+
     def test_formula_is_available_without_repair(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             resolver = Resolver(

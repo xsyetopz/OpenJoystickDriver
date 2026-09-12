@@ -7,6 +7,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import NoReturn
 
@@ -217,6 +218,44 @@ def repair_swiftpm_cache() -> int:
     return result.returncode
 
 
+def swift_testing_helper_crashed(output: bytes) -> bool:
+    return (
+        b"swiftpm-testing-helper" in output
+        and b"exited with unexpected signal code 11" in output
+    )
+
+
+def run_swift_tests(args: list[str]) -> int:
+    command = ["swift", "test", *args]
+    with tempfile.TemporaryFile() as output:
+        process = subprocess.Popen(
+            command,
+            cwd=PROJECT_DIR,
+            env=env_with(),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        if process.stdout is None:
+            die("could not capture Swift test output")
+        for chunk in iter(lambda: process.stdout.read(64 * 1024), b""):
+            sys.stdout.buffer.write(chunk)
+            sys.stdout.buffer.flush()
+            output.write(chunk)
+        returncode = process.wait()
+        output.seek(0)
+        captured = output.read()
+    if returncode == 0 or not swift_testing_helper_crashed(captured):
+        return returncode
+    print(
+        "Swift Testing helper crashed; cleaning SwiftPM build products and retrying once.",
+        file=sys.stderr,
+    )
+    repair_result = repair_swiftpm_cache()
+    if repair_result:
+        return repair_result
+    return subprocess.run(command, cwd=PROJECT_DIR, env=env_with(), check=False).returncode
+
+
 def run_commands(commands: list[list[str]]) -> int:
     for command in commands:
         result = subprocess.run(command, cwd=PROJECT_DIR, env=env_with(), check=False)
@@ -396,9 +435,7 @@ def dispatch(argv: list[str]) -> int:
             )
         case "test":
             if rest and rest[0] == "swift":
-                return subprocess.run(
-                    ["swift", "test", *rest[1:]], cwd=PROJECT_DIR, env=env_with(), check=False
-                ).returncode
+                return run_swift_tests(rest[1:])
             if rest != ["parsers-macos14"]:
                 die(
                     f"Unknown: test {rest[0] if rest else ''} (expected: parsers-macos14 | swift)"
