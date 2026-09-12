@@ -4,8 +4,11 @@ import Testing
 
 @testable import OpenJoystickDriver
 
-@Suite struct DeveloperToolsTests {
-  @Test @MainActor func reportsTheNoControllerStateExplicitly() async {
+@Suite
+struct DeveloperToolsTests {
+  @Test
+  @MainActor
+  func reportsTheNoControllerStateExplicitly() async {
     let model = DeveloperToolsViewModel(gateway: GatewayStub())
 
     await model.refresh()
@@ -14,7 +17,9 @@ import Testing
     #expect(model.selectedDevice == nil)
   }
 
-  @Test @MainActor func refreshLoadsControllerInputAndExistingPackets() async throws {
+  @Test
+  @MainActor
+  func refreshLoadsControllerInputAndExistingPackets() async throws {
     let packet = try packetEntry(timestamp: 1, hex: "01")
     let gateway = GatewayStub(
       statusPayload: statusPayload(device: device()),
@@ -30,7 +35,9 @@ import Testing
     #expect(model.observedExtraInputs == [Button.mute.rawValue])
   }
 
-  @Test @MainActor func sharePressIsListedAsAnExtraInput() async throws {
+  @Test
+  @MainActor
+  func sharePressIsListedAsAnExtraInput() async throws {
     let gateway = GatewayStub(
       statusPayload: statusPayload(device: device()),
       inputState: inputState(button: .share),
@@ -43,24 +50,53 @@ import Testing
     #expect(model.observedExtraInputs == [Button.share.rawValue])
   }
 
-  @Test @MainActor func announcePacketsStayHiddenFromTheCaptureConsole() async throws {
+  @Test
+  @MainActor
+  func activityFilterHidesGIPHousekeepingInBothDirections() async throws {
     let announce = try packetEntry(timestamp: 1, hex: "02 20 2A 1C 00")
-    let input = try packetEntry(timestamp: 2, hex: "20 00 47 20 00")
+    let status = try packetEntry(timestamp: 2, direction: "tx", hex: "03 20 2B 00")
+    let input = try packetEntry(timestamp: 3, hex: "20 00 47 20 00")
     let gateway = GatewayStub(
       statusPayload: statusPayload(device: device()),
       inputState: inputState(button: nil),
-      packetEntries: [announce, input]
+      packetEntries: [announce, status, input]
     )
     let model = DeveloperToolsViewModel(gateway: gateway)
 
     await model.refresh()
 
-    #expect(model.packets.map(\.hex) == [announce.hex, input.hex])
+    #expect(model.packets.map(\.hex) == [announce.hex, status.hex, input.hex])
     #expect(model.displayedPackets.map(\.hex) == [input.hex])
-    #expect(model.hiddenAnnouncePacketCount == 1)
+    #expect(model.hiddenIdlePacketCount == 2)
   }
 
-  @Test @MainActor func captureIgnoresTheBaselineAndAppendsNewPackets() async throws {
+  @Test
+  @MainActor
+  func filterSwitchesLiveAndExportRemainsComplete() async throws {
+    let announce = try packetEntry(timestamp: 1, hex: "02 20")
+    let input = try packetEntry(timestamp: 2, hex: "20 00")
+    let model = DeveloperToolsViewModel(
+      gateway: GatewayStub(
+        statusPayload: statusPayload(device: device()),
+        inputState: inputState(button: nil),
+        packetEntries: [announce, input]
+      )
+    )
+    await model.refresh()
+
+    #expect(model.packetFilter == .activity)
+    #expect(model.displayedPackets.map(\.hex) == [input.hex])
+    model.packetFilter = .all
+    #expect(model.displayedPackets.map(\.hex) == [announce.hex, input.hex])
+    #expect(model.hiddenIdlePacketCount == 0)
+
+    let exported = try JSONDecoder().decode([PacketLogEntry].self, from: model.encodedPacketLog())
+    #expect(exported.map(\.hex) == [announce.hex, input.hex])
+  }
+
+  @Test
+  @MainActor
+  func captureIgnoresTheBaselineAndAppendsNewPackets() async throws {
     let first = try packetEntry(timestamp: 1, hex: "01")
     let second = try packetEntry(timestamp: 2, hex: "02")
     let gateway = GatewayStub(
@@ -81,7 +117,9 @@ import Testing
     #expect(model.captureState == .stopped)
   }
 
-  @Test @MainActor func refreshStopsAnActiveCapture() async throws {
+  @Test
+  @MainActor
+  func refreshStopsAnActiveCapture() async throws {
     let baseline = try packetEntry(timestamp: 1, hex: "01")
     let later = try packetEntry(timestamp: 2, hex: "02")
     let gateway = GatewayStub(
@@ -104,7 +142,9 @@ import Testing
     #expect(model.packets.map(\.hex) == ["01"])
   }
 
-  @Test @MainActor func staleSnapshotCannotReplaceTheSelectedController() async throws {
+  @Test
+  @MainActor
+  func staleSnapshotCannotReplaceTheSelectedController() async throws {
     let firstDevice = device(runtimeIdentifier: "controller-1")
     let secondDevice = device(runtimeIdentifier: "controller-2")
     let firstPacket = try packetEntry(timestamp: 1, hex: "01")
@@ -113,13 +153,14 @@ import Testing
       statusPayload: statusPayload(devices: [firstDevice, secondDevice]),
       inputStatesByRuntimeIdentifier: [
         firstDevice.runtimeIdentifier: inputState(button: .mute),
-        secondDevice.runtimeIdentifier: inputState(button: .touchpad)
+        secondDevice.runtimeIdentifier: inputState(button: .touchpad),
       ],
       packetEntriesByRuntimeIdentifier: [
-        firstDevice.runtimeIdentifier: [firstPacket], secondDevice.runtimeIdentifier: [secondPacket]
+        firstDevice.runtimeIdentifier: [firstPacket],
+        secondDevice.runtimeIdentifier: [secondPacket],
       ],
       deviceReadDelaysNanoseconds: [
-        firstDevice.runtimeIdentifier: 50_000_000, secondDevice.runtimeIdentifier: 1_000_000
+        firstDevice.runtimeIdentifier: 50_000_000, secondDevice.runtimeIdentifier: 1_000_000,
       ]
     )
     let model = DeveloperToolsViewModel(gateway: gateway)
@@ -135,7 +176,9 @@ import Testing
     #expect(model.packets.map(\.hex) == ["02"])
   }
 
-  @Test @MainActor func latestRefreshRequestWins() async {
+  @Test
+  @MainActor
+  func latestRefreshRequestWins() async {
     let gateway = GatewayStub(
       statusPayload: statusPayload(devices: [device()]),
       statusReadDelayNanoseconds: 1_000_000,
@@ -150,9 +193,9 @@ import Testing
     #expect(model.selectedDevice?.runtimeIdentifier == "controller-1")
   }
 
-  private func device(runtimeIdentifier: String = "controller-1")
-    -> ApplicationServiceDeviceDescription
-  {
+  private func device(
+    runtimeIdentifier: String = "controller-1"
+  ) -> ApplicationServiceDeviceDescription {
     ApplicationServiceDeviceDescription(
       name: "Controller",
       vendorID: 0x1234,
@@ -168,13 +211,13 @@ import Testing
     )
   }
 
-  private func statusPayload(device: ApplicationServiceDeviceDescription)
-    -> ApplicationServiceStatusPayload
-  { statusPayload(devices: [device]) }
+  private func statusPayload(
+    device: ApplicationServiceDeviceDescription
+  ) -> ApplicationServiceStatusPayload { statusPayload(devices: [device]) }
 
-  private func statusPayload(devices: [ApplicationServiceDeviceDescription])
-    -> ApplicationServiceStatusPayload
-  {
+  private func statusPayload(
+    devices: [ApplicationServiceDeviceDescription]
+  ) -> ApplicationServiceStatusPayload {
     ApplicationServiceStatusPayload(
       inputMonitoring: "granted",
       accessibility: "granted",
@@ -191,14 +234,19 @@ import Testing
     return state
   }
 
-  private func packetEntry(timestamp: TimeInterval, hex: String) throws -> PacketLogEntry {
+  private func packetEntry(
+    timestamp: TimeInterval,
+    direction: String = "rx",
+    hex: String
+  ) throws -> PacketLogEntry {
     let data = try JSONSerialization.data(withJSONObject: [
-      "timestamp": timestamp, "direction": "rx", "hex": hex, "length": 1
+      "timestamp": timestamp, "direction": direction, "hex": hex, "length": 1,
     ])
     return try JSONDecoder().decode(PacketLogEntry.self, from: data)
   }
 
-  @MainActor private func waitUntil(_ condition: @escaping @MainActor () -> Bool) async {
+  @MainActor
+  private func waitUntil(_ condition: @escaping @MainActor () -> Bool) async {
     for _ in 0..<1_000 where !condition() { await Task.yield() }
   }
 }

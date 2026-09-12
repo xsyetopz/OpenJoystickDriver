@@ -811,8 +811,8 @@
 "developer.extraInputs" = "Zusatztasten";
 "developer.extraInputsDescription" = "Drücke jeweils eine Zusatztaste. Erkannte Tasten bleiben gelistet, bis du die Erfassung löschst.";
 "developer.hid" = "HID";
-"developer.hiddenAnnouncePackets" = "%d inaktive Announce-Pakete ausgeblendet (im Export weiterhin enthalten).";
-"developer.keepAliveNote" = "Inaktive Announce-Pakete sind ausgeblendet, damit Eingabeframes sichtbar bleiben.";
+"developer.hiddenIdlePackets" = "Hidden %d idle packets (still included in Export).";
+"developer.keepAliveNote" = "Routine idle traffic is hidden so controller activity stays visible.";
 "developer.leftStick" = "Linker Stick";
 "developer.loadingControllers" = "Controllerdiagnose wird geladen…";
 "developer.noControllers" = "Keine Controller verbunden";
@@ -821,6 +821,8 @@
 "developer.noExtraInputs" = "Keine Zusatztasten erkannt.";
 "developer.noPackets" = "Keine Pakete erfasst";
 "developer.packetCapture" = "Roh-Paketerfassung";
+"developer.packetFilterActivity" = "Activity";
+"developer.packetFilterAll" = "All";
 "developer.packetColumns" = "Zeit       Richtung   Bytes  Daten";
 "developer.packetSharingWarning" = "Paketinhalt hängt vom Controller ab. Prüfe die Datei vor dem Teilen.";
 "developer.rawUSB" = "Raw USB";

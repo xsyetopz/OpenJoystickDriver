@@ -1,5 +1,10 @@
 import Foundation
 
+public enum PacketLogClassification: Sendable, Equatable {
+  case activity
+  case gipHousekeeping
+}
+
 /// One recorded USB packet shown in the Developer tab packet log.
 ///
 /// Stored in a ring buffer inside ``DevicePipeline`` (up to 200 entries).
@@ -13,13 +18,12 @@ public struct PacketLogEntry: Codable, Sendable {
   /// Number of bytes in the packet.
   public let length: Int
 
-  /// GIP device announce frames (command `0x02`) arrive about twice a second and drown input
-  /// captures.
-  public var isPeriodicGIPAnnounce: Bool {
+  /// Classifies demonstrated GIP announce and status commands as routine housekeeping.
+  public var classification: PacketLogClassification {
     guard let first = hex.split(whereSeparator: \.isWhitespace).first,
       let command = UInt8(first, radix: 16)
-    else { return false }
-    return command == 0x02
+    else { return .activity }
+    return command == 0x02 || command == 0x03 ? .gipHousekeeping : .activity
   }
 }
 

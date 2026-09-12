@@ -811,8 +811,8 @@
 "developer.extraInputs" = "Boutons supplémentaires";
 "developer.extraInputsDescription" = "Appuyez sur un bouton supplémentaire à la fois. Les boutons détectés restent listés jusqu’à ce que vous effaciez la capture.";
 "developer.hid" = "HID";
-"developer.hiddenAnnouncePackets" = "%d paquets d’annonce inactifs masqués (toujours inclus dans l’export).";
-"developer.keepAliveNote" = "Les paquets d’annonce inactifs sont masqués pour garder les trames d’entrée visibles.";
+"developer.hiddenIdlePackets" = "Hidden %d idle packets (still included in Export).";
+"developer.keepAliveNote" = "Routine idle traffic is hidden so controller activity stays visible.";
 "developer.leftStick" = "Stick gauche";
 "developer.loadingControllers" = "Chargement des diagnostics de manette…";
 "developer.noControllers" = "Aucune manette connectée";
@@ -821,6 +821,8 @@
 "developer.noExtraInputs" = "Aucun bouton supplémentaire détecté.";
 "developer.noPackets" = "Aucun paquet capturé";
 "developer.packetCapture" = "Capture brute de paquets";
+"developer.packetFilterActivity" = "Activity";
+"developer.packetFilterAll" = "All";
 "developer.packetColumns" = "Heure      Direction  Octets  Données";
 "developer.packetSharingWarning" = "Le contenu des paquets varie selon la manette. Vérifiez le fichier avant de le partager.";
 "developer.rawUSB" = "Raw USB";

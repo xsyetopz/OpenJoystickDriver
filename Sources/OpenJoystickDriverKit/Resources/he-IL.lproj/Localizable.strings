@@ -811,8 +811,8 @@
 "developer.extraInputs" = "Extra Buttons";
 "developer.extraInputsDescription" = "Press one extra button at a time. Detected buttons stay listed until you clear the capture.";
 "developer.hid" = "HID";
-"developer.hiddenAnnouncePackets" = "Hidden %d idle announce packets (still included in Export).";
-"developer.keepAliveNote" = "Idle announce packets are hidden so input frames stay visible.";
+"developer.hiddenIdlePackets" = "Hidden %d idle packets (still included in Export).";
+"developer.keepAliveNote" = "Routine idle traffic is hidden so controller activity stays visible.";
 "developer.leftStick" = "מקל שמאלי";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "No controllers connected";
@@ -821,6 +821,8 @@
 "developer.noExtraInputs" = "No extra buttons detected.";
 "developer.noPackets" = "לא נלכדו מנות";
 "developer.packetCapture" = "Raw Packet Capture";
+"developer.packetFilterActivity" = "Activity";
+"developer.packetFilterAll" = "All";
 "developer.packetColumns" = "זמן       כיוון      בתים  נתונים";
 "developer.packetSharingWarning" = "Packet contents vary by controller. Check the file before sharing.";
 "developer.rawUSB" = "Raw USB";

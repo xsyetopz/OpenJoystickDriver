@@ -3,7 +3,13 @@
   import Foundation
   import OpenJoystickDriverKit
 
-  @MainActor final class DeveloperToolsViewModel: ObservableObject {
+  @MainActor
+  final class DeveloperToolsViewModel: ObservableObject {
+    enum PacketFilter: Hashable {
+      case activity
+      case all
+    }
+
     enum LoadState: Equatable {
       case idle
       case loading
@@ -23,19 +29,32 @@
 
     typealias Sleep = @Sendable (UInt64) async throws -> Void
 
-    @Published private(set) var loadState: LoadState = .idle
-    @Published private(set) var captureState: CaptureState = .idle
-    @Published private(set) var devices: [ApplicationServiceDeviceDescription] = []
-    @Published private(set) var selectedDevice: ApplicationServiceDeviceDescription?
-    @Published private(set) var latestInput: DeviceInputState?
-    @Published private(set) var packets: [PacketLogEntry] = []
-    @Published private(set) var observedExtraInputs: [String] = []
+    @Published
+    private(set) var loadState: LoadState = .idle
+    @Published
+    private(set) var captureState: CaptureState = .idle
+    @Published
+    private(set) var devices: [ApplicationServiceDeviceDescription] = []
+    @Published
+    private(set) var selectedDevice: ApplicationServiceDeviceDescription?
+    @Published
+    private(set) var latestInput: DeviceInputState?
+    @Published
+    private(set) var packets: [PacketLogEntry] = []
+    @Published
+    private(set) var observedExtraInputs: [String] = []
+    @Published
+    var packetFilter = PacketFilter.activity
 
-    /// Packets shown in the capture console. Periodic GIP announce frames stay in ``packets``
-    /// for export.
-    var displayedPackets: [PacketLogEntry] { packets.filter { !$0.isPeriodicGIPAnnounce } }
+    /// Packet filtering affects the console and copy action, while export retains ``packets``.
+    var displayedPackets: [PacketLogEntry] {
+      switch packetFilter {
+      case .activity: packets.filter { $0.classification == .activity }
+      case .all: packets
+      }
+    }
 
-    var hiddenAnnouncePacketCount: Int { packets.count - displayedPackets.count }
+    var hiddenIdlePacketCount: Int { packets.count - displayedPackets.count }
 
     var diagnosticRecipeAvailable: Bool {
       guard let device = selectedDevice else { return false }
@@ -215,7 +234,8 @@
       captureState = finalState
     }
 
-    @discardableResult private func beginSnapshotRequest() -> UInt64 {
+    @discardableResult
+    private func beginSnapshotRequest() -> UInt64 {
       snapshotGeneration &+= 1
       snapshotTask?.cancel()
       snapshotTask = nil

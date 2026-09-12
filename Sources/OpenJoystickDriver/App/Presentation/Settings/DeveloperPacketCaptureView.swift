@@ -5,13 +5,22 @@
   import SwiftUI
 
   struct DeveloperPacketCaptureView: View {
-    @ObservedObject var model: DeveloperToolsViewModel
+    @ObservedObject
+    var model: DeveloperToolsViewModel
 
     var body: some View {
       GroupBox {
         VStack(alignment: .leading, spacing: 12) {
           HStack(spacing: 8) {
             captureStatus
+            Picker("", selection: $model.packetFilter) {
+              Text(OJDLocalized.string("developer.packetFilterActivity", fallback: "Activity")).tag(
+                DeveloperToolsViewModel.PacketFilter.activity
+              )
+              Text(OJDLocalized.string("developer.packetFilterAll", fallback: "All")).tag(
+                DeveloperToolsViewModel.PacketFilter.all
+              )
+            }.pickerStyle(SegmentedPickerStyle()).frame(width: 150).labelsHidden()
             Spacer()
             if model.isCapturing {
               Button(
@@ -38,12 +47,12 @@
 
           packetList
 
-          if model.hiddenAnnouncePacketCount > 0 {
+          if model.hiddenIdlePacketCount > 0 {
             Text(
               OJDLocalized.formatted(
-                "developer.hiddenAnnouncePackets",
-                fallback: "Hidden %d idle announce packets (still included in Export).",
-                model.hiddenAnnouncePacketCount
+                "developer.hiddenIdlePackets",
+                fallback: "Hidden %d idle packets (still included in Export).",
+                model.hiddenIdlePacketCount
               )
             ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
           }
@@ -62,7 +71,8 @@
       }
     }
 
-    @ViewBuilder private var captureStatus: some View {
+    @ViewBuilder
+    private var captureStatus: some View {
       switch model.captureState {
       case .idle:
         statusLabel(OJDLocalized.string("developer.ready", fallback: "Ready"), symbol: "circle")
@@ -97,7 +107,8 @@
       }
     }
 
-    @ViewBuilder private var packetList: some View {
+    @ViewBuilder
+    private var packetList: some View {
       if model.displayedPackets.isEmpty {
         VStack(alignment: .leading, spacing: 6) {
           Text(
@@ -115,7 +126,7 @@
             Text(
               OJDLocalized.string(
                 "developer.keepAliveNote",
-                fallback: "Idle announce packets are hidden so input frames stay visible."
+                fallback: "Routine idle traffic is hidden so controller activity stays visible."
               )
             ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
           }
