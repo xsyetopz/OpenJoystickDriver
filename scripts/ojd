@@ -456,6 +456,8 @@ def dispatch(argv: list[str]) -> int:
                 require("release bump-version", tail, count=1)
                 exec_target("release/bump_version.py", tail, python=True)
             if sub == "package":
+                if tail in (["-h"], ["--help"], ["help"]):
+                    exec_python_with_environment("release/package.py", ["--help"])
                 require("release package", tail, maximum=1)
                 exec_python_with_environment("release/package.py", ["release", *tail])
             if sub == "install-local":

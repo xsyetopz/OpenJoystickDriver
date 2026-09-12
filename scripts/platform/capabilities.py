@@ -408,6 +408,8 @@ class Resolver:
 
 def requirements_for(argv: list[str]) -> tuple[Capability, ...]:
     route = tuple(argv)
+    if any(argument in {"-h", "--help", "help"} for argument in route[1:]):
+        return ()
     if route[:2] == ("catalog", "regenerate") and len(route) >= 3:
         return (Capability.SCHEMA_PYTHON,)
     if route == ("check", "profiles"):
@@ -447,11 +449,14 @@ def requirements_for(argv: list[str]) -> tuple[Capability, ...]:
     if route[:2] == ("signing", "export-github-secrets") and "--apply" in route:
         return (Capability.GH, Capability.GH_AUTH)
     if route[:2] in {("diagnose", "sdl3"), ("diagnose", "sdl3-gamecontroller"), ("diagnose", "sdl3-hidapi-x360"), ("diagnose", "backends")}:
-        return (Capability.SWIFT_TOOLCHAIN, Capability.PKG_CONFIG, Capability.SDL3)
+        base = (Capability.FULL_XCODE, Capability.PKG_CONFIG, Capability.SDL3)
+        return (Capability.SWIFT_TOOLCHAIN, *base) if route[:2] == ("diagnose", "backends") else base
     if route[:2] in {("diagnose", "record"), ("diagnose", "gamecontroller")}:
         return (Capability.SWIFT_TOOLCHAIN, Capability.FULL_XCODE)
     if route[:2] == ("diagnose", "rumble-motors"):
         return (Capability.SWIFT_TOOLCHAIN, Capability.FULL_XCODE, Capability.DEVELOPMENT_SIGNING)
+    if route == ("test", "parsers-macos14"):
+        return (Capability.SWIFT_TOOLCHAIN, Capability.FULL_XCODE)
     if route[:2] == ("hooks", "install") or route[:2] == ("hooks", "validate"):
         return (Capability.LEFTHOOK,)
     if route == ("setup",):

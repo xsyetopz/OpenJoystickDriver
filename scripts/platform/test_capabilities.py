@@ -180,6 +180,10 @@ class CapabilityResolverTests(unittest.TestCase):
             ),
         )
 
+    def test_help_routes_never_trigger_repairs(self) -> None:
+        self.assertEqual(requirements_for(["release", "package", "--help"]), ())
+        self.assertEqual(requirements_for(["release", "notarize", "help"]), ())
+
     def test_ci_notary_secrets_need_no_keychain_repair(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             resolver = Resolver(
