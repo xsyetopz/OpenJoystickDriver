@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import os
 import plistlib
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -20,7 +22,7 @@ from bundle_version import (
     validate_dext_bundle_version,
 )
 from package_common import require_clean_source, source_identity, verify_bundle_versions
-from package_tester import tester_metadata
+import package_tester
 
 
 def expect_failure(callable_, *args, **kwargs) -> None:
@@ -52,6 +54,92 @@ def expect_executable_failure(*args: str) -> None:
     )
     if result.returncode == 0:
         raise AssertionError(f"expected executable failure for {args}")
+
+
+def validate_tester_packaging_flow(*, fail_after_dmg: bool) -> None:
+    with tempfile.TemporaryDirectory() as directory:
+        project = Path(directory)
+        events: list[str] = []
+        captured_build_info = ""
+        original_environment = os.environ.copy()
+        overrides = {
+            "PROJECT_DIR": project,
+            "default_bundle_short_version": lambda _: "0.5.0-beta.4",
+            "require_clean_source": lambda *_: "a" * 40,
+            "advance_tester_sequence": lambda *_: 7,
+            "current_commit_bundle_version": lambda _: "42",
+            "dext_bundle_version_from_semver": lambda _: "0.5.0b4",
+            "command_output": lambda _: "aaaaaaaaaaaa",
+            "release_environment": lambda: os.environ.copy(),
+            "verify_bundle_versions": lambda *_: None,
+        }
+        originals = {name: getattr(package_tester, name) for name in overrides}
+        originals["run"] = package_tester.run
+        originals["make_dmg"] = package_tester.make_dmg
+
+        def fake_run(command: list[str], *, env: dict[str, str] | None = None) -> None:
+            if command[-2:] == ["build", "release"]:
+                dext = (
+                    project
+                    / ".build/debug/OpenJoystickDriver.app/Contents/Library/SystemExtensions"
+                    / "com.openjoystickdriver.XboxUSBDevice.dext"
+                )
+                dext.mkdir(parents=True)
+            elif command[0] == "/usr/bin/ditto":
+                shutil.copytree(command[1], command[2])
+            elif "notarize.sh" in " ".join(command):
+                events.append("notarize")
+                assert env is not None
+                Path(env["OJD_NOTARIZE_ZIP"]).write_text("temporary upload")
+            elif command[:3] == ["/usr/bin/xcrun", "stapler", "validate"]:
+                events.append("stapler")
+            elif command[0] == "/usr/sbin/spctl":
+                events.append("gatekeeper")
+            elif command[:2] == ["/usr/bin/hdiutil", "verify"] and fail_after_dmg:
+                raise package_tester.CommandFailure(19)
+
+        def fake_make_dmg(staging: Path, _: str, artifact: Path) -> None:
+            nonlocal captured_build_info
+            events.append("dmg")
+            captured_build_info = (
+                staging / "OpenJoystickDriver-TESTER-BUILD.txt"
+            ).read_text()
+            artifact.write_text("dmg")
+
+        try:
+            for name, value in overrides.items():
+                setattr(package_tester, name, value)
+            package_tester.run = fake_run
+            package_tester.make_dmg = fake_make_dmg
+            os.environ.clear()
+            os.environ["OJD_ENV"] = "release"
+            result = package_tester.main(["tester"])
+        finally:
+            os.environ.clear()
+            os.environ.update(original_environment)
+            for name, value in originals.items():
+                setattr(package_tester, name, value)
+
+        artifacts = list((project / ".build/tester-artifacts").glob("*.dmg"))
+        if fail_after_dmg:
+            assert result == 19
+            assert artifacts == []
+        else:
+            assert result == 0
+            assert len(artifacts) == 1
+            assert events == ["notarize", "stapler", "gatekeeper", "dmg"]
+            for line in (
+                "notarization: accepted",
+                "stapling: validated",
+                "gatekeeper: accepted",
+            ):
+                assert line in captured_build_info
+        for path in (
+            project / ".build/tester-dmg-staging",
+            project / ".build/tester-dmg-mount",
+            project / ".build/OpenJoystickDriver-tester-notarize.zip",
+        ):
+            assert not path.exists()
 
 
 def main() -> int:
@@ -147,7 +235,7 @@ def main() -> int:
             "a" * 40,
             "clean",
         )
-        metadata = tester_metadata(
+        metadata = package_tester.tester_metadata(
             "tester.dmg", "0.5.0-beta.3-next.1", "1.2.3d1", "0.5.0b3"
         )
         assert metadata == {
@@ -155,6 +243,9 @@ def main() -> int:
             "version": "0.5.0-beta.3-next.1",
             "app_bundle_build_version": "1.2.3d1",
             "dext_bundle_version": "0.5.0b3",
+            "notarization": "accepted",
+            "stapling": "validated",
+            "gatekeeper": "accepted",
         }
 
         repository = Path(directory) / "repository"
@@ -180,6 +271,8 @@ def main() -> int:
         tracked.write_text("dirty\n")
         assert source_identity(repository) == (commit, "dirty")
         expect_failure(require_clean_source, repository, "Tester")
+    validate_tester_packaging_flow(fail_after_dmg=False)
+    validate_tester_packaging_flow(fail_after_dmg=True)
     return 0
 
 

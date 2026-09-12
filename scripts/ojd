@@ -101,10 +101,10 @@ Usage:
   ./scripts/ojd package <subcommand> [args]
 
 Subcommands:
-  tester                      Build a private Developer ID-signed, unnotarized DMG
+  tester                      Build a private notarized Developer ID DMG
   release [version]           Build, notarize, staple, and package a release DMG
 
-The tester path does not install, publish, or notarize. The release path is
+The tester path notarizes and staples without installing or publishing. The release path is
 also available as ./scripts/ojd release package [version].""")
 
 

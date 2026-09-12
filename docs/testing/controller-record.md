@@ -91,7 +91,7 @@ and a source-built record probe are different test subjects:
   also run `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless diagnose report`.
   This exercises the packaged Developer ID-signed app and its embedded DEXT; it
   does not use the Swift sources in a checkout. The community tester package is
-  intentionally unnotarized and may require an explicit Gatekeeper override.
+  notarized and stapled so it can replace the DriverKit extension with SIP enabled.
 - **Source-built record probe:** report the checkout commit and working-tree
   state, the record path, and the complete `./scripts/ojd diagnose record ...`
   command and output. This route builds/runs the probe from the current source

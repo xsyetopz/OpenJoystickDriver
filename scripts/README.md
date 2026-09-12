@@ -91,7 +91,7 @@ dependencies from `.build/schema-validator` when that environment exists. See
 | `release/install_local.py` | `release install-local` | Packages a release and replaces the local app in `/Applications` | Dispatcher argument checks; Swift packaging contract |
 | `release/notarize.sh` | `release notarize` | Uses Apple notarization services, writes submission state, and staples the app | Help and shell checks; release-only CI |
 | `release/package.py` | `release package` | Builds signed artifacts, mounts temporary DMGs, notarizes, and writes release output | Swift packaging contracts; release-only CI |
-| `release/package_tester.py` | `package tester` | Builds a Developer ID-signed app and embedded DEXT into a private, unnotarized DMG | Swift packaging contracts; Python syntax |
+| `release/package_tester.py` | `package tester` | Builds, notarizes, and staples a Developer ID app and embedded DEXT into a private DMG | Packaging contracts; Python syntax |
 | `release/package_common.py` | Release packaging implementations | Shared deterministic DMG, mount, plist, and cleanup helpers | Python syntax; packaging contract |
 | `signing/configure.py` | Signing implementation | Reads profiles and Keychain identities; writes root environment files | Environment contracts; focused local setup |
 | `signing/export-github-secrets.sh` | `signing export-github-secrets` | Reads signing material, writes private build output, optionally updates GitHub secrets | Shell syntax; explicit operator action |
@@ -110,7 +110,7 @@ dependencies from `.build/schema-validator` when that environment exists. See
 | Check DriverKit generation | `./scripts/ojd check driverkit` | Double-generates, checks metadata/boundaries, and performs an unsigned native build |
 | Install signed dev build | `./scripts/ojd build install dev` | Application and generated USB DriverKit extension; the app embeds its service registration |
 | Fast install (app only) | `./scripts/ojd build install-fast dev` | Skips a generated system-extension upgrade |
-| Package private tester build | `./scripts/ojd package tester` | Writes a Developer ID-signed, unnotarized DMG to `.build/tester-artifacts/`; short version is `{SemVer}-next.N`; does not install or publish |
+| Package private tester build | `./scripts/ojd package tester` | Writes a Developer ID-signed, notarized DMG to `.build/tester-artifacts/`; short version is `{SemVer}-next.N`; does not install or publish |
 | Bump release version | `./scripts/ojd release bump-version <version>` | Verifies `## [<version>] - YYYY-MM-DD` in CHANGELOG.md and updates version references |
 | Package release DMG | `./scripts/ojd release package [version]` | Builds, notarizes, and staples; version defaults to the package version |
 | Package and install locally | `./scripts/ojd release install-local [version]` | Replaces the app in `/Applications` after packaging |
@@ -138,6 +138,7 @@ Use these paths in order:
    ./scripts/ojd package tester
    ```
 
+   This command requires the publisher notarization credentials described below.
    This writes a clearly named DMG under `.build/tester-artifacts/` containing
    the signed app and embedded `XboxUSBDevice.dext`, plus a build-info file with
    the full source commit, clean state, the unique tester short version
@@ -145,10 +146,10 @@ Use these paths in order:
    `0.5.0-beta.4-next.1`), and kext-legal bundle build versions (numeric
    commit-count base with a `d1`...`d255` tester suffix; DriverKit stays on the
    release mapping such as `0.5.0b4`). It
-   does not install, publish, or notarize anything. The app and
-   DEXT use the local Developer ID
-   identities/profiles; the artifact is intentionally **not notarized**, so a
-   recipient may need an explicit Gatekeeper override. Apple Development
+   does not install or publish anything. The app and DEXT use the local
+   Developer ID identities/profiles. Packaging notarizes the app, staples and
+   validates its ticket, and requires Gatekeeper assessment to pass before
+   creating the DMG. Apple Development
    artifacts are not supported for arbitrary community tester distribution.
    The recipient only needs the DMG, not a source checkout. Tester and release
    packaging reject a dirty checkout before allocating a tester sequence or

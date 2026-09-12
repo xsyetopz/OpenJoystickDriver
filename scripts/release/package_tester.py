@@ -1,4 +1,4 @@
-"""Build a private, unnotarized Developer ID tester DMG."""
+"""Build a private, notarized Developer ID tester DMG."""
 
 from __future__ import annotations
 
@@ -43,8 +43,8 @@ def usage() -> None:
   ./scripts/ojd package tester
 
 Builds and packages the locally configured Developer ID app and its embedded
-DriverKit extension into a shareable DMG without installing, publishing, or
-notarizing it. The app short version is the package SemVer plus a unique
+DriverKit extension into a notarized, shareable DMG without installing or
+publishing it. The app short version is the package SemVer plus a unique
 `-next.N` identifier. The DMG includes source and bundle-build metadata.""")
 
 
@@ -59,6 +59,9 @@ def tester_metadata(
         "version": version,
         "app_bundle_build_version": app_build_version,
         "dext_bundle_version": dext_bundle_version,
+        "notarization": "accepted",
+        "stapling": "validated",
+        "gatekeeper": "accepted",
     }
 
 
@@ -102,6 +105,7 @@ def main(argv: list[str]) -> int:
     rw_dmg = build_dir / f"OpenJoystickDriver-{safe}-tester-{build_version}-rw.dmg"
     mount_dir = build_dir / "tester-dmg-mount"
     app_path = build_dir / "debug/OpenJoystickDriver.app"
+    notary_zip = build_dir / "OpenJoystickDriver-tester-notarize.zip"
     dext_path = (
         app_path
         / "Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext"
@@ -114,6 +118,8 @@ def main(argv: list[str]) -> int:
         "OJD_SOURCE_STATE": tree_state,
     }
     artifact_dir.mkdir(parents=True, exist_ok=True)
+    cleanup_workdirs((staging, mount_dir, rw_dmg, notary_zip, artifact), mount_dir)
+    completed = False
 
     try:
         print("=== Build Developer ID app bundle ===")
@@ -172,7 +178,27 @@ def main(argv: list[str]) -> int:
                 str(dext_path),
             ]
         )
-        cleanup_workdirs((staging, mount_dir, rw_dmg, artifact), mount_dir)
+        print("\n=== Notarize and staple tester app ===")
+        notary_env = env | {
+            "OJD_NOTARIZE_APP": str(app_path),
+            "OJD_NOTARIZE_ZIP": str(notary_zip),
+        }
+        run(
+            ["/usr/bin/env", "bash", str(SCRIPT_DIR / "notarize.sh"), "submit"],
+            env=notary_env,
+        )
+        print("\n=== Verify notarization ticket and Gatekeeper acceptance ===")
+        run(["/usr/bin/xcrun", "stapler", "validate", str(app_path)])
+        run(
+            [
+                "/usr/sbin/spctl",
+                "--assess",
+                "--type",
+                "execute",
+                "--verbose=4",
+                str(app_path),
+            ]
+        )
         staging.mkdir(parents=True)
         run(["/usr/bin/ditto", str(app_path), str(staging / "OpenJoystickDriver.app")])
         (staging / "Applications").symlink_to("/Applications")
@@ -183,24 +209,29 @@ def main(argv: list[str]) -> int:
         dext_identity = os.environ.get(
             "DEXT_BUILD_IDENTITY", os.environ.get("CODESIGN_IDENTITY", "-")
         )
+        metadata = tester_metadata(
+            artifact.name, version, build_version, dext_version
+        )
         build_info.write_text(f"""OpenJoystickDriver local tester artifact
 
-artifact: {artifact.name}
-version: {version}
+artifact: {metadata["artifact"]}
+version: {metadata["version"]}
 release_version: {release_version}
-app_bundle_build_version: {build_version}
-dext_bundle_version: {dext_version}
+app_bundle_build_version: {metadata["app_bundle_build_version"]}
+dext_bundle_version: {metadata["dext_bundle_version"]}
 commit: {commit}
 working_tree: {tree_state}
 built_at_utc: {dt.datetime.now(dt.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")}
 app_signing_identity: {app_identity}
 dext_signing_identity: {dext_identity}
-notarization: not notarized (private local tester build)
+notarization: {metadata["notarization"]}
+stapling: {metadata["stapling"]}
+gatekeeper: {metadata["gatekeeper"]}
 recipient_source_checkout_required: no
 
 This artifact contains the Developer ID-signed OpenJoystickDriver.app and its
-embedded com.openjoystickdriver.XboxUSBDevice.dext. It is for private testing;
-it is not notarized and the recipient may need an explicit Gatekeeper override.
+embedded com.openjoystickdriver.XboxUSBDevice.dext. It is notarized and stapled
+for private testing with System Integrity Protection enabled.
 Apple Development artifacts are not supported as arbitrary community tester
 distribution and are not produced by this command.
 """)
@@ -208,11 +239,15 @@ distribution and are not produced by this command.
         make_dmg(staging, "OpenJoystickDriver Tester", artifact)
         cleanup_workdirs((staging, mount_dir, rw_dmg), mount_dir)
         run(["/usr/bin/hdiutil", "verify", str(artifact)])
+        completed = True
     except CommandFailure as error:
         return error.returncode
     finally:
-        cleanup_workdirs((staging, rw_dmg, mount_dir), mount_dir)
-    print(f"\nLocal tester artifact ready (not installed or published):\n  {artifact}")
+        cleanup = (staging, rw_dmg, mount_dir, notary_zip)
+        if not completed:
+            cleanup += (artifact,)
+        cleanup_workdirs(cleanup, mount_dir)
+    print(f"\nNotarized tester artifact ready (not installed or published):\n  {artifact}")
     return 0
 
 
