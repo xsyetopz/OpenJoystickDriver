@@ -9,7 +9,7 @@ enum SupportReportService {
     applicationServiceHealth: ApplicationServiceManager.ApplicationServiceHealth?,
     applicationServiceInstalled: Bool,
     applicationServiceConnected: Bool,
-    appVersion: String,
+    buildIdentity: BuildIdentity,
     appleGameControllerAudit: AppleGameControllerSupportAudit? = nil,
     generatedAt: Date = Date()
   ) -> SupportReport {
@@ -17,7 +17,7 @@ enum SupportReportService {
     let macOSVersion = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
     return SupportReport(
       generatedAt: generatedAt,
-      appVersion: appVersion,
+      buildIdentity: buildIdentity,
       macOSVersion: macOSVersion,
       architecture: architecture,
       inputMonitoring: inputMonitoring,

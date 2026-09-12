@@ -23,6 +23,7 @@ from package_common import (
     make_dmg,
     mounted,
     release_environment,
+    require_clean_source,
     run,
     safe_version,
     verify_bundle_versions,
@@ -71,9 +72,12 @@ def main(argv: list[str]) -> int:
     staging = build_dir / "dmg-staging"
     rw_dmg = build_dir / f"OpenJoystickDriver-{safe}-rw.dmg"
     mount_dir = build_dir / "dmg-mount"
+    commit = require_clean_source(PROJECT_DIR, "Release")
     env = release_environment()
     env["OJD_BUNDLE_SHORT_VERSION"] = version
     env["OJD_BUNDLE_VERSION"] = current_commit_bundle_version(PROJECT_DIR)
+    env["OJD_SOURCE_COMMIT"] = commit
+    env["OJD_SOURCE_STATE"] = "clean"
     dext_version = dext_bundle_version_from_semver(version)
     artifact_dir.mkdir(parents=True, exist_ok=True)
 
@@ -113,6 +117,8 @@ def main(argv: list[str]) -> int:
             env["OJD_BUNDLE_VERSION"],
             dext_version,
             version,
+            commit,
+            "clean",
         )
         print("\n=== Verify signed app before notarization ===")
         run(

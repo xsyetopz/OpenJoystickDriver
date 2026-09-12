@@ -283,6 +283,8 @@ public struct ApplicationServiceCompatibilityRetryPayload: Codable, Sendable, Eq
 }
 
 public struct ApplicationServiceStatusPayload: Codable, Sendable {
+  /// Exact source and app bundle identity that produced this status snapshot.
+  public let buildIdentity: BuildIdentity
   /// Input Monitoring permission state (e.g. "granted", "denied").
   public let inputMonitoring: String
   /// Accessibility permission used to publish an IOHIDUserDevice.
@@ -302,6 +304,7 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
 
   /// Creates a new ApplicationServiceStatusPayload.
   public init(
+    buildIdentity: BuildIdentity = .current(),
     inputMonitoring: String,
     accessibility: String,
     connectedDevices: [ApplicationServiceDeviceDescription],
@@ -311,6 +314,7 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     compatibilityLiveIdentity: String? = nil,
     compatibilityRetry: ApplicationServiceCompatibilityRetryPayload? = nil
   ) {
+    self.buildIdentity = buildIdentity
     self.inputMonitoring = inputMonitoring
     self.accessibility = accessibility
     self.connectedDevices = connectedDevices
@@ -319,5 +323,17 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     self.compatibilityIdentity = compatibilityIdentity
     self.compatibilityLiveIdentity = compatibilityLiveIdentity
     self.compatibilityRetry = compatibilityRetry
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case buildIdentity = "build_identity"
+    case inputMonitoring
+    case accessibility
+    case connectedDevices
+    case userSpaceVirtualDeviceEnabled
+    case userSpaceVirtualDeviceStatus
+    case compatibilityIdentity
+    case compatibilityLiveIdentity
+    case compatibilityRetry
   }
 }

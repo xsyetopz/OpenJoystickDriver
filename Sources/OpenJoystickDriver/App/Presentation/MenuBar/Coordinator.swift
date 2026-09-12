@@ -34,7 +34,8 @@
     }
   }
 
-  @MainActor final class MenuBarCoordinator: NSObject, NSApplicationDelegate {
+  @MainActor
+  final class MenuBarCoordinator: NSObject, NSApplicationDelegate {
     let runtime: ApplicationServiceRuntime
     let viewModel: RuntimeViewModel
 
@@ -93,11 +94,10 @@
       }
     }
 
-    func terminateFromShutdownSignal() {
-      NSApplication.shared.terminate(nil)
-    }
+    func terminateFromShutdownSignal() { NSApplication.shared.terminate(nil) }
 
-    @discardableResult static func terminateFromShutdownSignalIfRunning() -> Bool {
+    @discardableResult
+    static func terminateFromShutdownSignalIfRunning() -> Bool {
       guard let activeCoordinator else { return false }
       activeCoordinator.terminateFromShutdownSignal()
       return true
@@ -105,21 +105,24 @@
 
     func applicationWillTerminate(_ notification: Notification) { removeStatusItem() }
 
-    @objc func openSettings(_ sender: Any?) { openSettings(pane: .settings) }
+    @objc
+    func openSettings(_ sender: Any?) { openSettings(pane: .settings) }
 
-    @objc func showApplication(_ sender: Any?) { openSettings(pane: nil) }
+    @objc
+    func showApplication(_ sender: Any?) { openSettings(pane: nil) }
 
-    @objc func openSettingsFromStatus(_ sender: Any?) {
+    @objc
+    func openSettingsFromStatus(_ sender: Any?) {
       let item = sender as? NSMenuItem
       let pane = item.flatMap { SettingsPane(rawValue: $0.representedObject as? String ?? "") }
       openSettings(pane: pane ?? .overview)
     }
 
-    @objc func refreshFromStatus(_ sender: Any?) { refreshLiveStatus() }
+    @objc
+    func refreshFromStatus(_ sender: Any?) { refreshLiveStatus() }
 
-    @objc func quit(_ sender: Any?) {
-      NSApplication.shared.terminate(sender)
-    }
+    @objc
+    func quit(_ sender: Any?) { NSApplication.shared.terminate(sender) }
 
     private func openSettings(pane: SettingsPane?) {
       if settingsWindowController == nil {
@@ -149,10 +152,7 @@
         button.action = #selector(showStatusMenu(_:))
         if let image = MenuBarStatusItemImage.make(
           applicationIcon: NSImage(named: NSImage.applicationIconName),
-          accessibilityDescription: OJDLocalized.string(
-            "app.name",
-            fallback: "OpenJoystickDriver"
-          )
+          accessibilityDescription: OJDLocalized.string("app.name", fallback: "OpenJoystickDriver")
         ) {
           button.image = image
         }
@@ -176,7 +176,8 @@
       statusMenu = nil
     }
 
-    @objc private func showStatusMenu(_ sender: Any?) {
+    @objc
+    private func showStatusMenu(_ sender: Any?) {
       refreshLiveStatus()
       guard let menu = statusMenu, let button = statusItem?.button else { return }
       // Pop up the same native menu on every click after the asynchronous status refresh starts.
@@ -377,7 +378,8 @@
       menu.addItem(item)
     }
 
-    @objc private func requestAccessFromStatus(_ sender: Any?) {
+    @objc
+    private func requestAccessFromStatus(_ sender: Any?) {
       PermissionAccessActions.requestAccess(viewModel: viewModel)
     }
 
@@ -512,7 +514,8 @@
       return menu
     }
 
-    @objc private func saveSupportReport(_ sender: Any?) {
+    @objc
+    private func saveSupportReport(_ sender: Any?) {
       let panel = NSSavePanel()
       panel.title = OJDLocalized.string("debug.saveReportPanel", fallback: "Save Debug Report")
       panel.nameFieldStringValue = viewModel.defaultSupportReportFilename
@@ -523,7 +526,8 @@
       }
     }
 
-    @objc private func saveSupportLogs(_ sender: Any?) {
+    @objc
+    private func saveSupportLogs(_ sender: Any?) {
       let panel = NSSavePanel()
       panel.title = OJDLocalized.string("debug.saveLogsPanel", fallback: "Save Debug Logs")
       panel.nameFieldStringValue = viewModel.defaultSupportLogsFilename
@@ -534,12 +538,14 @@
       }
     }
 
-    @objc private func openProjectPage(_ sender: Any?) {
+    @objc
+    private func openProjectPage(_ sender: Any?) {
       guard let url = URL(string: "https://github.com/xsyetopz/OpenJoystickDriver") else { return }
       NSWorkspace.shared.open(url)
     }
 
-    @objc private func showAbout(_ sender: Any?) {
+    @objc
+    private func showAbout(_ sender: Any?) {
       let repositoryTitle = OJDLocalized.string("menu.projectPage", fallback: "GitHub")
       let credits = NSMutableAttributedString(string: repositoryTitle)
       if let url = URL(string: "https://github.com/xsyetopz/OpenJoystickDriver") {
@@ -547,7 +553,7 @@
       }
       var options: [NSApplication.AboutPanelOptionKey: Any] = [
         .applicationName: OJDLocalized.string("app.name", fallback: "OpenJoystickDriver"),
-        .applicationVersion: ApplicationVersion.current, .credits: credits
+        .applicationVersion: ApplicationVersion.display, .credits: credits,
       ]
       if let icon = NSImage(named: NSImage.applicationIconName) { options[.applicationIcon] = icon }
       NSApplication.shared.orderFrontStandardAboutPanel(options: options)

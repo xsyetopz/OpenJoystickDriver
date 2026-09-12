@@ -89,7 +89,7 @@ struct CLIGrammar {
         CLILocalized.format(
           "cli.help.title",
           "OpenJoystickDriver v%@ - macOS gamepad driver",
-          ApplicationVersion.current
+          ApplicationVersion.display
         )
       )
     case .status(let arguments), .appStatus(let arguments):

@@ -140,7 +140,7 @@ Use these paths in order:
 
    This writes a clearly named DMG under `.build/tester-artifacts/` containing
    the signed app and embedded `XboxUSBDevice.dext`, plus a build-info file with
-   the full source commit, clean/dirty state, the unique tester short version
+   the full source commit, clean state, the unique tester short version
    (`MAJOR.MINOR.PATCH[-alpha|beta|rc.N]-next.N`, for example
    `0.5.0-beta.4-next.1`), and kext-legal bundle build versions (numeric
    commit-count base with a `d1`...`d255` tester suffix; DriverKit stays on the
@@ -150,7 +150,10 @@ Use these paths in order:
    identities/profiles; the artifact is intentionally **not notarized**, so a
    recipient may need an explicit Gatekeeper override. Apple Development
    artifacts are not supported for arbitrary community tester distribution.
-   The recipient only needs the DMG, not a source checkout.
+   The recipient only needs the DMG, not a source checkout. Tester and release
+   packaging reject a dirty checkout before allocating a tester sequence or
+   starting a build. Developer app builds remain available and show `-dirty`
+   in About, `--version`, status JSON, and support reports.
 
 2. **GitHub Actions release (published).** Push a SemVer tag such as
    `0.5.0-beta.3`, or manually dispatch the release workflow with that SemVer

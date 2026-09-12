@@ -39,7 +39,7 @@ struct ReportCommand {
       applicationServiceHealth: health,
       applicationServiceInstalled: ApplicationServiceManager.isInstalled,
       applicationServiceConnected: status != nil,
-      appVersion: ApplicationVersion.current,
+      buildIdentity: ApplicationVersion.buildIdentity,
       appleGameControllerAudit: AppleGameControllerSupportAuditor.auditCurrentSystem()
     )
 

@@ -69,7 +69,30 @@ build_app_bundle() {
   local GUI_CONTENTS="$GUI_APP/Contents"
   local GUI_MACOS="$GUI_CONTENTS/MacOS"
   local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-$OJD_DEFAULT_BUNDLE_SHORT_VERSION}"
-  local bundle_version="${OJD_BUNDLE_VERSION:-1}"
+  local bundle_version="${OJD_BUNDLE_VERSION:-}"
+  if [[ -z "$bundle_version" ]]; then
+    bundle_version="$(python3 "$PROJECT_DIR/scripts/release/bundle_version.py" "$PROJECT_DIR")"
+  fi
+  local source_commit="${OJD_SOURCE_COMMIT:-}"
+  if [[ -z "$source_commit" ]]; then
+    source_commit="$(git -C "$PROJECT_DIR" rev-parse --verify HEAD)"
+  fi
+  local source_state="${OJD_SOURCE_STATE:-}"
+  if [[ -z "$source_state" ]]; then
+    if [[ -n "$(git -C "$PROJECT_DIR" status --porcelain --untracked-files=all)" ]]; then
+      source_state="dirty"
+    else
+      source_state="clean"
+    fi
+  fi
+  if [[ ! "$source_commit" =~ ^[0-9a-f]{40}$ ]]; then
+    echo "ERROR: OJD source commit must be a full 40-character lowercase Git SHA."
+    exit 1
+  fi
+  if [[ "$source_state" != "clean" && "$source_state" != "dirty" ]]; then
+    echo "ERROR: OJD source state must be clean or dirty."
+    exit 1
+  fi
 
   echo "Creating app bundle..."
   rm -rf "$GUI_APP"
@@ -103,6 +126,8 @@ build_app_bundle() {
   /usr/bin/plutil -replace CFBundleShortVersionString -string "$bundle_short_version" \
     "$GUI_CONTENTS/Info.plist"
   /usr/bin/plutil -replace CFBundleVersion -string "$bundle_version" "$GUI_CONTENTS/Info.plist"
+  /usr/bin/plutil -replace OJDSourceCommit -string "$source_commit" "$GUI_CONTENTS/Info.plist"
+  /usr/bin/plutil -replace OJDSourceState -string "$source_state" "$GUI_CONTENTS/Info.plist"
 
   echo "Signing GUI using:    $GUI_IDENTITY"
   for bundle in "$GUI_RESOURCES"/*.bundle; do

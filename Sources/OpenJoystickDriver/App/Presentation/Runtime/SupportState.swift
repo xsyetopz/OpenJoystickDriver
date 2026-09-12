@@ -90,7 +90,8 @@ enum RuntimeSupportLogsState: Sendable {
   case error(String)
 }
 
-@MainActor extension RuntimeViewModel {
+@MainActor
+extension RuntimeViewModel {
   func loadSupportDiagnostics() async {
     supportDiagnosticsGeneration &+= 1
     let generation = supportDiagnosticsGeneration
@@ -158,7 +159,7 @@ enum RuntimeSupportLogsState: Sendable {
         applicationServiceHealth: reportContext.health,
         applicationServiceInstalled: reportContext.installed,
         applicationServiceConnected: status != nil,
-        appVersion: ApplicationVersion.current,
+        buildIdentity: ApplicationVersion.buildIdentity,
         appleGameControllerAudit: reportContext.appleGameControllerAudit
       )
     }.value

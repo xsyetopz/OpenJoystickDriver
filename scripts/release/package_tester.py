@@ -24,6 +24,7 @@ from package_common import (
     die,
     make_dmg,
     release_environment,
+    require_clean_source,
     run,
     safe_version,
     verify_bundle_versions,
@@ -78,38 +79,24 @@ def main(argv: list[str]) -> int:
 
     release_version = default_bundle_short_version(PROJECT_DIR)
     build_dir = PROJECT_DIR / ".build"
+    commit = require_clean_source(PROJECT_DIR, "Tester")
     state_file = build_dir / "tester-build-version"
     sequence = advance_tester_sequence(release_version, state_file)
     version = tester_short_version(release_version, sequence)
     build_version = f"{current_commit_bundle_version(PROJECT_DIR)}d{sequence}"
     dext_version = dext_bundle_version_from_semver(release_version)
     try:
-        commit = command_output(
-            ["git", "-C", str(PROJECT_DIR), "rev-parse", "--verify", "HEAD"]
-        )
         short_commit = command_output(
             ["git", "-C", str(PROJECT_DIR), "rev-parse", "--short=12", "HEAD"]
         )
-        dirty = bool(
-            command_output(
-                [
-                    "git",
-                    "-C",
-                    str(PROJECT_DIR),
-                    "status",
-                    "--porcelain",
-                    "--untracked-files=all",
-                ]
-            )
-        )
     except CommandFailure as error:
         return error.returncode
-    tree_state = "dirty" if dirty else "clean"
+    tree_state = "clean"
     safe = safe_version(version)
     artifact_dir = build_dir / "tester-artifacts"
     artifact = (
         artifact_dir
-        / f"OpenJoystickDriver-{safe}-tester-{build_version}-{short_commit}{'-dirty' if dirty else ''}-macOS.dmg"
+        / f"OpenJoystickDriver-{safe}-tester-{build_version}-{short_commit}-macOS.dmg"
     )
     staging = build_dir / "tester-dmg-staging"
     rw_dmg = build_dir / f"OpenJoystickDriver-{safe}-tester-{build_version}-rw.dmg"
@@ -123,6 +110,8 @@ def main(argv: list[str]) -> int:
         "OJD_BUNDLE_SHORT_VERSION": version,
         "OJD_BUNDLE_VERSION": build_version,
         "DEXT_BUNDLE_VERSION": dext_version,
+        "OJD_SOURCE_COMMIT": commit,
+        "OJD_SOURCE_STATE": tree_state,
     }
     artifact_dir.mkdir(parents=True, exist_ok=True)
 
@@ -159,6 +148,8 @@ def main(argv: list[str]) -> int:
             build_version,
             dext_version,
             version,
+            commit,
+            tree_state,
         )
         print("\n=== Verify Developer ID signatures ===")
         run(

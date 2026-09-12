@@ -35,5 +35,9 @@
     <!-- Apple HID plugin preflight: skip IOServiceOpen on AppleGCSyntheticDevice. -->
     <key>GCSyntheticDevice</key>
     <false/>
+	<key>OJDSourceCommit</key>
+	<string>unknown</string>
+	<key>OJDSourceState</key>
+	<string>unknown</string>
 </dict>
 </plist>

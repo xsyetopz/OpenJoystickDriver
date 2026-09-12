@@ -124,11 +124,11 @@
 		},
 		"system": {
 			"type": "object",
-			"required": ["appVersion", "macOSVersion", "architecture"],
+			"required": ["build_identity", "macOSVersion", "architecture"],
 			"additionalProperties": false,
 			"properties": {
-				"appVersion": {
-					"type": "string"
+				"build_identity": {
+					"$ref": "#/$defs/buildIdentity"
 				},
 				"macOSVersion": {
 					"type": "string"
@@ -136,6 +136,22 @@
 				"architecture": {
 					"type": "string"
 				}
+			}
+		},
+		"buildIdentity": {
+			"type": "object",
+			"required": [
+				"semantic_version",
+				"app_bundle_version",
+				"source_commit",
+				"source_state"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"semantic_version": { "type": "string" },
+				"app_bundle_version": { "type": "string" },
+				"source_commit": { "type": "string" },
+				"source_state": { "enum": ["clean", "dirty", "unknown"] }
 			}
 		},
 		"permissions": {

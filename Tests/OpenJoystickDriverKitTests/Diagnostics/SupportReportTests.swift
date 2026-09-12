@@ -3,7 +3,8 @@ import OpenJoystickDriverKit
 import Testing
 
 struct SupportReportTests {
-  @Test func gameControllerProbeDurationIsFiniteAndPredictablyClamped() {
+  @Test
+  func gameControllerProbeDurationIsFiniteAndPredictablyClamped() {
     #expect(
       GameControllerProbeConfiguration.boundedSeconds(0)
         == GameControllerProbeConfiguration.minimumSeconds
@@ -15,7 +16,8 @@ struct SupportReportTests {
     #expect(GameControllerProbeConfiguration.boundedSeconds(5) == 5)
   }
 
-  @Test func reportExcludesSensitiveAndFreeFormDiagnosticValues() throws {
+  @Test
+  func reportExcludesSensitiveAndFreeFormDiagnosticValues() throws {
     let secretSerial = "SERIAL-SECRET-123"
     let secretPath = "/Users/alice/private/controller.txt"
     let status = ApplicationServiceStatusPayload(
@@ -37,7 +39,7 @@ struct SupportReportTests {
           postHandshakeSettleMs: 50,
           preferredBackends: ["driverKit"],
           physicalOutputCapabilities: PhysicalControllerOutputCapabilities(rumbleMotors: [
-            .leftMain, .rightMain, .leftTrigger, .rightTrigger
+            .leftMain, .rightMain, .leftTrigger, .rightTrigger,
           ]),
         )
       ],
@@ -70,7 +72,7 @@ struct SupportReportTests {
           ioUserClass: "IOHIDDevice",
           isOJDUserSpace: false,
           isGameControllerSupported: false
-        )
+        ),
       ]
     )
     let health = ApplicationServiceManager.ApplicationServiceHealth(
@@ -96,7 +98,12 @@ struct SupportReportTests {
     )
     let report = SupportReport(
       generatedAt: Date(timeIntervalSince1970: 0),
-      appVersion: "test",
+      buildIdentity: BuildIdentity(
+        semanticVersion: "0.5.0-beta.4",
+        appBundleVersion: "1.4.89",
+        sourceCommit: String(repeating: "a", count: 40),
+        sourceState: .clean
+      ),
       macOSVersion: "26.0.0",
       architecture: "arm64",
       inputMonitoring: .granted,
@@ -133,6 +140,10 @@ struct SupportReportTests {
     #expect(object["schemaVersion"] == nil)
     let payload = try #require(object["data"] as? [String: Any])
     _ = try #require(payload["hidGamepads"] as? [[String: Any]])
+    let system = try #require(payload["system"] as? [String: Any])
+    let buildIdentity = try #require(system["build_identity"] as? [String: Any])
+    #expect(buildIdentity["app_bundle_version"] as? String == "1.4.89")
+    #expect(buildIdentity["source_commit"] as? String == String(repeating: "a", count: 40))
     #expect(report.data.appleGameControllerAudit?.catalogListedOJDRecordCount == 1)
 
     let decoded = try JSONDecoder().decode(SupportReport.self, from: data)
@@ -142,10 +153,16 @@ struct SupportReportTests {
     #expect(decoded.dataschema == SupportReport.dataSchema)
   }
 
-  @Test func unavailableServiceProducesAnExplicitPartialReport() {
+  @Test
+  func unavailableServiceProducesAnExplicitPartialReport() {
     let report = SupportReport(
       generatedAt: Date(timeIntervalSince1970: 0),
-      appVersion: "test",
+      buildIdentity: BuildIdentity(
+        semanticVersion: "test",
+        appBundleVersion: "test",
+        sourceCommit: "unknown",
+        sourceState: .unknown
+      ),
       macOSVersion: "26.0.0",
       architecture: "arm64",
       inputMonitoring: .denied,

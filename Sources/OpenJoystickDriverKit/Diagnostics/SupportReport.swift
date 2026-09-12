@@ -30,9 +30,14 @@ public struct SupportReport: Codable, Sendable {
   }
 
   public struct System: Codable, Sendable {
-    public let appVersion: String
+    public let buildIdentity: BuildIdentity
     public let macOSVersion: String
     public let architecture: String
+
+    private enum CodingKeys: String, CodingKey {
+      case buildIdentity = "build_identity"
+      case macOSVersion, architecture
+    }
   }
 
   public struct Permissions: Codable, Sendable {
@@ -105,7 +110,7 @@ public struct SupportReport: Codable, Sendable {
   /// Creates a redacted report from application service and local diagnostic snapshots.
   public init(
     generatedAt: Date,
-    appVersion: String,
+    buildIdentity: BuildIdentity,
     macOSVersion: String,
     architecture: String,
     inputMonitoring: PermissionManager.AccessState,
@@ -132,7 +137,7 @@ public struct SupportReport: Codable, Sendable {
       includesDeviceProductNames: true
     )
     let system = System(
-      appVersion: appVersion,
+      buildIdentity: buildIdentity,
       macOSVersion: macOSVersion,
       architecture: architecture
     )
@@ -189,7 +194,7 @@ public struct SupportReport: Codable, Sendable {
     }
     var reportNotes = [
       "Review this file before sharing. Device product names are included.",
-      "Serial values, paths, packet payloads, HID locations, and discovery text are excluded."
+      "Serial values, paths, packet payloads, HID locations, and discovery text are excluded.",
     ]
     if status == nil { reportNotes.append("Application service status was unavailable.") }
     if virtualDiagnostics == nil {

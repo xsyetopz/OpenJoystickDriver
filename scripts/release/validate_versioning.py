@@ -19,7 +19,7 @@ from bundle_version import (
     tester_short_version,
     validate_dext_bundle_version,
 )
-from package_common import verify_bundle_versions
+from package_common import require_clean_source, source_identity, verify_bundle_versions
 from package_tester import tester_metadata
 
 
@@ -102,10 +102,20 @@ def main() -> int:
                     {
                         "CFBundleShortVersionString": "0.5.0-beta.3-next.1",
                         "CFBundleVersion": build,
+                        "OJDSourceCommit": "a" * 40,
+                        "OJDSourceState": "clean",
                     }
                 )
             )
-        verify_bundle_versions(app, dext, "1.2.3d1", "0.5.0b3", "0.5.0-beta.3-next.1")
+        verify_bundle_versions(
+            app,
+            dext,
+            "1.2.3d1",
+            "0.5.0b3",
+            "0.5.0-beta.3-next.1",
+            "a" * 40,
+            "clean",
+        )
         expect_failure(
             verify_bundle_versions,
             app,
@@ -113,6 +123,8 @@ def main() -> int:
             "wrong",
             "0.5.0b3",
             "0.5.0-beta.3-next.1",
+            "a" * 40,
+            "clean",
         )
         metadata = tester_metadata(
             "tester.dmg", "0.5.0-beta.3-next.1", "1.2.3d1", "0.5.0b3"
@@ -123,6 +135,30 @@ def main() -> int:
             "app_bundle_build_version": "1.2.3d1",
             "dext_bundle_version": "0.5.0b3",
         }
+
+        repository = Path(directory) / "repository"
+        repository.mkdir()
+        subprocess.run(["git", "-C", str(repository), "init", "-q"], check=True)
+        subprocess.run(
+            ["git", "-C", str(repository), "config", "user.name", "Version Test"],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(repository), "config", "user.email", "test@localhost"],
+            check=True,
+        )
+        tracked = repository / "tracked"
+        tracked.write_text("clean\n")
+        subprocess.run(["git", "-C", str(repository), "add", "tracked"], check=True)
+        subprocess.run(
+            ["git", "-C", str(repository), "commit", "-q", "-m", "initial"],
+            check=True,
+        )
+        commit = require_clean_source(repository, "Tester")
+        assert source_identity(repository) == (commit, "clean")
+        tracked.write_text("dirty\n")
+        assert source_identity(repository) == (commit, "dirty")
+        expect_failure(require_clean_source, repository, "Tester")
     return 0
 
 

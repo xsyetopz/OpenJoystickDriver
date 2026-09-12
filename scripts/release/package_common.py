@@ -44,6 +44,40 @@ def default_bundle_short_version(project_dir: Path) -> str:
     return str(value)
 
 
+def source_identity(project_dir: Path) -> tuple[str, str]:
+    commit = subprocess.run(
+        ["git", "-C", str(project_dir), "rev-parse", "--verify", "HEAD"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if commit.returncode or not re.fullmatch(r"[0-9a-f]{40}", commit.stdout.strip()):
+        die("Unable to resolve the full source commit")
+    status = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(project_dir),
+            "status",
+            "--porcelain",
+            "--untracked-files=all",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if status.returncode:
+        die("Unable to inspect the source working tree")
+    return commit.stdout.strip(), "dirty" if status.stdout else "clean"
+
+
+def require_clean_source(project_dir: Path, build_kind: str) -> str:
+    commit, state = source_identity(project_dir)
+    if state != "clean":
+        die(f"{build_kind} builds require a clean source working tree")
+    return commit
+
+
 def mounted(path: Path) -> bool:
     result = subprocess.run(
         ["/sbin/mount"], check=False, capture_output=True, text=True
@@ -77,6 +111,8 @@ def verify_bundle_versions(
     app_build_version: str,
     dext_build_version: str,
     short_version: str,
+    source_commit: str,
+    source_state: str,
 ) -> None:
     for label, path, expected in (
         ("App", app_info, app_build_version),
@@ -92,6 +128,11 @@ def verify_bundle_versions(
             die(f"{label} CFBundleVersion mismatch: expected {expected}, got {value}")
         if info.get("CFBundleShortVersionString") != short_version:
             die(f"{label} short version mismatch: expected {short_version}")
+    app = plistlib.loads(app_info.read_bytes())
+    if app.get("OJDSourceCommit") != source_commit:
+        die("App source commit does not match the packaged source commit")
+    if app.get("OJDSourceState") != source_state:
+        die("App source state does not match the packaged source state")
 
 
 def make_dmg(staging_dir: Path, volume_name: str, artifact: Path) -> None:
