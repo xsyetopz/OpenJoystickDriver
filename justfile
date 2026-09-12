@@ -84,6 +84,22 @@ catalog-xpad *args:
 # Checks
 # =========================================================================
 
+# Run quick checks against the current snapshot
+check-fast:
+    ./scripts/ojd catalog regenerate --check
+    ./scripts/ojd check profiles
+    ./scripts/ojd check schemas
+    ./scripts/ojd check scripts
+    ./scripts/ojd check swift-structure
+    ./scripts/ojd lint
+    git diff --check
+
+# Run the complete local validation suite
+check: check-fast
+    ./scripts/ojd check driverkit
+    ./scripts/ojd test parsers-macos14
+    swift test --no-parallel
+
 # Check canonical controller records
 check-profiles:
     ./scripts/ojd check profiles

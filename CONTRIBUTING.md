@@ -9,6 +9,20 @@ swift build
 swift test
 ```
 
+Install [Just](https://just.systems/) and [Lefthook](https://lefthook.dev/),
+then enable the repository's snapshot-aware checks:
+
+```bash
+python3 -m venv .build/schema-validator
+.build/schema-validator/bin/python -m pip install -r scripts/quality/requirements.txt
+lefthook validate
+lefthook install
+```
+
+The pre-commit hook runs `just check-fast` against the exact staged snapshot.
+The pre-push hook runs `just check` in an isolated worktree for each commit tip
+being pushed. Run either recipe directly to perform the same checks manually.
+
 Signing, DriverKit, and packaging: `scripts/README.md`. Dev install:
 `./scripts/ojd build install dev`. Do not edit `.build/driverkit/generated/`.
 SwifterKit comes from `Package.resolved`. `OJD_USE_LOCAL_SWIFTERKIT=1` is
