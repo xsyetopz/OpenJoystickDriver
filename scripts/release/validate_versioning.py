@@ -64,7 +64,25 @@ def main() -> int:
         resolve_dext_bundle_version("0.5.0-beta.3", "0.5.0b3", release=True)
         == "0.5.0b3"
     )
+    assert (
+        resolve_dext_bundle_version(
+            "0.5.0-beta.3-next.1", "0.5.0b3", release=True
+        )
+        == "0.5.0b3"
+    )
     expect_failure(resolve_dext_bundle_version, "0.5.0-beta.3", "0.5.0b2", release=True)
+    expect_failure(
+        resolve_dext_bundle_version,
+        "0.5.0-beta.3-next.1",
+        "0.5.0b2",
+        release=True,
+    )
+    expect_failure(
+        resolve_dext_bundle_version,
+        "0.5.0-beta.3-next.256",
+        "0.5.0b3",
+        release=True,
+    )
     for value in ("500003", "0.5.0b0", "0.5.0b256", "0.5.0beta3", "1.100.0"):
         expect_failure(validate_dext_bundle_version, value)
     assert (

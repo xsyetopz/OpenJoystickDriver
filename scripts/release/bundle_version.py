@@ -131,7 +131,17 @@ def validate_dext_bundle_version(version: str) -> str:
 def resolve_dext_bundle_version(
     short_version: str, override: str | None = None, *, release: bool = False
 ) -> str:
-    expected = dext_bundle_version_from_semver(short_version)
+    semantic_version = short_version
+    base_version, separator, sequence = short_version.rpartition("-next.")
+    if separator:
+        if (
+            SEMANTIC_VERSION.fullmatch(base_version) is None
+            or not sequence.isdecimal()
+            or not 1 <= int(sequence) <= 255
+        ):
+            die("Tester short version has invalid release base or sequence")
+        semantic_version = base_version
+    expected = dext_bundle_version_from_semver(semantic_version)
     if override is None:
         return expected
     explicit = validate_dext_bundle_version(override)
