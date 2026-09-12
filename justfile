@@ -7,6 +7,18 @@
 default:
     @just --list
 
+# Install the repository command runner and Git hooks
+setup:
+    ./scripts/ojd setup
+
+# Install repository Git hooks
+hooks-install:
+    ./scripts/ojd hooks install
+
+# Validate repository Git hook configuration
+hooks-validate:
+    ./scripts/ojd hooks validate
+
 # =========================================================================
 # Build
 # =========================================================================
@@ -41,7 +53,7 @@ install-fast-dev:
 
 # Generate a fresh SwifterKit DriverKit project
 driverkit-generate *args:
-    ./scripts/ojd driverkit generate {{args}}
+    ./scripts/ojd driverkit generate {{ args }}
 
 # Verify generated DriverKit reproducibility and unsigned build
 driverkit-check:
@@ -51,22 +63,13 @@ driverkit-check:
 # Lint & Format
 # =========================================================================
 
-# Run SwiftLint (requires swiftlint)
+# Run SwiftLint
 lint:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    command -v swiftlint >/dev/null 2>&1 || { echo "ERROR: swiftlint not found (brew install swiftlint)" >&2; exit 2; }
-    framework_path="$(xcrun --show-sdk-path 2>/dev/null)/../../usr/lib"
-    [ -d "$framework_path/sourcekitdInProc.framework" ] || framework_path=""
-    if [ -n "$framework_path" ]; then
-      DYLD_FRAMEWORK_PATH="$framework_path" swiftlint lint --no-cache --strict Sources Tests Package.swift
-    else
-      swiftlint lint --no-cache --strict Sources Tests Package.swift
-    fi
+    ./scripts/ojd lint
 
 # Format Swift sources in-place
 format:
-    swift-format format --recursive --in-place Sources Tests
+    ./scripts/ojd format
 
 # =========================================================================
 # Catalog
@@ -74,11 +77,11 @@ format:
 
 # Verify (--check) or rebuild (--write) the runtime catalog from pinned sources
 catalog-regenerate *args:
-    ./scripts/ojd catalog regenerate {{args}}
+    ./scripts/ojd catalog regenerate {{ args }}
 
 # Generate review-only records from a pinned Linux xpad.c
 catalog-xpad *args:
-    python3 scripts/catalog/generate-xpad-records.py {{args}}
+    ./scripts/ojd catalog xpad {{ args }}
 
 # =========================================================================
 # Checks
@@ -86,19 +89,11 @@ catalog-xpad *args:
 
 # Run quick checks against the current snapshot
 check-fast:
-    ./scripts/ojd catalog regenerate --check
-    ./scripts/ojd check profiles
-    ./scripts/ojd check schemas
-    ./scripts/ojd check scripts
-    ./scripts/ojd check swift-structure
-    ./scripts/ojd lint
-    git diff --check
+    ./scripts/ojd check fast
 
 # Run the complete local validation suite
-check: check-fast
-    ./scripts/ojd check driverkit
-    ./scripts/ojd test parsers-macos14
-    swift test --no-parallel
+check:
+    ./scripts/ojd check all
 
 # Check canonical controller records
 check-profiles:
@@ -106,11 +101,15 @@ check-profiles:
 
 # Check script ownership, paths, modes, and syntax
 check-scripts:
-    python3 scripts/quality/validate-scripts.py
+    ./scripts/ojd check scripts
+
+# Test prerequisite detection and recovery
+check-capabilities:
+    ./scripts/ojd check capabilities
 
 # Check Swift file sizes and ownership layout
 check-swift-structure:
-    python3 scripts/quality/validate-swift-structure.py
+    ./scripts/ojd check swift-structure
 
 # Verify generated DriverKit reproducibility and unsigned build
 check-driverkit:
@@ -126,7 +125,7 @@ test-parsers-macos14:
 
 # Validate the single-file env contract without printing values
 env-audit:
-    python3 scripts/quality/env-audit.py
+    ./scripts/ojd env audit
 
 # =========================================================================
 # Docs
@@ -134,7 +133,7 @@ env-audit:
 
 # Refresh archived GitHub issue and pull-request evidence
 docs-export-external-issues:
-    python3 scripts/docs/issues/export.py
+    ./scripts/ojd docs export-external-issues
 
 # =========================================================================
 # Signing
@@ -142,7 +141,7 @@ docs-export-external-issues:
 
 # Copy profiles from ~/Documents/Profiles into MobileDevice
 signing-install-profiles *args:
-    ./scripts/ojd signing install-profiles {{args}}
+    ./scripts/ojd signing install-profiles {{ args }}
 
 # Generate .env.dev + .env.release from Keychain + profiles
 signing-configure:
@@ -154,19 +153,19 @@ signing-doctor:
 
 # Audit profiles without leaking identifiers
 signing-audit *paths:
-    ./scripts/ojd signing audit {{paths}}
+    ./scripts/ojd signing audit {{ paths }}
 
 # Show safe-ish .cer info (Team ID = Subject OU)
 signing-cert-info *args:
-    ./scripts/ojd signing cert-info {{args}}
+    ./scripts/ojd signing cert-info {{ args }}
 
 # Show safe-ish profile embedded cert info
 signing-profile-info *args:
-    ./scripts/ojd signing profile-info {{args}}
+    ./scripts/ojd signing profile-info {{ args }}
 
 # Import embedded cert from a profile into Keychain
 signing-import-embedded profile:
-    ./scripts/ojd signing import-embedded {{profile}}
+    ./scripts/ojd signing import-embedded {{ profile }}
 
 # Import GitHub Actions release secrets (CI only)
 signing-ci-release-setup:
@@ -174,7 +173,7 @@ signing-ci-release-setup:
 
 # Write/import GitHub Actions release secrets
 signing-export-github-secrets *args:
-    ./scripts/ojd signing export-github-secrets {{args}}
+    ./scripts/ojd signing export-github-secrets {{ args }}
 
 # =========================================================================
 # Diagnostics
@@ -186,66 +185,35 @@ diagnose-dext:
 
 # Validate/probe a raw-USB record without app signing
 diagnose-record *args:
-    ./scripts/ojd diagnose record {{args}}
+    ./scripts/ojd diagnose record {{ args }}
 
 # Run SDL3 probe against the virtual device
 diagnose-sdl3 *args:
-    ./scripts/ojd diagnose sdl3 {{args}}
+    ./scripts/ojd diagnose sdl3 {{ args }}
 
 # Run SDL3 through GameController/MFI and test rumble
 diagnose-sdl3-gamecontroller *args:
-    ./scripts/ojd diagnose sdl3-gamecontroller {{args}}
+    ./scripts/ojd diagnose sdl3-gamecontroller {{ args }}
 
 # Run SDL3 through Xbox 360 HIDAPI and test rumble
 diagnose-sdl3-hidapi-x360 *args:
-    ./scripts/ojd diagnose sdl3-hidapi-x360 {{args}}
+    ./scripts/ojd diagnose sdl3-hidapi-x360 {{ args }}
 
 # Run GameController.framework probe
 diagnose-gamecontroller *args:
-    ./scripts/ojd diagnose gamecontroller {{args}}
+    ./scripts/ojd diagnose gamecontroller {{ args }}
 
 # Check a macOS 10.15 test app bundle
 diagnose-catalina *args:
-    ./scripts/ojd diagnose catalina {{args}}
+    ./scripts/ojd diagnose catalina {{ args }}
 
 # Run current backend acceptance loop
 diagnose-backends *args:
-    ./scripts/ojd diagnose backends {{args}}
+    ./scripts/ojd diagnose backends {{ args }}
 
 # Interactively identify each physical rumble actuator, stopping between steps
 diagnose-rumble-motors vid pid intensity="160" duration_ms="500":
-    #!/usr/bin/env bash
-    set -euo pipefail
-    app="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
-    if [[ ! -x "$app" ]]; then
-      app=".build/debug/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
-    fi
-    if [[ ! -x "$app" ]]; then
-      echo "OpenJoystickDriver is not installed or built." >&2
-      exit 1
-    fi
-
-    stop_rumble() {
-      "$app" --headless controller output rumble "{{vid}}" "{{pid}}" \
-        --left 0 --right 0 --lt 0 --rt 0 --duration-ms 0 >/dev/null 2>&1 || true
-    }
-    trap stop_rumble EXIT INT TERM
-
-    channels=(left-main right-main left-trigger right-trigger)
-    options=(--left --right --lt --rt)
-    echo "Testing {{vid}}:{{pid}} at intensity {{intensity}} for {{duration_ms}} ms."
-    echo "Hold the controller normally and note the exact location for each numbered step."
-    for index in "${!channels[@]}"; do
-      step=$((index + 1))
-      read -r -p "Press Return for $step/4 ${channels[$index]} (or Ctrl-C to stop)... "
-      stop_rumble
-      "$app" --headless controller output rumble "{{vid}}" "{{pid}}" \
-        --left 0 --right 0 --lt 0 --rt 0 "${options[$index]}" "{{intensity}}" \
-        --duration-ms "{{duration_ms}}"
-      stop_rumble
-      echo "Record $step: ${channels[$index]} -> left trigger / right trigger / left grip / right grip / none / other"
-    done
-    echo "Sequence complete; all rumble channels were explicitly stopped."
+    ./scripts/ojd diagnose rumble-motors {{ vid }} {{ pid }} {{ intensity }} {{ duration_ms }}
 
 # =========================================================================
 # Repair
@@ -257,14 +225,7 @@ repair-stale-dext:
 
 # Clean SwiftPM build products after toolchain/target changes
 repair-swiftpm-module-cache:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    if [[ ! -d ".build" ]]; then
-        echo "No .build directory; nothing to clean."
-        exit 0
-    fi
-    swift package clean
-    echo "Cleaned SwiftPM build products."
+    ./scripts/ojd repair swiftpm-module-cache
 
 # =========================================================================
 # Launch
@@ -272,7 +233,7 @@ repair-swiftpm-module-cache:
 
 # Launch an SDL app through GameController/MFI rumble route
 launch-sdl-gamecontroller *args:
-    ./scripts/ojd launch sdl-gamecontroller {{args}}
+    ./scripts/ojd launch sdl-gamecontroller {{ args }}
 
 # =========================================================================
 # Release
@@ -280,15 +241,15 @@ launch-sdl-gamecontroller *args:
 
 # Update release version references (changelog heading must exist)
 release-bump-version version:
-    ./scripts/ojd release bump-version {{version}}
+    ./scripts/ojd release bump-version {{ version }}
 
 # Build, notarize, staple, and package a release DMG
 release-package *args:
-    ./scripts/ojd release package {{args}}
+    ./scripts/ojd release package {{ args }}
 
 # Package and install the release app locally
 release-local-install *args:
-    ./scripts/ojd release install-local {{args}}
+    ./scripts/ojd release install-local {{ args }}
 
 # Submit the current release build for notarization
 release-notarize-submit:
@@ -296,7 +257,7 @@ release-notarize-submit:
 
 # Check notarization status (optionally pass a submission ID)
 release-notarize-status *args:
-    ./scripts/ojd release notarize status {{args}}
+    ./scripts/ojd release notarize status {{ args }}
 
 # Show notarization history
 release-notarize-history:
@@ -304,8 +265,8 @@ release-notarize-history:
 
 # Show notarization log for a submission
 release-notarize-log id:
-    ./scripts/ojd release notarize log {{id}}
+    ./scripts/ojd release notarize log {{ id }}
 
 # Store notarization credentials in Keychain
 release-notarize-store-credentials *args:
-    ./scripts/ojd release notarize store-credentials {{args}}
+    ./scripts/ojd release notarize store-credentials {{ args }}

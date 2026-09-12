@@ -23,14 +23,8 @@ snapshot="$({
   git commit-tree "$tree" "${parent[@]}")"
 
 git worktree add --detach --quiet "$temporary_worktree" "$snapshot"
-mkdir -p "$temporary_worktree/.build"
-if [[ -d "$repository_root/.build/schema-validator" ]]; then
-  ln -s "$repository_root/.build/schema-validator" \
-    "$temporary_worktree/.build/schema-validator"
-fi
 (
   unset GIT_DIR GIT_INDEX_FILE GIT_PREFIX GIT_WORK_TREE
   cd "$temporary_worktree"
-  source scripts/platform/environment.sh
-  just check-fast
+  ./scripts/ojd check fast
 )

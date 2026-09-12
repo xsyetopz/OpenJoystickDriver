@@ -26,16 +26,10 @@ while read -r _local_ref local_oid _remote_ref _remote_oid; do
 
   temporary_worktree="$(mktemp -d "${TMPDIR:-/tmp}/ojd-pre-push.XXXXXX")"
   git worktree add --detach --quiet "$temporary_worktree" "$commit"
-  mkdir -p "$temporary_worktree/.build"
-  if [[ -d "$repository_root/.build/schema-validator" ]]; then
-    ln -s "$repository_root/.build/schema-validator" \
-      "$temporary_worktree/.build/schema-validator"
-  fi
   (
     unset GIT_DIR GIT_INDEX_FILE GIT_PREFIX GIT_WORK_TREE
     cd "$temporary_worktree"
-    source scripts/platform/environment.sh
-    just check
+    ./scripts/ojd check all
   )
   git -C "$repository_root" worktree remove --force "$temporary_worktree"
   temporary_worktree=""

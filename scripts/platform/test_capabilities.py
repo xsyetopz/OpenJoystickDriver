@@ -213,5 +213,17 @@ class CapabilityResolverTests(unittest.TestCase):
         self.assertEqual(outcome.kind, OutcomeKind.EXTERNALLY_BLOCKED)
         self.assertEqual(commands, [["open", "macappstore://itunes.apple.com/app/id497799835"]])
 
+    def test_every_just_recipe_delegates_to_dispatcher(self) -> None:
+        root = Path(__file__).resolve().parents[2]
+        commands = [
+            line.strip()
+            for line in (root / "justfile").read_text(encoding="utf-8").splitlines()
+            if line.startswith("    ") and not line.lstrip().startswith("#")
+        ]
+        self.assertEqual(commands[0], "@just --list")
+        self.assertTrue(
+            all(command.startswith("./scripts/ojd ") for command in commands[1:])
+        )
+
 if __name__ == "__main__":
     unittest.main()
