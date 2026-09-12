@@ -2,6 +2,9 @@ import Foundation
 
 /// Stable application-service method names for controller remapping operations.
 public enum ApplicationServiceRemappingRPCMethod: String, CaseIterable, Sendable {
+  case motionCalibration = "remappingMotionCalibration"
+  case pairJoyCons = "pairRemappingJoyCons"
+  case unpairJoyCons = "unpairRemappingJoyCons"
   case getSnapshot = "getRemappingSnapshot"
   case getProfile = "getRemappingProfile"
   case createProfile = "createRemappingProfile"
@@ -67,6 +70,66 @@ public struct ApplicationServiceRemappingModelArguments: Codable, Sendable {
   }
 }
 
+public struct ApplicationServiceJoyConPairArguments: Codable, Sendable {
+  public let leftRuntimeIdentifier: String
+  public let rightRuntimeIdentifier: String
+  public let profileID: UUID
+
+  public init(leftRuntimeIdentifier: String, rightRuntimeIdentifier: String, profileID: UUID) {
+    self.leftRuntimeIdentifier = leftRuntimeIdentifier
+    self.rightRuntimeIdentifier = rightRuntimeIdentifier
+    self.profileID = profileID
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case leftRuntimeIdentifier = "left_runtime_identifier"
+    case rightRuntimeIdentifier = "right_runtime_identifier"
+    case profileID = "profile_id"
+  }
+}
+
+public struct ApplicationServiceJoyConUnpairArguments: Codable, Sendable {
+  public let sessionID: UUID
+
+  public init(sessionID: UUID) { self.sessionID = sessionID }
+
+  private enum CodingKeys: String, CodingKey { case sessionID = "session_id" }
+}
+
+public struct ApplicationServiceJoyConPairPayload: Codable, Equatable, Sendable {
+  public let sessionID: UUID
+  public let leftRuntimeIdentifier: String
+  public let rightRuntimeIdentifier: String
+  public let profileID: UUID
+  public let profileName: String
+  public let gyroSelection: RemappingJoyConGyroSelection
+
+  public init(
+    sessionID: UUID,
+    leftRuntimeIdentifier: String,
+    rightRuntimeIdentifier: String,
+    profileID: UUID,
+    profileName: String,
+    gyroSelection: RemappingJoyConGyroSelection
+  ) {
+    self.sessionID = sessionID
+    self.leftRuntimeIdentifier = leftRuntimeIdentifier
+    self.rightRuntimeIdentifier = rightRuntimeIdentifier
+    self.profileID = profileID
+    self.profileName = profileName
+    self.gyroSelection = gyroSelection
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case sessionID = "session_id"
+    case leftRuntimeIdentifier = "left_runtime_identifier"
+    case rightRuntimeIdentifier = "right_runtime_identifier"
+    case profileID = "profile_id"
+    case profileName = "profile_name"
+    case gyroSelection = "gyro_selection"
+  }
+}
+
 public struct ApplicationServiceRemappingActiveProfilePayload: Codable, Equatable, Sendable {
   public let vendorID: UInt16
   public let productID: UInt16
@@ -109,6 +172,7 @@ public enum ApplicationServiceRemappingRouteEligibility: String, Codable, Sendab
   case outputSuppressed = "output_suppressed"
   case postEventAccessNotAuthorized = "post_event_access_not_authorized"
   case targetApplicationNotFrontmost = "target_application_not_frontmost"
+  case physicalInputNotExclusive = "physical_input_not_exclusive"
   case unavailable
 }
 
@@ -180,17 +244,20 @@ public struct ApplicationServiceRemappingSnapshotPayload: Codable, Equatable, Se
   public let profiles: [RemappingProfile]
   public let activeProfiles: [ApplicationServiceRemappingActiveProfilePayload]
   public let routes: [ApplicationServiceRemappingRoutePayload]
+  public let joyConPairs: [ApplicationServiceJoyConPairPayload]
   public let postEventAccess: RemappingPostEventAccessState
 
   public init(
     profiles: [RemappingProfile],
     activeProfiles: [ApplicationServiceRemappingActiveProfilePayload],
     routes: [ApplicationServiceRemappingRoutePayload],
+    joyConPairs: [ApplicationServiceJoyConPairPayload] = [],
     postEventAccess: RemappingPostEventAccessState
   ) {
     self.profiles = profiles
     self.activeProfiles = activeProfiles
     self.routes = routes
+    self.joyConPairs = joyConPairs
     self.postEventAccess = postEventAccess
   }
 
@@ -198,7 +265,27 @@ public struct ApplicationServiceRemappingSnapshotPayload: Codable, Equatable, Se
     case profiles
     case activeProfiles = "active_profiles"
     case routes
+    case joyConPairs = "joy_con_pairs"
     case postEventAccess = "post_event_access"
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    profiles = try container.decode([RemappingProfile].self, forKey: .profiles)
+    activeProfiles = try container.decode(
+      [ApplicationServiceRemappingActiveProfilePayload].self,
+      forKey: .activeProfiles
+    )
+    routes = try container.decode([ApplicationServiceRemappingRoutePayload].self, forKey: .routes)
+    joyConPairs =
+      try container.decodeIfPresent(
+        [ApplicationServiceJoyConPairPayload].self,
+        forKey: .joyConPairs
+      ) ?? []
+    postEventAccess = try container.decode(
+      RemappingPostEventAccessState.self,
+      forKey: .postEventAccess
+    )
   }
 }
 
@@ -207,6 +294,9 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
   Sendable
 {
   public enum Code: String, Codable, Sendable {
+    case controllerUnavailable = "controller_unavailable"
+    case joyConPairUnavailable = "joy_con_pair_unavailable"
+    case motionUnavailable = "motion_unavailable"
     case argumentTooLarge = "argument_too_large"
     case corruptLibrary = "library_corrupt"
     case duplicateName = "duplicate_name"

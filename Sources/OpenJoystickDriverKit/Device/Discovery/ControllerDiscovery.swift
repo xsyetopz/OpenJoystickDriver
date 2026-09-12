@@ -69,9 +69,11 @@ public actor DeviceManager {
     let connection: String
     let serialNumber: String?
     let discoverySource: DiscoverySource
+    var hidInputOwnership: HIDInputOwnership = .unknown
 
     var ownershipObservation: ControllerOwnershipObservation {
-      discoverySource.ownershipObservation
+      if case .hid = discoverySource, hidInputOwnership == .exclusive { return .exclusiveHID }
+      return discoverySource.ownershipObservation
     }
   }
 
@@ -89,6 +91,7 @@ public actor DeviceManager {
   var lastPhysicalHIDOutputNanoseconds: [DeviceIdentifier: UInt64] = [:]
   var rumbleStopTasks: [DeviceIdentifier: Task<Void, Never>] = [:]
   var rumbleStopTokens = RumbleStopTokenRegistry()
+  var physicalOutputOwnership = PhysicalOutputOwnership()
 
   /// Creates a manager that sends all output to `dispatcher`.
   ///
@@ -193,35 +196,28 @@ public actor DeviceManager {
     guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier),
       let pipeline = pipelines[key]
     else { return false }
-    let featureHaptics = await pipeline.hidFeatureHapticReports(
-      left: left,
-      right: right,
-      durationMs: durationMs
-    )
-    if !featureHaptics.isEmpty, let locationID = key.locationID {
-      for report in featureHaptics
-      where !(await hidManager.setFeatureReport(locationID: locationID, report: report)) {
-        return false
-      }
-      return true
-    }
-
-    let didStartUSB = await pipeline.sendRumble(left: left, right: right, lt: lt, rt: rt)
-    if !didStartUSB {
-      do { try await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline) } catch {
-        return false
-      }
-    }
-    let didStartHID =
-      didStartUSB
-      ? false
-      : await sendHIDRumbleReport(
-        await pipeline.hidRumbleReport(left: left, right: right, lt: lt, rt: rt),
-        locationID: key.locationID
+    let values: [(PhysicalRumbleMotor, UInt8)] = [
+      (.leftMain, left), (.rightMain, right), (.leftTrigger, lt), (.rightTrigger, rt),
+      (.leftHaptic, left), (.rightHaptic, right),
+    ]
+    let supportedMotors = Set(pipeline.physicalOutputCapabilities().rumbleMotors)
+    guard values.contains(where: { supportedMotors.contains($0.0) }) else { return false }
+    let previousOwnership = physicalOutputOwnership
+    for (motor, value) in values where supportedMotors.contains(motor) {
+      _ = physicalOutputOwnership.setManual(
+        .rumble(motor: motor, intensity: Double(value) / 255),
+        for: key
       )
-    let didStart = didStartUSB || didStartHID
-    guard didStart else { return false }
+    }
+    guard await sendEffectiveRumble(for: key, pipeline: pipeline, durationMs: durationMs) else {
+      physicalOutputOwnership = previousOwnership
+      return false
+    }
     let clampedDurationMs = max(0, min(durationMs, maxRumbleDurationMs))
+    if clampedDurationMs == 0 {
+      _ = physicalOutputOwnership.releaseManualRumble(for: key)
+      return await sendEffectiveRumble(for: key, pipeline: pipeline, durationMs: 0)
+    }
     scheduleRumbleStop(
       for: key,
       pipeline: pipeline,
@@ -262,16 +258,8 @@ public actor DeviceManager {
     guard rumbleStopTokens.isCurrent(generation, for: identifier),
       pipelines[identifier] === pipeline
     else { return }
-    let didStopUSB = await pipeline.sendRumble(left: 0, right: 0, lt: 0, rt: 0)
-    if !didStopUSB {
-      do { try await enforcePhysicalHIDOutputInterval(for: identifier, pipeline: pipeline) } catch {
-        return
-      }
-      _ = await sendHIDRumbleReport(
-        await pipeline.hidRumbleReport(left: 0, right: 0, lt: 0, rt: 0),
-        locationID: identifier.locationID
-      )
-    }
+    _ = physicalOutputOwnership.releaseManualRumble(for: identifier)
+    _ = await sendEffectiveRumble(for: identifier, pipeline: pipeline, durationMs: 0)
     guard rumbleStopTokens.isCurrent(generation, for: identifier) else { return }
     rumbleStopTasks.removeValue(forKey: identifier)
     rumbleStopTokens.remove(identifier)
@@ -286,13 +274,14 @@ public actor DeviceManager {
     blue: UInt8
   ) async -> Bool {
     guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier),
-      let pipeline = pipelines[key], let locationID = key.locationID,
-      let report = await pipeline.hidColorReport(red: red, green: green, blue: blue)
+      let pipeline = pipelines[key],
+      pipeline.physicalOutputCapabilities().lightingFeatures.contains(.programmableColor)
     else { return false }
-    do { try await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline) } catch {
-      return false
-    }
-    return await hidManager.setOutputReport(locationID: locationID, report: report)
+    let previousOwnership = physicalOutputOwnership
+    _ = physicalOutputOwnership.setManual(.color(red: red, green: green, blue: blue), for: key)
+    let delivered = await applyPhysicalChannel(.color, for: key, pipeline: pipeline)
+    if !delivered { physicalOutputOwnership = previousOwnership }
+    return delivered
   }
 
   /// Sets scalar physical LED brightness when the active protocol supports it.
@@ -302,10 +291,17 @@ public actor DeviceManager {
     brightness: UInt8
   ) async -> Bool {
     guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier),
-      let pipeline = pipelines[key], let locationID = key.locationID,
-      let report = await pipeline.hidBrightnessReport(brightness)
+      let pipeline = pipelines[key],
+      pipeline.physicalOutputCapabilities().lightingFeatures.contains(.programmableBrightness)
     else { return false }
-    return await hidManager.setFeatureReport(locationID: locationID, report: report)
+    let previousOwnership = physicalOutputOwnership
+    _ = physicalOutputOwnership.setManual(
+      .brightness(Double(brightness) / 255),
+      for: key
+    )
+    let delivered = await applyPhysicalChannel(.brightness, for: key, pipeline: pipeline)
+    if !delivered { physicalOutputOwnership = previousOwnership }
+    return delivered
   }
 
   /// Sets the physical numbered player indicator when the active protocol supports it.
@@ -315,17 +311,201 @@ public actor DeviceManager {
     indicator: PhysicalPlayerIndicator
   ) async -> Bool {
     guard let key = connectedIdentifier(matching: identifier, runtimeIdentifier: runtimeIdentifier),
-      let pipeline = pipelines[key]
+      let pipeline = pipelines[key],
+      pipeline.physicalOutputCapabilities().lightingFeatures.contains(.playerIndicator)
     else { return false }
-    let didSendUSB = await pipeline.sendPlayerIndicator(indicator)
-    if didSendUSB { return true }
-    guard let locationID = key.locationID,
-      let report = await pipeline.hidPlayerIndicatorReport(indicator)
-    else { return false }
-    do { try await enforcePhysicalHIDOutputInterval(for: key, pipeline: pipeline) } catch {
+    let previousOwnership = physicalOutputOwnership
+    _ = physicalOutputOwnership.setManual(.playerIndicator(indicator), for: key)
+    let delivered = await applyPhysicalChannel(.playerIndicator, for: key, pipeline: pipeline)
+    if !delivered { physicalOutputOwnership = previousOwnership }
+    return delivered
+  }
+
+  /// Applies or releases one remapping claim for an exact connected controller.
+  public func setMappingPhysicalOutput(
+    _ output: RemappingPhysicalOutput,
+    active: Bool,
+    owner: UUID,
+    for identifier: DeviceIdentifier
+  ) async -> Bool {
+    do { try output.validate() } catch { return false }
+    guard let pipeline = pipelines[identifier] else {
+      if !active {
+        _ = physicalOutputOwnership.setMapping(
+          output, active: false, owner: owner, for: identifier
+        )
+        return true
+      }
       return false
     }
-    return await hidManager.setOutputReport(locationID: locationID, report: report)
+    guard supports(output, capabilities: pipeline.physicalOutputCapabilities()) else {
+      return false
+    }
+    let previousOwnership = physicalOutputOwnership
+    let channel = physicalOutputOwnership.setMapping(
+      output, active: active, owner: owner, for: identifier
+    )
+    let delivered = await applyPhysicalChannel(channel, for: identifier, pipeline: pipeline)
+    if !delivered { physicalOutputOwnership = previousOwnership }
+    return delivered
+  }
+
+  /// Releases every remapping claim for an exact controller without targeting a replacement.
+  public func releaseMappingPhysicalOutputs(for identifier: DeviceIdentifier) async -> Bool {
+    let channels = physicalOutputOwnership.releaseMappings(for: identifier)
+    guard let pipeline = pipelines[identifier] else { return true }
+    var delivered = true
+    for channel in channels.sorted(by: { $0.sortKey < $1.sortKey }) {
+      guard await applyPhysicalChannel(channel, for: identifier, pipeline: pipeline) else {
+        delivered = false
+        continue
+      }
+    }
+    return delivered
+  }
+
+  private func supports(
+    _ output: RemappingPhysicalOutput,
+    capabilities: PhysicalControllerOutputCapabilities
+  ) -> Bool {
+    switch output {
+    case .rumble(let motor, _): capabilities.rumbleMotors.contains(motor)
+    case .playerIndicator: capabilities.lightingFeatures.contains(.playerIndicator)
+    case .color: capabilities.lightingFeatures.contains(.programmableColor)
+    case .brightness: capabilities.lightingFeatures.contains(.programmableBrightness)
+    case .adaptiveTrigger(let trigger, _): capabilities.adaptiveTriggers.contains(trigger)
+    }
+  }
+
+  private func applyPhysicalChannel(
+    _ channel: PhysicalOutputChannel,
+    for identifier: DeviceIdentifier,
+    pipeline: DevicePipeline
+  ) async -> Bool {
+    switch channel {
+    case .rumble:
+      return await sendEffectiveRumble(for: identifier, pipeline: pipeline, durationMs: 0)
+    case .playerIndicator:
+      let indicator: PhysicalPlayerIndicator
+      if case .playerIndicator(let value) = physicalOutputOwnership.effectiveOutput(
+        for: channel, device: identifier
+      ) {
+        indicator = value
+      } else {
+        indicator = .off
+      }
+      let didSendUSB = await pipeline.sendPlayerIndicator(indicator)
+      if didSendUSB { return true }
+      guard let locationID = identifier.locationID,
+        let report = await pipeline.hidPlayerIndicatorReport(indicator)
+      else { return false }
+      do { try await enforcePhysicalHIDOutputInterval(for: identifier, pipeline: pipeline) } catch {
+        return false
+      }
+      return await hidManager.setOutputReport(locationID: locationID, report: report)
+    case .color:
+      let value = physicalOutputOwnership.effectiveOutput(for: channel, device: identifier)
+      let components: (UInt8, UInt8, UInt8)
+      if case .color(let red, let green, let blue) = value {
+        components = (red, green, blue)
+      } else {
+        components = (0, 0, 0)
+      }
+      guard let locationID = identifier.locationID,
+        let report = await pipeline.hidColorReport(
+          red: components.0, green: components.1, blue: components.2
+        )
+      else { return false }
+      do { try await enforcePhysicalHIDOutputInterval(for: identifier, pipeline: pipeline) } catch {
+        return false
+      }
+      return await hidManager.setOutputReport(locationID: locationID, report: report)
+    case .brightness:
+      let value = physicalOutputOwnership.effectiveOutput(for: channel, device: identifier)
+      let brightness: UInt8
+      if case .brightness(let intensity) = value {
+        brightness = UInt8((intensity * 255).rounded())
+      } else {
+        brightness = 0
+      }
+      guard let locationID = identifier.locationID,
+        let report = await pipeline.hidBrightnessReport(brightness)
+      else { return false }
+      return await hidManager.setFeatureReport(locationID: locationID, report: report)
+    case .adaptiveTrigger(let trigger):
+      let value = physicalOutputOwnership.effectiveOutput(for: channel, device: identifier)
+      let effect: PhysicalAdaptiveTriggerEffect
+      if case .adaptiveTrigger(_, let currentEffect) = value {
+        effect = currentEffect
+      } else {
+        effect = .off
+      }
+      guard let locationID = identifier.locationID,
+        let report = await pipeline.hidAdaptiveTriggerReport(trigger, effect: effect)
+      else { return false }
+      do { try await enforcePhysicalHIDOutputInterval(for: identifier, pipeline: pipeline) } catch {
+        return false
+      }
+      return await hidManager.setOutputReport(locationID: locationID, report: report)
+    }
+  }
+
+  private func sendEffectiveRumble(
+    for identifier: DeviceIdentifier,
+    pipeline: DevicePipeline,
+    durationMs: Int
+  ) async -> Bool {
+    func byte(for motor: PhysicalRumbleMotor) -> UInt8 {
+      guard case .rumble(_, let intensity) = physicalOutputOwnership.effectiveOutput(
+        for: .rumble(motor), device: identifier
+      ) else { return 0 }
+      return UInt8((intensity * 255).rounded())
+    }
+    let left = byte(for: .leftMain)
+    let right = byte(for: .rightMain)
+    let lt = byte(for: .leftTrigger)
+    let rt = byte(for: .rightTrigger)
+    let featureHaptics = await pipeline.hidFeatureHapticReports(
+      left: byte(for: .leftHaptic),
+      right: byte(for: .rightHaptic),
+      durationMs: durationMs
+    )
+    if pipeline.supportsHIDFeatureHaptics() {
+      guard let locationID = identifier.locationID else { return false }
+      for report in featureHaptics
+      where !(await hidManager.setFeatureReport(locationID: locationID, report: report)) {
+        return false
+      }
+      return true
+    }
+    let didSendUSB = await pipeline.sendRumble(left: left, right: right, lt: lt, rt: rt)
+    if didSendUSB { return true }
+    do { try await enforcePhysicalHIDOutputInterval(for: identifier, pipeline: pipeline) } catch {
+      return false
+    }
+    return await sendHIDRumbleReport(
+      await pipeline.hidRumbleReport(left: left, right: right, lt: lt, rt: rt),
+      locationID: identifier.locationID
+    )
+  }
+
+  func neutralizePhysicalOutputs(for identifier: DeviceIdentifier, pipeline: DevicePipeline) async {
+    rumbleStopTasks.removeValue(forKey: identifier)?.cancel()
+    rumbleStopTokens.remove(identifier)
+    physicalOutputOwnership.removeDevice(identifier)
+    let capabilities = pipeline.physicalOutputCapabilities()
+    var channels = Set(capabilities.rumbleMotors.map(PhysicalOutputChannel.rumble))
+    if capabilities.lightingFeatures.contains(.playerIndicator) {
+      channels.insert(.playerIndicator)
+    }
+    if capabilities.lightingFeatures.contains(.programmableColor) { channels.insert(.color) }
+    if capabilities.lightingFeatures.contains(.programmableBrightness) {
+      channels.insert(.brightness)
+    }
+    channels.formUnion(capabilities.adaptiveTriggers.map(PhysicalOutputChannel.adaptiveTrigger))
+    for channel in channels.sorted(by: { $0.sortKey < $1.sortKey }) {
+      _ = await applyPhysicalChannel(channel, for: identifier, pipeline: pipeline)
+    }
   }
 
   private func connectedIdentifier(matching model: DeviceIdentifier, runtimeIdentifier: String?)
@@ -398,6 +578,7 @@ public actor DeviceManager {
         connection: info?.connection ?? "USB",
         discoverySource: info?.discoverySource.applicationServiceValue ?? .unknown,
         physicalOwnership: ownership,
+        hidInputOwnership: info?.hidInputOwnership ?? .unknown,
         duplicateExposureRisk: ControllerExposureDecision.decide(
           ownership: ownership,
           intent: .outputDisabled
@@ -413,6 +594,7 @@ public actor DeviceManager {
         ),
         preferredBackends: profile.preferredBackends.map(\.rawValue),
         physicalOutputCapabilities: pipelines[id]?.physicalOutputCapabilities() ?? .none,
+        physicalInputCapabilities: pipelines[id]?.physicalInputCapabilities() ?? .none,
         runtimeIdentifier: id.runtimeIdentifier
       )
     }
@@ -433,12 +615,14 @@ public actor DeviceManager {
     permissionWatchTask?.cancel()
     permissionWatchTask = nil
     for (identifier, pipeline) in pipelines {
+      await neutralizePhysicalOutputs(for: identifier, pipeline: pipeline)
       if let locationID = identifier.locationID {
         await sendHIDShutdownFeatureReportsIfNeeded(pipeline: pipeline, locationID: locationID)
       }
       await pipeline.stop()
     }
     pipelines = [:]
+    physicalOutputOwnership.removeAll()
     lastPhysicalHIDOutputNanoseconds = [:]
     await permissionManager.stopPolling()
     print("[DeviceManager] Stopped")

@@ -1,65 +1,14 @@
 import Foundation
 import OpenJoystickDriverKit
 
-enum ProfileIdentifierInput {
-  static func parse(_ rawValue: String) -> UInt16? {
-    let value = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
-    if value.lowercased().hasPrefix("0x") { return UInt16(value.dropFirst(2), radix: 16) }
-    return UInt16(value, radix: 10)
-  }
-
-  static func formatted(_ value: UInt16) -> String { String(format: "0x%04X", value) }
-}
-
-enum ProfileScopeKind: String, CaseIterable, Identifiable {
-  case global
-  case application
-
-  var id: String { rawValue }
-
-  init(_ scope: RemappingApplicationScope) {
-    switch scope {
-    case .global: self = .global
-    case .application: self = .application
-    }
-  }
-}
-
-struct SourceOption: Hashable {
-  let source: RemappingSource
-  let title: String
-
-  static func options(including current: RemappingSource? = nil) -> [Self] {
-    var options = all
-    if let current, !options.contains(where: { $0.source == current }) {
-      options.append(Self(source: current, title: RuntimePresentation.sourceLabel(current)))
-    }
-    return options
-  }
-
-  static let all: [Self] = {
-    let buttons: [RemappingSource] = RemappingButton.allCases.compactMap { button in
-      // The Guide/Home control remains reserved for the operating system in the ordinary UI.
-      guard button != .guide else { return nil }
-      return .button(button)
-    }
-    let dpad: [RemappingSource] = RemappingDpadDirection.allCases.map { .dpad($0) }
-    let axes: [RemappingSource] = RemappingAxis.allCases.flatMap { axis in
-      [.axis(axis), .axisDirection(axis, .negative), .axisDirection(axis, .positive)]
-    }
-    return (buttons + dpad + axes).map {
-      .init(source: $0, title: RuntimePresentation.sourceLabel($0))
-    }
-  }()
-}
-
 struct DestinationOption: Hashable {
   let destination: RemappingDestination
   let title: String
 
-  static func options(for source: RemappingSource, including current: RemappingDestination? = nil)
-    -> [Self]
-  {
+  static func options(
+    for source: RemappingSource,
+    including current: RemappingDestination? = nil
+  ) -> [Self] {
     var options = all.filter { isCompatible($0.destination, with: source) }
     if let current, isCompatible(current, with: source),
       !options.contains(where: { $0.destination == current })
@@ -82,11 +31,11 @@ struct DestinationOption: Hashable {
     }
     let modifierGroups: [Set<RemappingKeyModifier>] =
       [[.command], [.control], [.option], [.shift]] + [
-        [.command, .control], [.command, .option], [.command, .shift]
+        [.command, .control], [.command, .option], [.command, .shift],
       ] + [[.control, .option], [.control, .shift], [.option, .shift]]
     let modifiedKeyboardKeys: [RemappingKeyboardKey] =
       [.arrowUp, .arrowDown, .arrowLeft, .arrowRight] + [
-        .f1, .f2, .f3, .f4, .f5, .f6, .f7, .f8, .f9, .f10
+        .f1, .f2, .f3, .f4, .f5, .f6, .f7, .f8, .f9, .f10,
       ] + [.f11, .f12, .f13, .f14, .f15, .f16, .f17, .f18, .f19, .f20]
     let modifiedKeyboard = modifiedKeyboardKeys.flatMap { key in
       modifierGroups.map { modifiers in
@@ -109,16 +58,27 @@ struct DestinationOption: Hashable {
     }.map { destination in
       Self(destination: destination, title: RuntimePresentation.destinationLabel(destination))
     }
-    return keyboard + mouse + pointer
+    let gamepadDestinations =
+      RemappingButton.allCases.filter(\.supportsVirtualOutput).map(
+        RemappingDestination.gamepadButton
+      ) + RemappingDpadDirection.allCases.map(RemappingDestination.gamepadDpad)
+      + RemappingAxis.allCases.map(RemappingDestination.gamepadAxis)
+    let gamepad = gamepadDestinations.map { destination in
+      Self(destination: destination, title: RuntimePresentation.destinationLabel(destination))
+    }
+    return keyboard + mouse + pointer + gamepad + physical
   }()
 
   private static func isCompatible(
     _ destination: RemappingDestination,
     with source: RemappingSource
   ) -> Bool {
+    if case .gamepadButton(let button) = destination, !button.supportsVirtualOutput { return false }
     switch source {
     case .axis: return destination.isContinuous
-    case .axisDirection, .button, .dpad: return !destination.isContinuous
+    case .axisDirection, .triggerStage, .motionLean, .button, .dpad, .touchContact, .touchGrid,
+      .touchSwipe:
+      return !destination.isContinuous
     }
   }
 }
@@ -151,6 +111,31 @@ struct RuntimeProfileDraft: Sendable, Equatable {
 
   func validatedProfile() throws -> RemappingProfile { try Self.validate(profile) }
 
+  func settingAdditionalActions(
+    _ actions: [RemappingAction],
+    for bindingID: UUID,
+    layerID: UUID? = nil
+  ) throws -> Self {
+    let transform: (RemappingBinding) -> RemappingBinding = { binding in
+      RemappingBinding(
+        id: binding.id,
+        source: binding.source,
+        destination: binding.destination,
+        behavior: binding.behavior,
+        pulseDurationMs: binding.pulseDurationMs,
+        axisTuning: binding.axisTuning,
+        turbo: binding.turbo,
+        longHold: binding.longHold,
+        doubleTap: binding.doubleTap,
+        additionalActions: actions
+      )
+    }
+    if let layerID {
+      return try replacingLayerBinding(layerID: layerID, bindingID: bindingID, transform: transform)
+    }
+    return try replacingBinding(bindingID, transform)
+  }
+
   func settingMetadata(
     name: String,
     device: RemappingDeviceScope,
@@ -159,16 +144,164 @@ struct RuntimeProfileDraft: Sendable, Equatable {
     try replacingProfile(name: name, device: device, applicationScope: applicationScope)
   }
 
+  func settingOutputPolicy(_ outputPolicy: RemappingOutputPolicy) throws -> Self {
+    let candidate = RemappingProfile(
+      id: profile.id,
+      name: profile.name,
+      device: profile.device,
+      applicationScope: profile.applicationScope,
+      outputPolicy: outputPolicy,
+      motionTuning: profile.motionTuning,
+      gyroOutput: profile.gyroOutput,
+      joyConPair: profile.joyConPair,
+      stickMappings: profile.stickMappings,
+      triggerMappings: profile.triggerMappings,
+      touchMappings: profile.touchMappings,
+      bindings: profile.bindings,
+      chords: profile.chords,
+      sequences: profile.sequences,
+      layers: profile.layers
+    )
+    return Self(profile: try Self.validate(candidate))
+  }
+
+  func settingLayerMotionTuning(_ tuning: RemappingMotionTuning?, for layerID: UUID) throws -> Self
+  {
+    guard let index = profile.layers.firstIndex(where: { $0.id == layerID }) else {
+      throw RuntimeProfileDraftError.layerNotFound(layerID)
+    }
+    var layers = profile.layers
+    let layer = layers[index]
+    layers[index] = RemappingLayer(
+      id: layer.id,
+      name: layer.name,
+      activationMode: layer.activationMode,
+      activator: layer.activator,
+      bindings: layer.bindings,
+      chords: layer.chords,
+      sequences: layer.sequences,
+      motionTuning: tuning
+    )
+    let candidate = RemappingProfile(
+      id: profile.id,
+      name: profile.name,
+      device: profile.device,
+      applicationScope: profile.applicationScope,
+      outputPolicy: profile.outputPolicy,
+      motionTuning: profile.motionTuning,
+      gyroOutput: profile.gyroOutput,
+      joyConPair: profile.joyConPair,
+      stickMappings: profile.stickMappings,
+      triggerMappings: profile.triggerMappings,
+      touchMappings: profile.touchMappings,
+      bindings: profile.bindings,
+      chords: profile.chords,
+      sequences: profile.sequences,
+      layers: layers
+    )
+    return Self(profile: try Self.validate(candidate))
+  }
+
+  func settingStickMappings(_ mappings: [RemappingStickMapping]) throws -> Self {
+    let candidate = RemappingProfile(
+      id: profile.id,
+      name: profile.name,
+      device: profile.device,
+      applicationScope: profile.applicationScope,
+      outputPolicy: profile.outputPolicy,
+      motionTuning: profile.motionTuning,
+      gyroOutput: profile.gyroOutput,
+      joyConPair: profile.joyConPair,
+      stickMappings: mappings,
+      triggerMappings: profile.triggerMappings,
+      touchMappings: profile.touchMappings,
+      bindings: profile.bindings,
+      chords: profile.chords,
+      sequences: profile.sequences,
+      layers: profile.layers
+    )
+    return Self(profile: try Self.validate(candidate))
+  }
+
+  func settingTriggerMappings(_ mappings: [RemappingTriggerMapping]) throws -> Self {
+    let candidate = RemappingProfile(
+      id: profile.id,
+      name: profile.name,
+      device: profile.device,
+      applicationScope: profile.applicationScope,
+      outputPolicy: profile.outputPolicy,
+      motionTuning: profile.motionTuning,
+      gyroOutput: profile.gyroOutput,
+      joyConPair: profile.joyConPair,
+      stickMappings: profile.stickMappings,
+      triggerMappings: mappings,
+      touchMappings: profile.touchMappings,
+      bindings: profile.bindings,
+      chords: profile.chords,
+      sequences: profile.sequences,
+      layers: profile.layers
+    )
+    return Self(profile: try Self.validate(candidate))
+  }
+
+  func settingTouchMappings(_ mappings: [RemappingTouchMapping]) throws -> Self {
+    let candidate = RemappingProfile(
+      id: profile.id,
+      name: profile.name,
+      device: profile.device,
+      applicationScope: profile.applicationScope,
+      outputPolicy: profile.outputPolicy,
+      motionTuning: profile.motionTuning,
+      gyroOutput: profile.gyroOutput,
+      joyConPair: profile.joyConPair,
+      stickMappings: profile.stickMappings,
+      triggerMappings: profile.triggerMappings,
+      touchMappings: mappings,
+      bindings: profile.bindings,
+      chords: profile.chords,
+      sequences: profile.sequences,
+      layers: profile.layers
+    )
+    return Self(profile: try Self.validate(candidate))
+  }
+
+  func settingMotionTuning(
+    _ tuning: RemappingMotionTuning,
+    gyroOutput: RemappingGyroOutput? = nil
+  ) throws -> Self {
+    let candidate = RemappingProfile(
+      id: profile.id,
+      name: profile.name,
+      device: profile.device,
+      applicationScope: profile.applicationScope,
+      outputPolicy: profile.outputPolicy,
+      motionTuning: tuning,
+      gyroOutput: gyroOutput ?? profile.gyroOutput,
+      joyConPair: profile.joyConPair,
+      stickMappings: profile.stickMappings,
+      triggerMappings: profile.triggerMappings,
+      touchMappings: profile.touchMappings,
+      bindings: profile.bindings,
+      chords: profile.chords,
+      sequences: profile.sequences,
+      layers: profile.layers
+    )
+    return Self(profile: try Self.validate(candidate))
+  }
+
   func settingDestination(_ destination: RemappingDestination, for bindingID: UUID) throws -> Self {
     try replacingBinding(bindingID) { binding in
       RemappingBinding(
         id: binding.id,
         source: binding.source,
         destination: destination,
+        behavior: binding.behavior,
+        pulseDurationMs: binding.pulseDurationMs,
         axisTuning: binding.axisTuning,
         turbo: binding.turbo,
         longHold: binding.longHold,
-        doubleTap: binding.doubleTap
+        doubleTap: binding.doubleTap,
+        additionalActions: binding.additionalActions
       )
     }
   }
@@ -178,17 +311,21 @@ struct RuntimeProfileDraft: Sendable, Equatable {
       let tuning: RemappingAxisTuning?
       switch source {
       case .axis, .axisDirection: tuning = binding.axisTuning ?? .default
-      case .button, .dpad: tuning = nil
+      case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe:
+        tuning = nil
       }
       let destination = Self.destination(for: source, preserving: binding.destination)
       return RemappingBinding(
         id: binding.id,
         source: source,
         destination: destination,
+        behavior: binding.behavior,
+        pulseDurationMs: binding.pulseDurationMs,
         axisTuning: tuning,
         turbo: binding.turbo,
         longHold: binding.longHold,
-        doubleTap: binding.doubleTap
+        doubleTap: binding.doubleTap,
+        additionalActions: binding.additionalActions
       )
     }
   }
@@ -210,15 +347,20 @@ struct RuntimeProfileDraft: Sendable, Equatable {
         id: binding.id,
         source: binding.source,
         destination: binding.destination,
+        behavior: binding.behavior,
+        pulseDurationMs: binding.pulseDurationMs,
         axisTuning: axisTuning,
         turbo: binding.turbo,
         longHold: binding.longHold,
-        doubleTap: binding.doubleTap
+        doubleTap: binding.doubleTap,
+        additionalActions: binding.additionalActions
       )
     }
   }
 
   func settingBindingBehaviors(
+    behavior: RemappingBindingBehavior? = nil,
+    pulseDurationMs: Double? = nil,
     turbo: RemappingTurbo?,
     longHold: RemappingLongHold?,
     doubleTap: RemappingDoubleTap?,
@@ -229,10 +371,14 @@ struct RuntimeProfileDraft: Sendable, Equatable {
         id: binding.id,
         source: binding.source,
         destination: binding.destination,
+        behavior: behavior ?? binding.behavior,
+        pulseDurationMs: (behavior ?? binding.behavior) == .pulse
+          ? pulseDurationMs ?? binding.pulseDurationMs : RemappingBinding.defaultPulseDurationMs,
         axisTuning: binding.axisTuning,
         turbo: turbo,
         longHold: longHold,
-        doubleTap: doubleTap
+        doubleTap: doubleTap,
+        additionalActions: binding.additionalActions
       )
     }
   }
@@ -245,17 +391,24 @@ struct RuntimeProfileDraft: Sendable, Equatable {
     let tuning: RemappingAxisTuning?
     switch source {
     case .axis, .axisDirection: tuning = axisTuning ?? .default
-    case .button, .dpad: tuning = nil
+    case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe:
+      tuning = nil
     }
     let binding = RemappingBinding(source: source, destination: destination, axisTuning: tuning)
     var bindings = profile.bindings
     bindings.append(binding)
     let candidate = RemappingProfile(
-      schemaVersion: profile.schemaVersion,
       id: profile.id,
       name: profile.name,
       device: profile.device,
       applicationScope: profile.applicationScope,
+      outputPolicy: profile.outputPolicy,
+      motionTuning: profile.motionTuning,
+      gyroOutput: profile.gyroOutput,
+      joyConPair: profile.joyConPair,
+      stickMappings: profile.stickMappings,
+      triggerMappings: profile.triggerMappings,
+      touchMappings: profile.touchMappings,
       bindings: bindings,
       chords: profile.chords,
       sequences: profile.sequences,
@@ -270,11 +423,17 @@ struct RuntimeProfileDraft: Sendable, Equatable {
     }
     let bindings = profile.bindings.filter { $0.id != bindingID }
     let candidate = RemappingProfile(
-      schemaVersion: profile.schemaVersion,
       id: profile.id,
       name: profile.name,
       device: profile.device,
       applicationScope: profile.applicationScope,
+      outputPolicy: profile.outputPolicy,
+      motionTuning: profile.motionTuning,
+      gyroOutput: profile.gyroOutput,
+      joyConPair: profile.joyConPair,
+      stickMappings: profile.stickMappings,
+      triggerMappings: profile.triggerMappings,
+      touchMappings: profile.touchMappings,
       bindings: bindings,
       chords: profile.chords,
       sequences: profile.sequences,
@@ -283,10 +442,16 @@ struct RuntimeProfileDraft: Sendable, Equatable {
     return Self(profile: try Self.validate(candidate))
   }
 
-  func addingChord(sources: Set<RemappingSource>, destination: RemappingDestination) throws -> Self
-  {
+  func addingChord(
+    sources: Set<RemappingSource>,
+    destination: RemappingDestination,
+    mode: RemappingChordMode = .modifier,
+    windowMs: Double = 50
+  ) throws -> Self {
     try replacingProfile(
-      chords: profile.chords + [RemappingChord(sources: sources, destination: destination)]
+      chords: profile.chords + [
+        RemappingChord(sources: sources, destination: destination, mode: mode, windowMs: windowMs)
+      ]
     )
   }
 
@@ -354,10 +519,14 @@ struct RuntimeProfileDraft: Sendable, Equatable {
       id: existingID ?? UUID(),
       source: source,
       destination: destination,
+      behavior: layer.bindings.first { $0.source == source }?.behavior ?? .hold,
+      pulseDurationMs: layer.bindings.first { $0.source == source }?.pulseDurationMs
+        ?? RemappingBinding.defaultPulseDurationMs,
       axisTuning: axisTuning ?? Self.defaultTuning(for: source),
       turbo: turbo,
       longHold: longHold,
-      doubleTap: doubleTap
+      doubleTap: doubleTap,
+      additionalActions: layer.bindings.first { $0.source == source }?.additionalActions ?? []
     )
     layers[index] = RemappingLayer(
       id: layer.id,
@@ -366,7 +535,8 @@ struct RuntimeProfileDraft: Sendable, Equatable {
       activator: layer.activator,
       bindings: layer.bindings.filter { $0.source != source } + [binding],
       chords: layer.chords,
-      sequences: layer.sequences
+      sequences: layer.sequences,
+      motionTuning: layer.motionTuning
     )
     return try replacingProfile(layers: layers)
   }
@@ -381,15 +551,20 @@ struct RuntimeProfileDraft: Sendable, Equatable {
         id: binding.id,
         source: binding.source,
         destination: binding.destination,
+        behavior: binding.behavior,
+        pulseDurationMs: binding.pulseDurationMs,
         axisTuning: axisTuning,
         turbo: binding.turbo,
         longHold: binding.longHold,
-        doubleTap: binding.doubleTap
+        doubleTap: binding.doubleTap,
+        additionalActions: binding.additionalActions
       )
     }
   }
 
   func settingLayerBindingBehaviors(
+    behavior: RemappingBindingBehavior? = nil,
+    pulseDurationMs: Double? = nil,
     layerID: UUID,
     bindingID: UUID,
     turbo: RemappingTurbo?,
@@ -401,10 +576,14 @@ struct RuntimeProfileDraft: Sendable, Equatable {
         id: binding.id,
         source: binding.source,
         destination: binding.destination,
+        behavior: behavior ?? binding.behavior,
+        pulseDurationMs: (behavior ?? binding.behavior) == .pulse
+          ? pulseDurationMs ?? binding.pulseDurationMs : RemappingBinding.defaultPulseDurationMs,
         axisTuning: binding.axisTuning,
         turbo: turbo,
         longHold: longHold,
-        doubleTap: doubleTap
+        doubleTap: doubleTap,
+        additionalActions: binding.additionalActions
       )
     }
   }
@@ -425,7 +604,8 @@ struct RuntimeProfileDraft: Sendable, Equatable {
       activator: layer.activator,
       bindings: layer.bindings.filter { $0.id != bindingID },
       chords: layer.chords,
-      sequences: layer.sequences
+      sequences: layer.sequences,
+      motionTuning: layer.motionTuning
     )
     return try replacingProfile(layers: layers)
   }
@@ -452,7 +632,8 @@ struct RuntimeProfileDraft: Sendable, Equatable {
       activator: layer.activator,
       bindings: bindings,
       chords: layer.chords,
-      sequences: layer.sequences
+      sequences: layer.sequences,
+      motionTuning: layer.motionTuning
     )
     return try replacingProfile(layers: layers)
   }
@@ -467,11 +648,17 @@ struct RuntimeProfileDraft: Sendable, Equatable {
     var bindings = profile.bindings
     bindings[index] = makeBinding(bindings[index])
     let candidate = RemappingProfile(
-      schemaVersion: profile.schemaVersion,
       id: profile.id,
       name: profile.name,
       device: profile.device,
       applicationScope: profile.applicationScope,
+      outputPolicy: profile.outputPolicy,
+      motionTuning: profile.motionTuning,
+      gyroOutput: profile.gyroOutput,
+      joyConPair: profile.joyConPair,
+      stickMappings: profile.stickMappings,
+      triggerMappings: profile.triggerMappings,
+      touchMappings: profile.touchMappings,
       bindings: bindings,
       chords: profile.chords,
       sequences: profile.sequences,
@@ -490,11 +677,17 @@ struct RuntimeProfileDraft: Sendable, Equatable {
     layers: [RemappingLayer]? = nil
   ) throws -> Self {
     let candidate = RemappingProfile(
-      schemaVersion: profile.schemaVersion,
       id: profile.id,
       name: name ?? profile.name,
       device: device ?? profile.device,
       applicationScope: applicationScope ?? profile.applicationScope,
+      outputPolicy: profile.outputPolicy,
+      motionTuning: profile.motionTuning,
+      gyroOutput: profile.gyroOutput,
+      joyConPair: profile.joyConPair,
+      stickMappings: profile.stickMappings,
+      triggerMappings: profile.triggerMappings,
+      touchMappings: profile.touchMappings,
       bindings: bindings ?? profile.bindings,
       chords: chords ?? profile.chords,
       sequences: sequences ?? profile.sequences,
@@ -506,7 +699,7 @@ struct RuntimeProfileDraft: Sendable, Equatable {
   private static func defaultTuning(for source: RemappingSource) -> RemappingAxisTuning? {
     switch source {
     case .axis, .axisDirection: .default
-    case .button, .dpad: nil
+    case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe: nil
     }
   }
 

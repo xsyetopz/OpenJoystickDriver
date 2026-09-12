@@ -107,6 +107,27 @@ struct CoreGraphicsSinkTests {
     #expect(poster.pointerReadCount == 3)
   }
 
+  @Test func integratedPointerDeltaPreservesUnitsAndSamplesCurrentOrigin() throws {
+    let poster = RecordingPoster(pointerLocation: CGPoint(x: 100, y: 200))
+    let sink = makeSink(poster: poster)
+    try sink.send(.pointerDelta(x: 0.125, y: -2.5))
+    poster.pointerLocation = CGPoint(x: 300, y: 400)
+    try sink.send(.pointerDelta(x: 64, y: 0.25))
+    try sink.send(.pointerDelta(x: 0, y: 0))
+    #expect(poster.events == [
+      .pointer(location: CGPoint(x: 100.125, y: 197.5), deltaX: 0.125, deltaY: -2.5),
+      .pointer(location: CGPoint(x: 364, y: 400.25), deltaX: 64, deltaY: 0.25)
+    ])
+    #expect(poster.pointerReadCount == 2)
+    #expect(throws: CoreGraphicsSystemInputSinkError.eventPreparationFailed) {
+      try sink.send(.pointerDelta(x: .nan, y: 0))
+    }
+    #expect(throws: CoreGraphicsSystemInputSinkError.eventPreparationFailed) {
+      try sink.send(.pointerDelta(x: 0, y: .infinity))
+    }
+    #expect(poster.events.count == 2)
+  }
+
   @Test func scrollPreservesSubUnitResidualsAndAxisIdentity() throws {
     let poster = RecordingPoster()
     let sink = makeSink(poster: poster)

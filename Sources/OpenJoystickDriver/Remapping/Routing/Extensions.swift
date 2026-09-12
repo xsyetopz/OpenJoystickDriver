@@ -2,6 +2,11 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension RemappingRoutingCore {
+  func independentSelection(for profile: RemappingProfile?) -> RemappingSelectedRoute {
+    guard let profile, profile.joyConPair == nil else { return .compatibility }
+    return .remapping(profile)
+  }
+
   func compatibilityRoute() -> RemappingControllerRoute {
     let suppressed = controls.outputSuppressed || !controls.compatibilityOutputAllowed
     return RemappingControllerRoute(
@@ -46,14 +51,30 @@ extension RemappingRoutingCore {
     guard !terminationRequested else { throw RemappingOutputRoutingError.shutDown }
   }
 
-  @discardableResult func requireOperationalPermit(_ permit: RemappingEmissionPermit?) throws
-    -> RemappingEmissionPermit
-  {
+  @discardableResult
+  func requireOperationalPermit(
+    _ permit: RemappingEmissionPermit?
+  ) throws -> RemappingEmissionPermit {
     if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
     guard let permit, emissionBarrier.permits(permit) else {
       throw RemappingEventEngineError.outputSuspended
     }
     return permit
+  }
+
+  func releaseAndRetire(
+    for identifier: DeviceIdentifier,
+    profile: RemappingProfile,
+    requiring permit: RemappingEmissionPermit?
+  ) async throws {
+    var releaseError: (any Error)?
+    do { try await releaseAllSafely(for: identifier, requiring: permit) } catch {
+      releaseError = error
+    }
+    if profile.outputPolicy.virtualGamepad != .disabled {
+      await notifyCompatibilityStop(identifier)
+    }
+    if let releaseError { throw releaseError }
   }
 
   func releaseAllSafely(

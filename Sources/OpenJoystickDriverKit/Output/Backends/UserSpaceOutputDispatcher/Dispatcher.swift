@@ -11,7 +11,8 @@ import Security
 /// IOKit user-space HID API because CoreHID is unavailable there. Neither path
 /// runs in the USB DriverKit extension.
 public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispatching,
-  CompatibilityUserSpaceOutputControllerActivating, @unchecked Sendable
+  CompatibilityUserSpaceOutputControllerActivating, RemappingGamepadSink,
+  RemappingGamepadOutputControlling, @unchecked Sendable
 {
   public typealias RumbleCommandHandler = @Sendable (DeviceIdentifier, VirtualRumbleCommand) -> Void
 
@@ -141,6 +142,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
   private var lifecycleGenerations: [DeviceIdentifier: UInt64] = [:]
   private var shutdownTask: Task<Void, Never>?
   private var _suppressOutput = false
+  private var remappingOutputSuppressed = false
   private var _status = "off"
   private var _lastRumbleStatus = "none"
 
@@ -157,6 +159,14 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
     }
     for sender in senders { _ = await sender.submit { [] }.result }
   }
+  public func setRemappingOutputSuppressed(_ suppressed: Bool) async {
+    let senders = registryLock.withLock {
+      remappingOutputSuppressed = suppressed
+      return entries.values.map(\.sender)
+    }
+    for sender in senders { _ = await sender.submit { [] }.result }
+  }
+
   public var lastRumbleStatus: String { registryLock.withLock { _lastRumbleStatus } }
 
   static let requiredVirtualDeviceEntitlement = "com.apple.developer.hid.virtual.device"
@@ -264,36 +274,103 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
   }
 
   private func startInputReportKeepalive(_ entry: Entry) {
-    entry.startInputReportKeepalive { [weak self] in
-      guard let self else { return false }
-      return self.lifecycle.isOpen && !self.suppressOutput
+    entry.startInputReportKeepalive { [weak self, weak entry] in
+      guard let self, let entry else { return false }
+      return self.lifecycle.isOpen
+        && !self.isOutputSuppressed(remapped: entry.inputReportState.isRemapped)
     }
   }
 
   public func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {
-    guard lifecycle.isOpen, !suppressOutput else { return }
+    try? await deliver(events: events, from: identifier, remappedState: nil, motionUpdate: nil)
+  }
 
-    let activeEntry: Entry
-    do { activeEntry = try await entry(for: identifier) } catch is CancellationError {
-      return
-    } catch {
-      registryLock.withLock { _status = "error: \(error)" }
+  public func send(_ state: RemappingGamepadState, for identifier: DeviceIdentifier) async throws {
+    if state == .neutral, !lifecycle.isOpen {
+      await close()
       return
     }
+    try await deliver(events: [], from: identifier, remappedState: state, motionUpdate: nil)
+  }
 
-    guard lifecycle.isOpen else { return }
+  public func send(
+    _ motion: RemappingVirtualMotionState?,
+    for identifier: DeviceIdentifier
+  ) async throws {
+    try await deliver(events: [], from: identifier, remappedState: nil, motionUpdate: .some(motion))
+  }
 
-    let stickTransfer = Self.stickTransfer(for: identifier)
-    let isActive: @Sendable () -> Bool = { [self] in lifecycle.isOpen && !suppressOutput }
+  private func isOutputSuppressed(remapped: Bool) -> Bool {
+    registryLock.withLock { remapped ? remappingOutputSuppressed : _suppressOutput }
+  }
+
+  private func deliver(
+    events: [ControllerEvent],
+    from identifier: DeviceIdentifier,
+    remappedState: RemappingGamepadState?,
+    motionUpdate: RemappingVirtualMotionState??
+  ) async throws {
+    let neutralizing = remappedState == .neutral || motionUpdate == .some(nil)
+    let remapped = remappedState != nil || motionUpdate != nil
+    guard lifecycle.isOpen, !isOutputSuppressed(remapped: remapped) || neutralizing else {
+      throw CancellationError()
+    }
+    let activeEntry: Entry
     do {
-      try await activeEntry.sender.submit(whileActive: isActive) { [self, activeEntry] in
-        guard lifecycle.isOpen, !suppressOutput else { return [] }
-        let primaryReport = activeEntry.inputReportState.update { state in
-          for event in events { applyEvent(event, stickTransfer: stickTransfer, state: &state) }
+      if neutralizing {
+        guard let existing = registryLock.withLock({ entries[identifier] }) else { return }
+        activeEntry = existing
+      } else {
+        activeEntry = try await entry(for: identifier)
+      }
+    } catch {
+      registryLock.withLock { if lifecycle.isOpen { _status = "error: \(error)" } }
+      throw error
+    }
+    guard lifecycle.isOpen else { throw CancellationError() }
+    let stickTransfer =
+      remappedState == nil
+      ? Self.stickTransfer(for: identifier) : StickTransfer(deadzone: 0, rescalesDeadzone: false)
+    let isActive: @Sendable () -> Bool = { [self] in
+      lifecycle.isOpen && (!isOutputSuppressed(remapped: remapped) || neutralizing)
+    }
+    do {
+      try await activeEntry.sender.submit(whileActive: isActive, requireActive: true) {
+        [self, activeEntry] in
+        guard isActive() else { throw CancellationError() }
+        let primaryReport: [UInt8]?
+        if let motionUpdate {
+          guard motionUpdate == nil || activeEntry.inputReportState.supportsMotion else {
+            throw RemappingEventEngineError.sinkUnavailable
+          }
+          primaryReport = activeEntry.inputReportState.updateMotion(motionUpdate)
+        } else {
+          primaryReport = activeEntry.inputReportState.update(remapped: remapped) { state in
+            if let remappedState {
+              let motion = state.motion
+              let motionSamples = state.motionSamples
+              let motionTimestamp = state.motionTimestampNanoseconds
+              state = VirtualGamepadState()
+              state.motion = motion
+              state.motionSamples = motionSamples
+              state.motionTimestampNanoseconds = motionTimestamp
+              for event in remappedState.events(since: .neutral) {
+                applyEvent(event, stickTransfer: stickTransfer, state: &state)
+              }
+            } else {
+              for event in events { applyEvent(event, stickTransfer: stickTransfer, state: &state) }
+            }
+          }
         }
-        let secondaryReports =
-          emitsXboxGuideReport ? events.compactMap { xboxGuideReport(for: $0) } : []
-        return [primaryReport] + secondaryReports
+        var reports = primaryReport.map { [$0] } ?? []
+        if emitsXboxGuideReport {
+          if let remappedState {
+            reports.append([0x02, remappedState.buttons.contains(.guide) ? 0x01 : 0x00])
+          } else {
+            reports += events.compactMap { xboxGuideReport(for: $0) }
+          }
+        }
+        return reports
       }.value
       startInputReportKeepalive(activeEntry)
       registryLock.withLock { recomputeStatusLocked() }
@@ -304,6 +381,7 @@ public final class UserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispat
         return entries.removeValue(forKey: identifier)
       }
       await removed?.close()
+      throw error
     }
   }
 

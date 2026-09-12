@@ -132,6 +132,8 @@ private actor USBDriverKitTransportSession: USBTransportSession {
   private let context: DriverContext
   private var isClosed = false
 
+  var inputOwnership: HIDInputOwnership { isClosed ? .unknown : .exclusive }
+
   init(runtime: DriverRuntimeConnection, context: DriverContext) {
     self.runtime = runtime
     self.context = context

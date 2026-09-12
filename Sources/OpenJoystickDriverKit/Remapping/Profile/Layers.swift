@@ -17,6 +17,7 @@ public struct RemappingLayer: Codable, Equatable, Hashable, Identifiable, Sendab
   public let bindings: [RemappingBinding]
   public let chords: [RemappingChord]
   public let sequences: [RemappingSequence]
+  public let motionTuning: RemappingMotionTuning?
 
   public init(
     id: UUID = UUID(),
@@ -25,7 +26,8 @@ public struct RemappingLayer: Codable, Equatable, Hashable, Identifiable, Sendab
     activator: RemappingSource,
     bindings: [RemappingBinding] = [],
     chords: [RemappingChord] = [],
-    sequences: [RemappingSequence] = []
+    sequences: [RemappingSequence] = [],
+    motionTuning: RemappingMotionTuning? = nil
   ) {
     self.id = id
     self.name = name
@@ -34,6 +36,7 @@ public struct RemappingLayer: Codable, Equatable, Hashable, Identifiable, Sendab
     self.bindings = bindings
     self.chords = chords
     self.sequences = sequences
+    self.motionTuning = motionTuning
   }
 
   private enum CodingKeys: String, CodingKey {
@@ -44,5 +47,6 @@ public struct RemappingLayer: Codable, Equatable, Hashable, Identifiable, Sendab
     case bindings
     case chords
     case sequences
+    case motionTuning = "motion_tuning"
   }
 }

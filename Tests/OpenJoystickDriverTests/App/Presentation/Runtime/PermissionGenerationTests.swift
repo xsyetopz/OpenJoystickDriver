@@ -4,8 +4,10 @@ import Testing
 
 @testable import OpenJoystickDriver
 
-@Suite(.serialized) struct RuntimePermissionGenerationTests {
-  @Test func newerPermissionRequestWinsOverAnOlderRefresh() async {
+@Suite(.serialized)
+struct RuntimePermissionGenerationTests {
+  @Test
+  func newerPermissionRequestWinsOverAnOlderRefresh() async {
     let gateway = PermissionRaceGatewayStub(
       statusPayload: ApplicationServiceStatusPayload(
         inputMonitoring: "denied",
@@ -32,7 +34,8 @@ import Testing
     #expect(permissions.isReady)
   }
 
-  @Test func newerPermissionRequestWinsInTheFullRefreshStatusSummary() async {
+  @Test
+  func newerPermissionRequestWinsInTheFullRefreshStatusSummary() async {
     let gateway = PermissionRaceGatewayStub(
       statusPayload: ApplicationServiceStatusPayload(
         inputMonitoring: "denied",
@@ -59,7 +62,8 @@ import Testing
     #expect(status.permissions.isReady)
   }
 
-  @Test func newerPostEventRequestWinsOverAnOlderRefresh() async {
+  @Test
+  func newerPostEventRequestWinsOverAnOlderRefresh() async {
     let gateway = PermissionRaceGatewayStub(
       snapshotPayload: ApplicationServiceRemappingSnapshotPayload(
         profiles: [],
@@ -85,7 +89,8 @@ import Testing
     #expect(access == .granted)
   }
 
-  @Test func newerPostEventRequestWinsInTheFullRefreshStatusSummary() async {
+  @Test
+  func newerPostEventRequestWinsInTheFullRefreshStatusSummary() async {
     let gateway = PermissionRaceGatewayStub(
       snapshotPayload: ApplicationServiceRemappingSnapshotPayload(
         profiles: [],
@@ -166,9 +171,9 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
     PermissionManager.Snapshot(inputMonitoring: .granted, accessibility: .granted)
   }
 
-  func requestPermission(_ requirement: PermissionManager.Requirement) throws
-    -> PermissionManager.Snapshot
-  { try requestPermissions() }
+  func requestPermission(
+    _ requirement: PermissionManager.Requirement
+  ) throws -> PermissionManager.Snapshot { try requestPermissions() }
 
   func deviceInputState(for selector: RuntimeDeviceSelector) throws -> DeviceInputState? { nil }
 
@@ -186,17 +191,18 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
     return profile
   }
 
-  func createRemappingProfile(_ profile: RemappingProfile) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { snapshotPayload }
+  func createRemappingProfile(
+    _ profile: RemappingProfile
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
-  func updateRemappingProfile(_ profile: RemappingProfile, expectedCurrent: RemappingProfile) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { snapshotPayload }
+  func updateRemappingProfile(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
-  func importRemappingProfile(_ profile: RemappingProfile) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { snapshotPayload }
+  func importRemappingProfile(
+    _ profile: RemappingProfile
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
   func deleteRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
     snapshotPayload
@@ -206,13 +212,14 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
     snapshotPayload
   }
 
-  func deactivateRemappingProfile(vendorID: UInt16, productID: UInt16) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { snapshotPayload }
+  func deactivateRemappingProfile(
+    vendorID: UInt16,
+    productID: UInt16
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
-  func deactivateRemappingProfile(profileID: UUID) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { snapshotPayload }
+  func deactivateRemappingProfile(
+    profileID: UUID
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
   func remappingPostEventAccess() async throws -> RemappingPostEventAccessState {
     if postEventAccessDelayNanoseconds > 0 {
@@ -224,6 +231,15 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
   func requestRemappingPostEventAccess() throws -> RemappingPostEventAccessState {
     requestedPostEventAccess
   }
+
+  func pairRemappingJoyCons(
+    left: String,
+    right: String,
+    profileID: UUID
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+
+  func unpairRemappingJoyCons(sessionID: UUID) throws -> ApplicationServiceRemappingSnapshotPayload
+  { snapshotPayload }
 
   func compatibilityIdentity() throws -> CompatibilityIdentity { .sdl2_3 }
 

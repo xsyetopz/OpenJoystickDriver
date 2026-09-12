@@ -5,6 +5,36 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  func profileSourceGroup(_ source: RemappingSource) -> String {
+    switch source {
+    case .button(let button):
+      switch button {
+      case .leftShoulder, .rightShoulder:
+        return OJDLocalized.string("profiles.sectionShoulders", fallback: "Shoulders")
+      case .leftStick, .rightStick:
+        return OJDLocalized.string("profiles.sectionStickClicks", fallback: "Stick clicks")
+      case .start, .back, .guide, .share, .options, .touchpad, .mute, .leftTriggerClick,
+        .rightTriggerClick:
+        return OJDLocalized.string("profiles.sectionSystemControls", fallback: "System controls")
+      default: return OJDLocalized.string("profiles.sectionFaceButtons", fallback: "Face buttons")
+      }
+    case .dpad: return OJDLocalized.string("profiles.sectionDpad", fallback: "D-pad")
+    case .axis, .axisDirection:
+      switch source {
+      case .axis(.leftTrigger), .axis(.rightTrigger), .axisDirection(.leftTrigger, _),
+        .axisDirection(.rightTrigger, _):
+        return OJDLocalized.string("profiles.sectionTriggers", fallback: "Triggers")
+      default: return OJDLocalized.string("profiles.sectionSticks", fallback: "Sticks")
+      }
+    case .triggerStage:
+      return OJDLocalized.string("profiles.sectionTriggers", fallback: "Triggers")
+    case .motionLean:
+      return OJDLocalized.string("profiles.sectionMotion", fallback: "Motion")
+    case .touchContact, .touchGrid, .touchSwipe:
+      return OJDLocalized.string("profiles.sectionTouch", fallback: "Touch")
+    }
+  }
+
   struct BindingGroup {
     let title: String
     let bindings: [RemappingBinding]
@@ -16,6 +46,8 @@
       case sticks
       case triggers
       case clicks
+      case touch
+      case motion
       case system
 
       var title: String {
@@ -29,6 +61,8 @@
         case .triggers: return OJDLocalized.string("profiles.sectionTriggers", fallback: "Triggers")
         case .clicks:
           return OJDLocalized.string("profiles.sectionStickClicks", fallback: "Stick clicks")
+        case .touch: return OJDLocalized.string("profiles.sectionTouch", fallback: "Touch")
+        case .motion: return OJDLocalized.string("profiles.sectionMotion", fallback: "Motion")
         case .system:
           return OJDLocalized.string("profiles.sectionSystemControls", fallback: "System controls")
         }
@@ -113,6 +147,7 @@
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
           OJDLocalized.string("common.destination", fallback: "Destination")
         ).ojdAccessibilityValue(RuntimePresentation.destinationLabel(binding.destination))
+        PhysicalOutputDestinationFields(destination: destinationBinding)
 
         HStack(spacing: 8) {
           if binding.axisTuning != nil {

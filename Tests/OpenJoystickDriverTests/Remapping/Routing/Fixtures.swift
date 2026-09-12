@@ -7,6 +7,7 @@ enum RemappingRouterTrace: Equatable {
   case compatibility([ControllerEvent], DeviceIdentifier)
   case compatibilityStop(DeviceIdentifier)
   case system(RemappingSystemInputAction)
+  case gamepad(RemappingGamepadState, DeviceIdentifier)
 }
 
 final class RemappingRouterRecorder: @unchecked Sendable {
@@ -21,6 +22,7 @@ final class RemappingRouterRecorder: @unchecked Sendable {
 }
 
 final class RemappingRouterCompatibility: OutputDispatcher, ControllerLifecycleListener,
+  RemappingGamepadSink, RemappingGamepadOutputControlling,
   @unchecked Sendable
 {
   private let lock = NSLock()
@@ -28,6 +30,12 @@ final class RemappingRouterCompatibility: OutputDispatcher, ControllerLifecycleL
   private let dispatchCheckpoint: @Sendable () async -> Void
   private let checkpointAfterSuppressionCheck: Bool
   private var suppressed = false
+  private var remappingSuppressed = false
+  private var rejectsNeutral = false
+  var rejectNeutral: Bool {
+    get { lock.withLock { rejectsNeutral } }
+    set { lock.withLock { rejectsNeutral = newValue } }
+  }
 
   var suppressOutput: Bool {
     get { lock.withLock { suppressed } }
@@ -55,6 +63,18 @@ final class RemappingRouterCompatibility: OutputDispatcher, ControllerLifecycleL
     await Task.yield()
     guard !suppressOutput else { return }
     recorder.append(.compatibility(events, identifier))
+  }
+
+  func setRemappingOutputSuppressed(_ suppressed: Bool) {
+    lock.withLock { remappingSuppressed = suppressed }
+  }
+
+  func send(_ state: RemappingGamepadState, for identifier: DeviceIdentifier) throws {
+    guard state == .neutral || !lock.withLock({ remappingSuppressed }) else {
+      throw CancellationError()
+    }
+    if state == .neutral, rejectNeutral { throw CancellationError() }
+    recorder.append(.gamepad(state, identifier))
   }
 
   func controllerDidStop(_ identifier: DeviceIdentifier) {
@@ -230,12 +250,12 @@ struct RemappingRouterHarness {
     let access = RemappingRouterAccess(accessState)
     let sink: any RemappingSystemInputSink =
       systemInputSink ?? RemappingRouterSink(recorder: recorder)
-    let engine = RemappingEventEngine(sink: sink)
     let compatibility = RemappingRouterCompatibility(
       recorder: recorder,
       dispatchCheckpoint: compatibilityDispatchCheckpoint,
       checkpointAfterSuppressionCheck: compatibilityCheckpointAfterSuppressionCheck
     )
+    let engine = RemappingEventEngine(sink: sink, gamepadSink: compatibility)
     let router = RemappingOutputRouter(
       library: library,
       engine: engine,

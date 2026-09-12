@@ -4,7 +4,7 @@
   import Foundation
   import OpenJoystickDriverKit
 
-  protocol InputTestDeviceGateway: Sendable {
+  protocol InputTestDeviceGateway: MotionCalibrationGateway {
     func inputState(for selector: RuntimeDeviceSelector) async throws -> DeviceInputState?
     func sendRumble(
       for selector: RuntimeDeviceSelector,
@@ -52,6 +52,18 @@
     static func localizedTitle(for rawName: String) -> String {
       guard let button = Button(rawValue: rawName) else { return rawName }
       switch button {
+      case .leftFunction: return RuntimePresentation.sourceLabel(.button(.leftFunction))
+      case .rightFunction: return RuntimePresentation.sourceLabel(.button(.rightFunction))
+      case .leftPaddle: return RuntimePresentation.sourceLabel(.button(.leftPaddle))
+      case .rightPaddle: return RuntimePresentation.sourceLabel(.button(.rightPaddle))
+      case .leftSL: return RuntimePresentation.sourceLabel(.button(.leftSL))
+      case .leftSR: return RuntimePresentation.sourceLabel(.button(.leftSR))
+      case .rightSL: return RuntimePresentation.sourceLabel(.button(.rightSL))
+      case .rightSR: return RuntimePresentation.sourceLabel(.button(.rightSR))
+      case .leftGrip: return RuntimePresentation.sourceLabel(.button(.leftGrip))
+      case .rightGrip: return RuntimePresentation.sourceLabel(.button(.rightGrip))
+      case .leftPadClick: return RuntimePresentation.sourceLabel(.button(.leftPadClick))
+      case .rightPadClick: return RuntimePresentation.sourceLabel(.button(.rightPadClick))
       case .mute: return OJDLocalized.string("mapping.mute", fallback: "Mute")
       case .touchpad:
         return OJDLocalized.string("mapping.touchpadClick", fallback: "Touchpad click")
@@ -107,6 +119,7 @@
     @Published private(set) var isDeviceConnected = false
     let liveState = InputTestLiveState()
     let outputSettings = InputTestOutputSettings()
+    let motionCalibration: MotionCalibrationViewModel
 
     var rumbleIntensities: [PhysicalRumbleMotor: Double] {
       get { outputSettings.rumbleIntensities }
@@ -159,6 +172,7 @@
       sleep: @escaping Sleep = { try await Task.sleep(nanoseconds: $0) }
     ) {
       self.gateway = gateway
+      motionCalibration = MotionCalibrationViewModel(gateway: gateway)
       self.sampleIntervalNanoseconds = sampleIntervalNanoseconds
       self.sleep = sleep
     }
@@ -185,6 +199,7 @@
     var canStopRumble: Bool { outputMayRequireRumbleStop }
 
     func selectDevice(_ selectedDevice: ApplicationServiceDeviceDescription) {
+      motionCalibration.select(RuntimeDeviceSelector(device: selectedDevice))
       guard device?.runtimeIdentifier != selectedDevice.runtimeIdentifier else {
         device = selectedDevice
         return
@@ -211,12 +226,14 @@
         let refreshed = devices.first(where: { $0.runtimeIdentifier == current.runtimeIdentifier })
       else {
         isDeviceConnected = false
+        motionCalibration.select(nil)
         cancelSampling(nextState: .disconnected)
         cancelOutput(stopSelector: RuntimeDeviceSelector(device: current))
         return
       }
       device = refreshed
       isDeviceConnected = true
+      motionCalibration.select(RuntimeDeviceSelector(device: refreshed))
       if sessionState == .disconnected { sessionState = .idle }
     }
 
@@ -248,7 +265,10 @@
       cancelOutput(stopSelector: device.map(RuntimeDeviceSelector.init(device:)))
     }
 
-    func close() { stop() }
+    func close() {
+      stop()
+      motionCalibration.select(nil)
+    }
 
     func testRumble() {
       guard let device, canSendOutput, capabilities.supportsRumble else { return }

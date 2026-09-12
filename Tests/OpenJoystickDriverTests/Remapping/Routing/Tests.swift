@@ -5,6 +5,232 @@ import Testing
 @testable import OpenJoystickDriver
 
 struct RemappingOutputRouterTests {
+  @Test func calibrationRejectsUnknownControllersAndIneligibleRoutes() async throws {
+    let harness = try await RemappingRouterHarness.make(profile: remappingRouterProfile())
+    defer { harness.removeFiles() }
+    let device = remappingRouterDevice(1)
+    await #expect(throws: RemappingMotionCalibrationError.controllerUnavailable) {
+      try await harness.router.motionCalibration(for: device.runtimeIdentifier, command: .start)
+    }
+    try await harness.router.dispatchCausally(events: [], from: device)
+    let status = try await harness.router.motionCalibration(for: device.runtimeIdentifier)
+    #expect(!status.hasMotionBaseline && !status.isCollecting)
+    await #expect(throws: RemappingMotionCalibrationError.motionUnavailable) {
+      try await harness.router.motionCalibration(for: device.runtimeIdentifier, command: .start)
+    }
+    harness.foreground.set("com.example.Other")
+    await #expect(throws: RemappingMotionCalibrationError.motionUnavailable) {
+      try await harness.router.motionCalibration(for: device.runtimeIdentifier, command: .reset)
+    }
+    #expect(await harness.router.status(for: device)?.eligibility == .targetApplicationNotFrontmost)
+    try await harness.router.stopController(device)
+    await #expect(throws: RemappingMotionCalibrationError.controllerUnavailable) {
+      try await harness.router.motionCalibration(for: device.runtimeIdentifier)
+    }
+    try await harness.router.shutdown()
+  }
+
+  @Test(arguments: [false, true])
+  func releaseFailureStillRetiresVirtualRoutes(transaction: Bool) async throws {
+    let original = remappingRouterProfile()
+    let profile = RemappingProfile(
+      name: original.name,
+      device: original.device,
+      applicationScope: original.applicationScope,
+      outputPolicy: RemappingOutputPolicy(virtualGamepad: .mapped),
+      bindings: [RemappingBinding(source: .button(.south), destination: .gamepadButton(.north))]
+    )
+    let harness = try await RemappingRouterHarness.make(profile: profile)
+    defer { harness.removeFiles() }
+    let devices = [remappingRouterDevice(1), remappingRouterDevice(2)]
+    for device in devices {
+      await harness.router.controllerInputOwnershipChanged(.exclusive, for: device)
+      try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
+    }
+    harness.recorder.removeAll()
+    harness.compatibility.rejectNeutral = true
+    if transaction {
+      await #expect(throws: RemappingOutputRoutingError.self) {
+        _ = try await harness.router.beginProfileTransaction()
+      }
+      for device in devices {
+        #expect(harness.recorder.snapshot().contains(.compatibilityStop(device)))
+      }
+    } else {
+      await #expect(throws: RemappingOutputRoutingError.self) {
+        try await harness.router.stopController(devices[0])
+      }
+      #expect(harness.recorder.snapshot().contains(.compatibilityStop(devices[0])))
+    }
+    harness.compatibility.rejectNeutral = false
+    try await harness.router.shutdown()
+  }
+
+  @Test func shutdownRetiresVirtualBackendEvenWhenNeutralDeliveryFails() async throws {
+    let original = remappingRouterProfile()
+    let profile = RemappingProfile(
+      name: original.name,
+      device: original.device,
+      applicationScope: original.applicationScope,
+      outputPolicy: RemappingOutputPolicy(virtualGamepad: .mapped),
+      bindings: [RemappingBinding(source: .button(.south), destination: .gamepadButton(.north))]
+    )
+    let harness = try await RemappingRouterHarness.make(profile: profile)
+    defer { harness.removeFiles() }
+    let device = remappingRouterDevice(1)
+    await harness.router.controllerInputOwnershipChanged(.exclusive, for: device)
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
+    harness.recorder.removeAll()
+    harness.compatibility.rejectNeutral = true
+    await #expect(throws: RemappingOutputRoutingError.self) {
+      try await harness.router.shutdown()
+    }
+    #expect(harness.recorder.snapshot() == [.compatibilityStop(device)])
+    harness.compatibility.rejectNeutral = false
+    try await harness.router.shutdown()
+    #expect(harness.recorder.snapshot() == [
+      .compatibilityStop(device), .gamepad(.neutral, device)
+    ])
+  }
+
+  @Test(arguments: [false, true])
+  func virtualRouteRetiresAfterNeutralization(transaction: Bool) async throws {
+    let original = remappingRouterProfile()
+    let profile = RemappingProfile(
+      name: original.name,
+      device: original.device,
+      applicationScope: original.applicationScope,
+      outputPolicy: RemappingOutputPolicy(virtualGamepad: .mapped),
+      bindings: [RemappingBinding(source: .button(.south), destination: .gamepadButton(.north))]
+    )
+    let harness = try await RemappingRouterHarness.make(profile: profile)
+    defer { harness.removeFiles() }
+    let device = remappingRouterDevice(1)
+    await harness.router.controllerInputOwnershipChanged(.exclusive, for: device)
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
+    harness.recorder.removeAll()
+    if transaction {
+      let pending = try await harness.router.beginProfileTransaction()
+      #expect(harness.recorder.snapshot() == [
+        .gamepad(.neutral, device), .compatibilityStop(device)
+      ])
+      try await harness.router.stopController(device)
+      try await harness.router.rollBackProfileTransaction(pending)
+      #expect(await harness.router.statuses().isEmpty)
+    } else {
+      try await harness.router.shutdown()
+      try await harness.router.shutdown()
+    }
+    #expect(harness.recorder.snapshot() == [
+      .gamepad(.neutral, device), .compatibilityStop(device)
+    ])
+  }
+
+  @Test func compatibilityGateDoesNotSuppressRemappedGamepad() async throws {
+    let original = remappingRouterProfile()
+    let profile = RemappingProfile(
+      name: original.name,
+      device: original.device,
+      applicationScope: original.applicationScope,
+      outputPolicy: RemappingOutputPolicy(virtualGamepad: .mapped),
+      bindings: [RemappingBinding(source: .button(.south), destination: .gamepadButton(.north))]
+    )
+    let harness = try await RemappingRouterHarness.make(profile: profile)
+    defer { harness.removeFiles() }
+    let device = remappingRouterDevice(1)
+    await harness.router.controllerInputOwnershipChanged(.exclusive, for: device)
+    try await harness.router.setCompatibilityOutputAllowed(false)
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
+    #expect(
+      harness.recorder.snapshot() == [.gamepad(RemappingGamepadState(buttons: [.north]), device)]
+    )
+    harness.router.suppressOutput = true
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: device)
+    #expect(harness.recorder.snapshot().last == .gamepad(.neutral, device))
+    harness.router.suppressOutput = false
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
+    #expect(
+      harness.recorder.snapshot().last == .gamepad(RemappingGamepadState(buttons: [.north]), device)
+    )
+    try await harness.router.stopController(device)
+  }
+
+  @Test func virtualOnlyProfileDoesNotRequireSystemInputPostingAccess() async throws {
+    let original = remappingRouterProfile()
+    let profile = RemappingProfile(
+      name: original.name,
+      device: original.device,
+      applicationScope: original.applicationScope,
+      outputPolicy: RemappingOutputPolicy(virtualGamepad: .mapped),
+      bindings: [RemappingBinding(source: .button(.south), destination: .gamepadButton(.north))]
+    )
+    let harness = try await RemappingRouterHarness.make(profile: profile)
+    defer { harness.removeFiles() }
+    let device = remappingRouterDevice(1)
+    harness.access.set(.notAuthorized)
+    await harness.router.controllerInputOwnershipChanged(.exclusive, for: device)
+    try await harness.router.dispatchCausally(events: [], from: device)
+    #expect(await harness.router.status(for: device)?.eligibility == .eligible)
+    harness.foreground.set("com.example.Other")
+    try await harness.router.refreshEligibility()
+    #expect(await harness.router.status(for: device)?.eligibility == .targetApplicationNotFrontmost)
+    #expect(harness.recorder.snapshot().isEmpty)
+  }
+
+  @Test func exclusiveProfileWaitsForOwnershipAndReleasesOnLoss() async throws {
+    let original = remappingRouterProfile()
+    let profile = RemappingProfile(
+      name: original.name,
+      device: original.device,
+      applicationScope: original.applicationScope,
+      outputPolicy: RemappingOutputPolicy(physicalInput: .exclusive),
+      bindings: original.bindings
+    )
+    let harness = try await RemappingRouterHarness.make(profile: profile)
+    defer { harness.removeFiles() }
+    let device = remappingRouterDevice(1)
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
+    #expect(harness.recorder.snapshot().isEmpty)
+    #expect(await harness.router.status(for: device)?.eligibility == .physicalInputNotExclusive)
+    await harness.router.controllerInputOwnershipChanged(.exclusive, for: device)
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
+    await harness.router.controllerInputOwnershipChanged(.shared, for: device)
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.b)], from: device)
+    #expect(harness.recorder.snapshot() == [.system(.keyDown(.space)), .system(.keyUp(.space))])
+    #expect(await harness.router.status(for: device)?.eligibility == .physicalInputNotExclusive)
+    await harness.router.controllerInputOwnershipChanged(.exclusive, for: device)
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
+    #expect(harness.recorder.snapshot().last == .system(.keyDown(.space)))
+    try await harness.router.stopController(device)
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: device)
+    #expect(await harness.router.status(for: device)?.eligibility == .physicalInputNotExclusive)
+  }
+
+  @Test func ownershipOfSameModelDoesNotAuthorizeAnotherController() async throws {
+    let original = remappingRouterProfile()
+    let profile = RemappingProfile(
+      name: original.name,
+      device: original.device,
+      applicationScope: original.applicationScope,
+      outputPolicy: RemappingOutputPolicy(physicalInput: .exclusive),
+      bindings: original.bindings
+    )
+    let harness = try await RemappingRouterHarness.make(profile: profile)
+    defer { harness.removeFiles() }
+    let first = remappingRouterDevice(1)
+    let second = remappingRouterDevice(2)
+    await harness.router.controllerInputOwnershipChanged(.exclusive, for: first)
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: second)
+    #expect(harness.recorder.snapshot().isEmpty)
+    let transaction = try await harness.router.beginProfileTransaction()
+    await harness.router.controllerInputOwnershipChanged(.accessDenied, for: first)
+    try await harness.router.dispatchCausally(events: [], from: first)
+    try await harness.router.acceptProfileTransaction(transaction)
+    try await harness.router.dispatchCausally(events: [.buttonPressed(.a)], from: first)
+    #expect(harness.recorder.snapshot().isEmpty)
+    #expect(await harness.router.status(for: first)?.eligibility == .physicalInputNotExclusive)
+  }
+
   @Test func activeProfileExclusivelyReplacesCompatibilityOutput() async throws {
     let profile = remappingRouterProfile()
     let harness = try await RemappingRouterHarness.make(profile: profile)

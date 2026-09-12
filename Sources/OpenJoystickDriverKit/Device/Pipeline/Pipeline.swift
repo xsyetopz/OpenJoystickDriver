@@ -140,8 +140,10 @@ actor DevicePipeline {
   /// Stop pipeline and clean up resources.
   func stop() async {
     isActive = false
+    (parser as? any HIDStartupRecoveryProvider)?.expireHIDStartupRequests()
     idleMonitorTask?.cancel()
     idleMonitorTask = nil
+    if case .usb = transport { await reportUSBInputOwnership(.unknown) }
     await neutralizeOutput()
     if let listener = dispatcher as? any ControllerLifecycleListener {
       await listener.controllerDidStop(identifier)
@@ -158,15 +160,41 @@ actor DevicePipeline {
     guard isActive else { return [] }
     appendToPacketLog(bytes: Array(data), direction: "rx")
     do {
-      let events = try parser.parse(data: data)
+      let receivedAt = DispatchTime.now().uptimeNanoseconds
+      let events = try parser.parse(data: data, receivedAtNanoseconds: receivedAt)
       let featureReports = await handleInputConnectionStateChangeIfNeeded()
       guard inputConnectionActive else { return featureReports }
-      await handleParsedEvents(events, now: DispatchTime.now().uptimeNanoseconds)
+      await handleParsedEvents(events, now: receivedAt)
       return featureReports
     } catch {
       print("[DevicePipeline] Parse error" + " for \(identifier): \(error)")
       return []
     }
+  }
+
+  func consumeHIDFeatureReport(
+    _ data: Data, request: PhysicalHIDFeatureReadRequest, transport: String?
+  ) -> Bool {
+    guard isActive, let consumer = parser as? any HIDFeatureReportConsumer else { return false }
+    return consumer.consumeHIDFeatureReport(data, request: request, transport: transport)
+  }
+
+  func hidStartupOutputPlan(transport: String?) -> ([PhysicalHIDOutputReport], UInt64) {
+    guard isActive, let provider = parser as? any HIDStartupOutputReportProvider
+    else { return ([], 0) }
+    return (
+      provider.hidStartupReports(transport: transport),
+      provider.hidStartupReportIntervalNanoseconds(transport: transport)
+    )
+  }
+
+  func pendingHIDStartupReports() -> [PhysicalHIDOutputReport] {
+    guard isActive else { return [] }
+    return (parser as? any HIDStartupRecoveryProvider)?.pendingHIDStartupReports() ?? []
+  }
+
+  func expireHIDStartupRequests() {
+    (parser as? any HIDStartupRecoveryProvider)?.expireHIDStartupRequests()
   }
 
   /// Feed one descriptor-decoded value to the Generic HID fallback.
@@ -187,6 +215,10 @@ actor DevicePipeline {
     return (parser as? any HIDShutdownFeatureReportProvider)?.hidShutdownFeatureReports() ?? []
   }
 
+  nonisolated func physicalInputCapabilities() -> PhysicalControllerInputCapabilities {
+    parser.physicalInputCapabilities
+  }
+
   nonisolated func physicalOutputCapabilities() -> PhysicalControllerOutputCapabilities {
     let rumbleMotors: [PhysicalRumbleMotor]
     if let usbOutput = parser as? PhysicalRumbleOutput {
@@ -204,10 +236,13 @@ actor DevicePipeline {
     lighting += (parser as? PhysicalHIDPlayerIndicatorOutput)?.physicalLightingFeatures ?? []
     lighting += (parser as? PhysicalHIDColorOutput)?.physicalLightingFeatures ?? []
     lighting += (parser as? PhysicalHIDFeatureBrightnessOutput)?.physicalLightingFeatures ?? []
+    let adaptiveTriggers =
+      (parser as? PhysicalHIDAdaptiveTriggerOutput)?.physicalAdaptiveTriggers ?? []
     return PhysicalControllerOutputCapabilities(
       rumbleMotors: rumbleMotors,
       lightingFeatures: lighting,
-      binaryRumbleMotors: binaryRumbleMotors
+      binaryRumbleMotors: binaryRumbleMotors,
+      adaptiveTriggers: adaptiveTriggers
     )
   }
 
@@ -344,6 +379,10 @@ actor DevicePipeline {
     ) ?? []
   }
 
+  nonisolated func supportsHIDFeatureHaptics() -> Bool {
+    parser is PhysicalHIDFeatureHapticOutput
+  }
+
   nonisolated func minimumPhysicalOutputIntervalNanoseconds() -> UInt64 {
     (parser as? PhysicalHIDRumbleOutput)?.minimumPhysicalOutputIntervalNanoseconds ?? 0
   }
@@ -364,6 +403,15 @@ actor DevicePipeline {
 
   func hidPlayerIndicatorReport(_ indicator: PhysicalPlayerIndicator) -> PhysicalHIDOutputReport? {
     (parser as? PhysicalHIDPlayerIndicatorOutput)?.physicalPlayerIndicatorReport(indicator)
+  }
+
+  func hidAdaptiveTriggerReport(
+    _ trigger: PhysicalAdaptiveTrigger,
+    effect: PhysicalAdaptiveTriggerEffect
+  ) -> PhysicalHIDOutputReport? {
+    (parser as? PhysicalHIDAdaptiveTriggerOutput)?.physicalAdaptiveTriggerReport(
+      trigger, effect: effect
+    )
   }
 
   func sendPlayerIndicator(_ indicator: PhysicalPlayerIndicator) async -> Bool {

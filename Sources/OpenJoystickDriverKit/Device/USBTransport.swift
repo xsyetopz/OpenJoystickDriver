@@ -4,6 +4,9 @@
 /// USB library or DriverKit client. Concrete transports own device discovery,
 /// interface claims, pipe lifetimes, and platform error translation.
 public protocol USBTransportSession: AnyObject, Sendable {
+  /// Ownership confirmed by this live transport session, rather than by discovery.
+  var inputOwnership: HIDInputOwnership { get async }
+
   /// Sends one packet to an interrupt OUT endpoint.
   @discardableResult func writeInterruptPacket(endpoint: UInt8, data: [UInt8], timeout: UInt32)
     async throws -> Int
@@ -15,7 +18,10 @@ public protocol USBTransportSession: AnyObject, Sendable {
   func close() async
 }
 
-extension USBTransportSession { public func close() async { await Task.yield() } }
+extension USBTransportSession {
+  public var inputOwnership: HIDInputOwnership { .unknown }
+  public func close() async { await Task.yield() }
+}
 
 /// The Apple transport boundary that owns one raw USB service.
 public enum USBTransportRoute: String, Hashable, Sendable {

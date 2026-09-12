@@ -39,12 +39,22 @@ public final class ParserRegistry: Sendable {
       )
     case "DS3": return DS3Parser()
     case "DS4": return DS4Parser()
-    case "DualSense": return DualSenseParser()
+    case "DualSense":
+      return DualSenseParser(hasEdgeButtons: runtimeProfile.quirks.contains("edgeButtons"))
     case "SteamController":
       return SteamControllerParser(
         isWirelessReceiver: runtimeProfile.quirks.contains("wirelessReceiver")
       )
-    case "SwitchPro": return SwitchProParser()
+    case "SwitchPro":
+      let layout: NintendoControllerLayout
+      if runtimeProfile.quirks.contains("joyConLeft") {
+        layout = .leftJoyCon
+      } else if runtimeProfile.quirks.contains("joyConRight") {
+        layout = .rightJoyCon
+      } else {
+        layout = .pro
+      }
+      return SwitchProParser(layout: layout)
     case "Flydigi": return FlydigiParser()
     case "XUSB":
       return Xbox360Parser(

@@ -4,7 +4,7 @@ import OpenJoystickDriverKit
 
 /// Exclusively selects compatibility output or system-input remapping per exact controller.
 final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener,
-  @unchecked Sendable
+  ControllerInputOwnershipListener, @unchecked Sendable
 {
   typealias UptimeReader = @Sendable () -> UInt64
   typealias TickerSleeper = @Sendable (UInt64) async throws -> Void
@@ -63,6 +63,16 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
 
   deinit { tickerTask?.cancel() }
 
+  func controllerInputOwnershipChanged(
+    _ ownership: HIDInputOwnership,
+    for identifier: DeviceIdentifier
+  ) async {
+    do { try await core.updateInputOwnership(ownership, for: identifier) } catch {
+      // Engine failures are retained in the typed route status by the core.
+    }
+    await reconcileTickerWithEngine()
+  }
+
   func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {
     do { try await dispatchCausally(events: events, from: identifier) } catch {
       // OutputDispatcher cannot surface errors. Callers that need causal failure
@@ -104,6 +114,36 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
       await reconcileTickerWithEngine()
       throw error
     }
+    await reconcileTickerWithEngine()
+  }
+
+  func pairJoyCons(
+    leftRuntimeIdentifier: String,
+    rightRuntimeIdentifier: String,
+    profile: RemappingProfile
+  ) async throws -> UUID {
+    guard let lease = try outputLeaseIfOpen() else {
+      throw RemappingEventEngineError.outputSuspended
+    }
+    defer { lease.finish() }
+    try await synchronizeControls(requiring: lease.permit)
+    let sessionID = try await core.pairJoyCons(
+      leftRuntimeIdentifier: leftRuntimeIdentifier,
+      rightRuntimeIdentifier: rightRuntimeIdentifier,
+      profile: profile,
+      requiring: lease.permit
+    )
+    await reconcileTickerWithEngine()
+    return sessionID
+  }
+
+  func unpairJoyCons(_ sessionID: UUID) async throws {
+    guard let lease = try outputLeaseIfOpen() else {
+      throw RemappingEventEngineError.outputSuspended
+    }
+    defer { lease.finish() }
+    try await synchronizeControls(requiring: lease.permit)
+    try await core.unpairJoyCons(sessionID, requiring: lease.permit)
     await reconcileTickerWithEngine()
   }
 

@@ -5,6 +5,8 @@ private let steamControllerReportPrefix1: UInt8 = 0x00
 private let steamControllerStateMessageID: UInt8 = 0x01
 private let steamControllerWirelessMessageID: UInt8 = 0x03
 private let steamControllerStatusMessageID: UInt8 = 0x04
+private let steamControllerIMUModeSetting: UInt8 = 48
+private let steamControllerRawIMUMode: UInt8 = 0x18
 private let steamControllerReportLength = 64
 private let steamControllerTriggerMax: Float = 255
 private let steamControllerStickMax: Float = 32767
@@ -51,6 +53,8 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     static let rightPadY = 22
   }
 
+  private var motionSamples = SteamMotionSamples()
+  private var touchSamples = SteamTouchSamples()
   private var prevButtons0: UInt8 = 0
   private var prevButtons1: UInt8 = 0
   private var prevButtons2: UInt8 = 0
@@ -71,6 +75,15 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     isLogicalControllerConnected = !isWirelessReceiver
   }
 
+  public var physicalInputCapabilities: PhysicalControllerInputCapabilities {
+    PhysicalControllerInputCapabilities(
+      rawMotion: true,
+      touchContactsPerFrame: 1,
+      additionalButtons: [.leftGrip, .rightGrip, .leftPadClick, .rightPadClick],
+      touchSurfaces: [.left, .right]
+    )
+  }
+
   public var physicalRumbleMotors: [PhysicalRumbleMotor] { [.leftHaptic, .rightHaptic] }
 
   public var requiresInputConnectionBeforeOutput: Bool { isWirelessReceiver }
@@ -85,9 +98,9 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     [
       steamFeatureReport([steamControllerClearDigitalMappingsCommand]),
       steamFeatureReport([
-        steamControllerSetSettingsValuesCommand, 6, steamControllerLeftTrackpadModeSetting,
+        steamControllerSetSettingsValuesCommand, 9, steamControllerLeftTrackpadModeSetting,
         steamControllerTrackpadNone, 0, steamControllerRightTrackpadModeSetting,
-        steamControllerTrackpadNone, 0
+        steamControllerTrackpadNone, 0, steamControllerIMUModeSetting, steamControllerRawIMUMode, 0
       ])
     ]
   }
@@ -150,6 +163,10 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
 
   /// Parses one Steam Controller state report and returns controller events.
   public func parse(data: Data) throws -> [ControllerEvent] {
+    try parse(data: data, receivedAtNanoseconds: DispatchTime.now().uptimeNanoseconds)
+  }
+
+  public func parse(data: Data, receivedAtNanoseconds: UInt64) throws -> [ControllerEvent] {
     let bytes = Array(data)
     guard bytes.count == steamControllerReportLength, bytes[0] == steamControllerReportPrefix0,
       bytes[1] == steamControllerReportPrefix1
@@ -164,7 +181,12 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
       return []
     case steamControllerStateMessageID:
       guard isLogicalControllerConnected else { return [] }
-      return parseControllerState(bytes)
+      var events = parseControllerState(bytes)
+      if let sample = motionSamples.decode(bytes, receivedAt: receivedAtNanoseconds) {
+        events.append(.motionSample(sample))
+        events.append(contentsOf: touchSamples.decode(bytes, timestamp: sample.timestamp))
+      }
+      return events
     default: return []
     }
   }
@@ -198,9 +220,10 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
     let rt = bytes[ReportOffset.rightTrigger]
     let lpadTouched = (b2 & 0x08) != 0
     let lpadAndJoy = (b2 & 0x80) != 0
-    let reportsLeftStick = !lpadTouched || lpadAndJoy
-    let lx = reportsLeftStick ? readInt16LE(bytes, offset: ReportOffset.leftX) : 0
-    let ly = reportsLeftStick ? clampedNegatedInt16LE(bytes, offset: ReportOffset.leftY) : 0
+    let lx = lpadTouched
+      ? (lpadAndJoy ? prevLX : 0) : readInt16LE(bytes, offset: ReportOffset.leftX)
+    let ly = lpadTouched
+      ? (lpadAndJoy ? prevLY : 0) : clampedNegatedInt16LE(bytes, offset: ReportOffset.leftY)
     let rx = readInt16LE(bytes, offset: ReportOffset.rightPadX)
     let ry = clampedNegatedInt16LE(bytes, offset: ReportOffset.rightPadY)
 
@@ -249,6 +272,8 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
   }
 
   private func resetPreviousReportState() {
+    motionSamples = SteamMotionSamples()
+    touchSamples = SteamTouchSamples()
     prevButtons0 = 0
     prevButtons1 = 0
     prevButtons2 = 0
@@ -279,14 +304,16 @@ public final class SteamControllerParser: InputParser, ControllerInputConnection
       contentsOf: diffButtons(
         prev: prevButtons1,
         curr: b1,
-        mapping: [(0x10, .back), (0x20, .guide), (0x40, .start)]
+        mapping: [(0x10, .back), (0x20, .guide), (0x40, .start), (0x80, .leftGrip)]
       )
     )
     events.append(
       contentsOf: diffButtons(
         prev: prevButtons2,
         curr: b2,
-        mapping: [(0x04, .rightStick), (0x40, .leftStick)]
+        mapping: [
+          (0x01, .rightGrip), (0x02, .leftPadClick), (0x04, .rightPadClick), (0x40, .leftStick)
+        ]
       )
     )
     return events

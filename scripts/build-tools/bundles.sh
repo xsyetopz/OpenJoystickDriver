@@ -82,6 +82,7 @@ build_app_bundle() {
   mkdir -p "$GUI_RESOURCES"
   cp "$PROJECT_DIR/Sources/OpenJoystickDriver/Resources/OpenJoystickDriver.icns" \
     "$GUI_RESOURCES/OpenJoystickDriver.icns"
+  cp "$PROJECT_DIR/THIRD_PARTY_NOTICES.md" "$GUI_RESOURCES/THIRD_PARTY_NOTICES.md"
   for bundle in "$BUILD_DIR"/OpenJoystickDriver_*.bundle; do
     [[ -d "$bundle" ]] && cp -R "$bundle" "$GUI_RESOURCES/"
   done

@@ -1,6 +1,32 @@
 import Foundation
 import IOKit.hid
 
+/// Observed result of acquiring one physical HID interface, independent of virtual output.
+public enum HIDInputOwnership: String, Codable, Equatable, Sendable {
+  case unknown
+  case exclusive
+  case shared
+  case accessDenied
+  case ownedByAnotherClient
+  case acquisitionFailed
+
+  /// Every interface must be exclusively owned before the location can promise isolation.
+  static func combined(_ observations: [Self]) -> Self {
+    observations.min { $0.priority < $1.priority } ?? .unknown
+  }
+
+  private var priority: Int {
+    switch self {
+    case .ownedByAnotherClient: 0
+    case .accessDenied: 1
+    case .acquisitionFailed: 2
+    case .unknown: 3
+    case .shared: 4
+    case .exclusive: 5
+    }
+  }
+}
+
 /// A semantic value decoded by the active app HID backend from one input element.
 public struct HIDElementValue: Sendable, Equatable {
   public let usagePage: UInt32
@@ -36,8 +62,11 @@ public enum HIDDeviceEvent: Sendable {
     serialNumber: String?,
     locationID: UInt32,
     productName: String?,
-    transport: String?
+    transport: String?,
+    ownership: HIDInputOwnership = .unknown
   )
+  /// Access changed while the physical controller remains connected.
+  case ownershipChanged(locationID: UInt32, ownership: HIDInputOwnership)
   /// A previously connected HID controller was unplugged.
   case disconnected(vendorID: UInt16, productID: UInt16, locationID: UInt32)
   /// The controller sent a raw input report (button presses, stick positions, etc.).

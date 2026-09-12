@@ -35,16 +35,12 @@ public final class ApplicationServiceClient: @unchecked Sendable {
       commandLineArguments: CommandLine.arguments,
       bundlePathExtension: Bundle.main.bundleURL.pathExtension
     ) {
-    case .waitForLocalServer:
-      break
+    case .waitForLocalServer: break
     case .spawnBundleExecutable:
-      let grace = Date().addingTimeInterval(
-        min(Self.concurrentHostLaunchGraceSeconds, timeout)
-      )
+      let grace = Date().addingTimeInterval(min(Self.concurrentHostLaunchGraceSeconds, timeout))
       if waitForLocalServer(until: grace) { return }
       spawnMainApplicationExecutable()
-    case .unavailable:
-      break
+    case .unavailable: break
     }
     if waitForLocalServer(until: deadline) { return }
     stateLock.withLock { connected = false }
@@ -69,9 +65,11 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     try await call("requestRequiredAccess", LocalServiceRPCEmptyArguments())
   }
 
-  public func requestAccess(_ requirement: PermissionManager.Requirement) async throws
-    -> PermissionManager.Snapshot
-  { try await call("requestAccess", LocalServiceRPCPermissionArguments(requirement: requirement)) }
+  public func requestAccess(
+    _ requirement: PermissionManager.Requirement
+  ) async throws -> PermissionManager.Snapshot {
+    try await call("requestAccess", LocalServiceRPCPermissionArguments(requirement: requirement))
+  }
 
   public func deviceInputState(
     vendorID: UInt16,
@@ -90,9 +88,11 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     return try? JSONDecoder().decode(DeviceInputState.self, from: data)
   }
 
-  public func packetLog(vendorID: UInt16, productID: UInt16, runtimeIdentifier: String? = nil)
-    async throws -> [PacketLogEntry]
-  {
+  public func packetLog(
+    vendorID: UInt16,
+    productID: UInt16,
+    runtimeIdentifier: String? = nil
+  ) async throws -> [PacketLogEntry] {
     let data: Data = try await call(
       "getPacketLog",
       LocalServiceRPCDeviceArguments(
@@ -212,9 +212,9 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     try await call("getCompatibilityIdentity", LocalServiceRPCEmptyArguments())
   }
 
-  public func runVirtualDeviceSelfTest(seconds: Int) async throws
-    -> ApplicationServiceVirtualDeviceSelfTestPayload
-  {
+  public func runVirtualDeviceSelfTest(
+    seconds: Int
+  ) async throws -> ApplicationServiceVirtualDeviceSelfTestPayload {
     let clampedSeconds = max(1, min(30, seconds))
     let data: Data = try await call(
       "runVirtualDeviceSelfTest",
@@ -238,6 +238,43 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     try await remappingCall(.getSnapshot, LocalServiceRPCEmptyArguments())
   }
 
+  public func remappingMotionCalibration(
+    runtimeIdentifier: String,
+    command: RemappingMotionCalibrationCommand? = nil
+  ) async throws -> RemappingMotionCalibrationStatus {
+    try await remappingCall(
+      .motionCalibration,
+      ApplicationServiceMotionCalibrationArguments(
+        runtimeIdentifier: runtimeIdentifier,
+        command: command
+      )
+    )
+  }
+
+  public func pairRemappingJoyCons(
+    leftRuntimeIdentifier: String,
+    rightRuntimeIdentifier: String,
+    profileID: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    try await remappingCall(
+      .pairJoyCons,
+      ApplicationServiceJoyConPairArguments(
+        leftRuntimeIdentifier: leftRuntimeIdentifier,
+        rightRuntimeIdentifier: rightRuntimeIdentifier,
+        profileID: profileID
+      )
+    )
+  }
+
+  public func unpairRemappingJoyCons(
+    sessionID: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    try await remappingCall(
+      .unpairJoyCons,
+      ApplicationServiceJoyConUnpairArguments(sessionID: sessionID)
+    )
+  }
+
   public func getRemappingProfile(id: UUID) async throws -> RemappingProfile {
     try await remappingCall(
       .getProfile,
@@ -245,18 +282,19 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     )
   }
 
-  public func createRemappingProfile(_ profile: RemappingProfile) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  public func createRemappingProfile(
+    _ profile: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await remappingCall(
       .createProfile,
       ApplicationServiceRemappingProfileArguments(profile: profile)
     )
   }
 
-  public func updateRemappingProfile(_ profile: RemappingProfile, expectedCurrent: RemappingProfile)
-    async throws -> ApplicationServiceRemappingSnapshotPayload
-  {
+  public func updateRemappingProfile(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await remappingCall(
       .updateProfile,
       ApplicationServiceRemappingProfileUpdateArguments(
@@ -266,45 +304,46 @@ public final class ApplicationServiceClient: @unchecked Sendable {
     )
   }
 
-  public func importRemappingProfile(_ profile: RemappingProfile) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  public func importRemappingProfile(
+    _ profile: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await remappingCall(
       .importProfile,
       ApplicationServiceRemappingProfileArguments(profile: profile)
     )
   }
 
-  public func deleteRemappingProfile(id: UUID) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  public func deleteRemappingProfile(
+    id: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await remappingCall(
       .deleteProfile,
       ApplicationServiceRemappingProfileIDArguments(profileID: id)
     )
   }
 
-  public func activateRemappingProfile(id: UUID) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  public func activateRemappingProfile(
+    id: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await remappingCall(
       .activateProfile,
       ApplicationServiceRemappingProfileIDArguments(profileID: id)
     )
   }
 
-  public func deactivateRemappingProfile(vendorID: UInt16, productID: UInt16) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  public func deactivateRemappingProfile(
+    vendorID: UInt16,
+    productID: UInt16
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await remappingCall(
       .deactivateProfile,
       ApplicationServiceRemappingModelArguments(vendorID: vendorID, productID: productID)
     )
   }
 
-  public func deactivateRemappingProfile(profileID: UUID) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  public func deactivateRemappingProfile(
+    profileID: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await remappingCall(
       .deactivateProfileByID,
       ApplicationServiceRemappingProfileIDArguments(profileID: profileID)

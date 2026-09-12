@@ -38,6 +38,7 @@ enum RemappingRouteEligibility: String, Equatable, Sendable {
   case outputSuppressed = "output_suppressed"
   case postEventAccessNotAuthorized = "post_event_access_not_authorized"
   case targetApplicationNotFrontmost = "target_application_not_frontmost"
+  case physicalInputNotExclusive = "physical_input_not_exclusive"
   case unavailable
 }
 
@@ -72,7 +73,36 @@ struct RemappingProfileTransaction: Equatable, Hashable, Sendable {
 
 struct RemappingRouterStatusSnapshot: Equatable, Sendable {
   let routes: [RemappingRouteStatus]
+  let joyConPairs: [ApplicationServiceJoyConPairPayload]
   let postEventAccessState: RemappingPostEventAccessState
+}
+
+enum RemappingJoyConPairError: Error, Equatable, LocalizedError, Sendable {
+  case controllerUnavailable
+  case invalidControllerSide
+  case memberAlreadyPaired
+  case profileNotPairable
+  case sessionUnavailable
+
+  var errorDescription: String? {
+    switch self {
+    case .controllerUnavailable:
+      "Both selected Joy-Cons must be connected by exact runtime identity."
+    case .invalidControllerSide: "Select one left Joy-Con and one right Joy-Con."
+    case .memberAlreadyPaired: "A selected Joy-Con already belongs to a paired session."
+    case .profileNotPairable: "The selected profile is not configured for paired Joy-Cons."
+    case .sessionUnavailable: "The paired Joy-Con session is no longer available."
+    }
+  }
+}
+
+struct RemappingJoyConPairSession: Equatable, Sendable {
+  let id: UUID
+  let left: DeviceIdentifier
+  let right: DeviceIdentifier
+  let profile: RemappingProfile
+
+  var members: [DeviceIdentifier] { [left, right] }
 }
 
 enum RemappingProfileTransactionState: Equatable, Sendable {

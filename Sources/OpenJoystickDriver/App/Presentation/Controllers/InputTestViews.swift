@@ -55,6 +55,7 @@
     private var diagnosticsColumn: some View {
       VStack(alignment: .leading, spacing: 16) {
         InputTestAxisValuesView(liveState: model.liveState)
+        MotionCalibrationControls(model: model.motionCalibration)
         InputTestOutputControlsView(settings: model.outputSettings) {
           VStack(alignment: .leading, spacing: 16) {
             rumbleGroup

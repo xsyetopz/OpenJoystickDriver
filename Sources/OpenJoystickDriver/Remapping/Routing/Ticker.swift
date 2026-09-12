@@ -159,6 +159,11 @@ extension RemappingOutputRouter {
     await compatibility.setOutputSuppressed(
       Self.compatibilityIsSuppressed(snapshot) || transactionSuppressed
     )
+    if let controlling = compatibility as? any RemappingGamepadOutputControlling {
+      await controlling.setRemappingOutputSuppressed(
+        snapshot.outputSuppressed || transactionSuppressed
+      )
+    }
   }
 
   private static func compatibilityIsSuppressed(_ controls: RemappingRoutingControls) -> Bool {

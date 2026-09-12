@@ -25,6 +25,11 @@ public enum ControllerEvent: Sendable, Equatable {
 
   /// The directional pad moved to a new position (or returned to center).
   case dpadChanged(DpadDirection)
+
+  /// An ordered sensor sample, including repeated readings.
+  case motionSample(ControllerMotionSample)
+  /// A complete touch contact frame, including historical frames.
+  case touchSample(ControllerTouchSample)
 }
 
 /// A named button on a game controller.
@@ -32,7 +37,7 @@ public enum ControllerEvent: Sendable, Equatable {
 /// Xbox-style names are the canonical identifiers. PlayStation names are aliases
 /// of the same identifiers. Extra buttons are emitted only when a parser maps
 /// them from a packet.
-public enum Button: String, Sendable, CaseIterable {
+public enum Button: String, Codable, Sendable, CaseIterable {
   case a, b, x, y
   case leftBumper, rightBumper
   case leftStick, rightStick
@@ -43,6 +48,9 @@ public enum Button: String, Sendable, CaseIterable {
   case l1, r1, l2Digital, r2Digital
   case share, options, ps, touchpad
   case mute
+  case leftGrip, rightGrip, leftPadClick, rightPadClick
+  case leftSL, leftSR, rightSL, rightSR
+  case leftFunction, rightFunction, leftPaddle, rightPaddle
 }
 
 /// One of eight compass directions, or neutral (center) for the D-pad.

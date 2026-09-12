@@ -19,8 +19,11 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
     let dispatcher = CompatibilityOutputDispatcher()
     let remappingProfileLibrary = RemappingProfileLibrary()
     let postEventAccess = CoreGraphicsPostEventAccess()
+    let physicalOutputBridge = RemappingPhysicalOutputBridge()
     let remappingEngine = RemappingEventEngine(
-      sink: CoreGraphicsSystemInputSink(access: postEventAccess)
+      sink: CoreGraphicsSystemInputSink(access: postEventAccess),
+      gamepadSink: dispatcher,
+      physicalOutputSink: physicalOutputBridge
     )
     let remappingRouter = RemappingOutputRouter(
       library: remappingProfileLibrary,
@@ -33,6 +36,7 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
       dispatcher: remappingRouter,
       usbTransportProvider: OpenJoystickDriverUSBTransportProvider()
     )
+    physicalOutputBridge.attach(manager)
     let applicationServiceServer = ApplicationServiceServer(
       deviceManager: manager,
       permissionManager: permissionManager,
@@ -138,6 +142,20 @@ final class ApplicationServiceRuntime: @unchecked Sendable {
 }
 
 #if canImport(SwiftUI)
+  extension ApplicationServiceRuntime: MotionCalibrationGateway {
+    func motionCalibration(
+      for selector: RuntimeDeviceSelector,
+      command: RemappingMotionCalibrationCommand?
+    ) async throws -> RemappingMotionCalibrationStatus {
+      guard let runtimeIdentifier = selector.runtimeIdentifier else {
+        throw RemappingMotionCalibrationError.controllerUnavailable
+      }
+      return try await remappingRouter.motionCalibration(
+        for: runtimeIdentifier, command: command
+      )
+    }
+  }
+
   extension ApplicationServiceRuntime: InputTestDeviceGateway {
     func inputState(for selector: RuntimeDeviceSelector) async throws -> DeviceInputState? {
       let identifier = DeviceIdentifier(vendorID: selector.vendorID, productID: selector.productID)

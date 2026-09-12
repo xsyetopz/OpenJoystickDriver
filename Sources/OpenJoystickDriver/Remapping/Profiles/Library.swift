@@ -10,6 +10,7 @@ enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
   case profileCountExceeded(Int)
   case profileAlreadyExists(UUID)
   case profileNotFound(UUID)
+  case pairProfileRequiresExplicitSession
   case profileUpdateConflict(UUID)
   case unreadableLibrary
   case unsupportedLibraryVersion(Int)
@@ -26,6 +27,8 @@ enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
       "The remapping profile library cannot contain \(count) profiles."
     case .profileAlreadyExists(let id): "The remapping profile \(id.uuidString) already exists."
     case .profileNotFound(let id): "The remapping profile \(id.uuidString) does not exist."
+    case .pairProfileRequiresExplicitSession:
+      "Paired Joy-Con profiles are started with an explicit pair session."
     case .profileUpdateConflict(let id):
       "The remapping profile \(id.uuidString) changed since it was read."
     case .unreadableLibrary: "The remapping profile library could not be read."
@@ -136,9 +139,8 @@ actor RemappingProfileLibrary {
     library = checkpoint.cachedLibrary
   }
 
-  @discardableResult func create(_ profile: RemappingProfile) throws
-    -> RemappingProfileMutationImpact
-  {
+  @discardableResult
+  func create(_ profile: RemappingProfile) throws -> RemappingProfileMutationImpact {
     var proposed = try loadIfNeeded()
     guard !proposed.profiles.contains(where: { $0.id == profile.id }) else {
       throw RemappingProfileLibraryError.profileAlreadyExists(profile.id)
@@ -162,9 +164,11 @@ actor RemappingProfileLibrary {
     }
   }
 
-  @discardableResult func update(_ profile: RemappingProfile, expectedCurrent: RemappingProfile)
-    throws -> RemappingProfileMutationImpact
-  {
+  @discardableResult
+  func update(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile
+  ) throws -> RemappingProfileMutationImpact {
     var proposed = try loadIfNeeded()
     guard let index = proposed.profiles.firstIndex(where: { $0.id == profile.id }) else {
       throw RemappingProfileLibraryError.profileNotFound(profile.id)
@@ -179,7 +183,7 @@ actor RemappingProfileLibrary {
     let wasActive = proposed.activeProfiles.contains { $0.profileID == profile.id }
     proposed.profiles[index] = profile
     let currentModel = RemappingProfileModel(profile.device)
-    if previousModel != currentModel {
+    if previousModel != currentModel || profile.joyConPair != nil {
       proposed.activeProfiles.removeAll { $0.profileID == profile.id }
     }
     try replace(with: proposed)
@@ -189,9 +193,8 @@ actor RemappingProfileLibrary {
   }
 
   /// Imports a profile, replacing the existing profile with the same identifier.
-  @discardableResult func importProfile(_ profile: RemappingProfile) throws
-    -> RemappingProfileMutationImpact
-  {
+  @discardableResult
+  func importProfile(_ profile: RemappingProfile) throws -> RemappingProfileMutationImpact {
     var proposed = try loadIfNeeded()
     var modelsNeedingRefresh: Set<RemappingProfileModel> = []
     if let index = proposed.profiles.firstIndex(where: { $0.id == profile.id }) {
@@ -205,7 +208,7 @@ actor RemappingProfileLibrary {
         modelsNeedingRefresh.insert(currentModel)
       }
       proposed.profiles[index] = profile
-      if previousModel != currentModel {
+      if previousModel != currentModel || profile.joyConPair != nil {
         proposed.activeProfiles.removeAll { $0.profileID == profile.id }
       }
     } else {
@@ -216,7 +219,8 @@ actor RemappingProfileLibrary {
     return RemappingProfileMutationImpact(modelsNeedingRefresh: modelsNeedingRefresh)
   }
 
-  @discardableResult func delete(id: UUID) throws -> RemappingProfileMutationImpact {
+  @discardableResult
+  func delete(id: UUID) throws -> RemappingProfileMutationImpact {
     var proposed = try loadIfNeeded()
     guard let index = proposed.profiles.firstIndex(where: { $0.id == id }) else {
       throw RemappingProfileLibraryError.profileNotFound(id)
@@ -230,10 +234,14 @@ actor RemappingProfileLibrary {
     )
   }
 
-  @discardableResult func activate(profileID: UUID) throws -> RemappingProfileMutationImpact {
+  @discardableResult
+  func activate(profileID: UUID) throws -> RemappingProfileMutationImpact {
     var proposed = try loadIfNeeded()
     guard let profile = proposed.profiles.first(where: { $0.id == profileID }) else {
       throw RemappingProfileLibraryError.profileNotFound(profileID)
+    }
+    guard profile.joyConPair == nil else {
+      throw RemappingProfileLibraryError.pairProfileRequiresExplicitSession
     }
     let model = RemappingProfileModel(profile.device)
     // Remove any existing active entry for this exact profile, then re-add.
@@ -250,7 +258,8 @@ actor RemappingProfileLibrary {
     return RemappingProfileMutationImpact(modelsNeedingRefresh: [model])
   }
 
-  @discardableResult func deactivate(profileID: UUID) throws -> RemappingProfileMutationImpact {
+  @discardableResult
+  func deactivate(profileID: UUID) throws -> RemappingProfileMutationImpact {
     var proposed = try loadIfNeeded()
     guard let existing = proposed.activeProfiles.first(where: { $0.profileID == profileID }) else {
       throw RemappingProfileLibraryError.profileNotFound(profileID)
@@ -260,9 +269,8 @@ actor RemappingProfileLibrary {
     return RemappingProfileMutationImpact(modelsNeedingRefresh: [existing.model])
   }
 
-  @discardableResult func deactivateAll(vendorID: UInt16, productID: UInt16) throws
-    -> RemappingProfileMutationImpact
-  {
+  @discardableResult
+  func deactivateAll(vendorID: UInt16, productID: UInt16) throws -> RemappingProfileMutationImpact {
     var proposed = try loadIfNeeded()
     let model = RemappingProfileModel(vendorID: vendorID, productID: productID)
     proposed.activeProfiles.removeAll { $0.model == model }
@@ -274,9 +282,11 @@ actor RemappingProfileLibrary {
     try activeProfile(vendorID: vendorID, productID: productID, frontmostBundleIdentifier: nil)
   }
 
-  func activeProfile(vendorID: UInt16, productID: UInt16, frontmostBundleIdentifier: String?) throws
-    -> RemappingProfile?
-  {
+  func activeProfile(
+    vendorID: UInt16,
+    productID: UInt16,
+    frontmostBundleIdentifier: String?
+  ) throws -> RemappingProfile? {
     let loaded = try loadIfNeeded()
     let model = RemappingProfileModel(vendorID: vendorID, productID: productID)
     let candidates = loaded.activeProfiles.filter { $0.model == model }
@@ -323,9 +333,11 @@ actor RemappingProfileLibrary {
     }
 
     let decoded: RemappingProfileLibraryState
-    do { decoded = try JSONDecoder().decode(RemappingProfileLibraryState.self, from: data) } catch {
-      throw RemappingProfileLibraryError.corruptLibrary
-    }
+    do {
+      decoded = try JSONDecoder().decode(RemappingProfileLibraryState.self, from: data)
+    } catch let error as RemappingValidationError {
+      throw RemappingProfileLibraryError.invalidProfile(error)
+    } catch { throw RemappingProfileLibraryError.corruptLibrary }
     try validate(decoded)
     library = decoded
     return decoded
@@ -391,6 +403,7 @@ actor RemappingProfileLibrary {
       guard active.model == RemappingProfileModel(profile.device) else {
         throw RemappingProfileLibraryError.corruptLibrary
       }
+      guard profile.joyConPair == nil else { throw RemappingProfileLibraryError.corruptLibrary }
       // No duplicate (model, profileID, scope) entries
       let scopeKey = String(describing: active.applicationScope)
       let key = "\(active.model.vendorID):\(active.model.productID):\(active.profileID):\(scopeKey)"

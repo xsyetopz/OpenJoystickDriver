@@ -142,7 +142,12 @@ public enum PhysicalHIDBackendEventPolicy {
 }
 
 public struct PhysicalHIDTrackingStateMachine {
-  private var locationsByDeviceID: [UInt64: UInt32] = [:]
+  private struct Device {
+    let locationID: UInt32
+    var ownership: HIDInputOwnership
+  }
+
+  private var devices: [UInt64: Device] = [:]
   private var deviceIDsByLocation: [UInt32: Set<UInt64>] = [:]
 
   public init() {}
@@ -150,29 +155,47 @@ public struct PhysicalHIDTrackingStateMachine {
   @discardableResult public mutating func register(
     deviceID: UInt64,
     locationID: UInt32,
-    syntheticProperty: Any?
+    syntheticProperty: Any?,
+    ownership: HIDInputOwnership = .unknown
   ) -> Bool {
     guard PhysicalHIDBackendEventPolicy.accepts(.deviceAdded, syntheticProperty: syntheticProperty),
-      locationsByDeviceID[deviceID] == nil
+      devices[deviceID] == nil
     else { return false }
-    locationsByDeviceID[deviceID] = locationID
+    devices[deviceID] = Device(locationID: locationID, ownership: ownership)
     deviceIDsByLocation[locationID, default: []].insert(deviceID)
     return true
   }
 
-  public func acceptsInput(deviceID: UInt64) -> Bool { locationsByDeviceID[deviceID] != nil }
+  public func acceptsInput(deviceID: UInt64) -> Bool {
+    guard let device = devices[deviceID] else { return false }
+    return device.ownership != .ownedByAnotherClient
+  }
 
-  public func isTracked(deviceID: UInt64) -> Bool { locationsByDeviceID[deviceID] != nil }
+  public func isTracked(deviceID: UInt64) -> Bool { devices[deviceID] != nil }
 
   public func acceptsInput(locationID: UInt32) -> Bool {
-    !(deviceIDsByLocation[locationID] ?? []).isEmpty
+    (deviceIDsByLocation[locationID] ?? []).contains { acceptsInput(deviceID: $0) }
+  }
+
+  public func ownership(locationID: UInt32) -> HIDInputOwnership {
+    HIDInputOwnership.combined(
+      (deviceIDsByLocation[locationID] ?? []).compactMap { devices[$0]?.ownership }
+    )
+  }
+
+  @discardableResult
+  public mutating func updateOwnership(_ ownership: HIDInputOwnership, deviceID: UInt64) -> Bool {
+    guard devices[deviceID] != nil else { return false }
+    devices[deviceID]?.ownership = ownership
+    return true
   }
 
   public func acceptsFeedback(locationID: UInt32) -> Bool { acceptsInput(locationID: locationID) }
 
   /// Removes one device and returns true only when its location is now fully disconnected.
-  @discardableResult public mutating func remove(deviceID: UInt64) -> Bool {
-    guard let locationID = locationsByDeviceID.removeValue(forKey: deviceID) else { return false }
+  @discardableResult
+  public mutating func remove(deviceID: UInt64) -> Bool {
+    guard let locationID = devices.removeValue(forKey: deviceID)?.locationID else { return false }
     deviceIDsByLocation[locationID]?.remove(deviceID)
     guard deviceIDsByLocation[locationID]?.isEmpty == true else { return false }
     deviceIDsByLocation.removeValue(forKey: locationID)
@@ -183,7 +206,7 @@ public struct PhysicalHIDTrackingStateMachine {
   @discardableResult public mutating func remove(locationID: UInt32) -> Bool {
     guard let deviceIDs = deviceIDsByLocation.removeValue(forKey: locationID), !deviceIDs.isEmpty
     else { return false }
-    deviceIDs.forEach { locationsByDeviceID.removeValue(forKey: $0) }
+    deviceIDs.forEach { devices.removeValue(forKey: $0) }
     return true
   }
 }
@@ -218,13 +241,24 @@ public struct PhysicalHIDBackendEventAdapter {
   @discardableResult public mutating func add(
     deviceID: UInt64,
     locationID: UInt32,
-    syntheticProperty: Any?
+    syntheticProperty: Any?,
+    ownership: HIDInputOwnership = .unknown
   ) -> Bool {
     tracking.register(
       deviceID: deviceID,
       locationID: locationID,
-      syntheticProperty: syntheticProperty
+      syntheticProperty: syntheticProperty,
+      ownership: ownership
     )
+  }
+
+  public func ownership(locationID: UInt32) -> HIDInputOwnership {
+    tracking.ownership(locationID: locationID)
+  }
+
+  @discardableResult
+  public mutating func updateOwnership(_ ownership: HIDInputOwnership, deviceID: UInt64) -> Bool {
+    tracking.updateOwnership(ownership, deviceID: deviceID)
   }
 
   public func acceptsInput(deviceID: UInt64) -> Bool { tracking.acceptsInput(deviceID: deviceID) }
@@ -271,12 +305,30 @@ public final class SynchronizedPhysicalHIDBackendEventAdapter: @unchecked Sendab
 
   public init() {}
 
-  @discardableResult public func add(deviceID: UInt64, locationID: UInt32, syntheticProperty: Any?)
-    -> Bool
-  {
+  @discardableResult
+  public func add(
+    deviceID: UInt64,
+    locationID: UInt32,
+    syntheticProperty: Any?,
+    ownership: HIDInputOwnership = .unknown
+  ) -> Bool {
     lock.withLock {
-      adapter.add(deviceID: deviceID, locationID: locationID, syntheticProperty: syntheticProperty)
+      adapter.add(
+        deviceID: deviceID,
+        locationID: locationID,
+        syntheticProperty: syntheticProperty,
+        ownership: ownership
+      )
     }
+  }
+
+  public func ownership(locationID: UInt32) -> HIDInputOwnership {
+    lock.withLock { adapter.ownership(locationID: locationID) }
+  }
+
+  @discardableResult
+  public func updateOwnership(_ ownership: HIDInputOwnership, deviceID: UInt64) -> Bool {
+    lock.withLock { adapter.updateOwnership(ownership, deviceID: deviceID) }
   }
 
   public func acceptsInput(deviceID: UInt64) -> Bool {

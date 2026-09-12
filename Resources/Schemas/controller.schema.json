@@ -270,6 +270,7 @@
 									"enum": [
 										"accelerometer",
 										"adaptiveTriggers",
+										"edgeButtons",
 										"battery",
 										"gyro",
 										"lightbar",
@@ -331,7 +332,15 @@
 										"calibration",
 										"imu",
 										"rumble",
-										"usbHandshake"
+										"usbHandshake",
+										"joyConLeft",
+										"joyConRight"
+									]
+								},
+								"not": {
+									"allOf": [
+										{"contains": {"const": "joyConLeft"}},
+										{"contains": {"const": "joyConRight"}}
 									]
 								},
 								"type": "array"

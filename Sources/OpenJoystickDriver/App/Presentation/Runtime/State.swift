@@ -2,32 +2,50 @@ import Combine
 import Foundation
 import OpenJoystickDriverKit
 
-@MainActor final class RuntimeViewModel: ObservableObject {
+@MainActor
+final class RuntimeViewModel: ObservableObject {
   let gateway: any ApplicationServiceGateway
 
-  @Published private(set) var loadState: RuntimeLoadState = .loading
-  @Published private(set) var statusState: RuntimeStatusState = .loading
-  @Published private(set) var remappingState: RuntimeRemappingState = .loading
-  @Published private(set) var permissionState: RuntimePermissionLoadState = .unavailable
-  @Published private(set) var postEventAccessState: RuntimePostEventAccessLoadState = .loading
-  @Published private(set) var compatibilityState: RuntimeCompatibilityState = .loading
-  @Published private(set) var compatibilityError: String?
-  @Published private(set) var mutationState: RuntimeMutationState = .idle
-  @Published private(set) var inputCaptureState: RuntimeInputCaptureState = .idle
-  @Published var supportDiagnosticsState: RuntimeSupportDiagnosticsState = .idle
-  @Published var supportReportState: RuntimeSupportReportState = .idle
-  @Published var supportLogsState: RuntimeSupportLogsState = .idle
-  @Published private(set) var lastError: String?
-  @Published private(set) var activeMutationOperation: RuntimeMutationOperation?
-  @Published private(set) var activeMutationID: UUID?
-  @Published private(set) var lastMutationOperation: RuntimeMutationOperation?
-  @Published private(set) var lastMutationID: UUID?
-  @Published private(set) var systemExtensionSetupState: SystemExtensionSetupState = .checking
+  @Published
+  private(set) var loadState: RuntimeLoadState = .loading
+  @Published
+  private(set) var statusState: RuntimeStatusState = .loading
+  @Published
+  private(set) var remappingState: RuntimeRemappingState = .loading
+  @Published
+  private(set) var permissionState: RuntimePermissionLoadState = .unavailable
+  @Published
+  private(set) var postEventAccessState: RuntimePostEventAccessLoadState = .loading
+  @Published
+  private(set) var compatibilityState: RuntimeCompatibilityState = .loading
+  @Published
+  private(set) var compatibilityError: String?
+  @Published
+  private(set) var mutationState: RuntimeMutationState = .idle
+  @Published
+  private(set) var inputCaptureState: RuntimeInputCaptureState = .idle
+  @Published
+  var supportDiagnosticsState: RuntimeSupportDiagnosticsState = .idle
+  @Published
+  var supportReportState: RuntimeSupportReportState = .idle
+  @Published
+  var supportLogsState: RuntimeSupportLogsState = .idle
+  @Published
+  private(set) var lastError: String?
+  @Published
+  private(set) var activeMutationOperation: RuntimeMutationOperation?
+  @Published
+  private(set) var activeMutationID: UUID?
+  @Published
+  private(set) var lastMutationOperation: RuntimeMutationOperation?
+  @Published
+  private(set) var lastMutationID: UUID?
+  @Published
+  private(set) var systemExtensionSetupState: SystemExtensionSetupState = .checking
 
   var requestedCompatibilityIdentity: CompatibilityIdentity {
     if let authoritativeCompatibilityIdentity { return authoritativeCompatibilityIdentity }
-    guard case .available(let status) = statusState,
-      let identity = status.compatibilityIdentity
+    guard case .available(let status) = statusState, let identity = status.compatibilityIdentity
     else { return .automatic }
     return identity
   }
@@ -200,7 +218,8 @@ import OpenJoystickDriverKit
   }
 
   /// Refreshes connection- and profile-sensitive state without replacing the UI with loading state.
-  @discardableResult func refreshLiveStatus() async -> Bool {
+  @discardableResult
+  func refreshLiveStatus() async -> Bool {
     guard !fullRefreshInFlight, !mutationInFlight, !scopedRefreshInFlight else { return false }
     let previousStatusState = statusState
     let previousRemappingState = remappingState
@@ -314,7 +333,8 @@ import OpenJoystickDriverKit
     }
   }
 
-  @discardableResult func requestPermissions() async -> RuntimePermissionSummary? {
+  @discardableResult
+  func requestPermissions() async -> RuntimePermissionSummary? {
     permissionRefreshGeneration += 1
     let generation = permissionRefreshGeneration
     authoritativePermissionSummary = nil
@@ -339,9 +359,10 @@ import OpenJoystickDriverKit
     }
   }
 
-  @discardableResult func requestPermission(_ requirement: PermissionManager.Requirement) async
-    -> RuntimePermissionSummary?
-  {
+  @discardableResult
+  func requestPermission(
+    _ requirement: PermissionManager.Requirement
+  ) async -> RuntimePermissionSummary? {
     permissionRefreshGeneration += 1
     let generation = permissionRefreshGeneration
     authoritativePermissionSummary = nil
@@ -366,7 +387,8 @@ import OpenJoystickDriverKit
     }
   }
 
-  @discardableResult func requestPostEventAccess() async -> RemappingPostEventAccessState? {
+  @discardableResult
+  func requestPostEventAccess() async -> RemappingPostEventAccessState? {
     postEventAccessGeneration += 1
     let generation = postEventAccessGeneration
     authoritativePostEventAccess = nil
@@ -468,7 +490,8 @@ import OpenJoystickDriverKit
     inputCaptureState = .idle
   }
 
-  @discardableResult func createRemappingProfile(
+  @discardableResult
+  func createRemappingProfile(
     _ profile: RemappingProfile,
     request: RuntimeMutationRequest
   ) async -> RuntimeMutationResult {
@@ -480,7 +503,8 @@ import OpenJoystickDriverKit
     }
   }
 
-  @discardableResult func updateRemappingProfile(
+  @discardableResult
+  func updateRemappingProfile(
     _ profile: RemappingProfile,
     expectedCurrent: RemappingProfile,
     request: RuntimeMutationRequest
@@ -495,7 +519,8 @@ import OpenJoystickDriverKit
     }
   }
 
-  @discardableResult func importRemappingProfile(
+  @discardableResult
+  func importRemappingProfile(
     _ profile: RemappingProfile,
     request: RuntimeMutationRequest
   ) async -> RuntimeMutationResult {
@@ -507,9 +532,11 @@ import OpenJoystickDriverKit
     }
   }
 
-  @discardableResult func deleteRemappingProfile(id: UUID, request: RuntimeMutationRequest) async
-    -> RuntimeMutationResult
-  {
+  @discardableResult
+  func deleteRemappingProfile(
+    id: UUID,
+    request: RuntimeMutationRequest
+  ) async -> RuntimeMutationResult {
     guard !mutationInFlight else { return rejectMutation(request) }
     let gateway = self.gateway
     return await performMutation(request: request, conflictProfileID: id) {
@@ -517,9 +544,11 @@ import OpenJoystickDriverKit
     }
   }
 
-  @discardableResult func activateRemappingProfile(id: UUID, request: RuntimeMutationRequest) async
-    -> RuntimeMutationResult
-  {
+  @discardableResult
+  func activateRemappingProfile(
+    id: UUID,
+    request: RuntimeMutationRequest
+  ) async -> RuntimeMutationResult {
     guard !mutationInFlight else { return rejectMutation(request) }
     let gateway = self.gateway
     return await performMutation(request: request, conflictProfileID: id) {
@@ -527,7 +556,8 @@ import OpenJoystickDriverKit
     }
   }
 
-  @discardableResult func deactivateRemappingProfile(
+  @discardableResult
+  func deactivateRemappingProfile(
     vendorID: UInt16,
     productID: UInt16,
     request: RuntimeMutationRequest
@@ -539,7 +569,44 @@ import OpenJoystickDriverKit
     }
   }
 
-  @discardableResult func deactivateRemappingProfile(
+  func pairRemappingJoyCons(left: String, right: String, profileID: UUID) async -> String? {
+    guard !mutationInFlight else {
+      return OJDLocalized.string(
+        "error.operationInProgress",
+        fallback: "Another profile operation is already in progress."
+      )
+    }
+    do {
+      remappingState = .available(
+        try await gateway.pairRemappingJoyCons(left: left, right: right, profileID: profileID)
+      )
+      return nil
+    } catch {
+      let message = RuntimePresentation.userFacingError(error)
+      lastError = message
+      return message
+    }
+  }
+
+  func unpairRemappingJoyCons(sessionID: UUID) async -> String? {
+    guard !mutationInFlight else {
+      return OJDLocalized.string(
+        "error.operationInProgress",
+        fallback: "Another profile operation is already in progress."
+      )
+    }
+    do {
+      remappingState = .available(try await gateway.unpairRemappingJoyCons(sessionID: sessionID))
+      return nil
+    } catch {
+      let message = RuntimePresentation.userFacingError(error)
+      lastError = message
+      return message
+    }
+  }
+
+  @discardableResult
+  func deactivateRemappingProfile(
     profileID: UUID,
     request: RuntimeMutationRequest
   ) async -> RuntimeMutationResult {
@@ -610,9 +677,10 @@ import OpenJoystickDriverKit
     await setCompatibilityIdentity(.automatic)
   }
 
-  private func locallyValid(_ profile: RemappingProfile, request: RuntimeMutationRequest)
-    -> RuntimeMutationResult?
-  {
+  private func locallyValid(
+    _ profile: RemappingProfile,
+    request: RuntimeMutationRequest
+  ) -> RuntimeMutationResult? {
     do {
       try profile.validate()
       return nil
@@ -679,9 +747,8 @@ import OpenJoystickDriverKit
     }
   }
 
-  @discardableResult private func rejectMutation(_ request: RuntimeMutationRequest)
-    -> RuntimeMutationResult
-  {
+  @discardableResult
+  private func rejectMutation(_ request: RuntimeMutationRequest) -> RuntimeMutationResult {
     lastMutationOperation = request.operation
     lastMutationID = request.id
     let message = OJDLocalized.string(

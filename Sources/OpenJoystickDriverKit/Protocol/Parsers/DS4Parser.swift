@@ -30,8 +30,17 @@ private enum DS4ConnectionMode {
 /// Bluetooth input report `0x11` carries the same controller state after its
 /// transport/control prefix.
 public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDColorOutput,
-  @unchecked Sendable
+  HIDStartupFeatureReadRequestProvider, HIDFeatureReportConsumer, @unchecked Sendable
 {
+
+  public var physicalInputCapabilities: PhysicalControllerInputCapabilities {
+    PhysicalControllerInputCapabilities(
+      rawMotion: true,
+      touchContactsPerFrame: 2,
+      additionalButtons: [.touchpad],
+      touchSurfaces: [.primary]
+    )
+  }
 
   private enum ReportOffset {
     static let leftStickX: Int = 0
@@ -45,6 +54,8 @@ public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDC
     static let r2Trigger: Int = 8
   }
 
+  private var sensorClock = SonySensorClock(mask: 0xFFFF, tickNumerator: 16_000)
+  private var motionCalibration = SonyMotionCalibration.nominal
   private var prevFace: UInt8 = 0
   private var prevShoulders: UInt8 = 0
   private var prevSystem: UInt8 = 0
@@ -65,6 +76,44 @@ public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDC
   /// No-op because DS4 requires no handshake.
   public func performHandshake(handle: (any USBTransportSession)?) throws {
     // Required by InputParser; DS4 needs no handshake.
+  }
+
+  public func hidStartupFeatureReadRequests() -> [PhysicalHIDFeatureReadRequest] {
+    hidStartupFeatureReadRequests(transport: nil)
+  }
+
+  public func hidStartupFeatureReadRequests(transport: String?) -> [PhysicalHIDFeatureReadRequest] {
+    let modeRequest = PhysicalHIDFeatureReadRequest(reportID: 2, length: 37)
+    if transport == "Bluetooth" || connectionMode == .bluetooth {
+      // Reading report 2 enables the full Bluetooth input report before calibration report 5.
+      return [modeRequest, PhysicalHIDFeatureReadRequest(reportID: 5, length: 41)]
+    }
+    return [modeRequest]
+  }
+
+  public func consumeHIDFeatureReport(
+    _ data: Data, request: PhysicalHIDFeatureReadRequest, transport: String?
+  ) -> Bool {
+    let bluetooth = transport == "Bluetooth" || connectionMode == .bluetooth
+    guard request.length == data.count, data.first == request.reportID else { return false }
+    if bluetooth, request.reportID == 2 {
+      // This response only acknowledges the advanced-mode read; its calibration layout is unused.
+      return data.count == 37
+    }
+    let bytes = Array(data)
+    guard bytes.count == (bluetooth ? 41 : 37), request.reportID == (bluetooth ? 5 : 2)
+    else { return false }
+    if bluetooth {
+      var crc = updateCRC32(0xFFFF_FFFF, byte: 0xA3)
+      for byte in bytes.dropLast(4) { crc = updateCRC32(crc, byte: byte) }
+      let expected = UInt32(bytes[37]) | (UInt32(bytes[38]) << 8)
+        | (UInt32(bytes[39]) << 16) | (UInt32(bytes[40]) << 24)
+      guard ~crc == expected else { return false }
+    }
+    guard let calibrated = SonyMotionCalibration.dualShock4Factory(bytes, bluetooth: bluetooth)
+    else { return false }
+    motionCalibration = calibrated.installed(after: motionCalibration)
+    return true
   }
 
   /// Parses one DS4 HID input report and returns zero or more controller events.
@@ -108,6 +157,14 @@ public final class DS4Parser: InputParser, PhysicalHIDRumbleOutput, PhysicalHIDC
     prevRSX = rsxRaw
     prevRSY = rsyRaw
 
+    events.append(
+      contentsOf: SonySensorSamples.dualShock4(
+        bytes,
+        bluetooth: connectionMode == .bluetooth,
+        clock: &sensorClock,
+        calibration: motionCalibration
+      )
+    )
     return events
   }
 

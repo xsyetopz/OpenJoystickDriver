@@ -27,6 +27,8 @@
 ## Develop
 
 - [Architecture](development/architecture.md)
+- [Remapping](development/remapping.md)
+- [Beta.4 remapping status](development/remapping-status.md)
 - [Localization](../LOCALIZATION.md)
 - [Apple controller ownership](development/apple-controller-ownership.md)
 - [Source topology](development/source-topology.md)

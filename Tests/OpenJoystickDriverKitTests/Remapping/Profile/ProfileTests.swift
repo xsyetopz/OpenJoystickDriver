@@ -64,7 +64,7 @@ struct RemappingProfileTests {
     #expect(
       Set(root.keys) == [
         "schema_version", "id", "name", "device", "application_scope", "bindings", "chords",
-        "sequences", "layers"
+        "sequences", "layers", "output_policy"
       ]
     )
 

@@ -21,6 +21,7 @@ final class UserSpaceReportSender: @unchecked Sendable {
   /// Builds reports only after preceding work finishes, so an idle report cannot replay old state.
   func submit(
     whileActive: @escaping @Sendable () -> Bool = { true },
+    requireActive: Bool = false,
     _ reports: @escaping @Sendable () throws -> [[UInt8]]
   ) -> Task<Void, Error> {
     lock.withLock {
@@ -35,7 +36,10 @@ final class UserSpaceReportSender: @unchecked Sendable {
         let values = try reports()
         for report in values {
           guard !lock.withLock({ closed }) else { throw CancellationError() }
-          guard whileActive() else { return }
+          guard whileActive() else {
+            if requireActive { throw CancellationError() }
+            return
+          }
           try await backend.send(report)
         }
       }

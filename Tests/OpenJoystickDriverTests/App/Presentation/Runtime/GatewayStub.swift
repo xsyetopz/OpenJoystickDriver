@@ -140,9 +140,9 @@ actor GatewayStub: ApplicationServiceGateway {
     PermissionManager.Snapshot(inputMonitoring: .granted, accessibility: .granted)
   }
 
-  func requestPermission(_ requirement: PermissionManager.Requirement) throws
-    -> PermissionManager.Snapshot
-  { try requestPermissions() }
+  func requestPermission(
+    _ requirement: PermissionManager.Requirement
+  ) throws -> PermissionManager.Snapshot { try requestPermissions() }
 
   func deviceInputState(for selector: RuntimeDeviceSelector) async throws -> DeviceInputState? {
     lastInputSelector = selector
@@ -190,9 +190,9 @@ actor GatewayStub: ApplicationServiceGateway {
     return profile
   }
 
-  func createRemappingProfile(_ profile: RemappingProfile) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  func createRemappingProfile(
+    _ profile: RemappingProfile
+  ) throws -> ApplicationServiceRemappingSnapshotPayload {
     snapshotPayload = snapshot(
       profiles: snapshotPayload.profiles + [profile],
       activeProfiles: snapshotPayload.activeProfiles,
@@ -201,9 +201,10 @@ actor GatewayStub: ApplicationServiceGateway {
     return snapshotPayload
   }
 
-  func updateRemappingProfile(_ profile: RemappingProfile, expectedCurrent: RemappingProfile)
-    async throws -> ApplicationServiceRemappingSnapshotPayload
-  {
+  func updateRemappingProfile(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     updateCallCount += 1
     lastExpectedCurrent = expectedCurrent
     if updateDelayNanoseconds > 0 { try await Task.sleep(nanoseconds: updateDelayNanoseconds) }
@@ -223,9 +224,9 @@ actor GatewayStub: ApplicationServiceGateway {
     return snapshotPayload
   }
 
-  func importRemappingProfile(_ profile: RemappingProfile) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  func importRemappingProfile(
+    _ profile: RemappingProfile
+  ) throws -> ApplicationServiceRemappingSnapshotPayload {
     var profiles = snapshotPayload.profiles
     if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
       profiles[index] = profile
@@ -256,13 +257,14 @@ actor GatewayStub: ApplicationServiceGateway {
     snapshotPayload
   }
 
-  func deactivateRemappingProfile(vendorID: UInt16, productID: UInt16) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { snapshotPayload }
+  func deactivateRemappingProfile(
+    vendorID: UInt16,
+    productID: UInt16
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
-  func deactivateRemappingProfile(profileID: UUID) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { snapshotPayload }
+  func deactivateRemappingProfile(
+    profileID: UUID
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
   func remappingPostEventAccess() throws -> RemappingPostEventAccessState {
     snapshotPayload.postEventAccess
@@ -271,6 +273,15 @@ actor GatewayStub: ApplicationServiceGateway {
   func requestRemappingPostEventAccess() throws -> RemappingPostEventAccessState {
     snapshotPayload.postEventAccess
   }
+
+  func pairRemappingJoyCons(
+    left: String,
+    right: String,
+    profileID: UUID
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+
+  func unpairRemappingJoyCons(sessionID: UUID) throws -> ApplicationServiceRemappingSnapshotPayload
+  { snapshotPayload }
 
   func compatibilityIdentity() async throws -> CompatibilityIdentity {
     let identity = selectedIdentity

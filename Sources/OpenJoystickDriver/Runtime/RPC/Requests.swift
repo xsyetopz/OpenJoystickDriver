@@ -330,6 +330,30 @@ extension ApplicationServiceServer {
     Task { callback.call(await remappingRequests.snapshot()) }
   }
 
+  func remappingMotionCalibration(
+    _ arguments: ApplicationServiceMotionCalibrationArguments,
+    reply: @escaping (RemappingRequestResult<RemappingMotionCalibrationStatus>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.motionCalibration(arguments)) }
+  }
+
+  func pairRemappingJoyCons(
+    _ arguments: ApplicationServiceJoyConPairArguments,
+    reply: @escaping (RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.pairJoyCons(arguments)) }
+  }
+
+  func unpairRemappingJoyCons(
+    _ arguments: ApplicationServiceJoyConUnpairArguments,
+    reply: @escaping (RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>) -> Void
+  ) {
+    let callback = SendableReply(call: reply)
+    Task { callback.call(await remappingRequests.unpairJoyCons(arguments)) }
+  }
+
   func getRemappingProfile(
     id: UUID,
     reply: @escaping (RemappingRequestResult<RemappingProfile>) -> Void

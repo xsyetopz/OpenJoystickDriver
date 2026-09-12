@@ -3,8 +3,10 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-@Suite(.serialized) struct RemappingRPCTests {
-  @Test func explicitPayloadsRoundTripWithoutAssociatedEnumAmbiguity() throws {
+@Suite(.serialized)
+struct RemappingRPCTests {
+  @Test
+  func explicitPayloadsRoundTripWithoutAssociatedEnumAmbiguity() throws {
     let profile = makeProfile()
     let snapshot = makeSnapshot(profile: profile)
     let data = try JSONEncoder().encode(snapshot)
@@ -22,11 +24,31 @@ import Testing
     )
   }
 
-  @Test func clientUsesEveryStableMethodAndDecodesTypedResults() async throws {
+  @Test
+  func olderSnapshotPayloadDoesNotInventPairedSessions() throws {
+    let encoded = try JSONEncoder().encode(makeSnapshot(profile: makeProfile()))
+    var object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+    object.removeValue(forKey: "joy_con_pairs")
+    let data = try JSONSerialization.data(withJSONObject: object)
+
+    #expect(
+      try JSONDecoder().decode(ApplicationServiceRemappingSnapshotPayload.self, from: data)
+        .joyConPairs.isEmpty
+    )
+  }
+
+  @Test
+  func clientUsesEveryStableMethodAndDecodesTypedResults() async throws {
     let socketPath = temporarySocketPath()
     let profile = makeProfile()
     let snapshot = makeSnapshot(profile: profile)
     let methods = MethodRecorder()
+    let calibration = RemappingMotionCalibrationStatus(
+      hasMotionBaseline: true,
+      isCollecting: true,
+      offsetDegreesPerSecond: ControllerMotionVector(x: 1, y: 2, z: 3)
+    )
+    let pairSessionID = UUID()
     let server = LocalServiceRPCServer(
       socketPath: socketPath,
       authentication: { _ in true },
@@ -35,6 +57,30 @@ import Testing
         do {
           let result: Data
           switch ApplicationServiceRemappingRPCMethod(rawValue: request.method) {
+          case .motionCalibration:
+            let arguments = try JSONDecoder().decode(
+              ApplicationServiceMotionCalibrationArguments.self,
+              from: request.arguments
+            )
+            #expect(arguments.runtimeIdentifier == "045e:028e:location:1")
+            #expect(arguments.command == .start)
+            result = try JSONEncoder().encode(calibration)
+          case .pairJoyCons:
+            let arguments = try JSONDecoder().decode(
+              ApplicationServiceJoyConPairArguments.self,
+              from: request.arguments
+            )
+            #expect(arguments.leftRuntimeIdentifier == "left")
+            #expect(arguments.rightRuntimeIdentifier == "right")
+            #expect(arguments.profileID == profile.id)
+            result = try JSONEncoder().encode(snapshot)
+          case .unpairJoyCons:
+            let arguments = try JSONDecoder().decode(
+              ApplicationServiceJoyConUnpairArguments.self,
+              from: request.arguments
+            )
+            #expect(arguments.sessionID == pairSessionID)
+            result = try JSONEncoder().encode(snapshot)
           case .getProfile:
             let arguments = try JSONDecoder().decode(
               ApplicationServiceRemappingProfileIDArguments.self,
@@ -108,11 +154,26 @@ import Testing
     #expect(try await client.getRemappingPostEventAccess() == .granted)
     #expect(try await client.requestRemappingPostEventAccess() == .granted)
     #expect(
+      try await client.remappingMotionCalibration(
+        runtimeIdentifier: "045e:028e:location:1",
+        command: .start
+      ) == calibration
+    )
+    #expect(
+      try await client.pairRemappingJoyCons(
+        leftRuntimeIdentifier: "left",
+        rightRuntimeIdentifier: "right",
+        profileID: profile.id
+      ) == snapshot
+    )
+    #expect(try await client.unpairRemappingJoyCons(sessionID: pairSessionID) == snapshot)
+    #expect(
       Set(methods.snapshot()) == Set(ApplicationServiceRemappingRPCMethod.allCases.map(\.rawValue))
     )
   }
 
-  @Test func clientReconstructsStableCodeBearingRemoteFailure() async throws {
+  @Test
+  func clientReconstructsStableCodeBearingRemoteFailure() async throws {
     let socketPath = temporarySocketPath()
     let expected = ApplicationServiceRemappingRPCError(
       code: .profileUpdateConflict,
@@ -133,7 +194,8 @@ import Testing
     await #expect(throws: expected) { try await client.getRemappingProfile(id: UUID()) }
   }
 
-  @Test func argumentLimitLeavesRoomForTheBase64FramedEnvelope() throws {
+  @Test
+  func argumentLimitLeavesRoomForTheBase64FramedEnvelope() throws {
     let arguments = Data(count: ApplicationServiceRemappingRPC.maximumArgumentBytes)
     let request = LocalServiceRPCRequest(method: "createRemappingProfile", arguments: arguments)
     let encodedRequest = try JSONEncoder().encode(request)
@@ -151,7 +213,8 @@ import Testing
     )
   }
 
-  @Test func updateArgumentsRoundTripExactlyAndFitArgumentBounds() throws {
+  @Test
+  func updateArgumentsRoundTripExactlyAndFitArgumentBounds() throws {
     let expectedCurrent = maximumProfile(0)
     let updated = RemappingProfile(
       schemaVersion: expectedCurrent.schemaVersion,
@@ -181,7 +244,8 @@ import Testing
     #expect(framed.count < ApplicationServiceRemappingRPC.maximumTransportFrameBytes)
   }
 
-  @Test func maximumValidLibraryShapeFitsPayloadAndOuterResponseBounds() throws {
+  @Test
+  func maximumValidLibraryShapeFitsPayloadAndOuterResponseBounds() throws {
     let profiles = (0..<RemappingPayloadLimits.maximumProfileCount).map(maximumProfile)
     for profile in profiles { try profile.validate() }
     let snapshot = ApplicationServiceRemappingSnapshotPayload(
@@ -205,7 +269,10 @@ import Testing
       name: "Desktop",
       device: RemappingDeviceScope(vendorID: 1118, productID: 654),
       applicationScope: .global,
-      bindings: []
+      touchMappings: [RemappingTouchMapping(surface: .primary, mode: .pointer)],
+      bindings: [
+        RemappingBinding(source: .touchContact(.primary), destination: .mouseButton(.left))
+      ]
     )
   }
 

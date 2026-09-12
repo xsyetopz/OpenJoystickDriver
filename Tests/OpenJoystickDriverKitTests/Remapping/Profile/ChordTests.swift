@@ -25,7 +25,7 @@ struct RemappingChordTests {
       using: currentProfile,
       at: 0
     )
-    #expect(sink.actions() == [.keyDown(.a)])
+    #expect(sink.actions().isEmpty)
 
     try await engine.process(
       events: [.buttonPressed(.b)],
@@ -33,7 +33,7 @@ struct RemappingChordTests {
       using: currentProfile,
       at: 1
     )
-    #expect(sink.actions() == [.keyDown(.a), .keyDown(.c)])
+    #expect(sink.actions() == [.keyDown(.c)])
 
     try await engine.process(
       events: [.buttonReleased(.b)],
@@ -41,7 +41,7 @@ struct RemappingChordTests {
       using: currentProfile,
       at: 2
     )
-    #expect(sink.actions() == [.keyDown(.a), .keyDown(.c), .keyUp(.c)])
+    #expect(sink.actions() == [.keyDown(.c), .keyUp(.c)])
 
     try await engine.process(
       events: [.buttonReleased(.a)],
@@ -49,7 +49,7 @@ struct RemappingChordTests {
       using: currentProfile,
       at: 3
     )
-    #expect(sink.actions() == [.keyDown(.a), .keyDown(.c), .keyUp(.c), .keyUp(.a)])
+    #expect(sink.actions() == [.keyDown(.c), .keyUp(.c)])
   }
 
   // MARK: - Helpers

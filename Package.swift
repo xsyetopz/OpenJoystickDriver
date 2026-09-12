@@ -33,7 +33,7 @@ let package = Package(
       resources: [.process("Resources/")],
       linkerSettings: [
         .linkedFramework("ServiceManagement"),
-        .unsafeFlags(["-Xlinker", "-weak_framework", "-Xlinker", "CoreHID"])
+        .unsafeFlags(["-Xlinker", "-weak_framework", "-Xlinker", "CoreHID"]),
       ]
     ),
 
@@ -84,7 +84,7 @@ let package = Package(
       name: "OpenJoystickDriverUSBTests",
       dependencies: [
         "OpenJoystickDriverKit", "OpenJoystickDriverUSB",
-        .product(name: "SwifterKit", package: "SwifterKit")
+        .product(name: "SwifterKit", package: "SwifterKit"),
       ],
       path: "Tests/OpenJoystickDriverUSBTests",
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
@@ -96,6 +96,6 @@ let package = Package(
       path: "Tests/OpenJoystickDriverTests",
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
-    )
+    ),
   ]
 )

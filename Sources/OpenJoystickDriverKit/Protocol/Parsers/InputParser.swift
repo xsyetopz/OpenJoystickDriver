@@ -32,6 +32,7 @@ public protocol HIDInputConnectionStatusRequester: AnyObject, Sendable {
 public protocol HIDStartupOutputReportProvider: AnyObject, Sendable {
   /// Source-backed startup reports needed before the controller emits full input reports.
   func hidStartupReports() -> [PhysicalHIDOutputReport]
+  func hidStartupReports(transport: String?) -> [PhysicalHIDOutputReport]
 
   /// Minimum interval between startup reports for the selected transport.
   func hidStartupReportIntervalNanoseconds(transport: String?) -> UInt64
@@ -44,6 +45,12 @@ extension HIDStartupOutputReportProvider {
   }
 
   public func hidStartupReportIntervalNanoseconds(transport _: String?) -> UInt64 { 0 }
+}
+
+/// Bounded follow-up reads for startup protocols whose replies arrive through the input stream.
+public protocol HIDStartupRecoveryProvider: AnyObject, Sendable {
+  func pendingHIDStartupReports() -> [PhysicalHIDOutputReport]
+  func expireHIDStartupRequests()
 }
 
 /// Optional USB output emitted when a receiver-backed controller connects or disconnects.
@@ -70,6 +77,7 @@ public protocol USBDeferredOutputProvider: AnyObject, Sendable {
 public protocol HIDStartupFeatureReportProvider: AnyObject, Sendable {
   /// Source-backed feature reports needed when OJD starts consuming the physical input.
   func hidStartupFeatureReports() -> [PhysicalHIDOutputReport]
+  func hidStartupFeatureReports(transport: String?) -> [PhysicalHIDOutputReport]
 }
 
 extension HIDStartupFeatureReportProvider {
@@ -89,12 +97,21 @@ public protocol HIDShutdownFeatureReportProvider: AnyObject, Sendable {
 public protocol HIDStartupFeatureReadRequestProvider: AnyObject, Sendable {
   /// Source-backed feature reads needed to put the controller into operational mode.
   func hidStartupFeatureReadRequests() -> [PhysicalHIDFeatureReadRequest]
+  func hidStartupFeatureReadRequests(transport: String?) -> [PhysicalHIDFeatureReadRequest]
 }
 
 extension HIDStartupFeatureReadRequestProvider {
   /// Source-backed feature reads for a specific HID transport, when transport matters.
   public func hidStartupFeatureReadRequests(transport _: String?) -> [PhysicalHIDFeatureReadRequest]
   { hidStartupFeatureReadRequests() }
+}
+
+/// Receives feature-read replies on the owning pipeline actor, serialized with input parsing.
+public protocol HIDFeatureReportConsumer: AnyObject, Sendable {
+  /// False means the report was rejected and the previous parser state remains valid.
+  func consumeHIDFeatureReport(
+    _ data: Data, request: PhysicalHIDFeatureReadRequest, transport: String?
+  ) -> Bool
 }
 
 /// Optional semantic input path for descriptor-defined HID gamepads.
@@ -104,6 +121,9 @@ public protocol HIDElementValueParser: AnyObject, Sendable {
 }
 
 public protocol InputParser: AnyObject, Sendable {
+  /// Immutable sample-format capabilities implemented by this parser.
+  var physicalInputCapabilities: PhysicalControllerInputCapabilities { get }
+
   /// Runs the startup handshake the controller needs before it starts sending input.
   ///
   /// For example, GIP controllers require a power-on packet. Protocols that
@@ -118,6 +138,9 @@ public protocol InputParser: AnyObject, Sendable {
   /// system receives from the controller.
   func parse(data: Data) throws -> [ControllerEvent]
 
+  /// Receives the host receipt time for protocols without a reliable device sample clock.
+  func parse(data: Data, receivedAtNanoseconds: UInt64) throws -> [ControllerEvent]
+
   /// Sends profile-selected periodic output so the controller does not power off.
   ///
   /// ``DevicePipeline`` calls this at a regular interval during the input
@@ -128,6 +151,12 @@ public protocol InputParser: AnyObject, Sendable {
 }
 
 extension InputParser {
+  public func parse(data: Data, receivedAtNanoseconds _: UInt64) throws -> [ControllerEvent] {
+    try parse(data: data)
+  }
+
+  public var physicalInputCapabilities: PhysicalControllerInputCapabilities { .none }
+
   /// Default no-op keep-alive implementation.
   public func keepAlive(handle: (any USBTransportSession)?) async throws { await Task.yield() }
 }

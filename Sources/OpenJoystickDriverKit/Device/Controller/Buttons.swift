@@ -29,6 +29,18 @@ extension Button {
     case .l2Digital: "L2"
     case .r2Digital: "R2"
     case .touchpad: "TP"
+    case .leftGrip: "LG"
+    case .rightGrip: "RG"
+    case .leftPadClick: "LP"
+    case .rightPadClick: "RP"
+    case .leftSL: "L SL"
+    case .leftSR: "L SR"
+    case .rightSL: "R SL"
+    case .rightSR: "R SR"
+    case .leftFunction: "L Fn"
+    case .rightFunction: "R Fn"
+    case .leftPaddle: "L P"
+    case .rightPaddle: "R P"
     case .mute: "Mute"
     }
   }
@@ -63,6 +75,9 @@ extension Button {
     case .options: "ellipsis.circle"
     case .ps: "logo.playstation"
     case .touchpad: "rectangle.roundedtop"
+    case .leftGrip, .rightGrip, .leftPadClick, .rightPadClick,
+      .leftSL, .leftSR, .rightSL, .rightSR,
+      .leftFunction, .rightFunction, .leftPaddle, .rightPaddle: "circle"
     case .mute: "mic.slash.circle"
     }
   }
@@ -99,6 +114,18 @@ extension Button {
     case .options: "Options"
     case .ps: "PS Button"
     case .touchpad: "Touchpad Click"
+    case .leftGrip: "Left grip"
+    case .rightGrip: "Right grip"
+    case .leftPadClick: "Left pad click"
+    case .rightPadClick: "Right pad click"
+    case .leftSL: "Left Joy-Con SL"
+    case .leftSR: "Left Joy-Con SR"
+    case .rightSL: "Right Joy-Con SL"
+    case .rightSR: "Right Joy-Con SR"
+    case .leftFunction: "Left function button"
+    case .rightFunction: "Right function button"
+    case .leftPaddle: "Left paddle"
+    case .rightPaddle: "Right paddle"
     case .mute: "Mute"
     }
   }

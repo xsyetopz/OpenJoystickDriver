@@ -14,24 +14,22 @@ extension RemappingRoutingCore {
     case .unreconciled(_, let error): throw error
     }
     let permit = try requireOperationalPermit(proposedPermit)
+    try await cancelAllJoyConPairs(requiring: permit)
 
-    do {
-      for identifier in sortedIdentifiers {
-        guard let route = routes[identifier] else { continue }
+    var firstError: (any Error)?
+    for identifier in sortedIdentifiers {
+      guard let route = routes[identifier] else { continue }
+      do {
         switch route.selection {
         case .compatibility:
           if route.eligibility == .eligible { await notifyCompatibilityStop(identifier) }
-        case .remapping, .unavailable:
-          try await engine.releaseAll(for: identifier, requiring: permit)
+        case .remapping(let profile):
+          try await releaseAndRetire(for: identifier, profile: profile, requiring: permit)
+        case .unavailable: try await releaseAllSafely(for: identifier, requiring: permit)
         }
-      }
-    } catch let error as RemappingEventEngineError {
-      if error == .outputSuspended, emissionBarrier.isTerminated {
-        throw RemappingOutputRoutingError.shutDown
-      }
-      recordEngineFailure(error)
-      throw RemappingOutputRoutingError.engine(error)
+      } catch { if firstError == nil { firstError = error } }
     }
+    if let firstError { throw firstError }
   }
 
   func acceptProfileTransaction(
@@ -127,7 +125,8 @@ extension RemappingRoutingCore {
       }
       _ = try requireOperationalPermit(permit)
       routes[identifier] = route(
-        for: profile.map(RemappingSelectedRoute.remapping) ?? .compatibility,
+        for: independentSelection(for: profile),
+        identifier: identifier,
         environment: environment
       )
     }
@@ -160,6 +159,7 @@ extension RemappingRoutingCore {
 
   private func route(
     for selection: RemappingSelectedRoute,
+    identifier: DeviceIdentifier,
     environment: RemappingEligibilityEnvironment
   ) -> RemappingControllerRoute {
     switch selection {
@@ -177,12 +177,7 @@ extension RemappingRoutingCore {
       return RemappingControllerRoute(
         selection: selection,
         eligibilitySnapshot: RemappingEligibilitySnapshot(
-          eligibility: RemappingForegroundPolicy.eligibility(
-            for: profile.applicationScope,
-            frontmostBundleIdentifier: environment.frontmostBundleIdentifier,
-            accessState: environment.postEventAccessState,
-            outputSuppressed: controls.outputSuppressed
-          ),
+          eligibility: remappingEligibility(profile, for: identifier, environment: environment),
           environment: environment
         ),
         error: nil

@@ -111,6 +111,10 @@ extension DeviceInputState {
       case .leftTriggerChanged(let v): leftTrigger = v
       case .rightTriggerChanged(let v): rightTrigger = v
       case .dpadChanged(let direction): applyDpad(direction)
+      case .motionSample: break
+      case .touchSample(let sample):
+        touchSamples.removeAll { $0.surface == sample.surface }
+        touchSamples.append(sample)
       }
     }
   }

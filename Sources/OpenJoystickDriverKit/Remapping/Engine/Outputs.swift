@@ -6,42 +6,46 @@ private let nanosecondsPerSecond: Double = 1_000_000_000
 
 extension RemappingEngineState {
   var hasScheduledOutput: Bool {
-    devices.values.contains { device in
-      !device.turbos.isEmpty || !device.continuous.isEmpty || deviceHasPendingActivation(device)
-    }
+    nextScheduledTick(after: 0, continuousIntervalNanoseconds: 1) != nil
   }
 
-  private func deviceHasPendingActivation(_ device: RemappingDeviceState) -> Bool {
-    for (_, tracker) in device.activations {
-      if tracker.pendingDefault { return true }
-      if tracker.firedBindingID == nil, tracker.pressUptime != nil { return true }
-    }
-    if !device.sequenceHistory.isEmpty {
-      let profile = device.profile
-      var allSequences = profile.sequences
-      for layerID in device.activeLayers {
-        guard let layer = profile.layers.first(where: { $0.id == layerID }) else { continue }
-        allSequences.append(contentsOf: layer.sequences)
-      }
-      if allSequences.contains(where: { !$0.sources.isEmpty }) { return true }
-    }
-    return false
-  }
-
-  func nextScheduledTick(after uptimeNanoseconds: UInt64, continuousIntervalNanoseconds: UInt64)
-    -> UInt64?
-  {
+  func nextScheduledTick(
+    after uptimeNanoseconds: UInt64,
+    continuousIntervalNanoseconds: UInt64
+  ) -> UInt64? {
     var deadline: UInt64?
-    if devices.values.contains(where: { !$0.continuous.isEmpty }) {
-      deadline = Self.saturatingAdd(uptimeNanoseconds, continuousIntervalNanoseconds)
-    }
     for device in devices.values {
+      let currentUptime = max(uptimeNanoseconds, device.lastUptime)
+      if let gyroDeadline = device.gyroDeadline {
+        deadline = min(deadline ?? gyroDeadline, gyroDeadline)
+      }
+      if let motionDeadline = device.virtualMotionDeadline {
+        deadline = min(deadline ?? motionDeadline, motionDeadline)
+      }
+      if let motionStickDeadline = device.motionStickDeadline {
+        deadline = min(deadline ?? motionStickDeadline, motionStickDeadline)
+      }
+      for trigger in device.triggers.values {
+        if let triggerDeadline = trigger.deadline {
+          deadline = min(deadline ?? triggerDeadline, triggerDeadline)
+        }
+      }
+      if !device.continuous.isEmpty || device.sticks.values.contains(where: \.needsTicks) {
+        let next = Self.saturatingAdd(currentUptime, continuousIntervalNanoseconds)
+        deadline = min(deadline ?? next, next)
+      }
+      if let chordDeadline = device.pendingChordDeadline {
+        deadline = min(deadline ?? chordDeadline, chordDeadline)
+      }
+      for pulseDeadline in device.pulseDeadlines.values {
+        deadline = min(deadline ?? pulseDeadline, pulseDeadline)
+      }
       for turbo in device.turbos.values {
-        let turboDeadline = turbo.nextTransition(after: uptimeNanoseconds)
+        let turboDeadline = turbo.nextTransition(after: currentUptime)
         deadline = min(deadline ?? turboDeadline, turboDeadline)
       }
-      for (source, tracker) in device.activations {
-        guard let binding = device.binding(for: source) else { continue }
+      for (id, tracker) in device.activations {
+        guard let binding = device.actionBinding(id: id) else { continue }
         if let longHold = binding.longHold, let pressTime = tracker.pressUptime,
           tracker.firedBindingID == nil, tracker.pendingDefault, tracker.releaseUptime == nil
         {
@@ -61,23 +65,8 @@ extension RemappingEngineState {
           deadline = min(deadline ?? windowDeadline, windowDeadline)
         }
       }
-      if !device.sequenceHistory.isEmpty {
-        var allSequences = device.profile.sequences
-        for layerID in device.activeLayers {
-          guard let layer = device.profile.layers.first(where: { $0.id == layerID }) else {
-            continue
-          }
-          allSequences.append(contentsOf: layer.sequences)
-        }
-        if let firstEntry = device.sequenceHistory.first {
-          for sequence in allSequences where !sequence.sources.isEmpty {
-            let seqDeadline = Self.saturatingAdd(
-              firstEntry.uptime,
-              UInt64(sequence.windowMs * nanosecondsPerMillisecond)
-            )
-            deadline = min(deadline ?? seqDeadline, seqDeadline)
-          }
-        }
+      if let sequenceDeadline = device.sequenceHistoryDeadline {
+        deadline = min(deadline ?? sequenceDeadline, sequenceDeadline)
       }
     }
     return deadline
@@ -90,13 +79,36 @@ extension RemappingEngineState {
     return outputs
   }
 
-  mutating func tick(at uptimeNanoseconds: UInt64) -> [RemappingSystemInputAction] {
-    var actions: [RemappingSystemInputAction] = []
+  mutating func tick(at uptimeNanoseconds: UInt64) -> [RemappingEngineAction] {
+    var actions: [RemappingEngineAction] = []
     for identifier in sortedDeviceIdentifiers {
+      actions += advanceTriggers(for: identifier, at: uptimeNanoseconds)
+      actions += expireMotionStick(for: identifier, at: uptimeNanoseconds)
       guard var device = devices[identifier] else { continue }
+      let tickUptime = max(uptimeNanoseconds, device.lastUptime)
+      device.lastUptime = tickUptime
+      actions += device.advanceSticks(at: tickUptime)
+      if let deadline = device.gyroDeadline, tickUptime >= deadline {
+        actions += device.clearGyroStick()
+      }
+      if let deadline = device.virtualMotionDeadline, tickUptime >= deadline {
+        actions += device.clearVirtualMotion()
+      }
+      actions += processChords(for: &device)
+      actions += replayPendingChordPresses(device: &device, at: tickUptime)
+      actions += processSequences(for: &device, at: tickUptime)
+      for bindingID in device.pulseDeadlines.keys.sorted(by: Self.uuidLessThan) {
+        guard let deadline = device.pulseDeadlines[bindingID], tickUptime >= deadline else {
+          continue
+        }
+        device.pulseDeadlines.removeValue(forKey: bindingID)
+        if let destination = device.heldBindings[bindingID] {
+          actions += setBinding(bindingID, destination: destination, isDown: false, device: &device)
+        }
+      }
       for bindingID in device.turbos.keys.sorted(by: Self.uuidLessThan) {
         guard var turbo = device.turbos[bindingID] else { continue }
-        let shouldBeDown = turbo.isDown(at: uptimeNanoseconds)
+        let shouldBeDown = turbo.isDown(at: tickUptime)
         if shouldBeDown != turbo.outputIsDown {
           actions += setBinding(
             bindingID,
@@ -109,11 +121,9 @@ extension RemappingEngineState {
         }
       }
 
-      for source in device.activations.keys.sorted(by: {
-        String(describing: $0) < String(describing: $1)
-      }) {
-        guard let binding = device.binding(for: source) else { continue }
-        guard var tracker = device.activations[source] else { continue }
+      for id in device.activations.keys.sorted(by: Self.uuidLessThan) {
+        guard let binding = device.actionBinding(id: id) else { continue }
+        guard var tracker = device.activations[id] else { continue }
 
         if let longHold = binding.longHold, let pressTime = tracker.pressUptime,
           tracker.firedBindingID == nil, tracker.pendingDefault, tracker.releaseUptime == nil
@@ -122,7 +132,7 @@ extension RemappingEngineState {
             pressTime,
             UInt64(longHold.durationMs * nanosecondsPerMillisecond)
           )
-          if uptimeNanoseconds >= threshold {
+          if tickUptime >= threshold {
             tracker.firedBindingID = binding.id
             tracker.pendingDefault = false
             actions += setBinding(
@@ -141,13 +151,13 @@ extension RemappingEngineState {
             releaseTime,
             UInt64(doubleTap.windowMs * nanosecondsPerMillisecond)
           )
-          if uptimeNanoseconds >= windowEnd {
+          if tickUptime >= windowEnd {
             actions += tapBinding(binding.id, destination: binding.destination, device: &device)
-            tracker.pendingDefault = false
+            tracker = RemappingActivationTracker()
           }
         }
 
-        device.activations[source] = tracker
+        device.activations[id] = tracker
       }
 
       devices[identifier] = device
@@ -156,21 +166,23 @@ extension RemappingEngineState {
     return actions
   }
 
-  mutating func releaseController(_ identifier: DeviceIdentifier) -> [RemappingSystemInputAction] {
+  mutating func releaseController(_ identifier: DeviceIdentifier) -> [RemappingEngineAction] {
     guard var device = devices[identifier] else { return [] }
     let oldContinuous = continuousTotals()
     devices.removeValue(forKey: identifier)
-    var actions: [RemappingSystemInputAction] = []
+    var actions: [RemappingEngineAction] = []
     for bindingID in device.heldBindings.keys.sorted(by: Self.uuidLessThan) {
       guard let destination = device.heldBindings[bindingID] else { continue }
       actions += setBinding(bindingID, destination: destination, isDown: false, device: &device)
     }
+    if let state = device.gamepad.drain() { actions.append(.gamepad(state, identifier)) }
+    actions += device.clearVirtualMotion()
     actions += stoppedContinuousActions(previous: oldContinuous)
     return actions
   }
 
-  mutating func drain() -> [RemappingSystemInputAction] {
-    var actions: [RemappingSystemInputAction] = []
+  mutating func drain() -> [RemappingEngineAction] {
+    var actions: [RemappingEngineAction] = []
     for identifier in sortedDeviceIdentifiers { actions += releaseController(identifier) }
     return actions
   }
@@ -180,35 +192,51 @@ extension RemappingEngineState {
     destination: RemappingDestination,
     isDown: Bool,
     device: inout RemappingDeviceState
-  ) -> [RemappingSystemInputAction] {
+  ) -> [RemappingEngineAction] {
     let wasDown = device.heldBindings[bindingID] != nil
     guard wasDown != isDown else { return [] }
+    let heldDestination = device.heldBindings[bindingID] ?? destination
     if isDown {
       device.heldBindings[bindingID] = destination
-      return press(destination)
+    } else {
+      device.heldBindings.removeValue(forKey: bindingID)
     }
-    device.heldBindings.removeValue(forKey: bindingID)
-    return release(destination)
+    let effectiveDestination = isDown ? destination : heldDestination
+    let virtualContribution: RemappingGamepadState?
+    switch effectiveDestination {
+    case .gamepadButton(let button): virtualContribution = RemappingGamepadState(buttons: [button])
+    case .gamepadDpad(let direction): virtualContribution = RemappingGamepadState(dpad: [direction])
+    default: virtualContribution = nil
+    }
+    if let virtualContribution {
+      let contribution = isDown ? virtualContribution : .neutral
+      guard let state = device.gamepad.update(contribution, for: bindingID) else { return [] }
+      return [.gamepad(state, device.identifier)]
+    }
+    if case .physical(let output) = effectiveDestination {
+      return [.physical(output, active: isDown, owner: bindingID, device.identifier)]
+    }
+    return isDown ? press(effectiveDestination) : release(effectiveDestination)
   }
 
   mutating func tapBinding(
     _ bindingID: UUID,
     destination: RemappingDestination,
     device: inout RemappingDeviceState
-  ) -> [RemappingSystemInputAction] {
+  ) -> [RemappingEngineAction] {
     setBinding(bindingID, destination: destination, isDown: true, device: &device)
       + setBinding(bindingID, destination: destination, isDown: false, device: &device)
   }
 
-  func stoppedContinuousActions(previous: [RemappingContinuousDestination: Double])
-    -> [RemappingSystemInputAction]
-  {
+  func stoppedContinuousActions(
+    previous: [RemappingContinuousDestination: Double]
+  ) -> [RemappingEngineAction] {
     let current = continuousTotals()
     return RemappingContinuousDestination.allCases.compactMap { destination in
       guard previous[destination, default: 0] != 0, current[destination, default: 0] == 0 else {
         return nil
       }
-      return destination.action(amount: 0)
+      return .system(destination.action(amount: 0))
     }
   }
 
@@ -222,48 +250,47 @@ extension RemappingEngineState {
     return totals.mapValues { min(max($0, -1), 1) }
   }
 
-  private mutating func press(_ destination: RemappingDestination) -> [RemappingSystemInputAction] {
+  private mutating func press(_ destination: RemappingDestination) -> [RemappingEngineAction] {
     switch destination {
     case .keyboard(let key, let modifiers):
-      var actions: [RemappingSystemInputAction] = []
+      var actions: [RemappingEngineAction] = []
       for modifier in Self.sortedModifiers(modifiers) {
         let referenceCount = Self.increment(&modifierReferences, key: modifier)
         guard referenceCount == 1 else { continue }
-        actions.append(.modifierDown(modifier))
+        actions.append(.system(.modifierDown(modifier)))
       }
-      if Self.increment(&keyReferences, key: key) == 1 { actions.append(.keyDown(key)) }
+      if Self.increment(&keyReferences, key: key) == 1 { actions.append(.system(.keyDown(key))) }
       return actions
     case .mouseButton(let button):
       return Self.increment(&mouseButtonReferences, key: button) == 1
-        ? [.mouseButtonDown(button)] : []
-    case .mouseMovement, .scroll: return []
+        ? [.system(.mouseButtonDown(button))] : []
+    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical: return []
     }
   }
 
-  private mutating func release(_ destination: RemappingDestination) -> [RemappingSystemInputAction]
-  {
+  private mutating func release(_ destination: RemappingDestination) -> [RemappingEngineAction] {
     switch destination {
     case .keyboard(let key, let modifiers):
-      var actions: [RemappingSystemInputAction] = []
-      if Self.decrement(&keyReferences, key: key) == 0 { actions.append(.keyUp(key)) }
+      var actions: [RemappingEngineAction] = []
+      if Self.decrement(&keyReferences, key: key) == 0 { actions.append(.system(.keyUp(key))) }
       for modifier in Self.sortedModifiers(modifiers).reversed() {
         let referenceCount = Self.decrement(&modifierReferences, key: modifier)
         guard referenceCount == 0 else { continue }
-        actions.append(.modifierUp(modifier))
+        actions.append(.system(.modifierUp(modifier)))
       }
       return actions
     case .mouseButton(let button):
       return Self.decrement(&mouseButtonReferences, key: button) == 0
-        ? [.mouseButtonUp(button)] : []
-    case .mouseMovement, .scroll: return []
+        ? [.system(.mouseButtonUp(button))] : []
+    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical: return []
     }
   }
 
-  private func continuousActions() -> [RemappingSystemInputAction] {
+  private func continuousActions() -> [RemappingEngineAction] {
     let totals = continuousTotals()
     return RemappingContinuousDestination.allCases.compactMap { destination in
       let amount = totals[destination, default: 0]
-      return amount == 0 ? nil : destination.action(amount: amount)
+      return amount == 0 ? nil : .system(destination.action(amount: amount))
     }
   }
 
@@ -283,9 +310,9 @@ extension RemappingEngineState {
     devices.keys.sorted { $0.runtimeIdentifier < $1.runtimeIdentifier }
   }
 
-  private static func sortedModifiers(_ modifiers: Set<RemappingKeyModifier>)
-    -> [RemappingKeyModifier]
-  { modifiers.sorted { $0.rawValue < $1.rawValue } }
+  private static func sortedModifiers(
+    _ modifiers: Set<RemappingKeyModifier>
+  ) -> [RemappingKeyModifier] { modifiers.sorted { $0.rawValue < $1.rawValue } }
 
   private static func uuidLessThan(_ lhs: UUID, _ rhs: UUID) -> Bool {
     lhs.uuidString < rhs.uuidString
@@ -350,7 +377,8 @@ enum RemappingContinuousDestination: CaseIterable, Hashable {
     case .mouseMovement(.y): self = .mouseY
     case .scroll(.x): self = .scrollX
     case .scroll(.y): self = .scrollY
-    case .keyboard, .mouseButton: return nil
+    case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical:
+      return nil
     }
   }
 

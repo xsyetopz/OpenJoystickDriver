@@ -9,7 +9,8 @@
 
   struct ProfileEditorView: View {
     let profile: RemappingProfile
-    @ObservedObject var viewModel: RuntimeViewModel
+    @ObservedObject
+    var viewModel: RuntimeViewModel
     let isActive: Bool
     let isEditingBlocked: Bool
     let onDelete: () -> Void
@@ -18,13 +19,20 @@
     let onMutationStarted: (RuntimeMutationRequest) -> Bool
     let onMutationResult: (RuntimeMutationResult) -> Void
 
-    @State private var draft: RuntimeProfileDraft
-    @State private var expectedCurrent: RemappingProfile
-    @State private var activeSheet: ProfileEditorSheet?
-    @State private var showingConflict = false
-    @State private var localError: String?
-    @State private var saveError: String?
-    @State private var saveState = ProfileEditorSaveState()
+    @State
+    private var draft: RuntimeProfileDraft
+    @State
+    private var expectedCurrent: RemappingProfile
+    @State
+    private var activeSheet: ProfileEditorSheet?
+    @State
+    private var showingConflict = false
+    @State
+    private var localError: String?
+    @State
+    private var saveError: String?
+    @State
+    private var saveState = ProfileEditorSaveState()
 
     init(
       profile: RemappingProfile,
@@ -61,6 +69,41 @@
         Group {
           switch sheet {
           case .metadata: ProfileMetadataSheet(profile: draft.profile) { updateMetadata($0) }
+          case .sticks:
+            ProfileStickSheet(mappings: draft.profile.stickMappings) { mappings in
+              draft = try draft.settingStickMappings(mappings)
+              localError = nil
+              saveError = nil
+              reportEditingState()
+            }
+          case .triggers:
+            ProfileTriggerSheet(mappings: draft.profile.triggerMappings) { mappings in
+              draft = try draft.settingTriggerMappings(mappings)
+              localError = nil
+              saveError = nil
+              reportEditingState()
+            }
+          case .touch:
+            ProfileTouchSheet(mappings: draft.profile.touchMappings) { mappings in
+              applyDraftChange { try draft.settingTouchMappings(mappings) }
+            }
+          case .motion:
+            ProfileMotionSheet(tuning: draft.profile.motionTuning, output: draft.profile.gyroOutput)
+            { tuning, output in
+              applyDraftChange { try draft.settingMotionTuning(tuning, gyroOutput: output) }
+            }
+          case .layerMotion(let layer):
+            ProfileMotionSheet(
+              tuning: layer.motionTuning ?? draft.profile.motionTuning,
+              output: .default,
+              showsGyroOutput: false,
+              onInherit: {
+                applyDraftChange { try draft.settingLayerMotionTuning(nil, for: layer.id) }
+              },
+              onSave: { tuning, _ in
+                applyDraftChange { try draft.settingLayerMotionTuning(tuning, for: layer.id) }
+              }
+            )
           case .capture:
             CaptureAssignmentSheet(viewModel: viewModel) { source, destination in
               addBinding(source: source, destination: destination)
@@ -70,20 +113,30 @@
               updateAxisTuning(tuning, for: binding.id)
             }
           case .behavior(let binding):
-            BindingBehaviorSheet(binding: binding) { turbo, longHold, doubleTap in
-              updateBindingBehaviors(
-                turbo: turbo,
-                longHold: longHold,
-                doubleTap: doubleTap,
-                for: binding.id
-              )
+            BindingBehaviorSheet(binding: binding) {
+              behavior,
+              pulseDurationMs,
+              turbo,
+              longHold,
+              doubleTap,
+              actions in
+              applyDraftChange {
+                try draft.settingBindingBehaviors(
+                  behavior: behavior,
+                  pulseDurationMs: pulseDurationMs,
+                  turbo: turbo,
+                  longHold: longHold,
+                  doubleTap: doubleTap,
+                  for: binding.id
+                ).settingAdditionalActions(actions, for: binding.id)
+              }
             }
           case .chord:
-            ProfileCombinationSheet(kind: .chord) { sources, _, destination in
-              addChord(sources: sources, destination: destination)
+            ProfileCombinationSheet(kind: .chord) { sources, mode, windowMs, destination in
+              addChord(sources: sources, mode: mode, windowMs: windowMs, destination: destination)
             }
           case .sequence:
-            ProfileCombinationSheet(kind: .sequence) { sources, windowMs, destination in
+            ProfileCombinationSheet(kind: .sequence) { sources, _, windowMs, destination in
               addSequence(sources: sources, windowMs: windowMs, destination: destination)
             }
           case .layer:
@@ -99,14 +152,24 @@
               updateLayerAxisTuning(tuning, layerID: layerID, bindingID: binding.id)
             }
           case .layerBehavior(let layerID, let binding):
-            BindingBehaviorSheet(binding: binding) { turbo, longHold, doubleTap in
-              updateLayerBindingBehaviors(
-                layerID: layerID,
-                bindingID: binding.id,
-                turbo: turbo,
-                longHold: longHold,
-                doubleTap: doubleTap
-              )
+            BindingBehaviorSheet(binding: binding) {
+              behavior,
+              pulseDurationMs,
+              turbo,
+              longHold,
+              doubleTap,
+              actions in
+              applyDraftChange {
+                try draft.settingLayerBindingBehaviors(
+                  behavior: behavior,
+                  pulseDurationMs: pulseDurationMs,
+                  layerID: layerID,
+                  bindingID: binding.id,
+                  turbo: turbo,
+                  longHold: longHold,
+                  doubleTap: doubleTap
+                ).settingAdditionalActions(actions, for: binding.id, layerID: layerID)
+              }
             }
           }
         }.disabled(isEditingDisabled)
@@ -136,7 +199,26 @@
           Button(OJDLocalized.string("profiles.details", fallback: "Details")) {
             activeSheet = .metadata
           }.disabled(isMutationActive)
-          if isActive {
+          Button(OJDLocalized.string("profiles.motion.title", fallback: "Motion tuning")) {
+            activeSheet = .motion
+          }.disabled(isMutationActive)
+          Button(OJDLocalized.string("profiles.stick.title", fallback: "Stick modes")) {
+            activeSheet = .sticks
+          }.disabled(isMutationActive)
+          Button(OJDLocalized.string("profiles.trigger.title", fallback: "Trigger stages")) {
+            activeSheet = .triggers
+          }.disabled(isMutationActive)
+          Button(OJDLocalized.string("profiles.touch.title", fallback: "Touch mappings")) {
+            activeSheet = .touch
+          }.disabled(isMutationActive)
+          if profile.joyConPair != nil {
+            Text(
+              OJDLocalized.string(
+                "profiles.joyConExplicitSession",
+                fallback: "Started with an explicit pair session"
+              )
+            ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+          } else if isActive {
             Button(OJDLocalized.string("common.deactivate", fallback: "Deactivate")) {
               guard !isMutationActive else { return }
               let request = RuntimeMutationRequest(operation: .deactivate(profileID: profile.id))
@@ -184,10 +266,15 @@
             .foregroundColor(Color(NSColor.secondaryLabelColor))
           Text("·").foregroundColor(Color(NSColor.tertiaryLabelColor))
           Text(
-            isActive
-              ? OJDLocalized.string("profiles.active", fallback: "Active")
-              : OJDLocalized.string("profiles.notActive", fallback: "Not active")
+            profile.joyConPair != nil
+              ? OJDLocalized.string("profiles.joyConSessionState", fallback: "Explicit pairing")
+              : isActive
+                ? OJDLocalized.string("profiles.active", fallback: "Active")
+                : OJDLocalized.string("profiles.notActive", fallback: "Not active")
           ).foregroundColor(Color(NSColor.secondaryLabelColor))
+        }
+        ProfileOutputPolicyView(policy: draft.profile.outputPolicy) { policy in
+          applyDraftChange { try draft.settingOutputPolicy(policy) }
         }
         if showingConflict {
           ConflictBanner(
@@ -286,7 +373,8 @@
       }.padding(.horizontal, 28).padding(.vertical, 14)
     }
 
-    @ViewBuilder private var saveStatusView: some View {
+    @ViewBuilder
+    private var saveStatusView: some View {
       HStack(spacing: 6) {
         if saveStatus == .saving { OJDLoadingIndicator() }
         Text(saveStatus.label).foregroundColor(saveStatus.color)
@@ -326,44 +414,26 @@
     private var draftError: String? { localError }
 
     private var bindingGroups: [BindingGroup] {
-      let grouped = Dictionary(grouping: draft.profile.bindings) { sourceGroup(for: $0.source) }
+      let grouped = Dictionary(grouping: draft.profile.bindings) { profileSourceGroup($0.source) }
       return BindingGroup.Order.allCases.compactMap { order in
         guard let bindings = grouped[order.title], !bindings.isEmpty else { return nil }
         return BindingGroup(title: order.title, bindings: bindings)
       }
     }
 
-    private func sourceGroup(for source: RemappingSource) -> String {
-      switch source {
-      case .button(let button):
-        switch button {
-        case .leftShoulder, .rightShoulder:
-          return OJDLocalized.string("profiles.sectionShoulders", fallback: "Shoulders")
-        case .leftStick, .rightStick:
-          return OJDLocalized.string("profiles.sectionStickClicks", fallback: "Stick clicks")
-        case .start, .back, .guide, .share, .options, .touchpad, .mute, .leftTriggerClick,
-          .rightTriggerClick:
-          return OJDLocalized.string("profiles.sectionSystemControls", fallback: "System controls")
-        default: return OJDLocalized.string("profiles.sectionFaceButtons", fallback: "Face buttons")
-        }
-      case .dpad: return OJDLocalized.string("profiles.sectionDpad", fallback: "D-pad")
-      case .axis, .axisDirection:
-        switch source {
-        case .axis(.leftTrigger), .axis(.rightTrigger), .axisDirection(.leftTrigger, _),
-          .axisDirection(.rightTrigger, _):
-          return OJDLocalized.string("profiles.sectionTriggers", fallback: "Triggers")
-        default: return OJDLocalized.string("profiles.sectionSticks", fallback: "Sticks")
-        }
-      }
-    }
-
     private func replacingName(_ name: String) -> RuntimeProfileDraft {
       let value = RemappingProfile(
-        schemaVersion: draft.profile.schemaVersion,
         id: draft.profile.id,
         name: name,
         device: draft.profile.device,
         applicationScope: draft.profile.applicationScope,
+        outputPolicy: draft.profile.outputPolicy,
+        motionTuning: draft.profile.motionTuning,
+        gyroOutput: draft.profile.gyroOutput,
+        joyConPair: draft.profile.joyConPair,
+        stickMappings: draft.profile.stickMappings,
+        triggerMappings: draft.profile.triggerMappings,
+        touchMappings: draft.profile.touchMappings,
         bindings: draft.profile.bindings,
         chords: draft.profile.chords,
         sequences: draft.profile.sequences,
@@ -408,24 +478,20 @@
       reportEditingState()
     }
 
-    private func updateBindingBehaviors(
-      turbo: RemappingTurbo?,
-      longHold: RemappingLongHold?,
-      doubleTap: RemappingDoubleTap?,
-      for id: UUID
+    private func addChord(
+      sources: [RemappingSource],
+      mode: RemappingChordMode,
+      windowMs: Double,
+      destination: RemappingDestination
     ) {
       applyDraftChange {
-        try draft.settingBindingBehaviors(
-          turbo: turbo,
-          longHold: longHold,
-          doubleTap: doubleTap,
-          for: id
+        try draft.addingChord(
+          sources: Set(sources),
+          destination: destination,
+          mode: mode,
+          windowMs: windowMs
         )
       }
-    }
-
-    private func addChord(sources: [RemappingSource], destination: RemappingDestination) {
-      applyDraftChange { try draft.addingChord(sources: Set(sources), destination: destination) }
     }
 
     private func removeChord(_ id: UUID) { applyDraftChange { try draft.removingChord(id) } }
@@ -475,24 +541,6 @@
           layerID: layerID,
           bindingID: bindingID,
           axisTuning: tuning
-        )
-      }
-    }
-
-    private func updateLayerBindingBehaviors(
-      layerID: UUID,
-      bindingID: UUID,
-      turbo: RemappingTurbo?,
-      longHold: RemappingLongHold?,
-      doubleTap: RemappingDoubleTap?
-    ) {
-      applyDraftChange {
-        try draft.settingLayerBindingBehaviors(
-          layerID: layerID,
-          bindingID: bindingID,
-          turbo: turbo,
-          longHold: longHold,
-          doubleTap: doubleTap
         )
       }
     }
@@ -594,6 +642,9 @@
                   Button(OJDLocalized.string("common.addAssignment", fallback: "Add assignment")) {
                     activeSheet = .layerBinding(layer)
                   }
+                  Button(OJDLocalized.string("profiles.motion.title", fallback: "Motion tuning")) {
+                    activeSheet = .layerMotion(layer)
+                  }
                   removeButton { removeLayer(layer.id) }
                 }
                 ForEach(layer.bindings) { binding in
@@ -663,16 +714,7 @@
     private func duplicateProfile() {
       guard !isEditingDisabled else { return }
       let source = draft.profile
-      let duplicate = RemappingProfile(
-        schemaVersion: source.schemaVersion,
-        name: OJDLocalized.formatted("profiles.copyName", fallback: "%@ Copy", source.name),
-        device: source.device,
-        applicationScope: source.applicationScope,
-        bindings: source.bindings,
-        chords: source.chords,
-        sequences: source.sequences,
-        layers: source.layers
-      )
+      let duplicate = duplicatedProfile(source)
       let request = RuntimeMutationRequest(operation: .create(profileID: duplicate.id))
       guard onMutationStarted(request) else { return }
       Task { @MainActor in
@@ -752,36 +794,6 @@
     private var pendingUpdateOperation: RuntimeMutationOperation? { saveState.operation }
 
     private var pendingUpdateMutationID: UUID? { saveState.mutationID }
-  }
-
-  private enum ProfileEditorSheet: Identifiable {
-    case metadata
-    case capture
-    case adjustment(RemappingBinding)
-    case behavior(RemappingBinding)
-    case chord
-    case sequence
-    case layer
-    case layerBinding(RemappingLayer)
-    case layerAdjustment(UUID, RemappingBinding)
-    case layerBehavior(UUID, RemappingBinding)
-
-    var id: String {
-      switch self {
-      case .metadata: return "metadata"
-      case .capture: return "capture"
-      case .adjustment(let binding): return "adjustment-\(binding.id.uuidString)"
-      case .behavior(let binding): return "behavior-\(binding.id.uuidString)"
-      case .chord: return "chord"
-      case .sequence: return "sequence"
-      case .layer: return "layer"
-      case .layerBinding(let layer): return "layer-binding-\(layer.id.uuidString)"
-      case .layerAdjustment(let layerID, let binding):
-        return "layer-adjustment-\(layerID.uuidString)-\(binding.id.uuidString)"
-      case .layerBehavior(let layerID, let binding):
-        return "layer-behavior-\(layerID.uuidString)-\(binding.id.uuidString)"
-      }
-    }
   }
 
 #endif

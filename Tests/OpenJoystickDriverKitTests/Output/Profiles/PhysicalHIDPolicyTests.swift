@@ -18,7 +18,66 @@ private final class RemovalDecisionRecorder: @unchecked Sendable {
 }
 
 struct PhysicalHIDPolicyTests {
-  @Test func testSyntheticAppleGameControllerDevicesAreExcluded() {
+  @Test
+  func compositeOwnershipRequiresEveryPhysicalInterface() {
+    let adapter = SynchronizedPhysicalHIDBackendEventAdapter()
+    #expect(adapter.ownership(locationID: 77) == .unknown)
+    #expect(
+      adapter.add(deviceID: 1, locationID: 77, syntheticProperty: false, ownership: .exclusive)
+    )
+    #expect(adapter.ownership(locationID: 77) == .exclusive)
+    #expect(
+      adapter.add(deviceID: 2, locationID: 77, syntheticProperty: false, ownership: .accessDenied)
+    )
+    #expect(adapter.ownership(locationID: 77) == .accessDenied)
+    #expect(
+      adapter.add(deviceID: 3, locationID: 88, syntheticProperty: false, ownership: .exclusive)
+    )
+    #expect(adapter.ownership(locationID: 88) == .exclusive)
+    #expect(adapter.remove(deviceID: 2).shouldEmitDisconnect == false)
+    #expect(adapter.ownership(locationID: 77) == .exclusive)
+    #expect(adapter.remove(deviceID: 1).shouldEmitDisconnect)
+    #expect(adapter.ownership(locationID: 77) == .unknown)
+  }
+
+  @Test
+  func ownershipLossRejectsInputAndFeedbackUntilAccessReturns() {
+    let adapter = SynchronizedPhysicalHIDBackendEventAdapter()
+    #expect(
+      adapter.add(deviceID: 1, locationID: 77, syntheticProperty: false, ownership: .exclusive)
+    )
+    #expect(adapter.updateOwnership(.ownedByAnotherClient, deviceID: 1))
+    #expect(adapter.acceptsInput(deviceID: 1) == false)
+    #expect(adapter.acceptsFeedback(locationID: 77) == false)
+    #expect(adapter.isTracked(deviceID: 1))
+    #expect(adapter.updateOwnership(.shared, deviceID: 1))
+    #expect(adapter.acceptsInput(deviceID: 1))
+    #expect(adapter.ownership(locationID: 77) == .shared)
+    #expect(adapter.updateOwnership(.exclusive, deviceID: 1))
+    #expect(adapter.ownership(locationID: 77) == .exclusive)
+    adapter.reset()
+    #expect(adapter.updateOwnership(.exclusive, deviceID: 1) == false)
+    #expect(adapter.ownership(locationID: 77) == .unknown)
+    #expect(adapter.acceptsFeedback(locationID: 77) == false)
+  }
+
+  @Test
+  func rejectedSyntheticInterfaceCannotChangePhysicalOwnership() {
+    let adapter = SynchronizedPhysicalHIDBackendEventAdapter()
+    #expect(
+      adapter.add(deviceID: 1, locationID: 77, syntheticProperty: false, ownership: .exclusive)
+    )
+    #expect(
+      adapter.add(deviceID: 2, locationID: 77, syntheticProperty: true, ownership: .accessDenied)
+        == false
+    )
+    #expect(adapter.updateOwnership(.ownedByAnotherClient, deviceID: 2) == false)
+    #expect(adapter.ownership(locationID: 77) == .exclusive)
+    #expect(adapter.acceptsInput(deviceID: 1))
+  }
+
+  @Test
+  func testSyntheticAppleGameControllerDevicesAreExcluded() {
     #expect(UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(true))
     #expect(!UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(false))
     var numericValue: Int32 = 1

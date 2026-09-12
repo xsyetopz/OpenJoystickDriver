@@ -8,7 +8,8 @@
     "variant": "dualSense",
     "quirks": [
       "touchpad",
-      "microphoneMute"
+      "microphoneMute",
+      "edgeButtons"
     ]
   }
 }

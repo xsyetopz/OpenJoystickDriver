@@ -2,7 +2,8 @@ import Foundation
 import OpenJoystickDriverKit
 
 final class AutomaticUserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDispatching,
-  CompatibilityUserSpaceOutputControllerActivating, ControllerLifecycleListener, @unchecked Sendable
+  CompatibilityUserSpaceOutputControllerActivating, ControllerLifecycleListener,
+  RemappingGamepadSink, RemappingGamepadOutputControlling, @unchecked Sendable
 {
   private let deviceManager: DeviceManager
   private let ownershipProvider:
@@ -18,6 +19,7 @@ final class AutomaticUserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDisp
   private let coordinator = AutomaticDispatcherCoordinator()
   private let stateLock = NSLock()
   private var suppressedOutput = false
+  private var remappingSuppressedOutput = false
   private var observationTask: Task<Void, Never>?
   init(
     deviceManager: DeviceManager,
@@ -89,9 +91,60 @@ final class AutomaticUserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDisp
     suppressOutput = suppressed
     await coordinator.synchronizeSuppression { self.suppressOutput }
   }
+  func setRemappingOutputSuppressed(_ suppressed: Bool) async {
+    stateLock.withLock { remappingSuppressedOutput = suppressed }
+    await coordinator.synchronizeRemappingSuppression {
+      self.stateLock.withLock { self.remappingSuppressedOutput }
+    }
+  }
   var status: String { "automatic" }
   var lastRumbleStatus: String { "none" }
   func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {
+    try? await deliver(events: events, state: nil, from: identifier)
+  }
+
+  func send(_ state: RemappingGamepadState, for identifier: DeviceIdentifier) async throws {
+    guard state == .neutral else {
+      try await activate(controller: identifier)
+      try await deliver(events: [], state: state, from: identifier)
+      return
+    }
+    guard let lease = await coordinator.leaseForNeutralization(identifier) else { return }
+    do {
+      guard let sink = lease.backend as? any RemappingGamepadSink else {
+        throw RemappingEventEngineError.sinkUnavailable
+      }
+      try await sink.send(state, for: identifier)
+    } catch {
+      await lease.release()
+      throw error
+    }
+    await lease.release()
+  }
+
+  func send(_ motion: RemappingVirtualMotionState?, for identifier: DeviceIdentifier) async throws {
+    if let motion {
+      try await activate(controller: identifier)
+      try await deliver(motion: motion, from: identifier)
+      return
+    }
+    guard let lease = await coordinator.leaseForNeutralization(identifier) else { return }
+    do {
+      guard let sink = lease.backend as? any RemappingGamepadSink else {
+        throw RemappingEventEngineError.sinkUnavailable
+      }
+      try await sink.send(nil, for: identifier)
+    } catch {
+      await lease.release()
+      throw error
+    }
+    await lease.release()
+  }
+
+  private func deliver(
+    motion: RemappingVirtualMotionState,
+    from identifier: DeviceIdentifier
+  ) async throws {
     await coordinator.synchronizeSuppression { self.suppressOutput }
     let description = await descriptionsProvider().first {
       $0.runtimeIdentifier == identifier.runtimeIdentifier
@@ -108,8 +161,54 @@ final class AutomaticUserSpaceOutputDispatcher: CompatibilityUserSpaceOutputDisp
         },
         factory: builder
       )
-    else { return }
-    await lease.backend.dispatch(events: events, from: identifier)
+    else { throw RemappingEventEngineError.sinkUnavailable }
+    do {
+      guard let sink = lease.backend as? any RemappingGamepadSink else {
+        throw RemappingEventEngineError.sinkUnavailable
+      }
+      try await sink.send(motion, for: identifier)
+    } catch {
+      await lease.release()
+      throw error
+    }
+    await lease.release()
+  }
+
+  private func deliver(
+    events: [ControllerEvent],
+    state: RemappingGamepadState?,
+    from identifier: DeviceIdentifier
+  ) async throws {
+    await coordinator.synchronizeSuppression { self.suppressOutput }
+    let description = await descriptionsProvider().first {
+      $0.runtimeIdentifier == identifier.runtimeIdentifier
+    }
+    let consumer = consumerProvider()
+    let identity = description.map { identityProvider($0, consumer) } ?? .genericHID
+    guard
+      let lease = await coordinator.leaseForDispatch(
+        controller: identifier,
+        consumer: consumer,
+        identity: identity,
+        isEligible: { [weak self] identifier, identity in
+          await self?.isEligible(identifier, identity: identity) ?? false
+        },
+        factory: builder
+      )
+    else { throw RemappingEventEngineError.sinkUnavailable }
+    do {
+      if let state {
+        guard let sink = lease.backend as? any RemappingGamepadSink else {
+          throw RemappingEventEngineError.sinkUnavailable
+        }
+        try await sink.send(state, for: identifier)
+      } else {
+        await lease.backend.dispatch(events: events, from: identifier)
+      }
+    } catch {
+      await lease.release()
+      throw error
+    }
     await lease.release()
   }
   func controllerDidStop(_ identifier: DeviceIdentifier) async {

@@ -12,12 +12,18 @@ Implemented:
 
 - USB report `0x01` and Bluetooth report `0x31` input
 - Bluetooth input CRC32 validation with seed `0xA1`
+- Edge function and paddle sources selected by the canonical Edge record
+- raw IMU and touch samples; calibration and mapping actions remain in progress
 - compatible rumble over USB and Bluetooth
 - five player-indicator LEDs
 - RGB lightbar output
 - Bluetooth sequence framing and output CRC32 with seed `0xA2`
 
-Needed: physical USB and Bluetooth checks for input, reconnect, rumble, indicators, and color. Records remain unverified.
+Needed: physical USB and Bluetooth checks for input, reconnect, rumble, indicators, and color.
+For Edge, verify all four function/paddle press/release edges in capture and in a remapped
+consumer, including disconnect while held. Check firmware-side assignments separately from
+OJD mappings. Records remain unverified. See [remapping input contracts](remapping.md) for
+the packet reference and constructed-fixture coverage.
 
 ## DualShock 3
 
@@ -56,6 +62,15 @@ Implemented:
 - startup and output rate limits
 
 Needed: calibration, IMU, reconnect, rumble, and LED checks on USB and Bluetooth hardware.
+
+## Joy-Con
+
+The pinned Nintendo source now supplies left `057e:2006` and right `057e:2007` HID records.
+Each selects a side-specific layout in the Nintendo parser. Primary controls and raw IMU
+samples are decoded; absent sticks and opposite-half button fields are ignored. Rumble
+capabilities expose only the available motor. SL/SR are distinct remapping sources for each
+half. Constructed tests cover calibration, motion actions, and explicit paired sessions. See [Joy-Con validation](../testing/joy-con.md) for the source
+revision, product evidence, and outstanding physical acceptance.
 
 ## Xbox 360 wireless receiver
 

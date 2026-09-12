@@ -38,6 +38,7 @@ public enum SwitchProUSBHIDDescriptor {
 }
 
 public struct SwitchProUSBHIDReportFormat: VirtualGamepadReportFormat {
+  public let supportsMotion = true
   public let descriptor: [UInt8] = SwitchProUSBHIDDescriptor.descriptor
   public let inputReportPayloadSize: Int = SwitchProUSBHIDDescriptor.inputReportLength - 1
   public let inputReportID: UInt8? = SwitchProUSBHIDDescriptor.reportID
@@ -49,6 +50,7 @@ public struct SwitchProUSBHIDReportFormat: VirtualGamepadReportFormat {
   public func buildInputReport(from state: VirtualGamepadState) -> [UInt8] {
     var report = [UInt8](repeating: 0, count: SwitchProUSBHIDDescriptor.inputReportLength)
     report[0] = SwitchProUSBHIDDescriptor.reportID
+    report[1] = UInt8(truncatingIfNeeded: state.motionTimestampNanoseconds / 5_000_000)
     report[2] = SwitchProUSBHIDDescriptor.usbBatteryAndConnection
     let buttons = SwitchProHIDBits.buttons(state)
     report[3] = UInt8(truncatingIfNeeded: buttons)
@@ -56,6 +58,7 @@ public struct SwitchProUSBHIDReportFormat: VirtualGamepadReportFormat {
     report[5] = UInt8(truncatingIfNeeded: buttons >> 16)
     SwitchProHIDBits.writeStick(x: state.leftStickX, y: state.leftStickY, into: &report, at: 6)
     SwitchProHIDBits.writeStick(x: state.rightStickX, y: state.rightStickY, into: &report, at: 9)
+    VirtualMotionEncoding.writeNintendoMotion(state, into: &report, at: 13)
     return report
   }
 

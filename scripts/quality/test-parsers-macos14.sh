@@ -242,7 +242,8 @@ func runProfileMetadataChecks() {
     require(registry.parserName(for: id) == "DualSense", "DualSense profile should select parser")
     require(profile.protocolVariant == .dualSense, "DualSense profile should use dualSense variant")
     require(
-      profile.quirks == ["touchpad", "microphoneMute"],
+      profile.quirks == ["touchpad", "microphoneMute"]
+        + (id.productID == 3570 ? ["edgeButtons"] : []),
       "DualSense profile should expose operational input flags"
     )
   }
@@ -297,7 +298,7 @@ func runSteamInputAndFeatureChecks() throws {
     rightPadX: -32767,
     rightPadY: 32767
   ))
-  for expected in [Button.a, .b, .x, .y, .leftBumper, .rightBumper, .back, .guide, .start, .leftStick, .rightStick] {
+  for expected in [Button.a, .b, .x, .y, .leftBumper, .rightBumper, .back, .guide, .start, .leftStick, .rightPadClick] {
     require(hasEvent(events, .buttonPressed(expected)), "Steam primary input should press \(expected)")
   }
   require(hasEvent(events, .leftTriggerChanged(1.0)), "Steam should parse left trigger")
@@ -313,7 +314,7 @@ func runSteamInputAndFeatureChecks() throws {
   let leftPadAndJoy = SteamControllerParser()
   _ = try leftPadAndJoy.parse(data: makeSteamControllerReport())
   let leftPadAndJoyEvents = try leftPadAndJoy.parse(data: makeSteamControllerReport(b10: 0x88, leftX: 32767, leftY: -32767))
-  require(hasEvent(leftPadAndJoyEvents, .leftStickChanged(x: 1.0, y: 1.0)), "Steam lpad+joy bit should allow left-stick motion")
+  require(!hasEvent(leftPadAndJoyEvents, .leftStickChanged(x: 1.0, y: 1.0)), "Steam interleaved pad coordinates must not overwrite the left stick")
 
   let dpad = SteamControllerParser()
   _ = try dpad.parse(data: makeSteamControllerReport())
@@ -331,7 +332,7 @@ func runSteamInputAndFeatureChecks() throws {
   require(startup.map(\.reportID) == [0, 0], "Steam lizard startup reports should use report ID 0")
   require(startup.map { $0.bytes.count } == [64, 64], "Steam lizard startup reports should be 64 bytes")
   require(startup[0].bytes[0] == 0x81, "Steam startup should clear digital mappings")
-  require(Array(startup[1].bytes.prefix(8)) == [0x87, 6, 0x07, 0x07, 0, 0x08, 0x07, 0], "Steam startup should disable trackpad mouse modes")
+  require(Array(startup[1].bytes.prefix(11)) == [0x87, 9, 0x07, 0x07, 0, 0x08, 0x07, 0, 48, 0x18, 0], "Steam startup should disable trackpad mouse modes and request raw IMU data")
   let shutdown = featureParser.hidShutdownFeatureReports()
   require(shutdown.map(\.reportID) == [0, 0], "Steam shutdown reports should use report ID 0")
   require(shutdown[0].bytes[0] == 0x85, "Steam shutdown should restore digital mappings")
@@ -492,10 +493,10 @@ func runDualSenseBluetoothCRCCheck() throws {
 func runSwitchProTransportAndMappingCheck() throws {
   let parser = SwitchProParser()
   let bluetoothStartup = parser.hidStartupReports(transport: "Bluetooth")
-  require(bluetoothStartup.map(\.reportID) == [0x01, 0x01], "Switch Pro Bluetooth should send subcommand startup reports")
-  require(bluetoothStartup.map { $0.bytes[10] } == [0x03, 0x48], "Switch Pro Bluetooth startup should select full reports and enable IMU")
+  require(bluetoothStartup.map(\.reportID) == [0x01, 0x01, 0x01, 0x01, 0x01], "Switch Pro Bluetooth should send subcommand startup reports")
+  require(bluetoothStartup.map { $0.bytes[10] } == [0x03, 0x40, 0x48, 0x10, 0x10], "Switch Pro Bluetooth startup should select full reports, enable IMU and rumble, and request calibration")
   require(parser.hidStartupReports(transport: nil).isEmpty, "Switch Pro unknown transport should skip USB startup reports")
-  require(parser.hidStartupReports(transport: "USB").map(\.reportID) == [0x80, 0x80, 0x80, 0x80, 0x01, 0x01], "Switch Pro USB startup report IDs should match Linux init slice")
+  require(parser.hidStartupReports(transport: "USB").map(\.reportID) == [0x80, 0x80, 0x80, 0x80, 0x01, 0x01, 0x01, 0x01, 0x01], "Switch Pro USB startup report IDs should match Linux init slice")
 
   let expectations: [(UInt32, Button)] = [
     (0x0000_0008, .b),
@@ -526,11 +527,12 @@ func runSwitchProTransportAndMappingCheck() throws {
   require(hasEvent(stickEvents, .rightStickChanged(x: -1.0, y: -1.0)), "Switch Pro should parse right 12-bit stick")
 
   let startupReports = SwitchProParser().hidStartupReports()
-  require(startupReports.map(\.reportID) == [0x80, 0x80, 0x80, 0x80, 0x01, 0x01], "Switch Pro USB startup report IDs should match Linux")
-  require(startupReports.map { Array($0.bytes.prefix(2)) } == [[0x80, 0x02], [0x80, 0x03], [0x80, 0x02], [0x80, 0x04], [0x01, 0x00], [0x01, 0x01]], "Switch Pro USB startup reports should match Linux init prefixes")
+  require(startupReports.map(\.reportID) == [0x80, 0x80, 0x80, 0x80, 0x01, 0x01, 0x01, 0x01, 0x01], "Switch Pro USB startup report IDs should match Linux")
+  require(startupReports.map { Array($0.bytes.prefix(2)) } == [[0x80, 0x02], [0x80, 0x03], [0x80, 0x02], [0x80, 0x04], [0x01, 0x00], [0x01, 0x01], [0x01, 0x02], [0x01, 0x03], [0x01, 0x04]], "Switch Pro USB startup reports should match Linux init prefixes")
   require(startupReports[4].bytes[10] == 0x03, "Switch Pro startup should set full report mode subcommand")
   require(startupReports[4].bytes[11] == 0x30, "Switch Pro startup should request full report mode 0x30")
-  require(startupReports[5].bytes[10] == 0x48, "Switch Pro startup should enable IMU")
+  require(startupReports[5].bytes[10] == 0x40, "Switch Pro startup should enable IMU")
+  require(startupReports[6].bytes[10] == 0x48 && startupReports[6].bytes[11] == 1, "Switch Pro startup should enable rumble")
   require(startupReports[5].bytes[11] == 0x01, "Switch Pro startup should enable IMU data")
 }
 

@@ -7,17 +7,30 @@
   import UniformTypeIdentifiers
 
   struct ProfilesView: View {
-    @ObservedObject var viewModel: RuntimeViewModel
-    @ObservedObject var navigation: SettingsNavigationModel
-    @State private var selectedProfileID: UUID?
-    @State private var isCreatingProfile = false
-    @State private var profileEditorTransition = ProfileEditorTransitionState()
-    @State private var activeAlert: ProfilesAlert?
-    @State private var profileActionError: String?
-    @State private var observedDiscardGeneration = 0
-    @State private var lastKnownSnapshot: ApplicationServiceRemappingSnapshotPayload?
-    @State private var preservedEditorProfile: RemappingProfile?
-    @State private var profileEditorGeneration = 0
+    @ObservedObject
+    var viewModel: RuntimeViewModel
+    @ObservedObject
+    var navigation: SettingsNavigationModel
+    @State
+    private var selectedProfileID: UUID?
+    @State
+    private var isCreatingProfile = false
+    @State
+    private var profileEditorTransition = ProfileEditorTransitionState()
+    @State
+    private var activeAlert: ProfilesAlert?
+    @State
+    private var profileActionError: String?
+    @State
+    private var observedDiscardGeneration = 0
+    @State
+    private var lastKnownSnapshot: ApplicationServiceRemappingSnapshotPayload?
+    @State
+    private var preservedEditorProfile: RemappingProfile?
+    @State
+    private var profileEditorGeneration = 0
+    @State
+    private var pairingProfile: RemappingProfile?
 
     var body: some View {
       VStack(alignment: .leading, spacing: 0) {
@@ -40,6 +53,16 @@
           initialName: OJDLocalized.string("profiles.defaultName", fallback: "My controller"),
           devices: connectedDevices
         ) { name, device, scope in createProfile(named: name, for: device, scope: scope) }
+      }.sheet(item: $pairingProfile) { profile in
+        ProfileJoyConPairSheet(profile: profile, devices: connectedDevices) { left, right in
+          Task { @MainActor in
+            profileActionError = await viewModel.pairRemappingJoyCons(
+              left: left,
+              right: right,
+              profileID: profile.id
+            )
+          }
+        }
       }.alert(item: $activeAlert) { alert in
         switch alert {
         case .delete(let id):
@@ -210,10 +233,12 @@
       }
     }
 
-    @ViewBuilder private var profileDetail: some View {
+    @ViewBuilder
+    private var profileDetail: some View {
       if let selectedProfile {
         VStack(alignment: .leading, spacing: 0) {
           refreshStatus
+          if selectedProfile.joyConPair != nil { joyConPairControls(selectedProfile) }
           ProfileEditorView(
             profile: selectedProfile,
             viewModel: viewModel,
@@ -255,6 +280,45 @@
       }
     }
 
+    @ViewBuilder
+    private func joyConPairControls(_ profile: RemappingProfile) -> some View {
+      let sessions = currentSnapshot?.joyConPairs.filter { $0.profileID == profile.id } ?? []
+      HStack(spacing: 10) {
+        Text(OJDLocalized.string("profiles.joyConPair", fallback: "Paired Joy-Con profile")).font(
+          .caption.weight(.semibold)
+        )
+        if sessions.isEmpty {
+          Button(
+            OJDLocalized.string("profiles.pairJoyCons", fallback: "Pair connected Joy-Cons...")
+          ) { pairingProfile = profile }.disabled(!hasAvailableJoyConPair || isProfileActionBlocked)
+        } else {
+          Text(OJDLocalized.string("profiles.joyConPairActive", fallback: "Pair active")).font(
+            .caption
+          ).foregroundColor(Color(NSColor.secondaryLabelColor))
+          ForEach(sessions, id: \.sessionID) { session in
+            Button(OJDLocalized.string("profiles.unpairJoyCons", fallback: "Unpair")) {
+              Task { @MainActor in
+                profileActionError = await viewModel.unpairRemappingJoyCons(
+                  sessionID: session.sessionID
+                )
+              }
+            }.disabled(isProfileActionBlocked)
+          }
+        }
+        Spacer()
+      }.padding(.horizontal, 28).padding(.top, 10)
+    }
+
+    private var currentSnapshot: ApplicationServiceRemappingSnapshotPayload? {
+      if case .available(let snapshot) = viewModel.remappingState { return snapshot }
+      return lastKnownSnapshot
+    }
+
+    private var hasAvailableJoyConPair: Bool {
+      connectedDevices.contains { $0.vendorID == 0x057E && $0.productID == 0x2006 }
+        && connectedDevices.contains { $0.vendorID == 0x057E && $0.productID == 0x2007 }
+    }
+
     private var noProfilesState: some View {
       VStack(alignment: .leading, spacing: 12) {
         EmptyStateView(
@@ -281,7 +345,8 @@
       return OJDLocalized.formatted("profiles.activeAssignmentCount", fallback: "%@, active", count)
     }
 
-    @ViewBuilder private var refreshStatus: some View {
+    @ViewBuilder
+    private var refreshStatus: some View {
       switch viewModel.remappingState {
       case .loading:
         HStack(spacing: 8) {
@@ -524,9 +589,10 @@
       }
     }
 
-    private func finishProfileMutation(_ request: RuntimeMutationRequest, succeeded: Bool)
-      -> ProfileEditorMutationFinish
-    {
+    private func finishProfileMutation(
+      _ request: RuntimeMutationRequest,
+      succeeded: Bool
+    ) -> ProfileEditorMutationFinish {
       guard profileEditorTransition.ownsMutation(request) else { return .ignored }
       guard navigation.ownsProfilesEditorMutation(request) else { return .ignored }
       let finish = profileEditorTransition.finishMutationIfOwned(request, succeeded: succeeded)

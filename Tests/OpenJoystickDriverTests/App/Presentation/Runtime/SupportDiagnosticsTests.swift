@@ -4,8 +4,10 @@ import Testing
 
 @testable import OpenJoystickDriver
 
-@Suite(.serialized) struct SupportDiagnosticsTests {
-  @Test func summarizesControllerOutputWithoutHIDDetails() async {
+@Suite(.serialized)
+struct SupportDiagnosticsTests {
+  @Test
+  func summarizesControllerOutputWithoutHIDDetails() async {
     let diagnostics = ApplicationServiceVirtualDeviceDiagnosticsPayload(
       userSpaceVirtualDeviceEnabled: true,
       userSpaceVirtualDeviceStatus: "ready",
@@ -29,7 +31,7 @@ import Testing
           serialKind: .present,
           ioUserClass: "IOHIDDevice",
           isOJDUserSpace: false
-        )
+        ),
       ]
     )
     let gateway = SupportDiagnosticsGatewayStub(diagnosticsPayloads: [diagnostics])
@@ -46,7 +48,8 @@ import Testing
     #expect(details.virtualControllerCount == 1)
   }
 
-  @Test func newerRetryWinsOverAnOlderResponse() async {
+  @Test
+  func newerRetryWinsOverAnOlderResponse() async {
     let gateway = SupportDiagnosticsGatewayStub(
       diagnosticsPayloads: [
         ApplicationServiceVirtualDeviceDiagnosticsPayload(
@@ -58,7 +61,7 @@ import Testing
           userSpaceVirtualDeviceEnabled: true,
           userSpaceVirtualDeviceStatus: "ready",
           hidGamepads: []
-        )
+        ),
       ],
       diagnosticsDelayNanoseconds: [100_000_000, 0]
     )
@@ -77,7 +80,8 @@ import Testing
     #expect(details.virtualControllerOutputState == .available)
   }
 
-  @Test func unavailableDiagnosticsRemainScopedToSupport() async {
+  @Test
+  func unavailableDiagnosticsRemainScopedToSupport() async {
     let gateway = SupportDiagnosticsGatewayStub(diagnosticsShouldFail: true)
     let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
 
@@ -91,7 +95,8 @@ import Testing
     #expect(await MainActor.run { viewModel.lastError } == nil)
   }
 
-  @Test func savesRedactedReportFromGatewaySnapshots() async throws {
+  @Test
+  func savesRedactedReportFromGatewaySnapshots() async throws {
     let device = ApplicationServiceDeviceDescription(
       name: "Test Pad",
       vendorID: 0x1234,
@@ -157,7 +162,8 @@ import Testing
     #expect(report.data.hidGamepads.count == 1)
   }
 
-  @Test func collectingDiagnosticsDoesNotLeaveReportSaving() async throws {
+  @Test
+  func collectingDiagnosticsDoesNotLeaveReportSaving() async throws {
     let gateway = SupportDiagnosticsGatewayStub(diagnosticsDelayNanoseconds: [100_000_000, 0])
     let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
     let outputURL = FileManager.default.temporaryDirectory.appendingPathComponent(
@@ -237,9 +243,9 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
     PermissionManager.Snapshot(inputMonitoring: .granted, accessibility: .granted)
   }
 
-  func requestPermission(_ requirement: PermissionManager.Requirement) throws
-    -> PermissionManager.Snapshot
-  { try requestPermissions() }
+  func requestPermission(
+    _ requirement: PermissionManager.Requirement
+  ) throws -> PermissionManager.Snapshot { try requestPermissions() }
 
   func deviceInputState(for _: RuntimeDeviceSelector) throws -> DeviceInputState? { nil }
 
@@ -258,17 +264,18 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
     throw ApplicationServiceClientError.invalidResponse
   }
 
-  func createRemappingProfile(_ profile: RemappingProfile) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { try remappingSnapshot() }
+  func createRemappingProfile(
+    _ profile: RemappingProfile
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
 
-  func updateRemappingProfile(_ profile: RemappingProfile, expectedCurrent: RemappingProfile) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { try remappingSnapshot() }
+  func updateRemappingProfile(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
 
-  func importRemappingProfile(_ profile: RemappingProfile) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { try remappingSnapshot() }
+  func importRemappingProfile(
+    _ profile: RemappingProfile
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
 
   func deleteRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
     try remappingSnapshot()
@@ -278,17 +285,27 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
     try remappingSnapshot()
   }
 
-  func deactivateRemappingProfile(vendorID: UInt16, productID: UInt16) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { try remappingSnapshot() }
+  func deactivateRemappingProfile(
+    vendorID: UInt16,
+    productID: UInt16
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
 
-  func deactivateRemappingProfile(profileID: UUID) throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  { try remappingSnapshot() }
+  func deactivateRemappingProfile(
+    profileID: UUID
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
 
   func remappingPostEventAccess() throws -> RemappingPostEventAccessState { .granted }
 
   func requestRemappingPostEventAccess() throws -> RemappingPostEventAccessState { .granted }
+
+  func pairRemappingJoyCons(
+    left: String,
+    right: String,
+    profileID: UUID
+  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
+
+  func unpairRemappingJoyCons(sessionID: UUID) throws -> ApplicationServiceRemappingSnapshotPayload
+  { try remappingSnapshot() }
 
   func compatibilityIdentity() throws -> CompatibilityIdentity { .sdl2_3 }
 

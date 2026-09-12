@@ -21,6 +21,8 @@ private let dualSenseOutputTag: UInt8 = 0x10
 private let dualSenseCompatibleVibrationFlags: UInt8 = 0x03
 private let dualSensePlayerIndicatorFlag: UInt8 = 0x10
 private let dualSenseLightbarFlag: UInt8 = 0x04
+private let dualSenseRightTriggerEffectFlag: UInt8 = 0x04
+private let dualSenseLeftTriggerEffectFlag: UInt8 = 0x08
 
 private enum DualSenseConnectionMode {
   case usb
@@ -37,9 +39,21 @@ public enum DualSenseParserError: Error, Equatable { case invalidBluetoothCRC }
 /// Bluetooth report `0x31` carries the same
 /// common input report after its two-byte header and is accepted only when
 /// its Linux-compatible CRC32 validates.
-public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
-  PhysicalHIDPlayerIndicatorOutput, PhysicalHIDColorOutput, @unchecked Sendable
+public final class DualSenseParser: InputParser, HIDStartupFeatureReadRequestProvider,
+  HIDFeatureReportConsumer, PhysicalHIDRumbleOutput,
+  PhysicalHIDPlayerIndicatorOutput, PhysicalHIDColorOutput, PhysicalHIDAdaptiveTriggerOutput,
+  @unchecked Sendable
 {
+
+  public var physicalInputCapabilities: PhysicalControllerInputCapabilities {
+    PhysicalControllerInputCapabilities(
+      rawMotion: true,
+      touchContactsPerFrame: 2,
+      additionalButtons: [.touchpad, .mute]
+        + (hasEdgeButtons ? [.leftFunction, .rightFunction, .leftPaddle, .rightPaddle] : []),
+      touchSurfaces: [.primary]
+    )
+  }
 
   private enum ReportOffset {
     static let leftStickX = 0
@@ -53,6 +67,10 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
     static let buttons2 = 9
   }
 
+  public let hasEdgeButtons: Bool
+
+  private var motionCalibration = SonyMotionCalibration.nominal
+  private var sensorClock = SonySensorClock(mask: .max, tickNumerator: 1000)
   private var prevFace: UInt8 = 0
   private var prevShoulders: UInt8 = 0
   private var prevSystem: UInt8 = 0
@@ -71,13 +89,35 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
   }
 
   /// Creates a new DualSense parser.
-  public init(prefersBluetooth: Bool = false) {
+  public init(prefersBluetooth: Bool = false, hasEdgeButtons: Bool = false) {
+    self.hasEdgeButtons = hasEdgeButtons
     connectionMode = prefersBluetooth ? .bluetooth : .usb
   }
 
   /// No-op for the current experimental HID input slice.
   public func performHandshake(handle: (any USBTransportSession)?) async throws {
     await Task.yield()
+  }
+
+  public func hidStartupFeatureReadRequests() -> [PhysicalHIDFeatureReadRequest] {
+    [PhysicalHIDFeatureReadRequest(reportID: 0x05, length: 41)]
+  }
+
+  public func consumeHIDFeatureReport(
+    _ data: Data, request: PhysicalHIDFeatureReadRequest, transport: String?
+  ) -> Bool {
+    guard request.reportID == 5, request.length == 41, data.count == 41 else { return false }
+    let bytes = Array(data)
+    if transport == "Bluetooth" || connectionMode == .bluetooth {
+      var crc = updateCRC32(0xFFFF_FFFF, byte: 0xA3)
+      for byte in bytes.dropLast(4) { crc = updateCRC32(crc, byte: byte) }
+      let expected = UInt32(bytes[37]) | (UInt32(bytes[38]) << 8)
+        | (UInt32(bytes[39]) << 16) | (UInt32(bytes[40]) << 24)
+      guard ~crc == expected else { return false }
+    }
+    guard let calibrated = SonyMotionCalibration.dualSenseFactory(bytes) else { return false }
+    motionCalibration = calibrated.installed(after: motionCalibration)
+    return true
   }
 
   /// Parses one DualSense HID input report and returns controller events.
@@ -121,6 +161,9 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
     prevRSX = rsxRaw
     prevRSY = rsyRaw
 
+    events.append(contentsOf: SonySensorSamples.dualSense(
+      bytes, clock: &sensorClock, calibration: motionCalibration
+    ))
     return events
   }
 
@@ -145,11 +188,35 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
   public func physicalColorReport(red: UInt8, green: UInt8, blue: UInt8) -> PhysicalHIDOutputReport
   { outputReport(validFlag1: dualSenseLightbarFlag, red: red, green: green, blue: blue) }
 
+  public func physicalAdaptiveTriggerReport(
+    _ trigger: PhysicalAdaptiveTrigger,
+    effect: PhysicalAdaptiveTriggerEffect
+  ) -> PhysicalHIDOutputReport {
+    let encoded = Self.encodedAdaptiveTriggerEffect(effect)
+    switch trigger {
+    case .left:
+      return outputReport(validFlag0: dualSenseLeftTriggerEffectFlag, leftTriggerEffect: encoded)
+    case .right:
+      return outputReport(validFlag0: dualSenseRightTriggerEffectFlag, rightTriggerEffect: encoded)
+    }
+  }
+
+  static func encodedAdaptiveTriggerEffect(_ effect: PhysicalAdaptiveTriggerEffect) -> [UInt8] {
+    var bytes = [UInt8](repeating: 0, count: 11)
+    guard (try? effect.validate()) != nil, effect.kind == .resistance else { return bytes }
+    bytes[0] = 0x01
+    bytes[1] = UInt8((effect.startPosition * 9).rounded())
+    bytes[2] = UInt8((effect.strength * 8).rounded())
+    return bytes
+  }
+
   private func outputReport(
     validFlag0: UInt8 = 0,
     validFlag1: UInt8 = 0,
     motorRight: UInt8 = 0,
     motorLeft: UInt8 = 0,
+    rightTriggerEffect: [UInt8] = [UInt8](repeating: 0, count: 11),
+    leftTriggerEffect: [UInt8] = [UInt8](repeating: 0, count: 11),
     playerIndicator: UInt8 = 0,
     red: UInt8 = 0,
     green: UInt8 = 0,
@@ -163,6 +230,8 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
       report[2] = validFlag1
       report[3] = motorRight
       report[4] = motorLeft
+      report.replaceSubrange(11..<22, with: rightTriggerEffect)
+      report.replaceSubrange(22..<33, with: leftTriggerEffect)
       report[44] = playerIndicator
       report[45] = red
       report[46] = green
@@ -178,6 +247,8 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
       report[4] = validFlag1
       report[5] = motorRight
       report[6] = motorLeft
+      report.replaceSubrange(13..<24, with: rightTriggerEffect)
+      report.replaceSubrange(24..<35, with: leftTriggerEffect)
       report[46] = playerIndicator
       report[47] = red
       report[48] = green
@@ -303,10 +374,13 @@ public final class DualSenseParser: InputParser, PhysicalHIDRumbleOutput,
 
   private func parseSystemButtons(bytes: [UInt8]) -> (events: [ControllerEvent], value: UInt8) {
     let system = bytes[ReportOffset.buttons2]
+    let extra: [(UInt8, Button)] = hasEdgeButtons
+      ? [(0x10, .leftFunction), (0x20, .rightFunction), (0x40, .leftPaddle), (0x80, .rightPaddle)]
+      : []
     let events = diffButtons(
       prev: prevSystem,
       curr: system,
-      mapping: [(0x01, .ps), (0x02, .touchpad), (0x04, .mute)]
+      mapping: [(0x01, .ps), (0x02, .touchpad), (0x04, .mute)] + extra
     )
     return (events, system)
   }

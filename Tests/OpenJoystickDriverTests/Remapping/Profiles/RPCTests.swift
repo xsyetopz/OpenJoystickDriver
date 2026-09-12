@@ -4,8 +4,49 @@ import Testing
 
 @testable import OpenJoystickDriver
 
-@Suite(.serialized) struct RemappingRequestCoordinatorTests {
-  @Test func fullCRUDImportActivationAndDeactivationUseOneServiceOwnedLibrary() async throws {
+@Suite(.serialized)
+struct RemappingRequestCoordinatorTests {
+  @Test
+  func pairingMutationUsesLibraryProfileAndReturnsTheAuthoritativeSessionSnapshot() async throws {
+    let harness = try await makeHarness()
+    defer { harness.routerHarness.removeFiles() }
+    let profile = RemappingProfile(
+      name: "Pair",
+      device: RemappingDeviceScope(vendorID: 0x057E, productID: 0x2006),
+      applicationScope: .global,
+      joyConPair: RemappingJoyConPairSettings(gyroSelection: .left),
+      bindings: []
+    )
+    _ = try await harness.coordinator.create(profile).get()
+    let automaticActivation = await harness.coordinator.activate(id: profile.id)
+    guard case .failure(let activationError) = automaticActivation else {
+      Issue.record("Expected pair profiles to require an explicit session.")
+      return
+    }
+    #expect(activationError.code == .invalidArguments)
+    let left = remappingRouterDevice(1, vendorID: 0x057E, productID: 0x2006)
+    let right = remappingRouterDevice(2, vendorID: 0x057E, productID: 0x2007)
+    try await harness.routerHarness.router.dispatchCausally(events: [], from: left)
+    try await harness.routerHarness.router.dispatchCausally(events: [], from: right)
+
+    var snapshot = try await harness.coordinator.pairJoyCons(
+      .init(
+        leftRuntimeIdentifier: left.runtimeIdentifier,
+        rightRuntimeIdentifier: right.runtimeIdentifier,
+        profileID: profile.id
+      )
+    ).get()
+    let session = try #require(snapshot.joyConPairs.first)
+    #expect(session.profileID == profile.id)
+    #expect(session.gyroSelection == .left)
+
+    snapshot = try await harness.coordinator.unpairJoyCons(.init(sessionID: session.sessionID))
+      .get()
+    #expect(snapshot.joyConPairs.isEmpty)
+  }
+
+  @Test
+  func fullCRUDImportActivationAndDeactivationUseOneServiceOwnedLibrary() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
     let original = profile(name: "Desktop")
@@ -42,7 +83,8 @@ import Testing
     )
   }
 
-  @Test func activeUpdateAndDeleteReleaseHeldStateBeforeSuccess() async throws {
+  @Test
+  func activeUpdateAndDeleteReleaseHeldStateBeforeSuccess() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
     let original = profile(name: "Desktop", key: .space)
@@ -58,7 +100,7 @@ import Testing
     _ = try await harness.coordinator.update(updated, expectedCurrent: original).get()
     #expect(
       harness.routerHarness.recorder.snapshot() == [
-        .system(.keyDown(.space)), .system(.keyUp(.space))
+        .system(.keyDown(.space)), .system(.keyUp(.space)),
       ]
     )
 
@@ -70,13 +112,14 @@ import Testing
     #expect(
       harness.routerHarness.recorder.snapshot() == [
         .system(.keyDown(.space)), .system(.keyUp(.space)), .system(.keyDown(.b)),
-        .system(.keyUp(.b))
+        .system(.keyUp(.b)),
       ]
     )
     #expect(await harness.routerHarness.router.status(for: device)?.selection == .compatibility)
   }
 
-  @Test func staleSecondClientReceivesTypedConflictWithoutMutationOrOutputDrain() async throws {
+  @Test
+  func staleSecondClientReceivesTypedConflictWithoutMutationOrOutputDrain() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
     let original = profile(name: "Desktop", key: .space)
@@ -113,7 +156,8 @@ import Testing
     #expect(harness.routerHarness.recorder.snapshot().isEmpty)
   }
 
-  @Test func movingAnActiveProfileRefreshesItsFormerModelAndClearsSelection() async throws {
+  @Test
+  func movingAnActiveProfileRefreshesItsFormerModelAndClearsSelection() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
     let original = profile(name: "Desktop")
@@ -131,13 +175,14 @@ import Testing
     #expect(snapshot.activeProfiles.isEmpty)
     #expect(
       harness.routerHarness.recorder.snapshot() == [
-        .system(.keyDown(.space)), .system(.keyUp(.space))
+        .system(.keyDown(.space)), .system(.keyUp(.space)),
       ]
     )
     #expect(await harness.routerHarness.router.status(for: device)?.selection == .compatibility)
   }
 
-  @Test func snapshotPreservesExactSameModelRoutesWithoutSerialNumbers() async throws {
+  @Test
+  func snapshotPreservesExactSameModelRoutesWithoutSerialNumbers() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
     let mapped = profile(name: "Desktop")
@@ -152,7 +197,7 @@ import Testing
     #expect(snapshot.routes.count == 2)
     #expect(
       Set(snapshot.routes.map(\.runtimeIdentifier)) == [
-        first.runtimeIdentifier, second.runtimeIdentifier
+        first.runtimeIdentifier, second.runtimeIdentifier,
       ]
     )
     #expect(snapshot.routes.allSatisfy { $0.selection == .remapping })
@@ -161,7 +206,8 @@ import Testing
     #expect(!encoded.contains("serial"))
   }
 
-  @Test func permissionRequestReturnsAuthoritativePreflightReadbackWithoutTrustingRequestResult()
+  @Test
+  func permissionRequestReturnsAuthoritativePreflightReadbackWithoutTrustingRequestResult()
     async throws
   {
     let probe = RPCPostEventProbe(preflight: [false, false, true], requestResult: false)
@@ -174,7 +220,8 @@ import Testing
     #expect(probe.preflightCount == 3)
   }
 
-  @Test func corruptStoreAndRouterFailuresCrossAsStableTypedErrors() async throws {
+  @Test
+  func corruptStoreAndRouterFailuresCrossAsStableTypedErrors() async throws {
     let corruptHarness = try await makeHarness()
     defer { corruptHarness.routerHarness.removeFiles() }
     try Data("not json".utf8).write(to: corruptHarness.routerHarness.fileURL)
@@ -207,7 +254,8 @@ import Testing
     )
   }
 
-  @Test func failedActiveModelMoveRestoresExactLibraryAndBothRoutes() async throws {
+  @Test
+  func failedActiveModelMoveRestoresExactLibraryAndBothRoutes() async throws {
     let harness = try makeRollbackHarness()
     defer { harness.removeFiles() }
     let original = profile(name: "Desktop")
@@ -264,7 +312,8 @@ import Testing
     #expect(await harness.router.status(for: device)?.activeProfileID == original.id)
   }
 
-  @Test func oversizedSuccessPayloadRollsBackBeforeReportingFailure() async throws {
+  @Test
+  func oversizedSuccessPayloadRollsBackBeforeReportingFailure() async throws {
     let harness = try await makeHarness(maximumResponseBytes: 1)
     defer { harness.routerHarness.removeFiles() }
     let result = await harness.coordinator.create(profile(name: "Desktop"))
@@ -278,7 +327,8 @@ import Testing
     #expect(!FileManager.default.fileExists(atPath: harness.routerHarness.fileURL.path))
   }
 
-  @Test func resetSettingsDoesNotDeleteTheRemappingProfileLibrary() async throws {
+  @Test
+  func resetSettingsDoesNotDeleteTheRemappingProfileLibrary() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
     let original = profile(name: "Desktop")
@@ -294,6 +344,51 @@ import Testing
     #expect(FileManager.default.fileExists(atPath: libraryURL.path))
     #expect(try Data(contentsOf: libraryURL) == bytesBeforeReset)
     #expect(try await harness.coordinator.profile(id: original.id).get() == original)
+  }
+
+  @Test
+  func calibrationRequestsValidateIdentifiersAndReportUnavailableMotion() async throws {
+    let harness = try await makeHarness()
+    defer { harness.routerHarness.removeFiles() }
+    for identifier in ["", String(repeating: "é", count: 257)] {
+      let result = await harness.coordinator.motionCalibration(
+        .init(runtimeIdentifier: identifier, command: .start)
+      )
+      guard case .failure(let error) = result else {
+        Issue.record("Expected invalid calibration arguments.")
+        continue
+      }
+      #expect(error.code == .invalidArguments)
+    }
+
+    let device = remappingRouterDevice(1)
+    let absent = await harness.coordinator.motionCalibration(
+      .init(runtimeIdentifier: device.runtimeIdentifier)
+    )
+    guard case .failure(let absentError) = absent else {
+      Issue.record("Expected an unavailable controller.")
+      return
+    }
+    #expect(absentError.code == .controllerUnavailable)
+
+    let original = profile(name: "Calibration")
+    _ = try await harness.coordinator.create(original).get()
+    _ = try await harness.coordinator.activate(id: original.id).get()
+    try await harness.routerHarness.router.dispatchCausally(events: [], from: device)
+    let status = try await harness.coordinator.motionCalibration(
+      .init(runtimeIdentifier: device.runtimeIdentifier)
+    ).get()
+    #expect(!status.hasMotionBaseline)
+    #expect(!status.isCollecting)
+    let start = await harness.coordinator.motionCalibration(
+      .init(runtimeIdentifier: device.runtimeIdentifier, command: .start)
+    )
+    guard case .failure(let startError) = start else {
+      Issue.record("Expected unavailable motion before the first sample.")
+      return
+    }
+    #expect(startError.code == .motionUnavailable)
+    try await harness.routerHarness.router.shutdown()
   }
 
   private func makeHarness(

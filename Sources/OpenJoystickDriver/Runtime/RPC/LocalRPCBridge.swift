@@ -75,6 +75,15 @@ extension ApplicationServiceServer {
     do {
       if let method = ApplicationServiceRemappingRPCMethod(rawValue: request.method) {
         switch method {
+        case .motionCalibration:
+          let value = try decodeRemapping(ApplicationServiceMotionCalibrationArguments.self)
+          remappingMotionCalibration(value, reply: sendRemapping)
+        case .pairJoyCons:
+          let value = try decodeRemapping(ApplicationServiceJoyConPairArguments.self)
+          pairRemappingJoyCons(value, reply: sendRemapping)
+        case .unpairJoyCons:
+          let value = try decodeRemapping(ApplicationServiceJoyConUnpairArguments.self)
+          unpairRemappingJoyCons(value, reply: sendRemapping)
         case .getSnapshot:
           _ = try decodeRemapping(LocalServiceRPCEmptyArguments.self)
           getRemappingSnapshot(reply: sendRemapping)

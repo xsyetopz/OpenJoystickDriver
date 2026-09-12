@@ -19,7 +19,13 @@ enum ControllerEventNormalizer {
       )
     }
     let nextState = currentState.applying(events: sanitized)
-    let normalized = currentState.transitionEvents(to: nextState)
+    let samples = sanitized.filter { event in
+      switch event {
+      case .motionSample, .touchSample: return true
+      default: return false
+      }
+    }
+    let normalized = currentState.transitionEvents(to: nextState) + samples
     return ControllerEventNormalizationResult(
       events: normalized,
       suppressedEventCount: max(0, events.count - normalized.count),
@@ -81,7 +87,7 @@ enum ControllerEventNormalizer {
           adjustedCount: &adjustedAnalogValueCount
         )
       )
-    case .buttonPressed, .buttonReleased, .dpadChanged: return event
+    case .buttonPressed, .buttonReleased, .dpadChanged, .motionSample, .touchSample: return event
     }
   }
 

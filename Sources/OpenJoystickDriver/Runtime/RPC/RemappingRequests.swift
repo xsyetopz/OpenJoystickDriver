@@ -38,6 +38,60 @@ actor RemappingRequestCoordinator {
     await exclusively { try await makeSnapshot() }
   }
 
+  func motionCalibration(
+    _ arguments: ApplicationServiceMotionCalibrationArguments
+  ) async -> RemappingRequestResult<RemappingMotionCalibrationStatus> {
+    await exclusively {
+      guard !arguments.runtimeIdentifier.isEmpty, arguments.runtimeIdentifier.utf8.count <= 512
+      else {
+        throw ApplicationServiceRemappingRPCError(
+          code: .invalidArguments,
+          message: "A valid controller runtime identifier is required."
+        )
+      }
+      let status = try await router.motionCalibration(
+        for: arguments.runtimeIdentifier,
+        command: arguments.command
+      )
+      try ensurePayloadFits(status)
+      return status
+    }
+  }
+
+  func pairJoyCons(
+    _ arguments: ApplicationServiceJoyConPairArguments
+  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
+    await exclusively {
+      guard !arguments.leftRuntimeIdentifier.isEmpty, !arguments.rightRuntimeIdentifier.isEmpty,
+        arguments.leftRuntimeIdentifier.utf8.count <= 512,
+        arguments.rightRuntimeIdentifier.utf8.count <= 512
+      else {
+        throw ApplicationServiceRemappingRPCError(
+          code: .invalidArguments,
+          message: "Two valid Joy-Con runtime identifiers are required."
+        )
+      }
+      guard let profile = try await library.profile(id: arguments.profileID) else {
+        throw RemappingProfileLibraryError.profileNotFound(arguments.profileID)
+      }
+      _ = try await router.pairJoyCons(
+        leftRuntimeIdentifier: arguments.leftRuntimeIdentifier,
+        rightRuntimeIdentifier: arguments.rightRuntimeIdentifier,
+        profile: profile
+      )
+      return try await makeSnapshot()
+    }
+  }
+
+  func unpairJoyCons(
+    _ arguments: ApplicationServiceJoyConUnpairArguments
+  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
+    await exclusively {
+      try await router.unpairJoyCons(arguments.sessionID)
+      return try await makeSnapshot()
+    }
+  }
+
   func profile(id: UUID) async -> RemappingRequestResult<RemappingProfile> {
     await exclusively {
       guard let profile = try await library.profile(id: id) else {
@@ -48,37 +102,49 @@ actor RemappingRequestCoordinator {
     }
   }
 
-  func create(_ profile: RemappingProfile) async -> RemappingRequestResult<
-    ApplicationServiceRemappingSnapshotPayload
-  > { await mutate { try await library.create(profile) } }
+  func create(
+    _ profile: RemappingProfile
+  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
+    await mutate { try await library.create(profile) }
+  }
 
-  func update(_ profile: RemappingProfile, expectedCurrent: RemappingProfile) async
-    -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>
-  {
+  func update(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile
+  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
     await mutate(
       preflight: { try await library.requireCurrent(expectedCurrent, profileID: profile.id) },
       operation: { try await library.update(profile, expectedCurrent: expectedCurrent) }
     )
   }
 
-  func importProfile(_ profile: RemappingProfile) async -> RemappingRequestResult<
-    ApplicationServiceRemappingSnapshotPayload
-  > { await mutate { try await library.importProfile(profile) } }
+  func importProfile(
+    _ profile: RemappingProfile
+  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
+    await mutate { try await library.importProfile(profile) }
+  }
 
   func delete(id: UUID) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>
   { await mutate { try await library.delete(id: id) } }
 
-  func activate(id: UUID) async -> RemappingRequestResult<
-    ApplicationServiceRemappingSnapshotPayload
-  > { await mutate { try await library.activate(profileID: id) } }
+  func activate(
+    id: UUID
+  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
+    await mutate { try await library.activate(profileID: id) }
+  }
 
-  func deactivate(vendorID: UInt16, productID: UInt16) async -> RemappingRequestResult<
-    ApplicationServiceRemappingSnapshotPayload
-  > { await mutate { try await library.deactivateAll(vendorID: vendorID, productID: productID) } }
+  func deactivate(
+    vendorID: UInt16,
+    productID: UInt16
+  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
+    await mutate { try await library.deactivateAll(vendorID: vendorID, productID: productID) }
+  }
 
-  func deactivate(profileID: UUID) async -> RemappingRequestResult<
-    ApplicationServiceRemappingSnapshotPayload
-  > { await mutate { try await library.deactivate(profileID: profileID) } }
+  func deactivate(
+    profileID: UUID
+  ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
+    await mutate { try await library.deactivate(profileID: profileID) }
+  }
 
   func currentPostEventAccess() async -> RemappingRequestResult<RemappingPostEventAccessState> {
     await exclusively { postEventAccess.currentState() }
@@ -120,9 +186,9 @@ actor RemappingRequestCoordinator {
     }
   }
 
-  private func makeSnapshot(validateResponse: Bool = true) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  private func makeSnapshot(
+    validateResponse: Bool = true
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     let librarySnapshot = try await library.snapshot()
     let profilesByID = Dictionary(
       uniqueKeysWithValues: librarySnapshot.profiles.map { ($0.id, $0) }
@@ -145,6 +211,7 @@ actor RemappingRequestCoordinator {
       profiles: librarySnapshot.profiles,
       activeProfiles: activeProfiles,
       routes: routes,
+      joyConPairs: routerSnapshot.joyConPairs,
       postEventAccess: routerSnapshot.postEventAccessState
     )
     if validateResponse { try ensurePayloadFits(payload) }
@@ -204,9 +271,9 @@ actor RemappingRequestCoordinator {
     }
   }
 
-  private func exclusively<Value: Sendable>(_ operation: () async throws -> Value) async
-    -> RemappingRequestResult<Value>
-  {
+  private func exclusively<Value: Sendable>(
+    _ operation: () async throws -> Value
+  ) async -> RemappingRequestResult<Value> {
     let predecessor = operationTail?.task
     let operationID = UUID()
     let signal = AsyncStream<Void>.makeStream()
@@ -223,17 +290,19 @@ actor RemappingRequestCoordinator {
     return await capture(operation)
   }
 
-  private func capture<Value: Sendable>(_ operation: () async throws -> Value) async
-    -> RemappingRequestResult<Value>
-  { do { return .success(try await operation()) } catch { return .failure(Self.rpcError(error)) } }
+  private func capture<Value: Sendable>(
+    _ operation: () async throws -> Value
+  ) async -> RemappingRequestResult<Value> {
+    do { return .success(try await operation()) } catch { return .failure(Self.rpcError(error)) }
+  }
 
   private static func sorted(_ models: Set<RemappingProfileModel>) -> [RemappingProfileModel] {
     models.sorted { ($0.vendorID, $0.productID) < ($1.vendorID, $1.productID) }
   }
 
-  private static func routePayload(_ status: RemappingRouteStatus)
-    -> ApplicationServiceRemappingRoutePayload
-  {
+  private static func routePayload(
+    _ status: RemappingRouteStatus
+  ) -> ApplicationServiceRemappingRoutePayload {
     let selection: ApplicationServiceRemappingRouteSelection
     switch status.selection {
     case .compatibility: selection = .compatibility
@@ -259,15 +328,16 @@ actor RemappingRequestCoordinator {
     )
   }
 
-  private static func routeEligibility(_ eligibility: RemappingRouteEligibility)
-    -> ApplicationServiceRemappingRouteEligibility
-  {
+  private static func routeEligibility(
+    _ eligibility: RemappingRouteEligibility
+  ) -> ApplicationServiceRemappingRouteEligibility {
     switch eligibility {
     case .compatibilityOutputSuppressed: .compatibilityOutputSuppressed
     case .eligible: .eligible
     case .outputSuppressed: .outputSuppressed
     case .postEventAccessNotAuthorized: .postEventAccessNotAuthorized
     case .targetApplicationNotFrontmost: .targetApplicationNotFrontmost
+    case .physicalInputNotExclusive: .physicalInputNotExclusive
     case .unavailable: .unavailable
     }
   }
@@ -276,6 +346,26 @@ actor RemappingRequestCoordinator {
     if let error = error as? ApplicationServiceRemappingRPCError { return error }
     if let error = error as? RemappingProfileLibraryError { return libraryError(error) }
     if let error = error as? RemappingOutputRoutingError { return routingError(error) }
+    if let error = error as? RemappingMotionCalibrationError {
+      return ApplicationServiceRemappingRPCError(
+        code: error == .controllerUnavailable ? .controllerUnavailable : .motionUnavailable,
+        message: error == .controllerUnavailable
+          ? "The selected controller is unavailable."
+          : "Motion calibration requires an eligible controller with motion samples."
+      )
+    }
+    if let error = error as? RemappingJoyConPairError {
+      return ApplicationServiceRemappingRPCError(
+        code: .joyConPairUnavailable,
+        message: error.localizedDescription
+      )
+    }
+    if let error = error as? RemappingEventEngineError {
+      return ApplicationServiceRemappingRPCError(
+        code: .routerEngineUnavailable,
+        message: error.localizedDescription
+      )
+    }
     return ApplicationServiceRemappingRPCError(
       code: .unexpected,
       message: error.localizedDescription
@@ -293,9 +383,9 @@ actor RemappingRequestCoordinator {
     )
   }
 
-  private static func libraryError(_ error: RemappingProfileLibraryError)
-    -> ApplicationServiceRemappingRPCError
-  {
+  private static func libraryError(
+    _ error: RemappingProfileLibraryError
+  ) -> ApplicationServiceRemappingRPCError {
     let code: ApplicationServiceRemappingRPCError.Code
     switch error {
     case .corruptLibrary: code = .corruptLibrary
@@ -305,6 +395,7 @@ actor RemappingRequestCoordinator {
     case .profileCountExceeded: code = .profileCountExceeded
     case .profileAlreadyExists: code = .profileAlreadyExists
     case .profileNotFound: code = .profileNotFound
+    case .pairProfileRequiresExplicitSession: code = .invalidArguments
     case .profileUpdateConflict: code = .profileUpdateConflict
     case .unreadableLibrary: code = .unreadableLibrary
     case .unsupportedLibraryVersion: code = .unsupportedLibraryVersion
@@ -313,9 +404,9 @@ actor RemappingRequestCoordinator {
     return ApplicationServiceRemappingRPCError(code: code, message: error.localizedDescription)
   }
 
-  private static func routingError(_ error: RemappingOutputRoutingError)
-    -> ApplicationServiceRemappingRPCError
-  {
+  private static func routingError(
+    _ error: RemappingOutputRoutingError
+  ) -> ApplicationServiceRemappingRPCError {
     let code: ApplicationServiceRemappingRPCError.Code
     switch error {
     case .engine: code = .routerEngineUnavailable

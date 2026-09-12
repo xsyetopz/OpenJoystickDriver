@@ -5,6 +5,31 @@ import Testing
 @testable import OpenJoystickDriver
 
 @Suite(.serialized) struct RuntimeProfileDraftTests {
+  @Test func profileEditsPreserveOutputAndIsolationPolicy() throws {
+    let policy = RemappingOutputPolicy(virtualGamepad: .passthrough, physicalInput: .exclusive)
+    let profile = RemappingProfile(
+      name: "Output",
+      device: RemappingDeviceScope(vendorID: 1, productID: 2),
+      applicationScope: .global,
+      outputPolicy: policy,
+      bindings: []
+    )
+    var draft = try RuntimeProfileDraft(profile: profile).addingBinding(
+      source: .button(.south), destination: .keyboard(key: .a, modifiers: [])
+    )
+    #expect(draft.profile.outputPolicy == policy)
+    let binding = try #require(draft.profile.bindings.first)
+    draft = try draft.settingDestination(.keyboard(key: .b, modifiers: []), for: binding.id)
+    #expect(draft.profile.outputPolicy == policy)
+    draft = try draft.settingMetadata(
+      name: "Renamed", device: profile.device, applicationScope: .global
+    )
+    #expect(draft.profile.outputPolicy == policy)
+    draft = try draft.removingBinding(binding.id)
+    #expect(draft.profile.outputPolicy == policy)
+    try draft.validatedProfile().validate()
+  }
+
   @Test func profileDraftRejectsInvalidSourceDuplication() throws {
     let profile = makeProfile()
     let draft = RuntimeProfileDraft(profile: profile)
@@ -184,7 +209,9 @@ import Testing
     var draft = RuntimeProfileDraft(profile: makeProfile())
     draft = try draft.addingChord(
       sources: [.button(.east), .button(.west)],
-      destination: .keyboard(key: .b, modifiers: [])
+      destination: .keyboard(key: .b, modifiers: []),
+      mode: .simultaneous,
+      windowMs: 375
     )
     draft = try draft.addingSequence(
       sources: [.button(.north), .dpad(.up)],
@@ -211,6 +238,8 @@ import Testing
     )
 
     #expect(draft.profile.chords.count == 1)
+    #expect(draft.profile.chords[0].mode == .simultaneous)
+    #expect(draft.profile.chords[0].windowMs == 375)
     #expect(draft.profile.sequences.count == 1)
     #expect(draft.profile.layers.count == 1)
     #expect(draft.profile.layers[0].bindings[0].axisTuning == tuning)

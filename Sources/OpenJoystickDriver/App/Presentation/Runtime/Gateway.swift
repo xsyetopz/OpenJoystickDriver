@@ -6,27 +6,43 @@ protocol ApplicationServiceGateway: Sendable {
   func status() async throws -> ApplicationServiceStatusPayload
   func virtualDeviceDiagnostics() async throws -> ApplicationServiceVirtualDeviceDiagnosticsPayload
   func requestPermissions() async throws -> PermissionManager.Snapshot
-  func requestPermission(_ requirement: PermissionManager.Requirement) async throws
-    -> PermissionManager.Snapshot
+  func requestPermission(
+    _ requirement: PermissionManager.Requirement
+  ) async throws -> PermissionManager.Snapshot
   func deviceInputState(for selector: RuntimeDeviceSelector) async throws -> DeviceInputState?
   func packetLog(for selector: RuntimeDeviceSelector) async throws -> [PacketLogEntry]
 
   func remappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload
   func remappingProfile(id: UUID) async throws -> RemappingProfile
-  func createRemappingProfile(_ profile: RemappingProfile) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  func updateRemappingProfile(_ profile: RemappingProfile, expectedCurrent: RemappingProfile)
-    async throws -> ApplicationServiceRemappingSnapshotPayload
-  func importRemappingProfile(_ profile: RemappingProfile) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
+  func createRemappingProfile(
+    _ profile: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload
+  func updateRemappingProfile(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload
+  func importRemappingProfile(
+    _ profile: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload
   func deleteRemappingProfile(id: UUID) async throws -> ApplicationServiceRemappingSnapshotPayload
   func activateRemappingProfile(id: UUID) async throws -> ApplicationServiceRemappingSnapshotPayload
-  func deactivateRemappingProfile(vendorID: UInt16, productID: UInt16) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  func deactivateRemappingProfile(profileID: UUID) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
+  func deactivateRemappingProfile(
+    vendorID: UInt16,
+    productID: UInt16
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload
+  func deactivateRemappingProfile(
+    profileID: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload
   func remappingPostEventAccess() async throws -> RemappingPostEventAccessState
   func requestRemappingPostEventAccess() async throws -> RemappingPostEventAccessState
+  func pairRemappingJoyCons(
+    left: String,
+    right: String,
+    profileID: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload
+  func unpairRemappingJoyCons(
+    sessionID: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload
 
   func compatibilityIdentity() async throws -> CompatibilityIdentity
   func setCompatibilityIdentity(_ identity: CompatibilityIdentity) async throws -> Bool
@@ -73,9 +89,9 @@ final class ApplicationServiceClientGateway: @unchecked Sendable, ApplicationSer
     return try await client.requestRequiredAccess()
   }
 
-  func requestPermission(_ requirement: PermissionManager.Requirement) async throws
-    -> PermissionManager.Snapshot
-  {
+  func requestPermission(
+    _ requirement: PermissionManager.Requirement
+  ) async throws -> PermissionManager.Snapshot {
     await ensureConnection()
     return try await client.requestAccess(requirement)
   }
@@ -108,23 +124,24 @@ final class ApplicationServiceClientGateway: @unchecked Sendable, ApplicationSer
     return try await client.getRemappingProfile(id: id)
   }
 
-  func createRemappingProfile(_ profile: RemappingProfile) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  func createRemappingProfile(
+    _ profile: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     await ensureConnection()
     return try await client.createRemappingProfile(profile)
   }
 
-  func updateRemappingProfile(_ profile: RemappingProfile, expectedCurrent: RemappingProfile)
-    async throws -> ApplicationServiceRemappingSnapshotPayload
-  {
+  func updateRemappingProfile(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     await ensureConnection()
     return try await client.updateRemappingProfile(profile, expectedCurrent: expectedCurrent)
   }
 
-  func importRemappingProfile(_ profile: RemappingProfile) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  func importRemappingProfile(
+    _ profile: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     await ensureConnection()
     return try await client.importRemappingProfile(profile)
   }
@@ -140,16 +157,17 @@ final class ApplicationServiceClientGateway: @unchecked Sendable, ApplicationSer
     return try await client.activateRemappingProfile(id: id)
   }
 
-  func deactivateRemappingProfile(vendorID: UInt16, productID: UInt16) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  func deactivateRemappingProfile(
+    vendorID: UInt16,
+    productID: UInt16
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     await ensureConnection()
     return try await client.deactivateRemappingProfile(vendorID: vendorID, productID: productID)
   }
 
-  func deactivateRemappingProfile(profileID: UUID) async throws
-    -> ApplicationServiceRemappingSnapshotPayload
-  {
+  func deactivateRemappingProfile(
+    profileID: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     await ensureConnection()
     return try await client.deactivateRemappingProfile(profileID: profileID)
   }
@@ -162,6 +180,26 @@ final class ApplicationServiceClientGateway: @unchecked Sendable, ApplicationSer
   func requestRemappingPostEventAccess() async throws -> RemappingPostEventAccessState {
     await ensureConnection()
     return try await client.requestRemappingPostEventAccess()
+  }
+
+  func pairRemappingJoyCons(
+    left: String,
+    right: String,
+    profileID: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    await ensureConnection()
+    return try await client.pairRemappingJoyCons(
+      leftRuntimeIdentifier: left,
+      rightRuntimeIdentifier: right,
+      profileID: profileID
+    )
+  }
+
+  func unpairRemappingJoyCons(
+    sessionID: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    await ensureConnection()
+    return try await client.unpairRemappingJoyCons(sessionID: sessionID)
   }
 
   func compatibilityIdentity() async throws -> CompatibilityIdentity {

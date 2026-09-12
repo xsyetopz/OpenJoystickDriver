@@ -8,12 +8,15 @@ struct RemappingEngineState {
   var modifierReferences: [RemappingKeyModifier: Int] = [:]
   var mouseButtonReferences: [RemappingMouseButton: Int] = [:]
 
-  mutating func setProfile(_ profile: RemappingProfile?, for identifier: DeviceIdentifier)
-    -> [RemappingSystemInputAction]
-  {
+  mutating func setProfile(
+    _ profile: RemappingProfile?,
+    for identifier: DeviceIdentifier
+  ) -> [RemappingEngineAction] {
     guard devices[identifier]?.profile != profile else { return [] }
     let actions = releaseController(identifier)
-    if let profile { devices[identifier] = RemappingDeviceState(profile: profile) }
+    if let profile {
+      devices[identifier] = RemappingDeviceState(profile: profile, identifier: identifier)
+    }
     return actions
   }
 
@@ -22,10 +25,21 @@ struct RemappingEngineState {
     from identifier: DeviceIdentifier,
     profile: RemappingProfile,
     at uptimeNanoseconds: UInt64
-  ) -> [RemappingSystemInputAction] {
+  ) -> [RemappingEngineAction] {
     var actions = setProfile(profile, for: identifier)
+    let monotonicUptime = max(uptimeNanoseconds, devices[identifier]?.lastUptime ?? 0)
     for event in events {
-      actions += process(event: event, from: identifier, at: uptimeNanoseconds)
+      if var device = devices[identifier] {
+        device.lastUptime = monotonicUptime
+        actions += processChords(for: &device)
+        actions += replayPendingChordPresses(device: &device, at: monotonicUptime)
+        devices[identifier] = device
+      }
+      actions += process(event: event, from: identifier, at: monotonicUptime)
+      if var device = devices[identifier] {
+        actions += device.updatePassthrough()
+        devices[identifier] = device
+      }
     }
     return actions
   }
@@ -34,32 +48,39 @@ struct RemappingEngineState {
     event: ControllerEvent,
     from identifier: DeviceIdentifier,
     at uptimeNanoseconds: UInt64
-  ) -> [RemappingSystemInputAction] {
+  ) -> [RemappingEngineAction] {
     switch event {
     case .buttonPressed(let button):
-      guard let source = Self.source(for: button) else { return [] }
+      guard let source = inputSource(for: button, identifier: identifier) else { return [] }
       return setSource(source, isActive: true, for: identifier, at: uptimeNanoseconds)
     case .buttonReleased(let button):
-      guard let source = Self.source(for: button) else { return [] }
+      guard let source = inputSource(for: button, identifier: identifier) else { return [] }
       return setSource(source, isActive: false, for: identifier, at: uptimeNanoseconds)
     case .dpadChanged(let direction):
       return setDpad(direction, for: identifier, at: uptimeNanoseconds)
     case .leftStickChanged(let x, let y):
-      return processAxes(
-        [(.leftStickX, x), (.leftStickY, y)],
-        for: identifier,
-        at: uptimeNanoseconds
-      )
+      let actions = processAdvancedStick(.left, x: x, y: y, for: identifier, at: uptimeNanoseconds)
+      return actions
+        + processAxes([(.leftStickX, x), (.leftStickY, y)], for: identifier, at: uptimeNanoseconds)
     case .rightStickChanged(let x, let y):
-      return processAxes(
-        [(.rightStickX, x), (.rightStickY, y)],
-        for: identifier,
-        at: uptimeNanoseconds
-      )
+      let actions = processAdvancedStick(.right, x: x, y: y, for: identifier, at: uptimeNanoseconds)
+      return actions
+        + processAxes(
+          [(.rightStickX, x), (.rightStickY, y)],
+          for: identifier,
+          at: uptimeNanoseconds
+        )
     case .leftTriggerChanged(let value):
-      return processAxes([(.leftTrigger, value)], for: identifier, at: uptimeNanoseconds)
+      return processAdvancedTrigger(
+        .left, value: value, for: identifier, at: uptimeNanoseconds
+      ) + processAxes([(.leftTrigger, value)], for: identifier, at: uptimeNanoseconds)
     case .rightTriggerChanged(let value):
-      return processAxes([(.rightTrigger, value)], for: identifier, at: uptimeNanoseconds)
+      return processAdvancedTrigger(
+        .right, value: value, for: identifier, at: uptimeNanoseconds
+      ) + processAxes([(.rightTrigger, value)], for: identifier, at: uptimeNanoseconds)
+    case .motionSample(let sample): return processMotion(sample, for: identifier)
+    case .touchSample(let sample):
+      return processTouch(sample, for: identifier, at: uptimeNanoseconds)
     }
   }
 
@@ -67,7 +88,7 @@ struct RemappingEngineState {
     _ direction: DpadDirection,
     for identifier: DeviceIdentifier,
     at uptimeNanoseconds: UInt64
-  ) -> [RemappingSystemInputAction] {
+  ) -> [RemappingEngineAction] {
     guard var device = devices[identifier] else { return [] }
     let nextDirections = Self.cardinalDirections(for: direction)
     let removed = device.dpadDirections.subtracting(nextDirections)
@@ -75,7 +96,7 @@ struct RemappingEngineState {
     device.dpadDirections = nextDirections
     devices[identifier] = device
 
-    var actions: [RemappingSystemInputAction] = []
+    var actions: [RemappingEngineAction] = []
     for direction in removed.sorted(by: Self.dpadLessThan) {
       actions += setSource(
         .dpad(direction),
@@ -94,8 +115,8 @@ struct RemappingEngineState {
     _ values: [(RemappingAxis, Float)],
     for identifier: DeviceIdentifier,
     at uptimeNanoseconds: UInt64
-  ) -> [RemappingSystemInputAction] {
-    var actions: [RemappingSystemInputAction] = []
+  ) -> [RemappingEngineAction] {
+    var actions: [RemappingEngineAction] = []
     for (axis, value) in values {
       actions += processAxis(axis, value: value, for: identifier, at: uptimeNanoseconds)
     }
@@ -107,30 +128,42 @@ struct RemappingEngineState {
     value rawValue: Float,
     for identifier: DeviceIdentifier,
     at uptimeNanoseconds: UInt64
-  ) -> [RemappingSystemInputAction] {
+  ) -> [RemappingEngineAction] {
     guard var device = devices[identifier] else { return [] }
+    device.physicalAxes[axis] = rawValue
     let oldContinuous = continuousTotals()
-    var actions: [RemappingSystemInputAction] = []
+    var actions: [RemappingEngineAction] = []
 
-    if let binding = device.binding(for: .axis(axis)), let tuning = binding.axisTuning,
-      let continuousDestination = RemappingContinuousDestination(binding.destination)
-    {
-      let transformed = RemappingTransform.value(rawValue, tuning: tuning)
-      if transformed == 0 {
-        device.continuous.removeValue(forKey: binding.id)
-      } else {
-        device.continuous[binding.id] = RemappingContinuousOutput(
-          destination: continuousDestination,
-          amount: transformed
-        )
+    for binding in device.binding(for: .axis(axis))?.expandedActions ?? [] {
+      if let tuning = binding.axisTuning, case .gamepadAxis(let destination) = binding.destination {
+        let value = RemappingTransform.value(rawValue, tuning: tuning)
+        device.virtualAxisBindings.insert(binding.id)
+        if let state = device.gamepad.update(
+          RemappingGamepadState(axes: [destination: value]),
+          for: binding.id
+        ) {
+          actions.append(.gamepad(state, identifier))
+        }
+      }
+
+      if let tuning = binding.axisTuning,
+        let continuousDestination = RemappingContinuousDestination(binding.destination)
+      {
+        let transformed = RemappingTransform.value(rawValue, tuning: tuning)
+        if transformed == 0 {
+          device.continuous.removeValue(forKey: binding.id)
+        } else {
+          device.continuous[binding.id] = RemappingContinuousOutput(
+            destination: continuousDestination,
+            amount: transformed
+          )
+        }
       }
     }
 
     for direction in [RemappingAxisDirection.negative, .positive] {
       let source = RemappingSource.axisDirection(axis, direction)
-      guard let binding = device.binding(for: source), let tuning = binding.axisTuning else {
-        continue
-      }
+      guard let tuning = device.directionTuning(for: source) else { continue }
       let transformed = RemappingTransform.value(rawValue, tuning: tuning)
       let wasActive = device.activeSources.contains(source)
       let isActive = RemappingTransform.isDirectionActive(
@@ -149,157 +182,84 @@ struct RemappingEngineState {
     return actions
   }
 
-  private mutating func setSource(
+  mutating func setSource(
     _ source: RemappingSource,
     isActive: Bool,
     for identifier: DeviceIdentifier,
     at uptimeNanoseconds: UInt64
-  ) -> [RemappingSystemInputAction] {
+  ) -> [RemappingEngineAction] {
     guard var device = devices[identifier] else { return [] }
     let wasActive = device.activeSources.contains(source)
+    let gyroWasActive = device.isGyroActive
     guard wasActive != isActive else { return [] }
-    if isActive { device.activeSources.insert(source) } else { device.activeSources.remove(source) }
+    var actions: [RemappingEngineAction] = []
+    if !isActive { actions += processChords(for: &device, releasing: source) }
+    actions += replayPendingChordPresses(
+      device: &device,
+      at: uptimeNanoseconds,
+      releasing: isActive ? nil : source
+    )
+    if isActive {
+      device.activeSources.insert(source)
+      device.sourcePressTimes[source] = uptimeNanoseconds
+    } else {
+      device.activeSources.remove(source)
+      device.sourcePressTimes.removeValue(forKey: source)
+    }
+    if device.profile.gyroOutput.activationSource == source {
+      if isActive, device.profile.gyroOutput.activationMode == .toggle {
+        device.gyroToggleActive.toggle()
+      }
+      if gyroWasActive != device.isGyroActive {
+        device.gyroAwaitingBaseline = true
+        if !device.isGyroActive { actions += device.clearGyroStick() }
+      }
+    }
 
+    let oldContinuous = continuousTotals()
     if let layerActions = handleLayerActivator(source, isActive: isActive, device: &device) {
       devices[identifier] = device
-      return layerActions
+      return actions + layerActions + stoppedContinuousActions(previous: oldContinuous)
     }
 
-    guard let binding = device.binding(for: source) else {
-      devices[identifier] = device
-      var noBindingActions: [RemappingSystemInputAction] = []
-      if isActive {
-        device.sequenceHistory.append(
-          RemappingSequenceHistoryEntry(source: source, uptime: uptimeNanoseconds)
-        )
-        devices[identifier] = device
-      }
-      if var updated = devices[identifier] {
-        noBindingActions += processChords(for: &updated)
-        noBindingActions += processSequences(for: &updated, at: uptimeNanoseconds)
-        devices[identifier] = updated
-      }
-      return noBindingActions
+    let wasConsumed = device.consumedChordSources.contains(source)
+    let buffered = isActive && device.bufferChordPress(source, at: uptimeNanoseconds)
+    let modifierOwned = device.effectiveChords.contains {
+      $0.mode == .modifier && $0.sources.contains(source)
     }
-
-    let hasActivation = binding.longHold != nil || binding.doubleTap != nil
-    if !hasActivation {
-      var immediateActions: [RemappingSystemInputAction] = []
-
-      let suppressIndividual = isActive && sourceCompletesChord(source, in: device)
-      if !suppressIndividual {
-        if let turbo = binding.turbo {
-          if isActive {
-            device.turbos[binding.id] = RemappingTurboOutput(
-              destination: binding.destination,
-              configuration: turbo,
-              startedAt: uptimeNanoseconds,
-              outputIsDown: true
-            )
-            immediateActions += setBinding(
-              binding.id,
-              destination: binding.destination,
-              isDown: true,
-              device: &device
-            )
-          } else {
-            device.turbos.removeValue(forKey: binding.id)
-            immediateActions += setBinding(
-              binding.id,
-              destination: binding.destination,
-              isDown: false,
-              device: &device
-            )
-          }
-        } else {
-          immediateActions += setBinding(
-            binding.id,
-            destination: binding.destination,
-            isDown: isActive,
-            device: &device
-          )
-        }
-      }
-
-      if isActive {
-        device.sequenceHistory.append(
-          RemappingSequenceHistoryEntry(source: source, uptime: uptimeNanoseconds)
-        )
-      }
-
-      devices[identifier] = device
-
-      if var updated = devices[identifier] {
-        immediateActions += processChords(for: &updated)
-        immediateActions += processSequences(for: &updated, at: uptimeNanoseconds)
-        devices[identifier] = updated
-      }
-
-      return immediateActions
-    }
-
-    var actions: [RemappingSystemInputAction] = []
-    var tracker = device.activations[source] ?? RemappingActivationTracker()
-
-    if isActive {
-      tracker.pressUptime = uptimeNanoseconds
-      tracker.releaseUptime = nil
-      tracker.tapCount += 1
-      tracker.pendingDefault = true
-      tracker.firedBindingID = nil
-
-      if tracker.tapCount >= 2, let doubleTap = binding.doubleTap {
-        tracker.pendingDefault = false
-        tracker.firedBindingID = binding.id
-        actions += setBinding(
-          binding.id,
-          destination: doubleTap.destination,
-          isDown: true,
-          device: &device
-        )
-      }
-
-      device.sequenceHistory.append(
-        RemappingSequenceHistoryEntry(source: source, uptime: uptimeNanoseconds)
+    let suppress =
+      buffered || wasConsumed || modifierOwned
+      || (isActive && sourceCompletesChord(source, in: device))
+    for binding in device.binding(for: source)?.expandedActions ?? [] {
+      actions += processAction(
+        binding,
+        isActive: isActive,
+        suppressed: suppress,
+        device: &device,
+        at: uptimeNanoseconds
       )
-    } else {
-      tracker.releaseUptime = uptimeNanoseconds
-
-      if tracker.firedBindingID != nil, tracker.pendingDefault == false {
-        if let longHold = binding.longHold, tracker.firedBindingID == binding.id {
-          actions += setBinding(
-            binding.id,
-            destination: longHold.destination,
-            isDown: false,
-            device: &device
-          )
-        } else if let doubleTap = binding.doubleTap, tracker.firedBindingID == binding.id {
-          actions += setBinding(
-            binding.id,
-            destination: doubleTap.destination,
-            isDown: false,
-            device: &device
-          )
-        }
-        tracker.firedBindingID = nil
-      } else if tracker.pendingDefault {
-        if binding.doubleTap == nil {
-          actions += tapBinding(binding.id, destination: binding.destination, device: &device)
-          tracker.pendingDefault = false
-        }
-      }
     }
-
-    device.activations[source] = tracker
+    if isActive && !wasConsumed {
+      device.sequenceHistory.append(
+        RemappingSequenceHistoryEntry(
+          source: source,
+          uptime: uptimeNanoseconds,
+          awaitingChord: buffered
+        )
+      )
+    }
+    if !isActive {
+      device.consumedChordSources.remove(source)
+      device.replayedChordSources.remove(source)
+    }
+    actions += processChords(for: &device)
+    actions += processSequences(for: &device, at: uptimeNanoseconds)
     devices[identifier] = device
-
-    if var updated = devices[identifier] {
-      actions += processChords(for: &updated)
-      actions += processSequences(for: &updated, at: uptimeNanoseconds)
-      devices[identifier] = updated
-    }
-
     return actions
+  }
+
+  private func inputSource(for button: Button, identifier _: DeviceIdentifier) -> RemappingSource? {
+    return Self.source(for: button)
   }
 
   static func source(for button: Button) -> RemappingSource? {
@@ -321,6 +281,18 @@ struct RemappingEngineState {
     case .l2Digital: .button(.leftTriggerClick)
     case .r2Digital: .button(.rightTriggerClick)
     case .mute: .button(.mute)
+    case .leftGrip: .button(.leftGrip)
+    case .rightGrip: .button(.rightGrip)
+    case .leftPadClick: .button(.leftPadClick)
+    case .rightPadClick: .button(.rightPadClick)
+    case .leftSL: .button(.leftSL)
+    case .leftSR: .button(.leftSR)
+    case .rightSL: .button(.rightSL)
+    case .rightSR: .button(.rightSR)
+    case .leftFunction: .button(.leftFunction)
+    case .rightFunction: .button(.rightFunction)
+    case .leftPaddle: .button(.leftPaddle)
+    case .rightPaddle: .button(.rightPaddle)
     case .dpadUp: .dpad(.up)
     case .dpadDown: .dpad(.down)
     case .dpadLeft: .dpad(.left)
@@ -328,9 +300,9 @@ struct RemappingEngineState {
     }
   }
 
-  private static func cardinalDirections(for direction: DpadDirection) -> Set<
-    RemappingDpadDirection
-  > {
+  private static func cardinalDirections(
+    for direction: DpadDirection
+  ) -> Set<RemappingDpadDirection> {
     switch direction {
     case .neutral: []
     case .north: [.up]
@@ -344,18 +316,21 @@ struct RemappingEngineState {
     }
   }
 
-  private static func dpadLessThan(_ lhs: RemappingDpadDirection, _ rhs: RemappingDpadDirection)
-    -> Bool
-  { lhs.rawValue < rhs.rawValue }
+  private static func dpadLessThan(
+    _ lhs: RemappingDpadDirection,
+    _ rhs: RemappingDpadDirection
+  ) -> Bool { lhs.rawValue < rhs.rawValue }
 
   private mutating func handleLayerActivator(
     _ source: RemappingSource,
     isActive: Bool,
     device: inout RemappingDeviceState
-  ) -> [RemappingSystemInputAction]? {
+  ) -> [RemappingEngineAction]? {
     let profile = device.profile
-    var actions: [RemappingSystemInputAction] = []
+    var actions: [RemappingEngineAction] = []
     var handled = false
+    let previousTuning = device.effectiveMotionTuning
+    let previousLayers = device.activeLayers
 
     for layer in profile.layers where layer.activator == source {
       handled = true
@@ -370,89 +345,81 @@ struct RemappingEngineState {
         if isActive {
           if device.layerToggleState.contains(layer.id) {
             device.layerToggleState.remove(layer.id)
+            device.activeLayers.removeAll { $0 == layer.id }
           } else {
             device.layerToggleState.insert(layer.id)
+            device.activeLayers.append(layer.id)
           }
         }
       }
     }
 
     guard handled else { return nil }
+    guard previousLayers != device.activeLayers else { return [] }
+    if previousTuning != device.effectiveMotionTuning {
+      actions += device.clearGyroStick()
+      actions += device.clearVirtualMotion()
+      actions += device.clearMotionSteering()
+      device.motionStickDeadline = nil
+      for direction in device.activeMotionLeans {
+        let source = RemappingSource.motionLean(direction)
+        actions += cancelActions(for: [source], device: &device)
+        device.activeSources.remove(source)
+        device.sourcePressTimes.removeValue(forKey: source)
+      }
+      device.activeMotionLeans.removeAll()
+      device.motion.resetCalibration()
+      device.gyroAwaitingBaseline = true
+    }
+    actions += reconcileLayerOutputs(device: &device)
+    device.sequenceHistory.removeAll()
+    device.deferredSequences.removeAll()
+    device.replayedChordSources.formUnion(device.pendingChordPresses.map(\.source))
+    device.consumedChordSources.formUnion(device.pendingChordPresses.map(\.source))
+    device.pendingChordPresses.removeAll()
 
     actions += processChords(for: &device)
     return actions
   }
 
-  private func sourceCompletesChord(_ source: RemappingSource, in device: RemappingDeviceState)
-    -> Bool
-  {
-    let activeSources = device.activeSources
-    let profile = device.profile
-    for chord in profile.chords where chord.sources.contains(source) {
-      if chord.sources.isSubset(of: activeSources) { return true }
-    }
-    for layerID in device.activeLayers {
-      guard let layer = profile.layers.first(where: { $0.id == layerID }) else { continue }
-      for chord in layer.chords where chord.sources.contains(source) {
-        if chord.sources.isSubset(of: activeSources) { return true }
-      }
-    }
-    return false
-  }
+  private func sourceCompletesChord(
+    _ source: RemappingSource,
+    in device: RemappingDeviceState
+  ) -> Bool { device.selectedChords().contains { $0.sources.contains(source) } }
 
-  private mutating func processChords(for device: inout RemappingDeviceState)
-    -> [RemappingSystemInputAction]
-  {
-    var actions: [RemappingSystemInputAction] = []
-    let activeSources = device.activeSources
-    let profile = device.profile
-
-    var allChords: [(chord: RemappingChord, bindingID: UUID)] = []
-    for chord in profile.chords { allChords.append((chord, chord.id)) }
-    for layerID in device.activeLayers {
-      guard let layer = profile.layers.first(where: { $0.id == layerID }) else { continue }
-      for chord in layer.chords { allChords.append((chord, chord.id)) }
+  mutating func processChords(
+    for device: inout RemappingDeviceState,
+    releasing source: RemappingSource? = nil
+  ) -> [RemappingEngineAction] {
+    let selected = device.selectedChords(releasing: source)
+    let selectedIDs = Set(selected.map(\.id))
+    var actions: [RemappingEngineAction] = []
+    let retiredIDs = device.activeChords.subtracting(selectedIDs).sorted {
+      $0.uuidString < $1.uuidString
     }
-
-    var newActiveChords: Set<UUID> = []
-    for (chord, id) in allChords {
-      let isFullyActive = chord.sources.isSubset(of: activeSources)
-      let wasActive = device.activeChords.contains(id)
-      if isFullyActive && !wasActive {
-        newActiveChords.insert(id)
-        device.activeChords.insert(id)
-        actions += setBinding(id, destination: chord.destination, isDown: true, device: &device)
-      } else if isFullyActive {
-        newActiveChords.insert(id)
-      } else if wasActive {
-        device.activeChords.remove(id)
-        actions += setBinding(id, destination: chord.destination, isDown: false, device: &device)
-      }
+    for id in retiredIDs {
+      guard let destination = device.heldBindings[id] else { continue }
+      actions += setBinding(id, destination: destination, isDown: false, device: &device)
     }
-    device.activeChords = newActiveChords
+    for chord in selected where !device.activeChords.contains(chord.id) {
+      actions += cancelActions(for: chord.sources, device: &device)
+      device.sequenceHistory.removeAll { chord.sources.contains($0.source) }
+      device.deferredSequences.removeAll { !$0.awaitingSources.isDisjoint(with: chord.sources) }
+      device.pendingChordPresses.removeAll { chord.sources.contains($0.source) }
+      device.consumedChordSources.formUnion(chord.sources)
+      actions += setBinding(chord.id, destination: chord.destination, isDown: true, device: &device)
+    }
+    device.activeChords = selectedIDs
     return actions
   }
 
   /// Checks if recent input history matches any defined sequence.
-  private mutating func processSequences(
+  mutating func processSequences(
     for device: inout RemappingDeviceState,
     at uptimeNanoseconds: UInt64
-  ) -> [RemappingSystemInputAction] {
-    var actions: [RemappingSystemInputAction] = []
-    let profile = device.profile
-
-    var allSequences: [RemappingSequence] = profile.sequences
-    for layerID in device.activeLayers {
-      guard let layer = profile.layers.first(where: { $0.id == layerID }) else { continue }
-      allSequences.append(contentsOf: layer.sequences)
-    }
-
-    let maxWindow = allSequences.map { UInt64($0.windowMs * nanosecondsPerMillisecond) }.max() ?? 0
-    if maxWindow > 0 {
-      while let first = device.sequenceHistory.first, uptimeNanoseconds > first.uptime,
-        uptimeNanoseconds - first.uptime > maxWindow
-      { device.sequenceHistory.removeFirst() }
-    }
+  ) -> [RemappingEngineAction] {
+    var actions = commitDeferredSequences(device: &device)
+    let allSequences = device.effectiveSequences
 
     for sequence in allSequences {
       let sources = sequence.sources
@@ -464,35 +431,73 @@ struct RemappingEngineState {
       let matches = zip(tail, sources).allSatisfy { $0.0.source == $0.1 }
       guard matches else { continue }
 
-      guard let firstUptime = tail.first?.uptime else { continue }
-      guard uptimeNanoseconds <= firstUptime + windowNs else { continue }
+      guard let firstUptime = tail.first?.uptime, let lastUptime = tail.last?.uptime else {
+        continue
+      }
+      guard lastUptime >= firstUptime, lastUptime - firstUptime <= windowNs else { continue }
 
-      actions += tapBinding(sequence.id, destination: sequence.destination, device: &device)
-
+      let awaitingSources = Set(tail.filter(\.awaitingChord).map(\.source))
+      if awaitingSources.isEmpty {
+        actions += tapBinding(sequence.id, destination: sequence.destination, device: &device)
+      } else {
+        device.deferredSequences.append(
+          RemappingDeferredSequence(sequence: sequence, awaitingSources: awaitingSources)
+        )
+      }
+      // Each deferred match owns at least one pending press, which this clear removes
+      // from history. It cannot create another match until that press resolves.
       device.sequenceHistory.removeAll()
       break
     }
 
+    device.pruneSequenceHistory(at: uptimeNanoseconds)
     return actions
   }
 }
 
 struct RemappingDeviceState {
+  let sessionID = UUID()
+  var motion = RemappingMotionProcessor()
+  let gyroBindingID = UUID()
+  let motionSteeringBindingID = UUID()
+  var gyroDeadline: UInt64?
+  var virtualMotionDeadline: UInt64?
+  var motionStickDeadline: UInt64?
+  var hasVirtualMotionOutput = false
+  var gyroToggleActive = false
+  var gyroAwaitingBaseline = true
+  var gyroTrackball = RemappingMotionTrackball()
+  var activeMotionLeans: Set<RemappingMotionLeanDirection> = []
+  var sticks: [RemappingStickSource: RemappingStickRuntime] = [:]
+  var triggers: [RemappingTriggerSource: RemappingDualStageTriggerRuntime] = [:]
+  var touchSurfaces: [RemappingTouchSurface: RemappingTouchSurfaceState] = [:]
   let profile: RemappingProfile
+  let identifier: DeviceIdentifier
+  var gamepad = RemappingGamepadAccumulator()
+  var virtualAxisBindings: Set<UUID> = []
+  let passthroughBindingID = UUID()
+  var physicalAxes: [RemappingAxis: Float] = [:]
   var activeSources: Set<RemappingSource> = []
+  var sourcePressTimes: [RemappingSource: UInt64] = [:]
+  var lastUptime: UInt64 = 0
+  var pendingChordPresses: [RemappingPendingChordPress] = []
+  var consumedChordSources: Set<RemappingSource> = []
+  var replayedChordSources: Set<RemappingSource> = []
   var dpadDirections: Set<RemappingDpadDirection> = []
   var heldBindings: [UUID: RemappingDestination] = [:]
+  var armedReleaseBindings: Set<UUID> = []
+  var pulseDeadlines: [UUID: UInt64] = [:]
   var turbos: [UUID: RemappingTurboOutput] = [:]
   var continuous: [UUID: RemappingContinuousOutput] = [:]
-  var activations: [RemappingSource: RemappingActivationTracker] = [:]
+  var activations: [UUID: RemappingActivationTracker] = [:]
   var activeChords: Set<UUID> = []
   var sequenceHistory: [RemappingSequenceHistoryEntry] = []
+  var deferredSequences: [RemappingDeferredSequence] = []
   var activeLayers: [UUID] = []
   var layerToggleState: Set<UUID> = []
 
   func binding(for source: RemappingSource) -> RemappingBinding? {
-    let activeLayerIDs = Set(activeLayers).union(layerToggleState)
-    for layerID in activeLayerIDs.reversed() {
+    for layerID in activeLayers.reversed() {
       guard let layer = profile.layers.first(where: { $0.id == layerID }) else { continue }
       if let binding = layer.bindings.first(where: { $0.source == source }) { return binding }
     }
@@ -511,4 +516,5 @@ struct RemappingActivationTracker {
 struct RemappingSequenceHistoryEntry: Equatable {
   let source: RemappingSource
   let uptime: UInt64
+  var awaitingChord: Bool = false
 }

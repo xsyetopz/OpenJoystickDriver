@@ -279,6 +279,10 @@
 "profiles.bindingBehavior" = "Assignment behavior";
 "profiles.bundleIdentifier" = "Bundle identifier";
 "profiles.chordHelp" = "The destination fires while all selected controls are pressed.";
+"profiles.chordMode" = "Modalità combinazione";
+"profiles.chordModeModifier" = "Modificatore";
+"profiles.chordModeSimultaneous" = "Simultaneo";
+"profiles.chordWindow" = "Finestra di pressione";
 "profiles.chords" = "Chords";
 "profiles.controlNumber" = "Control %d";
 "profiles.creationValidation" = "Review the profile name, controller identifiers, and application target.";
@@ -381,6 +385,28 @@
 "mapping.share" = "Share";
 "mapping.options" = "Options";
 "mapping.touchpadClick" = "Click del trackpad";
+"mapping.touchContact" = "%@ touch";
+"mapping.touchGridCell" = "%@ grid %d×%d cell %d,%d";
+"mapping.touchSwipe" = "%@ swipe %@";
+"mapping.touchSurfacePrimary" = "Primary surface";
+"mapping.touchSurfaceLeft" = "Left surface";
+"mapping.touchSurfaceRight" = "Right surface";
+"profiles.sectionTouch" = "Touch";
+"profiles.touch.title" = "Touch mappings";
+"profiles.touch.surface" = "Surface";
+"profiles.touch.enabled" = "Enable continuous touch output";
+"profiles.touch.mode" = "Touch mode";
+"profiles.touch.pointer" = "Pointer";
+"profiles.touch.leftStick" = "Left stick";
+"profiles.touch.rightStick" = "Right stick";
+"profiles.touch.pointerSensitivity" = "Pointer points per surface";
+"profiles.touch.stickRadius" = "Full stick radius (surface fraction)";
+"profiles.touch.deadzone" = "Stick deadzone";
+"capture.touchColumns" = "Grid columns: %d";
+"capture.touchRows" = "Grid rows: %d";
+"capture.touchColumn" = "Cell column: %d";
+"capture.touchRow" = "Cell row: %d";
+"capture.touchSwipeDistance" = "Minimum swipe distance: %.0f%%";
 "mapping.paddle1" = "Paddle 1";
 "mapping.paddle2" = "Paddle 2";
 "mapping.paddle3" = "Paddle 3";
@@ -654,10 +680,10 @@
 "cli.mapping.curve_unknown" = "Curva di risposta sconosciuta «%@».";
 "cli.mapping.double_tap_format" = "--double-tap richiede <ms>:<target>, ad es. --double-tap 300:key:c";
 "cli.mapping.error" = "%@";
-"cli.mapping.help" = "Uso: OpenJoystickDriver --headless map <command>\n\nComandi:\n  list [--json]\n  show <profile> [--json]\n  create <name> --vid <id> --pid <id> (--target-app <bundle-id> | --global)\n  update <profile> [--name <name>] [--vid <id>] [--pid <id>]\n    [--target-app <bundle-id> | --global]\n  bind <profile> --source <source> --target <target> [binding options]\n  unbind <profile> --source <source>\n  delete <profile>\n  import <file>\n  export <profile> [--output <file>]\n  enable <profile>\n  disable --vid <id> --pid <id> | --profile <uuid-or-name>\n  permission status | request\n  chord <profile> add --sources <s1>,<s2>,… --target <destination>\n  chord <profile> delete --id <chord-id>\n  sequence <profile> add --sources <s1>,<s2>,… --window <ms> --target <destination>\n  sequence <profile> delete --id <sequence-id>\n  layer <profile> create --name <name> --activator <source> --mode hold|toggle\n  layer <profile> delete --id <layer-id>\n  layer <profile> bind --layer <layer-id> --source <s> --target <t> [binding options]\n  layer <profile> unbind --layer <layer-id> --source <s>\n  layer <profile> list\n\nFonte: button:<name> | dpad:<direction> | axis:<name>[:negative|positive]\nDestinazione: key:<key>[:mods=command,control,option,shift] | mouse:<button> |\n  move:x|y | scroll:x|y\n\nOpzioni asse:\n  --deadzone <0...0.95> --gain <0.1...10>\n  --invert --response-curve <linear|ease_in|ease_out|smooth_step>\n  --digital-threshold <0.01...1>\n\nOpzioni turbo (solo pulsanti di tastiera e mouse):\n  --turbo-rate <1...60> --turbo-duty <0.05...0.95>\n\nOpzioni di attivazione (solo pulsanti di tastiera e mouse, esclusive rispetto a turbo):\n  --long-hold <ms>:<target>     ad es. --long-hold 500:key:b\n  --double-tap <ms>:<target>    ad es. --double-tap 300:key:c\n\n<profile> accetta un UUID o un nome di profilo esatto, senza distinzione di maiuscole.\n<id> accetta decimale o esadecimale con prefisso 0x.";
+"cli.mapping.help" = "Uso: OpenJoystickDriver --headless map <command>\n\nComandi:\n  list [--json]\n  show <profile> [--json]\n  create <name> --vid <id> --pid <id> (--target-app <bundle-id> | --global)\n  update <profile> [--name <name>] [--vid <id>] [--pid <id>]\n    [--target-app <bundle-id> | --global]\n  bind <profile> --source <source> --target <target> [binding options]\n  unbind <profile> --source <source>\n  delete <profile>\n  import <file>\n  export <profile> [--output <file>]\n  enable <profile>\n  disable --vid <id> --pid <id> | --profile <uuid-or-name>\n  permission status | request\n  chord add <profile> --sources <s1>,<s2>,… --target <destination>\n    [--mode modifier|simultaneous] [--window-ms <1...1000>]\n  chord delete <profile> --id <chord-id>\n  sequence add <profile> --sources <s1>,<s2>,… --window <ms> --target <destination>\n  sequence delete <profile> --id <sequence-id>\n  layer create <profile> --name <name> --activator <source> --mode hold|toggle\n  layer delete <profile> --id <layer-id>\n  layer bind <profile> --layer <layer-id> --source <s> --target <t> [binding options]\n  layer unbind <profile> --layer <layer-id> --source <s>\n  layer list <profile>\n\nFonte: button:<name> | dpad:<direction> | axis:<name>[:negative|positive]\nDestinazione: key:<key>[:mods=command,control,option,shift] | mouse:<button> |\n  move:x|y | scroll:x|y\n\nOpzioni asse:\n  --deadzone <0...0.95> --gain <0.1...10>\n  --invert --response-curve <linear|ease_in|ease_out|smooth_step>\n  --digital-threshold <0.01...1>\n\nOpzioni turbo (solo pulsanti di tastiera e mouse):\n  --turbo-rate <1...60> --turbo-duty <0.05...0.95>\n\nOpzioni di attivazione (solo pulsanti di tastiera e mouse, esclusive rispetto a turbo):\n  --long-hold <ms>:<target>     ad es. --long-hold 500:key:b\n  --double-tap <ms>:<target>    ad es. --double-tap 300:key:c\n\n<profile> accetta un UUID o un nome di profilo esatto, senza distinzione di maiuscole.\n<id> accetta decimale o esadecimale con prefisso 0x.\n\nmap update <profile> --virtual-gamepad disabled|mapped|passthrough\nmap update <profile> --physical-input shared|exclusive\ngamepad:button:<name> | gamepad:dpad:<direction> | gamepad:axis:<name>\n--behavior hold|toggle|tap_on_press|tap_on_release|pulse|press|release\n--pulse-ms <1...5000>\n--actions-json <JSON-array>\n\nmap update <profile> --motion-space local|player|world\n--motion-pitch-sensitivity <0...100> --motion-yaw-sensitivity <0...100>\n--motion-invert-pitch true|false --motion-invert-yaw true|false\n--motion-smoothing-half-time-ms <0...1000>\n--motion-threshold-degrees-per-second <0...1000>\n--motion-automatic-bias true|false --motion-yaw-relaxation <0...10>\n--motion-side-reduction-threshold <0...1> --motion-gravity-correction-rate <0...100>\n\nmap calibration status|start|pause|reset --controller <runtime-identifier>\n\n--gyro-output disabled|mouse|left_stick|right_stick\n--gyro-virtual-motion true|false\n--gyro-pointer-points-per-degree <0...1000>\n--gyro-full-stick-degrees-per-second <1...10000>\n--gyro-activation always|while_held|while_released|toggle\n--gyro-activation-source <source>\n  --gyro-consume-activation true|false\n  --gyro-trackball-source <source>|none --gyro-trackball-axes pitch|yaw|both\n  --gyro-trackball-decay <halvings/s> --gyro-trackball-consume true|false\n\nStick options (create and update; select one stick per command):\n  --stick-source left|right --stick-mode aim|flick|flick_only|rotate_only|none\n  --stick-inner-deadzone <0...0.95> --stick-outer-deadzone <0...0.95>\n  --stick-response-exponent <0.1...10> --stick-invert-x true|false\n  --stick-invert-y true|false --stick-aim-degrees-per-second <0...10000>\n  --stick-pointer-points-per-degree <0...1000> --stick-flick-duration-ms <0...10000>\n  --stick-flick-threshold <0.1...1> --stick-flick-hysteresis <0...0.5>\n\n\nPaired Joy-Con:\n  map create <name> --vid 0x057e --pid 0x2006 --joy-con-pair-gyro left|right|disabled --global\n  map joy-con pair <profile> --left <runtime-identifier> --right <runtime-identifier>\n  map joy-con unpair --session <session-uuid>";
 "cli.mapping.identifier_invalid" = "%@ deve essere un identificatore a 16 bit decimale o esadecimale con prefisso 0x.";
 "cli.mapping.jsonEncodeFailed" = "Impossibile codificare il JSON in UTF-8.";
-"cli.mapping.layer_action_unknown" = "Azione di livello sconosciuta «%@». Atteso: create | delete | bind | unbind | list";
+"cli.mapping.layer_action_unknown" = "Azione di livello sconosciuta «%@». Atteso: create | delete | bind | unbind | motion | list";
 "cli.mapping.layer_missing" = "Non esiste alcun livello con ID %@.";
 "cli.mapping.long_hold_format" = "--long-hold richiede <ms>:<target>, ad es. --long-hold 500:key:b";
 "cli.mapping.mode_invalid" = "--mode deve essere «hold» o «toggle».";
@@ -681,14 +707,14 @@
 "cli.mapping.turbo_unsupported" = "Il turbo non è supportato per lo spostamento del puntatore o lo scorrimento.";
 "cli.mapping.unexpected_argument" = "Argomento imprevisto «%@».";
 "cli.mapping.unknown_option" = "Opzione sconosciuta «%@».";
-"cli.mapping.usage.chord" = "Uso: map chord <profile> add|delete …";
+"cli.mapping.usage.chord" = "Uso: map chord add|delete <profile> …";
 "cli.mapping.usage.delete" = "map delete <uuid-or-name>";
 "cli.mapping.usage.enable" = "map enable <uuid-or-name>";
 "cli.mapping.usage.import" = "map import <file>";
-"cli.mapping.usage.layer" = "Uso: map layer <profile> create|delete|bind|unbind|list …";
+"cli.mapping.usage.layer" = "Uso: map layer create|delete|bind|unbind|motion|list <profile> …";
 "cli.mapping.usage.layer_list" = "map layer list <profile>";
 "cli.mapping.usage.permission" = "map permission status|request";
-"cli.mapping.usage.sequence" = "Uso: map sequence <profile> add|delete …";
+"cli.mapping.usage.sequence" = "Uso: map sequence add|delete <profile> …";
 "cli.mapping.usage_prefix" = "Uso: %@";
 "cli.mapping.uuid_invalid" = "%@ deve essere un UUID valido.";
 "cli.mapping.value_invalid" = "%@";
@@ -954,3 +980,228 @@
 "notifications.profileSwitchedBody" = "%@ → %@";
 "notifications.testBody" = "OpenJoystickDriver può avvisarti dell’attività di controller e profili.";
 "notifications.testTitle" = "Le notifiche sono pronte";
+"profiles.virtualOutput" = "Gamepad virtuale";
+"profiles.virtualDisabled" = "Disattivato";
+"profiles.virtualMapped" = "Solo comandi riassegnati";
+"profiles.virtualPassthrough" = "Includi comandi non riassegnati";
+"profiles.exclusiveInput" = "Richiedi accesso esclusivo all’ingresso fisico";
+"cli.mapping.output_policy_invalid" = "--virtual-gamepad: disabled|mapped|passthrough\n--physical-input: shared|exclusive";
+
+"profiles.tapOnPress" = "Tocco alla pressione";
+
+"profiles.tapOnRelease" = "Tocco al rilascio";
+
+"profiles.pulse" = "Impulso";
+
+"profiles.pulseDuration" = "Durata dell’impulso";
+
+"profiles.pressOnly" = "Solo pressione";
+
+"profiles.releaseOnly" = "Solo rilascio";
+
+"profiles.additionalActions" = "Azioni aggiuntive";
+
+"profiles.addAction" = "Aggiungi azione";
+
+"profiles.moveUp" = "Sposta su";
+
+"profiles.moveDown" = "Sposta giù";
+
+"mapping.leftFunctionButton" = "Pulsante funzione sinistro";
+
+"mapping.rightFunctionButton" = "Pulsante funzione destro";
+
+"mapping.leftPaddle" = "Levetta sinistra";
+
+"mapping.rightPaddle" = "Levetta destra";
+
+"mapping.leftJoyConSL" = "Joy-Con sinistro SL";
+
+"mapping.leftJoyConSR" = "Joy-Con sinistro SR";
+
+"mapping.rightJoyConSL" = "Joy-Con destro SL";
+
+"mapping.rightJoyConSR" = "Joy-Con destro SR";
+
+"mapping.leftGrip" = "Impugnatura sinistra";
+
+"mapping.rightGrip" = "Impugnatura destra";
+
+"mapping.leftPadClick" = "Clic sul pad sinistro";
+
+"mapping.rightPadClick" = "Clic sul pad destro";
+
+/* Motion tuning: first-pass translation; native review pending. */
+"profiles.motion.title" = "Regolazione del movimento";
+"profiles.motion.space" = "Spazio delle coordinate";
+"profiles.motion.local" = "Locale";
+"profiles.motion.player" = "Giocatore";
+"profiles.motion.world" = "Mondo";
+"profiles.motion.pitchSensitivity" = "Sensibilità del beccheggio";
+"profiles.motion.yawSensitivity" = "Sensibilità dell’imbardata";
+"profiles.motion.smoothingHalfTimeMs" = "Tempo di dimezzamento dello smussamento (ms)";
+"profiles.motion.thresholdDegreesPerSecond" = "Soglia di velocità angolare (gradi/s)";
+"profiles.motion.yawRelaxation" = "Tolleranza di imbardata nello spazio giocatore";
+"profiles.motion.sideReductionThreshold" = "Attenuazione laterale nello spazio mondo";
+"profiles.motion.gravityCorrectionRate" = "Tasso di correzione della gravità (1/s)";
+"profiles.motion.invertPitch" = "Inverti beccheggio";
+"profiles.motion.invertYaw" = "Inverti imbardata";
+"profiles.motion.automaticBias" = "Calibrazione automatica a riposo";
+
+/* Motion calibration CLI. Non-English translation pending. */
+"cli.mapping.usage.calibration" = "Usage: map calibration status|start|pause|reset --controller <runtime-identifier>";
+"cli.mapping.calibration.identifier_required" = "A valid controller runtime identifier is required.";
+
+/* Motion calibration controls. Non-English translation pending. */
+"motion.calibration.instructions" = "Keep the controller still while collecting gyro bias.";
+"motion.calibration.collecting" = "Collecting bias";
+"motion.calibration.paused" = "Manual collection paused";
+"motion.calibration.offset" = "Bias (°/s): X %.3f · Y %.3f · Z %.3f";
+"motion.calibration.start" = "Start calibration";
+"motion.calibration.pause" = "Pause";
+"motion.calibration.title" = "Motion calibration";
+
+/* Calibration guidance. Non-English translation pending. */
+"motion.calibration.controllerUnavailable" = "Reconnect the controller, then refresh calibration status.";
+"motion.calibration.motionUnavailable" = "Enable a remapping profile for this controller and check that motion is available.";
+"motion.calibration.waiting" = "Waiting for motion samples. Refresh to check again.";
+"motion.calibration.continues" = "Collection continues when this window closes. Use Pause to stop it.";
+
+/* Gyro authoring. Native translation review pending. */
+"profiles.gyro.output" = "Gyro output";
+"profiles.gyro.disabled" = "Disabled";
+"profiles.gyro.mouse" = "Mouse pointer";
+"profiles.gyro.leftStick" = "Left stick";
+"profiles.gyro.rightStick" = "Right stick";
+"profiles.gyro.pointerScale" = "Pointer points per degree";
+"profiles.gyro.stickScale" = "Full stick speed (degrees/s)";
+"profiles.gyro.activation" = "Gyro activation";
+"profiles.gyro.always" = "Always active";
+"profiles.gyro.whileHeld" = "While held";
+"profiles.gyro.whileReleased" = "While released";
+"profiles.gyro.toggle" = "Toggle on press";
+"profiles.gyro.source" = "Activation control";
+
+"profiles.gyro.consume" = "Suppress original virtual activation control";
+
+/* Trackball authoring. Translation review pending. */
+"profiles.trackball.enabled" = "Trackball";
+"profiles.trackball.hint" = "Hold the control to continue motion while repositioning the controller.";
+"profiles.trackball.source" = "Trackball control";
+"profiles.trackball.axes" = "Trackball axes";
+"profiles.trackball.pitch" = "Pitch";
+"profiles.trackball.yaw" = "Yaw";
+"profiles.trackball.both" = "Pitch and yaw";
+"profiles.trackball.decay" = "Velocity halvings per second";
+"profiles.trackball.decayHint" = "Zero keeps a constant speed. One halves the speed each second.";
+"profiles.trackball.consume" = "Suppress original virtual trackball control";
+
+"profiles.motion.inherit" = "Use profile tuning";
+
+"profiles.stick.aim" = "Aim";
+"profiles.stick.aimRate" = "Aim speed (degrees/s)";
+"profiles.stick.enabled" = "Enable pointer output";
+"profiles.stick.exponent" = "Response exponent";
+"profiles.stick.flick" = "Flick and rotate";
+"profiles.stick.flickDuration" = "Flick duration (ms)";
+"profiles.stick.flickOnly" = "Flick only";
+"profiles.stick.hysteresis" = "Flick release hysteresis";
+"profiles.stick.innerDeadzone" = "Inner deadzone";
+"profiles.stick.invertX" = "Invert horizontal axis";
+"profiles.stick.invertY" = "Invert vertical axis";
+"profiles.stick.mode" = "Stick mode";
+"profiles.stick.outerDeadzone" = "Outer deadzone";
+"profiles.stick.pointerScale" = "Pointer points per degree";
+"profiles.stick.rotateOnly" = "Rotate only";
+"profiles.stick.source" = "Stick";
+"profiles.stick.threshold" = "Flick engagement threshold";
+"profiles.stick.title" = "Stick modes";
+/* Advanced stick, trigger, and lean authoring. Translation review pending. */
+"mapping.triggerStage" = "%@ trigger %@ pull";
+"mapping.motionLean" = "Motion lean %@";
+"profiles.sectionMotion" = "Motion";
+"profiles.stick.pointerArea" = "Pointer area";
+"profiles.stick.pointerRing" = "Pointer ring";
+"profiles.stick.scrollWheel" = "Scroll wheel";
+"profiles.stick.steering" = "Steering wheel";
+"profiles.stick.pointerRadius" = "Pointer radius (points)";
+"profiles.stick.scrollDegrees" = "Rotation per scroll line (degrees)";
+"profiles.stick.scrollAxis" = "Scroll axis";
+"profiles.stick.horizontal" = "Horizontal";
+"profiles.stick.vertical" = "Vertical";
+"profiles.stick.steeringFullScale" = "Rotation at full steering (degrees)";
+"profiles.stick.steeringReturnRate" = "Steering return speed (degrees/s)";
+"profiles.stick.steeringOutput" = "Virtual steering axis";
+"profiles.stick.leftStickX" = "Left stick horizontal";
+"profiles.stick.rightStickX" = "Right stick horizontal";
+"profiles.stick.rotationDirection" = "Positive rotation";
+"profiles.stick.clockwise" = "Clockwise";
+"profiles.stick.counterclockwise" = "Counterclockwise";
+"profiles.stick.passthrough" = "Keep physical stick passthrough";
+"profiles.trigger.title" = "Trigger stages";
+"profiles.trigger.source" = "Trigger";
+"profiles.trigger.left" = "Left trigger";
+"profiles.trigger.right" = "Right trigger";
+"profiles.trigger.enabled" = "Enable dual-stage trigger";
+"profiles.trigger.mode" = "Stage interaction";
+"profiles.trigger.softThreshold" = "Soft-pull threshold (0...1)";
+"profiles.trigger.fullThreshold" = "Full-pull threshold (0...1)";
+"profiles.trigger.hysteresis" = "Release hysteresis";
+"profiles.trigger.skipWindow" = "Quick-pull window (ms)";
+"profiles.trigger.passthrough" = "Keep analog trigger passthrough";
+"profiles.trigger.simultaneous" = "Soft and full together";
+"profiles.trigger.exclusive" = "Full replaces soft";
+"profiles.trigger.preferFull" = "Prefer quick full";
+"profiles.trigger.preferFullCombined" = "Prefer quick full; combine late";
+"profiles.trigger.responsivePreferFull" = "Responsive soft; prefer quick full";
+"profiles.trigger.responsivePreferFullCombined" = "Responsive soft; combine late";
+"profiles.motion.leanEnabled" = "Enable lean sources";
+"profiles.motion.leanThresholdDegrees" = "Lean threshold (degrees)";
+"profiles.motion.leanHysteresisDegrees" = "Lean release hysteresis (degrees)";
+"profiles.motion.steeringEnabled" = "Enable motion steering";
+"profiles.motion.steeringOutput" = "Virtual steering axis";
+"profiles.motion.steeringLeft" = "Left stick horizontal";
+"profiles.motion.steeringRight" = "Right stick horizontal";
+"profiles.motion.steeringDeadzoneDegrees" = "Steering deadzone (degrees)";
+"profiles.motion.steeringFullScaleDegrees" = "Full steering angle (degrees)";
+"profiles.motion.steeringResponseExponent" = "Steering response exponent";
+"profiles.motion.steeringInverted" = "Invert steering";
+"cli.mapping.advanced_stick_trigger_help" = "Advanced stick, trigger, and lean options:\n  --stick-source left|right\n  --stick-mode pointer_area|pointer_ring|scroll_wheel|steering|none\n  --stick-pointer-radius-points <1...10000> --stick-scroll-degrees-per-line <1...360>\n  --stick-scroll-axis horizontal|vertical\n  --stick-rotation-direction clockwise|counterclockwise\n  --stick-steering-degrees-at-full-scale <45...1440>\n  --stick-steering-return-degrees-per-second <0...10000>\n  --stick-steering-output left_stick_x|right_stick_x --stick-passthrough true|false\n\n  --trigger-source left|right\n  --trigger-mode simultaneous|exclusive|prefer_full|prefer_full_combined|\n    responsive_prefer_full|responsive_prefer_full_combined|none\n  --trigger-soft-threshold <0.01...0.95> --trigger-full-threshold <0.05...1>\n  --trigger-hysteresis <0...0.25> --trigger-skip-window-ms <1...1000>\n  --trigger-passthrough true|false\n\n  --motion-lean true|false --motion-lean-threshold-degrees <1...89>\n  --motion-lean-hysteresis-degrees <0...30>\n  --motion-steering-output left_stick_x|right_stick_x|none\n  --motion-steering-deadzone-degrees <0...89>\n  --motion-steering-full-scale-degrees <1...90>\n  --motion-steering-response-exponent <0.1...10>\n  --motion-steering-inverted true|false\n\nSources:\n  trigger:<left|right>:<soft|full> | motion:lean:<left|right>";
+
+"common.disabled" = "Disabled";
+"cli.mapping.joyConPairs" = "Paired Joy-Cons:";
+"profiles.joyConPair" = "Paired Joy-Con profile";
+"profiles.joyConGyro" = "Pair gyro source";
+"profiles.joyConLeft" = "Left Joy-Con";
+"profiles.joyConRight" = "Right Joy-Con";
+"profiles.pairJoyCons" = "Pair connected Joy-Cons...";
+"profiles.joyConPairActive" = "Pair active";
+"profiles.unpairJoyCons" = "Unpair";
+"profiles.joyConPairSessionHint" = "Pairing uses these exact controllers for the current app session.";
+"profiles.pair" = "Pair";
+"error.joyConPairUnavailable" = "The selected Joy-Cons could not be paired. Refresh connected controllers and try again.";
+"profiles.joyConExplicitSession" = "Started with an explicit pair session";
+"profiles.joyConSessionState" = "Explicit pairing";
+"profiles.gyro.virtualMotion" = "Forward calibrated virtual motion";
+
+/* Mapping-owned physical controller output. Translation review pending. */
+"mapping.physicalRumble" = "%@ rumble (%@%%)";
+"mapping.physicalPlayerIndicator" = "Player indicator %@";
+"mapping.physicalColor" = "Controller color %@";
+"mapping.physicalBrightness" = "Controller brightness (%@%%)";
+"mapping.physicalAdaptiveTrigger" = "%@ adaptive trigger: %@";
+
+/* Physical mapping value editor. Translation review pending. */
+"profiles.physical.motor" = "Motor";
+"profiles.physical.intensity" = "Intensity";
+"profiles.physical.player" = "Player indicator";
+"profiles.physical.red" = "Red";
+"profiles.physical.green" = "Green";
+"profiles.physical.blue" = "Blue";
+"profiles.physical.brightness" = "Brightness";
+"profiles.physical.trigger" = "Adaptive trigger";
+"profiles.physical.effect" = "Effect";
+"profiles.physical.startPosition" = "Resistance start";
+"profiles.physical.strength" = "Resistance strength";
+
+"cli.mapping.physical_output_help" = "Physical controller targets:\n  physical:rumble:<motor>:<0...1>\n  physical:player:<0...4>\n  physical:color:<red>:<green>:<blue>\n  physical:brightness:<0...1>\n  physical:adaptive:<left|right>:off\n  physical:adaptive:<left|right>:resistance:<start-position>:<strength>";

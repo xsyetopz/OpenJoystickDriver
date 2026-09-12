@@ -102,26 +102,29 @@ struct SwitchProParserTests {
   @Test func testSwitchProStartupReportsMatchLinuxUsbInitSlice() {
     let reports = SwitchProParser().hidStartupReports()
 
-    #expect(reports.map(\.reportID) == [0x80, 0x80, 0x80, 0x80, 0x01, 0x01])
+    #expect(reports.map(\.reportID) == [0x80, 0x80, 0x80, 0x80, 0x01, 0x01, 0x01, 0x01, 0x01])
     #expect(
       reports.map { Array($0.bytes.prefix(2)) } == [
-        [0x80, 0x02], [0x80, 0x03], [0x80, 0x02], [0x80, 0x04], [0x01, 0x00], [0x01, 0x01]
+        [0x80, 0x02], [0x80, 0x03], [0x80, 0x02], [0x80, 0x04],
+        [0x01, 0x00], [0x01, 0x01], [0x01, 0x02], [0x01, 0x03], [0x01, 0x04]
       ]
     )
     #expect(Array(reports[4].bytes[2...9]) == [0x00, 0x01, 0x40, 0x40] + [0x00, 0x01, 0x40, 0x40])
     #expect(reports[4].bytes[10] == 0x03)
     #expect(reports[4].bytes[11] == 0x30)
-    #expect(reports[5].bytes[10] == 0x48)
+    #expect(reports[5].bytes[10] == 0x40)
+    #expect(reports[6].bytes[10] == 0x48)
+    #expect(reports[6].bytes[11] == 0x01)
     #expect(reports[5].bytes[11] == 0x01)
   }
 
   @Test func testSwitchProStartupReportsAreTransportScopedAndRateLimited() {
     let bluetooth = SwitchProParser().hidStartupReports(transport: "Bluetooth")
-    #expect(bluetooth.map(\.reportID) == [0x01, 0x01])
-    #expect(bluetooth.map { $0.bytes[10] } == [0x03, 0x48])
+    #expect(bluetooth.map(\.reportID) == [0x01, 0x01, 0x01, 0x01, 0x01])
+    #expect(bluetooth.map { $0.bytes[10] } == [0x03, 0x40, 0x48, 0x10, 0x10])
     #expect(SwitchProParser().hidStartupReports(transport: nil).isEmpty)
     let reportIDs = SwitchProParser().hidStartupReports(transport: "USB").map(\.reportID)
-    #expect(reportIDs == [0x80, 0x80, 0x80, 0x80, 0x01, 0x01])
+    #expect(reportIDs == [0x80, 0x80, 0x80, 0x80, 0x01, 0x01, 0x01, 0x01, 0x01])
     #expect(SwitchProParser().hidStartupReportIntervalNanoseconds(transport: "USB") == 20_000_000)
     #expect(
       SwitchProParser().hidStartupReportIntervalNanoseconds(transport: "Bluetooth") == 60_000_000

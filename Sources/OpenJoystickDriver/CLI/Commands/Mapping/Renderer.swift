@@ -44,7 +44,52 @@ enum MappingRenderer {
         + "\(layer.activationMode.rawValue):\(source(layer.activator)) "
         + "bindings:\(layer.bindings.count)"
     }
-    return ([header] + bindings + chords + sequences + layers).joined(separator: "\n")
+    let touchMappings = profile.touchMappings.map { mapping in
+      "  touch:\(mapping.surface.rawValue) mode:\(mapping.mode.rawValue) "
+        + "pointer-sensitivity:\(mapping.pointerSensitivity) "
+        + "stick-radius:\(mapping.stickRadius) deadzone:\(mapping.deadzone)"
+    }
+    let stickMappings = profile.stickMappings.map { mapping in
+      "  stick:\(mapping.source.rawValue) mode:\(mapping.mode.rawValue) "
+        + "passthrough:\(mapping.passthrough)"
+    }
+    let triggerMappings = profile.triggerMappings.map { mapping in
+      "  trigger:\(mapping.source.rawValue) mode:\(mapping.mode.rawValue) "
+        + "soft:\(mapping.softThreshold) full:\(mapping.fullThreshold) "
+        + "hysteresis:\(mapping.hysteresis) window:\(mapping.skipWindowMs)ms "
+        + "passthrough:\(mapping.passthrough)"
+    }
+    var lines = [header]
+    if let settings = profile.joyConPair {
+      lines.append("  joy-con-pair gyro:\(settings.gyroSelection.rawValue)")
+    }
+    if profile.gyroOutput.mode != .disabled || profile.gyroOutput.virtualMotion {
+      lines.append(
+        "  gyro-output mode:\(profile.gyroOutput.mode.rawValue) "
+          + "virtual-motion:\(profile.gyroOutput.virtualMotion)"
+      )
+    }
+    if let lean = profile.motionTuning.lean {
+      lines.append(
+        "  motion-lean threshold:\(lean.thresholdDegrees)deg "
+          + "hysteresis:\(lean.hysteresisDegrees)deg"
+      )
+    }
+    if let steering = profile.motionTuning.steering {
+      lines.append(
+        "  motion-steering output:\(steering.output.rawValue) "
+          + "deadzone:\(steering.deadzoneDegrees)deg "
+          + "full-scale:\(steering.fullScaleDegrees)deg"
+      )
+    }
+    lines.append(contentsOf: stickMappings)
+    lines.append(contentsOf: triggerMappings)
+    lines.append(contentsOf: touchMappings)
+    lines.append(contentsOf: bindings)
+    lines.append(contentsOf: chords)
+    lines.append(contentsOf: sequences)
+    lines.append(contentsOf: layers)
+    return lines.joined(separator: "\n")
   }
 
   static func snapshot(_ snapshot: ApplicationServiceRemappingSnapshotPayload) -> String {
@@ -53,13 +98,19 @@ enum MappingRenderer {
         "cli.mapping.postEventAccess",
         "Post-event access: %@",
         snapshot.postEventAccess.rawValue
-      ), CLILocalized.text("cli.mapping.profiles", "Profiles:")
+      ), CLILocalized.text("cli.mapping.profiles", "Profiles:"),
     ]
     lines += snapshot.profiles.map(profile)
     lines.append(CLILocalized.text("cli.mapping.routes", "Routes:"))
     lines += snapshot.routes.map {
       "  \($0.vendorID):\($0.productID) \($0.runtimeIdentifier) "
         + "\($0.selection.rawValue)/\($0.eligibility.rawValue)"
+    }
+    lines.append(CLILocalized.text("cli.mapping.joyConPairs", "Paired Joy-Cons:"))
+    lines += snapshot.joyConPairs.map {
+      "  \($0.sessionID.uuidString) left:\($0.leftRuntimeIdentifier) "
+        + "right:\($0.rightRuntimeIdentifier) profile:\($0.profileName) "
+        + "gyro:\($0.gyroSelection.rawValue)"
     }
     return lines.joined(separator: "\n")
   }
@@ -70,11 +121,22 @@ enum MappingRenderer {
     case .dpad(let value): "dpad:\(value.rawValue)"
     case .axis(let value): "axis:\(value.rawValue)"
     case .axisDirection(let axis, let direction): "axis:\(axis.rawValue):\(direction.rawValue)"
+    case .triggerStage(let trigger, let stage):
+      "trigger:\(trigger.rawValue):\(stage.rawValue)"
+    case .motionLean(let direction): "motion:lean:\(direction.rawValue)"
+    case .touchContact(let surface): "touch:\(surface.rawValue):contact"
+    case .touchGrid(let grid):
+      "touch:\(grid.surface.rawValue):grid:\(grid.columns):\(grid.rows):\(grid.column):\(grid.row)"
+    case .touchSwipe(let swipe):
+      "touch:\(swipe.surface.rawValue):swipe:\(swipe.direction.rawValue):\(swipe.minimumDistance)"
     }
   }
 
   static func destination(_ destination: RemappingDestination) -> String {
     switch destination {
+    case .gamepadAxis(let axis): return "gamepad:axis:\(axis.rawValue)"
+    case .gamepadDpad(let direction): return "gamepad:dpad:\(direction.rawValue)"
+    case .gamepadButton(let button): return "gamepad:button:\(button.rawValue)"
     case .keyboard(let key, let modifiers):
       let suffix =
         modifiers.isEmpty
@@ -83,6 +145,28 @@ enum MappingRenderer {
     case .mouseButton(let value): return "mouse:\(value.rawValue)"
     case .mouseMovement(let value): return "move:\(value.rawValue)"
     case .scroll(let value): return "scroll:\(value.rawValue)"
+    case .physical(let output): return physicalOutput(output)
+    }
+  }
+
+  private static func physicalOutput(_ output: RemappingPhysicalOutput) -> String {
+    switch output {
+    case .rumble(let motor, let intensity):
+      return "physical:rumble:\(motor.rawValue):\(intensity)"
+    case .playerIndicator(let indicator):
+      return "physical:player:\(indicator.rawValue)"
+    case .color(let red, let green, let blue):
+      return "physical:color:\(red):\(green):\(blue)"
+    case .brightness(let intensity):
+      return "physical:brightness:\(intensity)"
+    case .adaptiveTrigger(let trigger, let effect):
+      switch effect.kind {
+      case .off:
+        return "physical:adaptive:\(trigger.rawValue):off"
+      case .resistance:
+        return "physical:adaptive:\(trigger.rawValue):resistance:"
+          + "\(effect.startPosition):\(effect.strength)"
+      }
     }
   }
 

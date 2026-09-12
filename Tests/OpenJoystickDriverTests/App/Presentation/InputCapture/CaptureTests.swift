@@ -102,8 +102,46 @@ import Testing
     #expect(RuntimePresentation.detectedSource(from: state) == nil)
   }
 
+  @Test func detectedTransitionCapturesNewTouchSurfaceButNotHeldContactMovement() {
+    let previous = DeviceInputState(vendorID: 1, productID: 2)
+    var touched = previous
+    touched.touchSamples = [touchSample(surface: .right, x: 10)]
+    var moved = touched
+    moved.touchSamples = [touchSample(surface: .right, x: 50)]
+
+    #expect(
+      RuntimePresentation.detectedTransition(from: previous, to: touched)
+        == .touchContact(.right)
+    )
+    #expect(RuntimePresentation.detectedTransition(from: touched, to: moved) == nil)
+  }
+
   @Test func detectedSourceIncludesNamedExtraAndDigitalControllerAliases() {
     var state = DeviceInputState(vendorID: 0x1234, productID: 0x5678)
+    state.pressedButtons = ["left_function"]
+    #expect(RuntimePresentation.detectedSource(from: state) == .button(.leftFunction))
+
+    state.pressedButtons = ["right_function"]
+    #expect(RuntimePresentation.detectedSource(from: state) == .button(.rightFunction))
+
+    state.pressedButtons = ["left_paddle"]
+    #expect(RuntimePresentation.detectedSource(from: state) == .button(.leftPaddle))
+
+    state.pressedButtons = ["right_paddle"]
+    #expect(RuntimePresentation.detectedSource(from: state) == .button(.rightPaddle))
+
+    state.pressedButtons = ["left_sl"]
+    #expect(RuntimePresentation.detectedSource(from: state) == .button(.leftSL))
+
+    state.pressedButtons = ["left_sr"]
+    #expect(RuntimePresentation.detectedSource(from: state) == .button(.leftSR))
+
+    state.pressedButtons = ["right_sl"]
+    #expect(RuntimePresentation.detectedSource(from: state) == .button(.rightSL))
+
+    state.pressedButtons = ["right_sr"]
+    #expect(RuntimePresentation.detectedSource(from: state) == .button(.rightSR))
+
     state.pressedButtons = ["share"]
     #expect(RuntimePresentation.detectedSource(from: state) == .button(.share))
 
@@ -154,5 +192,24 @@ import Testing
     current.pressedButtons = ["B"]
 
     #expect(RuntimePresentation.detectedTransition(from: previous, to: current) == nil)
+  }
+
+  private func touchSample(surface: ControllerTouchSurface, x: Int32) -> ControllerTouchSample {
+    ControllerTouchSample(
+      reportTimestamp: ControllerSampleTimestamp(
+        rawCounter: 0,
+        elapsedNanoseconds: 0,
+        tickNanosecondsNumerator: nil,
+        tickNanosecondsDenominator: nil,
+        sequenceIndex: 0,
+        basis: .hostEstimate
+      ),
+      rawTouchCounter: nil,
+      historyIndex: 0,
+      width: 100,
+      height: 100,
+      contacts: [ControllerTouchContact(id: 0, isActive: true, x: x, y: 10)],
+      surface: surface
+    )
   }
 }

@@ -201,6 +201,27 @@ struct ProfileLibraryTests {
     }
   }
 
+  @Test func olderProfileVersionIsReportedWithoutParsingItsFields() async throws {
+    try await withLibrary { library, url in
+      var profileObject = try #require(
+        JSONSerialization.jsonObject(with: JSONEncoder().encode(makeProfile(name: "Old")))
+          as? [String: Any]
+      )
+      profileObject["schema_version"] = 2
+      profileObject["bindings"] = "must not be decoded"
+      let object: [String: Any] = [
+        "schema_version": 2, "profiles": [profileObject], "active_profiles": []
+      ]
+      try JSONSerialization.data(withJSONObject: object).write(to: url)
+
+      await #expect(
+        throws: RemappingProfileLibraryError.invalidProfile(.unsupportedSchemaVersion(2))
+      ) {
+        _ = try await library.profiles()
+      }
+    }
+  }
+
   @Test func listingUsesDeterministicNameThenIdentifierOrder() async throws {
     try await withLibrary { library, _ in
       let alphaLast = makeProfile(id: identifier(last: 255), name: "alpha")

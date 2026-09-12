@@ -22,6 +22,8 @@ struct USBStartupOutputPolicyTests {
 
     #expect(retried)
     #expect(dispatcher.dispatchCount == 0)
+    #expect(dispatcher.ownershipStates.contains(.accessDenied))
+    #expect(!dispatcher.ownershipStates.contains(.exclusive))
     await pipeline.stop()
     await startTask.value
   }
@@ -45,8 +47,10 @@ struct USBStartupOutputPolicyTests {
     #expect(published)
     #expect(await provider.openAttempts() == 4)
     #expect(dispatcher.batches == [[]])
+    #expect(dispatcher.ownershipAtDispatch == [.exclusive])
     await pipeline.stop()
     await startTask.value
+    #expect(dispatcher.ownershipStates.last == .unknown)
   }
 
   @Test func recoveryBackoffIsBounded() {
@@ -111,6 +115,7 @@ struct USBStartupOutputPolicyTests {
 
     #expect(dispatcher.dispatchCount == 0)
     #expect(await session.closeCount() == 1)
+    #expect(!dispatcher.ownershipStates.contains(.exclusive))
   }
 
   @Test func ignoresIOErrorForXbox360RingLED() {
@@ -240,6 +245,7 @@ private actor ScriptedUSBTransportProvider: USBTransportProvider {
 }
 
 private actor StartupUSBTransportSession: USBTransportSession {
+  var inputOwnership: HIDInputOwnership { .exclusive }
   func writeInterruptPacket(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int {
     data.count
   }
@@ -275,6 +281,7 @@ private actor SuspendedSuccessfulUSBTransportProvider: USBTransportProvider {
 }
 
 private actor ClosingUSBTransportSession: USBTransportSession {
+  var inputOwnership: HIDInputOwnership { closes == 0 ? .exclusive : .unknown }
   private var closes = 0
 
   func writeInterruptPacket(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int {
@@ -290,16 +297,32 @@ private actor ClosingUSBTransportSession: USBTransportSession {
   func closeCount() -> Int { closes }
 }
 
-private final class StartupRecordingOutputDispatcher: OutputDispatcher, @unchecked Sendable {
+private final class StartupRecordingOutputDispatcher: OutputDispatcher,
+  ControllerInputOwnershipListener, @unchecked Sendable
+{
   var suppressOutput = false
 
   private let lock = NSLock()
   private var recordedBatches: [[ControllerEvent]] = []
+  private var recordedOwnership: [HIDInputOwnership] = []
+  private var dispatchedOwnership: [HIDInputOwnership] = []
+
+  var ownershipStates: [HIDInputOwnership] { lock.withLock { recordedOwnership } }
+  var ownershipAtDispatch: [HIDInputOwnership] { lock.withLock { dispatchedOwnership } }
+
+  func controllerInputOwnershipChanged(
+    _ ownership: HIDInputOwnership, for identifier: DeviceIdentifier
+  ) {
+    lock.withLock { recordedOwnership.append(ownership) }
+  }
 
   var batches: [[ControllerEvent]] { lock.withLock { recordedBatches } }
   var dispatchCount: Int { lock.withLock { recordedBatches.count } }
 
   func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) {
-    lock.withLock { recordedBatches.append(events) }
+    lock.withLock {
+      recordedBatches.append(events)
+      dispatchedOwnership.append(recordedOwnership.last ?? .unknown)
+    }
   }
 }

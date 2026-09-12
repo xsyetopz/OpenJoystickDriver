@@ -21,6 +21,7 @@ extension UserSpaceOutputDispatcher {
     state: inout VirtualGamepadState
   ) {
     switch event {
+    case .motionSample, .touchSample: break
     case .buttonPressed(let button): applyButton(button, pressed: true, state: &state)
     case .buttonReleased(let button): applyButton(button, pressed: false, state: &state)
     case .leftStickChanged(let x, let y):
@@ -73,7 +74,7 @@ extension UserSpaceOutputDispatcher {
     case .leftBumper, .l1: return 4
     case .rightBumper, .r1: return 5
     case .leftStick: return 6
-    case .rightStick: return 7
+    case .rightStick, .rightPadClick: return 7
     case .start, .options: return 8
     case .back: return 9
     case .guide, .ps: return emitsXboxGuideReport ? nil : 10
@@ -82,7 +83,9 @@ extension UserSpaceOutputDispatcher {
     case .dpadLeft: return 13
     case .dpadRight: return 14
     case .share: return 15
-    case .l2Digital, .r2Digital, .touchpad, .mute: return nil
+    case .l2Digital, .r2Digital, .touchpad, .mute,
+      .leftGrip, .rightGrip, .leftPadClick, .leftSL, .leftSR, .rightSL, .rightSR,
+      .leftFunction, .rightFunction, .leftPaddle, .rightPaddle: return nil
     }
   }
 

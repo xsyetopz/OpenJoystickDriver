@@ -77,6 +77,7 @@ extension DeviceManager {
       knownServiceIDs.remove(serviceID)
       if let identifier = serviceToIdentifier.removeValue(forKey: serviceID) {
         let pipeline = pipelines.removeValue(forKey: identifier)
+        if let pipeline { await neutralizePhysicalOutputs(for: identifier, pipeline: pipeline) }
         deviceInfos.removeValue(forKey: identifier)
         lastPhysicalHIDOutputNanoseconds.removeValue(forKey: identifier)
         await pipeline?.stop()

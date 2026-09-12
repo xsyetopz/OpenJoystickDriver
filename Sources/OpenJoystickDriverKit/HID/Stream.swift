@@ -205,8 +205,7 @@ public final class HIDDeviceStream: @unchecked Sendable {
       )
     else { return }
 
-    // Try to take exclusive access so SDL sees only the virtual controller (no duplicates).
-    // This is best-effort; if it fails we still function, but users may see SDL-0/SDL-1 conflicts.
+    // Preserve shared input for existing profiles, but report whether isolation was acquired.
     let seizeKr = IOHIDDeviceOpen(device, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
     if seizeKr == kIOReturnSuccess {
       seizeLock.withLock {
@@ -217,6 +216,14 @@ public final class HIDDeviceStream: @unchecked Sendable {
         }
       }
     }
+    let ownership: HIDInputOwnership
+    switch seizeKr {
+    case kIOReturnSuccess: ownership = .exclusive
+    case kIOReturnExclusiveAccess: ownership = .ownedByAnotherClient
+    case kIOReturnNotPermitted, kIOReturnNotPrivileged: ownership = .accessDenied
+    default: ownership = .acquisitionFailed
+    }
+    eventAdapter.updateOwnership(ownership, deviceID: trackingID(for: device))
 
     continuation?.yield(
       .connected(
@@ -225,7 +232,8 @@ public final class HIDDeviceStream: @unchecked Sendable {
         serialNumber: serial,
         locationID: locationID,
         productName: productName,
-        transport: transport.isEmpty ? nil : transport
+        transport: transport.isEmpty ? nil : transport,
+        ownership: eventAdapter.ownership(locationID: locationID)
       )
     )
   }
@@ -258,6 +266,13 @@ public final class HIDDeviceStream: @unchecked Sendable {
           vendorID: UInt16(truncatingIfNeeded: vid),
           productID: UInt16(truncatingIfNeeded: pid),
           locationID: locationID
+        )
+      )
+    } else {
+      continuation?.yield(
+        .ownershipChanged(
+          locationID: locationID,
+          ownership: eventAdapter.ownership(locationID: locationID)
         )
       )
     }

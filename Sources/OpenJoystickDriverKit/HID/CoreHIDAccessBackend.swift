@@ -13,6 +13,8 @@ import Foundation
   private let manager = HIDDeviceManager()
   private let matchingCriteria: [HIDDeviceManager.DeviceMatchingCriteria]
   private var managerTask: Task<Void, Never>?
+  private var sessionID: UUID?
+  private var pendingAdmissions: [UInt64: UUID] = [:]
   private var recordsByDeviceID: [UInt64: ClientRecord] = [:]
   private var deviceIDsByLocation: [UInt32: Set<UInt64>] = [:]
   private let eventAdapter = SynchronizedPhysicalHIDBackendEventAdapter()
@@ -39,10 +41,16 @@ import Foundation
   }
 
   func deviceEvents() -> AsyncStream<HIDDeviceEvent> {
-    managerTask?.cancel()
+    stop()
+    let sessionID = UUID()
+    self.sessionID = sessionID
     return AsyncStream { continuation in
-      continuation.onTermination = { [weak self] _ in Task { await self?.stop() } }
-      managerTask = Task { [weak self] in await self?.monitorManager(continuation: continuation) }
+      continuation.onTermination = { [weak self] _ in
+        Task { await self?.stop(sessionID: sessionID) }
+      }
+      managerTask = Task { [weak self] in
+        await self?.monitorManager(continuation: continuation, sessionID: sessionID)
+      }
     }
   }
 
@@ -60,8 +68,12 @@ import Foundation
       do {
         let data = try await client.dispatchGetReportRequest(
           type: .feature,
-          id: HIDReportID(rawValue: request.reportID)
+          id: HIDReportID(rawValue: request.reportID),
+          timeout: .seconds(2)
         )
+        guard recordsByDeviceID[client.deviceReference.deviceID]?.client === client,
+          eventAdapter.acceptsFeedback(locationID: locationID)
+        else { continue }
         return Data(data.prefix(request.length))
       } catch { continue }
     }
@@ -86,17 +98,22 @@ import Foundation
   }
 
   private func clients(at locationID: UInt32) -> [HIDDeviceClient] {
-    (deviceIDsByLocation[locationID] ?? []).compactMap { recordsByDeviceID[$0]?.client }
+    (deviceIDsByLocation[locationID] ?? []).compactMap {
+      eventAdapter.acceptsInput(deviceID: $0) ? recordsByDeviceID[$0]?.client : nil
+    }
   }
 
-  private func monitorManager(continuation: AsyncStream<HIDDeviceEvent>.Continuation) async {
+  private func monitorManager(
+    continuation: AsyncStream<HIDDeviceEvent>.Continuation,
+    sessionID: UUID
+  ) async {
     let notifications = await manager.monitorNotifications(matchingCriteria: matchingCriteria)
     do {
       for try await notification in notifications {
-        if Task.isCancelled { break }
+        if Task.isCancelled || self.sessionID != sessionID { break }
         switch notification {
         case .deviceMatched(let reference):
-          await add(reference: reference, continuation: continuation)
+          await add(reference: reference, continuation: continuation, sessionID: sessionID)
         case .deviceRemoved(let reference): remove(reference: reference, continuation: continuation)
         @unknown default: break
         }
@@ -107,9 +124,19 @@ import Foundation
 
   private func add(
     reference: HIDDeviceClient.DeviceReference,
-    continuation: AsyncStream<HIDDeviceEvent>.Continuation
+    continuation: AsyncStream<HIDDeviceEvent>.Continuation,
+    sessionID: UUID
   ) async {
-    guard recordsByDeviceID[reference.deviceID] == nil else { return }
+    guard self.sessionID == sessionID, !Task.isCancelled else { return }
+    guard recordsByDeviceID[reference.deviceID] == nil, pendingAdmissions[reference.deviceID] == nil
+    else { return }
+    let admissionID = UUID()
+    pendingAdmissions[reference.deviceID] = admissionID
+    defer {
+      if pendingAdmissions[reference.deviceID] == admissionID {
+        pendingAdmissions.removeValue(forKey: reference.deviceID)
+      }
+    }
     guard !AppleGameControllerSyntheticHID.isSyntheticRegistryEntry(id: reference.deviceID) else {
       return
     }
@@ -122,6 +149,9 @@ import Foundation
     let locationID = UInt32(truncatingIfNeeded: await client.locationID ?? reference.deviceID)
     let syntheticProperty = await client[AppleGameControllerSyntheticHID.propertyKey]?.unsafeObject
     let transport = Self.transportName(await client.transport)
+    guard self.sessionID == sessionID, !Task.isCancelled,
+      pendingAdmissions[reference.deviceID] == admissionID
+    else { return }
     guard
       PhysicalHIDBackendEventPolicy.acceptsDevice(
         serialNumber: serialNumber,
@@ -139,9 +169,18 @@ import Foundation
       )
     else { return }
 
-    do { try await client.seizeDevice() } catch {
+    let ownership: HIDInputOwnership
+    do {
+      try await client.seizeDevice()
+      ownership = .exclusive
+    } catch {
+      ownership = Self.ownershipAfterAcquisitionFailure(error)
       print("[CoreHIDAccessBackend] Non-exclusive access for \(vendorID):\(productID): \(error)")
     }
+    guard self.sessionID == sessionID, !Task.isCancelled,
+      pendingAdmissions[reference.deviceID] == admissionID
+    else { return }
+    eventAdapter.updateOwnership(ownership, deviceID: reference.deviceID)
 
     let task = Task { [weak self] in
       guard let self else { return }
@@ -149,7 +188,8 @@ import Foundation
         client: client,
         deviceID: reference.deviceID,
         locationID: locationID,
-        continuation: continuation
+        continuation: continuation,
+        sessionID: sessionID
       )
     }
     recordsByDeviceID[reference.deviceID] = ClientRecord(
@@ -167,7 +207,8 @@ import Foundation
         serialNumber: serialNumber,
         locationID: locationID,
         productName: productName,
-        transport: transport
+        transport: transport,
+        ownership: eventAdapter.ownership(locationID: locationID)
       )
     )
   }
@@ -176,19 +217,46 @@ import Foundation
     client: HIDDeviceClient,
     deviceID: UInt64,
     locationID: UInt32,
-    continuation: AsyncStream<HIDDeviceEvent>.Continuation
+    continuation: AsyncStream<HIDDeviceEvent>.Continuation,
+    sessionID: UUID
   ) async {
-    guard eventAdapter.acceptsInput(deviceID: deviceID) else { return }
+    let reacquire = await receiveNotifications(
+      client: client,
+      deviceID: deviceID,
+      locationID: locationID,
+      continuation: continuation,
+      sessionID: sessionID
+    )
+    guard self.sessionID == sessionID, !Task.isCancelled,
+      recordsByDeviceID[deviceID]?.client === client
+    else { return }
+    remove(reference: client.deviceReference, continuation: continuation, cancelNotification: false)
+    if reacquire {
+      // The notification stream has ended before a fresh client attempts exclusive access.
+      await add(reference: client.deviceReference, continuation: continuation, sessionID: sessionID)
+    }
+  }
+
+  private func receiveNotifications(
+    client: HIDDeviceClient,
+    deviceID: UInt64,
+    locationID: UInt32,
+    continuation: AsyncStream<HIDDeviceEvent>.Continuation,
+    sessionID: UUID
+  ) async -> Bool {
+    guard eventAdapter.isTracked(deviceID: deviceID) else { return false }
     let inputElements = await client.elements.filter { $0.type == .input }
+    guard self.sessionID == sessionID, !Task.isCancelled else { return false }
     let notifications = await client.monitorNotifications(
       reportIDsToMonitor: [HIDReportID.allReports],
       elementsToMonitor: inputElements
     )
     do {
       for try await notification in notifications {
-        if Task.isCancelled { break }
+        if Task.isCancelled || self.sessionID != sessionID { break }
         switch notification {
         case .inputReport(let reportID, let data, _):
+          guard eventAdapter.acceptsInput(deviceID: deviceID) else { continue }
           var bytes = [UInt8](data)
           if let reportID, bytes.first != reportID.rawValue {
             bytes.insert(reportID.rawValue, at: 0)
@@ -201,6 +269,7 @@ import Foundation
             )
           )
         case .elementUpdates(let values):
+          guard eventAdapter.acceptsInput(deviceID: deviceID) else { continue }
           for value in values {
             let element = value.element
             continuation.yield(
@@ -216,8 +285,16 @@ import Foundation
               )
             )
           }
-        case .deviceRemoved: return
-        case .deviceSeized, .deviceUnseized: break
+        case .deviceRemoved: return false
+        case .deviceSeized:
+          eventAdapter.updateOwnership(.ownedByAnotherClient, deviceID: deviceID)
+          continuation.yield(
+            .ownershipChanged(
+              locationID: locationID,
+              ownership: eventAdapter.ownership(locationID: locationID)
+            )
+          )
+        case .deviceUnseized: return true
         @unknown default: break
         }
       }
@@ -226,12 +303,15 @@ import Foundation
         print("[CoreHIDAccessBackend] Device notification failed at \(locationID): \(error)")
       }
     }
+    return false
   }
 
   private func remove(
     reference: HIDDeviceClient.DeviceReference,
-    continuation: AsyncStream<HIDDeviceEvent>.Continuation
+    continuation: AsyncStream<HIDDeviceEvent>.Continuation,
+    cancelNotification: Bool = true
   ) {
+    pendingAdmissions.removeValue(forKey: reference.deviceID)
     let removal = eventAdapter.remove(deviceID: reference.deviceID)
     guard let record = recordsByDeviceID.removeValue(forKey: reference.deviceID) else {
       for locationID in Array(deviceIDsByLocation.keys) {
@@ -243,7 +323,7 @@ import Foundation
       return
     }
     let deviceID = reference.deviceID
-    if removal.shouldCancelNotification { record.notificationTask.cancel() }
+    if removal.shouldCancelNotification, cancelNotification { record.notificationTask.cancel() }
     deviceIDsByLocation[record.locationID]?.remove(deviceID)
     if deviceIDsByLocation[record.locationID]?.isEmpty == true {
       deviceIDsByLocation.removeValue(forKey: record.locationID)
@@ -256,16 +336,34 @@ import Foundation
           locationID: record.locationID
         )
       )
+    } else if removal.wasTracked {
+      continuation.yield(
+        .ownershipChanged(
+          locationID: record.locationID,
+          ownership: eventAdapter.ownership(locationID: record.locationID)
+        )
+      )
     }
   }
 
-  private func stop() {
+  private func stop(sessionID: UUID? = nil) {
+    if let sessionID, self.sessionID != sessionID { return }
+    self.sessionID = nil
     managerTask?.cancel()
     managerTask = nil
     recordsByDeviceID.values.forEach { $0.notificationTask.cancel() }
     recordsByDeviceID.removeAll()
+    pendingAdmissions.removeAll()
     deviceIDsByLocation.removeAll()
     eventAdapter.reset()
+  }
+
+  static func ownershipAfterAcquisitionFailure(_ error: any Error) -> HIDInputOwnership {
+    switch error as? HIDDeviceError {
+    case .exclusiveAccess: .ownedByAnotherClient
+    case .notPermitted, .notPrivileged: .accessDenied
+    default: .acquisitionFailed
+    }
   }
 
   private static func transportName(_ transport: HIDDeviceTransport?) -> String? {

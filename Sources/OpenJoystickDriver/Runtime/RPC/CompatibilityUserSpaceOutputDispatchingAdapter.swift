@@ -3,7 +3,8 @@ import OpenJoystickDriverKit
 
 /// Applies physical ownership and compatibility-profile policy at the concrete backend boundary.
 final class CompatibilityUserSpaceOutputDispatchingAdapter: CompatibilityUserSpaceOutputDispatching,
-  CompatibilityUserSpaceOutputControllerActivating, ControllerLifecycleListener, @unchecked Sendable
+  CompatibilityUserSpaceOutputControllerActivating, ControllerLifecycleListener,
+  RemappingGamepadSink, RemappingGamepadOutputControlling, @unchecked Sendable
 {
   private let backend: any CompatibilityUserSpaceOutputDispatching
   private let deviceManager: DeviceManager
@@ -61,6 +62,20 @@ final class CompatibilityUserSpaceOutputDispatchingAdapter: CompatibilityUserSpa
 
   func setOutputSuppressed(_ suppressed: Bool) async {
     await backend.setOutputSuppressed(suppressed)
+  }
+
+  func setRemappingOutputSuppressed(_ suppressed: Bool) async {
+    if let controlling = backend as? any RemappingGamepadOutputControlling {
+      await controlling.setRemappingOutputSuppressed(suppressed)
+    }
+  }
+
+  func send(_ state: RemappingGamepadState, for identifier: DeviceIdentifier) async throws {
+    let eligible = state == .neutral ? true : await isEligible(identifier)
+    guard eligible, let sink = backend as? any RemappingGamepadSink else {
+      throw RemappingEventEngineError.sinkUnavailable
+    }
+    try await sink.send(state, for: identifier)
   }
 
   func dispatch(events: [ControllerEvent], from identifier: DeviceIdentifier) async {

@@ -27,6 +27,14 @@ public protocol ControllerLifecycleListener: AnyObject, Sendable {
   func controllerDidStop(_ identifier: DeviceIdentifier) async
 }
 
+/// Receives physical input ownership before controller input or virtual activation is admitted.
+public protocol ControllerInputOwnershipListener: AnyObject, Sendable {
+  func controllerInputOwnershipChanged(
+    _ ownership: HIDInputOwnership,
+    for identifier: DeviceIdentifier
+  ) async
+}
+
 extension CompatibilityUserSpaceOutputDispatching {
   public func setOutputSuppressed(_ suppressed: Bool) { suppressOutput = suppressed }
 }

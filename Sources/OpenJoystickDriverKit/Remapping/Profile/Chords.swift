@@ -1,22 +1,58 @@
 import Foundation
 
-/// A simultaneous multi-button combination that fires a single destination.
+public enum RemappingChordMode: String, Codable, Hashable, Sendable, CaseIterable {
+  case modifier
+  case simultaneous
+}
+
+/// A multi-button combination that fires a single destination.
 public struct RemappingChord: Codable, Equatable, Hashable, Identifiable, Sendable {
+  public static let windowRange = 1.0...1000.0
   public let id: UUID
   /// All sources that must be active simultaneously.
   public let sources: Set<RemappingSource>
   public let destination: RemappingDestination
+  public let mode: RemappingChordMode
+  public let windowMs: Double
 
-  public init(id: UUID = UUID(), sources: Set<RemappingSource>, destination: RemappingDestination) {
+  public init(
+    id: UUID = UUID(),
+    sources: Set<RemappingSource>,
+    destination: RemappingDestination,
+    mode: RemappingChordMode = .modifier,
+    windowMs: Double = 50
+  ) {
     self.id = id
     self.sources = sources
     self.destination = destination
+    self.mode = mode
+    self.windowMs = windowMs
   }
 
   private enum CodingKeys: String, CodingKey {
     case id
     case sources
     case destination
+    case mode
+    case windowMs = "window_ms"
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let values = try decoder.container(keyedBy: CodingKeys.self)
+    id = try values.decode(UUID.self, forKey: .id)
+    sources = try values.decode(Set<RemappingSource>.self, forKey: .sources)
+    destination = try values.decode(RemappingDestination.self, forKey: .destination)
+    mode = try values.decodeIfPresent(RemappingChordMode.self, forKey: .mode) ?? .modifier
+    windowMs = try values.decodeIfPresent(Double.self, forKey: .windowMs) ?? 50
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    var values = encoder.container(keyedBy: CodingKeys.self)
+    try values.encode(id, forKey: .id)
+    try values.encode(sources, forKey: .sources)
+    try values.encode(destination, forKey: .destination)
+    if mode != .modifier { try values.encode(mode, forKey: .mode) }
+    if mode == .simultaneous || windowMs != 50 { try values.encode(windowMs, forKey: .windowMs) }
   }
 }
 

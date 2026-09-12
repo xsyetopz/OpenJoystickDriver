@@ -24,16 +24,66 @@ public enum PhysicalPlayerIndicator: Int, Codable, CaseIterable, Hashable, Senda
   case player4 = 4
 }
 
+public enum PhysicalAdaptiveTrigger: String, Codable, CaseIterable, Hashable, Sendable {
+  case left
+  case right
+}
+
+public enum PhysicalAdaptiveTriggerEffectKind: String, Codable, CaseIterable, Hashable, Sendable {
+  case off
+  case resistance
+}
+
+/// A bounded DualSense-style trigger effect. Positions and strength are normalized to `0...1`.
+public struct PhysicalAdaptiveTriggerEffect: Codable, Equatable, Hashable, Sendable {
+  public let kind: PhysicalAdaptiveTriggerEffectKind
+  public let startPosition: Double
+  public let strength: Double
+
+  public init(
+    kind: PhysicalAdaptiveTriggerEffectKind,
+    startPosition: Double = 0,
+    strength: Double = 0
+  ) {
+    self.kind = kind
+    self.startPosition = startPosition
+    self.strength = strength
+  }
+
+  public static let off = Self(kind: .off)
+
+  public func validate() throws {
+    guard startPosition.isFinite, (0...1).contains(startPosition),
+      strength.isFinite, (0...1).contains(strength)
+    else { throw PhysicalAdaptiveTriggerEffectError.invalidValue }
+    if kind == .off, startPosition != 0 || strength != 0 {
+      throw PhysicalAdaptiveTriggerEffectError.invalidValue
+    }
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case kind
+    case startPosition = "start_position"
+    case strength
+  }
+}
+
+public enum PhysicalAdaptiveTriggerEffectError: Error, Equatable, Sendable {
+  case invalidValue
+}
+
 /// Physical output capabilities implemented by the active controller protocol.
 public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable, Sendable {
   public let rumbleMotors: [PhysicalRumbleMotor]
   public let lightingFeatures: [PhysicalLightingFeature]
   /// Motors whose hardware accepts only off/on rather than variable intensity.
   public let binaryRumbleMotors: [PhysicalRumbleMotor]
+  public let adaptiveTriggers: [PhysicalAdaptiveTrigger]
   public init(
     rumbleMotors: [PhysicalRumbleMotor] = [],
     lightingFeatures: [PhysicalLightingFeature] = [],
-    binaryRumbleMotors: [PhysicalRumbleMotor] = []
+    binaryRumbleMotors: [PhysicalRumbleMotor] = [],
+    adaptiveTriggers: [PhysicalAdaptiveTrigger] = []
   ) {
     self.rumbleMotors = Array(Set(rumbleMotors)).sorted { $0.rawValue < $1.rawValue }
     self.lightingFeatures = Array(Set(lightingFeatures)).sorted { $0.rawValue < $1.rawValue }
@@ -41,6 +91,7 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
     self.binaryRumbleMotors = Array(Set(binaryRumbleMotors).intersection(supportedMotors)).sorted {
       $0.rawValue < $1.rawValue
     }
+    self.adaptiveTriggers = Array(Set(adaptiveTriggers)).sorted { $0.rawValue < $1.rawValue }
   }
 
   public static let none = Self()
@@ -53,6 +104,31 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
   public var supportsPlayerIndicator: Bool { lightingFeatures.contains(.playerIndicator) }
   public var supportsProgrammableBrightness: Bool {
     lightingFeatures.contains(.programmableBrightness)
+  }
+  public var supportsAdaptiveTriggers: Bool { !adaptiveTriggers.isEmpty }
+
+  private enum CodingKeys: String, CodingKey {
+    case rumbleMotors
+    case lightingFeatures
+    case binaryRumbleMotors
+    case adaptiveTriggers
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let values = try decoder.container(keyedBy: CodingKeys.self)
+    self.init(
+      rumbleMotors: try values.decodeIfPresent([PhysicalRumbleMotor].self, forKey: .rumbleMotors)
+        ?? [],
+      lightingFeatures: try values.decodeIfPresent(
+        [PhysicalLightingFeature].self, forKey: .lightingFeatures
+      ) ?? [],
+      binaryRumbleMotors: try values.decodeIfPresent(
+        [PhysicalRumbleMotor].self, forKey: .binaryRumbleMotors
+      ) ?? [],
+      adaptiveTriggers: try values.decodeIfPresent(
+        [PhysicalAdaptiveTrigger].self, forKey: .adaptiveTriggers
+      ) ?? []
+    )
   }
 }
 
@@ -158,6 +234,21 @@ public protocol PhysicalHIDPlayerIndicatorOutput: AnyObject, Sendable {
 
   func physicalPlayerIndicatorReport(_ indicator: PhysicalPlayerIndicator)
     -> PhysicalHIDOutputReport
+}
+
+/// Optional adaptive-trigger support delivered through a HID output report.
+public protocol PhysicalHIDAdaptiveTriggerOutput: AnyObject, Sendable {
+  var physicalAdaptiveTriggers: [PhysicalAdaptiveTrigger] { get }
+  func physicalAdaptiveTriggerReport(
+    _ trigger: PhysicalAdaptiveTrigger,
+    effect: PhysicalAdaptiveTriggerEffect
+  ) -> PhysicalHIDOutputReport
+}
+
+extension PhysicalHIDAdaptiveTriggerOutput {
+  public var physicalAdaptiveTriggers: [PhysicalAdaptiveTrigger] {
+    PhysicalAdaptiveTrigger.allCases
+  }
 }
 
 extension PhysicalHIDPlayerIndicatorOutput {

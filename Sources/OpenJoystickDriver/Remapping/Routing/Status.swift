@@ -41,6 +41,7 @@ extension RemappingRoutingCore {
     }
     return RemappingRouterStatusSnapshot(
       routes: statuses(),
+      joyConPairs: joyConPairPayloads(),
       postEventAccessState: environment.postEventAccessState
     )
   }
@@ -54,9 +55,10 @@ extension RemappingRoutingCore {
     }
   }
 
-  private func makeStatus(identifier: DeviceIdentifier, route: RemappingControllerRoute)
-    -> RemappingRouteStatus
-  {
+  private func makeStatus(
+    identifier: DeviceIdentifier,
+    route: RemappingControllerRoute
+  ) -> RemappingRouteStatus {
     let selection: RemappingRouteSelection
     let profile: RemappingProfile?
     switch route.selection {

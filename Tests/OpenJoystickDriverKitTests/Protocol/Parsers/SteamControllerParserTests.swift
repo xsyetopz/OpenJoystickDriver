@@ -108,20 +108,21 @@ struct SteamControllerParserTests {
     #expect(eventExists(events, .buttonPressed(.guide)))
     #expect(eventExists(events, .buttonPressed(.start)))
     #expect(eventExists(events, .buttonPressed(.leftStick)))
-    #expect(eventExists(events, .buttonPressed(.rightStick)))
+    #expect(eventExists(events, .buttonPressed(.rightPadClick)))
     #expect(eventExists(events, .leftTriggerChanged(1.0)))
     #expect(eventExists(events, .rightTriggerChanged(128.0 / 255.0)))
     #expect(eventExists(events, .leftStickChanged(x: 1.0, y: 1.0)))
     #expect(eventExists(events, .rightStickChanged(x: -1.0, y: -1.0)))
   }
 
-  @Test func testSteamGripBitsStayOmittedUntilMappedFromAKnownPacket() throws {
+  @Test func testSteamGripBitsHaveDistinctSources() throws {
     let parser = SteamControllerParser()
     _ = try parser.parse(data: makeSteamControllerReport())
 
     let events = try parser.parse(data: makeSteamControllerReport(b9: 0x80, b10: 0x01))
-
-    #expect(events.isEmpty)
+    #expect(events == [.buttonPressed(.leftGrip), .buttonPressed(.rightGrip)])
+    let releases = try parser.parse(data: makeSteamControllerReport())
+    #expect(releases == [.buttonReleased(.leftGrip), .buttonReleased(.rightGrip)])
   }
 
   @Test func testLeftPadTouchDoesNotCreateVirtualLeftStickMotion() throws {
@@ -135,7 +136,7 @@ struct SteamControllerParserTests {
     #expect(!eventExists(events, .leftStickChanged(x: 1.0, y: 1.0)))
   }
 
-  @Test func testLeftPadAndJoyBitAllowsVirtualLeftStickMotion() throws {
+  @Test func testLeftPadAndJoyBitDoesNotReplaceStickWithPadCoordinates() throws {
     let parser = SteamControllerParser()
     _ = try parser.parse(data: makeSteamControllerReport())
 
@@ -143,7 +144,7 @@ struct SteamControllerParserTests {
       data: makeSteamControllerReport(b10: 0x88, leftX: 32767, leftY: -32767)
     )
 
-    #expect(eventExists(events, .leftStickChanged(x: 1.0, y: 1.0)))
+    #expect(!eventExists(events, .leftStickChanged(x: 1.0, y: 1.0)))
   }
 
   @Test func testLeftPadTouchStaysOmitted() throws {
@@ -177,7 +178,9 @@ struct SteamControllerParserTests {
     #expect(startup.map(\.reportID) == [0, 0])
     #expect(startup.map { $0.bytes.count } == [64, 64])
     #expect(startup[0].bytes[0] == 0x81)
-    #expect(Array(startup[1].bytes.prefix(8)) == [0x87, 6, 0x07, 0x07, 0, 0x08, 0x07, 0])
+    #expect(
+      Array(startup[1].bytes.prefix(11)) == [0x87, 9, 0x07, 0x07, 0, 0x08, 0x07, 0, 48, 0x18, 0]
+    )
 
     let shutdown = parser.hidShutdownFeatureReports()
     #expect(shutdown.map(\.reportID) == [0, 0])
@@ -286,4 +289,66 @@ struct SteamControllerParserTests {
 
     #expect(events.isEmpty)
   }
+
+  @Test func rawMotionUsesReceiptTimeAndSuppressesDuplicateSequenceNumbers() throws {
+    let parser: any InputParser = SteamControllerParser()
+    var report = Array(makeSteamControllerReport())
+    report[4] = 255
+    report[5] = 255
+    report[6] = 255
+    report[7] = 255
+    writeInt16LE(-32_768, into: &report, at: 28)
+    writeInt16LE(32_767, into: &report, at: 30)
+    writeInt16LE(-1, into: &report, at: 32)
+    writeInt16LE(123, into: &report, at: 34)
+    let first = try parser.parse(data: Data(report), receivedAtNanoseconds: 100)
+    guard case .motionSample(let sample) = first.first(where: isMotionEvent) else {
+      Issue.record("Expected raw motion sample")
+      return
+    }
+    #expect(sample.rawAccelerometer == ControllerRawSensorVector(x: -32_768, y: 32_767, z: -1))
+    #expect(sample.rawGyroscope.x == 123)
+    #expect(sample.timestamp.basis == .hostEstimate)
+    #expect(sample.timestamp.rawCounter == .max)
+    #expect(sample.timestamp.elapsedNanoseconds == 0)
+    #expect(sample.timestamp.tickNanosecondsNumerator == nil)
+    #expect(try parser.parse(data: Data(report), receivedAtNanoseconds: 110).isEmpty)
+    report.replaceSubrange(4..<8, with: [0, 0, 0, 0])
+    let second = try parser.parse(data: Data(report), receivedAtNanoseconds: 120)
+    guard case .motionSample(let wrapped) = second.first(where: isMotionEvent) else {
+      Issue.record("Expected sample after packet counter wrap")
+      return
+    }
+    #expect(wrapped.timestamp.elapsedNanoseconds == 20)
+    #expect(wrapped.timestamp.sequenceIndex == 1)
+    report[4] = 1
+    let backward = try parser.parse(data: Data(report), receivedAtNanoseconds: 90)
+    guard case .motionSample(let clamped) = backward.first(where: isMotionEvent) else {
+      Issue.record("Expected sample with clamped receipt time")
+      return
+    }
+    #expect(clamped.timestamp.elapsedNanoseconds == 20)
+  }
+
+  @Test func receiverReconnectResetsMotionClockAndDuplicateTracking() throws {
+    let parser = SteamControllerParser(isWirelessReceiver: true)
+    _ = try parser.parse(data: makeSteamWirelessReport(status: 2))
+    _ = try parser.parse(data: makeSteamControllerReport(), receivedAtNanoseconds: 100)
+    _ = try parser.parse(data: makeSteamWirelessReport(status: 1))
+    #expect(try parser.parse(data: makeSteamControllerReport()).isEmpty)
+    _ = try parser.parse(data: makeSteamWirelessReport(status: 2))
+    let events = try parser.parse(data: makeSteamControllerReport(), receivedAtNanoseconds: 10)
+    guard case .motionSample(let sample) = events.first(where: isMotionEvent) else {
+      Issue.record("Expected fresh receiver-session motion sample")
+      return
+    }
+    #expect(sample.timestamp.sequenceIndex == 0)
+    #expect(sample.timestamp.elapsedNanoseconds == 0)
+  }
+
+}
+
+private func isMotionEvent(_ event: ControllerEvent) -> Bool {
+  if case .motionSample = event { return true }
+  return false
 }

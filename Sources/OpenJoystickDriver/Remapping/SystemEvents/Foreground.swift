@@ -25,10 +25,13 @@ enum RemappingForegroundPolicy {
     for scope: RemappingApplicationScope,
     frontmostBundleIdentifier: String?,
     accessState: RemappingPostEventAccessState,
-    outputSuppressed: Bool
+    outputSuppressed: Bool,
+    requiresPostEventAccess: Bool = true
   ) -> RemappingRouteEligibility {
     guard !outputSuppressed else { return .outputSuppressed }
-    guard accessState == .granted else { return .postEventAccessNotAuthorized }
+    guard !requiresPostEventAccess || accessState == .granted else {
+      return .postEventAccessNotAuthorized
+    }
     switch scope {
     case .global: return .eligible
     case .application(let requiredBundleIdentifier):

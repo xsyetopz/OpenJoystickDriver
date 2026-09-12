@@ -1,5 +1,6 @@
 /// How OJD owns or observes the physical controller input path.
 public enum ControllerOwnershipObservation: String, Codable, Equatable, Sendable {
+  case exclusiveHID
   case exclusiveRawUSB
   case driverKitOwnedUSB
   case nativeHIDVisible
@@ -71,7 +72,7 @@ public struct ControllerExposureDecision: Equatable, Sendable {
   ) -> Self {
     let duplicateRisk: DuplicateExposureRisk =
       switch ownership {
-      case .exclusiveRawUSB, .driverKitOwnedUSB: .none
+      case .exclusiveHID, .exclusiveRawUSB, .driverKitOwnedUSB: .none
       case .nativeHIDVisible: .nativeHIDVisible
       case .upstreamVirtualDevice: .upstreamVirtualDevice
       case .unknown: .unknownOwnership

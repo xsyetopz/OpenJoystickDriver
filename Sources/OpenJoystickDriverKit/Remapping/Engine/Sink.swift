@@ -108,7 +108,8 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
     }
   }
 
-  @discardableResult public func resume(owner: UUID) -> Bool {
+  @discardableResult
+  public func resume(owner: UUID) -> Bool {
     lock.withLock {
       guard case .transaction(let revision, let activeOwner) = state, activeOwner == owner else {
         return false
@@ -118,7 +119,8 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
     }
   }
 
-  @discardableResult public func resume(_ permit: RemappingEmissionPermit) -> Bool {
+  @discardableResult
+  public func resume(_ permit: RemappingEmissionPermit) -> Bool {
     lock.withLock {
       guard case .transaction(let revision, let owner) = state, permit.revision == revision,
         permit.owner == owner
@@ -151,9 +153,10 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
     lock.withLock { permitsEmission(permit) }
   }
 
-  func withEmissionPermit<Result>(_ permit: RemappingEmissionPermit, _ body: () throws -> Result)
-    throws -> Result
-  {
+  func withEmissionPermit<Result>(
+    _ permit: RemappingEmissionPermit,
+    _ body: () throws -> Result
+  ) throws -> Result {
     guard let lease = acquireLease(requiring: permit) else {
       throw RemappingEventEngineError.outputSuspended
     }
@@ -162,14 +165,18 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
   }
 
   func withTermination<Result>(_ body: () throws -> Result) throws -> Result {
-    guard
-      let lease = acquireLease({ state in
-        guard case .terminated(let revision) = state else { return nil }
-        return RemappingEmissionPermit(revision: revision, owner: nil)
-      })
-    else { throw RemappingEventEngineError.outputSuspended }
+    guard let lease = acquireTerminationLease() else {
+      throw RemappingEventEngineError.outputSuspended
+    }
     defer { lease.finish() }
     return try body()
+  }
+
+  func acquireTerminationLease() -> RemappingEmissionLease? {
+    acquireLease { state in
+      guard case .terminated(let revision) = state else { return nil }
+      return RemappingEmissionPermit(revision: revision, owner: nil)
+    }
   }
 
   func finishLease(id: UUID) {
@@ -181,16 +188,16 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
     for waiter in waiters { waiter.resume() }
   }
 
-  private func acquireLease(requiring permit: RemappingEmissionPermit) -> RemappingEmissionLease? {
+  func acquireLease(requiring permit: RemappingEmissionPermit) -> RemappingEmissionLease? {
     acquireLease { state in
       guard Self.permitsEmission(permit, in: state) else { return nil }
       return permit
     }
   }
 
-  private func acquireLease(_ admittedPermit: (State) -> RemappingEmissionPermit?)
-    -> RemappingEmissionLease?
-  {
+  private func acquireLease(
+    _ admittedPermit: (State) -> RemappingEmissionPermit?
+  ) -> RemappingEmissionLease? {
     lock.withLock {
       guard let permit = admittedPermit(state) else { return nil }
       let id = UUID()
@@ -235,7 +242,11 @@ public enum RemappingSystemInputAction: Equatable, Sendable {
   case mouseButtonDown(RemappingMouseButton)
   case mouseButtonUp(RemappingMouseButton)
   case mouseMoved(axis: RemappingPointerAxis, amount: Double)
+  /// Relative displacement in logical screen points, already integrated over sample time.
+  case pointerDelta(x: Double, y: Double)
   case scrolled(axis: RemappingPointerAxis, amount: Double)
+  /// Integrated high-resolution scroll displacement in logical lines.
+  case scrollDelta(deltaX: Double, deltaY: Double)
 }
 
 /// Inward-owned port for delivering remapped keyboard and pointer actions.
@@ -262,4 +273,42 @@ public enum RemappingEventEngineError: Error, Equatable, LocalizedError, Sendabl
     case .sinkUnavailable: "The system-input sink rejected a remapping action."
     }
   }
+}
+
+/// Delivers a complete remapped gamepad state through the existing virtual output backend.
+/// Completion must mean delivery has finished; enqueueing a detached send is insufficient.
+public protocol RemappingGamepadSink: AnyObject, Sendable {
+  func send(_ state: RemappingGamepadState, for identifier: DeviceIdentifier) async throws
+  func send(_ motion: RemappingVirtualMotionState?, for identifier: DeviceIdentifier) async throws
+}
+
+/// Delivers mapping-owned physical-controller channel claims for one exact input device.
+public protocol RemappingPhysicalOutputSink: AnyObject, Sendable {
+  func set(
+    _ output: RemappingPhysicalOutput,
+    active: Bool,
+    owner: UUID,
+    for identifier: DeviceIdentifier
+  ) async throws
+  func releaseAll(for identifier: DeviceIdentifier) async throws
+}
+
+extension RemappingGamepadSink {
+  public func send(
+    _ motion: RemappingVirtualMotionState?,
+    for identifier: DeviceIdentifier
+  ) throws { throw RemappingEventEngineError.sinkUnavailable }
+}
+
+/// Preserves the order of transient presses, releases, and mixed destination actions.
+enum RemappingEngineAction: Equatable, Sendable {
+  case system(RemappingSystemInputAction)
+  case gamepad(RemappingGamepadState, DeviceIdentifier)
+  case motion(RemappingVirtualMotionState?, DeviceIdentifier)
+  case physical(RemappingPhysicalOutput, active: Bool, owner: UUID, DeviceIdentifier)
+}
+
+/// Separates remapping admission from the compatibility passthrough gate of a shared backend.
+public protocol RemappingGamepadOutputControlling: AnyObject, Sendable {
+  func setRemappingOutputSuppressed(_ suppressed: Bool) async
 }

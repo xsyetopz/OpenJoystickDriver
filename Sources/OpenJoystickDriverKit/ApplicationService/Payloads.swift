@@ -127,6 +127,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   public let discoverySource: ApplicationServiceDeviceDiscoverySource
   /// Observed physical ownership route used by virtual exposure policy.
   public let physicalOwnership: ControllerOwnershipObservation
+  /// Current HID acquisition result; unknown for non-HID discovery routes.
+  public let hidInputOwnership: HIDInputOwnership
   /// Duplicate-device risk implied by the current physical ownership observation.
   public let duplicateExposureRisk: DuplicateExposureRisk
   /// USB serial number, or nil if not reported.
@@ -147,6 +149,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   public let preferredBackends: [String]
   /// Exact source-backed motors and lighting features of the active parser.
   public let physicalOutputCapabilities: PhysicalControllerOutputCapabilities
+  /// Sample formats implemented by the active parser; independent of calibration or mappings.
+  public let physicalInputCapabilities: PhysicalControllerInputCapabilities
 
   private enum CodingKeys: String, CodingKey {
     case name
@@ -157,6 +161,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case connection
     case discoverySource
     case physicalOwnership
+    case hidInputOwnership
     case duplicateExposureRisk
     case serialNumber
     case protocolVariant
@@ -167,6 +172,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case postHandshakeSettleMs
     case preferredBackends
     case physicalOutputCapabilities
+    case physicalInputCapabilities
   }
 
   /// Creates a new ApplicationServiceDeviceDescription.
@@ -178,6 +184,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     connection: String,
     discoverySource: ApplicationServiceDeviceDiscoverySource = .unknown,
     physicalOwnership: ControllerOwnershipObservation = .unknown,
+    hidInputOwnership: HIDInputOwnership = .unknown,
     duplicateExposureRisk: DuplicateExposureRisk = .unknownOwnership,
     serialNumber: String?,
     protocolVariant: ControllerProtocolVariant = .unknown,
@@ -188,6 +195,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     postHandshakeSettleMs: Int = 0,
     preferredBackends: [String] = [],
     physicalOutputCapabilities: PhysicalControllerOutputCapabilities = .none,
+    physicalInputCapabilities: PhysicalControllerInputCapabilities = .none,
     runtimeIdentifier: String? = nil
   ) {
     self.runtimeIdentifier = runtimeIdentifier ?? String(format: "%04X:%04X:M", vendorID, productID)
@@ -198,6 +206,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.connection = connection
     self.discoverySource = discoverySource
     self.physicalOwnership = physicalOwnership
+    self.hidInputOwnership = hidInputOwnership
     self.duplicateExposureRisk = duplicateExposureRisk
     self.serialNumber = serialNumber
     self.protocolVariant = protocolVariant
@@ -208,6 +217,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.postHandshakeSettleMs = postHandshakeSettleMs
     self.preferredBackends = preferredBackends
     self.physicalOutputCapabilities = physicalOutputCapabilities
+    self.physicalInputCapabilities = physicalInputCapabilities
   }
 
   public init(from decoder: Decoder) throws {
@@ -225,6 +235,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.physicalOwnership =
       try container.decodeIfPresent(ControllerOwnershipObservation.self, forKey: .physicalOwnership)
       ?? .unknown
+    self.hidInputOwnership =
+      try container.decodeIfPresent(HIDInputOwnership.self, forKey: .hidInputOwnership) ?? .unknown
     self.duplicateExposureRisk =
       try container.decodeIfPresent(DuplicateExposureRisk.self, forKey: .duplicateExposureRisk)
       ?? .unknownOwnership
@@ -246,6 +258,11 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
       PhysicalControllerOutputCapabilities.self,
       forKey: .physicalOutputCapabilities
     )
+    self.physicalInputCapabilities =
+      try container.decodeIfPresent(
+        PhysicalControllerInputCapabilities.self,
+        forKey: .physicalInputCapabilities
+      ) ?? .none
   }
 }
 

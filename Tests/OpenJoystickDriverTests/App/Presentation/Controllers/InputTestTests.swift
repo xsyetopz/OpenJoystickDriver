@@ -15,6 +15,12 @@ private struct RecordedRumble: Equatable, Sendable {
 }
 
 private actor InputTestGatewayStub: InputTestDeviceGateway {
+  func motionCalibration(
+    for selector: RuntimeDeviceSelector,
+    command: RemappingMotionCalibrationCommand?
+  ) throws -> RemappingMotionCalibrationStatus {
+    throw RemappingMotionCalibrationError.motionUnavailable
+  }
   var inputSequence: [DeviceInputState?]
   var inputDelayNanoseconds: UInt64
   var outputDelayNanoseconds: UInt64
@@ -141,6 +147,19 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
 }
 
 @Suite(.serialized) struct InputTestTests {
+  @Test @MainActor func calibrationSelectionFollowsDisconnectAndClose() {
+    let model = InputTestViewModel(gateway: InputTestGatewayStub())
+    let device = makeInputTestDevice()
+    model.selectDevice(device)
+    #expect(model.motionCalibration.selector == RuntimeDeviceSelector(device: device))
+    model.reconcileConnectedDevices([])
+    #expect(model.motionCalibration.selector == nil)
+    model.reconcileConnectedDevices([device])
+    #expect(model.motionCalibration.selector == RuntimeDeviceSelector(device: device))
+    model.close()
+    #expect(model.motionCalibration.selector == nil)
+  }
+
   @Test @MainActor func selectingDeviceRemainsIdleUntilExplicitStart() async {
     let gateway = InputTestGatewayStub()
     let model = InputTestViewModel(gateway: gateway, sampleIntervalNanoseconds: 1_000_000)
@@ -277,14 +296,22 @@ private actor InputTestGatewayStub: InputTestDeviceGateway {
     var state = DeviceInputState(vendorID: 1, productID: 2)
     state.pressedButtons = [
       Button.leftBumper.rawValue, Button.dpadUp.rawValue, Button.leftStick.rawValue,
-      Button.l2Digital.rawValue, Button.mute.rawValue
+      Button.l2Digital.rawValue, Button.leftFunction.rawValue, Button.rightFunction.rawValue,
+      Button.leftPaddle.rawValue, Button.rightPaddle.rawValue, Button.leftSL.rawValue,
+      Button.leftSR.rawValue, Button.rightSL.rawValue, Button.rightSR.rawValue, Button.mute.rawValue
     ]
 
     #expect(InputTestButtonPresentation.isPressed([.leftBumper, .l1], in: state))
     #expect(InputTestButtonPresentation.isPressed([.dpadUp], in: state))
     #expect(InputTestButtonPresentation.isPressed([.leftStick], in: state))
     #expect(InputTestButtonPresentation.isPressed([.l2Digital], in: state))
-    #expect(InputTestButtonPresentation.additionalButtons(in: state) == ["mute"])
+    #expect(
+      InputTestButtonPresentation.additionalButtons(in: state)
+        == [
+          "leftFunction", "leftPaddle", "leftSL", "leftSR", "mute", "rightFunction",
+          "rightPaddle", "rightSL", "rightSR"
+        ]
+    )
   }
 
   @Test func controllerFamiliesSelectProtocolAppropriateInputSymbols() {

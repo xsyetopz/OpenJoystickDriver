@@ -252,6 +252,8 @@ private actor IOUSBHostTransportSession: USBTransportSession {
   private var pipes: [UInt8: IOUSBHostPipeBox] = [:]
   private var isClosed = false
 
+  var inputOwnership: HIDInputOwnership { isClosed ? .unknown : .exclusive }
+
   init(interface: IOUSBHostInterface) { self.interface = interface }
 
   func writeInterruptPacket(endpoint: UInt8, data: [UInt8], timeout: UInt32) async throws -> Int {

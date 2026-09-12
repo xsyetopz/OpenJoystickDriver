@@ -41,6 +41,7 @@ actor AutomaticDispatcherCoordinator {
   private var closeWaiters: [CheckedContinuation<Void, Never>] = []
   private var foreground: UInt64 = 0
   private var consumer: CompatibilityConsumerFamily = .unknown
+  private var remappingSuppressed = false
   private var suppressed = false
   private var suppressionRevision: UInt64 = 0
 
@@ -96,6 +97,17 @@ actor AutomaticDispatcherCoordinator {
       await close()
       throw error
     }
+  }
+
+  /// Acquires only an existing backend so cleanup cannot create a replacement controller.
+  func leaseForNeutralization(_ controller: DeviceIdentifier) async -> AutomaticBackendLease? {
+    if closed {
+      await close()
+      return nil
+    }
+    if let lease = entries[controller]?.installed?.acquire() { return lease }
+    await entries[controller]?.retiring?.retireAndWait()
+    return nil
   }
 
   func leaseForDispatch(
@@ -202,6 +214,9 @@ actor AutomaticDispatcherCoordinator {
     repeat {
       let revision = suppressionRevision
       await candidate.backend.setOutputSuppressed(suppressed)
+      if let control = candidate.backend as? any RemappingGamepadOutputControlling {
+        await control.setRemappingOutputSuppressed(remappingSuppressed)
+      }
       try validate(request)
       if revision == suppressionRevision { break }
     } while true
@@ -262,6 +277,24 @@ actor AutomaticDispatcherCoordinator {
         await lease.backend.setOutputSuppressed(suppressed)
         if closed || revision == suppressionRevision { break }
       } while true
+      await lease.release()
+    }
+  }
+
+  func synchronizeRemappingSuppression(_ currentValue: @Sendable () -> Bool) async {
+    guard !closed else { return }
+    remappingSuppressed = currentValue()
+    suppressionRevision &+= 1
+    let slots = entries.values.compactMap(\.installed)
+    for slot in slots {
+      guard let lease = slot.acquire() else { continue }
+      if let control = lease.backend as? any RemappingGamepadOutputControlling {
+        repeat {
+          let revision = suppressionRevision
+          await control.setRemappingOutputSuppressed(remappingSuppressed)
+          if closed || revision == suppressionRevision { break }
+        } while true
+      }
       await lease.release()
     }
   }

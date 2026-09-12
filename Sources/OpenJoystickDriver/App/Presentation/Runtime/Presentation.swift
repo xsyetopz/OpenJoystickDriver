@@ -290,13 +290,19 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
         // indicator conservative rather than claiming output is safe to dispatch.
         return true
       }
-      return profile.hasOutputMappings
+      return profile.hasOutputMappings && profile.requiresSystemInputAccess
     }
   }
 }
 
 extension RemappingProfile {
   var hasOutputMappings: Bool {
+    if gyroOutput.mode != .disabled || gyroOutput.virtualMotion || !stickMappings.isEmpty
+      || !touchMappings.isEmpty || motionTuning.steering != nil
+      || layers.contains(where: { $0.motionTuning?.steering != nil })
+    {
+      return true
+    }
     if !bindings.isEmpty || !chords.isEmpty || !sequences.isEmpty { return true }
     return layers.contains { layer in
       !layer.bindings.isEmpty || !layer.chords.isEmpty || !layer.sequences.isEmpty

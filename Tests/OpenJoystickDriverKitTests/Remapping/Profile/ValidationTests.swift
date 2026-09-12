@@ -161,14 +161,15 @@ struct RemappingValidationTests {
     )
     #expect(throws: RemappingValidationError.invalidProfileName) { try invalidName.validate() }
 
+    let futureVersion = RemappingProfile.currentSchemaVersion + 1
     let unsupportedVersion = RemappingProfile(
-      schemaVersion: 3,
+      schemaVersion: futureVersion,
       name: "Future",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),
       applicationScope: .global,
       bindings: []
     )
-    #expect(throws: RemappingValidationError.unsupportedSchemaVersion(3)) {
+    #expect(throws: RemappingValidationError.unsupportedSchemaVersion(futureVersion)) {
       try unsupportedVersion.validate()
     }
 
@@ -191,6 +192,24 @@ struct RemappingValidationTests {
         from: Data(#"{"type":"button","button":"auxiliary_1"}"#.utf8)
       )
     }
+  }
+
+  @Test func physicalOutputDoesNotRequireVirtualOutputAndRejectsInvalidValues() throws {
+    let valid = makeProfile(bindings: [
+      RemappingBinding(
+        source: .button(.south),
+        destination: .physical(.rumble(motor: .leftMain, intensity: 0.5))
+      )
+    ])
+    try valid.validate()
+
+    let invalid = makeProfile(bindings: [
+      RemappingBinding(
+        source: .button(.south),
+        destination: .physical(.brightness(.nan))
+      )
+    ])
+    #expect(throws: RemappingValidationError.invalidPhysicalOutput) { try invalid.validate() }
   }
 
   private func makeProfile(bindings: [RemappingBinding]) -> RemappingProfile {

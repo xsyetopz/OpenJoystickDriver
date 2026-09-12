@@ -2,6 +2,7 @@ import Foundation
 import OpenJoystickDriverKit
 
 enum MappingProfileEditor {
+  static let joyConPairOptions: Set<String> = ["--joy-con-pair-gyro"]
   static func replacingBinding(
     in profile: RemappingProfile,
     source: RemappingSource,
@@ -18,18 +19,31 @@ enum MappingProfileEditor {
       id: existingID ?? UUID(),
       source: source,
       destination: destination,
+      behavior: try behavior(
+        options,
+        fallback: profile.bindings.first { $0.source == source }?.behavior ?? .hold
+      ),
+      pulseDurationMs: try pulseDuration(
+        options,
+        existing: profile.bindings.first { $0.source == source }
+      ),
       axisTuning: axisTuning,
       turbo: turbo,
       longHold: longHold,
-      doubleTap: doubleTap
+      doubleTap: doubleTap,
+      additionalActions: try additionalActions(
+        options,
+        fallback: profile.bindings.first { $0.source == source }?.additionalActions ?? []
+      )
     )
     let bindings = profile.bindings.filter { $0.source != source } + [replacement]
     return try copyAndValidate(copy(profile, bindings: bindings))
   }
 
-  static func removingBinding(from profile: RemappingProfile, source: RemappingSource) throws
-    -> RemappingProfile
-  {
+  static func removingBinding(
+    from profile: RemappingProfile,
+    source: RemappingSource
+  ) throws -> RemappingProfile {
     guard profile.bindings.contains(where: { $0.source == source }) else {
       throw MappingCommandError.invalidArguments(
         CLILocalized.text(
@@ -44,19 +58,41 @@ enum MappingProfileEditor {
   static func addingChord(
     in profile: RemappingProfile,
     sources: [RemappingSource],
-    destination: RemappingDestination
+    destination: RemappingDestination,
+    mode: RemappingChordMode = .modifier,
+    windowMs: Double = 50
   ) throws -> RemappingProfile {
     try copyAndValidate(
       copy(
         profile,
-        chords: profile.chords + [RemappingChord(sources: Set(sources), destination: destination)]
+        chords: profile.chords + [
+          RemappingChord(
+            sources: Set(sources),
+            destination: destination,
+            mode: mode,
+            windowMs: windowMs
+          )
+        ]
       )
     )
   }
 
-  static func removingChord(from profile: RemappingProfile, chordID: UUID) throws
-    -> RemappingProfile
-  {
+  static func chordMode(_ options: MappingOptions) throws -> RemappingChordMode {
+    let raw = options["--mode"] ?? "modifier"
+    guard let mode = RemappingChordMode(rawValue: raw) else {
+      throw MappingCommandError.invalidArguments("--mode: modifier|simultaneous")
+    }
+    return mode
+  }
+
+  static func chordWindow(_ options: MappingOptions) throws -> Double {
+    try number(options["--window-ms"], option: "--window-ms", fallback: 50)
+  }
+
+  static func removingChord(
+    from profile: RemappingProfile,
+    chordID: UUID
+  ) throws -> RemappingProfile {
     guard profile.chords.contains(where: { $0.id == chordID }) else {
       throw MappingCommandError.invalidArguments(
         CLILocalized.format(
@@ -85,9 +121,10 @@ enum MappingProfileEditor {
     )
   }
 
-  static func removingSequence(from profile: RemappingProfile, sequenceID: UUID) throws
-    -> RemappingProfile
-  {
+  static func removingSequence(
+    from profile: RemappingProfile,
+    sequenceID: UUID
+  ) throws -> RemappingProfile {
     guard profile.sequences.contains(where: { $0.id == sequenceID }) else {
       throw MappingCommandError.invalidArguments(
         CLILocalized.format(
@@ -118,9 +155,10 @@ enum MappingProfileEditor {
     )
   }
 
-  static func deletingLayer(from profile: RemappingProfile, layerID: UUID) throws
-    -> RemappingProfile
-  {
+  static func deletingLayer(
+    from profile: RemappingProfile,
+    layerID: UUID
+  ) throws -> RemappingProfile {
     guard profile.layers.contains(where: { $0.id == layerID }) else {
       throw MappingCommandError.invalidArguments(
         CLILocalized.format(
@@ -133,10 +171,32 @@ enum MappingProfileEditor {
     return try copyAndValidate(copy(profile, layers: profile.layers.filter { $0.id != layerID }))
   }
 
+  static func settingLayerMotion(
+    _ profile: RemappingProfile,
+    layerID: UUID,
+    options: MappingOptions
+  ) throws -> RemappingProfile {
+    guard let layer = profile.layers.first(where: { $0.id == layerID }) else {
+      throw MappingCommandError.invalidArguments("No layer exists with the requested ID")
+    }
+    let clear = options.contains("--clear")
+    let supplied = motionOptions.filter { $0.hasPrefix("--motion-") }.contains(
+      where: options.contains
+    )
+    guard clear != supplied else {
+      throw MappingCommandError.invalidArguments("Pass motion options or --clear")
+    }
+    let tuning =
+      clear
+      ? nil : try motionTuning(options, defaultValue: layer.motionTuning ?? profile.motionTuning)
+    return try replacingLayer(profile, layerID: layerID, motionOverride: .some(tuning))
+  }
+
   private static func replacingLayer(
     _ profile: RemappingProfile,
     layerID: UUID,
-    bindings: [RemappingBinding]? = nil
+    bindings: [RemappingBinding]? = nil,
+    motionOverride: RemappingMotionTuning?? = nil
   ) throws -> RemappingProfile {
     guard let layerIndex = profile.layers.firstIndex(where: { $0.id == layerID }) else {
       throw MappingCommandError.invalidArguments(
@@ -156,7 +216,8 @@ enum MappingProfileEditor {
       activator: old.activator,
       bindings: bindings ?? old.bindings,
       chords: old.chords,
-      sequences: old.sequences
+      sequences: old.sequences,
+      motionTuning: motionOverride ?? old.motionTuning
     )
     return try copyAndValidate(copy(profile, layers: layers))
   }
@@ -176,10 +237,24 @@ enum MappingProfileEditor {
     let binding = RemappingBinding(
       source: source,
       destination: destination,
+      behavior: try behavior(
+        options,
+        fallback: profile.layers.first { $0.id == layerID }?.bindings.first { $0.source == source }?
+          .behavior ?? .hold
+      ),
+      pulseDurationMs: try pulseDuration(
+        options,
+        existing: profile.layers.first { $0.id == layerID }?.bindings.first { $0.source == source }
+      ),
       axisTuning: axisTuning,
       turbo: turbo,
       longHold: longHold,
-      doubleTap: doubleTap
+      doubleTap: doubleTap,
+      additionalActions: try additionalActions(
+        options,
+        fallback: profile.layers.first { $0.id == layerID }?.bindings.first { $0.source == source }?
+          .additionalActions ?? []
+      )
     )
     guard let layer = profile.layers.first(where: { $0.id == layerID }) else {
       throw MappingCommandError.invalidArguments(
@@ -212,9 +287,10 @@ enum MappingProfileEditor {
     return try replacingLayer(profile, layerID: layerID, bindings: bindings)
   }
 
-  static func updating(_ profile: RemappingProfile, options: MappingOptions) throws
-    -> RemappingProfile
-  {
+  static func updating(
+    _ profile: RemappingProfile,
+    options: MappingOptions
+  ) throws -> RemappingProfile {
     let vendorID =
       try options["--vid"].map { try MappingSyntax.identifier($0, option: "--vid") }
       ?? profile.device.vendorID
@@ -227,6 +303,13 @@ enum MappingProfileEditor {
       name: options["--name"] ?? profile.name,
       device: RemappingDeviceScope(vendorID: vendorID, productID: productID),
       applicationScope: scope,
+      outputPolicy: try outputPolicy(options, defaultValue: profile.outputPolicy),
+      motionTuning: try motionTuning(options, defaultValue: profile.motionTuning),
+      gyroOutput: try gyroOutput(options, defaultValue: profile.gyroOutput),
+      joyConPair: try joyConPairSettings(options, defaultValue: profile.joyConPair),
+      stickMappings: try stickMappings(options, defaultValue: profile.stickMappings),
+      triggerMappings: try triggerMappings(options, defaultValue: profile.triggerMappings),
+      touchMappings: try touchMappings(options, defaultValue: profile.touchMappings),
       bindings: profile.bindings,
       chords: profile.chords,
       sequences: profile.sequences,
@@ -234,6 +317,40 @@ enum MappingProfileEditor {
     )
     try updated.validate()
     return updated
+  }
+
+  static func outputPolicy(
+    _ options: MappingOptions,
+    defaultValue: RemappingOutputPolicy = .systemInput
+  ) throws -> RemappingOutputPolicy {
+    let virtualRaw = options["--virtual-gamepad"] ?? defaultValue.virtualGamepad.rawValue
+    let physicalRaw = options["--physical-input"] ?? defaultValue.physicalInput.rawValue
+    guard let virtual = RemappingVirtualGamepadPolicy(rawValue: virtualRaw),
+      let physical = RemappingPhysicalInputPolicy(rawValue: physicalRaw)
+    else {
+      throw MappingCommandError.invalidArguments(
+        CLILocalized.text(
+          "cli.mapping.output_policy_invalid",
+          """
+          --virtual-gamepad: disabled|mapped|passthrough
+          --physical-input: shared|exclusive
+          """
+        )
+      )
+    }
+    return RemappingOutputPolicy(virtualGamepad: virtual, physicalInput: physical)
+  }
+
+  static func joyConPairSettings(
+    _ options: MappingOptions,
+    defaultValue: RemappingJoyConPairSettings? = nil
+  ) throws -> RemappingJoyConPairSettings? {
+    guard let raw = options["--joy-con-pair-gyro"] else { return defaultValue }
+    if raw == "none" { return nil }
+    guard let selection = RemappingJoyConGyroSelection(rawValue: raw) else {
+      throw MappingCommandError.invalidArguments("--joy-con-pair-gyro: left|right|disabled|none")
+    }
+    return RemappingJoyConPairSettings(gyroSelection: selection)
   }
 
   static func applicationScope(
@@ -260,6 +377,42 @@ enum MappingProfileEditor {
     return defaultValue
   }
 
+  private static func behavior(
+    _ options: MappingOptions,
+    fallback: RemappingBindingBehavior
+  ) throws -> RemappingBindingBehavior {
+    guard let raw = options["--behavior"] else { return fallback }
+    guard let value = RemappingBindingBehavior(rawValue: raw) else {
+      throw MappingCommandError.invalidArguments(
+        "--behavior: hold|toggle|tap_on_press|tap_on_release|pulse|press|release"
+      )
+    }
+    return value
+  }
+
+  private static func additionalActions(
+    _ options: MappingOptions,
+    fallback: [RemappingAction]
+  ) throws -> [RemappingAction] {
+    guard let raw = options["--actions-json"] else { return fallback }
+    guard raw.utf8.count <= RemappingProfile.maximumEncodedBytes else {
+      throw RemappingValidationError.encodedSizeExceeded(raw.utf8.count)
+    }
+    return try JSONDecoder().decode([RemappingAction].self, from: Data(raw.utf8))
+  }
+
+  private static func pulseDuration(
+    _ options: MappingOptions,
+    existing: RemappingBinding?
+  ) throws -> Double {
+    let selected = try behavior(options, fallback: existing?.behavior ?? .hold)
+    let fallback =
+      selected == .pulse
+      ? existing?.pulseDurationMs ?? RemappingBinding.defaultPulseDurationMs
+      : RemappingBinding.defaultPulseDurationMs
+    return try number(options["--pulse-ms"], option: "--pulse-ms", fallback: fallback)
+  }
+
   private static func resolvedBindingOptions(
     source: RemappingSource,
     destination: RemappingDestination,
@@ -272,11 +425,12 @@ enum MappingProfileEditor {
     )
   }
 
-  private static func tuning(source: RemappingSource, options: MappingOptions) throws
-    -> RemappingAxisTuning?
-  {
+  private static func tuning(
+    source: RemappingSource,
+    options: MappingOptions
+  ) throws -> RemappingAxisTuning? {
     let tuningOptions = [
-      "--deadzone", "--gain", "--invert", "--response-curve", "--digital-threshold"
+      "--deadzone", "--gain", "--invert", "--response-curve", "--digital-threshold",
     ]
     let supplied = tuningOptions.contains(where: options.contains)
     let isAxis =
@@ -303,9 +457,10 @@ enum MappingProfileEditor {
     )
   }
 
-  private static func turbo(destination: RemappingDestination, options: MappingOptions) throws
-    -> RemappingTurbo?
-  {
+  private static func turbo(
+    destination: RemappingDestination,
+    options: MappingOptions
+  ) throws -> RemappingTurbo? {
     let rate = options["--turbo-rate"]
     let duty = options["--turbo-duty"]
     guard rate != nil || duty != nil else { return nil }
@@ -390,11 +545,17 @@ enum MappingProfileEditor {
     layers: [RemappingLayer]? = nil
   ) -> RemappingProfile {
     RemappingProfile(
-      schemaVersion: profile.schemaVersion,
       id: profile.id,
       name: profile.name,
       device: profile.device,
       applicationScope: profile.applicationScope,
+      outputPolicy: profile.outputPolicy,
+      motionTuning: profile.motionTuning,
+      gyroOutput: profile.gyroOutput,
+      joyConPair: profile.joyConPair,
+      stickMappings: profile.stickMappings,
+      triggerMappings: profile.triggerMappings,
+      touchMappings: profile.touchMappings,
       bindings: bindings ?? profile.bindings,
       chords: chords ?? profile.chords,
       sequences: sequences ?? profile.sequences,

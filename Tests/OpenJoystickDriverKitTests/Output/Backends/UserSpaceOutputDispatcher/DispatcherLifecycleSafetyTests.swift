@@ -65,6 +65,91 @@ private final class UserSpaceDispatcherTestBackend: UserSpaceOutputDispatcher.Vi
 }
 
 struct UserSpaceOutputDispatcherLifecycleTests {
+  @Test func neutralRetryAfterRetirementDoesNotCreateAnotherDevice() async throws {
+    let creations = LockedCounter()
+    let dispatcher = UserSpaceOutputDispatcher { _ in
+      _ = creations.next()
+      return UserSpaceDispatcherTestBackend()
+    }
+    let identifier = DeviceIdentifier(vendorID: 1, productID: 2)
+    try await dispatcher.send(.neutral, for: identifier)
+    #expect(creations.current() == 0)
+    try await dispatcher.send(RemappingGamepadState(buttons: [.south]), for: identifier)
+    await dispatcher.controllerDidStop(identifier)
+    try await dispatcher.send(.neutral, for: identifier)
+    #expect(creations.current() == 1)
+    await dispatcher.close()
+  }
+
+  @Test func remappedReportsAndKeepaliveUseTheirOwnSuppressionGate() async throws {
+    let backend = UserSpaceDispatcherTestBackend()
+    let dispatcher = UserSpaceOutputDispatcher { _ in backend }
+    let identifier = DeviceIdentifier(vendorID: 1, productID: 2)
+    await dispatcher.setOutputSuppressed(true)
+    await dispatcher.dispatch(events: [.buttonPressed(.a)], from: identifier)
+    #expect(backend.publishedReports().isEmpty)
+    try await dispatcher.send(RemappingGamepadState(buttons: [.north]), for: identifier)
+    let pressed = try #require(backend.publishedReports().last)
+    let initialCount = backend.counts().send
+    let deadline = ContinuousClock.now.advanced(by: .milliseconds(250))
+    while backend.counts().send == initialCount, ContinuousClock.now < deadline {
+      try await Task.sleep(for: .milliseconds(8))
+    }
+    #expect(backend.counts().send > initialCount)
+    #expect(backend.publishedReports().last == pressed)
+    await dispatcher.setRemappingOutputSuppressed(true)
+    await #expect(throws: CancellationError.self) {
+      try await dispatcher.send(RemappingGamepadState(buttons: [.south]), for: identifier)
+    }
+    try await dispatcher.send(.neutral, for: identifier)
+    #expect(
+      backend.publishedReports().last
+        == OJDGenericGamepadFormat().buildInputReport(from: VirtualGamepadState())
+    )
+    await dispatcher.close()
+  }
+
+  @Test func remappedStatePreservesSmallAxesAndDistinctShareThenReplacesHeldState() async throws {
+    let backend = UserSpaceDispatcherTestBackend()
+    let dispatcher = UserSpaceOutputDispatcher { _ in backend }
+    let identifier = DeviceIdentifier(vendorID: 1, productID: 2)
+    try await dispatcher.send(
+      RemappingGamepadState(buttons: [.share], axes: [.leftStickX: 0.01]), for: identifier
+    )
+    var expected = VirtualGamepadState()
+    expected.buttons = 1 << 15
+    expected.leftStickX = Int16(Float(0.01) * 32_767)
+    #expect(
+      backend.publishedReports().last == OJDGenericGamepadFormat().buildInputReport(from: expected)
+    )
+    try await dispatcher.send(RemappingGamepadState(buttons: [.back]), for: identifier)
+    expected = VirtualGamepadState()
+    expected.buttons = 1 << 9
+    #expect(
+      backend.publishedReports().last == OJDGenericGamepadFormat().buildInputReport(from: expected)
+    )
+    await dispatcher.setOutputSuppressed(true)
+    try await dispatcher.send(.neutral, for: identifier)
+    #expect(
+      backend.publishedReports().last
+        == OJDGenericGamepadFormat().buildInputReport(from: VirtualGamepadState())
+    )
+    await dispatcher.close()
+  }
+
+  @Test func remappingReceivesNativeDeliveryFailure() async {
+    let backend = UserSpaceDispatcherTestBackend(failsSend: true)
+    let dispatcher = UserSpaceOutputDispatcher { _ in backend }
+    await #expect(throws: UserSpaceDispatcherTestBackend.SendFailure.self) {
+      try await dispatcher.send(
+        RemappingGamepadState(buttons: [.south]),
+        for: DeviceIdentifier(vendorID: 1, productID: 2)
+      )
+    }
+    #expect(backend.counts().close == 1)
+    await dispatcher.close()
+  }
+
   @Test func activationCreatesAndNeutralizesEveryController() async throws {
     let created = LockedBackends()
     let dispatcher = UserSpaceOutputDispatcher { _ in

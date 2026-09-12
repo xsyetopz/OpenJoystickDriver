@@ -23,6 +23,8 @@ public struct DeviceInputState: Codable, Sendable, Equatable {
   public var leftTrigger: Float
   /// Right trigger pressure, normalized to 0...1.
   public var rightTrigger: Float
+  /// Latest complete contact frame for each explicitly reported touch surface.
+  public var touchSamples: [ControllerTouchSample]
 
   /// Creates a zeroed-out input state for the given device.
   public init(vendorID: UInt16, productID: UInt16) {
@@ -35,5 +37,34 @@ public struct DeviceInputState: Codable, Sendable, Equatable {
     rightStickY = 0
     leftTrigger = 0
     rightTrigger = 0
+    touchSamples = []
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case vendorID
+    case productID
+    case pressedButtons
+    case leftStickX
+    case leftStickY
+    case rightStickX
+    case rightStickY
+    case leftTrigger
+    case rightTrigger
+    case touchSamples
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let values = try decoder.container(keyedBy: CodingKeys.self)
+    vendorID = try values.decode(UInt16.self, forKey: .vendorID)
+    productID = try values.decode(UInt16.self, forKey: .productID)
+    pressedButtons = try values.decode([String].self, forKey: .pressedButtons)
+    leftStickX = try values.decode(Float.self, forKey: .leftStickX)
+    leftStickY = try values.decode(Float.self, forKey: .leftStickY)
+    rightStickX = try values.decode(Float.self, forKey: .rightStickX)
+    rightStickY = try values.decode(Float.self, forKey: .rightStickY)
+    leftTrigger = try values.decode(Float.self, forKey: .leftTrigger)
+    rightTrigger = try values.decode(Float.self, forKey: .rightTrigger)
+    touchSamples =
+      try values.decodeIfPresent([ControllerTouchSample].self, forKey: .touchSamples) ?? []
   }
 }

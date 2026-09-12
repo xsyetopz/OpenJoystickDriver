@@ -150,6 +150,7 @@
             Text(option.title).tag(option.source)
           }
         }
+        touchSourceControls
         if !connectedDevices.isEmpty {
           Picker(
             OJDLocalized.string("common.controller", fallback: "Controller"),
@@ -209,6 +210,101 @@
         handleCaptureState(captureState)
         announceCaptureState(captureState)
       }
+    }
+
+    @ViewBuilder private var touchSourceControls: some View {
+      switch source {
+      case .touchGrid(let grid):
+        VStack(alignment: .leading, spacing: 8) {
+          Stepper(
+            OJDLocalized.formatted(
+              "capture.touchColumns", fallback: "Grid columns: %d", grid.columns
+            ),
+            value: touchGridValue(\.columns),
+            in: RemappingTouchGridSource.dimensionRange
+          )
+          Stepper(
+            OJDLocalized.formatted("capture.touchRows", fallback: "Grid rows: %d", grid.rows),
+            value: touchGridValue(\.rows),
+            in: RemappingTouchGridSource.dimensionRange
+          )
+          Stepper(
+            OJDLocalized.formatted(
+              "capture.touchColumn", fallback: "Cell column: %d", grid.column + 1
+            ),
+            value: touchGridValue(\.column),
+            in: 0...max(0, grid.columns - 1)
+          )
+          Stepper(
+            OJDLocalized.formatted("capture.touchRow", fallback: "Cell row: %d", grid.row + 1),
+            value: touchGridValue(\.row),
+            in: 0...max(0, grid.rows - 1)
+          )
+        }.padding(.leading, 8)
+      case .touchSwipe(let swipe):
+        VStack(alignment: .leading, spacing: 5) {
+          Text(
+            OJDLocalized.formatted(
+              "capture.touchSwipeDistance",
+              fallback: "Minimum swipe distance: %.0f%%",
+              swipe.minimumDistance * 100
+            )
+          )
+          Slider(
+            value: Binding(
+              get: { swipe.minimumDistance },
+              set: { distance in
+                source = .touchSwipe(
+                  RemappingTouchSwipeSource(
+                    surface: swipe.surface,
+                    direction: swipe.direction,
+                    minimumDistance: distance
+                  )
+                )
+              }
+            ),
+            in: RemappingTouchSwipeSource.minimumDistanceRange
+          )
+        }.padding(.leading, 8)
+      case .button, .dpad, .axis, .axisDirection, .triggerStage, .motionLean, .touchContact:
+        EmptyView()
+      }
+    }
+
+    private func touchGridValue(_ keyPath: KeyPath<RemappingTouchGridSource, Int>)
+      -> Binding<Int>
+    {
+      Binding(
+        get: {
+          guard case .touchGrid(let grid) = source else { return 0 }
+          return grid[keyPath: keyPath]
+        },
+        set: { value in
+          guard case .touchGrid(let grid) = source else { return }
+          var columns = grid.columns
+          var rows = grid.rows
+          var column = grid.column
+          var row = grid.row
+          switch keyPath {
+          case \.columns: columns = value
+          case \.rows: rows = value
+          case \.column: column = value
+          case \.row: row = value
+          default: return
+          }
+          column = min(column, columns - 1)
+          row = min(row, rows - 1)
+          source = .touchGrid(
+            RemappingTouchGridSource(
+              surface: grid.surface,
+              columns: columns,
+              rows: rows,
+              column: column,
+              row: row
+            )
+          )
+        }
+      )
     }
 
     private var canAddAssignment: Bool {

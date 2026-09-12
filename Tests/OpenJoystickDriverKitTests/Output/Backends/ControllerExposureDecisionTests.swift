@@ -3,8 +3,11 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct ControllerExposureDecisionTests {
-  @Test func ownedPhysicalInputPublishesGenericByDefault() {
-    for ownership in [ControllerOwnershipObservation.exclusiveRawUSB, .driverKitOwnedUSB] {
+  @Test
+  func ownedPhysicalInputPublishesGenericByDefault() {
+    for ownership in [
+      ControllerOwnershipObservation.exclusiveHID, .exclusiveRawUSB, .driverKitOwnedUSB,
+    ] {
       let decision = ControllerExposureDecision.decide(
         ownership: ownership,
         intent: .automatic(resolvedIdentity: .genericHID)

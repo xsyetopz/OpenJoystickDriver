@@ -82,6 +82,14 @@ struct ControllerRecordDocument: Decodable {
           )
         )
       }
+      if let quirks, quirks.contains("joyConLeft"), quirks.contains("joyConRight") {
+        throw DecodingError.dataCorrupted(
+          .init(
+            codingPath: decoder.codingPath,
+            debugDescription: "Joy-Con layout must select one side"
+          )
+        )
+      }
       let unknownQuirks = Set(quirks ?? []).subtracting(contract.quirks)
       guard unknownQuirks.isEmpty else {
         throw DecodingError.dataCorrupted(
@@ -128,13 +136,16 @@ struct ControllerRecordDocument: Decodable {
         ["dualSense", "unknown"],
         [
           "touchpad", "gyro", "accelerometer", "battery", "lightbar", "microphoneMute",
-          "adaptiveTriggers"
+          "adaptiveTriggers", "edgeButtons"
         ]
       ),
       "SteamController": (
         ["steamController", "unknown"],
         ["lizardMode", "trackpads", "gyro", "battery", "wirelessReceiver"]
-      ), "SwitchPro": (["switchPro", "unknown"], ["usbHandshake", "calibration", "imu", "rumble"]),
+      ), "SwitchPro": (
+        ["switchPro", "unknown"],
+        ["usbHandshake", "calibration", "imu", "rumble", "joyConLeft", "joyConRight"]
+      ),
       "XboxAdaptiveJoystick": (
         ["xboxAdaptiveJoystick", "unknown"], ["rawUSBPackets", "genericHIDPackets"]
       ), "Flydigi": (["flydigi"], []), "GenericHID": (["genericHID"], [])

@@ -60,12 +60,9 @@ enum RuntimePresentation {
       )
     case .xbox360HID:
       return OJDLocalized.string("compatibility.xbox360HID", fallback: "Xbox 360 HID")
-    case .dualShock4:
-      return OJDLocalized.string("controller.dualShock4", fallback: "DualShock 4")
-    case .dualSense:
-      return OJDLocalized.string("controller.dualSense", fallback: "DualSense")
-    case .switchPro:
-      return OJDLocalized.string("controller.switchPro", fallback: "Switch Pro")
+    case .dualShock4: return OJDLocalized.string("controller.dualShock4", fallback: "DualShock 4")
+    case .dualSense: return OJDLocalized.string("controller.dualSense", fallback: "DualSense")
+    case .switchPro: return OJDLocalized.string("controller.switchPro", fallback: "Switch Pro")
     }
   }
 
@@ -86,11 +83,58 @@ enum RuntimePresentation {
         axisLabel(axis),
         humanized(direction.rawValue)
       )
+    case .triggerStage(let trigger, let stage):
+      return OJDLocalized.formatted(
+        "mapping.triggerStage",
+        fallback: "%@ trigger %@ pull",
+        humanized(trigger.rawValue),
+        humanized(stage.rawValue)
+      )
+    case .motionLean(let direction):
+      return OJDLocalized.formatted(
+        "mapping.motionLean",
+        fallback: "Motion lean %@",
+        humanized(direction.rawValue)
+      )
+    case .touchContact(let surface):
+      return OJDLocalized.formatted(
+        "mapping.touchContact",
+        fallback: "%@ touch",
+        touchSurfaceLabel(surface)
+      )
+    case .touchGrid(let grid):
+      return OJDLocalized.formatted(
+        "mapping.touchGridCell",
+        fallback: "%@ grid %d×%d cell %d,%d",
+        touchSurfaceLabel(grid.surface),
+        grid.columns,
+        grid.rows,
+        grid.column + 1,
+        grid.row + 1
+      )
+    case .touchSwipe(let swipe):
+      return OJDLocalized.formatted(
+        "mapping.touchSwipe",
+        fallback: "%@ swipe %@",
+        touchSurfaceLabel(swipe.surface),
+        humanized(swipe.direction.rawValue)
+      )
+    }
+  }
+
+  private static func touchSurfaceLabel(_ surface: RemappingTouchSurface) -> String {
+    switch surface {
+    case .primary: OJDLocalized.string("mapping.touchSurfacePrimary", fallback: "Primary surface")
+    case .left: OJDLocalized.string("mapping.touchSurfaceLeft", fallback: "Left surface")
+    case .right: OJDLocalized.string("mapping.touchSurfaceRight", fallback: "Right surface")
     }
   }
 
   static func destinationLabel(_ destination: RemappingDestination) -> String {
     switch destination {
+    case .gamepadAxis(let axis): return axisLabel(axis)
+    case .gamepadDpad(let direction): return sourceLabel(.dpad(direction))
+    case .gamepadButton(let button): return buttonLabel(button)
     case .keyboard(let key, let modifiers):
       let modifierLabel = modifiers.sorted { $0.rawValue < $1.rawValue }.map(Self.modifierLabel)
         .joined(separator: " + ")
@@ -114,12 +158,68 @@ enum RuntimePresentation {
         fallback: "Scroll %@",
         humanized(axis.rawValue)
       )
+    case .physical(let output):
+      return physicalOutputLabel(output)
+    }
+  }
+
+  static func physicalOutputLabel(_ output: RemappingPhysicalOutput) -> String {
+    switch output {
+    case .rumble(let motor, let intensity):
+      return OJDLocalized.formatted(
+        "mapping.physicalRumble",
+        fallback: "%@ rumble (%@%%)",
+        humanized(motor.rawValue),
+        String(Int((intensity * 100).rounded()))
+      )
+    case .playerIndicator(let indicator):
+      return OJDLocalized.formatted(
+        "mapping.physicalPlayerIndicator",
+        fallback: "Player indicator %@",
+        indicator == .off
+          ? OJDLocalized.string("common.disabled", fallback: "Disabled")
+          : String(indicator.rawValue)
+      )
+    case .color(let red, let green, let blue):
+      return OJDLocalized.formatted(
+        "mapping.physicalColor",
+        fallback: "Controller color %@",
+        String(format: "#%02X%02X%02X", red, green, blue)
+      )
+    case .brightness(let intensity):
+      return OJDLocalized.formatted(
+        "mapping.physicalBrightness",
+        fallback: "Controller brightness (%@%%)",
+        String(Int((intensity * 100).rounded()))
+      )
+    case .adaptiveTrigger(let trigger, let effect):
+      return OJDLocalized.formatted(
+        "mapping.physicalAdaptiveTrigger",
+        fallback: "%@ adaptive trigger: %@",
+        humanized(trigger.rawValue),
+        humanized(effect.kind.rawValue)
+      )
     }
   }
 
   static func detectedSource(from state: DeviceInputState) -> RemappingSource? {
+    if let sample = state.touchSamples.first(where: { $0.contacts.contains(where: \.isActive) }) {
+      return .touchContact(RemappingTouchSurface(sample.surface))
+    }
     let pressed = Set(state.pressedButtons.map(normalizedInputName))
     var buttons: [(Set<String>, RemappingButton)] = []
+    buttons.append((Set(["leftfunction"]), .leftFunction))
+    buttons.append((Set(["rightfunction"]), .rightFunction))
+    buttons.append((Set(["leftpaddle"]), .leftPaddle))
+    buttons.append((Set(["rightpaddle"]), .rightPaddle))
+    buttons.append((Set(["leftsl"]), .leftSL))
+    buttons.append((Set(["leftsr"]), .leftSR))
+    buttons.append((Set(["rightsl"]), .rightSL))
+    buttons.append((Set(["rightsr"]), .rightSR))
+    buttons.append((Set(["leftgrip"]), .leftGrip))
+    buttons.append((Set(["rightgrip"]), .rightGrip))
+    buttons.append((Set(["leftpadclick"]), .leftPadClick))
+    buttons.append((Set(["rightpadclick"]), .rightPadClick))
     buttons.append((Set(["a", "cross", "south", "buttona", "buttoncross"]), .south))
     buttons.append((Set(["b", "circle", "east", "buttonb", "buttoncircle"]), .east))
     buttons.append((Set(["x", "square", "west", "buttonx", "buttonsquare"]), .west))
@@ -166,9 +266,25 @@ enum RuntimePresentation {
     return nil
   }
 
-  static func detectedTransition(from previous: DeviceInputState, to current: DeviceInputState)
-    -> RemappingSource?
-  {
+  static func detectedTransition(
+    from previous: DeviceInputState,
+    to current: DeviceInputState
+  ) -> RemappingSource? {
+    let previousTouches = Set(
+      previous.touchSamples.compactMap { sample in
+        sample.contacts.contains(where: \.isActive) ? RemappingTouchSurface(sample.surface) : nil
+      }
+    )
+    let currentTouches = Set(
+      current.touchSamples.compactMap { sample in
+        sample.contacts.contains(where: \.isActive) ? RemappingTouchSurface(sample.surface) : nil
+      }
+    )
+    if let surface = RemappingTouchSurface.allCases.first(where: {
+      currentTouches.contains($0) && !previousTouches.contains($0)
+    }) {
+      return .touchContact(surface)
+    }
     let previousButtons = Set(previous.pressedButtons.map(normalizedInputName))
     let currentButtons = Set(current.pressedButtons.map(normalizedInputName))
     let newlyPressed = currentButtons.subtracting(previousButtons)
@@ -258,6 +374,12 @@ enum RuntimePresentation {
           "error.profileLibraryCorrupt",
           fallback: "The profile library is damaged and could not be loaded."
         )
+      case .joyConPairUnavailable:
+        return OJDLocalized.string(
+          "error.joyConPairUnavailable",
+          fallback: "The selected Joy-Cons could not be paired. "
+            + "Refresh connected controllers and try again."
+        )
       case .routerEngineUnavailable, .routerLibraryUnavailable, .routerLibraryAndEngineUnavailable,
         .routerShutDown:
         return OJDLocalized.string(
@@ -325,6 +447,22 @@ enum RuntimePresentation {
 
   private static func buttonLabel(_ button: RemappingButton) -> String {
     switch button {
+    case .leftFunction:
+      return OJDLocalized.string("mapping.leftFunctionButton", fallback: "Left function button")
+    case .rightFunction:
+      return OJDLocalized.string("mapping.rightFunctionButton", fallback: "Right function button")
+    case .leftPaddle: return OJDLocalized.string("mapping.leftPaddle", fallback: "Left paddle")
+    case .rightPaddle: return OJDLocalized.string("mapping.rightPaddle", fallback: "Right paddle")
+    case .leftSL: return OJDLocalized.string("mapping.leftJoyConSL", fallback: "Left Joy-Con SL")
+    case .leftSR: return OJDLocalized.string("mapping.leftJoyConSR", fallback: "Left Joy-Con SR")
+    case .rightSL: return OJDLocalized.string("mapping.rightJoyConSL", fallback: "Right Joy-Con SL")
+    case .rightSR: return OJDLocalized.string("mapping.rightJoyConSR", fallback: "Right Joy-Con SR")
+    case .leftGrip: return OJDLocalized.string("mapping.leftGrip", fallback: "Left grip")
+    case .rightGrip: return OJDLocalized.string("mapping.rightGrip", fallback: "Right grip")
+    case .leftPadClick:
+      return OJDLocalized.string("mapping.leftPadClick", fallback: "Left pad click")
+    case .rightPadClick:
+      return OJDLocalized.string("mapping.rightPadClick", fallback: "Right pad click")
     case .south: return OJDLocalized.string("mapping.buttonSouth", fallback: "A / Cross")
     case .east: return OJDLocalized.string("mapping.buttonEast", fallback: "B / Circle")
     case .west: return OJDLocalized.string("mapping.buttonWest", fallback: "X / Square")
@@ -436,7 +574,7 @@ enum RuntimePresentation {
     }
   }
 
-  private static func humanized(_ value: String) -> String {
+  static func humanized(_ value: String) -> String {
     value.split(separator: "_").map { part in
       let value = String(part)
       return value.isEmpty ? value : value.prefix(1).uppercased() + value.dropFirst()

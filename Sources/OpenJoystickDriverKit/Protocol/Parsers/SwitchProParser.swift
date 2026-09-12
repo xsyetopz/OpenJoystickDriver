@@ -6,13 +6,20 @@ private let switchProStickCenter: UInt16 = 2048
 private let switchProStickMax: Float = 2047
 private let switchProDeadzone: Float = 0.08
 
-/// Parser for Nintendo Switch Pro Controller full input reports.
+public enum NintendoControllerLayout: Sendable {
+  case pro
+  case leftJoyCon
+  case rightJoyCon
+}
+
+/// Parser for Nintendo Switch Pro Controller and Joy-Con full input reports.
 ///
 /// Linux `hid-nintendo.c` uses report `0x30`, a packed 24-bit button field,
 /// and two packed 12-bit stick fields. This experimental slice uses default
 /// center calibration until physical hardware can verify SPI calibration reads.
 public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
-  PhysicalHIDRumbleOutput, PhysicalHIDPlayerIndicatorOutput, @unchecked Sendable
+  HIDStartupRecoveryProvider, PhysicalHIDRumbleOutput, PhysicalHIDPlayerIndicatorOutput,
+  @unchecked Sendable
 {
 
   private enum ReportOffset {
@@ -22,6 +29,12 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
     static let rightStick = 9
   }
 
+  public let layout: NintendoControllerLayout
+  private var sensorSamples = NintendoSensorSamples()
+  private var motionCalibration = NintendoMotionCalibration.nominal
+  private var pendingMotionCalibration: Set<UInt32> = []
+  private var factoryMotionBytes: [UInt8]?
+  private var userMotionBytes: [UInt8]?
   private var prevButtons: UInt32 = 0
   private var prevDpad: UInt32 = 0
   private var prevLX: UInt16 = switchProStickCenter
@@ -32,7 +45,25 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
   private var physicalRumbleData =
     SwitchProRumbleCodec.encode(intensity: 0) + SwitchProRumbleCodec.encode(intensity: 0)
 
-  public init() {}
+  public init(layout: NintendoControllerLayout = .pro) { self.layout = layout }
+
+  public var physicalRumbleMotors: [PhysicalRumbleMotor] {
+    switch layout {
+    case .pro: [.leftMain, .rightMain]
+    case .leftJoyCon: [.leftMain]
+    case .rightJoyCon: [.rightMain]
+    }
+  }
+
+  public var physicalInputCapabilities: PhysicalControllerInputCapabilities {
+    let buttons: [Button]
+    switch layout {
+    case .pro: buttons = []
+    case .leftJoyCon: buttons = [.leftSL, .leftSR]
+    case .rightJoyCon: buttons = [.rightSL, .rightSR]
+    }
+    return PhysicalControllerInputCapabilities(rawMotion: true, additionalButtons: buttons)
+  }
 
   public var minimumPhysicalOutputIntervalNanoseconds: UInt64 { 50_000_000 }
 
@@ -41,16 +72,22 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
   }
 
   public func hidStartupReports() -> [PhysicalHIDOutputReport] {
-    [
-      usbCommand(0x02), usbCommand(0x03), usbCommand(0x02), usbCommand(0x04),
-      subcommand(0x03, data: [0x30]), subcommand(0x48, data: [0x01])
-    ]
+    let prefix = layout == .pro
+      ? [usbCommand(0x02), usbCommand(0x03), usbCommand(0x02), usbCommand(0x04)] : []
+    return prefix + [
+      subcommand(0x03, data: [0x30]), subcommand(0x40, data: [0x01]),
+      subcommand(0x48, data: [0x01])
+    ] + motionCalibrationRequests()
   }
 
   public func hidStartupReports(transport: String?) -> [PhysicalHIDOutputReport] {
     switch transport {
     case "USB": return hidStartupReports()
-    case "Bluetooth": return [subcommand(0x03, data: [0x30]), subcommand(0x48, data: [0x01])]
+    case "Bluetooth":
+      return [
+        subcommand(0x03, data: [0x30]), subcommand(0x40, data: [0x01]),
+        subcommand(0x48, data: [0x01])
+      ] + motionCalibrationRequests()
     default: return []
     }
   }
@@ -63,7 +100,8 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
     -> PhysicalHIDOutputReport
   {
     physicalRumbleData =
-      SwitchProRumbleCodec.encode(intensity: left) + SwitchProRumbleCodec.encode(intensity: right)
+      SwitchProRumbleCodec.encode(intensity: layout == .rightJoyCon ? 0 : left)
+      + SwitchProRumbleCodec.encode(intensity: layout == .leftJoyCon ? 0 : right)
     var bytes = [UInt8](repeating: 0, count: 10)
     bytes[0] = 0x10
     bytes[1] = nextPacketNumber()
@@ -81,12 +119,26 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
   }
 
   public func parse(data: Data) throws -> [ControllerEvent] {
+    try parse(data: data, receivedAtNanoseconds: DispatchTime.now().uptimeNanoseconds)
+  }
+
+  public func parse(data: Data, receivedAtNanoseconds: UInt64) throws -> [ControllerEvent] {
     let bytes = Array(data)
+    if bytes.first == 0x21 {
+      consumeMotionCalibrationReply(bytes)
+      return []
+    }
     guard bytes.count >= switchProFullReportMinLength,
       bytes[ReportOffset.reportID] == switchProFullReportID
     else { return [] }
 
-    let buttons = readUInt24LE(bytes, offset: ReportOffset.buttons)
+    let buttonMask: UInt32
+    switch layout {
+    case .pro: buttonMask = 0x00FF_FFFF
+    case .leftJoyCon: buttonMask = 0x00FF_2900
+    case .rightJoyCon: buttonMask = 0x0000_16FF
+    }
+    let buttons = readUInt24LE(bytes, offset: ReportOffset.buttons) & buttonMask
     let left = readStick(bytes, offset: ReportOffset.leftStick)
     let right = readStick(bytes, offset: ReportOffset.rightStick)
 
@@ -95,6 +147,9 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
     events.append(contentsOf: parseDpad(buttons))
     events.append(contentsOf: parseSticks(left: left, right: right))
 
+    events.append(contentsOf: sensorSamples.decode(
+      bytes, receivedAt: receivedAtNanoseconds, layout: layout, calibration: motionCalibration
+    ))
     prevButtons = buttons
     prevDpad = buttons & 0x000F_0000
     prevLX = left.x
@@ -107,6 +162,53 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
 
   private func usbCommand(_ command: UInt8) -> PhysicalHIDOutputReport {
     PhysicalHIDOutputReport(reportID: 0x80, bytes: [0x80, command])
+  }
+
+  private func motionCalibrationRequests() -> [PhysicalHIDOutputReport] {
+    pendingMotionCalibration = [0x6020, 0x8026]
+    factoryMotionBytes = nil
+    userMotionBytes = nil
+    return pendingHIDStartupReports()
+  }
+
+  public func pendingHIDStartupReports() -> [PhysicalHIDOutputReport] {
+    pendingMotionCalibration.sorted().map { address in
+      let length: UInt8 = address == 0x6020 ? 24 : 20
+      return subcommand(0x10, data: [
+        UInt8(truncatingIfNeeded: address), UInt8(truncatingIfNeeded: address >> 8), 0, 0, length
+      ])
+    }
+  }
+
+  public func expireHIDStartupRequests() {
+    pendingMotionCalibration.removeAll()
+    factoryMotionBytes = nil
+    userMotionBytes = nil
+  }
+
+  private func consumeMotionCalibrationReply(_ bytes: [UInt8]) {
+    guard bytes.count >= 20, bytes[13] & 0x80 != 0, bytes[14] == 0x10
+    else { return }
+    let address = UInt32(bytes[15]) | (UInt32(bytes[16]) << 8)
+      | (UInt32(bytes[17]) << 16) | (UInt32(bytes[18]) << 24)
+    guard pendingMotionCalibration.contains(address) else { return }
+    let length = address == 0x6020 ? 24 : 20
+    guard Int(bytes[19]) == length, bytes.count >= 20 + length else { return }
+    let data = Array(bytes[20..<(20 + length)])
+    if address == 0x6020 {
+      guard NintendoMotionCalibration.factory(data) != nil else { return }
+      factoryMotionBytes = data
+    } else {
+      userMotionBytes = data[0] == 0xB2 && data[1] == 0xA1 ? data : nil
+    }
+    pendingMotionCalibration.remove(address)
+    guard let factoryMotionBytes,
+      let factory = NintendoMotionCalibration.factory(factoryMotionBytes)
+    else { return }
+    let calibrated = userMotionBytes.flatMap {
+      NintendoMotionCalibration.factory(factoryMotionBytes, userOffsets: $0)
+    } ?? factory
+    motionCalibration = calibrated.installed(after: motionCalibration)
   }
 
   private func subcommand(_ id: UInt8, data: [UInt8]) -> PhysicalHIDOutputReport {
@@ -125,10 +227,16 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
   }
 
   private func parseButtons(_ buttons: UInt32) -> [ControllerEvent] {
-    diffButtons(
+    var mapping: [(UInt32, Button)] = []
+    switch layout {
+    case .pro: break
+    case .leftJoyCon: mapping = [(0x0020_0000, .leftSL), (0x0010_0000, .leftSR)]
+    case .rightJoyCon: mapping = [(0x0000_0020, .rightSL), (0x0000_0010, .rightSR)]
+    }
+    return diffButtons(
       prev: prevButtons,
       curr: buttons,
-      mapping: [
+      mapping: mapping + [
         (0x0000_0008, .b), (0x0000_0004, .a), (0x0000_0002, .y), (0x0000_0001, .x),
         (0x0040_0000, .leftBumper), (0x0000_0040, .rightBumper), (0x0080_0000, .l2Digital),
         (0x0000_0080, .r2Digital), (0x0000_0100, .back), (0x0000_0200, .start),
@@ -152,10 +260,10 @@ public final class SwitchProParser: InputParser, HIDStartupOutputReportProvider,
     -> [ControllerEvent]
   {
     var events: [ControllerEvent] = []
-    if left.x != prevLX || left.y != prevLY {
+    if layout != .rightJoyCon, left.x != prevLX || left.y != prevLY {
       events.append(.leftStickChanged(x: normalizeStick(left.x), y: -normalizeStick(left.y)))
     }
-    if right.x != prevRX || right.y != prevRY {
+    if layout != .leftJoyCon, right.x != prevRX || right.y != prevRY {
       events.append(.rightStickChanged(x: normalizeStick(right.x), y: -normalizeStick(right.y)))
     }
     return events

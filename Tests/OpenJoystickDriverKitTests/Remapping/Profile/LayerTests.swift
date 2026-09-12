@@ -118,6 +118,100 @@ struct RemappingLayerTests {
     #expect(sink.actions() == [.keyDown(.a), .keyUp(.a)])
   }
 
+  @Test func rejectsInvalidLayerAxisBindingBeforeEmittingInput() async throws {
+    let sink = RemappingTestSink()
+    let engine = RemappingEventEngine(sink: sink)
+    let layer = RemappingLayer(
+      name: "Aim",
+      activationMode: .hold,
+      activator: .button(.leftShoulder),
+      bindings: [
+        RemappingBinding(
+          source: .axis(.rightStickX), destination: .mouseMovement(.x)
+        )
+      ]
+    )
+    let invalid = profile(bindings: [], layers: [layer])
+    await #expect(throws: RemappingValidationError.axisTuningRequired(index: 0)) {
+      try await engine.process(
+        events: [.buttonPressed(.leftBumper)], from: device(1), using: invalid, at: 0
+      )
+    }
+    #expect(sink.actions().isEmpty)
+  }
+
+  @Test func rejectsDuplicateIdentifiersAcrossBaseAndLayerMappings() {
+    let base = binding(source: .button(.south), key: .a)
+    let layer = RemappingLayer(
+      name: "Alternate",
+      activationMode: .hold,
+      activator: .button(.leftShoulder),
+      chords: [
+        RemappingChord(
+          id: base.id,
+          sources: [.button(.east), .button(.north)],
+          destination: .keyboard(key: .b, modifiers: [])
+        )
+      ]
+    )
+    #expect(throws: RemappingValidationError.duplicateBindingID(base.id)) {
+      try profile(bindings: [base], layers: [layer]).validate()
+    }
+  }
+
+  @Test func rejectsInvalidNestedSequenceAndDuplicateLayerIdentifiers() {
+    let layer = RemappingLayer(
+      name: "Alternate",
+      activationMode: .hold,
+      activator: .button(.leftShoulder),
+      sequences: [
+        RemappingSequence(
+          sources: [.button(.south), .button(.east)],
+          windowMs: 0,
+          destination: .keyboard(key: .b, modifiers: [])
+        )
+      ]
+    )
+    #expect(throws: RemappingValidationError.sequenceWindowOutOfRange(index: 0)) {
+      try profile(bindings: [], layers: [layer]).validate()
+    }
+    let first = RemappingLayer(
+      name: "First", activationMode: .hold, activator: .button(.leftShoulder)
+    )
+    let second = RemappingLayer(
+      id: first.id, name: "Second", activationMode: .hold, activator: .button(.rightShoulder)
+    )
+    #expect(throws: RemappingValidationError.duplicateLayerID(first.id)) {
+      try profile(bindings: [], layers: [first, second]).validate()
+    }
+  }
+
+  @Test func mappingLimitIncludesNestedMappings() {
+    let layers = (0...RemappingProfile.maximumBindingCount).map { index in
+      RemappingLayer(
+        name: "Layer \(index)", activationMode: .hold, activator: .button(.leftShoulder)
+      )
+    }
+    #expect(throws: RemappingValidationError.tooManyBindings(layers.count)) {
+      try profile(bindings: [], layers: layers).validate()
+    }
+  }
+
+  @Test func rejectsActivatorBoundInsideAnyLayer() {
+    let first = RemappingLayer(
+      name: "First", activationMode: .hold, activator: .button(.east)
+    )
+    let second = RemappingLayer(
+      name: "Second",
+      activationMode: .hold,
+      activator: .button(.north),
+      bindings: [binding(source: .button(.east), key: .a)]
+    )
+    #expect(throws: RemappingValidationError.layerActivatorAlsoBound(index: 0)) {
+      try profile(bindings: [], layers: [first, second]).validate()
+    }
+  }
+
   // MARK: - Helpers
 
   private func profile(

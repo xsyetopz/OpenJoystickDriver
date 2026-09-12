@@ -32,6 +32,15 @@ extension DevicePipeline {
     while isActive {
       let openResult = await openDeviceWithRetry(provider: provider, device: device)
       guard case .opened(let handle) = openResult else {
+        guard isActive else { return }
+        let ownership: HIDInputOwnership
+        if case .unavailable(.accessDenied) = openResult {
+          ownership = .accessDenied
+        } else {
+          ownership = .acquisitionFailed
+        }
+        await reportUSBInputOwnership(ownership)
+        guard isActive else { return }
         openAttempt += 1
         let delay: UInt64
         if case .unavailable(.accessDenied) = openResult {
@@ -71,6 +80,10 @@ extension DevicePipeline {
         return
       }
 
+      let ownership = await handle.inputOwnership
+      guard isActive else { return }
+      await reportUSBInputOwnership(ownership)
+      guard isActive else { return }
       openAttempt = 0
       if !requiresInputConnectionBeforeOutput() {
         await dispatcher.dispatch(events: [], from: identifier)
@@ -84,6 +97,12 @@ extension DevicePipeline {
       openAttempt += 1
       let delay = usbRecoveryPolicy.reconnectDelayNanoseconds(after: openAttempt)
       try? await Task.sleep(nanoseconds: delay)
+    }
+  }
+
+  func reportUSBInputOwnership(_ ownership: HIDInputOwnership) async {
+    if let listener = dispatcher as? any ControllerInputOwnershipListener {
+      await listener.controllerInputOwnershipChanged(ownership, for: identifier)
     }
   }
 
@@ -182,11 +201,12 @@ extension DevicePipeline {
         let bytes = try await readInterrupt(handle: handle, inEndpoint: inEndpoint)
         consecutiveUSBIOErrors = 0
         appendToPacketLog(bytes: bytes, direction: "rx")
-        let events = try parseEvents(from: bytes)
+        let receivedAt = DispatchTime.now().uptimeNanoseconds
+        let events = try parseEvents(from: bytes, receivedAtNanoseconds: receivedAt)
         await sendDeferredUSBOutputPackets(handle: handle)
         _ = await handleInputConnectionStateChangeIfNeeded()
         if inputConnectionActive {
-          await handleParsedEvents(events, now: DispatchTime.now().uptimeNanoseconds)
+          await handleParsedEvents(events, now: receivedAt)
         }
       } catch let error as USBTransportError where error.isTimeout {
         // No data in this interval; throttle below to avoid a hot timeout loop.
@@ -233,6 +253,7 @@ extension DevicePipeline {
       }
     }
 
+    await reportUSBInputOwnership(.unknown)
     await neutralizeOutput()
     await handle.close()
     usbHandle = nil
@@ -257,8 +278,11 @@ extension DevicePipeline {
     )
   }
 
-  func parseEvents(from bytes: [UInt8]) throws -> [ControllerEvent] {
-    try parser.parse(data: Data(bytes))
+  func parseEvents(
+    from bytes: [UInt8],
+    receivedAtNanoseconds: UInt64 = DispatchTime.now().uptimeNanoseconds
+  ) throws -> [ControllerEvent] {
+    try parser.parse(data: Data(bytes), receivedAtNanoseconds: receivedAtNanoseconds)
   }
 
   func sendDeferredUSBOutputPackets(handle: any USBTransportSession) async {

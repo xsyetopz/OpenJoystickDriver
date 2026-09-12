@@ -13,7 +13,8 @@
       switch destination {
       case .keyboard(let key, let modifiers):
         keyboardRow(key: key, modifiers: modifiers)
-      case .mouseButton, .mouseMovement, .scroll:
+      case .mouseButton, .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis,
+        .physical:
         Text(RuntimePresentation.destinationLabel(destination))
       }
     }
