@@ -6,8 +6,8 @@ Repository scripts load exactly one optional local file from the project root:
 - `.env.release` for publisher release, notarization, and packaging commands.
 
 `OJD_ENV` selects `dev` or `release`; other values fail immediately. Scripts do
-not load generic `.env` or `scripts/.env*` files. Create the appropriate root
-file from its matching `.example` file, or run `./scripts/ojd signing configure`.
+not load generic `.env` or `scripts/.env*` files. Signed build and package routes
+create or repair the appropriate root file from discovered Apple assets.
 
 Audit the file structure without exposing values:
 
@@ -22,8 +22,8 @@ development profiles and an Apple Development identity; publisher-only
 Developer ID assets are optional and do not block `.env.dev` generation.
 
 Unsigned `swift build` and `./scripts/ojd check driverkit` do not load
-`.env.dev`. Signed local development installs require `.env.dev` from
-`./scripts/ojd signing configure`. Notarization keys belong only in
+`.env.dev`. Signed local development installs create or repair `.env.dev`
+before building. Notarization keys belong only in
 `.env.release`; they are not inputs to unsigned or Apple Development builds.
 
 The signing configurator updates recognized signing keys in the appropriate root

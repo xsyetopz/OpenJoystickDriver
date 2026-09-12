@@ -62,13 +62,20 @@ development DEXT profile must contain exactly the seven approved Microsoft pairs
 GameSir dictionary is a mismatch and the signing gate rejects it. The connected GameSir G7 SE
 (`3537:1010`) uses the app's direct IOUSBHost route and does not require a DriverKit grant.
 
-Run:
+Normally, invoke the desired signed operation and follow its prompts:
 
 ```bash
-./scripts/ojd signing install-profiles
+./scripts/ojd build install dev
+```
+
+The command searches supported local profile locations, installs discovered
+profiles, configures matching Keychain identities, and resumes. Use the
+following only to diagnose an automatic repair that reports an asset mismatch:
+
+```bash
+./scripts/ojd signing audit
 ./scripts/ojd signing configure
 ./scripts/ojd signing doctor
-./scripts/ojd build install dev
 ```
 
 The doctor fails closed if the DEXT profile is missing, the host allowlist names the deleted

@@ -44,15 +44,26 @@ fi
 if [[ "$subcmd" == "store-credentials" ]]; then
   profile="${1:-${NOTARIZE_KEYCHAIN_PROFILE:-OpenJoystickDriver}}"
   if [[ -z "${NOTARIZE_APPLE_ID:-}" ]]; then
-    echo "ERROR: NOTARIZE_APPLE_ID is required."
-    exit 1
+    if [[ ! -t 0 || -n "${CI:-}" || "${OJD_NONINTERACTIVE:-0}" == "1" ]]; then
+      die "NOTARIZE_APPLE_ID is required in noninteractive mode"
+    fi
+    read -r -p "Apple ID for notarization: " NOTARIZE_APPLE_ID
+    [[ -n "$NOTARIZE_APPLE_ID" ]] || die "Apple ID cannot be empty"
   fi
   args=(store-credentials "$profile" --apple-id "$NOTARIZE_APPLE_ID" --team-id "$DEVELOPMENT_TEAM")
-  if [[ -n "${NOTARIZE_PASSWORD:-}" ]]; then
-    args+=(--password "$NOTARIZE_PASSWORD")
-  fi
+  echo "notarytool will securely prompt for the app-specific password."
   xcrun notarytool "${args[@]}"
+  PYTHONPATH="$SCRIPT_DIR/../platform" python3 - "$OJD_ENV_FILE" "$NOTARIZE_APPLE_ID" "$profile" <<'PY'
+import sys
+from pathlib import Path
+from capabilities import update_env_value
+
+path = Path(sys.argv[1])
+update_env_value(path, "NOTARIZE_APPLE_ID", sys.argv[2])
+update_env_value(path, "NOTARIZE_KEYCHAIN_PROFILE", sys.argv[3])
+PY
   echo "Stored notarytool profile: $profile"
+  echo "Updated NOTARIZE_KEYCHAIN_PROFILE in $OJD_ENV_FILE"
   exit 0
 fi
 

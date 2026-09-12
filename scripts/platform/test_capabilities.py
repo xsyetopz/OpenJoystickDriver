@@ -225,5 +225,28 @@ class CapabilityResolverTests(unittest.TestCase):
             all(command.startswith("./scripts/ojd ") for command in commands[1:])
         )
 
+    def test_profile_install_discovers_downloads(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            downloads = home / "Downloads"
+            downloads.mkdir()
+            names = (
+                "OpenJoystickDriver.provisionprofile",
+                "OpenJoystickDriver_XboxUSBDevice.provisionprofile",
+            )
+            for name in names:
+                (downloads / name).write_text(name, encoding="utf-8")
+            script = Path(__file__).resolve().parents[1] / "signing/signing.sh"
+            result = subprocess.run(
+                ["/usr/bin/env", "bash", str(script), "install-profiles"],
+                env={"HOME": str(home), "PATH": "/usr/bin:/bin"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            destination = home / "Library/MobileDevice/Provisioning Profiles"
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertTrue(all((destination / name).is_file() for name in names))
+
 if __name__ == "__main__":
     unittest.main()

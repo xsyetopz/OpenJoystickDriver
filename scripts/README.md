@@ -14,6 +14,14 @@ The main repository routes are `build install dev|release`, `build install-fast
 dev`, `package tester`, `release bump-version`, `release package [version]`,
 `release install-local [version]`, and `release notarize ...`.
 
+Invoke the desired route directly. Before dispatch, a shared capability resolver
+checks only that route's declared requirements. It creates repository-local
+Python environments, offers interactive Homebrew formula installation, resumes
+after successful repair, and directs missing Homebrew, Xcode, profiles, or
+credentials to their authoritative acquisition flow. Noninteractive and CI runs
+never prompt or install host software. Declined, unavailable, or failed repairs
+leave configuration and artifacts unchanged.
+
 ## Layout
 
 | Path | Responsibility |
@@ -79,9 +87,8 @@ or invalid values use the five-second default.
 | `quality/env-audit.py` | `env audit` | Reads environment-file keys without printing values | Environment contract validation |
 | `quality/validate-schemas.py` | `check schemas` | Validates the three canonical schemas, every generated controller record, every override, and a newly emitted support report | Draft 2020-12 meta-schema and live producer conformance |
 
-Schema, profile, and full catalog-regeneration commands use the pinned Python
-dependencies from `.build/schema-validator` when that environment exists. See
-`Resources/Schemas/README.md` for the one-time setup command.
+Schema, profile, and full catalog-regeneration commands automatically create and
+use the pinned Python environment in `.build/schema-validator`.
 | `quality/test-parsers-macos14.sh` | `test parsers-macos14` | Creates isolated harness and cache directories under `/tmp` | Parser harness gate |
 | `quality/validate-scripts.py` | `check scripts` | Reads repository paths and validates Bash and Python syntax | Script-layout validation |
 | `quality/validate-swift-structure.py` | `check swift-structure` | Reads Swift paths, sizes, names, and directives | Structural validation |
@@ -165,14 +172,21 @@ Use these paths in order:
    notarizes and staples the app, then publishes the release DMG to GitHub.
    This path requires the configured GitHub signing and notarization secrets.
 
-## Initial setup (per machine or team)
+## Command-first setup
 
-Start with [Signing assets](../docs/development/signing.md). It lists who can
-obtain each Apple asset, the exact App IDs and capabilities, the portal profile
-types, and every generated environment value. End users and parser or record
-contributors do not need signing assets.
+Run the command for the intended outcome, such as `./scripts/ojd build install
+dev` or `./scripts/ojd package tester`. Signed routes inspect installed
+profiles, common `Documents` and `Downloads` locations, and matching Keychain
+identities. Discovered profiles are installed and signing environment files are
+generated before the original command resumes. If an Apple-issued asset is
+absent, the command opens the Apple Developer portal when possible, names the
+exact missing filename, and provides one command to resume.
 
-### 1. Provisioning profiles
+End users and parser or record contributors do not need signing assets. The
+remaining details are expert troubleshooting; [Signing assets](../docs/development/signing.md)
+records the exact App IDs, capabilities, profile types, and environment values.
+
+### Provisioning-profile troubleshooting
 
 The scripts look for provisioning profiles at:
 
@@ -206,7 +220,7 @@ Sanity-check what you installed (safe output; no identifiers printed):
 ./scripts/ojd signing audit "$HOME/Library/MobileDevice/Provisioning Profiles"/*.provisionprofile
 ```
 
-### 2. Keychain identities
+### Keychain troubleshooting
 
 Development requires:
 
@@ -228,7 +242,7 @@ certificates (WWDR / Developer ID). Apple publishes them here:
 
 - <https://www.apple.com/certificateauthority/>
 
-### 3. Generate root `.env.dev` and optional `.env.release`
+### Environment-file troubleshooting
 
 These are the only local environment files loaded. See `../docs/development/environment.md`; run `./scripts/ojd env audit` to validate names without printing values.
 
@@ -317,23 +331,19 @@ certificate or profile matching, see the Troubleshooting section below.
 
 ## Notarization
 
-Store notarization credentials in the macOS Keychain:
+Invoke the packaging or notarization command directly:
 
 ```bash
-./scripts/ojd release notarize store-credentials OJDNotary
+./scripts/ojd package tester
 ```
 
-Put these into `.env.release`:
-
-- `NOTARIZE_KEYCHAIN_PROFILE` (the notarytool Keychain profile name)
-
-Then:
-
-```bash
-./scripts/ojd build install release
-./scripts/ojd release notarize submit
-./scripts/ojd release notarize status
-```
+When local credentials are absent, the resolver prompts for the Apple ID and
+lets `notarytool` securely prompt for the app-specific password. `notarytool`
+validates and stores the credential in Keychain before
+`NOTARIZE_KEYCHAIN_PROFILE` is atomically persisted in `.env.release`; existing
+release signing values are preserved. Packaging verifies the profile before it
+allocates a tester version or starts a build. Explicit setup remains available
+as `./scripts/ojd release notarize store-credentials [profile-name]`.
 
 ### Release package
 

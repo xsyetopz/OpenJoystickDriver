@@ -137,6 +137,7 @@ cat > "$out_dir/apply-github-secrets.sh" <<'SH'
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 repo_args=()
 if [[ "${1:-}" == "--repo" ]]; then
   [[ -n "${2:-}" ]] || { echo "ERROR: Missing value for --repo" >&2; exit 2; }
@@ -144,7 +145,7 @@ if [[ "${1:-}" == "--repo" ]]; then
   shift 2
 fi
 
-command -v gh >/dev/null 2>&1 || { echo "ERROR: gh CLI not found" >&2; exit 2; }
+"$PROJECT_DIR/scripts/ojd" github ensure-auth
 
 for file in "$SCRIPT_DIR"/values/*.txt; do
   name="$(basename "$file" .txt)"

@@ -20,15 +20,10 @@ must not create parallel JSON formats.
 every authored override against these exact contracts, then builds the app,
 emits a support report, and validates that live output against `report.schema.json`.
 
-Install the pinned validator once per checkout:
-
-```bash
-python3 -m venv .build/schema-validator
-.build/schema-validator/bin/python -m pip install -r scripts/quality/requirements.txt
-```
-
-The `scripts/ojd` dispatcher automatically uses that environment for schema,
-profile, and full catalog-regeneration commands.
+The `scripts/ojd` dispatcher creates and atomically repairs the pinned validator
+environment under `.build/schema-validator` when a schema, profile, or catalog
+command first needs it. An interrupted or offline installation leaves no
+partially configured environment.
 
 ## Evolution policy
 

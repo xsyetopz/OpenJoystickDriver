@@ -37,40 +37,59 @@ fi
 
 cmd_install_profiles() {
   local SRC="${1:-}"
-  if [[ -z "$SRC" ]]; then
-    if [[ -d "$HOME/Documents/Profiles" ]]; then
-      SRC="$HOME/Documents/Profiles"
-    else
-      SRC="$HOME/Documents/profiles"
-    fi
-  fi
   local DST="$HOME/Library/MobileDevice/Provisioning Profiles"
-  [[ -d "$SRC" ]] || die "Source directory not found: $SRC (expected ~/Documents/Profiles)"
   mkdir -p "$DST"
   local installed=()
+  local search_dirs=()
+  if [[ -n "$SRC" ]]; then
+    [[ -d "$SRC" ]] || die "Source directory not found: $SRC"
+    search_dirs+=("$SRC")
+  else
+    search_dirs+=(
+      "$HOME/Documents/Profiles"
+      "$HOME/Documents/profiles"
+      "$HOME/Downloads/Profiles"
+      "$HOME/Downloads/profiles"
+      "$HOME/Downloads"
+      "$DST"
+    )
+  fi
 
   copy_one() {
-    local name="$1"
-    local src_path="$SRC/$name"
-    [[ -f "$src_path" ]] || die "Missing profile: $src_path"
-    cp -f "$src_path" "$DST/"
+    local name="$1" required="$2"
+    local directory src_path=""
+    for directory in "${search_dirs[@]}"; do
+      if [[ -f "$directory/$name" ]]; then
+        src_path="$directory/$name"
+        break
+      fi
+    done
+    if [[ -z "$src_path" ]]; then
+      if [[ "$required" == "1" ]]; then
+        echo "ERROR: Missing Apple provisioning profile: $name" >&2
+        if [[ -t 0 && -z "${CI:-}" && "${OJD_NONINTERACTIVE:-0}" != "1" ]]; then
+          open "https://developer.apple.com/account/resources/profiles/list" >/dev/null 2>&1 || true
+          echo "Opened the Apple Developer provisioning profiles page." >&2
+        fi
+        echo "Download $name, then re-run the original command." >&2
+        return 2
+      fi
+      echo "Skipping optional publisher release profile: $name"
+      return 0
+    fi
+    if [[ "$src_path" != "$DST/$name" ]]; then
+      cp -f "$src_path" "$DST/"
+    fi
     installed+=("$name")
   }
 
-  copy_one "OpenJoystickDriver.provisionprofile"
-  copy_one "OpenJoystickDriver_XboxUSBDevice.provisionprofile"
-
-  local release_name
-  for release_name in \
-    "OpenJoystickDriver_DevID.provisionprofile" \
-    "OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile"; do
-    if [[ -f "$SRC/$release_name" ]]; then
-      cp -f "$SRC/$release_name" "$DST/"
-      installed+=("$release_name")
-    else
-      echo "Skipping optional publisher release profile: $SRC/$release_name"
-    fi
-  done
+  local mode="${OJD_SIGNING_MODE:-all}"
+  if [[ "$mode" != "release" ]]; then
+    copy_one "OpenJoystickDriver.provisionprofile" 1
+    copy_one "OpenJoystickDriver_XboxUSBDevice.provisionprofile" 1
+  fi
+  copy_one "OpenJoystickDriver_DevID.provisionprofile" "$([[ "$mode" == "release" ]] && echo 1 || echo 0)"
+  copy_one "OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile" "$([[ "$mode" == "release" ]] && echo 1 || echo 0)"
 
   echo "Installed profiles to: $DST"
   printf '  %s\n' "${installed[@]}"
