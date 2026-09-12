@@ -23,7 +23,7 @@ let package = Package(
   name: "OJDParserHarness",
   platforms: [.macOS(.v14)],
   dependencies: [
-    .package(path: "$PROJECT_DIR")
+    .package(name: "OpenJoystickDriver", path: "$PROJECT_DIR")
   ],
   targets: [
     .executableTarget(
