@@ -14,7 +14,7 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-declare -A validated=()
+validated_commits=$'\n'
 while read -r _local_ref local_oid _remote_ref _remote_oid; do
   [[ "$local_oid" == "$zero_oid" ]] && continue
 
@@ -22,7 +22,9 @@ while read -r _local_ref local_oid _remote_ref _remote_oid; do
     echo "Cannot validate pushed object $local_oid as a commit." >&2
     exit 1
   }
-  [[ -n "${validated[$commit]:-}" ]] && continue
+  case "$validated_commits" in
+    *$'\n'"$commit"$'\n'*) continue ;;
+  esac
 
   temporary_worktree="$(mktemp -d "${TMPDIR:-/tmp}/ojd-pre-push.XXXXXX")"
   git worktree add --detach --quiet "$temporary_worktree" "$commit"
@@ -33,5 +35,5 @@ while read -r _local_ref local_oid _remote_ref _remote_oid; do
   )
   git -C "$repository_root" worktree remove --force "$temporary_worktree"
   temporary_worktree=""
-  validated[$commit]=1
+  validated_commits+="$commit"$'\n'
 done
