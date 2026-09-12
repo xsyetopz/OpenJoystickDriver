@@ -35,7 +35,8 @@
   }
 
   extension View {
-    @ViewBuilder func ojdAccessibilityLabel(_ label: String) -> some View {
+    @ViewBuilder
+    func ojdAccessibilityLabel(_ label: String) -> some View {
       if #available(macOS 11.0, *) {
         accessibilityLabel(Text(label))
       } else {
@@ -43,7 +44,8 @@
       }
     }
 
-    @ViewBuilder func ojdAccessibilityValue(_ value: String) -> some View {
+    @ViewBuilder
+    func ojdAccessibilityValue(_ value: String) -> some View {
       if #available(macOS 11.0, *) {
         accessibilityValue(Text(value))
       } else {
@@ -51,7 +53,8 @@
       }
     }
 
-    @ViewBuilder func ojdAccessibilityHidden(_ hidden: Bool) -> some View {
+    @ViewBuilder
+    func ojdAccessibilityHidden(_ hidden: Bool) -> some View {
       if #available(macOS 11.0, *) {
         accessibilityHidden(hidden)
       } else {
@@ -59,7 +62,8 @@
       }
     }
 
-    @ViewBuilder func ojdAccessibilitySelection(_ selected: Bool) -> some View {
+    @ViewBuilder
+    func ojdAccessibilitySelection(_ selected: Bool) -> some View {
       let value = OJDLocalized.string(
         selected ? "common.selected" : "common.notSelected",
         fallback: selected ? "Selected" : "Not selected"
@@ -140,11 +144,16 @@
     func savePane(_ pane: SettingsPane) { defaults.set(pane.rawValue, forKey: Self.key) }
   }
 
-  @MainActor final class SettingsNavigationModel: ObservableObject {
-    @Published private(set) var selectedPane: SettingsPane
-    @Published private(set) var pendingPane: SettingsPane?
-    @Published private(set) var discardGeneration = 0
-    @Published var isDiscardConfirmationPresented = false
+  @MainActor
+  final class SettingsNavigationModel: ObservableObject {
+    @Published
+    private(set) var selectedPane: SettingsPane
+    @Published
+    private(set) var pendingPane: SettingsPane?
+    @Published
+    private(set) var discardGeneration = 0
+    @Published
+    var isDiscardConfirmationPresented = false
 
     private let persistence: any SettingsPanePersistence
     private var developerToolsEnabled: Bool
@@ -182,7 +191,8 @@
       selectAcceptedPane(.settings)
     }
 
-    @discardableResult func beginProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
+    @discardableResult
+    func beginProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
       guard activeProfilesEditorMutation == nil else { return false }
       activeProfilesEditorMutation = request
       activeProfilesEditorMutationIsRuntimeBound = false
@@ -194,17 +204,16 @@
       activeProfilesEditorMutation == request
     }
 
-    @discardableResult func finishProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool
-    {
+    @discardableResult
+    func finishProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
       guard activeProfilesEditorMutation == request else { return false }
       activeProfilesEditorMutation = nil
       activeProfilesEditorMutationIsRuntimeBound = false
       return true
     }
 
-    @discardableResult func reconcileProfilesEditorMutation(_ request: RuntimeMutationRequest)
-      -> Bool
-    {
+    @discardableResult
+    func reconcileProfilesEditorMutation(_ request: RuntimeMutationRequest) -> Bool {
       guard
         activeProfilesEditorMutation == nil || activeProfilesEditorMutation == request
           || (activeProfilesEditorMutation?.operation == request.operation
@@ -240,12 +249,15 @@
   }
 
   struct SettingsRootView: View {
-    @ObservedObject var navigation: SettingsNavigationModel
-    @ObservedObject var viewModel: RuntimeViewModel
+    @ObservedObject
+    var navigation: SettingsNavigationModel
+    @ObservedObject
+    var viewModel: RuntimeViewModel
     let notificationPermission: NotificationPermissionModel
     let preferences: SettingsPreferencesModel
     let console: ConsoleViewModel
     let developerTools: DeveloperToolsViewModel
+    let restartApplication: @MainActor () -> Void
     let openInputTest: @MainActor (ApplicationServiceDeviceDescription) -> Void
 
     var body: some View {
@@ -277,13 +289,15 @@
       }
     }
 
-    @ViewBuilder private var detail: some View {
+    @ViewBuilder
+    private var detail: some View {
       switch navigation.selectedPane {
       case .overview:
         OverviewView(
           viewModel: viewModel,
           navigation: navigation,
-          notificationPermission: notificationPermission
+          notificationPermission: notificationPermission,
+          restartApplication: restartApplication
         )
       case .controllers: ControllersView(viewModel: viewModel, openInputTest: openInputTest)
       case .profiles: ProfilesView(viewModel: viewModel, navigation: navigation)
@@ -347,7 +361,8 @@
       }
     }
 
-    @MainActor private static func openPrivacySettings(for permissions: RuntimePermissionSummary) {
+    @MainActor
+    private static func openPrivacySettings(for permissions: RuntimePermissionSummary) {
       let pane: String
       if permissions.inputMonitoring != .granted {
         pane = "Privacy_ListenEvent"
@@ -357,7 +372,8 @@
       openPrivacySettings(pane: pane)
     }
 
-    @MainActor private static func openPrivacySettings(pane: String) {
+    @MainActor
+    private static func openPrivacySettings(pane: String) {
       var urls: [URL] = []
       if #available(macOS 13.0, *) {
         if let url = URL(
@@ -383,18 +399,24 @@
   // MARK: - Overview and status
 
   struct OverviewView: View {
-    @ObservedObject var viewModel: RuntimeViewModel
-    @ObservedObject var navigation: SettingsNavigationModel
-    @ObservedObject private var notificationPermission: NotificationPermissionModel
+    @ObservedObject
+    var viewModel: RuntimeViewModel
+    @ObservedObject
+    var navigation: SettingsNavigationModel
+    @ObservedObject
+    private var notificationPermission: NotificationPermissionModel
+    let restartApplication: @MainActor () -> Void
 
     init(
       viewModel: RuntimeViewModel,
       navigation: SettingsNavigationModel,
-      notificationPermission: NotificationPermissionModel = NotificationPermissionModel()
+      notificationPermission: NotificationPermissionModel = NotificationPermissionModel(),
+      restartApplication: @escaping @MainActor () -> Void
     ) {
       self.viewModel = viewModel
       self.navigation = navigation
       self.notificationPermission = notificationPermission
+      self.restartApplication = restartApplication
     }
 
     var body: some View {
@@ -412,49 +434,60 @@
 
     private var accessSummary: some View {
       GroupBox {
-        HStack(alignment: .top, spacing: 12) {
-          AccessRequirementCard(
-            title: OJDLocalized.string("common.inputMonitoring", fallback: "Input Monitoring"),
-            value: inputMonitoringStatus.value,
-            symbol: "keyboard",
-            tone: inputMonitoringStatus.tone,
-            action: inputMonitoringStatus.isActionable
-              ? {
-                PermissionAccessActions.requestControllerAccess(
-                  viewModel: viewModel,
-                  requirement: .inputMonitoring
-                )
-              } : nil
-          )
-          AccessRequirementCard(
-            title: OJDLocalized.string("common.accessibility", fallback: "Accessibility"),
-            value: accessibilityStatus.value,
-            symbol: "lock.shield",
-            tone: accessibilityStatus.tone,
-            action: accessibilityStatus.isActionable
-              ? {
-                PermissionAccessActions.requestControllerAccess(
-                  viewModel: viewModel,
-                  requirement: .accessibility
-                )
-              } : nil
-          )
-          AccessRequirementCard(
-            title: OJDLocalized.string("common.keyboardPointer", fallback: "Keyboard & pointer"),
-            value: postEventStatus.value,
-            symbol: "cursorarrow",
-            tone: postEventStatus.tone,
-            action: postEventStatus.isActionable
-              ? { PermissionAccessActions.requestPostEventAccess(viewModel: viewModel) } : nil
-          )
-          AccessRequirementCard(
-            title: OJDLocalized.string("settings.notifications", fallback: "Notifications"),
-            value: notificationStatus.value,
-            symbol: "bell",
-            tone: notificationStatus.tone,
-            action: notificationStatus.isActionable
-              ? { notificationPermission.requestOrOpenSettings() } : nil
-          )
+        VStack(alignment: .leading, spacing: 12) {
+          HStack(alignment: .top, spacing: 12) {
+            AccessRequirementCard(
+              title: OJDLocalized.string("common.inputMonitoring", fallback: "Input Monitoring"),
+              value: inputMonitoringStatus.value,
+              symbol: "keyboard",
+              tone: inputMonitoringStatus.tone,
+              action: inputMonitoringStatus.isActionable
+                ? {
+                  PermissionAccessActions.requestControllerAccess(
+                    viewModel: viewModel,
+                    requirement: .inputMonitoring
+                  )
+                } : nil
+            )
+            AccessRequirementCard(
+              title: OJDLocalized.string("common.accessibility", fallback: "Accessibility"),
+              value: accessibilityStatus.value,
+              symbol: "lock.shield",
+              tone: accessibilityStatus.tone,
+              action: accessibilityStatus.isActionable
+                ? {
+                  PermissionAccessActions.requestControllerAccess(
+                    viewModel: viewModel,
+                    requirement: .accessibility
+                  )
+                } : nil
+            )
+            AccessRequirementCard(
+              title: OJDLocalized.string("common.keyboardPointer", fallback: "Keyboard & pointer"),
+              value: postEventStatus.value,
+              symbol: "cursorarrow",
+              tone: postEventStatus.tone,
+              action: postEventStatus.isActionable
+                ? { PermissionAccessActions.requestPostEventAccess(viewModel: viewModel) } : nil
+            )
+            AccessRequirementCard(
+              title: OJDLocalized.string("settings.notifications", fallback: "Notifications"),
+              value: notificationStatus.value,
+              symbol: "bell",
+              tone: notificationStatus.tone,
+              action: notificationStatus.isActionable
+                ? { notificationPermission.requestOrOpenSettings() } : nil
+            )
+          }
+          if needsPermissionRestart {
+            Button(
+              OJDLocalized.string(
+                "permissions.restartApplication",
+                fallback: "Restart OpenJoystickDriver"
+              ),
+              action: restartApplication
+            )
+          }
         }.padding(4)
       } label: {
         Text(OJDLocalized.string("settings.accessReadiness", fallback: "Access & readiness")).font(
@@ -471,7 +504,7 @@
     private var accessSummaryValue: String {
       [
         inputMonitoringStatus.value, accessibilityStatus.value, postEventStatus.value,
-        notificationStatus.value
+        notificationStatus.value,
       ].joined(separator: ", ")
     }
 
@@ -574,6 +607,12 @@
       if case .available(let permissions) = viewModel.permissionState { return permissions }
       if case .available(let status) = viewModel.statusState { return status.permissions }
       return nil
+    }
+
+    private var needsPermissionRestart: Bool {
+      guard let permissionSummary else { return false }
+      return permissionSummary.inputMonitoring != .granted
+        || permissionSummary.accessibility != .granted
     }
 
     private func permissionStatus(for state: RuntimePermissionState?) -> OverviewAccessStatus {

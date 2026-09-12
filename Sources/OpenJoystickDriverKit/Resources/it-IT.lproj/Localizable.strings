@@ -8,6 +8,7 @@
 "menu.debug" = "Debug…";
 "menu.settings" = "Impostazioni…";
 "menu.quit" = "Esci da OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Modifica";
 "menu.undo" = "Annulla";
 "menu.redo" = "Ripristina";

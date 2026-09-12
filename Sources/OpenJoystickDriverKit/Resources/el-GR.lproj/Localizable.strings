@@ -8,6 +8,7 @@
 "menu.debug" = "Εντοπισμός σφαλμάτων…";
 "menu.settings" = "Ρυθμίσεις…";
 "menu.quit" = "Έξοδος από το OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Επεξεργασία";
 "menu.undo" = "Αναίρεση";
 "menu.redo" = "Επανάληψη";

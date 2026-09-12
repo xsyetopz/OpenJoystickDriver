@@ -8,6 +8,7 @@
 "menu.debug" = "Depanare…";
 "menu.settings" = "Configurări…";
 "menu.quit" = "Ieși din OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Editare";
 "menu.undo" = "Anulează";
 "menu.redo" = "Refă";

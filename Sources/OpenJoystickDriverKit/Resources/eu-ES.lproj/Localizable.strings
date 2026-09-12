@@ -8,6 +8,7 @@
 "menu.debug" = "Arazketa…";
 "menu.settings" = "Ezarpenak…";
 "menu.quit" = "Irten OpenJoystickDriver-etik";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Editatu";
 "menu.undo" = "Desegin";
 "menu.redo" = "Berregin";

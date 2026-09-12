@@ -8,6 +8,7 @@
 "menu.debug" = "Վրիպազերծում…";
 "menu.settings" = "Կարգավորումներ…";
 "menu.quit" = "Դուրս գալ OpenJoystickDriver-ից";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Խմբագրել";
 "menu.undo" = "Հետարկել";
 "menu.redo" = "Կրկնել";

@@ -8,6 +8,7 @@
 "menu.debug" = "除錯…";
 "menu.settings" = "設定…";
 "menu.quit" = "結束 OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "編輯";
 "menu.undo" = "復原";
 "menu.redo" = "重做";

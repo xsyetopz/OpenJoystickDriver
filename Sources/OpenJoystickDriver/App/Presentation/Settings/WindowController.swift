@@ -22,7 +22,8 @@
     }
   }
 
-  @MainActor final class SettingsWindowController: NSWindowController, NSWindowDelegate {
+  @MainActor
+  final class SettingsWindowController: NSWindowController, NSWindowDelegate {
     private static let toolbarIdentifier = NSToolbar.Identifier(
       "OpenJoystickDriver.SettingsToolbar"
     )
@@ -40,6 +41,7 @@
 
     init(
       viewModel: RuntimeViewModel,
+      restartApplication: @escaping @MainActor () -> Void,
       openInputTest: @escaping @MainActor (ApplicationServiceDeviceDescription) -> Void,
       persistence: any SettingsPanePersistence = UserDefaultsSettingsPanePersistence()
     ) {
@@ -58,6 +60,7 @@
         preferences: preferences,
         console: console,
         developerTools: developerTools,
+        restartApplication: restartApplication,
         openInputTest: openInputTest
       )
       let host = NSHostingView(rootView: rootView)
@@ -108,9 +111,8 @@
       }
     }
 
-    @available(*, unavailable) required init?(coder: NSCoder) {
-      fatalError("init(coder:) has not been implemented")
-    }
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     func show(pane: SettingsPane?) {
       if let pane { navigation.requestPane(pane) }
@@ -157,7 +159,8 @@
       group.selectedIndex = index
     }
 
-    @objc private func selectPaneFromToolbar(_ sender: NSToolbarItemGroup) {
+    @objc
+    private func selectPaneFromToolbar(_ sender: NSToolbarItemGroup) {
       let panes = visiblePanes
       guard panes.indices.contains(sender.selectedIndex) else {
         updateToolbarSelection()

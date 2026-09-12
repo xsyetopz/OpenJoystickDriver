@@ -10,6 +10,7 @@
 "menu.debug" = "Debug...";
 "menu.settings" = "Settings...";
 "menu.quit" = "Quit OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Edit";
 "menu.undo" = "Undo";
 "menu.redo" = "Redo";

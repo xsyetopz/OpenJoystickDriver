@@ -8,6 +8,7 @@
 "menu.debug" = "اشکال‌زدایی…";
 "menu.settings" = "تنظیمات…";
 "menu.quit" = "خروج از OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "ویرایش";
 "menu.undo" = "واگرد";
 "menu.redo" = "ازنو";

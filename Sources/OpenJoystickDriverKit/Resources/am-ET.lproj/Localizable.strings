@@ -8,6 +8,7 @@
 "menu.debug" = "ማረም…";
 "menu.settings" = "ቅንብሮች…";
 "menu.quit" = "OpenJoystickDriverን ውጣ";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "አርትዕ";
 "menu.undo" = "ቀልብስ";
 "menu.redo" = "ድገም";

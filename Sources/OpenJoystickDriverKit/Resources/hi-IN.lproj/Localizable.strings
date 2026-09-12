@@ -8,6 +8,7 @@
 "menu.debug" = "डिबग…";
 "menu.settings" = "सेटिंग्ज़…";
 "menu.quit" = "OpenJoystickDriver छोड़ें";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "संपादित करें";
 "menu.undo" = "पहले जैसा करें";
 "menu.redo" = "दोहराएँ";

@@ -8,6 +8,7 @@
 "menu.debug" = "Virheenkorjaus…";
 "menu.settings" = "Asetukset…";
 "menu.quit" = "Lopeta OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Muokkaa";
 "menu.undo" = "Kumoa";
 "menu.redo" = "Tee uudelleen";

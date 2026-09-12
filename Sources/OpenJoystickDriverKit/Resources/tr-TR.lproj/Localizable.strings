@@ -8,6 +8,7 @@
 "menu.debug" = "Hata Ayıklama…";
 "menu.settings" = "Ayarlar…";
 "menu.quit" = "OpenJoystickDriver’dan Çık";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Düzen";
 "menu.undo" = "Geri Al";
 "menu.redo" = "Yinele";

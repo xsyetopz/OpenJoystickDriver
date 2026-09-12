@@ -8,6 +8,7 @@
 "menu.debug" = "デバッグ…";
 "menu.settings" = "設定…";
 "menu.quit" = "OpenJoystickDriverを終了";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "編集";
 "menu.undo" = "取り消す";
 "menu.redo" = "やり直す";

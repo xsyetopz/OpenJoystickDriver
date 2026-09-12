@@ -8,6 +8,7 @@
 "menu.debug" = "Aflúsun…";
 "menu.settings" = "Stillingar…";
 "menu.quit" = "Hætta í OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Breyta";
 "menu.undo" = "Afturkalla";
 "menu.redo" = "Endurgera";

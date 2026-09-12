@@ -8,6 +8,7 @@
 "menu.debug" = "Отстраняване на грешки…";
 "menu.settings" = "Настройки…";
 "menu.quit" = "Изход от OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Редактиране";
 "menu.undo" = "Отказ";
 "menu.redo" = "Повтори";

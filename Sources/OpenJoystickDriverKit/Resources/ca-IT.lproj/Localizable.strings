@@ -8,6 +8,7 @@
 "menu.debug" = "Depuració…";
 "menu.settings" = "Configuració…";
 "menu.quit" = "Surt d’OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Edita";
 "menu.undo" = "Desfés";
 "menu.redo" = "Refés";

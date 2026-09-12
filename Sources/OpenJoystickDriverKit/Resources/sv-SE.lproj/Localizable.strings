@@ -8,6 +8,7 @@
 "menu.debug" = "Felsök…";
 "menu.settings" = "Inställningar…";
 "menu.quit" = "Avsluta OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Redigera";
 "menu.undo" = "Ångra";
 "menu.redo" = "Gör om";

@@ -8,6 +8,7 @@
 "menu.debug" = "Ontfouting…";
 "menu.settings" = "Instellings…";
 "menu.quit" = "Sluit OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Wysig";
 "menu.undo" = "Ontdoen";
 "menu.redo" = "Herdoen";

@@ -8,6 +8,7 @@
 "menu.debug" = "Otklanjanje pogrešaka…";
 "menu.settings" = "Postavke…";
 "menu.quit" = "Izađi iz OpenJoystickDrivera";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Uredi";
 "menu.undo" = "Poništi";
 "menu.redo" = "Ponovi";

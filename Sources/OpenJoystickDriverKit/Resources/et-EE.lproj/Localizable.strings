@@ -8,6 +8,7 @@
 "menu.debug" = "Silumine…";
 "menu.settings" = "Seaded…";
 "menu.quit" = "Sulge OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Muuda";
 "menu.undo" = "Võta tagasi";
 "menu.redo" = "Tee uuesti";

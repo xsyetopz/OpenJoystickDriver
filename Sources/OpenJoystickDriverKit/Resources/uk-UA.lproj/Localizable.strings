@@ -8,6 +8,7 @@
 "menu.debug" = "Налагодження…";
 "menu.settings" = "Параметри…";
 "menu.quit" = "Завершити OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Редагування";
 "menu.undo" = "Скасувати";
 "menu.redo" = "Повторити";

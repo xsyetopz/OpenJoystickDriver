@@ -8,6 +8,7 @@
 "menu.debug" = "Derinimas…";
 "menu.settings" = "Nuostatos…";
 "menu.quit" = "Baigti OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Redaguoti";
 "menu.undo" = "Atšaukti";
 "menu.redo" = "Perdaryti";

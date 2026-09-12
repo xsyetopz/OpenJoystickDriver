@@ -8,6 +8,7 @@
 "menu.debug" = "Foutopsporing…";
 "menu.settings" = "Instellingen…";
 "menu.quit" = "OpenJoystickDriver stoppen";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Wijzig";
 "menu.undo" = "Herstel";
 "menu.redo" = "Opnieuw";

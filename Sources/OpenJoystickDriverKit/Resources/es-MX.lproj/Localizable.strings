@@ -8,6 +8,7 @@
 "menu.debug" = "Depuración…";
 "menu.settings" = "Ajustes…";
 "menu.quit" = "Salir de OpenJoystickDriver";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Edición";
 "menu.undo" = "Deshacer";
 "menu.redo" = "Rehacer";

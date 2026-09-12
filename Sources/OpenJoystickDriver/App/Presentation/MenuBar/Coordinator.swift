@@ -89,6 +89,8 @@
         self.removeStatusItem()
         self.inputTestWindowController?.stop()
         await self.runtime.stop()
+      } relaunch: {
+        await self.relaunchApplication()
       } reply: {
         sender.reply(toApplicationShouldTerminate: true)
       }
@@ -124,11 +126,29 @@
     @objc
     func quit(_ sender: Any?) { NSApplication.shared.terminate(sender) }
 
+    private func restartApplication() {
+      termination.requestRelaunch { NSApplication.shared.terminate(nil) }
+    }
+
+    private func relaunchApplication() async {
+      let configuration = NSWorkspace.OpenConfiguration()
+      configuration.createsNewApplicationInstance = true
+      await withCheckedContinuation { continuation in
+        NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration)
+        { _, error in
+          if let error { fputs("Failed to relaunch OpenJoystickDriver: \(error)\n", stderr) }
+          continuation.resume()
+        }
+      }
+    }
+
     private func openSettings(pane: SettingsPane?) {
       if settingsWindowController == nil {
-        settingsWindowController = SettingsWindowController(viewModel: viewModel) {
-          [weak self] device in self?.openInputTest(for: device)
-        }
+        settingsWindowController = SettingsWindowController(
+          viewModel: viewModel,
+          restartApplication: { [weak self] in self?.restartApplication() },
+          openInputTest: { [weak self] device in self?.openInputTest(for: device) }
+        )
       }
       settingsWindowController?.show(pane: pane)
     }

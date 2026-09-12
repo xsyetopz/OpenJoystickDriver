@@ -8,6 +8,7 @@
 "menu.debug" = "Hibakeresés…";
 "menu.settings" = "Beállítások…";
 "menu.quit" = "Az OpenJoystickDriver bezárása";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Szerkesztés";
 "menu.undo" = "Visszavonás";
 "menu.redo" = "Ismét";

@@ -8,6 +8,7 @@
 "menu.debug" = "Дибаг…";
 "menu.settings" = "Тохиргоо…";
 "menu.quit" = "OpenJoystickDriver-ээс гарах";
+"permissions.restartApplication" = "Restart OpenJoystickDriver";
 "menu.edit" = "Засах";
 "menu.undo" = "Буцаах";
 "menu.redo" = "Дахин хийх";
