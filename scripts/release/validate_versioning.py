@@ -88,6 +88,9 @@ def main() -> int:
         assert advance_tester_sequence("0.5.0-beta.4", next_state) == 1
         assert advance_tester_sequence("0.5.0-beta.4", next_state) == 2
         assert advance_tester_sequence("0.5.0-beta.5", next_state) == 1
+        nested_state = Path(directory) / "missing" / "tester-state"
+        assert advance_tester_sequence("0.5.0-beta.4", nested_state) == 1
+        assert nested_state.is_file()
         assert tester_short_version("0.5.0-beta.4", 1) == "0.5.0-beta.4-next.1"
         assert tester_short_version("0.5.0", 2) == "0.5.0-next.2"
         expect_failure(tester_short_version, "0.5.0-beta.4-next.1", 1)

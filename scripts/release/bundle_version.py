@@ -69,6 +69,7 @@ def advance_tester_sequence(release_version: str, state_file: Path) -> int:
     sequence = sequence + 1 if previous_base == release_version else 1
     if not 1 <= sequence <= 255:
         die(f"Tester build sequence exceeded 255 for {release_version}")
+    state_file.parent.mkdir(parents=True, exist_ok=True)
     state_file.write_text(f"base={release_version}\nsequence={sequence}\n")
     return sequence
 
