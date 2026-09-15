@@ -91,7 +91,9 @@ public final class ParserRegistry: Sendable {
         layout = .pro
       }
       return SwitchProParser(layout: layout)
+    case "XboxBluetoothHID": return XboxBluetoothHIDParser()
     case "Flydigi": return FlydigiParser()
+    case "FlydigiVendor": return FlydigiVendorParser()
     case "XUSB":
       return Xbox360Parser(
         outEndpoint: transportProfile.outputEndpoint,

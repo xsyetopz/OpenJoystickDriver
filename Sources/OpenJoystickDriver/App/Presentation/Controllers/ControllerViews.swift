@@ -248,6 +248,8 @@
       case .xbox360Wireless:
         return OJDLocalized.string("controller.xbox360Wireless", fallback: "Xbox 360 wireless")
       case .xboxOne: return OJDLocalized.string("controller.xboxOne", fallback: "Xbox One")
+      case .xboxBluetoothHID:
+        return OJDLocalized.string("controller.xboxBluetoothHID", fallback: "Xbox (Bluetooth)")
       case .dualShock3: return OJDLocalized.string("controller.dualShock3", fallback: "DualShock 3")
       case .dualShock4: return OJDLocalized.string("controller.dualShock4", fallback: "DualShock 4")
       case .dualSense: return OJDLocalized.string("controller.dualSense", fallback: "DualSense")
@@ -255,6 +257,8 @@
         return OJDLocalized.string("controller.steamController", fallback: "Steam Controller")
       case .switchPro: return OJDLocalized.string("controller.switchPro", fallback: "Switch Pro")
       case .flydigi: return OJDLocalized.string("controller.flydigi", fallback: "Flydigi")
+      case .flydigiVendor:
+        return OJDLocalized.string("controller.flydigiVendor", fallback: "Flydigi (dongle)")
       case .gameSirG7ProUSB: return "GameSir G7 Pro USB"
       case .gameSirEnhancedHID: return "GameSir enhanced HID"
       case .xboxAdaptiveJoystick:

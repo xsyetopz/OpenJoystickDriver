@@ -797,6 +797,7 @@
 "controller.dualShock3" = "DualShock 3";
 "controller.dualShock4" = "DualShock 4";
 "controller.flydigi" = "Flydigi";
+"controller.flydigiVendor" = "Flydigi (dongle)";
 "controller.genericHID" = "Generic HID";
 "controller.originalXbox" = "Original Xbox";
 "controller.standardHID" = "Standard HID";
@@ -807,6 +808,7 @@
 "controller.xbox360Wireless" = "Xbox 360 wireless";
 "controller.xbox360WirelessDeveloper" = "Xbox 360 Wireless";
 "controller.xboxAdaptiveJoystick" = "Xbox Adaptive Joystick";
+"controller.xboxBluetoothHID" = "Xbox (Bluetooth)";
 "controller.xboxOne" = "Xbox One";
 "controller.xboxOriginal" = "Xbox (original)";
 "developer.buttons" = "Buttons";
