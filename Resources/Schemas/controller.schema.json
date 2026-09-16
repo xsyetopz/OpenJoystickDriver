@@ -45,7 +45,9 @@
 						"SteamController",
 						"SwitchPro",
 						"XboxAdaptiveJoystick",
+						"XboxBluetoothHID",
 						"Flydigi",
+						"FlydigiVendor",
 						"GameSir",
 						"GenericHID"
 					]
@@ -62,7 +64,9 @@
 						"steamController",
 						"switchPro",
 						"xboxAdaptiveJoystick",
+						"xboxBluetoothHID",
 						"flydigi",
+						"flydigiVendor",
 						"gameSirG7ProUSB",
 						"gameSirEnhancedHID",
 						"genericHID",
@@ -366,6 +370,46 @@
 								},
 								"type": "array"
 							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"driver": {
+								"const": "FlydigiVendor"
+							}
+						},
+						"required": ["driver"]
+					},
+					"then": {
+						"properties": {
+							"variant": {
+								"enum": ["flydigiVendor"]
+							}
+						},
+						"not": {
+							"required": ["quirks"]
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"driver": {
+								"const": "XboxBluetoothHID"
+							}
+						},
+						"required": ["driver"]
+					},
+					"then": {
+						"properties": {
+							"variant": {
+								"enum": ["xboxBluetoothHID"]
+							}
+						},
+						"not": {
+							"required": ["quirks"]
 						}
 					}
 				},

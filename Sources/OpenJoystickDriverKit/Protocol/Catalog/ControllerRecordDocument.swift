@@ -148,7 +148,9 @@ struct ControllerRecordDocument: Decodable {
       ),
       "XboxAdaptiveJoystick": (
         ["xboxAdaptiveJoystick", "unknown"], ["rawUSBPackets", "genericHIDPackets"]
-      ), "Flydigi": (["flydigi"], []), "GameSir": (["gameSirG7ProUSB", "gameSirEnhancedHID"], []),
+      ), "XboxBluetoothHID": (["xboxBluetoothHID"], []), "Flydigi": (["flydigi"], []),
+      "FlydigiVendor": (["flydigiVendor"], []),
+      "GameSir": (["gameSirG7ProUSB", "gameSirEnhancedHID"], []),
       "GenericHID": (["genericHID"], []),
     ]
   }
