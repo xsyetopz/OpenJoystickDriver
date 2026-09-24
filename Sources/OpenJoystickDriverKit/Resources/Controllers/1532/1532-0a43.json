@@ -6,5 +6,11 @@
   "protocol": {
     "driver": "GIP",
     "variant": "xboxOne"
+  },
+  "usb": {
+    "endpoints": {
+      "in": 129,
+      "out": 1
+    }
   }
 }
