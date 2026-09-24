@@ -5,14 +5,19 @@
   "transport": "usb",
   "protocol": {
     "driver": "GIP",
-    "variant": "xboxOne"
+    "variant": "xboxOne",
+    "startupPackets": [
+      "horiAck",
+      "ledOn",
+      "authDone",
+      "powerOn"
+    ]
   },
   "usb": {
     "endpoints": {
       "in": 129,
       "out": 1
     },
-    "configuration": "set1-before-claim",
-    "postHandshakeSettleMs": 200
+    "configuration": "set1-before-claim"
   }
 }
