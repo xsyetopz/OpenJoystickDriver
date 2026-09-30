@@ -51,15 +51,15 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
     productID: UInt16,
     capabilities: PhysicalControllerOutputCapabilities
   ) -> [Step] {
-    let prefix = "OpenJoystickDriver --headless controller output"
-    let identity = "\(vendorID) \(productID)"
+    let prefix = "ojd controller"
+    let identity = String(format: "%04X:%04X", vendorID, productID)
     var result: [Step] = []
     let motors = Set(capabilities.rumbleMotors)
     if motors.contains(.leftMain) || motors.contains(.leftHaptic) {
       result.append(
         Step(
           id: motors.contains(.leftHaptic) ? "left-haptic" : "left-main",
-          command: "\(prefix) rumble \(identity) --left 160 --right 0 --duration-ms 300",
+          command: "\(prefix) rumble \(identity) --left 160 --duration 0.3",
           expectedObservation: motors.contains(.leftHaptic)
             ? "Only the left trackpad haptic actuator pulses." : "Only the left main actuator runs."
         )
@@ -69,7 +69,7 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
       result.append(
         Step(
           id: motors.contains(.rightHaptic) ? "right-haptic" : "right-main",
-          command: "\(prefix) rumble \(identity) --left 0 --right 160 --duration-ms 300",
+          command: "\(prefix) rumble \(identity) --right 160 --duration 0.3",
           expectedObservation: motors.contains(.rightHaptic)
             ? "Only the right trackpad haptic actuator pulses."
             : "Only the right main actuator runs."
@@ -80,7 +80,7 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
       result.append(
         Step(
           id: "left-trigger",
-          command: "\(prefix) rumble \(identity) --left 0 --right 0 --lt 160 --duration-ms 300",
+          command: "\(prefix) rumble \(identity) --left-trigger 160 --duration 0.3",
           expectedObservation: "Only the left trigger actuator runs."
         )
       )
@@ -89,7 +89,7 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
       result.append(
         Step(
           id: "right-trigger",
-          command: "\(prefix) rumble \(identity) --left 0 --right 0 --rt 160 --duration-ms 300",
+          command: "\(prefix) rumble \(identity) --right-trigger 160 --duration 0.3",
           expectedObservation: "Only the right trigger actuator runs."
         )
       )
@@ -112,13 +112,13 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
     }
     if capabilities.lightingFeatures.contains(.programmableColor) {
       for (id, color, values) in [
-        ("color-red", "red", "255 0 0"), ("color-green", "green", "0 255 0"),
-        ("color-blue", "blue", "0 0 255"),
+        ("color-red", "red", "FF0000"), ("color-green", "green", "00FF00"),
+        ("color-blue", "blue", "0000FF"),
       ] {
         result.append(
           Step(
             id: id,
-            command: "\(prefix) color \(identity) \(values)",
+            command: "\(prefix) light \(identity) --color \(values)",
             expectedObservation: "The lightbar becomes \(color)."
           )
         )
@@ -128,14 +128,14 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
       result.append(
         Step(
           id: "brightness-low",
-          command: "\(prefix) brightness \(identity) 32",
+          command: "\(prefix) light \(identity) --brightness 32",
           expectedObservation: "The controller LED becomes dim."
         )
       )
       result.append(
         Step(
           id: "brightness-high",
-          command: "\(prefix) brightness \(identity) 224",
+          command: "\(prefix) light \(identity) --brightness 224",
           expectedObservation: "The controller LED becomes bright."
         )
       )

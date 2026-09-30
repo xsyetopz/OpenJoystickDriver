@@ -45,8 +45,7 @@ To find out whether your controller is in the catalog:
 You can also run this command:
 
 ```shell
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller list
+ojd controller list
 ```
 
 If the controller appears, OJD has a record for it or reads it as a generic HID controller. If it does not appear, see [Controller not detected](../troubleshooting/controller-not-detected.md). A controller without a record may still work as a generic HID controller. For more information, see [Generic HID controllers](generic-hid-controllers.md).

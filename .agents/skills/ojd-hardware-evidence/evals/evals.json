@@ -14,9 +14,9 @@
 		{
 			"id": 2,
 			"prompt": "Confirm both rumble motors work on the Xbox pad.",
-			"expected_output": "Uses controller output list and plan, then one bounded step per actuator with approval, recording each observation.",
+			"expected_output": "Uses ojd controller list and show, then one bounded step per actuator with approval, recording each observation.",
 			"assertions": [
-				"Runs controller output plan before sending output",
+				"Runs ojd controller show before sending output",
 				"Uses a bounded intensity and duration",
 				"Classifies each actuator claim separately"
 			]
@@ -26,7 +26,7 @@
 			"prompt": "Write the contributing/testing page for the new controller.",
 			"expected_output": "An evidence ledger with a class per claim and redacted identifiers.",
 			"assertions": [
-				"Redacts serial numbers and --device identifiers",
+				"Redacts serial numbers and runtime controller IDs",
 				"Gives each claim an evidence class"
 			]
 		},

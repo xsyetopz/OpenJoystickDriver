@@ -42,8 +42,8 @@ Produce a repeatable evidence record for one controller in one connection mode. 
 - Stop the running app or any other probe before a live record probe. Two readers on one interface give busy errors or split packets, and the result shows nothing about the controller.
 - The record probe covers raw USB GIP and wired or wireless-receiver Xbox 360 records. A HID or Bluetooth controller missing from it shows no protocol incompatibility.
 - Do not fill unknown bytes by analogy with a similar PID. Leave them unknown in the page.
-- `controller output plan` and a successful write prove only that a command was sent. The actuator counts as working only after someone observes it.
-- The `--device` value from `controller output list` is valid for one runtime session. Recording it as an identity makes later reruns point at nothing.
+- The output checks from `ojd controller show` and a successful write prove only that a command was sent. The actuator counts as working only after someone observes it.
+- The controller ID from `ojd controller list` is valid for one runtime session. Recording it as an identity makes later reruns point at nothing.
 - Hardware verification applies to the model, mode, firmware, and macOS version that were observed, and to nothing else.
 - The record probe prints `RECORD_HANDSHAKE ... result=complete` only when every startup write succeeds; a failed write prints only `ERROR:` on stderr and exits 1. Quote the handshake line or name its absence, because a report that quotes only `RECORD_SUMMARY` loses whether the declared startup was accepted.
 - Write marker names literally (`RECORD_HANDSHAKE`, `RECORD_SUMMARY`), also when listing evidence still to collect before any probe has run. "The handshake line" does not tell the user which line to search for in the output.

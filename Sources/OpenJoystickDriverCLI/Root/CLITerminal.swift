@@ -40,6 +40,28 @@ enum CLITerminal {
     !context.noInput && isatty(STDIN_FILENO) == 1
   }
 
+  /// Confirms a destructive action: passes with `force`, asks `question` on a terminal, and
+  /// otherwise fails with a usage error that names `--force`.
+  static func confirm(_ question: String, force: Bool) throws {
+    if force { return }
+    guard canPrompt() else {
+      throw CLIFailure.usage(
+        CLILocalized.text(
+          "cli.error.confirm_needs_force",
+          "This change cannot be undone. Add --force to confirm it without a prompt."
+        )
+      )
+    }
+    CLIOutput.stderr(question + " [y/N] ", terminator: "")
+    let answer = readLine()?.trimmingCharacters(in: .whitespaces).lowercased() ?? ""
+    guard answer == "y" || answer == "yes" else {
+      throw CLIFailure(
+        .failure,
+        CLILocalized.text("cli.error.confirm_declined", "Nothing changed.")
+      )
+    }
+  }
+
   static func colored(_ text: String, _ color: Color, on stream: Stream) -> String {
     guard usesColor(on: stream) else { return text }
     return "\u{1B}[\(color.rawValue)m\(text)\u{1B}[0m"

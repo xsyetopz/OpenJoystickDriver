@@ -55,7 +55,7 @@ reset_ojd_virtual_profile_overrides() {
 
   [[ -x "$CLI_BIN" ]] || die "OpenJoystickDriver CLI not found at $CLI_BIN or $APP_BIN"
 
-  run_limited_command 8 "$CLI_BIN" --headless controller virtual reset --all >/dev/null || {
+  run_limited_command 8 ojd_cli "$CLI_BIN" virtual reset --all --force >/dev/null || {
     echo "WARN: could not reset OJD virtual HID profile overrides" >&2
   }
 }

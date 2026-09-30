@@ -46,18 +46,17 @@ Face buttons map by position: B is south, A east, Y west, X north. ZL and ZR are
 
 ## Procedure
 
-Connect the pad over USB, then confirm the route:
+Connect the pad over USB, then confirm the route (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller list
+ojd controller list
+ojd controller show <controller>
 ```
 
-The entry should report `protocol=nintendo.switch1` and `quirks=input-only`. Then watch the controls:
+`show` should report the protocol `nintendo.switch1`, and `ojd controller show <controller> --json` should list the quirk `input-only`. Then watch the controls:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller state
+ojd controller watch <controller>
 ```
 
 Push each stick fully right and fully up and confirm positive X and negative Y. Press every button, D-pad direction, Home and Capture, and confirm that the reported control matches the button position. Report the result in a new issue with the pad's VID:PID.

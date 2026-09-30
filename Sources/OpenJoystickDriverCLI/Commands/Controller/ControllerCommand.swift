@@ -1,0 +1,198 @@
+import ArgumentParser
+import Foundation
+import OpenJoystickDriverKit
+
+struct ControllerCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "controller",
+    abstract: CLILocalized.text(
+      "cli.controller.abstract",
+      "List, inspect, test, and control connected controllers."
+    ),
+    discussion: CLILocalized.text(
+      "cli.controller.discussion",
+      "CONTROLLER is an ID from 'ojd controller list', or VVVV:PPPP (hex vendor and product ID) "
+        + "when exactly one connected controller has it. Every controller command needs the "
+        + "service."
+    ),
+    subcommands: [
+      ControllerListCommand.self, ControllerShowCommand.self, ControllerWatchCommand.self,
+      ControllerCaptureCommand.self, ControllerRumbleCommand.self, ControllerLightCommand.self,
+      ControllerPlayerCommand.self, ControllerSuspendCommand.self, ControllerResumeCommand.self,
+      ControllerDisconnectCommand.self,
+    ]
+  )
+
+  @OptionGroup
+  var global: GlobalOptions
+}
+
+/// The shared `CONTROLLER` argument help.
+let controllerArgumentHelp = ArgumentHelp(
+  CLILocalized.text(
+    "cli.controller.argument",
+    "The controller: an ID from 'ojd controller list', or VVVV:PPPP."
+  ),
+  valueName: "controller"
+)
+
+struct ControllerListCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "list",
+    abstract: CLILocalized.text("cli.controller.list.abstract", "List connected controllers.")
+  )
+
+  @OptionGroup
+  var global: GlobalOptions
+
+  func run() async throws {
+    try await global.run {
+      let devices = try await ServiceConnection.request { try await $0.getStatus() }
+        .connectedDevices
+      let report = ControllerListReport(controllers: devices.map(ControllerSummary.init))
+      switch CLIContext.current.format {
+      case .json: try CLIOutput.json(report)
+      case .plain:
+        CLIOutput.plain(
+          report.controllers.map {
+            [
+              $0.id, deviceIdentity(vendorID: $0.vendorID, productID: $0.productID), $0.connection,
+              $0.session, $0.name,
+            ]
+          }
+        )
+      case .human:
+        guard !report.controllers.isEmpty else {
+          CLIOutput.stderr(
+            CLILocalized.text("cli.controller.list.empty", "No controllers are connected.")
+          )
+          return
+        }
+        let idWidth = report.controllers.map(\.id.count).max() ?? 0
+        for controller in report.controllers {
+          let id = controller.id.padding(toLength: idWidth, withPad: " ", startingAt: 0)
+          let identity = deviceIdentity(
+            vendorID: controller.vendorID,
+            productID: controller.productID
+          )
+          let suspended =
+            controller.session == ControllerSessionState.suspended.rawValue
+            ? "  " + CLILocalized.text("cli.controller.list.suspended", "(suspended)") : ""
+          CLIOutput.stdout(
+            "\(id)  \(identity)  \(controller.connection)  \(controller.name)\(suspended)"
+          )
+        }
+      }
+    }
+  }
+}
+
+struct ControllerShowCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "show",
+    abstract: CLILocalized.text(
+      "cli.controller.show.abstract",
+      "Show a controller's identity, ownership, capabilities, and virtual gamepad."
+    ),
+    discussion: CLILocalized.text(
+      "cli.controller.show.discussion",
+      "Also lists output checks: commands that exercise each rumble motor and light, with what "
+        + "to observe."
+    )
+  )
+
+  @OptionGroup
+  var global: GlobalOptions
+
+  @Argument(help: controllerArgumentHelp)
+  var controller: ControllerSelector
+
+  func run() async throws {
+    try await global.run {
+      let selector = controller
+      let device = try await ServiceConnection.request { try await selector.resolve(with: $0) }
+      let report = ControllerShowReport(device)
+      switch CLIContext.current.format {
+      case .json: try CLIOutput.json(report)
+      case .plain: CLIOutput.plain(Self.plainRows(report.controller))
+      case .human: Self.printHuman(report.controller)
+      }
+    }
+  }
+
+  static func plainRows(_ detail: ControllerShowReport.Detail) -> [[String]] {
+    var rows = [
+      ["id", detail.id],
+      ["identity", deviceIdentity(vendorID: detail.vendorID, productID: detail.productID)],
+      ["name", detail.name], ["connection", detail.connection], ["protocol", detail.protocol],
+      ["session", detail.session], ["input-health", detail.inputHealth.state],
+      ["ownership", detail.ownership.physical],
+      ["controls", detail.capabilities.controls.joined(separator: ",")],
+      ["rumble-motors", detail.capabilities.rumbleMotors.joined(separator: ",")],
+      ["lighting", detail.capabilities.lightingFeatures.joined(separator: ",")],
+    ]
+    if let virtual = detail.virtual {
+      rows.append(["virtual-profile", virtual.profile ?? "", virtual.source ?? ""])
+    }
+    rows += detail.outputChecks.map { ["output-check", $0.id, $0.command] }
+    return rows
+  }
+
+  private static func printHuman(_ detail: ControllerShowReport.Detail) {
+    let none = CLILocalized.text("cli.controller.show.none", "none")
+    func list(_ values: [String]) -> String {
+      values.isEmpty ? none : values.joined(separator: ", ")
+    }
+    var rows: [(String, String)] = [
+      (CLILocalized.text("cli.controller.show.label.name", "Name"), detail.name),
+      (CLILocalized.text("cli.controller.show.label.id", "ID"), detail.id),
+      (
+        CLILocalized.text("cli.controller.show.label.identity", "Vendor:Product"),
+        deviceIdentity(vendorID: detail.vendorID, productID: detail.productID)
+      ),
+      (CLILocalized.text("cli.controller.show.label.connection", "Connection"), detail.connection),
+      (CLILocalized.text("cli.controller.show.label.protocol", "Protocol"), detail.protocol),
+      (CLILocalized.text("cli.controller.show.label.session", "Session"), detail.session),
+      (
+        CLILocalized.text("cli.controller.show.label.input", "Input"),
+        detail.inputHealth.state + (detail.inputHealth.failureReason.map { " (\($0))" } ?? "")
+      ),
+      (
+        CLILocalized.text("cli.controller.show.label.ownership", "Ownership"),
+        "\(detail.ownership.discoverySource), \(detail.ownership.physical), "
+          + "HID \(detail.ownership.hidInput)"
+      ),
+      (
+        CLILocalized.text("cli.controller.show.label.controls", "Controls"),
+        list(detail.capabilities.controls)
+      ),
+      (
+        CLILocalized.text("cli.controller.show.label.rumble", "Rumble"),
+        list(detail.capabilities.rumbleMotors)
+      ),
+      (
+        CLILocalized.text("cli.controller.show.label.lighting", "Lighting"),
+        list(detail.capabilities.lightingFeatures)
+      ),
+    ]
+    if let virtual = detail.virtual {
+      rows.append(
+        (
+          CLILocalized.text("cli.controller.show.label.virtual", "Virtual gamepad"),
+          virtual.profile.map { "\($0) (\(virtual.source ?? ""))" } ?? none
+        )
+      )
+    }
+    let width = rows.map(\.0.count).max() ?? 0
+    for (label, value) in rows {
+      CLIOutput.stdout(label.padding(toLength: width, withPad: " ", startingAt: 0) + "  " + value)
+    }
+    guard !detail.outputChecks.isEmpty else { return }
+    CLIOutput.stdout("")
+    CLIOutput.stdout(CLILocalized.text("cli.controller.show.label.output_checks", "Output checks"))
+    for check in detail.outputChecks {
+      CLIOutput.stdout("  \(check.command)")
+      CLIOutput.stdout("    \(check.expected)")
+    }
+  }
+}

@@ -116,15 +116,14 @@ Also say whether Controller Settings lists the controller only after connect, cl
 OJD runs one controller per Steam interface whose HID report descriptor has a Feature item, as Linux `hid-steam.c` does; other interfaces are not controllers. Per `hid-steam.c`, the wired controller exposes mouse 0, keyboard 1 and gamepad 2, and the dongle exposes keyboard 0 and slots 1–4. None of this has been verified on macOS hardware yet.
 
 1. For each path, run `ioreg -r -c IOHIDDevice -l -w0` and paste, for every `28de` entry, the parent `IOUSBHostInterface` `bInterfaceNumber` and the `ReportDescriptor` bytes. Say which descriptors contain a Feature item (item prefix byte `0xB0`–`0xB3`).
-1. Start OJD and run:
+1. Start OJD and run (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md)):
 
    ```bash
-   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-     --headless controller list
+   ojd controller list --json
    ```
 
-   Expect one `protocol=valve.steam-controller` entry per Feature interface with `if=N`: wired `if=2`; dongle up to four entries for `if=1`–`if=4`. Paste the lines and any interfaces listed as unbound.
-1. Dongle only: pair controllers one at a time and record which `if=N` entry receives input. Power one off and confirm only its entry reports disconnected.
+   Expect one entry with `protocol` `valve.steam-controller` per Feature interface: wired `interfaceNumber` 2; dongle up to four entries for interfaces 1 to 4. `ojd controller show <ID> --json` gives each entry's `interfaceNumber`. Paste the output and any interfaces that `ojd status` lists as unbound.
+1. Dongle only: pair controllers one at a time and record which interface's entry receives input. Power one off and confirm only its entry reports disconnected.
 
 ## 6. Bluetooth LE
 
@@ -163,7 +162,7 @@ Path tested: wired / wireless / Bluetooth LE (PID:)
 
 Per-interface roles:
 - Feature interfaces (bInterfaceNumber):
-- controller list if= values:
+- `ojd controller show --json` `interfaceNumber` values:
 
 macOS native:
 - system_profiler sees device: yes/no, entry:

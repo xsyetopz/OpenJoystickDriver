@@ -29,9 +29,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - **BREAKING:** `ojd status` replaces `status` and `app status`. It works when the service is stopped, and its `--json` object and `--plain` lines have the new shape in the [command reference](docs/command-line/command-reference.md).
 - **BREAKING:** The minimum system is macOS 12 (was 10.15), and iOS and iPadOS 15 for companion apps.
 - **BREAKING:** Saved remapping profiles now decode strictly at every level. A profile with an unknown field anywhere, such as the removed `gyroOutput.virtualMotion`, or a field that belongs to another source, destination, output, or scope type, loads as a damaged profile that can be recovered or removed in the Profiles UI instead of being silently accepted.
-- Automatic virtual output publishes one of two profiles chosen only from the controller's declared controls: Xbox One S Bluetooth (`hid-xbox-one-s-bt`, `045E:02FD`) when they fit, OJD generic HID (`hid-generic`) otherwise. Browser- and consumer-based routing and the automatic DualShock 4, DualSense, Switch Pro, and Xbox Series (`045E:0B13`) identities are removed. A per-model override can still pin either profile with `controller virtual set`. Consumer binding of `045E:02FD` is not yet hardware-verified.
-- **BREAKING:** Remove the `compat` command family and compatibility identities. Choose between the two virtual HID profiles per controller model with `controller virtual set
-  <hid-xbox-one-s-bt|hid-generic>` and `controller virtual reset`; `status` now reports each
+- Automatic virtual output publishes one of two profiles chosen only from the controller's declared controls: Xbox One S Bluetooth (`hid-xbox-one-s-bt`, `045E:02FD`) when they fit, OJD generic HID (`hid-generic`) otherwise. Browser- and consumer-based routing and the automatic DualShock 4, DualSense, Switch Pro, and Xbox Series (`045E:0B13`) identities are removed. A per-model override can still pin either profile with `ojd virtual set`. Consumer binding of `045E:02FD` is not yet hardware-verified.
+- **BREAKING:** Remove the `compat` command family and compatibility identities. Choose between the two virtual HID profiles per controller model with `ojd virtual set
+  <hid-xbox-one-s-bt|hid-generic>` and `ojd virtual reset`; `status` now reports each
   controller's virtual profile and whether it came from an override or automatic selection.
 - **BREAKING:** Remove the old compatibility RPCs, client methods, and status identity fields. Per-controller status now carries `profile`, `source` (`automatic`, `override`, or `automatic-after-rejecting`), `override`, and `unavailable` instead.
 - **BREAKING:** Rename the remapping wire route `compatibility` to `virtual-gamepad` and the status field `compatibility_output_suppressed` to `virtual_output_suppressed`.
@@ -39,7 +39,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - **BREAKING:** Remove virtual motion (gyro relayed through the virtual controller) and the Xbox 360 Mac/DirectInput, DS4/DualSense USB, and Switch Pro USB virtual formats and their host protocols.
 - **BREAKING:** Remove the PlayStation, Nintendo, and Steam glyph families from `controller input test`.
 - Send physical output through one application-service request, `sendControllerOutput`, which carries one output command (`set-rumble`, `stop-rumble`, `set-player-indicator`, `set-rgb`, `set-light-brightness`, or `set-adaptive-trigger`) and returns a `ControllerOutputResult` (`outcome` plus `droppedRumbleChannels`). It replaces `sendPhysicalRumble`, `setPhysicalPlayerIndicator`, `setPhysicalColor`, and `setPhysicalBrightness`; older clients must be updated with the app.
-- `controller output rumble|player|color|brightness` no longer pre-check capabilities in the CLI; the app decides support and the CLI reports its result. `rumble` no longer refuses a request that names a trigger motor the controller lacks: it drives the channels the controller has, warns about each missing trigger motor, and exits successfully; a request whose every channel is missing fails. Through the application service and the GUI such a request (for example a DualShock 4 trigger-only rumble) previously reported success silently; the result now lists the dropped channels. `rumble --duration-ms` returns once the app accepts the command, and the app stops the rumble when the duration ends instead of the CLI sending a second stop.
+- `ojd controller rumble|player|light` no longer pre-check capabilities in the CLI; the app decides support and the CLI reports its result. `rumble` no longer refuses a request that names a trigger motor the controller lacks: it drives the channels the controller has, warns about each missing trigger motor, and exits successfully; a request whose every channel is missing fails. Through the application service and the GUI such a request (for example a DualShock 4 trigger-only rumble) previously reported success silently; the result now lists the dropped channels. `rumble --duration` returns once the app accepts the command, and the app stops the rumble when the duration ends instead of the CLI sending a second stop.
 - A stop-rumble, including every all-zero rumble report an application writes to a virtual controller, writes the physical controller once instead of twice and cancels a pending timed stop.
 - Reuse canonical GIP, GameSir, DualShock 3, Steam Controller, and Switch Pro packet construction, and share test-only protocol fixtures with the macOS 14 compatibility harness.
 - Keep local commit and push hooks fast by reserving full lint, build, test, and network-backed catalog validation for explicit checks and CI.
@@ -87,12 +87,13 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
   - `controller state` → `ojd controller show`
   - `controller watch`, `test` → `ojd controller watch`
   - `controller packets`, `controller trace` → `ojd controller capture`
-  - `controller rumble` → `ojd controller rumble`
-  - `controller color`, `controller brightness` → `ojd controller light`
-  - `controller player` → `ojd controller player`
+  - `controller output rumble` → `ojd controller rumble`; `--duration-ms` → `--duration` in seconds
+  - `controller output color`, `controller output brightness` → `ojd controller light --color|--brightness`
+  - `controller output player` → `ojd controller player`
+  - `controller output plan` → the Output checks section of `ojd controller show`
   - `controller disconnect`, `controller resume` → `ojd controller suspend|resume`
   - `controller disconnect-wireless` → `ojd controller disconnect`
-  - `controller virtual set|reset`, `controller plan` → `ojd virtual show|set|reset`
+  - `controller virtual set|reset` → `ojd virtual set|reset`; `ojd virtual show` lists each controller's profile
   - `map` → `ojd profile` and `ojd binding`; `map clear-inputs --confirm` has no replacement
   - `diagnose catalog` → `ojd record`
   - `permissions`, `map permission` → `ojd permission list|request`; `permissions open` has no replacement

@@ -29,15 +29,14 @@ The classes are source-backed, packet/parser-backed, record-probe-backed, hardwa
 
 ## Bounded physical output
 
-**Definition.** List the capabilities, generate a plan, then run one step at a low bounded value on one named controller.
+**Definition.** List the controllers, read the output checks, then run one step at a low bounded value on one named controller.
 
 ```bash
-app=/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver
-"$app" --headless controller output list
-"$app" --headless controller output plan <decimal-vid> <decimal-pid> [--device <id>]
+ojd controller list
+ojd controller show <controller>
 ```
 
-When identical models are connected, `--device <id>` is required. Ambiguous commands are rejected. `rumble`, `player`, `color`, and `brightness` each send one command, and a missing capability fails with a "has no ... implementation" message. The full behavior is in `contributing/testing/physical-output.md`.
+`<controller>` is the ID from `ojd controller list`, or `VVVV:PPPP` when only one connected controller matches it. A `VVVV:PPPP` selector that matches identical models is rejected. `ojd controller rumble`, `light`, and `player` each send one command, and a missing capability fails with exit code 1. The full behavior is in `contributing/testing/physical-output.md`.
 
 **Use when.** Any rumble, LED, colour, or brightness claim.
 
@@ -49,7 +48,7 @@ When identical models are connected, `--device <id>` is required. Ambiguous comm
 
 ## Redaction
 
-- Remove serial numbers, user home paths, signing identities, Team IDs, tokens, and runtime `--device` identifiers.
+- Remove serial numbers, user home paths, signing identities, Team IDs, tokens, and runtime controller IDs from `ojd controller list`.
 - Keep VID/PID, interface, endpoint, report ID, length, direction, and timing, because the analysis depends on them.
 - Never publish unredacted captures.
 

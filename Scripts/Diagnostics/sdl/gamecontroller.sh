@@ -39,7 +39,8 @@ if [[ ! -e "$APP_PATH" ]]; then
 fi
 
 if [[ -x "$OJD_CLI" ]]; then
-  "$OJD_CLI" --headless controller virtual reset --all >/dev/null || {
+  # The executable runs as the `ojd` command line when argv[0] is `ojd`.
+  (exec -a ojd "$OJD_CLI" virtual reset --all --force >/dev/null) || {
     echo "WARN: could not reset OJD virtual HID profile overrides" >&2
   }
 else

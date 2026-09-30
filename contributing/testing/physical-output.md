@@ -4,22 +4,18 @@ OpenJoystickDriver generates manual test instructions from a connected controlle
 
 ## Generate A Plan
 
-List connected devices. Then request a plan with a decimal VID and PID:
+List connected controllers. Then show one controller, whose Output checks section is the plan. `ojd` is the installed command-line tool ([install](../../docs/command-line/using-the-command-line.md)):
 
 ```bash
-vid=13623
-pid=4112
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller \
-  output list
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller \
-  output plan "$vid" "$pid"
+ojd controller list
+ojd controller show 3537:1010
 ```
 
-The variables use the GameSir G7 SE decimal VID/PID as an example. Replace them with the decimal identifiers printed by `controller output list`. Each list entry also includes an opaque `device` identifier. VID/PID is enough when one matching controller is connected. If identical models are connected, append `--device <id>` to `plan` and every output command. Ambiguous commands are rejected; no arbitrary controller is selected.
+The selector uses the GameSir G7 SE `VVVV:PPPP` as an example. Replace it with the hexadecimal vendor and product ID of the connected controller, or with the ID printed by `ojd controller list`. `VVVV:PPPP` is enough when one matching controller is connected. If identical models are connected, a `VVVV:PPPP` selector is rejected and the error lists them; use the ID from `ojd controller list` in `show` and every output command.
 
-The identifier is valid only for the current runtime session. Do not record it as hardware evidence.
+The ID is valid only for the current runtime session. Do not record it as hardware evidence.
 
-The `controller output` CLI provides controls based on the device capabilities. `rumble`, `player`, `color`, and `brightness` each send one output command to the app, which decides support: a controller without the capability fails with the matching "has no ... implementation" message. `rumble` applies the channels the controller has and warns about each requested trigger motor it lacks (for example `--lt` on a DualShock 4), then exits successfully; when the controller has none of the requested channels, it fails with that message instead. The main motors are mirrored onto the Steam Controller trackpad haptics. With `--duration-ms` above 0, the command returns as soon as the app accepts it and the app stops the rumble when the duration ends; an all-zero request is a stop. Its `plan` command prints the same generated validation steps. A redacted support report includes plans for connected devices with implemented output capabilities.
+The `controller` output commands depend on the device capabilities. `rumble`, `player`, and `light` each send one output command to the app, which decides support: a controller without the capability fails with a "has no ..." message that points at `ojd controller show`. `rumble` applies the channels the controller has and warns about each requested trigger motor it lacks (for example `--left-trigger` on a DualShock 4), then exits successfully; when the controller has none of the requested channels, it fails with that message instead. The main motors are mirrored onto the Steam Controller trackpad haptics. The command returns as soon as the app accepts it, and the app stops the rumble when `--duration` ends; an all-zero request is a stop. `ojd controller show` prints the same generated validation steps in its Output checks section. A redacted support report includes plans for connected devices with implemented output capabilities.
 
 ## Output Command Request
 
@@ -64,6 +60,6 @@ For controllers with conventional rumble capabilities, the interactive Just reci
 just diagnose-rumble-motors 13623 4112 160 500
 ```
 
-The example uses decimal VID `13623`, PID `4112`, intensity `160`, and a 500 ms duration. Replace the first two values with the connected device's decimal IDs. Report each numbered result as left trigger, right trigger, left grip, right grip, none, or another exact observation. The recipe is a convenience around the installed app's canonical `controller output rumble` command; it does not change the documented support status automatically.
+The example uses decimal VID `13623`, PID `4112`, intensity `160`, and a 500 ms duration. Replace the first two values with the connected device's vendor and product IDs, in decimal or `0x` hexadecimal; the recipe converts them to a `VVVV:PPPP` selector. Report each numbered result as left trigger, right trigger, left grip, right grip, none, or another exact observation. The recipe is a convenience around the installed app's canonical `ojd controller rumble` command; it does not change the documented support status automatically.
 
 The generated plan excludes serial values, HID locations, packet payloads, and filesystem paths. Review any free-form issue text or attachments separately before publishing them. The command reports implemented capabilities, not a machine-authored verification level; accepted observations remain in the matching testing document and issue history.

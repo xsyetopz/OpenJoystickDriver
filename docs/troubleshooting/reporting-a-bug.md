@@ -38,14 +38,13 @@ Logs may contain device names, identifiers, and paths. Read them before you shar
 
 ## Capture packets
 
-For a controller that is wrong or missing, attach a packet capture. Run the following commands.
+For a controller that is wrong or missing, attach a packet capture. Find the controller's ID with `ojd controller list`, then run the following command while you press each control. It needs the [`ojd` command](../command-line/using-the-command-line.md).
 
 ```shell
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller packets --limit 200 --json > packets.json
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller trace --seconds 10 --json-lines > trace.jsonl
+ojd controller capture <controller> --duration 10 --json > capture.jsonl
 ```
 
-The commands print to Terminal. The `>` redirect saves the output to a file in the current folder. Attach the files to your report.
+The command prints one packet per line to Terminal. The `>` redirect saves the output to a file in the current folder. Attach the file to your report.
 
 Say which controls you pressed and in what order. Packet contents differ by controller. Check the file before you share it.
 

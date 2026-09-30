@@ -6,7 +6,7 @@ import Testing
 
 struct CommandTreeTests {
   @Test
-  func treeHasTheSliceOneCommands() {
+  func treeHasTheRedesignedCommands() {
     let paths = CLICommandTree.paths()
     #expect(paths.contains(["status"]))
     #expect(paths.contains(["service", "start"]))
@@ -24,6 +24,11 @@ struct CommandTreeTests {
     #expect(paths.contains(["log", "path"]))
     #expect(paths.contains(["diagnose"]))
     #expect(paths.contains(["update", "check"]))
+    for verb in [
+      "list", "show", "watch", "capture", "rumble", "light", "player", "suspend", "resume",
+      "disconnect",
+    ] { #expect(paths.contains(["controller", verb]), "\(verb)") }
+    for verb in ["show", "set", "reset"] { #expect(paths.contains(["virtual", verb]), "\(verb)") }
   }
 
   @Test(arguments: [[]] + CLICommandTree.paths())
@@ -54,7 +59,10 @@ struct CommandTreeTests {
     ["status", "--frobnicate"], ["--json", "--plain", "status"], ["status", "--timeout", "0"],
     ["status", "--timeout", "nan"], ["status", "extra"],
     // Removed with no alias.
-    ["map"], ["app", "status"], ["permissions"], ["test"], ["--headless"],
+    ["map"], ["app", "status"], ["permissions"], ["test"], ["--headless"], ["controller", "state"],
+    ["controller", "packets"], ["controller", "trace"], ["controller", "color"],
+    ["controller", "brightness"], ["controller", "disconnect-wireless"], ["controller", "output"],
+    ["controller", "virtual"], ["controller", "plan"],
   ])
   func usageErrorsExitSixtyFourOnStandardErrorOnly(arguments: [String]) async {
     let result = await CLIRun.run(arguments)

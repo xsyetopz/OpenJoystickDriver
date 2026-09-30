@@ -42,13 +42,11 @@ If the interface is unavailable, preserve the selected route and registry owner;
 
 ## Check Physical Output With An Installed App
 
-Check LED and rumble with a separately installed current OpenJoystickDriver app. Use the [physical-output procedure](../physical-output.md) to generate a device-specific plan:
+Check LED and rumble with a separately installed current OpenJoystickDriver app. Use the [physical-output procedure](../physical-output.md) to generate a device-specific plan (`ojd` is the [command-line tool](../../../docs/command-line/using-the-command-line.md)):
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller \
-  output list
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller \
-  output plan 5426 2601
+ojd controller list
+ojd controller show 1532:0A29
 ```
 
 Run each generated step individually. Record the player-indicator result and, where the plan exposes them, left and right main rumble plus left and right trigger rumble. This output check does not establish support by itself.

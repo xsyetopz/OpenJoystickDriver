@@ -4,7 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 // Idle reports captured from the owner's pads on 2026-09-26 between 15:38 and 15:41 UTC with
-// `OpenJoystickDriver controller packets <vid> <pid> --limit 60 --json` against a running dev
+// `ojd controller capture <controller> --json` against a running dev
 // build. Nobody touched the pads, so these are neutral reports only; the command is read-only.
 extension DriverParseCharacterizationTests {
   /// GameSir G7 SE (3537:1010, xbox.gip) over USB: the pad sends no 0x20 input while idle, only

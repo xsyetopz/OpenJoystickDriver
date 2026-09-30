@@ -16,15 +16,17 @@ if [[ ! -x "$app" ]]; then
   "$PROJECT_DIR/Scripts/ojd" build dev
 fi
 [[ -x "$app" ]] || die "OpenJoystickDriver is not installed or built; run ./Scripts/ojd build install dev"
+# vid and pid may be decimal or 0x-prefixed hex; the CLI selects a controller by VVVV:PPPP.
+controller="$(printf '%04X:%04X' "$((vid))" "$((pid))")"
+duration="$((duration_ms / 1000)).$(printf '%03d' $((duration_ms % 1000)))"
 
 stop_rumble() {
-  "$app" --headless controller output rumble "$vid" "$pid" \
-    --left 0 --right 0 --lt 0 --rt 0 --duration-ms 0 >/dev/null 2>&1 || true
+  (ojd_cli "$app" controller rumble "$controller" --left 0 --right 0 >/dev/null 2>&1) || true
 }
 trap stop_rumble EXIT INT TERM
 
 channels=(left-main right-main left-trigger right-trigger)
-options=(--left --right --lt --rt)
+options=(--left --right --left-trigger --right-trigger)
 echo "Testing $vid:$pid at intensity $intensity for $duration_ms ms."
 echo "Hold the controller normally and note the exact location for each numbered step."
 for index in "${!channels[@]}"; do
@@ -32,14 +34,13 @@ for index in "${!channels[@]}"; do
   read -r -p "Press Return for $step/4 ${channels[$index]} (or Ctrl-C to stop)... "
   stop_rumble
   # A controller without this channel makes the command fail; the sequence goes on.
-  if ! "$app" --headless controller output rumble "$vid" "$pid" \
-    --left 0 --right 0 --lt 0 --rt 0 "${options[$index]}" "$intensity" \
-    --duration-ms "$duration_ms"; then
+  if ! (ojd_cli "$app" controller rumble "$controller" "${options[$index]}" "$intensity" \
+    --duration "$duration"); then
     echo "Record $step: ${channels[$index]} -> not present"
     continue
   fi
   # The command returns at once; the daemon stops the channel when the duration ends.
-  sleep "$((duration_ms / 1000)).$(printf '%03d' $((duration_ms % 1000)))"
+  sleep "$duration"
   stop_rumble
   echo "Record $step: ${channels[$index]} -> left trigger / right trigger / left grip / right grip / none / other"
 done

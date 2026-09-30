@@ -27,10 +27,10 @@ struct PhysicalOutputValidationPlanTests {
         "brightness-high",
       ]
     )
-    let firstCommand =
-      "OpenJoystickDriver --headless controller output rumble 1234 5678"
-      + " --left 160 --right 0 --duration-ms 300"
-    #expect(plan.steps.first?.command == firstCommand)
+    #expect(
+      plan.steps.first?.command == "ojd controller rumble 04D2:162E --left 160 --duration 0.3"
+    )
+    #expect(plan.steps.last?.command == "ojd controller light 04D2:162E --brightness 224")
     #expect(plan.notes.allSatisfy { !$0.contains("Secret Controller Name") })
     #expect(plan.notes.allSatisfy { !$0.contains("SERIAL-SECRET") })
   }

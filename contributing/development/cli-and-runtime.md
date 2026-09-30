@@ -27,6 +27,8 @@ CLI command families:
 ```text
 ojd status
 ojd service start|stop|wait
+ojd controller list|show|watch|capture|rumble|light|player|suspend|resume|disconnect
+ojd virtual show|set|reset
 ojd permission list|request
 ojd extension status|activate|deactivate
 ojd setting list|get|set
@@ -49,21 +51,21 @@ ojd update check
 | `update check` | Settings update check |
 | JSON/JSONL output, scripting, soak tests, catalog diagnostics, packaging, catalog generation, and DriverKit generation | Automation-only |
 
-`--timeout <seconds>` applies to bounded application-service calls. Controller operations retain opaque `--device` selection and ambiguity rejection. Machine-readable output uses `--json` where supported. Stream commands use their documented JSONL mode.
+`--timeout <seconds>` applies to bounded application-service calls. Controller commands take a `<controller>` operand: an ID from `ojd controller list`, or `VVVV:PPPP` (hexadecimal vendor and product ID). A `VVVV:PPPP` that matches two connected controllers is rejected, and the error lists them. Machine-readable output uses `--json` where supported. Stream commands use their documented JSONL mode.
 
-Packet capture is opt-in. The service records a controller's raw packets only while a reader holds a five-second capture lease, which each packet-log read renews: opening Developer Tools or selecting a controller there, its Live capture, `controller trace`, or `controller packets`, which samples for one second when its first read is empty. When the lease lapses, recording stops and the captured packets are discarded. Service logs, `status`, and `controller list` note only whether a controller has a serial number, never its value.
+Packet capture is opt-in. The service records a controller's raw packets only while a reader holds a five-second capture lease, which each packet-log read renews: opening Developer Tools or selecting a controller there, its Live capture, or `ojd controller capture`. When the lease lapses, recording stops and the captured packets are discarded. Service logs, `status`, and `controller list` note only whether a controller has a serial number, never its value.
 
 Keep raw packets, runtime soaking, catalog inspection, permission audits, and virtual-device self-tests in the CLI: their output is diagnostic, verbose, or unsuitable for an always-present consumer interface.
 
 ## Controller Sessions and Virtual HID Profiles
 
-`controller disconnect` suspends a controller from OpenJoystickDriver without terminating its physical Bluetooth or USB link. Suspension neutralizes input and physical effects, removes OJD virtual output, and keeps the controller visible. `controller resume` repeats required startup output and re-enables input; a physical reconnect creates a new active session. System sleep is not a physical disconnect: a controller suspended before sleep returns suspended after wake. A Bluetooth disconnect that reaches OJD before the sleep notification is a physical disconnect and ends the suspension.
+`controller suspend` suspends a controller from OpenJoystickDriver without terminating its physical Bluetooth or USB link. Suspension neutralizes input and physical effects, removes OJD virtual output, and keeps the controller visible. `controller resume` repeats required startup output and re-enables input; a physical reconnect creates a new active session. System sleep is not a physical disconnect: a controller suspended before sleep returns suspended after wake. A Bluetooth disconnect that reaches OJD before the sleep notification is a physical disconnect and ends the suspension.
 
-`controller disconnect-wireless` is Bluetooth-only. It neutralizes and suspends the selected OJD session before making a bounded request to macOS to close that physical connection. A failed or timed-out close leaves the session suspended so stale input cannot be republished; use `controller resume` only when you intentionally want OJD to accept it again. OJD never reconnects the controller automatically, and the command does not stop other controller sessions.
+`controller disconnect` is Bluetooth-only. It neutralizes and suspends the selected OJD session before making a bounded request to macOS to close that physical connection. A failed or timed-out close leaves the session suspended so stale input cannot be republished; use `controller resume` only when you intentionally want OJD to accept it again. OJD never reconnects the controller automatically, and the command does not stop other controller sessions.
 
 Parsers that expose complete report observations also expose typed input health in status and support reports. DualShock 4 health uses the advancing device sensor timestamp rather than host packet arrival alone. Missing or non-advancing complete reports become stale after one second, neutralize OJD-published output, and wait for a fresh neutral report before recovery. A fresh held control is not guessed to be accidental. Native HID pass-through may still be visible directly to another app, so stale health remains a Needs attention condition even after OJD retires its own publication.
 
-Each controller model (vendor/product) has a virtual HID profile: `hid-xbox-one-s-bt` (`045E:02FD`, selected automatically when the controller's declared controls fit) or `hid-generic`. Automatic selection runs unless the model has a stored override. `controller virtual set <hid-xbox-one-s-bt|hid-generic> [--vid N] [--pid N] [--device ID]` stores an override for the selected controller's model; `controller virtual reset [--vid N|--pid N|--device ID | --all]` clears it (`--all` clears every model's override and cannot combine with a selector). Both commands print the resulting live profile line, then print a failure to stderr and exit 1 if the request did not fully take effect (for example `controller-not-found`, `override-rejected-by-controller`, or `activation-failed`).
+Each controller model (vendor/product) has a virtual HID profile: `hid-xbox-one-s-bt` (`045E:02FD`, selected automatically when the controller's declared controls fit) or `hid-generic`. Automatic selection runs unless the model has a stored override. `ojd virtual set <hid-xbox-one-s-bt|hid-generic> <controller>` stores an override for the selected controller's model; `ojd virtual reset <controller>` clears it, and `ojd virtual reset --all` clears every model's override (it cannot combine with a controller). `ojd virtual show [<controller>]` shows each controller's live profile and the choices. Both commands print the resulting live profile line, then print a failure to stderr and exit 1 if the request did not fully take effect (for example `controller-not-found`, `override-rejected-by-controller`, or `activation-failed`).
 
 `ApplicationServiceVirtualHIDProfileStatus` reports each connected controller's selected profile, its source (`automatic`, `override`, or `automatic-after-rejecting`), its stored override, and whether no profile is available for its declared controls.
 

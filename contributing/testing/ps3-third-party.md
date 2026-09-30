@@ -49,18 +49,17 @@ SDL decodes the hat only when its byte changes from the previous report, startin
 
 ## Procedure
 
-Plug the controller in (the GP100 in PS3/PC mode), then confirm the route:
+Plug the controller in (the GP100 in PS3/PC mode), then confirm the route (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller list
+ojd controller list
+ojd controller show <controller>
 ```
 
-The entry should report `protocol=vendor.ps3-third-party`. Then watch the controls:
+`show` should report the protocol `vendor.ps3-third-party`. Then watch the controls:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller state
+ojd controller watch <controller>
 ```
 
 Push each stick fully right and fully up, and confirm positive X and negative Y. Confirm both triggers rest at 0. Press every button, every D-pad direction and Home, and confirm the reported name matches the label. If the sticks read wrong, the probe likely failed and the descriptor mapping is active. Report that with the VID:PID and a raw capture in a new issue. On the GP100, run `./Scripts/ojd diagnose rumble-motors 9571 1397` and confirm that the left (strong) step drives the heavier motor. Report GP100 results on [#38](https://github.com/xsyetopz/OpenJoystickDriver/issues/38).

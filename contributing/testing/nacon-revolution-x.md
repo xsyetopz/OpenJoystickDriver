@@ -40,13 +40,11 @@ The parser test fixtures cover split, stacked, extended-length, and requested AC
 
 ## Check Physical Output With An Installed App
 
-Check LED and rumble with a separately installed current OpenJoystickDriver app. Use the [physical-output procedure](physical-output.md) to generate a device-specific plan:
+Check LED and rumble with a separately installed current OpenJoystickDriver app. Use the [physical-output procedure](physical-output.md) to generate a device-specific plan (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md)):
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller \
-  output list
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller \
-  output plan 12933 1588
+ojd controller list
+ojd controller show 3285:0634
 ```
 
 Attach the probe and output results to issue #21. Include the macOS version, Mac model, controller firmware if known, exact OJD commit, selected USB route and ownership results, and any USB transfer error. Do not claim support until input, reconnect, and any claimed output behavior pass on physical hardware.

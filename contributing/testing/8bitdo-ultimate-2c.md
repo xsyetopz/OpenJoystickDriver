@@ -36,18 +36,17 @@ Usages 3 and 6 are the rear buttons and 9 and 10 repeat the triggers as digital 
 
 ## Procedure
 
-Connect the controller in the mode under test, then confirm the route:
+Connect the controller in the mode under test, then confirm the route (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller list
+ojd controller list
+ojd controller show <controller>
 ```
 
-Bluetooth and the HID receiver should report `protocol=hid.descriptor`; the XInput dongle reports `xbox.xusb`. Then watch the controls:
+In `show`, Bluetooth and the HID receiver should report the protocol `hid.descriptor`; the XInput dongle reports `xbox.xusb`. Then watch the controls:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller state
+ojd controller watch <controller>
 ```
 
 With the controller at rest, both triggers must read 0. Move the right stick and confirm the triggers stay at 0. Press each button in the table and confirm the reported name matches the label on the controller. Report the result with the mode and VID:PID on [#34](https://github.com/xsyetopz/OpenJoystickDriver/issues/34).

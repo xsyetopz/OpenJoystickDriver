@@ -2,10 +2,10 @@
 
 Use this test for [OpenJoystickDriver issue #11][1] and device `046d:c21d` (`1133:49693` decimal).
 
-The current record uses Linux's Xbox 360 packet layout with the hardware-observed interrupt endpoints `0x81`/`0x02`. OJD's parser maps the XInput button bitfield to named controls. Check the reported labels in Controller Settings Live or with:
+The current record uses Linux's Xbox 360 packet layout with the hardware-observed interrupt endpoints `0x81`/`0x02`. OJD's parser maps the XInput button bitfield to named controls. Check the reported labels in Controller Settings Live or with (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md)):
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller state
+ojd controller watch 046D:C21D
 ```
 
 Do not claim support until the reporter confirms the complete mapping.

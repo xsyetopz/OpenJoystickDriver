@@ -46,18 +46,17 @@ Input decoding is verified against captured reports for every control in the tab
 
 ## Procedure
 
-Pair the controller over Bluetooth, then confirm the runtime selects this record rather than the generic fallback:
+Pair the controller over Bluetooth, then confirm the runtime selects this record rather than the generic fallback (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md)):
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller list
+ojd controller list
+ojd controller show D7D7:0041
 ```
 
-The entry should report `protocol=vendor.flydigi`. Then check each control:
+`show` should report the protocol `vendor.flydigi`. Then check each control:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller state
+ojd controller watch D7D7:0041
 ```
 
 Push the left stick fully up; confirm negative Y. Deflect the right stick and confirm the triggers stay at rest. Press each face button, bumper, stick click, Select, Start, and Home in turn and confirm the reported name matches the physical label.

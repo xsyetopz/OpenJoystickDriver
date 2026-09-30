@@ -26,6 +26,50 @@ Keys that need the service are absent when it is stopped.
 
 With `--plain`, the first field of each line is `service`, `extension`, `permission`, `virtual-device`, `controller`, `unbound`, or `pass-through`.
 
+## controller
+
+List connected controllers, inspect them, and test their input and outputs. Every `controller` command needs the service running.
+
+```text
+ojd controller list
+ojd controller show CONTROLLER
+ojd controller watch CONTROLLER [--duration SECONDS] [--first-press]
+ojd controller capture CONTROLLER [--duration SECONDS]
+ojd controller rumble CONTROLLER [--left N] [--right N] [--left-trigger N] [--right-trigger N] [--duration SECONDS]
+ojd controller light CONTROLLER [--color RRGGBB] [--brightness N]
+ojd controller player CONTROLLER 1|2|3|4|off
+ojd controller suspend CONTROLLER
+ojd controller resume CONTROLLER
+ojd controller disconnect CONTROLLER
+```
+
+`CONTROLLER` is an ID from `ojd controller list`, or `VVVV:PPPP`, the hexadecimal vendor and product ID, in either case. A `VVVV:PPPP` that matches two connected controllers is rejected, and the error lists them. Use an ID to pick one.
+
+- `controller list`: List connected controllers.
+- `controller show`: Show a controller's identity, ownership, capabilities, and virtual gamepad. The Output checks section lists the commands that exercise each rumble motor and light, with what to observe.
+- `controller watch`: Print the controller's input state each time it changes, until you press Control-C. `--duration` stops after that many seconds. `--first-press` prints the first control pressed and exits. It fails when `--duration` passes first. With `--json`, it prints one object per line. Stick Y points up.
+- `controller capture`: Print the raw packets the controller sends and receives, each with its time, direction (`rx` or `tx`), length, and hex bytes. It runs until you press Control-C, or until `--duration` seconds pass. With `--json`, it prints one object per line.
+- `controller rumble`: Run the rumble motors. `--left`, `--right`, `--left-trigger`, and `--right-trigger` set each motor's intensity from 0 to 255. With none of them, both main motors run at 180. `--duration` is in seconds, above 0 and at most 5, and is 0.45 by default. Set every intensity to 0 to stop the motors.
+- `controller light`: Set the lightbar color with `--color`, as hex such as `FF8000`, or the LED brightness with `--brightness`, from 0 to 255.
+- `controller player`: Set the player indicator lights to 1 to 4, or turn them off with `off`.
+- `controller suspend`: Stop OpenJoystickDriver from driving the controller until you resume it.
+- `controller resume`: Let OpenJoystickDriver drive a suspended controller again.
+- `controller disconnect`: Close a Bluetooth controller's connection. The controller stays paired and reconnects when you turn it on again. The command waits at least 6 seconds for Bluetooth to confirm.
+
+## virtual
+
+Show and choose the virtual gamepad that OpenJoystickDriver publishes for a controller. A choice applies to every controller of the same model.
+
+```text
+ojd virtual show [CONTROLLER]
+ojd virtual set PROFILE CONTROLLER
+ojd virtual reset [CONTROLLER] [--all] [--force] [--dry-run]
+```
+
+- `virtual show`: Show each controller's virtual gamepad and the profiles you can choose. Name a controller to show only that one.
+- `virtual set`: Choose the profile for the controller's model. The profiles are `hid-xbox-one-s-bt` and `hid-generic`.
+- `virtual reset`: Return the controller's model to automatic selection. `--all` returns every model, including models that are not connected. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing.
+
 ## service
 
 Start or stop the OpenJoystickDriver service, or wait until it accepts requests. With `--timeout`, each command waits at most that many seconds. The default is 5 seconds.

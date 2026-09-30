@@ -60,6 +60,13 @@ enum CLICommandTree {
     switch path {
     case ["setting", "get"]: ["launch-at-login"]
     case ["setting", "set"]: ["launch-at-login", "true"]
+    case ["controller", "show"], ["controller", "watch"], ["controller", "capture"],
+      ["controller", "rumble"], ["controller", "suspend"], ["controller", "resume"],
+      ["controller", "disconnect"], ["virtual", "reset"]:
+      ["045E:028E"]
+    case ["controller", "light"]: ["045E:028E", "--color", "FF0000"]
+    case ["controller", "player"]: ["045E:028E", "1"]
+    case ["virtual", "set"]: ["hid-generic", "045E:028E"]
     default: []
     }
   }

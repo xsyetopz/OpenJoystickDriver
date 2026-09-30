@@ -37,10 +37,8 @@ Uninstall: `ojd setting set launch-at-login false`, quit, delete the app. Option
 OJD automatically publishes each non-native controller as one of two virtual HID profiles, chosen from the controller's declared controls: `hid-xbox-one-s-bt` (Xbox One S Bluetooth, `045E:02FD`) when they fit, else `hid-generic`. Override a model's profile, or clear the override to return to automatic selection:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller \
-  virtual set hid-generic --vid 0x045E --pid 0x02FD
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless controller \
-  virtual reset --all
+ojd virtual set hid-generic 045E:02FD
+ojd virtual reset --all
 ```
 
 ## Troubleshooting
@@ -59,7 +57,7 @@ ojd diagnose --bundle support-report.json
 
 More: [troubleshooting](docs/troubleshooting/README.md), [report a bug](docs/troubleshooting/reporting-a-bug.md), [tester builds](contributing/testing/tester-builds.md).
 
-Identical models: `controller output list`, then `--device <id>`. To close only the selected Bluetooth link, use `controller disconnect-wireless --device <id>`; this never reconnects it.
+Identical models: a `VVVV:PPPP` selector that matches both is rejected, so pass the ID from `ojd controller list` instead. To close only the selected Bluetooth link, use `ojd controller disconnect <controller>`; this never reconnects it.
 
 ## Development
 

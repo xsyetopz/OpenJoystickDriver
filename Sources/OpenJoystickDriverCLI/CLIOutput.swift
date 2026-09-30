@@ -26,6 +26,14 @@ enum CLIOutput {
     stdout(String(bytes: data, encoding: .utf8) ?? "")
   }
 
+  /// Prints `value` as one line of sorted JSON on stdout, for a `--json` stream.
+  static func jsonLine(_ value: some Encodable) throws {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+    let data = try encoder.encode(value)
+    stdout(String(bytes: data, encoding: .utf8) ?? "")
+  }
+
   /// Prints one tab-separated record per row on stdout, for `--plain`.
   static func plain(_ rows: [[String]]) {
     for row in rows {

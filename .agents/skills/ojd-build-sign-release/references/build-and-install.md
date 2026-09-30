@@ -24,7 +24,7 @@
 
 **Do not use when.** The change is covered by `swift test` alone. Do not install when no runtime check needs it.
 
-**Verify.** The version provenance in `--headless diagnose report` shows the built commit, and `./Scripts/ojd diagnose dext` reports activation.
+**Verify.** The version provenance in `ojd diagnose` shows the built commit, and `./Scripts/ojd diagnose dext` reports activation.
 
 ## Stale DEXT
 

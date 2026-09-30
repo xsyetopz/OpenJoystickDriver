@@ -40,18 +40,17 @@ Button mapping follows SDL's output: the bit SDL names VIEW is Menu (Start), and
 
 ## Procedure
 
-Connect the controller by USB, by Bluetooth, or through its dongle, then confirm the route:
+Connect the controller by USB, by Bluetooth, or through its dongle, then confirm the route (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller list
+ojd controller list
+ojd controller show <controller>
 ```
 
-The entry should report `protocol=valve.steam-controller` and `quirks=triton`. Then watch the controls:
+`show` should report the protocol `valve.steam-controller`, and `ojd controller show <controller> --json` should list the quirk `triton`. Then watch the controls:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller state
+ojd controller watch <controller>
 ```
 
 Check these points:

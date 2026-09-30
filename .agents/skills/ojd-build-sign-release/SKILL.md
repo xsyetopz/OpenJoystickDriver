@@ -24,7 +24,7 @@ Produce a signed app (and DEXT when needed) from the exact intended commit, and 
 1. After installing, check the result with:
 
    ```bash
-   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless diagnose report
+   ojd diagnose
    ./Scripts/ojd diagnose dext
    ```
 

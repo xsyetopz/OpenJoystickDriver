@@ -45,18 +45,17 @@ The offsets are for the payload after the report ID. Sticks, triggers and button
 
 ## Procedure
 
-Connect the controller, then confirm the route:
+Connect the controller, then confirm the route (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller list
+ojd controller list
+ojd controller show <controller>
 ```
 
-The entry should report `protocol=sony.dualsense`. Then watch the controls:
+`show` should report the protocol `sony.dualsense`. Then watch the controls:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless controller state
+ojd controller watch <controller>
 ```
 
 Check both sticks, both triggers from rest to full, every button, and the touchpad and motion if the controller has them. For a wireless receiver, turn the controller off and on, and confirm that it disconnects and reconnects. Report results with the VID:PID and a raw capture in a new issue.

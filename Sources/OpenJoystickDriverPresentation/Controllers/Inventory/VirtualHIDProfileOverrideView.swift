@@ -6,7 +6,7 @@
   import SwiftUI
 
   /// The Advanced override of one controller model's virtual HID profile, matching
-  /// `controller virtual set|reset`: Automatic clears the override.
+  /// `ojd virtual set|reset`: Automatic clears the override.
   struct VirtualHIDProfileOverrideView: View {
     @ObservedObject
     var viewModel: RuntimeViewModel

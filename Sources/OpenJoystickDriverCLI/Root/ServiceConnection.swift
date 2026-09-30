@@ -20,11 +20,19 @@ enum ServiceConnection {
     timeout: Double = CLIContext.current.requestTimeout,
     _ body: @escaping @Sendable (ApplicationServiceClient) async throws -> T
   ) async throws -> T {
+    let client = try await open()
+    defer { client.disconnect() }
+    return try await withDeadline(seconds: timeout) { try await body(client) }
+  }
+
+  /// Connects to a running service for a command that sends many requests, such as a stream.
+  ///
+  /// The caller disconnects the client and bounds each request with `withDeadline`.
+  static func open() async throws -> ApplicationServiceClient {
     let client = ApplicationServiceClient(socketPath: socketPath)
     await client.connect(timeoutSeconds: 0)
     guard client.isConnected else { throw CLIFailure.serviceUnavailable }
-    defer { client.disconnect() }
-    return try await withDeadline(seconds: timeout) { try await body(client) }
+    return client
   }
 
   /// Runs `operation` until it finishes or `seconds` elapse.
