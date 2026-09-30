@@ -8,9 +8,11 @@ extension DevicePipeline {
     case hid(locationID: UInt32)
   }
 
-  /// Start pipeline: open device, handshake, begin input loop.
+  /// Start pipeline: open device, handshake, begin input loop. A stopped pipeline stays stopped:
+  /// admission publishes it before starting it, so a detach can stop it first, and a later start
+  /// would open a session no stop closes.
   func start() {
-    guard !isActive else { return }
+    guard !isActive, !hasStopped else { return }
     isActive = true
     if driver.sessionPlan.inputReportLivenessTimeoutNanoseconds != nil {
       inputHealthMonitoringStartedNanoseconds = uptimeNanoseconds()

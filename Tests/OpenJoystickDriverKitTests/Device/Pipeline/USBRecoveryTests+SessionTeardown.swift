@@ -47,6 +47,29 @@ extension USBPipelineRecoveryTests {
     #expect(await manager.suspendedControllerIdentities.isEmpty)
   }
 
+  /// Admission publishes a pipeline before it starts it, so a detach can stop it first. The late
+  /// start must not open a session that no later stop would close.
+  @Test
+  func startAfterStopOpensNothing() async {
+    let session = RecoveryUSBSession(readError: .timeout)
+    let provider = RecoveryUSBProvider(sessions: [session])
+    let pipeline = DevicePipeline(
+      identifier: identifier,
+      transport: .usb(device: device),
+      driver: RecoveryInputParser(),
+      dispatcher: RecoveryOutputDispatcher(),
+      usbTransportProvider: provider
+    )
+
+    await pipeline.stop()
+    await pipeline.start()
+    try? await Task.sleep(for: .milliseconds(50))
+
+    #expect(await provider.openCount == 0)
+    #expect(await !pipeline.isActive)
+    await pipeline.stop()
+  }
+
   @Test
   func invalidatedSessionRejectsLateRumble() async {
     let session = RecoveryUSBSession(readError: .timeout)

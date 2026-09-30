@@ -161,15 +161,20 @@ private final class IOHIDAccessBackend: HIDAccessBackend, Sendable {
     await stream.getFeatureReport(connection: connection, request: request)
   }
 
-  func releaseInputClaim(locationID: UInt32) -> PhysicalHIDClaimResult {
-    stream.releaseInputClaim(locationID: locationID)
+  // Seizes and closes run on main, where the manager's run loop removes devices: a device that
+  // detaches mid-open must not lose its plug-in on another thread, and `retryInputClaim` yields to
+  // the main-confined stream continuation.
+  func releaseInputClaim(locationID: UInt32) async -> PhysicalHIDClaimResult {
+    await MainActor.run { stream.releaseInputClaim(locationID: locationID) }
   }
 
-  func reacquireInputClaim(locationID: UInt32) -> PhysicalHIDClaimResult {
-    stream.reacquireInputClaim(locationID: locationID)
+  func reacquireInputClaim(locationID: UInt32) async -> PhysicalHIDClaimResult {
+    await MainActor.run { stream.reacquireInputClaim(locationID: locationID) }
   }
 
-  func retryInputClaim(locationID: UInt32) { stream.retryInputClaim(locationID: locationID) }
+  func retryInputClaim(locationID: UInt32) async {
+    await MainActor.run { stream.retryInputClaim(locationID: locationID) }
+  }
 
   func routeElementValues(connection: HIDDeviceConnection) async {
     await stream.routeElementValues(connection: connection)
