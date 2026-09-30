@@ -32,19 +32,30 @@ public final class HIDDeviceStream: @unchecked Sendable {
   var sharedOpenByDeviceID: [UInt64: SharedOpenDevice] = [:]
   let eventAdapter = SynchronizedPhysicalHIDBackendEventAdapter()
   /// Models whose family declares HID protocol roles; each of their devices disconnects on its
-  /// own removal instead of when its location empties.
-  let roleModels: Set<PhysicalHIDIdentity>
-  /// Applied by each `deviceEvents()`, not at init: setting matching makes IOKit create a device
-  /// object, and load its plug-in, for every attached match.
-  let deviceMatching: CFArray
+  /// own removal instead of when its location empties. Set by each `deviceEvents()`.
+  var roleModels: Set<PhysicalHIDIdentity> = []
+  private let additionalProfileIdentifiers: @Sendable () -> [DeviceIdentifier]
+  private let roleProfileIdentifiers: @Sendable () -> [DeviceIdentifier]
 
   /// Creates a new stream that matches HID gamepad devices.
+  ///
+  /// The identifier providers are read by each `deviceEvents()`, so a stream started again after
+  /// the controller records change matches the new records.
+  @preconcurrency
   public init(
-    additionalProfileIdentifiers: [DeviceIdentifier] = [],
-    roleProfileIdentifiers: [DeviceIdentifier] = []
+    additionalProfileIdentifiers: @escaping @Sendable () -> [DeviceIdentifier] = { [] },
+    roleProfileIdentifiers: @escaping @Sendable () -> [DeviceIdentifier] = { [] }
   ) {
+    self.additionalProfileIdentifiers = additionalProfileIdentifiers
+    self.roleProfileIdentifiers = roleProfileIdentifiers
+  }
+
+  /// Reads the current models into ``roleModels`` and returns the matching to apply. Applied by
+  /// each `deviceEvents()`, not at init: setting matching makes IOKit create a device object, and
+  /// load its plug-in, for every attached match.
+  func currentDeviceMatching() -> CFArray {
     roleModels = Set(
-      roleProfileIdentifiers.compactMap {
+      roleProfileIdentifiers().compactMap {
         PhysicalHIDIdentity(
           vendorID: UInt64($0.controllerIdentity.vendorID),
           productID: UInt64($0.controllerIdentity.productID)
@@ -57,14 +68,13 @@ public final class HIDDeviceStream: @unchecked Sendable {
         kIOHIDDeviceUsageKey: kHIDUsage_GD_GamePad,
       ]
     ]
-    matches += additionalProfileIdentifiers.map {
+    matches += additionalProfileIdentifiers().map {
       [
         kIOHIDVendorIDKey: Int($0.controllerIdentity.vendorID),
         kIOHIDProductIDKey: Int($0.controllerIdentity.productID),
       ]
     }
-    deviceMatching =
-      matches.map { AppleGameControllerSyntheticHID.ioHIDMatchingExcludingSynthetics($0) }
+    return matches.map { AppleGameControllerSyntheticHID.ioHIDMatchingExcludingSynthetics($0) }
       as CFArray
   }
 

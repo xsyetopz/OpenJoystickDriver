@@ -33,7 +33,11 @@ struct StatusCommand: AsyncParsableCommand {
       do { payload = try await ServiceConnection.request { try await $0.getStatus() } } catch let
         failure as CLIFailure where failure.code == .serviceUnavailable
       { payload = nil }
-      let report = StatusReport(payload: payload, extensionStatus: Self.extensionProbe())
+      let report = StatusReport(
+        payload: payload,
+        extensionStatus: Self.extensionProbe(),
+        skippedRecords: RecordStore.load().problems.map(SkippedRecord.init)
+      )
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(report)
       case .plain: CLIOutput.plain(Self.plainRows(report))
@@ -75,6 +79,9 @@ struct StatusCommand: AsyncParsableCommand {
         "pass-through", deviceIdentity(vendorID: device.vendorID, productID: device.productID),
         device.connection,
       ])
+    }
+    for skipped in report.skippedRecords {
+      rows.append(["skipped-record", skipped.file, skipped.problem])
     }
     return rows
   }
@@ -168,6 +175,19 @@ struct StatusCommand: AsyncParsableCommand {
       for device in passThrough {
         let identity = deviceIdentity(vendorID: device.vendorID, productID: device.productID)
         CLIOutput.stdout("  \(identity)  \(device.connection)")
+      }
+    }
+    if !report.skippedRecords.isEmpty {
+      CLIOutput.stdout("")
+      CLIOutput.stdout(
+        CLILocalized.format(
+          "cli.status.label.skipped_records",
+          "Skipped controller records (%lld)",
+          report.skippedRecords.count
+        )
+      )
+      for skipped in report.skippedRecords {
+        CLIOutput.stdout("  \(skipped.file)  \(skipped.problem)")
       }
     }
   }

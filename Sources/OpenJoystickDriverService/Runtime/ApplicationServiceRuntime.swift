@@ -12,6 +12,7 @@ package final class ApplicationServiceRuntime {
   private let bluetoothLECentral: Switch2BluetoothLECentral
   private let applicationServiceServer: ApplicationServiceServer
   private var systemPowerObserver: SystemPowerNotificationObserver?
+  private var controllerRecordWatcher: ControllerRecordWatcher?
   private var systemPowerEventSession: DeviceManagerSystemPowerEventSession?
   private var started = false
   private var shutdownSignalSources: [DispatchSourceSignal] = []
@@ -73,9 +74,15 @@ package final class ApplicationServiceRuntime {
       started = false
       throw error
     }
+    let manager = manager
+    // Records apply before detection starts, so the first admission already uses them.
+    let controllerRecordWatcher = ControllerRecordWatcher {
+      Task { await manager.reloadControllerRecords() }
+    }
+    self.controllerRecordWatcher = controllerRecordWatcher
+    controllerRecordWatcher.start()
     let systemPowerEventSession = DeviceManagerSystemPowerEventSession()
     self.systemPowerEventSession = systemPowerEventSession
-    let manager = manager
     let systemPowerObserver = SystemPowerNotificationObserver { event in
       await deliverSystemPowerEvent(event, to: manager, session: systemPowerEventSession)
     }
@@ -104,6 +111,8 @@ package final class ApplicationServiceRuntime {
     started = false
 
     cancelGracefulShutdown()
+    controllerRecordWatcher?.stop()
+    controllerRecordWatcher = nil
     let systemPowerObserver = systemPowerObserver
     self.systemPowerObserver = nil
     let systemPowerEventSession = systemPowerEventSession

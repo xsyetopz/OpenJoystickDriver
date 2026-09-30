@@ -77,9 +77,17 @@ struct StatusReport: Encodable, Equatable {
   let controllers: [Controller]?
   let unboundDevices: [Device]?
   let passThroughDevices: [Device]?
+  /// User controller records OJD skipped. Read from the files, so present while the service is
+  /// stopped.
+  let skippedRecords: [SkippedRecord]
 
-  init(payload: ApplicationServiceStatusPayload?, extensionStatus: ExtensionStatus) {
+  init(
+    payload: ApplicationServiceStatusPayload?,
+    extensionStatus: ExtensionStatus,
+    skippedRecords: [SkippedRecord] = []
+  ) {
     self.extension = Extension(extensionStatus)
+    self.skippedRecords = skippedRecords
     guard let payload else {
       service = Service(state: .stopped, version: nil)
       permissions = nil

@@ -47,7 +47,24 @@ struct DiagnoseCommandTests {
     _ arguments: [String],
     socketPath: String,
     extensionStatus: @escaping @Sendable () -> ExtensionStatus = Self.healthyExtension,
-    usb: @escaping @Sendable () async throws -> Int = { 1 }
+    usb: @escaping @Sendable () async throws -> Int = { 1 },
+    records: URL = URL(fileURLWithPath: "/nonexistent-\(UUID().uuidString)")
+  ) async -> CLIRun {
+    await RecordStore.$directory.withValue(records) {
+      await runDiagnose(
+        arguments,
+        socketPath: socketPath,
+        extensionStatus: extensionStatus,
+        usb: usb
+      )
+    }
+  }
+
+  private func runDiagnose(
+    _ arguments: [String],
+    socketPath: String,
+    extensionStatus: @escaping @Sendable () -> ExtensionStatus,
+    usb: @escaping @Sendable () async throws -> Int
   ) async -> CLIRun {
     await ServiceConnection.$socketPath.withValue(socketPath) {
       await StatusCommand.$extensionProbe.withValue(extensionStatus) {
@@ -203,5 +220,24 @@ struct DiagnoseCommandTests {
     #expect(recorded.withLock { $0 } == [7, 250])
     #expect(try statuses(result)["runtime-health"] == "fail")
     #expect(result.code == 1)
+  }
+
+  @Test
+  func aSkippedControllerRecordWarnsButDoesNotFail() async throws {
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "ojd-diagnose-\(UUID().uuidString)",
+      isDirectory: true
+    )
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    try Data("{".utf8).write(to: directory.appendingPathComponent("broken.json"))
+
+    let result = await run(["--json"], socketPath: temporarySocketPath(), records: directory)
+
+    #expect(result.code == 0)
+    let checks = try #require(try result.json()["checks"] as? [[String: String]])
+    let records = try #require(checks.first { $0["id"] == "controller-records" })
+    #expect(records["status"] == "warn")
+    #expect(records["detail"]?.contains("broken.json (the file is not a JSON object)") == true)
   }
 }

@@ -63,7 +63,7 @@ extension HIDDeviceStream {
   private func registerCallbacks() {
     let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
     self.manager = manager
-    IOHIDManagerSetDeviceMatchingMultiple(manager, deviceMatching)
+    IOHIDManagerSetDeviceMatchingMultiple(manager, currentDeviceMatching())
     let context = Unmanaged.passUnretained(self).toOpaque()
     IOHIDManagerRegisterDeviceMatchingCallback(manager, Self.matchingCallback, context)
     IOHIDManagerRegisterDeviceRemovalCallback(manager, Self.removalCallback, context)

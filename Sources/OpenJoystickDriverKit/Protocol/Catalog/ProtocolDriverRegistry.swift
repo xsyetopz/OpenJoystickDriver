@@ -6,11 +6,12 @@ import Foundation
 /// on the bound ``PhysicalProtocolID`` and ``PhysicalProtocolVariantID``, after the claimed
 /// interface contract holds. A device that does not bind has no driver.
 public final class ProtocolDriverRegistry: Sendable {
-  private let catalog = DeviceCatalog()
+  /// The current catalog; it changes when the service applies new user controller records.
+  private var catalog: DeviceCatalog { DeviceCatalog.current.withLock { $0 } }
 
   public init() {}
 
-  /// Exact catalog models whose records declare raw USB access.
+  /// Exact catalog models whose records declare raw USB access, read when called.
   public var rawUSBIdentifiers: [DeviceIdentifier] { catalog.rawUSBProfileIdentifiers }
 
   /// Exact catalog models whose records declare HID access; they may not advertise

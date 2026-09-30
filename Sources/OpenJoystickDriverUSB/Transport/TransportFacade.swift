@@ -11,7 +11,9 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
 {
   private let ioUSBHostProvider: any USBTransportProvider
   private let usbDriverKitProvider: any USBTransportProvider
-  private let supportedRawUSBModels: Set<USBTransportModel>
+  /// Reads the catalog's raw-USB models; the service changes them when user records change.
+  private let rawUSBModels: @Sendable () -> Set<USBTransportModel>
+  private var supportedRawUSBModels: Set<USBTransportModel> { rawUSBModels() }
   private let requiredDriverKitModels: Set<USBTransportModel>
   private let ioUSBHostObservation: @Sendable (USBTransportDevice) throws -> PhysicalDevice?
   private var signatureAdmissions: [UInt64: Bool] = [:]
@@ -21,9 +23,8 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
   public init() {
     ioUSBHostProvider = IOUSBHostTransportProvider()
     usbDriverKitProvider = USBDriverKitTransportProvider()
-    supportedRawUSBModels = Set(
-      ProtocolDriverRegistry().rawUSBIdentifiers.map(USBTransportModel.init)
-    )
+    let registry = ProtocolDriverRegistry()
+    rawUSBModels = { Set(registry.rawUSBIdentifiers.map(USBTransportModel.init)) }
     requiredDriverKitModels = Set(
       USBDriverKitExtensionConfiguration.microsoftProductIDs.map {
         USBTransportModel(
@@ -50,7 +51,7 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
   ) {
     self.ioUSBHostProvider = ioUSBHostProvider
     self.usbDriverKitProvider = usbDriverKitProvider
-    self.supportedRawUSBModels = supportedRawUSBModels
+    rawUSBModels = { supportedRawUSBModels }
     self.requiredDriverKitModels = requiredDriverKitModels
     self.ioUSBHostObservation = ioUSBHostObservation
     self.ioUSBHostConfigurationObservation = ioUSBHostConfigurationObservation
@@ -121,6 +122,7 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     let enumerated = Set(direct.map(\.serviceID))
     signatureAdmissions = signatureAdmissions.filter { enumerated.contains($0.key) }
     var admitted: Set<UInt64> = []
+    let supportedRawUSBModels = supportedRawUSBModels
     for device in direct {
       let model = USBTransportModel(device)
       guard !supportedRawUSBModels.contains(model), !requiredDriverKitModels.contains(model) else {

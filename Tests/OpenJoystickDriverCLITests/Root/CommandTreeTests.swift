@@ -29,6 +29,9 @@ struct CommandTreeTests {
       "disconnect",
     ] { #expect(paths.contains(["controller", verb]), "\(verb)") }
     for verb in ["show", "set", "reset"] { #expect(paths.contains(["virtual", verb]), "\(verb)") }
+    for verb in ["list", "show", "validate", "install", "remove"] {
+      #expect(paths.contains(["record", verb]), "\(verb)")
+    }
   }
 
   @Test(arguments: [[]] + CLICommandTree.paths())
@@ -62,7 +65,8 @@ struct CommandTreeTests {
     ["map"], ["app", "status"], ["permissions"], ["test"], ["--headless"], ["controller", "state"],
     ["controller", "packets"], ["controller", "trace"], ["controller", "color"],
     ["controller", "brightness"], ["controller", "disconnect-wireless"], ["controller", "output"],
-    ["controller", "virtual"], ["controller", "plan"],
+    ["controller", "virtual"], ["controller", "plan"], ["diagnose", "catalog"],
+    ["record", "show", "zz"], ["record", "show", "045E"],
   ])
   func usageErrorsExitSixtyFourOnStandardErrorOnly(arguments: [String]) async {
     let result = await CLIRun.run(arguments)

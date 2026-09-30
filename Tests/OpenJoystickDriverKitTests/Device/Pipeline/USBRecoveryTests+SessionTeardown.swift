@@ -178,4 +178,23 @@ extension USBPipelineRecoveryTests {
     #expect(await session.writeCount == 0)
     #expect(await manager.mappingClaimCountForTesting == 0)
   }
+
+  @Test
+  func controllerRecordReloadReadmitsConnectedControllers() async {
+    let first = RecoveryUSBSession(readError: .timeout)
+    let second = RecoveryUSBSession(readError: .timeout)
+    let provider = RecoveryUSBProvider(sessions: [first, second], devices: [device])
+    let manager = makeManager(using: provider)
+    await manager.reloadControllerRecords()
+    #expect(await manager.detectionTasks.isEmpty)
+
+    await manager.start()
+    #expect(await waitUntil(timeout: .seconds(5)) { await first.writeCount > 0 })
+    await manager.reloadControllerRecords()
+    #expect(await first.closeCount == 1)
+    #expect(await waitUntil(timeout: .seconds(5)) { await second.writeCount > 0 })
+    #expect(await manager.connectedDeviceIdentifiers() == [identifier])
+    #expect(await provider.openedDevices == [device, device])
+    await manager.stop()
+  }
 }

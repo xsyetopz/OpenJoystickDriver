@@ -21,10 +21,11 @@ With `--json`, the output is one object with these keys:
 - `controllers`: each with `id`, `name`, `vendorID`, `productID`, and `connection`.
 - `unboundDevices`: devices that OpenJoystickDriver does not support, each with `vendorID`, `productID`, `connection`, and `reason`.
 - `passThroughDevices`: devices that OpenJoystickDriver leaves to macOS.
+- `skippedRecords`: your controller record files that OpenJoystickDriver skipped, each with `file` and `problem`.
 
 Keys that need the service are absent when it is stopped.
 
-With `--plain`, the first field of each line is `service`, `extension`, `permission`, `virtual-device`, `controller`, `unbound`, or `pass-through`.
+With `--plain`, the first field of each line is `service`, `extension`, `permission`, `virtual-device`, `controller`, `unbound`, `pass-through`, or `skipped-record`.
 
 ## controller
 
@@ -69,6 +70,28 @@ ojd virtual reset [CONTROLLER] [--all] [--force] [--dry-run]
 - `virtual show`: Show each controller's virtual gamepad and the profiles you can choose. Name a controller to show only that one.
 - `virtual set`: Choose the profile for the controller's model. The profiles are `hid-xbox-one-s-bt` and `hid-generic`.
 - `virtual reset`: Return the controller's model to automatic selection. `--all` returns every model, including models that are not connected. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing.
+
+## record
+
+List, check, install, or remove controller records. None of these commands needs the service. For more information, see [Adding or changing a controller record](../connecting-controllers/controller-records.md).
+
+```text
+ojd record list [--bundled]
+ojd record show VVVV:PPPP
+ojd record validate FILE|-
+ojd record install FILE|-
+ojd record remove VVVV:PPPP [--force] [--dry-run]
+```
+
+`FILE` is a record file. Use `-` to read the record from stdin.
+
+- `record list`: List every controller record, with its model, protocol family, layer (`bundled` or `user`), and file. It names each of your files that OpenJoystickDriver skipped, and why, on stderr. `--bundled` lists the bundled records alone.
+- `record show`: Show one model's effective record and the layer of each top-level field. It exits with code 1 when no record exists for the model.
+- `record validate`: Check a record without installing it. It shows the operation (`add` or `patch`), the model, the family, the file name, and whether the USB driver extension can claim the controller. It exits with code 1 when the record is not valid.
+- `record install`: Check a record and write it to your record folder as `vvvv-pppp.json`. It replaces the record already installed for that model. It exits with code 1 and writes nothing when the record is not valid.
+- `record remove`: Delete your record for a model. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing. It exits with code 1 when you have no record for the model.
+
+With `--json`, `record list` prints `records`, each with `identity`, `vendorID`, `productID`, `family`, `layer`, and `file`, and `skipped`, each with `file` and `problem`. `skipped` is absent with `--bundled`. `record show` prints `identity`, `family`, `layer`, `file`, `transport` (`hid` or `usb`), `usbExtension` (`claims` or `does-not-claim`, for `usb` only), `fields`, and `record`. `record validate` prints `valid`, and `problem` or the record's `operation`, `identity`, `family`, `fileName`, `transport`, and `usbExtension`. `record install` prints `installed`, `replaced`, and `record`, and `record remove` prints `removed` and `dryRun`.
 
 ## service
 
@@ -148,7 +171,7 @@ Run every check and report what is wrong.
 ojd diagnose [--bundle PATH] [--soak SECONDS]
 ```
 
-The checks are `service`, `extension-bundle`, `extension-registration`, `input-monitoring`, `accessibility`, `usb-access`, `virtual-device`, and `runtime-health`. Each reports `pass`, `warn`, `fail`, or `skip`. Checks that need the service are skipped while it is stopped. The command exits with code 1 when any check fails.
+The checks are `service`, `extension-bundle`, `extension-registration`, `input-monitoring`, `accessibility`, `controller-records`, `usb-access`, `virtual-device`, and `runtime-health`. Each reports `pass`, `warn`, `fail`, or `skip`. The `controller-records` check warns when OpenJoystickDriver skipped one of your controller record files. Checks that need the service are skipped while it is stopped. The command exits with code 1 when any check fails.
 
 - `--bundle PATH`: Also write a support report to `PATH`. Read it before you share it.
 - `--soak SECONDS`: Run the `runtime-health` check. It samples the service's memory, file descriptors, and CPU for 1 to 86400 seconds. Without `--soak`, that check is skipped. `--interval-ms`, `--rss-limit-mib`, and `--footprint-limit-mib` tune the sampling and set failure limits.

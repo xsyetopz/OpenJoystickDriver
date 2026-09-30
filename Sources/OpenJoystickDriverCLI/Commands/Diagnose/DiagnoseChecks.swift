@@ -50,6 +50,7 @@ enum DiagnoseChecks {
     checks.append(serviceCheck(snapshot))
     checks.append(contentsOf: permissionChecks(snapshot))
     checks.append(virtualDeviceCheck(snapshot))
+    checks.append(recordCheck(RecordStore.load()))
     checks.append(await usbCheck())
     checks.append(await soakCheck(snapshot: snapshot, soak: soak))
     return checks
@@ -216,6 +217,31 @@ enum DiagnoseChecks {
       )
     }
     return DiagnoseCheck(id, .pass, backend)
+  }
+
+  static func recordCheck(_ records: ControllerRecordSet) -> DiagnoseCheck {
+    let problems = records.problems
+    guard problems.isEmpty else {
+      let files = problems.map { "\($0.url.lastPathComponent) (\($0.problem ?? ""))" }
+      return DiagnoseCheck(
+        "controller-records",
+        .warn,
+        CLILocalized.format(
+          "cli.diagnose.records.skipped",
+          "skipped %@; check them with 'ojd record list'",
+          files.joined(separator: "; ")
+        )
+      )
+    }
+    return DiagnoseCheck(
+      "controller-records",
+      .pass,
+      CLILocalized.format(
+        "cli.diagnose.records.applied",
+        "user records applied: %lld",
+        records.userFiles.count
+      )
+    )
   }
 
   private static func usbCheck() async -> DiagnoseCheck {

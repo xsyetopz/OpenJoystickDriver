@@ -142,8 +142,8 @@ public actor DeviceManager {
     self.protocolDriverRegistry = registry
     self.permissionManager = PermissionManager()
     self.hidManager = HIDManager(
-      additionalProfileIdentifiers: registry.hidIdentifiers,
-      roleProfileIdentifiers: registry.hidRoleIdentifiers,
+      additionalProfileIdentifiers: { registry.hidIdentifiers },
+      roleProfileIdentifiers: { registry.hidRoleIdentifiers },
       bluetoothLEHub: bluetoothLEHub
     )
   }

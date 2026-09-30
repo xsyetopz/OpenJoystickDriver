@@ -66,6 +66,20 @@ extension DeviceManager {
     print("[DeviceManager] Suspended for system sleep")
   }
 
+  /// Re-admits every controller so each binds with the current controller records.
+  ///
+  /// Sessions are torn down as for system sleep and detection starts again, so connected
+  /// controllers re-attach through hot-plug detection. Does nothing while stopped or asleep; a
+  /// later start or wake reads the current records anyway.
+  public func reloadControllerRecords() async {
+    guard isStarted, !isStopping, !isSystemSleeping else { return }
+    isStopping = true
+    await tearDownControllerSessions()
+    isStopping = false
+    print("[DeviceManager] Controller records changed - re-admitting controllers")
+    await start()
+  }
+
   /// Restarts detection for a manager that was started before or during sleep.
   public func systemDidWake(session: DeviceManagerSystemPowerEventSession? = nil) async {
     guard session?.isActive ?? true, isSystemSleeping, !isStopping else { return }

@@ -20,6 +20,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Support the Steam Deck's built-in controller (`28DE:1205`) when macOS runs on Deck hardware. The new `neptune` quirk selects `SteamDeckDriver`, which decodes buttons, rear buttons, sticks with touch, analog triggers, trackpads with pressure and motion, turns off lizard mode and its watchdog, and sends rumble. It is not hardware-verified.
 - Support the NVIDIA SHIELD controllers with the new `vendor.nvidia-shield` family: the 2015 controller (`0955:7210`, V103) has input, touchpad click and rumble, and the 2017 controller (`0955:7214`, V104) is input-only on macOS. The report layouts follow SDL `SDL_hidapi_shield.c`. SDL disables V104's command-report rumble and battery on macOS because the write hangs, so OJD does not send it.  `0955:7210` previously had no record. Not hardware-verified.
 - `ojd permission list|request`, `ojd extension status|activate|deactivate`, `ojd setting list|get|set`, `ojd log path|show`, `ojd diagnose [--bundle PATH] [--soak SECONDS]`, and `ojd update check [--prerelease]`. See the [command reference](docs/command-line/command-reference.md).
+- User controller records: an `add` or `patch` file in `~/Library/Application Support/OpenJoystickDriver/Controllers` adds a controller model or changes the `protocol` or `usb` fields of a bundled one, and the running service applies it when the folder changes. OJD skips a file that is not valid and names it in `ojd status`, the `controller-records` check of `ojd diagnose`, and `ojd record list`. `ojd record list|show|validate|install|remove` manage the files. See [Adding or changing a controller record](docs/connecting-controllers/controller-records.md).
 - The Settings section of the app has an Install Command-Line Tool action that links `/usr/local/bin/ojd` to the app and removes the link again. macOS asks for an administrator password when the folder is not writable, and the action never replaces a file that is not a link.
 
 ### Changed
@@ -95,7 +96,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
   - `controller disconnect-wireless` → `ojd controller disconnect`
   - `controller virtual set|reset` → `ojd virtual set|reset`; `ojd virtual show` lists each controller's profile
   - `map` → `ojd profile` and `ojd binding`; `map clear-inputs --confirm` has no replacement
-  - `diagnose catalog` → `ojd record`
+  - `diagnose catalog` → the `appleGameControllerAudit` object in `ojd diagnose --bundle PATH`; `ojd record list --bundled` lists the bundled controller records
   - `permissions`, `map permission` → `ojd permission list|request`; `permissions open` has no replacement
   - `extension status|enable|disable` → `ojd extension status|activate|deactivate`
   - `app login enable|disable` → `ojd setting set launch-at-login true|false`

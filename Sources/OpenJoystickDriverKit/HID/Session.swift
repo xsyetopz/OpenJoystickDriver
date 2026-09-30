@@ -103,8 +103,10 @@ protocol HIDAccessBackend: Sendable {
 private final class IOHIDAccessBackend: HIDAccessBackend, Sendable {
   private let stream: HIDDeviceStream
 
-  init(additionalProfileIdentifiers: [DeviceIdentifier], roleProfileIdentifiers: [DeviceIdentifier])
-  {
+  init(
+    additionalProfileIdentifiers: @escaping @Sendable () -> [DeviceIdentifier],
+    roleProfileIdentifiers: @escaping @Sendable () -> [DeviceIdentifier]
+  ) {
     stream = HIDDeviceStream(
       additionalProfileIdentifiers: additionalProfileIdentifiers,
       roleProfileIdentifiers: roleProfileIdentifiers
@@ -189,11 +191,14 @@ public final class HIDManager: Sendable {
 
   init(backend: any HIDAccessBackend) { self.backend = backend }
 
-  /// `roleProfileIdentifiers` are the models whose family declares HID protocol roles.
-  /// `bluetoothLEHub` adds the Switch 2 controllers connected over Bluetooth LE GATT.
+  /// `additionalProfileIdentifiers` are the catalog's HID models, which may not advertise GamePad
+  /// usage; `roleProfileIdentifiers` are the models whose family declares HID protocol roles.
+  /// Both are read each time detection starts. `bluetoothLEHub` adds the Switch 2 controllers
+  /// connected over Bluetooth LE GATT.
+  @preconcurrency
   public init(
-    additionalProfileIdentifiers: [DeviceIdentifier] = [],
-    roleProfileIdentifiers: [DeviceIdentifier] = [],
+    additionalProfileIdentifiers: @escaping @Sendable () -> [DeviceIdentifier] = { [] },
+    roleProfileIdentifiers: @escaping @Sendable () -> [DeviceIdentifier] = { [] },
     bluetoothLEHub: Switch2BluetoothLEHub? = nil
   ) {
     let ioHID = IOHIDAccessBackend(

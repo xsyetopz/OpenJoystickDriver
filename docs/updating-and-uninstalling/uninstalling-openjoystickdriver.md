@@ -30,6 +30,7 @@ Removing the app does not remove these items.
 | Item | Location |
 | --- | --- |
 | Profiles and profile backups | `~/Library/Application Support/OpenJoystickDriver/` |
+| Your controller records | `~/Library/Application Support/OpenJoystickDriver/Controllers/` |
 | Logs | `~/Library/Logs/OpenJoystickDriver/` |
 | Settings | Preferences domain `com.openjoystickdriver` |
 | Privacy entries | **System Settings** > **Privacy & Security** |

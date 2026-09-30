@@ -1,80 +1,49 @@
 import Foundation
 
-/// Loads the canonical VID/PID controller records bundled with the driver.
+/// The controller records the runtime binds with: the bundled catalog and any user records.
 struct DeviceCatalog: Sendable {
-  private let profiles: [String: DeviceRuntimeProfile]
+  /// The catalog every ``ProtocolDriverRegistry`` reads. The service replaces it when the user's
+  /// controller records change.
+  static let current = Locked(Self())
+
+  private let profiles: [ControllerIdentity: DeviceRuntimeProfile]
+  /// Each record's merged document, to tell whether a new record set changes anything.
+  let documents: [ControllerIdentity: Data]
   let rawUSBProfileIdentifiers: [DeviceIdentifier]
   let hidProfileIdentifiers: [DeviceIdentifier]
 
-  init() {
-    do {
-      var loaded: [String: DeviceRuntimeProfile] = [:]
-      var hid: [DeviceIdentifier] = []
-      var rawUSB: [DeviceIdentifier] = []
-      for record in try Self.loadRecords() {
-        let key = "\(record.vendorID):\(record.productID)"
-        guard loaded[key] == nil else { throw CatalogError("duplicate controller identity \(key)") }
-        let profile = try Self.makeRuntimeProfile(record)
-        loaded[key] = profile
-        let identifier = DeviceIdentifier(
-          vendorID: UInt16(record.vendorID),
-          productID: UInt16(record.productID)
-        )
-        if profile.usesRawUSB { rawUSB.append(identifier) } else { hid.append(identifier) }
+  init(records: ControllerRecordSet = .bundled) {
+    var hid: [DeviceIdentifier] = []
+    var rawUSB: [DeviceIdentifier] = []
+    for identity in records.records.keys.sorted(by: {
+      ($0.vendorID, $0.productID) < ($1.vendorID, $1.productID)
+    }) {
+      let identifier = DeviceIdentifier(vendorID: identity.vendorID, productID: identity.productID)
+      if records.records[identity]?.usesRawUSB == true {
+        rawUSB.append(identifier)
+      } else {
+        hid.append(identifier)
       }
-      profiles = loaded
-      let modelOrder: (DeviceIdentifier, DeviceIdentifier) -> Bool = {
-        ($0.controllerIdentity.vendorID, $0.controllerIdentity.productID) < (
-          $1.controllerIdentity.vendorID, $1.controllerIdentity.productID
-        )
-      }
-      self.rawUSBProfileIdentifiers = rawUSB.sorted(by: modelOrder)
-      hidProfileIdentifiers = hid.sorted(by: modelOrder)
-    } catch { fatalError("[DeviceCatalog] Invalid controller catalog: \(error)") }
+    }
+    profiles = records.records.mapValues(\.profile)
+    documents = records.records.mapValues(\.document)
+    rawUSBProfileIdentifiers = rawUSB
+    hidProfileIdentifiers = hid
   }
 
   /// The exact catalog record for this identity; there is no default record.
   func record(for identifier: DeviceIdentifier) -> DeviceRuntimeProfile? {
-    profiles[key(for: identifier)]
-  }
-
-  private func key(for identifier: DeviceIdentifier) -> String {
-    "\(identifier.controllerIdentity.vendorID):\(identifier.controllerIdentity.productID)"
-  }
-
-  private static func loadRecords() throws -> [ControllerRecordDocument] {
-    let urls = (Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: nil) ?? [])
-      .filter { isControllerRecordFilename($0.lastPathComponent) }.sorted {
-        $0.lastPathComponent < $1.lastPathComponent
-      }
-    guard !urls.isEmpty else { throw CatalogError("controller catalog is empty") }
-
-    let decoder = JSONDecoder()
-    return try urls.map { url in
-      let data = try Data(contentsOf: url)
-      do {
-        let record = try decoder.decode(ControllerRecordDocument.self, from: data)
-        let expectedName = String(format: "%04x-%04x.json", record.vendorID, record.productID)
-        guard url.lastPathComponent == expectedName else {
-          throw CatalogError("\(url.path): filename must be \(expectedName)")
-        }
-        return record
-      } catch { throw CatalogError("\(url.path): \(error)") }
-    }
-  }
-
-  private static func isControllerRecordFilename(_ name: String) -> Bool {
-    guard name.count == 14, name.hasSuffix(".json") else { return false }
-    let stem = name.dropLast(5)
-    guard stem[stem.index(stem.startIndex, offsetBy: 4)] == "-" else { return false }
-    return stem.enumerated().allSatisfy { offset, character in offset == 4 || character.isHexDigit }
+    let identity = identifier.controllerIdentity
+    return profiles[ControllerIdentity(vendorID: identity.vendorID, productID: identity.productID)]
   }
 
   /// The runtime profile for one decoded record; the record probe plan builds on it too.
   static func makeRuntimeProfile(_ record: ControllerRecordDocument) throws -> DeviceRuntimeProfile
   {
     guard (1...65_535).contains(record.vendorID), (0...65_535).contains(record.productID) else {
-      throw CatalogError("invalid controller identity \(record.vendorID):\(record.productID)")
+      throw ControllerRecordProblem(
+        "invalid controller identity \(record.vendorID):\(record.productID)"
+      )
     }
     let protocolInfo = record.protocolInfo
     let defaultEndpoints = defaultEndpoints(for: protocolInfo.protocolID)
@@ -83,10 +52,10 @@ struct DeviceCatalog: Sendable {
     if record.usb != nil
       && !protocolInfo.protocolID.usesRawUSB(storedVariant: protocolInfo.protocolVariant)
     {
-      throw CatalogError("USB overrides require a raw-USB protocol family")
+      throw ControllerRecordProblem("USB overrides require a raw-USB protocol family")
     }
     if let configuration = record.usb?.configuration, configuration != "set1-before-claim" {
-      throw CatalogError("unsupported USB configuration \(configuration)")
+      throw ControllerRecordProblem("unsupported USB configuration \(configuration)")
     }
     let settleMilliseconds = record.usb?.postHandshakeSettleMilliseconds ?? 0
     let keepAlivePolicy: GIPKeepAlivePolicy =
@@ -148,11 +117,5 @@ struct DeviceCatalog: Sendable {
     case .xboxXID: (input: 129, output: 2)
     default: (input: 130, output: 2)
     }
-  }
-
-  private struct CatalogError: Error, CustomStringConvertible {
-    let description: String
-
-    init(_ description: String) { self.description = description }
   }
 }
