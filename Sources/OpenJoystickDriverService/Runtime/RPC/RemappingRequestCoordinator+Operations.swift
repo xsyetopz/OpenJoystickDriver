@@ -189,7 +189,7 @@ extension RemappingRequestCoordinator {
         productID: active.model.productID,
         profileID: profile.id,
         profileName: profile.name,
-        applicationScope: profile.applicationScope
+        applicationScope: active.applicationScope ?? profile.applicationScope
       )
     }
     let routerSnapshot = await router.statusSnapshot()

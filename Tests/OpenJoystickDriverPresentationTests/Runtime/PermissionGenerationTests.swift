@@ -20,7 +20,8 @@ struct RuntimePermissionGenerationTests {
     )
     let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
     let refresh = Task { @MainActor in await viewModel.refreshPermissions() }
-    try? await Task.sleep(nanoseconds: 10_000_000)
+    // The older operation must claim its generation before the newer request starts.
+    await gateway.waitForFirstRead()
 
     await viewModel.requestPermissions()
     await refresh.value
@@ -47,7 +48,8 @@ struct RuntimePermissionGenerationTests {
     )
     let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
     let refresh = Task { @MainActor in await viewModel.refresh() }
-    try? await Task.sleep(nanoseconds: 10_000_000)
+    // The older operation must claim its generation before the newer request starts.
+    await gateway.waitForFirstRead()
 
     await viewModel.requestPermissions()
     await refresh.value
@@ -74,7 +76,8 @@ struct RuntimePermissionGenerationTests {
     )
     let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
     let refresh = Task { @MainActor in await viewModel.refreshPostEventAccess() }
-    try? await Task.sleep(nanoseconds: 10_000_000)
+    // The older operation must claim its generation before the newer request starts.
+    await gateway.waitForFirstRead()
 
     await viewModel.requestPostEventAccess()
     await refresh.value
@@ -101,7 +104,8 @@ struct RuntimePermissionGenerationTests {
     )
     let viewModel = await MainActor.run { RuntimeViewModel(gateway: gateway) }
     let refresh = Task { @MainActor in await viewModel.refresh() }
-    try? await Task.sleep(nanoseconds: 10_000_000)
+    // The older operation must claim its generation before the newer request starts.
+    await gateway.waitForFirstRead()
 
     await viewModel.requestPostEventAccess()
     await refresh.value
@@ -151,7 +155,23 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
     self.requestedPostEventAccess = requestedPostEventAccess
   }
 
+  private var readStarted = false
+  private var readWaiters: [CheckedContinuation<Void, Never>] = []
+
+  /// Returns once a delayed read has started, instead of guessing how long scheduling takes.
+  func waitForFirstRead() async {
+    guard !readStarted else { return }
+    await withCheckedContinuation { readWaiters.append($0) }
+  }
+
+  private func markReadStarted() {
+    readStarted = true
+    readWaiters.forEach { $0.resume() }
+    readWaiters.removeAll()
+  }
+
   func status() async throws -> ApplicationServiceStatusPayload {
+    markReadStarted()
     if statusDelayNanoseconds > 0 { try await Task.sleep(nanoseconds: statusDelayNanoseconds) }
     return statusPayload
   }
@@ -177,6 +197,7 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
   func packetLog(for selector: RuntimeDeviceSelector) throws -> [PacketLogEntry] { [] }
 
   func remappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
+    markReadStarted()
     if snapshotDelayNanoseconds > 0 { try await Task.sleep(nanoseconds: snapshotDelayNanoseconds) }
     return snapshotPayload
   }
@@ -219,6 +240,7 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
   ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
   func remappingPostEventAccess() async throws -> RemappingPostEventAccessState {
+    markReadStarted()
     if postEventAccessDelayNanoseconds > 0 {
       try await Task.sleep(nanoseconds: postEventAccessDelayNanoseconds)
     }

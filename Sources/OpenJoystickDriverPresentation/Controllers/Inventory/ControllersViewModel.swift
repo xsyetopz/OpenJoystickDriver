@@ -58,9 +58,10 @@
       case .error(let message): return .error(message)
       case .available(let snapshot):
         guard
-          let profile = snapshot.activeProfiles.first(where: {
-            $0.vendorID == device.vendorID && $0.productID == device.productID
-          })
+          let profile = snapshot.activeProfiles.routingActiveProfile(
+            vendorID: device.vendorID,
+            productID: device.productID
+          )
         else { return .noProfile }
         return .profile(profile.profileName)
       }

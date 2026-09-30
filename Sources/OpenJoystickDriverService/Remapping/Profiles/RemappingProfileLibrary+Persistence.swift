@@ -27,9 +27,11 @@ extension RemappingProfileLibrary {
       } catch { return loadUnusableLibrary(data) }
     }
     do {
-      try validate(decoded)
-      library = decoded
-      return decoded
+      var normalized = decoded
+      normalized.activeProfiles = Self.normalizedActiveProfiles(decoded.activeProfiles)
+      try validate(normalized)
+      library = normalized
+      return normalized
     } catch {
       do {
         let recovered = try recoverProfiles(from: data)
@@ -108,7 +110,10 @@ extension RemappingProfileLibrary {
         return active
       }
     profileIssues = issues
-    return RemappingProfileLibraryState(profiles: profiles, activeProfiles: activeProfiles)
+    return RemappingProfileLibraryState(
+      profiles: profiles,
+      activeProfiles: Self.normalizedActiveProfiles(activeProfiles)
+    )
   }
 
   private func loadUnusableLibrary(_ data: Data) -> RemappingProfileLibraryState {
@@ -221,6 +226,20 @@ extension RemappingProfileLibrary {
         throw RemappingProfileLibraryError.corruptLibrary
       }
     }
+  }
+
+  /// Keeps only the last entry per model and application scope, matching what routing uses.
+  static func normalizedActiveProfiles(
+    _ entries: [RemappingPersistedActiveProfile]
+  ) -> [RemappingPersistedActiveProfile] {
+    var seen: Set<String> = []
+    var kept: [RemappingPersistedActiveProfile] = []
+    for entry in entries.reversed() {
+      let scope = String(describing: entry.applicationScope ?? .global)
+      let key = "\(entry.model.vendorID):\(entry.model.productID):\(scope)"
+      if seen.insert(key).inserted { kept.append(entry) }
+    }
+    return kept.reversed()
   }
 
   static func normalizedName(_ name: String) -> String {

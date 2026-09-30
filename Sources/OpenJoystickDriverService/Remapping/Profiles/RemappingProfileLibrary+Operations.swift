@@ -263,9 +263,12 @@ extension RemappingProfileLibrary {
       throw RemappingProfileLibraryError.pairProfileRequiresExplicitSession
     }
     let model = RemappingProfileModel(profile.device)
-    // Remove any existing active entry for this exact profile, then re-add.
+    // Replace any active entry for this profile or for the same model and application scope.
     // Multiple profiles per device are allowed — one per application scope.
-    proposed.activeProfiles.removeAll { $0.profileID == profileID }
+    proposed.activeProfiles.removeAll {
+      $0.profileID == profileID
+        || ($0.model == model && ($0.applicationScope ?? .global) == profile.applicationScope)
+    }
     proposed.activeProfiles.append(
       RemappingPersistedActiveProfile(
         model: model,

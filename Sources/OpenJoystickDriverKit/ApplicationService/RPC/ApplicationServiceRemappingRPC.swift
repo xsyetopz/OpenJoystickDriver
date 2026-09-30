@@ -175,6 +175,18 @@ public struct ApplicationServiceRemappingActiveProfilePayload: Codable, Equatabl
   }
 }
 
+extension Sequence where Element == ApplicationServiceRemappingActiveProfilePayload {
+  /// Returns the entry routing uses for a model without a frontmost app: the last global-scope
+  /// entry, otherwise the last entry.
+  public func routingActiveProfile(
+    vendorID: UInt16,
+    productID: UInt16
+  ) -> ApplicationServiceRemappingActiveProfilePayload? {
+    let candidates = filter { $0.vendorID == vendorID && $0.productID == productID }
+    return candidates.last { $0.applicationScope == .global } ?? candidates.last
+  }
+}
+
 public enum ApplicationServiceRemappingRouteSelection: String, Codable, Sendable {
   case remapping
   case unavailable

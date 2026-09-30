@@ -38,7 +38,8 @@
 
       let profileSummary: String
       if case .available(let snapshot) = runtime.remappingState,
-        let activeProfile = snapshot.activeProfiles.first,
+        let activeProfile = snapshot.activeProfiles.last(where: { $0.applicationScope == .global })
+          ?? snapshot.activeProfiles.last,
         let profile = snapshot.profiles.first(where: { $0.id == activeProfile.profileID })
       {
         profileSummary = profile.name

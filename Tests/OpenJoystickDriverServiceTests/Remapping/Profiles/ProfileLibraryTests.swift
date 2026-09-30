@@ -146,6 +146,48 @@ struct ProfileLibraryTests {
   }
 
   @Test
+  func activatingReplacesActiveProfileWithSameModelAndScope() async throws {
+    try await withLibrary { library, _ in
+      let first = makeProfile(name: "First")
+      let second = makeProfile(name: "Second")
+      try await library.create(first)
+      try await library.create(second)
+
+      try await library.activate(profileID: first.id)
+      try await library.activate(profileID: second.id)
+
+      let snapshot = try await library.snapshot()
+      #expect(snapshot.activeProfiles.map(\.profileID) == [second.id])
+    }
+  }
+
+  @Test
+  func loadingDuplicateActiveEntriesKeepsTheLastPerModelAndScope() async throws {
+    try await withLibrary { library, url in
+      let first = makeProfile(name: "First")
+      let second = makeProfile(name: "Second")
+      try await library.create(first)
+      try await library.create(second)
+      let model = RemappingProfileModel(first.device)
+      let state = RemappingProfileLibraryState(
+        profiles: [first, second],
+        activeProfiles: [
+          RemappingPersistedActiveProfile(model: model, profileID: first.id),
+          RemappingPersistedActiveProfile(model: model, profileID: second.id),
+        ]
+      )
+      try JSONEncoder().encode(state).write(to: url)
+
+      let restored = RemappingProfileLibrary(fileURL: url)
+      let snapshot = try await restored.snapshot()
+      #expect(snapshot.activeProfiles.map(\.profileID) == [second.id])
+      let active = try await restored.activeProfile(vendorID: 1118, productID: 654)
+      #expect(active == second)
+      #expect(snapshot.issues.isEmpty)
+    }
+  }
+
+  @Test
   func deletingProfileClearsItsActiveSelection() async throws {
     try await withLibrary { library, _ in
       let profile = makeProfile(name: "Primary")

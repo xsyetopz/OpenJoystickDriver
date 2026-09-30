@@ -25,6 +25,35 @@ struct RemappingRPCTests {
   }
 
   @Test
+  func routingActiveProfilePrefersGlobalScopeForSharedModel() {
+    func entry(
+      _ name: String,
+      _ scope: RemappingApplicationScope,
+      productID: UInt16 = 2
+    ) -> ApplicationServiceRemappingActiveProfilePayload {
+      ApplicationServiceRemappingActiveProfilePayload(
+        vendorID: 1,
+        productID: productID,
+        profileID: UUID(),
+        profileName: name,
+        applicationScope: scope
+      )
+    }
+    let active = [
+      entry("Global", .global), entry("Game", .application(bundleIdentifier: "com.example.game")),
+      entry("Other", .global, productID: 3),
+    ]
+
+    #expect(active.routingActiveProfile(vendorID: 1, productID: 2)?.profileName == "Global")
+    #expect(active.routingActiveProfile(vendorID: 1, productID: 3)?.profileName == "Other")
+    #expect(active.routingActiveProfile(vendorID: 1, productID: 4) == nil)
+    #expect(
+      Array(active.prefix(2).suffix(1)).routingActiveProfile(vendorID: 1, productID: 2)?.profileName
+        == "Game"
+    )
+  }
+
+  @Test
   func olderSnapshotPayloadDoesNotInventPairedSessions() throws {
     let encoded = try JSONEncoder().encode(makeSnapshot(profile: makeProfile()))
     var object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])

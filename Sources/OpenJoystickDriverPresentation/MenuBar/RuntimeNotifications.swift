@@ -186,11 +186,20 @@
 
       switch viewModel.remappingState {
       case .available(let snapshot):
-        activeProfiles = Dictionary(
-          uniqueKeysWithValues: snapshot.activeProfiles.map {
-            ("\($0.vendorID):\($0.productID)", $0.profileName)
-          }
-        )
+        // Several active profiles may share a model (one per app scope); use the one routing
+        // picks without a frontmost app.
+        var names: [String: String] = [:]
+        for active in snapshot.activeProfiles {
+          let key = "\(active.vendorID):\(active.productID)"
+          guard names[key] == nil,
+            let winner = snapshot.activeProfiles.routingActiveProfile(
+              vendorID: active.vendorID,
+              productID: active.productID
+            )
+          else { continue }
+          names[key] = winner.profileName
+        }
+        activeProfiles = names
       case .loading, .unavailable, .error: activeProfiles = nil
       }
     }
