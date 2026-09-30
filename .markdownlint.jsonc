@@ -5,16 +5,7 @@
 	"MD007": { "indent": 2, "start_indented": false },
 	"MD009": { "br_spaces": 0, "strict": true },
 	"MD012": { "maximum": 1 },
-	"MD013": {
-		"line_length": 100,
-		"heading_line_length": 100,
-		"code_block_line_length": 100,
-		"code_blocks": true,
-		"tables": false,
-		"headings": true,
-		"strict": true,
-		"stern": false
-	},
+	"MD013": false /* MD013/line-length: prose is not hard-wrapped */,
 	"MD024": { "siblings_only": true },
 	"MD026": { "punctuation": ".,;:!" },
 	"MD029": { "style": "one" },

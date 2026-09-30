@@ -6,10 +6,7 @@ CONTEXT.md
 .ojd-diagnostics/
 
 # Internal planning and evidence (local only)
-
-/GOAL.md
-/goals/
-/docs/AGENTS.md
+/.claude/handoff.md
 # Regenerate with `./Scripts/ojd docs export-external-issues`.
 /docs/external/
 
