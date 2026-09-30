@@ -247,16 +247,21 @@
         }.frame(maxWidth: .infinity, alignment: .leading)
       } else {
         VStack(alignment: .leading, spacing: 8) {
+          // Rows carry their facts by value: index-based rows crashed when a
+          // later render had fewer facts than the ForEach identities it reused.
           let facts = controllerFacts
-          ForEach(Array(stride(from: 0, to: facts.count, by: 2)), id: \.self) { index in
+          let rows = stride(from: 0, to: facts.count, by: 2).map {
+            Array(facts[$0..<min($0 + 2, facts.count)])
+          }
+          ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
             HStack(alignment: .top, spacing: 24) {
-              ForEach(index..<min(index + 2, facts.count), id: \.self) { column in
-                ControllerFactView(label: facts[column].label, value: facts[column].value).frame(
+              ForEach(Array(row.enumerated()), id: \.offset) { _, fact in
+                ControllerFactView(label: fact.label, value: fact.value).frame(
                   maxWidth: .infinity,
                   alignment: .leading
                 )
               }
-              if index + 1 == facts.count { Spacer().frame(maxWidth: .infinity) }
+              if row.count == 1 { Spacer().frame(maxWidth: .infinity) }
             }
           }
         }
