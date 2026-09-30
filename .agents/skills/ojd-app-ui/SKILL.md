@@ -14,32 +14,17 @@ description: >-
 
 # OpenJoystickDriver App UI
 
-Deliver one native, accessible user flow in Presentation, with its states and
-recovery path spelled out. Controller and protocol behavior stay outside the
-views.
+Deliver one native, accessible user flow in Presentation, with its states and recovery path spelled out. Controller and protocol behavior stay outside the views.
 
 ## Workflow
 
-1. Read `docs/development/menu-bar-settings-architecture.md` (owners, gateway
-   contract, and state rules), `LOCALIZATION.md`, the affected source, and its
-   mirror under `Tests/OpenJoystickDriverPresentationTests/`.
-1. Write down the primary action, its prerequisite, the success state, and the
-   recovery path. Then list which [required states](references/states-and-proof.md#required-states)
-   apply.
-1. Put the change at its [owner](references/ownership.md#presentation-owners).
-   Views hold transient visual state. `@MainActor` view models hold workflow
-   state. Coordinators and window controllers hold AppKit lifecycle and panels.
-1. Reach the runtime only through `ApplicationServiceGateway`. When the
-   gateway lacks a call, add it to the Kit client and the Service server first
-   (`ojd-swift-change`), then [extend the gateway](references/ownership.md#gateway-seam).
-1. Add strings to the Kit template catalog, then reference them with
-   `OJDLocalized` ([localized copy](references/states-and-proof.md#localized-copy)).
-1. Test view-model behavior against `GatewayStub`
-   ([state tests](references/states-and-proof.md#state-tests)). Then run
-   `swift test --filter OpenJoystickDriverPresentationTests`, `just lint`,
-   and `swift test --no-parallel`.
-1. Check the [proof points](references/states-and-proof.md#proof-points) in the
-   running app. Report any you could not check as unverified.
+1. Read `contributing/development/menu-bar-settings-architecture.md` (owners, gateway contract, and state rules), `LOCALIZATION.md`, the affected source, and its mirror under `Tests/OpenJoystickDriverPresentationTests/`.
+1. Write down the primary action, its prerequisite, the success state, and the recovery path. Then list which [required states](references/states-and-proof.md#required-states) apply.
+1. Put the change at its [owner](references/ownership.md#presentation-owners). Views hold transient visual state. `@MainActor` view models hold workflow state. Coordinators and window controllers hold AppKit lifecycle and panels.
+1. Reach the runtime only through `ApplicationServiceGateway`. When the gateway lacks a call, add it to the Kit client and the Service server first (`ojd-swift-change`), then [extend the gateway](references/ownership.md#gateway-seam).
+1. Add strings to the Kit template catalog, then reference them with `OJDLocalized` ([localized copy](references/states-and-proof.md#localized-copy)).
+1. Test view-model behavior against `GatewayStub` ([state tests](references/states-and-proof.md#state-tests)). Then run `swift test --filter OpenJoystickDriverPresentationTests`, `just lint`, and `swift test --no-parallel`.
+1. Check the [proof points](references/states-and-proof.md#proof-points) in the running app. Report any you could not check as unverified.
 
 ## Route the problem to a card
 
@@ -56,32 +41,18 @@ views.
 
 ## Rules
 
-- Presentation imports Kit only. `DeviceManager`, `RemappingProfileLibrary`,
-  socket frames, and CLI parsers do not reach this target, and the compiler
-  enforces it.
-- The app has one `ApplicationServiceRuntime`, one reusable settings window,
-  and no CLI subprocess. A second instance would fight the first for devices
-  and the RPC socket.
-- A newer API needs `#available` with a 10.15 path. `@Observable` and
-  `NavigationStack` are not available on the deployment floor.
-- State is text plus a symbol or shape, never colour alone. A value that
-  truncates visually stays complete for VoiceOver.
-- Do not test view prose or read Swift source in tests. Copy changes per
-  locale, and a source-text test passes on broken behavior.
-- Do not claim hardware behavior from previews, stubs, or source reading.
-  Hardware claims go to `ojd-hardware-evidence`.
+- Presentation imports Kit only. `DeviceManager`, `RemappingProfileLibrary`, socket frames, and CLI parsers do not reach this target, and the compiler enforces it.
+- The app has one `ApplicationServiceRuntime`, one reusable settings window, and no CLI subprocess. A second instance would fight the first for devices and the RPC socket.
+- A newer API needs `#available` with a 10.15 path. `@Observable` and `NavigationStack` are not available on the deployment floor.
+- State is text plus a symbol or shape, never colour alone. A value that truncates visually stays complete for VoiceOver.
+- Do not test view prose or read Swift source in tests. Copy changes per locale, and a source-text test passes on broken behavior.
+- Do not claim hardware behavior from previews, stubs, or source reading. Hardware claims go to `ojd-hardware-evidence`.
 
 ## References
 
-- [Ownership](references/ownership.md): presentation owners, gateway seam,
-  single window and runtime.
-- [States and proof](references/states-and-proof.md): required states, state
-  tests, localized copy, proof points.
+- [Ownership](references/ownership.md): presentation owners, gateway seam, single window and runtime.
+- [States and proof](references/states-and-proof.md): required states, state tests, localized copy, proof points.
 
 ## Completion evidence
 
-The report gives the user path, the states covered (with the test for each),
-localization keys added, and the commands run with their results. It lists
-the proof points checked in the running app and those left unverified, such
-as VoiceOver, Full Keyboard Access, appearance, reduced motion, TCC
-transitions, and macOS 10.15.
+The report gives the user path, the states covered (with the test for each), localization keys added, and the commands run with their results. It lists the proof points checked in the running app and those left unverified, such as VoiceOver, Full Keyboard Access, appearance, reduced motion, TCC transitions, and macOS 10.15.

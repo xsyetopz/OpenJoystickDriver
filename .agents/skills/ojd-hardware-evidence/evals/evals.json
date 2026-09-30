@@ -23,7 +23,7 @@
 		},
 		{
 			"id": 3,
-			"prompt": "Write the docs/testing page for the new controller.",
+			"prompt": "Write the contributing/testing page for the new controller.",
 			"expected_output": "An evidence ledger with a class per claim and redacted identifiers.",
 			"assertions": [
 				"Redacts serial numbers and --device identifiers",
