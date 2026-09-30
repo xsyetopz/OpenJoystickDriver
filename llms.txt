@@ -9,8 +9,8 @@ Do not edit generated controller records or `.build/driverkit/generated/`. `Open
 ## Docs
 
 - [README](README.md): install, virtual HID profiles, troubleshooting
-- [Compatibility](docs/user/compatibility.md): user-facing support matrix
-- [Permissions](docs/user/permissions.md): Input Monitoring, Accessibility, and related grants
+- [Controllers](docs/connecting-controllers/supported-controllers.md): supported controllers, evidence classes, VID:PID, DEXT scope
+- [Permissions](docs/permissions-and-security/permissions.md): Input Monitoring, Accessibility, and related grants
 - [Contributing](CONTRIBUTING.md): setup, adding controllers, code rules
 - [Documentation map](docs/README.md): user, testing, and development pages
 - [Agent instructions](AGENTS.md): generated-file rules and validation commands
@@ -18,11 +18,12 @@ Do not edit generated controller records or `.build/driverkit/generated/`. `Open
 
 ## Develop
 
-- [Architecture](docs/development/architecture.md): runtime, HID/USB split, DriverKit boundary
-- [Source topology](docs/development/source-topology.md): package targets and capability owners
-- [Signing](docs/development/signing.md): Apple identities, profiles, entitlements
+- [Building from source](contributing/development/building-from-source.md): prerequisites and what works without Apple assets
+- [Architecture](contributing/development/architecture.md): runtime, HID/USB split, DriverKit boundary
+- [Source topology](contributing/development/source-topology.md): package targets and capability owners
+- [Signing](contributing/development/signing.md): Apple identities, profiles, entitlements
 - [Scripts](Scripts/README.md): `./Scripts/ojd` build, install, DriverKit, and release
-- [xpad import](docs/development/xpad-import.md): catalog generation from locked Linux sources
+- [xpad import](contributing/development/xpad-import.md): catalog generation from locked Linux sources
 - [Schema instructions](Resources/Schemas/AGENTS.md): JSON contract ownership
 - [Package graph](Package.swift): SwiftPM targets and deployment floor
 
@@ -30,6 +31,6 @@ Do not edit generated controller records or `.build/driverkit/generated/`. `Open
 
 - [Full LLM context](llms-full.txt): expanded notes and complete documentation links
 - [Localization](LOCALIZATION.md): GUI and CLI string catalogs
-- [Generic HID](docs/user/generic-hid.md): descriptor-based parsing of uncatalogued HID gamepads
-- [CLI and runtime](docs/development/cli-and-runtime.md): headless commands and RPC
-- [Experimental controllers](docs/development/experimental-controllers.md): source-backed unfinished support
+- [Generic HID](docs/connecting-controllers/generic-hid-controllers.md): descriptor-based parsing of uncatalogued HID gamepads
+- [CLI and runtime](contributing/development/cli-and-runtime.md): headless commands and RPC
+- [Experimental controllers](contributing/development/experimental-controllers.md): source-backed unfinished support

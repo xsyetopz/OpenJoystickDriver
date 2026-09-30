@@ -6,7 +6,7 @@ The signed app owns the runtime, virtual HID, and authenticated local CLI. Physi
 
 `OpenJoystickDriverKit` owns parsers, records, HID/USB ports, and policy. It must not import SwifterKit. `OpenJoystickDriverUSB` and `DriverKitGenerator` are the SwifterKit boundaries. `OpenJoystickDriver` composes the app, CLI, and adapters.
 
-Do not edit `Sources/OpenJoystickDriverKit/Resources/Controllers/` or `.build/driverkit/generated/`. Catalog write: `./Scripts/ojd catalog regenerate --write`. DriverKit: `./Scripts/ojd driverkit generate`. Controller JSON uses decimal numbers. Support status lives in `docs/user/compatibility.md`; do not duplicate it here.
+Do not edit `Sources/OpenJoystickDriverKit/Resources/Controllers/` or `.build/driverkit/generated/`. Catalog write: `./Scripts/ojd catalog regenerate --write`. DriverKit: `./Scripts/ojd driverkit generate`. Controller JSON uses decimal numbers. Support status lives in `docs/connecting-controllers/supported-controllers.md`; do not duplicate it here.
 
 Production and development USBDriverKit personalities match only Apple's approved Microsoft GIP pairs: `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, `045E:0B12`. Accessible third-party GIP devices such as GameSir G7 SE `3537:1010` stay on direct IOUSBHost. The host user-client allowlist is exactly `com.openjoystickdriver.XboxUSBDevice`. `com.apple.developer.hid.virtual.device` belongs only to the app.
 
@@ -21,15 +21,15 @@ just lint
 swift test
 ```
 
-Parser/protocol: `./Scripts/ojd test parsers-macos14`. Cache: `./Scripts/ojd repair swiftpm-module-cache`. Hardware, signing, notarization, and permission behavior need the focused local diagnostics in `docs/testing/` and `Scripts/README.md`. Unsigned generation does not prove those facts.
+Parser/protocol: `./Scripts/ojd test parsers-macos14`. Cache: `./Scripts/ojd repair swiftpm-module-cache`. Hardware, signing, notarization, and permission behavior need the focused local diagnostics in `contributing/testing/` and `Scripts/README.md`. Unsigned generation does not prove those facts.
 
 ## Docs
 
 - [Short index](llms.txt): curated llms.txt v2 entry point
 - [README](README.md): install, compatibility identities, troubleshooting
-- [Compatibility](docs/user/compatibility.md): user-facing support matrix
-- [Permissions](docs/user/permissions.md): Input Monitoring, Accessibility, and related grants
-- [Generic HID](docs/user/generic-hid.md): descriptor-based parsing of uncatalogued HID gamepads
+- [Controllers](docs/connecting-controllers/supported-controllers.md): supported controllers, evidence classes, VID:PID, DEXT scope
+- [Permissions](docs/permissions-and-security/permissions.md): Input Monitoring, Accessibility, and related grants
+- [Generic HID](docs/connecting-controllers/generic-hid-controllers.md): descriptor-based parsing of uncatalogued HID gamepads
 - [Contributing](CONTRIBUTING.md): setup, adding controllers, code rules
 - [Localization](LOCALIZATION.md): GUI and CLI string catalogs
 - [Documentation map](docs/README.md): user, testing, and development pages
@@ -39,37 +39,36 @@ Parser/protocol: `./Scripts/ojd test parsers-macos14`. Cache: `./Scripts/ojd rep
 
 ## Develop
 
-- [Architecture](docs/development/architecture.md): runtime, HID/USB split, DriverKit boundary
-- [Source topology](docs/development/source-topology.md): package targets and capability owners
-- [Apple controller ownership](docs/development/apple-controller-ownership.md): entitlement scope vs support catalog
-- [Signing](docs/development/signing.md): Apple identities, profiles, entitlements
-- [Environment](docs/development/environment.md): generated environment contract
-- [CLI and runtime](docs/development/cli-and-runtime.md): headless commands and RPC
-- [Menu-bar UI](docs/development/menu-bar-settings-architecture.md): AppKit/SwiftUI settings shell
-- [Runtime health](docs/development/application-service-health.md): application-service diagnostics
-- [Responsiveness](docs/development/application-responsiveness.md): UI and runtime latency notes
-- [xpad import](docs/development/xpad-import.md): catalog generation from locked Linux sources
-- [Compatibility sources](docs/development/compatibility-sources.md): consumer-identity evidence
-- [Xbox identities](docs/development/xbox-identities.md): Xbox-family identity notes
-- [Experimental controllers](docs/development/experimental-controllers.md): source-backed unfinished support
-- [Implementation status](docs/development/implementation-status.md): remaining product gaps
-- [Issue audit](docs/development/issue-audit.md): tracked issue review
+- [Building from source](contributing/development/building-from-source.md): prerequisites and what works without Apple assets
+- [Architecture](contributing/development/architecture.md): runtime, HID/USB split, DriverKit boundary
+- [Source topology](contributing/development/source-topology.md): package targets and capability owners
+- [Apple controller ownership](contributing/development/apple-controller-ownership.md): entitlement scope vs support catalog
+- [Signing](contributing/development/signing.md): Apple identities, profiles, entitlements
+- [Environment](contributing/development/environment.md): generated environment contract
+- [CLI and runtime](contributing/development/cli-and-runtime.md): headless commands, RPC, responsiveness, runtime health
+- [Menu-bar UI](contributing/development/menu-bar-settings-architecture.md): AppKit/SwiftUI settings shell
+- [xpad import](contributing/development/xpad-import.md): catalog generation from locked Linux sources
+- [Compatibility sources](contributing/development/compatibility-sources.md): consumer-identity evidence
+- [Xbox identities](contributing/development/xbox-identities.md): Xbox-family identity notes
+- [Experimental controllers](contributing/development/experimental-controllers.md): source-backed unfinished support
+- [Implementation status](contributing/development/implementation-status.md): remaining product gaps
+- [Issue audit](contributing/development/issue-audit.md): tracked issue review
 - [Schema instructions](Resources/Schemas/AGENTS.md): JSON contract ownership
 - [Scripts](Scripts/README.md): `./Scripts/ojd` build, install, DriverKit, and release
 - [Package graph](Package.swift): SwiftPM targets and deployment floor
 
 ## Testing
 
-- [Physical output](docs/testing/physical-output.md): rumble, LED, and other device output
-- [Haptics backends](docs/testing/haptics-backends.md): consumer haptic routes
-- [Browser Gamepad API](docs/testing/browser-gamepad-api.md): browser visibility checks
-- [Controller record](docs/testing/controller-record.md): capture and validate a candidate record
-- [Logitech F310](docs/testing/logitech-f310.md): F310 hardware notes
-- [Xbox One 1537](docs/testing/xbox/1537.md): Xbox One Controller 1537
-- [Razer Wolverine V2](docs/testing/razer/wolverine-v2.md): Wolverine V2
-- [Razer Wolverine V3 TE](docs/testing/razer/v3-te.md): Wolverine V3 Tournament Edition
-- [Nacon Revolution X Pro](docs/testing/nacon-revolution-x.md): Nacon Revolution X Pro
-- [Steam Controller](docs/testing/steam-controller.md): Steam Controller capture
-- [Xbox 360 wireless receiver](docs/testing/xbox-360-wireless-receiver.md): wireless receiver
-- [Xbox Adaptive Joystick](docs/testing/xbox-adaptive-joystick.md): Adaptive Joystick checklist
-- [macOS 10.15 kit](docs/testing/catalina-testkit.md): Catalina test kit
+- [Physical output](contributing/testing/physical-output.md): rumble, LED, and other device output
+- [Haptics backends](contributing/testing/haptics-backends.md): consumer haptic routes
+- [Browser Gamepad API](contributing/testing/browser-gamepad-api.md): browser visibility checks
+- [Controller record](contributing/testing/controller-record.md): capture and validate a candidate record
+- [Logitech F310](contributing/testing/logitech-f310.md): F310 hardware notes
+- [Xbox One 1537](contributing/testing/xbox/1537.md): Xbox One Controller 1537
+- [Razer Wolverine V2](contributing/testing/razer/wolverine-v2.md): Wolverine V2
+- [Razer Wolverine V3 TE](contributing/testing/razer/v3-te.md): Wolverine V3 Tournament Edition
+- [Nacon Revolution X Pro](contributing/testing/nacon-revolution-x.md): Nacon Revolution X Pro
+- [Steam Controller](contributing/testing/steam-controller.md): Steam Controller capture
+- [Xbox 360 wireless receiver](contributing/testing/xbox-360-wireless-receiver.md): wireless receiver
+- [Xbox Adaptive Joystick](contributing/testing/xbox-adaptive-joystick.md): Adaptive Joystick checklist
+- [macOS 10.15 kit](contributing/testing/catalina-testkit.md): Catalina test kit
