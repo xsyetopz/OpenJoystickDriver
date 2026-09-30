@@ -5,11 +5,13 @@ import Foundation
 actor ClaimRecordingHIDAccessBackend: HIDAccessBackend {
   private var released: [UInt32] = []
   private var reacquired: [UInt32] = []
+  private var retried: [UInt32] = []
   private var elementValueRoutes: [UInt32] = []
 
   func releasedLocations() -> [UInt32] { released }
   func elementValueLocations() -> [UInt32] { elementValueRoutes }
   func reacquiredLocations() -> [UInt32] { reacquired }
+  func retriedLocations() -> [UInt32] { retried }
 
   func deviceEvents() -> AsyncStream<HIDDeviceEvent> { AsyncStream { _ in } }
 
@@ -54,6 +56,8 @@ actor ClaimRecordingHIDAccessBackend: HIDAccessBackend {
     reacquired.append(locationID)
     return .reacquired
   }
+
+  func retryInputClaim(locationID: UInt32) { retried.append(locationID) }
 
   func routeElementValues(connection: HIDDeviceConnection) {
     elementValueRoutes.append(connection.routingLocationID)

@@ -74,6 +74,8 @@ actor DevicePipeline {
   var hasStopped = false
   var usbRunGeneration: UInt64 = 0
   var usbHandle: (any USBTransportSession)?
+  /// Open ``USBCommandChannel`` of a controller bound over HID; see `sendUSBCommands`.
+  var usbCommandSession: (any USBTransportSession)?
   /// The binding the driver was built for: its protocol fixes the button labels, and with the
   /// interface it fixes the link that `ControllerState.connection` reports.
   let binding: ProtocolBinding?
@@ -98,6 +100,14 @@ actor DevicePipeline {
   var externalOutputAllowed: Bool
   var waitingForExternalNeutral = false
   var consecutiveUSBIOErrors: Int = 0
+  /// The latest USB open or handshake failed and no session has started since. The pipeline keeps
+  /// retrying; the device manager reads this to give a yielded HID route back.
+  var usbSessionStartFailed = false
+  /// The transport error of the latest failed USB startup write, cleared when a handshake starts.
+  var lastUSBStartupError: USBTransportError?
+  /// Whether this pipeline already reset its USB device. It resets at most once, so a device that
+  /// stays unresponsive after the reset is not reset again by the same pipeline.
+  var usbDeviceResetAttempted = false
   var lastUSBIOErrorLogNs: UInt64 = 0
   var inputConnectionActive: Bool
   var sessionState: ControllerSessionState
@@ -110,6 +120,8 @@ actor DevicePipeline {
   var startupOutputStatus: String?
   /// Whether the native startup player indicator still waits for the first input report.
   var startupPlayerIndicatorPending: Bool
+  /// The player slot a USB pipeline writes with its startup writes; nil sets none.
+  let usbStartupPlayerIndicator: PhysicalPlayerIndicator?
 
   init(
     identifier: DeviceIdentifier,
@@ -119,6 +131,7 @@ actor DevicePipeline {
     binding: ProtocolBinding? = nil,
     interface: PhysicalInterfaceSignature? = nil,
     nativeWrites: NativeGamepadWrites? = nil,
+    usbStartupPlayerIndicator: PhysicalPlayerIndicator? = nil,
     usbTransportProvider: (any USBTransportProvider)? = nil,
     transportProfile: DeviceTransportProfile = .gipDefault,
     usbRecoveryPolicy: USBPipelineRecoveryPolicy = .standard,
@@ -138,7 +151,8 @@ actor DevicePipeline {
       binding.map { ControllerButtonLabels(protocolID: $0.protocolID) } ?? .standard
     self.nativeWrites = nativeWrites
     self.observesOnly = nativeWrites != nil
-    self.startupPlayerIndicatorPending = nativeWrites?.startupPlayerIndicator != nil
+    self.usbStartupPlayerIndicator = usbStartupPlayerIndicator
+    self.startupPlayerIndicatorPending = nativeWrites?.setsStartupPlayerIndicator == true
     self.observedInputDemand = nativeWrites == nil ? nil : dispatcher as? any ObservedInputDemand
     self.usbTransportProvider = usbTransportProvider
     self.transportProfile = transportProfile

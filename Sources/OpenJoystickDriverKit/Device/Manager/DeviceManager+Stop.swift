@@ -72,6 +72,7 @@ extension DeviceManager {
     hidRoleConnections.removeAll()
     unboundDevices.removeAll()
     unboundHIDClaims.removeAll()
+    yieldedHIDConnections.removeAll()
     passThroughDevices.removeAll()
     for identifier in Array(hidOutputQueues.keys) { retireOutputQueue(for: identifier) }
     physicalOutputOwnership.removeAll()

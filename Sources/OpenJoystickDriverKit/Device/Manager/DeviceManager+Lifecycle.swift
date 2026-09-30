@@ -46,6 +46,7 @@ extension DeviceManager {
       while !Task.isCancelled {
         let currentState = await self.permissionManager.checkAccess().inputMonitoring
         await self.ensureHIDDetectionState(for: currentState)
+        await self.retryHIDInputClaims()
         try? await Task.sleep(nanoseconds: devicePermissionWatchNanoseconds)
       }
     }

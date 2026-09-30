@@ -128,6 +128,8 @@ actor ScriptedHIDAccessBackend: HIDAccessBackend {
 
   func reacquireInputClaim(locationID _: UInt32) -> PhysicalHIDClaimResult { .unavailable }
 
+  func retryInputClaim(locationID _: UInt32) {}
+
   func routeElementValues(connection _: HIDDeviceConnection) {}
 
   func attemptCount() -> Int { attempts }

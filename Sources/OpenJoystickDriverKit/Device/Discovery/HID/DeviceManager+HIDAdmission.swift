@@ -25,6 +25,7 @@ extension DeviceManager {
     // macOS serves a native controller: OJD binds only its native interface, observe-only, and
     // leaves every other HID interface at its location to macOS.
     if physicalDevice.nativePassThrough {
+      await yieldRawUSBPipelines(toNative: identifier)
       await prepareNativeHIDLocation(connection)
     } else if hasNativeHIDDevice(atLocation: routingLocationID) {
       guard isCurrentHIDInitialization(connection) else { return }
@@ -188,6 +189,7 @@ extension DeviceManager {
       interface: physicalDevice.interfaces?.first,
       nativeWrites: physicalDevice.nativePassThrough
         ? NativeGamepadWrites.allowance(for: binding.protocolID) : nil,
+      usbTransportProvider: usbTransportProvider,
       externalOutputAllowed: false,
       sessionState: suspendedControllerIdentities.contains(identifier) ? .suspended : .active
     )

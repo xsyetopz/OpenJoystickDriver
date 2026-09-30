@@ -76,6 +76,9 @@ public actor DeviceManager {
   let wirelessControllerDisconnector: (any WirelessControllerDisconnecting)?
   var pipelines: [DeviceIdentifier: DevicePipeline] = [:]
   var deviceInfos: [DeviceIdentifier: DeviceInfo] = [:]
+  /// The startup player indicator each native controller holds, one per controller and freed on
+  /// its detach.
+  var startupPlayerSlots: [DeviceIdentifier: PhysicalPlayerIndicator] = [:]
   var detectionTasks: [Task<Void, Never>] = []
   var hidDetectionTask: Task<Void, Never>?
   var hidDetectionSessionID: UUID?
@@ -106,6 +109,12 @@ public actor DeviceManager {
   var unboundDevices: [UnboundDeviceKey: UnboundDeviceSnapshot] = [:]
   /// OJD's input claim on each rejected HID connection, keyed by connection ID.
   var unboundHIDClaims: [UUID: UnboundHIDClaim] = [:]
+  /// HID connections stopped for a raw-USB pipeline of the same controller, keyed by connection
+  /// ID, so they can be admitted again if that pipeline never starts a session.
+  var yieldedHIDConnections: [UUID: YieldedHIDConnection] = [:]
+  /// Raw-USB services left acknowledged unclaimed because a native HID controller serves the
+  /// same physical controller, keyed by service with the key the service would have claimed.
+  var nativeShadowedUSBServices: [USBTransportServiceIdentity: DeviceIdentifier] = [:]
   /// HID connections left to macOS by native pass-through, keyed by connection ID.
   var passThroughDevices: [UUID: PassThroughHIDDevice] = [:]
 
@@ -115,20 +124,27 @@ public actor DeviceManager {
   ///   - dispatcher: Output dispatcher for sending HID reports.
   ///   - usbTransportProvider: Native raw-USB transport provider, or nil to disable raw USB
   ///     discovery.
+  ///   - bluetoothLEHub: Switch 2 controllers connected over Bluetooth LE GATT, or nil to serve
+  ///     IOHID devices only.
   public init(
     dispatcher: any OutputDispatcher,
     usbTransportProvider: (any USBTransportProvider)? = nil,
-    wirelessControllerDisconnector: (any WirelessControllerDisconnecting)? = nil
+    wirelessControllerDisconnector: (any WirelessControllerDisconnecting)? = nil,
+    bluetoothLEHub: Switch2BluetoothLEHub? = nil
   ) {
     self.dispatcher = dispatcher
-    self.usbTransportProvider = usbTransportProvider
+    self.usbTransportProvider =
+      bluetoothLEHub.map {
+        BluetoothLECompositeUSBTransportProvider(base: usbTransportProvider, hub: $0)
+      } ?? usbTransportProvider
     self.wirelessControllerDisconnector = wirelessControllerDisconnector
     let registry = ProtocolDriverRegistry()
     self.protocolDriverRegistry = registry
     self.permissionManager = PermissionManager()
     self.hidManager = HIDManager(
       additionalProfileIdentifiers: registry.hidIdentifiers,
-      roleProfileIdentifiers: registry.hidRoleIdentifiers
+      roleProfileIdentifiers: registry.hidRoleIdentifiers,
+      bluetoothLEHub: bluetoothLEHub
     )
   }
 

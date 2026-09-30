@@ -73,6 +73,7 @@ extension DeviceManager {
     }
     for key in keys { unboundDevices.removeValue(forKey: key) }
     unboundHIDClaims.removeAll()
+    yieldedHIDConnections.removeAll()
     if !keys.isEmpty { notifyControllerInventoryChanged() }
   }
 

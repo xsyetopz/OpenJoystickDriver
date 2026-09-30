@@ -43,6 +43,11 @@ struct USBEnumerationTracker {
     acknowledgedDevices[device.serviceIdentity] = device
   }
 
+  /// Forgets a device's acknowledgement without a detach, so the next poll attaches it again.
+  mutating func unacknowledge(_ device: USBTransportDevice) {
+    acknowledgedDevices.removeValue(forKey: device.serviceIdentity)
+  }
+
   mutating func events(for poll: USBEnumerationPoll) -> [USBEnumerationEvent] {
     guard case .available(let devices) = poll else {
       guard case .failed(let failure) = poll else { return [] }
@@ -134,6 +139,8 @@ extension DeviceManager {
           }
         }
       }
+      await restoreYieldedHIDRoutes()
+      releaseNativeShadowedUSBServices(in: &enumeration)
       try? await Task.sleep(nanoseconds: usbDetectionPollNanoseconds)
     }
   }
@@ -145,6 +152,7 @@ extension DeviceManager {
     serviceToIdentifiers: inout [USBTransportServiceIdentity: [DeviceIdentifier]]
   ) async {
     clearUnboundDevice(.usb(device.serviceIdentity))
+    nativeShadowedUSBServices.removeValue(forKey: device.serviceIdentity)
     let identifiers = (serviceToIdentifiers.removeValue(forKey: device.serviceIdentity) ?? [])
       .filter { isRunningUSBRole($0, of: device) }
     guard !identifiers.isEmpty else { return }
@@ -212,7 +220,14 @@ extension DeviceManager {
     // Resolution can move the claimed interface, so this early check keys on the configured one
     // and the check after resolution is authoritative.
     let configuredIdentifier = Self.usbIdentifier(for: device, claiming: configuredProfile)
-    guard !hasUSBPipelineConflict(for: configuredIdentifier, service: device.serviceIdentity) else {
+    guard !deferToNativeHID(device, identifier: configuredIdentifier) else { return .ignored }
+    guard
+      !hasUSBPipelineConflict(
+        for: configuredIdentifier,
+        service: device.serviceIdentity,
+        yieldingHID: true
+      )
+    else {
       print("[DeviceManager] Pipeline already exists for \(configuredIdentifier)")
       return .retry
     }
@@ -256,7 +271,10 @@ extension DeviceManager {
     let roleResolutions = protocolDriverRegistry.roleProfiles(for: binding, resolution: resolution)
     for (slotOrdinal, role) in roleResolutions.enumerated() {
       let identifier = Self.usbIdentifier(for: device, claiming: role.profile)
-      guard !hasUSBPipelineConflict(for: identifier, service: device.serviceIdentity) else {
+      guard !deferToNativeHID(device, identifier: identifier) else { return .ignored }
+      guard
+        !hasUSBPipelineConflict(for: identifier, service: device.serviceIdentity, yieldingHID: true)
+      else {
         print("[DeviceManager] Pipeline already exists for \(identifier)")
         return .retry
       }
@@ -287,6 +305,8 @@ extension DeviceManager {
         return .ignored
       }
     }
+    // Every role is admitted, so the HID route of this controller yields to raw USB now.
+    if let first = roles.first { await yieldHIDPipelines(to: first.identifier) }
     return await startUSBRoles(
       roles,
       of: device,
