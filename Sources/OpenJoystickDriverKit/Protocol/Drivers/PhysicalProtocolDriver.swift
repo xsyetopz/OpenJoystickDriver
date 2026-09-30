@@ -61,7 +61,8 @@ public struct DriverSessionPlan: Equatable, Sendable {
   /// Minimum spacing between user-output HID output reports (rumble, lighting); 0 is unlimited.
   public let minimumHIDOutputIntervalNanoseconds: UInt64
   /// True when the driver sets no player indicator itself: the manager picks a free slot per
-  /// controller and the pipeline writes it with the USB startup writes.
+  /// controller and the pipeline writes it with the USB startup writes, or, when output waits for
+  /// an input connection, each time the logical controller connects.
   public let assignsStartupPlayerIndicator: Bool
   /// USB command interface for `.usb` writes of a controller bound over HID; nil when none.
   public let usbCommandChannel: USBCommandChannel?

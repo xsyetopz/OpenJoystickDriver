@@ -76,7 +76,8 @@ extension DevicePipeline {
     case .usb:
       // A handle change stops the writes but not the state change, which is already consumed.
       guard let handle = usbHandle else { break }
-      for write in driver.inputConnectionWrites(for: state) {
+      let slotWrites = state == .connected ? assignedPlayerIndicatorWrites() : []
+      for write in driver.inputConnectionWrites(for: state) + slotWrites {
         guard usbHandle === handle else { break }
         do {
           try await performUSBWrite(write, handle: handle, runGeneration: usbRunGeneration)

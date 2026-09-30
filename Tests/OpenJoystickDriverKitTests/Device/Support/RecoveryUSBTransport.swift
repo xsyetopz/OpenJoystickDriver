@@ -59,6 +59,7 @@ actor RecoveryUSBSession: USBTransportSession {
   private var readResults: [Result<[UInt8], USBTransportError>]
   private(set) var closeCount = 0
   private(set) var writes: [[UInt8]] = []
+  private(set) var writeEndpoints: [UInt8] = []
   private(set) var readCount = 0
   var writeCount: Int { writes.count }
   var inputOwnership: HIDInputOwnership { closeCount == 0 ? .exclusive : .unknown }
@@ -76,6 +77,7 @@ actor RecoveryUSBSession: USBTransportSession {
   func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int {
     guard closeCount == 0 else { throw USBTransportError.disconnected }
     writes.append(data)
+    writeEndpoints.append(endpoint)
     return data.count
   }
 

@@ -99,8 +99,6 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
 public final class XUSBDriver: PhysicalProtocolDriver {
   private let outEndpoint: UInt8
   private let isWirelessReceiver: Bool
-  /// Player the receiver slot's ring light shows on connect: slot n (zero-based) is player n+1.
-  private let slotPlayer: PhysicalPlayerIndicator
   private var receiverConnected = false
   private var pendingConnectionState: ControllerInputConnectionState?
   private var pendingWrites: [PhysicalOutputWrite] = []
@@ -108,12 +106,13 @@ public final class XUSBDriver: PhysicalProtocolDriver {
 
   private var state = ControllerState.neutral
 
-  /// Creates a new XUSBDriver; a receiver built this way is slot 0.
+  /// Creates a new XUSBDriver.
   /// - Parameters:
   ///   - outEndpoint: Interrupt OUT endpoint address (default 0x01).
   ///   - isWirelessReceiver: Whether reports use the Xbox 360 receiver envelope.
-  public convenience init(outEndpoint: UInt8 = 0x01, isWirelessReceiver: Bool = false) {
-    self.init(outEndpoint: outEndpoint, isWirelessReceiver: isWirelessReceiver, slot: .player1)
+  public init(outEndpoint: UInt8 = 0x01, isWirelessReceiver: Bool = false) {
+    self.outEndpoint = outEndpoint
+    self.isWirelessReceiver = isWirelessReceiver
   }
 
   /// Creates the driver for one Xbox 360 wireless receiver slot, or nil outside slots 0–3.
@@ -121,16 +120,8 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   ///   - outEndpoint: Interrupt OUT endpoint address (default 0x01).
   ///   - slotOrdinal: Zero-based receiver slot in interface order.
   public convenience init?(outEndpoint: UInt8 = 0x01, slotOrdinal: Int) {
-    guard (0..<4).contains(slotOrdinal),
-      let slotPlayer = PhysicalPlayerIndicator(rawValue: slotOrdinal + 1)
-    else { return nil }
-    self.init(outEndpoint: outEndpoint, isWirelessReceiver: true, slot: slotPlayer)
-  }
-
-  private init(outEndpoint: UInt8, isWirelessReceiver: Bool, slot: PhysicalPlayerIndicator) {
-    self.outEndpoint = outEndpoint
-    self.isWirelessReceiver = isWirelessReceiver
-    slotPlayer = slot
+    guard (0..<4).contains(slotOrdinal) else { return nil }
+    self.init(outEndpoint: outEndpoint, isWirelessReceiver: true)
   }
 
   public var capabilities: ControllerCapabilities {
@@ -140,7 +131,7 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   public var sessionPlan: DriverSessionPlan {
     DriverSessionPlan(
       requiresInputConnectionBeforeOutput: isWirelessReceiver,
-      assignsStartupPlayerIndicator: !isWirelessReceiver
+      assignsStartupPlayerIndicator: true
     )
   }
 
@@ -151,8 +142,9 @@ public final class XUSBDriver: PhysicalProtocolDriver {
 
   // MARK: - PhysicalProtocolDriver
 
-  /// A wired Xbox 360 starts input without a handshake and sends no startup output: the manager
-  /// assigns its ring LED a free player slot, so two pads never both show player 1.
+  /// A wired Xbox 360 starts input without a handshake and sends no startup output. The manager
+  /// assigns every wired pad and receiver slot its ring LED from one pool of free player slots,
+  /// so two pads never both show player 1 (xpad numbers pads from one global `pad_nr` pool).
   /// A receiver slot asks for presence so a controller already paired before the interface
   /// opened reports itself (xpad.c:1845–1864). Either device that rejects its write still
   /// starts: xpad fails start only when it cannot submit the write (xpad.c:1473).
@@ -174,13 +166,6 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   public func drainPendingWrites() -> [PhysicalOutputWrite] {
     defer { pendingWrites.removeAll(keepingCapacity: true) }
     return pendingWrites
-  }
-
-  public func inputConnectionWrites(
-    for state: ControllerInputConnectionState
-  ) -> [PhysicalOutputWrite] {
-    guard isWirelessReceiver, state == .connected else { return [] }
-    return [.usb(ledOutputPacket(pattern: Self.ledPattern(for: slotPlayer)))]
   }
 
   /// Parses either a wired report or an Xbox 360 wireless receiver envelope.

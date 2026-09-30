@@ -266,12 +266,6 @@ struct XUSBDriverTests {
         0x00, 0x00, 0x08, 0x46, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       ]
     )
-    #expect(
-      parser.inputConnectionWrites(for: .connected).usbBytes == [
-        parser.ledPacket(pattern: .player1On)
-      ]
-    )
-    #expect(parser.inputConnectionWrites(for: .disconnected).isEmpty)
   }
 
   @Test
@@ -280,7 +274,7 @@ struct XUSBDriverTests {
 
     #expect(parser.startupWrites().isEmpty)
     #expect(parser.sessionPlan.assignsStartupPlayerIndicator)
-    #expect(!XUSBDriver(isWirelessReceiver: true).sessionPlan.assignsStartupPlayerIndicator)
+    #expect(XUSBDriver(isWirelessReceiver: true).sessionPlan.assignsStartupPlayerIndicator)
     #expect(
       HIDDescriptorDriver(identifier: DeviceIdentifier(vendorID: 1, productID: 2)).startupWrites()
         .isEmpty

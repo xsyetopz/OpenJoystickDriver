@@ -30,10 +30,9 @@ struct ReceiverRoleProfileTests {
         claimed: role,
         slotOrdinal: ordinal
       ).get()
-      // Slot n lights player n+1 (LED command 0x46 + n) on its own OUT endpoint.
-      let led = try #require(connectLED(driver))
+      // The manager's slot pool picks the player; each slot writes its LED on its own endpoint.
+      let led = try #require(playerLED(driver))
       #expect(led.endpoint == role.profile.outputEndpoint)
-      #expect(led.bytes[3] == 0x46 + UInt8(ordinal))
     }
   }
 
@@ -185,9 +184,8 @@ struct ReceiverRoleProfileTests {
     try #require(registry.runtimeProfile(for: binding)).transportProfile
   }
 
-  private func connectLED(_ driver: any PhysicalProtocolDriver) -> PhysicalUSBOutputPacket? {
-    guard case .usb(let packet, _) = driver.inputConnectionWrites(for: .connected).first,
-      packet.bytes.count > 3
+  private func playerLED(_ driver: any PhysicalProtocolDriver) -> PhysicalUSBOutputPacket? {
+    guard case .usb(let packet, _) = try? driver.encode(.setPlayerIndicator(.player1)).writes.first
     else { return nil }
     return packet
   }

@@ -129,9 +129,12 @@ struct DriverLifecycleCharacterizationTests {
     let packets = driver.startupWrites().usbBytes
     let interval = driver.sessionPlan.usbStartupIntervalNanoseconds
     let retries = driver.sessionPlan.usbStartupRetryDelays
-    // The manager appends the assigned player-slot write after these packets; the slot's own
-    // encoding is pinned by the `usbPlayer` lines.
-    let slot = driver.sessionPlan.assignsStartupPlayerIndicator ? ["usb.startup playerSlot"] : []
+    // The pipeline appends the manager-assigned player-slot write after these packets, or on
+    // connect when output waits for it; the slot's own encoding is pinned by the `usbPlayer` lines.
+    let plan = driver.sessionPlan
+    let slot =
+      plan.assignsStartupPlayerIndicator && !plan.requiresInputConnectionBeforeOutput
+      ? ["usb.startup playerSlot"] : []
     return ["usb.startup interval=\(interval) retries=\(retries) packets=\(packets.count)"]
       + packets.flatMap(render) + slot
   }
@@ -155,7 +158,11 @@ struct DriverLifecycleCharacterizationTests {
   func usbInputConnectionOutput(_ driver: any PhysicalProtocolDriver) -> [String] {
     [ControllerInputConnectionState.connected, .disconnected].flatMap { state in
       let packets = driver.inputConnectionWrites(for: state).usbBytes
-      return ["usb.connection[\(state)] packets=\(packets.count)"] + packets.flatMap(render)
+      let plan = driver.sessionPlan
+      let slot =
+        state == .connected && plan.assignsStartupPlayerIndicator
+          && plan.requiresInputConnectionBeforeOutput ? ["usb.connection playerSlot"] : []
+      return ["usb.connection[\(state)] packets=\(packets.count)"] + packets.flatMap(render) + slot
     }
   }
 

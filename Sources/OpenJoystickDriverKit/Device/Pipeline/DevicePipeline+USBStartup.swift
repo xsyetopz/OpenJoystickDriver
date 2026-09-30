@@ -184,19 +184,25 @@ extension DevicePipeline {
     } catch { print("[DevicePipeline] USB device reset failed for \(identifier): \(error)") }
   }
 
-  /// The driver's startup writes, then the assigned player slot. A pad that rejects only its
-  /// ring LED still starts, so that write tolerates rejection.
+  /// The driver's startup writes, then the assigned player slot unless the slot waits for an
+  /// input connection.
   func usbStartupWrites() -> [PhysicalOutputWrite] {
-    var writes = driver.startupWrites()
-    if let indicator = usbStartupPlayerIndicator,
-      let plan = try? driver.encode(.setPlayerIndicator(indicator))
-    {
-      writes += plan.writes.map { write in
-        guard case .usb(let packet, _) = write else { return write }
-        return .usb(packet, toleratesRejection: true)
-      }
+    guard !driver.sessionPlan.requiresInputConnectionBeforeOutput else {
+      return driver.startupWrites()
     }
-    return writes
+    return driver.startupWrites() + assignedPlayerIndicatorWrites()
+  }
+
+  /// The write lighting the manager-assigned player slot. A pad that rejects only its ring LED
+  /// still starts, so the write tolerates rejection.
+  func assignedPlayerIndicatorWrites() -> [PhysicalOutputWrite] {
+    guard let indicator = usbStartupPlayerIndicator,
+      let plan = try? driver.encode(.setPlayerIndicator(indicator))
+    else { return [] }
+    return plan.writes.map { write in
+      guard case .usb(let packet, _) = write else { return write }
+      return .usb(packet, toleratesRejection: true)
+    }
   }
 
   func sendUSBStartupOutputPackets(

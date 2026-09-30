@@ -96,18 +96,18 @@ extension XUSBDriverTests {
     #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)).contains(.press(.faceSouth)))
   }
 
+  /// The manager assigns a receiver slot's ring LED from the pool wired pads share, so the
+  /// driver lights nothing itself: two single-slot receivers must not both show player 1.
   @Test
-  func testWirelessReceiverConnectLEDFollowsSlotOrder() throws {
-    var patterns: [UInt8] = []
+  func testWirelessReceiverSlotLeavesThePlayerSlotToTheManager() throws {
     for slot in 0..<4 {
       let parser = try #require(XUSBDriver(slotOrdinal: slot))
-      let bytes = parser.inputConnectionWrites(for: .connected).usbBytes
-      #expect(bytes.count == 1)
-      patterns.append(bytes.first?[3] ?? 0)
+      #expect(parser.sessionPlan.assignsStartupPlayerIndicator)
+      #expect(parser.inputConnectionWrites(for: .connected).isEmpty)
     }
-
-    // xpad's receiver LED command is 0x40 + pattern; slot n shows the player n+1 pattern.
-    #expect(patterns == [0x46, 0x47, 0x48, 0x49])
+    // xpad's receiver LED command is 0x40 + pattern; player 2 is pattern 7.
+    let parser = try #require(XUSBDriver(slotOrdinal: 0))
+    #expect(try parser.encode(.setPlayerIndicator(.player2)).writes.usbBytes.first?[3] == 0x47)
     #expect(XUSBDriver(slotOrdinal: -1) == nil)
     #expect(XUSBDriver(slotOrdinal: 4) == nil)
   }

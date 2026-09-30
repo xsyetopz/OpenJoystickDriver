@@ -154,7 +154,7 @@ extension DriverLifecycleCharacterizationTests {
         "usb.startup interval=0 retries=[] packets=1", "  n=12", "    08000fc00000000000000000",
         "usb.keepAlive nil", "usb.deferred inputs=3 packets=1", "  n=12",
         "    08000fc00000000000000000", "usb.deferred drained=0",
-        "usb.connection[connected] packets=1", "  n=12", "    000008460000000000000000",
+        "usb.connection[connected] packets=0", "usb.connection playerSlot",
         "usb.connection[disconnected] packets=0",
         "hid.startupOutput[USB] interval=0 required=false beforeReads=false reports=0",
         "hid.featureReads[USB] validates=false requests=[]",
