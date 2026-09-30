@@ -5,15 +5,20 @@ import Testing
 
 // Output ownership and native-pad gates through DeviceManager.
 extension DriverLifecycleCharacterizationTests {
-  /// Native Sixaxis refuses rumble and stop; teardown writes only report 0x01.
+  /// Native Sixaxis drives rumble through report 0x01, which keeps the player LED; teardown
+  /// stops the motors, then turns the LED off.
   @Test
-  func nativeSixaxisRefusesRumbleAndNeutralizesOnlyReport01() async throws {
+  func nativeSixaxisDrivesRumbleThroughReport01() async throws {
+    let row2 = "    0000000000000000000000000000000000"
+    let stopped = "    0101ff00ff000000000002ff27100032ff27100032ff27100032ff2710003200"
     #expect(
       try await nativeSixaxisOutputSteps() == [
-        "capabilities rumble=[] lighting=[playerIndicator]", "rumble=false", "outputs=0",
-        "features=0", "stop=false", "outputs=0", "features=0", "teardown", "outputs=1",
-        "  id=0x01 n=49", "    0101ff00ff000000000020ff27100032ff27100032ff27100032ff2710003200",
-        "    0000000000000000000000000000000000", "features=0",
+        "capabilities rumble=[leftMain,rightMain] lighting=[playerIndicator]", "rumble=true",
+        "outputs=1", "  id=0x01 n=49",
+        "    0101ff01ffff0000000002ff27100032ff27100032ff27100032ff2710003200", row2, "features=0",
+        "stop=true", "outputs=1", "  id=0x01 n=49", stopped, row2, "features=0", "teardown",
+        "outputs=2", "  id=0x01 n=49", stopped, row2, "  id=0x01 n=49",
+        "    0101ff00ff000000000020ff27100032ff27100032ff27100032ff2710003200", row2, "features=0",
       ]
     )
   }

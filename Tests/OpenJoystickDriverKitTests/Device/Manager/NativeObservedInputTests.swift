@@ -5,7 +5,7 @@ import Testing
 
 struct NativeObservedInputTests {
   @Test
-  func nativeSixaxisSendsOnlyItsPlayerLED() async throws {
+  func nativeSixaxisDrivesItsPlayerLEDAndRumble() async throws {
     let backend = ScriptedHIDAccessBackend()
     await backend.enableOutputReports()
     await backend.enableFeatureReports()
@@ -23,18 +23,9 @@ struct NativeObservedInputTests {
 
     let device = try #require(await manager.connectedDeviceDescriptions().first)
     #expect(device.physicalOutputCapabilities.lightingFeatures == [.playerIndicator])
-    #expect(device.physicalOutputCapabilities.rumbleMotors.isEmpty)
+    // macOS never writes report 0x01, so OJD drives the motors it carries.
+    #expect(device.physicalOutputCapabilities.rumbleMotors == [.leftMain, .rightMain])
     let identifier = try #require(await manager.pipelines.keys.first)
-    #expect(
-      !(await manager.sendManualRumble(
-        for: identifier,
-        left: 255,
-        right: 255,
-        lt: 0,
-        rt: 0,
-        durationMs: 50
-      ))
-    )
     // A USB Sixaxis ignores its LED report until it streams input, so player 1 follows the first
     // input report, once.
     #expect(await backend.recordedOutputReports().isEmpty)
@@ -60,6 +51,20 @@ struct NativeObservedInputTests {
     // A never-seized native device is reachable only through its exact connection.
     let target: UUID? = connection.connectionID
     #expect(await backend.recordedFeatureReadTargets() == [target, target])
+    #expect(
+      await manager.sendManualRumble(
+        for: identifier,
+        left: 255,
+        right: 255,
+        lt: 0,
+        rt: 0,
+        durationMs: 5_000
+      )
+    )
+    let rumble = try #require(await backend.recordedOutputReports().last)
+    #expect(rumble.reportID == 0x01 && rumble.bytes[3] == 1 && rumble.bytes[5] == 255)
+    // The same report keeps player 1 lit.
+    #expect(rumble.bytes[10] == 0x02)
     await manager.stop()
   }
 

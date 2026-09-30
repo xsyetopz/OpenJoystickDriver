@@ -3,6 +3,8 @@
 struct NativeGamepadWrites: Equatable, Sendable {
   /// Lighting OJD drives because macOS does not.
   let lightingFeatures: Set<PhysicalLightingFeature>
+  /// Whether OJD drives the driver's rumble motors because macOS does not.
+  let drivesRumble: Bool
   /// HID output report IDs that carry that lighting; the write executors refuse every other
   /// output report and every feature report.
   let outputReportIDs: Set<UInt8>
@@ -14,6 +16,7 @@ struct NativeGamepadWrites: Equatable, Sendable {
 
   static let none = Self(
     lightingFeatures: [],
+    drivesRumble: false,
     outputReportIDs: [],
     setsStartupPlayerIndicator: false,
     readsStartupFeatures: false
@@ -22,12 +25,14 @@ struct NativeGamepadWrites: Equatable, Sendable {
   /// The allowance table, keyed by bound protocol.
   static func allowance(for protocolID: PhysicalProtocolID) -> Self {
     switch protocolID {
-    // macOS never lights a DualShock 3 / Sixaxis player LED. Output report 0x01 sets it; its
-    // rumble fields stay off because rumble is not allowed. On USB the controller sends no input
-    // and ignores that report until the host reads feature 0xF2, which macOS does not do.
+    // macOS never writes a DualShock 3 / Sixaxis output report 0x01, which carries both the
+    // player LED and the rumble motors, so OJD drives both. A Sixaxis without motors ignores the
+    // rumble fields. On USB the controller sends no input and ignores that report until the host
+    // reads feature 0xF2, which macOS does not do.
     case .sonySixaxis:
       Self(
         lightingFeatures: [.playerIndicator],
+        drivesRumble: true,
         outputReportIDs: [0x01],
         setsStartupPlayerIndicator: true,
         readsStartupFeatures: true
@@ -46,7 +51,9 @@ struct NativeGamepadWrites: Equatable, Sendable {
     _ capabilities: PhysicalControllerOutputCapabilities
   ) -> PhysicalControllerOutputCapabilities {
     PhysicalControllerOutputCapabilities(
-      lightingFeatures: capabilities.lightingFeatures.filter { lightingFeatures.contains($0) }
+      rumbleMotors: drivesRumble ? capabilities.rumbleMotors : [],
+      lightingFeatures: capabilities.lightingFeatures.filter { lightingFeatures.contains($0) },
+      binaryRumbleMotors: drivesRumble ? capabilities.binaryRumbleMotors : []
     )
   }
 }
