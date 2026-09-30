@@ -97,7 +97,7 @@ struct MotionFrameTests {
   /// Pins SDL's Steam mapping, not a verified physical frame: gyro raw (x, y, z) → (x, -y, z) and
   /// accel raw (x, y, z) → (x, y, z), both at nominal full scale. The two differ by a reflection,
   /// so at most one is right-handed; handedness is hardware-unverified until a capture (right edge
-  /// rolled down at rest, `docs/testing/steam-controller.md`) settles it.
+  /// rolled down at rest, `contributing/testing/steam-controller.md`) settles it.
   @Test
   func steamPinsSDLMappingWithUnverifiedHandedness() throws {
     let gyroSigns: [(Double, Double, Double)] = [(1, 0, 0), (0, -1, 0), (0, 0, 1)]

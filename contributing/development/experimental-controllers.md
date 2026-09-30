@@ -1,0 +1,111 @@
+# Experimental Controller Status
+
+Experimental entries have implementation work but incomplete accepted hardware evidence. Runtime controller records contain operational facts only; keep verification status in the matching testing document and issue, not controller metadata.
+
+For parser or record changes, run the parser validation gates in `AGENTS.md`.
+
+## DualSense
+
+Implemented:
+
+- USB report `0x01` and Bluetooth report `0x31` input
+- Bluetooth input CRC32 validation with seed `0xA1`
+- Edge function and paddle sources selected by the canonical Edge record
+- raw IMU and touch samples; calibration and mapping actions remain in progress
+- compatible rumble over USB and Bluetooth
+- five player-indicator LEDs
+- RGB lightbar output
+- Bluetooth sequence framing and output CRC32 with seed `0xA2`
+
+Needed: physical USB and Bluetooth checks for input, reconnect, rumble, indicators, and color. For Edge, verify all four function/paddle press/release edges in capture and in a remapped consumer, including disconnect while held. Check firmware-side assignments separately from OJD mappings. Records remain unverified. See [remapping input contracts](remapping.md) for the packet reference and constructed-fixture coverage.
+
+## DualShock 3
+
+Implemented:
+
+- USB and Bluetooth input report `0x01`
+- transport-specific operational-mode setup
+- bogus Bluetooth status report filtering
+- analog large motor and binary small motor
+- four numbered player LEDs
+
+Not claimed: sensors, battery reporting, or pairing support. USB control-transfer behavior and Bluetooth operation need hardware checks.
+
+## Steam Controller
+
+Implemented:
+
+- wired and wireless records
+- exact VID/PID discovery even when lizard mode exposes keyboard or mouse collections
+- wireless connect, disconnect, and status fallback
+- input parsing and lizard-mode feature reports
+- left and right trackpad haptics
+- home-button LED brightness
+
+The issue #8 wired report reaches macOS as lizard-mode keyboard input; gamepad-only monitoring does not find it. Profile-backed discovery covers that case. Run [the Steam Controller request](../testing/steam-controller.md) to check it.
+
+## Switch Pro
+
+Implemented:
+
+- USB startup handshake and full-report command
+- Bluetooth input without the USB-only startup sequence
+- 12-bit stick, button, and D-pad parsing
+- independent HD-rumble frames
+- four player LEDs
+- startup and output rate limits
+
+Needed: calibration, IMU, reconnect, rumble, and LED checks on USB and Bluetooth hardware.
+
+## Joy-Con
+
+The pinned Nintendo source now supplies left `057e:2006` and right `057e:2007` HID records. Each selects a side-specific layout in the Nintendo parser. Primary controls and raw IMU samples are decoded; absent sticks and opposite-half button fields are ignored. Rumble capabilities expose only the available motor. SL/SR are distinct remapping sources for each half. Constructed tests cover calibration, motion actions, and explicit paired sessions. See [Joy-Con validation](../testing/joy-con.md) for the source revision, product evidence, and outstanding physical acceptance.
+
+## Xbox 360 Wireless Receiver
+
+Implemented from Linux `xpad.c`:
+
+- receiver records for `045e:0291`, `045e:02a9`, and `045e:0719`
+- logical-controller presence and disconnect handling
+- wrapped state reports
+- receiver rumble and player-light packets
+
+Run [the receiver request](../testing/xbox-360-wireless-receiver.md) with real receiver hardware.
+
+## Razer Wolverine V3 Tournament Edition
+
+The bundled GIP record binds `1532:0A43` to `xbox.gip`; Generic HID could not run its handshake. Endpoint, handshake, input, and output behavior still need the [Razer hardware test](../testing/razer/v3-te.md).
+
+## Microsoft Xbox One Controller (Model 1537)
+
+Reporter packet evidence from an IOUSBHost harness verifies the GIP handshake, player LED, every input including Guide, and rumble for `045E:02D1`. The record carries the observed `0x81`/`0x01` endpoints, configuration-1-before-claim requirement. OJD's generated USBDriverKit extension and host wrapper have not passed on this hardware. Complete the [model 1537 test](../testing/xbox/1537.md).
+
+## Razer Wolverine V2
+
+The source-backed GIP record for `1532:0A29` has a local-hardware patch for the captured interface-0 endpoints `0x81`/`0x01`. Input mapping, reconnect, LED, and rumble behavior remain unverified pending the [Wolverine V2 hardware test](../testing/razer/wolverine-v2.md).
+
+## Nacon Revolution X Pro
+
+The local `3285:0634` override selects `xbox.gip` on interface 0 with the captured interrupt endpoints `0x87`/`0x07`. The profile disables OJD's periodic host-side GIP `0x03` transmission because the issue's working WebUSB trace shows the device emitting `0x03` status frames and remaining stable without a synthetic host packet. The parser also accepts split or stacked transfers, base-128 payload lengths, and requested ACK frames using the Linux/xone layout. Chunk headers are drained and acknowledged, but payload reassembly is not yet implemented because no issue capture requires a multi-chunk input report.
+
+Current Linux `xpad.c` supports the Nacon vendor and Xbox One fallback, but does not name this exact PID. That supports classification only, not the captured endpoint addresses or OJD USBDriverKit session. The [Nacon hardware procedure](../testing/nacon-revolution-x.md) remains the human-readable acceptance record for input, continuous-read, reconnect, and no-host-keep-alive checks.
+
+## ZD Ultimate Legend
+
+The Linux xpad XUSB record for `413D:2104` stays. A local-hardware patch pins interrupt endpoints `0x81`/`0x02` because rumble and player-indicator writes to the Xbox 360 default OUT `0x01` fail with `notFound`. Input on IN `0x81` was already working. The published virtual profile is separate; the automatic selector publishes `hid-xbox-one-s-bt`. See [issue #22](https://github.com/xsyetopz/OpenJoystickDriver/issues/22).
+
+## Xbox Adaptive Joystick
+
+No parser claim exists. Product descriptions do not provide a packet layout. Capture neutral, every button, stick axes, stick click, report IDs, and checksums with [the packet request](../testing/xbox-adaptive-joystick.md) before adding a record.
+
+## Flydigi Vader 4 Pro (Bluetooth)
+
+The bundled HID record for `D7D7:0041` binds `vendor.flydigi` instead of `hid.descriptor`. Input is packet-backed from captured 15-byte BLE reports. Consumer-visible virtual input, reconnect, rumble, and the 2.4 GHz/wired identities still need the [Vader 4 Pro hardware test](../testing/flydigi-vader-4-pro.md). See also [pull request #30](https://github.com/xsyetopz/OpenJoystickDriver/pull/30).
+
+## WR-007 USB HID Receiver
+
+The bundled HID record for `11C1:5600` stays on Generic HID. The parser maps this tuple's sparse Xbox-style button usages, Z/Rz right stick, and Simulation Accelerator/Brake triggers. Apple GameController identity is available for the tuple. Physical rumble is unavailable: the receiver accepts its 4-byte output report but channel probes produced no motor or LED response. Run the [WR-007 hardware test](../testing/wr-007.md). See also [issue #31](https://github.com/xsyetopz/OpenJoystickDriver/issues/31).
+
+## Generic HID
+
+Descriptor-driven fallback handles standard buttons, stick pairs, triggers, and an eight-way hat. Known protocol parsers still consume their raw reports. Vendor-defined layouts need a record and parser instead of more guesses in Generic HID.

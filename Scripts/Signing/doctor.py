@@ -270,7 +270,9 @@ def main() -> int:
     release_ready = report_release_signing(developer_id)
 
     if development_blocked:
-        print("Obtain the assets described in docs/development/signing.md, then run:")
+        print(
+            "Obtain the assets described in contributing/development/signing.md, then run:"
+        )
         print("  ./Scripts/ojd signing install-profiles")
         print("  ./Scripts/ojd signing configure")
         if release_ready:
