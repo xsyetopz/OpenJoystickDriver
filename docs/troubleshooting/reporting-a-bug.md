@@ -16,10 +16,10 @@ If you use a tester build, attach `OpenJoystickDriver-TESTER-BUILD.txt` from the
 
 ## Create a support report
 
-Run the following command. It writes a JSON file in the current folder. Add `--output PATH` to choose the file.
+Run the following command. It runs every check and writes the report to the file you name.
 
 ```shell
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless diagnose report
+ojd diagnose --bundle support-report.json
 ```
 
 You can also click **Copy Support Report** on the **Xbox USB Driver** card in **Overview**. The app copies the report to the clipboard and shows no confirmation.
@@ -31,7 +31,7 @@ The report leaves out serial numbers, file paths, packet payloads, and HID locat
 Open the Console pane and click **Copy All**. To open the pane, use the **Help** submenu of the menu bar item. Or run the following command.
 
 ```shell
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app logs show --lines 200
+ojd log show --lines 200
 ```
 
 Logs may contain device names, identifiers, and paths. Read them before you share them.

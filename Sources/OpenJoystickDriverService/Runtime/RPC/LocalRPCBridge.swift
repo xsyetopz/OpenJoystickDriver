@@ -191,6 +191,12 @@ extension ApplicationServiceServer {
     case .resetSettings:
       _ = try decode(LocalServiceRPCEmptyArguments.self)
       return try send(await resetSettings())
+    case .getSettings:
+      _ = try decode(LocalServiceRPCEmptyArguments.self)
+      return try send(getSettings())
+    case .setSetting:
+      let value = try decode(ApplicationServiceSettingArguments.self)
+      return try send(try setSetting(value.key, to: value.value))
     case .remappingMotionCalibration:
       let value = try decodeRemapping(ApplicationServiceMotionCalibrationArguments.self)
       return try sendRemapping(try await remappingMotionCalibration(value))

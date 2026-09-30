@@ -135,11 +135,12 @@ install_full() {
   done
   if sysext_listed "$NEW_SHORT_VERSION" "$NEW_BUILD_VERSION"; then
     echo "  ✓ The app requested activation of ${NEW_SHORT_VERSION} (${NEW_BUILD_VERSION})"
-  elif "$APP_BIN" --headless extension enable; then
+  # argv[0] "ojd" selects the command line in the app executable.
+  elif (exec -a ojd "$APP_BIN" extension activate); then
     echo "  ✓ Sysext activation request submitted"
   else
     echo "  ✗ Sysext activation request failed"
-    echo "    Fix: run: $APP_BIN --headless extension enable"
+    echo "    Fix: run: ojd extension activate"
   fi
 
   echo ""

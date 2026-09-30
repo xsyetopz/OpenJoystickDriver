@@ -107,6 +107,14 @@ func runRawUSBMonitor() {
   exit(exitCode.withLock { $0 })
 }
 if usbMonitor { runRawUSBMonitor() }
+if parsedArguments.mode == .usbPassive {
+  exit(
+    runPassiveUSBProbe(
+      vendorID: UInt16(clamping: intArg("--vid", default: 0)),
+      productID: UInt16(clamping: intArg("--pid", default: 0))
+    )
+  )
+}
 
 if monitor {
   let vid = intArg("--vid", default: 0x1209)

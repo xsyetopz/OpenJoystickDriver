@@ -15,6 +15,7 @@
 
             notificationSettings
             updateSettings
+            commandLineToolSettings
 
             if let errorMessage = preferences.errorMessage {
               HStack(alignment: .top, spacing: 8) {

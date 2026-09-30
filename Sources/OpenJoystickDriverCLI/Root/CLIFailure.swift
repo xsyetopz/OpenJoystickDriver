@@ -43,5 +43,17 @@ struct CLIFailure: Error, Equatable, Sendable {
     )
   }
 
+  /// A macOS permission that `permissionName` names is missing; exit code 77.
+  static func permissionMissing(_ permissionName: String) -> Self {
+    Self(
+      .permissionDenied,
+      CLILocalized.format(
+        "cli.error.permission_missing",
+        "%@ access is missing. Grant it with 'ojd permission request'.",
+        permissionName
+      )
+    )
+  }
+
   static func usage(_ message: String) -> Self { Self(.usage, message) }
 }

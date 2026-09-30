@@ -58,6 +58,8 @@ Commands:
 
   diagnose dext               Run dext diagnostics (activation, codesign, IORegistry, application service connection)
   diagnose record <json>      Validate a record or probe through the USB DEXT
+  diagnose usb-passive <vid> <pid>
+                              Print an authorized device's USB descriptor facts (debug build)
   diagnose sdl3 [--seconds N] Run SDL3 probe against the virtual device
   diagnose sdl3-gamecontroller [--seconds N]
                               Run SDL3 through GameController/MFI and test rumble
@@ -176,6 +178,7 @@ from .execution import (
     repair_swiftpm_cache,
     run_commands,
     run_record,
+    run_usb_passive,
 )
 
 
@@ -274,6 +277,8 @@ def dispatch(argv: list[str]) -> int:
                 exec_target("Diagnostics/backend.sh", ["help"])
             if sub == "record":
                 return run_record(tail)
+            if sub == "usb-passive":
+                return run_usb_passive(tail)
             if sub == "rumble-motors":
                 if len(tail) not in {2, 3, 4}:
                     die(
@@ -293,7 +298,7 @@ def dispatch(argv: list[str]) -> int:
                     exec_target("Diagnostics/dext/diagnose.sh", [])
                 exec_target("Diagnostics/backend.sh", [sub, *tail])
             die(
-                f"Unknown: diagnose {sub} (expected: record | dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | backends | rumble-motors)"
+                f"Unknown: diagnose {sub} (expected: record | usb-passive | dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | backends | rumble-motors)"
             )
         case "check":
             sub, tail = (rest[0], rest[1:]) if rest else ("", [])

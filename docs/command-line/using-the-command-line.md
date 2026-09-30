@@ -6,7 +6,9 @@ This article explains how to run `ojd`, which options apply to every command, ho
 
 The command-line tool is named `ojd`. It is the app's own executable: when it runs under the name `ojd`, it acts as the command line, and under any other name it opens the app.
 
-To run `ojd` without installing it, link it into a folder on your `PATH`:
+To install `ojd`, open the app's Settings and click Install Command-Line Tool. The app links `/usr/local/bin/ojd` to its executable, and macOS asks for an administrator password when that folder needs it. Uninstall in the same place removes the link. The app never replaces a file at that path that is not a link.
+
+To link it yourself instead, create the link in a folder on your `PATH`:
 
 ```shell
 ln -s /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver /usr/local/bin/ojd

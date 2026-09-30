@@ -23,12 +23,14 @@ Supported controllers and their evidence: [docs/connecting-controllers/supported
 
 One bundle, no helper app: `/Applications/OpenJoystickDriver.app`.
 
+For the `ojd` command, click **Install Command-Line Tool** in Settings, or link it yourself:
+
 ```bash
 ln -s /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver /usr/local/bin/ojd
 ojd status
 ```
 
-Uninstall: `--headless app login disable`, quit, delete the app. Optionally remove it from Input Monitoring and Accessibility.
+Uninstall: `ojd setting set launch-at-login false`, quit, delete the app. Optionally remove it from Input Monitoring and Accessibility.
 
 ## Virtual HID Profile
 
@@ -47,12 +49,12 @@ OJD automatically publishes each non-native controller as one of two virtual HID
 | --- | --- |
 | Runtime disconnected | `ojd service start`, then `ojd status` |
 | SDL sees 0 controllers | Grant Input Monitoring and Accessibility, restart, retry |
-| XboxUSBDevice install fails | Rebuild the signed app; `--headless extension enable` |
-| Input stays held or status says Needs attention | Release the controls and check controller input health with `--headless status --json` |
+| XboxUSBDevice install fails | Rebuild the signed app; `ojd extension activate` |
+| Input stays held or status says Needs attention | Release the controls and check controller input health with `ojd status --json` |
 | Bluetooth controller will not recover | Use Controller Details → Disconnect Wireless Controller, reconnect it manually, then verify neutral startup |
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless diagnose report
+ojd diagnose --bundle support-report.json
 ```
 
 More: [troubleshooting](docs/troubleshooting/README.md), [report a bug](docs/troubleshooting/reporting-a-bug.md), [tester builds](contributing/testing/tester-builds.md).

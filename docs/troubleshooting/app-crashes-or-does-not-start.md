@@ -7,7 +7,7 @@ This article explains what to do when OpenJoystickDriver (OJD) crashes, does not
 1. Open the Console pane, or run the following command.
 
    ```shell
-   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app logs show --lines 200
+   ojd log show --lines 200
    ```
 
 1. Note what you did before the crash.

@@ -44,6 +44,22 @@ def run_record(args: list[str]) -> int:
     return subprocess.run(command, env=env_with(), check=False).returncode
 
 
+def run_usb_passive(args: list[str]) -> int:
+    if len(args) != 2:
+        die("diagnose usb-passive requires vid pid (hex, for example 0x3537 0x1010)")
+    command = [
+        "/bin/bash",
+        "-c",
+        'source "$1"; cd "$2"; exec "$SWIFT_BIN" run OpenJoystickDriverHIDTool --usb-passive --vid "$3" --pid "$4"',
+        "ojd",
+        str(ENVIRONMENT),
+        str(PROJECT_DIR),
+        *args,
+    ]
+    overrides = {"OJD_ENABLE_CONTRIBUTOR_USB_PASSIVE": "1"}
+    return subprocess.run(command, env=env_with(overrides), check=False).returncode
+
+
 def run_commands(commands: list[list[str]]) -> int:
     for command in commands:
         result = subprocess.run(command, cwd=PROJECT_DIR, env=env_with(), check=False)

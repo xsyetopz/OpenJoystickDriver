@@ -97,21 +97,22 @@ def swift_binary_path() -> Path:
 def validate_live_support_report(schema: dict[str, object], registry: Registry) -> None:
     with tempfile.TemporaryDirectory(prefix="ojd-schema-") as directory:
         report_path = Path(directory) / "support-report.json"
-        subprocess.run(
-            [
-                str(swift_binary_path()),
-                "--headless",
-                "diagnose",
-                "report",
-                "--output",
-                str(report_path),
-            ],
+        # argv[0] "ojd" selects the command line in the app executable. `diagnose` exits 1 when
+        # a check fails, such as a missing extension on CI, and still writes the report.
+        command = ["ojd", "diagnose", "--bundle", str(report_path)]
+        result = subprocess.run(
+            command,
+            executable=swift_binary_path(),
             cwd=ROOT,
             env={**os.environ, "OJD_RUN_REPOSITORY_CLI": "1"},
-            check=True,
+            check=False,
             capture_output=True,
             text=True,
         )
+        if result.returncode not in {0, 1} or not report_path.is_file():
+            raise subprocess.CalledProcessError(
+                result.returncode, command, result.stdout, result.stderr
+            )
         Draft202012Validator(
             schema,
             registry=registry,

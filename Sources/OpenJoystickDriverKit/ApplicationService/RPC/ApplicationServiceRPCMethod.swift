@@ -18,6 +18,8 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case disconnectWirelessController
   case runVirtualDeviceSelfTest
   case resetSettings
+  case getSettings
+  case setSetting
   case remappingMotionCalibration
   case pairRemappingJoyCons
   case unpairRemappingJoyCons

@@ -16,6 +16,7 @@ enum HIDToolMode: String, CaseIterable {
   case monitor = "--monitor"
   case usbMonitor = "--usb-monitor"
   case recordProbe = "--record-probe"
+  case usbPassive = "--usb-passive"
 }
 
 struct HIDToolArguments {
@@ -96,6 +97,7 @@ func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
   case .monitor: owned = ["--vid", "--pid", "--seconds"]
   case .usbMonitor: owned = ["--vid", "--pid", "--endpoint", "--length", "--seconds"]
   case .recordProbe: owned = ["--seconds", "--validate-only"]
+  case .usbPassive: owned = ["--vid", "--pid"]
   }
   let suppliedOptions = Set(values.keys).union(flags).subtracting([mode.rawValue])
   if let option = suppliedOptions.subtracting(owned).min() {
@@ -121,9 +123,9 @@ func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
     try validate("--endpoint", range: 0...255)
     try validate("--length", range: 1...1024)
   }
-  if mode == .dump {
+  if mode == .dump || mode == .usbPassive {
     for required in ["--vid", "--pid"] where values[required] == nil {
-      throw HIDToolArgumentError.message("'--dump' requires '\(required)'")
+      throw HIDToolArgumentError.message("'\(mode.rawValue)' requires '\(required)'")
     }
   }
 
@@ -247,6 +249,7 @@ func printUsageAndExit(_ code: Int32) -> Never {
         [--endpoint 0x81] [--length 64] [--seconds 20]
       OpenJoystickDriverHIDTool --record-probe <record.json>
         [--seconds 30] [--validate-only]
+      OpenJoystickDriverHIDTool --usb-passive --vid 0x3537 --pid 0x1010
 
     Options:
       --list           List HID devices (vid/pid/product/transport + report sizes).
@@ -258,6 +261,8 @@ func printUsageAndExit(_ code: Int32) -> Never {
       --usb-monitor    Open one raw USB service and print interrupt IN packets.
       --record-probe  Validate and exercise one controller record through the USB facade.
       --validate-only  Validate --record-probe input without opening physical hardware.
+      --usb-passive    Print one authorized device's USB descriptor facts as JSON without
+                       opening it. Debug builds only; needs OJD_ENABLE_CONTRIBUTOR_USB_PASSIVE=1.
       --vid <int>      Vendor ID (decimal or 0x... hex).
       --pid <int>      Product ID (decimal or 0x... hex).
       --endpoint <n>   Interrupt IN endpoint for --usb-monitor; omitted sweeps 0x81...0x8f.

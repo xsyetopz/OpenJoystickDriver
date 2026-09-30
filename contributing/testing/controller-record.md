@@ -75,7 +75,7 @@ Identify the distribution path that produced the behavior. An installed app and 
 - **Installed app / shared DMG:** report the exact DMG filename and attach `OpenJoystickDriver-TESTER-BUILD.txt` from the DMG. For an installed copy, also run:
 
   ```bash
-  /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless diagnose report
+  ojd diagnose --bundle support-report.json
   ```
 
   This exercises the packaged Developer ID-signed app and its embedded DEXT; it does not use the Swift sources in a checkout. The notarized, stapled community tester package can replace the DriverKit extension with SIP enabled. The report's `controllers[].binding` and `unboundDevices[]` show how each connection was classified: outcome, reason, rule, matched predicates, catalog record ID, access backend, interface summaries, and rejected candidates. It records only whether a serial number is present, never its value, and no packet payloads.

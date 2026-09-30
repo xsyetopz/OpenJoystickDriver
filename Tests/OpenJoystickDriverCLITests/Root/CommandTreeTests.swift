@@ -12,6 +12,18 @@ struct CommandTreeTests {
     #expect(paths.contains(["service", "start"]))
     #expect(paths.contains(["service", "stop"]))
     #expect(paths.contains(["service", "wait"]))
+    #expect(paths.contains(["permission", "list"]))
+    #expect(paths.contains(["permission", "request"]))
+    #expect(paths.contains(["extension", "status"]))
+    #expect(paths.contains(["extension", "activate"]))
+    #expect(paths.contains(["extension", "deactivate"]))
+    #expect(paths.contains(["setting", "list"]))
+    #expect(paths.contains(["setting", "get"]))
+    #expect(paths.contains(["setting", "set"]))
+    #expect(paths.contains(["log", "show"]))
+    #expect(paths.contains(["log", "path"]))
+    #expect(paths.contains(["diagnose"]))
+    #expect(paths.contains(["update", "check"]))
   }
 
   @Test(arguments: [[]] + CLICommandTree.paths())
@@ -27,7 +39,8 @@ struct CommandTreeTests {
   @Test(arguments: CLICommandTree.leafPaths)
   func globalOptionsReachTheLeafBeforeAndAfterTheSubcommand(path: [String]) throws {
     let flags = ["--json", "--quiet", "--no-color", "--no-input", "--timeout", "2.5"]
-    for arguments in [flags + path, path + flags] {
+    let leaf = path + CLICommandTree.sampleOperands(for: path)
+    for arguments in [flags + leaf, leaf + flags] {
       let command = try OJDCommand.parseAsRoot(arguments)
       let global = try #require(CLICommandTree.globalOptions(of: command), "\(arguments)")
       let context = global.context

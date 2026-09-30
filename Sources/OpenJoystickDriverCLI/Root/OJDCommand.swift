@@ -22,7 +22,10 @@ struct OJDCommand: AsyncParsableCommand {
       """
     ),
     version: ApplicationVersion.current,
-    subcommands: [StatusCommand.self, ServiceCommand.self]
+    subcommands: [
+      StatusCommand.self, ServiceCommand.self, PermissionCommand.self, ExtensionCommand.self,
+      SettingCommand.self, LogCommand.self, DiagnoseCommand.self, UpdateCommand.self,
+    ]
   )
 
   static var _errorPrefix: String { "ojd: " }

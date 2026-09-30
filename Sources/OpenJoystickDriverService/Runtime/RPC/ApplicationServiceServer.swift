@@ -23,6 +23,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
   let feedbackGate: VirtualOutputFeedbackGate
   /// Service settings storage; also backs `virtualHIDProfileOverrides`.
   let defaults: UserDefaults
+  let launchAtLogin: LaunchAtLoginControl
   let virtualHIDProfileOverrides: VirtualHIDProfileOverrideStore
   let userSpaceDispatcherFactory: UserSpaceDispatcherFactory
   /// Guards `userSpaceDispatcher`, `userSpaceEnabled`, `userSpaceStatus`, `userSpaceCloseSlot`,
@@ -52,7 +53,8 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     connectedIdentifierProvider: (@Sendable () async -> [DeviceIdentifier])? = nil,
     virtualOutputTransitionTimeouts: VirtualOutputTransitionTimeouts = .standard,
     virtualOutputTransitionClock: VirtualOutputTransitionClock = .system,
-    defaults: UserDefaults = .standard
+    defaults: UserDefaults = .standard,
+    launchAtLogin: LaunchAtLoginControl = .system
   ) {
     self.deviceManager = deviceManager
     self.permissionManager = permissionManager
@@ -72,6 +74,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     self.virtualOutputTransitionClock = virtualOutputTransitionClock
     self.feedbackGate = VirtualOutputFeedbackGate(deviceManager: deviceManager)
     self.defaults = defaults
+    self.launchAtLogin = launchAtLogin
     self.virtualHIDProfileOverrides = VirtualHIDProfileOverrideStore(defaults: defaults)
     self.userSpaceEnabled = false
     self.userSpaceCloseSlot = nil

@@ -9,13 +9,13 @@ Removing the app alone leaves a login item, privacy entries, a system extension,
 1. Turn off the login item. Run the following command.
 
    ```shell
-   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless app login disable
+   ojd setting set launch-at-login false
    ```
 
 1. If you approved the Xbox USB system extension, remove it. In **Overview**, on the **Xbox USB Driver** card, click **Uninstall**. Or run the following command.
 
    ```shell
-   /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless extension disable
+   ojd extension deactivate
    ```
 
 1. Quit OJD from the menu bar item.

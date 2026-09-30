@@ -11,9 +11,10 @@
     static let profileNotifications = "OpenJoystickDriver.notifications.profiles"
     static let profileDeactivatedNotifications =
       "OpenJoystickDriver.notifications.profileDeactivated"
-    static let notificationSounds = "OpenJoystickDriver.notifications.sounds"
-    static let includePrereleaseUpdates = "OpenJoystickDriver.updates.includePrereleases"
-    static let developerTools = "OpenJoystickDriver.developerTools.enabled"
+    static let notificationSounds = ApplicationSettingKey.notificationSounds.defaultsKey ?? ""
+    static let includePrereleaseUpdates =
+      ApplicationSettingKey.includePrereleaseUpdates.defaultsKey ?? ""
+    static let developerTools = ApplicationSettingKey.developerTools.defaultsKey ?? ""
   }
 
   protocol ApplicationUpdateChecking: Sendable {

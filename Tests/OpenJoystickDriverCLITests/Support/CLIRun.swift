@@ -55,6 +55,15 @@ enum CLICommandTree {
     return command.configuration.subcommands
   }
 
+  /// Valid operands for leaf commands that require them, so a parse test can reach the leaf.
+  static func sampleOperands(for path: [String]) -> [String] {
+    switch path {
+    case ["setting", "get"]: ["launch-at-login"]
+    case ["setting", "set"]: ["launch-at-login", "true"]
+    default: []
+    }
+  }
+
   /// The global options a parsed command received.
   static func globalOptions(of command: any ParsableCommand) -> GlobalOptions? {
     Mirror(reflecting: command).children.first { $0.label == "_global" }.flatMap {

@@ -20,8 +20,7 @@ Create a private, notarized DMG with the [local tester-build guide](contributing
 ```bash
 ./Scripts/ojd diagnose record /tmp/controller-candidate.json --validate-only
 ./Scripts/ojd diagnose backends --seconds 5
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless diagnose report
+ojd diagnose --bundle support-report.json
 ```
 
 `--validate-only` needs no Apple Developer membership. A live USB probe may need the signed app and DEXT. Capture notes: `contributing/testing/controller-record.md`. Review product names before attaching a report.

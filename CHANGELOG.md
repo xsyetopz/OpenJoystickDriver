@@ -19,6 +19,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Connect the Switch 2 Pro Controller, Joy-Con 2 and NSO GameCube controller over Bluetooth LE. OJD scans for a controller in sync mode, connects over GATT without pairing, and runs the same `Switch2Driver` over the GATT input, command and vibration characteristics. Press the sync button each time the controller connects. macOS asks for Bluetooth access on first start. Two Joy-Con 2 can be paired as one controller like the first-generation Joy-Con. The transport follows ndeadly's `switch2_controller_research` and `joycon2cpp`. It is not hardware-verified.
 - Support the Steam Deck's built-in controller (`28DE:1205`) when macOS runs on Deck hardware. The new `neptune` quirk selects `SteamDeckDriver`, which decodes buttons, rear buttons, sticks with touch, analog triggers, trackpads with pressure and motion, turns off lizard mode and its watchdog, and sends rumble. It is not hardware-verified.
 - Support the NVIDIA SHIELD controllers with the new `vendor.nvidia-shield` family: the 2015 controller (`0955:7210`, V103) has input, touchpad click and rumble, and the 2017 controller (`0955:7214`, V104) is input-only on macOS. The report layouts follow SDL `SDL_hidapi_shield.c`. SDL disables V104's command-report rumble and battery on macOS because the write hangs, so OJD does not send it.  `0955:7210` previously had no record. Not hardware-verified.
+- `ojd permission list|request`, `ojd extension status|activate|deactivate`, `ojd setting list|get|set`, `ojd log path|show`, `ojd diagnose [--bundle PATH] [--soak SECONDS]`, and `ojd update check [--prerelease]`. See the [command reference](docs/command-line/command-reference.md).
+- The Settings section of the app has an Install Command-Line Tool action that links `/usr/local/bin/ojd` to the app and removes the link again. macOS asks for an administrator password when the folder is not writable, and the action never replaces a file that is not a link.
 
 ### Changed
 
@@ -93,13 +95,13 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
   - `controller virtual set|reset`, `controller plan` → `ojd virtual show|set|reset`
   - `map` → `ojd profile` and `ojd binding`; `map clear-inputs --confirm` has no replacement
   - `diagnose catalog` → `ojd record`
-  - `permissions`, `map permission` → `ojd permission list|request`
+  - `permissions`, `map permission` → `ojd permission list|request`; `permissions open` has no replacement
   - `extension status|enable|disable` → `ojd extension status|activate|deactivate`
-  - `app login enable|disable` → `ojd setting list|get|set`
+  - `app login enable|disable` → `ojd setting set launch-at-login true|false`
   - `app logs show|path` → `ojd log show|path`; `app logs open` has no replacement
-  - `diagnose runtime`, `diagnose report` → `ojd diagnose [--bundle PATH]`
-  - `diagnose usb-passive` → `./Scripts/ojd`
-  - `update check` → `ojd update check`
+  - `diagnose runtime` → `ojd diagnose [--soak SECONDS]`; `diagnose report` → `ojd diagnose --bundle PATH`
+  - `diagnose usb-passive` → `./Scripts/ojd diagnose usb-passive VID PID` (contributor checkout only)
+  - `update check` → `ojd update check`; `update check --open` has no replacement
 
 ### Fixed
 

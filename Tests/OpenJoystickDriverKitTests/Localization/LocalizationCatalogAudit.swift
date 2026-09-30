@@ -136,12 +136,36 @@ enum LocalizationCatalogAudit {
     ],
   ]
 
+  /// macOS ships no localization for these languages, so System Settings shows its English pane
+  /// and permission names, and the CLI names them the way the user sees them.
+  private static let englishSystemSettingsPanes: Set<String> = [
+    "cli.permission.pane.accessibility", "cli.permission.pane.driver_extension",
+    "cli.permission.pane.input_monitoring",
+  ]
+  private static let englishSystemSettingsNames: Set<String> = [
+    "cli.permission.name.accessibility", "cli.permission.name.input_monitoring",
+  ]
+  private static let englishSystemSettingsTermsByLocale: [String: Set<String>] = [
+    "af-ZA": englishSystemSettingsPanes.union(englishSystemSettingsNames),
+    // The app already names both permissions in Amharic; only the pane paths stay English.
+    "am-ET": englishSystemSettingsPanes,
+    "et-EE": englishSystemSettingsPanes.union(englishSystemSettingsNames),
+    "eu-ES": englishSystemSettingsPanes.union(englishSystemSettingsNames),
+    "ga-IE": englishSystemSettingsPanes.union(englishSystemSettingsNames),
+    "lt-LT": englishSystemSettingsPanes.union(englishSystemSettingsNames),
+    "lv-LV": englishSystemSettingsPanes.union(englishSystemSettingsNames),
+    "se-FI": englishSystemSettingsPanes.union(englishSystemSettingsNames),
+    "se-NO": englishSystemSettingsPanes.union(englishSystemSettingsNames),
+    "sl-SI": englishSystemSettingsPanes.union(englishSystemSettingsNames),
+  ]
+
   static func allowedSourceIdenticalEnglishProseKeys(for localization: String) -> Set<String> {
-    let localizedTerms =
-      sourceIdenticalTermsByLocale.first {
-        $0.key.caseInsensitiveCompare(localization) == .orderedSame
-      }?.value ?? []
-    return nonLinguisticSourceIdenticalKeys.union(localizedTerms)
+    func terms(in table: [String: Set<String>]) -> Set<String> {
+      table.first { $0.key.caseInsensitiveCompare(localization) == .orderedSame }?.value ?? []
+    }
+    return nonLinguisticSourceIdenticalKeys.union(terms(in: sourceIdenticalTermsByLocale)).union(
+      terms(in: englishSystemSettingsTermsByLocale)
+    )
   }
 
   static func keys(for localization: String) -> Set<String> {

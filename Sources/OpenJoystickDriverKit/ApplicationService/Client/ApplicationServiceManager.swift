@@ -70,6 +70,12 @@ public enum ApplicationServiceManager: Sendable {
     return MainAppServiceRegistration().status != .notRegistered
   }
 
+  /// Whether macOS will open the main application at login; false while approval is pending.
+  public static var isLaunchAtLoginEnabled: Bool {
+    guard #available(macOS 13.0, *) else { return false }
+    return MainAppServiceRegistration().status == .enabled
+  }
+
   /// Registers the main application itself to launch on subsequent logins.
   public static func install() throws {
     UserDefaults.standard.set(false, forKey: launchAtLoginOptOutDefaultsKey)

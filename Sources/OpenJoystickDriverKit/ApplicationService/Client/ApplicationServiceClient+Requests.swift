@@ -263,6 +263,20 @@ extension ApplicationServiceClient {
     try await call(.resetSettings, LocalServiceRPCEmptyArguments())
   }
 
+  /// Reads every app setting.
+  public func getSettings() async throws -> ApplicationSettingsPayload {
+    try await call(.getSettings, LocalServiceRPCEmptyArguments())
+  }
+
+  /// Applies one app setting and returns every setting as it stands afterward, because macOS can
+  /// leave a setting off, such as a login item that needs approval.
+  public func setSetting(
+    _ key: ApplicationSettingKey,
+    to value: Bool
+  ) async throws -> ApplicationSettingsPayload {
+    try await call(.setSetting, ApplicationServiceSettingArguments(key: key, value: value))
+  }
+
   public func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await call(.getRemappingSnapshot, LocalServiceRPCEmptyArguments())
   }

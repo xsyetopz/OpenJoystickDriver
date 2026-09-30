@@ -6,6 +6,8 @@
   struct ApplicationSettingsView: View {
     @ObservedObject
     var preferences: SettingsPreferencesModel
+    @StateObject
+    var commandLineTool = CommandLineToolModel()
 
     init(preferences: SettingsPreferencesModel = SettingsPreferencesModel()) {
       self.preferences = preferences

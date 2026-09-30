@@ -27,6 +27,12 @@ CLI command families:
 ```text
 ojd status
 ojd service start|stop|wait
+ojd permission list|request
+ojd extension status|activate|deactivate
+ojd setting list|get|set
+ojd log show|path
+ojd diagnose [--bundle PATH] [--soak SECONDS]
+ojd update check
 ```
 
 ## Workflow Capability Matrix
@@ -35,6 +41,12 @@ ojd service start|stop|wait
 | --- | --- |
 | `status` | Overview |
 | `service start/stop/wait` | Menu-bar Quit and app launch |
+| `permission list/request` | Overview permission cards |
+| `extension status/activate/deactivate` | Overview Xbox USB Driver card |
+| `setting list/get/set` | Settings |
+| `log show/path` | Console pane |
+| `diagnose --bundle` | Copy Support Report |
+| `update check` | Settings update check |
 | JSON/JSONL output, scripting, soak tests, catalog diagnostics, packaging, catalog generation, and DriverKit generation | Automation-only |
 
 `--timeout <seconds>` applies to bounded application-service calls. Controller operations retain opaque `--device` selection and ambiguity rejection. Machine-readable output uses `--json` where supported. Stream commands use their documented JSONL mode.
@@ -69,18 +81,17 @@ A missing runtime or stalled system tool may error, but must not freeze host shu
 
 ## Runtime Health
 
-Run a bounded soak diagnostic against the installed application process:
+Run every diagnostic check plus a bounded soak of the installed application process:
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless diagnose runtime \
-  --seconds 300 \
+ojd diagnose \
+  --soak 300 \
   --interval-ms 1000 \
   --rss-limit-mib 0 \
   --footprint-limit-mib 512
 ```
 
-`--seconds` accepts 1 to 86400, `--interval-ms` 100 to 60000, and each limit 0 to 65536. Use `--json` for automation.
+`--soak` accepts 1 to 86400 seconds, `--interval-ms` 100 to 60000, and each limit 0 to 65536. Use `--json` for automation.
 
 The sampler records resident set size, physical footprint (including dirty and compressed allocator pages), linear RSS and footprint growth rates, average process CPU, file descriptor count and growth, thread count and growth, and any configured high-water limits.
 

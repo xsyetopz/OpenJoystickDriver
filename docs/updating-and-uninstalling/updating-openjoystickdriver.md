@@ -28,7 +28,7 @@ An update check does not find tester builds. The maintainer sends them directly.
 To check from the terminal, run the following command. Add `--prerelease` to include prerelease versions.
 
 ```shell
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless update check
+ojd update check
 ```
 
 ## Install a new version
