@@ -8,14 +8,14 @@ enum LocalizationCatalogAudit {
     "cli.diagnose.usb_device_line", "cli.error.codesign_diagnostic",
     "cli.mapping.usage.restore_default_input", "controller.dualSense", "controller.dualShock3",
     "controller.dualShock4", "controller.flydigi", "controller.genericHID",
-    "controller.originalXbox", "controller.standardHID", "controller.steamController",
-    "controller.switchPro", "controller.switchProController", "controller.xbox360",
-    "controller.xbox360Wireless", "controller.xbox360WirelessDeveloper", "controller.xboxOne",
-    "controller.xboxOriginal", "controllers.usbIdentifier", "developer.hid", "developer.usbID",
-    "inputTest.aCross", "inputTest.yTriangle", "mapping.buttonNorth", "mapping.buttonSouth",
-    "mapping.dpadDirection", "mapping.paddle1", "mapping.paddle2", "mapping.paddle3",
-    "mapping.paddle4", "mapping.rightJoyConSL", "menu.projectPage", "profiles.sectionDpad",
-    "setup.driverAccessibility", "setup.driverTitle",
+    "controller.originalXbox", "controller.shanwan", "controller.standardHID",
+    "controller.steamController", "controller.switchPro", "controller.switchProController",
+    "controller.xbox360", "controller.xbox360Wireless", "controller.xbox360WirelessDeveloper",
+    "controller.xboxOne", "controller.xboxOriginal", "controllers.usbIdentifier", "developer.hid",
+    "developer.usbID", "inputTest.aCross", "inputTest.yTriangle", "mapping.buttonNorth",
+    "mapping.buttonSouth", "mapping.dpadDirection", "mapping.paddle1", "mapping.paddle2",
+    "mapping.paddle3", "mapping.paddle4", "mapping.rightJoyConSL", "menu.projectPage",
+    "profiles.sectionDpad", "setup.driverAccessibility", "setup.driverTitle",
   ]
 
   private static let sourceIdenticalTermsByLocale: [String: Set<String>] = [
