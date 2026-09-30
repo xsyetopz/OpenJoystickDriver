@@ -1,20 +1,35 @@
 /// Full Steam Controller state packets carry raw IMU vectors and a sequence number, not time.
 /// Sample time is the first sample's receipt time plus the clamped receipt time elapsed since.
 struct SteamMotionSamples {
+  /// Where a state packet carries its IMU vectors and how its gyro maps to the canonical frame.
+  enum Layout {
+    /// `ValveControllerStatePacket_t`: accel at 28, gyro at 34, gyro Y reflected.
+    case steamController
+    /// `SteamDeckStatePacket_t`: accel at 24, gyro at 30, raw axes (see ``sample``).
+    case steamDeck
+
+    var accelOffset: Int { self == .steamController ? 28 : 24 }
+    var gyroOffset: Int { accelOffset + 6 }
+    var reflectsGyroY: Bool { self == .steamController }
+  }
+
+  private(set) var layout = Layout.steamController
   private var previousCounter: UInt32?
   private var firstReceipt: UInt64?
   private var elapsed: UInt64 = 0
   private var sequence: UInt64 = 0
 
+  init(layout: Layout = .steamController) { self.layout = layout }
+
   /// Starts a new time and duplicate-tracking session; the sequence index keeps counting.
   mutating func reset() {
     let next = sequence
-    self = Self()
+    self = Self(layout: layout)
     sequence = next
   }
 
   mutating func decode(_ bytes: [UInt8], receivedAt: UInt64) -> ControllerMotionSample? {
-    guard bytes.count >= 40 else { return nil }
+    guard bytes.count >= layout.gyroOffset + 6 else { return nil }
     let counter = UInt32(unsigned16(bytes, at: 4)) | (UInt32(unsigned16(bytes, at: 6)) << 16)
     guard previousCounter != counter else { return nil }
     previousCounter = counter
@@ -32,8 +47,9 @@ struct SteamMotionSamples {
     sequence += 1
     return Self.sample(
       timestamp: timestamp,
-      gyro: vector(bytes, at: 34),
-      accel: vector(bytes, at: 28)
+      gyro: vector(bytes, at: layout.gyroOffset),
+      accel: vector(bytes, at: layout.accelOffset),
+      reflectsGyroY: layout.reflectsGyroY
     )
   }
 
@@ -50,10 +66,15 @@ struct SteamMotionSamples {
   /// most one is right-handed; it is kept until hardware confirms it. Linux's accel resolution
   /// (`STEAM_ACCEL_RES_PER_G` 16384) matches SDL's 2 g per 32768 counts. Linux declares 16 counts
   /// per °/s (`STEAM_GYRO_RES_PER_DPS`) where SDL uses 16.384; the SDL scale is kept.
+  ///
+  /// The Steam Deck packet puts accel at 24 and gyro at 30 with the same scales, and SDL
+  /// `HIDAPI_DriverSteamDeck_HandleState` maps both gyro and accel as (x, z, -y), so the canonical
+  /// frame equals the raw axes for both.
   static func sample(
     timestamp: ControllerSampleTimestamp,
     gyro: ControllerRawSensorVector,
-    accel: ControllerRawSensorVector
+    accel: ControllerRawSensorVector,
+    reflectsGyroY: Bool = true
   ) -> ControllerMotionSample? {
     let gyroScale = 2000.0 / 32768
     let accelScale = 2.0 / 32768
@@ -61,7 +82,7 @@ struct SteamMotionSamples {
       timestamp: timestamp,
       canonicalDegreesPerSecond: ControllerMotionVector(
         x: Double(gyro.x) * gyroScale,
-        y: -Double(gyro.y) * gyroScale,
+        y: (reflectsGyroY ? -1 : 1) * Double(gyro.y) * gyroScale,
         z: Double(gyro.z) * gyroScale
       ),
       canonicalG: ControllerMotionVector(
