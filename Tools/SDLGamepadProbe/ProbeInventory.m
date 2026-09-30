@@ -11,10 +11,13 @@ static const char *const OJDGUIDs[] = {
     "0300f88c091200004f4a000008040000",
 };
 
-static const char *display_string(const char *value) { return value ? value : "(null)"; }
+static const char *display_string(const char *value) {
+  return value ? value : "(null)";
+}
 
 static bool is_ojd_guid(const char *guid) {
-  for (size_t index = 0; index < sizeof(OJDGUIDs) / sizeof(OJDGUIDs[0]); index++) {
+  for (size_t index = 0; index < sizeof(OJDGUIDs) / sizeof(OJDGUIDs[0]);
+       index++) {
     if (strcmp(guid, OJDGUIDs[index]) == 0)
       return true;
   }
@@ -23,8 +26,9 @@ static bool is_ojd_guid(const char *guid) {
 
 static void pump_platform_events(void) {
   @autoreleasepool {
-    [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode
-                          beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+    [[NSRunLoop mainRunLoop]
+           runMode:NSDefaultRunLoopMode
+        beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
   }
 }
 
@@ -52,7 +56,8 @@ SDL_JoystickID *OJDProbeWaitForJoysticks(int wait_seconds, int *joy_count) {
   while ((SDL_GetTicks() - start) < (Uint64)(wait_seconds * 1000)) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
-      if (event.type == SDL_EVENT_JOYSTICK_ADDED || event.type == SDL_EVENT_GAMEPAD_ADDED) {
+      if (event.type == SDL_EVENT_JOYSTICK_ADDED ||
+          event.type == SDL_EVENT_GAMEPAD_ADDED) {
         joy_ids = enumerate_joysticks(joy_count);
         if (*joy_count > 0)
           return joy_ids;
@@ -94,7 +99,8 @@ void OJDProbePrintJoystick(SDL_JoystickID id) {
     printf(" a%d=%d", axis, SDL_GetGamepadAxis(gamepad, (SDL_GamepadAxis)axis));
   printf("\n  gamepad_buttons:");
   for (int button = 0; button < SDL_GAMEPAD_BUTTON_COUNT; button++)
-    printf(" b%d=%d", button, SDL_GetGamepadButton(gamepad, (SDL_GamepadButton)button));
+    printf(" b%d=%d", button,
+           SDL_GetGamepadButton(gamepad, (SDL_GamepadButton)button));
   printf("\n");
   SDL_CloseGamepad(gamepad);
 }
