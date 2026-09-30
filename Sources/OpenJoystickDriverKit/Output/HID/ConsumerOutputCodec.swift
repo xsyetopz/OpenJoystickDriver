@@ -37,7 +37,12 @@ enum ConsumerOutputCodec {
     }
   }
 
-  /// A rumble command from report bytes; all four channels at zero stop rumble.
+  /// The largest rumble magnitude: the descriptor's Magnitude logical maximum (0x64), and SDL's
+  /// and the Xbox Bluetooth firmware's full strength.
+  private static let rumbleMagnitudeMax = 100.0
+
+  /// A rumble command from report magnitudes in `0...100` (larger values clamp to full strength);
+  /// all four channels at zero stop rumble.
   static func rumble(
     left: UInt8,
     right: UInt8,
@@ -45,11 +50,14 @@ enum ConsumerOutputCodec {
     rightTrigger: UInt8 = 0,
     durationMs: Int = defaultRumbleDurationMs
   ) -> ControllerOutputCommand {
+    func magnitude(_ value: UInt8) -> UnipolarValue {
+      UnipolarValue(unitInterval: Double(value) / rumbleMagnitudeMax)
+    }
     let intensities = RumbleIntensities(
-      leftMain: UnipolarValue(byte: left),
-      rightMain: UnipolarValue(byte: right),
-      leftTrigger: UnipolarValue(byte: leftTrigger),
-      rightTrigger: UnipolarValue(byte: rightTrigger)
+      leftMain: magnitude(left),
+      rightMain: magnitude(right),
+      leftTrigger: magnitude(leftTrigger),
+      rightTrigger: magnitude(rightTrigger)
     )
     guard intensities != .off else { return .stopRumble }
     return .setRumble(intensities, duration: .milliseconds(durationMs))
