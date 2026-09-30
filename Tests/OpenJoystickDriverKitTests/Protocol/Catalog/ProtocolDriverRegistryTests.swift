@@ -315,6 +315,7 @@ struct ProtocolDriverRegistryTests {
     case .valveSteamController: driver is SteamControllerDriver
     case .vendorFlydigi: driver is FlydigiDriver
     case .vendorGameSir: driver is GameSirDriver
+    case .genericByteLayout: driver is ByteLayoutDriver
     }
   }
 }

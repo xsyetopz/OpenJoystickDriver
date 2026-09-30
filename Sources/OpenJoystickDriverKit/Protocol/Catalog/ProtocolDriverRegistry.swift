@@ -204,6 +204,7 @@ public final class ProtocolDriverRegistry: Sendable {
     case .valveSteamController:
       return .success(SteamControllerDriver(isWirelessReceiver: variant == .dongle))
     case .vendorFlydigi: return .success(FlydigiDriver())
+    case .genericByteLayout: return .success(ByteLayoutDriver())
     case .vendorGameSir:
       switch variant {
       case .usb:

@@ -152,11 +152,18 @@ extension DriverLifecycleCharacterizationTests {
     variant: nil
   )
 
+  static let byteLayout = Subject(
+    identifier: identifier(0x2563, 0x0575),
+    host: .usb,
+    protocolID: .genericByteLayout,
+    variant: nil
+  )
+
   static let subjects = [
     gipUSB, gipKeepAliveDisabled, xidGamepad, xusbWired, xusbReceiver, sixaxisUSB, sixaxisBluetooth,
     dualShock4USB, dualShock4Bluetooth, dualSenseUSB, dualSenseBluetooth, switchUSB,
     switchBluetooth, steamWired, steamDongle, flydigi, gameSirUSB, gameSirEnhancedHID,
-    gameSirEnhancedHID8K, hidDescriptor,
+    gameSirEnhancedHID8K, hidDescriptor, byteLayout,
   ]
 
   @Test

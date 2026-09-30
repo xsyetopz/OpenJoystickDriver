@@ -16,11 +16,12 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
   case valveSteamController = "valve.steam-controller"
   case vendorFlydigi = "vendor.flydigi"
   case vendorGameSir = "vendor.gamesir"
+  case genericByteLayout = "generic.byte-layout"
 
   /// Implemented variants. An empty list means the family has one contract.
   public var variants: [PhysicalProtocolVariantID] {
     switch self {
-    case .hidDescriptor, .vendorFlydigi: []
+    case .hidDescriptor, .vendorFlydigi, .genericByteLayout: []
     case .xboxXID: [.gamepad]
     case .xboxXUSB: [.wired, .receiver]
     case .xboxGIP: [.usb]
@@ -36,7 +37,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
     case .xboxXID, .xboxXUSB, .xboxGIP: true
     case .vendorGameSir: storedVariant == .usb
     case .hidDescriptor, .sonySixaxis, .sonyDualShock4, .sonyDualSense, .nintendoSwitch1,
-      .valveSteamController, .vendorFlydigi:
+      .valveSteamController, .vendorFlydigi, .genericByteLayout:
       false
     }
   }
@@ -47,7 +48,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
     switch self {
     case .xboxXID, .xboxXUSB, .valveSteamController, .vendorGameSir: true
     case .hidDescriptor, .xboxGIP, .sonySixaxis, .sonyDualShock4, .sonyDualSense, .nintendoSwitch1,
-      .vendorFlydigi:
+      .vendorFlydigi, .genericByteLayout:
       false
     }
   }

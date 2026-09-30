@@ -135,6 +135,7 @@
       case .vendorFlydigi: OJDLocalized.string("controller.flydigi", fallback: "Flydigi")
       case .vendorGameSir where value.variant == .usb: "GameSir G7 Pro USB"
       case .vendorGameSir: "GameSir enhanced HID"
+      case .genericByteLayout: "Generic byte layout"
       case .nintendoSwitch1:
         OJDLocalized.string("controller.switchProController", fallback: "Switch Pro Controller")
       case .hidDescriptor: OJDLocalized.string("controller.standardHID", fallback: "Standard HID")

@@ -46,7 +46,8 @@
 						"nintendo.switch1",
 						"valve.steam-controller",
 						"vendor.flydigi",
-						"vendor.gamesir"
+						"vendor.gamesir",
+						"generic.byte-layout"
 					]
 				},
 				"variant": {

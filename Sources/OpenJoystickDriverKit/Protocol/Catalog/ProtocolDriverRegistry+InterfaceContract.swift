@@ -150,7 +150,7 @@ extension ProtocolDriverRegistry {
     case .xboxXID: return true
     case .vendorGameSir: return interface.interfaceClass == 0xFF
     case .hidDescriptor, .sonySixaxis, .sonyDualShock4, .sonyDualSense, .nintendoSwitch1,
-      .valveSteamController, .vendorFlydigi:
+      .valveSteamController, .vendorFlydigi, .genericByteLayout:
       return false
     }
   }

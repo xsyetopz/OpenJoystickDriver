@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+  "operation": "add",
+  "record": {
+    "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+    "vendorID": 9571,
+    "productID": 1397,
+    "protocol": {
+      "family": "generic.byte-layout"
+    }
+  }
+}
