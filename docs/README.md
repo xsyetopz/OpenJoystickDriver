@@ -1,62 +1,20 @@
-# Documentation
+# OpenJoystickDriver documentation
 
-Choose the shortest path for your task.
+OpenJoystickDriver (OJD) lets you use game controllers on macOS that macOS does not support natively.
 
-## Use The App
+## Documentation
 
-- [Compatibility](user/compatibility.md)
-- [Permissions](user/permissions.md)
-- [Generic HID](user/generic-hid.md)
+- [Getting started](getting-started/README.md): Learn what OJD is, install it, and connect your first controller.
+- [Using the app](using-the-app/README.md): Learn the menu-bar item, the app window, and the tools in each pane.
+- [Connecting controllers](connecting-controllers/README.md): Find supported controllers, connection types, and how to identify your controller.
+- [Playing games](playing-games/README.md): Learn how games see your controller and which apps work.
+- [Remapping controls](remapping-controls/README.md): Change what your buttons, sticks, triggers, touchpad, and motion sensors do.
+- [Permissions and security](permissions-and-security/README.md): Learn which macOS permissions OJD needs and how OJD keeps your Mac secure.
+- [Updating and uninstalling](updating-and-uninstalling/README.md): Get a new version, or remove OJD and its data.
+- [Command line](command-line/README.md): Control OJD from Terminal.
+- [Troubleshooting](troubleshooting/README.md): Fix common problems, read the FAQ, and report a bug.
+- [Building from source](building-from-source/README.md): Build OJD yourself to get a fix before the next tester build.
 
-## Test Hardware
+## Contributor documentation
 
-- [Physical output](testing/physical-output.md)
-- [Haptics backends](testing/haptics-backends.md)
-- [Browser Gamepad API](testing/browser-gamepad-api.md)
-- [Consumer-binding evidence](testing/consumer-binding.md)
-- [Controller record](testing/controller-record.md)
-- [Logitech F310](testing/logitech-f310.md)
-- [Xbox One 1537](testing/xbox/1537.md)
-- [Razer Wolverine V2](testing/razer/wolverine-v2.md)
-- [Razer Wolverine V3 TE](testing/razer/v3-te.md)
-- [Nacon Revolution X Pro](testing/nacon-revolution-x.md)
-- [Flydigi Vader 4 Pro](testing/flydigi-vader-4-pro.md)
-- [WR-007](testing/wr-007.md)
-- [GameSir G7 Pro, Cyclone 2, and G7 Pro 8K PC](testing/gamesir-family.md)
-- [SCUF Envision Pro](testing/scuf-envision-pro.md)
-- [Steam Controller](testing/steam-controller.md)
-- [Xbox 360 wireless receiver](testing/xbox-360-wireless-receiver.md)
-- [Xbox Adaptive Joystick](testing/xbox-adaptive-joystick.md)
-- [macOS 10.15 kit](testing/catalina-testkit.md)
-
-## Develop
-
-- [Architecture](development/architecture.md)
-- [Remapping](development/remapping.md)
-- [Remapping input samples](development/remapping-input-samples.md)
-- [Remapping calibration](development/remapping-calibration.md)
-- [Remapping motion processing](development/remapping-motion.md)
-- [Advanced remapping controls](development/remapping-advanced-controls.md)
-- [`0.5.0-beta.5` remapping status](development/remapping-status.md)
-- [Localization](../LOCALIZATION.md)
-- [Apple controller ownership](development/apple-controller-ownership.md)
-- [Source topology](development/source-topology.md)
-- [Menu-bar UI](development/menu-bar-settings-architecture.md)
-- [CLI and runtime](development/cli-and-runtime.md)
-- [Runtime health](development/application-service-health.md)
-- [Responsiveness](development/application-responsiveness.md)
-- [Environment files](development/environment.md)
-- [Signing](development/signing.md)
-- [USB entitlement candidates](development/usb-entitlement-candidates.md)
-- [Local tester builds](development/tester-builds.md)
-- [Implementation status](development/implementation-status.md)
-- [Issue audit](development/issue-audit.md)
-- [Release reconciliation](development/releases.md)
-- [Experimental controllers](development/experimental-controllers.md)
-- [xpad import](development/xpad-import.md)
-- [Compatibility sources](development/compatibility-sources.md)
-- [Xbox identities](development/xbox-identities.md)
-- [Wire protocols](development/wire-protocols.md)
-- DriverKit: `./Scripts/ojd driverkit generate` / `./Scripts/ojd check driverkit`
-- Native tools: `./Scripts/ojd check tools`
-- Commands: `./Scripts/ojd help`
+Architecture, signing, release, and hardware test records are in the [contributor documentation](../contributing/README.md).
