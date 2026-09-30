@@ -25,7 +25,11 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     )
   }
 
-  init(socketPath: String, authentication: @escaping Authentication, handler: @escaping Handler) {
+  package init(
+    socketPath: String,
+    authentication: @escaping Authentication,
+    handler: @escaping Handler
+  ) {
     self.socketPath = socketPath
     self.authentication = authentication
     self.handler = handler

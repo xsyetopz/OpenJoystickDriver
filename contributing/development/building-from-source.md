@@ -4,7 +4,7 @@ Everything is driven through `./Scripts/ojd`. Run `./Scripts/ojd help` for the r
 
 ## Prerequisites
 
-- macOS with Xcode installed and launched once. `Package.swift` declares `swift-tools-version:6.3.0` and a macOS 10.15 deployment floor. CI pins Xcode 26.6 and Swift 6.3.3.
+- macOS with Xcode installed and launched once. `Package.swift` declares `swift-tools-version:6.3.0` and a macOS 12 deployment floor. CI pins Xcode 26.6 and Swift 6.3.3.
 - Homebrew, for the helper tools. In an interactive terminal, each `./Scripts/ojd` route offers to install only the formulas it is missing. `./Scripts/ojd setup` installs `just`, `lefthook`, `ruff`, `pyright`, `shellcheck`, and `swiftlint`, plus the Git hooks.
 - Python 3. The dispatcher creates its own schema-validation environment.
 

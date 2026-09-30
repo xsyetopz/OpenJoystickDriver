@@ -288,8 +288,7 @@
 
   final class RuntimeNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
     static var foregroundPresentationOptions: UNNotificationPresentationOptions {
-      if #available(macOS 11.0, *) { return [.banner, .sound] }
-      return [.alert, .sound]
+      [.banner, .sound]
     }
 
     func userNotificationCenter(

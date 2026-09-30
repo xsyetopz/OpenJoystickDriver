@@ -42,7 +42,7 @@ extension LocalServiceRPCClient {
     serverProcessIdentifier(socketPath: LocalServiceRPCTransport.defaultSocketPath)
   }
 
-  static func serverProcessIdentifier(socketPath: String) -> Int32? {
+  package static func serverProcessIdentifier(socketPath: String) -> Int32? {
     guard
       let descriptor = try? LocalServiceRPCTransport.openConnectedSocket(
         timeoutSeconds: 0.2,

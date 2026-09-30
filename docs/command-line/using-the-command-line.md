@@ -1,115 +1,67 @@
 # Using the command line
 
-This article explains how to run OpenJoystickDriver commands in Terminal, which options apply to every command, and what the exit codes mean.
+This article explains how to run `ojd`, which options apply to every command, how to read its output, and what its exit codes mean.
 
 ## Run a command
 
-The command line is part of the OpenJoystickDriver app. To run a command, call the app binary with `--headless` and the command name.
+The command-line tool is named `ojd`. It is the app's own executable: when it runs under the name `ojd`, it acts as the command line, and under any other name it opens the app.
+
+To run `ojd` without installing it, link it into a folder on your `PATH`:
 
 ```shell
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless COMMAND
+ln -s /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver /usr/local/bin/ojd
 ```
 
-Replace `COMMAND` with a command from the [command reference](command-reference.md). For example, `status` shows the driver status.
+Writing to `/usr/local/bin` can need `sudo`. To remove the tool, delete the link: `rm /usr/local/bin/ojd`.
 
-Some commands work only when you run the app from the `/Applications` folder. The `app login` and `extension enable` commands give an error when you run them from another folder.
+Then run a command:
 
-## Create a short alias
+```shell
+ojd status
+```
 
-The path is long. You can create an optional shell alias named `ojd`. OpenJoystickDriver does not install this alias.
-
-1. Open Terminal.
-1. Add this line to your `~/.zshrc` file:
-
-   ```shell
-   alias ojd='/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless'
-   ```
-
-1. Open a new Terminal window.
-1. Run `ojd status` to check the alias.
-
-The other articles use `ojd` in examples.
+The [command reference](command-reference.md) lists every command. `ojd --help` lists them too, and `ojd COMMAND --help` shows the options of one command.
 
 ## Global options
 
-Global options go before the command name.
+These options work on every command, before or after the command name. `ojd --json status` and `ojd status --json` do the same thing.
 
-```text
-ojd [--timeout SECONDS] COMMAND
-```
+- `--json`: Print JSON on standard output.
+- `--plain`: Print one record per line on standard output, with tab-separated fields.
+- `-q`, `--quiet`: Do not print success messages on standard error.
+- `--no-color`: Do not use color.
+- `--no-input`: Never ask a question. A command that needs a missing value fails and names the option that gives it.
+- `--timeout SECONDS`: How long to wait for each request to the service. The default is 0.5 seconds. For `service` commands, it bounds the whole command, and the default is 5 seconds. The value must be a number above 0.
+- `-h`, `--help`: Show help on standard output.
+- `--version`: Show the version alone, for example `0.5.0-beta.5`.
 
-- `--timeout SECONDS`: Set how long the command waits for the running app. The value must be greater than 0. The default is 0.5 seconds. Put this option before the command. Do not repeat it.
-- `-h`, `--help`: Show the list of commands. Use it alone.
-- `-v`, `--version`: Show the version. Use it alone.
+`--json` and `--plain` cannot be used together.
 
-For example, this command waits up to 5 seconds:
+## The service
 
-```shell
-ojd --timeout 5 controller list
-```
+Most commands send requests to the OpenJoystickDriver service, which runs inside the app. No command starts the service by itself. Start it with `ojd service start`, and stop it with `ojd service stop`.
 
-Some commands have their own `--help` text. For example, `ojd map --help`, `ojd app logs --help`, and `ojd permissions help` show help for that command. The `extension`, `diagnose`, and `app login` commands do not show help with `--help`. They exit with code 64. Use `ojd --help` instead.
+A command that needs the service exits with code 69 when the service is not running. `ojd status` works without the service and reports it as stopped.
 
-## Commands that need the running app
+## Output
 
-Many commands send a request to the running OpenJoystickDriver app. Start the app before you run them. If the app does not respond, the command exits with code 1 and says that it cannot connect to the installed app.
-
-These commands need the running app:
-
-- `controller` commands, including `controller output`.
-- `map` commands.
-- `app ready`.
-- `permissions request`.
-- `test`.
-- `diagnose runtime`.
-
-These commands also work when the app does not run:
-
-- `status` and `app status` show the permission state from the local system. The output says `direct mode - app service not running`.
-- `permissions status` shows the local permission state and exits with code 1.
-- `permissions open`, `permissions explain`, `app login`, `app logs`, `extension`, `diagnose catalog`, `diagnose report`, and `update check`.
-
-## Machine-readable output
-
-Some commands accept `--json`. They print JSON to standard output. The command reference lists the commands that accept it.
-
-```shell
-ojd status --json
-```
-
-The `controller trace` and `controller watch` commands accept `--json-lines` instead. They print one JSON object for each line.
-
-The text output of `test`, `diagnose`, `diagnose catalog`, and `app logs show` goes to standard error. To save it, redirect standard error, for example `2> FILE.txt`. The `diagnose runtime` and `diagnose report` commands print to standard output.
-
-## Identical controllers
-
-Many controller commands select a controller by vendor ID and product ID (`VID` and `PID`). Give the values in decimal or with the `0x` prefix. If you omit both, the command uses the one connected controller.
-
-If two controllers have the same `VID:PID`, the command cannot choose between them. Add `--device ID`. The ID is an opaque value that `controller output list` prints for each controller.
-
-```shell
-ojd controller output list
-ojd controller state --device ID
-```
-
-For more information about how to find a `VID:PID`, see [Finding your controller ID](../connecting-controllers/finding-your-controller-id.md).
+- Data goes to standard output. Progress messages, warnings, and errors go to standard error.
+- Human-readable output is translated and can change between releases. Do not parse it in scripts.
+- `--json` output is one JSON object. Its keys and values are stable identifiers and are never translated. New keys can appear in later releases.
+- `--plain` output has one record per line, with tab-separated fields. The first field names the kind of record. Fields are stable identifiers and are never translated.
+- Errors use one format: `ojd: WHAT FAILED. HOW TO FIX IT.`
+- Color appears only on a terminal. `NO_COLOR`, `TERM=dumb`, and `--no-color` turn it off.
 
 ## Exit codes
 
 | Code | Meaning |
 | --- | --- |
-| 0 | The command succeeded. |
+| 0 | Success. |
 | 1 | The command failed. |
-| 2 | The system blocks a permission request, or a system extension approval is pending. |
-| 64 | The command line has an error. The command shows the error and the command list. |
-
-Some details:
-
-- `permissions request` exits with code 2 when access stays blocked.
-- `extension enable` and `extension disable` exit with code 2 when the request does not finish in 60 seconds. Approve it in System Settings, then run `extension status`.
-- `test` exits with code 1 unless the test passes.
-- Argument errors inside some subcommands exit with code 1, not 64.
-- `update check` exits with code 1 when the check fails.
+| 64 | Usage error: an unknown command or option, or an invalid value. |
+| 69 | The service is not running. Start it with `ojd service start`. |
+| 77 | A macOS permission is missing. |
+| 130 | Interrupted with Control-C. |
 
 ## Further reading
 

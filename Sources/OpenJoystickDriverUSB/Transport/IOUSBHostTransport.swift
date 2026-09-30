@@ -182,7 +182,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
   ) throws -> [T] {
     var iterator: io_iterator_t = 0
     let result = IOServiceGetMatchingServices(
-      kIOMasterPortDefault,
+      kIOMainPortDefault,
       IOServiceMatching(className),
       &iterator
     )
@@ -203,7 +203,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
   ) throws -> io_service_t? {
     var iterator: io_iterator_t = 0
     let result = IOServiceGetMatchingServices(
-      kIOMasterPortDefault,
+      kIOMainPortDefault,
       IOServiceMatching(className),
       &iterator
     )

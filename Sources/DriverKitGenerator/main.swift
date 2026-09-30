@@ -52,7 +52,7 @@ do {
     options: DriverExtensionGenerationOptions(
       shortVersion: arguments.shortVersion,
       buildVersion: arguments.buildVersion,
-      deploymentTarget: "19.0"
+      deploymentTarget: "21.0"
     ),
     at: arguments.output
   )

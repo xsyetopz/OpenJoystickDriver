@@ -13,7 +13,7 @@ This article lists what works with each kind of OpenJoystickDriver (OJD) build.
 | Plain `swift build` binary | It has no entitlements. Expected: OJD reads controllers and cannot publish the virtual controller. Not verified. |
 | Build without the system extension | Everything works except Xbox One and Xbox Series controllers on USB. |
 | Only the Command Line Tools, no Xcode | Not verified for `swift build` and `swift test`. |
-| Tester DMG | Signed and notarized by the maintainer. It runs on macOS 10.15 or later and needs no Apple developer account. |
+| Tester DMG | Signed and notarized by the maintainer. It runs on macOS 12 or later and needs no Apple developer account. |
 
 ## Which controllers need the extension
 

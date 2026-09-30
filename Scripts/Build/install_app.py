@@ -35,12 +35,14 @@ def run(
     *,
     capture: bool = False,
     check: bool = True,
+    executable: Path | None = None,
 ) -> subprocess.CompletedProcess[str]:
     result = subprocess.run(
         command,
         check=False,
         text=True,
         capture_output=capture,
+        executable=executable,
     )
     if check and result.returncode:
         detail = (result.stderr or result.stdout or "").strip()
@@ -279,9 +281,11 @@ def launch_and_wait(application: Path, timeout_seconds: float) -> None:
             if not application_process_identifiers():
                 launch_application(application)
         result = run(
-            [str(executable), "--headless", "app", "ready"],
+            # argv[0] "ojd" selects the command line in the app executable.
+            ["ojd", "service", "wait", "--timeout", "1"],
             capture=True,
             check=False,
+            executable=executable,
         )
         if result.returncode == 0:
             print(

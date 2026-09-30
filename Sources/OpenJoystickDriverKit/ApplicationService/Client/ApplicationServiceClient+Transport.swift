@@ -35,23 +35,4 @@ extension ApplicationServiceClient {
       try await Task.sleep(nanoseconds: 100_000_000)
     }
   }
-
-  func spawnMainApplicationExecutable() {
-    guard let executable = Bundle.main.executableURL else { return }
-    let process = Process()
-    process.executableURL = executable
-    process.arguments = []
-    process.standardInput = FileHandle.nullDevice
-    process.standardOutput = FileHandle.nullDevice
-    process.standardError = FileHandle.nullDevice
-    do { try process.run() } catch {
-      FileHandle.standardError.write(
-        Data(
-          "[ApplicationServiceClient] Could not launch main app: ".appending(
-            "\(error.localizedDescription)\n"
-          ).utf8
-        )
-      )
-    }
-  }
 }

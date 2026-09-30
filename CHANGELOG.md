@@ -22,6 +22,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Changed
 
+- **BREAKING:** The command line is a separate program, `ojd`. The app executable runs it when started under the name `ojd`, for example through a link named `ojd` on your `PATH`, and runs the app under any other name, so `--headless` is gone. Every command takes the global options `--json`, `--plain`, `--quiet`, `--no-color`, `--no-input`, and `--timeout`, prints errors as `ojd: <message>` to stderr, and exits with 0, 1, 64 (usage), 69 (service unavailable), 77 (permission), or 130 (interrupted). See [Using the command line](docs/command-line/using-the-command-line.md).
+- **BREAKING:** Commands no longer start the service implicitly. Run `ojd service start` first; a command that needs the service exits with code 69 while it is stopped.
+- **BREAKING:** `ojd status` replaces `status` and `app status`. It works when the service is stopped, and its `--json` object and `--plain` lines have the new shape in the [command reference](docs/command-line/command-reference.md).
+- **BREAKING:** The minimum system is macOS 12 (was 10.15), and iOS and iPadOS 15 for companion apps.
 - **BREAKING:** Saved remapping profiles now decode strictly at every level. A profile with an unknown field anywhere, such as the removed `gyroOutput.virtualMotion`, or a field that belongs to another source, destination, output, or scope type, loads as a damaged profile that can be recovered or removed in the Profiles UI instead of being silently accepted.
 - Automatic virtual output publishes one of two profiles chosen only from the controller's declared controls: Xbox One S Bluetooth (`hid-xbox-one-s-bt`, `045E:02FD`) when they fit, OJD generic HID (`hid-generic`) otherwise. Browser- and consumer-based routing and the automatic DualShock 4, DualSense, Switch Pro, and Xbox Series (`045E:0B13`) identities are removed. A per-model override can still pin either profile with `controller virtual set`. Consumer binding of `045E:02FD` is not yet hardware-verified.
 - **BREAKING:** Remove the `compat` command family and compatibility identities. Choose between the two virtual HID profiles per controller model with `controller virtual set
@@ -70,6 +74,32 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Controller records reject vocabulary no runtime consumer reads: the `XboxAdaptiveJoystick` driver, `unknown` protocol variants, `usb.interface`, and unconsumed per-driver quirks.
 - Controller-record validation rejects protocol-default USB endpoints for every driver, not only GIP and Xbox 360, so such a record fails the catalog checks instead of the app at launch.
 - Replace the repository agent skills with `ojd-controller-catalog`, `ojd-hardware-evidence`, `ojd-swift-change`, `ojd-app-ui`, `ojd-repo-tooling`, and `ojd-build-sign-release`, also exposed to Claude Code through `.claude/skills`. The retired skills are `add-controller-openjoystickdriver`, `debug-controller-openjoystickdriver`, `design-openjoystickdriver`, `maintain-openjoystickdriver`, `organize-openjoystickdriver`, and `test-openjoystickdriver`.
+
+### Removed
+
+- **BREAKING:** Remove every command of the old command line, with no aliases. Each is replaced as follows:
+  - `--headless` → run the executable as `ojd`; `--json-lines` → `--json`
+  - `status`, `app status` → `ojd status`
+  - `app ready` and implicit service launches → `ojd service start|stop|wait`
+  - `controller list`, `controller output list` → `ojd controller list`
+  - `controller state` → `ojd controller show`
+  - `controller watch`, `test` → `ojd controller watch`
+  - `controller packets`, `controller trace` → `ojd controller capture`
+  - `controller rumble` → `ojd controller rumble`
+  - `controller color`, `controller brightness` → `ojd controller light`
+  - `controller player` → `ojd controller player`
+  - `controller disconnect`, `controller resume` → `ojd controller suspend|resume`
+  - `controller disconnect-wireless` → `ojd controller disconnect`
+  - `controller virtual set|reset`, `controller plan` → `ojd virtual show|set|reset`
+  - `map` → `ojd profile` and `ojd binding`; `map clear-inputs --confirm` has no replacement
+  - `diagnose catalog` → `ojd record`
+  - `permissions`, `map permission` → `ojd permission list|request`
+  - `extension status|enable|disable` → `ojd extension status|activate|deactivate`
+  - `app login enable|disable` → `ojd setting list|get|set`
+  - `app logs show|path` → `ojd log show|path`; `app logs open` has no replacement
+  - `diagnose runtime`, `diagnose report` → `ojd diagnose [--bundle PATH]`
+  - `diagnose usb-passive` → `./Scripts/ojd`
+  - `update check` → `ojd update check`
 
 ### Fixed
 

@@ -4,7 +4,7 @@ Install OpenJoystickDriver in the Applications folder, start it, and check the l
 
 ## Requirements
 
-- macOS 10.15 (Catalina) or later.
+- macOS 12 (Monterey) or later.
 - A Mac with Apple silicon or an Intel processor. The app contains both.
 - A controller. For more information, see [Supported controllers](../connecting-controllers/supported-controllers.md).
 

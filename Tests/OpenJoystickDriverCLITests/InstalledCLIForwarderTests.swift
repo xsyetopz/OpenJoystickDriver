@@ -15,7 +15,6 @@ struct InstalledCLIForwarderTests {
     let resolution = InstalledCLIForwarder.resolve(
       currentExecutableURL: sourceExecutable,
       mainBundleURL: sourceBundle,
-      arguments: ["--headless", "controller", "trace"],
       installedExecutableURL: installedExecutable,
       isExecutableFile: { $0 == self.installedExecutable.path },
       installedCLIIsCurrent: { _, _ in true }
@@ -29,19 +28,6 @@ struct InstalledCLIForwarderTests {
     let resolution = InstalledCLIForwarder.resolve(
       currentExecutableURL: installedExecutable,
       mainBundleURL: URL(fileURLWithPath: "/Applications/OpenJoystickDriver.app"),
-      arguments: ["--headless", "controller", "trace"],
-      installedExecutableURL: installedExecutable
-    ) { _ in true }
-
-    #expect(resolution == .local)
-  }
-
-  @Test
-  func applicationLaunchWithoutCLIArgumentsIsNotForwarded() {
-    let resolution = InstalledCLIForwarder.resolve(
-      currentExecutableURL: sourceExecutable,
-      mainBundleURL: sourceBundle,
-      arguments: [],
       installedExecutableURL: installedExecutable
     ) { _ in true }
 
@@ -53,7 +39,6 @@ struct InstalledCLIForwarderTests {
     let resolution = InstalledCLIForwarder.resolve(
       currentExecutableURL: sourceExecutable,
       mainBundleURL: sourceBundle,
-      arguments: ["--headless", "diagnose", "catalog"],
       installedExecutableURL: installedExecutable
     ) { _ in false }
 
@@ -73,7 +58,6 @@ struct InstalledCLIForwarderTests {
     let resolution = InstalledCLIForwarder.resolve(
       currentExecutableURL: symlink,
       mainBundleURL: sourceBundle,
-      arguments: ["--headless", "status"],
       installedExecutableURL: executable
     ) { _ in true }
 
@@ -85,7 +69,6 @@ struct InstalledCLIForwarderTests {
     let resolution = InstalledCLIForwarder.resolve(
       currentExecutableURL: sourceExecutable,
       mainBundleURL: sourceBundle,
-      arguments: ["--headless", "controller", "trace"],
       installedExecutableURL: installedExecutable,
       isExecutableFile: { _ in true },
       installedCLIIsCurrent: { _, _ in false }
@@ -99,7 +82,6 @@ struct InstalledCLIForwarderTests {
     let resolution = InstalledCLIForwarder.resolve(
       currentExecutableURL: sourceExecutable,
       mainBundleURL: sourceBundle,
-      arguments: ["--headless", "diagnose", "catalog"],
       installedExecutableURL: installedExecutable,
       repositoryCLIOverride: true,
       isExecutableFile: { _ in true },

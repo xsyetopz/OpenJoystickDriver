@@ -134,7 +134,7 @@ public struct LocalServiceRPCColorPreviewReleaseArguments: Codable, Sendable {
   }
 }
 
-enum LocalServiceRPCError: Error, Equatable, LocalizedError, Sendable {
+package enum LocalServiceRPCError: Error, Equatable, LocalizedError, Sendable {
   case alreadyRunning
   case connectionFailed(Int32)
   case invalidFrame
@@ -142,7 +142,7 @@ enum LocalServiceRPCError: Error, Equatable, LocalizedError, Sendable {
   case remote(String)
   case timeout
 
-  var errorDescription: String? {
+  package var errorDescription: String? {
     switch self {
     case .alreadyRunning: return "The main application RPC service is already running."
     case .connectionFailed(let code):
@@ -156,9 +156,9 @@ enum LocalServiceRPCError: Error, Equatable, LocalizedError, Sendable {
     }
   }
 }
-enum LocalServiceRPCTransport {
+package enum LocalServiceRPCTransport {
   static let maximumFrameBytes = ApplicationServiceRemappingRPC.maximumTransportFrameBytes
-  static var defaultSocketPath: String { "/tmp/com.openjoystickdriver.\(geteuid()).rpc" }
+  package static var defaultSocketPath: String { "/tmp/com.openjoystickdriver.\(geteuid()).rpc" }
 
   static func openConnectedSocket(
     timeoutSeconds: TimeInterval,

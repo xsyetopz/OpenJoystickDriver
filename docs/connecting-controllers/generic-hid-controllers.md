@@ -26,9 +26,10 @@ OJD accepts a controller as generic HID only if its descriptor passes strict che
 If a controller fails a check, OJD does not use it. The `status` command lists the controller as unbound and gives a reason. Run it with this command:
 
 ```shell
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless status
+ojd status
 ```
+
+For more information about `ojd`, see [Using the command line](../command-line/using-the-command-line.md).
 
 Some controllers are not standard. Their descriptor may put sticks or triggers on unusual axes. These controllers need a record.
 

@@ -1,7 +1,7 @@
 import Foundation
 
 // `@unchecked Sendable` is sound because `value` is private and every access goes through
-// `lock`. `Mutex` and `OSAllocatedUnfairLock` need newer systems than the macOS 10.15 floor.
+// `lock`. `Mutex` and `OSAllocatedUnfairLock` need newer systems than the macOS 12 floor.
 /// Mutable state that is only reachable through a lock.
 ///
 /// Use it for plain state that several threads read and write. Do not run I/O or callbacks

@@ -129,7 +129,7 @@ expected = {
     "CFBundleIdentifier": bundle_id,
     "CFBundleExecutable": product_name,
     "CFBundleName": product_name,
-    "OSMinimumDriverKitVersion": "19.0",
+    "OSMinimumDriverKitVersion": "21.0",
 }
 for key, value in expected.items():
     if info.get(key) != value:
@@ -305,7 +305,7 @@ _driverkit_xcodebuild() {
     PRODUCT_BUNDLE_IDENTIFIER="$DRIVERKIT_BUNDLE_ID" \
     PRODUCT_NAME="$DRIVERKIT_PRODUCT_NAME" \
     EXECUTABLE_NAME="$DRIVERKIT_PRODUCT_NAME" \
-    DRIVERKIT_DEPLOYMENT_TARGET=19.0 \
+    DRIVERKIT_DEPLOYMENT_TARGET=21.0 \
     CLANG_CXX_LANGUAGE_STANDARD=gnu++20 \
     "$@" clean build
 }
@@ -421,11 +421,18 @@ import sys
 
 package = json.load(open(sys.argv[1]))
 dependencies = package["dependencies"]
-expected_dependency = {
-    "identity": "swifterkit",
-    "location": "https://github.com/xsyetopz/SwifterKit.git",
-    "branch": "main",
-}
+expected_dependencies = [
+    {
+        "identity": "swifterkit",
+        "location": "https://github.com/xsyetopz/SwifterKit.git",
+        "requirement": {"branch": ["main"]},
+    },
+    {
+        "identity": "swift-argument-parser",
+        "location": "https://github.com/apple/swift-argument-parser.git",
+        "requirement": {"exact": ["1.8.2"]},
+    },
+]
 actual_dependencies = []
 for dependency in dependencies:
     source = dependency.get("sourceControl", [])
@@ -433,15 +440,14 @@ for dependency in dependencies:
         continue
     value = source[0]
     remote = value.get("location", {}).get("remote", [{}])[0]
-    branch = value.get("requirement", {}).get("branch", [None])[0]
     actual_dependencies.append(
         {
             "identity": value.get("identity"),
             "location": remote.get("urlString"),
-            "branch": branch,
+            "requirement": value.get("requirement"),
         }
     )
-if actual_dependencies != [expected_dependency]:
+if actual_dependencies != expected_dependencies:
     raise SystemExit(f"SwiftPM dependency contract mismatch: {actual_dependencies!r}")
 
 targets = {target["name"]: target for target in package["targets"]}

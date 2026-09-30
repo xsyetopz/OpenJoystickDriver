@@ -162,7 +162,7 @@ run_backend_acceptance_loop() {
 
   if [[ -x "$CLI_BIN" ]]; then
     echo "0) CLI status:"
-    run_limited "$step_timeout" "$CLI_BIN" --headless status || true
+    run_limited "$step_timeout" ojd_cli "$CLI_BIN" status || true
     echo
 
   else

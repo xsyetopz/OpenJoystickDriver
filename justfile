@@ -218,10 +218,6 @@ diagnose-sdl3-hidapi-x360 *args:
 diagnose-gamecontroller *args:
     ./Scripts/ojd diagnose gamecontroller {{ args }}
 
-# Check a macOS 10.15 test app bundle
-diagnose-catalina *args:
-    ./Scripts/ojd diagnose catalina {{ args }}
-
 # Run current backend acceptance loop
 diagnose-backends *args:
     ./Scripts/ojd diagnose backends {{ args }}

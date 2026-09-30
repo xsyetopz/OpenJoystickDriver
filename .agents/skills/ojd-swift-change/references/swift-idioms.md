@@ -8,7 +8,7 @@
 - [Package access](#package-access)
 - [CLI errors](#cli-errors)
 
-The package uses swift-tools-version 6.3 (Swift 6 language mode, complete concurrency checking), and source targets build for `.macOS(.v10_15)`.
+The package uses swift-tools-version 6.3 (Swift 6 language mode, complete concurrency checking), and source targets build for `.macOS(.v12)`.
 
 ## Locked state
 

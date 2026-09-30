@@ -24,7 +24,8 @@ Supported controllers and their evidence: [docs/connecting-controllers/supported
 One bundle, no helper app: `/Applications/OpenJoystickDriver.app`.
 
 ```bash
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status
+ln -s /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver /usr/local/bin/ojd
+ojd status
 ```
 
 Uninstall: `--headless app login disable`, quit, delete the app. Optionally remove it from Input Monitoring and Accessibility.
@@ -44,7 +45,7 @@ OJD automatically publishes each non-native controller as one of two virtual HID
 
 | Symptom | What to do |
 | --- | --- |
-| Runtime disconnected | Launch the app, then `--headless status` |
+| Runtime disconnected | `ojd service start`, then `ojd status` |
 | SDL sees 0 controllers | Grant Input Monitoring and Accessibility, restart, retry |
 | XboxUSBDevice install fails | Rebuild the signed app; `--headless extension enable` |
 | Input stays held or status says Needs attention | Release the controls and check controller input health with `--headless status --json` |

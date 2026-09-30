@@ -4,7 +4,7 @@
 		{
 			"id": 1,
 			"prompt": "Add a 'Reset all profiles' button to the Profiles pane.",
-			"expected_output": "Destructive semantics with a 10.15 fallback, confirmation alert, saving and failed states, localized strings, a view-model test with GatewayStub.",
+			"expected_output": "Destructive button role, confirmation alert, saving and failed states, localized strings, a view-model test with GatewayStub.",
 			"assertions": [
 				"Adds strings to Localizable.template.strings and uses OJDLocalized",
 				"Tests the view model against GatewayStub, not view text",
@@ -23,10 +23,10 @@
 		{
 			"id": 3,
 			"prompt": "Use @Observable for the new calibration view model.",
-			"expected_output": "Explains @Observable needs macOS 14 and the floor is 10.15; uses ObservableObject.",
+			"expected_output": "Explains @Observable needs macOS 14 and the floor is macOS 12; uses ObservableObject.",
 			"assertions": [
 				"Does not use @Observable in Sources",
-				"States the macOS 10.15 deployment floor"
+				"States the macOS 12 deployment floor"
 			]
 		},
 		{

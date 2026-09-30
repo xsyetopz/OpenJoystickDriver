@@ -2,27 +2,13 @@ import Foundation
 
 extension ApplicationServiceClient {
 
-  /// Connects to the running main app, launching the installed app when needed.
+  /// Connects to the running main app, waiting up to `timeoutSeconds` for its local server.
   ///
-  /// Cancelling the calling task stops the retries and leaves the client disconnected.
+  /// The client never launches the app. Cancelling the calling task stops the retries and leaves
+  /// the client disconnected.
   public func connect(timeoutSeconds: TimeInterval = 5) async {
-    do {
-      if try await waitForLocalServer(until: Date()) { return }
-      let timeout = max(0, timeoutSeconds)
-      let deadline = Date().addingTimeInterval(timeout)
-      switch Self.launchPolicy(
-        commandLineArguments: CommandLine.arguments,
-        bundlePathExtension: Bundle.main.bundleURL.pathExtension
-      ) {
-      case .waitForLocalServer: break
-      case .spawnBundleExecutable:
-        let grace = Date().addingTimeInterval(min(Self.concurrentHostLaunchGraceSeconds, timeout))
-        if try await waitForLocalServer(until: grace) { return }
-        spawnMainApplicationExecutable()
-      case .unavailable: break
-      }
-      if try await waitForLocalServer(until: deadline) { return }
-    } catch {}
+    let deadline = Date().addingTimeInterval(max(0, timeoutSeconds))
+    do { if try await waitForLocalServer(until: deadline) { return } } catch {}
     stateLock.withLock { connected = false }
   }
 

@@ -24,24 +24,5 @@ public final class ApplicationServiceClient: @unchecked Sendable {
 
   public init() { socketPath = LocalServiceRPCTransport.defaultSocketPath }
 
-  init(socketPath: String) { self.socketPath = socketPath }
-}
-
-extension ApplicationServiceClient {
-  enum LaunchPolicy: Equatable, Sendable {
-    case waitForLocalServer
-    case spawnBundleExecutable
-    case unavailable
-  }
-
-  static let concurrentHostLaunchGraceSeconds: TimeInterval = 0.5
-
-  static func launchPolicy(
-    commandLineArguments: [String],
-    bundlePathExtension: String
-  ) -> LaunchPolicy {
-    guard bundlePathExtension == "app" else { return .unavailable }
-    if commandLineArguments.dropFirst().isEmpty { return .waitForLocalServer }
-    return .spawnBundleExecutable
-  }
+  package init(socketPath: String) { self.socketPath = socketPath }
 }

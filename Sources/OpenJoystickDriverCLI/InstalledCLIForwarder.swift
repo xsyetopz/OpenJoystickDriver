@@ -15,7 +15,6 @@ package enum InstalledCLIForwarder {
   static func resolve(
     currentExecutableURL: URL,
     mainBundleURL: URL,
-    arguments: [String],
     installedExecutableURL: URL = installedExecutableURL,
     repositoryCLIOverride: Bool = ProcessInfo.processInfo.environment["OJD_RUN_REPOSITORY_CLI"]
       == "1",
@@ -25,9 +24,7 @@ package enum InstalledCLIForwarder {
       installedExecutableURL:
     )
   ) -> Resolution {
-    guard !arguments.isEmpty, mainBundleURL.pathExtension != "app", !repositoryCLIOverride else {
-      return .local
-    }
+    guard mainBundleURL.pathExtension != "app", !repositoryCLIOverride else { return .local }
     let current = currentExecutableURL.resolvingSymlinksInPath().standardizedFileURL
     let installed = installedExecutableURL.resolvingSymlinksInPath().standardizedFileURL
     guard current != installed, isExecutableFile(installed.path) else { return .local }
@@ -37,34 +34,31 @@ package enum InstalledCLIForwarder {
 
   package static func forwardIfNeeded(
     arguments: [String],
-    currentExecutableURL: URL = URL(fileURLWithPath: CommandLine.arguments[0]),
+    currentExecutableURL: URL = Bundle.main.executableURL
+      ?? URL(fileURLWithPath: CommandLine.arguments[0]),
     mainBundleURL: URL = Bundle.main.bundleURL
   ) {
     let executable: URL
-    switch resolve(
-      currentExecutableURL: currentExecutableURL,
-      mainBundleURL: mainBundleURL,
-      arguments: arguments
-    ) {
+    switch resolve(currentExecutableURL: currentExecutableURL, mainBundleURL: mainBundleURL) {
     case .local: return
     case .forward(let target): executable = target
     case .staleInstallation:
       fputs(
-        "error: repository sources are newer than the installed OpenJoystickDriver CLI; "
-          + "run './Scripts/ojd build install-fast dev' before using repository CLI paths, "
-          + "or set OJD_RUN_REPOSITORY_CLI=1 for local-only commands\n",
+        "ojd: The installed OpenJoystickDriver.app is older than these repository sources. "
+          + "Run './Scripts/ojd build install-fast dev', "
+          + "or set OJD_RUN_REPOSITORY_CLI=1 to run this build.\n",
         stderr
       )
       exit(1)
     }
 
-    let strings = [executable.path] + arguments
+    let strings = ["ojd"] + arguments
     var pointers: [UnsafeMutablePointer<CChar>?] = strings.map { string in
       string.withCString { strdup($0) }
     }
     guard pointers.allSatisfy({ $0 != nil }) else {
       release(pointers)
-      fputs("error: could not allocate arguments for the installed CLI\n", stderr)
+      fputs("ojd: Could not allocate arguments for the installed ojd. Retry the command.\n", stderr)
       exit(127)
     }
     pointers.append(nil)
@@ -78,7 +72,10 @@ package enum InstalledCLIForwarder {
     }
     guard result == -1 else { return }
     let message = String(cString: strerror(errno))
-    fputs("error: could not execute installed OpenJoystickDriver CLI: \(message)\n", stderr)
+    fputs(
+      "ojd: Could not run the installed ojd: \(message). Reinstall OpenJoystickDriver.app.\n",
+      stderr
+    )
     exit(127)
   }
 

@@ -32,7 +32,7 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
       }
     }
     var iterator: io_iterator_t = 0
-    let result = IOServiceGetMatchingServices(kIOMasterPortDefault, matching, &iterator)
+    let result = IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator)
     guard result == kIOReturnSuccess else {
       throw PassiveUSBDescriptorProbeError.matchingFailed(result)
     }

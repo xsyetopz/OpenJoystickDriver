@@ -60,4 +60,4 @@ Produce a signed app (and DEXT when needed) from the exact intended commit, and 
 
 ## Completion evidence
 
-The report gives the command run, the commit, and the version with build metadata. It includes the `signing doctor` result and the `diagnose report` / `diagnose dext` summary, plus the DMG path when packaging. It lists the user approvals obtained, and what remains unverified (for example Gatekeeper on another Mac, or macOS 10.15).
+The report gives the command run, the commit, and the version with build metadata. It includes the `signing doctor` result and the `diagnose report` / `diagnose dext` summary, plus the DMG path when packaging. It lists the user approvals obtained, and what remains unverified (for example Gatekeeper on another Mac, or macOS 12).

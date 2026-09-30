@@ -31,8 +31,10 @@ The built-in catalog has 696 records. A record without a physical test is unveri
 Run the following command to see the runtime state.
 
 ```shell
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless status
+ojd status
 ```
+
+For more information about `ojd`, see [Using the command line](../command-line/using-the-command-line.md).
 
 If the controller is still missing, report it. For more information, see [Reporting a bug](reporting-a-bug.md).
 

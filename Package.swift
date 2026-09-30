@@ -22,9 +22,12 @@ let swifterKitDependency: Package.Dependency =
 let package = Package(
   name: "OpenJoystickDriver",
   defaultLocalization: "en-US",
-  platforms: [.macOS(.v10_15)],
+  platforms: [.macOS(.v12), .iOS(.v15)],
   products: [.library(name: "OpenJoystickDriverKit", targets: ["OpenJoystickDriverKit"])],
-  dependencies: [swifterKitDependency],
+  dependencies: [
+    swifterKitDependency,
+    .package(url: "https://github.com/apple/swift-argument-parser.git", exact: "1.8.2"),
+  ],
   targets: [
     .target(
       name: "OpenJoystickDriverKit",
@@ -62,6 +65,7 @@ let package = Package(
       name: "OpenJoystickDriverCLI",
       dependencies: [
         "OpenJoystickDriverKit", "OpenJoystickDriverUSB", "OpenJoystickDriverService",
+        .product(name: "ArgumentParser", package: "swift-argument-parser"),
       ],
       path: "Sources/OpenJoystickDriverCLI"
     ),
@@ -147,6 +151,7 @@ let package = Package(
       dependencies: [
         "OpenJoystickDriverKit", "OpenJoystickDriverService", "OpenJoystickDriverCLI",
         "OpenJoystickDriverTestSupport",
+        .product(name: "ArgumentParser", package: "swift-argument-parser"),
       ],
       path: "Tests/OpenJoystickDriverCLITests",
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
@@ -155,8 +160,8 @@ let package = Package(
     .testTarget(
       name: "OpenJoystickDriverPresentationTests",
       dependencies: [
-        "OpenJoystickDriverKit", "OpenJoystickDriverUSB", "OpenJoystickDriverCLI",
-        "OpenJoystickDriverPresentation", "OpenJoystickDriverTestSupport",
+        "OpenJoystickDriverKit", "OpenJoystickDriverUSB", "OpenJoystickDriverPresentation",
+        "OpenJoystickDriverTestSupport",
       ],
       path: "Tests/OpenJoystickDriverPresentationTests",
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],

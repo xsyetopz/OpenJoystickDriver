@@ -1,6 +1,6 @@
 # CLI And Application Runtime
 
-The signed application bundle provides the menu-bar and settings interface for the in-process controller runtime. With `--headless`, the same executable provides the expert CLI for automation, advanced mappings, and diagnostics. The app host does not shell out to the CLI. See [Architecture](architecture.md) for the shared contracts, local-RPC boundary, and process lifecycle.
+The signed application bundle provides the menu-bar and settings interface for the in-process controller runtime. When `argv[0]` is `ojd`, the same executable is the `ojd` command line for automation, advanced mappings, and diagnostics; under any other name it runs the app host. The app host does not shell out to the CLI. See [Architecture](architecture.md) for the shared contracts, local-RPC boundary, and process lifecycle.
 
 | Capability | Shared owner |
 | --- | --- |
@@ -18,40 +18,23 @@ Launching `OpenJoystickDriver.app` starts `ApplicationServiceRuntime` once, then
 
 ## CLI
 
-The installed `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless` CLI remains the supported expert interface for automation, complete mapping operations, streaming input, and diagnostics. The menu-bar/settings facade is the supported consumer interface for readiness, permissions, connected controllers, profiles, and ordinary remapping. With CLI arguments, `swift run OpenJoystickDriver` or `.build/debug/OpenJoystickDriver` uses the installed signed executable when available. The server still checks the user, signing identifier, and team identifier. If the repository sources are newer than the installed executable, the command stops and asks for a new install instead of running stale code.
+The installed executable, run as `ojd`, is the supported expert interface for automation, complete mapping operations, streaming input, and diagnostics. [Using the command line](../../docs/command-line/using-the-command-line.md) documents its global options, output formats, and exit codes. The menu-bar/settings facade is the supported consumer interface for readiness, permissions, connected controllers, profiles, and ordinary remapping. A repository build run as `ojd` (for example through `ln -sf OpenJoystickDriver .build/debug/ojd`) uses the installed signed executable when available. The server still checks the user, signing identifier, and team identifier. If the repository sources are newer than the installed executable, the command stops and asks for a new install instead of running stale code.
 
 Run `./Scripts/ojd build install-fast dev` after source changes. Set `OJD_RUN_REPOSITORY_CLI=1` only to run a local command that does not use the application service. An unsigned repository executable cannot connect to the running service. Repository development, build, validation, and release tasks use the separate maintainer command, `./Scripts/ojd`. Direct use of `OpenJoystickDriverHIDTool` is internal and supported only for focused hardware investigation.
 
 CLI command families:
 
 ```text
-status [--json]
-controller list|state|packets|watch|output|disconnect|disconnect-wireless|resume ...
-map ...
-app status|login enable|disable|logs ...
-extension status|enable|disable
-permissions ...
-controller virtual set|reset
-test [positive-seconds]
-diagnose [runtime|catalog|report]
-update check ...
+ojd status
+ojd service start|stop|wait
 ```
 
 ## Workflow Capability Matrix
 
 | Runtime CLI workflow | GUI destination or classification |
 | --- | --- |
-| `status` and `diagnose runtime` | Overview and Developer Tools runtime health |
-| `controller list` | Controllers |
-| `controller state` and `controller watch` | Controllers → Input Test |
-| `controller output` | Controllers → Input Test output controls |
-| `controller packets` | Developer Tools packet capture |
-| `map` profile authoring and activation | Profiles |
-| `permissions` | Overview access cards |
-| `controller virtual set/reset` | Controllers → Virtual HID profile (Advanced) |
-| `app logs` and `diagnose report` | Console and Developer Tools report actions |
-| `extension status/enable/disable` | Overview driver setup, repair, and uninstall |
-| `update check` | Settings → Updates |
+| `status` | Overview |
+| `service start/stop/wait` | Menu-bar Quit and app launch |
 | JSON/JSONL output, scripting, soak tests, catalog diagnostics, packaging, catalog generation, and DriverKit generation | Automation-only |
 
 `--timeout <seconds>` applies to bounded application-service calls. Controller operations retain opaque `--device` selection and ambiguity rejection. Machine-readable output uses `--json` where supported. Stream commands use their documented JSONL mode.

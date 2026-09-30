@@ -59,7 +59,7 @@ GUI and CLI copy: `LOCALIZATION.md`. Tests check codes, routes, identifiers, pat
 - Decimal integers in JSON. No hex.
 - Keep the existing `print` diagnostics. No new logging stack.
 - Parser errors stay local: log and skip.
-- Deployment floor: macOS 10.15.
+- Deployment floor: macOS 12. Future iOS and iPadOS companion apps: iOS 15 and iPadOS 15.
 - Kit has no SwifterKit. USB adapter: `Sources/OpenJoystickDriverUSB/`. Generator: `Sources/DriverKitGenerator/` and `Scripts/Build/driverkit.sh`.
 - No manual DriverKit build or post-generation patch. `./Scripts/ojd check driverkit`.
 - Host `com.apple.developer.driverkit.userclient-access` lists only `com.openjoystickdriver.XboxUSBDevice`.

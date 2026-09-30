@@ -13,7 +13,7 @@ The UI lives in the `OpenJoystickDriverPresentation` library, which depends on `
 - SwiftUI renders the settings content. AppKit remains the lifecycle and 10.15 compatibility shell.
 - `ApplicationServiceRuntime` starts once. The shell receives an injected `ApplicationServiceGateway` backed by `ApplicationServiceClient`.
 - The UI never starts a CLI subprocess, creates another runtime, or opens another RPC server.
-- macOS 10.15 is the deployment floor. Newer APIs require an availability check and an older path.
+- macOS 12 is the deployment floor. Newer APIs require an availability check and an older path.
 - The consumer UI covers ordinary button, D-pad, axis, trigger, keyboard, mouse, pointer, scroll, and axis-tuning workflows. Advanced automation remains CLI-only.
 
 ## Runtime Boundary
@@ -130,7 +130,7 @@ The adapter connects the existing client, returns typed payloads, and maps trans
 
 ## Compatibility And Accessibility
 
-- Keep newer APIs behind `#available`; use AppKit template images and SwiftUI compatibility modifiers for macOS 10.15.
+- Keep newer APIs behind `#available`; use AppKit template images and SwiftUI compatibility modifiers for macOS 12.
 - Prefer 28-point controls and never make an interactive target smaller than 20 points.
 - Use semantic system colors, system typography, and text plus icon/shape for state. Never rely on color alone.
 - Keep full values available to VoiceOver when visual text truncates.

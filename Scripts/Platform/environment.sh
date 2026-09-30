@@ -11,6 +11,15 @@ die() {
   exit 2
 }
 
+# Run the app executable as the `ojd` command line, which it selects by argv[0].
+# The function replaces its shell, so call it in a subshell: `(ojd_cli ...)`, `$(ojd_cli ...)`,
+# or `ojd_cli ... &`. Usage: ojd_cli <executable> <arguments...>
+ojd_cli() {
+  local executable="$1"
+  shift
+  exec -a ojd "$executable" "$@"
+}
+
 # Load exactly one repository-local environment file.
 # OJD_ENV selects .env.dev (default) or .env.release at the project root.
 OJD_ENV="${OJD_ENV:-dev}"

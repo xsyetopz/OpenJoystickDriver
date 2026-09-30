@@ -20,7 +20,6 @@
 | Does SDL3's Xbox 360 HIDAPI path see it, and does rumble reach it? | `./Scripts/ojd diagnose sdl3-hidapi-x360 [--seconds N]` |
 | Does GameController.framework list it? | `./Scripts/ojd diagnose gamecontroller` |
 | Which physical motor is which? | `./Scripts/ojd diagnose rumble-motors <vid> <pid> [intensity] [duration-ms]` (interactive, drives motors) |
-| Does a macOS 10.15 test bundle run? | `./Scripts/ojd diagnose catalina [app]` |
 
 **Use when.** Pick the one probe whose answer decides the question.
 

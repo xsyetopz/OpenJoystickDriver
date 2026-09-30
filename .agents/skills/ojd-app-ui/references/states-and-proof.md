@@ -72,6 +72,6 @@ Check these in the running app. Report each one as checked or unverified.
 - VoiceOver announces a useful name for every non-text control, and the full value of any truncated text.
 - Light and dark appearance, increased contrast, and reduced motion all render.
 - The minimum window size shows long localized strings without clipping.
-- Newer APIs sit behind `#available`, with a macOS 10.15 path. Profile alerts use one `alert(item:)`, and capture uses one `sheet(item:)`.
+- Newer APIs sit behind `#available`, with a macOS 12 path. Profile alerts use one `alert(item:)`, and capture uses one `sheet(item:)`.
 - Interactive targets are at least 20 points, and 28 is preferred.
 - Permission copy links to System Settings, and does not claim access that was not observed.

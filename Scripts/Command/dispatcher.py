@@ -64,7 +64,6 @@ Commands:
   diagnose sdl3-hidapi-x360 [--seconds N]
                               Run SDL3 through Xbox 360 HIDAPI and test rumble
   diagnose gamecontroller     Run GameController.framework probe
-  diagnose catalina [app]     Check a macOS 10.15 test app bundle
   diagnose backends           Run current backend acceptance loop
   diagnose rumble-motors <vid> <pid> [intensity] [duration-ms]
                               Identify physical rumble actuators interactively
@@ -275,8 +274,6 @@ def dispatch(argv: list[str]) -> int:
                 exec_target("Diagnostics/backend.sh", ["help"])
             if sub == "record":
                 return run_record(tail)
-            if sub == "catalina":
-                exec_target("Diagnostics/catalina_smoke.py", tail, python=True)
             if sub == "rumble-motors":
                 if len(tail) not in {2, 3, 4}:
                     die(
@@ -296,7 +293,7 @@ def dispatch(argv: list[str]) -> int:
                     exec_target("Diagnostics/dext/diagnose.sh", [])
                 exec_target("Diagnostics/backend.sh", [sub, *tail])
             die(
-                f"Unknown: diagnose {sub} (expected: record | dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | catalina | backends | rumble-motors)"
+                f"Unknown: diagnose {sub} (expected: record | dext | sdl3 | sdl3-gamecontroller | sdl3-hidapi-x360 | gamecontroller | backends | rumble-motors)"
             )
         case "check":
             sub, tail = (rest[0], rest[1:]) if rest else ("", [])

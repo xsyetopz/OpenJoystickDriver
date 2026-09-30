@@ -2,7 +2,7 @@
 
 > Expanded LLM context for the macOS userspace gamepad driver. Prefer `llms.txt` when a short index is enough.
 
-The signed app owns the runtime, virtual HID, and authenticated local CLI. Physical HID and virtual HID use IOKit (`IOHIDManager`/`IOHIDDevice` and `IOHIDUserDevice`) on every supported macOS (10.15+). Raw USB uses app-side IOUSBHost, or the restricted `com.openjoystickdriver.XboxUSBDevice` DriverKit extension for Apple-entitled Microsoft GIP interfaces.
+The signed app owns the runtime, virtual HID, and authenticated local CLI. Physical HID and virtual HID use IOKit (`IOHIDManager`/`IOHIDDevice` and `IOHIDUserDevice`) on every supported macOS (12+). Raw USB uses app-side IOUSBHost, or the restricted `com.openjoystickdriver.XboxUSBDevice` DriverKit extension for Apple-entitled Microsoft GIP interfaces.
 
 `OpenJoystickDriverKit` owns parsers, records, HID/USB ports, and policy. It must not import SwifterKit. `OpenJoystickDriverUSB` and `DriverKitGenerator` are the SwifterKit boundaries. `OpenJoystickDriver` composes the app, CLI, and adapters.
 
@@ -71,4 +71,3 @@ Parser/protocol: `./Scripts/ojd test parsers-macos14`. Cache: `./Scripts/ojd rep
 - [Steam Controller](contributing/testing/steam-controller.md): Steam Controller capture
 - [Xbox 360 wireless receiver](contributing/testing/xbox-360-wireless-receiver.md): wireless receiver
 - [Xbox Adaptive Joystick](contributing/testing/xbox-adaptive-joystick.md): Adaptive Joystick checklist
-- [macOS 10.15 kit](contributing/testing/catalina-testkit.md): Catalina test kit

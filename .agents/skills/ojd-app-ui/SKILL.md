@@ -5,7 +5,7 @@ description: >-
   the OpenJoystickDriverPresentation target: AppKit window and status-item
   lifecycle, SwiftUI panes, @MainActor view models behind
   ApplicationServiceGateway, explicit loading/denied/stale/error states,
-  keyboard and VoiceOver access, macOS 10.15 fallbacks, and localized copy.
+  keyboard and VoiceOver access, macOS 12 fallbacks, and localized copy.
   Use when adding or changing a pane, menu item, profile editor flow, input
   test window, permission prompt, or UI string. Not for runtime, RPC, or
   domain logic (ojd-swift-change) or physical output proof
@@ -37,13 +37,13 @@ Deliver one native, accessible user flow in Presentation, with its states and re
 | Old response overwrites a newer one | [Required states](references/states-and-proof.md#required-states) (stale) |
 | Testing a view model | [State tests](references/states-and-proof.md#state-tests) |
 | New label, alert, or button text | [Localized copy](references/states-and-proof.md#localized-copy) |
-| API newer than macOS 10.15 | [Proof points](references/states-and-proof.md#proof-points) |
+| API newer than macOS 12 | [Proof points](references/states-and-proof.md#proof-points) |
 
 ## Rules
 
 - Presentation imports Kit only. `DeviceManager`, `RemappingProfileLibrary`, socket frames, and CLI parsers do not reach this target, and the compiler enforces it.
 - The app has one `ApplicationServiceRuntime`, one reusable settings window, and no CLI subprocess. A second instance would fight the first for devices and the RPC socket.
-- A newer API needs `#available` with a 10.15 path. `@Observable` and `NavigationStack` are not available on the deployment floor.
+- A newer API needs `#available` with a macOS 12 path. `@Observable` and `NavigationStack` are not available on the deployment floor.
 - State is text plus a symbol or shape, never colour alone. A value that truncates visually stays complete for VoiceOver.
 - Do not test view prose or read Swift source in tests. Copy changes per locale, and a source-text test passes on broken behavior.
 - Do not claim hardware behavior from previews, stubs, or source reading. Hardware claims go to `ojd-hardware-evidence`.

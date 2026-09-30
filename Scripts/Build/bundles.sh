@@ -98,24 +98,6 @@ build_app_bundle() {
   mkdir -p "$GUI_MACOS"
   cp "$gui_bin" "$GUI_MACOS/OpenJoystickDriver"
 
-  # macOS 10.15 and 11 ship no Swift Concurrency runtime, and the binary weak-links it through
-  # @rpath, so bundle the back-deployment copy the way Xcode does for apps. Only Xcode's
-  # toolchain ships it, so fall back to that when SWIFT_BIN comes from a swift.org toolchain.
-  local GUI_FRAMEWORKS="$GUI_CONTENTS/Frameworks"
-  local concurrency_relative="lib/swift-5.5/macosx/libswift_Concurrency.dylib"
-  local concurrency_dylib
-  concurrency_dylib="$(dirname "$(dirname "$SWIFT_BIN")")/$concurrency_relative"
-  if [[ ! -f "$concurrency_dylib" ]]; then
-    concurrency_dylib="$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/$concurrency_relative"
-  fi
-  if [[ ! -f "$concurrency_dylib" ]]; then
-    echo "ERROR: Swift Concurrency back-deployment library not found: $concurrency_dylib"
-    echo "Fix: point DEVELOPER_DIR (or xcode-select) at an installed Xcode."
-    exit 1
-  fi
-  mkdir -p "$GUI_FRAMEWORKS"
-  cp "$concurrency_dylib" "$GUI_FRAMEWORKS/"
-
   local BUILD_DIR
   BUILD_DIR="$(dirname "$gui_bin")"
   local GUI_RESOURCES="$GUI_CONTENTS/Resources"
@@ -149,9 +131,6 @@ build_app_bundle() {
   echo "Signing GUI using:    $GUI_IDENTITY"
   for bundle in "$GUI_RESOURCES"/*.bundle; do
     [[ -d "$bundle" ]] && OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign_resource_bundle "$bundle"
-  done
-  for library in "$GUI_FRAMEWORKS"/*.dylib; do
-    OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign_resource_bundle "$library"
   done
   OJD_ACTIVE_SIGN_IDENTITY="$GUI_IDENTITY" ojd_sign "$GUI_APP" --entitlements "$GUI_ENTITLEMENTS"
 

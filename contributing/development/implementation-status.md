@@ -16,7 +16,7 @@ Controller records remain generated data, while shared protocol behavior remains
 
 ## Platform Boundaries
 
-On every supported macOS (10.15+), physical HID access uses IOHID and consumer virtual output uses `IOHIDUserDevice`. Raw USB uses IOUSBHost/USBDriverKit. `OpenJoystickDriverUSB` hides the USB host transport from parsers and application callers. OJD does not retain a libusb fallback.
+On every supported macOS (12+), physical HID access uses IOHID and consumer virtual output uses `IOHIDUserDevice`. Raw USB uses IOUSBHost/USBDriverKit. `OpenJoystickDriverUSB` hides the USB host transport from parsers and application callers. OJD does not retain a libusb fallback.
 
 ## Known Issues
 

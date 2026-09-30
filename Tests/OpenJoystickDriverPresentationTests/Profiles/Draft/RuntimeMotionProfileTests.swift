@@ -2,7 +2,6 @@ import Foundation
 import OpenJoystickDriverKit
 import Testing
 
-@testable import OpenJoystickDriverCLI
 @testable import OpenJoystickDriverPresentation
 
 struct RuntimeMotionProfileTests {
@@ -56,8 +55,6 @@ struct RuntimeMotionProfileTests {
     #expect(try draft.removingBinding(binding.id).profile.motionTuning == tuning)
     let added = try draft.addingBinding(source: .button(.east), destination: destination)
     #expect(added.profile.motionTuning == tuning)
-    let cliEdited = try MappingProfileEditor.removingBinding(from: profile, source: .button(.south))
-    #expect(cliEdited.motionTuning == tuning)
   }
 
   @Test
