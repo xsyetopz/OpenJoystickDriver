@@ -95,7 +95,7 @@ struct VirtualControllerBackendTests {
   @Test
   func testXboxOneVirtualOutputFormatDeclaresRumbleOutputSize() throws {
     let format = try HIDDescriptorReportFormat(
-      descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor,
+      descriptor: XboxOneBluetoothHIDDescriptor.oneSDescriptor,
       outputReportID: ConsumerOutputCodec.xboxOneReportID,
       outputReportPayloadSize: ConsumerOutputCodec.xboxOneReportPayloadSize
     )
@@ -114,8 +114,8 @@ struct VirtualControllerBackendTests {
     #expect(xone[0] == 1)
     #expect(Array(xone[1...8]) == [0x00, 0x80, 0x00, 0x80, 0x00, 0x80, 0x00, 0x80])
     #expect(xone[14] == 0x00)
-    #expect(xone[16] == 0x00)
-    #expect(xone.count == 17)
+    #expect(xone[15] == 0x00)
+    #expect(xone.count == 16)
   }
 
   @Test

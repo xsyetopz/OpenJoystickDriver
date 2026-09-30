@@ -69,10 +69,10 @@ struct UserSpaceDeviceCreationTests {
   @Test(arguments: [
     (
       VirtualHIDProfileID.xboxOneSBluetooth, 0x045E, 0x02FD, 0x0000, "Xbox Wireless Controller",
-      "Microsoft", "Bluetooth", UInt64(0x935B_ACB9_7A71_52E8), Int?(9)
+      "Microsoft", "Bluetooth", UInt64(0x8C79_2AA2_4C28_57BD), Int?(9)
     ),
     (
-      VirtualHIDProfileID.generic, 0x4F4A, 0x4447, 0x0408, "OpenJoystickDriver Generic HID Gamepad",
+      VirtualHIDProfileID.generic, 0x1209, 0x4A4F, 0x0408, "OpenJoystickDriver Generic HID Gamepad",
       "OpenJoystickDriver", "USB", UInt64(0x1ECB_8E98_9A22_47A8), Int?.none
     ),
   ])

@@ -39,14 +39,14 @@ struct XboxOneHIDReportFormatTests {
   func identityAndReportShapeRemainXboxOneS() throws {
     let profile = VirtualHIDProfileID.xboxOneSBluetooth.identity
     let parsed = try #require(
-      HIDReportDescriptorParser.parse(descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor)
+      HIDReportDescriptorParser.parse(descriptor: XboxOneBluetoothHIDDescriptor.oneSDescriptor)
     )
 
     #expect(profile.vendorID == 0x045E)
     #expect(profile.productID == 0x02FD)
     #expect(profile.productName == "Xbox Wireless Controller")
     #expect(try format().inputReportID == 1)
-    #expect(parsed.payloadSizeBytesByReportID[1] == 16)
+    #expect(parsed.payloadSizeBytesByReportID[1] == 15)
     #expect(parsed.payloadSizeBytesByReportID[2] == 1)
   }
 
@@ -55,7 +55,7 @@ struct XboxOneHIDReportFormatTests {
     let a = try report(buttonBit: 0)
     let rb = try report(buttonBit: 5)
 
-    #expect(a.count == 17)
+    #expect(a.count == 16)
     #expect(a[0] == 1)
     #expect(a[14] == 0x01)
     #expect(rb[14] == 0x20)
@@ -95,7 +95,7 @@ struct XboxOneHIDReportFormatTests {
   func testPacksIdleSticksAtUnsignedCenter() throws {
     let idle = try format().buildInputReport(from: VirtualGamepadState())
 
-    #expect(idle.count == 17)
+    #expect(idle.count == 16)
     #expect(idle[0] == 1)
     #expect(Array(idle[1...8]) == [0x00, 0x80, 0x00, 0x80, 0x00, 0x80, 0x00, 0x80])
   }
@@ -123,7 +123,7 @@ struct XboxOneHIDReportFormatTests {
   @Test
   func testPreservesPrimaryButtonCountAndGuideMapping() throws {
     let parsed = try #require(
-      HIDReportDescriptorParser.parse(descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor)
+      HIDReportDescriptorParser.parse(descriptor: XboxOneBluetoothHIDDescriptor.oneSDescriptor)
     )
     let buttonUsages = parsed.fields.filter { $0.reportID == 1 && $0.usagePage == 0x09 }.sorted {
       $0.bitOffset < $1.bitOffset
@@ -136,7 +136,7 @@ struct XboxOneHIDReportFormatTests {
     #expect(XboxOneBluetoothHIDDescriptor.buttonUsageMap[7] == 10)
     #expect(XboxOneBluetoothHIDDescriptor.buttonUsageMap[10] == 11)
     #expect(parsed.fields.contains { $0.reportID == 2 && $0.usagePage == 0x01 && $0.usage == 0x85 })
-    #expect(parsed.fields.contains { $0.reportID == 1 && $0.usagePage == 0x0C && $0.usage == 0xB2 })
+    #expect(!parsed.fields.contains { $0.usagePage == 0x0C })
     #expect(buttonUsages.count == 15)
   }
 
@@ -147,7 +147,7 @@ struct XboxOneHIDReportFormatTests {
     let share = try report(buttonBit: GamepadHIDDescriptor.ButtonBit.share.rawValue)
 
     #expect(view[14] == 0x40)
-    #expect(view[16] == 0x00)
+    #expect(view[15] == 0x00)
     #expect(share == neutral)
   }
 

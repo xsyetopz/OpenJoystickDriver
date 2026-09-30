@@ -67,9 +67,15 @@ public protocol VirtualGamepadReportFormat: Sendable {
   ///
   /// If `inputReportID` is non-nil, the returned bytes MUST begin with that Report ID byte.
   func buildInputReport(from state: VirtualGamepadState) -> [UInt8]
+
+  /// Builds the additional input reports, each beginning with its own Report ID byte, that carry
+  /// state the primary report does not (for example a Guide button declared as a separate
+  /// report). Delivery sends each one when its bytes change.
+  func buildAuxiliaryInputReports(from state: VirtualGamepadState) -> [[UInt8]]
 }
 
 extension VirtualGamepadReportFormat {
+  public func buildAuxiliaryInputReports(from state: VirtualGamepadState) -> [[UInt8]] { [] }
   public var outputReportPayloadSize: Int? { nil }
   public var outputReportID: UInt8? { nil }
 }

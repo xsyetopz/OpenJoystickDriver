@@ -6,7 +6,7 @@ struct UserSpaceInputReportStateTests {
   @Test
   func currentInputReportTracksChangesForHostGetReportRequests() throws {
     let format = try HIDDescriptorReportFormat(
-      descriptor: XboxOneBluetoothHIDDescriptor.seriesDescriptor
+      descriptor: XboxOneBluetoothHIDDescriptor.oneSDescriptor
     )
     let state = UserSpaceInputReportState(format: format)
     let neutral = state.currentReport()
@@ -29,9 +29,22 @@ struct UserSpaceInputReportStateTests {
   func xboxOneSIdleReportMatchesInterruptGetReportLayout() throws {
     let format = try XboxGeckoHIDReportFormat()
     let report = UserSpaceInputReportState(format: format).currentReport()
-    #expect(report.count == 17)
+    #expect(report.count == 16)
     #expect(report[0] == 1)
     #expect(Array(report[1...8]) == [0x00, 0x80, 0x00, 0x80, 0x00, 0x80, 0x00, 0x80])
+  }
+
+  @Test
+  func guideChangesClaimTheSeparateGuideReportOnce() throws {
+    let state = UserSpaceInputReportState(format: try XboxGeckoHIDReportFormat())
+    #expect(state.claimChangedAuxiliaryReports().isEmpty)
+
+    _ = state.update { $0.buttons = 1 << GamepadHIDDescriptor.ButtonBit.guide.rawValue }
+    #expect(state.claimChangedAuxiliaryReports() == [[2, 1]])
+    #expect(state.claimChangedAuxiliaryReports().isEmpty)
+
+    _ = state.update { $0 = VirtualGamepadState() }
+    #expect(state.claimChangedAuxiliaryReports() == [[2, 0]])
   }
 
   @Test
@@ -67,7 +80,7 @@ struct UserSpaceInputReportStateTests {
 
     #expect(share == neutral)
     #expect(view[14] == 0x40)
-    #expect(view[16] == 0)
+    #expect(view[15] == 0)
     #expect(state.update { $0 = VirtualGamepadState() } == neutral)
   }
 

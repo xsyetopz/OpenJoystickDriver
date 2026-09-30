@@ -9,6 +9,8 @@ final class UserSpaceInputReportState: Sendable {
     var remapped = false
     /// The input report input delivery last published; nil once another path published.
     var deliveredReport: [UInt8]?
+    /// The auxiliary input reports last handed to delivery, index-aligned with the format's.
+    var deliveredAuxiliaryReports: [[UInt8]]
     /// Set once the published device closes; host report requests then fail.
     var closed = false
   }
@@ -20,7 +22,13 @@ final class UserSpaceInputReportState: Sendable {
 
   init(format: any VirtualGamepadReportFormat) {
     self.format = format
-    self.current = Locked(Current(report: format.buildInputReport(from: VirtualGamepadState())))
+    let neutral = VirtualGamepadState()
+    self.current = Locked(
+      Current(
+        report: format.buildInputReport(from: neutral),
+        deliveredAuxiliaryReports: format.buildAuxiliaryInputReports(from: neutral)
+      )
+    )
   }
 
   func update(remapped: Bool = false, _ body: (inout VirtualGamepadState) -> Void) -> [UInt8] {
@@ -40,6 +48,19 @@ final class UserSpaceInputReportState: Sendable {
       guard report != current.deliveredReport else { return false }
       current.deliveredReport = report
       return true
+    }
+  }
+
+  /// The auxiliary input reports whose bytes differ from those last returned here.
+  func claimChangedAuxiliaryReports() -> [[UInt8]] {
+    current.withLock { current in
+      let reports = format.buildAuxiliaryInputReports(from: current.state)
+      let changed = reports.enumerated().filter { index, report in
+        index >= current.deliveredAuxiliaryReports.count
+          || current.deliveredAuxiliaryReports[index] != report
+      }.map(\.element)
+      current.deliveredAuxiliaryReports = reports
+      return changed
     }
   }
 

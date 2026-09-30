@@ -79,10 +79,10 @@ public protocol VirtualHIDProfile: Sendable {
 /// `hid-xbox-one-s-bt` over today's hand-authored approximation, not a verified Microsoft ABI.
 ///
 /// The identity is the existing `VirtualDeviceProfile.xboxOneS` (045E:02FD). The descriptor and
-/// input layout are `XboxGeckoHIDReportFormat`'s: the Xbox Series Bluetooth descriptor, which
-/// still declares the Consumer Record field and report 2, with share and the d-pad button bits
-/// never set. It is an approximation until the descriptor and codec are replaced byte-exactly
-/// from a genuine 045E:02FD capture.
+/// input layout are `XboxGeckoHIDReportFormat`'s: the One S Bluetooth descriptor with its 16-byte
+/// report 1 (no Share field) and Guide also sent alone in report 2, with share and the d-pad
+/// button bits never set. It is an approximation until the descriptor and codec are replaced
+/// byte-exactly from a genuine 045E:02FD capture.
 struct XboxOneSBluetoothHIDProfile: VirtualHIDProfile {
   let id = VirtualHIDProfileID.xboxOneSBluetooth
   private let format: XboxGeckoHIDReportFormat
@@ -108,10 +108,10 @@ struct XboxOneSBluetoothHIDProfile: VirtualHIDProfile {
 
 /// `hid-generic` over the OJD generic gamepad, an approximation of the specified ABI.
 ///
-/// The identity is `VirtualDeviceProfile.openJoystickDriverGenericHID` (4F4A:4447), and the
+/// The identity is `VirtualDeviceProfile.openJoystickDriverGenericHID` (1209:4A4F), and the
 /// descriptor is `OJDGenericGamepadFormat`'s input-only layout: 16 buttons with the d-pad as four
 /// of them, no hat, four stick axes and two trigger axes, and no output report, so the profile
-/// decodes no consumer output. The vendor ID is still not organization-controlled.
+/// decodes no consumer output. pid.codes allocated the ID.
 struct OJDGenericHIDProfile: VirtualHIDProfile {
   let id = VirtualHIDProfileID.generic
   private let format = OJDGenericGamepadFormat()

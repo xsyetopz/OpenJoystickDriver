@@ -41,12 +41,12 @@ struct VirtualHIDProfileTests {
     let profile = try VirtualHIDProfileID.xboxOneSBluetooth.makeProfile()
     #expect(profile.identity == .xboxOneS)
     #expect(profile.identity.vendorID == 0x045E && profile.identity.productID == 0x02FD)
-    #expect(profile.descriptor == XboxOneBluetoothHIDDescriptor.seriesDescriptor)
+    #expect(profile.descriptor == XboxOneBluetoothHIDDescriptor.oneSDescriptor)
     let neutral = profile.inputReport(for: .neutral)
     #expect(
       neutral == [
         0x01, 0x00, 0x80, 0x00, 0x80, 0x00, 0x80, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00,
+        0x00,
       ]
     )
     #expect(
@@ -118,8 +118,8 @@ struct VirtualHIDProfileTests {
   @Test
   func genericProfileIsInputOnlyAndDecodesNoOutputReport() throws {
     let profile = try VirtualHIDProfileID.generic.makeProfile()
-    #expect(profile.identity.vendorID == 0x4F4A)
-    #expect(profile.identity.productID == 0x4447)
+    #expect(profile.identity.vendorID == 0x1209)
+    #expect(profile.identity.productID == 0x4A4F)
     #expect(profile.reportFormat.outputReportPayloadSize == nil)
     let reports: [(UInt32, [UInt8])] = [
       (0, Self.ojdRumble), (0, [0x08, 0x00, 10, 20]), (3, [0x03, 0x0F, 10, 20, 30, 40, 50, 0, 0]),

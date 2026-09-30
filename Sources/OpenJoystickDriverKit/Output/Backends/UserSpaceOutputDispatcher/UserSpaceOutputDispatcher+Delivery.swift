@@ -49,7 +49,9 @@ extension UserSpaceOutputDispatcher {
             Self.apply(input, labels: labels, stickTransfer: stickTransfer, to: &state)
           }
         }
-        return activeEntry.inputReportState.claimDelivery(of: primaryReport) ? [primaryReport] : []
+        let primary =
+          activeEntry.inputReportState.claimDelivery(of: primaryReport) ? [primaryReport] : []
+        return primary + activeEntry.inputReportState.claimChangedAuxiliaryReports()
       }.value()
       registryLock.withLock { recomputeStatusLocked() }
     } catch {

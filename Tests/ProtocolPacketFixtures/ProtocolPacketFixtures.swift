@@ -184,7 +184,7 @@ public enum ProtocolPacketFixtures {
 
   public enum XboxBluetooth {
     public static let neutralInputReport: [UInt8] = [
-      1, 0, 128, 0, 128, 0, 128, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 0, 128, 0, 128, 0, 128, 0, 128, 0, 0, 0, 0, 0, 0, 0,
     ]
   }
 

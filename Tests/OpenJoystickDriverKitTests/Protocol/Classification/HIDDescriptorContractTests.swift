@@ -4,9 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct HIDDescriptorContractTests {
-  @Test(arguments: [
-    GamepadHIDDescriptor.descriptor, XboxOneBluetoothHIDDescriptor.seriesDescriptor,
-  ])
+  @Test(arguments: [GamepadHIDDescriptor.descriptor, XboxOneBluetoothHIDDescriptor.oneSDescriptor])
   func repositoryControllerDescriptorsSatisfyTheContract(descriptor: [UInt8]) {
     #expect(violation(Data(descriptor)) == nil)
   }
@@ -212,12 +210,12 @@ struct HIDDescriptorContractTests {
 
   @Test
   func inputReportLengthMatchesTheHostCount() {
-    // The Xbox Series Bluetooth report 0x01 carries 16 payload bytes (four 16-bit sticks, two
+    // The Xbox One S Bluetooth report 0x01 carries 15 payload bytes (four 16-bit sticks, two
     // 16-bit triggers, the hat byte, two button bytes) plus its report ID.
-    let xbox = Data(XboxOneBluetoothHIDDescriptor.seriesDescriptor)
-    #expect(violation(xbox, maximumInputLength: 17) == nil)
-    #expect(violation(xbox, maximumInputLength: 16) == .reportLengthMismatch)
-    #expect(violation(xbox, maximumInputLength: 18) == .reportLengthMismatch)
+    let xbox = Data(XboxOneBluetoothHIDDescriptor.oneSDescriptor)
+    #expect(violation(xbox, maximumInputLength: 16) == nil)
+    #expect(violation(xbox, maximumInputLength: 15) == .reportLengthMismatch)
+    #expect(violation(xbox, maximumInputLength: 17) == .reportLengthMismatch)
     // Unnumbered reports have no ID byte: stick (2) and buttons (1).
     #expect(violation(application(stickXY + buttons), maximumInputLength: 3) == nil)
     #expect(
