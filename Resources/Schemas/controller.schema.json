@@ -46,6 +46,7 @@
 						"nintendo.switch1",
 						"valve.steam-controller",
 						"vendor.flydigi",
+						"vendor.shanwan",
 						"vendor.gamesir"
 					]
 				},
@@ -56,6 +57,7 @@
 						"receiver",
 						"dongle",
 						"usb",
+						"bluetooth-le",
 						"enhanced-hid"
 					]
 				},
@@ -133,7 +135,14 @@
 						"required": ["variant"],
 						"properties": {
 							"variant": {
-								"enum": ["wired", "dongle"]
+								"enum": ["wired", "dongle", "bluetooth-le"]
+							},
+							"quirks": {
+								"items": {
+									"enum": ["triton", "neptune"]
+								},
+								"maxItems": 1,
+								"type": "array"
 							}
 						}
 					}
@@ -275,10 +284,26 @@
 					"then": {
 						"properties": {
 							"quirks": {
-								"items": {
-									"enum": ["joy-con-left", "joy-con-right"]
-								},
-								"maxItems": 1,
+								"anyOf": [
+									{
+										"items": {
+											"enum": ["joy-con-left", "joy-con-right", "input-only", "switch-2"]
+										},
+										"maxItems": 1
+									},
+									{
+										"items": false,
+										"minItems": 2,
+										"prefixItems": [
+											{
+												"const": "switch-2"
+											},
+											{
+												"enum": ["joy-con-left", "joy-con-right", "gamecube"]
+											}
+										]
+									}
+								],
 								"type": "array"
 							}
 						}
@@ -289,7 +314,12 @@
 						"properties": {
 							"family": {
 								"not": {
-									"enum": ["xbox.gip", "nintendo.switch1", "vendor.gamesir"]
+									"enum": [
+										"xbox.gip",
+										"nintendo.switch1",
+										"valve.steam-controller",
+										"vendor.gamesir"
+									]
 								}
 							}
 						},

@@ -42,6 +42,12 @@ class ControllerSchemaTests(unittest.TestCase):
             "Joy-Con side": record(
                 {"family": "nintendo.switch1", "quirks": ["joy-con-left"]}
             ),
+            "Switch 2 Joy-Con": record(
+                {"family": "nintendo.switch1", "quirks": ["switch-2", "joy-con-right"]}
+            ),
+            "Switch 2 GameCube": record(
+                {"family": "nintendo.switch1", "quirks": ["switch-2", "gamecube"]}
+            ),
             "DualSense Edge controls": record(
                 DUALSENSE,
                 capabilities={
@@ -153,6 +159,18 @@ class ControllerSchemaTests(unittest.TestCase):
                     "family": "nintendo.switch1",
                     "quirks": ["joy-con-left", "joy-con-right"],
                 }
+            ),
+            "GameCube without Switch 2": record(
+                {"family": "nintendo.switch1", "quirks": ["gamecube"]}
+            ),
+            "Switch 2 with two layouts": record(
+                {
+                    "family": "nintendo.switch1",
+                    "quirks": ["switch-2", "gamecube", "joy-con-left"],
+                }
+            ),
+            "Switch 2 input-only": record(
+                {"family": "nintendo.switch1", "quirks": ["switch-2", "input-only"]}
             ),
             "XUSB rumble absence": record(XUSB, capabilities={"rumble": "absent"}),
             "unknown control": record(GIP, capabilities={"absent": ["leftTrigger"]}),

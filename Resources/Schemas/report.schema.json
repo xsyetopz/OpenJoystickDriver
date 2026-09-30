@@ -555,7 +555,10 @@
 					}
 				},
 				"hasGamePadOrJoystickCollection": { "type": "boolean" },
-				"descriptorFingerprint": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+				"descriptorFingerprint": {
+					"type": "string",
+					"pattern": "^[0-9a-f]{64}$"
+				}
 			}
 		},
 		"rejectedCandidate": {
@@ -575,6 +578,7 @@
 						"nintendo.switch1",
 						"valve.steam-controller",
 						"vendor.flydigi",
+						"vendor.shanwan",
 						"vendor.gamesir"
 					]
 				},
