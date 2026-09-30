@@ -119,6 +119,20 @@ private final class NonCooperativeReportBackend: UserSpaceOutputDispatcher.Virtu
   func closeCount() -> Int { lock.withLock { closes } }
 }
 
+/// A backend whose native teardown finishes only when its gate opens.
+private final class SlowTeardownBackend: UserSpaceOutputDispatcher.VirtualDeviceBackend,
+  @unchecked Sendable
+{
+  let gate = ReportSendGate()
+  private let lock = NSLock()
+  private var closes = 0
+
+  func send(_ report: [UInt8]) async { await Task.yield() }
+  func close() { lock.withLock { closes += 1 } }
+  func waitUntilClosed() async { await gate.wait() }
+  func closeCount() -> Int { lock.withLock { closes } }
+}
+
 private final class ActivityFlag: @unchecked Sendable {
   private let lock = NSLock()
   private var active = true
@@ -301,6 +315,27 @@ struct ReportSenderTests {
 
     await backend.gate.release()
     await sender.beginClose().value
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func closeCompletesOnlyAfterTheNativeDeviceHasBeenTornDown() async {
+    let backend = SlowTeardownBackend()
+    let sender = UserSpaceReportSender()
+    sender.attach(backend)
+    let finished = ActivityFlag()
+    finished.set(false)
+
+    let closing = Task {
+      await sender.beginClose().value
+      finished.set(true)
+    }
+    await backend.gate.waitForEntry()
+    #expect(backend.closeCount() == 1)
+    #expect(!finished.get())
+
+    await backend.gate.open()
+    await closing.value
+    #expect(finished.get())
   }
 
   @Test(.timeLimit(.minutes(1)))

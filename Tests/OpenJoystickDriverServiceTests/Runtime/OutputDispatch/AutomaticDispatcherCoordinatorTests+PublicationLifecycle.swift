@@ -235,6 +235,82 @@ extension AutomaticDispatcherCoordinatorTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
+  func stopThatTimesOutStillClearsRetirementOnceTheNativeCloseFinishes() async throws {
+    let coordinator = AutomaticDispatcherCoordinator()
+    let gate = InstallationGate()
+    let original = InstallationBackend(stage: .retirement, gate: gate)
+    let lease = await coordinator.leaseForDispatch(
+      controller: identifier,
+      profile: .generic,
+      isEligible: { _, _ in true },
+      factory: { _ in original }
+    )
+    try #require(lease != nil)
+
+    // The held lease makes retirement time out, which leaves the slot recorded as retiring.
+    await coordinator.stop(identifier)
+    #expect(await coordinator.entries[identifier]?.retiring != nil)
+
+    await gate.release()
+    while await coordinator.entries[identifier]?.retiring != nil { await Task.yield() }
+    #expect(original.counts().closes == 1)
+    await lease?.release()
+    await coordinator.close()
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func retargetBlockedByAnUnclosedSlotPublishesUntilTheCloseFinishes() async throws {
+    let coordinator = AutomaticDispatcherCoordinator()
+    let gate = InstallationGate()
+    let original = InstallationBackend(stage: .retirement, gate: gate)
+    let lease = await coordinator.leaseForDispatch(
+      controller: identifier,
+      profile: .generic,
+      isEligible: { _, _ in true },
+      factory: { _ in original }
+    )
+    try #require(lease != nil)
+    let factory: AutomaticDispatcherCoordinator.Factory = { _ in
+      InstallationBackend(stage: .none, gate: InstallationGate())
+    }
+
+    // The held lease and blocked native close make the original slot's retirement time out.
+    try await coordinator.retarget(
+      identifier,
+      target: .xboxOneSBluetooth,
+      isEligible: { _, _ in true },
+      factory: factory
+    )
+    #expect(await coordinator.entries[identifier]?.retiring != nil)
+
+    // A replacement never publishes beside a device still closing, so this retarget fails...
+    await #expect(throws: CancellationError.self) {
+      try await coordinator.retarget(
+        identifier,
+        target: .generic,
+        isEligible: { _, _ in true },
+        factory: factory
+      )
+    }
+    // ...while the live replacement keeps publishing.
+    #expect(await coordinator.installedTargets() == [identifier: .xboxOneSBluetooth])
+
+    // Once the native close finishes, the slot is cleared and the next retarget publishes.
+    await gate.release()
+    while await coordinator.entries[identifier]?.retiring != nil { await Task.yield() }
+    #expect(original.counts().closes == 1)
+    try await coordinator.retarget(
+      identifier,
+      target: .generic,
+      isEligible: { _, _ in true },
+      factory: factory
+    )
+    #expect(await coordinator.installedTargets() == [identifier: .generic])
+    await lease?.release()
+    await coordinator.close()
+  }
+
+  @Test(.timeLimit(.minutes(1)))
   func eligibilityCannotResurrectStoppedController() async {
     let coordinator = AutomaticDispatcherCoordinator()
     let gate = InstallationGate()

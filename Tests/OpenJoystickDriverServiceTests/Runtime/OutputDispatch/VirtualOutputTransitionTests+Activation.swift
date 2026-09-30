@@ -32,6 +32,40 @@ extension VirtualOutputTransitionTests {
   }
 
   @Test
+  func quiescingOneControllerLeavesIdenticalControllerFeedbackFlowing() async {
+    let first = DeviceIdentifier(vendorID: 1, productID: 2, locationID: 1)
+    let second = DeviceIdentifier(vendorID: 1, productID: 2, locationID: 2)
+    let stalledNeutralization = VirtualOutputTransitionGate()
+    let sent = Locked<[DeviceIdentifier]>([])
+    let feedbackGate = VirtualOutputFeedbackGate { identifier, _ in
+      sent.withLock { $0.append(identifier) }
+      if identifier == first { await stalledNeutralization.wait() }
+    }
+
+    let quiesce = Task {
+      await feedbackGate.quiesceAndNeutralize(
+        [first],
+        timeout: 1_000_000_000,
+        resumeWhenComplete: true
+      )
+    }
+    while sent.withLock({ $0.isEmpty }) { await Task.yield() }
+
+    // Mid-transition, the other controller's feedback is admitted and the first one's is not.
+    feedbackGate.submit(identifier: first, command: .stopRumble)
+    feedbackGate.submit(identifier: second, command: .stopRumble)
+    while !sent.withLock({ $0.contains(second) }) { await Task.yield() }
+    #expect(sent.withLock { $0 } == [first, second])
+
+    await stalledNeutralization.open()
+    #expect(await quiesce.value)
+
+    feedbackGate.submit(identifier: first, command: .stopRumble)
+    while sent.withLock({ $0.count }) < 3 { await Task.yield() }
+    #expect(sent.withLock { $0 } == [first, second, first])
+  }
+
+  @Test
   func consumerFeedbackMapsOntoThePhysicalCommand() {
     let rumble = RumbleIntensities(
       leftMain: UnipolarValue(byte: 1),

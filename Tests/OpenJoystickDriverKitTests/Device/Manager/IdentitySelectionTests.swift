@@ -32,4 +32,28 @@ struct DeviceManagerIdentitySelectionTests {
 
     #expect(selected == second)
   }
+
+  @Test
+  func virtualOutputFeedbackReachesTheOwningControllerAmongIdenticalModels() {
+    let first = DeviceIdentifier(vendorID: 1, productID: 2, locationID: 1)
+    let second = DeviceIdentifier(vendorID: 1, productID: 2, locationID: 2)
+
+    // Without the exact runtime identifier, two same-model controllers are ambiguous.
+    #expect(
+      DeviceManager.connectedIdentifier(
+        among: [first, second],
+        matching: first,
+        runtimeIdentifier: nil
+      ) == nil
+    )
+    for owner in [first, second] {
+      #expect(
+        DeviceManager.connectedIdentifier(
+          among: [first, second],
+          matching: owner,
+          runtimeIdentifier: owner.runtimeIdentifier
+        ) == owner
+      )
+    }
+  }
 }

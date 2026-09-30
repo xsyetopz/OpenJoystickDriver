@@ -157,7 +157,10 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     await synchronizeDiagnostics()
   }
 
+  /// Activation marks the start of a controller session, so it also starts a new physical
+  /// session for a controller whose earlier session stopped.
   func activateOutput(for identifier: DeviceIdentifier) async {
+    await coordinator.beginSession(identifier)
     try? await deliver(.activation, from: identifier)
     await synchronizeDiagnostics()
   }

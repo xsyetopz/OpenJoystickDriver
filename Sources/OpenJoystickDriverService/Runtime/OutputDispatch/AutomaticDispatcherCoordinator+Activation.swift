@@ -60,11 +60,7 @@ extension AutomaticDispatcherCoordinator {
         $0.runtimeIdentifier == identifier.runtimeIdentifier
       }), let profile = profileProvider(description)
     else { return }
-    if entries[identifier]?.physicalSessionActive == false {
-      entries[identifier]?.physicalSessionActive = true
-      entries[identifier]?.sessionGeneration &+= 1
-      entries[identifier]?.publicationGeneration &+= 1
-    }
+    beginSession(identifier)
     let lease = try await acquire(
       identifier,
       target: profile,
@@ -72,6 +68,15 @@ extension AutomaticDispatcherCoordinator {
       factory: factory
     )
     await lease?.release()
+  }
+
+  /// Starts a new physical session for a controller that `stop` ended, as when the same
+  /// controller starts again after system sleep. Work from the ended session stays invalid.
+  func beginSession(_ identifier: DeviceIdentifier) {
+    guard !closed, entries[identifier]?.physicalSessionActive == false else { return }
+    entries[identifier]?.physicalSessionActive = true
+    entries[identifier]?.sessionGeneration &+= 1
+    entries[identifier]?.publicationGeneration &+= 1
   }
 
   func activate(
@@ -292,7 +297,12 @@ extension AutomaticDispatcherCoordinator {
     try validate(request)
     // A slot still retiring from an earlier replacement finishes before this one takes its place.
     if let earlier = entries[request.controller]?.retiring {
-      _ = await earlier.retireAndWait()
+      // Never publish beside a device that has not finished closing. The live backend keeps
+      // publishing, and the slot clears once its forced close completes.
+      guard await earlier.retireAndWait() else {
+        clearRetirementOnceClosed(earlier, controller: request.controller)
+        throw CancellationError()
+      }
       if entries[request.controller]?.retiring === earlier {
         entries[request.controller]?.retiring = nil
       }
@@ -307,7 +317,11 @@ extension AutomaticDispatcherCoordinator {
     guard let old else { return }
     entries[request.controller]?.retiring = old
     await neutralize(old, controller: request.controller)
-    guard await old.retireAndWait(), entries[request.controller]?.retiring === old else { return }
+    guard await old.retireAndWait() else {
+      clearRetirementOnceClosed(old, controller: request.controller)
+      return
+    }
+    guard entries[request.controller]?.retiring === old else { return }
     entries[request.controller]?.retiring = nil
   }
 

@@ -64,6 +64,15 @@ extension AutomaticDispatcherCoordinator {
     }
   }
 
+  /// A retirement that timed out still completes its forced close; clear the slot then, so it
+  /// cannot linger, and publish again if the controller was left without a backend.
+  func clearRetirementOnceClosed(_ slot: AutomaticBackendSlot, controller: DeviceIdentifier) {
+    Task { [weak self] in
+      await slot.waitForCloseCompletion()
+      await self?.retirementFinished(identifier: controller, slot: slot)
+    }
+  }
+
   private func retirementFinished(identifier: DeviceIdentifier, slot: AutomaticBackendSlot) async {
     guard entries[identifier]?.retiring === slot else { return }
     entries[identifier]?.retiring = nil
@@ -148,11 +157,31 @@ extension AutomaticDispatcherCoordinator {
     entry.tasks.values.forEach { $0.task.cancel() }
     entry.pending = nil
     entries[controller] = entry
-    guard await old?.retireAndWait() ?? true else {
+    if let old, !(await old.retireAndWait()) {
       entries[controller]?.recoveryState = "waiting-for-retirement"
+      // The forced close still completes; resume recovery then, so retirement is never abandoned.
+      Task { [weak self] in
+        await old.waitForCloseCompletion()
+        await self?.resumeRecovery(controller, after: old, generation: entry.publicationGeneration)
+      }
       return
     }
-    guard entries[controller]?.publicationGeneration == entry.publicationGeneration else { return }
+    beginRecoveryRetry(controller, generation: entry.publicationGeneration)
+  }
+
+  private func resumeRecovery(
+    _ controller: DeviceIdentifier,
+    after slot: AutomaticBackendSlot,
+    generation: UInt64
+  ) {
+    guard entries[controller]?.retiring === slot,
+      entries[controller]?.recoveryState == "waiting-for-retirement"
+    else { return }
+    beginRecoveryRetry(controller, generation: generation)
+  }
+
+  private func beginRecoveryRetry(_ controller: DeviceIdentifier, generation: UInt64) {
+    guard entries[controller]?.publicationGeneration == generation else { return }
     entries[controller]?.retiring = nil
     let token = UUID()
     entries[controller]?.recoveryToken = token
@@ -207,6 +236,8 @@ extension AutomaticDispatcherCoordinator {
     for task in tasks { _ = await task.result }
     if retired, entries[controller]?.sessionGeneration == entry.sessionGeneration {
       entries[controller]?.retiring = nil
+    } else if let installed, !retired {
+      clearRetirementOnceClosed(installed, controller: controller)
     }
   }
 

@@ -27,6 +27,8 @@ extension UserSpaceOutputDispatcher {
   protocol VirtualDeviceBackend: AnyObject, Sendable {
     func send(_ report: [UInt8]) async throws
     func close()
+    /// Returns once the native device is gone. Backends without async teardown return at once.
+    func waitUntilClosed() async
   }
 
   internal final class LifecycleState: Sendable {
@@ -53,9 +55,57 @@ extension UserSpaceOutputDispatcher {
     /// Serial queue for blocking report calls; the sender's single worker already orders them.
     private let sendQueue = DispatchQueue(label: "com.openjoystickdriver.output.report")
 
+    /// Longest wait for the cancel handler before teardown is reported as finished anyway.
+    static let cancellationTimeoutNanoseconds: UInt64 = 2_000_000_000
+    private let cancellation = Locked(Cancellation())
+
+    private struct Cancellation {
+      var completed = false
+      var waiters: [CheckedContinuation<Void, Never>] = []
+    }
+
     init(device: IOHIDUserDevice, queue: DispatchQueue) {
       self.device = device
       self.queue = queue
+      // The cancel handler must be set before activation. It retains the device, as
+      // IOHIDUserDevice.h requires, until the cancel has been fully delivered.
+      IOHIDUserDeviceSetCancelHandler(device) { [weak self, device] in
+        _ = device
+        self?.finishCancellation()
+      }
+    }
+
+    private func finishCancellation() {
+      let waiters = cancellation.withLock { state -> [CheckedContinuation<Void, Never>] in
+        state.completed = true
+        defer { state.waiters.removeAll() }
+        return state.waiters
+      }
+      waiters.forEach { $0.resume() }
+    }
+
+    /// Suspends until the device's cancel handler ran, so the device no longer publishes.
+    func waitUntilClosed() async {
+      await withTaskGroup(of: Void.self) { group in
+        group.addTask { [self] in
+          await withCheckedContinuation { continuation in
+            let done = cancellation.withLock { state -> Bool in
+              if state.completed { return true }
+              state.waiters.append(continuation)
+              return false
+            }
+            if done { continuation.resume() }
+          }
+        }
+        group.addTask { [self] in
+          // A device that never reports cancellation must not stall teardown forever.
+          guard (try? await Task.sleep(nanoseconds: Self.cancellationTimeoutNanoseconds)) != nil
+          else { return }
+          finishCancellation()
+        }
+        await group.next()
+        group.cancelAll()
+      }
     }
 
     deinit { close() }
@@ -108,7 +158,8 @@ extension UserSpaceOutputDispatcher {
     for entry in suppression.entries {
       _ = try? await entry.sender.submit {
         suppression.shouldNeutralize && !entry.inputReportState.isRemapped
-          ? [entry.inputReportState.reset()] : []
+          ? [entry.inputReportState.reset()] + entry.inputReportState.claimChangedAuxiliaryReports()
+          : []
       }.value()
     }
   }
@@ -220,4 +271,8 @@ extension UserSpaceOutputDispatcher {
   internal func isOutputSuppressed(remapped: Bool) -> Bool {
     registryLock.withLock { remapped ? remappingOutputSuppressed : _suppressOutput }
   }
+}
+
+extension UserSpaceOutputDispatcher.VirtualDeviceBackend {
+  func waitUntilClosed() async { await Task.yield() }
 }

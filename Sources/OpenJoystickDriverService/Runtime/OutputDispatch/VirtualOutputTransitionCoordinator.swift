@@ -100,7 +100,21 @@ final class VirtualOutputFeedbackGate: Sendable {
   private struct Admission {
     var accepting = true
     var generation: UInt64 = 0
-    var cancellationHandlers: [UUID: @Sendable () -> Void] = [:]
+    var cancellationHandlers: [UUID: (identifier: DeviceIdentifier, cancel: @Sendable () -> Void)] =
+      [:]
+    /// Controllers whose own feedback is quiesced while the rest keep flowing.
+    var quiescedControllers: [DeviceIdentifier: Int] = [:]
+    var controllerGenerations: [DeviceIdentifier: UInt64] = [:]
+
+    func isCurrent(_ identifier: DeviceIdentifier, generation: Generation) -> Bool {
+      accepting && self.generation == generation.gate && quiescedControllers[identifier] == nil
+        && controllerGenerations[identifier, default: 0] == generation.controller
+    }
+  }
+
+  private struct Generation {
+    var gate: UInt64
+    var controller: UInt64
   }
 
   private let sendFeedback: SendFeedback
@@ -109,7 +123,12 @@ final class VirtualOutputFeedbackGate: Sendable {
   init(deviceManager: DeviceManager) {
     sendFeedback = { identifier, command in
       guard let command = Self.physicalFeedback(for: command) else { return }
-      _ = await deviceManager.sendControllerOutput(command, for: identifier)
+      // The exact runtime identifier: the model alone is ambiguous when two controllers match.
+      _ = await deviceManager.sendControllerOutput(
+        command,
+        for: identifier,
+        runtimeIdentifier: identifier.runtimeIdentifier
+      )
     }
   }
 
@@ -129,13 +148,18 @@ final class VirtualOutputFeedbackGate: Sendable {
 
   func submit(identifier: DeviceIdentifier, command: ControllerOutputCommand) {
     let token = UUID()
-    let currentGeneration = admission.withLock { admission -> UInt64? in
-      guard admission.accepting else { return nil }
-      return admission.generation
+    let currentGeneration = admission.withLock { admission -> Generation? in
+      guard admission.accepting, admission.quiescedControllers[identifier] == nil else {
+        return nil
+      }
+      return Generation(
+        gate: admission.generation,
+        controller: admission.controllerGenerations[identifier, default: 0]
+      )
     }
     guard let currentGeneration else { return }
     let task = Task { [weak self] in
-      guard let self, self.isCurrent(currentGeneration) else {
+      guard let self, self.isCurrent(identifier, generation: currentGeneration) else {
         self?.finish(token)
         return
       }
@@ -143,25 +167,41 @@ final class VirtualOutputFeedbackGate: Sendable {
       self.finish(token)
     }
     let shouldCancel = admission.withLock { admission -> Bool in
-      admission.cancellationHandlers[token] = { task.cancel() }
-      return !admission.accepting || admission.generation != currentGeneration
+      admission.cancellationHandlers[token] = (identifier, { task.cancel() })
+      return !admission.isCurrent(identifier, generation: currentGeneration)
     }
     if shouldCancel { task.cancel() }
   }
 
+  /// Closes feedback admission, cancels in-flight feedback, and queues one neutral write per
+  /// controller. With `resumeWhenComplete` only `identifiers` are quiesced, and admission for
+  /// each reopens afterwards, so other controllers' feedback is untouched; otherwise the whole
+  /// gate closes and stays closed until `resume()`.
   func quiesceAndNeutralize(
     _ identifiers: [DeviceIdentifier],
     timeout: UInt64 = VirtualOutputTransitionTimeouts.standard.feedbackNanoseconds,
     clock: VirtualOutputTransitionClock = .system,
     resumeWhenComplete: Bool = false
   ) async -> Bool {
-    let (wasAccepting, cancellations) = admission.withLock { admission in
-      let wasAccepting = admission.accepting
-      admission.accepting = false
-      admission.generation &+= 1
-      let cancellations = Array(admission.cancellationHandlers.values)
-      admission.cancellationHandlers.removeAll()
-      return (wasAccepting, cancellations)
+    let cancellations = admission.withLock { admission in
+      var cancellations: [@Sendable () -> Void] = []
+      if resumeWhenComplete {
+        for identifier in identifiers {
+          admission.quiescedControllers[identifier, default: 0] += 1
+          admission.controllerGenerations[identifier, default: 0] &+= 1
+        }
+        for (token, handler) in admission.cancellationHandlers
+        where identifiers.contains(handler.identifier) {
+          cancellations.append(handler.cancel)
+          admission.cancellationHandlers.removeValue(forKey: token)
+        }
+      } else {
+        admission.accepting = false
+        admission.generation &+= 1
+        cancellations = admission.cancellationHandlers.values.map(\.cancel)
+        admission.cancellationHandlers.removeAll()
+      }
+      return cancellations
     }
     cancellations.forEach { $0() }
 
@@ -182,7 +222,15 @@ final class VirtualOutputFeedbackGate: Sendable {
       // The queued neutral writes remain owned by their transport workers. Their late completion
       // cannot re-open feedback admission or mutate the virtual output publication.
     }
-    if resumeWhenComplete && wasAccepting { resume() }
+    if resumeWhenComplete {
+      admission.withLock { admission in
+        for identifier in identifiers {
+          admission.controllerGenerations[identifier, default: 0] &+= 1
+          let remaining = admission.quiescedControllers[identifier, default: 1] - 1
+          admission.quiescedControllers[identifier] = remaining > 0 ? remaining : nil
+        }
+      }
+    }
     return true
   }
 
@@ -193,8 +241,8 @@ final class VirtualOutputFeedbackGate: Sendable {
     }
   }
 
-  private func isCurrent(_ generation: UInt64) -> Bool {
-    admission.withLock { $0.accepting && $0.generation == generation }
+  private func isCurrent(_ identifier: DeviceIdentifier, generation: Generation) -> Bool {
+    admission.withLock { $0.isCurrent(identifier, generation: generation) }
   }
 
   private func finish(_ token: UUID) {

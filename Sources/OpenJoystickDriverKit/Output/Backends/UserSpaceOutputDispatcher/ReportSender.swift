@@ -277,7 +277,12 @@ final class UserSpaceReportSender: Sendable {
       state.pending.removeAll()
       state.worker?.cancel()
       let worker = state.worker
-      let task = Task { if let worker { await worker.value } }
+      let task = Task {
+        // The backend is closed right after this task starts; wait until the native device is
+        // gone, so a replacement is never published beside it.
+        await backend?.waitUntilClosed()
+        if let worker { await worker.value }
+      }
       state.closeTask = task
       return (task, backend, cancellations)
     }

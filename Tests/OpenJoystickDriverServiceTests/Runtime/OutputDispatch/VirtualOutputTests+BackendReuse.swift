@@ -23,6 +23,25 @@ extension VirtualOutputTests {
     await dispatcher.close()
   }
 
+  /// System sleep stops every controller session, and wake starts the same controller again.
+  @Test
+  func sameControllerPublishesAgainAfterItsSessionStops() async {
+    let id = DeviceIdentifier(vendorID: 0x3537, productID: 0x1010, locationID: 0x0013_0000)
+    let log = AutomaticProfileLog()
+    let dispatcher = AutomaticUserSpaceOutputDispatcher(
+      deviceManager: DeviceManager(dispatcher: LoggingOutputDispatcher()),
+      ownershipProvider: { _ in .exclusiveRawUSB },
+      builder: { log.record($0) },
+      descriptionsProvider: provider([description(id)])
+    )
+    await dispatcher.activateOutput(for: id)
+    await dispatcher.controllerDidStop(id)
+    await dispatcher.activateOutput(for: id)
+    #expect(log.profiles().count == 2)
+    #expect(dispatcher.status.wireValue.contains("targets:"))
+    await dispatcher.close()
+  }
+
   @Test
   func stoppingDuringAnInFlightDescriptionLookupDoesNotRepopulateItsCache() async {
     let id = DeviceIdentifier(vendorID: 0x3537, productID: 0x1010)
@@ -46,7 +65,9 @@ extension VirtualOutputTests {
     await activation.value
 
     await dispatcher.activateOutput(for: id)
-    #expect(await gate.lookupCount() == 2)
+    // A description lookup by each activation, then the eligibility check of the second
+    // activation, which publishes a new session. A repopulated cache would skip the second lookup.
+    #expect(await gate.lookupCount() == 3)
     await dispatcher.close()
   }
 
