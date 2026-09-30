@@ -16,13 +16,16 @@ extension DevicePipeline {
     return (driver.keepAliveWrites(), interval)
   }
 
-  /// Sends user-output packets in order on the current USB session at `intervalNanoseconds`
-  /// spacing, stopping at the first failure; a disconnected session is invalidated.
+  /// Sends packets in order on the current USB session at `intervalNanoseconds` spacing,
+  /// stopping at the first failure; a disconnected session is invalidated. Without a USB session,
+  /// the packets go to the driver's USB command channel, if it has one.
   func sendUSBOutput(
     _ packets: [PhysicalUSBOutputPacket],
     intervalNanoseconds: UInt64 = 0
   ) async -> Bool {
-    guard let handle = usbHandle else { return false }
+    guard let handle = usbHandle else {
+      return await sendUSBCommands(packets, intervalNanoseconds: intervalNanoseconds)
+    }
     do {
       for (index, packet) in packets.enumerated() {
         if index > 0, intervalNanoseconds > 0 {

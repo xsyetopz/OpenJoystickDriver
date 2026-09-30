@@ -1,5 +1,34 @@
 import Foundation
 
+/// A vendor-class USB interface that carries the controller's commands beside its HID interface.
+///
+/// The pipeline opens it on demand while the controller runs over HID, writes each `.usb` packet
+/// to ``outEndpoint``, and reads one reply from ``inEndpoint`` into
+/// ``PhysicalProtocolDriver/consumeUSBCommandReply(_:)``.
+public struct USBCommandChannel: Equatable, Sendable {
+  public let interfaceNumber: UInt8
+  public let outEndpoint: UInt8
+  public let inEndpoint: UInt8
+  /// Largest reply read after each command.
+  public let replyLength: Int
+  /// Timeout of each reply read; a command without a reply costs this much.
+  public let replyTimeoutMilliseconds: UInt32
+
+  public init(
+    interfaceNumber: UInt8,
+    outEndpoint: UInt8,
+    inEndpoint: UInt8,
+    replyLength: Int,
+    replyTimeoutMilliseconds: UInt32
+  ) {
+    self.interfaceNumber = interfaceNumber
+    self.outEndpoint = outEndpoint
+    self.inEndpoint = inEndpoint
+    self.replyLength = replyLength
+    self.replyTimeoutMilliseconds = replyTimeoutMilliseconds
+  }
+}
+
 /// Session behavior a driver fixes at construction for its bound family and variant.
 public struct DriverSessionPlan: Equatable, Sendable {
   /// Maximum age of the last fresh input report before held controls are retired; nil when the
@@ -31,6 +60,11 @@ public struct DriverSessionPlan: Equatable, Sendable {
   public let hidKeepAliveIntervalNanoseconds: UInt64?
   /// Minimum spacing between user-output HID output reports (rumble, lighting); 0 is unlimited.
   public let minimumHIDOutputIntervalNanoseconds: UInt64
+  /// True when the driver sets no player indicator itself: the manager picks a free slot per
+  /// controller and the pipeline writes it with the USB startup writes.
+  public let assignsStartupPlayerIndicator: Bool
+  /// USB command interface for `.usb` writes of a controller bound over HID; nil when none.
+  public let usbCommandChannel: USBCommandChannel?
 
   public init(
     inputReportLivenessTimeoutNanoseconds: UInt64? = nil,
@@ -45,7 +79,9 @@ public struct DriverSessionPlan: Equatable, Sendable {
     validatesFeatureReplies: Bool = false,
     hasStartupRecovery: Bool = false,
     hidKeepAliveIntervalNanoseconds: UInt64? = nil,
-    minimumHIDOutputIntervalNanoseconds: UInt64 = 0
+    minimumHIDOutputIntervalNanoseconds: UInt64 = 0,
+    assignsStartupPlayerIndicator: Bool = false,
+    usbCommandChannel: USBCommandChannel? = nil
   ) {
     self.inputReportLivenessTimeoutNanoseconds = inputReportLivenessTimeoutNanoseconds
     self.requiresInputConnectionBeforeOutput = requiresInputConnectionBeforeOutput
@@ -60,6 +96,8 @@ public struct DriverSessionPlan: Equatable, Sendable {
     self.hasStartupRecovery = hasStartupRecovery
     self.hidKeepAliveIntervalNanoseconds = hidKeepAliveIntervalNanoseconds
     self.minimumHIDOutputIntervalNanoseconds = minimumHIDOutputIntervalNanoseconds
+    self.assignsStartupPlayerIndicator = assignsStartupPlayerIndicator
+    self.usbCommandChannel = usbCommandChannel
   }
 }
 
@@ -124,6 +162,9 @@ public protocol PhysicalProtocolDriver: AnyObject {
   /// Takes one startup feature-read reply; false rejects it and keeps the previous state.
   func consumeFeatureReply(_ data: Data, request: PhysicalHIDFeatureReadRequest) -> Bool
 
+  /// Takes one reply read from the plan's ``DriverSessionPlan/usbCommandChannel``.
+  func consumeUSBCommandReply(_ bytes: [UInt8])
+
   /// Writes that re-request startup replies still missing, for one recovery round.
   func startupRecoveryWrites() -> [PhysicalOutputWrite]
 
@@ -174,6 +215,7 @@ extension PhysicalProtocolDriver {
   public func consumeFeatureReply(_: Data, request _: PhysicalHIDFeatureReadRequest) -> Bool {
     false
   }
+  public func consumeUSBCommandReply(_: [UInt8]) {}
   public func startupRecoveryWrites() -> [PhysicalOutputWrite] { [] }
   public func expireStartupRecovery() {}
   public func presenceRequestWrite() -> PhysicalOutputWrite? { nil }

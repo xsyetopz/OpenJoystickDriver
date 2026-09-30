@@ -30,8 +30,8 @@ extension DeviceManager {
   /// interface's output queue. A run of output reports goes out as one lifecycle output plan at
   /// `intervalNanoseconds` spacing and a run of feature reports as one feature batch, each through
   /// its write body and so behind the native write gate. Every write is attempted; the result is
-  /// false if any failed or the operation was cancelled. A USB write cannot reach a HID device and
-  /// fails the result.
+  /// false if any failed or the operation was cancelled. A run of USB writes goes to the pipeline,
+  /// which sends it on the driver's USB command channel; without one it fails the result.
   func sendHIDWrites(
     _ writes: [PhysicalOutputWrite],
     intervalNanoseconds: UInt64 = 0,
@@ -82,8 +82,12 @@ extension DeviceManager {
       let sent: Bool
       switch writes[index] {
       case .usb:
-        index += 1
-        sent = false
+        var packets: [PhysicalUSBOutputPacket] = []
+        while index < writes.count, case .usb(let packet, _) = writes[index] {
+          packets.append(packet)
+          index += 1
+        }
+        sent = await pipeline.sendUSBOutput(packets, intervalNanoseconds: intervalNanoseconds)
       case .hidOutput:
         while index < writes.count, case .hidOutput(let report) = writes[index] {
           reports.append(report)
