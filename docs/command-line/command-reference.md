@@ -42,6 +42,9 @@ ojd controller player CONTROLLER 1|2|3|4|off
 ojd controller suspend CONTROLLER
 ojd controller resume CONTROLLER
 ojd controller disconnect CONTROLLER
+ojd controller calibrate CONTROLLER [start|pause|reset]
+ojd controller pair LEFT RIGHT --profile PROFILE
+ojd controller unpair PAIR
 ```
 
 `CONTROLLER` is an ID from `ojd controller list`, or `VVVV:PPPP`, the hexadecimal vendor and product ID, in either case. A `VVVV:PPPP` that matches two connected controllers is rejected, and the error lists them. Use an ID to pick one.
@@ -56,6 +59,87 @@ ojd controller disconnect CONTROLLER
 - `controller suspend`: Stop OpenJoystickDriver from driving the controller until you resume it.
 - `controller resume`: Let OpenJoystickDriver drive a suspended controller again.
 - `controller disconnect`: Close a Bluetooth controller's connection. The controller stays paired and reconnects when you turn it on again. The command waits at least 6 seconds for Bluetooth to confirm.
+- `controller calibrate`: Show the motion calibration of a controller with a gyro. `start` collects gyro drift while the controller lies still, `pause` stops the collection, and `reset` removes the calibration. Motion lean and steering bindings use the calibration. With `--json`, it prints `controller`, `calibrated`, `collecting`, and `offsetDegreesPerSecond` with `x`, `y`, and `z`.
+- `controller pair`: Combine a left and a right Joy-Con into one controller that uses `PROFILE`. `PROFILE` must be a paired Joy-Con profile. For more information, see [Sticks, triggers, touchpad, and motion](../remapping-controls/sticks-triggers-touchpad-and-motion.md). Hardware behavior of Joy-Con pairing is not verified.
+- `controller unpair`: Separate a Joy-Con pair. `PAIR` is the session ID that `controller pair` prints, or the ID of either Joy-Con.
+
+With `--json`, `controller pair` and `controller unpair` print `session`, `left`, `right`, `profile`, and `gyro`.
+
+## profile
+
+Create, change, activate, and move remapping profiles. Every `profile` command needs the service running. For more information, see [Creating a profile](../remapping-controls/creating-a-profile.md).
+
+```text
+ojd profile list
+ojd profile show PROFILE
+ojd profile create NAME --controller CONTROLLER [--app BUNDLE-ID] [--virtual-gamepad disabled|mapped|passthrough] [--physical-input shared|exclusive]
+ojd profile duplicate PROFILE NEW-NAME
+ojd profile rename PROFILE NEW-NAME
+ojd profile delete PROFILE [--force] [--dry-run]
+ojd profile activate PROFILE [--allow-empty]
+ojd profile deactivate PROFILE
+ojd profile edit PROFILE
+ojd profile import FILE|-
+ojd profile export PROFILE [--output FILE]
+```
+
+`PROFILE` is a profile ID, or a profile name in any letter case. A name that two profiles share is rejected, and the error lists their IDs. Use an ID to pick one.
+
+- `profile list`: List each profile with its ID, name, controller model, app scope, and number of bindings, and show which profiles are active.
+- `profile show`: Show a profile's settings and bindings. Bindings use the `SOURCE` and `TARGET` forms of `ojd binding set`.
+- `profile create`: Create an empty, inactive profile for one controller model. `--controller` is `VVVV:PPPP` or the ID of a connected controller. The profile applies in every app unless `--app` gives an app's bundle ID. `--virtual-gamepad` sets what the virtual gamepad sends: nothing (`disabled`), bound controls only (`mapped`), or also every control that no binding uses (`passthrough`, the default). `--physical-input` sets whether macOS still sees the controller (`shared`, the default) or OpenJoystickDriver takes it (`exclusive`).
+- `profile duplicate`: Copy a profile under a new name. The copy is inactive.
+- `profile rename`: Give a profile a new name of 1 to 80 characters.
+- `profile delete`: Delete a profile. An active profile stops applying. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing.
+- `profile activate`: Apply a profile. It replaces the active profile of the same controller model and app scope. A profile with the virtual gamepad set to `mapped` or `disabled` and no bindings blocks all input from the controller. To activate such a profile, add `--allow-empty`.
+- `profile deactivate`: Stop applying a profile. The controller then sends its own input.
+- `profile edit`: Open the profile file in `$VISUAL`, `$EDITOR`, or `vi`, then check and save it. Use it to change chords, sequences, layers, stick and trigger tuning, and the app scope. It needs a terminal. Without one, export the profile, change the file, and import it. For the file format, see [Profile file reference](../remapping-controls/profile-file-reference.md).
+- `profile import`: Add a profile from a file that `profile export` wrote. Use `-` to read the file from stdin. A profile with the same ID as an existing profile replaces it.
+- `profile export`: Print a profile file to stdout, or write it to `--output`. The file is JSON, so `--json` and `--plain` do not change the output.
+
+With `--json`, a profile is an object with `id`, `name`, `controller`, `scope` (`global` or `app:BUNDLE-ID`), `active`, and `bindings`, the number of bindings. `profile list` prints `profiles` and `issues`, each issue with `id`, `kind`, and `message`. `profile show` prints `profile` and `document`, the full profile file. `profile create`, `duplicate`, `rename`, `activate`, `deactivate`, and `edit` print `profile` and `changed`. `profile delete` prints `deleted` and `dryRun`, and `profile import` prints `profile` and `replaced`.
+
+## binding
+
+List, set, and clear the bindings of a profile. A binding sends a target when you use a control on the controller. Every `binding` command needs the service running. For more information, see [Assigning buttons and actions](../remapping-controls/assigning-buttons-and-actions.md).
+
+```text
+ojd binding list PROFILE
+ojd binding set PROFILE SOURCE TARGET [options]
+ojd binding clear PROFILE SOURCE... [--force] [--dry-run]
+ojd binding clear PROFILE --all [--force] [--dry-run]
+```
+
+`SOURCE` is one of these forms:
+
+- `button:NAME`, such as `button:south` or `button:left_shoulder`
+- `dpad:DIRECTION`
+- `axis:NAME`, or `axis:NAME:negative` or `axis:NAME:positive` for one direction, such as `axis:left_stick_x:positive`
+- `trigger:NAME:STAGE`
+- `motion:lean:DIRECTION`
+- `touch:SURFACE:contact`, `touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW`, or `touch:SURFACE:swipe:DIRECTION:DISTANCE`
+
+`TARGET` is one of these forms:
+
+- `key:KEY`, with modifiers as `key:KEY:mods=command,control,option,shift`
+- `mouse:BUTTON`, `move:x`, `move:y`, `scroll:x`, or `scroll:y`
+- `gamepad:button:NAME`, `gamepad:dpad:DIRECTION`, or `gamepad:axis:NAME`
+- `physical:...` for rumble, lights, and adaptive triggers
+
+`ojd profile show` prints bindings in the same forms.
+
+- `binding list`: List a profile's bindings.
+- `binding set`: Bind a source to a target. A source has one binding, so this replaces the binding that the source has, and keeps its ID. The options are:
+  - `--behavior`: When the target fires: `hold` (the default for a new binding), `toggle`, `tap_on_press`, `tap_on_release`, `pulse`, `press`, or `release`.
+  - `--pulse-ms`: How long `pulse` holds the target, 1 to 5000 ms. The default is 100.
+  - `--deadzone`, `--gain`, `--invert`, `--response-curve`, and `--digital-threshold`: Tuning for axis sources. The dead zone is 0 to 0.95 (default 0.1), the gain is 0.1 to 10 (default 1), and the response curve is `linear` (the default), `ease_in`, `ease_out`, or `smooth_step`. The digital threshold is the travel that counts as a press for button targets (default 0.5).
+  - `--turbo-rate` and `--turbo-duty`: Repeat the target this many times a second while the source is held. The duty is the part of each cycle that the target is held, above 0 and below 1. Turbo cannot be used with `--long-hold` or `--double-tap`.
+  - `--long-hold MS:TARGET`: Send another target when the source is held this long, such as `500:key:b`.
+  - `--double-tap MS:TARGET`: Send another target when the source is pressed twice in this time, such as `300:key:c`.
+  - `--actions-json`: More actions, as a JSON array in the form that `ojd profile export` writes.
+- `binding clear`: Remove the bindings of the given sources. It exits with code 1 and changes nothing when a source has no binding. `--all` removes every binding, chord, sequence, and layer. Stick, trigger, touch, motion, and output settings stay. `--all` asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing.
+
+With `--json`, a binding is an object with `id`, `source`, `target`, and `behavior`. `binding list` prints `profile` and `bindings`, `binding set` prints `profile`, `binding`, and `replaced`, and `binding clear` prints `profile`, `removed` (the sources), `all`, and `dryRun`.
 
 ## virtual
 

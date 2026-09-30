@@ -19,7 +19,8 @@ struct ControllerCommand: AsyncParsableCommand {
       ControllerListCommand.self, ControllerShowCommand.self, ControllerWatchCommand.self,
       ControllerCaptureCommand.self, ControllerRumbleCommand.self, ControllerLightCommand.self,
       ControllerPlayerCommand.self, ControllerSuspendCommand.self, ControllerResumeCommand.self,
-      ControllerDisconnectCommand.self,
+      ControllerDisconnectCommand.self, ControllerCalibrateCommand.self, ControllerPairCommand.self,
+      ControllerUnpairCommand.self,
     ]
   )
 

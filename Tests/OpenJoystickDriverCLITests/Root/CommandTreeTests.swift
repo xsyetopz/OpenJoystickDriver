@@ -26,8 +26,13 @@ struct CommandTreeTests {
     #expect(paths.contains(["update", "check"]))
     for verb in [
       "list", "show", "watch", "capture", "rumble", "light", "player", "suspend", "resume",
-      "disconnect",
+      "disconnect", "calibrate", "pair", "unpair",
     ] { #expect(paths.contains(["controller", verb]), "\(verb)") }
+    for verb in [
+      "list", "show", "create", "duplicate", "rename", "delete", "activate", "deactivate", "import",
+      "export", "edit",
+    ] { #expect(paths.contains(["profile", verb]), "\(verb)") }
+    for verb in ["list", "set", "clear"] { #expect(paths.contains(["binding", verb]), "\(verb)") }
     for verb in ["show", "set", "reset"] { #expect(paths.contains(["virtual", verb]), "\(verb)") }
     for verb in ["list", "show", "validate", "install", "remove"] {
       #expect(paths.contains(["record", verb]), "\(verb)")
@@ -66,7 +71,12 @@ struct CommandTreeTests {
     ["controller", "packets"], ["controller", "trace"], ["controller", "color"],
     ["controller", "brightness"], ["controller", "disconnect-wireless"], ["controller", "output"],
     ["controller", "virtual"], ["controller", "plan"], ["diagnose", "catalog"],
-    ["record", "show", "zz"], ["record", "show", "045E"],
+    ["record", "show", "zz"], ["record", "show", "045E"], ["map", "list"], ["mapping"],
+    ["binding", "clear", "p"], ["binding", "clear", "p", "button:south", "--all"],
+    ["binding", "set", "p", "nonsense", "key:space"],
+    ["binding", "set", "p", "button:south", "key:space", "--turbo-rate", "10"],
+    ["binding", "set", "p", "button:south", "key:space", "--deadzone", "0.2"],
+    ["profile", "import", "/nonexistent/profile.json"],
   ])
   func usageErrorsExitSixtyFourOnStandardErrorOnly(arguments: [String]) async {
     let result = await CLIRun.run(arguments)

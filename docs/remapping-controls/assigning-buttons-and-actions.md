@@ -38,11 +38,10 @@ The section groups assignments as **Face buttons**, **Shoulders**, **D-pad**, **
 ## Add an assignment with the command line
 
 ```shell
-OpenJoystickDriver --headless map bind "My controller" \
-  --source button:south --target key:space
+ojd binding set "My controller" button:south key:space
 ```
 
-In the command above, `OpenJoystickDriver` stands for `/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver`. The `SOURCE` and `TARGET` values use this syntax:
+A control has one assignment, so this command replaces the control's assignment. The `SOURCE` and `TARGET` values use this syntax:
 
 ```text
 SOURCE: button:NAME | dpad:DIRECTION
@@ -62,7 +61,7 @@ TARGET: key:KEY[:mods=command,control,option,shift]
         physical:brightness:0...1
 ```
 
-To remove an assignment, run `map unbind PROFILE --source SOURCE`.
+To remove an assignment, run `ojd binding clear PROFILE SOURCE`. To list the assignments, run `ojd binding list PROFILE`. For the options of `ojd binding set`, see [Command reference](../command-line/command-reference.md#binding).
 
 ## Set a behavior
 

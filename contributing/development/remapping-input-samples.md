@@ -70,7 +70,7 @@ Catalog records were generated from the locked Linux source. Constructed packet 
 
 ### Paired Joy-Con Sessions
 
-Schema-3 profiles targeting the left Joy-Con model can opt into `joy_con_pair` and select the left, right, or no gyro. Pair profiles do not run on a standalone half. The CLI uses `map joy-con pair <profile> --left <runtime-identifier> --right <runtime-identifier>`; the native profile screen exposes the same exact connected-controller selection. Runtime identifiers are opaque and process-local, so pairing is an explicit in-memory session rather than persistent hardware identity.
+Schema-3 profiles targeting the left Joy-Con model can opt into `joy_con_pair` and select the left, right, or no gyro. Pair profiles do not run on a standalone half. The CLI uses `ojd controller pair <left> <right> --profile <profile>` and `ojd controller unpair <pair>`; the native profile screen exposes the same exact connected-controller selection. Runtime identifiers are opaque and process-local, so pairing is an explicit in-memory session rather than persistent hardware identity.
 
 Both halves feed one remapping state and one virtual output identity, using the left half as the session output key. Each half is diffed against its own last snapshot, so one half's report never releases a control the other half holds. Nintendo's parser normalizes left and right IMU readings into the stable combined-controller frame before the configured half reaches calibration and gyro routing. The unselected half's motion samples are discarded; buttons, the left and right sticks, and rail controls remain side-owned inputs. Existing Nintendo output reports retain per-half rumble bytes.
 

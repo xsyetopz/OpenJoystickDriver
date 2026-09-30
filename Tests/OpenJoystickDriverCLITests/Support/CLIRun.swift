@@ -68,7 +68,17 @@ enum CLICommandTree {
     case ["controller", "player"]: ["045E:028E", "1"]
     case ["virtual", "set"]: ["hid-generic", "045E:028E"]
     case ["record", "show"], ["record", "remove"]: ["045E:028E"]
-    case ["record", "validate"], ["record", "install"]: ["-"]
+    case ["record", "validate"], ["record", "install"], ["profile", "import"]: ["-"]
+    case ["controller", "calibrate"]: ["045E:028E", "start"]
+    case ["controller", "pair"]: ["057E:2006", "057E:2007", "--profile", "Pair"]
+    case ["controller", "unpair"]: ["057E:2006"]
+    case ["profile", "create"]: ["Pad", "--controller", "045E:028E"]
+    case ["profile", "duplicate"], ["profile", "rename"]: ["Pad", "Copy"]
+    case ["profile", "show"], ["profile", "delete"], ["profile", "activate"],
+      ["profile", "deactivate"], ["profile", "export"], ["profile", "edit"], ["binding", "list"]:
+      ["Pad"]
+    case ["binding", "set"]: ["Pad", "button:south", "key:space"]
+    case ["binding", "clear"]: ["Pad", "--all"]
     default: []
     }
   }

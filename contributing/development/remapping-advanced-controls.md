@@ -6,20 +6,7 @@ This page defines angular, area, ring, scroll, steering, lean, and trigger modes
 
 Native `stick_mappings` entries select the left or right stick. Aim integrates radial stick strength into angular travel at `aim_degrees_per_second`; `pointer_points_per_degree` converts that travel to logical screen points. Positive stick Y moves the pointer upward. Flick starts a smooth timed turn when the stick crosses the radial threshold, then follows rotation around the rim. `flick_only` omits rim rotation; `rotate_only` omits the initial turn. The initial angle is clockwise from forward, and rim rotation follows the shortest angular difference across the rear seam. A centered stick finishes its pending flick through the shared scheduler. Disconnects and profile replacement cancel pending travel. Aim stops at center and caps delayed integration at 100 ms per update.
 
-Create or update one stick per CLI command:
-
-```sh
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless map update \
-  Desktop --stick-source right --stick-mode flick \
-  --stick-pointer-points-per-degree 4 --stick-flick-duration-ms 100
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless map update \
-  Desktop --stick-source left --stick-mode aim \
-  --stick-aim-degrees-per-second 360 --stick-inner-deadzone 0.1
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver --headless map update \
-  Desktop --stick-source right --stick-mode none
-```
-
-Unspecified fields retain their current values, and edits preserve the other stick. `none` removes the selected mapping and cannot be combined with tuning options. Radial inner and outer deadzones must sum to less than one; response exponent shapes normalized radial strength. `--stick-invert-x` and `--stick-invert-y` accept `true` or `false`. Flick threshold and hysteresis control engagement and rearming; hysteresis must be smaller than the threshold.
+The CLI has no stick options. Edit `stickMappings` with `ojd profile edit <profile>`, or export the profile, change the file, and import it. The profile document validation applies to the saved file. Radial inner and outer deadzones must sum to less than one; response exponent shapes normalized radial strength. Flick threshold and hysteresis control engagement and rearming; hysteresis must be smaller than the threshold.
 
 A mapped stick suppresses its original virtual axes. Explicit axis bindings still run, allowing additional destinations; this does not hide the physical controller from other processes. Angular stick modes require system-input access. The profile editor’s Stick modes sheet edits both sticks, preserves hidden mode settings, and validates both drafts before applying them. Reset disables the selected stick mapping; Cancel discards sheet edits. Rendered layout, keyboard navigation, VoiceOver, translated labels/help, and physical feel/direction validation remain pending.
 
@@ -31,13 +18,13 @@ The `stick_mappings` contract also supports `pointer_area`, `pointer_ring`, `scr
 
 `steering` accumulates shortest angular travel into a bounded wheel angle. `steering_degrees_at_full_scale` maps that angle to the selected virtual left- or right-stick X axis. While the stick is not fully deflected, `steering_return_degrees_per_second` unwinds toward neutral using monotonic time, with each delayed step capped at 100 ms. The shared scheduler keeps return active without controller reports. The mapping owns one independent virtual-axis contribution; replacement, disconnect, permission loss, suspension, shutdown, or failed delivery removes it immediately without disturbing other contributors.
 
-Stick mappings suppress their physical virtual axes unless `passthrough` is true. Pointer and scroll modes require post-event access; steering requires mapped virtual output. CLI create/update accepts the `--stick-pointer-radius-points`, `--stick-scroll-*`, `--stick-rotation-direction`, `--stick-steering-*`, and `--stick-passthrough` options documented by `map help`. The native Stick modes sheet exposes the same values and retains hidden mode settings while switching modes.
+Stick mappings suppress their physical virtual axes unless `passthrough` is true. Pointer and scroll modes require post-event access; steering requires mapped virtual output. The CLI changes these settings through `ojd profile edit`. The native Stick modes sheet exposes the same values and retains hidden mode settings while switching modes.
 
 ### Motion Lean And Steering
 
 An accepted calibrated motion sample derives signed controller lean from its acceleration vector. Optional `motion_tuning.lean` defines a 1–89 degree digital threshold and a smaller release hysteresis. It supplies typed `motion:lean:left` and `motion:lean:right` sources through the normal binding, chord, sequence, layer, consumption, and lifecycle paths. Optional `motion_tuning.steering` maps lean outside `deadzone_degrees` to one virtual stick X axis, reaches full scale at `full_scale_degrees`, applies `response_exponent`, and may invert direction. It owns an independent virtual contribution rather than replacing other mapped contributors.
 
-Motion lean and steering require a calibrated physical reading. Invalid or missing readings, clock/calibration discontinuity, a 100 ms sample timeout, profile/layer replacement, calibration reset, disconnect, suspension, shutdown, or output failure clears digital and virtual ownership. Changing effective layer tuning requires a fresh baseline. Motion steering requires mapped virtual output; lean-only bindings do not. CLI uses `--motion-lean*` and `--motion-steering-*`; the native Motion tuning sheet authors the same fields.
+Motion lean and steering require a calibrated physical reading. Invalid or missing readings, clock/calibration discontinuity, a 100 ms sample timeout, profile/layer replacement, calibration reset, disconnect, suspension, shutdown, or output failure clears digital and virtual ownership. Changing effective layer tuning requires a fresh baseline. Motion steering requires mapped virtual output; lean-only bindings do not. The CLI changes these fields through `ojd profile edit`; the native Motion tuning sheet authors the same fields.
 
 ### Dual-Stage Triggers
 

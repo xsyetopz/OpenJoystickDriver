@@ -41,15 +41,7 @@ These settings apply to every mode:
 - **Keep physical stick passthrough**. This keeps the physical stick axes in the passthrough output.
 - **Positive rotation**: **Clockwise** or **Counterclockwise**.
 
-The command line options start with `--stick-`. For example:
-
-```shell
-OpenJoystickDriver --headless map update "My controller" \
-  --stick-source right --stick-mode aim \
-  --stick-aim-degrees-per-second 300
-```
-
-The `--stick-mode` values are `aim`, `flick`, `flick_only`, `rotate_only`, `pointer_area`, `pointer_ring`, `scroll_wheel`, `steering`, and `none`. Use `map --help` to see all `--stick-` options. If a mapping is invalid while the profile runs, OJD sends neutral output.
+To change these settings with the command line, run `ojd profile edit PROFILE` and change `stickMappings` in the profile file. For the file format, see [Profile file reference](profile-file-reference.md). The stick modes are `aim`, `flick`, `flick_only`, `rotate_only`, `pointer_area`, `pointer_ring`, `scroll_wheel`, `steering`, and `none`. If a mapping is invalid while the profile runs, OJD sends neutral output.
 
 ## Set trigger stages
 
@@ -108,9 +100,9 @@ Motion tuning has these values. The ranges come from the profile validation.
 | Threshold (degrees per second) | 0 to 1000 | 0 |
 | Automatic bias | On or off | On |
 
-The `--motion-` command line options match these settings.
+To change these settings with the command line, run `ojd profile edit PROFILE` and change `motionTuning` in the profile file.
 
-**Gyro output** sends motion to the mouse pointer, the left stick, or the right stick. The modes are `disabled`, `mouse`, `left_stick`, and `right_stick`. The activation is **Always active**, **While held**, **While released**, or **Toggle on press**. Any activation other than **Always active** needs an **Activation control**. The default is disabled. For the command line options, see [Command reference](../command-line/command-reference.md).
+**Gyro output** sends motion to the mouse pointer, the left stick, or the right stick. The modes are `disabled`, `mouse`, `left_stick`, and `right_stick`. The activation is **Always active**, **While held**, **While released**, or **Toggle on press**. Any activation other than **Always active** needs an **Activation control**. The default is disabled. To change it with the command line, run `ojd profile edit PROFILE` and change `gyroOutput` in the profile file.
 
 A gyro trackball keeps motion going after you hold a control. **Velocity halvings per second** ranges from 0 to 1000. Zero keeps a constant speed.
 
@@ -126,7 +118,7 @@ A paired Joy-Con profile combines a left and a right Joy-Con. The profile must t
 1. Click **Pair connected Joy-Cons...**.
 1. When the label **Pair active** appears, the pair works. Click **Unpair** to end it.
 
-A paired Joy-Con profile has no **Set active** button. The gyro setting works only after OJD pairs two exact Joy-Con controllers. The command line equivalents are `map joy-con pair PROFILE --left ID --right ID` and `map joy-con unpair --session SESSION-ID`. Hardware behavior of Joy-Con pairing is not verified.
+A paired Joy-Con profile has no **Set active** button. The gyro setting works only after OJD pairs two exact Joy-Con controllers. The command line equivalents are `ojd controller pair LEFT RIGHT --profile PROFILE` and `ojd controller unpair PAIR`. Hardware behavior of Joy-Con pairing is not verified.
 
 ## Set the lighting color
 

@@ -2,7 +2,10 @@ import Foundation
 
 public enum RemappingProfileFileStore {
   public static func load(from url: URL) throws -> RemappingProfile {
-    let data = try Data(contentsOf: url)
+    try load(from: Data(contentsOf: url))
+  }
+
+  public static func load(from data: Data) throws -> RemappingProfile {
     guard data.count <= RemappingProfile.maximumEncodedBytes else {
       throw RemappingValidationError.encodedSizeExceeded(data.count)
     }

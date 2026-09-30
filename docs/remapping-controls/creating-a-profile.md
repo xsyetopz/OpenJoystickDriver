@@ -22,12 +22,10 @@ To import a profile instead, click **Import profile**. For more information, see
 ## Create a profile with the command line
 
 ```shell
-/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver \
-  --headless map create "My controller" \
-  --vid 0x045E --pid 0x02FD --global
+ojd profile create "My controller" --controller 045E:02FD
 ```
 
-Replace `--global` with `--target-app BUNDLE-ID` to limit the profile to one app. The command needs the running app. For more information, see [Command reference](../command-line/command-reference.md).
+Add `--app BUNDLE-ID` to limit the profile to one app. The new profile is inactive and passes through every control until you add bindings. The command needs the running app. For more information, see [Command reference](../command-line/command-reference.md).
 
 ## Activate a profile
 
@@ -41,11 +39,11 @@ To deactivate the profile, click **Deactivate**. To deactivate every profile for
 The command line equivalents are:
 
 ```shell
-OpenJoystickDriver --headless map enable "My controller"
-OpenJoystickDriver --headless map disable --profile "My controller"
+ojd profile activate "My controller"
+ojd profile deactivate "My controller"
 ```
 
-The `enable` command refuses a profile that suppresses all input. Add `--allow-empty` to override. Paired Joy-Con profiles have no **Set active** button. For more information, see [Sticks, triggers, touchpad, and motion](sticks-triggers-touchpad-and-motion.md).
+The `activate` command refuses a profile that suppresses all input. Add `--allow-empty` to override. Paired Joy-Con profiles have no **Set active** button. For more information, see [Sticks, triggers, touchpad, and motion](sticks-triggers-touchpad-and-motion.md).
 
 ## Save changes
 
@@ -61,7 +59,7 @@ If another process changes the profile, the app shows **This profile changed els
 1. If you select **One application**, enter the **Bundle identifier**. The app has no running-app picker.
 1. Click **Apply**, then click **Save**.
 
-The command line equivalent is `map update PROFILE` with `--name`, `--vid`, `--pid`, `--target-app`, or `--global`.
+To rename a profile on the command line, run `ojd profile rename PROFILE NEW-NAME`. To change the controller model or the app, run `ojd profile edit PROFILE` and change `device` or `applicationScope` in the profile file.
 
 ## Duplicate a profile
 
@@ -69,7 +67,7 @@ The command line equivalent is `map update PROFILE` with `--name`, `--vid`, `--p
 1. Open the **Profile actions** menu.
 1. Select **Duplicate**.
 
-The copy is named `NAME Copy`. Profile names must be unique.
+The copy is named `NAME Copy`. Profile names must be unique. The command line equivalent is `ojd profile duplicate PROFILE NEW-NAME`.
 
 ## Delete a profile
 
@@ -77,7 +75,7 @@ The copy is named `NAME Copy`. Profile names must be unique.
 1. Click the red **Delete** button at the bottom of the editor.
 1. In the alert **Delete profile?**, click **Delete**.
 
-The command line equivalent is `map delete PROFILE`.
+The command line equivalent is `ojd profile delete PROFILE`.
 
 ## Clear all assignments
 
@@ -85,7 +83,9 @@ The command line equivalent is `map delete PROFILE`.
 1. Select **Clear all inputs**.
 1. Confirm the alert **Clear all inputs?**.
 
-This clears all assignments and input processing from the profile. The command line equivalent is `map clear-inputs PROFILE --confirm`. To return to pass-through, select **Restore default input** or run `map restore-default-input PROFILE`.
+This clears all assignments and input processing from the profile. To return to pass-through, select **Restore default input**.
+
+The command line has no equivalent that also clears input processing. `ojd binding clear PROFILE --all` removes every assignment, combination, sequence, and layer, and keeps stick, trigger, touch, motion, and output settings. To return to pass-through, run `ojd profile edit PROFILE` and set `virtualGamepad` to `passthrough`.
 
 ## Further reading
 

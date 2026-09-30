@@ -27,15 +27,7 @@ Create a profile and open it. For more information, see [Creating a profile](cre
 
 The sheet shows this hint: "The destination fires while all selected controls are pressed."
 
-The command line equivalent is:
-
-```shell
-OpenJoystickDriver --headless map chord add "My controller" \
-  --sources button:left_shoulder,button:right_shoulder \
-  --target key:space --mode simultaneous --window-ms 50
-```
-
-To delete a chord, run `map chord delete PROFILE --id CHORD-ID`.
+To add or delete a chord with the command line, run `ojd profile edit PROFILE`, then add or change the entry in `chords` in the profile file. For the file format, see [Profile file reference](profile-file-reference.md).
 
 ## Add a sequence
 
@@ -46,15 +38,7 @@ To delete a chord, run `map chord delete PROFILE --id CHORD-ID`.
 1. Select a **Destination**.
 1. Confirm the sheet, then click **Save**.
 
-The command line equivalent is:
-
-```shell
-OpenJoystickDriver --headless map sequence add "My controller" \
-  --sources button:south,button:east \
-  --window 1000 --target key:return
-```
-
-To delete a sequence, run `map sequence delete PROFILE --id SEQUENCE-ID`.
+To add or delete a sequence with the command line, run `ojd profile edit PROFILE`, then add or change the entry in `sequences` in the profile file. For the file format, see [Profile file reference](profile-file-reference.md).
 
 ## Add a layer
 
@@ -68,17 +52,7 @@ To delete a sequence, run `map sequence delete PROFILE --id SEQUENCE-ID`.
 
 **Hold** keeps the layer active while you hold the activator. **Toggle** switches the layer on or off each time you press the activator. The activator cannot also be an assignment in the profile.
 
-The command line equivalents are:
-
-```shell
-OpenJoystickDriver --headless map layer create "My controller" \
-  --name Shift --activator button:left_shoulder --mode hold
-OpenJoystickDriver --headless map layer list "My controller"
-OpenJoystickDriver --headless map layer bind "My controller" \
-  --layer LAYER-ID --source button:south --target key:a
-```
-
-Use `map layer unbind` to remove a layer assignment and `map layer delete PROFILE --id LAYER-ID` to delete a layer. A layer can also have its own **Motion tuning**. For more information, see [Sticks, triggers, touchpad, and motion](sticks-triggers-touchpad-and-motion.md).
+To add, change, or delete a layer with the command line, run `ojd profile edit PROFILE`, then add or change the entry in `layers` in the profile file. For the file format, see [Profile file reference](profile-file-reference.md). A layer can also have its own **Motion tuning**. For more information, see [Sticks, triggers, touchpad, and motion](sticks-triggers-touchpad-and-motion.md).
 
 ## Further reading
 

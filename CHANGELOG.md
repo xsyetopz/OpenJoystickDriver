@@ -95,7 +95,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
   - `controller disconnect`, `controller resume` → `ojd controller suspend|resume`
   - `controller disconnect-wireless` → `ojd controller disconnect`
   - `controller virtual set|reset` → `ojd virtual set|reset`; `ojd virtual show` lists each controller's profile
-  - `map` → `ojd profile` and `ojd binding`; `map clear-inputs --confirm` has no replacement
+  - `map list` → `ojd profile list`; `map show` → `ojd profile show`
+  - `map create` → `ojd profile create`; `map update` → `ojd profile rename` for the name and `ojd profile edit` for every other setting, including the `--stick-` and `--motion-` options
+  - `map delete` → `ojd profile delete`; `map import`, `map export` → `ojd profile import|export`
+  - `map enable`, `map disable` → `ojd profile activate|deactivate`
+  - `map bind` → `ojd binding set`; `map unbind` → `ojd binding clear`
+  - `map chord`, `map sequence`, `map layer` → `ojd profile edit`
+  - `map restore-default-input`, `map clear-inputs --confirm` have no replacement; `ojd binding clear --all` removes bindings, chords, sequences, and layers, and `ojd profile edit` changes the rest
+  - `map calibration` → `ojd controller calibrate`
+  - `map joy-con pair|unpair` → `ojd controller pair|unpair`
   - `diagnose catalog` → the `appleGameControllerAudit` object in `ojd diagnose --bundle PATH`; `ojd record list --bundled` lists the bundled controller records
   - `permissions`, `map permission` → `ojd permission list|request`; `permissions open` has no replacement
   - `extension status|enable|disable` → `ojd extension status|activate|deactivate`

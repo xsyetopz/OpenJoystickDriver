@@ -45,7 +45,7 @@ Not yet validated, because constructed tests cannot establish them:
 
 Only schema 3 profiles are accepted. The decoder rejects any other version immediately, before decoding profile fields; OJD does not migrate, reinterpret, or reset older profiles. Schema 3 assignments retain their primary destination and can contain an ordered `additional_actions` array. Each additional action has its own UUID, destination, behavior, and optional turbo, long-hold, double-tap, or pulse settings. Action IDs share the profile-wide uniqueness requirement. Additional actions count toward the 512-item mapping limit. Continuous actions use the assignment's axis tuning. Permission requirements include every action and its alternate destinations, including actions in inactive layers.
 
-The assignment behavior sheet supports adding, removing, reordering, and editing additional actions. CLI `bind` and `layer bind` accept `--actions-json <JSON-array>` in the native action format. An omitted option preserves the collection; `[]` removes all additional actions. Nested CLI commands put the operation before the profile, for example `map layer bind <profile> --layer <uuid> --source button:south --target key:a`.
+The assignment behavior sheet supports adding, removing, reordering, and editing additional actions. CLI `ojd binding set` accepts `--actions-json <JSON-array>` in the native action format. An omitted option preserves the collection; `[]` removes all additional actions. Layer bindings are edited with `ojd profile edit <profile>`.
 
 Implemented behaviors:
 
@@ -85,7 +85,7 @@ Native schema-3 chords accept `mode: "simultaneous"` and `window_ms` from 1 to 1
 
 Modifier-chord sources are owned by the modifier recognizer while that chord is effective. Their individual assignments, additional actions, and raw passthrough contributions stay suppressed. When the chord completes, it consumes its constituent presses and any sequence completion that depends on them. Releasing a constituent retires the chord without replaying the suppressed source action.
 
-The CLI accepts `map chord add <profile> --sources button:south,button:east --target key:space --mode simultaneous --window-ms 75` (on one command line). Invalid timing is rejected before profile mutation. The native combination sheet exposes the same mode and simultaneous window.
+The CLI edits chords with `ojd profile edit <profile>`. Invalid timing is rejected before the profile is saved. The native combination sheet exposes the same mode and simultaneous window.
 
 Simultaneous chords buffer constituent presses until resolution. A match consumes those presses; an unmatched timeout replays a held action once, and an early release replays a press/release pair. Passthrough replay uses the virtual-state aggregator, including a retained axis sample for a quick direction release. A completed smaller chord waits while a higher-priority overlapping chord can still complete. Higher source count wins, then profile order. Releasing a completed smaller chord commits it before its release; releasing a larger chord does not activate a smaller chord from its already-consumed controls. Disjoint chords can remain active together. Layer transitions and controller teardown cancel pending presses.
 

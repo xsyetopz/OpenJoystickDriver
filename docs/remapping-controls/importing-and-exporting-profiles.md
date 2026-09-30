@@ -15,7 +15,7 @@ Use export and import to keep a copy of a profile, to share it, or to move it to
 The command line equivalent prints the profile JSON, or writes it to a file. The examples use the `ojd` alias. For more information, see [Using the command line](../command-line/using-the-command-line.md).
 
 ```shell
-ojd map export PROFILE --output FILE.json
+ojd profile export PROFILE --output FILE.json
 ```
 
 ## Import a profile
@@ -28,7 +28,7 @@ ojd map export PROFILE --output FILE.json
 The command line equivalent is:
 
 ```shell
-ojd map import FILE.json
+ojd profile import FILE.json
 ```
 
 OJD checks the file before it adds the profile. OJD rejects a file with unknown keys, values out of range, or a size above 4 MiB.
