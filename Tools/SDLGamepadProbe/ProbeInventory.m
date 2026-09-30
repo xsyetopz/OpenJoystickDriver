@@ -8,7 +8,7 @@
 #include <string.h>
 
 static const char *const OJDGUIDs[] = {
-    "0300f88c4a4f00004844000008040000",
+    "0300f88c091200004f4a000008040000",
 };
 
 static const char *display_string(const char *value) { return value ? value : "(null)"; }

@@ -14,8 +14,8 @@ struct GenericGamepadHIDTests {
     }
 
     // Assert
-    #expect(profile.vendorID == 0x4F4A)
-    #expect(profile.productID == 0x4447)
+    #expect(profile.vendorID == 0x1209)
+    #expect(profile.productID == 0x4A4F)
     #expect(profile.versionNumber == 0x0408)
     #expect(profile.productName == "OpenJoystickDriver Generic HID Gamepad")
     #expect(profile.manufacturer == "OpenJoystickDriver")

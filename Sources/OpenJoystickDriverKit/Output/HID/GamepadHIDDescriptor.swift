@@ -17,7 +17,7 @@ import Foundation
 /// The device is input-only: the descriptor declares no output or feature report, so no
 /// consumer output (rumble or otherwise) reaches the controller through it.
 ///
-/// This layout is the published contract for OJD VID/PID `4F4A:4447`. An incompatible
+/// This layout is the published contract for OJD VID/PID `1209:4A4F`. An incompatible
 /// descriptor or report-layout change must use a new product ID.
 public enum GamepadHIDDescriptor {
   // MARK: - Report descriptor bytes

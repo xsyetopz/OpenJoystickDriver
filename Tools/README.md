@@ -8,8 +8,7 @@ Build the maintained `SDLGamepadProbe` without opening hardware:
 ./Scripts/ojd check tools
 ```
 
-The build uses Apple Clang, the system `SDL3` package found through `pkg-config`,
-and the Foundation and GameController frameworks.
+The build uses Apple Clang, the system `SDL3` package found through `pkg-config`, and the Foundation and GameController frameworks.
 
 To test a connected controller for 10 seconds:
 
@@ -17,5 +16,4 @@ To test a connected controller for 10 seconds:
 ./Scripts/ojd diagnose sdl3 --seconds 10
 ```
 
-Expected result: the probe lists SDL gamepad events and exits after 10 seconds.
-Add `--rumble` only when you intend to activate output on every SDL gamepad.
+Expected result: the probe lists SDL gamepad events and exits after 10 seconds. Add `--rumble` only when you intend to activate output on every SDL gamepad.
