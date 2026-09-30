@@ -15,11 +15,27 @@ struct CLIRun {
     let code = await CLIOutput.$capture.withValue(capture) {
       await CLI.execute(arguments: arguments)
     }
-    return Self(
+    let run = Self(
       code: code,
       standardOutput: capture.standardOutput,
       standardError: capture.standardError
     )
+    run.expectValidJSON(arguments)
+    return run
+  }
+
+  /// Checks every `--json` document a command prints against its output schema.
+  private func expectValidJSON(_ arguments: [String]) {
+    let path = CLICommandTree.commandPath(in: arguments)
+    guard arguments.contains("--json"), !CLIOutputSchema.exempt.contains(path),
+      !standardOutput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    else { return }
+    do {
+      let issues = try CLIOutputSchema.issues(in: standardOutput, path: path)
+      #expect(issues.isEmpty, "ojd \(arguments.joined(separator: " ")): \(issues)")
+    } catch {
+      Issue.record(error, "ojd \(arguments.joined(separator: " "))")
+    }
   }
 
   func json() throws -> [String: Any] {
@@ -41,6 +57,17 @@ enum CLICommandTree {
   }
 
   static var leafPaths: [[String]] { paths().filter { subcommands(at: $0).isEmpty } }
+
+  /// The command path at the start of `arguments`, such as `["profile", "list"]`.
+  static func commandPath(in arguments: [String]) -> [String] {
+    var path: [String] = []
+    for argument in arguments {
+      guard subcommands(at: path).contains(where: { $0.configuration.commandName == argument })
+      else { break }
+      path.append(argument)
+    }
+    return path
+  }
 
   static func subcommands(at path: [String]) -> [any ParsableCommand.Type] {
     var command: any ParsableCommand.Type = OJDCommand.self

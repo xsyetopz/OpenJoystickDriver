@@ -83,8 +83,8 @@ struct ProfileCommandTests {
     let library = FakeProfileLibrary([original])
     let service = try Self.service(library)
 
-    let duplicate = await service.run(["profile", "duplicate", "Pad", "Pad Copy"])
-    let rename = await service.run(["profile", "rename", original.id.uuidString, "Main"])
+    let duplicate = await service.run(["profile", "duplicate", "Pad", "Pad Copy", "--json"])
+    let rename = await service.run(["profile", "rename", original.id.uuidString, "Main", "--json"])
 
     #expect(duplicate.code == 0, "\(duplicate.standardError)")
     #expect(rename.code == 0, "\(rename.standardError)")

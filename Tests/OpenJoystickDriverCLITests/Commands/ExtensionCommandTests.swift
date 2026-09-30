@@ -103,10 +103,12 @@ struct ExtensionCommandTests {
     let actions = Locked<[ExtensionSubmission.Action]>([])
 
     let result = await submit("deactivate", ["--plain"], outcome: .inactive, actions: actions)
+    let jsonRun = await submit("deactivate", ["--json"], outcome: .inactive, actions: actions)
 
     #expect(result.code == 0)
     #expect(result.standardOutput == "state\tinactive\n")
-    #expect(actions.withLock { $0 } == [.deactivate])
+    #expect(try jsonRun.json()["state"] as? String == "inactive")
+    #expect(actions.withLock { $0 } == [.deactivate, .deactivate])
   }
 
   @Test

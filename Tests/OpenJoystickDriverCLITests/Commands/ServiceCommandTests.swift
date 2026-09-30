@@ -96,6 +96,14 @@ struct ServiceCommandTests {
     #expect(rows.contains(["controller", "pad-1", "045E:028E", "USB", "Test Pad"]))
   }
 
+  @Test(arguments: ["start", "wait"])
+  func startAndWaitReportARunningService(verb: String) async throws {
+    let service = try FakeService(devices: [])
+    let result = await service.run(["service", verb, "--json"])
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(try result.json()["state"] as? String == "running")
+  }
+
   @Test
   func waitWithoutAServiceExitsSixtyNineAfterTheTimeout() async {
     let result = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {

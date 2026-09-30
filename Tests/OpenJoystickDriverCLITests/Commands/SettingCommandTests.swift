@@ -110,6 +110,22 @@ struct SettingCommandTests {
   }
 
   @Test
+  func setPrintsTheNewValueAsJSON() async throws {
+    let socketPath = temporarySocketPath()
+    let server = try serve(socketPath: socketPath, received: Locked<[String]>([]))
+    defer { server.stop() }
+
+    let result = await run(
+      ["setting", "set", "notification-sounds", "false", "--json"],
+      socketPath: socketPath
+    )
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(try result.json()["key"] as? String == "notification-sounds")
+    #expect(try result.json()["value"] as? Bool == false)
+  }
+
+  @Test
   func setExitsOneWhenMacOSLeavesTheSettingOff() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(refused: [.launchAtLogin], socketPath: socketPath)

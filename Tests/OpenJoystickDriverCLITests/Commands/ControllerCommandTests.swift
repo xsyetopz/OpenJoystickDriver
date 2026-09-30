@@ -174,6 +174,73 @@ struct ControllerCommandTests {
     #expect(json["changed"] as? Bool == false)
   }
 
+  @Test
+  func showPrintsTheControllerReport() async throws {
+    let service = try FakeService(devices: [FakeService.device(id: "pad-1")])
+    let result = await service.run(["controller", "show", "pad-1", "--json"])
+    #expect(result.code == 0, "\(result.standardError)")
+    let controller = try #require(try result.json()["controller"] as? [String: Any])
+    #expect(controller["id"] as? String == "pad-1")
+  }
+
+  @Test(arguments: [
+    ["controller", "rumble", "pad-1", "--left", "100"],
+    ["controller", "light", "pad-1", "--color", "#00FF00"],
+  ])
+  func outputCommandsReportEachDeliveredCommand(arguments: [String]) async throws {
+    let service = try FakeService(
+      devices: [FakeService.device(id: "pad-1")],
+      respond: Self.delivered()
+    )
+    let result = await service.run(arguments + ["--json"])
+    #expect(result.code == 0, "\(result.standardError)")
+    let results = try #require(try result.json()["results"] as? [[String: Any]])
+    #expect(results.allSatisfy { $0["outcome"] as? String == "delivered" })
+  }
+
+  @Test
+  func resumeAndDisconnectReportTheSession() async throws {
+    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+      switch method {
+      case .resumeController: doubleEncoded(ControllerResumeResult(state: .active))
+      case .disconnectWirelessController:
+        doubleEncoded(WirelessControllerDisconnectResult(state: .active))
+      default: nil
+      }
+    }
+    let resume = await service.run(["controller", "resume", "pad-1", "--json"])
+    let disconnect = await service.run(["controller", "disconnect", "pad-1", "--json"])
+    #expect(resume.code == 0, "\(resume.standardError)")
+    #expect(try resume.json()["session"] as? String == "active")
+    #expect(disconnect.code == 0, "\(disconnect.standardError)")
+    #expect(try disconnect.json()["session"] as? String == "disconnected")
+  }
+
+  @Test
+  func capturePrintsEachNewPacketAsAJSONLine() async throws {
+    let reads = Counter()
+    let packet = #"{"direction":"rx","hex":"01 02","length":2,"timestamp":1.5}"#
+    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+      guard method == .getPacketLog else { return nil }
+      return encoded(Data((reads.next() == 0 ? "[]" : "[\(packet)]").utf8))
+    }
+    let result = await service.run([
+      "controller", "capture", "pad-1", "--duration", "0.3", "--json",
+    ])
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(result.standardOutput == packet + "\n")
+  }
+
+  @Test
+  func watchPrintsTheStateAsJSONLines() async throws {
+    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+      method == .getControllerState ? doubleEncoded(ControllerState(pressed: [.faceSouth])) : nil
+    }
+    let result = await service.run(["controller", "watch", "pad-1", "--duration", "0.2", "--json"])
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(!result.standardOutput.isEmpty)
+  }
+
   @Test(arguments: [
     ["controller", "rumble", "pad-1", "--duration", "9"], ["controller", "player", "pad-1", "7"],
     ["controller", "light", "pad-1"], ["controller", "light", "pad-1", "--color", "red"],

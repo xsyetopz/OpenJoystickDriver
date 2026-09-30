@@ -22,6 +22,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - `ojd permission list|request`, `ojd extension status|activate|deactivate`, `ojd setting list|get|set`, `ojd log path|show`, `ojd diagnose [--bundle PATH] [--soak SECONDS]`, and `ojd update check [--prerelease]`. See the [command reference](docs/command-line/command-reference.md).
 - User controller records: an `add` or `patch` file in `~/Library/Application Support/OpenJoystickDriver/Controllers` adds a controller model or changes the `protocol` or `usb` fields of a bundled one, and the running service applies it when the folder changes. OJD skips a file that is not valid and names it in `ojd status`, the `controller-records` check of `ojd diagnose`, and `ojd record list`. `ojd record list|show|validate|install|remove` manage the files. See [Adding or changing a controller record](docs/connecting-controllers/controller-records.md).
 - The Settings section of the app has an Install Command-Line Tool action that links `/usr/local/bin/ojd` to the app and removes the link again. macOS asks for an administrator password when the folder is not writable, and the action never replaces a file that is not a link.
+- `Resources/Schemas/cli-output.schema.json` describes the `--json` output of every `ojd` command, one `$defs` entry per command. The CLI tests validate each `--json` document they print against it.
 
 ### Changed
 
