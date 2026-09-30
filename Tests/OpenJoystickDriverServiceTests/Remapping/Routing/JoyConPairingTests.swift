@@ -90,6 +90,32 @@ struct JoyConPairingRoutingTests {
   }
 
   @Test
+  func switch2HalvesPairAndSwappedSidesAreRejected() async throws {
+    let profile = pairProfile()
+    let harness = try await RemappingRouterHarness.make()
+    defer { harness.removeFiles() }
+    try await harness.library.create(profile)
+    let left = joyCon(productID: 0x2067, location: 41)
+    let right = joyCon(productID: 0x2066, location: 42)
+    for member in [left, right] {
+      try await harness.router.dispatchCausally(.activation, from: member)
+    }
+    await #expect(throws: RemappingJoyConPairError.invalidControllerSide) {
+      _ = try await harness.router.pairJoyCons(
+        leftRuntimeIdentifier: right.runtimeIdentifier,
+        rightRuntimeIdentifier: left.runtimeIdentifier,
+        profile: profile
+      )
+    }
+    let sessionID = try await harness.router.pairJoyCons(
+      leftRuntimeIdentifier: left.runtimeIdentifier,
+      rightRuntimeIdentifier: right.runtimeIdentifier,
+      profile: profile
+    )
+    #expect(await harness.router.statusSnapshot().joyConPairs.map(\.sessionID) == [sessionID])
+  }
+
+  @Test
   func selectedHalfAloneFeedsPairCalibrationAndTransactionCancelsTheSession() async throws {
     let profile = pairProfile(gyroSelection: .right)
     let harness = try await RemappingRouterHarness.make()

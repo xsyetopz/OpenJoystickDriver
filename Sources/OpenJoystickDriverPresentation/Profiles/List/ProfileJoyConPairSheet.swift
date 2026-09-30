@@ -72,13 +72,13 @@
     private static func leftDevices(
       _ devices: [ApplicationServiceDeviceDescription]
     ) -> [ApplicationServiceDeviceDescription] {
-      devices.filter { $0.vendorID == 0x057E && $0.productID == 0x2006 }
+      devices.filter { JoyConHalf(vendorID: $0.vendorID, productID: $0.productID) == .left }
     }
 
     private static func rightDevices(
       _ devices: [ApplicationServiceDeviceDescription]
     ) -> [ApplicationServiceDeviceDescription] {
-      devices.filter { $0.vendorID == 0x057E && $0.productID == 0x2007 }
+      devices.filter { JoyConHalf(vendorID: $0.vendorID, productID: $0.productID) == .right }
     }
   }
 #endif

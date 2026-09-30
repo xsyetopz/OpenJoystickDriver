@@ -13,8 +13,10 @@ enum ProfileCapabilityResolver {
     )
     // A Joy-Con pair profile is scoped to the left half but maps controls from both halves.
     guard profile.joyConPair != nil, let resolved else { return resolved }
-    let halves = [0x2006, 0x2007].compactMap {
-      registry.profileCapabilities(for: DeviceIdentifier(vendorID: 0x057E, productID: $0))
+    let halves = JoyConHalf.generationProductIDs(forLeft: profile.device.productID).compactMap {
+      registry.profileCapabilities(
+        for: DeviceIdentifier(vendorID: profile.device.vendorID, productID: $0)
+      )
     }
     let pairInput = halves.map(\.physicalInput).reduce(resolved.physicalInput) { $0.union($1) }
     return ControllerProfileCapabilities(

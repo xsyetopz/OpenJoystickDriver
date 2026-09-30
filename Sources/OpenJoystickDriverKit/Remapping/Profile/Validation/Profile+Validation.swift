@@ -4,7 +4,9 @@ extension RemappingProfile {
   /// Validates the complete persistence and dispatch contract for this profile.
   public func validate() throws {
     try validateName()
-    if joyConPair != nil, device != RemappingDeviceScope(vendorID: 0x057E, productID: 0x2006) {
+    if joyConPair != nil,
+      JoyConHalf(vendorID: device.vendorID, productID: device.productID) != .left
+    {
       throw RemappingValidationError.invalidJoyConPairDevice
     }
     var stickSources: Set<RemappingStickSource> = []

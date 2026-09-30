@@ -77,7 +77,7 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
     case .invalidMotionTuning(let error): error.localizedDescription
     case .invalidGyroOutput(let error): error.localizedDescription
     case .invalidJoyConPairDevice:
-      "Joy-Con pair profiles must target the Nintendo left Joy-Con model (057e:2006)."
+      "Joy-Con pair profiles must target a Nintendo left Joy-Con model (057e:2006 or 057e:2067)."
     case .bindingBehaviorConflict(let index):
       "Binding \(index) uses a behavior incompatible with its destination or activation settings."
     case .unsupportedGamepadButton(let button):

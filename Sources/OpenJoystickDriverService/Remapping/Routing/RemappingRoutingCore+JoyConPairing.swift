@@ -18,8 +18,10 @@ extension RemappingRoutingCore {
         $0.runtimeIdentifier == rightRuntimeIdentifier
       })
     else { throw RemappingJoyConPairError.controllerUnavailable }
-    guard left.controllerIdentity.vendorID == 0x057E, left.controllerIdentity.productID == 0x2006,
-      right.controllerIdentity.vendorID == 0x057E, right.controllerIdentity.productID == 0x2007,
+    let leftIdentity = left.controllerIdentity
+    let rightIdentity = right.controllerIdentity
+    guard JoyConHalf(vendorID: leftIdentity.vendorID, productID: leftIdentity.productID) == .left,
+      JoyConHalf(vendorID: rightIdentity.vendorID, productID: rightIdentity.productID) == .right,
       left != right
     else { throw RemappingJoyConPairError.invalidControllerSide }
     guard joyConPairByMember[left] == nil, joyConPairByMember[right] == nil else {

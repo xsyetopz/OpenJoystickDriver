@@ -175,8 +175,12 @@
     }
 
     var hasAvailableJoyConPair: Bool {
-      connectedDevices.contains { $0.vendorID == 0x057E && $0.productID == 0x2006 }
-        && connectedDevices.contains { $0.vendorID == 0x057E && $0.productID == 0x2007 }
+      connectedDevices.contains {
+        JoyConHalf(vendorID: $0.vendorID, productID: $0.productID) == .left
+      }
+        && connectedDevices.contains {
+          JoyConHalf(vendorID: $0.vendorID, productID: $0.productID) == .right
+        }
     }
 
     var noProfilesState: some View {
