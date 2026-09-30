@@ -173,6 +173,13 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     }
   }
 
+  public func resetDevice(_ device: USBTransportDevice) async throws {
+    switch device.route {
+    case .ioUSBHost: try await ioUSBHostProvider.resetDevice(device)
+    case .usbDriverKit: try await usbDriverKitProvider.resetDevice(device)
+    }
+  }
+
   public func resolveTransport(
     for device: USBTransportDevice,
     configured: DeviceTransportProfile

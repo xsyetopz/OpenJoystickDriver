@@ -255,6 +255,10 @@ public protocol USBTransportProvider: Sendable {
     for device: USBTransportDevice,
     configurationValue: UInt8
   ) async throws -> PhysicalDevice?
+
+  /// Resets the device's USB port, which makes the host enumerate the device again as a replug
+  /// does. Every open interface of the device ends, and the device returns as a new attachment.
+  func resetDevice(_ device: USBTransportDevice) async throws
 }
 
 extension USBTransportProvider {
@@ -272,6 +276,8 @@ extension USBTransportProvider {
     for device: USBTransportDevice,
     configurationValue: UInt8
   ) throws -> PhysicalDevice? { throw USBTransportError.notSupported }
+
+  public func resetDevice(_: USBTransportDevice) throws { throw USBTransportError.notSupported }
 }
 
 /// Stable failure categories shared by USB transport implementations.

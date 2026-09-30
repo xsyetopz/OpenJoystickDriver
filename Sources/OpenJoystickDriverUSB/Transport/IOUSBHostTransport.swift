@@ -45,6 +45,22 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     } catch { throw Self.transportError(error) }
   }
 
+  public func resetDevice(_ device: USBTransportDevice) throws {
+    guard device.route == .ioUSBHost else { throw USBTransportError.notSupported }
+    let service = try Self.deviceService(for: device)
+    defer { IOObjectRelease(service) }
+    do {
+      let hostDevice = try IOUSBHostDevice(
+        __ioService: service,
+        options: [],
+        queue: nil,
+        interestHandler: nil
+      )
+      defer { hostDevice.destroy() }
+      try hostDevice.reset()
+    } catch { throw Self.transportError(error) }
+  }
+
   static func devices(from facts: [IOUSBHostDeviceFacts]) -> [USBTransportDevice] {
     facts.map { device in
       USBTransportDevice(
@@ -301,6 +317,11 @@ private actor IOUSBHostTransportSession: USBTransportSession {
   private let interface: IOUSBHostInterface
   private var pipes: [UInt8: IOUSBHostPipeBox] = [:]
   private var isClosed = false
+  private var isDestroyed = false
+  // Actor methods are reentrant at every `await`, so `close()` can run while a transfer is
+  // suspended. The interface owns the `ioData` buffers, so it is destroyed only once no
+  // transfer is in flight.
+  private var inFlightTransfers = 0
 
   var inputOwnership: HIDInputOwnership { isClosed ? .unknown : .exclusive }
 
@@ -311,6 +332,8 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     guard USBEndpointDirection(endpointAddress: endpoint) == .out, !data.isEmpty else {
       throw USBTransportError.notSupported
     }
+    beginTransfer()
+    defer { endTransfer() }
     do {
       let buffer = try interface.ioData(withCapacity: data.count)
       Self.copy(data, into: buffer)
@@ -323,9 +346,12 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     guard USBEndpointDirection(endpointAddress: endpoint) == .in, length > 0 else {
       throw USBTransportError.notSupported
     }
+    beginTransfer()
+    defer { endTransfer() }
     do {
       let buffer = try interface.ioData(withCapacity: length)
       let count = try await transfer(endpoint: endpoint, buffer: buffer, timeout: timeout)
+      guard !isClosed else { throw USBTransportError.disconnected }
       return Array(Data(bytes: buffer.bytes, count: min(count, buffer.length)))
     } catch { throw closeIfDisconnected(error) }
   }
@@ -336,6 +362,8 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     timeout: UInt32
   ) async throws -> [UInt8] {
     guard !isClosed else { throw USBTransportError.disconnected }
+    beginTransfer()
+    defer { endTransfer() }
     do {
       let buffer: NSMutableData?
       switch request.dataStage {
@@ -351,6 +379,7 @@ private actor IOUSBHostTransportSession: USBTransportSession {
         data: buffer,
         completionTimeout: IOUSBHostTransportProvider.completionTimeout(milliseconds: timeout)
       )
+      guard !isClosed else { throw USBTransportError.disconnected }
       guard status == kIOReturnSuccess else {
         throw IOUSBHostTransportProvider.transportError(status)
       }
@@ -364,6 +393,19 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     isClosed = true
     for box in pipes.values { try? box.pipe.__abort(with: .synchronous) }
     pipes.removeAll()
+    destroyInterfaceIfIdle()
+  }
+
+  private func beginTransfer() { inFlightTransfers += 1 }
+
+  private func endTransfer() {
+    inFlightTransfers -= 1
+    destroyInterfaceIfIdle()
+  }
+
+  private func destroyInterfaceIfIdle() {
+    guard isClosed, inFlightTransfers == 0, !isDestroyed else { return }
+    isDestroyed = true
     interface.destroy()
   }
 
