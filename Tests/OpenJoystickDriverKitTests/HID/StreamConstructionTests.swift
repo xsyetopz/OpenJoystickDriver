@@ -11,18 +11,25 @@ struct StreamConstructionTests {
   @Test
   func constructionDoesNotEnumerateDevices() {
     let stream = HIDDeviceStream()
-    #expect(IOHIDManagerCopyDevices(stream.manager) == nil)
+    #expect(stream.manager == nil)
   }
 
-  /// Matching is deferred, not dropped: the first `deviceEvents()` applies it, or the stream would
-  /// never see a controller. Holds on a host without a matching device.
+  /// Matching is deferred, not dropped: each `deviceEvents()` applies it to a new manager, or the
+  /// stream would never see a controller. A restarted stream, as after system sleep, never reuses
+  /// the manager of the stream it replaced. Holds on a host without a matching device.
   @Test
   @MainActor
-  func firstDeviceEventsAppliesMatching() {
+  func eachDeviceEventsUsesANewManager() throws {
     let stream = HIDDeviceStream()
-    let events = stream.deviceEvents()
+    let first = stream.deviceEvents()
+    let firstManager = try #require(stream.manager)
+    stream.cleanup()
+    #expect(stream.manager == nil)
+    let second = stream.deviceEvents()
     // Unschedules the manager and finishes the stream, so no callbacks outlive the test.
     defer { stream.cleanup() }
-    withExtendedLifetime(events) { #expect(stream.deviceMatchingApplied) }
+    withExtendedLifetime((first, second)) {
+      #expect(stream.manager.map { $0 !== firstManager } == true)
+    }
   }
 }

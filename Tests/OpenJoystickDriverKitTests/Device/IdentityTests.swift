@@ -113,6 +113,30 @@ struct DeviceIdentifierTests {
   }
 
   @Test
+  func virtualIdentityOfASerialControllerSurvivesAPortChange() {
+    let before = DeviceIdentifier(
+      vendorID: 0x045E,
+      productID: 0x0B12,
+      serialNumber: "Pad-Serial-42",
+      locationID: 7
+    )
+    let after = DeviceIdentifier(
+      vendorID: 0x045E,
+      productID: 0x0B12,
+      serialNumber: "Pad-Serial-42",
+      locationID: 9
+    )
+    #expect(
+      UserSpaceVirtualDeviceConstants.serialNumber(for: before)
+        == UserSpaceVirtualDeviceConstants.serialNumber(for: after)
+    )
+    #expect(
+      UserSpaceVirtualDeviceConstants.locationID(for: before)
+        == UserSpaceVirtualDeviceConstants.locationID(for: after)
+    )
+  }
+
+  @Test
   func exactRuntimeIdentifiersAreOpaqueStableAndDistinct() throws {
     let serial = "Pad-Serial-42"
     let first = DeviceIdentifier(vendorID: 0x045E, productID: 0x028E, serialNumber: serial)

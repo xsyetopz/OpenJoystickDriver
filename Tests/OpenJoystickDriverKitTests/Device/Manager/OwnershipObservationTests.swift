@@ -131,6 +131,43 @@ struct OwnershipObservationTests {
     await manager.stop()
   }
 
+  @Test(arguments: [HIDInputOwnership.ownedByAnotherClient, .acquisitionFailed])
+  func unseizedConnectionIsRetriedAndRestartsWhenTheSeizeSucceeds(
+    _ initial: HIDInputOwnership
+  ) async throws {
+    let backend = ClaimRecordingHIDAccessBackend()
+    let dispatcher = OwnershipOutputRecorder()
+    let manager = DeviceManager(dispatcher: dispatcher, hidManager: HIDManager(backend: backend))
+    let identifier = DeviceIdentifier(vendorID: 0x1234, productID: 0x5678, locationID: 77)
+    let connection = HIDDeviceConnection(
+      physicalDevice: PhysicalDevice(
+        vendorID: identifier.controllerIdentity.vendorID,
+        productID: identifier.controllerIdentity.productID,
+        productName: "Test",
+        transportProperty: "USB",
+        physicalLocationIdentifier: 77,
+        interfaces: [gamepadHIDInterface(host: .usb)]
+      ),
+      routingLocationID: 77
+    )
+    await manager.handleHIDEvent(.connected(connection: connection, ownership: initial))
+    let first = try #require(await manager.pipelines[identifier])
+
+    await manager.retryHIDInputClaims()
+    #expect(await backend.retriedLocations() == [77])
+
+    await manager.handleHIDEvent(.ownershipChanged(locationID: 77, ownership: .exclusive))
+    let second = try #require(await manager.pipelines[identifier])
+    #expect(first !== second)
+    #expect(await first.isActive == false)
+    #expect(await second.isActive)
+    #expect(await manager.deviceInfos[identifier]?.hidInputOwnership == .exclusive)
+
+    await manager.retryHIDInputClaims()
+    #expect(await backend.retriedLocations() == [77])
+    await manager.stop()
+  }
+
   @Test
   func exclusiveHIDOwnershipIsReportedByTheLiveManagerAndPayload() async throws {
     let manager = DeviceManager(dispatcher: LoggingOutputDispatcher())

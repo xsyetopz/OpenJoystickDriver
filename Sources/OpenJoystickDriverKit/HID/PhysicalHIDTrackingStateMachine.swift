@@ -85,12 +85,13 @@ public enum UserSpaceVirtualDeviceConstants {
   // MARK: - Private helpers
 
   private static func stableKey(for identifier: DeviceIdentifier) -> String {
-    // Prefer physical serial when available, fall back to locationID. The interface keeps each
-    // logical controller of one physical device distinct.
+    // Prefer physical serial when available, fall back to locationID. A serial identifies the
+    // controller across reconnects on another port, so the port must not change the virtual
+    // identity. The interface keeps each logical controller of one physical device distinct.
     // IMPORTANT: this key is only used as hash input; it is not exposed to consumers.
     let identity = identifier.controllerIdentity
     let sn = identity.serialNumber ?? ""
-    let loc = identifier.locationID.map { "\($0)" } ?? ""
+    let loc = sn.isEmpty ? (identifier.locationID.map { "\($0)" } ?? "") : ""
     let interface = identifier.interfaceNumber.map { "\($0)" } ?? ""
     return "\(identity.vendorID):\(identity.productID):\(sn):\(loc):\(interface)"
   }
@@ -211,6 +212,8 @@ public struct PhysicalHIDTrackingStateMachine {
     (deviceIDsByLocation[locationID] ?? []).contains { acceptsInput(deviceID: $0) }
   }
 
+  public func ownership(deviceID: UInt64) -> HIDInputOwnership? { devices[deviceID]?.ownership }
+
   public func ownership(locationID: UInt32) -> HIDInputOwnership {
     HIDInputOwnership.combined(
       (deviceIDsByLocation[locationID] ?? []).compactMap { devices[$0]?.ownership }
@@ -318,6 +321,10 @@ public struct PhysicalHIDBackendEventAdapter {
     )
   }
 
+  public func ownership(deviceID: UInt64) -> HIDInputOwnership? {
+    tracking.ownership(deviceID: deviceID)
+  }
+
   public func ownership(locationID: UInt32) -> HIDInputOwnership {
     tracking.ownership(locationID: locationID)
   }
@@ -397,6 +404,10 @@ public final class SynchronizedPhysicalHIDBackendEventAdapter: @unchecked Sendab
         disconnectsIndividually: disconnectsIndividually
       )
     }
+  }
+
+  public func ownership(deviceID: UInt64) -> HIDInputOwnership? {
+    lock.withLock { adapter.ownership(deviceID: deviceID) }
   }
 
   public func ownership(locationID: UInt32) -> HIDInputOwnership {

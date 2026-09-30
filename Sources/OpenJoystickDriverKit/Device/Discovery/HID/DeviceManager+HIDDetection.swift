@@ -109,6 +109,39 @@ extension DeviceManager {
     }
   }
 
+  /// Whether a seize that was refused or failed and now differs restarts the pipeline.
+  private static func readmitsHIDPipeline(
+    from old: HIDInputOwnership,
+    to new: HIDInputOwnership
+  ) -> Bool {
+    switch old {
+    case .ownedByAnotherClient: new != .ownedByAnotherClient
+    case .acquisitionFailed: new == .exclusive
+    default: false
+    }
+  }
+
+  /// Asks the backend to seize again for each bound, active, non-native HID controller that
+  /// lacks its seize and whose claim was not released on purpose.
+  func retryHIDInputClaims() async {
+    var locationIDs: Set<UInt32> = []
+    for (identifier, info) in deviceInfos {
+      guard case .hid = info.discoverySource, info.physicalDevice?.nativePassThrough != true,
+        info.hidInputOwnership == .ownedByAnotherClient
+          || info.hidInputOwnership == .acquisitionFailed, let pipeline = pipelines[identifier],
+        !pipeline.observesOnly, !suspendedControllerIdentities.contains(identifier),
+        let locationID = identifier.locationID,
+        !unboundHIDClaims.values.contains(where: {
+          $0.routingLocationID == locationID && $0.isReleased
+        })
+      else { continue }
+      locationIDs.insert(locationID)
+    }
+    for locationID in locationIDs.sorted() {
+      await hidManager.retryInputClaim(locationID: locationID)
+    }
+  }
+
   func updateHIDOwnership(_ ownership: HIDInputOwnership, locationID: UInt32) async {
     let identifiers = deviceInfos.keys.filter { $0.locationID == locationID }
     for identifier in identifiers {
@@ -122,11 +155,10 @@ extension DeviceManager {
           await neutralizePhysicalOutputs(for: identifier, pipeline: pipeline)
           await pipeline.stop()
         }
-      } else if ownership != .ownedByAnotherClient, info.hidInputOwnership == .ownedByAnotherClient
-      {
+      } else if Self.readmitsHIDPipeline(from: info.hidInputOwnership, to: ownership) {
         // A fresh parser and normalized state prevent replaying controls held before access loss.
         if let physicalDevice = info.physicalDevice, let connectionID = info.hidConnectionID {
-          pipelines.removeValue(forKey: identifier)
+          if let stale = pipelines.removeValue(forKey: identifier) { await stale.stop() }
           await handleHIDDeviceConnected(
             connection: HIDDeviceConnection(
               connectionID: connectionID,

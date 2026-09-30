@@ -33,7 +33,9 @@ extension HIDDeviceStream {
 
   @MainActor
   private func currentConnectionSnapshotsOnMainRunLoop() -> [HIDDeviceConnectionSnapshot]? {
-    guard let devices = IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice> else { return nil }
+    guard let manager, let devices = IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice> else {
+      return nil
+    }
     let presentDeviceIDs = Set(devices.map(trackingID(for:)))
     let trackedConnections = seizeLock.withLock { connectionsByDeviceID }
     var ownershipByLocation: [UInt32: HIDInputOwnership] = [:]
@@ -59,16 +61,15 @@ extension HIDDeviceStream {
   /// ignores negative property keys) and a second object for any service that satisfies more
   /// than one matching dictionary. `handleDeviceAdded` opens only admitted devices.
   private func registerCallbacks() {
-    if !deviceMatchingApplied {
-      IOHIDManagerSetDeviceMatchingMultiple(manager, deviceMatching)
-      deviceMatchingApplied = true
-    }
+    let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
+    self.manager = manager
+    IOHIDManagerSetDeviceMatchingMultiple(manager, deviceMatching)
     let context = Unmanaged.passUnretained(self).toOpaque()
     IOHIDManagerRegisterDeviceMatchingCallback(manager, Self.matchingCallback, context)
     IOHIDManagerRegisterDeviceRemovalCallback(manager, Self.removalCallback, context)
     IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
-    // A rescheduled manager does not repeat matching callbacks for devices it already holds, so
-    // a restarted stream admits them here; admission is idempotent per device and service.
+    // Admit the devices already present in case matching callbacks do not report them.
+    // Admission is idempotent per device and service.
     let present = IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice> ?? []
     for device in present {
       if let failure = handleDeviceAdded(device, failingOnAccessDenial: true) {
@@ -90,11 +91,16 @@ extension HIDDeviceStream {
   func cleanup() {
     guard let continuation else { return }
     self.continuation = nil
-    IOHIDManagerUnscheduleFromRunLoop(
-      manager,
-      CFRunLoopGetMain(),
-      CFRunLoopMode.defaultMode.rawValue
-    )
+    if let manager {
+      IOHIDManagerRegisterDeviceMatchingCallback(manager, nil, nil)
+      IOHIDManagerRegisterDeviceRemovalCallback(manager, nil, nil)
+      IOHIDManagerUnscheduleFromRunLoop(
+        manager,
+        CFRunLoopGetMain(),
+        CFRunLoopMode.defaultMode.rawValue
+      )
+      self.manager = nil
+    }
     let sharedOpens = seizeLock.withLock {
       for devices in seizedByLocation.values {
         for device in devices {
@@ -231,6 +237,31 @@ extension HIDDeviceStream {
     }
   }
 
+  /// Re-runs the seize of tracked non-native devices at a location whose earlier seize was
+  /// refused or failed, and yields `.ownershipChanged` when the location's ownership changes.
+  public func retryInputClaim(locationID: UInt32) {
+    guard !eventAdapter.hasNativeDevice(locationID: locationID) else { return }
+    let candidates: [(deviceID: UInt64, device: IOHIDDevice)] = seizeLock.withLock {
+      guard releasedByLocation[locationID]?.isEmpty ?? true else { return [] }
+      return sharedOpenByDeviceID.compactMap { deviceID, sharedOpen in
+        connectionsByDeviceID[deviceID]?.routingLocationID == locationID
+          ? (deviceID, sharedOpen.device) : nil
+      }
+    }
+    let before = eventAdapter.ownership(locationID: locationID)
+    for candidate in candidates {
+      switch eventAdapter.ownership(deviceID: candidate.deviceID) {
+      case .ownedByAnotherClient, .acquisitionFailed:
+        seizeInput(candidate.device, deviceID: candidate.deviceID, locationID: locationID)
+      default: continue
+      }
+    }
+    let after = eventAdapter.ownership(locationID: locationID)
+    if after != before {
+      continuation?.yield(.ownershipChanged(locationID: locationID, ownership: after))
+    }
+  }
+
   private func setReport(
     locationID: UInt32,
     report: PhysicalHIDOutputReport,
@@ -323,7 +354,7 @@ extension HIDDeviceStream {
     type: IOHIDReportType,
     reads: Bool = false
   ) -> IOHIDDevice? {
-    guard let devices = IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice>,
+    guard let manager, let devices = IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice>,
       let deviceID = seizeLock.withLock({
         connectionsByDeviceID.first { $0.value == connection }?.key
       }), let device = devices.first(where: { trackingID(for: $0) == deviceID }),

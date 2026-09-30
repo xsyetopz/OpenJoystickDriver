@@ -95,6 +95,8 @@ protocol HIDAccessBackend: Sendable {
   ) async -> PhysicalHIDReportResult<Data>
   func releaseInputClaim(locationID: UInt32) async -> PhysicalHIDClaimResult
   func reacquireInputClaim(locationID: UInt32) async -> PhysicalHIDClaimResult
+  /// Re-runs the seize of a location's devices whose earlier attempt was refused or failed.
+  func retryInputClaim(locationID: UInt32) async
   func routeElementValues(connection: HIDDeviceConnection) async
 }
 
@@ -167,6 +169,8 @@ private final class IOHIDAccessBackend: HIDAccessBackend, Sendable {
     stream.reacquireInputClaim(locationID: locationID)
   }
 
+  func retryInputClaim(locationID: UInt32) { stream.retryInputClaim(locationID: locationID) }
+
   func routeElementValues(connection: HIDDeviceConnection) async {
     await stream.routeElementValues(connection: connection)
   }
@@ -181,14 +185,18 @@ public final class HIDManager: Sendable {
   init(backend: any HIDAccessBackend) { self.backend = backend }
 
   /// `roleProfileIdentifiers` are the models whose family declares HID protocol roles.
+  /// `bluetoothLEHub` adds the Switch 2 controllers connected over Bluetooth LE GATT.
   public init(
     additionalProfileIdentifiers: [DeviceIdentifier] = [],
-    roleProfileIdentifiers: [DeviceIdentifier] = []
+    roleProfileIdentifiers: [DeviceIdentifier] = [],
+    bluetoothLEHub: Switch2BluetoothLEHub? = nil
   ) {
-    backend = IOHIDAccessBackend(
+    let ioHID = IOHIDAccessBackend(
       additionalProfileIdentifiers: additionalProfileIdentifiers,
       roleProfileIdentifiers: roleProfileIdentifiers
     )
+    backend =
+      bluetoothLEHub.map { BluetoothLECompositeHIDBackend(primary: ioHID, hub: $0) } ?? ioHID
   }
 
   public func deviceEvents() async -> AsyncStream<HIDDeviceEvent> { await backend.deviceEvents() }
@@ -253,6 +261,10 @@ public final class HIDManager: Sendable {
 
   public func reacquireInputClaim(locationID: UInt32) async -> PhysicalHIDClaimResult {
     await backend.reacquireInputClaim(locationID: locationID)
+  }
+
+  public func retryInputClaim(locationID: UInt32) async {
+    await backend.retryInputClaim(locationID: locationID)
   }
 
   /// Delivers a connection's decoded element values, for a driver that parses them.

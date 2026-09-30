@@ -18,7 +18,10 @@ public final class HIDDeviceStream: @unchecked Sendable {
   // - `seizeLock` guards the device maps, which output paths also read off main
   // - `deviceEvents()` terminates any existing stream before creating a new one
 
-  let manager: IOHIDManager
+  /// The manager of the current stream, created by each `deviceEvents()` and released by
+  /// `cleanup()`. A manager unscheduled across system sleep does not learn of devices that
+  /// enumerated meanwhile, so a restarted stream never reuses one. Main-confined.
+  var manager: IOHIDManager?
   var continuation: AsyncStream<HIDDeviceEvent>.Continuation?
   var streamGeneration = 0
   let seizeLock = NSLock()
@@ -31,10 +34,9 @@ public final class HIDDeviceStream: @unchecked Sendable {
   /// Models whose family declares HID protocol roles; each of their devices disconnects on its
   /// own removal instead of when its location empties.
   let roleModels: Set<PhysicalHIDIdentity>
-  /// Applied by the first `deviceEvents()`, not at init: setting matching makes IOKit create a
-  /// device object, and load its plug-in, for every attached match. Main-confined.
+  /// Applied by each `deviceEvents()`, not at init: setting matching makes IOKit create a device
+  /// object, and load its plug-in, for every attached match.
   let deviceMatching: CFArray
-  var deviceMatchingApplied = false
 
   /// Creates a new stream that matches HID gamepad devices.
   public init(
@@ -49,7 +51,6 @@ public final class HIDDeviceStream: @unchecked Sendable {
         )
       }
     )
-    manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
     var matches: [[String: Any]] = [
       [
         kIOHIDDeviceUsagePageKey: kHIDPage_GenericDesktop,

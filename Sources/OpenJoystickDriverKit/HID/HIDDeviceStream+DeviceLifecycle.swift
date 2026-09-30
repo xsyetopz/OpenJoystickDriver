@@ -88,7 +88,7 @@ extension HIDDeviceStream {
 
   /// Seizes a shared-open device and records whether isolation was acquired; a failed seize keeps
   /// shared input for existing profiles.
-  private func seizeInput(_ device: IOHIDDevice, deviceID: UInt64, locationID: UInt32) {
+  func seizeInput(_ device: IOHIDDevice, deviceID: UInt64, locationID: UInt32) {
     let seizeKr = IOHIDDeviceOpen(device, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
     if seizeKr == kIOReturnSuccess {
       seizeLock.withLock {
