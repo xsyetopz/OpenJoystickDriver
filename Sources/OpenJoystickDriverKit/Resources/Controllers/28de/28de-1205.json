@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+  "vendorID": 10462,
+  "productID": 4613,
+  "protocol": {
+    "family": "valve.steam-controller",
+    "variant": "wired",
+    "quirks": [
+      "neptune"
+    ]
+  }
+}

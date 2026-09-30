@@ -241,6 +241,10 @@ class SDLControllerListTests(unittest.TestCase):
             "SwitchProController": {"family": "nintendo.switch1"},
             "XBox360Controller": {"family": "xbox.xusb", "variant": "wired"},
             "XBoxOneController": {"family": "xbox.gip"},
+            "SwitchInputOnlyController": {
+                "family": "nintendo.switch1",
+                "quirks": ["input-only"],
+            },
         }
         for controller_type, protocol in expected.items():
             with self.subTest(controller_type):
@@ -248,29 +252,84 @@ class SDLControllerListTests(unittest.TestCase):
                 self.assertEqual(records[(0x054C, 0x1234)]["protocol"], protocol)
                 self.assertEqual(counts, {"added": 1})
 
-    def test_unmapped_and_excluded_types_are_skipped_and_counted(self) -> None:
+    def test_steam_rows_store_the_variant_their_sdl_row_names(self) -> None:
+        rows = [
+            (0x28DE, 0x1101, "SteamController"),
+            (0x28DE, 0x1105, "SteamController"),
+            (0x28DE, 0x1106, "SteamController"),
+            (0x28DE, 0x1201, "SteamControllerV2"),
+            (0x28DE, 0x1202, "SteamControllerV2"),
+            (0x28DE, 0x1205, "SteamControllerNeptune"),
+            (0x28DE, 0x1302, "SteamControllerTriton"),
+            (0x28DE, 0x1303, "SteamControllerTriton"),
+            (0x28DE, 0x1304, "SteamControllerTriton"),
+            (0x28DE, 0x1305, "SteamControllerTriton"),
+        ]
+        records, counts = self.build(rows)
+        protocols = {key[1]: record["protocol"] for key, record in records.items()}
+        steam = "valve.steam-controller"
+        wired = {"family": steam, "variant": "wired"}
+        ble = {"family": steam, "variant": "bluetooth-le"}
+        self.assertEqual(
+            protocols,
+            {
+                0x1101: wired,
+                0x1105: ble,
+                0x1106: ble,
+                0x1201: wired,
+                0x1202: ble,
+                0x1205: {**wired, "quirks": ["neptune"]},
+                0x1302: {**wired, "quirks": ["triton"]},
+                0x1303: {**ble, "quirks": ["triton"]},
+                0x1304: {"family": steam, "variant": "dongle", "quirks": ["triton"]},
+                0x1305: {"family": steam, "variant": "dongle", "quirks": ["triton"]},
+            },
+        )
+        self.assertEqual(counts, {"added": 10})
+
+    def test_switch_2_rows_carry_the_switch_2_quirk_before_the_side(self) -> None:
         rows = [
             (0x057E, 0x2006, "SwitchJoyConLeft"),
-            (0x0F0D, 0x00C1, "SwitchInputOnlyController"),
+            (0x057E, 0x2066, "SwitchJoyConRight"),
+            (0x057E, 0x2067, "SwitchJoyConLeft"),
+            (0x057E, 0x2069, "SwitchProController"),
+        ]
+        records, counts = self.build(rows)
+        protocols = {key[1]: record["protocol"] for key, record in records.items()}
+        switch = "nintendo.switch1"
+        self.assertEqual(
+            protocols,
+            {
+                0x2006: {"family": switch, "quirks": ["joy-con-left"]},
+                0x2066: {"family": switch, "quirks": ["switch-2", "joy-con-right"]},
+                0x2067: {"family": switch, "quirks": ["switch-2", "joy-con-left"]},
+                0x2069: {"family": switch, "quirks": ["switch-2"]},
+            },
+        )
+        self.assertEqual(counts, {"added": 4})
+
+    def test_a_steam_row_without_a_known_variant_fails_generation(self) -> None:
+        with self.assertRaises(catalog.CatalogError):
+            self.build([(0x28DE, 0x11FE, "SteamController")])
+
+    def test_unmapped_and_excluded_types_are_skipped_and_counted(self) -> None:
+        rows = [
+            (0x057E, 0x2008, "SwitchJoyConPair"),
             (0x0079, 0x0006, "UnknownNonSteamController"),
-            (0x0F0D, 0x0092, "SwitchInputOnlyController"),
             (0x0738, 0x3250, "PS3Controller"),
             (0x0955, 0x7210, "XBox360Controller"),
             (0x0000, 0x6686, "XBoxOneController"),
-            (0x28DE, 0x1106, "SteamController"),
         ]
         records, counts = self.build(rows)
         self.assertEqual(records, {})
         self.assertEqual(
             counts,
             {
-                "unmapped:SwitchJoyConLeft": 1,
-                "unmapped:SwitchInputOnlyController": 2,
+                "unmapped:SwitchJoyConPair": 1,
                 "unmapped:UnknownNonSteamController": 1,
                 "excluded:third-party-ps3": 1,
                 "excluded:not-xbox-protocol": 1,
                 "excluded:not-usb-identity": 1,
-                "excluded:variant-undeterminable": 1,
             },
         )
 

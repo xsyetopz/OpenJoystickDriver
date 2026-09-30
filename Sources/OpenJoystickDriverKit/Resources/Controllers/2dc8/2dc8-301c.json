@@ -1,0 +1,8 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+  "vendorID": 11720,
+  "productID": 12316,
+  "protocol": {
+    "family": "hid.descriptor"
+  }
+}

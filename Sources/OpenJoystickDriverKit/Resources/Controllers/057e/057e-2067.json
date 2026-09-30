@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+  "vendorID": 1406,
+  "productID": 8295,
+  "protocol": {
+    "family": "nintendo.switch1",
+    "quirks": [
+      "switch-2",
+      "joy-con-left"
+    ]
+  }
+}

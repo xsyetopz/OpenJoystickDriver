@@ -236,17 +236,57 @@ MICROSOFT_XBOX_360_PRODUCT_IDS = frozenset(
 )
 
 # SDL controller type -> (family, stored variant). Types absent here have no
-# implemented family and are skipped. SteamController rows carry no variant; SDL
-# does not say whether a row is the wired pad, the dongle or a Bluetooth link.
+# implemented family and are skipped. Steam rows take their variant from
+# STEAM_VARIANTS, because one SDL type covers wired pads, dongles and Bluetooth LE links.
 SDL_FAMILIES: dict[str, tuple[str, str | None]] = {
     "PS3Controller": ("sony.sixaxis", None),
     "PS4Controller": ("sony.dualshock4", None),
     "PS5Controller": ("sony.dualsense", None),
     "SwitchProController": ("nintendo.switch1", None),
+    "SwitchJoyConLeft": ("nintendo.switch1", None),
+    "SwitchJoyConRight": ("nintendo.switch1", None),
     "XBox360Controller": ("xbox.xusb", "wired"),
     "XBoxOneController": ("xbox.gip", None),
     "SteamController": ("valve.steam-controller", None),
+    "SteamControllerV2": ("valve.steam-controller", None),
+    "SteamControllerNeptune": ("valve.steam-controller", None),
+    "SwitchInputOnlyController": ("nintendo.switch1", None),
+    "SteamControllerTriton": ("valve.steam-controller", None),
 }
+
+# Stored variant of each Valve Steam identity, from the per-row comments in SDL
+# `controller_list.h` ("wired", "Bluetooth", "BLE", "Dongle") and SDL `IsDongle` /
+# `IsProteusDongle`. A Steam row missing here fails generation instead of guessing.
+STEAM_VARIANTS: dict[tuple[int, int], str] = {
+    (0x28DE, 0x1101): "wired",  # Legacy Steam Controller (CHELL)
+    (0x28DE, 0x1102): "wired",  # wired Steam Controller (D0G)
+    (0x28DE, 0x1105): "bluetooth-le",  # Bluetooth Steam Controller (D0G)
+    (0x28DE, 0x1106): "bluetooth-le",  # Bluetooth Steam Controller (D0G)
+    (0x28DE, 0x1142): "dongle",  # wireless Steam Controller
+    (0x28DE, 0x1201): "wired",  # wired Steam Controller (HEADCRAB)
+    (0x28DE, 0x1202): "bluetooth-le",  # Bluetooth Steam Controller (HEADCRAB)
+    (0x28DE, 0x1205): "wired",  # Steam Deck built-in controller
+    (0x28DE, 0x1302): "wired",  # Steam Triton Controller
+    (0x28DE, 0x1303): "bluetooth-le",  # Steam Triton Controller (BLE)
+    (0x28DE, 0x1304): "dongle",  # Steam Proteus Dongle
+    (0x28DE, 0x1305): "dongle",  # Steam Nereid Dongle
+}
+
+# SDL controller type -> quirks its rows carry. SwitchInputOnlyController pads send one fixed HID
+# report and take no Switch subcommands; SteamControllerTriton selects the Triton driver and
+# SteamControllerNeptune the Steam Deck driver. The Joy-Con types select the Joy-Con side.
+SDL_QUIRKS: dict[str, list[str]] = {
+    "SwitchJoyConLeft": ["joy-con-left"],
+    "SwitchJoyConRight": ["joy-con-right"],
+    "SwitchInputOnlyController": ["input-only"],
+    "SteamControllerTriton": ["triton"],
+    "SteamControllerNeptune": ["neptune"],
+}
+
+# Nintendo Switch 2 identities, from the SDL `USB_PRODUCT_NINTENDO_SWITCH2_*` IDs that
+# `SDL_hidapi_switch2.c` claims. SDL lists them under the Switch 1 types, so their rows also
+# carry the Switch 2 quirk before any Joy-Con side quirk.
+SWITCH_2_IDENTITIES = frozenset({(0x057E, 0x2066), (0x057E, 0x2067), (0x057E, 0x2069)})
 
 # Identities whose SDL type does not describe the wire protocol of an implemented
 # variant: (identity) -> (expected SDL type, skip reason). Each entry must still be
@@ -267,7 +307,6 @@ SDL_EXCLUSIONS: dict[tuple[int, int], tuple[str, str]] = {
     (0x054C, 0x05C5): ("PS4Controller", "grip-add-on"),
     (0x054C, 0x0BA0): ("PS4Controller", "ds4-dongle"),
     (0x054C, 0x0E5F): ("PS5Controller", "layout-unverified"),
-    (0x057E, 0x2069): ("SwitchProController", "switch-2"),
     (0x0E6F, 0x0186): ("SwitchProController", "no-usb-protocol"),
     (0x0F0D, 0x00F6): ("SwitchProController", "no-usb-protocol"),
     (0x1038, 0xB360): ("XBox360Controller", "semantics-unclear"),
@@ -388,11 +427,17 @@ def build_sdl_records(
             count(f"excluded:{reason}")
             continue
         if family == "valve.steam-controller":
-            count("excluded:variant-undeterminable")
-            continue
+            if key not in STEAM_VARIANTS:
+                raise CatalogError(f"Steam row {key} has no STEAM_VARIANTS entry")
+            variant = STEAM_VARIANTS[key]
         protocol: dict[str, Any] = {"family": family}
         if variant is not None:
             protocol["variant"] = variant
+        quirks = (["switch-2"] if key in SWITCH_2_IDENTITIES else []) + SDL_QUIRKS.get(
+            controller_type, []
+        )
+        if quirks:
+            protocol["quirks"] = quirks
         vendor_id, product_id = key
         records[key] = {
             "$schema": RECORD_SCHEMA_ID,
