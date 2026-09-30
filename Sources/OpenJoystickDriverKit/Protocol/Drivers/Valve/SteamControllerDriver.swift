@@ -43,7 +43,8 @@ let steamControllerLoadDefaultSettingsPayload: [UInt8] = [steamControllerLoadDef
 /// Message type `0x01` carries a 60-byte controller state payload with button
 /// bytes at offsets 8-10, analog triggers at 11-12, left stick/left pad axes at
 /// 16-19, and right pad axes at 20-23. Source-backed lizard-mode feature
-/// reports are sent when OJD starts and stops consuming Steam Controller input.
+/// reports are sent when OJD starts and stops consuming Steam Controller input. Over Bluetooth LE
+/// the same messages travel in report-`0x03` segments (``SteamBluetooth``).
 public final class SteamControllerDriver: PhysicalProtocolDriver {
 
   var motionSamples = SteamMotionSamples()
@@ -52,12 +53,17 @@ public final class SteamControllerDriver: PhysicalProtocolDriver {
   /// The left stick's last raw position, which a report interleaving pad and stick keeps.
   var leftStickRaw: (x: Int16, y: Int16) = (0, 0)
   let isWirelessReceiver: Bool
+  /// The legacy controller paired over Bluetooth LE: segmented report-`0x03` framing.
+  let isBluetooth: Bool
+  var bluetoothAssembler = SteamBluetoothAssembler()
+  var bluetoothState = SteamBluetoothState()
   var isLogicalControllerConnected: Bool
   var pendingConnectionStateChange: ControllerInputConnectionState?
 
   /// Creates a new Steam Controller parser.
-  public init(isWirelessReceiver: Bool = false) {
+  public init(isWirelessReceiver: Bool = false, isBluetooth: Bool = false) {
     self.isWirelessReceiver = isWirelessReceiver
+    self.isBluetooth = isBluetooth
     isLogicalControllerConnected = !isWirelessReceiver
   }
 
@@ -66,5 +72,7 @@ public final class SteamControllerDriver: PhysicalProtocolDriver {
     state = .neutral
     leftStickRaw = (0, 0)
     motionSamples.reset()
+    bluetoothAssembler.reset()
+    bluetoothState = SteamBluetoothState()
   }
 }

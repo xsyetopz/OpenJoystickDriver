@@ -47,18 +47,22 @@ extension SteamControllerDriver {
     return state
   }
 
+  /// Over Bluetooth LE the settings also select wireless packet version 2, as SDL
+  /// `ResetSteamController` does.
   public func activationWrites() -> [PhysicalOutputWrite] {
-    [
-      .hidFeature(steamFeatureReport(steamControllerClearDigitalMappingsPayload)),
-      .hidFeature(steamFeatureReport(steamControllerLizardModePayload)),
-    ]
+    var settings = steamControllerLizardModePayload
+    if isBluetooth {
+      settings += [SteamBluetooth.wirelessPacketVersionSetting, 2, 0]
+      settings[1] += 3
+    }
+    return
+      (steamFeatureReports(steamControllerClearDigitalMappingsPayload)
+      + steamFeatureReports(settings)).map { .hidFeature($0) }
   }
 
   public func deactivationWrites() -> [PhysicalOutputWrite] {
-    [
-      .hidFeature(steamFeatureReport(steamControllerDefaultDigitalMappingsPayload)),
-      .hidFeature(steamFeatureReport(steamControllerLoadDefaultSettingsPayload)),
-    ]
+    (steamFeatureReports(steamControllerDefaultDigitalMappingsPayload)
+      + steamFeatureReports(steamControllerLoadDefaultSettingsPayload)).map { .hidFeature($0) }
   }
 
   /// A dongle controller connecting or disconnecting activates or deactivates it.
@@ -80,11 +84,11 @@ extension SteamControllerDriver {
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
     switch command {
     case .setLightBrightness(let brightness):
-      let report = steamFeatureReport([
+      let reports = steamFeatureReports([
         steamControllerSetSettingsValuesCommand, 3, steamControllerUserLEDBrightnessSetting,
         brightness.byte, 0,
       ])
-      return PhysicalOutputPlan(writes: [.hidFeature(report)])
+      return PhysicalOutputPlan(writes: reports.map { .hidFeature($0) })
     case .setRumble(let intensities, let duration):
       let durationMs =
         switch duration {
@@ -115,36 +119,45 @@ extension SteamControllerDriver {
     let pulseCount = min(65_535, (totalMicroseconds + pulseDuration - 1) / pulseDuration)
     var reports: [PhysicalHIDOutputReport] = []
     if left > 0 {
-      reports.append(
-        hapticPulseReport(
+      reports +=
+        (hapticPulseReports(
           pad: 1,
           intensity: left,
           durationMicroseconds: pulseDuration,
           count: pulseCount
-        )
-      )
+        ))
     }
     if right > 0 {
-      reports.append(
-        hapticPulseReport(
+      reports +=
+        (hapticPulseReports(
           pad: 0,
           intensity: right,
           durationMicroseconds: pulseDuration,
           count: pulseCount
-        )
-      )
+        ))
     }
     return reports
   }
 
   public func presenceRequestWrite() -> PhysicalOutputWrite? {
     guard isWirelessReceiver else { return nil }
-    return .hidFeature(steamFeatureReport([steamControllerGetWirelessStateCommand]))
+    return steamFeatureReports([steamControllerGetWirelessStateCommand]).first.map {
+      .hidFeature($0)
+    }
   }
 
   /// Decodes one Steam Controller state report; wireless status messages carry no input.
   public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
-    let bytes = Array(data)
+    var bytes = Array(data)
+    if isBluetooth {
+      guard let packet = bluetoothAssembler.append(bytes),
+        let wired = bluetoothState.wiredReport(from: packet)
+      else { return nil }
+      bytes = wired.report
+      if let stick = wired.leftStick {
+        leftStickRaw = (clampedInt16(stick.x), -clampedInt16(stick.y))
+      }
+    }
     guard bytes.count == steamControllerReportLength, bytes[0] == steamControllerReportPrefix0,
       bytes[1] == steamControllerReportPrefix1
     else { return nil }
@@ -238,15 +251,15 @@ extension SteamControllerDriver {
     (ReportOffset.buttons2, 0x40, .leftStickClick),
   ]
 
-  private func hapticPulseReport(
+  private func hapticPulseReports(
     pad: UInt8,
     intensity: UInt8,
     durationMicroseconds: Int,
     count: Int
-  ) -> PhysicalHIDOutputReport {
+  ) -> [PhysicalHIDOutputReport] {
     let gainDecibels = -24 + Int((Double(intensity) * 30.0 / 255.0).rounded())
     let gain = UInt8(bitPattern: Int8(clamping: gainDecibels))
-    return steamFeatureReport([
+    return steamFeatureReports([
       steamControllerHapticPulseCommand, steamControllerHapticPulsePayloadLength, pad,
       UInt8(truncatingIfNeeded: durationMicroseconds),
       UInt8(truncatingIfNeeded: durationMicroseconds >> 8), 0, 0, UInt8(truncatingIfNeeded: count),
@@ -254,12 +267,14 @@ extension SteamControllerDriver {
     ])
   }
 
-  private func steamFeatureReport(_ command: [UInt8]) -> PhysicalHIDOutputReport {
+  /// One unnumbered 64-byte report over USB; report-`0x03` segments over Bluetooth LE.
+  private func steamFeatureReports(_ command: [UInt8]) -> [PhysicalHIDOutputReport] {
+    if isBluetooth { return SteamBluetooth.featureReports(command) }
     var report = [UInt8](repeating: 0, count: steamControllerReportLength)
     for (index, byte) in command.prefix(steamControllerReportLength).enumerated() {
       report[index] = byte
     }
-    return PhysicalHIDOutputReport(reportID: 0, bytes: report)
+    return [PhysicalHIDOutputReport(reportID: 0, bytes: report)]
   }
 
   private func resetPreviousReportState() {
@@ -267,13 +282,15 @@ extension SteamControllerDriver {
     touchSamples = SteamTouchSamples()
     state = .neutral
     leftStickRaw = (0, 0)
+    bluetoothAssembler.reset()
+    bluetoothState = SteamBluetoothState()
   }
 
   private func readInt16LE(_ bytes: [UInt8], offset: Int) -> Int16 {
-    let raw = UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)
-    let value = Int16(bitPattern: raw)
-    return value == Int16.min ? -Int16.max : value
+    clampedInt16(Int16(bitPattern: UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)))
   }
+
+  private func clampedInt16(_ value: Int16) -> Int16 { value == Int16.min ? -Int16.max : value }
 
   private func clampedNegatedInt16LE(_ bytes: [UInt8], offset: Int) -> Int16 {
     -readInt16LE(bytes, offset: offset)
