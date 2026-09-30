@@ -30,6 +30,8 @@
          System Settings -> Privacy & Security when user approves the extension. -->
     <key>NSInputMonitoringUsageDescription</key>
     <string>OpenJoystickDriver needs Input Monitoring to read physical controller reports.</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>OpenJoystickDriver uses Bluetooth to connect Nintendo Switch 2 controllers.</string>
     <key>NSSystemExtensionUsageDescription</key>
     <string>OpenJoystickDriver uses a DriverKit extension to communicate with supported Microsoft USB controllers.</string>
     <!-- Apple HID plugin preflight: skip IOServiceOpen on AppleGCSyntheticDevice. -->

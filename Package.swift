@@ -53,8 +53,8 @@ let package = Package(
       dependencies: ["OpenJoystickDriverKit", "OpenJoystickDriverUSB"],
       path: "Sources/OpenJoystickDriverService",
       linkerSettings: [
-        .linkedFramework("GameController"), .linkedFramework("IOBluetooth"),
-        .linkedFramework("SystemExtensions"),
+        .linkedFramework("CoreBluetooth"), .linkedFramework("GameController"),
+        .linkedFramework("IOBluetooth"), .linkedFramework("SystemExtensions"),
       ]
     ),
 

@@ -9,6 +9,7 @@ package final class ApplicationServiceRuntime {
   private let dispatcher: VirtualOutputRouter
   private let remappingRouter: RemappingOutputRouter
   private let manager: DeviceManager
+  private let bluetoothLECentral: Switch2BluetoothLECentral
   private let applicationServiceServer: ApplicationServiceServer
   private var systemPowerObserver: SystemPowerNotificationObserver?
   private var systemPowerEventSession: DeviceManagerSystemPowerEventSession?
@@ -34,11 +35,14 @@ package final class ApplicationServiceRuntime {
       foregroundApplication: WorkspaceRemappingForegroundApplication(),
       postEventAccess: postEventAccess
     )
+    let bluetoothLEHub = Switch2BluetoothLEHub()
     let manager = DeviceManager(
       dispatcher: remappingRouter,
       usbTransportProvider: OpenJoystickDriverUSBTransportProvider(),
-      wirelessControllerDisconnector: BluetoothControllerDisconnector()
+      wirelessControllerDisconnector: BluetoothControllerDisconnector(),
+      bluetoothLEHub: bluetoothLEHub
     )
+    bluetoothLECentral = Switch2BluetoothLECentral(hub: bluetoothLEHub)
     physicalOutputBridge.attach(manager)
     let applicationServiceServer = ApplicationServiceServer(
       deviceManager: manager,
@@ -79,8 +83,10 @@ package final class ApplicationServiceRuntime {
     systemPowerObserver.start()
     Task { await permissionManager.startPolling() }
     remappingRouter.startTicker()
+    let bluetoothLECentral = bluetoothLECentral
     Task {
       await manager.start()
+      bluetoothLECentral.start()
       _ = await applicationServiceServer.activateVirtualOutputBackendForCurrentDevices()
     }
   }
@@ -103,6 +109,7 @@ package final class ApplicationServiceRuntime {
     let systemPowerEventSession = systemPowerEventSession
     self.systemPowerEventSession = nil
     systemPowerEventSession?.invalidate()
+    bluetoothLECentral.stop()
     if let systemPowerObserver {
       async let observerStop: Void = systemPowerObserver.stop()
       await applicationServiceServer.stop()
