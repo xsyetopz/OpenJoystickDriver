@@ -186,7 +186,7 @@ struct ProtocolDriverRegistryTests {
       built.insert(binding.id.rawValue)
     }
     for identifier in registry.hidIdentifiers {
-      for host in [PhysicalTransport.usb, .bluetoothClassic] {
+      for host in [PhysicalTransport.usb, .bluetoothClassic, .bluetoothLE] {
         let device = hidDevice(identifier, gamepadHIDInterface(host: host))
         guard case .bound(let binding) = registry.classify(device, backend: .ioHID) else {
           continue
@@ -311,9 +311,12 @@ struct ProtocolDriverRegistryTests {
     case .sonySixaxis: driver is SixaxisDriver
     case .sonyDualShock4: driver is DualShock4Driver
     case .sonyDualSense: driver is DualSenseDriver
-    case .nintendoSwitch1: driver is Switch1Driver
-    case .valveSteamController: driver is SteamControllerDriver
+    case .nintendoSwitch1:
+      driver is Switch1Driver || driver is SwitchInputOnlyDriver || driver is Switch2Driver
+    case .valveSteamController:
+      driver is SteamControllerDriver || driver is SteamTritonDriver || driver is SteamDeckDriver
     case .vendorFlydigi: driver is FlydigiDriver
+    case .vendorShanwan: driver is ShanwanDriver
     case .vendorGameSir: driver is GameSirDriver
     }
   }

@@ -94,6 +94,12 @@ struct ControllerRecordDocumentTests {
       ["family": "valve.steam-controller", "variant": "wired", "quirks": ["lizardMode"]],
       ["family": "nintendo.switch1", "quirks": ["joyConLeft"]],
       ["family": "nintendo.switch1", "quirks": ["joy-con-left", "joy-con-right"]],
+      ["family": "nintendo.switch1", "quirks": ["input-only", "joy-con-left"]],
+      ["family": "nintendo.switch1", "quirks": ["gamecube"]],
+      ["family": "nintendo.switch1", "quirks": ["switch-2", "gamecube", "joy-con-left"]],
+      ["family": "vendor.shanwan", "quirks": ["input-only"]],
+      ["family": "valve.steam-controller", "variant": "wired", "quirks": ["triton", "neptune"]],
+      ["family": "valve.steam-controller", "variant": "bluetooth-le", "quirks": ["neptune"]],
       ["family": "sony.dualshock4", "quirks": ["gyro"]],
       ["family": "xbox.gip", "startupPackets": ["xbox.gip/power-on"]],
       ["family": "xbox.gip", "initialization": ["powerOn"]],
@@ -224,7 +230,7 @@ struct ControllerRecordDocumentTests {
         #expect(variants == family.variants.map(\.rawValue), "\(name)")
         familiesWithVariants.append(family)
       }
-      if let quirks = Self.enumValues((thenProperties["quirks"] as? [String: Any])?["items"]) {
+      if let quirks = Self.quirkValues(thenProperties["quirks"]) {
         #expect(
           quirks == ControllerQuirk.allCases.filter { $0.protocolID == family }.map(\.rawValue),
           "\(name)"
@@ -246,6 +252,23 @@ struct ControllerRecordDocumentTests {
 
   private static func enumValues(_ node: Any?) -> [String]? {
     (node as? [String: Any])?["enum"] as? [String]
+  }
+
+  /// The quirk names a family's `quirks` schema admits, in declaration order: the item enum,
+  /// or the union over `anyOf` branches of their item enums and `prefixItems` values.
+  private static func quirkValues(_ node: Any?) -> [String]? {
+    guard let schema = node as? [String: Any] else { return nil }
+    let branches = (schema["anyOf"] as? [[String: Any]]) ?? [schema]
+    var names: [String] = []
+    for branch in branches {
+      let slots = [branch["items"]] + ((branch["prefixItems"] as? [Any]) ?? [])
+      for slot in slots {
+        let slot = slot as? [String: Any]
+        let values = enumValues(slot) ?? (slot?["const"] as? String).map { [$0] } ?? []
+        names += values.filter { !names.contains($0) }
+      }
+    }
+    return names.isEmpty ? nil : names
   }
 
   private static func familyConstant(_ branch: [String: Any]) -> String? {

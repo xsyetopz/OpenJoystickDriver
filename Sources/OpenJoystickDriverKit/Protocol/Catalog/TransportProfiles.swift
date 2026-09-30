@@ -103,18 +103,33 @@ public enum ControllerQuirk: String, CaseIterable, Sendable {
   case joyConLeft = "joy-con-left"
   /// Nintendo right Joy-Con axis and button permutation.
   case joyConRight = "joy-con-right"
+  /// Wired Switch pad with a fixed HID input report and no subcommand channel (SDL
+  /// `SwitchInputOnlyController`).
+  case inputOnly = "input-only"
+  /// Nintendo Switch 2 controller (SDL `SDL_hidapi_switch2.c`): input report `0x05` after an init
+  /// sequence on the vendor bulk interface. A Joy-Con side quirk selects the Joy-Con 2 layout.
+  case switch2 = "switch-2"
+  /// Switch 2 NSO GameCube controller layout, with analog triggers and flash trigger calibration.
+  case gameCube = "gamecube"
   /// GameSir enhanced HID reports the inner grips in extras-byte bits 0x40 and 0x80.
   case innerGrips = "inner-grips"
   /// GameSir enhanced HID lighting memory is organized in profile slots: the driver reads the
   /// active slot at startup, tracks it, and writes color and brightness into that slot.
   case lightingSlots = "lighting-slots"
+  /// 2026 Steam Controller (SDL `SteamControllerTriton`): its own report IDs, settings feature
+  /// report, and repeated rumble report.
+  case triton = "triton"
+  /// Steam Deck built-in controller (SDL `SteamControllerNeptune`): its own state report,
+  /// settings, watchdog, and rumble report.
+  case neptune = "neptune"
 
   /// The protocol driver that declares this quirk.
   public var protocolID: PhysicalProtocolID {
     switch self {
     case .shareOffset: .xboxGIP
-    case .joyConLeft, .joyConRight: .nintendoSwitch1
+    case .joyConLeft, .joyConRight, .inputOnly, .switch2, .gameCube: .nintendoSwitch1
     case .innerGrips, .lightingSlots: .vendorGameSir
+    case .triton, .neptune: .valveSteamController
     }
   }
 }

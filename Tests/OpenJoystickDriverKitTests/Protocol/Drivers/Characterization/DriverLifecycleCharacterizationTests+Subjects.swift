@@ -119,6 +119,12 @@ extension DriverLifecycleCharacterizationTests {
     protocolID: .vendorFlydigi,
     variant: nil
   )
+  static let shanwan = Subject(
+    identifier: identifier(0x2563, 0x0575),
+    host: .usb,
+    protocolID: .vendorShanwan,
+    variant: nil
+  )
   static let gameSirUSB = Subject(
     identifier: identifier(0x3537, 0x1003),
     host: .usb,
@@ -152,10 +158,33 @@ extension DriverLifecycleCharacterizationTests {
     variant: nil
   )
 
+  /// Catalog rows whose driver a family and variant alone does not select. Only the output
+  /// capability sweep uses them, so the transcripts over ``subjects`` stay unchanged.
+  static let tritonDongle = Subject(
+    identifier: identifier(0x28DE, 0x1304),
+    host: .usb,
+    protocolID: .valveSteamController,
+    variant: .dongle,
+    quirks: [.triton],
+    readyingInput: [Data([0x79, 0x02])]
+  )
+  static let steamBluetoothLE = Subject(
+    identifier: identifier(0x28DE, 0x1106),
+    host: .bluetoothLE,
+    protocolID: .valveSteamController,
+    variant: .bluetoothLE
+  )
+  static let switch2BluetoothLE = Subject(
+    identifier: identifier(0x057E, 0x2069),
+    host: .bluetoothLE,
+    protocolID: .nintendoSwitch1,
+    variant: .bluetoothLE
+  )
+
   static let subjects = [
     gipUSB, gipKeepAliveDisabled, xidGamepad, xusbWired, xusbReceiver, sixaxisUSB, sixaxisBluetooth,
     dualShock4USB, dualShock4Bluetooth, dualSenseUSB, dualSenseBluetooth, switchUSB,
-    switchBluetooth, steamWired, steamDongle, flydigi, gameSirUSB, gameSirEnhancedHID,
+    switchBluetooth, steamWired, steamDongle, flydigi, shanwan, gameSirUSB, gameSirEnhancedHID,
     gameSirEnhancedHID8K, hidDescriptor,
   ]
 

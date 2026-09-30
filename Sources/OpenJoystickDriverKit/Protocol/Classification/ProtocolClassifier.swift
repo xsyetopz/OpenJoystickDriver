@@ -15,17 +15,20 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
   case nintendoSwitch1 = "nintendo.switch1"
   case valveSteamController = "valve.steam-controller"
   case vendorFlydigi = "vendor.flydigi"
+  case vendorShanwan = "vendor.shanwan"
   case vendorGameSir = "vendor.gamesir"
 
   /// Implemented variants. An empty list means the family has one contract.
   public var variants: [PhysicalProtocolVariantID] {
     switch self {
-    case .hidDescriptor, .vendorFlydigi: []
+    case .hidDescriptor, .vendorFlydigi, .vendorShanwan: []
     case .xboxXID: [.gamepad]
     case .xboxXUSB: [.wired, .receiver]
     case .xboxGIP: [.usb]
-    case .sonySixaxis, .sonyDualShock4, .sonyDualSense, .nintendoSwitch1: [.usb, .bluetoothClassic]
-    case .valveSteamController: [.wired, .dongle]
+    case .sonySixaxis, .sonyDualShock4, .sonyDualSense: [.usb, .bluetoothClassic]
+    // Bluetooth LE is the Switch 2 GATT link; see `transportVariants(of:)`.
+    case .nintendoSwitch1: [.usb, .bluetoothClassic, .bluetoothLE]
+    case .valveSteamController: [.wired, .dongle, .bluetoothLE]
     case .vendorGameSir: [.usb, .enhancedHID]
     }
   }
@@ -36,7 +39,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
     case .xboxXID, .xboxXUSB, .xboxGIP: true
     case .vendorGameSir: storedVariant == .usb
     case .hidDescriptor, .sonySixaxis, .sonyDualShock4, .sonyDualSense, .nintendoSwitch1,
-      .valveSteamController, .vendorFlydigi:
+      .valveSteamController, .vendorFlydigi, .vendorShanwan:
       false
     }
   }
@@ -47,7 +50,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
     switch self {
     case .xboxXID, .xboxXUSB, .valveSteamController, .vendorGameSir: true
     case .hidDescriptor, .xboxGIP, .sonySixaxis, .sonyDualShock4, .sonyDualSense, .nintendoSwitch1,
-      .vendorFlydigi:
+      .vendorFlydigi, .vendorShanwan:
       false
     }
   }
@@ -59,6 +62,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
 public enum PhysicalProtocolVariantID: String, Sendable {
   case usb
   case bluetoothClassic = "bluetooth-classic"
+  case bluetoothLE = "bluetooth-le"
   case gamepad
   case wired
   case receiver
@@ -181,7 +185,7 @@ enum ProtocolClassifier {
     }
     guard record.usesRawUSB == isRawUSB else { return reject(.unsupportedTransportVariant) }
     var predicates: [ProtocolPredicate] = [.catalogIdentity, .catalogAccessPath]
-    let variants = record.physicalProtocolID.variants
+    let variants = transportVariants(of: record)
     let variant: PhysicalProtocolVariantID?
     if let stored = record.physicalProtocolVariant {
       variant = stored
@@ -227,6 +231,18 @@ enum ProtocolClassifier {
     interfaces.first { HIDDescriptorContract.violation(in: $0.hidLayout) == nil }
   }
 
+  /// The family's variants this model has a link for. A Switch 2 controller has USB and its
+  /// Bluetooth LE GATT link; every other Switch model has USB and Bluetooth Classic.
+  private static func transportVariants(
+    of record: DeviceRuntimeProfile
+  ) -> [PhysicalProtocolVariantID] {
+    let variants = record.physicalProtocolID.variants
+    guard record.physicalProtocolID == .nintendoSwitch1 else { return variants }
+    let absent: PhysicalProtocolVariantID =
+      record.quirks.contains(.switch2) ? .bluetoothClassic : .bluetoothLE
+    return variants.filter { $0 != absent }
+  }
+
   /// The single host transport shared by every interface; unknown when any is absent.
   private static func hostTransportVariant(
     _ interfaces: [PhysicalInterfaceSignature]
@@ -237,7 +253,8 @@ enum ProtocolClassifier {
     switch transport {
     case .usb: return .usb
     case .bluetoothClassic: return .bluetoothClassic
-    case .bluetoothLE, .proprietaryRadioReceiver: return nil
+    case .bluetoothLE: return .bluetoothLE
+    case .proprietaryRadioReceiver: return nil
     }
   }
 

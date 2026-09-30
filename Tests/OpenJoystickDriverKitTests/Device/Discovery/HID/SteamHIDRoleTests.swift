@@ -151,10 +151,13 @@ struct SteamHIDRoleTests {
   func onlyTheSteamFamilyDeclaresRoles() throws {
     let registry = ProtocolDriverRegistry()
     #expect(
-      Set(registry.hidRoleIdentifiers) == [
-        DeviceIdentifier(vendorID: 0x28DE, productID: 0x1102),
-        DeviceIdentifier(vendorID: 0x28DE, productID: 0x1142),
-      ]
+      Set(registry.hidRoleIdentifiers)
+        == Set(
+          [
+            0x1101, 0x1102, 0x1105, 0x1106, 0x1142, 0x1201, 0x1202, 0x1205, 0x1302, 0x1303, 0x1304,
+            0x1305,
+          ].map { DeviceIdentifier(vendorID: 0x28DE, productID: $0) }
+        )
     )
     let slot = Self.dongle(interface: 1).physicalDevice
     #expect(registry.hidConnectionRole(of: slot) == .interface(1))
@@ -178,6 +181,34 @@ struct SteamHIDRoleTests {
       interfaces: [steamHIDInterface(number: 1)]
     )
     #expect(registry.hidConnectionRole(of: gameSir) == .location)
+  }
+
+  /// SDL `HIDAPI_DriverSteamTriton_IsSupportedDevice`: dongle controllers live on interfaces
+  /// 2–5; the Bluetooth LE controller has no USB interface number.
+  @Test
+  func tritonDongleSlotsAreInterfacesTwoToFiveAndBluetoothIsItsLocation() {
+    let registry = ProtocolDriverRegistry()
+    for number: UInt8 in 0...6 {
+      let dongle = PhysicalDevice(
+        vendorID: 0x28DE,
+        productID: 0x1304,
+        interfaces: [steamHIDInterface(number: number)]
+      )
+      let expected: HIDConnectionRole = (2...5).contains(number) ? .interface(number) : .notARole
+      #expect(registry.hidConnectionRole(of: dongle) == expected)
+    }
+    let bluetooth = PhysicalDevice(
+      vendorID: 0x28DE,
+      productID: 0x1303,
+      interfaces: [
+        PhysicalInterfaceSignature(
+          hostTransport: .bluetoothLE,
+          accessBackend: .ioHID,
+          hidLayout: steamHIDInterface(number: 0).hidLayout
+        )
+      ]
+    )
+    #expect(registry.hidConnectionRole(of: bluetooth) == .location)
   }
 
   static func slot(_ number: UInt8) -> DeviceIdentifier {

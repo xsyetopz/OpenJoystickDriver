@@ -147,6 +147,27 @@ struct ProtocolClassifierTests {
     #expect(classify(device(vendorID, productID, interfaces: []), backend: .ioHID) == expected)
   }
 
+  /// Bluetooth LE is the Switch 2 GATT link; a Switch 2 controller has no Classic link.
+  @Test
+  func switch2BindsUSBAndBluetoothLEButNotBluetoothClassic() throws {
+    for host in [PhysicalTransport.usb, .bluetoothLE] {
+      let binding = try bound(
+        classify(device(0x057E, 0x2069, interfaces: [hidInterface(host: host)]), backend: .ioHID)
+      )
+      #expect(binding.variant == (host == .usb ? .usb : .bluetoothLE))
+    }
+    let classic = classify(
+      device(0x057E, 0x2069, interfaces: [hidInterface(host: .bluetoothClassic)]),
+      backend: .ioHID
+    )
+    let expected = rejection(
+      .unsupportedTransportVariant,
+      .nintendoSwitch1,
+      record: recordID(0x057E, 0x2069)
+    )
+    #expect(classic == expected)
+  }
+
   @Test(arguments: [(0x3537, 0x100A), (0x11C1, 0x5600), (0x2E95, 0x434D)] as [(UInt16, UInt16)])
   func singleContractHIDRecordsNeedNoTransportVariant(identity: (UInt16, UInt16)) throws {
     let record = try #require(Self.catalog.record(for: identifier(identity.0, identity.1)))

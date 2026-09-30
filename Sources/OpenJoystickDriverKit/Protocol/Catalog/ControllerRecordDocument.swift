@@ -125,6 +125,18 @@ struct ControllerRecordDocument: Decodable {
           "quirks must be declared by the selected driver"
         } else if quirks.contains(.joyConLeft) && quirks.contains(.joyConRight) {
           "Joy-Con layout must select one side"
+        } else if quirks.contains(.inputOnly) && quirks.count != 1 {
+          "a Switch input-only pad has no Joy-Con layout"
+        } else if quirks.contains(.gameCube) && !quirks.contains(.switch2) {
+          "the GameCube layout is a Switch 2 controller"
+        } else if quirks.contains(.gameCube)
+          && (quirks.contains(.joyConLeft) || quirks.contains(.joyConRight))
+        {
+          "a Switch 2 row selects one layout"
+        } else if protocolID == .valveSteamController && quirks.count > 1 {
+          "a Steam Controller row selects at most one hardware generation"
+        } else if quirks.contains(.neptune) && protocolVariant != .wired {
+          "the Steam Deck controller is an internal USB device"
         } else if protocolID == .vendorGameSir && protocolVariant == .usb && !quirks.isEmpty {
           "GameSir vendor USB declares no quirks"
         } else if protocolVariant == .enhancedHID && quirks.count != 1 {

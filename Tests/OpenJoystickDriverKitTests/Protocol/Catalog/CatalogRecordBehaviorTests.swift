@@ -119,6 +119,15 @@ struct CatalogRecordBehaviorTests {
   }
 
   @Test
+  func switchInputOnlyRowsBindTheFixedReportDriver() throws {
+    // HORIPAD for Nintendo Switch and PowerA Wired Controller Plus (SDL SwitchInputOnlyController).
+    for (vendorID, productID) in [(UInt16(0x0F0D), UInt16(0x00C1)), (0x20D6, 0xA711)] {
+      let identifier = DeviceIdentifier(vendorID: vendorID, productID: productID)
+      #expect(try catalogParser(identifier) is SwitchInputOnlyDriver, "\(identifier)")
+    }
+  }
+
+  @Test
   func seriesXReadsShareFromTheEndRelativeOffset() throws {
     // The 44-byte Series X firmware 5.5 payload carries Share at byte 18 (SDL, xpad).
     var payload = Data(repeating: 0, count: 44)
