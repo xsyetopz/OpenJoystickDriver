@@ -32,6 +32,7 @@ Supported Linux input mappings:
 - `MAP_TRIGGERS_TO_BUTTONS` and `MAP_STICKS_TO_NULL` become `capabilities.absent` entries (`left-trigger`/`right-trigger` and the four stick axes). Buttons and stick clicks stay; no trigger buttons are added because the XID, XUSB and GIP parsers emit none.
 - `MAP_DPAD_TO_BUTTONS` is dropped: it changes only how Linux reports the D-pad, not the wire bits OJD parsers decode.
 - Supported PlayStation, Sony, Nintendo, and Steam HID registrations become IOHID records from their driver tables and hid-ids.h (`sony.sixaxis`, `sony.dualshock4`, `sony.dualsense`, `nintendo.switch1`, `valve.steam-controller:wired`, and `valve.steam-controller:dongle` for the Steam wireless receiver).
+- `FLAG_DELAY_INIT` on an `XTYPE_XBOXONE` row is not a skip reason: `DRIVER_HANDLED_DEVICE_FLAGS` in `generate_xpad_records.py` lists it, because `GIPDriver` already resends its startup sequence on the announce packets before the first input. Any other device flag still skips the row as `unsupported_device_flags`.
 - Non-default `xboxone_init_packets` become ordered `protocol.initialization` action IDs (`xbox.gip/power-on`, `xbox.gip/s-init`, `xbox.gip/enable-extra-input`, `xbox.gip/hori-ack`, `xbox.gip/led-on`, `xbox.gip/auth-done`, `xbox.gip/rumble-begin`, `xbox.gip/rumble-end`); the GIP driver owns their bytes.
 
 Protocol-default endpoints and the default initialization sequence are omitted. The pinned source revision and hashes remain in `ControllerSources.lock.json`; generated runtime records contain only operational controller facts. Unknown types, quirks, mappings, or startup macros are skipped with an explicit count. Linux xpad's `0xFFFF:0xFFFF` catch-all row is skipped; it is not a USB identity. Partial source-table parsing fails generation.
@@ -42,9 +43,10 @@ SDL's `src/joystick/controller_list.h` is the second pinned upstream (currently 
 
 | SDL type | Record |
 | --- | --- |
-| `PS3Controller` (Sony vendor ID only) | `sony.sixaxis` |
+| `PS3Controller`, Sony vendor ID | `sony.sixaxis` |
+| `PS3Controller`, other vendor IDs | `vendor.ps3-third-party`, which probes for SDL's `PS3ThirdParty` report format |
 | `PS4Controller` | `sony.dualshock4` |
-| `PS5Controller` | `sony.dualsense` |
+| `PS5Controller` | `sony.dualsense`; the driver probes non-Sony controllers for their features as SDL does |
 | `SwitchProController` | `nintendo.switch1` |
 | `SwitchJoyConLeft`, `SwitchJoyConRight` | `nintendo.switch1` with the `joy-con-left` or `joy-con-right` quirk |
 | `XBox360Controller` | `xbox.xusb:wired` |
@@ -58,27 +60,30 @@ One SDL Steam type covers wired pads, dongles and Bluetooth LE links, so the typ
 
 The Switch 2 identities in `SWITCH_2_IDENTITIES` (`057e:2066`, `2067`, `2069`) also get the `switch-2` quirk first, which selects `Switch2Driver` instead of the Switch 1 driver. The GameCube controller `057e:2073` is only in SDL `usb_ids.h`, so an add override gives it `switch-2` and `gamecube`.
 
-`XInputPS4Controller` and `XInputSwitchController` rows are pads in Xbox 360 mode. They get no record, because the XUSB interface signature binds them without one. Every other type (Joy-Con pair, Apple, mobile touch, unknown) is skipped with a per-type count.
+A few identities use a different SDL driver than their type implies. `SDL_IDENTITY_FAMILIES` in `generate_controller_catalog.py` gives each one the family of the driver that claims it: SDL's Sixaxis driver claims the ShanWan DS3 (`2563:0523`), so it gets `sony.sixaxis`, and `controller_list.h` marks HORI `0f0d:0086` as the Xbox 360 protocol, so it gets `xbox.xusb`. SDL's PS5 driver rejects the Backbone One PlayStation Edition Gen 2 (`358a:0304`), so it gets `hid.descriptor`. DragonRise `0079:0006`, SDL's "Generic USB PCB", is a standard HID gamepad, so it gets `hid.descriptor`. SDL's Xbox 360 driver rejects the NVIDIA SHIELD controller `0955:7210` because it does not speak the Xbox protocol (`SDL_hidapi_shield.c` drives it), so it gets `vendor.nvidia-shield`; generation fails on any other NVIDIA row that is neither catalogued nor listed. The Microsoft Bluetooth Xbox identities that SDL's `SDL_IsJoystickBluetoothXboxOne` lists (`045e:02e0`, `02fd`, `0b05`, `0b0c`, `0b13`, `0b20`, `0b21`, `0b22`) are HID over Bluetooth, not GIP, so they get `hid.descriptor`; `HIDDescriptorDriver` picks the layout from the report descriptor, covering the Linux and Windows firmware modes that xpadneo documents in `docs/descriptors/`. A listed identity must still appear with its expected type, so a lock bump forces a review.
 
-Linux rows and authored add overrides win. An SDL identity already present with the same family is a duplicate; one with a different family is a conflict. Both are skipped and counted, as is an identity SDL lists under two types. Identities are decided after grouping, so row order does not change the output.
+Some rows get no record because `ProtocolClassifier` binds an identity without a record by its USB interface signature, XUSB or GIP, before it falls back to `hid.descriptor`. A record would pin one protocol on a pad whose firmware mode chooses it. `regenerate` counts these rows as bound by interface signature, not as skipped:
+
+- `XInputPS4Controller` and `XInputSwitchController` rows: pads that switch to Xbox 360 mode on a PC. Their console mode has no Xbox interface and reaches `hid.descriptor`.
+- `XBoxOneController` rows whose product ID is a Microsoft Xbox 360 ID (`028e`, `0291`, `02a0`, `02a1`, `02a9`, `0719`) under another vendor: the ID says XUSB and the type says GIP. Linux xpad rows with such IDs (PDP `0e6f:02a0`/`02a1` are GIP) still win.
+- An identity SDL lists under two Xbox USB types, such as HORI `0f0d:00ed` as both `XInputPS4Controller` and `XBoxOneController`.
+- `SDL_EXCLUSIONS` rows in the `interface-signature` bucket: `045e:02a0` (the Xbox 360 Big Button IR receiver), `045e:0867` (an unnamed Microsoft ID SDL lists as "Unknown Controller") and `1038:b360` (SteelSeries Nimbus/Stratus XL). Nothing beyond SDL's type says which protocol they speak.
+
+Every other unmapped type (mobile touch, unknown) is skipped with a per-type count.
+
+Linux rows and authored add overrides win. An SDL identity already present with the same family is a duplicate; one with a different family is a conflict. Both are skipped and counted, as is an identity SDL lists under two types that are not both Xbox USB types. Identities are decided after grouping, so row order does not change the output.
 
 SDL's own drivers at the pinned commit show that some typed rows do not use the wire protocol of an implemented variant. The generator skips them by rule or by the `SDL_EXCLUSIONS` identity list in `generate_controller_catalog.py`. A listed identity must still appear with its expected type, must not be catalogued, and must not already be covered by a rule, so a lock bump forces a review. Generation also fails on any Microsoft (`045e`) `XBoxOneController` row that is neither catalogued nor listed, so a new Bluetooth or driver identity cannot reach the USB-only GIP driver unreviewed.
 
-- Non-Sony `PS3Controller` rows: `SDL_hidapi_ps3.c` reads them through a separate third-party report format behind a feature-report probe. Its Sixaxis driver also claims the ShanWan DS3 (`2563:0523`) with ShanWan-specific handling that OJD's DS3 parser has not been checked against, so only Sony's vendor ID is admitted.
-- Non-Sony `PS5Controller` rows: `SDL_hidapi_ps5.c` decodes third-party pads with the alternate `PS5StatePacketAlt_t` layout, which OJD's DualSense parser does not implement.
-- `XBoxOneController` rows whose product ID is a Microsoft Xbox 360 ID (`028e`, `0291`, `02a0`, `02a1`, `02a9`, `0719`) under another vendor: the ID says XUSB, not GIP, and a catalog row would bypass interface-signature admission. Linux xpad rows with such IDs (PDP `0e6f:02a0`/`02a1` are GIP) still win.
-- `XBox360Controller` rows with NVIDIA's vendor ID: `SDL_hidapi_xbox360.c` notes the Shield controller does not talk the Xbox protocol.
-- Microsoft Bluetooth Xbox identities (`SDL_IsJoystickBluetoothXboxOne`): they are HID over Bluetooth, and OJD implements GIP only over USB. `045e:0867` is an unnamed Microsoft ID SDL lists as "Unknown Controller"; semantics unclear.
-- `045e:02a1` and `045e:02ff`: identities of the Windows XUSB and XBOXGIP drivers, not USB devices. `045e:02a0`: the Xbox 360 Big Button IR receiver.
-- `054c:0ba0` DualShock 4 USB wireless adapter: `SDL_hidapi_ps4.c` handles it with `is_dongle` and a deferred connect that OJD does not implement.
-- `054c:05c5` STRIKEPAD PS4 grip add-on and `054c:0e5f` Access Controller: their report layout against OJD's parsers is unverified.
-- `0f0d:00f6` HORI Wireless Switch Pad and `0e6f:0186` PDP Afterglow Wireless: SDL rejects the first over USB, and its list says the second uses USB for charging only (`no-usb-protocol`).
-- `1038:b360` SteelSeries Nimbus/Stratus XL: semantics unclear; no pinned evidence that it speaks XUSB.
+- `virtual-identity`: rows that name no USB device a host enumerates. These are Apple's generic MFi identities `05ac:0001` and `05ac:0002`, the Joy-Con pair `057e:2008` and `057e:2068` (OJD pairs two Joy-Con records itself), Steam's virtual gamepad `28de:11ff`, and NVIDIA's streaming controller `0955:b400`.
+- `045e:02a1` and `045e:02ff`: identities of the Windows XUSB and XBOXGIP drivers, not USB devices (`windows-driver-identity`).
 - Vendor ID `0x0000`: not a USB identity.
+
+`0e6f:0186` (PDP Afterglow Wireless) and `0f0d:00f6` (HORI Wireless Switch Pad) get a `nintendo.switch1` record with the `bluetooth-only` quirk. Their USB link only charges the pad, so the driver binds only the Bluetooth Classic link. The DualShock 4 USB wireless adapter `054c:0ba0`, the STRIKEPAD PS4 grip add-on `054c:05c5` and the Access Controller `054c:0e5f` are catalogued from their SDL types (`sony.dualshock4` for the first two, `sony.dualsense` for the Access Controller).
 
 Admitted third-party DualShock 4 rows keep the nominal motion scale: like SDL, OJD installs the factory calibration report only for Sony's vendor ID. SDL's own list flags `0079:181b` (Venom Arcade Stick) as possibly a PS3-protocol pad; it is admitted as `sony.dualshock4` as listed.
 
-`regenerate` prints the parsed, mapped, added, duplicate, and conflict counts and every skip bucket.
+`regenerate` prints the parsed, mapped, added, duplicate, conflict, and interface-signature counts and every skip bucket.
 
 ## Local Source Overrides
 

@@ -45,7 +45,8 @@ This directory holds the development notes and hardware-evidence records for Ope
 - [Test Razer Wolverine V3 Tournament Edition](testing/razer/v3-te.md): The test for issue #14.
 - [Testing The Razer Wolverine V2](testing/razer/wolverine-v2.md): The test procedure for issue #19.
 - [Test The SCUF Envision Pro](testing/scuf-envision-pro.md): The wired record for HID identity `2E95:434D`.
-- [Shanwan PS3/PC pads](testing/shanwan-ps3-pc.md): The Shanwan chip family that does not speak Sony's protocol.
+- [Third-party PS3 controllers](testing/ps3-third-party.md): Non-Sony PS3 pads, sticks and adapters that do not speak Sony's protocol.
+- [Third-party DualSense controllers](testing/dualsense-third-party.md): Non-Sony PS5 pads, sticks and receivers that speak the DualSense protocol.
 - [Wired Switch input-only pads](testing/switch-input-only.md): Licensed wired Switch pads that send one fixed HID report.
 - [Switch 2 controllers over USB](testing/switch-2.md): The Switch 2 Pro Controller, Joy-Con 2 and NSO GameCube controller over USB.
 - [Steam Controller (2026, Triton)](testing/steam-triton.md): The 2026 Steam Controller over USB, Bluetooth LE and its dongles.
