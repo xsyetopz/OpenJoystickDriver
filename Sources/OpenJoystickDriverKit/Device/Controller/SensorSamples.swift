@@ -134,7 +134,7 @@ public struct ControllerTouchContact: Sendable, Equatable, Codable {
   public let isActive: Bool
   public let x: UInt16
   public let y: UInt16
-  /// Contact pressure where the hardware reports it; no current producer does.
+  /// Contact pressure where the hardware reports it; only the Steam Triton does.
   public let pressure: UnipolarValue?
 
   public init(slot: UInt8, isActive: Bool, x: UInt16, y: UInt16, pressure: UnipolarValue? = nil) {
