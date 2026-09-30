@@ -94,6 +94,29 @@ struct HIDDescriptorDriverTests {
     #expect(parse(parser, value(page: 0x09, usage: 12, minimum: 0, maximum: 1, integer: 1)) == nil)
   }
 
+  /// SDL's two `0079:0006` gamepad mappings agree on the buttons: 1-4 are Y, B, A, X, 7-8 are
+  /// digital L2 and R2, and 9-12 are back, start, and the stick clicks. Z and Rz carry the right
+  /// stick.
+  @Test
+  func dragonRiseUsesItsButtonOrderAndZRzRightStick() {
+    let parser = HIDDescriptorDriver(identifier: DeviceIdentifier(vendorID: 0x0079, productID: 6))
+    let buttons: [ControlID] = [
+      .faceNorth, .faceEast, .faceSouth, .faceWest, .leftShoulder, .rightShoulder,
+      .leftTriggerButton, .rightTriggerButton, .view, .menu, .leftStickClick, .rightStickClick,
+    ]
+    for (index, control) in buttons.enumerated() {
+      let usage = UInt32(index + 1)
+      let press = value(page: 0x09, usage: usage, minimum: 0, maximum: 1, integer: 1)
+      #expect(parse(parser, press).contains(.press(control)), "\(control)")
+      let release = value(page: 0x09, usage: usage, minimum: 0, maximum: 1, integer: 0)
+      #expect(parse(parser, release)?.state == .neutral)
+    }
+    #expect(parse(parser, axis(usage: 0x32, integer: 255)).contains(.rightStick(x: 1, y: 0)))
+    #expect(parse(parser, axis(usage: 0x35, integer: 0)).contains(.rightStick(x: 1, y: -1)))
+    #expect(parser.capabilities.controls.contains(.leftTriggerButton))
+    #expect(!parser.capabilities.controls.contains(.leftTrigger))
+  }
+
   @Test
   func sessionResetReturnsElementStateToNeutral() {
     let parser = HIDDescriptorDriver(identifier: identifier)

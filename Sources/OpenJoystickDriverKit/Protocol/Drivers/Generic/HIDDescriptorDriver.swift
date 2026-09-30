@@ -22,17 +22,25 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   private static let wr007ProductID: UInt16 = 0x5600
   private static let envisionVendorID: UInt16 = 0x2E95
   private static let envisionProductID: UInt16 = 0x434D
-  private static let gameSirG7SEVendorID: UInt16 = 0x3537
-  private static let gameSirG7SEProductID: UInt16 = 0x1082
+  /// GameSir G7 SE (`3537:1082`) and 8BitDo Ultimate 2C Wireless over Bluetooth LE
+  /// (`2DC8:301B`) and its HID receiver (`2DC8:301C`).
+  private static let zRzBrakeLeftDevices: Set<[UInt16]> = [
+    [0x3537, 0x1082], [0x2DC8, 0x301B], [0x2DC8, 0x301C],
+  ]
+  /// DragonRise generic USB PCB (`0079:0006`), sold under several gamepad brands.
+  private static let dragonRiseDevice: [UInt16] = [0x0079, 0x0006]
 
   private enum AxisLayout {
     case standard
     case wr007
     case envision
     /// WR007's Z/Rz right stick and button order, with Brake as LT and a Home button.
-    case gameSirG7SE
+    case zRzBrakeLeft
+    /// DragonRise's Z/Rz right stick and DirectInput button order: 1-4 are Y, B, A, X, and 7-8
+    /// are digital L2 and R2.
+    case dragonRise
 
-    var zRzIsRightStick: Bool { self == .wr007 || self == .gameSirG7SE }
+    var zRzIsRightStick: Bool { self == .wr007 || self == .zRzBrakeLeft || self == .dragonRise }
   }
 
   private let identifier: DeviceIdentifier
@@ -57,10 +65,14 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
       && identifier.controllerIdentity.productID == Self.envisionProductID
     {
       axisLayout = .envision
-    } else if identifier.controllerIdentity.vendorID == Self.gameSirG7SEVendorID
-      && identifier.controllerIdentity.productID == Self.gameSirG7SEProductID
+    } else if Self.zRzBrakeLeftDevices.contains([
+      identifier.controllerIdentity.vendorID, identifier.controllerIdentity.productID,
+    ]) {
+      axisLayout = .zRzBrakeLeft
+    } else if [identifier.controllerIdentity.vendorID, identifier.controllerIdentity.productID]
+      == Self.dragonRiseDevice
     {
-      axisLayout = .gameSirG7SE
+      axisLayout = .dragonRise
     } else {
       axisLayout = .standard
     }
@@ -80,7 +92,14 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
   public var capabilities: ControllerCapabilities {
-    ControllerCapabilities(controls: ControlID.xboxLayout.union([.guide]))
+    guard axisLayout == .dragonRise else {
+      return ControllerCapabilities(controls: ControlID.xboxLayout.union([.guide]))
+    }
+    return ControllerCapabilities(
+      controls: ControlID.xboxLayout.subtracting([.leftTrigger, .rightTrigger]).union([
+        .leftTriggerButton, .rightTriggerButton,
+      ])
+    )
   }
 
   /// Raw reports are handled through IOKit's descriptor-decoded element callback.
@@ -160,9 +179,9 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
     _ value: HIDElementValue,
     into next: inout ControllerState
   ) -> Bool {
-    guard axisLayout.zRzIsRightStick else { return false }
+    guard axisLayout.zRzIsRightStick, axisLayout != .dragonRise else { return false }
     let trigger = UnipolarValue(normalized: Self.normalizedTrigger(value))
-    let brakeIsLeft = axisLayout == .gameSirG7SE
+    let brakeIsLeft = axisLayout == .zRzBrakeLeft
     switch value.usage {
     case Self.usageAccelerator:
       if brakeIsLeft { next.rightTrigger = trigger } else { next.leftTrigger = trigger }
@@ -194,9 +213,17 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   }
 
   private func control(for usage: UInt32) -> ControlID? {
+    if axisLayout == .dragonRise {
+      let dragonRise: [ControlID] = [
+        .faceNorth, .faceEast, .faceSouth, .faceWest, .leftShoulder, .rightShoulder,
+        .leftTriggerButton, .rightTriggerButton, .view, .menu, .leftStickClick, .rightStickClick,
+      ]
+      guard usage > 0, usage <= dragonRise.count else { return nil }
+      return dragonRise[Int(usage - 1)]
+    }
     if axisLayout.zRzIsRightStick {
       // Buttons 9 and 10 mirror the analog triggers.
-      if axisLayout == .gameSirG7SE, usage == 13 { return .guide }
+      if axisLayout == .zRzBrakeLeft, usage == 13 { return .guide }
       return [
         1: .faceSouth, 2: .faceEast, 4: .faceWest, 5: .faceNorth, 7: .leftShoulder,
         8: .rightShoulder, 11: .view, 12: .menu, 14: .leftStickClick, 15: .rightStickClick,
