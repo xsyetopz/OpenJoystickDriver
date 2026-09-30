@@ -92,6 +92,47 @@ class XpadTranslationTests(unittest.TestCase):
             },
         )
 
+    def test_delayed_init_is_accepted_only_where_the_driver_performs_it(self) -> None:
+        def device(xtype: str) -> xpad.XpadDevice:
+            return xpad.XpadDevice(
+                vendor_id=0x366C,
+                product_id=0x0005,
+                name="pad",
+                mapping_expression="0",
+                xtype=xtype,
+                flags_expression="FLAG_DELAY_INIT",
+            )
+
+        candidates, skipped, _ = xpad.generate_candidates(
+            devices=[device("XTYPE_XBOXONE")],
+            init_rules=[xpad.InitRule(0, 0, "xboxone_power_on")],
+            existing_keys=set(),
+            include_existing=True,
+            requested_type="all",
+            vendor_id=None,
+            product_id=None,
+        )
+        self.assertEqual(skipped, [])
+        self.assertEqual(
+            candidates[0].profile["protocol"],
+            {
+                "family": "xbox.gip",
+                "initialization": ["xbox.gip/power-on"],
+            },
+        )
+        _, skipped, _ = xpad.generate_candidates(
+            devices=[device("XTYPE_XBOX360")],
+            init_rules=[xpad.InitRule(0, 0, "xboxone_power_on")],
+            existing_keys=set(),
+            include_existing=True,
+            requested_type="all",
+            vendor_id=None,
+            product_id=None,
+        )
+        self.assertEqual(
+            skipped[0]["reason"], "unsupported_device_flags:FLAG_DELAY_INIT"
+        )
+
     def test_gip_share_offset_and_initialization_use_driver_ids(self) -> None:
         rules = [
             xpad.InitRule(0, 0, "xboxone_power_on"),
@@ -230,7 +271,10 @@ class SDLControllerListTests(unittest.TestCase):
         rows: list[tuple[int, int, str]],
         existing: dict[tuple[int, int], str] | None = None,
     ) -> tuple[dict[tuple[int, int], dict[str, object]], dict[str, int]]:
-        with patch.object(catalog, "SDL_EXCLUSIONS", {}):
+        with (
+            patch.object(catalog, "SDL_EXCLUSIONS", {}),
+            patch.object(catalog, "SDL_IDENTITY_FAMILIES", {}),
+        ):
             return catalog.build_sdl_records(rows, existing or {})
 
     def test_types_map_to_implemented_families_and_variants(self) -> None:
@@ -316,8 +360,6 @@ class SDLControllerListTests(unittest.TestCase):
         rows = [
             (0x057E, 0x2008, "SwitchJoyConPair"),
             (0x0079, 0x0006, "UnknownNonSteamController"),
-            (0x0738, 0x3250, "PS3Controller"),
-            (0x0955, 0x7210, "XBox360Controller"),
             (0x0000, 0x6686, "XBoxOneController"),
         ]
         records, counts = self.build(rows)
@@ -327,11 +369,40 @@ class SDLControllerListTests(unittest.TestCase):
             {
                 "unmapped:SwitchJoyConPair": 1,
                 "unmapped:UnknownNonSteamController": 1,
-                "excluded:third-party-ps3": 1,
-                "excluded:not-xbox-protocol": 1,
                 "excluded:not-usb-identity": 1,
             },
         )
+
+    def test_an_unreviewed_nvidia_row_fails_generation(self) -> None:
+        with self.assertRaises(catalog.CatalogError):
+            self.build([(0x0955, 0x7210, "XBox360Controller")])
+
+    def test_the_shield_controller_binds_the_shield_driver(self) -> None:
+        shield = {(0x0955, 0x7210): catalog.SDL_IDENTITY_FAMILIES[(0x0955, 0x7210)]}
+        with (
+            patch.object(catalog, "SDL_EXCLUSIONS", {}),
+            patch.object(catalog, "SDL_IDENTITY_FAMILIES", shield),
+        ):
+            records, counts = catalog.build_sdl_records(
+                [(0x0955, 0x7210, "XBox360Controller")], {}
+            )
+        self.assertEqual(
+            records[(0x0955, 0x7210)]["protocol"], {"family": "vendor.nvidia-shield"}
+        )
+        self.assertEqual(counts, {"added": 1})
+
+    def test_xinput_mode_rows_are_bound_by_interface_signature(self) -> None:
+        rows = [
+            (0x0F0D, 0x00ED, "XInputPS4Controller"),
+            (0x0F0D, 0x00DC, "XInputSwitchController"),
+        ]
+        records, counts = self.build(rows)
+        self.assertEqual(records, {})
+        self.assertEqual(counts, {"interface-signature": 2})
+        summary = catalog.sdl_summary(rows, counts)
+        self.assertIn("mapped 2", summary)
+        self.assertIn("bound by interface signature 2", summary)
+        self.assertNotIn("skipped", summary)
 
     def test_existing_rows_win_as_duplicates_or_conflicts(self) -> None:
         existing = {
@@ -356,16 +427,23 @@ class SDLControllerListTests(unittest.TestCase):
             (0x0F0D, 0x00ED, "XInputPS4Controller"),
             (0x146B, 0x0D10, "PS4Controller"),
             (0x0F0D, 0x00ED, "XBoxOneController"),
+            (0x0E6F, 0x018C, "SwitchProController"),
+            (0x0E6F, 0x018C, "PS4Controller"),
         ]
         records, counts = self.build(rows)
         self.assertEqual(list(records), [(0x146B, 0x0D10)])
-        self.assertEqual(counts, {"added": 1, "sdl-conflict": 1})
+        self.assertEqual(
+            counts, {"added": 1, "interface-signature": 1, "sdl-conflict": 1}
+        )
         self.assertEqual(self.build(list(reversed(rows))), (records, counts))
 
     def test_exclusions_must_match_the_pinned_list_and_stay_uncatalogued(self) -> None:
         exclusions = {(0x057E, 0x2069): ("SwitchProController", "switch-2")}
         rows = [(0x057E, 0x2069, "SwitchProController")]
-        with patch.object(catalog, "SDL_EXCLUSIONS", exclusions):
+        with (
+            patch.object(catalog, "SDL_EXCLUSIONS", exclusions),
+            patch.object(catalog, "SDL_IDENTITY_FAMILIES", {}),
+        ):
             self.assertEqual(
                 catalog.build_sdl_records(rows, {}), ({}, {"excluded:switch-2": 1})
             )
@@ -383,7 +461,10 @@ class SDLControllerListTests(unittest.TestCase):
         }
         overrides = [("add", (0x1532, 0x1000), override)]
         records: dict[tuple[int, int], dict[str, object]] = {}
-        with patch.object(catalog, "SDL_EXCLUSIONS", {}):
+        with (
+            patch.object(catalog, "SDL_EXCLUSIONS", {}),
+            patch.object(catalog, "SDL_IDENTITY_FAMILIES", {}),
+        ):
             counts = catalog.merge_sdl_records(
                 records, overrides, [(0x1532, 0x1000, "PS4Controller")]
             )
@@ -391,7 +472,7 @@ class SDLControllerListTests(unittest.TestCase):
         catalog.apply_overrides(records, overrides)
         self.assertEqual(records, {(0x1532, 0x1000): override})
 
-    def test_third_party_rules_skip_rows_the_implemented_parsers_do_not_decode(
+    def test_third_party_dualsense_is_admitted_and_360_product_ids_are_skipped(
         self,
     ) -> None:
         rows = [
@@ -402,15 +483,47 @@ class SDLControllerListTests(unittest.TestCase):
             (0x1532, 0x0A15, "XBoxOneController"),
         ]
         records, counts = self.build(rows)
-        self.assertEqual(sorted(records), [(0x054C, 0x0CE6), (0x1532, 0x0A15)])
         self.assertEqual(
-            counts,
-            {
-                "added": 2,
-                "excluded:third-party-ps5": 1,
-                "excluded:xbox-360-product-id": 2,
-            },
+            sorted(records), [(0x054C, 0x0CE6), (0x1532, 0x0A15), (0x1532, 0x100B)]
         )
+        self.assertEqual(
+            records[(0x1532, 0x100B)]["protocol"], {"family": "sony.dualsense"}
+        )
+        self.assertEqual(counts, {"added": 3, "interface-signature": 2})
+
+    def test_third_party_ps3_rows_bind_the_third_party_family(self) -> None:
+        records, counts = self.build(
+            [(0x0738, 0x3250, "PS3Controller"), (0x054C, 0x0268, "PS3Controller")]
+        )
+        self.assertEqual(
+            records[(0x0738, 0x3250)]["protocol"], {"family": "vendor.ps3-third-party"}
+        )
+        self.assertEqual(
+            records[(0x054C, 0x0268)]["protocol"], {"family": "sony.sixaxis"}
+        )
+        self.assertEqual(counts, {"added": 2})
+
+    def test_identity_families_override_the_type_and_must_stay_listed(self) -> None:
+        overrides = {
+            (0x2563, 0x0523): ("PS3Controller", "sony.sixaxis", None),
+            (0x0F0D, 0x0086): ("PS3Controller", "xbox.xusb", "wired"),
+        }
+        rows = [(0x2563, 0x0523, "PS3Controller"), (0x0F0D, 0x0086, "PS3Controller")]
+        with (
+            patch.object(catalog, "SDL_EXCLUSIONS", {}),
+            patch.object(catalog, "SDL_IDENTITY_FAMILIES", overrides),
+        ):
+            records, counts = catalog.build_sdl_records(rows, {})
+            with self.assertRaises(catalog.CatalogError):
+                catalog.build_sdl_records(rows[:1], {})
+        self.assertEqual(
+            records[(0x2563, 0x0523)]["protocol"], {"family": "sony.sixaxis"}
+        )
+        self.assertEqual(
+            records[(0x0F0D, 0x0086)]["protocol"],
+            {"family": "xbox.xusb", "variant": "wired"},
+        )
+        self.assertEqual(counts, {"added": 2})
 
     def test_unreviewed_microsoft_xbox_one_row_fails_generation(self) -> None:
         with self.assertRaises(catalog.CatalogError):
@@ -421,12 +534,27 @@ class SDLControllerListTests(unittest.TestCase):
         self.assertEqual((records, counts), ({}, {"duplicate": 1}))
 
     def test_exclusion_shadowed_by_a_rule_fails_generation(self) -> None:
-        exclusions = {(0x358A, 0x0304): ("PS5Controller", "not-dualsense-protocol")}
+        exclusions = {(0x0000, 0x0001): ("PS4Controller", "not-usb-identity")}
         with (
             patch.object(catalog, "SDL_EXCLUSIONS", exclusions),
             self.assertRaises(catalog.CatalogError),
         ):
-            catalog.build_sdl_records([(0x358A, 0x0304, "PS5Controller")], {})
+            catalog.build_sdl_records([(0x0000, 0x0001, "PS4Controller")], {})
+
+    def test_backbone_one_ps5_v2_uses_the_descriptor_mapping(self) -> None:
+        backbone = (0x358A, 0x0304)
+        with (
+            patch.object(catalog, "SDL_EXCLUSIONS", {}),
+            patch.object(
+                catalog,
+                "SDL_IDENTITY_FAMILIES",
+                {backbone: catalog.SDL_IDENTITY_FAMILIES[backbone]},
+            ),
+        ):
+            records, _ = catalog.build_sdl_records([(*backbone, "PS5Controller")], {})
+        self.assertEqual(
+            records[(0x358A, 0x0304)]["protocol"], {"family": "hid.descriptor"}
+        )
 
     def test_records_carry_no_provenance(self) -> None:
         records, _ = self.build([(0x1532, 0x1000, "PS4Controller")])
@@ -450,14 +578,10 @@ class CommittedCatalogTests(unittest.TestCase):
     def setUp(self) -> None:
         self.records = committed_records()
 
-    def test_only_sony_dualsense_records_are_catalogued(self) -> None:
-        offenders = [
-            key
-            for key, record in self.records.items()
-            if record["protocol"]["family"] == "sony.dualsense"
-            and key[0] != catalog.SONY_VENDOR_ID
-        ]
-        self.assertEqual(offenders, [])
+    def test_backbone_one_ps5_v2_is_not_catalogued_as_dualsense(self) -> None:
+        record = self.records.get((0x358A, 0x0304))
+        if record is not None:
+            self.assertEqual(record["protocol"]["family"], "hid.descriptor")
 
     def test_excluded_sdl_identities_are_not_catalogued(self) -> None:
         self.assertEqual(sorted(set(catalog.SDL_EXCLUSIONS) & set(self.records)), [])
@@ -491,7 +615,7 @@ class PinnedSDLDataTests(unittest.TestCase):
         )
         self.assertEqual(unreviewed, [])
 
-    def test_admitted_rows_avoid_360_product_ids_and_third_party_dualsense(
+    def test_admitted_rows_avoid_360_product_ids_and_non_dualsense_backbone(
         self,
     ) -> None:
         # Linux xpad legitimately binds PDP 0e6f:02a0/02a1 to GIP, so check what SDL
@@ -514,14 +638,7 @@ class PinnedSDLDataTests(unittest.TestCase):
             ],
             [],
         )
-        self.assertEqual(
-            [
-                key
-                for key, family in families.items()
-                if family == "sony.dualsense" and key[0] != catalog.SONY_VENDOR_ID
-            ],
-            [],
-        )
+        self.assertEqual(families.get((0x358A, 0x0304)), "hid.descriptor")
         self.assertTrue(set(records) <= set(committed_records()))
 
     def test_real_exclusions_hold_and_every_admissible_row_is_committed(self) -> None:
@@ -533,7 +650,9 @@ class PinnedSDLDataTests(unittest.TestCase):
         self.assertEqual(records, {})
         excluded = {
             reason
+            if reason == catalog.INTERFACE_SIGNATURE_BUCKET
+            else f"excluded:{reason}"
             for key, (_, reason) in catalog.SDL_EXCLUSIONS.items()
             if key not in existing
         }
-        self.assertTrue(excluded <= {bucket[9:] for bucket in counts})
+        self.assertTrue(excluded <= set(counts))

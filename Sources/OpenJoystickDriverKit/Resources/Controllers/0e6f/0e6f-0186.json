@@ -1,8 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
-  "vendorID": 9571,
-  "productID": 1397,
+  "vendorID": 3695,
+  "productID": 390,
   "protocol": {
-    "family": "vendor.ps3-third-party"
+    "family": "nintendo.switch1",
+    "quirks": [
+      "bluetooth-only"
+    ]
   }
 }

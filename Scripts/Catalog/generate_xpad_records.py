@@ -39,6 +39,10 @@ INIT_PATTERN = re.compile(
     r"(0x[0-9a-fA-F]+)\s*,\s*([A-Za-z0-9_]+)\s*\)"
 )
 
+# xpad device flags whose behavior the family's driver already performs for every row.
+# `FLAG_DELAY_INIT` holds the GIP init sequence until the pad's announce packet; GIPDriver
+# resends its startup sequence on the announces before the first input.
+DRIVER_HANDLED_DEVICE_FLAGS = {("FLAG_DELAY_INIT", "XTYPE_XBOXONE")}
 # xpad mapping macros that select a driver-declared quirk, and the one protocol
 # family declaring it; rows needing a quirk their driver does not declare are skipped.
 MAPPING_ORDER = (("MAP_SHARE_OFFSET", "share-offset", "xbox.gip"),)
@@ -363,7 +367,11 @@ def generate_candidates(
             reason = "already_bundled"
         else:
             try:
-                device_flags = parse_device_flags(device.flags_expression)
+                device_flags = [
+                    flag
+                    for flag in parse_device_flags(device.flags_expression)
+                    if (flag, device.xtype) not in DRIVER_HANDLED_DEVICE_FLAGS
+                ]
                 if device_flags:
                     reason = f"unsupported_device_flags:{','.join(device_flags)}"
                 else:

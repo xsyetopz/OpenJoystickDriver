@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
-  "vendorID": 9571,
-  "productID": 1397,
+  "vendorID": 34952,
+  "productID": 776,
   "protocol": {
     "family": "vendor.ps3-third-party"
   }

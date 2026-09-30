@@ -172,6 +172,12 @@ class ControllerSchemaTests(unittest.TestCase):
             "Switch 2 input-only": record(
                 {"family": "nintendo.switch1", "quirks": ["switch-2", "input-only"]}
             ),
+            "Bluetooth-only with a layout": record(
+                {
+                    "family": "nintendo.switch1",
+                    "quirks": ["bluetooth-only", "joy-con-left"],
+                }
+            ),
             "XUSB rumble absence": record(XUSB, capabilities={"rumble": "absent"}),
             "unknown control": record(GIP, capabilities={"absent": ["leftTrigger"]}),
             "empty capabilities": record(GIP, capabilities={}),
