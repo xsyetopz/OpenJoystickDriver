@@ -1,16 +1,10 @@
 # Repository Scripts
 
-`./Scripts/ojd` is the supported entrypoint for repository-specific behavior.
-Just orchestrates standard formatters, linters, type checkers, tests, and those
-repository routes.
+`./Scripts/ojd` is the supported entrypoint for repository-specific behavior. Just orchestrates standard formatters, linters, type checkers, tests, and those repository routes.
 
-The dispatcher owns command parsing; `Scripts/Command/` owns process execution,
-while `Scripts/Platform/` owns capability models,
-resolution, and route requirements. The remaining feature groups own narrow
-implementations.
+The dispatcher owns command parsing; `Scripts/Command/` owns process execution, while `Scripts/Platform/` owns capability models, resolution, and route requirements. The remaining feature groups own narrow implementations.
 
-Use `./Scripts/ojd help` for supported routes. Run the standard tools directly
-or use the equivalent `just lint`, `just check-fast`, and `just check` recipes:
+Use `./Scripts/ojd help` for supported routes. Run the standard tools directly or use the equivalent `just lint`, `just check-fast`, and `just check` recipes:
 
 ```bash
 ./Scripts/ojd check profiles
@@ -29,6 +23,4 @@ python3 -m unittest discover -s Tests/RepositoryScripts
 swift test --no-parallel
 ```
 
-`catalog regenerate --write` writes generated controller records. DriverKit
-project generation writes DriverKit output. All other commands retain
-their documented route-specific effects and requirements.
+`catalog regenerate --write` writes generated controller records. DriverKit project generation writes DriverKit output. All other commands retain their documented route-specific effects and requirements.

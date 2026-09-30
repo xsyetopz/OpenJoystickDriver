@@ -1,17 +1,13 @@
 # Agent brief
 
-OpenJoystickDriver is a macOS userspace gamepad driver. Ground claims in source, tests, schemas, or
-recorded hardware evidence.
+OpenJoystickDriver is a macOS userspace gamepad driver. Ground claims in source, tests, schemas, or recorded hardware evidence.
 
-Before editing, read `CONTRIBUTING.md`, `docs/README.md`, `LOCALIZATION.md`, and
-`Resources/Schemas/AGENTS.md`.
+Before editing, read `CONTRIBUTING.md`, `docs/README.md`, `LOCALIZATION.md`, and `Resources/Schemas/AGENTS.md`.
 
 ## Boundaries
 
-- Do not edit generated records in `Sources/OpenJoystickDriverKit/Resources/Controllers/` or
-  generated DriverKit files in `.build/driverkit/generated/`.
-- Regenerate the catalog with `./Scripts/ojd catalog regenerate --write` only after intentionally
-  changing its authored inputs.
+- Do not edit generated records in `Sources/OpenJoystickDriverKit/Resources/Controllers/` or generated DriverKit files in `.build/driverkit/generated/`.
+- Regenerate the catalog with `./Scripts/ojd catalog regenerate --write` only after intentionally changing its authored inputs.
 - Generate DriverKit files with `./Scripts/ojd driverkit generate`.
 - Do not add SVGs or secrets.
 - Confirm destructive writes and publication before running them.
@@ -38,5 +34,4 @@ python3 Scripts/Quality/check_swift_file_length.py
 swift test
 ```
 
-For parser or protocol changes, also run `./Scripts/ojd test parsers-macos14`.
-Use `./Scripts/ojd repair swiftpm-module-cache` only to repair a SwiftPM module-cache mismatch.
+For parser or protocol changes, also run `./Scripts/ojd test parsers-macos14`. Use `./Scripts/ojd repair swiftpm-module-cache` only to repair a SwiftPM module-cache mismatch.
