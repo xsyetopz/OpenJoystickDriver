@@ -5,13 +5,22 @@ import Testing
 /// SE (firmware 6.6.4) in its HID mode, report 0x05: 15 buttons, hat, X Y Z Rz and Simulation Brake
 /// then Accelerator, all 8-bit 0...255. The 8BitDo Ultimate 2C Wireless over Bluetooth LE
 /// (`2DC8:301B`) was confirmed on hardware to use the same usages (issue #34); its HID receiver
-/// (`2DC8:301C`) is assumed to match.
+/// (`2DC8:301C`) is assumed to match. The GameSir is not listed by identity; its recorded
+/// descriptor selects the layout.
 struct ZRzBrakeLeftLayoutTests {
   static let identifiers = [
     DeviceIdentifier(vendorID: 0x3537, productID: 0x1082),
     DeviceIdentifier(vendorID: 0x2DC8, productID: 0x301B),
     DeviceIdentifier(vendorID: 0x2DC8, productID: 0x301C),
   ]
+
+  private func makeParser(_ identifier: DeviceIdentifier) -> HIDDescriptorDriver {
+    let isGameSir = identifier.controllerIdentity.vendorID == 0x3537
+    return HIDDescriptorDriver(
+      identifier: identifier,
+      reportDescriptor: isGameSir ? RecordedHIDDescriptors.gameSirG7SE : nil
+    )
+  }
 
   private func parse(
     _ parser: HIDDescriptorDriver,
@@ -22,7 +31,7 @@ struct ZRzBrakeLeftLayoutTests {
 
   @Test(arguments: identifiers)
   func mapsRecordedButtonsAndIgnoresDigitalTriggerBits(identifier: DeviceIdentifier) {
-    let parser = HIDDescriptorDriver(identifier: identifier)
+    let parser = makeParser(identifier)
     let buttons: [UInt32: ControlID] = [
       1: .faceSouth, 2: .faceEast, 4: .faceWest, 5: .faceNorth, 7: .leftShoulder, 8: .rightShoulder,
       11: .view, 12: .menu, 13: .guide, 14: .leftStickClick, 15: .rightStickClick,
@@ -39,7 +48,7 @@ struct ZRzBrakeLeftLayoutTests {
 
   @Test(arguments: identifiers)
   func zAndRzAreTheRightStick(identifier: DeviceIdentifier) {
-    let parser = HIDDescriptorDriver(identifier: identifier)
+    let parser = makeParser(identifier)
     #expect(parse(parser, value(usage: 0x32, integer: 255)).contains(.rightStick(x: 1, y: 0)))
     let down = parse(parser, value(usage: 0x35, integer: 255))
     #expect(down.contains(.rightStick(x: 1, y: 1)))
@@ -49,7 +58,7 @@ struct ZRzBrakeLeftLayoutTests {
 
   @Test(arguments: identifiers)
   func brakeIsLeftTriggerAndAcceleratorIsRightTrigger(identifier: DeviceIdentifier) {
-    let parser = HIDDescriptorDriver(identifier: identifier)
+    let parser = makeParser(identifier)
     #expect(parse(parser, value(page: 2, usage: 0xC5, integer: 255)).contains(.leftTrigger(1)))
     #expect(
       parse(parser, value(page: 2, usage: 0xC4, integer: 128)).contains(

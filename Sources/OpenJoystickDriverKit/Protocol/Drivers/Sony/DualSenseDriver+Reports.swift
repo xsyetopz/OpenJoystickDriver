@@ -8,9 +8,17 @@ extension DualSenseDriver {
     .paddleLeft1, .paddleRight1, .auxiliary1, .auxiliary2,
   ]
 
-  public var sessionPlan: DriverSessionPlan { DriverSessionPlan(validatesFeatureReplies: true) }
+  public var sessionPlan: DriverSessionPlan {
+    DriverSessionPlan(
+      requiresInputConnectionBeforeOutput: thirdParty?.isDongle == true,
+      validatesFeatureReplies: true
+    )
+  }
 
-  public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
+  public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? {
+    defer { pendingConnectionState = nil }
+    return pendingConnectionState
+  }
 
   public var capabilities: ControllerCapabilities {
     let base: Set<ControlID> = [
@@ -36,21 +44,33 @@ extension DualSenseDriver {
     static let buttons2 = 9
   }
 
+  /// Output limited to the controller's features; adaptive triggers only on Sony controllers.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
-    PhysicalControllerOutputCapabilities(
-      rumbleMotors: [.leftMain, .rightMain],
-      lightingFeatures: [.playerIndicator, .programmableColor],
-      adaptiveTriggers: PhysicalAdaptiveTrigger.allCases
+    var lighting: [PhysicalLightingFeature] = []
+    if features.contains(.playerIndicator) { lighting.append(.playerIndicator) }
+    if features.contains(.lightbar) { lighting.append(.programmableColor) }
+    return PhysicalControllerOutputCapabilities(
+      rumbleMotors: features.contains(.vibration) ? [.leftMain, .rightMain] : [],
+      lightingFeatures: lighting,
+      adaptiveTriggers: thirdParty == nil ? PhysicalAdaptiveTrigger.allCases : []
     )
   }
 
+  /// Calibration, preceded on a third-party controller by SDL's capability probe.
   public func startupFeatureReads() -> [PhysicalHIDFeatureReadRequest] {
-    [PhysicalHIDFeatureReadRequest(reportID: 0x05, length: 41)]
+    let calibration = PhysicalHIDFeatureReadRequest(reportID: 0x05, length: 41)
+    guard thirdParty != nil else { return [calibration] }
+    let probe = PhysicalHIDFeatureReadRequest(
+      reportID: dualSenseCapabilitiesReportID,
+      length: dualSenseCapabilitiesReportLength
+    )
+    return [probe, calibration]
   }
 
   public func consumeFeatureReply(_ data: Data, request: PhysicalHIDFeatureReadRequest) -> Bool {
-    guard request.reportID == 5, request.length == 41, data.count == 41 else { return false }
     let bytes = Array(data)
+    if request.reportID == dualSenseCapabilitiesReportID { return applyCapabilityReply(bytes) }
+    guard request.reportID == 5, request.length == 41, data.count == 41 else { return false }
     if isBluetoothVariant || connectionMode == .bluetooth,
       !SonyBluetoothCRC32.isValid(seed: 0xA3, report: bytes)
     {
@@ -64,7 +84,9 @@ extension DualSenseDriver {
   /// Decodes one DualSense HID input report into the full controller state and its samples.
   public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
     let bytes = try reportPayload(from: data)
-    guard bytes.count >= 10 else { return nil }
+    guard bytes.count >= 10, acceptsDongleReport(bytes, receivedAt: receivedAt.nanoseconds) else {
+      return nil
+    }
     var next = state
     next.leftStick = StickPosition(
       x: normalizeHID(bytes[ReportOffset.leftStickX]),
@@ -74,22 +96,34 @@ extension DualSenseDriver {
       x: normalizeHID(bytes[ReportOffset.rightStickX]),
       yDown: normalizeHID(bytes[ReportOffset.rightStickY])
     )
-    next.leftTrigger = UnipolarValue(
-      normalized: Float(bytes[ReportOffset.l2Trigger]) / dualSenseTriggerMax
+    next.leftTrigger = trigger(
+      bytes[ReportOffset.l2Trigger],
+      button: bytes[ReportOffset.buttons1] & 0x04 != 0
     )
-    next.rightTrigger = UnipolarValue(
-      normalized: Float(bytes[ReportOffset.r2Trigger]) / dualSenseTriggerMax
+    next.rightTrigger = trigger(
+      bytes[ReportOffset.r2Trigger],
+      button: bytes[ReportOffset.buttons1] & 0x08 != 0
     )
     next.hat = mapHat(bytes[ReportOffset.buttons0] & 0x0F)
     for (offset, mask, control) in buttonTable {
       next.set(control, pressed: bytes[offset] & mask != 0)
     }
-    let samples = SonySensorSamples.dualSense(
-      bytes,
-      receivedAt: receivedAt.nanoseconds,
-      clock: &sensorClock,
-      calibration: motionCalibration
-    )
+    var samples =
+      usesAlternateReport
+      ? SonySensorSamples.dualSenseAlternate(
+        bytes,
+        receivedAt: receivedAt.nanoseconds,
+        clock: &sensorClock,
+        calibration: motionCalibration
+      )
+      : SonySensorSamples.dualSense(
+        bytes,
+        receivedAt: receivedAt.nanoseconds,
+        clock: &sensorClock,
+        calibration: motionCalibration
+      )
+    if !features.contains(.sensors) { samples.motion = [] }
+    if !features.contains(.touchpad) { samples.touch = [] }
     next.recordTouch(samples.touch)
     state = next
     return ControllerEvent(
@@ -98,6 +132,12 @@ extension DualSenseDriver {
       motion: samples.motion,
       touchFrames: samples.touch
     )
+  }
+
+  /// A digital trigger with an idle analog byte reads fully pulled, as SDL reads it; arcade
+  /// sticks report only the digital bit.
+  private func trigger(_ raw: UInt8, button: Bool) -> UnipolarValue {
+    UnipolarValue(normalized: raw == 0 && button ? 1 : Float(raw) / dualSenseTriggerMax)
   }
 
   /// Payload byte, mask and PlayStation-label control of each button; Edge buttons only on Edge.
@@ -122,6 +162,7 @@ extension DualSenseDriver {
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
+    guard supports(command) else { throw .unsupportedCapability(command.capability) }
     switch command {
     case .setRumble(let intensities, _):
       return output(
@@ -154,6 +195,17 @@ extension DualSenseDriver {
         return output(validFlag0: dualSenseRightTriggerEffectFlag, rightTriggerEffect: encoded)
       }
     case .setLightBrightness: throw .unsupportedCapability(command.capability)
+    }
+  }
+
+  private func supports(_ command: ControllerOutputCommand) -> Bool {
+    let output = outputCapabilities
+    switch command {
+    case .setRumble, .stopRumble: return output.supportsRumble
+    case .setPlayerIndicator: return output.supportsPlayerIndicator
+    case .setRGB: return output.lightingFeatures.contains(.programmableColor)
+    case .setAdaptiveTrigger: return output.supportsAdaptiveTriggers
+    case .setLightBrightness: return true
     }
   }
 
@@ -222,7 +274,9 @@ extension DualSenseDriver {
 
   private func reportPayload(from data: Data) throws -> [UInt8] {
     let bytes = Array(data)
-    if bytes.first == dualSenseUSBInputReportID, bytes.count >= dualSenseUSBInputReportLength {
+    // SDL reads a third-party report of any length but 10, its simple Bluetooth report.
+    let usbLength = thirdParty == nil ? dualSenseUSBInputReportLength : 11
+    if bytes.first == dualSenseUSBInputReportID, bytes.count >= usbLength {
       connectionMode = .usb
       return Array(bytes.dropFirst())
     }

@@ -91,14 +91,16 @@ struct InterfaceSignatureBindingTests {
 
   @Test
   func catalogRowBeatsAnInterfaceSignature() throws {
-    // 045E:028E is a catalogued XUSB row; a GIP triple on it does not change the binding.
+    // 045E:028E is a catalogued XUSB row; while its own XUSB interface is present, an extra GIP
+    // triple does not change the binding. A GIP-only device is the firmware-mode case covered in
+    // `ProtocolClassifierTests.xboxRecordYieldsToTheOtherXboxFamilysObservedSignature`.
     let device = PhysicalDevice(
       vendorID: 0x045E,
       productID: 0x028E,
       deviceClass: 0xFF,
       deviceSubclass: 0x47,
       deviceProtocol: 0xD0,
-      interfaces: [registryInterface(0, 0xFF, 0x47, 0xD0)]
+      interfaces: [registryInterface(0, 0xFF, 0x5D, 0x01), registryInterface(1, 0xFF, 0x47, 0xD0)]
     )
     let binding = try bound(device)
     #expect(binding.rule == .catalogRecord)

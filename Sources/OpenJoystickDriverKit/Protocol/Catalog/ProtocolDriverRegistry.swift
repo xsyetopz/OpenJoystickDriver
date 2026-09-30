@@ -101,16 +101,20 @@ public final class ProtocolDriverRegistry: Sendable {
   /// route, which reports no interface facts. An interface-signature binding fails closed there.
   ///
   /// `slotOrdinal` is the role's index in ``roleProfiles(for:resolution:)``; only an Xbox 360
-  /// receiver reads it, as the slot whose ring light it drives.
+  /// receiver reads it, and only to reject a slot past the fourth. `reportDescriptor` is the bound
+  /// HID interface's report descriptor; only `hid.descriptor` reads it, to choose its layout.
   func makeDriver(
     for binding: ProtocolBinding,
     identifier: DeviceIdentifier,
     claimed: USBTransportResolution?,
-    slotOrdinal: Int = 0
+    slotOrdinal: Int = 0,
+    reportDescriptor: Data? = nil
   ) -> Result<any PhysicalProtocolDriver, ProtocolBindingReason> {
     guard let record = runtimeProfile(for: binding) else {
       guard binding.protocolID == .hidDescriptor else { return .failure(.noProtocolMatch) }
-      return .success(HIDDescriptorDriver(identifier: identifier))
+      return .success(
+        HIDDescriptorDriver(identifier: identifier, reportDescriptor: reportDescriptor)
+      )
     }
     var transportProfile = record.transportProfile
     if binding.accessBackend != .ioHID {
@@ -130,7 +134,8 @@ public final class ProtocolDriverRegistry: Sendable {
       record: record,
       identifier: identifier,
       transportProfile: transportProfile,
-      slotOrdinal: slotOrdinal
+      slotOrdinal: slotOrdinal,
+      reportDescriptor: reportDescriptor
     )
   }
 
@@ -143,7 +148,8 @@ public final class ProtocolDriverRegistry: Sendable {
     record: DeviceRuntimeProfile,
     identifier: DeviceIdentifier,
     transportProfile: DeviceTransportProfile,
-    slotOrdinal: Int = 0
+    slotOrdinal: Int = 0,
+    reportDescriptor: Data? = nil
   ) -> Result<any PhysicalProtocolDriver, ProtocolBindingReason> {
     if !protocolID.variants.isEmpty {
       guard let variant, protocolID.variants.contains(variant) else {
@@ -151,7 +157,10 @@ public final class ProtocolDriverRegistry: Sendable {
       }
     }
     switch protocolID {
-    case .hidDescriptor: return .success(HIDDescriptorDriver(identifier: identifier))
+    case .hidDescriptor:
+      return .success(
+        HIDDescriptorDriver(identifier: identifier, reportDescriptor: reportDescriptor)
+      )
     case .xboxXID: return .success(XIDDriver(outEndpoint: transportProfile.outputEndpoint))
     case .xboxXUSB:
       guard variant == .receiver else {
@@ -179,7 +188,11 @@ public final class ProtocolDriverRegistry: Sendable {
       return .success(
         DualShock4Driver(
           prefersBluetooth: variant == .bluetoothClassic,
-          usesFactoryCalibration: identifier.controllerIdentity.vendorID == 0x054C
+          usesFactoryCalibration: identifier.controllerIdentity.vendorID == 0x054C,
+          model: DualShock4Model(
+            vendorID: identifier.controllerIdentity.vendorID,
+            productID: identifier.controllerIdentity.productID
+          )
         )
       )
     case .sonyDualSense:
@@ -188,7 +201,9 @@ public final class ProtocolDriverRegistry: Sendable {
           prefersBluetooth: variant == .bluetoothClassic,
           hasEdgeButtons: DualSenseDriver.edgeControls.isSubset(
             of: record.capabilityDelta.presentControls
-          )
+          ),
+          vendorID: identifier.controllerIdentity.vendorID,
+          productID: identifier.controllerIdentity.productID
         )
       )
     case .nintendoSwitch1:
@@ -227,7 +242,9 @@ public final class ProtocolDriverRegistry: Sendable {
         )
       )
     case .vendorFlydigi: return .success(FlydigiDriver())
-    case .vendorShanwan: return .success(ShanwanDriver())
+    case .vendorPS3ThirdParty: return .success(PS3ThirdPartyDriver(identifier: identifier))
+    case .vendorNVIDIAShield:
+      return .success(NVIDIAShieldDriver(productID: identifier.controllerIdentity.productID))
     case .vendorGameSir:
       switch variant {
       case .usb:

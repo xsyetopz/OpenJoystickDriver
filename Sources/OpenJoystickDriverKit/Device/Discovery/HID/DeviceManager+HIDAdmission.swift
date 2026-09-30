@@ -112,7 +112,15 @@ extension DeviceManager {
       // No row names an assembly policy yet (the vocabulary is empty), so each role is its own
       // logical controller; the first policy must assemble its roles here.
       if let policy = protocolDriverRegistry.assemblyPolicy(for: bound) { switch policy {} }
-      switch protocolDriverRegistry.makeDriver(for: bound, identifier: identifier, claimed: nil) {
+      let reportDescriptor = physicalDevice.interfaces?.first {
+        $0.interfaceNumber == bound.interfaceNumber
+      }?.hidLayout?.reportDescriptor
+      switch protocolDriverRegistry.makeDriver(
+        for: bound,
+        identifier: identifier,
+        claimed: nil,
+        reportDescriptor: reportDescriptor
+      ) {
       case .success(let resolved):
         binding = bound
         driver = resolved

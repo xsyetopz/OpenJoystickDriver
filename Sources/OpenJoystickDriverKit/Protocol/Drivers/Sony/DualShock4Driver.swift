@@ -41,23 +41,33 @@ public final class DualShock4Driver: PhysicalProtocolDriver {
   public internal(set) var transport: DS4Transport = .usb
   public internal(set) var power: ControllerConnectionState.Power?
   public let sessionPlan: DriverSessionPlan
-  public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
   public internal(set) var latestInputReportFormat: String?
   /// Whether a validated factory calibration report is installed. SDL ignores the report on
   /// controllers without Sony's vendor ID, so third-party pads keep the nominal scale.
   let usesFactoryCalibration: Bool
   /// The bound variant; startup follows Bluetooth whenever this or the observed reports say so.
   let isBluetoothVariant: Bool
+  let model: DualShock4Model
+  var adapterPadConnected = false
+  var lastAdapterPadReportAt: UInt64?
+  var pendingConnectionState: ControllerInputConnectionState?
 
   /// Creates a new DualShock4Driver.
-  public init(prefersBluetooth: Bool = false, usesFactoryCalibration: Bool = true) {
+  public init(
+    prefersBluetooth: Bool = false,
+    usesFactoryCalibration: Bool = true,
+    model: DualShock4Model = .standard
+  ) {
     transport = prefersBluetooth ? .bluetooth : .usb
     isBluetoothVariant = prefersBluetooth
     self.usesFactoryCalibration = usesFactoryCalibration
+    self.model = model
+    motionCalibration = model.scaled(.nominal)
     // Startup output is required only for the bound Bluetooth variant; Bluetooth-shaped reports
     // on a USB binding change the startup writes, not this requirement.
     sessionPlan = DriverSessionPlan(
       inputReportLivenessTimeoutNanoseconds: 1_000_000_000,
+      requiresInputConnectionBeforeOutput: model == .wirelessAdapter,
       outputPrecedesFeatureReads: true,
       requiresStartupOutput: prefersBluetooth,
       validatesFeatureReplies: true
@@ -68,5 +78,6 @@ public final class DualShock4Driver: PhysicalProtocolDriver {
   public func resetProtocolState() {
     state = .neutral
     sensorClock.reset()
+    resetAdapterPresence()
   }
 }

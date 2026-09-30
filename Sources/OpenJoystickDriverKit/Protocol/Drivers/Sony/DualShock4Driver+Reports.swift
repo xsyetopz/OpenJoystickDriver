@@ -54,17 +54,24 @@ extension DualShock4Driver {
 
     if bluetooth, !SonyBluetoothCRC32.isValid(seed: 0xA3, report: bytes) { return false }
     guard usesFactoryCalibration else { return true }
-    guard let calibrated = SonyMotionCalibration.dualShock4Factory(bytes, bluetooth: bluetooth)
+    guard
+      let calibrated = SonyMotionCalibration.dualShock4Factory(
+        bytes,
+        bluetooth: bluetooth,
+        groupsGyroEndpoints: bluetooth || model == .wirelessAdapter
+      )
     else { return false }
 
-    motionCalibration = calibrated.installed(after: motionCalibration)
+    motionCalibration = model.scaled(calibrated).installed(after: motionCalibration)
     return true
   }
 
   /// Decodes one DS4 HID input report into the full controller state and its samples.
   public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
     let bytes = try reportPayload(from: data)
-    guard bytes.count >= 9 else { return nil }
+    guard bytes.count >= 9, acceptsAdapterReport(bytes, receivedAt: receivedAt.nanoseconds) else {
+      return nil
+    }
     let timestamp = bytes.count >= 11 ? UInt16(bytes[9]) | (UInt16(bytes[10]) << 8) : nil
     let isFresh =
       timestamp.map { current in

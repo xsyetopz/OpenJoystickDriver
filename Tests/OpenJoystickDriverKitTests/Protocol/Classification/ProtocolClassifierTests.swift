@@ -168,6 +168,30 @@ struct ProtocolClassifierTests {
     #expect(classic == expected)
   }
 
+  /// A Bluetooth-only Switch pad (PDP `0e6f:0186`, PowerA `0f0d:00f6`) only charges over USB.
+  @Test(arguments: [(0x0E6F, 0x0186), (0x0F0D, 0x00F6)] as [(UInt16, UInt16)])
+  func bluetoothOnlySwitchPadBindsBluetoothClassicButNotUSB(identity: (UInt16, UInt16)) throws {
+    let (vendorID, productID) = identity
+    let classic = try bound(
+      classify(
+        device(vendorID, productID, interfaces: [hidInterface(host: .bluetoothClassic)]),
+        backend: .ioHID
+      )
+    )
+    #expect(classic.protocolID == .nintendoSwitch1)
+    #expect(classic.variant == .bluetoothClassic)
+    let usb = classify(
+      device(vendorID, productID, interfaces: [hidInterface(host: .usb)]),
+      backend: .ioHID
+    )
+    let expected = rejection(
+      .unsupportedTransportVariant,
+      .nintendoSwitch1,
+      record: recordID(vendorID, productID)
+    )
+    #expect(usb == expected)
+  }
+
   @Test(arguments: [(0x3537, 0x100A), (0x11C1, 0x5600), (0x2E95, 0x434D)] as [(UInt16, UInt16)])
   func singleContractHIDRecordsNeedNoTransportVariant(identity: (UInt16, UInt16)) throws {
     let record = try #require(Self.catalog.record(for: identifier(identity.0, identity.1)))
@@ -222,11 +246,32 @@ struct ProtocolClassifierTests {
     }
   }
 
+  /// One VID:PID can ship XUSB or GIP firmware; the Xbox interface it exposes decides.
   @Test
-  func catalogRecordOutranksAContradictingInterfaceSignature() throws {
-    // Contradiction with observed interfaces is the selected driver's validation.
-    let binding = try bound(
+  func xboxRecordYieldsToTheOtherXboxFamilysObservedSignature() throws {
+    let asGIP = try bound(
       classify(device(0x045E, 0x028E, interfaces: [gipInterface()]), backend: .ioUSBHost)
+    )
+    #expect(asGIP.protocolID == .xboxGIP)
+    #expect(asGIP.rule == .interfaceSignature)
+    #expect(asGIP.record == nil)
+
+    let asXUSB = try bound(
+      classify(
+        device(0x045E, 0x02EA, interfaces: [usbInterface(0, 0xFF, 0x5D, 0x01)]),
+        backend: .ioUSBHost
+      )
+    )
+    #expect(asXUSB.protocolID == .xboxXUSB)
+    #expect(asXUSB.variant == .wired)
+    #expect(asXUSB.rule == .interfaceSignature)
+  }
+
+  @Test
+  func xboxRecordKeepsItsFamilyWhenItsOwnSignatureIsPresent() throws {
+    let interfaces = [usbInterface(0, 0xFF, 0x5D, 0x01), usbInterface(1, 0xFF, 0x47, 0xD0)]
+    let binding = try bound(
+      classify(device(0x045E, 0x028E, interfaces: interfaces), backend: .ioUSBHost)
     )
     #expect(binding.protocolID == .xboxXUSB)
     #expect(binding.rule == .catalogRecord)

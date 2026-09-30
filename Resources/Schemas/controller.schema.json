@@ -46,8 +46,9 @@
 						"nintendo.switch1",
 						"valve.steam-controller",
 						"vendor.flydigi",
-						"vendor.shanwan",
-						"vendor.gamesir"
+						"vendor.ps3-third-party",
+						"vendor.gamesir",
+						"vendor.nvidia-shield"
 					]
 				},
 				"variant": {
@@ -287,7 +288,13 @@
 								"anyOf": [
 									{
 										"items": {
-											"enum": ["joy-con-left", "joy-con-right", "input-only", "switch-2"]
+											"enum": [
+												"joy-con-left",
+												"joy-con-right",
+												"input-only",
+												"bluetooth-only",
+												"switch-2"
+											]
 										},
 										"maxItems": 1
 									},

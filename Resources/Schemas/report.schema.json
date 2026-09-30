@@ -578,8 +578,9 @@
 						"nintendo.switch1",
 						"valve.steam-controller",
 						"vendor.flydigi",
-						"vendor.shanwan",
-						"vendor.gamesir"
+						"vendor.ps3-third-party",
+						"vendor.gamesir",
+						"vendor.nvidia-shield"
 					]
 				},
 				"reason": { "$ref": "#/$defs/bindingReason" },

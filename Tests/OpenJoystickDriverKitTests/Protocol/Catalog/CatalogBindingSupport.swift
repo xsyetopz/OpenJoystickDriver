@@ -41,12 +41,18 @@ func steamHIDInterface(number: UInt8, gamepad: Bool = true) -> PhysicalInterface
   )
 }
 
+/// The host link a catalog row is observed on by default: USB, except for a Bluetooth-only
+/// pad, whose USB link only charges it.
+func defaultHost(of record: DeviceRuntimeProfile) -> PhysicalTransport {
+  record.quirks.contains(.bluetoothOnly) ? .bluetoothClassic : .usb
+}
+
 /// Binds a catalog model on its family's access path, as discovery does, and returns the
-/// driver the runtime would construct. A raw-USB row claims `transportProfile`, or the record's
-/// profile, without observed interface facts.
+/// driver the runtime would construct. A HID row is observed over `host`, or its default host;
+/// a raw-USB row claims `transportProfile`, or the record's profile, without interface facts.
 func catalogParser(
   _ identifier: DeviceIdentifier,
-  host: PhysicalTransport = .usb,
+  host: PhysicalTransport? = nil,
   transportProfile: DeviceTransportProfile? = nil,
   registry: ProtocolDriverRegistry = ProtocolDriverRegistry()
 ) throws -> any PhysicalProtocolDriver {
@@ -55,7 +61,7 @@ func catalogParser(
   let device = PhysicalDevice(
     vendorID: identifier.controllerIdentity.vendorID,
     productID: identifier.controllerIdentity.productID,
-    interfaces: isRawUSB ? nil : [gamepadHIDInterface(host: host)]
+    interfaces: isRawUSB ? nil : [gamepadHIDInterface(host: host ?? defaultHost(of: record))]
   )
   let classification = registry.classify(device, backend: isRawUSB ? .ioUSBHost : .ioHID)
   guard case .bound(let binding) = classification else {

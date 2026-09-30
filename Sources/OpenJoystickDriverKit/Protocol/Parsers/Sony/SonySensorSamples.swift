@@ -118,6 +118,28 @@ enum SonySensorSamples {
     )
   }
 
+  /// SDL's `PS5StatePacketAlt_t`, sent by third-party DualSense-protocol controllers: motion at
+  /// 15 as in the standard report, a 16-bit microsecond sensor timestamp at 27, and touch
+  /// contacts at 31 and 35.
+  static func dualSenseAlternate(
+    _ bytes: [UInt8],
+    receivedAt: UInt64,
+    clock: inout SonySensorClock,
+    calibration: SonyMotionCalibration = .nominal
+  ) -> ControllerReportSamples {
+    guard bytes.count >= 39 else { return ControllerReportSamples() }
+    let timestamp = clock.timestamp(UInt32(unsigned16(bytes, at: 27)), receivedAt: receivedAt)
+    return ControllerReportSamples(
+      motion: motion(bytes, at: 15, timestamp: timestamp, calibration: calibration),
+      touch: [
+        ControllerTouchSample(
+          timestamp: timestamp.monotonic,
+          contacts: contacts(bytes, at: 31, geometry: dualSenseTouchpad)
+        )
+      ]
+    )
+  }
+
   private static func motion(
     _ bytes: [UInt8],
     at offset: Int,

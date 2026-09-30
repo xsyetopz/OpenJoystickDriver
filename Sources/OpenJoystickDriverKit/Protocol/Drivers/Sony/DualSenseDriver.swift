@@ -37,6 +37,9 @@ public enum DualSenseDriverError: Error, Equatable { case invalidBluetoothCRC }
 /// Bluetooth report `0x31` carries the same
 /// common input report after its two-byte header and is accepted only when
 /// its Linux-compatible CRC32 validates.
+///
+/// A controller with a non-Sony vendor ID runs in SDL's third-party mode; see
+/// `DualSenseThirdPartyModel`.
 public final class DualSenseDriver: PhysicalProtocolDriver {
 
   public let hasEdgeButtons: Bool
@@ -50,16 +53,38 @@ public final class DualSenseDriver: PhysicalProtocolDriver {
   var connectionMode: DualSenseConnectionMode
   var outputSequence: UInt8 = 0
 
-  /// Creates a new DualSense parser.
-  public init(prefersBluetooth: Bool = false, hasEdgeButtons: Bool = false) {
+  /// Set for a non-Sony controller.
+  let thirdParty: DualSenseThirdPartyModel?
+  var features: DualSenseFeatures
+  var usesAlternateReport = false
+  var lastPacketSequence: UInt32?
+  var lastLiveReportAt: UInt64?
+  var dongleConnected = false
+  var pendingConnectionState: ControllerInputConnectionState?
+
+  /// Creates a new DualSense parser for the controller with `vendorID` and `productID`.
+  public init(
+    prefersBluetooth: Bool = false,
+    hasEdgeButtons: Bool = false,
+    vendorID: UInt16 = 0x054C,
+    productID: UInt16 = 0
+  ) {
     self.hasEdgeButtons = hasEdgeButtons
     isBluetoothVariant = prefersBluetooth
     connectionMode = prefersBluetooth ? .bluetooth : .usb
+    let model =
+      vendorID == dualSenseSonyVendorID
+      ? nil : DualSenseThirdPartyModel(vendorID: vendorID, productID: productID)
+    thirdParty = model
+    features = model?.unprobedFeatures ?? .all
+    if model?.usesAlternateReportUnprobed == true { useAlternateReport() }
   }
 
-  /// A new transport session starts from neutral input and re-anchors motion time.
+  /// A new transport session starts from neutral input and re-anchors motion time. The probe
+  /// result describes the device, so it survives.
   public func resetProtocolState() {
     state = .neutral
     sensorClock.reset()
+    resetDonglePresence()
   }
 }

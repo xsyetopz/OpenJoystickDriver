@@ -8,7 +8,7 @@ enum LocalizationCatalogAudit {
     "cli.diagnose.usb_device_line", "cli.error.codesign_diagnostic",
     "cli.mapping.usage.restore_default_input", "controller.dualSense", "controller.dualShock3",
     "controller.dualShock4", "controller.flydigi", "controller.genericHID",
-    "controller.originalXbox", "controller.shanwan", "controller.standardHID",
+    "controller.originalXbox", "controller.standardHID",
     "controller.steamController", "controller.switchPro", "controller.switchProController",
     "controller.xbox360", "controller.xbox360Wireless", "controller.xbox360WirelessDeveloper",
     "controller.xboxOne", "controller.xboxOriginal", "controllers.usbIdentifier", "developer.hid",

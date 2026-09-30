@@ -119,10 +119,16 @@ extension DriverLifecycleCharacterizationTests {
     protocolID: .vendorFlydigi,
     variant: nil
   )
-  static let shanwan = Subject(
+  static let ps3ThirdParty = Subject(
     identifier: identifier(0x2563, 0x0575),
     host: .usb,
-    protocolID: .vendorShanwan,
+    protocolID: .vendorPS3ThirdParty,
+    variant: nil
+  )
+  static let nvidiaShield = Subject(
+    identifier: identifier(0x0955, 0x7210),
+    host: .usb,
+    protocolID: .vendorNVIDIAShield,
     variant: nil
   )
   static let gameSirUSB = Subject(
@@ -184,8 +190,8 @@ extension DriverLifecycleCharacterizationTests {
   static let subjects = [
     gipUSB, gipKeepAliveDisabled, xidGamepad, xusbWired, xusbReceiver, sixaxisUSB, sixaxisBluetooth,
     dualShock4USB, dualShock4Bluetooth, dualSenseUSB, dualSenseBluetooth, switchUSB,
-    switchBluetooth, steamWired, steamDongle, flydigi, shanwan, gameSirUSB, gameSirEnhancedHID,
-    gameSirEnhancedHID8K, hidDescriptor,
+    switchBluetooth, steamWired, steamDongle, flydigi, ps3ThirdParty, nvidiaShield, gameSirUSB,
+    gameSirEnhancedHID, gameSirEnhancedHID8K, hidDescriptor,
   ]
 
   @Test

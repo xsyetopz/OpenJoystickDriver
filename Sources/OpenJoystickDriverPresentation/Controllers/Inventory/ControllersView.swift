@@ -252,7 +252,8 @@
         OJDLocalized.string("controller.steamController", fallback: "Steam Controller")
       case .nintendoSwitch1: OJDLocalized.string("controller.switchPro", fallback: "Switch Pro")
       case .vendorFlydigi: OJDLocalized.string("controller.flydigi", fallback: "Flydigi")
-      case .vendorShanwan: OJDLocalized.string("controller.shanwan", fallback: "Shanwan")
+      case .vendorPS3ThirdParty: "Third-party PS3"
+      case .vendorNVIDIAShield: "NVIDIA SHIELD"
       case .vendorGameSir where variant == .usb: "GameSir G7 Pro USB"
       case .vendorGameSir: "GameSir enhanced HID"
       case .hidDescriptor: OJDLocalized.string("controller.genericHID", fallback: "Generic HID")

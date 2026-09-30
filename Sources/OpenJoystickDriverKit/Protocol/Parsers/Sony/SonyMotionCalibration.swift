@@ -44,11 +44,29 @@ struct SonyMotionCalibration {
     return factory(bytes, groupedGyroEndpoints: false, useBiasedGyroRange: false)
   }
 
-  static func dualShock4Factory(_ bytes: [UInt8], bluetooth: Bool) -> Self? {
+  /// `groupsGyroEndpoints` selects the Bluetooth gyro endpoint order (all plus, then all minus),
+  /// which SDL `HIDAPI_DriverPS4_LoadCalibrationData` also reads from Sony's wireless adapter's
+  /// USB report.
+  static func dualShock4Factory(
+    _ bytes: [UInt8],
+    bluetooth: Bool,
+    groupsGyroEndpoints: Bool
+  ) -> Self? {
     let expectedLength = bluetooth ? Report.dualShock4BluetoothLength : Report.dualShock4USBLength
     let expectedID = bluetooth ? Report.dualShock4BluetoothID : Report.dualShock4USBID
     guard bytes.count == expectedLength, bytes[0] == expectedID else { return nil }
-    return factory(bytes, groupedGyroEndpoints: bluetooth, useBiasedGyroRange: true)
+    return factory(bytes, groupedGyroEndpoints: groupsGyroEndpoints, useBiasedGyroRange: true)
+  }
+
+  /// This calibration with every gyro and accelerometer axis scale multiplied by a factor.
+  func scaled(gyro gyroFactor: Double, accel accelFactor: Double) -> Self {
+    var result = Self(
+      gyro: gyro.map { Axis(bias: $0.bias, unitsPerCount: $0.unitsPerCount * gyroFactor) },
+      accel: accel.map { Axis(bias: $0.bias, unitsPerCount: $0.unitsPerCount * accelFactor) },
+      source: source
+    )
+    result.revision = revision
+    return result
   }
 
   private static func factory(

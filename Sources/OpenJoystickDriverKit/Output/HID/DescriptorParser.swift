@@ -177,6 +177,10 @@ enum HIDReportDescriptorParser {
       let prefix = descriptor[i]
       i += 1
 
+      // Xbox One S Bluetooth descriptors end with a zero byte after the last End Collection;
+      // Linux ignores it as an unknown main item.
+      if prefix == 0, collectionDepth == 0, descriptor[i...].allSatisfy({ $0 == 0 }) { break }
+
       if prefix == 0xFE {
         // Long item: [0xFE][size][tag][data...]
         guard i + 2 <= descriptor.count else { return nil }

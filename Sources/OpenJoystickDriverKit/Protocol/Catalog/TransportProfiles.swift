@@ -106,6 +106,9 @@ public enum ControllerQuirk: String, CaseIterable, Sendable {
   /// Wired Switch pad with a fixed HID input report and no subcommand channel (SDL
   /// `SwitchInputOnlyController`).
   case inputOnly = "input-only"
+  /// Switch pad that enumerates over USB for charging but speaks the protocol only over
+  /// Bluetooth (SDL `HIDAPI_DriverSwitch_IsSupportedDevice`, Linux `hid-nintendo.c` device table).
+  case bluetoothOnly = "bluetooth-only"
   /// Nintendo Switch 2 controller (SDL `SDL_hidapi_switch2.c`): input report `0x05` after an init
   /// sequence on the vendor bulk interface. A Joy-Con side quirk selects the Joy-Con 2 layout.
   case switch2 = "switch-2"
@@ -127,7 +130,8 @@ public enum ControllerQuirk: String, CaseIterable, Sendable {
   public var protocolID: PhysicalProtocolID {
     switch self {
     case .shareOffset: .xboxGIP
-    case .joyConLeft, .joyConRight, .inputOnly, .switch2, .gameCube: .nintendoSwitch1
+    case .joyConLeft, .joyConRight, .inputOnly, .bluetoothOnly, .switch2, .gameCube:
+      .nintendoSwitch1
     case .innerGrips, .lightingSlots: .vendorGameSir
     case .triton, .neptune: .valveSteamController
     }

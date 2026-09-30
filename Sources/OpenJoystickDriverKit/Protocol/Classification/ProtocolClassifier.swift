@@ -15,13 +15,14 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
   case nintendoSwitch1 = "nintendo.switch1"
   case valveSteamController = "valve.steam-controller"
   case vendorFlydigi = "vendor.flydigi"
-  case vendorShanwan = "vendor.shanwan"
+  case vendorPS3ThirdParty = "vendor.ps3-third-party"
   case vendorGameSir = "vendor.gamesir"
+  case vendorNVIDIAShield = "vendor.nvidia-shield"
 
   /// Implemented variants. An empty list means the family has one contract.
   public var variants: [PhysicalProtocolVariantID] {
     switch self {
-    case .hidDescriptor, .vendorFlydigi, .vendorShanwan: []
+    case .hidDescriptor, .vendorFlydigi, .vendorPS3ThirdParty, .vendorNVIDIAShield: []
     case .xboxXID: [.gamepad]
     case .xboxXUSB: [.wired, .receiver]
     case .xboxGIP: [.usb]
@@ -39,7 +40,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
     case .xboxXID, .xboxXUSB, .xboxGIP: true
     case .vendorGameSir: storedVariant == .usb
     case .hidDescriptor, .sonySixaxis, .sonyDualShock4, .sonyDualSense, .nintendoSwitch1,
-      .valveSteamController, .vendorFlydigi, .vendorShanwan:
+      .valveSteamController, .vendorFlydigi, .vendorPS3ThirdParty, .vendorNVIDIAShield:
       false
     }
   }
@@ -50,7 +51,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
     switch self {
     case .xboxXID, .xboxXUSB, .valveSteamController, .vendorGameSir: true
     case .hidDescriptor, .xboxGIP, .sonySixaxis, .sonyDualShock4, .sonyDualSense, .nintendoSwitch1,
-      .vendorFlydigi, .vendorShanwan:
+      .vendorFlydigi, .vendorPS3ThirdParty, .vendorNVIDIAShield:
       false
     }
   }
@@ -128,7 +129,9 @@ public enum ProtocolClassification: Equatable, Sendable {
 /// signature (the device-descriptor GIP triple only when an unconfigured device
 /// exposes no interface facts), then the `hid.descriptor` contract.
 /// `hid.descriptor` always requires the descriptor contract, including for catalog records.
-/// A validation failure never falls through to a lower level.
+/// A validation failure never falls through to a lower level. One exception: a record of one
+/// Xbox USB family whose device exposes only the other family's interface signature binds by
+/// that signature.
 enum ProtocolClassifier {
   static func classify(
     _ device: PhysicalDevice,
@@ -143,7 +146,8 @@ enum ProtocolClassifier {
     if let vendorID = device.vendorID, let productID = device.productID,
       let record = catalog.record(for: DeviceIdentifier(vendorID: vendorID, productID: productID))
     {
-      return bind(record, interfaces: interfaces, backend: backend)
+      return otherXboxFamilyBinding(for: record, interfaces: interfaces, backend: backend)
+        ?? bind(record, interfaces: interfaces, backend: backend)
     }
     if let result = classifySignature(interfaces, backend: backend)
       ?? classifyDeviceSignature(device, backend: backend)
@@ -224,6 +228,28 @@ enum ProtocolClassifier {
     )
   }
 
+  /// The signature binding of a device whose record names one Xbox USB family but whose
+  /// interfaces carry only the other's. One VID:PID can ship either firmware mode (8BitDo
+  /// `2dc8:3106` is XUSB in Linux `xpad.c` and GIP in SDL `controller_list.h`), and the claimed
+  /// interface class is what the device speaks. Nil when the record's own signature is present.
+  private static func otherXboxFamilyBinding(
+    for record: DeviceRuntimeProfile,
+    interfaces: [PhysicalInterfaceSignature],
+    backend: DeviceAccessBackend
+  ) -> ProtocolClassification? {
+    let xboxUSB: Set<PhysicalProtocolID> = [.xboxXUSB, .xboxGIP]
+    guard xboxUSB.contains(record.physicalProtocolID) else { return nil }
+    let observed = Set(
+      signatures.filter { signature in interfaces.contains(where: signature.matches) }.map(
+        \.protocolID
+      )
+    )
+    guard !observed.contains(record.physicalProtocolID),
+      !observed.isDisjoint(with: xboxUSB.subtracting([record.physicalProtocolID]))
+    else { return nil }
+    return classifySignature(interfaces, backend: backend)
+  }
+
   /// The first interface whose observed HID facts satisfy the descriptor contract.
   private static func descriptorInterface(
     _ interfaces: [PhysicalInterfaceSignature]
@@ -232,15 +258,17 @@ enum ProtocolClassifier {
   }
 
   /// The family's variants this model has a link for. A Switch 2 controller has USB and its
-  /// Bluetooth LE GATT link; every other Switch model has USB and Bluetooth Classic.
+  /// Bluetooth LE GATT link; every other Switch model has USB and Bluetooth Classic, except a
+  /// Bluetooth-only pad, whose USB link only charges it.
   private static func transportVariants(
     of record: DeviceRuntimeProfile
   ) -> [PhysicalProtocolVariantID] {
     let variants = record.physicalProtocolID.variants
     guard record.physicalProtocolID == .nintendoSwitch1 else { return variants }
-    let absent: PhysicalProtocolVariantID =
-      record.quirks.contains(.switch2) ? .bluetoothClassic : .bluetoothLE
-    return variants.filter { $0 != absent }
+    var absent: Set<PhysicalProtocolVariantID> =
+      record.quirks.contains(.switch2) ? [.bluetoothClassic] : [.bluetoothLE]
+    if record.quirks.contains(.bluetoothOnly) { absent.insert(.usb) }
+    return variants.filter { !absent.contains($0) }
   }
 
   /// The single host transport shared by every interface; unknown when any is absent.

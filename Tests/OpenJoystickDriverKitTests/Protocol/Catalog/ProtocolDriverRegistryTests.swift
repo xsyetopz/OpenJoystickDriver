@@ -41,11 +41,13 @@ struct ProtocolDriverRegistryTests {
   }
 
   @Test
-  func everyHIDRowBindsItsFamilyParserOverUSB() throws {
+  func everyHIDRowBindsItsFamilyParserOverItsDefaultHost() throws {
     #expect(!registry.hidIdentifiers.isEmpty)
     for identifier in registry.hidIdentifiers {
       let record = try #require(registry.record(for: identifier))
-      let binding = try bound(hidDevice(identifier, gamepadHIDInterface(host: .usb)))
+      let binding = try bound(
+        hidDevice(identifier, gamepadHIDInterface(host: defaultHost(of: record)))
+      )
       #expect(binding.protocolID == record.physicalProtocolID, "\(identifier)")
       let driver = try registry.makeDriver(for: binding, identifier: identifier, claimed: nil).get()
       #expect(Self.driver(driver, belongsTo: binding.protocolID), "\(identifier)")
@@ -316,8 +318,9 @@ struct ProtocolDriverRegistryTests {
     case .valveSteamController:
       driver is SteamControllerDriver || driver is SteamTritonDriver || driver is SteamDeckDriver
     case .vendorFlydigi: driver is FlydigiDriver
-    case .vendorShanwan: driver is ShanwanDriver
+    case .vendorPS3ThirdParty: driver is PS3ThirdPartyDriver
     case .vendorGameSir: driver is GameSirDriver
+    case .vendorNVIDIAShield: driver is NVIDIAShieldDriver
     }
   }
 }

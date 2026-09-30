@@ -127,6 +127,8 @@ struct ControllerRecordDocument: Decodable {
           "Joy-Con layout must select one side"
         } else if quirks.contains(.inputOnly) && quirks.count != 1 {
           "a Switch input-only pad has no Joy-Con layout"
+        } else if quirks.contains(.bluetoothOnly) && quirks.count != 1 {
+          "a Bluetooth-only Switch pad selects no other layout"
         } else if quirks.contains(.gameCube) && !quirks.contains(.switch2) {
           "the GameCube layout is a Switch 2 controller"
         } else if quirks.contains(.gameCube)
