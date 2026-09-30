@@ -52,6 +52,7 @@ extension DevicePipeline {
     let handle = usbHandle
     usbHandle = nil
     await neutralizeOutput()
+    await closeUSBCommandSession()
     await notifyControllerDidStop()
     await handle?.close()
     driver.resetProtocolState()
@@ -88,12 +89,12 @@ extension DevicePipeline {
     }
   }
 
-  /// The native startup player indicator, returned once. The caller asks after an input report,
-  /// because a USB Sixaxis ignores the LED report until it streams input.
-  func takeStartupPlayerIndicator() -> PhysicalPlayerIndicator? {
-    guard startupPlayerIndicatorPending else { return nil }
+  /// Whether the native startup player indicator is due, true once. The caller asks after an
+  /// input report, because a USB Sixaxis ignores the LED report until it streams input.
+  func takeStartupPlayerIndicatorDue() -> Bool {
+    guard startupPlayerIndicatorPending else { return false }
     startupPlayerIndicatorPending = false
-    return nativeWrites?.startupPlayerIndicator
+    return true
   }
 
   func sessionPlan() -> DriverSessionPlan { driver.sessionPlan }
@@ -180,6 +181,7 @@ extension DevicePipeline {
       case .receiver, .dongle: .proprietaryRadioReceiver
       case .usb, .wired, .gamepad: .usb
       case .bluetoothClassic: .bluetoothClassic
+      case .bluetoothLE: .bluetoothLE
       case .enhancedHID, nil:
         switch interface?.hostTransport {
         case .bluetoothClassic, .bluetoothLE: interface?.hostTransport

@@ -64,6 +64,44 @@ struct NativeObservedInputTests {
   }
 
   @Test
+  func nativeSixaxisControllersOfOneModelTakeDistinctReusablePlayerSlots() async throws {
+    let backend = ScriptedHIDAccessBackend()
+    await backend.enableOutputReports()
+    await backend.enableFeatureReports()
+    let manager = DeviceManager(
+      dispatcher: LoggingOutputDispatcher(),
+      hidManager: HIDManager(backend: backend)
+    )
+    await manager.markStartedForTest()
+    var input = [UInt8](repeating: 0, count: 49)
+    input[0] = 0x01
+    input.replaceSubrange(6...9, with: [0x80, 0x80, 0x80, 0x80])
+    func ledByte(afterConnecting connection: HIDDeviceConnection) async -> UInt8? {
+      await manager.handleHIDEvent(.connected(connection: connection, ownership: .unknown))
+      await manager.routeHIDInputReport(
+        locationID: connection.routingLocationID,
+        connectionID: connection.connectionID,
+        data: Data(input)
+      )
+      return await backend.recordedOutputReports().last?.bytes[10]
+    }
+    let first = Self.connection(0x054C, 0x0268, locationID: 90, native: true)
+    let second = Self.connection(0x054C, 0x0268, locationID: 95, native: true)
+    let third = Self.connection(0x054C, 0x0268, locationID: 96, native: true)
+    await backend.setConnectionSnapshots(
+      [first, second, third].map {
+        HIDDeviceConnectionSnapshot(connection: $0, ownership: .unknown)
+      }
+    )
+
+    #expect(await ledByte(afterConnecting: first) == 0x02)
+    #expect(await ledByte(afterConnecting: second) == 0x04)
+    await manager.handleHIDEvent(.disconnected(connection: first))
+    #expect(await ledByte(afterConnecting: third) == 0x02)
+    await manager.stop()
+  }
+
+  @Test
   func nativePadDispatchesOnlyWhileInputIsDemanded() async throws {
     let dispatcher = NativeEventRecorder()
     dispatcher.demandsInput = false

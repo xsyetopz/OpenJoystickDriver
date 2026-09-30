@@ -4,6 +4,18 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct USBStartupOutputPolicyTests {
+  /// The ring LED write a wired Xbox 360 pipeline sends after the manager assigns it a slot.
+  private func xbox360RingLEDWrite() async throws -> PhysicalOutputWrite {
+    let pipeline = DevicePipeline(
+      identifier: DeviceIdentifier(vendorID: 0x045E, productID: 0x028E),
+      transport: .usb(device: Self.device),
+      driver: XUSBDriver(),
+      dispatcher: LoggingOutputDispatcher(),
+      usbStartupPlayerIndicator: .player1
+    )
+    return try #require(await pipeline.usbStartupWrites().first)
+  }
+
   @Test
   func defersVirtualOutputUntilThePhysicalUSBSessionOpens() async {
     let identifier = DeviceIdentifier(vendorID: 0x3537, productID: 0x1010)
@@ -124,36 +136,36 @@ struct USBStartupOutputPolicyTests {
   }
 
   @Test
-  func ignoresIOErrorForXbox360RingLED() throws {
-    let write = try #require(XUSBDriver().startupWrites().first)
+  func ignoresIOErrorForXbox360RingLED() async throws {
+    let write = try await xbox360RingLEDWrite()
 
     #expect(isIgnorableUSBStartupOutputError(write, error: .inputOutput))
   }
 
   @Test
-  func ignoresUnsupportedErrorForXbox360RingLED() throws {
-    let write = try #require(XUSBDriver().startupWrites().first)
+  func ignoresUnsupportedErrorForXbox360RingLED() async throws {
+    let write = try await xbox360RingLEDWrite()
 
     #expect(isIgnorableUSBStartupOutputError(write, error: .notSupported))
   }
 
   @Test
-  func ignoresNotFoundErrorForXbox360RingLED() throws {
-    let write = try #require(XUSBDriver().startupWrites().first)
+  func ignoresNotFoundErrorForXbox360RingLED() async throws {
+    let write = try await xbox360RingLEDWrite()
 
     #expect(isIgnorableUSBStartupOutputError(write, error: .notFound))
   }
 
   @Test
-  func ignoresTimeoutForXbox360RingLED() throws {
-    let write = try #require(XUSBDriver().startupWrites().first)
+  func ignoresTimeoutForXbox360RingLED() async throws {
+    let write = try await xbox360RingLEDWrite()
 
     #expect(isIgnorableUSBStartupOutputError(write, error: .timeout))
   }
 
   @Test
-  func preservesOtherXbox360StartupOutputFailures() throws {
-    let write = try #require(XUSBDriver().startupWrites().first)
+  func preservesOtherXbox360StartupOutputFailures() async throws {
+    let write = try await xbox360RingLEDWrite()
     let errors: [USBTransportError] = [
       .disconnected, .accessDenied, .platform(code: 1, message: "unexpected"),
     ]

@@ -115,8 +115,8 @@ extension DriverLifecycleCharacterizationTests {
       try transcript(Self.xusbWired) == [
         "capabilities rumble=[leftMain,rightMain] binary=[]",
         "capabilities lighting=[playerIndicator]", "capabilities triggers=[]",
-        "usb.startup interval=0 retries=[] packets=1", "  n=3", "    010306", "usb.keepAlive nil",
-        "usb.deferred inputs=0 packets=0", "usb.deferred drained=0",
+        "usb.startup interval=0 retries=[] packets=0", "usb.startup playerSlot",
+        "usb.keepAlive nil", "usb.deferred inputs=0 packets=0", "usb.deferred drained=0",
         "usb.connection[connected] packets=0", "usb.connection[disconnected] packets=0",
         "hid.startupOutput[USB] interval=0 required=false beforeReads=false reports=0",
         "hid.featureReads[USB] validates=false requests=[]",

@@ -4,6 +4,7 @@ extension DeviceManager {
   func handleHIDDeviceDisconnected(connection: HIDDeviceConnection) async {
     clearUnboundDevice(.hid(connection.connectionID))
     clearPassThroughDevice(connection.connectionID)
+    yieldedHIDConnections.removeValue(forKey: connection.connectionID)
     let locationID = connection.routingLocationID
     let key = hidInitializationKey(for: connection)
     if hidInitializationTasks[key]?.connection.connectionID == connection.connectionID {
@@ -60,6 +61,7 @@ extension DeviceManager {
     suspendedControllerIdentities.remove(identifier)
 
     let pipeline = pipelines.removeValue(forKey: identifier)
+    startupPlayerSlots.removeValue(forKey: identifier)
     let outputQueue = hidOutputQueues[identifier]
     hidPeriodicOutputTasks.removeValue(forKey: identifier)?.cancel()
     // Pending output never reaches a disconnected controller; neutralization queues after.
@@ -160,13 +162,27 @@ extension DeviceManager {
       pipeline: pipeline,
       startupConnection: connection
     )
-    guard pipeline.nativeWrites?.startupPlayerIndicator != nil,
-      let indicator = await pipeline.takeStartupPlayerIndicator()
+    guard pipeline.nativeWrites?.setsStartupPlayerIndicator == true,
+      await pipeline.takeStartupPlayerIndicatorDue(), pipelines[key] === pipeline,
+      let indicator = claimStartupPlayerSlot(for: key)
     else { return }
     _ = await sendControllerOutput(
       .setPlayerIndicator(indicator),
       for: key,
       runtimeIdentifier: key.runtimeIdentifier
     )
+  }
+
+  /// The lowest player slot no other native controller holds, kept for `identifier` until it
+  /// detaches; nil when all four are taken.
+  func claimStartupPlayerSlot(for identifier: DeviceIdentifier) -> PhysicalPlayerIndicator? {
+    if let held = startupPlayerSlots[identifier] { return held }
+    let taken = Set(startupPlayerSlots.values)
+    guard
+      let slot = PhysicalPlayerIndicator.allCases.first(where: { $0 != .off && !taken.contains($0) }
+      )
+    else { return nil }
+    startupPlayerSlots[identifier] = slot
+    return slot
   }
 }

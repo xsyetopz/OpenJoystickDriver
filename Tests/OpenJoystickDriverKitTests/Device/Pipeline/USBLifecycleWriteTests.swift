@@ -85,30 +85,78 @@ struct USBLifecycleWriteTests {
     #expect(await session.writes == [.init(0x01, inquiry, 2_000)])
   }
 
+  /// A controller that stayed attached through sleep can open but fail its startup writes as
+  /// disconnected until its port is reset. The pipeline resets it once and keeps retrying.
+  @Test
+  func startupFailingAsDisconnectedResetsTheDeviceOnce() async {
+    let driver = LifecycleWriteDriver(startup: [Self.write(endpoint: 0x02, bytes: [0x10])])
+    let session = LifecycleUSBSession(rejections: [[0x10]: .disconnected])
+    let provider = LifecycleUSBProvider(session: session)
+    let pipeline = Self.pipeline(
+      driver: driver,
+      provider: provider,
+      recoveryPolicy: USBPipelineRecoveryPolicy(
+        openRetryDelays: [1],
+        reconnectBaseDelayNanoseconds: 1_000_000,
+        reconnectMaximumDelayNanoseconds: 1_000_000,
+        accessContentionDelayNanoseconds: 1_000_000
+      )
+    )
+
+    await pipeline.start()
+    #expect(await waitUntil { await provider.openCount >= 3 })
+    await pipeline.stop()
+
+    #expect(await provider.resetCount == 1)
+  }
+
+  /// A startup that the device rejects for another reason does not reset the device.
+  @Test
+  func startupFailingForAnotherReasonDoesNotResetTheDevice() async {
+    let driver = LifecycleWriteDriver(startup: [Self.write(endpoint: 0x02, bytes: [0x10])])
+    let session = LifecycleUSBSession(rejections: [[0x10]: .inputOutput])
+    let provider = LifecycleUSBProvider(session: session)
+    let pipeline = Self.pipeline(driver: driver, provider: provider)
+    await pipeline.activateForTesting()
+    await pipeline.setUSBHandleForTesting(session)
+
+    #expect(await !pipeline.performUSBHandshake(handle: session))
+    await pipeline.resetUSBDeviceIfUnresponsive(Self.device, provider: provider)
+
+    #expect(await provider.resetCount == 0)
+  }
+
   private static func write(endpoint: UInt8, bytes: [UInt8]) -> PhysicalOutputWrite {
     .usb(PhysicalUSBOutputPacket(endpoint: endpoint, bytes: bytes, timeoutMilliseconds: 2_000))
   }
+
+  private static let device = USBTransportDevice(
+    route: .ioUSBHost,
+    serviceID: 1,
+    vendorID: 0x1532,
+    productID: 0x0A15,
+    locationID: 7
+  )
 
   /// The pipeline's profile names endpoints 0x82/0x02, unlike the writes above.
   private static func pipeline(
     driver: sending any PhysicalProtocolDriver,
     session: LifecycleUSBSession
+  ) -> DevicePipeline { pipeline(driver: driver, provider: LifecycleUSBProvider(session: session)) }
+
+  private static func pipeline(
+    driver: sending any PhysicalProtocolDriver,
+    provider: LifecycleUSBProvider,
+    recoveryPolicy: USBPipelineRecoveryPolicy = .standard
   ) -> DevicePipeline {
     DevicePipeline(
       identifier: DeviceIdentifier(vendorID: 0x1532, productID: 0x0A15),
-      transport: .usb(
-        device: USBTransportDevice(
-          route: .ioUSBHost,
-          serviceID: 1,
-          vendorID: 0x1532,
-          productID: 0x0A15,
-          locationID: 7
-        )
-      ),
+      transport: .usb(device: device),
       driver: driver,
       dispatcher: LoggingOutputDispatcher(),
-      usbTransportProvider: LifecycleUSBProvider(session: session),
-      transportProfile: .gipDefault
+      usbTransportProvider: provider,
+      transportProfile: .gipDefault,
+      usbRecoveryPolicy: recoveryPolicy
     )
   }
 
@@ -222,12 +270,17 @@ private actor LifecycleUSBSession: USBTransportSession {
 
 private actor LifecycleUSBProvider: USBTransportProvider {
   private let session: LifecycleUSBSession
+  private(set) var openCount = 0
+  private(set) var resetCount = 0
 
   init(session: LifecycleUSBSession) { self.session = session }
 
   func devices() -> [USBTransportDevice] { [] }
 
   func open(_: USBTransportDevice, options _: USBTransportOpenOptions) -> any USBTransportSession {
-    session
+    openCount += 1
+    return session
   }
+
+  func resetDevice(_: USBTransportDevice) { resetCount += 1 }
 }

@@ -6,15 +6,16 @@ struct NativeGamepadWrites: Equatable, Sendable {
   /// HID output report IDs that carry that lighting; the write executors refuse every other
   /// output report and every feature report.
   let outputReportIDs: Set<UInt8>
-  /// Player indicator OJD sets after the controller's first input report.
-  let startupPlayerIndicator: PhysicalPlayerIndicator?
+  /// Whether OJD sets a player indicator after the controller's first input report. The manager
+  /// picks the slot per controller, so two controllers of one model never share it.
+  let setsStartupPlayerIndicator: Bool
   /// Whether OJD makes the driver's startup feature reads, which macOS does not.
   let readsStartupFeatures: Bool
 
   static let none = Self(
     lightingFeatures: [],
     outputReportIDs: [],
-    startupPlayerIndicator: nil,
+    setsStartupPlayerIndicator: false,
     readsStartupFeatures: false
   )
 
@@ -28,7 +29,7 @@ struct NativeGamepadWrites: Equatable, Sendable {
       Self(
         lightingFeatures: [.playerIndicator],
         outputReportIDs: [0x01],
-        startupPlayerIndicator: .player1,
+        setsStartupPlayerIndicator: true,
         readsStartupFeatures: true
       )
     default: .none

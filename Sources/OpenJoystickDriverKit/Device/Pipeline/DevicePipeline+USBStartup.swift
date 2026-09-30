@@ -52,6 +52,7 @@ extension DevicePipeline {
         }
         await reportUSBInputOwnership(ownership)
         guard isCurrentUSBRun(generation) else { return }
+        usbSessionStartFailed = true
         openAttempt += 1
         let delay: UInt64
         if case .unavailable(.accessDenied) = openResult {
@@ -75,6 +76,8 @@ extension DevicePipeline {
 
       guard await performUSBHandshake(handle: handle, runGeneration: generation) else {
         guard isCurrentUSBRun(generation) else { return }
+        usbSessionStartFailed = true
+        await resetUSBDeviceIfUnresponsive(device, provider: provider)
         // Try again while active, but slow down to avoid hot loops that launchd may kill
         // as "inefficient".
         openAttempt += 1
@@ -91,6 +94,7 @@ extension DevicePipeline {
         return
       }
 
+      usbSessionStartFailed = false
       let ownership = await handle.inputOwnership
       guard isCurrentUSBRun(generation) else { return }
       await reportUSBInputOwnership(ownership)
@@ -136,6 +140,7 @@ extension DevicePipeline {
     runGeneration: UInt64? = nil
   ) async -> Bool {
     let retryDelays = driver.sessionPlan.usbStartupRetryDelays
+    lastUSBStartupError = nil
     for attempt in 0...retryDelays.count {
       guard isCurrentUSBOperation(runGeneration) else { return false }
       do {
@@ -146,6 +151,7 @@ extension DevicePipeline {
         return true
       } catch {
         startupOutputStatus = "failed: \(error)"
+        lastUSBStartupError = error as? USBTransportError
         print(
           "[DevicePipeline] Handshake attempt \(attempt + 1) failed for \(identifier): \(error)"
         )
@@ -162,11 +168,42 @@ extension DevicePipeline {
     return false
   }
 
+  /// A controller that stayed attached through system sleep can open again but fail every write
+  /// as disconnected until its port is reset. A Razer Wolverine Tournament Edition (1532:0A15) did
+  /// this after wake. The reset enumerates the device again, as a replug does, and the device
+  /// manager starts a new pipeline for the returned device.
+  func resetUSBDeviceIfUnresponsive(
+    _ device: USBTransportDevice,
+    provider: any USBTransportProvider
+  ) async {
+    guard !usbDeviceResetAttempted, lastUSBStartupError == .disconnected else { return }
+    usbDeviceResetAttempted = true
+    do {
+      try await provider.resetDevice(device)
+      print("[DevicePipeline] Reset USB device after its startup failed: \(identifier)")
+    } catch { print("[DevicePipeline] USB device reset failed for \(identifier): \(error)") }
+  }
+
+  /// The driver's startup writes, then the assigned player slot. A pad that rejects only its
+  /// ring LED still starts, so that write tolerates rejection.
+  func usbStartupWrites() -> [PhysicalOutputWrite] {
+    var writes = driver.startupWrites()
+    if let indicator = usbStartupPlayerIndicator,
+      let plan = try? driver.encode(.setPlayerIndicator(indicator))
+    {
+      writes += plan.writes.map { write in
+        guard case .usb(let packet, _) = write else { return write }
+        return .usb(packet, toleratesRejection: true)
+      }
+    }
+    return writes
+  }
+
   func sendUSBStartupOutputPackets(
     handle: any USBTransportSession,
     runGeneration: UInt64? = nil
   ) async throws {
-    let writes = driver.startupWrites()
+    let writes = usbStartupWrites()
     let interval = driver.sessionPlan.usbStartupIntervalNanoseconds
     for (index, write) in writes.enumerated() {
       let handleIsCurrent: Bool

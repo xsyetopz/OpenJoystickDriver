@@ -91,7 +91,7 @@ struct ControllerRecordProbePlanTests {
 
     #expect(plan.protocolBinding == ProtocolBindingID(.xboxXUSB, variant: .wired))
     #expect(plan.startupPackets.isEmpty)
-    #expect(parser.startupWrites().usbBytes == [[0x01, 0x03, 0x06]])
+    #expect(parser.startupWrites().isEmpty)
   }
 
   @Test

@@ -57,6 +57,9 @@ extension DeviceManager {
         usbTransportDevice: device
       )
       print("[DeviceManager] USB device added: \(productName) (\(role.identifier))")
+      let startupIndicator =
+        driver.sessionPlan.assignsStartupPlayerIndicator
+        ? claimStartupPlayerSlot(for: role.identifier) : nil
       let pipeline = DevicePipeline(
         identifier: role.identifier,
         transport: .usb(device: device),
@@ -64,6 +67,7 @@ extension DeviceManager {
         dispatcher: dispatcher,
         binding: binding,
         interface: role.resolution.physicalDevice?.interfaces?.first,
+        usbStartupPlayerIndicator: startupIndicator,
         usbTransportProvider: provider,
         transportProfile: role.resolution.profile,
         externalOutputAllowed: externalOutputAllowed,
@@ -87,6 +91,7 @@ extension DeviceManager {
   /// Detach and admission rollback share it, so both clear the role's output state alike.
   func removeUSBRole(_ identifier: DeviceIdentifier) -> DevicePipeline? {
     let pipeline = pipelines.removeValue(forKey: identifier)
+    startupPlayerSlots.removeValue(forKey: identifier)
     retireOutputQueue(for: identifier)
     discardPhysicalOutputs(for: identifier)
     deviceInfos.removeValue(forKey: identifier)

@@ -129,8 +129,11 @@ struct DriverLifecycleCharacterizationTests {
     let packets = driver.startupWrites().usbBytes
     let interval = driver.sessionPlan.usbStartupIntervalNanoseconds
     let retries = driver.sessionPlan.usbStartupRetryDelays
+    // The manager appends the assigned player-slot write after these packets; the slot's own
+    // encoding is pinned by the `usbPlayer` lines.
+    let slot = driver.sessionPlan.assignsStartupPlayerIndicator ? ["usb.startup playerSlot"] : []
     return ["usb.startup interval=\(interval) retries=\(retries) packets=\(packets.count)"]
-      + packets.flatMap(render)
+      + packets.flatMap(render) + slot
   }
 
   func usbKeepAlive(_ driver: any PhysicalProtocolDriver) -> [String] {

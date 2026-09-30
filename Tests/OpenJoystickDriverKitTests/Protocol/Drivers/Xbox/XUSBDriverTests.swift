@@ -275,10 +275,12 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testStartupLEDReportSetsPlayerOneSolidOnlyForXUSBDriver() {
+  func testWiredStartupLeavesThePlayerSlotToTheManager() {
     let parser = XUSBDriver()
 
-    #expect(parser.startupWrites().usbBytes == [[0x01, 0x03, 0x06]])
+    #expect(parser.startupWrites().isEmpty)
+    #expect(parser.sessionPlan.assignsStartupPlayerIndicator)
+    #expect(!XUSBDriver(isWirelessReceiver: true).sessionPlan.assignsStartupPlayerIndicator)
     #expect(
       HIDDescriptorDriver(identifier: DeviceIdentifier(vendorID: 1, productID: 2)).startupWrites()
         .isEmpty

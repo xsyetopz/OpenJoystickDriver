@@ -138,7 +138,10 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   }
 
   public var sessionPlan: DriverSessionPlan {
-    DriverSessionPlan(requiresInputConnectionBeforeOutput: isWirelessReceiver)
+    DriverSessionPlan(
+      requiresInputConnectionBeforeOutput: isWirelessReceiver,
+      assignsStartupPlayerIndicator: !isWirelessReceiver
+    )
   }
 
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? {
@@ -148,13 +151,13 @@ public final class XUSBDriver: PhysicalProtocolDriver {
 
   // MARK: - PhysicalProtocolDriver
 
-  /// A wired Xbox 360 starts input without a handshake; startup output only sets the ring LED.
+  /// A wired Xbox 360 starts input without a handshake and sends no startup output: the manager
+  /// assigns its ring LED a free player slot, so two pads never both show player 1.
   /// A receiver slot asks for presence so a controller already paired before the interface
   /// opened reports itself (xpad.c:1845–1864). Either device that rejects its write still
   /// starts: xpad fails start only when it cannot submit the write (xpad.c:1473).
   public func startupWrites() -> [PhysicalOutputWrite] {
-    guard !isWirelessReceiver else { return [presenceInquiryWrite] }
-    return [.usb(ledOutputPacket(pattern: .player1On), toleratesRejection: true)]
+    isWirelessReceiver ? [presenceInquiryWrite] : []
   }
 
   /// A new transport session learns receiver presence again from the device; the pipeline drops
