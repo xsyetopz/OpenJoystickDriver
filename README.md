@@ -47,7 +47,8 @@ ojd virtual reset --all
 | --- | --- |
 | Runtime disconnected | `ojd service start`, then `ojd status` |
 | SDL sees 0 controllers | Grant Input Monitoring and Accessibility, restart, retry |
-| XboxUSBDevice install fails | Rebuild the signed app; `ojd extension activate` |
+| VirtualHIDDevice install fails | Rebuild the signed app; `ojd extension activate` |
+| Old XboxUSBDevice extension still listed | Deactivate it from an older OJD build, or in System Settings > General > Login Items & Extensions > Driver Extensions |
 | Input stays held or status says Needs attention | Release the controls and check controller input health with `ojd status --json` |
 | Bluetooth controller will not recover | Use Controller Details → Disconnect Wireless Controller, reconnect it manually, then verify neutral startup |
 

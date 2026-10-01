@@ -14,7 +14,7 @@ git clone https://github.com/xsyetopz/OpenJoystickDriver.git
 cd OpenJoystickDriver
 ```
 
-`--validate-only` needs no paid Apple account, provisioning profile, application signing, or system-extension approval. A physical probe through the restricted DEXT route requires the development signing assets described in [Signing assets](../development/signing.md), an installed and approved `com.openjoystickdriver.XboxUSBDevice` extension, and a host authorized to open its user client. Direct IOUSBHost probes do not use that user client. OJD does not use libusb.
+`--validate-only` needs no paid Apple account, provisioning profile, application signing, or system-extension approval. A physical probe through the restricted DEXT route requires the development signing assets described in [Signing assets](../development/signing.md), an installed and approved `com.openjoystickdriver.VirtualHIDDevice` extension signed with the `transport.usb` entitlement, and a host authorized to open its user client. Direct IOUSBHost probes do not use that user client. OJD does not use libusb.
 
 ## 1. Save The Candidate Record
 

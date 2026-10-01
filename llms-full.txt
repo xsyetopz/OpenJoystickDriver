@@ -2,13 +2,13 @@
 
 > Expanded LLM context for the macOS userspace gamepad driver. Prefer `llms.txt` when a short index is enough.
 
-The signed app owns the runtime, virtual HID, and authenticated local CLI. Physical HID and virtual HID use IOKit (`IOHIDManager`/`IOHIDDevice` and `IOHIDUserDevice`) on every supported macOS (12+). Raw USB uses app-side IOUSBHost, or the restricted `com.openjoystickdriver.XboxUSBDevice` DriverKit extension for Apple-entitled Microsoft GIP interfaces.
+The signed app owns the runtime, virtual HID, and authenticated local CLI. Physical HID and virtual HID use IOKit (`IOHIDManager`/`IOHIDDevice` and `IOHIDUserDevice`) on every supported macOS (12+). Raw USB uses app-side IOUSBHost, or the `XboxUSB` personality of the `com.openjoystickdriver.VirtualHIDDevice` DriverKit extension for Apple-entitled Microsoft GIP interfaces.
 
 `OpenJoystickDriverKit` owns parsers, records, HID/USB ports, and policy. It must not import SwifterKit. `OpenJoystickDriverUSB` and `DriverKitGenerator` are the SwifterKit boundaries. `OpenJoystickDriver` composes the app, CLI, and adapters.
 
 Do not edit `Sources/OpenJoystickDriverKit/Resources/Controllers/` or `.build/driverkit/generated/`. Catalog write: `./Scripts/ojd catalog regenerate --write`. DriverKit: `./Scripts/ojd driverkit generate`. Controller JSON uses decimal numbers. Support status lives in `docs/connecting-controllers/supported-controllers.md`; do not duplicate it here.
 
-Production and development USBDriverKit personalities match only Apple's approved Microsoft GIP pairs: `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, `045E:0B12`. Accessible third-party GIP devices such as GameSir G7 SE `3537:1010` stay on direct IOUSBHost. The host user-client allowlist is exactly `com.openjoystickdriver.XboxUSBDevice`. `com.apple.developer.hid.virtual.device` belongs only to the app.
+Production and development USBDriverKit personalities match only Apple's approved Microsoft GIP pairs: `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, `045E:0B12`. Accessible third-party GIP devices such as GameSir G7 SE `3537:1010` stay on direct IOUSBHost. The host user-client allowlist must be exactly `com.openjoystickdriver.VirtualHIDDevice`. `com.apple.developer.hid.virtual.device` belongs only to the app.
 
 Generator inputs are `ControllerSources.lock.json` and `Resources/ControllerOverrides/`. Schemas are in `Resources/Schemas/`. `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` are symlinks to `AGENTS.md`.
 

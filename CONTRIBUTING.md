@@ -13,7 +13,7 @@ Run the needed command and follow its native prompts. The dispatcher automatical
 
 The pre-commit hook runs fast structural checks against the exact staged snapshot. The pre-push hook checks the outgoing tree diff for whitespace errors without repeating lint, builds, tests, or network-backed catalog generation. Run `just check` before opening a pull request; CI repeats the complete validation.
 
-Prerequisites and what works without Apple assets: `contributing/development/building-from-source.md`. Signing: `contributing/development/signing.md`. Releases and packaging: `contributing/development/releases.md`. Script routes: `Scripts/README.md`. Dev install: `./Scripts/ojd build install dev`. Do not edit `.build/driverkit/generated/`. SwifterKit comes from `Package.resolved`. `OJD_USE_LOCAL_SWIFTERKIT=1` is local-only.
+Prerequisites and what works without Apple assets: `contributing/development/building-from-source.md`. Signing: `contributing/development/signing.md`. Releases and packaging: `contributing/development/releases.md`. Script routes: `Scripts/README.md`. Dev install: `./Scripts/ojd build install dev`. Do not edit `.build/driverkit/generated/`. SwifterKit temporarily comes from the sibling `../SwifterKit` checkout when it exists, built from its working tree; `OJD_USE_LOCAL_SWIFTERKIT=0` uses the `Package.resolved` remote, which CI and release builds require.
 
 Create a private, notarized DMG with the [local tester-build guide](contributing/development/tester-builds.md).
 
@@ -61,7 +61,8 @@ GUI and CLI copy: `LOCALIZATION.md`. Tests check codes, routes, identifiers, pat
 - Deployment floor: macOS 12. Future iOS and iPadOS companion apps: iOS 15 and iPadOS 15.
 - Kit has no SwifterKit. USB adapter: `Sources/OpenJoystickDriverUSB/`. Generator: `Sources/DriverKitGenerator/` and `Scripts/Build/driverkit.sh`.
 - No manual DriverKit build or post-generation patch. `./Scripts/ojd check driverkit`.
-- Host `com.apple.developer.driverkit.userclient-access` lists only `com.openjoystickdriver.XboxUSBDevice`.
+- Host `com.apple.developer.driverkit.userclient-access` must be exactly `com.openjoystickdriver.VirtualHIDDevice`.
+- `com.openjoystickdriver.VirtualHIDDevice` is the only DEXT. It has two personalities: `HIDFactory` (SwifterKit HID device factory) and `XboxUSB` (Microsoft GIP USB interfaces). `./Scripts/ojd driverkit generate [--without-usb-personality] [path]` generates it. Without Apple's `transport.usb` grant for this App ID, builds sign factory-only (`OJD_DRIVERKIT_WITHOUT_USB=1` forces that). At runtime the service publishes virtual gamepads through it only when its service is running, and otherwise falls back to `IOHIDUserDevice`.
 
 ## Pull Requests
 
