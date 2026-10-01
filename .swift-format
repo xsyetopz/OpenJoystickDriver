@@ -1,19 +1,19 @@
 {
-  "lineBreakBeforeEachArgument": true,
-  "lineBreakBeforeEachGenericRequirement": true,
-  "lineBreakBetweenDeclarationAttributes": true,
-  "noAssignmentInExpressions": {
-    "allowedFunctions": []
-  },
-  "prioritizeKeepingFunctionOutputTogether": true,
-  "respectsExistingLineBreaks": false,
-  "rules": {
-    "AvoidRetroactiveConformances": false,
-    "GroupNumericLiterals": false,
-    "IdentifiersMustBeASCII": false,
-    "ReplaceForEachWithForLoop": false,
-    "UseEarlyExits": true,
-    "UseWhereClausesInForLoops": true
-  },
-  "tabWidth": 2
+	"lineBreakBeforeEachArgument": true,
+	"lineBreakBeforeEachGenericRequirement": true,
+	"lineBreakBetweenDeclarationAttributes": true,
+	"noAssignmentInExpressions": {
+		"allowedFunctions": []
+	},
+	"prioritizeKeepingFunctionOutputTogether": true,
+	"respectsExistingLineBreaks": true,
+	"rules": {
+		"AvoidRetroactiveConformances": false,
+		"GroupNumericLiterals": false,
+		"IdentifiersMustBeASCII": false,
+		"ReplaceForEachWithForLoop": false,
+		"UseEarlyExits": true,
+		"UseWhereClausesInForLoops": true
+	},
+	"tabWidth": 2
 }
