@@ -237,6 +237,71 @@ class ControllerSchemaTests(unittest.TestCase):
                 )
 
 
+THIRD_PARTY = {"family": "vendor.ps3-third-party"}
+GP100_RUMBLE = {
+    "report": {"kind": "output", "id": 2, "length": 8},
+    "leftMain": {"byte": 3},
+    "rightMain": {"byte": 2},
+}
+
+
+class OwnershipAndOutputTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.validator = validate_profiles.validator()
+
+    def test_accepts_ownership_and_rumble_template(self) -> None:
+        accepted = {
+            "third-party rumble": record(THIRD_PARTY, output={"rumble": GP100_RUMBLE}),
+            "OJD ownership": record(THIRD_PARTY, ownership="ojd"),
+            "macOS ownership": record(DUALSENSE, ownership="macos"),
+            "feature report": record(
+                THIRD_PARTY,
+                output={
+                    "rumble": {
+                        "report": {"kind": "feature", "id": 0, "length": 2},
+                        "rightTrigger": {"byte": 1},
+                    }
+                },
+            ),
+        }
+        for name, document in accepted.items():
+            with self.subTest(name):
+                self.assertTrue(self.validator.is_valid(document))
+
+    def test_rejects_invalid_ownership_and_output(self) -> None:
+        report = GP100_RUMBLE["report"]
+        rejected = {
+            "unknown ownership": record(THIRD_PARTY, ownership="native"),
+            "GIP ownership": record(GIP, ownership="ojd"),
+            "XUSB ownership": record(XUSB, ownership="macos"),
+            "GameSir USB ownership": record(
+                {"family": "vendor.gamesir", "variant": "usb"}, ownership="ojd"
+            ),
+            "template on DualSense": record(DUALSENSE, output={"rumble": GP100_RUMBLE}),
+            "input report": record(
+                THIRD_PARTY,
+                output={
+                    "rumble": {
+                        "report": {**report, "kind": "input"},
+                        "leftMain": {"byte": 3},
+                    }
+                },
+            ),
+            "no motor": record(THIRD_PARTY, output={"rumble": {"report": report}}),
+            "haptic motor": record(
+                THIRD_PARTY,
+                output={"rumble": {"report": report, "leftHaptic": {"byte": 3}}},
+            ),
+            "unknown template": record(
+                THIRD_PARTY, output={"rumble": GP100_RUMBLE, "lighting": {}}
+            ),
+            "empty output": record(THIRD_PARTY, output={}),
+        }
+        for name, document in rejected.items():
+            with self.subTest(name):
+                self.assertFalse(self.validator.is_valid(document))
+
+
 class CapabilityOverlapTests(unittest.TestCase):
     def test_validator_rejects_overlapping_capabilities(self) -> None:
         import json

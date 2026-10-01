@@ -42,8 +42,13 @@ private func acceptedDriver() -> PS3ThirdPartyDriver {
   return driver
 }
 
+/// A GP100 driver with the rumble template from its bundled record.
 private func gp100() -> PS3ThirdPartyDriver {
-  PS3ThirdPartyDriver(identifier: DeviceIdentifier(vendorID: 0x2563, productID: 0x0575))
+  let identifier = DeviceIdentifier(vendorID: 0x2563, productID: 0x0575)
+  return PS3ThirdPartyDriver(
+    identifier: identifier,
+    rumbleTemplate: DeviceCatalog().record(for: identifier)?.rumbleTemplate
+  )
 }
 
 @Suite

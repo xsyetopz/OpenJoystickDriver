@@ -243,7 +243,10 @@ public final class ProtocolDriverRegistry: Sendable {
         )
       )
     case .vendorFlydigi: return .success(FlydigiDriver())
-    case .vendorPS3ThirdParty: return .success(PS3ThirdPartyDriver(identifier: identifier))
+    case .vendorPS3ThirdParty:
+      return .success(
+        PS3ThirdPartyDriver(identifier: identifier, rumbleTemplate: record.rumbleTemplate)
+      )
     case .vendorNVIDIAShield:
       return .success(NVIDIAShieldDriver(productID: identifier.controllerIdentity.productID))
     case .vendorGameSir:

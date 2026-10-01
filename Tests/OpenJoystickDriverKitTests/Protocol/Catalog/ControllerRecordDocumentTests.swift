@@ -263,7 +263,7 @@ struct ControllerRecordDocumentTests {
     let branches = (schema["anyOf"] as? [[String: Any]]) ?? [schema]
     var names: [String] = []
     for branch in branches {
-      let slots = [branch["items"]] + ((branch["prefixItems"] as? [Any]) ?? [])
+      let slots = [branch["items"] as Any] + ((branch["prefixItems"] as? [Any]) ?? [])
       for slot in slots {
         let slot = slot as? [String: Any]
         let values = enumValues(slot) ?? (slot?["const"] as? String).map { [$0] } ?? []

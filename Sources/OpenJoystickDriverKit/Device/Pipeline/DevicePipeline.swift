@@ -59,7 +59,7 @@ actor DevicePipeline {
   let dispatcher: any OutputDispatcher
   /// Set for a controller macOS serves natively: OJD parses and routes its input, publishes no
   /// virtual gamepad for it, and writes to it only what this allowance names.
-  let nativeWrites: NativeGamepadWrites?
+  let macOSOwnedOutput: MacOSOwnedOutput?
   let observesOnly: Bool
   /// For an observe-only pipeline, the consumer that says whether anyone uses its input.
   let observedInputDemand: (any ObservedInputDemand)?
@@ -130,7 +130,7 @@ actor DevicePipeline {
     dispatcher: any OutputDispatcher,
     binding: ProtocolBinding? = nil,
     interface: PhysicalInterfaceSignature? = nil,
-    nativeWrites: NativeGamepadWrites? = nil,
+    macOSOwnedOutput: MacOSOwnedOutput? = nil,
     usbStartupPlayerIndicator: PhysicalPlayerIndicator? = nil,
     usbTransportProvider: (any USBTransportProvider)? = nil,
     transportProfile: DeviceTransportProfile = .gipDefault,
@@ -149,11 +149,12 @@ actor DevicePipeline {
     self.interface = interface
     self.buttonLabels =
       binding.map { ControllerButtonLabels(protocolID: $0.protocolID) } ?? .standard
-    self.nativeWrites = nativeWrites
-    self.observesOnly = nativeWrites != nil
+    self.macOSOwnedOutput = macOSOwnedOutput
+    self.observesOnly = macOSOwnedOutput != nil
     self.usbStartupPlayerIndicator = usbStartupPlayerIndicator
-    self.startupPlayerIndicatorPending = nativeWrites?.setsStartupPlayerIndicator == true
-    self.observedInputDemand = nativeWrites == nil ? nil : dispatcher as? any ObservedInputDemand
+    self.startupPlayerIndicatorPending = macOSOwnedOutput?.setsStartupPlayerIndicator == true
+    self.observedInputDemand =
+      macOSOwnedOutput == nil ? nil : dispatcher as? any ObservedInputDemand
     self.usbTransportProvider = usbTransportProvider
     self.transportProfile = transportProfile
     self.usbRecoveryPolicy = usbRecoveryPolicy

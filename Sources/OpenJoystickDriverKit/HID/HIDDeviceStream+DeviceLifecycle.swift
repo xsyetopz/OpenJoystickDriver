@@ -44,8 +44,15 @@ extension HIDDeviceStream {
         syntheticProperty: syntheticProperty
       )
     else { return nil }
-    // macOS already serves a native gamepad, so OJD only observes its input and never seizes it.
-    let nativePassThrough = GCController.supportsHIDDevice(device)
+    // macOS already serves a native gamepad, so OJD only observes its input and never seizes it,
+    // unless the controller's record takes ownership for OJD.
+    let nativePassThrough =
+      GCController.supportsHIDDevice(device)
+      && !DeviceCatalog.current.withLock {
+        $0.takesOwnership(
+          of: DeviceIdentifier(vendorID: identity.vendorID, productID: identity.productID)
+        )
+      }
     guard
       eventAdapter.add(
         deviceID: deviceID,

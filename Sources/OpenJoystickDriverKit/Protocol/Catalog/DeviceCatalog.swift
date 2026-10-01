@@ -37,6 +37,12 @@ struct DeviceCatalog: Sendable {
     return profiles[ControllerIdentity(vendorID: identity.vendorID, productID: identity.productID)]
   }
 
+  /// Whether the record sets `ownership: ojd`, so OJD seizes the controller even when macOS
+  /// serves it natively. The stream reads it when a device is added.
+  func takesOwnership(of identifier: DeviceIdentifier) -> Bool {
+    record(for: identifier)?.ownership == .ojd
+  }
+
   /// The runtime profile for one decoded record; the record probe plan builds on it too.
   static func makeRuntimeProfile(_ record: ControllerRecordDocument) throws -> DeviceRuntimeProfile
   {
@@ -78,7 +84,9 @@ struct DeviceCatalog: Sendable {
       preferredBackends: [.userSpaceHID],
       gipStartupPackets: protocolInfo.initialization ?? GIPStartupPacket.defaultSequence,
       gipKeepAlivePolicy: keepAlivePolicy,
-      assemblyPolicy: protocolInfo.assembly
+      assemblyPolicy: protocolInfo.assembly,
+      ownership: record.ownership ?? .macOS,
+      rumbleTemplate: record.rumbleTemplate
     )
   }
 
@@ -105,7 +113,9 @@ struct DeviceCatalog: Sendable {
       preferredBackends: [.userSpaceHID],
       gipStartupPackets: GIPStartupPacket.defaultSequence,
       gipKeepAlivePolicy: .enabled,
-      assemblyPolicy: nil
+      assemblyPolicy: nil,
+      ownership: .macOS,
+      rumbleTemplate: nil
     )
   }
 

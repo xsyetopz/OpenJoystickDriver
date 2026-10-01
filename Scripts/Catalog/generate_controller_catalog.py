@@ -26,6 +26,8 @@ RECORD_SCHEMA_ID = (
     "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
     "Resources/Schemas/controller.schema.json"
 )
+# Top-level record sections a patch override may replace.
+PATCH_FIELDS = frozenset({"protocol", "usb", "ownership", "output"})
 
 
 # DualSense Edge function buttons and back paddles, present beyond the DualSense
@@ -618,7 +620,7 @@ def load_overrides(
         else:
             key = (int(document["vendorID"]), int(document["productID"]))
             payload = document["set"]
-            if not payload or not set(payload) <= {"protocol", "usb"}:
+            if not payload or not set(payload) <= PATCH_FIELDS:
                 raise CatalogError(f"{path}: invalid patch fields")
         expected = record_path(override_dir, key)
         if path != expected:

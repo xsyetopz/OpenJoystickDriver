@@ -160,6 +160,15 @@ public enum GIPKeepAlivePolicy: String, Codable, Sendable {
   case disabled
 }
 
+/// Who serves a HID controller that macOS also supports as a native gamepad.
+public enum ControllerOwnership: String, Sendable {
+  /// macOS serves it; OJD publishes no virtual controller and sends only the output macOS
+  /// leaves undone. A controller macOS does not support is OJD's either way.
+  case macOS = "macos"
+  /// OJD seizes it and publishes its own virtual controller.
+  case ojd
+}
+
 /// Complete runtime profile for one physical controller model.
 public struct DeviceRuntimeProfile: Equatable, Sendable {
   /// The catalog record's `vvvv-pppp` file stem; nil for a family profile, which has no record.
@@ -176,6 +185,9 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public let gipKeepAlivePolicy: GIPKeepAlivePolicy
   /// The assembly policy the row names; nil runs each protocol role as its own controller.
   public let assemblyPolicy: ControllerAssemblyPolicy?
+  public let ownership: ControllerOwnership
+  /// The record's rumble report, for a driver that encodes rumble from it.
+  public let rumbleTemplate: RumbleOutputTemplate?
 
   /// Whether this row is reached through raw USB rather than IOHID.
   public var usesRawUSB: Bool {

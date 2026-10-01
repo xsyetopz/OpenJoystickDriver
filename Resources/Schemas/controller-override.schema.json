@@ -49,6 +49,12 @@
 						},
 						"usb": {
 							"$ref": "controller.schema.json#/$defs/usbOverride"
+						},
+						"ownership": {
+							"$ref": "controller.schema.json#/$defs/ownership"
+						},
+						"output": {
+							"$ref": "controller.schema.json#/$defs/output"
 						}
 					}
 				}

@@ -8,7 +8,6 @@ private let ps3ThirdPartyTriggerMax: Float = 255
 private let ps3ThirdPartyPressedThreshold: UInt8 = 0x80
 /// Byte 2 of the probe reply that marks SDL's third-party PS3 report format.
 private let ps3ThirdPartyProbeMarker: UInt8 = 0x26
-private let gp100RumbleReportID: UInt8 = 0x02
 
 /// Driver for non-Sony PS3 controllers: pads, fight sticks, instruments and adapters sold for
 /// the PS3 that do not speak Sony's DualShock 3 protocol.
@@ -33,10 +32,8 @@ private let gp100RumbleReportID: UInt8 = 0x02
 /// (issue #38, PR #42), and PR #42 reads byte 0 as a report ID, so the driver reads its buttons,
 /// D-pad and triggers from the pressure and analog bytes alone.
 ///
-/// Only the GP100 drives rumble. SDL's third-party driver sends no output, because some of these
-/// pads then rumble without stopping. The GP100 report `02 00 <right> <left> 00 00 00 00` is
-/// confirmed on hardware by an owner's hidapi script; the motor order follows `hid-shanwan`
-/// (hbiyik/hid-shanwan), which writes the weak motor to byte 2 and the strong one to byte 3.
+/// Only a pad whose controller record names a rumble template drives rumble. SDL's third-party
+/// driver sends no output, because some of these pads then rumble without stopping.
 public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
 
   private enum Layout {
@@ -80,7 +77,7 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
 
   private let descriptorFallback: HIDDescriptorDriver
   private let hatFromPressureOnly: Bool
-  private let drivesRumble: Bool
+  private let rumbleTemplate: RumbleOutputTemplate?
   /// Ignores byte 0 and the hat nibble, whose meaning is unverified on this device.
   private let readsAnalogBytesOnly: Bool
   /// Set once the hat nibble has been nonzero in this session.
@@ -89,15 +86,15 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
   private(set) var decodesRawReports: Bool
   private var state = ControllerState.neutral
 
-  /// Creates a driver for the controller at `identifier`.
-  public init(identifier: DeviceIdentifier) {
+  /// Creates a driver for the controller at `identifier`. `rumbleTemplate` comes from its record.
+  public init(identifier: DeviceIdentifier, rumbleTemplate: RumbleOutputTemplate? = nil) {
     let identity = [
       identifier.controllerIdentity.vendorID, identifier.controllerIdentity.productID,
     ]
     descriptorFallback = HIDDescriptorDriver(identifier: identifier)
     hatFromPressureOnly = identity == Self.cyborgV3
     readsAnalogBytesOnly = identity == Self.gp100
-    drivesRumble = identity == Self.gp100
+    self.rumbleTemplate = rumbleTemplate
     decodesRawReports = identity == Self.chillStream || identity == Self.gp100
   }
 
@@ -113,7 +110,7 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     DriverSessionPlan(parsesHIDElementValues: true, validatesFeatureReplies: true)
   }
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
-    drivesRumble ? .dualMainRumble : .none
+    rumbleTemplate?.outputCapabilities ?? .none
   }
   public var defaultColor: ControllerColor? { nil }
 
@@ -123,23 +120,12 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     ControllerCapabilities(controls: ControlID.xboxLayout.union([.guide]))
   }
 
-  /// GP100 rumble: `[2, 0, right, left, 0, 0, 0, 0]`, one byte per motor; the motors run until
-  /// the next report.
+  /// Rumble through the record's template; the motors run until the next report.
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
-    guard drivesRumble else { throw .unsupportedCapability(command.capability) }
-    let (left, right): (UInt8, UInt8)
-    switch command {
-    case .setRumble(let intensities, _):
-      (left, right) = (intensities.leftMain.byte, intensities.rightMain.byte)
-    case .stopRumble: (left, right) = (0, 0)
-    default: throw .unsupportedCapability(command.capability)
-    }
-    let bytes: [UInt8] = [gp100RumbleReportID, 0x00, right, left, 0x00, 0x00, 0x00, 0x00]
-    return PhysicalOutputPlan(writes: [
-      .hidOutput(PhysicalHIDOutputReport(reportID: gp100RumbleReportID, bytes: bytes))
-    ])
+    guard let rumbleTemplate else { throw .unsupportedCapability(command.capability) }
+    return try rumbleTemplate.encode(command)
   }
 
   public func startupFeatureReads() -> [PhysicalHIDFeatureReadRequest] {

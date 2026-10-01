@@ -7,6 +7,21 @@
 		"productID": 1397,
 		"protocol": {
 			"family": "vendor.ps3-third-party"
+		},
+		"output": {
+			"rumble": {
+				"report": {
+					"kind": "output",
+					"id": 2,
+					"length": 8
+				},
+				"leftMain": {
+					"byte": 3
+				},
+				"rightMain": {
+					"byte": 2
+				}
+			}
 		}
 	}
 }

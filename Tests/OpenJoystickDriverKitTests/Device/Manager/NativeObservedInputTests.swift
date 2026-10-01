@@ -107,6 +107,49 @@ struct NativeObservedInputTests {
   }
 
   @Test
+  func nativeGP100DrivesItsRumbleReportOnly() async throws {
+    let backend = ScriptedHIDAccessBackend()
+    await backend.enableOutputReports()
+    await backend.enableFeatureReports()
+    let manager = DeviceManager(
+      dispatcher: LoggingOutputDispatcher(),
+      hidManager: HIDManager(backend: backend)
+    )
+    await manager.markStartedForTest()
+    let connection = Self.connection(0x2563, 0x0575, locationID: 95, native: true)
+    await backend.setConnectionSnapshots([
+      HIDDeviceConnectionSnapshot(connection: connection, ownership: .unknown)
+    ])
+
+    await manager.handleHIDEvent(.connected(connection: connection, ownership: .unknown))
+
+    let device = try #require(await manager.connectedDeviceDescriptions().first)
+    #expect(device.protocolBinding.protocolID == .vendorPS3ThirdParty)
+    #expect(device.physicalOwnership == .nativeGamepad)
+    // macOS has no driver for the GP100's vendor rumble report 0x02, so OJD drives it.
+    #expect(device.physicalOutputCapabilities.rumbleMotors == [.leftMain, .rightMain])
+    #expect(device.physicalOutputCapabilities.lightingFeatures.isEmpty)
+    let identifier = try #require(await manager.pipelines.keys.first)
+    #expect(
+      await manager.sendManualRumble(
+        for: identifier,
+        left: 200,
+        right: 100,
+        lt: 0,
+        rt: 0,
+        durationMs: 5_000
+      )
+    )
+    let rumble = try #require(await backend.recordedOutputReports().first)
+    #expect(rumble.reportID == 0x02)
+    #expect(rumble.bytes == [0x02, 0x00, 100, 200, 0x00, 0x00, 0x00, 0x00])
+    #expect(await backend.recordedOutputReportConnectionIDs().first == connection.connectionID)
+    #expect(await backend.recordedFeatureReports().isEmpty)
+    #expect(await backend.recordedFeatureReadCount() == 0)
+    await manager.stop()
+  }
+
+  @Test
   func nativePadDispatchesOnlyWhileInputIsDemanded() async throws {
     let dispatcher = NativeEventRecorder()
     dispatcher.demandsInput = false

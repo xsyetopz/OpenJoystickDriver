@@ -84,7 +84,7 @@ struct ControllerRecordSetTests {
     )
     #expect(
       Self.problem(try Self.patch(Self.bundledGIP, set: ["capabilities": ["rumble": "absent"]]))
-        == "set must hold protocol, usb, or both"
+        == "set must hold protocol, usb, ownership, or output"
     )
     #expect(Self.problem(Data("[]".utf8)) == "the file is not a JSON object")
     let unknownKey = try Self.json([

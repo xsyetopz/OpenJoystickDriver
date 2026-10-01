@@ -15,7 +15,7 @@ extension DeviceManager {
   ) async -> Bool {
     // Nothing to send (a Steam dongle without a controller) succeeds, except on a native
     // controller, whose executors refuse an empty batch.
-    guard !plan.writes.isEmpty else { return pipeline.nativeWrites == nil }
+    guard !plan.writes.isEmpty else { return pipeline.macOSOwnedOutput == nil }
     let writes = plan.writes
     var index = 0
     func run<Item>(_ item: (PhysicalOutputWrite) -> Item?) -> [Item] {
@@ -38,7 +38,7 @@ extension DeviceManager {
           return packet
         }
         // A native controller is HID-only and receives no USB output.
-        guard pipeline.nativeWrites == nil else { return false }
+        guard pipeline.macOSOwnedOutput == nil else { return false }
         sent = await pipeline.sendUSBOutput(packets, intervalNanoseconds: plan.intervalNanoseconds)
       case .hidOutput:
         let reports = run { write -> PhysicalHIDOutputReport? in

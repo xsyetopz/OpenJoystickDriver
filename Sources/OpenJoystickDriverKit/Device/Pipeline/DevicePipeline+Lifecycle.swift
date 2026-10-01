@@ -155,7 +155,7 @@ extension DevicePipeline {
 
   /// For an observe-only pipeline, only what its native allowance names: macOS owns the rest.
   func physicalOutputCapabilities() -> PhysicalControllerOutputCapabilities {
-    nativeWrites?.narrowing(driver.outputCapabilities) ?? driver.outputCapabilities
+    macOSOwnedOutput?.narrowing(driver.outputCapabilities) ?? driver.outputCapabilities
   }
 
   func supportsPhysicalRumble() -> Bool { physicalOutputCapabilities().supportsRumble }

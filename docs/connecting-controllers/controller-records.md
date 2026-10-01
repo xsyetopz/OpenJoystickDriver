@@ -7,9 +7,37 @@ A controller record tells OpenJoystickDriver which protocol family drives one co
 A record has one of two operations:
 
 - `add`: a complete record for a model that has no bundled record.
-- `patch`: new values for the `protocol` or `usb` fields of a bundled record. The other fields stay bundled.
+- `patch`: new values for the `protocol`, `usb`, `ownership`, or `output` fields of a bundled record. The other fields stay bundled.
 
 A record for a model that uses raw USB works only when macOS lets OpenJoystickDriver open the device directly. The [Xbox USB driver extension](xbox-usb-driver-extension.md) claims only the Xbox models in its signed product list, and your record cannot add a model to that list. `ojd record validate` says when this applies.
+
+## Choose who drives the controller
+
+macOS serves some controllers natively through the Game Controller framework. OpenJoystickDriver leaves those to macOS by default and only reads their input. The record's `ownership` field changes this:
+
+- `macos`: macOS drives the controller when it can. This is the default.
+- `ojd`: OpenJoystickDriver opens the controller exclusively even when macOS supports it, and drives it like a controller macOS does not know.
+
+A raw-USB family, such as `xbox.gip`, has no `ownership` field, because macOS cannot serve those controllers. A new `ownership` value applies the next time the controller connects, so unplug it and plug it in again.
+
+## Add rumble to a controller
+
+A `vendor.ps3-third-party` controller is input-only unless its record names its rumble report in `output.rumble`:
+
+```json
+"output": {
+  "rumble": {
+    "report": { "kind": "output", "id": 2, "length": 8 },
+    "leftMain": { "byte": 3 },
+    "rightMain": { "byte": 2 }
+  }
+}
+```
+
+- `report` names the HID report: `kind` is `output` or `feature`, `id` is the report ID, and `length` counts every byte, including the report ID.
+- `leftMain`, `rightMain`, `leftTrigger`, and `rightTrigger` each give the byte offset of that motor's intensity, from 0 to 255. Name at least one.
+
+OpenJoystickDriver sets the report ID in byte 0 when the ID is not 0, writes each motor's intensity, and sends 0 in every other byte. It sends this report even when macOS drives the controller, because macOS does not drive these motors.
 
 ## Install a record
 

@@ -26,6 +26,12 @@
 		},
 		"capabilities": {
 			"$ref": "#/$defs/capabilities"
+		},
+		"ownership": {
+			"$ref": "#/$defs/ownership"
+		},
+		"output": {
+			"$ref": "#/$defs/output"
 		}
 	},
 	"$defs": {
@@ -453,6 +459,74 @@
 				}
 			},
 			"minProperties": 1
+		},
+		"ownership": {
+			"enum": ["macos", "ojd"]
+		},
+		"output": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["rumble"],
+			"properties": {
+				"rumble": {
+					"$ref": "#/$defs/rumbleTemplate"
+				}
+			}
+		},
+		"rumbleTemplate": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["report"],
+			"minProperties": 2,
+			"properties": {
+				"report": {
+					"$ref": "#/$defs/templateReport"
+				},
+				"leftMain": {
+					"$ref": "#/$defs/templateByte"
+				},
+				"rightMain": {
+					"$ref": "#/$defs/templateByte"
+				},
+				"leftTrigger": {
+					"$ref": "#/$defs/templateByte"
+				},
+				"rightTrigger": {
+					"$ref": "#/$defs/templateByte"
+				}
+			}
+		},
+		"templateReport": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["kind", "id", "length"],
+			"properties": {
+				"kind": {
+					"enum": ["output", "feature"]
+				},
+				"id": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 255
+				},
+				"length": {
+					"type": "integer",
+					"minimum": 2,
+					"maximum": 64
+				}
+			}
+		},
+		"templateByte": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["byte"],
+			"properties": {
+				"byte": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 63
+				}
+			}
 		}
 	},
 	"allOf": [
@@ -668,6 +742,56 @@
 									]
 								}
 							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"required": ["output"]
+			},
+			"then": {
+				"properties": {
+					"protocol": {
+						"properties": {
+							"family": {
+								"const": "vendor.ps3-third-party"
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"required": ["ownership"]
+			},
+			"then": {
+				"properties": {
+					"protocol": {
+						"not": {
+							"anyOf": [
+								{
+									"properties": {
+										"family": {
+											"enum": ["xbox.xid", "xbox.xusb", "xbox.gip"]
+										}
+									},
+									"required": ["family"]
+								},
+								{
+									"properties": {
+										"family": {
+											"const": "vendor.gamesir"
+										},
+										"variant": {
+											"const": "usb"
+										}
+									},
+									"required": ["family", "variant"]
+								}
+							]
 						}
 					}
 				}

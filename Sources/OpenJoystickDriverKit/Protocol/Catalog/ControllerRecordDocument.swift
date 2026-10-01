@@ -14,11 +14,14 @@ struct ControllerRecordDocument: Decodable {
   let protocolInfo: ProtocolInfo
   let usb: USBOverride?
   let capabilities: ControllerCapabilityDelta
+  /// Nil leaves a controller macOS supports to macOS.
+  let ownership: ControllerOwnership?
+  let rumbleTemplate: RumbleOutputTemplate?
 
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)
     try container.rejectUnknown(allowed: [
-      "$schema", "vendorID", "productID", "protocol", "usb", "capabilities",
+      "$schema", "vendorID", "productID", "protocol", "usb", "capabilities", "ownership", "output",
     ])
     let schema = try container.decode(String.self, for: "$schema")
     guard schema == Self.schemaID else {
@@ -34,6 +37,18 @@ struct ControllerRecordDocument: Decodable {
     usb = try container.decodeOptional(USBOverride.self, for: "usb")
     capabilities =
       try container.decodeOptional(CapabilityDelta.self, for: "capabilities")?.delta ?? .none
+    ownership = try container.decodeOptional(String.self, for: "ownership").map { name in
+      guard let ownership = ControllerOwnership(rawValue: name) else {
+        throw DecodingError.dataCorruptedError(
+          forKey: DocumentKey("ownership"),
+          in: container,
+          debugDescription: "ownership must be macos or ojd"
+        )
+      }
+      return ownership
+    }
+    rumbleTemplate = try container.decodeOptional(Output.self, for: "output")?.rumble
+    try validateOwnershipAndOutput(codingPath: decoder.codingPath)
     // Only these deltas have a driver that acts on them: GIP drops rumble, DualSense Edge adds
     // exactly its paddles and function buttons.
     let presentAllowed =
@@ -63,6 +78,97 @@ struct ControllerRecordDocument: Decodable {
           )
         )
       }
+    }
+  }
+
+  /// macOS cannot serve a raw-USB family, and only a driver that encodes rumble from a template
+  /// may name one.
+  private func validateOwnershipAndOutput(codingPath: [any CodingKey]) throws {
+    let rawUSB = protocolInfo.protocolID.usesRawUSB(storedVariant: protocolInfo.protocolVariant)
+    if ownership != nil, rawUSB {
+      throw DecodingError.dataCorrupted(
+        .init(
+          codingPath: codingPath + [DocumentKey("ownership")],
+          debugDescription: "ownership applies only to HID controllers"
+        )
+      )
+    }
+    if rumbleTemplate != nil, !protocolInfo.protocolID.encodesRumbleTemplate {
+      throw DecodingError.dataCorrupted(
+        .init(
+          codingPath: codingPath + [DocumentKey("output")],
+          debugDescription: "output templates require a driver that encodes them"
+        )
+      )
+    }
+  }
+
+  /// The record's output templates; rumble is the only one.
+  struct Output: Decodable {
+    let rumble: RumbleOutputTemplate
+
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: DocumentKey.self)
+      try container.rejectUnknown(allowed: ["rumble"])
+      rumble = try container.decode(RumbleTemplate.self, for: "rumble").template
+    }
+  }
+
+  struct RumbleTemplate: Decodable {
+    let template: RumbleOutputTemplate
+
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: DocumentKey.self)
+      let motors = RumbleOutputTemplate.templateMotors
+      try container.rejectUnknown(allowed: Set(["report"] + motors.map(\.rawValue)))
+      let report = try container.decode(TemplateReport.self, for: "report").report
+      var motorBytes: [PhysicalRumbleMotor: Int] = [:]
+      for motor in motors {
+        motorBytes[motor] = try container.decodeOptional(TemplateByte.self, for: motor.rawValue)?
+          .byte
+      }
+      do {
+        template = try RumbleOutputTemplate(report: report, motorBytes: motorBytes)
+      } catch {
+        throw DecodingError.dataCorrupted(
+          .init(codingPath: decoder.codingPath, debugDescription: error.description)
+        )
+      }
+    }
+  }
+
+  struct TemplateReport: Decodable {
+    let report: ControllerTemplateReport
+
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: DocumentKey.self)
+      try container.rejectUnknown(allowed: ["kind", "id", "length"])
+      let kind = try container.decode(String.self, for: "kind")
+      let reportID = try container.decode(Int.self, for: "id")
+      let length = try container.decode(Int.self, for: "length")
+      guard kind == "output" || kind == "feature", let id = UInt8(exactly: reportID) else {
+        throw DecodingError.dataCorrupted(
+          .init(
+            codingPath: decoder.codingPath,
+            debugDescription: "report must be an output or feature report with ID 0...255"
+          )
+        )
+      }
+      report = ControllerTemplateReport(
+        kind: kind == "output" ? .output : .feature,
+        reportID: id,
+        length: length
+      )
+    }
+  }
+
+  struct TemplateByte: Decodable {
+    let byte: Int
+
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: DocumentKey.self)
+      try container.rejectUnknown(allowed: ["byte"])
+      byte = try container.decode(Int.self, for: "byte")
     }
   }
 
@@ -239,7 +345,8 @@ struct ControllerRecordDocument: Decodable {
   }
 }
 
-private struct DocumentKey: CodingKey, Hashable {
+/// A coding key for any field name, so the strict decoders can name and reject fields.
+struct DocumentKey: CodingKey, Hashable {
   let stringValue: String
   let intValue: Int? = nil
 

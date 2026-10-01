@@ -195,8 +195,8 @@ extension DeviceManager {
       dispatcher: dispatcher,
       binding: binding,
       interface: physicalDevice.interfaces?.first,
-      nativeWrites: physicalDevice.nativePassThrough
-        ? NativeGamepadWrites.allowance(for: binding.protocolID) : nil,
+      macOSOwnedOutput: physicalDevice.nativePassThrough
+        ? MacOSOwnedOutput.allowance(for: binding.protocolID, record: binding.record) : nil,
       usbTransportProvider: usbTransportProvider,
       externalOutputAllowed: false,
       sessionState: suspendedControllerIdentities.contains(identifier) ? .suspended : .active
@@ -221,7 +221,7 @@ extension DeviceManager {
     // macOS initializes a native controller; OJD sends it no startup, status or periodic output
     // beyond its allowance, and makes feature reads only where the allowance says macOS does not.
     // Its startup player indicator follows its first input report (`routeHIDInputReport`).
-    if pipeline.nativeWrites?.readsStartupFeatures == true {
+    if pipeline.macOSOwnedOutput?.readsStartupFeatures == true {
       await sendHIDStartupFeatureReadRequestsIfNeeded(pipeline: pipeline, connection: connection)
       guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
     }

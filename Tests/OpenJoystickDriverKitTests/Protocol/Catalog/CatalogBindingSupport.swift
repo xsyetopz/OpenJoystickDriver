@@ -113,7 +113,9 @@ extension DeviceRuntimeProfile {
       preferredBackends: preferredBackends,
       gipStartupPackets: gipStartupPackets,
       gipKeepAlivePolicy: gipKeepAlivePolicy,
-      assemblyPolicy: assemblyPolicy
+      assemblyPolicy: assemblyPolicy,
+      ownership: ownership,
+      rumbleTemplate: rumbleTemplate
     )
   }
 }

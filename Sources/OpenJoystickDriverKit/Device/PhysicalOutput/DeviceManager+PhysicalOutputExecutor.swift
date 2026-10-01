@@ -138,7 +138,7 @@ extension DeviceManager {
     in _: PhysicalOutputQueueOperation
   ) async -> Bool {
     // macOS owns a native controller's output; OJD writes only what its allowance names.
-    if let allowance = pipeline.nativeWrites,
+    if let allowance = pipeline.macOSOwnedOutput,
       reports.isEmpty || !reports.allSatisfy({ allowance.permits($0, kind: .feature) })
     {
       return false

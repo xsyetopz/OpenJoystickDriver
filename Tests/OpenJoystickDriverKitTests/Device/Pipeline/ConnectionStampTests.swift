@@ -57,7 +57,7 @@ struct ConnectionStampTests {
       transport: .hid(locationID: 1),
       driver: StatusFrameDriver(),
       dispatcher: dispatcher,
-      nativeWrites: NativeGamepadWrites.none
+      macOSOwnedOutput: MacOSOwnedOutput.none
     )
     await pipeline.start()
     await pipeline.feedHIDData(Data([StatusFrameDriver.press]))

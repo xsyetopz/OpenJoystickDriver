@@ -162,7 +162,7 @@ extension DeviceManager {
       pipeline: pipeline,
       startupConnection: connection
     )
-    guard pipeline.nativeWrites?.setsStartupPlayerIndicator == true,
+    guard pipeline.macOSOwnedOutput?.setsStartupPlayerIndicator == true,
       await pipeline.takeStartupPlayerIndicatorDue(), pipelines[key] === pipeline,
       let indicator = claimStartupPlayerSlot(for: key)
     else { return }
