@@ -27,7 +27,7 @@ RECORD_SCHEMA_ID = (
     "Resources/Schemas/controller.schema.json"
 )
 # Top-level record sections a patch override may replace.
-PATCH_FIELDS = frozenset({"protocol", "usb", "ownership", "output"})
+PATCH_FIELDS = frozenset({"protocol", "usb", "ownership", "output", "input"})
 
 
 # DualSense Edge function buttons and back paddles, present beyond the DualSense

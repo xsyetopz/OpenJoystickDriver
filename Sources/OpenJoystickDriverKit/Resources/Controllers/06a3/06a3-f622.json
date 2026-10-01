@@ -3,6 +3,9 @@
   "vendorID": 1699,
   "productID": 63010,
   "protocol": {
-    "family": "vendor.ps3-third-party"
+    "family": "vendor.ps3-third-party",
+    "quirks": [
+      "dpad-pressure"
+    ]
   }
 }

@@ -302,6 +302,101 @@ class OwnershipAndOutputTests(unittest.TestCase):
                 self.assertFalse(self.validator.is_valid(document))
 
 
+REPORT_LAYOUT = {"family": "hid.report-layout"}
+BUTTON = {"control": "face-south", "byte": 1, "mask": 1}
+LAYOUT = {"report": {"length": 2}, "buttons": [BUTTON]}
+
+
+class InputLayoutTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.validator = validate_profiles.validator()
+
+    def test_accepts_report_layouts_and_dpad_pressure(self) -> None:
+        accepted = {
+            "one button": record(REPORT_LAYOUT, input=LAYOUT),
+            "every section": record(
+                REPORT_LAYOUT,
+                input={
+                    "report": {"id": 1, "length": 8},
+                    "buttons": [BUTTON],
+                    "axes": [
+                        {
+                            "control": "left-stick-x",
+                            "byte": 2,
+                            "bits": 16,
+                            "signed": True,
+                        },
+                        {"control": "left-stick-y", "byte": 4, "inverted": True},
+                    ],
+                    "hat": [
+                        {
+                            "encoding": "8-way",
+                            "byte": 5,
+                            "mask": 240,
+                            "neutralUntilNonzero": True,
+                        },
+                        {
+                            "encoding": "directions",
+                            "up": {"byte": 6, "mask": 1},
+                            "right": {"byte": 6, "mask": 2},
+                            "down": {"byte": 6, "mask": 4},
+                            "left": {"byte": 6, "mask": 8},
+                        },
+                    ],
+                    "leftTrigger": {"byte": 7},
+                    "rightTrigger": {"button": {"byte": 1, "mask": 2}},
+                },
+            ),
+            "layout with rumble": record(
+                REPORT_LAYOUT, input=LAYOUT, output={"rumble": GP100_RUMBLE}
+            ),
+            "dpad pressure": record({**THIRD_PARTY, "quirks": ["dpad-pressure"]}),
+        }
+        for name, document in accepted.items():
+            with self.subTest(name):
+                self.assertTrue(self.validator.is_valid(document))
+
+    def test_rejects_invalid_report_layouts(self) -> None:
+        rejected = {
+            "missing input": record(REPORT_LAYOUT),
+            "input on another family": record(THIRD_PARTY, input=LAYOUT),
+            "report ID 0": record(
+                REPORT_LAYOUT, input={**LAYOUT, "report": {"id": 0, "length": 2}}
+            ),
+            "long report": record(
+                REPORT_LAYOUT, input={**LAYOUT, "report": {"length": 65}}
+            ),
+            "report only": record(REPORT_LAYOUT, input={"report": {"length": 2}}),
+            "empty buttons": record(REPORT_LAYOUT, input={**LAYOUT, "buttons": []}),
+            "zero mask": record(
+                REPORT_LAYOUT, input={**LAYOUT, "buttons": [{**BUTTON, "mask": 0}]}
+            ),
+            "dpad button": record(
+                REPORT_LAYOUT,
+                input={**LAYOUT, "buttons": [{**BUTTON, "control": "dpad"}]},
+            ),
+            "12-bit axis": record(
+                REPORT_LAYOUT,
+                input={
+                    **LAYOUT,
+                    "axes": [{"control": "left-stick-x", "byte": 1, "bits": 12}],
+                },
+            ),
+            "4-way hat": record(
+                REPORT_LAYOUT,
+                input={**LAYOUT, "hat": [{"encoding": "4-way", "byte": 1, "mask": 15}]},
+            ),
+            "empty trigger": record(REPORT_LAYOUT, input={**LAYOUT, "leftTrigger": {}}),
+            "unknown section": record(REPORT_LAYOUT, input={**LAYOUT, "touchpad": {}}),
+            "dpad pressure elsewhere": record(
+                {**DUALSENSE, "quirks": ["dpad-pressure"]}
+            ),
+        }
+        for name, document in rejected.items():
+            with self.subTest(name):
+                self.assertFalse(self.validator.is_valid(document))
+
+
 class CapabilityOverlapTests(unittest.TestCase):
     def test_validator_rejects_overlapping_capabilities(self) -> None:
         import json

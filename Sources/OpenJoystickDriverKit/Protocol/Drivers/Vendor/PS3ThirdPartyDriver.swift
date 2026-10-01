@@ -16,8 +16,9 @@ private let ps3ThirdPartyProbeMarker: UInt8 = 0x26
 /// for devices without report IDs, report `0x00`) whose reply carries `0x26` at SDL's byte 2
 /// identifies the fixed third-party report format. The descriptor's logical ranges do not match
 /// that format, so the driver then decodes raw reports by byte offset. A device that fails the
-/// probe keeps the generic HID descriptor mapping, which SDL also falls back to. Devices SDL
-/// accepts without a probe start in raw mode.
+/// probe keeps the generic HID descriptor mapping, which SDL also falls back to. Pads SDL
+/// accepts without a probe (Logitech ChillStream, Ant Esports GP100) have records in the
+/// `hid.report-layout` family instead, which ``ReportLayoutDriver`` decodes.
 ///
 /// Raw reports of 19 or more bytes carry face and shoulder bits and digital triggers in byte 0,
 /// system buttons in byte 1, a hat in the low nibble of byte 2, sticks in bytes 3–6, per-button
@@ -28,9 +29,8 @@ private let ps3ThirdPartyProbeMarker: UInt8 = 0x26
 /// report, starting from zero, so a hat that stays `0` never reads as held north; the driver
 /// matches that by using the D-pad pressure bytes until the hat nibble is nonzero.
 ///
-/// The Ant Esports GP100 (`2563:0575`) is verified on hardware for bytes 1 and 3–18 only
-/// (issue #38, PR #42), and PR #42 reads byte 0 as a report ID, so the driver reads its buttons,
-/// D-pad and triggers from the pressure and analog bytes alone.
+/// The record quirk `dpad-pressure` (Saitek Cyborg V.3) ignores the hat nibble and reads any
+/// nonzero D-pad pressure as held, as SDL does for that pad.
 ///
 /// Only a pad whose controller record names a rumble template drives rumble. SDL's third-party
 /// driver sends no output, because some of these pads then rumble without stopping.
@@ -68,34 +68,26 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     static let replyLength = 8
   }
 
-  /// Logitech ChillStream (`046d:cad1`), which SDL accepts without the feature probe.
-  private static let chillStream: [UInt16] = [0x046D, 0xCAD1]
-  /// Ant Esports GP100 (`2563:0575`): the raw layout is hardware-verified (issue #38, PR #42).
-  private static let gp100: [UInt16] = [0x2563, 0x0575]
-  /// Saitek Cyborg V.3 Rumble Pad (`06a3:f622`), whose hat bits SDL does not trust.
-  private static let cyborgV3: [UInt16] = [0x06A3, 0xF622]
-
   private let descriptorFallback: HIDDescriptorDriver
   private let hatFromPressureOnly: Bool
   private let rumbleTemplate: RumbleOutputTemplate?
-  /// Ignores byte 0 and the hat nibble, whose meaning is unverified on this device.
-  private let readsAnalogBytesOnly: Bool
   /// Set once the hat nibble has been nonzero in this session.
   private var hatIsLive = false
   /// Set once the device is known to send the third-party report format.
   private(set) var decodesRawReports: Bool
   private var state = ControllerState.neutral
 
-  /// Creates a driver for the controller at `identifier`. `rumbleTemplate` comes from its record.
-  public init(identifier: DeviceIdentifier, rumbleTemplate: RumbleOutputTemplate? = nil) {
-    let identity = [
-      identifier.controllerIdentity.vendorID, identifier.controllerIdentity.productID,
-    ]
+  /// Creates a driver for the controller at `identifier`. `rumbleTemplate` and
+  /// `hatFromPressureOnly` (quirk `dpad-pressure`) come from its record.
+  public init(
+    identifier: DeviceIdentifier,
+    rumbleTemplate: RumbleOutputTemplate? = nil,
+    hatFromPressureOnly: Bool = false
+  ) {
     descriptorFallback = HIDDescriptorDriver(identifier: identifier)
-    hatFromPressureOnly = identity == Self.cyborgV3
-    readsAnalogBytesOnly = identity == Self.gp100
+    self.hatFromPressureOnly = hatFromPressureOnly
     self.rumbleTemplate = rumbleTemplate
-    decodesRawReports = identity == Self.chillStream || identity == Self.gp100
+    decodesRawReports = false
   }
 
   /// A new transport session starts from neutral input. The probe result describes the device,
@@ -178,7 +170,7 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     default: return nil
     }
     var next = state
-    let digital = readsAnalogBytesOnly ? 0 : bytes[0]
+    let digital = bytes[0]
     decodeButtons(bytes, digital: digital, layout: layout, into: &next)
     next.hat = hat(bytes, layout: layout)
     let triggers = layout.triggerOffset
@@ -222,26 +214,21 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
   private func hat(_ bytes: [UInt8], layout: Layout) -> HatDirection {
     let nibble = layout == .standard ? bytes[2] & 0x0F : bytes[1] >> 4
     if nibble != 0 { hatIsLive = true }
-    if hatIsLive, !hatFromPressureOnly, !readsAnalogBytesOnly,
-      Int(nibble) < Self.hatDirections.count
-    {
-      return Self.hatDirections[Int(nibble)]
+    let directions = HatDirection.clockwiseFromNorth
+    if hatIsLive, !hatFromPressureOnly, Int(nibble) < directions.count {
+      return directions[Int(nibble)]
     }
     let pressure = layout.pressureOffset
     // The Cyborg V.3 reports any nonzero D-pad pressure as held, as SDL reads it.
     let threshold: UInt8 = hatFromPressureOnly ? 0x01 : ps3ThirdPartyPressedThreshold
     func held(_ offset: Int) -> Bool { bytes[pressure + offset] >= threshold }
-    return Self.direction(
+    return HatDirection(
       up: held(Pressure.dpadUp),
       right: held(Pressure.dpadRight),
       down: held(Pressure.dpadDown),
       left: held(Pressure.dpadLeft)
     )
   }
-
-  private static let hatDirections: [HatDirection] = [
-    .north, .northEast, .east, .southEast, .south, .southWest, .west, .northWest,
-  ]
 
   private static func trigger(_ raw: UInt8, digital: Bool) -> UnipolarValue {
     UnipolarValue(normalized: digital ? 1 : Float(raw) / ps3ThirdPartyTriggerMax)
@@ -252,20 +239,5 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     let centered = Float(raw) - ps3ThirdPartyAxisCenter
     let divisor = centered >= 0 ? ps3ThirdPartyAxisPositiveMax : ps3ThirdPartyAxisNegativeMax
     return max(-1, min(1, centered / divisor))
-  }
-
-  /// Combines the four D-pad flags; opposing directions cancel to neutral.
-  private static func direction(up: Bool, right: Bool, down: Bool, left: Bool) -> HatDirection {
-    switch (up && !down, right && !left, down && !up, left && !right) {
-    case (true, false, false, false): .north
-    case (true, true, false, false): .northEast
-    case (false, true, false, false): .east
-    case (false, true, true, false): .southEast
-    case (false, false, true, false): .south
-    case (false, false, true, true): .southWest
-    case (false, false, false, true): .west
-    case (true, false, false, true): .northWest
-    default: .neutral
-    }
   }
 }

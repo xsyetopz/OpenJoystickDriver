@@ -6,6 +6,8 @@ import Foundation
 /// this enum only when a driver for it exists.
 public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
   case hidDescriptor = "hid.descriptor"
+  /// A fixed input-report layout from the controller record (``ControllerInputLayout``).
+  case hidReportLayout = "hid.report-layout"
   case xboxXID = "xbox.xid"
   case xboxXUSB = "xbox.xusb"
   case xboxGIP = "xbox.gip"
@@ -22,7 +24,9 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
   /// Implemented variants. An empty list means the family has one contract.
   public var variants: [PhysicalProtocolVariantID] {
     switch self {
-    case .hidDescriptor, .vendorFlydigi, .vendorPS3ThirdParty, .vendorNVIDIAShield: []
+    case .hidDescriptor, .hidReportLayout, .vendorFlydigi, .vendorPS3ThirdParty,
+      .vendorNVIDIAShield:
+      []
     case .xboxXID: [.gamepad]
     case .xboxXUSB: [.wired, .receiver]
     case .xboxGIP: [.usb]
@@ -39,22 +43,23 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
     switch self {
     case .xboxXID, .xboxXUSB, .xboxGIP: true
     case .vendorGameSir: storedVariant == .usb
-    case .hidDescriptor, .sonySixaxis, .sonyDualShock4, .sonyDualSense, .nintendoSwitch1,
-      .valveSteamController, .vendorFlydigi, .vendorPS3ThirdParty, .vendorNVIDIAShield:
+    case .hidDescriptor, .hidReportLayout, .sonySixaxis, .sonyDualShock4, .sonyDualSense,
+      .nintendoSwitch1, .valveSteamController, .vendorFlydigi, .vendorPS3ThirdParty,
+      .vendorNVIDIAShield:
       false
     }
   }
 
   /// Whether this family's driver encodes rumble from a record's rumble template.
-  var encodesRumbleTemplate: Bool { self == .vendorPS3ThirdParty }
+  var encodesRumbleTemplate: Bool { self == .hidReportLayout || self == .vendorPS3ThirdParty }
 
   /// Whether catalog records store this family's variant; otherwise the family has one
   /// contract or classification derives the variant from the observed transport.
   public var storesVariant: Bool {
     switch self {
     case .xboxXID, .xboxXUSB, .valveSteamController, .vendorGameSir: true
-    case .hidDescriptor, .xboxGIP, .sonySixaxis, .sonyDualShock4, .sonyDualSense, .nintendoSwitch1,
-      .vendorFlydigi, .vendorPS3ThirdParty, .vendorNVIDIAShield:
+    case .hidDescriptor, .hidReportLayout, .xboxGIP, .sonySixaxis, .sonyDualShock4,
+      .sonyDualSense, .nintendoSwitch1, .vendorFlydigi, .vendorPS3ThirdParty, .vendorNVIDIAShield:
       false
     }
   }

@@ -55,6 +55,9 @@
 						},
 						"output": {
 							"$ref": "controller.schema.json#/$defs/output"
+						},
+						"input": {
+							"$ref": "controller.schema.json#/$defs/input"
 						}
 					}
 				}

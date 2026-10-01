@@ -1,0 +1,14 @@
+{
+	"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+	"operation": "patch",
+	"vendorID": 1699,
+	"productID": 63010,
+	"set": {
+		"protocol": {
+			"family": "vendor.ps3-third-party",
+			"quirks": [
+				"dpad-pressure"
+			]
+		}
+	}
+}

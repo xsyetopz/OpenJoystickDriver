@@ -3,6 +3,144 @@
   "vendorID": 1133,
   "productID": 51921,
   "protocol": {
-    "family": "vendor.ps3-third-party"
+    "family": "hid.report-layout"
+  },
+  "input": {
+    "report": {
+      "length": 18
+    },
+    "buttons": [
+      {
+        "control": "face-west",
+        "byte": 0,
+        "mask": 1
+      },
+      {
+        "control": "face-south",
+        "byte": 0,
+        "mask": 2
+      },
+      {
+        "control": "face-east",
+        "byte": 0,
+        "mask": 4
+      },
+      {
+        "control": "face-north",
+        "byte": 0,
+        "mask": 8
+      },
+      {
+        "control": "left-shoulder",
+        "byte": 0,
+        "mask": 16
+      },
+      {
+        "control": "right-shoulder",
+        "byte": 0,
+        "mask": 32
+      },
+      {
+        "control": "face-north",
+        "byte": 10,
+        "mask": 128
+      },
+      {
+        "control": "face-east",
+        "byte": 11,
+        "mask": 128
+      },
+      {
+        "control": "face-south",
+        "byte": 12,
+        "mask": 128
+      },
+      {
+        "control": "face-west",
+        "byte": 13,
+        "mask": 128
+      },
+      {
+        "control": "left-shoulder",
+        "byte": 14,
+        "mask": 128
+      },
+      {
+        "control": "right-shoulder",
+        "byte": 15,
+        "mask": 128
+      },
+      {
+        "control": "view",
+        "byte": 1,
+        "mask": 1
+      },
+      {
+        "control": "menu",
+        "byte": 1,
+        "mask": 2
+      },
+      {
+        "control": "left-stick-click",
+        "byte": 1,
+        "mask": 4
+      },
+      {
+        "control": "right-stick-click",
+        "byte": 1,
+        "mask": 8
+      }
+    ],
+    "axes": [
+      {
+        "control": "left-stick-x",
+        "byte": 2
+      },
+      {
+        "control": "left-stick-y",
+        "byte": 3
+      },
+      {
+        "control": "right-stick-x",
+        "byte": 4
+      },
+      {
+        "control": "right-stick-y",
+        "byte": 5
+      }
+    ],
+    "hat": [
+      {
+        "encoding": "8-way",
+        "byte": 1,
+        "mask": 240,
+        "neutralUntilNonzero": true
+      },
+      {
+        "encoding": "directions",
+        "up": {
+          "byte": 8,
+          "mask": 128
+        },
+        "right": {
+          "byte": 6,
+          "mask": 128
+        },
+        "down": {
+          "byte": 9,
+          "mask": 128
+        },
+        "left": {
+          "byte": 7,
+          "mask": 128
+        }
+      }
+    ],
+    "leftTrigger": {
+      "byte": 16
+    },
+    "rightTrigger": {
+      "byte": 17
+    }
   }
 }

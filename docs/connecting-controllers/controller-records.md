@@ -7,7 +7,7 @@ A controller record tells OpenJoystickDriver which protocol family drives one co
 A record has one of two operations:
 
 - `add`: a complete record for a model that has no bundled record.
-- `patch`: new values for the `protocol`, `usb`, `ownership`, or `output` fields of a bundled record. The other fields stay bundled.
+- `patch`: new values for the `protocol`, `usb`, `ownership`, `output`, or `input` fields of a bundled record. The other fields stay bundled.
 
 A record for a model that uses raw USB works only when macOS lets OpenJoystickDriver open the device directly. The [Xbox USB driver extension](xbox-usb-driver-extension.md) claims only the Xbox models in its signed product list, and your record cannot add a model to that list. `ojd record validate` says when this applies.
 
@@ -20,9 +20,49 @@ macOS serves some controllers natively through the Game Controller framework. Op
 
 A raw-USB family, such as `xbox.gip`, has no `ownership` field, because macOS cannot serve those controllers. A new `ownership` value applies the next time the controller connects, so unplug it and plug it in again.
 
+## Describe a controller's input reports
+
+Some controllers send fixed input reports that their HID descriptor describes wrongly. A record with the protocol family `hid.report-layout` names where each control sits in the report, in its `input` field. The family requires `input`, and no other family takes it.
+
+```json
+"protocol": { "family": "hid.report-layout" },
+"input": {
+  "report": { "length": 19 },
+  "buttons": [
+    { "control": "face-south", "byte": 13, "mask": 128 },
+    { "control": "view", "byte": 1, "mask": 1 }
+  ],
+  "axes": [
+    { "control": "left-stick-x", "byte": 3 },
+    { "control": "left-stick-y", "byte": 4 }
+  ],
+  "hat": [
+    {
+      "encoding": "directions",
+      "up": { "byte": 9, "mask": 128 },
+      "right": { "byte": 7, "mask": 128 },
+      "down": { "byte": 10, "mask": 128 },
+      "left": { "byte": 8, "mask": 128 }
+    }
+  ],
+  "leftTrigger": { "byte": 17 },
+  "rightTrigger": { "byte": 18 }
+}
+```
+
+Offsets count from the first byte of the report as macOS delivers it.
+
+- `report`: `length` is the shortest report OpenJoystickDriver reads, from 1 to 64 bytes. With `id`, from 1 to 255, byte 0 must hold that report ID, and `length` counts it. OpenJoystickDriver ignores shorter reports and reports with another ID.
+- `buttons`: each entry names a control, a `byte`, and a `mask`. The button is pressed while any masked bit is set. Repeat a control to read it from several places. A button cannot be `dpad`, a stick axis, `left-trigger`, or `right-trigger`.
+- `axes`: each entry names a stick axis and its `byte`. `bits` is 8, the default, or 16 for a little-endian value in `byte` and the next byte. `signed` reads the value as two's complement. `min` and `max` set the raw range, which defaults to the full range of the width. `inverted` flips the direction. X grows right and Y grows down, as in HID.
+- `hat`: a list of sources; the first that reads a direction wins. An `8-way` source reads the masked bits as 0 for north, clockwise to 7 for north-west, and any other value as centered. With `neutralUntilNonzero`, 0 also reads centered until the bits have been nonzero once, for a controller that sends 0 before its hat is live. A `directions` source names one bit for each direction; opposing directions cancel.
+- `leftTrigger` and `rightTrigger`: a `byte` read from 0 to 255, a `button` that reads as fully pulled, or both.
+
+Name at least one control. `ojd record validate` checks that every field lies inside the report.
+
 ## Add rumble to a controller
 
-A `vendor.ps3-third-party` controller is input-only unless its record names its rumble report in `output.rumble`:
+A `hid.report-layout` or `vendor.ps3-third-party` controller is input-only unless its record names its rumble report in `output.rumble`:
 
 ```json
 "output": {

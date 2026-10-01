@@ -1,46 +1,75 @@
 {
 	"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
-	"operation": "add",
-	"record": {
-		"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
-		"vendorID": 9571,
-		"productID": 1397,
+	"operation": "patch",
+	"vendorID": 1133,
+	"productID": 51921,
+	"set": {
 		"protocol": {
 			"family": "hid.report-layout"
 		},
 		"input": {
 			"report": {
-				"length": 19
+				"length": 18
 			},
 			"buttons": [
 				{
+					"control": "face-west",
+					"byte": 0,
+					"mask": 1
+				},
+				{
+					"control": "face-south",
+					"byte": 0,
+					"mask": 2
+				},
+				{
+					"control": "face-east",
+					"byte": 0,
+					"mask": 4
+				},
+				{
 					"control": "face-north",
-					"byte": 11,
+					"byte": 0,
+					"mask": 8
+				},
+				{
+					"control": "left-shoulder",
+					"byte": 0,
+					"mask": 16
+				},
+				{
+					"control": "right-shoulder",
+					"byte": 0,
+					"mask": 32
+				},
+				{
+					"control": "face-north",
+					"byte": 10,
 					"mask": 128
 				},
 				{
 					"control": "face-east",
-					"byte": 12,
+					"byte": 11,
 					"mask": 128
 				},
 				{
 					"control": "face-south",
-					"byte": 13,
+					"byte": 12,
 					"mask": 128
 				},
 				{
 					"control": "face-west",
-					"byte": 14,
+					"byte": 13,
 					"mask": 128
 				},
 				{
 					"control": "left-shoulder",
-					"byte": 15,
+					"byte": 14,
 					"mask": 128
 				},
 				{
 					"control": "right-shoulder",
-					"byte": 16,
+					"byte": 15,
 					"mask": 128
 				},
 				{
@@ -62,72 +91,58 @@
 					"control": "right-stick-click",
 					"byte": 1,
 					"mask": 8
-				},
-				{
-					"control": "guide",
-					"byte": 1,
-					"mask": 16
 				}
 			],
 			"axes": [
 				{
 					"control": "left-stick-x",
-					"byte": 3
+					"byte": 2
 				},
 				{
 					"control": "left-stick-y",
-					"byte": 4
+					"byte": 3
 				},
 				{
 					"control": "right-stick-x",
-					"byte": 5
+					"byte": 4
 				},
 				{
 					"control": "right-stick-y",
-					"byte": 6
+					"byte": 5
 				}
 			],
 			"hat": [
 				{
+					"encoding": "8-way",
+					"byte": 1,
+					"mask": 240,
+					"neutralUntilNonzero": true
+				},
+				{
 					"encoding": "directions",
 					"up": {
-						"byte": 9,
+						"byte": 8,
 						"mask": 128
 					},
 					"right": {
-						"byte": 7,
+						"byte": 6,
 						"mask": 128
 					},
 					"down": {
-						"byte": 10,
+						"byte": 9,
 						"mask": 128
 					},
 					"left": {
-						"byte": 8,
+						"byte": 7,
 						"mask": 128
 					}
 				}
 			],
 			"leftTrigger": {
-				"byte": 17
+				"byte": 16
 			},
 			"rightTrigger": {
-				"byte": 18
-			}
-		},
-		"output": {
-			"rumble": {
-				"report": {
-					"kind": "output",
-					"id": 2,
-					"length": 8
-				},
-				"leftMain": {
-					"byte": 3
-				},
-				"rightMain": {
-					"byte": 2
-				}
+				"byte": 17
 			}
 		}
 	}

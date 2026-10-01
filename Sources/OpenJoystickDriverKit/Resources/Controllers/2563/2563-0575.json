@@ -3,7 +3,114 @@
   "vendorID": 9571,
   "productID": 1397,
   "protocol": {
-    "family": "vendor.ps3-third-party"
+    "family": "hid.report-layout"
+  },
+  "input": {
+    "report": {
+      "length": 19
+    },
+    "buttons": [
+      {
+        "control": "face-north",
+        "byte": 11,
+        "mask": 128
+      },
+      {
+        "control": "face-east",
+        "byte": 12,
+        "mask": 128
+      },
+      {
+        "control": "face-south",
+        "byte": 13,
+        "mask": 128
+      },
+      {
+        "control": "face-west",
+        "byte": 14,
+        "mask": 128
+      },
+      {
+        "control": "left-shoulder",
+        "byte": 15,
+        "mask": 128
+      },
+      {
+        "control": "right-shoulder",
+        "byte": 16,
+        "mask": 128
+      },
+      {
+        "control": "view",
+        "byte": 1,
+        "mask": 1
+      },
+      {
+        "control": "menu",
+        "byte": 1,
+        "mask": 2
+      },
+      {
+        "control": "left-stick-click",
+        "byte": 1,
+        "mask": 4
+      },
+      {
+        "control": "right-stick-click",
+        "byte": 1,
+        "mask": 8
+      },
+      {
+        "control": "guide",
+        "byte": 1,
+        "mask": 16
+      }
+    ],
+    "axes": [
+      {
+        "control": "left-stick-x",
+        "byte": 3
+      },
+      {
+        "control": "left-stick-y",
+        "byte": 4
+      },
+      {
+        "control": "right-stick-x",
+        "byte": 5
+      },
+      {
+        "control": "right-stick-y",
+        "byte": 6
+      }
+    ],
+    "hat": [
+      {
+        "encoding": "directions",
+        "up": {
+          "byte": 9,
+          "mask": 128
+        },
+        "right": {
+          "byte": 7,
+          "mask": 128
+        },
+        "down": {
+          "byte": 10,
+          "mask": 128
+        },
+        "left": {
+          "byte": 8,
+          "mask": 128
+        }
+      }
+    ],
+    "leftTrigger": {
+      "byte": 17
+    },
+    "rightTrigger": {
+      "byte": 18
+    }
   },
   "output": {
     "rumble": {

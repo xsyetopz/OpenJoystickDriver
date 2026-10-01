@@ -129,11 +129,11 @@ struct ControllerRecordOutputTests {
     #expect(!sixaxis.permits(PhysicalHIDOutputReport(reportID: 1, bytes: [1, 0]), kind: .output))
     #expect(sixaxis.setsStartupPlayerIndicator && sixaxis.readsStartupFeatures)
 
-    #expect(MacOSOwnedOutput.allowance(for: .vendorPS3ThirdParty, record: nil) == .none)
+    #expect(MacOSOwnedOutput.allowance(for: .hidReportLayout, record: nil) == .none)
     let gp100 = try #require(
       DeviceCatalog().record(for: DeviceIdentifier(vendorID: 0x2563, productID: 0x0575))
     )
-    let allowance = MacOSOwnedOutput.allowance(for: .vendorPS3ThirdParty, record: gp100)
+    let allowance = MacOSOwnedOutput.allowance(for: .hidReportLayout, record: gp100)
     let rumble = PhysicalHIDOutputReport(reportID: 2, bytes: [2, 0, 0, 0, 0, 0, 0, 0])
     #expect(allowance.drivesRumble)
     #expect(allowance.permits(rumble, kind: .output))

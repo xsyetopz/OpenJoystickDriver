@@ -32,6 +32,9 @@
 		},
 		"output": {
 			"$ref": "#/$defs/output"
+		},
+		"input": {
+			"$ref": "#/$defs/input"
 		}
 	},
 	"$defs": {
@@ -43,6 +46,7 @@
 				"family": {
 					"enum": [
 						"hid.descriptor",
+						"hid.report-layout",
 						"xbox.xid",
 						"xbox.xusb",
 						"xbox.gip",
@@ -283,6 +287,26 @@
 					"if": {
 						"properties": {
 							"family": {
+								"const": "vendor.ps3-third-party"
+							}
+						},
+						"required": ["family"]
+					},
+					"then": {
+						"properties": {
+							"quirks": {
+								"items": {
+									"enum": ["dpad-pressure"]
+								},
+								"type": "array"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"family": {
 								"const": "nintendo.switch1"
 							}
 						},
@@ -331,7 +355,8 @@
 										"xbox.gip",
 										"nintendo.switch1",
 										"valve.steam-controller",
-										"vendor.gamesir"
+										"vendor.gamesir",
+										"vendor.ps3-third-party"
 									]
 								}
 							}
@@ -525,6 +550,216 @@
 					"type": "integer",
 					"minimum": 0,
 					"maximum": 63
+				}
+			}
+		},
+		"input": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["report"],
+			"minProperties": 2,
+			"properties": {
+				"report": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["length"],
+					"properties": {
+						"id": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 255
+						},
+						"length": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 64
+						}
+					}
+				},
+				"buttons": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"$ref": "#/$defs/inputButton"
+					}
+				},
+				"axes": {
+					"type": "array",
+					"minItems": 1,
+					"maxItems": 4,
+					"items": {
+						"$ref": "#/$defs/inputAxis"
+					}
+				},
+				"hat": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"$ref": "#/$defs/inputHatSource"
+					}
+				},
+				"leftTrigger": {
+					"$ref": "#/$defs/inputTrigger"
+				},
+				"rightTrigger": {
+					"$ref": "#/$defs/inputTrigger"
+				}
+			}
+		},
+		"inputField": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["byte", "mask"],
+			"properties": {
+				"byte": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 63
+				},
+				"mask": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 255
+				}
+			}
+		},
+		"inputButton": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["control", "byte", "mask"],
+			"properties": {
+				"control": {
+					"allOf": [
+						{
+							"$ref": "#/$defs/controlID"
+						},
+						{
+							"not": {
+								"enum": [
+									"dpad",
+									"left-stick-x",
+									"left-stick-y",
+									"right-stick-x",
+									"right-stick-y",
+									"left-trigger",
+									"right-trigger"
+								]
+							}
+						}
+					]
+				},
+				"byte": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 63
+				},
+				"mask": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 255
+				}
+			}
+		},
+		"inputAxis": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["control", "byte"],
+			"properties": {
+				"control": {
+					"enum": [
+						"left-stick-x",
+						"left-stick-y",
+						"right-stick-x",
+						"right-stick-y"
+					]
+				},
+				"byte": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 63
+				},
+				"bits": {
+					"enum": [8, 16]
+				},
+				"signed": {
+					"type": "boolean"
+				},
+				"min": {
+					"type": "integer",
+					"minimum": -32768,
+					"maximum": 65535
+				},
+				"max": {
+					"type": "integer",
+					"minimum": -32768,
+					"maximum": 65535
+				},
+				"inverted": {
+					"type": "boolean"
+				}
+			}
+		},
+		"inputHatSource": {
+			"oneOf": [
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["encoding", "byte", "mask"],
+					"properties": {
+						"encoding": {
+							"const": "8-way"
+						},
+						"byte": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 63
+						},
+						"mask": {
+							"type": "integer",
+							"minimum": 7,
+							"maximum": 255
+						},
+						"neutralUntilNonzero": {
+							"type": "boolean"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["encoding", "up", "right", "down", "left"],
+					"properties": {
+						"encoding": {
+							"const": "directions"
+						},
+						"up": {
+							"$ref": "#/$defs/inputField"
+						},
+						"right": {
+							"$ref": "#/$defs/inputField"
+						},
+						"down": {
+							"$ref": "#/$defs/inputField"
+						},
+						"left": {
+							"$ref": "#/$defs/inputField"
+						}
+					}
+				}
+			]
+		},
+		"inputTrigger": {
+			"type": "object",
+			"additionalProperties": false,
+			"minProperties": 1,
+			"properties": {
+				"byte": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 63
+				},
+				"button": {
+					"$ref": "#/$defs/inputField"
 				}
 			}
 		}
@@ -756,10 +991,32 @@
 					"protocol": {
 						"properties": {
 							"family": {
-								"const": "vendor.ps3-third-party"
+								"enum": ["hid.report-layout", "vendor.ps3-third-party"]
 							}
 						}
 					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"protocol": {
+						"properties": {
+							"family": {
+								"const": "hid.report-layout"
+							}
+						},
+						"required": ["family"]
+					}
+				}
+			},
+			"then": {
+				"required": ["input"]
+			},
+			"else": {
+				"not": {
+					"required": ["input"]
 				}
 			}
 		},

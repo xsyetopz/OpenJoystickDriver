@@ -307,6 +307,7 @@ struct ProtocolDriverRegistryTests {
   {
     switch id {
     case .hidDescriptor: driver is HIDDescriptorDriver
+    case .hidReportLayout: driver is ReportLayoutDriver
     case .xboxXID: driver is XIDDriver
     case .xboxXUSB: driver is XUSBDriver
     case .xboxGIP: driver is GIPDriver

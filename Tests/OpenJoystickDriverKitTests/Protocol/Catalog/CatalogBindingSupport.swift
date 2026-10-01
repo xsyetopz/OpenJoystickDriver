@@ -115,7 +115,8 @@ extension DeviceRuntimeProfile {
       gipKeepAlivePolicy: gipKeepAlivePolicy,
       assemblyPolicy: assemblyPolicy,
       ownership: ownership,
-      rumbleTemplate: rumbleTemplate
+      rumbleTemplate: rumbleTemplate,
+      inputLayout: inputLayout
     )
   }
 }

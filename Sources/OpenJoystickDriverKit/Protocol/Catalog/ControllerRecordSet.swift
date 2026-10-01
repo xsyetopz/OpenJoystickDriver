@@ -199,8 +199,10 @@ public struct ControllerRecordSet: Sendable {
       else { throw ControllerRecordProblem("vendorID must be 1...65535 and productID 0...65535") }
       let identity = ControllerIdentity(vendorID: vendorID, productID: productID)
       guard let fields = document["set"] as? [String: Any], !fields.isEmpty,
-        Set(fields.keys).isSubset(of: ["protocol", "usb", "ownership", "output"])
-      else { throw ControllerRecordProblem("set must hold protocol, usb, ownership, or output") }
+        Set(fields.keys).isSubset(of: ["protocol", "usb", "ownership", "output", "input"])
+      else {
+        throw ControllerRecordProblem("set must hold protocol, usb, ownership, output, or input")
+      }
       guard let upstream = bundled.records[identity],
         let base = try JSONSerialization.jsonObject(with: upstream.document) as? [String: Any]
       else {

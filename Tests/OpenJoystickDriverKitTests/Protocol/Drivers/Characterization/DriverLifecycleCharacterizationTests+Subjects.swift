@@ -120,9 +120,16 @@ extension DriverLifecycleCharacterizationTests {
     variant: nil
   )
   static let ps3ThirdParty = Subject(
-    identifier: identifier(0x2563, 0x0575),
+    identifier: identifier(0x06A3, 0xF622),
     host: .usb,
     protocolID: .vendorPS3ThirdParty,
+    variant: nil,
+    quirks: [.dpadPressure]
+  )
+  static let reportLayout = Subject(
+    identifier: identifier(0x2563, 0x0575),
+    host: .usb,
+    protocolID: .hidReportLayout,
     variant: nil
   )
   static let nvidiaShield = Subject(
@@ -191,7 +198,7 @@ extension DriverLifecycleCharacterizationTests {
     gipUSB, gipKeepAliveDisabled, xidGamepad, xusbWired, xusbReceiver, sixaxisUSB, sixaxisBluetooth,
     dualShock4USB, dualShock4Bluetooth, dualSenseUSB, dualSenseBluetooth, switchUSB,
     switchBluetooth, steamWired, steamDongle, flydigi, ps3ThirdParty, nvidiaShield, gameSirUSB,
-    gameSirEnhancedHID, gameSirEnhancedHID8K, hidDescriptor,
+    gameSirEnhancedHID, gameSirEnhancedHID8K, hidDescriptor, reportLayout,
   ]
 
   @Test

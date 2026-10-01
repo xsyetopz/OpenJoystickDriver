@@ -125,6 +125,9 @@ public enum ControllerQuirk: String, CaseIterable, Sendable {
   /// Steam Deck built-in controller (SDL `SteamControllerNeptune`): its own state report,
   /// settings, watchdog, and rumble report.
   case neptune = "neptune"
+  /// Third-party PS3 pad whose hat bits are untrusted, so any nonzero D-pad pressure byte holds
+  /// its direction (SDL `SDL_hidapi_ps3.c`, Saitek Cyborg V.3 Rumble Pad).
+  case dpadPressure = "dpad-pressure"
 
   /// The protocol driver that declares this quirk.
   public var protocolID: PhysicalProtocolID {
@@ -134,6 +137,7 @@ public enum ControllerQuirk: String, CaseIterable, Sendable {
       .nintendoSwitch1
     case .innerGrips, .lightingSlots: .vendorGameSir
     case .triton, .neptune: .valveSteamController
+    case .dpadPressure: .vendorPS3ThirdParty
     }
   }
 }
@@ -188,6 +192,8 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public let ownership: ControllerOwnership
   /// The record's rumble report, for a driver that encodes rumble from it.
   public let rumbleTemplate: RumbleOutputTemplate?
+  /// The record's input-report layout; set exactly for the `hid.report-layout` family.
+  public let inputLayout: ControllerInputLayout?
 
   /// Whether this row is reached through raw USB rather than IOHID.
   public var usesRawUSB: Bool {

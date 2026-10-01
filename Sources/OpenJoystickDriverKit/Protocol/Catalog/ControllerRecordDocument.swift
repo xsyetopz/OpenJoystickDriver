@@ -17,11 +17,14 @@ struct ControllerRecordDocument: Decodable {
   /// Nil leaves a controller macOS supports to macOS.
   let ownership: ControllerOwnership?
   let rumbleTemplate: RumbleOutputTemplate?
+  /// Present exactly for the `hid.report-layout` family.
+  let inputLayout: ControllerInputLayout?
 
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)
     try container.rejectUnknown(allowed: [
       "$schema", "vendorID", "productID", "protocol", "usb", "capabilities", "ownership", "output",
+      "input",
     ])
     let schema = try container.decode(String.self, for: "$schema")
     guard schema == Self.schemaID else {
@@ -48,6 +51,7 @@ struct ControllerRecordDocument: Decodable {
       return ownership
     }
     rumbleTemplate = try container.decodeOptional(Output.self, for: "output")?.rumble
+    inputLayout = try container.decodeOptional(InputLayout.self, for: "input")?.layout
     try validateOwnershipAndOutput(codingPath: decoder.codingPath)
     // Only these deltas have a driver that acts on them: GIP drops rumble, DualSense Edge adds
     // exactly its paddles and function buttons.
@@ -81,8 +85,8 @@ struct ControllerRecordDocument: Decodable {
     }
   }
 
-  /// macOS cannot serve a raw-USB family, and only a driver that encodes rumble from a template
-  /// may name one.
+  /// macOS cannot serve a raw-USB family, only a driver that encodes rumble from a template may
+  /// name one, and the report-layout family alone has, and needs, an input layout.
   private func validateOwnershipAndOutput(codingPath: [any CodingKey]) throws {
     let rawUSB = protocolInfo.protocolID.usesRawUSB(storedVariant: protocolInfo.protocolVariant)
     if ownership != nil, rawUSB {
@@ -90,6 +94,14 @@ struct ControllerRecordDocument: Decodable {
         .init(
           codingPath: codingPath + [DocumentKey("ownership")],
           debugDescription: "ownership applies only to HID controllers"
+        )
+      )
+    }
+    if (inputLayout != nil) != (protocolInfo.protocolID == .hidReportLayout) {
+      throw DecodingError.dataCorrupted(
+        .init(
+          codingPath: codingPath + [DocumentKey("input")],
+          debugDescription: "an input layout is required for hid.report-layout and only there"
         )
       )
     }

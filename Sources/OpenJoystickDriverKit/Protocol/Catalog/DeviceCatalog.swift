@@ -86,7 +86,8 @@ struct DeviceCatalog: Sendable {
       gipKeepAlivePolicy: keepAlivePolicy,
       assemblyPolicy: protocolInfo.assembly,
       ownership: record.ownership ?? .macOS,
-      rumbleTemplate: record.rumbleTemplate
+      rumbleTemplate: record.rumbleTemplate,
+      inputLayout: record.inputLayout
     )
   }
 
@@ -115,7 +116,8 @@ struct DeviceCatalog: Sendable {
       gipKeepAlivePolicy: .enabled,
       assemblyPolicy: nil,
       ownership: .macOS,
-      rumbleTemplate: nil
+      rumbleTemplate: nil,
+      inputLayout: nil
     )
   }
 

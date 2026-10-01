@@ -58,11 +58,14 @@ struct ControllerRecordDocumentTests {
 
   @Test(arguments: PhysicalProtocolID.allCases.filter { !$0.storesVariant })
   func rejectsVariantsTheTransportDecides(family: PhysicalProtocolID) throws {
-    let document = try decode(protocol: ["family": family.rawValue])
+    // A report-layout row must carry its layout; any other row must not.
+    let extra: [String: any Sendable] =
+      family == .hidReportLayout ? ["input": Self.minimalInput] : [:]
+    let document = try decode(protocol: ["family": family.rawValue], extra: extra)
     #expect(document.protocolInfo.protocolID == family)
     #expect(document.protocolInfo.protocolVariant == nil)
     #expect(throws: DecodingError.self) {
-      try decode(protocol: ["family": family.rawValue, "variant": "usb"])
+      try decode(protocol: ["family": family.rawValue, "variant": "usb"], extra: extra)
     }
   }
 
@@ -243,6 +246,26 @@ struct ControllerRecordDocumentTests {
     #expect(familiesWithVariants == PhysicalProtocolID.allCases.filter(\.storesVariant))
     #expect(declaredQuirks.sorted() == ControllerQuirk.allCases.map(\.rawValue).sorted())
   }
+
+  /// An input layout belongs to the `hid.report-layout` family, which cannot run without one.
+  @Test
+  func inputLayoutIsRequiredExactlyForTheReportLayoutFamily() throws {
+    let document = try decode(
+      protocol: ["family": "hid.report-layout"],
+      extra: ["input": Self.minimalInput]
+    )
+    #expect(document.inputLayout?.controls == [.faceSouth])
+    #expect(throws: DecodingError.self) { try decode(protocol: ["family": "hid.report-layout"]) }
+    #expect(throws: DecodingError.self) {
+      try decode(protocol: ["family": "hid.descriptor"], extra: ["input": Self.minimalInput])
+    }
+  }
+
+  /// The smallest valid `input` section: one button in a one-byte report.
+  static let minimalInput: [String: any Sendable] = [
+    "report": ["length": 1] as [String: Int],
+    "buttons": [["control": "face-south", "byte": 0, "mask": 1] as [String: any Sendable]],
+  ]
 
   private static func controllerSchema() throws -> [String: Any] {
     let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()

@@ -256,7 +256,8 @@
       case .vendorNVIDIAShield: "NVIDIA SHIELD"
       case .vendorGameSir where variant == .usb: "GameSir G7 Pro USB"
       case .vendorGameSir: "GameSir enhanced HID"
-      case .hidDescriptor: OJDLocalized.string("controller.genericHID", fallback: "Generic HID")
+      case .hidDescriptor, .hidReportLayout:
+        OJDLocalized.string("controller.genericHID", fallback: "Generic HID")
       }
     }
   }

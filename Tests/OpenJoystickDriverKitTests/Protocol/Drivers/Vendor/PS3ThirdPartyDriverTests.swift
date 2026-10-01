@@ -42,15 +42,6 @@ private func acceptedDriver() -> PS3ThirdPartyDriver {
   return driver
 }
 
-/// A GP100 driver with the rumble template from its bundled record.
-private func gp100() -> PS3ThirdPartyDriver {
-  let identifier = DeviceIdentifier(vendorID: 0x2563, productID: 0x0575)
-  return PS3ThirdPartyDriver(
-    identifier: identifier,
-    rumbleTemplate: DeviceCatalog().record(for: identifier)?.rumbleTemplate
-  )
-}
-
 @Suite
 struct PS3ThirdPartyDriverTests {
 
@@ -128,17 +119,6 @@ struct PS3ThirdPartyDriverTests {
     let driver = acceptedDriver()
     driver.resetProtocolState()
     #expect(driver.decodesRawReports)
-  }
-
-  @Test
-  func chillStreamAndGP100SkipTheProbe() {
-    for (vendor, product) in [(UInt16(0x046D), UInt16(0xCAD1)), (0x2563, 0x0575)] {
-      let driver = PS3ThirdPartyDriver(
-        identifier: DeviceIdentifier(vendorID: vendor, productID: product)
-      )
-      #expect(driver.decodesRawReports)
-      #expect(driver.startupFeatureReads().isEmpty)
-    }
   }
 
   // MARK: - 19-byte layout
@@ -303,10 +283,12 @@ struct PS3ThirdPartyDriverTests {
 
   // MARK: - Device quirks
 
+  /// The Cyborg V.3 record sets `dpad-pressure`, so its hat comes only from pressure bytes 7–10.
   @Test
   func cyborgV3ReadsTheHatFromAnyDpadPressure() throws {
     let driver = PS3ThirdPartyDriver(
-      identifier: DeviceIdentifier(vendorID: 0x06A3, productID: 0xF622)
+      identifier: DeviceIdentifier(vendorID: 0x06A3, productID: 0xF622),
+      hatFromPressureOnly: true
     )
     _ = driver.consumeFeatureReply(
       Data([0x03, 0, 0x26, 0, 0, 0, 0, 0]),
@@ -314,66 +296,17 @@ struct PS3ThirdPartyDriverTests {
     )
     #expect(try driver.parseReport(ThirdPartyReport.standard([2: 0x02]))?.state == .neutral)
     #expect(try driver.parseReport(ThirdPartyReport.standard([7: 0x01])).contains(.hat(.east)))
-  }
-
-  /// Button map an Ant Esports GP100 owner recorded with a raw HID probe (issue #38).
-  @Test
-  func gp100MapsPressureBytesToButtons() throws {
-    let controls: [Int: ControlID] = [
-      11: .faceNorth, 12: .faceEast, 13: .faceSouth, 14: .faceWest, 15: .leftShoulder,
-      16: .rightShoulder,
-    ]
-    for (offset, control) in controls {
-      let driver = gp100()
-      #expect(
-        try driver.parseReport(ThirdPartyReport.standard([offset: 0xFF]))?.state
-          == snapshot(.press(control))
-      )
-      #expect(try driver.parseReport(ThirdPartyReport.standard()).contains(.release(control)))
-    }
-  }
-
-  @Test
-  func gp100IgnoresByteZeroAndTheHatNibble() throws {
-    let driver = gp100()
-    // PR #42 reads byte 0 as a report ID and byte 2 as unused; neither is verified as input.
-    #expect(
-      try driver.parseReport(ThirdPartyReport.standard([0: 0xFF, 2: 0x01]))?.state == .neutral
-    )
-    #expect(try driver.parseReport(ThirdPartyReport.standard([2: 0x00]))?.state == .neutral)
-    #expect(try driver.parseReport(ThirdPartyReport.standard([9: 0xFF])).contains(.hat(.north)))
+    let record = DeviceCatalog().record(for: DeviceIdentifier(vendorID: 0x06A3, productID: 0xF622))
+    #expect(record?.physicalProtocolID == .vendorPS3ThirdParty)
+    #expect(record?.quirks == [.dpadPressure])
   }
 
   // MARK: - Output
-
-  /// The report an owner's hidapi script drove on hardware; weak motor in byte 2, strong in 3.
-  @Test
-  func gp100RumbleUsesTheHardwareVerifiedReport() throws {
-    let command = ControllerOutputCommand.setRumble(
-      RumbleIntensities(leftMain: UnipolarValue(byte: 0x40), rightMain: UnipolarValue(byte: 0xC0)),
-      duration: .held
-    )
-    let plan = try gp100().encode(command)
-    #expect(plan.writes.hidOutputs.map(\.reportID) == [0x02])
-    #expect(plan.writes.hidOutputs.map(\.bytes) == [[0x02, 0x00, 0xC0, 0x40, 0, 0, 0, 0]])
-    #expect(
-      try gp100().encode(.stopRumble).writes.hidOutputs.map(\.bytes) == [
-        [0x02, 0x00, 0x00, 0x00, 0, 0, 0, 0]
-      ]
-    )
-    #expect(gp100().outputCapabilities == .dualMainRumble)
-  }
 
   /// SDL sends third-party pads no output, because some then rumble without stopping.
   @Test
   func otherThirdPartyPadsAreInputOnly() {
     #expect(acceptedDriver().outputCapabilities == .none)
     #expect(throws: ControllerOutputError.self) { try acceptedDriver().encode(.stopRumble) }
-  }
-
-  @Test
-  func catalogBindsTheGP100ToTheThirdPartyFamily() {
-    let record = DeviceCatalog().record(for: DeviceIdentifier(vendorID: 0x2563, productID: 0x0575))
-    #expect(record?.physicalProtocolID == .vendorPS3ThirdParty)
   }
 }

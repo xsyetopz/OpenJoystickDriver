@@ -13,7 +13,9 @@ Only the Ant Esports GP100 (`2563:0575`) has hardware evidence. It starts in XIn
 
 The descriptor's logical ranges do not match the values these devices send, so the generic HID mapping reads the sticks wrong. SDL does not trust the VID:PID alone. It reads feature report `0x03` and accepts the device when the 8-byte reply has `0x26` at byte 2. For devices without report IDs it reads report `0x00` instead. hidapi prepends a report-ID byte there and IOKit does not, so OJD looks for the marker at byte 1 of that reply.
 
-Once a probe is accepted, the driver decodes raw reports by byte offset. A device that fails both probes keeps the generic HID descriptor mapping, as SDL does. The probe result describes the device, so it survives a reconnect. The Logitech ChillStream (`046d:cad1`) and the GP100 skip the probe and start in raw mode: SDL accepts the ChillStream without one, and the GP100's layout is hardware-verified.
+Once a probe is accepted, the driver decodes raw reports by byte offset. A device that fails both probes keeps the generic HID descriptor mapping, as SDL does. The probe result describes the device, so it survives a reconnect.
+
+The Logitech ChillStream (`046d:cad1`) and the GP100 need no probe: SDL accepts the ChillStream without one, and the GP100's layout is hardware-verified. Their records bind the `hid.report-layout` family and describe their reports in the record's `input` field (see [Adding or changing a controller record](../../docs/connecting-controllers/controller-records.md)), so `PS3ThirdPartyDriver` holds no identity checks. The ChillStream record uses the 18-byte layout below and the GP100 record the bytes listed under Device quirks.
 
 ## Report layout
 
@@ -31,16 +33,16 @@ The offsets are for the report as macOS delivers it. Reports of 19 bytes or more
 | 15, 16 | L1, R1 pressure |
 | 17, 18 | L2, R2 analog |
 
-The 18-byte layout (Logitech ChillStream) has no Home and no digital triggers. It moves the hat to the high nibble of byte 1 and shifts the sticks, pressure and triggers down one byte, to offsets 2, 6 and 16.
+The 18-byte layout has no Home and no digital triggers. It moves the hat to the high nibble of byte 1 and shifts the sticks, pressure and triggers down one byte, to offsets 2, 6 and 16.
 
-A face or shoulder button counts as pressed from its byte 0 bit or from bit 7 of its pressure byte (`0x80` or higher), so light pressure or noise does not register a press. A digital trigger bit reads as a fully pulled trigger.
+A face or shoulder button counts as pressed from its byte 0 bit or from bit 7 of its pressure byte (`0x80` or higher), so light pressure or noise does not register a press. A digital trigger bit reads as a fully pulled trigger. A probed pad's report length selects the layout per report; the ChillStream record reads every report of 18 bytes or more with the 18-byte offsets.
 
 SDL decodes the hat only when its byte changes from the previous report, starting from zero. A hat that stays `0` therefore never reads as held north. The driver matches that: it uses the D-pad pressure bytes until the hat nibble has been nonzero in the session, and whenever the nibble is centered.
 
 ## Device quirks
 
-- **Ant Esports GP100 (`2563:0575`).** A GP100 owner's raw HID probe and [PR #42](https://github.com/xsyetopz/OpenJoystickDriver/pull/42) by kartinul verify bytes 1 and 3–18: buttons, D-pad with diagonals, both sticks and both triggers. PR #42 reads byte 0 as a report ID and byte 2 as unused. The driver therefore ignores both on this device and reads its face buttons, shoulders, D-pad and triggers from the pressure and analog bytes alone. It is the only third-party pad with rumble: output report 2, `02 00 <right> <left> 00 00 00 00`. A GP100 owner's hidapi script confirmed this report on hardware. The motor order follows [`hid-shanwan`](https://github.com/hbiyik/hid-shanwan), a Linux driver for `2563:0575` that writes the weak motor to byte 2 and the strong motor to byte 3.
-- **Saitek Cyborg V.3 Rumble Pad (`06a3:f622`).** SDL does not trust its hat bits and reads a D-pad direction as held from any nonzero pressure. The driver does the same.
+- **Ant Esports GP100 (`2563:0575`).** A GP100 owner's raw HID probe and [PR #42](https://github.com/xsyetopz/OpenJoystickDriver/pull/42) by kartinul verify bytes 1 and 3–18: buttons, D-pad with diagonals, both sticks and both triggers. PR #42 reads byte 0 as a report ID and byte 2 as unused. Its record therefore ignores both and reads its face buttons, shoulders, D-pad and triggers from the pressure and analog bytes alone, and it reads only reports of 19 bytes or more. It is the only third-party pad with rumble: output report 2, `02 00 <right> <left> 00 00 00 00`. A GP100 owner's hidapi script confirmed this report on hardware. The motor order follows [`hid-shanwan`](https://github.com/hbiyik/hid-shanwan), a Linux driver for `2563:0575` that writes the weak motor to byte 2 and the strong motor to byte 3.
+- **Saitek Cyborg V.3 Rumble Pad (`06a3:f622`).** SDL does not trust its hat bits and reads a D-pad direction as held from any nonzero pressure. SDL admits it only after the feature probe, so it stays in `vendor.ps3-third-party`; its record sets the `dpad-pressure` quirk, which makes the driver do the same.
 
 ## Not supported
 
@@ -56,7 +58,7 @@ ojd controller list
 ojd controller show <controller>
 ```
 
-`show` should report the protocol `vendor.ps3-third-party`. Then watch the controls:
+`show` should report the protocol `hid.report-layout` for the GP100 and the ChillStream, and `vendor.ps3-third-party` for any other pad. Then watch the controls:
 
 ```bash
 ojd controller watch <controller>

@@ -162,6 +162,10 @@ public final class ProtocolDriverRegistry: Sendable {
       return .success(
         HIDDescriptorDriver(identifier: identifier, reportDescriptor: reportDescriptor)
       )
+    case .hidReportLayout:
+      // Only a record carries a layout; a family profile has nothing to decode with.
+      guard let layout = record.inputLayout else { return .failure(.noProtocolMatch) }
+      return .success(ReportLayoutDriver(layout: layout, rumbleTemplate: record.rumbleTemplate))
     case .xboxXID: return .success(XIDDriver(outEndpoint: transportProfile.outputEndpoint))
     case .xboxXUSB:
       guard variant == .receiver else {
@@ -245,7 +249,11 @@ public final class ProtocolDriverRegistry: Sendable {
     case .vendorFlydigi: return .success(FlydigiDriver())
     case .vendorPS3ThirdParty:
       return .success(
-        PS3ThirdPartyDriver(identifier: identifier, rumbleTemplate: record.rumbleTemplate)
+        PS3ThirdPartyDriver(
+          identifier: identifier,
+          rumbleTemplate: record.rumbleTemplate,
+          hatFromPressureOnly: record.quirks.contains(.dpadPressure)
+        )
       )
     case .vendorNVIDIAShield:
       return .success(NVIDIAShieldDriver(productID: identifier.controllerIdentity.productID))

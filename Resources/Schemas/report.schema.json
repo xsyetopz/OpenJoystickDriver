@@ -569,6 +569,7 @@
 				"protocolID": {
 					"enum": [
 						"hid.descriptor",
+						"hid.report-layout",
 						"xbox.xid",
 						"xbox.xusb",
 						"xbox.gip",

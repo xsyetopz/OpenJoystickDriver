@@ -139,7 +139,8 @@
       case .vendorGameSir: "GameSir enhanced HID"
       case .nintendoSwitch1:
         OJDLocalized.string("controller.switchProController", fallback: "Switch Pro Controller")
-      case .hidDescriptor: OJDLocalized.string("controller.standardHID", fallback: "Standard HID")
+      case .hidDescriptor, .hidReportLayout:
+        OJDLocalized.string("controller.standardHID", fallback: "Standard HID")
       }
     }
 

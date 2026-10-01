@@ -124,7 +124,7 @@ struct NativeObservedInputTests {
     await manager.handleHIDEvent(.connected(connection: connection, ownership: .unknown))
 
     let device = try #require(await manager.connectedDeviceDescriptions().first)
-    #expect(device.protocolBinding.protocolID == .vendorPS3ThirdParty)
+    #expect(device.protocolBinding.protocolID == .hidReportLayout)
     #expect(device.physicalOwnership == .nativeGamepad)
     // macOS has no driver for the GP100's vendor rumble report 0x02, so OJD drives it.
     #expect(device.physicalOutputCapabilities.rumbleMotors == [.leftMain, .rightMain])
