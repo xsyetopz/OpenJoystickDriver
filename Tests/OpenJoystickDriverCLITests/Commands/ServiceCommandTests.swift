@@ -11,13 +11,29 @@ struct ServiceCommandTests {
     ExtensionStatus(bundle: .present, registration: .absent)
   }
 
-  @Test
-  func statusReportsAStoppedServiceAsStateAndExitsZero() async throws {
-    let result = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
-      await StatusCommand.$extensionProbe.withValue(stoppedExtension) {
-        await CLIRun.run(["status", "--json"])
+  /// A user record directory that holds no records, so `ojd status` never reads the real one.
+  private static func emptyRecordDirectory() -> URL {
+    URL(fileURLWithPath: "/nonexistent-\(UUID().uuidString)")
+  }
+
+  /// Runs `ojd status` with the extension stopped and `records` as the user record directory.
+  private func runStatus(
+    _ arguments: [String],
+    socketPath: String = temporarySocketPath(),
+    records: URL = Self.emptyRecordDirectory()
+  ) async -> CLIRun {
+    await RecordStore.$directory.withValue(records) {
+      await ServiceConnection.$socketPath.withValue(socketPath) {
+        await StatusCommand.$extensionProbe.withValue(stoppedExtension) {
+          await CLIRun.run(["status"] + arguments)
+        }
       }
     }
+  }
+
+  @Test
+  func statusReportsAStoppedServiceAsStateAndExitsZero() async throws {
+    let result = await runStatus(["--json"])
     #expect(result.code == 0)
     let json = try result.json()
     let service = try #require(json["service"] as? [String: Any])
@@ -26,6 +42,25 @@ struct ServiceCommandTests {
     #expect(extensionState["bundle"] as? String == "present")
     #expect(extensionState["registration"] as? String == "absent")
     #expect(json["controllers"] == nil)
+    #expect((json["skippedRecords"] as? [Any])?.isEmpty == true)
+  }
+
+  @Test
+  func statusNamesTheSkippedRecordsOfTheInjectedDirectoryOnly() async throws {
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "ojd-status-\(UUID().uuidString)",
+      isDirectory: true
+    )
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    try Data("{".utf8).write(to: directory.appendingPathComponent("broken.json"))
+
+    let withFile = await runStatus(["--plain"], records: directory)
+    let withoutFile = await runStatus(["--plain"])
+
+    #expect(withFile.code == 0, "\(withFile.standardError)")
+    #expect(withFile.standardOutput.contains("broken.json\tthe file is not a JSON object"))
+    #expect(!withoutFile.standardOutput.contains("skipped-record"))
   }
 
   @Test
@@ -66,14 +101,8 @@ struct ServiceCommandTests {
     try server.start()
     defer { server.stop() }
 
-    let (jsonRun, plainRun) = await ServiceConnection.$socketPath.withValue(socketPath) {
-      await StatusCommand.$extensionProbe.withValue(stoppedExtension) {
-        (
-          await CLIRun.run(["status", "--json", "--timeout", "5"]),
-          await CLIRun.run(["status", "--plain", "--timeout", "5"])
-        )
-      }
-    }
+    let jsonRun = await runStatus(["--json", "--timeout", "5"], socketPath: socketPath)
+    let plainRun = await runStatus(["--plain", "--timeout", "5"], socketPath: socketPath)
 
     #expect(jsonRun.code == 0, "\(jsonRun.standardError)")
     let json = try jsonRun.json()
