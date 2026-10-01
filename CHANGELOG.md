@@ -22,6 +22,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - `ojd permission list|request`, `ojd extension status|activate|deactivate`, `ojd setting list|get|set`, `ojd log path|show`, `ojd diagnose [--bundle PATH] [--soak SECONDS]`, and `ojd update check [--prerelease]`. See the [command reference](docs/command-line/command-reference.md).
 - User controller records: an `add` or `patch` file in `~/Library/Application Support/OpenJoystickDriver/Controllers` adds a controller model or changes the `protocol` or `usb` fields of a bundled one, and the running service applies it when the folder changes. OJD skips a file that is not valid and names it in `ojd status`, the `controller-records` check of `ojd diagnose`, and `ojd record list`. `ojd record list|show|validate|install|remove` manage the files. See [Adding or changing a controller record](docs/connecting-controllers/controller-records.md).
 - The Settings section of the app has an Install Command-Line Tool action that links `/usr/local/bin/ojd` to the app and removes the link again. macOS asks for an administrator password when the folder is not writable, and the action never replaces a file that is not a link.
+- `ojd controller show` names the record for the controller's model: bundled, one of your records with its file, or none. `--json` reports it as `controller.record`.
+- `ojd binding clear` warns when it leaves an active profile with no input binding.
 - `Resources/Schemas/cli-output.schema.json` describes the `--json` output of every `ojd` command, one `$defs` entry per command. The CLI tests validate each `--json` document they print against it.
 
 ### Changed
@@ -39,7 +41,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - **BREAKING:** Rename the remapping wire route `compatibility` to `virtual-gamepad` and the status field `compatibility_output_suppressed` to `virtual_output_suppressed`.
 - **BREAKING:** `hid-generic` is input-only and publishes as `1209:4A4F`, a vendor and product ID that pid.codes allocated to OJD. Its descriptor no longer declares the vendor rumble output report, so apps cannot rumble a controller through it, and the new ID keeps hosts from reusing a descriptor cached for the former `4F4A:4449`.
 - **BREAKING:** Remove virtual motion (gyro relayed through the virtual controller) and the Xbox 360 Mac/DirectInput, DS4/DualSense USB, and Switch Pro USB virtual formats and their host protocols.
-- **BREAKING:** Remove the PlayStation, Nintendo, and Steam glyph families from `controller input test`.
+- **BREAKING:** Remove the unused `listDevices` and `runVirtualDeviceSelfTest` application-service RPCs.
+- **BREAKING:** Remove the PlayStation, Nintendo, and Steam glyph families from Input Test; it shows Xbox or generic glyphs.
 - Send physical output through one application-service request, `sendControllerOutput`, which carries one output command (`set-rumble`, `stop-rumble`, `set-player-indicator`, `set-rgb`, `set-light-brightness`, or `set-adaptive-trigger`) and returns a `ControllerOutputResult` (`outcome` plus `droppedRumbleChannels`). It replaces `sendPhysicalRumble`, `setPhysicalPlayerIndicator`, `setPhysicalColor`, and `setPhysicalBrightness`; older clients must be updated with the app.
 - `ojd controller rumble|player|light` no longer pre-check capabilities in the CLI; the app decides support and the CLI reports its result. `rumble` no longer refuses a request that names a trigger motor the controller lacks: it drives the channels the controller has, warns about each missing trigger motor, and exits successfully; a request whose every channel is missing fails. Through the application service and the GUI such a request (for example a DualShock 4 trigger-only rumble) previously reported success silently; the result now lists the dropped channels. `rumble --duration` returns once the app accepts the command, and the app stops the rumble when the duration ends instead of the CLI sending a second stop.
 - A stop-rumble, including every all-zero rumble report an application writes to a virtual controller, writes the physical controller once instead of twice and cancels a pending timed stop.
@@ -78,6 +81,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Controller records reject vocabulary no runtime consumer reads: the `XboxAdaptiveJoystick` driver, `unknown` protocol variants, `usb.interface`, and unconsumed per-driver quirks.
 - Controller-record validation rejects protocol-default USB endpoints for every driver, not only GIP and Xbox 360, so such a record fails the catalog checks instead of the app at launch.
 - Replace the repository agent skills with `ojd-controller-catalog`, `ojd-hardware-evidence`, `ojd-swift-change`, `ojd-app-ui`, `ojd-repo-tooling`, and `ojd-build-sign-release`, also exposed to Claude Code through `.claude/skills`. The retired skills are `add-controller-openjoystickdriver`, `debug-controller-openjoystickdriver`, `design-openjoystickdriver`, `maintain-openjoystickdriver`, `organize-openjoystickdriver`, and `test-openjoystickdriver`.
+- Revise the command-line translations of 66 locales: consistent terms, native quotation marks, and decimal points in typed option values.
 
 ### Removed
 
