@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve og --digital-threshold treng ei aksekjelde.";
 "cli.binding.clear.abstract" = "Fjern bindingane til dei oppgjevne kjeldene, eller alle bindingar.";
 "cli.binding.clear.all" = "Fjern alle bindingar, akkordar, sekvensar og lag.";
+"cli.binding.clear.blocks_input" = "'%@' er aktiv på ein tilkopla kontrollar og blokkerer no all inndata frå han. Legg til ei binding med 'ojd binding set', eller stopp profilen med 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Fjerne alle bindingar, akkordar, sekvensar og lag frå '%@'?";
 "cli.binding.clear.discussion" = "--all fjernar òg akkordane, sekvensane og laga til profilen, og ber om stadfesting i ein terminal; elles trengst --force. Innstillingane for spakar, avtrekkarar, berøring, rørsle og utdata blir ståande.";
 "cli.binding.clear.done" = "Fjerna %lld bindingar frå '%@'.";

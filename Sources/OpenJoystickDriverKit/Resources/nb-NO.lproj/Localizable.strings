@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve og --digital-threshold trenger en aksekilde.";
 "cli.binding.clear.abstract" = "Fjern bindingene til de oppgitte kildene, eller alle bindinger.";
 "cli.binding.clear.all" = "Fjern alle bindinger, akkorder, sekvenser og lag.";
+"cli.binding.clear.blocks_input" = "'%@' er aktiv på en tilkoblet kontroller og blokkerer nå all inndata fra den. Legg til en binding med 'ojd binding set', eller stopp profilen med 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Fjerne alle bindinger, akkorder, sekvenser og lag fra '%@'?";
 "cli.binding.clear.discussion" = "--all fjerner også profilens akkorder, sekvenser og lag, og ber om bekreftelse i en terminal; ellers trengs --force. Innstillingene for spaker, avtrekkere, berøring, bevegelse og utdata beholdes.";
 "cli.binding.clear.done" = "Fjernet %lld bindinger fra '%@'.";

@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve, --digital-threshold에는 축 소스가 필요합니다.";
 "cli.binding.clear.abstract" = "지정한 소스의 할당 또는 모든 할당을 제거합니다.";
 "cli.binding.clear.all" = "모든 할당, 코드, 시퀀스, 레이어를 제거합니다.";
+"cli.binding.clear.blocks_input" = "'%@'이(가) 연결된 컨트롤러에서 활성 상태이며 이제 해당 컨트롤러의 모든 입력을 차단합니다. 'ojd binding set'로 할당을 추가하거나 'ojd profile deactivate'로 프로필을 중지하세요.";
 "cli.binding.clear.confirm" = "'%@'에서 모든 할당, 코드, 시퀀스, 레이어를 제거하시겠습니까?";
 "cli.binding.clear.discussion" = "--all은 프로필의 코드, 시퀀스, 레이어도 제거하며, 터미널에서는 확인을 요청합니다. 그렇지 않으면 --force가 필요합니다. 스틱, 트리거, 터치, 모션, 출력 설정은 유지됩니다.";
 "cli.binding.clear.done" = "할당 %lld개를 '%@'에서 제거했습니다.";

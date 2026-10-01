@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve i --digital-threshold zahtijevaju izvor osi.";
 "cli.binding.clear.abstract" = "Ukloni dodjele zadanih izvora ili sve dodjele.";
 "cli.binding.clear.all" = "Ukloni sve dodjele, akorde, nizove i slojeve.";
+"cli.binding.clear.blocks_input" = "'%@' je aktivan na povezanom kontroleru i sada blokira sav njegov ulaz. Dodajte dodjelu pomoću 'ojd binding set' ili zaustavite profil pomoću 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Ukloniti sve dodjele, akorde, nizove i slojeve iz '%@'?";
 "cli.binding.clear.discussion" = "--all uklanja i akorde, nizove i slojeve profila te u terminalu traži potvrdu; inače zahtijeva --force. Postavke palica, okidača, dodira, pokreta i izlaza ostaju.";
 "cli.binding.clear.done" = "Uklonjene dodjele: %lld iz '%@'.";

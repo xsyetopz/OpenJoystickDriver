@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone、--gain、--invert、--response-curve 和 --digital-threshold 需要轴来源。";
 "cli.binding.clear.abstract" = "移除指定来源的映射，或移除所有映射。";
 "cli.binding.clear.all" = "移除所有映射、组合键、序列和层。";
+"cli.binding.clear.blocks_input" = "“%@”在已连接的控制器上处于活动状态，现在会阻止其所有输入。请用 'ojd binding set' 添加映射，或用 'ojd profile deactivate' 停止该配置文件。";
 "cli.binding.clear.confirm" = "要从“%@”中移除所有映射、组合键、序列和层吗？";
 "cli.binding.clear.discussion" = "--all 还会移除配置文件的组合键、序列和层，并在终端中请求确认；否则需要 --force。摇杆、扳机、触控、体感和输出设置会保留。";
 "cli.binding.clear.done" = "已移除 %lld 个映射，来自“%@”。";

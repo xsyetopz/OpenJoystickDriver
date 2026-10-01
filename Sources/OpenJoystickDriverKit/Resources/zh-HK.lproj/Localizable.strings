@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone、--gain、--invert、--response-curve 和 --digital-threshold 需要軸來源。";
 "cli.binding.clear.abstract" = "移除指定來源的對應，或移除所有對應。";
 "cli.binding.clear.all" = "移除所有對應、按鍵組合、序列和層。";
+"cli.binding.clear.blocks_input" = "「%@」在已連接的控制器上處於啟用狀態，現在會阻擋其所有輸入。請用 'ojd binding set' 新增對應，或用 'ojd profile deactivate' 停止此設定檔。";
 "cli.binding.clear.confirm" = "要從「%@」移除所有對應、按鍵組合、序列和層嗎？";
 "cli.binding.clear.discussion" = "--all 也會移除設定檔的按鍵組合、序列和層，並在終端機中要求確認；否則需要 --force。搖桿、扳機、觸控、動作和輸出設定會保留。";
 "cli.binding.clear.done" = "已移除 %lld 個對應，來自「%@」。";

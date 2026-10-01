@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve i --digital-threshold wymagają źródła osi.";
 "cli.binding.clear.abstract" = "Usuń przypisania podanych źródeł lub wszystkie przypisania.";
 "cli.binding.clear.all" = "Usuń wszystkie przypisania, akordy, sekwencje i warstwy.";
+"cli.binding.clear.blocks_input" = "'%@' jest aktywny na podłączonym kontrolerze i teraz blokuje całe jego wejście. Dodaj przypisanie za pomocą 'ojd binding set' albo zatrzymaj profil za pomocą 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Usunąć wszystkie przypisania, akordy, sekwencje i warstwy z '%@'?";
 "cli.binding.clear.discussion" = "--all usuwa też akordy, sekwencje i warstwy profilu oraz prosi o potwierdzenie w terminalu; poza nim wymaga --force. Ustawienia drążków, spustów, dotyku, ruchu i wyjścia pozostają.";
 "cli.binding.clear.done" = "Usunięto przypisania (%lld) z '%@'.";

@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "A --deadzone, --gain, --invert, --response-curve és --digital-threshold tengelyforrást igényel.";
 "cli.binding.clear.abstract" = "A megadott források hozzárendeléseinek vagy az összes hozzárendelésnek az eltávolítása.";
 "cli.binding.clear.all" = "Minden hozzárendelés, akkord, sorozat és réteg eltávolítása.";
+"cli.binding.clear.blocks_input" = "A(z) '%@' profil aktív egy csatlakoztatott vezérlőn, és most blokkolja annak teljes bemenetét. Adjon hozzá hozzárendelést a(z) 'ojd binding set' paranccsal, vagy állítsa le a profilt a(z) 'ojd profile deactivate' paranccsal.";
 "cli.binding.clear.confirm" = "Eltávolítja az összes hozzárendelést, akkordot, sorozatot és réteget a(z) '%@' profilból?";
 "cli.binding.clear.discussion" = "Az --all a profil akkordjait, sorozatait és rétegeit is eltávolítja, és terminálon megerősítést kér; egyébként --force szükséges hozzá. A kar-, ravasz-, érintés-, mozgás- és kimeneti beállítások megmaradnak.";
 "cli.binding.clear.done" = "%lld hozzárendelés eltávolítva a(z) '%@' profilból.";

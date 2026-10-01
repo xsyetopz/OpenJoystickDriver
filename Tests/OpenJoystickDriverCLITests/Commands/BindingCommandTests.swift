@@ -121,4 +121,30 @@ struct BindingCommandTests {
     #expect(library.stored.first?.bindings.isEmpty == true)
     #expect(library.stored.first?.outputPolicy.virtualGamepad == .disabled)
   }
+
+  @Test(arguments: [
+    (RemappingVirtualGamepadPolicy.mapped, true, true), (.mapped, false, false),
+    (.passthrough, true, false),
+  ])
+  func clearAllWarnsWhenAnActiveProfileNowBlocksAConnectedController(
+    policy: RemappingVirtualGamepadPolicy,
+    connected: Bool,
+    warns: Bool
+  ) async throws {
+    let binding = RemappingBinding(source: .button(.south), destination: .gamepadButton(.south))
+    let profile = FakeProfileLibrary.profile("Pad", virtualGamepad: policy, bindings: [binding])
+    let library = FakeProfileLibrary(
+      [profile],
+      active: [profile.id],
+      connected: connected ? [FakeService.device(id: "pad-1")] : []
+    )
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let cleared = await service.run(["binding", "clear", "Pad", "--all", "-f", "--json"])
+
+    #expect(cleared.code == 0, "\(cleared.standardError)")
+    #expect(try cleared.json()["all"] as? Bool == true)
+    #expect(cleared.standardError.contains("now blocks all of its input") == warns)
+    #expect(cleared.standardError.contains("'ojd profile deactivate'") == warns)
+  }
 }

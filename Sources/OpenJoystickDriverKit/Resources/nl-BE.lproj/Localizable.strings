@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve en --digital-threshold vereisen een asbron.";
 "cli.binding.clear.abstract" = "Verwijder de koppelingen van de opgegeven bronnen, of alle koppelingen.";
 "cli.binding.clear.all" = "Verwijder alle koppelingen, akkoorden, reeksen en lagen.";
+"cli.binding.clear.blocks_input" = "‘%@’ is actief op een verbonden controller en blokkeert nu alle invoer ervan. Voeg een koppeling toe met 'ojd binding set' of stop het profiel met 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Alle koppelingen, akkoorden, reeksen en lagen uit ‘%@’ verwijderen?";
 "cli.binding.clear.discussion" = "--all verwijdert ook de akkoorden, reeksen en lagen van het profiel en vraagt in een terminal om bevestiging; anders is --force nodig. Instellingen voor sticks, triggers, aanraking, beweging en uitvoer blijven behouden.";
 "cli.binding.clear.done" = "%lld koppelingen uit ‘%@’ verwijderd.";

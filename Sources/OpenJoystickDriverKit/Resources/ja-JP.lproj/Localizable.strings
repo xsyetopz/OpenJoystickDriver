@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone、--gain、--invert、--response-curve、--digital-threshold には軸のソースが必要です。";
 "cli.binding.clear.abstract" = "指定したソースの割り当て、またはすべての割り当てを削除します。";
 "cli.binding.clear.all" = "すべての割り当て、コード、シーケンス、レイヤーを削除します。";
+"cli.binding.clear.blocks_input" = "「%@」は接続中のコントローラで有効になっており、その入力をすべて遮断しています。'ojd binding set' で割り当てを追加するか、'ojd profile deactivate' でプロファイルを停止してください。";
 "cli.binding.clear.confirm" = "「%@」からすべての割り当て、コード、シーケンス、レイヤーを削除しますか？";
 "cli.binding.clear.discussion" = "--all はプロファイルのコード、シーケンス、レイヤーも削除し、ターミナルでは確認を求めます。それ以外では --force が必要です。スティック、トリガー、タッチ、モーション、出力の設定は残ります。";
 "cli.binding.clear.done" = "%lld 件の割り当てを「%@」から削除しました。";

@@ -1219,6 +1219,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve, and --digital-threshold need an axis source.";
 "cli.binding.clear.abstract" = "Remove the bindings of the given sources, or every binding.";
 "cli.binding.clear.all" = "Remove every binding, chord, sequence, and layer.";
+"cli.binding.clear.blocks_input" = "'%@' is active on a connected controller and now blocks all of its input. Add a binding with 'ojd binding set', or stop the profile with 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Remove every binding, chord, sequence, and layer from '%@'?";
 "cli.binding.clear.discussion" = "--all also removes the profile's chords, sequences, and layers, and asks for confirmation on a terminal; it needs --force otherwise. Stick, trigger, touch, motion, and output settings stay.";
 "cli.binding.clear.done" = "Removed %lld bindings from '%@'.";

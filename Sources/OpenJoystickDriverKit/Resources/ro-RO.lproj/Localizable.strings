@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve și --digital-threshold necesită o sursă de tip axă.";
 "cli.binding.clear.abstract" = "Elimină asocierile surselor indicate sau toate asocierile.";
 "cli.binding.clear.all" = "Elimină toate asocierile, combinațiile, secvențele și straturile.";
+"cli.binding.clear.blocks_input" = "«%@» este activ pe un controller conectat și acum îi blochează toate intrările. Adăugați o asociere cu 'ojd binding set' sau opriți profilul cu 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Eliminați toate asocierile, combinațiile, secvențele și straturile din «%@»?";
 "cli.binding.clear.discussion" = "--all elimină și combinațiile, secvențele și straturile profilului și cere confirmare într-un terminal; în caz contrar necesită --force. Setările pentru joystick, trigger, atingere, mișcare și ieșire rămân.";
 "cli.binding.clear.done" = "S-au eliminat %lld asocieri din «%@».";

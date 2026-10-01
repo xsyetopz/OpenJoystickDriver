@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "האפשרויות ‎--deadzone, ‎--gain, ‎--invert, ‎--response-curve ו‎--digital-threshold דורשות מקור ציר.";
 "cli.binding.clear.abstract" = "הסרת השיוכים של המקורות שצוינו, או של כל השיוכים.";
 "cli.binding.clear.all" = "הסרת כל השיוכים, האקורדים, הרצפים והשכבות.";
+"cli.binding.clear.blocks_input" = "'%@' פעיל בבקר מחובר וחוסם כעת את כל הקלט שלו. יש להוסיף שיוך באמצעות 'ojd binding set', או לעצור את הפרופיל באמצעות 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "להסיר את כל השיוכים, האקורדים, הרצפים והשכבות מ-'%@'?";
 "cli.binding.clear.discussion" = "‎--all מסיר גם את האקורדים, הרצפים והשכבות של הפרופיל, ומבקש אישור בטרמינל; אחרת הוא דורש ‎--force. הגדרות המקלות, ההדקים, המגע, התנועה והפלט נשארות.";
 "cli.binding.clear.done" = "הוסרו %lld שיוכים מ-'%@'.";

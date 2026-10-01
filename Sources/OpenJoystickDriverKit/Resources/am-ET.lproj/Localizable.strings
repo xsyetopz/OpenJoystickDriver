@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone፣ --gain፣ --invert፣ --response-curve እና --digital-threshold የዘንግ ምንጭ ያስፈልጋቸዋል።";
 "cli.binding.clear.abstract" = "የተሰጡ ምንጮችን ምደባዎች ወይም ሁሉንም ምደባዎች ያስወግዱ።";
 "cli.binding.clear.all" = "ሁሉንም ምደባዎች፣ ጥምረቶች፣ ቅደም ተከተሎች እና ንብርብሮች ያስወግዱ።";
+"cli.binding.clear.blocks_input" = "«%@» በተገናኘ መቆጣጠሪያ ላይ ገቢር ነው እና አሁን ሁሉንም ግብዓቱን ያግዳል። በ'ojd binding set' ምደባ ያክሉ፣ ወይም መገለጫውን በ'ojd profile deactivate' ያቁሙ።";
 "cli.binding.clear.confirm" = "ሁሉም ምደባዎች፣ ጥምረቶች፣ ቅደም ተከተሎች እና ንብርብሮች ከ«%@» ይወገዱ?";
 "cli.binding.clear.discussion" = "--all የመገለጫውን ጥምረቶች፣ ቅደም ተከተሎች እና ንብርብሮችም ያስወግዳል፣ በተርሚናል ላይ ማረጋገጫ ይጠይቃል፤ ካልሆነ --force ያስፈልገዋል። የስቲክ፣ ቀስቃሽ፣ ንክኪ፣ እንቅስቃሴ እና የውጤት ቅንብሮች ይቀራሉ።";
 "cli.binding.clear.done" = "%lld ምደባዎች ከ«%@» ተወግደዋል።";

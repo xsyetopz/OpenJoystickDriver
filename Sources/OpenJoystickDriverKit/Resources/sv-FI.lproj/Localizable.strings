@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve och --digital-threshold kräver en axelkälla.";
 "cli.binding.clear.abstract" = "Ta bort bindningarna för de angivna källorna, eller alla bindningar.";
 "cli.binding.clear.all" = "Ta bort alla bindningar, ackord, sekvenser och lager.";
+"cli.binding.clear.blocks_input" = "'%@' är aktiv på en ansluten kontroll och blockerar nu all dess inmatning. Lägg till en bindning med 'ojd binding set', eller stoppa profilen med 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Ta bort alla bindningar, ackord, sekvenser och lager från '%@'?";
 "cli.binding.clear.discussion" = "--all tar också bort profilens ackord, sekvenser och lager, och frågar om bekräftelse i en terminal; annars krävs --force. Inställningarna för spakar, avtryckare, beröring, rörelse och utdata behålls.";
 "cli.binding.clear.done" = "Tog bort %lld bindningar från '%@'.";

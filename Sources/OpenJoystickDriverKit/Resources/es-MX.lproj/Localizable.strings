@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve y --digital-threshold necesitan un origen de eje.";
 "cli.binding.clear.abstract" = "Elimina las asignaciones de los orígenes indicados, o todas.";
 "cli.binding.clear.all" = "Elimina todas las asignaciones, combinaciones, secuencias y capas.";
+"cli.binding.clear.blocks_input" = "«%@» está activo en un control conectado y ahora bloquea toda su entrada. Añade una asignación con 'ojd binding set' o detén el perfil con 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "¿Eliminar todas las asignaciones, combinaciones, secuencias y capas de «%@»?";
 "cli.binding.clear.discussion" = "--all también elimina las combinaciones, secuencias y capas del perfil, y pide confirmación en un terminal; sin terminal necesita --force. Se mantienen los ajustes de palancas, gatillos, táctil, movimiento y salida.";
 "cli.binding.clear.done" = "Se han eliminado %lld asignaciones de «%@».";

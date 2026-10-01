@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve og --digital-threshold þurfa ásgjafa.";
 "cli.binding.clear.abstract" = "Fjarlægja varpanir tiltekinna gjafa, eða allar varpanir.";
 "cli.binding.clear.all" = "Fjarlægja allar varpanir, samsetningar, raðir og lög.";
+"cli.binding.clear.blocks_input" = "„%@“ er virkt á tengdri stýringu og lokar nú á allt inntak hennar. Bættu við vörpun með 'ojd binding set' eða stöðvaðu sniðið með 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Fjarlægja allar varpanir, samsetningar, raðir og lög úr „%@“?";
 "cli.binding.clear.discussion" = "--all fjarlægir einnig samsetningar, raðir og lög sniðsins og biður um staðfestingu í skjáskel; annars þarf --force. Stillingar fyrir stýripinna, gikki, snertingu, hreyfingu og úttak haldast.";
 "cli.binding.clear.done" = "%lld varpanir fjarlægðar úr „%@“.";

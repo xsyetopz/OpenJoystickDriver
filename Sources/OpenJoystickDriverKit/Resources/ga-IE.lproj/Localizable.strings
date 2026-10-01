@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "Teastaíonn foinse acastóra ó --deadzone, --gain, --invert, --response-curve agus --digital-threshold.";
 "cli.binding.clear.abstract" = "Bain ceangail na bhfoinsí a thugtar, nó gach ceangal.";
 "cli.binding.clear.all" = "Bain gach ceangal, cord, seicheamh agus ciseal.";
+"cli.binding.clear.blocks_input" = "Tá «%@» gníomhach ar rialtóir ceangailte agus blocálann sé gach ionchur uaidh anois. Cuir ceangal leis le 'ojd binding set', nó stop an phróifíl le 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Bain gach ceangal, cord, seicheamh agus ciseal de «%@»?";
 "cli.binding.clear.discussion" = "Bainfidh --all cordanna, seichimh agus sraitheanna na próifíle freisin, agus iarrfaidh sé deimhniú ar théarmionál; teastaíonn --force seachas sin. Fanann socruithe bioráin, truicir, teagmhála, gluaisne agus aschuir.";
 "cli.binding.clear.done" = "Baineadh %lld ceangal de «%@».";

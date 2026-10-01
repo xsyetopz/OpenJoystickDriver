@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve i --digital-threshold necessiten una font d’eix.";
 "cli.binding.clear.abstract" = "Elimina les assignacions de les fonts indicades, o totes.";
 "cli.binding.clear.all" = "Elimina totes les assignacions, combinacions, seqüències i capes.";
+"cli.binding.clear.blocks_input" = "'%@' és actiu en un comandament connectat i ara en bloqueja tota l’entrada. Afegiu una assignació amb 'ojd binding set' o atureu el perfil amb 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Voleu eliminar totes les assignacions, combinacions, seqüències i capes de '%@'?";
 "cli.binding.clear.discussion" = "--all també elimina les combinacions, seqüències i capes del perfil, i demana confirmació en un terminal; en cas contrari necessita --force. Els ajustos de palanques, gallets, tàctil, moviment i sortida es mantenen.";
 "cli.binding.clear.done" = "S’han eliminat %lld assignacions de '%@'.";

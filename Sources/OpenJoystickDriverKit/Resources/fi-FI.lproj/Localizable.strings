@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve ja --digital-threshold tarvitsevat akselilähteen.";
 "cli.binding.clear.abstract" = "Poista annettujen lähteiden sidonnat tai kaikki sidonnat.";
 "cli.binding.clear.all" = "Poista kaikki sidonnat, yhdistelmät, sarjat ja tasot.";
+"cli.binding.clear.blocks_input" = "Profiili ”%@” on käytössä yhdistetyssä ohjaimessa ja estää nyt kaiken sen syötteen. Lisää sidonta komennolla 'ojd binding set' tai pysäytä profiili komennolla 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Poistetaanko kaikki sidonnat, yhdistelmät, sarjat ja tasot profiilista ”%@”?";
 "cli.binding.clear.discussion" = "--all poistaa myös profiilin yhdistelmät, sarjat ja tasot ja pyytää vahvistuksen päätteessä; muuten se vaatii --force. Sauvojen, liipaisimien, kosketuksen, liikkeen ja tulosteen asetukset säilyvät.";
 "cli.binding.clear.done" = "Poistettiin %lld sidontaa profiilista ”%@”.";

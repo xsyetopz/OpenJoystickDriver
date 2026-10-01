@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve in --digital-threshold zahtevajo vir osi.";
 "cli.binding.clear.abstract" = "Odstrani dodelitve podanih virov ali vse dodelitve.";
 "cli.binding.clear.all" = "Odstrani vse dodelitve, akorde, zaporedja in plasti.";
+"cli.binding.clear.blocks_input" = "'%@' je aktiven na povezanem krmilniku in zdaj blokira ves njegov vhod. Dodajte dodelitev z 'ojd binding set' ali ustavite profil z 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Odstranim vse dodelitve, akorde, zaporedja in plasti iz '%@'?";
 "cli.binding.clear.discussion" = "--all odstrani tudi akorde, zaporedja in plasti profila ter na terminalu zahteva potrditev; sicer zahteva --force. Nastavitve palčk, sprožilcev, dotika, gibanja in izhoda ostanejo.";
 "cli.binding.clear.done" = "Odstranjene dodelitve: %lld iz '%@'.";

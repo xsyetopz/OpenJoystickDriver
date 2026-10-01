@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "تحتاج --deadzone و--gain و--invert و--response-curve و--digital-threshold إلى مصدر محور.";
 "cli.binding.clear.abstract" = "أزل تعيينات المصادر المحددة، أو كل التعيينات.";
 "cli.binding.clear.all" = "أزل كل التعيينات والتوافقات والتسلسلات والطبقات.";
+"cli.binding.clear.blocks_input" = "'%@' نشط على وحدة تحكم متصلة ويحجب الآن كل إدخالها. أضف تعيينًا باستخدام 'ojd binding set'، أو أوقف ملف التعريف باستخدام 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "هل تريد إزالة كل التعيينات والتوافقات والتسلسلات والطبقات من '%@'؟";
 "cli.binding.clear.discussion" = "يزيل --all أيضًا توافقات ملف التعريف وتسلسلاته وطبقاته، ويطلب تأكيدًا في الطرفية؛ وإلا فهو يحتاج إلى --force. تبقى إعدادات العصي والزنادات واللمس والحركة والإخراج.";
 "cli.binding.clear.done" = "تمت إزالة %lld تعيينًا من '%@'.";

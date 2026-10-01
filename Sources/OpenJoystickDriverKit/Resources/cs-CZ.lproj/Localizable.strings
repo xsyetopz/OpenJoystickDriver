@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve a --digital-threshold vyžadují zdroj osy.";
 "cli.binding.clear.abstract" = "Odebere přiřazení zadaných zdrojů, nebo všechna přiřazení.";
 "cli.binding.clear.all" = "Odebere všechna přiřazení, akordy, sekvence a vrstvy.";
+"cli.binding.clear.blocks_input" = "'%@' je aktivní na připojeném ovladači a nyní blokuje veškerý jeho vstup. Přidejte přiřazení pomocí 'ojd binding set', nebo profil zastavte pomocí 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Odebrat všechna přiřazení, akordy, sekvence a vrstvy z '%@'?";
 "cli.binding.clear.discussion" = "--all odebere také akordy, sekvence a vrstvy profilu a v terminálu žádá o potvrzení; jinak vyžaduje --force. Nastavení páček, spouští, dotyku, pohybu a výstupu zůstávají.";
 "cli.binding.clear.done" = "Odebrána přiřazení: %lld z '%@'.";

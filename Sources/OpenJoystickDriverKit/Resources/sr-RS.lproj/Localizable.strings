@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve и --digital-threshold захтевају извор осе.";
 "cli.binding.clear.abstract" = "Уклони доделе наведених извора или све доделе.";
 "cli.binding.clear.all" = "Уклони све доделе, акорде, секвенце и слојеве.";
+"cli.binding.clear.blocks_input" = "'%@' је активан на повезаном контролеру и сада блокира сав његов унос. Додајте доделу помоћу 'ojd binding set' или зауставите профил помоћу 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Уклонити све доделе, акорде, секвенце и слојеве из '%@'?";
 "cli.binding.clear.discussion" = "--all уклања и акорде, секвенце и слојеве профила, а на терминалу тражи потврду; иначе захтева --force. Поставке стикова, окидача, додира, покрета и излаза остају.";
 "cli.binding.clear.done" = "Уклоњено додела: %lld из '%@'.";

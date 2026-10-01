@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve og --digital-threshold kræver en akselkilde.";
 "cli.binding.clear.abstract" = "Fjern tilknytningerne for de angivne kilder, eller alle tilknytninger.";
 "cli.binding.clear.all" = "Fjern alle tilknytninger, akkorder, sekvenser og lag.";
+"cli.binding.clear.blocks_input" = "“%@” er aktiv på en tilsluttet controller og blokerer nu al dens input. Tilføj en tilknytning med 'ojd binding set', eller stop profilen med 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Fjern alle tilknytninger, akkorder, sekvenser og lag fra “%@”?";
 "cli.binding.clear.discussion" = "--all fjerner også profilens akkorder, sekvenser og lag og beder om bekræftelse i en terminal; ellers kræves --force. Indstillinger for stick, trigger, berøring, bevægelse og output bevares.";
 "cli.binding.clear.done" = "Fjernede %lld tilknytninger fra “%@”.";

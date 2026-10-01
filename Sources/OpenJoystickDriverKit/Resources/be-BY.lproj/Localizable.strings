@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve і --digital-threshold патрабуюць крыніцы-восі.";
 "cli.binding.clear.abstract" = "Выдаліць прывязкі ўказаных крыніц або ўсе прывязкі.";
 "cli.binding.clear.all" = "Выдаліць усе прывязкі, акорды, паслядоўнасці і пласты.";
+"cli.binding.clear.blocks_input" = "Профіль «%@» актыўны на падключаным кантролеры і цяпер блакуе ўвесь яго ўвод. Дадайце прывязку праз 'ojd binding set' або спыніце профіль праз 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Выдаліць усе прывязкі, акорды, паслядоўнасці і пласты з профілю «%@»?";
 "cli.binding.clear.discussion" = "--all таксама выдаляе акорды, паслядоўнасці і пласты профілю і запытвае пацвярджэнне ў тэрмінале; без тэрмінала патрэбны --force. Налады стыкаў, трыгераў, дотыкаў, руху і вываду захоўваюцца.";
 "cli.binding.clear.done" = "Выдалена прывязак: %lld (профіль «%@»).";

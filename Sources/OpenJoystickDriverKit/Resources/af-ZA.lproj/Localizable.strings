@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve en --digital-threshold benodig ’n asbron.";
 "cli.binding.clear.abstract" = "Verwyder die bindings van die gegewe bronne, of elke binding.";
 "cli.binding.clear.all" = "Verwyder elke binding, akkoord, reeks en laag.";
+"cli.binding.clear.blocks_input" = "„%@“ is aktief op ’n gekoppelde kontroleerder en blokkeer nou al sy invoer. Voeg ’n binding by met 'ojd binding set', of stop die profiel met 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Verwyder elke binding, akkoord, reeks en laag uit „%@“?";
 "cli.binding.clear.discussion" = "--all verwyder ook die profiel se akkoorde, reekse en lae, en vra op ’n terminaal om bevestiging; andersins is --force nodig. Stok-, sneller-, raak-, bewegings- en afvoerinstellings bly behoue.";
 "cli.binding.clear.done" = "%lld bindings uit „%@“ verwyder.";

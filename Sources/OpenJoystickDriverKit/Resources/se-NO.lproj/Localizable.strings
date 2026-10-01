@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve ja --digital-threshold dárbbašit sáhka gáldu.";
 "cli.binding.clear.abstract" = "Váldde eret addojuvvon gálduid čatnumiid dahje buot čatnumiid.";
 "cli.binding.clear.all" = "Váldde eret buot čatnumiid, kombinašuvnnaid, ráidduid ja dásiid.";
+"cli.binding.clear.blocks_input" = "Profiila '%@' lea aktiivalaš čatnon stivrejeaddjis ja gieldá dál buot dan sisdieđu. Lasit čatnosa 'ojd binding set' bokte, dahje bisset profiilla 'ojd profile deactivate' bokte.";
 "cli.binding.clear.confirm" = "Váldetgo eret buot čatnumiid, kombinašuvnnaid, ráidduid ja dásiid profiilas '%@'?";
 "cli.binding.clear.discussion" = "--all válddaha eret maiddái profiila kombinašuvnnaid, ráidduid ja dásiid ja jearrá nannema terminálas; muđui dárbbaša --force. Stiivrra, dirrala, sorjavuođa, lihkadusa ja olggosdieđu ásahusat orrot.";
 "cli.binding.clear.done" = "Válddii eret %lld čatnuma profiilas '%@'.";

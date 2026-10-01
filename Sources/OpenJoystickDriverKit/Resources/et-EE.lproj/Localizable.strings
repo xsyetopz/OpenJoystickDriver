@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve ja --digital-threshold vajavad telje allikat.";
 "cli.binding.clear.abstract" = "Eemalda antud allikate seosed või kõik seosed.";
 "cli.binding.clear.all" = "Eemalda kõik seosed, kombinatsioonid, jadad ja kihid.";
+"cli.binding.clear.blocks_input" = "Profiil '%@' on ühendatud kontrolleril aktiivne ja blokeerib nüüd kogu selle sisendi. Lisa seos käsuga 'ojd binding set' või peata profiil käsuga 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Kas eemaldada profiilist '%@' kõik seosed, kombinatsioonid, jadad ja kihid?";
 "cli.binding.clear.discussion" = "--all eemaldab ka profiili kombinatsioonid, jadad ja kihid ning küsib terminalis kinnitust; muidu vajab see --force. Kangide, päästikute, puute, liikumise ja väljundi seaded jäävad alles.";
 "cli.binding.clear.done" = "Eemaldati %lld seost profiilist '%@'.";

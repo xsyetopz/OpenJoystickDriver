@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve ve --digital-threshold için bir eksen kaynağı gerekir.";
 "cli.binding.clear.abstract" = "Verilen kaynakların atamalarını ya da tüm atamaları kaldırır.";
 "cli.binding.clear.all" = "Tüm atamaları, kombinasyonları, dizileri ve katmanları kaldırır.";
+"cli.binding.clear.blocks_input" = "'%@' bağlı bir kontrolcüde etkin ve artık onun tüm girdisini engelliyor. 'ojd binding set' ile bir atama ekleyin veya profili 'ojd profile deactivate' ile durdurun.";
 "cli.binding.clear.confirm" = "'%@' profilindeki tüm atamalar, kombinasyonlar, diziler ve katmanlar kaldırılsın mı?";
 "cli.binding.clear.discussion" = "--all ayrıca profilin kombinasyonlarını, dizilerini ve katmanlarını kaldırır ve terminalde onay ister; aksi halde --force gerekir. Çubuk, tetik, dokunma, hareket ve çıkış ayarları kalır.";
 "cli.binding.clear.done" = "%lld atama '%@' profilinden kaldırıldı.";

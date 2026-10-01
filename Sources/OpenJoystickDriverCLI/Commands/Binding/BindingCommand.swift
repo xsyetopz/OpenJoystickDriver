@@ -314,6 +314,19 @@ struct BindingClearCommand: AsyncParsableCommand {
           )
         if dryRun { CLIOutput.stdout(message) } else { CLIOutput.success(message) }
       }
+      if !dryRun, current.suppressesAllControllerInput,
+        snapshot.routes.contains(where: { $0.activeProfileID == current.id })
+      {
+        CLIOutput.stderr(
+          CLILocalized.format(
+            "cli.binding.clear.blocks_input",
+            "'%@' is active on a connected controller and now blocks all of its input. "
+              + "Add a binding with 'ojd binding set', or stop the profile with "
+              + "'ojd profile deactivate'.",
+            current.name
+          )
+        )
+      }
     }
   }
 

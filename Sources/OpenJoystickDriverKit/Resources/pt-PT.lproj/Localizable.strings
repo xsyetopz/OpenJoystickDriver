@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve e --digital-threshold precisam de uma origem de eixo.";
 "cli.binding.clear.abstract" = "Remove as atribuições das origens indicadas, ou todas.";
 "cli.binding.clear.all" = "Remove todas as atribuições, combinações, sequências e camadas.";
+"cli.binding.clear.blocks_input" = "«%@» está ativo num comando ligado e agora bloqueia toda a entrada dele. Adicione uma atribuição com 'ojd binding set' ou pare o perfil com 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Remover todas as atribuições, combinações, sequências e camadas de «%@»?";
 "cli.binding.clear.discussion" = "--all também remove as combinações, sequências e camadas do perfil, e pede confirmação em um terminal; sem terminal, precisa de --force. Os definições de analógicos, gatilhos, toque, movimento e saída permanecem.";
 "cli.binding.clear.done" = "%lld atribuições removidas de «%@».";

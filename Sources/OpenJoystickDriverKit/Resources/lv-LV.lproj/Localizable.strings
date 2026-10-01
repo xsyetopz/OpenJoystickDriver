@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve un --digital-threshold nepieciešams ass avots.";
 "cli.binding.clear.abstract" = "Noņemt norādīto avotu piesaistes vai visas piesaistes.";
 "cli.binding.clear.all" = "Noņemt visas piesaistes, kombinācijas, secības un slāņus.";
+"cli.binding.clear.blocks_input" = "'%@' ir aktīvs pievienotā kontrolierī un tagad bloķē visu tā ievadi. Pievienojiet piesaisti ar 'ojd binding set' vai apturiet profilu ar 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Vai noņemt visas piesaistes, kombinācijas, secības un slāņus no '%@'?";
 "cli.binding.clear.discussion" = "--all noņem arī profila kombinācijas, secības un slāņus un terminālī prasa apstiprinājumu; citādi nepieciešams --force. Kursiekaru, sprūdu, pieskārienu, kustību un izvades iestatījumi paliek.";
 "cli.binding.clear.done" = "Noņemtas %lld piesaistes no '%@'.";

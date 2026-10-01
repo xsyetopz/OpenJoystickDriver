@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve eta --digital-threshold aukerek ardatz-iturburu bat behar dute.";
 "cli.binding.clear.abstract" = "Kendu emandako iturburuen esleipenak, edo esleipen guztiak.";
 "cli.binding.clear.all" = "Kendu esleipen, akorde, sekuentzia eta geruza guztiak.";
+"cli.binding.clear.blocks_input" = "«%@» aktibo dago konektatutako agintean, eta orain haren sarrera guztiak blokeatzen ditu. Gehitu esleipen bat 'ojd binding set' erabiliz, edo gelditu profila 'ojd profile deactivate' erabiliz.";
 "cli.binding.clear.confirm" = "Esleipen, akorde, sekuentzia eta geruza guztiak kendu nahi dituzu «%@» profiletik?";
 "cli.binding.clear.discussion" = "--all aukerak profilaren akordeak, sekuentziak eta geruzak ere kentzen ditu, eta terminalean baieztapena eskatzen du; bestela --force behar du. Makila, eragile, ukipen, mugimendu eta irteera-ezarpenak mantentzen dira.";
 "cli.binding.clear.done" = "%lld esleipen kendu dira «%@» profiletik.";

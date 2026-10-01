@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve e --digital-threshold richiedono una sorgente ad asse.";
 "cli.binding.clear.abstract" = "Rimuove le assegnazioni delle sorgenti indicate, oppure tutte.";
 "cli.binding.clear.all" = "Rimuove ogni assegnazione, combinazione, sequenza e livello.";
+"cli.binding.clear.blocks_input" = "'%@' è attivo su un controller collegato e ora ne blocca tutto l’input. Aggiungi un’assegnazione con 'ojd binding set' oppure interrompi il profilo con 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Rimuovere ogni assegnazione, combinazione, sequenza e livello da '%@'?";
 "cli.binding.clear.discussion" = "--all rimuove anche le combinazioni, le sequenze e i livelli del profilo e chiede conferma su un terminale; altrimenti richiede --force. Le impostazioni di levette, grilletti, tocco, movimento e output restano.";
 "cli.binding.clear.done" = "Rimosse %lld assegnazioni da '%@'.";

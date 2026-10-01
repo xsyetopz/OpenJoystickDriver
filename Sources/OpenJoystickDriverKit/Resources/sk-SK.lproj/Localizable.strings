@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve a --digital-threshold vyžadujú zdroj osi.";
 "cli.binding.clear.abstract" = "Odstráni priradenia zadaných zdrojov, alebo všetky priradenia.";
 "cli.binding.clear.all" = "Odstráni všetky priradenia, akordy, sekvencie a vrstvy.";
+"cli.binding.clear.blocks_input" = "'%@' je aktívny na pripojenom ovládači a teraz blokuje všetok jeho vstup. Pridajte priradenie pomocou 'ojd binding set' alebo profil zastavte pomocou 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Odstrániť všetky priradenia, akordy, sekvencie a vrstvy z '%@'?";
 "cli.binding.clear.discussion" = "--all odstráni aj akordy, sekvencie a vrstvy profilu a v termináli žiada o potvrdenie; inak vyžaduje --force. Nastavenia páčok, spúští, dotyku, pohybu a výstupu zostanú.";
 "cli.binding.clear.done" = "Odstránené priradenia: %lld z '%@'.";

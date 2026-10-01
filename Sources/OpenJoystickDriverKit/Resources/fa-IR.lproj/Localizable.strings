@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone، --gain، --invert، --response-curve و --digital-threshold به یک منبع محور نیاز دارند.";
 "cli.binding.clear.abstract" = "حذف تخصیص‌های منابع داده‌شده، یا همهٔ تخصیص‌ها.";
 "cli.binding.clear.all" = "حذف همهٔ تخصیص‌ها، آکوردها، توالی‌ها و لایه‌ها.";
+"cli.binding.clear.blocks_input" = "«%@» روی یک کنترلر متصل فعال است و اکنون همهٔ ورودی آن را مسدود می‌کند. با 'ojd binding set' یک تخصیص اضافه کنید، یا نمایه را با 'ojd profile deactivate' متوقف کنید.";
 "cli.binding.clear.confirm" = "همهٔ تخصیص‌ها، آکوردها، توالی‌ها و لایه‌ها از «%@» حذف شود؟";
 "cli.binding.clear.discussion" = "--all آکوردها، توالی‌ها و لایه‌های نمایه را هم حذف می‌کند و در ترمینال تأیید می‌خواهد؛ در غیر این صورت به --force نیاز دارد. تنظیمات استیک، ماشه، لمس، حرکت و خروجی می‌مانند.";
 "cli.binding.clear.done" = "%lld تخصیص از «%@» حذف شد.";

@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve ir --digital-threshold reikalauja ašies šaltinio.";
 "cli.binding.clear.abstract" = "Pašalinti nurodytų šaltinių susiejimus arba visus susiejimus.";
 "cli.binding.clear.all" = "Pašalinti visus susiejimus, kombinacijas, sekas ir sluoksnius.";
+"cli.binding.clear.blocks_input" = "'%@' aktyvus prijungtame valdiklyje ir dabar blokuoja visą jo įvestį. Pridėkite susiejimą su 'ojd binding set' arba sustabdykite profilį su 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Pašalinti visus susiejimus, kombinacijas, sekas ir sluoksnius iš '%@'?";
 "cli.binding.clear.discussion" = "--all pašalina ir profilio kombinacijas, sekas bei sluoksnius ir terminale paprašo patvirtinimo; kitu atveju reikia --force. Lazdelių, gaidukų, prisilietimo, judesio ir išvesties nustatymai lieka.";
 "cli.binding.clear.done" = "Pašalinta susiejimų: %lld, iš '%@'.";

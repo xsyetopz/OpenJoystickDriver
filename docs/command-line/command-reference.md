@@ -137,7 +137,7 @@ ojd binding clear PROFILE --all [--force] [--dry-run]
   - `--long-hold MS:TARGET`: Send another target when the source is held this long, such as `500:key:b`.
   - `--double-tap MS:TARGET`: Send another target when the source is pressed twice in this time, such as `300:key:c`.
   - `--actions-json`: More actions, as a JSON array in the form that `ojd profile export` writes.
-- `binding clear`: Remove the bindings of the given sources. It exits with code 1 and changes nothing when a source has no binding. `--all` removes every binding, chord, sequence, and layer. Stick, trigger, touch, motion, and output settings stay. `--all` asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing.
+- `binding clear`: Remove the bindings of the given sources. It exits with code 1 and changes nothing when a source has no binding. `--all` removes every binding, chord, sequence, and layer. Stick, trigger, touch, motion, and output settings stay. `--all` asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing. When the result leaves a profile that is active on a connected controller with no inputs while OJD seizes the physical input, the command prints a warning on stderr that names `ojd binding set` and `ojd profile deactivate`, and still exits with code 0.
 
 With `--json`, a binding is an object with `id`, `source`, `target`, and `behavior`. `binding list` prints `profile` and `bindings`, `binding set` prints `profile`, `binding`, and `replaced`, and `binding clear` prints `profile`, `removed` (the sources), `all`, and `dryRun`.
 

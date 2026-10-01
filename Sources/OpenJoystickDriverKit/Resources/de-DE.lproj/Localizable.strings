@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve und --digital-threshold benötigen eine Achsenquelle.";
 "cli.binding.clear.abstract" = "Die Belegungen der angegebenen Quellen oder alle Belegungen entfernen.";
 "cli.binding.clear.all" = "Alle Belegungen, Tastenkombinationen, Sequenzen und Ebenen entfernen.";
+"cli.binding.clear.blocks_input" = "'%@' ist auf einem verbundenen Controller aktiv und blockiert jetzt alle seine Eingaben. Füge mit 'ojd binding set' eine Belegung hinzu oder beende das Profil mit 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Alle Belegungen, Tastenkombinationen, Sequenzen und Ebenen aus '%@' entfernen?";
 "cli.binding.clear.discussion" = "--all entfernt auch die Tastenkombinationen, Sequenzen und Ebenen des Profils und fragt im Terminal nach Bestätigung; andernfalls ist --force nötig. Die Einstellungen für Stick, Trigger, Touch, Bewegung und Ausgabe bleiben erhalten.";
 "cli.binding.clear.done" = "%lld Belegungen aus '%@' entfernt.";

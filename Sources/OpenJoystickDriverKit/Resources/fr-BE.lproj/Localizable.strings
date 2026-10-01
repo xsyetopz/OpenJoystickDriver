@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve et --digital-threshold exigent une source d’axe.";
 "cli.binding.clear.abstract" = "Supprimer les affectations des sources indiquées, ou toutes les affectations.";
 "cli.binding.clear.all" = "Supprimer toutes les affectations, tous les accords, séquences et couches.";
+"cli.binding.clear.blocks_input" = "'%@' est actif sur une manette connectée et bloque désormais toute son entrée. Ajoutez une affectation avec 'ojd binding set', ou arrêtez le profil avec 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Supprimer toutes les affectations, tous les accords, séquences et couches de '%@' ?";
 "cli.binding.clear.discussion" = "--all supprime aussi les accords, séquences et couches du profil, et demande confirmation dans un terminal ; sinon, il exige --force. Les réglages des sticks, des gâchettes, du tactile, du mouvement et de la sortie sont conservés.";
 "cli.binding.clear.done" = "%lld affectations supprimées de '%@'.";

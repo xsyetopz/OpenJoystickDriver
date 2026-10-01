@@ -1216,6 +1216,7 @@
 "cli.binding.axis_options_source" = "--deadzone, --gain, --invert, --response-curve और --digital-threshold के लिए एक्सिस स्रोत चाहिए।";
 "cli.binding.clear.abstract" = "दिए गए स्रोतों के असाइनमेंट, या सभी असाइनमेंट हटाएँ।";
 "cli.binding.clear.all" = "सभी असाइनमेंट, कॉर्ड, सीक्वेंस और लेयर हटाएँ।";
+"cli.binding.clear.blocks_input" = "“%@” एक कनेक्टेड कंट्रोलर पर सक्रिय है और अब उसका सारा इनपुट रोकती है। 'ojd binding set' से एक असाइनमेंट जोड़ें, या 'ojd profile deactivate' से प्रोफ़ाइल रोकें।";
 "cli.binding.clear.confirm" = "“%@” से सभी असाइनमेंट, कॉर्ड, सीक्वेंस और लेयर हटाएँ?";
 "cli.binding.clear.discussion" = "--all प्रोफ़ाइल के कॉर्ड, सीक्वेंस और लेयर भी हटाता है, और टर्मिनल पर पुष्टि माँगता है; अन्यथा इसे --force चाहिए। स्टिक, ट्रिगर, टच, मोशन और आउटपुट सेटिंग बनी रहती हैं।";
 "cli.binding.clear.done" = "%lld असाइनमेंट “%@” से हटाए गए।";

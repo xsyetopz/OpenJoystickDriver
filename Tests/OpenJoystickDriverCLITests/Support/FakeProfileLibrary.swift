@@ -9,10 +9,17 @@ final class FakeProfileLibrary: @unchecked Sendable {
   private var profiles: [RemappingProfile]
   private var active: Set<UUID>
   private var pairs: [ApplicationServiceJoyConPairPayload] = []
+  private let connected: [ApplicationServiceDeviceDescription]
 
-  init(_ profiles: [RemappingProfile], active: Set<UUID> = []) {
+  /// `connected` devices get a route to the active profile of their model, as the service reports.
+  init(
+    _ profiles: [RemappingProfile],
+    active: Set<UUID> = [],
+    connected: [ApplicationServiceDeviceDescription] = []
+  ) {
     self.profiles = profiles
     self.active = active
+    self.connected = connected
   }
 
   static func profile(
@@ -33,18 +40,38 @@ final class FakeProfileLibrary: @unchecked Sendable {
 
   var snapshot: ApplicationServiceRemappingSnapshotPayload {
     lock.withLock {
-      ApplicationServiceRemappingSnapshotPayload(
+      let activeProfiles = profiles.filter { active.contains($0.id) }.map {
+        ApplicationServiceRemappingActiveProfilePayload(
+          vendorID: $0.device.vendorID,
+          productID: $0.device.productID,
+          profileID: $0.id,
+          profileName: $0.name,
+          applicationScope: $0.applicationScope
+        )
+      }
+      let routes = connected.map { device in
+        let profile = activeProfiles.routingActiveProfile(
+          vendorID: device.vendorID,
+          productID: device.productID
+        )
+        return ApplicationServiceRemappingRoutePayload(
+          vendorID: device.vendorID,
+          productID: device.productID,
+          runtimeIdentifier: device.runtimeIdentifier,
+          selection: profile == nil ? .unavailable : .remapping,
+          eligibility: profile == nil ? .unavailable : .eligible,
+          activeProfileID: profile?.profileID,
+          activeProfileName: profile?.profileName,
+          applicationScope: profile?.applicationScope,
+          frontmostBundleIdentifier: nil,
+          postEventAccess: .granted,
+          failure: nil
+        )
+      }
+      return ApplicationServiceRemappingSnapshotPayload(
         profiles: profiles,
-        activeProfiles: profiles.filter { active.contains($0.id) }.map {
-          ApplicationServiceRemappingActiveProfilePayload(
-            vendorID: $0.device.vendorID,
-            productID: $0.device.productID,
-            profileID: $0.id,
-            profileName: $0.name,
-            applicationScope: $0.applicationScope
-          )
-        },
-        routes: [],
+        activeProfiles: activeProfiles,
+        routes: routes,
         joyConPairs: pairs,
         postEventAccess: .granted
       )
