@@ -1,0 +1,21 @@
+{
+	"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+	"operation": "patch",
+	"vendorID": 1356,
+	"productID": 616,
+	"set": {
+		"output": {
+			"startup": [
+				{
+					"report": {
+						"kind": "feature",
+						"id": 244,
+						"length": 5
+					},
+					"bytes": [66, 3, 0, 0],
+					"transport": "bluetooth-classic"
+				}
+			]
+		}
+	}
+}

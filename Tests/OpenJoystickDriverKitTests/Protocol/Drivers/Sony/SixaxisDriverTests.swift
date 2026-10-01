@@ -80,17 +80,9 @@ struct SixaxisDriverTests {
       ]
     )
     #expect(bluetooth.startupFeatureReads().isEmpty)
+    // The Bluetooth enable report is a startup write in the controller's record.
     #expect(usb.activationWrites().isEmpty)
-    #expect(
-      bluetooth.activationWrites() == [
-        .hidFeature(
-          PhysicalHIDOutputReport(
-            reportID: ProtocolPacketFixtures.DS3.bluetoothOperationalReportID,
-            bytes: ProtocolPacketFixtures.DS3.bluetoothOperationalReport
-          )
-        )
-      ]
-    )
+    #expect(bluetooth.activationWrites().isEmpty)
   }
 
   @Test

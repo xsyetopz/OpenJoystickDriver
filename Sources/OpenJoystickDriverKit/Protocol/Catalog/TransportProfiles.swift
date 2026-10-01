@@ -192,6 +192,8 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public let ownership: ControllerOwnership
   /// The record's rumble report, for a driver that encodes rumble from it.
   public let rumbleTemplate: RumbleOutputTemplate?
+  /// The record's fixed startup reports, in order; OJD sends them only to a controller it owns.
+  public let startupWrites: [RecordStartupWrite]
   /// The record's input-report layout; set exactly for the `hid.report-layout` family.
   public let inputLayout: ControllerInputLayout?
 

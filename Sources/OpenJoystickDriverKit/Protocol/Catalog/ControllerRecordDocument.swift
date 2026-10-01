@@ -17,6 +17,8 @@ struct ControllerRecordDocument: Decodable {
   /// Nil leaves a controller macOS supports to macOS.
   let ownership: ControllerOwnership?
   let rumbleTemplate: RumbleOutputTemplate?
+  /// Fixed reports OJD sends when it starts the controller; empty when the record has none.
+  let startupWrites: [RecordStartupWrite]
   /// Present exactly for the `hid.report-layout` family.
   let inputLayout: ControllerInputLayout?
 
@@ -50,7 +52,9 @@ struct ControllerRecordDocument: Decodable {
       }
       return ownership
     }
-    rumbleTemplate = try container.decodeOptional(Output.self, for: "output")?.rumble
+    let output = try container.decodeOptional(Output.self, for: "output")
+    rumbleTemplate = output?.rumble
+    startupWrites = output?.startup ?? []
     inputLayout = try container.decodeOptional(InputLayout.self, for: "input")?.layout
     try validateOwnershipAndOutput(codingPath: decoder.codingPath)
     // Only these deltas have a driver that acts on them: GIP drops rumble, DualSense Edge adds
@@ -85,8 +89,9 @@ struct ControllerRecordDocument: Decodable {
     }
   }
 
-  /// macOS cannot serve a raw-USB family, only a driver that encodes rumble from a template may
-  /// name one, and the report-layout family alone has, and needs, an input layout.
+  /// macOS cannot serve a raw-USB family, startup writes go to HID controllers, only a driver that
+  /// encodes rumble from a template may name one, and the report-layout family alone has, and
+  /// needs, an input layout.
   private func validateOwnershipAndOutput(codingPath: [any CodingKey]) throws {
     let rawUSB = protocolInfo.protocolID.usesRawUSB(storedVariant: protocolInfo.protocolVariant)
     if ownership != nil, rawUSB {
@@ -94,6 +99,14 @@ struct ControllerRecordDocument: Decodable {
         .init(
           codingPath: codingPath + [DocumentKey("ownership")],
           debugDescription: "ownership applies only to HID controllers"
+        )
+      )
+    }
+    if !startupWrites.isEmpty, rawUSB {
+      throw DecodingError.dataCorrupted(
+        .init(
+          codingPath: codingPath + [DocumentKey("output"), DocumentKey("startup")],
+          debugDescription: "startup writes apply only to HID controllers"
         )
       )
     }
@@ -108,21 +121,10 @@ struct ControllerRecordDocument: Decodable {
     if rumbleTemplate != nil, !protocolInfo.protocolID.encodesRumbleTemplate {
       throw DecodingError.dataCorrupted(
         .init(
-          codingPath: codingPath + [DocumentKey("output")],
-          debugDescription: "output templates require a driver that encodes them"
+          codingPath: codingPath + [DocumentKey("output"), DocumentKey("rumble")],
+          debugDescription: "rumble templates require a driver that encodes them"
         )
       )
-    }
-  }
-
-  /// The record's output templates; rumble is the only one.
-  struct Output: Decodable {
-    let rumble: RumbleOutputTemplate
-
-    init(from decoder: any Decoder) throws {
-      let container = try decoder.container(keyedBy: DocumentKey.self)
-      try container.rejectUnknown(allowed: ["rumble"])
-      rumble = try container.decode(RumbleTemplate.self, for: "rumble").template
     }
   }
 

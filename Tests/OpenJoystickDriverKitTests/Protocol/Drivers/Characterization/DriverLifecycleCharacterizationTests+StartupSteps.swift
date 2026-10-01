@@ -145,6 +145,15 @@ extension DriverLifecycleCharacterizationTests {
     )
   }
 
+  /// The record limits the Bluetooth enable report to Bluetooth, so USB startup writes nothing.
+  @Test
+  func sixaxisUSBStartupWritesNothing() async {
+    let recording = await startHIDController(Self.sixaxisUSB, transport: "USB", locationID: 206)
+    let steps = await recordedSteps(recording)
+    await recording.manager.stop()
+    #expect(steps == ["outputs=0", "features=0"])
+  }
+
   @Test
   func switchBluetoothStartupStepOrder() async {
     #expect(

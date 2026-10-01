@@ -116,6 +116,7 @@ extension DeviceRuntimeProfile {
       assemblyPolicy: assemblyPolicy,
       ownership: ownership,
       rumbleTemplate: rumbleTemplate,
+      startupWrites: startupWrites,
       inputLayout: inputLayout
     )
   }

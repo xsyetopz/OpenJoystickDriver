@@ -79,6 +79,29 @@ A `hid.report-layout` or `vendor.ps3-third-party` controller is input-only unles
 
 OpenJoystickDriver sets the report ID in byte 0 when the ID is not 0, writes each motor's intensity, and sends 0 in every other byte. It sends this report even when macOS drives the controller, because macOS does not drive these motors.
 
+## Send fixed reports at startup
+
+A HID controller that needs a fixed report before it sends input can name it in `output.startup`. The Sixaxis records use one to enable a DualShock 3 over Bluetooth:
+
+```json
+"output": {
+  "startup": [
+    {
+      "report": { "kind": "feature", "id": 244, "length": 5 },
+      "bytes": [66, 3, 0, 0],
+      "transport": "bluetooth-classic"
+    }
+  ]
+}
+```
+
+- `report` names the HID report as in `output.rumble`. `length` is 2 to 64 bytes.
+- `bytes` lists every byte after the report ID, or every byte of the report when `id` is 0, from 0 to 255.
+- `delayMilliseconds` waits before this write, from 0, the default, to 1000.
+- `transport` limits the write to `usb`, `bluetooth-classic`, or `bluetooth-le`. Without it, OpenJoystickDriver sends the write on every transport.
+
+List 1 to 16 writes. OpenJoystickDriver sends them in order after the protocol driver's own startup, only when it opens the controller. A failed write is logged and the next one is still sent. Raw-USB families do not take `output.startup`.
+
 ## Install a record
 
 1. Find the VID:PID of your controller. For more information, see [Finding your controller ID](finding-your-controller-id.md).

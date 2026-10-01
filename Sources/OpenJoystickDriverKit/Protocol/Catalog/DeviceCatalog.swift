@@ -87,6 +87,7 @@ struct DeviceCatalog: Sendable {
       assemblyPolicy: protocolInfo.assembly,
       ownership: record.ownership ?? .macOS,
       rumbleTemplate: record.rumbleTemplate,
+      startupWrites: record.startupWrites,
       inputLayout: record.inputLayout
     )
   }
@@ -117,6 +118,7 @@ struct DeviceCatalog: Sendable {
       assemblyPolicy: nil,
       ownership: .macOS,
       rumbleTemplate: nil,
+      startupWrites: [],
       inputLayout: nil
     )
   }

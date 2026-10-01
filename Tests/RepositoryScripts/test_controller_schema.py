@@ -302,6 +302,84 @@ class OwnershipAndOutputTests(unittest.TestCase):
                 self.assertFalse(self.validator.is_valid(document))
 
 
+SIXAXIS = {"family": "sony.sixaxis"}
+ENABLE = {
+    "report": {"kind": "feature", "id": 244, "length": 5},
+    "bytes": [66, 3, 0, 0],
+    "transport": "bluetooth-classic",
+}
+
+
+class StartupWriteTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.validator = validate_profiles.validator()
+
+    def test_accepts_startup_writes(self) -> None:
+        accepted = {
+            "Sixaxis enable": record(SIXAXIS, output={"startup": [ENABLE]}),
+            "delayed output": record(
+                DUALSENSE,
+                output={
+                    "startup": [
+                        {
+                            "report": {"kind": "output", "id": 0, "length": 2},
+                            "bytes": [1, 2],
+                            "delayMilliseconds": 1000,
+                        }
+                    ]
+                },
+            ),
+            "startup with rumble": record(
+                THIRD_PARTY, output={"rumble": GP100_RUMBLE, "startup": [ENABLE]}
+            ),
+        }
+        for name, document in accepted.items():
+            with self.subTest(name):
+                self.assertTrue(self.validator.is_valid(document))
+
+    def test_rejects_invalid_startup_writes(self) -> None:
+        rejected = {
+            "empty list": record(SIXAXIS, output={"startup": []}),
+            "too many": record(SIXAXIS, output={"startup": [ENABLE] * 17}),
+            "input report": record(
+                SIXAXIS,
+                output={
+                    "startup": [
+                        {**ENABLE, "report": {**ENABLE["report"], "kind": "input"}}
+                    ]
+                },
+            ),
+            "byte above 255": record(
+                SIXAXIS, output={"startup": [{**ENABLE, "bytes": [256]}]}
+            ),
+            "no bytes": record(SIXAXIS, output={"startup": [{**ENABLE, "bytes": []}]}),
+            "long delay": record(
+                SIXAXIS, output={"startup": [{**ENABLE, "delayMilliseconds": 1001}]}
+            ),
+            "radio transport": record(
+                SIXAXIS,
+                output={
+                    "startup": [{**ENABLE, "transport": "proprietary-radio-receiver"}]
+                },
+            ),
+            "unknown key": record(
+                SIXAXIS, output={"startup": [{**ENABLE, "repeat": 2}]}
+            ),
+            "GIP": record(GIP, output={"startup": [ENABLE]}),
+            "XUSB": record(XUSB, output={"startup": [ENABLE]}),
+            "GameSir USB": record(
+                {"family": "vendor.gamesir", "variant": "usb"},
+                output={"startup": [ENABLE]},
+            ),
+            "rumble on Sixaxis": record(
+                SIXAXIS, output={"rumble": GP100_RUMBLE, "startup": [ENABLE]}
+            ),
+        }
+        for name, document in rejected.items():
+            with self.subTest(name):
+                self.assertFalse(self.validator.is_valid(document))
+
+
 REPORT_LAYOUT = {"family": "hid.report-layout"}
 BUTTON = {"control": "face-south", "byte": 1, "mask": 1}
 LAYOUT = {"report": {"length": 2}, "buttons": [BUTTON]}

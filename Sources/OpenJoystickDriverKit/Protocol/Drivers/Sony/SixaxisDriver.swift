@@ -10,7 +10,6 @@ private let ds3OperationalReportF2: UInt8 = 0xF2
 private let ds3OperationalReportF2Length = 17
 private let ds3OperationalReportF5: UInt8 = 0xF5
 private let ds3OperationalReportF5Length = 8
-private let ds3BluetoothOperationalReportID: UInt8 = 0xF4
 private let ds3OutputReportID: UInt8 = 0x01
 private let ds3OutputReportLength = 49
 private let ds3OutputReportTemplate: [UInt8] = [
@@ -50,7 +49,8 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
   private var physicalRumbleLeft: UInt8 = 0
   private var physicalRumbleRightOn = false
   private var physicalPlayerIndicator: PhysicalPlayerIndicator = .player1
-  /// The bound variant: USB reads the operational feature reports, Bluetooth writes one.
+  /// The bound variant: USB reads the operational feature reports. The Bluetooth enable report
+  /// is a startup write in the controller's record.
   private let isBluetooth: Bool
 
   public init(isBluetooth: Bool = false) { self.isBluetooth = isBluetooth }
@@ -89,18 +89,6 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
         reportID: ds3OperationalReportF5,
         length: ds3OperationalReportF5Length
       ),
-    ]
-  }
-
-  public func activationWrites() -> [PhysicalOutputWrite] {
-    guard isBluetooth else { return [] }
-    return [
-      .hidFeature(
-        PhysicalHIDOutputReport(
-          reportID: ds3BluetoothOperationalReportID,
-          bytes: [ds3BluetoothOperationalReportID, 0x42, 0x03, 0x00, 0x00]
-        )
-      )
     ]
   }
 

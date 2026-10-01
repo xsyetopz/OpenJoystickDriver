@@ -79,6 +79,39 @@ extension DeviceManager {
       pipeline: pipeline,
       startupConnection: connection
     )
+    await sendRecordStartupWrites(pipeline: pipeline, connection: connection)
+  }
+
+  /// Sends the record's startup writes in order, each after its delay. A failed write is logged
+  /// and the rest still go out, as with the driver's activation writes.
+  private func sendRecordStartupWrites(
+    pipeline: DevicePipeline,
+    connection: HIDDeviceConnection
+  ) async {
+    guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
+    let writes = await pipeline.recordStartupWrites()
+    for write in writes {
+      if write.delayMilliseconds > 0 {
+        let delay =
+          UInt64(write.delayMilliseconds) * DeviceTransportProfile.nanosecondsPerMillisecond
+        do { try await Task.sleep(nanoseconds: delay) } catch { return }
+      }
+      guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
+      let sent = await sendHIDWrites(
+        [write.write],
+        locationID: connection.routingLocationID,
+        identifier: pipeline.identifier,
+        pipeline: pipeline,
+        startupConnection: connection
+      )
+      guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
+      if !sent {
+        print(
+          "[DeviceManager] Record startup write failed for controller=\(pipeline.identifier) "
+            + "loc=\(connection.routingLocationID) report=\(write.report.reportID)"
+        )
+      }
+    }
   }
 
   func sendHIDStartupOutputReportsIfNeeded(

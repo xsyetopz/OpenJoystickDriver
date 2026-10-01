@@ -19,8 +19,8 @@ extension DriverLifecycleCharacterizationTests {
         "hid.featureReplies[USB] accepts=false", "hid.featureReports[USB] reports=0",
         "hid.startupOutput[Bluetooth] interval=0 required=false beforeReads=false reports=0",
         "hid.featureReads[Bluetooth] validates=false requests=[]",
-        "hid.featureReplies[Bluetooth] accepts=false", "hid.featureReports[Bluetooth] reports=1",
-        "  id=0xf4 n=5", "    f442030000", "hid.featureReports[presence] reports=0",
+        "hid.featureReplies[Bluetooth] accepts=false", "hid.featureReports[Bluetooth] reports=0",
+        "hid.featureReports[presence] reports=0",
         "hid.shutdownFeatureReports reports=0", "hid.periodic nil", "hid.statusRequest nil",
         "hid.recovery[USB] supported=false beforeStartup=0 afterStartup=0",
         "hid.recovery afterExpiry=0", "presence requiresConnection=false", "liveness timeout=nil",
@@ -42,6 +42,8 @@ extension DriverLifecycleCharacterizationTests {
     )
   }
 
+  /// The Bluetooth enable report is a startup write in the Sixaxis records now;
+  /// `sixaxisBluetoothStartupStepOrder` still sees it sent.
   @Test
   func sixaxisBluetoothTranscript() throws {
     #expect(
@@ -56,8 +58,8 @@ extension DriverLifecycleCharacterizationTests {
         "hid.featureReplies[USB] accepts=false", "hid.featureReports[USB] reports=0",
         "hid.startupOutput[Bluetooth] interval=0 required=false beforeReads=false reports=0",
         "hid.featureReads[Bluetooth] validates=false requests=[]",
-        "hid.featureReplies[Bluetooth] accepts=false", "hid.featureReports[Bluetooth] reports=1",
-        "  id=0xf4 n=5", "    f442030000", "hid.featureReports[presence] reports=0",
+        "hid.featureReplies[Bluetooth] accepts=false", "hid.featureReports[Bluetooth] reports=0",
+        "hid.featureReports[presence] reports=0",
         "hid.shutdownFeatureReports reports=0", "hid.periodic nil", "hid.statusRequest nil",
         "hid.recovery[Bluetooth] supported=false beforeStartup=0 afterStartup=0",
         "hid.recovery afterExpiry=0", "presence requiresConnection=false", "liveness timeout=nil",

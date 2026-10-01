@@ -131,6 +131,13 @@ extension DevicePipeline {
     return driver.activationWrites()
   }
 
+  /// The record's startup writes for the observed host transport; none for an observe-only
+  /// pipeline, which macOS starts.
+  func recordStartupWrites() -> [RecordStartupWrite] {
+    guard isActive, !observesOnly, let writes = binding?.record?.startupWrites else { return [] }
+    return writes.filter { $0.applies(to: interface?.hostTransport) }
+  }
+
   func hidPresenceRequestWrite() -> PhysicalOutputWrite? { driver.presenceRequestWrite() }
 
   func expireHIDStartupRecovery() { driver.expireStartupRecovery() }

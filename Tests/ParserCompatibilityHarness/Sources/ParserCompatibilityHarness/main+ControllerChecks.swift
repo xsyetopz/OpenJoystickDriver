@@ -120,15 +120,8 @@ func runDS3TransportAndBluetoothCheck() throws {
   )
   require(parser.activationWrites().isEmpty, "DS3 USB should not send Bluetooth feature report")
   require(
-    bluetooth.activationWrites() == [
-      .hidFeature(
-        PhysicalHIDOutputReport(
-          reportID: ProtocolPacketFixtures.DS3.bluetoothOperationalReportID,
-          bytes: ProtocolPacketFixtures.DS3.bluetoothOperationalReport
-        )
-      )
-    ],
-    "DS3 Bluetooth operational feature report should match Linux"
+    bluetooth.activationWrites().isEmpty,
+    "DS3 Bluetooth enable report should come from the controller record"
   )
   var bogus = Array(
     ProtocolPacketFixtures.DS3.inputReport(
