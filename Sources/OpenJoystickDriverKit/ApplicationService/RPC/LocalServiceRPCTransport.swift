@@ -32,7 +32,6 @@ public enum LocalServiceRPCErrorCode: String, Codable, Sendable { case peerRejec
 
 public struct LocalServiceRPCEmptyArguments: Codable, Sendable {}
 public struct LocalServiceRPCBoolArguments: Codable, Sendable { public let value: Bool }
-public struct LocalServiceRPCIntArguments: Codable, Sendable { public let value: Int }
 public struct LocalServiceRPCPermissionArguments: Codable, Sendable {
   public let requirement: PermissionManager.Requirement
 

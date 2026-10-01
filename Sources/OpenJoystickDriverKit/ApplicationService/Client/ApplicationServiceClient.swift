@@ -1,7 +1,6 @@
 import Foundation
 
 let applicationServiceDefaultReplyTimeoutSeconds: TimeInterval = 5
-let applicationServiceSelfTestReplyGraceSeconds: TimeInterval = 5
 
 public enum ApplicationServiceClientError: Error, LocalizedError, Sendable {
   case notConnected

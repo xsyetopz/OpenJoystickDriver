@@ -1,6 +1,5 @@
 /// Stable local RPC method names; each raw value is the method name on the wire.
 package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
-  case listDevices
   case getStatus
   case requestRequiredAccess
   case requestAccess
@@ -16,7 +15,6 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case suspendController
   case resumeController
   case disconnectWirelessController
-  case runVirtualDeviceSelfTest
   case resetSettings
   case getSettings
   case setSetting

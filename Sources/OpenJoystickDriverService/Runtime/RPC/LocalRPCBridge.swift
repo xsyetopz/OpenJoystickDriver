@@ -71,9 +71,6 @@ extension ApplicationServiceServer {
       )
     }
     switch method {
-    case .listDevices:
-      _ = try decode(LocalServiceRPCEmptyArguments.self)
-      return try send(await listDevices())
     case .getStatus:
       _ = try decode(LocalServiceRPCEmptyArguments.self)
       return try send(await getStatus())
@@ -185,9 +182,6 @@ extension ApplicationServiceServer {
           runtimeIdentifier: value.runtimeIdentifier
         )
       )
-    case .runVirtualDeviceSelfTest:
-      let seconds = try decode(LocalServiceRPCIntArguments.self).value
-      return try send(await runVirtualDeviceSelfTest(seconds: seconds))
     case .resetSettings:
       _ = try decode(LocalServiceRPCEmptyArguments.self)
       return try send(await resetSettings())

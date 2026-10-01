@@ -7,12 +7,11 @@ import Testing
 @Suite(.serialized)
 struct LocalRPCBridgeTests {
   private static let controllerMethodNames: Set = [
-    "listDevices", "getStatus", "requestRequiredAccess", "requestAccess", "getControllerState",
-    "getPacketLog", "sendControllerOutput", "previewPhysicalColor", "releasePhysicalColorPreview",
+    "getStatus", "requestRequiredAccess", "requestAccess", "getControllerState", "getPacketLog",
+    "sendControllerOutput", "previewPhysicalColor", "releasePhysicalColorPreview",
     "setSuppressOutput", "getVirtualDeviceDiagnostics", "setVirtualHIDProfileOverride",
     "resetVirtualHIDProfileOverride", "suspendController", "resumeController",
-    "disconnectWirelessController", "runVirtualDeviceSelfTest", "resetSettings", "getSettings",
-    "setSetting",
+    "disconnectWirelessController", "resetSettings", "getSettings", "setSetting",
   ]
   private static let remappingMethodNames: Set = [
     "remappingMotionCalibration", "pairRemappingJoyCons", "unpairRemappingJoyCons",

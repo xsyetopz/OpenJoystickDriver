@@ -16,10 +16,6 @@ extension ApplicationServiceClient {
 
   public var isConnected: Bool { stateLock.withLock { connected } }
 
-  public func listDevices() async throws -> [String] {
-    try await call(.listDevices, LocalServiceRPCEmptyArguments())
-  }
-
   public func getStatus() async throws -> ApplicationServiceStatusPayload {
     let data: Data = try await call(.getStatus, LocalServiceRPCEmptyArguments())
     guard let payload = try? JSONDecoder().decode(ApplicationServiceStatusPayload.self, from: data)
@@ -239,24 +235,6 @@ extension ApplicationServiceClient {
       let result = try? JSONDecoder().decode(WirelessControllerDisconnectResult.self, from: data)
     else { throw ApplicationServiceClientError.invalidResponse }
     return result
-  }
-
-  public func runVirtualDeviceSelfTest(
-    seconds: Int
-  ) async throws -> ApplicationServiceVirtualDeviceSelfTestPayload {
-    let clampedSeconds = max(1, min(30, seconds))
-    let data: Data = try await call(
-      .runVirtualDeviceSelfTest,
-      LocalServiceRPCIntArguments(value: clampedSeconds),
-      timeoutSeconds: TimeInterval(clampedSeconds) + applicationServiceSelfTestReplyGraceSeconds
-    )
-    guard
-      let payload = try? JSONDecoder().decode(
-        ApplicationServiceVirtualDeviceSelfTestPayload.self,
-        from: data
-      )
-    else { throw ApplicationServiceClientError.invalidResponse }
-    return payload
   }
 
   public func resetSettings() async throws -> Bool {

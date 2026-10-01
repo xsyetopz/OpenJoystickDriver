@@ -2,37 +2,6 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
-  /// Returns a list of connected device descriptions.
-  public func listDevices() async -> [String] {
-    await deviceManager.connectedDeviceDescriptions().map {
-      Self.deviceDescriptionLine(ApplicationServiceDeviceDescription(snapshot: $0))
-    }
-  }
-
-  static func deviceDescriptionLine(_ device: ApplicationServiceDeviceDescription) -> String {
-    let serialNumber = device.serialNumber == nil ? "none" : "present"
-    let quirks = device.quirks.isEmpty ? "none" : device.quirks.joined(separator: ",")
-    let backends =
-      device.preferredBackends.isEmpty ? "none" : device.preferredBackends.joined(separator: ",")
-    let battery = device.connectionState.map { Self.batteryDescription($0.power) } ?? "unknown"
-    return "\(device.name) (VID:\(device.vendorID)" + " PID:\(device.productID)"
-      + " [\(device.connection)] SN:\(serialNumber))"
-      + (device.interfaceNumber.map { " if=\($0)" } ?? "")
-      + " protocol=\(device.protocolBinding.rawValue)"
-      + " endpoints=in:0x\(String(device.inputEndpoint, radix: 16))"
-      + " out:0x\(String(device.outputEndpoint, radix: 16))"
-      + " setConfig=\(device.needsSetConfiguration)" + " settleMs=\(device.postHandshakeSettleMs)"
-      + " quirks=\(quirks)" + " backends=\(backends)" + " battery=\(battery)"
-      + " session=\(device.sessionState.rawValue)"
-      + " startup=\(device.startupCommandStatus ?? "not-required")"
-  }
-
-  private static func batteryDescription(_ power: ControllerConnectionState.Power) -> String {
-    let percentage = power.battery.percentageText ?? "unknown"
-    let wired = power.wiredPower.map { $0 ? "yes" : "no" } ?? "unknown"
-    return "\(percentage),\(power.charging.rawValue),wired-power-\(wired)"
-  }
-
   /// Returns the current application service status including input monitoring state and
   /// connected devices.
   public func getStatus() async -> Data {
@@ -175,17 +144,6 @@ extension ApplicationServiceServer {
     )
     do { return try JSONEncoder().encode(payload) } catch {
       print("[ApplicationServiceServer] getVirtualDeviceDiagnostics encode error: \(error)")
-      return Data()
-    }
-  }
-
-  public func runVirtualDeviceSelfTest(seconds: Int) async -> Data {
-    let minimumDiagnosticDurationSeconds = 1
-    let maximumDiagnosticDurationSeconds = 30
-    let secs = max(minimumDiagnosticDurationSeconds, min(maximumDiagnosticDurationSeconds, seconds))
-    let payload = await runVirtualDeviceSelfTestInternal(seconds: secs)
-    do { return try JSONEncoder().encode(payload) } catch {
-      print("[ApplicationServiceServer] runVirtualDeviceSelfTest encode error: \(error)")
       return Data()
     }
   }
