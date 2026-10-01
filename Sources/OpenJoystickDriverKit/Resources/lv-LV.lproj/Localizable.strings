@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Izvades pārbaudes";
 "cli.controller.show.label.ownership" = "Piederība";
 "cli.controller.show.label.protocol" = "Protokols";
+"cli.controller.show.label.record" = "Ieraksts";
 "cli.controller.show.label.rumble" = "Vibrācija";
 "cli.controller.show.label.session" = "Sesija";
 "cli.controller.show.label.virtual" = "Virtuālais spēļu kontrolieris";
 "cli.controller.show.none" = "nav";
+"cli.controller.show.record.bundled" = "iekļauts";
+"cli.controller.show.record.none" = "nav (neviens ieraksts neatbilst)";
+"cli.controller.show.record.user" = "jūsu ieraksts, %@";
 "cli.controller.suspend.abstract" = "Pārtraukt kontroliera vadīšanu ar OpenJoystickDriver, līdz to atsākat.";
 "cli.controller.suspend.already" = "%@ jau ir apturēts.";
 "cli.controller.suspend.done" = "%@ apturēts.";

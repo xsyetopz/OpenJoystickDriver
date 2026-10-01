@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Preverjanja izhoda";
 "cli.controller.show.label.ownership" = "Lastništvo";
 "cli.controller.show.label.protocol" = "Protokol";
+"cli.controller.show.label.record" = "Zapis";
 "cli.controller.show.label.rumble" = "Vibriranje";
 "cli.controller.show.label.session" = "Seja";
 "cli.controller.show.label.virtual" = "Navidezni igralni plošček";
 "cli.controller.show.none" = "brez";
+"cli.controller.show.record.bundled" = "vgrajen";
+"cli.controller.show.record.none" = "brez (noben zapis se ne ujema)";
+"cli.controller.show.record.user" = "vaš zapis, %@";
 "cli.controller.suspend.abstract" = "Prepreči, da bi OpenJoystickDriver upravljal krmilnik, dokler ga ne nadaljujete.";
 "cli.controller.suspend.already" = "%@ je že začasno ustavljen.";
 "cli.controller.suspend.done" = "%@ začasno ustavljen.";

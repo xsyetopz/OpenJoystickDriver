@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "輸出檢查";
 "cli.controller.show.label.ownership" = "擁有者";
 "cli.controller.show.label.protocol" = "通訊協定";
+"cli.controller.show.label.record" = "記錄";
 "cli.controller.show.label.rumble" = "震動";
 "cli.controller.show.label.session" = "工作階段";
 "cli.controller.show.label.virtual" = "虛擬遊戲控制器";
 "cli.controller.show.none" = "無";
+"cli.controller.show.record.bundled" = "內置";
+"cli.controller.show.record.none" = "無（沒有相符的記錄）";
+"cli.controller.show.record.user" = "您的記錄，%@";
 "cli.controller.suspend.abstract" = "在你恢復之前，停止 OpenJoystickDriver 驅動控制器。";
 "cli.controller.suspend.already" = "%@ 已經暫停。";
 "cli.controller.suspend.done" = "已暫停 %@。";

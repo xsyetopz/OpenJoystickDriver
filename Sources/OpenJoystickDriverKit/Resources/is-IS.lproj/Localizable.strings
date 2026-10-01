@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Úttaksathuganir";
 "cli.controller.show.label.ownership" = "Eignarhald";
 "cli.controller.show.label.protocol" = "Samskiptareglur";
+"cli.controller.show.label.record" = "Færsla";
 "cli.controller.show.label.rumble" = "Titringur";
 "cli.controller.show.label.session" = "Lota";
 "cli.controller.show.label.virtual" = "Sýndarleikjastýring";
 "cli.controller.show.none" = "ekkert";
+"cli.controller.show.record.bundled" = "innbyggð";
+"cli.controller.show.record.none" = "ekkert (engin færsla passar)";
+"cli.controller.show.record.user" = "þín færsla, %@";
 "cli.controller.suspend.abstract" = "Láta OpenJoystickDriver hætta að stjórna stýringu þar til þú virkjar hana aftur.";
 "cli.controller.suspend.already" = "%@ er þegar í bið.";
 "cli.controller.suspend.done" = "%@ sett í bið.";

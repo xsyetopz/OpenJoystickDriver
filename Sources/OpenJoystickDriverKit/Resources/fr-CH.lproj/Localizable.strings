@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Vérifications de sortie";
 "cli.controller.show.label.ownership" = "Propriété";
 "cli.controller.show.label.protocol" = "Protocole";
+"cli.controller.show.label.record" = "Fiche";
 "cli.controller.show.label.rumble" = "Vibration";
 "cli.controller.show.label.session" = "Session";
 "cli.controller.show.label.virtual" = "Manette virtuelle";
 "cli.controller.show.none" = "aucun";
+"cli.controller.show.record.bundled" = "intégrée";
+"cli.controller.show.record.none" = "aucune (aucune fiche ne correspond)";
+"cli.controller.show.record.user" = "votre fiche, %@";
 "cli.controller.suspend.abstract" = "Empêche OpenJoystickDriver de piloter une manette jusqu’à ce que vous la repreniez.";
 "cli.controller.suspend.already" = "%@ est déjà suspendue.";
 "cli.controller.suspend.done" = "%@ est suspendue.";

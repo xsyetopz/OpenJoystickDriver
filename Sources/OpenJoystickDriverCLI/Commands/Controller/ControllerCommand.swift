@@ -112,7 +112,10 @@ struct ControllerShowCommand: AsyncParsableCommand {
     try await global.run {
       let selector = controller
       let device = try await ServiceConnection.request { try await selector.resolve(with: $0) }
-      let report = ControllerShowReport(device)
+      let record = RecordStore.load().records[
+        ControllerIdentity(vendorID: device.vendorID, productID: device.productID)
+      ]
+      let report = ControllerShowReport(device, record: record)
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(report)
       case .plain: CLIOutput.plain(Self.plainRows(report.controller))
@@ -132,11 +135,24 @@ struct ControllerShowCommand: AsyncParsableCommand {
       ["rumble-motors", detail.capabilities.rumbleMotors.joined(separator: ",")],
       ["lighting", detail.capabilities.lightingFeatures.joined(separator: ",")],
     ]
+    rows.append(["record", detail.record?.layer ?? "none", detail.record?.file ?? ""])
     if let virtual = detail.virtual {
       rows.append(["virtual-profile", virtual.profile ?? "", virtual.source ?? ""])
     }
     rows += detail.outputChecks.map { ["output-check", $0.id, $0.command] }
     return rows
+  }
+
+  /// The Record row: the layer and the user file, or that no record matches the model.
+  private static func recordText(_ record: ControllerShowReport.Record?) -> String {
+    guard let record else {
+      return CLILocalized.text("cli.controller.show.record.none", "none (no record matches)")
+    }
+    switch record.file {
+    case let file?:
+      return CLILocalized.format("cli.controller.show.record.user", "your record, %@", file)
+    case nil: return CLILocalized.text("cli.controller.show.record.bundled", "bundled")
+    }
   }
 
   private static func printHuman(_ detail: ControllerShowReport.Detail) {
@@ -163,6 +179,7 @@ struct ControllerShowCommand: AsyncParsableCommand {
         "\(detail.ownership.discoverySource), \(detail.ownership.physical), "
           + "HID \(detail.ownership.hidInput)"
       ),
+      (CLILocalized.text("cli.controller.show.label.record", "Record"), recordText(detail.record)),
       (
         CLILocalized.text("cli.controller.show.label.controls", "Controls"),
         list(detail.capabilities.controls)

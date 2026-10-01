@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Tulostarkistukset";
 "cli.controller.show.label.ownership" = "Omistajuus";
 "cli.controller.show.label.protocol" = "Protokolla";
+"cli.controller.show.label.record" = "Tietue";
 "cli.controller.show.label.rumble" = "Värinä";
 "cli.controller.show.label.session" = "Istunto";
 "cli.controller.show.label.virtual" = "Virtuaalinen peliohjain";
 "cli.controller.show.none" = "ei mitään";
+"cli.controller.show.record.bundled" = "mukana tuleva";
+"cli.controller.show.record.none" = "ei mitään (mikään tietue ei täsmää)";
+"cli.controller.show.record.user" = "oma tietue, %@";
 "cli.controller.suspend.abstract" = "Estä OpenJoystickDriveria ohjaamasta ohjainta, kunnes jatkat sen käyttöä.";
 "cli.controller.suspend.already" = "%@ on jo keskeytetty.";
 "cli.controller.suspend.done" = "Keskeytettiin: %@.";

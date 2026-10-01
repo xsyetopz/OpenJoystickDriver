@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "בדיקות פלט";
 "cli.controller.show.label.ownership" = "בעלות";
 "cli.controller.show.label.protocol" = "פרוטוקול";
+"cli.controller.show.label.record" = "רשומה";
 "cli.controller.show.label.rumble" = "רטט";
 "cli.controller.show.label.session" = "הפעלה";
 "cli.controller.show.label.virtual" = "שלט משחק וירטואלי";
 "cli.controller.show.none" = "אין";
+"cli.controller.show.record.bundled" = "מובנה";
+"cli.controller.show.record.none" = "אין (אין רשומה תואמת)";
+"cli.controller.show.record.user" = "הרשומה שלך, %@";
 "cli.controller.suspend.abstract" = "מניעת שליטה של OpenJoystickDriver בבקר עד שתחדש אותה.";
 "cli.controller.suspend.already" = "%@ כבר מושהה.";
 "cli.controller.suspend.done" = "%@ הושהה.";

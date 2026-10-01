@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Utdatakontroller";
 "cli.controller.show.label.ownership" = "Eierskap";
 "cli.controller.show.label.protocol" = "Protokoll";
+"cli.controller.show.label.record" = "Oppføring";
 "cli.controller.show.label.rumble" = "Vibrasjon";
 "cli.controller.show.label.session" = "Økt";
 "cli.controller.show.label.virtual" = "Virtuell gamepad";
 "cli.controller.show.none" = "ingen";
+"cli.controller.show.record.bundled" = "medfølgende";
+"cli.controller.show.record.none" = "ingen (ingen oppføring samsvarer)";
+"cli.controller.show.record.user" = "oppføringen din, %@";
 "cli.controller.suspend.abstract" = "Hindre OpenJoystickDriver i å styre en kontroller til du gjenopptar den.";
 "cli.controller.suspend.already" = "%@ er allerede suspendert.";
 "cli.controller.suspend.done" = "Suspenderte %@.";

@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "出力チェック";
 "cli.controller.show.label.ownership" = "所有状態";
 "cli.controller.show.label.protocol" = "プロトコル";
+"cli.controller.show.label.record" = "レコード";
 "cli.controller.show.label.rumble" = "振動";
 "cli.controller.show.label.session" = "セッション";
 "cli.controller.show.label.virtual" = "仮想ゲームパッド";
 "cli.controller.show.none" = "なし";
+"cli.controller.show.record.bundled" = "同梱";
+"cli.controller.show.record.none" = "なし (一致するレコードはありません)";
+"cli.controller.show.record.user" = "ユーザーのレコード、%@";
 "cli.controller.suspend.abstract" = "再開するまで、OpenJoystickDriver によるコントローラの制御を止めます。";
 "cli.controller.suspend.already" = "%@ はすでに一時停止中です。";
 "cli.controller.suspend.done" = "%@ を一時停止しました。";

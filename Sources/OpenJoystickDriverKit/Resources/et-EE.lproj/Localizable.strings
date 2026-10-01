@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Väljundikontrollid";
 "cli.controller.show.label.ownership" = "Omand";
 "cli.controller.show.label.protocol" = "Protokoll";
+"cli.controller.show.label.record" = "Kirje";
 "cli.controller.show.label.rumble" = "Värin";
 "cli.controller.show.label.session" = "Seanss";
 "cli.controller.show.label.virtual" = "Virtuaalne mängupult";
 "cli.controller.show.none" = "puudub";
+"cli.controller.show.record.bundled" = "kaasasolev";
+"cli.controller.show.record.none" = "puudub (sobivat kirjet pole)";
+"cli.controller.show.record.user" = "oma kirje, %@";
 "cli.controller.suspend.abstract" = "Takista OpenJoystickDriveril kontrollerit juhtimast, kuni selle jätkad.";
 "cli.controller.suspend.already" = "%@ on juba peatatud.";
 "cli.controller.suspend.done" = "%@ peatati.";

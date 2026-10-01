@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "የውጤት ፍተሻዎች";
 "cli.controller.show.label.ownership" = "ባለቤትነት";
 "cli.controller.show.label.protocol" = "ፕሮቶኮል";
+"cli.controller.show.label.record" = "መዝገብ";
 "cli.controller.show.label.rumble" = "ንዝረት";
 "cli.controller.show.label.session" = "ክፍለ ጊዜ";
 "cli.controller.show.label.virtual" = "ምናባዊ የጨዋታ መቆጣጠሪያ";
 "cli.controller.show.none" = "ምንም";
+"cli.controller.show.record.bundled" = "አብሮ የተካተተ";
+"cli.controller.show.record.none" = "ምንም (ምንም የሚዛመድ መዝገብ የለም)";
+"cli.controller.show.record.user" = "የእርስዎ መዝገብ፣ %@";
 "cli.controller.suspend.abstract" = "እስኪቀጥሉት ድረስ OpenJoystickDriver መቆጣጠሪያን እንዳያንቀሳቅስ ያቁሙ።";
 "cli.controller.suspend.already" = "%@ አስቀድሞ ታግዷል።";
 "cli.controller.suspend.done" = "%@ ታግዷል።";

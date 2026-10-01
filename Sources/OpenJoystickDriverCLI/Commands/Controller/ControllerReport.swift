@@ -62,6 +62,17 @@ struct ControllerShowReport: Encodable, Equatable {
     let unavailable: Bool
   }
 
+  /// The effective record for the controller's model, in the layer and file shape of `record list`.
+  struct Record: Encodable, Equatable {
+    let layer: String
+    let file: String?
+
+    init(_ record: ControllerRecord) {
+      layer = record.layer.rawValue
+      file = record.userFile?.path
+    }
+  }
+
   struct OutputCheck: Encodable, Equatable {
     let id: String
     let command: String
@@ -82,6 +93,7 @@ struct ControllerShowReport: Encodable, Equatable {
     let inputHealth: InputHealth
     let ownership: Ownership
     let quirks: [String]
+    let record: Record?
     let capabilities: Capabilities
     let virtual: Virtual?
     let outputChecks: [OutputCheck]
@@ -89,7 +101,8 @@ struct ControllerShowReport: Encodable, Equatable {
 
   let controller: Detail
 
-  init(_ device: ApplicationServiceDeviceDescription) {
+  /// `record` is the effective record of the device's model, if there is one.
+  init(_ device: ApplicationServiceDeviceDescription, record: ControllerRecord?) {
     let output = device.physicalOutputCapabilities
     controller = Detail(
       id: device.runtimeIdentifier,
@@ -115,6 +128,7 @@ struct ControllerShowReport: Encodable, Equatable {
         duplicateExposureRisk: device.duplicateExposureRisk.rawValue
       ),
       quirks: device.quirks,
+      record: record.map(Record.init),
       capabilities: Capabilities(
         controls: ControlID.allCases.filter(device.capabilities.controls.contains).map(\.rawValue),
         touchContactCount: Int(device.capabilities.touchContactCount),

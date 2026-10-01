@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "출력 점검";
 "cli.controller.show.label.ownership" = "소유권";
 "cli.controller.show.label.protocol" = "프로토콜";
+"cli.controller.show.label.record" = "레코드";
 "cli.controller.show.label.rumble" = "진동";
 "cli.controller.show.label.session" = "세션";
 "cli.controller.show.label.virtual" = "가상 게임패드";
 "cli.controller.show.none" = "없음";
+"cli.controller.show.record.bundled" = "번들";
+"cli.controller.show.record.none" = "없음 (일치하는 레코드 없음)";
+"cli.controller.show.record.user" = "사용자 레코드, %@";
 "cli.controller.suspend.abstract" = "재개할 때까지 OpenJoystickDriver가 컨트롤러를 구동하지 않게 합니다.";
 "cli.controller.suspend.already" = "%@은(는) 이미 일시 중단되었습니다.";
 "cli.controller.suspend.done" = "%@ 일시 중단했습니다.";

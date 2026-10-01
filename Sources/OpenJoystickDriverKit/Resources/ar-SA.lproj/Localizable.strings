@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "فحوص الإخراج";
 "cli.controller.show.label.ownership" = "الملكية";
 "cli.controller.show.label.protocol" = "البروتوكول";
+"cli.controller.show.label.record" = "السجل";
 "cli.controller.show.label.rumble" = "الاهتزاز";
 "cli.controller.show.label.session" = "الجلسة";
 "cli.controller.show.label.virtual" = "وحدة تحكم افتراضية";
 "cli.controller.show.none" = "لا شيء";
+"cli.controller.show.record.bundled" = "مضمّن";
+"cli.controller.show.record.none" = "لا شيء (لا يوجد سجل مطابق)";
+"cli.controller.show.record.user" = "سجلك، %@";
 "cli.controller.suspend.abstract" = "أوقف تحكم OpenJoystickDriver في وحدة تحكم إلى أن تستأنفه.";
 "cli.controller.suspend.already" = "%@ معلّقة بالفعل.";
 "cli.controller.suspend.done" = "تم تعليق %@.";

@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Έλεγχοι εξόδου";
 "cli.controller.show.label.ownership" = "Κυριότητα";
 "cli.controller.show.label.protocol" = "Πρωτόκολλο";
+"cli.controller.show.label.record" = "Εγγραφή";
 "cli.controller.show.label.rumble" = "Δόνηση";
 "cli.controller.show.label.session" = "Συνεδρία";
 "cli.controller.show.label.virtual" = "Εικονικό gamepad";
 "cli.controller.show.none" = "κανένα";
+"cli.controller.show.record.bundled" = "ενσωματωμένη";
+"cli.controller.show.record.none" = "καμία (καμία εγγραφή δεν ταιριάζει)";
+"cli.controller.show.record.user" = "η εγγραφή σας, %@";
 "cli.controller.suspend.abstract" = "Εμποδίζει το OpenJoystickDriver να χειρίζεται ένα χειριστήριο μέχρι να το συνεχίσετε.";
 "cli.controller.suspend.already" = "Το %@ είναι ήδη σε αναστολή.";
 "cli.controller.suspend.done" = "Το %@ τέθηκε σε αναστολή.";

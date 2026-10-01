@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Перевірки виводу";
 "cli.controller.show.label.ownership" = "Належність";
 "cli.controller.show.label.protocol" = "Протокол";
+"cli.controller.show.label.record" = "Запис";
 "cli.controller.show.label.rumble" = "Вібрація";
 "cli.controller.show.label.session" = "Сеанс";
 "cli.controller.show.label.virtual" = "Віртуальний геймпад";
 "cli.controller.show.none" = "немає";
+"cli.controller.show.record.bundled" = "вбудований";
+"cli.controller.show.record.none" = "немає (відповідного запису немає)";
+"cli.controller.show.record.user" = "ваш запис, %@";
 "cli.controller.suspend.abstract" = "Зупиняє керування контролером з боку OpenJoystickDriver, доки ви його не відновите.";
 "cli.controller.suspend.already" = "%@ уже призупинено.";
 "cli.controller.suspend.done" = "%@ призупинено.";

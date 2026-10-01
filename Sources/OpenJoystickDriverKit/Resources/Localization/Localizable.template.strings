@@ -1144,10 +1144,14 @@
 "cli.controller.show.label.output_checks" = "Output checks";
 "cli.controller.show.label.ownership" = "Ownership";
 "cli.controller.show.label.protocol" = "Protocol";
+"cli.controller.show.label.record" = "Record";
 "cli.controller.show.label.rumble" = "Rumble";
 "cli.controller.show.label.session" = "Session";
 "cli.controller.show.label.virtual" = "Virtual gamepad";
 "cli.controller.show.none" = "none";
+"cli.controller.show.record.bundled" = "bundled";
+"cli.controller.show.record.none" = "none (no record matches)";
+"cli.controller.show.record.user" = "your record, %@";
 "cli.controller.suspend.abstract" = "Stop OpenJoystickDriver from driving a controller until you resume it.";
 "cli.controller.suspend.already" = "%@ is already suspended.";
 "cli.controller.suspend.done" = "Suspended %@.";

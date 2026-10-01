@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Comprobaciones de salida";
 "cli.controller.show.label.ownership" = "Propiedad";
 "cli.controller.show.label.protocol" = "Protocolo";
+"cli.controller.show.label.record" = "Registro";
 "cli.controller.show.label.rumble" = "Vibración";
 "cli.controller.show.label.session" = "Sesión";
 "cli.controller.show.label.virtual" = "Mando virtual";
 "cli.controller.show.none" = "ninguno";
+"cli.controller.show.record.bundled" = "incluido";
+"cli.controller.show.record.none" = "ninguno (ningún registro coincide)";
+"cli.controller.show.record.user" = "tu registro, %@";
 "cli.controller.suspend.abstract" = "Dejar de controlar un mando con OpenJoystickDriver hasta que lo reanudes.";
 "cli.controller.suspend.already" = "%@ ya está suspendido.";
 "cli.controller.suspend.done" = "%@ suspendido.";

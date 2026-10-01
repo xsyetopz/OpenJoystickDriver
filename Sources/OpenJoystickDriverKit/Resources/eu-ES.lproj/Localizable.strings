@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Irteera-egiaztapenak";
 "cli.controller.show.label.ownership" = "Jabetza";
 "cli.controller.show.label.protocol" = "Protokoloa";
+"cli.controller.show.label.record" = "Erregistroa";
 "cli.controller.show.label.rumble" = "Dardara";
 "cli.controller.show.label.session" = "Saioa";
 "cli.controller.show.label.virtual" = "Gamepad birtuala";
 "cli.controller.show.none" = "bat ere ez";
+"cli.controller.show.record.bundled" = "barnekoa";
+"cli.controller.show.record.none" = "bat ere ez (ez dago erregistro egokirik)";
+"cli.controller.show.record.user" = "zure erregistroa, %@";
 "cli.controller.suspend.abstract" = "Eragotzi OpenJoystickDriver-i agintea kontrolatzea, berriro hasi arte.";
 "cli.controller.suspend.already" = "%@ etenda dago dagoeneko.";
 "cli.controller.suspend.done" = "%@ eten da.";

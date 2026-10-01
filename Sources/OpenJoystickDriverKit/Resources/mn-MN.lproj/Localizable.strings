@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Гаралтын шалгалт";
 "cli.controller.show.label.ownership" = "Эзэмшил";
 "cli.controller.show.label.protocol" = "Протокол";
+"cli.controller.show.label.record" = "Бүртгэл";
 "cli.controller.show.label.rumble" = "Чичиргээ";
 "cli.controller.show.label.session" = "Сесс";
 "cli.controller.show.label.virtual" = "Виртуал тоглоомын удирдлага";
 "cli.controller.show.none" = "алга";
+"cli.controller.show.record.bundled" = "багтсан";
+"cli.controller.show.record.none" = "алга (тохирох бүртгэл алга)";
+"cli.controller.show.record.user" = "таны бүртгэл, %@";
 "cli.controller.suspend.abstract" = "Үргэлжлүүлтэл удирдлагыг OpenJoystickDriver-аар удирдахыг зогсоох.";
 "cli.controller.suspend.already" = "%@ аль хэдийн түр зогссон.";
 "cli.controller.suspend.done" = "%@-г түр зогсоолоо.";

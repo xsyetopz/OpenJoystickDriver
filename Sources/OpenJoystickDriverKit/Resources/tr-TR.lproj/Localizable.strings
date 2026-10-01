@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Çıkış denetimleri";
 "cli.controller.show.label.ownership" = "Sahiplik";
 "cli.controller.show.label.protocol" = "Protokol";
+"cli.controller.show.label.record" = "Kayıt";
 "cli.controller.show.label.rumble" = "Titreşim";
 "cli.controller.show.label.session" = "Oturum";
 "cli.controller.show.label.virtual" = "Sanal oyun kumandası";
 "cli.controller.show.none" = "yok";
+"cli.controller.show.record.bundled" = "birlikte gelen";
+"cli.controller.show.record.none" = "yok (eşleşen kayıt yok)";
+"cli.controller.show.record.user" = "kaydınız, %@";
 "cli.controller.suspend.abstract" = "OpenJoystickDriver’ın bir kontrolcüyü siz sürdürene kadar yönetmesini durdurur.";
 "cli.controller.suspend.already" = "%@ zaten askıda.";
 "cli.controller.suspend.done" = "%@ askıya alındı.";

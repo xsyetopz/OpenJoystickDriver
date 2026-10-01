@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Seiceálacha aschuir";
 "cli.controller.show.label.ownership" = "Úinéireacht";
 "cli.controller.show.label.protocol" = "Prótacal";
+"cli.controller.show.label.record" = "Taifead";
 "cli.controller.show.label.rumble" = "Creathadh";
 "cli.controller.show.label.session" = "Seisiún";
 "cli.controller.show.label.virtual" = "Gamepad fíorúil";
 "cli.controller.show.none" = "ceann ar bith";
+"cli.controller.show.record.bundled" = "san áireamh";
+"cli.controller.show.record.none" = "ceann ar bith (níl taifead ar bith ag teacht leis)";
+"cli.controller.show.record.user" = "do thaifead, %@";
 "cli.controller.suspend.abstract" = "Stop OpenJoystickDriver ó rialtóir a thiomáint go dtí go n-atosóidh tú é.";
 "cli.controller.suspend.already" = "Tá %@ ar fionraí cheana.";
 "cli.controller.suspend.done" = "Cuireadh %@ ar fionraí.";

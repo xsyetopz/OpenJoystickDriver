@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Utdatakontroller";
 "cli.controller.show.label.ownership" = "Ägarskap";
 "cli.controller.show.label.protocol" = "Protokoll";
+"cli.controller.show.label.record" = "Post";
 "cli.controller.show.label.rumble" = "Vibration";
 "cli.controller.show.label.session" = "Session";
 "cli.controller.show.label.virtual" = "Virtuell handkontroll";
 "cli.controller.show.none" = "ingen";
+"cli.controller.show.record.bundled" = "medföljande";
+"cli.controller.show.record.none" = "ingen (ingen post matchar)";
+"cli.controller.show.record.user" = "din post, %@";
 "cli.controller.suspend.abstract" = "Hindrar OpenJoystickDriver från att styra en kontroll tills du återupptar den.";
 "cli.controller.suspend.already" = "%@ är redan pausad.";
 "cli.controller.suspend.done" = "Pausade %@.";

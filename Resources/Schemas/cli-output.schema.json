@@ -412,6 +412,25 @@
 								"type": "string"
 							}
 						},
+						"record": {
+							"description": "The effective record for the controller's model. Absent when no record matches.",
+							"type": "object",
+							"required": [
+								"layer"
+							],
+							"additionalProperties": false,
+							"properties": {
+								"file": {
+									"type": "string"
+								},
+								"layer": {
+									"enum": [
+										"bundled",
+										"user"
+									]
+								}
+							}
+						},
 						"session": {
 							"enum": [
 								"active",

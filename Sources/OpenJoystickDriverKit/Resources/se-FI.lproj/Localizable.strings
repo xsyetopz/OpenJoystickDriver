@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Olggosbidjangeahččalemiid";
 "cli.controller.show.label.ownership" = "Eaiggáduššan";
 "cli.controller.show.label.protocol" = "Protokolla";
+"cli.controller.show.label.record" = "Čálus";
 "cli.controller.show.label.rumble" = "Vibrerem";
 "cli.controller.show.label.session" = "Sešuvdna";
 "cli.controller.show.label.virtual" = "Virtuála speallanbáddi";
 "cli.controller.show.none" = "ii maidege";
+"cli.controller.show.record.bundled" = "mielde boahtti";
+"cli.controller.show.record.none" = "ii maidege (ii leat heivvolaš čálusa)";
+"cli.controller.show.record.user" = "du čálus, %@";
 "cli.controller.suspend.abstract" = "Bisut OpenJoystickDrivera stivrema stivrejeaddji dassážii go joatkkat dan.";
 "cli.controller.suspend.already" = "%@ lea juo bisuhuvvon.";
 "cli.controller.suspend.done" = "%@ bisuhuvvui.";

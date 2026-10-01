@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Провере излаза";
 "cli.controller.show.label.ownership" = "Власништво";
 "cli.controller.show.label.protocol" = "Протокол";
+"cli.controller.show.label.record" = "Запис";
 "cli.controller.show.label.rumble" = "Вибрација";
 "cli.controller.show.label.session" = "Сесија";
 "cli.controller.show.label.virtual" = "Виртуелни гејмпад";
 "cli.controller.show.none" = "нема";
+"cli.controller.show.record.bundled" = "уграђен";
+"cli.controller.show.record.none" = "нема (ниједан запис не одговара)";
+"cli.controller.show.record.user" = "ваш запис, %@";
 "cli.controller.suspend.abstract" = "Спречи OpenJoystickDriver да управља контролером док га не наставите.";
 "cli.controller.suspend.already" = "%@ је већ суспендован.";
 "cli.controller.suspend.done" = "%@ је суспендован.";

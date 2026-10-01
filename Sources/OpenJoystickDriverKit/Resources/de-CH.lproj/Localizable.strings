@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Ausgabeprüfungen";
 "cli.controller.show.label.ownership" = "Besitz";
 "cli.controller.show.label.protocol" = "Protokoll";
+"cli.controller.show.label.record" = "Datensatz";
 "cli.controller.show.label.rumble" = "Vibration";
 "cli.controller.show.label.session" = "Sitzung";
 "cli.controller.show.label.virtual" = "Virtuelles Gamepad";
 "cli.controller.show.none" = "keine";
+"cli.controller.show.record.bundled" = "mitgeliefert";
+"cli.controller.show.record.none" = "keiner (kein Datensatz passt)";
+"cli.controller.show.record.user" = "dein Datensatz, %@";
 "cli.controller.suspend.abstract" = "Hält OpenJoystickDriver davon ab, einen Controller anzusteuern, bis du ihn fortsetzt.";
 "cli.controller.suspend.already" = "%@ ist bereits angehalten.";
 "cli.controller.suspend.done" = "%@ angehalten.";

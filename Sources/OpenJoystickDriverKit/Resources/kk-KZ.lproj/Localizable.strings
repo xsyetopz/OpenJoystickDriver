@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Шығару тексерулері";
 "cli.controller.show.label.ownership" = "Иелік";
 "cli.controller.show.label.protocol" = "Протокол";
+"cli.controller.show.label.record" = "Жазба";
 "cli.controller.show.label.rumble" = "Діріл";
 "cli.controller.show.label.session" = "Сеанс";
 "cli.controller.show.label.virtual" = "Виртуалды геймпад";
 "cli.controller.show.none" = "жоқ";
+"cli.controller.show.record.bundled" = "кірістірілген";
+"cli.controller.show.record.none" = "жоқ (сәйкес жазба жоқ)";
+"cli.controller.show.record.user" = "сіздің жазбаңыз, %@";
 "cli.controller.suspend.abstract" = "Жалғастырғанша OpenJoystickDriver-дің контроллерді басқаруын тоқтату.";
 "cli.controller.suspend.already" = "%@ қазірдің өзінде тоқтатылған.";
 "cli.controller.suspend.done" = "%@ тоқтатылды.";

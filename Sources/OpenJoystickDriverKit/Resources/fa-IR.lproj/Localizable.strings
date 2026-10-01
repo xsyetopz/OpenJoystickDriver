@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "بررسی‌های خروجی";
 "cli.controller.show.label.ownership" = "مالکیت";
 "cli.controller.show.label.protocol" = "پروتکل";
+"cli.controller.show.label.record" = "رکورد";
 "cli.controller.show.label.rumble" = "لرزش";
 "cli.controller.show.label.session" = "نشست";
 "cli.controller.show.label.virtual" = "گیم‌پد مجازی";
 "cli.controller.show.none" = "هیچ";
+"cli.controller.show.record.bundled" = "همراه برنامه";
+"cli.controller.show.record.none" = "هیچ (رکوردی مطابقت ندارد)";
+"cli.controller.show.record.user" = "رکورد شما، %@";
 "cli.controller.suspend.abstract" = "جلوگیری از اداره شدن یک کنترلر توسط OpenJoystickDriver تا زمانی که آن را از سر بگیرید.";
 "cli.controller.suspend.already" = "%@ از قبل معلق است.";
 "cli.controller.suspend.done" = "%@ معلق شد.";

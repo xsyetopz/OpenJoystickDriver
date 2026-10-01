@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Uitvoertoetse";
 "cli.controller.show.label.ownership" = "Eienaarskap";
 "cli.controller.show.label.protocol" = "Protokol";
+"cli.controller.show.label.record" = "Rekord";
 "cli.controller.show.label.rumble" = "Vibrasie";
 "cli.controller.show.label.session" = "Sessie";
 "cli.controller.show.label.virtual" = "Virtuele gamepad";
 "cli.controller.show.none" = "geen";
+"cli.controller.show.record.bundled" = "gebundel";
+"cli.controller.show.record.none" = "geen (geen rekord pas)";
+"cli.controller.show.record.user" = "jou rekord, %@";
 "cli.controller.suspend.abstract" = "Hou op om ’n kontroleerder met OpenJoystickDriver aan te dryf totdat jy dit hervat.";
 "cli.controller.suspend.already" = "%@ is reeds opgeskort.";
 "cli.controller.suspend.done" = "%@ is opgeskort.";

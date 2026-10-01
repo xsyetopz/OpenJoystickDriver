@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Išvesties patikros";
 "cli.controller.show.label.ownership" = "Nuosavybė";
 "cli.controller.show.label.protocol" = "Protokolas";
+"cli.controller.show.label.record" = "Įrašas";
 "cli.controller.show.label.rumble" = "Vibracija";
 "cli.controller.show.label.session" = "Seansas";
 "cli.controller.show.label.virtual" = "Virtualus žaidimų pultas";
 "cli.controller.show.none" = "nėra";
+"cli.controller.show.record.bundled" = "įtrauktas";
+"cli.controller.show.record.none" = "nėra (joks įrašas neatitinka)";
+"cli.controller.show.record.user" = "jūsų įrašas, %@";
 "cli.controller.suspend.abstract" = "Neleisti OpenJoystickDriver valdyti valdiklio, kol jį atnaujinsite.";
 "cli.controller.suspend.already" = "%@ jau sustabdytas.";
 "cli.controller.suspend.done" = "%@ sustabdytas.";

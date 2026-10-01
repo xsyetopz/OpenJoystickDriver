@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "आउटपुट जाँच";
 "cli.controller.show.label.ownership" = "स्वामित्व";
 "cli.controller.show.label.protocol" = "प्रोटोकॉल";
+"cli.controller.show.label.record" = "रिकॉर्ड";
 "cli.controller.show.label.rumble" = "रंबल";
 "cli.controller.show.label.session" = "सेशन";
 "cli.controller.show.label.virtual" = "वर्चुअल गेमपैड";
 "cli.controller.show.none" = "कोई नहीं";
+"cli.controller.show.record.bundled" = "बंडल किया गया";
+"cli.controller.show.record.none" = "कोई नहीं (कोई रिकॉर्ड मेल नहीं खाता)";
+"cli.controller.show.record.user" = "आपका रिकॉर्ड, %@";
 "cli.controller.suspend.abstract" = "फिर से शुरू करने तक OpenJoystickDriver को कंट्रोलर चलाने से रोकें।";
 "cli.controller.suspend.already" = "%@ पहले से निलंबित है।";
 "cli.controller.suspend.done" = "%@ निलंबित हो गया।";

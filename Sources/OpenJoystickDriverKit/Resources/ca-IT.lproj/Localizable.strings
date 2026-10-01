@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Comprovacions de sortida";
 "cli.controller.show.label.ownership" = "Propietat";
 "cli.controller.show.label.protocol" = "Protocol";
+"cli.controller.show.label.record" = "Registre";
 "cli.controller.show.label.rumble" = "Vibració";
 "cli.controller.show.label.session" = "Sessió";
 "cli.controller.show.label.virtual" = "Comandament virtual";
 "cli.controller.show.none" = "cap";
+"cli.controller.show.record.bundled" = "inclòs";
+"cli.controller.show.record.none" = "cap (cap registre coincideix)";
+"cli.controller.show.record.user" = "el vostre registre, %@";
 "cli.controller.suspend.abstract" = "Evita que OpenJoystickDriver gestioni un comandament fins que el represeu.";
 "cli.controller.suspend.already" = "%@ ja està suspès.";
 "cli.controller.suspend.done" = "S’ha suspès %@.";

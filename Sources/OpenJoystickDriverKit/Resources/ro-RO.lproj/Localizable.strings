@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Verificări de ieșire";
 "cli.controller.show.label.ownership" = "Proprietate";
 "cli.controller.show.label.protocol" = "Protocol";
+"cli.controller.show.label.record" = "Înregistrare";
 "cli.controller.show.label.rumble" = "Vibrații";
 "cli.controller.show.label.session" = "Sesiune";
 "cli.controller.show.label.virtual" = "Gamepad virtual";
 "cli.controller.show.none" = "niciunul";
+"cli.controller.show.record.bundled" = "inclusă";
+"cli.controller.show.record.none" = "niciuna (nicio înregistrare nu se potrivește)";
+"cli.controller.show.record.user" = "înregistrarea dvs., %@";
 "cli.controller.suspend.abstract" = "Oprește OpenJoystickDriver să controleze un controller până îl reluați.";
 "cli.controller.suspend.already" = "%@ este deja suspendat.";
 "cli.controller.suspend.done" = "%@ a fost suspendat.";

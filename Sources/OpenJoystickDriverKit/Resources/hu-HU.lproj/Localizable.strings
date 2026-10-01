@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Kimeneti ellenőrzések";
 "cli.controller.show.label.ownership" = "Tulajdonos";
 "cli.controller.show.label.protocol" = "Protokoll";
+"cli.controller.show.label.record" = "Rekord";
 "cli.controller.show.label.rumble" = "Rezgés";
 "cli.controller.show.label.session" = "Munkamenet";
 "cli.controller.show.label.virtual" = "Virtuális gamepad";
 "cli.controller.show.none" = "nincs";
+"cli.controller.show.record.bundled" = "beépített";
+"cli.controller.show.record.none" = "nincs (nincs egyező rekord)";
+"cli.controller.show.record.user" = "saját rekord, %@";
 "cli.controller.suspend.abstract" = "Megakadályozza, hogy az OpenJoystickDriver irányítson egy vezérlőt, amíg nem folytatja.";
 "cli.controller.suspend.already" = "%@ már fel van függesztve.";
 "cli.controller.suspend.done" = "%@ felfüggesztve.";

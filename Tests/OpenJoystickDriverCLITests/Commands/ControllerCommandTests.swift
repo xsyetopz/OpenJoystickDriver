@@ -183,6 +183,88 @@ struct ControllerCommandTests {
     #expect(controller["id"] as? String == "pad-1")
   }
 
+  /// `controller show` for a `366C:0005` pad, with the user directory holding `userRecord` if any.
+  private static func show(
+    _ flags: [String],
+    userRecord: Data? = nil,
+    vendorID: UInt16 = 0x366C,
+    productID: UInt16 = 0x0005
+  ) async throws -> (result: CLIRun, file: String) {
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "ojd-show-\(UUID().uuidString)",
+      isDirectory: true
+    )
+    defer { try? FileManager.default.removeItem(at: directory) }
+    let file = directory.appendingPathComponent("366c-0005.json")
+    if let userRecord {
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      try userRecord.write(to: file)
+    }
+    let service = try FakeService(devices: [
+      FakeService.device(id: "pad-1", vendorID: vendorID, productID: productID)
+    ])
+    let result = await RecordStore.$directory.withValue(directory) {
+      await service.run(["controller", "show", "pad-1"] + flags)
+    }
+    return (result, "\(directory.lastPathComponent)/366c-0005.json")
+  }
+
+  /// The value of the `Record` row of the human `controller show` output.
+  private static func recordRow(_ result: CLIRun) -> String? {
+    result.standardOutput.split(separator: "\n").first { $0.hasPrefix("Record ") }
+      .map { $0.dropFirst("Record".count).trimmingCharacters(in: .whitespaces) }
+  }
+
+  private static let userPatch = Data(
+    """
+    {"$schema": "\(ControllerRecordSet.overrideSchemaID)", "operation": "patch",
+     "vendorID": 13932, "productID": 5, "set": {"usb": {"postHandshakeSettleMs": 5}}}
+    """.utf8
+  )
+
+  @Test
+  func showReportsABundledRecord() async throws {
+    let json = try await Self.show(["--json"])
+    let human = try await Self.show([])
+    let plain = try await Self.show(["--plain"])
+
+    #expect(json.result.code == 0, "\(json.result.standardError)")
+    let controller = try #require(try json.result.json()["controller"] as? [String: Any])
+    #expect(controller["record"] as? [String: String] == ["layer": "bundled"])
+    #expect(Self.recordRow(human.result) == "bundled")
+    #expect(plain.result.standardOutput.contains("record\tbundled\t\n"))
+  }
+
+  @Test
+  func showReportsAUserRecordAndItsFile() async throws {
+    let json = try await Self.show(["--json"], userRecord: Self.userPatch)
+    let human = try await Self.show([], userRecord: Self.userPatch)
+    let plain = try await Self.show(["--plain"], userRecord: Self.userPatch)
+
+    #expect(json.result.code == 0, "\(json.result.standardError)")
+    let controller = try #require(try json.result.json()["controller"] as? [String: Any])
+    #expect((controller["record"] as? [String: String])?.keys.sorted() == ["file", "layer"])
+    #expect((controller["record"] as? [String: String])?["layer"] == "user")
+    #expect((controller["record"] as? [String: String])?["file"]?.hasSuffix(json.file) == true)
+    #expect(Self.recordRow(human.result)?.hasPrefix("your record, /") == true)
+    #expect(Self.recordRow(human.result)?.hasSuffix(human.file) == true)
+    #expect(plain.result.standardOutput.contains("record\tuser\t/"))
+    #expect(plain.result.standardOutput.contains("\(plain.file)\n"))
+  }
+
+  @Test
+  func showReportsWhenNoRecordMatches() async throws {
+    let json = try await Self.show(["--json"], vendorID: 0x1234, productID: 0x5678)
+    let human = try await Self.show([], vendorID: 0x1234, productID: 0x5678)
+    let plain = try await Self.show(["--plain"], vendorID: 0x1234, productID: 0x5678)
+
+    #expect(json.result.code == 0, "\(json.result.standardError)")
+    let controller = try #require(try json.result.json()["controller"] as? [String: Any])
+    #expect(controller["record"] == nil)
+    #expect(Self.recordRow(human.result) == "none (no record matches)")
+    #expect(plain.result.standardOutput.contains("record\tnone\t\n"))
+  }
+
   @Test(arguments: [
     ["controller", "rumble", "pad-1", "--left", "100"],
     ["controller", "light", "pad-1", "--color", "#00FF00"],

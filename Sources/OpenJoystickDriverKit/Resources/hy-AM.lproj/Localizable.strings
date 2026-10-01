@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Ելքի ստուգումներ";
 "cli.controller.show.label.ownership" = "Սեփականատեր";
 "cli.controller.show.label.protocol" = "Արձանագրություն";
+"cli.controller.show.label.record" = "Գրառում";
 "cli.controller.show.label.rumble" = "Թրթռում";
 "cli.controller.show.label.session" = "Սեանս";
 "cli.controller.show.label.virtual" = "Վիրտուալ խաղային վահանակ";
 "cli.controller.show.none" = "ոչինչ";
+"cli.controller.show.record.bundled" = "ներկառուցված";
+"cli.controller.show.record.none" = "ոչինչ (համապատասխան գրառում չկա)";
+"cli.controller.show.record.user" = "ձեր գրառումը, %@";
 "cli.controller.suspend.abstract" = "Կանգնեցնել OpenJoystickDriver-ի կողմից կարգավորիչի կառավարումը, մինչև վերսկսեք։";
 "cli.controller.suspend.already" = "%@ արդեն կասեցված է։";
 "cli.controller.suspend.done" = "%@ կասեցվեց։";

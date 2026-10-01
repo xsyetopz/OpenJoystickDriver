@@ -1141,10 +1141,14 @@
 "cli.controller.show.label.output_checks" = "Kontroly výstupu";
 "cli.controller.show.label.ownership" = "Vlastnictví";
 "cli.controller.show.label.protocol" = "Protokol";
+"cli.controller.show.label.record" = "Záznam";
 "cli.controller.show.label.rumble" = "Vibrace";
 "cli.controller.show.label.session" = "Relace";
 "cli.controller.show.label.virtual" = "Virtuální gamepad";
 "cli.controller.show.none" = "žádné";
+"cli.controller.show.record.bundled" = "přibalený";
+"cli.controller.show.record.none" = "žádný (žádný záznam neodpovídá)";
+"cli.controller.show.record.user" = "váš záznam, %@";
 "cli.controller.suspend.abstract" = "Zastavit ovládání ovladače pomocí OpenJoystickDriver, dokud ho neobnovíte.";
 "cli.controller.suspend.already" = "%@ je již pozastaven.";
 "cli.controller.suspend.done" = "%@ pozastaven.";

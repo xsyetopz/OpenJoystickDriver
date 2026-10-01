@@ -91,10 +91,13 @@ enum LocalizationCatalogAudit {
     ], "ga-IE": ["profiles.turbo", "common.stop", "profiles.trackball.yaw"],
     "hr-HR": ["profiles.turbo", "inputTest.testRumble", "profiles.physical.motor"],
     "hu-HU": ["profiles.trackball.yaw", "profiles.physical.motor"],
-    "it-CH": ["menu.zoom", "settings.debug", "profiles.turbo", "debug.title"],
-    "it-IT": [
-      "cli.controller.show.label.input", "menu.zoom", "settings.debug", "profiles.turbo",
+    "it-CH": [
+      "cli.controller.show.label.record", "menu.zoom", "settings.debug", "profiles.turbo",
       "debug.title",
+    ],
+    "it-IT": [
+      "cli.controller.show.label.input", "cli.controller.show.label.record", "menu.zoom",
+      "settings.debug", "profiles.turbo", "debug.title",
     ], "lt-LT": ["profiles.turbo"], "lv-LV": ["profiles.turbo"],
     "nb-NO": [
       "menu.zoom", "settings.status", "profiles.turbo", "mapping.start", "common.status",
@@ -102,13 +105,15 @@ enum LocalizationCatalogAudit {
       "profiles.physical.motor",
     ],
     "nl-BE": [
-      "cli.controller.show.label.protocol", "cli.status.label.controllers", "settings.status",
+      "cli.controller.show.label.protocol", "cli.controller.show.label.record",
+      "cli.status.label.controllers", "settings.status",
       "settings.updates", "controllers.protocol", "profiles.activator", "profiles.sectionTriggers",
       "common.status", "common.protocol", "keyboard.tab", "console.title",
       "motion.calibration.offset", "profiles.trackball.enabled", "profiles.trigger.source",
     ],
     "nl-NL": [
-      "cli.controller.show.label.protocol", "cli.status.label.controllers", "settings.status",
+      "cli.controller.show.label.protocol", "cli.controller.show.label.record",
+      "cli.status.label.controllers", "settings.status",
       "settings.updates", "controllers.protocol", "profiles.activator", "profiles.sectionTriggers",
       "common.status", "common.protocol", "keyboard.tab", "console.title",
       "motion.calibration.offset", "profiles.trackball.enabled", "profiles.trigger.source",
