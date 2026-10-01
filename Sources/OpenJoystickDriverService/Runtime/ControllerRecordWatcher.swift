@@ -4,8 +4,8 @@ import OpenJoystickDriverKit
 /// Applies the user's controller records at start and again whenever their directory changes.
 ///
 /// The directory is watched for entries being added, removed, or renamed, which covers `ojd record
-/// install` and `ojd record remove` and editors that save by replacing the file. A file rewritten
-/// in place is picked up at the next change or service start.
+/// install` and `ojd record remove` and editors that save by replacing the file. Each file in it is
+/// watched as well, so a file rewritten in place, such as by `echo ... > file`, also reloads.
 @MainActor
 final class ControllerRecordWatcher {
   private static let debounce: DispatchTimeInterval = .milliseconds(300)
@@ -14,6 +14,7 @@ final class ControllerRecordWatcher {
   private let onChange: @MainActor () -> Void
   private let activate: @MainActor (ControllerRecordSet) -> Bool
   private var source: (any DispatchSourceFileSystemObject)?
+  private var fileSources: [any DispatchSourceFileSystemObject] = []
   private var pendingReload: DispatchWorkItem?
 
   /// `onChange` runs after a change to the directory changed an effective record. `activate`
@@ -43,15 +44,8 @@ final class ControllerRecordWatcher {
       fputs("[Records] Cannot watch \(directory.path): errno \(errno)\n", stderr)
       return
     }
-    let source = DispatchSource.makeFileSystemObjectSource(
-      fileDescriptor: descriptor,
-      eventMask: [.write, .rename, .delete],
-      queue: .main
-    )
-    source.setEventHandler { [weak self] in MainActor.assumeIsolated { self?.scheduleReload() } }
-    source.setCancelHandler { close(descriptor) }
-    self.source = source
-    source.resume()
+    source = makeSource(descriptor: descriptor, events: [.write, .rename, .delete])
+    watchFiles()
   }
 
   func stop() {
@@ -59,6 +53,40 @@ final class ControllerRecordWatcher {
     pendingReload = nil
     source?.cancel()
     source = nil
+    for fileSource in fileSources { fileSource.cancel() }
+    fileSources = []
+  }
+
+  private func makeSource(
+    descriptor: Int32,
+    events: DispatchSource.FileSystemEvent
+  ) -> any DispatchSourceFileSystemObject {
+    let source = DispatchSource.makeFileSystemObjectSource(
+      fileDescriptor: descriptor,
+      eventMask: events,
+      queue: .main
+    )
+    source.setEventHandler { [weak self] in MainActor.assumeIsolated { self?.scheduleReload() } }
+    source.setCancelHandler { close(descriptor) }
+    source.resume()
+    return source
+  }
+
+  /// Watches the content of every file now in the directory, replacing earlier file watches so a
+  /// file replaced by rename is watched by its new inode.
+  private func watchFiles() {
+    for fileSource in fileSources { fileSource.cancel() }
+    let urls =
+      (try? FileManager.default.contentsOfDirectory(
+        at: directory,
+        includingPropertiesForKeys: nil,
+        options: [.skipsHiddenFiles]
+      )) ?? []
+    fileSources = urls.compactMap { url in
+      let descriptor = open(url.path, O_EVTONLY)
+      guard descriptor >= 0 else { return nil }
+      return makeSource(descriptor: descriptor, events: [.write, .extend, .delete, .rename])
+    }
   }
 
   /// Waits for a burst of changes, such as a write followed by a rename, to settle.
@@ -67,6 +95,7 @@ final class ControllerRecordWatcher {
     let reload = DispatchWorkItem { [weak self] in
       MainActor.assumeIsolated {
         guard let self, self.source != nil else { return }
+        self.watchFiles()
         if self.apply() { self.onChange() }
       }
     }
