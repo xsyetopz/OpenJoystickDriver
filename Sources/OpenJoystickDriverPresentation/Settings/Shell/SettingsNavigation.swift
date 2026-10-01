@@ -44,8 +44,7 @@
 
     /// Toolbar images use SF Symbols; a missing symbol yields a blank template slot.
     var toolbarImage: NSImage {
-      if let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: title)
-      {
+      if let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: title) {
         image.isTemplate = true
         return image
       }
