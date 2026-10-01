@@ -155,4 +155,48 @@ struct RecordCommandTests {
     #expect(directory.fileNames.isEmpty)
     #expect(absent.code == 1)
   }
+
+  /// A descriptor reader that finds none.
+  private static let noDescriptor: @Sendable (Int, Int) -> [UInt8]? = { _, _ in nil }
+
+  @Test
+  func draftPrintsARecordFromTheCapturedReports() async throws {
+    let reads = Counter()
+    let packets = """
+      [{"direction":"rx","hex":"00 01 02","length":3,"timestamp":1},
+       {"direction":"tx","hex":"00 00 00","length":3,"timestamp":2},
+       {"direction":"rx","hex":"00 01 05","length":3,"timestamp":3}]
+      """
+    let service = try FakeService(
+      devices: [FakeService.device(id: "pad-1", vendorID: 0x1234, productID: 0x5678)]
+    ) { method, _ in
+      guard method == .getPacketLog else { return nil }
+      return encoded(Data((reads.next() == 0 ? "[]" : packets).utf8))
+    }
+    let result = await RecordDraftCommand.$descriptor.withValue(Self.noDescriptor) {
+      await service.run(["record", "draft", "pad-1", "--duration", "0.3", "--json"])
+    }
+    #expect(result.code == 0, "\(result.standardError)")
+    let json = try result.json()
+    #expect(json["operation"] as? String == "add")
+    #expect(json["family"] as? String == "hid.descriptor")
+    #expect(json["capturedReports"] as? Int == 2)
+    #expect(json["report"] as? [String: Int] == ["length": 3])
+    #expect(json["changedBytes"] as? [[String: Int]] == [["byte": 2, "minimum": 2, "maximum": 5]])
+    let record = try #require(json["record"] as? [String: Any])
+    #expect(record["operation"] as? String == "add")
+  }
+
+  /// A bundled model whose descriptor maps nothing keeps its bundled family.
+  @Test
+  func draftOfABundledModelWithoutALayoutExitsOne() async throws {
+    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+      method == .getPacketLog ? encoded(Data("[]".utf8)) : nil
+    }
+    let result = await RecordDraftCommand.$descriptor.withValue(Self.noDescriptor) {
+      await service.run(["record", "draft", "pad-1", "--duration", "0.2"])
+    }
+    #expect(result.code == 1)
+    #expect(result.standardError.contains("ojd record show 045E:028E"))
+  }
 }

@@ -94,7 +94,7 @@ enum CLICommandTree {
     case ["controller", "light"]: ["045E:028E", "--color", "FF0000"]
     case ["controller", "player"]: ["045E:028E", "1"]
     case ["virtual", "set"]: ["hid-generic", "045E:028E"]
-    case ["record", "show"], ["record", "remove"]: ["045E:028E"]
+    case ["record", "draft"], ["record", "show"], ["record", "remove"]: ["045E:028E"]
     case ["record", "validate"], ["record", "install"], ["profile", "import"]: ["-"]
     case ["controller", "calibrate"]: ["045E:028E", "start"]
     case ["controller", "pair"]: ["057E:2006", "057E:2007", "--profile", "Pair"]

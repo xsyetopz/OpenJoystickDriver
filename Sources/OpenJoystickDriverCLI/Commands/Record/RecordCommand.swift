@@ -7,18 +7,18 @@ struct RecordCommand: AsyncParsableCommand {
     commandName: "record",
     abstract: CLILocalized.text(
       "cli.record.abstract",
-      "List, check, install, or remove controller records."
+      "Draft, list, check, install, or remove controller records."
     ),
     discussion: CLILocalized.text(
       "cli.record.discussion",
       "A controller record tells OpenJoystickDriver how to drive one controller model. Your "
         + "records live in ~/Library/Application Support/OpenJoystickDriver/Controllers and "
         + "add a model or patch a bundled one. The running service applies them when the "
-        + "directory changes. None of these commands needs the service."
+        + "directory changes. Only 'ojd record draft' needs the service."
     ),
     subcommands: [
-      RecordListCommand.self, RecordShowCommand.self, RecordValidateCommand.self,
-      RecordInstallCommand.self, RecordRemoveCommand.self,
+      RecordDraftCommand.self, RecordListCommand.self, RecordShowCommand.self,
+      RecordValidateCommand.self, RecordInstallCommand.self, RecordRemoveCommand.self,
     ]
   )
 

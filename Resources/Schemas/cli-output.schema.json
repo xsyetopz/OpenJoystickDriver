@@ -910,6 +910,96 @@
 				}
 			}
 		},
+		"recordDraft": {
+			"type": "object",
+			"required": [
+				"capturedReports",
+				"changedBytes",
+				"family",
+				"identity",
+				"name",
+				"operation",
+				"record"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"capturedReports": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"changedBytes": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": [
+							"byte",
+							"maximum",
+							"minimum"
+						],
+						"additionalProperties": false,
+						"properties": {
+							"byte": {
+								"type": "integer",
+								"minimum": 0,
+								"maximum": 63
+							},
+							"maximum": {
+								"type": "integer",
+								"minimum": 0,
+								"maximum": 255
+							},
+							"minimum": {
+								"type": "integer",
+								"minimum": 0,
+								"maximum": 255
+							}
+						}
+					}
+				},
+				"family": {
+					"enum": [
+						"hid.descriptor",
+						"hid.report-layout"
+					]
+				},
+				"identity": {
+					"type": "string",
+					"pattern": "^[0-9A-F]{4}:[0-9A-F]{4}$"
+				},
+				"name": {
+					"type": "string"
+				},
+				"operation": {
+					"enum": [
+						"add",
+						"patch"
+					]
+				},
+				"record": {
+					"description": "The drafted controller record, as 'ojd record install' reads it.",
+					"$ref": "controller-override.schema.json"
+				},
+				"report": {
+					"type": "object",
+					"required": [
+						"length"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"id": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 255
+						},
+						"length": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 64
+						}
+					}
+				}
+			}
+		},
 		"recordInstall": {
 			"type": "object",
 			"required": [

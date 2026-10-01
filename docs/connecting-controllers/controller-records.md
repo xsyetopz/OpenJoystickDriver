@@ -102,6 +102,16 @@ A HID controller that needs a fixed report before it sends input can name it in 
 
 List 1 to 16 writes. OpenJoystickDriver sends them in order after the protocol driver's own startup, only when it opens the controller. A failed write is logged and the next one is still sent. Raw-USB families do not take `output.startup`.
 
+## Draft a record from a connected controller
+
+`ojd record draft CONTROLLER` builds a starting record for a connected controller. The service must be running.
+
+1. Run `ojd record draft CONTROLLER > record.json`, where `CONTROLLER` is an ID from `ojd controller list` or the controller's VID:PID.
+1. For 10 seconds, press every button and move each stick, trigger, and the D-pad. `--duration SECONDS` changes the time.
+1. Read the bytes that changed. For each report byte that took more than one value, the command prints its offset and its lowest and highest value on stderr.
+
+The record maps what the HID report descriptor states plainly: buttons 1 to 11 in the order the `hid.descriptor` family reads them, X, Y, Rx, and Ry sticks, Z and Rz triggers, and the hat, with the `hid.report-layout` family. When nothing maps, it names `hid.descriptor` instead. Check every control against the changed bytes and correct the record before you install it. The record is a `patch` for a model with a bundled record and an `add` otherwise.
+
 ## Install a record
 
 1. Find the VID:PID of your controller. For more information, see [Finding your controller ID](finding-your-controller-id.md).

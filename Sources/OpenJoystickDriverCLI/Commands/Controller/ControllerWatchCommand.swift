@@ -5,8 +5,7 @@ import OpenJoystickDriverKit
 /// Polls the service every 16 ms until `body` returns true or `duration` elapses.
 ///
 /// Returns whether `body` stopped the loop. Without a duration it runs until interrupted.
-private func pollController(duration: Double?, _ body: () async throws -> Bool) async throws -> Bool
-{
+func pollController(duration: Double?, _ body: () async throws -> Bool) async throws -> Bool {
   let start = DispatchTime.now().uptimeNanoseconds
   let limit = duration.map { UInt64($0 * 1_000_000_000) }
   while limit.map({ DispatchTime.now().uptimeNanoseconds - start < $0 }) ?? true {
@@ -16,7 +15,7 @@ private func pollController(duration: Double?, _ body: () async throws -> Bool) 
   return false
 }
 
-private func validateDuration(_ duration: Double?) throws {
+func validateDuration(_ duration: Double?) throws {
   if let duration, !(duration.isFinite && duration > 0) {
     throw ValidationError(
       CLILocalized.text(
@@ -27,7 +26,7 @@ private func validateDuration(_ duration: Double?) throws {
   }
 }
 
-private let durationHelp = ArgumentHelp(
+let durationHelp = ArgumentHelp(
   CLILocalized.text(
     "cli.controller.option.duration",
     "Stop after this many seconds. Without it, run until you press Control-C."
@@ -36,7 +35,7 @@ private let durationHelp = ArgumentHelp(
 )
 
 /// Opens one service connection, resolves the controller, and runs `body` with both.
-private func withController(
+func withController(
   _ selector: ControllerSelector,
   _ body: (ApplicationServiceClient, ApplicationServiceDeviceDescription) async throws -> Void
 ) async throws {

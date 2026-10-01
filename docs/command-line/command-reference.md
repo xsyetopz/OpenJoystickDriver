@@ -157,9 +157,10 @@ ojd virtual reset [CONTROLLER] [--all] [--force] [--dry-run]
 
 ## record
 
-List, check, install, or remove controller records. None of these commands needs the service. For more information, see [Adding or changing a controller record](../connecting-controllers/controller-records.md).
+Draft, list, check, install, or remove controller records. Only `record draft` needs the service. For more information, see [Adding or changing a controller record](../connecting-controllers/controller-records.md).
 
 ```text
+ojd record draft CONTROLLER [--duration SECONDS]
 ojd record list [--bundled]
 ojd record show VVVV:PPPP
 ojd record validate FILE|-
@@ -169,13 +170,14 @@ ojd record remove VVVV:PPPP [--force] [--dry-run]
 
 `FILE` is a record file. Use `-` to read the record from stdin.
 
+- `record draft`: Read a connected controller's HID report descriptor, capture its input reports for `--duration` seconds (10 by default) while you press each control, and print a record to start from. The record is an `add` for a model without a bundled record and a `patch` otherwise. It maps the buttons, sticks, triggers, and hat that the descriptor states plainly, with the `hid.report-layout` family, or names `hid.descriptor` when nothing maps. Each report byte that changed during the capture is listed on stderr with its lowest and highest value. It exits with code 1 when nothing maps for a model with a bundled record.
 - `record list`: List every controller record, with its model, protocol family, layer (`bundled` or `user`), and file. It names each of your files that OpenJoystickDriver skipped, and why, on stderr. `--bundled` lists the bundled records alone.
 - `record show`: Show one model's effective record and the layer of each top-level field. It exits with code 1 when no record exists for the model.
 - `record validate`: Check a record without installing it. It shows the operation (`add` or `patch`), the model, the family, the file name, and whether the USB driver extension can claim the controller. It exits with code 1 when the record is not valid.
 - `record install`: Check a record and write it to your record folder as `vvvv-pppp.json`. It replaces the record already installed for that model. It exits with code 1 and writes nothing when the record is not valid.
 - `record remove`: Delete your record for a model. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing. It exits with code 1 when you have no record for the model.
 
-With `--json`, `record list` prints `records`, each with `identity`, `vendorID`, `productID`, `family`, `layer`, and `file`, and `skipped`, each with `file` and `problem`. `skipped` is absent with `--bundled`. `record show` prints `identity`, `family`, `layer`, `file`, `transport` (`hid` or `usb`), `usbExtension` (`claims` or `does-not-claim`, for `usb` only), `fields`, and `record`. `record validate` prints `valid`, and `problem` or the record's `operation`, `identity`, `family`, `fileName`, `transport`, and `usbExtension`. `record install` prints `installed`, `replaced`, and `record`, and `record remove` prints `removed` and `dryRun`.
+With `--json`, `record draft` prints `identity`, `name`, `operation`, `family`, `report` (`id` and `length`, absent when no report was chosen), `capturedReports`, `changedBytes`, each with `byte`, `minimum`, and `maximum`, and `record`. With `--plain`, it prints one line for each changed byte: its offset, lowest value, and highest value. `record list` prints `records`, each with `identity`, `vendorID`, `productID`, `family`, `layer`, and `file`, and `skipped`, each with `file` and `problem`. `skipped` is absent with `--bundled`. `record show` prints `identity`, `family`, `layer`, `file`, `transport` (`hid` or `usb`), `usbExtension` (`claims` or `does-not-claim`, for `usb` only), `fields`, and `record`. `record validate` prints `valid`, and `problem` or the record's `operation`, `identity`, `family`, `fileName`, `transport`, and `usbExtension`. `record install` prints `installed`, `replaced`, and `record`, and `record remove` prints `removed` and `dryRun`.
 
 ## service
 

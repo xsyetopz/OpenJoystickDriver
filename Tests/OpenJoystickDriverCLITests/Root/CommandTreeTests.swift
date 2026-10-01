@@ -34,7 +34,7 @@ struct CommandTreeTests {
     ] { #expect(paths.contains(["profile", verb]), "\(verb)") }
     for verb in ["list", "set", "clear"] { #expect(paths.contains(["binding", verb]), "\(verb)") }
     for verb in ["show", "set", "reset"] { #expect(paths.contains(["virtual", verb]), "\(verb)") }
-    for verb in ["list", "show", "validate", "install", "remove"] {
+    for verb in ["draft", "list", "show", "validate", "install", "remove"] {
       #expect(paths.contains(["record", verb]), "\(verb)")
     }
   }
