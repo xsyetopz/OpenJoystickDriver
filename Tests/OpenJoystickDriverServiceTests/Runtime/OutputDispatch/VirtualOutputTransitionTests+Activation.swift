@@ -5,7 +5,7 @@ import Testing
 @testable import OpenJoystickDriverService
 
 extension VirtualOutputTransitionTests {
-  @Test
+  @Test(.timeLimit(.minutes(1)))
   func noncooperativeFeedbackIsQuarantinedBeforeNeutralization() async {
     let identifier = DeviceIdentifier(vendorID: 1, productID: 2)
     let stalledWrite = VirtualOutputTransitionGate()
@@ -22,10 +22,19 @@ extension VirtualOutputTransitionTests {
     )
     while await probe.count() < 1 { await Task.yield() }
 
-    let started = DispatchTime.now().uptimeNanoseconds
-    #expect(await feedbackGate.quiesceAndNeutralize([identifier], timeout: 20_000_000))
-    let elapsed = DispatchTime.now().uptimeNanoseconds - started
-    #expect(elapsed < 100_000_000)
+    // The feedback timeout cannot fire within the test's time limit, so the call returns only
+    // once the neutral write completes, without waiting for the stalled write or the timeout.
+    let timeoutNeverFires = VirtualOutputTransitionClock(
+      now: { 0 },
+      sleep: { _ in try await Task.sleep(nanoseconds: 3_600_000_000_000) }
+    )
+    #expect(
+      await feedbackGate.quiesceAndNeutralize(
+        [identifier],
+        timeout: 20_000_000,
+        clock: timeoutNeverFires
+      )
+    )
     #expect(await probe.values().last == .stopRumble)
 
     await stalledWrite.open()
