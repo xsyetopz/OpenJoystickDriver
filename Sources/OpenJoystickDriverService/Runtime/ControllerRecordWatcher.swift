@@ -11,18 +11,21 @@ final class ControllerRecordWatcher {
   private static let debounce: DispatchTimeInterval = .milliseconds(300)
 
   private let directory: URL
-  private let onChange: @MainActor () -> Void
-  private let activate: @MainActor (ControllerRecordSet) -> Bool
+  private let onChange: @MainActor (Set<ControllerIdentity>) -> Void
+  private let activate: @MainActor (ControllerRecordSet) -> Set<ControllerIdentity>
   private var source: (any DispatchSourceFileSystemObject)?
   private var fileSources: [any DispatchSourceFileSystemObject] = []
   private var pendingReload: DispatchWorkItem?
 
-  /// `onChange` runs after a change to the directory changed an effective record. `activate`
-  /// makes a loaded set current and returns whether that changed an effective record.
+  /// `onChange` runs with the identities whose effective record a change to the directory
+  /// changed, when there are any. `activate` makes a loaded set current and returns those
+  /// identities.
   init(
     directory: URL = ControllerRecordSet.userDirectory,
-    activate: @escaping @MainActor (ControllerRecordSet) -> Bool = { $0.activate() },
-    onChange: @escaping @MainActor () -> Void
+    activate: @escaping @MainActor (ControllerRecordSet) -> Set<ControllerIdentity> = {
+      $0.activate()
+    },
+    onChange: @escaping @MainActor (Set<ControllerIdentity>) -> Void
   ) {
     self.directory = directory
     self.activate = activate
@@ -96,16 +99,17 @@ final class ControllerRecordWatcher {
       MainActor.assumeIsolated {
         guard let self, self.source != nil else { return }
         self.watchFiles()
-        if self.apply() { self.onChange() }
+        let changed = self.apply()
+        if !changed.isEmpty { self.onChange(changed) }
       }
     }
     pendingReload = reload
     DispatchQueue.main.asyncAfter(deadline: .now() + Self.debounce, execute: reload)
   }
 
-  /// Loads and activates the records; returns whether an effective record changed.
+  /// Loads and activates the records; returns the identities whose effective record changed.
   @discardableResult
-  private func apply() -> Bool {
+  private func apply() -> Set<ControllerIdentity> {
     let records = ControllerRecordSet.load(userDirectory: directory)
     for file in records.problems {
       fputs("[Records] Skipped \(file.url.path): \(file.problem ?? "")\n", stderr)

@@ -185,16 +185,34 @@ extension USBPipelineRecoveryTests {
     let second = RecoveryUSBSession(readError: .timeout)
     let provider = RecoveryUSBProvider(sessions: [first, second], devices: [device])
     let manager = makeManager(using: provider)
-    await manager.reloadControllerRecords()
+    await manager.reloadControllerRecords(changing: [identifier.controllerIdentity])
     #expect(await manager.detectionTasks.isEmpty)
 
     await manager.start()
     #expect(await waitUntil(timeout: .seconds(5)) { await first.writeCount > 0 })
-    await manager.reloadControllerRecords()
+    await manager.reloadControllerRecords(changing: [identifier.controllerIdentity])
     #expect(await first.closeCount == 1)
     #expect(await waitUntil(timeout: .seconds(5)) { await second.writeCount > 0 })
     #expect(await manager.connectedDeviceIdentifiers() == [identifier])
     #expect(await provider.openedDevices == [device, device])
+    await manager.stop()
+  }
+
+  @Test
+  func controllerRecordReloadKeepsControllersWhoseRecordDidNotChange() async {
+    let first = RecoveryUSBSession(readError: .timeout)
+    let second = RecoveryUSBSession(readError: .timeout)
+    let provider = RecoveryUSBProvider(sessions: [first, second], devices: [device])
+    let manager = makeManager(using: provider)
+    await manager.start()
+    #expect(await waitUntil(timeout: .seconds(5)) { await first.writeCount > 0 })
+
+    await manager.reloadControllerRecords(changing: [
+      ControllerIdentity(vendorID: 0x1234, productID: 0xabcd)
+    ])
+    #expect(await first.closeCount == 0)
+    #expect(await manager.connectedDeviceIdentifiers() == [identifier])
+    #expect(await provider.openedDevices == [device])
     await manager.stop()
   }
 }

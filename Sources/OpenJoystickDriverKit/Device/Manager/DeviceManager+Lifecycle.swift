@@ -66,18 +66,38 @@ extension DeviceManager {
     print("[DeviceManager] Suspended for system sleep")
   }
 
-  /// Re-admits every controller so each binds with the current controller records.
+  /// Re-admits every controller so each binds with the current controller records, when a
+  /// controller OJD sees has a vendor and product ID in `identities`, whose records changed.
   ///
   /// Sessions are torn down as for system sleep and detection starts again, so connected
   /// controllers re-attach through hot-plug detection. Does nothing while stopped or asleep; a
   /// later start or wake reads the current records anyway.
-  public func reloadControllerRecords() async {
+  public func reloadControllerRecords(changing identities: Set<ControllerIdentity>) async {
     guard isStarted, !isStopping, !isSystemSleeping else { return }
+    guard seesController(in: identities) else {
+      print("[DeviceManager] Controller records changed - no connected controller affected")
+      return
+    }
     isStopping = true
     await tearDownControllerSessions()
     isStopping = false
     print("[DeviceManager] Controller records changed - re-admitting controllers")
     await start()
+  }
+
+  private func seesController(in identities: Set<ControllerIdentity>) -> Bool {
+    let changed = Set(identities.map { [$0.vendorID, $0.productID] })
+    let seen = pipelines.keys.map(\.controllerIdentity) + deviceInfos.keys.map(\.controllerIdentity)
+    return seen.contains { changed.contains([$0.vendorID, $0.productID]) }
+      || unboundDevices.values.contains { changed.contains([$0.vendorID, $0.productID]) }
+      || passThroughDevices.values.contains {
+        changed.contains([$0.description.vendorID, $0.description.productID])
+      }
+      || hidInitializationTasks.values.contains {
+        let device = $0.connection.physicalDevice
+        guard let vendorID = device.vendorID, let productID = device.productID else { return true }
+        return changed.contains([vendorID, productID])
+      }
   }
 
   /// Restarts detection for a manager that was started before or during sleep.

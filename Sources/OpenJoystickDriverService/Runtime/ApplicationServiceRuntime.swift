@@ -76,8 +76,8 @@ package final class ApplicationServiceRuntime {
     }
     let manager = manager
     // Records apply before detection starts, so the first admission already uses them.
-    let controllerRecordWatcher = ControllerRecordWatcher {
-      Task { await manager.reloadControllerRecords() }
+    let controllerRecordWatcher = ControllerRecordWatcher { changed in
+      Task { await manager.reloadControllerRecords(changing: changed) }
     }
     self.controllerRecordWatcher = controllerRecordWatcher
     controllerRecordWatcher.start()

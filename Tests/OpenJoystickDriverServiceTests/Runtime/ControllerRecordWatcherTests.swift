@@ -28,9 +28,9 @@ struct ControllerRecordWatcherTests {
       directory: directory,
       activate: { records in
         applied.append(records.userFiles.count)
-        return true
+        return [ControllerIdentity(vendorID: 0x1234, productID: 0xabcd)]
       },
-      onChange: { changes += 1 }
+      onChange: { _ in changes += 1 }
     )
     watcher.start()
     defer { watcher.stop() }
@@ -63,9 +63,9 @@ struct ControllerRecordWatcherTests {
       directory: directory,
       activate: { _ in
         applied += 1
-        return true
+        return [ControllerIdentity(vendorID: 0x1234, productID: 0xabcd)]
       },
-      onChange: { changes += 1 }
+      onChange: { _ in changes += 1 }
     )
     watcher.start()
     defer { watcher.stop() }

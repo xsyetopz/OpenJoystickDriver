@@ -144,5 +144,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func activatingTheSameRecordsChangesNothing() { #expect(!ControllerRecordSet.bundled.activate()) }
+  func activatingTheSameRecordsChangesNothing() {
+    #expect(ControllerRecordSet.bundled.activate().isEmpty)
+  }
 }

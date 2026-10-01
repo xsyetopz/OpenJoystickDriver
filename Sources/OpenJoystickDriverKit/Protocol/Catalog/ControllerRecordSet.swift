@@ -100,14 +100,15 @@ public struct ControllerRecordSet: Sendable {
 
   /// Makes these records the ones every ``ProtocolDriverRegistry`` binds with.
   ///
-  /// Returns whether any effective record changed. Devices that are already bound keep the
-  /// record they bound with until they are admitted again.
+  /// Returns the identities whose effective record changed, added, or went away. Devices that
+  /// are already bound keep the record they bound with until they are admitted again.
   @discardableResult
-  public func activate() -> Bool {
+  public func activate() -> Set<ControllerIdentity> {
     let catalog = DeviceCatalog(records: self)
     return DeviceCatalog.current.withLock { current in
       defer { current = catalog }
-      return current.documents != catalog.documents
+      let identities = Set(current.documents.keys).union(catalog.documents.keys)
+      return identities.filter { current.documents[$0] != catalog.documents[$0] }
     }
   }
 
