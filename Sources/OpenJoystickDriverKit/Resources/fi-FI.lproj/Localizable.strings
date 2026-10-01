@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "Profiilissa ”%@” ei ole sidontoja. Lisää sidonta komennolla ”ojd binding set”.";
 "cli.binding.option.actions_json" = "Lisätoiminnot JSON-taulukkona siinä muodossa, jonka ”ojd profile export” kirjoittaa.";
 "cli.binding.option.behavior" = "Milloin kohde laukeaa. Oletus: nykyisen sidonnan toiminta tai hold.";
-"cli.binding.option.deadzone" = "Akselilähteet: liikeradan huomiotta jätettävä osa, 0–0,95. Oletus: 0,1.";
-"cli.binding.option.digital_threshold" = "Akselilähteet: liikerata, joka lasketaan painallukseksi painikekohteissa. Oletus: 0,5.";
+"cli.binding.option.deadzone" = "Akselilähteet: liikeradan huomiotta jätettävä osa, 0–0.95. Oletus: 0.1.";
+"cli.binding.option.digital_threshold" = "Akselilähteet: liikerata, joka lasketaan painallukseksi painikekohteissa. Oletus: 0.5.";
 "cli.binding.option.double_tap" = "Lähetä toinen kohde, kun lähdettä painetaan kahdesti tämän ajan sisällä, esimerkiksi 300:key:c.";
-"cli.binding.option.gain" = "Akselilähteet: tulosteen mittakaava, 0,1–10. Oletus: 1.";
+"cli.binding.option.gain" = "Akselilähteet: tulosteen mittakaava, 0.1–10. Oletus: 1.";
 "cli.binding.option.invert" = "Akselilähteet: käännä suunta päinvastaiseksi.";
 "cli.binding.option.long_hold" = "Lähetä toinen kohde, kun lähdettä pidetään painettuna näin kauan, esimerkiksi 500:key:b.";
 "cli.binding.option.pulse_ms" = "Kuinka kauan pulssi pitää kohteen aktiivisena, 1–5000 ms. Oletus: 100.";

@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "'%@' har ingen bindinger. Legg til en med 'ojd binding set'.";
 "cli.binding.option.actions_json" = "Ekstra handlinger som en JSON-matrise, i formen 'ojd profile export' skriver dem.";
 "cli.binding.option.behavior" = "Når målet utløses. Standard: den nåværende bindingens oppførsel, eller hold.";
-"cli.binding.option.deadzone" = "Aksekilder: den delen av bevegelsen som ignoreres, 0 til 0,95. Standard: 0,1.";
-"cli.binding.option.digital_threshold" = "Aksekilder: bevegelsen som teller som et trykk for knappemål. Standard: 0,5.";
+"cli.binding.option.deadzone" = "Aksekilder: den delen av bevegelsen som ignoreres, 0 til 0.95. Standard: 0.1.";
+"cli.binding.option.digital_threshold" = "Aksekilder: bevegelsen som teller som et trykk for knappemål. Standard: 0.5.";
 "cli.binding.option.double_tap" = "Send et annet mål når kilden trykkes to ganger innen denne tiden, for eksempel 300:key:c.";
-"cli.binding.option.gain" = "Aksekilder: skalaen på utdata, 0,1 til 10. Standard: 1.";
+"cli.binding.option.gain" = "Aksekilder: skalaen på utdata, 0.1 til 10. Standard: 1.";
 "cli.binding.option.invert" = "Aksekilder: snu retningen.";
 "cli.binding.option.long_hold" = "Send et annet mål når kilden holdes inne så lenge, for eksempel 500:key:b.";
 "cli.binding.option.pulse_ms" = "Hvor lenge en puls holder målet, 1 til 5000 ms. Standard: 100.";

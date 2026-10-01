@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "«%@» não tem atribuições. Adicione uma com «ojd binding set».";
 "cli.binding.option.actions_json" = "Ações extras como uma matriz JSON, na forma que «ojd profile export» grava.";
 "cli.binding.option.behavior" = "Quando o destino é acionado. Padrão: o comportamento da atribuição atual, ou hold.";
-"cli.binding.option.deadzone" = "Origens de eixo: a parte do curso que é ignorada, de 0 a 0,95. Padrão: 0,1.";
-"cli.binding.option.digital_threshold" = "Origens de eixo: o curso que conta como pressionamento para destinos de botão. Padrão: 0,5.";
+"cli.binding.option.deadzone" = "Origens de eixo: a parte do curso que é ignorada, de 0 a 0.95. Padrão: 0.1.";
+"cli.binding.option.digital_threshold" = "Origens de eixo: o curso que conta como pressionamento para destinos de botão. Padrão: 0.5.";
 "cli.binding.option.double_tap" = "Envia outro destino quando a origem é pressionada duas vezes dentro deste tempo, como 300:key:c.";
-"cli.binding.option.gain" = "Origens de eixo: a escala da saída, de 0,1 a 10. Padrão: 1.";
+"cli.binding.option.gain" = "Origens de eixo: a escala da saída, de 0.1 a 10. Padrão: 1.";
 "cli.binding.option.invert" = "Origens de eixo: inverte a direção.";
 "cli.binding.option.long_hold" = "Envia outro destino quando a origem é mantida pressionada por este tempo, como 500:key:b.";
 "cli.binding.option.pulse_ms" = "Por quanto tempo um pulso mantém o destino, de 1 a 5000 ms. Padrão: 100.";

@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "‘%@’ heeft geen koppelingen. Voeg er een toe met ‘ojd binding set’.";
 "cli.binding.option.actions_json" = "Extra acties als JSON-array, in de vorm die ‘ojd profile export’ schrijft.";
 "cli.binding.option.behavior" = "Wanneer het doel wordt geactiveerd. Standaard: het gedrag van de huidige koppeling, of hold.";
-"cli.binding.option.deadzone" = "Asbronnen: het deel van de slag dat wordt genegeerd, 0 tot 0,95. Standaard: 0,1.";
-"cli.binding.option.digital_threshold" = "Asbronnen: de slag die voor doelen met een knop als indrukken telt. Standaard: 0,5.";
+"cli.binding.option.deadzone" = "Asbronnen: het deel van de slag dat wordt genegeerd, 0 tot 0.95. Standaard: 0.1.";
+"cli.binding.option.digital_threshold" = "Asbronnen: de slag die voor doelen met een knop als indrukken telt. Standaard: 0.5.";
 "cli.binding.option.double_tap" = "Stuur een ander doel wanneer de bron binnen deze tijd tweemaal wordt ingedrukt, zoals 300:key:c.";
-"cli.binding.option.gain" = "Asbronnen: de uitvoerschaal, 0,1 tot 10. Standaard: 1.";
+"cli.binding.option.gain" = "Asbronnen: de uitvoerschaal, 0.1 tot 10. Standaard: 1.";
 "cli.binding.option.invert" = "Asbronnen: keer de richting om.";
 "cli.binding.option.long_hold" = "Stuur een ander doel wanneer de bron zo lang wordt ingehouden, zoals 500:key:b.";
 "cli.binding.option.pulse_ms" = "Hoe lang een puls het doel vasthoudt, 1 tot 5000 ms. Standaard: 100.";

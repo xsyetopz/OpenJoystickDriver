@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "Profiilil '%@' pole seoseid. Lisa üks käsuga 'ojd binding set'.";
 "cli.binding.option.actions_json" = "Lisatoimingud JSON-massiivina, nagu 'ojd profile export' need kirjutab.";
 "cli.binding.option.behavior" = "Millal siht käivitub. Vaikimisi: praeguse seose käitumine või hold.";
-"cli.binding.option.deadzone" = "Telje allikad: liikumisulatuse osa, mida eiratakse, 0 kuni 0,95. Vaikimisi: 0,1.";
-"cli.binding.option.digital_threshold" = "Telje allikad: liikumisulatus, mis loetakse nupuvajutuseks nupusihtide puhul. Vaikimisi: 0,5.";
+"cli.binding.option.deadzone" = "Telje allikad: liikumisulatuse osa, mida eiratakse, 0 kuni 0.95. Vaikimisi: 0.1.";
+"cli.binding.option.digital_threshold" = "Telje allikad: liikumisulatus, mis loetakse nupuvajutuseks nupusihtide puhul. Vaikimisi: 0.5.";
 "cli.binding.option.double_tap" = "Saada teine siht, kui allikat vajutatakse kaks korda selle aja jooksul, näiteks 300:key:c.";
-"cli.binding.option.gain" = "Telje allikad: väljundi skaala, 0,1 kuni 10. Vaikimisi: 1.";
+"cli.binding.option.gain" = "Telje allikad: väljundi skaala, 0.1 kuni 10. Vaikimisi: 1.";
 "cli.binding.option.invert" = "Telje allikad: pööra suund ümber.";
 "cli.binding.option.long_hold" = "Saada teine siht, kui allikat hoitakse nii kaua all, näiteks 500:key:b.";
 "cli.binding.option.pulse_ms" = "Kui kaua impulss sihti hoiab, 1 kuni 5000 ms. Vaikimisi: 100.";

@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "'%@' nema dodjela. Dodajte dodjelu naredbom 'ojd binding set'.";
 "cli.binding.option.actions_json" = "Dodatne radnje kao JSON polje, u obliku u kojem ih zapisuje 'ojd profile export'.";
 "cli.binding.option.behavior" = "Kada se cilj aktivira. Zadano: ponašanje trenutne dodjele ili hold.";
-"cli.binding.option.deadzone" = "Izvori osi: dio hoda koji se zanemaruje, od 0 do 0,95. Zadano: 0,1.";
-"cli.binding.option.digital_threshold" = "Izvori osi: hod koji se za ciljeve tipki računa kao pritisak. Zadano: 0,5.";
+"cli.binding.option.deadzone" = "Izvori osi: dio hoda koji se zanemaruje, od 0 do 0.95. Zadano: 0.1.";
+"cli.binding.option.digital_threshold" = "Izvori osi: hod koji se za ciljeve tipki računa kao pritisak. Zadano: 0.5.";
 "cli.binding.option.double_tap" = "Pošalji još jedan cilj kad se izvor pritisne dvaput unutar ovog vremena, na primjer 300:key:c.";
-"cli.binding.option.gain" = "Izvori osi: mjerilo izlaza, od 0,1 do 10. Zadano: 1.";
+"cli.binding.option.gain" = "Izvori osi: mjerilo izlaza, od 0.1 do 10. Zadano: 1.";
 "cli.binding.option.invert" = "Izvori osi: obrni smjer.";
 "cli.binding.option.long_hold" = "Pošalji još jedan cilj kad se izvor drži ovoliko dugo, na primjer 500:key:b.";
 "cli.binding.option.pulse_ms" = "Koliko dugo impuls drži cilj, od 1 do 5000 ms. Zadano: 100.";

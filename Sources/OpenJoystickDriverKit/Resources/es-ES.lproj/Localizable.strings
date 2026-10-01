@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "«%@» no tiene asignaciones. Añade una con «ojd binding set».";
 "cli.binding.option.actions_json" = "Acciones adicionales como matriz JSON, con la forma que escribe «ojd profile export».";
 "cli.binding.option.behavior" = "Cuándo se activa el destino. Predeterminado: el comportamiento de la asignación actual, o hold.";
-"cli.binding.option.deadzone" = "Orígenes de eje: la parte del recorrido que se ignora, de 0 a 0,95. Predeterminado: 0,1.";
-"cli.binding.option.digital_threshold" = "Orígenes de eje: el recorrido que cuenta como pulsación para destinos de botón. Predeterminado: 0,5.";
+"cli.binding.option.deadzone" = "Orígenes de eje: la parte del recorrido que se ignora, de 0 a 0.95. Predeterminado: 0.1.";
+"cli.binding.option.digital_threshold" = "Orígenes de eje: el recorrido que cuenta como pulsación para destinos de botón. Predeterminado: 0.5.";
 "cli.binding.option.double_tap" = "Envía otro destino cuando el origen se pulsa dos veces dentro de este tiempo, como 300:key:c.";
-"cli.binding.option.gain" = "Orígenes de eje: la escala de salida, de 0,1 a 10. Predeterminado: 1.";
+"cli.binding.option.gain" = "Orígenes de eje: la escala de salida, de 0.1 a 10. Predeterminado: 1.";
 "cli.binding.option.invert" = "Orígenes de eje: invierte la dirección.";
 "cli.binding.option.long_hold" = "Envía otro destino cuando el origen se mantiene pulsado este tiempo, como 500:key:b.";
 "cli.binding.option.pulse_ms" = "Cuánto tiempo mantiene el destino un pulso, de 1 a 5000 ms. Predeterminado: 100.";

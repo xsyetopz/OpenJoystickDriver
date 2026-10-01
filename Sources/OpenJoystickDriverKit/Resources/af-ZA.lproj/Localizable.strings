@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "„%@“ het geen bindings nie. Voeg een by met „ojd binding set“.";
 "cli.binding.option.actions_json" = "Ekstra aksies as ’n JSON-skikking, in die vorm wat „ojd profile export“ hulle skryf.";
 "cli.binding.option.behavior" = "Wanneer die teiken geaktiveer word. Verstek: die huidige binding se gedrag, of hold.";
-"cli.binding.option.deadzone" = "Asbronne: die deel van die beweging wat geïgnoreer word, 0 tot 0,95. Verstek: 0,1.";
-"cli.binding.option.digital_threshold" = "Asbronne: die beweging wat vir knoppieteikens as ’n druk tel. Verstek: 0,5.";
+"cli.binding.option.deadzone" = "Asbronne: die deel van die beweging wat geïgnoreer word, 0 tot 0.95. Verstek: 0.1.";
+"cli.binding.option.digital_threshold" = "Asbronne: die beweging wat vir knoppieteikens as ’n druk tel. Verstek: 0.5.";
 "cli.binding.option.double_tap" = "Stuur ’n ander teiken wanneer die bron binne hierdie tyd twee keer gedruk word, soos 300:key:c.";
-"cli.binding.option.gain" = "Asbronne: die afvoerskaal, 0,1 tot 10. Verstek: 1.";
+"cli.binding.option.gain" = "Asbronne: die afvoerskaal, 0.1 tot 10. Verstek: 1.";
 "cli.binding.option.invert" = "Asbronne: keer die rigting om.";
 "cli.binding.option.long_hold" = "Stuur ’n ander teiken wanneer die bron so lank gehou word, soos 500:key:b.";
 "cli.binding.option.pulse_ms" = "Hoe lank ’n puls die teiken hou, 1 tot 5000 ms. Verstek: 100.";

@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "'%@' nemá žádná přiřazení. Přidejte je pomocí 'ojd binding set'.";
 "cli.binding.option.actions_json" = "Další akce jako pole JSON, ve tvaru, v jakém je zapisuje 'ojd profile export'.";
 "cli.binding.option.behavior" = "Kdy se cíl spustí. Výchozí: chování aktuálního přiřazení, nebo hold.";
-"cli.binding.option.deadzone" = "Zdroje osy: část rozsahu, která se ignoruje, 0 až 0,95. Výchozí: 0,1.";
-"cli.binding.option.digital_threshold" = "Zdroje osy: rozsah, který se pro cíle tlačítek počítá jako stisk. Výchozí: 0,5.";
+"cli.binding.option.deadzone" = "Zdroje osy: část rozsahu, která se ignoruje, 0 až 0.95. Výchozí: 0.1.";
+"cli.binding.option.digital_threshold" = "Zdroje osy: rozsah, který se pro cíle tlačítek počítá jako stisk. Výchozí: 0.5.";
 "cli.binding.option.double_tap" = "Odešle další cíl, když je zdroj stisknut dvakrát během této doby, například 300:key:c.";
-"cli.binding.option.gain" = "Zdroje osy: měřítko výstupu, 0,1 až 10. Výchozí: 1.";
+"cli.binding.option.gain" = "Zdroje osy: měřítko výstupu, 0.1 až 10. Výchozí: 1.";
 "cli.binding.option.invert" = "Zdroje osy: obrátí směr.";
 "cli.binding.option.long_hold" = "Odešle další cíl, když je zdroj držen takto dlouho, například 500:key:b.";
 "cli.binding.option.pulse_ms" = "Jak dlouho puls drží cíl, 1 až 5000 ms. Výchozí: 100.";

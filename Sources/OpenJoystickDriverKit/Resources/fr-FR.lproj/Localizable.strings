@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "'%@' n’a aucune affectation. Ajoutez-en une avec 'ojd binding set'.";
 "cli.binding.option.actions_json" = "Actions supplémentaires sous forme de tableau JSON, dans le format qu’écrit 'ojd profile export'.";
 "cli.binding.option.behavior" = "Quand la cible se déclenche. Par défaut : le comportement de l’affectation actuelle, ou hold.";
-"cli.binding.option.deadzone" = "Sources d’axe : la part de la course qui est ignorée, de 0 à 0,95. Par défaut : 0,1.";
-"cli.binding.option.digital_threshold" = "Sources d’axe : la course qui compte comme un appui pour les cibles de type bouton. Par défaut : 0,5.";
+"cli.binding.option.deadzone" = "Sources d’axe : la part de la course qui est ignorée, de 0 à 0.95. Par défaut : 0.1.";
+"cli.binding.option.digital_threshold" = "Sources d’axe : la course qui compte comme un appui pour les cibles de type bouton. Par défaut : 0.5.";
 "cli.binding.option.double_tap" = "Envoyer une autre cible quand la source est pressée deux fois dans ce délai, par exemple 300:key:c.";
-"cli.binding.option.gain" = "Sources d’axe : l’échelle de sortie, de 0,1 à 10. Par défaut : 1.";
+"cli.binding.option.gain" = "Sources d’axe : l’échelle de sortie, de 0.1 à 10. Par défaut : 1.";
 "cli.binding.option.invert" = "Sources d’axe : inverser la direction.";
 "cli.binding.option.long_hold" = "Envoyer une autre cible quand la source est maintenue aussi longtemps, par exemple 500:key:b.";
 "cli.binding.option.pulse_ms" = "Durée pendant laquelle une impulsion maintient la cible, de 1 à 5000 ms. Par défaut : 100.";

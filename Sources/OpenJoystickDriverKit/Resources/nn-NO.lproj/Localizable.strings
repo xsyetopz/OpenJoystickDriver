@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "'%@' har ingen bindingar. Legg til ei med 'ojd binding set'.";
 "cli.binding.option.actions_json" = "Ekstra handlingar som ei JSON-matrise, i forma 'ojd profile export' skriv dei.";
 "cli.binding.option.behavior" = "Når målet blir utløyst. Standard: oppførselen til den noverande bindinga, eller hold.";
-"cli.binding.option.deadzone" = "Aksekjelder: den delen av rørsla som blir ignorert, 0 til 0,95. Standard: 0,1.";
-"cli.binding.option.digital_threshold" = "Aksekjelder: rørsla som tel som eit trykk for knappemål. Standard: 0,5.";
+"cli.binding.option.deadzone" = "Aksekjelder: den delen av rørsla som blir ignorert, 0 til 0.95. Standard: 0.1.";
+"cli.binding.option.digital_threshold" = "Aksekjelder: rørsla som tel som eit trykk for knappemål. Standard: 0.5.";
 "cli.binding.option.double_tap" = "Send eit anna mål når kjelda blir trykt to gonger innan denne tida, til dømes 300:key:c.";
-"cli.binding.option.gain" = "Aksekjelder: skalaen på utdata, 0,1 til 10. Standard: 1.";
+"cli.binding.option.gain" = "Aksekjelder: skalaen på utdata, 0.1 til 10. Standard: 1.";
 "cli.binding.option.invert" = "Aksekjelder: snu retninga.";
 "cli.binding.option.long_hold" = "Send eit anna mål når kjelda blir halden inne så lenge, til dømes 500:key:b.";
 "cli.binding.option.pulse_ms" = "Kor lenge ein puls held målet, 1 til 5000 ms. Standard: 100.";

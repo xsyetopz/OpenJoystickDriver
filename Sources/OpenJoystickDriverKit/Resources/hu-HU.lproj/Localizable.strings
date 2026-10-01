@@ -1228,10 +1228,10 @@
 "cli.binding.list.empty" = "A(z) '%@' profilnak nincsenek hozzárendelései. Adjon hozzá egyet az 'ojd binding set' paranccsal.";
 "cli.binding.option.actions_json" = "További műveletek JSON tömbként, abban a formában, ahogy az 'ojd profile export' kiírja.";
 "cli.binding.option.behavior" = "Mikor aktiválódik a cél. Alapértelmezés: a jelenlegi hozzárendelés viselkedése, vagy hold.";
-"cli.binding.option.deadzone" = "Tengelyforrások: a mozgási útnak az a része, amelyet figyelmen kívül hagy, 0 és 0,95 között. Alapértelmezés: 0,1.";
-"cli.binding.option.digital_threshold" = "Tengelyforrások: az a mozgási út, amely gombcéloknál megnyomásnak számít. Alapértelmezés: 0,5.";
+"cli.binding.option.deadzone" = "Tengelyforrások: a mozgási útnak az a része, amelyet figyelmen kívül hagy, 0 és 0.95 között. Alapértelmezés: 0.1.";
+"cli.binding.option.digital_threshold" = "Tengelyforrások: az a mozgási út, amely gombcéloknál megnyomásnak számít. Alapértelmezés: 0.5.";
 "cli.binding.option.double_tap" = "Újabb célt küld, ha a forrást ezen az időn belül kétszer nyomják meg, például 300:key:c.";
-"cli.binding.option.gain" = "Tengelyforrások: a kimeneti skála, 0,1 és 10 között. Alapértelmezés: 1.";
+"cli.binding.option.gain" = "Tengelyforrások: a kimeneti skála, 0.1 és 10 között. Alapértelmezés: 1.";
 "cli.binding.option.invert" = "Tengelyforrások: az irány megfordítása.";
 "cli.binding.option.long_hold" = "Újabb célt küld, ha a forrást ennyi ideig tartják lenyomva, például 500:key:b.";
 "cli.binding.option.pulse_ms" = "Mennyi ideig tartja egy impulzus a célt, 1 és 5000 ms között. Alapértelmezés: 100.";
