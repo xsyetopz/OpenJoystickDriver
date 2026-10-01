@@ -5,13 +5,14 @@ import Testing
 
 @testable import OpenJoystickDriverUSB
 
-struct USBDriverKitExtensionConfigurationTests {
+struct VirtualHIDExtensionConfigurationTests {
   @Test
-  func productionConfigurationUsesOnlyApplesApprovedMicrosoftPairs() throws {
-    let configuration = USBDriverKitExtensionConfiguration.driver
+  func usbPersonalityUsesOnlyApplesApprovedMicrosoftPairs() throws {
+    let configuration = VirtualHIDExtensionConfiguration.xboxUSB
     let usb = try #require(configuration.usbDevice)
 
-    #expect(configuration.bundleIdentifier == "com.openjoystickdriver.XboxUSBDevice")
+    #expect(configuration.bundleIdentifier == "com.openjoystickdriver.VirtualHIDDevice")
+    #expect(configuration.personalityName == "XboxUSB")
     #expect(configuration.providerClass == "IOUSBHostInterface")
     #expect(configuration.capabilities == .usb)
     #expect(usb.vendorID == 0x045E)
@@ -24,10 +25,45 @@ struct USBDriverKitExtensionConfigurationTests {
   }
 
   @Test
+  func factoryPersonalityIsResourcesMatchedInTheSameExtension() throws {
+    let configuration = VirtualHIDExtensionConfiguration.hidFactory
+    let factory = try #require(configuration.hidDeviceFactory)
+
+    #expect(configuration.bundleIdentifier == "com.openjoystickdriver.VirtualHIDDevice")
+    #expect(configuration.personalityName == "HIDFactory")
+    #expect(configuration.providerClass == "IOUserResources")
+    #expect(configuration.matchingProperties == ["IOResourceMatch": .string("IOKit")])
+    #expect(configuration.capabilities == .hid)
+    #expect(configuration.usbDevice == nil)
+    #expect(HIDDeviceFactoryConfiguration.deviceLimit.contains(factory.maximumDevices))
+    #expect(factory.maximumDevices == 8)
+  }
+
+  @Test
+  func eachPersonalityMatchesOnlyItsOwnService() {
+    let factory = VirtualHIDExtensionConfiguration.hidFactory.serviceMatch.registryProperties
+    let usb = VirtualHIDExtensionConfiguration.xboxUSB.serviceMatch.registryProperties
+
+    #expect(factory["SwifterKitPersonality"] == .string("HIDFactory"))
+    #expect(usb["SwifterKitPersonality"] == .string("XboxUSB"))
+    #expect(factory["CFBundleIdentifier"] == usb["CFBundleIdentifier"])
+  }
+
+  @Test
+  func usbPersonalityCanBeLeftOut() {
+    let full = VirtualHIDExtensionConfiguration.driverExtension()
+    let factoryOnly = VirtualHIDExtensionConfiguration.driverExtension(includingUSB: false)
+
+    #expect(Set(full.personalities.keys) == ["HIDFactory", "XboxUSB"])
+    #expect(Array(factoryOnly.personalities.keys) == ["HIDFactory"])
+    #expect(factoryOnly.bundleIdentifier == full.bundleIdentifier)
+  }
+
+  @Test
   func registryServiceBecomesStableKitOwnedDeviceValue() throws {
     let service = DriverService(
       id: 42,
-      name: "XboxUSBDevice",
+      name: "XboxUSB",
       properties: [
         "idVendor": .unsignedInteger(0x3537), "idProduct": .integer(0x1010),
         "locationID": .unsignedInteger(77), "USB Product Name": .string("GameSir G7 SE"),
@@ -72,7 +108,7 @@ struct USBDriverKitExtensionConfigurationTests {
   func driverKitObservationKeepsUnavailableFactsNil() throws {
     let service = DriverService(
       id: 42,
-      name: "XboxUSBDevice",
+      name: "XboxUSB",
       properties: [
         "idVendor": .unsignedInteger(0x3537), "idProduct": .integer(0x1010),
         "USB Product Name": .string("GameSir G7 SE"),

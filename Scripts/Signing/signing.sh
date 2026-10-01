@@ -74,7 +74,7 @@ cmd_install_profiles() {
         echo "Download $name, then re-run the original command." >&2
         return 2
       fi
-      echo "Skipping optional publisher release profile: $name"
+      echo "Skipping optional profile: $name"
       return 0
     fi
     if [[ "$src_path" != "$DST/$name" ]]; then
@@ -86,10 +86,10 @@ cmd_install_profiles() {
   local mode="${OJD_SIGNING_MODE:-all}"
   if [[ "$mode" != "release" ]]; then
     copy_one "OpenJoystickDriver.provisionprofile" 1
-    copy_one "OpenJoystickDriver_XboxUSBDevice.provisionprofile" 1
+    copy_one "OpenJoystickDriver_VirtualHIDDevice.provisionprofile" 1
   fi
   copy_one "OpenJoystickDriver_DevID.provisionprofile" "$([[ "$mode" == "release" ]] && echo 1 || echo 0)"
-  copy_one "OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile" "$([[ "$mode" == "release" ]] && echo 1 || echo 0)"
+  copy_one "OpenJoystickDriver_VirtualHIDDevice_DevID.provisionprofile" "$([[ "$mode" == "release" ]] && echo 1 || echo 0)"
 
   echo "Installed profiles to: $DST"
   printf '  %s\n' "${installed[@]}"
@@ -148,7 +148,7 @@ cmd_ci_release_setup() {
 
   echo "Installing provisioning profiles..."
   write_base64_file OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64 "$profiles_dir/OpenJoystickDriver_DevID.provisionprofile"
-  write_base64_file OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64 "$profiles_dir/OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile"
+  write_base64_file OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64 "$profiles_dir/OpenJoystickDriver_VirtualHIDDevice_DevID.provisionprofile"
 
   echo "Generating release signing environment..."
   (
@@ -425,8 +425,8 @@ REL_ENV="${REL_ENV:-$PROJECT_DIR/.env.release}"
 
 GUI_DEV_PROFILE="${GUI_DEV_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver.provisionprofile}"
 GUI_DEVID_PROFILE="${GUI_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_DevID.provisionprofile}"
-DEXT_PROFILE="${DEXT_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice.provisionprofile}"
-DEXT_DEVID_PROFILE="${DEXT_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile}"
+DEXT_PROFILE="${DEXT_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_VirtualHIDDevice.provisionprofile}"
+DEXT_DEVID_PROFILE="${DEXT_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_VirtualHIDDevice_DevID.provisionprofile}"
 APPLE_DEV_IDENTITY="${APPLE_DEV_IDENTITY:-}"
 DEVID_APP_IDENTITY="${DEVID_APP_IDENTITY:-}"
 

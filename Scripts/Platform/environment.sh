@@ -180,45 +180,6 @@ verify_profile_cert() (
   fi
 )
 
-# The restricted DriverKit extension is eligible to start only when one of the
-# Apple-approved Microsoft GIP interfaces is present. Third-party GIP devices
-# remain on the app-owned IOUSBHost path.
-ojd_microsoft_driverkit_interface_connected() {
-  ioreg -r -c IOUSBHostInterface -a 2>/dev/null | python3 -c '
-import plistlib
-import sys
-
-products = {0x02D1, 0x02DD, 0x02E3, 0x02EA, 0x0B00, 0x0B0A, 0x0B12}
-
-def dictionaries(value):
-    if isinstance(value, dict):
-        yield value
-        for child in value.values():
-            yield from dictionaries(child)
-    elif isinstance(value, list):
-        for child in value:
-            yield from dictionaries(child)
-
-try:
-    root = plistlib.load(sys.stdin.buffer)
-except plistlib.InvalidFileException:
-    raise SystemExit(1)
-
-for item in dictionaries(root):
-    if (
-        item.get("idVendor") == 0x045E
-        and item.get("idProduct") in products
-        and item.get("bConfigurationValue") == 1
-        and item.get("bInterfaceNumber") == 0
-        and item.get("bInterfaceClass") == 0xFF
-        and item.get("bInterfaceSubClass") == 0x47
-        and item.get("bInterfaceProtocol") == 0xD0
-    ):
-        raise SystemExit(0)
-raise SystemExit(1)
-'
-}
-
 # Apple Development host designated requirement: bundle id + team OU.
 # Leading "=" is required so codesign treats this as source, not a file path.
 # Do not pin cdhash or leaf CN: TCC Input Monitoring / Accessibility keys off

@@ -65,7 +65,10 @@ extension UserSpaceOutputDispatcher {
     }
   }
 
-  internal func entry(for identifier: DeviceIdentifier) async throws -> Entry {
+  internal func entry(
+    for identifier: DeviceIdentifier,
+    seed: UserSpaceInputReportState.Snapshot? = nil
+  ) async throws -> Entry {
     let result: (task: Task<Entry, Error>, generation: UInt64) = try registryLock.withLock {
       guard lifecycle.isOpen else { throw CancellationError() }
       let generation = lifecycleGenerations[identifier, default: 0]
@@ -76,7 +79,7 @@ extension UserSpaceOutputDispatcher {
       let retryPolicy = creationRetryPolicies[identifier] ?? UserSpaceDeviceCreationRetryPolicy()
       guard retryPolicy.permitsAttempt(at: now) else { throw CreationError.createFailed }
 
-      let task = Task { try await self.createEntry(for: identifier) }
+      let task = Task { try await self.createEntry(for: identifier, seed: seed) }
       creationTasks[identifier] = task
       return (task, generation)
     }
@@ -109,6 +112,23 @@ extension UserSpaceOutputDispatcher {
       }
       throw error
     }
+  }
+
+  /// Replaces a published device its publisher lost with a new one that starts from the lost
+  /// device's state, so the virtual gamepad comes back without waiting for new input.
+  internal func replaceLostEntry(for identifier: DeviceIdentifier, lost: Entry) async {
+    let removed = registryLock.withLock { () -> Bool in
+      guard lifecycle.isOpen, entries[identifier] === lost else { return false }
+      entries.removeValue(forKey: identifier)
+      recomputeStatusLocked()
+      return true
+    }
+    guard removed else { return }
+    let seed = lost.inputReportState.snapshot()
+    await lost.close()
+    guard let entry = try? await entry(for: identifier, seed: seed) else { return }
+    _ = try? await entry.sender.submit { [entry] in [entry.inputReportState.currentReport()] }
+      .value()
   }
 
   internal func recomputeStatusLocked() {

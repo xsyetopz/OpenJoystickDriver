@@ -26,9 +26,9 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     let registry = ProtocolDriverRegistry()
     rawUSBModels = { Set(registry.rawUSBIdentifiers.map(USBTransportModel.init)) }
     requiredDriverKitModels = Set(
-      USBDriverKitExtensionConfiguration.microsoftProductIDs.map {
+      VirtualHIDExtensionConfiguration.microsoftProductIDs.map {
         USBTransportModel(
-          vendorID: USBDriverKitExtensionConfiguration.microsoftVendorID,
+          vendorID: VirtualHIDExtensionConfiguration.microsoftVendorID,
           productID: $0
         )
       }

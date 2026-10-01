@@ -20,12 +20,14 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
   public let steps: [Step]
   public let notes: [String]
 
-  public init(device: ApplicationServiceDeviceDescription) {
+  /// `selector` names the controller in the commands; it defaults to its `VVVV:PPPP` identity.
+  public init(device: ApplicationServiceDeviceDescription, selector: String? = nil) {
     self.init(
       vendorID: device.vendorID,
       productID: device.productID,
       protocolBinding: device.protocolBinding,
-      capabilities: device.physicalOutputCapabilities
+      capabilities: device.physicalOutputCapabilities,
+      selector: selector
     )
   }
 
@@ -33,12 +35,16 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
     vendorID: UInt16,
     productID: UInt16,
     protocolBinding: ProtocolBindingID,
-    capabilities: PhysicalControllerOutputCapabilities
+    capabilities: PhysicalControllerOutputCapabilities,
+    selector: String? = nil
   ) {
     self.vendorID = vendorID
     self.productID = productID
     self.protocolBinding = protocolBinding
-    steps = Self.steps(vendorID: vendorID, productID: productID, capabilities: capabilities)
+    steps = Self.steps(
+      selector: selector ?? String(format: "%04X:%04X", vendorID, productID),
+      capabilities: capabilities
+    )
     notes = [
       "Record pass/fail separately; generating this plan does not verify hardware.",
       "Stop testing and disconnect the controller if output behaves unexpectedly.",
@@ -47,12 +53,10 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
   }
 
   private static func steps(
-    vendorID: UInt16,
-    productID: UInt16,
+    selector identity: String,
     capabilities: PhysicalControllerOutputCapabilities
   ) -> [Step] {
     let prefix = "ojd controller"
-    let identity = String(format: "%04X:%04X", vendorID, productID)
     var result: [Step] = []
     let motors = Set(capabilities.rumbleMotors)
     if motors.contains(.leftMain) || motors.contains(.leftHaptic) {

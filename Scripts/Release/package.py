@@ -13,6 +13,7 @@ from .package_common import (
     default_bundle_short_version,
     detach_if_mounted,
     die,
+    embedded_dexts,
     make_dmg,
     mounted,
     release_environment,
@@ -102,18 +103,15 @@ def main(argv: list[str]) -> int:
         )
         if not app_path.is_dir():
             die(f"App bundle not found: {app_path}")
-        dext_info = (
-            app_path
-            / "Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext/Info.plist"
-        )
-        verify_bundle_versions(
-            app_path / "Contents/Info.plist",
-            dext_info,
-            env["OJD_BUNDLE_VERSION"],
-            version,
-            commit,
-            "clean",
-        )
+        for dext in embedded_dexts(app_path):
+            verify_bundle_versions(
+                app_path / "Contents/Info.plist",
+                dext / "Info.plist",
+                env["OJD_BUNDLE_VERSION"],
+                version,
+                commit,
+                "clean",
+            )
         print("\n=== Verify signed app before notarization ===")
         run(
             [

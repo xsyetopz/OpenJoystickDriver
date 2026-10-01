@@ -12,7 +12,7 @@ next_dext_bundle_version() {
   local candidate
 
   candidate=$(plutil -extract CFBundleVersion raw \
-    /Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext/Info.plist \
+    /Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/com.openjoystickdriver.VirtualHIDDevice.dext/Info.plist \
     2>/dev/null || echo "")
   [[ -n "$candidate" ]] && installed+=("$candidate")
 
@@ -20,7 +20,7 @@ next_dext_bundle_version() {
     installed+=("$candidate")
   done < <(
     systemextensionsctl list 2>/dev/null \
-      | sed -n 's/.*com\.openjoystickdriver\.XboxUSBDevice ([^/][^/]*\/\([^)]*\)).*/\1/p'
+      | sed -n 's/.*com\.openjoystickdriver\.VirtualHIDDevice ([^/][^/]*\/\([^)]*\)).*/\1/p'
   )
 
   python3 "$PROJECT_DIR/Scripts/Release/bundle_version.py" --next-dev \
@@ -32,7 +32,7 @@ next_dext_bundle_version() {
 sysext_listed() {
   local listing
   listing="$(systemextensionsctl list 2>&1 || true)"
-  [[ "$listing" == *"com.openjoystickdriver.XboxUSBDevice ($1/$2)"* ]]
+  [[ "$listing" == *"com.openjoystickdriver.VirtualHIDDevice ($1/$2)"* ]]
 }
 
 # App-only install. Not a TCC or permission probe: the copy-then-re-sign of the
@@ -53,7 +53,9 @@ install_fast() {
   echo "=== Step 2: Preserve embedded system extension ==="
   local DEXT_DIR_DST="$APP_DST/Contents/Library/SystemExtensions"
   local DEXT_DIR_SRC="$APP_SRC/Contents/Library/SystemExtensions"
-  if [[ -d "$DEXT_DIR_DST" ]]; then
+  if [[ "$OJD_HOST_USERCLIENT" != "1" ]]; then
+    echo "  Skipped: the host profile cannot open the DEXT user client, so the app ships without it"
+  elif [[ -d "$DEXT_DIR_DST" ]]; then
     rm -rf "$DEXT_DIR_SRC" 2>/dev/null || true
     mkdir -p "$DEXT_DIR_SRC"
     cp -R "$DEXT_DIR_DST/"* "$DEXT_DIR_SRC/" 2>/dev/null || true
@@ -93,11 +95,21 @@ install_full() {
   echo "  Using CFBundleVersion=$DEXT_VER"
   DEXT_BUNDLE_VERSION="$DEXT_VER" build_dext_bundle
 
+  if [[ "$OJD_HOST_USERCLIENT" != "1" ]]; then
+    echo ""
+    echo "=== Step 4: Install app without the DEXT ==="
+    python3 "$PROJECT_DIR/Scripts/Build/install_app.py" \
+      --retire-driverkit \
+      "$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
+    echo "  Virtual gamepads use IOHIDUserDevice until Apple grants DriverKit user-client access."
+    return 0
+  fi
+
   echo ""
   echo "=== Step 4: Verify bundle IDs ==="
   local APP_ID DEXT_ID
   APP_ID=$(plutil -extract CFBundleIdentifier raw .build/debug/OpenJoystickDriver.app/Contents/Info.plist 2>/dev/null || echo "MISSING")
-  DEXT_ID=$(plutil -extract CFBundleIdentifier raw ".build/debug/OpenJoystickDriver.app/Contents/Library/SystemExtensions/${APP_ID}.XboxUSBDevice.dext/Info.plist" 2>/dev/null || echo "MISSING")
+  DEXT_ID=$(plutil -extract CFBundleIdentifier raw ".build/debug/OpenJoystickDriver.app/Contents/Library/SystemExtensions/${APP_ID}.VirtualHIDDevice.dext/Info.plist" 2>/dev/null || echo "MISSING")
   echo "  App:  $APP_ID"
   echo "  Dext: $DEXT_ID"
   [[ "$DEXT_ID" == "$APP_ID"* ]] || die "PREFIX MISMATCH: dext will not be found in app bundle"
@@ -116,7 +128,7 @@ install_full() {
     "$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
 
   local INSTALLED_DEXT_INFO
-  INSTALLED_DEXT_INFO="/Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext/Info.plist"
+  INSTALLED_DEXT_INFO="/Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/com.openjoystickdriver.VirtualHIDDevice.dext/Info.plist"
   local NEW_SHORT_VERSION NEW_BUILD_VERSION
   NEW_SHORT_VERSION=$(plutil -extract CFBundleShortVersionString raw "$INSTALLED_DEXT_INFO" 2>/dev/null || echo "")
   NEW_BUILD_VERSION=$(plutil -extract CFBundleVersion raw "$INSTALLED_DEXT_INFO" 2>/dev/null || echo "")
@@ -152,7 +164,7 @@ install_full() {
     sleep 2
     SYSEXT_ELAPSED=$(( SYSEXT_ELAPSED + 2 ))
     if systemextensionsctl list 2>&1 \
-      | grep -F "com.openjoystickdriver.XboxUSBDevice (${NEW_SHORT_VERSION}/${NEW_BUILD_VERSION})" \
+      | grep -F "com.openjoystickdriver.VirtualHIDDevice (${NEW_SHORT_VERSION}/${NEW_BUILD_VERSION})" \
       | grep -q "activated enabled"; then
       echo "  ✓ Sysext ${NEW_SHORT_VERSION} (${NEW_BUILD_VERSION}) activated after ${SYSEXT_ELAPSED}s"
       break
@@ -165,37 +177,33 @@ install_full() {
 
   echo ""
   echo "=== Step 7: Wait for dext start ==="
-  if ! ojd_microsoft_driverkit_interface_connected; then
-    echo "  ✓ Dext is activated and idle; no entitled Microsoft USB interface is connected."
-  else
-    local TIMEOUT=60 ELAPSED=0
-    while (( ELAPSED < TIMEOUT )); do
-      sleep 3
-      ELAPSED=$(( ELAPSED + 3 ))
-      if $LOG show --last 10s --predicate 'process == "kernel" AND eventMessage CONTAINS "DK:"' --info --debug --style compact 2>/dev/null | grep -q "start fail"; then
-        echo "  ✗ Kernel DK log shows 'start fail' after ${ELAPSED}s"
-        break
-      fi
-      if $LOG show --last 10s --predicate 'process == "kernel" AND eventMessage CONTAINS "DK:"' --info --debug --style compact 2>/dev/null | grep -q "user server timeout"; then
-        echo "  ✗ Kernel DK log shows 'user server timeout' after ${ELAPSED}s"
-        break
-      fi
-      if pgrep -x XboxUSBDevice >/dev/null 2>&1; then
-        echo "  ✓ Dext process detected after ${ELAPSED}s"
-        break
-      fi
-      printf "  ...%ds\n" "$ELAPSED"
-    done
-    if (( ELAPSED >= TIMEOUT )); then
-      echo "  ⚠ Timed out after ${TIMEOUT}s while an entitled Microsoft USB interface was connected."
+  local TIMEOUT=60 ELAPSED=0
+  while (( ELAPSED < TIMEOUT )); do
+    sleep 3
+    ELAPSED=$(( ELAPSED + 3 ))
+    if $LOG show --last 10s --predicate 'process == "kernel" AND eventMessage CONTAINS "DK:"' --info --debug --style compact 2>/dev/null | grep -q "start fail"; then
+      echo "  ✗ Kernel DK log shows 'start fail' after ${ELAPSED}s"
+      break
     fi
+    if $LOG show --last 10s --predicate 'process == "kernel" AND eventMessage CONTAINS "DK:"' --info --debug --style compact 2>/dev/null | grep -q "user server timeout"; then
+      echo "  ✗ Kernel DK log shows 'user server timeout' after ${ELAPSED}s"
+      break
+    fi
+    if pgrep -x VirtualHIDDevice >/dev/null 2>&1; then
+      echo "  ✓ Dext process detected after ${ELAPSED}s"
+      break
+    fi
+    printf "  ...%ds\n" "$ELAPSED"
+  done
+  if (( ELAPSED >= TIMEOUT )); then
+    echo "  ⚠ Timed out after ${TIMEOUT}s waiting for the VirtualHIDDevice process."
   fi
 
   echo ""
   echo ""
   echo "=== Step 8: Diagnostics ==="
   echo "--- Dext os_log (last 60s) ---"
-  $LOG show --last 60s --predicate 'eventMessage CONTAINS "XboxUSBDevice"' --info --debug --style compact 2>/dev/null || echo "(none)"
+  $LOG show --last 60s --predicate 'eventMessage CONTAINS "VirtualHIDDevice"' --info --debug --style compact 2>/dev/null || echo "(none)"
   echo ""
   echo "--- Kernel DK logs (last 60s) ---"
   $LOG show --last 60s --predicate 'process == "kernel" AND eventMessage CONTAINS "DK:"' --info --debug --style compact 2>/dev/null || echo "(none)"

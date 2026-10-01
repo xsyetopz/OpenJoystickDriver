@@ -11,7 +11,7 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
 
   public func devices() async throws -> [USBTransportDevice] {
     let services = try await client.services(
-      matching: USBDriverKitExtensionConfiguration.driver.serviceMatch
+      matching: VirtualHIDExtensionConfiguration.xboxUSB.serviceMatch
     )
     servicesByID = Dictionary(uniqueKeysWithValues: services.map { ($0.id, $0) })
     return services.compactMap(Self.device)
@@ -147,7 +147,8 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
   static func transportError(_ error: Error) -> USBTransportError {
     if let transportError = error as? USBTransportError { return transportError }
     switch error as? USBRuntimeError {
-    case .emptyTransfer, .directionMismatch, .invalidOutputLength, .transferTooLarge:
+    case .emptyTransfer, .directionMismatch, .invalidOutputLength, .transferTooLarge,
+      .invalidBundleRing, .invalidBundledTransfer, .invalidEndpointPolicy:
       return .notSupported
     case .invalidResponse, nil: break
     }

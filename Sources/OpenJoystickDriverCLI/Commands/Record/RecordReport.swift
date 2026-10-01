@@ -78,8 +78,8 @@ enum RecordUSBExtension: String, Encodable, Equatable {
   init?(_ record: ControllerRecord) {
     guard record.usesRawUSB else { return nil }
     let claimed =
-      record.identity.vendorID == USBDriverKitExtensionConfiguration.microsoftVendorID
-      && USBDriverKitExtensionConfiguration.microsoftProductIDs.contains(record.identity.productID)
+      record.identity.vendorID == VirtualHIDExtensionConfiguration.microsoftVendorID
+      && VirtualHIDExtensionConfiguration.microsoftProductIDs.contains(record.identity.productID)
     self = claimed ? .claims : .doesNotClaim
   }
 }

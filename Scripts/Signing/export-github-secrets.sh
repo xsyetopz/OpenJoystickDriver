@@ -106,7 +106,7 @@ display_path() {
 }
 
 gui_devid_profile="${OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_DevID.provisionprofile}"
-dext_profile="${OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile}"
+dext_profile="${OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE:-$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_VirtualHIDDevice_DevID.provisionprofile}"
 
 [[ -f "$gui_devid_profile" ]] || die "Missing GUI Developer ID profile: $gui_devid_profile"
 [[ -f "$dext_profile" ]] || die "Missing DriverKit profile: $dext_profile"

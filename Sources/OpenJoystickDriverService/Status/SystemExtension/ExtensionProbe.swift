@@ -3,9 +3,8 @@ import OpenJoystickDriverKit
 import OpenJoystickDriverUSB
 
 package enum ExtensionProbe {
-  package static let bundleIdentifier = USBDriverKitExtensionConfiguration.bundleIdentifier
-  static let relativePath =
-    "Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext"
+  package static let bundleIdentifier = VirtualHIDExtensionConfiguration.bundleIdentifier
+  static let relativePath = "Contents/Library/SystemExtensions/\(bundleIdentifier).dext"
 
   package static func currentStatus(bundleURL: URL = Bundle.main.bundleURL) -> ExtensionStatus {
     let bundle = bundleState(in: bundleURL)

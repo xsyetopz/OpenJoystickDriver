@@ -82,7 +82,7 @@ jobs:
 
       - name: Check generated DriverKit project
         run: |
-          test "$OJD_USE_LOCAL_SWIFTERKIT" != "1"
+          test "$OJD_USE_LOCAL_SWIFTERKIT" = "0"
           ./Scripts/ojd check driverkit
 
       - name: Check Swift formatting and lint

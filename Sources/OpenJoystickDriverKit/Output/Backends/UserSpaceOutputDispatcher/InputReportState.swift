@@ -20,15 +20,29 @@ final class UserSpaceInputReportState: Sendable {
 
   var isRemapped: Bool { current.withLock { $0.remapped } }
 
-  init(format: any VirtualGamepadReportFormat) {
+  /// The controller state a replacement device starts from.
+  struct Snapshot: Sendable {
+    let state: VirtualGamepadState
+    let remapped: Bool
+  }
+
+  /// Starts neutral, or from `seed` with nothing delivered yet.
+  init(format: any VirtualGamepadReportFormat, seed: Snapshot? = nil) {
     self.format = format
     let neutral = VirtualGamepadState()
+    let state = seed?.state ?? neutral
     self.current = Locked(
       Current(
-        report: format.buildInputReport(from: neutral),
+        state: state,
+        report: format.buildInputReport(from: state),
+        remapped: seed?.remapped ?? false,
         deliveredAuxiliaryReports: format.buildAuxiliaryInputReports(from: neutral)
       )
     )
+  }
+
+  func snapshot() -> Snapshot {
+    current.withLock { Snapshot(state: $0.state, remapped: $0.remapped) }
   }
 
   func update(remapped: Bool = false, _ body: (inout VirtualGamepadState) -> Void) -> [UInt8] {

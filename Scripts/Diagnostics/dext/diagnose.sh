@@ -44,13 +44,9 @@ info() {
   echo -e "      $1"
 }
 
-BUNDLE_ID="com.openjoystickdriver.XboxUSBDevice"
-DEXT_PROCESS="XboxUSBDevice"
+BUNDLE_ID="com.openjoystickdriver.VirtualHIDDevice"
+DEXT_PROCESS="VirtualHIDDevice"
 APP_DEXT_DIR="/Applications/OpenJoystickDriver.app/Contents/Library/SystemExtensions/${BUNDLE_ID}.dext"
-DRIVERKIT_INTERFACE_CONNECTED=0
-if ojd_microsoft_driverkit_interface_connected; then
-  DRIVERKIT_INTERFACE_CONNECTED=1
-fi
 
 echo -e "${BOLD}=== OpenJoystickDriver Dext Diagnostics ===${RESET}"
 echo ""
@@ -172,21 +168,16 @@ if pgrep -x "$DEXT_PROCESS" >/dev/null 2>&1; then
     fi
   fi
 else
-  if (( DRIVERKIT_INTERFACE_CONNECTED == 0 )); then
-    pass "Dext is ready and idle; no entitled Microsoft USB interface is connected"
-  else
-    fail "Dext process not running while an entitled Microsoft USB interface is connected"
-  fi
+  # The factory personality matches IOUserResources, so an activated dext runs without a device.
+  fail "Dext process not running (an activated dext runs even with no controller attached)"
 fi
 
 # --- 8. IOUserService presence ---
 ioreg_service=$(ioreg -l -c IOUserService 2>/dev/null | grep -i openjoystick || true)
 if [[ -n "$ioreg_service" ]]; then
   pass "IORegistry IOUserService proxy node present"
-elif (( DRIVERKIT_INTERFACE_CONNECTED == 0 )); then
-  pass "IORegistry IOUserService is absent while the dext is idle, as expected"
 else
-  fail "IORegistry IOUserService proxy node not found for an entitled Microsoft USB interface"
+  fail "IORegistry IOUserService proxy node not found"
 fi
 
 # --- 9. Dext os_log (last 2 minutes) ---

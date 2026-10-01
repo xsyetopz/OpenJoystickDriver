@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverUSB
 
 extension ApplicationServiceRuntime {
   /// Builds the automatic dispatcher, which applies ownership and session policy per controller
@@ -22,6 +23,12 @@ extension ApplicationServiceRuntime {
     )
   }
 
+  /// Shared by every dispatcher, because the factory accepts commands from one connection only.
+  /// Nil when the app bundles no extension, so devices use `IOHIDUserDevice` directly.
+  nonisolated static let hidFactoryPublisher: DriverKitHIDFactoryPublisher? =
+    ExtensionProbe.bundleState(in: Bundle.main.bundleURL) == .present
+    ? DriverKitHIDFactoryPublisher() : nil
+
   /// Each profile's backend publishes directly and routes output commands through the
   /// feedback gate.
   nonisolated private static func makeUserSpaceOutputDispatcher(
@@ -37,6 +44,7 @@ extension ApplicationServiceRuntime {
     return try UserSpaceOutputDispatcher(
       profile: profile,
       format: format,
+      devicePublisher: hidFactoryPublisher,
       onOutputCommand: outputHandler
     ) { identifier in
       _ = await feedbackGate.quiesceAndNeutralize(

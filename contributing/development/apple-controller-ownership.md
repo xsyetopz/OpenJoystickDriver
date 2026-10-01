@@ -6,14 +6,14 @@ Controller records and protocol implementations define OJD support, not Apple's 
 
 - Standard HID input uses IOHID (`IOHIDManager` / `IOHIDDevice`) on every supported macOS.
 - Accessible raw or vendor-specific USB interfaces use the app-side [IOUSBHost framework](https://developer.apple.com/documentation/iousbhost?language=objc), available since macOS 10.15.
-- A raw interface owned through OJD's restricted USBDriverKit configuration uses `com.openjoystickdriver.XboxUSBDevice` and its exact user-client allowlist.
+- A raw interface owned through OJD's restricted USBDriverKit configuration uses the `XboxUSB` personality of `com.openjoystickdriver.VirtualHIDDevice` and its exact user-client allowlist.
 - Consumer virtual HID is app-owned. `com.apple.developer.hid.virtual.device` is not a DriverKit entitlement and never belongs in the DEXT.
 
 `OpenJoystickDriverUSB` records the selected route with each discovered service. It does not infer transport from a brand name and does not retry an open failure through a different backend. The Apple-entitled Microsoft models are always reserved for the DEXT, even when unavailable: direct claims would bypass the established ownership and provisioning boundary.
 
 ## Apple-Issued OJD Scope
 
-Apple granted the host user-client entitlement for the existing external identity `com.openjoystickdriver.XboxUSBDevice`. The production USB transport entitlement covers only:
+The team's `transport.usb` capability (VendorID and ProductID) is already assigned. Enable it on the `com.openjoystickdriver.VirtualHIDDevice` App ID and regenerate the DriverKit profile; a profile without it builds factory-only (no Xbox USB ownership). The USB transport entitlement covers only:
 
 ```text
 045E:02D1  045E:02DD  045E:02E3  045E:02EA
@@ -33,6 +33,6 @@ Those plists explain why macOS can report an exclusive owner for some controller
 
 ## Security Boundary
 
-The host allowlist contains only `com.openjoystickdriver.XboxUSBDevice`; allow-any DriverKit user-client access is forbidden. The DEXT's USB entitlement contains exact device dictionaries and no HID virtual-device or HIDDriverKit entitlement. No route disables SIP, installs a kernel extension, or restores the removed libusb/IOUSBFamily shim path.
+The host allowlist is exactly `com.openjoystickdriver.VirtualHIDDevice`; allow-any DriverKit user-client access is forbidden. The DEXT's optional USB entitlement contains exact device dictionaries, and the DEXT has no HID virtual-device entitlement. No route disables SIP, installs a kernel extension, or restores the removed libusb/IOUSBFamily shim path.
 
 Signed activation, the production provisioning profile, exclusive ownership transfer, and physical packet delivery remain hardware-and-account checks. Source tests and unsigned DriverKit builds do not prove them.

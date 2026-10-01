@@ -121,7 +121,7 @@ struct SetupCoordinatorTests {
         registration: .active("historical"),
         embedded: Self.currentFacts,
         installed: ExtensionVersionFacts(
-          bundleIdentifier: USBDriverKitExtensionConfiguration.bundleIdentifier,
+          bundleIdentifier: VirtualHIDExtensionConfiguration.bundleIdentifier,
           shortVersion: "0.5.0-beta.1",
           buildVersion: "500001"
         )
@@ -171,7 +171,7 @@ struct SetupCoordinatorTests {
     registration: .inactive("inactive")
   )
   private static let currentFacts = ExtensionVersionFacts(
-    bundleIdentifier: USBDriverKitExtensionConfiguration.bundleIdentifier,
+    bundleIdentifier: VirtualHIDExtensionConfiguration.bundleIdentifier,
     shortVersion: "0.5.0-beta.3",
     buildVersion: "0.5.0b3"
   )
@@ -186,7 +186,7 @@ struct SetupCoordinatorTests {
     registration: .active("older"),
     embedded: currentFacts,
     installed: ExtensionVersionFacts(
-      bundleIdentifier: USBDriverKitExtensionConfiguration.bundleIdentifier,
+      bundleIdentifier: VirtualHIDExtensionConfiguration.bundleIdentifier,
       shortVersion: "0.5.0-beta.2",
       buildVersion: "0.5.0b2"
     )

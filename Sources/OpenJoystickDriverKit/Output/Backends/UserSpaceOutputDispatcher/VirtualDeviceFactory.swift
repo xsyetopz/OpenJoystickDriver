@@ -5,17 +5,71 @@ import IOKit.hid
 import Security
 
 extension UserSpaceOutputDispatcher {
-  internal func createEntry(for identifier: DeviceIdentifier) async throws -> Entry {
+  /// Creates the native device for `identifier`, starting from `seed` when it replaces a lost
+  /// device.
+  internal func createEntry(
+    for identifier: DeviceIdentifier,
+    seed: UserSpaceInputReportState.Snapshot? = nil
+  ) async throws -> Entry {
     guard lifecycle.isOpen else { throw CancellationError() }
+    if let devicePublisher,
+      let entry = try await createPublishedEntry(for: identifier, devicePublisher, seed: seed)
+    {
+      return entry
+    }
     if let testBackendFactory {
       let backend = try await testBackendFactory(identifier)
       guard lifecycle.isOpen else {
         backend.close()
         throw CancellationError()
       }
-      return Entry(backend: backend, inputReportState: UserSpaceInputReportState(format: format))
+      return Entry(
+        backend: backend,
+        inputReportState: UserSpaceInputReportState(format: format, seed: seed)
+      )
     }
-    return try createIOKitEntry(for: identifier)
+    return try createIOKitEntry(for: identifier, seed: seed)
+  }
+
+  /// Returns nil when the publisher declines, so the caller falls back to `IOHIDUserDevice`.
+  internal func createPublishedEntry(
+    for identifier: DeviceIdentifier,
+    _ publisher: any VirtualHIDDevicePublisher,
+    seed: UserSpaceInputReportState.Snapshot? = nil
+  ) async throws -> Entry? {
+    let inputReportState = UserSpaceInputReportState(format: format, seed: seed)
+    let entry = Entry(inputReportState: inputReportState)
+    let handler = hostReportHandler(
+      identifier: identifier,
+      input: inputReportState,
+      sender: entry.sender
+    )
+    let description = Self.deviceDescription(
+      profile: profile,
+      format: format,
+      identifier: identifier
+    )
+    guard
+      let backend = await publisher.publish(
+        description,
+        hostReports: VirtualHIDHostReports(handler: handler),
+        onLost: { [weak self, weak entry] in
+          guard let self, let entry else { return }
+          Task { await self.replaceLostEntry(for: identifier, lost: entry) }
+        }
+      )
+    else {
+      await entry.close()
+      return nil
+    }
+    guard lifecycle.isOpen else {
+      backend.close()
+      await entry.close()
+      throw CancellationError()
+    }
+    entry.sender.attach(backend)
+    print("[UserSpaceOutputDispatcher] Created published virtual device for \(identifier)")
+    return entry
   }
 
   internal func hostReportHandler(
@@ -47,7 +101,10 @@ extension UserSpaceOutputDispatcher {
   /// Deferred creation until `IOHIDUserDeviceActivate` avoids dropped get/set report calls.
   static let deviceCreationOptions = IOOptionBits(IOHIDUserDeviceOptions.createOnActivate.rawValue)
 
-  internal func createIOKitEntry(for identifier: DeviceIdentifier) throws -> Entry {
+  internal func createIOKitEntry(
+    for identifier: DeviceIdentifier,
+    seed: UserSpaceInputReportState.Snapshot? = nil
+  ) throws -> Entry {
     let properties = Self.deviceProperties(profile: profile, format: format, identifier: identifier)
     let device = IOHIDUserDeviceCreateWithProperties(
       kCFAllocatorDefault,
@@ -66,7 +123,7 @@ extension UserSpaceOutputDispatcher {
     let queue = DispatchQueue(
       label: "com.openjoystickdriver.iokit-hid.\(identity.vendorID).\(identity.productID)"
     )
-    let inputReportState = UserSpaceInputReportState(format: format)
+    let inputReportState = UserSpaceInputReportState(format: format, seed: seed)
     let entry = Entry(
       backend: IOHIDBackend(device: device, queue: queue),
       inputReportState: inputReportState
@@ -121,6 +178,28 @@ extension UserSpaceOutputDispatcher {
     }
   }
 
+  /// The identity, descriptor, transport, location, and GenericDesktop/GamePad primary usage that
+  /// every provider publishes for one device.
+  static func deviceDescription(
+    profile: VirtualDeviceProfile,
+    format: any VirtualGamepadReportFormat,
+    identifier: DeviceIdentifier
+  ) -> VirtualHIDDeviceDescription {
+    VirtualHIDDeviceDescription(
+      reportDescriptor: format.descriptor,
+      vendorID: profile.vendorID,
+      productID: profile.productID,
+      versionNumber: profile.versionNumber,
+      manufacturer: profile.manufacturer,
+      product: profile.productName,
+      serialNumber: UserSpaceVirtualDeviceConstants.serialNumber(for: identifier),
+      transport: ioHIDTransportValue(for: profile),
+      locationID: UserSpaceVirtualDeviceConstants.locationID(for: identifier),
+      primaryUsagePage: UInt32(kHIDPage_GenericDesktop),
+      primaryUsage: UInt32(kHIDUsage_GD_GamePad)
+    )
+  }
+
   /// The complete published property dictionary for the one `IOHIDUserDeviceCreateWithProperties`
   /// call: identity, report sizes, location, and the GenericDesktop/GamePad primary usage and
   /// usage pairs.
@@ -129,27 +208,25 @@ extension UserSpaceOutputDispatcher {
     format: any VirtualGamepadReportFormat,
     identifier: DeviceIdentifier
   ) -> [String: Any] {
-    let primaryUsage = Int(kHIDUsage_GD_GamePad)
+    let device = deviceDescription(profile: profile, format: format, identifier: identifier)
+    let usagePage = Int(device.primaryUsagePage)
+    let usage = Int(device.primaryUsage)
     var properties: [String: Any] = [
-      kIOHIDReportDescriptorKey as String: Data(format.descriptor),
-      kIOHIDVendorIDKey as String: Int(profile.vendorID),
-      kIOHIDProductIDKey as String: Int(profile.productID),
-      kIOHIDVersionNumberKey as String: profile.versionNumber,
-      kIOHIDProductKey as String: profile.productName,
-      kIOHIDManufacturerKey as String: profile.manufacturer,
-      kIOHIDSerialNumberKey as String: UserSpaceVirtualDeviceConstants.serialNumber(
-        for: identifier
-      ), kIOHIDTransportKey as String: ioHIDTransportValue(for: profile),
+      kIOHIDReportDescriptorKey as String: Data(device.reportDescriptor),
+      kIOHIDVendorIDKey as String: Int(device.vendorID),
+      kIOHIDProductIDKey as String: Int(device.productID),
+      kIOHIDVersionNumberKey as String: device.versionNumber,
+      kIOHIDProductKey as String: device.product,
+      kIOHIDManufacturerKey as String: device.manufacturer,
+      kIOHIDSerialNumberKey as String: device.serialNumber,
+      kIOHIDTransportKey as String: device.transport,
       kIOHIDMaxInputReportSizeKey as String: reportBufferSize(
         payloadSize: format.inputReportPayloadSize,
         reportID: format.inputReportID
-      ), kIOHIDPrimaryUsagePageKey as String: Int(kHIDPage_GenericDesktop),
-      kIOHIDPrimaryUsageKey as String: primaryUsage,
+      ), kIOHIDPrimaryUsagePageKey as String: usagePage,
+      kIOHIDPrimaryUsageKey as String: usage,
       kIOHIDDeviceUsagePairsKey as String: [
-        [
-          kIOHIDDeviceUsagePageKey as String: Int(kHIDPage_GenericDesktop),
-          kIOHIDDeviceUsageKey as String: primaryUsage,
-        ]
+        [kIOHIDDeviceUsagePageKey as String: usagePage, kIOHIDDeviceUsageKey as String: usage]
       ],
     ]
     if let outputSize = format.outputReportPayloadSize {
@@ -158,9 +235,7 @@ extension UserSpaceOutputDispatcher {
         reportID: format.outputReportID
       )
     }
-    properties[kIOHIDLocationIDKey as String] = Int64(
-      UserSpaceVirtualDeviceConstants.locationID(for: identifier)
-    )
+    properties[kIOHIDLocationIDKey as String] = Int64(device.locationID)
     return properties
   }
 

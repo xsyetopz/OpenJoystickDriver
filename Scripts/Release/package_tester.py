@@ -18,6 +18,7 @@ from .package_common import (
     cleanup_workdirs,
     default_bundle_short_version,
     die,
+    embedded_dexts,
     make_dmg,
     release_environment,
     require_clean_source,
@@ -101,10 +102,6 @@ def main(argv: list[str]) -> int:
     mount_dir = build_dir / "tester-dmg-mount"
     app_path = build_dir / "debug/OpenJoystickDriver.app"
     notary_zip = build_dir / "OpenJoystickDriver-tester-notarize.zip"
-    dext_path = (
-        app_path
-        / "Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext"
-    )
     env = release_environment() | {
         "OJD_BUNDLE_SHORT_VERSION": short_version,
         "OJD_BUNDLE_VERSION": build_version,
@@ -140,16 +137,16 @@ def main(argv: list[str]) -> int:
         )
         if not app_path.is_dir():
             die(f"App bundle not found: {app_path}")
-        if not dext_path.is_dir():
-            die(f"Embedded DriverKit extension not found: {dext_path}")
-        verify_bundle_versions(
-            app_path / "Contents/Info.plist",
-            dext_path / "Info.plist",
-            build_version,
-            short_version,
-            commit,
-            tree_state,
-        )
+        dexts = embedded_dexts(app_path)
+        for dext_path in dexts:
+            verify_bundle_versions(
+                app_path / "Contents/Info.plist",
+                dext_path / "Info.plist",
+                build_version,
+                short_version,
+                commit,
+                tree_state,
+            )
         print("\n=== Verify Developer ID signatures ===")
         run(
             [
@@ -161,16 +158,17 @@ def main(argv: list[str]) -> int:
                 str(app_path),
             ]
         )
-        run(
-            [
-                "/usr/bin/codesign",
-                "--verify",
-                "--deep",
-                "--strict",
-                "--verbose=2",
-                str(dext_path),
-            ]
-        )
+        for dext_path in dexts:
+            run(
+                [
+                    "/usr/bin/codesign",
+                    "--verify",
+                    "--deep",
+                    "--strict",
+                    "--verbose=2",
+                    str(dext_path),
+                ]
+            )
         print("\n=== Notarize and staple tester app ===")
         notary_env = env | {
             "OJD_NOTARIZE_APP": str(app_path),
@@ -220,7 +218,7 @@ gatekeeper: {metadata["gatekeeper"]}
 recipient_source_checkout_required: no
 
 This artifact contains the Developer ID-signed OpenJoystickDriver.app and its
-embedded com.openjoystickdriver.XboxUSBDevice.dext. It is notarized and stapled
+embedded {", ".join(dext.name for dext in dexts)}. It is notarized and stapled
 for private testing with System Integrity Protection enabled.
 Apple Development artifacts are not supported as arbitrary community tester
 distribution and are not produced by this command.

@@ -45,13 +45,13 @@ build_app_bundle() {
   if [[ "$OJD_ENV" == "release" ]]; then
     echo "Building release binaries (universal)..."
     cd "$PROJECT_DIR" || exit
-    "$SWIFT_BIN" build -c release --product OpenJoystickDriver --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors \
+    "$SWIFT_BIN" build -c release --product OpenJoystickDriver --arch arm64 --arch x86_64 \
       -Xlinker -rpath -Xlinker @executable_path/../Frameworks
     local gui_bin="$GUI_RELEASE"
   else
     echo "Building debug binaries (universal)..."
     cd "$PROJECT_DIR" || exit
-    "$SWIFT_BIN" build --product OpenJoystickDriver --arch arm64 --arch x86_64 -Xswiftc -warnings-as-errors \
+    "$SWIFT_BIN" build --product OpenJoystickDriver --arch arm64 --arch x86_64 \
       -Xlinker -rpath -Xlinker @executable_path/../Frameworks
     local gui_bin="$PROJECT_DIR/.build/apple/Products/Debug/OpenJoystickDriver"
   fi

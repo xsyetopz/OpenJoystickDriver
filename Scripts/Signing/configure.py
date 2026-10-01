@@ -131,7 +131,7 @@ def profile_name(path: str) -> str:
     return name if isinstance(name, str) else ""
 
 
-dext_bundle_id = "com.openjoystickdriver.XboxUSBDevice"
+dext_bundle_id = "com.openjoystickdriver.VirtualHIDDevice"
 
 
 # Prefer exact certificate match with provisioning profiles (handles multiple teams/idents cleanly).
@@ -258,13 +258,37 @@ production_usb = [
 ]
 
 
-def require_host_profile(path: str, label: str) -> None:
+def userclient_ungranted(value: object) -> bool:
+    """True when the profile has no user-client grant for this DEXT, such as a grant that
+    names only another bundle ID."""
+    if value is None:
+        return True
+    return (
+        isinstance(value, list)
+        and all(isinstance(item, str) for item in value)
+        and dext_bundle_id not in value
+    )
+
+
+def require_host_profile(
+    path: str, label: str, *, allow_ungranted_userclient: bool = False
+) -> None:
+    """Checks the host profile.
+
+    A development profile may lack user-client access for the DEXT until Apple grants it; the
+    build then omits the DEXT.
+    """
     entitlements = decode_profile(path).get("Entitlements") or {}
-    expected = {
+    expected: dict[str, object] = {
         "com.apple.developer.system-extension.install": True,
         hid_entitlement: True,
-        "com.apple.developer.driverkit.userclient-access": [dext_bundle_id],
     }
+    userclient = "com.apple.developer.driverkit.userclient-access"
+    if not (
+        allow_ungranted_userclient
+        and userclient_ungranted(entitlements.get(userclient))
+    ):
+        expected[userclient] = [dext_bundle_id]
     for key, value in expected.items():
         if entitlements.get(key) != value:
             raise SystemExit(
@@ -279,19 +303,24 @@ def require_host_profile(path: str, label: str) -> None:
 
 def require_dext_profile(path: str, label: str) -> None:
     entitlements = decode_profile(path).get("Entitlements") or {}
-    if entitlements.get("com.apple.developer.driverkit") is not True:
-        raise SystemExit(f"ERROR: {label} is missing the DriverKit base entitlement")
+    required = (
+        "com.apple.developer.driverkit",
+        "com.apple.developer.driverkit.family.hid.device",
+        "com.apple.developer.driverkit.transport.hid",
+        "com.apple.developer.driverkit.family.hid.eventservice",
+    )
+    for key in required:
+        if entitlements.get(key) is not True:
+            raise SystemExit(f"ERROR: {label} is missing {key}")
+    # Optional: without it the build signs the HID factory personality only.
     actual_usb = entitlements.get("com.apple.developer.driverkit.transport.usb")
-    if actual_usb != production_usb:
+    if actual_usb is not None and actual_usb != production_usb:
         raise SystemExit(
             f"ERROR: {label} USB entitlement does not match Apple's issued configuration: "
             f"{actual_usb!r}"
         )
     forbidden = (
         hid_entitlement,
-        "com.apple.developer.driverkit.family.hid.device",
-        "com.apple.developer.driverkit.transport.hid",
-        "com.apple.developer.driverkit.family.hid.eventservice",
         "com.apple.developer.driverkit.allow-any-userclient-access",
     )
     for key in forbidden:
@@ -302,7 +331,9 @@ def require_dext_profile(path: str, label: str) -> None:
 def configure_development() -> None:
     must_exist(gui_dev_profile, "GUI development provisioning profile")
     must_exist(dext_profile, "DriverKit development provisioning profile")
-    require_host_profile(gui_dev_profile, "GUI development profile")
+    require_host_profile(
+        gui_dev_profile, "GUI development profile", allow_ungranted_userclient=True
+    )
     require_dext_profile(dext_profile, "DriverKit development profile")
     dev_team = team_id_from_profile(gui_dev_profile)
     if team_id_from_profile(dext_profile) != dev_team:
@@ -375,7 +406,8 @@ def configure_release(*, optional: bool) -> None:
     print(f"Updated {rel_env}")
 
 
-if signing_mode in {"all", "development"}:
-    configure_development()
-if signing_mode in {"all", "release"}:
-    configure_release(optional=signing_mode == "all")
+if __name__ == "__main__":
+    if signing_mode in {"all", "development"}:
+        configure_development()
+    if signing_mode in {"all", "release"}:
+        configure_release(optional=signing_mode == "all")

@@ -6,14 +6,21 @@ private struct Arguments {
   let output: URL
   let shortVersion: String
   let buildVersion: String
+  let driverExtension: DriverExtensionConfiguration
 
   init(_ values: [String]) throws {
     var output: String?
+    var includingUSB = true
     var shortVersion: String?
     var buildVersion: String?
     var index = 0
     while index < values.count {
       let option = values[index]
+      if option == "--without-usb-personality" {
+        includingUSB = false
+        index += 1
+        continue
+      }
       guard index + 1 < values.count else { throw ArgumentError.missingValue(option) }
       let value = values[index + 1]
       switch option {
@@ -28,6 +35,7 @@ private struct Arguments {
     self.output = URL(fileURLWithPath: output, isDirectory: true)
     self.shortVersion = shortVersion
     self.buildVersion = buildVersion
+    driverExtension = VirtualHIDExtensionConfiguration.driverExtension(includingUSB: includingUSB)
   }
 }
 
@@ -40,7 +48,9 @@ private enum ArgumentError: Error, CustomStringConvertible {
     switch self {
     case .missingValue(let option): "missing value for \(option)"
     case .unknownOption(let option): "unknown option: \(option)"
-    case .usage: "required arguments: --output PATH --short-version VERSION --build-version VERSION"
+    case .usage:
+      "required arguments: --output PATH --short-version VERSION --build-version VERSION"
+        + " [--without-usb-personality]"
     }
   }
 }
@@ -48,7 +58,7 @@ private enum ArgumentError: Error, CustomStringConvertible {
 do {
   let arguments = try Arguments(Array(CommandLine.arguments.dropFirst()))
   try DriverExtensionGenerator.generate(
-    configuration: USBDriverKitExtensionConfiguration.driver,
+    extension: arguments.driverExtension,
     options: DriverExtensionGenerationOptions(
       shortVersion: arguments.shortVersion,
       buildVersion: arguments.buildVersion,

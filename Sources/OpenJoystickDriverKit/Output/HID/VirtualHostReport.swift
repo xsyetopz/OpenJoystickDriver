@@ -1,6 +1,7 @@
 import Foundation
 
-enum VirtualHostReportType: Sendable { case input, output, feature }
+/// The kind of a report the host sets or gets.
+public enum VirtualHostReportType: Sendable { case input, output, feature }
 
 enum VirtualHostReportError: Error, Equatable, Sendable {
   case unsupported

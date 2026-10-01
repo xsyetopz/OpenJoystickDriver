@@ -3,7 +3,9 @@ import Foundation
 import PackageDescription
 
 let packageDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
-let useLocalSwifterKit = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTERKIT"] == "1"
+// Temporary: SwifterKit 0.3.0 (HID device factory) is not yet pushed, so the sibling checkout is
+// the default and its working tree is built as-is. CI and release set OJD_USE_LOCAL_SWIFTERKIT=0.
+let useLocalSwifterKit = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTERKIT"] != "0"
 let localSwifterKitPath = packageDirectory.appendingPathComponent("../SwifterKit")
   .standardizedFileURL.path
 let swifterKitDependency: Package.Dependency =
@@ -169,3 +171,14 @@ let package = Package(
     ),
   ]
 )
+
+// Warnings are errors only in this package's app targets. A global `-Xswiftc -warnings-as-errors`
+// would also reach dependencies, and swift-argument-parser 1.8.2 uses its own deprecated
+// `_errorLabel`.
+let warningsAsErrorsTargets: Set = [
+  "OpenJoystickDriverKit", "OpenJoystickDriverUSB", "OpenJoystickDriverService",
+  "OpenJoystickDriverCLI", "OpenJoystickDriverPresentation", "OpenJoystickDriver",
+]
+for target in package.targets where warningsAsErrorsTargets.contains(target.name) {
+  target.swiftSettings = (target.swiftSettings ?? []) + [.treatAllWarnings(as: .error)]
+}

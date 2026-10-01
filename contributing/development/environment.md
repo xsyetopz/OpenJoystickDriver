@@ -38,4 +38,4 @@ GitHub injects workflow secrets directly; CI neither creates nor requires a loca
 
 Do not copy the CI-only `*_BASE64` / `CERTIFICATE_SECRET` / `KEYCHAIN_SECRET` keys into `.env.dev` or `.env.release`; `./Scripts/ojd env audit` rejects them.
 
-The GUI provisioning profile must authorize the host app's exact `com.apple.developer.driverkit.userclient-access` allowlist for `com.openjoystickdriver.XboxUSBDevice`. The DriverKit profile authorizes the USB system extension. The build rejects an allow-any user-client entitlement in either artifact.
+The GUI provisioning profile must authorize the host app's exact `com.apple.developer.driverkit.userclient-access` allowlist, exactly `com.openjoystickdriver.VirtualHIDDevice`. The DriverKit profile (`DEXT_PROVISIONING_PROFILE`, embedded name `DEXT_BUILD_PROFILE`, default `OpenJoystickDriver (VirtualHIDDevice)`) authorizes the single system extension. The build rejects an allow-any user-client entitlement in either artifact. A development GUI profile without a grant for `com.openjoystickdriver.VirtualHIDDevice` builds the app without the DEXT; see [Signing](signing.md).

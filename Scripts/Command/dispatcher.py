@@ -33,7 +33,8 @@ Commands:
   build dext                  Build DriverKit `.dext` and embed into `.build/` app
   build install dev|release   Full rebuild and install
   build install-fast dev      App-only rebuild and install (keeps installed sysext)
-  driverkit generate [path]   Generate a fresh SwifterKit DriverKit project
+  driverkit generate [--without-usb-personality] [path]
+                              Generate a fresh SwifterKit DriverKit project
   package tester               Build a private, shareable Developer ID DMG
   release bump-version <version>
                               Update release version references
@@ -219,7 +220,7 @@ def dispatch(argv: list[str]) -> int:
             sub, tail = (rest[0], rest[1:]) if rest else ("", [])
             if sub != "generate":
                 die(f"Unknown: driverkit {sub} (expected: generate)")
-            require("driverkit generate", tail, maximum=1)
+            require("driverkit generate", tail, maximum=3)
             exec_target("Build/driverkit.sh", [sub, *tail])
         case "env":
             if rest != ["audit"]:

@@ -24,8 +24,12 @@ extension UserSpaceOutputDispatcher {
     }
   }
 
-  protocol VirtualDeviceBackend: AnyObject, Sendable {
+  /// One published native device: `IOHIDUserDevice`, or a device from a
+  /// ``VirtualHIDDevicePublisher``.
+  public protocol VirtualDeviceBackend: AnyObject, Sendable {
+    /// Publishes one complete input report.
     func send(_ report: [UInt8]) async throws
+    /// Starts removing the native device. Idempotent.
     func close()
     /// Returns once the native device is gone. Backends without async teardown return at once.
     func waitUntilClosed() async

@@ -2,7 +2,7 @@
 name: ojd-build-sign-release
 description: >-
   Builds, installs, signs, and packages OpenJoystickDriver: the app bundle and
-  the XboxUSBDevice DriverKit extension through ./Scripts/ojd build, signing
+  the VirtualHIDDevice DriverKit extension through ./Scripts/ojd build, signing
   profiles and entitlement doctor checks, stale-DEXT repair, version bumps,
   Developer ID tester DMGs, notarization, and release reconciliation. Use when
   a local install fails, an entitlement or profile mismatch appears, the
@@ -46,7 +46,7 @@ Produce a signed app (and DEXT when needed) from the exact intended commit, and 
 ## Rules
 
 - Never edit a provisioning profile or broaden an entitlement to silence a mismatch. DriverKit entitlements are Apple-issued data. The fix is a matching profile, or an exact entitlement plist.
-- Do not edit generated DriverKit files in `.build/driverkit/generated/`. Regenerate them with `./Scripts/ojd driverkit generate`. The authored DEXT entitlements are in `Sources/DriverKitGenerator/Entitlements/XboxUSBDevice.entitlements`.
+- Do not edit generated DriverKit files in `.build/driverkit/generated/`. Regenerate them with `./Scripts/ojd driverkit generate`. The authored DEXT entitlements are in `Sources/DriverKitGenerator/Entitlements/VirtualHIDDevice.entitlements`.
 - Keep `.env.dev`, `.env.release`, certificates, profiles, Team IDs, and notarization credentials out of commits, logs, and reports.
 - Apple Development builds run only on registered Macs, so never send them to testers.
 - Package only from a clean worktree at the commit under test. The DMG metadata names that commit.

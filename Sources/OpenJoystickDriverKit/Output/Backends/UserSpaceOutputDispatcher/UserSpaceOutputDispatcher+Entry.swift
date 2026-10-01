@@ -5,10 +5,18 @@ extension UserSpaceOutputDispatcher {
     let sender: UserSpaceReportSender
     let inputReportState: UserSpaceInputReportState
 
-    init(backend: any VirtualDeviceBackend, inputReportState: UserSpaceInputReportState) {
+    convenience init(
+      backend: any VirtualDeviceBackend,
+      inputReportState: UserSpaceInputReportState
+    ) {
+      self.init(inputReportState: inputReportState)
+      sender.attach(backend)
+    }
+
+    /// An entry whose backend is attached later, once the host report handler exists.
+    init(inputReportState: UserSpaceInputReportState) {
       sender = UserSpaceReportSender()
       self.inputReportState = inputReportState
-      sender.attach(backend)
     }
 
     deinit { beginClose() }
