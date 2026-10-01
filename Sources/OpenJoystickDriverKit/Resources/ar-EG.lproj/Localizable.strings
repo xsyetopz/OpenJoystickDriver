@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "لم يعد %@ متصلًا.";
 "cli.error.json_plain" = "استخدم --json أو --plain، وليس كليهما.";
 "cli.error.peer_rejected" = "رفضت الخدمة هذا الأمر ojd لأنه غير موقّع بالطريقة نفسها التي وُقّع بها التطبيق. شغّل ojd المرفق داخل OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "لم تردّ الخدمة خلال %@ ثانية. أعد المحاولة مع قيمة --timeout أكبر.";
+"cli.error.request_timeout" = "لم تردّ الخدمة خلال %@. أعد المحاولة مع قيمة --timeout أكبر.";
 "cli.error.service_request_failed" = "لم تُكمل الخدمة الطلب: %@. تحقّق منها باستخدام «ojd status».";
+"cli.error.duplicate_profile_name" = "يوجد بالفعل ملف تعريف بهذا الاسم. يعرض «ojd profile list» كل ملفات التعريف.";
 "cli.error.service_timeout" = "لم تردّ الخدمة في الوقت المناسب. أعد المحاولة، أو تحقّق منها باستخدام «ojd status».";
 "cli.error.service_unavailable" = "خدمة OpenJoystickDriver غير قيد التشغيل. ابدأها باستخدام «ojd service start».";
 "cli.error.timeout_value" = "يتطلب --timeout عددًا من الثواني أكبر من 0.";
 "cli.error.unexpected" = "خطأ غير متوقع: %@. شغّل «ojd diagnose --bundle PATH» وأرفق الحزمة بتقرير الخلل.";
+"cli.error.unknown_command" = "أمر غير معروف «%@». هل تقصد «%@»؟";
 "cli.option.json" = "اطبع JSON على stdout.";
 "cli.option.no_color" = "لا تستخدم الألوان.";
 "cli.option.no_input" = "لا تطلب إدخالًا أبدًا؛ وأخفق عند غياب قيمة.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "تعذّر على macOS فتح %@. افتحه من Finder لمعرفة السبب.";
 "cli.service.stop.abstract" = "أوقف الخدمة وانتظر حتى تنتهي. تعود وحدات التحكم المتصلة إلى macOS.";
 "cli.service.stop.signal_failed" = "تعذّر إيقاف الخدمة: %@. أنهِ OpenJoystickDriver من قائمته.";
-"cli.service.stop.timeout" = "لم تتوقف الخدمة خلال %@ ثانية. أعد المحاولة مع قيمة --timeout أكبر.";
+"cli.service.stop.timeout" = "لم تتوقف الخدمة خلال %@. أعد المحاولة مع قيمة --timeout أكبر.";
 "cli.service.stopped" = "الخدمة متوقفة.";
 "cli.service.wait.abstract" = "انتظر حتى تقبل الخدمة الطلبات. يحدّد --timeout مدة الانتظار (الافتراضي 5 ثوانٍ).";
-"cli.service.wait.timeout" = "لم تقبل الخدمة الطلبات خلال %@ ثانية. ابدأها باستخدام «ojd service start»، أو أعد المحاولة مع قيمة --timeout أكبر.";
+"cli.service.wait.timeout" = "لم تقبل الخدمة الطلبات خلال %@. ابدأها باستخدام «ojd service start»، أو أعد المحاولة مع قيمة --timeout أكبر.";
 "cli.status.abstract" = "اعرض الخدمة والامتداد والأذونات ووحدات التحكم المتصلة.";
 "cli.status.discussion" = "يعمل عندما تكون الخدمة متوقفة: يبلّغ بأنها متوقفة ثم ينتهي بالرمز 0.";
 "cli.status.label.accessibility" = "تسهيلات الاستخدام";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "الخدمة غير قيد التشغيل";
 "cli.diagnose.soak" = "خذ أيضًا عينات من ذاكرة الخدمة وواصفات الملفات ووحدة CPU لهذه المدة (1-86400).";
 "cli.diagnose.soak.not_requested" = "لم يُطلب؛ استخدم --soak SECONDS";
-"cli.diagnose.soak.progress" = "جارٍ أخذ عينات من الخدمة لمدة %lld ثانية…";
+"cli.diagnose.soak.progress" = "جارٍ أخذ عينات من الخدمة لمدة %@…";
 "cli.diagnose.soak_range" = "يجب أن تكون قيمة --soak بين 1 و86400 ثانية.";
 "cli.diagnose.usb.failed" = "فشل فحص USB: %@. امنح OpenJoystickDriver إذن مراقبة الإدخال.";
-"cli.diagnose.usb.ok" = "%lld من وحدات تحكم USB الخاصة بالمورّد ظاهرة";
+"cli.diagnose.usb.ok" = "وحدات تحكم USB الخاصة بالمورّد الظاهرة: %lld";
 "cli.diagnose.virtual.disabled" = "وحدة التحكم الافتراضية معطّلة";
 "cli.diagnose.virtual.error" = "خطأ في وحدة التحكم الافتراضية: %@";
 "cli.diagnose.virtual.override" = "تعذّرت قراءة تجاوزات ملفات التعريف المخزّنة: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "الإصدار %@ من OpenJoystickDriver متاح (لديك %@): %@";
 "cli.update.check.discussion" = "يعمل فقط عندما تطلب ذلك؛ ولا يتحقق ojd من تلقاء نفسه أبدًا. لا ينزّل شيئًا ولا يثبّته. ينتهي بالرمز 0 سواء وُجد تحديث أم لا، وبالرمز 1 عند فشل التحقق.";
 "cli.update.check.failed" = "تعذّر التحقق من التحديثات: %@. تحقق من اتصالك بالشبكة وحاول مرة أخرى.";
+"cli.update.check.failed_reason" = "تعذّر التحقق من التحديثات: %@.";
 "cli.update.check.incomplete" = "لا توجد نتيجة";
 "cli.update.check.prerelease" = "ضمّن الإصدارات التجريبية.";
 "cli.update.check.up_to_date" = "الإصدار %@ من OpenJoystickDriver محدّث (أحدث إصدار: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "الاسم";
 "cli.controller.show.label.output_checks" = "فحوص الإخراج";
 "cli.controller.show.label.ownership" = "الملكية";
+"cli.controller.show.ownership" = "المسار \U2068%@\U2069، المادي \U2068%@\U2069، إدخال HID \U2068%@\U2069";
 "cli.controller.show.label.protocol" = "البروتوكول";
 "cli.controller.show.label.record" = "السجل";
 "cli.controller.show.label.rumble" = "الاهتزاز";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "مع --json يطبع كائن JSON واحدًا في كل سطر. محور Y للعصا يشير إلى الأعلى. مع --first-press يطبع أول عنصر تحكم يُضغط ثم يخرج؛ ويفشل إذا انقضت --duration أولًا.";
 "cli.controller.watch.first_press" = "اطبع أول عنصر تحكم يُضغط، ثم اخرج.";
 "cli.controller.watch.no_input" = "لم يصل أي إدخال.";
-"cli.controller.watch.no_press" = "لم يُضغط أي عنصر تحكم خلال %@ ثانية.";
+"cli.controller.watch.no_press" = "لم يُضغط أي عنصر تحكم خلال %@.";
 "cli.controller.watch.press_prompt" = "اضغط على عنصر تحكم في %@ (%@).";
 "cli.controller.watch.started" = "جارٍ مراقبة %@ (%@). اضغط على أزرار وحدة التحكم.";
 "cli.error.confirm_declined" = "لم يتغير شيء.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "لا تطلب التأكيد.";
 "cli.virtual.abstract" = "اعرض وحدة التحكم الافتراضية التي ينشرها OpenJoystickDriver لوحدة تحكم، واختَرها.";
 "cli.virtual.changed" = "%@ تنشر الآن %@ (%@).";
+"cli.virtual.stored" = "تم حفظ الاختيار لـ \U2068%@\U2069. سيُطبق عند تمكين الإخراج الافتراضي.";
 "cli.virtual.discussion" = "ينطبق الاختيار على كل وحدات التحكم من الطراز نفسه. «reset» يعيد الطراز إلى الاختيار التلقائي.";
 "cli.virtual.error.failed" = "لم تتغير وحدة التحكم الافتراضية لـ %@ (%@). افحصها باستخدام «ojd virtual show».";
 "cli.virtual.reset.abstract" = "أعد طراز وحدة تحكم، أو كل الطُرز، إلى الاختيار التلقائي لوحدة التحكم الافتراضية.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "«%@» نشط على وحدة تحكم متصلة ويحجب الآن كل إدخالها. أضف تعيينًا باستخدام «ojd binding set»، أو أوقف ملف التعريف باستخدام «ojd profile deactivate».";
 "cli.binding.clear.confirm" = "هل تريد إزالة كل التعيينات والتوافقات والتسلسلات والطبقات من «%@»؟";
 "cli.binding.clear.discussion" = "يزيل --all أيضًا توافقات ملف التعريف وتسلسلاته وطبقاته، ويطلب تأكيدًا في الطرفية؛ وإلا فهو يحتاج إلى --force. تبقى إعدادات العصي والزنادات واللمس والحركة والإخراج.";
-"cli.binding.clear.done" = "تمت إزالة %lld تعيينًا من «%@».";
-"cli.binding.clear.dry_run" = "ستتم إزالة %lld تعيينًا من «%@».";
+"cli.binding.clear.done" = "التعيينات التي أُزيلت من «%@»: %lld.";
+"cli.binding.clear.dry_run" = "التعيينات التي ستتم إزالتها من «%@»: %lld.";
 "cli.binding.clear.missing" = "لا يوجد في «%@» تعيين لـ %@. لم يتغير شيء.";
 "cli.binding.clear.sources" = "المصادر التي تُزال تعييناتها.";
 "cli.binding.clear.usage" = "حدّد مصدرًا واحدًا أو أكثر، أو --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "سيُحذف ملف التعريف «%@».";
 "cli.profile.discussion" = "يحوّل ملف تعريف إعادة التعيين عناصر التحكم في وحدة تحكم من طراز واحد إلى إدخال وحدة تحكم ولوحة مفاتيح ومؤشر. PROFILE هو معرّف ملف تعريف أو اسمه من «ojd profile list». غيّر التعيينات باستخدام «ojd binding»، وكل شيء آخر باستخدام «ojd profile edit». تحتاج كل أوامر ملف التعريف إلى الخدمة.";
 "cli.profile.document_invalid" = "%@ ليس ملف تعريف صالحًا: %@";
+"cli.document.not_json" = "ليس JSON صالحًا";
+"cli.document.missing_field" = "الحقل «%@» مفقود";
+"cli.document.wrong_type" = "الحقل «%@» من نوع غير صحيح";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "انسخ ملف تعريف باسم جديد. تبدأ النسخة غير نشطة.";
 "cli.profile.duplicate.done" = "تم إنشاء «%@» (%@).";
 "cli.profile.duplicate.name" = "اسم النسخة.";

@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ er ekki lengur tengd.";
 "cli.error.json_plain" = "Notaðu annaðhvort --json eða --plain, ekki bæði.";
 "cli.error.peer_rejected" = "Þjónustan hafnaði þessu ojd því það er ekki undirritað eins og forritið. Keyrðu ojd sem fylgir með OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Þjónustan svaraði ekki innan %@ sekúndna. Reyndu aftur með hærra --timeout.";
+"cli.error.request_timeout" = "Þjónustan svaraði ekki innan %@. Reyndu aftur með hærra --timeout.";
 "cli.error.service_request_failed" = "Þjónustan lauk ekki beiðninni: %@. Athugaðu hana með „ojd status“.";
+"cli.error.duplicate_profile_name" = "Snið með því heiti er þegar til. „ojd profile list“ sýnir öll snið.";
 "cli.error.service_timeout" = "Þjónustan svaraði ekki í tæka tíð. Reyndu aftur eða athugaðu hana með „ojd status“.";
 "cli.error.service_unavailable" = "OpenJoystickDriver-þjónustan er ekki í gangi. Ræstu hana með „ojd service start“.";
 "cli.error.timeout_value" = "--timeout þarf fjölda sekúndna sem er hærri en 0.";
 "cli.error.unexpected" = "Óvænt villa: %@. Keyrðu „ojd diagnose --bundle PATH“ og hengdu pakkann við villutilkynningu.";
+"cli.error.unknown_command" = "Óþekkt skipun „%@“. Áttirðu við „%@“?";
 "cli.option.json" = "Prenta JSON á stdout.";
 "cli.option.no_color" = "Nota ekki liti.";
 "cli.option.no_input" = "Spyrja aldrei; mistakast ef gildi vantar.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS gat ekki opnað %@. Opnaðu það úr Finder til að sjá hvers vegna.";
 "cli.service.stop.abstract" = "Stöðva þjónustuna og bíða þar til hún hættir. Tengdar stýringar fara aftur til macOS.";
 "cli.service.stop.signal_failed" = "Ekki tókst að stöðva þjónustuna: %@. Hættu í OpenJoystickDriver í valmyndinni.";
-"cli.service.stop.timeout" = "Þjónustan stöðvaðist ekki innan %@ sekúndna. Reyndu aftur með hærra --timeout.";
+"cli.service.stop.timeout" = "Þjónustan stöðvaðist ekki innan %@. Reyndu aftur með hærra --timeout.";
 "cli.service.stopped" = "Þjónustan er stöðvuð.";
 "cli.service.wait.abstract" = "Bíða þar til þjónustan tekur við beiðnum. --timeout takmarkar biðina (sjálfgefið 5 sekúndur).";
-"cli.service.wait.timeout" = "Þjónustan tók ekki við beiðnum innan %@ sekúndna. Ræstu hana með „ojd service start“ eða reyndu aftur með hærra --timeout.";
+"cli.service.wait.timeout" = "Þjónustan tók ekki við beiðnum innan %@. Ræstu hana með „ojd service start“ eða reyndu aftur með hærra --timeout.";
 "cli.status.abstract" = "Sýna þjónustuna, viðbótina, heimildir og tengdar stýringar.";
 "cli.status.discussion" = "Virkar þegar þjónustan er stöðvuð: tilkynnir hana sem stöðvaða og lýkur með 0.";
 "cli.status.label.accessibility" = "Aðgengi";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "þjónustan er ekki í gangi";
 "cli.diagnose.soak" = "Taka einnig sýni af minni, skráarlýsum og CPU þjónustunnar í þennan tíma (1-86400).";
 "cli.diagnose.soak.not_requested" = "ekki beðið um; notaðu --soak SECONDS";
-"cli.diagnose.soak.progress" = "Tek sýni af þjónustunni í %lld sekúndur…";
+"cli.diagnose.soak.progress" = "Tek sýni af þjónustunni í %@…";
 "cli.diagnose.soak_range" = "--soak verður að vera á milli 1 og 86400 sekúndna.";
 "cli.diagnose.usb.failed" = "USB-skönnun mistókst: %@. Veittu OpenJoystickDriver aðgang að Vöktun inntaks.";
-"cli.diagnose.usb.ok" = "%lld USB-stýringar með framleiðandasértæku viðmóti sýnilegar";
+"cli.diagnose.usb.ok" = "Sýnilegar USB-stýringar með framleiðandasértæku viðmóti: %lld";
 "cli.diagnose.virtual.disabled" = "sýndarleikjastýring óvirk";
 "cli.diagnose.virtual.error" = "villa í sýndarleikjastýringu: %@";
 "cli.diagnose.virtual.override" = "ekki hægt að lesa vistaðar sniðyfirskriftir: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ er tiltækt (þú ert með %@): %@";
 "cli.update.check.discussion" = "Keyrir aðeins þegar þú biður um það; ojd athugar aldrei sjálfkrafa. Það sækir ekkert og setur ekkert upp. Lýkur með 0 hvort sem uppfærsla er til eða ekki, og með 1 ef athugunin mistekst.";
 "cli.update.check.failed" = "Gat ekki athugað með uppfærslur: %@. Athugaðu nettenginguna og reyndu aftur.";
+"cli.update.check.failed_reason" = "Gat ekki athugað með uppfærslur: %@.";
 "cli.update.check.incomplete" = "engin niðurstaða";
 "cli.update.check.prerelease" = "Hafa forútgáfur með.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ er uppfært (nýjasta útgáfa: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Heiti";
 "cli.controller.show.label.output_checks" = "Úttaksathuganir";
 "cli.controller.show.label.ownership" = "Eignarhald";
+"cli.controller.show.ownership" = "leið %@, raunlægt %@, HID-inntak %@";
 "cli.controller.show.label.protocol" = "Samskiptareglur";
 "cli.controller.show.label.record" = "Færsla";
 "cli.controller.show.label.rumble" = "Titringur";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Með --json er einn JSON-hlutur prentaður í hverri línu. Y-ás stýripinna vísar upp. Með --first-press er fyrsta stjórntækið sem ýtt er á prentað og skipuninni lýkur; hún mistekst ef --duration rennur út fyrst.";
 "cli.controller.watch.first_press" = "Prenta fyrsta stjórntækið sem ýtt er á og hætta síðan.";
 "cli.controller.watch.no_input" = "Ekkert inntak barst.";
-"cli.controller.watch.no_press" = "Ekki var ýtt á neitt stjórntæki innan %@ sekúndna.";
+"cli.controller.watch.no_press" = "Ekki var ýtt á neitt stjórntæki innan %@.";
 "cli.controller.watch.press_prompt" = "Ýttu á stjórntæki á %@ (%@).";
 "cli.controller.watch.started" = "Fylgist með %@ (%@). Ýttu á hnappa stýringarinnar.";
 "cli.error.confirm_declined" = "Engu var breytt.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Ekki biðja um staðfestingu.";
 "cli.virtual.abstract" = "Sýna og velja sýndarleikjastýringuna sem OpenJoystickDriver birtir fyrir stýringu.";
 "cli.virtual.changed" = "%@ birtir nú %@ (%@).";
+"cli.virtual.stored" = "Valið fyrir %@ er vistað. Það tekur gildi þegar sýndarúttak er virkjað.";
 "cli.virtual.discussion" = "Val gildir um allar stýringar af sömu gerð. „reset“ skilar gerð í sjálfvirkt val.";
 "cli.virtual.error.failed" = "Sýndarleikjastýring fyrir %@ breyttist ekki (%@). Athugaðu hana með „ojd virtual show“.";
 "cli.virtual.reset.abstract" = "Skila gerð stýringar, eða öllum gerðum, í sjálfvirkt val á sýndarleikjastýringu.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "„%@“ er virkt á tengdri stýringu og lokar nú á allt inntak hennar. Bættu við vörpun með „ojd binding set“ eða stöðvaðu sniðið með „ojd profile deactivate“.";
 "cli.binding.clear.confirm" = "Fjarlægja allar varpanir, samsetningar, raðir og lög úr „%@“?";
 "cli.binding.clear.discussion" = "--all fjarlægir einnig samsetningar, raðir og lög sniðsins og biður um staðfestingu í skjáskel; annars þarf --force. Stillingar fyrir stýripinna, gikki, snertingu, hreyfingu og úttak haldast.";
-"cli.binding.clear.done" = "%lld varpanir fjarlægðar úr „%@“.";
-"cli.binding.clear.dry_run" = "Myndi fjarlægja %lld varpanir úr „%@“.";
+"cli.binding.clear.done" = "Varpanir fjarlægðar úr „%@“: %lld.";
+"cli.binding.clear.dry_run" = "Varpanir sem yrðu fjarlægðar úr „%@“: %lld.";
 "cli.binding.clear.missing" = "„%@“ hefur enga vörpun fyrir %@. Engu var breytt.";
 "cli.binding.clear.sources" = "Gjafarnir sem fjarlægja á varpanir fyrir.";
 "cli.binding.clear.usage" = "Gefðu upp einn eða fleiri gjafa, eða --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Myndi eyða sniðinu „%@“.";
 "cli.profile.discussion" = "Endurvörpunarsnið breytir stjórntækjum einnar stýringargerðar í leikjastýringar-, lyklaborðs- og bendilinntak. PROFILE er auðkenni eða nafn sniðs úr „ojd profile list“. Breyttu vörpunum með „ojd binding“ og öllu öðru með „ojd profile edit“. Allar sniðskipanir þurfa þjónustuna.";
 "cli.profile.document_invalid" = "%@ er ekki gilt snið: %@";
+"cli.document.not_json" = "það er ekki gilt JSON";
+"cli.document.missing_field" = "reitinn „%@“ vantar";
+"cli.document.wrong_type" = "reiturinn „%@“ er af röngu tagi";
+"cli.document.field_problem" = "„%@“: %@";
 "cli.profile.duplicate.abstract" = "Afrita snið undir nýju nafni. Afritið byrjar óvirkt.";
 "cli.profile.duplicate.done" = "„%@“ (%@) búið til.";
 "cli.profile.duplicate.name" = "Nafn afritsins.";

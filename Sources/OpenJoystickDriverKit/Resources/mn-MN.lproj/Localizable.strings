@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ Одоо холбоогүй.";
 "cli.error.json_plain" = "--json эсвэл --plain-ийн аль нэгийг ашиглана уу, хоёуланг нь биш.";
 "cli.error.peer_rejected" = "Үйлчилгээ энэ ojd-г няцаалаа, учир нь энэ нь апптай адил гарын үсэг зурагдаагүй байна. OpenJoystickDriver.app дотор байгаа ojd-г ажиллуулна уу.";
-"cli.error.request_timeout" = "Үйлчилгээ %@ секундын дотор хариу өгсөнгүй. Илүү том --timeout-оор дахин оролдоно уу.";
+"cli.error.request_timeout" = "Үйлчилгээ %@ дотор хариу өгсөнгүй. Илүү том --timeout-оор дахин оролдоно уу.";
 "cli.error.service_request_failed" = "Үйлчилгээ хүсэлтийг гүйцэтгэсэнгүй: %@. «ojd status»-аар шалгана уу.";
+"cli.error.duplicate_profile_name" = "Тийм нэртэй профайл аль хэдийн байна. «ojd profile list» нь профайл бүрийг харуулна.";
 "cli.error.service_timeout" = "Үйлчилгээ цаг тухайд нь хариу өгсөнгүй. Дахин оролдох эсвэл «ojd status»-аар шалгана уу.";
 "cli.error.service_unavailable" = "OpenJoystickDriver үйлчилгээ ажиллахгүй байна. «ojd service start»-аар эхлүүлнэ үү.";
 "cli.error.timeout_value" = "--timeout нь 0-ээс их секундийн тоо шаарддаг.";
 "cli.error.unexpected" = "Гэнэтийн алдаа: %@. «ojd diagnose --bundle PATH»-ийг ажиллуулж, багцыг алдааны мэдээлэлд хавсаргана уу.";
+"cli.error.unknown_command" = "Үл мэдэгдэх тушаал «%@». Та «%@» гэж хэлэх гэсэн үү?";
 "cli.option.json" = "JSON-г stdout руу хэвлэнэ.";
 "cli.option.no_color" = "Өнгө ашиглахгүй.";
 "cli.option.no_input" = "Хэзээ ч асуухгүй; утга дутуу бол амжилтгүй болно.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS %@-г нээж чадсангүй. Шалтгааныг харахын тулд Finder-ээс нээнэ үү.";
 "cli.service.stop.abstract" = "Үйлчилгээг зогсоож, дуустал хүлээх. Холбогдсон удирдлагууд macOS-д буцна.";
 "cli.service.stop.signal_failed" = "Үйлчилгээг зогсоож чадсангүй: %@. OpenJoystickDriver-г цэснээс нь гаргана уу.";
-"cli.service.stop.timeout" = "Үйлчилгээ %@ секундын дотор зогссонгүй. Илүү том --timeout-оор дахин оролдоно уу.";
+"cli.service.stop.timeout" = "Үйлчилгээ %@ дотор зогссонгүй. Илүү том --timeout-оор дахин оролдоно уу.";
 "cli.service.stopped" = "Үйлчилгээ зогссон.";
 "cli.service.wait.abstract" = "Үйлчилгээ хүсэлт хүлээн авах хүртэл хүлээх. --timeout нь хүлээлтийг хязгаарлана (өгөгдмөл 5 секунд).";
-"cli.service.wait.timeout" = "Үйлчилгээ %@ секундын дотор хүсэлт хүлээн авсангүй. «ojd service start»-аар эхлүүлэх эсвэл илүү том --timeout-оор дахин оролдоно уу.";
+"cli.service.wait.timeout" = "Үйлчилгээ %@ дотор хүсэлт хүлээн авсангүй. «ojd service start»-аар эхлүүлэх эсвэл илүү том --timeout-оор дахин оролдоно уу.";
 "cli.status.abstract" = "Үйлчилгээ, өргөтгөл, зөвшөөрөл болон холбогдсон удирдлагуудыг харуулах.";
 "cli.status.discussion" = "Үйлчилгээ зогссон үед ч ажиллана: үйлчилгээг зогссон гэж мэдээлж, 0-ээр гарна.";
 "cli.status.label.accessibility" = "Хүртээмж";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "үйлчилгээ ажиллахгүй байна";
 "cli.diagnose.soak" = "Үйлчилгээний санах ой, файлын дескриптор, CPU-г энэ хугацаанд дээжлэх (1-86400).";
 "cli.diagnose.soak.not_requested" = "хүсээгүй; --soak SECONDS ашиглана уу";
-"cli.diagnose.soak.progress" = "Үйлчилгээг %lld секунд дээжилж байна…";
+"cli.diagnose.soak.progress" = "Үйлчилгээг %@ турш дээжилж байна…";
 "cli.diagnose.soak_range" = "--soak нь 1-ээс 86400 секундын хооронд байх ёстой.";
 "cli.diagnose.usb.failed" = "USB скан амжилтгүй боллоо: %@. OpenJoystickDriver-т оролтыг хянах зөвшөөрөл олгоно уу.";
 "cli.diagnose.usb.ok" = "Харагдаж буй үйлдвэрлэгчийн тусгай USB удирдлага: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ боломжтой (танд %@ байна): %@";
 "cli.update.check.discussion" = "Зөвхөн таныг хүсэхэд ажиллана; ojd хэзээ ч өөрөө шалгадаггүй. Юу ч татаж аваад суулгадаггүй. Шинэчлэлт байгаа эсэхээс үл хамааран 0 кодоор, шалгалт амжилтгүй бол 1 кодоор гарна.";
 "cli.update.check.failed" = "Шинэчлэлтийг шалгаж чадсангүй: %@. Сүлжээний холболтоо шалгаад дахин оролдоно уу.";
+"cli.update.check.failed_reason" = "Шинэчлэлтийг шалгаж чадсангүй: %@.";
 "cli.update.check.incomplete" = "үр дүн алга";
 "cli.update.check.prerelease" = "Урьдчилсан хувилбарыг оруулах.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ шинэчлэгдсэн байна (сүүлийн хувилбар: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Нэр";
 "cli.controller.show.label.output_checks" = "Гаралтын шалгалт";
 "cli.controller.show.label.ownership" = "Эзэмшил";
+"cli.controller.show.ownership" = "чиглэл %@, физик %@, HID оролт %@";
 "cli.controller.show.label.protocol" = "Протокол";
 "cli.controller.show.label.record" = "Бүртгэл";
 "cli.controller.show.label.rumble" = "Чичиргээ";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "--json-той бол мөр бүрт нэг JSON объект хэвлэнэ. Стикийн Y тэнхлэг дээш заана. --first-press-тэй бол дарагдсан эхний элементийг хэвлээд гарна; --duration түрүүлж дуусвал амжилтгүй болно.";
 "cli.controller.watch.first_press" = "Дарагдсан эхний элементийг хэвлээд гарах.";
 "cli.controller.watch.no_input" = "Оролт хүлээн аваагүй.";
-"cli.controller.watch.no_press" = "%@ секундын дотор ямар ч элемент дарагдаагүй.";
+"cli.controller.watch.no_press" = "%@ дотор ямар ч элемент дарагдаагүй.";
 "cli.controller.watch.press_prompt" = "%@ (%@) дээрх аль нэг элементийг дарна уу.";
 "cli.controller.watch.started" = "%@ (%@)-г ажиглаж байна. Удирдлагын товчнуудыг дарна уу.";
 "cli.error.confirm_declined" = "Юу ч өөрчлөгдөөгүй.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Баталгаажуулалт асуухгүй.";
 "cli.virtual.abstract" = "OpenJoystickDriver-ийн удирдлагад зориулж нийтэлдэг виртуал тоглоомын удирдлагыг харуулж, сонгох.";
 "cli.virtual.changed" = "%@ одоо %@ (%@)-ийг нийтэлж байна.";
+"cli.virtual.stored" = "%@ төхөөрөмжийн сонголт хадгалагдсан. Виртуал гаралтыг идэвхжүүлэхэд хэрэгжинэ.";
 "cli.virtual.discussion" = "Сонголт нь ижил загварын бүх удирдлагад хамаарна. «reset» нь загварыг автомат сонголт руу буцаана.";
 "cli.virtual.error.failed" = "%@-ийн виртуал тоглоомын удирдлага өөрчлөгдсөнгүй (%@). «ojd virtual show»-оор шалгана уу.";
 "cli.virtual.reset.abstract" = "Удирдлагын загвар эсвэл бүх загварыг виртуал тоглоомын удирдлагын автомат сонголт руу буцаах.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "«%@» профайл холбогдсон удирдлага дээр идэвхтэй бөгөөд одоо түүний бүх оролтыг хааж байна. «ojd binding set»-ээр оноолт нэмэх эсвэл «ojd profile deactivate»-ээр профайлыг зогсооно уу.";
 "cli.binding.clear.confirm" = "«%@» профайлаас бүх оноолт, хослол, дараалал, давхаргыг устгах уу?";
 "cli.binding.clear.discussion" = "--all нь профайлын хослол, дараалал, давхаргыг мөн устгаж, терминал дээр баталгаажуулалт асууна; эс бөгөөс --force шаардлагатай. Стик, триггер, хүрэлт, хөдөлгөөн, гаралтын тохиргоо хэвээр үлдэнэ.";
-"cli.binding.clear.done" = "%lld оноолт устгагдлаа («%@» профайл).";
-"cli.binding.clear.dry_run" = "%lld оноолт устгагдах байсан («%@» профайл).";
+"cli.binding.clear.done" = "«%@» профайлаас устгагдсан оноолтууд: %lld.";
+"cli.binding.clear.dry_run" = "«%@» профайлаас устгагдах оноолтууд: %lld.";
 "cli.binding.clear.missing" = "«%@» профайлд %@-д оноолт байхгүй. Юу ч өөрчлөгдсөнгүй.";
 "cli.binding.clear.sources" = "Оноолтыг нь устгах эх сурвалжууд.";
 "cli.binding.clear.usage" = "Нэг буюу хэд хэдэн эх сурвалж эсвэл --all өгнө үү.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "«%@» профайлыг устгах байсан.";
 "cli.profile.discussion" = "Дахин оноох профайл нь нэг удирдлагын загварын элементүүдийг тоглоомын удирдлага, гар, заагчийн оролт болгон хөрвүүлдэг. PROFILE нь «ojd profile list»-ийн профайлын ID эсвэл нэр юм. Оноолтуудыг «ojd binding»-ээр, бусад бүгдийг «ojd profile edit»-ээр өөрчилнө үү. Профайлын команд бүр үйлчилгээ шаарддаг.";
 "cli.profile.document_invalid" = "%@ нь хүчинтэй профайл биш: %@";
+"cli.document.not_json" = "хүчинтэй JSON биш";
+"cli.document.missing_field" = "«%@» талбар алга";
+"cli.document.wrong_type" = "«%@» талбарын төрөл буруу";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Профайлыг шинэ нэрээр хуулах. Хуулбар идэвхгүй эхэлнэ.";
 "cli.profile.duplicate.done" = "«%@» (%@) үүсгэлээ.";
 "cli.profile.duplicate.name" = "Хуулбарын нэр.";

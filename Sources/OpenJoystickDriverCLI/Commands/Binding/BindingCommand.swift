@@ -302,15 +302,15 @@ struct BindingClearCommand: AsyncParsableCommand {
           dryRun
           ? CLILocalized.format(
             "cli.binding.clear.dry_run",
-            "Would remove %lld bindings from '%@'.",
-            result.removed.count,
-            current.name
+            "Bindings that would be removed from '%@': %lld.",
+            current.name,
+            result.removed.count
           )
           : CLILocalized.format(
             "cli.binding.clear.done",
-            "Removed %lld bindings from '%@'.",
-            result.removed.count,
-            current.name
+            "Bindings removed from '%@': %lld.",
+            current.name,
+            result.removed.count
           )
         if dryRun { CLIOutput.stdout(message) } else { CLIOutput.success(message) }
       }

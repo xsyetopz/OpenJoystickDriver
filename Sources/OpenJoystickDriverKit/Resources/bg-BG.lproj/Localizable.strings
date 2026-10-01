@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ вече не е свързана.";
 "cli.error.json_plain" = "Използвайте или --json, или --plain, не и двете.";
 "cli.error.peer_rejected" = "Услугата отхвърли този ojd, защото не е подписан като приложението. Стартирайте ojd, който е в OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Услугата не отговори в рамките на %@ секунди. Опитайте отново с по-голям --timeout.";
+"cli.error.request_timeout" = "Услугата не отговори в рамките на %@. Опитайте отново с по-голям --timeout.";
 "cli.error.service_request_failed" = "Услугата не изпълни заявката: %@. Проверете я с «ojd status».";
+"cli.error.duplicate_profile_name" = "Вече съществува профил с това име. 'ojd profile list' показва всички профили.";
 "cli.error.service_timeout" = "Услугата не отговори навреме. Опитайте отново или я проверете с «ojd status».";
 "cli.error.service_unavailable" = "Услугата OpenJoystickDriver не работи. Стартирайте я с «ojd service start».";
 "cli.error.timeout_value" = "--timeout изисква брой секунди, по-голям от 0.";
 "cli.error.unexpected" = "Неочаквана грешка: %@. Изпълнете «ojd diagnose --bundle PATH» и прикачете пакета към доклад за грешка.";
+"cli.error.unknown_command" = "Непозната команда «%@». Имахте предвид «%@»?";
 "cli.option.json" = "Отпечатва JSON в stdout.";
 "cli.option.no_color" = "Без използване на цветове.";
 "cli.option.no_input" = "Без запитвания; завършва с грешка, ако липсва стойност.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS не успя да отвори %@. Отворете го от Finder, за да видите защо.";
 "cli.service.stop.abstract" = "Спрете услугата и изчакайте да излезе. Свързаните контролери се връщат на macOS.";
 "cli.service.stop.signal_failed" = "Услугата не можа да бъде спряна: %@. Излезте от OpenJoystickDriver от менюто му.";
-"cli.service.stop.timeout" = "Услугата не спря в рамките на %@ секунди. Опитайте отново с по-голям --timeout.";
+"cli.service.stop.timeout" = "Услугата не спря в рамките на %@. Опитайте отново с по-голям --timeout.";
 "cli.service.stopped" = "Услугата е спряна.";
 "cli.service.wait.abstract" = "Изчакайте услугата да започне да приема заявки. --timeout ограничава чакането (по подразбиране 5 секунди).";
-"cli.service.wait.timeout" = "Услугата не започна да приема заявки в рамките на %@ секунди. Стартирайте я с «ojd service start» или опитайте отново с по-голям --timeout.";
+"cli.service.wait.timeout" = "Услугата не започна да приема заявки в рамките на %@. Стартирайте я с «ojd service start» или опитайте отново с по-голям --timeout.";
 "cli.status.abstract" = "Показва услугата, разширението, разрешенията и свързаните контролери.";
 "cli.status.discussion" = "Работи, когато услугата е спряна: съобщава, че е спряна, и излиза с код 0.";
 "cli.status.label.accessibility" = "Универсален достъп";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "услугата не работи";
 "cli.diagnose.soak" = "Измерва и паметта, файловите дескриптори и CPU на услугата за толкова време (1-86400).";
 "cli.diagnose.soak.not_requested" = "не е заявено; използвайте --soak SECONDS";
-"cli.diagnose.soak.progress" = "Измерване на услугата за %lld секунди...";
+"cli.diagnose.soak.progress" = "Измерване на услугата за %@...";
 "cli.diagnose.soak_range" = "--soak трябва да е между 1 и 86400 секунди.";
 "cli.diagnose.usb.failed" = "USB сканирането не успя: %@. Дайте на OpenJoystickDriver достъп до наблюдението на въвеждането.";
 "cli.diagnose.usb.ok" = "Видими USB контролери със специфичен протокол: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ е налична (имате %@): %@";
 "cli.update.check.discussion" = "Работи само когато поискате; ojd никога не проверява сам. Не изтегля и не инсталира нищо. Завършва с 0, независимо дали има актуализация, и с 1, ако проверката е неуспешна.";
 "cli.update.check.failed" = "Актуализациите не можаха да се проверят: %@. Проверете мрежовата връзка и опитайте отново.";
+"cli.update.check.failed_reason" = "Актуализациите не можаха да се проверят: %@.";
 "cli.update.check.incomplete" = "няма резултат";
 "cli.update.check.prerelease" = "Включва предварителни версии.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ е актуален (последна версия: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Име";
 "cli.controller.show.label.output_checks" = "Проверки на изхода";
 "cli.controller.show.label.ownership" = "Притежател";
+"cli.controller.show.ownership" = "маршрут %@, физически %@, HID вход %@";
 "cli.controller.show.label.protocol" = "Протокол";
 "cli.controller.show.label.record" = "Запис";
 "cli.controller.show.label.rumble" = "Вибрация";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "С --json извежда по един JSON обект на ред. Оста Y на стика сочи нагоре. С --first-press извежда първата натисната контрола и излиза; завършва с грешка, ако --duration изтече първо.";
 "cli.controller.watch.first_press" = "Извежда първата натисната контрола и излиза.";
 "cli.controller.watch.no_input" = "Не е получен вход.";
-"cli.controller.watch.no_press" = "Не е натисната контрола в рамките на %@ секунди.";
+"cli.controller.watch.no_press" = "Не е натисната контрола в рамките на %@.";
 "cli.controller.watch.press_prompt" = "Натиснете контрола на %@ (%@).";
 "cli.controller.watch.started" = "Наблюдение на %@ (%@). Натискайте бутони на контролера.";
 "cli.error.confirm_declined" = "Нищо не е променено.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Не иска потвърждение.";
 "cli.virtual.abstract" = "Показва и избира виртуалния геймпад, който OpenJoystickDriver публикува за контролер.";
 "cli.virtual.changed" = "%@ вече публикува %@ (%@).";
+"cli.virtual.stored" = "Изборът за %@ е запазен. Ще се приложи, когато виртуалният изход бъде включен.";
 "cli.virtual.discussion" = "Изборът важи за всеки контролер от същия модел. 'reset' връща модела към автоматичен избор.";
 "cli.virtual.error.failed" = "Виртуалният геймпад за %@ не се промени (%@). Проверете с 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Връща модела на контролер, или всички модели, към автоматичен избор на виртуален геймпад.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "'%@' е активен на свързан контролер и вече блокира целия му вход. Добавете обвързване с 'ojd binding set' или спрете профила с 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Да се премахнат ли всички обвързвания, акорди, последователности и слоеве от '%@'?";
 "cli.binding.clear.discussion" = "--all премахва и акордите, последователностите и слоевете на профила и иска потвърждение в терминал; иначе изисква --force. Настройките на стиковете, спусъците, докосването, движението и изхода остават.";
-"cli.binding.clear.done" = "Премахнати %lld обвързвания от '%@'.";
-"cli.binding.clear.dry_run" = "Щяха да бъдат премахнати %lld обвързвания от '%@'.";
+"cli.binding.clear.done" = "Премахнати обвързвания от '%@': %lld.";
+"cli.binding.clear.dry_run" = "Обвързвания, които щяха да бъдат премахнати от '%@': %lld.";
 "cli.binding.clear.missing" = "'%@' няма обвързване за %@. Нищо не е променено.";
 "cli.binding.clear.sources" = "Източниците, чиито обвързвания да се премахнат.";
 "cli.binding.clear.usage" = "Посочете един или повече източници или --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Профилът '%@' щеше да бъде изтрит.";
 "cli.profile.discussion" = "Профилът за преназначаване превръща контролите на един модел контролер във вход от геймпад, клавиатура и показалец. PROFILE е ID или име на профил от 'ojd profile list'. Обвързванията се променят с 'ojd binding', а всичко останало — с 'ojd profile edit'. Всяка команда за профил изисква услугата.";
 "cli.profile.document_invalid" = "%@ не е валиден профил: %@";
+"cli.document.not_json" = "не е валиден JSON";
+"cli.document.missing_field" = "полето «%@» липсва";
+"cli.document.wrong_type" = "полето «%@» е от грешен тип";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Копира профил под ново име. Копието започва неактивно.";
 "cli.profile.duplicate.done" = "Създаден е '%@' (%@).";
 "cli.profile.duplicate.name" = "Името на копието.";

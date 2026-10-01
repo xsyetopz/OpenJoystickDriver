@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ ii leat šat čadnojuvvon.";
 "cli.error.json_plain" = "Geavat juogo --json dahje --plain, ii goappašiid.";
 "cli.error.peer_rejected" = "Bálvalus hilggui dán ojd, go dat ii leat vuolláičállojuvvon nu go áppa. Čađat ojd mii lea OpenJoystickDriver.app siskkobealde.";
-"cli.error.request_timeout" = "Bálvalus ii vástidan %@ sekundda siste. Geahččal ođđasit stuorát --timeout-árvvuin.";
+"cli.error.request_timeout" = "Bálvalus ii vástidan %@ siste. Geahččal ođđasit stuorát --timeout-árvvuin.";
 "cli.error.service_request_failed" = "Bálvalus ii gárvvistan bivdima: %@. Dárkkis dan komanddain ”ojd status”.";
+"cli.error.duplicate_profile_name" = "Profiila mas lea dat namma gávdno juo. ”ojd profile list” čájeha buot profiillaid.";
 "cli.error.service_timeout" = "Bálvalus ii vástidan áigge siste. Geahččal ođđasit dahje dárkkis dan komanddain ”ojd status”.";
 "cli.error.service_unavailable" = "OpenJoystickDriver-bálvalus ii johtte. Álggat dan komanddain ”ojd service start”.";
 "cli.error.timeout_value" = "--timeout gáibida sekunddaloga mii lea stuorát go 0.";
 "cli.error.unexpected" = "Ii vuordojuvvon meattáhus: %@. Čađat ”ojd diagnose --bundle PATH” ja lasit paketa meattáhusraportii.";
+"cli.error.unknown_command" = "Dovdameahttun kommando ”%@”. Oaivvildit go ”%@”?";
 "cli.option.json" = "Čálle JSON stdout:ii.";
 "cli.option.no_color" = "Ale geavat ivnniid.";
 "cli.option.no_input" = "Ale goassege jeara; ii lihkostuva go árvu váilu.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS ii sáhttán rahpat %@. Rahpa dan Finderis vai oainnát sivvá.";
 "cli.service.stop.abstract" = "Bisuha bálvalusa ja vuordá dassážii go dat loahpahuvvo. Čadnojuvvon stivrejeaddjit máhccet macOS:ii.";
 "cli.service.stop.signal_failed" = "Ii lihkostuvvan bisuhit bálvalusa: %@. Heaittit OpenJoystickDriver dan válljenlisttus.";
-"cli.service.stop.timeout" = "Bálvalus ii bisánan %@ sekundda siste. Geahččal ođđasit stuorát --timeout-árvvuin.";
+"cli.service.stop.timeout" = "Bálvalus ii bisánan %@ siste. Geahččal ođđasit stuorát --timeout-árvvuin.";
 "cli.service.stopped" = "Bálvalus lea bisánan.";
 "cli.service.wait.abstract" = "Vuordá dassážii go bálvalus dohkkeha bivdimiid. --timeout ráddje vuordima (standárda 5 sekundda).";
-"cli.service.wait.timeout" = "Bálvalus ii dohkkehan bivdimiid %@ sekundda siste. Álggat dan komanddain ”ojd service start” dahje geahččal ođđasit stuorát --timeout-árvvuin.";
+"cli.service.wait.timeout" = "Bálvalus ii dohkkehan bivdimiid %@ siste. Álggat dan komanddain ”ojd service start” dahje geahččal ođđasit stuorát --timeout-árvvuin.";
 "cli.status.abstract" = "Čájeha bálvalusa, viiddidusa, lobiid ja čadnojuvvon stivrejeaddjiid.";
 "cli.status.discussion" = "Doaibmá maiddái go bálvalus lea bisánan: dat muitala bálvalusa bisánan ja olggosmanná koddain 0.";
 "cli.status.label.accessibility" = "Oažžumisvuohta";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "bálvalus ii johtá";
 "cli.diagnose.soak" = "Váldá maiddái bálvalusa muittu, fiilačilgehusaid ja CPU mihtidusaid dán áiggi (1-86400).";
 "cli.diagnose.soak.not_requested" = "ii bivdojuvvon; geavat --soak SECONDS";
-"cli.diagnose.soak.progress" = "Váldá bálvalusa mihtidusaid %lld sekunda...";
+"cli.diagnose.soak.progress" = "Váldá bálvalusa mihtidusaid %@...";
 "cli.diagnose.soak_range" = "--soak ferte leat gaskal 1 ja 86400 sekunda.";
 "cli.diagnose.usb.failed" = "USB-skáneren ii lihkostuvvan: %@. Atte OpenJoystickDriver:ii Input Monitoring-beassama.";
 "cli.diagnose.usb.ok" = "Oidnosis USB-stivrejeaddjit mat leat ráhkadeaddji mielde: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ lea oažžumis (dus lea %@): %@";
 "cli.update.check.discussion" = "Jođiha dušše go don bivddát; ojd ii goassige iežas dárkkis. Ii viečča ii ge sajáiduhte maidege. Loahpahuvvo koda 0:in leago ođasmahttin dahje ii, ja koda 1:in go dárkkisteapmi ii lihkostuva.";
 "cli.update.check.failed" = "Ii sáhttan dárkkistit ođasmahttimiid: %@. Dárkkis fierpmádatgulahallama ja geahččal ođđasit.";
+"cli.update.check.failed_reason" = "Ii sáhttan dárkkistit ođasmahttimiid: %@.";
 "cli.update.check.incomplete" = "ii leat bohtosa";
 "cli.update.check.prerelease" = "Sisttisdoallá ovdaversuvnnaid.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ lea ođas (ođđaseamos almmuhus: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Namma";
 "cli.controller.show.label.output_checks" = "Olggosbidjangeahččalemiid";
 "cli.controller.show.label.ownership" = "Eaiggáduššan";
+"cli.controller.show.ownership" = "geaidnu %@, fysalaš %@, HID-sisbidjan %@";
 "cli.controller.show.label.protocol" = "Protokolla";
 "cli.controller.show.label.record" = "Čálus";
 "cli.controller.show.label.rumble" = "Vibrerem";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "--json:in prentte ovtta JSON-objeavtta juohke ráiddus. Stickka Y čujuha bajás. --first-press:in čálle vuosttaš deaddiluvvon stivrenelemeantta ja gohtta; dat ii lihkostuva jos --duration nohkka ovdal.";
 "cli.controller.watch.first_press" = "Prentte vuosttaš deaddiluvvon stivrenelemeantta, de gohtte.";
 "cli.controller.watch.no_input" = "Ii leat vuostáiváldán sisaboahtu.";
-"cli.controller.watch.no_press" = "Ii oktage stivrenelemeanta deaddiluvvon %@ sekundda siste.";
+"cli.controller.watch.no_press" = "Ii oktage stivrenelemeanta deaddiluvvon %@ siste.";
 "cli.controller.watch.press_prompt" = "Deaddil stivrenelemeantta %@:s (%@).";
 "cli.controller.watch.started" = "Čuovvu %@ (%@). Deaddil stivrejeaddji boalddiid.";
 "cli.error.confirm_declined" = "Ii mihkkege rievdan.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Ale jeara nanosvuođa.";
 "cli.virtual.abstract" = "Čájeha ja vállje virtuála speallanbáddi maid OpenJoystickDriver almmuha stivrejeaddjái.";
 "cli.virtual.changed" = "%@ almmuha dál %@ (%@).";
+"cli.virtual.stored" = "%@: válljen lea vurkejuvvon. Doaibmá go virtuála olggosbuktin lea doaimmas.";
 "cli.virtual.discussion" = "Válljen guoská juohke stivrejeaddjái seamma modealas. ”reset” máhcaha modealet automáhtalaš válljemii.";
 "cli.virtual.error.failed" = "%@ virtuála speallanbáddi ii rievdan (%@). Geahčat dan komanddain ”ojd virtual show”.";
 "cli.virtual.reset.abstract" = "Máhcaha stivrejeaddji modealet, dahje buot modeallaid, virtuála speallanbáddi automáhtalaš válljemii.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "Profiila ”%@” lea aktiivvalaš čadnojuvvon stivrejeaddjis ja gieldá dál buot dan sisdieđu. Lasit čatnosa ”ojd binding set” bokte, dahje bisset profiilla ”ojd profile deactivate” bokte.";
 "cli.binding.clear.confirm" = "Váldetgo eret buot čatnumiid, kombinašuvnnaid, ráidduid ja dásiid profiilas ”%@”?";
 "cli.binding.clear.discussion" = "--all válddaha eret maiddái profiila kombinašuvnnaid, ráidduid ja dásiid ja jearrá nannema terminálas; muđui dárbbaša --force. Stiivrra, dirrala, guoskkaheami, lihkadusa ja olggosdieđu ásahusat orrot.";
-"cli.binding.clear.done" = "Válddii eret %lld čatnuma profiilas ”%@”.";
-"cli.binding.clear.dry_run" = "Livččii váldán eret %lld čatnuma profiilas ”%@”.";
+"cli.binding.clear.done" = "Profiilas ”%@” eret váldojuvvon čatnumat: %lld.";
+"cli.binding.clear.dry_run" = "Čatnumat mat váldojuvvošedje eret profiilas ”%@”: %lld.";
 "cli.binding.clear.missing" = "Profiilas ”%@” ii leat čatnun gáldui %@. Ii mihkkege rievdaduvvon.";
 "cli.binding.clear.sources" = "Gáldut maid čatnumiid váldit eret.";
 "cli.binding.clear.usage" = "Attát ovtta dahje máŋga gálddu, dahje --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Sihkkošii profiila ”%@”.";
 "cli.profile.discussion" = "Heivehanprofiila rievdada ovtta stivrejeaddjemálle stivrenoasiid speallanbáddi-, boallobeavdi- ja čuojančihpasisaboađun. PROFILE lea profiila ID dahje namma ”ojd profile list”-komanddas. Rievdat čatnumiid ”ojd binding”-komanddain ja buot eará ”ojd profile edit”-komanddain. Juohke profiilakomanda dárbbaša bálvalusa.";
 "cli.profile.document_invalid" = "%@ ii leat gustovaš profiila: %@";
+"cli.document.not_json" = "ii leat gustovaš JSON";
+"cli.document.missing_field" = "gieddi ”%@” váilu";
+"cli.document.wrong_type" = "gieddi ”%@” šládja lea boastut";
+"cli.document.field_problem" = "”%@”: %@";
 "cli.profile.duplicate.abstract" = "Ráhkat profiilas máŋgosa ođđa nammain. Máŋggus álgá ii-aktiivan.";
 "cli.profile.duplicate.done" = "Ráhkaduvvui ”%@” (%@).";
 "cli.profile.duplicate.name" = "Máŋgosa namma.";

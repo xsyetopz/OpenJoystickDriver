@@ -18,6 +18,18 @@ package struct CLI {
   static func execute(arguments: [String]) async -> Int32 {
     var command: any ParsableCommand
     do { command = try OJDCommand.parseAsRoot(arguments) } catch {
+      if let match = CommandSuggestion.match(arguments: arguments) {
+        CLIOutput.stderr(
+          "ojd: "
+            + CLILocalized.format(
+              "cli.error.unknown_command",
+              "Unknown command '%@'. Did you mean '%@'?",
+              match.typed,
+              match.suggestion
+            )
+        )
+        return CLIExitCode.usage.rawValue
+      }
       return reportLibraryError(error)
     }
     // Every ojd command is async; a synchronous one is the library's help command, whose

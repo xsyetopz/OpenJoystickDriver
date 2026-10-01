@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ - Neįjungtas.";
 "cli.error.json_plain" = "Naudokite --json arba --plain, bet ne abu kartu.";
 "cli.error.peer_rejected" = "Tarnyba atmetė šį ojd, nes jis nepasirašytas kaip programa. Paleiskite ojd, pateikiamą kartu su OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Tarnyba neatsakė per %@ sek. Bandykite dar kartą su didesne --timeout reikšme.";
+"cli.error.request_timeout" = "Tarnyba neatsakė per %@ Bandykite dar kartą su didesne --timeout reikšme.";
 "cli.error.service_request_failed" = "Tarnyba neįvykdė užklausos: %@. Patikrinkite ją komanda „ojd status“.";
+"cli.error.duplicate_profile_name" = "Profilis tokiu pavadinimu jau yra. „ojd profile list“ parodo visus profilius.";
 "cli.error.service_timeout" = "Tarnyba neatsakė laiku. Bandykite dar kartą arba patikrinkite ją komanda „ojd status“.";
 "cli.error.service_unavailable" = "OpenJoystickDriver tarnyba neveikia. Paleiskite ją komanda „ojd service start“.";
 "cli.error.timeout_value" = "--timeout reikia sekundžių skaičiaus, didesnio už 0.";
 "cli.error.unexpected" = "Netikėta klaida: %@. Paleiskite „ojd diagnose --bundle PATH“ ir pridėkite paketą prie pranešimo apie klaidą.";
+"cli.error.unknown_command" = "Nežinoma komanda „%@“. Ar turėjote omenyje „%@“?";
 "cli.option.json" = "Spausdinti JSON į stdout.";
 "cli.option.no_color" = "Nenaudoti spalvų.";
 "cli.option.no_input" = "Niekada neprašyti įvesties; nepavykti, jei trūksta reikšmės.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS nepavyko atidaryti %@. Atidarykite iš Finder, kad pamatytumėte priežastį.";
 "cli.service.stop.abstract" = "Sustabdyti tarnybą ir laukti, kol ji baigs darbą. Prijungti valdikliai grąžinami macOS.";
 "cli.service.stop.signal_failed" = "Nepavyko sustabdyti tarnybos: %@. Išeikite iš OpenJoystickDriver jos meniu.";
-"cli.service.stop.timeout" = "Tarnyba nesustojo per %@ sek. Bandykite dar kartą su didesne --timeout reikšme.";
+"cli.service.stop.timeout" = "Tarnyba nesustojo per %@ Bandykite dar kartą su didesne --timeout reikšme.";
 "cli.service.stopped" = "Tarnyba sustabdyta.";
 "cli.service.wait.abstract" = "Laukti, kol tarnyba priims užklausas. --timeout riboja laukimą (numatytoji reikšmė 5 sekundės).";
-"cli.service.wait.timeout" = "Tarnyba nepriėmė užklausų per %@ sek. Paleiskite ją komanda „ojd service start“ arba bandykite dar kartą su didesne --timeout reikšme.";
+"cli.service.wait.timeout" = "Tarnyba nepriėmė užklausų per %@ Paleiskite ją komanda „ojd service start“ arba bandykite dar kartą su didesne --timeout reikšme.";
 "cli.status.abstract" = "Rodyti tarnybą, plėtinį, leidimus ir prijungtus valdiklius.";
 "cli.status.discussion" = "Veikia ir sustabdžius tarnybą: praneša, kad tarnyba sustabdyta, ir išeina su 0.";
 "cli.status.label.accessibility" = "Pritaikymas neįgaliesiems";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "tarnyba neveikia";
 "cli.diagnose.soak" = "Taip pat tiek laiko ima tarnybos atminties, failų deskriptorių ir CPU mėginius (1-86400).";
 "cli.diagnose.soak.not_requested" = "neprašyta; naudokite --soak SECONDS";
-"cli.diagnose.soak.progress" = "Imami tarnybos mėginiai %lld s…";
+"cli.diagnose.soak.progress" = "Imami tarnybos mėginiai %@…";
 "cli.diagnose.soak_range" = "--soak turi būti tarp 1 ir 86400 sekundžių.";
 "cli.diagnose.usb.failed" = "USB nuskaitymas nepavyko: %@. Suteikite OpenJoystickDriver Input Monitoring prieigą.";
 "cli.diagnose.usb.ok" = "Matomų gamintojui specifinių USB valdiklių: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "Yra OpenJoystickDriver %@ (turite %@): %@";
 "cli.update.check.discussion" = "Veikia tik jūsų prašymu; ojd niekada netikrina pats. Nieko neatsisiunčia ir neįdiegia. Baigiasi kodu 0, nesvarbu, ar naujinimas yra, ir kodu 1, kai patikrinimas nepavyksta.";
 "cli.update.check.failed" = "Nepavyko patikrinti naujinimų: %@. Patikrinkite tinklo ryšį ir bandykite dar kartą.";
+"cli.update.check.failed_reason" = "Nepavyko patikrinti naujinimų: %@.";
 "cli.update.check.incomplete" = "nėra rezultato";
 "cli.update.check.prerelease" = "Įtraukia išankstines versijas.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ yra naujausias (naujausias leidimas: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Pavadinimas";
 "cli.controller.show.label.output_checks" = "Išvesties patikros";
 "cli.controller.show.label.ownership" = "Nuosavybė";
+"cli.controller.show.ownership" = "maršrutas %@, fizinis %@, HID įvestis %@";
 "cli.controller.show.label.protocol" = "Protokolas";
 "cli.controller.show.label.record" = "Įrašas";
 "cli.controller.show.label.rumble" = "Vibracija";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Su --json rodo po vieną JSON objektą eilutėje. Y ašis rodo aukštyn. Su --first-press parodo pirmą paspaustą valdymo elementą ir išeina; nepavyksta, jei --duration baigiasi anksčiau.";
 "cli.controller.watch.first_press" = "Parodyti pirmą paspaustą valdymo elementą ir išeiti.";
 "cli.controller.watch.no_input" = "Įvesties negauta.";
-"cli.controller.watch.no_press" = "Per %@ sek. nebuvo paspaustas joks valdymo elementas.";
+"cli.controller.watch.no_press" = "Per %@ nebuvo paspaustas joks valdymo elementas.";
 "cli.controller.watch.press_prompt" = "Paspauskite valdymo elementą: %@ (%@).";
 "cli.controller.watch.started" = "Stebimas %@ (%@). Paspauskite valdiklio mygtukus.";
 "cli.error.confirm_declined" = "Niekas nepasikeitė.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Neprašyti patvirtinimo.";
 "cli.virtual.abstract" = "Rodyti ir pasirinkti virtualų žaidimų pultą, kurį OpenJoystickDriver skelbia valdikliui.";
 "cli.virtual.changed" = "%@ dabar skelbia %@ (%@).";
+"cli.virtual.stored" = "Pasirinkimas įrenginiui %@ išsaugotas. Jis bus pritaikytas įjungus virtualią išvestį.";
 "cli.virtual.discussion" = "Pasirinkimas taikomas visiems to paties modelio valdikliams. „reset“ grąžina modelį į automatinį pasirinkimą.";
 "cli.virtual.error.failed" = "%@ virtualus žaidimų pultas nepasikeitė (%@). Patikrinkite naudodami „ojd virtual show“.";
 "cli.virtual.reset.abstract" = "Grąžinti valdiklio modelį arba visus modelius į automatinį virtualaus žaidimų pulto pasirinkimą.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "„%@“ aktyvus prijungtame valdiklyje ir dabar blokuoja visą jo įvestį. Pridėkite susiejimą su „ojd binding set“ arba sustabdykite profilį su „ojd profile deactivate“.";
 "cli.binding.clear.confirm" = "Pašalinti visus susiejimus, kombinacijas, sekas ir sluoksnius iš „%@“?";
 "cli.binding.clear.discussion" = "--all pašalina ir profilio kombinacijas, sekas bei sluoksnius ir terminale paprašo patvirtinimo; kitu atveju reikia --force. Valdymo svirčių, gaidukų, prisilietimo, judesio ir išvesties nustatymai lieka.";
-"cli.binding.clear.done" = "Pašalinta susiejimų: %lld, iš „%@“.";
-"cli.binding.clear.dry_run" = "Būtų pašalinta susiejimų: %lld, iš „%@“.";
+"cli.binding.clear.done" = "Iš „%@“ pašalinti susiejimai: %lld.";
+"cli.binding.clear.dry_run" = "Susiejimai, kurie būtų pašalinti iš „%@“: %lld.";
 "cli.binding.clear.missing" = "„%@“ neturi susiejimo šaltiniui %@. Niekas nepakeista.";
 "cli.binding.clear.sources" = "Šaltiniai, kurių susiejimus pašalinti.";
 "cli.binding.clear.usage" = "Nurodykite vieną ar daugiau šaltinių arba --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Būtų ištrintas profilis „%@“.";
 "cli.profile.discussion" = "Perprogramavimo profilis paverčia vieno valdiklio modelio elementus žaidimų pulto, klaviatūros ir žymeklio įvestimi. PROFILE yra profilio ID arba pavadinimas iš „ojd profile list“. Susiejimus keiskite naudodami „ojd binding“, o viską kita – naudodami „ojd profile edit“. Kiekvienai profilio komandai reikia tarnybos.";
 "cli.profile.document_invalid" = "%@ nėra tinkamas profilis: %@";
+"cli.document.not_json" = "tai nėra tinkamas JSON";
+"cli.document.missing_field" = "trūksta lauko „%@“";
+"cli.document.wrong_type" = "laukas „%@“ yra netinkamo tipo";
+"cli.document.field_problem" = "„%@“: %@";
 "cli.profile.duplicate.abstract" = "Nukopijuoti profilį nauju pavadinimu. Kopija pradeda neaktyvi.";
 "cli.profile.duplicate.done" = "Sukurta „%@“ (%@).";
 "cli.profile.duplicate.name" = "Kopijos pavadinimas.";

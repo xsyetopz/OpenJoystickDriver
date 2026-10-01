@@ -191,11 +191,11 @@ enum DiagnoseChecks {
     guard let status = snapshot.status else { return skipped("virtual-device", snapshot) }
     let id = "virtual-device"
     let backend = status.userSpaceVirtualDeviceStatus?.wireValue ?? "unknown"
-    if status.userSpaceVirtualDeviceStatus?.isError == true {
+    if case .error(let message) = status.userSpaceVirtualDeviceStatus {
       return DiagnoseCheck(
         id,
         .fail,
-        CLILocalized.format("cli.diagnose.virtual.error", "virtual gamepad error: %@", backend)
+        CLILocalized.format("cli.diagnose.virtual.error", "virtual gamepad error: %@", message)
       )
     }
     if let error = status.virtualHIDProfileOverrideError {
@@ -252,7 +252,7 @@ enum DiagnoseChecks {
         .pass,
         CLILocalized.format(
           "cli.diagnose.usb.ok",
-          "%lld vendor-specific USB controllers visible",
+          "Vendor-specific USB controllers visible: %lld",
           count
         )
       )
@@ -293,8 +293,8 @@ enum DiagnoseChecks {
     CLIOutput.stderr(
       CLILocalized.format(
         "cli.diagnose.soak.progress",
-        "Sampling the service for %lld seconds...",
-        soak.seconds
+        "Sampling the service for %@...",
+        Double(soak.seconds).durationText
       )
     )
     do {

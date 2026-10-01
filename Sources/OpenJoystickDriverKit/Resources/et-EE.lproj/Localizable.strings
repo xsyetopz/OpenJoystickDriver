@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ pole enam ühendatud.";
 "cli.error.json_plain" = "Kasuta kas --json või --plain, mitte mõlemat.";
 "cli.error.peer_rejected" = "Teenus lükkas selle ojd tagasi, sest see pole allkirjastatud nagu rakendus. Käivita ojd, mis on OpenJoystickDriver.app-is kaasas.";
-"cli.error.request_timeout" = "Teenus ei vastanud %@ sekundi jooksul. Proovi uuesti suurema --timeout väärtusega.";
+"cli.error.request_timeout" = "Teenus ei vastanud %@ jooksul. Proovi uuesti suurema --timeout väärtusega.";
 "cli.error.service_request_failed" = "Teenus ei lõpetanud päringut: %@. Kontrolli seda käsuga „ojd status“.";
+"cli.error.duplicate_profile_name" = "Sellise nimega profiil on juba olemas. 'ojd profile list' näitab kõiki profiile.";
 "cli.error.service_timeout" = "Teenus ei vastanud õigel ajal. Proovi uuesti või kontrolli teenust käsuga „ojd status“.";
 "cli.error.service_unavailable" = "OpenJoystickDriveri teenus ei tööta. Käivita see käsuga „ojd service start“.";
 "cli.error.timeout_value" = "--timeout vajab sekundite arvu, mis on suurem kui 0.";
 "cli.error.unexpected" = "Ootamatu viga: %@. Käivita „ojd diagnose --bundle PATH“ ja lisa komplekt veaaruandele.";
+"cli.error.unknown_command" = "Tundmatu käsk „%@“. Kas mõtlesid „%@“?";
 "cli.option.json" = "Prindi JSON stdout'i.";
 "cli.option.no_color" = "Ära kasuta värve.";
 "cli.option.no_input" = "Ära kunagi küsi; puuduva väärtuse korral ebaõnnestu.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS ei saanud faili %@ avada. Ava see Finderis, et näha põhjust.";
 "cli.service.stop.abstract" = "Peata teenus ja oota, kuni see väljub. Ühendatud kontrollerid lähevad tagasi macOS-ile.";
 "cli.service.stop.signal_failed" = "Teenust ei saanud peatada: %@. Sulge OpenJoystickDriver selle menüüst.";
-"cli.service.stop.timeout" = "Teenus ei peatunud %@ sekundi jooksul. Proovi uuesti suurema --timeout väärtusega.";
+"cli.service.stop.timeout" = "Teenus ei peatunud %@ jooksul. Proovi uuesti suurema --timeout väärtusega.";
 "cli.service.stopped" = "Teenus on peatatud.";
 "cli.service.wait.abstract" = "Oota, kuni teenus päringuid vastu võtab. --timeout piirab ooteaega (vaikimisi 5 sekundit).";
-"cli.service.wait.timeout" = "Teenus ei võtnud %@ sekundi jooksul päringuid vastu. Käivita see käsuga „ojd service start“ või proovi uuesti suurema --timeout väärtusega.";
+"cli.service.wait.timeout" = "Teenus ei võtnud %@ jooksul päringuid vastu. Käivita see käsuga „ojd service start“ või proovi uuesti suurema --timeout väärtusega.";
 "cli.status.abstract" = "Näita teenust, laiendit, lubasid ja ühendatud kontrollereid.";
 "cli.status.discussion" = "Töötab ka peatatud teenusega: teatab teenuse peatatuks ja väljub koodiga 0.";
 "cli.status.label.accessibility" = "Hõlbustus";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "teenus ei tööta";
 "cli.diagnose.soak" = "Võtab selle aja jooksul ka teenuse mälu, failikirjelduste ja CPU näidiseid (1-86400).";
 "cli.diagnose.soak.not_requested" = "pole taotletud; kasuta --soak SECONDS";
-"cli.diagnose.soak.progress" = "Teenuse näidiste võtmine %lld s...";
+"cli.diagnose.soak.progress" = "Teenuse näidiste võtmine %@ jooksul...";
 "cli.diagnose.soak_range" = "--soak peab olema vahemikus 1 kuni 86400 sekundit.";
 "cli.diagnose.usb.failed" = "USB skannimine ebaõnnestus: %@. Anna OpenJoystickDriverile Input Monitoring juurdepääs.";
 "cli.diagnose.usb.ok" = "Nähtavaid tootjaspetsiifilisi USB-kontrollereid: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ on saadaval (sul on %@): %@";
 "cli.update.check.discussion" = "Käivitub ainult sinu soovil; ojd ei kontrolli kunagi ise. See ei laadi midagi alla ega installi. Lõpeb koodiga 0, olenemata sellest, kas värskendus on olemas, ja koodiga 1, kui kontroll ebaõnnestub.";
 "cli.update.check.failed" = "Värskendusi ei saanud kontrollida: %@. Kontrolli võrguühendust ja proovi uuesti.";
+"cli.update.check.failed_reason" = "Värskendusi ei saanud kontrollida: %@.";
 "cli.update.check.incomplete" = "tulemust pole";
 "cli.update.check.prerelease" = "Lisab eelväljaanded.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ on ajakohane (uusim väljaanne: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Nimi";
 "cli.controller.show.label.output_checks" = "Väljundikontrollid";
 "cli.controller.show.label.ownership" = "Omand";
+"cli.controller.show.ownership" = "tee %@, füüsiline %@, HID-sisend %@";
 "cli.controller.show.label.protocol" = "Protokoll";
 "cli.controller.show.label.record" = "Kirje";
 "cli.controller.show.label.rumble" = "Värin";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Võtmega --json prinditakse üks JSON-objekt rea kohta. Kangi Y osutab üles. Võtmega --first-press prinditakse esimene vajutatud juhtelement ja väljutakse; see ebaõnnestub, kui --duration saab enne täis.";
 "cli.controller.watch.first_press" = "Prindi esimene vajutatud juhtelement ja välju.";
 "cli.controller.watch.no_input" = "Sisendit ei saadud.";
-"cli.controller.watch.no_press" = "%@ sekundi jooksul ei vajutatud ühtegi juhtelementi.";
+"cli.controller.watch.no_press" = "%@ jooksul ei vajutatud ühtegi juhtelementi.";
 "cli.controller.watch.press_prompt" = "Vajuta juhtelementi kontrolleril %@ (%@).";
 "cli.controller.watch.started" = "Jälgin kontrollerit %@ (%@). Vajuta kontrolleri nuppe.";
 "cli.error.confirm_declined" = "Midagi ei muudetud.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Ära küsi kinnitust.";
 "cli.virtual.abstract" = "Näita ja vali virtuaalset mängupulti, mille OpenJoystickDriver kontrolleri jaoks avaldab.";
 "cli.virtual.changed" = "%@ avaldab nüüd %@ (%@).";
+"cli.virtual.stored" = "Valik seadme %@ jaoks on salvestatud. See rakendub, kui virtuaalne väljund on lubatud.";
 "cli.virtual.discussion" = "Valik kehtib kõigile sama mudeli kontrolleritele. 'reset' viib mudeli tagasi automaatse valiku juurde.";
 "cli.virtual.error.failed" = "Kontrolleri %@ virtuaalne mängupult ei muutunud (%@). Kontrolli seda käsuga 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Vii kontrolleri mudel või iga mudel tagasi virtuaalse mängupuldi automaatse valiku juurde.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "Profiil '%@' on ühendatud kontrolleril aktiivne ja blokeerib nüüd kogu selle sisendi. Lisa seos käsuga 'ojd binding set' või peata profiil käsuga 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Kas eemaldada profiilist '%@' kõik seosed, kombinatsioonid, jadad ja kihid?";
 "cli.binding.clear.discussion" = "--all eemaldab ka profiili kombinatsioonid, jadad ja kihid ning küsib terminalis kinnitust; muidu vajab see --force. Kangide, päästikute, puute, liikumise ja väljundi seaded jäävad alles.";
-"cli.binding.clear.done" = "Eemaldati %lld seost profiilist '%@'.";
-"cli.binding.clear.dry_run" = "Eemaldataks %lld seost profiilist '%@'.";
+"cli.binding.clear.done" = "Profiilist '%@' eemaldatud seoseid: %lld.";
+"cli.binding.clear.dry_run" = "Profiilist '%@' eemaldataks seoseid: %lld.";
 "cli.binding.clear.missing" = "Profiilil '%@' pole allika %@ seost. Midagi ei muudetud.";
 "cli.binding.clear.sources" = "Allikad, mille seosed eemaldada.";
 "cli.binding.clear.usage" = "Anna üks või mitu allikat või --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Profiil '%@' kustutataks.";
 "cli.profile.discussion" = "Ümberseadistusprofiil muudab ühe kontrolleri mudeli juhtelemendid gamepadi, klaviatuuri ja kursori sisendiks. PROFILE on profiili ID või nimi käsust 'ojd profile list'. Seoseid muuda käsuga 'ojd binding' ja kõike muud käsuga 'ojd profile edit'. Iga profiilikäsk vajab teenust.";
 "cli.profile.document_invalid" = "%@ ei ole kehtiv profiil: %@";
+"cli.document.not_json" = "see ei ole kehtiv JSON";
+"cli.document.missing_field" = "väli „%@“ puudub";
+"cli.document.wrong_type" = "väljal „%@“ on vale tüüp";
+"cli.document.field_problem" = "„%@“: %@";
 "cli.profile.duplicate.abstract" = "Kopeeri profiil uue nime alla. Koopia on algul mitteaktiivne.";
 "cli.profile.duplicate.done" = "Loodi '%@' (%@).";
 "cli.profile.duplicate.name" = "Koopia nimi.";

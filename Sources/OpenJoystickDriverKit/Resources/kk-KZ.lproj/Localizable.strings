@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ қосылмаған.";
 "cli.error.json_plain" = "--json немесе --plain параметрін пайдаланыңыз, екеуін бірге емес.";
 "cli.error.peer_rejected" = "Қызмет бұл ojd-ті қабылдамады, себебі ол қолданба сияқты қол қойылмаған. OpenJoystickDriver.app ішіндегі ojd-ті іске қосыңыз.";
-"cli.error.request_timeout" = "Қызмет %@ секунд ішінде жауап бермеді. Үлкенірек --timeout мәнімен қайталаңыз.";
+"cli.error.request_timeout" = "Қызмет %@ ішінде жауап бермеді. Үлкенірек --timeout мәнімен қайталаңыз.";
 "cli.error.service_request_failed" = "Қызмет сұрауды аяқтамады: %@. Оны «ojd status» арқылы тексеріңіз.";
+"cli.error.duplicate_profile_name" = "Осы атаумен профиль бар. «ojd profile list» әр профильді көрсетеді.";
 "cli.error.service_timeout" = "Қызмет уақытында жауап бермеді. Қайталаңыз немесе «ojd status» арқылы тексеріңіз.";
 "cli.error.service_unavailable" = "OpenJoystickDriver қызметі жұмыс істемей тұр. Оны «ojd service start» арқылы іске қосыңыз.";
 "cli.error.timeout_value" = "--timeout үшін 0-ден үлкен секунд саны қажет.";
 "cli.error.unexpected" = "Күтпеген қате: %@. «ojd diagnose --bundle PATH» іске қосып, буманы қате туралы есепке тіркеңіз.";
+"cli.error.unknown_command" = "Белгісіз команда «%@». «%@» дегіңіз келді ме?";
 "cli.option.json" = "JSON-ды stdout-қа шығару.";
 "cli.option.no_color" = "Түс пайдаланбау.";
 "cli.option.no_input" = "Ешқашан сұрамау; мән жоқ болса, қатемен аяқтау.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS %@ ашып алмады. Себебін көру үшін оны Finder арқылы ашыңыз.";
 "cli.service.stop.abstract" = "Қызметті тоқтатып, ол шыққанша күту. Қосылған контроллерлер macOS-қа қайтарылады.";
 "cli.service.stop.signal_failed" = "Қызметті тоқтату мүмкін болмады: %@. OpenJoystickDriver қолданбасынан оның мәзірі арқылы шығыңыз.";
-"cli.service.stop.timeout" = "Қызмет %@ секунд ішінде тоқтамады. Үлкенірек --timeout мәнімен қайталаңыз.";
+"cli.service.stop.timeout" = "Қызмет %@ ішінде тоқтамады. Үлкенірек --timeout мәнімен қайталаңыз.";
 "cli.service.stopped" = "Қызмет тоқтатылды.";
 "cli.service.wait.abstract" = "Қызмет сұрауларды қабылдағанша күту. --timeout күту уақытын шектейді (әдепкі 5 секунд).";
-"cli.service.wait.timeout" = "Қызмет %@ секунд ішінде сұрауларды қабылдамады. Оны «ojd service start» арқылы іске қосыңыз немесе үлкенірек --timeout мәнімен қайталаңыз.";
+"cli.service.wait.timeout" = "Қызмет %@ ішінде сұрауларды қабылдамады. Оны «ojd service start» арқылы іске қосыңыз немесе үлкенірек --timeout мәнімен қайталаңыз.";
 "cli.status.abstract" = "Қызметті, кеңейтімді, рұқсаттарды және қосылған контроллерлерді көрсету.";
 "cli.status.discussion" = "Қызмет тоқтатылған болса да жұмыс істейді: қызметті тоқтатылған деп хабарлап, 0 кодымен шығады.";
 "cli.status.label.accessibility" = "Қолжетімділік";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "қызмет жұмыс істемейді";
 "cli.diagnose.soak" = "Қызметтің жадын, файл дескрипторларын және CPU жүктемесін осыншама уақыт өлшеу (1-86400).";
 "cli.diagnose.soak.not_requested" = "сұралмаған; --soak SECONDS пайдаланыңыз";
-"cli.diagnose.soak.progress" = "Қызметті %lld секунд өлшеу…";
+"cli.diagnose.soak.progress" = "Қызметті %@ бойы өлшеу…";
 "cli.diagnose.soak_range" = "--soak 1 мен 86400 секунд арасында болуы керек.";
 "cli.diagnose.usb.failed" = "USB сканерлеу сәтсіз аяқталды: %@. OpenJoystickDriver қолданбасына енгізуді бақылауға рұқсат беріңіз.";
 "cli.diagnose.usb.ok" = "Көрінетін арнайы USB контроллерлер: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ қолжетімді (сізде %@): %@";
 "cli.update.check.discussion" = "Тек сіз сұрағанда ғана жұмыс істейді; ojd өздігінен ешқашан тексермейді. Ештеңе жүктемейді және орнатпайды. Жаңарту бар-жоғына қарамастан 0 кодымен, тексеру сәтсіз болса 1 кодымен аяқталады.";
 "cli.update.check.failed" = "Жаңартуларды тексеру мүмкін болмады: %@. Желі қосылымын тексеріп, қайталаңыз.";
+"cli.update.check.failed_reason" = "Жаңартуларды тексеру мүмкін болмады: %@.";
 "cli.update.check.incomplete" = "нәтиже жоқ";
 "cli.update.check.prerelease" = "Алдын ала нұсқаларды қосу.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ нұсқасы — ең соңғысы (соңғы шығарылым: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Атауы";
 "cli.controller.show.label.output_checks" = "Шығару тексерулері";
 "cli.controller.show.label.ownership" = "Иелік";
+"cli.controller.show.ownership" = "бағыт %@, физикалық %@, HID кірісі %@";
 "cli.controller.show.label.protocol" = "Протокол";
 "cli.controller.show.label.record" = "Жазба";
 "cli.controller.show.label.rumble" = "Діріл";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "--json болса, әр жолға бір JSON нысанын шығарады. Стиктің Y осі жоғарыға бағытталған. --first-press болса, бірінші басылған басқару элементін шығарып, шығады; --duration бұрын аяқталса, сәтсіз болады.";
 "cli.controller.watch.first_press" = "Бірінші басылған басқару элементін шығарып, шығу.";
 "cli.controller.watch.no_input" = "Енгізу алынған жоқ.";
-"cli.controller.watch.no_press" = "%@ секунд ішінде ешбір басқару элементі басылған жоқ.";
+"cli.controller.watch.no_press" = "%@ ішінде ешбір басқару элементі басылған жоқ.";
 "cli.controller.watch.press_prompt" = "%@ (%@) құрылғысындағы басқару элементін басыңыз.";
 "cli.controller.watch.started" = "%@ (%@) бақылануда. Контроллер түймелерін басыңыз.";
 "cli.error.confirm_declined" = "Ештеңе өзгерген жоқ.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Растауды сұрамау.";
 "cli.virtual.abstract" = "OpenJoystickDriver контроллер үшін жариялайтын виртуалды геймпадты көрсету және таңдау.";
 "cli.virtual.changed" = "%@ енді %@ (%@) жариялайды.";
+"cli.virtual.stored" = "%@ үшін таңдау сақталды. Ол виртуалды шығыс қосылғанда қолданылады.";
 "cli.virtual.discussion" = "Таңдау бірдей модельдегі әр контроллерге қолданылады. «reset» модельді автоматты таңдауға қайтарады.";
 "cli.virtual.error.failed" = "%@ үшін виртуалды геймпад өзгерген жоқ (%@). «ojd virtual show» арқылы тексеріңіз.";
 "cli.virtual.reset.abstract" = "Контроллер моделін немесе барлық модельдерді виртуалды геймпадты автоматты таңдауға қайтару.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "«%@» профилі қосылған контроллерде белсенді және енді оның барлық енгізуін бұғаттайды. «ojd binding set» арқылы тағайындау қосыңыз немесе профильді «ojd profile deactivate» арқылы тоқтатыңыз.";
 "cli.binding.clear.confirm" = "«%@» профилінен барлық тағайындауларды, аккордтарды, бірізділіктерді және қабаттарды жою керек пе?";
 "cli.binding.clear.discussion" = "--all профильдің аккордтарын, бірізділіктерін және қабаттарын да жояды және терминалда растауды сұрайды; әйтпесе --force қажет. Стик, триггер, жанасу, қозғалыс және шығыс параметрлері сақталады.";
-"cli.binding.clear.done" = "Тағайындаулар жойылды: %lld («%@» профилі).";
-"cli.binding.clear.dry_run" = "Тағайындаулар жойылар еді: %lld («%@» профилі).";
+"cli.binding.clear.done" = "«%@» профилінен жойылған тағайындаулар: %lld.";
+"cli.binding.clear.dry_run" = "«%@» профилінен жойылатын тағайындаулар: %lld.";
 "cli.binding.clear.missing" = "«%@» профилінде %@ үшін тағайындау жоқ. Ештеңе өзгерген жоқ.";
 "cli.binding.clear.sources" = "Тағайындаулары жойылатын көздер.";
 "cli.binding.clear.usage" = "Бір немесе бірнеше көзді немесе --all беріңіз.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "«%@» профилі жойылар еді.";
 "cli.profile.discussion" = "Қайта тағайындау профилі бір контроллер моделінің элементтерін геймпад, пернетақта және меңзер енгізуіне айналдырады. PROFILE — «ojd profile list» ішіндегі профиль ID-і немесе атауы. Тағайындауларды «ojd binding» арқылы, қалғанының бәрін «ojd profile edit» арқылы өзгертіңіз. Профильдің әр пәрмені қызметті қажет етеді.";
 "cli.profile.document_invalid" = "%@ жарамды профиль емес: %@";
+"cli.document.not_json" = "жарамды JSON емес";
+"cli.document.missing_field" = "«%@» өрісі жоқ";
+"cli.document.wrong_type" = "«%@» өрісінің түрі қате";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Профильді жаңа атаумен көшіру. Көшірме белсенді емес күйде басталады.";
 "cli.profile.duplicate.done" = "«%@» профилі жасалды (%@).";
 "cli.profile.duplicate.name" = "Көшірменің атауы.";

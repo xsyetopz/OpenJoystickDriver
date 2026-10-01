@@ -65,4 +65,17 @@ struct UpdateCommandTests {
     #expect(result.standardError.hasPrefix("ojd: "))
     #expect(result.standardError.contains("offline"))
   }
+
+  @Test
+  func onlyANetworkFailureSuggestsCheckingTheConnection() async {
+    let network = UpdateCheckFailure(reason: .transport, message: "timed out")
+    let version = UpdateCheckFailure(reason: .invalidCurrentVersion, message: "not SemVer")
+    let networkResult = await run(["update", "check"], state: .failed(network))
+    let versionResult = await run(["update", "check"], state: .failed(version))
+
+    #expect(networkResult.standardError.contains("network connection"))
+    #expect(versionResult.code == 1)
+    #expect(versionResult.standardError.contains("not SemVer"))
+    #expect(!versionResult.standardError.contains("network connection"))
+  }
 }

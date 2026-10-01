@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ nu mai este conectat.";
 "cli.error.json_plain" = "Folosiți fie --json, fie --plain, nu ambele.";
 "cli.error.peer_rejected" = "Serviciul a respins acest ojd, deoarece nu este semnat ca aplicația. Rulați ojd din interiorul OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Serviciul nu a răspuns în %@ secunde. Reîncercați cu un --timeout mai mare.";
+"cli.error.request_timeout" = "Serviciul nu a răspuns în %@. Reîncercați cu un --timeout mai mare.";
 "cli.error.service_request_failed" = "Serviciul nu a finalizat cererea: %@. Verificați-l cu «ojd status».";
+"cli.error.duplicate_profile_name" = "Există deja un profil cu acest nume. «ojd profile list» afișează toate profilurile.";
 "cli.error.service_timeout" = "Serviciul nu a răspuns la timp. Reîncercați sau verificați-l cu «ojd status».";
 "cli.error.service_unavailable" = "Serviciul OpenJoystickDriver nu rulează. Porniți-l cu «ojd service start».";
 "cli.error.timeout_value" = "--timeout necesită un număr de secunde mai mare decât 0.";
 "cli.error.unexpected" = "Eroare neașteptată: %@. Rulați «ojd diagnose --bundle PATH» și atașați pachetul la un raport de eroare.";
+"cli.error.unknown_command" = "Comandă necunoscută «%@». Ați vrut să scrieți «%@»?";
 "cli.option.json" = "Afișează JSON în stdout.";
 "cli.option.no_color" = "Nu folosește culori.";
 "cli.option.no_input" = "Nu cere niciodată date; eșuează când lipsește o valoare.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS nu a putut deschide %@. Deschideți-l din Finder pentru a vedea motivul.";
 "cli.service.stop.abstract" = "Oprește serviciul și așteaptă până când se încheie. Controllerele conectate revin la macOS.";
 "cli.service.stop.signal_failed" = "Serviciul nu a putut fi oprit: %@. Închideți OpenJoystickDriver din meniul său.";
-"cli.service.stop.timeout" = "Serviciul nu s-a oprit în %@ secunde. Reîncercați cu un --timeout mai mare.";
+"cli.service.stop.timeout" = "Serviciul nu s-a oprit în %@. Reîncercați cu un --timeout mai mare.";
 "cli.service.stopped" = "Serviciul este oprit.";
 "cli.service.wait.abstract" = "Așteaptă până când serviciul acceptă cereri. --timeout limitează așteptarea (implicit 5 secunde).";
-"cli.service.wait.timeout" = "Serviciul nu a acceptat cereri în %@ secunde. Porniți-l cu «ojd service start» sau reîncercați cu un --timeout mai mare.";
+"cli.service.wait.timeout" = "Serviciul nu a acceptat cereri în %@. Porniți-l cu «ojd service start» sau reîncercați cu un --timeout mai mare.";
 "cli.status.abstract" = "Afișează serviciul, extensia, permisiunile și controllerele conectate.";
 "cli.status.discussion" = "Funcționează și cu serviciul oprit: raportează serviciul ca oprit și iese cu 0.";
 "cli.status.label.accessibility" = "Accesibilitate";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "serviciul nu rulează";
 "cli.diagnose.soak" = "Eșantionează și memoria, descriptorii de fișiere și CPU ale serviciului pe această durată (1-86400).";
 "cli.diagnose.soak.not_requested" = "nesolicitat; folosiți --soak SECONDS";
-"cli.diagnose.soak.progress" = "Se eșantionează serviciul timp de %lld secunde...";
+"cli.diagnose.soak.progress" = "Se eșantionează serviciul timp de %@...";
 "cli.diagnose.soak_range" = "--soak trebuie să fie între 1 și 86400 de secunde.";
 "cli.diagnose.usb.failed" = "Scanarea USB a eșuat: %@. Acordați monitorizarea introducerii pentru OpenJoystickDriver.";
-"cli.diagnose.usb.ok" = "%lld controllere USB specifice producătorului vizibile";
+"cli.diagnose.usb.ok" = "Controllere USB specifice producătorului vizibile: %lld";
 "cli.diagnose.virtual.disabled" = "gamepad virtual dezactivat";
 "cli.diagnose.virtual.error" = "eroare la gamepadul virtual: %@";
 "cli.diagnose.virtual.override" = "suprascrierile de profil stocate nu pot fi citite: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ este disponibil (aveți %@): %@";
 "cli.update.check.discussion" = "Rulează doar când îl cereți; ojd nu verifică niciodată singur. Nu descarcă și nu instalează nimic. Se încheie cu codul 0 indiferent dacă există sau nu o actualizare și cu 1 dacă verificarea eșuează.";
 "cli.update.check.failed" = "Nu s-au putut căuta actualizări: %@. Verificați conexiunea la rețea și încercați din nou.";
+"cli.update.check.failed_reason" = "Nu s-au putut căuta actualizări: %@.";
 "cli.update.check.incomplete" = "niciun rezultat";
 "cli.update.check.prerelease" = "Include versiunile preliminare.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ este la zi (ultima versiune: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Nume";
 "cli.controller.show.label.output_checks" = "Verificări de ieșire";
 "cli.controller.show.label.ownership" = "Proprietate";
+"cli.controller.show.ownership" = "rută %@, fizic %@, intrare HID %@";
 "cli.controller.show.label.protocol" = "Protocol";
 "cli.controller.show.label.record" = "Înregistrare";
 "cli.controller.show.label.rumble" = "Vibrații";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Cu --json, afișează un obiect JSON pe linie. Axa Y a stickului indică în sus. Cu --first-press, afișează primul control apăsat și iese; eșuează dacă --duration expiră mai întâi.";
 "cli.controller.watch.first_press" = "Afișează primul control apăsat, apoi iese.";
 "cli.controller.watch.no_input" = "Nu s-a primit nicio intrare.";
-"cli.controller.watch.no_press" = "Niciun control nu a fost apăsat în %@ secunde.";
+"cli.controller.watch.no_press" = "Niciun control nu a fost apăsat în %@.";
 "cli.controller.watch.press_prompt" = "Apăsați un control de pe %@ (%@).";
 "cli.controller.watch.started" = "Se urmărește %@ (%@). Apăsați butoanele controllerului.";
 "cli.error.confirm_declined" = "Nu s-a schimbat nimic.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Nu cere confirmare.";
 "cli.virtual.abstract" = "Arată și alege gamepadul virtual pe care OpenJoystickDriver îl publică pentru un controller.";
 "cli.virtual.changed" = "%@ publică acum %@ (%@).";
+"cli.virtual.stored" = "Alegerea pentru %@ a fost salvată. Se aplică după activarea ieșirii virtuale.";
 "cli.virtual.discussion" = "O alegere se aplică fiecărui controller de același model. «reset» readuce un model la selecția automată.";
 "cli.virtual.error.failed" = "Gamepadul virtual pentru %@ nu s-a schimbat (%@). Verificați-l cu «ojd virtual show».";
 "cli.virtual.reset.abstract" = "Readuce modelul unui controller, sau fiecare model, la selecția automată a gamepadului virtual.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "«%@» este activ pe un controller conectat și acum îi blochează toate intrările. Adăugați o asociere cu «ojd binding set» sau opriți profilul cu «ojd profile deactivate».";
 "cli.binding.clear.confirm" = "Eliminați toate asocierile, combinațiile, secvențele și straturile din «%@»?";
 "cli.binding.clear.discussion" = "--all elimină și combinațiile, secvențele și straturile profilului și cere confirmare într-un terminal; în caz contrar necesită --force. Setările pentru joystick, trigger, atingere, mișcare și ieșire rămân.";
-"cli.binding.clear.done" = "S-au eliminat %lld asocieri din «%@».";
-"cli.binding.clear.dry_run" = "S-ar elimina %lld asocieri din «%@».";
+"cli.binding.clear.done" = "Asocieri eliminate din «%@»: %lld.";
+"cli.binding.clear.dry_run" = "Asocieri care ar fi eliminate din «%@»: %lld.";
 "cli.binding.clear.missing" = "«%@» nu are nicio asociere pentru %@. Nu s-a schimbat nimic.";
 "cli.binding.clear.sources" = "Sursele ale căror asocieri se elimină.";
 "cli.binding.clear.usage" = "Indicați una sau mai multe surse, sau --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "S-ar șterge profilul «%@».";
 "cli.profile.discussion" = "Un profil de remapare transformă controalele unui model de controller în intrări de gamepad, tastatură și cursor. PROFILE este ID-ul sau numele unui profil din «ojd profile list». Modificați asocierile cu «ojd binding», iar tot restul cu «ojd profile edit». Orice comandă de profil necesită serviciul.";
 "cli.profile.document_invalid" = "%@ nu este un profil valid: %@";
+"cli.document.not_json" = "nu este un JSON valid";
+"cli.document.missing_field" = "lipsește câmpul «%@»";
+"cli.document.wrong_type" = "câmpul «%@» are tipul greșit";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Copiază un profil sub un nume nou. Copia începe inactivă.";
 "cli.profile.duplicate.done" = "S-a creat «%@» (%@).";
 "cli.profile.duplicate.name" = "Numele copiei.";

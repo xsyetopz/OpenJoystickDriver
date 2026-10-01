@@ -184,8 +184,8 @@ struct ControllerWatchCommand: AsyncParsableCommand {
         .failure,
         CLILocalized.format(
           "cli.controller.watch.no_press",
-          "No control was pressed within %@ seconds.",
-          (duration ?? 0).secondsText
+          "No control was pressed within %@.",
+          (duration ?? 0).durationText
         )
       )
     }

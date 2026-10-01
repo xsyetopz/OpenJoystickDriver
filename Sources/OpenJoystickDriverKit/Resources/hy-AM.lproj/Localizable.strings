@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ այլեւս կապ չունի:";
 "cli.error.json_plain" = "Օգտագործեք կամ --json, կամ --plain, ոչ երկուսը միասին։";
 "cli.error.peer_rejected" = "Ծառայությունը մերժեց այս ojd-ը, քանի որ այն ստորագրված չէ հավելվածի նման։ Գործարկեք OpenJoystickDriver.app-ի ներսում առաքվող ojd-ը։";
-"cli.error.request_timeout" = "Ծառայությունը չպատասխանեց %@ վայրկյանի ընթացքում։ Կրկնեք ավելի մեծ --timeout արժեքով։";
+"cli.error.request_timeout" = "Ծառայությունը չպատասխանեց %@ ընթացքում։ Կրկնեք ավելի մեծ --timeout արժեքով։";
 "cli.error.service_request_failed" = "Ծառայությունը չավարտեց հարցումը՝ %@։ Ստուգեք այն «ojd status» հրամանով։";
+"cli.error.duplicate_profile_name" = "Այդ անունով պրոֆիլ արդեն կա։ «ojd profile list»-ը ցույց է տալիս բոլոր պրոֆիլները։";
 "cli.error.service_timeout" = "Ծառայությունը ժամանակին չպատասխանեց։ Կրկնեք կամ ստուգեք այն «ojd status» հրամանով։";
 "cli.error.service_unavailable" = "OpenJoystickDriver ծառայությունը չի աշխատում։ Գործարկեք այն «ojd service start» հրամանով։";
 "cli.error.timeout_value" = "--timeout-ը պահանջում է 0-ից մեծ վայրկյանների թիվ։";
 "cli.error.unexpected" = "Անսպասելի սխալ՝ %@։ Գործարկեք «ojd diagnose --bundle PATH» և կցեք փաթեթը սխալի հաշվետվությանը։";
+"cli.error.unknown_command" = "Անհայտ հրաման՝ «%@»։ Գուցե նկատի ունեիք «%@»։";
 "cli.option.json" = "Տպել JSON stdout-ում։";
 "cli.option.no_color" = "Չօգտագործել գույներ։";
 "cli.option.no_input" = "Երբեք չհարցնել. արժեքի բացակայության դեպքում ավարտել սխալով։";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS-ը չկարողացավ բացել %@։ Բացեք այն Finder-ից՝ պատճառը տեսնելու համար։";
 "cli.service.stop.abstract" = "Կանգնեցնել ծառայությունը և սպասել, մինչև այն դուրս գա։ Միացված կարգավորիչները վերադառնում են macOS-ին։";
 "cli.service.stop.signal_failed" = "Չհաջողվեց կանգնեցնել ծառայությունը՝ %@։ Փակեք OpenJoystickDriver-ը իր ընտրացանկից։";
-"cli.service.stop.timeout" = "Ծառայությունը չկանգնեց %@ վայրկյանի ընթացքում։ Կրկնեք ավելի մեծ --timeout արժեքով։";
+"cli.service.stop.timeout" = "Ծառայությունը չկանգնեց %@ ընթացքում։ Կրկնեք ավելի մեծ --timeout արժեքով։";
 "cli.service.stopped" = "Ծառայությունը կանգնեցված է։";
 "cli.service.wait.abstract" = "Սպասել, մինչև ծառայությունն ընդունի հարցումներ։ --timeout-ը սահմանափակում է սպասումը (կանխադրված՝ 5 վայրկյան)։";
-"cli.service.wait.timeout" = "Ծառայությունը չընդունեց հարցումներ %@ վայրկյանի ընթացքում։ Գործարկեք այն «ojd service start» հրամանով կամ կրկնեք ավելի մեծ --timeout արժեքով։";
+"cli.service.wait.timeout" = "Ծառայությունը չընդունեց հարցումներ %@ ընթացքում։ Գործարկեք այն «ojd service start» հրամանով կամ կրկնեք ավելի մեծ --timeout արժեքով։";
 "cli.status.abstract" = "Ցույց տալ ծառայությունը, ընդլայնումը, թույլտվությունները և միացված կարգավորիչները։";
 "cli.status.discussion" = "Աշխատում է նաև կանգնեցված ծառայության դեպքում. այն նշում է ծառայությունը որպես կանգնեցված և ավարտում 0 կոդով։";
 "cli.status.label.accessibility" = "Մատչելիություն";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "ծառայությունը չի աշխատում";
 "cli.diagnose.soak" = "Չափել նաև ծառայության հիշողությունը, ֆայլերի նկարագրիչները և CPU-ն այսքան ժամանակ (1-86400)։";
 "cli.diagnose.soak.not_requested" = "չի պահանջվել՝ օգտագործեք --soak SECONDS";
-"cli.diagnose.soak.progress" = "Ծառայությունը չափվում է %lld վայրկյան…";
+"cli.diagnose.soak.progress" = "Ծառայությունը չափվում է %@ ընթացքում…";
 "cli.diagnose.soak_range" = "--soak-ը պետք է լինի 1-ից 86400 վայրկյան։";
 "cli.diagnose.usb.failed" = "USB սկանավորումը ձախողվեց՝ %@։ Տրամադրեք OpenJoystickDriver-ին մուտքի մոնիթորինգի թույլտվություն։";
 "cli.diagnose.usb.ok" = "Տեսանելի հատուկ USB կարգավորիչներ՝ %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@-ը հասանելի է (դուք ունեք %@)՝ %@";
 "cli.update.check.discussion" = "Աշխատում է միայն ձեր խնդրանքով։ ojd-ն երբեք ինքնուրույն չի ստուգում։ Ոչինչ չի ներբեռնում և չի տեղադրում։ Ավարտվում է 0 կոդով՝ անկախ նրանից՝ թարմացում կա, թե ոչ, և 1 կոդով՝ եթե ստուգումը ձախողվի։";
 "cli.update.check.failed" = "Չհաջողվեց ստուգել թարմացումները՝ %@։ Ստուգեք ցանցային կապը և կրկին փորձեք։";
+"cli.update.check.failed_reason" = "Չհաջողվեց ստուգել թարմացումները՝ %@։";
 "cli.update.check.incomplete" = "արդյունք չկա";
 "cli.update.check.prerelease" = "Ներառել նախնական տարբերակները։";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@-ը թարմ է (վերջին թողարկումը՝ %@)։";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Անուն";
 "cli.controller.show.label.output_checks" = "Ելքի ստուգումներ";
 "cli.controller.show.label.ownership" = "Սեփականատեր";
+"cli.controller.show.ownership" = "ուղի %@, ֆիզիկական %@, HID մուտք %@";
 "cli.controller.show.label.protocol" = "Արձանագրություն";
 "cli.controller.show.label.record" = "Գրառում";
 "cli.controller.show.label.rumble" = "Թրթռում";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "--json-ի դեպքում տպում է մեկ JSON օբյեկտ տողում։ Ջոյսթիքի Y առանցքը ուղղված է վերև։ --first-press-ի դեպքում տպում է առաջին սեղմված կառավարման տարրը և դուրս գալիս։ Ձախողվում է, եթե --duration-ը սպառվի ավելի շուտ։";
 "cli.controller.watch.first_press" = "Տպել առաջին սեղմված կառավարման տարրը, ապա դուրս գալ։";
 "cli.controller.watch.no_input" = "Մուտք չի ստացվել։";
-"cli.controller.watch.no_press" = "%@ վայրկյանի ընթացքում ոչ մի կառավարման տարր չսեղմվեց։";
+"cli.controller.watch.no_press" = "%@ ընթացքում ոչ մի կառավարման տարր չսեղմվեց։";
 "cli.controller.watch.press_prompt" = "Սեղմեք կառավարման տարր %@-ի վրա (%@)։";
 "cli.controller.watch.started" = "%@ (%@) դիտարկվում է։ Սեղմեք կարգավորիչի կոճակները։";
 "cli.error.confirm_declined" = "Ոչինչ չփոխվեց։";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Հաստատում չհարցնել։";
 "cli.virtual.abstract" = "Ցույց տալ և ընտրել այն վիրտուալ խաղային վահանակը, որը OpenJoystickDriver-ը հրապարակում է կարգավորիչի համար։";
 "cli.virtual.changed" = "%@-ն այժմ հրապարակում է %@ (%@)։";
+"cli.virtual.stored" = "%@ սարքի ընտրությունը պահպանված է։ Այն կկիրառվի վիրտուալ ելքը միացնելուց հետո։";
 "cli.virtual.discussion" = "Ընտրությունը կիրառվում է նույն մոդելի յուրաքանչյուր կարգավորիչի համար։ «reset»-ը մոդելը վերադարձնում է ավտոմատ ընտրության։";
 "cli.virtual.error.failed" = "%@-ի վիրտուալ խաղային վահանակը չփոխվեց (%@)։ Ստուգեք «ojd virtual show» հրամանով։";
 "cli.virtual.reset.abstract" = "Վերադարձնել կարգավորիչի մոդելը կամ բոլոր մոդելները վիրտուալ խաղային վահանակի ավտոմատ ընտրության։";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "«%@» պրոֆիլը ակտիվ է միացված կարգավորիչի վրա և այժմ արգելափակում է դրա ամբողջ մուտքը։ Ավելացրեք կապակցում «ojd binding set» հրամանով կամ դադարեցրեք պրոֆիլը «ojd profile deactivate» հրամանով։";
 "cli.binding.clear.confirm" = "Հեռացնե՞լ «%@» պրոֆիլի բոլոր կապակցումները, համադրությունները, հաջորդականությունները և շերտերը։";
 "cli.binding.clear.discussion" = "--all-ը նաև հեռացնում է պրոֆիլի համադրությունները, հաջորդականությունները և շերտերը և տերմինալում հաստատում է հարցնում, այլապես պահանջվում է --force։ Ջոյսթիքների, ձգանների, հպման, շարժման և ելքի կարգավորումները մնում են։";
-"cli.binding.clear.done" = "Հեռացվեց կապակցումներ՝ %lld («%@» պրոֆիլ)։";
-"cli.binding.clear.dry_run" = "Կհեռացվեր կապակցումներ՝ %lld («%@» պրոֆիլ)։";
+"cli.binding.clear.done" = "«%@» պրոֆիլից հեռացված կապակցումներ՝ %lld։";
+"cli.binding.clear.dry_run" = "«%@» պրոֆիլից հեռացվելիք կապակցումներ՝ %lld։";
 "cli.binding.clear.missing" = "«%@» պրոֆիլում %@-ի համար կապակցում չկա։ Ոչինչ չփոխվեց։";
 "cli.binding.clear.sources" = "Աղբյուրները, որոնց կապակցումները պետք է հեռացնել։";
 "cli.binding.clear.usage" = "Նշեք մեկ կամ մի քանի աղբյուր կամ --all։";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "«%@» պրոֆիլը կջնջվեր։";
 "cli.profile.discussion" = "Վերանշանակման պրոֆիլը մեկ կարգավորիչի մոդելի կառավարման տարրերը վերածում է խաղային վահանակի, ստեղնաշարի և ցուցիչի մուտքի։ PROFILE-ը պրոֆիլի ID-ն կամ անունն է «ojd profile list»-ից։ Կապակցումները փոխեք «ojd binding»-ով, մնացած ամենը՝ «ojd profile edit»-ով։ Պրոֆիլի յուրաքանչյուր հրաման պահանջում է ծառայություն։";
 "cli.profile.document_invalid" = "%@-ը վավեր պրոֆիլ չէ՝ %@";
+"cli.document.not_json" = "վավեր JSON չէ";
+"cli.document.missing_field" = "«%@» դաշտը բացակայում է";
+"cli.document.wrong_type" = "«%@» դաշտի տեսակը սխալ է";
+"cli.document.field_problem" = "«%@»՝%@";
 "cli.profile.duplicate.abstract" = "Պատճենել պրոֆիլը նոր անվամբ։ Պատճենը սկսվում է ոչ ակտիվ։";
 "cli.profile.duplicate.done" = "«%@» պրոֆիլը ստեղծվեց (%@)։";
 "cli.profile.duplicate.name" = "Պատճենի անունը։";

@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ دیگه ارتباط نداره";
 "cli.error.json_plain" = "یا --json یا --plain را به کار ببرید، نه هر دو را.";
 "cli.error.peer_rejected" = "سرویس این ojd را رد کرد، زیرا مانند برنامه امضا نشده است. ojd موجود در OpenJoystickDriver.app را اجرا کنید.";
-"cli.error.request_timeout" = "سرویس در %@ ثانیه پاسخ نداد. با مقدار --timeout بزرگ‌تر دوباره تلاش کنید.";
+"cli.error.request_timeout" = "سرویس در %@ پاسخ نداد. با مقدار --timeout بزرگ‌تر دوباره تلاش کنید.";
 "cli.error.service_request_failed" = "سرویس درخواست را کامل نکرد: %@. آن را با «ojd status» بررسی کنید.";
+"cli.error.duplicate_profile_name" = "نمایه‌ای با این نام از قبل وجود دارد. «ojd profile list» همهٔ نمایه‌ها را نشان می‌دهد.";
 "cli.error.service_timeout" = "سرویس به‌موقع پاسخ نداد. دوباره تلاش کنید یا آن را با «ojd status» بررسی کنید.";
 "cli.error.service_unavailable" = "سرویس OpenJoystickDriver در حال اجرا نیست. آن را با «ojd service start» شروع کنید.";
 "cli.error.timeout_value" = "--timeout به تعداد ثانیه‌ای بزرگ‌تر از 0 نیاز دارد.";
 "cli.error.unexpected" = "خطای غیرمنتظره: %@. «ojd diagnose --bundle PATH» را اجرا کنید و بسته را به گزارش اشکال پیوست کنید.";
+"cli.error.unknown_command" = "فرمان ناشناخته «%@». منظورتان «%@» بود؟";
 "cli.option.json" = "چاپ JSON در stdout.";
 "cli.option.no_color" = "عدم استفاده از رنگ.";
 "cli.option.no_input" = "هرگز درخواست ورودی نکنید؛ اگر مقداری موجود نباشد، با خطا خارج شوید.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS نتوانست %@ را باز کند. برای دیدن دلیل، آن را از Finder باز کنید.";
 "cli.service.stop.abstract" = "توقف سرویس و انتظار تا پایان آن. کنترلرهای متصل به macOS برمی‌گردند.";
 "cli.service.stop.signal_failed" = "سرویس متوقف نشد: %@. از منوی OpenJoystickDriver خارج شوید.";
-"cli.service.stop.timeout" = "سرویس در %@ ثانیه متوقف نشد. با مقدار --timeout بزرگ‌تر دوباره تلاش کنید.";
+"cli.service.stop.timeout" = "سرویس در %@ متوقف نشد. با مقدار --timeout بزرگ‌تر دوباره تلاش کنید.";
 "cli.service.stopped" = "سرویس متوقف است.";
 "cli.service.wait.abstract" = "انتظار تا پذیرش درخواست‌ها توسط سرویس. --timeout انتظار را محدود می‌کند (پیش‌فرض 5 ثانیه).";
-"cli.service.wait.timeout" = "سرویس در %@ ثانیه درخواستی نپذیرفت. آن را با «ojd service start» شروع کنید یا با مقدار --timeout بزرگ‌تر دوباره تلاش کنید.";
+"cli.service.wait.timeout" = "سرویس در %@ درخواستی نپذیرفت. آن را با «ojd service start» شروع کنید یا با مقدار --timeout بزرگ‌تر دوباره تلاش کنید.";
 "cli.status.abstract" = "نمایش سرویس، افزونه، مجوزها و کنترلرهای متصل.";
 "cli.status.discussion" = "وقتی سرویس متوقف است هم کار می‌کند: سرویس را متوقف گزارش می‌دهد و با 0 خارج می‌شود.";
 "cli.status.label.accessibility" = "دسترس‌پذیری";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "سرویس در حال اجرا نیست";
 "cli.diagnose.soak" = "همچنین نمونه‌برداری از حافظه، توصیف‌گرهای فایل و CPU سرویس به این مدت (1-86400).";
 "cli.diagnose.soak.not_requested" = "درخواست نشده؛ از --soak SECONDS استفاده کنید";
-"cli.diagnose.soak.progress" = "در حال نمونه‌برداری از سرویس به مدت %lld ثانیه…";
+"cli.diagnose.soak.progress" = "در حال نمونه‌برداری از سرویس به مدت %@…";
 "cli.diagnose.soak_range" = "--soak باید بین 1 و 86400 ثانیه باشد.";
 "cli.diagnose.usb.failed" = "پویش USB ناموفق بود: %@. به OpenJoystickDriver دسترسی «پایش ورودی» بدهید.";
-"cli.diagnose.usb.ok" = "%lld کنترلر USB مخصوص سازنده قابل مشاهده است";
+"cli.diagnose.usb.ok" = "کنترلر‌های USB مخصوص سازنده قابل مشاهده: %lld";
 "cli.diagnose.virtual.disabled" = "گیم‌پد مجازی غیرفعال است";
 "cli.diagnose.virtual.error" = "خطای گیم‌پد مجازی: %@";
 "cli.diagnose.virtual.override" = "خواندن بازنویسی‌های ذخیره‌شده نمایه ممکن نیست: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ در دسترس است (نسخه شما %@): %@";
 "cli.update.check.discussion" = "فقط وقتی شما بخواهید اجرا می‌شود؛ ojd هرگز خودش بررسی نمی‌کند. چیزی دانلود یا نصب نمی‌کند. چه به‌روزرسانی باشد چه نباشد با کد 0 خارج می‌شود، و اگر بررسی ناموفق باشد با کد 1.";
 "cli.update.check.failed" = "بررسی به‌روزرسانی ممکن نشد: %@. اتصال شبکه را بررسی کنید و دوباره تلاش کنید.";
+"cli.update.check.failed_reason" = "بررسی به‌روزرسانی ممکن نشد: %@.";
 "cli.update.check.incomplete" = "بدون نتیجه";
 "cli.update.check.prerelease" = "شامل کردن نسخه‌های پیش‌انتشار.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ به‌روز است (آخرین نسخه: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "نام";
 "cli.controller.show.label.output_checks" = "بررسی‌های خروجی";
 "cli.controller.show.label.ownership" = "مالکیت";
+"cli.controller.show.ownership" = "مسیر \U2068%@\U2069، فیزیکی \U2068%@\U2069، ورودی HID \U2068%@\U2069";
 "cli.controller.show.label.protocol" = "پروتکل";
 "cli.controller.show.label.record" = "رکورد";
 "cli.controller.show.label.rumble" = "لرزش";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "با --json در هر خط یک شیء JSON چاپ می‌کند. محور Y استیک رو به بالاست. با --first-press اولین کنترل فشرده‌شده را چاپ می‌کند و خارج می‌شود؛ اگر --duration زودتر سپری شود ناموفق می‌شود.";
 "cli.controller.watch.first_press" = "چاپ اولین کنترل فشرده‌شده و سپس خروج.";
 "cli.controller.watch.no_input" = "هیچ ورودی دریافت نشد.";
-"cli.controller.watch.no_press" = "در %@ ثانیه هیچ کنترلی فشرده نشد.";
+"cli.controller.watch.no_press" = "در %@ هیچ کنترلی فشرده نشد.";
 "cli.controller.watch.press_prompt" = "یک کنترل را روی %@ (%@) فشار دهید.";
 "cli.controller.watch.started" = "در حال نظارت بر %@ (%@). دکمه‌های کنترلر را فشار دهید.";
 "cli.error.confirm_declined" = "چیزی تغییر نکرد.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "نپرسیدن تأیید.";
 "cli.virtual.abstract" = "نمایش و انتخاب گیم‌پد مجازی‌ای که OpenJoystickDriver برای یک کنترلر منتشر می‌کند.";
 "cli.virtual.changed" = "%@ اکنون %@ (%@) را منتشر می‌کند.";
+"cli.virtual.stored" = "انتخاب برای \U2068%@\U2069 ذخیره شد. پس از فعال شدن خروجی مجازی اعمال می‌شود.";
 "cli.virtual.discussion" = "انتخاب برای هر کنترلر از همان مدل اعمال می‌شود. «reset» یک مدل را به انتخاب خودکار برمی‌گرداند.";
 "cli.virtual.error.failed" = "گیم‌پد مجازی %@ تغییر نکرد (%@). با «ojd virtual show» بررسی کنید.";
 "cli.virtual.reset.abstract" = "برگرداندن مدل یک کنترلر یا همهٔ مدل‌ها به انتخاب خودکار گیم‌پد مجازی.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "«%@» روی یک کنترلر متصل فعال است و اکنون همهٔ ورودی آن را مسدود می‌کند. با «ojd binding set» یک تخصیص اضافه کنید، یا نمایه را با «ojd profile deactivate» متوقف کنید.";
 "cli.binding.clear.confirm" = "همهٔ تخصیص‌ها، آکوردها، توالی‌ها و لایه‌ها از «%@» حذف شود؟";
 "cli.binding.clear.discussion" = "--all آکوردها، توالی‌ها و لایه‌های نمایه را هم حذف می‌کند و در ترمینال تأیید می‌خواهد؛ در غیر این صورت به --force نیاز دارد. تنظیمات استیک، ماشه، لمس، حرکت و خروجی می‌مانند.";
-"cli.binding.clear.done" = "%lld تخصیص از «%@» حذف شد.";
-"cli.binding.clear.dry_run" = "%lld تخصیص از «%@» حذف خواهد شد.";
+"cli.binding.clear.done" = "تخصیص‌های حذف‌شده از «%@»: %lld.";
+"cli.binding.clear.dry_run" = "تخصیص‌هایی که از «%@» حذف خواهند شد: %lld.";
 "cli.binding.clear.missing" = "«%@» تخصیصی برای %@ ندارد. چیزی تغییر نکرد.";
 "cli.binding.clear.sources" = "منابعی که تخصیص‌هایشان حذف می‌شود.";
 "cli.binding.clear.usage" = "یک یا چند منبع بدهید، یا --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "نمایهٔ «%@» حذف خواهد شد.";
 "cli.profile.discussion" = "یک نمایهٔ بازتخصیص، کنترل‌های یک مدل کنترلر را به ورودی گیم‌پد، صفحه‌کلید و اشاره‌گر تبدیل می‌کند. PROFILE شناسه یا نام یک نمایه از «ojd profile list» است. تخصیص‌ها را با «ojd binding» تغییر دهید و هر چیز دیگر را با «ojd profile edit». هر دستور نمایه به سرویس نیاز دارد.";
 "cli.profile.document_invalid" = "%@ نمایهٔ معتبری نیست: %@";
+"cli.document.not_json" = "JSON معتبر نیست";
+"cli.document.missing_field" = "فیلد «%@» وجود ندارد";
+"cli.document.wrong_type" = "نوع فیلد «%@» نادرست است";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "کپی یک نمایه با نام جدید. کپی غیرفعال شروع می‌شود.";
 "cli.profile.duplicate.done" = "«%@» (%@) ایجاد شد.";
 "cli.profile.duplicate.name" = "نام کپی.";

@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ כבר אינו מחובר.";
 "cli.error.json_plain" = "יש להשתמש ב-‎--json או ב-‎--plain, לא בשניהם.";
 "cli.error.peer_rejected" = "השירות דחה את ה-ojd הזה, מכיוון שהוא אינו חתום כמו האפליקציה. יש להריץ את ה-ojd שמצורף ל-OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "השירות לא הגיב תוך %@ שניות. יש לנסות שוב עם ערך --timeout גדול יותר.";
+"cli.error.request_timeout" = "השירות לא הגיב תוך %@. יש לנסות שוב עם ערך --timeout גדול יותר.";
 "cli.error.service_request_failed" = "השירות לא השלים את הבקשה: %@. יש לבדוק אותו באמצעות ״ojd status״.";
+"cli.error.duplicate_profile_name" = "כבר קיים פרופיל בשם זה. ״ojd profile list״ מציג את כל הפרופילים.";
 "cli.error.service_timeout" = "השירות לא הגיב בזמן. יש לנסות שוב או לבדוק אותו באמצעות ״ojd status״.";
 "cli.error.service_unavailable" = "השירות של OpenJoystickDriver אינו פועל. יש להפעיל אותו באמצעות ״ojd service start״.";
 "cli.error.timeout_value" = "--timeout דורש מספר שניות גדול מ-0.";
 "cli.error.unexpected" = "שגיאה בלתי צפויה: %@. יש להריץ ״ojd diagnose --bundle PATH״ ולצרף את החבילה לדוח באג.";
+"cli.error.unknown_command" = "פקודה לא מוכרת ״%@״. האם התכוונת ל־״%@״?";
 "cli.option.json" = "הדפסת JSON ל-stdout.";
 "cli.option.no_color" = "לא להשתמש בצבע.";
 "cli.option.no_input" = "לעולם לא לבקש קלט; להיכשל כשחסר ערך.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS לא הצליח לפתוח את %@. יש לפתוח אותו מ-Finder כדי לראות את הסיבה.";
 "cli.service.stop.abstract" = "עצירת השירות והמתנה עד שיסתיים. בקרים מחוברים חוזרים ל-macOS.";
 "cli.service.stop.signal_failed" = "לא ניתן לעצור את השירות: %@. יש לצאת מ-OpenJoystickDriver דרך התפריט שלו.";
-"cli.service.stop.timeout" = "השירות לא נעצר תוך %@ שניות. יש לנסות שוב עם ערך --timeout גדול יותר.";
+"cli.service.stop.timeout" = "השירות לא נעצר תוך %@. יש לנסות שוב עם ערך --timeout גדול יותר.";
 "cli.service.stopped" = "השירות נעצר.";
 "cli.service.wait.abstract" = "המתנה עד שהשירות יקבל בקשות. --timeout מגביל את ההמתנה (ברירת מחדל: 5 שניות).";
-"cli.service.wait.timeout" = "השירות לא קיבל בקשות תוך %@ שניות. יש להפעיל אותו באמצעות ״ojd service start״ או לנסות שוב עם ערך --timeout גדול יותר.";
+"cli.service.wait.timeout" = "השירות לא קיבל בקשות תוך %@. יש להפעיל אותו באמצעות ״ojd service start״ או לנסות שוב עם ערך --timeout גדול יותר.";
 "cli.status.abstract" = "הצגת השירות, ההרחבה, ההרשאות והבקרים המחוברים.";
 "cli.status.discussion" = "פועל גם כשהשירות עצור: מדווח שהשירות עצור ויוצא עם 0.";
 "cli.status.label.accessibility" = "נגישות";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "השירות לא פועל";
 "cli.diagnose.soak" = "דגום גם את הזיכרון, מתארי הקבצים וה-CPU של השירות למשך הזמן הזה (1-86400).";
 "cli.diagnose.soak.not_requested" = "לא התבקש; השתמש ב-‎--soak SECONDS";
-"cli.diagnose.soak.progress" = "דוגם את השירות במשך %lld שניות…";
+"cli.diagnose.soak.progress" = "דוגם את השירות במשך %@…";
 "cli.diagnose.soak_range" = "--soak חייב להיות בין 1 ל-86400 שניות.";
 "cli.diagnose.usb.failed" = "סריקת USB נכשלה: %@. הענק ל-OpenJoystickDriver גישה ל״ניטור קלט״.";
-"cli.diagnose.usb.ok" = "%lld בקרי USB ייעודיים ליצרן גלויים";
+"cli.diagnose.usb.ok" = "בקרי USB ייעודיים ליצרן שגלויים: %lld";
 "cli.diagnose.virtual.disabled" = "שלט המשחק הווירטואלי מושבת";
 "cli.diagnose.virtual.error" = "שגיאה בשלט המשחק הווירטואלי: %@";
 "cli.diagnose.virtual.override" = "לא ניתן לקרוא את עקיפות הפרופיל השמורות: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ זמין (הגרסה שלך %@): %@";
 "cli.update.check.discussion" = "פועל רק כשאתה מבקש; ojd לעולם לא בודק מעצמו. אינו מוריד או מתקין דבר. יוצא עם קוד 0 בין אם קיים עדכון ובין אם לא, ועם קוד 1 כשהבדיקה נכשלת.";
 "cli.update.check.failed" = "לא ניתן לבדוק עדכונים: %@. בדוק את חיבור הרשת ונסה שוב.";
+"cli.update.check.failed_reason" = "לא ניתן לבדוק עדכונים: %@.";
 "cli.update.check.incomplete" = "אין תוצאה";
 "cli.update.check.prerelease" = "הכללת גרסאות טרום-שחרור.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ מעודכן (הגרסה האחרונה: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "שם";
 "cli.controller.show.label.output_checks" = "בדיקות פלט";
 "cli.controller.show.label.ownership" = "בעלות";
+"cli.controller.show.ownership" = "נתיב \U2068%@\U2069, פיזי \U2068%@\U2069, קלט HID \U2068%@\U2069";
 "cli.controller.show.label.protocol" = "פרוטוקול";
 "cli.controller.show.label.record" = "רשומה";
 "cli.controller.show.label.rumble" = "רטט";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "עם --json מודפס אובייקט JSON אחד בכל שורה. ציר Y של המקל פונה מעלה. עם --first-press מודפס הפקד הראשון שנלחץ והפקודה מסתיימת; היא נכשלת אם --duration חולף קודם.";
 "cli.controller.watch.first_press" = "הדפסת הפקד הראשון שנלחץ, ואז יציאה.";
 "cli.controller.watch.no_input" = "לא התקבל קלט.";
-"cli.controller.watch.no_press" = "לא נלחץ אף פקד תוך %@ שניות.";
+"cli.controller.watch.no_press" = "לא נלחץ אף פקד תוך %@.";
 "cli.controller.watch.press_prompt" = "לחץ על פקד ב-%@ (%@).";
 "cli.controller.watch.started" = "צופה ב-%@ (%@). לחץ על כפתורי הבקר.";
 "cli.error.confirm_declined" = "דבר לא השתנה.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "לא לבקש אישור.";
 "cli.virtual.abstract" = "הצגה ובחירה של שלט המשחק הווירטואלי ש-OpenJoystickDriver מפרסם עבור בקר.";
 "cli.virtual.changed" = "%@ מפרסם עכשיו %@ (%@).";
+"cli.virtual.stored" = "הבחירה עבור \U2068%@\U2069 נשמרה. היא תחול כאשר הפלט הווירטואלי יופעל.";
 "cli.virtual.discussion" = "בחירה חלה על כל בקר מאותו דגם. ״reset״ מחזיר דגם לבחירה אוטומטית.";
 "cli.virtual.error.failed" = "שלט המשחק הווירטואלי של %@ לא השתנה (%@). בדוק זאת באמצעות ״ojd virtual show״.";
 "cli.virtual.reset.abstract" = "החזרת הדגם של בקר, או כל הדגמים, לבחירה אוטומטית של שלט משחק וירטואלי.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "״%@״ פעיל בבקר מחובר וחוסם כעת את כל הקלט שלו. יש להוסיף שיוך באמצעות ״ojd binding set״, או לעצור את הפרופיל באמצעות ״ojd profile deactivate״.";
 "cli.binding.clear.confirm" = "להסיר את כל השיוכים, האקורדים, הרצפים והשכבות מ-״%@״?";
 "cli.binding.clear.discussion" = "‎--all מסיר גם את האקורדים, הרצפים והשכבות של הפרופיל, ומבקש אישור בטרמינל; אחרת הוא דורש ‎--force. הגדרות המקלות, ההדקים, המגע, התנועה והפלט נשארות.";
-"cli.binding.clear.done" = "הוסרו %lld שיוכים מ-״%@״.";
-"cli.binding.clear.dry_run" = "יוסרו %lld שיוכים מ-״%@״.";
+"cli.binding.clear.done" = "שיוכים שהוסרו מ-״%@״: %lld.";
+"cli.binding.clear.dry_run" = "שיוכים שיוסרו מ-״%@״: %lld.";
 "cli.binding.clear.missing" = "ב-״%@״ אין שיוך עבור %@. לא השתנה דבר.";
 "cli.binding.clear.sources" = "המקורות שיש להסיר את השיוכים שלהם.";
 "cli.binding.clear.usage" = "יש לציין מקור אחד או יותר, או את ‎--all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "הפרופיל ״%@״ יימחק.";
 "cli.profile.discussion" = "פרופיל מיפוי הופך את הפקדים של דגם בקר אחד לקלט של בקר משחק, מקלדת ומצביע. PROFILE הוא מזהה או שם של פרופיל מתוך ״ojd profile list״. שיוכים משנים באמצעות ״ojd binding״, וכל דבר אחר באמצעות ״ojd profile edit״. כל פקודות הפרופיל דורשות את השירות.";
 "cli.profile.document_invalid" = "%@ אינו פרופיל תקין: %@";
+"cli.document.not_json" = "הוא אינו JSON תקין";
+"cli.document.missing_field" = "השדה ״%@״ חסר";
+"cli.document.wrong_type" = "לשדה ״%@״ יש סוג שגוי";
+"cli.document.field_problem" = "״%@״: %@";
 "cli.profile.duplicate.abstract" = "העתקת פרופיל בשם חדש. ההעתק מתחיל כלא פעיל.";
 "cli.profile.duplicate.done" = "״%@״ (%@) נוצר.";
 "cli.profile.duplicate.name" = "שם ההעתק.";

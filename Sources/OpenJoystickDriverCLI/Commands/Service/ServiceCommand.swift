@@ -141,8 +141,8 @@ struct ServiceStopCommand: AsyncParsableCommand {
           .failure,
           CLILocalized.format(
             "cli.service.stop.timeout",
-            "The service did not stop within %@ seconds. Retry with a larger --timeout.",
-            timeout.secondsText
+            "The service did not stop within %@. Retry with a larger --timeout.",
+            timeout.durationText
           )
         )
       }
@@ -191,9 +191,9 @@ struct ServiceWaitCommand: AsyncParsableCommand {
       .serviceUnavailable,
       CLILocalized.format(
         "cli.service.wait.timeout",
-        "The service did not accept requests within %@ seconds. "
+        "The service did not accept requests within %@. "
           + "Start it with 'ojd service start', or retry with a larger --timeout.",
-        timeout.secondsText
+        timeout.durationText
       )
     )
   }

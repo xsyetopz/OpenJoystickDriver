@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ ei ole enää yhdistettynä.";
 "cli.error.json_plain" = "Käytä joko --json tai --plain, älä molempia.";
 "cli.error.peer_rejected" = "Palvelu hylkäsi tämän ojd:n, koska sitä ei ole allekirjoitettu samoin kuin sovellus. Suorita OpenJoystickDriver.app-sovelluksen mukana tuleva ojd.";
-"cli.error.request_timeout" = "Palvelu ei vastannut %@ sekunnin kuluessa. Yritä uudelleen suuremmalla --timeout-arvolla.";
+"cli.error.request_timeout" = "Palvelu ei vastannut %@ kuluessa. Yritä uudelleen suuremmalla --timeout-arvolla.";
 "cli.error.service_request_failed" = "Palvelu ei suorittanut pyyntöä loppuun: %@. Tarkista palvelu komennolla ”ojd status”.";
+"cli.error.duplicate_profile_name" = "Samanniminen profiili on jo olemassa. ”ojd profile list” näyttää kaikki profiilit.";
 "cli.error.service_timeout" = "Palvelu ei vastannut ajoissa. Yritä uudelleen tai tarkista palvelu komennolla ”ojd status”.";
 "cli.error.service_unavailable" = "OpenJoystickDriver-palvelu ei ole käynnissä. Käynnistä se komennolla ”ojd service start”.";
 "cli.error.timeout_value" = "--timeout vaatii sekuntimäärän, joka on suurempi kuin 0.";
 "cli.error.unexpected" = "Odottamaton virhe: %@. Suorita ”ojd diagnose --bundle PATH” ja liitä paketti virheraporttiin.";
+"cli.error.unknown_command" = "Tuntematon komento ”%@”. Tarkoititko ”%@”?";
 "cli.option.json" = "Tulosta JSON stdout-kanavalle.";
 "cli.option.no_color" = "Älä käytä värejä.";
 "cli.option.no_input" = "Älä kysy koskaan; epäonnistu, jos arvo puuttuu.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS ei voinut avata kohdetta %@. Avaa se Finderissa nähdäksesi syyn.";
 "cli.service.stop.abstract" = "Pysäytä palvelu ja odota, kunnes se päättyy. Yhdistetyt ohjaimet palaavat macOS:n hallintaan.";
 "cli.service.stop.signal_failed" = "Palvelua ei voitu pysäyttää: %@. Lopeta OpenJoystickDriver sen valikosta.";
-"cli.service.stop.timeout" = "Palvelu ei pysähtynyt %@ sekunnin kuluessa. Yritä uudelleen suuremmalla --timeout-arvolla.";
+"cli.service.stop.timeout" = "Palvelu ei pysähtynyt %@ kuluessa. Yritä uudelleen suuremmalla --timeout-arvolla.";
 "cli.service.stopped" = "Palvelu on pysäytetty.";
 "cli.service.wait.abstract" = "Odota, kunnes palvelu hyväksyy pyyntöjä. --timeout rajaa odotusajan (oletus 5 sekuntia).";
-"cli.service.wait.timeout" = "Palvelu ei hyväksynyt pyyntöjä %@ sekunnin kuluessa. Käynnistä se komennolla ”ojd service start” tai yritä uudelleen suuremmalla --timeout-arvolla.";
+"cli.service.wait.timeout" = "Palvelu ei hyväksynyt pyyntöjä %@ kuluessa. Käynnistä se komennolla ”ojd service start” tai yritä uudelleen suuremmalla --timeout-arvolla.";
 "cli.status.abstract" = "Näytä palvelu, laajennus, käyttöoikeudet ja yhdistetyt ohjaimet.";
 "cli.status.discussion" = "Toimii, kun palvelu on pysäytetty: ilmoittaa palvelun pysäytetyksi ja päättyy koodiin 0.";
 "cli.status.label.accessibility" = "Käyttöapu";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "palvelu ei ole käynnissä";
 "cli.diagnose.soak" = "Ottaa myös näytteitä palvelun muistista, tiedostokahvoista ja CPU:sta tämän ajan (1-86400).";
 "cli.diagnose.soak.not_requested" = "ei pyydetty; käytä --soak SECONDS";
-"cli.diagnose.soak.progress" = "Otetaan näytteitä palvelusta %lld sekuntia...";
+"cli.diagnose.soak.progress" = "Otetaan näytteitä palvelusta %@ ajan...";
 "cli.diagnose.soak_range" = "--soak on oltava välillä 1-86400 sekuntia.";
 "cli.diagnose.usb.failed" = "USB-haku epäonnistui: %@. Myönnä OpenJoystickDriverille Syötteen valvonta -käyttöoikeus.";
 "cli.diagnose.usb.ok" = "Näkyviä valmistajakohtaisia USB-ohjaimia: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ on saatavilla (sinulla on %@): %@";
 "cli.update.check.discussion" = "Suoritetaan vain pyynnöstä; ojd ei koskaan tarkista itsestään. Se ei lataa eikä asenna mitään. Päättyy koodiin 0 riippumatta siitä, onko päivitystä, ja koodiin 1, kun tarkistus epäonnistuu.";
 "cli.update.check.failed" = "Päivityksiä ei voitu tarkistaa: %@. Tarkista verkkoyhteytesi ja yritä uudelleen.";
+"cli.update.check.failed_reason" = "Päivityksiä ei voitu tarkistaa: %@.";
 "cli.update.check.incomplete" = "ei tulosta";
 "cli.update.check.prerelease" = "Sisällyttää esiversiot.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ on ajan tasalla (uusin julkaisu: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Nimi";
 "cli.controller.show.label.output_checks" = "Tulostarkistukset";
 "cli.controller.show.label.ownership" = "Omistajuus";
+"cli.controller.show.ownership" = "reitti %@, fyysinen %@, HID-syöte %@";
 "cli.controller.show.label.protocol" = "Protokolla";
 "cli.controller.show.label.record" = "Tietue";
 "cli.controller.show.label.rumble" = "Värinä";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Valinnalla --json tulostaa yhden JSON-objektin riviä kohden. Sauvan Y-suunta osoittaa ylös. Valinnalla --first-press tulostaa ensimmäisen painetun ohjaimen ja poistuu; se epäonnistuu, jos --duration kuluu ensin.";
 "cli.controller.watch.first_press" = "Tulosta ensimmäinen painettu ohjain ja poistu.";
 "cli.controller.watch.no_input" = "Syötettä ei vastaanotettu.";
-"cli.controller.watch.no_press" = "Ohjainta ei painettu %@ sekunnin aikana.";
+"cli.controller.watch.no_press" = "Ohjainta ei painettu %@ aikana.";
 "cli.controller.watch.press_prompt" = "Paina ohjainta laitteessa %@ (%@).";
 "cli.controller.watch.started" = "Seurataan laitetta %@ (%@). Paina ohjaimen painikkeita.";
 "cli.error.confirm_declined" = "Mitään ei muutettu.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Älä pyydä vahvistusta.";
 "cli.virtual.abstract" = "Näytä ja valitse virtuaalinen peliohjain, jonka OpenJoystickDriver julkaisee ohjaimelle.";
 "cli.virtual.changed" = "%@ julkaisee nyt: %@ (%@).";
+"cli.virtual.stored" = "Valinta laitteelle %@ on tallennettu. Se otetaan käyttöön, kun virtuaalinen ulostulo on käytössä.";
 "cli.virtual.discussion" = "Valinta koskee kaikkia samanmallisia ohjaimia. 'reset' palauttaa mallin automaattiseen valintaan.";
 "cli.virtual.error.failed" = "Laitteen %@ virtuaalinen peliohjain ei muuttunut (%@). Tarkista asia komennolla 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Palauta ohjaimen malli tai kaikki mallit virtuaalisen peliohjaimen automaattiseen valintaan.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "Profiili ”%@” on käytössä yhdistetyssä ohjaimessa ja estää nyt kaiken sen syötteen. Lisää sidonta komennolla 'ojd binding set' tai pysäytä profiili komennolla 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Poistetaanko kaikki sidonnat, yhdistelmät, sarjat ja tasot profiilista ”%@”?";
 "cli.binding.clear.discussion" = "--all poistaa myös profiilin yhdistelmät, sarjat ja tasot ja pyytää vahvistuksen päätteessä; muuten se vaatii --force. Sauvojen, liipaisimien, kosketuksen, liikkeen ja tulosteen asetukset säilyvät.";
-"cli.binding.clear.done" = "Poistettiin %lld sidontaa profiilista ”%@”.";
-"cli.binding.clear.dry_run" = "Poistaisi %lld sidontaa profiilista ”%@”.";
+"cli.binding.clear.done" = "Profiilista ”%@” poistetut sidonnat: %lld.";
+"cli.binding.clear.dry_run" = "Profiilista ”%@” poistettavat sidonnat: %lld.";
 "cli.binding.clear.missing" = "Profiilissa ”%@” ei ole sidontaa lähteelle %@. Mitään ei muutettu.";
 "cli.binding.clear.sources" = "Lähteet, joiden sidonnat poistetaan.";
 "cli.binding.clear.usage" = "Anna yksi tai useampi lähde tai --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Poistaisi profiilin ”%@”.";
 "cli.profile.discussion" = "Uudelleenmäärityksen profiili muuttaa yhden ohjainmallin ohjauselimet peliohjaimen, näppäimistön ja osoittimen syötteeksi. PROFILE on profiilin ID tai nimi komennosta ”ojd profile list”. Muuta sidontoja komennolla ”ojd binding” ja kaikkea muuta komennolla ”ojd profile edit”. Kaikki profiilikomennot tarvitsevat palvelun.";
 "cli.profile.document_invalid" = "%@ ei ole kelvollinen profiili: %@";
+"cli.document.not_json" = "se ei ole kelvollista JSONia";
+"cli.document.missing_field" = "kenttä ”%@” puuttuu";
+"cli.document.wrong_type" = "kentän ”%@” tyyppi on väärä";
+"cli.document.field_problem" = "”%@”: %@";
 "cli.profile.duplicate.abstract" = "Kopioi profiili uudella nimellä. Kopio on aluksi ei-aktiivinen.";
 "cli.profile.duplicate.done" = "Luotiin ”%@” (%@).";
 "cli.profile.duplicate.name" = "Kopion nimi.";

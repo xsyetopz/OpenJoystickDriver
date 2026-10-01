@@ -84,9 +84,13 @@ struct UpdateCheckCommand: AsyncParsableCommand {
           releaseURL: info.htmlURL.absoluteString,
           includePrereleases: prerelease
         )
-      case .failed(let failure): throw Self.failure(failure.message)
+      case .failed(let failure):
+        throw Self.failure(failure.message, network: failure.reason == .transport)
       case .idle, .checking:
-        throw Self.failure(CLILocalized.text("cli.update.check.incomplete", "no result"))
+        throw Self.failure(
+          CLILocalized.text("cli.update.check.incomplete", "no result"),
+          network: false
+        )
       }
       try Self.print(result)
     }
@@ -127,14 +131,20 @@ struct UpdateCheckCommand: AsyncParsableCommand {
     }
   }
 
-  private static func failure(_ detail: String) -> CLIFailure {
-    CLIFailure(
-      .failure,
-      CLILocalized.format(
+  /// Only a network failure points at the connection; other failures state their reason alone.
+  private static func failure(_ detail: String, network: Bool) -> CLIFailure {
+    let message =
+      network
+      ? CLILocalized.format(
         "cli.update.check.failed",
         "Could not check for updates: %@. Check your network connection and try again.",
         detail
       )
-    )
+      : CLILocalized.format(
+        "cli.update.check.failed_reason",
+        "Could not check for updates: %@.",
+        detail
+      )
+    return CLIFailure(.failure, message)
   }
 }

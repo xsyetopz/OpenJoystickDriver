@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ n’est plus connecté.";
 "cli.error.json_plain" = "Utilisez --json ou --plain, mais pas les deux.";
 "cli.error.peer_rejected" = "Le service a rejeté ce ojd, car il n’est pas signé comme l’application. Exécutez le ojd fourni dans OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Le service n’a pas répondu en %@ secondes. Réessayez avec un --timeout plus grand.";
+"cli.error.request_timeout" = "Le service n’a pas répondu en %@. Réessayez avec un --timeout plus grand.";
 "cli.error.service_request_failed" = "Le service n’a pas terminé la requête : %@. Vérifiez-le avec « ojd status ».";
+"cli.error.duplicate_profile_name" = "Un profil portant ce nom existe déjà. 'ojd profile list' affiche tous les profils.";
 "cli.error.service_timeout" = "Le service n’a pas répondu à temps. Réessayez ou vérifiez-le avec « ojd status ».";
 "cli.error.service_unavailable" = "Le service OpenJoystickDriver n’est pas en cours d’exécution. Démarrez-le avec « ojd service start ».";
 "cli.error.timeout_value" = "--timeout requiert un nombre de secondes supérieur à 0.";
 "cli.error.unexpected" = "Erreur inattendue : %@. Exécutez « ojd diagnose --bundle PATH » et joignez l’archive à un rapport de bogue.";
+"cli.error.unknown_command" = "Commande inconnue « %@ ». Vouliez-vous dire « %@ » ?";
 "cli.option.json" = "Afficher du JSON sur stdout.";
 "cli.option.no_color" = "Ne pas utiliser de couleur.";
 "cli.option.no_input" = "Ne jamais demander de saisie ; échouer si une valeur manque.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS n’a pas pu ouvrir %@. Ouvrez-le depuis le Finder pour en voir la raison.";
 "cli.service.stop.abstract" = "Arrêter le service et attendre qu’il se termine. Les manettes connectées reviennent à macOS.";
 "cli.service.stop.signal_failed" = "Impossible d’arrêter le service : %@. Quittez OpenJoystickDriver depuis son menu.";
-"cli.service.stop.timeout" = "Le service ne s’est pas arrêté en %@ secondes. Réessayez avec un --timeout plus grand.";
+"cli.service.stop.timeout" = "Le service ne s’est pas arrêté en %@. Réessayez avec un --timeout plus grand.";
 "cli.service.stopped" = "Le service est arrêté.";
 "cli.service.wait.abstract" = "Attendre que le service accepte les requêtes. --timeout limite l’attente (5 secondes par défaut).";
-"cli.service.wait.timeout" = "Le service n’a pas accepté de requêtes en %@ secondes. Démarrez-le avec « ojd service start » ou réessayez avec un --timeout plus grand.";
+"cli.service.wait.timeout" = "Le service n’a pas accepté de requêtes en %@. Démarrez-le avec « ojd service start » ou réessayez avec un --timeout plus grand.";
 "cli.status.abstract" = "Afficher le service, l’extension, les autorisations et les manettes connectées.";
 "cli.status.discussion" = "Fonctionne quand le service est arrêté : il le signale comme arrêté et se termine avec le code 0.";
 "cli.status.label.accessibility" = "Accessibilité";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "service arrêté";
 "cli.diagnose.soak" = "Échantillonne aussi la mémoire, les descripteurs de fichier et le CPU du service pendant cette durée (1-86400).";
 "cli.diagnose.soak.not_requested" = "non demandé ; utilisez --soak SECONDS";
-"cli.diagnose.soak.progress" = "Échantillonnage du service pendant %lld secondes...";
+"cli.diagnose.soak.progress" = "Échantillonnage du service pendant %@...";
 "cli.diagnose.soak_range" = "--soak doit être compris entre 1 et 86400 secondes.";
 "cli.diagnose.usb.failed" = "L’analyse USB a échoué : %@. Accordez la surveillance des entrées à OpenJoystickDriver.";
-"cli.diagnose.usb.ok" = "%lld contrôleurs USB propriétaires visibles";
+"cli.diagnose.usb.ok" = "Contrôleurs USB propriétaires visibles : %lld";
 "cli.diagnose.virtual.disabled" = "manette virtuelle désactivée";
 "cli.diagnose.virtual.error" = "erreur de la manette virtuelle : %@";
 "cli.diagnose.virtual.override" = "les remplacements de profil enregistrés sont illisibles : %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ est disponible (vous avez %@) : %@";
 "cli.update.check.discussion" = "S’exécute uniquement sur demande ; ojd ne vérifie jamais de lui-même. Il ne télécharge ni n’installe rien. Se termine avec le code 0 qu’une mise à jour existe ou non, et avec 1 si la vérification échoue.";
 "cli.update.check.failed" = "Impossible de rechercher des mises à jour : %@. Vérifiez votre connexion réseau et réessayez.";
+"cli.update.check.failed_reason" = "Impossible de rechercher des mises à jour : %@.";
 "cli.update.check.incomplete" = "aucun résultat";
 "cli.update.check.prerelease" = "Inclut les versions préliminaires.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ est à jour (dernière version : %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Nom";
 "cli.controller.show.label.output_checks" = "Vérifications de sortie";
 "cli.controller.show.label.ownership" = "Propriété";
+"cli.controller.show.ownership" = "accès %@, physique %@, entrée HID %@";
 "cli.controller.show.label.protocol" = "Protocole";
 "cli.controller.show.label.record" = "Fiche";
 "cli.controller.show.label.rumble" = "Vibration";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Avec --json, affiche un objet JSON par ligne. Le stick Y pointe vers le haut. Avec --first-press, affiche la première commande actionnée puis quitte ; échoue si --duration expire avant.";
 "cli.controller.watch.first_press" = "Afficher la première commande actionnée, puis quitter.";
 "cli.controller.watch.no_input" = "Aucune entrée reçue.";
-"cli.controller.watch.no_press" = "Aucune commande n’a été actionnée en %@ secondes.";
+"cli.controller.watch.no_press" = "Aucune commande n’a été actionnée en %@.";
 "cli.controller.watch.press_prompt" = "Actionnez une commande sur %@ (%@).";
 "cli.controller.watch.started" = "Surveillance de %@ (%@). Appuyez sur les boutons de la manette.";
 "cli.error.confirm_declined" = "Rien n’a changé.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Ne pas demander de confirmation.";
 "cli.virtual.abstract" = "Afficher et choisir la manette virtuelle que OpenJoystickDriver publie pour une manette.";
 "cli.virtual.changed" = "%@ publie désormais %@ (%@).";
+"cli.virtual.stored" = "Le choix pour %@ est enregistré. Il s’appliquera dès que la sortie virtuelle sera activée.";
 "cli.virtual.discussion" = "Un choix s’applique à toutes les manettes du même modèle. 'reset' remet un modèle en sélection automatique.";
 "cli.virtual.error.failed" = "La manette virtuelle de %@ n’a pas changé (%@). Vérifiez avec 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Remettre le modèle d’une manette, ou tous les modèles, en sélection automatique de la manette virtuelle.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "'%@' est actif sur une manette connectée et bloque désormais toute son entrée. Ajoutez une affectation avec 'ojd binding set', ou arrêtez le profil avec 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Supprimer toutes les affectations, tous les accords, séquences et couches de '%@' ?";
 "cli.binding.clear.discussion" = "--all supprime aussi les accords, séquences et couches du profil, et demande confirmation dans un terminal ; sinon, il exige --force. Les réglages des sticks, des gâchettes, du tactile, du mouvement et de la sortie sont conservés.";
-"cli.binding.clear.done" = "%lld affectations supprimées de '%@'.";
-"cli.binding.clear.dry_run" = "%lld affectations seraient supprimées de '%@'.";
+"cli.binding.clear.done" = "Affectations supprimées de '%@' : %lld.";
+"cli.binding.clear.dry_run" = "Affectations qui seraient supprimées de '%@' : %lld.";
 "cli.binding.clear.missing" = "'%@' n’a aucune affectation pour %@. Rien n’a changé.";
 "cli.binding.clear.sources" = "Les sources dont il faut supprimer les affectations.";
 "cli.binding.clear.usage" = "Indiquez une ou plusieurs sources, ou --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Le profil '%@' serait supprimé.";
 "cli.profile.discussion" = "Un profil de remappage transforme les commandes d’un modèle de manette en entrées de manette, de clavier et de pointeur. PROFILE est l’ID ou le nom d’un profil issu de 'ojd profile list'. Modifiez les affectations avec 'ojd binding', et tout le reste avec 'ojd profile edit'. Toutes les commandes de profil exigent le service.";
 "cli.profile.document_invalid" = "%@ n’est pas un profil valide : %@";
+"cli.document.not_json" = "il ne s’agit pas d’un JSON valide";
+"cli.document.missing_field" = "le champ « %@ » est manquant";
+"cli.document.wrong_type" = "le champ « %@ » a un type incorrect";
+"cli.document.field_problem" = "« %@ » : %@";
 "cli.profile.duplicate.abstract" = "Copier un profil sous un nouveau nom. La copie démarre inactive.";
 "cli.profile.duplicate.done" = "Profil '%@' créé (%@).";
 "cli.profile.duplicate.name" = "Le nom de la copie.";

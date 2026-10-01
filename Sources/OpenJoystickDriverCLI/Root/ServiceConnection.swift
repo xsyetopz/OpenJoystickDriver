@@ -58,6 +58,15 @@ enum ServiceConnection {
     case ApplicationServiceClientError.timeout: CLIFailure.timedOut(seconds: nil)
     case LocalServiceRPCError.peerRejected: CLIFailure.peerRejected
     case is CLIFailure, is CancellationError: error
+    case let rejection as ApplicationServiceRemappingRPCError
+    where rejection.code == .duplicateName:
+      CLIFailure(
+        .failure,
+        CLILocalized.text(
+          "cli.error.duplicate_profile_name",
+          "A profile with that name already exists. 'ojd profile list' shows every profile."
+        )
+      )
     default: CLIFailure.serviceRequestFailed(error.localizedDescription)
     }
   }
@@ -78,8 +87,8 @@ extension CLIFailure {
       .failure,
       CLILocalized.format(
         "cli.error.request_timeout",
-        "The service did not reply within %@ seconds. Retry with a larger --timeout.",
-        seconds.secondsText
+        "The service did not reply within %@. Retry with a larger --timeout.",
+        seconds.durationText
       )
     )
   }
@@ -97,8 +106,12 @@ extension CLIFailure {
 }
 
 extension Double {
-  /// Seconds as short decimal text, such as `0.5` or `5`.
-  var secondsText: String {
-    self == rounded() && abs(self) < 1e15 ? String(Int(self)) : String(self)
+  /// Seconds as a localized value with a unit symbol, such as `0.5s` or `5 с`. A symbol needs
+  /// no plural agreement, so messages read correctly for any value.
+  var durationText: String { durationText(locale: .current) }
+
+  func durationText(locale: Locale) -> String {
+    Measurement(value: self, unit: UnitDuration.seconds)
+      .formatted(.measurement(width: .narrow, numberFormatStyle: .number).locale(locale))
   }
 }

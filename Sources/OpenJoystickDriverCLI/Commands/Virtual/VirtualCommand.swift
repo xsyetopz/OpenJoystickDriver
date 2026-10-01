@@ -133,7 +133,9 @@ private func printChange(
   _ result: VirtualHIDProfileOverrideResult,
   device: ApplicationServiceDeviceDescription
 ) throws {
-  if let failure = result.failure {
+  // With virtual output off, the service stores the choice and applies it when output is on.
+  let stored = result.failure == .outputDisabled
+  if let failure = result.failure, !stored {
     var reason = failure.code
     if case .activationFailed(let detail) = failure { reason += ": " + detail }
     throw CLIFailure(
@@ -155,6 +157,14 @@ private func printChange(
   switch CLIContext.current.format {
   case .json: try CLIOutput.json(report)
   case .plain: CLIOutput.plain([[report.controller, report.live ?? "", report.source]])
+  case .human where stored:
+    CLIOutput.success(
+      CLILocalized.format(
+        "cli.virtual.stored",
+        "Saved the choice for %@. It applies once virtual output is enabled.",
+        device.name
+      )
+    )
   case .human:
     CLIOutput.success(
       CLILocalized.format(

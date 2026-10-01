@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ input stopped updating. Release its controls or disconnect it.";
 "cli.error.json_plain" = "Use either --json or --plain, not both.";
 "cli.error.peer_rejected" = "The service rejected this ojd, because it is not signed like the app. Run the ojd that ships inside OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "The service did not reply within %@ seconds. Retry with a larger --timeout.";
+"cli.error.request_timeout" = "The service did not reply within %@. Retry with a larger --timeout.";
 "cli.error.service_request_failed" = "The service did not complete the request: %@. Check it with 'ojd status'.";
+"cli.error.duplicate_profile_name" = "A profile with that name already exists. 'ojd profile list' shows every profile.";
 "cli.error.service_timeout" = "The service did not reply in time. Retry, or check it with 'ojd status'.";
 "cli.error.service_unavailable" = "The OpenJoystickDriver service is not running. Start it with 'ojd service start'.";
 "cli.error.timeout_value" = "--timeout needs a number of seconds above 0.";
 "cli.error.unexpected" = "Unexpected error: %@. Run 'ojd diagnose --bundle PATH' and attach the bundle to a bug report.";
+"cli.error.unknown_command" = "Unknown command '%@'. Did you mean '%@'?";
 "cli.option.json" = "Print JSON on stdout.";
 "cli.option.no_color" = "Do not use color.";
 "cli.option.no_input" = "Never prompt; fail when a value is missing.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS could not open %@. Open it from Finder to see why.";
 "cli.service.stop.abstract" = "Stop the service and wait until it exits. Connected controllers return to macOS.";
 "cli.service.stop.signal_failed" = "Could not stop the service: %@. Quit OpenJoystickDriver from its menu.";
-"cli.service.stop.timeout" = "The service did not stop within %@ seconds. Retry with a larger --timeout.";
+"cli.service.stop.timeout" = "The service did not stop within %@. Retry with a larger --timeout.";
 "cli.service.stopped" = "The service is stopped.";
 "cli.service.wait.abstract" = "Wait until the service accepts requests. --timeout bounds the wait (default 5 seconds).";
-"cli.service.wait.timeout" = "The service did not accept requests within %@ seconds. Start it with 'ojd service start', or retry with a larger --timeout.";
+"cli.service.wait.timeout" = "The service did not accept requests within %@. Start it with 'ojd service start', or retry with a larger --timeout.";
 "cli.status.abstract" = "Show the service, extension, permissions, and connected controllers.";
 "cli.status.discussion" = "Works when the service is stopped: it reports the service as stopped and exits 0.";
 "cli.status.label.accessibility" = "Accessibility";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "service not running";
 "cli.diagnose.soak" = "Also sample the service's memory, file descriptors, and CPU for this long (1-86400).";
 "cli.diagnose.soak.not_requested" = "not requested; use --soak SECONDS";
-"cli.diagnose.soak.progress" = "Sampling the service for %lld seconds...";
+"cli.diagnose.soak.progress" = "Sampling the service for %@...";
 "cli.diagnose.soak_range" = "--soak must be between 1 and 86400 seconds.";
 "cli.diagnose.usb.failed" = "USB scan failed: %@. Grant Input Monitoring to OpenJoystickDriver.";
-"cli.diagnose.usb.ok" = "%lld vendor-specific USB controllers visible";
+"cli.diagnose.usb.ok" = "Vendor-specific USB controllers visible: %lld";
 "cli.diagnose.virtual.disabled" = "virtual gamepad disabled";
 "cli.diagnose.virtual.error" = "virtual gamepad error: %@";
 "cli.diagnose.virtual.override" = "stored profile overrides unreadable: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ is available (you have %@): %@";
 "cli.update.check.discussion" = "Runs only when you ask; ojd never checks on its own. It does not download or install anything. Exits 0 whether or not an update exists, and 1 when the check fails.";
 "cli.update.check.failed" = "Could not check for updates: %@. Check your network connection and try again.";
+"cli.update.check.failed_reason" = "Could not check for updates: %@.";
 "cli.update.check.incomplete" = "no result";
 "cli.update.check.prerelease" = "Include pre-release versions.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ is up to date (latest release: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Name";
 "cli.controller.show.label.output_checks" = "Output checks";
 "cli.controller.show.label.ownership" = "Ownership";
+"cli.controller.show.ownership" = "route %@, physical %@, HID input %@";
 "cli.controller.show.label.protocol" = "Protocol";
 "cli.controller.show.label.record" = "Record";
 "cli.controller.show.label.rumble" = "Rumble";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "With --json, prints one JSON object per line. Stick Y points up. With --first-press, prints the first control pressed and exits; it fails when --duration passes first.";
 "cli.controller.watch.first_press" = "Print the first control pressed, then exit.";
 "cli.controller.watch.no_input" = "No input received.";
-"cli.controller.watch.no_press" = "No control was pressed within %@ seconds.";
+"cli.controller.watch.no_press" = "No control was pressed within %@.";
 "cli.controller.watch.press_prompt" = "Press a control on %@ (%@).";
 "cli.controller.watch.started" = "Watching %@ (%@). Press controller buttons.";
 "cli.error.confirm_declined" = "Nothing changed.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Do not ask for confirmation.";
 "cli.virtual.abstract" = "Show and choose the virtual gamepad OpenJoystickDriver publishes for a controller.";
 "cli.virtual.changed" = "%@ now publishes %@ (%@).";
+"cli.virtual.stored" = "Saved the choice for %@. It applies once virtual output is enabled.";
 "cli.virtual.discussion" = "A choice applies to every controller of the same model. 'reset' returns a model to automatic selection.";
 "cli.virtual.error.failed" = "The virtual gamepad for %@ did not change (%@). Check it with 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Return a controller's model, or every model, to automatic virtual gamepad selection.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "'%@' is active on a connected controller and now blocks all of its input. Add a binding with 'ojd binding set', or stop the profile with 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Remove every binding, chord, sequence, and layer from '%@'?";
 "cli.binding.clear.discussion" = "--all also removes the profile's chords, sequences, and layers, and asks for confirmation on a terminal; it needs --force otherwise. Stick, trigger, touch, motion, and output settings stay.";
-"cli.binding.clear.done" = "Removed %lld bindings from '%@'.";
-"cli.binding.clear.dry_run" = "Would remove %lld bindings from '%@'.";
+"cli.binding.clear.done" = "Bindings removed from '%@': %lld.";
+"cli.binding.clear.dry_run" = "Bindings that would be removed from '%@': %lld.";
 "cli.binding.clear.missing" = "'%@' has no binding for %@. Nothing changed.";
 "cli.binding.clear.sources" = "The sources whose bindings to remove.";
 "cli.binding.clear.usage" = "Give one or more sources, or --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Would delete the profile '%@'.";
 "cli.profile.discussion" = "A remapping profile turns the controls of one controller model into gamepad, keyboard, and pointer input. PROFILE is a profile ID or name from 'ojd profile list'. Change bindings with 'ojd binding', and everything else with 'ojd profile edit'. Every profile command needs the service.";
 "cli.profile.document_invalid" = "%@ is not a valid profile: %@";
+"cli.document.not_json" = "it is not valid JSON";
+"cli.document.missing_field" = "the field '%@' is missing";
+"cli.document.wrong_type" = "the field '%@' has the wrong type";
+"cli.document.field_problem" = "'%@': %@";
 "cli.profile.duplicate.abstract" = "Copy a profile under a new name. The copy starts inactive.";
 "cli.profile.duplicate.done" = "Created '%@' (%@).";
 "cli.profile.duplicate.name" = "The name of the copy.";

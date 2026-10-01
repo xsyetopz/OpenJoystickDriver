@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ Ní bhaineann sé le chéile.";
 "cli.error.json_plain" = "Úsáid --json nó --plain, ní an dá cheann.";
 "cli.error.peer_rejected" = "Dhiúltaigh an tseirbhís don ojd seo mar nach bhfuil sé sínithe mar a shínítear an app. Rith an ojd atá taobh istigh de OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Níor fhreagair an tseirbhís laistigh de %@ soicind. Bain triail eile as le --timeout níos mó.";
+"cli.error.request_timeout" = "Níor fhreagair an tseirbhís laistigh de %@. Bain triail eile as le --timeout níos mó.";
 "cli.error.service_request_failed" = "Níor chríochnaigh an tseirbhís an iarratas: %@. Seiceáil í le «ojd status».";
+"cli.error.duplicate_profile_name" = "Tá próifíl leis an ainm sin ann cheana. Taispeánann «ojd profile list» gach próifíl.";
 "cli.error.service_timeout" = "Níor fhreagair an tseirbhís in am. Bain triail eile as, nó seiceáil í le «ojd status».";
 "cli.error.service_unavailable" = "Níl seirbhís OpenJoystickDriver ag rith. Tosaigh í le «ojd service start».";
 "cli.error.timeout_value" = "Teastaíonn líon soicindí níos mó ná 0 ó --timeout.";
 "cli.error.unexpected" = "Earráid gan choinne: %@. Rith «ojd diagnose --bundle PATH» agus ceangail an burla le tuarascáil fhabht.";
+"cli.error.unknown_command" = "Ordú anaithnid «%@». An raibh «%@» i gceist agat?";
 "cli.option.json" = "Priontáil JSON ar stdout.";
 "cli.option.no_color" = "Ná húsáid dath.";
 "cli.option.no_input" = "Ná héiligh ionchur riamh; teip má tá luach ar iarraidh.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "Níorbh fhéidir le macOS %@ a oscailt. Oscail ó Finder é chun an fáth a fheiceáil.";
 "cli.service.stop.abstract" = "Stop an tseirbhís agus fan go scoirfidh sí. Filleann rialtóirí atá ceangailte ar macOS.";
 "cli.service.stop.signal_failed" = "Níorbh fhéidir an tseirbhís a stopadh: %@. Scoir OpenJoystickDriver óna roghchlár.";
-"cli.service.stop.timeout" = "Níor stop an tseirbhís laistigh de %@ soicind. Bain triail eile as le --timeout níos mó.";
+"cli.service.stop.timeout" = "Níor stop an tseirbhís laistigh de %@. Bain triail eile as le --timeout níos mó.";
 "cli.service.stopped" = "Tá an tseirbhís stoptha.";
 "cli.service.wait.abstract" = "Fan go nglacfaidh an tseirbhís le hiarratais. Cuireann --timeout teorainn leis an bhfanacht (réamhshocrú 5 soicind).";
-"cli.service.wait.timeout" = "Níor ghlac an tseirbhís le hiarratais laistigh de %@ soicind. Tosaigh í le «ojd service start», nó bain triail eile as le --timeout níos mó.";
+"cli.service.wait.timeout" = "Níor ghlac an tseirbhís le hiarratais laistigh de %@. Tosaigh í le «ojd service start», nó bain triail eile as le --timeout níos mó.";
 "cli.status.abstract" = "Taispeáin an tseirbhís, an síneadh, na ceadanna agus na rialtóirí atá ceangailte.";
 "cli.status.discussion" = "Oibríonn sé nuair atá an tseirbhís stoptha: tuairiscíonn sé go bhfuil an tseirbhís stoptha agus scoireann sé le 0.";
 "cli.status.label.accessibility" = "Inrochtaineacht";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "níl an tseirbhís ag rith";
 "cli.diagnose.soak" = "Tóg samplaí de chuimhne, de thuairisceoirí comhad agus de CPU na seirbhíse don tréimhse seo freisin (1-86400).";
 "cli.diagnose.soak.not_requested" = "níor iarradh; úsáid --soak SOICINDÍ";
-"cli.diagnose.soak.progress" = "Ag tógáil samplaí den tseirbhís ar feadh %lld soicind...";
+"cli.diagnose.soak.progress" = "Ag tógáil samplaí den tseirbhís ar feadh %@...";
 "cli.diagnose.soak_range" = "Caithfidh --soak a bheith idir 1 agus 86400 soicind.";
 "cli.diagnose.usb.failed" = "Theip ar an scanadh USB: %@. Deonaigh Monatóireacht ionchuir d'OpenJoystickDriver.";
-"cli.diagnose.usb.ok" = "%lld rialtóir USB sainiúil do dhíoltóir le feiceáil";
+"cli.diagnose.usb.ok" = "Rialtóirí USB sainiúla do dhíoltóir atá le feiceáil: %lld";
 "cli.diagnose.virtual.disabled" = "gamepad fíorúil díchumasaithe";
 "cli.diagnose.virtual.error" = "earráid gamepad fhíorúil: %@";
 "cli.diagnose.virtual.override" = "ní féidir sáraithe próifíle stóráilte a léamh: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "Tá OpenJoystickDriver %@ ar fáil (tá %@ agat): %@";
 "cli.update.check.discussion" = "Ritheann sé nuair a iarrann tú amháin; ní sheiceálann ojd leis féin riamh. Ní íoslódálann ná ní shuiteálann sé aon rud. Scoireann sé le cód 0 cibé an bhfuil nuashonrú ann nó nach bhfuil, agus le 1 nuair a theipeann ar an tseiceáil.";
 "cli.update.check.failed" = "Níorbh fhéidir nuashonruithe a sheiceáil: %@. Seiceáil do cheangal líonra agus bain triail eile as.";
+"cli.update.check.failed_reason" = "Níorbh fhéidir nuashonruithe a sheiceáil: %@.";
 "cli.update.check.incomplete" = "gan toradh";
 "cli.update.check.prerelease" = "Cuir leaganacha réamheisiúna san áireamh.";
 "cli.update.check.up_to_date" = "Tá OpenJoystickDriver %@ cothrom le dáta (an eisiúint is déanaí: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Ainm";
 "cli.controller.show.label.output_checks" = "Seiceálacha aschuir";
 "cli.controller.show.label.ownership" = "Úinéireacht";
+"cli.controller.show.ownership" = "bealach %@, fisiciúil %@, ionchur HID %@";
 "cli.controller.show.label.protocol" = "Prótacal";
 "cli.controller.show.label.record" = "Taifead";
 "cli.controller.show.label.rumble" = "Creathadh";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Le --json, priontálann sé réad JSON amháin ar gach líne. Pointeálann Y an bhata suas. Le --first-press, priontálann sé an chéad rialú a brúdh agus scoireann sé; teipeann air má théann --duration thart ar dtús.";
 "cli.controller.watch.first_press" = "Priontáil an chéad rialú a brúdh, ansin scoir.";
 "cli.controller.watch.no_input" = "Níor fuarthas aon ionchur.";
-"cli.controller.watch.no_press" = "Níor brúdh aon rialú laistigh de %@ soicind.";
+"cli.controller.watch.no_press" = "Níor brúdh aon rialú laistigh de %@.";
 "cli.controller.watch.press_prompt" = "Brúigh rialú ar %@ (%@).";
 "cli.controller.watch.started" = "Ag faire ar %@ (%@). Brúigh cnaipí an rialtóra.";
 "cli.error.confirm_declined" = "Níor athraigh aon rud.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Ná iarr deimhniú.";
 "cli.virtual.abstract" = "Taispeáin agus roghnaigh an gamepad fíorúil a fhoilsíonn OpenJoystickDriver do rialtóir.";
 "cli.virtual.changed" = "Foilsíonn %@ %@ (%@) anois.";
+"cli.virtual.stored" = "Tá an rogha do %@ stóráilte. Cuirfear i bhfeidhm é nuair a chumasófar aschur fíorúil.";
 "cli.virtual.discussion" = "Baineann rogha le gach rialtóir den mhúnla céanna. Tugann «reset» múnla ar ais chuig roghnú uathoibríoch.";
 "cli.virtual.error.failed" = "Níor athraigh an gamepad fíorúil do %@ (%@). Seiceáil é le «ojd virtual show».";
 "cli.virtual.reset.abstract" = "Tabhair múnla rialtóra, nó gach múnla, ar ais chuig roghnú uathoibríoch gamepad fíorúil.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "Tá «%@» gníomhach ar rialtóir ceangailte agus blocálann sé gach ionchur uaidh anois. Cuir ceangal leis le «ojd binding set», nó stop an phróifíl le «ojd profile deactivate».";
 "cli.binding.clear.confirm" = "Bain gach ceangal, corda, seicníocht agus leagan de «%@»?";
 "cli.binding.clear.discussion" = "Bainfidh --all córdaí, seicníochtaí agus leagáin na próifíle freisin, agus iarrfaidh sé deimhniú ar theirminéal; teastaíonn --force seachas sin. Fanann socruithe maidí, truicir, teagmhála, gluaisne agus aschuir.";
-"cli.binding.clear.done" = "Baineadh %lld ceangal de «%@».";
-"cli.binding.clear.dry_run" = "Bhainfí %lld ceangal de «%@».";
+"cli.binding.clear.done" = "Ceangail a baineadh de «%@»: %lld.";
+"cli.binding.clear.dry_run" = "Ceangail a bhainfí de «%@»: %lld.";
 "cli.binding.clear.missing" = "Níl aon cheangal ag «%@» do %@. Níor athraíodh aon rud.";
 "cli.binding.clear.sources" = "Na foinsí a mbainfear a gceangail.";
 "cli.binding.clear.usage" = "Tabhair foinse amháin nó níos mó, nó --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Scriosfaí an phróifíl «%@».";
 "cli.profile.discussion" = "Tiontaíonn próifíl athmhapála rialuithe samhla rialtóra ina n-ionchur gamepad, méarchláir agus pointeora. Is ID nó ainm próifíle ó «ojd profile list» é PROFILE. Athraigh ceangail le «ojd binding», agus gach rud eile le «ojd profile edit». Teastaíonn an tseirbhís ó gach ordú próifíle.";
 "cli.profile.document_invalid" = "Ní próifíl bhailí é %@: %@";
+"cli.document.not_json" = "ní JSON bailí é";
+"cli.document.missing_field" = "tá an réimse «%@» ar iarraidh";
+"cli.document.wrong_type" = "tá cineál mícheart ag an réimse «%@»";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Cóipeáil próifíl faoi ainm nua. Tosaíonn an chóip neamhghníomhach.";
 "cli.profile.duplicate.done" = "Cruthaíodh «%@» (%@).";
 "cli.profile.duplicate.name" = "Ainm na cóipe.";

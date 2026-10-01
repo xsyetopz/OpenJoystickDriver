@@ -10,7 +10,7 @@ func decodeProfile(_ data: Data, source: String) throws -> RemappingProfile {
         "cli.profile.document_invalid",
         "%@ is not a valid profile: %@",
         source,
-        error.localizedDescription
+        DocumentProblem.describe(error)
       )
     )
   }

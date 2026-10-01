@@ -44,9 +44,9 @@ private func sendOutput(_ requests: [OutputRequest], to selector: ControllerSele
         )
       )
     }
-    return (device.runtimeIdentifier, entries)
+    return (device, entries)
   }
-  let report = ControllerOutputReport(controller: entries.0, results: entries.1)
+  let report = ControllerOutputReport(controller: entries.0.runtimeIdentifier, results: entries.1)
   switch CLIContext.current.format {
   case .json: try CLIOutput.json(report)
   case .plain:
@@ -61,7 +61,7 @@ private func sendOutput(_ requests: [OutputRequest], to selector: ControllerSele
         "cli.controller.output.sent",
         "Sent %@ to %@.",
         report.results.map(\.command).joined(separator: ", "),
-        report.controller
+        entries.0.name
       )
     )
   }
@@ -111,7 +111,7 @@ private func check(
         "%@ did not accept the %@ command (%@). Check it with 'ojd log show'.",
         device.name,
         request.name,
-        result.outcome.rawValue
+        ControllerShowCommand.kebabCase(result.outcome.rawValue)
       )
     )
   }
@@ -248,7 +248,7 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
           "cli.controller.rumble.dropped",
           "warning: %@ has no %@ motor; it did not run.",
           device.name,
-          motor.rawValue
+          ControllerShowCommand.kebabCase(motor.rawValue)
         )
       )
     }
@@ -293,7 +293,7 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
           : CLILocalized.format(
             "cli.controller.rumble.sent",
             "Rumbled %@ on %@.",
-            ran.map(\.rawValue).joined(separator: ", "),
+            ran.map { ControllerShowCommand.kebabCase($0.rawValue) }.joined(separator: ", "),
             device.name
           )
       )

@@ -54,6 +54,31 @@ struct VirtualCommandTests {
     #expect(result.standardError.contains("no fit"))
   }
 
+  /// With virtual output off, the service stores the choice and reports `output-disabled`.
+  @Test(arguments: [
+    ["virtual", "set", "hid-generic", "pad-1"], ["virtual", "reset", "pad-1"],
+  ])
+  func aChoiceStoredWhileVirtualOutputIsOffSucceeds(arguments: [String]) async throws {
+    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+      method == .setVirtualHIDProfileOverride || method == .resetVirtualHIDProfileOverride
+        ? encoded(
+          VirtualHIDProfileOverrideResult(
+            requested: arguments[1] == "set" ? .generic : nil,
+            live: nil,
+            source: "override",
+            failure: .outputDisabled
+          )
+        ) : nil
+    }
+    let result = await service.run(arguments)
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(
+      result.standardError.contains(
+        "Saved the choice for Test Pad. It applies once virtual output is enabled."
+      )
+    )
+  }
+
   @Test
   func resetAllWithForceClearsEveryChoice() async throws {
     let service = try FakeService(devices: []) { method, _ in

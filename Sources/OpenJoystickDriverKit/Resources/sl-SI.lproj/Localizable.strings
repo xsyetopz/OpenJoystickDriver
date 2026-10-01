@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ Ni več povezan.";
 "cli.error.json_plain" = "Uporabite --json ali --plain, ne obojega.";
 "cli.error.peer_rejected" = "Storitev je zavrnila ta ojd, ker ni podpisan kot aplikacija. Zaženite ojd iz OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Storitev ni odgovorila v %@ s. Poskusite znova z večjim --timeout.";
+"cli.error.request_timeout" = "Storitev ni odgovorila v %@. Poskusite znova z večjim --timeout.";
 "cli.error.service_request_failed" = "Storitev ni dokončala zahteve: %@. Preverite jo z „ojd status“.";
+"cli.error.duplicate_profile_name" = "Profil s tem imenom že obstaja. „ojd profile list“ pokaže vse profile.";
 "cli.error.service_timeout" = "Storitev ni odgovorila pravočasno. Poskusite znova ali jo preverite z „ojd status“.";
 "cli.error.service_unavailable" = "Storitev OpenJoystickDriver ne teče. Zaženite jo z „ojd service start“.";
 "cli.error.timeout_value" = "--timeout zahteva število sekund, večje od 0.";
 "cli.error.unexpected" = "Nepričakovana napaka: %@. Zaženite „ojd diagnose --bundle PATH“ in priložite paket poročilu o napaki.";
+"cli.error.unknown_command" = "Neznan ukaz „%@“. Ste mislili „%@“?";
 "cli.option.json" = "Natisne JSON na stdout.";
 "cli.option.no_color" = "Ne uporablja barv.";
 "cli.option.no_input" = "Nikoli ne vpraša; ob manjkajoči vrednosti spodleti.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS ni mogel odpreti %@. Odprite v Finderju, da vidite razlog.";
 "cli.service.stop.abstract" = "Ustavi storitev in počaka, da se konča. Povezani krmilniki se vrnejo macOS.";
 "cli.service.stop.signal_failed" = "Storitve ni bilo mogoče ustaviti: %@. Zaprite OpenJoystickDriver v njegovem meniju.";
-"cli.service.stop.timeout" = "Storitev se ni ustavila v %@ s. Poskusite znova z večjim --timeout.";
+"cli.service.stop.timeout" = "Storitev se ni ustavila v %@. Poskusite znova z večjim --timeout.";
 "cli.service.stopped" = "Storitev je ustavljena.";
 "cli.service.wait.abstract" = "Počaka, da storitev začne sprejemati zahteve. --timeout omeji čakanje (privzeto 5 sekund).";
-"cli.service.wait.timeout" = "Storitev ni začela sprejemati zahtev v %@ s. Zaženite jo z „ojd service start“ ali poskusite znova z večjim --timeout.";
+"cli.service.wait.timeout" = "Storitev ni začela sprejemati zahtev v %@. Zaženite jo z „ojd service start“ ali poskusite znova z večjim --timeout.";
 "cli.status.abstract" = "Pokaže storitev, razširitev, dovoljenja in povezane krmilnike.";
 "cli.status.discussion" = "Deluje tudi, ko je storitev ustavljena: sporoči, da je ustavljena, in se konča s 0.";
 "cli.status.label.accessibility" = "Dostopnost";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "storitev ne teče";
 "cli.diagnose.soak" = "V tem času vzorči tudi pomnilnik, deskriptorje datotek in CPU storitve (1-86400).";
 "cli.diagnose.soak.not_requested" = "ni zahtevano; uporabite --soak SECONDS";
-"cli.diagnose.soak.progress" = "Vzorčenje storitve %lld s…";
+"cli.diagnose.soak.progress" = "Vzorčenje storitve (trajanje: %@)…";
 "cli.diagnose.soak_range" = "--soak mora biti med 1 in 86400 sekundami.";
 "cli.diagnose.usb.failed" = "Pregled USB ni uspel: %@. Dodelite OpenJoystickDriver dostop Input Monitoring.";
 "cli.diagnose.usb.ok" = "Vidnih USB krmilnikov, specifičnih za proizvajalca: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ je na voljo (imate %@): %@";
 "cli.update.check.discussion" = "Zažene se samo na vašo zahtevo; ojd nikoli ne preverja sam. Ničesar ne prenese ali namesti. Konča s kodo 0, ne glede na to, ali posodobitev obstaja, in s kodo 1, ko preverjanje ne uspe.";
 "cli.update.check.failed" = "Posodobitev ni bilo mogoče preveriti: %@. Preverite omrežno povezavo in poskusite znova.";
+"cli.update.check.failed_reason" = "Posodobitev ni bilo mogoče preveriti: %@.";
 "cli.update.check.incomplete" = "ni rezultata";
 "cli.update.check.prerelease" = "Vključi predizdajne različice.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ je posodobljen (najnovejša izdaja: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Ime";
 "cli.controller.show.label.output_checks" = "Preverjanja izhoda";
 "cli.controller.show.label.ownership" = "Lastništvo";
+"cli.controller.show.ownership" = "pot %@, fizično %@, vhod HID %@";
 "cli.controller.show.label.protocol" = "Protokol";
 "cli.controller.show.label.record" = "Zapis";
 "cli.controller.show.label.rumble" = "Vibriranje";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Z --json izpiše po en objekt JSON v vrstici. Os Y palice kaže navzgor. Z --first-press izpiše prvi pritisnjeni upravljalni element in konča; spodleti, če --duration poteče prej.";
 "cli.controller.watch.first_press" = "Izpiše prvi pritisnjeni upravljalni element, nato konča.";
 "cli.controller.watch.no_input" = "Noben vnos ni bil prejet.";
-"cli.controller.watch.no_press" = "V %@ sekundah ni bil pritisnjen noben upravljalni element.";
+"cli.controller.watch.no_press" = "V %@ ni bil pritisnjen noben upravljalni element.";
 "cli.controller.watch.press_prompt" = "Pritisnite upravljalni element na %@ (%@).";
 "cli.controller.watch.started" = "Opazovanje %@ (%@). Pritisnite gumbe krmilnika.";
 "cli.error.confirm_declined" = "Nič se ni spremenilo.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Ne zahteva potrditve.";
 "cli.virtual.abstract" = "Pokaže in izbere navidezni igralni plošček, ki ga OpenJoystickDriver objavi za krmilnik.";
 "cli.virtual.changed" = "%@ zdaj objavlja %@ (%@).";
+"cli.virtual.stored" = "Izbira za %@ je shranjena. Uveljavljena bo, ko bo navidezni izhod omogočen.";
 "cli.virtual.discussion" = "Izbira velja za vse krmilnike istega modela. „reset“ vrne model na samodejno izbiro.";
 "cli.virtual.error.failed" = "Navidezni igralni plošček za %@ se ni spremenil (%@). Preverite z „ojd virtual show“.";
 "cli.virtual.reset.abstract" = "Vrne model krmilnika ali vse modele na samodejno izbiro navideznega igralnega ploščka.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "„%@“ je aktiven na povezanem krmilniku in zdaj blokira ves njegov vhod. Dodajte dodelitev z „ojd binding set“ ali ustavite profil z „ojd profile deactivate“.";
 "cli.binding.clear.confirm" = "Odstranim vse dodelitve, akorde, zaporedja in plasti iz „%@“?";
 "cli.binding.clear.discussion" = "--all odstrani tudi akorde, zaporedja in plasti profila ter na terminalu zahteva potrditev; sicer zahteva --force. Nastavitve palic, sprožilcev, dotika, gibanja in izhoda ostanejo.";
-"cli.binding.clear.done" = "Odstranjene dodelitve: %lld iz „%@“.";
-"cli.binding.clear.dry_run" = "Odstranjenih bi bilo dodelitev: %lld iz „%@“.";
+"cli.binding.clear.done" = "Dodelitve, odstranjene iz „%@“: %lld.";
+"cli.binding.clear.dry_run" = "Dodelitve, ki bi bile odstranjene iz „%@“: %lld.";
 "cli.binding.clear.missing" = "„%@“ nima dodelitve za %@. Nič se ni spremenilo.";
 "cli.binding.clear.sources" = "Viri, katerih dodelitve naj se odstranijo.";
 "cli.binding.clear.usage" = "Podajte enega ali več virov ali --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Profil „%@“ bi bil izbrisan.";
 "cli.profile.discussion" = "Profil preslikave pretvori upravljalne elemente enega modela krmilnika v vhod igralnega ploščka, tipkovnice in kazalca. PROFILE je ID ali ime profila iz „ojd profile list“. Dodelitve spreminjajte z „ojd binding“, vse drugo pa z „ojd profile edit“. Vsak ukaz profila zahteva storitev.";
 "cli.profile.document_invalid" = "%@ ni veljaven profil: %@";
+"cli.document.not_json" = "ni veljaven JSON";
+"cli.document.missing_field" = "polje „%@“ manjka";
+"cli.document.wrong_type" = "polje „%@“ ima napačno vrsto";
+"cli.document.field_problem" = "„%@“: %@";
 "cli.profile.duplicate.abstract" = "Kopira profil pod novim imenom. Kopija se začne kot neaktivna.";
 "cli.profile.duplicate.done" = "Ustvarjeno „%@“ (%@).";
 "cli.profile.duplicate.name" = "Ime kopije.";

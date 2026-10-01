@@ -2,8 +2,9 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
-/// The `CONTROLLER` argument: a stable ID from `ojd controller list`, or `VVVV:PPPP` when exactly
-/// one connected controller has that vendor and product ID.
+/// The `CONTROLLER` argument: an ID from `ojd controller list`, or `VVVV:PPPP` when exactly one
+/// connected controller has that vendor and product ID. An ID lasts until the service restarts and
+/// can change when the controller is unplugged and replugged (see `RuntimeDeviceIdentity`).
 struct ControllerSelector: ExpressibleByArgument, Equatable, Sendable {
   enum Kind: Equatable, Sendable {
     case id(String)

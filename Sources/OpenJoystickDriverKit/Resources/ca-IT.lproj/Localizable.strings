@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ ja no està connectat.";
 "cli.error.json_plain" = "Feu servir --json o --plain, però no tots dos.";
 "cli.error.peer_rejected" = "El servei ha rebutjat aquest ojd perquè no està signat com l’aplicació. Executeu l’ojd que s’inclou a OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "El servei no ha respost en %@ segons. Torneu-ho a provar amb un --timeout més gran.";
+"cli.error.request_timeout" = "El servei no ha respost en %@. Torneu-ho a provar amb un --timeout més gran.";
 "cli.error.service_request_failed" = "El servei no ha completat la sol·licitud: %@. Comproveu-lo amb «ojd status».";
+"cli.error.duplicate_profile_name" = "Ja existeix un perfil amb aquest nom. 'ojd profile list' mostra tots els perfils.";
 "cli.error.service_timeout" = "El servei no ha respost a temps. Torneu-ho a provar o comproveu-lo amb «ojd status».";
 "cli.error.service_unavailable" = "El servei d’OpenJoystickDriver no s’està executant. Inicieu-lo amb «ojd service start».";
 "cli.error.timeout_value" = "--timeout necessita un nombre de segons superior a 0.";
 "cli.error.unexpected" = "Error inesperat: %@. Executeu «ojd diagnose --bundle PATH» i adjunteu el paquet a un informe d’error.";
+"cli.error.unknown_command" = "Ordre desconeguda «%@». Volíeu dir «%@»?";
 "cli.option.json" = "Imprimeix JSON a stdout.";
 "cli.option.no_color" = "No utilitza color.";
 "cli.option.no_input" = "No pregunta mai; falla si falta un valor.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS no ha pogut obrir %@. Obriu-lo des del Finder per veure’n el motiu.";
 "cli.service.stop.abstract" = "Atureu el servei i espereu fins que surti. Els comandaments connectats tornen a macOS.";
 "cli.service.stop.signal_failed" = "No s’ha pogut aturar el servei: %@. Sortiu d’OpenJoystickDriver des del seu menú.";
-"cli.service.stop.timeout" = "El servei no s’ha aturat en %@ segons. Torneu-ho a provar amb un --timeout més gran.";
+"cli.service.stop.timeout" = "El servei no s’ha aturat en %@. Torneu-ho a provar amb un --timeout més gran.";
 "cli.service.stopped" = "El servei està aturat.";
 "cli.service.wait.abstract" = "Espereu fins que el servei accepti sol·licituds. --timeout limita l’espera (5 segons per defecte).";
-"cli.service.wait.timeout" = "El servei no ha acceptat sol·licituds en %@ segons. Inicieu-lo amb «ojd service start» o torneu-ho a provar amb un --timeout més gran.";
+"cli.service.wait.timeout" = "El servei no ha acceptat sol·licituds en %@. Inicieu-lo amb «ojd service start» o torneu-ho a provar amb un --timeout més gran.";
 "cli.status.abstract" = "Mostra el servei, l’extensió, els permisos i els comandaments connectats.";
 "cli.status.discussion" = "Funciona quan el servei està aturat: l’informa com a aturat i surt amb 0.";
 "cli.status.label.accessibility" = "Accessibilitat";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "el servei no s’està executant";
 "cli.diagnose.soak" = "Mostreja també la memòria, els descriptors de fitxer i la CPU del servei durant aquest temps (1-86400).";
 "cli.diagnose.soak.not_requested" = "no sol·licitat; useu --soak SECONDS";
-"cli.diagnose.soak.progress" = "S’està mostrejant el servei durant %lld segons...";
+"cli.diagnose.soak.progress" = "S’està mostrejant el servei durant %@...";
 "cli.diagnose.soak_range" = "--soak ha d’estar entre 1 i 86400 segons.";
 "cli.diagnose.usb.failed" = "L’exploració USB ha fallat: %@. Concediu el monitoratge d’entrada a OpenJoystickDriver.";
-"cli.diagnose.usb.ok" = "%lld controladors USB específics del fabricant visibles";
+"cli.diagnose.usb.ok" = "Controladors USB específics del fabricant visibles: %lld";
 "cli.diagnose.virtual.disabled" = "comandament virtual desactivat";
 "cli.diagnose.virtual.error" = "error del comandament virtual: %@";
 "cli.diagnose.virtual.override" = "les substitucions de perfil desades no es poden llegir: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ està disponible (teniu la %@): %@";
 "cli.update.check.discussion" = "S’executa només quan ho demaneu; ojd mai comprova res pel seu compte. No descarrega ni instal·la res. Surt amb el codi 0 tant si hi ha una actualització com si no, i amb 1 si la comprovació falla.";
 "cli.update.check.failed" = "No s’han pogut cercar actualitzacions: %@. Comproveu la connexió de xarxa i torneu-ho a provar.";
+"cli.update.check.failed_reason" = "No s’han pogut cercar actualitzacions: %@.";
 "cli.update.check.incomplete" = "sense resultat";
 "cli.update.check.prerelease" = "Inclou les versions preliminars.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ està actualitzat (última versió: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Nom";
 "cli.controller.show.label.output_checks" = "Comprovacions de sortida";
 "cli.controller.show.label.ownership" = "Propietat";
+"cli.controller.show.ownership" = "ruta %@, físic %@, entrada HID %@";
 "cli.controller.show.label.protocol" = "Protocol";
 "cli.controller.show.label.record" = "Registre";
 "cli.controller.show.label.rumble" = "Vibració";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Amb --json, mostra un objecte JSON per línia. La palanca Y apunta cap amunt. Amb --first-press, mostra el primer control premut i surt; falla si --duration passa abans.";
 "cli.controller.watch.first_press" = "Mostra el primer control premut i després surt.";
 "cli.controller.watch.no_input" = "No s’ha rebut cap entrada.";
-"cli.controller.watch.no_press" = "No s’ha premut cap control en %@ segons.";
+"cli.controller.watch.no_press" = "No s’ha premut cap control en %@.";
 "cli.controller.watch.press_prompt" = "Premeu un control a %@ (%@).";
 "cli.controller.watch.started" = "Observant %@ (%@). Premeu els botons del comandament.";
 "cli.error.confirm_declined" = "No ha canviat res.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "No demana confirmació.";
 "cli.virtual.abstract" = "Mostra i tria el comandament virtual que OpenJoystickDriver publica per a un comandament.";
 "cli.virtual.changed" = "%@ ara publica %@ (%@).";
+"cli.virtual.stored" = "S’ha desat l’opció per a %@. S’aplicarà quan s’activi la sortida virtual.";
 "cli.virtual.discussion" = "Una elecció s’aplica a tots els comandaments del mateix model. 'reset' torna un model a la selecció automàtica.";
 "cli.virtual.error.failed" = "El comandament virtual de %@ no ha canviat (%@). Comproveu-ho amb 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Torna el model d’un comandament, o tots els models, a la selecció automàtica de comandament virtual.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "'%@' és actiu en un comandament connectat i ara en bloqueja tota l’entrada. Afegiu una assignació amb 'ojd binding set' o atureu el perfil amb 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Voleu eliminar totes les assignacions, combinacions, seqüències i capes de '%@'?";
 "cli.binding.clear.discussion" = "--all també elimina les combinacions, seqüències i capes del perfil, i demana confirmació en un terminal; en cas contrari necessita --force. Els ajustos de palanques, gallets, tàctil, moviment i sortida es mantenen.";
-"cli.binding.clear.done" = "S’han eliminat %lld assignacions de '%@'.";
-"cli.binding.clear.dry_run" = "S’eliminarien %lld assignacions de '%@'.";
+"cli.binding.clear.done" = "Assignacions eliminades de '%@': %lld.";
+"cli.binding.clear.dry_run" = "Assignacions que s’eliminarien de '%@': %lld.";
 "cli.binding.clear.missing" = "'%@' no té cap assignació per a %@. No ha canviat res.";
 "cli.binding.clear.sources" = "Les fonts de les quals s’han d’eliminar les assignacions.";
 "cli.binding.clear.usage" = "Indiqueu una o més fonts, o --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "S’eliminaria el perfil '%@'.";
 "cli.profile.discussion" = "Un perfil de reassignament converteix els controls d’un model de comandament en entrada de comandament, teclat i punter. PROFILE és l’ID o el nom d’un perfil de 'ojd profile list'. Canvieu les assignacions amb 'ojd binding' i tota la resta amb 'ojd profile edit'. Totes les ordres de perfil necessiten el servei.";
 "cli.profile.document_invalid" = "%@ no és un perfil vàlid: %@";
+"cli.document.not_json" = "no és un JSON vàlid";
+"cli.document.missing_field" = "falta el camp «%@»";
+"cli.document.wrong_type" = "el camp «%@» té un tipus incorrecte";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Copia un perfil amb un nom nou. La còpia comença inactiva.";
 "cli.profile.duplicate.done" = "S’ha creat '%@' (%@).";
 "cli.profile.duplicate.name" = "El nom de la còpia.";

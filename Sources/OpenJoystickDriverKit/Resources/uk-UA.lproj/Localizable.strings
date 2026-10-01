@@ -358,7 +358,7 @@
 "debug.outputNeedsAttention" = "Вивід контролера потребує уваги.";
 "debug.serviceUnavailable" = "Діагностика служби зараз недоступна.";
 "error.profileChanged" = "Цей профіль змінено в іншому місці. Перезавантажте або продовжте редагування.";
-"error.duplicateProfile" = "Профіль с таким именем вже існує.";
+"error.duplicateProfile" = "Профіль із такою назвою вже існує.";
 "error.profileMissing" = "Цей профіль больше недоступний.";
 "error.reviewAssignments" = "Перевірте призначення профілю и повторіть спробу.";
 "error.profileLibrarySave" = "Не вдалося зберегти библиотеку профілів.";
@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ більше не підключений.";
 "cli.error.json_plain" = "Використовуйте --json або --plain, але не обидва одночасно.";
 "cli.error.peer_rejected" = "Служба відхилила цей ojd, бо він підписаний інакше, ніж застосунок. Запустіть ojd із OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Служба не відповіла за %@ с. Повторіть із більшим значенням --timeout.";
+"cli.error.request_timeout" = "Служба не відповіла протягом %@. Повторіть із більшим значенням --timeout.";
 "cli.error.service_request_failed" = "Служба не виконала запит: %@. Перевірте її командою «ojd status».";
+"cli.error.duplicate_profile_name" = "Профіль із такою назвою вже існує. 'ojd profile list' показує всі профілі.";
 "cli.error.service_timeout" = "Служба не відповіла вчасно. Повторіть або перевірте її командою «ojd status».";
 "cli.error.service_unavailable" = "Служба OpenJoystickDriver не запущена. Запустіть її командою «ojd service start».";
 "cli.error.timeout_value" = "--timeout потребує число секунд більше за 0.";
 "cli.error.unexpected" = "Неочікувана помилка: %@. Виконайте «ojd diagnose --bundle PATH» і додайте пакет до звіту про помилку.";
+"cli.error.unknown_command" = "Невідома команда «%@». Можливо, ви мали на увазі «%@»?";
 "cli.option.json" = "Виводить JSON у stdout.";
 "cli.option.no_color" = "Не використовує колір.";
 "cli.option.no_input" = "Ніколи не запитує введення; завершується з помилкою, якщо значення не задано.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS не вдалося відкрити %@. Відкрийте його з Finder, щоб дізнатися причину.";
 "cli.service.stop.abstract" = "Зупиняє службу й чекає на її завершення. Підключені контролери повертаються до macOS.";
 "cli.service.stop.signal_failed" = "Не вдалося зупинити службу: %@. Завершіть OpenJoystickDriver через його меню.";
-"cli.service.stop.timeout" = "Служба не зупинилася за %@ с. Повторіть із більшим значенням --timeout.";
+"cli.service.stop.timeout" = "Служба не зупинилася протягом %@. Повторіть із більшим значенням --timeout.";
 "cli.service.stopped" = "Службу зупинено.";
 "cli.service.wait.abstract" = "Чекає, доки служба почне приймати запити. --timeout обмежує очікування (типово 5 секунд).";
-"cli.service.wait.timeout" = "Служба не почала приймати запити за %@ с. Запустіть її командою «ojd service start» або повторіть із більшим значенням --timeout.";
+"cli.service.wait.timeout" = "Служба не почала приймати запити протягом %@. Запустіть її командою «ojd service start» або повторіть із більшим значенням --timeout.";
 "cli.status.abstract" = "Показує службу, розширення, дозволи та підключені контролери.";
 "cli.status.discussion" = "Працює й за зупиненої служби: повідомляє, що службу зупинено, і завершується з кодом 0.";
 "cli.status.label.accessibility" = "Універсальний доступ";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "служба не запущена";
 "cli.diagnose.soak" = "Також вимірювати пам'ять, файлові дескриптори та CPU служби протягом цього часу (1-86400).";
 "cli.diagnose.soak.not_requested" = "не запитано; використайте --soak SECONDS";
-"cli.diagnose.soak.progress" = "Вимірювання служби протягом %lld с...";
+"cli.diagnose.soak.progress" = "Вимірювання служби протягом %@...";
 "cli.diagnose.soak_range" = "--soak має бути від 1 до 86400 секунд.";
 "cli.diagnose.usb.failed" = "Не вдалося просканувати USB: %@. Надайте OpenJoystickDriver доступ до моніторингу введення.";
 "cli.diagnose.usb.ok" = "Видимих USB-контролерів зі специфічним протоколом: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "Доступна версія OpenJoystickDriver %@ (у вас %@): %@";
 "cli.update.check.discussion" = "Виконується лише на ваш запит; ojd ніколи не перевіряє сам. Нічого не завантажує й не встановлює. Завершується з кодом 0, є оновлення чи ні, і з кодом 1, якщо перевірка не вдалася.";
 "cli.update.check.failed" = "Не вдалося перевірити оновлення: %@. Перевірте підключення до мережі й повторіть.";
+"cli.update.check.failed_reason" = "Не вдалося перевірити оновлення: %@.";
 "cli.update.check.incomplete" = "немає результату";
 "cli.update.check.prerelease" = "Враховувати попередні версії.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ — остання версія (останній випуск: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Назва";
 "cli.controller.show.label.output_checks" = "Перевірки виводу";
 "cli.controller.show.label.ownership" = "Належність";
+"cli.controller.show.ownership" = "маршрут: %@, фізичний доступ: %@, введення HID: %@";
 "cli.controller.show.label.protocol" = "Протокол";
 "cli.controller.show.label.record" = "Запис";
 "cli.controller.show.label.rumble" = "Вібрація";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "З --json виводить один об’єкт JSON на рядок. Вісь Y стіка спрямована вгору. З --first-press виводить перший натиснутий елемент керування й завершується; завершується помилкою, якщо --duration спливе раніше.";
 "cli.controller.watch.first_press" = "Виводить перший натиснутий елемент керування, а потім завершується.";
 "cli.controller.watch.no_input" = "Введення не отримано.";
-"cli.controller.watch.no_press" = "За %@ секунд не натиснуто жодного елемента керування.";
+"cli.controller.watch.no_press" = "Протягом %@ не натиснуто жодного елемента керування.";
 "cli.controller.watch.press_prompt" = "Натисніть елемент керування на %@ (%@).";
 "cli.controller.watch.started" = "Спостереження за %@ (%@). Натискайте кнопки контролера.";
 "cli.error.confirm_declined" = "Нічого не змінено.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Не запитувати підтвердження.";
 "cli.virtual.abstract" = "Показує й дає вибрати віртуальний геймпад, який OpenJoystickDriver публікує для контролера.";
 "cli.virtual.changed" = "%@ тепер публікує %@ (%@).";
+"cli.virtual.stored" = "Вибір для %@ збережено. Він набуде чинності після ввімкнення віртуального виводу.";
 "cli.virtual.discussion" = "Вибір застосовується до кожного контролера тієї самої моделі. 'reset' повертає модель до автоматичного вибору.";
 "cli.virtual.error.failed" = "Віртуальний геймпад для %@ не змінився (%@). Перевірте через 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Повертає модель контролера або всі моделі до автоматичного вибору віртуального геймпада.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "Профіль «%@» активний на під’єднаному контролері й тепер блокує весь його ввід. Додайте прив’язку за допомогою 'ojd binding set' або зупиніть профіль за допомогою 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Вилучити всі прив’язки, акорди, послідовності й шари з профілю «%@»?";
 "cli.binding.clear.discussion" = "--all також вилучає акорди, послідовності й шари профілю та запитує підтвердження в терміналі; без термінала потрібен --force. Налаштування стиків, тригерів, дотиків, руху й виводу зберігаються.";
-"cli.binding.clear.done" = "Вилучено прив’язок: %lld (профіль «%@»).";
-"cli.binding.clear.dry_run" = "Було б вилучено прив’язок: %lld (профіль «%@»).";
+"cli.binding.clear.done" = "Прив’язки, вилучені з профілю «%@»: %lld.";
+"cli.binding.clear.dry_run" = "Прив’язки, які були б вилучені з профілю «%@»: %lld.";
 "cli.binding.clear.missing" = "У профілі «%@» немає прив’язки для %@. Нічого не змінено.";
 "cli.binding.clear.sources" = "Джерела, прив’язки яких потрібно вилучити.";
 "cli.binding.clear.usage" = "Вкажіть одне або кілька джерел чи --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Профіль «%@» було б видалено.";
 "cli.profile.discussion" = "Профіль перепризначення перетворює елементи керування однієї моделі контролера на ввід геймпада, клавіатури й вказівника. PROFILE — це ID або ім’я профілю з 'ojd profile list'. Прив’язки змінюються командою 'ojd binding', а все інше — командою 'ojd profile edit'. Кожна команда профілю потребує служби.";
 "cli.profile.document_invalid" = "%@ не є дійсним профілем: %@";
+"cli.document.not_json" = "це недійсний JSON";
+"cli.document.missing_field" = "поле «%@» відсутнє";
+"cli.document.wrong_type" = "поле «%@» має неправильний тип";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Скопіювати профіль під новим іменем. Копія створюється неактивною.";
 "cli.profile.duplicate.done" = "Створено профіль «%@» (%@).";
 "cli.profile.duplicate.name" = "Ім’я копії.";

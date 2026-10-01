@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ अब जुड़ा नहीं है।";
 "cli.error.json_plain" = "--json या --plain में से किसी एक का उपयोग करें, दोनों का नहीं।";
 "cli.error.peer_rejected" = "सेवा ने इस ojd को अस्वीकार कर दिया, क्योंकि यह ऐप की तरह साइन नहीं किया गया है। OpenJoystickDriver.app के अंदर मौजूद ojd चलाएँ।";
-"cli.error.request_timeout" = "सेवा ने %@ सेकंड में उत्तर नहीं दिया। बड़े --timeout के साथ फिर से प्रयास करें।";
+"cli.error.request_timeout" = "सेवा ने %@ में उत्तर नहीं दिया। बड़े --timeout के साथ फिर से प्रयास करें।";
 "cli.error.service_request_failed" = "सेवा अनुरोध पूरा नहीं कर सकी: %@। इसे “ojd status” से जाँचें।";
+"cli.error.duplicate_profile_name" = "उस नाम की प्रोफ़ाइल पहले से मौजूद है। 'ojd profile list' सभी प्रोफ़ाइल दिखाता है।";
 "cli.error.service_timeout" = "सेवा ने समय पर उत्तर नहीं दिया। फिर से प्रयास करें, या इसे “ojd status” से जाँचें।";
 "cli.error.service_unavailable" = "OpenJoystickDriver सेवा चालू नहीं है। इसे “ojd service start” से शुरू करें।";
 "cli.error.timeout_value" = "--timeout के लिए 0 से अधिक सेकंड की संख्या चाहिए।";
 "cli.error.unexpected" = "अप्रत्याशित त्रुटि: %@। “ojd diagnose --bundle PATH” चलाएँ और बंडल को बग रिपोर्ट के साथ संलग्न करें।";
+"cli.error.unknown_command" = "अज्ञात कमांड “%@”। क्या आपका मतलब “%@” था?";
 "cli.option.json" = "stdout पर JSON प्रिंट करें।";
 "cli.option.no_color" = "रंग का उपयोग न करें।";
 "cli.option.no_input" = "कभी प्रॉम्प्ट न करें; कोई मान न होने पर विफल हों।";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS %@ को नहीं खोल सका। कारण देखने के लिए इसे Finder से खोलें।";
 "cli.service.stop.abstract" = "सेवा बंद करें और उसके समाप्त होने तक प्रतीक्षा करें। कनेक्ट किए गए कंट्रोलर macOS को लौट जाते हैं।";
 "cli.service.stop.signal_failed" = "सेवा बंद नहीं की जा सकी: %@। OpenJoystickDriver को उसके मेनू से बंद करें।";
-"cli.service.stop.timeout" = "सेवा %@ सेकंड में बंद नहीं हुई। बड़े --timeout के साथ फिर से प्रयास करें।";
+"cli.service.stop.timeout" = "सेवा %@ में बंद नहीं हुई। बड़े --timeout के साथ फिर से प्रयास करें।";
 "cli.service.stopped" = "सेवा बंद है।";
 "cli.service.wait.abstract" = "सेवा के अनुरोध स्वीकार करने तक प्रतीक्षा करें। --timeout प्रतीक्षा की सीमा तय करता है (डिफ़ॉल्ट 5 सेकंड)।";
-"cli.service.wait.timeout" = "सेवा ने %@ सेकंड में अनुरोध स्वीकार नहीं किए। इसे “ojd service start” से शुरू करें, या बड़े --timeout के साथ फिर से प्रयास करें।";
+"cli.service.wait.timeout" = "सेवा ने %@ में अनुरोध स्वीकार नहीं किए। इसे “ojd service start” से शुरू करें, या बड़े --timeout के साथ फिर से प्रयास करें।";
 "cli.status.abstract" = "सेवा, एक्सटेंशन, अनुमतियाँ और कनेक्ट किए गए कंट्रोलर दिखाएँ।";
 "cli.status.discussion" = "सेवा बंद होने पर भी काम करता है: यह सेवा को बंद बताता है और 0 के साथ बाहर निकलता है।";
 "cli.status.label.accessibility" = "ऐक्सेसिबिलिटी";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "सर्विस चल नहीं रही";
 "cli.diagnose.soak" = "इतने समय तक सर्विस की मेमोरी, फ़ाइल डिस्क्रिप्टर और CPU का भी सैंपल लें (1-86400)।";
 "cli.diagnose.soak.not_requested" = "माँगा नहीं गया; --soak SECONDS इस्तेमाल करें";
-"cli.diagnose.soak.progress" = "सर्विस का %lld सेकंड तक सैंपल लिया जा रहा है...";
+"cli.diagnose.soak.progress" = "सर्विस का %@ तक सैंपल लिया जा रहा है...";
 "cli.diagnose.soak_range" = "--soak 1 और 86400 सेकंड के बीच होना चाहिए।";
 "cli.diagnose.usb.failed" = "USB स्कैन विफल रहा: %@। OpenJoystickDriver को इनपुट मॉनिटरिंग की अनुमति दें।";
-"cli.diagnose.usb.ok" = "%lld वेंडर-स्पेसिफ़िक USB कंट्रोलर दिख रहे हैं";
+"cli.diagnose.usb.ok" = "दिखने वाले वेंडर-स्पेसिफ़िक USB कंट्रोलर: %lld";
 "cli.diagnose.virtual.disabled" = "वर्चुअल गेमपैड अक्षम है";
 "cli.diagnose.virtual.error" = "वर्चुअल गेमपैड में त्रुटि: %@";
 "cli.diagnose.virtual.override" = "सहेजे गए प्रोफ़ाइल ओवरराइड पढ़े नहीं जा सकते: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ उपलब्ध है (आपके पास %@ है): %@";
 "cli.update.check.discussion" = "केवल तब चलता है जब आप कहते हैं; ojd अपने आप कभी नहीं जाँचता। यह कुछ डाउनलोड या इंस्टॉल नहीं करता। अपडेट हो या न हो, कोड 0 के साथ बाहर निकलता है, और जाँच विफल होने पर 1 के साथ।";
 "cli.update.check.failed" = "अपडेट जाँचे नहीं जा सके: %@। अपना नेटवर्क कनेक्शन जाँचें और दोबारा कोशिश करें।";
+"cli.update.check.failed_reason" = "अपडेट जाँचे नहीं जा सके: %@।";
 "cli.update.check.incomplete" = "कोई नतीजा नहीं";
 "cli.update.check.prerelease" = "प्री-रिलीज़ वर्शन शामिल करें।";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ अप-टू-डेट है (नवीनतम रिलीज़: %@)।";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "नाम";
 "cli.controller.show.label.output_checks" = "आउटपुट जाँच";
 "cli.controller.show.label.ownership" = "स्वामित्व";
+"cli.controller.show.ownership" = "रूट %@, भौतिक %@, HID इनपुट %@";
 "cli.controller.show.label.protocol" = "प्रोटोकॉल";
 "cli.controller.show.label.record" = "रिकॉर्ड";
 "cli.controller.show.label.rumble" = "रंबल";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "--json के साथ, हर पंक्ति में एक JSON ऑब्जेक्ट प्रिंट करता है। स्टिक का Y ऊपर की ओर है। --first-press के साथ, दबाया गया पहला कंट्रोल प्रिंट करके बाहर निकल जाता है; अगर --duration पहले पूरी हो जाए तो विफल होता है।";
 "cli.controller.watch.first_press" = "दबाया गया पहला कंट्रोल प्रिंट करें, फिर बाहर निकलें।";
 "cli.controller.watch.no_input" = "कोई इनपुट नहीं मिला।";
-"cli.controller.watch.no_press" = "%@ सेकंड में कोई कंट्रोल नहीं दबाया गया।";
+"cli.controller.watch.no_press" = "%@ में कोई कंट्रोल नहीं दबाया गया।";
 "cli.controller.watch.press_prompt" = "%@ (%@) पर कोई कंट्रोल दबाएँ।";
 "cli.controller.watch.started" = "%@ (%@) देखा जा रहा है। कंट्रोलर के बटन दबाएँ।";
 "cli.error.confirm_declined" = "कुछ नहीं बदला।";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "पुष्टि के लिए न पूछें।";
 "cli.virtual.abstract" = "OpenJoystickDriver किसी कंट्रोलर के लिए जो वर्चुअल गेमपैड प्रकाशित करता है, उसे दिखाएँ और चुनें।";
 "cli.virtual.changed" = "%@ अब %@ (%@) प्रकाशित करता है।";
+"cli.virtual.stored" = "%@ के लिए चयन सहेजा गया है। यह वर्चुअल आउटपुट सक्षम होने पर लागू होगा।";
 "cli.virtual.discussion" = "चुनाव एक ही मॉडल के हर कंट्रोलर पर लागू होता है। 'reset' किसी मॉडल को स्वचालित चयन पर लौटाता है।";
 "cli.virtual.error.failed" = "%@ का वर्चुअल गेमपैड नहीं बदला (%@)। 'ojd virtual show' से जाँचें।";
 "cli.virtual.reset.abstract" = "किसी कंट्रोलर मॉडल, या हर मॉडल, को स्वचालित वर्चुअल गेमपैड चयन पर लौटाएँ।";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "“%@” एक कनेक्टेड कंट्रोलर पर सक्रिय है और अब उसका सारा इनपुट रोकती है। 'ojd binding set' से एक असाइनमेंट जोड़ें, या 'ojd profile deactivate' से प्रोफ़ाइल रोकें।";
 "cli.binding.clear.confirm" = "“%@” से सभी असाइनमेंट, कॉर्ड, सीक्वेंस और लेयर हटाएँ?";
 "cli.binding.clear.discussion" = "--all प्रोफ़ाइल के कॉर्ड, सीक्वेंस और लेयर भी हटाता है, और टर्मिनल पर पुष्टि माँगता है; अन्यथा इसे --force चाहिए। स्टिक, ट्रिगर, टच, मोशन और आउटपुट सेटिंग बनी रहती हैं।";
-"cli.binding.clear.done" = "%lld असाइनमेंट “%@” से हटाए गए।";
-"cli.binding.clear.dry_run" = "%lld असाइनमेंट “%@” से हटाए जाएँगे।";
+"cli.binding.clear.done" = "“%@” से हटाए गए असाइनमेंट: %lld।";
+"cli.binding.clear.dry_run" = "“%@” से हटाए जाने वाले असाइनमेंट: %lld।";
 "cli.binding.clear.missing" = "“%@” में %@ के लिए कोई असाइनमेंट नहीं है। कुछ नहीं बदला।";
 "cli.binding.clear.sources" = "वे स्रोत जिनके असाइनमेंट हटाने हैं।";
 "cli.binding.clear.usage" = "एक या अधिक स्रोत दें, या --all दें।";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "प्रोफ़ाइल “%@” हटाई जाएगी।";
 "cli.profile.discussion" = "रीमैपिंग प्रोफ़ाइल एक कंट्रोलर मॉडल के नियंत्रणों को गेमपैड, कीबोर्ड और पॉइंटर इनपुट में बदलती है। PROFILE 'ojd profile list' से प्रोफ़ाइल की ID या नाम है। असाइनमेंट 'ojd binding' से बदलें, और बाकी सब कुछ 'ojd profile edit' से। हर प्रोफ़ाइल कमांड को सेवा चाहिए।";
 "cli.profile.document_invalid" = "%@ मान्य प्रोफ़ाइल नहीं है: %@";
+"cli.document.not_json" = "यह मान्य JSON नहीं है";
+"cli.document.missing_field" = "फ़ील्ड “%@” मौजूद नहीं है";
+"cli.document.wrong_type" = "फ़ील्ड “%@” का प्रकार गलत है";
+"cli.document.field_problem" = "“%@”: %@";
 "cli.profile.duplicate.abstract" = "प्रोफ़ाइल को नए नाम से कॉपी करें। कॉपी निष्क्रिय शुरू होती है।";
 "cli.profile.duplicate.done" = "“%@” (%@) बनाई गई।";
 "cli.profile.duplicate.name" = "कॉपी का नाम।";

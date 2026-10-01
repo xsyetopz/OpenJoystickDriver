@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ is nie meer verbind nie.";
 "cli.error.json_plain" = "Gebruik óf --json óf --plain, nie albei nie.";
 "cli.error.peer_rejected" = "Die diens het hierdie ojd van die hand gewys, omdat dit nie soos die toepassing onderteken is nie. Voer die ojd uit wat in OpenJoystickDriver.app saamgestuur word.";
-"cli.error.request_timeout" = "Die diens het nie binne %@ sekondes gereageer nie. Probeer weer met ’n groter --timeout.";
+"cli.error.request_timeout" = "Die diens het nie binne %@ gereageer nie. Probeer weer met ’n groter --timeout.";
 "cli.error.service_request_failed" = "Die diens het nie die versoek voltooi nie: %@. Kontroleer dit met „ojd status“.";
+"cli.error.duplicate_profile_name" = "’n Profiel met daardie naam bestaan al. „ojd profile list“ wys elke profiel.";
 "cli.error.service_timeout" = "Die diens het nie betyds gereageer nie. Probeer weer, of kontroleer dit met „ojd status“.";
 "cli.error.service_unavailable" = "Die OpenJoystickDriver-diens loop nie. Begin dit met „ojd service start“.";
 "cli.error.timeout_value" = "--timeout vereis ’n getal sekondes groter as 0.";
 "cli.error.unexpected" = "Onverwagte fout: %@. Voer „ojd diagnose --bundle PATH“ uit en heg die bundel aan ’n foutverslag aan.";
+"cli.error.unknown_command" = "Onbekende opdrag „%@“. Bedoel jy „%@“?";
 "cli.option.json" = "Druk JSON na stdout.";
 "cli.option.no_color" = "Moenie kleur gebruik nie.";
 "cli.option.no_input" = "Moet nooit vra nie; misluk as ’n waarde ontbreek.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS kon %@ nie oopmaak nie. Maak dit vanuit Finder oop om te sien hoekom.";
 "cli.service.stop.abstract" = "Stop die diens en wag totdat dit afsluit. Gekoppelde kontroleerders keer terug na macOS.";
 "cli.service.stop.signal_failed" = "Kon nie die diens stop nie: %@. Verlaat OpenJoystickDriver vanaf sy menu.";
-"cli.service.stop.timeout" = "Die diens het nie binne %@ sekondes gestop nie. Probeer weer met ’n groter --timeout.";
+"cli.service.stop.timeout" = "Die diens het nie binne %@ gestop nie. Probeer weer met ’n groter --timeout.";
 "cli.service.stopped" = "Die diens is gestop.";
 "cli.service.wait.abstract" = "Wag totdat die diens versoeke aanvaar. --timeout begrens die wagtyd (verstek 5 sekondes).";
-"cli.service.wait.timeout" = "Die diens het nie binne %@ sekondes versoeke aanvaar nie. Begin dit met „ojd service start“, of probeer weer met ’n groter --timeout.";
+"cli.service.wait.timeout" = "Die diens het nie binne %@ versoeke aanvaar nie. Begin dit met „ojd service start“, of probeer weer met ’n groter --timeout.";
 "cli.status.abstract" = "Wys die diens, uitbreiding, toestemmings en gekoppelde kontroleerders.";
 "cli.status.discussion" = "Werk wanneer die diens gestop is: dit meld die diens as gestop en sluit af met 0.";
 "cli.status.label.accessibility" = "Toeganklikheid";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "diens loop nie";
 "cli.diagnose.soak" = "Monster ook die diens se geheue, lêerbeskrywers en CPU vir hierdie tydsduur (1-86400).";
 "cli.diagnose.soak.not_requested" = "nie gevra nie; gebruik --soak SEKONDES";
-"cli.diagnose.soak.progress" = "Monster tans die diens vir %lld sekondes...";
+"cli.diagnose.soak.progress" = "Monster tans die diens vir %@...";
 "cli.diagnose.soak_range" = "--soak moet tussen 1 en 86400 sekondes wees.";
 "cli.diagnose.usb.failed" = "USB-skandering het misluk: %@. Verleen Input Monitoring aan OpenJoystickDriver.";
-"cli.diagnose.usb.ok" = "%lld verkeerderspesifieke USB-kontroleerders sigbaar";
+"cli.diagnose.usb.ok" = "Sigbare verkeerderspesifieke USB-kontroleerders: %lld";
 "cli.diagnose.virtual.disabled" = "virtuele kontroleerder gedeaktiveer";
 "cli.diagnose.virtual.error" = "virtuele kontroleerderfout: %@";
 "cli.diagnose.virtual.override" = "gestoorde profieloorheersings is onleesbaar: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ is beskikbaar (jy het %@): %@";
 "cli.update.check.discussion" = "Loop net wanneer jy dit vra; ojd kyk nooit self nie. Dit laai niks af of installeer niks nie. Eindig met kode 0 of daar 'n opdatering is of nie, en met 1 wanneer die kontrole misluk.";
 "cli.update.check.failed" = "Kon nie vir opdaterings kyk nie: %@. Kontroleer jou netwerkverbinding en probeer weer.";
+"cli.update.check.failed_reason" = "Kon nie vir opdaterings kyk nie: %@.";
 "cli.update.check.incomplete" = "geen resultaat";
 "cli.update.check.prerelease" = "Sluit voorvrystellingsweergawes in.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ is op datum (jongste vrystelling: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Naam";
 "cli.controller.show.label.output_checks" = "Uitvoertoetse";
 "cli.controller.show.label.ownership" = "Eienaarskap";
+"cli.controller.show.ownership" = "roete %@, fisies %@, HID-invoer %@";
 "cli.controller.show.label.protocol" = "Protokol";
 "cli.controller.show.label.record" = "Rekord";
 "cli.controller.show.label.rumble" = "Vibrasie";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Met --json word een JSON-voorwerp per reël gedruk. Stok-Y wys op. Met --first-press word die eerste kontrole wat gedruk word, gedruk en dit sluit af; dit misluk as --duration eerste verstryk.";
 "cli.controller.watch.first_press" = "Druk die eerste kontrole wat gedruk word, en sluit dan af.";
 "cli.controller.watch.no_input" = "Geen toevoer ontvang nie.";
-"cli.controller.watch.no_press" = "Geen kontrole is binne %@ sekondes gedruk nie.";
+"cli.controller.watch.no_press" = "Geen kontrole is binne %@ gedruk nie.";
 "cli.controller.watch.press_prompt" = "Druk ’n kontrole op %@ (%@).";
 "cli.controller.watch.started" = "Hou %@ (%@) dop. Druk knoppies op die kontroleerder.";
 "cli.error.confirm_declined" = "Niks het verander nie.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Moenie om bevestiging vra nie.";
 "cli.virtual.abstract" = "Wys en kies die virtuele gamepad wat OpenJoystickDriver vir ’n kontroleerder publiseer.";
 "cli.virtual.changed" = "%@ publiseer nou %@ (%@).";
+"cli.virtual.stored" = "Die keuse vir %@ is gestoor. Dit geld sodra virtuele uitset geaktiveer is.";
 "cli.virtual.discussion" = "’n Keuse geld vir elke kontroleerder van dieselfde model. 'reset' bring ’n model terug na outomatiese keuse.";
 "cli.virtual.error.failed" = "Die virtuele gamepad vir %@ het nie verander nie (%@). Gaan dit na met 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Bring ’n kontroleerder se model, of elke model, terug na outomatiese keuse van virtuele gamepad.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "„%@“ is aktief op ’n gekoppelde kontroleerder en blokkeer nou al sy invoer. Voeg ’n binding by met 'ojd binding set', of stop die profiel met 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Verwyder elke binding, akkoord, reeks en laag uit „%@“?";
 "cli.binding.clear.discussion" = "--all verwyder ook die profiel se akkoorde, reekse en lae, en vra op ’n terminaal om bevestiging; andersins is --force nodig. Stok-, sneller-, raak-, bewegings- en afvoerinstellings bly behoue.";
-"cli.binding.clear.done" = "%lld bindings uit „%@“ verwyder.";
-"cli.binding.clear.dry_run" = "Sou %lld bindings uit „%@“ verwyder.";
+"cli.binding.clear.done" = "Bindings verwyder uit „%@“: %lld.";
+"cli.binding.clear.dry_run" = "Bindings wat verwyder sou word uit „%@“: %lld.";
 "cli.binding.clear.missing" = "„%@“ het geen binding vir %@ nie. Niks het verander nie.";
 "cli.binding.clear.sources" = "Die bronne wie se bindings verwyder moet word.";
 "cli.binding.clear.usage" = "Gee een of meer bronne, of --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Sou die profiel „%@“ skrap.";
 "cli.profile.discussion" = "’n Toewysingsprofiel skakel die beheer van een kontroleerdermodel om in gamepad-, sleutelbord- en wyserinvoer. PROFILE is ’n profiel-ID of -naam uit „ojd profile list“. Verander bindings met „ojd binding“ en alles anders met „ojd profile edit“. Elke profielopdrag benodig die diens.";
 "cli.profile.document_invalid" = "%@ is nie ’n geldige profiel nie: %@";
+"cli.document.not_json" = "dit is nie geldige JSON nie";
+"cli.document.missing_field" = "die veld „%@“ ontbreek";
+"cli.document.wrong_type" = "die veld „%@“ het die verkeerde tipe";
+"cli.document.field_problem" = "„%@“: %@";
 "cli.profile.duplicate.abstract" = "Kopieer ’n profiel onder ’n nuwe naam. Die kopie begin onaktief.";
 "cli.profile.duplicate.done" = "„%@“ (%@) geskep.";
 "cli.profile.duplicate.name" = "Die naam van die kopie.";

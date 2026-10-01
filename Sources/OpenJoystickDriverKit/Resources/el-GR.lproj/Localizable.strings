@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ Δεν συνδέεται πλέον.";
 "cli.error.json_plain" = "Χρησιμοποιήστε είτε --json είτε --plain, όχι και τα δύο.";
 "cli.error.peer_rejected" = "Η υπηρεσία απέρριψε αυτό το ojd, επειδή δεν είναι υπογεγραμμένο όπως η εφαρμογή. Εκτελέστε το ojd που περιλαμβάνεται στο OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Η υπηρεσία δεν απάντησε μέσα σε %@ δευτερόλεπτα. Δοκιμάστε ξανά με μεγαλύτερο --timeout.";
+"cli.error.request_timeout" = "Η υπηρεσία δεν απάντησε μέσα σε %@. Δοκιμάστε ξανά με μεγαλύτερο --timeout.";
 "cli.error.service_request_failed" = "Η υπηρεσία δεν ολοκλήρωσε το αίτημα: %@. Ελέγξτε την με «ojd status».";
+"cli.error.duplicate_profile_name" = "Υπάρχει ήδη προφίλ με αυτό το όνομα. Το «ojd profile list» δείχνει κάθε προφίλ.";
 "cli.error.service_timeout" = "Η υπηρεσία δεν απάντησε εγκαίρως. Δοκιμάστε ξανά ή ελέγξτε την με «ojd status».";
 "cli.error.service_unavailable" = "Η υπηρεσία OpenJoystickDriver δεν εκτελείται. Ξεκινήστε την με «ojd service start».";
 "cli.error.timeout_value" = "Το --timeout απαιτεί αριθμό δευτερολέπτων μεγαλύτερο από 0.";
 "cli.error.unexpected" = "Μη αναμενόμενο σφάλμα: %@. Εκτελέστε «ojd diagnose --bundle PATH» και επισυνάψτε το πακέτο σε μια αναφορά σφάλματος.";
+"cli.error.unknown_command" = "Άγνωστη εντολή «%@». Μήπως εννοούσατε «%@»;";
 "cli.option.json" = "Εκτύπωση JSON στο stdout.";
 "cli.option.no_color" = "Να μη χρησιμοποιούνται χρώματα.";
 "cli.option.no_input" = "Χωρίς ερωτήσεις· αποτυχία όταν λείπει μια τιμή.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "Το macOS δεν μπόρεσε να ανοίξει το %@. Ανοίξτε το από το Finder για να δείτε τον λόγο.";
 "cli.service.stop.abstract" = "Διακοπή της υπηρεσίας και αναμονή μέχρι να τερματιστεί. Τα συνδεδεμένα χειριστήρια επιστρέφουν στο macOS.";
 "cli.service.stop.signal_failed" = "Δεν ήταν δυνατή η διακοπή της υπηρεσίας: %@. Τερματίστε το OpenJoystickDriver από το μενού του.";
-"cli.service.stop.timeout" = "Η υπηρεσία δεν σταμάτησε μέσα σε %@ δευτερόλεπτα. Δοκιμάστε ξανά με μεγαλύτερο --timeout.";
+"cli.service.stop.timeout" = "Η υπηρεσία δεν σταμάτησε μέσα σε %@. Δοκιμάστε ξανά με μεγαλύτερο --timeout.";
 "cli.service.stopped" = "Η υπηρεσία έχει σταματήσει.";
 "cli.service.wait.abstract" = "Αναμονή μέχρι η υπηρεσία να δέχεται αιτήματα. Το --timeout περιορίζει την αναμονή (προεπιλογή 5 δευτερόλεπτα).";
-"cli.service.wait.timeout" = "Η υπηρεσία δεν δέχτηκε αιτήματα μέσα σε %@ δευτερόλεπτα. Ξεκινήστε την με «ojd service start» ή δοκιμάστε ξανά με μεγαλύτερο --timeout.";
+"cli.service.wait.timeout" = "Η υπηρεσία δεν δέχτηκε αιτήματα μέσα σε %@. Ξεκινήστε την με «ojd service start» ή δοκιμάστε ξανά με μεγαλύτερο --timeout.";
 "cli.status.abstract" = "Εμφάνιση της υπηρεσίας, της επέκτασης, των αδειών και των συνδεδεμένων χειριστηρίων.";
 "cli.status.discussion" = "Λειτουργεί και όταν η υπηρεσία έχει σταματήσει: την αναφέρει ως σταματημένη και τερματίζει με 0.";
 "cli.status.label.accessibility" = "Προσβασιμότητα";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "η υπηρεσία δεν εκτελείται";
 "cli.diagnose.soak" = "Παίρνει επίσης δείγματα από τη μνήμη, τους περιγραφείς αρχείων και τη CPU της υπηρεσίας για τόσο χρόνο (1-86400).";
 "cli.diagnose.soak.not_requested" = "δεν ζητήθηκε· χρησιμοποιήστε --soak SECONDS";
-"cli.diagnose.soak.progress" = "Δειγματοληψία της υπηρεσίας για %lld δευτερόλεπτα…";
+"cli.diagnose.soak.progress" = "Δειγματοληψία της υπηρεσίας για %@…";
 "cli.diagnose.soak_range" = "Το --soak πρέπει να είναι μεταξύ 1 και 86400 δευτερολέπτων.";
 "cli.diagnose.usb.failed" = "Η σάρωση USB απέτυχε: %@. Παραχωρήστε στο OpenJoystickDriver την Παρακολούθηση εισόδου.";
-"cli.diagnose.usb.ok" = "%lld χειριστήρια USB ειδικά για τον κατασκευαστή είναι ορατά";
+"cli.diagnose.usb.ok" = "Ορατά χειριστήρια USB ειδικά για τον κατασκευαστή: %lld";
 "cli.diagnose.virtual.disabled" = "το εικονικό gamepad είναι απενεργοποιημένο";
 "cli.diagnose.virtual.error" = "σφάλμα εικονικού gamepad: %@";
 "cli.diagnose.virtual.override" = "οι αποθηκευμένες παρακάμψεις προφίλ δεν είναι αναγνώσιμες: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "Το OpenJoystickDriver %@ είναι διαθέσιμο (έχετε το %@): %@";
 "cli.update.check.discussion" = "Εκτελείται μόνο όταν το ζητήσετε· το ojd δεν ελέγχει ποτέ μόνο του. Δεν κατεβάζει και δεν εγκαθιστά τίποτα. Τερματίζει με κωδικό 0 είτε υπάρχει ενημέρωση είτε όχι, και με 1 όταν ο έλεγχος αποτύχει.";
 "cli.update.check.failed" = "Δεν ήταν δυνατός ο έλεγχος για ενημερώσεις: %@. Ελέγξτε τη σύνδεσή σας στο δίκτυο και δοκιμάστε ξανά.";
+"cli.update.check.failed_reason" = "Δεν ήταν δυνατός ο έλεγχος για ενημερώσεις: %@.";
 "cli.update.check.incomplete" = "κανένα αποτέλεσμα";
 "cli.update.check.prerelease" = "Συμπερίληψη προδημοσιευμένων εκδόσεων.";
 "cli.update.check.up_to_date" = "Το OpenJoystickDriver %@ είναι ενημερωμένο (τελευταία έκδοση: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Όνομα";
 "cli.controller.show.label.output_checks" = "Έλεγχοι εξόδου";
 "cli.controller.show.label.ownership" = "Κυριότητα";
+"cli.controller.show.ownership" = "διαδρομή %@, φυσικό %@, είσοδος HID %@";
 "cli.controller.show.label.protocol" = "Πρωτόκολλο";
 "cli.controller.show.label.record" = "Εγγραφή";
 "cli.controller.show.label.rumble" = "Δόνηση";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Με --json, εκτυπώνει ένα αντικείμενο JSON ανά γραμμή. Ο άξονας Y του μοχλού δείχνει προς τα πάνω. Με --first-press, εκτυπώνει το πρώτο στοιχείο ελέγχου που πατήθηκε και τερματίζει· αποτυγχάνει αν περάσει πρώτα το --duration.";
 "cli.controller.watch.first_press" = "Εκτύπωση του πρώτου στοιχείου ελέγχου που πατήθηκε και έξοδος.";
 "cli.controller.watch.no_input" = "Δεν ελήφθη είσοδος.";
-"cli.controller.watch.no_press" = "Δεν πατήθηκε κανένα στοιχείο ελέγχου μέσα σε %@ δευτερόλεπτα.";
+"cli.controller.watch.no_press" = "Δεν πατήθηκε κανένα στοιχείο ελέγχου μέσα σε %@.";
 "cli.controller.watch.press_prompt" = "Πατήστε ένα στοιχείο ελέγχου στο %@ (%@).";
 "cli.controller.watch.started" = "Παρακολούθηση του %@ (%@). Πατήστε κουμπιά του χειριστηρίου.";
 "cli.error.confirm_declined" = "Δεν άλλαξε τίποτα.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Να μη ζητηθεί επιβεβαίωση.";
 "cli.virtual.abstract" = "Εμφανίζει και επιλέγει το εικονικό gamepad που δημοσιεύει το OpenJoystickDriver για ένα χειριστήριο.";
 "cli.virtual.changed" = "Το %@ δημοσιεύει τώρα %@ (%@).";
+"cli.virtual.stored" = "Η επιλογή για το %@ αποθηκεύτηκε. Θα εφαρμοστεί μόλις ενεργοποιηθεί η εικονική έξοδος.";
 "cli.virtual.discussion" = "Η επιλογή ισχύει για κάθε χειριστήριο του ίδιου μοντέλου. Το «reset» επαναφέρει ένα μοντέλο στην αυτόματη επιλογή.";
 "cli.virtual.error.failed" = "Το εικονικό gamepad για το %@ δεν άλλαξε (%@). Ελέγξτε με «ojd virtual show».";
 "cli.virtual.reset.abstract" = "Επαναφέρει το μοντέλο ενός χειριστηρίου, ή όλα τα μοντέλα, στην αυτόματη επιλογή εικονικού gamepad.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "Το «%@» είναι ενεργό σε συνδεδεμένο χειριστήριο και πλέον αποκλείει κάθε είσοδό του. Προσθέστε αντιστοίχιση με «ojd binding set» ή σταματήστε το προφίλ με «ojd profile deactivate».";
 "cli.binding.clear.confirm" = "Να αφαιρεθούν όλες οι αντιστοιχίσεις, οι συνδυασμοί, οι ακολουθίες και τα επίπεδα από το «%@»;";
 "cli.binding.clear.discussion" = "Το --all αφαιρεί επίσης τους συνδυασμούς, τις ακολουθίες και τα επίπεδα του προφίλ και ζητά επιβεβαίωση σε τερματικό· διαφορετικά απαιτεί --force. Οι ρυθμίσεις μοχλών, σκανδάλων, αφής, κίνησης και εξόδου παραμένουν.";
-"cli.binding.clear.done" = "Αφαιρέθηκαν %lld αντιστοιχίσεις από το «%@».";
-"cli.binding.clear.dry_run" = "Θα αφαιρούνταν %lld αντιστοιχίσεις από το «%@».";
+"cli.binding.clear.done" = "Αντιστοιχίσεις που αφαιρέθηκαν από το «%@»: %lld.";
+"cli.binding.clear.dry_run" = "Αντιστοιχίσεις που θα αφαιρούνταν από το «%@»: %lld.";
 "cli.binding.clear.missing" = "Το «%@» δεν έχει αντιστοίχιση για %@. Δεν άλλαξε τίποτα.";
 "cli.binding.clear.sources" = "Οι πηγές των οποίων οι αντιστοιχίσεις θα αφαιρεθούν.";
 "cli.binding.clear.usage" = "Δώστε μία ή περισσότερες πηγές ή --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Θα διαγραφόταν το προφίλ «%@».";
 "cli.profile.discussion" = "Ένα προφίλ επαναντιστοίχισης μετατρέπει τα στοιχεία ελέγχου ενός μοντέλου χειριστηρίου σε είσοδο gamepad, πληκτρολογίου και δείκτη. Το PROFILE είναι ένα ID ή όνομα προφίλ από το «ojd profile list». Αλλάξτε τις αντιστοιχίσεις με το «ojd binding» και όλα τα υπόλοιπα με το «ojd profile edit». Κάθε εντολή προφίλ απαιτεί την υπηρεσία.";
 "cli.profile.document_invalid" = "Το %@ δεν είναι έγκυρο προφίλ: %@";
+"cli.document.not_json" = "δεν είναι έγκυρο JSON";
+"cli.document.missing_field" = "το πεδίο «%@» λείπει";
+"cli.document.wrong_type" = "το πεδίο «%@» έχει λάθος τύπο";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Αντιγράφει ένα προφίλ με νέο όνομα. Το αντίγραφο ξεκινά ανενεργό.";
 "cli.profile.duplicate.done" = "Δημιουργήθηκε το «%@» (%@).";
 "cli.profile.duplicate.name" = "Το όνομα του αντιγράφου.";

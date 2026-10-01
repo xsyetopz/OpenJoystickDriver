@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ 已不再连接。";
 "cli.error.json_plain" = "请使用 --json 或 --plain，不要同时使用。";
 "cli.error.peer_rejected" = "服务拒绝了此 ojd，因为它的签名与 App 不同。请运行 OpenJoystickDriver.app 内的 ojd。";
-"cli.error.request_timeout" = "服务未在 %@ 秒内回复。请使用更大的 --timeout 重试。";
+"cli.error.request_timeout" = "服务未在 %@内回复。请使用更大的 --timeout 重试。";
 "cli.error.service_request_failed" = "服务未能完成请求：%@。请用“ojd status”检查。";
+"cli.error.duplicate_profile_name" = "已存在同名配置文件。'ojd profile list' 会显示所有配置文件。";
 "cli.error.service_timeout" = "服务未及时回复。请重试，或用“ojd status”检查。";
 "cli.error.service_unavailable" = "OpenJoystickDriver 服务未运行。请用“ojd service start”启动。";
 "cli.error.timeout_value" = "--timeout 需要大于 0 的秒数。";
 "cli.error.unexpected" = "意外错误：%@。请运行“ojd diagnose --bundle PATH”，并将生成的包附在错误报告中。";
+"cli.error.unknown_command" = "未知命令“%@”。你是不是想用“%@”？";
 "cli.option.json" = "在 stdout 上输出 JSON。";
 "cli.option.no_color" = "不使用颜色。";
 "cli.option.no_input" = "从不提示输入；缺少值时失败。";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS 无法打开 %@。请从 Finder 中打开以查看原因。";
 "cli.service.stop.abstract" = "停止服务并等待其退出。已连接的控制器将交还给 macOS。";
 "cli.service.stop.signal_failed" = "无法停止服务：%@。请从菜单中退出 OpenJoystickDriver。";
-"cli.service.stop.timeout" = "服务未在 %@ 秒内停止。请使用更大的 --timeout 重试。";
+"cli.service.stop.timeout" = "服务未在 %@内停止。请使用更大的 --timeout 重试。";
 "cli.service.stopped" = "服务已停止。";
 "cli.service.wait.abstract" = "等待服务开始接受请求。--timeout 限制等待时间（默认 5 秒）。";
-"cli.service.wait.timeout" = "服务未在 %@ 秒内开始接受请求。请用“ojd service start”启动，或使用更大的 --timeout 重试。";
+"cli.service.wait.timeout" = "服务未在 %@内开始接受请求。请用“ojd service start”启动，或使用更大的 --timeout 重试。";
 "cli.status.abstract" = "显示服务、扩展、权限和已连接的控制器。";
 "cli.status.discussion" = "服务停止时也可使用：会将服务报告为已停止，并以 0 退出。";
 "cli.status.label.accessibility" = "辅助功能";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "服务未运行";
 "cli.diagnose.soak" = "同时在这段时间内对服务的内存、文件描述符和 CPU 采样（1-86400）。";
 "cli.diagnose.soak.not_requested" = "未请求；请使用 --soak SECONDS";
-"cli.diagnose.soak.progress" = "正在对服务采样 %lld 秒...";
+"cli.diagnose.soak.progress" = "正在对服务采样 %@...";
 "cli.diagnose.soak_range" = "--soak 必须介于 1 和 86400 秒之间。";
 "cli.diagnose.usb.failed" = "USB 扫描失败：%@。请为 OpenJoystickDriver 授予输入监控权限。";
-"cli.diagnose.usb.ok" = "可见 %lld 个厂商自定义 USB 控制器";
+"cli.diagnose.usb.ok" = "可见的厂商自定义 USB 控制器：%lld";
 "cli.diagnose.virtual.disabled" = "虚拟游戏手柄已停用";
 "cli.diagnose.virtual.error" = "虚拟游戏手柄错误：%@";
 "cli.diagnose.virtual.override" = "无法读取已存储的配置文件覆盖项：%@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ 可用（当前为 %@）：%@";
 "cli.update.check.discussion" = "仅在您请求时运行；ojd 不会自行检查。它不会下载或安装任何内容。无论是否有更新都以退出码 0 退出，检查失败时以 1 退出。";
 "cli.update.check.failed" = "无法检查更新：%@。请检查网络连接后重试。";
+"cli.update.check.failed_reason" = "无法检查更新：%@。";
 "cli.update.check.incomplete" = "无结果";
 "cli.update.check.prerelease" = "包含预发布版本。";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ 已是最新版本（最新发布版本：%@）。";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "名称";
 "cli.controller.show.label.output_checks" = "输出检查";
 "cli.controller.show.label.ownership" = "归属";
+"cli.controller.show.ownership" = "路径 %@，物理 %@，HID 输入 %@";
 "cli.controller.show.label.protocol" = "协议";
 "cli.controller.show.label.record" = "记录";
 "cli.controller.show.label.rumble" = "振动";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "使用 --json 时，每行打印一个 JSON 对象。摇杆 Y 轴向上为正。使用 --first-press 时，打印第一个被按下的控件并退出；如果先达到 --duration，则失败。";
 "cli.controller.watch.first_press" = "打印第一个被按下的控件，然后退出。";
 "cli.controller.watch.no_input" = "未收到输入。";
-"cli.controller.watch.no_press" = "%@ 秒内没有按下任何控件。";
+"cli.controller.watch.no_press" = "%@内没有按下任何控件。";
 "cli.controller.watch.press_prompt" = "请按下 %@（%@）上的一个控件。";
 "cli.controller.watch.started" = "正在监视 %@（%@）。请按下控制器上的按键。";
 "cli.error.confirm_declined" = "未做任何更改。";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "不要求确认。";
 "cli.virtual.abstract" = "显示并选择 OpenJoystickDriver 为控制器发布的虚拟游戏手柄。";
 "cli.virtual.changed" = "%@ 现在发布 %@（%@）。";
+"cli.virtual.stored" = "已存储 %@ 的选择，将在启用虚拟输出后应用。";
 "cli.virtual.discussion" = "所做选择适用于同一型号的所有控制器。'reset' 会让某个型号恢复自动选择。";
 "cli.virtual.error.failed" = "%@ 的虚拟游戏手柄未更改（%@）。请用 'ojd virtual show' 检查。";
 "cli.virtual.reset.abstract" = "让控制器的型号或所有型号恢复自动选择虚拟游戏手柄。";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "“%@”在已连接的控制器上处于活动状态，现在会阻止其所有输入。请用 'ojd binding set' 添加映射，或用 'ojd profile deactivate' 停止该配置文件。";
 "cli.binding.clear.confirm" = "要从“%@”中移除所有映射、组合键、序列和层吗？";
 "cli.binding.clear.discussion" = "--all 还会移除配置文件的组合键、序列和层，并在终端中请求确认；否则需要 --force。摇杆、扳机、触控、体感和输出设置会保留。";
-"cli.binding.clear.done" = "已移除 %lld 个映射，来自“%@”。";
-"cli.binding.clear.dry_run" = "将移除 %lld 个映射，来自“%@”。";
+"cli.binding.clear.done" = "从“%@”移除的映射：%lld。";
+"cli.binding.clear.dry_run" = "将从“%@”移除的映射：%lld。";
 "cli.binding.clear.missing" = "“%@”没有 %@ 的映射。未更改任何内容。";
 "cli.binding.clear.sources" = "要移除其映射的来源。";
 "cli.binding.clear.usage" = "请给出一个或多个来源，或使用 --all。";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "将会删除配置文件“%@”。";
 "cli.profile.discussion" = "重映射配置文件会把某一控制器型号的控件转换为游戏手柄、键盘和指针输入。PROFILE 是来自 'ojd profile list' 的配置文件 ID 或名称。请用 'ojd binding' 更改映射，其他内容用 'ojd profile edit' 更改。每个配置文件命令都需要服务。";
 "cli.profile.document_invalid" = "%@ 不是有效的配置文件：%@";
+"cli.document.not_json" = "它不是有效的 JSON";
+"cli.document.missing_field" = "缺少字段“%@”";
+"cli.document.wrong_type" = "字段“%@”的类型不正确";
+"cli.document.field_problem" = "“%@”：%@";
 "cli.profile.duplicate.abstract" = "以新名称复制配置文件。副本处于未激活状态。";
 "cli.profile.duplicate.done" = "已创建“%@”（%@）。";
 "cli.profile.duplicate.name" = "副本的名称。";

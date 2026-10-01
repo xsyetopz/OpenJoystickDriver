@@ -102,7 +102,13 @@ struct ControllerShowReport: Encodable, Equatable {
   let controller: Detail
 
   /// `record` is the effective record of the device's model, if there is one.
-  init(_ device: ApplicationServiceDeviceDescription, record: ControllerRecord?) {
+  /// `sharesModel` is whether another connected controller has the same VID:PID, so the output
+  /// checks must name this one by its ID.
+  init(
+    _ device: ApplicationServiceDeviceDescription,
+    record: ControllerRecord?,
+    sharesModel: Bool = false
+  ) {
     let output = device.physicalOutputCapabilities
     controller = Detail(
       id: device.runtimeIdentifier,
@@ -146,7 +152,10 @@ struct ControllerShowReport: Encodable, Equatable {
           unavailable: $0.unavailable
         )
       },
-      outputChecks: PhysicalOutputValidationPlan(device: device).steps.map {
+      outputChecks: PhysicalOutputValidationPlan(
+        device: device,
+        selector: sharesModel ? device.runtimeIdentifier : nil
+      ).steps.map {
         OutputCheck(id: $0.id, command: $0.command, expected: $0.expectedObservation)
       }
     )

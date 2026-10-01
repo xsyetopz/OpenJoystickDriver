@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ nav vairs savienota.";
 "cli.error.json_plain" = "Izmantojiet --json vai --plain, bet ne abus.";
 "cli.error.peer_rejected" = "Pakalpojums noraidīja šo ojd, jo tas nav parakstīts tāpat kā lietotne. Palaidiet ojd, kas iekļauts OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Pakalpojums neatbildēja %@ sekunžu laikā. Mēģiniet vēlreiz ar lielāku --timeout.";
+"cli.error.request_timeout" = "Pakalpojums neatbildēja %@ laikā. Mēģiniet vēlreiz ar lielāku --timeout.";
 "cli.error.service_request_failed" = "Pakalpojums neizpildīja pieprasījumu: %@. Pārbaudiet to ar „ojd status“.";
+"cli.error.duplicate_profile_name" = "Profils ar šādu nosaukumu jau pastāv. „ojd profile list“ rāda visus profilus.";
 "cli.error.service_timeout" = "Pakalpojums neatbildēja laikā. Mēģiniet vēlreiz vai pārbaudiet to ar „ojd status“.";
 "cli.error.service_unavailable" = "OpenJoystickDriver pakalpojums nedarbojas. Startējiet to ar „ojd service start“.";
 "cli.error.timeout_value" = "--timeout nepieciešams sekunžu skaits, kas lielāks par 0.";
 "cli.error.unexpected" = "Neparedzēta kļūda: %@. Palaidiet „ojd diagnose --bundle PATH“ un pievienojiet pakotni kļūdas ziņojumam.";
+"cli.error.unknown_command" = "Nezināma komanda „%@“. Vai domājāt „%@“?";
 "cli.option.json" = "Drukāt JSON uz stdout.";
 "cli.option.no_color" = "Neizmantot krāsas.";
 "cli.option.no_input" = "Nekad neprasīt ievadi; beigt ar kļūdu, ja trūkst vērtības.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS nevarēja atvērt %@. Atveriet to no Finder, lai redzētu iemeslu.";
 "cli.service.stop.abstract" = "Apturēt pakalpojumu un gaidīt, līdz tas beidz darbu. Pievienotie kontrolieri atgriežas macOS.";
 "cli.service.stop.signal_failed" = "Neizdevās apturēt pakalpojumu: %@. Izejiet no OpenJoystickDriver, izmantojot tā izvēlni.";
-"cli.service.stop.timeout" = "Pakalpojums neapstājās %@ sekunžu laikā. Mēģiniet vēlreiz ar lielāku --timeout.";
+"cli.service.stop.timeout" = "Pakalpojums neapstājās %@ laikā. Mēģiniet vēlreiz ar lielāku --timeout.";
 "cli.service.stopped" = "Pakalpojums ir apturēts.";
 "cli.service.wait.abstract" = "Gaidīt, līdz pakalpojums pieņem pieprasījumus. --timeout ierobežo gaidīšanu (noklusējums ir 5 sekundes).";
-"cli.service.wait.timeout" = "Pakalpojums nepieņēma pieprasījumus %@ sekunžu laikā. Startējiet to ar „ojd service start“ vai mēģiniet vēlreiz ar lielāku --timeout.";
+"cli.service.wait.timeout" = "Pakalpojums nepieņēma pieprasījumus %@ laikā. Startējiet to ar „ojd service start“ vai mēģiniet vēlreiz ar lielāku --timeout.";
 "cli.status.abstract" = "Rādīt pakalpojumu, paplašinājumu, atļaujas un pievienotos kontrolierus.";
 "cli.status.discussion" = "Darbojas, arī ja pakalpojums ir apturēts: ziņo, ka tas ir apturēts, un beidz ar 0.";
 "cli.status.label.accessibility" = "Pieejamība";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "pakalpojums nedarbojas";
 "cli.diagnose.soak" = "Šo laiku ņem arī pakalpojuma atmiņas, failu deskriptoru un CPU paraugus (1-86400).";
 "cli.diagnose.soak.not_requested" = "nav pieprasīts; izmantojiet --soak SECONDS";
-"cli.diagnose.soak.progress" = "Ņem pakalpojuma paraugus %lld s…";
+"cli.diagnose.soak.progress" = "Ņem pakalpojuma paraugus %@…";
 "cli.diagnose.soak_range" = "--soak jābūt starp 1 un 86400 sekundēm.";
 "cli.diagnose.usb.failed" = "USB skenēšana neizdevās: %@. Piešķiriet OpenJoystickDriver piekļuvi Input Monitoring.";
 "cli.diagnose.usb.ok" = "Redzamie ražotājam specifiskie USB kontrolieri: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "Pieejams OpenJoystickDriver %@ (jums ir %@): %@";
 "cli.update.check.discussion" = "Darbojas tikai pēc jūsu pieprasījuma; ojd nekad nepārbauda pats. Tas neko nelejupielādē un neinstalē. Beidzas ar kodu 0 neatkarīgi no tā, vai atjauninājums ir, un ar kodu 1, ja pārbaude neizdodas.";
 "cli.update.check.failed" = "Neizdevās pārbaudīt atjauninājumus: %@. Pārbaudiet tīkla savienojumu un mēģiniet vēlreiz.";
+"cli.update.check.failed_reason" = "Neizdevās pārbaudīt atjauninājumus: %@.";
 "cli.update.check.incomplete" = "nav rezultāta";
 "cli.update.check.prerelease" = "Iekļauj pirmsizlaides versijas.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ ir atjaunināts (jaunākais izlaidums: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Nosaukums";
 "cli.controller.show.label.output_checks" = "Izvades pārbaudes";
 "cli.controller.show.label.ownership" = "Piederība";
+"cli.controller.show.ownership" = "maršruts %@, fiziskais %@, HID ievade %@";
 "cli.controller.show.label.protocol" = "Protokols";
 "cli.controller.show.label.record" = "Ieraksts";
 "cli.controller.show.label.rumble" = "Vibrācija";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Ar --json izvada vienu JSON objektu katrā rindā. Sviras Y ass norāda uz augšu. Ar --first-press izvada pirmo nospiesto vadīklu un beidz darbu; tas neizdodas, ja --duration beidzas agrāk.";
 "cli.controller.watch.first_press" = "Izvadīt pirmo nospiesto vadīklu un beigt darbu.";
 "cli.controller.watch.no_input" = "Ievade nav saņemta.";
-"cli.controller.watch.no_press" = "Netika nospiesta neviena vadīkla %@ sekunžu laikā.";
+"cli.controller.watch.no_press" = "Netika nospiesta neviena vadīkla %@ laikā.";
 "cli.controller.watch.press_prompt" = "Nospiediet vadīklu uz %@ (%@).";
 "cli.controller.watch.started" = "Tiek vērots %@ (%@). Nospiediet kontroliera pogas.";
 "cli.error.confirm_declined" = "Nekas nav mainīts.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Neprasīt apstiprinājumu.";
 "cli.virtual.abstract" = "Rādīt un izvēlēties virtuālo spēļu kontrolieri, ko OpenJoystickDriver publicē kontrolierim.";
 "cli.virtual.changed" = "%@ tagad publicē %@ (%@).";
+"cli.virtual.stored" = "Izvēle ierīcei %@ ir saglabāta. Tā tiks lietota, kad virtuālā izvade būs ieslēgta.";
 "cli.virtual.discussion" = "Izvēle attiecas uz katru tā paša modeļa kontrolieri. „reset“ atgriež modeli pie automātiskās atlases.";
 "cli.virtual.error.failed" = "Virtuālais spēļu kontrolieris ierīcei %@ nemainījās (%@). Pārbaudiet ar „ojd virtual show“.";
 "cli.virtual.reset.abstract" = "Atgriezt kontroliera modeli vai visus modeļus pie automātiskās virtuālā spēļu kontroliera atlases.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "„%@“ ir aktīvs pievienotā kontrolierī un tagad bloķē visu tā ievadi. Pievienojiet piesaisti ar „ojd binding set“ vai apturiet profilu ar „ojd profile deactivate“.";
 "cli.binding.clear.confirm" = "Vai noņemt visas piesaistes, kombinācijas, secības un slāņus no „%@“?";
 "cli.binding.clear.discussion" = "--all noņem arī profila kombinācijas, secības un slāņus un terminālī prasa apstiprinājumu; citādi nepieciešams --force. Sviru, sprūdu, pieskārienu, kustību un izvades iestatījumi paliek.";
-"cli.binding.clear.done" = "Noņemtas %lld piesaistes no „%@“.";
-"cli.binding.clear.dry_run" = "Tiktu noņemtas %lld piesaistes no „%@“.";
+"cli.binding.clear.done" = "No „%@“ noņemtās piesaistes: %lld.";
+"cli.binding.clear.dry_run" = "Piesaistes, kas tiktu noņemtas no „%@“: %lld.";
 "cli.binding.clear.missing" = "„%@“ nav piesaistes avotam %@. Nekas nav mainīts.";
 "cli.binding.clear.sources" = "Avoti, kuru piesaistes noņemt.";
 "cli.binding.clear.usage" = "Norādiet vienu vai vairākus avotus vai --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Tiktu izdzēsts profils „%@“.";
 "cli.profile.discussion" = "Pārkartēšanas profils pārvērš viena kontroliera modeļa vadīklas spēļu kontroliera, tastatūras un rādītāja ievadē. PROFILE ir profila ID vai nosaukums no „ojd profile list“. Piesaistes mainiet ar „ojd binding“, bet visu pārējo ar „ojd profile edit“. Katrai profila komandai nepieciešams pakalpojums.";
 "cli.profile.document_invalid" = "%@ nav derīgs profils: %@";
+"cli.document.not_json" = "tas nav derīgs JSON";
+"cli.document.missing_field" = "trūkst lauka „%@“";
+"cli.document.wrong_type" = "laukam „%@“ ir nepareizs tips";
+"cli.document.field_problem" = "„%@“: %@";
 "cli.profile.duplicate.abstract" = "Kopēt profilu ar jaunu nosaukumu. Kopija sākumā ir neaktīva.";
 "cli.profile.duplicate.done" = "Izveidots „%@“ (%@).";
 "cli.profile.duplicate.name" = "Kopijas nosaukums.";

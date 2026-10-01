@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ är inte längre ansluten.";
 "cli.error.json_plain" = "Bruk enten --json eller --plain, ikke begge.";
 "cli.error.peer_rejected" = "Tjenesten avviste denne ojd-en fordi den ikke er signert som appen. Kjør ojd-en som følger med OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Tjenesten svarte ikke innen %@ sekunder. Prøv på nytt med en større --timeout.";
+"cli.error.request_timeout" = "Tjenesten svarte ikke innen %@. Prøv på nytt med en større --timeout.";
 "cli.error.service_request_failed" = "Tjenesten fullførte ikke forespørselen: %@. Sjekk den med «ojd status».";
+"cli.error.duplicate_profile_name" = "En profil med det navnet finnes allerede. 'ojd profile list' viser alle profiler.";
 "cli.error.service_timeout" = "Tjenesten svarte ikke i tide. Prøv på nytt, eller sjekk den med «ojd status».";
 "cli.error.service_unavailable" = "OpenJoystickDriver-tjenesten kjører ikke. Start den med «ojd service start».";
 "cli.error.timeout_value" = "--timeout krever et antall sekunder over 0.";
 "cli.error.unexpected" = "Uventet feil: %@. Kjør «ojd diagnose --bundle PATH» og legg ved pakken i feilrapporten.";
+"cli.error.unknown_command" = "Ukjent kommando «%@». Mente du «%@»?";
 "cli.option.json" = "Skriv ut JSON til stdout.";
 "cli.option.no_color" = "Ikke bruk farger.";
 "cli.option.no_input" = "Aldri spør etter inndata; mislykkes hvis en verdi mangler.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS kunne ikke åpne %@. Åpne den fra Finder for å se hvorfor.";
 "cli.service.stop.abstract" = "Stopp tjenesten og vent til den avsluttes. Tilkoblede kontrollere går tilbake til macOS.";
 "cli.service.stop.signal_failed" = "Kunne ikke stoppe tjenesten: %@. Avslutt OpenJoystickDriver fra menyen.";
-"cli.service.stop.timeout" = "Tjenesten stoppet ikke innen %@ sekunder. Prøv på nytt med en større --timeout.";
+"cli.service.stop.timeout" = "Tjenesten stoppet ikke innen %@. Prøv på nytt med en større --timeout.";
 "cli.service.stopped" = "Tjenesten er stoppet.";
 "cli.service.wait.abstract" = "Vent til tjenesten godtar forespørsler. --timeout begrenser ventetiden (standard 5 sekunder).";
-"cli.service.wait.timeout" = "Tjenesten godtok ikke forespørsler innen %@ sekunder. Start den med «ojd service start», eller prøv på nytt med en større --timeout.";
+"cli.service.wait.timeout" = "Tjenesten godtok ikke forespørsler innen %@. Start den med «ojd service start», eller prøv på nytt med en større --timeout.";
 "cli.status.abstract" = "Vis tjenesten, utvidelsen, tillatelsene og tilkoblede kontrollere.";
 "cli.status.discussion" = "Fungerer når tjenesten er stoppet: den rapporterer tjenesten som stoppet og avslutter med 0.";
 "cli.status.label.accessibility" = "Hjelpemidler";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "tjenesten kjører ikke";
 "cli.diagnose.soak" = "Måler også tjenestens minne, filbeskrivere og CPU så lenge (1-86400).";
 "cli.diagnose.soak.not_requested" = "ikke forespurt; bruk --soak SECONDS";
-"cli.diagnose.soak.progress" = "Måler tjenesten i %lld sekunder...";
+"cli.diagnose.soak.progress" = "Måler tjenesten i %@...";
 "cli.diagnose.soak_range" = "--soak må være mellom 1 og 86400 sekunder.";
 "cli.diagnose.usb.failed" = "USB-skanningen mislyktes: %@. Gi OpenJoystickDriver tilgang til Inndataovervåking.";
-"cli.diagnose.usb.ok" = "%lld produsentspesifikke USB-kontrollere synlige";
+"cli.diagnose.usb.ok" = "Synlige produsentspesifikke USB-kontrollere: %lld";
 "cli.diagnose.virtual.disabled" = "virtuell spillkontroller slått av";
 "cli.diagnose.virtual.error" = "feil i virtuell spillkontroller: %@";
 "cli.diagnose.virtual.override" = "lagrede profiloverstyringer kan ikke leses: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ er tilgjengelig (du har %@): %@";
 "cli.update.check.discussion" = "Kjører bare når du ber om det; ojd sjekker aldri på egen hånd. Den laster ikke ned eller installerer noe. Avslutter med 0 uansett om det finnes en oppdatering, og med 1 hvis sjekken mislykkes.";
 "cli.update.check.failed" = "Kunne ikke se etter oppdateringer: %@. Sjekk nettverkstilkoblingen og prøv igjen.";
+"cli.update.check.failed_reason" = "Kunne ikke se etter oppdateringer: %@.";
 "cli.update.check.incomplete" = "ingen resultat";
 "cli.update.check.prerelease" = "Ta med forhåndsversjoner.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ er oppdatert (nyeste utgivelse: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Navn";
 "cli.controller.show.label.output_checks" = "Utdatasjekker";
 "cli.controller.show.label.ownership" = "Eierskap";
+"cli.controller.show.ownership" = "rute %@, fysisk %@, HID-inndata %@";
 "cli.controller.show.label.protocol" = "Protokoll";
 "cli.controller.show.label.record" = "Oppføring";
 "cli.controller.show.label.rumble" = "Vibrasjon";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Med --json skrives ett JSON-objekt per linje. Stikke-Y peker opp. Med --first-press skrives den første kontrollen som trykkes, og kommandoen avsluttes; den mislykkes hvis --duration går ut først.";
 "cli.controller.watch.first_press" = "Skriv ut den første kontrollen som trykkes, og avslutt.";
 "cli.controller.watch.no_input" = "Ingen inndata mottatt.";
-"cli.controller.watch.no_press" = "Ingen kontroll ble trykket innen %@ sekunder.";
+"cli.controller.watch.no_press" = "Ingen kontroll ble trykket innen %@.";
 "cli.controller.watch.press_prompt" = "Trykk på en kontroll på %@ (%@).";
 "cli.controller.watch.started" = "Overvåker %@ (%@). Trykk på knappene på kontrolleren.";
 "cli.error.confirm_declined" = "Ingenting ble endret.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Ikke be om bekreftelse.";
 "cli.virtual.abstract" = "Vis og velg den virtuelle spillkontrolleren OpenJoystickDriver publiserer for en kontroller.";
 "cli.virtual.changed" = "%@ publiserer nå %@ (%@).";
+"cli.virtual.stored" = "Valget for %@ er lagret. Det tas i bruk når virtuell utgang er slått på.";
 "cli.virtual.discussion" = "Et valg gjelder alle kontrollere av samme modell. 'reset' setter en modell tilbake til automatisk valg.";
 "cli.virtual.error.failed" = "Den virtuelle spillkontrolleren for %@ ble ikke endret (%@). Sjekk den med 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Sett en kontrollers modell, eller alle modeller, tilbake til automatisk valg av virtuell spillkontroller.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "'%@' er aktiv på en tilkoblet kontroller og blokkerer nå all inndata fra den. Legg til en binding med 'ojd binding set', eller stopp profilen med 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Fjerne alle bindinger, akkorder, sekvenser og lag fra '%@'?";
 "cli.binding.clear.discussion" = "--all fjerner også profilens akkorder, sekvenser og lag, og ber om bekreftelse i en terminal; ellers trengs --force. Innstillingene for spaker, avtrekkere, berøring, bevegelse og utdata beholdes.";
-"cli.binding.clear.done" = "Fjernet %lld bindinger fra '%@'.";
-"cli.binding.clear.dry_run" = "Ville fjernet %lld bindinger fra '%@'.";
+"cli.binding.clear.done" = "Bindinger fjernet fra '%@': %lld.";
+"cli.binding.clear.dry_run" = "Bindinger som ville blitt fjernet fra '%@': %lld.";
 "cli.binding.clear.missing" = "'%@' har ingen binding for %@. Ingenting ble endret.";
 "cli.binding.clear.sources" = "Kildene som bindingene skal fjernes fra.";
 "cli.binding.clear.usage" = "Oppgi en eller flere kilder, eller --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Ville slettet profilen '%@'.";
 "cli.profile.discussion" = "En ommappingsprofil gjør styreelementene på én kontrollermodell om til inndata for gamepad, tastatur og peker. PROFILE er en profil-ID eller et navn fra 'ojd profile list'. Endre bindinger med 'ojd binding', og alt annet med 'ojd profile edit'. Alle profilkommandoer trenger tjenesten.";
 "cli.profile.document_invalid" = "%@ er ikke en gyldig profil: %@";
+"cli.document.not_json" = "det er ikke gyldig JSON";
+"cli.document.missing_field" = "feltet «%@» mangler";
+"cli.document.wrong_type" = "feltet «%@» har feil type";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Kopier en profil under et nytt navn. Kopien starter som inaktiv.";
 "cli.profile.duplicate.done" = "Opprettet '%@' (%@).";
 "cli.profile.duplicate.name" = "Navnet på kopien.";

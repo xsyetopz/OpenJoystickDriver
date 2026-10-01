@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ Ez dago loturarik.";
 "cli.error.json_plain" = "Erabili --json edo --plain, ez biak.";
 "cli.error.peer_rejected" = "Zerbitzuak ojd hau baztertu du, aplikazioaren modu berean sinatuta ez dagoelako. Exekutatu OpenJoystickDriver.app barruan datorren ojd.";
-"cli.error.request_timeout" = "Zerbitzuak ez du erantzun %@ segundoren barruan. Saiatu berriro --timeout handiago batekin.";
+"cli.error.request_timeout" = "Zerbitzuak ez du erantzun %@ barruan. Saiatu berriro --timeout handiago batekin.";
 "cli.error.service_request_failed" = "Zerbitzuak ez du eskaera osatu: %@. Egiaztatu «ojd status» komandoarekin.";
+"cli.error.duplicate_profile_name" = "Izen hori duen profil bat badago jada. «ojd profile list» komandoak profil guztiak erakusten ditu.";
 "cli.error.service_timeout" = "Zerbitzuak ez du garaiz erantzun. Saiatu berriro edo egiaztatu «ojd status» komandoarekin.";
 "cli.error.service_unavailable" = "OpenJoystickDriver zerbitzua ez dago martxan. Abiarazi «ojd service start» komandoarekin.";
 "cli.error.timeout_value" = "--timeout aukerak 0 baino handiagoa den segundo kopurua behar du.";
 "cli.error.unexpected" = "Ustekabeko errorea: %@. Exekutatu «ojd diagnose --bundle PATH» eta erantsi paketea akats-txosten batean.";
+"cli.error.unknown_command" = "Komando ezezaguna: «%@». «%@» esan nahi zenuen?";
 "cli.option.json" = "Inprimatu JSON stdout-en.";
 "cli.option.no_color" = "Ez erabili kolorerik.";
 "cli.option.no_input" = "Ez eskatu sekula datuak; huts egin balio bat falta bada.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOSek ezin izan du %@ ireki. Ireki Finderretik arrazoia ikusteko.";
 "cli.service.stop.abstract" = "Gelditu zerbitzua eta itxaron amaitu arte. Konektatutako aginteak macOSera itzultzen dira.";
 "cli.service.stop.signal_failed" = "Ezin izan da zerbitzua gelditu: %@. Irten OpenJoystickDriver aplikaziotik bere menuaren bidez.";
-"cli.service.stop.timeout" = "Zerbitzua ez da gelditu %@ segundoren barruan. Saiatu berriro --timeout handiago batekin.";
+"cli.service.stop.timeout" = "Zerbitzua ez da gelditu %@ barruan. Saiatu berriro --timeout handiago batekin.";
 "cli.service.stopped" = "Zerbitzua geldituta dago.";
 "cli.service.wait.abstract" = "Itxaron zerbitzuak eskaerak onartu arte. --timeout aukerak itxaronaldia mugatzen du (lehenetsia 5 segundo).";
-"cli.service.wait.timeout" = "Zerbitzuak ez ditu eskaerak onartu %@ segundoren barruan. Abiarazi «ojd service start» komandoarekin edo saiatu berriro --timeout handiago batekin.";
+"cli.service.wait.timeout" = "Zerbitzuak ez ditu eskaerak onartu %@ barruan. Abiarazi «ojd service start» komandoarekin edo saiatu berriro --timeout handiago batekin.";
 "cli.status.abstract" = "Erakutsi zerbitzua, hedapena, baimenak eta konektatutako aginteak.";
 "cli.status.discussion" = "Zerbitzua geldituta dagoenean ere funtzionatzen du: geldituta dagoela jakinarazten du eta 0 kodearekin irteten da.";
 "cli.status.label.accessibility" = "Erabilerraztasuna";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "zerbitzua ez dago martxan";
 "cli.diagnose.soak" = "Lagindu zerbitzuaren memoria, fitxategi-deskriptoreak eta CPUa ere denbora honetan zehar (1-86400).";
 "cli.diagnose.soak.not_requested" = "ez da eskatu; erabili --soak SEGUNDOAK";
-"cli.diagnose.soak.progress" = "Zerbitzua lagintzen %lld segundoz…";
+"cli.diagnose.soak.progress" = "Zerbitzua lagintzen (iraupena: %@)…";
 "cli.diagnose.soak_range" = "--soak 1 eta 86400 segundo artekoa izan behar da.";
 "cli.diagnose.usb.failed" = "USB azterketak huts egin du: %@. Eman Sarreraren jarraipenerako baimena OpenJoystickDriver aplikazioari.";
-"cli.diagnose.usb.ok" = "%lld fabrikatzaile-espezifikoko USB aginte ikusgai";
+"cli.diagnose.usb.ok" = "Ikusgai dauden fabrikatzaile-espezifikoko USB aginteak: %lld";
 "cli.diagnose.virtual.disabled" = "gamepad birtuala desgaituta";
 "cli.diagnose.virtual.error" = "gamepad birtualaren errorea: %@";
 "cli.diagnose.virtual.override" = "gordetako profil-gainidazketak ezin dira irakurri: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ erabilgarri dago (zuk %@ daukazu): %@";
 "cli.update.check.discussion" = "Eskatzen duzunean bakarrik exekutatzen da; ojd ez da inoiz bere kabuz egiaztatzen. Ez du ezer deskargatzen edo instalatzen. 0 kodearekin amaitzen da eguneratzerik dagoen ala ez, eta 1ekin egiaztapenak huts egiten duenean.";
 "cli.update.check.failed" = "Ezin izan dira eguneratzeak egiaztatu: %@. Begiratu sareko konexioa eta saiatu berriro.";
+"cli.update.check.failed_reason" = "Ezin izan dira eguneratzeak egiaztatu: %@.";
 "cli.update.check.incomplete" = "emaitzarik ez";
 "cli.update.check.prerelease" = "Sartu argitaratu aurreko bertsioak.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ eguneratuta dago (azken bertsioa: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Izena";
 "cli.controller.show.label.output_checks" = "Irteera-egiaztapenak";
 "cli.controller.show.label.ownership" = "Jabetza";
+"cli.controller.show.ownership" = "bidea %@, fisikoa %@, HID sarrera %@";
 "cli.controller.show.label.protocol" = "Protokoloa";
 "cli.controller.show.label.record" = "Erregistroa";
 "cli.controller.show.label.rumble" = "Dardara";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "--json erabiliz gero, JSON objektu bat erakusten du lerroko. Palankaren Y gorantz doa. --first-press erabiliz gero, sakatutako lehen kontrola erakusten du eta irteten da; huts egiten du --duration lehenago igarotzen bada.";
 "cli.controller.watch.first_press" = "Inprimatu sakatutako lehen kontrola, eta gero irten.";
 "cli.controller.watch.no_input" = "Ez da sarrerarik jaso.";
-"cli.controller.watch.no_press" = "Ez da kontrolik sakatu %@ segundotan.";
+"cli.controller.watch.no_press" = "Ez da kontrolik sakatu %@ barruan.";
 "cli.controller.watch.press_prompt" = "Sakatu kontrol bat hemen: %@ (%@).";
 "cli.controller.watch.started" = "%@ (%@) behatzen. Sakatu aginteko botoiak.";
 "cli.error.confirm_declined" = "Ez da ezer aldatu.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Ez eskatu berresteko.";
 "cli.virtual.abstract" = "Erakutsi eta aukeratu OpenJoystickDriver-ek agintearentzat argitaratzen duen gamepad birtuala.";
 "cli.virtual.changed" = "%@ gailuak orain %@ (%@) argitaratzen du.";
+"cli.virtual.stored" = "%@ gailuaren aukera gorde da. Irteera birtuala gaitzen denean aplikatuko da.";
 "cli.virtual.discussion" = "Aukera batek modelo bereko aginte guztiei eragiten die. «reset» komandoak modelo bat hautapen automatikora itzultzen du.";
 "cli.virtual.error.failed" = "%@ gailuaren gamepad birtuala ez da aldatu (%@). Egiaztatu «ojd virtual show» komandoarekin.";
 "cli.virtual.reset.abstract" = "Itzuli agintearen modeloa, edo modelo guztiak, gamepad birtualaren hautapen automatikora.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "«%@» aktibo dago konektatutako agintean, eta orain haren sarrera guztiak blokeatzen ditu. Gehitu esleipen bat «ojd binding set» erabiliz, edo gelditu profila «ojd profile deactivate» erabiliz.";
 "cli.binding.clear.confirm" = "Esleipen, akorde, sekuentzia eta geruza guztiak kendu nahi dituzu «%@» profiletik?";
 "cli.binding.clear.discussion" = "--all aukerak profilaren akordeak, sekuentziak eta geruzak ere kentzen ditu, eta terminalean berrespena eskatzen du; bestela --force behar du. Palanka, trigerra, ukipen, mugimendu eta irteera-ezarpenak mantentzen dira.";
-"cli.binding.clear.done" = "%lld esleipen kendu dira «%@» profiletik.";
-"cli.binding.clear.dry_run" = "%lld esleipen kenduko lirateke «%@» profiletik.";
+"cli.binding.clear.done" = "«%@» profiletik kendutako esleipenak: %lld.";
+"cli.binding.clear.dry_run" = "«%@» profiletik kenduko liratekeen esleipenak: %lld.";
 "cli.binding.clear.missing" = "«%@» profilak ez du esleipenik %@ iturburuarentzat. Ez da ezer aldatu.";
 "cli.binding.clear.sources" = "Esleipenak kendu beharreko iturburuak.";
 "cli.binding.clear.usage" = "Eman iturburu bat edo gehiago, edo --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "«%@» profila ezabatuko litzateke.";
 "cli.profile.discussion" = "Birmapatze-profil batek aginte-modelo baten kontrolak gamepad, teklatu eta erakusle-sarrera bihurtzen ditu. PROFILE profil baten IDa edo izena da, «ojd profile list» komandotik. Aldatu esleipenak «ojd binding» komandoarekin, eta gainerako guztia «ojd profile edit» komandoarekin. Profil-komando guztiek zerbitzua behar dute.";
 "cli.profile.document_invalid" = "%@ ez da profil baliozkoa: %@";
+"cli.document.not_json" = "ez da JSON baliozkoa";
+"cli.document.missing_field" = "«%@» eremua falta da";
+"cli.document.wrong_type" = "«%@» eremuaren mota okerra da";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Kopiatu profil bat izen berri batekin. Kopia aktibatu gabe hasten da.";
 "cli.profile.duplicate.done" = "«%@» (%@) sortu da.";
 "cli.profile.duplicate.name" = "Kopiaren izena.";

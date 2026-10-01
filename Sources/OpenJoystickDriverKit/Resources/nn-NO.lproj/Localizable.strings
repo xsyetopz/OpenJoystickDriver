@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ är inte längre ansluten.";
 "cli.error.json_plain" = "Bruk anten --json eller --plain, ikkje begge.";
 "cli.error.peer_rejected" = "Tenesta avviste denne ojd-en fordi han ikkje er signert som appen. Køyr ojd-en som følgjer med OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Tenesta svarte ikkje innan %@ sekund. Prøv på nytt med ein større --timeout.";
+"cli.error.request_timeout" = "Tenesta svarte ikkje innan %@. Prøv på nytt med ein større --timeout.";
 "cli.error.service_request_failed" = "Tenesta fullførte ikkje førespurnaden: %@. Sjekk ho med «ojd status».";
+"cli.error.duplicate_profile_name" = "Ein profil med det namnet finst allereie. 'ojd profile list' viser alle profilar.";
 "cli.error.service_timeout" = "Tenesta svarte ikkje i tide. Prøv på nytt, eller sjekk ho med «ojd status».";
 "cli.error.service_unavailable" = "OpenJoystickDriver-tenesta køyrer ikkje. Start ho med «ojd service start».";
 "cli.error.timeout_value" = "--timeout krev eit tal på sekund over 0.";
 "cli.error.unexpected" = "Uventa feil: %@. Køyr «ojd diagnose --bundle PATH» og legg ved pakken i feilrapporten.";
+"cli.error.unknown_command" = "Ukjend kommando «%@». Meinte du «%@»?";
 "cli.option.json" = "Skriv ut JSON til stdout.";
 "cli.option.no_color" = "Ikkje bruk fargar.";
 "cli.option.no_input" = "Spør aldri etter inndata; mislykkast viss ein verdi manglar.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS kunne ikkje opne %@. Opne han frå Finder for å sjå kvifor.";
 "cli.service.stop.abstract" = "Stopp tenesta og vent til ho avsluttar. Tilkopla kontrollarar går tilbake til macOS.";
 "cli.service.stop.signal_failed" = "Kunne ikkje stoppe tenesta: %@. Avslutt OpenJoystickDriver frå menyen.";
-"cli.service.stop.timeout" = "Tenesta stoppa ikkje innan %@ sekund. Prøv på nytt med ein større --timeout.";
+"cli.service.stop.timeout" = "Tenesta stoppa ikkje innan %@. Prøv på nytt med ein større --timeout.";
 "cli.service.stopped" = "Tenesta er stoppa.";
 "cli.service.wait.abstract" = "Vent til tenesta tek imot førespurnader. --timeout avgrensar venta (standard 5 sekund).";
-"cli.service.wait.timeout" = "Tenesta tok ikkje imot førespurnader innan %@ sekund. Start ho med «ojd service start», eller prøv på nytt med ein større --timeout.";
+"cli.service.wait.timeout" = "Tenesta tok ikkje imot førespurnader innan %@. Start ho med «ojd service start», eller prøv på nytt med ein større --timeout.";
 "cli.status.abstract" = "Vis tenesta, utvidinga, løyva og tilkopla kontrollarar.";
 "cli.status.discussion" = "Fungerer når tenesta er stoppa: ho rapporterer tenesta som stoppa og avsluttar med 0.";
 "cli.status.label.accessibility" = "Hjelpemiddel";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "tenesta køyrer ikkje";
 "cli.diagnose.soak" = "Måler òg minnet, filbeskrivarane og CPU-en til tenesta så lenge (1-86400).";
 "cli.diagnose.soak.not_requested" = "ikkje førespurd; bruk --soak SECONDS";
-"cli.diagnose.soak.progress" = "Måler tenesta i %lld sekund...";
+"cli.diagnose.soak.progress" = "Måler tenesta i %@...";
 "cli.diagnose.soak_range" = "--soak må vere mellom 1 og 86400 sekund.";
 "cli.diagnose.usb.failed" = "USB-skanninga mislukkast: %@. Gi OpenJoystickDriver tilgang til Inndataovervåking.";
-"cli.diagnose.usb.ok" = "%lld produsentspesifikke USB-kontrollarar synlege";
+"cli.diagnose.usb.ok" = "Synlege produsentspesifikke USB-kontrollarar: %lld";
 "cli.diagnose.virtual.disabled" = "virtuell spelkontrollar slått av";
 "cli.diagnose.virtual.error" = "feil i virtuell spelkontrollar: %@";
 "cli.diagnose.virtual.override" = "lagra profilovertyringar kan ikkje lesast: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ er tilgjengeleg (du har %@): %@";
 "cli.update.check.discussion" = "Køyrer berre når du bed om det; ojd sjekkar aldri på eiga hand. Han lastar ikkje ned eller installerer noko. Avsluttar med 0 uansett om det finst ei oppdatering, og med 1 viss sjekken mislukkast.";
 "cli.update.check.failed" = "Kunne ikkje sjå etter oppdateringar: %@. Sjekk nettverkstilkoplinga og prøv igjen.";
+"cli.update.check.failed_reason" = "Kunne ikkje sjå etter oppdateringar: %@.";
 "cli.update.check.incomplete" = "inkje resultat";
 "cli.update.check.prerelease" = "Ta med førehandsversjonar.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ er oppdatert (nyaste utgjeving: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Namn";
 "cli.controller.show.label.output_checks" = "Utdatasjekkar";
 "cli.controller.show.label.ownership" = "Eigarskap";
+"cli.controller.show.ownership" = "rute %@, fysisk %@, HID-inndata %@";
 "cli.controller.show.label.protocol" = "Protokoll";
 "cli.controller.show.label.record" = "Oppføring";
 "cli.controller.show.label.rumble" = "Vibrasjon";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Med --json blir eitt JSON-objekt skrive ut per line. Y på stikka peikar opp. Med --first-press skriv han ut den første kontrollen som vart trykt og avsluttar; han mislukkast viss --duration går ut først.";
 "cli.controller.watch.first_press" = "Skriv ut den første kontrollen som vart trykt, og avslutt.";
 "cli.controller.watch.no_input" = "Ingen inndata mottekne.";
-"cli.controller.watch.no_press" = "Ingen kontroll vart trykt på innan %@ sekund.";
+"cli.controller.watch.no_press" = "Ingen kontroll vart trykt på innan %@.";
 "cli.controller.watch.press_prompt" = "Trykk på ein kontroll på %@ (%@).";
 "cli.controller.watch.started" = "Følgjer med på %@ (%@). Trykk på knappane på kontrollaren.";
 "cli.error.confirm_declined" = "Ingenting vart endra.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Ikkje spør om stadfesting.";
 "cli.virtual.abstract" = "Vis og vel den virtuelle gamepaden OpenJoystickDriver publiserer for ein kontrollar.";
 "cli.virtual.changed" = "%@ publiserer no %@ (%@).";
+"cli.virtual.stored" = "Valet for %@ er lagra. Det blir teke i bruk når virtuell utgang er slått på.";
 "cli.virtual.discussion" = "Eit val gjeld alle kontrollarar av same modell. 'reset' set ein modell tilbake til automatisk val.";
 "cli.virtual.error.failed" = "Den virtuelle gamepaden for %@ vart ikkje endra (%@). Sjekk med 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Set modellen til ein kontrollar, eller alle modellar, tilbake til automatisk val av virtuell gamepad.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "'%@' er aktiv på ein tilkopla kontrollar og blokkerer no all inndata frå han. Legg til ei binding med 'ojd binding set', eller stopp profilen med 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Fjerne alle bindingar, akkordar, sekvensar og lag frå '%@'?";
 "cli.binding.clear.discussion" = "--all fjernar òg akkordane, sekvensane og laga til profilen, og ber om stadfesting i ein terminal; elles trengst --force. Innstillingane for spakar, avtrekkarar, berøring, rørsle og utdata blir ståande.";
-"cli.binding.clear.done" = "Fjerna %lld bindingar frå '%@'.";
-"cli.binding.clear.dry_run" = "Ville fjerna %lld bindingar frå '%@'.";
+"cli.binding.clear.done" = "Bindingar fjerna frå '%@': %lld.";
+"cli.binding.clear.dry_run" = "Bindingar som ville vorte fjerna frå '%@': %lld.";
 "cli.binding.clear.missing" = "'%@' har inga binding for %@. Ingenting vart endra.";
 "cli.binding.clear.sources" = "Kjeldene som bindingane skal fjernast frå.";
 "cli.binding.clear.usage" = "Oppgje éi eller fleire kjelder, eller --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Ville sletta profilen '%@'.";
 "cli.profile.discussion" = "Ein ommappingsprofil gjer styreelementa på éin kontrollarmodell om til inndata for gamepad, tastatur og peikar. PROFILE er ein profil-ID eller eit namn frå 'ojd profile list'. Endre bindingar med 'ojd binding', og alt anna med 'ojd profile edit'. Alle profilkommandoar treng tenesta.";
 "cli.profile.document_invalid" = "%@ er ikkje ein gyldig profil: %@";
+"cli.document.not_json" = "det er ikkje gyldig JSON";
+"cli.document.missing_field" = "feltet «%@» manglar";
+"cli.document.wrong_type" = "feltet «%@» har feil type";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Kopier ein profil under eit nytt namn. Kopien startar som inaktiv.";
 "cli.profile.duplicate.done" = "Oppretta '%@' (%@).";
 "cli.profile.duplicate.name" = "Namnet på kopien.";

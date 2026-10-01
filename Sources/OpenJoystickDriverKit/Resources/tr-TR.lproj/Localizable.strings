@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ artık bağlı değil.";
 "cli.error.json_plain" = "--json ve --plain seçeneklerinden yalnızca birini kullanın.";
 "cli.error.peer_rejected" = "Servis bu ojd’yi reddetti, çünkü uygulama gibi imzalanmamış. OpenJoystickDriver.app içindeki ojd’yi çalıştırın.";
-"cli.error.request_timeout" = "Servis %@ saniye içinde yanıt vermedi. Daha büyük bir --timeout ile yeniden deneyin.";
+"cli.error.request_timeout" = "Servis %@ içinde yanıt vermedi. Daha büyük bir --timeout ile yeniden deneyin.";
 "cli.error.service_request_failed" = "Servis isteği tamamlamadı: %@. “ojd status” ile kontrol edin.";
+"cli.error.duplicate_profile_name" = "Bu ada sahip bir profil zaten var. “ojd profile list” her profili gösterir.";
 "cli.error.service_timeout" = "Servis zamanında yanıt vermedi. Yeniden deneyin veya “ojd status” ile kontrol edin.";
 "cli.error.service_unavailable" = "OpenJoystickDriver servisi çalışmıyor. “ojd service start” ile başlatın.";
 "cli.error.timeout_value" = "--timeout, 0’dan büyük bir saniye sayısı gerektirir.";
 "cli.error.unexpected" = "Beklenmeyen hata: %@. “ojd diagnose --bundle PATH” komutunu çalıştırın ve paketi bir hata raporuna ekleyin.";
+"cli.error.unknown_command" = "Bilinmeyen komut “%@”. Şunu mu demek istediniz: “%@”?";
 "cli.option.json" = "JSON’u stdout’a yazdırır.";
 "cli.option.no_color" = "Renk kullanmaz.";
 "cli.option.no_input" = "Asla sormaz; bir değer eksikse başarısız olur.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS %@ öğesini açamadı. Nedenini görmek için Finder’dan açın.";
 "cli.service.stop.abstract" = "Servisi durdurur ve çıkana kadar bekler. Bağlı kontrolcüler macOS’a döner.";
 "cli.service.stop.signal_failed" = "Servis durdurulamadı: %@. OpenJoystickDriver’ı menüsünden kapatın.";
-"cli.service.stop.timeout" = "Servis %@ saniye içinde durmadı. Daha büyük bir --timeout ile yeniden deneyin.";
+"cli.service.stop.timeout" = "Servis %@ içinde durmadı. Daha büyük bir --timeout ile yeniden deneyin.";
 "cli.service.stopped" = "Servis durduruldu.";
 "cli.service.wait.abstract" = "Servis istekleri kabul edene kadar bekler. --timeout beklemeyi sınırlar (varsayılan 5 saniye).";
-"cli.service.wait.timeout" = "Servis %@ saniye içinde istekleri kabul etmedi. “ojd service start” ile başlatın veya daha büyük bir --timeout ile yeniden deneyin.";
+"cli.service.wait.timeout" = "Servis %@ içinde istekleri kabul etmedi. “ojd service start” ile başlatın veya daha büyük bir --timeout ile yeniden deneyin.";
 "cli.status.abstract" = "Servisi, eklentiyi, izinleri ve bağlı kontrolcüleri gösterir.";
 "cli.status.discussion" = "Servis durdurulmuşken de çalışır: servisi durdurulmuş olarak bildirir ve 0 koduyla çıkar.";
 "cli.status.label.accessibility" = "Erişilebilirlik";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "servis çalışmıyor";
 "cli.diagnose.soak" = "Ayrıca servisin belleğini, dosya tanımlayıcılarını ve CPU kullanımını bu süre boyunca örnekler (1-86400).";
 "cli.diagnose.soak.not_requested" = "istenmedi; --soak SECONDS kullanın";
-"cli.diagnose.soak.progress" = "Servisten %lld saniye boyunca örnek alınıyor...";
+"cli.diagnose.soak.progress" = "Servisten %@ boyunca örnek alınıyor...";
 "cli.diagnose.soak_range" = "--soak 1 ile 86400 saniye arasında olmalıdır.";
 "cli.diagnose.usb.failed" = "USB taraması başarısız oldu: %@. OpenJoystickDriver’a Giriş İzleme izni verin.";
-"cli.diagnose.usb.ok" = "%lld üreticiye özgü USB kontrolcüsü görünüyor";
+"cli.diagnose.usb.ok" = "Görünen üreticiye özgü USB kontrolcüleri: %lld";
 "cli.diagnose.virtual.disabled" = "sanal oyun kumandası devre dışı";
 "cli.diagnose.virtual.error" = "sanal oyun kumandası hatası: %@";
 "cli.diagnose.virtual.override" = "kayıtlı profil geçersiz kılmaları okunamıyor: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ kullanılabilir (sizde %@ var): %@";
 "cli.update.check.discussion" = "Yalnızca siz istediğinizde çalışır; ojd kendiliğinden denetlemez. Hiçbir şey indirmez veya yüklemez. Güncelleme olsun ya da olmasın 0 koduyla çıkar, denetim başarısız olursa 1 koduyla çıkar.";
 "cli.update.check.failed" = "Güncellemeler denetlenemedi: %@. Ağ bağlantınızı kontrol edip yeniden deneyin.";
+"cli.update.check.failed_reason" = "Güncellemeler denetlenemedi: %@.";
 "cli.update.check.incomplete" = "sonuç yok";
 "cli.update.check.prerelease" = "Ön sürümleri dahil eder.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ güncel (en son sürüm: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Ad";
 "cli.controller.show.label.output_checks" = "Çıkış denetimleri";
 "cli.controller.show.label.ownership" = "Sahiplik";
+"cli.controller.show.ownership" = "yol %@, fiziksel %@, HID girdisi %@";
 "cli.controller.show.label.protocol" = "Protokol";
 "cli.controller.show.label.record" = "Kayıt";
 "cli.controller.show.label.rumble" = "Titreşim";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "--json ile satır başına bir JSON nesnesi yazdırır. Çubuğun Y ekseni yukarı bakar. --first-press ile basılan ilk kontrol öğesini yazdırıp çıkar; --duration önce dolarsa başarısız olur.";
 "cli.controller.watch.first_press" = "Basılan ilk kontrol öğesini yazdırır ve çıkar.";
 "cli.controller.watch.no_input" = "Giriş alınmadı.";
-"cli.controller.watch.no_press" = "%@ saniye içinde hiçbir kontrol öğesine basılmadı.";
+"cli.controller.watch.no_press" = "%@ içinde hiçbir kontrol öğesine basılmadı.";
 "cli.controller.watch.press_prompt" = "%@ (%@) üzerinde bir kontrol öğesine basın.";
 "cli.controller.watch.started" = "%@ (%@) izleniyor. Kontrolcü düğmelerine basın.";
 "cli.error.confirm_declined" = "Hiçbir şey değişmedi.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Onay istemez.";
 "cli.virtual.abstract" = "OpenJoystickDriver’ın bir kontrolcü için yayımladığı sanal oyun kumandasını gösterir ve seçer.";
 "cli.virtual.changed" = "%@ artık %@ (%@) yayımlıyor.";
+"cli.virtual.stored" = "%@ için seçim kaydedildi. Sanal çıkış etkinleştirildiğinde uygulanacak.";
 "cli.virtual.discussion" = "Bir seçim aynı modeldeki her kontrolcü için geçerlidir. “reset” bir modeli otomatik seçime döndürür.";
 "cli.virtual.error.failed" = "%@ için sanal oyun kumandası değişmedi (%@). “ojd virtual show” ile kontrol edin.";
 "cli.virtual.reset.abstract" = "Bir kontrolcünün modelini veya tüm modelleri sanal oyun kumandasının otomatik seçimine döndürür.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "“%@” bağlı bir kontrolcüde etkin ve artık onun tüm girişini engelliyor. “ojd binding set” ile bir atama ekleyin veya profili “ojd profile deactivate” ile durdurun.";
 "cli.binding.clear.confirm" = "“%@” profilindeki tüm atamalar, akordlar, diziler ve katmanlar kaldırılsın mı?";
 "cli.binding.clear.discussion" = "--all ayrıca profilin akordlarını, dizilerini ve katmanlarını kaldırır ve terminalde onay ister; aksi halde --force gerekir. Çubuk, tetik, dokunma, hareket ve çıkış ayarları kalır.";
-"cli.binding.clear.done" = "%lld atama “%@” profilinden kaldırıldı.";
-"cli.binding.clear.dry_run" = "%lld atama “%@” profilinden kaldırılırdı.";
+"cli.binding.clear.done" = "“%@” profilinden kaldırılan atamalar: %lld.";
+"cli.binding.clear.dry_run" = "“%@” profilinden kaldırılacak atamalar: %lld.";
 "cli.binding.clear.missing" = "“%@” profilinde %@ için atama yok. Hiçbir şey değişmedi.";
 "cli.binding.clear.sources" = "Atamaları kaldırılacak kaynaklar.";
 "cli.binding.clear.usage" = "Bir veya daha fazla kaynak ya da --all verin.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "“%@” profili silinirdi.";
 "cli.profile.discussion" = "Yeniden atama profili, tek bir kontrolcü modelinin kontrol öğelerini oyun kumandası, klavye ve işaretçi girişine çevirir. PROFILE, “ojd profile list” çıktısındaki bir profil kimliği veya adıdır. Atamaları “ojd binding” ile, geri kalan her şeyi “ojd profile edit” ile değiştirin. Her profil komutu servise ihtiyaç duyar.";
 "cli.profile.document_invalid" = "%@ geçerli bir profil değil: %@";
+"cli.document.not_json" = "geçerli bir JSON değil";
+"cli.document.missing_field" = "“%@” alanı eksik";
+"cli.document.wrong_type" = "“%@” alanının türü yanlış";
+"cli.document.field_problem" = "“%@”: %@";
 "cli.profile.duplicate.abstract" = "Bir profili yeni bir adla kopyalar. Kopya etkin değilken başlar.";
 "cli.profile.duplicate.done" = "“%@” oluşturuldu (%@).";
 "cli.profile.duplicate.name" = "Kopyanın adı.";

@@ -121,6 +121,24 @@ struct DiagnoseCommandTests {
   }
 
   @Test
+  func aVirtualDeviceErrorShowsItsMessageOnce() {
+    let status = ApplicationServiceStatusPayload(
+      inputMonitoring: "granted",
+      accessibility: "granted",
+      connectedDevices: [],
+      userSpaceVirtualDeviceEnabled: true,
+      userSpaceVirtualDeviceStatus: .error("Missing entitlement")
+    )
+    let check = DiagnoseChecks.virtualDeviceCheck(
+      DiagnoseServiceSnapshot(availability: .running, status: status, virtualDiagnostics: nil)
+    )
+
+    #expect(
+      check == DiagnoseCheck("virtual-device", .fail, "virtual gamepad error: Missing entitlement")
+    )
+  }
+
+  @Test
   func aStoppedServiceSkipsItsChecksAndNeverExits69() async throws {
     let result = await run(["--json"], socketPath: temporarySocketPath())
 

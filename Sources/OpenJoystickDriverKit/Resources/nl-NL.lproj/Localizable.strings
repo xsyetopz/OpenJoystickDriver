@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ is niet meer verbonden.";
 "cli.error.json_plain" = "Gebruik --json of --plain, niet allebei.";
 "cli.error.peer_rejected" = "De voorziening heeft deze ojd geweigerd, omdat die niet is ondertekend zoals de app. Voer de ojd uit die met OpenJoystickDriver.app wordt meegeleverd.";
-"cli.error.request_timeout" = "De voorziening heeft niet binnen %@ seconden geantwoord. Probeer het opnieuw met een grotere --timeout.";
+"cli.error.request_timeout" = "De voorziening heeft niet binnen %@ geantwoord. Probeer het opnieuw met een grotere --timeout.";
 "cli.error.service_request_failed" = "De voorziening heeft het verzoek niet voltooid: %@. Controleer het met ‘ojd status’.";
+"cli.error.duplicate_profile_name" = "Er bestaat al een profiel met die naam. ‘ojd profile list’ toont alle profielen.";
 "cli.error.service_timeout" = "De voorziening heeft niet op tijd geantwoord. Probeer het opnieuw, of controleer het met ‘ojd status’.";
 "cli.error.service_unavailable" = "De OpenJoystickDriver-voorziening draait niet. Start die met ‘ojd service start’.";
 "cli.error.timeout_value" = "--timeout vereist een aantal seconden boven 0.";
 "cli.error.unexpected" = "Onverwachte fout: %@. Voer ‘ojd diagnose --bundle PATH’ uit en voeg het pakket toe aan een bugmelding.";
+"cli.error.unknown_command" = "Onbekende opdracht ‘%@’. Bedoelde je ‘%@’?";
 "cli.option.json" = "Print JSON naar stdout.";
 "cli.option.no_color" = "Gebruik geen kleur.";
 "cli.option.no_input" = "Vraag nooit om invoer; mislukt als een waarde ontbreekt.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS kon %@ niet openen. Open het vanuit de Finder om te zien waarom.";
 "cli.service.stop.abstract" = "Stop de voorziening en wacht tot die is afgesloten. Aangesloten controllers gaan terug naar macOS.";
 "cli.service.stop.signal_failed" = "Kon de voorziening niet stoppen: %@. Sluit OpenJoystickDriver af via het menu.";
-"cli.service.stop.timeout" = "De voorziening is niet binnen %@ seconden gestopt. Probeer het opnieuw met een grotere --timeout.";
+"cli.service.stop.timeout" = "De voorziening is niet binnen %@ gestopt. Probeer het opnieuw met een grotere --timeout.";
 "cli.service.stopped" = "De voorziening is gestopt.";
 "cli.service.wait.abstract" = "Wacht tot de voorziening verzoeken accepteert. --timeout begrenst de wachttijd (standaard 5 seconden).";
-"cli.service.wait.timeout" = "De voorziening heeft niet binnen %@ seconden verzoeken geaccepteerd. Start die met ‘ojd service start’, of probeer het opnieuw met een grotere --timeout.";
+"cli.service.wait.timeout" = "De voorziening heeft niet binnen %@ verzoeken geaccepteerd. Start die met ‘ojd service start’, of probeer het opnieuw met een grotere --timeout.";
 "cli.status.abstract" = "Toon de voorziening, extensie, toestemmingen en aangesloten controllers.";
 "cli.status.discussion" = "Werkt ook als de voorziening is gestopt: meldt de voorziening als gestopt en sluit af met 0.";
 "cli.status.label.accessibility" = "Toegankelijkheid";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "service draait niet";
 "cli.diagnose.soak" = "Bemonstert ook zo lang het geheugen, de bestandsdescriptors en de CPU van de service (1-86400).";
 "cli.diagnose.soak.not_requested" = "niet gevraagd; gebruik --soak SECONDS";
-"cli.diagnose.soak.progress" = "De service wordt %lld seconden bemonsterd...";
+"cli.diagnose.soak.progress" = "De service wordt gedurende %@ bemonsterd...";
 "cli.diagnose.soak_range" = "--soak moet tussen 1 en 86400 seconden liggen.";
 "cli.diagnose.usb.failed" = "USB-scan mislukt: %@. Geef OpenJoystickDriver toegang tot 'Invoermonitoring'.";
-"cli.diagnose.usb.ok" = "%lld fabrikantspecifieke USB-controllers zichtbaar";
+"cli.diagnose.usb.ok" = "Zichtbare fabrikantspecifieke USB-controllers: %lld";
 "cli.diagnose.virtual.disabled" = "virtuele gamepad uitgeschakeld";
 "cli.diagnose.virtual.error" = "fout bij virtuele gamepad: %@";
 "cli.diagnose.virtual.override" = "opgeslagen profielaanpassingen onleesbaar: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ is beschikbaar (je hebt %@): %@";
 "cli.update.check.discussion" = "Draait alleen als je erom vraagt; ojd controleert nooit uit zichzelf. Er wordt niets gedownload of geïnstalleerd. Stopt met code 0, of er nu een update is of niet, en met code 1 als de controle mislukt.";
 "cli.update.check.failed" = "Kon niet controleren op updates: %@. Controleer je netwerkverbinding en probeer het opnieuw.";
+"cli.update.check.failed_reason" = "Kon niet controleren op updates: %@.";
 "cli.update.check.incomplete" = "geen resultaat";
 "cli.update.check.prerelease" = "Neem pre-releaseversies mee.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ is up-to-date (nieuwste release: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Naam";
 "cli.controller.show.label.output_checks" = "Uitvoercontroles";
 "cli.controller.show.label.ownership" = "Eigenaarschap";
+"cli.controller.show.ownership" = "route %@, fysiek %@, HID-invoer %@";
 "cli.controller.show.label.protocol" = "Protocol";
 "cli.controller.show.label.record" = "Record";
 "cli.controller.show.label.rumble" = "Trillen";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Met --json wordt één JSON-object per regel getoond. Stick-Y wijst omhoog. Met --first-press wordt het eerste ingedrukte bedieningselement getoond en stopt het commando; het mislukt als --duration eerst verstrijkt.";
 "cli.controller.watch.first_press" = "Toon het eerste ingedrukte bedieningselement en stop dan.";
 "cli.controller.watch.no_input" = "Geen invoer ontvangen.";
-"cli.controller.watch.no_press" = "Binnen %@ seconden is er geen bedieningselement ingedrukt.";
+"cli.controller.watch.no_press" = "Binnen %@ is er geen bedieningselement ingedrukt.";
 "cli.controller.watch.press_prompt" = "Druk op een bedieningselement van %@ (%@).";
 "cli.controller.watch.started" = "%@ (%@) wordt bekeken. Druk op knoppen van de controller.";
 "cli.error.confirm_declined" = "Er is niets gewijzigd.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Vraag niet om bevestiging.";
 "cli.virtual.abstract" = "Het virtuele gamepad tonen en kiezen dat OpenJoystickDriver voor een controller publiceert.";
 "cli.virtual.changed" = "%@ publiceert nu %@ (%@).";
+"cli.virtual.stored" = "De keuze voor %@ is opgeslagen. Die wordt toegepast zodra virtuele uitvoer is ingeschakeld.";
 "cli.virtual.discussion" = "Een keuze geldt voor elke controller van hetzelfde model. 'reset' zet een model terug op automatische selectie.";
 "cli.virtual.error.failed" = "Het virtuele gamepad voor %@ is niet gewijzigd (%@). Controleer dit met 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Het model van een controller, of elk model, terugzetten op automatische selectie van het virtuele gamepad.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "‘%@’ is actief op een verbonden controller en blokkeert nu alle invoer ervan. Voeg een koppeling toe met 'ojd binding set' of stop het profiel met 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Alle koppelingen, akkoorden, reeksen en lagen uit ‘%@’ verwijderen?";
 "cli.binding.clear.discussion" = "--all verwijdert ook de akkoorden, reeksen en lagen van het profiel en vraagt in een terminal om bevestiging; anders is --force nodig. Instellingen voor sticks, triggers, aanraking, beweging en uitvoer blijven behouden.";
-"cli.binding.clear.done" = "%lld koppelingen uit ‘%@’ verwijderd.";
-"cli.binding.clear.dry_run" = "Zou %lld koppelingen uit ‘%@’ verwijderen.";
+"cli.binding.clear.done" = "Koppelingen verwijderd uit ‘%@’: %lld.";
+"cli.binding.clear.dry_run" = "Koppelingen die uit ‘%@’ zouden worden verwijderd: %lld.";
 "cli.binding.clear.missing" = "‘%@’ heeft geen koppeling voor %@. Niets gewijzigd.";
 "cli.binding.clear.sources" = "De bronnen waarvan de koppelingen worden verwijderd.";
 "cli.binding.clear.usage" = "Geef een of meer bronnen op, of --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Zou het profiel ‘%@’ verwijderen.";
 "cli.profile.discussion" = "Een toewijzingsprofiel zet de bedieningselementen van één controllermodel om in gamepad-, toetsenbord- en aanwijzerinvoer. PROFILE is de ID of naam van een profiel uit ‘ojd profile list’. Wijzig koppelingen met ‘ojd binding’ en al het andere met ‘ojd profile edit’. Elke profielopdracht vereist de voorziening.";
 "cli.profile.document_invalid" = "%@ is geen geldig profiel: %@";
+"cli.document.not_json" = "het is geen geldige JSON";
+"cli.document.missing_field" = "het veld ‘%@’ ontbreekt";
+"cli.document.wrong_type" = "het veld ‘%@’ heeft het verkeerde type";
+"cli.document.field_problem" = "‘%@’: %@";
 "cli.profile.duplicate.abstract" = "Kopieer een profiel onder een nieuwe naam. De kopie begint inactief.";
 "cli.profile.duplicate.done" = "‘%@’ (%@) gemaakt.";
 "cli.profile.duplicate.name" = "De naam van de kopie.";

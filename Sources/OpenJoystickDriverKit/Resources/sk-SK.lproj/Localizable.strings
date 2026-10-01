@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ už nie je prepojená.";
 "cli.error.json_plain" = "Použite buď --json, alebo --plain, nie oboje.";
 "cli.error.peer_rejected" = "Služba odmietla tento ojd, pretože nie je podpísaný ako aplikácia. Spustite ojd z OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Služba neodpovedala do %@ s. Skúste znova s väčšou hodnotou --timeout.";
+"cli.error.request_timeout" = "Služba neodpovedala do %@. Skúste znova s väčšou hodnotou --timeout.";
 "cli.error.service_request_failed" = "Služba nedokončila požiadavku: %@. Skontrolujte ju príkazom „ojd status“.";
+"cli.error.duplicate_profile_name" = "Profil s týmto názvom už existuje. „ojd profile list“ zobrazí všetky profily.";
 "cli.error.service_timeout" = "Služba neodpovedala včas. Skúste znova alebo ju skontrolujte príkazom „ojd status“.";
 "cli.error.service_unavailable" = "Služba OpenJoystickDriver nebeží. Spustite ju príkazom „ojd service start“.";
 "cli.error.timeout_value" = "--timeout vyžaduje počet sekúnd väčší ako 0.";
 "cli.error.unexpected" = "Neočakávaná chyba: %@. Spustite „ojd diagnose --bundle PATH“ a priložte balík k hláseniu chyby.";
+"cli.error.unknown_command" = "Neznámy príkaz „%@“. Mali ste na mysli „%@“?";
 "cli.option.json" = "Vypíše JSON na stdout.";
 "cli.option.no_color" = "Nepoužíva farby.";
 "cli.option.no_input" = "Nikdy nevyzýva na zadanie; pri chýbajúcej hodnote zlyhá.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS nemohol otvoriť %@. Otvorte to z aplikácie Finder, aby ste zistili dôvod.";
 "cli.service.stop.abstract" = "Zastaví službu a počká, kým sa ukončí. Pripojené ovládače sa vrátia macOS.";
 "cli.service.stop.signal_failed" = "Službu sa nepodarilo zastaviť: %@. Ukončite OpenJoystickDriver z jeho ponuky.";
-"cli.service.stop.timeout" = "Služba sa nezastavila do %@ s. Skúste znova s väčšou hodnotou --timeout.";
+"cli.service.stop.timeout" = "Služba sa nezastavila do %@. Skúste znova s väčšou hodnotou --timeout.";
 "cli.service.stopped" = "Služba je zastavená.";
 "cli.service.wait.abstract" = "Počká, kým služba začne prijímať požiadavky. --timeout obmedzuje čakanie (predvolene 5 sekúnd).";
-"cli.service.wait.timeout" = "Služba nezačala prijímať požiadavky do %@ s. Spustite ju príkazom „ojd service start“ alebo skúste znova s väčšou hodnotou --timeout.";
+"cli.service.wait.timeout" = "Služba nezačala prijímať požiadavky do %@. Spustite ju príkazom „ojd service start“ alebo skúste znova s väčšou hodnotou --timeout.";
 "cli.status.abstract" = "Zobrazí službu, rozšírenie, povolenia a pripojené ovládače.";
 "cli.status.discussion" = "Funguje aj pri zastavenej službe: ohlási ju ako zastavenú a skončí s kódom 0.";
 "cli.status.label.accessibility" = "Prístupnosť";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "služba nebeží";
 "cli.diagnose.soak" = "Po túto dobu tiež vzorkuje pamäť, deskriptory súborov a CPU služby (1-86400).";
 "cli.diagnose.soak.not_requested" = "nevyžiadané; použite --soak SECONDS";
-"cli.diagnose.soak.progress" = "Vzorkuje sa služba počas %lld s…";
+"cli.diagnose.soak.progress" = "Vzorkuje sa služba počas %@…";
 "cli.diagnose.soak_range" = "--soak musí byť medzi 1 a 86400 sekundami.";
 "cli.diagnose.usb.failed" = "Skenovanie USB zlyhalo: %@. Udeľte OpenJoystickDriveru prístup k monitorovaniu vstupu.";
 "cli.diagnose.usb.ok" = "Viditeľné USB ovládače špecifické pre výrobcu: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ je k dispozícii (máte %@): %@";
 "cli.update.check.discussion" = "Spustí sa len na požiadanie; ojd nikdy nekontroluje sám. Nič nesťahuje ani neinštaluje. Skončí s kódom 0, či aktualizácia existuje, alebo nie, a s kódom 1, keď kontrola zlyhá.";
 "cli.update.check.failed" = "Aktualizácie sa nepodarilo skontrolovať: %@. Skontrolujte sieťové pripojenie a skúste to znova.";
+"cli.update.check.failed_reason" = "Aktualizácie sa nepodarilo skontrolovať: %@.";
 "cli.update.check.incomplete" = "žiadny výsledok";
 "cli.update.check.prerelease" = "Zahrnie predbežné verzie.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ je aktuálny (najnovšie vydanie: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Názov";
 "cli.controller.show.label.output_checks" = "Kontroly výstupu";
 "cli.controller.show.label.ownership" = "Vlastníctvo";
+"cli.controller.show.ownership" = "cesta %@, fyzicky %@, vstup HID %@";
 "cli.controller.show.label.protocol" = "Protokol";
 "cli.controller.show.label.record" = "Záznam";
 "cli.controller.show.label.rumble" = "Vibrácie";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "S --json vypíše jeden objekt JSON na riadok. Os Y páčky smeruje nahor. S --first-press vypíše prvý stlačený ovládací prvok a skončí; zlyhá, ak uplynie --duration skôr.";
 "cli.controller.watch.first_press" = "Vypíše prvý stlačený ovládací prvok a skončí.";
 "cli.controller.watch.no_input" = "Nebol prijatý žiadny vstup.";
-"cli.controller.watch.no_press" = "Do %@ sekúnd nebol stlačený žiadny ovládací prvok.";
+"cli.controller.watch.no_press" = "Do %@ nebol stlačený žiadny ovládací prvok.";
 "cli.controller.watch.press_prompt" = "Stlačte ovládací prvok na zariadení %@ (%@).";
 "cli.controller.watch.started" = "Sleduje sa zariadenie %@ (%@). Stláčajte tlačidlá ovládača.";
 "cli.error.confirm_declined" = "Nič sa nezmenilo.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Nepýta sa na potvrdenie.";
 "cli.virtual.abstract" = "Zobrazí a vyberie virtuálny gamepad, ktorý OpenJoystickDriver publikuje pre ovládač.";
 "cli.virtual.changed" = "Zariadenie %@ teraz publikuje %@ (%@).";
+"cli.virtual.stored" = "Voľba pre %@ je uložená. Použije sa po zapnutí virtuálneho výstupu.";
 "cli.virtual.discussion" = "Voľba platí pre všetky ovládače rovnakého modelu. „reset“ vráti model na automatický výber.";
 "cli.virtual.error.failed" = "Virtuálny gamepad pre %@ sa nezmenil (%@). Skontrolujte to pomocou „ojd virtual show“.";
 "cli.virtual.reset.abstract" = "Vráti model ovládača alebo všetky modely na automatický výber virtuálneho gamepadu.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "„%@“ je aktívny na pripojenom ovládači a teraz blokuje všetok jeho vstup. Pridajte priradenie pomocou „ojd binding set“ alebo profil zastavte pomocou „ojd profile deactivate“.";
 "cli.binding.clear.confirm" = "Odstrániť všetky priradenia, akordy, sekvencie a vrstvy z „%@“?";
 "cli.binding.clear.discussion" = "--all odstráni aj akordy, sekvencie a vrstvy profilu a v termináli žiada o potvrdenie; inak vyžaduje --force. Nastavenia páčok, spúšťačov, dotyku, pohybu a výstupu zostanú.";
-"cli.binding.clear.done" = "Odstránené priradenia: %lld z „%@“.";
-"cli.binding.clear.dry_run" = "Odstránili by sa priradenia: %lld z „%@“.";
+"cli.binding.clear.done" = "Priradenia odstránené z „%@“: %lld.";
+"cli.binding.clear.dry_run" = "Priradenia, ktoré by sa odstránili z „%@“: %lld.";
 "cli.binding.clear.missing" = "„%@“ nemá priradenie pre %@. Nič sa nezmenilo.";
 "cli.binding.clear.sources" = "Zdroje, ktorých priradenia sa majú odstrániť.";
 "cli.binding.clear.usage" = "Zadajte jeden alebo viac zdrojov, alebo --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Profil „%@“ by sa odstránil.";
 "cli.profile.discussion" = "Profil mapovania premieňa ovládacie prvky jedného modelu ovládača na vstup gamepadu, klávesnice a ukazovateľa. PROFILE je ID alebo názov profilu z „ojd profile list“. Priradenia meňte pomocou „ojd binding“ a všetko ostatné pomocou „ojd profile edit“. Každý príkaz profilu vyžaduje službu.";
 "cli.profile.document_invalid" = "%@ nie je platný profil: %@";
+"cli.document.not_json" = "nie je platný JSON";
+"cli.document.missing_field" = "chýba pole „%@“";
+"cli.document.wrong_type" = "pole „%@“ má nesprávny typ";
+"cli.document.field_problem" = "„%@“: %@";
 "cli.profile.duplicate.abstract" = "Skopíruje profil pod novým názvom. Kópia začína ako neaktívna.";
 "cli.profile.duplicate.done" = "Vytvorené „%@“ (%@).";
 "cli.profile.duplicate.name" = "Názov kópie.";

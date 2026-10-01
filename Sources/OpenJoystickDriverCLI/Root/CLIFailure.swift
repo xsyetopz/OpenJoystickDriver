@@ -38,7 +38,8 @@ struct CLIFailure: Error, Equatable, Sendable {
       CLILocalized.format(
         "cli.error.service_request_failed",
         "The service did not complete the request: %@. Check it with 'ojd status'.",
-        detail
+        // The service's message ends with a period; the format adds its own.
+        detail.hasSuffix(".") ? String(detail.dropLast()) : detail
       )
     )
   }

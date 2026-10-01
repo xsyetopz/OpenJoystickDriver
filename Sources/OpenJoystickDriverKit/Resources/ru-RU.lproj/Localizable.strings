@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ больше не подключен.";
 "cli.error.json_plain" = "Используйте либо --json, либо --plain, но не оба сразу.";
 "cli.error.peer_rejected" = "Служба отклонила этот ojd, так как он подписан иначе, чем приложение. Запустите ojd из OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Служба не ответила за %@ сек. Повторите с большим значением --timeout.";
+"cli.error.request_timeout" = "Служба не ответила в течение %@. Повторите с большим значением --timeout.";
 "cli.error.service_request_failed" = "Служба не выполнила запрос: %@. Проверьте её командой «ojd status».";
+"cli.error.duplicate_profile_name" = "Профиль с таким именем уже существует. 'ojd profile list' показывает все профили.";
 "cli.error.service_timeout" = "Служба не ответила вовремя. Повторите или проверьте её командой «ojd status».";
 "cli.error.service_unavailable" = "Служба OpenJoystickDriver не запущена. Запустите её командой «ojd service start».";
 "cli.error.timeout_value" = "--timeout требует число секунд больше 0.";
 "cli.error.unexpected" = "Непредвиденная ошибка: %@. Выполните «ojd diagnose --bundle PATH» и приложите пакет к отчёту об ошибке.";
+"cli.error.unknown_command" = "Неизвестная команда «%@». Возможно, вы имели в виду «%@»?";
 "cli.option.json" = "Выводит JSON в stdout.";
 "cli.option.no_color" = "Не использует цвет.";
 "cli.option.no_input" = "Никогда не запрашивает ввод; завершается с ошибкой, если значение не задано.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS не удалось открыть %@. Откройте его из Finder, чтобы узнать причину.";
 "cli.service.stop.abstract" = "Останавливает службу и ждёт её завершения. Подключённые контроллеры возвращаются macOS.";
 "cli.service.stop.signal_failed" = "Не удалось остановить службу: %@. Завершите OpenJoystickDriver из его меню.";
-"cli.service.stop.timeout" = "Служба не остановилась за %@ сек. Повторите с большим значением --timeout.";
+"cli.service.stop.timeout" = "Служба не остановилась в течение %@. Повторите с большим значением --timeout.";
 "cli.service.stopped" = "Служба остановлена.";
 "cli.service.wait.abstract" = "Ждёт, пока служба начнёт принимать запросы. --timeout ограничивает ожидание (по умолчанию 5 секунд).";
-"cli.service.wait.timeout" = "Служба не начала принимать запросы за %@ сек. Запустите её командой «ojd service start» или повторите с большим значением --timeout.";
+"cli.service.wait.timeout" = "Служба не начала принимать запросы в течение %@. Запустите её командой «ojd service start» или повторите с большим значением --timeout.";
 "cli.status.abstract" = "Показывает службу, расширение, разрешения и подключённые контроллеры.";
 "cli.status.discussion" = "Работает и при остановленной службе: сообщает, что служба остановлена, и завершается с кодом 0.";
 "cli.status.label.accessibility" = "Универсальный доступ";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "служба не запущена";
 "cli.diagnose.soak" = "Также замерять память, файловые дескрипторы и CPU службы в течение этого времени (1-86400).";
 "cli.diagnose.soak.not_requested" = "не запрошено; используйте --soak SECONDS";
-"cli.diagnose.soak.progress" = "Замеры службы в течение %lld с...";
+"cli.diagnose.soak.progress" = "Замеры службы в течение %@...";
 "cli.diagnose.soak_range" = "--soak должен быть от 1 до 86400 секунд.";
 "cli.diagnose.usb.failed" = "Не удалось просканировать USB: %@. Предоставьте OpenJoystickDriver доступ к мониторингу ввода.";
 "cli.diagnose.usb.ok" = "Видимых USB-контроллеров с особым протоколом: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "Доступна версия OpenJoystickDriver %@ (у вас %@): %@";
 "cli.update.check.discussion" = "Выполняется только по вашему запросу; ojd никогда не проверяет сам. Ничего не скачивает и не устанавливает. Завершается с кодом 0, есть обновление или нет, и с кодом 1, если проверка не удалась.";
 "cli.update.check.failed" = "Не удалось проверить обновления: %@. Проверьте подключение к сети и повторите.";
+"cli.update.check.failed_reason" = "Не удалось проверить обновления: %@.";
 "cli.update.check.incomplete" = "нет результата";
 "cli.update.check.prerelease" = "Учитывать предварительные версии.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ — последняя версия (последний выпуск: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Имя";
 "cli.controller.show.label.output_checks" = "Проверки вывода";
 "cli.controller.show.label.ownership" = "Владелец";
+"cli.controller.show.ownership" = "маршрут: %@, физический доступ: %@, ввод HID: %@";
 "cli.controller.show.label.protocol" = "Протокол";
 "cli.controller.show.label.record" = "Запись";
 "cli.controller.show.label.rumble" = "Вибрация";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "С --json выводит по одному JSON-объекту на строку. Ось Y стика направлена вверх. С --first-press выводит первый нажатый элемент управления и завершается; завершается с ошибкой, если сначала истекает --duration.";
 "cli.controller.watch.first_press" = "Выводит первый нажатый элемент управления и завершается.";
 "cli.controller.watch.no_input" = "Ввод не получен.";
-"cli.controller.watch.no_press" = "За %@ с не нажат ни один элемент управления.";
+"cli.controller.watch.no_press" = "В течение %@ не нажат ни один элемент управления.";
 "cli.controller.watch.press_prompt" = "Нажмите элемент управления на %@ (%@).";
 "cli.controller.watch.started" = "Наблюдение за %@ (%@). Нажимайте кнопки контроллера.";
 "cli.error.confirm_declined" = "Ничего не изменилось.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Не запрашивать подтверждение.";
 "cli.virtual.abstract" = "Показывает и выбирает виртуальный геймпад, который OpenJoystickDriver публикует для контроллера.";
 "cli.virtual.changed" = "%@ теперь публикует %@ (%@).";
+"cli.virtual.stored" = "Выбор для %@ сохранён. Он вступит в силу после включения виртуального вывода.";
 "cli.virtual.discussion" = "Выбор применяется ко всем контроллерам одной модели. 'reset' возвращает модель к автоматическому выбору.";
 "cli.virtual.error.failed" = "Виртуальный геймпад для %@ не изменился (%@). Проверьте через 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Возвращает модель контроллера или все модели к автоматическому выбору виртуального геймпада.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "Профиль «%@» активен на подключённом контроллере и теперь блокирует весь его ввод. Добавьте привязку с помощью 'ojd binding set' или остановите профиль с помощью 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "Удалить все привязки, аккорды, последовательности и слои из профиля «%@»?";
 "cli.binding.clear.discussion" = "--all также удаляет аккорды, последовательности и слои профиля и запрашивает подтверждение в терминале; без терминала нужен --force. Настройки стиков, триггеров, касаний, движения и вывода сохраняются.";
-"cli.binding.clear.done" = "Удалено привязок: %lld (профиль «%@»).";
-"cli.binding.clear.dry_run" = "Было бы удалено привязок: %lld (профиль «%@»).";
+"cli.binding.clear.done" = "Привязки, удалённые из профиля «%@»: %lld.";
+"cli.binding.clear.dry_run" = "Привязки, которые были бы удалены из профиля «%@»: %lld.";
 "cli.binding.clear.missing" = "В профиле «%@» нет привязки для %@. Ничего не изменено.";
 "cli.binding.clear.sources" = "Источники, привязки которых нужно удалить.";
 "cli.binding.clear.usage" = "Укажите один или несколько источников либо --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Профиль «%@» был бы удалён.";
 "cli.profile.discussion" = "Профиль переназначения превращает элементы управления одной модели контроллера во ввод геймпада, клавиатуры и указателя. PROFILE — это ID или имя профиля из 'ojd profile list'. Привязки меняются командой 'ojd binding', всё остальное — командой 'ojd profile edit'. Каждая команда профиля требует службы.";
 "cli.profile.document_invalid" = "%@ не является допустимым профилем: %@";
+"cli.document.not_json" = "это недопустимый JSON";
+"cli.document.missing_field" = "поле «%@» отсутствует";
+"cli.document.wrong_type" = "поле «%@» имеет неверный тип";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Скопировать профиль под новым именем. Копия создаётся неактивной.";
 "cli.profile.duplicate.done" = "Создан профиль «%@» (%@).";
 "cli.profile.duplicate.name" = "Имя копии.";

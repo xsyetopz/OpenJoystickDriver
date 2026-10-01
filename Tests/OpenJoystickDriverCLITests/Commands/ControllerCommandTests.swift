@@ -47,7 +47,8 @@ struct ControllerCommandTests {
   @Test
   func aModelSelectorMatchingTwoControllersFailsAndListsBoth() async throws {
     let service = try FakeService(devices: [
-      FakeService.device(id: "pad-1"), FakeService.device(id: "pad-2"),
+      FakeService.device(id: "pad-1", outputs: .dualMainRumble),
+      FakeService.device(id: "pad-2", outputs: .dualMainRumble),
     ])
     let result = await service.run(["controller", "show", "045e:028e"])
     #expect(result.code == 1)
@@ -86,14 +87,26 @@ struct ControllerCommandTests {
     ])
     #expect(result.code == 0, "\(result.standardError)")
     #expect(result.standardError.contains("warning:"))
-    #expect(result.standardError.contains("leftTrigger"))
-    #expect(!result.standardError.contains("Haptic"))
+    #expect(result.standardError.contains("has no left-trigger motor"))
+    #expect(result.standardError.contains("Rumbled left-main on"))
+    #expect(!result.standardError.contains("aptic"))
     guard case .setRumble(let intensities, _) = try Self.sentCommands(service).first else {
       Issue.record("expected setRumble")
       return
     }
     #expect(intensities.leftMain == UnipolarValue(byte: 100))
     #expect(intensities.leftHaptic == UnipolarValue(byte: 100))
+  }
+
+  @Test
+  func playerNamesTheControllerLikeTheOtherOutputMessages() async throws {
+    let service = try FakeService(
+      devices: [FakeService.device(id: "pad-1")],
+      respond: Self.delivered()
+    )
+    let result = await service.run(["controller", "player", "pad-1", "1"])
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(result.standardError.contains("Sent player to Test Pad."))
   }
 
   @Test
@@ -157,7 +170,7 @@ struct ControllerCommandTests {
     ])
     #expect(result.code == 1)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.contains("0.2"))
+    #expect(result.standardError.contains(0.2.durationText))
   }
 
   @Test
@@ -181,6 +194,40 @@ struct ControllerCommandTests {
     #expect(result.code == 0, "\(result.standardError)")
     let controller = try #require(try result.json()["controller"] as? [String: Any])
     #expect(controller["id"] as? String == "pad-1")
+  }
+
+  @Test
+  func showLabelsOwnershipInTheSameStyleAsTheOtherValues() async throws {
+    let service = try FakeService(devices: [FakeService.device(id: "pad-1")])
+    let result = await service.run(["controller", "show", "pad-1"])
+    #expect(result.code == 0, "\(result.standardError)")
+    let ownership = result.standardOutput.split(separator: "\n").first { $0.hasPrefix("Ownership") }
+    #expect(ownership?.hasSuffix("  route raw-usb, physical unknown, HID input unknown") == true)
+  }
+
+  @Test
+  func outputChecksNameTheControllerByIDWhenAnotherSharesItsModel() async throws {
+    let service = try FakeService(devices: [
+      FakeService.device(id: "pad-1", outputs: .dualMainRumble),
+      FakeService.device(id: "pad-2", outputs: .dualMainRumble),
+    ])
+    let shared = await service.run(["controller", "show", "pad-2", "--json"])
+    #expect(shared.code == 0, "\(shared.standardError)")
+    #expect(shared.standardOutput.contains("ojd controller rumble pad-2 "))
+    #expect(!shared.standardOutput.contains("045E:028E --"))
+    let alone = try FakeService(devices: [
+      FakeService.device(id: "pad-1", outputs: .dualMainRumble)
+    ])
+    let single = await alone.run(["controller", "show", "pad-1", "--json"])
+    #expect(single.standardOutput.contains("ojd controller rumble 045E:028E "))
+  }
+
+  @Test(arguments: [
+    ("exclusiveRawUSB", "exclusive-raw-usb"), ("leftMain", "left-main"), ("raw-usb", "raw-usb"),
+    ("playerIndicator", "player-indicator"), ("driverKitOwnedUSB", "driver-kit-owned-usb"),
+  ])
+  func kebabCaseMatchesTheControlNames(value: String, expected: String) {
+    #expect(ControllerShowCommand.kebabCase(value) == expected)
   }
 
   /// `controller show` for a `366C:0005` pad, with the user directory holding `userRecord` if any.

@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@は接続されていません。";
 "cli.error.json_plain" = "--json と --plain は同時に指定できません。";
 "cli.error.peer_rejected" = "サービスがこの ojd を拒否しました。アプリと同じ署名ではないためです。OpenJoystickDriver.app に同梱されている ojd を実行してください。";
-"cli.error.request_timeout" = "サービスが %@ 秒以内に応答しませんでした。--timeout を大きくして再試行してください。";
+"cli.error.request_timeout" = "サービスが %@以内に応答しませんでした。--timeout を大きくして再試行してください。";
 "cli.error.service_request_failed" = "サービスがリクエストを完了できませんでした: %@。「ojd status」で確認してください。";
+"cli.error.duplicate_profile_name" = "その名前のプロファイルはすでに存在します。「ojd profile list」で全プロファイルを確認できます。";
 "cli.error.service_timeout" = "サービスが時間内に応答しませんでした。再試行するか、「ojd status」で確認してください。";
 "cli.error.service_unavailable" = "OpenJoystickDriver サービスが実行されていません。「ojd service start」で開始してください。";
 "cli.error.timeout_value" = "--timeout には 0 より大きい秒数を指定してください。";
 "cli.error.unexpected" = "予期しないエラー: %@。「ojd diagnose --bundle PATH」を実行し、バンドルをバグ報告に添付してください。";
+"cli.error.unknown_command" = "不明なコマンド「%@」です。「%@」のことですか？";
 "cli.option.json" = "JSON を stdout に出力します。";
 "cli.option.no_color" = "色を使用しません。";
 "cli.option.no_input" = "入力を求めません。値がない場合は失敗します。";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS が %@ を開けませんでした。理由を確認するには Finder から開いてください。";
 "cli.service.stop.abstract" = "サービスを停止し、終了するまで待機します。接続中のコントローラは macOS に戻ります。";
 "cli.service.stop.signal_failed" = "サービスを停止できませんでした: %@。OpenJoystickDriver をメニューから終了してください。";
-"cli.service.stop.timeout" = "サービスが %@ 秒以内に停止しませんでした。--timeout を大きくして再試行してください。";
+"cli.service.stop.timeout" = "サービスが %@以内に停止しませんでした。--timeout を大きくして再試行してください。";
 "cli.service.stopped" = "サービスは停止しています。";
 "cli.service.wait.abstract" = "サービスがリクエストを受け付けるまで待機します。--timeout で待機時間を制限します（デフォルトは 5 秒）。";
-"cli.service.wait.timeout" = "サービスが %@ 秒以内にリクエストを受け付けませんでした。「ojd service start」で開始するか、--timeout を大きくして再試行してください。";
+"cli.service.wait.timeout" = "サービスが %@以内にリクエストを受け付けませんでした。「ojd service start」で開始するか、--timeout を大きくして再試行してください。";
 "cli.status.abstract" = "サービス、機能拡張、権限、接続中のコントローラを表示します。";
 "cli.status.discussion" = "サービスが停止していても動作します。サービスを停止中として報告し、0 で終了します。";
 "cli.status.label.accessibility" = "アクセシビリティ";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "サービスが実行されていません";
 "cli.diagnose.soak" = "この時間だけ、サービスのメモリ、ファイル記述子、CPU もサンプリングします (1-86400)。";
 "cli.diagnose.soak.not_requested" = "指定されていません。--soak SECONDS を使用してください";
-"cli.diagnose.soak.progress" = "サービスを %lld 秒間サンプリングしています...";
+"cli.diagnose.soak.progress" = "サービスを %@間サンプリングしています...";
 "cli.diagnose.soak_range" = "--soak は 1 から 86400 秒の間で指定してください。";
 "cli.diagnose.usb.failed" = "USB のスキャンに失敗しました: %@。OpenJoystickDriver に入力監視を許可してください。";
-"cli.diagnose.usb.ok" = "ベンダー固有の USB コントローラが %lld 台見えています";
+"cli.diagnose.usb.ok" = "見えているベンダー固有の USB コントローラ：%lld 台";
 "cli.diagnose.virtual.disabled" = "仮想ゲームパッドは無効です";
 "cli.diagnose.virtual.error" = "仮想ゲームパッドのエラー: %@";
 "cli.diagnose.virtual.override" = "保存されたプロファイルの上書きを読み取れません: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ が利用できます (現在のバージョン: %@): %@";
 "cli.update.check.discussion" = "実行を指示したときだけ動作し、ojd が自動で確認することはありません。ダウンロードやインストールは行いません。アップデートの有無にかかわらず終了コード 0 で終了し、確認に失敗した場合は 1 で終了します。";
 "cli.update.check.failed" = "アップデートを確認できませんでした: %@。ネットワーク接続を確認して、もう一度お試しください。";
+"cli.update.check.failed_reason" = "アップデートを確認できませんでした: %@。";
 "cli.update.check.incomplete" = "結果なし";
 "cli.update.check.prerelease" = "プレリリース版を含めます。";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ は最新です (最新リリース: %@)。";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "名前";
 "cli.controller.show.label.output_checks" = "出力チェック";
 "cli.controller.show.label.ownership" = "所有状態";
+"cli.controller.show.ownership" = "経路 %@、物理 %@、HID 入力 %@";
 "cli.controller.show.label.protocol" = "プロトコル";
 "cli.controller.show.label.record" = "レコード";
 "cli.controller.show.label.rumble" = "振動";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "--json を付けると、1行に1つの JSON オブジェクトを表示します。スティックの Y は上向きが正です。--first-press を付けると、最初に押された操作部を表示して終了します。その前に --duration が経過すると失敗します。";
 "cli.controller.watch.first_press" = "最初に押された操作部を表示して終了します。";
 "cli.controller.watch.no_input" = "入力を受信していません。";
-"cli.controller.watch.no_press" = "%@ 秒以内に操作部が押されませんでした。";
+"cli.controller.watch.no_press" = "%@以内に操作部が押されませんでした。";
 "cli.controller.watch.press_prompt" = "%@ (%@) の操作部を押してください。";
 "cli.controller.watch.started" = "%@ (%@) を監視しています。コントローラのボタンを押してください。";
 "cli.error.confirm_declined" = "何も変更していません。";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "確認を求めません。";
 "cli.virtual.abstract" = "OpenJoystickDriver がコントローラ向けに公開する仮想ゲームパッドを表示し、選択します。";
 "cli.virtual.changed" = "%@ は %@ (%@) を公開するようになりました。";
+"cli.virtual.stored" = "%@ の選択を保存しました。仮想出力が有効になると適用されます。";
 "cli.virtual.discussion" = "選択は同じモデルのすべてのコントローラに適用されます。「reset」を使うと、モデルを自動選択に戻します。";
 "cli.virtual.error.failed" = "%@ の仮想ゲームパッドは変更されませんでした (%@)。「ojd virtual show」で確認してください。";
 "cli.virtual.reset.abstract" = "コントローラのモデル、またはすべてのモデルを、仮想ゲームパッドの自動選択に戻します。";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "「%@」は接続中のコントローラで有効になっており、その入力をすべて遮断しています。「ojd binding set」で割り当てを追加するか、「ojd profile deactivate」でプロファイルを停止してください。";
 "cli.binding.clear.confirm" = "「%@」からすべての割り当て、コード、シーケンス、レイヤーを削除しますか？";
 "cli.binding.clear.discussion" = "--all はプロファイルのコード、シーケンス、レイヤーも削除し、ターミナルでは確認を求めます。それ以外では --force が必要です。スティック、トリガー、タッチ、モーション、出力の設定は残ります。";
-"cli.binding.clear.done" = "%lld 件の割り当てを「%@」から削除しました。";
-"cli.binding.clear.dry_run" = "%lld 件の割り当てを「%@」から削除します。";
+"cli.binding.clear.done" = "「%@」から削除した割り当て：%lld 件。";
+"cli.binding.clear.dry_run" = "「%@」から削除される割り当て：%lld 件。";
 "cli.binding.clear.missing" = "「%@」には %@ の割り当てがありません。何も変更していません。";
 "cli.binding.clear.sources" = "割り当てを削除するソース。";
 "cli.binding.clear.usage" = "ソースを 1 つ以上指定するか、--all を指定してください。";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "プロファイル「%@」を削除します。";
 "cli.profile.discussion" = "リマッピングプロファイルは、1 つのコントローラモデルの操作部をゲームパッド、キーボード、ポインタの入力に変換します。PROFILE は「ojd profile list」に表示されるプロファイルの ID または名前です。割り当ては「ojd binding」で、それ以外は「ojd profile edit」で変更します。プロファイルのコマンドはすべてサービスが必要です。";
 "cli.profile.document_invalid" = "%@ は有効なプロファイルではありません: %@";
+"cli.document.not_json" = "有効な JSON ではありません";
+"cli.document.missing_field" = "フィールド「%@」がありません";
+"cli.document.wrong_type" = "フィールド「%@」の型が正しくありません";
+"cli.document.field_problem" = "「%@」: %@";
 "cli.profile.duplicate.abstract" = "プロファイルを新しい名前でコピーします。コピーは無効の状態で作成されます。";
 "cli.profile.duplicate.done" = "「%@」(%@) を作成しました。";
 "cli.profile.duplicate.name" = "コピーの名前。";

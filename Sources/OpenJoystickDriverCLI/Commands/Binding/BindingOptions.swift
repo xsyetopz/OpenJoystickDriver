@@ -264,7 +264,7 @@ struct BindingOptions: ParsableArguments {
         CLILocalized.format(
           "cli.binding.actions_invalid",
           "--actions-json is not a valid action list: %@",
-          error.localizedDescription
+          DocumentProblem.describe(error)
         )
       )
     }

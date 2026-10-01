@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ више није повезан.";
 "cli.error.json_plain" = "Користите или --json или --plain, не оба.";
 "cli.error.peer_rejected" = "Услуга је одбила овај ojd јер није потписан као апликација. Покрените ojd из OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "Услуга није одговорила у року од %@ с. Покушајте поново са већим --timeout.";
+"cli.error.request_timeout" = "Услуга није одговорила у року од %@. Покушајте поново са већим --timeout.";
 "cli.error.service_request_failed" = "Услуга није завршила захтев: %@. Проверите је командом „ojd status“.";
+"cli.error.duplicate_profile_name" = "Профил с тим називом већ постоји. „ojd profile list“ приказује сваки профил.";
 "cli.error.service_timeout" = "Услуга није одговорила на време. Покушајте поново или је проверите командом „ojd status“.";
 "cli.error.service_unavailable" = "Услуга OpenJoystickDriver није покренута. Покрените је командом „ojd service start“.";
 "cli.error.timeout_value" = "--timeout захтева број секунди већи од 0.";
 "cli.error.unexpected" = "Неочекивана грешка: %@. Покрените „ojd diagnose --bundle PATH“ и приложите пакет извештају о грешци.";
+"cli.error.unknown_command" = "Непозната команда „%@“. Да ли сте мислили „%@“?";
 "cli.option.json" = "Испиши JSON на stdout.";
 "cli.option.no_color" = "Не користи боје.";
 "cli.option.no_input" = "Никада не тражи унос; не успева када вредност недостаје.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS није могао да отвори %@. Отворите је из програма Finder да видите разлог.";
 "cli.service.stop.abstract" = "Заустави услугу и сачекај да се заврши. Повезани контролери се враћају macOS-у.";
 "cli.service.stop.signal_failed" = "Услугу није могуће зауставити: %@. Изађите из OpenJoystickDriver-а из његовог менија.";
-"cli.service.stop.timeout" = "Услуга се није зауставила у року од %@ с. Покушајте поново са већим --timeout.";
+"cli.service.stop.timeout" = "Услуга се није зауставила у року од %@. Покушајте поново са већим --timeout.";
 "cli.service.stopped" = "Услуга је заустављена.";
 "cli.service.wait.abstract" = "Сачекај да услуга почне да прихвата захтеве. --timeout ограничава чекање (подразумевано 5 секунди).";
-"cli.service.wait.timeout" = "Услуга није почела да прихвата захтеве у року од %@ с. Покрените је командом „ojd service start“ или покушајте поново са већим --timeout.";
+"cli.service.wait.timeout" = "Услуга није почела да прихвата захтеве у року од %@. Покрените је командом „ojd service start“ или покушајте поново са већим --timeout.";
 "cli.status.abstract" = "Прикажи услугу, проширење, дозволе и повезане контролере.";
 "cli.status.discussion" = "Ради и када је услуга заустављена: јавља да је заустављена и завршава са 0.";
 "cli.status.label.accessibility" = "Приступачност";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "услуга не ради";
 "cli.diagnose.soak" = "Такође узоркуј меморију, дескрипторе датотека и CPU услуге толико дуго (1-86400).";
 "cli.diagnose.soak.not_requested" = "није затражено; користите --soak SECONDS";
-"cli.diagnose.soak.progress" = "Узорковање услуге %lld секунди…";
+"cli.diagnose.soak.progress" = "Узорковање услуге током %@…";
 "cli.diagnose.soak_range" = "--soak мора бити између 1 и 86400 секунди.";
 "cli.diagnose.usb.failed" = "USB скенирање није успело: %@. Одобрите OpenJoystickDriver надзор уноса.";
 "cli.diagnose.usb.ok" = "Видљивих USB контролера са посебним протоколом: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ је доступан (имате %@): %@";
 "cli.update.check.discussion" = "Ради само када затражите; ojd никада не проверава сам. Не преузима и не инсталира ништа. Завршава се кодом 0 без обзира на то да ли ажурирање постоји, и кодом 1 ако провера не успе.";
 "cli.update.check.failed" = "Није могуће проверити ажурирања: %@. Проверите мрежну везу и покушајте поново.";
+"cli.update.check.failed_reason" = "Није могуће проверити ажурирања: %@.";
 "cli.update.check.incomplete" = "нема резултата";
 "cli.update.check.prerelease" = "Укључи претходна издања.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ је ажуран (најновије издање: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Име";
 "cli.controller.show.label.output_checks" = "Провере излаза";
 "cli.controller.show.label.ownership" = "Власништво";
+"cli.controller.show.ownership" = "путања %@, физички %@, HID улаз %@";
 "cli.controller.show.label.protocol" = "Протокол";
 "cli.controller.show.label.record" = "Запис";
 "cli.controller.show.label.rumble" = "Вибрација";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Са --json исписује један JSON објекат по реду. Y оса аналогне палице показује нагоре. Са --first-press исписује прву притиснуту контролу и излази; завршава се неуспехом ако --duration истекне раније.";
 "cli.controller.watch.first_press" = "Испиши прву притиснуту контролу, па изађи.";
 "cli.controller.watch.no_input" = "Улаз није примљен.";
-"cli.controller.watch.no_press" = "Ниједна контрола није притиснута у року од %@ секунди.";
+"cli.controller.watch.no_press" = "Ниједна контрола није притиснута у року од %@.";
 "cli.controller.watch.press_prompt" = "Притисните контролу на %@ (%@).";
 "cli.controller.watch.started" = "Праћење %@ (%@). Притисните дугмад на контролеру.";
 "cli.error.confirm_declined" = "Ништа није промењено.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Не тражи потврду.";
 "cli.virtual.abstract" = "Прикажи и изабери виртуелни гејмпад који OpenJoystickDriver објављује за контролер.";
 "cli.virtual.changed" = "%@ сада објављује %@ (%@).";
+"cli.virtual.stored" = "Избор за %@ је сачуван. Примениће се када се укључи виртуелни излаз.";
 "cli.virtual.discussion" = "Избор важи за сваки контролер истог модела. „reset“ враћа модел на аутоматски избор.";
 "cli.virtual.error.failed" = "Виртуелни гејмпад за %@ није промењен (%@). Проверите помоћу „ojd virtual show“.";
 "cli.virtual.reset.abstract" = "Врати модел контролера, или све моделе, на аутоматски избор виртуелног гејмпада.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "„%@“ је активан на повезаном контролеру и сада блокира сав његов унос. Додајте доделу помоћу „ojd binding set“ или зауставите профил помоћу „ojd profile deactivate“.";
 "cli.binding.clear.confirm" = "Уклонити све доделе, акорде, секвенце и слојеве из „%@“?";
 "cli.binding.clear.discussion" = "--all уклања и акорде, секвенце и слојеве профила, а на терминалу тражи потврду; иначе захтева --force. Поставке аналогних палица, окидача, додира, покрета и излаза остају.";
-"cli.binding.clear.done" = "Уклоњено је %lld додела из „%@“.";
-"cli.binding.clear.dry_run" = "Уклонило би се %lld додела из „%@“.";
+"cli.binding.clear.done" = "Уклоњене доделе из „%@“: %lld.";
+"cli.binding.clear.dry_run" = "Доделе које би биле уклоњене из „%@“: %lld.";
 "cli.binding.clear.missing" = "„%@“ нема доделу за %@. Ништа није промењено.";
 "cli.binding.clear.sources" = "Извори чије доделе треба уклонити.";
 "cli.binding.clear.usage" = "Наведите један или више извора или --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Профил „%@“ би био обрисан.";
 "cli.profile.discussion" = "Профил мапирања претвара контроле једног модела контролера у унос гејмпада, тастатуре и показивача. PROFILE је ID или име профила из „ojd profile list“. Доделе мењајте командом „ojd binding“, а све остало командом „ojd profile edit“. Свака команда профила захтева услугу.";
 "cli.profile.document_invalid" = "%@ није исправан профил: %@";
+"cli.document.not_json" = "није исправан JSON";
+"cli.document.missing_field" = "поље „%@“ недостаје";
+"cli.document.wrong_type" = "поље „%@“ има погрешан тип";
+"cli.document.field_problem" = "„%@“: %@";
 "cli.profile.duplicate.abstract" = "Копирај профил под новим именом. Копија почиње као неактивна.";
 "cli.profile.duplicate.done" = "Креиран је профил „%@“ (%@).";
 "cli.profile.duplicate.name" = "Име копије.";

@@ -111,11 +111,17 @@ struct ControllerShowCommand: AsyncParsableCommand {
   func run() async throws {
     try await global.run {
       let selector = controller
-      let device = try await ServiceConnection.request { try await selector.resolve(with: $0) }
+      let devices = try await ServiceConnection.request {
+        try await $0.getStatus().connectedDevices
+      }
+      let device = try selector.resolve(in: devices)
       let record = RecordStore.load().records[
         ControllerIdentity(vendorID: device.vendorID, productID: device.productID)
       ]
-      let report = ControllerShowReport(device, record: record)
+      let sharesModel =
+        devices.filter { $0.vendorID == device.vendorID && $0.productID == device.productID }
+        .count > 1
+      let report = ControllerShowReport(device, record: record, sharesModel: sharesModel)
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(report)
       case .plain: CLIOutput.plain(Self.plainRows(report.controller))
@@ -155,6 +161,24 @@ struct ControllerShowCommand: AsyncParsableCommand {
     }
   }
 
+  /// A JSON value such as `exclusiveRawUSB` in the kebab-case the other rows use:
+  /// `exclusive-raw-usb`.
+  static func kebabCase(_ value: String) -> String {
+    var result = ""
+    let characters = Array(value)
+    for (index, character) in characters.enumerated() {
+      if character.isUppercase, index > 0 {
+        let previous = characters[index - 1]
+        let next = index + 1 < characters.count ? characters[index + 1] : nil
+        if previous.isLowercase || previous.isNumber || (next?.isLowercase ?? false) {
+          result.append("-")
+        }
+      }
+      result.append(Character(character.lowercased()))
+    }
+    return result
+  }
+
   private static func printHuman(_ detail: ControllerShowReport.Detail) {
     let none = CLILocalized.text("cli.controller.show.none", "none")
     func list(_ values: [String]) -> String {
@@ -176,8 +200,13 @@ struct ControllerShowCommand: AsyncParsableCommand {
       ),
       (
         CLILocalized.text("cli.controller.show.label.ownership", "Ownership"),
-        "\(detail.ownership.discoverySource), \(detail.ownership.physical), "
-          + "HID \(detail.ownership.hidInput)"
+        CLILocalized.format(
+          "cli.controller.show.ownership",
+          "route %@, physical %@, HID input %@",
+          kebabCase(detail.ownership.discoverySource),
+          kebabCase(detail.ownership.physical),
+          kebabCase(detail.ownership.hidInput)
+        )
       ),
       (CLILocalized.text("cli.controller.show.label.record", "Record"), recordText(detail.record)),
       (
@@ -186,11 +215,11 @@ struct ControllerShowCommand: AsyncParsableCommand {
       ),
       (
         CLILocalized.text("cli.controller.show.label.rumble", "Rumble"),
-        list(detail.capabilities.rumbleMotors)
+        list(detail.capabilities.rumbleMotors.map(kebabCase))
       ),
       (
         CLILocalized.text("cli.controller.show.label.lighting", "Lighting"),
-        list(detail.capabilities.lightingFeatures)
+        list(detail.capabilities.lightingFeatures.map(kebabCase))
       ),
     ]
     if let virtual = detail.virtual {

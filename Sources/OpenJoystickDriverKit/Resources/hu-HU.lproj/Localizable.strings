@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "A(z) %@ már nincs csatlakoztatva.";
 "cli.error.json_plain" = "Használja a --json vagy a --plain kapcsolót, ne mindkettőt.";
 "cli.error.peer_rejected" = "A szolgáltatás elutasította ezt az ojd-t, mert nem az alkalmazással azonos módon van aláírva. Futtassa az OpenJoystickDriver.app-ba csomagolt ojd-t.";
-"cli.error.request_timeout" = "A szolgáltatás %@ másodpercen belül nem válaszolt. Próbálja újra nagyobb --timeout értékkel.";
+"cli.error.request_timeout" = "A szolgáltatás %@ alatt nem válaszolt. Próbálja újra nagyobb --timeout értékkel.";
 "cli.error.service_request_failed" = "A szolgáltatás nem fejezte be a kérést: %@. Ellenőrizze az „ojd status” paranccsal.";
+"cli.error.duplicate_profile_name" = "Már létezik ilyen nevű profil. Az 'ojd profile list' minden profilt megmutat.";
 "cli.error.service_timeout" = "A szolgáltatás időben nem válaszolt. Próbálja újra, vagy ellenőrizze az „ojd status” paranccsal.";
 "cli.error.service_unavailable" = "Az OpenJoystickDriver szolgáltatás nem fut. Indítsa el az „ojd service start” paranccsal.";
 "cli.error.timeout_value" = "A --timeout értéke 0-nál nagyobb másodpercszám legyen.";
 "cli.error.unexpected" = "Váratlan hiba: %@. Futtassa az „ojd diagnose --bundle PATH” parancsot, és csatolja a csomagot a hibajelentéshez.";
+"cli.error.unknown_command" = "Ismeretlen parancs: „%@”. Erre gondolt: „%@”?";
 "cli.option.json" = "JSON kiírása az stdout-ra.";
 "cli.option.no_color" = "Ne használjon színeket.";
 "cli.option.no_input" = "Soha ne kérjen bevitelt; hiányzó érték esetén hibával álljon le.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "A macOS nem tudta megnyitni: %@. Nyissa meg a Finderből, hogy lássa az okot.";
 "cli.service.stop.abstract" = "A szolgáltatás leállítása, majd várakozás a kilépésére. A csatlakoztatott vezérlők visszakerülnek a macOS-hez.";
 "cli.service.stop.signal_failed" = "Nem sikerült leállítani a szolgáltatást: %@. Lépjen ki az OpenJoystickDriverből a menüjében.";
-"cli.service.stop.timeout" = "A szolgáltatás %@ másodpercen belül nem állt le. Próbálja újra nagyobb --timeout értékkel.";
+"cli.service.stop.timeout" = "A szolgáltatás %@ alatt nem állt le. Próbálja újra nagyobb --timeout értékkel.";
 "cli.service.stopped" = "A szolgáltatás leállt.";
 "cli.service.wait.abstract" = "Várakozás, amíg a szolgáltatás kéréseket fogad. A --timeout korlátozza a várakozást (alapértelmezés: 5 másodperc).";
-"cli.service.wait.timeout" = "A szolgáltatás %@ másodpercen belül nem fogadott kéréseket. Indítsa el az „ojd service start” paranccsal, vagy próbálja újra nagyobb --timeout értékkel.";
+"cli.service.wait.timeout" = "A szolgáltatás %@ alatt nem fogadott kéréseket. Indítsa el az „ojd service start” paranccsal, vagy próbálja újra nagyobb --timeout értékkel.";
 "cli.status.abstract" = "A szolgáltatás, a bővítmény, az engedélyek és a csatlakoztatott vezérlők megjelenítése.";
 "cli.status.discussion" = "Leállított szolgáltatás mellett is működik: leállítottként jelzi, és 0-val lép ki.";
 "cli.status.label.accessibility" = "Kisegítő lehetőségek";
@@ -985,7 +987,7 @@
 "cli.diagnose.skip.service_stopped" = "a szolgáltatás nem fut";
 "cli.diagnose.soak" = "Ennyi ideig a szolgáltatás memóriáját, fájlleíróit és CPU-használatát is mintázza (1-86400).";
 "cli.diagnose.soak.not_requested" = "nincs kérve; használja: --soak SECONDS";
-"cli.diagnose.soak.progress" = "A szolgáltatás mintázása %lld másodpercig...";
+"cli.diagnose.soak.progress" = "A szolgáltatás mintázása %@ ideig...";
 "cli.diagnose.soak_range" = "A --soak értéke 1 és 86400 másodperc között lehet.";
 "cli.diagnose.usb.failed" = "Az USB-vizsgálat sikertelen: %@. Adjon bevitelfigyelési hozzáférést az OpenJoystickDriver alkalmazásnak.";
 "cli.diagnose.usb.ok" = "Látható gyártóspecifikus USB-vezérlők: %lld";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "Elérhető az OpenJoystickDriver %@ (az Öné: %@): %@";
 "cli.update.check.discussion" = "Csak kérésre fut; az ojd soha nem ellenőriz magától. Semmit nem tölt le és nem telepít. 0-s kóddal lép ki, akár van frissítés, akár nincs, és 1-es kóddal, ha az ellenőrzés sikertelen.";
 "cli.update.check.failed" = "Nem sikerült a frissítések keresése: %@. Ellenőrizze a hálózati kapcsolatot, és próbálja újra.";
+"cli.update.check.failed_reason" = "Nem sikerült a frissítések keresése: %@.";
 "cli.update.check.incomplete" = "nincs eredmény";
 "cli.update.check.prerelease" = "Az előzetes verziókat is figyelembe veszi.";
 "cli.update.check.up_to_date" = "Az OpenJoystickDriver %@ naprakész (legújabb kiadás: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Név";
 "cli.controller.show.label.output_checks" = "Kimeneti ellenőrzések";
 "cli.controller.show.label.ownership" = "Tulajdonos";
+"cli.controller.show.ownership" = "útvonal %@, fizikai %@, HID-bemenet %@";
 "cli.controller.show.label.protocol" = "Protokoll";
 "cli.controller.show.label.record" = "Rekord";
 "cli.controller.show.label.rumble" = "Rezgés";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "A --json kapcsolóval soronként egy JSON-objektumot ír ki. Az Y tengely felfelé mutat. A --first-press kapcsolóval az elsőként megnyomott vezérlőelemet írja ki, majd kilép; hibával végződik, ha előbb letelik a --duration.";
 "cli.controller.watch.first_press" = "Az elsőként megnyomott vezérlőelem kiírása, majd kilépés.";
 "cli.controller.watch.no_input" = "Nem érkezett bemenet.";
-"cli.controller.watch.no_press" = "%@ másodpercen belül egy vezérlőelemet sem nyomtak meg.";
+"cli.controller.watch.no_press" = "%@ alatt egy vezérlőelemet sem nyomtak meg.";
 "cli.controller.watch.press_prompt" = "Nyomjon meg egy vezérlőelemet ezen: %@ (%@).";
 "cli.controller.watch.started" = "%@ (%@) figyelése. Nyomja meg a vezérlő gombjait.";
 "cli.error.confirm_declined" = "Nem változott semmi.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "Nem kér megerősítést.";
 "cli.virtual.abstract" = "Megjeleníti és kiválasztja a virtuális gamepadet, amelyet az OpenJoystickDriver egy vezérlőhöz közzétesz.";
 "cli.virtual.changed" = "%@ mostantól ezt teszi közzé: %@ (%@).";
+"cli.virtual.stored" = "A(z) %@ választása mentve. A virtuális kimenet bekapcsolásakor lép életbe.";
 "cli.virtual.discussion" = "A választás az azonos modell minden vezérlőjére érvényes. A 'reset' visszaállítja a modellt az automatikus kiválasztásra.";
 "cli.virtual.error.failed" = "%@ virtuális gamepadje nem változott (%@). Ellenőrizze az 'ojd virtual show' paranccsal.";
 "cli.virtual.reset.abstract" = "Egy vezérlő modelljét, vagy az összes modellt visszaállítja az automatikus virtuális gamepad-kiválasztásra.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "A(z) '%@' profil aktív egy csatlakoztatott vezérlőn, és most blokkolja annak teljes bemenetét. Adjon hozzá hozzárendelést a(z) 'ojd binding set' paranccsal, vagy állítsa le a profilt a(z) 'ojd profile deactivate' paranccsal.";
 "cli.binding.clear.confirm" = "Eltávolítja az összes hozzárendelést, akkordot, sorozatot és réteget a(z) '%@' profilból?";
 "cli.binding.clear.discussion" = "Az --all a profil akkordjait, sorozatait és rétegeit is eltávolítja, és terminálon megerősítést kér; egyébként --force szükséges hozzá. A kar-, ravasz-, érintés-, mozgás- és kimeneti beállítások megmaradnak.";
-"cli.binding.clear.done" = "%lld hozzárendelés eltávolítva a(z) '%@' profilból.";
-"cli.binding.clear.dry_run" = "%lld hozzárendelést távolítana el a(z) '%@' profilból.";
+"cli.binding.clear.done" = "A(z) '%@' profilból eltávolított hozzárendelések: %lld.";
+"cli.binding.clear.dry_run" = "A(z) '%@' profilból eltávolítandó hozzárendelések: %lld.";
 "cli.binding.clear.missing" = "A(z) '%@' profilban nincs hozzárendelés ehhez: %@. Semmi sem változott.";
 "cli.binding.clear.sources" = "Azok a források, amelyek hozzárendeléseit el kell távolítani.";
 "cli.binding.clear.usage" = "Adjon meg egy vagy több forrást, vagy az --all kapcsolót.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Törölné a(z) '%@' profilt.";
 "cli.profile.discussion" = "Az átképezési profil egy vezérlőmodell vezérlőelemeit gamepad-, billentyűzet- és mutatóbemenetté alakítja. A PROFILE egy profil ID-ja vagy neve az 'ojd profile list' parancsból. A hozzárendeléseket az 'ojd binding' paranccsal módosíthatja, minden mást az 'ojd profile edit' paranccsal. Minden profilparancshoz szükség van a szolgáltatásra.";
 "cli.profile.document_invalid" = "A(z) %@ nem érvényes profil: %@";
+"cli.document.not_json" = "nem érvényes JSON";
+"cli.document.missing_field" = "hiányzik a(z) „%@” mező";
+"cli.document.wrong_type" = "a(z) „%@” mező típusa hibás";
+"cli.document.field_problem" = "„%@”: %@";
 "cli.profile.duplicate.abstract" = "Profil másolása új néven. A másolat inaktívan indul.";
 "cli.profile.duplicate.done" = "Létrehozva: '%@' (%@).";
 "cli.profile.duplicate.name" = "A másolat neve.";

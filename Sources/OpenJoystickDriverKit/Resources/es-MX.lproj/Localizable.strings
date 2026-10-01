@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ ya no está conectado.";
 "cli.error.json_plain" = "Usa --json o --plain, pero no ambos.";
 "cli.error.peer_rejected" = "El servicio rechazó este ojd porque no está firmado como la app. Ejecuta el ojd que se incluye en OpenJoystickDriver.app.";
-"cli.error.request_timeout" = "El servicio no respondió en %@ segundos. Vuelve a intentarlo con un --timeout mayor.";
+"cli.error.request_timeout" = "El servicio no respondió en %@. Vuelve a intentarlo con un --timeout mayor.";
 "cli.error.service_request_failed" = "El servicio no completó la solicitud: %@. Compruébalo con «ojd status».";
+"cli.error.duplicate_profile_name" = "Ya existe un perfil con ese nombre. «ojd profile list» muestra todos los perfiles.";
 "cli.error.service_timeout" = "El servicio no respondió a tiempo. Vuelve a intentarlo o compruébalo con «ojd status».";
 "cli.error.service_unavailable" = "El servicio de OpenJoystickDriver no se está ejecutando. Inícialo con «ojd service start».";
 "cli.error.timeout_value" = "--timeout necesita un número de segundos mayor que 0.";
 "cli.error.unexpected" = "Error inesperado: %@. Ejecuta «ojd diagnose --bundle PATH» y adjunta el paquete a un informe de error.";
+"cli.error.unknown_command" = "Comando desconocido «%@». ¿Quisiste decir «%@»?";
 "cli.option.json" = "Imprime JSON en stdout.";
 "cli.option.no_color" = "No uses color.";
 "cli.option.no_input" = "No preguntes nunca; falla si falta un valor.";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS no pudo abrir %@. Ábrelo desde el Finder para ver el motivo.";
 "cli.service.stop.abstract" = "Detiene el servicio y espera hasta que termine. Los controles conectados vuelven a macOS.";
 "cli.service.stop.signal_failed" = "No se pudo detener el servicio: %@. Sal de OpenJoystickDriver desde su menú.";
-"cli.service.stop.timeout" = "El servicio no se detuvo en %@ segundos. Vuelve a intentarlo con un --timeout mayor.";
+"cli.service.stop.timeout" = "El servicio no se detuvo en %@. Vuelve a intentarlo con un --timeout mayor.";
 "cli.service.stopped" = "El servicio está detenido.";
 "cli.service.wait.abstract" = "Espera hasta que el servicio acepte solicitudes. --timeout limita la espera (5 segundos por defecto).";
-"cli.service.wait.timeout" = "El servicio no aceptó solicitudes en %@ segundos. Inícialo con «ojd service start» o vuelve a intentarlo con un --timeout mayor.";
+"cli.service.wait.timeout" = "El servicio no aceptó solicitudes en %@. Inícialo con «ojd service start» o vuelve a intentarlo con un --timeout mayor.";
 "cli.status.abstract" = "Muestra el servicio, la extensión, los permisos y los controles conectados.";
 "cli.status.discussion" = "Funciona con el servicio detenido: lo informa como detenido y termina con 0.";
 "cli.status.label.accessibility" = "Accesibilidad";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "el servicio no se está ejecutando";
 "cli.diagnose.soak" = "Muestrea también la memoria, los descriptores de archivo y la CPU del servicio durante este tiempo (1-86400).";
 "cli.diagnose.soak.not_requested" = "no solicitado; usa --soak SEGUNDOS";
-"cli.diagnose.soak.progress" = "Muestreando el servicio durante %lld segundos...";
+"cli.diagnose.soak.progress" = "Muestreando el servicio durante %@...";
 "cli.diagnose.soak_range" = "--soak debe estar entre 1 y 86400 segundos.";
 "cli.diagnose.usb.failed" = "Falló la búsqueda USB: %@. Concede Monitoreo de entrada a OpenJoystickDriver.";
-"cli.diagnose.usb.ok" = "%lld controladores USB específicos de fabricante visibles";
+"cli.diagnose.usb.ok" = "Controladores USB específicos de fabricante visibles: %lld";
 "cli.diagnose.virtual.disabled" = "control virtual desactivado";
 "cli.diagnose.virtual.error" = "error del control virtual: %@";
 "cli.diagnose.virtual.override" = "no se pueden leer los ajustes de perfil guardados: %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ está disponible (tienes %@): %@";
 "cli.update.check.discussion" = "Solo se ejecuta cuando lo pides; ojd nunca comprueba por su cuenta. No descarga ni instala nada. Termina con código 0 haya o no una actualización, y con 1 si la comprobación falla.";
 "cli.update.check.failed" = "No se pudo buscar actualizaciones: %@. Comprueba tu conexión de red e inténtalo de nuevo.";
+"cli.update.check.failed_reason" = "No se pudo buscar actualizaciones: %@.";
 "cli.update.check.incomplete" = "sin resultado";
 "cli.update.check.prerelease" = "Incluye versiones preliminares.";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ está actualizado (última versión: %@).";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "Nombre";
 "cli.controller.show.label.output_checks" = "Comprobaciones de salida";
 "cli.controller.show.label.ownership" = "Propiedad";
+"cli.controller.show.ownership" = "ruta %@, físico %@, entrada HID %@";
 "cli.controller.show.label.protocol" = "Protocolo";
 "cli.controller.show.label.record" = "Registro";
 "cli.controller.show.label.rumble" = "Vibración";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "Con --json, imprime un objeto JSON por línea. El eje Y del stick apunta hacia arriba. Con --first-press, imprime el primer control presionado y termina; falla si --duration se cumple antes.";
 "cli.controller.watch.first_press" = "Imprime el primer control presionado y termina.";
 "cli.controller.watch.no_input" = "No se recibió ninguna entrada.";
-"cli.controller.watch.no_press" = "No se presionó ningún control en %@ segundos.";
+"cli.controller.watch.no_press" = "No se presionó ningún control en %@.";
 "cli.controller.watch.press_prompt" = "Presiona un control en %@ (%@).";
 "cli.controller.watch.started" = "Observando %@ (%@). Presiona los botones del control.";
 "cli.error.confirm_declined" = "No se cambió nada.";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "No pide confirmación.";
 "cli.virtual.abstract" = "Muestra y elige el control virtual que OpenJoystickDriver publica para un control.";
 "cli.virtual.changed" = "%@ ahora publica %@ (%@).";
+"cli.virtual.stored" = "La elección para %@ se guardó. Se aplicará cuando se active la salida virtual.";
 "cli.virtual.discussion" = "Una elección se aplica a todos los controles del mismo modelo. 'reset' devuelve un modelo a la selección automática.";
 "cli.virtual.error.failed" = "El control virtual de %@ no cambió (%@). Revísalo con 'ojd virtual show'.";
 "cli.virtual.reset.abstract" = "Devuelve el modelo de un control, o todos los modelos, a la selección automática de control virtual.";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "«%@» está activo en un control conectado y ahora bloquea toda su entrada. Añade una asignación con 'ojd binding set' o detén el perfil con 'ojd profile deactivate'.";
 "cli.binding.clear.confirm" = "¿Eliminar todas las asignaciones, combinaciones, secuencias y capas de «%@»?";
 "cli.binding.clear.discussion" = "--all también elimina las combinaciones, secuencias y capas del perfil, y pide confirmación en un terminal; sin terminal necesita --force. Se mantienen los ajustes de palancas, gatillos, táctil, movimiento y salida.";
-"cli.binding.clear.done" = "Se han eliminado %lld asignaciones de «%@».";
-"cli.binding.clear.dry_run" = "Se eliminarían %lld asignaciones de «%@».";
+"cli.binding.clear.done" = "Asignaciones eliminadas de «%@»: %lld.";
+"cli.binding.clear.dry_run" = "Asignaciones que se eliminarían de «%@»: %lld.";
 "cli.binding.clear.missing" = "«%@» no tiene ninguna asignación para %@. No se ha cambiado nada.";
 "cli.binding.clear.sources" = "Los orígenes cuyas asignaciones se eliminan.";
 "cli.binding.clear.usage" = "Indica uno o más orígenes, o --all.";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "Se eliminaría el perfil «%@».";
 "cli.profile.discussion" = "Un perfil de reasignación convierte los controles de un modelo de control en entrada de gamepad, teclado y puntero. PROFILE es el ID o el nombre de un perfil de «ojd profile list». Cambia las asignaciones con «ojd binding» y todo lo demás con «ojd profile edit». Todos los comandos de perfil necesitan el servicio.";
 "cli.profile.document_invalid" = "%@ no es un perfil válido: %@";
+"cli.document.not_json" = "no es un JSON válido";
+"cli.document.missing_field" = "falta el campo «%@»";
+"cli.document.wrong_type" = "el campo «%@» tiene un tipo incorrecto";
+"cli.document.field_problem" = "«%@»: %@";
 "cli.profile.duplicate.abstract" = "Copia un perfil con un nombre nuevo. La copia empieza inactiva.";
 "cli.profile.duplicate.done" = "Se ha creado «%@» (%@).";
 "cli.profile.duplicate.name" = "El nombre de la copia.";

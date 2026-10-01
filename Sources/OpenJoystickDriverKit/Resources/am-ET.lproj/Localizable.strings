@@ -919,12 +919,14 @@
 "notifications.controllerNeedsAttentionBody" = "%@ ከእንግዲህ ወዲህ አልተገናኘም።";
 "cli.error.json_plain" = "--json ወይም --plain ይጠቀሙ፣ ሁለቱንም አይደለም።";
 "cli.error.peer_rejected" = "አገልግሎቱ ይህን ojd ውድቅ አድርጓል፤ ምክንያቱም እንደ መተግበሪያው አልተፈረመም። በOpenJoystickDriver.app ውስጥ የሚመጣውን ojd ያሂዱ።";
-"cli.error.request_timeout" = "አገልግሎቱ በ%@ ሰከንዶች ውስጥ አልመለሰም። በትልቅ --timeout እንደገና ይሞክሩ።";
+"cli.error.request_timeout" = "አገልግሎቱ በ%@ ውስጥ አልመለሰም። በትልቅ --timeout እንደገና ይሞክሩ።";
 "cli.error.service_request_failed" = "አገልግሎቱ ጥያቄውን አላጠናቀቀም፦ %@። በ«ojd status» ይፈትሹት።";
+"cli.error.duplicate_profile_name" = "በዚያ ስም መገለጫ አስቀድሞ አለ። «ojd profile list» ሁሉንም መገለጫዎች ያሳያል።";
 "cli.error.service_timeout" = "አገልግሎቱ በጊዜ አልመለሰም። እንደገና ይሞክሩ፣ ወይም በ«ojd status» ይፈትሹት።";
 "cli.error.service_unavailable" = "የOpenJoystickDriver አገልግሎት እየሰራ አይደለም። በ«ojd service start» ያስጀምሩት።";
 "cli.error.timeout_value" = "--timeout ከ0 በላይ የሆነ የሰከንዶች ቁጥር ያስፈልገዋል።";
 "cli.error.unexpected" = "ያልተጠበቀ ስህተት፦ %@። «ojd diagnose --bundle PATH» ያሂዱ እና ጥቅሉን ከሳንካ ሪፖርት ጋር ያያይዙ።";
+"cli.error.unknown_command" = "ያልታወቀ ትእዛዝ «%@»። «%@» ማለትዎ ነው?";
 "cli.option.json" = "JSON ወደ stdout ያትሙ።";
 "cli.option.no_color" = "ቀለም አይጠቀሙ።";
 "cli.option.no_input" = "በጭራሽ አይጠይቁ፤ እሴት ሲጎድል አይሳካም።";
@@ -940,10 +942,10 @@
 "cli.service.start.open_failed" = "macOS %@ን መክፈት አልቻለም። ምክንያቱን ለማየት ከFinder ይክፈቱት።";
 "cli.service.stop.abstract" = "አገልግሎቱን ያቁሙ እና እስኪወጣ ድረስ ይጠብቁ። የተገናኙ መቆጣጠሪያዎች ወደ macOS ይመለሳሉ።";
 "cli.service.stop.signal_failed" = "አገልግሎቱን ማቆም አልተቻለም፦ %@። OpenJoystickDriverን ከምናሌው ያቋርጡ።";
-"cli.service.stop.timeout" = "አገልግሎቱ በ%@ ሰከንዶች ውስጥ አልቆመም። በትልቅ --timeout እንደገና ይሞክሩ።";
+"cli.service.stop.timeout" = "አገልግሎቱ በ%@ ውስጥ አልቆመም። በትልቅ --timeout እንደገና ይሞክሩ።";
 "cli.service.stopped" = "አገልግሎቱ ቆሟል።";
 "cli.service.wait.abstract" = "አገልግሎቱ ጥያቄዎችን እስኪቀበል ድረስ ይጠብቁ። --timeout የመጠበቂያ ጊዜውን ይገድባል (ነባሪ 5 ሰከንዶች)።";
-"cli.service.wait.timeout" = "አገልግሎቱ በ%@ ሰከንዶች ውስጥ ጥያቄዎችን አልተቀበለም። በ«ojd service start» ያስጀምሩት፣ ወይም በትልቅ --timeout እንደገና ይሞክሩ።";
+"cli.service.wait.timeout" = "አገልግሎቱ በ%@ ውስጥ ጥያቄዎችን አልተቀበለም። በ«ojd service start» ያስጀምሩት፣ ወይም በትልቅ --timeout እንደገና ይሞክሩ።";
 "cli.status.abstract" = "አገልግሎቱን፣ ቅጥያውን፣ ፈቃዶችን እና የተገናኙ መቆጣጠሪያዎችን ያሳዩ።";
 "cli.status.discussion" = "አገልግሎቱ ሲቆም ይሰራል፦ አገልግሎቱን እንደቆመ ሪፖርት ያደርጋል እና በ0 ይወጣል።";
 "cli.status.label.accessibility" = "ተደራሽነት";
@@ -985,10 +987,10 @@
 "cli.diagnose.skip.service_stopped" = "አገልግሎቱ አይሰራም";
 "cli.diagnose.soak" = "የአገልግሎቱን ማህደረ ትውስታ፣ የፋይል ገላጮች እና CPUን ለዚህ ያህል ጊዜ ናሙና ይውሰዱ (1-86400)።";
 "cli.diagnose.soak.not_requested" = "አልተጠየቀም፤ --soak SECONDSን ይጠቀሙ";
-"cli.diagnose.soak.progress" = "አገልግሎቱን ለ %lld ሰከንዶች ናሙና በመውሰድ ላይ…";
+"cli.diagnose.soak.progress" = "አገልግሎቱን ለ %@ ናሙና በመውሰድ ላይ…";
 "cli.diagnose.soak_range" = "--soak በ 1 እና 86400 ሰከንዶች መካከል መሆን አለበት።";
 "cli.diagnose.usb.failed" = "የUSB ቅኝት አልተሳካም፦ %@። ለOpenJoystickDriver የግቤት ክትትል ፈቃድ ይስጡ።";
-"cli.diagnose.usb.ok" = "%lld አቅራቢ-ተኮር የUSB መቆጣጠሪያዎች ይታያሉ";
+"cli.diagnose.usb.ok" = "የሚታዩ አቅራቢ-ተኮር የUSB መቆጣጠሪያዎች፦ %lld";
 "cli.diagnose.virtual.disabled" = "ምናባዊ የጨዋታ መቆጣጠሪያ ተሰናክሏል";
 "cli.diagnose.virtual.error" = "የምናባዊ የጨዋታ መቆጣጠሪያ ስህተት፦ %@";
 "cli.diagnose.virtual.override" = "የተከማቹ የመገለጫ መሻሪያዎች ሊነበቡ አይችሉም፦ %@";
@@ -1065,6 +1067,7 @@
 "cli.update.check.available" = "OpenJoystickDriver %@ ይገኛል (የእርስዎ %@ ነው)፦ %@";
 "cli.update.check.discussion" = "የሚሰራው ሲጠይቁ ብቻ ነው፤ ojd በራሱ በጭራሽ አይፈትሽም። ምንም አያወርድም ወይም አይጭንም። ዝማኔ ቢኖርም ባይኖርም በ0 ይወጣል፣ ፍተሻው ሳይሳካ ሲቀር በ1 ይወጣል።";
 "cli.update.check.failed" = "ዝማኔዎችን መፈተሽ አልተቻለም፦ %@። የአውታረ መረብ ግንኙነትዎን ይፈትሹ እና እንደገና ይሞክሩ።";
+"cli.update.check.failed_reason" = "ዝማኔዎችን መፈተሽ አልተቻለም፦ %@።";
 "cli.update.check.incomplete" = "ውጤት የለም";
 "cli.update.check.prerelease" = "የቅድመ-ልቀት ስሪቶችን ያካትቱ።";
 "cli.update.check.up_to_date" = "OpenJoystickDriver %@ ወቅታዊ ነው (የቅርብ ጊዜ ልቀት፦ %@)።";
@@ -1140,6 +1143,7 @@
 "cli.controller.show.label.name" = "ስም";
 "cli.controller.show.label.output_checks" = "የውጤት ፍተሻዎች";
 "cli.controller.show.label.ownership" = "ባለቤትነት";
+"cli.controller.show.ownership" = "መንገድ %@፣ አካላዊ %@፣ HID ግቤት %@";
 "cli.controller.show.label.protocol" = "ፕሮቶኮል";
 "cli.controller.show.label.record" = "መዝገብ";
 "cli.controller.show.label.rumble" = "ንዝረት";
@@ -1156,7 +1160,7 @@
 "cli.controller.watch.discussion" = "በ --json በአንድ መስመር አንድ የJSON ነገር ያትማል። የዱላ Y ወደ ላይ ያመለክታል። በ --first-press የመጀመሪያውን የተጫነ የመቆጣጠሪያ ክፍል ያትማል እና ይወጣል፤ --duration ቀድሞ ካለፈ አይሳካም።";
 "cli.controller.watch.first_press" = "የመጀመሪያውን የተጫነ የመቆጣጠሪያ ክፍል ያትሙ፣ ከዚያ ይውጡ።";
 "cli.controller.watch.no_input" = "ምንም ግብዓት አልደረሰም።";
-"cli.controller.watch.no_press" = "በ%@ ሰከንድ ውስጥ ምንም የመቆጣጠሪያ ክፍል አልተጫነም።";
+"cli.controller.watch.no_press" = "በ%@ ውስጥ ምንም የመቆጣጠሪያ ክፍል አልተጫነም።";
 "cli.controller.watch.press_prompt" = "በ%@ (%@) ላይ አንድ የመቆጣጠሪያ ክፍል ይጫኑ።";
 "cli.controller.watch.started" = "%@ (%@) በመከታተል ላይ። የመቆጣጠሪያውን አዝራሮች ይጫኑ።";
 "cli.error.confirm_declined" = "ምንም አልተለወጠም።";
@@ -1165,6 +1169,7 @@
 "cli.option.force" = "ማረጋገጫ አይጠይቁ።";
 "cli.virtual.abstract" = "OpenJoystickDriver ለመቆጣጠሪያ የሚያትመውን ምናባዊ የጨዋታ መቆጣጠሪያ ያሳዩ እና ይምረጡ።";
 "cli.virtual.changed" = "%@ አሁን %@ (%@) ያትማል።";
+"cli.virtual.stored" = "ለ%@ ምርጫው ተቀምጧል። ምናባዊ ውፅዓት ሲነቃ ይተገበራል።";
 "cli.virtual.discussion" = "ምርጫ ለተመሳሳይ ሞዴል ላሉ ሁሉም መቆጣጠሪያዎች ይተገበራል። «reset» ሞዴልን ወደ ራስ-ሰር ምርጫ ይመልሳል።";
 "cli.virtual.error.failed" = "የ%@ ምናባዊ የጨዋታ መቆጣጠሪያ አልተለወጠም (%@)። በ«ojd virtual show» ይፈትሹት።";
 "cli.virtual.reset.abstract" = "የመቆጣጠሪያን ሞዴል፣ ወይም ሁሉንም ሞዴሎች፣ ወደ ራስ-ሰር ምናባዊ የጨዋታ መቆጣጠሪያ ምርጫ ይመልሱ።";
@@ -1230,8 +1235,8 @@
 "cli.binding.clear.blocks_input" = "«%@» በተገናኘ መቆጣጠሪያ ላይ ንቁ ነው እና አሁን ሁሉንም ግብዓቱን ያግዳል። በ«ojd binding set» ምደባ ያክሉ፣ ወይም መገለጫውን በ«ojd profile deactivate» ያቁሙ።";
 "cli.binding.clear.confirm" = "ሁሉም ምደባዎች፣ ጥምረቶች፣ ቅደም ተከተሎች እና ንብርብሮች ከ«%@» ይወገዱ?";
 "cli.binding.clear.discussion" = "--all የመገለጫውን ጥምረቶች፣ ቅደም ተከተሎች እና ንብርብሮችም ያስወግዳል፣ በተርሚናል ላይ ማረጋገጫ ይጠይቃል፤ ካልሆነ --force ያስፈልገዋል። የዱላ፣ ቀስቃሽ፣ ንክኪ፣ እንቅስቃሴ እና የውጤት ቅንብሮች ይቀራሉ።";
-"cli.binding.clear.done" = "%lld ምደባዎች ከ«%@» ተወግደዋል።";
-"cli.binding.clear.dry_run" = "%lld ምደባዎች ከ«%@» ይወገዱ ነበር።";
+"cli.binding.clear.done" = "ከ«%@» የተወገዱ ምደባዎች፦ %lld።";
+"cli.binding.clear.dry_run" = "ከ«%@» የሚወገዱ ምደባዎች፦ %lld።";
 "cli.binding.clear.missing" = "«%@» ለ%@ ምደባ የለውም። ምንም አልተለወጠም።";
 "cli.binding.clear.sources" = "ምደባዎቻቸው የሚወገዱ ምንጮች።";
 "cli.binding.clear.usage" = "አንድ ወይም ከዚያ በላይ ምንጮችን ወይም --all ይስጡ።";
@@ -1301,6 +1306,10 @@
 "cli.profile.delete.dry_run" = "መገለጫው «%@» ይሰረዝ ነበር።";
 "cli.profile.discussion" = "የዳግም ምደባ መገለጫ የአንድ መቆጣጠሪያ ሞዴል የመቆጣጠሪያ ክፍሎችን ወደ የጨዋታ መቆጣጠሪያ፣ ኪቦርድ እና ጠቋሚ ግብዓት ይቀይራል። PROFILE ከ«ojd profile list» የመገለጫ ID ወይም ስም ነው። ምደባዎችን በ«ojd binding» ይለውጡ፣ ሌላውን ሁሉ ደግሞ በ«ojd profile edit»። እያንዳንዱ የመገለጫ ትዕዛዝ አገልግሎቱን ይፈልጋል።";
 "cli.profile.document_invalid" = "%@ ትክክለኛ መገለጫ አይደለም፦ %@";
+"cli.document.not_json" = "ትክክለኛ JSON አይደለም";
+"cli.document.missing_field" = "መስኩ «%@» ጠፍቷል";
+"cli.document.wrong_type" = "መስኩ «%@» የተሳሳተ ዓይነት አለው";
+"cli.document.field_problem" = "«%@»፦%@";
 "cli.profile.duplicate.abstract" = "መገለጫን በአዲስ ስም ይቅዱ። ቅጂው ንቁ ሳይሆን ይጀምራል።";
 "cli.profile.duplicate.done" = "«%@» (%@) ተፈጥሯል።";
 "cli.profile.duplicate.name" = "የቅጂው ስም።";

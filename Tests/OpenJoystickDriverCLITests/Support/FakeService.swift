@@ -71,7 +71,8 @@ final class FakeService: @unchecked Sendable {
     id: String,
     name: String = "Test Pad",
     vendorID: UInt16 = 0x045E,
-    productID: UInt16 = 0x028E
+    productID: UInt16 = 0x028E,
+    outputs: PhysicalControllerOutputCapabilities = .none
   ) -> ApplicationServiceDeviceDescription {
     ApplicationServiceDeviceDescription(
       name: name,
@@ -82,6 +83,7 @@ final class FakeService: @unchecked Sendable {
       discoverySource: .rawUSB,
       serialNumber: nil,
       bindingResult: .hidDescriptorFixture,
+      physicalOutputCapabilities: outputs,
       runtimeIdentifier: id
     )
   }
