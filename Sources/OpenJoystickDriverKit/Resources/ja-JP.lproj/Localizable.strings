@@ -25,7 +25,6 @@
 "menu.projectPage" = "GitHub";
 "menu.show" = "OpenJoystickDriverを表示";
 "common.ok" = "OK";
-"common.loadingEllipsis" = "…";
 "about.version" = "バージョン %@\nmacOS向けコントローラ入力";
 "common.refresh" = "更新";
 "common.tryAgain" = "再試行";

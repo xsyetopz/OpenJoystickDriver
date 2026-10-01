@@ -24,7 +24,6 @@
     }
 
     static func templateSymbol(accessibilityDescription: String) -> NSImage? {
-      guard #available(macOS 11.0, *) else { return nil }
       let image = NSImage(
         systemSymbolName: "gamecontroller",
         accessibilityDescription: accessibilityDescription

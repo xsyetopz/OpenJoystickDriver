@@ -24,7 +24,7 @@
       HStack(spacing: 10) {
         OJDSystemSymbol(name: statusSemanticState.presentation.symbolName, fallback: statusLabel)
           .foregroundColor(Color(statusSemanticState.presentation.tone.color))
-          .ojdAccessibilityHidden(true)
+          .accessibilityHidden(true)
         Text(statusLabel).font(.subheadline.weight(.semibold))
         if let device = model.device {
           Text(
@@ -293,7 +293,7 @@
     @ViewBuilder
     private func outputStatus(for operation: InputTestViewModel.OutputOperation) -> some View {
       switch model.outputState {
-      case .running(let current) where current == operation: OJDLoadingIndicator()
+      case .running(let current) where current == operation: ProgressView()
       case .succeeded(let current) where current == operation:
         Text(OJDLocalized.string("common.done", fallback: "Done")).foregroundColor(
           Color(SemanticState.healthy.presentation.tone.color)

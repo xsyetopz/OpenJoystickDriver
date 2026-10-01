@@ -100,7 +100,7 @@
             (issue.kind == .damagedProfile ? SemanticState.attention : .failure).presentation.tone
               .color
           )
-        ).ojdAccessibilityHidden(true)
+        ).accessibilityHidden(true)
         Text(
           OJDLocalized.string(
             issue.kind == .damagedProfile ? "profiles.damagedProfile" : "profiles.damagedLibrary",
@@ -214,7 +214,7 @@
       switch viewModel.remappingState {
       case .loading:
         HStack(spacing: 8) {
-          OJDLoadingIndicator()
+          ProgressView()
           Text(OJDLocalized.string("profiles.refreshing", fallback: "Refreshing profile state..."))
             .foregroundColor(Color(NSColor.secondaryLabelColor))
         }.padding(.horizontal, 28).padding(.top, 14)

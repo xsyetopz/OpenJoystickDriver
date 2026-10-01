@@ -116,7 +116,7 @@
     @ViewBuilder
     var saveStatusView: some View {
       HStack(spacing: 6) {
-        if saveStatus == .saving { OJDLoadingIndicator() }
+        if saveStatus == .saving { ProgressView() }
         Text(saveStatus.label).foregroundColor(saveStatus.color)
       }.frame(minHeight: 28).ojdAccessibilityLabel(
         OJDLocalized.string("profiles.saveStatus", fallback: "Profile save status")

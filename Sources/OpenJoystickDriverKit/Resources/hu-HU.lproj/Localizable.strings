@@ -25,7 +25,6 @@
 "menu.projectPage" = "GitHub";
 "menu.show" = "OpenJoystickDriver megjelenítése";
 "common.ok" = "OK";
-"common.loadingEllipsis" = "…";
 "about.version" = "%@ verzió\nVezérlőbemenet macOS-hez";
 "common.refresh" = "Frissítés";
 "common.tryAgain" = "Újra";

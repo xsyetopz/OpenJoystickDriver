@@ -25,7 +25,6 @@
 "menu.projectPage" = "GitHub";
 "menu.show" = "Sýndu OpenJoystickDriver";
 "common.ok" = "OK";
-"common.loadingEllipsis" = "…";
 "about.version" = "Útgáfa %@\nStýrinntak fyrir macOS";
 "common.refresh" = "Uppfæra";
 "common.tryAgain" = "Reyna aftur";

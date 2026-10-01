@@ -170,7 +170,7 @@
           fallback: nil,
           fallbackSymbolName: presentation.controllerSymbolFallback
         ).font(.title).foregroundColor(presentation.glyphFamily.controllerSymbolColor)
-          .ojdAccessibilityHidden(true)
+          .accessibilityHidden(true)
         VStack(alignment: .leading, spacing: 3) {
           Text(device.name).font(.headline.weight(.semibold)).lineLimit(1)
           Text("\(reportedValue(device.connection)) · " + device.publishedIdentityLabel)

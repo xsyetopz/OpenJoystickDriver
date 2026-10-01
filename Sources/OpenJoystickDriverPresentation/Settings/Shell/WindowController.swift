@@ -200,9 +200,7 @@
       item.label = OJDLocalized.string("settings.navigation", fallback: "Settings navigation")
       item.paletteLabel = item.label
       item.toolTip = item.label
-      if #available(macOS 11.0, *) {
-        item.image = NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: item.label)
-      }
+      item.image = NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: item.label)
       return item
     }
   }

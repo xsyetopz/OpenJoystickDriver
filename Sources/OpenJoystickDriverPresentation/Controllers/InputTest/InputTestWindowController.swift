@@ -127,12 +127,10 @@
         item.label = OJDLocalized.string("common.refresh", fallback: "Refresh Controller")
         item.paletteLabel = item.label
         item.toolTip = item.label
-        if #available(macOS 11.0, *) {
-          item.image = NSImage(
-            systemSymbolName: "arrow.clockwise",
-            accessibilityDescription: item.label
-          )
-        }
+        item.image = NSImage(
+          systemSymbolName: "arrow.clockwise",
+          accessibilityDescription: item.label
+        )
         return item
       default: return nil
       }

@@ -13,18 +13,7 @@
     let device: ApplicationServiceDeviceDescription
 
     var body: some View {
-      if #available(macOS 11.0, *) {
-        DisclosureGroup(advancedTitle) { content.padding(.top, 8) }
-      } else {
-        alwaysExpanded
-      }
-    }
-
-    private var alwaysExpanded: some View {
-      VStack(alignment: .leading, spacing: 8) {
-        Text(advancedTitle).font(.headline)
-        content
-      }
+      DisclosureGroup(advancedTitle) { content.padding(.top, 8) }
     }
 
     private var advancedTitle: String {
@@ -61,7 +50,7 @@
         )
         if overrideState.inFlight {
           HStack(spacing: 8) {
-            OJDLoadingIndicator()
+            ProgressView()
             Text(updatingLabel).foregroundColor(Color(NSColor.secondaryLabelColor))
           }.ojdAccessibilityLabel(updatingLabel)
         }

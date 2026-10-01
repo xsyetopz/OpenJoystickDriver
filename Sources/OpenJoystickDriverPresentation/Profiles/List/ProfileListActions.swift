@@ -157,11 +157,7 @@
     }
 
     func configureJSONTypes(_ panel: NSSavePanel) {
-      if #available(macOS 11.0, *) {
-        panel.allowedContentTypes = [.json]
-      } else {
-        panel.allowedFileTypes = ["json"]
-      }
+      panel.allowedContentTypes = [.json]
     }
 
     func handleProfileMutation(_ mutation: RuntimeMutationState) {

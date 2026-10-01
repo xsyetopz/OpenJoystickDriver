@@ -25,28 +25,23 @@ func describe(_ controller: GCController) -> String {
 }
 
 func describeInputs(_ controller: GCController) -> String {
-  guard #available(macOS 11.0, *) else { return "buttons=unavailable" }
   let names = controller.physicalInputProfile.buttons.keys.sorted().joined(separator: ",")
   guard let xbox = controller.extendedGamepad as? GCXboxGamepad else {
     return "buttons=[\(names)] xbox=false"
   }
-  let share = if #available(macOS 12.0, *) { xbox.buttonShare != nil } else { false }
+  let share = xbox.buttonShare != nil
   let paddles = [xbox.paddleButton1, xbox.paddleButton2, xbox.paddleButton3, xbox.paddleButton4]
     .compactMap { $0 }.count
   return "buttons=[\(names)] xbox=true share=\(share) paddles=\(paddles)"
 }
 
 func controllerHapticsDescription(_ controller: GCController) -> String {
-  if #available(macOS 11.0, *) {
-    guard let haptics = controller.haptics else { return "haptics=false" }
-    let localities = haptics.supportedLocalities.map(\.rawValue).sorted().joined(separator: ",")
-    return "haptics=true localities=[\(localities)]"
-  }
-  return "haptics=unavailable"
+  guard let haptics = controller.haptics else { return "haptics=false" }
+  let localities = haptics.supportedLocalities.map(\.rawValue).sorted().joined(separator: ",")
+  return "haptics=true localities=[\(localities)]"
 }
 
 func playHapticPulse(on controller: GCController) -> String {
-  guard #available(macOS 11.0, *) else { return "unavailable: macOS 11 required" }
   guard let haptics = controller.haptics else { return "unavailable: controller has no haptics" }
   guard let engine = haptics.createEngine(withLocality: .default) else {
     return "unavailable: no default haptic engine"
@@ -117,14 +112,9 @@ func printHIDSupport() -> Bool? {
     let pid = intProp(device, kIOHIDProductIDKey)
     let product = strProp(device, kIOHIDProductKey) ?? "(unknown)"
     let transport = strProp(device, kIOHIDTransportKey) ?? "(unknown)"
-    let supported: String
-    if #available(macOS 11.0, *) {
-      let value = GCController.supportsHIDDevice(device)
-      observedSupport.append(value)
-      supported = value ? "yes" : "no"
-    } else {
-      supported = "unavailable"
-    }
+    let value = GCController.supportsHIDDevice(device)
+    observedSupport.append(value)
+    let supported = value ? "yes" : "no"
     print(
       String(
         format: "- %04X:%04X \"%@\" transport=%@ gamecontroller=%@",
@@ -188,7 +178,7 @@ print("Listening for \(seconds)s")
 if shouldRumble { print("Rumble pulse requested") }
 if shouldDisableSystemGestures { print("System controller gestures disabled for this test") }
 print("")
-if #available(macOS 11.3, *) { GCController.shouldMonitorBackgroundEvents = true }
+GCController.shouldMonitorBackgroundEvents = true
 let supportsHID = printHIDSupport()
 print("")
 
@@ -200,10 +190,10 @@ let evidence = ProbeEvidence()
 func observeInput(on controller: GCController, disableSystemGestures: Bool) {
   evidence.markConnected(controller)
   guard let gamepad = controller.extendedGamepad else { return }
-  if disableSystemGestures, #available(macOS 11.0, *) {
+  if disableSystemGestures {
     gamepad.buttonOptions?.preferredSystemGestureState = .disabled
     gamepad.buttonHome?.preferredSystemGestureState = .disabled
-    if #available(macOS 12.0, *), let xbox = gamepad as? GCXboxGamepad {
+    if let xbox = gamepad as? GCXboxGamepad {
       xbox.buttonShare?.preferredSystemGestureState = .disabled
     }
   }

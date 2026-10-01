@@ -84,8 +84,8 @@
           }
         }
       }
-      // macOS 10.15 presents only the last of several sheets attached to one view, so each sheet
-      // hangs off its own sibling background view.
+      // Older macOS presents only the last of several sheets attached to one view (unverified on
+      // macOS 12), so each sheet hangs off its own sibling background view.
       .background(
         EmptyView().sheet(isPresented: $screen.isCreatingProfile) {
           ProfileNameSheet(

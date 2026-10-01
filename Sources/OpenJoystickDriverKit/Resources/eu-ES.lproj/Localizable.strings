@@ -25,7 +25,6 @@
 "menu.projectPage" = "GitHub";
 "menu.show" = "Erakutsi OpenJoystickDriver";
 "common.ok" = "OK";
-"common.loadingEllipsis" = "…";
 "about.version" = "%@ bertsioa\nAginte-sarrera macOS-erako";
 "common.refresh" = "Freskatu";
 "common.tryAgain" = "Saiatu berriro";

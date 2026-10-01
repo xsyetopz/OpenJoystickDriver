@@ -78,7 +78,7 @@
           Button(OJDLocalized.string("common.refresh", fallback: "Refresh")) {
             Task { await model.refresh() }
           }
-          if model.isBusy { OJDLoadingIndicator() }
+          if model.isBusy { ProgressView() }
         }
         HStack {
           Button(OJDLocalized.string("motion.calibration.start", fallback: "Start calibration")) {

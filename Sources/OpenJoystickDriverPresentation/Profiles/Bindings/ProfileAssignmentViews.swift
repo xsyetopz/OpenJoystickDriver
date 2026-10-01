@@ -126,7 +126,7 @@
             sourceField
             OJDSystemSymbol(name: "arrow.right", fallback: "->").foregroundColor(
               Color(NSColor.secondaryLabelColor)
-            ).padding(.top, 25).ojdAccessibilityHidden(true)
+            ).padding(.top, 25).accessibilityHidden(true)
             destinationField
           }
         } else {
@@ -153,12 +153,12 @@
           Button(
             action: { onRemove(binding.id) },
             label: {
-              OJDSystemSymbol(name: "minus.circle", fallback: "−").ojdAccessibilityHidden(true)
+              OJDSystemSymbol(name: "minus.circle", fallback: "−").accessibilityHidden(true)
                 .frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
             }
           ).buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(
             OJDLocalized.string("common.removeAssignment", fallback: "Remove assignment")
-          ).ojdHelp(OJDLocalized.string("common.removeAssignment", fallback: "Remove assignment"))
+          ).help(OJDLocalized.string("common.removeAssignment", fallback: "Remove assignment"))
         }
       }.disabled(isEditingDisabled).frame(maxWidth: .infinity, alignment: .leading).padding(
         .vertical,

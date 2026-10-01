@@ -25,7 +25,6 @@
 "menu.projectPage" = "GitHub";
 "menu.show" = "Wys OpenJoystickDriver";
 "common.ok" = "OK";
-"common.loadingEllipsis" = "…";
 "about.version" = "Weergawe %@\nKontroleerderinvoer vir macOS";
 "common.refresh" = "Verfris";
 "common.tryAgain" = "Probeer weer";

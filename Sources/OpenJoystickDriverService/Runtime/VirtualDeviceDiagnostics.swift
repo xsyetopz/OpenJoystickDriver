@@ -42,10 +42,7 @@ enum VirtualDeviceDiagnostics {
       serialKind: serialKind(serial),
       ioUserClass: IOHIDDeviceGetProperty(device, ioUserClassKey as CFString) as? String,
       isOJDUserSpace: isOJD,
-      isGameControllerSupported: {
-        if #available(macOS 11.0, *) { return GCController.supportsHIDDevice(device) }
-        return nil
-      }()
+      isGameControllerSupported: GCController.supportsHIDDevice(device)
     )
   }
 

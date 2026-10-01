@@ -1,4 +1,3 @@
-import ApplicationServices
 import CoreGraphics
 import OpenJoystickDriverKit
 
@@ -8,23 +7,11 @@ protocol CoreGraphicsPostEventAccessProbing: Sendable {
   func request() -> Bool
 }
 
-/// The SDK marks the CoreGraphics post-event access calls available from macOS 10.15, but
-/// 10.15's CoreGraphics does not export them and calling one aborts the process. There,
-/// event posting is gated by Accessibility, which `AXIsProcessTrusted` reads.
 private struct PlatformPostEventAccessProbe: CoreGraphicsPostEventAccessProbing {
-  func preflight() -> Bool {
-    guard #available(macOS 11, *) else { return AXIsProcessTrusted() }
-    return CGPreflightPostEventAccess()
-  }
+  func preflight() -> Bool { CGPreflightPostEventAccess() }
 
   @discardableResult
-  func request() -> Bool {
-    guard #available(macOS 11, *) else {
-      // The value of `kAXTrustedCheckOptionPrompt`, whose global Swift 6 rejects as mutable.
-      return AXIsProcessTrustedWithOptions(["AXTrustedCheckOptionPrompt": true] as CFDictionary)
-    }
-    return CGRequestPostEventAccess()
-  }
+  func request() -> Bool { CGRequestPostEventAccess() }
 }
 
 /// Reads and requests the CoreGraphics permission used for keyboard and pointer injection.

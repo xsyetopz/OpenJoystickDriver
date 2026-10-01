@@ -16,8 +16,7 @@
     }
   }
 
-  /// A destructive action that keeps the native semantic role on systems that support it while
-  /// retaining a visibly destructive fallback for the macOS 10.15 deployment target.
+  /// A destructive action that keeps the native semantic role and a visibly destructive tint.
   struct OJDDestructiveButton<Label: View>: View {
     let action: () -> Void
     let label: () -> Label
@@ -27,23 +26,10 @@
       self.label = label
     }
 
-    @ViewBuilder
     var body: some View {
-      if #available(macOS 12.0, *) {
-        Button(role: .destructive, action: action, label: label).foregroundColor(
-          Color(NSColor.systemRed)
-        )
-      } else {
-        Button(action: action, label: label).foregroundColor(Color(NSColor.systemRed))
-      }
-    }
-  }
-
-  extension View {
-    /// SwiftUI's tooltip modifier was introduced after the app's minimum deployment target.
-    @ViewBuilder
-    func ojdHelp(_ message: String) -> some View {
-      if #available(macOS 11.0, *) { help(message) } else { self }
+      Button(role: .destructive, action: action, label: label).foregroundColor(
+        Color(NSColor.systemRed)
+      )
     }
   }
 

@@ -25,7 +25,6 @@
 "menu.projectPage" = "GitHub";
 "menu.show" = "OpenJoystickDriver 보기";
 "common.ok" = "OK";
-"common.loadingEllipsis" = "…";
 "about.version" = "버전 %@\nmacOS용 컨트롤러 입력";
 "common.refresh" = "새로 고침";
 "common.tryAgain" = "다시 시도";

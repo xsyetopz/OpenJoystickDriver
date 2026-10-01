@@ -49,7 +49,7 @@
         OJDSystemSymbol(name: symbol, fallback: nil).foregroundColor(Color(tone.color)).frame(
           width: 20,
           height: 20
-        ).ojdAccessibilityHidden(true)
+        ).accessibilityHidden(true)
         Text(title).font(.body.weight(.medium)).fixedSize(horizontal: false, vertical: true)
         Text(value).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         if let action {
@@ -75,7 +75,7 @@
         OJDSystemSymbol(
           name: semanticState.presentation.symbolName,
           fallback: OJDLocalized.string("common.status", fallback: "Status")
-        ).ojdAccessibilityHidden(true)
+        ).accessibilityHidden(true)
         Text(status).font(.headline.weight(.semibold))
       }.foregroundColor(Color(semanticState.presentation.tone.color)).ojdAccessibilityLabel(
         OJDLocalized.string("common.status", fallback: "Status")

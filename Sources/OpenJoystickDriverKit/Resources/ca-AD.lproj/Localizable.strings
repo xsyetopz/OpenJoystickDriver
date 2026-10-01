@@ -25,7 +25,6 @@
 "menu.projectPage" = "GitHub";
 "menu.show" = "Mostra l’OpenJoystickDriver";
 "common.ok" = "OK";
-"common.loadingEllipsis" = "…";
 "about.version" = "Versió %@\nEntrada de comandament per a macOS";
 "common.refresh" = "Actualitza";
 "common.tryAgain" = "Torna-ho a provar";

@@ -94,7 +94,7 @@
                   labels: model.selectedButtonLabels
                 )
               }.joined(separator: ", ")
-            ).font(.system(.body, design: .monospaced)).textSelectionIfAvailable()
+            ).font(.system(.body, design: .monospaced)).textSelection(.enabled)
           }
         }.padding(4).frame(maxWidth: .infinity, alignment: .leading)
       } label: {

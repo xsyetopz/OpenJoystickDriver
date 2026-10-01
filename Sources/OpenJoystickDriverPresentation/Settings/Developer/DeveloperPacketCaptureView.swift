@@ -27,12 +27,12 @@
               Button(
                 OJDLocalized.string("common.stop", fallback: "Stop"),
                 action: model.stopCapture
-              ).ojdPrimaryAction()
+              ).keyboardShortcut(.defaultAction)
             } else {
               Button(
                 OJDLocalized.string("developer.startCapture", fallback: "Start Capture"),
                 action: model.startCapture
-              ).ojdPrimaryAction().disabled(model.selectedDevice == nil)
+              ).keyboardShortcut(.defaultAction).disabled(model.selectedDevice == nil)
             }
             Button(
               OJDLocalized.string("common.clear", fallback: "Clear"),

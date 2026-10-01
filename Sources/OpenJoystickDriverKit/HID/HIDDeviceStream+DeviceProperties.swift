@@ -1,5 +1,4 @@
 import Foundation
-import GameController
 import IOKit
 import IOKit.hid
 
@@ -98,13 +97,6 @@ extension HIDDeviceStream {
       ],
       nativePassThrough: nativePassThrough
     )
-  }
-
-  /// Whether the running macOS exposes the device as a native gamepad. The API is unavailable on
-  /// macOS 10.15, where no device is native.
-  static func isNativeGamepad(_ device: IOHIDDevice) -> Bool {
-    guard #available(macOS 11.0, *) else { return false }
-    return GCController.supportsHIDDevice(device)
   }
 
   /// The `bInterfaceNumber` of the USB interface a HID device is published on, read from the

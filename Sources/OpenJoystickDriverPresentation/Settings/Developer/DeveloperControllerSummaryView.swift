@@ -159,7 +159,7 @@
       VStack(alignment: .leading, spacing: 2) {
         Text(label).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         Text(value).font(.system(.body, design: .monospaced)).lineLimit(2)
-          .textSelectionIfAvailable()
+          .textSelection(.enabled)
       }.accessibilityElement(children: .combine)
     }
   }

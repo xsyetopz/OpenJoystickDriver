@@ -1,4 +1,5 @@
 import Foundation
+import GameController
 import IOKit
 import IOKit.hid
 
@@ -44,7 +45,7 @@ extension HIDDeviceStream {
       )
     else { return nil }
     // macOS already serves a native gamepad, so OJD only observes its input and never seizes it.
-    let nativePassThrough = Self.isNativeGamepad(device)
+    let nativePassThrough = GCController.supportsHIDDevice(device)
     guard
       eventAdapter.add(
         deviceID: deviceID,

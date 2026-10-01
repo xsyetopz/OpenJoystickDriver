@@ -216,8 +216,7 @@ public struct PhysicalDevice: Equatable, Sendable {
   public let stableParentDeviceIdentifier: String?
   public let interfaces: [PhysicalInterfaceSignature]?
   /// Whether the running macOS already exposes this device as a native gamepad
-  /// (`GCController.supportsHIDDevice`, macOS 11 and later). OJD leaves such a device to macOS
-  /// before classification. On macOS 10.15 the API is unavailable and no device is native.
+  /// (`GCController.supportsHIDDevice`). OJD leaves such a device to macOS before classification.
   public let nativePassThrough: Bool
 
   public init(

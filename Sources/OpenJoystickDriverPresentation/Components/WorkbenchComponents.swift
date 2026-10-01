@@ -5,8 +5,8 @@
   import SwiftUI
 
   // SF Symbol via NSImage(systemSymbolName:), else fallback text. Pass a nil fallback for a
-  // decorative glyph whose meaning is already printed beside it: macOS 10.15 has no SF Symbols,
-  // and fallback text in a glyph-sized frame wraps into a column.
+  // decorative glyph whose meaning is already printed beside it: fallback text in a glyph-sized
+  // frame wraps into a column.
   struct OJDSystemSymbol: View {
     let name: String
     let fallback: String?
@@ -19,27 +19,23 @@
     }
 
     var body: some View {
-      if #available(macOS 11.0, *) {
-        let preferredImage = NSImage(systemSymbolName: name, accessibilityDescription: nil)
-        let fallbackImage = fallbackSymbolName.flatMap {
-          NSImage(systemSymbolName: $0, accessibilityDescription: nil)
+      let preferredImage = NSImage(systemSymbolName: name, accessibilityDescription: nil)
+      let fallbackImage = fallbackSymbolName.flatMap {
+        NSImage(systemSymbolName: $0, accessibilityDescription: nil)
+      }
+      switch SystemSymbolPolicy.resolution(
+        preferred: name,
+        fallback: fallbackSymbolName,
+        preferredIsAvailable: preferredImage != nil,
+        fallbackIsAvailable: fallbackImage != nil
+      ) {
+      case .symbol(let resolvedName):
+        if resolvedName == name, let preferredImage {
+          Image(nsImage: preferredImage)
+        } else if let fallbackImage {
+          Image(nsImage: fallbackImage)
         }
-        switch SystemSymbolPolicy.resolution(
-          preferred: name,
-          fallback: fallbackSymbolName,
-          preferredIsAvailable: preferredImage != nil,
-          fallbackIsAvailable: fallbackImage != nil
-        ) {
-        case .symbol(let resolvedName):
-          if resolvedName == name, let preferredImage {
-            Image(nsImage: preferredImage)
-          } else if let fallbackImage {
-            Image(nsImage: fallbackImage)
-          }
-        case .text: if let fallback { Text(fallback).font(.caption) }
-        }
-      } else if let fallback {
-        Text(fallback).font(.caption)
+      case .text: if let fallback { Text(fallback).font(.caption) }
       }
     }
   }
@@ -54,7 +50,7 @@
         width: 28,
         height: 28,
         alignment: .center
-      ).ojdAccessibilityHidden(true)
+      ).accessibilityHidden(true)
     }
   }
 
@@ -80,42 +76,14 @@
       Button(action: action) {
         OJDSystemSymbol(name: symbolName, fallback: label, fallbackSymbolName: fallbackSymbolName)
           .frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
-      }.buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(label).ojdHelp(label)
+      }.buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(label).help(label)
     }
   }
 
   extension View {
-    @ViewBuilder
-    func ojdPrimaryAction() -> some View {
-      if #available(macOS 11.0, *) { keyboardShortcut(.defaultAction) } else { self }
-    }
+    func ojdAccessibilityLabel(_ label: String) -> some View { accessibilityLabel(Text(label)) }
 
-    @ViewBuilder
-    func ojdAccessibilityLabel(_ label: String) -> some View {
-      if #available(macOS 11.0, *) {
-        accessibilityLabel(Text(label))
-      } else {
-        accessibility(label: Text(label))
-      }
-    }
-
-    @ViewBuilder
-    func ojdAccessibilityValue(_ value: String) -> some View {
-      if #available(macOS 11.0, *) {
-        accessibilityValue(Text(value))
-      } else {
-        accessibility(value: Text(value))
-      }
-    }
-
-    @ViewBuilder
-    func ojdAccessibilityHidden(_ hidden: Bool) -> some View {
-      if #available(macOS 11.0, *) {
-        accessibilityHidden(hidden)
-      } else {
-        accessibility(hidden: hidden)
-      }
-    }
+    func ojdAccessibilityValue(_ value: String) -> some View { accessibilityValue(Text(value)) }
 
     @ViewBuilder
     func ojdAccessibilitySelection(_ selected: Bool) -> some View {
@@ -123,11 +91,7 @@
         selected ? "common.selected" : "common.notSelected",
         fallback: selected ? "Selected" : "Not selected"
       )
-      if #available(macOS 11.0, *) {
-        accessibilityValue(Text(value)).accessibilityAddTraits(selected ? .isSelected : [])
-      } else {
-        accessibility(value: Text(value)).accessibility(addTraits: selected ? .isSelected : [])
-      }
+      accessibilityValue(Text(value)).accessibilityAddTraits(selected ? .isSelected : [])
     }
   }
 
@@ -141,7 +105,7 @@
         ForEach(panes) { pane in
           HStack(spacing: 8) {
             OJDSystemSymbol(name: pane.symbolName, fallback: nil).frame(width: 18)
-              .ojdAccessibilityHidden(true)
+              .accessibilityHidden(true)
             Text(pane.title)
             Spacer(minLength: 0)
           }.padding(.vertical, 3).tag(pane)

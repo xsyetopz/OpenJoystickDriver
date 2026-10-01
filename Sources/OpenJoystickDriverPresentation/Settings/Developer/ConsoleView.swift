@@ -147,7 +147,7 @@
                   .foregroundColor(Color(NSColor.secondaryLabelColor)).padding(12)
               } else {
                 ForEach(Array(model.displayedLines.enumerated()), id: \.offset) { _, line in
-                  Text(line).font(.system(.caption, design: .monospaced)).textSelectionIfAvailable()
+                  Text(line).font(.system(.caption, design: .monospaced)).textSelection(.enabled)
                 }
               }
             }.padding(10).frame(maxWidth: .infinity, alignment: .leading)
@@ -160,13 +160,6 @@
           Color(NSColor.secondaryLabelColor)
         )
       }.padding(24).onAppear { model.refresh() }
-    }
-  }
-
-  extension View {
-    @ViewBuilder
-    func textSelectionIfAvailable() -> some View {
-      if #available(macOS 12.0, *) { textSelection(.enabled) } else { self }
     }
   }
 

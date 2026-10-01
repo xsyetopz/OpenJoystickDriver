@@ -30,11 +30,7 @@
 
     var body: some View {
       HStack(spacing: 8) {
-        if #available(macOS 11.0, *) {
-          ProgressView()
-        } else {
-          Text(OJDLocalized.string("common.loadingEllipsis", fallback: "..."))
-        }
+        ProgressView()
         Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
           horizontal: false,
           vertical: true
@@ -66,16 +62,6 @@
           Spacer(minLength: 0)
         }.padding(4)
       }.ojdAccessibilityLabel(title).ojdAccessibilityValue(message)
-    }
-  }
-
-  struct OJDLoadingIndicator: View {
-    var body: some View {
-      if #available(macOS 11.0, *) {
-        ProgressView()
-      } else {
-        Text(OJDLocalized.string("common.loadingEllipsis", fallback: "..."))
-      }
     }
   }
 

@@ -25,7 +25,6 @@
 "menu.projectPage" = "GitHub";
 "menu.show" = "Көрме OpenJoystickDriver";
 "common.ok" = "OK";
-"common.loadingEllipsis" = "…";
 "about.version" = "%@ нұсқасы\nmacOS үшін контроллер енгізуі";
 "common.refresh" = "Жаңарту";
 "common.tryAgain" = "Қайта көру";

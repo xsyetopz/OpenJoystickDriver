@@ -71,7 +71,6 @@
     }
 
     func menuImage(symbol: String) -> NSImage? {
-      guard #available(macOS 11.0, *) else { return nil }
       let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
       image?.isTemplate = true
       return image

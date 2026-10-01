@@ -42,10 +42,9 @@
       developerToolsEnabled ? Self.allCases : Self.allCases.filter { $0 != Self.developer }
     }
 
-    /// Toolbar images use SF Symbols when available; otherwise a blank template slot.
+    /// Toolbar images use SF Symbols; a missing symbol yields a blank template slot.
     var toolbarImage: NSImage {
-      if #available(macOS 11.0, *),
-        let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: title)
+      if let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: title)
       {
         image.isTemplate = true
         return image

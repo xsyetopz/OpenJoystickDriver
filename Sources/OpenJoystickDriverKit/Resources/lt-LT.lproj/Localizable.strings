@@ -25,7 +25,6 @@
 "menu.projectPage" = "GitHub";
 "menu.show" = "Parodyk OpenJoystickDriver";
 "common.ok" = "OK";
-"common.loadingEllipsis" = "…";
 "about.version" = "Versija %@\nValdiklio įvestis, skirta macOS";
 "common.refresh" = "Atnaujinti";
 "common.tryAgain" = "Bandyti dar kartą";
