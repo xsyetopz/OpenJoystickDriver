@@ -6,7 +6,7 @@ The signed app owns the runtime, virtual HID, and authenticated local CLI. Physi
 
 `OpenJoystickDriverKit` owns parsers, records, HID/USB ports, and policy. It must not import SwifterKit. `OpenJoystickDriverUSB` and `DriverKitGenerator` are the SwifterKit boundaries. `OpenJoystickDriver` composes the app, CLI, and adapters.
 
-Do not edit `Sources/OpenJoystickDriverKit/Resources/Controllers/` or `.build/driverkit/generated/`. Catalog write: `./Scripts/ojd catalog regenerate --write`. DriverKit: `./Scripts/ojd driverkit generate`. Controller JSON uses decimal numbers. Support status lives in `docs/connecting-controllers/supported-controllers.md`; do not duplicate it here.
+Do not edit `Sources/OpenJoystickDriverKit/Resources/Controllers/` or `.build/driverkit/generated/`. Catalog write: `./Scripts/ojd catalog regenerate --write`. DriverKit: `./Scripts/ojd driverkit generate`. Controller JSON uses decimal numbers. Support status lives in `docs/Supported-Controllers.md`; do not duplicate it here.
 
 Production and development USBDriverKit personalities match only Apple's approved Microsoft GIP pairs: `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, `045E:0B12`. Accessible third-party GIP devices such as GameSir G7 SE `3537:1010` stay on direct IOUSBHost. The host user-client allowlist must be exactly `com.openjoystickdriver.VirtualHIDDevice`. `com.apple.developer.hid.virtual.device` belongs only to the app.
 
@@ -27,12 +27,12 @@ Parser/protocol: `./Scripts/ojd test parsers-macos14`. Cache: `./Scripts/ojd rep
 
 - [Short index](llms.txt): curated llms.txt v2 entry point
 - [README](README.md): install, compatibility identities, troubleshooting
-- [Controllers](docs/connecting-controllers/supported-controllers.md): supported controllers, evidence classes, VID:PID, DEXT scope
-- [Permissions](docs/permissions-and-security/permissions.md): Input Monitoring, Accessibility, and related grants
-- [Generic HID](docs/connecting-controllers/generic-hid-controllers.md): descriptor-based parsing of uncatalogued HID gamepads
+- [Controllers](docs/Supported-Controllers.md#supported-controllers): supported controllers, evidence classes, VID:PID, DEXT scope
+- [Permissions](docs/Permissions-and-Security.md#permissions): Input Monitoring, Accessibility, and related grants
+- [Generic HID](docs/Supported-Controllers.md#generic-hid-controllers): descriptor-based parsing of uncatalogued HID gamepads
 - [Contributing](CONTRIBUTING.md): setup, adding controllers, code rules
 - [Localization](LOCALIZATION.md): GUI and CLI string catalogs
-- [Documentation map](docs/README.md): user, testing, and development pages
+- [Documentation map](docs/Home.md): user, testing, and development pages
 - [Agent instructions](AGENTS.md): generated-file rules and validation commands
 - [Changelog](CHANGELOG.md): Keep a Changelog 1.1.0 history
 - [License](LICENSE): MIT

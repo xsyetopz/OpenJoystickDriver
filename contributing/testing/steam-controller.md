@@ -116,7 +116,7 @@ Also say whether Controller Settings lists the controller only after connect, cl
 OJD runs one controller per Steam interface whose HID report descriptor has a Feature item, as Linux `hid-steam.c` does; other interfaces are not controllers. Per `hid-steam.c`, the wired controller exposes mouse 0, keyboard 1 and gamepad 2, and the dongle exposes keyboard 0 and slots 1–4. None of this has been verified on macOS hardware yet.
 
 1. For each path, run `ioreg -r -c IOHIDDevice -l -w0` and paste, for every `28de` entry, the parent `IOUSBHostInterface` `bInterfaceNumber` and the `ReportDescriptor` bytes. Say which descriptors contain a Feature item (item prefix byte `0xB0`–`0xB3`).
-1. Start OJD and run (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md)):
+1. Start OJD and run (`ojd` is the [command-line tool](../../docs/Command-Line.md)):
 
    ```bash
    ojd controller list --json

@@ -4,7 +4,7 @@ OpenJoystickDriver generates manual test instructions from a connected controlle
 
 ## Generate A Plan
 
-List connected controllers. Then show one controller, whose Output checks section is the plan. `ojd` is the installed command-line tool ([install](../../docs/command-line/using-the-command-line.md)):
+List connected controllers. Then show one controller, whose Output checks section is the plan. `ojd` is the installed command-line tool ([install](../../docs/Command-Line.md)):
 
 ```bash
 ojd controller list

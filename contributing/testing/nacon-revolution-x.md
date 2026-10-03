@@ -40,7 +40,7 @@ The parser test fixtures cover split, stacked, extended-length, and requested AC
 
 ## Check Physical Output With An Installed App
 
-Check LED and rumble with a separately installed current OpenJoystickDriver app. Use the [physical-output procedure](physical-output.md) to generate a device-specific plan (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md)):
+Check LED and rumble with a separately installed current OpenJoystickDriver app. Use the [physical-output procedure](physical-output.md) to generate a device-specific plan (`ojd` is the [command-line tool](../../docs/Command-Line.md)):
 
 ```bash
 ojd controller list

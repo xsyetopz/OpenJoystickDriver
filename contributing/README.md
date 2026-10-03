@@ -1,6 +1,6 @@
 # Contributor documentation
 
-This directory holds the development notes and hardware-evidence records for OpenJoystickDriver contributors and maintainers; user guides live in [`docs/`](../docs/README.md).
+This directory holds the development notes and hardware-evidence records for OpenJoystickDriver contributors and maintainers; user guides live in [`docs/`](../docs/Home.md).
 
 ## Development
 

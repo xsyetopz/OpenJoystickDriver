@@ -153,7 +153,7 @@ Slice 1 lands before the Controller Configuration Plan adds any command, so no c
 - Each slice runs the repository checks in `CLAUDE.md`.
 - `Tests/OpenJoystickDriverCLITests/` gains tests that assert stdout, stderr, and exit code for success, usage errors, service down, and missing permission; `--help` for every command; global flags in both positions; and a run with stdin from `/dev/null`.
 - `check_cli.py` runs on each slice's build with every noun as `--sub` and ends with no findings. The baseline is the 6 errors above.
-- `docs/command-line/` is rewritten per slice. The command reference is checked against `ojd --help` output.
+- `docs/Command-Line.md` and `docs/Command-Reference.md` are rewritten per slice. The command reference is checked against `ojd --help` output.
 - The changelog lists every removed command and flag with its replacement.
 
 ## Open questions

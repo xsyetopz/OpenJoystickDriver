@@ -20,7 +20,7 @@ A quiet utility. One glance answers two questions: does each controller work, an
 - Accessibility: 8 fixed `.font(.system(size:))` sizes, 41 fixed frames, no handling for Reduce Motion or Differentiate Without Color.
 - About 14 `#available` checks for macOS 13, plus older shims: `OJDSystemSymbol`, `NavigationView`, `.alert(isPresented:)`, one sheet per view, and `MenuBarStatusItemImage`.
 - iOS blockers: `OpenJoystickDriverKit` imports IOKit, and 61 presentation files import AppKit.
-- `docs/using-the-app/` has no Profiles page, and `menu-bar-settings-architecture.md` describes the current design.
+- `docs/Using-the-App.md` has no Profiles section, and `menu-bar-settings-architecture.md` describes the current design.
 
 ## Prior art
 
@@ -179,7 +179,7 @@ Each slice is one change with its tests, docs, and checks. Slices after slice 2 
 - View model tests use a fake `OJDOperations` and assert the same results the CLI tests assert.
 - Each area is checked on macOS 12 and on the current macOS release.
 - Each area is checked in light, dark, and increased contrast, at the smallest and largest window size, with VoiceOver, and with the keyboard only. Screenshots go into the pull request.
-- The user docs in `docs/using-the-app/` are rewritten per slice, with a new Profiles page and a Records page. `menu-bar-settings-architecture.md` is replaced by this design.
+- The user docs in `docs/Using-the-App.md` are rewritten per slice, with a new Profiles section and a Records section. `menu-bar-settings-architecture.md` is replaced by this design.
 
 ## Open questions
 

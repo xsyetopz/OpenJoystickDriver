@@ -1,0 +1,29 @@
+- **[Home](Home.md)**
+- **Start here**
+  - [Getting started](Getting-Started.md)
+  - [Using the app](Using-the-App.md)
+  - [Testing a controller](Testing-a-Controller.md)
+- **Controllers**
+  - [Supported controllers](Supported-Controllers.md)
+  - [Connecting controllers](Connecting-Controllers.md)
+  - [Controller records](Controller-Records.md)
+- **Games**
+  - [Playing games](Playing-Games.md)
+- **Remapping**
+  - [Remapping profiles](Remapping-Profiles.md)
+  - [Bindings and actions](Bindings-and-Actions.md)
+  - [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md)
+  - [Profile file reference](Profile-File-Reference.md)
+- **Your Mac**
+  - [Permissions and security](Permissions-and-Security.md)
+  - [Updating and uninstalling](Updating-and-Uninstalling.md)
+- **Command line**
+  - [Command line](Command-Line.md)
+  - [Command reference](Command-Reference.md)
+- **Help**
+  - [Troubleshooting](Troubleshooting.md)
+  - [Known issues](Known-Issues.md)
+  - [FAQ](FAQ.md)
+  - [Reporting a bug](Reporting-a-Bug.md)
+- **Advanced**
+  - [Building from source](Building-from-Source.md)

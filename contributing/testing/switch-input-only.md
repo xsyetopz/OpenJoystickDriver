@@ -46,7 +46,7 @@ Face buttons map by position: B is south, A east, Y west, X north. ZL and ZR are
 
 ## Procedure
 
-Connect the pad over USB, then confirm the route (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
+Connect the pad over USB, then confirm the route (`ojd` is the [command-line tool](../../docs/Command-Line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
 
 ```bash
 ojd controller list

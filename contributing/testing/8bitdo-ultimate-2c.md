@@ -36,7 +36,7 @@ Usages 3 and 6 are the rear buttons and 9 and 10 repeat the triggers as digital 
 
 ## Procedure
 
-Connect the controller in the mode under test, then confirm the route (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
+Connect the controller in the mode under test, then confirm the route (`ojd` is the [command-line tool](../../docs/Command-Line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
 
 ```bash
 ojd controller list

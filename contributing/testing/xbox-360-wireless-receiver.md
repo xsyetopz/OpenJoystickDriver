@@ -57,7 +57,7 @@ OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and
    ```
 
    Paste every `IOUSBHostInterface` under the receiver with its `bInterfaceNumber`, `bInterfaceClass`, `bInterfaceSubClass` and `bInterfaceProtocol`, plus `kUSBCurrentConfiguration` on the device before and after OJD starts.
-1. Start OJD and list controllers (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md)):
+1. Start OJD and list controllers (`ojd` is the [command-line tool](../../docs/Command-Line.md)):
 
    ```bash
    ojd controller list --json

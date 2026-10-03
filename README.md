@@ -8,7 +8,7 @@ A macOS userspace gamepad driver. The signed app binary hosts the runtime and CL
 
 Xbox and PlayStation names in the UI are trademarks of Microsoft and Sony. This project is not affiliated with either. [Microsoft](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks) · [PlayStation](https://www.playstation.com/en-us/legal/copyright-and-trademark-notice/).
 
-Supported controllers and their evidence: [docs/connecting-controllers/supported-controllers.md](docs/connecting-controllers/supported-controllers.md). New here: [install](docs/getting-started/installing-openjoystickdriver.md), [FAQ](docs/troubleshooting/faq.md).
+Supported controllers and their evidence: [docs/Supported-Controllers.md](docs/Supported-Controllers.md#supported-controllers). New here: [install](docs/Getting-Started.md#installing-openjoystickdriver), [FAQ](docs/FAQ.md).
 
 [1]: https://img.shields.io/github/stars/xsyetopz/OpenJoystickDriver?style=social
 [2]: https://img.shields.io/github/license/xsyetopz/OpenJoystickDriver
@@ -56,13 +56,13 @@ ojd virtual reset --all
 ojd diagnose --bundle support-report.json
 ```
 
-More: [troubleshooting](docs/troubleshooting/README.md), [report a bug](docs/troubleshooting/reporting-a-bug.md), [tester builds](contributing/testing/tester-builds.md).
+More: [troubleshooting](docs/Troubleshooting.md), [report a bug](docs/Reporting-a-Bug.md), [tester builds](contributing/testing/tester-builds.md).
 
 Identical models: a `VVVV:PPPP` selector that matches both is rejected, so pass the ID from `ojd controller list` instead. To close only the selected Bluetooth link, use `ojd controller disconnect <controller>`; this never reconnects it.
 
 ## Development
 
-[CONTRIBUTING.md](CONTRIBUTING.md) · [LOCALIZATION.md](LOCALIZATION.md) · [docs/README.md](docs/README.md) · [Scripts/README.md](Scripts/README.md) · [Tools/README.md](Tools/README.md) · [AGENTS.md](AGENTS.md)
+[CONTRIBUTING.md](CONTRIBUTING.md) · [LOCALIZATION.md](LOCALIZATION.md) · [docs/Home.md](docs/Home.md) · [Scripts/README.md](Scripts/README.md) · [Tools/README.md](Tools/README.md) · [AGENTS.md](AGENTS.md)
 
 ## License
 

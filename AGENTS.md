@@ -2,7 +2,7 @@
 
 OpenJoystickDriver is a macOS userspace gamepad driver. Ground claims in source, tests, schemas, or recorded hardware evidence.
 
-Before editing, read `CONTRIBUTING.md`, `docs/README.md`, `LOCALIZATION.md`, and `Resources/Schemas/AGENTS.md`.
+Before editing, read `CONTRIBUTING.md`, `docs/Home.md`, `LOCALIZATION.md`, and `Resources/Schemas/AGENTS.md`.
 
 ## Boundaries
 

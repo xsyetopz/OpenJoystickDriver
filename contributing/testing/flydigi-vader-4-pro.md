@@ -46,7 +46,7 @@ Input decoding is verified against captured reports for every control in the tab
 
 ## Procedure
 
-Pair the controller over Bluetooth, then confirm the runtime selects this record rather than the generic fallback (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md)):
+Pair the controller over Bluetooth, then confirm the runtime selects this record rather than the generic fallback (`ojd` is the [command-line tool](../../docs/Command-Line.md)):
 
 ```bash
 ojd controller list

@@ -15,7 +15,7 @@ The descriptor's logical ranges do not match the values these devices send, so t
 
 Once a probe is accepted, the driver decodes raw reports by byte offset. A device that fails both probes keeps the generic HID descriptor mapping, as SDL does. The probe result describes the device, so it survives a reconnect.
 
-The Logitech ChillStream (`046d:cad1`) and the GP100 need no probe: SDL accepts the ChillStream without one, and the GP100's layout is hardware-verified. Their records bind the `hid.report-layout` family and describe their reports in the record's `input` field (see [Adding or changing a controller record](../../docs/connecting-controllers/controller-records.md)), so `PS3ThirdPartyDriver` holds no identity checks. The ChillStream record uses the 18-byte layout below and the GP100 record the bytes listed under Device quirks.
+The Logitech ChillStream (`046d:cad1`) and the GP100 need no probe: SDL accepts the ChillStream without one, and the GP100's layout is hardware-verified. Their records bind the `hid.report-layout` family and describe their reports in the record's `input` field (see [Adding or changing a controller record](../../docs/Controller-Records.md)), so `PS3ThirdPartyDriver` holds no identity checks. The ChillStream record uses the 18-byte layout below and the GP100 record the bytes listed under Device quirks.
 
 ## Report layout
 
@@ -51,7 +51,7 @@ SDL decodes the hat only when its byte changes from the previous report, startin
 
 ## Procedure
 
-Plug the controller in (the GP100 in PS3/PC mode), then confirm the route (`ojd` is the [command-line tool](../../docs/command-line/using-the-command-line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
+Plug the controller in (the GP100 in PS3/PC mode), then confirm the route (`ojd` is the [command-line tool](../../docs/Command-Line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
 
 ```bash
 ojd controller list

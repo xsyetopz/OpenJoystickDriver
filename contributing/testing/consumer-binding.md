@@ -1,6 +1,6 @@
 # Consumer-Binding Evidence
 
-Use this record to interpret compatibility claims. It preserves exact physical modes, consumer versions, observed results, and missing evidence. For the user-facing summary, see [virtual HID profiles](../../docs/using-the-app/README.md).
+Use this record to interpret compatibility claims. It preserves exact physical modes, consumer versions, observed results, and missing evidence. For the user-facing summary, see [virtual HID profiles](../../docs/Using-the-App.md).
 
 Status marks used in the tables below:
 
