@@ -44,8 +44,8 @@ struct VirtualHIDExtensionConfigurationTests {
     let factory = VirtualHIDExtensionConfiguration.hidFactory.serviceMatch.registryProperties
     let usb = VirtualHIDExtensionConfiguration.xboxUSB.serviceMatch.registryProperties
 
-    #expect(factory["SwifterKitPersonality"] == .string("HIDFactory"))
-    #expect(usb["SwifterKitPersonality"] == .string("XboxUSB"))
+    #expect(factory["IOUserClass"] == .string("SwifterKitHIDFactoryRuntimeService"))
+    #expect(usb["IOUserClass"] == .string("SwifterKitXboxUSBRuntimeService"))
     #expect(factory["CFBundleIdentifier"] == usb["CFBundleIdentifier"])
   }
 

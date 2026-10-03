@@ -27,9 +27,9 @@ DRIVERKIT_PROFILE="${DEXT_PROVISIONING_PROFILE:-$DRIVERKIT_DEFAULT_PROFILE}"
 DRIVERKIT_INCLUDE_USB=1
 [[ "${OJD_DRIVERKIT_WITHOUT_USB:-0}" == "1" ]] && DRIVERKIT_INCLUDE_USB=0
 
-# Mirrors Package.swift: the sibling checkout is used unless OJD_USE_LOCAL_SWIFTERKIT=0.
+# Mirrors Package.swift: the sibling checkout is used only when OJD_USE_LOCAL_SWIFTERKIT=1.
 _swifterkit_is_local() {
-  [[ "${OJD_USE_LOCAL_SWIFTERKIT:-}" != "0" ]] && [[ -d "$PROJECT_DIR/../SwifterKit" ]]
+  [[ "${OJD_USE_LOCAL_SWIFTERKIT:-}" == "1" ]] && [[ -d "$PROJECT_DIR/../SwifterKit" ]]
 }
 
 _reject_local_swifterkit() {
@@ -100,12 +100,10 @@ expected_names = {"HIDFactory", "XboxUSB"} if include_usb == "1" else {"HIDFacto
 if set(personalities) != expected_names:
     raise SystemExit(f"generated personalities mismatch: {sorted(personalities)}")
 for name, personality in personalities.items():
-    if personality.get("IOUserClass") != "SwifterKitRuntimeService":
+    if personality.get("IOUserClass") != f"SwifterKit{name}RuntimeService":
         raise SystemExit(f"generated {name} runtime service class mismatch")
     if personality.get("IOUserServerName") != "$(PRODUCT_BUNDLE_IDENTIFIER)":
         raise SystemExit(f"generated {name} user-server identity mismatch")
-    if personality.get("SwifterKitPersonality") != name:
-        raise SystemExit(f"generated {name} personality name mismatch")
 factory = personalities["HIDFactory"]
 if factory.get("IOProviderClass") != "IOUserResources":
     raise SystemExit("generated factory provider class mismatch")
@@ -161,7 +159,7 @@ personalities = info.get("IOKitPersonalities", {})
 if "HIDFactory" not in personalities:
     raise SystemExit("built DriverKit factory personality is missing")
 for name, personality in personalities.items():
-    if personality.get("IOUserClass") != "SwifterKitRuntimeService":
+    if personality.get("IOUserClass") != f"SwifterKit{name}RuntimeService":
         raise SystemExit(f"built DriverKit {name} service class mismatch")
     if personality.get("IOUserServerName") != bundle_id:
         raise SystemExit(f"built DriverKit {name} user-server identity mismatch")
@@ -563,7 +561,7 @@ expected_dependencies = [] if local_swifterkit else [
     {
         "identity": "swifterkit",
         "location": "https://github.com/xsyetopz/SwifterKit.git",
-        "requirement": {"branch": ["main"]},
+        "requirement": {"range": [{"lowerBound": "0.3.0", "upperBound": "1.0.0"}]},
     },
 ]
 expected_dependencies += [

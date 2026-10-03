@@ -3,15 +3,15 @@ import Foundation
 import PackageDescription
 
 let packageDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
-// Temporary: SwifterKit 0.3.0 (HID device factory) is not yet pushed, so the sibling checkout is
-// the default and its working tree is built as-is. CI and release set OJD_USE_LOCAL_SWIFTERKIT=0.
-let useLocalSwifterKit = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTERKIT"] != "0"
+// OJD_USE_LOCAL_SWIFTERKIT=1 builds the sibling ../SwifterKit working tree instead of the pinned
+// remote.
+let useLocalSwifterKit = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTERKIT"] == "1"
 let localSwifterKitPath = packageDirectory.appendingPathComponent("../SwifterKit")
   .standardizedFileURL.path
 let swifterKitDependency: Package.Dependency =
   useLocalSwifterKit && FileManager.default.fileExists(atPath: localSwifterKitPath)
   ? .package(path: localSwifterKitPath)
-  : .package(url: "https://github.com/xsyetopz/SwifterKit.git", branch: "main")
+  : .package(url: "https://github.com/xsyetopz/SwifterKit.git", from: "0.3.0")
 
 #if arch(arm64)
   let testTargetTriple = "arm64-apple-macosx14.0"
