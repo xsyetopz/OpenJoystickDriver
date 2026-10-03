@@ -131,7 +131,7 @@ If another process changes the profile, the app shows **This profile changed els
 1. If you select **One application**, enter the **Bundle identifier**. The app has no running-app picker.
 1. Click **Apply**, then click **Save**.
 
-To rename a profile on the command line, run `ojd profile rename PROFILE NEW-NAME`. To change the controller model or the app, run `ojd profile edit PROFILE` and change `device` or `applicationScope` in the profile file.
+To rename a profile on the command line, run `ojd profile rename PROFILE NEW-NAME`. To change the controller model or the app, run `ojd profile edit PROFILE` and change `device` or `applicationScope` in the profile file, or run `ojd profile set PROFILE applicationScope '{"type":"global"}'`.
 
 ### Duplicate a profile
 
@@ -157,7 +157,7 @@ The command line equivalent is `ojd profile delete PROFILE`.
 
 This clears all assignments and input processing from the profile. To return to pass-through, select **Restore default input**.
 
-The command line has no equivalent that also clears input processing. `ojd binding clear PROFILE --all` removes every assignment, combination, sequence, and layer, and keeps stick, trigger, touch, motion, and output settings. To return to pass-through, run `ojd profile edit PROFILE` and set `virtualGamepad` to `passthrough`.
+The command line has no equivalent that also clears input processing. `ojd binding clear PROFILE --all` removes every assignment, combination, sequence, and layer, and keeps stick, trigger, touch, motion, and output settings. To return to pass-through, run `ojd profile set PROFILE outputPolicy.virtualGamepad passthrough`.
 
 ## Importing and exporting profiles
 

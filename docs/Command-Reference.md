@@ -100,6 +100,8 @@ ojd profile recover [--force] [--dry-run]
 ojd profile import FILE|-
 ojd profile validate FILE|-
 ojd profile export PROFILE [--output FILE]
+ojd profile get PROFILE KEY
+ojd profile set PROFILE KEY VALUE
 ```
 
 `PROFILE` is a profile ID, or a profile name in any letter case. A name that two profiles share is rejected, and the error lists their IDs. Use an ID to pick one.
@@ -117,8 +119,10 @@ ojd profile export PROFILE [--output FILE]
 - `profile import`: Add a profile from a file that `profile export` wrote. Use `-` to read the file from stdin. A profile with the same ID as an existing profile replaces it.
 - `profile validate`: Check a profile file without importing it. Use `-` to read the file from stdin. It needs no running service and exits 1 when the profile is invalid.
 - `profile export`: Print a profile file to stdout, or write it to `--output`. The file is JSON, so `--json` and `--plain` do not change the output.
+- `profile get`: Print one value from the profile file. `KEY` is a path of member names and array indexes joined by dots, such as `stickMappings.0.tuning.innerDeadzone`. A string prints alone, and any other value prints as JSON. A key with no value exits 1.
+- `profile set`: Change one value in the profile file. `VALUE` is read as JSON, or as a string when it is not JSON, so `0.2` is a number and `space` is a string. To set the string `true`, write `'"true"'`. `null` removes the key or the array item, and the index one past the end of an array adds an item. OJD checks the whole profile before it saves it and refuses a change that makes it invalid or changes `id`. For example, `ojd profile set Racing physicalColor '{"red":255,"green":0,"blue":0}'`.
 
-With `--json`, a profile is an object with `id`, `name`, `controller`, `scope` (`global` or `app:BUNDLE-ID`), `active`, and `bindings`, the number of bindings. `profile list` prints `profiles` and `issues`, each issue with `id`, `kind`, and `message`. `profile show` prints `profile` and `document`, the full profile file. `profile create`, `duplicate`, `rename`, `activate`, `deactivate`, and `edit` print `profile` and `changed`. `profile delete` prints `deleted` and `dryRun`, `profile recover` prints `recovered`, each with `id`, `kind`, and `message`, and `dryRun`, `profile import` prints `profile` and `replaced`, and `profile validate` prints `valid`, then `id`, `name`, `controller`, and `scope` for a valid profile or `problem` for an invalid one.
+With `--json`, a profile is an object with `id`, `name`, `controller`, `scope` (`global` or `app:BUNDLE-ID`), `active`, and `bindings`, the number of bindings. `profile list` prints `profiles` and `issues`, each issue with `id`, `kind`, and `message`. `profile show` prints `profile` and `document`, the full profile file. `profile create`, `duplicate`, `rename`, `activate`, `deactivate`, `edit`, and `set` print `profile` and `changed`. `profile get` prints `key` and `value`. `profile delete` prints `deleted` and `dryRun`, `profile recover` prints `recovered`, each with `id`, `kind`, and `message`, and `dryRun`, `profile import` prints `profile` and `replaced`, and `profile validate` prints `valid`, then `id`, `name`, `controller`, and `scope` for a valid profile or `problem` for an invalid one.
 
 ## binding
 

@@ -779,6 +779,30 @@
 		"profileDuplicate": {
 			"$ref": "#/$defs/sharedProfileResult"
 		},
+		"profileGet": {
+			"type": "object",
+			"required": [
+				"key",
+				"value"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"key": {
+					"type": "string",
+					"minLength": 1
+				},
+				"value": {
+					"description": "The value at key in the profile file, which profile.schema.json describes.",
+					"type": [
+						"array",
+						"boolean",
+						"number",
+						"object",
+						"string"
+					]
+				}
+			}
+		},
 		"profileImport": {
 			"type": "object",
 			"required": [
@@ -837,6 +861,9 @@
 			}
 		},
 		"profileRename": {
+			"$ref": "#/$defs/sharedProfileResult"
+		},
+		"profileSet": {
 			"$ref": "#/$defs/sharedProfileResult"
 		},
 		"profileShow": {

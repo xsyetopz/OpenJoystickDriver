@@ -117,6 +117,8 @@ enum CLICommandTree {
     case ["profile", "show"], ["profile", "delete"], ["profile", "activate"],
       ["profile", "deactivate"], ["profile", "export"], ["profile", "edit"], ["binding", "list"]:
       ["Pad"]
+    case ["profile", "get"]: ["Pad", "name"]
+    case ["profile", "set"]: ["Pad", "name", "Main"]
     case ["binding", "set"]: ["Pad", "button:south", "key:space"]
     case ["binding", "clear"]: ["Pad", "--all"]
     case ["log", "export"]: ["ojd.log"]

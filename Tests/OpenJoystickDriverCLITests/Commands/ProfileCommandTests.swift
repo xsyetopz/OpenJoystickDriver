@@ -235,6 +235,69 @@ struct ProfileCommandTests {
   }
 
   @Test
+  func getPrintsOneValueAndSetSavesAValidChange() async throws {
+    let binding = RemappingBinding(source: .button(.east), destination: .mouseButton(.left))
+    let original = FakeProfileLibrary.profile("Pad", bindings: [binding])
+    let library = FakeProfileLibrary([original])
+    let service = try Self.service(library)
+
+    let name = await service.run(["profile", "get", "Pad", "name"])
+    let device = await service.run(["profile", "get", "Pad", "device", "--json"])
+    let missing = await service.run(["profile", "get", "Pad", "physicalColor"])
+    let behavior = await service.run([
+      "profile", "set", "Pad", "bindings.0.behavior", "tap_on_press", "--json",
+    ])
+    let color = await service.run([
+      "profile", "set", "Pad", "physicalColor", #"{"red":1,"green":2,"blue":3}"#,
+    ])
+    let same = await service.run(["profile", "set", "Pad", "physicalColor.red", "1", "--json"])
+    let invalid = await service.run(["profile", "set", "Pad", "physicalColor.red", "256"])
+    let noParent = await service.run(["profile", "set", "Pad", "motionTuning.space", "world"])
+    let id = await service.run(["profile", "set", "Pad", "id", UUID().uuidString])
+    let removed = await service.run(["profile", "set", "Pad", "physicalColor", "null"])
+
+    #expect(name.code == 0, "\(name.standardError)")
+    #expect(name.standardOutput == "Pad\n")
+    let value = try #require(try device.json()["value"] as? [String: Any])
+    #expect(value["vendorID"] as? Int == 0x045E)
+    #expect(missing.code == 1)
+    #expect(behavior.code == 0, "\(behavior.standardError)")
+    #expect(try behavior.json()["changed"] as? Bool == true)
+    #expect(color.code == 0, "\(color.standardError)")
+    #expect(try same.json()["changed"] as? Bool == false)
+    #expect(invalid.code == 64)
+    #expect(noParent.code == 64)
+    #expect(id.code == 64)
+    #expect(removed.code == 0, "\(removed.standardError)")
+    let saved = try #require(library.stored.first)
+    #expect(saved.id == original.id)
+    #expect(saved.bindings.first?.behavior == .tapOnPress)
+    #expect(saved.physicalColor == nil)
+    #expect(service.arguments(of: .updateRemappingProfile).count == 3)
+  }
+
+  @Test
+  func profileValueAddsAndRemovesArrayItemsAndReadsJSONOrText() {
+    let tree = ProfileValue.object(["items": .array([.integer(1), .integer(2)])])
+    let key = { (text: String) in ProfileKey(argument: text)?.components[...] ?? [] }
+
+    #expect(
+      tree.setting(.integer(3), at: key("items.2"))
+        == .object(["items": .array([.integer(1), .integer(2), .integer(3)])])
+    )
+    #expect(tree.setting(.null, at: key("items.0")) == .object(["items": .array([.integer(2)])]))
+    #expect(tree.setting(.integer(3), at: key("items.3")) == nil)
+    #expect(tree.setting(.integer(3), at: key("other.0")) == nil)
+    #expect(tree.value(at: key("items.1")) == .integer(2))
+    #expect(ProfileKey(argument: "items..1") == nil)
+    #expect(ProfileValue(argument: "0.5") == .number(0.5))
+    #expect(ProfileValue(argument: "true") == .bool(true))
+    #expect(ProfileValue(argument: "space") == .string("space"))
+    #expect(ProfileValue(argument: #""true""#) == .string("true"))
+    #expect(ProfileValue.array([.integer(1), .string("a")]).text == #"[1,"a"]"#)
+  }
+
+  @Test
   func editReturnsTheSavedProfileAndRejectsAChangedID() throws {
     let original = FakeProfileLibrary.profile("Pad")
     let renamed = ProfileEditor.$open.withValue(

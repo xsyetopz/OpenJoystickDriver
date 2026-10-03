@@ -30,6 +30,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - `ojd binding clear` warns when it leaves an active profile with no input binding.
 - `Resources/Schemas/cli-output.schema.json` describes the `--json` output of every `ojd` command, one `$defs` entry per command. The CLI tests validate each `--json` document they print against it.
 - `Resources/Schemas/profile.schema.json` describes the profile file that `ojd profile export` writes. `ojd profile validate FILE|-` checks a file against the schema and the cross-field rules without the service.
+- `ojd profile get PROFILE KEY` and `ojd profile set PROFILE KEY VALUE` read and change one value in a profile file by its path, such as `stickMappings.0.tuning.innerDeadzone`. `set` checks the whole profile before it saves it.
 
 ### Changed
 
