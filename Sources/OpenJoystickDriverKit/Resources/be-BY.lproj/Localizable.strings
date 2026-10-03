@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Гэты профіль падаўжае ўсе ўваходы кантролера.";
 "profiles.restoreDefaultInput" = "Вярнуць папярэдні ўклад";
 "profiles.damagedProfile" = "Пашкоджаны профіль";
-"profiles.damagedLibrary" = "Бібліятэка профіляў";
+"profiles.damagedLibrary" = "Пашкоджаны спіс актыўных профіляў";
 "profiles.deleteDamagedButton" = "Выдаліць пашкоджаны профіль…";
-"profiles.resetLibraryButton" = "Бібліятэка рэзервовага капіявання і скіду…";
+"profiles.resetLibraryButton" = "Рэзервовае капіраванне і скід актыўных профіляў…";
 "profiles.recoveryBackupMessage" = "Перад выдаленнем пашкоджаных дадзеных будзе створана рэзервовая копія.";
 "profiles.damagedProfileMessage" = "Гэты захаваны профіль не можа быць прачытаны. Выдаліце яго, каб працягваць карыстацца дапушчальнымі профілямі.";
+"profiles.damagedSelectionsMessage" = "Не ўдалося прачытаць спіс актыўных профіляў. Скіньце яго, каб працягнуць. Вашы профілі захаваюцца.";
 "profiles.resetLibraryAction" = "Рэзервовае капіраванне і скід";
 
 /* Controller session lifecycle */

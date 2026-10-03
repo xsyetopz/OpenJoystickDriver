@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "이 프로파일은 모든 컨트롤러 입력을 억제합니다.";
 "profiles.restoreDefaultInput" = "기본 입력값을 복원";
 "profiles.damagedProfile" = "손상된 프로필";
-"profiles.damagedLibrary" = "프로필 라이브러리";
+"profiles.damagedLibrary" = "손상된 활성 프로파일 목록";
 "profiles.deleteDamagedButton" = "손상된 프로필 삭제…";
-"profiles.resetLibraryButton" = "라이브러리 백업 및 재설정…";
+"profiles.resetLibraryButton" = "활성 프로파일 백업 및 재설정…";
 "profiles.recoveryBackupMessage" = "손상된 데이터가 제거되기 전에 백업이 생성됩니다.";
 "profiles.damagedProfileMessage" = "이 저장된 프로필을 읽을 수 없습니다. 유효한 프로필을 계속 사용하려면 삭제하십시오.";
+"profiles.damagedSelectionsMessage" = "활성 프로파일 목록을 읽을 수 없습니다. 계속하려면 재설정하십시오. 프로파일은 유지됩니다.";
 "profiles.resetLibraryAction" = "백업 및 재설정";
 
 /* Controller session lifecycle */

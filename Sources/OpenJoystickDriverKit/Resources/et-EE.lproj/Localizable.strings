@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "See profiil lükkab kõik kontrolleride sisendused.";
 "profiles.restoreDefaultInput" = "Taastage eelmudelik sisend";
 "profiles.damagedProfile" = "Kahjustatud profiil";
-"profiles.damagedLibrary" = "Profiiliteek";
+"profiles.damagedLibrary" = "Aktiivsete profiilide loend on kahjustatud";
 "profiles.deleteDamagedButton" = "Kustuta kahjustatud profiil…";
-"profiles.resetLibraryButton" = "Varunda ja lähtesta teek…";
+"profiles.resetLibraryButton" = "Varunda ja lähtesta aktiivsed profiilid…";
 "profiles.recoveryBackupMessage" = "Enne kahjustatud andmete eemaldamist luuakse varukoopia.";
 "profiles.damagedProfileMessage" = "Seda salvestatud profiili ei saanud lugeda. Kehtivate profiilide kasutamise jätkamiseks kustuta see.";
+"profiles.damagedSelectionsMessage" = "Aktiivsete profiilide loendit ei saanud lugeda. Jätkamiseks lähtesta see. Sinu profiilid jäävad alles.";
 "profiles.resetLibraryAction" = "Varunda ja lähtesta";
 
 /* Controller session lifecycle */

@@ -15,14 +15,14 @@ enum RollbackMutation: Sendable {
 }
 
 struct TransactionRollbackHarness {
-  let fileURL: URL
+  let directory: URL
   let library: RemappingProfileLibrary
   let router: RemappingOutputRouter
   let coordinator: RemappingRequestCoordinator
   let sink: TransactionFaultSink
 
   func removeFiles() {
-    try? FileManager.default.removeItem(at: fileURL.deletingLastPathComponent())
+    try? FileManager.default.removeItem(at: directory)
   }
 }
 

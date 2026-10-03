@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "הפרופיל הזה מדכא את כל הכניסה של המפעיל.";
 "profiles.restoreDefaultInput" = "תחזיר את הכניסה המקובלת";
 "profiles.damagedProfile" = "פרופיל פגום";
-"profiles.damagedLibrary" = "ספריית פרופיל";
+"profiles.damagedLibrary" = "רשימת הפרופילים הפעילים פגומה";
 "profiles.deleteDamagedButton" = "מחיקת פרופיל פגום…";
-"profiles.resetLibraryButton" = "גיבוי ואיפוס ספרייה…";
+"profiles.resetLibraryButton" = "גיבוי ואיפוס של הפרופילים הפעילים…";
 "profiles.recoveryBackupMessage" = "גיבוי ייווצר לפני הסרת נתונים פגומים.";
 "profiles.damagedProfileMessage" = "לא ניתן לקרוא את הפרופיל השמור הזה. יש למחוק אותו כדי להמשיך להשתמש בפרופילים החוקיים.";
+"profiles.damagedSelectionsMessage" = "לא ניתן היה לקרוא את רשימת הפרופילים הפעילים. אפס אותה כדי להמשיך. הפרופילים שלך נשמרים.";
 "profiles.resetLibraryAction" = "גיבוי ואיפוס";
 
 /* Controller session lifecycle */

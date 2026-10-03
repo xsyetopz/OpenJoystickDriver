@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Ez a profil elnyomja az összes vezérlő beadását.";
 "profiles.restoreDefaultInput" = "Visszaállítása a megadott beadvány";
 "profiles.damagedProfile" = "Sérült profil";
-"profiles.damagedLibrary" = "Profilkönyvtár";
+"profiles.damagedLibrary" = "Sérült aktív profillista";
 "profiles.deleteDamagedButton" = "Sérült profil törlése…";
-"profiles.resetLibraryButton" = "Könyvtár biztonsági mentése és visszaállítása…";
+"profiles.resetLibraryButton" = "Aktív profilok biztonsági mentése és visszaállítása…";
 "profiles.recoveryBackupMessage" = "A sérült adatok eltávolítása előtt biztonsági másolat készül.";
 "profiles.damagedProfileMessage" = "Ez a mentett profil nem olvasható. Töröld, hogy továbbra is használhasd az érvényes profilokat.";
+"profiles.damagedSelectionsMessage" = "Az aktív profilok listája nem olvasható. A folytatáshoz állítsa vissza. A profiljai megmaradnak.";
 "profiles.resetLibraryAction" = "Biztonsági mentés és visszaállítás";
 
 /* Controller session lifecycle */

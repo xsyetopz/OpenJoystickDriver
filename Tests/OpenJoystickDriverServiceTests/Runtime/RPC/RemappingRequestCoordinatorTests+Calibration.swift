@@ -76,8 +76,7 @@ extension RemappingRequestCoordinatorTests {
       isDirectory: true
     )
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-    let fileURL = directory.appendingPathComponent("profiles.json")
-    let library = RemappingProfileLibrary(fileURL: fileURL)
+    let library = RemappingProfileLibrary(directory: directory)
 
     let recorder = RemappingRouterRecorder()
     let sink = TransactionFaultSink(recorder: recorder)
@@ -93,7 +92,7 @@ extension RemappingRequestCoordinatorTests {
       probe: RPCPostEventProbe(preflight: [true], requestResult: true)
     )
     return TransactionRollbackHarness(
-      fileURL: fileURL,
+      directory: directory,
       library: library,
       router: router,
       coordinator: RemappingRequestCoordinator(

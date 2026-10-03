@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Αυτό το προφίλ καταπιέζει όλες τις εισόδους του ελεγκτή.";
 "profiles.restoreDefaultInput" = "Επιστρέψει την προεπιλεγμένη είσοδο";
 "profiles.damagedProfile" = "Κατεστραμμένο προφίλ";
-"profiles.damagedLibrary" = "Βιβλιοθήκη προφίλ";
+"profiles.damagedLibrary" = "Κατεστραμμένη λίστα ενεργών προφίλ";
 "profiles.deleteDamagedButton" = "Διαγραφή κατεστραμμένου προφίλ…";
-"profiles.resetLibraryButton" = "Δημιουργία αντιγράφων ασφαλείας & επαναφορά βιβλιοθήκης…";
+"profiles.resetLibraryButton" = "Αντίγραφο ασφαλείας και επαναφορά ενεργών προφίλ…";
 "profiles.recoveryBackupMessage" = "Θα δημιουργηθεί ένα αντίγραφο ασφαλείας πριν από την κατάργηση των κατεστραμμένων δεδομένων.";
 "profiles.damagedProfileMessage" = "Δεν ήταν δυνατή η ανάγνωση αυτού του αποθηκευμένου προφίλ. Διαγράψτε το για να συνεχίσετε να χρησιμοποιείτε τα έγκυρα προφίλ.";
+"profiles.damagedSelectionsMessage" = "Δεν ήταν δυνατή η ανάγνωση της λίστας ενεργών προφίλ. Επαναφέρετέ τη για να συνεχίσετε. Τα προφίλ σας διατηρούνται.";
 "profiles.resetLibraryAction" = "Δημιουργία αντιγράφων ασφαλείας και επαναφορά";
 
 /* Controller session lifecycle */

@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "This profile suppresses all controller input.";
 "profiles.restoreDefaultInput" = "Restore default input";
 "profiles.damagedProfile" = "Damaged profile";
-"profiles.damagedLibrary" = "Profile library";
+"profiles.damagedLibrary" = "Damaged active profile list";
 "profiles.deleteDamagedButton" = "Delete Damaged Profile...";
-"profiles.resetLibraryButton" = "Back Up & Reset Library...";
+"profiles.resetLibraryButton" = "Back Up & Reset Active Profiles...";
 "profiles.recoveryBackupMessage" = "A backup will be created before damaged data is removed.";
 "profiles.damagedProfileMessage" = "This saved profile could not be read. Delete it to continue using the valid profiles.";
+"profiles.damagedSelectionsMessage" = "The list of active profiles could not be read. Reset it to continue. Your profiles are kept.";
 "profiles.resetLibraryAction" = "Back Up & Reset";
 
 /* Controller session lifecycle */

@@ -116,7 +116,7 @@ struct LocalRPCBridgeTests {
     let defaults = try #require(UserDefaults(suiteName: suiteName))
     defer { defaults.removePersistentDomain(forName: suiteName) }
     let dispatcher = VirtualOutputRouter()
-    let library = RemappingProfileLibrary(fileURL: directory.appendingPathComponent("p.json"))
+    let library = RemappingProfileLibrary(directory: directory)
     let postEventAccess = CoreGraphicsPostEventAccess()
     let router = RemappingOutputRouter(
       library: library,

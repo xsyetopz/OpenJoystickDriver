@@ -230,7 +230,7 @@ struct RemappingRouterHarness {
   let virtualOutput: RemappingRouterVirtualOutput
   let foreground: RemappingRouterForeground
   let access: RemappingRouterAccess
-  let fileURL: URL
+  let directory: URL
 
   static func make(
     profile: RemappingProfile? = nil,
@@ -249,8 +249,7 @@ struct RemappingRouterHarness {
       isDirectory: true
     )
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-    let fileURL = directory.appendingPathComponent("profiles.json")
-    let library = RemappingProfileLibrary(fileURL: fileURL)
+    let library = RemappingProfileLibrary(directory: directory)
     if let profile {
       try await library.create(profile)
       try await library.activate(profileID: profile.id)
@@ -285,13 +284,27 @@ struct RemappingRouterHarness {
       virtualOutput: virtualOutput,
       foreground: foreground,
       access: access,
-      fileURL: fileURL
+      directory: directory
     )
   }
 
   func removeFiles() {
-    try? FileManager.default.removeItem(at: fileURL.deletingLastPathComponent())
+    try? FileManager.default.removeItem(at: directory)
   }
+}
+
+/// Every file under a profile library directory, keyed by its path relative to the directory.
+func libraryFiles(in directory: URL) throws -> [String: Data] {
+  let manager = FileManager.default
+  var files: [String: Data] = [:]
+  for path in try manager.subpathsOfDirectory(atPath: directory.path) {
+    let url = directory.appendingPathComponent(path)
+    var isDirectory: ObjCBool = false
+    if manager.fileExists(atPath: url.path, isDirectory: &isDirectory), !isDirectory.boolValue {
+      files[path] = try Data(contentsOf: url)
+    }
+  }
+  return files
 }
 
 func remappingRouterDevice(

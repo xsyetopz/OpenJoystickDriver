@@ -9,6 +9,13 @@ extension ApplicationServiceServer {
     try await remappingRequests.snapshot().get()
   }
 
+  /// Reloads the profile files after they change on disk and refreshes the affected routes.
+  func reloadRemappingProfiles() async {
+    if case .failure(let error) = await remappingRequests.reloadProfiles() {
+      fputs("[Profiles] Reload failed: \(error.message)\n", stderr)
+    }
+  }
+
   func deleteDamagedRemappingProfile(
     _ arguments: ApplicationServiceRemappingProfileIssueArguments
   ) async throws -> ApplicationServiceRemappingSnapshotPayload {

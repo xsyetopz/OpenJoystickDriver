@@ -104,7 +104,8 @@
         Text(
           OJDLocalized.string(
             issue.kind == .damagedProfile ? "profiles.damagedProfile" : "profiles.damagedLibrary",
-            fallback: issue.kind == .damagedProfile ? "Damaged profile" : "Profile library"
+            fallback: issue.kind == .damagedProfile
+              ? "Damaged profile" : "Damaged active profile list"
           )
         ).font(.title.weight(.semibold))
         Text(profileIssueMessage(issue)).foregroundColor(Color(NSColor.secondaryLabelColor))
@@ -114,7 +115,7 @@
             issue.kind == .damagedProfile
               ? "profiles.deleteDamagedButton" : "profiles.resetLibraryButton",
             fallback: issue.kind == .damagedProfile
-              ? "Delete Damaged Profile..." : "Back Up & Reset Library..."
+              ? "Delete Damaged Profile..." : "Back Up & Reset Active Profiles..."
           )
         ) {
           activeAlert =
@@ -126,17 +127,20 @@
         .ojdAccessibilityLabel(
           OJDLocalized.string(
             issue.kind == .damagedProfile ? "profiles.damagedProfile" : "profiles.damagedLibrary",
-            fallback: issue.kind == .damagedProfile ? "Damaged profile" : "Profile library"
+            fallback: issue.kind == .damagedProfile
+              ? "Damaged profile" : "Damaged active profile list"
           )
         ).ojdAccessibilityValue(profileIssueMessage(issue))
     }
 
     func profileIssueMessage(_ issue: ApplicationServiceRemappingProfileIssue) -> String {
       OJDLocalized.string(
-        issue.kind == .damagedProfile ? "profiles.damagedProfileMessage" : "profiles.loadError",
+        issue.kind == .damagedProfile
+          ? "profiles.damagedProfileMessage" : "profiles.damagedSelectionsMessage",
         fallback: issue.kind == .damagedProfile
           ? "This saved profile could not be read. Delete it to continue using the valid profiles."
-          : "Profiles could not be loaded."
+          : "The list of active profiles could not be read. Reset it to continue. "
+            + "Your profiles are kept."
       )
     }
 

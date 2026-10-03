@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Bu profil tüm denetleyicilerin girişlerini bastırır.";
 "profiles.restoreDefaultInput" = "Öntanımlı girişleri geri yükle";
 "profiles.damagedProfile" = "Hasarlı profil";
-"profiles.damagedLibrary" = "Profil kitaplığı";
+"profiles.damagedLibrary" = "Hasarlı etkin profil listesi";
 "profiles.deleteDamagedButton" = "Hasarlı Profili Sil…";
-"profiles.resetLibraryButton" = "Kitaplığı Yedekle ve Sıfırla…";
+"profiles.resetLibraryButton" = "Etkin Profilleri Yedekle ve Sıfırla…";
 "profiles.recoveryBackupMessage" = "Hasarlı veriler kaldırılmadan önce bir yedek oluşturulacaktır.";
 "profiles.damagedProfileMessage" = "Kaydedilen bu profil okunamadı. Geçerli profilleri kullanmaya devam etmek için silin.";
+"profiles.damagedSelectionsMessage" = "Etkin profil listesi okunamadı. Devam etmek için sıfırlayın. Profilleriniz korunur.";
 "profiles.resetLibraryAction" = "Yedekleme ve Sıfırlama";
 
 /* Controller session lifecycle */

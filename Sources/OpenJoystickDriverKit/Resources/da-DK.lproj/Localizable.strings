@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Denne profil undertrykker alle kontrollerindgang.";
 "profiles.restoreDefaultInput" = "Gennemføre standardindgang";
 "profiles.damagedProfile" = "Beskadiget profil";
-"profiles.damagedLibrary" = "Profilbibliotek";
+"profiles.damagedLibrary" = "Beskadiget liste over aktive profiler";
 "profiles.deleteDamagedButton" = "Slet beskadiget profil…";
-"profiles.resetLibraryButton" = "Sikkerhedskopier og nulstil bibliotek…";
+"profiles.resetLibraryButton" = "Sikkerhedskopier og nulstil aktive profiler…";
 "profiles.recoveryBackupMessage" = "Der oprettes en sikkerhedskopi, før beskadigede data fjernes.";
 "profiles.damagedProfileMessage" = "Denne gemte profil kunne ikke læses. Slet det for at fortsætte med at bruge de gyldige profiler.";
+"profiles.damagedSelectionsMessage" = "Listen over aktive profiler kunne ikke læses. Nulstil den for at fortsætte. Dine profiler bevares.";
 "profiles.resetLibraryAction" = "Sikkerhedskopier og nulstil";
 
 /* Controller session lifecycle */

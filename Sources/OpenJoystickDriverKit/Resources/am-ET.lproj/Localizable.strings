@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "ይህ መገለጫ ሁሉንም የቁጥጥር ማስገቢያ ይደመሰሳል.";
 "profiles.restoreDefaultInput" = "ነባሪ ግብዓት መልሶ ማግኘት";
 "profiles.damagedProfile" = "የተበላሸ መገለጫ";
-"profiles.damagedLibrary" = "የመገለጫ ቤተ-መጽሐፍት";
+"profiles.damagedLibrary" = "የተበላሸ የንቁ መገለጫዎች ዝርዝር";
 "profiles.deleteDamagedButton" = "የተበላሸ መገለጫ ይሰርዙ…";
-"profiles.resetLibraryButton" = "ወደላይ ተመለስ & ቤተ-መጽሐፍት ዳግም አስጀምር…";
+"profiles.resetLibraryButton" = "ንቁ መገለጫዎችን ምትኬ አስቀምጥና ዳግም አስጀምር…";
 "profiles.recoveryBackupMessage" = "የተበላሸ ውሂብ ከመውጣቱ በፊት የመጠባበቂያ ይፈጠራል.";
 "profiles.damagedProfileMessage" = "ይህ የተቀመጡ መገለጫ ማንበብ አልተቻለም. ትክክለኛ መገለጫዎችን መጠቀሙን ለመቀጠል ይሰርዙ ።";
+"profiles.damagedSelectionsMessage" = "የንቁ መገለጫዎች ዝርዝር ሊነበብ አልቻለም። ለመቀጠል ዳግም ያስጀምሩት። መገለጫዎችዎ ይቀመጣሉ።";
 "profiles.resetLibraryAction" = "ወደላይ ተመለስ & ዳግም አስጀምር";
 
 /* Controller session lifecycle */

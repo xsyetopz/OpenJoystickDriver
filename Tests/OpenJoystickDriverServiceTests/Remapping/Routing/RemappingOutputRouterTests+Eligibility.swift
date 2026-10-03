@@ -174,7 +174,7 @@ extension RemappingOutputRouterTests {
   func corruptLibraryFailsClosedAndPropagatesTypedStatus() async throws {
     let harness = try await RemappingRouterHarness.make()
     defer { harness.removeFiles() }
-    try Data("not json".utf8).write(to: harness.fileURL)
+    try Data("not json".utf8).write(to: harness.library.selectionsURL)
     let device = remappingRouterDevice(1)
 
     await #expect(throws: RemappingOutputRoutingError.library(.corruptLibrary)) {

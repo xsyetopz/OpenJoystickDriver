@@ -114,6 +114,23 @@ extension RemappingRequestCoordinator {
     }
   }
 
+  /// Reloads the profile files and refreshes each model whose active profiles changed.
+  func reloadProfiles() async -> RemappingRequestResult<Void> {
+    await exclusively {
+      for model in Self.sorted(try await library.reload()) {
+        do {
+          try await router.refreshModel(vendorID: model.vendorID, productID: model.productID)
+        } catch {
+          fputs(
+            "[Profiles] Cannot refresh \(model.vendorID):\(model.productID): "
+              + "\(error.localizedDescription)\n",
+            stderr
+          )
+        }
+      }
+    }
+  }
+
   func activate(
     id: UUID
   ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {

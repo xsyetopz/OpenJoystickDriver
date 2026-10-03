@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Ovaj profil uklanja sve ulazne kontrole.";
 "profiles.restoreDefaultInput" = "Obnova podrazumevanoga ulaza";
 "profiles.damagedProfile" = "Oštećen profil";
-"profiles.damagedLibrary" = "Biblioteka profila";
+"profiles.damagedLibrary" = "Oštećen popis aktivnih profila";
 "profiles.deleteDamagedButton" = "Izbriši oštećeni profil…";
-"profiles.resetLibraryButton" = "Napravi sigurnosnu kopiju i resetiraj medijateku…";
+"profiles.resetLibraryButton" = "Sigurnosno kopiraj i resetiraj aktivne profile…";
 "profiles.recoveryBackupMessage" = "Prije uklanjanja oštećenih podataka izradit će se sigurnosna kopija.";
 "profiles.damagedProfileMessage" = "Ovaj spremljeni profil nije se mogao pročitati. Izbriši ga kako bi se nastavio koristiti važećim profilima.";
+"profiles.damagedSelectionsMessage" = "Popis aktivnih profila nije moguće pročitati. Resetirajte ga za nastavak. Vaši profili se zadržavaju.";
 "profiles.resetLibraryAction" = "Sigurnosno kopiraj i resetiraj";
 
 /* Controller session lifecycle */

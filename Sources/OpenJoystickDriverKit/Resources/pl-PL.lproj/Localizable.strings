@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Ten profil tłumi wszystkie wpisy kontrolera.";
 "profiles.restoreDefaultInput" = "Przywrócić domyślny wpis";
 "profiles.damagedProfile" = "Uszkodzony profil";
-"profiles.damagedLibrary" = "Biblioteka profili";
+"profiles.damagedLibrary" = "Uszkodzona lista aktywnych profili";
 "profiles.deleteDamagedButton" = "Usuń uszkodzony profil…";
-"profiles.resetLibraryButton" = "Utwórz kopię zapasową i zresetuj bibliotekę…";
+"profiles.resetLibraryButton" = "Utwórz kopię zapasową i zresetuj aktywne profile…";
 "profiles.recoveryBackupMessage" = "Kopia zapasowa zostanie utworzona przed usunięciem uszkodzonych danych.";
 "profiles.damagedProfileMessage" = "Nie można odczytać tego zapisanego profilu. Usuń go, aby kontynuować korzystanie z prawidłowych profili.";
+"profiles.damagedSelectionsMessage" = "Nie można odczytać listy aktywnych profili. Zresetuj ją, aby kontynuować. Twoje profile zostaną zachowane.";
 "profiles.resetLibraryAction" = "Utwórz kopię zapasową i zresetuj";
 
 /* Controller session lifecycle */

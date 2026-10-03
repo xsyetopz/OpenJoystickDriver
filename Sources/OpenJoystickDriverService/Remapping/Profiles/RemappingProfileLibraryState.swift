@@ -18,46 +18,26 @@ struct RemappingProfileMutationImpact: Sendable {
 }
 
 struct RemappingProfileLibraryCheckpoint: Sendable {
+  struct File: Sendable {
+    let data: Data
+    let permissions: Int?
+  }
+
   let cachedLibrary: RemappingProfileLibraryState?
-  let persistedData: Data?
-  let parentExisted: Bool
-  let parentPermissions: Int?
-  let filePermissions: Int?
+  let cachedIssues: [UUID: RemappingProfileLibrary.RecoveryIssue]
+  let rootPermissions: Int?
+  let profilesDirectoryPermissions: Int?
+  /// Keyed by file name in `Profiles/`.
+  let profileFiles: [String: File]
+  let selections: File?
 }
 
-struct RemappingProfileLibraryState: Codable, Sendable {
+struct RemappingProfileLibraryState: Equatable, Sendable {
   var profiles: [RemappingProfile] = []
   var activeProfiles: [RemappingPersistedActiveProfile] = []
-
-  private enum CodingKeys: String, CodingKey, CaseIterable {
-    case profiles
-    case activeProfiles
-  }
-
-  init() {}
-
-  init(profiles: [RemappingProfile], activeProfiles: [RemappingPersistedActiveProfile]) {
-    self.profiles = profiles
-    self.activeProfiles = activeProfiles
-  }
-
-  init(from decoder: any Decoder) throws {
-    try decoder.rejectUnknownKeys(CodingKeys.self)
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    profiles = try container.decode([RemappingProfile].self, forKey: .profiles)
-    activeProfiles =
-      try container.decodeIfPresent([RemappingPersistedActiveProfile].self, forKey: .activeProfiles)
-      ?? []
-  }
-
-  func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(profiles, forKey: .profiles)
-    try container.encode(activeProfiles, forKey: .activeProfiles)
-  }
 }
 
-struct RemappingPersistedActiveProfile: Codable, Sendable {
+struct RemappingPersistedActiveProfile: Codable, Equatable, Sendable {
   let model: RemappingProfileModel
   let profileID: UUID
   let applicationScope: RemappingApplicationScope?

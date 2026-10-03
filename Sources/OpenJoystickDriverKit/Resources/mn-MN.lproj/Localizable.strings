@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Энэ профил нь бүх хяналтын өгөгдлийг устгадаг.";
 "profiles.restoreDefaultInput" = "Хувьцааж өгөх";
 "profiles.damagedProfile" = "Хохирсон профайл";
-"profiles.damagedLibrary" = "Профайл сан";
+"profiles.damagedLibrary" = "Идэвхтэй профайлын жагсаалт гэмтсэн";
 "profiles.deleteDamagedButton" = "Гэмтсэн профайлыг устгах…";
-"profiles.resetLibraryButton" = "Дахин сэргээж, номын санг дахин тохируулах…";
+"profiles.resetLibraryButton" = "Идэвхтэй профайлуудыг нөөцлөөд дахин тохируулах…";
 "profiles.recoveryBackupMessage" = "Нөөцлөх нь эвдэрсэн өгөгдөл устгагдахаас өмнө үүсдэг.";
 "profiles.damagedProfileMessage" = "Энэ хадгалагдсан профайлыг унших боломжгүй байна. Хүчинтэй профайлыг үргэлжлүүлэн ашиглахын тулд үүнийг устгах.";
+"profiles.damagedSelectionsMessage" = "Идэвхтэй профайлын жагсаалтыг уншиж чадсангүй. Үргэлжлүүлэхийн тулд үүнийг дахин тохируулна уу. Таны профайлууд хадгалагдана.";
 "profiles.resetLibraryAction" = "Дахин сэргээх & Дахин тохируулах";
 
 /* Controller session lifecycle */

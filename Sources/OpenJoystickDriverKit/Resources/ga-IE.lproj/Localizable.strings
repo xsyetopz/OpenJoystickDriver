@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Cuirtear an próifíl seo ar fáil do gach iontráil rialaitheora.";
 "profiles.restoreDefaultInput" = "Athbhreisiú iontráil réamhshocraithe";
 "profiles.damagedProfile" = "Próifíl dhamáistithe";
-"profiles.damagedLibrary" = "Leabharlann phróifíle";
+"profiles.damagedLibrary" = "Liosta damáistithe de phróifílí gníomhacha";
 "profiles.deleteDamagedButton" = "Scrios Próifíl Damáistithe…";
-"profiles.resetLibraryButton" = "Déan Cúltaca ar an Leabharlann & Athshocraigh…";
+"profiles.resetLibraryButton" = "Déan Cúltaca de Phróifílí Gníomhacha agus Athshocraigh…";
 "profiles.recoveryBackupMessage" = "Cruthófar cúltaca sula mbainfear sonraí damáistithe.";
 "profiles.damagedProfileMessage" = "Níorbh fhéidir an phróifíl shábháilte seo a léamh. Scrios é chun leanúint ar aghaidh ag baint úsáide as na próifílí bailí.";
+"profiles.damagedSelectionsMessage" = "Níorbh fhéidir liosta na bpróifílí gníomhacha a léamh. Athshocraigh é chun leanúint ar aghaidh. Coinnítear do phróifílí.";
 "profiles.resetLibraryAction" = "Déan Cúltaca agus Athshocraigh";
 
 /* Controller session lifecycle */

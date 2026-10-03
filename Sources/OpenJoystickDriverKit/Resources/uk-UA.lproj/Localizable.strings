@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Цей профіль подавляє всі входи контролера.";
 "profiles.restoreDefaultInput" = "Відновити замовчування";
 "profiles.damagedProfile" = "Пошкоджений профіль";
-"profiles.damagedLibrary" = "Бібліотека профілів";
+"profiles.damagedLibrary" = "Пошкоджений список активних профілів";
 "profiles.deleteDamagedButton" = "Видалити пошкоджений профіль…";
-"profiles.resetLibraryButton" = "Створити резервну копію та скинути бібліотеку…";
+"profiles.resetLibraryButton" = "Резервне копіювання та скидання активних профілів…";
 "profiles.recoveryBackupMessage" = "Перед видаленням пошкоджених даних буде створено резервну копію.";
 "profiles.damagedProfileMessage" = "Не вдалося прочитати цей збережений профіль. Видаліть його, щоб і надалі використовувати дійсні профілі.";
+"profiles.damagedSelectionsMessage" = "Не вдалося прочитати список активних профілів. Скиньте його, щоб продовжити. Ваші профілі збережено.";
 "profiles.resetLibraryAction" = "Резервне копіювання та скидання";
 
 /* Controller session lifecycle */

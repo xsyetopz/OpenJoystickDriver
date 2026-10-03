@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "このプロフィールでは,すべてのコントローラー入力が抑制されます.";
 "profiles.restoreDefaultInput" = "デフォルト入力を再現する";
 "profiles.damagedProfile" = "破損したプロフィール";
-"profiles.damagedLibrary" = "プロファイルライブラリ";
+"profiles.damagedLibrary" = "アクティブなプロファイルの一覧が破損しています";
 "profiles.deleteDamagedButton" = "破損したプロファイルを削除…";
-"profiles.resetLibraryButton" = "ライブラリのバックアップとリセット…";
+"profiles.resetLibraryButton" = "アクティブなプロファイルをバックアップしてリセット…";
 "profiles.recoveryBackupMessage" = "破損したデータが削除される前にバックアップが作成されます。";
 "profiles.damagedProfileMessage" = "この保存されたプロファイルを読み取ることができませんでした。 有効なプロフィールを引き続き使用するには、削除してください。";
+"profiles.damagedSelectionsMessage" = "アクティブなプロファイルの一覧を読み取れませんでした。続行するにはリセットしてください。プロファイルは保持されます。";
 "profiles.resetLibraryAction" = "バックアップとリセット";
 
 /* Controller session lifecycle */

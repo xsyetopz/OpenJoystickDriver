@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Aquest perfil suprimeix totes les entrades del controlador.";
 "profiles.restoreDefaultInput" = "Restaurar la entrada predeterminada";
 "profiles.damagedProfile" = "Perfil danyat";
-"profiles.damagedLibrary" = "Biblioteca de perfils";
+"profiles.damagedLibrary" = "Llista de perfils actius danyada";
 "profiles.deleteDamagedButton" = "Elimina el perfil danyat…";
-"profiles.resetLibraryButton" = "Còpia de seguretat i restabliment de la biblioteca…";
+"profiles.resetLibraryButton" = "Fes una còpia de seguretat i reinicia els perfils actius…";
 "profiles.recoveryBackupMessage" = "Es crearà una còpia de seguretat abans que s'eliminin les dades danyades.";
 "profiles.damagedProfileMessage" = "No s'ha pogut llegir aquest perfil desat. Elimina-la per continuar utilitzant els perfils vàlids.";
+"profiles.damagedSelectionsMessage" = "No s’ha pogut llegir la llista de perfils actius. Reinicia-la per continuar. Els teus perfils es conserven.";
 "profiles.resetLibraryAction" = "Còpia de seguretat i reinici";
 
 /* Controller session lifecycle */

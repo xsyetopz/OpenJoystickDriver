@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Tämä profiili supistaa kaikki valvonnan sisäänkäynnit.";
 "profiles.restoreDefaultInput" = "Vastuttaa oletusarvio";
 "profiles.damagedProfile" = "Vaurioitunut profiili";
-"profiles.damagedLibrary" = "Profiilikirjasto";
+"profiles.damagedLibrary" = "Vaurioitunut aktiivisten profiilien luettelo";
 "profiles.deleteDamagedButton" = "Poista vaurioitunut profiili…";
-"profiles.resetLibraryButton" = "Varmuuskopioi ja nollaa kirjasto…";
+"profiles.resetLibraryButton" = "Varmuuskopioi ja nollaa aktiiviset profiilit…";
 "profiles.recoveryBackupMessage" = "Varmuuskopio luodaan ennen vahingoittuneiden tietojen poistamista.";
 "profiles.damagedProfileMessage" = "Tätä tallennettua profiilia ei voitu lukea. Poista se jatkaaksesi kelvollisten profiilien käyttöä.";
+"profiles.damagedSelectionsMessage" = "Aktiivisten profiilien luetteloa ei voitu lukea. Jatka nollaamalla se. Profiilisi säilyvät.";
 "profiles.resetLibraryAction" = "Varmuuskopioi ja nollaa";
 
 /* Controller session lifecycle */

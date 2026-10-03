@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Овај профил потиска све улаз контролера.";
 "profiles.restoreDefaultInput" = "Вратити подешаљени улаз";
 "profiles.damagedProfile" = "Oštećen profil";
-"profiles.damagedLibrary" = "Biblioteka profila";
+"profiles.damagedLibrary" = "Oštećena lista aktivnih profila";
 "profiles.deleteDamagedButton" = "Izbrišite oštećeni profil…";
-"profiles.resetLibraryButton" = "Napravi rezervnu kopiju i resetuj biblioteku…";
+"profiles.resetLibraryButton" = "Napravi rezervnu kopiju i resetuj aktivne profile…";
 "profiles.recoveryBackupMessage" = "Biće kreirana rezervna kopija pre uklanjanja oštećenih podataka.";
 "profiles.damagedProfileMessage" = "Nije moguće pročitati ovaj sačuvani profil. Izbrišite je da biste nastavili da koristite važeće profile.";
+"profiles.damagedSelectionsMessage" = "Nije moguće pročitati listu aktivnih profila. Resetujte je da biste nastavili. Vaši profili se zadržavaju.";
 "profiles.resetLibraryAction" = "Napravi rezervnu kopiju i resetuj";
 
 /* Controller session lifecycle */

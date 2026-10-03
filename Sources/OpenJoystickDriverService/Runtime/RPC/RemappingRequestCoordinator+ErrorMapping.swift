@@ -52,7 +52,6 @@ extension RemappingRequestCoordinator {
     case .corruptLibrary: code = .corruptLibrary
     case .duplicateName: code = .duplicateName
     case .invalidProfile: code = .invalidProfile
-    case .librarySizeExceeded: code = .librarySizeExceeded
     case .profileCountExceeded: code = .profileCountExceeded
     case .profileAlreadyExists: code = .profileAlreadyExists
     case .profileNotFound: code = .profileNotFound

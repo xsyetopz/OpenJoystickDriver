@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Denne profilen undertekstar alle kontrollørinnføringar.";
 "profiles.restoreDefaultInput" = "Återställa default input";
 "profiles.damagedProfile" = "Skadet profil";
-"profiles.damagedLibrary" = "Profilbibliotek";
+"profiles.damagedLibrary" = "Skadd liste over aktive profilar";
 "profiles.deleteDamagedButton" = "Slett skadet profil…";
-"profiles.resetLibraryButton" = "Sikkerhetskopier og tilbakestill biblioteket…";
+"profiles.resetLibraryButton" = "Tryggleikskopier og tilbakestill aktive profilar…";
 "profiles.recoveryBackupMessage" = "Det vil bli opprettet en sikkerhetskopi før skadede data slettes.";
 "profiles.damagedProfileMessage" = "Denne lagrede profilen kunne ikke leses. Slett den for å fortsette å bruke de gyldige profilene.";
+"profiles.damagedSelectionsMessage" = "Lista over aktive profilar kunne ikkje lesast. Tilbakestill ho for å halde fram. Profilane dine vert behaldne.";
 "profiles.resetLibraryAction" = "Sikkerhetskopier og tilbakestill";
 
 /* Controller session lifecycle */

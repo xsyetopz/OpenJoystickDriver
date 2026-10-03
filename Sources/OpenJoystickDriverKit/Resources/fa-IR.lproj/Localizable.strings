@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "این پروفایل تمام ورودی های کنترل کننده را سرکوب می کند.";
 "profiles.restoreDefaultInput" = "بازگردانیدن ورودی پیش فرض";
 "profiles.damagedProfile" = "مشخصات آسیب دیده";
-"profiles.damagedLibrary" = "کتابخانه پروفایل";
+"profiles.damagedLibrary" = "فهرست نمایه‌های فعال آسیب دیده است";
 "profiles.deleteDamagedButton" = "حذف پروفایل آسیب دیده…";
-"profiles.resetLibraryButton" = "پشتیبان‌گیری و بازنشانی کتابخانه…";
+"profiles.resetLibraryButton" = "پشتیبان‌گیری و تنظیم مجدد نمایه‌های فعال…";
 "profiles.recoveryBackupMessage" = "قبل از حذف داده‌های آسیب‌دیده، یک نسخه پشتیبان تهیه می‌شود.";
 "profiles.damagedProfileMessage" = "این پروفایل ذخیره شده قابل خواندن نیست. برای ادامه استفاده از پروفایل‌های معتبر، آن را حذف کنید.";
+"profiles.damagedSelectionsMessage" = "فهرست نمایه‌های فعال خوانده نشد. برای ادامه آن را تنظیم مجدد کنید. نمایه‌های شما حفظ می‌شوند.";
 "profiles.resetLibraryAction" = "پشتیبان‌گیری و تنظیم مجدد";
 
 /* Controller session lifecycle */

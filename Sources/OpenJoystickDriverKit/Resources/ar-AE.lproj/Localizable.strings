@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "هذا الملف يضغط على جميع المدخلات من جهاز التحكم.";
 "profiles.restoreDefaultInput" = "استعادة المدخل الافتراضي";
 "profiles.damagedProfile" = "ملف تعريف تالف";
-"profiles.damagedLibrary" = "مكتبة الملفات الشخصية";
+"profiles.damagedLibrary" = "قائمة ملفات التعريف النشطة تالفة";
 "profiles.deleteDamagedButton" = "حذف ملف التعريف التالف…";
-"profiles.resetLibraryButton" = "النسخ الاحتياطي وإعادة تعيين المكتبة…";
+"profiles.resetLibraryButton" = "نسخ احتياطي لملفات التعريف النشطة وإعادة تعيينها…";
 "profiles.recoveryBackupMessage" = "سيتم إنشاء نسخة احتياطية قبل إزالة البيانات التالفة.";
 "profiles.damagedProfileMessage" = "تعذرت قراءة ملف التعريف المحفوظ هذا. احذفه لمتابعة استخدام الملفات التعريفية الصالحة.";
+"profiles.damagedSelectionsMessage" = "تعذّرت قراءة قائمة ملفات التعريف النشطة. أعد تعيينها للمتابعة. سيتم الاحتفاظ بملفات التعريف.";
 "profiles.resetLibraryAction" = "النسخ الاحتياطي وإعادة التعيين";
 
 /* Controller session lifecycle */

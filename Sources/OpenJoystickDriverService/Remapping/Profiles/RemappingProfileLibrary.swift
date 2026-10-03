@@ -6,7 +6,6 @@ enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
   case corruptLibrary
   case duplicateName(String)
   case invalidProfile(RemappingValidationError)
-  case librarySizeExceeded(Int)
   case profileCountExceeded(Int)
   case profileAlreadyExists(UUID)
   case profileNotFound(UUID)
@@ -22,8 +21,6 @@ enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
     case .corruptLibrary: "The remapping profile library is corrupt."
     case .duplicateName(let name): "A remapping profile named \(name) already exists."
     case .invalidProfile(let error): error.localizedDescription
-    case .librarySizeExceeded(let size):
-      "The remapping profile library is too large (\(size) bytes)."
     case .profileCountExceeded(let count):
       "The remapping profile library cannot contain \(count) profiles."
     case .profileAlreadyExists(let id): "The remapping profile \(id.uuidString) already exists."
@@ -41,15 +38,40 @@ enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
 }
 
 /// The single application-service writer for locally authored remapping profiles.
+///
+/// Each profile is its own `Profiles/<id>.json` file in the profile-file format, and the active
+/// selections are `ActiveProfiles.json`, both under `directory`.
 actor RemappingProfileLibrary {
   static let maximumProfileCount = RemappingPayloadLimits.maximumProfileCount
   static let maximumEncodedBytes = RemappingPayloadLimits.maximumEncodedBytes
+  static let selectionsFileName = "ActiveProfiles.json"
+  static let legacyLibraryFileName = "RemappingProfiles.json"
 
-  let fileURL: URL
+  let directory: URL
   var library: RemappingProfileLibraryState?
-
   var profileIssues: [UUID: RecoveryIssue] = [:]
-  var originalRecoveryData: Data?
 
-  init(fileURL: URL = RemappingProfileLibrary.defaultFileURL) { self.fileURL = fileURL }
+  init(directory: URL = RemappingProfileLibrary.defaultDirectory) { self.directory = directory }
+
+  static var defaultDirectory: URL {
+    let manager = FileManager.default
+    let directory =
+      manager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+      ?? manager.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support")
+    return directory.appendingPathComponent("OpenJoystickDriver", isDirectory: true)
+  }
+
+  nonisolated var profilesDirectory: URL {
+    directory.appendingPathComponent("Profiles", isDirectory: true)
+  }
+
+  nonisolated var selectionsURL: URL {
+    directory.appendingPathComponent(Self.selectionsFileName, isDirectory: false)
+  }
+
+  nonisolated func profileURL(_ id: UUID) -> URL {
+    profilesDirectory.appendingPathComponent(Self.profileFileName(id), isDirectory: false)
+  }
+
+  static func profileFileName(_ id: UUID) -> String { "\(id.uuidString).json" }
 }

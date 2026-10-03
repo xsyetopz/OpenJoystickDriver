@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Этот профиль подавляет все входы контроллера.";
 "profiles.restoreDefaultInput" = "Восстановить дефолтный вход";
 "profiles.damagedProfile" = "Поврежденный профиль";
-"profiles.damagedLibrary" = "Библиотека профилей";
+"profiles.damagedLibrary" = "Повреждённый список активных профилей";
 "profiles.deleteDamagedButton" = "Удалить поврежденный профиль…";
-"profiles.resetLibraryButton" = "Резервное копирование и сброс библиотеки…";
+"profiles.resetLibraryButton" = "Резервное копирование и сброс активных профилей…";
 "profiles.recoveryBackupMessage" = "Перед удалением поврежденных данных будет создана резервная копия.";
 "profiles.damagedProfileMessage" = "Не удалось прочитать этот сохраненный профиль. Удалите его, чтобы продолжить использование действительных профилей.";
+"profiles.damagedSelectionsMessage" = "Не удалось прочитать список активных профилей. Сбросьте его, чтобы продолжить. Ваши профили сохранятся.";
 "profiles.resetLibraryAction" = "Резервное копирование и сброс";
 
 /* Controller session lifecycle */

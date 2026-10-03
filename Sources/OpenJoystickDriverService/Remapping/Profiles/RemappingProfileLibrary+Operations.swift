@@ -2,20 +2,6 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension RemappingProfileLibrary {
-  enum RecoveryIssue {
-    case damagedProfile(index: Int)
-    case unusableLibrary
-  }
-
-  static var defaultFileURL: URL {
-    let manager = FileManager.default
-    let directory =
-      manager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-      ?? manager.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support")
-    return directory.appendingPathComponent("OpenJoystickDriver", isDirectory: true)
-      .appendingPathComponent("RemappingProfiles.json", isDirectory: false)
-  }
-
   func profiles() throws -> [RemappingProfile] {
     try loadIfNeeded().profiles.sorted(by: Self.profileOrder)
   }
@@ -42,7 +28,7 @@ extension RemappingProfileLibrary {
           kind: kind,
           message: kind == .damagedProfile
             ? "This saved profile could not be read and can be removed."
-            : "The saved profile library could not be read and must be reset."
+            : "The list of active profiles could not be read and must be reset."
         )
       }
     )
@@ -52,105 +38,6 @@ extension RemappingProfileLibrary {
     let loaded = try loadIfNeeded()
     try requireUsableLibrary()
     return loaded.profiles.first { $0.id == id }
-  }
-
-  @discardableResult
-  func deleteDamagedProfile(issueID: UUID) throws -> RemappingProfileMutationImpact {
-    _ = try loadIfNeeded()
-    guard case .damagedProfile(let index) = profileIssues[issueID], let originalRecoveryData else {
-      throw RemappingProfileLibraryError.profileIssueNotFound(issueID)
-    }
-    try requireCurrentRecoveryData(originalRecoveryData, issueID: issueID)
-    var root = try Self.libraryRoot(from: originalRecoveryData)
-    var profiles = try Self.profileObjects(from: root)
-    guard profiles.indices.contains(index) else {
-      throw RemappingProfileLibraryError.profileIssueNotFound(issueID)
-    }
-    profiles.remove(at: index)
-    root["profiles"] = profiles
-    let recovered = try recoverProfiles(
-      from: try JSONSerialization.data(withJSONObject: root),
-      requireDamagedProfile: false
-    )
-    root["activeProfiles"] = try recovered.activeProfiles.map {
-      try JSONSerialization.jsonObject(with: JSONEncoder().encode($0))
-    }
-    try backUp(originalRecoveryData)
-    try replaceRawLibrary(try JSONSerialization.data(withJSONObject: root), clearRecovery: true)
-    return RemappingProfileMutationImpact(modelsNeedingRefresh: [])
-  }
-
-  @discardableResult
-  func resetDamagedLibrary(issueID: UUID) throws -> RemappingProfileMutationImpact {
-    _ = try loadIfNeeded()
-    guard case .unusableLibrary = profileIssues[issueID], let originalRecoveryData else {
-      throw RemappingProfileLibraryError.profileIssueNotFound(issueID)
-    }
-    try requireCurrentRecoveryData(originalRecoveryData, issueID: issueID)
-    try backUp(originalRecoveryData)
-    try replace(with: RemappingProfileLibraryState())
-    profileIssues = [:]
-    self.originalRecoveryData = nil
-    return RemappingProfileMutationImpact(modelsNeedingRefresh: [])
-  }
-
-  func checkpoint() throws -> RemappingProfileLibraryCheckpoint {
-    let manager = FileManager.default
-    let parentURL = fileURL.deletingLastPathComponent()
-    let parentExisted = manager.fileExists(atPath: parentURL.path)
-    let parentPermissions = try Self.permissions(at: parentURL, ifPresent: parentExisted)
-    let fileExisted = manager.fileExists(atPath: fileURL.path)
-    let filePermissions = try Self.permissions(at: fileURL, ifPresent: fileExisted)
-    let persistedData: Data?
-    if fileExisted {
-      do { persistedData = try Data(contentsOf: fileURL) } catch {
-        throw RemappingProfileLibraryError.unreadableLibrary
-      }
-    } else {
-      persistedData = nil
-    }
-    let cachedLibrary = library
-    _ = try loadIfNeeded()
-    return RemappingProfileLibraryCheckpoint(
-      cachedLibrary: cachedLibrary,
-      persistedData: persistedData,
-      parentExisted: parentExisted,
-      parentPermissions: parentPermissions,
-      filePermissions: filePermissions
-    )
-  }
-
-  func restore(_ checkpoint: RemappingProfileLibraryCheckpoint) throws {
-    let manager = FileManager.default
-    let directory = fileURL.deletingLastPathComponent()
-    do {
-      if let data = checkpoint.persistedData {
-        try manager.createDirectory(
-          at: directory,
-          withIntermediateDirectories: true,
-          attributes: [.posixPermissions: 0o700]
-        )
-        try data.write(to: fileURL, options: .atomic)
-        try manager.setAttributes(
-          [.posixPermissions: checkpoint.parentPermissions ?? 0o700],
-          ofItemAtPath: directory.path
-        )
-        try manager.setAttributes(
-          [.posixPermissions: checkpoint.filePermissions ?? 0o600],
-          ofItemAtPath: fileURL.path
-        )
-      } else {
-        if manager.fileExists(atPath: fileURL.path) { try manager.removeItem(at: fileURL) }
-        if !checkpoint.parentExisted, manager.fileExists(atPath: directory.path),
-          try manager.contentsOfDirectory(atPath: directory.path).isEmpty
-        {
-          try manager.removeItem(at: directory)
-        } else if let permissions = checkpoint.parentPermissions {
-          try manager.setAttributes([.posixPermissions: permissions], ofItemAtPath: directory.path)
-        }
-      }
-    } catch { throw RemappingProfileLibraryError.unwritableLibrary }
-    library = checkpoint.cachedLibrary
   }
 
   @discardableResult

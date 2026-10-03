@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "यह प्रोफ़ाइल सभी नियंत्रक इनपुट को दबाता है।";
 "profiles.restoreDefaultInput" = "डिफ़ॉल्ट इनपुट को पुनर्स्थापित करें";
 "profiles.damagedProfile" = "क्षतिग्रस्त प्रोफ़ाइल";
-"profiles.damagedLibrary" = "प्रोफ़ाइल लाइब्रेरी";
+"profiles.damagedLibrary" = "सक्रिय प्रोफ़ाइल सूची क्षतिग्रस्त है";
 "profiles.deleteDamagedButton" = "क्षतिग्रस्त प्रोफ़ाइल हटाएं…";
-"profiles.resetLibraryButton" = "बैकअप लें और लाइब्रेरी रीसेट करें…";
+"profiles.resetLibraryButton" = "सक्रिय प्रोफ़ाइल का बैक अप लें और रीसेट करें…";
 "profiles.recoveryBackupMessage" = "क्षतिग्रस्त डेटा को हटाने से पहले एक बैकअप बनाया जाएगा।";
 "profiles.damagedProfileMessage" = "यह सहेजी गई प्रोफ़ाइल पढ़ी नहीं जा सकी। मान्य प्रोफ़ाइल का इस्तेमाल जारी रखने के लिए इसे हटाएँ।";
+"profiles.damagedSelectionsMessage" = "सक्रिय प्रोफ़ाइल की सूची पढ़ी नहीं जा सकी। जारी रखने के लिए इसे रीसेट करें। आपकी प्रोफ़ाइल सुरक्षित रहती हैं।";
 "profiles.resetLibraryAction" = "बैक अप और रीसेट करें";
 
 /* Controller session lifecycle */

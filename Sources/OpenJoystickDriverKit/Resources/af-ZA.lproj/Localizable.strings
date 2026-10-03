@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Hierdie profiel onderdruk alle beheerder invoer.";
 "profiles.restoreDefaultInput" = "Herstel verstek invoer";
 "profiles.damagedProfile" = "Beskadigde profiel";
-"profiles.damagedLibrary" = "Profielbiblioteek";
+"profiles.damagedLibrary" = "Beskadigde lys van aktiewe profiele";
 "profiles.deleteDamagedButton" = "Skrap beskadigde profiel…";
-"profiles.resetLibraryButton" = "Rugsteun Begin & Herstel Biblioteek…";
+"profiles.resetLibraryButton" = "Rugsteun en herstel aktiewe profiele…";
 "profiles.recoveryBackupMessage" = "'N Rugsteun sal geskep word voordat beskadigde data verwyder word.";
 "profiles.damagedProfileMessage" = "Hierdie gestoorde profiel kon nie gelees word nie. Verwyder dit om voort te gaan met die gebruik van die geldige profiele.";
+"profiles.damagedSelectionsMessage" = "Die lys van aktiewe profiele kon nie gelees word nie. Herstel dit om voort te gaan. Jou profiele word behou.";
 "profiles.resetLibraryAction" = "Rugsteun Begin & Herstel";
 
 /* Controller session lifecycle */

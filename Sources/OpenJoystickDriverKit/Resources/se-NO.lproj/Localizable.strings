@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Dát profiila hehtte buot stivrejeaddji sisaváldima.";
 "profiles.restoreDefaultInput" = "Máhcahit standárda sisačáliheami";
 "profiles.damagedProfile" = "Billahuvvan profiila";
-"profiles.damagedLibrary" = "Profiilagirjerájus";
+"profiles.damagedLibrary" = "Billahuvvan aktiiva profiillaid listu";
 "profiles.deleteDamagedButton" = "Sihko billahuvvan profiila…";
-"profiles.resetLibraryButton" = "Váldde várrekoopia ja nollestahte girjeráju…";
+"profiles.resetLibraryButton" = "Váldde várrekoopia ja nollestahte aktiiva profiillaid…";
 "profiles.recoveryBackupMessage" = "Várrekoopia ráhkaduvvo ovdal go billahuvvan dieđut sihkkojuvvojit.";
 "profiles.damagedProfileMessage" = "Dán vurkejuvvon profiilla ii sáhttán lohkat. Sihko dan vai sáhtát ain geavahit gustojeaddji profiillaid.";
+"profiles.damagedSelectionsMessage" = "Aktiiva profiillaid listtu ii sáhttán lohkat. Nollestahte dan vai sáhtát joatkit. Du profiillat seilot.";
 "profiles.resetLibraryAction" = "Váldde várrekoopia ja nollestahte";
 
 /* Controller session lifecycle */

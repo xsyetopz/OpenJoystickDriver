@@ -139,7 +139,7 @@ extension RemappingRequestCoordinatorTests {
     let firstUpdate = profile(id: original.id, name: "Desktop", key: .a)
     _ = try await harness.coordinator.update(firstUpdate, expectedCurrent: original).get()
     harness.routerHarness.recorder.removeAll()
-    let bytesAfterFirstUpdate = try Data(contentsOf: harness.routerHarness.fileURL)
+    let bytesAfterFirstUpdate = try libraryFiles(in: harness.routerHarness.directory)
     let routeAfterFirstUpdate = await harness.routerHarness.router.status(for: device)
     let staleUpdate = profile(id: original.id, name: "Desktop", key: .b)
 
@@ -154,7 +154,7 @@ extension RemappingRequestCoordinatorTests {
           )
         )
     )
-    #expect(try Data(contentsOf: harness.routerHarness.fileURL) == bytesAfterFirstUpdate)
+    #expect(try libraryFiles(in: harness.routerHarness.directory) == bytesAfterFirstUpdate)
     #expect(try await harness.routerHarness.library.profile(id: original.id) == firstUpdate)
     #expect(await harness.routerHarness.router.status(for: device) == routeAfterFirstUpdate)
     #expect(harness.routerHarness.recorder.snapshot().isEmpty)
@@ -230,7 +230,7 @@ extension RemappingRequestCoordinatorTests {
   func corruptStoreAndRouterFailuresCrossAsStableTypedErrors() async throws {
     let corruptHarness = try await makeHarness()
     defer { corruptHarness.routerHarness.removeFiles() }
-    try Data("not json".utf8).write(to: corruptHarness.routerHarness.fileURL)
+    try Data("not json".utf8).write(to: corruptHarness.routerHarness.library.selectionsURL)
     let corrupt = try await corruptHarness.coordinator.snapshot().get()
     #expect(corrupt.profiles.isEmpty)
     #expect(corrupt.profileIssues.count == 1)
@@ -267,20 +267,19 @@ extension RemappingRequestCoordinatorTests {
 
     try await harness.router.dispatchCausally(.activation, from: newDevice)
     try await harness.router.dispatchCausally(changes: [.press(.faceSouth)], from: oldDevice)
-    let exactPriorBytes = try Data(contentsOf: harness.fileURL)
-    let priorFilePermissions = try permissions(at: harness.fileURL)
-    let priorParentPermissions = try permissions(at: harness.fileURL.deletingLastPathComponent())
+    let exactPriorBytes = try libraryFiles(in: harness.directory)
+    let profileURL = harness.library.profileURL(original.id)
+    let priorFilePermissions = try permissions(at: profileURL)
+    let priorParentPermissions = try permissions(at: harness.directory)
     harness.sink.failNextAction()
 
     let moved = profile(id: original.id, name: original.name, vendorID: 1356, productID: 2508)
     let result = await harness.coordinator.update(moved, expectedCurrent: original)
 
     expectRecoveredEngineFailure(result)
-    #expect(try Data(contentsOf: harness.fileURL) == exactPriorBytes)
-    #expect(try permissions(at: harness.fileURL) == priorFilePermissions)
-    #expect(
-      try permissions(at: harness.fileURL.deletingLastPathComponent()) == priorParentPermissions
-    )
+    #expect(try libraryFiles(in: harness.directory) == exactPriorBytes)
+    #expect(try permissions(at: profileURL) == priorFilePermissions)
+    #expect(try permissions(at: harness.directory) == priorParentPermissions)
     #expect(try await harness.library.profile(id: original.id) == original)
     #expect(try await harness.library.activeProfile(vendorID: 1118, productID: 654) == original)
     #expect(try await harness.library.activeProfile(vendorID: 1356, productID: 2508) == nil)
@@ -298,7 +297,7 @@ extension RemappingRequestCoordinatorTests {
     _ = try await harness.coordinator.activate(id: original.id).get()
     let device = remappingRouterDevice(1)
     try await harness.router.dispatchCausally(changes: [.press(.faceSouth)], from: device)
-    let exactPriorBytes = try Data(contentsOf: harness.fileURL)
+    let exactPriorBytes = try libraryFiles(in: harness.directory)
     harness.sink.failNextAction()
 
     let result: RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>
@@ -308,7 +307,7 @@ extension RemappingRequestCoordinatorTests {
     }
 
     expectRecoveredEngineFailure(result)
-    #expect(try Data(contentsOf: harness.fileURL) == exactPriorBytes)
+    #expect(try libraryFiles(in: harness.directory) == exactPriorBytes)
     #expect(try await harness.library.profile(id: original.id) == original)
     #expect(try await harness.library.activeProfile(vendorID: 1118, productID: 654) == original)
     #expect(await harness.router.status(for: device)?.activeProfileID == original.id)
@@ -326,7 +325,7 @@ extension RemappingRequestCoordinatorTests {
     }
     #expect(error.code == .responseTooLarge)
     #expect(try await harness.routerHarness.library.profiles().isEmpty)
-    #expect(!FileManager.default.fileExists(atPath: harness.routerHarness.fileURL.path))
+    #expect(try libraryFiles(in: harness.routerHarness.directory).isEmpty)
   }
 
   @Test
@@ -336,15 +335,14 @@ extension RemappingRequestCoordinatorTests {
     let original = profile(name: "Desktop")
     _ = try await harness.coordinator.create(original).get()
 
-    let libraryURL = harness.routerHarness.fileURL
-    #expect(FileManager.default.fileExists(atPath: libraryURL.path))
-    let bytesBeforeReset = try Data(contentsOf: libraryURL)
+    let directory = harness.routerHarness.directory
+    let bytesBeforeReset = try libraryFiles(in: directory)
+    #expect(!bytesBeforeReset.isEmpty)
 
     // The remapping profile library is owned by the coordinator, not by
     // ApplicationServiceServer.resetSettings. The library file must survive any
     // settings reset.
-    #expect(FileManager.default.fileExists(atPath: libraryURL.path))
-    #expect(try Data(contentsOf: libraryURL) == bytesBeforeReset)
+    #expect(try libraryFiles(in: directory) == bytesBeforeReset)
     #expect(try await harness.coordinator.profile(id: original.id).get() == original)
   }
 

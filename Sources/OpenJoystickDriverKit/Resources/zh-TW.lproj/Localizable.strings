@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "這樣的配置文件將所有控制器輸入都壓制.";
 "profiles.restoreDefaultInput" = "恢復預設輸入";
 "profiles.damagedProfile" = "個人資料損壞";
-"profiles.damagedLibrary" = "個人資料庫";
+"profiles.damagedLibrary" = "使用中的設定檔清單已損壞";
 "profiles.deleteDamagedButton" = "刪除損壞的設定檔…";
-"profiles.resetLibraryButton" = "備份並重設程式庫…";
+"profiles.resetLibraryButton" = "備份並重設使用中的設定檔…";
 "profiles.recoveryBackupMessage" = "系統會在移除損壞的資料前建立備份。";
 "profiles.damagedProfileMessage" = "無法讀取此儲存的設定檔。 刪除以繼續使用有效的基本資料。";
+"profiles.damagedSelectionsMessage" = "無法讀取使用中的設定檔清單。請重設以繼續。你的設定檔會保留。";
 "profiles.resetLibraryAction" = "備份與重設";
 
 /* Controller session lifecycle */

@@ -21,7 +21,7 @@ struct RemappingProfileTransactionIsolationTests {
     try await harness.router.dispatchCausally(changes: [.press(.faceSouth)], from: mapped)
     try await harness.router.dispatchCausally(.activation, from: virtualOutput)
     harness.recorder.removeAll()
-    let exactPriorBytes = try Data(contentsOf: harness.fileURL)
+    let exactPriorBytes = try libraryFiles(in: harness.directory)
     let candidate = transactionProfile(
       id: original.id,
       name: original.name,
@@ -58,7 +58,7 @@ struct RemappingProfileTransactionIsolationTests {
       return
     }
     #expect(error.code == .responseTooLarge)
-    #expect(try Data(contentsOf: harness.fileURL) == exactPriorBytes)
+    #expect(try libraryFiles(in: harness.directory) == exactPriorBytes)
     #expect(try await harness.library.profile(id: original.id) == original)
     #expect(await harness.router.status(for: mapped)?.activeProfileID == original.id)
     #expect(await harness.router.status(for: newlyConnected)?.activeProfileID == original.id)
@@ -121,7 +121,7 @@ struct RemappingProfileTransactionIsolationTests {
     defer { harness.removeFiles() }
     let mapped = remappingRouterDevice(1)
     try await harness.router.dispatchCausally(changes: [.press(.faceSouth)], from: mapped)
-    let exactPriorBytes = try Data(contentsOf: harness.fileURL)
+    let exactPriorBytes = try libraryFiles(in: harness.directory)
 
     let result = await harness.coordinator.create(original)
 
@@ -130,7 +130,7 @@ struct RemappingProfileTransactionIsolationTests {
       return
     }
     #expect(error.code == .profileAlreadyExists)
-    #expect(try Data(contentsOf: harness.fileURL) == exactPriorBytes)
+    #expect(try libraryFiles(in: harness.directory) == exactPriorBytes)
     #expect(harness.recorder.snapshot() == [.system(.keyDown(.space)), .system(.keyUp(.space))])
     try await harness.router.dispatchCausally(changes: [.press(.faceSouth)], from: mapped)
     #expect(harness.recorder.snapshot().last == .system(.keyDown(.space)))
@@ -152,10 +152,8 @@ struct RemappingProfileTransactionIsolationTests {
 
     let mutation = Task { await harness.coordinator.update(candidate, expectedCurrent: original) }
     await gate.waitUntilPaused()
-    let parent = harness.fileURL.deletingLastPathComponent()
-    try FileManager.default.removeItem(at: harness.fileURL)
-    try FileManager.default.removeItem(at: parent)
-    try Data("blocks-directory-restoration".utf8).write(to: parent)
+    try FileManager.default.removeItem(at: harness.directory)
+    try Data("blocks-directory-restoration".utf8).write(to: harness.directory)
     gate.resume()
     let result = await mutation.value
 
@@ -173,7 +171,7 @@ struct RemappingProfileTransactionIsolationTests {
     try await harness.router.dispatchCausally(changes: [.press(.faceSouth)], from: mapped)
     #expect(!harness.recorder.snapshot().contains(.system(.keyDown(.b))))
 
-    try FileManager.default.removeItem(at: parent)
+    try FileManager.default.removeItem(at: harness.directory)
     try await harness.library.restore(checkpoint)
     try await harness.router.recoverProfileTransaction()
     try await harness.router.dispatchCausally(changes: [.press(.faceSouth)], from: mapped)
@@ -235,7 +233,7 @@ struct RemappingProfileTransactionIsolationTests {
 }
 
 private struct TransactionIsolationHarness {
-  let fileURL: URL
+  let directory: URL
   let library: RemappingProfileLibrary
   let router: RemappingOutputRouter
   let coordinator: RemappingRequestCoordinator
@@ -252,8 +250,7 @@ private struct TransactionIsolationHarness {
       isDirectory: true
     )
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-    let fileURL = directory.appendingPathComponent("profiles.json")
-    let library = RemappingProfileLibrary(fileURL: fileURL)
+    let library = RemappingProfileLibrary(directory: directory)
     try await library.create(initialProfile)
     try await library.activate(profileID: initialProfile.id)
     let recorder = RemappingRouterRecorder()
@@ -267,7 +264,7 @@ private struct TransactionIsolationHarness {
       tickerIntervalNanoseconds: nil
     ) { 1_000_000_000 }
     return Self(
-      fileURL: fileURL,
+      directory: directory,
       library: library,
       router: router,
       coordinator: RemappingRequestCoordinator(
@@ -282,8 +279,7 @@ private struct TransactionIsolationHarness {
   }
 
   func removeFiles() {
-    let parent = fileURL.deletingLastPathComponent()
-    try? FileManager.default.removeItem(at: parent)
+    try? FileManager.default.removeItem(at: directory)
   }
 }
 

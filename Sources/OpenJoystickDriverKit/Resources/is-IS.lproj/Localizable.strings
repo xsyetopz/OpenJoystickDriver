@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Þessi prófíll kemur ekki í gegnum allur inngangur stjórnanda.";
 "profiles.restoreDefaultInput" = "Endurnýta sjálfgefið innrit";
 "profiles.damagedProfile" = "Skemmd notandalýsing";
-"profiles.damagedLibrary" = "Notandasafn";
+"profiles.damagedLibrary" = "Skemmdur listi yfir virk snið";
 "profiles.deleteDamagedButton" = "Eyða skemmdri notandalýsingu…";
-"profiles.resetLibraryButton" = "Til baka upp og endurstilla bókasafn…";
+"profiles.resetLibraryButton" = "Taka afrit og endurstilla virk snið…";
 "profiles.recoveryBackupMessage" = "Öryggisafrit verður búið til áður en skemmd gögn eru fjarlægð.";
 "profiles.damagedProfileMessage" = "Ekki var hægt að lesa þessa vistuðu notandalýsingu. Eyddu henni til að halda áfram að nota gild notandalýsingar.";
+"profiles.damagedSelectionsMessage" = "Ekki var hægt að lesa listann yfir virk snið. Endurstilltu hann til að halda áfram. Sniðin þín eru varðveitt.";
 "profiles.resetLibraryAction" = "Til baka upp og endurstilla";
 
 /* Controller session lifecycle */

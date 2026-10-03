@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Šis profilis slopina visus valdiklio įvedimus.";
 "profiles.restoreDefaultInput" = "Atkurti numatomą įvedimą";
 "profiles.damagedProfile" = "Pažeistas profilis";
-"profiles.damagedLibrary" = "Profilio biblioteka";
+"profiles.damagedLibrary" = "Pažeistas aktyvių profilių sąrašas";
 "profiles.deleteDamagedButton" = "Ištrinti sugadintą profilį…";
-"profiles.resetLibraryButton" = "Atsarginė kopija ir bibliotekos atstatymas…";
+"profiles.resetLibraryButton" = "Sukurti atsarginę kopiją ir iš naujo nustatyti aktyvius profilius…";
 "profiles.recoveryBackupMessage" = "Prieš pašalinant sugadintus duomenis bus sukurta atsarginė kopija.";
 "profiles.damagedProfileMessage" = "Šio išsaugoto profilio nepavyko perskaityti. Ištrinkite jį, kad galėtumėte toliau naudoti galiojančius profilius.";
+"profiles.damagedSelectionsMessage" = "Nepavyko perskaityti aktyvių profilių sąrašo. Norėdami tęsti, nustatykite jį iš naujo. Jūsų profiliai išsaugomi.";
 "profiles.resetLibraryAction" = "Atsarginė kopija ir nustatymas iš naujo";
 
 /* Controller session lifecycle */

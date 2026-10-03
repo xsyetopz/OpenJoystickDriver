@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Acest profil suprimează toate intrările controlerului.";
 "profiles.restoreDefaultInput" = "Restaurați intrarea de parfait";
 "profiles.damagedProfile" = "Profil deteriorat";
-"profiles.damagedLibrary" = "Bibliotecă de profiluri";
+"profiles.damagedLibrary" = "Listă de profiluri active deteriorată";
 "profiles.deleteDamagedButton" = "Ștergeți profilul deteriorat…";
-"profiles.resetLibraryButton" = "Faceți o copie de rezervă și resetați biblioteca…";
+"profiles.resetLibraryButton" = "Copie de rezervă și resetare a profilurilor active…";
 "profiles.recoveryBackupMessage" = "Va fi creată o copie de rezervă înainte ca datele deteriorate să fie eliminate.";
 "profiles.damagedProfileMessage" = "Acest profil salvat nu a putut fi citit. Ștergeți-l pentru a continua să utilizați profilurile valide.";
+"profiles.damagedSelectionsMessage" = "Lista profilurilor active nu a putut fi citită. Resetați-o pentru a continua. Profilurile dvs. sunt păstrate.";
 "profiles.resetLibraryAction" = "Copie de rezervă și resetare";
 
 /* Controller session lifecycle */

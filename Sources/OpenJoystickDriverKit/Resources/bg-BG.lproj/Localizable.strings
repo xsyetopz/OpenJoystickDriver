@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Този профил потиска всички входове на контролера.";
 "profiles.restoreDefaultInput" = "Възстановяване на дефолтната входна информация";
 "profiles.damagedProfile" = "Повреден профил";
-"profiles.damagedLibrary" = "Библиотека с профили";
+"profiles.damagedLibrary" = "Повреден списък с активни профили";
 "profiles.deleteDamagedButton" = "Изтриване на повреден профил…";
-"profiles.resetLibraryButton" = "Архивиране и нулиране на библиотеката…";
+"profiles.resetLibraryButton" = "Архивиране и нулиране на активните профили…";
 "profiles.recoveryBackupMessage" = "Ще бъде създадено резервно копие, преди повредените данни да бъдат премахнати.";
 "profiles.damagedProfileMessage" = "Този запазен профил не може да бъде прочетен. Изтрийте го, за да продължите да използвате валидните профили.";
+"profiles.damagedSelectionsMessage" = "Списъкът с активни профили не може да бъде прочетен. Нулирайте го, за да продължите. Профилите ви се запазват.";
 "profiles.resetLibraryAction" = "Архивиране и нулиране";
 
 /* Controller session lifecycle */

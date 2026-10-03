@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Այս պրոֆիլը ճնշում է բոլոր վերահսկիչ մուտքը:";
 "profiles.restoreDefaultInput" = "Վերականգնել նախնական մուտքը";
 "profiles.damagedProfile" = "Վնասված պրոֆիլ";
-"profiles.damagedLibrary" = "Պրոֆիլի գրադարան";
+"profiles.damagedLibrary" = "Ակտիվ պրոֆիլների ցանկը վնասված է";
 "profiles.deleteDamagedButton" = "Ջնջել վնասված պրոֆիլը…";
-"profiles.resetLibraryButton" = "Պահուստավորել և վերականգնել գրադարանը…";
+"profiles.resetLibraryButton" = "Պահուստավորել և վերակայել ակտիվ պրոֆիլները…";
 "profiles.recoveryBackupMessage" = "Պահուստային կրկնօրինակը կստեղծվի նախքան վնասված տվյալների հեռացումը:";
 "profiles.damagedProfileMessage" = "Այս պահված պրոֆիլը հնարավոր չեղավ կարդալ: Ջնջեք այն, որպեսզի շարունակեք օգտագործել վավեր պրոֆիլները ։";
+"profiles.damagedSelectionsMessage" = "Ակտիվ պրոֆիլների ցանկը հնարավոր չեղավ կարդալ։ Շարունակելու համար վերակայեք այն։ Ձեր պրոֆիլները պահպանվում են։";
 "profiles.resetLibraryAction" = "Պահուստավորում և վերականգնում";
 
 /* Controller session lifecycle */

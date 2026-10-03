@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Бұл профиль барлық контроллер кірісін басып тастайды.";
 "profiles.restoreDefaultInput" = "Әдетті кірісті қалпына келтіру";
 "profiles.damagedProfile" = "Зақымдалған профиль";
-"profiles.damagedLibrary" = "Профиль кітапханасы";
+"profiles.damagedLibrary" = "Белсенді профильдер тізімі зақымдалған";
 "profiles.deleteDamagedButton" = "Зақымдалған профильді жою…";
-"profiles.resetLibraryButton" = "Кітапхананың сақтық көшірмесін жасау және қалпына келтіру…";
+"profiles.resetLibraryButton" = "Белсенді профильдердің сақтық көшірмесін жасау және қалпына келтіру…";
 "profiles.recoveryBackupMessage" = "Зақымдалған деректер жойылғанға дейін сақтық көшірме жасалады.";
 "profiles.damagedProfileMessage" = "Бұл сақталған профиль оқылмады. Жарамды профильдерді пайдалануды жалғастыру үшін оны жойыңыз.";
+"profiles.damagedSelectionsMessage" = "Белсенді профильдер тізімін оқу мүмкін болмады. Жалғастыру үшін оны қалпына келтіріңіз. Профильдеріңіз сақталады.";
 "profiles.resetLibraryAction" = "Сақтық көшірме жасау және қалпына келтіру";
 
 /* Controller session lifecycle */

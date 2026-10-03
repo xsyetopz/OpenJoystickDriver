@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "控制器输入的数据.";
 "profiles.restoreDefaultInput" = "恢复默认输入";
 "profiles.damagedProfile" = "轮廓损坏";
-"profiles.damagedLibrary" = "个人资料库";
+"profiles.damagedLibrary" = "活跃配置文件列表已损坏";
 "profiles.deleteDamagedButton" = "删除损坏的配置文件…";
-"profiles.resetLibraryButton" = "备份和重置库…";
+"profiles.resetLibraryButton" = "备份并重置活跃配置文件…";
 "profiles.recoveryBackupMessage" = "在删除损坏的数据之前，将创建备份。";
 "profiles.damagedProfileMessage" = "无法读取此保存的个人资料。 删除它以继续使用有效的个人资料。";
+"profiles.damagedSelectionsMessage" = "无法读取活跃配置文件列表。请重置以继续。你的配置文件将被保留。";
 "profiles.resetLibraryAction" = "备份和重置";
 
 /* Controller session lifecycle */

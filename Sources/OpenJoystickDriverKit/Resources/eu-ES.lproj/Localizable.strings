@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Profil honek kontrolgailuaren sarrera guztiak ezabatu egiten ditu.";
 "profiles.restoreDefaultInput" = "Irteera iraunkorra berrezarri";
 "profiles.damagedProfile" = "Kaltetutako profila";
-"profiles.damagedLibrary" = "Profil liburutegia";
+"profiles.damagedLibrary" = "Profil aktiboen zerrenda kaltetuta";
 "profiles.deleteDamagedButton" = "Ezabatu kaltetutako profila…";
-"profiles.resetLibraryButton" = "Liburutegiaren babeskopia egin eta berrezarri…";
+"profiles.resetLibraryButton" = "Egin profil aktiboen babeskopia eta berrezarri…";
 "profiles.recoveryBackupMessage" = "Datu kaltetuak kendu aurretik babeskopia bat sortuko da.";
 "profiles.damagedProfileMessage" = "Gordetako profil hau ezin izan da irakurri. Ezabatu baliozko profilak erabiltzen jarraitzeko.";
+"profiles.damagedSelectionsMessage" = "Ezin izan da profil aktiboen zerrenda irakurri. Berrezarri jarraitzeko. Zure profilak gorde egiten dira.";
 "profiles.resetLibraryAction" = "Babeskopia egin eta berrezarri";
 
 /* Controller session lifecycle */

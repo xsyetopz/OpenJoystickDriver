@@ -165,7 +165,10 @@
         case .resetLibrary(let issueID):
           Alert(
             title: Text(
-              OJDLocalized.string("profiles.damagedLibrary", fallback: "Profile library")
+              OJDLocalized.string(
+                "profiles.damagedLibrary",
+                fallback: "Damaged active profile list"
+              )
             ),
             message: Text(
               OJDLocalized.string(
@@ -325,7 +328,8 @@
                 OJDLocalized.string(
                   issue.kind == .damagedProfile
                     ? "profiles.damagedProfile" : "profiles.damagedLibrary",
-                  fallback: issue.kind == .damagedProfile ? "Damaged profile" : "Profile library"
+                  fallback: issue.kind == .damagedProfile
+                    ? "Damaged profile" : "Damaged active profile list"
                 )
               ).lineLimit(1)
               Text(OJDLocalized.string("common.needsAttention", fallback: "Needs attention")).font(

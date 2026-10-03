@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Šis profils aiztur visus vadības vadības ierīču ievades.";
 "profiles.restoreDefaultInput" = "Atgriež sākotnējo ievadījumu";
 "profiles.damagedProfile" = "Bojāts profils";
-"profiles.damagedLibrary" = "Profila bibliotēka";
+"profiles.damagedLibrary" = "Bojāts aktīvo profilu saraksts";
 "profiles.deleteDamagedButton" = "Dzēst bojāto profilu…";
-"profiles.resetLibraryButton" = "Dublēt un atiestatīt bibliotēku…";
+"profiles.resetLibraryButton" = "Dublēt un atiestatīt aktīvos profilus…";
 "profiles.recoveryBackupMessage" = "Pirms bojāto datu noņemšanas tiks izveidots dublējums.";
 "profiles.damagedProfileMessage" = "Šo saglabāto profilu nevarēja nolasīt. Dzēsiet to, lai turpinātu izmantot derīgos profilus.";
+"profiles.damagedSelectionsMessage" = "Aktīvo profilu sarakstu nevarēja nolasīt. Lai turpinātu, atiestatiet to. Jūsu profili tiek saglabāti.";
 "profiles.resetLibraryAction" = "Dublēšana un atiestatīšana";
 
 /* Controller session lifecycle */

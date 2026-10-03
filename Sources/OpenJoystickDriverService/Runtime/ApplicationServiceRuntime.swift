@@ -11,8 +11,10 @@ package final class ApplicationServiceRuntime {
   private let manager: DeviceManager
   private let bluetoothLECentral: Switch2BluetoothLECentral
   private let applicationServiceServer: ApplicationServiceServer
+  private let remappingProfileLibrary: RemappingProfileLibrary
   private var systemPowerObserver: SystemPowerNotificationObserver?
   private var controllerRecordWatcher: ControllerRecordWatcher?
+  private var profileWatcher: FileChangeWatcher?
   private var systemPowerEventSession: DeviceManagerSystemPowerEventSession?
   private var started = false
   private var shutdownSignalSources: [DispatchSourceSignal] = []
@@ -60,6 +62,7 @@ package final class ApplicationServiceRuntime {
     self.remappingRouter = remappingRouter
     self.manager = manager
     self.applicationServiceServer = applicationServiceServer
+    self.remappingProfileLibrary = remappingProfileLibrary
   }
 
   package func start() throws {
@@ -81,6 +84,7 @@ package final class ApplicationServiceRuntime {
     }
     self.controllerRecordWatcher = controllerRecordWatcher
     controllerRecordWatcher.start()
+    startProfileWatcher()
     let systemPowerEventSession = DeviceManagerSystemPowerEventSession()
     self.systemPowerEventSession = systemPowerEventSession
     let systemPowerObserver = SystemPowerNotificationObserver { event in
@@ -113,6 +117,8 @@ package final class ApplicationServiceRuntime {
     cancelGracefulShutdown()
     controllerRecordWatcher?.stop()
     controllerRecordWatcher = nil
+    profileWatcher?.stop()
+    profileWatcher = nil
     let systemPowerObserver = systemPowerObserver
     self.systemPowerObserver = nil
     let systemPowerEventSession = systemPowerEventSession
@@ -133,6 +139,31 @@ package final class ApplicationServiceRuntime {
     }
     await permissionManager.stopPolling()
     serviceLog("[Service] Stopped")
+  }
+
+  /// Deletes the earlier single-file library and reloads profiles when their files change.
+  private func startProfileWatcher() {
+    let library = remappingProfileLibrary
+    library.discardLegacyLibrary()
+    let profilesDirectory = library.profilesDirectory
+    for directory in [library.directory, profilesDirectory] {
+      do { try RemappingProfileLibrary.createPrivateDirectory(directory) } catch {
+        serviceError("[Profiles] Cannot create \(directory.path): \(error.localizedDescription)")
+      }
+    }
+    let selectionsURL = library.selectionsURL
+    let applicationServiceServer = applicationServiceServer
+    let profileWatcher = FileChangeWatcher(
+      directories: [library.directory, profilesDirectory],
+      watchesFile: {
+        $0.standardizedFileURL == selectionsURL.standardizedFileURL
+          || $0.deletingLastPathComponent().standardizedFileURL
+            == profilesDirectory.standardizedFileURL
+      },
+      onChange: { Task { await applicationServiceServer.reloadRemappingProfiles() } }
+    )
+    self.profileWatcher = profileWatcher
+    profileWatcher.start()
   }
 
   private func serviceLog(_ message: String) { print(message) }

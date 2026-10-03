@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Tento profil potlačuje veškeré vstupy ovládače.";
 "profiles.restoreDefaultInput" = "Vrátit nastavený vstup";
 "profiles.damagedProfile" = "Poškozený profil";
-"profiles.damagedLibrary" = "Knihovna profilů";
+"profiles.damagedLibrary" = "Poškozený seznam aktivních profilů";
 "profiles.deleteDamagedButton" = "Smazat poškozený profil…";
-"profiles.resetLibraryButton" = "Zálohovat a obnovit knihovnu…";
+"profiles.resetLibraryButton" = "Zálohovat a resetovat aktivní profily…";
 "profiles.recoveryBackupMessage" = "Před odstraněním poškozených dat bude vytvořena záloha.";
 "profiles.damagedProfileMessage" = "Tento uložený profil nelze přečíst. Chcete-li pokračovat v používání platných profilů, smažte jej.";
+"profiles.damagedSelectionsMessage" = "Seznam aktivních profilů nelze přečíst. Pokračujte jeho resetováním. Vaše profily zůstanou zachovány.";
 "profiles.resetLibraryAction" = "Zálohovat a resetovat";
 
 /* Controller session lifecycle */

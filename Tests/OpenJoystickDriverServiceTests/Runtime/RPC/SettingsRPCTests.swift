@@ -125,7 +125,7 @@ struct SettingsRPCTests {
     defer { defaults.removePersistentDomain(forName: suiteName) }
     let login = Locked(false)
     let dispatcher = VirtualOutputRouter()
-    let library = RemappingProfileLibrary(fileURL: directory.appendingPathComponent("p.json"))
+    let library = RemappingProfileLibrary(directory: directory)
     let postEventAccess = CoreGraphicsPostEventAccess()
     let router = RemappingOutputRouter(
       library: library,

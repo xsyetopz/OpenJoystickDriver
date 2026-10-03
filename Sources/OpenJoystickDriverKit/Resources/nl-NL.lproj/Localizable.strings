@@ -892,11 +892,12 @@
 "profiles.emptyInputWarning" = "Dit profiel verdringt alle controller-invoer.";
 "profiles.restoreDefaultInput" = "De standaard input herstellen";
 "profiles.damagedProfile" = "Beschadigd profiel";
-"profiles.damagedLibrary" = "Profielbibliotheek";
+"profiles.damagedLibrary" = "Beschadigde lijst met actieve profielen";
 "profiles.deleteDamagedButton" = "Beschadigd profiel verwijderen…";
-"profiles.resetLibraryButton" = "Bibliotheek back-uppen en resetten…";
+"profiles.resetLibraryButton" = "Back-up maken en actieve profielen resetten…";
 "profiles.recoveryBackupMessage" = "Er wordt een back-up gemaakt voordat beschadigde gegevens worden verwijderd.";
 "profiles.damagedProfileMessage" = "Dit opgeslagen profiel kon niet worden gelezen. Verwijder het om de geldige profielen te blijven gebruiken.";
+"profiles.damagedSelectionsMessage" = "De lijst met actieve profielen kon niet worden gelezen. Reset deze om door te gaan. Je profielen blijven behouden.";
 "profiles.resetLibraryAction" = "Back-up en resetten";
 
 /* Controller session lifecycle */
