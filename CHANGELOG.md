@@ -34,6 +34,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - `Resources/Schemas/cli-output.schema.json` describes the `--json` output of every `ojd` command, one `$defs` entry per command. The CLI tests validate each `--json` document they print against it. Within a major version the output only gains keys and values, and `./Scripts/ojd check schemas` fails on a change that would break a reader of the last release's output.
 - `Resources/Schemas/profile.schema.json` describes the profile file that `ojd profile export` writes. `ojd profile validate FILE|-` checks a file against the schema and the cross-field rules without the service.
 - `ojd profile get PROFILE KEY` and `ojd profile set PROFILE KEY VALUE` read and change one value in a profile file by its path, such as `stickMappings.0.tuning.innerDeadzone`. `set` checks the whole profile before it saves it.
+- On macOS 13 or later, Shortcuts lists the actions Get Controllers, Get Battery Level, Activate Profile, Deactivate Profile, and Get OpenJoystickDriver Version. A shortcut stores a controller by its unit ID or by its model as `VVVV:PPPP`; see [Automating OpenJoystickDriver](docs/Automating-OpenJoystickDriver.md#use-shortcuts).
 
 ### Changed
 

@@ -89,6 +89,34 @@ printf '%s\n' '{"buttons":["south"],"holdMilliseconds":50}' '{}' | ojd virtual f
 
 Games and latency with `ojd virtual feed` are not verified.
 
+## Use Shortcuts
+
+On macOS 13 or later, the Shortcuts app lists these OpenJoystickDriver actions:
+
+| Action | Takes | Returns |
+| --- | --- | --- |
+| Get Controllers | Nothing | The connected controllers, each with a name and a model |
+| Get Battery Level | A controller | The battery charge in percent |
+| Activate Profile | A remapping profile | The profile, now active |
+| Deactivate Profile | A remapping profile | The profile, now inactive |
+| Get OpenJoystickDriver Version | Nothing | The version of the installed app |
+
+The actions run in the app, so the app must be installed. They do not use `ojd`.
+
+When you pick a controller, the list shows each connected controller, and then one entry for each connected model. A shortcut stores the controller in the same forms as `CONTROLLER` in [Name a Controller](#name-a-controller):
+
+- A single controller is stored by its unit ID, or by its `ojd controller list` ID when it has no unit ID. The unit ID changes when you connect the controller to a different USB port, and the list ID changes when the service restarts.
+- A model entry is stored as `VVVV:PPPP`. It finds the connected controller of that model on any port. When two connected controllers have the same model, the action fails and lists them. You can also type `VVVV:PPPP` in the search field.
+
+Get Battery Level fails when the controller reports no battery level. When the controller reports a range, such as `30-39%`, the action returns the lowest value of the range.
+
+To run a shortcut from another program, use the `shortcuts` command or a `shortcuts://` link:
+
+- Raycast: the Shortcuts extension runs a shortcut by name, or a Script Command can run `shortcuts run "Low Battery Check"`.
+- Stream Deck: an Open action with the link `shortcuts://run-shortcut?name=Low%20Battery%20Check` runs the shortcut.
+
+None of these actions is verified live in the Shortcuts app yet.
+
 ## Further reading
 
 - [Command line](Command-Line.md)
