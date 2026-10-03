@@ -70,4 +70,5 @@ A command that needs the service exits with code 69 when the service is not runn
 ## Further reading
 
 - [Command reference](Command-Reference.md)
+- [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md)
 - [Reporting a bug](Reporting-a-Bug.md)

@@ -306,4 +306,5 @@ ojd update check [--prerelease]
 ## Further reading
 
 - [Command line](Command-Line.md)
+- [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md)
 - [Reporting a bug](Reporting-a-Bug.md)

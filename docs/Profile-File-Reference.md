@@ -73,10 +73,15 @@ Profile names must be unique. OJD compares names without regard to case.
 
 ## Controller catalog data
 
-You cannot edit the controller catalog. It lives inside the OpenJoystickDriver app. A scripting API is planned for a later beta.
+You cannot edit the controller catalog. It lives inside the OpenJoystickDriver app. To add a controller or change how OJD drives one, write a controller record. For more information, see [Adding or changing a controller record](Controller-Records.md).
+
+## Scripting
+
+To read and change profiles from scripts, use `ojd profile get`, `ojd profile set`, and `ojd profile validate`. For more information, see [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md#change-profiles).
 
 ## Further reading
 
 - [Remapping profiles](Remapping-Profiles.md)
 - [Bindings and actions](Bindings-and-Actions.md)
+- [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md)
 - [Updating and uninstalling](Updating-and-Uninstalling.md)

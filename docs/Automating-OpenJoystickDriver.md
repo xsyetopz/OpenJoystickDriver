@@ -1,0 +1,89 @@
+# Automating OpenJoystickDriver
+
+Use `ojd` in scripts and other programs to read controller state, change profiles, and drive a virtual gamepad.
+
+## Choose the interface
+
+`ojd` is the interface for scripts and other programs. Run it as a subprocess, read its `--json` output, and check its exit code. For the global options, output rules, and exit codes, see [Command line](Command-Line.md).
+
+The Swift package `OpenJoystickDriverKit` has an `ApplicationServiceClient`, but the service accepts a connection only from a process with the same code signature as the app. A program you build yourself cannot use it with a released app. Use `ojd` instead.
+
+## Write a script
+
+1. Start the service and wait until it accepts requests: `ojd service start`.
+1. Add `--no-input` to each command, so that a command fails instead of asking a question.
+1. Add `--json` to each command whose output you read.
+1. Check the exit code of each command. Code 69 means that the service is not running.
+
+Commands that delete or reset data ask first on a terminal. In a script, they need `--force`. Run them first with `--dry-run` to see what they change.
+
+```shell
+ojd service start --timeout 30
+ojd --no-input --json controller list | jq -r '.controllers[] | [.id, .name, .unit // ""] | @tsv'
+```
+
+## Read JSON output
+
+Keys and values in `--json` output are stable identifiers, and OJD never translates them. A command that streams, such as `ojd controller watch` or `ojd virtual feed`, prints one JSON object per line.
+
+[`cli-output.schema.json`](../Resources/Schemas/cli-output.schema.json) describes the output of each command. Each command has one entry in `$defs`, named after its command path in lowerCamelCase: the entry for `ojd controller show` is `controllerShow`. Entries that start with `shared` are shapes that more than one command uses. The schema rejects keys that its release does not print, and a later release can add keys. Validate output against the schema from the same release.
+
+Do not parse the human-readable output. It is translated, and it can change in each release.
+
+## Name a controller
+
+Commands take a `CONTROLLER` operand. Use one of these forms:
+
+- A unit ID, such as `U-` and 16 characters. It stays the same across reconnects and service restarts while the controller uses the same USB port. It changes when you connect the controller to a different port. Scripts can store it. A controller with no location ID has no unit ID.
+- `VVVV:PPPP`, the hexadecimal vendor and product ID. It names a controller model. When two connected controllers have the same model, the command fails and lists them.
+- An ID from `ojd controller list`. It lasts only until the service restarts, so do not store it.
+
+`ojd controller list --json` gives the unit ID of each controller in `unit`.
+
+## Change profiles
+
+A profile is a JSON file. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields.
+
+- `ojd profile get PROFILE KEY` prints one value. `ojd profile set PROFILE KEY VALUE` changes one value. `KEY` is a path of member names and array indexes, joined by dots.
+- `ojd profile export PROFILE` prints the whole file. `ojd profile import FILE` adds it again, or replaces the profile with the same ID. Use `-` as `FILE` to read standard input.
+- `ojd profile validate FILE` checks a file against the schema and against the rules that span fields. It does not need the service.
+- `ojd profile activate PROFILE` and `ojd profile deactivate PROFILE` apply a profile and stop it.
+
+```shell
+ojd profile get Racing stickMappings.0.tuning.innerDeadzone
+ojd profile set Racing stickMappings.0.tuning.innerDeadzone 0.15
+ojd profile export Racing --output racing.json
+ojd profile validate racing.json
+```
+
+To limit a profile to one controller, set `device.unit` to the controller's unit ID. To choose the virtual gamepad for one controller, use `ojd virtual set PROFILE CONTROLLER --unit`.
+
+## Drive a virtual gamepad
+
+`ojd virtual feed --as PROFILE` publishes a virtual gamepad and reads one JSON object per line from standard input. Each line gives the state of the whole gamepad. A control that the line does not name is neutral. The virtual gamepad profiles are `hid-xbox-one-s-bt` and `hid-generic`.
+
+```shell
+{
+  echo '{"buttons":["south"]}'
+  sleep 1
+  echo '{"axes":{"left_stick_x":-1,"right_trigger":0.5}}'
+  sleep 1
+} | ojd virtual feed --as hid-generic
+```
+
+This example holds the south button for 1 second, then moves the left stick fully left and pulls the right trigger halfway for 1 second. When the input ends, the virtual gamepad is removed.
+
+- `buttons` and `dpad` list the controls that are pressed. They take the names that `button:` and `dpad:` binding sources use, such as `south` and `up`.
+- `axes` maps axis names to values. Sticks, such as `left_stick_x`, go from -1 to 1, with Y up. The triggers, `left_trigger` and `right_trigger`, go from 0 to 1.
+- OJD sends the latest line at most every 16 ms.
+- Each rumble command that a game sends to the virtual gamepad prints on standard output as one JSON object per line. The `virtualFeed` entry of the output schema describes it.
+- The service removes the virtual gamepad when the input ends, when you press Control-C, or when it gets no update for 2 seconds. The command sends updates while it waits for input.
+- A line that is not valid stops the command with exit code 64. The service runs at most 4 feeds at the same time.
+
+Games and latency with `ojd virtual feed` are not verified.
+
+## Further reading
+
+- [Command line](Command-Line.md)
+- [Command reference](Command-Reference.md)
+- [Profile file reference](Profile-File-Reference.md)
