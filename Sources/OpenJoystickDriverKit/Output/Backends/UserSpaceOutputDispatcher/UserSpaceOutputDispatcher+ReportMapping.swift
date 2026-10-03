@@ -12,7 +12,7 @@ extension UserSpaceOutputDispatcher {
     {
       return StickTransfer(deadzone: 0.02, rescalesDeadzone: true)
     }
-    return StickTransfer(deadzone: 0.15, rescalesDeadzone: false)
+    return StickTransfer(deadzone: 0, rescalesDeadzone: false)
   }
 
   // MARK: - State mapping (called inside reportLock.withLock)

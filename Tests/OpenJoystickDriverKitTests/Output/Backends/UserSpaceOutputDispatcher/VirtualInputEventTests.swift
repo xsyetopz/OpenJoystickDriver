@@ -110,6 +110,24 @@ struct VirtualInputEventTests {
     #expect(state.effectiveLeftTrigger == 0)
   }
 
+  /// Without a profile the virtual sticks follow the controller; dead zones belong to the profile
+  /// and the game.
+  @Test
+  func unprofiledSticksReachTheVirtualReportWithoutADeadZone() {
+    let zd = DeviceIdentifier(vendorID: 0x413D, productID: 0x2104)
+    for (x, y) in [(Float(0.12), Float(0.12)), (0.14, 0)] {
+      var state = VirtualGamepadState()
+      UserSpaceOutputDispatcher.apply(
+        snapshot(.leftStick(x: x, y: y)),
+        labels: .standard,
+        stickTransfer: UserSpaceOutputDispatcher.stickTransfer(for: zd),
+        to: &state
+      )
+      #expect(abs(Int(state.leftStickX) - Int(x * 32_767)) <= 1)
+      #expect(abs(Int(state.leftStickY) - Int(y * 32_767)) <= 1)
+    }
+  }
+
   @Test
   func xidSoutheastSurvivesParserToReport() throws {
     var packet = [UInt8](repeating: 0, count: 20)

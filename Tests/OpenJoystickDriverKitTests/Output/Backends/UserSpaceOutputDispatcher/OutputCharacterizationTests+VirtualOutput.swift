@@ -80,8 +80,8 @@ extension OutputCharacterizationTests {
     )
   }
 
-  /// Stick transfer (per axis, with the exact 0.15 and rescaled 0.02 boundaries), trigger scaling
-  /// and clamping at both ends, digital triggers and the hat.
+  /// Stick transfer (per axis, with no dead zone by default and the rescaled 0.02 boundary),
+  /// trigger scaling and clamping at both ends, digital triggers and the hat.
   @Test
   func axesTriggersAndHat() async {
     var lines: [String] = []
@@ -111,10 +111,11 @@ extension OutputCharacterizationTests {
     }
     #expect(
       lines == [
-        "ls.1 b=0000 h=0 ls=0,0 rs=0,0 t=0,0 f=00 +1", "  out 0000000000000000000000000000",
+        "ls.1 b=0000 h=0 ls=3276,-3276 rs=0,0 t=0,0 f=00 +1", "  out 0000cc0c34f30000000000000000",
         "ls.2 b=0000 h=0 ls=6553,-32767 rs=0,0 t=0,0 f=00 +1", "  out 0000991901800000000000000000",
-        "ls.1,-1 b=0000 h=0 ls=0,-32767 rs=0,0 t=0,0 f=00 +1", "  out 0000000001800000000000000000",
-        "ls.15 b=0000 h=0 ls=0,0 rs=0,0 t=0,0 f=00 +1", "  out 0000000000000000000000000000",
+        "ls.1,-1 b=0000 h=0 ls=3276,-32767 rs=0,0 t=0,0 f=00 +1",
+        "  out 0000cc0c01800000000000000000",
+        "ls.15 b=0000 h=0 ls=4915,-4915 rs=0,0 t=0,0 f=00 +1", "  out 00003313cdec0000000000000000",
         "ls.151 b=0000 h=0 ls=4947,-4947 rs=0,0 t=0,0 f=00 +1",
         "  out 00005313adec0000000000000000",
         "rs1.5 b=0000 h=0 ls=4947,-4947 rs=32767,-32767 t=0,0 f=00 +1",

@@ -5,8 +5,8 @@ import Testing
 // Pinned remapped-path transcripts; the rendering rules are on `OutputCharacterizationTests`.
 extension OutputCharacterizationTests {
   /// Remapped states reach the device with no stick deadzone on every controller, including the
-  /// `11C1:5600` rescaled transfer and the virtual output path's 0.15 deadzone: a passthrough 0.2
-  /// and a default-tuned 0.2 binding both stay non-zero.
+  /// `11C1:5600` rescaled transfer: a passthrough 0.2 and a default-tuned 0.2 binding both stay
+  /// non-zero.
   @Test
   func remappedSmallSticksSkipTheVirtualOutputTransfer() async throws {
     var lines: [String] = []

@@ -24,7 +24,7 @@ extension OutputCharacterizationTests {
   static let standard = DeviceIdentifier(vendorID: 0x045E, productID: 0x028E, locationID: 1)
   static let playStation = DeviceIdentifier(vendorID: 0x054C, productID: 0x0CE6, locationID: 2)
   static let nintendo = DeviceIdentifier(vendorID: 0x057E, productID: 0x2009, locationID: 3)
-  /// The one controller whose sticks use the rescaled 0.02 transfer instead of the 0.15 deadzone.
+  /// The one controller whose sticks use the rescaled 0.02 transfer instead of no dead zone.
   static let rescaled = DeviceIdentifier(vendorID: 0x11C1, productID: 0x5600, locationID: 4)
   static let engineDevice = DeviceIdentifier(vendorID: 1, productID: 2, locationID: 5)
 
