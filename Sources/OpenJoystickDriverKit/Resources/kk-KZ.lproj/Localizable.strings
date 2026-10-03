@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ қазірдің өзінде тоқтатылған.";
 "cli.controller.suspend.done" = "%@ тоқтатылды.";
 "cli.controller.watch.abstract" = "Контроллердің енгізу күйін әр өзгерген сайын басып шығару.";
+"cli.controller.watch.all" = "Барлық контроллерді бақылап, қосылған немесе ажыратылған әрқайсысы туралы хабарлау.";
+"cli.controller.watch.all_started" = "Барлық контроллер бақылануда. Контроллер түймелерін басыңыз.";
+"cli.controller.watch.connected" = "%@ қосылды: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ ажыратылды";
 "cli.controller.watch.discussion" = "--json болса, әр жолға бір JSON нысанын шығарады. Стиктің Y осі жоғарыға бағытталған. --first-press болса, бірінші басылған басқару элементін шығарып, шығады; --duration бұрын аяқталса, сәтсіз болады.";
+"cli.controller.watch.discussion.all" = "--all болғанда әр жол контроллердің ID-ымен басталады, ал жол қосылған немесе ажыратылған әр контроллер туралы хабарлайды. Алғашқы жолдар қазірдің өзінде қосылған контроллерлер туралы хабарлайды.";
+"cli.controller.watch.error.first_press_all" = "--first-press үшін CONTROLLER қажет; ол --all-мен жұмыс істемейді.";
+"cli.controller.watch.error.target" = "CONTROLLER немесе --all көрсетіңіз, бірақ екеуін бірге емес.";
 "cli.controller.watch.first_press" = "Бірінші басылған басқару элементін шығарып, шығу.";
 "cli.controller.watch.output" = "Виртуалды геймпад жіберетін мәндерді де шығарады. Стиктің Y осі HID есебіндегідей төмен бағытталған.";
 "cli.controller.watch.no_input" = "Енгізу алынған жоқ.";

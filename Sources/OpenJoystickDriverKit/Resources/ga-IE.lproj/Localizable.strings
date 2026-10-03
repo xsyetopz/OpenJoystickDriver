@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "Tá %@ ar fionraí cheana.";
 "cli.controller.suspend.done" = "Cuireadh %@ ar fionraí.";
 "cli.controller.watch.abstract" = "Priontáil staid ionchuir rialtóra gach uair a athraíonn sí.";
+"cli.controller.watch.all" = "Faigh faire ar gach rialtóir, agus tuairiscigh gach ceann a nasctar nó a dhínasctar.";
+"cli.controller.watch.all_started" = "Ag faire ar gach rialtóir. Brúigh cnaipí an rialtóra.";
+"cli.controller.watch.connected" = "%@ nasctha: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ dínasctha";
 "cli.controller.watch.discussion" = "Le --json, priontálann sé réad JSON amháin ar gach líne. Pointeálann Y an bhata suas. Le --first-press, priontálann sé an chéad rialú a brúdh agus scoireann sé; teipeann air má théann --duration thart ar dtús.";
+"cli.controller.watch.discussion.all" = "Le --all, tosaíonn gach líne le ID an rialtóra, agus tuairiscíonn líne gach rialtóir a nasctar nó a dhínasctar. Tuairiscíonn na chéad línte na rialtóirí atá nasctha cheana.";
+"cli.controller.watch.error.first_press_all" = "Teastaíonn CONTROLLER ó --first-press; ní oibríonn sé le --all.";
+"cli.controller.watch.error.target" = "Tabhair CONTROLLER nó --all, ach ní an dá cheann.";
 "cli.controller.watch.first_press" = "Priontáil an chéad rialú a brúdh, ansin scoir.";
 "cli.controller.watch.output" = "Priontáil freisin an méid a sheolann an gamepad fíorúil. Díríonn ais Y a mhaide síos, mar atá sa tuairisc HID.";
 "cli.controller.watch.no_input" = "Níor fuarthas aon ionchur.";

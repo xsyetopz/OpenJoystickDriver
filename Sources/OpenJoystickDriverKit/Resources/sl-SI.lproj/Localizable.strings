@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ je že začasno ustavljen.";
 "cli.controller.suspend.done" = "%@ začasno ustavljen.";
 "cli.controller.watch.abstract" = "Izpiše stanje vnosa krmilnika ob vsaki spremembi.";
+"cli.controller.watch.all" = "Opazuje vse krmilnike in sporoči vsak krmilnik, ki se poveže ali odklopi.";
+"cli.controller.watch.all_started" = "Opazovanje vseh krmilnikov. Pritisnite gumbe krmilnika.";
+"cli.controller.watch.connected" = "%@ povezan: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ odklopljen";
 "cli.controller.watch.discussion" = "Z --json izpiše po en objekt JSON v vrstici. Os Y palice kaže navzgor. Z --first-press izpiše prvi pritisnjeni upravljalni element in konča; spodleti, če --duration poteče prej.";
+"cli.controller.watch.discussion.all" = "Z --all se vsaka vrstica začne z ID-jem krmilnika, vrstica pa sporoči vsak krmilnik, ki se poveže ali odklopi. Prve vrstice sporočajo krmilnike, ki so že povezani.";
+"cli.controller.watch.error.first_press_all" = "--first-press potrebuje CONTROLLER; z --all ne deluje.";
+"cli.controller.watch.error.target" = "Podajte CONTROLLER ali --all, ne pa obeh.";
 "cli.controller.watch.first_press" = "Izpiše prvi pritisnjeni upravljalni element, nato konča.";
 "cli.controller.watch.output" = "Izpiši tudi, kaj pošilja navidezni igralni plošček. Os Y njegove palice kaže navzdol, kot v poročilu HID.";
 "cli.controller.watch.no_input" = "Noben vnos ni bil prejet.";

@@ -544,7 +544,7 @@
 			"$ref": "#/$defs/sharedJoyConPair"
 		},
 		"controllerWatch": {
-			"description": "With --first-press, the first control pressed; with --output, one controller state and the virtual gamepad's values per line; otherwise one controller state per line.",
+			"description": "With --first-press, the first control pressed; with --all, one event per line for every controller; with --output, one controller state and the virtual gamepad's values per line; otherwise one controller state per line.",
 			"oneOf": [
 				{
 					"type": "object",
@@ -588,6 +588,74 @@
 							"$ref": "#/$defs/sharedVirtualOutput"
 						}
 					}
+				},
+				{
+					"description": "With --all: a controller that connected, including those connected when the command starts; its input changes; and its disconnection.",
+					"oneOf": [
+						{
+							"type": "object",
+							"required": [
+								"controller",
+								"id",
+								"type"
+							],
+							"additionalProperties": false,
+							"properties": {
+								"type": {
+									"const": "connected"
+								},
+								"id": {
+									"type": "string",
+									"description": "The ID from ojd controller list."
+								},
+								"controller": {
+									"$ref": "#/$defs/controllerList/properties/controllers/items"
+								}
+							}
+						},
+						{
+							"type": "object",
+							"required": [
+								"id",
+								"input",
+								"type"
+							],
+							"additionalProperties": false,
+							"properties": {
+								"type": {
+									"const": "input"
+								},
+								"id": {
+									"type": "string",
+									"description": "The ID from ojd controller list."
+								},
+								"input": {
+									"$ref": "#/$defs/sharedControllerState"
+								},
+								"output": {
+									"description": "With --output. Absent when the controller is not published.",
+									"$ref": "#/$defs/sharedVirtualOutput"
+								}
+							}
+						},
+						{
+							"type": "object",
+							"required": [
+								"id",
+								"type"
+							],
+							"additionalProperties": false,
+							"properties": {
+								"type": {
+									"const": "disconnected"
+								},
+								"id": {
+									"type": "string",
+									"description": "The ID from ojd controller list."
+								}
+							}
+						}
+					]
 				}
 			]
 		},

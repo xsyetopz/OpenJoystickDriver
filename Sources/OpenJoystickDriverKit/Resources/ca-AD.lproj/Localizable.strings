@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ ja està suspès.";
 "cli.controller.suspend.done" = "%@ suspès.";
 "cli.controller.watch.abstract" = "Mostra l’estat d’entrada d’un comandament cada cop que canvia.";
+"cli.controller.watch.all" = "Observa tots els comandaments i informa de cadascun que es connecta o es desconnecta.";
+"cli.controller.watch.all_started" = "Observant tots els comandaments. Premeu botons del comandament.";
+"cli.controller.watch.connected" = "%@ connectat: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ desconnectat";
 "cli.controller.watch.discussion" = "Amb --json, mostra un objecte JSON per línia. L’eix Y del joystick apunta amunt. Amb --first-press, mostra el primer control premut i surt; falla si --duration s’esgota abans.";
+"cli.controller.watch.discussion.all" = "Amb --all, cada línia comença amb l’ID del comandament, i una línia informa de cada comandament que es connecta o es desconnecta. Les primeres línies informen dels comandaments ja connectats.";
+"cli.controller.watch.error.first_press_all" = "--first-press necessita un CONTROLLER; no funciona amb --all.";
+"cli.controller.watch.error.target" = "Indiqueu un CONTROLLER o --all, però no tots dos.";
 "cli.controller.watch.first_press" = "Mostra el primer control premut i surt.";
 "cli.controller.watch.output" = "Mostra també el que envia el comandament virtual. L’eix Y de la palanca apunta avall, com a l’informe HID.";
 "cli.controller.watch.no_input" = "No s’ha rebut cap entrada.";

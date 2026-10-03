@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ вече е спрян.";
 "cli.controller.suspend.done" = "%@ е спрян.";
 "cli.controller.watch.abstract" = "Извежда състоянието на входа на контролер при всяка промяна.";
+"cli.controller.watch.all" = "Наблюдава всеки контролер и съобщава за всеки, който се свързва или изключва.";
+"cli.controller.watch.all_started" = "Наблюдение на всеки контролер. Натискайте бутони на контролера.";
+"cli.controller.watch.connected" = "%@ е свързан: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ е изключен";
 "cli.controller.watch.discussion" = "С --json извежда по един JSON обект на ред. Оста Y на стика сочи нагоре. С --first-press извежда първата натисната контрола и излиза; завършва с грешка, ако --duration изтече първо.";
+"cli.controller.watch.discussion.all" = "С --all всеки ред започва с ID на контролера, а ред съобщава за всеки контролер, който се свързва или изключва. Първите редове съобщават за вече свързаните контролери.";
+"cli.controller.watch.error.first_press_all" = "--first-press изисква CONTROLLER; не работи с --all.";
+"cli.controller.watch.error.target" = "Задайте CONTROLLER или --all, но не и двете.";
 "cli.controller.watch.first_press" = "Извежда първата натисната контрола и излиза.";
 "cli.controller.watch.output" = "Извежда и това, което изпраща виртуалният геймпад. Оста Y на стика сочи надолу, както в HID отчета.";
 "cli.controller.watch.no_input" = "Не е получен вход.";

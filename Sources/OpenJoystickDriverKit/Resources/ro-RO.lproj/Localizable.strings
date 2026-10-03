@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ este deja suspendat.";
 "cli.controller.suspend.done" = "%@ a fost suspendat.";
 "cli.controller.watch.abstract" = "Afișează starea de intrare a unui controller la fiecare schimbare.";
+"cli.controller.watch.all" = "Urmărește toate controllerele și raportează fiecare controller care se conectează sau se deconectează.";
+"cli.controller.watch.all_started" = "Se urmăresc toate controllerele. Apăsați butoanele controllerului.";
+"cli.controller.watch.connected" = "%@ conectat: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ deconectat";
 "cli.controller.watch.discussion" = "Cu --json, afișează un obiect JSON pe linie. Axa Y a stickului indică în sus. Cu --first-press, afișează primul control apăsat și iese; eșuează dacă --duration expiră mai întâi.";
+"cli.controller.watch.discussion.all" = "Cu --all, fiecare linie începe cu ID-ul controllerului, iar o linie raportează fiecare controller care se conectează sau se deconectează. Primele linii raportează controllerele deja conectate.";
+"cli.controller.watch.error.first_press_all" = "--first-press necesită un CONTROLLER; nu funcționează cu --all.";
+"cli.controller.watch.error.target" = "Indicați un CONTROLLER sau --all, dar nu pe amândouă.";
 "cli.controller.watch.first_press" = "Afișează primul control apăsat, apoi iese.";
 "cli.controller.watch.output" = "Afișează și ce trimite gamepadul virtual. Axa Y a manetei sale indică în jos, ca în raportul HID.";
 "cli.controller.watch.no_input" = "Nu s-a primit nicio intrare.";

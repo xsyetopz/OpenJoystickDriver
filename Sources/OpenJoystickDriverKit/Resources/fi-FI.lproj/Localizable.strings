@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ on jo keskeytetty.";
 "cli.controller.suspend.done" = "Keskeytettiin: %@.";
 "cli.controller.watch.abstract" = "Tulosta ohjaimen syötetila aina, kun se muuttuu.";
+"cli.controller.watch.all" = "Seuraa kaikkia ohjaimia ja ilmoita jokainen ohjain, joka kytketään tai irrotetaan.";
+"cli.controller.watch.all_started" = "Seurataan kaikkia ohjaimia. Paina ohjaimen painikkeita.";
+"cli.controller.watch.connected" = "%@ kytketty: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ irrotettu";
 "cli.controller.watch.discussion" = "Valinnalla --json tulostaa yhden JSON-objektin riviä kohden. Sauvan Y-suunta osoittaa ylös. Valinnalla --first-press tulostaa ensimmäisen painetun ohjaimen ja poistuu; se epäonnistuu, jos --duration kuluu ensin.";
+"cli.controller.watch.discussion.all" = "Kun käytetään --all, jokainen rivi alkaa ohjaimen tunnuksella, ja rivi ilmoittaa jokaisen ohjaimen, joka kytketään tai irrotetaan. Ensimmäiset rivit ilmoittavat jo kytketyt ohjaimet.";
+"cli.controller.watch.error.first_press_all" = "--first-press vaatii CONTROLLER-arvon; se ei toimi valinnan --all kanssa.";
+"cli.controller.watch.error.target" = "Anna CONTROLLER tai --all, mutta ei molempia.";
 "cli.controller.watch.first_press" = "Tulosta ensimmäinen painettu ohjain ja poistu.";
 "cli.controller.watch.output" = "Tulosta myös se, mitä virtuaalinen peliohjain lähettää. Sen sauvan Y-akseli osoittaa alas, kuten HID-raportissa.";
 "cli.controller.watch.no_input" = "Syötettä ei vastaanotettu.";

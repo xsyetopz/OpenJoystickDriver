@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ is al onderbroken.";
 "cli.controller.suspend.done" = "%@ onderbroken.";
 "cli.controller.watch.abstract" = "Toont de invoerstatus van een controller telkens wanneer die verandert.";
+"cli.controller.watch.all" = "Volgt elke controller en meldt elke controller die verbinding maakt of verbreekt.";
+"cli.controller.watch.all_started" = "Alle controllers worden gevolgd. Druk op knoppen van de controller.";
+"cli.controller.watch.connected" = "%@ verbonden: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ losgekoppeld";
 "cli.controller.watch.discussion" = "Met --json wordt één JSON-object per regel getoond. Stick Y wijst omhoog. Met --first-press wordt het eerste ingedrukte bedieningselement getoond en stopt het commando; het mislukt als --duration eerst verstrijkt.";
+"cli.controller.watch.discussion.all" = "Met --all begint elke regel met de controller-ID, en een regel meldt elke controller die verbinding maakt of verbreekt. De eerste regels melden de controllers die al verbonden zijn.";
+"cli.controller.watch.error.first_press_all" = "--first-press heeft een CONTROLLER nodig; het werkt niet met --all.";
+"cli.controller.watch.error.target" = "Geef een CONTROLLER of --all op, maar niet beide.";
 "cli.controller.watch.first_press" = "Toont het eerste ingedrukte bedieningselement en stopt dan.";
 "cli.controller.watch.output" = "Toon ook wat de virtuele gamepad verstuurt. De Y-as van de stick wijst omlaag, zoals in het HID-rapport.";
 "cli.controller.watch.no_input" = "Geen invoer ontvangen.";

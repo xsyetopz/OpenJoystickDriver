@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ ist bereits angehalten.";
 "cli.controller.suspend.done" = "%@ angehalten.";
 "cli.controller.watch.abstract" = "Den Eingabezustand eines Controllers bei jeder Änderung ausgeben.";
+"cli.controller.watch.all" = "Alle Controller beobachten und jeden melden, der verbunden oder getrennt wird.";
+"cli.controller.watch.all_started" = "Alle Controller werden beobachtet. Drücke Tasten am Controller.";
+"cli.controller.watch.connected" = "%@ verbunden: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ getrennt";
 "cli.controller.watch.discussion" = "Mit --json wird ein JSON-Objekt pro Zeile ausgegeben. Stick-Y zeigt nach oben. Mit --first-press wird das erste gedrückte Bedienelement ausgegeben und beendet; es schlägt fehl, wenn --duration zuerst abläuft.";
+"cli.controller.watch.discussion.all" = "Mit --all beginnt jede Zeile mit der Controller-ID, und eine Zeile meldet jeden Controller, der verbunden oder getrennt wird. Die ersten Zeilen melden die bereits verbundenen Controller.";
+"cli.controller.watch.error.first_press_all" = "--first-press benötigt einen CONTROLLER; es funktioniert nicht mit --all.";
+"cli.controller.watch.error.target" = "Gib einen CONTROLLER oder --all an, aber nicht beides.";
 "cli.controller.watch.first_press" = "Das erste gedrückte Bedienelement ausgeben, dann beenden.";
 "cli.controller.watch.output" = "Gibt auch aus, was das virtuelle Gamepad sendet. Die Stick-Y-Achse zeigt nach unten, wie im HID-Bericht.";
 "cli.controller.watch.no_input" = "Keine Eingabe empfangen.";

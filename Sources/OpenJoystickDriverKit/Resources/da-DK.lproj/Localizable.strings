@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ er allerede sat på pause.";
 "cli.controller.suspend.done" = "%@ er sat på pause.";
 "cli.controller.watch.abstract" = "Udskriv en controllers inputtilstand, hver gang den ændres.";
+"cli.controller.watch.all" = "Overvåg alle controllere, og rapportér hver controller, der tilsluttes eller frakobles.";
+"cli.controller.watch.all_started" = "Overvåger alle controllere. Tryk på knapperne på controlleren.";
+"cli.controller.watch.connected" = "%@ tilsluttet: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ frakoblet";
 "cli.controller.watch.discussion" = "Med --json udskrives ét JSON-objekt pr. linje. Stick Y peger opad. Med --first-press udskrives den første betjening, der trykkes på, og programmet afsluttes; det fejler, hvis --duration udløber først.";
+"cli.controller.watch.discussion.all" = "Med --all begynder hver linje med controller-ID'et, og en linje rapporterer hver controller, der tilsluttes eller frakobles. De første linjer rapporterer de controllere, der allerede er tilsluttet.";
+"cli.controller.watch.error.first_press_all" = "--first-press kræver en CONTROLLER; det virker ikke sammen med --all.";
+"cli.controller.watch.error.target" = "Angiv en CONTROLLER eller --all, men ikke begge dele.";
 "cli.controller.watch.first_press" = "Udskriv den første betjening, der trykkes på, og afslut.";
 "cli.controller.watch.output" = "Udskriv også det, den virtuelle gamepad sender. Dens stik-Y peger nedad, som i HID-rapporten.";
 "cli.controller.watch.no_input" = "Intet input modtaget.";

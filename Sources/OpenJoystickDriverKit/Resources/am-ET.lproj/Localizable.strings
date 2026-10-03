@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ አስቀድሞ ታግዷል።";
 "cli.controller.suspend.done" = "%@ ታግዷል።";
 "cli.controller.watch.abstract" = "የመቆጣጠሪያን የግብዓት ሁኔታ በተለወጠ ቁጥር ያትሙ።";
+"cli.controller.watch.all" = "እያንዳንዱን መቆጣጠሪያ ይከታተሉ፣ እና የሚገናኝ ወይም የሚቋረጥ እያንዳንዱን ሪፖርት ያድርጉ።";
+"cli.controller.watch.all_started" = "እያንዳንዱን መቆጣጠሪያ በመከታተል ላይ። የመቆጣጠሪያውን አዝራሮች ይጫኑ።";
+"cli.controller.watch.connected" = "%@ ተገናኝቷል፦ %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ ተቋርጧል";
 "cli.controller.watch.discussion" = "በ --json በአንድ መስመር አንድ የJSON ነገር ያትማል። የዱላ Y ወደ ላይ ያመለክታል። በ --first-press የመጀመሪያውን የተጫነ የመቆጣጠሪያ ክፍል ያትማል እና ይወጣል፤ --duration ቀድሞ ካለፈ አይሳካም።";
+"cli.controller.watch.discussion.all" = "በ--all፣ እያንዳንዱ መስመር የሚጀምረው በመቆጣጠሪያው መለያ ሲሆን፣ አንድ መስመር የሚገናኝ ወይም የሚቋረጥ እያንዳንዱን መቆጣጠሪያ ሪፖርት ያደርጋል። የመጀመሪያዎቹ መስመሮች ቀድሞ የተገናኙትን መቆጣጠሪያዎች ሪፖርት ያደርጋሉ።";
+"cli.controller.watch.error.first_press_all" = "--first-press CONTROLLER ይፈልጋል፤ ከ--all ጋር አይሰራም።";
+"cli.controller.watch.error.target" = "CONTROLLER ወይም --all ይስጡ፣ ሁለቱንም ግን አይደለም።";
 "cli.controller.watch.first_press" = "የመጀመሪያውን የተጫነ የመቆጣጠሪያ ክፍል ያትሙ፣ ከዚያ ይውጡ።";
 "cli.controller.watch.output" = "ምናባዊው የጨዋታ መቆጣጠሪያ የሚልከውንም አትም። የዱላው Y ልክ እንደ HID ሪፖርቱ ወደ ታች ያመለክታል።";
 "cli.controller.watch.no_input" = "ምንም ግብዓት አልደረሰም።";

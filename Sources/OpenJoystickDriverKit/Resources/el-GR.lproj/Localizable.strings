@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "Το %@ είναι ήδη σε αναστολή.";
 "cli.controller.suspend.done" = "Το %@ τέθηκε σε αναστολή.";
 "cli.controller.watch.abstract" = "Εκτυπώνει την κατάσταση εισόδου ενός χειριστηρίου κάθε φορά που αλλάζει.";
+"cli.controller.watch.all" = "Παρακολούθηση κάθε χειριστηρίου και αναφορά κάθε χειριστηρίου που συνδέεται ή αποσυνδέεται.";
+"cli.controller.watch.all_started" = "Παρακολούθηση όλων των χειριστηρίων. Πατήστε κουμπιά του χειριστηρίου.";
+"cli.controller.watch.connected" = "%@ συνδέθηκε: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ αποσυνδέθηκε";
 "cli.controller.watch.discussion" = "Με --json, εκτυπώνει ένα αντικείμενο JSON ανά γραμμή. Ο άξονας Y του μοχλού δείχνει προς τα πάνω. Με --first-press, εκτυπώνει το πρώτο στοιχείο ελέγχου που πατήθηκε και τερματίζει· αποτυγχάνει αν περάσει πρώτα το --duration.";
+"cli.controller.watch.discussion.all" = "Με το --all, κάθε γραμμή ξεκινά με το αναγνωριστικό του χειριστηρίου και μια γραμμή αναφέρει κάθε χειριστήριο που συνδέεται ή αποσυνδέεται. Οι πρώτες γραμμές αναφέρουν τα χειριστήρια που είναι ήδη συνδεδεμένα.";
+"cli.controller.watch.error.first_press_all" = "Το --first-press απαιτεί ένα CONTROLLER· δεν λειτουργεί με το --all.";
+"cli.controller.watch.error.target" = "Δώστε ένα CONTROLLER ή --all, αλλά όχι και τα δύο.";
 "cli.controller.watch.first_press" = "Εκτύπωση του πρώτου στοιχείου ελέγχου που πατήθηκε και έξοδος.";
 "cli.controller.watch.output" = "Εμφανίζει επίσης ό,τι στέλνει το εικονικό gamepad. Ο άξονας Y του μοχλού δείχνει προς τα κάτω, όπως στην αναφορά HID.";
 "cli.controller.watch.no_input" = "Δεν ελήφθη είσοδος.";

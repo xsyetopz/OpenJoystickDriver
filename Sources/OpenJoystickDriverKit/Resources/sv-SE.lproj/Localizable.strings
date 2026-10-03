@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ är redan pausad.";
 "cli.controller.suspend.done" = "Pausade %@.";
 "cli.controller.watch.abstract" = "Skriver ut en kontrolls indatatillstånd varje gång det ändras.";
+"cli.controller.watch.all" = "Bevakar varje kontroll och rapporterar varje som ansluts eller kopplas från.";
+"cli.controller.watch.all_started" = "Bevakar alla kontroller. Tryck på knappar på kontrollen.";
+"cli.controller.watch.connected" = "%@ ansluten: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ frånkopplad";
 "cli.controller.watch.discussion" = "Med --json skrivs ett JSON-objekt per rad. Spak Y pekar uppåt. Med --first-press skrivs det första reglaget som trycks ut och kommandot avslutas; det misslyckas om --duration löper ut först.";
+"cli.controller.watch.discussion.all" = "Med --all börjar varje rad med kontrollens ID, och en rad rapporterar varje kontroll som ansluts eller kopplas från. De första raderna rapporterar kontroller som redan är anslutna.";
+"cli.controller.watch.error.first_press_all" = "--first-press kräver en CONTROLLER; det fungerar inte med --all.";
+"cli.controller.watch.error.target" = "Ange en CONTROLLER eller --all, men inte båda.";
 "cli.controller.watch.first_press" = "Skriver ut det första reglaget som trycks och avslutar sedan.";
 "cli.controller.watch.output" = "Skriv även ut vad den virtuella handkontrollen skickar. Spakens Y-axel pekar nedåt, som i HID-rapporten.";
 "cli.controller.watch.no_input" = "Inga indata togs emot.";

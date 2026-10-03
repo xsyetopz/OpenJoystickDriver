@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ је већ суспендован.";
 "cli.controller.suspend.done" = "%@ је суспендован.";
 "cli.controller.watch.abstract" = "Испиши стање улаза контролера сваки пут када се промени.";
+"cli.controller.watch.all" = "Прати сваки контролер и пријави сваки који се повеже или прекине везу.";
+"cli.controller.watch.all_started" = "Праћење сваког контролера. Притисните дугмад на контролеру.";
+"cli.controller.watch.connected" = "%@ повезан: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ прекинуо везу";
 "cli.controller.watch.discussion" = "Са --json исписује један JSON објекат по реду. Y оса аналогне палице показује нагоре. Са --first-press исписује прву притиснуту контролу и излази; завршава се неуспехом ако --duration истекне раније.";
+"cli.controller.watch.discussion.all" = "Са --all сваки ред почиње ID-јем контролера, а ред пријављује сваки контролер који се повеже или прекине везу. Први редови пријављују контролере који су већ повезани.";
+"cli.controller.watch.error.first_press_all" = "--first-press захтева CONTROLLER; не ради са --all.";
+"cli.controller.watch.error.target" = "Наведите CONTROLLER или --all, али не оба.";
 "cli.controller.watch.first_press" = "Испиши прву притиснуту контролу, па изађи.";
 "cli.controller.watch.output" = "Испиши и оно што шаље виртуелни гејмпад. Оса Y његове палице показује надоле, као у HID извештају.";
 "cli.controller.watch.no_input" = "Улаз није примљен.";

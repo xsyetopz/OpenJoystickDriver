@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ ya está suspendido.";
 "cli.controller.suspend.done" = "Se suspendió %@.";
 "cli.controller.watch.abstract" = "Imprime el estado de entrada de un control cada vez que cambia.";
+"cli.controller.watch.all" = "Observa todos los controles e informa de cada uno que se conecta o desconecta.";
+"cli.controller.watch.all_started" = "Observando todos los controles. Presioná botones del control.";
+"cli.controller.watch.connected" = "%@ conectado: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ desconectado";
 "cli.controller.watch.discussion" = "Con --json, imprime un objeto JSON por línea. El eje Y del stick apunta hacia arriba. Con --first-press, imprime el primer control presionado y termina; falla si pasa --duration antes.";
+"cli.controller.watch.discussion.all" = "Con --all, cada línea empieza con el ID del control, y una línea informa de cada control que se conecta o desconecta. Las primeras líneas informan de los controles ya conectados.";
+"cli.controller.watch.error.first_press_all" = "--first-press necesita un CONTROLLER; no funciona con --all.";
+"cli.controller.watch.error.target" = "Indicá un CONTROLLER o --all, pero no ambos.";
 "cli.controller.watch.first_press" = "Imprime el primer control presionado y termina.";
 "cli.controller.watch.output" = "Muestra también lo que envía el control virtual. El eje Y de su joystick apunta hacia abajo, como en el informe HID.";
 "cli.controller.watch.no_input" = "No se recibió entrada.";

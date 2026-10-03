@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ lea juo bisuhuvvon.";
 "cli.controller.suspend.done" = "%@ bisuhuvvui.";
 "cli.controller.watch.abstract" = "Prentte stivrejeaddji sisaboahtodili juohke háve go dat rievdá.";
+"cli.controller.watch.all" = "Čuovvu buot stivrejeaddjiid ja dieđit juohke stivrejeaddjis mii čatnasa dahje čuvgejuvvo.";
+"cli.controller.watch.all_started" = "Čuovvu buot stivrejeaddjiid. Deaddil stivrejeaddji boalddiid.";
+"cli.controller.watch.connected" = "%@ čatnasan: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ čuvgejuvvon";
 "cli.controller.watch.discussion" = "--json:in prentte ovtta JSON-objeavtta juohke ráiddus. Stickka Y čujuha bajás. --first-press:in čálle vuosttaš deaddiluvvon stivrenelemeantta ja gohtta; dat ii lihkostuva jos --duration nohkka ovdal.";
+"cli.controller.watch.discussion.all" = "--all:in juohke linnjá álgá stivrejeaddji ID:in, ja linnjá dieđiha juohke stivrejeaddjis mii čatnasa dahje čuvgejuvvo. Vuosttaš linnját dieđihit stivrejeaddjiin mat leat juo čatnasan.";
+"cli.controller.watch.error.first_press_all" = "--first-press dárbbaša CONTROLLER; dat ii doaimma --all:in.";
+"cli.controller.watch.error.target" = "Addde CONTROLLER dahje --all, muhto ii goabbáge.";
 "cli.controller.watch.first_press" = "Prentte vuosttaš deaddiluvvon stivrenelemeantta, de gohtte.";
 "cli.controller.watch.output" = "Čális maid dan maid virtuála speallanbáddi sádde. Gieđa Y-ákse čujuha vulos, nugo HID-raporttas.";
 "cli.controller.watch.no_input" = "Ii leat vuostáiváldán sisaboahtu.";

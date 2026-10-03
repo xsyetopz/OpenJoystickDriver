@@ -537,10 +537,66 @@ struct ControllerCommandTests {
     #expect(!result.standardOutput.isEmpty)
   }
 
+  @Test
+  func watchAllReportsControllersThatConnectAndDisconnect() async throws {
+    let lists = Counter()
+    let unit = "U-0123456789abcdef"
+    // pad-2 is connected for the first device list only.
+    let service = try FakeService(
+      devices: {
+        lists.next() == 0
+          ? [FakeService.device(id: "pad-1"), FakeService.device(id: "pad-2", unit: unit)]
+          : [FakeService.device(id: "pad-1")]
+      },
+      respond: { method, _ in
+        method == .getControllerState ? doubleEncoded(ControllerState(pressed: [.faceSouth])) : nil
+      }
+    )
+    let result = await service.run(["controller", "watch", "--all", "--duration", "0.4", "--json"])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    let lines = try result.standardOutput.split(separator: "\n").map {
+      try #require(try JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Any])
+    }
+    let events = lines.map { "\($0["type"] ?? "") \($0["id"] ?? "")" }
+    #expect(
+      events == [
+        "connected pad-1", "connected pad-2", "input pad-1", "input pad-2", "disconnected pad-2",
+      ]
+    )
+    let connected = try #require(lines[1]["controller"] as? [String: Any])
+    #expect(connected["unit"] as? String == unit)
+    let input = try #require(lines[2]["input"] as? [String: Any])
+    #expect(input["pressed"] as? [String] == ["face-south"])
+  }
+
+  @Test
+  func watchAllPrefixesEachHumanAndPlainLineWithTheController() async throws {
+    let input = ControllerState(pressed: [.faceSouth])
+    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+      method == .getControllerState ? doubleEncoded(input) : nil
+    }
+    let human = await service.run(["controller", "watch", "--all", "--duration", "0.1"])
+    let plain = await service.run(["controller", "watch", "--all", "--duration", "0.1", "--plain"])
+
+    #expect(human.code == 0, "\(human.standardError)")
+    #expect(
+      human.standardOutput
+        == "pad-1 connected: Test Pad (045E:028E)\npad-1 "
+        + ControllerWatchCommand.formatted(input) + "\n"
+    )
+    let rows = plain.standardOutput.split(separator: "\n").map {
+      $0.split(separator: "\t", omittingEmptySubsequences: false).map(String.init)
+    }
+    #expect(rows.first == ["connected", "pad-1", "045E:028E", "Test Pad"])
+    #expect(rows.last == ["input", "pad-1"] + ControllerWatchCommand.plainRow(input))
+  }
+
   @Test(arguments: [
     ["controller", "rumble", "pad-1", "--duration", "9"], ["controller", "player", "pad-1", "7"],
     ["controller", "light", "pad-1"], ["controller", "light", "pad-1", "--color", "red"],
-    ["controller", "watch", "pad-1", "--duration", "0"],
+    ["controller", "watch", "pad-1", "--duration", "0"], ["controller", "watch"],
+    ["controller", "watch", "pad-1", "--all"], ["controller", "watch", "--all", "--first-press"],
   ])
   func invalidOperandsExitSixtyFourBeforeAnyRequest(arguments: [String]) async throws {
     let service = try FakeService(devices: [FakeService.device(id: "pad-1")])

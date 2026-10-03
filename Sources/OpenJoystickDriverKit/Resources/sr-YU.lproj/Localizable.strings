@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ je već obustavljen.";
 "cli.controller.suspend.done" = "%@ je obustavljen.";
 "cli.controller.watch.abstract" = "Ispisuje stanje unosa kontrolera svaki put kada se promeni.";
+"cli.controller.watch.all" = "Prati svaki kontroler i prijavi svaki koji se poveže ili prekine vezu.";
+"cli.controller.watch.all_started" = "Praćenje svakog kontrolera. Pritisnite dugmad na kontroleru.";
+"cli.controller.watch.connected" = "%@ povezan: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ prekinuo vezu";
 "cli.controller.watch.discussion" = "Uz --json ispisuje po jedan JSON objekat u redu. Y osa analogne palice pokazuje nagore. Uz --first-press ispisuje prvi pritisnuti upravljački element i izlazi; ne uspeva ako --duration istekne prvi.";
+"cli.controller.watch.discussion.all" = "Sa --all svaki red počinje ID-jem kontrolera, a red prijavljuje svaki kontroler koji se poveže ili prekine vezu. Prvi redovi prijavljuju kontrolere koji su već povezani.";
+"cli.controller.watch.error.first_press_all" = "--first-press zahteva CONTROLLER; ne radi sa --all.";
+"cli.controller.watch.error.target" = "Navedite CONTROLLER ili --all, ali ne oba.";
 "cli.controller.watch.first_press" = "Ispisuje prvi pritisnuti upravljački element, pa izlazi.";
 "cli.controller.watch.output" = "Ispiši i ono što šalje virtuelni gejmpad. Osa Y njegove palice pokazuje nadole, kao u HID izveštaju.";
 "cli.controller.watch.no_input" = "Nijedan unos nije primljen.";

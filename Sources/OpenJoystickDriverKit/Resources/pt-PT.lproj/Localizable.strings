@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ já está suspenso.";
 "cli.controller.suspend.done" = "%@ suspenso.";
 "cli.controller.watch.abstract" = "Imprime o estado de entrada de um comando sempre que muda.";
+"cli.controller.watch.all" = "Observa todos os comandos e indica cada um que se liga ou desliga.";
+"cli.controller.watch.all_started" = "A observar todos os comandos. Prima os botões do comando.";
+"cli.controller.watch.connected" = "%@ ligado: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ desligado";
 "cli.controller.watch.discussion" = "Com --json, imprime um objeto JSON por linha. O Y do stick aponta para cima. Com --first-press, imprime o primeiro controlo premido e termina; falha se --duration passar primeiro.";
+"cli.controller.watch.discussion.all" = "Com --all, cada linha começa com o ID do comando, e uma linha indica cada comando que se liga ou desliga. As primeiras linhas indicam os comandos já ligados.";
+"cli.controller.watch.error.first_press_all" = "--first-press precisa de um CONTROLLER; não funciona com --all.";
+"cli.controller.watch.error.target" = "Indique um CONTROLLER ou --all, mas não ambos.";
 "cli.controller.watch.first_press" = "Imprime o primeiro controlo premido e termina.";
 "cli.controller.watch.output" = "Mostra também o que o comando virtual envia. O eixo Y do manípulo aponta para baixo, como no relatório HID.";
 "cli.controller.watch.no_input" = "Nenhuma entrada recebida.";

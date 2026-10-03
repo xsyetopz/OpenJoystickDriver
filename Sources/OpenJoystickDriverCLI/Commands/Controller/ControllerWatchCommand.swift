@@ -79,14 +79,30 @@ struct ControllerWatchCommand: AsyncParsableCommand {
       "cli.controller.watch.discussion",
       "With --json, prints one JSON object per line. Stick Y points up. With --first-press, "
         + "prints the first control pressed and exits; it fails when --duration passes first."
-    )
+    ) + " "
+      + CLILocalized.text(
+        "cli.controller.watch.discussion.all",
+        "With --all, each line starts with the controller ID, and a line reports each controller "
+          + "that connects or disconnects. The first lines report the controllers already "
+          + "connected."
+      )
   )
 
   @OptionGroup
   var global: GlobalOptions
 
   @Argument(help: controllerArgumentHelp)
-  var controller: ControllerSelector
+  var controller: ControllerSelector?
+
+  @Flag(
+    help: ArgumentHelp(
+      CLILocalized.text(
+        "cli.controller.watch.all",
+        "Watch every controller, and report each one that connects or disconnects."
+      )
+    )
+  )
+  var all = false
 
   @Option(help: durationHelp)
   var duration: Double?
@@ -117,10 +133,29 @@ struct ControllerWatchCommand: AsyncParsableCommand {
     let output: ApplicationServiceVirtualOutputState?
   }
 
-  func validate() throws { try validateDuration(duration) }
+  func validate() throws {
+    try validateDuration(duration)
+    if all == (controller != nil) {
+      throw ValidationError(
+        CLILocalized.text(
+          "cli.controller.watch.error.target",
+          "Give a CONTROLLER or --all, but not both."
+        )
+      )
+    }
+    if all, firstPress {
+      throw ValidationError(
+        CLILocalized.text(
+          "cli.controller.watch.error.first_press_all",
+          "--first-press needs a CONTROLLER; it does not work with --all."
+        )
+      )
+    }
+  }
 
   func run() async throws {
     try await global.run {
+      guard let controller else { return try await watchAll() }
       try await withController(controller) { client, device in
         let timeout = CLIContext.current.requestTimeout
         let read: @Sendable () async throws -> ControllerState? = {

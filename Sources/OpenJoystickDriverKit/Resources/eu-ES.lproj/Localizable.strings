@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ etenda dago dagoeneko.";
 "cli.controller.suspend.done" = "%@ eten da.";
 "cli.controller.watch.abstract" = "Inprimatu agintearen sarrera-egoera aldatzen den bakoitzean.";
+"cli.controller.watch.all" = "Behatu agintzaile guztiak, eta jakinarazi konektatzen edo deskonektatzen den bakoitza.";
+"cli.controller.watch.all_started" = "Agintzaile guztiak behatzen. Sakatu aginteko botoiak.";
+"cli.controller.watch.connected" = "%@ konektatuta: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ deskonektatuta";
 "cli.controller.watch.discussion" = "--json erabiliz gero, JSON objektu bat erakusten du lerroko. Palankaren Y gorantz doa. --first-press erabiliz gero, sakatutako lehen kontrola erakusten du eta irteten da; huts egiten du --duration lehenago igarotzen bada.";
+"cli.controller.watch.discussion.all" = "--all erabiliz gero, lerro bakoitza aginteko IDarekin hasten da, eta lerro batek konektatzen edo deskonektatzen den agintzaile bakoitza jakinarazten du. Lehen lerroek lehendik konektatuta dauden agintzaileak jakinarazten dituzte.";
+"cli.controller.watch.error.first_press_all" = "--first-press aginterako CONTROLLER behar du; ez dabil --all-ekin.";
+"cli.controller.watch.error.target" = "Eman CONTROLLER bat edo --all, baina ez biak.";
 "cli.controller.watch.first_press" = "Inprimatu sakatutako lehen kontrola, eta gero irten.";
 "cli.controller.watch.output" = "Inprimatu gamepad birtualak bidaltzen duena ere. Makilaren Y ardatzak behera egiten du, HID txostenean bezala.";
 "cli.controller.watch.no_input" = "Ez da sarrerarik jaso.";

@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ on juba peatatud.";
 "cli.controller.suspend.done" = "%@ peatati.";
 "cli.controller.watch.abstract" = "Prindi kontrolleri sisendi olek iga muutuse korral.";
+"cli.controller.watch.all" = "Jälgi kõiki kontrollereid ja anna teada igaühest, mis ühendatakse või lahutatakse.";
+"cli.controller.watch.all_started" = "Jälgin kõiki kontrollereid. Vajuta kontrolleri nuppe.";
+"cli.controller.watch.connected" = "%@ ühendatud: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ lahutatud";
 "cli.controller.watch.discussion" = "Võtmega --json prinditakse üks JSON-objekt rea kohta. Kangi Y osutab üles. Võtmega --first-press prinditakse esimene vajutatud juhtelement ja väljutakse; see ebaõnnestub, kui --duration saab enne täis.";
+"cli.controller.watch.discussion.all" = "Valikuga --all algab iga rida kontrolleri ID-ga ning rida annab teada igast kontrollerist, mis ühendatakse või lahutatakse. Esimesed read annavad teada juba ühendatud kontrolleritest.";
+"cli.controller.watch.error.first_press_all" = "--first-press vajab väärtust CONTROLLER; see ei tööta koos valikuga --all.";
+"cli.controller.watch.error.target" = "Anna CONTROLLER või --all, kuid mitte mõlemat.";
 "cli.controller.watch.first_press" = "Prindi esimene vajutatud juhtelement ja välju.";
 "cli.controller.watch.output" = "Prindi ka see, mida virtuaalne mängupult saadab. Selle pulga Y-telg osutab alla, nagu HID-aruandes.";
 "cli.controller.watch.no_input" = "Sisendit ei saadud.";

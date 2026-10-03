@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ पहले से निलंबित है।";
 "cli.controller.suspend.done" = "%@ निलंबित हो गया।";
 "cli.controller.watch.abstract" = "कंट्रोलर की इनपुट स्थिति हर बार बदलने पर प्रिंट करें।";
+"cli.controller.watch.all" = "हर कंट्रोलर को देखें, और जो कंट्रोलर कनेक्ट या डिस्कनेक्ट हो उसकी रिपोर्ट करें।";
+"cli.controller.watch.all_started" = "हर कंट्रोलर को देखा जा रहा है। कंट्रोलर के बटन दबाएँ।";
+"cli.controller.watch.connected" = "%@ कनेक्ट हुआ: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ डिस्कनेक्ट हुआ";
 "cli.controller.watch.discussion" = "--json के साथ, हर पंक्ति में एक JSON ऑब्जेक्ट प्रिंट करता है। स्टिक का Y ऊपर की ओर है। --first-press के साथ, दबाया गया पहला कंट्रोल प्रिंट करके बाहर निकल जाता है; अगर --duration पहले पूरी हो जाए तो विफल होता है।";
+"cli.controller.watch.discussion.all" = "--all के साथ, हर पंक्ति कंट्रोलर ID से शुरू होती है, और एक पंक्ति हर उस कंट्रोलर की रिपोर्ट करती है जो कनेक्ट या डिस्कनेक्ट होता है। पहली पंक्तियाँ पहले से कनेक्ट कंट्रोलरों की रिपोर्ट करती हैं।";
+"cli.controller.watch.error.first_press_all" = "--first-press को एक CONTROLLER चाहिए; यह --all के साथ काम नहीं करता।";
+"cli.controller.watch.error.target" = "एक CONTROLLER या --all दें, दोनों नहीं।";
 "cli.controller.watch.first_press" = "दबाया गया पहला कंट्रोल प्रिंट करें, फिर बाहर निकलें।";
 "cli.controller.watch.output" = "वर्चुअल गेमपैड जो भेजता है, उसे भी प्रिंट करें। उसकी स्टिक का Y अक्ष HID रिपोर्ट की तरह नीचे की ओर है।";
 "cli.controller.watch.no_input" = "कोई इनपुट नहीं मिला।";

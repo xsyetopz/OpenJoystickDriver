@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ jest już wstrzymany.";
 "cli.controller.suspend.done" = "Wstrzymano %@.";
 "cli.controller.watch.abstract" = "Wyświetlaj stan wejścia kontrolera przy każdej zmianie.";
+"cli.controller.watch.all" = "Obserwuj każdy kontroler i zgłaszaj każdy, który się połączy lub rozłączy.";
+"cli.controller.watch.all_started" = "Obserwowanie wszystkich kontrolerów. Naciskaj przyciski kontrolera.";
+"cli.controller.watch.connected" = "%@ połączony: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ rozłączony";
 "cli.controller.watch.discussion" = "Z opcją --json wyświetla jeden obiekt JSON w wierszu. Oś Y wskazuje w górę. Z opcją --first-press wyświetla pierwszy naciśnięty element i kończy; kończy się błędem, jeśli --duration upłynie wcześniej.";
+"cli.controller.watch.discussion.all" = "Z opcją --all każdy wiersz zaczyna się od identyfikatora kontrolera, a wiersz zgłasza każdy kontroler, który się połączy lub rozłączy. Pierwsze wiersze zgłaszają kontrolery już połączone.";
+"cli.controller.watch.error.first_press_all" = "--first-press wymaga CONTROLLER; nie działa z --all.";
+"cli.controller.watch.error.target" = "Podaj CONTROLLER albo --all, ale nie oba naraz.";
 "cli.controller.watch.first_press" = "Wyświetl pierwszy naciśnięty element sterujący, a potem zakończ.";
 "cli.controller.watch.output" = "Wyświetlaj też to, co wysyła wirtualny gamepad. Oś Y jego gałki wskazuje w dół, jak w raporcie HID.";
 "cli.controller.watch.no_input" = "Nie odebrano wejścia.";

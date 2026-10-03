@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ já está suspenso.";
 "cli.controller.suspend.done" = "%@ suspenso.";
 "cli.controller.watch.abstract" = "Exibir o estado de entrada de um controle sempre que ele mudar.";
+"cli.controller.watch.all" = "Observar todos os controles e informar cada um que se conecta ou desconecta.";
+"cli.controller.watch.all_started" = "Observando todos os controles. Pressione botões do controle.";
+"cli.controller.watch.connected" = "%@ conectado: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ desconectado";
 "cli.controller.watch.discussion" = "Com --json, exibe um objeto JSON por linha. O eixo Y do analógico aponta para cima. Com --first-press, exibe o primeiro controle pressionado e sai; falha se --duration passar antes.";
+"cli.controller.watch.discussion.all" = "Com --all, cada linha começa com o ID do controle, e uma linha informa cada controle que se conecta ou desconecta. As primeiras linhas informam os controles já conectados.";
+"cli.controller.watch.error.first_press_all" = "--first-press precisa de um CONTROLLER; não funciona com --all.";
+"cli.controller.watch.error.target" = "Informe um CONTROLLER ou --all, mas não ambos.";
 "cli.controller.watch.first_press" = "Exibir o primeiro controle pressionado e sair.";
 "cli.controller.watch.output" = "Mostra também o que o gamepad virtual envia. O eixo Y do analógico aponta para baixo, como no relatório HID.";
 "cli.controller.watch.no_input" = "Nenhuma entrada recebida.";

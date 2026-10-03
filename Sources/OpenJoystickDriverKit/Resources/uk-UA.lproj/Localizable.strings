@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ уже призупинено.";
 "cli.controller.suspend.done" = "%@ призупинено.";
 "cli.controller.watch.abstract" = "Виводить стан введення контролера щоразу, коли він змінюється.";
+"cli.controller.watch.all" = "Спостерігає за всіма контролерами й повідомляє про кожен, що підключається або відключається.";
+"cli.controller.watch.all_started" = "Спостереження за всіма контролерами. Натискайте кнопки контролера.";
+"cli.controller.watch.connected" = "%@ підключено: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ відключено";
 "cli.controller.watch.discussion" = "З --json виводить один об’єкт JSON на рядок. Вісь Y стіка спрямована вгору. З --first-press виводить перший натиснутий елемент керування й завершується; завершується помилкою, якщо --duration спливе раніше.";
+"cli.controller.watch.discussion.all" = "З --all кожен рядок починається з ID контролера, а рядок повідомляє про кожен контролер, що підключається або відключається. Перші рядки повідомляють про контролери, які вже підключені.";
+"cli.controller.watch.error.first_press_all" = "--first-press потребує CONTROLLER; з --all він не працює.";
+"cli.controller.watch.error.target" = "Укажіть CONTROLLER або --all, але не обидва.";
 "cli.controller.watch.first_press" = "Виводить перший натиснутий елемент керування, а потім завершується.";
 "cli.controller.watch.output" = "Також виводити те, що надсилає віртуальний геймпад. Вісь Y його стіка спрямована вниз, як у звіті HID.";
 "cli.controller.watch.no_input" = "Введення не отримано.";

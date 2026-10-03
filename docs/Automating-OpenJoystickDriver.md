@@ -40,6 +40,20 @@ Commands take a `CONTROLLER` operand. Use one of these forms:
 
 `ojd controller list --json` gives the unit ID of each controller in `unit`.
 
+## Watch controllers
+
+`ojd controller watch --all --json` reports every controller on one stream, so a program does not have to reconnect when a controller comes and goes. Each line is one JSON object with a `type` and the controller's `id` from `ojd controller list`:
+
+- `connected`: a controller connected. `controller` has the fields of an `ojd controller list` entry, including `unit`. The first lines report the controllers already connected.
+- `input`: the controller's input changed. `input` is the whole input state. With `--output`, `output` has the values of the controller's virtual gamepad.
+- `disconnected`: the controller disconnected.
+
+```shell
+ojd --no-input controller watch --all --json | jq -c 'select(.type != "input")'
+```
+
+The service is polled every 16 ms for input, and every 250 ms for connected controllers.
+
 ## Change profiles
 
 A profile is a JSON file. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields.

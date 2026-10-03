@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ er allerede suspendert.";
 "cli.controller.suspend.done" = "Suspenderte %@.";
 "cli.controller.watch.abstract" = "Skriv ut en kontrollers inndatatilstand hver gang den endres.";
+"cli.controller.watch.all" = "Overvåk alle kontrollere, og rapporter hver kontroller som kobles til eller fra.";
+"cli.controller.watch.all_started" = "Overvåker alle kontrollere. Trykk på knappene på kontrolleren.";
+"cli.controller.watch.connected" = "%@ koblet til: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ koblet fra";
 "cli.controller.watch.discussion" = "Med --json skrives ett JSON-objekt per linje. Stikkens Y-akse peker opp. Med --first-press skrives den første kontrollen som trykkes, og kommandoen avslutter; den mislykkes hvis --duration utløper først.";
+"cli.controller.watch.discussion.all" = "Med --all starter hver linje med kontroller-ID-en, og en linje rapporterer hver kontroller som kobles til eller fra. De første linjene rapporterer kontrollerne som allerede er tilkoblet.";
+"cli.controller.watch.error.first_press_all" = "--first-press trenger en CONTROLLER; det fungerer ikke med --all.";
+"cli.controller.watch.error.target" = "Oppgi en CONTROLLER eller --all, men ikke begge.";
 "cli.controller.watch.first_press" = "Skriv ut den første kontrollen som trykkes, og avslutt.";
 "cli.controller.watch.output" = "Skriv også ut det den virtuelle spillkontrolleren sender. Stikkens Y-akse peker nedover, som i HID-rapporten.";
 "cli.controller.watch.no_input" = "Ingen inndata mottatt.";

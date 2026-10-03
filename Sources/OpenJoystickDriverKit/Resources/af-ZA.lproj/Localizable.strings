@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ is reeds opgeskort.";
 "cli.controller.suspend.done" = "%@ is opgeskort.";
 "cli.controller.watch.abstract" = "Druk ’n kontroleerder se toevoertoestand elke keer as dit verander.";
+"cli.controller.watch.all" = "Hou elke kontroleerder dop en meld elkeen wat koppel of ontkoppel.";
+"cli.controller.watch.all_started" = "Hou elke kontroleerder dop. Druk knoppies op die kontroleerder.";
+"cli.controller.watch.connected" = "%@ gekoppel: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ ontkoppel";
 "cli.controller.watch.discussion" = "Met --json word een JSON-voorwerp per reël gedruk. Stok-Y wys op. Met --first-press word die eerste kontrole wat gedruk word, gedruk en dit sluit af; dit misluk as --duration eerste verstryk.";
+"cli.controller.watch.discussion.all" = "Met --all begin elke reël met die kontroleerder-ID, en 'n reël meld elke kontroleerder wat koppel of ontkoppel. Die eerste reëls meld die kontroleerders wat reeds gekoppel is.";
+"cli.controller.watch.error.first_press_all" = "--first-press benodig 'n CONTROLLER; dit werk nie met --all nie.";
+"cli.controller.watch.error.target" = "Gee 'n CONTROLLER of --all, maar nie albei nie.";
 "cli.controller.watch.first_press" = "Druk die eerste kontrole wat gedruk word, en sluit dan af.";
 "cli.controller.watch.output" = "Druk ook wat die virtuele spelbeheerder stuur. Sy stok-Y wys af, soos in die HID-verslag.";
 "cli.controller.watch.no_input" = "Geen toevoer ontvang nie.";

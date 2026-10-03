@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ è già sospeso.";
 "cli.controller.suspend.done" = "%@ sospeso.";
 "cli.controller.watch.abstract" = "Mostra lo stato di input di un controller a ogni cambiamento.";
+"cli.controller.watch.all" = "Monitora tutti i controller e segnala ciascuno che si connette o si disconnette.";
+"cli.controller.watch.all_started" = "Monitoraggio di tutti i controller. Premi i pulsanti del controller.";
+"cli.controller.watch.connected" = "%@ connesso: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ disconnesso";
 "cli.controller.watch.discussion" = "Con --json, mostra un oggetto JSON per riga. Y dello stick indica verso l’alto. Con --first-press, mostra il primo comando premuto ed esce; fallisce se --duration scade prima.";
+"cli.controller.watch.discussion.all" = "Con --all, ogni riga inizia con l’ID del controller e una riga segnala ogni controller che si connette o si disconnette. Le prime righe segnalano i controller già connessi.";
+"cli.controller.watch.error.first_press_all" = "--first-press richiede un CONTROLLER; non funziona con --all.";
+"cli.controller.watch.error.target" = "Indica un CONTROLLER o --all, ma non entrambi.";
 "cli.controller.watch.first_press" = "Mostra il primo comando premuto, poi esce.";
 "cli.controller.watch.output" = "Stampa anche ciò che invia il gamepad virtuale. L’asse Y della levetta punta verso il basso, come nel report HID.";
 "cli.controller.watch.no_input" = "Nessun input ricevuto.";

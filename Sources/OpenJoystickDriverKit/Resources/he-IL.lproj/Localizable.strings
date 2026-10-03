@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ כבר מושהה.";
 "cli.controller.suspend.done" = "%@ הושהה.";
 "cli.controller.watch.abstract" = "הדפסת מצב הקלט של בקר בכל פעם שהוא משתנה.";
+"cli.controller.watch.all" = "צפה בכל הבקרים ודווח על כל בקר שמתחבר או מתנתק.";
+"cli.controller.watch.all_started" = "צופה בכל הבקרים. לחץ על כפתורי הבקר.";
+"cli.controller.watch.connected" = "%@ מחובר: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ מנותק";
 "cli.controller.watch.discussion" = "עם --json מודפס אובייקט JSON אחד בכל שורה. ציר Y של המקל פונה מעלה. עם --first-press מודפס הפקד הראשון שנלחץ והפקודה מסתיימת; היא נכשלת אם --duration חולף קודם.";
+"cli.controller.watch.discussion.all" = "עם --all, כל שורה מתחילה במזהה הבקר, ושורה מדווחת על כל בקר שמתחבר או מתנתק. השורות הראשונות מדווחות על הבקרים שכבר מחוברים.";
+"cli.controller.watch.error.first_press_all" = "--first-press דורש CONTROLLER; הוא אינו פועל עם --all.";
+"cli.controller.watch.error.target" = "ציין CONTROLLER או --all, אך לא את שניהם.";
 "cli.controller.watch.first_press" = "הדפסת הפקד הראשון שנלחץ, ואז יציאה.";
 "cli.controller.watch.output" = "הדפס גם את מה שהשלט הווירטואלי שולח. ציר Y של הסטיק שלו מצביע למטה, כמו בדוח ה־HID.";
 "cli.controller.watch.no_input" = "לא התקבל קלט.";

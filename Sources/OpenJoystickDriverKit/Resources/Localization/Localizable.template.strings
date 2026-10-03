@@ -1169,7 +1169,14 @@
 "cli.controller.suspend.already" = "%@ is already suspended.";
 "cli.controller.suspend.done" = "Suspended %@.";
 "cli.controller.watch.abstract" = "Print a controller's input state each time it changes.";
+"cli.controller.watch.all" = "Watch every controller, and report each one that connects or disconnects.";
+"cli.controller.watch.all_started" = "Watching every controller. Press controller buttons.";
+"cli.controller.watch.connected" = "%@ connected: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ disconnected";
 "cli.controller.watch.discussion" = "With --json, prints one JSON object per line. Stick Y points up. With --first-press, prints the first control pressed and exits; it fails when --duration passes first.";
+"cli.controller.watch.discussion.all" = "With --all, each line starts with the controller ID, and a line reports each controller that connects or disconnects. The first lines report the controllers already connected.";
+"cli.controller.watch.error.first_press_all" = "--first-press needs a CONTROLLER; it does not work with --all.";
+"cli.controller.watch.error.target" = "Give a CONTROLLER or --all, but not both.";
 "cli.controller.watch.first_press" = "Print the first control pressed, then exit.";
 "cli.controller.watch.output" = "Also print what the virtual gamepad sends. Its stick Y points down, as in the HID report.";
 "cli.controller.watch.no_input" = "No input received.";

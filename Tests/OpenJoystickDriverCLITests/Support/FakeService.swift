@@ -4,8 +4,8 @@ import OpenJoystickDriverTestSupport
 
 @testable import OpenJoystickDriverCLI
 
-/// A service socket that answers `getStatus` with fixed controllers and each other method with
-/// `respond`, and records every request it received.
+/// A service socket that answers `getStatus` with the controllers `devices` returns and each other
+/// method with `respond`, and records every request it received.
 final class FakeService: @unchecked Sendable {
   typealias Respond = @Sendable (_ method: ApplicationServiceRPCMethod, _ arguments: Data) -> Data?
 
@@ -14,20 +14,28 @@ final class FakeService: @unchecked Sendable {
   private var received: [(ApplicationServiceRPCMethod, Data)] = []
   private var server: LocalServiceRPCServer?
 
-  init(
+  convenience init(
     devices: [ApplicationServiceDeviceDescription],
     respond: @escaping Respond = { _, _ in nil }
   ) throws {
-    let status = try JSONEncoder().encode(
-      try JSONEncoder().encode(
+    try self.init(devices: { devices }, respond: respond)
+  }
+
+  /// `devices` runs for each `getStatus` request, so the connected controllers can change.
+  init(
+    devices: @escaping @Sendable () -> [ApplicationServiceDeviceDescription],
+    respond: @escaping Respond = { _, _ in nil }
+  ) throws {
+    let status: @Sendable () -> Data? = {
+      doubleEncoded(
         ApplicationServiceStatusPayload(
           inputMonitoring: "granted",
           accessibility: "granted",
-          connectedDevices: devices,
+          connectedDevices: devices(),
           userSpaceVirtualDeviceEnabled: true
         )
       )
-    )
+    }
     let server = LocalServiceRPCServer(
       socketPath: socketPath,
       authentication: { _ in true },
@@ -37,7 +45,7 @@ final class FakeService: @unchecked Sendable {
           return
         }
         self?.record(method, request.arguments)
-        let result = method == .getStatus ? status : respond(method, request.arguments)
+        let result = method == .getStatus ? status() : respond(method, request.arguments)
         completion(
           LocalServiceRPCResponse(
             result: result,

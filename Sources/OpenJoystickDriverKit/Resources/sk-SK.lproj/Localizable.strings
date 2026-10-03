@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "Zariadenie %@ je už pozastavené.";
 "cli.controller.suspend.done" = "Pozastavené: %@.";
 "cli.controller.watch.abstract" = "Vypíše stav vstupu ovládača pri každej zmene.";
+"cli.controller.watch.all" = "Sleduje každý ovládač a hlási každý, ktorý sa pripojí alebo odpojí.";
+"cli.controller.watch.all_started" = "Sledujú sa všetky ovládače. Stláčajte tlačidlá ovládača.";
+"cli.controller.watch.connected" = "%@ pripojený: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ odpojený";
 "cli.controller.watch.discussion" = "S --json vypíše jeden objekt JSON na riadok. Os Y páčky smeruje nahor. S --first-press vypíše prvý stlačený ovládací prvok a skončí; zlyhá, ak uplynie --duration skôr.";
+"cli.controller.watch.discussion.all" = "S --all každý riadok začína ID ovládača a riadok hlási každý ovládač, ktorý sa pripojí alebo odpojí. Prvé riadky hlásia už pripojené ovládače.";
+"cli.controller.watch.error.first_press_all" = "--first-press vyžaduje CONTROLLER; s --all nefunguje.";
+"cli.controller.watch.error.target" = "Zadajte CONTROLLER alebo --all, ale nie obe.";
 "cli.controller.watch.first_press" = "Vypíše prvý stlačený ovládací prvok a skončí.";
 "cli.controller.watch.output" = "Vypíše aj to, čo posiela virtuálny gamepad. Os Y jeho páčky smeruje nadol, ako v hlásení HID.";
 "cli.controller.watch.no_input" = "Nebol prijatý žiadny vstup.";

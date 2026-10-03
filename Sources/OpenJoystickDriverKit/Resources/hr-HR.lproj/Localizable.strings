@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ je već obustavljen.";
 "cli.controller.suspend.done" = "Obustavljeno: %@.";
 "cli.controller.watch.abstract" = "Ispisuje stanje unosa kontrolera svaki put kad se promijeni.";
+"cli.controller.watch.all" = "Prati svaki kontroler i prijavi svaki koji se spoji ili odspoji.";
+"cli.controller.watch.all_started" = "Praćenje svih kontrolera. Pritisnite tipke na kontroleru.";
+"cli.controller.watch.connected" = "%@ spojen: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ odspojen";
 "cli.controller.watch.discussion" = "S --json ispisuje jedan JSON objekt po retku. Os Y palice pokazuje prema gore. S --first-press ispisuje prvu pritisnutu kontrolu i izlazi; ne uspijeva ako --duration istekne prije.";
+"cli.controller.watch.discussion.all" = "S --all svaki redak počinje ID-jem kontrolera, a redak prijavljuje svaki kontroler koji se spoji ili odspoji. Prvi reci prijavljuju kontrolere koji su već spojeni.";
+"cli.controller.watch.error.first_press_all" = "--first-press zahtijeva CONTROLLER; ne radi s --all.";
+"cli.controller.watch.error.target" = "Navedite CONTROLLER ili --all, ali ne oboje.";
 "cli.controller.watch.first_press" = "Ispisuje prvu pritisnutu kontrolu, zatim izlazi.";
 "cli.controller.watch.output" = "Ispiši i ono što šalje virtualni gamepad. Os Y njegove palice pokazuje prema dolje, kao u HID izvješću.";
 "cli.controller.watch.no_input" = "Nije primljen nikakav unos.";

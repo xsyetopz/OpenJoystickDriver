@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ معلّق بالفعل.";
 "cli.controller.suspend.done" = "تم تعليق %@.";
 "cli.controller.watch.abstract" = "اطبع حالة إدخال وحدة التحكم في كل مرة تتغير فيها.";
+"cli.controller.watch.all" = "راقب كل وحدة تحكم، وأبلغ عن كل وحدة تتصل أو تنقطع.";
+"cli.controller.watch.all_started" = "جارٍ مراقبة كل وحدة تحكم. اضغط أزرار وحدة التحكم.";
+"cli.controller.watch.connected" = "%@ متصل: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ منقطع";
 "cli.controller.watch.discussion" = "مع --json يطبع كائن JSON واحدًا في كل سطر. يشير محور Y للعصا إلى الأعلى. مع --first-press يطبع أول عنصر تحكم يُضغط عليه ثم يخرج، ويفشل إذا انقضت --duration أولًا.";
+"cli.controller.watch.discussion.all" = "مع --all، يبدأ كل سطر بمعرّف وحدة التحكم، ويبلغ سطر عن كل وحدة تحكم تتصل أو تنقطع. تبلغ الأسطر الأولى عن وحدات التحكم المتصلة بالفعل.";
+"cli.controller.watch.error.first_press_all" = "--first-press يحتاج إلى CONTROLLER؛ ولا يعمل مع --all.";
+"cli.controller.watch.error.target" = "حدّد CONTROLLER أو --all، وليس كليهما.";
 "cli.controller.watch.first_press" = "اطبع أول عنصر تحكم يُضغط عليه، ثم اخرج.";
 "cli.controller.watch.output" = "اطبع أيضًا ما ترسله ذراع الألعاب الافتراضية. يشير المحور Y لعصاها إلى الأسفل، كما في تقرير HID.";
 "cli.controller.watch.no_input" = "لم يُستلم أي إدخال.";

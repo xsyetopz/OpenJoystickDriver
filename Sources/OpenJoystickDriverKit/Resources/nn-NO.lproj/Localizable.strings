@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ er allereie sett på pause.";
 "cli.controller.suspend.done" = "Sette %@ på pause.";
 "cli.controller.watch.abstract" = "Skriv ut inndatatilstanden til ein kontrollar kvar gong han endrar seg.";
+"cli.controller.watch.all" = "Følg med på alle kontrollarar, og rapporter kvar kontrollar som vert kopla til eller frå.";
+"cli.controller.watch.all_started" = "Følgjer med på alle kontrollarar. Trykk på knappane på kontrollaren.";
+"cli.controller.watch.connected" = "%@ kopla til: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ kopla frå";
 "cli.controller.watch.discussion" = "Med --json blir eitt JSON-objekt skrive ut per line. Y på stikka peikar opp. Med --first-press skriv han ut den første kontrollen som vart trykt og avsluttar; han mislukkast viss --duration går ut først.";
+"cli.controller.watch.discussion.all" = "Med --all startar kvar linje med kontrollar-ID-en, og ei linje rapporterer kvar kontrollar som vert kopla til eller frå. Dei første linjene rapporterer kontrollarane som allereie er tilkopla.";
+"cli.controller.watch.error.first_press_all" = "--first-press treng ein CONTROLLER; det fungerer ikkje med --all.";
+"cli.controller.watch.error.target" = "Oppgi ein CONTROLLER eller --all, men ikkje begge.";
 "cli.controller.watch.first_press" = "Skriv ut den første kontrollen som vart trykt, og avslutt.";
 "cli.controller.watch.output" = "Skriv òg ut det den virtuelle spelkontrollen sender. Y-aksen til stikka peikar nedover, som i HID-rapporten.";
 "cli.controller.watch.no_input" = "Ingen inndata mottekne.";

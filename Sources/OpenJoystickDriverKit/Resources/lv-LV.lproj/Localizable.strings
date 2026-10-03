@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ jau ir apturēts.";
 "cli.controller.suspend.done" = "%@ apturēts.";
 "cli.controller.watch.abstract" = "Izvadīt kontroliera ievades stāvokli katru reizi, kad tas mainās.";
+"cli.controller.watch.all" = "Vērot visus kontrolierus un ziņot par katru, kas tiek pievienots vai atvienots.";
+"cli.controller.watch.all_started" = "Tiek vēroti visi kontrolieri. Nospiediet kontroliera pogas.";
+"cli.controller.watch.connected" = "%@ pievienots: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ atvienots";
 "cli.controller.watch.discussion" = "Ar --json izvada vienu JSON objektu katrā rindā. Sviras Y ass norāda uz augšu. Ar --first-press izvada pirmo nospiesto vadīklu un beidz darbu; tas neizdodas, ja --duration beidzas agrāk.";
+"cli.controller.watch.discussion.all" = "Ar --all katra rinda sākas ar kontroliera ID, un rinda ziņo par katru kontrolieri, kas tiek pievienots vai atvienots. Pirmās rindas ziņo par kontrolieriem, kas jau ir pievienoti.";
+"cli.controller.watch.error.first_press_all" = "--first-press nepieciešams CONTROLLER; tas nedarbojas kopā ar --all.";
+"cli.controller.watch.error.target" = "Norādiet CONTROLLER vai --all, bet ne abus.";
 "cli.controller.watch.first_press" = "Izvadīt pirmo nospiesto vadīklu un beigt darbu.";
 "cli.controller.watch.output" = "Izdrukāt arī to, ko sūta virtuālais spēļu kontrolieris. Tā sviras Y ass vērsta uz leju, kā HID ziņojumā.";
 "cli.controller.watch.no_input" = "Ievade nav saņemta.";

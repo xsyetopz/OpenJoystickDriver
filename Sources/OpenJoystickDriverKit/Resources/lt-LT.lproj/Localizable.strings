@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ jau sustabdytas.";
 "cli.controller.suspend.done" = "%@ sustabdytas.";
 "cli.controller.watch.abstract" = "Rodyti valdiklio įvesties būseną kaskart jai pasikeitus.";
+"cli.controller.watch.all" = "Stebėti visus valdiklius ir pranešti apie kiekvieną, kuris prijungiamas arba atjungiamas.";
+"cli.controller.watch.all_started" = "Stebimi visi valdikliai. Paspauskite valdiklio mygtukus.";
+"cli.controller.watch.connected" = "%@ prijungtas: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ atjungtas";
 "cli.controller.watch.discussion" = "Su --json rodo po vieną JSON objektą eilutėje. Y ašis rodo aukštyn. Su --first-press parodo pirmą paspaustą valdymo elementą ir išeina; nepavyksta, jei --duration baigiasi anksčiau.";
+"cli.controller.watch.discussion.all" = "Su --all kiekviena eilutė prasideda valdiklio ID, o eilutė praneša apie kiekvieną valdiklį, kuris prijungiamas arba atjungiamas. Pirmosios eilutės praneša apie jau prijungtus valdiklius.";
+"cli.controller.watch.error.first_press_all" = "--first-press reikia CONTROLLER; jis neveikia su --all.";
+"cli.controller.watch.error.target" = "Nurodykite CONTROLLER arba --all, bet ne abu.";
 "cli.controller.watch.first_press" = "Parodyti pirmą paspaustą valdymo elementą ir išeiti.";
 "cli.controller.watch.output" = "Taip pat spausdinti, ką siunčia virtualus žaidimų pultas. Jo svirtelės Y ašis nukreipta žemyn, kaip HID ataskaitoje.";
 "cli.controller.watch.no_input" = "Įvesties negauta.";

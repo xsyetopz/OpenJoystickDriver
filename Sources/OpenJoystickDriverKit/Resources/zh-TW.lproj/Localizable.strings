@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ 已處於暫停狀態。";
 "cli.controller.suspend.done" = "已暫停 %@。";
 "cli.controller.watch.abstract" = "每當控制器的輸入狀態變更時就顯示。";
+"cli.controller.watch.all" = "監看每個控制器，並回報每個已連接或已中斷連接的控制器。";
+"cli.controller.watch.all_started" = "正在監看所有控制器。請按下控制器按鈕。";
+"cli.controller.watch.connected" = "%@ 已連接：%@ (%@)";
+"cli.controller.watch.disconnected" = "%@ 已中斷連接";
 "cli.controller.watch.discussion" = "使用 --json 時，每行顯示一個 JSON 物件。搖桿 Y 軸向上為正。使用 --first-press 時，會顯示第一個被按下的控制項後結束；若 --duration 先到期則失敗。";
+"cli.controller.watch.discussion.all" = "使用 --all 時，每行以控制器 ID 開頭，並回報每個已連接或已中斷連接的控制器。最前面幾行會回報已連接的控制器。";
+"cli.controller.watch.error.first_press_all" = "--first-press 需要 CONTROLLER；不能與 --all 一併使用。";
+"cli.controller.watch.error.target" = "請提供 CONTROLLER 或 --all，但不能同時提供。";
 "cli.controller.watch.first_press" = "顯示第一個被按下的控制項，然後結束。";
 "cli.controller.watch.output" = "同時列印虛擬遊戲控制器傳送的值。其搖桿 Y 軸與 HID 報告一致，向下為正。";
 "cli.controller.watch.no_input" = "未收到輸入。";

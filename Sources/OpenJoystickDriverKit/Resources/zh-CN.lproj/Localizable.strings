@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ 已处于暂停状态。";
 "cli.controller.suspend.done" = "已暂停 %@。";
 "cli.controller.watch.abstract" = "控制器的输入状态每次变化时打印一次。";
+"cli.controller.watch.all" = "监视每个控制器，并报告每个已连接或已断开的控制器。";
+"cli.controller.watch.all_started" = "正在监视所有控制器。请按下控制器上的按键。";
+"cli.controller.watch.connected" = "%@ 已连接：%@（%@）";
+"cli.controller.watch.disconnected" = "%@ 已断开连接";
 "cli.controller.watch.discussion" = "使用 --json 时，每行打印一个 JSON 对象。摇杆 Y 轴向上为正。使用 --first-press 时，打印第一个被按下的控件并退出；如果先达到 --duration，则失败。";
+"cli.controller.watch.discussion.all" = "使用 --all 时，每行以控制器 ID 开头，并报告每个已连接或已断开的控制器。最前面几行报告已连接的控制器。";
+"cli.controller.watch.error.first_press_all" = "--first-press 需要 CONTROLLER；它不能与 --all 一起使用。";
+"cli.controller.watch.error.target" = "请提供 CONTROLLER 或 --all，但不能同时提供。";
 "cli.controller.watch.first_press" = "打印第一个被按下的控件，然后退出。";
 "cli.controller.watch.output" = "同时打印虚拟游戏手柄发送的值。其摇杆 Y 轴与 HID 报告一致，向下为正。";
 "cli.controller.watch.no_input" = "未收到输入。";

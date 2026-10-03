@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ er þegar í bið.";
 "cli.controller.suspend.done" = "%@ sett í bið.";
 "cli.controller.watch.abstract" = "Prenta inntaksstöðu stýringar í hvert sinn sem hún breytist.";
+"cli.controller.watch.all" = "Fylgjast með öllum stýringum og tilkynna hverja stýringu sem tengist eða aftengist.";
+"cli.controller.watch.all_started" = "Fylgist með öllum stýringum. Ýttu á hnappa stýringarinnar.";
+"cli.controller.watch.connected" = "%@ tengd: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ aftengd";
 "cli.controller.watch.discussion" = "Með --json er einn JSON-hlutur prentaður í hverri línu. Y-ás stýripinna vísar upp. Með --first-press er fyrsta stjórntækið sem ýtt er á prentað og skipuninni lýkur; hún mistekst ef --duration rennur út fyrst.";
+"cli.controller.watch.discussion.all" = "Með --all byrjar hver lína á auðkenni stýringarinnar og lína tilkynnir hverja stýringu sem tengist eða aftengist. Fyrstu línurnar tilkynna stýringar sem þegar eru tengdar.";
+"cli.controller.watch.error.first_press_all" = "--first-press þarf CONTROLLER; það virkar ekki með --all.";
+"cli.controller.watch.error.target" = "Gefðu upp CONTROLLER eða --all, en ekki hvort tveggja.";
 "cli.controller.watch.first_press" = "Prenta fyrsta stjórntækið sem ýtt er á og hætta síðan.";
 "cli.controller.watch.output" = "Prentaðu líka það sem sýndarleikjastýringin sendir. Y-ás pinnans vísar niður, eins og í HID-skýrslunni.";
 "cli.controller.watch.no_input" = "Ekkert inntak barst.";

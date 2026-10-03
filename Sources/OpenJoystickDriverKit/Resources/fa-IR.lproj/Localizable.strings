@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ از قبل معلق است.";
 "cli.controller.suspend.done" = "%@ معلق شد.";
 "cli.controller.watch.abstract" = "چاپ وضعیت ورودی یک کنترلر در هر بار که تغییر می‌کند.";
+"cli.controller.watch.all" = "همه کنترلرها را زیر نظر بگیرید و هر کنترلری را که وصل یا قطع می‌شود گزارش دهید.";
+"cli.controller.watch.all_started" = "در حال نظارت بر همه کنترلرها. دکمه‌های کنترلر را فشار دهید.";
+"cli.controller.watch.connected" = "%@ وصل شد: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ قطع شد";
 "cli.controller.watch.discussion" = "با --json در هر خط یک شیء JSON چاپ می‌کند. محور Y استیک رو به بالاست. با --first-press اولین کنترل فشرده‌شده را چاپ می‌کند و خارج می‌شود؛ اگر --duration زودتر سپری شود ناموفق می‌شود.";
+"cli.controller.watch.discussion.all" = "با --all، هر خط با شناسه کنترلر شروع می‌شود و یک خط هر کنترلری را که وصل یا قطع می‌شود گزارش می‌دهد. خط‌های اول، کنترلرهایی را که از قبل وصل هستند گزارش می‌دهند.";
+"cli.controller.watch.error.first_press_all" = "--first-press به یک CONTROLLER نیاز دارد؛ با --all کار نمی‌کند.";
+"cli.controller.watch.error.target" = "یک CONTROLLER یا --all بدهید، نه هر دو.";
 "cli.controller.watch.first_press" = "چاپ اولین کنترل فشرده‌شده و سپس خروج.";
 "cli.controller.watch.output" = "آنچه دستهٔ بازی مجازی می‌فرستد را نیز چاپ کن. محور Y اهرم آن مانند گزارش HID رو به پایین است.";
 "cli.controller.watch.no_input" = "هیچ ورودی دریافت نشد.";

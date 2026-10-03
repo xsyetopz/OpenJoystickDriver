@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ már fel van függesztve.";
 "cli.controller.suspend.done" = "%@ felfüggesztve.";
 "cli.controller.watch.abstract" = "Egy vezérlő bemeneti állapotának kiírása minden változáskor.";
+"cli.controller.watch.all" = "Minden vezérlő figyelése, és minden csatlakozó vagy lecsatlakozó vezérlő jelentése.";
+"cli.controller.watch.all_started" = "Minden vezérlő figyelése. Nyomja meg a vezérlő gombjait.";
+"cli.controller.watch.connected" = "%@ csatlakozott: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ lecsatlakozott";
 "cli.controller.watch.discussion" = "A --json kapcsolóval soronként egy JSON-objektumot ír ki. Az Y tengely felfelé mutat. A --first-press kapcsolóval az elsőként megnyomott vezérlőelemet írja ki, majd kilép; hibával végződik, ha előbb letelik a --duration.";
+"cli.controller.watch.discussion.all" = "A --all használatakor minden sor a vezérlő azonosítójával kezdődik, és egy sor jelenti az összes csatlakozó vagy lecsatlakozó vezérlőt. Az első sorok a már csatlakoztatott vezérlőket jelentik.";
+"cli.controller.watch.error.first_press_all" = "A --first-press egy CONTROLLER megadását igényli; a --all kapcsolóval nem működik.";
+"cli.controller.watch.error.target" = "Adjon meg egy CONTROLLER értéket vagy a --all kapcsolót, de ne mindkettőt.";
 "cli.controller.watch.first_press" = "Az elsőként megnyomott vezérlőelem kiírása, majd kilépés.";
 "cli.controller.watch.output" = "Azt is kiírja, amit a virtuális gamepad küld. A kar Y tengelye lefelé mutat, mint a HID-jelentésben.";
 "cli.controller.watch.no_input" = "Nem érkezett bemenet.";

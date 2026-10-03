@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ zaten askıda.";
 "cli.controller.suspend.done" = "%@ askıya alındı.";
 "cli.controller.watch.abstract" = "Bir kontrolcünün giriş durumunu her değiştiğinde yazdırır.";
+"cli.controller.watch.all" = "Her kontrolcüyü izler ve bağlanan veya bağlantısı kesilen her kontrolcüyü bildirir.";
+"cli.controller.watch.all_started" = "Tüm kontrolcüler izleniyor. Kontrolcü düğmelerine basın.";
+"cli.controller.watch.connected" = "%@ bağlandı: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ bağlantısı kesildi";
 "cli.controller.watch.discussion" = "--json ile satır başına bir JSON nesnesi yazdırır. Çubuğun Y ekseni yukarı bakar. --first-press ile basılan ilk kontrol öğesini yazdırıp çıkar; --duration önce dolarsa başarısız olur.";
+"cli.controller.watch.discussion.all" = "--all ile her satır kontrolcü kimliğiyle başlar ve bir satır bağlanan veya bağlantısı kesilen her kontrolcüyü bildirir. İlk satırlar zaten bağlı olan kontrolcüleri bildirir.";
+"cli.controller.watch.error.first_press_all" = "--first-press bir CONTROLLER gerektirir; --all ile çalışmaz.";
+"cli.controller.watch.error.target" = "Bir CONTROLLER veya --all verin, ikisini birden değil.";
 "cli.controller.watch.first_press" = "Basılan ilk kontrol öğesini yazdırır ve çıkar.";
 "cli.controller.watch.output" = "Sanal oyun kumandasının gönderdiklerini de yazdırır. Çubuğunun Y ekseni, HID raporundaki gibi aşağıyı gösterir.";
 "cli.controller.watch.no_input" = "Giriş alınmadı.";

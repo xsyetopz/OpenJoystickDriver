@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ はすでに一時停止中です。";
 "cli.controller.suspend.done" = "%@ を一時停止しました。";
 "cli.controller.watch.abstract" = "コントローラの入力状態が変わるたびに表示します。";
+"cli.controller.watch.all" = "すべてのコントローラを監視し、接続または切断されたコントローラをそれぞれ報告します。";
+"cli.controller.watch.all_started" = "すべてのコントローラを監視しています。コントローラのボタンを押してください。";
+"cli.controller.watch.connected" = "%@ が接続されました: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ が切断されました";
 "cli.controller.watch.discussion" = "--json を付けると、1行に1つの JSON オブジェクトを表示します。スティックの Y は上向きが正です。--first-press を付けると、最初に押された操作部を表示して終了します。その前に --duration が経過すると失敗します。";
+"cli.controller.watch.discussion.all" = "--all を指定すると、各行はコントローラの ID で始まり、接続または切断されたコントローラごとに 1 行が報告されます。最初の数行は、すでに接続されているコントローラを報告します。";
+"cli.controller.watch.error.first_press_all" = "--first-press には CONTROLLER が必要です。--all とは併用できません。";
+"cli.controller.watch.error.target" = "CONTROLLER か --all のどちらか一方を指定してください。";
 "cli.controller.watch.first_press" = "最初に押された操作部を表示して終了します。";
 "cli.controller.watch.output" = "仮想ゲームパッドが送信する値も表示します。スティックのY軸はHIDレポートと同じく下向きが正です。";
 "cli.controller.watch.no_input" = "入力を受信していません。";

@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@은(는) 이미 일시 중단되었습니다.";
 "cli.controller.suspend.done" = "%@ 일시 중단했습니다.";
 "cli.controller.watch.abstract" = "컨트롤러의 입력 상태가 바뀔 때마다 출력합니다.";
+"cli.controller.watch.all" = "모든 컨트롤러를 지켜보고 연결되거나 연결 해제되는 컨트롤러를 각각 보고합니다.";
+"cli.controller.watch.all_started" = "모든 컨트롤러를 지켜보는 중입니다. 컨트롤러 버튼을 누르세요.";
+"cli.controller.watch.connected" = "%@ 연결됨: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ 연결 해제됨";
 "cli.controller.watch.discussion" = "--json을 사용하면 한 줄에 JSON 객체 하나를 출력합니다. 스틱 Y축은 위쪽이 양수입니다. --first-press를 사용하면 처음 누른 컨트롤을 출력하고 종료하며, 그 전에 --duration이 지나면 실패합니다.";
+"cli.controller.watch.discussion.all" = "--all을 사용하면 각 줄이 컨트롤러 ID로 시작하며, 연결되거나 연결 해제되는 컨트롤러마다 한 줄씩 보고합니다. 처음 몇 줄은 이미 연결된 컨트롤러를 보고합니다.";
+"cli.controller.watch.error.first_press_all" = "--first-press에는 CONTROLLER가 필요하며 --all과 함께 사용할 수 없습니다.";
+"cli.controller.watch.error.target" = "CONTROLLER 또는 --all 중 하나만 지정하세요.";
 "cli.controller.watch.first_press" = "처음 누른 컨트롤을 출력한 후 종료합니다.";
 "cli.controller.watch.output" = "가상 게임패드가 보내는 값도 출력합니다. 스틱 Y축은 HID 보고서처럼 아래쪽이 양수입니다.";
 "cli.controller.watch.no_input" = "받은 입력이 없습니다.";

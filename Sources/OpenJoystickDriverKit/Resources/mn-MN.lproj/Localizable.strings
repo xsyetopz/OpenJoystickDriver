@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ аль хэдийн түр зогссон.";
 "cli.controller.suspend.done" = "%@-г түр зогсоолоо.";
 "cli.controller.watch.abstract" = "Удирдлагын оролтын төлөвийг өөрчлөгдөх бүрд хэвлэх.";
+"cli.controller.watch.all" = "Бүх удирдлагыг ажиглаж, холбогдсон эсвэл салсан тус бүрийг мэдээлэх.";
+"cli.controller.watch.all_started" = "Бүх удирдлагыг ажиглаж байна. Удирдлагын товчнуудыг дарна уу.";
+"cli.controller.watch.connected" = "%@ холбогдлоо: %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ салгагдлаа";
 "cli.controller.watch.discussion" = "--json-той бол мөр бүрт нэг JSON объект хэвлэнэ. Стикийн Y тэнхлэг дээш заана. --first-press-тэй бол дарагдсан эхний элементийг хэвлээд гарна; --duration түрүүлж дуусвал амжилтгүй болно.";
+"cli.controller.watch.discussion.all" = "--all үед мөр бүр удирдлагын ID-аар эхэлж, холбогдсон эсвэл салсан удирдлага бүрийг мөр мэдээлнэ. Эхний мөрүүд аль хэдийн холбогдсон удирдлагуудыг мэдээлнэ.";
+"cli.controller.watch.error.first_press_all" = "--first-press нь CONTROLLER шаарддаг; --all-тай хамт ажилладаггүй.";
+"cli.controller.watch.error.target" = "CONTROLLER эсвэл --all-ийн аль нэгийг өгнө үү, хоёуланг нь биш.";
 "cli.controller.watch.first_press" = "Дарагдсан эхний элементийг хэвлээд гарах.";
 "cli.controller.watch.output" = "Виртуал тоглоомын удирдлагын илгээж буй утгыг мөн хэвлэнэ. Түүний бариулын Y тэнхлэг HID тайлангийн адил доош чиглэнэ.";
 "cli.controller.watch.no_input" = "Оролт хүлээн аваагүй.";

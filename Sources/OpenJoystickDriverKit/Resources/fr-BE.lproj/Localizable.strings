@@ -1166,7 +1166,14 @@
 "cli.controller.suspend.already" = "%@ est déjà suspendue.";
 "cli.controller.suspend.done" = "%@ suspendue.";
 "cli.controller.watch.abstract" = "Afficher l’état d’entrée d’une manette à chaque changement.";
+"cli.controller.watch.all" = "Surveiller toutes les manettes et signaler chacune qui se connecte ou se déconnecte.";
+"cli.controller.watch.all_started" = "Surveillance de toutes les manettes. Appuyez sur les boutons de la manette.";
+"cli.controller.watch.connected" = "%@ connectée : %@ (%@)";
+"cli.controller.watch.disconnected" = "%@ déconnectée";
 "cli.controller.watch.discussion" = "Avec --json, affiche un objet JSON par ligne. Le stick Y pointe vers le haut. Avec --first-press, affiche la première commande actionnée puis quitte ; échoue si --duration expire avant.";
+"cli.controller.watch.discussion.all" = "Avec --all, chaque ligne commence par l’ID de la manette, et une ligne signale chaque manette qui se connecte ou se déconnecte. Les premières lignes signalent les manettes déjà connectées.";
+"cli.controller.watch.error.first_press_all" = "--first-press nécessite une CONTROLLER ; il ne fonctionne pas avec --all.";
+"cli.controller.watch.error.target" = "Indiquez une CONTROLLER ou --all, mais pas les deux.";
 "cli.controller.watch.first_press" = "Afficher la première commande actionnée, puis quitter.";
 "cli.controller.watch.output" = "Affiche aussi ce qu’envoie la manette virtuelle. L’axe Y de son stick pointe vers le bas, comme dans le rapport HID.";
 "cli.controller.watch.no_input" = "Aucune entrée reçue.";
