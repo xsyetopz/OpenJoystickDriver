@@ -5,7 +5,7 @@ import OpenJoystickDriverKit
 /// as a structured remapping error.
 extension ApplicationServiceServer {
 
-  func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
+  package func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await remappingRequests.snapshot().get()
   }
 

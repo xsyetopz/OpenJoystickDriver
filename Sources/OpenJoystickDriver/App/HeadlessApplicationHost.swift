@@ -4,6 +4,9 @@ import OpenJoystickDriverKit
 import OpenJoystickDriverPresentation
 import OpenJoystickDriverService
 
+#if canImport(AppIntents)
+  import AppIntents
+#endif
 #if canImport(AppKit) && canImport(SwiftUI)
   import AppKit
 #endif
@@ -46,6 +49,13 @@ final class HeadlessApplicationHost {
       )
       exit(EXIT_FAILURE)
     }
+    #if canImport(AppIntents)
+      if #available(macOS 13, *) {
+        // The Shortcuts entity queries read the running service through this dependency.
+        let automationService = runtime.automationService
+        AppDependencyManager.shared.add(dependency: automationService)
+      }
+    #endif
     #if canImport(AppKit) && canImport(SwiftUI)
       presentation = MenuBarCoordinator(
         stopRuntime: { [runtime] in await runtime.stop() },

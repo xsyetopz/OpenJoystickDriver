@@ -6,11 +6,7 @@ extension ApplicationServiceServer {
   /// connected devices.
   public func getStatus() async -> Data {
     let permissions = await permissionManager.refreshAccessState()
-    let devices = describingVirtualHIDProfiles(
-      await deviceManager.connectedDeviceDescriptions().map(
-        ApplicationServiceDeviceDescription.init(snapshot:)
-      )
-    )
+    let devices = describingVirtualHIDProfiles(await connectedDevices())
     let unboundDevices = await deviceManager.unboundDeviceDescriptions().map(
       ApplicationServiceUnboundDevice.init(snapshot:)
     )

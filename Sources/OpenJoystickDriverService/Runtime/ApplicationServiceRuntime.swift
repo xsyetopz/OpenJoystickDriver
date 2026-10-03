@@ -65,6 +65,9 @@ package final class ApplicationServiceRuntime {
     self.remappingProfileLibrary = remappingProfileLibrary
   }
 
+  /// The service state that the app's Shortcuts actions read.
+  package var automationService: any AutomationService { applicationServiceServer }
+
   package func start() throws {
     guard !started else { return }
     started = true

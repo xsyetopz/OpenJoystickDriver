@@ -10,6 +10,8 @@
 		0A0000000000000000000101 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000201 /* main.swift */; };
 		0A0000000000000000000102 /* HeadlessApplicationHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000202 /* HeadlessApplicationHost.swift */; };
 		0A0000000000000000000103 /* AppVersionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000203 /* AppVersionIntent.swift */; };
+		0A0000000000000000000106 /* ControllerEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A000000000000000000020A /* ControllerEntity.swift */; };
+		0A0000000000000000000107 /* ProfileEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A000000000000000000020B /* ProfileEntity.swift */; };
 		0A0000000000000000000104 /* OpenJoystickDriver.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000204 /* OpenJoystickDriver.icns */; };
 		0A0000000000000000000105 /* THIRD_PARTY_NOTICES.md in Resources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000205 /* THIRD_PARTY_NOTICES.md */; };
 		0A0000000000000000000111 /* OpenJoystickDriverKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0A0000000000000000000811 /* OpenJoystickDriverKit */; };
@@ -23,6 +25,8 @@
 		0A0000000000000000000201 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = main.swift; path = Sources/OpenJoystickDriver/main.swift; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000202 /* HeadlessApplicationHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeadlessApplicationHost.swift; path = Sources/OpenJoystickDriver/App/HeadlessApplicationHost.swift; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000203 /* AppVersionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppVersionIntent.swift; path = Sources/OpenJoystickDriver/App/Intents/AppVersionIntent.swift; sourceTree = SOURCE_ROOT; };
+		0A000000000000000000020A /* ControllerEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ControllerEntity.swift; path = Sources/OpenJoystickDriver/App/Intents/ControllerEntity.swift; sourceTree = SOURCE_ROOT; };
+		0A000000000000000000020B /* ProfileEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileEntity.swift; path = Sources/OpenJoystickDriver/App/Intents/ProfileEntity.swift; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000204 /* OpenJoystickDriver.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = OpenJoystickDriver.icns; path = Sources/OpenJoystickDriver/Resources/OpenJoystickDriver.icns; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000205 /* THIRD_PARTY_NOTICES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = THIRD_PARTY_NOTICES.md; path = THIRD_PARTY_NOTICES.md; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000206 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Sources/OpenJoystickDriver/App/Info.plist; sourceTree = SOURCE_ROOT; };
@@ -60,6 +64,8 @@
 				0A0000000000000000000201 /* main.swift */,
 				0A0000000000000000000202 /* HeadlessApplicationHost.swift */,
 				0A0000000000000000000203 /* AppVersionIntent.swift */,
+				0A000000000000000000020A /* ControllerEntity.swift */,
+				0A000000000000000000020B /* ProfileEntity.swift */,
 				0A0000000000000000000206 /* Info.plist */,
 				0A0000000000000000000207 /* Host.entitlements */,
 				0A0000000000000000000204 /* OpenJoystickDriver.icns */,
@@ -154,6 +160,8 @@
 				0A0000000000000000000101 /* main.swift in Sources */,
 				0A0000000000000000000102 /* HeadlessApplicationHost.swift in Sources */,
 				0A0000000000000000000103 /* AppVersionIntent.swift in Sources */,
+				0A0000000000000000000106 /* ControllerEntity.swift in Sources */,
+				0A0000000000000000000107 /* ProfileEntity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

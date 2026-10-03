@@ -1,6 +1,7 @@
 import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverService
 
 /// The `CONTROLLER` argument: an ID from `ojd controller list`, or `VVVV:PPPP` when exactly one
 /// connected controller has that vendor and product ID. An ID lasts until the service restarts and
@@ -25,11 +26,7 @@ struct ControllerSelector: ExpressibleByArgument, Equatable, Sendable {
 
   /// `VVVV:PPPP`, four hex digits each, case-insensitive.
   static func model(_ text: String) -> (UInt16, UInt16)? {
-    let parts = text.split(separator: ":", omittingEmptySubsequences: false)
-    guard parts.count == 2, parts.allSatisfy({ $0.count == 4 && $0.allSatisfy(\.isHexDigit) }),
-      let vendorID = UInt16(parts[0], radix: 16), let productID = UInt16(parts[1], radix: 16)
-    else { return nil }
-    return (vendorID, productID)
+    parseControllerModel(text).map { ($0.vendorID, $0.productID) }
   }
 
   /// The one connected controller this selector names.
