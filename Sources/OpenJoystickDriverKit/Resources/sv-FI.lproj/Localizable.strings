@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "En aktiv profil slutar tillämpas. Frågar om bekräftelse i en terminal; annars krävs --force. Exportera profilen först för att behålla en kopia.";
 "cli.profile.delete.done" = "Tog bort profilen '%@'.";
 "cli.profile.delete.dry_run" = "Skulle ta bort profilen '%@'.";
-"cli.profile.discussion" = "En ommappningsprofil gör om en kontrollmodells styrelement till inmatning för spelkontroll, tangentbord och pekare. PROFILE är ett profil-ID eller ett namn från 'ojd profile list'. Ändra bindningar med 'ojd binding', och allt annat med 'ojd profile edit'. Alla profilkommandon kräver tjänsten.";
+"cli.profile.discussion" = "En ommappningsprofil gör om en kontrollmodells styrelement till inmatning för spelkontroll, tangentbord och pekare. PROFILE är ett profil-ID eller ett namn från 'ojd profile list'. Ändra bindningar med 'ojd binding', och allt annat med 'ojd profile edit'. Alla profilkommandon utom 'ojd profile validate' kräver tjänsten.";
 "cli.profile.document_invalid" = "%@ är inte en giltig profil: %@";
 "cli.document.not_json" = "det är inte giltig JSON";
 "cli.document.missing_field" = "fältet ”%@” saknas";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "'%@' är namnet på %lld profiler. Använd något av de här ID:na:";
 "cli.profile.selector.not_found" = "Ingen profil har ID eller namn '%@'. 'ojd profile list' visar alla profiler.";
 "cli.profile.show.abstract" = "Visa en profils inställningar och bindningar.";
+"cli.profile.validate.abstract" = "Kontrollera en profilfil utan att importera den.";
+"cli.profile.validate.discussion" = "Kontrollerar filen mot profilschemat och de regler som spänner över flera fält, till exempel dubbla källor. Använd - för att läsa profilen från stdin. Kräver ingen tjänst som körs. Avslutas med 1 när profilen är ogiltig.";
+"cli.profile.validate.file" = "Profilfilen, eller - för stdin.";
+"cli.profile.validate.valid" = "%@ är en giltig profil: '%@' för %@ (%@). Lägg till den med 'ojd profile import'.";
 "cli.profile.vanished" = "Tjänsten behöll inte profilen. Kontrollera den med 'ojd profile list'.";

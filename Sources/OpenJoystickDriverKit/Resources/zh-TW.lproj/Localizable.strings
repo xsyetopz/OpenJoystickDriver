@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "使用中的設定檔會停止套用。在終端機中會要求確認；否則需要 --force。請先匯出設定檔以保留副本。";
 "cli.profile.delete.done" = "已刪除設定檔「%@」。";
 "cli.profile.delete.dry_run" = "將會刪除設定檔「%@」。";
-"cli.profile.discussion" = "重新對應設定檔會把某一控制器型號的控制項轉換為遊戲控制器、鍵盤和指標輸入。PROFILE 是來自 'ojd profile list' 的設定檔 ID 或名稱。請用 'ojd binding' 變更對應，其他內容用 'ojd profile edit' 變更。每個設定檔指令都需要服務。";
+"cli.profile.discussion" = "重新對應設定檔會把某一控制器型號的控制項轉換為遊戲控制器、鍵盤和指標輸入。PROFILE 是來自 'ojd profile list' 的設定檔 ID 或名稱。請用 'ojd binding' 變更對應，其他內容用 'ojd profile edit' 變更。除 'ojd profile validate' 外，每個設定檔指令都需要服務。";
 "cli.profile.document_invalid" = "%@ 不是有效的設定檔：%@";
 "cli.document.not_json" = "它不是有效的 JSON";
 "cli.document.missing_field" = "缺少欄位「%@」";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "「%@」對應 %lld 個設定檔。請使用以下其中一個 ID：";
 "cli.profile.selector.not_found" = "沒有 ID 或名稱為「%@」的設定檔。'ojd profile list' 會顯示所有設定檔。";
 "cli.profile.show.abstract" = "顯示設定檔的設定和對應。";
+"cli.profile.validate.abstract" = "檢查設定檔，但不匯入。";
+"cli.profile.validate.discussion" = "對照設定檔架構和跨欄位的規則（例如重複的來源）檢查檔案。使用 - 從 stdin 讀取設定檔。不需要執行中的服務。設定檔無效時以狀態 1 結束。";
+"cli.profile.validate.file" = "設定檔，或用 - 表示 stdin。";
+"cli.profile.validate.valid" = "%@ 是有效的設定檔：「%@」，對應 %@（%@）。可用 'ojd profile import' 新增。";
 "cli.profile.vanished" = "服務未保留該設定檔。請用 'ojd profile list' 檢查。";

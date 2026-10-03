@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Aktivni profil se preneha uporabljati. Na terminalu zahteva potrditev; sicer zahteva --force. Če želite obdržati kopijo, profil najprej izvozite.";
 "cli.profile.delete.done" = "Profil „%@“ izbrisan.";
 "cli.profile.delete.dry_run" = "Profil „%@“ bi bil izbrisan.";
-"cli.profile.discussion" = "Profil preslikave pretvori upravljalne elemente enega modela krmilnika v vhod igralnega ploščka, tipkovnice in kazalca. PROFILE je ID ali ime profila iz „ojd profile list“. Dodelitve spreminjajte z „ojd binding“, vse drugo pa z „ojd profile edit“. Vsak ukaz profila zahteva storitev.";
+"cli.profile.discussion" = "Profil preslikave pretvori upravljalne elemente enega modela krmilnika v vhod igralnega ploščka, tipkovnice in kazalca. PROFILE je ID ali ime profila iz „ojd profile list“. Dodelitve spreminjajte z „ojd binding“, vse drugo pa z „ojd profile edit“. Vsak ukaz profila razen „ojd profile validate“ zahteva storitev.";
 "cli.profile.document_invalid" = "%@ ni veljaven profil: %@";
 "cli.document.not_json" = "ni veljaven JSON";
 "cli.document.missing_field" = "polje „%@“ manjka";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "Število profilov z imenom „%@“: %lld. Uporabite enega od teh ID-jev:";
 "cli.profile.selector.not_found" = "Noben profil nima ID-ja ali imena „%@“. „ojd profile list“ pokaže vse profile.";
 "cli.profile.show.abstract" = "Pokaže nastavitve in dodelitve profila.";
+"cli.profile.validate.abstract" = "Preveri datoteko profila brez uvoza.";
+"cli.profile.validate.discussion" = "Preveri datoteko glede na shemo profila in pravila, ki zajemajo več polj, na primer podvojene vire. Z - se profil prebere iz stdin. Ne potrebuje delujoče storitve. Konča s kodo 1, ko je profil neveljaven.";
+"cli.profile.validate.file" = "Datoteka profila ali - za stdin.";
+"cli.profile.validate.valid" = "%@ je veljaven profil: „%@“ za %@ (%@). Dodajte ga z ukazom „ojd profile import“.";
 "cli.profile.vanished" = "Storitev profila ni obdržala. Preverite ga z „ojd profile list“.";

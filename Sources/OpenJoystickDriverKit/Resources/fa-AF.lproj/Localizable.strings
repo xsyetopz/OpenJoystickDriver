@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "نمایهٔ فعال دیگر اعمال نمی‌شود. در ترمینال تأیید می‌خواهد؛ در غیر این صورت به --force نیاز دارد. برای نگه داشتن یک نسخه، ابتدا نمایه را صادر کنید.";
 "cli.profile.delete.done" = "نمایهٔ «%@» حذف شد.";
 "cli.profile.delete.dry_run" = "نمایهٔ «%@» حذف خواهد شد.";
-"cli.profile.discussion" = "یک نمایهٔ بازتخصیص، کنترل‌های یک مدل کنترلر را به ورودی گیم‌پد، صفحه‌کلید و اشاره‌گر تبدیل می‌کند. PROFILE شناسه یا نام یک نمایه از «ojd profile list» است. تخصیص‌ها را با «ojd binding» تغییر دهید و هر چیز دیگر را با «ojd profile edit». هر دستور نمایه به سرویس نیاز دارد.";
+"cli.profile.discussion" = "یک نمایهٔ بازتخصیص، کنترل‌های یک مدل کنترلر را به ورودی گیم‌پد، صفحه‌کلید و اشاره‌گر تبدیل می‌کند. PROFILE شناسه یا نام یک نمایه از «ojd profile list» است. تخصیص‌ها را با «ojd binding» تغییر دهید و هر چیز دیگر را با «ojd profile edit». هر دستور نمایه، به‌جز «ojd profile validate»، به سرویس نیاز دارد.";
 "cli.profile.document_invalid" = "%@ نمایهٔ معتبری نیست: %@";
 "cli.document.not_json" = "JSON معتبر نیست";
 "cli.document.missing_field" = "فیلد «%@» وجود ندارد";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "«%@» نام %lld نمایه است. یکی از این شناسه‌ها را به کار ببرید:";
 "cli.profile.selector.not_found" = "هیچ نمایه‌ای شناسه یا نام «%@» ندارد. «ojd profile list» همهٔ نمایه‌ها را نشان می‌دهد.";
 "cli.profile.show.abstract" = "نمایش تنظیمات و تخصیص‌های یک نمایه.";
+"cli.profile.validate.abstract" = "فایل نمایه را بدون وارد کردن آن بررسی کنید.";
+"cli.profile.validate.discussion" = "فایل را با طرح‌واره نمایه و قواعدی که چند فیلد را در بر می‌گیرند، مانند منابع تکراری، بررسی می‌کند. برای خواندن نمایه از stdin از - استفاده کنید. به سرویس در حال اجرا نیاز ندارد. اگر نمایه نامعتبر باشد با کد 1 خارج می‌شود.";
+"cli.profile.validate.file" = "فایل نمایه، یا - برای stdin.";
+"cli.profile.validate.valid" = "%@ یک نمایه معتبر است: «%@» برای %@ (%@). آن را با «ojd profile import» اضافه کنید.";
 "cli.profile.vanished" = "سرویس نمایه را نگه نداشت. آن را با «ojd profile list» بررسی کنید.";

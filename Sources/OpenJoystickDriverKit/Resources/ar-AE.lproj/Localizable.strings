@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "يتوقف ملف التعريف النشط عن التطبيق. يطلب تأكيدًا في الطرفية؛ وإلا فهو يحتاج إلى --force. صدّر ملف التعريف أولًا للاحتفاظ بنسخة.";
 "cli.profile.delete.done" = "تم حذف ملف التعريف «%@».";
 "cli.profile.delete.dry_run" = "سيُحذف ملف التعريف «%@».";
-"cli.profile.discussion" = "يحوّل ملف تعريف إعادة التعيين عناصر التحكم في وحدة تحكم من طراز واحد إلى إدخال وحدة تحكم ولوحة مفاتيح ومؤشر. PROFILE هو معرّف ملف تعريف أو اسمه من «ojd profile list». غيّر التعيينات باستخدام «ojd binding»، وكل شيء آخر باستخدام «ojd profile edit». تحتاج كل أوامر ملف التعريف إلى الخدمة.";
+"cli.profile.discussion" = "يحوّل ملف تعريف إعادة التعيين عناصر التحكم في وحدة تحكم من طراز واحد إلى إدخال وحدة تحكم ولوحة مفاتيح ومؤشر. PROFILE هو معرّف ملف تعريف أو اسمه من «ojd profile list». غيّر التعيينات باستخدام «ojd binding»، وكل شيء آخر باستخدام «ojd profile edit». تحتاج كل أوامر ملف التعريف، عدا «ojd profile validate»، إلى الخدمة.";
 "cli.profile.document_invalid" = "%@ ليس ملف تعريف صالحًا: %@";
 "cli.document.not_json" = "ليس JSON صالحًا";
 "cli.document.missing_field" = "الحقل «%@» مفقود";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "«%@» هو اسم %lld من ملفات التعريف. استخدم أحد هذه المعرّفات:";
 "cli.profile.selector.not_found" = "لا يوجد ملف تعريف بالمعرّف أو الاسم «%@». يعرض «ojd profile list» كل ملفات التعريف.";
 "cli.profile.show.abstract" = "اعرض إعدادات ملف تعريف وتعييناته.";
+"cli.profile.validate.abstract" = "تحقق من ملف تعريف دون استيراده.";
+"cli.profile.validate.discussion" = "يتحقق من الملف وفق مخطط ملف التعريف والقواعد التي تشمل عدة حقول، مثل المصادر المكررة. استخدم - لقراءة ملف التعريف من stdin. لا يحتاج إلى خدمة قيد التشغيل. ينتهي بالرمز 1 عندما يكون ملف التعريف غير صالح.";
+"cli.profile.validate.file" = "الملف الذي يحتوي ملف التعريف، أو - لـ stdin.";
+"cli.profile.validate.valid" = "%@ ملف تعريف صالح: «%@» لـ %@ (%@). أضفه باستخدام «ojd profile import».";
 "cli.profile.vanished" = "لم تحتفظ الخدمة بملف التعريف. تحقّق منه باستخدام «ojd profile list».";

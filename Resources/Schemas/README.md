@@ -8,6 +8,7 @@
 - `controller-override.schema.json`: authored additions and factual patches.
 - `report.schema.json`: the CloudEvents 1.0 support-report envelope and payload.
 - `cli-output.schema.json`: the `--json` output of each `ojd` command. The CLI tests check every `--json` document they print against it.
+- `profile.schema.json`: the remapping profile file that `ojd profile export` writes and `ojd profile import` reads. Cross-field rules stay in the strict decoder, and a test keeps the schema enums equal to the Swift cases.
 
 Each artifact class has one current, unversioned contract. OJD-owned property names use lowerCamelCase, including `vendorID`, `profileID`, `initialization`, `keepAlive`, and `postHandshakeSettleMs`. JSON Schema keywords, CloudEvents context attributes, external API fields, and dynamic map keys retain their standards' or sources' spelling. Do not recase values: enums, protocol identifiers, hashes, URLs, or user text.
 

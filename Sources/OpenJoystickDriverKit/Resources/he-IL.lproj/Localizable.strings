@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "פרופיל פעיל מפסיק לחול. מבקש אישור בטרמינל; אחרת דורש ‎--force. כדאי לייצא את הפרופיל קודם כדי לשמור עותק.";
 "cli.profile.delete.done" = "הפרופיל ״%@״ נמחק.";
 "cli.profile.delete.dry_run" = "הפרופיל ״%@״ יימחק.";
-"cli.profile.discussion" = "פרופיל מיפוי הופך את הפקדים של דגם בקר אחד לקלט של בקר משחק, מקלדת ומצביע. PROFILE הוא מזהה או שם של פרופיל מתוך ״ojd profile list״. שיוכים משנים באמצעות ״ojd binding״, וכל דבר אחר באמצעות ״ojd profile edit״. כל פקודות הפרופיל דורשות את השירות.";
+"cli.profile.discussion" = "פרופיל מיפוי הופך את הפקדים של דגם בקר אחד לקלט של בקר משחק, מקלדת ומצביע. PROFILE הוא מזהה או שם של פרופיל מתוך ״ojd profile list״. שיוכים משנים באמצעות ״ojd binding״, וכל דבר אחר באמצעות ״ojd profile edit״. כל פקודות הפרופיל, מלבד ״ojd profile validate״, דורשות את השירות.";
 "cli.profile.document_invalid" = "%@ אינו פרופיל תקין: %@";
 "cli.document.not_json" = "הוא אינו JSON תקין";
 "cli.document.missing_field" = "השדה ״%@״ חסר";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "״%@״ הוא שם של %lld פרופילים. יש להשתמש באחד מהמזהים האלה:";
 "cli.profile.selector.not_found" = "אין פרופיל עם המזהה או השם ״%@״. ״ojd profile list״ מציג את כל הפרופילים.";
 "cli.profile.show.abstract" = "הצגת ההגדרות והשיוכים של פרופיל.";
+"cli.profile.validate.abstract" = "בדיקת קובץ פרופיל ללא ייבוא שלו.";
+"cli.profile.validate.discussion" = "בודק את הקובץ מול סכמת הפרופיל והכללים החלים על כמה שדות, כגון מקורות כפולים. יש להשתמש במקף (-) כדי לקרוא את הפרופיל מ-stdin. אינו דורש שירות פועל. מסתיים בקוד 1 כאשר הפרופיל אינו תקין.";
+"cli.profile.validate.file" = "קובץ הפרופיל, או - עבור stdin.";
+"cli.profile.validate.valid" = "%@ הוא פרופיל תקין: ״%@״ עבור %@ (%@). ניתן להוסיף אותו באמצעות ״ojd profile import״.";
 "cli.profile.vanished" = "השירות לא שמר את הפרופיל. יש לבדוק אותו באמצעות ״ojd profile list״.";

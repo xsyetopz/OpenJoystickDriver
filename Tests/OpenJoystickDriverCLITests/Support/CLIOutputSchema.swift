@@ -8,6 +8,7 @@ import Foundation
 /// silently weaker than the schema.
 enum CLIOutputSchema {
   static let fileName = "cli-output.schema.json"
+  static let profileFileName = "profile.schema.json"
 
   static let directory = URL(fileURLWithPath: #filePath)
     .deletingLastPathComponent()  // Support
@@ -18,7 +19,7 @@ enum CLIOutputSchema {
 
   /// Commands whose stdout is not a `--json` document of their own.
   static let exempt: Set<[String]> = [
-    // Prints the profile file, whose format `ojd profile import` reads, for every format.
+    // Prints the profile file for every format; `CLIRun` checks it against the profile schema.
     ["profile", "export"],
     // Opens an editor and needs a terminal, so tests never reach its output.
     ["profile", "edit"],
@@ -68,6 +69,17 @@ enum CLIOutputSchema {
       )
     }
     return issues
+  }
+
+  /// The issues in `text`, one profile file, against `profile.schema.json`.
+  static func profileIssues(in text: String) throws -> [String] {
+    let value = try JSONSerialization.jsonObject(with: Data(text.utf8))
+    return try Validator().validate(
+      value,
+      against: ["$ref": profileFileName],
+      in: profileFileName,
+      at: "$"
+    )
   }
 
   struct SchemaError: Error, CustomStringConvertible {

@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "ንቁ መገለጫ መተግበሩን ያቆማል። በተርሚናል ላይ ማረጋገጫ ይጠይቃል፤ ካልሆነ --force ያስፈልገዋል። ቅጂ ለማቆየት መጀመሪያ መገለጫውን ወደ ውጭ ይላኩ።";
 "cli.profile.delete.done" = "መገለጫው «%@» ተሰርዟል።";
 "cli.profile.delete.dry_run" = "መገለጫው «%@» ይሰረዝ ነበር።";
-"cli.profile.discussion" = "የዳግም ምደባ መገለጫ የአንድ መቆጣጠሪያ ሞዴል የመቆጣጠሪያ ክፍሎችን ወደ የጨዋታ መቆጣጠሪያ፣ ኪቦርድ እና ጠቋሚ ግብዓት ይቀይራል። PROFILE ከ«ojd profile list» የመገለጫ ID ወይም ስም ነው። ምደባዎችን በ«ojd binding» ይለውጡ፣ ሌላውን ሁሉ ደግሞ በ«ojd profile edit»። እያንዳንዱ የመገለጫ ትዕዛዝ አገልግሎቱን ይፈልጋል።";
+"cli.profile.discussion" = "የዳግም ምደባ መገለጫ የአንድ መቆጣጠሪያ ሞዴል የመቆጣጠሪያ ክፍሎችን ወደ የጨዋታ መቆጣጠሪያ፣ ኪቦርድ እና ጠቋሚ ግብዓት ይቀይራል። PROFILE ከ«ojd profile list» የመገለጫ ID ወይም ስም ነው። ምደባዎችን በ«ojd binding» ይለውጡ፣ ሌላውን ሁሉ ደግሞ በ«ojd profile edit»። ከ«ojd profile validate» በስተቀር እያንዳንዱ የመገለጫ ትዕዛዝ አገልግሎቱን ይፈልጋል።";
 "cli.profile.document_invalid" = "%@ ትክክለኛ መገለጫ አይደለም፦ %@";
 "cli.document.not_json" = "ትክክለኛ JSON አይደለም";
 "cli.document.missing_field" = "መስኩ «%@» ጠፍቷል";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "«%@» %lld መገለጫዎችን ይሰይማል። ከእነዚህ ID አንዱን ይጠቀሙ፦";
 "cli.profile.selector.not_found" = "ID ወይም ስሙ «%@» የሆነ መገለጫ የለም። «ojd profile list» ሁሉንም መገለጫዎች ያሳያል።";
 "cli.profile.show.abstract" = "የመገለጫን ቅንብሮች እና ምደባዎች ያሳዩ።";
+"cli.profile.validate.abstract" = "የመገለጫ ፋይልን ሳያስመጡ ይፈትሹ።";
+"cli.profile.validate.discussion" = "ፋይሉን ከመገለጫ ንድፍ እና በመስኮች መካከል ከሚሠሩ ደንቦች ጋር ይፈትሻል፣ ለምሳሌ ተደጋጋሚ ምንጮች። መገለጫውን ከstdin ለማንበብ - ይጠቀሙ። የሚሰራ አገልግሎት አያስፈልገውም። መገለጫው ልክ ካልሆነ በ1 ይወጣል።";
+"cli.profile.validate.file" = "የመገለጫው ፋይል፣ ወይም ለstdin -።";
+"cli.profile.validate.valid" = "%@ ልክ የሆነ መገለጫ ነው፦ «%@» ለ%@ (%@)። በ«ojd profile import» ያክሉት።";
 "cli.profile.vanished" = "አገልግሎቱ መገለጫውን አላቆየም። በ«ojd profile list» ይፈትሹት።";

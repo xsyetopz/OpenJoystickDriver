@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Az aktív profil alkalmazása leáll. Terminálon megerősítést kér; egyébként --force szükséges. Másolat megőrzéséhez előbb exportálja a profilt.";
 "cli.profile.delete.done" = "A(z) '%@' profil törölve.";
 "cli.profile.delete.dry_run" = "Törölné a(z) '%@' profilt.";
-"cli.profile.discussion" = "Az átképezési profil egy vezérlőmodell vezérlőelemeit gamepad-, billentyűzet- és mutatóbemenetté alakítja. A PROFILE egy profil ID-ja vagy neve az 'ojd profile list' parancsból. A hozzárendeléseket az 'ojd binding' paranccsal módosíthatja, minden mást az 'ojd profile edit' paranccsal. Minden profilparancshoz szükség van a szolgáltatásra.";
+"cli.profile.discussion" = "Az átképezési profil egy vezérlőmodell vezérlőelemeit gamepad-, billentyűzet- és mutatóbemenetté alakítja. A PROFILE egy profil ID-ja vagy neve az 'ojd profile list' parancsból. A hozzárendeléseket az 'ojd binding' paranccsal módosíthatja, minden mást az 'ojd profile edit' paranccsal. Minden profilparancshoz szükség van a szolgáltatásra, kivéve az 'ojd profile validate' parancsot.";
 "cli.profile.document_invalid" = "A(z) %@ nem érvényes profil: %@";
 "cli.document.not_json" = "nem érvényes JSON";
 "cli.document.missing_field" = "hiányzik a(z) „%@” mező";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "A(z) '%@' %lld profilra illik. Használja az alábbi ID-k egyikét:";
 "cli.profile.selector.not_found" = "Egyetlen profil ID-ja vagy neve sem '%@'. Az 'ojd profile list' minden profilt megmutat.";
 "cli.profile.show.abstract" = "Egy profil beállításainak és hozzárendeléseinek megjelenítése.";
+"cli.profile.validate.abstract" = "Profilfájl ellenőrzése importálás nélkül.";
+"cli.profile.validate.discussion" = "Ellenőrzi a fájlt a profilsémával és a több mezőt érintő szabályokkal szemben, például az ismétlődő forrásokat illetően. A - megadásával a profil a stdin-ről olvasható. Nem igényel futó szolgáltatást. Érvénytelen profil esetén 1-es kóddal lép ki.";
+"cli.profile.validate.file" = "A profilfájl, vagy - a stdin-hez.";
+"cli.profile.validate.valid" = "A(z) %@ érvényes profil: '%@' a következőhöz: %@ (%@). Adja hozzá az 'ojd profile import' paranccsal.";
 "cli.profile.vanished" = "A szolgáltatás nem őrizte meg a profilt. Ellenőrizze az 'ojd profile list' paranccsal.";

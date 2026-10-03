@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Um perfil ativo deixa de ser aplicado. Pede confirmação em um terminal; sem terminal, precisa de --force. Exporte o perfil antes para guardar uma cópia.";
 "cli.profile.delete.done" = "Perfil «%@» eliminado.";
 "cli.profile.delete.dry_run" = "O perfil «%@» seria eliminado.";
-"cli.profile.discussion" = "Um perfil de remapeamento transforma os comandos de um modelo de comando em entrada de gamepad, teclado e ponteiro. PROFILE é o ID ou o nome de um perfil de «ojd profile list». Altere atribuições com «ojd binding» e tudo o mais com «ojd profile edit». Todos os comandos de perfil precisam do serviço.";
+"cli.profile.discussion" = "Um perfil de remapeamento transforma os comandos de um modelo de comando em entrada de gamepad, teclado e ponteiro. PROFILE é o ID ou o nome de um perfil de «ojd profile list». Altere atribuições com «ojd binding» e tudo o mais com «ojd profile edit». Todos os comandos de perfil, exceto «ojd profile validate», precisam do serviço.";
 "cli.profile.document_invalid" = "%@ não é um perfil válido: %@";
 "cli.document.not_json" = "não é um JSON válido";
 "cli.document.missing_field" = "o campo «%@» está em falta";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "«%@» nomeia %lld perfis. Utilize um destes IDs:";
 "cli.profile.selector.not_found" = "Nenhum perfil tem o ID ou o nome «%@». «ojd profile list» mostra todos os perfis.";
 "cli.profile.show.abstract" = "Mostra os definições e as atribuições de um perfil.";
+"cli.profile.validate.abstract" = "Verifica um ficheiro de perfil sem o importar.";
+"cli.profile.validate.discussion" = "Verifica o ficheiro com o esquema de perfil e as regras que abrangem vários campos, como origens duplicadas. Utilize - para ler o perfil de stdin. Não precisa de um serviço em execução. Termina com o código 1 quando o perfil é inválido.";
+"cli.profile.validate.file" = "O ficheiro do perfil, ou - para stdin.";
+"cli.profile.validate.valid" = "%@ é um perfil válido: «%@» para %@ (%@). Adicione-o com «ojd profile import».";
 "cli.profile.vanished" = "O serviço não manteve o perfil. Verifique-o com «ojd profile list».";

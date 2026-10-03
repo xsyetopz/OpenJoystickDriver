@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Aktyvus profilis nustoja būti taikomas. Terminale paprašo patvirtinimo; kitu atveju reikia --force. Norėdami pasilikti kopiją, pirmiausia eksportuokite profilį.";
 "cli.profile.delete.done" = "Profilis „%@“ ištrintas.";
 "cli.profile.delete.dry_run" = "Būtų ištrintas profilis „%@“.";
-"cli.profile.discussion" = "Perprogramavimo profilis paverčia vieno valdiklio modelio elementus žaidimų pulto, klaviatūros ir žymeklio įvestimi. PROFILE yra profilio ID arba pavadinimas iš „ojd profile list“. Susiejimus keiskite naudodami „ojd binding“, o viską kita – naudodami „ojd profile edit“. Kiekvienai profilio komandai reikia tarnybos.";
+"cli.profile.discussion" = "Perprogramavimo profilis paverčia vieno valdiklio modelio elementus žaidimų pulto, klaviatūros ir žymeklio įvestimi. PROFILE yra profilio ID arba pavadinimas iš „ojd profile list“. Susiejimus keiskite naudodami „ojd binding“, o viską kita – naudodami „ojd profile edit“. Kiekvienai profilio komandai, išskyrus „ojd profile validate“, reikia tarnybos.";
 "cli.profile.document_invalid" = "%@ nėra tinkamas profilis: %@";
 "cli.document.not_json" = "tai nėra tinkamas JSON";
 "cli.document.missing_field" = "trūksta lauko „%@“";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "„%@“ atitinka %lld profilius. Naudokite vieną iš šių ID:";
 "cli.profile.selector.not_found" = "Joks profilis neturi ID ar pavadinimo „%@“. „ojd profile list“ parodo visus profilius.";
 "cli.profile.show.abstract" = "Rodyti profilio nustatymus ir susiejimus.";
+"cli.profile.validate.abstract" = "Patikrinti profilio failą jo neimportuojant.";
+"cli.profile.validate.discussion" = "Patikrina failą pagal profilio schemą ir taisykles, apimančias kelis laukus, pavyzdžiui, pasikartojančius šaltinius. Naudokite -, kad profilis būtų skaitomas iš stdin. Nereikalauja veikiančios tarnybos. Baigia darbą su kodu 1, kai profilis neteisingas.";
+"cli.profile.validate.file" = "Profilio failas arba - stdin.";
+"cli.profile.validate.valid" = "%@ yra tinkamas profilis: „%@“, skirtas %@ (%@). Pridėkite jį naudodami „ojd profile import“.";
 "cli.profile.vanished" = "Tarnyba neišsaugojo profilio. Patikrinkite jį naudodami „ojd profile list“.";

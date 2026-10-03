@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Stopann próifíl ghníomhach de bheith i bhfeidhm. Iarrann sé deimhniú ar theirminéal; teastaíonn --force seachas sin. Easpórtáil an phróifíl ar dtús chun cóip a choinneáil.";
 "cli.profile.delete.done" = "Scriosadh an phróifíl «%@».";
 "cli.profile.delete.dry_run" = "Scriosfaí an phróifíl «%@».";
-"cli.profile.discussion" = "Tiontaíonn próifíl athmhapála rialuithe samhla rialtóra ina n-ionchur gamepad, méarchláir agus pointeora. Is ID nó ainm próifíle ó «ojd profile list» é PROFILE. Athraigh ceangail le «ojd binding», agus gach rud eile le «ojd profile edit». Teastaíonn an tseirbhís ó gach ordú próifíle.";
+"cli.profile.discussion" = "Tiontaíonn próifíl athmhapála rialuithe samhla rialtóra ina n-ionchur gamepad, méarchláir agus pointeora. Is ID nó ainm próifíle ó «ojd profile list» é PROFILE. Athraigh ceangail le «ojd binding», agus gach rud eile le «ojd profile edit». Teastaíonn an tseirbhís ó gach ordú próifíle seachas «ojd profile validate».";
 "cli.profile.document_invalid" = "Ní próifíl bhailí é %@: %@";
 "cli.document.not_json" = "ní JSON bailí é";
 "cli.document.missing_field" = "tá an réimse «%@» ar iarraidh";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "Ainmníonn «%@» %lld próifíl. Úsáid ceann de na ID seo:";
 "cli.profile.selector.not_found" = "Níl aon phróifíl leis an ID nó an t-ainm «%@». Taispeánann «ojd profile list» gach próifíl.";
 "cli.profile.show.abstract" = "Taispeáin socruithe agus ceangail próifíle.";
+"cli.profile.validate.abstract" = "Seiceáil comhad próifíle gan é a iompórtáil.";
+"cli.profile.validate.discussion" = "Seiceálann sé an comhad i gcomparáid le scéimre na próifíle agus leis na rialacha a chuimsíonn réimsí iolracha, amhail foinsí dúblacha. Úsáid - chun an phróifíl a léamh ó stdin. Ní theastaíonn seirbhís atá ag rith uaidh. Scoireann sé le cód 1 nuair nach bhfuil an phróifíl bailí.";
+"cli.profile.validate.file" = "An comhad próifíle, nó - le haghaidh stdin.";
+"cli.profile.validate.valid" = "Is próifíl bhailí é %@: «%@» do %@ (%@). Cuir leis é le «ojd profile import».";
 "cli.profile.vanished" = "Níor choinnigh an tseirbhís an phróifíl. Seiceáil í le «ojd profile list».";

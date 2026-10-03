@@ -83,6 +83,104 @@ struct ProfileImportCommand: AsyncParsableCommand {
   }
 }
 
+struct ProfileValidateCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "validate",
+    abstract: CLILocalized.text(
+      "cli.profile.validate.abstract",
+      "Check a profile file without importing it."
+    ),
+    discussion: CLILocalized.text(
+      "cli.profile.validate.discussion",
+      "Checks the file against the profile schema and the rules that span fields, such as "
+        + "duplicate sources. Use - to read the profile from stdin. Needs no running service. "
+        + "Exits 1 when the profile is invalid."
+    )
+  )
+
+  /// The `--json` result.
+  /// An invalid profile has only `valid` and `problem`.
+  struct Result: Encodable, Equatable {
+    let valid: Bool
+    let problem: String?
+    let id: String?
+    let name: String?
+    let controller: String?
+    let scope: String?
+
+    init(_ profile: RemappingProfile) {
+      valid = true
+      problem = nil
+      id = profile.id.uuidString
+      name = profile.name
+      controller = deviceIdentity(
+        vendorID: Int(profile.device.vendorID),
+        productID: Int(profile.device.productID)
+      )
+      scope = ProfileText.scope(profile.applicationScope)
+    }
+
+    init(problem: String) {
+      valid = false
+      self.problem = problem
+      id = nil
+      name = nil
+      controller = nil
+      scope = nil
+    }
+  }
+
+  @Argument(
+    help: ArgumentHelp(
+      CLILocalized.text("cli.profile.validate.file", "The profile file, or - for stdin."),
+      valueName: "FILE|-"
+    )
+  )
+  var file: String
+
+  @OptionGroup
+  var global: GlobalOptions
+
+  func run() async throws {
+    try await global.run {
+      let data = try RecordStore.read(file)
+      let profile: RemappingProfile
+      do { profile = try RemappingProfileFileStore.load(from: data) } catch {
+        let problem = DocumentProblem.describe(error)
+        if CLIContext.current.format == .json { try CLIOutput.json(Result(problem: problem)) }
+        throw CLIFailure(
+          .failure,
+          CLILocalized.format(
+            "cli.profile.document_invalid",
+            "%@ is not a valid profile: %@",
+            file == "-" ? "stdin" : file,
+            problem
+          )
+        )
+      }
+      let result = Result(profile)
+      switch CLIContext.current.format {
+      case .json: try CLIOutput.json(result)
+      case .plain:
+        CLIOutput.plain([
+          [result.id ?? "", result.name ?? "", result.controller ?? "", result.scope ?? ""]
+        ])
+      case .human:
+        CLIOutput.stdout(
+          CLILocalized.format(
+            "cli.profile.validate.valid",
+            "%@ is a valid profile: '%@' for %@ (%@). Add it with 'ojd profile import'.",
+            file == "-" ? "stdin" : file,
+            profile.name,
+            result.controller ?? "",
+            result.scope ?? ""
+          )
+        )
+      }
+    }
+  }
+}
+
 struct ProfileExportCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "export",

@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Ein aktiv profil sluttar å gjelde. Ber om stadfesting i ein terminal; elles trengst --force. Eksporter profilen først for å behalde ein kopi.";
 "cli.profile.delete.done" = "Sletta profilen '%@'.";
 "cli.profile.delete.dry_run" = "Ville sletta profilen '%@'.";
-"cli.profile.discussion" = "Ein ommappingsprofil gjer styreelementa på éin kontrollarmodell om til inndata for gamepad, tastatur og peikar. PROFILE er ein profil-ID eller eit namn frå 'ojd profile list'. Endre bindingar med 'ojd binding', og alt anna med 'ojd profile edit'. Alle profilkommandoar treng tenesta.";
+"cli.profile.discussion" = "Ein ommappingsprofil gjer styreelementa på éin kontrollarmodell om til inndata for gamepad, tastatur og peikar. PROFILE er ein profil-ID eller eit namn frå 'ojd profile list'. Endre bindingar med 'ojd binding', og alt anna med 'ojd profile edit'. Alle profilkommandoar unntatt 'ojd profile validate' treng tenesta.";
 "cli.profile.document_invalid" = "%@ er ikkje ein gyldig profil: %@";
 "cli.document.not_json" = "det er ikkje gyldig JSON";
 "cli.document.missing_field" = "feltet «%@» manglar";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "'%@' er namnet på %lld profilar. Bruk ein av desse ID-ane:";
 "cli.profile.selector.not_found" = "Ingen profil har ID-en eller namnet '%@'. 'ojd profile list' viser alle profilar.";
 "cli.profile.show.abstract" = "Vis innstillingane og bindingane til ein profil.";
+"cli.profile.validate.abstract" = "Kontroller ei profilfil utan å importere ho.";
+"cli.profile.validate.discussion" = "Kontrollerer fila mot profilskjemaet og reglane som går på tvers av felt, til dømes dupliserte kjelder. Bruk - for å lese profilen frå stdin. Treng inga teneste som køyrer. Avsluttar med 1 når profilen er ugyldig.";
+"cli.profile.validate.file" = "Profilfila, eller - for stdin.";
+"cli.profile.validate.valid" = "%@ er ein gyldig profil: '%@' for %@ (%@). Legg han til med 'ojd profile import'.";
 "cli.profile.vanished" = "Tenesta heldt ikkje på profilen. Sjekk han med 'ojd profile list'.";

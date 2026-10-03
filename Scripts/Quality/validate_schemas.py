@@ -30,6 +30,7 @@ SCHEMA_PATHS = (
     SCHEMAS / "controller-override.schema.json",
     SCHEMAS / "report.schema.json",
     SCHEMAS / "cli-output.schema.json",
+    SCHEMAS / "profile.schema.json",
 )
 
 
@@ -142,7 +143,7 @@ def main() -> int:
         print(f"error: {detail}", file=sys.stderr)
         return 1
     print(
-        "Validated 4 schema documents, "
+        "Validated 5 schema documents, "
         f"{len(controller_records)} controller records, {len(overrides)} overrides, "
         "and one live support report."
     )

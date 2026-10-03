@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "En aktiv profil holder op med at blive anvendt. Beder om bekræftelse i en terminal; ellers kræves --force. Eksporter profilen først for at beholde en kopi.";
 "cli.profile.delete.done" = "Slettede profilen “%@”.";
 "cli.profile.delete.dry_run" = "Ville slette profilen “%@”.";
-"cli.profile.discussion" = "En omtildelingsprofil omsætter betjeningselementerne på én controllermodel til gamepad-, tastatur- og markørinput. PROFILE er et profil-ID eller -navn fra “ojd profile list”. Ændr tilknytninger med “ojd binding”, og alt andet med “ojd profile edit”. Alle profilkommandoer kræver tjenesten.";
+"cli.profile.discussion" = "En omtildelingsprofil omsætter betjeningselementerne på én controllermodel til gamepad-, tastatur- og markørinput. PROFILE er et profil-ID eller -navn fra “ojd profile list”. Ændr tilknytninger med “ojd binding”, og alt andet med “ojd profile edit”. Alle profilkommandoer undtagen “ojd profile validate” kræver tjenesten.";
 "cli.profile.document_invalid" = "%@ er ikke en gyldig profil: %@";
 "cli.document.not_json" = "det er ikke gyldig JSON";
 "cli.document.missing_field" = "feltet “%@” mangler";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "“%@” er navnet på %lld profiler. Brug et af disse ID’er:";
 "cli.profile.selector.not_found" = "Ingen profil har ID’et eller navnet “%@”. “ojd profile list” viser alle profiler.";
 "cli.profile.show.abstract" = "Vis en profils indstillinger og tilknytninger.";
+"cli.profile.validate.abstract" = "Kontroller en profilfil uden at importere den.";
+"cli.profile.validate.discussion" = "Kontrollerer filen mod profilskemaet og de regler, der går på tværs af felter, for eksempel dublerede kilder. Brug - til at læse profilen fra stdin. Kræver ingen kørende tjeneste. Afslutter med 1, når profilen er ugyldig.";
+"cli.profile.validate.file" = "Profilfilen, eller - for stdin.";
+"cli.profile.validate.valid" = "%@ er en gyldig profil: “%@” til %@ (%@). Tilføj den med “ojd profile import”.";
 "cli.profile.vanished" = "Tjenesten beholdt ikke profilen. Tjek den med “ojd profile list”.";

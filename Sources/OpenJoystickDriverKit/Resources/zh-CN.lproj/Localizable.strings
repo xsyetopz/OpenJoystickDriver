@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "活动的配置文件会停止应用。在终端中会请求确认；否则需要 --force。请先导出配置文件以保留副本。";
 "cli.profile.delete.done" = "已删除配置文件“%@”。";
 "cli.profile.delete.dry_run" = "将会删除配置文件“%@”。";
-"cli.profile.discussion" = "重映射配置文件会把某一控制器型号的控件转换为游戏手柄、键盘和指针输入。PROFILE 是来自 'ojd profile list' 的配置文件 ID 或名称。请用 'ojd binding' 更改映射，其他内容用 'ojd profile edit' 更改。每个配置文件命令都需要服务。";
+"cli.profile.discussion" = "重映射配置文件会把某一控制器型号的控件转换为游戏手柄、键盘和指针输入。PROFILE 是来自 'ojd profile list' 的配置文件 ID 或名称。请用 'ojd binding' 更改映射，其他内容用 'ojd profile edit' 更改。除 'ojd profile validate' 外，每个配置文件命令都需要服务。";
 "cli.profile.document_invalid" = "%@ 不是有效的配置文件：%@";
 "cli.document.not_json" = "它不是有效的 JSON";
 "cli.document.missing_field" = "缺少字段“%@”";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "“%@”对应 %lld 个配置文件。请使用以下某个 ID：";
 "cli.profile.selector.not_found" = "没有 ID 或名称为“%@”的配置文件。'ojd profile list' 会显示所有配置文件。";
 "cli.profile.show.abstract" = "显示配置文件的设置和映射。";
+"cli.profile.validate.abstract" = "检查配置文件，但不导入。";
+"cli.profile.validate.discussion" = "对照配置文件架构和跨字段的规则（例如重复的来源）检查文件。使用 - 从 stdin 读取配置文件。不需要运行中的服务。配置文件无效时以状态 1 退出。";
+"cli.profile.validate.file" = "配置文件，或用 - 表示 stdin。";
+"cli.profile.validate.valid" = "%@ 是有效的配置文件：“%@”，对应 %@（%@）。可用 'ojd profile import' 添加。";
 "cli.profile.vanished" = "服务未保留该配置文件。请用 'ojd profile list' 检查。";

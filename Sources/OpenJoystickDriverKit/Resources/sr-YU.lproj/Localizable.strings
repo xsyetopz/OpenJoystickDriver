@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Aktivan profil prestaje da se primenjuje. Na terminalu traži potvrdu; inače zahteva --force. Prvo izvezite profil da biste sačuvali kopiju.";
 "cli.profile.delete.done" = "Profil „%@“ je obrisan.";
 "cli.profile.delete.dry_run" = "Profil „%@“ bi bio obrisan.";
-"cli.profile.discussion" = "Profil mapiranja pretvara upravljačke elemente jednog modela kontrolera u unos gejmpada, tastature i pokazivača. PROFILE je ID ili ime profila iz „ojd profile list“. Dodele menjajte komandom „ojd binding“, a sve ostalo komandom „ojd profile edit“. Svaka komanda profila zahteva uslugu.";
+"cli.profile.discussion" = "Profil mapiranja pretvara upravljačke elemente jednog modela kontrolera u unos gejmpada, tastature i pokazivača. PROFILE je ID ili ime profila iz „ojd profile list“. Dodele menjajte komandom „ojd binding“, a sve ostalo komandom „ojd profile edit“. Svaka komanda profila osim „ojd profile validate“ zahteva uslugu.";
 "cli.profile.document_invalid" = "%@ nije ispravan profil: %@";
 "cli.document.not_json" = "nije ispravan JSON";
 "cli.document.missing_field" = "polje „%@“ nedostaje";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "Naziv „%@“ odgovara profilima (%lld). Koristite jedan od ovih ID-ova:";
 "cli.profile.selector.not_found" = "Nijedan profil nema ID ili ime „%@“. „ojd profile list“ prikazuje svaki profil.";
 "cli.profile.show.abstract" = "Prikazuje postavke i dodele profila.";
+"cli.profile.validate.abstract" = "Provera datoteke profila bez njenog uvoza.";
+"cli.profile.validate.discussion" = "Proverava datoteku u odnosu na šemu profila i pravila koja obuhvataju više polja, na primer duplirane izvore. Koristite - da biste pročitali profil sa stdin. Ne zahteva pokrenutu uslugu. Završava se kodom 1 kada je profil nevažeći.";
+"cli.profile.validate.file" = "Datoteka profila ili - za stdin.";
+"cli.profile.validate.valid" = "%@ je važeći profil: „%@“ za %@ (%@). Dodajte ga komandom „ojd profile import“.";
 "cli.profile.vanished" = "Usluga nije sačuvala profil. Proverite ga komandom „ojd profile list“.";

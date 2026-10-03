@@ -98,6 +98,7 @@ ojd profile deactivate PROFILE
 ojd profile edit PROFILE
 ojd profile recover [--force] [--dry-run]
 ojd profile import FILE|-
+ojd profile validate FILE|-
 ojd profile export PROFILE [--output FILE]
 ```
 
@@ -114,9 +115,10 @@ ojd profile export PROFILE [--output FILE]
 - `profile edit`: Open the profile file in `$VISUAL`, `$EDITOR`, or `vi`, then check and save it. Use it to change chords, sequences, layers, stick and trigger tuning, and the app scope. It needs a terminal. Without one, export the profile, change the file, and import it. For the file format, see [Profile file reference](Profile-File-Reference.md).
 - `profile recover`: Repair the problems that `profile list` reports. It acts on each issue: it removes a damaged profile file and resets a damaged active profile list. The service first backs up each file beside the original, under a name that contains `.backup-`. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing. With `--plain`, it prints one line for each issue, with its ID and kind.
 - `profile import`: Add a profile from a file that `profile export` wrote. Use `-` to read the file from stdin. A profile with the same ID as an existing profile replaces it.
+- `profile validate`: Check a profile file without importing it. Use `-` to read the file from stdin. It needs no running service and exits 1 when the profile is invalid.
 - `profile export`: Print a profile file to stdout, or write it to `--output`. The file is JSON, so `--json` and `--plain` do not change the output.
 
-With `--json`, a profile is an object with `id`, `name`, `controller`, `scope` (`global` or `app:BUNDLE-ID`), `active`, and `bindings`, the number of bindings. `profile list` prints `profiles` and `issues`, each issue with `id`, `kind`, and `message`. `profile show` prints `profile` and `document`, the full profile file. `profile create`, `duplicate`, `rename`, `activate`, `deactivate`, and `edit` print `profile` and `changed`. `profile delete` prints `deleted` and `dryRun`, `profile recover` prints `recovered`, each with `id`, `kind`, and `message`, and `dryRun`, and `profile import` prints `profile` and `replaced`.
+With `--json`, a profile is an object with `id`, `name`, `controller`, `scope` (`global` or `app:BUNDLE-ID`), `active`, and `bindings`, the number of bindings. `profile list` prints `profiles` and `issues`, each issue with `id`, `kind`, and `message`. `profile show` prints `profile` and `document`, the full profile file. `profile create`, `duplicate`, `rename`, `activate`, `deactivate`, and `edit` print `profile` and `changed`. `profile delete` prints `deleted` and `dryRun`, `profile recover` prints `recovered`, each with `id`, `kind`, and `message`, and `dryRun`, `profile import` prints `profile` and `replaced`, and `profile validate` prints `valid`, then `id`, `name`, `controller`, and `scope` for a valid profile or `problem` for an invalid one.
 
 ## binding
 

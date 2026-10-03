@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Aktywny profil przestaje obowiązywać. Prosi o potwierdzenie w terminalu; poza nim wymaga --force. Najpierw wyeksportuj profil, aby zachować kopię.";
 "cli.profile.delete.done" = "Usunięto profil '%@'.";
 "cli.profile.delete.dry_run" = "Profil '%@' zostałby usunięty.";
-"cli.profile.discussion" = "Profil mapowania zamienia elementy sterujące jednego modelu kontrolera na wejście gamepada, klawiatury i wskaźnika. PROFILE to ID lub nazwa profilu z 'ojd profile list'. Przypisania zmieniaj poleceniem 'ojd binding', a całą resztę poleceniem 'ojd profile edit'. Każde polecenie profilu wymaga usługi.";
+"cli.profile.discussion" = "Profil mapowania zamienia elementy sterujące jednego modelu kontrolera na wejście gamepada, klawiatury i wskaźnika. PROFILE to ID lub nazwa profilu z 'ojd profile list'. Przypisania zmieniaj poleceniem 'ojd binding', a całą resztę poleceniem 'ojd profile edit'. Każde polecenie profilu oprócz 'ojd profile validate' wymaga usługi.";
 "cli.profile.document_invalid" = "%@ nie jest prawidłowym profilem: %@";
 "cli.document.not_json" = "to nie jest prawidłowy JSON";
 "cli.document.missing_field" = "brakuje pola „%@”";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "'%@' pasuje do %lld profili. Użyj jednego z tych ID:";
 "cli.profile.selector.not_found" = "Żaden profil nie ma ID ani nazwy '%@'. 'ojd profile list' pokazuje wszystkie profile.";
 "cli.profile.show.abstract" = "Pokaż ustawienia i przypisania profilu.";
+"cli.profile.validate.abstract" = "Sprawdź plik profilu bez jego importowania.";
+"cli.profile.validate.discussion" = "Sprawdza plik pod kątem schematu profilu i reguł obejmujących wiele pól, takich jak zduplikowane źródła. Użyj -, aby wczytać profil ze stdin. Nie wymaga uruchomionej usługi. Kończy działanie z kodem 1, gdy profil jest nieprawidłowy.";
+"cli.profile.validate.file" = "Plik profilu lub - dla stdin.";
+"cli.profile.validate.valid" = "%@ jest prawidłowym profilem: '%@' dla %@ (%@). Dodaj go poleceniem 'ojd profile import'.";
 "cli.profile.vanished" = "Usługa nie zachowała profilu. Sprawdź go poleceniem 'ojd profile list'.";

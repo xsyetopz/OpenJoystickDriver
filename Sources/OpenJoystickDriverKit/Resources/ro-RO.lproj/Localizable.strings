@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Un profil activ nu se mai aplică. Cere confirmare într-un terminal; în caz contrar necesită --force. Exportați mai întâi profilul pentru a păstra o copie.";
 "cli.profile.delete.done" = "S-a șters profilul «%@».";
 "cli.profile.delete.dry_run" = "S-ar șterge profilul «%@».";
-"cli.profile.discussion" = "Un profil de remapare transformă controalele unui model de controller în intrări de gamepad, tastatură și cursor. PROFILE este ID-ul sau numele unui profil din «ojd profile list». Modificați asocierile cu «ojd binding», iar tot restul cu «ojd profile edit». Orice comandă de profil necesită serviciul.";
+"cli.profile.discussion" = "Un profil de remapare transformă controalele unui model de controller în intrări de gamepad, tastatură și cursor. PROFILE este ID-ul sau numele unui profil din «ojd profile list». Modificați asocierile cu «ojd binding», iar tot restul cu «ojd profile edit». Orice comandă de profil, cu excepția «ojd profile validate», necesită serviciul.";
 "cli.profile.document_invalid" = "%@ nu este un profil valid: %@";
 "cli.document.not_json" = "nu este un JSON valid";
 "cli.document.missing_field" = "lipsește câmpul «%@»";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "«%@» denumește %lld profiluri. Folosiți unul dintre aceste ID-uri:";
 "cli.profile.selector.not_found" = "Niciun profil nu are ID-ul sau numele «%@». «ojd profile list» afișează toate profilurile.";
 "cli.profile.show.abstract" = "Afișează setările și asocierile unui profil.";
+"cli.profile.validate.abstract" = "Verifică un fișier de profil fără a-l importa.";
+"cli.profile.validate.discussion" = "Verifică fișierul în raport cu schema profilului și cu regulile care acoperă mai multe câmpuri, cum ar fi sursele duplicate. Folosiți - pentru a citi profilul din stdin. Nu necesită un serviciu în execuție. Se încheie cu codul 1 când profilul nu este valid.";
+"cli.profile.validate.file" = "Fișierul profilului sau - pentru stdin.";
+"cli.profile.validate.valid" = "%@ este un profil valid: «%@» pentru %@ (%@). Adăugați-l cu «ojd profile import».";
 "cli.profile.vanished" = "Serviciul nu a păstrat profilul. Verificați-l cu «ojd profile list».";

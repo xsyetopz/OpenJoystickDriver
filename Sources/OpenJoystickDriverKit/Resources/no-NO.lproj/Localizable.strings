@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "En aktiv profil slutter å gjelde. Ber om bekreftelse i en terminal; ellers trengs --force. Eksporter profilen først for å beholde en kopi.";
 "cli.profile.delete.done" = "Slettet profilen '%@'.";
 "cli.profile.delete.dry_run" = "Ville slettet profilen '%@'.";
-"cli.profile.discussion" = "En ommappingsprofil gjør styreelementene på én kontrollermodell om til inndata for gamepad, tastatur og peker. PROFILE er en profil-ID eller et navn fra 'ojd profile list'. Endre bindinger med 'ojd binding', og alt annet med 'ojd profile edit'. Alle profilkommandoer trenger tjenesten.";
+"cli.profile.discussion" = "En ommappingsprofil gjør styreelementene på én kontrollermodell om til inndata for gamepad, tastatur og peker. PROFILE er en profil-ID eller et navn fra 'ojd profile list'. Endre bindinger med 'ojd binding', og alt annet med 'ojd profile edit'. Alle profilkommandoer unntatt 'ojd profile validate' trenger tjenesten.";
 "cli.profile.document_invalid" = "%@ er ikke en gyldig profil: %@";
 "cli.document.not_json" = "det er ikke gyldig JSON";
 "cli.document.missing_field" = "feltet «%@» mangler";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "'%@' er navnet på %lld profiler. Bruk en av disse ID-ene:";
 "cli.profile.selector.not_found" = "Ingen profil har ID-en eller navnet '%@'. 'ojd profile list' viser alle profiler.";
 "cli.profile.show.abstract" = "Vis innstillingene og bindingene til en profil.";
+"cli.profile.validate.abstract" = "Kontroller en profilfil uten å importere den.";
+"cli.profile.validate.discussion" = "Kontrollerer filen mot profilskjemaet og reglene som går på tvers av felt, for eksempel dupliserte kilder. Bruk - for å lese profilen fra stdin. Trenger ingen tjeneste som kjører. Avslutter med 1 når profilen er ugyldig.";
+"cli.profile.validate.file" = "Profilfilen, eller - for stdin.";
+"cli.profile.validate.valid" = "%@ er en gyldig profil: '%@' for %@ (%@). Legg den til med 'ojd profile import'.";
 "cli.profile.vanished" = "Tjenesten beholdt ikke profilen. Sjekk den med 'ojd profile list'.";

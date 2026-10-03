@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Aktiivinen profiili lakkaa olemasta käytössä. Pyytää vahvistuksen päätteessä; muuten se vaatii --force. Vie profiili ensin, jos haluat säilyttää kopion.";
 "cli.profile.delete.done" = "Profiili ”%@” poistettiin.";
 "cli.profile.delete.dry_run" = "Poistaisi profiilin ”%@”.";
-"cli.profile.discussion" = "Uudelleenmäärityksen profiili muuttaa yhden ohjainmallin ohjauselimet peliohjaimen, näppäimistön ja osoittimen syötteeksi. PROFILE on profiilin ID tai nimi komennosta ”ojd profile list”. Muuta sidontoja komennolla ”ojd binding” ja kaikkea muuta komennolla ”ojd profile edit”. Kaikki profiilikomennot tarvitsevat palvelun.";
+"cli.profile.discussion" = "Uudelleenmäärityksen profiili muuttaa yhden ohjainmallin ohjauselimet peliohjaimen, näppäimistön ja osoittimen syötteeksi. PROFILE on profiilin ID tai nimi komennosta ”ojd profile list”. Muuta sidontoja komennolla ”ojd binding” ja kaikkea muuta komennolla ”ojd profile edit”. Kaikki profiilikomennot paitsi ”ojd profile validate” tarvitsevat palvelun.";
 "cli.profile.document_invalid" = "%@ ei ole kelvollinen profiili: %@";
 "cli.document.not_json" = "se ei ole kelvollista JSONia";
 "cli.document.missing_field" = "kenttä ”%@” puuttuu";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "”%@” vastaa %lld profiilia. Käytä jotakin näistä ID-tunnuksista:";
 "cli.profile.selector.not_found" = "Millään profiililla ei ole ID:tä tai nimeä ”%@”. ”ojd profile list” näyttää kaikki profiilit.";
 "cli.profile.show.abstract" = "Näytä profiilin asetukset ja sidonnat.";
+"cli.profile.validate.abstract" = "Tarkista profiilitiedosto tuomatta sitä.";
+"cli.profile.validate.discussion" = "Tarkistaa tiedoston profiiliskeemaa ja useiden kenttien yli ulottuvia sääntöjä vasten, kuten päällekkäisiä lähteitä. Käytä arvoa -, jos haluat lukea profiilin stdin-kanavalta. Ei tarvitse käynnissä olevaa palvelua. Päättyy koodiin 1, jos profiili on virheellinen.";
+"cli.profile.validate.file" = "Profiilitiedosto tai - stdin-kanavalle.";
+"cli.profile.validate.valid" = "%@ on kelvollinen profiili: ”%@” kohteelle %@ (%@). Lisää se komennolla ”ojd profile import”.";
 "cli.profile.vanished" = "Palvelu ei säilyttänyt profiilia. Tarkista se komennolla ”ojd profile list”.";

@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Un perfil actiu deixa d’aplicar-se. Demana confirmació en un terminal; en cas contrari necessita --force. Exporteu primer el perfil per conservar-ne una còpia.";
 "cli.profile.delete.done" = "S’ha eliminat el perfil '%@'.";
 "cli.profile.delete.dry_run" = "S’eliminaria el perfil '%@'.";
-"cli.profile.discussion" = "Un perfil de reassignament converteix els controls d’un model de comandament en entrada de comandament, teclat i punter. PROFILE és l’ID o el nom d’un perfil de 'ojd profile list'. Canvieu les assignacions amb 'ojd binding' i tota la resta amb 'ojd profile edit'. Totes les ordres de perfil necessiten el servei.";
+"cli.profile.discussion" = "Un perfil de reassignament converteix els controls d’un model de comandament en entrada de comandament, teclat i punter. PROFILE és l’ID o el nom d’un perfil de 'ojd profile list'. Canvieu les assignacions amb 'ojd binding' i tota la resta amb 'ojd profile edit'. Totes les ordres de perfil, excepte 'ojd profile validate', necessiten el servei.";
 "cli.profile.document_invalid" = "%@ no és un perfil vàlid: %@";
 "cli.document.not_json" = "no és un JSON vàlid";
 "cli.document.missing_field" = "falta el camp «%@»";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "'%@' és el nom de %lld perfils. Feu servir un d’aquests ID:";
 "cli.profile.selector.not_found" = "Cap perfil té l’ID o el nom '%@'. 'ojd profile list' mostra tots els perfils.";
 "cli.profile.show.abstract" = "Mostra els ajustos i les assignacions d’un perfil.";
+"cli.profile.validate.abstract" = "Comprova un fitxer de perfil sense importar-lo.";
+"cli.profile.validate.discussion" = "Comprova el fitxer amb l’esquema de perfil i amb les regles que abasten diversos camps, com ara les fonts duplicades. Feu servir - per llegir el perfil de stdin. No necessita cap servei en execució. Surt amb el codi 1 quan el perfil no és vàlid.";
+"cli.profile.validate.file" = "El fitxer del perfil, o - per a stdin.";
+"cli.profile.validate.valid" = "%@ és un perfil vàlid: '%@' per a %@ (%@). Afegiu-lo amb 'ojd profile import'.";
 "cli.profile.vanished" = "El servei no ha conservat el perfil. Comproveu-lo amb 'ojd profile list'.";

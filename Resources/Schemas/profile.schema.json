@@ -1,0 +1,1713 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/profile.schema.json",
+	"title": "OpenJoystickDriver profile",
+	"description": "A remapping profile, as 'ojd profile export' writes it and 'ojd profile import' reads it. The schema checks the shape and the range of each field. 'ojd profile validate' also checks the rules that span fields, such as duplicate sources and IDs.",
+	"type": "object",
+	"required": [
+		"applicationScope",
+		"bindings",
+		"device",
+		"id",
+		"name"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"applicationScope": {
+			"oneOf": [
+				{
+					"type": "object",
+					"required": [
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"type": {
+							"const": "global"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"bundleIdentifier",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"bundleIdentifier": {
+							"type": "string",
+							"minLength": 3,
+							"maxLength": 255,
+							"pattern": "^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)+$"
+						},
+						"type": {
+							"const": "application"
+						}
+					}
+				}
+			]
+		},
+		"bindings": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/binding"
+			}
+		},
+		"chords": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/chord"
+			}
+		},
+		"device": {
+			"type": "object",
+			"description": "The controller model the profile applies to.",
+			"required": [
+				"productID",
+				"vendorID"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"productID": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"vendorID": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				}
+			}
+		},
+		"gyroOutput": {
+			"$ref": "#/$defs/gyroOutput"
+		},
+		"id": {
+			"$ref": "#/$defs/uuid"
+		},
+		"joyConPair": {
+			"type": "object",
+			"required": [
+				"gyroSelection"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"gyroSelection": {
+					"enum": [
+						"disabled",
+						"left",
+						"right"
+					]
+				}
+			}
+		},
+		"layers": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/layer"
+			}
+		},
+		"motionTuning": {
+			"$ref": "#/$defs/motionTuning"
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"pattern": "^\\S(.*\\S)?$",
+			"description": "At most 80 characters, with no space at either end and no control characters."
+		},
+		"outputPolicy": {
+			"type": "object",
+			"required": [
+				"physicalInput",
+				"virtualGamepad"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"physicalInput": {
+					"enum": [
+						"shared",
+						"exclusive"
+					]
+				},
+				"virtualGamepad": {
+					"enum": [
+						"disabled",
+						"mapped",
+						"passthrough"
+					]
+				}
+			}
+		},
+		"physicalColor": {
+			"$ref": "#/$defs/color"
+		},
+		"sequences": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/sequence"
+			}
+		},
+		"stickMappings": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/stickMapping"
+			}
+		},
+		"touchMappings": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/touchMapping"
+			}
+		},
+		"triggerMappings": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/triggerMapping"
+			}
+		}
+	},
+	"$defs": {
+		"action": {
+			"type": "object",
+			"description": "An extra action of a binding, run from the same source.",
+			"required": [
+				"destination",
+				"id"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"behavior": {
+					"enum": [
+						"hold",
+						"toggle",
+						"tap_on_press",
+						"tap_on_release",
+						"pulse",
+						"press",
+						"release"
+					],
+					"default": "hold"
+				},
+				"destination": {
+					"$ref": "#/$defs/destination"
+				},
+				"doubleTap": {
+					"$ref": "#/$defs/doubleTap"
+				},
+				"id": {
+					"$ref": "#/$defs/uuid"
+				},
+				"longHold": {
+					"$ref": "#/$defs/longHold"
+				},
+				"pulseDurationMs": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 5000,
+					"default": 100,
+					"description": "Only a pulse binding sets a value other than 100."
+				},
+				"turbo": {
+					"$ref": "#/$defs/turbo"
+				}
+			}
+		},
+		"adaptiveTriggerEffect": {
+			"type": "object",
+			"description": "An off effect has startPosition and strength 0.",
+			"required": [
+				"kind",
+				"startPosition",
+				"strength"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"kind": {
+					"enum": [
+						"off",
+						"resistance"
+					]
+				},
+				"startPosition": {
+					"$ref": "#/$defs/unitInterval"
+				},
+				"strength": {
+					"$ref": "#/$defs/unitInterval"
+				}
+			},
+			"if": {
+				"properties": {
+					"kind": {
+						"const": "off"
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"startPosition": {
+						"const": 0
+					},
+					"strength": {
+						"const": 0
+					}
+				}
+			}
+		},
+		"axis": {
+			"enum": [
+				"left_stick_x",
+				"left_stick_y",
+				"right_stick_x",
+				"right_stick_y",
+				"left_trigger",
+				"right_trigger"
+			]
+		},
+		"axisOutput": {
+			"enum": [
+				"left_stick_x",
+				"right_stick_x"
+			]
+		},
+		"axisTuning": {
+			"type": "object",
+			"required": [
+				"deadzone",
+				"digitalActivationThreshold",
+				"gain",
+				"inverted",
+				"responseCurve"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"deadzone": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 0.95
+				},
+				"digitalActivationThreshold": {
+					"type": "number",
+					"minimum": 0.01,
+					"maximum": 1
+				},
+				"gain": {
+					"type": "number",
+					"minimum": 0.1,
+					"maximum": 10
+				},
+				"inverted": {
+					"type": "boolean"
+				},
+				"responseCurve": {
+					"enum": [
+						"linear",
+						"ease_in",
+						"ease_out",
+						"smooth_step"
+					]
+				}
+			}
+		},
+		"binding": {
+			"type": "object",
+			"required": [
+				"destination",
+				"id",
+				"source"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"additionalActions": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/action"
+					}
+				},
+				"axisTuning": {
+					"$ref": "#/$defs/axisTuning"
+				},
+				"behavior": {
+					"enum": [
+						"hold",
+						"toggle",
+						"tap_on_press",
+						"tap_on_release",
+						"pulse",
+						"press",
+						"release"
+					],
+					"default": "hold"
+				},
+				"destination": {
+					"$ref": "#/$defs/destination"
+				},
+				"doubleTap": {
+					"$ref": "#/$defs/doubleTap"
+				},
+				"id": {
+					"$ref": "#/$defs/uuid"
+				},
+				"longHold": {
+					"$ref": "#/$defs/longHold"
+				},
+				"pulseDurationMs": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 5000,
+					"default": 100,
+					"description": "Only a pulse binding sets a value other than 100."
+				},
+				"source": {
+					"$ref": "#/$defs/source"
+				},
+				"turbo": {
+					"$ref": "#/$defs/turbo"
+				}
+			}
+		},
+		"button": {
+			"enum": [
+				"south",
+				"east",
+				"west",
+				"north",
+				"left_shoulder",
+				"right_shoulder",
+				"left_stick",
+				"right_stick",
+				"start",
+				"back",
+				"guide",
+				"share",
+				"options",
+				"touchpad",
+				"mute",
+				"left_trigger_click",
+				"right_trigger_click",
+				"left_grip",
+				"right_grip",
+				"left_pad_click",
+				"right_pad_click",
+				"left_sl",
+				"left_sr",
+				"right_sl",
+				"right_sr",
+				"left_function",
+				"right_function",
+				"left_paddle",
+				"right_paddle"
+			]
+		},
+		"byte": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 255
+		},
+		"chord": {
+			"type": "object",
+			"description": "Sources pressed together. Their order does not matter.",
+			"required": [
+				"destination",
+				"id",
+				"sources"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"destination": {
+					"$ref": "#/$defs/destination"
+				},
+				"id": {
+					"$ref": "#/$defs/uuid"
+				},
+				"mode": {
+					"enum": [
+						"modifier",
+						"simultaneous"
+					],
+					"default": "modifier"
+				},
+				"sources": {
+					"type": "array",
+					"minItems": 2,
+					"items": {
+						"$ref": "#/$defs/discreteSource"
+					}
+				},
+				"windowMs": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 1000,
+					"default": 50
+				}
+			}
+		},
+		"color": {
+			"type": "object",
+			"required": [
+				"blue",
+				"green",
+				"red"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"blue": {
+					"$ref": "#/$defs/byte"
+				},
+				"green": {
+					"$ref": "#/$defs/byte"
+				},
+				"red": {
+					"$ref": "#/$defs/byte"
+				}
+			}
+		},
+		"destination": {
+			"description": "What a control does on the Mac or on the virtual gamepad.",
+			"oneOf": [
+				{
+					"type": "object",
+					"required": [
+						"key",
+						"modifiers",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"key": {
+							"enum": [
+								"a",
+								"b",
+								"c",
+								"d",
+								"e",
+								"f",
+								"g",
+								"h",
+								"i",
+								"j",
+								"k",
+								"l",
+								"m",
+								"n",
+								"o",
+								"p",
+								"q",
+								"r",
+								"s",
+								"t",
+								"u",
+								"v",
+								"w",
+								"x",
+								"y",
+								"z",
+								"0",
+								"1",
+								"2",
+								"3",
+								"4",
+								"5",
+								"6",
+								"7",
+								"8",
+								"9",
+								"escape",
+								"tab",
+								"caps_lock",
+								"space",
+								"return",
+								"delete_backward",
+								"delete_forward",
+								"help",
+								"insert",
+								"home",
+								"end",
+								"page_up",
+								"page_down",
+								"arrow_up",
+								"arrow_down",
+								"arrow_left",
+								"arrow_right",
+								"minus",
+								"equal",
+								"left_bracket",
+								"right_bracket",
+								"backslash",
+								"semicolon",
+								"quote",
+								"comma",
+								"period",
+								"slash",
+								"grave",
+								"section",
+								"f1",
+								"f2",
+								"f3",
+								"f4",
+								"f5",
+								"f6",
+								"f7",
+								"f8",
+								"f9",
+								"f10",
+								"f11",
+								"f12",
+								"f13",
+								"f14",
+								"f15",
+								"f16",
+								"f17",
+								"f18",
+								"f19",
+								"f20",
+								"keypad_0",
+								"keypad_1",
+								"keypad_2",
+								"keypad_3",
+								"keypad_4",
+								"keypad_5",
+								"keypad_6",
+								"keypad_7",
+								"keypad_8",
+								"keypad_9",
+								"keypad_decimal",
+								"keypad_multiply",
+								"keypad_plus",
+								"keypad_clear",
+								"keypad_divide",
+								"keypad_enter",
+								"keypad_minus",
+								"keypad_equal"
+							]
+						},
+						"modifiers": {
+							"type": "array",
+							"items": {
+								"enum": [
+									"command",
+									"control",
+									"option",
+									"shift"
+								]
+							}
+						},
+						"type": {
+							"const": "keyboard"
+						}
+					},
+					"description": "OJD writes modifiers sorted and without repeats."
+				},
+				{
+					"type": "object",
+					"required": [
+						"button",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"button": {
+							"$ref": "#/$defs/button"
+						},
+						"type": {
+							"const": "gamepad_button"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"direction",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"direction": {
+							"$ref": "#/$defs/dpadDirection"
+						},
+						"type": {
+							"const": "gamepad_dpad"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"axis",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"axis": {
+							"$ref": "#/$defs/axis"
+						},
+						"type": {
+							"const": "gamepad_axis"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"button",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"button": {
+							"enum": [
+								"left",
+								"right",
+								"middle",
+								"back",
+								"forward"
+							]
+						},
+						"type": {
+							"const": "mouse_button"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"axis",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"axis": {
+							"enum": [
+								"x",
+								"y"
+							]
+						},
+						"type": {
+							"const": "mouse_movement"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"axis",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"axis": {
+							"enum": [
+								"x",
+								"y"
+							]
+						},
+						"type": {
+							"const": "scroll"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"physical",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"physical": {
+							"$ref": "#/$defs/physicalOutput"
+						},
+						"type": {
+							"const": "physical"
+						}
+					}
+				}
+			]
+		},
+		"discreteSource": {
+			"description": "A source that is pressed or released, so any source but a whole axis.",
+			"allOf": [
+				{
+					"$ref": "#/$defs/source"
+				},
+				{
+					"not": {
+						"type": "object",
+						"required": [
+							"type"
+						],
+						"properties": {
+							"type": {
+								"const": "axis"
+							}
+						}
+					}
+				}
+			]
+		},
+		"doubleTap": {
+			"type": "object",
+			"required": [
+				"destination",
+				"windowMs"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"destination": {
+					"$ref": "#/$defs/destination"
+				},
+				"windowMs": {
+					"type": "number",
+					"minimum": 50,
+					"maximum": 1000
+				}
+			}
+		},
+		"dpadDirection": {
+			"enum": [
+				"up",
+				"down",
+				"left",
+				"right"
+			]
+		},
+		"gyroOutput": {
+			"type": "object",
+			"description": "activationSource is set exactly when activationMode is not always.",
+			"additionalProperties": false,
+			"properties": {
+				"activationMode": {
+					"enum": [
+						"always",
+						"while_held",
+						"while_released",
+						"toggle"
+					],
+					"default": "always"
+				},
+				"activationSource": {
+					"$ref": "#/$defs/discreteSource"
+				},
+				"consumesActivationSource": {
+					"type": "boolean",
+					"default": true
+				},
+				"fullStickDegreesPerSecond": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 10000,
+					"default": 360
+				},
+				"mode": {
+					"enum": [
+						"disabled",
+						"mouse",
+						"left_stick",
+						"right_stick"
+					],
+					"default": "disabled"
+				},
+				"pointerPointsPerDegree": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 1000,
+					"default": 1
+				},
+				"trackball": {
+					"$ref": "#/$defs/gyroTrackball"
+				}
+			},
+			"if": {
+				"properties": {
+					"activationMode": {
+						"const": "always"
+					}
+				}
+			},
+			"then": {
+				"not": {
+					"required": [
+						"activationSource"
+					]
+				}
+			},
+			"else": {
+				"required": [
+					"activationSource"
+				]
+			}
+		},
+		"gyroTrackball": {
+			"type": "object",
+			"required": [
+				"source"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"axes": {
+					"enum": [
+						"pitch",
+						"yaw",
+						"both"
+					],
+					"default": "both"
+				},
+				"consumesSource": {
+					"type": "boolean",
+					"default": true
+				},
+				"decayHalvingsPerSecond": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 1000,
+					"default": 1
+				},
+				"source": {
+					"$ref": "#/$defs/discreteSource"
+				}
+			}
+		},
+		"layer": {
+			"type": "object",
+			"description": "Bindings that replace the base bindings while the activator is held or toggled on.",
+			"required": [
+				"activationMode",
+				"activator",
+				"bindings",
+				"chords",
+				"id",
+				"name",
+				"sequences"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"activationMode": {
+					"enum": [
+						"hold",
+						"toggle"
+					]
+				},
+				"activator": {
+					"$ref": "#/$defs/discreteSource"
+				},
+				"bindings": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/binding"
+					}
+				},
+				"chords": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/chord"
+					}
+				},
+				"id": {
+					"$ref": "#/$defs/uuid"
+				},
+				"motionTuning": {
+					"$ref": "#/$defs/motionTuning"
+				},
+				"name": {
+					"type": "string",
+					"minLength": 1,
+					"pattern": "^\\S(.*\\S)?$",
+					"description": "At most 40 characters, with no space at either end and no control characters."
+				},
+				"sequences": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/sequence"
+					}
+				}
+			}
+		},
+		"lean": {
+			"type": "object",
+			"description": "hysteresisDegrees is less than thresholdDegrees.",
+			"required": [
+				"hysteresisDegrees",
+				"thresholdDegrees"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"hysteresisDegrees": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 30
+				},
+				"thresholdDegrees": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 89
+				}
+			}
+		},
+		"longHold": {
+			"type": "object",
+			"required": [
+				"destination",
+				"durationMs"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"destination": {
+					"$ref": "#/$defs/destination"
+				},
+				"durationMs": {
+					"type": "number",
+					"minimum": 100,
+					"maximum": 5000
+				}
+			}
+		},
+		"motionTuning": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"automaticBias": {
+					"type": "boolean",
+					"default": true
+				},
+				"gravityCorrectionRate": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 100,
+					"default": 2
+				},
+				"invertPitch": {
+					"type": "boolean",
+					"default": false
+				},
+				"invertYaw": {
+					"type": "boolean",
+					"default": false
+				},
+				"lean": {
+					"$ref": "#/$defs/lean"
+				},
+				"pitchSensitivity": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 100,
+					"default": 1
+				},
+				"sideReductionThreshold": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 1,
+					"default": 0.125
+				},
+				"smoothingHalfTimeMs": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 1000,
+					"default": 0
+				},
+				"space": {
+					"enum": [
+						"local",
+						"player",
+						"world"
+					],
+					"default": "player"
+				},
+				"steering": {
+					"$ref": "#/$defs/steering"
+				},
+				"thresholdDegreesPerSecond": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 1000,
+					"default": 0
+				},
+				"yawRelaxation": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 10,
+					"default": 1.41
+				},
+				"yawSensitivity": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 100,
+					"default": 1
+				}
+			}
+		},
+		"physicalOutput": {
+			"description": "A value sent to the physical controller while the action is active.",
+			"oneOf": [
+				{
+					"type": "object",
+					"required": [
+						"intensity",
+						"motor",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"intensity": {
+							"$ref": "#/$defs/unitInterval"
+						},
+						"motor": {
+							"enum": [
+								"leftMain",
+								"rightMain",
+								"leftTrigger",
+								"rightTrigger",
+								"leftHaptic",
+								"rightHaptic"
+							]
+						},
+						"type": {
+							"const": "rumble"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"indicator",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"indicator": {
+							"enum": [
+								0,
+								1,
+								2,
+								3,
+								4
+							]
+						},
+						"type": {
+							"const": "player_indicator"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"blue",
+						"green",
+						"red",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"blue": {
+							"$ref": "#/$defs/byte"
+						},
+						"green": {
+							"$ref": "#/$defs/byte"
+						},
+						"red": {
+							"$ref": "#/$defs/byte"
+						},
+						"type": {
+							"const": "color"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"intensity",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"intensity": {
+							"$ref": "#/$defs/unitInterval"
+						},
+						"type": {
+							"const": "brightness"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"effect",
+						"trigger",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"effect": {
+							"$ref": "#/$defs/adaptiveTriggerEffect"
+						},
+						"trigger": {
+							"enum": [
+								"left",
+								"right"
+							]
+						},
+						"type": {
+							"const": "adaptive_trigger"
+						}
+					}
+				}
+			]
+		},
+		"sequence": {
+			"type": "object",
+			"description": "Sources pressed one after another, in order.",
+			"required": [
+				"destination",
+				"id",
+				"sources",
+				"windowMs"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"destination": {
+					"$ref": "#/$defs/destination"
+				},
+				"id": {
+					"$ref": "#/$defs/uuid"
+				},
+				"sources": {
+					"type": "array",
+					"minItems": 2,
+					"items": {
+						"$ref": "#/$defs/discreteSource"
+					}
+				},
+				"windowMs": {
+					"type": "number",
+					"minimum": 200,
+					"maximum": 10000
+				}
+			}
+		},
+		"source": {
+			"description": "A control on the physical controller.",
+			"oneOf": [
+				{
+					"type": "object",
+					"required": [
+						"button",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"button": {
+							"$ref": "#/$defs/button"
+						},
+						"type": {
+							"const": "button"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"direction",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"direction": {
+							"$ref": "#/$defs/dpadDirection"
+						},
+						"type": {
+							"const": "dpad"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"axis",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"axis": {
+							"$ref": "#/$defs/axis"
+						},
+						"type": {
+							"const": "axis"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"axis",
+						"direction",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"axis": {
+							"$ref": "#/$defs/axis"
+						},
+						"direction": {
+							"enum": [
+								"negative",
+								"positive"
+							]
+						},
+						"type": {
+							"const": "axis_direction"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"stage",
+						"trigger",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"stage": {
+							"enum": [
+								"soft",
+								"full"
+							]
+						},
+						"trigger": {
+							"$ref": "#/$defs/triggerSide"
+						},
+						"type": {
+							"const": "trigger_stage"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"direction",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"direction": {
+							"enum": [
+								"left",
+								"right"
+							]
+						},
+						"type": {
+							"const": "motion_lean"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"surface",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"surface": {
+							"$ref": "#/$defs/touchSurface"
+						},
+						"type": {
+							"const": "touch_contact"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"column",
+						"columns",
+						"row",
+						"rows",
+						"surface",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"column": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 15
+						},
+						"columns": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 16
+						},
+						"row": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 15
+						},
+						"rows": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 16
+						},
+						"surface": {
+							"$ref": "#/$defs/touchSurface"
+						},
+						"type": {
+							"const": "touch_grid"
+						}
+					},
+					"description": "column is less than columns, and row is less than rows."
+				},
+				{
+					"type": "object",
+					"required": [
+						"direction",
+						"minimumDistance",
+						"surface",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"direction": {
+							"enum": [
+								"up",
+								"down",
+								"left",
+								"right"
+							]
+						},
+						"minimumDistance": {
+							"type": "number",
+							"minimum": 0.01,
+							"maximum": 1
+						},
+						"surface": {
+							"$ref": "#/$defs/touchSurface"
+						},
+						"type": {
+							"const": "touch_swipe"
+						}
+					}
+				}
+			]
+		},
+		"steering": {
+			"type": "object",
+			"description": "deadzoneDegrees is less than fullScaleDegrees.",
+			"required": [
+				"deadzoneDegrees",
+				"fullScaleDegrees",
+				"inverted",
+				"output",
+				"responseExponent"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"deadzoneDegrees": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 89
+				},
+				"fullScaleDegrees": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 90
+				},
+				"inverted": {
+					"type": "boolean"
+				},
+				"output": {
+					"$ref": "#/$defs/axisOutput"
+				},
+				"responseExponent": {
+					"type": "number",
+					"minimum": 0.1,
+					"maximum": 10
+				}
+			}
+		},
+		"stickMapping": {
+			"type": "object",
+			"description": "flickHysteresis is less than flickThreshold.",
+			"required": [
+				"source"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"aimDegreesPerSecond": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 10000,
+					"default": 360
+				},
+				"flickDurationMs": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 10000,
+					"default": 100
+				},
+				"flickHysteresis": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 0.5,
+					"default": 0.1
+				},
+				"flickThreshold": {
+					"type": "number",
+					"minimum": 0.1,
+					"maximum": 1,
+					"default": 0.9
+				},
+				"mode": {
+					"enum": [
+						"aim",
+						"flick",
+						"flick_only",
+						"rotate_only",
+						"pointer_area",
+						"pointer_ring",
+						"scroll_wheel",
+						"steering"
+					],
+					"default": "aim"
+				},
+				"passthrough": {
+					"type": "boolean",
+					"default": false
+				},
+				"pointerPointsPerDegree": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 1000,
+					"default": 1
+				},
+				"pointerRadiusPoints": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 10000,
+					"default": 128
+				},
+				"rotationDirection": {
+					"enum": [
+						"clockwise",
+						"counterclockwise"
+					],
+					"default": "clockwise"
+				},
+				"scrollAxis": {
+					"enum": [
+						"horizontal",
+						"vertical"
+					],
+					"default": "vertical"
+				},
+				"scrollDegreesPerLine": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 360,
+					"default": 15
+				},
+				"source": {
+					"$ref": "#/$defs/stickSide"
+				},
+				"steeringDegreesAtFullScale": {
+					"type": "number",
+					"minimum": 45,
+					"maximum": 1440,
+					"default": 360
+				},
+				"steeringOutput": {
+					"enum": [
+						"left_stick_x",
+						"right_stick_x"
+					],
+					"default": "left_stick_x"
+				},
+				"steeringReturnDegreesPerSecond": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 10000,
+					"default": 360
+				},
+				"tuning": {
+					"$ref": "#/$defs/stickTuning"
+				}
+			}
+		},
+		"stickSide": {
+			"enum": [
+				"left",
+				"right"
+			]
+		},
+		"stickTuning": {
+			"type": "object",
+			"description": "innerDeadzone plus outerDeadzone is less than 1.",
+			"additionalProperties": false,
+			"properties": {
+				"innerDeadzone": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 0.95,
+					"default": 0.1
+				},
+				"invertX": {
+					"type": "boolean",
+					"default": false
+				},
+				"invertY": {
+					"type": "boolean",
+					"default": false
+				},
+				"outerDeadzone": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 0.95,
+					"default": 0
+				},
+				"responseExponent": {
+					"type": "number",
+					"minimum": 0.1,
+					"maximum": 10,
+					"default": 1
+				}
+			}
+		},
+		"touchMapping": {
+			"type": "object",
+			"required": [
+				"deadzone",
+				"id",
+				"mode",
+				"pointerSensitivity",
+				"stickRadius",
+				"surface"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"deadzone": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 0.95
+				},
+				"id": {
+					"$ref": "#/$defs/uuid"
+				},
+				"mode": {
+					"enum": [
+						"pointer",
+						"left_stick",
+						"right_stick"
+					]
+				},
+				"pointerSensitivity": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 5000
+				},
+				"stickRadius": {
+					"type": "number",
+					"minimum": 0.01,
+					"maximum": 1
+				},
+				"surface": {
+					"$ref": "#/$defs/touchSurface"
+				}
+			}
+		},
+		"touchSurface": {
+			"enum": [
+				"primary",
+				"left",
+				"right"
+			]
+		},
+		"triggerMapping": {
+			"type": "object",
+			"description": "softThreshold is less than fullThreshold, and hysteresis is less than softThreshold.",
+			"required": [
+				"source"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"fullThreshold": {
+					"type": "number",
+					"minimum": 0.05,
+					"maximum": 1,
+					"default": 0.95
+				},
+				"hysteresis": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 0.25,
+					"default": 0.05
+				},
+				"mode": {
+					"enum": [
+						"simultaneous",
+						"exclusive",
+						"prefer_full",
+						"prefer_full_combined",
+						"responsive_prefer_full",
+						"responsive_prefer_full_combined"
+					],
+					"default": "simultaneous"
+				},
+				"passthrough": {
+					"type": "boolean",
+					"default": false
+				},
+				"skipWindowMs": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 1000,
+					"default": 150
+				},
+				"softThreshold": {
+					"type": "number",
+					"minimum": 0.01,
+					"maximum": 0.95,
+					"default": 0.1
+				},
+				"source": {
+					"$ref": "#/$defs/triggerSide"
+				}
+			}
+		},
+		"triggerSide": {
+			"enum": [
+				"left",
+				"right"
+			]
+		},
+		"turbo": {
+			"type": "object",
+			"required": [
+				"dutyCycle",
+				"repeatRateHz"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"dutyCycle": {
+					"type": "number",
+					"minimum": 0.05,
+					"maximum": 0.95
+				},
+				"repeatRateHz": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 60
+				}
+			}
+		},
+		"unitInterval": {
+			"type": "number",
+			"minimum": 0,
+			"maximum": 1
+		},
+		"uuid": {
+			"type": "string",
+			"pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+		}
+	}
+}

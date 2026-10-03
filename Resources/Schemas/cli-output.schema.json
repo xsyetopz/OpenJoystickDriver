@@ -848,13 +848,98 @@
 			"additionalProperties": false,
 			"properties": {
 				"document": {
-					"type": "object",
-					"description": "The whole profile, as 'ojd profile export' writes it. The profile file has no schema yet."
+					"$ref": "profile.schema.json"
 				},
 				"profile": {
 					"$ref": "#/$defs/sharedProfileSummary"
 				}
 			}
+		},
+		"profileValidate": {
+			"type": "object",
+			"required": [
+				"valid"
+			],
+			"additionalProperties": false,
+			"description": "A valid profile has every property except problem. An invalid profile has only valid and problem.",
+			"properties": {
+				"controller": {
+					"type": "string",
+					"pattern": "^[0-9A-F]{4}:[0-9A-F]{4}$"
+				},
+				"id": {
+					"type": "string",
+					"pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
+				},
+				"name": {
+					"type": "string"
+				},
+				"problem": {
+					"type": "string",
+					"minLength": 1
+				},
+				"scope": {
+					"type": "string",
+					"pattern": "^(global|app:.+)$"
+				},
+				"valid": {
+					"type": "boolean"
+				}
+			},
+			"oneOf": [
+				{
+					"properties": {
+						"valid": {
+							"const": true
+						}
+					},
+					"required": [
+						"controller",
+						"id",
+						"name",
+						"scope"
+					],
+					"not": {
+						"required": [
+							"problem"
+						]
+					}
+				},
+				{
+					"properties": {
+						"valid": {
+							"const": false
+						}
+					},
+					"required": [
+						"problem"
+					],
+					"not": {
+						"anyOf": [
+							{
+								"required": [
+									"controller"
+								]
+							},
+							{
+								"required": [
+									"id"
+								]
+							},
+							{
+								"required": [
+									"name"
+								]
+							},
+							{
+								"required": [
+									"scope"
+								]
+							}
+						]
+					}
+				}
+			]
 		},
 		"recordDraft": {
 			"type": "object",

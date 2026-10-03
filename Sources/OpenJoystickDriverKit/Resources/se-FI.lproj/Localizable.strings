@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Aktiiva profiila heaitá doaibmamis. Jearrá nannema terminálas; muđui dárbbaša --force. Eksporte profiila vuos vai vurket máŋgosa.";
 "cli.profile.delete.done" = "Profiila ”%@” sihkkojuvvui.";
 "cli.profile.delete.dry_run" = "Sihkkošii profiila ”%@”.";
-"cli.profile.discussion" = "Heivehanprofiila rievdada ovtta stivrejeaddjemálle stivrenoasiid speallanbáddi-, boallobeavdi- ja čuojančihpasisaboađun. PROFILE lea profiila ID dahje namma ”ojd profile list”-komanddas. Rievdat čatnumiid ”ojd binding”-komanddain ja buot eará ”ojd profile edit”-komanddain. Juohke profiilakomanda dárbbaša bálvalusa.";
+"cli.profile.discussion" = "Heivehanprofiila rievdada ovtta stivrejeaddjemálle stivrenoasiid speallanbáddi-, boallobeavdi- ja čuojančihpasisaboađun. PROFILE lea profiila ID dahje namma ”ojd profile list”-komanddas. Rievdat čatnumiid ”ojd binding”-komanddain ja buot eará ”ojd profile edit”-komanddain. Juohke profiilakomanda earret ”ojd profile validate” dárbbaša bálvalusa.";
 "cli.profile.document_invalid" = "%@ ii leat gustovaš profiila: %@";
 "cli.document.not_json" = "ii leat gustovaš JSON";
 "cli.document.missing_field" = "gieddi ”%@” váilu";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "”%@” namuha %lld profiilla. Geavat ovtta dáin ID:ain:";
 "cli.profile.selector.not_found" = "Ii oktage profiila leat ID dahje namma ”%@”. ”ojd profile list” čájeha buot profiillaid.";
 "cli.profile.show.abstract" = "Čájeha profiila ásahusaid ja čatnumiid.";
+"cli.profile.validate.abstract" = "Iskka profiilafiilla importekeahttá.";
+"cli.profile.validate.discussion" = "Iska fiilla profiilaskeamma ja máŋgga báikki ráddjejeaddji njuolggadusaid vuostá, omd. guovtegeardánit gáldut. Geavat -, go háliidat lohkat profiila stdin:as. Ii dárbbaš jodi bálvalusa. Nohkká koda 1:in go profiila ii leat gustovaš.";
+"cli.profile.validate.file" = "Profiilafiila dahje - stdin:a várás.";
+"cli.profile.validate.valid" = "%@ lea gustovaš profiila: ”%@” %@ várás (%@). Lasit dan ”ojd profile import”:ain.";
 "cli.profile.vanished" = "Bálvalus ii vurken profiila. Dárkkis dan ”ojd profile list”-komanddain.";

@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "An active profile stops applying. Asks for confirmation on a terminal; needs --force otherwise. Export the profile first to keep a copy.";
 "cli.profile.delete.done" = "Deleted the profile '%@'.";
 "cli.profile.delete.dry_run" = "Would delete the profile '%@'.";
-"cli.profile.discussion" = "A remapping profile turns the controls of one controller model into gamepad, keyboard, and pointer input. PROFILE is a profile ID or name from 'ojd profile list'. Change bindings with 'ojd binding', and everything else with 'ojd profile edit'. Every profile command needs the service.";
+"cli.profile.discussion" = "A remapping profile turns the controls of one controller model into gamepad, keyboard, and pointer input. PROFILE is a profile ID or name from 'ojd profile list'. Change bindings with 'ojd binding', and everything else with 'ojd profile edit'. Every profile command except 'ojd profile validate' needs the service.";
 "cli.profile.document_invalid" = "%@ is not a valid profile: %@";
 "cli.document.not_json" = "it is not valid JSON";
 "cli.document.missing_field" = "the field '%@' is missing";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "'%@' names %lld profiles. Use one of these IDs:";
 "cli.profile.selector.not_found" = "No profile has the ID or name '%@'. 'ojd profile list' shows every profile.";
 "cli.profile.show.abstract" = "Show a profile's settings and bindings.";
+"cli.profile.validate.abstract" = "Check a profile file without importing it.";
+"cli.profile.validate.discussion" = "Checks the file against the profile schema and the rules that span fields, such as duplicate sources. Use - to read the profile from stdin. Needs no running service. Exits 1 when the profile is invalid.";
+"cli.profile.validate.file" = "The profile file, or - for stdin.";
+"cli.profile.validate.valid" = "%@ is a valid profile: '%@' for %@ (%@). Add it with 'ojd profile import'.";
 "cli.profile.vanished" = "The service did not keep the profile. Check it with 'ojd profile list'.";

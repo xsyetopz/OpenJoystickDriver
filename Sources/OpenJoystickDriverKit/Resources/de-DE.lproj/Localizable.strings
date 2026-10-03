@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Ein aktives Profil wird nicht mehr angewendet. Fragt im Terminal nach Bestätigung; andernfalls ist --force nötig. Exportiere das Profil zuerst, um eine Kopie zu behalten.";
 "cli.profile.delete.done" = "Das Profil „%@“ gelöscht.";
 "cli.profile.delete.dry_run" = "Das Profil „%@“ würde gelöscht.";
-"cli.profile.discussion" = "Ein Neubelegungsprofil wandelt die Bedienelemente eines Controller-Modells in Gamepad-, Tastatur- und Zeigereingaben um. PROFILE ist eine Profil-ID oder ein Profilname aus „ojd profile list“. Belegungen änderst du mit „ojd binding“, alles andere mit „ojd profile edit“. Jeder Profilbefehl benötigt den Dienst.";
+"cli.profile.discussion" = "Ein Neubelegungsprofil wandelt die Bedienelemente eines Controller-Modells in Gamepad-, Tastatur- und Zeigereingaben um. PROFILE ist eine Profil-ID oder ein Profilname aus „ojd profile list“. Belegungen änderst du mit „ojd binding“, alles andere mit „ojd profile edit“. Jeder Profilbefehl außer „ojd profile validate“ benötigt den Dienst.";
 "cli.profile.document_invalid" = "%@ ist kein gültiges Profil: %@";
 "cli.document.not_json" = "es ist kein gültiges JSON";
 "cli.document.missing_field" = "das Feld „%@“ fehlt";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "„%@“ benennt %lld Profile. Verwende eine dieser IDs:";
 "cli.profile.selector.not_found" = "Kein Profil hat die ID oder den Namen „%@“. „ojd profile list“ zeigt alle Profile.";
 "cli.profile.show.abstract" = "Die Einstellungen und Belegungen eines Profils anzeigen.";
+"cli.profile.validate.abstract" = "Eine Profildatei prüfen, ohne sie zu importieren.";
+"cli.profile.validate.discussion" = "Prüft die Datei anhand des Profilschemas und der feldübergreifenden Regeln, etwa doppelter Quellen. Mit - wird das Profil von stdin gelesen. Benötigt keinen laufenden Dienst. Beendet sich mit 1, wenn das Profil ungültig ist.";
+"cli.profile.validate.file" = "Die Profildatei oder - für stdin.";
+"cli.profile.validate.valid" = "%@ ist ein gültiges Profil: „%@“ für %@ (%@). Mit „ojd profile import“ hinzufügen.";
 "cli.profile.vanished" = "Der Dienst hat das Profil nicht behalten. Prüfe es mit „ojd profile list“.";

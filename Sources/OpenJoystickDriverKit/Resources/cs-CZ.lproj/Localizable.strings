@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Aktivní profil se přestane používat. V terminálu žádá o potvrzení; jinak vyžaduje --force. Pro zachování kopie profil nejprve exportujte.";
 "cli.profile.delete.done" = "Profil '%@' smazán.";
 "cli.profile.delete.dry_run" = "Profil '%@' by byl smazán.";
-"cli.profile.discussion" = "Profil mapování převádí ovládací prvky jednoho modelu ovladače na vstup gamepadu, klávesnice a ukazatele. PROFILE je ID nebo název profilu z 'ojd profile list'. Přiřazení měňte pomocí 'ojd binding' a vše ostatní pomocí 'ojd profile edit'. Každý příkaz profilu vyžaduje službu.";
+"cli.profile.discussion" = "Profil mapování převádí ovládací prvky jednoho modelu ovladače na vstup gamepadu, klávesnice a ukazatele. PROFILE je ID nebo název profilu z 'ojd profile list'. Přiřazení měňte pomocí 'ojd binding' a vše ostatní pomocí 'ojd profile edit'. Každý příkaz profilu kromě 'ojd profile validate' vyžaduje službu.";
 "cli.profile.document_invalid" = "%@ není platný profil: %@";
 "cli.document.not_json" = "není platný JSON";
 "cli.document.missing_field" = "chybí pole „%@“";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "'%@' pojmenovává %lld profilů. Použijte jedno z těchto ID:";
 "cli.profile.selector.not_found" = "Žádný profil nemá ID ani název '%@'. 'ojd profile list' zobrazí všechny profily.";
 "cli.profile.show.abstract" = "Zobrazí nastavení a přiřazení profilu.";
+"cli.profile.validate.abstract" = "Zkontroluje soubor profilu bez jeho importu.";
+"cli.profile.validate.discussion" = "Zkontroluje soubor podle schématu profilu a pravidel, která zahrnují více polí, například duplicitní zdroje. Pomocí - se profil přečte ze stdin. Nevyžaduje spuštěnou službu. Skončí s kódem 1, pokud je profil neplatný.";
+"cli.profile.validate.file" = "Soubor profilu, nebo - pro stdin.";
+"cli.profile.validate.valid" = "%@ je platný profil: '%@' pro %@ (%@). Přidejte jej příkazem 'ojd profile import'.";
 "cli.profile.vanished" = "Služba profil neuchovala. Zkontrolujte jej pomocí 'ojd profile list'.";

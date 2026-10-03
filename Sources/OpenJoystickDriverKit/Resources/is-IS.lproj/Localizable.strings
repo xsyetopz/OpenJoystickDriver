@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Virkt snið hættir að gilda. Biður um staðfestingu í skjáskel; annars þarf --force. Fluttu sniðið fyrst út til að halda afriti.";
 "cli.profile.delete.done" = "Sniðinu „%@“ eytt.";
 "cli.profile.delete.dry_run" = "Myndi eyða sniðinu „%@“.";
-"cli.profile.discussion" = "Endurvörpunarsnið breytir stjórntækjum einnar stýringargerðar í leikjastýringar-, lyklaborðs- og bendilinntak. PROFILE er auðkenni eða nafn sniðs úr „ojd profile list“. Breyttu vörpunum með „ojd binding“ og öllu öðru með „ojd profile edit“. Allar sniðskipanir þurfa þjónustuna.";
+"cli.profile.discussion" = "Endurvörpunarsnið breytir stjórntækjum einnar stýringargerðar í leikjastýringar-, lyklaborðs- og bendilinntak. PROFILE er auðkenni eða nafn sniðs úr „ojd profile list“. Breyttu vörpunum með „ojd binding“ og öllu öðru með „ojd profile edit“. Allar sniðskipanir nema „ojd profile validate“ þurfa þjónustuna.";
 "cli.profile.document_invalid" = "%@ er ekki gilt snið: %@";
 "cli.document.not_json" = "það er ekki gilt JSON";
 "cli.document.missing_field" = "reitinn „%@“ vantar";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "„%@“ á við %lld snið. Notaðu eitt af þessum auðkennum:";
 "cli.profile.selector.not_found" = "Ekkert snið hefur auðkennið eða nafnið „%@“. „ojd profile list“ sýnir öll snið.";
 "cli.profile.show.abstract" = "Sýna stillingar og varpanir sniðs.";
+"cli.profile.validate.abstract" = "Athuga sniðskrá án þess að flytja hana inn.";
+"cli.profile.validate.discussion" = "Athugar skrána gegn sniðskemanu og reglum sem ná yfir fleiri reiti, svo sem tvíteknar uppsprettur. Notaðu - til að lesa sniðið úr stdin. Þarf ekki þjónustu í gangi. Lýkur með kóðanum 1 þegar sniðið er ógilt.";
+"cli.profile.validate.file" = "Sniðskráin, eða - fyrir stdin.";
+"cli.profile.validate.valid" = "%@ er gilt snið: „%@“ fyrir %@ (%@). Bættu því við með „ojd profile import“.";
 "cli.profile.vanished" = "Þjónustan vistaði ekki sniðið. Athugaðu það með „ojd profile list“.";

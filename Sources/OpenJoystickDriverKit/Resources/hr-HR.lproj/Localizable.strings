@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Aktivni profil prestaje se primjenjivati. U terminalu traži potvrdu; inače zahtijeva --force. Da biste zadržali kopiju, prvo izvezite profil.";
 "cli.profile.delete.done" = "Profil '%@' izbrisan.";
 "cli.profile.delete.dry_run" = "Profil '%@' bio bi izbrisan.";
-"cli.profile.discussion" = "Profil mapiranja pretvara kontrole jednog modela kontrolera u ulaz gamepada, tipkovnice i pokazivača. PROFILE je ID ili naziv profila iz 'ojd profile list'. Dodjele mijenjajte naredbom 'ojd binding', a sve ostalo naredbom 'ojd profile edit'. Svaka naredba profila zahtijeva uslugu.";
+"cli.profile.discussion" = "Profil mapiranja pretvara kontrole jednog modela kontrolera u ulaz gamepada, tipkovnice i pokazivača. PROFILE je ID ili naziv profila iz 'ojd profile list'. Dodjele mijenjajte naredbom 'ojd binding', a sve ostalo naredbom 'ojd profile edit'. Svaka naredba profila osim 'ojd profile validate' zahtijeva uslugu.";
 "cli.profile.document_invalid" = "%@ nije valjan profil: %@";
 "cli.document.not_json" = "nije valjan JSON";
 "cli.document.missing_field" = "polje „%@“ nedostaje";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "'%@' imenuje %lld profila. Upotrijebite jedan od ovih ID-ova:";
 "cli.profile.selector.not_found" = "Nijedan profil nema ID ni naziv '%@'. 'ojd profile list' prikazuje sve profile.";
 "cli.profile.show.abstract" = "Prikaži postavke i dodjele profila.";
+"cli.profile.validate.abstract" = "Provjerite datoteku profila bez uvoza.";
+"cli.profile.validate.discussion" = "Provjerava datoteku prema shemi profila i pravilima koja obuhvaćaju više polja, na primjer duplicirane izvore. S - profil se čita iz stdin. Ne treba pokrenutu uslugu. Završava s kodom 1 kada je profil nevaljan.";
+"cli.profile.validate.file" = "Datoteka profila ili - za stdin.";
+"cli.profile.validate.valid" = "%@ je valjan profil: '%@' za %@ (%@). Dodajte ga naredbom 'ojd profile import'.";
 "cli.profile.vanished" = "Usluga nije zadržala profil. Provjerite ga naredbom 'ojd profile list'.";

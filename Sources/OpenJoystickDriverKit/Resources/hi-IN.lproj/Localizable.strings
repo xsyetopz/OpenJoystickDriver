@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "सक्रिय प्रोफ़ाइल लागू होना बंद कर देती है। टर्मिनल पर पुष्टि माँगता है; अन्यथा --force चाहिए। प्रति रखने के लिए पहले प्रोफ़ाइल एक्सपोर्ट करें।";
 "cli.profile.delete.done" = "प्रोफ़ाइल “%@” हटाई गई।";
 "cli.profile.delete.dry_run" = "प्रोफ़ाइल “%@” हटाई जाएगी।";
-"cli.profile.discussion" = "रीमैपिंग प्रोफ़ाइल एक कंट्रोलर मॉडल के नियंत्रणों को गेमपैड, कीबोर्ड और पॉइंटर इनपुट में बदलती है। PROFILE 'ojd profile list' से प्रोफ़ाइल की ID या नाम है। असाइनमेंट 'ojd binding' से बदलें, और बाकी सब कुछ 'ojd profile edit' से। हर प्रोफ़ाइल कमांड को सेवा चाहिए।";
+"cli.profile.discussion" = "रीमैपिंग प्रोफ़ाइल एक कंट्रोलर मॉडल के नियंत्रणों को गेमपैड, कीबोर्ड और पॉइंटर इनपुट में बदलती है। PROFILE 'ojd profile list' से प्रोफ़ाइल की ID या नाम है। असाइनमेंट 'ojd binding' से बदलें, और बाकी सब कुछ 'ojd profile edit' से। 'ojd profile validate' को छोड़कर हर प्रोफ़ाइल कमांड को सेवा चाहिए।";
 "cli.profile.document_invalid" = "%@ मान्य प्रोफ़ाइल नहीं है: %@";
 "cli.document.not_json" = "यह मान्य JSON नहीं है";
 "cli.document.missing_field" = "फ़ील्ड “%@” मौजूद नहीं है";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "“%@” %lld प्रोफ़ाइल का नाम है। इनमें से कोई एक ID उपयोग करें:";
 "cli.profile.selector.not_found" = "किसी प्रोफ़ाइल की ID या नाम “%@” नहीं है। 'ojd profile list' सभी प्रोफ़ाइल दिखाता है।";
 "cli.profile.show.abstract" = "प्रोफ़ाइल की सेटिंग और असाइनमेंट दिखाएँ।";
+"cli.profile.validate.abstract" = "प्रोफ़ाइल फ़ाइल को इम्पोर्ट किए बिना जाँचें।";
+"cli.profile.validate.discussion" = "फ़ाइल को प्रोफ़ाइल स्कीमा और कई फ़ील्ड में लागू होने वाले नियमों, जैसे डुप्लिकेट स्रोतों, के अनुसार जाँचता है। प्रोफ़ाइल को stdin से पढ़ने के लिए - का उपयोग करें। इसके लिए चालू सेवा की ज़रूरत नहीं होती। प्रोफ़ाइल अमान्य होने पर यह 1 कोड के साथ बाहर निकलता है।";
+"cli.profile.validate.file" = "प्रोफ़ाइल फ़ाइल, या stdin के लिए -।";
+"cli.profile.validate.valid" = "%@ एक मान्य प्रोफ़ाइल है: “%@”, %@ (%@) के लिए। इसे 'ojd profile import' से जोड़ें।";
 "cli.profile.vanished" = "सेवा ने प्रोफ़ाइल को नहीं रखा। उसे 'ojd profile list' से जाँचें।";

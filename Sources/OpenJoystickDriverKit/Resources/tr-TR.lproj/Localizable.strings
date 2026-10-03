@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Etkin bir profil artık uygulanmaz. Terminalde onay ister; aksi halde --force gerekir. Kopyasını saklamak için önce profili dışa aktarın.";
 "cli.profile.delete.done" = "“%@” profili silindi.";
 "cli.profile.delete.dry_run" = "“%@” profili silinirdi.";
-"cli.profile.discussion" = "Yeniden atama profili, tek bir kontrolcü modelinin kontrol öğelerini oyun kumandası, klavye ve işaretçi girişine çevirir. PROFILE, “ojd profile list” çıktısındaki bir profil kimliği veya adıdır. Atamaları “ojd binding” ile, geri kalan her şeyi “ojd profile edit” ile değiştirin. Her profil komutu servise ihtiyaç duyar.";
+"cli.profile.discussion" = "Yeniden atama profili, tek bir kontrolcü modelinin kontrol öğelerini oyun kumandası, klavye ve işaretçi girişine çevirir. PROFILE, “ojd profile list” çıktısındaki bir profil kimliği veya adıdır. Atamaları “ojd binding” ile, geri kalan her şeyi “ojd profile edit” ile değiştirin. “ojd profile validate” dışındaki her profil komutu servise ihtiyaç duyar.";
 "cli.profile.document_invalid" = "%@ geçerli bir profil değil: %@";
 "cli.document.not_json" = "geçerli bir JSON değil";
 "cli.document.missing_field" = "“%@” alanı eksik";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "“%@”, %lld profili adlandırıyor. Şu kimliklerden birini kullanın:";
 "cli.profile.selector.not_found" = "Kimliği veya adı “%@” olan profil yok. “ojd profile list” her profili gösterir.";
 "cli.profile.show.abstract" = "Bir profilin ayarlarını ve atamalarını gösterir.";
+"cli.profile.validate.abstract" = "Bir profil dosyasını içe aktarmadan denetleyin.";
+"cli.profile.validate.discussion" = "Dosyayı profil şemasına ve birden çok alanı kapsayan kurallara, örneğin yinelenen kaynaklara, göre denetler. Profili stdin’den okumak için - kullanın. Çalışan bir servis gerektirmez. Profil geçersizse 1 koduyla çıkar.";
+"cli.profile.validate.file" = "Profil dosyası veya stdin için -.";
+"cli.profile.validate.valid" = "%@ geçerli bir profil: “%@”, %@ için (%@). “ojd profile import” ile ekleyin.";
 "cli.profile.vanished" = "Servis profili saklamadı. “ojd profile list” ile kontrol edin.";

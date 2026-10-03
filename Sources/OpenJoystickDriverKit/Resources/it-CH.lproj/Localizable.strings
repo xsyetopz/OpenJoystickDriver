@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Un profilo attivo smette di essere applicato. Chiede conferma su un terminale; altrimenti richiede --force. Esporta prima il profilo per tenerne una copia.";
 "cli.profile.delete.done" = "Eliminato il profilo '%@'.";
 "cli.profile.delete.dry_run" = "Eliminerebbe il profilo '%@'.";
-"cli.profile.discussion" = "Un profilo di rimappatura trasforma i controlli di un modello di controller in input di gamepad, tastiera e puntatore. PROFILE è l’ID o il nome di un profilo da 'ojd profile list'. Cambia le assegnazioni con 'ojd binding' e tutto il resto con 'ojd profile edit'. Ogni comando del profilo richiede il servizio.";
+"cli.profile.discussion" = "Un profilo di rimappatura trasforma i controlli di un modello di controller in input di gamepad, tastiera e puntatore. PROFILE è l’ID o il nome di un profilo da 'ojd profile list'. Cambia le assegnazioni con 'ojd binding' e tutto il resto con 'ojd profile edit'. Ogni comando del profilo, tranne 'ojd profile validate', richiede il servizio.";
 "cli.profile.document_invalid" = "%@ non è un profilo valido: %@";
 "cli.document.not_json" = "non è un JSON valido";
 "cli.document.missing_field" = "manca il campo «%@»";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "'%@' indica %lld profili. Usa uno di questi ID:";
 "cli.profile.selector.not_found" = "Nessun profilo ha l’ID o il nome '%@'. 'ojd profile list' mostra tutti i profili.";
 "cli.profile.show.abstract" = "Mostra le impostazioni e le assegnazioni di un profilo.";
+"cli.profile.validate.abstract" = "Controlla un file di profilo senza importarlo.";
+"cli.profile.validate.discussion" = "Controlla il file rispetto allo schema del profilo e alle regole che coinvolgono più campi, come le sorgenti duplicate. Usa - per leggere il profilo da stdin. Non richiede un servizio in esecuzione. Termina con codice 1 quando il profilo non è valido.";
+"cli.profile.validate.file" = "Il file del profilo, oppure - per stdin.";
+"cli.profile.validate.valid" = "%@ è un profilo valido: '%@' per %@ (%@). Aggiungilo con 'ojd profile import'.";
 "cli.profile.vanished" = "Il servizio non ha conservato il profilo. Controllalo con 'ojd profile list'.";

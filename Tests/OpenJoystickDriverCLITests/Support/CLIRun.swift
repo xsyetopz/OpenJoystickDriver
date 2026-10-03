@@ -24,9 +24,20 @@ struct CLIRun {
     return run
   }
 
-  /// Checks every `--json` document a command prints against its output schema.
+  /// Checks every `--json` document and every exported profile against its schema.
   private func expectValidJSON(_ arguments: [String]) {
     let path = CLICommandTree.commandPath(in: arguments)
+    if path == ["profile", "export"], code == 0,
+      !arguments.contains(where: ["-o", "--output", "-h", "--help"].contains)
+    {
+      do {
+        let issues = try CLIOutputSchema.profileIssues(in: standardOutput)
+        #expect(issues.isEmpty, "ojd \(arguments.joined(separator: " ")): \(issues)")
+      } catch {
+        Issue.record(error, "ojd \(arguments.joined(separator: " "))")
+      }
+      return
+    }
     guard arguments.contains("--json"), !CLIOutputSchema.exempt.contains(path),
       !standardOutput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     else { return }
@@ -95,7 +106,9 @@ enum CLICommandTree {
     case ["controller", "player"]: ["045E:028E", "1"]
     case ["virtual", "set"]: ["hid-generic", "045E:028E"]
     case ["record", "draft"], ["record", "show"], ["record", "remove"]: ["045E:028E"]
-    case ["record", "validate"], ["record", "install"], ["profile", "import"]: ["-"]
+    case ["record", "validate"], ["record", "install"], ["profile", "import"],
+      ["profile", "validate"]:
+      ["-"]
     case ["controller", "calibrate"]: ["045E:028E", "start"]
     case ["controller", "pair"]: ["057E:2006", "057E:2007", "--profile", "Pair"]
     case ["controller", "unpair"]: ["057E:2006"]

@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Aktīvs profils pārstāj darboties. Terminālī prasa apstiprinājumu; citādi nepieciešams --force. Lai saglabātu kopiju, vispirms eksportējiet profilu.";
 "cli.profile.delete.done" = "Profils „%@“ izdzēsts.";
 "cli.profile.delete.dry_run" = "Tiktu izdzēsts profils „%@“.";
-"cli.profile.discussion" = "Pārkartēšanas profils pārvērš viena kontroliera modeļa vadīklas spēļu kontroliera, tastatūras un rādītāja ievadē. PROFILE ir profila ID vai nosaukums no „ojd profile list“. Piesaistes mainiet ar „ojd binding“, bet visu pārējo ar „ojd profile edit“. Katrai profila komandai nepieciešams pakalpojums.";
+"cli.profile.discussion" = "Pārkartēšanas profils pārvērš viena kontroliera modeļa vadīklas spēļu kontroliera, tastatūras un rādītāja ievadē. PROFILE ir profila ID vai nosaukums no „ojd profile list“. Piesaistes mainiet ar „ojd binding“, bet visu pārējo ar „ojd profile edit“. Katrai profila komandai, izņemot „ojd profile validate“, nepieciešams pakalpojums.";
 "cli.profile.document_invalid" = "%@ nav derīgs profils: %@";
 "cli.document.not_json" = "tas nav derīgs JSON";
 "cli.document.missing_field" = "trūkst lauka „%@“";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "„%@“ atbilst %lld profiliem. Izmantojiet kādu no šiem ID:";
 "cli.profile.selector.not_found" = "Nevienam profilam nav ID vai nosaukuma „%@“. „ojd profile list“ rāda visus profilus.";
 "cli.profile.show.abstract" = "Rādīt profila iestatījumus un piesaistes.";
+"cli.profile.validate.abstract" = "Pārbaudīt profila failu, to neimportējot.";
+"cli.profile.validate.discussion" = "Pārbauda failu pēc profila shēmas un noteikumiem, kas aptver vairākus laukus, piemēram, dublētus avotus. Izmantojiet -, lai nolasītu profilu no stdin. Nav nepieciešams darbojošs pakalpojums. Beidzas ar kodu 1, ja profils nav derīgs.";
+"cli.profile.validate.file" = "Profila fails vai - stdin.";
+"cli.profile.validate.valid" = "%@ ir derīgs profils: „%@“, paredzēts %@ (%@). Pievienojiet to ar „ojd profile import“.";
 "cli.profile.vanished" = "Pakalpojums nesaglabāja profilu. Pārbaudiet to ar „ojd profile list“.";

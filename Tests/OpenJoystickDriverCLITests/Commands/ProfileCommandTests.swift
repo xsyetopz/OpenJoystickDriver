@@ -205,6 +205,36 @@ struct ProfileCommandTests {
   }
 
   @Test
+  func validateChecksAFileWithoutTheService() async throws {
+    let profile = FakeProfileLibrary.profile("Pad")
+    let document = Data(try RemappingProfileFileStore.encodedJSON(profile).utf8)
+    let run = { (data: Data, arguments: [String]) in
+      await RecordStore.$standardInput.withValue(
+        { data },
+        operation: { await CLIRun.run(["profile", "validate", "-"] + arguments) }
+      )
+    }
+
+    let json = await run(document, ["--json"])
+    let plain = await run(document, ["--plain"])
+    let human = await run(document, [])
+    let invalidJSON = await run(Data(#"{"name":"Pad"}"#.utf8), ["--json"])
+    let invalid = await run(Data("{}".utf8), [])
+
+    #expect(json.code == 0, "\(json.standardError)")
+    #expect(try json.json()["valid"] as? Bool == true)
+    #expect(try json.json()["id"] as? String == profile.id.uuidString)
+    #expect(plain.standardOutput == "\(profile.id.uuidString)\tPad\t045E:028E\tglobal\n")
+    #expect(human.code == 0)
+    #expect(human.standardOutput.contains("stdin is a valid profile"))
+    #expect(invalidJSON.code == 1)
+    #expect(try invalidJSON.json()["valid"] as? Bool == false)
+    #expect(try invalidJSON.json()["problem"] is String)
+    #expect(invalid.code == 1)
+    #expect(invalid.standardError.contains("stdin is not a valid profile"))
+  }
+
+  @Test
   func editReturnsTheSavedProfileAndRejectsAChangedID() throws {
     let original = FakeProfileLibrary.profile("Pad")
     let renamed = ProfileEditor.$open.withValue(

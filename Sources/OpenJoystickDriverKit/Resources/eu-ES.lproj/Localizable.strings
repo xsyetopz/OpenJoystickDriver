@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Profil aktibo bat aplikatzeari uzten dio. Terminalean berrespena eskatzen du; bestela --force behar du. Esportatu profila lehenago kopia bat gordetzeko.";
 "cli.profile.delete.done" = "«%@» profila ezabatu da.";
 "cli.profile.delete.dry_run" = "«%@» profila ezabatuko litzateke.";
-"cli.profile.discussion" = "Birmapatze-profil batek aginte-modelo baten kontrolak gamepad, teklatu eta erakusle-sarrera bihurtzen ditu. PROFILE profil baten IDa edo izena da, «ojd profile list» komandotik. Aldatu esleipenak «ojd binding» komandoarekin, eta gainerako guztia «ojd profile edit» komandoarekin. Profil-komando guztiek zerbitzua behar dute.";
+"cli.profile.discussion" = "Birmapatze-profil batek aginte-modelo baten kontrolak gamepad, teklatu eta erakusle-sarrera bihurtzen ditu. PROFILE profil baten IDa edo izena da, «ojd profile list» komandotik. Aldatu esleipenak «ojd binding» komandoarekin, eta gainerako guztia «ojd profile edit» komandoarekin. Profil-komando guztiek, «ojd profile validate» izan ezik, zerbitzua behar dute.";
 "cli.profile.document_invalid" = "%@ ez da profil baliozkoa: %@";
 "cli.document.not_json" = "ez da JSON baliozkoa";
 "cli.document.missing_field" = "«%@» eremua falta da";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "«%@» izenak %lld profil izendatzen ditu. Erabili ID hauetako bat:";
 "cli.profile.selector.not_found" = "Ez dago «%@» IDa edo izena duen profilik. «ojd profile list» komandoak profil guztiak erakusten ditu.";
 "cli.profile.show.abstract" = "Erakutsi profil baten ezarpenak eta esleipenak.";
+"cli.profile.validate.abstract" = "Egiaztatu profil-fitxategi bat inportatu gabe.";
+"cli.profile.validate.discussion" = "Fitxategia profil-eskemaren eta eremu anitzeko arauen aurka egiaztatzen du, adibidez iturburu bikoiztuen aurka. Erabili - profila stdin-etik irakurtzeko. Ez du martxan dagoen zerbitzurik behar. 1 kodearekin amaitzen da profila baliogabea denean.";
+"cli.profile.validate.file" = "Profilaren fitxategia, edo - stdin-erako.";
+"cli.profile.validate.valid" = "%@ baliozko profila da: «%@», %@ (%@) eredurako. Gehitu «ojd profile import» erabiliz.";
 "cli.profile.vanished" = "Zerbitzuak ez du profila mantendu. Egiaztatu «ojd profile list» komandoarekin.";

@@ -54,7 +54,7 @@ A profile file contains one profile object. An exported profile file has the sam
 | `stickMappings`, `triggerMappings`, `touchMappings` | No | Analog and touch settings |
 | `chords`, `sequences`, `layers` | No | Combinations and layers |
 
-OJD rejects unknown keys anywhere in a profile. The file has no schema version field. The repository has no JSON schema for profiles.
+OJD rejects unknown keys anywhere in a profile. The file has no schema version field. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes the file. Rules that span fields, such as a source used twice, are not in the schema. Check a file against both with `ojd profile validate FILE`.
 
 ## Limits
 

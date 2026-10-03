@@ -1311,7 +1311,7 @@
 "cli.profile.delete.discussion" = "Активан профил престаје да се примењује. На терминалу тражи потврду; иначе захтева --force. Прво извезите профил да бисте сачували копију.";
 "cli.profile.delete.done" = "Профил „%@“ је обрисан.";
 "cli.profile.delete.dry_run" = "Профил „%@“ би био обрисан.";
-"cli.profile.discussion" = "Профил мапирања претвара контроле једног модела контролера у унос гејмпада, тастатуре и показивача. PROFILE је ID или име профила из „ojd profile list“. Доделе мењајте командом „ojd binding“, а све остало командом „ojd profile edit“. Свака команда профила захтева услугу.";
+"cli.profile.discussion" = "Профил мапирања претвара контроле једног модела контролера у унос гејмпада, тастатуре и показивача. PROFILE је ID или име профила из „ojd profile list“. Доделе мењајте командом „ojd binding“, а све остало командом „ojd profile edit“. Свака команда профила осим „ojd profile validate“ захтева услугу.";
 "cli.profile.document_invalid" = "%@ није исправан профил: %@";
 "cli.document.not_json" = "није исправан JSON";
 "cli.document.missing_field" = "поље „%@“ недостаје";
@@ -1357,4 +1357,8 @@
 "cli.profile.selector.ambiguous" = "Име „%@“ имају %lld профила. Користите један од ових ID-ова:";
 "cli.profile.selector.not_found" = "Ниједан профил нема ID или име „%@“. „ojd profile list“ приказује сваки профил.";
 "cli.profile.show.abstract" = "Прикажи поставке и доделе профила.";
+"cli.profile.validate.abstract" = "Провера датотеке профила без њеног увоза.";
+"cli.profile.validate.discussion" = "Проверава датотеку у односу на шему профила и правила која обухватају више поља, на пример дуплиране изворе. Користите - да бисте прочитали профил са stdin. Не захтева покренуту услугу. Завршава се кодом 1 када је профил неважећи.";
+"cli.profile.validate.file" = "Датотека профила или - за stdin.";
+"cli.profile.validate.valid" = "%@ је важећи профил: „%@“ за %@ (%@). Додајте га командом „ojd profile import“.";
 "cli.profile.vanished" = "Услуга није сачувала профил. Проверите га командом „ojd profile list“.";

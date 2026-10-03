@@ -14,13 +14,14 @@ struct ProfileCommand: AsyncParsableCommand {
       "A remapping profile turns the controls of one controller model into gamepad, keyboard, "
         + "and pointer input. PROFILE is a profile ID or name from 'ojd profile list'. Change "
         + "bindings with 'ojd binding', and everything else with 'ojd profile edit'. Every "
-        + "profile command needs the service."
+        + "profile command except 'ojd profile validate' needs the service."
     ),
     subcommands: [
       ProfileListCommand.self, ProfileShowCommand.self, ProfileCreateCommand.self,
       ProfileDuplicateCommand.self, ProfileRenameCommand.self, ProfileDeleteCommand.self,
       ProfileActivateCommand.self, ProfileDeactivateCommand.self, ProfileImportCommand.self,
-      ProfileExportCommand.self, ProfileEditCommand.self, ProfileRecoverCommand.self,
+      ProfileValidateCommand.self, ProfileExportCommand.self, ProfileEditCommand.self,
+      ProfileRecoverCommand.self,
     ]
   )
 
