@@ -7,6 +7,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+from .schema_compatibility import IncompatibleSchemaError
+from .schema_compatibility import check as check_compatibility
+
 try:
     from jsonschema import Draft202012Validator, FormatChecker
     from jsonschema.exceptions import SchemaError, ValidationError
@@ -135,7 +138,14 @@ def main() -> int:
             documents["controller-override.schema.json"], registry, overrides
         )
         validate_live_support_report(documents["report.schema.json"], registry)
-    except (OSError, json.JSONDecodeError, SchemaError, ValidationError) as error:
+        compatibility = check_compatibility(ROOT, documents)
+    except (
+        OSError,
+        json.JSONDecodeError,
+        SchemaError,
+        ValidationError,
+        IncompatibleSchemaError,
+    ) as error:
         print(f"error: {error}", file=sys.stderr)
         return 1
     except subprocess.CalledProcessError as error:
@@ -147,6 +157,7 @@ def main() -> int:
         f"{len(controller_records)} controller records, {len(overrides)} overrides, "
         "and one live support report."
     )
+    print(compatibility)
     return 0
 
 

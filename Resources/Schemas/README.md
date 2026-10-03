@@ -40,7 +40,8 @@ CloudEvents owns `specversion`, `id`, `source`, `type`, `time`, `datacontenttype
 git diff --check
 ```
 
-`check schemas` validates all schemas, every generated controller record, every override, OJD-owned Swift `CodingKeys`, and one live support report. Generate an intentional catalog change only through:
+`check schemas` validates all schemas, every generated controller record, every override, OJD-owned Swift `CodingKeys`, and one live support report.
+It also compares `cli-output.schema.json` with its copy at the last release tag, and fails when a change would break a program that reads that release's `--json` output; see [Using the command line](../../docs/Command-Line.md). Generate an intentional catalog change only through:
 
 ```bash
 ./Scripts/ojd catalog regenerate --write
