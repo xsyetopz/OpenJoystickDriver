@@ -11,7 +11,7 @@ This page lists the controllers that people tested with OpenJoystickDriver (OJD)
 
 ## Supported controllers
 
-This section sorts controllers into three tiers. The tiers are a documentation classification. The app shows no tier and no warning. Somebody verified a controller only in the connection mode that they tested. The other modes have no verification and may work. A controller that works over USB may not work over Bluetooth or a dongle. For more information, see [Connection types](Connecting-Controllers.md#connection-types).
+This section sorts controllers into three tiers. The tiers are a documentation classification. The app shows no tier and no warning. A tier records how much hardware testing confirms a controller. Official and Community-verified mean that people tested the controller on real hardware and it worked. Unverified means that nobody confirmed the controller yet. Somebody verified a controller only in the connection mode that they tested. The other modes have no verification and may work. A controller that works over USB may not work over Bluetooth or a dongle. For more information, see [Connection types](Connecting-Controllers.md#connection-types).
 
 ### Official
 
@@ -45,7 +45,7 @@ The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode. The Blueto
 
 OJD includes a built-in catalog of 696 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.
 
-An unverified controller may work, may partly work, or may not work. The tier does not mean that the controller is broken.
+An unverified controller may work, may partly work, or may not work. The tier does not mean that the controller is broken or fake.
 
 To find out whether your controller is in the catalog:
 
@@ -81,10 +81,6 @@ Clones often send data in a different format, so the driver for the original con
 | Ant Esports GP100 | PS3 controller | A Shanwan PS3 clone. VID:PID `2563:0575` in PS3/PC mode. |
 
 The Ant Esports GP100 starts in XInput mode. In that mode macOS sees no input. To switch it to PS3/PC mode, hold **Select** and **B** while you connect it. One tester reports **Start** and **B** instead. For more information, see [the Shanwan test record](../contributing/testing/ps3-third-party.md).
-
-### What the warning sign means
-
-A controller in the Unverified tier has a record in the OJD catalog, but nobody tested it on real hardware. The warning does not say that the controller is fake. It says that OJD may work, may partly work, or may not work with it. For more information, see [Supported controllers](#supported-controllers).
 
 ## Generic HID controllers
 
