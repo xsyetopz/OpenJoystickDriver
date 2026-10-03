@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Осы атаумен профиль бар.";
 "error.profileMissing" = "Бұл профиль енді қолжетімсіз.";
 "error.reviewAssignments" = "Профиль тағайындауларын тексеріп, қайта көріңіз.";
-"error.profileLibrarySave" = "Профиль кітапханасын сақтау мүмкін болмады.";
+"error.profileLibrarySave" = "Профильдерді сақтау мүмкін болмады.";
 "error.remappingUnavailable" = "Контроллерді қайта тағайындау уақытша қолжетімсіз.";
 "error.generic" = "OpenJoystickDriver бұл әрекетті аяқтай алмады.";
 "error.notAvailable" = "OpenJoystickDriver қазір қолжетімсіз.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Контроллер енгізуі әлі қолжетімсіз.";
 "error.noDetectedControl" = "Жаңа контроллер басқаруы анықталмады.";
 "error.actionInProgress" = "Басқа профиль әрекеті қазірдің өзінде орындалуда.";
-"error.profileLibraryCorrupt" = "Профиль кітапханасы зақымдалған және жүктеуге болмайды.";
-"error.profileLibraryVersion" = "Бұл профильдік кітапхана жаңартылуға тиіс. Жаңа профильді құру немесе ескі кітапхана файлын алып тастау.";
+"error.profileLibraryCorrupt" = "Белсенді профильдер тізімі зақымдалған және оны жүктеу мүмкін болмады.";
 "error.selectedAssignmentMissing" = "Таңдалған тағайындау енді қолжетімсіз.";
 "capture.listeningButton" = "Тыңдалуда…";
 "error.reviewAssignmentsBeforeSave" = "Осы профильді сақтамас бұрын тағайындауларды тексеріңіз.";

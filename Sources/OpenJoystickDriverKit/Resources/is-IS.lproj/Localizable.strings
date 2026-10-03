@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Snið með því heiti er þegar til.";
 "error.profileMissing" = "Það snið er ekki lengur tiltækt.";
 "error.reviewAssignments" = "Yfirfarðu úthlutanir sniðsins og reyndu aftur.";
-"error.profileLibrarySave" = "Ekki tókst að vista sniðasafnið.";
+"error.profileLibrarySave" = "Ekki tókst að vista sniðin.";
 "error.remappingUnavailable" = "Endurúthlutun stýringar er tímabundið ótiltæk.";
 "error.generic" = "OpenJoystickDriver gat ekki lokið þeirri aðgerð.";
 "error.notAvailable" = "OpenJoystickDriver er ekki tiltækt núna.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Ekkert stýrinntak er enn tiltækt.";
 "error.noDetectedControl" = "Engin ný stýring fannst.";
 "error.actionInProgress" = "Önnur sniðaðgerð er þegar í gangi.";
-"error.profileLibraryCorrupt" = "Persónuvernd er skemmd og ekki hægt að hlaða.";
-"error.profileLibraryVersion" = "Þessi prófíll bókasafn þarf að uppfæra. Búðu til nýs prófíls eða fjarlægðu gamla bókasafn skrá.";
+"error.profileLibraryCorrupt" = "Listinn yfir virk snið er skemmdur og ekki tókst að hlaða honum.";
 "error.selectedAssignmentMissing" = "Valin úthlutun er ekki lengur tiltæk.";
 "capture.listeningButton" = "Hlustar…";
 "error.reviewAssignmentsBeforeSave" = "Yfirfarðu úthlutanirnar áður en þú vistar þetta snið.";

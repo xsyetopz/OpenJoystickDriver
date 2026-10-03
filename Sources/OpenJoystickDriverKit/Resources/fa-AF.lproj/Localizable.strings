@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "نمایه‌ای با این نام از قبل وجود دارد.";
 "error.profileMissing" = "آن نمایه دیگر در دسترس نیست.";
 "error.reviewAssignments" = "تخصیص‌های نمایه را بازبینی کنید و دوباره تلاش کنید.";
-"error.profileLibrarySave" = "ذخیره کتابخانه نمایه‌ها ممکن نشد.";
+"error.profileLibrarySave" = "ذخیره نمایه‌ها ممکن نشد.";
 "error.remappingUnavailable" = "بازنگاشت کنترلر موقتاً در دسترس نیست.";
 "error.generic" = "OpenJoystickDriver نتوانست آن اقدام را کامل کند.";
 "error.notAvailable" = "OpenJoystickDriver فعلاً در دسترس نیست.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "هنوز ورودی کنترلر در دسترس نیست.";
 "error.noDetectedControl" = "کنترل جدیدی از کنترلر شناسایی نشد.";
 "error.actionInProgress" = "اقدام دیگری روی نمایه در جریان است.";
-"error.profileLibraryCorrupt" = "کتابخانه پروفایل آسیب دیده و نمیتونه بارش بشه";
-"error.profileLibraryVersion" = "این کتابخانه پروفایل نیاز به بروزرسانی دارد. یک پروفایل جدید ایجاد کنید یا فایل قدیمی کتابخانه را حذف کنید.";
+"error.profileLibraryCorrupt" = "فهرست نمایه‌های فعال آسیب دیده است و بارگذاری آن ممکن نشد.";
 "error.selectedAssignmentMissing" = "تخصیص انتخاب‌شده دیگر در دسترس نیست.";
 "capture.listeningButton" = "در حال شنیدن…";
 "error.reviewAssignmentsBeforeSave" = "پیش از ذخیره این نمایه تخصیص‌ها را بازبینی کنید.";

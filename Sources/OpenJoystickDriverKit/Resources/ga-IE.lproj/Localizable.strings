@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Tá próifíl leis an ainm sin ann cheana.";
 "error.profileMissing" = "Níl an phróifíl sin ar fáil a thuilleadh.";
 "error.reviewAssignments" = "Athbhreithnigh sannaidh na próifíle agus bain triail eile as.";
-"error.profileLibrarySave" = "Níorbh fhéidir leabharlann na bpróifílí a shábháil.";
+"error.profileLibrarySave" = "Níorbh fhéidir na próifílí a shábháil.";
 "error.remappingUnavailable" = "Níl athmhapáil an rialtóra ar fáil go sealadach.";
 "error.generic" = "Níorbh fhéidir le OpenJoystickDriver an gníomh sin a chríochnú.";
 "error.notAvailable" = "Níl OpenJoystickDriver ar fáil faoi láthair.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Níl aon ionchur rialtóra ar fáil fós.";
 "error.noDetectedControl" = "Níor braitheadh aon rialú rialtóra nua.";
 "error.actionInProgress" = "Tá gníomh próifíle eile ar siúl cheana.";
-"error.profileLibraryCorrupt" = "Tá an leabharlann próifíl damáiste agus ní raibh sé in ann a lasta.";
-"error.profileLibraryVersion" = "Ní mór an leabharlann próifíl seo a nuashonrú. Cruthaigh próifíl nua nó cuir ar fáil an sean-fhiil leabharlann.";
+"error.profileLibraryCorrupt" = "Tá liosta na bpróifílí gníomhacha damáistithe agus níorbh fhéidir é a lódáil.";
 "error.selectedAssignmentMissing" = "Níl an sannadh roghnaithe ar fáil a thuilleadh.";
 "capture.listeningButton" = "Ag éisteacht…";
 "error.reviewAssignmentsBeforeSave" = "Athbhreithnigh na sannaidh sula sábháiltear an phróifíl seo.";

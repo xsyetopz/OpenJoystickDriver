@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Profil s tem imenom že obstaja.";
 "error.profileMissing" = "Ta profil ni več na voljo.";
 "error.reviewAssignments" = "Preglejte dodelitve profila in poskusite znova.";
-"error.profileLibrarySave" = "Knjižnice profilov ni bilo mogoče shraniti.";
+"error.profileLibrarySave" = "Profilov ni bilo mogoče shraniti.";
 "error.remappingUnavailable" = "Preslikava krmilnika trenutno ni na voljo.";
 "error.generic" = "OpenJoystickDriver tega dejanja ni mogel dokončati.";
 "error.notAvailable" = "OpenJoystickDriver trenutno ni na voljo.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Vhod krmilnika še ni na voljo.";
 "error.noDetectedControl" = "Ni bil zaznan noben nov krmilni element krmilnika.";
 "error.actionInProgress" = "Drugo dejanje profila je že v teku.";
-"error.profileLibraryCorrupt" = "Biblioteka profila je poškodovana in se ne more naložiti.";
-"error.profileLibraryVersion" = "Ta knjižnica profilov potrebuje posodobitev. Ustvari novo profil ali odstranite staro datoteko knjižnice.";
+"error.profileLibraryCorrupt" = "Seznam aktivnih profilov je poškodovan in ga ni bilo mogoče naložiti.";
 "error.selectedAssignmentMissing" = "Izbrana dodelitev ni več na voljo.";
 "capture.listeningButton" = "Poslušanje…";
 "error.reviewAssignmentsBeforeSave" = "Pred shranjevanjem tega profila preglejte dodelitve.";

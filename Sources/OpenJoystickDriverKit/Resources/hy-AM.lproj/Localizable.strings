@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Այդ անունով պրոֆիլ արդեն կա։";
 "error.profileMissing" = "Այդ պրոֆիլն այլևս հասանելի չէ։";
 "error.reviewAssignments" = "Վերանայեք պրոֆիլի նշանակումները և փորձեք նորից։";
-"error.profileLibrarySave" = "Պրոֆիլների գրադարանը չհաջողվեց պահել։";
+"error.profileLibrarySave" = "Պրոֆիլները չհաջողվեց պահել։";
 "error.remappingUnavailable" = "Կարգավորիչի վերանշանակումն ժամանակավորապես անհասանելի է։";
 "error.generic" = "OpenJoystickDriver-ը չկարողացավ ավարտել այդ գործողությունը։";
 "error.notAvailable" = "OpenJoystickDriver-ն այժմ անհասանելի է։";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Կարգավորիչի մուտք դեռ հասանելի չէ։";
 "error.noDetectedControl" = "Նոր կարգավորիչի կառավարիչ չհայտնաբերվեց։";
 "error.actionInProgress" = "Այլ պրոֆիլի գործողություն արդեն ընթացքի մեջ է։";
-"error.profileLibraryCorrupt" = "Պրոֆիլային գրադարանը վնասված է եւ չի կարող բեռնել:";
-"error.profileLibraryVersion" = "Այս պրոֆիլային գրադարանը պետք է թարմացվի: Ստեղծեք նոր պրոֆիլ կամ հանեք հին գրադարանի ֆայլը:";
+"error.profileLibraryCorrupt" = "Ակտիվ պրոֆիլների ցանկը վնասված է և չհաջողվեց բեռնել։";
 "error.selectedAssignmentMissing" = "Ընտրված նշանակումն այլևս հասանելի չէ։";
 "capture.listeningButton" = "Լսում…";
 "error.reviewAssignmentsBeforeSave" = "Վերանայեք նշանակումները այս պրոֆիլը պահելուց առաջ։";

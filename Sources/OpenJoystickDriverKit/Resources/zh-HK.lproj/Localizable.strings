@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "已存在相同名稱的設定檔。";
 "error.profileMissing" = "該設定檔已無法使用。";
 "error.reviewAssignments" = "請檢查設定檔對應後再試一次。";
-"error.profileLibrarySave" = "無法儲存設定檔資料庫。";
+"error.profileLibrarySave" = "無法儲存設定檔。";
 "error.remappingUnavailable" = "控制器重新對應暫時無法使用。";
 "error.generic" = "OpenJoystickDriver 無法完成該動作。";
 "error.notAvailable" = "OpenJoystickDriver 目前無法使用。";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "尚無可用的控制器輸入。";
 "error.noDetectedControl" = "未偵測到新的控制器控制項。";
 "error.actionInProgress" = "另一項設定檔動作已在進行中。";
-"error.profileLibraryCorrupt" = "該資料庫受損,無法加載.";
-"error.profileLibraryVersion" = "建立新的專頁或移除舊圖書館檔案.";
+"error.profileLibraryCorrupt" = "使用中的設定檔清單已損壞，無法載入。";
 "error.selectedAssignmentMissing" = "所選的對應已無法使用。";
 "capture.listeningButton" = "正在聆聽…";
 "error.reviewAssignmentsBeforeSave" = "儲存此設定檔前請先檢查對應。";

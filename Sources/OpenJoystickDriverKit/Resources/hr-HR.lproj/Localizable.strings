@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Profil s tim nazivom već postoji.";
 "error.profileMissing" = "Taj profil više nije dostupan.";
 "error.reviewAssignments" = "Pregledajte dodjele profila i pokušajte ponovo.";
-"error.profileLibrarySave" = "Biblioteku profila nije moguće spremiti.";
+"error.profileLibrarySave" = "Profile nije moguće spremiti.";
 "error.remappingUnavailable" = "Mapiranje kontrolera privremeno nije dostupno.";
 "error.generic" = "OpenJoystickDriver nije mogao dovršiti tu radnju.";
 "error.notAvailable" = "OpenJoystickDriver trenutačno nije dostupan.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Ulaz kontrolera još nije dostupan.";
 "error.noDetectedControl" = "Nije otkriven novi upravljački element kontrolera.";
 "error.actionInProgress" = "Druga radnja profila već je u tijeku.";
-"error.profileLibraryCorrupt" = "Profilska biblioteka je oštećena i nije mogla se učitati.";
-"error.profileLibraryVersion" = "Ova biblioteka profila treba ažurirati. Stvorite novi profil ili uklonite stari datoteku biblioteke.";
+"error.profileLibraryCorrupt" = "Popis aktivnih profila je oštećen i nije ga moguće učitati.";
 "error.selectedAssignmentMissing" = "Odabrana dodjela više nije dostupna.";
 "capture.listeningButton" = "Slušanje…";
 "error.reviewAssignmentsBeforeSave" = "Pregledajte dodjele prije spremanja ovog profila.";

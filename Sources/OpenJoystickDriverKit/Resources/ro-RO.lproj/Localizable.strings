@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Există deja un profil cu acest nume.";
 "error.profileMissing" = "Profilul respectiv nu mai este disponibil.";
 "error.reviewAssignments" = "Verifică atribuirile profilului și încearcă din nou.";
-"error.profileLibrarySave" = "Biblioteca de profiluri nu a putut fi salvată.";
+"error.profileLibrarySave" = "Profilurile nu au putut fi salvate.";
 "error.remappingUnavailable" = "Remaparea controllerului este temporar indisponibilă.";
 "error.generic" = "OpenJoystickDriver nu a putut finaliza acea acțiune.";
 "error.notAvailable" = "OpenJoystickDriver nu este disponibil momentan.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Nu este încă disponibilă nicio intrare de controller.";
 "error.noDetectedControl" = "Nu a fost detectat niciun control nou de controller.";
 "error.actionInProgress" = "O altă acțiune de profil este deja în curs.";
-"error.profileLibraryCorrupt" = "Biblioteca de profil este deteriorată şi nu a putut fi încărcată.";
-"error.profileLibraryVersion" = "Aceasta biblioteca de profil are nevoie de o actualizare. Creează un nou profil sau elimină vechiul fișier de bibliotecă.";
+"error.profileLibraryCorrupt" = "Lista de profiluri active este deteriorată și nu a putut fi încărcată.";
 "error.selectedAssignmentMissing" = "Atribuirea selectată nu mai este disponibilă.";
 "capture.listeningButton" = "Se ascultă…";
 "error.reviewAssignmentsBeforeSave" = "Verifică atribuirile înainte de a salva acest profil.";

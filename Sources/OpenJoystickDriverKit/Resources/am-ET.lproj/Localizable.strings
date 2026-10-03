@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "በዚያ ስም መገለጫ አስቀድሞ አለ።";
 "error.profileMissing" = "ያ መገለጫ ከእንግዲህ አይገኝም።";
 "error.reviewAssignments" = "የመገለጫ ምደባዎችን ይገምግሙና እንደገና ይሞክሩ።";
-"error.profileLibrarySave" = "የመገለጫ ቤተ-መጽሐፍት ማስቀመጥ አልተቻለም።";
+"error.profileLibrarySave" = "መገለጫዎቹን ማስቀመጥ አልተቻለም።";
 "error.remappingUnavailable" = "የመቆጣጠሪያ ዳግም ምደባ ለጊዜው አይገኝም።";
 "error.generic" = "OpenJoystickDriver ያንን እርምጃ ማጠናቀቅ አልቻለም።";
 "error.notAvailable" = "OpenJoystickDriver በአሁኑ ጊዜ አይገኝም።";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "እስካሁን የመቆጣጠሪያ ግቤት አይገኝም።";
 "error.noDetectedControl" = "አዲስ የመቆጣጠሪያ መቆጣጠሪያ አልተገኘም።";
 "error.actionInProgress" = "ሌላ የመገለጫ እርምጃ አስቀድሞ በሂደት ላይ ነው።";
-"error.profileLibraryCorrupt" = "የመገለጫ ቤተ-መጽሐፉ ጉዳት ደርሶበታል እና መጫን አልተቻለም።";
-"error.profileLibraryVersion" = "ይህ የመገለጫ ቤተ-መጽሐፍት ዝማኔ ያስፈልጋል. አዲስ መገለጫ ይፍጠሩ ወይም አሮጌውን የመጽሐፍ ቅዱስ ፋይል ያስወግዱ.";
+"error.profileLibraryCorrupt" = "የንቁ መገለጫዎች ዝርዝር ተበላሽቷል እና ሊጫን አልቻለም።";
 "error.selectedAssignmentMissing" = "የተመረጠው ምደባ ከእንግዲህ አይገኝም።";
 "capture.listeningButton" = "እየሰማ ነው…";
 "error.reviewAssignmentsBeforeSave" = "ይህን መገለጫ ከማስቀመጥዎ በፊት ምደባዎችን ይገምግሙ።";

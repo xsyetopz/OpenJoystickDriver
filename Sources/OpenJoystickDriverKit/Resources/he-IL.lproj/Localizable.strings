@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "כבר קיים פרופיל בשם זה.";
 "error.profileMissing" = "הפרופיל הזה אינו זמין עוד.";
 "error.reviewAssignments" = "בדוק את שיוכי הפרופיל ונסה שוב.";
-"error.profileLibrarySave" = "לא ניתן לשמור את ספריית הפרופילים.";
+"error.profileLibrarySave" = "לא ניתן לשמור את הפרופילים.";
 "error.remappingUnavailable" = "מיפוי מחדש של הבקר אינו זמין זמנית.";
 "error.generic" = "OpenJoystickDriver לא הצליח להשלים את הפעולה.";
 "error.notAvailable" = "OpenJoystickDriver אינו זמין כרגע.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "עדיין אין קלט בקר זמין.";
 "error.noDetectedControl" = "לא זוהה פקד בקר חדש.";
 "error.actionInProgress" = "פעולת פרופיל אחרת כבר מתבצעת.";
-"error.profileLibraryCorrupt" = "ספריית הפרופיל נזוקת ולא ניתן לאסוף.";
-"error.profileLibraryVersion" = "ספריית הפרופיל הזו צריכה עדכון. ליצור פרופיל חדש או להסיר את הקובץ הישן של הספרייה.";
+"error.profileLibraryCorrupt" = "רשימת הפרופילים הפעילים פגומה ולא ניתן לטעון אותה.";
 "error.selectedAssignmentMissing" = "השיוך שנבחר אינו זמין עוד.";
 "capture.listeningButton" = "מאזין…";
 "error.reviewAssignmentsBeforeSave" = "בדוק את השיוכים לפני שמירת הפרופיל.";

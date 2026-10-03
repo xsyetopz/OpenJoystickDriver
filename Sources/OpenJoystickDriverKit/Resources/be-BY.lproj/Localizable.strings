@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Профіль з такой назвай ужо існуе.";
 "error.profileMissing" = "Гэты профіль больш недаступны.";
 "error.reviewAssignments" = "Праверце назначения профиля и паўтарыце спробу.";
-"error.profileLibrarySave" = "Не ўдалося захаваць библиотеку профилей.";
+"error.profileLibrarySave" = "Не ўдалося захаваць профілі.";
 "error.remappingUnavailable" = "Перепрызначэнне кантролера временно недаступна.";
 "error.generic" = "OpenJoystickDriver не змог выканаць гэта дзеянне.";
 "error.notAvailable" = "OpenJoystickDriver зараз недаступны.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Ввод с кантролера пока недаступны.";
 "error.noDetectedControl" = "Новы элемент кіравання кантролера не выяўлены.";
 "error.actionInProgress" = "Іншае дзеянне профілю ўжо выконваецца.";
-"error.profileLibraryCorrupt" = "Бібліятэка профіля пашкоджана і не можа быць загружана.";
-"error.profileLibraryVersion" = "Гэтай бібліятэцы профіляў патрэбна абнаўленне. Стварыць новы профіль або выдаліць стары файл бібліятэкі.";
+"error.profileLibraryCorrupt" = "Спіс актыўных профіляў пашкоджаны, і яго не ўдалося загрузіць.";
 "error.selectedAssignmentMissing" = "Выбранае прызначэнне больш недаступнае.";
 "capture.listeningButton" = "Чаканне…";
 "error.reviewAssignmentsBeforeSave" = "Праверце прызначэнні перад захаваннем гэтага профілю.";

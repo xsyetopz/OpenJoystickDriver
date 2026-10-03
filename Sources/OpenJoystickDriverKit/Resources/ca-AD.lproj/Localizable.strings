@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Ja existeix un perfil amb aquest nom.";
 "error.profileMissing" = "Aquest perfil ja no està disponible.";
 "error.reviewAssignments" = "Revisa les assignacions del perfil i torna-ho a provar.";
-"error.profileLibrarySave" = "No s’ha pogut desar la biblioteca de perfils.";
+"error.profileLibrarySave" = "No s’han pogut desar els perfils.";
 "error.remappingUnavailable" = "El reassignament del comandament no està disponible temporalment.";
 "error.generic" = "OpenJoystickDriver no ha pogut completar aquesta acció.";
 "error.notAvailable" = "OpenJoystickDriver no està disponible ara.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Encara no hi ha entrada de comandament disponible.";
 "error.noDetectedControl" = "No s’ha detectat cap control de comandament nou.";
 "error.actionInProgress" = "Ja hi ha una altra acció de perfil en curs.";
-"error.profileLibraryCorrupt" = "La biblioteca de perfil està danyada i no es pot carregar.";
-"error.profileLibraryVersion" = "Aquesta biblioteca de perfil necessita una actualització. Crea un nou perfil o elimina el vell fitxer de biblioteca.";
+"error.profileLibraryCorrupt" = "La llista de perfils actius està danyada i no s’ha pogut carregar.";
 "error.selectedAssignmentMissing" = "L’assignació seleccionada ja no està disponible.";
 "capture.listeningButton" = "S’està escoltant…";
 "error.reviewAssignmentsBeforeSave" = "Revisa les assignacions abans de desar aquest perfil.";

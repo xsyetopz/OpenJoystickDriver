@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "En profil med det namnet finns redan.";
 "error.profileMissing" = "Den profilen är inte längre tillgänglig.";
 "error.reviewAssignments" = "Granska profiltilldelningarna och försök igen.";
-"error.profileLibrarySave" = "Profilbiblioteket kunde inte sparas.";
+"error.profileLibrarySave" = "Profilerna kunde inte sparas.";
 "error.remappingUnavailable" = "Ommappning av kontrollen är tillfälligt otillgänglig.";
 "error.generic" = "OpenJoystickDriver kunde inte slutföra den åtgärden.";
 "error.notAvailable" = "OpenJoystickDriver är inte tillgänglig just nu.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Ingen kontrollinmatning är tillgänglig ännu.";
 "error.noDetectedControl" = "Ingen ny kontrollstyrning upptäcktes.";
 "error.actionInProgress" = "En annan profilåtgärd pågår redan.";
-"error.profileLibraryCorrupt" = "Profilbiblioteket är skadat och kunde inte laddas.";
-"error.profileLibraryVersion" = "Detta profilbibliotek behöver uppdateras. Skapa en ny profil eller ta bort den gamla bibliotekfilen.";
+"error.profileLibraryCorrupt" = "Listan över aktiva profiler är skadad och kunde inte läsas in.";
 "error.selectedAssignmentMissing" = "Den valda tilldelningen är inte längre tillgänglig.";
 "capture.listeningButton" = "Lyssnar…";
 "error.reviewAssignmentsBeforeSave" = "Granska tilldelningarna innan du sparar den här profilen.";

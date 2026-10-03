@@ -231,7 +231,7 @@ extension RemappingRequestCoordinator {
     do { try await library.restore(checkpoint) } catch {
       let unreconciled = Self.unreconciledError(
         original: original,
-        detail: "The prior profile library could not be restored: \(error.localizedDescription)"
+        detail: "The prior profiles could not be restored: \(error.localizedDescription)"
       )
       await router.markProfileTransactionUnreconciled(transaction, detail: unreconciled.message)
       throw unreconciled
@@ -240,7 +240,7 @@ extension RemappingRequestCoordinator {
     do { try await router.rollBackProfileTransaction(transaction) } catch {
       throw Self.unreconciledError(
         original: original,
-        detail: "The prior profile library was restored, but route reconciliation failed: "
+        detail: "The prior profiles were restored, but route reconciliation failed: "
           + error.localizedDescription
       )
     }

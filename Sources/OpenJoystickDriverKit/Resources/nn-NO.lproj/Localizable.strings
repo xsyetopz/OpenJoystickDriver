@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Ein profil med det namnet finst allereie.";
 "error.profileMissing" = "Den profilen er ikkje lenger tilgjengeleg.";
 "error.reviewAssignments" = "Sjå gjennom profiltildelingane og prøv på nytt.";
-"error.profileLibrarySave" = "Profilbiblioteket kunne ikkje lagrast.";
+"error.profileLibrarySave" = "Profilane kunne ikkje lagrast.";
 "error.remappingUnavailable" = "Ny tildeling av kontrollaren er mellombels ikkje tilgjengeleg.";
 "error.generic" = "OpenJoystickDriver kunne ikkje fullføre den handlinga.";
 "error.notAvailable" = "OpenJoystickDriver er ikkje tilgjengeleg no.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Ingen kontrollarinndata er tilgjengeleg enno.";
 "error.noDetectedControl" = "Inga ny kontrollarstyring vart oppdaga.";
 "error.actionInProgress" = "Ei anna profilhandling er allereie i gang.";
-"error.profileLibraryCorrupt" = "Profilbiblioteket er skadet og kan ikkje lastast.";
-"error.profileLibraryVersion" = "Dette profiltøya treng ein oppdatering. Skapa ein ny profil eller fjerne den gamle biblioteket.";
+"error.profileLibraryCorrupt" = "Lista over aktive profilar er skadd og kunne ikkje lastast inn.";
 "error.selectedAssignmentMissing" = "Den valde tildelinga er ikkje lenger tilgjengeleg.";
 "capture.listeningButton" = "Lyttar…";
 "error.reviewAssignmentsBeforeSave" = "Sjå gjennom tildelingane før du lagrar denne profilen.";

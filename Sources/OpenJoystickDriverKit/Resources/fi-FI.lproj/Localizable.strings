@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Samanniminen profiili on jo olemassa.";
 "error.profileMissing" = "Tuo profiili ei ole enää käytettävissä.";
 "error.reviewAssignments" = "Tarkista profiilin määritykset ja yritä uudelleen.";
-"error.profileLibrarySave" = "Profiilikirjastoa ei voitu tallentaa.";
+"error.profileLibrarySave" = "Profiileja ei voitu tallentaa.";
 "error.remappingUnavailable" = "Ohjaimen uudelleenmääritys ei ole tilapäisesti käytettävissä.";
 "error.generic" = "OpenJoystickDriver ei voinut suorittaa tätä toimintoa.";
 "error.notAvailable" = "OpenJoystickDriver ei ole juuri nyt käytettävissä.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Ohjaimen syötettä ei ole vielä käytettävissä.";
 "error.noDetectedControl" = "Uutta ohjaimen hallintaa ei havaittu.";
 "error.actionInProgress" = "Toinen profiilitoiminto on jo käynnissä.";
-"error.profileLibraryCorrupt" = "Profiilikirjaston on vahingoittunut eikä sitä voi ladata.";
-"error.profileLibraryVersion" = "Tämä profiili- kirjaston täytyy päivittää. Luo uusi profiili tai poista vanha kirjaston tiedosto.";
+"error.profileLibraryCorrupt" = "Aktiivisten profiilien luettelo on vaurioitunut, eikä sitä voitu ladata.";
 "error.selectedAssignmentMissing" = "Valittu määritys ei ole enää käytettävissä.";
 "capture.listeningButton" = "Kuunnellaan…";
 "error.reviewAssignmentsBeforeSave" = "Tarkista määritykset ennen tämän profiilin tallentamista.";

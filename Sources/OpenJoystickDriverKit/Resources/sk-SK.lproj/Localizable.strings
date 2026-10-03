@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Profil s týmto názvom už existuje.";
 "error.profileMissing" = "Tento profil už nie je dostupný.";
 "error.reviewAssignments" = "Skontrolujte priradenia profilu a skúste to znova.";
-"error.profileLibrarySave" = "Knižnicu profilov sa nepodarilo uložiť.";
+"error.profileLibrarySave" = "Profily sa nepodarilo uložiť.";
 "error.remappingUnavailable" = "Priraďovanie ovládača je dočasne nedostupné.";
 "error.generic" = "OpenJoystickDriver túto akciu nemohol dokončiť.";
 "error.notAvailable" = "OpenJoystickDriver teraz nie je dostupný.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Vstup ovládača zatiaľ nie je dostupný.";
 "error.noDetectedControl" = "Nebol zistený žiadny nový ovládací prvok ovládača.";
 "error.actionInProgress" = "Iná akcia profilu už prebieha.";
-"error.profileLibraryCorrupt" = "Knižnica profilov je poškodená a nemohla sa načítať.";
-"error.profileLibraryVersion" = "Táto knižnica profilov potrebuje aktualizáciu. Vytvorte nový profil alebo odstráňte starý súbor knižnice.";
+"error.profileLibraryCorrupt" = "Zoznam aktívnych profilov je poškodený a nepodarilo sa ho načítať.";
 "error.selectedAssignmentMissing" = "Vybrané priradenie už nie je dostupné.";
 "capture.listeningButton" = "Počúvanie…";
 "error.reviewAssignmentsBeforeSave" = "Pred uložením tohto profilu skontrolujte priradenia.";

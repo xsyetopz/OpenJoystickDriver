@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Profiila mas lea dat namma gávdno juo.";
 "error.profileMissing" = "Dat profiila ii leat šat gávdnamis.";
 "error.reviewAssignments" = "Geahča profiilabargguid ja geahččal fas.";
-"error.profileLibrarySave" = "Profiilagirjerádju ii sáhttán vurkejuvvot.";
+"error.profileLibrarySave" = "Profiillat eai sáhttán vurkejuvvot.";
 "error.remappingUnavailable" = "Stivrenrusttega ođđasiskárten ii leat gaskaboddosaččat fálaldat.";
 "error.generic" = "OpenJoystickDriver ii nagodan čađahit dan doaimmaid.";
 "error.notAvailable" = "OpenJoystickDriver ii leat gávdnamis dál.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Ii leat vuos gávdnamis stivrejeaddji sisaváldin.";
 "error.noDetectedControl" = "Ii gávdnon ođđa stivrejeaddji stivrejupmi.";
 "error.actionInProgress" = "Nubbi profiiladoaibma lea juo jođus.";
-"error.profileLibraryCorrupt" = "Profiilagirjerádju lea billašuvvan ja dan ii sáhttán bidjat sisa.";
-"error.profileLibraryVersion" = "Dát profiilagirjerádju dárbbaša ođasmahttima. Ráhkat ođđa profiilla dahje váldde eret boares girjerádjofiilla.";
+"error.profileLibraryCorrupt" = "Aktiiva profiillaid listu lea billahuvvan iige sáhttán viežžojuvvot.";
 "error.selectedAssignmentMissing" = "Válljejuvvon bargu ii leat šat gávdnamis.";
 "capture.listeningButton" = "Gullat…";
 "error.reviewAssignmentsBeforeSave" = "Geahča bargguid ovdal go vurket dán profiilla.";

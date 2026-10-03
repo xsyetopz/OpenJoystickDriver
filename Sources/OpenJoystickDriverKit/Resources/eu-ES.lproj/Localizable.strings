@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Izen hori duen profil bat badago jada.";
 "error.profileMissing" = "Profil hori jada ez dago erabilgarri.";
 "error.reviewAssignments" = "Berrikusi profilaren esleipenak eta saiatu berriro.";
-"error.profileLibrarySave" = "Ezin izan da profil-liburutegia gorde.";
+"error.profileLibrarySave" = "Ezin izan dira profilak gorde.";
 "error.remappingUnavailable" = "Agintearen birmapatzea aldi baterako ez dago erabilgarri.";
 "error.generic" = "OpenJoystickDriver-ek ezin izan du ekintza hori osatu.";
 "error.notAvailable" = "OpenJoystickDriver ez dago erabilgarri orain.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Oraindik ez dago aginte-sarrerarik erabilgarri.";
 "error.noDetectedControl" = "Ez da agintearen kontrol berririk detektatu.";
 "error.actionInProgress" = "Beste profil-ekintza bat abian da jada.";
-"error.profileLibraryCorrupt" = "Profil-liburutegia kaltetua dago eta ezin da kargatu.";
-"error.profileLibraryVersion" = "Profil liburutegi honek eguneratze bat behar du. Profilak sortu edo liburutegi zaharra kendu.";
+"error.profileLibraryCorrupt" = "Profil aktiboen zerrenda kaltetuta dago eta ezin izan da kargatu.";
 "error.selectedAssignmentMissing" = "Hautatutako esleipena jada ez dago erabilgarri.";
 "capture.listeningButton" = "Entzuten…";
 "error.reviewAssignmentsBeforeSave" = "Berrikusi esleipenak profil hau gorde aurretik.";

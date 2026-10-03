@@ -43,12 +43,12 @@ extension RuntimePresentation {
       case .unwritableLibrary, .librarySizeExceeded, .profileCountExceeded:
         return OJDLocalized.string(
           "error.profileLibrarySave",
-          fallback: "The profile library could not be saved."
+          fallback: "Your profiles could not be saved."
         )
       case .corruptLibrary:
         return OJDLocalized.string(
           "error.profileLibraryCorrupt",
-          fallback: "The profile library is damaged and could not be loaded."
+          fallback: "The active profile list is damaged and could not be loaded."
         )
       case .joyConPairUnavailable:
         return OJDLocalized.string(

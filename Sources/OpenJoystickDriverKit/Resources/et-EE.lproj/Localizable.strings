@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Sellise nimega profiil on juba olemas.";
 "error.profileMissing" = "See profiil pole enam saadaval.";
 "error.reviewAssignments" = "Vaata profiili vastendused üle ja proovi uuesti.";
-"error.profileLibrarySave" = "Profiiliteeki ei saanud salvestada.";
+"error.profileLibrarySave" = "Profiile ei saanud salvestada.";
 "error.remappingUnavailable" = "Kontrolleri ümbervastendamine pole ajutiselt saadaval.";
 "error.generic" = "OpenJoystickDriver ei saanud seda toimingut lõpule viia.";
 "error.notAvailable" = "OpenJoystickDriver pole praegu saadaval.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Kontrolleri sisend pole veel saadaval.";
 "error.noDetectedControl" = "Uut kontrolleri juhtelementi ei tuvastatud.";
 "error.actionInProgress" = "Teine profiilitoiming on juba pooleli.";
-"error.profileLibraryCorrupt" = "Profiiliteek on kahjustatud ja seda ei saanud laadida.";
-"error.profileLibraryVersion" = "See profiiliteek vajab värskendust. Loo uus profiil või eemalda vana teegifail.";
+"error.profileLibraryCorrupt" = "Aktiivsete profiilide loend on kahjustatud ja seda ei saanud laadida.";
 "error.selectedAssignmentMissing" = "Valitud vastendus pole enam saadaval.";
 "capture.listeningButton" = "Ootan sisendit…";
 "error.reviewAssignmentsBeforeSave" = "Vaata vastendused enne selle profiili salvestamist üle.";

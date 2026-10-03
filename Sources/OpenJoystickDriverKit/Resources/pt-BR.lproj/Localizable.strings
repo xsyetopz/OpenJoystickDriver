@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Já existe um perfil com esse nome.";
 "error.profileMissing" = "Esse perfil não está mais disponível.";
 "error.reviewAssignments" = "Revise as atribuições do perfil e tente novamente.";
-"error.profileLibrarySave" = "Não foi possível salvar a biblioteca de perfis.";
+"error.profileLibrarySave" = "Não foi possível salvar os perfis.";
 "error.remappingUnavailable" = "O remapeamento do controle está temporariamente indisponível.";
 "error.generic" = "O OpenJoystickDriver não pôde concluir essa ação.";
 "error.notAvailable" = "O OpenJoystickDriver não está disponível no momento.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Ainda não há entrada de controle disponível.";
 "error.noDetectedControl" = "Nenhum comando de controle novo foi detectado.";
 "error.actionInProgress" = "Outra ação de perfil já está em andamento.";
-"error.profileLibraryCorrupt" = "A biblioteca de perfil está danificada e não pôde ser carregada.";
-"error.profileLibraryVersion" = "Esta biblioteca de perfil precisa de uma atualização. Criar um novo perfil ou remover o arquivo da biblioteca antiga.";
+"error.profileLibraryCorrupt" = "A lista de perfis ativos está danificada e não pôde ser carregada.";
 "error.selectedAssignmentMissing" = "A atribuição selecionada não está mais disponível.";
 "capture.listeningButton" = "Ouvindo…";
 "error.reviewAssignmentsBeforeSave" = "Revise as atribuições antes de salvar este perfil.";

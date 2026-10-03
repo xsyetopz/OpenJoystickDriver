@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Un profil portant ce nom existe déjà.";
 "error.profileMissing" = "Ce profil n’est plus disponible.";
 "error.reviewAssignments" = "Vérifiez les attributions du profil, puis réessayez.";
-"error.profileLibrarySave" = "Impossible d’enregistrer la bibliothèque de profils.";
+"error.profileLibrarySave" = "Impossible d’enregistrer les profils.";
 "error.remappingUnavailable" = "Le remappage de manette est temporairement indisponible.";
 "error.generic" = "OpenJoystickDriver n’a pas pu terminer cette action.";
 "error.notAvailable" = "OpenJoystickDriver n’est pas disponible pour le moment.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Aucune entrée de manette n’est encore disponible.";
 "error.noDetectedControl" = "Aucune nouvelle commande de manette n’a été détectée.";
 "error.actionInProgress" = "Une autre action de profil est déjà en cours.";
-"error.profileLibraryCorrupt" = "La bibliothèque de profils est endommagée et n’a pas pu être chargée.";
-"error.profileLibraryVersion" = "Cette bibliothèque de profils doit être mise à jour. Créez un nouveau profil ou supprimez l’ancien fichier de bibliothèque.";
+"error.profileLibraryCorrupt" = "La liste des profils actifs est endommagée et n’a pas pu être chargée.";
 "error.selectedAssignmentMissing" = "L’attribution sélectionnée n’est plus disponible.";
 "capture.listeningButton" = "Écoute…";
 "error.reviewAssignmentsBeforeSave" = "Vérifiez les attributions avant d’enregistrer ce profil.";

@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "’n Profiel met daardie naam bestaan al.";
 "error.profileMissing" = "Daardie profiel is nie meer beskikbaar nie.";
 "error.reviewAssignments" = "Hersien die profieltoewysings en probeer weer.";
-"error.profileLibrarySave" = "Die profielbiblioteek kon nie gestoor word nie.";
+"error.profileLibrarySave" = "Die profiele kon nie gestoor word nie.";
 "error.remappingUnavailable" = "Kontroleerderhermapping is tydelik nie beskikbaar nie.";
 "error.generic" = "OpenJoystickDriver kon nie daardie aksie voltooi nie.";
 "error.notAvailable" = "OpenJoystickDriver is tans nie beskikbaar nie.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Geen kontroleerderinvoer is nog beskikbaar nie.";
 "error.noDetectedControl" = "Geen nuwe kontroleerderkontrole is bespeur nie.";
 "error.actionInProgress" = "Nog ’n profielaksie is al aan die gang.";
-"error.profileLibraryCorrupt" = "Die profielbiblioteek is beskadig en kon nie gelaai word nie.";
-"error.profileLibraryVersion" = "Hierdie profiel biblioteek moet opgedateer word. Skep 'n nuwe profiel of verwyder die ou biblioteek lêer.";
+"error.profileLibraryCorrupt" = "Die lys van aktiewe profiele is beskadig en kon nie gelaai word nie.";
 "error.selectedAssignmentMissing" = "Die gekose toewysing is nie meer beskikbaar nie.";
 "capture.listeningButton" = "Luister…";
 "error.reviewAssignmentsBeforeSave" = "Hersien die toewysings voordat jy hierdie profiel stoor.";

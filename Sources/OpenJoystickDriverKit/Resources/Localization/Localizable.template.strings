@@ -363,7 +363,7 @@
 "error.duplicateProfile" = "A profile with that name already exists.";
 "error.profileMissing" = "That profile is no longer available.";
 "error.reviewAssignments" = "Review the profile assignments and try again.";
-"error.profileLibrarySave" = "The profile library could not be saved.";
+"error.profileLibrarySave" = "Your profiles could not be saved.";
 "error.remappingUnavailable" = "Controller remapping is temporarily unavailable.";
 "error.generic" = "OpenJoystickDriver couldn't complete that action.";
 "error.notAvailable" = "OpenJoystickDriver isn't available right now.";
@@ -474,8 +474,7 @@
 "error.noControllerInput" = "No controller input is available yet.";
 "error.noDetectedControl" = "No new controller control was detected.";
 "error.actionInProgress" = "Another profile action is already in progress.";
-"error.profileLibraryCorrupt" = "The profile library is damaged and could not be loaded.";
-"error.profileLibraryVersion" = "This profile library needs an update. Create a new profile or remove the old library file.";
+"error.profileLibraryCorrupt" = "The active profile list is damaged and could not be loaded.";
 "error.selectedAssignmentMissing" = "The selected assignment is no longer available.";
 "capture.listeningButton" = "Listening...";
 "error.reviewAssignmentsBeforeSave" = "Review the assignments before saving this profile.";

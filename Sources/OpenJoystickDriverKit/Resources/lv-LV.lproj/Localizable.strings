@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Profils ar šādu nosaukumu jau pastāv.";
 "error.profileMissing" = "Šis profils vairs nav pieejams.";
 "error.reviewAssignments" = "Pārskatiet profila piešķīrumus un mēģiniet vēlreiz.";
-"error.profileLibrarySave" = "Profilu bibliotēku neizdevās saglabāt.";
+"error.profileLibrarySave" = "Profilus neizdevās saglabāt.";
 "error.remappingUnavailable" = "Kontroliera pārkartēšana īslaicīgi nav pieejama.";
 "error.generic" = "OpenJoystickDriver nevarēja pabeigt šo darbību.";
 "error.notAvailable" = "OpenJoystickDriver pašlaik nav pieejams.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Kontroliera ievade vēl nav pieejama.";
 "error.noDetectedControl" = "Netika noteikta jauna kontroliera vadīkla.";
 "error.actionInProgress" = "Cita profila darbība jau notiek.";
-"error.profileLibraryCorrupt" = "Profilā esoša biblioteka ir bojāta un nevarēja iekārtot.";
-"error.profileLibraryVersion" = "Šī profilu biblioteka ir jāaizpilda.";
+"error.profileLibraryCorrupt" = "Aktīvo profilu saraksts ir bojāts, un to neizdevās ielādēt.";
 "error.selectedAssignmentMissing" = "Atlasītais piešķīrums vairs nav pieejams.";
 "capture.listeningButton" = "Klausās…";
 "error.reviewAssignmentsBeforeSave" = "Pirms šī profila saglabāšanas pārskatiet piešķīrumus.";

@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Bu ada sahip bir profil zaten var.";
 "error.profileMissing" = "Bu profil artık kullanılamıyor.";
 "error.reviewAssignments" = "Profil atamalarını gözden geçir ve yeniden dene.";
-"error.profileLibrarySave" = "Profil kitaplığı kaydedilemedi.";
+"error.profileLibrarySave" = "Profiller kaydedilemedi.";
 "error.remappingUnavailable" = "Kontrolcü yeniden ataması geçici olarak kullanılamıyor.";
 "error.generic" = "OpenJoystickDriver bu eylemi tamamlayamadı.";
 "error.notAvailable" = "OpenJoystickDriver şu anda kullanılamıyor.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Henüz kullanılabilir kontrolcü girişi yok.";
 "error.noDetectedControl" = "Yeni bir kontrolcü denetimi algılanmadı.";
 "error.actionInProgress" = "Başka bir profil eylemi zaten sürüyor.";
-"error.profileLibraryCorrupt" = "Profil kütüphanesi hasar görmüş ve yüklenemiyor.";
-"error.profileLibraryVersion" = "Bu profil kütüphanesi güncelleme ihtiyacı var. Yeni bir profil oluştur veya eski kütüphanesi dosyasını kaldır.";
+"error.profileLibraryCorrupt" = "Etkin profil listesi hasarlı ve yüklenemedi.";
 "error.selectedAssignmentMissing" = "Seçilen atama artık kullanılamıyor.";
 "capture.listeningButton" = "Dinleniyor…";
 "error.reviewAssignmentsBeforeSave" = "Bu profili kaydetmeden önce atamaları gözden geçir.";

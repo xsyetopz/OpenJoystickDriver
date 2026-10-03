@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Ya existe un perfil con ese nombre.";
 "error.profileMissing" = "Ese perfil ya no está disponible.";
 "error.reviewAssignments" = "Revisa las asignaciones del perfil y vuelve a intentarlo.";
-"error.profileLibrarySave" = "No se ha podido guardar la biblioteca de perfiles.";
+"error.profileLibrarySave" = "No se han podido guardar los perfiles.";
 "error.remappingUnavailable" = "La reasignación del mando no está disponible temporalmente.";
 "error.generic" = "OpenJoystickDriver no ha podido completar esa acción.";
 "error.notAvailable" = "OpenJoystickDriver no está disponible ahora.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Aún no hay entrada de mando disponible.";
 "error.noDetectedControl" = "No se ha detectado ningún control de mando nuevo.";
 "error.actionInProgress" = "Ya hay otra acción de perfil en curso.";
-"error.profileLibraryCorrupt" = "La biblioteca de perfil está dañada y no se puede cargar.";
-"error.profileLibraryVersion" = "Esta biblioteca de perfil necesita una actualización. Crea un nuevo perfil o elimina el archivo de biblioteca anterior.";
+"error.profileLibraryCorrupt" = "La lista de perfiles activos está dañada y no se ha podido cargar.";
 "error.selectedAssignmentMissing" = "La asignación seleccionada ya no está disponible.";
 "capture.listeningButton" = "Escuchando…";
 "error.reviewAssignmentsBeforeSave" = "Revisa las asignaciones antes de guardar este perfil.";

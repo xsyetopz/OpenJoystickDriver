@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Υπάρχει ήδη προφίλ με αυτό το όνομα.";
 "error.profileMissing" = "Αυτό το προφίλ δεν είναι πλέον διαθέσιμο.";
 "error.reviewAssignments" = "Ελέγξτε τις αντιστοιχίσεις προφίλ και δοκιμάστε ξανά.";
-"error.profileLibrarySave" = "Δεν ήταν δυνατή η αποθήκευση της βιβλιοθήκης προφίλ.";
+"error.profileLibrarySave" = "Δεν ήταν δυνατή η αποθήκευση των προφίλ.";
 "error.remappingUnavailable" = "Η επαντιστοίχιση χειριστηρίου δεν είναι προσωρινά διαθέσιμη.";
 "error.generic" = "Το OpenJoystickDriver δεν μπόρεσε να ολοκληρώσει αυτή την ενέργεια.";
 "error.notAvailable" = "Το OpenJoystickDriver δεν είναι διαθέσιμο αυτή τη στιγμή.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Δεν υπάρχει ακόμη διαθέσιμη είσοδος χειριστηρίου.";
 "error.noDetectedControl" = "Δεν ανιχνεύθηκε νέο στοιχείο ελέγχου χειριστηρίου.";
 "error.actionInProgress" = "Μια άλλη ενέργεια προφίλ είναι ήδη σε εξέλιξη.";
-"error.profileLibraryCorrupt" = "Η βιβλιοθήκη προφίλ έχει υποστεί ζημιά και δεν μπορούσε να φορτωθεί.";
-"error.profileLibraryVersion" = "Αυτή η βιβλιοθήκη προφίλ χρειάζεται ενημέρωση. Δημιουργήστε ένα νέο προφίλ ή αφαιρέστε το παλιό αρχείο βιβλιοθήκης.";
+"error.profileLibraryCorrupt" = "Η λίστα ενεργών προφίλ είναι κατεστραμμένη και δεν ήταν δυνατή η φόρτωσή της.";
 "error.selectedAssignmentMissing" = "Η επιλεγμένη αντιστοίχιση δεν είναι πλέον διαθέσιμη.";
 "capture.listeningButton" = "Ακρόαση…";
 "error.reviewAssignmentsBeforeSave" = "Ελέγξτε τις αντιστοιχίσεις πριν αποθηκεύσετε αυτό το προφίλ.";

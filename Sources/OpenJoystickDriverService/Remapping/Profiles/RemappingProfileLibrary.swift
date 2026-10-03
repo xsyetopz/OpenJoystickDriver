@@ -18,20 +18,20 @@ enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
 
   var errorDescription: String? {
     switch self {
-    case .corruptLibrary: "The remapping profile library is corrupt."
+    case .corruptLibrary: "The active remapping profile list is damaged."
     case .duplicateName(let name): "A remapping profile named \(name) already exists."
     case .invalidProfile(let error): error.localizedDescription
-    case .profileCountExceeded(let count):
-      "The remapping profile library cannot contain \(count) profiles."
+    case .profileCountExceeded(let count): "There cannot be \(count) remapping profiles."
     case .profileAlreadyExists(let id): "The remapping profile \(id.uuidString) already exists."
     case .profileNotFound(let id): "The remapping profile \(id.uuidString) does not exist."
     case .pairProfileRequiresExplicitSession:
       "Paired Joy-Con profiles are started with an explicit pair session."
     case .profileUpdateConflict(let id):
       "The remapping profile \(id.uuidString) changed since it was read."
-    case .unreadableLibrary: "The remapping profile library could not be read."
-    case .unwritableLibrary: "The remapping profile library could not be written."
-    case .profileRecoveryRequired: "Damaged profiles must be repaired before changing the library."
+    case .unreadableLibrary: "A remapping profile file could not be read."
+    case .unwritableLibrary: "A remapping profile file could not be written."
+    case .profileRecoveryRequired:
+      "Repair or remove the damaged profile files before changing profiles."
     case .profileIssueNotFound: "The selected damaged profile is no longer current."
     }
   }

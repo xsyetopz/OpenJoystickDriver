@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Profilis tokiu pavadinimu jau yra.";
 "error.profileMissing" = "Tas profilis jau nepasiekiamas.";
 "error.reviewAssignments" = "Peržiūrėkite profilio priskyrimus ir bandykite dar kartą.";
-"error.profileLibrarySave" = "Profilių bibliotekos nepavyko įrašyti.";
+"error.profileLibrarySave" = "Profilių nepavyko įrašyti.";
 "error.remappingUnavailable" = "Valdiklio perpriskyrimas laikinai nepasiekiamas.";
 "error.generic" = "OpenJoystickDriver nepavyko užbaigti to veiksmo.";
 "error.notAvailable" = "OpenJoystickDriver dabar nepasiekiama.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Valdiklio įvestis dar nepasiekiama.";
 "error.noDetectedControl" = "Naujas valdiklio valdymas neaptiktas.";
 "error.actionInProgress" = "Kitas profilio veiksmas jau vykdomas.";
-"error.profileLibraryCorrupt" = "Profilo biblioteka sugadinta ir negali būti įkrauta.";
-"error.profileLibraryVersion" = "Šiam profilo bibliotekam reikia atnaujinti. Sukūrite naują profilį arba pašalinkite seną bibliotekos failą.";
+"error.profileLibraryCorrupt" = "Aktyvių profilių sąrašas pažeistas ir jo nepavyko įkelti.";
 "error.selectedAssignmentMissing" = "Pasirinktas priskyrimas jau nepasiekiamas.";
 "capture.listeningButton" = "Klausomasi…";
 "error.reviewAssignmentsBeforeSave" = "Prieš įrašydami šį profilį peržiūrėkite priskyrimus.";

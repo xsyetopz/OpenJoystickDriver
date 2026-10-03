@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Тийм нэртэй профайл аль хэдийн байна.";
 "error.profileMissing" = "Тэр профайл одоо боломжгүй.";
 "error.reviewAssignments" = "Профайлын оноолтыг шалгаад дахин оролдоно уу.";
-"error.profileLibrarySave" = "Профайлын санг хадгалж чадсангүй.";
+"error.profileLibrarySave" = "Профайлуудыг хадгалж чадсангүй.";
 "error.remappingUnavailable" = "Удирдлагыг дахин оноох нь түр боломжгүй.";
 "error.generic" = "OpenJoystickDriver тэр үйлдлийг дуусгаж чадсангүй.";
 "error.notAvailable" = "OpenJoystickDriver одоогоор боломжгүй.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Удирдлагын оролт одоохондоо боломжгүй.";
 "error.noDetectedControl" = "Шинэ удирдлагын удирдлага илрээгүй.";
 "error.actionInProgress" = "Өөр профайлын үйлдэл аль хэдийн явагдаж байна.";
-"error.profileLibraryCorrupt" = "Профилийн номын сан гэмтэж, ачаалж чадахгүй байна.";
-"error.profileLibraryVersion" = "Энэ хувилбар номын сан шинэчлэл хэрэгтэй. Шинэ хувилбар бий болгох эсвэл хуучин номын сан файлыг устгах.";
+"error.profileLibraryCorrupt" = "Идэвхтэй профайлын жагсаалт гэмтсэн тул ачаалж чадсангүй.";
 "error.selectedAssignmentMissing" = "Сонгосон оноолт одоо боломжгүй.";
 "capture.listeningButton" = "Сонсож байна…";
 "error.reviewAssignmentsBeforeSave" = "Энэ профайлыг хадгалахаасаа өмнө оноолтыг шалгана уу.";

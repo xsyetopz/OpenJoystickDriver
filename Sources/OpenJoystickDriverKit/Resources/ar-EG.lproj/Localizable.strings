@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "يوجد بالفعل ملف تعريف بهذا الاسم.";
 "error.profileMissing" = "ملف التعريف هذا لم يعد متوفراً.";
 "error.reviewAssignments" = "راجع تعيينات ملف التعريف وحاول مرة أخرى.";
-"error.profileLibrarySave" = "تعذر حفظ مكتبة ملفات التعريف.";
+"error.profileLibrarySave" = "تعذر حفظ ملفات التعريف.";
 "error.remappingUnavailable" = "إعادة تعيين وحدة التحكم غير متوفرة مؤقتاً.";
 "error.generic" = "تعذر على OpenJoystickDriver إكمال هذا الإجراء.";
 "error.notAvailable" = "OpenJoystickDriver غير متوفر حالياً.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "لا يتوفر إدخال من وحدة التحكم بعد.";
 "error.noDetectedControl" = "لم يُكشف عن عنصر جديد في وحدة التحكم.";
 "error.actionInProgress" = "إجراء آخر لملف التعريف قيد التنفيذ بالفعل.";
-"error.profileLibraryCorrupt" = "مكتبة الملفات الشخصية تلفت ولم يتم تحملها";
-"error.profileLibraryVersion" = "هذه المكتبة الملفية تحتاج إلى تحديث. إنشاء ملف جديد أو إزالة ملف المكتبة القديم.";
+"error.profileLibraryCorrupt" = "قائمة ملفات التعريف النشطة تالفة وتعذر تحميلها.";
 "error.selectedAssignmentMissing" = "التعيين المحدد لم يعد متوفراً.";
 "capture.listeningButton" = "جارٍ الاستماع…";
 "error.reviewAssignmentsBeforeSave" = "راجع التعيينات قبل حفظ ملف التعريف هذا.";

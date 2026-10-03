@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Ein Profil mit diesem Namen existiert bereits.";
 "error.profileMissing" = "Dieses Profil ist nicht mehr verfügbar.";
 "error.reviewAssignments" = "Prüfe die Profilzuweisungen und versuche es erneut.";
-"error.profileLibrarySave" = "Die Profilbibliothek konnte nicht gesichert werden.";
+"error.profileLibrarySave" = "Die Profile konnten nicht gesichert werden.";
 "error.remappingUnavailable" = "Die Controller-Neubelegung ist vorübergehend nicht verfügbar.";
 "error.generic" = "OpenJoystickDriver konnte diese Aktion nicht abschließen.";
 "error.notAvailable" = "OpenJoystickDriver ist derzeit nicht verfügbar.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Noch keine Controller-Eingabe verfügbar.";
 "error.noDetectedControl" = "Keine neue Controller-Steuerung erkannt.";
 "error.actionInProgress" = "Eine andere Profilaktion läuft bereits.";
-"error.profileLibraryCorrupt" = "Die Profilbibliothek ist beschädigt und konnte nicht geladen werden.";
-"error.profileLibraryVersion" = "Diese Profilbibliothek muss aktualisiert werden. Erstelle ein neues Profil oder entferne die alte Bibliotheksdatei.";
+"error.profileLibraryCorrupt" = "Die Liste aktiver Profile ist beschädigt und konnte nicht geladen werden.";
 "error.selectedAssignmentMissing" = "Die ausgewählte Zuweisung ist nicht mehr verfügbar.";
 "capture.listeningButton" = "Lauschen…";
 "error.reviewAssignmentsBeforeSave" = "Prüfe die Zuweisungen, bevor du dieses Profil sicherst.";

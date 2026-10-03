@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Esiste già un profilo con quel nome.";
 "error.profileMissing" = "Quel profilo non è più disponibile.";
 "error.reviewAssignments" = "Controlla le assegnazioni del profilo e riprova.";
-"error.profileLibrarySave" = "Impossibile salvare la libreria dei profili.";
+"error.profileLibrarySave" = "Impossibile salvare i profili.";
 "error.remappingUnavailable" = "La rimappatura del controller è temporaneamente non disponibile.";
 "error.generic" = "OpenJoystickDriver non ha potuto completare quell’azione.";
 "error.notAvailable" = "OpenJoystickDriver non è disponibile in questo momento.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Nessun input del controller è ancora disponibile.";
 "error.noDetectedControl" = "Nessun nuovo controllo del controller è stato rilevato.";
 "error.actionInProgress" = "Un’altra azione del profilo è già in corso.";
-"error.profileLibraryCorrupt" = "La libreria di profilo è danneggiata e non è stata caricata.";
-"error.profileLibraryVersion" = "Questa libreria di profili ha bisogno di un aggiornamento. Crea un nuovo profilo o rimuovi il vecchio file della libreria.";
+"error.profileLibraryCorrupt" = "L’elenco dei profili attivi è danneggiato e non è stato possibile caricarlo.";
 "error.selectedAssignmentMissing" = "L’assegnazione selezionata non è più disponibile.";
 "capture.listeningButton" = "In ascolto…";
 "error.reviewAssignmentsBeforeSave" = "Controlla le assegnazioni prima di salvare questo profilo.";

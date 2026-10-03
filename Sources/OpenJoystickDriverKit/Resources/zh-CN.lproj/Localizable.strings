@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "已存在同名配置文件。";
 "error.profileMissing" = "该配置文件已不可用。";
 "error.reviewAssignments" = "请检查配置文件映射后重试。";
-"error.profileLibrarySave" = "无法存储配置文件库。";
+"error.profileLibrarySave" = "无法存储配置文件。";
 "error.remappingUnavailable" = "控制器重新映射暂时不可用。";
 "error.generic" = "OpenJoystickDriver 无法完成该操作。";
 "error.notAvailable" = "OpenJoystickDriver 目前不可用。";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "尚无可用的控制器输入。";
 "error.noDetectedControl" = "未检测到新的控制器控件。";
 "error.actionInProgress" = "另一项配置文件操作已在进行中。";
-"error.profileLibraryCorrupt" = "个人资料库损坏,无法加载.";
-"error.profileLibraryVersion" = "这个个人资料库需要更新. 创建一个新的个人资料或删除旧的库文件.";
+"error.profileLibraryCorrupt" = "活跃配置文件列表已损坏，无法载入。";
 "error.selectedAssignmentMissing" = "所选映射已不可用。";
 "capture.listeningButton" = "正在侦听…";
 "error.reviewAssignmentsBeforeSave" = "存储此配置文件前请先检查映射。";

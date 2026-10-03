@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Er bestaat al een profiel met die naam.";
 "error.profileMissing" = "Dat profiel is niet meer beschikbaar.";
 "error.reviewAssignments" = "Controleer de profieltoewijzingen en probeer opnieuw.";
-"error.profileLibrarySave" = "De profielbibliotheek kon niet worden bewaard.";
+"error.profileLibrarySave" = "De profielen konden niet worden bewaard.";
 "error.remappingUnavailable" = "Het opnieuw toewijzen van de controller is tijdelijk niet beschikbaar.";
 "error.generic" = "OpenJoystickDriver kon die actie niet voltooien.";
 "error.notAvailable" = "OpenJoystickDriver is nu niet beschikbaar.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Er is nog geen controllerinvoer beschikbaar.";
 "error.noDetectedControl" = "Er is geen nieuwe controllerbesturing gedetecteerd.";
 "error.actionInProgress" = "Er is al een andere profielactie bezig.";
-"error.profileLibraryCorrupt" = "De profielbibliotheek is beschadigd en kon niet worden geladen.";
-"error.profileLibraryVersion" = "Deze profielbibliotheek moet worden bijgewerkt. Maak een nieuw profiel of verwijder het oude bibliotheekbestand.";
+"error.profileLibraryCorrupt" = "De lijst met actieve profielen is beschadigd en kon niet worden geladen.";
 "error.selectedAssignmentMissing" = "De geselecteerde toewijzing is niet meer beschikbaar.";
 "capture.listeningButton" = "Luisteren…";
 "error.reviewAssignmentsBeforeSave" = "Controleer de toewijzingen voordat je dit profiel bewaart.";

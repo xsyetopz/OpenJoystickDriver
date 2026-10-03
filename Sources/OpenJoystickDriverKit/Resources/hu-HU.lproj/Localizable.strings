@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "Már létezik ilyen nevű profil.";
 "error.profileMissing" = "Ez a profil már nem érhető el.";
 "error.reviewAssignments" = "Ellenőrizze a profil hozzárendeléseit, majd próbálja újra.";
-"error.profileLibrarySave" = "A profilkönyvtárat nem sikerült menteni.";
+"error.profileLibrarySave" = "A profilokat nem sikerült menteni.";
 "error.remappingUnavailable" = "A vezérlő-hozzárendelés átmenetileg nem érhető el.";
 "error.generic" = "Az OpenJoystickDriver nem tudta befejezni a műveletet.";
 "error.notAvailable" = "Az OpenJoystickDriver jelenleg nem érhető el.";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "Még nincs elérhető vezérlőbemenet.";
 "error.noDetectedControl" = "Nem észlelhető új vezérlőelem.";
 "error.actionInProgress" = "Már folyamatban van egy másik profilművelet.";
-"error.profileLibraryCorrupt" = "A profilkönyvtár sérült, és nem lehet tölteni.";
-"error.profileLibraryVersion" = "Ez a profilkönyvtár frissítésre van szüksége. Új profilot hozzon létre vagy távolítsa el a régi könyvtárfájlt.";
+"error.profileLibraryCorrupt" = "Az aktív profilok listája sérült, és nem sikerült betölteni.";
 "error.selectedAssignmentMissing" = "A kijelölt hozzárendelés már nem érhető el.";
 "capture.listeningButton" = "Figyelés…";
 "error.reviewAssignmentsBeforeSave" = "A profil mentése előtt ellenőrizze a hozzárendeléseket.";

@@ -361,7 +361,7 @@
 "error.duplicateProfile" = "その名前のプロファイルはすでに存在します。";
 "error.profileMissing" = "そのプロファイルは利用できなくなりました。";
 "error.reviewAssignments" = "プロファイルの割り当てを確認して再試行してください。";
-"error.profileLibrarySave" = "プロファイルライブラリを保存できませんでした。";
+"error.profileLibrarySave" = "プロファイルを保存できませんでした。";
 "error.remappingUnavailable" = "コントローラの再割り当ては一時的に利用できません。";
 "error.generic" = "OpenJoystickDriverはその操作を完了できませんでした。";
 "error.notAvailable" = "OpenJoystickDriverは現在利用できません。";
@@ -472,8 +472,7 @@
 "error.noControllerInput" = "コントローラ入力はまだありません。";
 "error.noDetectedControl" = "新しいコントローラ操作は検出されませんでした。";
 "error.actionInProgress" = "別のプロファイル操作がすでに進行中です。";
-"error.profileLibraryCorrupt" = "プロフィールライブラリが損傷し 読み込みはできなかった.";
-"error.profileLibraryVersion" = "このプロフィールライブラリに更新が必要です. 新しいプロフィールを作成するか,古いライブラリファイルを削除してください.";
+"error.profileLibraryCorrupt" = "アクティブなプロファイルの一覧が破損しているため、読み込めませんでした。";
 "error.selectedAssignmentMissing" = "選択した割り当ては利用できなくなりました。";
 "capture.listeningButton" = "待機中…";
 "error.reviewAssignmentsBeforeSave" = "このプロファイルを保存する前に割り当てを確認してください。";
