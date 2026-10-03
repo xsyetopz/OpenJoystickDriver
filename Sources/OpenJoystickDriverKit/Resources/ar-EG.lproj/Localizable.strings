@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "فشل فصل Bluetooth أثناء %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ غير متصلة عبر Bluetooth. افصل الكابل لفصلها.";
 "cli.controller.discussion" = "CONTROLLER هو معرّف من «ojd controller list» أو VVVV:PPPP (معرّف المورّد والمنتج بالنظام الست عشري) عندما تحمله وحدة تحكم متصلة واحدة فقط. تحتاج كل أوامر وحدة التحكم إلى الخدمة.";
+"cli.controller.discussion.unit" = "يحدد معرّف الجهاز (U-...) وحدة تحكم واحدة بحسب طرازها ومنفذ USB الذي تستخدمه. ويبقى كما هو بعد إعادة التشغيل ما دامت وحدة التحكم تستخدم هذا المنفذ.";
 "cli.controller.error.duration" = "--duration يتطلب عددًا من الثواني أكبر من 0.";
 "cli.controller.feature.brightness" = "سطوع ضوء قابل للضبط";
 "cli.controller.feature.color" = "لون ضوء قابل للبرمجة";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "السجل";
 "cli.controller.show.label.rumble" = "الاهتزاز";
 "cli.controller.show.label.session" = "الجلسة";
+"cli.controller.show.label.unit" = "معرّف الجهاز";
 "cli.controller.show.label.virtual" = "وحدة تحكم افتراضية";
 "cli.controller.show.label.publication" = "النشر";
 "cli.controller.show.none" = "لا شيء";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "اعرض وحدة التحكم الافتراضية التي ينشرها OpenJoystickDriver لوحدة تحكم، واختَرها.";
 "cli.virtual.changed" = "%@ تنشر الآن %@ (%@).";
 "cli.virtual.stored" = "تم حفظ الاختيار لـ \U2068%@\U2069. سيُطبق عند تمكين الإخراج الافتراضي.";
+"cli.virtual.unit" = "طبّق على وحدة التحكم هذه فقط، بحسب معرّف جهازها، بدلًا من طرازها بالكامل.";
 "cli.virtual.discussion" = "ينطبق الاختيار على كل وحدات التحكم من الطراز نفسه. «reset» يعيد الطراز إلى الاختيار التلقائي.";
+"cli.virtual.discussion.unit" = "مع --unit، يُطبَّق «set» على وحدة تحكم واحدة بحسب معرّف جهازها، ويعيد «reset» وحدة التحكم هذه إلى اختيار طرازها.";
 "cli.virtual.error.failed" = "لم تتغير وحدة التحكم الافتراضية لـ %@ (%@). افحصها باستخدام «ojd virtual show».";
+"cli.virtual.error.no_unit" = "%@ ليس له معرّف جهاز، لذا لا يمكن تطبيق الاختيار إلا على طرازه بالكامل. شغّل الأمر بدون --unit.";
 "cli.virtual.reset.abstract" = "أعد طراز وحدة تحكم، أو كل الطُرز، إلى الاختيار التلقائي لوحدة التحكم الافتراضية.";
 "cli.virtual.reset.all" = "أعد ضبط كل طُرز وحدات التحكم.";
 "cli.virtual.reset.all.done" = "يختار كل طراز وحدة تحكم الآن وحدة التحكم الافتراضية تلقائيًا.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "يمسح --all أيضًا خيارات الطُرز غير المتصلة. يسأل أولًا في الطرفية ويحتاج إلى --force في غيرها.";
 "cli.virtual.reset.dry_run" = "سيعيد %@ إلى الاختيار التلقائي لوحدة التحكم الافتراضية.";
 "cli.virtual.reset.error.target" = "حدد CONTROLLER أو --all.";
+"cli.virtual.reset.error.unit_all" = "يحتاج --unit إلى CONTROLLER وليس --all.";
 "cli.virtual.set.abstract" = "اختر وحدة التحكم الافتراضية لطراز وحدة تحكم.";
 "cli.virtual.set.profile" = "ملف تعريف وحدة التحكم الافتراضية.";
 "cli.virtual.show.abstract" = "اعرض وحدة التحكم الافتراضية لكل وحدة تحكم وملفات التعريف التي يمكنك اختيارها.";

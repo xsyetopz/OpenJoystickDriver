@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Odpojení přes Bluetooth selhalo při %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ není připojen přes Bluetooth. Odpojte ho kabelem.";
 "cli.controller.discussion" = "CONTROLLER je ID z 'ojd controller list' nebo VVVV:PPPP (hexadecimální ID výrobce a produktu), pokud ho má právě jeden připojený ovladač. Každý příkaz pro ovladač potřebuje službu.";
+"cli.controller.discussion.unit" = "ID jednotky (U-...) označuje jeden ovladač podle jeho modelu a portu USB, který používá. Zůstává stejné i po restartech, dokud ovladač tento port používá.";
 "cli.controller.error.duration" = "--duration vyžaduje počet sekund větší než 0.";
 "cli.controller.feature.brightness" = "nastavitelný jas světla";
 "cli.controller.feature.color" = "programovatelnou barvu světla";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Záznam";
 "cli.controller.show.label.rumble" = "Vibrace";
 "cli.controller.show.label.session" = "Relace";
+"cli.controller.show.label.unit" = "ID jednotky";
 "cli.controller.show.label.virtual" = "Virtuální gamepad";
 "cli.controller.show.label.publication" = "Publikování";
 "cli.controller.show.none" = "žádné";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Zobrazit a zvolit virtuální gamepad, který OpenJoystickDriver zveřejňuje pro ovladač.";
 "cli.virtual.changed" = "%@ nyní zveřejňuje %@ (%@).";
 "cli.virtual.stored" = "Volba pro %@ je uložena. Použije se po zapnutí virtuálního výstupu.";
+"cli.virtual.unit" = "Použít jen pro tento ovladač podle jeho ID jednotky, ne pro celý jeho model.";
 "cli.virtual.discussion" = "Volba platí pro všechny ovladače stejného modelu. 'reset' vrátí model k automatickému výběru.";
+"cli.virtual.discussion.unit" = "S --unit se 'set' použije pro jeden ovladač podle jeho ID jednotky a 'reset' vrátí tento ovladač k volbě jeho modelu.";
 "cli.virtual.error.failed" = "Virtuální gamepad pro %@ se nezměnil (%@). Zkontrolujte to pomocí 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ nemá ID jednotky, proto lze volbu použít jen pro celý jeho model. Spusťte příkaz bez --unit.";
 "cli.virtual.reset.abstract" = "Vrátit model ovladače, nebo všechny modely, k automatickému výběru virtuálního gamepadu.";
 "cli.virtual.reset.all" = "Resetovat všechny modely ovladačů.";
 "cli.virtual.reset.all.done" = "Každý model ovladače nyní vybírá svůj virtuální gamepad automaticky.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all vymaže také volby pro modely, které nejsou připojeny. V terminálu se nejdřív zeptá, jinak vyžaduje --force.";
 "cli.virtual.reset.dry_run" = "Vrátilo by %@ k automatickému výběru virtuálního gamepadu.";
 "cli.virtual.reset.error.target" = "Zadejte CONTROLLER, nebo --all.";
+"cli.virtual.reset.error.unit_all" = "--unit vyžaduje CONTROLLER, ne --all.";
 "cli.virtual.set.abstract" = "Zvolit virtuální gamepad pro model ovladače.";
 "cli.virtual.set.profile" = "Profil virtuálního gamepadu.";
 "cli.virtual.show.abstract" = "Zobrazit virtuální gamepad každého ovladače a profily, které můžete zvolit.";

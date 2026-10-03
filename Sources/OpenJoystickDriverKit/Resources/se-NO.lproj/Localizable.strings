@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth-čuvgen ii lihkostuvvan %@ áigge: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ ii leat čadnojuvvon Bluetoothain. Dulbmo kaabela olggos čuvgen várás.";
 "cli.controller.discussion" = "CONTROLLER lea ID ”ojd controller list”-listtus, dahje VVVV:PPPP (hex-ráhkadeaddji- ja buktaga-ID) go dušše okta čadnojuvvon stivrejeaddji lea dat. Juohke stivrejeaddjikomanda dárbbaša bálvalusa.";
+"cli.controller.discussion.unit" = "Ovttadaga-ID (U-...) namuha ovtta stivrejeaddji dan modeallas ja USB-porttas mii das lea. Dat orru seammaláganin maiddái lihkadettiin go stivrejeaddji geavaha dan porta.";
 "cli.controller.error.duration" = "--duration dárbbaša sekunddaid logu mii lea badjel 0.";
 "cli.controller.feature.brightness" = "heivehahtti čuovgga čuovgodat";
 "cli.controller.feature.color" = "prográmmehahtti čuovgga earri";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Čálus";
 "cli.controller.show.label.rumble" = "Vibrerem";
 "cli.controller.show.label.session" = "Sešuvdna";
+"cli.controller.show.label.unit" = "Ovttadaga-ID";
 "cli.controller.show.label.virtual" = "Virtuála speallanbáddi";
 "cli.controller.show.label.publication" = "Almmuheapmi";
 "cli.controller.show.none" = "ii maidege";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Čájeha ja vállje virtuála speallanbáddi maid OpenJoystickDriver almmuha stivrejeaddjái.";
 "cli.virtual.changed" = "%@ almmuha dál %@ (%@).";
 "cli.virtual.stored" = "%@: válljen lea vurkejuvvon. Doaibmá go virtuála olggosbuktin lea doaimmas.";
+"cli.virtual.unit" = "Guoská dušše dán stivrejeaddjái su ovttadaga-ID mielde, ii olles modeallii.";
 "cli.virtual.discussion" = "Válljen guoská juohke stivrejeaddjái seamma modealas. ”reset” máhcaha modealet automáhtalaš válljemii.";
+"cli.virtual.discussion.unit" = "Go geavahat --unit, de ”set” guoská ovtta stivrejeaddjái su ovttadaga-ID mielde, ja ”reset” máhcaha dan stivrejeaddji su modealla válljemii.";
 "cli.virtual.error.failed" = "%@ virtuála speallanbáddi ii rievdan (%@). Geahčat dan komanddain ”ojd virtual show”.";
+"cli.virtual.error.no_unit" = "%@ ii leat ovttadaga-ID, danne válljen sáhttá guoskat dušše olles modeallii. Čađat komando --unit haga.";
 "cli.virtual.reset.abstract" = "Máhcaha stivrejeaddji modealet, dahje buot modeallaid, virtuála speallanbáddi automáhtalaš válljemii.";
 "cli.virtual.reset.all" = "Ođđasit buot stivrejeaddjimodeallaid.";
 "cli.virtual.reset.all.done" = "Juohke stivrejeaddjimodealla vállje dál virtuála speallanbáddi automáhtalaččat.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all sihkku maiddái válljemiid modeallaide mat eai leat čadnojuvvon. Dat jerrá vuos terminálas, ja earáláhkai dárbbaša --force.";
 "cli.virtual.reset.dry_run" = "Máhcahivččii %@ virtuála speallanbáddi automáhtalaš válljemii.";
 "cli.virtual.reset.error.target" = "Addte juogo CONTROLLER dahje --all.";
+"cli.virtual.reset.error.unit_all" = "--unit gáibida CONTROLLER, ii --all.";
 "cli.virtual.set.abstract" = "Vállje virtuála speallanbáddi stivrejeaddji modealla várás.";
 "cli.virtual.set.profile" = "Virtuála speallanbáddi profiila.";
 "cli.virtual.show.abstract" = "Čájeha juohke stivrejeaddji virtuála speallanbáddi ja profiilaid maid sáhtát válljet.";

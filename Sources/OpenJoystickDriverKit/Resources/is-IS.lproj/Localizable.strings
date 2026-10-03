@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth-aftenging mistókst við %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ er ekki tengd í gegnum Bluetooth. Taktu hana úr sambandi til að aftengja hana.";
 "cli.controller.discussion" = "CONTROLLER er auðkenni úr „ojd controller list“ eða VVVV:PPPP (sextándakerfisauðkenni framleiðanda og vöru) þegar nákvæmlega ein tengd stýring hefur það. Allar stýringarskipanir þurfa þjónustuna.";
+"cli.controller.discussion.unit" = "Tækisauðkenni (U-...) nefnir eina stýringu eftir gerð hennar og USB-tenginu sem hún notar. Það helst óbreytt eftir endurræsingu á meðan stýringin notar það tengi.";
 "cli.controller.error.duration" = "--duration þarf fjölda sekúndna yfir 0.";
 "cli.controller.feature.brightness" = "stillanlega ljósbirtu";
 "cli.controller.feature.color" = "forritanlegan ljóslit";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Færsla";
 "cli.controller.show.label.rumble" = "Titringur";
 "cli.controller.show.label.session" = "Lota";
+"cli.controller.show.label.unit" = "Tækisauðkenni";
 "cli.controller.show.label.virtual" = "Sýndarleikjastýring";
 "cli.controller.show.label.publication" = "Birting";
 "cli.controller.show.none" = "ekkert";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Sýna og velja sýndarleikjastýringuna sem OpenJoystickDriver birtir fyrir stýringu.";
 "cli.virtual.changed" = "%@ birtir nú %@ (%@).";
 "cli.virtual.stored" = "Valið fyrir %@ er vistað. Það tekur gildi þegar sýndarúttak er virkjað.";
+"cli.virtual.unit" = "Gildir aðeins um þessa stýringu eftir tækisauðkenni hennar í stað allrar gerðarinnar.";
 "cli.virtual.discussion" = "Val gildir um allar stýringar af sömu gerð. „reset“ skilar gerð í sjálfvirkt val.";
+"cli.virtual.discussion.unit" = "Með --unit gildir „set“ um eina stýringu eftir tækisauðkenni hennar og „reset“ skilar þeirri stýringu í val gerðar hennar.";
 "cli.virtual.error.failed" = "Sýndarleikjastýring fyrir %@ breyttist ekki (%@). Athugaðu hana með „ojd virtual show“.";
+"cli.virtual.error.no_unit" = "%@ er ekki með tækisauðkenni og því getur val aðeins gilt um alla gerðina. Keyrðu skipunina án --unit.";
 "cli.virtual.reset.abstract" = "Skila gerð stýringar, eða öllum gerðum, í sjálfvirkt val á sýndarleikjastýringu.";
 "cli.virtual.reset.all" = "Endurstilla allar stýringagerðir.";
 "cli.virtual.reset.all.done" = "Allar stýringagerðir velja nú sýndarleikjastýringu sína sjálfvirkt.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all hreinsar einnig val fyrir gerðir sem eru ekki tengdar. Spyr fyrst í skjáskel; annars þarf --force.";
 "cli.virtual.reset.dry_run" = "Myndi skila %@ í sjálfvirkt val á sýndarleikjastýringu.";
 "cli.virtual.reset.error.target" = "Gefðu upp annaðhvort CONTROLLER eða --all.";
+"cli.virtual.reset.error.unit_all" = "--unit krefst CONTROLLER, ekki --all.";
 "cli.virtual.set.abstract" = "Velja sýndarleikjastýringu fyrir gerð stýringar.";
 "cli.virtual.set.profile" = "Snið sýndarleikjastýringar.";
 "cli.virtual.show.abstract" = "Sýna sýndarleikjastýringu hverrar stýringar og þau snið sem þú getur valið.";

@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "断开 %@ 的蓝牙连接失败：%@。";
 "cli.controller.disconnect.not_bluetooth" = "%@ 不是通过蓝牙连接的。拔下它即可断开。";
 "cli.controller.discussion" = "CONTROLLER 是 'ojd controller list' 中的 ID，或 VVVV:PPPP（十六进制供应商和产品 ID，仅当恰好有一个已连接的控制器具有该 ID 时）。所有控制器命令都需要服务。";
+"cli.controller.discussion.unit" = "单元 ID（U-...）通过型号和所用的 USB 端口来标识一个控制器。只要该控制器继续使用该端口，它在重启后保持不变。";
 "cli.controller.error.duration" = "--duration 需要大于 0 的秒数。";
 "cli.controller.feature.brightness" = "可调节的灯光亮度";
 "cli.controller.feature.color" = "可编程的灯光颜色";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "记录";
 "cli.controller.show.label.rumble" = "振动";
 "cli.controller.show.label.session" = "会话";
+"cli.controller.show.label.unit" = "单元 ID";
 "cli.controller.show.label.virtual" = "虚拟游戏手柄";
 "cli.controller.show.label.publication" = "发布状态";
 "cli.controller.show.none" = "无";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "显示并选择 OpenJoystickDriver 为控制器发布的虚拟游戏手柄。";
 "cli.virtual.changed" = "%@ 现在发布 %@（%@）。";
 "cli.virtual.stored" = "已存储 %@ 的选择，将在启用虚拟输出后应用。";
+"cli.virtual.unit" = "仅适用于此控制器（按其单元 ID），而不是其整个型号。";
 "cli.virtual.discussion" = "所做选择适用于同一型号的所有控制器。'reset' 会让某个型号恢复自动选择。";
+"cli.virtual.discussion.unit" = "使用 --unit 时，'set' 只作用于按单元 ID 指定的那一个控制器，'reset' 会让该控制器恢复为其型号的选择。";
 "cli.virtual.error.failed" = "%@ 的虚拟游戏手柄未更改（%@）。请用 'ojd virtual show' 检查。";
+"cli.virtual.error.no_unit" = "%@ 没有单元 ID，因此所做选择只能适用于其整个型号。请不带 --unit 运行该命令。";
 "cli.virtual.reset.abstract" = "让控制器的型号或所有型号恢复自动选择虚拟游戏手柄。";
 "cli.virtual.reset.all" = "重置所有控制器型号。";
 "cli.virtual.reset.all.done" = "现在每个控制器型号都会自动选择其虚拟游戏手柄。";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all 还会清除未连接型号的选择。在终端中会先询问，否则需要 --force。";
 "cli.virtual.reset.dry_run" = "将让 %@ 恢复自动选择虚拟游戏手柄。";
 "cli.virtual.reset.error.target" = "请提供一个 CONTROLLER，或使用 --all。";
+"cli.virtual.reset.error.unit_all" = "--unit 需要 CONTROLLER，不能与 --all 一起使用。";
 "cli.virtual.set.abstract" = "为控制器的型号选择虚拟游戏手柄。";
 "cli.virtual.set.profile" = "虚拟游戏手柄配置文件。";
 "cli.virtual.show.abstract" = "显示每个控制器的虚拟游戏手柄以及可选择的配置文件。";

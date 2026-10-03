@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "ניתוק Bluetooth נכשל במהלך %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ אינו מחובר באמצעות Bluetooth. שלוף אותו מהכבל כדי לנתק אותו.";
 "cli.controller.discussion" = "CONTROLLER הוא מזהה מתוך ״ojd controller list״, או VVVV:PPPP (מזהה יצרן ומוצר בהקסדצימלי) כשבקר מחובר אחד בדיוק נושא אותו. כל פקודת בקר דורשת את השירות.";
+"cli.controller.discussion.unit" = "מזהה מכשיר (U-...) מציין בקר אחד לפי הדגם שלו ויציאת ה-USB שבה הוא משתמש. הוא נשאר זהה בין הפעלות מחדש כל עוד הבקר משתמש ביציאה הזו.";
 "cli.controller.error.duration" = "--duration דורש מספר שניות גדול מ-0.";
 "cli.controller.feature.brightness" = "בהירות אור מתכווננת";
 "cli.controller.feature.color" = "צבע אור ניתן לתכנות";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "רשומה";
 "cli.controller.show.label.rumble" = "רטט";
 "cli.controller.show.label.session" = "הפעלה";
+"cli.controller.show.label.unit" = "מזהה מכשיר";
 "cli.controller.show.label.virtual" = "שלט משחק וירטואלי";
 "cli.controller.show.label.publication" = "פרסום";
 "cli.controller.show.none" = "אין";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "הצגה ובחירה של שלט המשחק הווירטואלי ש-OpenJoystickDriver מפרסם עבור בקר.";
 "cli.virtual.changed" = "%@ מפרסם עכשיו %@ (%@).";
 "cli.virtual.stored" = "הבחירה עבור \U2068%@\U2069 נשמרה. היא תחול כאשר הפלט הווירטואלי יופעל.";
+"cli.virtual.unit" = "החל רק על הבקר הזה, לפי מזהה המכשיר שלו, במקום על הדגם כולו.";
 "cli.virtual.discussion" = "בחירה חלה על כל בקר מאותו דגם. ״reset״ מחזיר דגם לבחירה אוטומטית.";
+"cli.virtual.discussion.unit" = "עם --unit, ״set״ חל על בקר אחד לפי מזהה המכשיר שלו, ו-״reset״ מחזיר את הבקר הזה לבחירה של הדגם שלו.";
 "cli.virtual.error.failed" = "שלט המשחק הווירטואלי של %@ לא השתנה (%@). בדוק זאת באמצעות ״ojd virtual show״.";
+"cli.virtual.error.no_unit" = "ל-%@ אין מזהה מכשיר, ולכן בחירה יכולה לחול רק על הדגם שלו כולו. הרץ את הפקודה בלי --unit.";
 "cli.virtual.reset.abstract" = "החזרת הדגם של בקר, או כל הדגמים, לבחירה אוטומטית של שלט משחק וירטואלי.";
 "cli.virtual.reset.all" = "איפוס כל דגמי הבקרים.";
 "cli.virtual.reset.all.done" = "כל דגם בקר בוחר עכשיו את שלט המשחק הווירטואלי שלו אוטומטית.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all מנקה גם בחירות של דגמים שאינם מחוברים. בטרמינל הוא שואל קודם, ובמקרים אחרים נדרש --force.";
 "cli.virtual.reset.dry_run" = "יוחזר %@ לבחירה אוטומטית של שלט משחק וירטואלי.";
 "cli.virtual.reset.error.target" = "ציין CONTROLLER או --all.";
+"cli.virtual.reset.error.unit_all" = "--unit דורש CONTROLLER, לא --all.";
 "cli.virtual.set.abstract" = "בחירת שלט המשחק הווירטואלי לדגם של בקר.";
 "cli.virtual.set.profile" = "פרופיל שלט המשחק הווירטואלי.";
 "cli.virtual.show.abstract" = "הצגת שלט המשחק הווירטואלי של כל בקר והפרופילים שאפשר לבחור.";

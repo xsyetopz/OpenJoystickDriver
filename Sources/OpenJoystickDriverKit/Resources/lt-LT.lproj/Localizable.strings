@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth atjungimas nepavyko (%@): %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ neprijungtas per Bluetooth. Ištraukite jį, kad atjungtumėte.";
 "cli.controller.discussion" = "CONTROLLER yra ID iš „ojd controller list“ arba VVVV:PPPP (šešioliktainis gamintojo ir gaminio ID), kai jį turi tiksliai vienas prijungtas valdiklis. Visoms valdiklio komandoms reikia tarnybos.";
+"cli.controller.discussion.unit" = "Įrenginio ID (U-...) įvardija vieną valdiklį pagal jo modelį ir naudojamą USB prievadą. Jis išlieka toks pat po paleidimo iš naujo, kol valdiklis naudoja tą prievadą.";
 "cli.controller.error.duration" = "--duration reikia sekundžių skaičiaus, didesnio už 0.";
 "cli.controller.feature.brightness" = "reguliuojamo šviesos ryškumo";
 "cli.controller.feature.color" = "programuojamos šviesos spalvos";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Įrašas";
 "cli.controller.show.label.rumble" = "Vibracija";
 "cli.controller.show.label.session" = "Seansas";
+"cli.controller.show.label.unit" = "Įrenginio ID";
 "cli.controller.show.label.virtual" = "Virtualus žaidimų pultas";
 "cli.controller.show.label.publication" = "Publikavimas";
 "cli.controller.show.none" = "nėra";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Rodyti ir pasirinkti virtualų žaidimų pultą, kurį OpenJoystickDriver skelbia valdikliui.";
 "cli.virtual.changed" = "%@ dabar skelbia %@ (%@).";
 "cli.virtual.stored" = "Pasirinkimas įrenginiui %@ išsaugotas. Jis bus pritaikytas įjungus virtualią išvestį.";
+"cli.virtual.unit" = "Taikyti tik šiam valdikliui pagal jo įrenginio ID, o ne visam modeliui.";
 "cli.virtual.discussion" = "Pasirinkimas taikomas visiems to paties modelio valdikliams. „reset“ grąžina modelį į automatinį pasirinkimą.";
+"cli.virtual.discussion.unit" = "Su --unit „set“ taikoma vienam valdikliui pagal jo įrenginio ID, o „reset“ grąžina tą valdiklį prie jo modelio pasirinkimo.";
 "cli.virtual.error.failed" = "%@ virtualus žaidimų pultas nepasikeitė (%@). Patikrinkite naudodami „ojd virtual show“.";
+"cli.virtual.error.no_unit" = "%@ neturi įrenginio ID, todėl pasirinkimas gali būti taikomas tik visam jo modeliui. Paleiskite komandą be --unit.";
 "cli.virtual.reset.abstract" = "Grąžinti valdiklio modelį arba visus modelius į automatinį virtualaus žaidimų pulto pasirinkimą.";
 "cli.virtual.reset.all" = "Atstatyti kiekvieną valdiklio modelį.";
 "cli.virtual.reset.all.done" = "Kiekvienas valdiklio modelis dabar automatiškai pasirenka virtualų žaidimų pultą.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all išvalo ir neprijungtų modelių pasirinkimus. Terminale pirmiausia paklausia, kitais atvejais reikia --force.";
 "cli.virtual.reset.dry_run" = "Grąžintų %@ į automatinį virtualaus žaidimų pulto pasirinkimą.";
 "cli.virtual.reset.error.target" = "Nurodykite CONTROLLER arba --all.";
+"cli.virtual.reset.error.unit_all" = "--unit reikia CONTROLLER, o ne --all.";
 "cli.virtual.set.abstract" = "Pasirinkti virtualų žaidimų pultą valdiklio modeliui.";
 "cli.virtual.set.profile" = "Virtualaus žaidimų pulto profilis.";
 "cli.virtual.show.abstract" = "Rodyti kiekvieno valdiklio virtualų žaidimų pultą ir galimus pasirinkti profilius.";

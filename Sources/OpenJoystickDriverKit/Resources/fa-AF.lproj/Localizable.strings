@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "قطع اتصال Bluetooth در جریان %@ ناکام شد: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ با Bluetooth وصل نیست. برای قطع اتصال، آن را جدا کنید.";
 "cli.controller.discussion" = "CONTROLLER یک شناسه از «ojd controller list» است، یا VVVV:PPPP (شناسهٔ هگزادسیمال فروشنده و محصول) وقتی دقیقاً یک کنترلر متصل آن را داشته باشد. هر فرمان کنترلر به سرویس نیاز دارد.";
+"cli.controller.discussion.unit" = "شناسهٔ دستگاه (U-...) یک کنترلر را بر اساس مدل آن و درگاه USB که استفاده می‌کند مشخص می‌کند. تا زمانی که کنترلر از همان درگاه استفاده کند، پس از راه‌اندازی مجدد نیز ثابت می‌ماند.";
 "cli.controller.error.duration" = "--duration به تعداد ثانیه‌ای بزرگ‌تر از 0 نیاز دارد.";
 "cli.controller.feature.brightness" = "روشنایی قابل تنظیم نور";
 "cli.controller.feature.color" = "رنگ قابل برنامه‌ریزی نور";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "رکورد";
 "cli.controller.show.label.rumble" = "لرزش";
 "cli.controller.show.label.session" = "نشست";
+"cli.controller.show.label.unit" = "شناسهٔ دستگاه";
 "cli.controller.show.label.virtual" = "دستهٔ بازی مجازی";
 "cli.controller.show.label.publication" = "انتشار";
 "cli.controller.show.none" = "هیچ";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "نمایش و انتخاب دستهٔ بازی مجازی‌ای که OpenJoystickDriver برای یک کنترلر منتشر می‌کند.";
 "cli.virtual.changed" = "%@ اکنون %@ (%@) را منتشر می‌کند.";
 "cli.virtual.stored" = "انتخاب برای \U2068%@\U2069 ذخیره شد. پس از فعال شدن خروجی مجازی اعمال می‌شود.";
+"cli.virtual.unit" = "فقط برای همین کنترلر و بر اساس شناسهٔ دستگاه آن اعمال شود، نه برای کل مدلش.";
 "cli.virtual.discussion" = "یک انتخاب برای هر کنترلر همان مدل اعمال می‌شود. «reset» یک مدل را به انتخاب خودکار برمی‌گرداند.";
+"cli.virtual.discussion.unit" = "با --unit، «set» برای یک کنترلر بر اساس شناسهٔ دستگاه آن اعمال می‌شود و «reset» آن کنترلر را به انتخاب مدلش برمی‌گرداند.";
 "cli.virtual.error.failed" = "دستهٔ بازی مجازی %@ تغییر نکرد (%@). با «ojd virtual show» بررسی کنید.";
+"cli.virtual.error.no_unit" = "%@ شناسهٔ دستگاه ندارد، بنابراین انتخاب فقط برای کل مدل آن قابل اعمال است. دستور را بدون --unit اجرا کنید.";
 "cli.virtual.reset.abstract" = "بازگرداندن مدل یک کنترلر، یا همهٔ مدل‌ها، به انتخاب خودکار دستهٔ بازی مجازی.";
 "cli.virtual.reset.all" = "بازنشانی همهٔ مدل‌های کنترلر.";
 "cli.virtual.reset.all.done" = "اکنون هر مدل کنترلر دستهٔ بازی مجازی‌اش را خودکار انتخاب می‌کند.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all انتخاب مدل‌های غیرمتصل را هم پاک می‌کند. در ترمینال اول می‌پرسد و در غیر این صورت به --force نیاز دارد.";
 "cli.virtual.reset.dry_run" = "%@ به انتخاب خودکار دستهٔ بازی مجازی برگردانده خواهد شد.";
 "cli.virtual.reset.error.target" = "یک CONTROLLER یا --all بدهید.";
+"cli.virtual.reset.error.unit_all" = "--unit به یک CONTROLLER نیاز دارد، نه --all.";
 "cli.virtual.set.abstract" = "انتخاب دستهٔ بازی مجازی برای مدل یک کنترلر.";
 "cli.virtual.set.profile" = "نمایهٔ دستهٔ بازی مجازی.";
 "cli.virtual.show.abstract" = "نمایش دستهٔ بازی مجازی هر کنترلر و نمایه‌هایی که می‌توانید انتخاب کنید.";

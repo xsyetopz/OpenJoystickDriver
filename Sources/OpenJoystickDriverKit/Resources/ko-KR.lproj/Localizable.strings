@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "%@ 연결을 끊는 중 Bluetooth 연결 해제에 실패했습니다: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ 컨트롤러는 Bluetooth로 연결되어 있지 않습니다. 연결을 끊으려면 케이블을 분리하세요.";
 "cli.controller.discussion" = "CONTROLLER는 'ojd controller list'의 ID이거나, 연결된 컨트롤러 중 정확히 하나만 해당할 때 쓸 수 있는 VVVV:PPPP(16진수 공급업체 ID와 제품 ID)입니다. 모든 컨트롤러 명령에는 서비스가 필요합니다.";
+"cli.controller.discussion.unit" = "유닛 ID(U-...)는 컨트롤러의 모델과 컨트롤러가 사용하는 USB 포트로 컨트롤러 하나를 가리킵니다. 컨트롤러가 같은 포트를 사용하는 동안에는 다시 시작해도 그대로 유지됩니다.";
 "cli.controller.error.duration" = "--duration에는 0보다 큰 초 단위 숫자가 필요합니다.";
 "cli.controller.feature.brightness" = "조절 가능한 조명 밝기";
 "cli.controller.feature.color" = "프로그래밍 가능한 조명 색상";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "레코드";
 "cli.controller.show.label.rumble" = "진동";
 "cli.controller.show.label.session" = "세션";
+"cli.controller.show.label.unit" = "유닛 ID";
 "cli.controller.show.label.virtual" = "가상 게임패드";
 "cli.controller.show.label.publication" = "게시 상태";
 "cli.controller.show.none" = "없음";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "OpenJoystickDriver가 컨트롤러용으로 게시하는 가상 게임패드를 표시하고 선택합니다.";
 "cli.virtual.changed" = "%@이(가) 이제 %@(%@)을(를) 게시합니다.";
 "cli.virtual.stored" = "%@의 선택이 저장되었습니다. 가상 출력이 활성화되면 적용됩니다.";
+"cli.virtual.unit" = "모델 전체가 아니라 이 컨트롤러에만 유닛 ID로 적용합니다.";
 "cli.virtual.discussion" = "선택은 같은 모델의 모든 컨트롤러에 적용됩니다. 'reset'은 모델을 자동 선택으로 되돌립니다.";
+"cli.virtual.discussion.unit" = "--unit을 사용하면 'set'은 유닛 ID로 지정한 컨트롤러 하나에 적용되고, 'reset'은 해당 컨트롤러를 모델의 선택으로 되돌립니다.";
 "cli.virtual.error.failed" = "%@의 가상 게임패드가 변경되지 않았습니다(%@). 'ojd virtual show'로 확인하세요.";
+"cli.virtual.error.no_unit" = "%@에는 유닛 ID가 없으므로 선택은 모델 전체에만 적용할 수 있습니다. --unit 없이 명령을 실행하세요.";
 "cli.virtual.reset.abstract" = "컨트롤러 모델 또는 모든 모델을 가상 게임패드 자동 선택으로 되돌립니다.";
 "cli.virtual.reset.all" = "모든 컨트롤러 모델을 초기화합니다.";
 "cli.virtual.reset.all.done" = "이제 모든 컨트롤러 모델이 가상 게임패드를 자동으로 선택합니다.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all은 연결되지 않은 모델의 선택도 지웁니다. 터미널에서는 먼저 묻고, 그 외에는 --force가 필요합니다.";
 "cli.virtual.reset.dry_run" = "%@을(를) 가상 게임패드 자동 선택으로 되돌립니다.";
 "cli.virtual.reset.error.target" = "CONTROLLER 또는 --all을 지정하세요.";
+"cli.virtual.reset.error.unit_all" = "--unit에는 CONTROLLER가 필요하며 --all은 사용할 수 없습니다.";
 "cli.virtual.set.abstract" = "컨트롤러 모델의 가상 게임패드를 선택합니다.";
 "cli.virtual.set.profile" = "가상 게임패드 프로필.";
 "cli.virtual.show.abstract" = "각 컨트롤러의 가상 게임패드와 선택할 수 있는 프로필을 표시합니다.";

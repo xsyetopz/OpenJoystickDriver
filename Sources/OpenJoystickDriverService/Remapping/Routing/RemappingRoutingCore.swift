@@ -170,19 +170,24 @@ actor RemappingRoutingCore {
     let affected = sortedIdentifiers.filter {
       $0.controllerIdentity.vendorID == vendorID && $0.controllerIdentity.productID == productID
     }
-    let profile: RemappingProfile?
+    var profiles: [RemappingProfile?] = []
     do {
       let frontmostBundleID = foregroundApplication.frontmostBundleIdentifier()
-      profile = try await library.activeProfile(
-        vendorID: vendorID,
-        productID: productID,
-        frontmostBundleIdentifier: frontmostBundleID
-      )
+      for identifier in affected {
+        profiles.append(
+          try await library.activeProfile(
+            vendorID: vendorID,
+            productID: productID,
+            unit: identifier.unitIdentifier,
+            frontmostBundleIdentifier: frontmostBundleID
+          )
+        )
+      }
     } catch let error as RemappingProfileLibraryError {
       try await markLibraryUnavailable(error, identifiers: affected, requiring: permit)
       throw RemappingOutputRoutingError.library(error)
     }
-    for identifier in affected {
+    for (identifier, profile) in zip(affected, profiles) {
       _ = try requireOperationalPermit(permit)
       try await transition(
         to: independentSelection(for: profile),

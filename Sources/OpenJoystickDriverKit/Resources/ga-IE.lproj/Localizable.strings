@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Theip ar dhícheangal Bluetooth le linn %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "Níl %@ ceangailte trí Bluetooth. Díphlugáil é chun é a dhícheangal.";
 "cli.controller.discussion" = "Is ID ó «ojd controller list» é CONTROLLER, nó VVVV:PPPP (aitheantóir heicsidheachúlach díoltóra agus táirge) nuair nach bhfuil aige ach aon rialtóir ceangailte amháin. Teastaíonn an tseirbhís ó gach ordú rialtóra.";
+"cli.controller.discussion.unit" = "Ainmníonn ID aonaid (U-...) rialtóir amháin de réir a mhúnla agus an port USB a úsáideann sé. Fanann sé mar a chéile thar atosuithe fad a úsáideann an rialtóir an port sin.";
 "cli.controller.error.duration" = "Teastaíonn líon soicindí os cionn 0 ó --duration.";
 "cli.controller.feature.brightness" = "gile solais in-athraithe";
 "cli.controller.feature.color" = "dath solais in-ríomhchláraithe";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Taifead";
 "cli.controller.show.label.rumble" = "Creathadh";
 "cli.controller.show.label.session" = "Seisiún";
+"cli.controller.show.label.unit" = "ID aonaid";
 "cli.controller.show.label.virtual" = "Gamepad fíorúil";
 "cli.controller.show.label.publication" = "Foilsiú";
 "cli.controller.show.none" = "ceann ar bith";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Taispeáin agus roghnaigh an gamepad fíorúil a fhoilsíonn OpenJoystickDriver do rialtóir.";
 "cli.virtual.changed" = "Foilsíonn %@ %@ (%@) anois.";
 "cli.virtual.stored" = "Tá an rogha do %@ stóráilte. Cuirfear i bhfeidhm é nuair a chumasófar aschur fíorúil.";
+"cli.virtual.unit" = "Cuir i bhfeidhm ar an rialtóir seo amháin, de réir a ID aonaid, in ionad a mhúnla iomláin.";
 "cli.virtual.discussion" = "Baineann rogha le gach rialtóir den mhúnla céanna. Tugann «reset» múnla ar ais chuig roghnú uathoibríoch.";
+"cli.virtual.discussion.unit" = "Le --unit, baineann «set» le rialtóir amháin de réir a ID aonaid, agus cuireann «reset» an rialtóir sin ar ais ar rogha a mhúnla.";
 "cli.virtual.error.failed" = "Níor athraigh an gamepad fíorúil do %@ (%@). Seiceáil é le «ojd virtual show».";
+"cli.virtual.error.no_unit" = "Níl ID aonaid ag %@, mar sin ní féidir rogha a chur i bhfeidhm ach ar a mhúnla iomlán. Rith an t-ordú gan --unit.";
 "cli.virtual.reset.abstract" = "Tabhair múnla rialtóra, nó gach múnla, ar ais chuig roghnú uathoibríoch gamepad fíorúil.";
 "cli.virtual.reset.all" = "Athshocraigh gach múnla rialtóra.";
 "cli.virtual.reset.all.done" = "Roghnaíonn gach múnla rialtóra a ghamepad fíorúil go huathoibríoch anois.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "Glanann --all roghanna do mhúnlaí nach bhfuil ceangailte freisin. Fiafraíonn sé ar dtús i dteirminéal agus teastaíonn --force ar shlí eile.";
 "cli.virtual.reset.dry_run" = "Thabharfaí %@ ar ais chuig roghnú uathoibríoch gamepad fíorúil.";
 "cli.virtual.reset.error.target" = "Tabhair CONTROLLER nó --all.";
+"cli.virtual.reset.error.unit_all" = "Teastaíonn CONTROLLER ó --unit, ní --all.";
 "cli.virtual.set.abstract" = "Roghnaigh an gamepad fíorúil do mhúnla rialtóra.";
 "cli.virtual.set.profile" = "Próifíl an ghamepad fhíorúil.";
 "cli.virtual.show.abstract" = "Taispeáin gamepad fíorúil gach rialtóra agus na próifílí is féidir leat a roghnú.";

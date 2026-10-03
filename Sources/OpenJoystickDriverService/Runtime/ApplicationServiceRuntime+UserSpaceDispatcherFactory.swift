@@ -19,7 +19,9 @@ extension ApplicationServiceRuntime {
           context: context
         )
       },
-      overrideProvider: { overrides.override(vendorID: $0.vendorID, productID: $0.productID) }
+      overrideProvider: {
+        overrides.override(vendorID: $0.vendorID, productID: $0.productID, unit: $0.unitIdentifier)
+      }
     )
   }
 

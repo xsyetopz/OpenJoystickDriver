@@ -45,7 +45,7 @@ A profile file contains one profile object. An exported profile file has the sam
 | --- | --- | --- |
 | `id` | Yes | UUID of the profile |
 | `name` | Yes | 1 to 80 printable characters |
-| `device` | Yes | `vendorID` and `productID` of the controller model |
+| `device` | Yes | `vendorID` and `productID` of the controller model, and an optional `unit`: a unit ID from `ojd controller list` that limits the profile to that one controller |
 | `applicationScope` | Yes | `{"type":"global"}` or `{"type":"application","bundleIdentifier":"ID"}` |
 | `bindings` | Yes | The assignments |
 | `outputPolicy` | No | `virtualGamepad` and `physicalInput` |
@@ -53,6 +53,8 @@ A profile file contains one profile object. An exported profile file has the sam
 | `motionTuning`, `gyroOutput`, `joyConPair` | No | Motion settings |
 | `stickMappings`, `triggerMappings`, `touchMappings` | No | Analog and touch settings |
 | `chords`, `sequences`, `layers` | No | Combinations and layers |
+
+A profile with `device.unit` applies only to the controller with that unit ID, and wins over an active profile for the whole model in the same application scope. Activating it replaces only the active profile of that unit and scope.
 
 OJD rejects unknown keys anywhere in a profile. The file has no schema version field. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes the file. Rules that span fields, such as a source used twice, are not in the schema. Check a file against both with `ojd profile validate FILE`.
 

@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "La déconnexion Bluetooth a échoué pendant %@ : %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ n’est pas connectée en Bluetooth. Débranchez-la pour la déconnecter.";
 "cli.controller.discussion" = "CONTROLLER est un ID de 'ojd controller list', ou VVVV:PPPP (ID hexadécimal du fabricant et du produit) quand une seule manette connectée le porte. Toutes les commandes de manette ont besoin du service.";
+"cli.controller.discussion.unit" = "Un ID d’unité (U-...) désigne une manette par son modèle et le port USB qu’elle utilise. Il reste le même après un redémarrage tant que la manette utilise ce port.";
 "cli.controller.error.duration" = "--duration demande un nombre de secondes supérieur à 0.";
 "cli.controller.feature.brightness" = "luminosité réglable";
 "cli.controller.feature.color" = "couleur de lumière programmable";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Fiche";
 "cli.controller.show.label.rumble" = "Vibration";
 "cli.controller.show.label.session" = "Session";
+"cli.controller.show.label.unit" = "ID d’unité";
 "cli.controller.show.label.virtual" = "Manette virtuelle";
 "cli.controller.show.label.publication" = "État de publication";
 "cli.controller.show.none" = "aucun";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Affiche et choisit la manette virtuelle qu’OpenJoystickDriver publie pour une manette.";
 "cli.virtual.changed" = "%@ publie maintenant %@ (%@).";
 "cli.virtual.stored" = "Le choix pour %@ est enregistré. Il s’appliquera dès que la sortie virtuelle sera activée.";
+"cli.virtual.unit" = "S’applique uniquement à cette manette, selon son ID d’unité, et non à l’ensemble de son modèle.";
 "cli.virtual.discussion" = "Un choix s’applique à toutes les manettes du même modèle. 'reset' remet un modèle en sélection automatique.";
+"cli.virtual.discussion.unit" = "Avec --unit, 'set' s’applique à une seule manette selon son ID d’unité, et 'reset' remet cette manette sur le choix de son modèle.";
 "cli.virtual.error.failed" = "La manette virtuelle de %@ n’a pas changé (%@). Vérifiez avec 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ n’a pas d’ID d’unité, un choix ne peut donc s’appliquer qu’à l’ensemble de son modèle. Lancez la commande sans --unit.";
 "cli.virtual.reset.abstract" = "Remet le modèle d’une manette, ou tous les modèles, en sélection automatique de manette virtuelle.";
 "cli.virtual.reset.all" = "Réinitialise tous les modèles de manette.";
 "cli.virtual.reset.all.done" = "Chaque modèle de manette sélectionne maintenant sa manette virtuelle automatiquement.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all efface aussi les choix des modèles non connectés. Demande d’abord confirmation dans un terminal, et exige --force sinon.";
 "cli.virtual.reset.dry_run" = "Remettrait %@ en sélection automatique de manette virtuelle.";
 "cli.virtual.reset.error.target" = "Indiquez une CONTROLLER ou --all.";
+"cli.virtual.reset.error.unit_all" = "--unit exige une CONTROLLER, pas --all.";
 "cli.virtual.set.abstract" = "Choisit la manette virtuelle pour le modèle d’une manette.";
 "cli.virtual.set.profile" = "Le profil de la manette virtuelle.";
 "cli.virtual.show.abstract" = "Affiche la manette virtuelle de chaque manette et les profils que vous pouvez choisir.";

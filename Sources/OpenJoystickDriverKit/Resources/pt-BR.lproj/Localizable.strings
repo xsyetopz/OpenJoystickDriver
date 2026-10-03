@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Falha ao desconectar via Bluetooth durante %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ não está conectado por Bluetooth. Desconecte o cabo para desconectá-lo.";
 "cli.controller.discussion" = "CONTROLLER é um ID de 'ojd controller list', ou VVVV:PPPP (ID hexadecimal do fabricante e do produto) quando apenas um controle conectado o tem. Todo comando de controle precisa do serviço.";
+"cli.controller.discussion.unit" = "Um ID de unidade (U-...) identifica um controle pelo modelo e pela porta USB que ele usa. Continua o mesmo após reinicializações enquanto o controle usar essa porta.";
 "cli.controller.error.duration" = "--duration precisa de um número de segundos maior que 0.";
 "cli.controller.feature.brightness" = "brilho de luz ajustável";
 "cli.controller.feature.color" = "cor de luz programável";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Registro";
 "cli.controller.show.label.rumble" = "Vibração";
 "cli.controller.show.label.session" = "Sessão";
+"cli.controller.show.label.unit" = "ID da unidade";
 "cli.controller.show.label.virtual" = "Gamepad virtual";
 "cli.controller.show.label.publication" = "Publicação";
 "cli.controller.show.none" = "nenhum";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Mostrar e escolher o gamepad virtual que o OpenJoystickDriver publica para um controle.";
 "cli.virtual.changed" = "%@ agora publica %@ (%@).";
 "cli.virtual.stored" = "A escolha para %@ foi salva. Ela será aplicada quando a saída virtual estiver ativada.";
+"cli.virtual.unit" = "Aplica-se somente a este controle, pelo ID da unidade, em vez de a todo o modelo.";
 "cli.virtual.discussion" = "Uma escolha vale para todos os controles do mesmo modelo. 'reset' devolve um modelo à seleção automática.";
+"cli.virtual.discussion.unit" = "Com --unit, 'set' se aplica a um único controle pelo ID da unidade dele, e 'reset' devolve esse controle à escolha do modelo.";
 "cli.virtual.error.failed" = "O gamepad virtual de %@ não mudou (%@). Verifique com 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ não tem ID de unidade, então uma escolha só pode valer para todo o modelo. Execute o comando sem --unit.";
 "cli.virtual.reset.abstract" = "Devolver o modelo de um controle, ou todos os modelos, à seleção automática de gamepad virtual.";
 "cli.virtual.reset.all" = "Redefinir todos os modelos de controle.";
 "cli.virtual.reset.all.done" = "Agora todos os modelos de controle selecionam o gamepad virtual automaticamente.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all também limpa as escolhas de modelos que não estão conectados. Pergunta antes em um terminal e, caso contrário, precisa de --force.";
 "cli.virtual.reset.dry_run" = "Devolveria %@ à seleção automática de gamepad virtual.";
 "cli.virtual.reset.error.target" = "Informe um CONTROLLER ou --all.";
+"cli.virtual.reset.error.unit_all" = "--unit precisa de um CONTROLLER, não de --all.";
 "cli.virtual.set.abstract" = "Escolher o gamepad virtual para o modelo de um controle.";
 "cli.virtual.set.profile" = "O perfil do gamepad virtual.";
 "cli.virtual.show.abstract" = "Mostrar o gamepad virtual de cada controle e os perfis que você pode escolher.";

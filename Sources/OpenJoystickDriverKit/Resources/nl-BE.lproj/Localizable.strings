@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth-verbinding verbreken mislukt tijdens %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ is niet via Bluetooth verbonden. Trek de stekker eruit om de verbinding te verbreken.";
 "cli.controller.discussion" = "CONTROLLER is een ID uit 'ojd controller list' of VVVV:PPPP (hexadecimale leverancier- en product-ID) wanneer precies één aangesloten controller die heeft. Elk controllercommando heeft de service nodig.";
+"cli.controller.discussion.unit" = "Een apparaat-ID (U-...) benoemt één controller op basis van het model en de USB-poort die hij gebruikt. Het blijft hetzelfde na herstarts zolang de controller die poort gebruikt.";
 "cli.controller.error.duration" = "--duration vraagt een aantal seconden boven 0.";
 "cli.controller.feature.brightness" = "instelbare lichthelderheid";
 "cli.controller.feature.color" = "programmeerbare lichtkleur";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Record";
 "cli.controller.show.label.rumble" = "Trillen";
 "cli.controller.show.label.session" = "Sessie";
+"cli.controller.show.label.unit" = "Apparaat-ID";
 "cli.controller.show.label.virtual" = "Virtuele gamepad";
 "cli.controller.show.label.publication" = "Publicatie";
 "cli.controller.show.none" = "geen";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Toont en kiest de virtuele gamepad die OpenJoystickDriver voor een controller publiceert.";
 "cli.virtual.changed" = "%@ publiceert nu %@ (%@).";
 "cli.virtual.stored" = "De keuze voor %@ is opgeslagen. Die wordt toegepast zodra virtuele uitvoer is ingeschakeld.";
+"cli.virtual.unit" = "Geldt alleen voor deze controller op basis van het apparaat-ID, in plaats van voor het hele model.";
 "cli.virtual.discussion" = "Een keuze geldt voor elke controller van hetzelfde model. 'reset' zet een model terug op automatische selectie.";
+"cli.virtual.discussion.unit" = "Met --unit geldt 'set' voor één controller op basis van het apparaat-ID, en 'reset' zet die controller terug op de keuze van zijn model.";
 "cli.virtual.error.failed" = "De virtuele gamepad voor %@ is niet gewijzigd (%@). Controleer het met 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ heeft geen apparaat-ID, dus een keuze kan alleen voor het hele model gelden. Voer de opdracht uit zonder --unit.";
 "cli.virtual.reset.abstract" = "Zet het model van een controller, of elk model, terug op automatische selectie van de virtuele gamepad.";
 "cli.virtual.reset.all" = "Zet elk controllermodel terug.";
 "cli.virtual.reset.all.done" = "Elk controllermodel selecteert nu automatisch zijn virtuele gamepad.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all wist ook de keuzes voor modellen die niet zijn aangesloten. In een terminal wordt eerst gevraagd; anders is --force nodig.";
 "cli.virtual.reset.dry_run" = "Zou %@ terugzetten op automatische selectie van de virtuele gamepad.";
 "cli.virtual.reset.error.target" = "Geef een CONTROLLER of --all op.";
+"cli.virtual.reset.error.unit_all" = "--unit vereist een CONTROLLER, niet --all.";
 "cli.virtual.set.abstract" = "Kiest de virtuele gamepad voor het model van een controller.";
 "cli.virtual.set.profile" = "Het profiel van de virtuele gamepad.";
 "cli.virtual.show.abstract" = "Toont de virtuele gamepad van elke controller en de profielen die je kunt kiezen.";

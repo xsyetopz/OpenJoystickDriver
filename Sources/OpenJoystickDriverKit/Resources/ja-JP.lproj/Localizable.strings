@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "%@ の Bluetooth 切断中に失敗しました: %@。";
 "cli.controller.disconnect.not_bluetooth" = "%@ は Bluetooth で接続されていません。切断するにはケーブルを抜いてください。";
 "cli.controller.discussion" = "CONTROLLER には「ojd controller list」で表示される ID、または接続中のコントローラの中で 1 台だけが持つ VVVV:PPPP (16進のベンダー ID とプロダクト ID) を指定します。すべてのコントローラコマンドにはサービスが必要です。";
+"cli.controller.discussion.unit" = "ユニット ID (U-...) は、モデルと使用している USB ポートによって 1 台のコントローラを指定します。コントローラが同じポートを使用している間は、再起動しても変わりません。";
 "cli.controller.error.duration" = "--duration には 0 より大きい秒数を指定してください。";
 "cli.controller.feature.brightness" = "調整可能なライトの明るさ";
 "cli.controller.feature.color" = "設定可能なライトの色";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "レコード";
 "cli.controller.show.label.rumble" = "振動";
 "cli.controller.show.label.session" = "セッション";
+"cli.controller.show.label.unit" = "ユニット ID";
 "cli.controller.show.label.virtual" = "仮想ゲームパッド";
 "cli.controller.show.label.publication" = "公開状態";
 "cli.controller.show.none" = "なし";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "OpenJoystickDriver がコントローラ向けに公開する仮想ゲームパッドを表示し、選択します。";
 "cli.virtual.changed" = "%@ は %@ (%@) を公開するようになりました。";
 "cli.virtual.stored" = "%@ の選択を保存しました。仮想出力が有効になると適用されます。";
+"cli.virtual.unit" = "モデル全体ではなく、このコントローラのみに、ユニット ID で適用します。";
 "cli.virtual.discussion" = "選択は同じモデルのすべてのコントローラに適用されます。「reset」を使うと、モデルを自動選択に戻します。";
+"cli.virtual.discussion.unit" = "--unit を付けると、「set」 はユニット ID で指定した 1 台のコントローラに適用され、「reset」 はそのコントローラをモデルの選択に戻します。";
 "cli.virtual.error.failed" = "%@ の仮想ゲームパッドは変更されませんでした (%@)。「ojd virtual show」で確認してください。";
+"cli.virtual.error.no_unit" = "%@ にはユニット ID がないため、選択はモデル全体にのみ適用できます。--unit を付けずにコマンドを実行してください。";
 "cli.virtual.reset.abstract" = "コントローラのモデル、またはすべてのモデルを、仮想ゲームパッドの自動選択に戻します。";
 "cli.virtual.reset.all" = "すべてのコントローラモデルをリセットします。";
 "cli.virtual.reset.all.done" = "すべてのコントローラモデルが、仮想ゲームパッドを自動で選択するようになりました。";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all は、接続されていないモデルの選択も消去します。ターミナルでは先に確認し、それ以外では --force が必要です。";
 "cli.virtual.reset.dry_run" = "%@ を仮想ゲームパッドの自動選択に戻します。";
 "cli.virtual.reset.error.target" = "CONTROLLER か --all のどちらかを指定してください。";
+"cli.virtual.reset.error.unit_all" = "--unit には CONTROLLER が必要です。--all は使用できません。";
 "cli.virtual.set.abstract" = "コントローラのモデルに使う仮想ゲームパッドを選択します。";
 "cli.virtual.set.profile" = "仮想ゲームパッドのプロファイル。";
 "cli.virtual.show.abstract" = "各コントローラの仮想ゲームパッドと、選択できるプロファイルを表示します。";

@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Prekid Bluetooth veze nije uspeo tokom %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ nije povezan preko Bluetooth-a. Isključite kabl da biste prekinuli vezu.";
 "cli.controller.discussion" = "CONTROLLER je ID iz „ojd controller list“ ili VVVV:PPPP (heksadecimalni ID proizvođača i proizvoda) kada ga ima tačno jedan povezani kontroler. Sve komande za kontrolere zahtevaju uslugu.";
+"cli.controller.discussion.unit" = "ID uređaja (U-...) imenuje jedan kontroler prema njegovom modelu i USB portu koji koristi. Ostaje isti nakon ponovnog pokretanja dok kontroler koristi taj port.";
 "cli.controller.error.duration" = "--duration zahteva broj sekundi veći od 0.";
 "cli.controller.feature.brightness" = "podesive svetline osvetljenja";
 "cli.controller.feature.color" = "programabilne boje osvetljenja";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Zapis";
 "cli.controller.show.label.rumble" = "Vibracija";
 "cli.controller.show.label.session" = "Sesija";
+"cli.controller.show.label.unit" = "ID uređaja";
 "cli.controller.show.label.virtual" = "Virtuelni gejmpad";
 "cli.controller.show.label.publication" = "Objavljivanje";
 "cli.controller.show.none" = "nema";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Prikazuje i bira virtuelni gejmpad koji OpenJoystickDriver objavljuje za kontroler.";
 "cli.virtual.changed" = "%@ sada objavljuje %@ (%@).";
 "cli.virtual.stored" = "Izbor za %@ je sačuvan. Primeniće se kada se uključi virtuelni izlaz.";
+"cli.virtual.unit" = "Važi samo za ovaj kontroler prema njegovom ID-u uređaja, a ne za ceo njegov model.";
 "cli.virtual.discussion" = "Izbor važi za svaki kontroler istog modela. „reset“ vraća model na automatski izbor.";
+"cli.virtual.discussion.unit" = "Sa --unit, „set“ važi za jedan kontroler prema njegovom ID-u uređaja, a „reset“ vraća taj kontroler na izbor njegovog modela.";
 "cli.virtual.error.failed" = "Virtuelni gejmpad za %@ nije promenjen (%@). Proverite ga pomoću „ojd virtual show“.";
+"cli.virtual.error.no_unit" = "%@ nema ID uređaja, pa izbor može da važi samo za ceo njegov model. Pokrenite komandu bez --unit.";
 "cli.virtual.reset.abstract" = "Vraća model kontrolera, ili svaki model, na automatski izbor virtuelnog gejmpada.";
 "cli.virtual.reset.all" = "Resetuje svaki model kontrolera.";
 "cli.virtual.reset.all.done" = "Svaki model kontrolera sada automatski bira svoj virtuelni gejmpad.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all briše i izbore za modele koji nisu povezani. U terminalu prvo pita, a inače zahteva --force.";
 "cli.virtual.reset.dry_run" = "Vratilo bi %@ na automatski izbor virtuelnog gejmpada.";
 "cli.virtual.reset.error.target" = "Navedite CONTROLLER ili --all.";
+"cli.virtual.reset.error.unit_all" = "--unit zahteva CONTROLLER, a ne --all.";
 "cli.virtual.set.abstract" = "Bira virtuelni gejmpad za model kontrolera.";
 "cli.virtual.set.profile" = "Profil virtuelnog gejmpada.";
 "cli.virtual.show.abstract" = "Prikazuje virtuelni gejmpad svakog kontrolera i profile koje možete izabrati.";

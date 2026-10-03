@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth deskonexioak huts egin du %@ egiten ari zela: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ ez dago Bluetooth bidez konektatuta. Askatu kablea deskonektatzeko.";
 "cli.controller.discussion" = "CONTROLLER «ojd controller list» komandoko ID bat da, edo VVVV:PPPP (fabrikatzaile- eta produktu-ID hexadezimalak) konektatutako aginte bakar batek baldin badu. Aginte-komando guztiek zerbitzua behar dute.";
+"cli.controller.discussion.unit" = "Unitate-IDak (U-...) aginte bat identifikatzen du bere modeloaren eta erabiltzen duen USB atakaren arabera. Berrabiarazi ondoren ere berdin jarraitzen du, agintea ataka hori erabiltzen duen bitartean.";
 "cli.controller.error.duration" = "--duration aukerak 0 baino handiagoko segundo kopurua behar du.";
 "cli.controller.feature.brightness" = "argiaren distira doigarria";
 "cli.controller.feature.color" = "argiaren kolore programagarria";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Erregistroa";
 "cli.controller.show.label.rumble" = "Dardara";
 "cli.controller.show.label.session" = "Saioa";
+"cli.controller.show.label.unit" = "Unitate-ID";
 "cli.controller.show.label.virtual" = "Gamepad birtuala";
 "cli.controller.show.label.publication" = "Argitalpena";
 "cli.controller.show.none" = "bat ere ez";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Erakutsi eta aukeratu OpenJoystickDriver-ek agintearentzat argitaratzen duen gamepad birtuala.";
 "cli.virtual.changed" = "%@ gailuak orain %@ (%@) argitaratzen du.";
 "cli.virtual.stored" = "%@ gailuaren aukera gorde da. Irteera birtuala gaitzen denean aplikatuko da.";
+"cli.virtual.unit" = "Aplikatu aginte honi soilik, bere unitate-IDaren arabera, modelo osoari aplikatu beharrean.";
 "cli.virtual.discussion" = "Aukera batek modelo bereko aginte guztiei eragiten die. «reset» komandoak modelo bat hautapen automatikora itzultzen du.";
+"cli.virtual.discussion.unit" = "--unit erabiliz gero, «set» komandoa aginte bakar bati aplikatzen zaio bere unitate-IDaren arabera, eta «reset» komandoak aginte hori bere modeloaren aukerara itzultzen du.";
 "cli.virtual.error.failed" = "%@ gailuaren gamepad birtuala ez da aldatu (%@). Egiaztatu «ojd virtual show» komandoarekin.";
+"cli.virtual.error.no_unit" = "%@ gailuak ez du unitate-IDrik, beraz aukera bat bere modelo osoari soilik aplika dakioke. Exekutatu komandoa --unit gabe.";
 "cli.virtual.reset.abstract" = "Itzuli agintearen modeloa, edo modelo guztiak, gamepad birtualaren hautapen automatikora.";
 "cli.virtual.reset.all" = "Aginte-modelo guztiak berrezarri.";
 "cli.virtual.reset.all.done" = "Aginte-modelo bakoitzak orain automatikoki hautatzen du bere gamepad birtuala.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all aukerak konektatuta ez dauden modeloen aukerak ere garbitzen ditu. Terminalean lehenik galdetzen du, eta bestela --force behar du.";
 "cli.virtual.reset.dry_run" = "%@ gamepad birtualaren hautapen automatikora itzuliko luke.";
 "cli.virtual.reset.error.target" = "Eman CONTROLLER bat edo --all.";
+"cli.virtual.reset.error.unit_all" = "--unit aukerak CONTROLLER bat behar du, ez --all.";
 "cli.virtual.set.abstract" = "Aukeratu agintearen modeloaren gamepad birtuala.";
 "cli.virtual.set.profile" = "Gamepad birtualaren profila.";
 "cli.virtual.show.abstract" = "Erakutsi aginte bakoitzaren gamepad birtuala eta aukera ditzakezun profilak.";

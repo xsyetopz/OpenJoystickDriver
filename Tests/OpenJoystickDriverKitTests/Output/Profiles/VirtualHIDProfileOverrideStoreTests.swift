@@ -57,6 +57,30 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
+  func aUnitOverrideBeatsItsModelAndResettingItFallsBack() throws {
+    try withDefaults { defaults in
+      let store = Store(defaults: defaults)
+      try store.set(.generic, vendorID: 1, productID: 2)
+      try store.set(.xboxOneSBluetooth, vendorID: 1, productID: 2, unit: "U-AbCd_123-xyzW09q")
+
+      let restored = Store(defaults: defaults)
+      #expect(
+        restored.override(vendorID: 1, productID: 2, unit: "U-AbCd_123-xyzW09q")
+          == .xboxOneSBluetooth
+      )
+      #expect(restored.override(vendorID: 1, productID: 2, unit: "U-0000000000000000") == .generic)
+      #expect(restored.override(vendorID: 1, productID: 2) == .generic)
+      #expect(restored.storedOverride(vendorID: 1, productID: 2, unit: "U-0000000000000000") == nil)
+      let data = try #require(defaults.data(forKey: Store.defaultsKey))
+      let entries = try #require(try JSONSerialization.jsonObject(with: data) as? [[String: Any]])
+      #expect(entries.compactMap { $0["unit"] as? String } == ["U-AbCd_123-xyzW09q"])
+
+      try restored.reset(vendorID: 1, productID: 2, unit: "U-AbCd_123-xyzW09q")
+      #expect(restored.override(vendorID: 1, productID: 2, unit: "U-AbCd_123-xyzW09q") == .generic)
+    }
+  }
+
+  @Test
   func resettingTheLastOverrideRemovesTheKey() throws {
     try withDefaults { defaults in
       let store = Store(defaults: defaults)

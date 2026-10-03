@@ -6,6 +6,8 @@ import OpenJoystickDriverKit
 /// The serial number is never printed; `hasSerialNumber` says whether the controller reports one.
 struct ControllerSummary: Encodable, Equatable {
   let id: String
+  /// The persistent unit ID; see ``UnitIdentity``.
+  let unit: String?
   let name: String
   let vendorID: Int
   let productID: Int
@@ -16,6 +18,7 @@ struct ControllerSummary: Encodable, Equatable {
 
   init(_ device: ApplicationServiceDeviceDescription) {
     id = device.runtimeIdentifier
+    unit = device.unitIdentifier
     name = device.name
     vendorID = Int(device.vendorID)
     productID = Int(device.productID)
@@ -59,6 +62,8 @@ struct ControllerShowReport: Encodable, Equatable {
     let profile: String?
     let source: String?
     let override: String?
+    /// `unit` or `model`: which choice `override` is.
+    let overrideScope: String?
     let unavailable: Bool
   }
 
@@ -92,6 +97,7 @@ struct ControllerShowReport: Encodable, Equatable {
 
   struct Detail: Encodable, Equatable {
     let id: String
+    let unit: String?
     let name: String
     let vendorID: Int
     let productID: Int
@@ -124,6 +130,7 @@ struct ControllerShowReport: Encodable, Equatable {
     let output = device.physicalOutputCapabilities
     controller = Detail(
       id: device.runtimeIdentifier,
+      unit: device.unitIdentifier,
       name: device.name,
       vendorID: Int(device.vendorID),
       productID: Int(device.productID),
@@ -161,6 +168,7 @@ struct ControllerShowReport: Encodable, Equatable {
           profile: $0.profile?.rawValue,
           source: $0.source,
           override: $0.override?.rawValue,
+          overrideScope: $0.overrideScope,
           unavailable: $0.unavailable
         )
       },

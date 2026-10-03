@@ -4,6 +4,9 @@ import Foundation
 public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// Opaque selector for one connected controller during the current runtime session.
   public let runtimeIdentifier: String
+  /// Persistent selector for this controller on its USB port, which lasts across reconnects and
+  /// service restarts; nil when the controller reports no location ID. See ``UnitIdentity``.
+  public let unitIdentifier: String?
   /// Human-readable controller name.
   public let name: String
   /// USB vendor ID.
@@ -85,9 +88,11 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     sessionState: ControllerSessionState = .active,
     startupCommandStatus: String? = nil,
     inputHealth: ControllerInputHealth = ControllerInputHealth(state: .healthy),
-    runtimeIdentifier: String? = nil
+    runtimeIdentifier: String? = nil,
+    unitIdentifier: String? = nil
   ) {
     self.runtimeIdentifier = runtimeIdentifier ?? String(format: "%04X:%04X:M", vendorID, productID)
+    self.unitIdentifier = unitIdentifier
     self.name = name
     self.vendorID = vendorID
     self.productID = productID
@@ -117,6 +122,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.runtimeIdentifier = try container.decode(String.self, forKey: .runtimeIdentifier)
+    self.unitIdentifier = try container.decodeIfPresent(String.self, forKey: .unitIdentifier)
     self.name = try container.decode(String.self, forKey: .name)
     self.vendorID = try container.decode(UInt16.self, forKey: .vendorID)
     self.productID = try container.decode(UInt16.self, forKey: .productID)
@@ -175,6 +181,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   private enum CodingKeys: String, CodingKey {
     case name
     case runtimeIdentifier
+    case unitIdentifier
     case vendorID
     case productID
     case protocolBinding
@@ -231,7 +238,8 @@ extension ApplicationServiceDeviceDescription {
       sessionState: snapshot.sessionState,
       startupCommandStatus: snapshot.startupCommandStatus,
       inputHealth: snapshot.inputHealth,
-      runtimeIdentifier: snapshot.runtimeIdentifier
+      runtimeIdentifier: snapshot.runtimeIdentifier,
+      unitIdentifier: snapshot.unitIdentifier
     )
   }
 }

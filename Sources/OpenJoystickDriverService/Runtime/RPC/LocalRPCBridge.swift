@@ -150,16 +150,18 @@ extension ApplicationServiceServer {
           value.profile,
           vendorID: value.vendorID,
           productID: value.productID,
-          runtimeIdentifier: value.runtimeIdentifier
+          runtimeIdentifier: value.runtimeIdentifier,
+          unit: value.unit
         )
       )
     case .resetVirtualHIDProfileOverride:
-      let value = try decode(LocalServiceRPCDeviceArguments.self)
+      let value = try decode(LocalServiceRPCVirtualHIDProfileOverrideResetArguments.self)
       return try send(
         await resetVirtualHIDProfileOverride(
           vendorID: value.vendorID,
           productID: value.productID,
-          runtimeIdentifier: value.runtimeIdentifier
+          runtimeIdentifier: value.runtimeIdentifier,
+          unit: value.unit
         )
       )
     case .suspendController:

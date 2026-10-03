@@ -2,6 +2,8 @@
 public struct ConnectedDeviceSnapshot: Sendable {
   /// Opaque selector for one connected controller during the current runtime session.
   public let runtimeIdentifier: String
+  /// Persistent selector for this controller on its USB port; nil without a location ID.
+  public let unitIdentifier: String?
   /// Human-readable controller name.
   public let name: String
   /// USB vendor ID.

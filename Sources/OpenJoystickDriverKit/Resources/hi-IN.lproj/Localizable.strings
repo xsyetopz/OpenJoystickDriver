@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "%@ के दौरान Bluetooth डिस्कनेक्ट विफल रहा: %@।";
 "cli.controller.disconnect.not_bluetooth" = "%@ Bluetooth से कनेक्ट नहीं है। इसे डिस्कनेक्ट करने के लिए प्लग निकालें।";
 "cli.controller.discussion" = "CONTROLLER 'ojd controller list' से कोई ID है, या VVVV:PPPP (हेक्स वेंडर और प्रोडक्ट ID) जब ठीक एक कनेक्ट किए गए कंट्रोलर की यही ID हो। हर कंट्रोलर कमांड के लिए सेवा चाहिए।";
+"cli.controller.discussion.unit" = "यूनिट ID (U-...) एक कंट्रोलर को उसके मॉडल और उसके उपयोग किए जा रहे USB पोर्ट से पहचानता है। जब तक कंट्रोलर उसी पोर्ट का उपयोग करता है, यह रीस्टार्ट के बाद भी वही रहता है।";
 "cli.controller.error.duration" = "--duration के लिए 0 से अधिक सेकंड की संख्या चाहिए।";
 "cli.controller.feature.brightness" = "समायोज्य लाइट ब्राइटनेस";
 "cli.controller.feature.color" = "प्रोग्राम करने योग्य लाइट रंग";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "रिकॉर्ड";
 "cli.controller.show.label.rumble" = "रंबल";
 "cli.controller.show.label.session" = "सेशन";
+"cli.controller.show.label.unit" = "यूनिट ID";
 "cli.controller.show.label.virtual" = "वर्चुअल गेमपैड";
 "cli.controller.show.label.publication" = "प्रकाशन";
 "cli.controller.show.none" = "कोई नहीं";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "OpenJoystickDriver किसी कंट्रोलर के लिए जो वर्चुअल गेमपैड प्रकाशित करता है, उसे दिखाएँ और चुनें।";
 "cli.virtual.changed" = "%@ अब %@ (%@) प्रकाशित करता है।";
 "cli.virtual.stored" = "%@ के लिए चयन सहेजा गया है। यह वर्चुअल आउटपुट सक्षम होने पर लागू होगा।";
+"cli.virtual.unit" = "पूरे मॉडल के बजाय केवल इस कंट्रोलर पर, उसकी यूनिट ID से, लागू करें।";
 "cli.virtual.discussion" = "चुनाव एक ही मॉडल के हर कंट्रोलर पर लागू होता है। 'reset' किसी मॉडल को स्वचालित चयन पर लौटाता है।";
+"cli.virtual.discussion.unit" = "--unit के साथ, 'set' एक कंट्रोलर पर उसकी यूनिट ID से लागू होता है, और 'reset' उस कंट्रोलर को उसके मॉडल के चुनाव पर लौटाता है।";
 "cli.virtual.error.failed" = "%@ का वर्चुअल गेमपैड नहीं बदला (%@)। 'ojd virtual show' से जाँचें।";
+"cli.virtual.error.no_unit" = "%@ की कोई यूनिट ID नहीं है, इसलिए चुनाव केवल उसके पूरे मॉडल पर लागू हो सकता है। कमांड को --unit के बिना चलाएँ।";
 "cli.virtual.reset.abstract" = "किसी कंट्रोलर मॉडल, या हर मॉडल, को स्वचालित वर्चुअल गेमपैड चयन पर लौटाएँ।";
 "cli.virtual.reset.all" = "हर कंट्रोलर मॉडल रीसेट करें।";
 "cli.virtual.reset.all.done" = "अब हर कंट्रोलर मॉडल अपना वर्चुअल गेमपैड स्वचालित रूप से चुनता है।";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all उन मॉडल के चुनाव भी साफ़ करता है जो कनेक्ट नहीं हैं। टर्मिनल पर पहले पूछता है, अन्यथा --force चाहिए।";
 "cli.virtual.reset.dry_run" = "%@ को स्वचालित वर्चुअल गेमपैड चयन पर लौटा देता।";
 "cli.virtual.reset.error.target" = "CONTROLLER या --all में से एक दें।";
+"cli.virtual.reset.error.unit_all" = "--unit के लिए CONTROLLER चाहिए, --all नहीं।";
 "cli.virtual.set.abstract" = "कंट्रोलर के मॉडल के लिए वर्चुअल गेमपैड चुनें।";
 "cli.virtual.set.profile" = "वर्चुअल गेमपैड प्रोफ़ाइल।";
 "cli.virtual.show.abstract" = "हर कंट्रोलर का वर्चुअल गेमपैड और वे प्रोफ़ाइल दिखाएँ जिन्हें आप चुन सकते हैं।";

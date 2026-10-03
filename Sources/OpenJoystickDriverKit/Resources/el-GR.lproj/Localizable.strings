@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Η αποσύνδεση Bluetooth απέτυχε κατά το %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "Το %@ δεν είναι συνδεδεμένο μέσω Bluetooth. Βγάλτε το καλώδιο για να το αποσυνδέσετε.";
 "cli.controller.discussion" = "Το CONTROLLER είναι ένα αναγνωριστικό από το «ojd controller list» ή VVVV:PPPP (δεκαεξαδικό αναγνωριστικό κατασκευαστή και προϊόντος) όταν το έχει ακριβώς ένα συνδεδεμένο χειριστήριο. Κάθε εντολή χειριστηρίου απαιτεί την υπηρεσία.";
+"cli.controller.discussion.unit" = "Ένα αναγνωριστικό συσκευής (U-...) ορίζει ένα χειριστήριο με βάση το μοντέλο του και τη θύρα USB που χρησιμοποιεί. Παραμένει το ίδιο μετά από επανεκκινήσεις όσο το χειριστήριο χρησιμοποιεί αυτή τη θύρα.";
 "cli.controller.error.duration" = "Το --duration χρειάζεται αριθμό δευτερολέπτων μεγαλύτερο από 0.";
 "cli.controller.feature.brightness" = "ρυθμιζόμενη φωτεινότητα φωτισμού";
 "cli.controller.feature.color" = "προγραμματιζόμενο χρώμα φωτισμού";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Εγγραφή";
 "cli.controller.show.label.rumble" = "Δόνηση";
 "cli.controller.show.label.session" = "Συνεδρία";
+"cli.controller.show.label.unit" = "Αναγνωριστικό συσκευής";
 "cli.controller.show.label.virtual" = "Εικονικό gamepad";
 "cli.controller.show.label.publication" = "Δημοσίευση";
 "cli.controller.show.none" = "κανένα";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Εμφανίζει και επιλέγει το εικονικό gamepad που δημοσιεύει το OpenJoystickDriver για ένα χειριστήριο.";
 "cli.virtual.changed" = "Το %@ δημοσιεύει τώρα %@ (%@).";
 "cli.virtual.stored" = "Η επιλογή για το %@ αποθηκεύτηκε. Θα εφαρμοστεί μόλις ενεργοποιηθεί η εικονική έξοδος.";
+"cli.virtual.unit" = "Ισχύει μόνο για αυτό το χειριστήριο, με βάση το αναγνωριστικό συσκευής του, αντί για ολόκληρο το μοντέλο του.";
 "cli.virtual.discussion" = "Η επιλογή ισχύει για κάθε χειριστήριο του ίδιου μοντέλου. Το «reset» επαναφέρει ένα μοντέλο στην αυτόματη επιλογή.";
+"cli.virtual.discussion.unit" = "Με το --unit, το «set» ισχύει για ένα χειριστήριο με βάση το αναγνωριστικό συσκευής του, και το «reset» επαναφέρει αυτό το χειριστήριο στην επιλογή του μοντέλου του.";
 "cli.virtual.error.failed" = "Το εικονικό gamepad για το %@ δεν άλλαξε (%@). Ελέγξτε με «ojd virtual show».";
+"cli.virtual.error.no_unit" = "Το %@ δεν έχει αναγνωριστικό συσκευής, επομένως μια επιλογή μπορεί να ισχύει μόνο για ολόκληρο το μοντέλο του. Εκτελέστε την εντολή χωρίς το --unit.";
 "cli.virtual.reset.abstract" = "Επαναφέρει το μοντέλο ενός χειριστηρίου, ή όλα τα μοντέλα, στην αυτόματη επιλογή εικονικού gamepad.";
 "cli.virtual.reset.all" = "Επαναφορά όλων των μοντέλων χειριστηρίων.";
 "cli.virtual.reset.all.done" = "Κάθε μοντέλο χειριστηρίου επιλέγει πλέον αυτόματα το εικονικό του gamepad.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "Το --all διαγράφει και τις επιλογές για μοντέλα που δεν είναι συνδεδεμένα. Ρωτά πρώτα σε τερματικό και αλλιώς απαιτεί --force.";
 "cli.virtual.reset.dry_run" = "Θα επανέφερε το %@ στην αυτόματη επιλογή εικονικού gamepad.";
 "cli.virtual.reset.error.target" = "Δώστε είτε CONTROLLER είτε --all.";
+"cli.virtual.reset.error.unit_all" = "Το --unit απαιτεί ένα CONTROLLER, όχι --all.";
 "cli.virtual.set.abstract" = "Επιλέγει το εικονικό gamepad για το μοντέλο ενός χειριστηρίου.";
 "cli.virtual.set.profile" = "Το προφίλ του εικονικού gamepad.";
 "cli.virtual.show.abstract" = "Εμφανίζει το εικονικό gamepad κάθε χειριστηρίου και τα προφίλ που μπορείτε να επιλέξετε.";

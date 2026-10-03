@@ -13,7 +13,12 @@ struct VirtualCommand: AsyncParsableCommand {
       "cli.virtual.discussion",
       "A choice applies to every controller of the same model. 'reset' returns a model to "
         + "automatic selection."
-    ),
+    ) + " "
+      + CLILocalized.text(
+        "cli.virtual.discussion.unit",
+        "With --unit, 'set' applies to one controller by its unit ID, and 'reset' returns that "
+          + "controller to its model's choice."
+      ),
     subcommands: [VirtualShowCommand.self, VirtualSetCommand.self, VirtualResetCommand.self]
   )
 
@@ -35,6 +40,7 @@ struct VirtualShowReport: Encodable, Equatable {
     let profile: String?
     let source: String?
     let override: String?
+    let overrideScope: String?
     let unavailable: Bool
 
     init(_ device: ApplicationServiceDeviceDescription) {
@@ -45,6 +51,7 @@ struct VirtualShowReport: Encodable, Equatable {
       profile = device.virtualHIDProfile?.profile?.rawValue
       source = device.virtualHIDProfile?.source
       override = device.virtualHIDProfile?.override?.rawValue
+      overrideScope = device.virtualHIDProfile?.overrideScope
       unavailable = device.virtualHIDProfile?.unavailable ?? false
     }
   }
@@ -129,6 +136,28 @@ struct VirtualShowCommand: AsyncParsableCommand {
   }
 }
 
+/// The `--unit` flag of `virtual set` and `virtual reset`.
+private let unitFlagHelp = ArgumentHelp(
+  CLILocalized.text(
+    "cli.virtual.unit",
+    "Apply to this controller only, by its unit ID, instead of to its whole model."
+  )
+)
+
+/// Throws when `unit` is set and `device` has no unit ID, which the service would refuse.
+private func requireUnit(_ unit: Bool, _ device: ApplicationServiceDeviceDescription) throws {
+  guard unit, device.unitIdentifier == nil else { return }
+  throw CLIFailure(
+    .failure,
+    CLILocalized.format(
+      "cli.virtual.error.no_unit",
+      "%@ has no unit ID, so a choice can apply only to its whole model. Run the command "
+        + "without --unit.",
+      device.name
+    )
+  )
+}
+
 private func printChange(
   _ result: VirtualHIDProfileOverrideResult,
   device: ApplicationServiceDeviceDescription
@@ -201,19 +230,25 @@ struct VirtualSetCommand: AsyncParsableCommand {
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  @Flag(help: unitFlagHelp)
+  var unit = false
+
   func run() async throws {
     try await global.run {
       let selector = controller
       let profile = profile
+      let unit = unit
       let (device, result) = try await ServiceConnection.request(
         timeout: CLIContext.current.waitTimeout
       ) { client in
         let device = try await selector.resolve(with: client)
+        try requireUnit(unit, device)
         let result = try await client.setVirtualHIDProfileOverride(
           profile.rawValue,
           vendorID: device.vendorID,
           productID: device.productID,
-          runtimeIdentifier: device.runtimeIdentifier
+          runtimeIdentifier: device.runtimeIdentifier,
+          unit: unit
         )
         return (device, result)
       }
@@ -248,6 +283,9 @@ struct VirtualResetCommand: AsyncParsableCommand {
   )
   var all = false
 
+  @Flag(help: unitFlagHelp)
+  var unit = false
+
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.option.force", "Do not ask for confirmation."))
@@ -268,6 +306,14 @@ struct VirtualResetCommand: AsyncParsableCommand {
         CLILocalized.text("cli.virtual.reset.error.target", "Give either a CONTROLLER or --all.")
       )
     }
+    guard !(all && unit) else {
+      throw ValidationError(
+        CLILocalized.text(
+          "cli.virtual.reset.error.unit_all",
+          "--unit needs a CONTROLLER, not --all."
+        )
+      )
+    }
   }
 
   func run() async throws {
@@ -279,6 +325,7 @@ struct VirtualResetCommand: AsyncParsableCommand {
   private func reset(_ selector: ControllerSelector) async throws {
     if dryRun {
       let device = try await ServiceConnection.request { try await selector.resolve(with: $0) }
+      try requireUnit(unit, device)
       CLIOutput.stdout(
         CLILocalized.format(
           "cli.virtual.reset.dry_run",
@@ -288,14 +335,17 @@ struct VirtualResetCommand: AsyncParsableCommand {
       )
       return
     }
+    let unit = unit
     let (device, result) = try await ServiceConnection.request(
       timeout: CLIContext.current.waitTimeout
     ) { client in
       let device = try await selector.resolve(with: client)
+      try requireUnit(unit, device)
       let result = try await client.resetVirtualHIDProfileOverride(
         vendorID: device.vendorID,
         productID: device.productID,
-        runtimeIdentifier: device.runtimeIdentifier
+        runtimeIdentifier: device.runtimeIdentifier,
+        unit: unit
       )
       return (device, result)
     }

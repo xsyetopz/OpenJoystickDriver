@@ -14,7 +14,12 @@ struct ControllerCommand: AsyncParsableCommand {
       "CONTROLLER is an ID from 'ojd controller list', or VVVV:PPPP (hex vendor and product ID) "
         + "when exactly one connected controller has it. Every controller command needs the "
         + "service."
-    ),
+    ) + " "
+      + CLILocalized.text(
+        "cli.controller.discussion.unit",
+        "A unit ID (U-...) names one controller by its model and the USB port it uses. It stays "
+          + "the same across restarts while the controller uses that port."
+      ),
     subcommands: [
       ControllerListCommand.self, ControllerShowCommand.self, ControllerWatchCommand.self,
       ControllerCaptureCommand.self, ControllerRumbleCommand.self, ControllerLightCommand.self,
@@ -58,7 +63,7 @@ struct ControllerListCommand: AsyncParsableCommand {
           report.controllers.map {
             [
               $0.id, deviceIdentity(vendorID: $0.vendorID, productID: $0.productID), $0.connection,
-              $0.session, $0.name,
+              $0.session, $0.name, $0.unit ?? "",
             ]
           }
         )
@@ -70,8 +75,14 @@ struct ControllerListCommand: AsyncParsableCommand {
           return
         }
         let idWidth = report.controllers.map(\.id.count).max() ?? 0
+        let unitWidth = report.controllers.map { $0.unit?.count ?? 0 }.max() ?? 0
         for controller in report.controllers {
           let id = controller.id.padding(toLength: idWidth, withPad: " ", startingAt: 0)
+          let unit =
+            unitWidth == 0
+            ? ""
+            : (controller.unit ?? "").padding(toLength: unitWidth, withPad: " ", startingAt: 0)
+              + "  "
           let identity = deviceIdentity(
             vendorID: controller.vendorID,
             productID: controller.productID
@@ -80,7 +91,7 @@ struct ControllerListCommand: AsyncParsableCommand {
             controller.session == ControllerSessionState.suspended.rawValue
             ? "  " + CLILocalized.text("cli.controller.list.suspended", "(suspended)") : ""
           CLIOutput.stdout(
-            "\(id)  \(identity)  \(controller.connection)  \(controller.name)\(suspended)"
+            "\(id)  \(unit)\(identity)  \(controller.connection)  \(controller.name)\(suspended)"
           )
         }
       }
@@ -131,8 +142,9 @@ struct ControllerShowCommand: AsyncParsableCommand {
   }
 
   static func plainRows(_ detail: ControllerShowReport.Detail) -> [[String]] {
-    var rows = [
-      ["id", detail.id],
+    var rows = [["id", detail.id]]
+    if let unit = detail.unit { rows.append(["unit", unit]) }
+    rows += [
       ["identity", deviceIdentity(vendorID: detail.vendorID, productID: detail.productID)],
       ["name", detail.name], ["connection", detail.connection], ["protocol", detail.protocol],
       ["session", detail.session], ["input-health", detail.inputHealth.state],
@@ -190,6 +202,7 @@ struct ControllerShowCommand: AsyncParsableCommand {
     var rows: [(String, String)] = [
       (CLILocalized.text("cli.controller.show.label.name", "Name"), detail.name),
       (CLILocalized.text("cli.controller.show.label.id", "ID"), detail.id),
+      (CLILocalized.text("cli.controller.show.label.unit", "Unit ID"), detail.unit ?? none),
       (
         CLILocalized.text("cli.controller.show.label.identity", "Vendor:Product"),
         deviceIdentity(vendorID: detail.vendorID, productID: detail.productID)

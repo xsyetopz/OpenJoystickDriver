@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth-ի անջատումը ձախողվեց %@ ընթացքում՝ %@։";
 "cli.controller.disconnect.not_bluetooth" = "%@ միացված չէ Bluetooth-ով։ Անջատեք լարը՝ այն անջատելու համար։";
 "cli.controller.discussion" = "CONTROLLER-ը ID է «ojd controller list» հրամանից կամ VVVV:PPPP (արտադրողի և արտադրանքի hex ID), երբ այն ունի ճիշտ մեկ միացված կարգավորիչ։ Կարգավորիչի յուրաքանչյուր հրաման պահանջում է ծառայությունը։";
+"cli.controller.discussion.unit" = "Սարքի ID-ն (U-...) որոշում է մեկ կարգավորիչ՝ ըստ նրա մոդելի և օգտագործվող USB պորտի։ Այն մնում է նույնը վերագործարկումների ընթացքում, քանի դեռ կարգավորիչն օգտագործում է այդ պորտը։";
 "cli.controller.error.duration" = "--duration-ը պահանջում է 0-ից մեծ վայրկյանների թիվ։";
 "cli.controller.feature.brightness" = "կարգավորվող լույսի պայծառություն";
 "cli.controller.feature.color" = "ծրագրավորվող լույսի գույն";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Գրառում";
 "cli.controller.show.label.rumble" = "Թրթռում";
 "cli.controller.show.label.session" = "Սեանս";
+"cli.controller.show.label.unit" = "Սարքի ID";
 "cli.controller.show.label.virtual" = "Վիրտուալ խաղային վահանակ";
 "cli.controller.show.label.publication" = "Հրապարակում";
 "cli.controller.show.none" = "ոչինչ";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Ցույց տալ և ընտրել այն վիրտուալ խաղային վահանակը, որը OpenJoystickDriver-ը հրապարակում է կարգավորիչի համար։";
 "cli.virtual.changed" = "%@-ն այժմ հրապարակում է %@ (%@)։";
 "cli.virtual.stored" = "%@ սարքի ընտրությունը պահպանված է։ Այն կկիրառվի վիրտուալ ելքը միացնելուց հետո։";
+"cli.virtual.unit" = "Կիրառել միայն այս կարգավորիչի համար՝ ըստ նրա սարքի ID-ի, ոչ թե ամբողջ մոդելի համար։";
 "cli.virtual.discussion" = "Ընտրությունը կիրառվում է նույն մոդելի յուրաքանչյուր կարգավորիչի համար։ «reset»-ը մոդելը վերադարձնում է ավտոմատ ընտրության։";
+"cli.virtual.discussion.unit" = "--unit-ի դեպքում «set»-ը կիրառվում է մեկ կարգավորիչի համար՝ ըստ նրա սարքի ID-ի, իսկ «reset»-ը այդ կարգավորիչը վերադարձնում է իր մոդելի ընտրությանը։";
 "cli.virtual.error.failed" = "%@-ի վիրտուալ խաղային վահանակը չփոխվեց (%@)։ Ստուգեք «ojd virtual show» հրամանով։";
+"cli.virtual.error.no_unit" = "%@-ը սարքի ID չունի, ուստի ընտրությունը կարող է կիրառվել միայն նրա ամբողջ մոդելի համար։ Գործարկեք հրամանն առանց --unit-ի։";
 "cli.virtual.reset.abstract" = "Վերադարձնել կարգավորիչի մոդելը կամ բոլոր մոդելները վիրտուալ խաղային վահանակի ավտոմատ ընտրության։";
 "cli.virtual.reset.all" = "Զրոյացնել կարգավորիչների բոլոր մոդելները։";
 "cli.virtual.reset.all.done" = "Կարգավորիչների յուրաքանչյուր մոդել այժմ ավտոմատ ընտրում է իր վիրտուալ խաղային վահանակը։";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all-ը մաքրում է նաև չմիացված մոդելների ընտրությունները։ Տերմինալում նախ հարցնում է, հակառակ դեպքում պահանջում է --force։";
 "cli.virtual.reset.dry_run" = "Կվերադարձներ %@-ը վիրտուալ խաղային վահանակի ավտոմատ ընտրության։";
 "cli.virtual.reset.error.target" = "Նշեք CONTROLLER կամ --all։";
+"cli.virtual.reset.error.unit_all" = "--unit-ը պահանջում է CONTROLLER, ոչ թե --all։";
 "cli.virtual.set.abstract" = "Ընտրել վիրտուալ խաղային վահանակը կարգավորիչի մոդելի համար։";
 "cli.virtual.set.profile" = "Վիրտուալ խաղային վահանակի պրոֆիլը։";
 "cli.virtual.show.abstract" = "Ցույց տալ յուրաքանչյուր կարգավորիչի վիրտուալ խաղային վահանակը և ձեր ընտրելի պրոֆիլները։";

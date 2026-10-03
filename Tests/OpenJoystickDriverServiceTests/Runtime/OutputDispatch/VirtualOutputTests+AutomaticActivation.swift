@@ -20,7 +20,8 @@ extension VirtualOutputTests {
       discoverySource: .rawUSB,
       serialNumber: nil,
       bindingResult: .hidDescriptorFixture,
-      runtimeIdentifier: id.runtimeIdentifier
+      runtimeIdentifier: id.runtimeIdentifier,
+      unitIdentifier: id.unitIdentifier
     )
   }
 

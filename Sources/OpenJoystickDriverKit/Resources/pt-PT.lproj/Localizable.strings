@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "A desligação Bluetooth falhou durante %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ não está ligado por Bluetooth. Desligue o cabo para o desligar.";
 "cli.controller.discussion" = "CONTROLLER é um ID de 'ojd controller list' ou VVVV:PPPP (ID hexadecimal de fabricante e produto) quando exatamente um comando ligado o tem. Todos os comandos de controlo precisam do serviço.";
+"cli.controller.discussion.unit" = "Um ID de unidade (U-...) identifica um comando pelo modelo e pela porta USB que utiliza. Mantém-se igual após reinícios enquanto o comando utilizar essa porta.";
 "cli.controller.error.duration" = "--duration precisa de um número de segundos superior a 0.";
 "cli.controller.feature.brightness" = "brilho de luz ajustável";
 "cli.controller.feature.color" = "cor de luz programável";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Registo";
 "cli.controller.show.label.rumble" = "Vibração";
 "cli.controller.show.label.session" = "Sessão";
+"cli.controller.show.label.unit" = "ID da unidade";
 "cli.controller.show.label.virtual" = "Comando virtual";
 "cli.controller.show.label.publication" = "Publicação";
 "cli.controller.show.none" = "nenhum";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Mostra e escolhe o comando virtual que o OpenJoystickDriver publica para um comando.";
 "cli.virtual.changed" = "%@ publica agora %@ (%@).";
 "cli.virtual.stored" = "A escolha para %@ foi guardada. Será aplicada quando a saída virtual estiver ativada.";
+"cli.virtual.unit" = "Aplica-se apenas a este comando, pelo ID da unidade, em vez de a todo o modelo.";
 "cli.virtual.discussion" = "Uma escolha aplica-se a todos os comandos do mesmo modelo. 'reset' devolve um modelo à seleção automática.";
+"cli.virtual.discussion.unit" = "Com --unit, 'set' aplica-se a um único comando pelo ID da unidade, e 'reset' repõe esse comando na escolha do modelo.";
 "cli.virtual.error.failed" = "O comando virtual de %@ não mudou (%@). Verifique com 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ não tem ID de unidade, pelo que uma escolha só pode aplicar-se a todo o modelo. Execute sem --unit.";
 "cli.virtual.reset.abstract" = "Devolve o modelo de um comando, ou todos os modelos, à seleção automática de comando virtual.";
 "cli.virtual.reset.all" = "Repõe todos os modelos de comando.";
 "cli.virtual.reset.all.done" = "Todos os modelos de comando selecionam agora o seu comando virtual automaticamente.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all também limpa as escolhas de modelos que não estão ligados. Pergunta primeiro num terminal e exige --force nos outros casos.";
 "cli.virtual.reset.dry_run" = "Devolveria %@ à seleção automática de comando virtual.";
 "cli.virtual.reset.error.target" = "Indique um CONTROLLER ou --all.";
+"cli.virtual.reset.error.unit_all" = "--unit requer um CONTROLLER, não --all.";
 "cli.virtual.set.abstract" = "Escolhe o comando virtual para o modelo de um comando.";
 "cli.virtual.set.profile" = "O perfil do comando virtual.";
 "cli.virtual.show.abstract" = "Mostra o comando virtual de cada comando e os perfis que pode escolher.";

@@ -116,6 +116,7 @@ extension RemappingRoutingCore {
         profile = try await library.activeProfile(
           vendorID: identifier.controllerIdentity.vendorID,
           productID: identifier.controllerIdentity.productID,
+          unit: identifier.unitIdentifier,
           frontmostBundleIdentifier: environment.frontmostBundleIdentifier
         )
       } catch let error as RemappingProfileLibraryError {

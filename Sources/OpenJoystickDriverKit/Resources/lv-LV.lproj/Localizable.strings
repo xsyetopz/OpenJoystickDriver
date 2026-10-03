@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth atvienošana neizdevās darbībā %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ nav pievienots pa Bluetooth. Atvienojiet vadu, lai to atvienotu.";
 "cli.controller.discussion" = "CONTROLLER ir ID no „ojd controller list“ vai VVVV:PPPP (heksadecimāls ražotāja un produkta ID), ja to ir tieši vienam pievienotam kontrolierim. Katrai kontroliera komandai nepieciešams pakalpojums.";
+"cli.controller.discussion.unit" = "Ierīces ID (U-...) nosauc vienu kontrolieri pēc tā modeļa un izmantotā USB porta. Tas paliek nemainīgs pēc restartēšanas, kamēr kontrolieris izmanto šo portu.";
 "cli.controller.error.duration" = "--duration nepieciešams sekunžu skaits, kas lielāks par 0.";
 "cli.controller.feature.brightness" = "regulējamas gaismas spilgtuma";
 "cli.controller.feature.color" = "programmējamas gaismas krāsas";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Ieraksts";
 "cli.controller.show.label.rumble" = "Vibrācija";
 "cli.controller.show.label.session" = "Sesija";
+"cli.controller.show.label.unit" = "Ierīces ID";
 "cli.controller.show.label.virtual" = "Virtuālais spēļu kontrolieris";
 "cli.controller.show.label.publication" = "Publicēšana";
 "cli.controller.show.none" = "nav";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Rādīt un izvēlēties virtuālo spēļu kontrolieri, ko OpenJoystickDriver publicē kontrolierim.";
 "cli.virtual.changed" = "%@ tagad publicē %@ (%@).";
 "cli.virtual.stored" = "Izvēle ierīcei %@ ir saglabāta. Tā tiks lietota, kad virtuālā izvade būs ieslēgta.";
+"cli.virtual.unit" = "Attiecas tikai uz šo kontrolieri pēc tā ierīces ID, nevis uz visu modeli.";
 "cli.virtual.discussion" = "Izvēle attiecas uz katru tā paša modeļa kontrolieri. „reset“ atgriež modeli pie automātiskās atlases.";
+"cli.virtual.discussion.unit" = "Ar --unit „set“ attiecas uz vienu kontrolieri pēc tā ierīces ID, bet „reset“ atgriež šo kontrolieri pie tā modeļa izvēles.";
 "cli.virtual.error.failed" = "Virtuālais spēļu kontrolieris ierīcei %@ nemainījās (%@). Pārbaudiet ar „ojd virtual show“.";
+"cli.virtual.error.no_unit" = "Ierīcei %@ nav ierīces ID, tāpēc izvēle var attiekties tikai uz visu tās modeli. Palaidiet komandu bez --unit.";
 "cli.virtual.reset.abstract" = "Atgriezt kontroliera modeli vai visus modeļus pie automātiskās virtuālā spēļu kontroliera atlases.";
 "cli.virtual.reset.all" = "Atiestatīt visus kontrolieru modeļus.";
 "cli.virtual.reset.all.done" = "Katrs kontrolieru modelis tagad automātiski atlasa savu virtuālo spēļu kontrolieri.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all notīra arī izvēles modeļiem, kas nav pievienoti. Terminālī vispirms jautā, citādi nepieciešams --force.";
 "cli.virtual.reset.dry_run" = "Atgrieztu %@ pie automātiskās virtuālā spēļu kontroliera atlases.";
 "cli.virtual.reset.error.target" = "Norādiet CONTROLLER vai --all.";
+"cli.virtual.reset.error.unit_all" = "--unit nepieciešams CONTROLLER, nevis --all.";
 "cli.virtual.set.abstract" = "Izvēlēties virtuālo spēļu kontrolieri kontroliera modelim.";
 "cli.virtual.set.profile" = "Virtuālā spēļu kontroliera profils.";
 "cli.virtual.show.abstract" = "Rādīt katra kontroliera virtuālo spēļu kontrolieri un profilus, ko varat izvēlēties.";

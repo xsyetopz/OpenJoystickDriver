@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Прекид Bluetooth везе није успео током %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ није повезан преко Bluetooth-а. Извуците кабл да бисте прекинули везу.";
 "cli.controller.discussion" = "CONTROLLER је ID из „ojd controller list“ или VVVV:PPPP (хексадецимални ID произвођача и производа) када га има тачно један повезани контролер. Свака команда за контролер захтева услугу.";
+"cli.controller.discussion.unit" = "ID уређаја (U-...) именује један контролер према његовом моделу и USB порту који користи. Остаје исти након поновног покретања док контролер користи тај порт.";
 "cli.controller.error.duration" = "--duration захтева број секунди већи од 0.";
 "cli.controller.feature.brightness" = "подесиве осветљености светла";
 "cli.controller.feature.color" = "програмабилне боје светла";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Запис";
 "cli.controller.show.label.rumble" = "Вибрација";
 "cli.controller.show.label.session" = "Сесија";
+"cli.controller.show.label.unit" = "ID уређаја";
 "cli.controller.show.label.virtual" = "Виртуелни гејмпад";
 "cli.controller.show.label.publication" = "Објављивање";
 "cli.controller.show.none" = "нема";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Прикажи и изабери виртуелни гејмпад који OpenJoystickDriver објављује за контролер.";
 "cli.virtual.changed" = "%@ сада објављује %@ (%@).";
 "cli.virtual.stored" = "Избор за %@ је сачуван. Примениће се када се укључи виртуелни излаз.";
+"cli.virtual.unit" = "Важи само за овај контролер према његовом ID-у уређаја, а не за цео његов модел.";
 "cli.virtual.discussion" = "Избор важи за сваки контролер истог модела. „reset“ враћа модел на аутоматски избор.";
+"cli.virtual.discussion.unit" = "Са --unit, „set“ важи за један контролер према његовом ID-у уређаја, а „reset“ враћа тај контролер на избор његовог модела.";
 "cli.virtual.error.failed" = "Виртуелни гејмпад за %@ није промењен (%@). Проверите помоћу „ojd virtual show“.";
+"cli.virtual.error.no_unit" = "%@ нема ID уређаја, па избор може да важи само за цео његов модел. Покрените команду без --unit.";
 "cli.virtual.reset.abstract" = "Врати модел контролера, или све моделе, на аутоматски избор виртуелног гејмпада.";
 "cli.virtual.reset.all" = "Ресетуј све моделе контролера.";
 "cli.virtual.reset.all.done" = "Сваки модел контролера сада аутоматски бира свој виртуелни гејмпад.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all такође брише изборе за моделе који нису повезани. На терминалу прво пита, иначе захтева --force.";
 "cli.virtual.reset.dry_run" = "Био би враћен на аутоматски избор виртуелног гејмпада: %@.";
 "cli.virtual.reset.error.target" = "Наведите CONTROLLER или --all.";
+"cli.virtual.reset.error.unit_all" = "--unit захтева CONTROLLER, а не --all.";
 "cli.virtual.set.abstract" = "Изабери виртуелни гејмпад за модел контролера.";
 "cli.virtual.set.profile" = "Профил виртуелног гејмпада.";
 "cli.virtual.show.abstract" = "Прикажи виртуелни гејмпад сваког контролера и профиле које можете изабрати.";

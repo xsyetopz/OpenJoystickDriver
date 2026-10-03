@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth disconnect failed during %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ is not connected over Bluetooth. Unplug it to disconnect it.";
 "cli.controller.discussion" = "CONTROLLER is an ID from 'ojd controller list', or VVVV:PPPP (hex vendor and product ID) when exactly one connected controller has it. Every controller command needs the service.";
+"cli.controller.discussion.unit" = "A unit ID (U-...) names one controller by its model and the USB port it uses. It stays the same across restarts while the controller uses that port.";
 "cli.controller.error.duration" = "--duration needs a number of seconds above 0.";
 "cli.controller.feature.brightness" = "adjustable light brightness";
 "cli.controller.feature.color" = "programmable light color";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Record";
 "cli.controller.show.label.rumble" = "Rumble";
 "cli.controller.show.label.session" = "Session";
+"cli.controller.show.label.unit" = "Unit ID";
 "cli.controller.show.label.virtual" = "Virtual gamepad";
 "cli.controller.show.label.publication" = "Publication";
 "cli.controller.show.none" = "none";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Show and choose the virtual gamepad OpenJoystickDriver publishes for a controller.";
 "cli.virtual.changed" = "%@ now publishes %@ (%@).";
 "cli.virtual.stored" = "Saved the choice for %@. It applies once virtual output is enabled.";
+"cli.virtual.unit" = "Apply to this controller only, by its unit ID, instead of to its whole model.";
 "cli.virtual.discussion" = "A choice applies to every controller of the same model. 'reset' returns a model to automatic selection.";
+"cli.virtual.discussion.unit" = "With --unit, 'set' applies to one controller by its unit ID, and 'reset' returns that controller to its model's choice.";
 "cli.virtual.error.failed" = "The virtual gamepad for %@ did not change (%@). Check it with 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ has no unit ID, so a choice can apply only to its whole model. Run the command without --unit.";
 "cli.virtual.reset.abstract" = "Return a controller's model, or every model, to automatic virtual gamepad selection.";
 "cli.virtual.reset.all" = "Reset every controller model.";
 "cli.virtual.reset.all.done" = "Every controller model now selects its virtual gamepad automatically.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all also clears choices for models that are not connected. It asks first on a terminal and needs --force otherwise.";
 "cli.virtual.reset.dry_run" = "Would return %@ to automatic virtual gamepad selection.";
 "cli.virtual.reset.error.target" = "Give either a CONTROLLER or --all.";
+"cli.virtual.reset.error.unit_all" = "--unit needs a CONTROLLER, not --all.";
 "cli.virtual.set.abstract" = "Choose the virtual gamepad for a controller's model.";
 "cli.virtual.set.profile" = "The virtual gamepad profile.";
 "cli.virtual.show.abstract" = "Show each controller's virtual gamepad and the profiles you can choose.";

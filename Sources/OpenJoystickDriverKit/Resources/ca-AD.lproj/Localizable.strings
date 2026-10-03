@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "La desconnexió Bluetooth ha fallat durant %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ no està connectat per Bluetooth. Desendolleu-lo per desconnectar-lo.";
 "cli.controller.discussion" = "CONTROLLER és un ID de 'ojd controller list' o VVVV:PPPP (ID hexadecimal de proveïdor i de producte) quan exactament un comandament connectat el té. Totes les ordres de comandament necessiten el servei.";
+"cli.controller.discussion.unit" = "Un ID d’unitat (U-...) identifica un comandament pel seu model i el port USB que utilitza. Continua sent el mateix després de reiniciar mentre el comandament utilitzi aquest port.";
 "cli.controller.error.duration" = "--duration necessita un nombre de segons superior a 0.";
 "cli.controller.feature.brightness" = "brillantor de llum ajustable";
 "cli.controller.feature.color" = "color de llum programable";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Registre";
 "cli.controller.show.label.rumble" = "Vibració";
 "cli.controller.show.label.session" = "Sessió";
+"cli.controller.show.label.unit" = "ID d’unitat";
 "cli.controller.show.label.virtual" = "Comandament virtual";
 "cli.controller.show.label.publication" = "Publicació";
 "cli.controller.show.none" = "cap";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Mostra i tria el comandament virtual que OpenJoystickDriver publica per a un comandament.";
 "cli.virtual.changed" = "%@ ara publica %@ (%@).";
 "cli.virtual.stored" = "S’ha desat l’opció per a %@. S’aplicarà quan s’activi la sortida virtual.";
+"cli.virtual.unit" = "S’aplica només a aquest comandament, pel seu ID d’unitat, en lloc d’aplicar-se a tot el seu model.";
 "cli.virtual.discussion" = "Una tria s’aplica a tots els comandaments del mateix model. 'reset' torna un model a la selecció automàtica.";
+"cli.virtual.discussion.unit" = "Amb --unit, 'set' s’aplica a un sol comandament pel seu ID d’unitat, i 'reset' retorna aquest comandament a l’elecció del seu model.";
 "cli.virtual.error.failed" = "El comandament virtual de %@ no ha canviat (%@). Comproveu-ho amb 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ no té ID d’unitat, de manera que una elecció només es pot aplicar a tot el seu model. Executeu l’ordre sense --unit.";
 "cli.virtual.reset.abstract" = "Torna el model d’un comandament, o tots els models, a la selecció automàtica del comandament virtual.";
 "cli.virtual.reset.all" = "Restableix tots els models de comandament.";
 "cli.virtual.reset.all.done" = "Tots els models de comandament trien ara el comandament virtual automàticament.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all també esborra les tries dels models que no estan connectats. Pregunta primer en un terminal i, si no, necessita --force.";
 "cli.virtual.reset.dry_run" = "Tornaria %@ a la selecció automàtica del comandament virtual.";
 "cli.virtual.reset.error.target" = "Indiqueu un CONTROLLER o --all.";
+"cli.virtual.reset.error.unit_all" = "--unit necessita un CONTROLLER, no --all.";
 "cli.virtual.set.abstract" = "Tria el comandament virtual per al model d’un comandament.";
 "cli.virtual.set.profile" = "El perfil del comandament virtual.";
 "cli.virtual.show.abstract" = "Mostra el comandament virtual de cada comandament i els perfils que podeu triar.";

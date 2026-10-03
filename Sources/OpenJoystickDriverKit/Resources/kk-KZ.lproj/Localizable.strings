@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "%@ кезінде Bluetooth ажырату сәтсіз болды: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ Bluetooth арқылы қосылмаған. Ажырату үшін оны суырыңыз.";
 "cli.controller.discussion" = "CONTROLLER — «ojd controller list» ішіндегі ID немесе VVVV:PPPP (hex түріндегі өндіруші және өнім ID-і), егер оған дәл бір қосылған контроллер сәйкес келсе. Әр контроллер пәрмені қызметті қажет етеді.";
+"cli.controller.discussion.unit" = "Құрылғы ID-і (U-...) бір контроллерді оның моделі мен қолданатын USB портына қарай атайды. Контроллер сол портты қолданып тұрғанда, ол қайта іске қосқаннан кейін де өзгермейді.";
 "cli.controller.error.duration" = "--duration үшін 0-ден үлкен секунд саны қажет.";
 "cli.controller.feature.brightness" = "реттелетін жарық жарықтығы";
 "cli.controller.feature.color" = "бағдарламаланатын жарық түсі";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Жазба";
 "cli.controller.show.label.rumble" = "Діріл";
 "cli.controller.show.label.session" = "Сеанс";
+"cli.controller.show.label.unit" = "Құрылғы ID-і";
 "cli.controller.show.label.virtual" = "Виртуалды геймпад";
 "cli.controller.show.label.publication" = "Жариялау";
 "cli.controller.show.none" = "жоқ";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "OpenJoystickDriver контроллер үшін жариялайтын виртуалды геймпадты көрсету және таңдау.";
 "cli.virtual.changed" = "%@ енді %@ (%@) жариялайды.";
 "cli.virtual.stored" = "%@ үшін таңдау сақталды. Ол виртуалды шығыс қосылғанда қолданылады.";
+"cli.virtual.unit" = "Бүкіл модельге емес, тек осы контроллерге оның құрылғы ID-і бойынша қолдану.";
 "cli.virtual.discussion" = "Таңдау бірдей модельдегі әр контроллерге қолданылады. «reset» модельді автоматты таңдауға қайтарады.";
+"cli.virtual.discussion.unit" = "--unit болса, «set» бір контроллерге оның құрылғы ID-і бойынша қолданылады, ал «reset» сол контроллерді оның моделінің таңдауына қайтарады.";
 "cli.virtual.error.failed" = "%@ үшін виртуалды геймпад өзгерген жоқ (%@). «ojd virtual show» арқылы тексеріңіз.";
+"cli.virtual.error.no_unit" = "%@ үшін құрылғы ID-і жоқ, сондықтан таңдау тек оның бүкіл моделіне қолданыла алады. Команданы --unit-сіз орындаңыз.";
 "cli.virtual.reset.abstract" = "Контроллер моделін немесе барлық модельдерді виртуалды геймпадты автоматты таңдауға қайтару.";
 "cli.virtual.reset.all" = "Барлық контроллер модельдерін қалпына келтіру.";
 "cli.virtual.reset.all.done" = "Енді әр контроллер моделі виртуалды геймпадын автоматты түрде таңдайды.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all қосылмаған модельдердің таңдауларын да тазартады. Терминалда алдымен сұрайды, әйтпесе --force қажет.";
 "cli.virtual.reset.dry_run" = "%@ құрылғысын виртуалды геймпадты автоматты таңдауға қайтарар еді.";
 "cli.virtual.reset.error.target" = "CONTROLLER немесе --all беріңіз.";
+"cli.virtual.reset.error.unit_all" = "--unit үшін CONTROLLER қажет, --all емес.";
 "cli.virtual.set.abstract" = "Контроллер моделі үшін виртуалды геймпадты таңдау.";
 "cli.virtual.set.profile" = "Виртуалды геймпад профилі.";
 "cli.virtual.show.abstract" = "Әр контроллердің виртуалды геймпадын және таңдауға болатын профильдерді көрсету.";

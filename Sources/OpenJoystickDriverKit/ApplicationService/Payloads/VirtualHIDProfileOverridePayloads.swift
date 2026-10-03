@@ -1,18 +1,60 @@
 import Foundation
 
-/// Arguments of `setVirtualHIDProfileOverride`: the controller selector and the requested
-/// profile's raw identifier, such as `hid-generic`.
+/// Arguments of `setVirtualHIDProfileOverride`: the controller selector, the requested
+/// profile's raw identifier, such as `hid-generic`, and whether the override is for the selected
+/// unit only (see ``UnitIdentity``) instead of its model. An absent `unit` means the model.
 public struct LocalServiceRPCVirtualHIDProfileOverrideArguments: Codable, Sendable {
   public let vendorID: Int
   public let productID: Int
   public let runtimeIdentifier: String?
   public let profile: String
+  public let unit: Bool
 
-  public init(vendorID: Int, productID: Int, runtimeIdentifier: String? = nil, profile: String) {
+  public init(
+    vendorID: Int,
+    productID: Int,
+    runtimeIdentifier: String? = nil,
+    profile: String,
+    unit: Bool = false
+  ) {
     self.vendorID = vendorID
     self.productID = productID
     self.runtimeIdentifier = runtimeIdentifier
     self.profile = profile
+    self.unit = unit
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    vendorID = try container.decode(Int.self, forKey: .vendorID)
+    productID = try container.decode(Int.self, forKey: .productID)
+    runtimeIdentifier = try container.decodeIfPresent(String.self, forKey: .runtimeIdentifier)
+    profile = try container.decode(String.self, forKey: .profile)
+    unit = try container.decodeIfPresent(Bool.self, forKey: .unit) ?? false
+  }
+}
+
+/// Arguments of `resetVirtualHIDProfileOverride`: the controller selector and whether to reset
+/// the selected unit's override instead of its model's. An absent `unit` means the model.
+public struct LocalServiceRPCVirtualHIDProfileOverrideResetArguments: Codable, Sendable {
+  public let vendorID: Int
+  public let productID: Int
+  public let runtimeIdentifier: String?
+  public let unit: Bool
+
+  public init(vendorID: Int, productID: Int, runtimeIdentifier: String? = nil, unit: Bool = false) {
+    self.vendorID = vendorID
+    self.productID = productID
+    self.runtimeIdentifier = runtimeIdentifier
+    self.unit = unit
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    vendorID = try container.decode(Int.self, forKey: .vendorID)
+    productID = try container.decode(Int.self, forKey: .productID)
+    runtimeIdentifier = try container.decodeIfPresent(String.self, forKey: .runtimeIdentifier)
+    unit = try container.decodeIfPresent(Bool.self, forKey: .unit) ?? false
   }
 }
 
@@ -22,9 +64,10 @@ public struct LocalServiceRPCVirtualHIDProfileOverrideArguments: Codable, Sendab
 public enum VirtualHIDProfileOverrideFailure: Codable, Equatable, Sendable {
   /// The requested profile identifier names no profile. Nothing was stored.
   case unknownProfile
-  /// No connected controller of the model matches the selector, or the selected controller
-  /// disconnected during the request. The stored override is unchanged, except when the
-  /// controller disconnected after every retarget succeeded.
+  /// No connected controller of the model matches the selector, a unit request selected a
+  /// controller without a unit ID, or the selected controller disconnected during the request.
+  /// The stored override is unchanged, except when the controller disconnected after every
+  /// retarget succeeded.
   case controllerNotFound
   /// The override is stored, but the controller cannot satisfy it, so automatic selection runs.
   case overrideRejectedByController
@@ -118,8 +161,11 @@ public struct ApplicationServiceVirtualHIDProfileStatus: Codable, Equatable, Sen
   /// How `profile` was selected: `automatic`, `override`, or `automatic-after-rejecting`; nil
   /// when no profile is selected.
   public let source: String?
-  /// The stored Advanced override for this controller model; nil when it selects automatically.
+  /// The stored Advanced override in effect for this controller: its unit's, else its model's;
+  /// nil when it selects automatically.
   public let override: VirtualHIDProfileID?
+  /// Whose override `override` is: `unit` or `model`; nil without an override.
+  public let overrideScope: String?
   /// Whether no virtual profile can represent the controller's declared controls.
   public let unavailable: Bool
 
@@ -127,11 +173,13 @@ public struct ApplicationServiceVirtualHIDProfileStatus: Codable, Equatable, Sen
     profile: VirtualHIDProfileID?,
     source: String?,
     override: VirtualHIDProfileID?,
+    overrideScope: String? = nil,
     unavailable: Bool
   ) {
     self.profile = profile
     self.source = source
     self.override = override
+    self.overrideScope = overrideScope
     self.unavailable = unavailable
   }
 }

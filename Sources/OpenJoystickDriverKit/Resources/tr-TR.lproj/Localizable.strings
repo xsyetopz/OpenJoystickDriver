@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "%@ için Bluetooth bağlantısı kesilemedi: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ Bluetooth ile bağlı değil. Bağlantısını kesmek için fişini çekin.";
 "cli.controller.discussion" = "CONTROLLER, “ojd controller list” çıktısındaki bir kimliktir; bağlı kontrolcülerden yalnızca biri sahipse VVVV:PPPP (onaltılık üretici ve ürün kimliği) da olabilir. Her kontrolcü komutu servise ihtiyaç duyar.";
+"cli.controller.discussion.unit" = "Cihaz kimliği (U-...), bir kontrolcüyü modeli ve kullandığı USB bağlantı noktası üzerinden adlandırır. Kontrolcü aynı bağlantı noktasını kullandığı sürece yeniden başlatmalarda aynı kalır.";
 "cli.controller.error.duration" = "--duration için 0’dan büyük bir saniye sayısı gerekir.";
 "cli.controller.feature.brightness" = "ayarlanabilir ışık parlaklığı";
 "cli.controller.feature.color" = "programlanabilir ışık rengi";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Kayıt";
 "cli.controller.show.label.rumble" = "Titreşim";
 "cli.controller.show.label.session" = "Oturum";
+"cli.controller.show.label.unit" = "Cihaz kimliği";
 "cli.controller.show.label.virtual" = "Sanal oyun kumandası";
 "cli.controller.show.label.publication" = "Yayımlama";
 "cli.controller.show.none" = "yok";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "OpenJoystickDriver’ın bir kontrolcü için yayımladığı sanal oyun kumandasını gösterir ve seçer.";
 "cli.virtual.changed" = "%@ artık %@ (%@) yayımlıyor.";
 "cli.virtual.stored" = "%@ için seçim kaydedildi. Sanal çıkış etkinleştirildiğinde uygulanacak.";
+"cli.virtual.unit" = "Modelin tamamı yerine yalnızca bu kontrolcüye, cihaz kimliği üzerinden uygulanır.";
 "cli.virtual.discussion" = "Bir seçim aynı modeldeki her kontrolcü için geçerlidir. “reset” bir modeli otomatik seçime döndürür.";
+"cli.virtual.discussion.unit" = "--unit ile “set”, tek bir kontrolcüye cihaz kimliği üzerinden uygulanır; “reset” ise o kontrolcüyü modelinin seçimine döndürür.";
 "cli.virtual.error.failed" = "%@ için sanal oyun kumandası değişmedi (%@). “ojd virtual show” ile kontrol edin.";
+"cli.virtual.error.no_unit" = "%@ için cihaz kimliği yok, bu yüzden bir seçim yalnızca modelin tamamına uygulanabilir. Komutu --unit olmadan çalıştırın.";
 "cli.virtual.reset.abstract" = "Bir kontrolcünün modelini veya tüm modelleri sanal oyun kumandasının otomatik seçimine döndürür.";
 "cli.virtual.reset.all" = "Tüm kontrolcü modellerini sıfırlar.";
 "cli.virtual.reset.all.done" = "Her kontrolcü modeli artık sanal oyun kumandasını otomatik seçiyor.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all bağlı olmayan modellerin seçimlerini de temizler. Terminalde önce sorar, aksi halde --force gerekir.";
 "cli.virtual.reset.dry_run" = "%@ sanal oyun kumandasının otomatik seçimine döndürülürdü.";
 "cli.virtual.reset.error.target" = "Bir CONTROLLER veya --all verin.";
+"cli.virtual.reset.error.unit_all" = "--unit bir CONTROLLER gerektirir, --all değil.";
 "cli.virtual.set.abstract" = "Bir kontrolcünün modeli için sanal oyun kumandasını seçer.";
 "cli.virtual.set.profile" = "Sanal oyun kumandası profili.";
 "cli.virtual.show.abstract" = "Her kontrolcünün sanal oyun kumandasını ve seçebileceğiniz profilleri gösterir.";

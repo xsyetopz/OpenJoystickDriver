@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth-fråkopling mislukkast under %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ er ikkje kopla til med Bluetooth. Dra ut kabelen for å kople han frå.";
 "cli.controller.discussion" = "CONTROLLER er ein ID frå 'ojd controller list', eller VVVV:PPPP (hex-ID for produsent og produkt) når nøyaktig éin tilkopla kontrollar har han. Alle kontrollarkommandoar treng tenesta.";
+"cli.controller.discussion.unit" = "Ein eining-ID (U-...) peikar ut éin kontrollar ut frå modellen og USB-porten kontrollaren brukar. Han forblir den same etter omstart så lenge kontrollaren brukar den porten.";
 "cli.controller.error.duration" = "--duration treng eit tal sekund over 0.";
 "cli.controller.feature.brightness" = "justerbar lysstyrke";
 "cli.controller.feature.color" = "programmerbar lysfarge";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Oppføring";
 "cli.controller.show.label.rumble" = "Vibrasjon";
 "cli.controller.show.label.session" = "Økt";
+"cli.controller.show.label.unit" = "Eining-ID";
 "cli.controller.show.label.virtual" = "Virtuell gamepad";
 "cli.controller.show.label.publication" = "Publisering";
 "cli.controller.show.none" = "ingen";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Vis og vel den virtuelle gamepaden OpenJoystickDriver publiserer for ein kontrollar.";
 "cli.virtual.changed" = "%@ publiserer no %@ (%@).";
 "cli.virtual.stored" = "Valet for %@ er lagra. Det blir teke i bruk når virtuell utgang er slått på.";
+"cli.virtual.unit" = "Gjeld berre denne kontrollaren, ut frå eining-ID-en, i staden for heile modellen.";
 "cli.virtual.discussion" = "Eit val gjeld alle kontrollarar av same modell. 'reset' set ein modell tilbake til automatisk val.";
+"cli.virtual.discussion.unit" = "Med --unit gjeld 'set' éin kontrollar ut frå eining-ID-en, og 'reset' set den kontrollaren tilbake til valet for modellen.";
 "cli.virtual.error.failed" = "Den virtuelle gamepaden for %@ vart ikkje endra (%@). Sjekk med 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ har ingen eining-ID, så eit val kan berre gjelde heile modellen. Køyr kommandoen utan --unit.";
 "cli.virtual.reset.abstract" = "Set modellen til ein kontrollar, eller alle modellar, tilbake til automatisk val av virtuell gamepad.";
 "cli.virtual.reset.all" = "Nullstill alle kontrollarmodellar.";
 "cli.virtual.reset.all.done" = "Kvar kontrollarmodell vel no den virtuelle gamepaden sin automatisk.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all fjernar òg vala for modellar som ikkje er tilkopla. Han spør først i ein terminal og treng elles --force.";
 "cli.virtual.reset.dry_run" = "Ville sett %@ tilbake til automatisk val av virtuell gamepad.";
 "cli.virtual.reset.error.target" = "Oppgi anten ein CONTROLLER eller --all.";
+"cli.virtual.reset.error.unit_all" = "--unit krev ein CONTROLLER, ikkje --all.";
 "cli.virtual.set.abstract" = "Vel den virtuelle gamepaden for modellen til ein kontrollar.";
 "cli.virtual.set.profile" = "Profilen for den virtuelle gamepaden.";
 "cli.virtual.show.abstract" = "Vis den virtuelle gamepaden til kvar kontrollar og profilane du kan velje.";

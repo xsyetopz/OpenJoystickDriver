@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "A Bluetooth-leválasztás sikertelen volt (%@): %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ nem Bluetooth-on csatlakozik. A leválasztásához húzza ki.";
 "cli.controller.discussion" = "A CONTROLLER az 'ojd controller list' parancsból származó azonosító, vagy VVVV:PPPP (hexadecimális gyártó- és termékazonosító), ha pontosan egy csatlakoztatott vezérlőé. Minden vezérlőparancshoz szükség van a szolgáltatásra.";
+"cli.controller.discussion.unit" = "Az eszközazonosító (U-...) egy vezérlőt jelöl a modellje és az általa használt USB-port alapján. Újraindítások után is ugyanaz marad, amíg a vezérlő ugyanazt a portot használja.";
 "cli.controller.error.duration" = "A --duration 0-nál nagyobb másodpercszámot vár.";
 "cli.controller.feature.brightness" = "állítható fényerő";
 "cli.controller.feature.color" = "programozható fényszín";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Rekord";
 "cli.controller.show.label.rumble" = "Rezgés";
 "cli.controller.show.label.session" = "Munkamenet";
+"cli.controller.show.label.unit" = "Eszközazonosító";
 "cli.controller.show.label.virtual" = "Virtuális gamepad";
 "cli.controller.show.label.publication" = "Közzététel";
 "cli.controller.show.none" = "nincs";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Megjeleníti és kiválasztja a virtuális gamepadet, amelyet az OpenJoystickDriver egy vezérlőhöz közzétesz.";
 "cli.virtual.changed" = "%@ mostantól ezt teszi közzé: %@ (%@).";
 "cli.virtual.stored" = "A(z) %@ választása mentve. A virtuális kimenet bekapcsolásakor lép életbe.";
+"cli.virtual.unit" = "Csak erre a vezérlőre vonatkozik az eszközazonosítója alapján, a teljes modell helyett.";
 "cli.virtual.discussion" = "A választás az azonos modell minden vezérlőjére érvényes. A 'reset' visszaállítja a modellt az automatikus kiválasztásra.";
+"cli.virtual.discussion.unit" = "A --unit használatakor a 'set' egyetlen vezérlőre vonatkozik az eszközazonosítója alapján, a 'reset' pedig visszaállítja azt a vezérlőt a modellje választására.";
 "cli.virtual.error.failed" = "%@ virtuális gamepadje nem változott (%@). Ellenőrizze az 'ojd virtual show' paranccsal.";
+"cli.virtual.error.no_unit" = "%@ nem rendelkezik eszközazonosítóval, ezért a választás csak a teljes modelljére vonatkozhat. Futtassa a parancsot a --unit kapcsoló nélkül.";
 "cli.virtual.reset.abstract" = "Egy vezérlő modelljét, vagy az összes modellt visszaállítja az automatikus virtuális gamepad-kiválasztásra.";
 "cli.virtual.reset.all" = "Minden vezérlőmodell visszaállítása.";
 "cli.virtual.reset.all.done" = "Minden vezérlőmodell mostantól automatikusan választja ki a virtuális gamepadjét.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "A --all a nem csatlakoztatott modellek választásait is törli. Terminálon előbb rákérdez, egyébként --force kell hozzá.";
 "cli.virtual.reset.dry_run" = "%@ vezérlőt visszaállítana az automatikus virtuális gamepad-kiválasztásra.";
 "cli.virtual.reset.error.target" = "Adjon meg egy CONTROLLER értéket vagy a --all kapcsolót.";
+"cli.virtual.reset.error.unit_all" = "A --unit kapcsolóhoz CONTROLLER érték kell, nem a --all.";
 "cli.virtual.set.abstract" = "Virtuális gamepad kiválasztása egy vezérlő modelljéhez.";
 "cli.virtual.set.profile" = "A virtuális gamepad profilja.";
 "cli.virtual.show.abstract" = "Minden vezérlő virtuális gamepadjének és a választható profiloknak a megjelenítése.";

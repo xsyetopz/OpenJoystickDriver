@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Prekid Bluetooth veze nije uspio za %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ nije povezan putem Bluetootha. Iskopčajte ga da biste prekinuli vezu.";
 "cli.controller.discussion" = "CONTROLLER je ID iz 'ojd controller list' ili VVVV:PPPP (heksadecimalni ID proizvođača i proizvoda) kada ga ima točno jedan povezani kontroler. Svaka naredba kontrolera treba uslugu.";
+"cli.controller.discussion.unit" = "ID uređaja (U-...) imenuje jedan kontroler prema njegovu modelu i USB portu koji koristi. Ostaje isti nakon ponovnih pokretanja dok kontroler koristi taj port.";
 "cli.controller.error.duration" = "--duration treba broj sekundi veći od 0.";
 "cli.controller.feature.brightness" = "podesivu svjetlinu svjetla";
 "cli.controller.feature.color" = "programabilnu boju svjetla";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Zapis";
 "cli.controller.show.label.rumble" = "Vibracija";
 "cli.controller.show.label.session" = "Sesija";
+"cli.controller.show.label.unit" = "ID uređaja";
 "cli.controller.show.label.virtual" = "Virtualni gamepad";
 "cli.controller.show.label.publication" = "Objava";
 "cli.controller.show.none" = "nema";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Prikazuje i bira virtualni gamepad koji OpenJoystickDriver objavljuje za kontroler.";
 "cli.virtual.changed" = "%@ sada objavljuje %@ (%@).";
 "cli.virtual.stored" = "Odabir za %@ je spremljen. Primijenit će se kad se uključi virtualni izlaz.";
+"cli.virtual.unit" = "Vrijedi samo za ovaj kontroler prema njegovu ID-u uređaja, a ne za cijeli njegov model.";
 "cli.virtual.discussion" = "Odabir vrijedi za sve kontrolere istog modela. 'reset' vraća model na automatski odabir.";
+"cli.virtual.discussion.unit" = "Uz --unit, 'set' vrijedi za jedan kontroler prema njegovu ID-u uređaja, a 'reset' vraća taj kontroler na odabir njegova modela.";
 "cli.virtual.error.failed" = "Virtualni gamepad za %@ nije promijenjen (%@). Provjerite s 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ nema ID uređaja pa odabir može vrijediti samo za cijeli njegov model. Pokrenite naredbu bez --unit.";
 "cli.virtual.reset.abstract" = "Vraća model kontrolera, ili svaki model, na automatski odabir virtualnog gamepada.";
 "cli.virtual.reset.all" = "Resetira svaki model kontrolera.";
 "cli.virtual.reset.all.done" = "Svaki model kontrolera sada automatski bira svoj virtualni gamepad.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all briše i odabire za modele koji nisu povezani. Na terminalu prvo pita, a inače treba --force.";
 "cli.virtual.reset.dry_run" = "Vratilo bi %@ na automatski odabir virtualnog gamepada.";
 "cli.virtual.reset.error.target" = "Navedite CONTROLLER ili --all.";
+"cli.virtual.reset.error.unit_all" = "--unit zahtijeva CONTROLLER, a ne --all.";
 "cli.virtual.set.abstract" = "Bira virtualni gamepad za model kontrolera.";
 "cli.virtual.set.profile" = "Profil virtualnog gamepada.";
 "cli.virtual.show.abstract" = "Prikazuje virtualni gamepad svakog kontrolera i profile koje možete odabrati.";

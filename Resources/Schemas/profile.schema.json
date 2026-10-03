@@ -62,7 +62,7 @@
 		},
 		"device": {
 			"type": "object",
-			"description": "The controller model the profile applies to.",
+			"description": "The controller model the profile applies to, and optionally one unit of it.",
 			"required": [
 				"productID",
 				"vendorID"
@@ -78,6 +78,11 @@
 					"type": "integer",
 					"minimum": 0,
 					"maximum": 65535
+				},
+				"unit": {
+					"type": "string",
+					"pattern": "^U-[A-Za-z0-9_-]{16}$",
+					"description": "A unit ID from `ojd controller list`. The profile applies only to that unit; other units of the model ignore it."
 				}
 			}
 		},

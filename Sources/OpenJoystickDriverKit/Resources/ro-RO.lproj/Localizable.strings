@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Deconectarea Bluetooth a eșuat în timpul %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ nu este conectat prin Bluetooth. Scoateți-l din port pentru a-l deconecta.";
 "cli.controller.discussion" = "CONTROLLER este un ID din «ojd controller list» sau VVVV:PPPP (ID hexazecimal de producător și produs) când exact un controller conectat îl are. Fiecare comandă pentru controller necesită serviciul.";
+"cli.controller.discussion.unit" = "Un ID de unitate (U-...) identifică un controller după model și portul USB pe care îl folosește. Rămâne același după reporniri cât timp controllerul folosește acel port.";
 "cli.controller.error.duration" = "--duration necesită un număr de secunde mai mare decât 0.";
 "cli.controller.feature.brightness" = "luminozitate reglabilă a luminii";
 "cli.controller.feature.color" = "culoare programabilă a luminii";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Înregistrare";
 "cli.controller.show.label.rumble" = "Vibrații";
 "cli.controller.show.label.session" = "Sesiune";
+"cli.controller.show.label.unit" = "ID de unitate";
 "cli.controller.show.label.virtual" = "Gamepad virtual";
 "cli.controller.show.label.publication" = "Publicare";
 "cli.controller.show.none" = "niciunul";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Arată și alege gamepadul virtual pe care OpenJoystickDriver îl publică pentru un controller.";
 "cli.virtual.changed" = "%@ publică acum %@ (%@).";
 "cli.virtual.stored" = "Alegerea pentru %@ a fost salvată. Se aplică după activarea ieșirii virtuale.";
+"cli.virtual.unit" = "Se aplică doar acestui controller, după ID-ul lui de unitate, nu întregului model.";
 "cli.virtual.discussion" = "O alegere se aplică fiecărui controller de același model. «reset» readuce un model la selecția automată.";
+"cli.virtual.discussion.unit" = "Cu --unit, «set» se aplică unui singur controller după ID-ul lui de unitate, iar «reset» readuce acel controller la alegerea modelului său.";
 "cli.virtual.error.failed" = "Gamepadul virtual pentru %@ nu s-a schimbat (%@). Verificați-l cu «ojd virtual show».";
+"cli.virtual.error.no_unit" = "%@ nu are ID de unitate, deci o alegere se poate aplica doar întregului model. Rulați comanda fără --unit.";
 "cli.virtual.reset.abstract" = "Readuce modelul unui controller, sau fiecare model, la selecția automată a gamepadului virtual.";
 "cli.virtual.reset.all" = "Resetează fiecare model de controller.";
 "cli.virtual.reset.all.done" = "Fiecare model de controller își selectează acum automat gamepadul virtual.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all șterge și alegerile pentru modelele care nu sunt conectate. Întreabă mai întâi într-un terminal și necesită altfel --force.";
 "cli.virtual.reset.dry_run" = "Ar readuce %@ la selecția automată a gamepadului virtual.";
 "cli.virtual.reset.error.target" = "Indică fie un CONTROLLER, fie --all.";
+"cli.virtual.reset.error.unit_all" = "--unit necesită un CONTROLLER, nu --all.";
 "cli.virtual.set.abstract" = "Alege gamepadul virtual pentru modelul unui controller.";
 "cli.virtual.set.profile" = "Profilul gamepadului virtual.";
 "cli.virtual.show.abstract" = "Arată gamepadul virtual al fiecărui controller și profilurile pe care le puteți alege.";

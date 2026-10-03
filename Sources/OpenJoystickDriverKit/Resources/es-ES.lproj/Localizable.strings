@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Error al desconectar por Bluetooth durante %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ no está conectado por Bluetooth. Desenchúfalo para desconectarlo.";
 "cli.controller.discussion" = "CONTROLLER es un ID de 'ojd controller list', o VVVV:PPPP (ID hexadecimal de fabricante y de producto) cuando solo un mando conectado lo tiene. Todos los comandos de mando necesitan el servicio.";
+"cli.controller.discussion.unit" = "Un ID de unidad (U-...) identifica un mando por su modelo y el puerto USB que usa. Sigue siendo el mismo tras los reinicios mientras el mando use ese puerto.";
 "cli.controller.error.duration" = "--duration necesita un número de segundos mayor que 0.";
 "cli.controller.feature.brightness" = "brillo de luz ajustable";
 "cli.controller.feature.color" = "color de luz programable";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Registro";
 "cli.controller.show.label.rumble" = "Vibración";
 "cli.controller.show.label.session" = "Sesión";
+"cli.controller.show.label.unit" = "ID de unidad";
 "cli.controller.show.label.virtual" = "Mando virtual";
 "cli.controller.show.label.publication" = "Publicación";
 "cli.controller.show.none" = "ninguno";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Mostrar y elegir el mando virtual que OpenJoystickDriver publica para un mando.";
 "cli.virtual.changed" = "%@ ahora publica %@ (%@).";
 "cli.virtual.stored" = "La elección para %@ se ha guardado. Se aplicará cuando se active la salida virtual.";
+"cli.virtual.unit" = "Se aplica solo a este mando, según su ID de unidad, en lugar de a todo su modelo.";
 "cli.virtual.discussion" = "Una elección se aplica a todos los mandos del mismo modelo. 'reset' devuelve un modelo a la selección automática.";
+"cli.virtual.discussion.unit" = "Con --unit, 'set' se aplica a un solo mando según su ID de unidad, y 'reset' devuelve ese mando a la elección de su modelo.";
 "cli.virtual.error.failed" = "El mando virtual de %@ no ha cambiado (%@). Compruébalo con 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ no tiene ID de unidad, así que una elección solo puede aplicarse a todo su modelo. Ejecuta el comando sin --unit.";
 "cli.virtual.reset.abstract" = "Devolver el modelo de un mando, o todos los modelos, a la selección automática de mando virtual.";
 "cli.virtual.reset.all" = "Restablecer todos los modelos de mando.";
 "cli.virtual.reset.all.done" = "Ahora todos los modelos de mando seleccionan su mando virtual automáticamente.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all también borra las elecciones de los modelos que no están conectados. Pregunta antes en un terminal y, si no, necesita --force.";
 "cli.virtual.reset.dry_run" = "Devolvería %@ a la selección automática de mando virtual.";
 "cli.virtual.reset.error.target" = "Indica un CONTROLLER o --all, pero no ambos.";
+"cli.virtual.reset.error.unit_all" = "--unit necesita un CONTROLLER, no --all.";
 "cli.virtual.set.abstract" = "Elegir el mando virtual para el modelo de un mando.";
 "cli.virtual.set.profile" = "El perfil del mando virtual.";
 "cli.virtual.show.abstract" = "Mostrar el mando virtual de cada mando y los perfiles que puedes elegir.";

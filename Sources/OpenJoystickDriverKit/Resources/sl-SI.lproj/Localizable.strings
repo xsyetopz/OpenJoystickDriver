@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Prekinitev povezave Bluetooth ni uspela med %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ ni povezan prek Bluetootha. Izvlecite kabel, da prekinete povezavo.";
 "cli.controller.discussion" = "CONTROLLER je ID iz „ojd controller list“ ali VVVV:PPPP (šestnajstiški ID proizvajalca in izdelka), kadar ga ima natanko en povezan krmilnik. Vsi ukazi za krmilnike potrebujejo storitev.";
+"cli.controller.discussion.unit" = "ID naprave (U-...) označuje en krmilnik glede na njegov model in vrata USB, ki jih uporablja. Ostane enak po ponovnih zagonih, dokler krmilnik uporablja ta vrata.";
 "cli.controller.error.duration" = "--duration potrebuje število sekund, večje od 0.";
 "cli.controller.feature.brightness" = "nastavljiva svetlost luči";
 "cli.controller.feature.color" = "programirljiva barva luči";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Zapis";
 "cli.controller.show.label.rumble" = "Vibriranje";
 "cli.controller.show.label.session" = "Seja";
+"cli.controller.show.label.unit" = "ID naprave";
 "cli.controller.show.label.virtual" = "Navidezni igralni plošček";
 "cli.controller.show.label.publication" = "Objava";
 "cli.controller.show.none" = "brez";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Pokaže in izbere navidezni igralni plošček, ki ga OpenJoystickDriver objavi za krmilnik.";
 "cli.virtual.changed" = "%@ zdaj objavlja %@ (%@).";
 "cli.virtual.stored" = "Izbira za %@ je shranjena. Uveljavljena bo, ko bo navidezni izhod omogočen.";
+"cli.virtual.unit" = "Velja samo za ta krmilnik glede na njegov ID naprave, ne za celoten model.";
 "cli.virtual.discussion" = "Izbira velja za vse krmilnike istega modela. „reset“ vrne model na samodejno izbiro.";
+"cli.virtual.discussion.unit" = "Z možnostjo --unit „set“ velja za en krmilnik glede na njegov ID naprave, „reset“ pa ta krmilnik vrne na izbiro njegovega modela.";
 "cli.virtual.error.failed" = "Navidezni igralni plošček za %@ se ni spremenil (%@). Preverite z „ojd virtual show“.";
+"cli.virtual.error.no_unit" = "%@ nima ID-ja naprave, zato izbira lahko velja samo za celoten model. Zaženite ukaz brez --unit.";
 "cli.virtual.reset.abstract" = "Vrne model krmilnika ali vse modele na samodejno izbiro navideznega igralnega ploščka.";
 "cli.virtual.reset.all" = "Ponastavi vse modele krmilnikov.";
 "cli.virtual.reset.all.done" = "Vsak model krmilnika zdaj samodejno izbere svoj navidezni igralni plošček.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all počisti tudi izbire za modele, ki niso povezani. V terminalu vpraša vnaprej, sicer zahteva --force.";
 "cli.virtual.reset.dry_run" = "Vrnil bi %@ na samodejno izbiro navideznega igralnega ploščka.";
 "cli.virtual.reset.error.target" = "Podajte CONTROLLER ali --all.";
+"cli.virtual.reset.error.unit_all" = "--unit zahteva CONTROLLER, ne --all.";
 "cli.virtual.set.abstract" = "Izbere navidezni igralni plošček za model krmilnika.";
 "cli.virtual.set.profile" = "Profil navideznega igralnega ploščka.";
 "cli.virtual.show.abstract" = "Pokaže navidezni igralni plošček vsakega krmilnika in profile, ki jih lahko izberete.";

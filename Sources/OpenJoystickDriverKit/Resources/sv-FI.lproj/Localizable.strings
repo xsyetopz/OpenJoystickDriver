@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth-frånkopplingen misslyckades under %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ är inte ansluten via Bluetooth. Dra ut kabeln för att koppla från den.";
 "cli.controller.discussion" = "CONTROLLER är ett ID från 'ojd controller list', eller VVVV:PPPP (hexadecimalt tillverkar- och produkt-ID) när exakt en ansluten kontroll har det. Alla kontrollkommandon kräver tjänsten.";
+"cli.controller.discussion.unit" = "Ett enhets-ID (U-...) pekar ut en kontroll utifrån dess modell och den USB-port den använder. Det är detsamma efter omstarter så länge kontrollen använder den porten.";
 "cli.controller.error.duration" = "--duration kräver ett antal sekunder över 0.";
 "cli.controller.feature.brightness" = "justerbar ljusstyrka";
 "cli.controller.feature.color" = "programmerbar ljusfärg";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Post";
 "cli.controller.show.label.rumble" = "Vibration";
 "cli.controller.show.label.session" = "Session";
+"cli.controller.show.label.unit" = "Enhets-ID";
 "cli.controller.show.label.virtual" = "Virtuell spelkontroll";
 "cli.controller.show.label.publication" = "Publicering";
 "cli.controller.show.none" = "ingen";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Visa och välj den virtuella spelkontroll som OpenJoystickDriver publicerar för en kontroll.";
 "cli.virtual.changed" = "%@ publicerar nu %@ (%@).";
 "cli.virtual.stored" = "Valet för %@ är sparat. Det tillämpas när virtuell utgång är aktiverad.";
+"cli.virtual.unit" = "Gäller bara den här kontrollen, utifrån dess enhets-ID, i stället för hela modellen.";
 "cli.virtual.discussion" = "Ett val gäller alla kontroller av samma modell. 'reset' återställer en modell till automatiskt val.";
+"cli.virtual.discussion.unit" = "Med --unit gäller 'set' en enskild kontroll utifrån dess enhets-ID, och 'reset' återställer den kontrollen till modellens val.";
 "cli.virtual.error.failed" = "Den virtuella spelkontrollen för %@ ändrades inte (%@). Kontrollera den med 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ har inget enhets-ID, så ett val kan bara gälla hela modellen. Kör kommandot utan --unit.";
 "cli.virtual.reset.abstract" = "Återställ en kontrolls modell, eller alla modeller, till automatiskt val av virtuell spelkontroll.";
 "cli.virtual.reset.all" = "Återställ alla kontrollmodeller.";
 "cli.virtual.reset.all.done" = "Alla kontrollmodeller väljer nu sin virtuella spelkontroll automatiskt.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all rensar också val för modeller som inte är anslutna. Den frågar först i en terminal och kräver annars --force.";
 "cli.virtual.reset.dry_run" = "Skulle återställa %@ till automatiskt val av virtuell spelkontroll.";
 "cli.virtual.reset.error.target" = "Ange antingen en CONTROLLER eller --all.";
+"cli.virtual.reset.error.unit_all" = "--unit kräver en CONTROLLER, inte --all.";
 "cli.virtual.set.abstract" = "Välj virtuell spelkontroll för en kontrolls modell.";
 "cli.virtual.set.profile" = "Den virtuella spelkontrollens profil.";
 "cli.virtual.show.abstract" = "Visa varje kontrolls virtuella spelkontroll och de profiler du kan välja.";

@@ -22,7 +22,7 @@ extension VirtualOutputTests {
     let log = RetargetEventLog()
     let descriptions = provider(identifiers.map { description($0) })
     let overrideProvider: @Sendable (ApplicationServiceDeviceDescription) -> VirtualHIDProfileID? =
-      { store.override(vendorID: $0.vendorID, productID: $0.productID) }
+      { store.override(vendorID: $0.vendorID, productID: $0.productID, unit: $0.unitIdentifier) }
     let dispatcher = VirtualOutputRouter()
     let profileLibrary = RemappingProfileLibrary()
     let postEventAccess = CoreGraphicsPostEventAccess()

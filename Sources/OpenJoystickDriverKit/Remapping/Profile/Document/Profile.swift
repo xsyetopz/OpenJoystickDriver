@@ -3,15 +3,19 @@ import Foundation
 public struct RemappingDeviceScope: Codable, Equatable, Hashable, Sendable {
   public let vendorID: UInt16
   public let productID: UInt16
+  /// The one unit of the model the profile is for (see ``UnitIdentity``); nil for every unit.
+  public let unit: String?
 
-  public init(vendorID: UInt16, productID: UInt16) {
+  public init(vendorID: UInt16, productID: UInt16, unit: String? = nil) {
     self.vendorID = vendorID
     self.productID = productID
+    self.unit = unit
   }
 
   enum CodingKeys: String, CodingKey, CaseIterable {
     case vendorID
     case productID
+    case unit
   }
 
   public init(from decoder: any Decoder) throws {
@@ -19,6 +23,14 @@ public struct RemappingDeviceScope: Codable, Equatable, Hashable, Sendable {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     vendorID = try values.decode(UInt16.self, forKey: .vendorID)
     productID = try values.decode(UInt16.self, forKey: .productID)
+    unit = try values.decodeIfPresent(String.self, forKey: .unit)
+    if let unit, !UnitIdentity.isWellFormed(unit) {
+      throw DecodingError.dataCorruptedError(
+        forKey: .unit,
+        in: values,
+        debugDescription: "A unit ID is U- and 16 base64url characters."
+      )
+    }
   }
 }
 

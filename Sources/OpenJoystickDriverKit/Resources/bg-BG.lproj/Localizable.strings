@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Неуспешно изключване по Bluetooth по време на %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ не е свързан през Bluetooth. Изключете го от кабела, за да го разкачите.";
 "cli.controller.discussion" = "CONTROLLER е ID от 'ojd controller list' или VVVV:PPPP (шестнадесетични ID на производител и продукт), когато точно един свързан контролер го има. Всяка команда за контролер изисква услугата.";
+"cli.controller.discussion.unit" = "ID на устройство (U-...) назовава един контролер по неговия модел и USB порта, който използва. Остава същото след рестартиране, докато контролерът използва този порт.";
 "cli.controller.error.duration" = "--duration изисква брой секунди над 0.";
 "cli.controller.feature.brightness" = "регулируема яркост на светлината";
 "cli.controller.feature.color" = "програмируем цвят на светлината";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Запис";
 "cli.controller.show.label.rumble" = "Вибрация";
 "cli.controller.show.label.session" = "Сесия";
+"cli.controller.show.label.unit" = "ID на устройство";
 "cli.controller.show.label.virtual" = "Виртуален геймпад";
 "cli.controller.show.label.publication" = "Публикуване";
 "cli.controller.show.none" = "няма";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Показва и избира виртуалния геймпад, който OpenJoystickDriver публикува за контролер.";
 "cli.virtual.changed" = "%@ вече публикува %@ (%@).";
 "cli.virtual.stored" = "Изборът за %@ е запазен. Ще се приложи, когато виртуалният изход бъде включен.";
+"cli.virtual.unit" = "Важи само за този контролер, според ID на устройството му, вместо за целия му модел.";
 "cli.virtual.discussion" = "Изборът важи за всеки контролер от същия модел. 'reset' връща модела към автоматичен избор.";
+"cli.virtual.discussion.unit" = "С --unit 'set' важи за един контролер според ID на устройството му, а 'reset' връща този контролер към избора за неговия модел.";
 "cli.virtual.error.failed" = "Виртуалният геймпад за %@ не се промени (%@). Проверете с 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "%@ няма ID на устройство, затова изборът може да важи само за целия му модел. Изпълнете командата без --unit.";
 "cli.virtual.reset.abstract" = "Връща модела на контролер, или всички модели, към автоматичен избор на виртуален геймпад.";
 "cli.virtual.reset.all" = "Нулира всеки модел контролер.";
 "cli.virtual.reset.all.done" = "Всеки модел контролер вече избира виртуалния си геймпад автоматично.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all изчиства и изборите за модели, които не са свързани. В терминал пита първо, иначе изисква --force.";
 "cli.virtual.reset.dry_run" = "Би върнало %@ към автоматичен избор на виртуален геймпад.";
 "cli.virtual.reset.error.target" = "Задайте или CONTROLLER, или --all.";
+"cli.virtual.reset.error.unit_all" = "--unit изисква CONTROLLER, а не --all.";
 "cli.virtual.set.abstract" = "Избира виртуалния геймпад за модела на контролер.";
 "cli.virtual.set.profile" = "Профилът на виртуалния геймпад.";
 "cli.virtual.show.abstract" = "Показва виртуалния геймпад на всеки контролер и профилите, от които можете да избирате.";

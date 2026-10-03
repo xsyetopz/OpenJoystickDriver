@@ -159,13 +159,14 @@ extension ApplicationServiceClient {
     return payload
   }
 
-  /// Stores `profile` as the virtual HID profile override for the selected controller's model
-  /// and applies it to the connected controller.
+  /// Stores `profile` as the virtual HID profile override for the selected controller's model,
+  /// or for that unit only when `unit` is true, and applies it to the connected controller.
   public func setVirtualHIDProfileOverride(
     _ profile: String,
     vendorID: UInt16,
     productID: UInt16,
-    runtimeIdentifier: String? = nil
+    runtimeIdentifier: String? = nil,
+    unit: Bool = false
   ) async throws -> VirtualHIDProfileOverrideResult {
     try await call(
       .setVirtualHIDProfileOverride,
@@ -173,23 +174,27 @@ extension ApplicationServiceClient {
         vendorID: Int(vendorID),
         productID: Int(productID),
         runtimeIdentifier: runtimeIdentifier,
-        profile: profile
+        profile: profile,
+        unit: unit
       )
     )
   }
 
-  /// Returns the selected controller's model to automatic virtual HID profile selection.
+  /// Returns the selected controller's model, or that unit only when `unit` is true, to automatic
+  /// virtual HID profile selection.
   public func resetVirtualHIDProfileOverride(
     vendorID: UInt16,
     productID: UInt16,
-    runtimeIdentifier: String? = nil
+    runtimeIdentifier: String? = nil,
+    unit: Bool = false
   ) async throws -> VirtualHIDProfileOverrideResult {
     try await call(
       .resetVirtualHIDProfileOverride,
-      LocalServiceRPCDeviceArguments(
+      LocalServiceRPCVirtualHIDProfileOverrideResetArguments(
         vendorID: Int(vendorID),
         productID: Int(productID),
-        runtimeIdentifier: runtimeIdentifier
+        runtimeIdentifier: runtimeIdentifier,
+        unit: unit
       )
     )
   }

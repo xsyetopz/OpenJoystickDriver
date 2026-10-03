@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "在 %@ 期間中斷 Bluetooth 連線失敗：%@。";
 "cli.controller.disconnect.not_bluetooth" = "%@ 不是透過 Bluetooth 連接。請拔除連接線以中斷連線。";
 "cli.controller.discussion" = "CONTROLLER 是 'ojd controller list' 中的 ID，或 VVVV:PPPP（十六進位的廠商 ID 與產品 ID），前提是只有一個已連接的控制器符合。所有控制器指令都需要服務。";
+"cli.controller.discussion.unit" = "單元 ID（U-...）會透過型號和所使用的 USB 連接埠來識別一個控制器。只要該控制器持續使用該連接埠，重新啟動後也會保持不變。";
 "cli.controller.error.duration" = "--duration 需要大於 0 的秒數。";
 "cli.controller.feature.brightness" = "可調整的燈光亮度";
 "cli.controller.feature.color" = "可設定的燈光顏色";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "記錄";
 "cli.controller.show.label.rumble" = "震動";
 "cli.controller.show.label.session" = "工作階段";
+"cli.controller.show.label.unit" = "單元 ID";
 "cli.controller.show.label.virtual" = "虛擬遊戲控制器";
 "cli.controller.show.label.publication" = "發佈狀態";
 "cli.controller.show.none" = "無";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "顯示並選擇 OpenJoystickDriver 為控制器發布的虛擬遊戲控制器。";
 "cli.virtual.changed" = "%@ 現在發布 %@ (%@)。";
 "cli.virtual.stored" = "已儲存 %@ 的選擇，將在啟用虛擬輸出後套用。";
+"cli.virtual.unit" = "僅套用至此控制器（依其單元 ID），而非其整個型號。";
 "cli.virtual.discussion" = "選擇會套用至相同型號的所有控制器。'reset' 會讓型號恢復自動選擇。";
+"cli.virtual.discussion.unit" = "使用 --unit 時，'set' 只會套用至依單元 ID 指定的那一個控制器，'reset' 則會讓該控制器恢復為其型號的選擇。";
 "cli.virtual.error.failed" = "%@ 的虛擬遊戲控制器未變更 (%@)。請用 'ojd virtual show' 檢查。";
+"cli.virtual.error.no_unit" = "%@ 沒有單元 ID，因此所做選擇只能套用至其整個型號。請不使用 --unit 來執行該指令。";
 "cli.virtual.reset.abstract" = "讓控制器的型號或所有型號恢復自動選擇虛擬遊戲控制器。";
 "cli.virtual.reset.all" = "重設所有控制器型號。";
 "cli.virtual.reset.all.done" = "現在每個控制器型號都會自動選擇其虛擬遊戲控制器。";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all 也會清除未連接型號的選擇。在終端機中會先詢問，否則需要 --force。";
 "cli.virtual.reset.dry_run" = "會讓 %@ 恢復自動選擇虛擬遊戲控制器。";
 "cli.virtual.reset.error.target" = "請提供 CONTROLLER 或 --all。";
+"cli.virtual.reset.error.unit_all" = "--unit 需要 CONTROLLER，不能與 --all 一併使用。";
 "cli.virtual.set.abstract" = "為控制器的型號選擇虛擬遊戲控制器。";
 "cli.virtual.set.profile" = "虛擬遊戲控制器設定檔。";
 "cli.virtual.show.abstract" = "顯示每個控制器的虛擬遊戲控制器，以及您可以選擇的設定檔。";

@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth-yhteyden katkaisu epäonnistui kohteessa %@: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ ei ole yhdistetty Bluetoothilla. Irrota se katkaistaksesi yhteyden.";
 "cli.controller.discussion" = "CONTROLLER on tunnus komennosta 'ojd controller list' tai VVVV:PPPP (heksadesimaalinen valmistaja- ja tuotetunnus), kun täsmälleen yhdellä yhdistetyllä ohjaimella on se. Jokainen ohjainkomento tarvitsee palvelun.";
+"cli.controller.discussion.unit" = "Laitetunnus (U-...) yksilöi yhden ohjaimen sen mallin ja käyttämän USB-portin perusteella. Se pysyy samana uudelleenkäynnistysten yli, kun ohjain käyttää samaa porttia.";
 "cli.controller.error.duration" = "--duration vaatii sekuntimäärän, joka on suurempi kuin 0.";
 "cli.controller.feature.brightness" = "säädettävää valon kirkkautta";
 "cli.controller.feature.color" = "ohjelmoitavaa valon väriä";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Tietue";
 "cli.controller.show.label.rumble" = "Värinä";
 "cli.controller.show.label.session" = "Istunto";
+"cli.controller.show.label.unit" = "Laitetunnus";
 "cli.controller.show.label.virtual" = "Virtuaalinen peliohjain";
 "cli.controller.show.label.publication" = "Julkaisu";
 "cli.controller.show.none" = "ei mitään";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Näytä ja valitse virtuaalinen peliohjain, jonka OpenJoystickDriver julkaisee ohjaimelle.";
 "cli.virtual.changed" = "%@ julkaisee nyt: %@ (%@).";
 "cli.virtual.stored" = "Valinta laitteelle %@ on tallennettu. Se otetaan käyttöön, kun virtuaalinen ulostulo on käytössä.";
+"cli.virtual.unit" = "Koskee vain tätä ohjainta sen laitetunnuksen perusteella koko mallin sijaan.";
 "cli.virtual.discussion" = "Valinta koskee kaikkia samanmallisia ohjaimia. 'reset' palauttaa mallin automaattiseen valintaan.";
+"cli.virtual.discussion.unit" = "Valinnalla --unit 'set' koskee yhtä ohjainta sen laitetunnuksen perusteella, ja 'reset' palauttaa kyseisen ohjaimen mallinsa valintaan.";
 "cli.virtual.error.failed" = "Laitteen %@ virtuaalinen peliohjain ei muuttunut (%@). Tarkista asia komennolla 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "Laitteella %@ ei ole laitetunnusta, joten valinta voi koskea vain sen koko mallia. Suorita komento ilman valintaa --unit.";
 "cli.virtual.reset.abstract" = "Palauta ohjaimen malli tai kaikki mallit virtuaalisen peliohjaimen automaattiseen valintaan.";
 "cli.virtual.reset.all" = "Nollaa kaikki ohjainmallit.";
 "cli.virtual.reset.all.done" = "Jokainen ohjainmalli valitsee nyt virtuaalisen peliohjaimensa automaattisesti.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all tyhjentää myös valinnat malleista, joita ei ole yhdistetty. Se kysyy ensin päätteessä ja vaatii muuten --force.";
 "cli.virtual.reset.dry_run" = "Palauttaisi kohteen %@ virtuaalisen peliohjaimen automaattiseen valintaan.";
 "cli.virtual.reset.error.target" = "Anna joko CONTROLLER tai --all.";
+"cli.virtual.reset.error.unit_all" = "--unit vaatii arvon CONTROLLER, ei --all.";
 "cli.virtual.set.abstract" = "Valitse virtuaalinen peliohjain ohjaimen mallille.";
 "cli.virtual.set.profile" = "Virtuaalisen peliohjaimen profiili.";
 "cli.virtual.show.abstract" = "Näytä jokaisen ohjaimen virtuaalinen peliohjain ja valittavissa olevat profiilit.";

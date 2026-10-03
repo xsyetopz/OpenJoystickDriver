@@ -9,7 +9,7 @@ struct ProfileSchemaTests {
     {
       "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E",
       "name": "Everything",
-      "device": {"vendorID": 1356, "productID": 3302},
+      "device": {"vendorID": 1356, "productID": 3302, "unit": "U-AbCd_123-xyzW09q"},
       "applicationScope": {"type": "application", "bundleIdentifier": "com.example.game"},
       "outputPolicy": {"virtualGamepad": "mapped", "physicalInput": "exclusive"},
       "physicalColor": {"red": 255, "green": 32, "blue": 0},
@@ -198,6 +198,7 @@ struct ProfileSchemaTests {
     ("unknown curve", #""ease_in""#, #""quadratic""#),
     ("bad bundle ID", #""com.example.game""#, #""not an app""#),
     ("unknown button", #""button": "south""#, #""button": "a""#),
+    ("malformed unit ID", #""U-AbCd_123-xyzW09q""#, #""U-AbCd+123""#),
     (
       "axis in a chord", #"{"type": "button", "button": "back"}"#,
       #"{"type": "axis", "axis": "left_trigger"}"#

@@ -64,10 +64,10 @@ ojd controller pair LEFT RIGHT --profile PROFILE
 ojd controller unpair PAIR
 ```
 
-`CONTROLLER` is an ID from `ojd controller list`, or `VVVV:PPPP`, the hexadecimal vendor and product ID, in either case. A `VVVV:PPPP` that matches two connected controllers is rejected, and the error lists them. Use an ID to pick one. An ID lasts until the service restarts, and it can change when you unplug and replug the controller. By design, IDs from different service runs cannot be linked to the same controller, so scripts should use `VVVV:PPPP` instead of a stored ID.
+`CONTROLLER` is an ID from `ojd controller list`, or `VVVV:PPPP`, the hexadecimal vendor and product ID, in either case. A `VVVV:PPPP` that matches two connected controllers is rejected, and the error lists them. Use an ID to pick one. An ID lasts until the service restarts, and it can change when you unplug and replug the controller. By design, IDs from different service runs cannot be linked to the same controller, so scripts should use `VVVV:PPPP` instead of a stored ID. A unit ID (`U-` and 16 characters) also names one controller. It comes from the controller's model, the USB port it uses, and its interface, never its serial number. It stays the same across reconnects and service restarts while the controller uses the same port, and changes when it moves to another port. A controller with no location ID has no unit ID. Scripts can store a unit ID.
 
-- `controller list`: List connected controllers.
-- `controller show`: Show a controller's identity, ownership, capabilities, effective record, and virtual gamepad. The Record line says whether the record is bundled or one of your records, and names the file of your record. It reads your records from disk when you run the command, so a controller that connected before you changed a record can still run on the older one until it connects again. With `--json`, `controller.record` has `layer` (`bundled` or `user`) and, for your record, `file`. It is absent when no record matches the controller's model, as for a generic HID controller. The Publication line says whether a virtual gamepad publishes the controller and, when none does, why, such as `native-gamepad` for a controller macOS serves itself. With `--json`, `controller.publication` has `state` (`published`, `not-published`, or `failed`), `reason`, and `target`. The Output checks section lists the commands that exercise each rumble motor and light, with what to observe.
+- `controller list`: List connected controllers. Each line shows the unit ID after the ID, and with `--json`, `unit` gives each controller's unit ID. With `--plain`, the unit ID is the last field, empty when the controller has none.
+- `controller show`: Show a controller's unit ID (`controller.unit` with `--json`), identity, ownership, capabilities, effective record, and virtual gamepad. The Record line says whether the record is bundled or one of your records, and names the file of your record. It reads your records from disk when you run the command, so a controller that connected before you changed a record can still run on the older one until it connects again. With `--json`, `controller.record` has `layer` (`bundled` or `user`) and, for your record, `file`. It is absent when no record matches the controller's model, as for a generic HID controller. The Publication line says whether a virtual gamepad publishes the controller and, when none does, why, such as `native-gamepad` for a controller macOS serves itself. With `--json`, `controller.publication` has `state` (`published`, `not-published`, or `failed`), `reason`, and `target`. The Output checks section lists the commands that exercise each rumble motor and light, with what to observe.
 - `controller watch`: Print the controller's input state each time it changes, until you press Control-C. `--duration` stops after that many seconds. `--first-press` prints the first control pressed and exits. It fails when `--duration` passes first. With `--json`, it prints one object per line. Stick Y points up. `--output` also prints what the virtual gamepad sends after stick transfer and remapping, on an `out` line, or `out none` when no virtual gamepad publishes the controller. Its stick Y points down, as in the HID report. With `--json` and `--output`, each object has `input` and, when the controller is published, `output`.
 - `controller capture`: Print the raw packets the controller sends and receives, each with its time, direction (`rx` or `tx`), length, and hex bytes. It runs until you press Control-C, or until `--duration` seconds pass. With `--json`, it prints one object per line.
 - `controller rumble`: Run the rumble motors. `--left`, `--right`, `--left-trigger`, and `--right-trigger` set each motor's intensity from 0 to 255. With none of them, both main motors run at 180. `--duration` is in seconds, above 0 and at most 5, and is 0.45 by default. Set every intensity to 0 to stop the motors.
@@ -168,17 +168,17 @@ With `--json`, a binding is an object with `id`, `source`, `target`, and `behavi
 
 ## virtual
 
-Show and choose the virtual gamepad that OpenJoystickDriver publishes for a controller. A choice applies to every controller of the same model.
+Show and choose the virtual gamepad that OpenJoystickDriver publishes for a controller. A choice applies to every controller of the same model, unless you add `--unit`: then it applies to that controller only, by its unit ID, and wins over its model's choice.
 
 ```text
 ojd virtual show [CONTROLLER]
-ojd virtual set PROFILE CONTROLLER
-ojd virtual reset [CONTROLLER] [--all] [--force] [--dry-run]
+ojd virtual set PROFILE CONTROLLER [--unit]
+ojd virtual reset [CONTROLLER] [--unit] [--all] [--force] [--dry-run]
 ```
 
-- `virtual show`: Show each controller's virtual gamepad and the profiles you can choose. Name a controller to show only that one.
-- `virtual set`: Choose the profile for the controller's model. The profiles are `hid-xbox-one-s-bt` and `hid-generic`.
-- `virtual reset`: Return the controller's model to automatic selection. `--all` returns every model, including models that are not connected. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing.
+- `virtual show`: Show each controller's virtual gamepad and the profiles you can choose. Name a controller to show only that one. With `--json`, `overrideScope` says whether a stored choice is the controller's own (`unit`) or its model's (`model`).
+- `virtual set`: Choose the profile for the controller's model. With `--unit`, choose it for that controller only. A controller with no unit ID cannot take `--unit`. The profiles are `hid-xbox-one-s-bt` and `hid-generic`.
+- `virtual reset`: Return the controller's model to automatic selection. With `--unit`, it removes only that controller's own choice, so its model's choice applies again. `--unit` cannot be used with `--all`. `--all` returns every model, including models that are not connected. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing.
 
 ## record
 

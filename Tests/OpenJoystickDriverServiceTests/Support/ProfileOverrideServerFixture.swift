@@ -17,13 +17,15 @@ struct ProfileOverrideServerFixture {
     _ change: ApplicationServiceServer.VirtualHIDProfileOverrideChange,
     vendorID: Int = 1,
     productID: Int = 2,
-    runtimeIdentifier: String? = nil
+    runtimeIdentifier: String? = nil,
+    unit: Bool = false
   ) async -> VirtualHIDProfileOverrideResult {
     await server.changeVirtualHIDProfileOverride(
       change,
       vendorID: vendorID,
       productID: productID,
-      runtimeIdentifier: runtimeIdentifier
+      runtimeIdentifier: runtimeIdentifier,
+      unit: unit
     )
   }
 

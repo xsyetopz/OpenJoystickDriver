@@ -125,6 +125,7 @@ extension VirtualOutputTests {
           profile: .generic,
           source: "override",
           override: .generic,
+          overrideScope: "model",
           unavailable: false
         ),
         ApplicationServiceVirtualHIDProfileStatus(

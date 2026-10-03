@@ -2,42 +2,48 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
-  /// A requested change to one controller model's stored virtual HID profile override.
+  /// A requested change to one controller model's or unit's stored virtual HID profile override.
   enum VirtualHIDProfileOverrideChange: Sendable {
     /// Store the profile with this raw identifier.
     case set(String)
-    /// Return the model to automatic selection.
+    /// Return the model or unit to automatic selection.
     case reset
   }
 
   /// Stores `profile` as the override for the selected controller's model and retargets every
-  /// connected controller of that model to it.
+  /// connected controller of that model to it. With `unit`, stores it for the selected unit only
+  /// and retargets only that controller.
   public func setVirtualHIDProfileOverride(
     _ profile: String,
     vendorID: Int,
     productID: Int,
-    runtimeIdentifier: String?
+    runtimeIdentifier: String?,
+    unit: Bool = false
   ) async -> VirtualHIDProfileOverrideResult {
     await changeVirtualHIDProfileOverride(
       .set(profile),
       vendorID: vendorID,
       productID: productID,
-      runtimeIdentifier: runtimeIdentifier
+      runtimeIdentifier: runtimeIdentifier,
+      unit: unit
     )
   }
 
   /// Returns the selected controller's model to automatic selection and retargets every connected
-  /// controller of that model.
+  /// controller of that model. With `unit`, removes the selected unit's override only, so its
+  /// model's override applies again, and retargets only that controller.
   public func resetVirtualHIDProfileOverride(
     vendorID: Int,
     productID: Int,
-    runtimeIdentifier: String?
+    runtimeIdentifier: String?,
+    unit: Bool = false
   ) async -> VirtualHIDProfileOverrideResult {
     await changeVirtualHIDProfileOverride(
       .reset,
       vendorID: vendorID,
       productID: productID,
-      runtimeIdentifier: runtimeIdentifier
+      runtimeIdentifier: runtimeIdentifier,
+      unit: unit
     )
   }
 
@@ -47,7 +53,8 @@ extension ApplicationServiceServer {
     _ change: VirtualHIDProfileOverrideChange,
     vendorID: Int,
     productID: Int,
-    runtimeIdentifier: String?
+    runtimeIdentifier: String?,
+    unit: Bool = false
   ) async -> VirtualHIDProfileOverrideResult {
     let result = await virtualOutputTransitionCoordinator.enqueueResult {
       [weak self] () -> VirtualHIDProfileOverrideResult? in
@@ -55,7 +62,8 @@ extension ApplicationServiceServer {
         change,
         vendorID: vendorID,
         productID: productID,
-        runtimeIdentifier: runtimeIdentifier
+        runtimeIdentifier: runtimeIdentifier,
+        unit: unit
       )
     }
     if let result = result.flatMap({ $0 }) { return result }
@@ -73,9 +81,10 @@ extension ApplicationServiceServer {
     _ change: VirtualHIDProfileOverrideChange,
     vendorID: Int,
     productID: Int,
-    runtimeIdentifier: String?
+    runtimeIdentifier: String?,
+    unit: Bool
   ) async -> VirtualHIDProfileOverrideResult {
-    let matches = await connectedControllers(vendorID: vendorID, productID: productID)
+    var matches = await connectedControllers(vendorID: vendorID, productID: productID)
     let target: DeviceIdentifier?
     if let runtimeIdentifier {
       target = matches.first { $0.runtimeIdentifier == runtimeIdentifier }
@@ -98,18 +107,26 @@ extension ApplicationServiceServer {
     case .reset: requested = nil
     }
     guard let target else { return result(requested, .controllerNotFound) }
-    let model = target.controllerIdentity
-    let prior = virtualHIDProfileOverrides.override(
-      vendorID: model.vendorID,
-      productID: model.productID
+    var scope = OverrideScope(model: target.controllerIdentity, unit: nil)
+    if unit {
+      guard let unitIdentifier = target.unitIdentifier else {
+        return result(requested, .controllerNotFound)
+      }
+      scope.unit = unitIdentifier
+      matches = [target]
+    }
+    let prior = virtualHIDProfileOverrides.storedOverride(
+      vendorID: scope.model.vendorID,
+      productID: scope.model.productID,
+      unit: scope.unit
     )
-    do { try storeVirtualHIDProfileOverride(requested, for: model) } catch {
+    do { try storeVirtualHIDProfileOverride(requested, for: scope) } catch {
       return result(requested, .persistenceFailed)
     }
     guard let automatic = automaticUserSpaceDispatcher() else {
       return result(requested, .outputDisabled)
     }
-    if let failure = await retargetModel(matches, with: automatic, restoring: prior, for: model) {
+    if let failure = await retargetModel(matches, with: automatic, restoring: prior, for: scope) {
       return result(requested, failure)
     }
     guard
@@ -121,13 +138,13 @@ extension ApplicationServiceServer {
     return result(requested, nil)
   }
 
-  /// Retargets every controller in `matches`. When one fails, restores `prior` as the model's
+  /// Retargets every controller in `matches`. When one fails, restores `prior` as the scope's
   /// stored override, returns the already switched controllers to it, and names the failure.
   private func retargetModel(
     _ matches: [DeviceIdentifier],
     with automatic: AutomaticUserSpaceOutputDispatcher,
     restoring prior: VirtualHIDProfileID?,
-    for model: ControllerIdentity
+    for scope: OverrideScope
   ) async -> VirtualHIDProfileOverrideFailure? {
     var switched: [DeviceIdentifier] = []
     for identifier in matches {
@@ -136,7 +153,7 @@ extension ApplicationServiceServer {
         switched.append(identifier)
       } catch {
         var restoreError: (any Error)?
-        do { try storeVirtualHIDProfileOverride(prior, for: model) } catch let failure {
+        do { try storeVirtualHIDProfileOverride(prior, for: scope) } catch let failure {
           restoreError = failure
         }
         for pad in switched { try? await retargetWithinTimeout(pad, with: automatic) }
@@ -182,18 +199,29 @@ extension ApplicationServiceServer {
     return .activationFailed(detail: detail)
   }
 
+  /// The stored override a change writes: a controller model's, or one unit's of it.
+  private struct OverrideScope {
+    let model: ControllerIdentity
+    var unit: String?
+  }
+
   private func storeVirtualHIDProfileOverride(
     _ profile: VirtualHIDProfileID?,
-    for model: ControllerIdentity
+    for scope: OverrideScope
   ) throws(VirtualHIDProfileOverrideError) {
     if let profile {
       try virtualHIDProfileOverrides.set(
         profile,
-        vendorID: model.vendorID,
-        productID: model.productID
+        vendorID: scope.model.vendorID,
+        productID: scope.model.productID,
+        unit: scope.unit
       )
     } else {
-      try virtualHIDProfileOverrides.reset(vendorID: model.vendorID, productID: model.productID)
+      try virtualHIDProfileOverrides.reset(
+        vendorID: scope.model.vendorID,
+        productID: scope.model.productID,
+        unit: scope.unit
+      )
     }
   }
 
@@ -219,7 +247,8 @@ extension ApplicationServiceServer {
     let stored = identifier.flatMap {
       virtualHIDProfileOverrides.override(
         vendorID: $0.controllerIdentity.vendorID,
-        productID: $0.controllerIdentity.productID
+        productID: $0.controllerIdentity.productID,
+        unit: $0.unitIdentifier
       )
     }
     let source: VirtualHIDProfileSelector.Selection.Source
@@ -251,13 +280,24 @@ extension ApplicationServiceServer {
     return devices.map { device in
       let state = automatic?.profileState(runtimeIdentifier: device.runtimeIdentifier)
       var described = device
+      let unitOverride = device.unitIdentifier.flatMap {
+        virtualHIDProfileOverrides.storedOverride(
+          vendorID: device.vendorID,
+          productID: device.productID,
+          unit: $0
+        )
+      }
+      let override =
+        unitOverride
+        ?? virtualHIDProfileOverrides.override(
+          vendorID: device.vendorID,
+          productID: device.productID
+        )
       described.virtualHIDProfile = ApplicationServiceVirtualHIDProfileStatus(
         profile: state?.selection?.profileID,
         source: state?.selection?.source.wireName,
-        override: virtualHIDProfileOverrides.override(
-          vendorID: device.vendorID,
-          productID: device.productID
-        ),
+        override: override,
+        overrideScope: override == nil ? nil : unitOverride == nil ? "model" : "unit",
         unavailable: state?.unavailable ?? false
       )
       described.publication = Self.publication(

@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "Bluetooth-ühenduse katkestamine ebaõnnestus (%@): %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ ei ole ühendatud Bluetoothi kaudu. Ühenduse katkestamiseks tõmba kaabel välja.";
 "cli.controller.discussion" = "CONTROLLER on ID käsust 'ojd controller list' või VVVV:PPPP (kuueteistkümnendsüsteemis tootja- ja tooteID), kui seda on täpselt ühel ühendatud kontrolleril. Iga kontrolleri käsk vajab teenust.";
+"cli.controller.discussion.unit" = "Seadme ID (U-...) nimetab ühe kontrolleri selle mudeli ja kasutatava USB-pordi järgi. See jääb taaskäivitustel samaks seni, kuni kontroller seda porti kasutab.";
 "cli.controller.error.duration" = "--duration vajab sekundite arvu, mis on suurem kui 0.";
 "cli.controller.feature.brightness" = "reguleeritavat tule heledust";
 "cli.controller.feature.color" = "programmeeritavat tule värvi";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Kirje";
 "cli.controller.show.label.rumble" = "Värin";
 "cli.controller.show.label.session" = "Seanss";
+"cli.controller.show.label.unit" = "Seadme ID";
 "cli.controller.show.label.virtual" = "Virtuaalne mängupult";
 "cli.controller.show.label.publication" = "Avaldamine";
 "cli.controller.show.none" = "puudub";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "Näita ja vali virtuaalset mängupulti, mille OpenJoystickDriver kontrolleri jaoks avaldab.";
 "cli.virtual.changed" = "%@ avaldab nüüd %@ (%@).";
 "cli.virtual.stored" = "Valik seadme %@ jaoks on salvestatud. See rakendub, kui virtuaalne väljund on lubatud.";
+"cli.virtual.unit" = "Kehtib ainult sellele kontrollerile selle seadme ID järgi, mitte kogu mudelile.";
 "cli.virtual.discussion" = "Valik kehtib kõigile sama mudeli kontrolleritele. 'reset' viib mudeli tagasi automaatse valiku juurde.";
+"cli.virtual.discussion.unit" = "Valikuga --unit kehtib 'set' ühe kontrolleri kohta selle seadme ID järgi ja 'reset' viib selle kontrolleri tagasi selle mudeli valiku juurde.";
 "cli.virtual.error.failed" = "Kontrolleri %@ virtuaalne mängupult ei muutunud (%@). Kontrolli seda käsuga 'ojd virtual show'.";
+"cli.virtual.error.no_unit" = "Kontrolleril %@ puudub seadme ID, seega saab valik kehtida ainult kogu selle mudeli kohta. Käivita käsk ilma valikuta --unit.";
 "cli.virtual.reset.abstract" = "Vii kontrolleri mudel või iga mudel tagasi virtuaalse mängupuldi automaatse valiku juurde.";
 "cli.virtual.reset.all" = "Lähtesta iga kontrollerimudel.";
 "cli.virtual.reset.all.done" = "Iga kontrollerimudel valib nüüd oma virtuaalse mängupuldi automaatselt.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all tühjendab ka ühendamata mudelite valikud. Terminalis küsib see enne kinnitust, muidu vajab --force.";
 "cli.virtual.reset.dry_run" = "Viiks %@ tagasi virtuaalse mängupuldi automaatse valiku juurde.";
 "cli.virtual.reset.error.target" = "Anna kas CONTROLLER või --all.";
+"cli.virtual.reset.error.unit_all" = "--unit vajab väärtust CONTROLLER, mitte --all.";
 "cli.virtual.set.abstract" = "Vali virtuaalne mängupult kontrolleri mudelile.";
 "cli.virtual.set.profile" = "Virtuaalse mängupuldi profiil.";
 "cli.virtual.show.abstract" = "Näita iga kontrolleri virtuaalset mängupulti ja profiile, mille seast saad valida.";

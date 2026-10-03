@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "%@ үед Bluetooth салгалт амжилтгүй боллоо: %@.";
 "cli.controller.disconnect.not_bluetooth" = "%@ Bluetooth-ээр холбогдоогүй байна. Салгахын тулд залгаснаа сугална уу.";
 "cli.controller.discussion" = "CONTROLLER нь «ojd controller list»-ийн ID, эсвэл яг нэг холбогдсон удирдлагад байгаа VVVV:PPPP (үйлдвэрлэгч ба бүтээгдэхүүний hex ID) байна. Удирдлагын бүх команд үйлчилгээг шаарддаг.";
+"cli.controller.discussion.unit" = "Төхөөрөмжийн ID (U-...) нь нэг удирдлагыг загвар болон ашиглаж буй USB портоор нь нэрлэнэ. Удирдлага тэр портыг ашиглаж байгаа цагт дахин эхлүүлсний дараа ч ижил хэвээр байна.";
 "cli.controller.error.duration" = "--duration нь 0-ээс их секундийн тоо шаардана.";
 "cli.controller.feature.brightness" = "тохируулж болох гэрлийн тод байдал";
 "cli.controller.feature.color" = "програмчлагдах гэрлийн өнгө";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "Бүртгэл";
 "cli.controller.show.label.rumble" = "Чичиргээ";
 "cli.controller.show.label.session" = "Сесс";
+"cli.controller.show.label.unit" = "Төхөөрөмжийн ID";
 "cli.controller.show.label.virtual" = "Виртуал тоглоомын удирдлага";
 "cli.controller.show.label.publication" = "Нийтлэх төлөв";
 "cli.controller.show.none" = "алга";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "OpenJoystickDriver-ийн удирдлагад зориулж нийтэлдэг виртуал тоглоомын удирдлагыг харуулж, сонгох.";
 "cli.virtual.changed" = "%@ одоо %@ (%@)-ийг нийтэлж байна.";
 "cli.virtual.stored" = "%@ төхөөрөмжийн сонголт хадгалагдсан. Виртуал гаралтыг идэвхжүүлэхэд хэрэгжинэ.";
+"cli.virtual.unit" = "Бүх загварт биш, зөвхөн энэ удирдлагад түүний төхөөрөмжийн ID-аар хэрэглэнэ.";
 "cli.virtual.discussion" = "Сонголт нь ижил загварын бүх удирдлагад хамаарна. «reset» нь загварыг автомат сонголт руу буцаана.";
+"cli.virtual.discussion.unit" = "--unit-тай үед «set» нь нэг удирдлагад түүний төхөөрөмжийн ID-аар хамаарах бөгөөд «reset» нь тэр удирдлагыг загварынх нь сонголт руу буцаана.";
 "cli.virtual.error.failed" = "%@-ийн виртуал тоглоомын удирдлага өөрчлөгдсөнгүй (%@). «ojd virtual show»-оор шалгана уу.";
+"cli.virtual.error.no_unit" = "%@-д төхөөрөмжийн ID байхгүй тул сонголт зөвхөн түүний бүх загварт хамаарна. Командыг --unit-гүйгээр ажиллуулна уу.";
 "cli.virtual.reset.abstract" = "Удирдлагын загвар эсвэл бүх загварыг виртуал тоглоомын удирдлагын автомат сонголт руу буцаах.";
 "cli.virtual.reset.all" = "Удирдлагын бүх загварыг дахин тохируулах.";
 "cli.virtual.reset.all.done" = "Удирдлагын загвар бүр одоо виртуал тоглоомын удирдлагаа автоматаар сонгоно.";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all нь холбогдоогүй загваруудын сонголтыг мөн арилгана. Терминалд эхлээд асууна, үгүй бол --force шаардана.";
 "cli.virtual.reset.dry_run" = "%@-г виртуал тоглоомын удирдлагын автомат сонголт руу буцаах байсан.";
 "cli.virtual.reset.error.target" = "CONTROLLER эсвэл --all-ийн аль нэгийг өгнө үү.";
+"cli.virtual.reset.error.unit_all" = "--unit нь CONTROLLER шаардана, --all биш.";
 "cli.virtual.set.abstract" = "Удирдлагын загварт зориулж виртуал тоглоомын удирдлагыг сонгох.";
 "cli.virtual.set.profile" = "Виртуал тоглоомын удирдлагын профайл.";
 "cli.virtual.show.abstract" = "Удирдлага бүрийн виртуал тоглоомын удирдлага болон сонгож болох профайлуудыг харуулах.";

@@ -75,6 +75,7 @@ extension DeviceManager {
       } else { id.interfaceNumber }
     return ConnectedDeviceSnapshot(
       runtimeIdentifier: id.runtimeIdentifier,
+      unitIdentifier: id.unitIdentifier,
       name: info.name,
       vendorID: id.controllerIdentity.vendorID,
       productID: id.controllerIdentity.productID,

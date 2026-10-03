@@ -195,6 +195,11 @@
 									"suspended"
 								]
 							},
+							"unit": {
+								"type": "string",
+								"pattern": "^U-[A-Za-z0-9_-]{16}$",
+								"description": "The persistent unit ID: stays the same while the controller uses the same port. Absent without a location ID."
+							},
 							"vendorID": {
 								"type": "integer",
 								"minimum": 0,
@@ -476,6 +481,11 @@
 						"startupCommandStatus": {
 							"type": "string"
 						},
+						"unit": {
+							"type": "string",
+							"pattern": "^U-[A-Za-z0-9_-]{16}$",
+							"description": "The persistent unit ID: stays the same while the controller uses the same port. Absent without a location ID."
+						},
 						"vendorID": {
 							"type": "integer",
 							"minimum": 0,
@@ -493,6 +503,13 @@
 										"hid-xbox-one-s-bt",
 										"hid-generic"
 									]
+								},
+								"overrideScope": {
+									"enum": [
+										"unit",
+										"model"
+									],
+									"description": "Whether override is the controller's own choice or its model's."
 								},
 								"profile": {
 									"enum": [
@@ -2145,6 +2162,13 @@
 									"hid-xbox-one-s-bt",
 									"hid-generic"
 								]
+							},
+							"overrideScope": {
+								"enum": [
+									"unit",
+									"model"
+								],
+								"description": "Whether override is the controller's own choice or its model's."
 							},
 							"productID": {
 								"type": "integer",

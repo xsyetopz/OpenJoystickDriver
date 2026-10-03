@@ -1098,6 +1098,7 @@
 "cli.controller.disconnect.failed" = "በ%@ ወቅት የBluetooth ማቋረጥ አልተሳካም፦ %@።";
 "cli.controller.disconnect.not_bluetooth" = "%@ በBluetooth አልተገናኘም። ለማቋረጥ ያላቅቁት።";
 "cli.controller.discussion" = "CONTROLLER ከ«ojd controller list» የተገኘ መለያ ነው፣ ወይም አንድ የተገናኘ መቆጣጠሪያ ብቻ ሲኖረው VVVV:PPPP (የሄክስ አምራችና ምርት መለያ) ነው። እያንዳንዱ የመቆጣጠሪያ ትዕዛዝ አገልግሎቱን ይፈልጋል።";
+"cli.controller.discussion.unit" = "የክፍል መለያ (U-...) አንድ መቆጣጠሪያን በሞዴሉና በሚጠቀምበት USB ወደብ ይሰይማል። መቆጣጠሪያው ያንኑ ወደብ እስከተጠቀመ ድረስ ከዳግም ማስጀመር በኋላም ተመሳሳይ ሆኖ ይቆያል።";
 "cli.controller.error.duration" = "--duration ከ0 በላይ የሆነ የሰከንድ ቁጥር ይፈልጋል።";
 "cli.controller.feature.brightness" = "የሚስተካከል የብርሃን ድምቀት";
 "cli.controller.feature.color" = "በፕሮግራም የሚቀየር የብርሃን ቀለም";
@@ -1153,6 +1154,7 @@
 "cli.controller.show.label.record" = "መዝገብ";
 "cli.controller.show.label.rumble" = "ንዝረት";
 "cli.controller.show.label.session" = "ክፍለ ጊዜ";
+"cli.controller.show.label.unit" = "የክፍል መለያ";
 "cli.controller.show.label.virtual" = "ምናባዊ የጨዋታ መቆጣጠሪያ";
 "cli.controller.show.label.publication" = "ህትመት";
 "cli.controller.show.none" = "ምንም";
@@ -1177,8 +1179,11 @@
 "cli.virtual.abstract" = "OpenJoystickDriver ለመቆጣጠሪያ የሚያትመውን ምናባዊ የጨዋታ መቆጣጠሪያ ያሳዩ እና ይምረጡ።";
 "cli.virtual.changed" = "%@ አሁን %@ (%@) ያትማል።";
 "cli.virtual.stored" = "ለ%@ ምርጫው ተቀምጧል። ምናባዊ ውፅዓት ሲነቃ ይተገበራል።";
+"cli.virtual.unit" = "በሙሉ ሞዴሉ ፋንታ በዚህ መቆጣጠሪያ ላይ ብቻ፣ በክፍል መለያው፣ ይተግብሩ።";
 "cli.virtual.discussion" = "ምርጫ ለተመሳሳይ ሞዴል ላሉ ሁሉም መቆጣጠሪያዎች ይተገበራል። «reset» ሞዴልን ወደ ራስ-ሰር ምርጫ ይመልሳል።";
+"cli.virtual.discussion.unit" = "በ--unit፣ «set» በአንድ መቆጣጠሪያ ላይ በክፍል መለያው ይተገበራል፣ «reset» ደግሞ ያንን መቆጣጠሪያ ወደ ሞዴሉ ምርጫ ይመልሰዋል።";
 "cli.virtual.error.failed" = "የ%@ ምናባዊ የጨዋታ መቆጣጠሪያ አልተለወጠም (%@)። በ«ojd virtual show» ይፈትሹት።";
+"cli.virtual.error.no_unit" = "%@ የክፍል መለያ የለውም፣ ስለዚህ ምርጫ ሊተገበር የሚችለው በሙሉ ሞዴሉ ላይ ብቻ ነው። ትዕዛዙን ያለ --unit ያስኪዱ።";
 "cli.virtual.reset.abstract" = "የመቆጣጠሪያን ሞዴል፣ ወይም ሁሉንም ሞዴሎች፣ ወደ ራስ-ሰር ምናባዊ የጨዋታ መቆጣጠሪያ ምርጫ ይመልሱ።";
 "cli.virtual.reset.all" = "ሁሉንም የመቆጣጠሪያ ሞዴሎች ዳግም ያስጀምሩ።";
 "cli.virtual.reset.all.done" = "እያንዳንዱ የመቆጣጠሪያ ሞዴል አሁን ምናባዊ የጨዋታ መቆጣጠሪያውን በራስ-ሰር ይመርጣል።";
@@ -1188,6 +1193,7 @@
 "cli.virtual.reset.discussion" = "--all ያልተገናኙ ሞዴሎችን ምርጫዎችም ያጸዳል። በተርሚናል ላይ መጀመሪያ ይጠይቃል፣ ካልሆነ --force ይፈልጋል።";
 "cli.virtual.reset.dry_run" = "%@ን ወደ ራስ-ሰር ምናባዊ የጨዋታ መቆጣጠሪያ ምርጫ ይመልስ ነበር።";
 "cli.virtual.reset.error.target" = "CONTROLLER ወይም --all ይስጡ።";
+"cli.virtual.reset.error.unit_all" = "--unit CONTROLLER ይፈልጋል፣ --all አይደለም።";
 "cli.virtual.set.abstract" = "ለመቆጣጠሪያ ሞዴል ምናባዊ የጨዋታ መቆጣጠሪያ ይምረጡ።";
 "cli.virtual.set.profile" = "የምናባዊ የጨዋታ መቆጣጠሪያ መገለጫ።";
 "cli.virtual.show.abstract" = "የእያንዳንዱን መቆጣጠሪያ ምናባዊ የጨዋታ መቆጣጠሪያ እና መምረጥ የሚችሏቸውን መገለጫዎች ያሳዩ።";
