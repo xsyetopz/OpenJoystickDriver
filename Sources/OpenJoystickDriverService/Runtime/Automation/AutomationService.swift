@@ -8,6 +8,11 @@ package protocol AutomationService: Sendable {
   /// The controllers that the service drives now.
   func connectedDevices() async -> [ApplicationServiceDeviceDescription]
   func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload
+  func activateRemappingProfile(id: UUID) async throws -> ApplicationServiceRemappingSnapshotPayload
+  func deactivateRemappingProfile(
+    id: UUID
+  ) async throws
+    -> ApplicationServiceRemappingSnapshotPayload
 }
 
 /// A connected controller as Shortcuts shows it.
@@ -20,12 +25,15 @@ package struct AutomationController: Equatable, Sendable {
   package let model: String
   /// Whether `id` names the model, so the entry stands for any one connected controller of it.
   package let isModelMatch: Bool
+  /// The charge in percent as the controller reports it; `nil` when it reports no level.
+  package let battery: ClosedRange<UInt8>?
 
   package init(_ device: ApplicationServiceDeviceDescription) {
     id = device.unitIdentifier ?? device.runtimeIdentifier
     name = device.name
     model = automationModel(vendorID: device.vendorID, productID: device.productID)
     isModelMatch = false
+    battery = device.connectionState?.power.battery.percentage
   }
 
   /// The entry that `model` names, which resolves to `device`.
@@ -34,6 +42,7 @@ package struct AutomationController: Equatable, Sendable {
     name = device.name
     self.model = automationModel(vendorID: device.vendorID, productID: device.productID)
     isModelMatch = true
+    battery = device.connectionState?.power.battery.percentage
   }
 }
 
@@ -131,5 +140,25 @@ extension AutomationService {
     return ids.compactMap { id in
       snapshot.profiles.first { $0.id == id }.map { AutomationProfile($0, snapshot: snapshot) }
     }
+  }
+
+  /// Activates the profile with `id` and returns it as the service now reports it.
+  package func activateProfile(id: UUID) async throws -> AutomationProfile {
+    try Self.profile(id: id, in: try await activateRemappingProfile(id: id))
+  }
+
+  /// Deactivates the profile with `id` and returns it as the service now reports it.
+  package func deactivateProfile(id: UUID) async throws -> AutomationProfile {
+    try Self.profile(id: id, in: try await deactivateRemappingProfile(id: id))
+  }
+
+  private static func profile(
+    id: UUID,
+    in snapshot: ApplicationServiceRemappingSnapshotPayload
+  ) throws -> AutomationProfile {
+    guard let profile = snapshot.profiles.first(where: { $0.id == id }) else {
+      throw RemappingProfileLibraryError.profileNotFound(id)
+    }
+    return AutomationProfile(profile, snapshot: snapshot)
   }
 }

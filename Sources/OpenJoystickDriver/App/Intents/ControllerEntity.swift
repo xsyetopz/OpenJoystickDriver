@@ -6,16 +6,18 @@
   /// A connected controller that Shortcuts actions take and return.
   @available(macOS 13, *)
   struct ControllerEntity: AppEntity {
-    static let typeDisplayRepresentation = TypeDisplayRepresentation(name: "Controller")
+    static let typeDisplayRepresentation = TypeDisplayRepresentation(
+      name: LocalizedStringResource("shortcuts.controller.type", defaultValue: "Controller")
+    )
     static let defaultQuery = ControllerEntityQuery()
 
     /// The unit ID, the runtime ID when the controller reports no unit ID, or `VVVV:PPPP` for
     /// the one connected controller of that model.
     let id: String
-    @Property(title: "Name")
+    @Property(title: LocalizedStringResource("shortcuts.controller.name", defaultValue: "Name"))
     var name: String
     /// `VVVV:PPPP`.
-    @Property(title: "Model")
+    @Property(title: LocalizedStringResource("shortcuts.controller.model", defaultValue: "Model"))
     var model: String
     let isModelMatch: Bool
 

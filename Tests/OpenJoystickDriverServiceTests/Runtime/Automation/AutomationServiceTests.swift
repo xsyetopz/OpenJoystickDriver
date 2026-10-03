@@ -15,6 +15,19 @@ struct AutomationServiceTests {
     func connectedDevices() -> [ApplicationServiceDeviceDescription] { devices }
 
     func getRemappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
+      snapshot(active: active)
+    }
+
+    /// The snapshot after activation, as the service returns it; the fake keeps no state.
+    func activateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+      snapshot(active: active.union([id]))
+    }
+
+    func deactivateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+      snapshot(active: active.subtracting([id]))
+    }
+
+    private func snapshot(active: Set<UUID>) -> ApplicationServiceRemappingSnapshotPayload {
       ApplicationServiceRemappingSnapshotPayload(
         profiles: profiles,
         activeProfiles: profiles.filter { active.contains($0.id) }.map {
@@ -41,13 +54,22 @@ struct AutomationServiceTests {
     func getRemappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
       throw SnapshotUnavailable()
     }
+
+    func activateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+      throw SnapshotUnavailable()
+    }
+
+    func deactivateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+      throw SnapshotUnavailable()
+    }
   }
 
   private static func device(
     _ name: String,
     runtimeID: String,
     unitID: String?,
-    productID: UInt16 = 0x028E
+    productID: UInt16 = 0x028E,
+    battery: BatteryLevel = .unknown
   ) -> ApplicationServiceDeviceDescription {
     ApplicationServiceDeviceDescription(
       name: name,
@@ -58,6 +80,16 @@ struct AutomationServiceTests {
       discoverySource: .rawUSB,
       serialNumber: nil,
       bindingResult: .hidDescriptorFixture,
+      connectionState: ControllerConnectionState(
+        transport: .usb,
+        backend: .usbDriverKit,
+        isConnected: true,
+        power: ControllerConnectionState.Power(
+          charging: .discharging,
+          battery: battery,
+          wiredPower: nil
+        )
+      ),
       runtimeIdentifier: runtimeID,
       unitIdentifier: unitID
     )
@@ -87,6 +119,22 @@ struct AutomationServiceTests {
     #expect(controllers.map(\.name) == ["Pad A", "Pad B", "Pad A"])
     #expect(controllers.map(\.model) == ["045E:028E", "045E:028E", "045E:028E"])
     #expect(controllers.map(\.isModelMatch) == [false, false, true])
+  }
+
+  @Test
+  func controllersReportTheBatteryChargeAsTheDeviceReportsIt() async throws {
+    let service = FakeService(devices: [
+      Self.device(
+        "Pad A",
+        runtimeID: "pad-1",
+        unitID: nil,
+        battery: BatteryLevel(percentage: 30...39)
+      ),
+      Self.device("Pad B", runtimeID: "pad-2", unitID: nil, productID: 0x0B12),
+    ])
+
+    #expect(await service.controllers().map(\.battery) == [30...39, nil, 30...39, nil])
+    #expect(try await service.controllers(ids: ["045E:028E"]).map(\.battery) == [30...39])
   }
 
   @Test
@@ -174,6 +222,32 @@ struct AutomationServiceTests {
     await #expect(throws: SnapshotUnavailable.self) { try await FailingService().profiles() }
     await #expect(throws: SnapshotUnavailable.self) {
       try await FailingService().profiles(ids: [UUID()])
+    }
+  }
+
+  @Test
+  func activatingAndDeactivatingReturnTheProfileInItsNewState() async throws {
+    let racing = Self.profile("Racing")
+    let service = FakeService(profiles: [racing])
+
+    let activated = try await service.activateProfile(id: racing.id)
+    let deactivated = try await FakeService(profiles: [racing], active: [racing.id])
+      .deactivateProfile(id: racing.id)
+
+    #expect(activated.id == racing.id)
+    #expect(activated.isActive)
+    #expect(!deactivated.isActive)
+  }
+
+  @Test
+  func activatingAProfileMissingFromTheResultThrowsNotFound() async {
+    let missing = UUID()
+
+    await #expect(throws: RemappingProfileLibraryError.profileNotFound(missing)) {
+      try await FakeService().activateProfile(id: missing)
+    }
+    await #expect(throws: SnapshotUnavailable.self) {
+      try await FailingService().deactivateProfile(id: missing)
     }
   }
 }

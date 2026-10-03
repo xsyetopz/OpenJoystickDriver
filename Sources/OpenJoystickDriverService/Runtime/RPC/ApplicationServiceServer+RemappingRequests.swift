@@ -73,8 +73,11 @@ extension ApplicationServiceServer {
     try await remappingRequests.delete(id: id).get()
   }
 
-  func activateRemappingProfile(id: UUID) async throws -> ApplicationServiceRemappingSnapshotPayload
-  { try await remappingRequests.activate(id: id).get() }
+  package func activateRemappingProfile(
+    id: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    try await remappingRequests.activate(id: id).get()
+  }
 
   func deactivateRemappingProfile(
     vendorID: UInt16,
@@ -83,7 +86,7 @@ extension ApplicationServiceServer {
     try await remappingRequests.deactivate(vendorID: vendorID, productID: productID).get()
   }
 
-  func deactivateRemappingProfile(
+  package func deactivateRemappingProfile(
     id: UUID
   ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await remappingRequests.deactivate(profileID: id).get()

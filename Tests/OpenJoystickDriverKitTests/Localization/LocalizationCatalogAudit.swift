@@ -20,49 +20,65 @@ enum LocalizationCatalogAudit {
     "af-ZA": [
       "cli.controller.show.label.battery", "settings.status", "controllers.battery",
       "profiles.turbo", "common.status", "common.stop", "keyboard.tab", "profiles.physical.motor",
+      "shortcuts.controller.model",
     ],
     "ca-AD": [
       "cli.controller.show.label.controls", "cli.controller.show.label.protocol", "menu.zoom",
       "settings.general", "controllers.protocol", "profiles.controlNumber", "profiles.turbo",
       "mapping.mode", "common.protocol", "inputTest.color", "inputTest.rumble", "keyboard.control",
       "console.errors", "profiles.motion.local", "profiles.physical.motor",
+      "shortcuts.controller.model",
     ],
     "ca-ES": [
       "cli.controller.show.label.controls", "cli.controller.show.label.protocol", "menu.zoom",
       "settings.general", "controllers.protocol", "profiles.controlNumber", "profiles.turbo",
       "mapping.mode", "common.protocol", "inputTest.color", "inputTest.rumble", "keyboard.control",
       "console.errors", "profiles.motion.local", "profiles.physical.motor",
+      "shortcuts.controller.model",
     ],
     "ca-FR": [
       "cli.controller.show.label.controls", "cli.controller.show.label.protocol", "menu.zoom",
       "settings.general", "controllers.protocol", "profiles.controlNumber", "profiles.turbo",
       "mapping.mode", "common.protocol", "inputTest.color", "inputTest.rumble", "keyboard.control",
       "console.errors", "profiles.motion.local", "profiles.physical.motor",
+      "shortcuts.controller.model",
     ],
     "ca-IT": [
       "cli.controller.show.label.controls", "cli.controller.show.label.protocol", "menu.zoom",
       "settings.general", "controllers.protocol", "profiles.controlNumber", "profiles.turbo",
       "mapping.mode", "common.protocol", "inputTest.color", "inputTest.rumble", "keyboard.control",
       "console.errors", "profiles.motion.local", "profiles.physical.motor",
-    ], "cs-CZ": ["profiles.turbo", "profiles.trackball.enabled", "profiles.physical.motor"],
+      "shortcuts.controller.model",
+    ],
+    "cs-CZ": [
+      "profiles.turbo", "profiles.trackball.enabled", "profiles.physical.motor",
+      "shortcuts.controller.model",
+    ],
     "da-DK": [
       "cli.controller.show.label.input", "cli.controller.show.label.session", "menu.zoom",
       "settings.status", "capture.destination", "profiles.turbo", "mapping.start",
       "profiles.touch.pointer", "common.status", "common.destination", "inputTest.rumble",
       "inputTest.testRumble", "motion.calibration.pause", "profiles.stick.pointerRing",
       "profiles.physical.motor",
+      "shortcuts.controller.model", "shortcuts.controller.type", "shortcuts.parameter.controller",
     ],
     "de-AT": [
       "cli.controller.show.label.name", "settings.status", "capture.linear", "profiles.turbo",
       "common.status", "developer.route", "profiles.trackball.enabled", "profiles.physical.motor",
+      "shortcuts.controller.name", "shortcuts.controller.type", "shortcuts.parameter.controller",
+      "shortcuts.profile.name",
     ],
     "de-CH": [
       "cli.controller.show.label.name", "settings.status", "capture.linear", "profiles.turbo",
       "common.status", "developer.route", "profiles.trackball.enabled", "profiles.physical.motor",
+      "shortcuts.controller.name", "shortcuts.controller.type", "shortcuts.parameter.controller",
+      "shortcuts.profile.name",
     ],
     "de-DE": [
       "cli.controller.show.label.name", "settings.status", "capture.linear", "profiles.turbo",
       "common.status", "developer.route", "profiles.trackball.enabled", "profiles.physical.motor",
+      "shortcuts.controller.name", "shortcuts.controller.type", "shortcuts.parameter.controller",
+      "shortcuts.profile.name",
     ], "es-AR": ["profiles.turbo"], "es-CR": ["profiles.turbo"], "es-ES": ["profiles.turbo"],
     "es-MX": ["profiles.turbo"], "et-EE": ["profiles.turbo"], "fi-FI": ["profiles.turbo"],
     "fr-BE": [
@@ -89,15 +105,20 @@ enum LocalizationCatalogAudit {
       "profiles.touch.surface", "common.service", "common.destination", "console.title",
       "motion.calibration.pause",
     ], "ga-IE": ["profiles.turbo", "common.stop", "profiles.trackball.yaw"],
-    "hr-HR": ["profiles.turbo", "inputTest.testRumble", "profiles.physical.motor"],
+    "hr-HR": [
+      "profiles.turbo", "inputTest.testRumble", "profiles.physical.motor",
+      "shortcuts.controller.model",
+    ],
     "hu-HU": ["profiles.trackball.yaw", "profiles.physical.motor"],
     "it-CH": [
       "cli.controller.show.label.record", "menu.zoom", "settings.debug", "profiles.turbo",
       "debug.title",
+      "shortcuts.controller.type", "shortcuts.parameter.controller",
     ],
     "it-IT": [
       "cli.controller.show.label.input", "cli.controller.show.label.record", "menu.zoom",
       "settings.debug", "profiles.turbo", "debug.title",
+      "shortcuts.controller.type", "shortcuts.parameter.controller",
     ], "lt-LT": ["profiles.turbo"], "lv-LV": ["profiles.turbo"],
     "nb-NO": [
       "menu.zoom", "settings.status", "profiles.turbo", "mapping.start", "common.status",
@@ -110,6 +131,7 @@ enum LocalizationCatalogAudit {
       "settings.updates", "controllers.protocol", "profiles.activator", "profiles.sectionTriggers",
       "common.status", "common.protocol", "keyboard.tab", "console.title",
       "motion.calibration.offset", "profiles.trackball.enabled", "profiles.trigger.source",
+      "shortcuts.controller.model", "shortcuts.controller.type", "shortcuts.parameter.controller",
     ],
     "nl-NL": [
       "cli.controller.show.label.protocol", "cli.controller.show.label.record",
@@ -117,6 +139,7 @@ enum LocalizationCatalogAudit {
       "settings.updates", "controllers.protocol", "profiles.activator", "profiles.sectionTriggers",
       "common.status", "common.protocol", "keyboard.tab", "console.title",
       "motion.calibration.offset", "profiles.trackball.enabled", "profiles.trigger.source",
+      "shortcuts.controller.model", "shortcuts.controller.type", "shortcuts.parameter.controller",
     ],
     "nn-NO": [
       "menu.zoom", "profiles.turbo", "inputTest.rumble", "inputTest.testRumble",
@@ -126,13 +149,14 @@ enum LocalizationCatalogAudit {
       "menu.zoom", "settings.status", "profiles.turbo", "mapping.start", "common.status",
       "inputTest.rumble", "inputTest.testRumble", "motion.calibration.pause",
       "profiles.physical.motor",
-    ], "pl-PL": ["profiles.turbo", "inputTest.menu"],
+    ], "pl-PL": ["profiles.turbo", "inputTest.menu", "shortcuts.controller.model"],
     "pt-BR": ["menu.zoom", "profiles.turbo", "keyboard.capsLock", "profiles.physical.motor"],
     "pt-PT": ["menu.zoom", "profiles.turbo", "keyboard.capsLock", "profiles.physical.motor"],
     "ro-RO": [
       "cli.controller.show.label.protocol", "menu.zoom", "profiles.activator", "profiles.turbo",
       "inputTest.testRumble", "profiles.motion.local", "profiles.trigger.source",
       "profiles.physical.motor",
+      "shortcuts.controller.model", "shortcuts.controller.type", "shortcuts.parameter.controller",
     ],
     "se-FI": [
       "menu.zoom", "profiles.turbo", "inputTest.rumble", "keyboard.capsLock", "keyboard.tab",
@@ -141,8 +165,15 @@ enum LocalizationCatalogAudit {
     "se-NO": [
       "menu.zoom", "profiles.turbo", "inputTest.rumble", "keyboard.capsLock", "keyboard.tab",
       "motion.calibration.offset",
-    ], "sk-SK": ["profiles.turbo", "profiles.trackball.enabled", "profiles.physical.motor"],
-    "sl-SI": ["profiles.turbo", "inputTest.testRumble", "profiles.physical.motor"],
+    ],
+    "sk-SK": [
+      "profiles.turbo", "profiles.trackball.enabled", "profiles.physical.motor",
+      "shortcuts.controller.model",
+    ],
+    "sl-SI": [
+      "profiles.turbo", "inputTest.testRumble", "profiles.physical.motor",
+      "shortcuts.controller.model",
+    ],
     "sv-FI": [
       "cli.controller.show.label.session", "settings.status", "profiles.turbo", "common.status",
       "inputTest.rumble", "profiles.physical.motor",
@@ -151,6 +182,7 @@ enum LocalizationCatalogAudit {
       "cli.controller.show.label.session", "settings.status", "profiles.turbo", "common.status",
       "inputTest.rumble", "profiles.physical.motor",
     ],
+    "sr-YU": ["shortcuts.controller.model"], "tr-TR": ["shortcuts.controller.model"],
   ]
 
   /// macOS ships no localization for these languages, so System Settings shows its English pane

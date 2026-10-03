@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		0A0000000000000000000101 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000201 /* main.swift */; };
 		0A0000000000000000000102 /* HeadlessApplicationHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000202 /* HeadlessApplicationHost.swift */; };
+		0A0000000000000000000108 /* ControllerIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00000000000000000020C /* ControllerIntents.swift */; };
+		0A0000000000000000000109 /* ProfileIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00000000000000000020D /* ProfileIntents.swift */; };
 		0A0000000000000000000103 /* AppVersionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000203 /* AppVersionIntent.swift */; };
 		0A0000000000000000000106 /* ControllerEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A000000000000000000020A /* ControllerEntity.swift */; };
 		0A0000000000000000000107 /* ProfileEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A000000000000000000020B /* ProfileEntity.swift */; };
@@ -24,6 +26,8 @@
 		0A0000000000000000000208 /* OpenJoystickDriver */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = OpenJoystickDriver; path = .; sourceTree = "<group>"; };
 		0A0000000000000000000201 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = main.swift; path = Sources/OpenJoystickDriver/main.swift; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000202 /* HeadlessApplicationHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeadlessApplicationHost.swift; path = Sources/OpenJoystickDriver/App/HeadlessApplicationHost.swift; sourceTree = SOURCE_ROOT; };
+		0A00000000000000000020C /* ControllerIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ControllerIntents.swift; path = Sources/OpenJoystickDriver/App/Intents/ControllerIntents.swift; sourceTree = SOURCE_ROOT; };
+		0A00000000000000000020D /* ProfileIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileIntents.swift; path = Sources/OpenJoystickDriver/App/Intents/ProfileIntents.swift; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000203 /* AppVersionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppVersionIntent.swift; path = Sources/OpenJoystickDriver/App/Intents/AppVersionIntent.swift; sourceTree = SOURCE_ROOT; };
 		0A000000000000000000020A /* ControllerEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ControllerEntity.swift; path = Sources/OpenJoystickDriver/App/Intents/ControllerEntity.swift; sourceTree = SOURCE_ROOT; };
 		0A000000000000000000020B /* ProfileEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileEntity.swift; path = Sources/OpenJoystickDriver/App/Intents/ProfileEntity.swift; sourceTree = SOURCE_ROOT; };
@@ -64,6 +68,8 @@
 				0A0000000000000000000201 /* main.swift */,
 				0A0000000000000000000202 /* HeadlessApplicationHost.swift */,
 				0A0000000000000000000203 /* AppVersionIntent.swift */,
+				0A00000000000000000020D /* ProfileIntents.swift */,
+				0A00000000000000000020C /* ControllerIntents.swift */,
 				0A000000000000000000020A /* ControllerEntity.swift */,
 				0A000000000000000000020B /* ProfileEntity.swift */,
 				0A0000000000000000000206 /* Info.plist */,
@@ -160,6 +166,8 @@
 				0A0000000000000000000101 /* main.swift in Sources */,
 				0A0000000000000000000102 /* HeadlessApplicationHost.swift in Sources */,
 				0A0000000000000000000103 /* AppVersionIntent.swift in Sources */,
+				0A0000000000000000000109 /* ProfileIntents.swift in Sources */,
+				0A0000000000000000000108 /* ControllerIntents.swift in Sources */,
 				0A0000000000000000000106 /* ControllerEntity.swift in Sources */,
 				0A0000000000000000000107 /* ProfileEntity.swift in Sources */,
 			);
