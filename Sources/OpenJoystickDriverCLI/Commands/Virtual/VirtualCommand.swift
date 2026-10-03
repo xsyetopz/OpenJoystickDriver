@@ -19,7 +19,10 @@ struct VirtualCommand: AsyncParsableCommand {
         "With --unit, 'set' applies to one controller by its unit ID, and 'reset' returns that "
           + "controller to its model's choice."
       ),
-    subcommands: [VirtualShowCommand.self, VirtualSetCommand.self, VirtualResetCommand.self]
+    subcommands: [
+      VirtualShowCommand.self, VirtualSetCommand.self, VirtualResetCommand.self,
+      VirtualFeedCommand.self,
+    ]
   )
 
   @OptionGroup

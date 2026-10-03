@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Ar --unit „set“ attiecas uz vienu kontrolieri pēc tā ierīces ID, bet „reset“ atgriež šo kontrolieri pie tā modeļa izvēles.";
 "cli.virtual.error.failed" = "Virtuālais spēļu kontrolieris ierīcei %@ nemainījās (%@). Pārbaudiet ar „ojd virtual show“.";
 "cli.virtual.error.no_unit" = "Ierīcei %@ nav ierīces ID, tāpēc izvēle var attiekties tikai uz visu tās modeli. Palaidiet komandu bez --unit.";
+"cli.virtual.feed.abstract" = "Publicēt virtuālo spēļu kontrolieri, ko vada stdin.";
+"cli.virtual.feed.discussion" = "Nolasa vienu JSON objektu katrā rindā: „buttons“ un „dpad“ uzskaita nospiestos vadības elementus, piemēram, south un up, bet „axes“ piešķir vērtības asu nosaukumiem, piemēram, left_stick_x. Trūkstošie vadības elementi ir neitrāli. Kursorsviras mainās no -1 līdz 1, Y uz augšu; sprūdi mainās no 0 līdz 1. Izvada katru izvades komandu, ko spēles sūta spēļu kontrolierim, piemēram, vibrāciju, kā vienu JSON objektu katrā rindā. Apstājas, kad ievade beidzas.";
+"cli.virtual.feed.error.closed" = "Pakalpojums aizvēra virtuālo spēļu kontrolieri. Pārbaudiet to ar „ojd status“.";
+"cli.virtual.feed.error.frame" = "Rinda %@ nav derīgs kadrs. „ojd virtual feed --help“ parāda formātu.";
+"cli.virtual.feed.profile" = "Publicējamā virtuālā spēļu kontroliera profils.";
+"cli.virtual.feed.started" = "Tiek publicēts virtuāls spēļu kontrolieris (%@). Rakstiet kadrus stdin; beidziet ievadi vai nospiediet Control-C, lai apturētu.";
 "cli.virtual.reset.abstract" = "Atgriezt kontroliera modeli vai visus modeļus pie automātiskās virtuālā spēļu kontroliera atlases.";
 "cli.virtual.reset.all" = "Atiestatīt visus kontrolieru modeļus.";
 "cli.virtual.reset.all.done" = "Katrs kontrolieru modelis tagad automātiski atlasa savu virtuālo spēļu kontrolieri.";

@@ -25,6 +25,21 @@ extension ApplicationServiceRuntime {
     )
   }
 
+  /// Builds the device of one `ojd virtual feed`, which reports its output commands to the feed
+  /// instead of a physical controller.
+  nonisolated static func makeVirtualFeedDevice(
+    profileID: VirtualHIDProfileID,
+    onOutputCommand: @escaping UserSpaceOutputDispatcher.OutputCommandHandler
+  ) throws -> any VirtualFeedDevice {
+    let profile = try profileID.makeProfile()
+    return try UserSpaceOutputDispatcher(
+      profile: profile.identity,
+      format: profile.reportFormat,
+      devicePublisher: hidFactoryPublisher,
+      onOutputCommand: onOutputCommand
+    )
+  }
+
   /// Shared by every dispatcher, because the factory accepts commands from one connection only.
   /// Nil when the app bundles no extension, so devices use `IOHIDUserDevice` directly.
   nonisolated static let hidFactoryPublisher: DriverKitHIDFactoryPublisher? =

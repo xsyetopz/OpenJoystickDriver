@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Con --unit, 'set' se aplica a un solo control según su ID de unidad, y 'reset' devuelve ese control a la elección de su modelo.";
 "cli.virtual.error.failed" = "El control virtual de %@ no cambió (%@). Revisalo con 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ no tiene ID de unidad, así que una elección solo puede aplicarse a todo su modelo. Ejecutá el comando sin --unit.";
+"cli.virtual.feed.abstract" = "Publicar un control virtual controlado por stdin.";
+"cli.virtual.feed.discussion" = "Lee un objeto JSON por línea: 'buttons' y 'dpad' enumeran los controles presionados, como south y up, y 'axes' asigna valores a los nombres de los ejes, como left_stick_x. Los controles que faltan quedan en neutro. Los sticks van de -1 a 1, con Y hacia arriba; los gatillos van de 0 a 1. Imprime cada cocontrol de salida que los juegos envían al control, como la vibración, como un objeto JSON por línea. Termina cuando terminá la entrada.";
+"cli.virtual.feed.error.closed" = "El servicio cerró el control virtual. Comprobalo con 'ojd status'.";
+"cli.virtual.feed.error.frame" = "La línea %@ no es un fotograma válido. 'ojd virtual feed --help' muestra el formato.";
+"cli.virtual.feed.profile" = "El perfil del control virtual que se va a publicar.";
+"cli.virtual.feed.started" = "Publicando un control virtual %@. Escribí fotogramas en stdin; terminá la entrada o presioná Control-C para detener.";
 "cli.virtual.reset.abstract" = "Devuelve el modelo de un control, o todos los modelos, a la selección automática de control virtual.";
 "cli.virtual.reset.all" = "Restablece todos los modelos de control.";
 "cli.virtual.reset.all.done" = "Ahora cada modelo de control selecciona su control virtual automáticamente.";

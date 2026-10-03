@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "S --unit sa „set“ použije pre jeden ovládač podľa jeho ID zariadenia a „reset“ vráti tento ovládač na voľbu jeho modelu.";
 "cli.virtual.error.failed" = "Virtuálny gamepad pre %@ sa nezmenil (%@). Skontrolujte to pomocou „ojd virtual show“.";
 "cli.virtual.error.no_unit" = "%@ nemá ID zariadenia, preto sa voľba môže vzťahovať len na celý jeho model. Spustite príkaz bez --unit.";
+"cli.virtual.feed.abstract" = "Zverejní virtuálny gamepad ovládaný cez stdin.";
+"cli.virtual.feed.discussion" = "Číta jeden objekt JSON na riadok: „buttons“ a „dpad“ uvádzajú stlačené ovládacie prvky, napríklad south a up, a „axes“ priraďuje hodnoty názvom osí, napríklad left_stick_x. Chýbajúce ovládacie prvky sú neutrálne. Páčky sa pohybujú od -1 do 1, os Y smeruje nahor; spúšte sa pohybujú od 0 do 1. Vypisuje každý výstupný príkaz, ktorý hry posielajú gamepadu, napríklad vibrácie, ako jeden objekt JSON na riadok. Skončí, keď skončí vstup.";
+"cli.virtual.feed.error.closed" = "Služba zavrela virtuálny gamepad. Skontrolujte to pomocou „ojd status“.";
+"cli.virtual.feed.error.frame" = "Riadok %@ nie je platný snímok. „ojd virtual feed --help“ zobrazuje formát.";
+"cli.virtual.feed.profile" = "Profil virtuálneho gamepadu, ktorý sa má zverejniť.";
+"cli.virtual.feed.started" = "Zverejňuje sa virtuálny gamepad (%@). Zapisujte snímky do stdin; ukončite vstup alebo zastavte stlačením Control-C.";
 "cli.virtual.reset.abstract" = "Vráti model ovládača alebo všetky modely na automatický výber virtuálneho gamepadu.";
 "cli.virtual.reset.all" = "Resetuje všetky modely ovládačov.";
 "cli.virtual.reset.all.done" = "Každý model ovládača teraz vyberá svoj virtuálny gamepad automaticky.";

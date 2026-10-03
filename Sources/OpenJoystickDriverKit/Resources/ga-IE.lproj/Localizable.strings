@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Le --unit, baineann «set» le rialtóir amháin de réir a ID aonaid, agus cuireann «reset» an rialtóir sin ar ais ar rogha a mhúnla.";
 "cli.virtual.error.failed" = "Níor athraigh an gamepad fíorúil do %@ (%@). Seiceáil é le «ojd virtual show».";
 "cli.virtual.error.no_unit" = "Níl ID aonaid ag %@, mar sin ní féidir rogha a chur i bhfeidhm ach ar a mhúnla iomlán. Rith an t-ordú gan --unit.";
+"cli.virtual.feed.abstract" = "Foilsigh gamepad fíorúil a threoraíonn stdin.";
+"cli.virtual.feed.discussion" = "Léann sé réad JSON amháin in aghaidh na líne: liostaíonn «buttons» agus «dpad» na rialuithe atá brúite, mar south agus up, agus mapálann «axes» ainmneacha aiseanna, mar left_stick_x, le luachanna. Tá rialuithe atá ar iarraidh neodrach. Ritheann bataí ó -1 go 1 agus Y suas; ritheann truicir ó 0 go 1. Priontálann sé gach ordú aschuir a sheolann cluichí chuig an gamepad, mar creathadh, mar réad JSON amháin in aghaidh na líne. Stopann sé nuair a chríochnaíonn an t-ionchur.";
+"cli.virtual.feed.error.closed" = "Dhún an tseirbhís an gamepad fíorúil. Seiceáil é le «ojd status».";
+"cli.virtual.feed.error.frame" = "Ní fráma bailí é líne %@. Léiríonn «ojd virtual feed --help» an fhormáid.";
+"cli.virtual.feed.profile" = "Próifíl an ghamepad fhíorúil atá le foilsiú.";
+"cli.virtual.feed.started" = "Gamepad fíorúil (%@) á fhoilsiú. Scríobh frámaí chuig stdin; cuir deireadh leis an ionchur nó brúigh Control-C chun stopadh.";
 "cli.virtual.reset.abstract" = "Tabhair múnla rialtóra, nó gach múnla, ar ais chuig roghnú uathoibríoch gamepad fíorúil.";
 "cli.virtual.reset.all" = "Athshocraigh gach múnla rialtóra.";
 "cli.virtual.reset.all.done" = "Roghnaíonn gach múnla rialtóra a ghamepad fíorúil go huathoibríoch anois.";

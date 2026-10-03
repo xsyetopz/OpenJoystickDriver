@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Valikuga --unit kehtib 'set' ühe kontrolleri kohta selle seadme ID järgi ja 'reset' viib selle kontrolleri tagasi selle mudeli valiku juurde.";
 "cli.virtual.error.failed" = "Kontrolleri %@ virtuaalne mängupult ei muutunud (%@). Kontrolli seda käsuga 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "Kontrolleril %@ puudub seadme ID, seega saab valik kehtida ainult kogu selle mudeli kohta. Käivita käsk ilma valikuta --unit.";
+"cli.virtual.feed.abstract" = "Avalda virtuaalne mängupult, mida juhitakse stdin kaudu.";
+"cli.virtual.feed.discussion" = "Loeb rea kohta ühe JSON-objekti: 'buttons' ja 'dpad' loetlevad vajutatud juhtelemendid, näiteks south ja up, ning 'axes' seob telgede nimed, näiteks left_stick_x, väärtustega. Puuduvad juhtelemendid on neutraalsed. Juhtkangid liiguvad vahemikus -1 kuni 1, Y on ülespoole; päästikud liiguvad vahemikus 0 kuni 1. Prindib iga väljundkäsu, mida mängud mängupulti saadavad, näiteks värina, ühe JSON-objektina rea kohta. Peatub, kui sisend lõpeb.";
+"cli.virtual.feed.error.closed" = "Teenus sulges virtuaalse mängupuldi. Kontrolli seda käsuga 'ojd status'.";
+"cli.virtual.feed.error.frame" = "Rida %@ ei ole kehtiv kaader. 'ojd virtual feed --help' näitab vormingut.";
+"cli.virtual.feed.profile" = "Avaldatava virtuaalse mängupuldi profiil.";
+"cli.virtual.feed.started" = "Avaldatakse virtuaalset mängupulti (%@). Kirjuta kaadrid stdin-i; lõpeta sisend või peatamiseks vajuta Control-C.";
 "cli.virtual.reset.abstract" = "Vii kontrolleri mudel või iga mudel tagasi virtuaalse mängupuldi automaatse valiku juurde.";
 "cli.virtual.reset.all" = "Lähtesta iga kontrollerimudel.";
 "cli.virtual.reset.all.done" = "Iga kontrollerimudel valib nüüd oma virtuaalse mängupuldi automaatselt.";

@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "使用 --unit 時，'set' 只會套用至依單元 ID 指定的那一個控制器，'reset' 則會讓該控制器恢復為其型號的選擇。";
 "cli.virtual.error.failed" = "%@ 的虛擬遊戲控制器未變更 (%@)。請用 'ojd virtual show' 檢查。";
 "cli.virtual.error.no_unit" = "%@ 沒有單元 ID，因此所做選擇只能套用至其整個型號。請不使用 --unit 來執行該指令。";
+"cli.virtual.feed.abstract" = "發布由 stdin 驅動的虛擬遊戲控制器。";
+"cli.virtual.feed.discussion" = "每行讀取一個 JSON 物件：'buttons' 和 'dpad' 列出被按下的控制項，例如 south 和 up；'axes' 將軸名稱（例如 left_stick_x）對應到數值。缺少的控制項保持中立。搖桿範圍為 -1 到 1，Y 軸向上；扳機範圍為 0 到 1。將遊戲傳送給遊戲控制器的每個輸出命令（例如震動）以每行一個 JSON 物件的形式輸出。輸入結束時停止。";
+"cli.virtual.feed.error.closed" = "服務已關閉虛擬遊戲控制器。請用 'ojd status' 檢查。";
+"cli.virtual.feed.error.frame" = "第 %@ 行不是有效的影格。'ojd virtual feed --help' 會顯示格式。";
+"cli.virtual.feed.profile" = "要發布的虛擬遊戲控制器設定檔。";
+"cli.virtual.feed.started" = "正在發布 %@ 虛擬遊戲控制器。請將影格寫入 stdin；結束輸入或按 Control-C 即可停止。";
 "cli.virtual.reset.abstract" = "讓控制器的型號或所有型號恢復自動選擇虛擬遊戲控制器。";
 "cli.virtual.reset.all" = "重設所有控制器型號。";
 "cli.virtual.reset.all.done" = "現在每個控制器型號都會自動選擇其虛擬遊戲控制器。";

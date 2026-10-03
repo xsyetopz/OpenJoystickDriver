@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Go geavahat --unit, de ”set” guoská ovtta stivrejeaddjái su ovttadaga-ID mielde, ja ”reset” máhcaha dan stivrejeaddji su modealla válljemii.";
 "cli.virtual.error.failed" = "%@ virtuála speallanbáddi ii rievdan (%@). Geahčat dan komanddain ”ojd virtual show”.";
 "cli.virtual.error.no_unit" = "%@ ii leat ovttadaga-ID, danne válljen sáhttá guoskat dušše olles modeallii. Čađat komando --unit haga.";
+"cli.virtual.feed.abstract" = "Almmuhit virtuála speallanbáddi mii stivrejuvvo stdin bokte.";
+"cli.virtual.feed.discussion" = "Lohká ovtta JSON-objeavtta juohke linjás: ”buttons” ja ”dpad” listet deaddiluvvon stivrenelementtaid, ovdamearkka dihte south ja up, ja ”axes” govvida akselnamaid, ovdamearkka dihte left_stick_x, árvvuide. Váilevaš stivrenelementtat leat neutrálat. Stickat leat gaskal -1 ja 1, Y bajás; triggerat leat gaskal 0 ja 1. Prentte juohke olggosmeannudusa maid spealut sáddejit speallanbáddái, ovdamearkka dihte vibrašuvnna, ovtta JSON-objeavttas juohke linjás. Heaittiha go sisdoallu nohká.";
+"cli.virtual.feed.error.closed" = "Bálvalus gidde virtuála speallanbáddi. Geahčat dan komanddain ”ojd status”.";
+"cli.virtual.feed.error.frame" = "Linjá %@ ii leat gustovaš ráma. ”ojd virtual feed --help” čájeha formáhta.";
+"cli.virtual.feed.profile" = "Virtuála speallanbáddi profiila man galgá almmuhit.";
+"cli.virtual.feed.started" = "Almmuhan virtuála speallanbáddi (%@). Čále rámaid stdin:ii; heaitte sisdoalu dahje deaddil Control-C botket.";
 "cli.virtual.reset.abstract" = "Máhcaha stivrejeaddji modealet, dahje buot modeallaid, virtuála speallanbáddi automáhtalaš válljemii.";
 "cli.virtual.reset.all" = "Ođđasit buot stivrejeaddjimodeallaid.";
 "cli.virtual.reset.all.done" = "Juohke stivrejeaddjimodealla vállje dál virtuála speallanbáddi automáhtalaččat.";

@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Amb --unit, 'set' s’aplica a un sol comandament pel seu ID d’unitat, i 'reset' retorna aquest comandament a l’elecció del seu model.";
 "cli.virtual.error.failed" = "El comandament virtual de %@ no ha canviat (%@). Comproveu-ho amb 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ no té ID d’unitat, de manera que una elecció només es pot aplicar a tot el seu model. Executeu l’ordre sense --unit.";
+"cli.virtual.feed.abstract" = "Publica un comandament virtual controlat per stdin.";
+"cli.virtual.feed.discussion" = "Llegeix un objecte JSON per línia: 'buttons' i 'dpad' enumeren els controls premuts, com south i up, i 'axes' associa valors als noms dels eixos, com left_stick_x. Els controls que falten queden en neutre. Els sticks van de -1 a 1, amb Y cap amunt; els gallets van de 0 a 1. Imprimeix cada ordre de sortida que els jocs envien al comandament, com la vibració, com un objecte JSON per línia. S’atura quan acabeu l’entrada.";
+"cli.virtual.feed.error.closed" = "El servei ha tancat el comandament virtual. Comproveu-ho amb 'ojd status'.";
+"cli.virtual.feed.error.frame" = "La línia %@ no és un fotograma vàlid. 'ojd virtual feed --help' mostra el format.";
+"cli.virtual.feed.profile" = "El perfil del comandament virtual que es publicarà.";
+"cli.virtual.feed.started" = "Publicant un comandament virtual %@. Escriviu fotogrames a stdin; acabeu l’entrada o premeu Control-C per aturar.";
 "cli.virtual.reset.abstract" = "Torna el model d’un comandament, o tots els models, a la selecció automàtica del comandament virtual.";
 "cli.virtual.reset.all" = "Restableix tots els models de comandament.";
 "cli.virtual.reset.all.done" = "Tots els models de comandament trien ara el comandament virtual automàticament.";

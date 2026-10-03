@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "使用 --unit 时，'set' 只作用于按单元 ID 指定的那一个控制器，'reset' 会让该控制器恢复为其型号的选择。";
 "cli.virtual.error.failed" = "%@ 的虚拟游戏手柄未更改（%@）。请用 'ojd virtual show' 检查。";
 "cli.virtual.error.no_unit" = "%@ 没有单元 ID，因此所做选择只能适用于其整个型号。请不带 --unit 运行该命令。";
+"cli.virtual.feed.abstract" = "发布一个由 stdin 驱动的虚拟游戏手柄。";
+"cli.virtual.feed.discussion" = "每行读取一个 JSON 对象：'buttons' 和 'dpad' 列出被按下的控件，例如 south 和 up；'axes' 将轴名称（例如 left_stick_x）映射到数值。缺少的控件保持中立。摇杆范围为 -1 到 1，Y 轴向上；扳机范围为 0 到 1。将游戏发送给游戏手柄的每条输出命令（例如震动）以每行一个 JSON 对象的形式输出。输入结束时停止。";
+"cli.virtual.feed.error.closed" = "服务已关闭虚拟游戏手柄。请用 'ojd status' 检查。";
+"cli.virtual.feed.error.frame" = "第 %@ 行不是有效的帧。'ojd virtual feed --help' 会显示格式。";
+"cli.virtual.feed.profile" = "要发布的虚拟游戏手柄配置文件。";
+"cli.virtual.feed.started" = "正在发布 %@ 虚拟游戏手柄。请将帧写入 stdin；结束输入或按 Control-C 即可停止。";
 "cli.virtual.reset.abstract" = "让控制器的型号或所有型号恢复自动选择虚拟游戏手柄。";
 "cli.virtual.reset.all" = "重置所有控制器型号。";
 "cli.virtual.reset.all.done" = "现在每个控制器型号都会自动选择其虚拟游戏手柄。";

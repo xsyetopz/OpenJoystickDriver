@@ -1187,6 +1187,12 @@
 "cli.virtual.discussion.unit" = "With --unit, 'set' applies to one controller by its unit ID, and 'reset' returns that controller to its model's choice.";
 "cli.virtual.error.failed" = "The virtual gamepad for %@ did not change (%@). Check it with 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ has no unit ID, so a choice can apply only to its whole model. Run the command without --unit.";
+"cli.virtual.feed.abstract" = "Publish a virtual gamepad that standard input drives.";
+"cli.virtual.feed.discussion" = "Reads one JSON object per line: 'buttons' and 'dpad' list the pressed controls, such as south and up, and 'axes' maps axis names, such as left_stick_x, to values. Missing controls are neutral. Sticks run from -1 to 1 with Y up; triggers run from 0 to 1. Prints each output command that games send to the gamepad, such as rumble, as one JSON object per line. Stops when the input ends.";
+"cli.virtual.feed.error.closed" = "The service closed the virtual gamepad. Check it with 'ojd status'.";
+"cli.virtual.feed.error.frame" = "Line %@ is not a valid frame. 'ojd virtual feed --help' shows the format.";
+"cli.virtual.feed.profile" = "The virtual gamepad profile to publish.";
+"cli.virtual.feed.started" = "Publishing a %@ virtual gamepad. Write frames on standard input; end the input or press Control-C to stop.";
 "cli.virtual.reset.abstract" = "Return a controller's model, or every model, to automatic virtual gamepad selection.";
 "cli.virtual.reset.all" = "Reset every controller model.";
 "cli.virtual.reset.all.done" = "Every controller model now selects its virtual gamepad automatically.";

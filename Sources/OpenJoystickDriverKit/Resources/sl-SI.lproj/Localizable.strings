@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Z možnostjo --unit „set“ velja za en krmilnik glede na njegov ID naprave, „reset“ pa ta krmilnik vrne na izbiro njegovega modela.";
 "cli.virtual.error.failed" = "Navidezni igralni plošček za %@ se ni spremenil (%@). Preverite z „ojd virtual show“.";
 "cli.virtual.error.no_unit" = "%@ nima ID-ja naprave, zato izbira lahko velja samo za celoten model. Zaženite ukaz brez --unit.";
+"cli.virtual.feed.abstract" = "Objavi navidezni igralni plošček, ki ga upravlja stdin.";
+"cli.virtual.feed.discussion" = "Prebere en objekt JSON na vrstico: „buttons“ in „dpad“ navajata pritisnjene upravljalne elemente, na primer south in up, „axes“ pa imenom osi, na primer left_stick_x, dodeli vrednosti. Manjkajoči upravljalni elementi so nevtralni. Palčki segajo od -1 do 1, Y je navzgor; sprožilca segata od 0 do 1. Izpiše vsak izhodni ukaz, ki ga igre pošljejo igralnemu ploščku, na primer vibriranje, kot en objekt JSON na vrstico. Ustavi se, ko se vhod konča.";
+"cli.virtual.feed.error.closed" = "Storitev je zaprla navidezni igralni plošček. Preverite z „ojd status“.";
+"cli.virtual.feed.error.frame" = "Vrstica %@ ni veljaven okvir. „ojd virtual feed --help“ prikaže obliko.";
+"cli.virtual.feed.profile" = "Profil navideznega igralnega ploščka, ki ga je treba objaviti.";
+"cli.virtual.feed.started" = "Objavljanje navideznega igralnega ploščka (%@). Pišite okvirje v stdin; končajte vnos ali pritisnite Control-C za ustavitev.";
 "cli.virtual.reset.abstract" = "Vrne model krmilnika ali vse modele na samodejno izbiro navideznega igralnega ploščka.";
 "cli.virtual.reset.all" = "Ponastavi vse modele krmilnikov.";
 "cli.virtual.reset.all.done" = "Vsak model krmilnika zdaj samodejno izbere svoj navidezni igralni plošček.";

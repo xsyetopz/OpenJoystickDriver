@@ -199,6 +199,31 @@ extension ApplicationServiceClient {
     )
   }
 
+  /// Publishes a virtual controller with the `profile` virtual HID profile, such as `hid-generic`,
+  /// that this client drives with ``exchangeVirtualFeed(token:frame:)``.
+  public func openVirtualFeed(profile: String) async throws -> VirtualFeedSession {
+    try await call(.openVirtualFeed, LocalServiceRPCVirtualFeedOpenArguments(profile: profile))
+  }
+
+  /// Sends `frame`, when given, to the feed and returns the output commands queued since the
+  /// previous exchange. Exchange at least every ``VirtualFeedExchangeResult/idleTimeoutSeconds``
+  /// to keep the feed open.
+  public func exchangeVirtualFeed(
+    token: UUID,
+    frame: VirtualFeedFrame? = nil
+  ) async throws -> VirtualFeedExchangeResult {
+    try await call(
+      .exchangeVirtualFeed,
+      LocalServiceRPCVirtualFeedExchangeArguments(token: token, frame: frame)
+    )
+  }
+
+  /// Removes the feed's virtual controller; false when no open feed has the token.
+  @discardableResult
+  public func closeVirtualFeed(token: UUID) async throws -> Bool {
+    try await call(.closeVirtualFeed, LocalServiceRPCVirtualFeedCloseArguments(token: token))
+  }
+
   public func suspendController(
     vendorID: UInt16,
     productID: UInt16,

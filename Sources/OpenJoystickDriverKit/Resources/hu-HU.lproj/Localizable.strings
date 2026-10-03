@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "A --unit használatakor a 'set' egyetlen vezérlőre vonatkozik az eszközazonosítója alapján, a 'reset' pedig visszaállítja azt a vezérlőt a modellje választására.";
 "cli.virtual.error.failed" = "%@ virtuális gamepadje nem változott (%@). Ellenőrizze az 'ojd virtual show' paranccsal.";
 "cli.virtual.error.no_unit" = "%@ nem rendelkezik eszközazonosítóval, ezért a választás csak a teljes modelljére vonatkozhat. Futtassa a parancsot a --unit kapcsoló nélkül.";
+"cli.virtual.feed.abstract" = "Közzétesz egy virtuális gamepadet, amelyet a stdin vezérel.";
+"cli.virtual.feed.discussion" = "Soronként egy JSON-objektumot olvas: a 'buttons' és a 'dpad' felsorolja a lenyomott vezérlőelemeket, például south és up, az 'axes' pedig értékeket rendel a tengelynevekhez, például left_stick_x. A hiányzó vezérlőelemek semlegesek. A karok -1 és 1 között mozognak, az Y felfelé mutat; a ravaszok 0 és 1 között mozognak. Kiír minden kimeneti parancsot, amelyet a játékok a gamepadnek küldenek, például a rezgést, soronként egy JSON-objektumként. Leáll, amikor a bemenet véget ér.";
+"cli.virtual.feed.error.closed" = "A szolgáltatás bezárta a virtuális gamepadet. Ellenőrizze az 'ojd status' paranccsal.";
+"cli.virtual.feed.error.frame" = "A(z) %@. sor nem érvényes keret. Az 'ojd virtual feed --help' megmutatja a formátumot.";
+"cli.virtual.feed.profile" = "A közzéteendő virtuális gamepad profilja.";
+"cli.virtual.feed.started" = "Virtuális gamepad (%@) közzététele. Írjon kereteket a stdin-re; fejezze be a bemenetet, vagy a leállításhoz nyomja meg a Control-C billentyűkombinációt.";
 "cli.virtual.reset.abstract" = "Egy vezérlő modelljét, vagy az összes modellt visszaállítja az automatikus virtuális gamepad-kiválasztásra.";
 "cli.virtual.reset.all" = "Minden vezérlőmodell visszaállítása.";
 "cli.virtual.reset.all.done" = "Minden vezérlőmodell mostantól automatikusan választja ki a virtuális gamepadjét.";

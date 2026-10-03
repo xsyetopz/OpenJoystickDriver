@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Sa --unit, „set“ važi za jedan kontroler prema njegovom ID-u uređaja, a „reset“ vraća taj kontroler na izbor njegovog modela.";
 "cli.virtual.error.failed" = "Virtuelni gejmpad za %@ nije promenjen (%@). Proverite ga pomoću „ojd virtual show“.";
 "cli.virtual.error.no_unit" = "%@ nema ID uređaja, pa izbor može da važi samo za ceo njegov model. Pokrenite komandu bez --unit.";
+"cli.virtual.feed.abstract" = "Objavi virtuelni gejmpad kojim upravlja stdin.";
+"cli.virtual.feed.discussion" = "Čita jedan JSON objekat po redu: „buttons“ i „dpad“ nabrajaju pritisnute kontrole, na primer south i up, a „axes“ dodeljuje vrednosti nazivima osa, na primer left_stick_x. Kontrole koje nedostaju su neutralne. Štapići idu od -1 do 1, a Y je naviše; obarači idu od 0 do 1. Ispisuje svaku izlaznu komandu koju igre šalju gejmpadu, na primer vibraciju, kao jedan JSON objekat po redu. Zaustavlja se kada ulaz završi.";
+"cli.virtual.feed.error.closed" = "Usluga je zatvorila virtuelni gejmpad. Proverite ga pomoću „ojd status“.";
+"cli.virtual.feed.error.frame" = "Red %@ nije važeći okvir. „ojd virtual feed --help“ prikazuje format.";
+"cli.virtual.feed.profile" = "Profil virtuelnog gejmpada koji se objavljuje.";
+"cli.virtual.feed.started" = "Objavljuje se virtuelni gejmpad (%@). Pišite okvire u stdin; završite ulaz ili pritisnite Control-C da zaustavite.";
 "cli.virtual.reset.abstract" = "Vraća model kontrolera, ili svaki model, na automatski izbor virtuelnog gejmpada.";
 "cli.virtual.reset.all" = "Resetuje svaki model kontrolera.";
 "cli.virtual.reset.all.done" = "Svaki model kontrolera sada automatski bira svoj virtuelni gejmpad.";

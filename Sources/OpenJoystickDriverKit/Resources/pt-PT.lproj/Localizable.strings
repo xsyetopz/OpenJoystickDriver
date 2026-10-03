@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Com --unit, 'set' aplica-se a um único comando pelo ID da unidade, e 'reset' repõe esse comando na escolha do modelo.";
 "cli.virtual.error.failed" = "O comando virtual de %@ não mudou (%@). Verifique com 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ não tem ID de unidade, pelo que uma escolha só pode aplicar-se a todo o modelo. Execute sem --unit.";
+"cli.virtual.feed.abstract" = "Publicar um comando virtual controlado pelo stdin.";
+"cli.virtual.feed.discussion" = "Lê um objeto JSON por linha: 'buttons' e 'dpad' listam os controlos premidos, como south e up, e 'axes' associa valores aos nomes dos eixos, como left_stick_x. Os controlos em falta ficam neutros. Os manípulos vão de -1 a 1, com Y para cima; os gatilhos vão de 0 a 1. Imprime cada comando de saída que os jogos enviam ao comando, como a vibração, como um objeto JSON por linha. Termina quando a entrada termina.";
+"cli.virtual.feed.error.closed" = "O serviço fechou o comando virtual. Verifique com 'ojd status'.";
+"cli.virtual.feed.error.frame" = "A linha %@ não é uma trama válida. 'ojd virtual feed --help' mostra o formato.";
+"cli.virtual.feed.profile" = "O perfil do comando virtual a publicar.";
+"cli.virtual.feed.started" = "A publicar um comando virtual %@. Escreva tramas no stdin; termine a entrada ou prima Control-C para parar.";
 "cli.virtual.reset.abstract" = "Devolve o modelo de um comando, ou todos os modelos, à seleção automática de comando virtual.";
 "cli.virtual.reset.all" = "Repõe todos os modelos de comando.";
 "cli.virtual.reset.all.done" = "Todos os modelos de comando selecionam agora o seu comando virtual automaticamente.";

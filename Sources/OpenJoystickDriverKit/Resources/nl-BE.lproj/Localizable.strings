@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Met --unit geldt 'set' voor één controller op basis van het apparaat-ID, en 'reset' zet die controller terug op de keuze van zijn model.";
 "cli.virtual.error.failed" = "De virtuele gamepad voor %@ is niet gewijzigd (%@). Controleer het met 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ heeft geen apparaat-ID, dus een keuze kan alleen voor het hele model gelden. Voer de opdracht uit zonder --unit.";
+"cli.virtual.feed.abstract" = "Een virtuele gamepad publiceren die door stdin wordt aangestuurd.";
+"cli.virtual.feed.discussion" = "Leest één JSON-object per regel: 'buttons' en 'dpad' geven de ingedrukte bedieningselementen weer, zoals south en up, en 'axes' koppelt namen van assen, zoals left_stick_x, aan waarden. Ontbrekende bedieningselementen blijven neutraal. Sticks lopen van -1 tot 1 met Y omhoog; triggers lopen van 0 tot 1. Drukt elk uitvoercommando dat games naar de gamepad sturen, zoals trillen, af als één JSON-object per regel. Stopt wanneer de invoer eindigt.";
+"cli.virtual.feed.error.closed" = "De service heeft de virtuele gamepad gesloten. Controleer het met 'ojd status'.";
+"cli.virtual.feed.error.frame" = "Regel %@ is geen geldig frame. 'ojd virtual feed --help' toont het formaat.";
+"cli.virtual.feed.profile" = "Het profiel van de virtuele gamepad die moet worden gepubliceerd.";
+"cli.virtual.feed.started" = "Een virtuele gamepad (%@) wordt gepubliceerd. Schrijf frames naar stdin; beëindig de invoer of druk op Control-C om te stoppen.";
 "cli.virtual.reset.abstract" = "Zet het model van een controller, of elk model, terug op automatische selectie van de virtuele gamepad.";
 "cli.virtual.reset.all" = "Zet elk controllermodel terug.";
 "cli.virtual.reset.all.done" = "Elk controllermodel selecteert nu automatisch zijn virtuele gamepad.";

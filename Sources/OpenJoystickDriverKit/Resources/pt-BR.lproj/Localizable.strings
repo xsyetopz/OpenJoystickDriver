@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Com --unit, 'set' se aplica a um único controle pelo ID da unidade dele, e 'reset' devolve esse controle à escolha do modelo.";
 "cli.virtual.error.failed" = "O gamepad virtual de %@ não mudou (%@). Verifique com 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ não tem ID de unidade, então uma escolha só pode valer para todo o modelo. Execute o comando sem --unit.";
+"cli.virtual.feed.abstract" = "Publicar um gamepad virtual controlado pelo stdin.";
+"cli.virtual.feed.discussion" = "Lê um objeto JSON por linha: 'buttons' e 'dpad' listam os controles pressionados, como south e up, e 'axes' associa valores aos nomes dos eixos, como left_stick_x. Controles ausentes ficam neutros. Os analógicos vão de -1 a 1, com Y para cima; os gatilhos vão de 0 a 1. Imprime cada comando de saída que os jogos enviam ao gamepad, como vibração, como um objeto JSON por linha. Termina quando a entrada termina.";
+"cli.virtual.feed.error.closed" = "O serviço fechou o gamepad virtual. Verifique com 'ojd status'.";
+"cli.virtual.feed.error.frame" = "A linha %@ não é um quadro válido. 'ojd virtual feed --help' mostra o formato.";
+"cli.virtual.feed.profile" = "O perfil do gamepad virtual a publicar.";
+"cli.virtual.feed.started" = "Publicando um gamepad virtual %@. Escreva quadros no stdin; encerre a entrada ou pressione Control-C para parar.";
 "cli.virtual.reset.abstract" = "Devolver o modelo de um controle, ou todos os modelos, à seleção automática de gamepad virtual.";
 "cli.virtual.reset.all" = "Redefinir todos os modelos de controle.";
 "cli.virtual.reset.all.done" = "Agora todos os modelos de controle selecionam o gamepad virtual automaticamente.";

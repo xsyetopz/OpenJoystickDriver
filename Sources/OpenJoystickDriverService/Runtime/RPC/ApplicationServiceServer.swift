@@ -26,6 +26,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
   let launchAtLogin: LaunchAtLoginControl
   let virtualHIDProfileOverrides: VirtualHIDProfileOverrideStore
   let userSpaceDispatcherFactory: UserSpaceDispatcherFactory
+  let virtualFeeds: VirtualFeedRegistry
   /// Guards `userSpaceDispatcher`, `userSpaceEnabled`, `userSpaceStatus`, `userSpaceCloseSlot`,
   /// and `virtualOutputServerStopped`.
   let userSpaceLock = NSLock()
@@ -41,7 +42,8 @@ public final class ApplicationServiceServer: @unchecked Sendable {
   /// Creates a server backed by the device manager, permissions, and output dispatchers.
   ///
   /// `userSpaceDispatcherFactory` builds each user-space dispatcher candidate; the composition
-  /// root supplies the concrete one.
+  /// root supplies the concrete one. `virtualFeeds` defaults to feeds that publish IOHID-backed
+  /// devices.
   init(
     deviceManager: DeviceManager,
     permissionManager: PermissionManager,
@@ -50,6 +52,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     remappingRouter: RemappingOutputRouter,
     postEventAccess: CoreGraphicsPostEventAccess,
     userSpaceDispatcherFactory: @escaping UserSpaceDispatcherFactory,
+    virtualFeeds: VirtualFeedRegistry? = nil,
     connectedIdentifierProvider: (@Sendable () async -> [DeviceIdentifier])? = nil,
     virtualOutputTransitionTimeouts: VirtualOutputTransitionTimeouts = .standard,
     virtualOutputTransitionClock: VirtualOutputTransitionClock = .system,
@@ -68,6 +71,8 @@ public final class ApplicationServiceServer: @unchecked Sendable {
       postEventAccess: postEventAccess
     )
     self.userSpaceDispatcherFactory = userSpaceDispatcherFactory
+    self.virtualFeeds =
+      virtualFeeds ?? VirtualFeedRegistry(factory: ApplicationServiceRuntime.makeVirtualFeedDevice)
     self.connectedIdentifierProvider =
       connectedIdentifierProvider ?? { await deviceManager.activeDeviceIdentifiers() }
     self.virtualOutputTransitionTimeouts = virtualOutputTransitionTimeouts
@@ -121,6 +126,7 @@ extension ApplicationServiceServer {
     }
     server?.stop()
     userSpaceLock.withLock { virtualOutputServerStopped = true }
+    await virtualFeeds.stop()
     await virtualOutputTransitionCoordinator.stop()
     let identifiers = await connectedIdentifierProvider()
     _ = await feedbackGate.quiesceAndNeutralize(

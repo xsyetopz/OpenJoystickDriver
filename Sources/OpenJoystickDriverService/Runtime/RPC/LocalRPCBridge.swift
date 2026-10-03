@@ -164,6 +164,15 @@ extension ApplicationServiceServer {
           unit: value.unit
         )
       )
+    case .openVirtualFeed:
+      let value = try decode(LocalServiceRPCVirtualFeedOpenArguments.self)
+      return try send(try await virtualFeeds.open(profile: value.profile))
+    case .exchangeVirtualFeed:
+      let value = try decode(LocalServiceRPCVirtualFeedExchangeArguments.self)
+      return try send(try await virtualFeeds.exchange(token: value.token, frame: value.frame))
+    case .closeVirtualFeed:
+      let value = try decode(LocalServiceRPCVirtualFeedCloseArguments.self)
+      return try send(await virtualFeeds.close(token: value.token))
     case .suspendController:
       let value = try decode(LocalServiceRPCDeviceArguments.self)
       return try send(

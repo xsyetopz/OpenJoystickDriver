@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Mit --unit gilt „set“ für einen einzelnen Controller anhand seiner Geräte-ID, und „reset“ setzt diesen Controller auf die Auswahl seines Modells zurück.";
 "cli.virtual.error.failed" = "Das virtuelle Gamepad für %@ hat sich nicht geändert (%@). Prüfe es mit „ojd virtual show“.";
 "cli.virtual.error.no_unit" = "%@ hat keine Geräte-ID, daher kann eine Auswahl nur für das gesamte Modell gelten. Führe den Befehl ohne --unit aus.";
+"cli.virtual.feed.abstract" = "Ein virtuelles Gamepad veröffentlichen, das über stdin gesteuert wird.";
+"cli.virtual.feed.discussion" = "Liest ein JSON-Objekt pro Zeile: „buttons“ und „dpad“ listen die gedrückten Bedienelemente auf, etwa south und up, und „axes“ ordnet Achsennamen wie left_stick_x Werte zu. Fehlende Bedienelemente bleiben neutral. Sticks reichen von -1 bis 1, wobei Y nach oben zeigt; Trigger reichen von 0 bis 1. Gibt jeden Ausgabebefehl, den Spiele an das Gamepad senden, etwa Vibration, als ein JSON-Objekt pro Zeile aus. Endet, wenn die Eingabe endet.";
+"cli.virtual.feed.error.closed" = "Der Dienst hat das virtuelle Gamepad geschlossen. Prüfe es mit „ojd status“.";
+"cli.virtual.feed.error.frame" = "Zeile %@ ist kein gültiger Frame. „ojd virtual feed --help“ zeigt das Format.";
+"cli.virtual.feed.profile" = "Das Profil des virtuellen Gamepads, das veröffentlicht werden soll.";
+"cli.virtual.feed.started" = "Ein virtuelles Gamepad (%@) wird veröffentlicht. Schreibe Frames nach stdin; beende die Eingabe oder drücke Control-C zum Beenden.";
 "cli.virtual.reset.abstract" = "Setzt das Modell eines Controllers oder jedes Modell auf die automatische Auswahl des virtuellen Gamepads zurück.";
 "cli.virtual.reset.all" = "Jedes Controller-Modell zurücksetzen.";
 "cli.virtual.reset.all.done" = "Jedes Controller-Modell wählt sein virtuelles Gamepad jetzt automatisch.";

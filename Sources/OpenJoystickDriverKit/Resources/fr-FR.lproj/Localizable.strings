@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Avec --unit, 'set' s’applique à une seule manette selon son identifiant d’unité, et 'reset' remet cette manette sur le choix de son modèle.";
 "cli.virtual.error.failed" = "La manette virtuelle de %@ n’a pas changé (%@). Vérifiez avec 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ n’a pas d’identifiant d’unité, un choix ne peut donc s’appliquer qu’à l’ensemble de son modèle. Lancez la commande sans --unit.";
+"cli.virtual.feed.abstract" = "Publier une manette virtuelle pilotée par stdin.";
+"cli.virtual.feed.discussion" = "Lit un objet JSON par ligne : 'buttons' et 'dpad' listent les commandes actionnées, par exemple south et up, et 'axes' associe des valeurs aux noms d’axes, par exemple left_stick_x. Les commandes absentes restent neutres. Les sticks vont de -1 à 1, avec Y vers le haut ; les gâchettes vont de 0 à 1. Affiche chaque commande de sortie que les jeux envoient à la manette, comme la vibration, sous forme d’un objet JSON par ligne. S’arrête à la fin de l’entrée.";
+"cli.virtual.feed.error.closed" = "Le service a fermé la manette virtuelle. Vérifiez avec 'ojd status'.";
+"cli.virtual.feed.error.frame" = "La ligne %@ n’est pas une trame valide. 'ojd virtual feed --help' indique le format.";
+"cli.virtual.feed.profile" = "Le profil de la manette virtuelle à publier.";
+"cli.virtual.feed.started" = "Publication d’une manette virtuelle %@. Écrivez des trames sur stdin ; terminez l’entrée ou appuyez sur Control-C pour arrêter.";
 "cli.virtual.reset.abstract" = "Remettre le modèle d’une manette, ou tous les modèles, en sélection automatique de la manette virtuelle.";
 "cli.virtual.reset.all" = "Réinitialiser tous les modèles de manette.";
 "cli.virtual.reset.all.done" = "Chaque modèle de manette sélectionne désormais sa manette virtuelle automatiquement.";

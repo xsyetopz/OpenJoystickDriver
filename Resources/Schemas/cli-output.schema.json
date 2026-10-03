@@ -2108,6 +2108,102 @@
 				}
 			}
 		},
+		"virtualFeed": {
+			"description": "One output command per line that the host sent to the virtual gamepad, oldest first. Virtual gamepads receive only rumble commands.",
+			"oneOf": [
+				{
+					"type": "object",
+					"required": [
+						"duration",
+						"intensities",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"type": {
+							"const": "set-rumble"
+						},
+						"intensities": {
+							"type": "object",
+							"required": [
+								"leftMain",
+								"rightMain",
+								"leftTrigger",
+								"rightTrigger",
+								"leftHaptic",
+								"rightHaptic"
+							],
+							"additionalProperties": false,
+							"properties": {
+								"leftMain": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 65535
+								},
+								"rightMain": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 65535
+								},
+								"leftTrigger": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 65535
+								},
+								"rightTrigger": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 65535
+								},
+								"leftHaptic": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 65535
+								},
+								"rightHaptic": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 65535
+								}
+							}
+						},
+						"duration": {
+							"oneOf": [
+								{
+									"const": "held"
+								},
+								{
+									"type": "object",
+									"required": [
+										"milliseconds"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"milliseconds": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 5000
+										}
+									}
+								}
+							]
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"type": {
+							"const": "stop-rumble"
+						}
+					}
+				}
+			]
+		},
 		"virtualReset": {
 			"oneOf": [
 				{

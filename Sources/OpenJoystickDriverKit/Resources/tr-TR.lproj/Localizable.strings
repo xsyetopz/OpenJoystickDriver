@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "--unit ile “set”, tek bir kontrolcüye cihaz kimliği üzerinden uygulanır; “reset” ise o kontrolcüyü modelinin seçimine döndürür.";
 "cli.virtual.error.failed" = "%@ için sanal oyun kumandası değişmedi (%@). “ojd virtual show” ile kontrol edin.";
 "cli.virtual.error.no_unit" = "%@ için cihaz kimliği yok, bu yüzden bir seçim yalnızca modelin tamamına uygulanabilir. Komutu --unit olmadan çalıştırın.";
+"cli.virtual.feed.abstract" = "stdin ile yönetilen sanal bir oyun kumandası yayımlar.";
+"cli.virtual.feed.discussion" = "Her satırda bir JSON nesnesi okur: “buttons” ve “dpad” basılan denetimleri listeler, örneğin south ve up; “axes” ise eksen adlarını, örneğin left_stick_x, değerlerle eşler. Eksik denetimler nötrdür. Çubuklar -1 ile 1 arasında değişir, Y yukarı yöndedir; tetikler 0 ile 1 arasında değişir. Oyunların oyun kumandasına gönderdiği her çıkış komutunu, örneğin titreşimi, satır başına bir JSON nesnesi olarak yazdırır. Girdi bittiğinde durur.";
+"cli.virtual.feed.error.closed" = "Hizmet sanal oyun kumandasını kapattı. “ojd status” ile kontrol edin.";
+"cli.virtual.feed.error.frame" = "%@. satır geçerli bir kare değil. “ojd virtual feed --help” biçimi gösterir.";
+"cli.virtual.feed.profile" = "Yayımlanacak sanal oyun kumandasının profili.";
+"cli.virtual.feed.started" = "Sanal bir oyun kumandası (%@) yayımlanıyor. Kareleri stdin’e yazın; durdurmak için girdiyi bitirin veya Control-C tuşlarına basın.";
 "cli.virtual.reset.abstract" = "Bir kontrolcünün modelini veya tüm modelleri sanal oyun kumandasının otomatik seçimine döndürür.";
 "cli.virtual.reset.all" = "Tüm kontrolcü modellerini sıfırlar.";
 "cli.virtual.reset.all.done" = "Her kontrolcü modeli artık sanal oyun kumandasını otomatik seçiyor.";

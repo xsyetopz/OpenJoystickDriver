@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Con --unit, 'set' se aplica a un solo mando según su ID de unidad, y 'reset' devuelve ese mando a la elección de su modelo.";
 "cli.virtual.error.failed" = "El mando virtual de %@ no ha cambiado (%@). Compruébalo con 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ no tiene ID de unidad, así que una elección solo puede aplicarse a todo su modelo. Ejecuta el comando sin --unit.";
+"cli.virtual.feed.abstract" = "Publicar un mando virtual controlado por stdin.";
+"cli.virtual.feed.discussion" = "Lee un objeto JSON por línea: 'buttons' y 'dpad' enumeran los controles pulsados, como south y up, y 'axes' asigna valores a los nombres de los ejes, como left_stick_x. Los controles que faltan quedan en neutro. Los sticks van de -1 a 1, con Y hacia arriba; los gatillos van de 0 a 1. Imprime cada comando de salida que los juegos envían al mando, como la vibración, como un objeto JSON por línea. Termina cuando termina la entrada.";
+"cli.virtual.feed.error.closed" = "El servicio ha cerrado el mando virtual. Compruébalo con 'ojd status'.";
+"cli.virtual.feed.error.frame" = "La línea %@ no es un fotograma válido. 'ojd virtual feed --help' muestra el formato.";
+"cli.virtual.feed.profile" = "El perfil del mando virtual que se va a publicar.";
+"cli.virtual.feed.started" = "Publicando un mando virtual %@. Escribe fotogramas en stdin; termina la entrada o pulsa Control-C para detener.";
 "cli.virtual.reset.abstract" = "Devolver el modelo de un mando, o todos los modelos, a la selección automática de mando virtual.";
 "cli.virtual.reset.all" = "Restablecer todos los modelos de mando.";
 "cli.virtual.reset.all.done" = "Ahora todos los modelos de mando seleccionan su mando virtual automáticamente.";

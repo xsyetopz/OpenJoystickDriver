@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Med --unit gäller 'set' en enskild kontroll utifrån dess enhets-ID, och 'reset' återställer den kontrollen till modellens val.";
 "cli.virtual.error.failed" = "Den virtuella spelkontrollen för %@ ändrades inte (%@). Kontrollera den med 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ har inget enhets-ID, så ett val kan bara gälla hela modellen. Kör kommandot utan --unit.";
+"cli.virtual.feed.abstract" = "Publicera en virtuell spelkontroll som styrs via stdin.";
+"cli.virtual.feed.discussion" = "Läser ett JSON-objekt per rad: 'buttons' och 'dpad' listar de nedtryckta kontrollerna, till exempel south och up, och 'axes' kopplar axelnamn, till exempel left_stick_x, till värden. Saknade kontroller är neutrala. Spakar går från -1 till 1 med Y uppåt; avtryckare går från 0 till 1. Skriver ut varje utkommando som spel skickar till spelkontrollen, till exempel vibration, som ett JSON-objekt per rad. Avslutas när indatan tar slut.";
+"cli.virtual.feed.error.closed" = "Tjänsten stängde den virtuella spelkontrollen. Kontrollera den med 'ojd status'.";
+"cli.virtual.feed.error.frame" = "Rad %@ är inte en giltig bildruta. 'ojd virtual feed --help' visar formatet.";
+"cli.virtual.feed.profile" = "Profilen för den virtuella spelkontrollen som ska publiceras.";
+"cli.virtual.feed.started" = "Publicerar en virtuell spelkontroll (%@). Skriv bildrutor till stdin; avsluta indatan eller tryck på Control-C för att stoppa.";
 "cli.virtual.reset.abstract" = "Återställ en kontrolls modell, eller alla modeller, till automatiskt val av virtuell spelkontroll.";
 "cli.virtual.reset.all" = "Återställ alla kontrollmodeller.";
 "cli.virtual.reset.all.done" = "Alla kontrollmodeller väljer nu sin virtuella spelkontroll automatiskt.";

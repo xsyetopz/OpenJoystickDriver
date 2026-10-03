@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Med --unit gjelder 'set' én kontroller ut fra enhets-ID-en, og 'reset' setter den kontrolleren tilbake til valget for modellen.";
 "cli.virtual.error.failed" = "Den virtuelle spillkontrolleren for %@ ble ikke endret (%@). Sjekk den med 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ har ingen enhets-ID, så et valg kan bare gjelde hele modellen. Kjør kommandoen uten --unit.";
+"cli.virtual.feed.abstract" = "Publiser en virtuell spillkontroller som styres via stdin.";
+"cli.virtual.feed.discussion" = "Leser ett JSON-objekt per linje: 'buttons' og 'dpad' lister opp kontrollene som er trykket, for eksempel south og up, og 'axes' kobler aksenavn, for eksempel left_stick_x, til verdier. Manglende kontroller er nøytrale. Spaker går fra -1 til 1 med Y opp; avtrekkere går fra 0 til 1. Skriver ut hver utdatakommando som spill sender til spillkontrolleren, for eksempel vibrasjon, som ett JSON-objekt per linje. Stopper når inndataene tar slutt.";
+"cli.virtual.feed.error.closed" = "Tjenesten lukket den virtuelle spillkontrolleren. Sjekk den med 'ojd status'.";
+"cli.virtual.feed.error.frame" = "Linje %@ er ikke en gyldig ramme. 'ojd virtual feed --help' viser formatet.";
+"cli.virtual.feed.profile" = "Profilen for den virtuelle spillkontrolleren som skal publiseres.";
+"cli.virtual.feed.started" = "Publiserer en virtuell spillkontroller (%@). Skriv rammer til stdin; avslutt inndataene eller trykk Control-C for å stoppe.";
 "cli.virtual.reset.abstract" = "Sett en kontrollers modell, eller alle modeller, tilbake til automatisk valg av virtuell spillkontroller.";
 "cli.virtual.reset.all" = "Nullstill alle kontrollermodeller.";
 "cli.virtual.reset.all.done" = "Alle kontrollermodeller velger nå virtuell spillkontroller automatisk.";

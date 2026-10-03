@@ -1184,6 +1184,12 @@
 "cli.virtual.discussion.unit" = "Su --unit „set“ taikoma vienam valdikliui pagal jo įrenginio ID, o „reset“ grąžina tą valdiklį prie jo modelio pasirinkimo.";
 "cli.virtual.error.failed" = "%@ virtualus žaidimų pultas nepasikeitė (%@). Patikrinkite naudodami „ojd virtual show“.";
 "cli.virtual.error.no_unit" = "%@ neturi įrenginio ID, todėl pasirinkimas gali būti taikomas tik visam jo modeliui. Paleiskite komandą be --unit.";
+"cli.virtual.feed.abstract" = "Paskelbti virtualų žaidimų pultą, valdomą per stdin.";
+"cli.virtual.feed.discussion" = "Skaito po vieną JSON objektą eilutėje: „buttons“ ir „dpad“ išvardija paspaustus valdymo elementus, pavyzdžiui, south ir up, o „axes“ susieja ašių pavadinimus, pavyzdžiui, left_stick_x, su reikšmėmis. Trūkstami valdymo elementai yra neutralūs. Lazdelės juda nuo -1 iki 1, Y kryptis aukštyn; gaidukai juda nuo 0 iki 1. Išveda kiekvieną išvesties komandą, kurią žaidimai siunčia žaidimų pultui, pavyzdžiui, vibraciją, kaip vieną JSON objektą eilutėje. Sustoja, kai įvestis baigiasi.";
+"cli.virtual.feed.error.closed" = "Paslauga uždarė virtualų žaidimų pultą. Patikrinkite naudodami „ojd status“.";
+"cli.virtual.feed.error.frame" = "Eilutė %@ nėra tinkamas kadras. „ojd virtual feed --help“ rodo formatą.";
+"cli.virtual.feed.profile" = "Skelbiamo virtualaus žaidimų pulto profilis.";
+"cli.virtual.feed.started" = "Skelbiamas virtualus žaidimų pultas (%@). Rašykite kadrus į stdin; baikite įvestį arba paspauskite Control-C, kad sustabdytumėte.";
 "cli.virtual.reset.abstract" = "Grąžinti valdiklio modelį arba visus modelius į automatinį virtualaus žaidimų pulto pasirinkimą.";
 "cli.virtual.reset.all" = "Atstatyti kiekvieną valdiklio modelį.";
 "cli.virtual.reset.all.done" = "Kiekvienas valdiklio modelis dabar automatiškai pasirenka virtualų žaidimų pultą.";
