@@ -1,6 +1,6 @@
 # Public Endpoint Design
 
-Status: proposed for milestone 3 (slice 3.2). No code exists yet. Slice 3.3 starts after this note is approved.
+Status: implemented for read (slice 3.3). The control stream (milestone 4) and token grants (slice 3.4) are not built yet.
 
 ## Goal
 
@@ -111,5 +111,5 @@ The signature checks need a client signed with a team ID, which a unit test cann
 
 1. Script clients (agreed). Slice 3.3 has signature grants only: a grant for an interpreter covers all its scripts, and ad-hoc signed tools are refused. Token grants come with 3.4, which needs them for browsers anyway: `ojd access grant --token NAME` prints a secret that the client sends in `hello`. Any process of the user that reads the token can use it.
 1. The socket path (agreed). The socket goes in the per-user temporary folder, and `ojd access status --json` prints its path. `~/Library/Application Support/OpenJoystickDriver/endpoint.sock` is not used, because a long user name can pass the 104-byte limit of a socket path.
-1. Sandboxed clients (open). It is not verified whether a sandboxed app can connect to a socket outside its container without a temporary exception entitlement. Slice 3.3 tests it with a sandboxed client and documents the result. The user decides how to support sandboxed clients after that result.
+1. Sandboxed clients (open). Slice 3.3 tested an ad-hoc signed app bundle with `com.apple.security.app-sandbox` on macOS 27. Its `connect()` to a socket in the unsandboxed `DARWIN_USER_TEMP_DIR` fails with `EPERM`. It still fails with `com.apple.security.network.client`, and with `com.apple.security.temporary-exception.files.absolute-path.read-write` naming the socket, its `/private` path, or the folder. The same app connects to a socket inside its own container. So a sandboxed client cannot use the endpoint as built. The user decides how to support sandboxed clients after this result.
 1. The internal socket (agreed). It identifies its peer by PID, and the same PID-reuse race applies there. Slice 3.3 fixes it: both sockets share one peer check that reads the audit token and checks the code with `SecCodeCheckValidity`.

@@ -14,6 +14,7 @@ This page lists every `ojd` command. Every command also accepts the global optio
 - [permission](#permission)
 - [extension](#extension)
 - [setting](#setting)
+- [access](#access)
 - [log](#log)
 - [diagnose](#diagnose)
 - [update](#update)
@@ -264,6 +265,28 @@ ojd setting set KEY true|false
 ```
 
 The keys are `launch-at-login`, `notification-sounds`, `include-prerelease-updates`, and `developer-tools`. `setting get` prints `true` or `false` alone. With `--json`, `setting list` prints `settings`, each with `key`, `value`, and `description`, and `setting get` and `setting set` print `key` and `value`.
+
+## access
+
+Turn on the endpoint and choose which programs may read controllers through it. The endpoint is a local socket that granted programs read controller events from. For its protocol, see [Read the Endpoint](Automating-OpenJoystickDriver.md#read-the-endpoint). These commands need the service running.
+
+```text
+ojd access status
+ojd access enable [--force]
+ojd access disable
+ojd access list
+ojd access grant CLIENT [--scope read|control]... [--force]
+ojd access revoke CLIENT [--scope read|control]...
+```
+
+- `access status`: Show whether the endpoint is on, the path of its socket, and the connected clients. With `--json`, it prints `enabled`, `socketPath`, `connections`, `grants`, and `refused`.
+- `access enable`: Turn on the endpoint. It asks first. In a script, it needs `--force`. The endpoint is off until you run this command.
+- `access disable`: Turn off the endpoint and close its connections. The grants stay.
+- `access list`: List the granted clients, and the clients that the endpoint refused in the last 24 hours. Each client has an 8-character ID.
+- `access grant`: Allow a program to use the endpoint. `CLIENT` is the path of the program's app bundle or executable, or an ID from `access list`. `--scope` is `read` by default. The grant names the program's signature, so it stays valid when the program is updated or moved. It asks first, and in a script it needs `--force`.
+- `access revoke`: Remove a client's grant. With `--scope`, it removes only those scopes. The endpoint closes each connection that loses a scope.
+
+`access grant` accepts only a program signed with a Developer ID or Apple Development certificate, or signed by Apple. It refuses an ad-hoc signed or unsigned program, because any program can claim that signature. For a program that Apple signed, such as `python3`, every script that the program runs gets the access. The `control` scope can be granted, but the endpoint serves only `read` in this release.
 
 ## log
 

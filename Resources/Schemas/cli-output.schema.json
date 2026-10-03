@@ -4,6 +4,143 @@
 	"title": "ojd --json output",
 	"description": "The --json output of each ojd command. Each command's entry in $defs is its command path in lowerCamelCase, such as controllerShow for 'ojd controller show'. Entries that start with 'shared' are shapes that several commands use. A command that streams prints one document per line, and each line matches the entry.",
 	"$defs": {
+		"accessDisable": {
+			"type": "object",
+			"required": [
+				"enabled",
+				"socketPath"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"enabled": {
+					"type": "boolean"
+				},
+				"socketPath": {
+					"type": "string"
+				}
+			}
+		},
+		"accessEnable": {
+			"type": "object",
+			"required": [
+				"enabled",
+				"socketPath"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"enabled": {
+					"type": "boolean"
+				},
+				"socketPath": {
+					"type": "string"
+				}
+			}
+		},
+		"accessGrant": {
+			"$ref": "#/$defs/sharedAccessGrant"
+		},
+		"accessList": {
+			"type": "object",
+			"required": [
+				"grants",
+				"refused"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"grants": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/sharedAccessGrant"
+					}
+				},
+				"refused": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/sharedAccessRefusedClient"
+					}
+				}
+			}
+		},
+		"accessRevoke": {
+			"type": "object",
+			"required": [
+				"closedConnections",
+				"id"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"closedConnections": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"grant": {
+					"$ref": "#/$defs/sharedAccessGrant"
+				},
+				"id": {
+					"type": "string"
+				}
+			}
+		},
+		"accessStatus": {
+			"type": "object",
+			"required": [
+				"connections",
+				"enabled",
+				"grants",
+				"refused",
+				"socketPath"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"connections": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": [
+							"id",
+							"identifier",
+							"scopes"
+						],
+						"additionalProperties": false,
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"identifier": {
+								"type": "string"
+							},
+							"scopes": {
+								"type": "array",
+								"items": {
+									"enum": [
+										"read",
+										"control"
+									]
+								}
+							}
+						}
+					}
+				},
+				"enabled": {
+					"type": "boolean"
+				},
+				"grants": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/sharedAccessGrant"
+					}
+				},
+				"refused": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/sharedAccessRefusedClient"
+					}
+				},
+				"socketPath": {
+					"type": "string"
+				}
+			}
+		},
 		"bindingClear": {
 			"type": "object",
 			"required": [
@@ -590,72 +727,8 @@
 					}
 				},
 				{
-					"description": "With --all: a controller that connected, including those connected when the command starts; its input changes; and its disconnection.",
-					"oneOf": [
-						{
-							"type": "object",
-							"required": [
-								"controller",
-								"id",
-								"type"
-							],
-							"additionalProperties": false,
-							"properties": {
-								"type": {
-									"const": "connected"
-								},
-								"id": {
-									"type": "string",
-									"description": "The ID from ojd controller list."
-								},
-								"controller": {
-									"$ref": "#/$defs/controllerList/properties/controllers/items"
-								}
-							}
-						},
-						{
-							"type": "object",
-							"required": [
-								"id",
-								"input",
-								"type"
-							],
-							"additionalProperties": false,
-							"properties": {
-								"type": {
-									"const": "input"
-								},
-								"id": {
-									"type": "string",
-									"description": "The ID from ojd controller list."
-								},
-								"input": {
-									"$ref": "#/$defs/sharedControllerState"
-								},
-								"output": {
-									"description": "With --output. Absent when the controller is not published.",
-									"$ref": "#/$defs/sharedVirtualOutput"
-								}
-							}
-						},
-						{
-							"type": "object",
-							"required": [
-								"id",
-								"type"
-							],
-							"additionalProperties": false,
-							"properties": {
-								"type": {
-									"const": "disconnected"
-								},
-								"id": {
-									"type": "string",
-									"description": "The ID from ojd controller list."
-								}
-							}
-						}
-					]
+					"description": "With --all, one event per line.",
+					"$ref": "#/$defs/sharedControllerWatchEvent"
 				}
 			]
 		},
@@ -1349,6 +1422,98 @@
 		"settingSet": {
 			"$ref": "#/$defs/sharedSetting"
 		},
+		"sharedAccessGrant": {
+			"type": "object",
+			"required": [
+				"grantedAt",
+				"id",
+				"identifier",
+				"kind",
+				"path",
+				"scopes"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"grantedAt": {
+					"type": "string"
+				},
+				"id": {
+					"type": "string"
+				},
+				"identifier": {
+					"type": "string"
+				},
+				"kind": {
+					"enum": [
+						"team",
+						"apple"
+					]
+				},
+				"path": {
+					"type": "string"
+				},
+				"scopes": {
+					"type": "array",
+					"items": {
+						"enum": [
+							"read",
+							"control"
+						]
+					}
+				},
+				"teamIdentifier": {
+					"type": "string"
+				}
+			}
+		},
+		"sharedAccessRefusedClient": {
+			"type": "object",
+			"required": [
+				"id",
+				"identifier",
+				"kind",
+				"reason",
+				"refusedAt",
+				"scopes"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"identifier": {
+					"type": "string"
+				},
+				"kind": {
+					"enum": [
+						"team",
+						"apple",
+						"ad-hoc"
+					]
+				},
+				"path": {
+					"type": "string"
+				},
+				"reason": {
+					"type": "string"
+				},
+				"refusedAt": {
+					"type": "string"
+				},
+				"scopes": {
+					"type": "array",
+					"items": {
+						"enum": [
+							"read",
+							"control"
+						]
+					}
+				},
+				"teamIdentifier": {
+					"type": "string"
+				}
+			}
+		},
 		"sharedBindingSummary": {
 			"type": "object",
 			"required": [
@@ -1577,6 +1742,74 @@
 					}
 				}
 			}
+		},
+		"sharedControllerWatchEvent": {
+			"description": "A controller that connected, including those connected when the stream starts; its input changes; and its disconnection. Lines of ojd controller watch --all and of the endpoint's controllers stream.",
+			"oneOf": [
+				{
+					"type": "object",
+					"required": [
+						"controller",
+						"id",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"type": {
+							"const": "connected"
+						},
+						"id": {
+							"type": "string",
+							"description": "The ID from ojd controller list."
+						},
+						"controller": {
+							"$ref": "#/$defs/controllerList/properties/controllers/items"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"id",
+						"input",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"type": {
+							"const": "input"
+						},
+						"id": {
+							"type": "string",
+							"description": "The ID from ojd controller list."
+						},
+						"input": {
+							"$ref": "#/$defs/sharedControllerState"
+						},
+						"output": {
+							"description": "With --output, or a subscription that asked for output. Absent when the controller is not published.",
+							"$ref": "#/$defs/sharedVirtualOutput"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"required": [
+						"id",
+						"type"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"type": {
+							"const": "disconnected"
+						},
+						"id": {
+							"type": "string",
+							"description": "The ID from ojd controller list."
+						}
+					}
+				}
+			]
 		},
 		"sharedDevice": {
 			"type": "object",

@@ -12,7 +12,9 @@ struct ControllerRemappingCommandTests {
       (#"{"hasMotionBaseline":false,"isCollecting":true,"#
         + #""offsetDegreesPerSecond":{"x":0.5,"y":0,"z":-0.25}}"#).utf8
     )
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       method == .remappingMotionCalibration ? status : nil
     }
 
@@ -37,8 +39,16 @@ struct ControllerRemappingCommandTests {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pair")])
     let service = try FakeService(
       devices: [
-        FakeService.device(id: "left-1", vendorID: 0x057E, productID: 0x2006),
-        FakeService.device(id: "right-1", vendorID: 0x057E, productID: 0x2007),
+        ApplicationServiceDeviceDescription.fixture(
+          id: "left-1",
+          vendorID: 0x057E,
+          productID: 0x2006
+        ),
+        ApplicationServiceDeviceDescription.fixture(
+          id: "right-1",
+          vendorID: 0x057E,
+          productID: 0x2007
+        ),
       ],
       respond: library.respond
     )

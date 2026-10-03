@@ -139,7 +139,7 @@ struct BindingCommandTests {
     let library = FakeProfileLibrary(
       [profile],
       active: [profile.id],
-      connected: connected ? [FakeService.device(id: "pad-1")] : []
+      connected: connected ? [ApplicationServiceDeviceDescription.fixture(id: "pad-1")] : []
     )
     let service = try FakeService(devices: [], respond: library.respond)
 

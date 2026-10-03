@@ -41,15 +41,16 @@ enum CLITerminal {
   }
 
   /// Confirms a destructive action: passes with `force`, asks `question` on a terminal, and
-  /// otherwise fails with a usage error that names `--force`.
-  static func confirm(_ question: String, force: Bool) throws {
+  /// otherwise fails with a usage error that names `--force`; `needsForce` replaces its message.
+  static func confirm(_ question: String, force: Bool, needsForce: String? = nil) throws {
     if force { return }
     guard canPrompt() else {
       throw CLIFailure.usage(
-        CLILocalized.text(
-          "cli.error.confirm_needs_force",
-          "This change cannot be undone. Add --force to confirm it without a prompt."
-        )
+        needsForce
+          ?? CLILocalized.text(
+            "cli.error.confirm_needs_force",
+            "This change cannot be undone. Add --force to confirm it without a prompt."
+          )
       )
     }
     CLIOutput.stderr(question + " [y/N] ", terminator: "")

@@ -14,6 +14,7 @@ struct LocalRPCBridgeTests {
     "resetVirtualHIDProfileOverride", "openVirtualFeed", "exchangeVirtualFeed",
     "closeVirtualFeed", "suspendController", "resumeController",
     "disconnectWirelessController", "resetSettings", "getSettings", "setSetting",
+    "getAccessStatus", "setAccessEnabled", "grantAccess", "revokeAccess",
   ]
   private static let remappingMethodNames: Set = [
     "remappingMotionCalibration", "pairRemappingJoyCons", "unpairRemappingJoyCons",

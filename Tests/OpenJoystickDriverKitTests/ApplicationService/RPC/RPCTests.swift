@@ -65,6 +65,36 @@ struct LocalServiceRPCTests {
   }
 
   @Test
+  func authenticationReceivesThePeerFromItsAuditToken() async throws {
+    let socketPath = temporarySocketPath()
+    let peers = PeerRecorder()
+    let server = LocalServiceRPCServer(
+      socketPath: socketPath,
+      authentication: { peer in
+        peers.record(peer)
+        return true
+      },
+      handler: { _, completion in
+        completion(LocalServiceRPCResponse(result: Data("1".utf8), error: nil))
+      }
+    )
+    try server.start()
+    defer { server.stop() }
+
+    let _: Int = try await LocalServiceRPCClient.call(
+      method: "peer",
+      arguments: LocalServiceRPCEmptyArguments(),
+      timeoutSeconds: 10,
+      socketPath: socketPath
+    )
+
+    let peer = try #require(peers.last)
+    #expect(peer.processIdentifier == getpid())
+    #expect(peer.code() != nil)
+    #expect(peer.satisfies(nil))
+  }
+
+  @Test
   func secondServerCannotDisplaceLiveSocketOwner() throws {
     let socketPath = temporarySocketPath()
     let first = LocalServiceRPCServer(
@@ -295,4 +325,13 @@ struct LocalServiceRPCTests {
   private func temporarySocketPath() -> String {
     "/tmp/com.openjoystickdriver.test.\(UUID().uuidString).rpc"
   }
+}
+
+private final class PeerRecorder: @unchecked Sendable {
+  private let lock = NSLock()
+  private var peers: [LocalSocketPeer] = []
+
+  var last: LocalSocketPeer? { lock.withLock { peers.last } }
+
+  func record(_ peer: LocalSocketPeer) { lock.withLock { peers.append(peer) } }
 }

@@ -33,6 +33,10 @@ OJD stores this data locally:
 
 The only network request in the OJD source is the update check. It runs when you click **Check Now** and contacts GitHub. OJD does not send controller data. OJD has no automatic update.
 
+### Endpoint access
+
+The endpoint is a local socket that other programs can read controller input from. It is off until you run `ojd access enable`. Only programs that you grant with `ojd access grant` can use it, and a program needs a grant for each scope that it uses. The service reads the signature of each program that connects from the kernel, not from the program. A grant names that signature, by team ID or as Apple, so OJD refuses ad-hoc signed and unsigned programs. The grants are in `~/Library/Application Support/OpenJoystickDriver/AccessGrants.json`. Until the service stops, the endpoint remembers the programs that it refused in the last 24 hours, so that you can see them with `ojd access list`. For the commands, see [access](Command-Reference.md#access).
+
 ### Support report
 
 **Copy Support Report** copies a JSON report to the clipboard. OJD does not save it to disk. The report contains service status, virtual device details, Input Monitoring state, build identity, and Apple game controller data. It contains product names of your devices. By its own privacy flags, it leaves out serial numbers, file paths, packet data, and HID location IDs. Read the report before you share it.

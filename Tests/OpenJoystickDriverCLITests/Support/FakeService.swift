@@ -74,33 +74,6 @@ final class FakeService: @unchecked Sendable {
   private func record(_ method: ApplicationServiceRPCMethod, _ arguments: Data) {
     lock.withLock { received.append((method, arguments)) }
   }
-
-  static func device(
-    id: String,
-    name: String = "Test Pad",
-    vendorID: UInt16 = 0x045E,
-    productID: UInt16 = 0x028E,
-    outputs: PhysicalControllerOutputCapabilities = .none,
-    unit: String? = nil,
-    power: ControllerConnectionState.Power? = nil
-  ) -> ApplicationServiceDeviceDescription {
-    ApplicationServiceDeviceDescription(
-      name: name,
-      vendorID: vendorID,
-      productID: productID,
-      protocolBinding: ProtocolBindingID(.hidDescriptor),
-      connection: "USB",
-      discoverySource: .rawUSB,
-      serialNumber: nil,
-      bindingResult: .hidDescriptorFixture,
-      physicalOutputCapabilities: outputs,
-      connectionState: power.map {
-        ControllerConnectionState(transport: .usb, backend: .ioHID, isConnected: true, power: $0)
-      },
-      runtimeIdentifier: id,
-      unitIdentifier: unit
-    )
-  }
 }
 
 /// `value` encoded as the service encodes it.

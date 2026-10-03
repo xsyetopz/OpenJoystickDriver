@@ -36,6 +36,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - `ojd profile get PROFILE KEY` and `ojd profile set PROFILE KEY VALUE` read and change one value in a profile file by its path, such as `stickMappings.0.tuning.innerDeadzone`. `set` checks the whole profile before it saves it.
 - On macOS 13 or later, Shortcuts lists the actions Get Controllers, Get Battery Level, Activate Profile, Deactivate Profile, and Get OpenJoystickDriver Version. A shortcut stores a controller by its unit ID or by its model as `VVVV:PPPP`; see [Automating OpenJoystickDriver](docs/Automating-OpenJoystickDriver.md#use-shortcuts).
 - `ojd controller watch --all` watches every controller on one stream. It reports each controller that connects or disconnects, and each line names its controller. With `--json`, each line has a `type` of `connected`, `input`, or `disconnected`, which `cli-output.schema.json` describes.
+- The endpoint: a local socket that programs you grant can read controller events from, with the same lines as `ojd controller watch --all --json`. It is off by default. `ojd access status|enable|disable|list|grant|revoke` turn it on and grant programs by code signature; ad-hoc signed and unsigned programs are refused. `endpoint.schema.json` describes the protocol. A sandboxed app cannot connect. Only the `read` scope is served; see [Automating OpenJoystickDriver](docs/Automating-OpenJoystickDriver.md#read-the-endpoint).
 
 ### Changed
 

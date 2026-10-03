@@ -209,6 +209,15 @@ extension ApplicationServiceServer {
     case .setSetting:
       let value = try decode(ApplicationServiceSettingArguments.self)
       return try send(try setSetting(value.key, to: value.value))
+    case .getAccessStatus:
+      _ = try decode(LocalServiceRPCEmptyArguments.self)
+      return try send(try getAccessStatus())
+    case .setAccessEnabled:
+      return try send(try setAccessEnabled(try decode(AccessEnabledArguments.self).enabled))
+    case .grantAccess:
+      return try send(try grantAccess(try decode(AccessGrantArguments.self)))
+    case .revokeAccess:
+      return try send(try revokeAccess(try decode(AccessRevokeArguments.self)))
     case .remappingMotionCalibration:
       let value = try decodeRemapping(ApplicationServiceMotionCalibrationArguments.self)
       return try sendRemapping(try await remappingMotionCalibration(value))

@@ -1,37 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
 
-/// One controller in `ojd controller list --json`.
-///
-/// The serial number is never printed; `hasSerialNumber` says whether the controller reports one.
-struct ControllerSummary: Encodable, Equatable {
-  let id: String
-  /// The persistent unit ID; see ``UnitIdentity``.
-  let unit: String?
-  let name: String
-  let vendorID: Int
-  let productID: Int
-  let connection: String
-  let `protocol`: String
-  let session: String
-  let hasSerialNumber: Bool
-  /// Absent when the service reports no power state.
-  let power: ControllerConnectionState.Power?
-
-  init(_ device: ApplicationServiceDeviceDescription) {
-    id = device.runtimeIdentifier
-    unit = device.unitIdentifier
-    name = device.name
-    vendorID = Int(device.vendorID)
-    productID = Int(device.productID)
-    connection = device.connection
-    self.protocol = device.protocolBinding.rawValue
-    session = device.sessionState.rawValue
-    hasSerialNumber = device.serialNumber.map { !$0.isEmpty } ?? false
-    power = device.connectionState?.power
-  }
-}
-
 /// The `ojd controller list --json` result.
 struct ControllerListReport: Encodable, Equatable { let controllers: [ControllerSummary] }
 

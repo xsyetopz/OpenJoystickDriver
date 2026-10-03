@@ -117,7 +117,10 @@ let package = Package(
     ),
     .testTarget(
       name: "OpenJoystickDriverKitTests",
-      dependencies: ["OpenJoystickDriverKit", "OpenJoystickDriverUSB", "ProtocolPacketFixtures"],
+      dependencies: [
+        "OpenJoystickDriverKit", "OpenJoystickDriverUSB", "OpenJoystickDriverTestSupport",
+        "ProtocolPacketFixtures",
+      ],
       path: "Tests/OpenJoystickDriverKitTests",
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]

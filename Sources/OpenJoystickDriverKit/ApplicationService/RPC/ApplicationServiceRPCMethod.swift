@@ -21,6 +21,10 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case resetSettings
   case getSettings
   case setSetting
+  case getAccessStatus
+  case setAccessEnabled
+  case grantAccess
+  case revokeAccess
   case remappingMotionCalibration
   case pairRemappingJoyCons
   case unpairRemappingJoyCons

@@ -34,9 +34,10 @@ public final class ApplicationServiceServer: @unchecked Sendable {
   var userSpaceEnabled: Bool
   var userSpaceStatus: VirtualOutputBackendStatus = .off
   var userSpaceCloseSlot: VirtualOutputBackendCloseSlot?
-  /// Guards `rpcServer`.
+  /// Guards `rpcServer` and `endpointServer`.
   let rpcServerLock = NSLock()
   var rpcServer: LocalServiceRPCServer?
+  var endpointServer: EndpointServer?
   var virtualOutputServerStopped = false
 
   /// Creates a server backed by the device manager, permissions, and output dispatchers.
@@ -87,7 +88,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
 
   /// Starts the authenticated local RPC server used by the headless host and CLI.
   public func start() throws {
-    let server = LocalServiceRPCServer(authentication: Self.isTrustedClient(processIdentifier:)) {
+    let server = LocalServiceRPCServer(authentication: Self.isTrustedClient(peer:)) {
       [weak self] request, completion in
       guard let self else {
         completion(LocalServiceRPCResponse(result: nil, error: "Service stopped."))
@@ -96,7 +97,12 @@ public final class ApplicationServiceServer: @unchecked Sendable {
       Task { completion(await self.handleLocalRPC(request)) }
     }
     try server.start()
-    rpcServerLock.withLock { rpcServer = server }
+    let endpoint = EndpointServer(source: ApplicationServiceWatchSource(server: self))
+    endpoint.start()
+    rpcServerLock.withLock {
+      rpcServer = server
+      endpointServer = endpoint
+    }
     print("[ApplicationServiceServer] Listening on authenticated local RPC socket")
   }
 }
@@ -120,10 +126,15 @@ extension ApplicationServiceServer {
   }
 
   public func stop() async {
-    let server = rpcServerLock.withLock { () -> LocalServiceRPCServer? in
-      defer { rpcServer = nil }
-      return rpcServer
+    let (server, endpoint) = rpcServerLock.withLock {
+      () -> (LocalServiceRPCServer?, EndpointServer?) in
+      defer {
+        rpcServer = nil
+        endpointServer = nil
+      }
+      return (rpcServer, endpointServer)
     }
+    endpoint?.stop()
     server?.stop()
     userSpaceLock.withLock { virtualOutputServerStopped = true }
     await virtualFeeds.stop()
@@ -146,50 +157,16 @@ extension ApplicationServiceServer {
     _ = await closeVirtualOutputBackend(slot)
   }
 
-  static func isTrustedClient(processIdentifier: Int32) -> Bool {
+  static func isTrustedClient(peer: LocalSocketPeer) -> Bool {
     // The app's own UI calls this service over the socket. Security cannot resolve a running
     // process's code once its bundle is replaced on disk (a rebuild or an update before relaunch),
     // which would reject the app's own calls and freeze its controller list.
-    if processIdentifier == getpid() { return true }
-    guard let expected = currentProcessSigningIdentity else { return false }
-    let attributes = [kSecGuestAttributePid as String: processIdentifier] as CFDictionary
-    var guestCode: SecCode?
-    guard
-      SecCodeCopyGuestWithAttributes(nil, attributes, SecCSFlags(), &guestCode) == errSecSuccess,
-      let guestCode, let actual = signingIdentity(for: guestCode)
-    else { return false }
-    return actual == expected
-  }
-
-  /// This process's code does not change while it runs; every client connection compares with it.
-  private static let currentProcessSigningIdentity = signingIdentityForCurrentProcess()
-
-  private static func signingIdentityForCurrentProcess() -> SigningIdentity? {
-    var currentCode: SecCode?
-    guard SecCodeCopySelf(SecCSFlags(), &currentCode) == errSecSuccess, let currentCode else {
-      return nil
-    }
-    return signingIdentity(for: currentCode)
-  }
-
-  private static func signingIdentity(for code: SecCode) -> SigningIdentity? {
-    var staticCode: SecStaticCode?
-    var information: CFDictionary?
-    let flags = SecCSFlags(rawValue: kSecCSSigningInformation)
-    guard SecCodeCopyStaticCode(code, SecCSFlags(), &staticCode) == errSecSuccess, let staticCode,
-      SecCodeCopySigningInformation(staticCode, flags, &information) == errSecSuccess,
-      let values = information as? [String: Any],
-      let identifier = values[kSecCodeInfoIdentifier as String] as? String
-    else { return nil }
-    return SigningIdentity(
-      identifier: identifier,
-      teamIdentifier: values[kSecCodeInfoTeamIdentifier as String] as? String
-    )
-  }
-
-  private struct SigningIdentity: Equatable {
-    let identifier: String
-    let teamIdentifier: String?
+    if peer.processIdentifier == getpid() { return true }
+    guard let expected = CodeSigningIdentity.current else { return false }
+    if let requirement = expected.requirement { return peer.satisfies(requirement) }
+    // An ad-hoc development build has no signer to require; compare its signing details.
+    guard peer.satisfies(nil), let code = peer.code() else { return false }
+    return CodeSigningIdentity.of(code) == expected
   }
 
   // MARK: - Private

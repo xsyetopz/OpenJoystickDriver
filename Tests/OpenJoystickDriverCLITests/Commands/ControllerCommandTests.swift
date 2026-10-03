@@ -22,7 +22,9 @@ struct ControllerCommandTests {
 
   @Test
   func listPrintsEachControllerInJSONAndPlainRows() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")])
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ])
     let jsonRun = await service.run(["controller", "list", "--json"])
     let plainRun = await service.run(["controller", "list", "--plain"])
 
@@ -36,7 +38,9 @@ struct ControllerCommandTests {
 
   @Test
   func anUnknownSelectorFailsAndListsTheConnectedControllers() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")])
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ])
     let result = await service.run(["controller", "show", "pad-9"])
     #expect(result.code == 1)
     #expect(result.standardOutput.isEmpty)
@@ -47,8 +51,8 @@ struct ControllerCommandTests {
   @Test
   func aModelSelectorMatchingTwoControllersFailsAndListsBoth() async throws {
     let service = try FakeService(devices: [
-      FakeService.device(id: "pad-1", outputs: .dualMainRumble),
-      FakeService.device(id: "pad-2", outputs: .dualMainRumble),
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1", outputs: .dualMainRumble),
+      ApplicationServiceDeviceDescription.fixture(id: "pad-2", outputs: .dualMainRumble),
     ])
     let result = await service.run(["controller", "show", "045e:028e"])
     #expect(result.code == 1)
@@ -60,8 +64,12 @@ struct ControllerCommandTests {
   func aModelSelectorMatchingOneControllerResolvesIt() async throws {
     let service = try FakeService(
       devices: [
-        FakeService.device(id: "pad-1"),
-        FakeService.device(id: "pad-2", vendorID: 0x054C, productID: 0x0CE6),
+        ApplicationServiceDeviceDescription.fixture(id: "pad-1"),
+        ApplicationServiceDeviceDescription.fixture(
+          id: "pad-2",
+          vendorID: 0x054C,
+          productID: 0x0CE6
+        ),
       ],
       respond: Self.delivered()
     )
@@ -79,7 +87,7 @@ struct ControllerCommandTests {
   @Test
   func rumbleWarnsAboutAMissingTriggerMotorAndSucceedsWhenAMainMotorRan() async throws {
     let service = try FakeService(
-      devices: [FakeService.device(id: "pad-1")],
+      devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],
       respond: Self.delivered(dropping: [.leftTrigger, .leftHaptic, .rightHaptic])
     )
     let result = await service.run([
@@ -101,7 +109,7 @@ struct ControllerCommandTests {
   @Test
   func playerNamesTheControllerLikeTheOtherOutputMessages() async throws {
     let service = try FakeService(
-      devices: [FakeService.device(id: "pad-1")],
+      devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],
       respond: Self.delivered()
     )
     let result = await service.run(["controller", "player", "pad-1", "1"])
@@ -112,7 +120,7 @@ struct ControllerCommandTests {
   @Test
   func rumbleFailsWhenNoRequestedMotorRan() async throws {
     let service = try FakeService(
-      devices: [FakeService.device(id: "pad-1")],
+      devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],
       respond: Self.delivered(dropping: [.leftTrigger])
     )
     let result = await service.run(["controller", "rumble", "pad-1", "--left-trigger", "100"])
@@ -123,7 +131,7 @@ struct ControllerCommandTests {
   @Test
   func rumbleWithEveryIntensityAtZeroStopsTheMotors() async throws {
     let service = try FakeService(
-      devices: [FakeService.device(id: "pad-1")],
+      devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],
       respond: Self.delivered()
     )
     let result = await service.run(["controller", "rumble", "pad-1", "--left", "0", "--right", "0"])
@@ -133,7 +141,9 @@ struct ControllerCommandTests {
 
   @Test
   func anUnsupportedOutputFailsWithExitOne() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       method == .sendControllerOutput
         ? encoded(ControllerOutputResult(.unsupportedCapability)) : nil
     }
@@ -145,7 +155,9 @@ struct ControllerCommandTests {
   @Test
   func watchFirstPressPrintsTheFirstNewlyPressedControl() async throws {
     let reads = Counter()
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       guard method == .getControllerState else { return nil }
       // A control held at the start does not count; face-south is the new press.
       let state =
@@ -162,7 +174,9 @@ struct ControllerCommandTests {
 
   @Test
   func watchFirstPressFailsWhenTheDurationPassesFirst() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       switch method {
       case .getControllerState: doubleEncoded(ControllerState.neutral)
       case .getVirtualOutputState: encoded(Data?.none)
@@ -179,7 +193,9 @@ struct ControllerCommandTests {
 
   @Test
   func suspendingASuspendedControllerSucceedsWithoutAChange() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       method == .suspendController
         ? doubleEncoded(ControllerSuspendResult(state: .suspended, failure: .alreadySuspended))
         : nil
@@ -193,7 +209,9 @@ struct ControllerCommandTests {
 
   @Test
   func showPrintsTheControllerReport() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")])
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ])
     let result = await service.run(["controller", "show", "pad-1", "--json"])
     #expect(result.code == 0, "\(result.standardError)")
     let controller = try #require(try result.json()["controller"] as? [String: Any])
@@ -202,7 +220,9 @@ struct ControllerCommandTests {
 
   @Test
   func showLabelsOwnershipInTheSameStyleAsTheOtherValues() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")])
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ])
     let result = await service.run(["controller", "show", "pad-1"])
     #expect(result.code == 0, "\(result.standardError)")
     let ownership = result.standardOutput.split(separator: "\n").first { $0.hasPrefix("Ownership") }
@@ -211,7 +231,7 @@ struct ControllerCommandTests {
 
   @Test
   func showPrintsWhyTheControllerIsNotPublished() async throws {
-    var device = FakeService.device(id: "pad-1")
+    var device = ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     device.publication = ApplicationServicePublicationStatus(
       state: .notPublished,
       reason: "native-gamepad",
@@ -236,7 +256,9 @@ struct ControllerCommandTests {
 
   @Test
   func showLeavesOutPublicationWhenTheServiceSendsNone() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")])
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ])
     let plain = await service.run(["controller", "show", "pad-1", "--plain"])
     #expect(plain.code == 0, "\(plain.standardError)")
     #expect(!plain.standardOutput.contains("publication"))
@@ -245,16 +267,16 @@ struct ControllerCommandTests {
   /// Controllers with an exact battery level, a bucket, an unknown level, and no power state.
   private static func poweredDevices() -> [ApplicationServiceDeviceDescription] {
     [
-      FakeService.device(
+      ApplicationServiceDeviceDescription.fixture(
         id: "pad-1",
         power: .init(charging: .charging, battery: .init(percentage: 73...73), wiredPower: true)
       ),
-      FakeService.device(
+      ApplicationServiceDeviceDescription.fixture(
         id: "pad-2",
         power: .init(charging: .discharging, battery: .init(percentage: 0...9), wiredPower: nil)
       ),
-      FakeService.device(id: "pad-3", power: .unknown),
-      FakeService.device(id: "pad-4"),
+      ApplicationServiceDeviceDescription.fixture(id: "pad-3", power: .unknown),
+      ApplicationServiceDeviceDescription.fixture(id: "pad-4"),
     ]
   }
 
@@ -321,7 +343,9 @@ struct ControllerCommandTests {
     virtual.rightTriggerPressed = true
     let output = ApplicationServiceVirtualOutputState(virtual)
     let input = ControllerState(pressed: [.faceSouth])
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       switch method {
       case .getControllerState: doubleEncoded(input)
       case .getVirtualOutputState: doubleEncoded(output)
@@ -358,7 +382,9 @@ struct ControllerCommandTests {
 
   @Test
   func watchOutputPrintsNoneWhenNothingIsPublished() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       switch method {
       case .getControllerState: doubleEncoded(ControllerState.neutral)
       case .getVirtualOutputState: encoded(Data?.none)
@@ -375,15 +401,15 @@ struct ControllerCommandTests {
   @Test
   func outputChecksNameTheControllerByIDWhenAnotherSharesItsModel() async throws {
     let service = try FakeService(devices: [
-      FakeService.device(id: "pad-1", outputs: .dualMainRumble),
-      FakeService.device(id: "pad-2", outputs: .dualMainRumble),
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1", outputs: .dualMainRumble),
+      ApplicationServiceDeviceDescription.fixture(id: "pad-2", outputs: .dualMainRumble),
     ])
     let shared = await service.run(["controller", "show", "pad-2", "--json"])
     #expect(shared.code == 0, "\(shared.standardError)")
     #expect(shared.standardOutput.contains("ojd controller rumble pad-2 "))
     #expect(!shared.standardOutput.contains("045E:028E --"))
     let alone = try FakeService(devices: [
-      FakeService.device(id: "pad-1", outputs: .dualMainRumble)
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1", outputs: .dualMainRumble)
     ])
     let single = await alone.run(["controller", "show", "pad-1", "--json"])
     #expect(single.standardOutput.contains("ojd controller rumble 045E:028E "))
@@ -415,7 +441,11 @@ struct ControllerCommandTests {
       try userRecord.write(to: file)
     }
     let service = try FakeService(devices: [
-      FakeService.device(id: "pad-1", vendorID: vendorID, productID: productID)
+      ApplicationServiceDeviceDescription.fixture(
+        id: "pad-1",
+        vendorID: vendorID,
+        productID: productID
+      )
     ])
     let result = await RecordStore.$directory.withValue(directory) {
       await service.run(["controller", "show", "pad-1"] + flags)
@@ -485,7 +515,7 @@ struct ControllerCommandTests {
   ])
   func outputCommandsReportEachDeliveredCommand(arguments: [String]) async throws {
     let service = try FakeService(
-      devices: [FakeService.device(id: "pad-1")],
+      devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],
       respond: Self.delivered()
     )
     let result = await service.run(arguments + ["--json"])
@@ -496,7 +526,9 @@ struct ControllerCommandTests {
 
   @Test
   func resumeAndDisconnectReportTheSession() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       switch method {
       case .resumeController: doubleEncoded(ControllerResumeResult(state: .active))
       case .disconnectWirelessController:
@@ -516,7 +548,9 @@ struct ControllerCommandTests {
   func capturePrintsEachNewPacketAsAJSONLine() async throws {
     let reads = Counter()
     let packet = #"{"direction":"rx","hex":"01 02","length":2,"timestamp":1.5}"#
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       guard method == .getPacketLog else { return nil }
       return encoded(Data((reads.next() == 0 ? "[]" : "[\(packet)]").utf8))
     }
@@ -529,7 +563,9 @@ struct ControllerCommandTests {
 
   @Test
   func watchPrintsTheStateAsJSONLines() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       method == .getControllerState ? doubleEncoded(ControllerState(pressed: [.faceSouth])) : nil
     }
     let result = await service.run(["controller", "watch", "pad-1", "--duration", "0.2", "--json"])
@@ -545,8 +581,11 @@ struct ControllerCommandTests {
     let service = try FakeService(
       devices: {
         lists.next() == 0
-          ? [FakeService.device(id: "pad-1"), FakeService.device(id: "pad-2", unit: unit)]
-          : [FakeService.device(id: "pad-1")]
+          ? [
+            ApplicationServiceDeviceDescription.fixture(id: "pad-1"),
+            ApplicationServiceDeviceDescription.fixture(id: "pad-2", unit: unit),
+          ]
+          : [ApplicationServiceDeviceDescription.fixture(id: "pad-1")]
       },
       respond: { method, _ in
         method == .getControllerState ? doubleEncoded(ControllerState(pressed: [.faceSouth])) : nil
@@ -573,7 +612,9 @@ struct ControllerCommandTests {
   @Test
   func watchAllPrefixesEachHumanAndPlainLineWithTheController() async throws {
     let input = ControllerState(pressed: [.faceSouth])
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       method == .getControllerState ? doubleEncoded(input) : nil
     }
     let human = await service.run(["controller", "watch", "--all", "--duration", "0.1"])
@@ -599,7 +640,9 @@ struct ControllerCommandTests {
     ["controller", "watch", "pad-1", "--all"], ["controller", "watch", "--all", "--first-press"],
   ])
   func invalidOperandsExitSixtyFourBeforeAnyRequest(arguments: [String]) async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")])
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ])
     let result = await service.run(arguments)
     #expect(result.code == 64, "\(arguments)")
     #expect(service.arguments(of: .getStatus).isEmpty)

@@ -180,7 +180,7 @@ package enum LocalServiceRPCTransport {
     }
   }
 
-  static func socketAddress(path: String) throws -> sockaddr_un {
+  package static func socketAddress(path: String) throws -> sockaddr_un {
     guard path.utf8.count < MemoryLayout.size(ofValue: sockaddr_un().sun_path) else {
       throw LocalServiceRPCError.invalidFrame
     }
@@ -194,12 +194,12 @@ package enum LocalServiceRPCTransport {
     return address
   }
 
-  static func socketAddressLength(path: String) -> socklen_t {
+  package static func socketAddressLength(path: String) -> socklen_t {
     let pathOffset = MemoryLayout<sockaddr_un>.offset(of: \sockaddr_un.sun_path) ?? 0
     return socklen_t(pathOffset + path.utf8.count + 1)
   }
 
-  static func setTimeout(_ descriptor: Int32, seconds: TimeInterval) throws {
+  package static func setTimeout(_ descriptor: Int32, seconds: TimeInterval) throws {
     let clamped = max(0.1, seconds)
     var timeout = timeval(
       tv_sec: Int(clamped),

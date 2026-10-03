@@ -2,7 +2,7 @@ import Darwin
 import Foundation
 
 public final class LocalServiceRPCServer: @unchecked Sendable {
-  public typealias Authentication = @Sendable (Int32) -> Bool
+  public typealias Authentication = @Sendable (LocalSocketPeer) -> Bool
   public typealias Completion = @Sendable (LocalServiceRPCResponse) -> Void
   public typealias Handler = @Sendable (LocalServiceRPCRequest, @escaping Completion) -> Void
 
@@ -87,13 +87,13 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
   }
 
   private func handleConnection(_ descriptor: Int32) {
-    guard let peerPID = authenticatedPeerPID(descriptor) else {
+    guard let peer = LocalSocketPeer.authenticated(descriptor) else {
       Darwin.close(descriptor)
       return
     }
     do {
       try LocalServiceRPCTransport.setTimeout(descriptor, seconds: 35)
-      guard authentication(peerPID) else {
+      guard authentication(peer) else {
         let response = LocalServiceRPCResponse(
           result: nil,
           error: LocalServiceRPCError.peerRejected.localizedDescription,
@@ -117,18 +117,6 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
       }
       Darwin.close(descriptor)
     }
-  }
-
-  private func authenticatedPeerPID(_ descriptor: Int32) -> Int32? {
-    var userID: uid_t = 0
-    var groupID: gid_t = 0
-    guard getpeereid(descriptor, &userID, &groupID) == 0, userID == geteuid() else { return nil }
-    var processIdentifier: pid_t = 0
-    var size = socklen_t(MemoryLayout<pid_t>.size)
-    guard getsockopt(descriptor, SOL_LOCAL, LOCAL_PEERPID, &processIdentifier, &size) == 0,
-      processIdentifier > 0
-    else { return nil }
-    return processIdentifier
   }
 
   private func removeStaleSocket(at path: String) throws {

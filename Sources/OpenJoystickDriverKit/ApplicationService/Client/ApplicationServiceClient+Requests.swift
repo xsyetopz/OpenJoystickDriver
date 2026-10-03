@@ -309,6 +309,34 @@ extension ApplicationServiceClient {
     try await call(.setSetting, ApplicationServiceSettingArguments(key: key, value: value))
   }
 
+  /// The endpoint's state, its grants, and the clients it refused recently.
+  public func accessStatus() async throws -> AccessStatusPayload {
+    try await call(.getAccessStatus, LocalServiceRPCEmptyArguments())
+  }
+
+  /// Turns the endpoint on or off and returns its state afterward.
+  public func setAccessEnabled(_ enabled: Bool) async throws -> AccessStatusPayload {
+    try await call(.setAccessEnabled, AccessEnabledArguments(enabled: enabled))
+  }
+
+  /// Grants `scopes` to the client signed as `identity`, adding to any scopes it already has.
+  public func grantAccess(
+    _ identity: CodeSigningIdentity,
+    path: String,
+    scopes: [EndpointScope]
+  ) async throws -> AccessGrantSummary {
+    try await call(
+      .grantAccess,
+      AccessGrantArguments(identity: identity, path: path, scopes: scopes)
+    )
+  }
+
+  /// Removes `scopes` from the client's grant, or the whole grant when nil.
+  public func revokeAccess(id: String, scopes: [EndpointScope]?) async throws -> AccessRevokeResult
+  {
+    try await call(.revokeAccess, AccessRevokeArguments(id: id, scopes: scopes))
+  }
+
   public func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await call(.getRemappingSnapshot, LocalServiceRPCEmptyArguments())
   }

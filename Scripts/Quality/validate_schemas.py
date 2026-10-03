@@ -34,6 +34,8 @@ SCHEMA_PATHS = (
     SCHEMAS / "report.schema.json",
     SCHEMAS / "cli-output.schema.json",
     SCHEMAS / "profile.schema.json",
+    SCHEMAS / "access-grants.schema.json",
+    SCHEMAS / "endpoint.schema.json",
 )
 
 

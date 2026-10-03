@@ -1,0 +1,93 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/access-grants.schema.json",
+	"title": "OpenJoystickDriver endpoint access grants",
+	"description": "The file AccessGrants.json in the OpenJoystickDriver Application Support folder. Only the service writes it, when 'ojd access enable', 'disable', 'grant', or 'revoke' runs.",
+	"type": "object",
+	"required": [
+		"enabled",
+		"grants"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"enabled": {
+			"description": "Whether the endpoint socket exists.",
+			"type": "boolean"
+		},
+		"grants": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/grant"
+			}
+		}
+	},
+	"$defs": {
+		"scope": {
+			"description": "'read' receives controller events; 'control' drives a virtual gamepad.",
+			"enum": [
+				"read",
+				"control"
+			]
+		},
+		"grant": {
+			"description": "A client the user allowed, matched by its code signature.",
+			"type": "object",
+			"required": [
+				"kind",
+				"identifier",
+				"scopes",
+				"grantedAt",
+				"path"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"kind": {
+					"description": "'team' matches the identifier signed by an Apple-issued certificate of the team; 'apple' matches the identifier signed by Apple.",
+					"enum": [
+						"team",
+						"apple"
+					]
+				},
+				"identifier": {
+					"description": "The code signing identifier.",
+					"type": "string",
+					"minLength": 1
+				},
+				"teamIdentifier": {
+					"description": "The signing team; present for 'team' grants.",
+					"type": "string",
+					"minLength": 1
+				},
+				"scopes": {
+					"type": "array",
+					"minItems": 1,
+					"uniqueItems": true,
+					"items": {
+						"$ref": "#/$defs/scope"
+					}
+				},
+				"grantedAt": {
+					"description": "When the latest 'ojd access grant' for this client ran.",
+					"type": "string",
+					"format": "date-time"
+				},
+				"path": {
+					"description": "Where the client was when it was granted; for display only.",
+					"type": "string"
+				}
+			},
+			"if": {
+				"properties": {
+					"kind": {
+						"const": "team"
+					}
+				}
+			},
+			"then": {
+				"required": [
+					"teamIdentifier"
+				]
+			}
+		}
+	}
+}

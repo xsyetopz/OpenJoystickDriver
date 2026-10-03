@@ -168,7 +168,13 @@ struct RecordCommandTests {
        {"direction":"rx","hex":"00 01 05","length":3,"timestamp":3}]
       """
     let service = try FakeService(
-      devices: [FakeService.device(id: "pad-1", vendorID: 0x1234, productID: 0x5678)]
+      devices: [
+        ApplicationServiceDeviceDescription.fixture(
+          id: "pad-1",
+          vendorID: 0x1234,
+          productID: 0x5678
+        )
+      ]
     ) { method, _ in
       guard method == .getPacketLog else { return nil }
       return encoded(Data((reads.next() == 0 ? "[]" : packets).utf8))
@@ -190,7 +196,9 @@ struct RecordCommandTests {
   /// A bundled model whose descriptor maps nothing keeps its bundled family.
   @Test
   func draftOfABundledModelWithoutALayoutExitsOne() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       method == .getPacketLog ? encoded(Data("[]".utf8)) : nil
     }
     let result = await RecordDraftCommand.$descriptor.withValue(Self.noDescriptor) {

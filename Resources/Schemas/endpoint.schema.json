@@ -1,0 +1,152 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/endpoint.schema.json",
+	"title": "OpenJoystickDriver endpoint protocol",
+	"description": "One JSON object per line on the endpoint socket. A client sends hello, waits for welcome, then sends subscribe; the service then sends controllers stream lines. An error line is the last line before the service closes the connection.",
+	"oneOf": [
+		{
+			"$ref": "#/$defs/clientLine"
+		},
+		{
+			"$ref": "#/$defs/serviceLine"
+		}
+	],
+	"$defs": {
+		"clientLine": {
+			"oneOf": [
+				{
+					"$ref": "#/$defs/hello"
+				},
+				{
+					"$ref": "#/$defs/subscribe"
+				}
+			]
+		},
+		"serviceLine": {
+			"oneOf": [
+				{
+					"$ref": "#/$defs/welcome"
+				},
+				{
+					"$ref": "#/$defs/error"
+				},
+				{
+					"$ref": "cli-output.schema.json#/$defs/sharedControllerWatchEvent"
+				}
+			]
+		},
+		"hello": {
+			"type": "object",
+			"required": ["protocol", "scopes", "type"],
+			"additionalProperties": false,
+			"properties": {
+				"type": {
+					"const": "hello"
+				},
+				"protocol": {
+					"type": "integer",
+					"minimum": 1,
+					"description": "The protocol version the client speaks."
+				},
+				"scopes": {
+					"type": "array",
+					"minItems": 1,
+					"uniqueItems": true,
+					"items": {
+						"$ref": "access-grants.schema.json#/$defs/scope"
+					},
+					"description": "The scopes the client needs; each must be granted."
+				}
+			}
+		},
+		"welcome": {
+			"type": "object",
+			"required": ["protocol", "scopes", "type", "version"],
+			"additionalProperties": false,
+			"properties": {
+				"type": {
+					"const": "welcome"
+				},
+				"protocol": {
+					"const": 1
+				},
+				"version": {
+					"type": "string",
+					"description": "The OpenJoystickDriver version."
+				},
+				"scopes": {
+					"type": "array",
+					"minItems": 1,
+					"uniqueItems": true,
+					"items": {
+						"$ref": "access-grants.schema.json#/$defs/scope"
+					}
+				}
+			}
+		},
+		"subscribe": {
+			"type": "object",
+			"required": ["stream", "type"],
+			"additionalProperties": false,
+			"properties": {
+				"type": {
+					"const": "subscribe"
+				},
+				"stream": {
+					"const": "controllers"
+				},
+				"output": {
+					"type": "boolean",
+					"description": "Adds the virtual gamepad's values to input lines. Defaults to false."
+				}
+			}
+		},
+		"error": {
+			"type": "object",
+			"required": ["code", "message", "type"],
+			"additionalProperties": false,
+			"properties": {
+				"type": {
+					"const": "error"
+				},
+				"code": {
+					"enum": [
+						"endpoint-disabled",
+						"not-granted",
+						"unsupported-protocol",
+						"invalid-message",
+						"too-many-connections",
+						"revoked",
+						"too-slow"
+					]
+				},
+				"message": {
+					"type": "string",
+					"description": "English text for logs; clients branch on code."
+				},
+				"supported": {
+					"type": "array",
+					"items": {
+						"type": "integer"
+					},
+					"description": "The protocol versions the service speaks; only with unsupported-protocol."
+				}
+			},
+			"if": {
+				"properties": {
+					"code": {
+						"const": "unsupported-protocol"
+					}
+				}
+			},
+			"then": {
+				"required": ["supported"]
+			},
+			"else": {
+				"not": {
+					"required": ["supported"]
+				}
+			}
+		}
+	}
+}

@@ -8,7 +8,9 @@ import Testing
 struct VirtualCommandTests {
   @Test
   func setSendsTheProfileForTheSelectedControllerAndPrintsTheResult() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       method == .setVirtualHIDProfileOverride
         ? encoded(
           VirtualHIDProfileOverrideResult(
@@ -37,7 +39,9 @@ struct VirtualCommandTests {
 
   @Test
   func aRejectedProfileFailsWithExitOne() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       method == .setVirtualHIDProfileOverride
         ? encoded(
           VirtualHIDProfileOverrideResult(
@@ -59,7 +63,9 @@ struct VirtualCommandTests {
     ["virtual", "set", "hid-generic", "pad-1"], ["virtual", "reset", "pad-1"],
   ])
   func aChoiceStoredWhileVirtualOutputIsOffSucceeds(arguments: [String]) async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { method, _ in
       method == .setVirtualHIDProfileOverride || method == .resetVirtualHIDProfileOverride
         ? encoded(
           VirtualHIDProfileOverrideResult(
@@ -103,7 +109,9 @@ struct VirtualCommandTests {
     ["virtual", "reset", "--all", "--dry-run"], ["virtual", "reset", "pad-1", "-n"],
   ])
   func aDryRunDescribesTheResetAndChangesNothing(arguments: [String]) async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { _, _ in
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ]) { _, _ in
       encoded(true)
     }
     let result = await service.run(arguments)
@@ -118,7 +126,9 @@ struct VirtualCommandTests {
     ["virtual", "set", "hid-unknown", "pad-1"],
   ])
   func aMissingOrInvalidTargetExitsSixtyFour(arguments: [String]) async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")])
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ])
     let result = await service.run(arguments)
     #expect(result.code == 64, "\(arguments)")
     #expect(service.arguments(of: .getStatus).isEmpty)
@@ -126,7 +136,9 @@ struct VirtualCommandTests {
 
   @Test
   func showListsEachControllersProfileAndTheChoices() async throws {
-    let service = try FakeService(devices: [FakeService.device(id: "pad-1")])
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    ])
     let result = await service.run(["virtual", "show", "--json"])
     #expect(result.code == 0, "\(result.standardError)")
     let json = try result.json()

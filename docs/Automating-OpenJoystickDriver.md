@@ -54,6 +54,47 @@ ojd --no-input controller watch --all --json | jq -c 'select(.type != "input")'
 
 The service is polled every 16 ms for input, and every 250 ms for connected controllers.
 
+## Read the endpoint
+
+A program that runs all the time can read controller events from the endpoint, a local socket, instead of running `ojd controller watch`. The endpoint is off by default, and it serves only the programs that you grant:
+
+1. Turn on the endpoint: `ojd access enable`.
+1. Grant your program: `ojd access grant /Applications/Reader.app`. To find the ID of a program that the endpoint refused, run `ojd access list`.
+1. Read the socket path: `ojd --json access status | jq -r .socketPath`. It is in your user's temporary folder, and it exists only while the endpoint is on.
+
+The program sends and receives JSON objects, one per line, each at most 64 KiB:
+
+1. Within 5 seconds, the program sends `{"type":"hello","protocol":1,"scopes":["read"]}`.
+1. The endpoint answers `welcome`, with `protocol`, `version`, and the granted `scopes`, or `error`, with `code` and `message`, and closes the connection.
+1. The program sends `{"type":"subscribe","stream":"controllers"}`. Add `"output":true` for the values of the virtual gamepad.
+1. The endpoint sends the same `connected`, `input`, and `disconnected` lines as `ojd controller watch --all --json`.
+
+```python
+import json
+import socket
+import subprocess
+
+status = json.loads(subprocess.check_output(["ojd", "--json", "access", "status"]))
+with socket.socket(socket.AF_UNIX) as endpoint:
+    endpoint.connect(status["socketPath"])
+    lines = endpoint.makefile("rw")
+    lines.write('{"type":"hello","protocol":1,"scopes":["read"]}\n')
+    lines.flush()
+    print(lines.readline(), end="")
+    lines.write('{"type":"subscribe","stream":"controllers"}\n')
+    lines.flush()
+    for line in lines:
+        event = json.loads(line)
+        if event["type"] != "input":
+            print(event["type"], event["id"])
+```
+
+`python3` is signed by Apple, so to run this example, grant `/usr/bin/python3`. Every Python script you run then gets the access. Grant a signed app of your own for regular use.
+
+The error codes are `endpoint-disabled`, `not-granted`, `unsupported-protocol`, `invalid-message`, `too-many-connections`, `revoked`, and `too-slow`. With `unsupported-protocol`, `supported` lists the protocol versions. The endpoint serves at most 8 connections. When a program reads too slowly, the endpoint keeps only the newest `input` line of each controller. When 256 lines wait, it sends `too-slow` and closes the connection.
+
+[`endpoint.schema.json`](../Resources/Schemas/endpoint.schema.json) describes each line. In a test, a sandboxed app could not connect to the endpoint: macOS refused the connection with `EPERM`, with and without a temporary-exception entitlement for the socket path. The endpoint does not have the `control` scope yet, so a program cannot drive a virtual gamepad through it.
+
 ## Change profiles
 
 A profile is a JSON file. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields.

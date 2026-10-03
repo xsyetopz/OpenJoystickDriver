@@ -10,7 +10,8 @@ extension VirtualCommandTests {
   private static func unitService() throws -> FakeService {
     try FakeService(
       devices: [
-        FakeService.device(id: "pad-1", unit: unit), FakeService.device(id: "pad-2"),
+        ApplicationServiceDeviceDescription.fixture(id: "pad-1", unit: unit),
+        ApplicationServiceDeviceDescription.fixture(id: "pad-2"),
       ]
     ) { method, _ in
       method == .setVirtualHIDProfileOverride || method == .resetVirtualHIDProfileOverride
