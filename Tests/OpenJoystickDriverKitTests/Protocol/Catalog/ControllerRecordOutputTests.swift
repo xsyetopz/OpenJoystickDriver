@@ -144,6 +144,15 @@ struct ControllerRecordOutputTests {
     #expect(MacOSOwnedOutput.none.narrowing(.dualMainRumble) == .none)
   }
 
+  /// A native DS4 gets only the startup feature read that switches Bluetooth to report 0x11.
+  @Test
+  func macOSOwnedDualShock4ReadsStartupFeaturesOnly() {
+    let ds4 = MacOSOwnedOutput.allowance(for: .sonyDualShock4, record: nil)
+    #expect(ds4.readsStartupFeatures)
+    #expect(ds4.reports.isEmpty && ds4.lightingFeatures.isEmpty && !ds4.drivesRumble)
+    #expect(!ds4.setsStartupPlayerIndicator)
+  }
+
   /// Decodes a record for 2563:0575 whose remaining top-level fields are `fields`.
   private func decode(_ fields: String) throws -> ControllerRecordDocument {
     let json = """

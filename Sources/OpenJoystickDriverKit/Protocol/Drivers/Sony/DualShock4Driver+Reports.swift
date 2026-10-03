@@ -73,12 +73,13 @@ extension DualShock4Driver {
       return nil
     }
     let timestamp = bytes.count >= 11 ? UInt16(bytes[9]) | (UInt16(bytes[10]) << 8) : nil
+    // The minimal Bluetooth report has no timestamp, so its arrival is the only liveness signal.
     let isFresh =
       timestamp.map { current in
         guard let previousSensorTimestamp else { return true }
         let advance = current &- previousSensorTimestamp
         return advance > 0 && advance < 0x8000
-      } ?? false
+      } ?? true
     previousSensorTimestamp = timestamp
     updatePower(from: bytes)
 

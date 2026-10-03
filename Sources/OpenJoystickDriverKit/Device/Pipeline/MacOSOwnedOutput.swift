@@ -49,6 +49,16 @@ struct MacOSOwnedOutput: Equatable, Sendable {
         setsStartupPlayerIndicator: true,
         readsStartupFeatures: true
       )
+    // Over Bluetooth a DualShock 4 sends only the 10-byte report 0x01, with no motion, touch or
+    // battery, until the host reads its calibration feature report. macOS does not read it.
+    case .sonyDualShock4:
+      Self(
+        lightingFeatures: [],
+        drivesRumble: false,
+        reports: [],
+        setsStartupPlayerIndicator: false,
+        readsStartupFeatures: true
+      )
     default: .none
     }
   }

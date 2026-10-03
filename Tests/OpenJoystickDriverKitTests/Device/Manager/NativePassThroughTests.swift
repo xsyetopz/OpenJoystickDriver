@@ -59,7 +59,11 @@ struct NativePassThroughTests {
     #expect(await manager.connectedDeviceDescriptions().isEmpty)
     #expect(await backend.recordedOutputReports().isEmpty)
     #expect(await backend.recordedFeatureReports().isEmpty)
-    #expect(await backend.recordedFeatureReadCount() == 0)
+    // Only the calibration read that switches Bluetooth to report 0x11, on the exact connection,
+    // retried while the scripted backend has no reply.
+    #expect(await backend.recordedFeatureReadReportIDs() == [5, 5, 5])
+    let readTargets = await backend.recordedFeatureReadTargets()
+    #expect(readTargets == Array(repeating: connection.connectionID, count: 3))
     await manager.stop()
   }
 

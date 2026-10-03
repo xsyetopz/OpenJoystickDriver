@@ -134,7 +134,7 @@ extension DriverParseCharacterizationTests {
         "repeat [] hat=neutral ls=0,0 rs=0,0 lt=0 rt=0 motion=1 touch=0 stale",
         "  motion n=59 w=0.0011,-0.0033,-0.0022 a=4.9033,-0.0383,-4.9033",
         "short [] hat=neutral ls=0,0 rs=0,0 lt=0 rt=0 stale threw=invalidReportFraming",
-        "minimal [left-shoulder] hat=neutral ls=0,0 rs=0,0 lt=0 rt=0 stale",
+        "minimal [left-shoulder] hat=neutral ls=0,0 rs=0,0 lt=0 rt=0 fresh",
       ]
     )
   }
