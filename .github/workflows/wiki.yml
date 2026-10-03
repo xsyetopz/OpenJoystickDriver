@@ -1,0 +1,49 @@
+name: Wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/**
+      - Scripts/Documentation/wiki/**
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wiki-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync docs to the wiki
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build wiki pages
+        run: python3 -m Scripts.Documentation.wiki.build "$RUNNER_TEMP/pages"
+
+      - name: Publish wiki pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          wiki="$RUNNER_TEMP/wiki"
+          git clone --depth 1 \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" "$wiki"
+          git -C "$wiki" rm -rq --ignore-unmatch .
+          cp "$RUNNER_TEMP"/pages/*.md "$wiki"/
+          git -C "$wiki" add -A
+          if git -C "$wiki" diff --cached --quiet; then
+            echo "The wiki is current."
+            exit 0
+          fi
+          git -C "$wiki" -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "Sync docs from ${SOURCE_SHA}"
+          git -C "$wiki" push -q origin HEAD
