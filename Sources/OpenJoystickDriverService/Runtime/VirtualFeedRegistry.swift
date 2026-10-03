@@ -34,6 +34,10 @@ enum VirtualFeedError: LocalizedError, Equatable {
 /// The open virtual feeds: each one publishes a virtual controller that a client drives with
 /// frames and that queues the host's output commands for the client.
 ///
+/// Each feed shows its frames in order, each for at least its hold and at least
+/// `VirtualFeedExchangeResult.minimumFrameMilliseconds`. A queued frame without a hold gives way
+/// to a newer one with the same buttons and d-pad, so that only axis changes coalesce.
+///
 /// A feed closes when its client closes it, when it gets no exchange for `idleTimeout`, or when
 /// the service stops.
 /// - Note: `@unchecked Sendable` because `lock` guards `sessions` and `stopped`.
@@ -46,6 +50,12 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     let device: any VirtualFeedDevice
     let identifier: DeviceIdentifier
     var feedback: [ControllerOutputCommand] = []
+    /// Frames that wait for `player`, oldest first.
+    var pending: [VirtualFeedFrame] = []
+    /// Shows `pending`; nil when the feed shows its last frame and waits for more.
+    var player: Task<Void, Never>?
+    /// Whether `player` waits out the time of a frame it sent.
+    var showing = false
     /// `ProcessInfo.systemUptime` of the last exchange.
     var lastExchange: TimeInterval
     var watchdog: Task<Void, Never>?
@@ -114,29 +124,26 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     return VirtualFeedSession(token: token)
   }
 
-  /// Sends `frame`, when given, and returns the queued output commands; a token with no open
-  /// feed returns `closed`.
-  func exchange(token: UUID, frame: VirtualFeedFrame?) async throws -> VirtualFeedExchangeResult {
-    let taken = lock.withLock { () -> (Session, [ControllerOutputCommand])? in
-      guard let session = sessions[token] else { return nil }
-      session.lastExchange = ProcessInfo.processInfo.systemUptime
-      defer { session.feedback.removeAll() }
-      return (session, session.feedback)
-    }
-    guard let (session, feedback) = taken else {
-      return VirtualFeedExchangeResult(feedback: [], closed: true)
-    }
-    if let frame {
-      do {
-        try await session.device.send(frame.gamepadState, for: session.identifier)
-      } catch {
-        guard await close(token: token) else {
-          return VirtualFeedExchangeResult(feedback: feedback, closed: true)
-        }
-        throw error
+  /// Queues as many of `frames` as fit and returns the queued output commands; a token with no
+  /// open feed returns `closed`.
+  func exchange(token: UUID, frames: [VirtualFeedFrame]) -> VirtualFeedExchangeResult {
+    lock.withLock {
+      guard let session = sessions[token] else {
+        return VirtualFeedExchangeResult(feedback: [], closed: true)
       }
+      session.lastExchange = ProcessInfo.processInfo.systemUptime
+      let accepted = Self.enqueue(frames, in: session)
+      if session.player == nil, !session.pending.isEmpty {
+        session.player = Task { [weak self] in await self?.play(token) }
+      }
+      defer { session.feedback.removeAll() }
+      return VirtualFeedExchangeResult(
+        feedback: session.feedback,
+        closed: false,
+        accepted: accepted,
+        queued: session.pending.count + (session.showing ? 1 : 0)
+      )
     }
-    return VirtualFeedExchangeResult(feedback: feedback, closed: false)
   }
 
   /// Removes the feed's virtual controller; false when no open feed has the token.
@@ -146,6 +153,7 @@ final class VirtualFeedRegistry: @unchecked Sendable {
       return false
     }
     session.watchdog?.cancel()
+    session.player?.cancel()
     await session.device.close()
     return true
   }
@@ -159,6 +167,7 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     }
     for session in closing {
       session.watchdog?.cancel()
+      session.player?.cancel()
       await session.device.close()
     }
   }
@@ -171,6 +180,61 @@ final class VirtualFeedRegistry: @unchecked Sendable {
       session.feedback.append(command)
       let excess = session.feedback.count - Self.maximumQueuedFeedback
       if excess > 0 { session.feedback.removeFirst(excess) }
+    }
+  }
+
+  /// Adds `frames` to the session's queue, oldest first, until it is full; returns how many it
+  /// took. The caller holds `lock`.
+  private static func enqueue(_ frames: [VirtualFeedFrame], in session: Session) -> Int {
+    var accepted = 0
+    for frame in frames {
+      if let last = session.pending.last, replaces(last, with: frame) {
+        session.pending[session.pending.count - 1] = frame
+      } else if session.pending.count < VirtualFeedExchangeResult.maximumQueuedFrames {
+        session.pending.append(frame)
+      } else {
+        break
+      }
+      accepted += 1
+    }
+    return accepted
+  }
+
+  /// Whether `frame` can take the place of the queued `last` without losing a press, a release,
+  /// or a hold.
+  private static func replaces(_ last: VirtualFeedFrame, with frame: VirtualFeedFrame) -> Bool {
+    (last.holdMilliseconds ?? 0) == 0 && (frame.holdMilliseconds ?? 0) == 0
+      && last.buttons == frame.buttons && last.dpad == frame.dpad
+  }
+
+  /// Sends the feed's queued frames in order and waits out each one's time; stops when the queue
+  /// is empty. A failed send closes the feed.
+  private func play(_ token: UUID) async {
+    while !Task.isCancelled {
+      let next = lock.withLock { () -> (Session, VirtualFeedFrame)? in
+        guard let session = sessions[token] else { return nil }
+        guard !session.pending.isEmpty else {
+          session.player = nil
+          session.showing = false
+          return nil
+        }
+        session.showing = true
+        return (session, session.pending.removeFirst())
+      }
+      guard let (session, frame) = next else { return }
+      do {
+        try await session.device.send(frame.gamepadState, for: session.identifier)
+        let milliseconds = max(
+          frame.holdMilliseconds ?? 0,
+          VirtualFeedExchangeResult.minimumFrameMilliseconds
+        )
+        try await Task.sleep(nanoseconds: UInt64(milliseconds) * 1_000_000)
+      } catch is CancellationError {
+        return
+      } catch {
+        await close(token: token)
+        return
+      }
     }
   }
 

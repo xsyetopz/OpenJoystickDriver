@@ -1185,7 +1185,7 @@
 "cli.virtual.error.failed" = "Virtuální gamepad pro %@ se nezměnil (%@). Zkontrolujte to pomocí 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ nemá ID jednotky, proto lze volbu použít jen pro celý jeho model. Spusťte příkaz bez --unit.";
 "cli.virtual.feed.abstract" = "Zveřejnit virtuální gamepad ovládaný přes stdin.";
-"cli.virtual.feed.discussion" = "Čte jeden objekt JSON na řádek: 'buttons' a 'dpad' uvádějí stisknuté ovládací prvky, například south a up, a 'axes' přiřazuje hodnoty názvům os, například left_stick_x. Chybějící ovládací prvky jsou neutrální. Páčky se pohybují od -1 do 1, osa Y míří nahoru; spouště se pohybují od 0 do 1. Vypisuje každý výstupní příkaz, který hry posílají gamepadu, například vibrace, jako jeden objekt JSON na řádek. Skončí, když skončí vstup.";
+"cli.virtual.feed.discussion" = "Čte jeden objekt JSON na řádek: 'buttons' a 'dpad' uvádějí stisknuté ovládací prvky, například south a up, a 'axes' přiřazuje hodnoty názvům os, například left_stick_x. Chybějící ovládací prvky jsou neutrální. Páčky se pohybují od -1 do 1, osa Y míří nahoru; spouště se pohybují od 0 do 1. Snímky se přehrávají popořadě, každý alespoň 8 ms; 'holdMilliseconds' podrží snímek déle, nejvýše 60000. Vypisuje každý výstupní příkaz, který hry posílají gamepadu, například vibrace, jako jeden objekt JSON na řádek. Skončí, když se přehrají všechny snímky po skončení vstupu.";
 "cli.virtual.feed.error.closed" = "Služba virtuální gamepad zavřela. Zkontrolujte to pomocí 'ojd status'.";
 "cli.virtual.feed.error.frame" = "Řádek %@ není platný snímek. 'ojd virtual feed --help' ukazuje formát.";
 "cli.virtual.feed.profile" = "Profil virtuálního gamepadu, který se má zveřejnit.";

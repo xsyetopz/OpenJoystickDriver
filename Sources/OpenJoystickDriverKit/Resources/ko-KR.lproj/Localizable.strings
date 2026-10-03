@@ -1185,7 +1185,7 @@
 "cli.virtual.error.failed" = "%@의 가상 게임패드가 변경되지 않았습니다(%@). 'ojd virtual show'로 확인하세요.";
 "cli.virtual.error.no_unit" = "%@에는 유닛 ID가 없으므로 선택은 모델 전체에만 적용할 수 있습니다. --unit 없이 명령을 실행하세요.";
 "cli.virtual.feed.abstract" = "stdin으로 구동되는 가상 게임패드를 게시합니다.";
-"cli.virtual.feed.discussion" = "한 줄에 JSON 객체 하나를 읽습니다. 'buttons'와 'dpad'는 south, up처럼 눌린 컨트롤을 나열하고, 'axes'는 left_stick_x 같은 축 이름을 값에 대응시킵니다. 없는 컨트롤은 중립으로 처리됩니다. 스틱은 -1에서 1까지이며 Y는 위쪽입니다. 트리거는 0에서 1까지입니다. 게임이 게임패드로 보내는 모든 출력 명령(예: 진동)을 한 줄에 JSON 객체 하나로 출력합니다. 입력이 끝나면 중지됩니다.";
+"cli.virtual.feed.discussion" = "한 줄에 JSON 객체 하나를 읽습니다. 'buttons'와 'dpad'는 south, up처럼 눌린 컨트롤을 나열하고, 'axes'는 left_stick_x 같은 축 이름을 값에 대응시킵니다. 없는 컨트롤은 중립으로 처리됩니다. 스틱은 -1에서 1까지이며 Y는 위쪽입니다. 트리거는 0에서 1까지입니다. 프레임은 순서대로 재생되며 각각 최소 8 ms 동안 유지됩니다. 'holdMilliseconds'는 프레임을 더 오래 유지하며 최대 60000까지 가능합니다. 게임이 게임패드로 보내는 모든 출력 명령(예: 진동)을 한 줄에 JSON 객체 하나로 출력합니다. 입력이 끝난 뒤 모든 프레임이 재생되면 중지됩니다.";
 "cli.virtual.feed.error.closed" = "서비스가 가상 게임패드를 닫았습니다. 'ojd status'로 확인하세요.";
 "cli.virtual.feed.error.frame" = "%@번째 줄은 올바른 프레임이 아닙니다. 'ojd virtual feed --help'에서 형식을 확인할 수 있습니다.";
 "cli.virtual.feed.profile" = "게시할 가상 게임패드 프로필.";

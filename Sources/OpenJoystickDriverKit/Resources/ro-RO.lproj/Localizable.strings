@@ -1185,7 +1185,7 @@
 "cli.virtual.error.failed" = "Gamepadul virtual pentru %@ nu s-a schimbat (%@). Verificați-l cu «ojd virtual show».";
 "cli.virtual.error.no_unit" = "%@ nu are ID de unitate, deci o alegere se poate aplica doar întregului model. Rulați comanda fără --unit.";
 "cli.virtual.feed.abstract" = "Publică un gamepad virtual controlat prin stdin.";
-"cli.virtual.feed.discussion" = "Citește câte un obiect JSON pe linie: «buttons» și «dpad» enumeră controalele apăsate, de exemplu south și up, iar «axes» asociază valori numelor axelor, de exemplu left_stick_x. Controalele lipsă sunt neutre. Manetele merg de la -1 la 1, cu Y în sus; trăgaciurile merg de la 0 la 1. Afișează fiecare comandă de ieșire pe care jocurile o trimit gamepadului, de exemplu vibrația, ca un obiect JSON pe linie. Se oprește când se termină intrarea.";
+"cli.virtual.feed.discussion" = "Citește câte un obiect JSON pe linie: «buttons» și «dpad» enumeră controalele apăsate, de exemplu south și up, iar «axes» asociază valori numelor axelor, de exemplu left_stick_x. Controalele lipsă sunt neutre. Manetele merg de la -1 la 1, cu Y în sus; trăgaciurile merg de la 0 la 1. Cadrele sunt redate în ordine, fiecare cel puțin 8 ms; «holdMilliseconds» menține un cadru mai mult, până la 60000. Afișează fiecare comandă de ieșire pe care jocurile o trimit gamepadului, de exemplu vibrația, ca un obiect JSON pe linie. Se oprește când toate cadrele au fost redate după încheierea intrării.";
 "cli.virtual.feed.error.closed" = "Serviciul a închis gamepadul virtual. Verificați-l cu «ojd status».";
 "cli.virtual.feed.error.frame" = "Linia %@ nu este un cadru valid. «ojd virtual feed --help» arată formatul.";
 "cli.virtual.feed.profile" = "Profilul gamepadului virtual de publicat.";

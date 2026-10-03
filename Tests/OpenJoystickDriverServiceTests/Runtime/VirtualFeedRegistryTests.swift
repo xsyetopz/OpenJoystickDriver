@@ -11,9 +11,12 @@ struct VirtualFeedRegistryTests {
     let profile: VirtualHIDProfileID
     let output: UserSpaceOutputDispatcher.OutputCommandHandler
     let failsActivation: Bool
+    var failsSending = false
     private let lock = NSLock()
     private var activatedValue: DeviceIdentifier?
     private var sentValue: [RemappingGamepadState] = []
+    /// `ProcessInfo.systemUptime` of each send.
+    private var sentTimesValue: [TimeInterval] = []
     private var closeCountValue = 0
 
     init(
@@ -28,6 +31,7 @@ struct VirtualFeedRegistryTests {
 
     var activated: DeviceIdentifier? { lock.withLock { activatedValue } }
     var sent: [RemappingGamepadState] { lock.withLock { sentValue } }
+    var sentTimes: [TimeInterval] { lock.withLock { sentTimesValue } }
     var closeCount: Int { lock.withLock { closeCountValue } }
 
     func activate(controller identifier: DeviceIdentifier) throws {
@@ -36,7 +40,11 @@ struct VirtualFeedRegistryTests {
     }
 
     func send(_ state: RemappingGamepadState, for identifier: DeviceIdentifier) throws {
-      lock.withLock { sentValue.append(state) }
+      if failsSending { throw UserSpaceOutputDispatcher.CreationError.createFailed }
+      lock.withLock {
+        sentValue.append(state)
+        sentTimesValue.append(ProcessInfo.processInfo.systemUptime)
+      }
     }
 
     func close() { lock.withLock { closeCountValue += 1 } }
@@ -73,7 +81,12 @@ struct VirtualFeedRegistryTests {
     }
   }
 
-  @Test
+  /// Waits until `condition` holds.
+  private static func wait(until condition: () -> Bool) async throws {
+    while !condition() { try await Task.sleep(nanoseconds: 2_000_000) }
+  }
+
+  @Test(.timeLimit(.minutes(1)))
   func aFeedPublishesItsProfileSendsFramesWithYDownAndReturnsTheHostsCommands() async throws {
     let factory = Factory()
     let registry = factory.registry()
@@ -89,23 +102,125 @@ struct VirtualFeedRegistryTests {
     device.receive(.setRumble(.off, duration: .held))
     device.receive(.stopRumble)
     let frame = VirtualFeedFrame(buttons: [.south], axes: [.leftStickY: 0.5, .leftStickX: 0.25])
-    let result = try await registry.exchange(token: session.token, frame: frame)
+    let result = registry.exchange(token: session.token, frames: [frame])
 
     #expect(
       result
         == VirtualFeedExchangeResult(
           feedback: [.setRumble(.off, duration: .held), .stopRumble],
-          closed: false
+          closed: false,
+          accepted: 1,
+          queued: 1
         )
     )
+    try await Self.wait { !device.sent.isEmpty }
     #expect(
       device.sent == [
         RemappingGamepadState(buttons: [.south], axes: [.leftStickY: -0.5, .leftStickX: 0.25])
       ]
     )
-    let empty = try await registry.exchange(token: session.token, frame: nil)
+    try await Self.wait { registry.exchange(token: session.token, frames: []).queued == 0 }
+    let empty = registry.exchange(token: session.token, frames: [])
     #expect(empty == VirtualFeedExchangeResult(feedback: [], closed: false))
     #expect(device.sent.count == 1)
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func framesPlayInOrderEachForItsHoldAndAtLeastTheMinimum() async throws {
+    let factory = Factory()
+    let registry = factory.registry()
+    let session = try await registry.open(profile: "hid-generic")
+    let device = try #require(factory.devices.first)
+    let frames = [
+      VirtualFeedFrame(buttons: [.south], holdMilliseconds: 100), VirtualFeedFrame(),
+      VirtualFeedFrame(dpad: [.up]), VirtualFeedFrame(holdMilliseconds: 0),
+    ]
+
+    let result = registry.exchange(token: session.token, frames: frames)
+    #expect(result.accepted == 4)
+    #expect(result.queued == 4)
+    try await Self.wait { device.sent.count == 4 }
+
+    #expect(device.sent == frames.map(\.gamepadState))
+    let times = device.sentTimes
+    #expect(times[1] - times[0] >= 0.1)
+    let minimum = Double(VirtualFeedExchangeResult.minimumFrameMilliseconds) / 1000
+    #expect(times[2] - times[1] >= minimum)
+    #expect(times[3] - times[2] >= minimum)
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func queuedFramesCoalesceOnlyWhenButtonsAndDpadMatchWithoutAHold() async throws {
+    let factory = Factory()
+    let registry = factory.registry()
+    let session = try await registry.open(profile: "hid-generic")
+    let device = try #require(factory.devices.first)
+    let frames = [
+      VirtualFeedFrame(buttons: [.south], axes: [.leftStickX: 0.1]),
+      VirtualFeedFrame(buttons: [.south], axes: [.leftStickX: 0.2]),
+      VirtualFeedFrame(buttons: [.south], axes: [.leftStickX: 0.3]),
+      VirtualFeedFrame(), VirtualFeedFrame(axes: [.leftStickX: 1]),
+      VirtualFeedFrame(holdMilliseconds: 10), VirtualFeedFrame(),
+    ]
+
+    let result = registry.exchange(token: session.token, frames: frames)
+    #expect(result.accepted == frames.count)
+    #expect(result.queued == 4)
+    try await Self.wait { registry.exchange(token: session.token, frames: []).queued == 0 }
+
+    #expect(
+      device.sent
+        == [frames[2], frames[4], frames[5], frames[6]].map(\.gamepadState)
+    )
+  }
+
+  @Test
+  func aFullQueueAcceptsOnlyTheFramesThatFit() async throws {
+    let factory = Factory()
+    let registry = factory.registry()
+    let session = try await registry.open(profile: "hid-generic")
+    let limit = VirtualFeedExchangeResult.maximumQueuedFrames
+    let frames = (0..<(limit + 10)).map {
+      $0.isMultiple(of: 2) ? VirtualFeedFrame(buttons: [.south]) : VirtualFeedFrame()
+    }
+
+    let result = registry.exchange(token: session.token, frames: frames)
+    #expect(result.accepted == limit)
+    #expect(result.queued == limit)
+    await registry.close(token: session.token)
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func closingStopsTheFramesThatWait() async throws {
+    let factory = Factory()
+    let registry = factory.registry()
+    let session = try await registry.open(profile: "hid-generic")
+    let device = try #require(factory.devices.first)
+    _ = registry.exchange(
+      token: session.token,
+      frames: [VirtualFeedFrame(buttons: [.south], holdMilliseconds: 60_000), VirtualFeedFrame()]
+    )
+    try await Self.wait { !device.sent.isEmpty }
+
+    #expect(await registry.close(token: session.token))
+    try await Task.sleep(nanoseconds: 50_000_000)
+    #expect(device.sent.count == 1)
+    #expect(device.closeCount == 1)
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func aFailedSendClosesTheFeed() async throws {
+    let factory = Factory()
+    let registry = factory.registry()
+    let session = try await registry.open(profile: "hid-generic")
+    let device = try #require(factory.devices.first)
+    device.failsSending = true
+
+    _ = registry.exchange(token: session.token, frames: [VirtualFeedFrame()])
+    try await Self.wait { registry.openFeedCount == 0 }
+
+    #expect(device.closeCount == 1)
+    #expect(registry.exchange(token: session.token, frames: []).closed)
   }
 
   @Test
@@ -118,7 +233,7 @@ struct VirtualFeedRegistryTests {
     #expect(!(await registry.close(token: session.token)))
     #expect(factory.devices.first?.closeCount == 1)
     #expect(registry.openFeedCount == 0)
-    let result = try await registry.exchange(token: session.token, frame: VirtualFeedFrame())
+    let result = registry.exchange(token: session.token, frames: [VirtualFeedFrame()])
     #expect(result == VirtualFeedExchangeResult(feedback: [], closed: true))
   }
 
@@ -130,8 +245,7 @@ struct VirtualFeedRegistryTests {
     while registry.openFeedCount > 0 { try await Task.sleep(nanoseconds: 10_000_000) }
 
     #expect(factory.devices.first?.closeCount == 1)
-    let result = try await registry.exchange(token: session.token, frame: nil)
-    #expect(result.closed)
+    #expect(registry.exchange(token: session.token, frames: []).closed)
   }
 
   @Test
@@ -200,7 +314,7 @@ struct VirtualFeedRegistryTests {
       device.receive(.setRumble(.off, duration: .milliseconds(index)))
     }
 
-    let result = try await registry.exchange(token: session.token, frame: nil)
+    let result = registry.exchange(token: session.token, frames: [])
     #expect(result.feedback.count == limit)
     #expect(result.feedback.first == .setRumble(.off, duration: .milliseconds(2)))
     #expect(result.feedback.last == .setRumble(.off, duration: .milliseconds(limit + 1)))

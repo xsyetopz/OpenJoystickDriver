@@ -1185,7 +1185,7 @@
 "cli.virtual.error.failed" = "Die virtuele gamepad vir %@ het nie verander nie (%@). Gaan dit na met 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ het nie ’n eenheid-ID nie, so ’n keuse kan net vir die hele model geld. Voer die opdrag sonder --unit uit.";
 "cli.virtual.feed.abstract" = "Publiseer ’n virtuele gamepad wat deur stdin beheer word.";
-"cli.virtual.feed.discussion" = "Lees een JSON-objek per reël: 'buttons' en 'dpad' lys die ingedrukte kontroles, soos south en up, en 'axes' koppel asname, soos left_stick_x, aan waardes. Ontbrekende kontroles is neutraal. Stokke loop van -1 tot 1 met Y op; snellers loop van 0 tot 1. Druk elke uitvoeropdrag wat speletjies na die gamepad stuur, soos vibrasie, as een JSON-objek per reël. Stop wanneer die invoer eindig.";
+"cli.virtual.feed.discussion" = "Lees een JSON-objek per reël: 'buttons' en 'dpad' lys die ingedrukte kontroles, soos south en up, en 'axes' koppel asname, soos left_stick_x, aan waardes. Ontbrekende kontroles is neutraal. Stokke loop van -1 tot 1 met Y op; snellers loop van 0 tot 1. Rame speel in volgorde, elk vir ten minste 8 ms; 'holdMilliseconds' hou 'n raam langer, tot 60000. Druk elke uitvoeropdrag wat speletjies na die gamepad stuur, soos vibrasie, as een JSON-objek per reël. Stop wanneer elke raam gespeel is nadat die invoer eindig.";
 "cli.virtual.feed.error.closed" = "Die diens het die virtuele gamepad gesluit. Gaan dit na met 'ojd status'.";
 "cli.virtual.feed.error.frame" = "Reël %@ is nie ’n geldige raam nie. 'ojd virtual feed --help' wys die formaat.";
 "cli.virtual.feed.profile" = "Die profiel van die virtuele gamepad wat gepubliseer moet word.";

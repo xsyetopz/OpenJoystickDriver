@@ -1185,7 +1185,7 @@
 "cli.virtual.error.failed" = "Virtualni gamepad za %@ nije promijenjen (%@). Provjerite s 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ nema ID uređaja pa odabir može vrijediti samo za cijeli njegov model. Pokrenite naredbu bez --unit.";
 "cli.virtual.feed.abstract" = "Objavljuje virtualni gamepad kojim upravlja stdin.";
-"cli.virtual.feed.discussion" = "Čita jedan JSON objekt po retku: 'buttons' i 'dpad' navode pritisnute kontrole, na primjer south i up, a 'axes' pridružuje vrijednosti nazivima osi, na primjer left_stick_x. Kontrole koje nedostaju neutralne su. Štapići idu od -1 do 1, a Y je prema gore; okidači idu od 0 do 1. Ispisuje svaku izlaznu naredbu koju igre šalju gamepadu, na primjer vibraciju, kao jedan JSON objekt po retku. Zaustavlja se kada ulaz završi.";
+"cli.virtual.feed.discussion" = "Čita jedan JSON objekt po retku: 'buttons' i 'dpad' navode pritisnute kontrole, na primjer south i up, a 'axes' pridružuje vrijednosti nazivima osi, na primjer left_stick_x. Kontrole koje nedostaju neutralne su. Štapići idu od -1 do 1, a Y je prema gore; okidači idu od 0 do 1. Okviri se reproduciraju redom, svaki najmanje 8 ms; 'holdMilliseconds' zadržava okvir dulje, do 60000. Ispisuje svaku izlaznu naredbu koju igre šalju gamepadu, na primjer vibraciju, kao jedan JSON objekt po retku. Zaustavlja se kada se nakon završetka ulaza reproduciraju svi okviri.";
 "cli.virtual.feed.error.closed" = "Usluga je zatvorila virtualni gamepad. Provjerite s 'ojd status'.";
 "cli.virtual.feed.error.frame" = "Redak %@ nije valjan okvir. 'ojd virtual feed --help' prikazuje format.";
 "cli.virtual.feed.profile" = "Profil virtualnog gamepada koji se objavljuje.";

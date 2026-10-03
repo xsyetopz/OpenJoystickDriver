@@ -14,21 +14,24 @@ struct VirtualFeedCommand: AsyncParsableCommand {
       "Reads one JSON object per line: 'buttons' and 'dpad' list the pressed controls, such as "
         + "south and up, and 'axes' maps axis names, such as left_stick_x, to values. Missing "
         + "controls are neutral. Sticks run from -1 to 1 with Y up; triggers run from 0 to 1. "
-        + "Prints each output command that games send to the gamepad, such as rumble, as one JSON "
-        + "object per line. Stops when the input ends."
+        + "Frames play in order, each for at least 8 ms; 'holdMilliseconds' keeps a frame longer, "
+        + "up to 60000. Prints each output command that games send to the gamepad, such as "
+        + "rumble, as one JSON object per line. Stops when every frame has played after the input "
+        + "ends."
     )
   )
 
   /// How often an idle feed tells the service that it is still open.
   static let heartbeatSeconds = 0.5
 
-  /// Standard input split into lines; tests replace it.
+  /// Standard input split into lines, read only when the feed asks for the next one; tests
+  /// replace it.
   @TaskLocal
   static var standardInputLines: @Sendable () -> AsyncStream<String> = {
-    AsyncStream { continuation in
-      Thread.detachNewThread {
-        while let line = readLine() { continuation.yield(line) }
-        continuation.finish()
+    let reader = DispatchQueue(label: "com.openjoystickdriver.ojd.virtual-feed.input")
+    return AsyncStream {
+      await withCheckedContinuation { continuation in
+        reader.async { continuation.resume(returning: readLine()) }
       }
     }
   }
@@ -77,8 +80,9 @@ struct VirtualFeedCommand: AsyncParsableCommand {
     }
   }
 
-  /// Sends the latest frame at most every 16 ms, and a heartbeat when no frame arrives, until
-  /// the input ends.
+  /// Sends each frame as soon as it is read, in order, and a heartbeat when no frame arrives,
+  /// until the input ends and the feed has played every frame. Stops reading input while
+  /// ``VirtualFeedExchangeResult/maximumQueuedFrames`` frames wait to be sent.
   private static func feed(
     _ client: ApplicationServiceClient,
     token: UUID,
@@ -86,7 +90,11 @@ struct VirtualFeedCommand: AsyncParsableCommand {
   ) async throws {
     let input = Locked(Input())
     let lines = standardInputLines()
+    var wake: AsyncStream<Void>.Continuation?
+    let wakes = AsyncStream<Void>(bufferingPolicy: .bufferingNewest(1)) { wake = $0 }
+    let signal = wake
     let reader = Task {
+      defer { signal?.yield() }
       var number = 0
       for await line in lines {
         number += 1
@@ -97,17 +105,32 @@ struct VirtualFeedCommand: AsyncParsableCommand {
           input.withLock { $0.invalidLine = number }
           return
         }
-        input.withLock { $0.frame = frame }
+        while input.withLock({ $0.pending.count >= VirtualFeedExchangeResult.maximumQueuedFrames })
+        {
+          try? await Task.sleep(nanoseconds: 4_000_000)
+          if Task.isCancelled { return }
+        }
+        input.withLock { $0.pending.append(frame) }
+        signal?.yield()
       }
       input.withLock { $0.finished = true }
     }
-    defer { reader.cancel() }
-    var lastExchange = 0.0
-    while true {
-      let next = input.withLock { state -> Input in
-        defer { state.frame = nil }
-        return state
+    let ticker = Task {
+      while !Task.isCancelled {
+        try? await Task.sleep(nanoseconds: 16_000_000)
+        signal?.yield()
       }
+    }
+    defer {
+      reader.cancel()
+      ticker.cancel()
+      signal?.finish()
+    }
+    var woken = wakes.makeAsyncIterator()
+    var lastExchange = 0.0
+    var queued = 0
+    while true {
+      let next = input.withLock { $0 }
       if let line = next.invalidLine {
         throw CLIFailure.usage(
           CLILocalized.format(
@@ -117,13 +140,16 @@ struct VirtualFeedCommand: AsyncParsableCommand {
           )
         )
       }
+      let draining = next.finished && queued > 0
       let now = ProcessInfo.processInfo.systemUptime
-      if next.frame != nil || now - lastExchange >= heartbeatSeconds {
+      if !next.pending.isEmpty || draining || now - lastExchange >= heartbeatSeconds {
         lastExchange = now
-        let frame = next.frame
+        let frames = next.pending
         let result = try await ServiceConnection.withDeadline(seconds: timeout) {
-          try await client.exchangeVirtualFeed(token: token, frame: frame)
+          try await client.exchangeVirtualFeed(token: token, frames: frames)
         }
+        input.withLock { $0.pending.removeFirst(min(result.accepted, frames.count)) }
+        queued = result.queued
         for command in result.feedback { try CLIOutput.jsonLine(command) }
         if result.closed {
           throw CLIFailure(
@@ -135,14 +161,15 @@ struct VirtualFeedCommand: AsyncParsableCommand {
           )
         }
       }
-      if next.finished { return }
-      try await Task.sleep(nanoseconds: 16_000_000)
+      if next.finished, queued == 0, input.withLock({ $0.pending.isEmpty }) { return }
+      guard await woken.next() != nil else { throw CancellationError() }
     }
   }
 
-  /// What the input reader has seen since the last exchange.
+  /// What the input reader has seen and the feed has not accepted yet.
   private struct Input: Sendable {
-    var frame: VirtualFeedFrame?
+    /// Frames to send, oldest first.
+    var pending: [VirtualFeedFrame] = []
     var finished = false
     /// The 1-based number of the first line that is not a frame.
     var invalidLine: Int?

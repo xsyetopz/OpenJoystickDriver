@@ -1185,7 +1185,7 @@
 "cli.virtual.error.failed" = "Sýndarleikjastýring fyrir %@ breyttist ekki (%@). Athugaðu hana með „ojd virtual show“.";
 "cli.virtual.error.no_unit" = "%@ er ekki með tækisauðkenni og því getur val aðeins gilt um alla gerðina. Keyrðu skipunina án --unit.";
 "cli.virtual.feed.abstract" = "Birta sýndarleikjastýringu sem stdin stýrir.";
-"cli.virtual.feed.discussion" = "Les einn JSON-hlut í hverri línu: „buttons“ og „dpad“ telja upp stjórntækin sem ýtt er á, til dæmis south og up, og „axes“ tengir ásanöfn, til dæmis left_stick_x, við gildi. Stjórntæki sem vantar eru hlutlaus. Stýripinnar ganga frá -1 til 1 þar sem Y snýr upp; gikkir ganga frá 0 til 1. Prentar sérhverja úttaksskipun sem leikir senda til leikjastýringarinnar, til dæmis titring, sem einn JSON-hlut í hverri línu. Stöðvast þegar inntakinu lýkur.";
+"cli.virtual.feed.discussion" = "Les einn JSON-hlut í hverri línu: „buttons“ og „dpad“ telja upp stjórntækin sem ýtt er á, til dæmis south og up, og „axes“ tengir ásanöfn, til dæmis left_stick_x, við gildi. Stjórntæki sem vantar eru hlutlaus. Stýripinnar ganga frá -1 til 1 þar sem Y snýr upp; gikkir ganga frá 0 til 1. Rammar spilast í röð, hver í að minnsta kosti 8 ms; „holdMilliseconds“ heldur ramma lengur, allt að 60000. Prentar sérhverja úttaksskipun sem leikir senda til leikjastýringarinnar, til dæmis titring, sem einn JSON-hlut í hverri línu. Stöðvast þegar allir rammar hafa verið spilaðir eftir að inntakinu lýkur.";
 "cli.virtual.feed.error.closed" = "Þjónustan lokaði sýndarleikjastýringunni. Athugaðu það með „ojd status“.";
 "cli.virtual.feed.error.frame" = "Lína %@ er ekki gildur rammi. „ojd virtual feed --help“ sýnir sniðið.";
 "cli.virtual.feed.profile" = "Snið sýndarleikjastýringarinnar sem á að birta.";

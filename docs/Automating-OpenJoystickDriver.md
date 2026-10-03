@@ -73,11 +73,18 @@ To limit a profile to one controller, set `device.unit` to the controller's unit
 
 This example holds the south button for 1 second, then moves the left stick fully left and pulls the right trigger halfway for 1 second. When the input ends, the virtual gamepad is removed.
 
+To tap a button without waiting in the script, write the press with `holdMilliseconds` and the release after it:
+
+```shell
+printf '%s\n' '{"buttons":["south"],"holdMilliseconds":50}' '{}' | ojd virtual feed --as hid-generic
+```
+
 - `buttons` and `dpad` list the controls that are pressed. They take the names that `button:` and `dpad:` binding sources use, such as `south` and `up`.
 - `axes` maps axis names to values. Sticks, such as `left_stick_x`, go from -1 to 1, with Y up. The triggers, `left_trigger` and `right_trigger`, go from 0 to 1.
-- OJD sends the latest line at most every 16 ms.
+- The service plays the lines in order. Each line lasts at least 8 ms, and then until the next line plays. Add `holdMilliseconds`, from 0 to 60000, to keep a line longer.
+- When lines arrive faster than every 8 ms, they wait in a queue of at most 256 lines, so a full queue is about 2 seconds behind. A line without `holdMilliseconds` replaces the last waiting line when that one has no `holdMilliseconds` and the same `buttons` and `dpad`. A press or release is never dropped.
 - Each rumble command that a game sends to the virtual gamepad prints on standard output as one JSON object per line. The `virtualFeed` entry of the output schema describes it.
-- The service removes the virtual gamepad when the input ends, when you press Control-C, or when it gets no update for 2 seconds. The command sends updates while it waits for input.
+- The service removes the virtual gamepad when the input ends and every line has played, when you press Control-C, or when it gets no update for 2 seconds. The command sends updates while it waits for input.
 - A line that is not valid stops the command with exit code 64. The service runs at most 4 feeds at the same time.
 
 Games and latency with `ojd virtual feed` are not verified.

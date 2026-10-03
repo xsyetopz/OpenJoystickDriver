@@ -1185,7 +1185,7 @@
 "cli.virtual.error.failed" = "O gamepad virtual de %@ não mudou (%@). Verifique com 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ não tem ID de unidade, então uma escolha só pode valer para todo o modelo. Execute o comando sem --unit.";
 "cli.virtual.feed.abstract" = "Publicar um gamepad virtual controlado pelo stdin.";
-"cli.virtual.feed.discussion" = "Lê um objeto JSON por linha: 'buttons' e 'dpad' listam os controles pressionados, como south e up, e 'axes' associa valores aos nomes dos eixos, como left_stick_x. Controles ausentes ficam neutros. Os analógicos vão de -1 a 1, com Y para cima; os gatilhos vão de 0 a 1. Imprime cada comando de saída que os jogos enviam ao gamepad, como vibração, como um objeto JSON por linha. Termina quando a entrada termina.";
+"cli.virtual.feed.discussion" = "Lê um objeto JSON por linha: 'buttons' e 'dpad' listam os controles pressionados, como south e up, e 'axes' associa valores aos nomes dos eixos, como left_stick_x. Controles ausentes ficam neutros. Os analógicos vão de -1 a 1, com Y para cima; os gatilhos vão de 0 a 1. Os quadros são reproduzidos em ordem, cada um por pelo menos 8 ms; 'holdMilliseconds' mantém um quadro por mais tempo, até 60000. Imprime cada comando de saída que os jogos enviam ao gamepad, como vibração, como um objeto JSON por linha. Termina quando todos os quadros são reproduzidos após o fim da entrada.";
 "cli.virtual.feed.error.closed" = "O serviço fechou o gamepad virtual. Verifique com 'ojd status'.";
 "cli.virtual.feed.error.frame" = "A linha %@ não é um quadro válido. 'ojd virtual feed --help' mostra o formato.";
 "cli.virtual.feed.profile" = "O perfil do gamepad virtual a publicar.";

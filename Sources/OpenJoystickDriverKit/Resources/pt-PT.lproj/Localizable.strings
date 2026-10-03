@@ -1185,7 +1185,7 @@
 "cli.virtual.error.failed" = "O comando virtual de %@ não mudou (%@). Verifique com 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ não tem ID de unidade, pelo que uma escolha só pode aplicar-se a todo o modelo. Execute sem --unit.";
 "cli.virtual.feed.abstract" = "Publicar um comando virtual controlado pelo stdin.";
-"cli.virtual.feed.discussion" = "Lê um objeto JSON por linha: 'buttons' e 'dpad' listam os controlos premidos, como south e up, e 'axes' associa valores aos nomes dos eixos, como left_stick_x. Os controlos em falta ficam neutros. Os manípulos vão de -1 a 1, com Y para cima; os gatilhos vão de 0 a 1. Imprime cada comando de saída que os jogos enviam ao comando, como a vibração, como um objeto JSON por linha. Termina quando a entrada termina.";
+"cli.virtual.feed.discussion" = "Lê um objeto JSON por linha: 'buttons' e 'dpad' listam os controlos premidos, como south e up, e 'axes' associa valores aos nomes dos eixos, como left_stick_x. Os controlos em falta ficam neutros. Os manípulos vão de -1 a 1, com Y para cima; os gatilhos vão de 0 a 1. Os fotogramas são reproduzidos por ordem, cada um durante pelo menos 8 ms; 'holdMilliseconds' mantém um fotograma durante mais tempo, até 60000. Imprime cada comando de saída que os jogos enviam ao comando, como a vibração, como um objeto JSON por linha. Termina quando todos os fotogramas tiverem sido reproduzidos depois de a entrada terminar.";
 "cli.virtual.feed.error.closed" = "O serviço fechou o comando virtual. Verifique com 'ojd status'.";
 "cli.virtual.feed.error.frame" = "A linha %@ não é uma trama válida. 'ojd virtual feed --help' mostra o formato.";
 "cli.virtual.feed.profile" = "O perfil do comando virtual a publicar.";

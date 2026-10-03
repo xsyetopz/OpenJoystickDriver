@@ -1185,7 +1185,7 @@
 "cli.virtual.error.failed" = "The virtual gamepad for %@ did not change (%@). Check it with 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ has no unit ID, so a choice can apply only to its whole model. Run the command without --unit.";
 "cli.virtual.feed.abstract" = "Publish a virtual gamepad that standard input drives.";
-"cli.virtual.feed.discussion" = "Reads one JSON object per line: 'buttons' and 'dpad' list the pressed controls, such as south and up, and 'axes' maps axis names, such as left_stick_x, to values. Missing controls are neutral. Sticks run from -1 to 1 with Y up; triggers run from 0 to 1. Prints each output command that games send to the gamepad, such as rumble, as one JSON object per line. Stops when the input ends.";
+"cli.virtual.feed.discussion" = "Reads one JSON object per line: 'buttons' and 'dpad' list the pressed controls, such as south and up, and 'axes' maps axis names, such as left_stick_x, to values. Missing controls are neutral. Sticks run from -1 to 1 with Y up; triggers run from 0 to 1. Frames play in order, each for at least 8 ms; 'holdMilliseconds' keeps a frame longer, up to 60000. Prints each output command that games send to the gamepad, such as rumble, as one JSON object per line. Stops when every frame has played after the input ends.";
 "cli.virtual.feed.error.closed" = "The service closed the virtual gamepad. Check it with 'ojd status'.";
 "cli.virtual.feed.error.frame" = "Line %@ is not a valid frame. 'ojd virtual feed --help' shows the format.";
 "cli.virtual.feed.profile" = "The virtual gamepad profile to publish.";

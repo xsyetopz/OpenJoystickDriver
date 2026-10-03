@@ -200,21 +200,21 @@ extension ApplicationServiceClient {
   }
 
   /// Publishes a virtual controller with the `profile` virtual HID profile, such as `hid-generic`,
-  /// that this client drives with ``exchangeVirtualFeed(token:frame:)``.
+  /// that this client drives with ``exchangeVirtualFeed(token:frames:)``.
   public func openVirtualFeed(profile: String) async throws -> VirtualFeedSession {
     try await call(.openVirtualFeed, LocalServiceRPCVirtualFeedOpenArguments(profile: profile))
   }
 
-  /// Sends `frame`, when given, to the feed and returns the output commands queued since the
-  /// previous exchange. Exchange at least every ``VirtualFeedExchangeResult/idleTimeoutSeconds``
-  /// to keep the feed open.
+  /// Queues `frames` on the feed and returns the output commands queued since the previous
+  /// exchange. Send the frames past ``VirtualFeedExchangeResult/accepted`` again later. Exchange
+  /// at least every ``VirtualFeedExchangeResult/idleTimeoutSeconds`` to keep the feed open.
   public func exchangeVirtualFeed(
     token: UUID,
-    frame: VirtualFeedFrame? = nil
+    frames: [VirtualFeedFrame] = []
   ) async throws -> VirtualFeedExchangeResult {
     try await call(
       .exchangeVirtualFeed,
-      LocalServiceRPCVirtualFeedExchangeArguments(token: token, frame: frame)
+      LocalServiceRPCVirtualFeedExchangeArguments(token: token, frames: frames)
     )
   }
 

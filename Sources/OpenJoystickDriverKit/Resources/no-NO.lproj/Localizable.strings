@@ -1185,7 +1185,7 @@
 "cli.virtual.error.failed" = "Den virtuelle gamepaden for %@ ble ikke endret (%@). Sjekk med 'ojd virtual show'.";
 "cli.virtual.error.no_unit" = "%@ har ingen enhets-ID, så et valg kan bare gjelde hele modellen. Kjør kommandoen uten --unit.";
 "cli.virtual.feed.abstract" = "Publiser en virtuell gamepad som styres via stdin.";
-"cli.virtual.feed.discussion" = "Leser ett JSON-objekt per linje: 'buttons' og 'dpad' lister opp kontrollene som er trykket, for eksempel south og up, og 'axes' kobler aksenavn, for eksempel left_stick_x, til verdier. Manglende kontroller er nøytrale. Spaker går fra -1 til 1 med Y opp; avtrekkere går fra 0 til 1. Skriver ut hver utdatakommando som spill sender til gamepaden, for eksempel vibrasjon, som ett JSON-objekt per linje. Stopper når inndataene tar slutt.";
+"cli.virtual.feed.discussion" = "Leser ett JSON-objekt per linje: 'buttons' og 'dpad' lister opp kontrollene som er trykket, for eksempel south og up, og 'axes' kobler aksenavn, for eksempel left_stick_x, til verdier. Manglende kontroller er nøytrale. Spaker går fra -1 til 1 med Y opp; avtrekkere går fra 0 til 1. Rammer spilles av i rekkefølge, hver i minst 8 ms; 'holdMilliseconds' holder en ramme lenger, opptil 60000. Skriver ut hver utdatakommando som spill sender til gamepaden, for eksempel vibrasjon, som ett JSON-objekt per linje. Stopper når alle rammer er spilt av etter at inndataene tar slutt.";
 "cli.virtual.feed.error.closed" = "Tjenesten lukket den virtuelle gamepaden. Sjekk den med 'ojd status'.";
 "cli.virtual.feed.error.frame" = "Linje %@ er ikke en gyldig ramme. 'ojd virtual feed --help' viser formatet.";
 "cli.virtual.feed.profile" = "Profilen for den virtuelle gamepaden som skal publiseres.";
