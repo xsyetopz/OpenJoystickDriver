@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS nije završio zahtev na vreme. Proverite da li u Podešavanjima sistema čeka zahtev za odobrenje, pa pokrenite „ojd extension status“.";
 "cli.log.abstract" = "Prikazuje zapisnike usluge ili ispisuje gde se nalaze.";
 "cli.log.path.abstract" = "Ispisuje fasciklu sa zapisnicima usluge. Otvorite je pomoću: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Upiši kraj dnevnika usluge u datoteku, sa početnom fasciklom prikazanom kao ~.";
+"cli.log.export.file" = "Datoteka za upis.";
+"cli.log.export.force" = "Zameni datoteku ako postoji.";
+"cli.log.export.exists" = "%@ već postoji. Koristite --force da je zamenite.";
+"cli.log.export.written" = "Dnevnici usluge upisani su u %@.";
 "cli.log.show.abstract" = "Ispisuje kraj zapisnika usluge.";
 "cli.log.show.discussion" = "U terminalu izlaz ide kroz $PAGER (podrazumevano „less -FRX“; podesite PAGER na praznu vrednost da isključite straničenje). --follow nastavlja da ispisuje nove redove dok ne pritisnete Control-C; sa --json ispisuje po jedan JSON objekat u redu.";
 "cli.log.show.empty" = "(datoteka zapisnika je prazna)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibracija";
 "cli.controller.show.label.session" = "Sesija";
 "cli.controller.show.label.virtual" = "Virtuelni gejmpad";
+"cli.controller.show.label.publication" = "Objavljivanje";
 "cli.controller.show.none" = "nema";
 "cli.controller.show.record.bundled" = "ugrađen";
 "cli.controller.show.record.none" = "nema (nijedan zapis ne odgovara)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Ispisuje stanje unosa kontrolera svaki put kada se promeni.";
 "cli.controller.watch.discussion" = "Uz --json ispisuje po jedan JSON objekat u redu. Y osa analogne palice pokazuje nagore. Uz --first-press ispisuje prvi pritisnuti upravljački element i izlazi; ne uspeva ako --duration istekne prvi.";
 "cli.controller.watch.first_press" = "Ispisuje prvi pritisnuti upravljački element, pa izlazi.";
+"cli.controller.watch.output" = "Ispiši i ono što šalje virtuelni gejmpad. Osa Y njegove palice pokazuje nadole, kao u HID izveštaju.";
 "cli.controller.watch.no_input" = "Nijedan unos nije primljen.";
 "cli.controller.watch.no_press" = "Nijedan upravljački element nije pritisnut u roku od %@.";
 "cli.controller.watch.press_prompt" = "Pritisnite neki upravljački element na %@ (%@).";

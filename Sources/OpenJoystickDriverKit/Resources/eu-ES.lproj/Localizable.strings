@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOSek ez du eskaera garaiz amaitu. Begiratu System Settings aukeran onarpen-abisurik dagoen, eta exekutatu «ojd extension status».";
 "cli.log.abstract" = "Erakutsi zerbitzuaren erregistroak edo inprimatu non dauden.";
 "cli.log.path.abstract" = "Inprimatu zerbitzuaren erregistroak dituen karpeta. Ireki honekin: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Idatzi zerbitzuaren erregistroen amaiera fitxategi batean, etxeko karpeta ~ gisa erakutsita.";
+"cli.log.export.file" = "Idatzi beharreko fitxategia.";
+"cli.log.export.force" = "Ordeztu fitxategia badago.";
+"cli.log.export.exists" = "%@ badago lehendik. Erabili --force ordezteko.";
+"cli.log.export.written" = "Zerbitzuaren erregistroak %@ fitxategian idatzi dira.";
 "cli.log.show.abstract" = "Inprimatu zerbitzuaren erregistroen amaiera.";
 "cli.log.show.discussion" = "Terminalean, irteera $PAGER bidez pasatzen da (lehenespenez «less -FRX»; ezarri PAGER balio huts batean orrialdekatzea desaktibatzeko). --follow aukerak lerro berriak inprimatzen jarraitzen du Control-C sakatu arte; --json erabiliz, JSON objektu bat inprimatzen du lerro bakoitzeko.";
 "cli.log.show.empty" = "(erregistro-fitxategia hutsik dago)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Dardara";
 "cli.controller.show.label.session" = "Saioa";
 "cli.controller.show.label.virtual" = "Gamepad birtuala";
+"cli.controller.show.label.publication" = "Argitalpena";
 "cli.controller.show.none" = "bat ere ez";
 "cli.controller.show.record.bundled" = "barnekoa";
 "cli.controller.show.record.none" = "bat ere ez (ez dago erregistro egokirik)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Inprimatu agintearen sarrera-egoera aldatzen den bakoitzean.";
 "cli.controller.watch.discussion" = "--json erabiliz gero, JSON objektu bat erakusten du lerroko. Palankaren Y gorantz doa. --first-press erabiliz gero, sakatutako lehen kontrola erakusten du eta irteten da; huts egiten du --duration lehenago igarotzen bada.";
 "cli.controller.watch.first_press" = "Inprimatu sakatutako lehen kontrola, eta gero irten.";
+"cli.controller.watch.output" = "Inprimatu gamepad birtualak bidaltzen duena ere. Makilaren Y ardatzak behera egiten du, HID txostenean bezala.";
 "cli.controller.watch.no_input" = "Ez da sarrerarik jaso.";
 "cli.controller.watch.no_press" = "Ez da kontrolik sakatu %@ barruan.";
 "cli.controller.watch.press_prompt" = "Sakatu kontrol bat hemen: %@ (%@).";

@@ -5,6 +5,7 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case requestAccess
   case getControllerState
   case getPacketLog
+  case getVirtualOutputState
   case sendControllerOutput
   case previewPhysicalColor
   case releasePhysicalColorPreview

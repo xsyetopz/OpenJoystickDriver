@@ -9,7 +9,7 @@ struct LogCommand: AsyncParsableCommand {
       "cli.log.abstract",
       "Show the service logs or print where they are."
     ),
-    subcommands: [LogShowCommand.self, LogPathCommand.self]
+    subcommands: [LogShowCommand.self, LogPathCommand.self, LogExportCommand.self]
   )
 
   /// Tests replace it so they never read real logs or spawn a pager.
@@ -152,7 +152,7 @@ struct LogShowCommand: AsyncParsableCommand {
     }
   }
 
-  private static func humanText(_ snapshots: [ApplicationServiceLogSnapshot]) -> String {
+  static func humanText(_ snapshots: [ApplicationServiceLogSnapshot]) -> String {
     var text = ""
     for snapshot in snapshots {
       text += "== \(snapshot.stream.rawValue): \(snapshot.path) ==\n"

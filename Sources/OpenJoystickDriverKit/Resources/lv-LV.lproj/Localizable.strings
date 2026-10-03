@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS laikus nepabeidza pieprasījumu. Sadaļā System Settings pārbaudiet, vai nav apstiprinājuma uzvednes, pēc tam palaidiet „ojd extension status“.";
 "cli.log.abstract" = "Rāda pakalpojuma žurnālus vai izdrukā, kur tie atrodas.";
 "cli.log.path.abstract" = "Izdrukā mapi ar pakalpojuma žurnāliem. Atveriet to ar: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Ierakstīt pakalpojuma žurnālu beigas failā, mājas mapi rādot kā ~.";
+"cli.log.export.file" = "Rakstāmais fails.";
+"cli.log.export.force" = "Aizstāt failu, ja tas pastāv.";
+"cli.log.export.exists" = "%@ jau pastāv. Lai to aizstātu, izmantojiet --force.";
+"cli.log.export.written" = "Pakalpojuma žurnāli ierakstīti %@.";
 "cli.log.show.abstract" = "Izdrukā pakalpojuma žurnālu beigas.";
 "cli.log.show.discussion" = "Terminālī izvade iet caur $PAGER (noklusējums „less -FRX“; lai izslēgtu lapošanu, iestatiet PAGER tukšu vērtību). --follow turpina drukāt jaunas rindas, līdz nospiežat Control-C; ar --json izdrukā vienu JSON objektu rindā.";
 "cli.log.show.empty" = "(žurnāla fails ir tukšs)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibrācija";
 "cli.controller.show.label.session" = "Sesija";
 "cli.controller.show.label.virtual" = "Virtuālais spēļu kontrolieris";
+"cli.controller.show.label.publication" = "Publicēšana";
 "cli.controller.show.none" = "nav";
 "cli.controller.show.record.bundled" = "iekļauts";
 "cli.controller.show.record.none" = "nav (neviens ieraksts neatbilst)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Izvadīt kontroliera ievades stāvokli katru reizi, kad tas mainās.";
 "cli.controller.watch.discussion" = "Ar --json izvada vienu JSON objektu katrā rindā. Sviras Y ass norāda uz augšu. Ar --first-press izvada pirmo nospiesto vadīklu un beidz darbu; tas neizdodas, ja --duration beidzas agrāk.";
 "cli.controller.watch.first_press" = "Izvadīt pirmo nospiesto vadīklu un beigt darbu.";
+"cli.controller.watch.output" = "Izdrukāt arī to, ko sūta virtuālais spēļu kontrolieris. Tā sviras Y ass vērsta uz leju, kā HID ziņojumā.";
 "cli.controller.watch.no_input" = "Ievade nav saņemta.";
 "cli.controller.watch.no_press" = "Netika nospiesta neviena vadīkla %@ laikā.";
 "cli.controller.watch.press_prompt" = "Nospiediet vadīklu uz %@ (%@).";

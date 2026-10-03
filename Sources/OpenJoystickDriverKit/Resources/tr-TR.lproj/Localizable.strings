@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS isteği zamanında tamamlamadı. Sistem Ayarları’nda bir onay istemi olup olmadığına bakın, ardından “ojd extension status” komutunu çalıştırın.";
 "cli.log.abstract" = "Servis günlüklerini gösterir veya nerede olduklarını yazdırır.";
 "cli.log.path.abstract" = "Servis günlüklerinin bulunduğu klasörü yazdırır. Şununla açın: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Hizmet günlüklerinin sonunu bir dosyaya yazar; ev klasörünüz ~ olarak gösterilir.";
+"cli.log.export.file" = "Yazılacak dosya.";
+"cli.log.export.force" = "Dosya varsa değiştirir.";
+"cli.log.export.exists" = "%@ zaten var. Değiştirmek için --force kullanın.";
+"cli.log.export.written" = "Hizmet günlükleri %@ dosyasına yazıldı.";
 "cli.log.show.abstract" = "Servis günlüklerinin sonunu yazdırır.";
 "cli.log.show.discussion" = "Terminalde çıktı $PAGER üzerinden geçer (varsayılan “less -FRX”; sayfalamayı kapatmak için PAGER’ı boş bir değere ayarlayın). --follow, Control-C’ye basana kadar yeni satırları yazdırmayı sürdürür; --json ile satır başına bir JSON nesnesi yazdırır.";
 "cli.log.show.empty" = "(günlük dosyası boş)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Titreşim";
 "cli.controller.show.label.session" = "Oturum";
 "cli.controller.show.label.virtual" = "Sanal oyun kumandası";
+"cli.controller.show.label.publication" = "Yayımlama";
 "cli.controller.show.none" = "yok";
 "cli.controller.show.record.bundled" = "birlikte gelen";
 "cli.controller.show.record.none" = "yok (eşleşen kayıt yok)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Bir kontrolcünün giriş durumunu her değiştiğinde yazdırır.";
 "cli.controller.watch.discussion" = "--json ile satır başına bir JSON nesnesi yazdırır. Çubuğun Y ekseni yukarı bakar. --first-press ile basılan ilk kontrol öğesini yazdırıp çıkar; --duration önce dolarsa başarısız olur.";
 "cli.controller.watch.first_press" = "Basılan ilk kontrol öğesini yazdırır ve çıkar.";
+"cli.controller.watch.output" = "Sanal oyun kumandasının gönderdiklerini de yazdırır. Çubuğunun Y ekseni, HID raporundaki gibi aşağıyı gösterir.";
 "cli.controller.watch.no_input" = "Giriş alınmadı.";
 "cli.controller.watch.no_press" = "%@ içinde hiçbir kontrol öğesine basılmadı.";
 "cli.controller.watch.press_prompt" = "%@ (%@) üzerinde bir kontrol öğesine basın.";

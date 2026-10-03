@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS ጥያቄውን በጊዜ አላጠናቀቀም። በSystem Settings ውስጥ የማጽደቂያ ጥያቄ መኖሩን ይመልከቱ፣ ከዚያ «ojd extension status»ን ያሂዱ።";
 "cli.log.abstract" = "የአገልግሎቱን ምዝግብ ማስታወሻዎች ያሳዩ ወይም የት እንዳሉ ያትሙ።";
 "cli.log.path.abstract" = "የአገልግሎት ምዝግብ ማስታወሻዎችን የያዘውን አቃፊ ያትሙ። በዚህ ይክፈቱት፦ open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "የአገልግሎት ምዝግብ ማስታወሻዎችን መጨረሻ ወደ ፋይል ጻፍ፤ የቤት አቃፊዎ እንደ ~ ይታያል።";
+"cli.log.export.file" = "የሚጻፈው ፋይል።";
+"cli.log.export.force" = "ፋይሉ ካለ ተካው።";
+"cli.log.export.exists" = "%@ አስቀድሞ አለ። ለመተካት --force ይጠቀሙ።";
+"cli.log.export.written" = "የአገልግሎት ምዝግብ ማስታወሻዎች ወደ %@ ተጽፈዋል።";
 "cli.log.show.abstract" = "የአገልግሎቱን ምዝግብ ማስታወሻዎች መጨረሻ ያትሙ።";
 "cli.log.show.discussion" = "በተርሚናል ላይ ውጤቱ በ $PAGER በኩል ያልፋል (ነባሪ «less -FRX»፤ ገጽ መከፋፈልን ለማጥፋት PAGERን ባዶ እሴት ያድርጉ)። --follow Control-C እስኪጫኑ ድረስ አዳዲስ መስመሮችን ማተሙን ይቀጥላል፤ ከ --json ጋር በመስመር አንድ የJSON ነገር ያትማል።";
 "cli.log.show.empty" = "(የምዝግብ ማስታወሻ ፋይሉ ባዶ ነው)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "ንዝረት";
 "cli.controller.show.label.session" = "ክፍለ ጊዜ";
 "cli.controller.show.label.virtual" = "ምናባዊ የጨዋታ መቆጣጠሪያ";
+"cli.controller.show.label.publication" = "ህትመት";
 "cli.controller.show.none" = "ምንም";
 "cli.controller.show.record.bundled" = "አብሮ የተካተተ";
 "cli.controller.show.record.none" = "ምንም (ምንም የሚዛመድ መዝገብ የለም)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "የመቆጣጠሪያን የግብዓት ሁኔታ በተለወጠ ቁጥር ያትሙ።";
 "cli.controller.watch.discussion" = "በ --json በአንድ መስመር አንድ የJSON ነገር ያትማል። የዱላ Y ወደ ላይ ያመለክታል። በ --first-press የመጀመሪያውን የተጫነ የመቆጣጠሪያ ክፍል ያትማል እና ይወጣል፤ --duration ቀድሞ ካለፈ አይሳካም።";
 "cli.controller.watch.first_press" = "የመጀመሪያውን የተጫነ የመቆጣጠሪያ ክፍል ያትሙ፣ ከዚያ ይውጡ።";
+"cli.controller.watch.output" = "ምናባዊው የጨዋታ መቆጣጠሪያ የሚልከውንም አትም። የዱላው Y ልክ እንደ HID ሪፖርቱ ወደ ታች ያመለክታል።";
 "cli.controller.watch.no_input" = "ምንም ግብዓት አልደረሰም።";
 "cli.controller.watch.no_press" = "በ%@ ውስጥ ምንም የመቆጣጠሪያ ክፍል አልተጫነም።";
 "cli.controller.watch.press_prompt" = "በ%@ (%@) ላይ አንድ የመቆጣጠሪያ ክፍል ይጫኑ።";

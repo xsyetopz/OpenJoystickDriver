@@ -406,6 +406,42 @@
 						"protocol": {
 							"$ref": "report.schema.json#/$defs/controller/properties/protocolBinding"
 						},
+						"publication": {
+							"description": "Whether a virtual device publishes the controller.",
+							"type": "object",
+							"required": [
+								"state"
+							],
+							"additionalProperties": false,
+							"properties": {
+								"lastAttemptedNanoseconds": {
+									"description": "System uptime of the last send to the virtual device.",
+									"type": "integer",
+									"minimum": 0
+								},
+								"lastCompletedNanoseconds": {
+									"description": "System uptime of the last send the virtual device accepted.",
+									"type": "integer",
+									"minimum": 0
+								},
+								"reason": {
+									"type": "string"
+								},
+								"state": {
+									"enum": [
+										"published",
+										"not-published",
+										"failed"
+									]
+								},
+								"target": {
+									"enum": [
+										"hid-xbox-one-s-bt",
+										"hid-generic"
+									]
+								}
+							}
+						},
 						"quirks": {
 							"type": "array",
 							"items": {
@@ -483,7 +519,7 @@
 			"$ref": "#/$defs/sharedJoyConPair"
 		},
 		"controllerWatch": {
-			"description": "With --first-press, the first control pressed; otherwise one controller state per line.",
+			"description": "With --first-press, the first control pressed; with --output, one controller state and the virtual gamepad's values per line; otherwise one controller state per line.",
 			"oneOf": [
 				{
 					"type": "object",
@@ -510,127 +546,21 @@
 					}
 				},
 				{
+					"$ref": "#/$defs/sharedControllerState"
+				},
+				{
 					"type": "object",
 					"required": [
-						"hat",
-						"leftStick",
-						"leftTrigger",
-						"pressed",
-						"rightStick",
-						"rightTrigger",
-						"touch"
+						"input"
 					],
 					"additionalProperties": false,
 					"properties": {
-						"connection": {
-							"$ref": "report.schema.json#/$defs/controllerConnectionState"
+						"input": {
+							"$ref": "#/$defs/sharedControllerState"
 						},
-						"hat": {
-							"enum": [
-								"neutral",
-								"north",
-								"north-east",
-								"east",
-								"south-east",
-								"south",
-								"south-west",
-								"west",
-								"north-west"
-							]
-						},
-						"leftStick": {
-							"$ref": "#/$defs/sharedStick"
-						},
-						"leftTrigger": {
-							"type": "integer",
-							"minimum": 0,
-							"maximum": 65535
-						},
-						"pressed": {
-							"type": "array",
-							"items": {
-								"$ref": "controller.schema.json#/$defs/controlID"
-							}
-						},
-						"rightStick": {
-							"$ref": "#/$defs/sharedStick"
-						},
-						"rightTrigger": {
-							"type": "integer",
-							"minimum": 0,
-							"maximum": 65535
-						},
-						"touch": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"required": [
-									"contacts",
-									"surface",
-									"timestamp"
-								],
-								"additionalProperties": false,
-								"properties": {
-									"contacts": {
-										"type": "array",
-										"items": {
-											"type": "object",
-											"required": [
-												"isActive",
-												"slot",
-												"x",
-												"y"
-											],
-											"additionalProperties": false,
-											"properties": {
-												"isActive": {
-													"type": "boolean"
-												},
-												"pressure": {
-													"type": "integer",
-													"minimum": 0,
-													"maximum": 65535
-												},
-												"slot": {
-													"type": "integer",
-													"minimum": 0,
-													"maximum": 255
-												},
-												"x": {
-													"type": "integer",
-													"minimum": 0,
-													"maximum": 65535
-												},
-												"y": {
-													"type": "integer",
-													"minimum": 0,
-													"maximum": 65535
-												}
-											}
-										}
-									},
-									"surface": {
-										"enum": [
-											"primary",
-											"left",
-											"right"
-										]
-									},
-									"timestamp": {
-										"type": "object",
-										"required": [
-											"nanoseconds"
-										],
-										"additionalProperties": false,
-										"properties": {
-											"nanoseconds": {
-												"type": "integer",
-												"minimum": 0
-											}
-										}
-									}
-								}
-							}
+						"output": {
+							"description": "Absent when the controller is not published.",
+							"$ref": "#/$defs/sharedVirtualOutput"
 						}
 					}
 				}
@@ -707,6 +637,24 @@
 						"absent",
 						"unavailable"
 					]
+				}
+			}
+		},
+		"logExport": {
+			"type": "object",
+			"required": [
+				"lines",
+				"path"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"lines": {
+					"description": "The number of log lines written.",
+					"type": "integer",
+					"minimum": 0
+				},
+				"path": {
+					"type": "string"
 				}
 			}
 		},
@@ -1300,6 +1248,131 @@
 				}
 			}
 		},
+		"sharedControllerState": {
+			"type": "object",
+			"required": [
+				"hat",
+				"leftStick",
+				"leftTrigger",
+				"pressed",
+				"rightStick",
+				"rightTrigger",
+				"touch"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"connection": {
+					"$ref": "report.schema.json#/$defs/controllerConnectionState"
+				},
+				"hat": {
+					"enum": [
+						"neutral",
+						"north",
+						"north-east",
+						"east",
+						"south-east",
+						"south",
+						"south-west",
+						"west",
+						"north-west"
+					]
+				},
+				"leftStick": {
+					"$ref": "#/$defs/sharedStick"
+				},
+				"leftTrigger": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"pressed": {
+					"type": "array",
+					"items": {
+						"$ref": "controller.schema.json#/$defs/controlID"
+					}
+				},
+				"rightStick": {
+					"$ref": "#/$defs/sharedStick"
+				},
+				"rightTrigger": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"touch": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": [
+							"contacts",
+							"surface",
+							"timestamp"
+						],
+						"additionalProperties": false,
+						"properties": {
+							"contacts": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"required": [
+										"isActive",
+										"slot",
+										"x",
+										"y"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"isActive": {
+											"type": "boolean"
+										},
+										"pressure": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 65535
+										},
+										"slot": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 255
+										},
+										"x": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 65535
+										},
+										"y": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 65535
+										}
+									}
+								}
+							},
+							"surface": {
+								"enum": [
+									"primary",
+									"left",
+									"right"
+								]
+							},
+							"timestamp": {
+								"type": "object",
+								"required": [
+									"nanoseconds"
+								],
+								"additionalProperties": false,
+								"properties": {
+									"nanoseconds": {
+										"type": "integer",
+										"minimum": 0
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"sharedDevice": {
 			"type": "object",
 			"required": [
@@ -1636,6 +1709,72 @@
 				},
 				"source": {
 					"type": "string"
+				}
+			}
+		},
+		"sharedVirtualOutput": {
+			"description": "What the virtual gamepad last reported, after stick transfer and remapping. Stick Y points down, as in the HID report.",
+			"type": "object",
+			"required": [
+				"buttons",
+				"hat",
+				"leftStickX",
+				"leftStickY",
+				"leftTrigger",
+				"rightStickX",
+				"rightStickY",
+				"rightTrigger"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"buttons": {
+					"description": "Bit n is HID button n + 1.",
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 4294967295
+				},
+				"hat": {
+					"enum": [
+						"neutral",
+						"north",
+						"north-east",
+						"east",
+						"south-east",
+						"south",
+						"south-west",
+						"west",
+						"north-west"
+					]
+				},
+				"leftStickX": {
+					"type": "integer",
+					"minimum": -32768,
+					"maximum": 32767
+				},
+				"leftStickY": {
+					"type": "integer",
+					"minimum": -32768,
+					"maximum": 32767
+				},
+				"leftTrigger": {
+					"type": "integer",
+					"minimum": -32768,
+					"maximum": 32767
+				},
+				"rightStickX": {
+					"type": "integer",
+					"minimum": -32768,
+					"maximum": 32767
+				},
+				"rightStickY": {
+					"type": "integer",
+					"minimum": -32768,
+					"maximum": 32767
+				},
+				"rightTrigger": {
+					"type": "integer",
+					"minimum": -32768,
+					"maximum": 32767
 				}
 			}
 		},

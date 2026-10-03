@@ -163,7 +163,11 @@ struct ControllerCommandTests {
   @Test
   func watchFirstPressFailsWhenTheDurationPassesFirst() async throws {
     let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
-      method == .getControllerState ? doubleEncoded(ControllerState.neutral) : nil
+      switch method {
+      case .getControllerState: doubleEncoded(ControllerState.neutral)
+      case .getVirtualOutputState: encoded(Data?.none)
+      default: nil
+      }
     }
     let result = await service.run([
       "controller", "watch", "pad-1", "--first-press", "--duration", "0.2",
@@ -203,6 +207,100 @@ struct ControllerCommandTests {
     #expect(result.code == 0, "\(result.standardError)")
     let ownership = result.standardOutput.split(separator: "\n").first { $0.hasPrefix("Ownership") }
     #expect(ownership?.hasSuffix("  route raw-usb, physical unknown, HID input unknown") == true)
+  }
+
+  @Test
+  func showPrintsWhyTheControllerIsNotPublished() async throws {
+    var device = FakeService.device(id: "pad-1")
+    device.publication = ApplicationServicePublicationStatus(
+      state: .notPublished,
+      reason: "native-gamepad",
+      target: .xboxOneSBluetooth
+    )
+    let service = try FakeService(devices: [device])
+
+    let json = await service.run(["controller", "show", "pad-1", "--json"])
+    let plain = await service.run(["controller", "show", "pad-1", "--plain"])
+    let human = await service.run(["controller", "show", "pad-1"])
+
+    #expect(json.code == 0, "\(json.standardError)")
+    let controller = try #require(try json.json()["controller"] as? [String: Any])
+    let publication = try #require(controller["publication"] as? [String: Any])
+    #expect(publication["state"] as? String == "not-published")
+    #expect(publication["reason"] as? String == "native-gamepad")
+    #expect(publication["target"] as? String == VirtualHIDProfileID.xboxOneSBluetooth.rawValue)
+    #expect(plain.standardOutput.contains("\npublication\tnot-published\tnative-gamepad\n"))
+    let row = human.standardOutput.split(separator: "\n").first { $0.hasPrefix("Publication") }
+    #expect(row?.hasSuffix("  not-published (native-gamepad)") == true)
+  }
+
+  @Test
+  func showLeavesOutPublicationWhenTheServiceSendsNone() async throws {
+    let service = try FakeService(devices: [FakeService.device(id: "pad-1")])
+    let plain = await service.run(["controller", "show", "pad-1", "--plain"])
+    #expect(plain.code == 0, "\(plain.standardError)")
+    #expect(!plain.standardOutput.contains("publication"))
+  }
+
+  @Test
+  func watchOutputPrintsTheVirtualGamepadNextToTheInput() async throws {
+    var virtual = VirtualGamepadState()
+    virtual.buttons = 0x11
+    virtual.hat = .east
+    virtual.leftStickX = 1200
+    virtual.leftStickY = -300
+    virtual.rightTriggerPressed = true
+    let output = ApplicationServiceVirtualOutputState(virtual)
+    let input = ControllerState(pressed: [.faceSouth])
+    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+      switch method {
+      case .getControllerState: doubleEncoded(input)
+      case .getVirtualOutputState: doubleEncoded(output)
+      default: nil
+      }
+    }
+    let args = ["controller", "watch", "pad-1", "--output", "--duration", "0.1"]
+
+    let human = await service.run(args)
+    let json = await service.run(args + ["--json"])
+    let plain = await service.run(args + ["--plain"])
+    let inputOnly = await service.run([
+      "controller", "watch", "pad-1", "--duration", "0.1", "--json",
+    ])
+
+    #expect(human.code == 0, "\(human.standardError)")
+    #expect(
+      human.standardOutput
+        == ControllerWatchCommand.formatted(input) + "\n"
+        + "out buttons=0x11 hat=east LS=(1200,-300) RS=(0,0) LT=0 RT=32767\n"
+    )
+    let sample = try json.json()
+    #expect(sample["input"] is [String: Any])
+    let sent = try #require(sample["output"] as? [String: Any])
+    #expect(sent["leftStickY"] as? Int == -300)
+    #expect(sent["rightTrigger"] as? Int == 32_767)
+    let fields = plain.standardOutput.dropLast()
+      .split(separator: "\t", omittingEmptySubsequences: false)
+    #expect(fields.count == 16)
+    #expect(fields.suffix(8) == ["0x11", "east", "1200", "-300", "0", "0", "0", "32767"])
+    #expect(try inputOnly.json()["output"] == nil)
+    #expect(try inputOnly.json()["pressed"] != nil)
+  }
+
+  @Test
+  func watchOutputPrintsNoneWhenNothingIsPublished() async throws {
+    let service = try FakeService(devices: [FakeService.device(id: "pad-1")]) { method, _ in
+      switch method {
+      case .getControllerState: doubleEncoded(ControllerState.neutral)
+      case .getVirtualOutputState: encoded(Data?.none)
+      default: nil
+      }
+    }
+    let human = await service.run([
+      "controller", "watch", "pad-1", "--output", "--duration", "0.1",
+    ])
+    #expect(human.code == 0, "\(human.standardError)")
+    #expect(human.standardOutput.hasSuffix("\nout none\n"))
   }
 
   @Test

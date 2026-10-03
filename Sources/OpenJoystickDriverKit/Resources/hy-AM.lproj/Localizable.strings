@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS-ը ժամանակին չավարտեց հարցումը։ Ստուգեք «Համակարգի կարգավորումներ»-ը հաստատման հարցման համար, ապա կատարեք «ojd extension status»։";
 "cli.log.abstract" = "Ցույց տալ ծառայության մատյանները կամ տպել դրանց տեղը։";
 "cli.log.path.abstract" = "Տպել ծառայության մատյանների թղթապանակը։ Բացեք այն այսպես՝ open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Գրել ծառայության մատյանների վերջը ֆայլում՝ տնային թղթապանակը ցույց տալով որպես ~։";
+"cli.log.export.file" = "Գրվող ֆայլը։";
+"cli.log.export.force" = "Փոխարինել ֆայլը, եթե այն գոյություն ունի։";
+"cli.log.export.exists" = "%@ արդեն գոյություն ունի։ Փոխարինելու համար օգտագործեք --force։";
+"cli.log.export.written" = "Ծառայության մատյանները գրվեցին %@-ում։";
 "cli.log.show.abstract" = "Տպել ծառայության մատյանների վերջը։";
 "cli.log.show.discussion" = "Տերմինալում արդյունքն անցնում է $PAGER-ով (լռելյայն՝ «less -FRX»։ էջավորումն անջատելու համար PAGER-ը դրեք դատարկ արժեքի)։ --follow-ը շարունակում է տպել նոր տողերը, մինչև սեղմեք Control-C։ --json-ի դեպքում տպում է մեկ JSON օբյեկտ տողում։";
 "cli.log.show.empty" = "(մատյանի ֆայլը դատարկ է)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Թրթռում";
 "cli.controller.show.label.session" = "Սեանս";
 "cli.controller.show.label.virtual" = "Վիրտուալ խաղային վահանակ";
+"cli.controller.show.label.publication" = "Հրապարակում";
 "cli.controller.show.none" = "ոչինչ";
 "cli.controller.show.record.bundled" = "ներկառուցված";
 "cli.controller.show.record.none" = "ոչինչ (համապատասխան գրառում չկա)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Տպել կարգավորիչի մուտքի վիճակը՝ ամեն անգամ, երբ այն փոխվում է։";
 "cli.controller.watch.discussion" = "--json-ի դեպքում տպում է մեկ JSON օբյեկտ տողում։ Ջոյսթիքի Y առանցքը ուղղված է վերև։ --first-press-ի դեպքում տպում է առաջին սեղմված կառավարման տարրը և դուրս գալիս։ Ձախողվում է, եթե --duration-ը սպառվի ավելի շուտ։";
 "cli.controller.watch.first_press" = "Տպել առաջին սեղմված կառավարման տարրը, ապա դուրս գալ։";
+"cli.controller.watch.output" = "Տպել նաև այն, ինչ ուղարկում է վիրտուալ խաղային վահանակը։ Նրա լծակի Y առանցքը ուղղված է ներքև, ինչպես HID հաշվետվությունում։";
 "cli.controller.watch.no_input" = "Մուտք չի ստացվել։";
 "cli.controller.watch.no_press" = "%@ ընթացքում ոչ մի կառավարման տարր չսեղմվեց։";
 "cli.controller.watch.press_prompt" = "Սեղմեք կառավարման տարր %@-ի վրա (%@)։";

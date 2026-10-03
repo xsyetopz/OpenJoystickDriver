@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "A macOS nem fejezte be időben a kérést. Nézze meg a Rendszerbeállításokban, van-e jóváhagyási kérés, majd futtassa: 'ojd extension status'.";
 "cli.log.abstract" = "Megjeleníti a szolgáltatás naplóit, vagy kiírja, hol vannak.";
 "cli.log.path.abstract" = "Kiírja a szolgáltatás naplóit tartalmazó mappát. Nyissa meg így: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "A szolgáltatásnaplók végét fájlba írja, a saját mappát ~ formában mutatva.";
+"cli.log.export.file" = "Az írandó fájl.";
+"cli.log.export.force" = "Lecseréli a fájlt, ha létezik.";
+"cli.log.export.exists" = "%@ már létezik. A cseréhez használja a --force kapcsolót.";
+"cli.log.export.written" = "A szolgáltatásnaplók kiírva ide: %@.";
 "cli.log.show.abstract" = "Kiírja a szolgáltatásnaplók végét.";
 "cli.log.show.discussion" = "Terminálban a kimenet a $PAGER programon megy át (alapértelmezés: 'less -FRX'; a lapozás kikapcsolásához állítsa a PAGER értékét üresre). A --follow addig írja az új sorokat, amíg nem nyomja meg a Control-C billentyűt; a --json használatakor soronként egy JSON-objektumot ír.";
 "cli.log.show.empty" = "(a naplófájl üres)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Rezgés";
 "cli.controller.show.label.session" = "Munkamenet";
 "cli.controller.show.label.virtual" = "Virtuális gamepad";
+"cli.controller.show.label.publication" = "Közzététel";
 "cli.controller.show.none" = "nincs";
 "cli.controller.show.record.bundled" = "beépített";
 "cli.controller.show.record.none" = "nincs (nincs egyező rekord)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Egy vezérlő bemeneti állapotának kiírása minden változáskor.";
 "cli.controller.watch.discussion" = "A --json kapcsolóval soronként egy JSON-objektumot ír ki. Az Y tengely felfelé mutat. A --first-press kapcsolóval az elsőként megnyomott vezérlőelemet írja ki, majd kilép; hibával végződik, ha előbb letelik a --duration.";
 "cli.controller.watch.first_press" = "Az elsőként megnyomott vezérlőelem kiírása, majd kilépés.";
+"cli.controller.watch.output" = "Azt is kiírja, amit a virtuális gamepad küld. A kar Y tengelye lefelé mutat, mint a HID-jelentésben.";
 "cli.controller.watch.no_input" = "Nem érkezett bemenet.";
 "cli.controller.watch.no_press" = "%@ alatt egy vezérlőelemet sem nyomtak meg.";
 "cli.controller.watch.press_prompt" = "Nyomjon meg egy vezérlőelemet ezen: %@ (%@).";

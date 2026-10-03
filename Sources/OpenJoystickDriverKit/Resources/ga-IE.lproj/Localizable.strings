@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "Níor chríochnaigh macOS an t-iarratas in am. Seiceáil System Settings le haghaidh leid cheadaithe, ansin rith «ojd extension status».";
 "cli.log.abstract" = "Taispeáin logaí na seirbhíse nó priontáil an áit a bhfuil siad.";
 "cli.log.path.abstract" = "Priontálann sé an fillteán ina bhfuil logaí na seirbhíse. Oscail é le: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Scríobh deireadh logaí na seirbhíse chuig comhad, agus d’fhillteán baile taispeánta mar ~.";
+"cli.log.export.file" = "An comhad le scríobh.";
+"cli.log.export.force" = "Cuir an comhad in ionad má tá sé ann.";
+"cli.log.export.exists" = "Tá %@ ann cheana. Úsáid --force chun é a athsholáthar.";
+"cli.log.export.written" = "Scríobhadh logaí na seirbhíse chuig %@.";
 "cli.log.show.abstract" = "Priontálann sé deireadh logaí na seirbhíse.";
 "cli.log.show.discussion" = "Ar teirminéal, téann an t-aschur trí $PAGER («less -FRX» de réir réamhshocraithe; socraigh PAGER ina luach folamh chun an leathanú a mhúchadh). Leanann --follow ag priontáil línte nua go dtí go mbrúnn tú Control-C; le --json priontálann sé réad JSON amháin in aghaidh na líne.";
 "cli.log.show.empty" = "(tá an comhad logála folamh)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Creathadh";
 "cli.controller.show.label.session" = "Seisiún";
 "cli.controller.show.label.virtual" = "Gamepad fíorúil";
+"cli.controller.show.label.publication" = "Foilsiú";
 "cli.controller.show.none" = "ceann ar bith";
 "cli.controller.show.record.bundled" = "san áireamh";
 "cli.controller.show.record.none" = "ceann ar bith (níl taifead ar bith ag teacht leis)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Priontáil staid ionchuir rialtóra gach uair a athraíonn sí.";
 "cli.controller.watch.discussion" = "Le --json, priontálann sé réad JSON amháin ar gach líne. Pointeálann Y an bhata suas. Le --first-press, priontálann sé an chéad rialú a brúdh agus scoireann sé; teipeann air má théann --duration thart ar dtús.";
 "cli.controller.watch.first_press" = "Priontáil an chéad rialú a brúdh, ansin scoir.";
+"cli.controller.watch.output" = "Priontáil freisin an méid a sheolann an gamepad fíorúil. Díríonn ais Y a mhaide síos, mar atá sa tuairisc HID.";
 "cli.controller.watch.no_input" = "Níor fuarthas aon ionchur.";
 "cli.controller.watch.no_press" = "Níor brúdh aon rialú laistigh de %@.";
 "cli.controller.watch.press_prompt" = "Brúigh rialú ar %@ (%@).";

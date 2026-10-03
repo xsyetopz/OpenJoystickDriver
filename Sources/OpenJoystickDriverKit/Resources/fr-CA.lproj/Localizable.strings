@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS n’a pas terminé la demande à temps. Vérifiez dans Réglages Système si une demande d’approbation s’affiche, puis exécutez 'ojd extension status'.";
 "cli.log.abstract" = "Affiche les journaux du service ou indique où ils se trouvent.";
 "cli.log.path.abstract" = "Affiche le dossier qui contient les journaux du service. Ouvrez-le avec : open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Écrit la fin des journaux du service dans un fichier, avec votre dossier personnel affiché comme ~.";
+"cli.log.export.file" = "Le fichier à écrire.";
+"cli.log.export.force" = "Remplace le fichier s’il existe.";
+"cli.log.export.exists" = "%@ existe déjà. Utilisez --force pour le remplacer.";
+"cli.log.export.written" = "Journaux du service écrits dans %@.";
 "cli.log.show.abstract" = "Affiche la fin des journaux du service.";
 "cli.log.show.discussion" = "Dans un terminal, la sortie passe par $PAGER (par défaut 'less -FRX' ; définissez PAGER sur une valeur vide pour désactiver la pagination). --follow continue d’afficher les nouvelles lignes jusqu’à ce que vous appuyiez sur Control-C ; avec --json, il affiche un objet JSON par ligne.";
 "cli.log.show.empty" = "(le fichier journal est vide)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibration";
 "cli.controller.show.label.session" = "Session";
 "cli.controller.show.label.virtual" = "Manette virtuelle";
+"cli.controller.show.label.publication" = "État de publication";
 "cli.controller.show.none" = "aucune";
 "cli.controller.show.record.bundled" = "intégrée";
 "cli.controller.show.record.none" = "aucune (aucune fiche ne correspond)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Afficher l’état d’entrée d’une manette chaque fois qu’il change.";
 "cli.controller.watch.discussion" = "Avec --json, affiche un objet JSON par ligne. L’axe Y du stick pointe vers le haut. Avec --first-press, affiche la première commande actionnée et quitte; échoue si --duration s’écoule avant.";
 "cli.controller.watch.first_press" = "Afficher la première commande actionnée, puis quitter.";
+"cli.controller.watch.output" = "Affiche aussi ce qu’envoie la manette virtuelle. L’axe Y de son stick pointe vers le bas, comme dans le rapport HID.";
 "cli.controller.watch.no_input" = "Aucune entrée reçue.";
 "cli.controller.watch.no_press" = "Aucune commande n’a été actionnée en %@.";
 "cli.controller.watch.press_prompt" = "Actionnez une commande sur %@ (%@).";

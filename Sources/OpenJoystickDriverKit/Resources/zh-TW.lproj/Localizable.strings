@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS 未能及時完成該要求。請檢查「系統設定」中是否有核准提示，然後執行 'ojd extension status'。";
 "cli.log.abstract" = "顯示服務記錄，或印出記錄所在位置。";
 "cli.log.path.abstract" = "印出存放服務記錄的資料夾。可用以下指令開啟：open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "將服務記錄的結尾寫入檔案，主檔案夾顯示為 ~。";
+"cli.log.export.file" = "要寫入的檔案。";
+"cli.log.export.force" = "如果檔案已存在則取代。";
+"cli.log.export.exists" = "%@ 已存在。使用 --force 取代它。";
+"cli.log.export.written" = "已將服務記錄寫入 %@。";
 "cli.log.show.abstract" = "印出服務記錄的結尾部分。";
 "cli.log.show.discussion" = "在終端機中，輸出會經過 $PAGER（預設為 'less -FRX'；將 PAGER 設為空值可關閉分頁）。--follow 會持續印出新行，直到您按下 Control-C；與 --json 一起使用時，每行印出一個 JSON 物件。";
 "cli.log.show.empty" = "（記錄檔為空）";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "震動";
 "cli.controller.show.label.session" = "工作階段";
 "cli.controller.show.label.virtual" = "虛擬遊戲控制器";
+"cli.controller.show.label.publication" = "發佈狀態";
 "cli.controller.show.none" = "無";
 "cli.controller.show.record.bundled" = "內建";
 "cli.controller.show.record.none" = "無（沒有相符的記錄）";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "每當控制器的輸入狀態變更時就顯示。";
 "cli.controller.watch.discussion" = "使用 --json 時，每行顯示一個 JSON 物件。搖桿 Y 軸向上為正。使用 --first-press 時，會顯示第一個被按下的控制項後結束；若 --duration 先到期則失敗。";
 "cli.controller.watch.first_press" = "顯示第一個被按下的控制項，然後結束。";
+"cli.controller.watch.output" = "同時列印虛擬遊戲控制器傳送的值。其搖桿 Y 軸與 HID 報告一致，向下為正。";
 "cli.controller.watch.no_input" = "未收到輸入。";
 "cli.controller.watch.no_press" = "在 %@內沒有按下任何控制項。";
 "cli.controller.watch.press_prompt" = "請在 %@ (%@) 上按下一個控制項。";

@@ -56,7 +56,7 @@ extension DeviceManager {
     )
   }
 
-  static func connectedIdentifier<Identifiers: Sequence>(
+  package static func connectedIdentifier<Identifiers: Sequence>(
     among identifiers: Identifiers,
     matching model: DeviceIdentifier,
     runtimeIdentifier: String?

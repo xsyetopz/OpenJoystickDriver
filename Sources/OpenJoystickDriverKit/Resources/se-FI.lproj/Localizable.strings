@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS ii gárvvistan bivddu áigge. Dárkkis System Settings:as lea go dohkkehusbivdda vuordimin, ja dasto jođit ”ojd extension status”.";
 "cli.log.abstract" = "Čájeha bálvalusa loggaid dahje prentte gos dat leat.";
 "cli.log.path.abstract" = "Prentte máhpa gos bálvalusa loggat leat. Rahpa dan: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Čális bálvalusa loggaid loahpa fiilii, ja ruoktomáhpa čájehuvvo ~:n.";
+"cli.log.export.file" = "Fiila maid čállit.";
+"cli.log.export.force" = "Buhtte fiilla jus dat gávdno.";
+"cli.log.export.exists" = "%@ gávdno juo. Geavat --force buhttet dan.";
+"cli.log.export.written" = "Bálvalusa loggat čállojuvvojedje %@:ii.";
 "cli.log.show.abstract" = "Prentte bálvalusa loggaid lohppa.";
 "cli.log.show.discussion" = "Terminálas bohtosat mannet $PAGER bokte (vuođđoárvu ”less -FRX”; ásat PAGER guorus árvui jos háliidat sivvat siidduheami eret). --follow prentte ođđa ráidduid dassážii go deaddilat Control-C; --json:in prentte ovtta JSON-objeavtta ráiddus.";
 "cli.log.show.empty" = "(loggafiila lea guorus)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibrerem";
 "cli.controller.show.label.session" = "Sešuvdna";
 "cli.controller.show.label.virtual" = "Virtuála speallanbáddi";
+"cli.controller.show.label.publication" = "Almmuheapmi";
 "cli.controller.show.none" = "ii maidege";
 "cli.controller.show.record.bundled" = "mielde boahtti";
 "cli.controller.show.record.none" = "ii maidege (ii leat heivvolaš čálusa)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Prentte stivrejeaddji sisaboahtodili juohke háve go dat rievdá.";
 "cli.controller.watch.discussion" = "--json:in prentte ovtta JSON-objeavtta juohke ráiddus. Stickka Y čujuha bajás. --first-press:in čálle vuosttaš deaddiluvvon stivrenelemeantta ja gohtta; dat ii lihkostuva jos --duration nohkka ovdal.";
 "cli.controller.watch.first_press" = "Prentte vuosttaš deaddiluvvon stivrenelemeantta, de gohtte.";
+"cli.controller.watch.output" = "Čális maid dan maid virtuála speallanbáddi sádde. Gieđa Y-ákse čujuha vulos, nugo HID-raporttas.";
 "cli.controller.watch.no_input" = "Ii leat vuostáiváldán sisaboahtu.";
 "cli.controller.watch.no_press" = "Ii oktage stivrenelemeanta deaddiluvvon %@ siste.";
 "cli.controller.watch.press_prompt" = "Deaddil stivrenelemeantta %@:s (%@).";

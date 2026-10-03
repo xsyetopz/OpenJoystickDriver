@@ -59,6 +59,22 @@ extension ApplicationServiceServer {
     return try? JSONEncoder().encode(state)
   }
 
+  /// Returns the values the device's virtual gamepad last reported as encoded JSON data; nil
+  /// when no virtual gamepad publishes the device.
+  public func getVirtualOutputState(
+    vendorID: Int,
+    productID: Int,
+    runtimeIdentifier: String?
+  ) async -> Data? {
+    guard let vendor = UInt16(exactly: vendorID), let product = UInt16(exactly: productID),
+      let state = await automaticUserSpaceDispatcher()?.virtualOutputState(
+        matching: DeviceIdentifier(vendorID: vendor, productID: product),
+        runtimeIdentifier: runtimeIdentifier
+      )
+    else { return nil }
+    return try? JSONEncoder().encode(ApplicationServiceVirtualOutputState(state))
+  }
+
   /// Returns the recent packet log for the specified device as encoded JSON data.
   public func getPacketLog(vendorID: Int, productID: Int, runtimeIdentifier: String?) async -> Data
   {

@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS ने अनुरोध समय पर पूरा नहीं किया। सिस्टम सेटिंग्ज़ में स्वीकृति का संकेत देखें, फिर 'ojd extension status' चलाएँ।";
 "cli.log.abstract" = "सर्विस लॉग दिखाएँ या बताएँ कि वे कहाँ हैं।";
 "cli.log.path.abstract" = "वह फ़ोल्डर प्रिंट करें जिसमें सर्विस लॉग हैं। इसे इस तरह खोलें: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "सेवा लॉग का अंतिम भाग एक फ़ाइल में लिखें, होम फ़ोल्डर ~ के रूप में दिखेगा।";
+"cli.log.export.file" = "लिखी जाने वाली फ़ाइल।";
+"cli.log.export.force" = "फ़ाइल मौजूद हो तो उसे बदलें।";
+"cli.log.export.exists" = "%@ पहले से मौजूद है। बदलने के लिए --force का उपयोग करें।";
+"cli.log.export.written" = "सेवा लॉग %@ में लिखे गए।";
 "cli.log.show.abstract" = "सर्विस लॉग का अंतिम हिस्सा प्रिंट करें।";
 "cli.log.show.discussion" = "टर्मिनल पर आउटपुट $PAGER से होकर जाता है (डिफ़ॉल्ट 'less -FRX'; पेज बंद करने के लिए PAGER को खाली मान पर सेट करें)। --follow नई पंक्तियाँ तब तक प्रिंट करता रहता है जब तक आप Control-C नहीं दबाते; --json के साथ यह हर पंक्ति में एक JSON ऑब्जेक्ट प्रिंट करता है।";
 "cli.log.show.empty" = "(लॉग फ़ाइल खाली है)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "रंबल";
 "cli.controller.show.label.session" = "सेशन";
 "cli.controller.show.label.virtual" = "वर्चुअल गेमपैड";
+"cli.controller.show.label.publication" = "प्रकाशन";
 "cli.controller.show.none" = "कोई नहीं";
 "cli.controller.show.record.bundled" = "बंडल किया गया";
 "cli.controller.show.record.none" = "कोई नहीं (कोई रिकॉर्ड मेल नहीं खाता)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "कंट्रोलर की इनपुट स्थिति हर बार बदलने पर प्रिंट करें।";
 "cli.controller.watch.discussion" = "--json के साथ, हर पंक्ति में एक JSON ऑब्जेक्ट प्रिंट करता है। स्टिक का Y ऊपर की ओर है। --first-press के साथ, दबाया गया पहला कंट्रोल प्रिंट करके बाहर निकल जाता है; अगर --duration पहले पूरी हो जाए तो विफल होता है।";
 "cli.controller.watch.first_press" = "दबाया गया पहला कंट्रोल प्रिंट करें, फिर बाहर निकलें।";
+"cli.controller.watch.output" = "वर्चुअल गेमपैड जो भेजता है, उसे भी प्रिंट करें। उसकी स्टिक का Y अक्ष HID रिपोर्ट की तरह नीचे की ओर है।";
 "cli.controller.watch.no_input" = "कोई इनपुट नहीं मिला।";
 "cli.controller.watch.no_press" = "%@ में कोई कंट्रोल नहीं दबाया गया।";
 "cli.controller.watch.press_prompt" = "%@ (%@) पर कोई कंट्रोल दबाएँ।";

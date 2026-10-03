@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "لم ينهِ macOS الطلب في الوقت المناسب. تحقق من إعدادات النظام بحثًا عن طلب موافقة، ثم شغّل «ojd extension status».";
 "cli.log.abstract" = "اعرض سجلات الخدمة أو اطبع مكانها.";
 "cli.log.path.abstract" = "اطبع المجلد الذي يحتوي على سجلات الخدمة. افتحه باستخدام: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "اكتب نهاية سجلات الخدمة إلى ملف، مع عرض مجلد المنزل على أنه ~.";
+"cli.log.export.file" = "الملف المراد كتابته.";
+"cli.log.export.force" = "استبدل الملف إن كان موجودًا.";
+"cli.log.export.exists" = "%@ موجود بالفعل. استخدم --force لاستبداله.";
+"cli.log.export.written" = "كُتبت سجلات الخدمة إلى %@.";
 "cli.log.show.abstract" = "اطبع نهاية سجلات الخدمة.";
 "cli.log.show.discussion" = "في الطرفية يمر الإخراج عبر $PAGER (الافتراضي «less -FRX»؛ اضبط PAGER على قيمة فارغة لإيقاف التقسيم إلى صفحات). يواصل --follow طباعة الأسطر الجديدة حتى تضغط Control-C؛ ومع --json يطبع كائن JSON واحدًا في كل سطر.";
 "cli.log.show.empty" = "(ملف السجل فارغ)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "الاهتزاز";
 "cli.controller.show.label.session" = "الجلسة";
 "cli.controller.show.label.virtual" = "وحدة تحكم افتراضية";
+"cli.controller.show.label.publication" = "النشر";
 "cli.controller.show.none" = "لا شيء";
 "cli.controller.show.record.bundled" = "مضمّن";
 "cli.controller.show.record.none" = "لا شيء (لا يوجد سجل مطابق)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "اطبع حالة إدخال وحدة التحكم كلما تغيرت.";
 "cli.controller.watch.discussion" = "مع --json يطبع كائن JSON واحدًا في كل سطر. يشير المحور Y للعصا إلى الأعلى. مع --first-press يطبع أول عنصر تحكم يُضغط ثم ينتهي؛ ويفشل إذا انقضت المدة --duration أولًا.";
 "cli.controller.watch.first_press" = "اطبع أول عنصر تحكم يُضغط ثم أنهِ.";
+"cli.controller.watch.output" = "اطبع أيضًا ما ترسله ذراع الألعاب الافتراضية. يشير المحور Y لعصاها إلى الأسفل، كما في تقرير HID.";
 "cli.controller.watch.no_input" = "لم يصل أي إدخال.";
 "cli.controller.watch.no_press" = "لم يُضغط أي عنصر تحكم خلال %@.";
 "cli.controller.watch.press_prompt" = "اضغط عنصر تحكم على %@ (%@).";

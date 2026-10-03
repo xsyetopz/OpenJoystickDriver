@@ -50,6 +50,25 @@ extension ApplicationServiceClient {
     return try? JSONDecoder().decode(ControllerState.self, from: data)
   }
 
+  /// The values the controller's virtual gamepad last reported; nil when no virtual gamepad
+  /// publishes the controller.
+  public func virtualOutputState(
+    vendorID: UInt16,
+    productID: UInt16,
+    runtimeIdentifier: String? = nil
+  ) async throws -> ApplicationServiceVirtualOutputState? {
+    let data: Data? = try await call(
+      .getVirtualOutputState,
+      LocalServiceRPCDeviceArguments(
+        vendorID: Int(vendorID),
+        productID: Int(productID),
+        runtimeIdentifier: runtimeIdentifier
+      )
+    )
+    guard let data else { return nil }
+    return try JSONDecoder().decode(ApplicationServiceVirtualOutputState.self, from: data)
+  }
+
   public func packetLog(
     vendorID: UInt16,
     productID: UInt16,

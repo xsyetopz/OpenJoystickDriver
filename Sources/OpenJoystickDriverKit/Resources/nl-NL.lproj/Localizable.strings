@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS heeft het verzoek niet op tijd afgerond. Controleer in Systeeminstellingen of er een goedkeuringsvenster is en voer daarna 'ojd extension status' uit.";
 "cli.log.abstract" = "Toont de servicelogs of geeft aan waar ze staan.";
 "cli.log.path.abstract" = "Geeft de map met de servicelogs weer. Open die met: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Schrijf het einde van de servicelogboeken naar een bestand, met je thuismap weergegeven als ~.";
+"cli.log.export.file" = "Het bestand om te schrijven.";
+"cli.log.export.force" = "Vervang het bestand als het bestaat.";
+"cli.log.export.exists" = "%@ bestaat al. Gebruik --force om het te vervangen.";
+"cli.log.export.written" = "Servicelogboeken geschreven naar %@.";
 "cli.log.show.abstract" = "Geeft het einde van de servicelogs weer.";
 "cli.log.show.discussion" = "In een terminal loopt de uitvoer via $PAGER (standaard 'less -FRX'; stel PAGER in op een lege waarde om paginering uit te zetten). --follow blijft nieuwe regels tonen tot je op Control-C drukt; met --json wordt één JSON-object per regel weergegeven.";
 "cli.log.show.empty" = "(logbestand is leeg)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Trillen";
 "cli.controller.show.label.session" = "Sessie";
 "cli.controller.show.label.virtual" = "Virtueel gamepad";
+"cli.controller.show.label.publication" = "Publicatie";
 "cli.controller.show.none" = "geen";
 "cli.controller.show.record.bundled" = "meegeleverd";
 "cli.controller.show.record.none" = "geen (geen record komt overeen)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "De invoerstatus van een controller tonen telkens als die verandert.";
 "cli.controller.watch.discussion" = "Met --json wordt één JSON-object per regel getoond. Stick-Y wijst omhoog. Met --first-press wordt het eerste ingedrukte bedieningselement getoond en stopt het commando; het mislukt als --duration eerst verstrijkt.";
 "cli.controller.watch.first_press" = "Toon het eerste ingedrukte bedieningselement en stop dan.";
+"cli.controller.watch.output" = "Toon ook wat de virtuele gamepad verstuurt. De Y-as van de stick wijst omlaag, zoals in het HID-rapport.";
 "cli.controller.watch.no_input" = "Geen invoer ontvangen.";
 "cli.controller.watch.no_press" = "Binnen %@ is er geen bedieningselement ingedrukt.";
 "cli.controller.watch.press_prompt" = "Druk op een bedieningselement van %@ (%@).";

@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS ni pravočasno dokončal zahteve. V System Settings preverite, ali čaka poziv za odobritev, nato zaženite „ojd extension status“.";
 "cli.log.abstract" = "Prikaže dnevnike storitve ali izpiše, kje so.";
 "cli.log.path.abstract" = "Izpiše mapo z dnevniki storitve. Odprite jo z: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Zapiši konec dnevnikov storitve v datoteko, z domačo mapo prikazano kot ~.";
+"cli.log.export.file" = "Datoteka za zapis.";
+"cli.log.export.force" = "Zamenjaj datoteko, če obstaja.";
+"cli.log.export.exists" = "%@ že obstaja. Za zamenjavo uporabite --force.";
+"cli.log.export.written" = "Dnevniki storitve so zapisani v %@.";
 "cli.log.show.abstract" = "Izpiše konec dnevnikov storitve.";
 "cli.log.show.discussion" = "V terminalu gre izpis skozi $PAGER (privzeto „less -FRX“; za izklop ostranjevanja nastavite PAGER na prazno vrednost). --follow izpisuje nove vrstice, dokler ne pritisnete Control-C; z --json izpiše en objekt JSON na vrstico.";
 "cli.log.show.empty" = "(datoteka dnevnika je prazna)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibriranje";
 "cli.controller.show.label.session" = "Seja";
 "cli.controller.show.label.virtual" = "Navidezni igralni plošček";
+"cli.controller.show.label.publication" = "Objava";
 "cli.controller.show.none" = "brez";
 "cli.controller.show.record.bundled" = "vgrajen";
 "cli.controller.show.record.none" = "brez (noben zapis se ne ujema)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Izpiše stanje vnosa krmilnika ob vsaki spremembi.";
 "cli.controller.watch.discussion" = "Z --json izpiše po en objekt JSON v vrstici. Os Y palice kaže navzgor. Z --first-press izpiše prvi pritisnjeni upravljalni element in konča; spodleti, če --duration poteče prej.";
 "cli.controller.watch.first_press" = "Izpiše prvi pritisnjeni upravljalni element, nato konča.";
+"cli.controller.watch.output" = "Izpiši tudi, kaj pošilja navidezni igralni plošček. Os Y njegove palice kaže navzdol, kot v poročilu HID.";
 "cli.controller.watch.no_input" = "Noben vnos ni bil prejet.";
 "cli.controller.watch.no_press" = "V %@ ni bil pritisnjen noben upravljalni element.";
 "cli.controller.watch.press_prompt" = "Pritisnite upravljalni element na %@ (%@).";

@@ -101,6 +101,22 @@ struct ControllerWatchCommand: AsyncParsableCommand {
   )
   var firstPress = false
 
+  @Flag(
+    help: ArgumentHelp(
+      CLILocalized.text(
+        "cli.controller.watch.output",
+        "Also print what the virtual gamepad sends. Its stick Y points down, as in the HID report."
+      )
+    )
+  )
+  var output = false
+
+  /// One poll: the controller's input state and, with --output, its virtual gamepad's values.
+  struct Sample: Encodable, Equatable {
+    let input: ControllerState
+    let output: ApplicationServiceVirtualOutputState?
+  }
+
   func validate() throws { try validateDuration(duration) }
 
   func run() async throws {
@@ -116,10 +132,22 @@ struct ControllerWatchCommand: AsyncParsableCommand {
             )
           }
         }
+        let readOutput: @Sendable () async throws -> ApplicationServiceVirtualOutputState? = {
+          try await ServiceConnection.withDeadline(seconds: timeout) {
+            try await client.virtualOutputState(
+              vendorID: device.vendorID,
+              productID: device.productID,
+              runtimeIdentifier: device.runtimeIdentifier
+            )
+          }
+        }
         if firstPress {
           try await waitForFirstPress(device, read: read)
         } else {
-          try await watch(device, read: read)
+          try await watch(device) {
+            guard let input = try await read() else { return nil }
+            return Sample(input: input, output: output ? try await readOutput() : nil)
+          }
         }
       }
     }
@@ -127,7 +155,7 @@ struct ControllerWatchCommand: AsyncParsableCommand {
 
   private func watch(
     _ device: ApplicationServiceDeviceDescription,
-    read: () async throws -> ControllerState?
+    read: () async throws -> Sample?
   ) async throws {
     if CLIContext.current.format == .human {
       CLIOutput.success(
@@ -139,14 +167,20 @@ struct ControllerWatchCommand: AsyncParsableCommand {
         )
       )
     }
-    var previous: ControllerState?
+    var previous: Sample?
     _ = try await pollController(duration: duration) {
-      guard let state = try await read(), state != previous else { return false }
-      previous = state
+      guard let sample = try await read(), sample != previous else { return false }
+      previous = sample
       switch CLIContext.current.format {
-      case .json: try CLIOutput.jsonLine(state)
-      case .plain: CLIOutput.plain([Self.plainRow(state)])
-      case .human: CLIOutput.stdout(Self.formatted(state))
+      case .json where output: try CLIOutput.jsonLine(sample)
+      case .json: try CLIOutput.jsonLine(sample.input)
+      case .plain where output:
+        CLIOutput.plain([Self.plainRow(sample.input) + Self.plainRow(sample.output)])
+      case .plain: CLIOutput.plain([Self.plainRow(sample.input)])
+      case .human where output:
+        CLIOutput.stdout(Self.formatted(sample.input))
+        CLIOutput.stdout(Self.formatted(sample.output))
+      case .human: CLIOutput.stdout(Self.formatted(sample.input))
       }
       return false
     }
@@ -214,6 +248,31 @@ struct ControllerWatchCommand: AsyncParsableCommand {
       + " LS=(\(state.leftStick.x.rawValue),\(state.leftStick.y.rawValue))"
       + " RS=(\(state.rightStick.x.rawValue),\(state.rightStick.y.rawValue))"
       + " LT=\(state.leftTrigger.rawValue) RT=\(state.rightTrigger.rawValue)"
+  }
+
+  /// Virtual buttons in hex, hat, sticks, and triggers as tab-separated fields; empty fields when
+  /// no virtual gamepad publishes the controller.
+  static func plainRow(_ state: ApplicationServiceVirtualOutputState?) -> [String] {
+    guard let state else { return Array(repeating: "", count: 8) }
+    return [
+      hex(state.buttons), state.hat.rawValue,
+      String(state.leftStickX), String(state.leftStickY),
+      String(state.rightStickX), String(state.rightStickY),
+      String(state.leftTrigger), String(state.rightTrigger),
+    ]
+  }
+
+  /// The virtual gamepad's values on an `out` line, or `out none` when nothing is published.
+  static func formatted(_ state: ApplicationServiceVirtualOutputState?) -> String {
+    guard let state else { return "out none" }
+    return "out buttons=\(hex(state.buttons)) hat=\(state.hat.rawValue)"
+      + " LS=(\(state.leftStickX),\(state.leftStickY))"
+      + " RS=(\(state.rightStickX),\(state.rightStickY))"
+      + " LT=\(state.leftTrigger) RT=\(state.rightTrigger)"
+  }
+
+  private static func hex(_ buttons: UInt32) -> String {
+    "0x" + String(buttons, radix: 16, uppercase: true)
   }
 
   private static func pressedControls(_ state: ControllerState) -> [String] {

@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS درخواست را به‌موقع تمام نکرد. تنظیمات سیستم را برای درخواست تأیید بررسی کنید، سپس «ojd extension status» را اجرا کنید.";
 "cli.log.abstract" = "نمایش گزارش‌های سرویس یا چاپ محل آن‌ها.";
 "cli.log.path.abstract" = "چاپ پوشه‌ای که گزارش‌های سرویس در آن است. آن را با این دستور باز کنید: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "انتهای گزارش‌های سرویس را در یک فایل بنویس و پوشهٔ خانه را به صورت ~ نشان بده.";
+"cli.log.export.file" = "فایلی که نوشته می‌شود.";
+"cli.log.export.force" = "اگر فایل وجود دارد جایگزینش کن.";
+"cli.log.export.exists" = "%@ از قبل وجود دارد. برای جایگزینی از --force استفاده کنید.";
+"cli.log.export.written" = "گزارش‌های سرویس در %@ نوشته شد.";
 "cli.log.show.abstract" = "چاپ انتهای گزارش‌های سرویس.";
 "cli.log.show.discussion" = "در ترمینال، خروجی از طریق $PAGER عبور می‌کند (پیش‌فرض «less -FRX»؛ برای خاموش کردن صفحه‌بندی، PAGER را روی مقدار خالی بگذارید). --follow تا وقتی Control-C را بزنید خطوط جدید را چاپ می‌کند؛ با --json در هر خط یک شیء JSON چاپ می‌کند.";
 "cli.log.show.empty" = "(فایل گزارش خالی است)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "لرزش";
 "cli.controller.show.label.session" = "نشست";
 "cli.controller.show.label.virtual" = "گیم‌پد مجازی";
+"cli.controller.show.label.publication" = "انتشار";
 "cli.controller.show.none" = "هیچ";
 "cli.controller.show.record.bundled" = "همراه برنامه";
 "cli.controller.show.record.none" = "هیچ (رکوردی مطابقت ندارد)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "چاپ وضعیت ورودی یک کنترلر در هر بار که تغییر می‌کند.";
 "cli.controller.watch.discussion" = "با --json در هر خط یک شیء JSON چاپ می‌کند. محور Y استیک رو به بالاست. با --first-press اولین کنترل فشرده‌شده را چاپ می‌کند و خارج می‌شود؛ اگر --duration زودتر سپری شود ناموفق می‌شود.";
 "cli.controller.watch.first_press" = "چاپ اولین کنترل فشرده‌شده و سپس خروج.";
+"cli.controller.watch.output" = "آنچه دستهٔ بازی مجازی می‌فرستد را نیز چاپ کن. محور Y اهرم آن مانند گزارش HID رو به پایین است.";
 "cli.controller.watch.no_input" = "هیچ ورودی دریافت نشد.";
 "cli.controller.watch.no_press" = "در %@ هیچ کنترلی فشرده نشد.";
 "cli.controller.watch.press_prompt" = "یک کنترل را روی %@ (%@) فشار دهید.";

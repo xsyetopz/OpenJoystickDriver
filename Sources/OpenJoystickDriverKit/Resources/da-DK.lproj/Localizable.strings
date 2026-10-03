@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS nåede ikke at afslutte anmodningen i tide. Se i Systemindstillinger, om der er en godkendelsesanmodning, og kør derefter “ojd extension status”.";
 "cli.log.abstract" = "Vis tjenestens logfiler, eller udskriv, hvor de er.";
 "cli.log.path.abstract" = "Udskriv mappen med tjenestens logfiler. Åbn den med: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Skriv slutningen af tjenestens logfiler til en fil, med din hjemmemappe vist som ~.";
+"cli.log.export.file" = "Filen, der skal skrives.";
+"cli.log.export.force" = "Erstat filen, hvis den findes.";
+"cli.log.export.exists" = "%@ findes allerede. Brug --force for at erstatte den.";
+"cli.log.export.written" = "Tjenestens logfiler er skrevet til %@.";
 "cli.log.show.abstract" = "Udskriv slutningen af tjenestens logfiler.";
 "cli.log.show.discussion" = "I en terminal går outputtet gennem $PAGER (standard “less -FRX”; sæt PAGER til en tom værdi for at slå sideinddeling fra). --follow bliver ved med at udskrive nye linjer, indtil du trykker på Control-C; med --json udskrives ét JSON-objekt pr. linje.";
 "cli.log.show.empty" = "(logfilen er tom)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibration";
 "cli.controller.show.label.session" = "Session";
 "cli.controller.show.label.virtual" = "Virtuel gamepad";
+"cli.controller.show.label.publication" = "Publicering";
 "cli.controller.show.none" = "ingen";
 "cli.controller.show.record.bundled" = "medfølgende";
 "cli.controller.show.record.none" = "ingen (ingen post passer)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Udskriv en controllers inputtilstand, hver gang den ændres.";
 "cli.controller.watch.discussion" = "Med --json udskrives ét JSON-objekt pr. linje. Stick Y peger opad. Med --first-press udskrives den første betjening, der trykkes på, og programmet afsluttes; det fejler, hvis --duration udløber først.";
 "cli.controller.watch.first_press" = "Udskriv den første betjening, der trykkes på, og afslut.";
+"cli.controller.watch.output" = "Udskriv også det, den virtuelle gamepad sender. Dens stik-Y peger nedad, som i HID-rapporten.";
 "cli.controller.watch.no_input" = "Intet input modtaget.";
 "cli.controller.watch.no_press" = "Ingen betjening blev trykket på inden for %@.";
 "cli.controller.watch.press_prompt" = "Tryk på en betjening på %@ (%@).";

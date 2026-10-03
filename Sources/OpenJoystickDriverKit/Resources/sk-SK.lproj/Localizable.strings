@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS nedokončil požiadavku včas. Skontrolujte v Systémových nastaveniach, či čaká výzva na schválenie, a potom spustite „ojd extension status“.";
 "cli.log.abstract" = "Zobrazí denníky služby alebo vypíše, kde sú.";
 "cli.log.path.abstract" = "Vypíše priečinok s denníkmi služby. Otvorte ho príkazom: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Zapíše koniec protokolov služby do súboru, domovský priečinok sa zobrazí ako ~.";
+"cli.log.export.file" = "Súbor na zápis.";
+"cli.log.export.force" = "Nahradí súbor, ak existuje.";
+"cli.log.export.exists" = "%@ už existuje. Na nahradenie použite --force.";
+"cli.log.export.written" = "Protokoly služby boli zapísané do %@.";
 "cli.log.show.abstract" = "Vypíše koniec denníkov služby.";
 "cli.log.show.discussion" = "V termináli výstup prechádza cez $PAGER (predvolene „less -FRX“; nastavte PAGER na prázdnu hodnotu, aby sa stránkovanie vypnulo). --follow vypisuje nové riadky, kým nestlačíte Control-C; s --json vypíše jeden objekt JSON na riadok.";
 "cli.log.show.empty" = "(súbor denníka je prázdny)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibrácie";
 "cli.controller.show.label.session" = "Relácia";
 "cli.controller.show.label.virtual" = "Virtuálny gamepad";
+"cli.controller.show.label.publication" = "Publikovanie";
 "cli.controller.show.none" = "žiadne";
 "cli.controller.show.record.bundled" = "vstavaný";
 "cli.controller.show.record.none" = "žiadny (žiadny záznam nezodpovedá)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Vypíše stav vstupu ovládača pri každej zmene.";
 "cli.controller.watch.discussion" = "S --json vypíše jeden objekt JSON na riadok. Os Y páčky smeruje nahor. S --first-press vypíše prvý stlačený ovládací prvok a skončí; zlyhá, ak uplynie --duration skôr.";
 "cli.controller.watch.first_press" = "Vypíše prvý stlačený ovládací prvok a skončí.";
+"cli.controller.watch.output" = "Vypíše aj to, čo posiela virtuálny gamepad. Os Y jeho páčky smeruje nadol, ako v hlásení HID.";
 "cli.controller.watch.no_input" = "Nebol prijatý žiadny vstup.";
 "cli.controller.watch.no_press" = "Do %@ nebol stlačený žiadny ovládací prvok.";
 "cli.controller.watch.press_prompt" = "Stlačte ovládací prvok na zariadení %@ (%@).";

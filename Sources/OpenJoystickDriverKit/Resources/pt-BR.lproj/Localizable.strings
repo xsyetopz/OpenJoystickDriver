@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "O macOS não concluiu o pedido a tempo. Procure em Ajustes do Sistema um aviso de aprovação e execute 'ojd extension status'.";
 "cli.log.abstract" = "Mostra os registros do serviço ou imprime onde eles estão.";
 "cli.log.path.abstract" = "Imprime a pasta que contém os registros do serviço. Abra-a com: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Grava o final dos logs do serviço em um arquivo, com sua pasta pessoal mostrada como ~.";
+"cli.log.export.file" = "O arquivo a gravar.";
+"cli.log.export.force" = "Substitui o arquivo se ele existir.";
+"cli.log.export.exists" = "%@ já existe. Use --force para substituí-lo.";
+"cli.log.export.written" = "Logs do serviço gravados em %@.";
 "cli.log.show.abstract" = "Imprime o final dos registros do serviço.";
 "cli.log.show.discussion" = "Em um terminal, a saída passa por $PAGER (padrão 'less -FRX'; defina PAGER como um valor vazio para desativar a paginação). --follow continua imprimindo novas linhas até você pressionar Control-C; com --json imprime um objeto JSON por linha.";
 "cli.log.show.empty" = "(o arquivo de registro está vazio)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibração";
 "cli.controller.show.label.session" = "Sessão";
 "cli.controller.show.label.virtual" = "Gamepad virtual";
+"cli.controller.show.label.publication" = "Publicação";
 "cli.controller.show.none" = "nenhum";
 "cli.controller.show.record.bundled" = "incluído";
 "cli.controller.show.record.none" = "nenhum (nenhum registro corresponde)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Exibir o estado de entrada de um controle sempre que ele mudar.";
 "cli.controller.watch.discussion" = "Com --json, exibe um objeto JSON por linha. O eixo Y do analógico aponta para cima. Com --first-press, exibe o primeiro controle pressionado e sai; falha se --duration passar antes.";
 "cli.controller.watch.first_press" = "Exibir o primeiro controle pressionado e sair.";
+"cli.controller.watch.output" = "Mostra também o que o gamepad virtual envia. O eixo Y do analógico aponta para baixo, como no relatório HID.";
 "cli.controller.watch.no_input" = "Nenhuma entrada recebida.";
 "cli.controller.watch.no_press" = "Nenhum controle foi pressionado em %@.";
 "cli.controller.watch.press_prompt" = "Pressione um controle em %@ (%@).";

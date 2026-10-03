@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS がリクエストを時間内に完了しませんでした。システム設定に承認の確認が出ていないか確認してから、「ojd extension status」を実行してください。";
 "cli.log.abstract" = "サービスのログを表示するか、その場所を出力します。";
 "cli.log.path.abstract" = "サービスのログを保存しているフォルダを出力します。開くには次を実行します: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "サービスログの末尾をファイルに書き込みます。ホームフォルダは ~ と表示されます。";
+"cli.log.export.file" = "書き込むファイル。";
+"cli.log.export.force" = "ファイルが存在する場合は置き換えます。";
+"cli.log.export.exists" = "%@ は既に存在します。置き換えるには --force を指定してください。";
+"cli.log.export.written" = "サービスログを %@ に書き込みました。";
 "cli.log.show.abstract" = "サービスのログの末尾を出力します。";
 "cli.log.show.discussion" = "ターミナルでは、出力は $PAGER を通します (既定は「less -FRX」。PAGER を空にするとページ送りを無効にできます)。--follow は Control-C を押すまで新しい行を出力し続けます。--json を付けると 1 行に 1 つの JSON オブジェクトを出力します。";
 "cli.log.show.empty" = "(ログファイルは空です)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "振動";
 "cli.controller.show.label.session" = "セッション";
 "cli.controller.show.label.virtual" = "仮想ゲームパッド";
+"cli.controller.show.label.publication" = "公開状態";
 "cli.controller.show.none" = "なし";
 "cli.controller.show.record.bundled" = "同梱";
 "cli.controller.show.record.none" = "なし (一致するレコードはありません)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "コントローラの入力状態が変わるたびに表示します。";
 "cli.controller.watch.discussion" = "--json を付けると、1行に1つの JSON オブジェクトを表示します。スティックの Y は上向きが正です。--first-press を付けると、最初に押された操作部を表示して終了します。その前に --duration が経過すると失敗します。";
 "cli.controller.watch.first_press" = "最初に押された操作部を表示して終了します。";
+"cli.controller.watch.output" = "仮想ゲームパッドが送信する値も表示します。スティックのY軸はHIDレポートと同じく下向きが正です。";
 "cli.controller.watch.no_input" = "入力を受信していません。";
 "cli.controller.watch.no_press" = "%@以内に操作部が押されませんでした。";
 "cli.controller.watch.press_prompt" = "%@ (%@) の操作部を押してください。";

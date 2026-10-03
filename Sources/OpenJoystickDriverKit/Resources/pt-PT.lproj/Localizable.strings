@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "O macOS não concluiu o pedido a tempo. Procure em Definições do Sistema um aviso de aprovação e execute 'ojd extension status'.";
 "cli.log.abstract" = "Mostra os registos do serviço ou indica onde estão.";
 "cli.log.path.abstract" = "Imprime a pasta que contém os registos do serviço. Abra-a com: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Escreve o final dos registos do serviço num ficheiro, com a pasta pessoal mostrada como ~.";
+"cli.log.export.file" = "O ficheiro a escrever.";
+"cli.log.export.force" = "Substitui o ficheiro se existir.";
+"cli.log.export.exists" = "%@ já existe. Utilize --force para o substituir.";
+"cli.log.export.written" = "Registos do serviço escritos em %@.";
 "cli.log.show.abstract" = "Imprime o fim dos registos do serviço.";
 "cli.log.show.discussion" = "Num terminal, a saída passa por $PAGER (por predefinição 'less -FRX'; defina PAGER como um valor vazio para desativar a paginação). --follow continua a imprimir linhas novas até premir Control-C; com --json imprime um objeto JSON por linha.";
 "cli.log.show.empty" = "(o ficheiro de registo está vazio)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibração";
 "cli.controller.show.label.session" = "Sessão";
 "cli.controller.show.label.virtual" = "Comando virtual";
+"cli.controller.show.label.publication" = "Publicação";
 "cli.controller.show.none" = "nenhum";
 "cli.controller.show.record.bundled" = "incluído";
 "cli.controller.show.record.none" = "nenhum (nenhum registo corresponde)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Imprime o estado de entrada de um comando sempre que muda.";
 "cli.controller.watch.discussion" = "Com --json, imprime um objeto JSON por linha. O Y do stick aponta para cima. Com --first-press, imprime o primeiro controlo premido e termina; falha se --duration passar primeiro.";
 "cli.controller.watch.first_press" = "Imprime o primeiro controlo premido e termina.";
+"cli.controller.watch.output" = "Mostra também o que o comando virtual envia. O eixo Y do manípulo aponta para baixo, como no relatório HID.";
 "cli.controller.watch.no_input" = "Nenhuma entrada recebida.";
 "cli.controller.watch.no_press" = "Nenhum controlo foi premido em %@.";
 "cli.controller.watch.press_prompt" = "Prima um controlo em %@ (%@).";

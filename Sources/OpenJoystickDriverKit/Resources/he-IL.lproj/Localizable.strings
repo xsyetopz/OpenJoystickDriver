@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS לא סיים את הבקשה בזמן. בדוק ב״הגדרות המערכת״ אם יש בקשת אישור, ואז הרץ ״ojd extension status״.";
 "cli.log.abstract" = "הצגת יומני השירות או הדפסת מיקומם.";
 "cli.log.path.abstract" = "הדפסת התיקייה שמכילה את יומני השירות. לפתיחה: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "כתוב את סוף יומני השירות לקובץ, כשתיקיית הבית מוצגת כ־~.";
+"cli.log.export.file" = "הקובץ לכתיבה.";
+"cli.log.export.force" = "החלף את הקובץ אם הוא קיים.";
+"cli.log.export.exists" = "%@ כבר קיים. השתמש באפשרות --force כדי להחליף אותו.";
+"cli.log.export.written" = "יומני השירות נכתבו אל %@.";
 "cli.log.show.abstract" = "הדפסת סוף יומני השירות.";
 "cli.log.show.discussion" = "בטרמינל הפלט עובר דרך $PAGER (ברירת המחדל ״less -FRX״; הגדר את PAGER לערך ריק כדי לכבות את חלוקת העמודים). --follow ממשיך להדפיס שורות חדשות עד שתלחץ Control-C; עם --json מודפס אובייקט JSON אחד בכל שורה.";
 "cli.log.show.empty" = "(קובץ היומן ריק)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "רטט";
 "cli.controller.show.label.session" = "הפעלה";
 "cli.controller.show.label.virtual" = "שלט משחק וירטואלי";
+"cli.controller.show.label.publication" = "פרסום";
 "cli.controller.show.none" = "אין";
 "cli.controller.show.record.bundled" = "מובנה";
 "cli.controller.show.record.none" = "אין (אין רשומה תואמת)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "הדפסת מצב הקלט של בקר בכל פעם שהוא משתנה.";
 "cli.controller.watch.discussion" = "עם --json מודפס אובייקט JSON אחד בכל שורה. ציר Y של המקל פונה מעלה. עם --first-press מודפס הפקד הראשון שנלחץ והפקודה מסתיימת; היא נכשלת אם --duration חולף קודם.";
 "cli.controller.watch.first_press" = "הדפסת הפקד הראשון שנלחץ, ואז יציאה.";
+"cli.controller.watch.output" = "הדפס גם את מה שהשלט הווירטואלי שולח. ציר Y של הסטיק שלו מצביע למטה, כמו בדוח ה־HID.";
 "cli.controller.watch.no_input" = "לא התקבל קלט.";
 "cli.controller.watch.no_press" = "לא נלחץ אף פקד תוך %@.";
 "cli.controller.watch.press_prompt" = "לחץ על פקד ב-%@ (%@).";

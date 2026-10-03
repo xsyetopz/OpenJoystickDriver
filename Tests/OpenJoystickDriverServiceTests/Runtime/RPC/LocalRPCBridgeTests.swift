@@ -8,6 +8,7 @@ import Testing
 struct LocalRPCBridgeTests {
   private static let controllerMethodNames: Set = [
     "getStatus", "requestRequiredAccess", "requestAccess", "getControllerState", "getPacketLog",
+    "getVirtualOutputState",
     "sendControllerOutput", "previewPhysicalColor", "releasePhysicalColorPreview",
     "setSuppressOutput", "getVirtualDeviceDiagnostics", "setVirtualHIDProfileOverride",
     "resetVirtualHIDProfileOverride", "suspendController", "resumeController",

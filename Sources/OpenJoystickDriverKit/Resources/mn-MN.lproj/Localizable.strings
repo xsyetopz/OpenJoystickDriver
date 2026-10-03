@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS хүсэлтийг цаг тухайд нь дуусгасангүй. «Системийн тохиргоо»-нд зөвшөөрлийн хүсэлт хүлээж байгаа эсэхийг шалгаад, «ojd extension status» ажиллуулна уу.";
 "cli.log.abstract" = "Үйлчилгээний логийг харуулах эсвэл хаана байгааг хэвлэх.";
 "cli.log.path.abstract" = "Үйлчилгээний лог агуулсан хавтсыг хэвлэх. Үүнийг ингэж нээнэ үү: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Үйлчилгээний бүртгэлийн төгсгөлийг файлд бичиж, гэрийн хавтсыг ~ хэлбэрээр харуулна.";
+"cli.log.export.file" = "Бичих файл.";
+"cli.log.export.force" = "Файл байгаа бол солино.";
+"cli.log.export.exists" = "%@ аль хэдийн байна. Солихын тулд --force ашиглана уу.";
+"cli.log.export.written" = "Үйлчилгээний бүртгэлийг %@ руу бичлээ.";
 "cli.log.show.abstract" = "Үйлчилгээний логийн төгсгөлийг хэвлэх.";
 "cli.log.show.discussion" = "Терминал дээр гаралт $PAGER-ээр дамжина (анхдагч нь «less -FRX»; хуудаслалтыг унтраахын тулд PAGER-ийг хоосон утгатай болгоно уу). --follow нь та Control-C дарах хүртэл шинэ мөрийг хэвлэсээр байна; --json-той үед мөр бүрт нэг JSON объект хэвлэнэ.";
 "cli.log.show.empty" = "(лог файл хоосон)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Чичиргээ";
 "cli.controller.show.label.session" = "Сесс";
 "cli.controller.show.label.virtual" = "Виртуал тоглоомын удирдлага";
+"cli.controller.show.label.publication" = "Нийтлэх төлөв";
 "cli.controller.show.none" = "алга";
 "cli.controller.show.record.bundled" = "багтсан";
 "cli.controller.show.record.none" = "алга (тохирох бүртгэл алга)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Удирдлагын оролтын төлөвийг өөрчлөгдөх бүрд хэвлэх.";
 "cli.controller.watch.discussion" = "--json-той бол мөр бүрт нэг JSON объект хэвлэнэ. Стикийн Y тэнхлэг дээш заана. --first-press-тэй бол дарагдсан эхний элементийг хэвлээд гарна; --duration түрүүлж дуусвал амжилтгүй болно.";
 "cli.controller.watch.first_press" = "Дарагдсан эхний элементийг хэвлээд гарах.";
+"cli.controller.watch.output" = "Виртуал тоглоомын удирдлагын илгээж буй утгыг мөн хэвлэнэ. Түүний бариулын Y тэнхлэг HID тайлангийн адил доош чиглэнэ.";
 "cli.controller.watch.no_input" = "Оролт хүлээн аваагүй.";
 "cli.controller.watch.no_press" = "%@ дотор ямар ч элемент дарагдаагүй.";
 "cli.controller.watch.press_prompt" = "%@ (%@) дээрх аль нэг элементийг дарна уу.";

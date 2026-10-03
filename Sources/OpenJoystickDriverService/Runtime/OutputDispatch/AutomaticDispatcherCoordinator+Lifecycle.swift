@@ -122,6 +122,45 @@ extension AutomaticDispatcherCoordinator {
     }.sorted()
   }
 
+  /// The installed backend of the one controller matching `model` and `runtimeIdentifier`.
+  func installedBackend(
+    matching model: DeviceIdentifier,
+    runtimeIdentifier: String?
+  ) -> (controller: DeviceIdentifier, backend: any VirtualOutputDispatching)? {
+    guard
+      let controller = DeviceManager.connectedIdentifier(
+        among: entries.keys,
+        matching: model,
+        runtimeIdentifier: runtimeIdentifier
+      ), let backend = entries[controller]?.installed?.backend
+    else { return nil }
+    return (controller, backend)
+  }
+
+  /// Each controller's publication state, for controllers that have a target profile.
+  func publicationStatuses() -> [DeviceIdentifier: ApplicationServicePublicationStatus] {
+    entries.reduce(into: [:]) { statuses, element in
+      let entry = element.value
+      guard let target = entry.target ?? entry.context?.target else { return }
+      let state: ApplicationServicePublicationStatus.State
+      let reason: String?
+      if let failure = entry.lastFailure {
+        (state, reason) = (.failed, failure)
+      } else if entry.installed != nil {
+        (state, reason) = (.published, nil)
+      } else {
+        (state, reason) = (.notPublished, suppressed ? "suppressed" : "no-input-yet")
+      }
+      statuses[element.key] = ApplicationServicePublicationStatus(
+        state: state,
+        reason: reason,
+        target: target,
+        lastAttemptedNanoseconds: entry.lastAttemptedSend,
+        lastCompletedNanoseconds: entry.lastCompletedSend
+      )
+    }
+  }
+
   func synchronizeRemappingSuppression(_ currentValue: @Sendable () -> Bool) async {
     guard !closed else { return }
     remappingSuppressed = currentValue()

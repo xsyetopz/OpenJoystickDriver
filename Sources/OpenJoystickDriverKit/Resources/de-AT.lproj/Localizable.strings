@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS hat die Anfrage nicht rechtzeitig abgeschlossen. Prüfe die Systemeinstellungen auf eine Genehmigungsanfrage und führe dann „ojd extension status“ aus.";
 "cli.log.abstract" = "Zeigt die Dienstprotokolle an oder gibt ihren Speicherort aus.";
 "cli.log.path.abstract" = "Gibt den Ordner mit den Dienstprotokollen aus. Öffne ihn mit: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Schreibt das Ende der Dienstprotokolle in eine Datei; der Benutzerordner erscheint als ~.";
+"cli.log.export.file" = "Die zu schreibende Datei.";
+"cli.log.export.force" = "Ersetzt die Datei, falls sie existiert.";
+"cli.log.export.exists" = "%@ existiert bereits. Mit --force ersetzen.";
+"cli.log.export.written" = "Dienstprotokolle nach %@ geschrieben.";
 "cli.log.show.abstract" = "Gibt das Ende der Dienstprotokolle aus.";
 "cli.log.show.discussion" = "In einem Terminal läuft die Ausgabe über $PAGER (Standard „less -FRX“; setze PAGER auf einen leeren Wert, um das Blättern auszuschalten). --follow gibt weiter neue Zeilen aus, bis du Control-C drückst; mit --json wird ein JSON-Objekt pro Zeile ausgegeben.";
 "cli.log.show.empty" = "(Protokolldatei ist leer)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibration";
 "cli.controller.show.label.session" = "Sitzung";
 "cli.controller.show.label.virtual" = "Virtuelles Gamepad";
+"cli.controller.show.label.publication" = "Veröffentlichung";
 "cli.controller.show.none" = "keine";
 "cli.controller.show.record.bundled" = "mitgeliefert";
 "cli.controller.show.record.none" = "keiner (kein Datensatz passt)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Den Eingabezustand eines Controllers bei jeder Änderung ausgeben.";
 "cli.controller.watch.discussion" = "Mit --json wird ein JSON-Objekt pro Zeile ausgegeben. Stick-Y zeigt nach oben. Mit --first-press wird das erste gedrückte Bedienelement ausgegeben und beendet; es schlägt fehl, wenn --duration zuerst abläuft.";
 "cli.controller.watch.first_press" = "Das erste gedrückte Bedienelement ausgeben, dann beenden.";
+"cli.controller.watch.output" = "Gibt auch aus, was das virtuelle Gamepad sendet. Die Stick-Y-Achse zeigt nach unten, wie im HID-Bericht.";
 "cli.controller.watch.no_input" = "Keine Eingabe empfangen.";
 "cli.controller.watch.no_press" = "Innerhalb von %@ wurde kein Bedienelement gedrückt.";
 "cli.controller.watch.press_prompt" = "Drücke ein Bedienelement an %@ (%@).";

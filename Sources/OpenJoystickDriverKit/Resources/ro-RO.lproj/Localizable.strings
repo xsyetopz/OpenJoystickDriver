@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS nu a finalizat cererea la timp. Verificați în Setări de sistem dacă există o solicitare de aprobare, apoi rulați «ojd extension status».";
 "cli.log.abstract" = "Afișează jurnalele serviciului sau locul unde se află.";
 "cli.log.path.abstract" = "Afișează folderul care conține jurnalele serviciului. Deschideți-l cu: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Scrie finalul jurnalelor serviciului într-un fișier, cu dosarul personal afișat ca ~.";
+"cli.log.export.file" = "Fișierul de scris.";
+"cli.log.export.force" = "Înlocuiește fișierul dacă există.";
+"cli.log.export.exists" = "%@ există deja. Folosiți --force pentru a-l înlocui.";
+"cli.log.export.written" = "Jurnalele serviciului au fost scrise în %@.";
 "cli.log.show.abstract" = "Afișează sfârșitul jurnalelor serviciului.";
 "cli.log.show.discussion" = "Într-un terminal, ieșirea trece prin $PAGER (implicit «less -FRX»; setați PAGER la o valoare goală pentru a dezactiva paginarea). --follow continuă să afișeze liniile noi până apăsați Control-C; cu --json afișează un obiect JSON pe linie.";
 "cli.log.show.empty" = "(fișierul jurnal este gol)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibrații";
 "cli.controller.show.label.session" = "Sesiune";
 "cli.controller.show.label.virtual" = "Gamepad virtual";
+"cli.controller.show.label.publication" = "Publicare";
 "cli.controller.show.none" = "niciunul";
 "cli.controller.show.record.bundled" = "inclusă";
 "cli.controller.show.record.none" = "niciuna (nicio înregistrare nu se potrivește)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Afișează starea de intrare a unui controller la fiecare schimbare.";
 "cli.controller.watch.discussion" = "Cu --json, afișează un obiect JSON pe linie. Axa Y a stickului indică în sus. Cu --first-press, afișează primul control apăsat și iese; eșuează dacă --duration expiră mai întâi.";
 "cli.controller.watch.first_press" = "Afișează primul control apăsat, apoi iese.";
+"cli.controller.watch.output" = "Afișează și ce trimite gamepadul virtual. Axa Y a manetei sale indică în jos, ca în raportul HID.";
 "cli.controller.watch.no_input" = "Nu s-a primit nicio intrare.";
 "cli.controller.watch.no_press" = "Niciun control nu a fost apăsat în %@.";
 "cli.controller.watch.press_prompt" = "Apăsați un control de pe %@ (%@).";

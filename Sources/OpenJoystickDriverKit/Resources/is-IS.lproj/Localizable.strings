@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS lauk ekki beiðninni í tæka tíð. Athugaðu í Kerfisstillingum hvort samþykkisbeiðni bíður og keyrðu svo „ojd extension status“.";
 "cli.log.abstract" = "Sýna annála þjónustunnar eða prenta hvar þeir eru.";
 "cli.log.path.abstract" = "Prenta möppuna sem geymir annála þjónustunnar. Opnaðu hana með: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Skrifaðu enda þjónustuskránna í skrá, með heimamöppuna sýnda sem ~.";
+"cli.log.export.file" = "Skráin sem á að skrifa.";
+"cli.log.export.force" = "Skipta út skránni ef hún er til.";
+"cli.log.export.exists" = "%@ er þegar til. Notaðu --force til að skipta henni út.";
+"cli.log.export.written" = "Þjónustuskrár skrifaðar í %@.";
 "cli.log.show.abstract" = "Prenta lok annála þjónustunnar.";
 "cli.log.show.discussion" = "Í skjáskel fer úttakið í gegnum $PAGER (sjálfgefið „less -FRX“; stilltu PAGER á autt gildi til að slökkva á síðuskiptingu). --follow heldur áfram að prenta nýjar línur þar til þú ýtir á Control-C; með --json er einn JSON-hlutur prentaður í hverri línu.";
 "cli.log.show.empty" = "(annálsskráin er tóm)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Titringur";
 "cli.controller.show.label.session" = "Lota";
 "cli.controller.show.label.virtual" = "Sýndarleikjastýring";
+"cli.controller.show.label.publication" = "Birting";
 "cli.controller.show.none" = "ekkert";
 "cli.controller.show.record.bundled" = "innbyggð";
 "cli.controller.show.record.none" = "ekkert (engin færsla passar)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Prenta inntaksstöðu stýringar í hvert sinn sem hún breytist.";
 "cli.controller.watch.discussion" = "Með --json er einn JSON-hlutur prentaður í hverri línu. Y-ás stýripinna vísar upp. Með --first-press er fyrsta stjórntækið sem ýtt er á prentað og skipuninni lýkur; hún mistekst ef --duration rennur út fyrst.";
 "cli.controller.watch.first_press" = "Prenta fyrsta stjórntækið sem ýtt er á og hætta síðan.";
+"cli.controller.watch.output" = "Prentaðu líka það sem sýndarleikjastýringin sendir. Y-ás pinnans vísar niður, eins og í HID-skýrslunni.";
 "cli.controller.watch.no_input" = "Ekkert inntak barst.";
 "cli.controller.watch.no_press" = "Ekki var ýtt á neitt stjórntæki innan %@.";
 "cli.controller.watch.press_prompt" = "Ýttu á stjórntæki á %@ (%@).";

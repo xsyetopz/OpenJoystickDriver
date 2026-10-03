@@ -106,6 +106,7 @@ enum CLICommandTree {
       ["Pad"]
     case ["binding", "set"]: ["Pad", "button:south", "key:space"]
     case ["binding", "clear"]: ["Pad", "--all"]
+    case ["log", "export"]: ["ojd.log"]
     default: []
     }
   }

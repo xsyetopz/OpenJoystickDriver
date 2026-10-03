@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS nie zakończył żądania na czas. Sprawdź w Ustawieniach systemowych, czy czeka prośba o zatwierdzenie, a potem uruchom 'ojd extension status'.";
 "cli.log.abstract" = "Pokaż logi usługi lub wypisz, gdzie się znajdują.";
 "cli.log.path.abstract" = "Wypisz folder z logami usługi. Otwórz go poleceniem: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Zapisz koniec logów usługi do pliku, z folderem domowym pokazanym jako ~.";
+"cli.log.export.file" = "Plik do zapisania.";
+"cli.log.export.force" = "Zastąp plik, jeśli istnieje.";
+"cli.log.export.exists" = "%@ już istnieje. Użyj --force, aby go zastąpić.";
+"cli.log.export.written" = "Zapisano logi usługi do %@.";
 "cli.log.show.abstract" = "Wypisz koniec logów usługi.";
 "cli.log.show.discussion" = "W terminalu wynik przechodzi przez $PAGER (domyślnie 'less -FRX'; ustaw PAGER na pustą wartość, aby wyłączyć stronicowanie). --follow wypisuje nowe wiersze, aż naciśniesz Control-C; z --json wypisuje jeden obiekt JSON na wiersz.";
 "cli.log.show.empty" = "(plik logu jest pusty)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Wibracje";
 "cli.controller.show.label.session" = "Sesja";
 "cli.controller.show.label.virtual" = "Wirtualny gamepad";
+"cli.controller.show.label.publication" = "Publikacja";
 "cli.controller.show.none" = "brak";
 "cli.controller.show.record.bundled" = "wbudowany";
 "cli.controller.show.record.none" = "brak (żaden wpis nie pasuje)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Wyświetlaj stan wejścia kontrolera przy każdej zmianie.";
 "cli.controller.watch.discussion" = "Z opcją --json wyświetla jeden obiekt JSON w wierszu. Oś Y wskazuje w górę. Z opcją --first-press wyświetla pierwszy naciśnięty element i kończy; kończy się błędem, jeśli --duration upłynie wcześniej.";
 "cli.controller.watch.first_press" = "Wyświetl pierwszy naciśnięty element sterujący, a potem zakończ.";
+"cli.controller.watch.output" = "Wyświetlaj też to, co wysyła wirtualny gamepad. Oś Y jego gałki wskazuje w dół, jak w raporcie HID.";
 "cli.controller.watch.no_input" = "Nie odebrano wejścia.";
 "cli.controller.watch.no_press" = "W ciągu %@ nie naciśnięto żadnego elementu sterującego.";
 "cli.controller.watch.press_prompt" = "Naciśnij element sterujący na %@ (%@).";

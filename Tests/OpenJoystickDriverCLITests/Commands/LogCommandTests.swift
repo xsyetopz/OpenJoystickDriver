@@ -131,6 +131,47 @@ struct LogCommandTests {
   }
 
   @Test
+  func exportWritesTheLogsAndRefusesToReplaceAFile() async throws {
+    let requested = Locked<[Int]>([])
+    let env = environment(terminal: false, paged: Locked([]), requestedLines: requested)
+    let file = FileManager.default.temporaryDirectory
+      .appendingPathComponent("ojd-log-export-\(UUID().uuidString).txt")
+    defer { try? FileManager.default.removeItem(at: file) }
+
+    let written = await run(["log", "export", file.path], env)
+    let again = await run(["log", "export", file.path], env)
+    let forced = await run(["log", "export", file.path, "--force", "-n", "5", "--json"], env)
+
+    #expect(written.code == 0, "\(written.standardError)")
+    #expect(written.standardError.contains(ApplicationServiceLogService.sharingWarning))
+    let text = try String(contentsOf: file, encoding: .utf8)
+    #expect(text.contains("== standardOutput: /logs/standardOutput.log ==\nstandardOutput line\n"))
+    #expect(text.contains("standardError line\n"))
+    #expect(again.code == 1)
+    #expect(again.standardError.contains("--force"))
+    #expect(forced.code == 0, "\(forced.standardError)")
+    #expect(try forced.json()["lines"] as? Int == 2)
+    #expect(requested.withLock { $0 } == [2000, 2000, 2000, 2000, 5, 5])
+  }
+
+  @Test
+  func exportShowsTheHomeFolderAsATilde() {
+    let text = """
+      == standardOutput: /Users/me/Library/Logs/ojd.log ==
+      opened /Users/me
+      kept /Users/meow/file and "/Users/me/a b"
+      """
+    #expect(
+      LogExportCommand.redactingHome(text, home: "/Users/me/")
+        == """
+        == standardOutput: ~/Library/Logs/ojd.log ==
+        opened ~
+        kept /Users/meow/file and "~/a b"
+        """
+    )
+  }
+
+  @Test
   func pagerCommandFollowsThePagerVariable() {
     #expect(LogShowCommand.pagerCommand(environment: [:]) == "less -FRX")
     #expect(LogShowCommand.pagerCommand(environment: ["PAGER": "more"]) == "more")

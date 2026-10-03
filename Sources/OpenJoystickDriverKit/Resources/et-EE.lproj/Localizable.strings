@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS ei lõpetanud taotlust õigel ajal. Vaata jaotisest System Settings, kas ootab kinnituspäring, ja käivita siis 'ojd extension status'.";
 "cli.log.abstract" = "Kuvab teenuse logid või prindib, kus need asuvad.";
 "cli.log.path.abstract" = "Prindib teenuse logide kausta. Ava see käsuga: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Kirjuta teenuse logide lõpp faili, kodukaust kuvatakse kujul ~.";
+"cli.log.export.file" = "Kirjutatav fail.";
+"cli.log.export.force" = "Asenda fail, kui see on olemas.";
+"cli.log.export.exists" = "%@ on juba olemas. Asendamiseks kasuta --force.";
+"cli.log.export.written" = "Teenuse logid kirjutati faili %@.";
 "cli.log.show.abstract" = "Prindib teenuse logide lõpu.";
 "cli.log.show.discussion" = "Terminalis läheb väljund läbi programmi $PAGER (vaikimisi 'less -FRX'; lehtede kaupa kuvamise väljalülitamiseks sea PAGER tühjaks). --follow prindib uusi ridu, kuni vajutad Control-C; koos --json prindib ühe JSON-objekti rea kohta.";
 "cli.log.show.empty" = "(logifail on tühi)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Värin";
 "cli.controller.show.label.session" = "Seanss";
 "cli.controller.show.label.virtual" = "Virtuaalne mängupult";
+"cli.controller.show.label.publication" = "Avaldamine";
 "cli.controller.show.none" = "puudub";
 "cli.controller.show.record.bundled" = "kaasasolev";
 "cli.controller.show.record.none" = "puudub (sobivat kirjet pole)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Prindi kontrolleri sisendi olek iga muutuse korral.";
 "cli.controller.watch.discussion" = "Võtmega --json prinditakse üks JSON-objekt rea kohta. Kangi Y osutab üles. Võtmega --first-press prinditakse esimene vajutatud juhtelement ja väljutakse; see ebaõnnestub, kui --duration saab enne täis.";
 "cli.controller.watch.first_press" = "Prindi esimene vajutatud juhtelement ja välju.";
+"cli.controller.watch.output" = "Prindi ka see, mida virtuaalne mängupult saadab. Selle pulga Y-telg osutab alla, nagu HID-aruandes.";
 "cli.controller.watch.no_input" = "Sisendit ei saadud.";
 "cli.controller.watch.no_press" = "%@ jooksul ei vajutatud ühtegi juhtelementi.";
 "cli.controller.watch.press_prompt" = "Vajuta juhtelementi kontrolleril %@ (%@).";

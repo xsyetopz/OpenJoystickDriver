@@ -55,6 +55,9 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   public let inputHealth: ControllerInputHealth
   /// Virtual HID profile selection for this controller; set by the service when it reports status.
   public var virtualHIDProfile: ApplicationServiceVirtualHIDProfileStatus?
+  /// Whether a virtual device publishes this controller and why not; set by the service when it
+  /// reports status.
+  public var publication: ApplicationServicePublicationStatus?
 
   /// Creates a new ApplicationServiceDeviceDescription.
   public init(
@@ -163,6 +166,10 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
       ApplicationServiceVirtualHIDProfileStatus.self,
       forKey: .virtualHIDProfile
     )
+    self.publication = try container.decodeIfPresent(
+      ApplicationServicePublicationStatus.self,
+      forKey: .publication
+    )
   }
 
   private enum CodingKeys: String, CodingKey {
@@ -192,6 +199,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case startupCommandStatus
     case inputHealth
     case virtualHIDProfile
+    case publication
   }
 }
 

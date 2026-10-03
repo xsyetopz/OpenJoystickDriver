@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS не завърши заявката навреме. Проверете «Системни настройки» за заявка за одобрение, след това изпълнете 'ojd extension status'.";
 "cli.log.abstract" = "Показва дневниците на услугата или къде се намират.";
 "cli.log.path.abstract" = "Отпечатва папката с дневниците на услугата. Отворете я с: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Записва края на журналите на услугата във файл, като домашната папка се показва като ~.";
+"cli.log.export.file" = "Файлът за запис.";
+"cli.log.export.force" = "Заменя файла, ако съществува.";
+"cli.log.export.exists" = "%@ вече съществува. Използвайте --force, за да го замените.";
+"cli.log.export.written" = "Журналите на услугата са записани в %@.";
 "cli.log.show.abstract" = "Отпечатва края на дневниците на услугата.";
 "cli.log.show.discussion" = "В терминал изходът минава през $PAGER (по подразбиране 'less -FRX'; задайте PAGER с празна стойност, за да изключите страницирането). --follow продължава да печата нови редове, докато не натиснете Control-C; с --json печата по един JSON обект на ред.";
 "cli.log.show.empty" = "(файлът на дневника е празен)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Вибрация";
 "cli.controller.show.label.session" = "Сесия";
 "cli.controller.show.label.virtual" = "Виртуален геймпад";
+"cli.controller.show.label.publication" = "Публикуване";
 "cli.controller.show.none" = "няма";
 "cli.controller.show.record.bundled" = "вграден";
 "cli.controller.show.record.none" = "няма (няма съответстващ запис)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Извежда състоянието на входа на контролер при всяка промяна.";
 "cli.controller.watch.discussion" = "С --json извежда по един JSON обект на ред. Оста Y на стика сочи нагоре. С --first-press извежда първата натисната контрола и излиза; завършва с грешка, ако --duration изтече първо.";
 "cli.controller.watch.first_press" = "Извежда първата натисната контрола и излиза.";
+"cli.controller.watch.output" = "Извежда и това, което изпраща виртуалният геймпад. Оста Y на стика сочи надолу, както в HID отчета.";
 "cli.controller.watch.no_input" = "Не е получен вход.";
 "cli.controller.watch.no_press" = "Не е натисната контрола в рамките на %@.";
 "cli.controller.watch.press_prompt" = "Натиснете контрола на %@ (%@).";

@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS сұрауды уақытында аяқтамады. «Жүйелік параметрлерден» бекіту сұрауын тексеріңіз, содан кейін «ojd extension status» орындаңыз.";
 "cli.log.abstract" = "Қызмет журналдарын көрсету немесе олардың орнын шығару.";
 "cli.log.path.abstract" = "Қызмет журналдары бар қалтаны шығару. Оны мынамен ашыңыз: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Қызмет журналдарының соңын файлға жазады, үй қалтасы ~ түрінде көрсетіледі.";
+"cli.log.export.file" = "Жазылатын файл.";
+"cli.log.export.force" = "Файл бар болса, оны ауыстырады.";
+"cli.log.export.exists" = "%@ бұрыннан бар. Ауыстыру үшін --force қолданыңыз.";
+"cli.log.export.written" = "Қызмет журналдары %@ файлына жазылды.";
 "cli.log.show.abstract" = "Қызмет журналдарының соңын шығару.";
 "cli.log.show.discussion" = "Терминалда шығыс $PAGER арқылы өтеді (әдепкі «less -FRX»; беттеуді өшіру үшін PAGER бос мәнге қойыңыз). --follow Control-C басқанша жаңа жолдарды шығаруды жалғастырады; --json кезінде әр жолға бір JSON нысанын шығарады.";
 "cli.log.show.empty" = "(журнал файлы бос)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Діріл";
 "cli.controller.show.label.session" = "Сеанс";
 "cli.controller.show.label.virtual" = "Виртуалды геймпад";
+"cli.controller.show.label.publication" = "Жариялау";
 "cli.controller.show.none" = "жоқ";
 "cli.controller.show.record.bundled" = "кірістірілген";
 "cli.controller.show.record.none" = "жоқ (сәйкес жазба жоқ)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Контроллердің енгізу күйін әр өзгерген сайын басып шығару.";
 "cli.controller.watch.discussion" = "--json болса, әр жолға бір JSON нысанын шығарады. Стиктің Y осі жоғарыға бағытталған. --first-press болса, бірінші басылған басқару элементін шығарып, шығады; --duration бұрын аяқталса, сәтсіз болады.";
 "cli.controller.watch.first_press" = "Бірінші басылған басқару элементін шығарып, шығу.";
+"cli.controller.watch.output" = "Виртуалды геймпад жіберетін мәндерді де шығарады. Стиктің Y осі HID есебіндегідей төмен бағытталған.";
 "cli.controller.watch.no_input" = "Енгізу алынған жоқ.";
 "cli.controller.watch.no_press" = "%@ ішінде ешбір басқару элементі басылған жоқ.";
 "cli.controller.watch.press_prompt" = "%@ (%@) құрылғысындағы басқару элементін басыңыз.";

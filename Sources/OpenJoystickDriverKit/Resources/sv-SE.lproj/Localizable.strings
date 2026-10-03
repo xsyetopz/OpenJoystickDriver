@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS hann inte slutföra begäran. Titta i Systeminställningar efter en godkännandefråga och kör sedan 'ojd extension status'.";
 "cli.log.abstract" = "Visar tjänstens loggar eller skriver ut var de finns.";
 "cli.log.path.abstract" = "Skriver ut mappen som innehåller tjänstens loggar. Öppna den med: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Skriv slutet av tjänstens loggar till en fil, med hemmappen visad som ~.";
+"cli.log.export.file" = "Filen som ska skrivas.";
+"cli.log.export.force" = "Ersätt filen om den finns.";
+"cli.log.export.exists" = "%@ finns redan. Använd --force för att ersätta den.";
+"cli.log.export.written" = "Tjänstens loggar skrevs till %@.";
 "cli.log.show.abstract" = "Skriver ut slutet av tjänstens loggar.";
 "cli.log.show.discussion" = "I en terminal går utdata via $PAGER (standard 'less -FRX'; sätt PAGER till ett tomt värde för att stänga av sidvisning). --follow fortsätter skriva ut nya rader tills du trycker på Control-C; med --json skrivs ett JSON-objekt ut per rad.";
 "cli.log.show.empty" = "(loggfilen är tom)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibration";
 "cli.controller.show.label.session" = "Session";
 "cli.controller.show.label.virtual" = "Virtuell handkontroll";
+"cli.controller.show.label.publication" = "Publicering";
 "cli.controller.show.none" = "ingen";
 "cli.controller.show.record.bundled" = "medföljande";
 "cli.controller.show.record.none" = "ingen (ingen post matchar)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Skriver ut en kontrolls indatatillstånd varje gång det ändras.";
 "cli.controller.watch.discussion" = "Med --json skrivs ett JSON-objekt per rad. Spak Y pekar uppåt. Med --first-press skrivs det första reglaget som trycks ut och kommandot avslutas; det misslyckas om --duration löper ut först.";
 "cli.controller.watch.first_press" = "Skriver ut det första reglaget som trycks och avslutar sedan.";
+"cli.controller.watch.output" = "Skriv även ut vad den virtuella handkontrollen skickar. Spakens Y-axel pekar nedåt, som i HID-rapporten.";
 "cli.controller.watch.no_input" = "Inga indata togs emot.";
 "cli.controller.watch.no_press" = "Inget reglage trycktes inom %@.";
 "cli.controller.watch.press_prompt" = "Tryck på ett reglage på %@ (%@).";

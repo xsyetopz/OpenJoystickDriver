@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS ei suorittanut pyyntöä loppuun ajoissa. Tarkista Järjestelmäasetuksista, odottaako hyväksyntäkehote, ja suorita sitten 'ojd extension status'.";
 "cli.log.abstract" = "Näyttää palvelun lokit tai tulostaa niiden sijainnin.";
 "cli.log.path.abstract" = "Tulostaa kansion, jossa palvelun lokit ovat. Avaa se komennolla: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Kirjoita palvelun lokien loppu tiedostoon, kotikansio näytetään muodossa ~.";
+"cli.log.export.file" = "Kirjoitettava tiedosto.";
+"cli.log.export.force" = "Korvaa tiedosto, jos se on olemassa.";
+"cli.log.export.exists" = "%@ on jo olemassa. Korvaa se valitsimella --force.";
+"cli.log.export.written" = "Palvelun lokit kirjoitettiin tiedostoon %@.";
 "cli.log.show.abstract" = "Tulostaa palvelun lokien lopun.";
 "cli.log.show.discussion" = "Päätteessä tuloste kulkee ohjelman $PAGER kautta (oletus 'less -FRX'; aseta PAGER tyhjäksi, niin sivutus poistuu käytöstä). --follow tulostaa uusia rivejä, kunnes painat Control-C; valitsimen --json kanssa tulostaa yhden JSON-objektin riviä kohti.";
 "cli.log.show.empty" = "(lokitiedosto on tyhjä)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Värinä";
 "cli.controller.show.label.session" = "Istunto";
 "cli.controller.show.label.virtual" = "Virtuaalinen peliohjain";
+"cli.controller.show.label.publication" = "Julkaisu";
 "cli.controller.show.none" = "ei mitään";
 "cli.controller.show.record.bundled" = "mukana tuleva";
 "cli.controller.show.record.none" = "ei mitään (mikään tietue ei täsmää)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Tulosta ohjaimen syötetila aina, kun se muuttuu.";
 "cli.controller.watch.discussion" = "Valinnalla --json tulostaa yhden JSON-objektin riviä kohden. Sauvan Y-suunta osoittaa ylös. Valinnalla --first-press tulostaa ensimmäisen painetun ohjaimen ja poistuu; se epäonnistuu, jos --duration kuluu ensin.";
 "cli.controller.watch.first_press" = "Tulosta ensimmäinen painettu ohjain ja poistu.";
+"cli.controller.watch.output" = "Tulosta myös se, mitä virtuaalinen peliohjain lähettää. Sen sauvan Y-akseli osoittaa alas, kuten HID-raportissa.";
 "cli.controller.watch.no_input" = "Syötettä ei vastaanotettu.";
 "cli.controller.watch.no_press" = "Ohjainta ei painettu %@ aikana.";
 "cli.controller.watch.press_prompt" = "Paina ohjainta laitteessa %@ (%@).";

@@ -22,6 +22,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   private var remappingSuppressedOutput = false
   private var diagnosticTargets: [DeviceIdentifier: VirtualHIDProfileID] = [:]
   private var publicationDiagnostics: [String] = []
+  private var publicationStatuses: [DeviceIdentifier: ApplicationServicePublicationStatus] = [:]
   /// Per-controller descriptions whose declared controls are fixed for the controller's binding.
   private var descriptionCache: [DeviceIdentifier: ApplicationServiceDeviceDescription] = [:]
   /// Bumped by `controllerDidStop` so a description lookup in flight at that point cannot
@@ -235,9 +236,11 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   private func synchronizeDiagnostics() async {
     let targets = await coordinator.installedTargets()
     let publication = await coordinator.publicationDiagnostics()
+    let statuses = await coordinator.publicationStatuses()
     stateLock.withLock {
       diagnosticTargets = targets
       publicationDiagnostics = publication
+      publicationStatuses = statuses
     }
   }
 
@@ -309,6 +312,31 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
         unavailableControllers.contains { $0.runtimeIdentifier == runtimeIdentifier }
       )
     }
+  }
+
+  /// The publication state of the controller with `runtimeIdentifier` at the last delivery,
+  /// activation, or stop; nil before the controller has a target profile.
+  func publicationStatus(runtimeIdentifier: String) -> ApplicationServicePublicationStatus? {
+    stateLock.withLock {
+      publicationStatuses.first { $0.key.runtimeIdentifier == runtimeIdentifier }?.value
+    }
+  }
+
+  /// The values the matching controller's virtual gamepad last reported; nil when no user-space
+  /// virtual gamepad publishes it.
+  func virtualOutputState(
+    matching model: DeviceIdentifier,
+    runtimeIdentifier: String?
+  ) async -> VirtualGamepadState? {
+    guard
+      let installed = await coordinator.installedBackend(
+        matching: model,
+        runtimeIdentifier: runtimeIdentifier
+      )
+    else { return nil }
+    return (installed.backend as? UserSpaceOutputDispatcher)?.virtualOutputState(
+      for: installed.controller
+    )
   }
 
   /// Reselects the profile for one controller and, when the profile changes, replaces only that

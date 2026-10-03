@@ -145,6 +145,9 @@ struct ControllerShowCommand: AsyncParsableCommand {
     if let virtual = detail.virtual {
       rows.append(["virtual-profile", virtual.profile ?? "", virtual.source ?? ""])
     }
+    if let publication = detail.publication {
+      rows.append(["publication", publication.state, publication.reason ?? ""])
+    }
     rows += detail.outputChecks.map { ["output-check", $0.id, $0.command] }
     return rows
   }
@@ -227,6 +230,14 @@ struct ControllerShowCommand: AsyncParsableCommand {
         (
           CLILocalized.text("cli.controller.show.label.virtual", "Virtual gamepad"),
           virtual.profile.map { "\($0) (\(virtual.source ?? ""))" } ?? none
+        )
+      )
+    }
+    if let publication = detail.publication {
+      rows.append(
+        (
+          CLILocalized.text("cli.controller.show.label.publication", "Publication"),
+          publication.state + (publication.reason.map { " (\($0))" } ?? "")
         )
       )
     }

@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS rakk ikke å fullføre forespørselen. Sjekk Systeminnstillinger for en godkjenningsforespørsel, og kjør deretter 'ojd extension status'.";
 "cli.log.abstract" = "Viser tjenestens logger eller skriver ut hvor de er.";
 "cli.log.path.abstract" = "Skriver ut mappen som inneholder tjenestens logger. Åpne den med: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Skriv slutten av tjenesteloggene til en fil, med hjemmemappen vist som ~.";
+"cli.log.export.file" = "Filen som skal skrives.";
+"cli.log.export.force" = "Erstatt filen hvis den finnes.";
+"cli.log.export.exists" = "%@ finnes allerede. Bruk --force for å erstatte den.";
+"cli.log.export.written" = "Tjenesteloggene ble skrevet til %@.";
 "cli.log.show.abstract" = "Skriver ut slutten av tjenestens logger.";
 "cli.log.show.discussion" = "I en terminal går utdataene gjennom $PAGER (standard 'less -FRX'; sett PAGER til en tom verdi for å slå av sideskifting). --follow fortsetter å skrive ut nye linjer til du trykker Control-C; med --json skrives ett JSON-objekt ut per linje.";
 "cli.log.show.empty" = "(loggfilen er tom)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibrasjon";
 "cli.controller.show.label.session" = "Økt";
 "cli.controller.show.label.virtual" = "Virtuell spillkontroller";
+"cli.controller.show.label.publication" = "Publisering";
 "cli.controller.show.none" = "ingen";
 "cli.controller.show.record.bundled" = "medfølgende";
 "cli.controller.show.record.none" = "ingen (ingen oppføring samsvarer)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Skriv ut inndatatilstanden til en kontroller hver gang den endres.";
 "cli.controller.watch.discussion" = "Med --json skrives ett JSON-objekt per linje. Stikke-Y peker opp. Med --first-press skrives den første kontrollen som trykkes, og kommandoen avsluttes; den mislykkes hvis --duration går ut først.";
 "cli.controller.watch.first_press" = "Skriv ut den første kontrollen som trykkes, og avslutt.";
+"cli.controller.watch.output" = "Skriv også ut det den virtuelle spillkontrolleren sender. Stikkens Y-akse peker nedover, som i HID-rapporten.";
 "cli.controller.watch.no_input" = "Ingen inndata mottatt.";
 "cli.controller.watch.no_press" = "Ingen kontroll ble trykket innen %@.";
 "cli.controller.watch.press_prompt" = "Trykk på en kontroll på %@ (%@).";

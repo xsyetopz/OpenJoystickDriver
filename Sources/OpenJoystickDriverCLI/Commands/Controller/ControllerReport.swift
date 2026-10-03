@@ -62,6 +62,17 @@ struct ControllerShowReport: Encodable, Equatable {
     let unavailable: Bool
   }
 
+  /// Whether a virtual device publishes the controller, and why not.
+  struct Publication: Encodable, Equatable {
+    let state: String
+    let reason: String?
+    let target: String?
+    /// System uptime in nanoseconds of the last send to the virtual device.
+    let lastAttemptedNanoseconds: UInt64?
+    /// System uptime in nanoseconds of the last send the virtual device accepted.
+    let lastCompletedNanoseconds: UInt64?
+  }
+
   /// The effective record for the controller's model, in the layer and file shape of `record list`.
   struct Record: Encodable, Equatable {
     let layer: String
@@ -96,6 +107,7 @@ struct ControllerShowReport: Encodable, Equatable {
     let record: Record?
     let capabilities: Capabilities
     let virtual: Virtual?
+    let publication: Publication?
     let outputChecks: [OutputCheck]
   }
 
@@ -150,6 +162,15 @@ struct ControllerShowReport: Encodable, Equatable {
           source: $0.source,
           override: $0.override?.rawValue,
           unavailable: $0.unavailable
+        )
+      },
+      publication: device.publication.map {
+        Publication(
+          state: $0.state.rawValue,
+          reason: $0.reason,
+          target: $0.target?.rawValue,
+          lastAttemptedNanoseconds: $0.lastAttemptedNanoseconds,
+          lastCompletedNanoseconds: $0.lastCompletedNanoseconds
         )
       },
       outputChecks: PhysicalOutputValidationPlan(

@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS did not finish the request in time. Check System Settings for an approval prompt, then run 'ojd extension status'.";
 "cli.log.abstract" = "Show the service logs or print where they are.";
 "cli.log.path.abstract" = "Print the folder that holds the service logs. Open it with: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Write the end of the service logs to a file, with your home folder shown as ~.";
+"cli.log.export.file" = "The file to write.";
+"cli.log.export.force" = "Replace the file if it exists.";
+"cli.log.export.exists" = "%@ already exists. Pass --force to replace it.";
+"cli.log.export.written" = "Wrote the service logs to %@.";
 "cli.log.show.abstract" = "Print the end of the service logs.";
 "cli.log.show.discussion" = "On a terminal the output goes through $PAGER (default 'less -FRX'; set PAGER to an empty value to turn paging off). --follow keeps printing new lines until you press Control-C; with --json it prints one JSON object per line.";
 "cli.log.show.empty" = "(log file is empty)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Rumble";
 "cli.controller.show.label.session" = "Session";
 "cli.controller.show.label.virtual" = "Virtual gamepad";
+"cli.controller.show.label.publication" = "Publication";
 "cli.controller.show.none" = "none";
 "cli.controller.show.record.bundled" = "bundled";
 "cli.controller.show.record.none" = "none (no record matches)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Print a controller's input state each time it changes.";
 "cli.controller.watch.discussion" = "With --json, prints one JSON object per line. Stick Y points up. With --first-press, prints the first control pressed and exits; it fails when --duration passes first.";
 "cli.controller.watch.first_press" = "Print the first control pressed, then exit.";
+"cli.controller.watch.output" = "Also print what the virtual gamepad sends. Its stick Y points down, as in the HID report.";
 "cli.controller.watch.no_input" = "No input received.";
 "cli.controller.watch.no_press" = "No control was pressed within %@.";
 "cli.controller.watch.press_prompt" = "Press a control on %@ (%@).";

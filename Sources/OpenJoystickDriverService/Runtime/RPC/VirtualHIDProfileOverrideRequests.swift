@@ -260,8 +260,42 @@ extension ApplicationServiceServer {
         ),
         unavailable: state?.unavailable ?? false
       )
+      described.publication = Self.publication(
+        of: device,
+        automatic: automatic,
+        unavailable: state?.unavailable ?? false
+      )
       return described
     }
+  }
+
+  /// Whether a virtual device publishes `device`, with the first reason it does not.
+  private static func publication(
+    of device: ApplicationServiceDeviceDescription,
+    automatic: AutomaticUserSpaceOutputDispatcher?,
+    unavailable: Bool
+  ) -> ApplicationServicePublicationStatus {
+    let notPublished = { (reason: String) in
+      ApplicationServicePublicationStatus(state: .notPublished, reason: reason)
+    }
+    guard let automatic else { return notPublished("output-disabled") }
+    let recorded = automatic.publicationStatus(runtimeIdentifier: device.runtimeIdentifier)
+    if let recorded, recorded.state != .notPublished { return recorded }
+    switch ControllerExposureDecision.decide(
+      ownership: device.physicalOwnership,
+      intent: .profile(recorded?.target ?? .generic)
+    ).eligibility {
+    case .suppressedNativeHIDPassThrough:
+      return notPublished(
+        device.physicalOwnership == .nativeGamepad ? "native-gamepad" : "native-hid-pass-through"
+      )
+    case .suppressedUpstreamVirtualDevice: return notPublished("upstream-virtual-device")
+    case .suppressedOutputDisabled: return notPublished("output-disabled")
+    case .eligible: break
+    }
+    if device.sessionState == .suspended { return notPublished("session-suspended") }
+    if unavailable { return notPublished("no-virtual-profile") }
+    return recorded ?? notPublished("no-input-yet")
   }
 
   /// Clears every virtual HID profile override.

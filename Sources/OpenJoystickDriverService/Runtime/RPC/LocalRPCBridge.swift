@@ -89,6 +89,15 @@ extension ApplicationServiceServer {
           runtimeIdentifier: value.runtimeIdentifier
         )
       )
+    case .getVirtualOutputState:
+      let value = try decode(LocalServiceRPCDeviceArguments.self)
+      return try send(
+        await getVirtualOutputState(
+          vendorID: value.vendorID,
+          productID: value.productID,
+          runtimeIdentifier: value.runtimeIdentifier
+        )
+      )
     case .getPacketLog:
       let value = try decode(LocalServiceRPCDeviceArguments.self)
       return try send(

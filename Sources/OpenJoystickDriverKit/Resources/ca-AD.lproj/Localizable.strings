@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS no ha acabat la sol·licitud a temps. Comproveu a Configuració del Sistema si hi ha una sol·licitud d’aprovació i executeu 'ojd extension status'.";
 "cli.log.abstract" = "Mostra els registres del servei o n’imprimeix la ubicació.";
 "cli.log.path.abstract" = "Imprimeix la carpeta que conté els registres del servei. Obriu-la amb: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Escriu el final dels registres del servei en un fitxer, amb la carpeta d’inici mostrada com a ~.";
+"cli.log.export.file" = "El fitxer que s’ha d’escriure.";
+"cli.log.export.force" = "Substitueix el fitxer si ja existeix.";
+"cli.log.export.exists" = "%@ ja existeix. Feu servir --force per substituir-lo.";
+"cli.log.export.written" = "S’han escrit els registres del servei a %@.";
 "cli.log.show.abstract" = "Imprimeix el final dels registres del servei.";
 "cli.log.show.discussion" = "En un terminal, la sortida passa per $PAGER (per defecte 'less -FRX'; definiu PAGER amb un valor buit per desactivar la paginació). --follow continua imprimint línies noves fins que premeu Control-C; amb --json imprimeix un objecte JSON per línia.";
 "cli.log.show.empty" = "(el fitxer de registre és buit)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibració";
 "cli.controller.show.label.session" = "Sessió";
 "cli.controller.show.label.virtual" = "Comandament virtual";
+"cli.controller.show.label.publication" = "Publicació";
 "cli.controller.show.none" = "cap";
 "cli.controller.show.record.bundled" = "inclòs";
 "cli.controller.show.record.none" = "cap (cap registre coincideix)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Mostra l’estat d’entrada d’un comandament cada cop que canvia.";
 "cli.controller.watch.discussion" = "Amb --json, mostra un objecte JSON per línia. L’eix Y del joystick apunta amunt. Amb --first-press, mostra el primer control premut i surt; falla si --duration s’esgota abans.";
 "cli.controller.watch.first_press" = "Mostra el primer control premut i surt.";
+"cli.controller.watch.output" = "Mostra també el que envia el comandament virtual. L’eix Y de la palanca apunta avall, com a l’informe HID.";
 "cli.controller.watch.no_input" = "No s’ha rebut cap entrada.";
 "cli.controller.watch.no_press" = "No s’ha premut cap control en %@.";
 "cli.controller.watch.press_prompt" = "Premeu un control de %@ (%@).";

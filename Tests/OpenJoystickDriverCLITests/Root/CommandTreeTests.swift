@@ -22,6 +22,7 @@ struct CommandTreeTests {
     #expect(paths.contains(["setting", "set"]))
     #expect(paths.contains(["log", "show"]))
     #expect(paths.contains(["log", "path"]))
+    #expect(paths.contains(["log", "export"]))
     #expect(paths.contains(["diagnose"]))
     #expect(paths.contains(["update", "check"]))
     for verb in [

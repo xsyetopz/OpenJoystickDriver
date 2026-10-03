@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS가 제때 요청을 완료하지 못했습니다. 시스템 설정에 승인 요청이 표시되어 있는지 확인한 다음 'ojd extension status'를 실행하십시오.";
 "cli.log.abstract" = "서비스 로그를 표시하거나 로그 위치를 출력합니다.";
 "cli.log.path.abstract" = "서비스 로그가 있는 폴더를 출력합니다. 다음 명령으로 열 수 있습니다: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "서비스 로그의 끝부분을 파일에 기록하며, 홈 폴더는 ~로 표시합니다.";
+"cli.log.export.file" = "기록할 파일.";
+"cli.log.export.force" = "파일이 있으면 바꿉니다.";
+"cli.log.export.exists" = "%@이(가) 이미 있습니다. 바꾸려면 --force를 사용하세요.";
+"cli.log.export.written" = "서비스 로그를 %@에 기록했습니다.";
 "cli.log.show.abstract" = "서비스 로그의 끝부분을 출력합니다.";
 "cli.log.show.discussion" = "터미널에서는 출력이 $PAGER를 거칩니다 (기본값은 'less -FRX'이며, PAGER를 빈 값으로 설정하면 페이지 나누기를 끕니다). --follow는 Control-C를 누를 때까지 새 줄을 계속 출력하며, --json과 함께 쓰면 줄마다 JSON 객체 하나를 출력합니다.";
 "cli.log.show.empty" = "(로그 파일이 비어 있음)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "진동";
 "cli.controller.show.label.session" = "세션";
 "cli.controller.show.label.virtual" = "가상 게임패드";
+"cli.controller.show.label.publication" = "게시 상태";
 "cli.controller.show.none" = "없음";
 "cli.controller.show.record.bundled" = "번들";
 "cli.controller.show.record.none" = "없음 (일치하는 레코드 없음)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "컨트롤러의 입력 상태가 바뀔 때마다 출력합니다.";
 "cli.controller.watch.discussion" = "--json을 사용하면 한 줄에 JSON 객체 하나를 출력합니다. 스틱 Y축은 위쪽이 양수입니다. --first-press를 사용하면 처음 누른 컨트롤을 출력하고 종료하며, 그 전에 --duration이 지나면 실패합니다.";
 "cli.controller.watch.first_press" = "처음 누른 컨트롤을 출력한 후 종료합니다.";
+"cli.controller.watch.output" = "가상 게임패드가 보내는 값도 출력합니다. 스틱 Y축은 HID 보고서처럼 아래쪽이 양수입니다.";
 "cli.controller.watch.no_input" = "받은 입력이 없습니다.";
 "cli.controller.watch.no_press" = "%@ 안에 누른 컨트롤이 없습니다.";
 "cli.controller.watch.press_prompt" = "%@(%@)에서 컨트롤을 누르세요.";

@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS laiku neužbaigė užklausos. Skiltyje System Settings patikrinkite, ar laukia patvirtinimo raginimas, tada paleiskite „ojd extension status“.";
 "cli.log.abstract" = "Rodo tarnybos žurnalus arba išveda, kur jie yra.";
 "cli.log.path.abstract" = "Išveda aplanką su tarnybos žurnalais. Atidarykite jį taip: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Įrašyti paslaugos žurnalų pabaigą į failą, namų aplanką rodant kaip ~.";
+"cli.log.export.file" = "Rašomas failas.";
+"cli.log.export.force" = "Pakeisti failą, jei jis yra.";
+"cli.log.export.exists" = "%@ jau yra. Norėdami pakeisti, naudokite --force.";
+"cli.log.export.written" = "Paslaugos žurnalai įrašyti į %@.";
 "cli.log.show.abstract" = "Išveda tarnybos žurnalų pabaigą.";
 "cli.log.show.discussion" = "Terminale išvestis eina per $PAGER (numatytoji „less -FRX“; norėdami išjungti puslapiavimą, nustatykite PAGER tuščią reikšmę). --follow išveda naujas eilutes, kol paspausite Control-C; su --json išveda po vieną JSON objektą eilutėje.";
 "cli.log.show.empty" = "(žurnalo failas tuščias)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibracija";
 "cli.controller.show.label.session" = "Seansas";
 "cli.controller.show.label.virtual" = "Virtualus žaidimų pultas";
+"cli.controller.show.label.publication" = "Publikavimas";
 "cli.controller.show.none" = "nėra";
 "cli.controller.show.record.bundled" = "įtrauktas";
 "cli.controller.show.record.none" = "nėra (joks įrašas neatitinka)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Rodyti valdiklio įvesties būseną kaskart jai pasikeitus.";
 "cli.controller.watch.discussion" = "Su --json rodo po vieną JSON objektą eilutėje. Y ašis rodo aukštyn. Su --first-press parodo pirmą paspaustą valdymo elementą ir išeina; nepavyksta, jei --duration baigiasi anksčiau.";
 "cli.controller.watch.first_press" = "Parodyti pirmą paspaustą valdymo elementą ir išeiti.";
+"cli.controller.watch.output" = "Taip pat spausdinti, ką siunčia virtualus žaidimų pultas. Jo svirtelės Y ašis nukreipta žemyn, kaip HID ataskaitoje.";
 "cli.controller.watch.no_input" = "Įvesties negauta.";
 "cli.controller.watch.no_press" = "Per %@ nebuvo paspaustas joks valdymo elementas.";
 "cli.controller.watch.press_prompt" = "Paspauskite valdymo elementą: %@ (%@).";

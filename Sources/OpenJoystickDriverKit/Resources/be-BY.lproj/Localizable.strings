@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS не завяршыла запыт своечасова. Праверце «Сістэмныя налады»: магчыма, там чакае запыт на пацвярджэнне. Потым выканайце «ojd extension status».";
 "cli.log.abstract" = "Паказаць журналы службы або вывесці іх размяшчэнне.";
 "cli.log.path.abstract" = "Вывесці папку з журналамі службы. Адкрыйце яе так: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Запісаць канец журналаў службы ў файл, паказваючы хатнюю папку як ~.";
+"cli.log.export.file" = "Файл для запісу.";
+"cli.log.export.force" = "Замяніць файл, калі ён існуе.";
+"cli.log.export.exists" = "%@ ужо існуе. Выкарыстайце --force, каб замяніць яго.";
+"cli.log.export.written" = "Журналы службы запісаны ў %@.";
 "cli.log.show.abstract" = "Вывесці канец журналаў службы.";
 "cli.log.show.discussion" = "У тэрмінале вывад ідзе праз $PAGER (па змаўчанні «less -FRX»; каб адключыць пастаронкавы вывад, задайце PAGER пустым значэннем). --follow працягвае выводзіць новыя радкі, пакуль вы не націснеце Control-C; з --json выводзіць па адным аб'екце JSON у радку.";
 "cli.log.show.empty" = "(файл журнала пусты)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Вібрацыя";
 "cli.controller.show.label.session" = "Сеанс";
 "cli.controller.show.label.virtual" = "Віртуальны геймпад";
+"cli.controller.show.label.publication" = "Публікацыя";
 "cli.controller.show.none" = "няма";
 "cli.controller.show.record.bundled" = "убудаваны";
 "cli.controller.show.record.none" = "няма (няма адпаведнага запісу)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Выводзіць стан уводу кантролера пры кожнай змене.";
 "cli.controller.watch.discussion" = "З --json выводзіць адзін аб’ект JSON на радок. Вось Y стыка накіравана ўверх. З --first-press выводзіць першы націснуты элемент кіравання і завяршаецца; памылка, калі --duration мінае раней.";
 "cli.controller.watch.first_press" = "Вывесці першы націснуты элемент кіравання і выйсці.";
+"cli.controller.watch.output" = "Таксама выводзіць тое, што адпраўляе віртуальны геймпад. Вось Y яго стыка накіравана ўніз, як у справаздачы HID.";
 "cli.controller.watch.no_input" = "Увод не атрыманы.";
 "cli.controller.watch.no_press" = "На працягу %@ не быў націснуты ніводзін элемент кіравання.";
 "cli.controller.watch.press_prompt" = "Націсніце элемент кіравання на %@ (%@).";

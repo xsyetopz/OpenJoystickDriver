@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS не завершила запрос вовремя. Проверьте «Системные настройки»: возможно, там ждёт запрос подтверждения. Затем выполните 'ojd extension status'.";
 "cli.log.abstract" = "Показать журналы службы или вывести их расположение.";
 "cli.log.path.abstract" = "Вывести папку с журналами службы. Откройте её так: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Записать конец журналов службы в файл, показывая домашнюю папку как ~.";
+"cli.log.export.file" = "Файл для записи.";
+"cli.log.export.force" = "Заменить файл, если он существует.";
+"cli.log.export.exists" = "%@ уже существует. Используйте --force, чтобы заменить его.";
+"cli.log.export.written" = "Журналы службы записаны в %@.";
 "cli.log.show.abstract" = "Вывести конец журналов службы.";
 "cli.log.show.discussion" = "В терминале вывод идёт через $PAGER (по умолчанию 'less -FRX'; чтобы отключить постраничный вывод, задайте PAGER пустым значением). --follow продолжает выводить новые строки, пока вы не нажмёте Control-C; с --json выводит по одному объекту JSON в строке.";
 "cli.log.show.empty" = "(файл журнала пуст)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Вибрация";
 "cli.controller.show.label.session" = "Сеанс";
 "cli.controller.show.label.virtual" = "Виртуальный геймпад";
+"cli.controller.show.label.publication" = "Публикация";
 "cli.controller.show.none" = "нет";
 "cli.controller.show.record.bundled" = "встроенная";
 "cli.controller.show.record.none" = "нет (подходящей записи нет)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Выводит состояние ввода контроллера при каждом изменении.";
 "cli.controller.watch.discussion" = "С --json выводит по одному JSON-объекту на строку. Ось Y стика направлена вверх. С --first-press выводит первый нажатый элемент управления и завершается; завершается с ошибкой, если сначала истекает --duration.";
 "cli.controller.watch.first_press" = "Выводит первый нажатый элемент управления и завершается.";
+"cli.controller.watch.output" = "Также выводить то, что отправляет виртуальный геймпад. Ось Y его стика направлена вниз, как в отчёте HID.";
 "cli.controller.watch.no_input" = "Ввод не получен.";
 "cli.controller.watch.no_press" = "В течение %@ не нажат ни один элемент управления.";
 "cli.controller.watch.press_prompt" = "Нажмите элемент управления на %@ (%@).";

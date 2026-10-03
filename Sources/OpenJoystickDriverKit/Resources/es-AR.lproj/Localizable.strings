@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS no terminó la solicitud a tiempo. Busca en Configuración del Sistema un aviso de aprobación y ejecuta 'ojd extension status'.";
 "cli.log.abstract" = "Muestra los registros del servicio o imprime dónde están.";
 "cli.log.path.abstract" = "Imprime la carpeta que contiene los registros del servicio. Ábrela con: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Escribe el final de los registros del servicio en un archivo, con tu carpeta de inicio mostrada como ~.";
+"cli.log.export.file" = "El archivo que se escribirá.";
+"cli.log.export.force" = "Reemplaza el archivo si existe.";
+"cli.log.export.exists" = "%@ ya existe. Usa --force para reemplazarlo.";
+"cli.log.export.written" = "Se escribieron los registros del servicio en %@.";
 "cli.log.show.abstract" = "Imprime el final de los registros del servicio.";
 "cli.log.show.discussion" = "En una terminal, la salida pasa por $PAGER (por defecto 'less -FRX'; define PAGER con un valor vacío para desactivar la paginación). --follow sigue imprimiendo líneas nuevas hasta que pulses Control-C; con --json imprime un objeto JSON por línea.";
 "cli.log.show.empty" = "(el archivo de registro está vacío)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibración";
 "cli.controller.show.label.session" = "Sesión";
 "cli.controller.show.label.virtual" = "Control virtual";
+"cli.controller.show.label.publication" = "Publicación";
 "cli.controller.show.none" = "ninguno";
 "cli.controller.show.record.bundled" = "incluido";
 "cli.controller.show.record.none" = "ninguno (ningún registro coincide)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Imprime el estado de entrada de un control cada vez que cambia.";
 "cli.controller.watch.discussion" = "Con --json, imprime un objeto JSON por línea. El eje Y del stick apunta hacia arriba. Con --first-press, imprime el primer control presionado y termina; falla si pasa --duration antes.";
 "cli.controller.watch.first_press" = "Imprime el primer control presionado y termina.";
+"cli.controller.watch.output" = "Muestra también lo que envía el control virtual. El eje Y de su joystick apunta hacia abajo, como en el informe HID.";
 "cli.controller.watch.no_input" = "No se recibió entrada.";
 "cli.controller.watch.no_press" = "No se presionó ningún control en %@.";
 "cli.controller.watch.press_prompt" = "Presioná un control en %@ (%@).";

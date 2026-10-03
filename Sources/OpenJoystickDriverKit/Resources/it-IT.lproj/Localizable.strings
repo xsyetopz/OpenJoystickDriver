@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS non ha completato la richiesta in tempo. Controlla in Impostazioni di Sistema se c’è una richiesta di approvazione, poi esegui 'ojd extension status'.";
 "cli.log.abstract" = "Mostra i log del servizio o stampa dove si trovano.";
 "cli.log.path.abstract" = "Stampa la cartella che contiene i log del servizio. Aprila con: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Scrive la parte finale dei log del servizio in un file, mostrando la cartella home come ~.";
+"cli.log.export.file" = "Il file da scrivere.";
+"cli.log.export.force" = "Sostituisce il file se esiste.";
+"cli.log.export.exists" = "%@ esiste già. Usa --force per sostituirlo.";
+"cli.log.export.written" = "Log del servizio scritti in %@.";
 "cli.log.show.abstract" = "Stampa la parte finale dei log del servizio.";
 "cli.log.show.discussion" = "In un terminale l’output passa da $PAGER (predefinito 'less -FRX'; imposta PAGER su un valore vuoto per disattivare la paginazione). --follow continua a stampare le nuove righe finché non premi Control-C; con --json stampa un oggetto JSON per riga.";
 "cli.log.show.empty" = "(il file di log è vuoto)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibrazione";
 "cli.controller.show.label.session" = "Sessione";
 "cli.controller.show.label.virtual" = "Gamepad virtuale";
+"cli.controller.show.label.publication" = "Pubblicazione";
 "cli.controller.show.none" = "nessuno";
 "cli.controller.show.record.bundled" = "incluso";
 "cli.controller.show.record.none" = "nessuno (nessun record corrisponde)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Mostra lo stato di input di un controller a ogni cambiamento.";
 "cli.controller.watch.discussion" = "Con --json, mostra un oggetto JSON per riga. Y dello stick indica verso l’alto. Con --first-press, mostra il primo comando premuto ed esce; fallisce se --duration scade prima.";
 "cli.controller.watch.first_press" = "Mostra il primo comando premuto, poi esce.";
+"cli.controller.watch.output" = "Stampa anche ciò che invia il gamepad virtuale. L’asse Y della levetta punta verso il basso, come nel report HID.";
 "cli.controller.watch.no_input" = "Nessun input ricevuto.";
 "cli.controller.watch.no_press" = "Nessun comando premuto entro %@.";
 "cli.controller.watch.press_prompt" = "Premi un comando su %@ (%@).";

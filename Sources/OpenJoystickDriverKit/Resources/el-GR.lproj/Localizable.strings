@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "Το macOS δεν ολοκλήρωσε το αίτημα εγκαίρως. Ελέγξτε τις Ρυθμίσεις συστήματος για μήνυμα έγκρισης και εκτελέστε «ojd extension status».";
 "cli.log.abstract" = "Εμφανίζει τα αρχεία καταγραφής της υπηρεσίας ή εκτυπώνει πού βρίσκονται.";
 "cli.log.path.abstract" = "Εκτυπώνει τον φάκελο που περιέχει τα αρχεία καταγραφής της υπηρεσίας. Ανοίξτε τον με: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Γράφει το τέλος των αρχείων καταγραφής της υπηρεσίας σε αρχείο, με τον αρχικό φάκελο ως ~.";
+"cli.log.export.file" = "Το αρχείο προς εγγραφή.";
+"cli.log.export.force" = "Αντικαθιστά το αρχείο αν υπάρχει.";
+"cli.log.export.exists" = "Το %@ υπάρχει ήδη. Χρησιμοποιήστε --force για αντικατάσταση.";
+"cli.log.export.written" = "Τα αρχεία καταγραφής της υπηρεσίας γράφτηκαν στο %@.";
 "cli.log.show.abstract" = "Εκτυπώνει το τέλος των αρχείων καταγραφής της υπηρεσίας.";
 "cli.log.show.discussion" = "Σε τερματικό, η έξοδος περνά από το $PAGER (προεπιλογή «less -FRX»· ορίστε το PAGER σε κενή τιμή για να απενεργοποιήσετε τη σελιδοποίηση). Το --follow εκτυπώνει συνεχώς νέες γραμμές μέχρι να πατήσετε Control-C· με το --json εκτυπώνει ένα αντικείμενο JSON ανά γραμμή.";
 "cli.log.show.empty" = "(το αρχείο καταγραφής είναι κενό)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Δόνηση";
 "cli.controller.show.label.session" = "Συνεδρία";
 "cli.controller.show.label.virtual" = "Εικονικό gamepad";
+"cli.controller.show.label.publication" = "Δημοσίευση";
 "cli.controller.show.none" = "κανένα";
 "cli.controller.show.record.bundled" = "ενσωματωμένη";
 "cli.controller.show.record.none" = "καμία (καμία εγγραφή δεν ταιριάζει)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Εκτυπώνει την κατάσταση εισόδου ενός χειριστηρίου κάθε φορά που αλλάζει.";
 "cli.controller.watch.discussion" = "Με --json, εκτυπώνει ένα αντικείμενο JSON ανά γραμμή. Ο άξονας Y του μοχλού δείχνει προς τα πάνω. Με --first-press, εκτυπώνει το πρώτο στοιχείο ελέγχου που πατήθηκε και τερματίζει· αποτυγχάνει αν περάσει πρώτα το --duration.";
 "cli.controller.watch.first_press" = "Εκτύπωση του πρώτου στοιχείου ελέγχου που πατήθηκε και έξοδος.";
+"cli.controller.watch.output" = "Εμφανίζει επίσης ό,τι στέλνει το εικονικό gamepad. Ο άξονας Y του μοχλού δείχνει προς τα κάτω, όπως στην αναφορά HID.";
 "cli.controller.watch.no_input" = "Δεν ελήφθη είσοδος.";
 "cli.controller.watch.no_press" = "Δεν πατήθηκε κανένα στοιχείο ελέγχου μέσα σε %@.";
 "cli.controller.watch.press_prompt" = "Πατήστε ένα στοιχείο ελέγχου στο %@ (%@).";

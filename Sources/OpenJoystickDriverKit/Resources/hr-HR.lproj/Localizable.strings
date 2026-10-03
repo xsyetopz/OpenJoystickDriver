@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS nije na vrijeme dovršio zahtjev. Provjerite u Postavkama sustava čeka li upit za odobrenje, a zatim pokrenite 'ojd extension status'.";
 "cli.log.abstract" = "Prikazuje zapisnike usluge ili ispisuje gdje se nalaze.";
 "cli.log.path.abstract" = "Ispisuje mapu sa zapisnicima usluge. Otvorite je naredbom: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Zapiši kraj zapisnika usluge u datoteku, s početnom mapom prikazanom kao ~.";
+"cli.log.export.file" = "Datoteka za zapis.";
+"cli.log.export.force" = "Zamijeni datoteku ako postoji.";
+"cli.log.export.exists" = "%@ već postoji. Upotrijebite --force za zamjenu.";
+"cli.log.export.written" = "Zapisnici usluge zapisani su u %@.";
 "cli.log.show.abstract" = "Ispisuje kraj zapisnika usluge.";
 "cli.log.show.discussion" = "U terminalu izlaz ide kroz $PAGER (zadano 'less -FRX'; postavite PAGER na praznu vrijednost da isključite straničenje). --follow ispisuje nove retke dok ne pritisnete Control-C; uz --json ispisuje jedan JSON objekt po retku.";
 "cli.log.show.empty" = "(datoteka zapisnika je prazna)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibracija";
 "cli.controller.show.label.session" = "Sesija";
 "cli.controller.show.label.virtual" = "Virtualni gamepad";
+"cli.controller.show.label.publication" = "Objava";
 "cli.controller.show.none" = "nema";
 "cli.controller.show.record.bundled" = "ugrađen";
 "cli.controller.show.record.none" = "nema (nijedan zapis ne odgovara)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Ispisuje stanje unosa kontrolera svaki put kad se promijeni.";
 "cli.controller.watch.discussion" = "S --json ispisuje jedan JSON objekt po retku. Os Y palice pokazuje prema gore. S --first-press ispisuje prvu pritisnutu kontrolu i izlazi; ne uspijeva ako --duration istekne prije.";
 "cli.controller.watch.first_press" = "Ispisuje prvu pritisnutu kontrolu, zatim izlazi.";
+"cli.controller.watch.output" = "Ispiši i ono što šalje virtualni gamepad. Os Y njegove palice pokazuje prema dolje, kao u HID izvješću.";
 "cli.controller.watch.no_input" = "Nije primljen nikakav unos.";
 "cli.controller.watch.no_press" = "Nijedna kontrola nije pritisnuta unutar %@.";
 "cli.controller.watch.press_prompt" = "Pritisnite kontrolu na uređaju %@ (%@).";

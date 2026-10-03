@@ -51,7 +51,7 @@ List connected controllers, inspect them, and test their input and outputs. Ever
 ```text
 ojd controller list
 ojd controller show CONTROLLER
-ojd controller watch CONTROLLER [--duration SECONDS] [--first-press]
+ojd controller watch CONTROLLER [--duration SECONDS] [--first-press] [--output]
 ojd controller capture CONTROLLER [--duration SECONDS]
 ojd controller rumble CONTROLLER [--left N] [--right N] [--left-trigger N] [--right-trigger N] [--duration SECONDS]
 ojd controller light CONTROLLER [--color RRGGBB] [--brightness N]
@@ -67,8 +67,8 @@ ojd controller unpair PAIR
 `CONTROLLER` is an ID from `ojd controller list`, or `VVVV:PPPP`, the hexadecimal vendor and product ID, in either case. A `VVVV:PPPP` that matches two connected controllers is rejected, and the error lists them. Use an ID to pick one. An ID lasts until the service restarts, and it can change when you unplug and replug the controller. By design, IDs from different service runs cannot be linked to the same controller, so scripts should use `VVVV:PPPP` instead of a stored ID.
 
 - `controller list`: List connected controllers.
-- `controller show`: Show a controller's identity, ownership, capabilities, effective record, and virtual gamepad. The Record line says whether the record is bundled or one of your records, and names the file of your record. It reads your records from disk when you run the command, so a controller that connected before you changed a record can still run on the older one until it connects again. With `--json`, `controller.record` has `layer` (`bundled` or `user`) and, for your record, `file`. It is absent when no record matches the controller's model, as for a generic HID controller. The Output checks section lists the commands that exercise each rumble motor and light, with what to observe.
-- `controller watch`: Print the controller's input state each time it changes, until you press Control-C. `--duration` stops after that many seconds. `--first-press` prints the first control pressed and exits. It fails when `--duration` passes first. With `--json`, it prints one object per line. Stick Y points up.
+- `controller show`: Show a controller's identity, ownership, capabilities, effective record, and virtual gamepad. The Record line says whether the record is bundled or one of your records, and names the file of your record. It reads your records from disk when you run the command, so a controller that connected before you changed a record can still run on the older one until it connects again. With `--json`, `controller.record` has `layer` (`bundled` or `user`) and, for your record, `file`. It is absent when no record matches the controller's model, as for a generic HID controller. The Publication line says whether a virtual gamepad publishes the controller and, when none does, why, such as `native-gamepad` for a controller macOS serves itself. With `--json`, `controller.publication` has `state` (`published`, `not-published`, or `failed`), `reason`, and `target`. The Output checks section lists the commands that exercise each rumble motor and light, with what to observe.
+- `controller watch`: Print the controller's input state each time it changes, until you press Control-C. `--duration` stops after that many seconds. `--first-press` prints the first control pressed and exits. It fails when `--duration` passes first. With `--json`, it prints one object per line. Stick Y points up. `--output` also prints what the virtual gamepad sends after stick transfer and remapping, on an `out` line, or `out none` when no virtual gamepad publishes the controller. Its stick Y points down, as in the HID report. With `--json` and `--output`, each object has `input` and, when the controller is published, `output`.
 - `controller capture`: Print the raw packets the controller sends and receives, each with its time, direction (`rx` or `tx`), length, and hex bytes. It runs until you press Control-C, or until `--duration` seconds pass. With `--json`, it prints one object per line.
 - `controller rumble`: Run the rumble motors. `--left`, `--right`, `--left-trigger`, and `--right-trigger` set each motor's intensity from 0 to 255. With none of them, both main motors run at 180. `--duration` is in seconds, above 0 and at most 5, and is 0.45 by default. Set every intensity to 0 to stop the motors.
 - `controller light`: Set the lightbar color with `--color`, as hex such as `FF8000`, or the LED brightness with `--brightness`, from 0 to 255.
@@ -263,10 +263,12 @@ Show the service logs or print the folder that holds them.
 ```text
 ojd log show [--lines COUNT] [--follow]
 ojd log path
+ojd log export FILE [--lines COUNT] [--force]
 ```
 
 - `log show`: Print the last lines of each service log, 100 by default and at most 10000. On a terminal, the output goes through `$PAGER`, or `less -FRX` when it is unset. Set `PAGER` to an empty value to turn paging off. `--follow` keeps printing new lines until you press Control-C. With `--json` and `--follow`, it prints one object per line, with `stream` and `line`.
 - `log path`: Print the log folder. To open it in Finder, run `open "$(ojd log path)"`.
+- `log export`: Write the last lines of each service log to `FILE`, 2000 by default and at most 10000, with your home folder shown as `~`. It does not replace an existing file unless you pass `--force`. Review the file before you share it.
 
 ## diagnose
 

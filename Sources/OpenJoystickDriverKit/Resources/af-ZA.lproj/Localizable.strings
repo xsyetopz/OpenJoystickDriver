@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS het nie die versoek betyds voltooi nie. Kyk in System Settings vir 'n goedkeuringsopdrag en voer dan 'ojd extension status' uit.";
 "cli.log.abstract" = "Wys die diens se logboeke of druk uit waar hulle is.";
 "cli.log.path.abstract" = "Druk die gids uit wat die diens se logboeke bevat. Maak dit oop met: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Skryf die einde van die dienslogboeke na ’n lêer, met jou tuisgids as ~ gewys.";
+"cli.log.export.file" = "Die lêer om te skryf.";
+"cli.log.export.force" = "Vervang die lêer as dit bestaan.";
+"cli.log.export.exists" = "%@ bestaan reeds. Gebruik --force om dit te vervang.";
+"cli.log.export.written" = "Dienslogboeke na %@ geskryf.";
 "cli.log.show.abstract" = "Druk die einde van die diens se logboeke uit.";
 "cli.log.show.discussion" = "Op 'n terminaal gaan die uitvoer deur $PAGER (verstek 'less -FRX'; stel PAGER op 'n leë waarde om bladsy-vir-bladsy-vertoning af te skakel). --follow hou aan om nuwe reëls uit te druk totdat jy Control-C druk; met --json druk dit een JSON-objek per reël uit.";
 "cli.log.show.empty" = "(logleêr is leeg)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Vibrasie";
 "cli.controller.show.label.session" = "Sessie";
 "cli.controller.show.label.virtual" = "Virtuele gamepad";
+"cli.controller.show.label.publication" = "Publikasie";
 "cli.controller.show.none" = "geen";
 "cli.controller.show.record.bundled" = "gebundel";
 "cli.controller.show.record.none" = "geen (geen rekord pas)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Druk ’n kontroleerder se toevoertoestand elke keer as dit verander.";
 "cli.controller.watch.discussion" = "Met --json word een JSON-voorwerp per reël gedruk. Stok-Y wys op. Met --first-press word die eerste kontrole wat gedruk word, gedruk en dit sluit af; dit misluk as --duration eerste verstryk.";
 "cli.controller.watch.first_press" = "Druk die eerste kontrole wat gedruk word, en sluit dan af.";
+"cli.controller.watch.output" = "Druk ook wat die virtuele spelbeheerder stuur. Sy stok-Y wys af, soos in die HID-verslag.";
 "cli.controller.watch.no_input" = "Geen toevoer ontvang nie.";
 "cli.controller.watch.no_press" = "Geen kontrole is binne %@ gedruk nie.";
 "cli.controller.watch.press_prompt" = "Druk ’n kontrole op %@ (%@).";

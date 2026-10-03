@@ -1017,6 +1017,11 @@
 "cli.extension.timeout" = "macOS није завршио захтев на време. Проверите да ли у „Системска подешавања“ чека захтев за одобрење, па покрените „ojd extension status“.";
 "cli.log.abstract" = "Прикажи записнике услуге или испиши где се налазе.";
 "cli.log.path.abstract" = "Испиши фасциклу са записницима услуге. Отворите је помоћу: open \"$(ojd log path)\"";
+"cli.log.export.abstract" = "Упиши крај дневника услуге у датотеку, са почетном фасциклом приказаном као ~.";
+"cli.log.export.file" = "Датотека за упис.";
+"cli.log.export.force" = "Замени датотеку ако постоји.";
+"cli.log.export.exists" = "%@ већ постоји. Користите --force да је замените.";
+"cli.log.export.written" = "Дневници услуге уписани су у %@.";
 "cli.log.show.abstract" = "Испиши крај записника услуге.";
 "cli.log.show.discussion" = "У терминалу излаз иде кроз $PAGER (подразумевано „less -FRX“; подесите PAGER на празну вредност да искључите страничење). --follow наставља да исписује нове редове док не притиснете Control-C; са --json исписује по један JSON објекат у реду.";
 "cli.log.show.empty" = "(датотека записника је празна)";
@@ -1149,6 +1154,7 @@
 "cli.controller.show.label.rumble" = "Вибрација";
 "cli.controller.show.label.session" = "Сесија";
 "cli.controller.show.label.virtual" = "Виртуелни гејмпад";
+"cli.controller.show.label.publication" = "Објављивање";
 "cli.controller.show.none" = "нема";
 "cli.controller.show.record.bundled" = "уграђен";
 "cli.controller.show.record.none" = "нема (ниједан запис не одговара)";
@@ -1159,6 +1165,7 @@
 "cli.controller.watch.abstract" = "Испиши стање улаза контролера сваки пут када се промени.";
 "cli.controller.watch.discussion" = "Са --json исписује један JSON објекат по реду. Y оса аналогне палице показује нагоре. Са --first-press исписује прву притиснуту контролу и излази; завршава се неуспехом ако --duration истекне раније.";
 "cli.controller.watch.first_press" = "Испиши прву притиснуту контролу, па изађи.";
+"cli.controller.watch.output" = "Испиши и оно што шаље виртуелни гејмпад. Оса Y његове палице показује надоле, као у HID извештају.";
 "cli.controller.watch.no_input" = "Улаз није примљен.";
 "cli.controller.watch.no_press" = "Ниједна контрола није притиснута у року од %@.";
 "cli.controller.watch.press_prompt" = "Притисните контролу на %@ (%@).";
