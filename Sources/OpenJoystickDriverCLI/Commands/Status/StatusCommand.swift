@@ -52,8 +52,8 @@ struct StatusCommand: AsyncParsableCommand {
       ["extension", report.extension.bundle.rawValue, report.extension.registration.rawValue],
     ]
     if let permissions = report.permissions {
-      rows.append(["permission", "input-monitoring", permissions.inputMonitoring])
-      rows.append(["permission", "accessibility", permissions.accessibility])
+      rows.append(["permission", "input-monitoring", permissions.inputMonitoring.rawValue])
+      rows.append(["permission", "accessibility", permissions.accessibility.rawValue])
     }
     if let virtual = report.virtualDevice {
       rows.append([
@@ -101,13 +101,13 @@ struct StatusCommand: AsyncParsableCommand {
       rows.append(
         (
           CLILocalized.text("cli.status.label.input_monitoring", "Input Monitoring"),
-          permissions.inputMonitoring
+          permissions.inputMonitoring.rawValue
         )
       )
       rows.append(
         (
           CLILocalized.text("cli.status.label.accessibility", "Accessibility"),
-          permissions.accessibility
+          permissions.accessibility.rawValue
         )
       )
     }

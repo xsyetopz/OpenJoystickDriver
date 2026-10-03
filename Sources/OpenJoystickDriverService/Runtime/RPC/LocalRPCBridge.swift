@@ -140,8 +140,6 @@ extension ApplicationServiceServer {
           token: value.token
         )
       )
-    case .setSuppressOutput:
-      return try send(await setSuppressOutput(try decode(LocalServiceRPCBoolArguments.self).value))
     case .getVirtualDeviceDiagnostics:
       _ = try decode(LocalServiceRPCEmptyArguments.self)
       return try send(getVirtualDeviceDiagnostics())

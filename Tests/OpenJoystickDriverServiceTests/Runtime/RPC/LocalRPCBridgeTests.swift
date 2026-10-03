@@ -10,7 +10,7 @@ struct LocalRPCBridgeTests {
     "getStatus", "requestRequiredAccess", "requestAccess", "getControllerState", "getPacketLog",
     "getVirtualOutputState",
     "sendControllerOutput", "previewPhysicalColor", "releasePhysicalColorPreview",
-    "setSuppressOutput", "getVirtualDeviceDiagnostics", "setVirtualHIDProfileOverride",
+    "getVirtualDeviceDiagnostics", "setVirtualHIDProfileOverride",
     "resetVirtualHIDProfileOverride", "suspendController", "resumeController",
     "disconnectWirelessController", "resetSettings", "getSettings", "setSetting",
   ]

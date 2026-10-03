@@ -22,7 +22,7 @@ struct PermissionCommand: AsyncParsableCommand {
     case .plain: CLIOutput.plain(report.plainRows)
     case .human:
       let rows = PermissionID.allCases.map {
-        ($0.localizedName, report.state(of: $0), $0.localizedPurpose)
+        ($0.localizedName, report.state(of: $0).rawValue, $0.localizedPurpose)
       }
       let nameWidth = rows.map(\.0.count).max() ?? 0
       let stateWidth = rows.map(\.1.count).max() ?? 0
@@ -149,7 +149,7 @@ struct PermissionRequestCommand: AsyncParsableCommand {
         extensionStatus: StatusCommand.extensionProbe()
       )
       try PermissionCommand.print(report)
-      let missing = targets.filter { report.state(of: $0) != "granted" }
+      let missing = targets.filter { report.state(of: $0) != .granted }
       guard missing.isEmpty else { throw CLIFailure.permissionStillMissing(missing) }
       CLIOutput.success(
         CLILocalized.text("cli.permission.request.granted", "The requested access is granted.")

@@ -104,14 +104,6 @@ extension ApplicationServiceServer {
     )
   }
 
-  /// Enables or disables virtual output suppression and reports success.
-  public func setSuppressOutput(_ suppress: Bool) async -> Bool {
-    do {
-      try await remappingRouter.setOutputSuppressed(suppress)
-      return true
-    } catch { return false }
-  }
-
   public func suspendController(
     vendorID: Int,
     productID: Int,

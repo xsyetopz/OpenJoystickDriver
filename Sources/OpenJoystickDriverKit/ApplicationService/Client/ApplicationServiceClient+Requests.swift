@@ -146,10 +146,6 @@ extension ApplicationServiceClient {
     )
   }
 
-  public func setSuppressOutput(_ suppress: Bool) async throws {
-    let _: Bool = try await call(.setSuppressOutput, LocalServiceRPCBoolArguments(value: suppress))
-  }
-
   public func getVirtualDeviceDiagnostics() async throws
     -> ApplicationServiceVirtualDeviceDiagnosticsPayload
   {

@@ -45,8 +45,8 @@ struct StatusReport: Encodable, Equatable {
   }
 
   struct Permissions: Encodable, Equatable {
-    let inputMonitoring: String
-    let accessibility: String
+    let inputMonitoring: PermissionManager.AccessState
+    let accessibility: PermissionManager.AccessState
   }
 
   struct VirtualDevice: Encodable, Equatable {
@@ -99,8 +99,8 @@ struct StatusReport: Encodable, Equatable {
     }
     service = Service(state: .running, version: payload.buildIdentity.semanticVersion)
     permissions = Permissions(
-      inputMonitoring: payload.inputMonitoring,
-      accessibility: payload.accessibility
+      inputMonitoring: PermissionManager.AccessState(status: payload.inputMonitoring),
+      accessibility: PermissionManager.AccessState(status: payload.accessibility)
     )
     virtualDevice = VirtualDevice(
       enabled: payload.userSpaceVirtualDeviceEnabled,

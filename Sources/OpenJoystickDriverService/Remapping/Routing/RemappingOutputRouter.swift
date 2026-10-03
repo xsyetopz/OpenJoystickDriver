@@ -290,23 +290,6 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
     await reconcileTickerWithEngine()
   }
 
-  func setOutputSuppressed(_ suppressed: Bool) async throws {
-    let snapshot = updateControls(outputSuppressed: suppressed)
-    try await applyControlsSnapshot(snapshot)
-  }
-
-  private func applyControlsSnapshot(_ snapshot: RemappingRoutingControls) async throws {
-    await updateOutputSuppression(controls: snapshot)
-    guard let lease = try outputLeaseIfOpen() else { return }
-    defer { lease.finish() }
-    let permit = lease.permit
-    do { try await core.apply(snapshot, requiring: permit) } catch {
-      await reconcileTickerWithEngine()
-      throw error
-    }
-    await reconcileTickerWithEngine()
-  }
-
   func tick(at uptimeNanoseconds: UInt64) async throws {
     guard let lease = try outputLeaseIfOpen() else { return }
     defer { lease.finish() }

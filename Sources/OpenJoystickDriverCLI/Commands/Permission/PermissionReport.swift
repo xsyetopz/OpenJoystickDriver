@@ -63,10 +63,10 @@ struct PermissionReport: Encodable, Equatable {
   struct Entry: Encodable, Equatable {
     let id: String
     let name: String
-    let state: String
+    let state: PermissionManager.AccessState
     let purpose: String
 
-    init(_ permission: PermissionID, state: String) {
+    init(_ permission: PermissionID, state: PermissionManager.AccessState) {
       id = permission.rawValue
       name = permission.name
       self.state = state
@@ -77,22 +77,22 @@ struct PermissionReport: Encodable, Equatable {
   let permissions: [Entry]
 
   init(snapshot: PermissionManager.Snapshot, extensionStatus: ExtensionStatus) {
-    let driverState: String
+    let driverState: PermissionManager.AccessState
     switch extensionStatus.registration {
-    case .active: driverState = PermissionManager.AccessState.granted.rawValue
-    case .inactive: driverState = PermissionManager.AccessState.denied.rawValue
-    case .absent, .unavailable: driverState = PermissionManager.AccessState.unknown.rawValue
+    case .active: driverState = .granted
+    case .inactive: driverState = .denied
+    case .absent, .unavailable: driverState = .unknown
     }
     permissions = [
-      Entry(.inputMonitoring, state: snapshot.inputMonitoring.rawValue),
-      Entry(.accessibility, state: snapshot.accessibility.rawValue),
+      Entry(.inputMonitoring, state: snapshot.inputMonitoring),
+      Entry(.accessibility, state: snapshot.accessibility),
       Entry(.driverExtension, state: driverState),
     ]
   }
 
-  func state(of permission: PermissionID) -> String {
-    permissions.first { $0.id == permission.rawValue }?.state ?? ""
+  func state(of permission: PermissionID) -> PermissionManager.AccessState {
+    permissions.first { $0.id == permission.rawValue }?.state ?? .unknown
   }
 
-  var plainRows: [[String]] { permissions.map { [$0.id, $0.state] } }
+  var plainRows: [[String]] { permissions.map { [$0.id, $0.state.rawValue] } }
 }

@@ -9,7 +9,6 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case sendControllerOutput
   case previewPhysicalColor
   case releasePhysicalColorPreview
-  case setSuppressOutput
   case getVirtualDeviceDiagnostics
   case setVirtualHIDProfileOverride
   case resetVirtualHIDProfileOverride

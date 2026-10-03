@@ -4,15 +4,23 @@ import OpenJoystickDriverKit
 
 /// The `--json` result of `ojd controller suspend`, `resume`, and `disconnect`.
 struct ControllerSessionReport: Encodable, Equatable {
+  /// The session after the command. Only `disconnect` reports `disconnected`.
+  enum Session: String, Encodable {
+    case active
+    case suspended
+    case disconnected
+  }
+
   let controller: String
-  let session: String
+  let session: Session
   let changed: Bool
 }
 
 private func printSession(_ report: ControllerSessionReport, message: String) throws {
   switch CLIContext.current.format {
   case .json: try CLIOutput.json(report)
-  case .plain: CLIOutput.plain([[report.controller, report.session, String(report.changed)]])
+  case .plain:
+    CLIOutput.plain([[report.controller, report.session.rawValue, String(report.changed)]])
   case .human: CLIOutput.success(message)
   }
 }
@@ -61,7 +69,7 @@ struct ControllerSuspendCommand: AsyncParsableCommand {
       try printSession(
         ControllerSessionReport(
           controller: device.runtimeIdentifier,
-          session: ControllerSessionState.suspended.rawValue,
+          session: .suspended,
           changed: result.succeeded
         ),
         message: result.succeeded
@@ -109,7 +117,7 @@ struct ControllerResumeCommand: AsyncParsableCommand {
       try printSession(
         ControllerSessionReport(
           controller: device.runtimeIdentifier,
-          session: ControllerSessionState.active.rawValue,
+          session: .active,
           changed: result.succeeded
         ),
         message: result.succeeded
@@ -164,7 +172,7 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
       try printSession(
         ControllerSessionReport(
           controller: device.runtimeIdentifier,
-          session: "disconnected",
+          session: .disconnected,
           changed: true
         ),
         message: CLILocalized.format(

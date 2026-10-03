@@ -51,7 +51,7 @@ A command that needs the service exits with code 69 when the service is not runn
 
 - Data goes to standard output. Progress messages, warnings, and errors go to standard error.
 - Human-readable output is translated and can change between releases. Do not parse it in scripts.
-- `--json` output is one JSON object. A command that streams, such as `ojd controller watch`, prints one object per line. Keys and values are stable identifiers and are never translated. New keys can appear in later releases. [`cli-output.schema.json`](../Resources/Schemas/cli-output.schema.json) describes the output of each command.
+- `--json` output is one JSON object. A command that streams, such as `ojd controller watch`, prints one object per line. Keys and values are stable identifiers and are never translated. [`cli-output.schema.json`](../Resources/Schemas/cli-output.schema.json) describes the output of each command. The schema is strict: it lists every key and value that its release prints, and rejects others. A later release can add keys, so validate output against the schema from the same release.
 - `--plain` output has one record per line, with tab-separated fields. The first field names the kind of record. Fields are stable identifiers and are never translated.
 - Errors use one format: `ojd: WHAT FAILED. HOW TO FIX IT.`
 - Color appears only on a terminal. `NO_COLOR`, `TERM=dumb`, and `--no-color` turn it off.
