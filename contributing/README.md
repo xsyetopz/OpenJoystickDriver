@@ -15,6 +15,7 @@ This directory holds the development notes and hardware-evidence records for Ope
 - [Controller Configuration Plan](development/controller-config-plan.md): User controller records, output templates, input layouts, and where configuration lives.
 - [CLI Redesign Plan](development/cli-redesign-plan.md): The `ojd` command tree, output contract, and exit codes that every app feature builds on.
 - [GUI Redesign Plan](development/gui-redesign-plan.md): The menu bar extra, main window, and Settings as a layer over the CLI, planned for macOS and later iPadOS and iOS.
+- [Public Endpoint Design](development/public-endpoint-design.md): The socket, handshake, and grants that let approved programs read controllers and drive a virtual gamepad.
 - [Controller Issue Audit](development/issue-audit.md): Implemented behavior versus observations on reported hardware.
 - [Menu-Bar And Settings UI Architecture](development/menu-bar-settings-architecture.md): The architecture decision for the menu-bar and settings UI.
 - [Reconcile A GitHub Release](development/releases.md): The procedure after the release commit and changelog are complete.
