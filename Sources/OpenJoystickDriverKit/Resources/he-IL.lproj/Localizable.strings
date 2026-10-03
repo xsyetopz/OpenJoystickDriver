@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "הצגת פרופילי מיפוי.";
 "cli.profile.list.empty" = "אין פרופילים. יש ליצור אחד באמצעות ״ojd profile create״.";
 "cli.profile.list.issue" = "השירות לא הצליח לטעון פרופיל שמור: %@";
+"cli.profile.list.recover_hint" = "אפשר לתקן אותם באמצעות ״ojd profile recover״.";
 "cli.profile.name" = "שם הפרופיל, 1 עד 80 תווים.";
+"cli.profile.recover.abstract" = "מסיר קובצי פרופיל פגומים ומאפס רשימת פרופילים פעילים פגומה.";
+"cli.profile.recover.confirm" = "להסיר את קובצי הפרופיל הפגומים ולאפס רשימת פרופילים פעילים פגומה?";
+"cli.profile.recover.discussion" = "פועל על כל בעיה ש-״ojd profile list״ מדווח עליה. השירות מגבה תחילה כל קובץ לצד המקור, בשם שמכיל ‎.backup-. מבקש אישור בטרמינל; אחרת דורש ‎--force.";
+"cli.profile.recover.none" = "אין קובצי פרופיל פגומים.";
+"cli.profile.recover.remove.done" = "קובץ הפרופיל הפגום של בעיה %@ הוסר.";
+"cli.profile.recover.remove.dry_run" = "קובץ הפרופיל הפגום של בעיה %@ יוסר.";
+"cli.profile.recover.reset.done" = "רשימת הפרופילים הפעילים אופסה.";
+"cli.profile.recover.reset.dry_run" = "רשימת הפרופילים הפעילים תאופס.";
 "cli.profile.rename.abstract" = "שינוי שם של פרופיל.";
 "cli.profile.rename.done" = "השם שונה ל-״%@״.";
 "cli.profile.rename.name" = "השם החדש, 1 עד 80 תווים.";

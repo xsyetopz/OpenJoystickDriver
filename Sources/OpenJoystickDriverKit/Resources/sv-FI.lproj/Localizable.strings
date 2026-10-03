@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Lista ommappningsprofiler.";
 "cli.profile.list.empty" = "Inga profiler. Skapa en med 'ojd profile create'.";
 "cli.profile.list.issue" = "Tjänsten kunde inte läsa in en sparad profil: %@";
+"cli.profile.list.recover_hint" = "Reparera dem med ”ojd profile recover”.";
 "cli.profile.name" = "Profilens namn, 1 till 80 tecken.";
+"cli.profile.recover.abstract" = "Tar bort skadade profilfiler och återställer en skadad lista över aktiva profiler.";
+"cli.profile.recover.confirm" = "Vill du ta bort de skadade profilfilerna och återställa en skadad lista över aktiva profiler?";
+"cli.profile.recover.discussion" = "Åtgärdar varje problem som ”ojd profile list” rapporterar. Tjänsten säkerhetskopierar först varje fil bredvid originalet under ett namn som innehåller .backup-. Frågar om bekräftelse i en terminal; annars krävs --force.";
+"cli.profile.recover.none" = "Inga skadade profilfiler.";
+"cli.profile.recover.remove.done" = "Den skadade profilfilen för problem %@ togs bort.";
+"cli.profile.recover.remove.dry_run" = "Skulle ta bort den skadade profilfilen för problem %@.";
+"cli.profile.recover.reset.done" = "Listan över aktiva profiler återställdes.";
+"cli.profile.recover.reset.dry_run" = "Skulle återställa listan över aktiva profiler.";
 "cli.profile.rename.abstract" = "Byt namn på en profil.";
 "cli.profile.rename.done" = "Bytte namn till '%@'.";
 "cli.profile.rename.name" = "Det nya namnet, 1 till 80 tecken.";

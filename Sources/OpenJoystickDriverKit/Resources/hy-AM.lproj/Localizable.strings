@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Թվարկել վերանշանակման պրոֆիլները։";
 "cli.profile.list.empty" = "Պրոֆիլներ չկան։ Ստեղծեք մեկը «ojd profile create»-ով։";
 "cli.profile.list.issue" = "Ծառայությունը չկարողացավ բեռնել պահված պրոֆիլը՝ %@";
+"cli.profile.list.recover_hint" = "Վերանորոգեք դրանք «ojd profile recover» հրամանով։";
 "cli.profile.name" = "Պրոֆիլի անունը՝ 1-ից մինչև 80 նիշ։";
+"cli.profile.recover.abstract" = "Հեռացնում է վնասված պրոֆիլի ֆայլերը և վերակայում է ակտիվ պրոֆիլների վնասված ցանկը։";
+"cli.profile.recover.confirm" = "Հեռացնե՞լ վնասված պրոֆիլի ֆայլերը և վերակայե՞լ ակտիվ պրոֆիլների վնասված ցանկը։";
+"cli.profile.recover.discussion" = "Գործում է յուրաքանչյուր խնդրի վրա, որի մասին զեկուցում է «ojd profile list»-ը։ Ծառայությունը նախ պահուստավորում է յուրաքանչյուր ֆայլ բնօրինակի կողքին՝ .backup- պարունակող անունով։ Տերմինալում հաստատում է հարցնում, այլապես պահանջվում է --force։";
+"cli.profile.recover.none" = "Վնասված պրոֆիլի ֆայլեր չկան։";
+"cli.profile.recover.remove.done" = "%@ խնդրի վնասված պրոֆիլի ֆայլը հեռացվեց։";
+"cli.profile.recover.remove.dry_run" = "%@ խնդրի վնասված պրոֆիլի ֆայլը կհեռացվեր։";
+"cli.profile.recover.reset.done" = "Ակտիվ պրոֆիլների ցանկը վերակայվեց։";
+"cli.profile.recover.reset.dry_run" = "Ակտիվ պրոֆիլների ցանկը կվերակայվեր։";
 "cli.profile.rename.abstract" = "Վերանվանել պրոֆիլը։";
 "cli.profile.rename.done" = "Վերանվանվեց «%@»։";
 "cli.profile.rename.name" = "Նոր անունը՝ 1-ից մինչև 80 նիշ։";

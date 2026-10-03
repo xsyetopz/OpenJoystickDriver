@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Sýna endurvörpunarsnið.";
 "cli.profile.list.empty" = "Engin snið. Búðu til eitt með „ojd profile create“.";
 "cli.profile.list.issue" = "Þjónustan gat ekki hlaðið vistuðu sniði: %@";
+"cli.profile.list.recover_hint" = "Lagaðu þau með „ojd profile recover“.";
 "cli.profile.name" = "Nafn sniðsins, 1 til 80 stafir.";
+"cli.profile.recover.abstract" = "Fjarlægir skemmdar sniðskrár og endurstillir skemmdan lista yfir virk snið.";
+"cli.profile.recover.confirm" = "Fjarlægja skemmdar sniðskrár og endurstilla skemmdan lista yfir virk snið?";
+"cli.profile.recover.discussion" = "Bregst við hverju vandamáli sem „ojd profile list“ tilkynnir. Þjónustan afritar fyrst hverja skrá við hlið upprunalegu skrárinnar undir nafni sem inniheldur .backup-. Biður um staðfestingu í skjáskel; annars þarf --force.";
+"cli.profile.recover.none" = "Engar skemmdar sniðskrár.";
+"cli.profile.recover.remove.done" = "Skemmda sniðskráin í vandamáli %@ var fjarlægð.";
+"cli.profile.recover.remove.dry_run" = "Myndi fjarlægja skemmdu sniðskrána í vandamáli %@.";
+"cli.profile.recover.reset.done" = "Listinn yfir virk snið var endurstilltur.";
+"cli.profile.recover.reset.dry_run" = "Myndi endurstilla listann yfir virk snið.";
 "cli.profile.rename.abstract" = "Endurnefna snið.";
 "cli.profile.rename.done" = "Endurnefnt sem „%@“.";
 "cli.profile.rename.name" = "Nýja nafnið, 1 til 80 stafir.";

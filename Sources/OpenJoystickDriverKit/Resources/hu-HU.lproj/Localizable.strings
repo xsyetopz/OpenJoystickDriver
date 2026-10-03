@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Átképezési profilok listázása.";
 "cli.profile.list.empty" = "Nincsenek profilok. Hozzon létre egyet az 'ojd profile create' paranccsal.";
 "cli.profile.list.issue" = "A szolgáltatás nem tudott betölteni egy mentett profilt: %@";
+"cli.profile.list.recover_hint" = "Javítsa őket a következővel: „ojd profile recover”.";
 "cli.profile.name" = "A profil neve, 1–80 karakter.";
+"cli.profile.recover.abstract" = "Eltávolítja a sérült profilfájlokat, és alaphelyzetbe állítja a sérült aktív profillistát.";
+"cli.profile.recover.confirm" = "Eltávolítja a sérült profilfájlokat, és alaphelyzetbe állítja a sérült aktív profillistát?";
+"cli.profile.recover.discussion" = "Minden olyan hibán eljár, amelyet az „ojd profile list” jelent. A szolgáltatás előbb biztonsági másolatot készít minden fájlról az eredeti mellett, .backup- tartalmú néven. Terminálon megerősítést kér; egyébként --force szükséges.";
+"cli.profile.recover.none" = "Nincs sérült profilfájl.";
+"cli.profile.recover.remove.done" = "A(z) %@ hiba sérült profilfájlja el lett távolítva.";
+"cli.profile.recover.remove.dry_run" = "Eltávolítaná a(z) %@ hiba sérült profilfájlját.";
+"cli.profile.recover.reset.done" = "Az aktív profillista alaphelyzetbe lett állítva.";
+"cli.profile.recover.reset.dry_run" = "Alaphelyzetbe állítaná az aktív profillistát.";
 "cli.profile.rename.abstract" = "Profil átnevezése.";
 "cli.profile.rename.done" = "Új név: '%@'.";
 "cli.profile.rename.name" = "Az új név, 1–80 karakter.";

@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "रीमैपिंग प्रोफ़ाइल की सूची दिखाएँ।";
 "cli.profile.list.empty" = "कोई प्रोफ़ाइल नहीं है। 'ojd profile create' से बनाएँ।";
 "cli.profile.list.issue" = "सेवा सहेजी गई प्रोफ़ाइल लोड नहीं कर सकी: %@";
+"cli.profile.list.recover_hint" = "इन्हें “ojd profile recover” से ठीक करें।";
 "cli.profile.name" = "प्रोफ़ाइल का नाम, 1 से 80 वर्ण।";
+"cli.profile.recover.abstract" = "क्षतिग्रस्त प्रोफ़ाइल फ़ाइलें हटाएँ और क्षतिग्रस्त सक्रिय प्रोफ़ाइल सूची रीसेट करें।";
+"cli.profile.recover.confirm" = "क्या क्षतिग्रस्त प्रोफ़ाइल फ़ाइलें हटानी हैं और क्षतिग्रस्त सक्रिय प्रोफ़ाइल सूची रीसेट करनी है?";
+"cli.profile.recover.discussion" = "“ojd profile list” द्वारा रिपोर्ट की गई हर समस्या पर कार्रवाई करता है। सेवा पहले हर फ़ाइल का बैकअप मूल फ़ाइल के पास ऐसे नाम से बनाती है जिसमें .backup- हो। टर्मिनल पर पुष्टि माँगता है; अन्यथा --force चाहिए।";
+"cli.profile.recover.none" = "कोई क्षतिग्रस्त प्रोफ़ाइल फ़ाइल नहीं है।";
+"cli.profile.recover.remove.done" = "समस्या %@ की क्षतिग्रस्त प्रोफ़ाइल फ़ाइल हटा दी गई।";
+"cli.profile.recover.remove.dry_run" = "समस्या %@ की क्षतिग्रस्त प्रोफ़ाइल फ़ाइल हटाई जाएगी।";
+"cli.profile.recover.reset.done" = "सक्रिय प्रोफ़ाइल सूची रीसेट कर दी गई।";
+"cli.profile.recover.reset.dry_run" = "सक्रिय प्रोफ़ाइल सूची रीसेट की जाएगी।";
 "cli.profile.rename.abstract" = "प्रोफ़ाइल का नाम बदलें।";
 "cli.profile.rename.done" = "नाम बदलकर “%@” किया गया।";
 "cli.profile.rename.name" = "नया नाम, 1 से 80 वर्ण।";

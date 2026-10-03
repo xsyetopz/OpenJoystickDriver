@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Loetle ümberseadistusprofiilid.";
 "cli.profile.list.empty" = "Profiile pole. Loo üks käsuga 'ojd profile create'.";
 "cli.profile.list.issue" = "Teenus ei saanud salvestatud profiili laadida: %@";
+"cli.profile.list.recover_hint" = "Paranda need käsuga „ojd profile recover“.";
 "cli.profile.name" = "Profiili nimi, 1 kuni 80 märki.";
+"cli.profile.recover.abstract" = "Eemaldab kahjustatud profiilifailid ja lähtestab kahjustatud aktiivsete profiilide loendi.";
+"cli.profile.recover.confirm" = "Kas eemaldada kahjustatud profiilifailid ja lähtestada kahjustatud aktiivsete profiilide loend?";
+"cli.profile.recover.discussion" = "Tegutseb iga probleemi kallal, mida „ojd profile list“ teatab. Teenus varundab esmalt iga faili algse kõrvale nimega, mis sisaldab .backup-. Küsib terminalis kinnitust; muidu vajab --force.";
+"cli.profile.recover.none" = "Kahjustatud profiilifaile pole.";
+"cli.profile.recover.remove.done" = "Probleemi %@ kahjustatud profiilifail eemaldati.";
+"cli.profile.recover.remove.dry_run" = "Probleemi %@ kahjustatud profiilifail eemaldataks.";
+"cli.profile.recover.reset.done" = "Aktiivsete profiilide loend lähtestati.";
+"cli.profile.recover.reset.dry_run" = "Aktiivsete profiilide loend lähtestataks.";
 "cli.profile.rename.abstract" = "Nimeta profiil ümber.";
 "cli.profile.rename.done" = "Uus nimi on '%@'.";
 "cli.profile.rename.name" = "Uus nimi, 1 kuni 80 märki.";

@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Toon toewijzingsprofielen.";
 "cli.profile.list.empty" = "Geen profielen. Maak er een met ‘ojd profile create’.";
 "cli.profile.list.issue" = "De voorziening kon een bewaard profiel niet laden: %@";
+"cli.profile.list.recover_hint" = "Herstel ze met ‘ojd profile recover’.";
 "cli.profile.name" = "De profielnaam, 1 tot 80 tekens.";
+"cli.profile.recover.abstract" = "Verwijdert beschadigde profielbestanden en zet een beschadigde lijst met actieve profielen terug.";
+"cli.profile.recover.confirm" = "De beschadigde profielbestanden verwijderen en een beschadigde lijst met actieve profielen terugzetten?";
+"cli.profile.recover.discussion" = "Handelt elk probleem af dat ‘ojd profile list’ meldt. De voorziening maakt eerst een reservekopie van elk bestand naast het origineel, onder een naam die .backup- bevat. Vraagt in een terminal om bevestiging; anders is --force nodig.";
+"cli.profile.recover.none" = "Geen beschadigde profielbestanden.";
+"cli.profile.recover.remove.done" = "Het beschadigde profielbestand van probleem %@ is verwijderd.";
+"cli.profile.recover.remove.dry_run" = "Zou het beschadigde profielbestand van probleem %@ verwijderen.";
+"cli.profile.recover.reset.done" = "De lijst met actieve profielen is teruggezet.";
+"cli.profile.recover.reset.dry_run" = "Zou de lijst met actieve profielen terugzetten.";
 "cli.profile.rename.abstract" = "Hernoem een profiel.";
 "cli.profile.rename.done" = "Hernoemd naar ‘%@’.";
 "cli.profile.rename.name" = "De nieuwe naam, 1 tot 80 tekens.";

@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "列出重映射配置文件。";
 "cli.profile.list.empty" = "没有配置文件。请用 'ojd profile create' 创建。";
 "cli.profile.list.issue" = "服务无法加载已保存的配置文件：%@";
+"cli.profile.list.recover_hint" = "可使用 “ojd profile recover” 修复。";
 "cli.profile.name" = "配置文件名称，1 到 80 个字符。";
+"cli.profile.recover.abstract" = "移除损坏的配置文件，并重置损坏的活动配置文件列表。";
+"cli.profile.recover.confirm" = "要移除损坏的配置文件并重置损坏的活动配置文件列表吗？";
+"cli.profile.recover.discussion" = "会处理 “ojd profile list” 报告的每个问题。服务会先在原文件旁以包含 .backup- 的名称备份每个文件。在终端中会请求确认；否则需要 --force。";
+"cli.profile.recover.none" = "没有损坏的配置文件。";
+"cli.profile.recover.remove.done" = "已移除问题 %@ 的损坏配置文件。";
+"cli.profile.recover.remove.dry_run" = "将会移除问题 %@ 的损坏配置文件。";
+"cli.profile.recover.reset.done" = "已重置活动配置文件列表。";
+"cli.profile.recover.reset.dry_run" = "将会重置活动配置文件列表。";
 "cli.profile.rename.abstract" = "重命名配置文件。";
 "cli.profile.rename.done" = "已重命名为“%@”。";
 "cli.profile.rename.name" = "新名称，1 到 80 个字符。";

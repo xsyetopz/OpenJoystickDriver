@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Қайта тағайындау профильдерін тізімдеу.";
 "cli.profile.list.empty" = "Профильдер жоқ. «ojd profile create» арқылы біреуін жасаңыз.";
 "cli.profile.list.issue" = "Қызмет сақталған профильді жүктей алмады: %@";
+"cli.profile.list.recover_hint" = "Оларды «ojd profile recover» арқылы жөндеңіз.";
 "cli.profile.name" = "Профиль атауы, 1-ден 80 таңбаға дейін.";
+"cli.profile.recover.abstract" = "Зақымдалған профиль файлдарын жояды және зақымдалған белсенді профильдер тізімін қалпына келтіреді.";
+"cli.profile.recover.confirm" = "Зақымдалған профиль файлдары жойылып, зақымдалған белсенді профильдер тізімі қалпына келтірілсін бе?";
+"cli.profile.recover.discussion" = "«ojd profile list» хабарлайтын әр мәселе бойынша әрекет етеді. Қызмет алдымен әр файлдың сақтық көшірмесін түпнұсқаның жанында .backup- бар атаумен жасайды. Терминалда растауды сұрайды; әйтпесе --force қажет.";
+"cli.profile.recover.none" = "Зақымдалған профиль файлдары жоқ.";
+"cli.profile.recover.remove.done" = "%@ мәселесінің зақымдалған профиль файлы жойылды.";
+"cli.profile.recover.remove.dry_run" = "%@ мәселесінің зақымдалған профиль файлы жойылар еді.";
+"cli.profile.recover.reset.done" = "Белсенді профильдер тізімі қалпына келтірілді.";
+"cli.profile.recover.reset.dry_run" = "Белсенді профильдер тізімі қалпына келтірілер еді.";
 "cli.profile.rename.abstract" = "Профильді қайта атау.";
 "cli.profile.rename.done" = "«%@» деп қайта аталды.";
 "cli.profile.rename.name" = "Жаңа атау, 1-ден 80 таңбаға дейін.";

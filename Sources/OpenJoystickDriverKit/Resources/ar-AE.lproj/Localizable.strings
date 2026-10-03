@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "اعرض ملفات تعريف إعادة التعيين.";
 "cli.profile.list.empty" = "لا توجد ملفات تعريف. أنشئ واحدًا باستخدام «ojd profile create».";
 "cli.profile.list.issue" = "تعذّر على الخدمة تحميل ملف تعريف محفوظ: %@";
+"cli.profile.list.recover_hint" = "أصلحها باستخدام «ojd profile recover».";
 "cli.profile.name" = "اسم ملف التعريف، من 1 إلى 80 حرفًا.";
+"cli.profile.recover.abstract" = "احذف ملفات التعريف التالفة وأعد ضبط قائمة ملفات التعريف النشطة التالفة.";
+"cli.profile.recover.confirm" = "هل تريد حذف ملفات التعريف التالفة وإعادة ضبط قائمة ملفات التعريف النشطة التالفة؟";
+"cli.profile.recover.discussion" = "يعمل على كل مشكلة يبلغ عنها «ojd profile list». تنشئ الخدمة أولًا نسخة احتياطية من كل ملف بجوار الأصل، باسم يحتوي على .backup-. يطلب تأكيدًا في الطرفية؛ وإلا فهو يحتاج إلى --force.";
+"cli.profile.recover.none" = "لا توجد ملفات تعريف تالفة.";
+"cli.profile.recover.remove.done" = "تمت إزالة ملف التعريف التالف للمشكلة %@.";
+"cli.profile.recover.remove.dry_run" = "سيتم حذف ملف التعريف التالف للمشكلة %@.";
+"cli.profile.recover.reset.done" = "تمت إعادة ضبط قائمة ملفات التعريف النشطة.";
+"cli.profile.recover.reset.dry_run" = "ستتم إعادة ضبط قائمة ملفات التعريف النشطة.";
 "cli.profile.rename.abstract" = "أعد تسمية ملف تعريف.";
 "cli.profile.rename.done" = "تمت إعادة التسمية إلى «%@».";
 "cli.profile.rename.name" = "الاسم الجديد، من 1 إلى 80 حرفًا.";

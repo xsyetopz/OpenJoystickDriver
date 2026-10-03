@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Uzskaitīt pārkartēšanas profilus.";
 "cli.profile.list.empty" = "Profilu nav. Izveidojiet vienu ar „ojd profile create“.";
 "cli.profile.list.issue" = "Pakalpojums nevarēja ielādēt saglabātu profilu: %@";
+"cli.profile.list.recover_hint" = "Salabojiet tos ar „ojd profile recover“.";
 "cli.profile.name" = "Profila nosaukums, no 1 līdz 80 rakstzīmēm.";
+"cli.profile.recover.abstract" = "Noņem bojātus profilu failus un atiestata bojātu aktīvo profilu sarakstu.";
+"cli.profile.recover.confirm" = "Vai noņemt bojātos profilu failus un atiestatīt bojātu aktīvo profilu sarakstu?";
+"cli.profile.recover.discussion" = "Darbojas ar katru problēmu, ko ziņo „ojd profile list“. Pakalpojums vispirms izveido katra faila dublējumu blakus oriģinālam ar nosaukumu, kas satur .backup-. Terminālī prasa apstiprinājumu; citādi nepieciešams --force.";
+"cli.profile.recover.none" = "Nav bojātu profilu failu.";
+"cli.profile.recover.remove.done" = "Problēmas %@ bojātais profila fails noņemts.";
+"cli.profile.recover.remove.dry_run" = "Tiktu noņemts problēmas %@ bojātais profila fails.";
+"cli.profile.recover.reset.done" = "Aktīvo profilu saraksts atiestatīts.";
+"cli.profile.recover.reset.dry_run" = "Tiktu atiestatīts aktīvo profilu saraksts.";
 "cli.profile.rename.abstract" = "Pārdēvēt profilu.";
 "cli.profile.rename.done" = "Pārdēvēts par „%@“.";
 "cli.profile.rename.name" = "Jaunais nosaukums, no 1 līdz 80 rakstzīmēm.";

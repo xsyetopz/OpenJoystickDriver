@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Дахин оноох профайлуудыг жагсаах.";
 "cli.profile.list.empty" = "Профайл байхгүй. «ojd profile create»-ээр нэгийг үүсгэнэ үү.";
 "cli.profile.list.issue" = "Үйлчилгээ хадгалсан профайлыг ачаалж чадсангүй: %@";
+"cli.profile.list.recover_hint" = "Тэдгээрийг «ojd profile recover» командаар засна уу.";
 "cli.profile.name" = "Профайлын нэр, 1-ээс 80 тэмдэгт.";
+"cli.profile.recover.abstract" = "Гэмтсэн профайл файлуудыг устгаж, гэмтсэн идэвхтэй профайлуудын жагсаалтыг дахин тохируулна.";
+"cli.profile.recover.confirm" = "Гэмтсэн профайл файлуудыг устгаж, гэмтсэн идэвхтэй профайлуудын жагсаалтыг дахин тохируулах уу?";
+"cli.profile.recover.discussion" = "«ojd profile list»-ын мэдээлсэн асуудал бүр дээр ажиллана. Үйлчилгээ эхлээд файл бүрийг эх хувийн хажууд .backup- агуулсан нэрээр нөөцлөнө. Терминал дээр баталгаажуулалт асууна; эс бөгөөс --force шаардлагатай.";
+"cli.profile.recover.none" = "Гэмтсэн профайл файл алга.";
+"cli.profile.recover.remove.done" = "%@ асуудлын гэмтсэн профайл файлыг устгасан.";
+"cli.profile.recover.remove.dry_run" = "%@ асуудлын гэмтсэн профайл файлыг устгах байсан.";
+"cli.profile.recover.reset.done" = "Идэвхтэй профайлуудын жагсаалтыг дахин тохируулсан.";
+"cli.profile.recover.reset.dry_run" = "Идэвхтэй профайлуудын жагсаалтыг дахин тохируулах байсан.";
 "cli.profile.rename.abstract" = "Профайлыг дахин нэрлэх.";
 "cli.profile.rename.done" = "«%@» болгож нэрлэлээ.";
 "cli.profile.rename.name" = "Шинэ нэр, 1-ээс 80 тэмдэгт.";

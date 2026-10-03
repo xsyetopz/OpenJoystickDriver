@@ -120,6 +120,41 @@ struct ProfileCommandTests {
   }
 
   @Test
+  func recoverActsOnEachIssueAndNeedsForceWithoutATerminal() async throws {
+    let damaged = ApplicationServiceRemappingProfileIssue(id: UUID(), message: "damaged")
+    let selections = ApplicationServiceRemappingProfileIssue(
+      id: UUID(),
+      kind: .unusableLibrary,
+      message: "selections"
+    )
+    let library = FakeProfileLibrary([], issues: [damaged, selections])
+    let service = try Self.service(library)
+
+    let listed = await service.run(["profile", "list"])
+    let refused = await service.run(["profile", "recover", "--no-input"])
+    let dryRun = await service.run(["profile", "recover", "-n", "--json"])
+    #expect(library.storedIssues.count == 2)
+    let recovered = await service.run(["profile", "recover", "-f", "--json"])
+    let again = await service.run(["profile", "recover", "-f"])
+
+    #expect(listed.standardError.contains("ojd profile recover"))
+    #expect(refused.code == 64)
+    #expect(refused.standardError.contains("--force"))
+    #expect(dryRun.code == 0, "\(dryRun.standardError)")
+    #expect(try dryRun.json()["dryRun"] as? Bool == true)
+    #expect(recovered.code == 0, "\(recovered.standardError)")
+    let ids = try #require(try recovered.json()["recovered"] as? [[String: Any]]).map {
+      $0["id"] as? String
+    }
+    #expect(ids == [damaged.id.uuidString, selections.id.uuidString])
+    #expect(library.storedIssues.isEmpty)
+    #expect(service.arguments(of: .deleteDamagedRemappingProfile).count == 1)
+    #expect(service.arguments(of: .resetRemappingProfileLibrary).count == 1)
+    #expect(again.code == 0, "\(again.standardError)")
+    #expect(again.standardOutput.contains("No damaged profile files."))
+  }
+
+  @Test
   func activateRefusesAProfileThatBlocksAllInputUnlessAllowed() async throws {
     let empty = FakeProfileLibrary.profile("Empty", virtualGamepad: .mapped)
     let library = FakeProfileLibrary([empty])

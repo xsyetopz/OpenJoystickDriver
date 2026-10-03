@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Zerrendatu birmapatze-profilak.";
 "cli.profile.list.empty" = "Ez dago profilik. Sortu bat «ojd profile create» komandoarekin.";
 "cli.profile.list.issue" = "Zerbitzuak ezin izan du gordetako profil bat kargatu: %@";
+"cli.profile.list.recover_hint" = "Konpondu itzazu «ojd profile recover» erabiliz.";
 "cli.profile.name" = "Profilaren izena, 1etik 80 karakterera.";
+"cli.profile.recover.abstract" = "Kendu profil-fitxategi hondatuak eta berrezarri profil aktiboen zerrenda hondatua.";
+"cli.profile.recover.confirm" = "Profil-fitxategi hondatuak kendu eta profil aktiboen zerrenda hondatua berrezarri nahi duzu?";
+"cli.profile.recover.discussion" = "«ojd profile list» komandoak jakinarazten duen arazo bakoitzean jarduten du. Zerbitzuak lehenik fitxategi bakoitzaren babeskopia egiten du jatorrizkoaren ondoan, .backup- duen izen batekin. Terminalean berrespena eskatzen du; bestela --force behar du.";
+"cli.profile.recover.none" = "Ez dago profil-fitxategi hondaturik.";
+"cli.profile.recover.remove.done" = "%@ arazoko profil-fitxategi hondatua kendu da.";
+"cli.profile.recover.remove.dry_run" = "%@ arazoko profil-fitxategi hondatua kenduko litzateke.";
+"cli.profile.recover.reset.done" = "Profil aktiboen zerrenda berrezarri da.";
+"cli.profile.recover.reset.dry_run" = "Profil aktiboen zerrenda berrezarriko litzateke.";
 "cli.profile.rename.abstract" = "Aldatu profil baten izena.";
 "cli.profile.rename.done" = "«%@» izenarekin berrizendatu da.";
 "cli.profile.rename.name" = "Izen berria, 1etik 80 karakterera.";

@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "የዳግም ምደባ መገለጫዎችን ይዘርዝሩ።";
 "cli.profile.list.empty" = "መገለጫ የለም። በ«ojd profile create» አንዱን ይፍጠሩ።";
 "cli.profile.list.issue" = "አገልግሎቱ የተቀመጠ መገለጫ መጫን አልቻለም፦ %@";
+"cli.profile.list.recover_hint" = "በ«ojd profile recover» ይጠግኗቸው።";
 "cli.profile.name" = "የመገለጫው ስም፣ ከ1 እስከ 80 ቁምፊዎች።";
+"cli.profile.recover.abstract" = "የተበላሹ የመገለጫ ፋይሎችን ያስወግዱ እና የተበላሸ የንቁ መገለጫዎች ዝርዝርን ዳግም ያስጀምሩ።";
+"cli.profile.recover.confirm" = "የተበላሹትን የመገለጫ ፋይሎች ያስወግዱ እና የተበላሸ የንቁ መገለጫዎች ዝርዝርን ዳግም ያስጀምሩ?";
+"cli.profile.recover.discussion" = "«ojd profile list» በሚያሳያቸው እያንዳንዱ ችግር ላይ ይሰራል። አገልግሎቱ መጀመሪያ እያንዳንዱን ፋይል ከመጀመሪያው አጠገብ .backup- የያዘ ስም ባለው ቅጂ ይደግፋል። በተርሚናል ላይ ማረጋገጫ ይጠይቃል፤ ካልሆነ --force ያስፈልገዋል።";
+"cli.profile.recover.none" = "የተበላሹ የመገለጫ ፋይሎች የሉም።";
+"cli.profile.recover.remove.done" = "የችግር %@ የተበላሸ የመገለጫ ፋይል ተወግዷል።";
+"cli.profile.recover.remove.dry_run" = "የችግር %@ የተበላሸ የመገለጫ ፋይል ይወገድ ነበር።";
+"cli.profile.recover.reset.done" = "የንቁ መገለጫዎች ዝርዝር ዳግም ተጀምሯል።";
+"cli.profile.recover.reset.dry_run" = "የንቁ መገለጫዎች ዝርዝር ዳግም ይጀመር ነበር።";
 "cli.profile.rename.abstract" = "መገለጫን እንደገና ይሰይሙ።";
 "cli.profile.rename.done" = "ወደ «%@» ተሰይሟል።";
 "cli.profile.rename.name" = "አዲሱ ስም፣ ከ1 እስከ 80 ቁምፊዎች።";

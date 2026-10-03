@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Yeniden atama profillerini listeler.";
 "cli.profile.list.empty" = "Profil yok. “ojd profile create” ile bir tane oluşturun.";
 "cli.profile.list.issue" = "Servis kaydedilmiş bir profili yükleyemedi: %@";
+"cli.profile.list.recover_hint" = "Bunları “ojd profile recover” ile onarın.";
 "cli.profile.name" = "Profil adı, 1 ile 80 karakter.";
+"cli.profile.recover.abstract" = "Hasarlı profil dosyalarını kaldırır ve hasarlı etkin profil listesini sıfırlar.";
+"cli.profile.recover.confirm" = "Hasarlı profil dosyaları kaldırılsın ve hasarlı etkin profil listesi sıfırlansın mı?";
+"cli.profile.recover.discussion" = "“ojd profile list” tarafından bildirilen her sorun için işlem yapar. Servis önce her dosyayı özgün dosyanın yanına .backup- içeren bir adla yedekler. Terminalde onay ister; aksi halde --force gerekir.";
+"cli.profile.recover.none" = "Hasarlı profil dosyası yok.";
+"cli.profile.recover.remove.done" = "%@ sorununun hasarlı profil dosyası kaldırıldı.";
+"cli.profile.recover.remove.dry_run" = "%@ sorununun hasarlı profil dosyası kaldırılırdı.";
+"cli.profile.recover.reset.done" = "Etkin profil listesi sıfırlandı.";
+"cli.profile.recover.reset.dry_run" = "Etkin profil listesi sıfırlanırdı.";
 "cli.profile.rename.abstract" = "Bir profilin adını değiştirir.";
 "cli.profile.rename.done" = "Adı “%@” olarak değiştirildi.";
 "cli.profile.rename.name" = "Yeni ad, 1 ile 80 karakter.";

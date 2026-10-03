@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Наброј профиле мапирања.";
 "cli.profile.list.empty" = "Нема профила. Направите један командом „ojd profile create“.";
 "cli.profile.list.issue" = "Услуга није могла да учита сачуван профил: %@";
+"cli.profile.list.recover_hint" = "Поправите их помоћу „ojd profile recover“.";
 "cli.profile.name" = "Име профила, од 1 до 80 знакова.";
+"cli.profile.recover.abstract" = "Уклања оштећене датотеке профила и ресетује оштећену листу активних профила.";
+"cli.profile.recover.confirm" = "Уклонити оштећене датотеке профила и ресетовати оштећену листу активних профила?";
+"cli.profile.recover.discussion" = "Делује на сваки проблем који пријави „ojd profile list“. Услуга прво прави резервну копију сваке датотеке поред оригинала под именом које садржи .backup-. На терминалу тражи потврду; иначе захтева --force.";
+"cli.profile.recover.none" = "Нема оштећених датотека профила.";
+"cli.profile.recover.remove.done" = "Оштећена датотека профила проблема %@ је уклоњена.";
+"cli.profile.recover.remove.dry_run" = "Оштећена датотека профила проблема %@ била би уклоњена.";
+"cli.profile.recover.reset.done" = "Листа активних профила је ресетована.";
+"cli.profile.recover.reset.dry_run" = "Листа активних профила била би ресетована.";
 "cli.profile.rename.abstract" = "Преименуј профил.";
 "cli.profile.rename.done" = "Преименовано у „%@“.";
 "cli.profile.rename.name" = "Ново име, од 1 до 80 знакова.";

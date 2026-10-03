@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "فهرست نمایه‌های بازتخصیص.";
 "cli.profile.list.empty" = "نمایه‌ای نیست. با «ojd profile create» یکی بسازید.";
 "cli.profile.list.issue" = "سرویس نتوانست یک نمایهٔ ذخیره‌شده را بارگذاری کند: %@";
+"cli.profile.list.recover_hint" = "آن‌ها را با «ojd profile recover» ترمیم کنید.";
 "cli.profile.name" = "نام نمایه، 1 تا 80 نویسه.";
+"cli.profile.recover.abstract" = "پرونده‌های نمایهٔ آسیب‌دیده را حذف می‌کند و فهرست نمایه‌های فعال آسیب‌دیده را بازنشانی می‌کند.";
+"cli.profile.recover.confirm" = "پرونده‌های نمایهٔ آسیب‌دیده حذف شوند و فهرست نمایه‌های فعال آسیب‌دیده بازنشانی شود؟";
+"cli.profile.recover.discussion" = "روی هر مشکلی که «ojd profile list» گزارش می‌کند عمل می‌کند. سرویس ابتدا از هر پرونده در کنار نسخهٔ اصلی با نامی حاوی .backup- نسخهٔ پشتیبان می‌گیرد. در ترمینال تأیید می‌خواهد؛ در غیر این صورت به --force نیاز دارد.";
+"cli.profile.recover.none" = "هیچ پروندهٔ نمایهٔ آسیب‌دیده‌ای وجود ندارد.";
+"cli.profile.recover.remove.done" = "پروندهٔ نمایهٔ آسیب‌دیدهٔ مشکل %@ حذف شد.";
+"cli.profile.recover.remove.dry_run" = "پروندهٔ نمایهٔ آسیب‌دیدهٔ مشکل %@ حذف خواهد شد.";
+"cli.profile.recover.reset.done" = "فهرست نمایه‌های فعال بازنشانی شد.";
+"cli.profile.recover.reset.dry_run" = "فهرست نمایه‌های فعال بازنشانی خواهد شد.";
 "cli.profile.rename.abstract" = "تغییر نام یک نمایه.";
 "cli.profile.rename.done" = "نام به «%@» تغییر کرد.";
 "cli.profile.rename.name" = "نام جدید، 1 تا 80 نویسه.";

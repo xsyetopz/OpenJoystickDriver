@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Listează profilurile de remapare.";
 "cli.profile.list.empty" = "Niciun profil. Creați unul cu «ojd profile create».";
 "cli.profile.list.issue" = "Serviciul nu a putut încărca un profil salvat: %@";
+"cli.profile.list.recover_hint" = "Reparați-le cu „ojd profile recover”.";
 "cli.profile.name" = "Numele profilului, de la 1 la 80 de caractere.";
+"cli.profile.recover.abstract" = "Elimină fișierele de profil deteriorate și resetează o listă de profiluri active deteriorată.";
+"cli.profile.recover.confirm" = "Eliminați fișierele de profil deteriorate și resetați o listă de profiluri active deteriorată?";
+"cli.profile.recover.discussion" = "Acționează asupra fiecărei probleme raportate de „ojd profile list”. Serviciul face mai întâi o copie de rezervă a fiecărui fișier lângă original, cu un nume care conține .backup-. Cere confirmare într-un terminal; în caz contrar necesită --force.";
+"cli.profile.recover.none" = "Niciun fișier de profil deteriorat.";
+"cli.profile.recover.remove.done" = "Fișierul de profil deteriorat al problemei %@ a fost eliminat.";
+"cli.profile.recover.remove.dry_run" = "Fișierul de profil deteriorat al problemei %@ ar fi eliminat.";
+"cli.profile.recover.reset.done" = "Lista profilurilor active a fost resetată.";
+"cli.profile.recover.reset.dry_run" = "Lista profilurilor active ar fi resetată.";
 "cli.profile.rename.abstract" = "Redenumește un profil.";
 "cli.profile.rename.done" = "S-a redenumit în «%@».";
 "cli.profile.rename.name" = "Noul nume, de la 1 la 80 de caractere.";

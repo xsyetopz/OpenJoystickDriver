@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Neubelegungsprofile auflisten.";
 "cli.profile.list.empty" = "Keine Profile. Erstelle eines mit „ojd profile create“.";
 "cli.profile.list.issue" = "Der Dienst konnte ein gesichertes Profil nicht laden: %@";
+"cli.profile.list.recover_hint" = "Repariere sie mit „ojd profile recover“.";
 "cli.profile.name" = "Der Profilname, 1 bis 80 Zeichen.";
+"cli.profile.recover.abstract" = "Entfernt beschädigte Profildateien und setzt eine beschädigte Liste der aktiven Profile zurück.";
+"cli.profile.recover.confirm" = "Die beschädigten Profildateien entfernen und eine beschädigte Liste der aktiven Profile zurücksetzen?";
+"cli.profile.recover.discussion" = "Behandelt jedes Problem, das „ojd profile list“ meldet. Der Dienst sichert zuerst jede Datei neben dem Original unter einem Namen, der .backup- enthält. Fragt im Terminal nach Bestätigung; andernfalls ist --force nötig.";
+"cli.profile.recover.none" = "Keine beschädigten Profildateien.";
+"cli.profile.recover.remove.done" = "Die beschädigte Profildatei von Problem %@ wurde entfernt.";
+"cli.profile.recover.remove.dry_run" = "Die beschädigte Profildatei von Problem %@ würde entfernt.";
+"cli.profile.recover.reset.done" = "Die Liste der aktiven Profile wurde zurückgesetzt.";
+"cli.profile.recover.reset.dry_run" = "Die Liste der aktiven Profile würde zurückgesetzt.";
 "cli.profile.rename.abstract" = "Ein Profil umbenennen.";
 "cli.profile.rename.done" = "Umbenannt in „%@“.";
 "cli.profile.rename.name" = "Der neue Name, 1 bis 80 Zeichen.";

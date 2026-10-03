@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Llista els perfils de reassignament.";
 "cli.profile.list.empty" = "Cap perfil. Creeu-ne un amb 'ojd profile create'.";
 "cli.profile.list.issue" = "El servei no ha pogut carregar un perfil desat: %@";
+"cli.profile.list.recover_hint" = "Repareu-los amb «ojd profile recover».";
 "cli.profile.name" = "El nom del perfil, d’1 a 80 caràcters.";
+"cli.profile.recover.abstract" = "Elimina els fitxers de perfil malmesos i restableix una llista de perfils actius malmesa.";
+"cli.profile.recover.confirm" = "Voleu eliminar els fitxers de perfil malmesos i restablir una llista de perfils actius malmesa?";
+"cli.profile.recover.discussion" = "Actua sobre cada incidència que «ojd profile list» informa. El servei fa primer una còpia de seguretat de cada fitxer al costat de l’original, amb un nom que conté .backup-. Demana confirmació en un terminal; en cas contrari necessita --force.";
+"cli.profile.recover.none" = "No hi ha fitxers de perfil malmesos.";
+"cli.profile.recover.remove.done" = "S’ha eliminat el fitxer de perfil malmès de la incidència %@.";
+"cli.profile.recover.remove.dry_run" = "S’eliminaria el fitxer de perfil malmès de la incidència %@.";
+"cli.profile.recover.reset.done" = "S’ha restablert la llista de perfils actius.";
+"cli.profile.recover.reset.dry_run" = "Es restabliria la llista de perfils actius.";
 "cli.profile.rename.abstract" = "Canvia el nom d’un perfil.";
 "cli.profile.rename.done" = "S’ha canviat el nom a '%@'.";
 "cli.profile.rename.name" = "El nom nou, d’1 a 80 caràcters.";

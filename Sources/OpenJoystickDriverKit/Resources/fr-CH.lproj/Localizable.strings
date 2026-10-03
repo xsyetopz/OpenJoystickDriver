@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Liste les profils de remappage.";
 "cli.profile.list.empty" = "Aucun profil. Créez-en un avec 'ojd profile create'.";
 "cli.profile.list.issue" = "Le service n’a pas pu charger un profil enregistré : %@";
+"cli.profile.list.recover_hint" = "Réparez-les avec « ojd profile recover ».";
 "cli.profile.name" = "Le nom du profil, de 1 à 80 caractères.";
+"cli.profile.recover.abstract" = "Supprime les fichiers de profil endommagés et réinitialise une liste de profils actifs endommagée.";
+"cli.profile.recover.confirm" = "Supprimer les fichiers de profil endommagés et réinitialiser une liste de profils actifs endommagée ?";
+"cli.profile.recover.discussion" = "Agit sur chaque problème que signale « ojd profile list ». Le service sauvegarde d’abord chaque fichier à côté de l’original, sous un nom contenant .backup-. Demande confirmation dans un terminal ; sinon, exige --force.";
+"cli.profile.recover.none" = "Aucun fichier de profil endommagé.";
+"cli.profile.recover.remove.done" = "Le fichier de profil endommagé du problème %@ a été supprimé.";
+"cli.profile.recover.remove.dry_run" = "Le fichier de profil endommagé du problème %@ serait supprimé.";
+"cli.profile.recover.reset.done" = "La liste des profils actifs a été réinitialisée.";
+"cli.profile.recover.reset.dry_run" = "La liste des profils actifs serait réinitialisée.";
 "cli.profile.rename.abstract" = "Renomme un profil.";
 "cli.profile.rename.done" = "Profil renommé en '%@'.";
 "cli.profile.rename.name" = "Le nouveau nom, de 1 à 80 caractères.";

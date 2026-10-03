@@ -858,34 +858,32 @@
 				"issues": {
 					"type": "array",
 					"items": {
-						"type": "object",
-						"required": [
-							"id",
-							"kind",
-							"message"
-						],
-						"additionalProperties": false,
-						"properties": {
-							"id": {
-								"type": "string",
-								"pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
-							},
-							"kind": {
-								"enum": [
-									"damagedProfile",
-									"unusableLibrary"
-								]
-							},
-							"message": {
-								"type": "string"
-							}
-						}
+						"$ref": "#/$defs/sharedProfileIssue"
 					}
 				},
 				"profiles": {
 					"type": "array",
 					"items": {
 						"$ref": "#/$defs/sharedProfileSummary"
+					}
+				}
+			}
+		},
+		"profileRecover": {
+			"type": "object",
+			"required": [
+				"dryRun",
+				"recovered"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"dryRun": {
+					"type": "boolean"
+				},
+				"recovered": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/sharedProfileIssue"
 					}
 				}
 			}
@@ -1416,6 +1414,30 @@
 							}
 						}
 					}
+				}
+			}
+		},
+		"sharedProfileIssue": {
+			"type": "object",
+			"required": [
+				"id",
+				"kind",
+				"message"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"id": {
+					"type": "string",
+					"pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
+				},
+				"kind": {
+					"enum": [
+						"damagedProfile",
+						"unusableLibrary"
+					]
+				},
+				"message": {
+					"type": "string"
 				}
 			}
 		},

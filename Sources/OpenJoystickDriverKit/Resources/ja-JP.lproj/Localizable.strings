@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "リマッピングプロファイルを一覧表示します。";
 "cli.profile.list.empty" = "プロファイルがありません。「ojd profile create」で作成してください。";
 "cli.profile.list.issue" = "サービスが保存済みのプロファイルを読み込めませんでした: %@";
+"cli.profile.list.recover_hint" = "「ojd profile recover」 で修復できます。";
 "cli.profile.name" = "プロファイルの名前。1 から 80 文字。";
+"cli.profile.recover.abstract" = "破損したプロファイルファイルを削除し、破損した有効プロファイルの一覧をリセットします。";
+"cli.profile.recover.confirm" = "破損したプロファイルファイルを削除し、破損した有効プロファイルの一覧をリセットしますか？";
+"cli.profile.recover.discussion" = "「ojd profile list」 が報告する各問題に対して処理します。サービスはまず、各ファイルを元のファイルの隣に .backup- を含む名前でバックアップします。ターミナルでは確認を求めます。それ以外では --force が必要です。";
+"cli.profile.recover.none" = "破損したプロファイルファイルはありません。";
+"cli.profile.recover.remove.done" = "問題 %@ の破損したプロファイルファイルを削除しました。";
+"cli.profile.recover.remove.dry_run" = "問題 %@ の破損したプロファイルファイルを削除します。";
+"cli.profile.recover.reset.done" = "有効プロファイルの一覧をリセットしました。";
+"cli.profile.recover.reset.dry_run" = "有効プロファイルの一覧をリセットします。";
 "cli.profile.rename.abstract" = "プロファイルの名前を変更します。";
 "cli.profile.rename.done" = "「%@」に名前を変更しました。";
 "cli.profile.rename.name" = "新しい名前。1 から 80 文字。";

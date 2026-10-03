@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Vypíše profily mapování.";
 "cli.profile.list.empty" = "Žádné profily. Vytvořte jeden pomocí 'ojd profile create'.";
 "cli.profile.list.issue" = "Služba nemohla načíst uložený profil: %@";
+"cli.profile.list.recover_hint" = "Opravte je pomocí „ojd profile recover“.";
 "cli.profile.name" = "Název profilu, 1 až 80 znaků.";
+"cli.profile.recover.abstract" = "Odstraní poškozené soubory profilů a obnoví poškozený seznam aktivních profilů.";
+"cli.profile.recover.confirm" = "Odstranit poškozené soubory profilů a obnovit poškozený seznam aktivních profilů?";
+"cli.profile.recover.discussion" = "Zpracuje každý problém, který hlásí „ojd profile list“. Služba nejprve zálohuje každý soubor vedle originálu pod názvem obsahujícím .backup-. V terminálu žádá o potvrzení; jinak vyžaduje --force.";
+"cli.profile.recover.none" = "Žádné poškozené soubory profilů.";
+"cli.profile.recover.remove.done" = "Poškozený soubor profilu problému %@ byl odstraněn.";
+"cli.profile.recover.remove.dry_run" = "Poškozený soubor profilu problému %@ by byl odstraněn.";
+"cli.profile.recover.reset.done" = "Seznam aktivních profilů byl obnoven.";
+"cli.profile.recover.reset.dry_run" = "Seznam aktivních profilů by byl obnoven.";
 "cli.profile.rename.abstract" = "Přejmenuje profil.";
 "cli.profile.rename.done" = "Přejmenováno na '%@'.";
 "cli.profile.rename.name" = "Nový název, 1 až 80 znaků.";

@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Lys toewysingsprofiele.";
 "cli.profile.list.empty" = "Geen profiele nie. Skep een met „ojd profile create“.";
 "cli.profile.list.issue" = "Die diens kon nie ’n gestoorde profiel laai nie: %@";
+"cli.profile.list.recover_hint" = "Herstel hulle met „ojd profile recover“.";
 "cli.profile.name" = "Die profielnaam, 1 tot 80 karakters.";
+"cli.profile.recover.abstract" = "Verwyder beskadigde profiellêers en stel ’n beskadigde lys van aktiewe profiele terug.";
+"cli.profile.recover.confirm" = "Verwyder die beskadigde profiellêers en stel ’n beskadigde lys van aktiewe profiele terug?";
+"cli.profile.recover.discussion" = "Tree op volgens elke kwessie wat „ojd profile list“ rapporteer. Die diens maak eers ’n rugsteun van elke lêer langs die oorspronklike, onder ’n naam wat .backup- bevat. Vra op ’n terminaal om bevestiging; andersins is --force nodig.";
+"cli.profile.recover.none" = "Geen beskadigde profiellêers nie.";
+"cli.profile.recover.remove.done" = "Die beskadigde profiellêer van kwessie %@ is verwyder.";
+"cli.profile.recover.remove.dry_run" = "Sou die beskadigde profiellêer van kwessie %@ verwyder.";
+"cli.profile.recover.reset.done" = "Die lys van aktiewe profiele is teruggestel.";
+"cli.profile.recover.reset.dry_run" = "Sou die lys van aktiewe profiele terugstel.";
 "cli.profile.rename.abstract" = "Hernoem ’n profiel.";
 "cli.profile.rename.done" = "Hernoem na „%@“.";
 "cli.profile.rename.name" = "Die nuwe naam, 1 tot 80 karakters.";

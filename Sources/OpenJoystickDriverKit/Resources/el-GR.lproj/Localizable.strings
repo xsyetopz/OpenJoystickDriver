@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Εμφανίζει τα προφίλ επαναντιστοίχισης.";
 "cli.profile.list.empty" = "Δεν υπάρχουν προφίλ. Δημιουργήστε ένα με το «ojd profile create».";
 "cli.profile.list.issue" = "Η υπηρεσία δεν μπόρεσε να φορτώσει ένα αποθηκευμένο προφίλ: %@";
+"cli.profile.list.recover_hint" = "Επιδιορθώστε τα με «ojd profile recover».";
 "cli.profile.name" = "Το όνομα του προφίλ, 1 έως 80 χαρακτήρες.";
+"cli.profile.recover.abstract" = "Αφαιρεί κατεστραμμένα αρχεία προφίλ και επαναφέρει μια κατεστραμμένη λίστα ενεργών προφίλ.";
+"cli.profile.recover.confirm" = "Να αφαιρεθούν τα κατεστραμμένα αρχεία προφίλ και να επαναφερθεί μια κατεστραμμένη λίστα ενεργών προφίλ;";
+"cli.profile.recover.discussion" = "Ενεργεί για κάθε πρόβλημα που αναφέρει το «ojd profile list». Η υπηρεσία δημιουργεί πρώτα αντίγραφο ασφαλείας κάθε αρχείου δίπλα στο πρωτότυπο, με όνομα που περιέχει .backup-. Ζητά επιβεβαίωση σε τερματικό· διαφορετικά απαιτεί --force.";
+"cli.profile.recover.none" = "Δεν υπάρχουν κατεστραμμένα αρχεία προφίλ.";
+"cli.profile.recover.remove.done" = "Το κατεστραμμένο αρχείο προφίλ του προβλήματος %@ αφαιρέθηκε.";
+"cli.profile.recover.remove.dry_run" = "Θα αφαιρούνταν το κατεστραμμένο αρχείο προφίλ του προβλήματος %@.";
+"cli.profile.recover.reset.done" = "Η λίστα ενεργών προφίλ επαναφέρθηκε.";
+"cli.profile.recover.reset.dry_run" = "Η λίστα ενεργών προφίλ θα επαναφερόταν.";
 "cli.profile.rename.abstract" = "Μετονομάζει ένα προφίλ.";
 "cli.profile.rename.done" = "Μετονομάστηκε σε «%@».";
 "cli.profile.rename.name" = "Το νέο όνομα, 1 έως 80 χαρακτήρες.";

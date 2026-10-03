@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "List opp ommappingsprofilar.";
 "cli.profile.list.empty" = "Ingen profilar. Opprett ein med 'ojd profile create'.";
 "cli.profile.list.issue" = "Tenesta kunne ikkje laste ein lagra profil: %@";
+"cli.profile.list.recover_hint" = "Reparer dei med «ojd profile recover».";
 "cli.profile.name" = "Profilnamnet, 1 til 80 teikn.";
+"cli.profile.recover.abstract" = "Fjernar skadde profilfiler og tilbakestiller ei skadd liste over aktive profilar.";
+"cli.profile.recover.confirm" = "Vil du fjerne dei skadde profilfilene og tilbakestille ei skadd liste over aktive profilar?";
+"cli.profile.recover.discussion" = "Handlar på kvart problem som «ojd profile list» rapporterer. Tenesta tek først sikkerheitskopi av kvar fil ved sida av originalen under eit namn som inneheld .backup-. Ber om stadfesting i ein terminal; elles trengst --force.";
+"cli.profile.recover.none" = "Ingen skadde profilfiler.";
+"cli.profile.recover.remove.done" = "Den skadde profilfila for problem %@ vart fjerna.";
+"cli.profile.recover.remove.dry_run" = "Ville fjerna den skadde profilfila for problem %@.";
+"cli.profile.recover.reset.done" = "Lista over aktive profilar vart tilbakestilt.";
+"cli.profile.recover.reset.dry_run" = "Ville tilbakestilt lista over aktive profilar.";
 "cli.profile.rename.abstract" = "Gi ein profil nytt namn.";
 "cli.profile.rename.done" = "Fekk nytt namn: '%@'.";
 "cli.profile.rename.name" = "Det nye namnet, 1 til 80 teikn.";

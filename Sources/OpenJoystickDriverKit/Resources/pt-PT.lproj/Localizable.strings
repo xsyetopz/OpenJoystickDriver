@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Lista os perfis de remapeamento.";
 "cli.profile.list.empty" = "Nenhum perfil. Crie um com «ojd profile create».";
 "cli.profile.list.issue" = "O serviço não conseguiu carregar um perfil guardado: %@";
+"cli.profile.list.recover_hint" = "Repare-os com «ojd profile recover».";
 "cli.profile.name" = "O nome do perfil, de 1 a 80 caracteres.";
+"cli.profile.recover.abstract" = "Remove ficheiros de perfil danificados e repõe uma lista de perfis ativos danificada.";
+"cli.profile.recover.confirm" = "Remover os ficheiros de perfil danificados e repor uma lista de perfis ativos danificada?";
+"cli.profile.recover.discussion" = "Atua sobre cada problema que «ojd profile list» reporta. O serviço primeiro faz uma cópia de segurança de cada ficheiro junto ao original, com um nome que contém .backup-. Pede confirmação em um terminal; sem terminal, precisa de --force.";
+"cli.profile.recover.none" = "Nenhum ficheiro de perfil danificado.";
+"cli.profile.recover.remove.done" = "O ficheiro de perfil danificado do problema %@ foi removido.";
+"cli.profile.recover.remove.dry_run" = "O ficheiro de perfil danificado do problema %@ seria removido.";
+"cli.profile.recover.reset.done" = "A lista de perfis ativos foi reposta.";
+"cli.profile.recover.reset.dry_run" = "A lista de perfis ativos seria reposta.";
 "cli.profile.rename.abstract" = "Renomeia um perfil.";
 "cli.profile.rename.done" = "Renomeado para «%@».";
 "cli.profile.rename.name" = "O novo nome, de 1 a 80 caracteres.";

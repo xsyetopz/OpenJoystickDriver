@@ -20,7 +20,7 @@ struct ProfileCommand: AsyncParsableCommand {
       ProfileListCommand.self, ProfileShowCommand.self, ProfileCreateCommand.self,
       ProfileDuplicateCommand.self, ProfileRenameCommand.self, ProfileDeleteCommand.self,
       ProfileActivateCommand.self, ProfileDeactivateCommand.self, ProfileImportCommand.self,
-      ProfileExportCommand.self, ProfileEditCommand.self,
+      ProfileExportCommand.self, ProfileEditCommand.self, ProfileRecoverCommand.self,
     ]
   )
 
@@ -111,6 +111,14 @@ struct ProfileListCommand: AsyncParsableCommand {
               "cli.profile.list.issue",
               "The service could not load a saved profile: %@",
               issue.message
+            )
+          )
+        }
+        if !result.issues.isEmpty {
+          CLIOutput.stderr(
+            CLILocalized.text(
+              "cli.profile.list.recover_hint",
+              "Repair them with 'ojd profile recover'."
             )
           )
         }

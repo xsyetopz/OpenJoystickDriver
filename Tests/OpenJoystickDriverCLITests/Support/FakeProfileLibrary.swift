@@ -9,16 +9,19 @@ final class FakeProfileLibrary: @unchecked Sendable {
   private var profiles: [RemappingProfile]
   private var active: Set<UUID>
   private var pairs: [ApplicationServiceJoyConPairPayload] = []
+  private var issues: [ApplicationServiceRemappingProfileIssue]
   private let connected: [ApplicationServiceDeviceDescription]
 
   /// `connected` devices get a route to the active profile of their model, as the service reports.
   init(
     _ profiles: [RemappingProfile],
     active: Set<UUID> = [],
-    connected: [ApplicationServiceDeviceDescription] = []
+    connected: [ApplicationServiceDeviceDescription] = [],
+    issues: [ApplicationServiceRemappingProfileIssue] = []
   ) {
     self.profiles = profiles
     self.active = active
+    self.issues = issues
     self.connected = connected
   }
 
@@ -73,12 +76,15 @@ final class FakeProfileLibrary: @unchecked Sendable {
         activeProfiles: activeProfiles,
         routes: routes,
         joyConPairs: pairs,
+        profileIssues: issues,
         postEventAccess: .granted
       )
     }
   }
 
   var stored: [RemappingProfile] { lock.withLock { profiles } }
+
+  var storedIssues: [ApplicationServiceRemappingProfileIssue] { lock.withLock { issues } }
 
   var respond: FakeService.Respond {
     { [self] method, arguments in
@@ -120,6 +126,21 @@ final class FakeProfileLibrary: @unchecked Sendable {
           default: active.remove(id)
           }
         }
+      case .deleteDamagedRemappingProfile, .resetRemappingProfileLibrary:
+        guard
+          let id = try? decoder.decode(
+            ApplicationServiceRemappingProfileIssueArguments.self,
+            from: arguments
+          ).issueID
+        else { return nil }
+        let kind: ApplicationServiceRemappingProfileIssue.Kind =
+          method == .deleteDamagedRemappingProfile ? .damagedProfile : .unusableLibrary
+        let removed = lock.withLock {
+          let count = issues.count
+          issues.removeAll { $0.id == id && $0.kind == kind }
+          return issues.count < count
+        }
+        guard removed else { return nil }
       case .pairRemappingJoyCons:
         guard
           let pair = try? decoder.decode(

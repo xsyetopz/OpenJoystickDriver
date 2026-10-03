@@ -1337,7 +1337,16 @@
 "cli.profile.list.abstract" = "List remapping profiles.";
 "cli.profile.list.empty" = "No profiles. Create one with 'ojd profile create'.";
 "cli.profile.list.issue" = "The service could not load a saved profile: %@";
+"cli.profile.list.recover_hint" = "Repair them with 'ojd profile recover'.";
 "cli.profile.name" = "The profile name, 1 to 80 characters.";
+"cli.profile.recover.abstract" = "Remove damaged profile files and reset a damaged active profile list.";
+"cli.profile.recover.confirm" = "Remove the damaged profile files and reset a damaged active profile list?";
+"cli.profile.recover.discussion" = "Acts on each issue that 'ojd profile list' reports. The service first backs up each file beside the original, under a name that contains .backup-. Asks for confirmation on a terminal; needs --force otherwise.";
+"cli.profile.recover.none" = "No damaged profile files.";
+"cli.profile.recover.remove.done" = "Removed the damaged profile file of issue %@.";
+"cli.profile.recover.remove.dry_run" = "Would remove the damaged profile file of issue %@.";
+"cli.profile.recover.reset.done" = "Reset the active profile list.";
+"cli.profile.recover.reset.dry_run" = "Would reset the active profile list.";
 "cli.profile.rename.abstract" = "Rename a profile.";
 "cli.profile.rename.done" = "Renamed to '%@'.";
 "cli.profile.rename.name" = "The new name, 1 to 80 characters.";

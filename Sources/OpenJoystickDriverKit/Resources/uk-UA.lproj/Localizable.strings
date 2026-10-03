@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Показати профілі перепризначення.";
 "cli.profile.list.empty" = "Профілів немає. Створіть профіль командою 'ojd profile create'.";
 "cli.profile.list.issue" = "Службі не вдалося завантажити збережений профіль: %@";
+"cli.profile.list.recover_hint" = "Виправте їх командою «ojd profile recover».";
 "cli.profile.name" = "Ім’я профілю, від 1 до 80 символів.";
+"cli.profile.recover.abstract" = "Видаляє пошкоджені файли профілів і скидає пошкоджений список активних профілів.";
+"cli.profile.recover.confirm" = "Видалити пошкоджені файли профілів і скинути пошкоджений список активних профілів?";
+"cli.profile.recover.discussion" = "Обробляє кожну проблему, про яку повідомляє «ojd profile list». Спершу служба створює резервну копію кожного файлу поруч з оригіналом під іменем, що містить .backup-. У терміналі запитує підтвердження; без термінала потрібен --force.";
+"cli.profile.recover.none" = "Пошкоджених файлів профілів немає.";
+"cli.profile.recover.remove.done" = "Пошкоджений файл профілю для проблеми %@ видалено.";
+"cli.profile.recover.remove.dry_run" = "Пошкоджений файл профілю для проблеми %@ було б видалено.";
+"cli.profile.recover.reset.done" = "Список активних профілів скинуто.";
+"cli.profile.recover.reset.dry_run" = "Список активних профілів було б скинуто.";
 "cli.profile.rename.abstract" = "Перейменувати профіль.";
 "cli.profile.rename.done" = "Перейменовано на «%@».";
 "cli.profile.rename.name" = "Нове ім’я, від 1 до 80 символів.";

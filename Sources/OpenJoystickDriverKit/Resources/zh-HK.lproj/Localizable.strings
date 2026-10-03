@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "列出重新對應設定檔。";
 "cli.profile.list.empty" = "沒有設定檔。請用 'ojd profile create' 建立。";
 "cli.profile.list.issue" = "服務無法載入已儲存的設定檔：%@";
+"cli.profile.list.recover_hint" = "可使用 「ojd profile recover」 修復。";
 "cli.profile.name" = "設定檔名稱，1 到 80 個字元。";
+"cli.profile.recover.abstract" = "移除損毀的設定檔，並重置損毀的使用中設定檔清單。";
+"cli.profile.recover.confirm" = "要移除損毀的設定檔並重置損毀的使用中設定檔清單嗎？";
+"cli.profile.recover.discussion" = "會處理 「ojd profile list」 回報的每個問題。服務會先在原檔案旁以包含 .backup- 的名稱備份每個檔案。在終端機中會要求確認；否則需要 --force。";
+"cli.profile.recover.none" = "沒有損毀的設定檔。";
+"cli.profile.recover.remove.done" = "已移除問題 %@ 的損毀設定檔。";
+"cli.profile.recover.remove.dry_run" = "將會移除問題 %@ 的損毀設定檔。";
+"cli.profile.recover.reset.done" = "已重置使用中設定檔清單。";
+"cli.profile.recover.reset.dry_run" = "將會重置使用中設定檔清單。";
 "cli.profile.rename.abstract" = "重新命名設定檔。";
 "cli.profile.rename.done" = "已重新命名為「%@」。";
 "cli.profile.rename.name" = "新名稱，1 到 80 個字元。";

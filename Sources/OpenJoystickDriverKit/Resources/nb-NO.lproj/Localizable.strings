@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "List opp ommappingsprofiler.";
 "cli.profile.list.empty" = "Ingen profiler. Opprett en med 'ojd profile create'.";
 "cli.profile.list.issue" = "Tjenesten kunne ikke laste en lagret profil: %@";
+"cli.profile.list.recover_hint" = "Reparer dem med «ojd profile recover».";
 "cli.profile.name" = "Profilnavnet, 1 til 80 tegn.";
+"cli.profile.recover.abstract" = "Fjerner skadde profilfiler og tilbakestiller en skadd liste over aktive profiler.";
+"cli.profile.recover.confirm" = "Vil du fjerne de skadde profilfilene og tilbakestille en skadd liste over aktive profiler?";
+"cli.profile.recover.discussion" = "Handler på hvert problem som «ojd profile list» rapporterer. Tjenesten sikkerhetskopierer først hver fil ved siden av originalen under et navn som inneholder .backup-. Ber om bekreftelse i en terminal; ellers trengs --force.";
+"cli.profile.recover.none" = "Ingen skadde profilfiler.";
+"cli.profile.recover.remove.done" = "Den skadde profilfilen for problem %@ ble fjernet.";
+"cli.profile.recover.remove.dry_run" = "Ville fjernet den skadde profilfilen for problem %@.";
+"cli.profile.recover.reset.done" = "Listen over aktive profiler ble tilbakestilt.";
+"cli.profile.recover.reset.dry_run" = "Ville tilbakestilt listen over aktive profiler.";
 "cli.profile.rename.abstract" = "Gi en profil nytt navn.";
 "cli.profile.rename.done" = "Fikk nytt navn: '%@'.";
 "cli.profile.rename.name" = "Det nye navnet, 1 til 80 tegn.";

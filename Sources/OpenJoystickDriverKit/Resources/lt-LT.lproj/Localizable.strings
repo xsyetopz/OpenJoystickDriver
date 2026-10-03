@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Rodyti perprogramavimo profilius.";
 "cli.profile.list.empty" = "Profilių nėra. Sukurkite vieną naudodami „ojd profile create“.";
 "cli.profile.list.issue" = "Tarnyba negalėjo įkelti išsaugoto profilio: %@";
+"cli.profile.list.recover_hint" = "Pataisykite juos naudodami „ojd profile recover“.";
 "cli.profile.name" = "Profilio pavadinimas, nuo 1 iki 80 simbolių.";
+"cli.profile.recover.abstract" = "Pašalina pažeistus profilių failus ir atkuria pažeistą aktyvių profilių sąrašą.";
+"cli.profile.recover.confirm" = "Pašalinti pažeistus profilių failus ir atkurti pažeistą aktyvių profilių sąrašą?";
+"cli.profile.recover.discussion" = "Veikia pagal kiekvieną problemą, apie kurią praneša „ojd profile list“. Tarnyba pirmiausia sukuria kiekvieno failo atsarginę kopiją šalia originalo pavadinimu, kuriame yra .backup-. Terminale paprašo patvirtinimo; kitu atveju reikia --force.";
+"cli.profile.recover.none" = "Pažeistų profilių failų nėra.";
+"cli.profile.recover.remove.done" = "Problemos %@ pažeistas profilio failas pašalintas.";
+"cli.profile.recover.remove.dry_run" = "Būtų pašalintas problemos %@ pažeistas profilio failas.";
+"cli.profile.recover.reset.done" = "Aktyvių profilių sąrašas atkurtas.";
+"cli.profile.recover.reset.dry_run" = "Būtų atkurtas aktyvių profilių sąrašas.";
 "cli.profile.rename.abstract" = "Pervadinti profilį.";
 "cli.profile.rename.done" = "Pervadinta į „%@“.";
 "cli.profile.rename.name" = "Naujas pavadinimas, nuo 1 iki 80 simbolių.";

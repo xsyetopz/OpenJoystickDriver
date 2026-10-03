@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Izpiše profile preslikave.";
 "cli.profile.list.empty" = "Ni profilov. Ustvarite enega z „ojd profile create“.";
 "cli.profile.list.issue" = "Storitev ni mogla naložiti shranjenega profila: %@";
+"cli.profile.list.recover_hint" = "Popravite jih z „ojd profile recover“.";
 "cli.profile.name" = "Ime profila, od 1 do 80 znakov.";
+"cli.profile.recover.abstract" = "Odstrani poškodovane datoteke profilov in ponastavi poškodovan seznam aktivnih profilov.";
+"cli.profile.recover.confirm" = "Odstranim poškodovane datoteke profilov in ponastavim poškodovan seznam aktivnih profilov?";
+"cli.profile.recover.discussion" = "Ukrepa pri vsaki težavi, o kateri poroča „ojd profile list“. Storitev najprej varnostno kopira vsako datoteko poleg izvirnika pod imenom, ki vsebuje .backup-. Na terminalu zahteva potrditev; sicer zahteva --force.";
+"cli.profile.recover.none" = "Ni poškodovanih datotek profilov.";
+"cli.profile.recover.remove.done" = "Poškodovana datoteka profila težave %@ je bila odstranjena.";
+"cli.profile.recover.remove.dry_run" = "Poškodovana datoteka profila težave %@ bi bila odstranjena.";
+"cli.profile.recover.reset.done" = "Seznam aktivnih profilov je bil ponastavljen.";
+"cli.profile.recover.reset.dry_run" = "Seznam aktivnih profilov bi bil ponastavljen.";
 "cli.profile.rename.abstract" = "Preimenuje profil.";
 "cli.profile.rename.done" = "Preimenovano v „%@“.";
 "cli.profile.rename.name" = "Novo ime, od 1 do 80 znakov.";

@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Listaa uudelleenmäärityksen profiilit.";
 "cli.profile.list.empty" = "Ei profiileja. Luo profiili komennolla ”ojd profile create”.";
 "cli.profile.list.issue" = "Palvelu ei voinut ladata tallennettua profiilia: %@";
+"cli.profile.list.recover_hint" = "Korjaa ne komennolla ”ojd profile recover”.";
 "cli.profile.name" = "Profiilin nimi, 1–80 merkkiä.";
+"cli.profile.recover.abstract" = "Poistaa vioittuneet profiilitiedostot ja nollaa vioittuneen aktiivisten profiilien luettelon.";
+"cli.profile.recover.confirm" = "Poistetaanko vioittuneet profiilitiedostot ja nollataanko vioittunut aktiivisten profiilien luettelo?";
+"cli.profile.recover.discussion" = "Toimii jokaisen ongelman osalta, jonka ”ojd profile list” ilmoittaa. Palvelu varmuuskopioi ensin jokaisen tiedoston alkuperäisen viereen nimellä, joka sisältää .backup-. Pyytää vahvistuksen päätteessä; muuten se vaatii --force.";
+"cli.profile.recover.none" = "Ei vioittuneita profiilitiedostoja.";
+"cli.profile.recover.remove.done" = "Ongelman %@ vioittunut profiilitiedosto poistettiin.";
+"cli.profile.recover.remove.dry_run" = "Poistaisi ongelman %@ vioittuneen profiilitiedoston.";
+"cli.profile.recover.reset.done" = "Aktiivisten profiilien luettelo nollattiin.";
+"cli.profile.recover.reset.dry_run" = "Nollaisi aktiivisten profiilien luettelon.";
 "cli.profile.rename.abstract" = "Nimeä profiili uudelleen.";
 "cli.profile.rename.done" = "Nimettiin uudelleen: ”%@”.";
 "cli.profile.rename.name" = "Uusi nimi, 1–80 merkkiä.";

@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Liostaigh próifílí athmhapála.";
 "cli.profile.list.empty" = "Gan aon phróifíl. Cruthaigh ceann le «ojd profile create».";
 "cli.profile.list.issue" = "Níorbh fhéidir leis an tseirbhís próifíl shábháilte a luchtú: %@";
+"cli.profile.list.recover_hint" = "Deisigh iad le «ojd profile recover».";
 "cli.profile.name" = "Ainm na próifíle, 1 go 80 carachtar.";
+"cli.profile.recover.abstract" = "Bain comhaid próifíle damáistithe agus athshocraigh liosta damáistithe de phróifílí gníomhacha.";
+"cli.profile.recover.confirm" = "An mbeidh na comhaid próifíle damáistithe le baint agus liosta damáistithe de phróifílí gníomhacha le hathshocrú?";
+"cli.profile.recover.discussion" = "Gníomhaíonn sé ar gach saincheist a thuairiscíonn «ojd profile list». Déanann an tseirbhís cúltaca de gach comhad ar dtús in aice leis an mbunchomhad, faoi ainm ina bhfuil .backup-. Iarrann sé deimhniú ar theirminéal; teastaíonn --force seachas sin.";
+"cli.profile.recover.none" = "Níl aon chomhad próifíle damáistithe ann.";
+"cli.profile.recover.remove.done" = "Baineadh comhad próifíle damáistithe na saincheiste %@.";
+"cli.profile.recover.remove.dry_run" = "Bainfí comhad próifíle damáistithe na saincheiste %@.";
+"cli.profile.recover.reset.done" = "Athshocraíodh liosta na bpróifílí gníomhacha.";
+"cli.profile.recover.reset.dry_run" = "Athshocrófaí liosta na bpróifílí gníomhacha.";
 "cli.profile.rename.abstract" = "Athainmnigh próifíl.";
 "cli.profile.rename.done" = "Athainmníodh é go «%@».";
 "cli.profile.rename.name" = "An t-ainm nua, 1 go 80 carachtar.";

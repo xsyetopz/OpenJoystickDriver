@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Čájeha heivehanprofiillaid.";
 "cli.profile.list.empty" = "Ii leat profiillat. Ráhkat ovtta ”ojd profile create”-komanddain.";
 "cli.profile.list.issue" = "Bálvalus ii sáhttán viežžat vurkejuvvon profiila: %@";
+"cli.profile.list.recover_hint" = "Divvo daid ”ojd profile recover”:in.";
 "cli.profile.name" = "Profiila namma, 1 rádjai 80 mearkka.";
+"cli.profile.recover.abstract" = "Sihkko billašuvvan profiilafiillaid ja nuble billašuvvan aktiiva profiilalisttu.";
+"cli.profile.recover.confirm" = "Sihkkot go billašuvvan profiilafiillaid ja nublet billašuvvan aktiiva profiilalisttu?";
+"cli.profile.recover.discussion" = "Doaibmá juohke vuolggasaji ala maid ”ojd profile list” muitala. Bálvalus ráhkada vuos juohke fiilla várrejuvvon máŋgosa originála lusa nama vuolde mii sisttisdoallá .backup-. Jearrá nannema terminálas; muđui dárbbaša --force.";
+"cli.profile.recover.none" = "Ii leat billašuvvan profiilafiillaid.";
+"cli.profile.recover.remove.done" = "Billašuvvan profiilafiila %@ vuolggasajis sihkkojuvvui.";
+"cli.profile.recover.remove.dry_run" = "Sihkkošii billašuvvan profiilafiilla %@ vuolggasajis.";
+"cli.profile.recover.reset.done" = "Aktiiva profiilalistu nublejuvvui.";
+"cli.profile.recover.reset.dry_run" = "Nublešii aktiiva profiilalisttu.";
 "cli.profile.rename.abstract" = "Rievdat profiila nama.";
 "cli.profile.rename.done" = "Nama rievdaduvvui: ”%@”.";
 "cli.profile.rename.name" = "Ođđa namma, 1 rádjai 80 mearkka.";

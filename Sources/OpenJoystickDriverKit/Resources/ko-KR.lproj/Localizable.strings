@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "리매핑 프로필을 나열합니다.";
 "cli.profile.list.empty" = "프로필이 없습니다. 'ojd profile create'로 만드세요.";
 "cli.profile.list.issue" = "서비스가 저장된 프로필을 불러오지 못했습니다: %@";
+"cli.profile.list.recover_hint" = "‘ojd profile recover’로 복구하세요.";
 "cli.profile.name" = "프로필 이름이며 1~80자입니다.";
+"cli.profile.recover.abstract" = "손상된 프로필 파일을 제거하고 손상된 활성 프로필 목록을 재설정합니다.";
+"cli.profile.recover.confirm" = "손상된 프로필 파일을 제거하고 손상된 활성 프로필 목록을 재설정할까요?";
+"cli.profile.recover.discussion" = "‘ojd profile list’가 보고하는 각 문제에 대해 작업합니다. 서비스는 먼저 각 파일을 원본 옆에 .backup-이 포함된 이름으로 백업합니다. 터미널에서는 확인을 요청하며, 그렇지 않으면 --force가 필요합니다.";
+"cli.profile.recover.none" = "손상된 프로필 파일이 없습니다.";
+"cli.profile.recover.remove.done" = "문제 %@의 손상된 프로필 파일을 제거했습니다.";
+"cli.profile.recover.remove.dry_run" = "문제 %@의 손상된 프로필 파일을 제거합니다.";
+"cli.profile.recover.reset.done" = "활성 프로필 목록을 재설정했습니다.";
+"cli.profile.recover.reset.dry_run" = "활성 프로필 목록을 재설정합니다.";
 "cli.profile.rename.abstract" = "프로필의 이름을 변경합니다.";
 "cli.profile.rename.done" = "이름을 '%@'(으)로 변경했습니다.";
 "cli.profile.rename.name" = "새 이름이며 1~80자입니다.";

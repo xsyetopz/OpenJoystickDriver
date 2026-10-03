@@ -1334,7 +1334,16 @@
 "cli.profile.list.abstract" = "Wypisz profile mapowania.";
 "cli.profile.list.empty" = "Brak profili. Utwórz profil poleceniem 'ojd profile create'.";
 "cli.profile.list.issue" = "Usługa nie mogła wczytać zapisanego profilu: %@";
+"cli.profile.list.recover_hint" = "Napraw je poleceniem „ojd profile recover”.";
 "cli.profile.name" = "Nazwa profilu, od 1 do 80 znaków.";
+"cli.profile.recover.abstract" = "Usuwa uszkodzone pliki profili i resetuje uszkodzoną listę aktywnych profili.";
+"cli.profile.recover.confirm" = "Usunąć uszkodzone pliki profili i zresetować uszkodzoną listę aktywnych profili?";
+"cli.profile.recover.discussion" = "Działa na każdym problemie zgłoszonym przez „ojd profile list”. Usługa najpierw tworzy kopię zapasową każdego pliku obok oryginału pod nazwą zawierającą .backup-. Prosi o potwierdzenie w terminalu; poza nim wymaga --force.";
+"cli.profile.recover.none" = "Brak uszkodzonych plików profili.";
+"cli.profile.recover.remove.done" = "Uszkodzony plik profilu problemu %@ został usunięty.";
+"cli.profile.recover.remove.dry_run" = "Uszkodzony plik profilu problemu %@ zostałby usunięty.";
+"cli.profile.recover.reset.done" = "Lista aktywnych profili została zresetowana.";
+"cli.profile.recover.reset.dry_run" = "Lista aktywnych profili zostałaby zresetowana.";
 "cli.profile.rename.abstract" = "Zmień nazwę profilu.";
 "cli.profile.rename.done" = "Zmieniono nazwę na '%@'.";
 "cli.profile.rename.name" = "Nowa nazwa, od 1 do 80 znaków.";
