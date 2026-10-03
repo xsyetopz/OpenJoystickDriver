@@ -18,8 +18,8 @@ enum LocalizationCatalogAudit {
 
   private static let sourceIdenticalTermsByLocale: [String: Set<String>] = [
     "af-ZA": [
-      "settings.status", "controllers.battery", "profiles.turbo", "common.status", "common.stop",
-      "keyboard.tab", "profiles.physical.motor",
+      "cli.controller.show.label.battery", "settings.status", "controllers.battery",
+      "profiles.turbo", "common.status", "common.stop", "keyboard.tab", "profiles.physical.motor",
     ],
     "ca-AD": [
       "cli.controller.show.label.controls", "cli.controller.show.label.protocol", "menu.zoom",

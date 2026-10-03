@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' се изключи, преди заявката да стигне до него. Свържете го отново и опитайте пак.";
 "cli.controller.show.abstract" = "Показва самоличността, притежателя, възможностите и виртуалния геймпад на контролер.";
 "cli.controller.show.discussion" = "Изброява и проверките на изхода: команди, които изпробват всеки мотор за вибрация и всяка светлина, с това какво да наблюдавате.";
+"cli.controller.show.label.battery" = "Батерия";
 "cli.controller.show.label.connection" = "Връзка";
 "cli.controller.show.label.controls" = "Контроли";
 "cli.controller.show.label.id" = "ID";

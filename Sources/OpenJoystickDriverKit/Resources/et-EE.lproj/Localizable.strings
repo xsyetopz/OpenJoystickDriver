@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' ühendus katkes enne, kui päring sinna jõudis. Ühenda uuesti ja proovi veel kord.";
 "cli.controller.show.abstract" = "Näita kontrolleri identiteeti, omandit, võimalusi ja virtuaalset mängupulti.";
 "cli.controller.show.discussion" = "Loetleb ka väljundikontrollid: käsud, mis rakendavad iga värinamootorit ja tuld, koos sellega, mida jälgida.";
+"cli.controller.show.label.battery" = "Aku";
 "cli.controller.show.label.connection" = "Ühendus";
 "cli.controller.show.label.controls" = "Juhtelemendid";
 "cli.controller.show.label.id" = "ID";

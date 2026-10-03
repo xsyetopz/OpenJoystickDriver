@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "A(z) '%@' leválasztódott, mielőtt a kérés elérte volna. Csatlakoztassa újra, és próbálja újra.";
 "cli.controller.show.abstract" = "Egy vezérlő azonosságának, tulajdonosának, képességeinek és virtuális gamepadjének megjelenítése.";
 "cli.controller.show.discussion" = "Kiírja a kimeneti ellenőrzéseket is: parancsokat, amelyek minden rezgőmotort és fényt működtetnek, és azt, hogy mit kell megfigyelni.";
+"cli.controller.show.label.battery" = "Akkumulátor";
 "cli.controller.show.label.connection" = "Kapcsolat";
 "cli.controller.show.label.controls" = "Vezérlők";
 "cli.controller.show.label.id" = "Azonosító";

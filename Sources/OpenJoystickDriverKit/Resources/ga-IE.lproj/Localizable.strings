@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "Dícheangail «%@» sula shroich an t-iarratas é. Athcheangail é agus bain triail eile as.";
 "cli.controller.show.abstract" = "Taispeáin céannacht, úinéireacht, cumais agus gamepad fíorúil rialtóra.";
 "cli.controller.show.discussion" = "Liostaíonn sé seiceálacha aschuir freisin: orduithe a thástálann gach mótar creatha agus gach solas, le cad atá le breathnú.";
+"cli.controller.show.label.battery" = "Ceallraí";
 "cli.controller.show.label.connection" = "Nasc";
 "cli.controller.show.label.controls" = "Rialuithe";
 "cli.controller.show.label.id" = "ID";

@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "„%@“ wurde getrennt, bevor die Anfrage ihn erreichte. Verbinde ihn erneut und versuche es noch einmal.";
 "cli.controller.show.abstract" = "Identität, Zuständigkeit, Fähigkeiten und virtuelles Gamepad eines Controllers anzeigen.";
 "cli.controller.show.discussion" = "Listet auch Ausgabeprüfungen auf: Befehle, die jeden Vibrationsmotor und jedes Licht ansteuern, mit dem, was du beobachten sollst.";
+"cli.controller.show.label.battery" = "Batterie";
 "cli.controller.show.label.connection" = "Verbindung";
 "cli.controller.show.label.controls" = "Bedienelemente";
 "cli.controller.show.label.id" = "ID";

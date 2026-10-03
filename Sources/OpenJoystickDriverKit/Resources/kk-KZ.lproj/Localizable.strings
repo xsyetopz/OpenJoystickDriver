@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "«%@» сұрау жеткенге дейін ажыратылды. Қайта қосып, әрекетті қайталаңыз.";
 "cli.controller.show.abstract" = "Контроллердің сәйкестігін, иелігін, мүмкіндіктерін және виртуалды геймпадын көрсету.";
 "cli.controller.show.discussion" = "Сондай-ақ шығару тексерулерін тізімдейді: әр діріл мотор мен шамды іске қосатын пәрмендер және нені бақылау керек екені.";
+"cli.controller.show.label.battery" = "Батарея";
 "cli.controller.show.label.connection" = "Қосылым";
 "cli.controller.show.label.controls" = "Басқару элементтері";
 "cli.controller.show.label.id" = "ID";

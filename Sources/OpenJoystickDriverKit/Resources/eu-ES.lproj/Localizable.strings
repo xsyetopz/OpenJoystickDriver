@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "«%@» deskonektatu egin da eskaera iritsi aurretik. Konektatu berriro eta saiatu berriz.";
 "cli.controller.show.abstract" = "Erakutsi agintearen identitatea, jabetza, gaitasunak eta gamepad birtuala.";
 "cli.controller.show.discussion" = "Irteera-egiaztapenak ere zerrendatzen ditu: dardara-motor eta argi bakoitza probatzen duten komandoak, zer behatu behar den adierazita.";
+"cli.controller.show.label.battery" = "Bateria";
 "cli.controller.show.label.connection" = "Konexioa";
 "cli.controller.show.label.controls" = "Kontrolak";
 "cli.controller.show.label.id" = "ID";

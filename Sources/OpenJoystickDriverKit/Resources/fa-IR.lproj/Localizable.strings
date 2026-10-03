@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "«%@» پیش از رسیدن درخواست قطع شد. دوباره وصل کنید و دوباره تلاش کنید.";
 "cli.controller.show.abstract" = "نمایش هویت، مالکیت، قابلیت‌ها و گیم‌پد مجازی یک کنترلر.";
 "cli.controller.show.discussion" = "بررسی‌های خروجی را هم فهرست می‌کند: دستورهایی که هر موتور لرزش و هر نور را آزمایش می‌کنند، همراه با آنچه باید مشاهده کنید.";
+"cli.controller.show.label.battery" = "باتری";
 "cli.controller.show.label.connection" = "اتصال";
 "cli.controller.show.label.controls" = "کنترل‌ها";
 "cli.controller.show.label.id" = "شناسه";

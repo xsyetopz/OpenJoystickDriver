@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' katkaisi yhteyden ennen kuin pyyntö ehti perille. Yhdistä se uudelleen ja yritä uudelleen.";
 "cli.controller.show.abstract" = "Näytä ohjaimen identiteetti, omistajuus, ominaisuudet ja virtuaalinen peliohjain.";
 "cli.controller.show.discussion" = "Luettelee myös tulostarkistukset: komennot, jotka kokeilevat jokaista värinämoottoria ja valoa, sekä sen, mitä kannattaa tarkkailla.";
+"cli.controller.show.label.battery" = "Akku";
 "cli.controller.show.label.connection" = "Yhteys";
 "cli.controller.show.label.controls" = "Ohjaimet";
 "cli.controller.show.label.id" = "Tunnus";

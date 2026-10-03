@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' kopplades från innan begäran nådde den. Anslut den igen och försök på nytt.";
 "cli.controller.show.abstract" = "Visar en kontrolls identitet, ägarskap, funktioner och virtuella handkontroll.";
 "cli.controller.show.discussion" = "Listar också utdatakontroller: kommandon som testar varje vibrationsmotor och lampa, med vad du ska observera.";
+"cli.controller.show.label.battery" = "Batteri";
 "cli.controller.show.label.connection" = "Anslutning";
 "cli.controller.show.label.controls" = "Reglage";
 "cli.controller.show.label.id" = "ID";

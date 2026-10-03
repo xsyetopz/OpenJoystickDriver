@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' se odpojil dříve, než k němu požadavek dorazil. Připojte ho znovu a zkuste to znovu.";
 "cli.controller.show.abstract" = "Zobrazit identitu, vlastnictví, schopnosti a virtuální gamepad ovladače.";
 "cli.controller.show.discussion" = "Vypíše také kontroly výstupu: příkazy, které vyzkouší každý vibrační motor a světlo, s údajem, co sledovat.";
+"cli.controller.show.label.battery" = "Baterie";
 "cli.controller.show.label.connection" = "Připojení";
 "cli.controller.show.label.controls" = "Ovládací prvky";
 "cli.controller.show.label.id" = "ID";

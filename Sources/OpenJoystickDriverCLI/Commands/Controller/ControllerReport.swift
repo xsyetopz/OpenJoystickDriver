@@ -15,6 +15,8 @@ struct ControllerSummary: Encodable, Equatable {
   let `protocol`: String
   let session: String
   let hasSerialNumber: Bool
+  /// Absent when the service reports no power state.
+  let power: ControllerConnectionState.Power?
 
   init(_ device: ApplicationServiceDeviceDescription) {
     id = device.runtimeIdentifier
@@ -26,6 +28,7 @@ struct ControllerSummary: Encodable, Equatable {
     self.protocol = device.protocolBinding.rawValue
     session = device.sessionState.rawValue
     hasSerialNumber = device.serialNumber.map { !$0.isEmpty } ?? false
+    power = device.connectionState?.power
   }
 }
 
@@ -106,6 +109,8 @@ struct ControllerShowReport: Encodable, Equatable {
     let interfaceNumber: Int?
     let hasSerialNumber: Bool
     let session: String
+    /// Absent when the service reports no power state.
+    let power: ControllerConnectionState.Power?
     let startupCommandStatus: String?
     let inputHealth: InputHealth
     let ownership: Ownership
@@ -139,6 +144,7 @@ struct ControllerShowReport: Encodable, Equatable {
       interfaceNumber: device.interfaceNumber.map(Int.init),
       hasSerialNumber: device.serialNumber.map { !$0.isEmpty } ?? false,
       session: device.sessionState.rawValue,
+      power: device.connectionState?.power,
       startupCommandStatus: device.startupCommandStatus,
       inputHealth: InputHealth(
         state: device.inputHealth.state.rawValue,

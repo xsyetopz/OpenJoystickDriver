@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' 在請求送達前已中斷連線。請重新連接後再試一次。";
 "cli.controller.show.abstract" = "顯示控制器的身分、擁有者、功能和虛擬遊戲控制器。";
 "cli.controller.show.discussion" = "也會列出輸出檢查：驅動每個震動馬達和燈光的指令，以及應觀察的現象。";
+"cli.controller.show.label.battery" = "電池";
 "cli.controller.show.label.connection" = "連線";
 "cli.controller.show.label.controls" = "控制項";
 "cli.controller.show.label.id" = "ID";

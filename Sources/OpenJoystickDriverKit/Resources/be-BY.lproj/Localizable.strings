@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "«%@» адключыўся да таго, як запыт дайшоў да яго. Падключыце яго зноў і паўтарыце.";
 "cli.controller.show.abstract" = "Паказаць ідэнтычнасць, валоданне, магчымасці і віртуальны геймпад кантролера.";
 "cli.controller.show.discussion" = "Таксама паказвае праверкі вываду: каманды, якія правяраюць кожны матор вібрацыі і кожную падсветку, з указаннем, што трэба назіраць.";
+"cli.controller.show.label.battery" = "Акумулятар";
 "cli.controller.show.label.connection" = "Злучэнне";
 "cli.controller.show.label.controls" = "Элементы кіравання";
 "cli.controller.show.label.id" = "ID";

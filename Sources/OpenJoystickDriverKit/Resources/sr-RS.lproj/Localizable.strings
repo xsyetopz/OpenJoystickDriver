@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "„%@“ се искључио пре него што је захтев стигао до њега. Повежите га поново и покушајте опет.";
 "cli.controller.show.abstract" = "Прикажи идентитет, власништво, могућности и виртуелни гејмпад контролера.";
 "cli.controller.show.discussion" = "Такође наводи провере излаза: команде које покрећу сваки мотор за вибрацију и светло, са оним што треба посматрати.";
+"cli.controller.show.label.battery" = "Батерија";
 "cli.controller.show.label.connection" = "Веза";
 "cli.controller.show.label.controls" = "Контроле";
 "cli.controller.show.label.id" = "ID";

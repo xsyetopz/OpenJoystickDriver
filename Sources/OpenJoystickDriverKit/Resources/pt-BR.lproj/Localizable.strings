@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' desconectou antes de a solicitação chegar. Reconecte-o e tente de novo.";
 "cli.controller.show.abstract" = "Mostrar a identidade, a posse, os recursos e o gamepad virtual de um controle.";
 "cli.controller.show.discussion" = "Também lista verificações de saída: comandos que acionam cada motor de vibração e cada luz, com o que observar.";
+"cli.controller.show.label.battery" = "Bateria";
 "cli.controller.show.label.connection" = "Conexão";
 "cli.controller.show.label.controls" = "Controles";
 "cli.controller.show.label.id" = "ID";

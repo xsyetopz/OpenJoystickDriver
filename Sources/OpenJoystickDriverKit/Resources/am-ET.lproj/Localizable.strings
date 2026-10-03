@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "«%@» ጥያቄው ከመድረሱ በፊት ተቋርጧል። እንደገና ያገናኙትና ይሞክሩ።";
 "cli.controller.show.abstract" = "የመቆጣጠሪያን ማንነት፣ ባለቤትነት፣ ችሎታዎች እና ምናባዊ የጨዋታ መቆጣጠሪያ ያሳዩ።";
 "cli.controller.show.discussion" = "የውጤት ፍተሻዎችንም ይዘረዝራል፦ እያንዳንዱን የንዝረት ሞተር እና መብራት የሚሞክሩ ትዕዛዞች፣ ምን መታዘብ እንዳለበት ጭምር።";
+"cli.controller.show.label.battery" = "ባትሪ";
 "cli.controller.show.label.connection" = "ግንኙነት";
 "cli.controller.show.label.controls" = "የመቆጣጠሪያ ክፍሎች";
 "cli.controller.show.label.id" = "መለያ";

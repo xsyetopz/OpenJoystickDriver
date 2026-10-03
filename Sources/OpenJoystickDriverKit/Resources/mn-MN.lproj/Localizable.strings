@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "Хүсэлт хүрэхээс өмнө «%@» салсан. Дахин холбоод, дахин оролдоно уу.";
 "cli.controller.show.abstract" = "Удирдлагын таних мэдээлэл, эзэмшил, чадвар болон виртуал тоглоомын удирдлагыг харуулах.";
 "cli.controller.show.discussion" = "Мөн гаралтын шалгалтуудыг жагсаана: чичиргээний мотор, гэрэл бүрийг ажиллуулах командууд, юуг ажиглахыг заасан.";
+"cli.controller.show.label.battery" = "Батарей";
 "cli.controller.show.label.connection" = "Холболт";
 "cli.controller.show.label.controls" = "Элементүүд";
 "cli.controller.show.label.id" = "ID";

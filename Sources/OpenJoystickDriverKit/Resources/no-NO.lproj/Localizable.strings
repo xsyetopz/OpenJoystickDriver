@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' koblet fra før forespørselen nådde den. Koble til igjen og prøv på nytt.";
 "cli.controller.show.abstract" = "Vis en kontrollers identitet, eierskap, funksjoner og virtuelle gamepad.";
 "cli.controller.show.discussion" = "Viser også utdatakontroller: kommandoer som tester hver vibrasjonsmotor og hvert lys, med hva du skal se etter.";
+"cli.controller.show.label.battery" = "Batteri";
 "cli.controller.show.label.connection" = "Tilkobling";
 "cli.controller.show.label.controls" = "Kontroller";
 "cli.controller.show.label.id" = "ID";

@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "अनुरोध पहुँचने से पहले '%@' डिस्कनेक्ट हो गया। दोबारा कनेक्ट करके फिर कोशिश करें।";
 "cli.controller.show.abstract" = "कंट्रोलर की पहचान, स्वामित्व, क्षमताएँ और वर्चुअल गेमपैड दिखाएँ।";
 "cli.controller.show.discussion" = "आउटपुट जाँच भी सूचीबद्ध करता है: ऐसे कमांड जो हर रंबल मोटर और लाइट को चलाकर देखते हैं, साथ में यह कि क्या देखना है।";
+"cli.controller.show.label.battery" = "बैटरी";
 "cli.controller.show.label.connection" = "कनेक्शन";
 "cli.controller.show.label.controls" = "कंट्रोल";
 "cli.controller.show.label.id" = "ID";

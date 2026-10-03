@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' disconnected before the request reached it. Reconnect it and retry.";
 "cli.controller.show.abstract" = "Show a controller's identity, ownership, capabilities, and virtual gamepad.";
 "cli.controller.show.discussion" = "Also lists output checks: commands that exercise each rumble motor and light, with what to observe.";
+"cli.controller.show.label.battery" = "Battery";
 "cli.controller.show.label.connection" = "Connection";
 "cli.controller.show.label.controls" = "Controls";
 "cli.controller.show.label.id" = "ID";

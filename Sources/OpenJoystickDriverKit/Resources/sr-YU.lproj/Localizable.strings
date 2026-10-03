@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "Veza sa „%@“ je prekinuta pre nego što je zahtev stigao. Povežite ga ponovo i pokušajte opet.";
 "cli.controller.show.abstract" = "Prikazuje identitet, vlasništvo, mogućnosti i virtuelni gejmpad kontrolera.";
 "cli.controller.show.discussion" = "Navodi i provere izlaza: komande koje testiraju svaki motor za vibraciju i svako svetlo, uz ono što treba posmatrati.";
+"cli.controller.show.label.battery" = "Батерија";
 "cli.controller.show.label.connection" = "Veza";
 "cli.controller.show.label.controls" = "Upravljački elementi";
 "cli.controller.show.label.id" = "ID";

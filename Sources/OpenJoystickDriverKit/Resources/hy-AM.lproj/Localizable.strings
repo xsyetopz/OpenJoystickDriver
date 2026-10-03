@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "«%@»-ն անջատվեց՝ նախքան հարցումը կհասներ նրան։ Նորից միացրեք և կրկին փորձեք։";
 "cli.controller.show.abstract" = "Ցույց տալ կարգավորիչի ինքնությունը, սեփականատիրոջը, հնարավորությունները և վիրտուալ խաղային վահանակը։";
 "cli.controller.show.discussion" = "Նաև ցուցադրում է ելքի ստուգումները՝ հրամաններ, որոնք փորձարկում են թրթռման յուրաքանչյուր շարժիչ և լույս, նշելով՝ ինչ պետք է դիտարկել։";
+"cli.controller.show.label.battery" = "Մարտկոց";
 "cli.controller.show.label.connection" = "Կապ";
 "cli.controller.show.label.controls" = "Կառավարման տարրեր";
 "cli.controller.show.label.id" = "ID";

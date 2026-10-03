@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "Krmilnik „%@“ se je odklopil, preden je zahteva prispela do njega. Znova ga povežite in poskusite znova.";
 "cli.controller.show.abstract" = "Pokaže identiteto, lastništvo, zmožnosti in navidezni igralni plošček krmilnika.";
 "cli.controller.show.discussion" = "Navede tudi preverjanja izhoda: ukaze, ki preizkusijo vsak vibracijski motor in vsako luč, ter kaj je treba opazovati.";
+"cli.controller.show.label.battery" = "Baterija";
 "cli.controller.show.label.connection" = "Povezava";
 "cli.controller.show.label.controls" = "Upravljalni elementi";
 "cli.controller.show.label.id" = "ID";

@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "„%@“ atvienojās, pirms pieprasījums to sasniedza. Pievienojiet to vēlreiz un mēģiniet vēlreiz.";
 "cli.controller.show.abstract" = "Rādīt kontroliera identitāti, piederību, iespējas un virtuālo spēļu kontrolieri.";
 "cli.controller.show.discussion" = "Uzskaita arī izvades pārbaudes: komandas, kas pārbauda katru vibrācijas motoru un gaismu, norādot, ko novērot.";
+"cli.controller.show.label.battery" = "Akumulators";
 "cli.controller.show.label.connection" = "Savienojums";
 "cli.controller.show.label.controls" = "Vadīklas";
 "cli.controller.show.label.id" = "ID";

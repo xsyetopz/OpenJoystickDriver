@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "„%@“ aftengdist áður en beiðnin barst henni. Tengdu hana aftur og reyndu aftur.";
 "cli.controller.show.abstract" = "Sýna auðkenni, eignarhald, eiginleika og sýndarleikjastýringu stýringar.";
 "cli.controller.show.discussion" = "Sýnir einnig úttaksathuganir: skipanir sem prófa hvern titringsmótor og hvert ljós, með því sem á að fylgjast með.";
+"cli.controller.show.label.battery" = "Rafhlaða";
 "cli.controller.show.label.connection" = "Tenging";
 "cli.controller.show.label.controls" = "Stjórntæki";
 "cli.controller.show.label.id" = "Auðkenni";

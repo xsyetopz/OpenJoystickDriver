@@ -181,6 +181,10 @@
 							"name": {
 								"type": "string"
 							},
+							"power": {
+								"description": "The latest power state the controller reports. Absent when the service reports none.",
+								"$ref": "report.schema.json#/$defs/controllerConnectionState/properties/power"
+							},
 							"productID": {
 								"type": "integer",
 								"minimum": 0,
@@ -402,6 +406,10 @@
 									]
 								}
 							}
+						},
+						"power": {
+							"description": "The latest power state the controller reports. Absent when the service reports none.",
+							"$ref": "report.schema.json#/$defs/controllerConnectionState/properties/power"
 						},
 						"productID": {
 							"type": "integer",

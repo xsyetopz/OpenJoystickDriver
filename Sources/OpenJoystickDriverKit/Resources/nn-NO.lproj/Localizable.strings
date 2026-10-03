@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' vart fråkopla før førespurnaden nådde han. Kople til att og prøv på nytt.";
 "cli.controller.show.abstract" = "Vis identiteten, eigarskapen, funksjonane og den virtuelle gamepaden til ein kontrollar.";
 "cli.controller.show.discussion" = "Viser òg utdatasjekkar: kommandoar som testar kvar vibrasjonsmotor og kvart lys, med kva du skal sjå etter.";
+"cli.controller.show.label.battery" = "Batteri";
 "cli.controller.show.label.connection" = "Tilkopling";
 "cli.controller.show.label.controls" = "Kontrollar";
 "cli.controller.show.label.id" = "ID";

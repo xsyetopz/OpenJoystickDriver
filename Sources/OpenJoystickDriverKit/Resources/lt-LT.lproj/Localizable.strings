@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "„%@“ atsijungė, kol užklausa jo nepasiekė. Prijunkite iš naujo ir bandykite dar kartą.";
 "cli.controller.show.abstract" = "Rodyti valdiklio tapatybę, nuosavybę, galimybes ir virtualų žaidimų pultą.";
 "cli.controller.show.discussion" = "Taip pat rodo išvesties patikras: komandas, kurios išbando kiekvieną vibracijos variklį ir šviesą, ir ką reikia stebėti.";
+"cli.controller.show.label.battery" = "Baterija";
 "cli.controller.show.label.connection" = "Ryšys";
 "cli.controller.show.label.controls" = "Valdymo elementai";
 "cli.controller.show.label.id" = "ID";

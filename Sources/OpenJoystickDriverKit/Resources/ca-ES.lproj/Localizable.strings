@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' s’ha desconnectat abans que la sol·licitud hi arribés. Reconnecta’l i torna-ho a provar.";
 "cli.controller.show.abstract" = "Mostra la identitat, la propietat, les capacitats i el comandament virtual d’un comandament.";
 "cli.controller.show.discussion" = "També llista les comprovacions de sortida: ordres que exerciten cada motor de vibració i cada llum, amb el que cal observar.";
+"cli.controller.show.label.battery" = "Bateria";
 "cli.controller.show.label.connection" = "Connexió";
 "cli.controller.show.label.controls" = "Controls";
 "cli.controller.show.label.id" = "ID";

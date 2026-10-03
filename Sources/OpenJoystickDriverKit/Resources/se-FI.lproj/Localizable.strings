@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "”%@” čuvgejuvvui ovdal go gažaldat olli dasa. Čatnat fas ja geahččal ođđasit.";
 "cli.controller.show.abstract" = "Čájeha stivrejeaddji identitehta, eaiggáduššama, návccaid ja virtuála speallanbáddi.";
 "cli.controller.show.discussion" = "Čájeha maiddái olggosbidjangeahččalemiid: komandaid mat geahččalit juohke vibreremmotora ja čuovgga, ja maid galggat fuobmát.";
+"cli.controller.show.label.battery" = "Báhtter";
 "cli.controller.show.label.connection" = "Oktavuohta";
 "cli.controller.show.label.controls" = "Stivrenelementtat";
 "cli.controller.show.label.id" = "ID";

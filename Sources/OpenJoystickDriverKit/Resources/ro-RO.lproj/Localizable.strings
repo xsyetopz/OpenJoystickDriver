@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "«%@» s-a deconectat înainte ca cererea să ajungă la el. Reconectați-l și încercați din nou.";
 "cli.controller.show.abstract" = "Arată identitatea, proprietatea, capabilitățile și gamepadul virtual ale unui controller.";
 "cli.controller.show.discussion" = "Listează și verificările de ieșire: comenzi care pun la încercare fiecare motor de vibrații și fiecare lumină, cu ce trebuie observat.";
+"cli.controller.show.label.battery" = "Baterie";
 "cli.controller.show.label.connection" = "Conexiune";
 "cli.controller.show.label.controls" = "Controale";
 "cli.controller.show.label.id" = "ID";

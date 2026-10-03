@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' s’est déconnectée avant que la requête ne l’atteigne. Reconnectez-la et réessayez.";
 "cli.controller.show.abstract" = "Affiche l’identité, la propriété, les capacités et la manette virtuelle d’une manette.";
 "cli.controller.show.discussion" = "Liste aussi les vérifications de sortie : des commandes qui sollicitent chaque moteur de vibration et chaque lumière, avec ce qu’il faut observer.";
+"cli.controller.show.label.battery" = "Batterie";
 "cli.controller.show.label.connection" = "Connexion";
 "cli.controller.show.label.controls" = "Commandes";
 "cli.controller.show.label.id" = "ID";

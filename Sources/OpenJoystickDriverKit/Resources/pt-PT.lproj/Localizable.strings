@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' desligou-se antes de o pedido chegar. Volte a ligá-lo e tente de novo.";
 "cli.controller.show.abstract" = "Mostra a identidade, a propriedade, as capacidades e o comando virtual de um comando.";
 "cli.controller.show.discussion" = "Lista também verificações de saída: comandos que exercitam cada motor de vibração e cada luz, com o que observar.";
+"cli.controller.show.label.battery" = "Bateria";
 "cli.controller.show.label.connection" = "Ligação";
 "cli.controller.show.label.controls" = "Controlos";
 "cli.controller.show.label.id" = "ID";

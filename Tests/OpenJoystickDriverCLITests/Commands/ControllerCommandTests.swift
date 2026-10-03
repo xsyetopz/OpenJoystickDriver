@@ -242,6 +242,75 @@ struct ControllerCommandTests {
     #expect(!plain.standardOutput.contains("publication"))
   }
 
+  /// Controllers with an exact battery level, a bucket, an unknown level, and no power state.
+  private static func poweredDevices() -> [ApplicationServiceDeviceDescription] {
+    [
+      FakeService.device(
+        id: "pad-1",
+        power: .init(charging: .charging, battery: .init(percentage: 73...73), wiredPower: true)
+      ),
+      FakeService.device(
+        id: "pad-2",
+        power: .init(charging: .discharging, battery: .init(percentage: 0...9), wiredPower: nil)
+      ),
+      FakeService.device(id: "pad-3", power: .unknown),
+      FakeService.device(id: "pad-4"),
+    ]
+  }
+
+  @Test
+  func listPrintsEachControllersPower() async throws {
+    let service = try FakeService(devices: Self.poweredDevices())
+    let json = await service.run(["controller", "list", "--json"])
+    let plain = await service.run(["controller", "list", "--plain"])
+    let human = await service.run(["controller", "list"])
+
+    #expect(json.code == 0, "\(json.standardError)")
+    let controllers = try #require(try json.json()["controllers"] as? [[String: Any]])
+    let power = controllers.map { $0["power"] as? [String: Any] }
+    #expect(power[0]?["charging"] as? String == "charging")
+    #expect((power[0]?["battery"] as? [String: Any])?["percentage"] as? [Int] == [73, 73])
+    #expect(power[0]?["wiredPower"] as? Bool == true)
+    #expect((power[1]?["battery"] as? [String: Any])?["percentage"] as? [Int] == [0, 9])
+    #expect(power[1]?["wiredPower"] == nil)
+    #expect((power[2]?["battery"] as? [String: Any])?.isEmpty == true)
+    #expect(controllers[3]["power"] == nil)
+    let rows = plain.standardOutput.split(separator: "\n").map {
+      $0.split(separator: "\t", omittingEmptySubsequences: false).map(String.init)
+    }
+    #expect(
+      rows.map { Array($0.suffix(2)) } == [
+        ["73%", "charging"], ["0-9%", "discharging"], ["", "unknown"], ["", ""],
+      ]
+    )
+    let lines = human.standardOutput.split(separator: "\n")
+    #expect(lines[0].contains("  USB  73%   Test Pad"))
+    #expect(lines[1].contains("  USB  0-9%  Test Pad"))
+    #expect(lines[3].contains("  USB        Test Pad"))
+  }
+
+  @Test
+  func showPrintsThePowerState() async throws {
+    let service = try FakeService(devices: Self.poweredDevices())
+    let json = await service.run(["controller", "show", "pad-1", "--json"])
+    let plain = await service.run(["controller", "show", "pad-2", "--plain"])
+    let human = await service.run(["controller", "show", "pad-1"])
+    let unknown = await service.run(["controller", "show", "pad-3"])
+    let absent = await service.run(["controller", "show", "pad-4", "--plain"])
+
+    #expect(json.code == 0, "\(json.standardError)")
+    let controller = try #require(try json.json()["controller"] as? [String: Any])
+    let power = try #require(controller["power"] as? [String: Any])
+    #expect(power["charging"] as? String == "charging")
+    #expect(plain.standardOutput.contains("\npower\tdischarging\t0-9%\t\n"))
+    let battery = { (run: CLIRun) in
+      run.standardOutput.split(separator: "\n").first { $0.hasPrefix("Battery") }
+    }
+    #expect(battery(human)?.hasSuffix("  73% (charging)") == true)
+    #expect(battery(unknown)?.hasSuffix("  none") == true)
+    #expect(!absent.standardOutput.contains("power"))
+  }
+
   @Test
   func watchOutputPrintsTheVirtualGamepadNextToTheInput() async throws {
     var virtual = VirtualGamepadState()

@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "انقطع اتصال «%@» قبل وصول الطلب إليه. أعد توصيله وحاول مرة أخرى.";
 "cli.controller.show.abstract" = "اعرض هوية وحدة التحكم وملكيتها وقدراتها وذراع الألعاب الافتراضي الخاص بها.";
 "cli.controller.show.discussion" = "يعرض أيضًا فحوصات الإخراج: أوامر تختبر كل محرك اهتزاز وكل إضاءة، مع ما ينبغي ملاحظته.";
+"cli.controller.show.label.battery" = "البطارية";
 "cli.controller.show.label.connection" = "الاتصال";
 "cli.controller.show.label.controls" = "عناصر التحكم";
 "cli.controller.show.label.id" = "المعرّف";

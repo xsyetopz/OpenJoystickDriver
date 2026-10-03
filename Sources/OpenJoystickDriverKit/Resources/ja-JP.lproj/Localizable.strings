@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "リクエストが届く前に「%@」が切断されました。再接続してやり直してください。";
 "cli.controller.show.abstract" = "コントローラの識別情報、所有状態、機能、仮想ゲームパッドを表示します。";
 "cli.controller.show.discussion" = "出力チェックも表示します。各振動モーターとライトを動かすコマンドと、確認すべき内容です。";
+"cli.controller.show.label.battery" = "バッテリー";
 "cli.controller.show.label.connection" = "接続";
 "cli.controller.show.label.controls" = "操作部";
 "cli.controller.show.label.id" = "ID";

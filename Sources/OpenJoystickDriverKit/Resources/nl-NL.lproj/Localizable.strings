@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' is losgekoppeld voordat het verzoek hem bereikte. Sluit hem opnieuw aan en probeer het opnieuw.";
 "cli.controller.show.abstract" = "De identiteit, het eigenaarschap, de mogelijkheden en het virtuele gamepad van een controller weergeven.";
 "cli.controller.show.discussion" = "Toont ook uitvoercontroles: commando's die elke rumblemotor en elk lampje uitproberen, met wat je moet waarnemen.";
+"cli.controller.show.label.battery" = "Batterij";
 "cli.controller.show.label.connection" = "Verbinding";
 "cli.controller.show.label.controls" = "Bedieningselementen";
 "cli.controller.show.label.id" = "ID";

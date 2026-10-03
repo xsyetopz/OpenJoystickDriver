@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' отключился до того, как запрос дошёл до него. Подключите его снова и повторите.";
 "cli.controller.show.abstract" = "Показывает идентификацию, владельца, возможности и виртуальный геймпад контроллера.";
 "cli.controller.show.discussion" = "Также перечисляет проверки вывода: команды, которые запускают каждый вибромотор и подсветку, и что при этом наблюдать.";
+"cli.controller.show.label.battery" = "Батарея";
 "cli.controller.show.label.connection" = "Подключение";
 "cli.controller.show.label.controls" = "Элементы управления";
 "cli.controller.show.label.id" = "ID";

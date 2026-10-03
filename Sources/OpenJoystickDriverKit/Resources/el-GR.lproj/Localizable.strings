@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "Το «%@» αποσυνδέθηκε πριν το αίτημα φτάσει σε αυτό. Συνδέστε το ξανά και δοκιμάστε πάλι.";
 "cli.controller.show.abstract" = "Εμφανίζει την ταυτότητα, την κυριότητα, τις δυνατότητες και το εικονικό gamepad ενός χειριστηρίου.";
 "cli.controller.show.discussion" = "Εμφανίζει επίσης ελέγχους εξόδου: εντολές που δοκιμάζουν κάθε κινητήρα δόνησης και φωτισμό, με το τι να παρατηρήσετε.";
+"cli.controller.show.label.battery" = "Μπαταρία";
 "cli.controller.show.label.connection" = "Σύνδεση";
 "cli.controller.show.label.controls" = "Στοιχεία ελέγχου";
 "cli.controller.show.label.id" = "ID";

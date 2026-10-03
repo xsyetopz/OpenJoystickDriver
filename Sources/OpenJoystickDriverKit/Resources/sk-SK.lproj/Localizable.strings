@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "Zariadenie „%@“ sa odpojilo skôr, než k nemu dorazila požiadavka. Pripojte ho znova a skúste to ešte raz.";
 "cli.controller.show.abstract" = "Zobrazí identitu, vlastníctvo, schopnosti a virtuálny gamepad ovládača.";
 "cli.controller.show.discussion" = "Zobrazí aj kontroly výstupu: príkazy, ktoré vyskúšajú každý vibračný motor a svetlo, spolu s tým, čo sledovať.";
+"cli.controller.show.label.battery" = "Batéria";
 "cli.controller.show.label.connection" = "Pripojenie";
 "cli.controller.show.label.controls" = "Ovládacie prvky";
 "cli.controller.show.label.id" = "ID";

@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "요청이 도달하기 전에 '%@' 연결이 끊어졌습니다. 다시 연결한 후 재시도하세요.";
 "cli.controller.show.abstract" = "컨트롤러의 ID, 소유권, 기능, 가상 게임패드를 표시합니다.";
 "cli.controller.show.discussion" = "출력 점검도 나열합니다. 각 진동 모터와 조명을 작동시키는 명령과 관찰할 내용입니다.";
+"cli.controller.show.label.battery" = "배터리";
 "cli.controller.show.label.connection" = "연결";
 "cli.controller.show.label.controls" = "컨트롤";
 "cli.controller.show.label.id" = "ID";

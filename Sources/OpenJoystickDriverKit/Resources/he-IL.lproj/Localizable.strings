@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "״%@״ נותק לפני שהבקשה הגיעה אליו. חבר אותו מחדש ונסה שוב.";
 "cli.controller.show.abstract" = "הצגת הזהות, הבעלות, היכולות ושלט המשחק הווירטואלי של בקר.";
 "cli.controller.show.discussion" = "מציג גם בדיקות פלט: פקודות שמפעילות כל מנוע רטט וכל אור, עם מה שיש לצפות בו.";
+"cli.controller.show.label.battery" = "סוללה";
 "cli.controller.show.label.connection" = "חיבור";
 "cli.controller.show.label.controls" = "פקדים";
 "cli.controller.show.label.id" = "מזהה";

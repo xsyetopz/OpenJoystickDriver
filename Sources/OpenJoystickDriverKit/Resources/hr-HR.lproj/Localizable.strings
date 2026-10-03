@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' je prekinuo vezu prije nego što je zahtjev stigao do njega. Ponovno ga povežite i pokušajte opet.";
 "cli.controller.show.abstract" = "Prikazuje identitet, vlasništvo, mogućnosti i virtualni gamepad kontrolera.";
 "cli.controller.show.discussion" = "Također navodi provjere izlaza: naredbe koje ispituju svaki motor za vibraciju i svjetlo, uz ono što treba promatrati.";
+"cli.controller.show.label.battery" = "Baterija";
 "cli.controller.show.label.connection" = "Veza";
 "cli.controller.show.label.controls" = "Kontrole";
 "cli.controller.show.label.id" = "ID";

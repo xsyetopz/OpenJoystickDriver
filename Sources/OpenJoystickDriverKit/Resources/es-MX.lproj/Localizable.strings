@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' se desconectó antes de que la solicitud llegara. Vuelve a conectarlo e inténtalo de nuevo.";
 "cli.controller.show.abstract" = "Muestra la identidad, la propiedad, las capacidades y el control virtual de un control.";
 "cli.controller.show.discussion" = "También lista comprobaciones de salida: comandos que ejercitan cada motor de vibración y cada luz, con lo que debes observar.";
+"cli.controller.show.label.battery" = "Batería";
 "cli.controller.show.label.connection" = "Conexión";
 "cli.controller.show.label.controls" = "Controles";
 "cli.controller.show.label.id" = "ID";

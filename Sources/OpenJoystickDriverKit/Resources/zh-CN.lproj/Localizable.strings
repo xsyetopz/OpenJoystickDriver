@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' 在请求到达前已断开。请重新连接后重试。";
 "cli.controller.show.abstract" = "显示控制器的身份、归属、功能和虚拟游戏手柄。";
 "cli.controller.show.discussion" = "还会列出输出检查：用于测试每个振动马达和灯光的命令，以及应观察的现象。";
+"cli.controller.show.label.battery" = "电池";
 "cli.controller.show.label.connection" = "连接";
 "cli.controller.show.label.controls" = "控件";
 "cli.controller.show.label.id" = "ID";

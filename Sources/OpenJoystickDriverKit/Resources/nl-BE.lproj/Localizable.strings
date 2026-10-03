@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' was verbroken voordat het verzoek hem bereikte. Sluit hem opnieuw aan en probeer opnieuw.";
 "cli.controller.show.abstract" = "Toont identiteit, eigenaarschap, mogelijkheden en virtuele gamepad van een controller.";
 "cli.controller.show.discussion" = "Toont ook uitvoercontroles: commando's die elke trilmotor en elk lampje aansturen, met wat je moet waarnemen.";
+"cli.controller.show.label.battery" = "Batterij";
 "cli.controller.show.label.connection" = "Verbinding";
 "cli.controller.show.label.controls" = "Bediening";
 "cli.controller.show.label.id" = "ID";

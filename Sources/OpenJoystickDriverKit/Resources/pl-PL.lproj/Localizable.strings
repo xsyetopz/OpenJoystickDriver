@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' rozłączył się, zanim żądanie do niego dotarło. Połącz go ponownie i spróbuj jeszcze raz.";
 "cli.controller.show.abstract" = "Pokaż tożsamość, własność, możliwości i wirtualny gamepad kontrolera.";
 "cli.controller.show.discussion" = "Wyświetla też testy wyjścia: polecenia, które uruchamiają każdy silnik wibracji i każde światło, wraz z tym, co obserwować.";
+"cli.controller.show.label.battery" = "Bateria";
 "cli.controller.show.label.connection" = "Połączenie";
 "cli.controller.show.label.controls" = "Elementy sterujące";
 "cli.controller.show.label.id" = "ID";

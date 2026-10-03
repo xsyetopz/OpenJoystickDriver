@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "“%@” istek ona ulaşmadan önce bağlantısını kaybetti. Yeniden bağlayıp tekrar deneyin.";
 "cli.controller.show.abstract" = "Bir kontrolcünün kimliğini, sahipliğini, yeteneklerini ve sanal oyun kumandasını gösterir.";
 "cli.controller.show.discussion" = "Ayrıca çıkış denetimlerini listeler: her titreşim motorunu ve ışığı deneyen komutlar ve nelerin gözlemleneceği.";
+"cli.controller.show.label.battery" = "Pil";
 "cli.controller.show.label.connection" = "Bağlantı";
 "cli.controller.show.label.controls" = "Kontrol öğeleri";
 "cli.controller.show.label.id" = "Kimlik";

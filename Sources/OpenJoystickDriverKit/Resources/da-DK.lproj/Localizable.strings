@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "“%@” blev afbrudt, før anmodningen nåede frem. Tilslut den igen, og prøv igen.";
 "cli.controller.show.abstract" = "Vis en controllers identitet, ejerskab, funktioner og virtuelle gamepad.";
 "cli.controller.show.discussion" = "Viser også outputtjek: kommandoer, der afprøver hver vibrationsmotor og hvert lys, med det, du skal iagttage.";
+"cli.controller.show.label.battery" = "Batteri";
 "cli.controller.show.label.connection" = "Forbindelse";
 "cli.controller.show.label.controls" = "Betjening";
 "cli.controller.show.label.id" = "ID";

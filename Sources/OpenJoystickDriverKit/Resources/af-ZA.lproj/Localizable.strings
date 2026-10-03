@@ -1140,6 +1140,7 @@
 "cli.controller.session.not_found" = "'%@' is ontkoppel voordat die versoek dit bereik het. Koppel dit weer en probeer weer.";
 "cli.controller.show.abstract" = "Wys ’n kontroleerder se identiteit, eienaarskap, vermoëns en virtuele gamepad.";
 "cli.controller.show.discussion" = "Lys ook uitvoertoetse: opdragte wat elke vibrasiemotor en lig uitoefen, met wat om waar te neem.";
+"cli.controller.show.label.battery" = "Battery";
 "cli.controller.show.label.connection" = "Verbinding";
 "cli.controller.show.label.controls" = "Kontroles";
 "cli.controller.show.label.id" = "ID";
