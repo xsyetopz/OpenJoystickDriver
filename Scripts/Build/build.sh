@@ -132,8 +132,7 @@ clean_build_artifacts() {
   echo "=== CLEAN: clearing build artifacts ==="
   rm -rf "$PROJECT_DIR/.build/driverkit" 2>/dev/null || true
   rm -rf "$PROJECT_DIR/.build/debug/OpenJoystickDriver.app" 2>/dev/null || true
-  rm -rf "$PROJECT_DIR/.build/arm64-apple-macosx" 2>/dev/null || true
-  rm -rf "$PROJECT_DIR/.build/x86_64-apple-macosx" 2>/dev/null || true
+  rm -rf "$GUI_DERIVED_DATA/Build" 2>/dev/null || true
   echo "  cleared generated DriverKit and application products"
 }
 

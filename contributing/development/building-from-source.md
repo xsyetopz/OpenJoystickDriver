@@ -46,3 +46,16 @@ swift test
 ```
 
 `just check` runs the complete validation that CI repeats. The full command list is in [`CLAUDE.md`](../../CLAUDE.md), and route details are in [`Scripts/README.md`](../../Scripts/README.md).
+
+## Building in Xcode
+
+`OpenJoystickDriver.xcodeproj` builds the app from the Swift package.
+Open it in Xcode and build or run the `OpenJoystickDriverApp` scheme.
+The `build` routes run the same scheme through `xcodebuild`, because only an Xcode build extracts the App Intents metadata that Shortcuts reads.
+
+An Xcode build is signed to run locally, without the restricted entitlements in `Sources/OpenJoystickDriver/App/Host.entitlements`.
+Without the `com.apple.developer.hid.virtual.device` entitlement, it cannot create the virtual gamepad.
+Use `./Scripts/ojd build install-fast dev` to test the signed app.
+
+When a swift.org toolchain is selected through `TOOLCHAINS`, `xcodebuild` cannot resolve the package.
+The `build` routes unset `TOOLCHAINS`; in a shell, run `env -u TOOLCHAINS xcodebuild`.

@@ -1,0 +1,270 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A0000000000000000000101 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000201 /* main.swift */; };
+		0A0000000000000000000102 /* HeadlessApplicationHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000202 /* HeadlessApplicationHost.swift */; };
+		0A0000000000000000000103 /* AppVersionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000203 /* AppVersionIntent.swift */; };
+		0A0000000000000000000104 /* OpenJoystickDriver.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000204 /* OpenJoystickDriver.icns */; };
+		0A0000000000000000000105 /* THIRD_PARTY_NOTICES.md in Resources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000205 /* THIRD_PARTY_NOTICES.md */; };
+		0A0000000000000000000111 /* OpenJoystickDriverKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0A0000000000000000000811 /* OpenJoystickDriverKit */; };
+		0A0000000000000000000112 /* OpenJoystickDriverService in Frameworks */ = {isa = PBXBuildFile; productRef = 0A0000000000000000000812 /* OpenJoystickDriverService */; };
+		0A0000000000000000000113 /* OpenJoystickDriverCLI in Frameworks */ = {isa = PBXBuildFile; productRef = 0A0000000000000000000813 /* OpenJoystickDriverCLI */; };
+		0A0000000000000000000114 /* OpenJoystickDriverPresentation in Frameworks */ = {isa = PBXBuildFile; productRef = 0A0000000000000000000814 /* OpenJoystickDriverPresentation */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0A0000000000000000000208 /* OpenJoystickDriver */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = OpenJoystickDriver; path = .; sourceTree = "<group>"; };
+		0A0000000000000000000201 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = main.swift; path = Sources/OpenJoystickDriver/main.swift; sourceTree = SOURCE_ROOT; };
+		0A0000000000000000000202 /* HeadlessApplicationHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeadlessApplicationHost.swift; path = Sources/OpenJoystickDriver/App/HeadlessApplicationHost.swift; sourceTree = SOURCE_ROOT; };
+		0A0000000000000000000203 /* AppVersionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppVersionIntent.swift; path = Sources/OpenJoystickDriver/App/Intents/AppVersionIntent.swift; sourceTree = SOURCE_ROOT; };
+		0A0000000000000000000204 /* OpenJoystickDriver.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = OpenJoystickDriver.icns; path = Sources/OpenJoystickDriver/Resources/OpenJoystickDriver.icns; sourceTree = SOURCE_ROOT; };
+		0A0000000000000000000205 /* THIRD_PARTY_NOTICES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = THIRD_PARTY_NOTICES.md; path = THIRD_PARTY_NOTICES.md; sourceTree = SOURCE_ROOT; };
+		0A0000000000000000000206 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Sources/OpenJoystickDriver/App/Info.plist; sourceTree = SOURCE_ROOT; };
+		0A0000000000000000000207 /* Host.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Host.entitlements; path = Sources/OpenJoystickDriver/App/Host.entitlements; sourceTree = SOURCE_ROOT; };
+		0A0000000000000000000209 /* OpenJoystickDriver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenJoystickDriver.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0A0000000000000000000401 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A0000000000000000000111 /* OpenJoystickDriverKit in Frameworks */,
+				0A0000000000000000000112 /* OpenJoystickDriverService in Frameworks */,
+				0A0000000000000000000113 /* OpenJoystickDriverCLI in Frameworks */,
+				0A0000000000000000000114 /* OpenJoystickDriverPresentation in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0A0000000000000000000301 = {
+			isa = PBXGroup;
+			children = (
+				0A0000000000000000000208 /* OpenJoystickDriver */,
+				0A0000000000000000000302 /* App */,
+				0A0000000000000000000305 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0A0000000000000000000302 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				0A0000000000000000000201 /* main.swift */,
+				0A0000000000000000000202 /* HeadlessApplicationHost.swift */,
+				0A0000000000000000000203 /* AppVersionIntent.swift */,
+				0A0000000000000000000206 /* Info.plist */,
+				0A0000000000000000000207 /* Host.entitlements */,
+				0A0000000000000000000204 /* OpenJoystickDriver.icns */,
+				0A0000000000000000000205 /* THIRD_PARTY_NOTICES.md */,
+			);
+			name = App;
+			sourceTree = "<group>";
+		};
+		0A0000000000000000000305 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0A0000000000000000000209 /* OpenJoystickDriver.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0A0000000000000000000501 /* OpenJoystickDriverApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A0000000000000000000702 /* Build configuration list for PBXNativeTarget "OpenJoystickDriverApp" */;
+			buildPhases = (
+				0A0000000000000000000402 /* Sources */,
+				0A0000000000000000000401 /* Frameworks */,
+				0A0000000000000000000403 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OpenJoystickDriverApp;
+			packageProductDependencies = (
+				0A0000000000000000000811 /* OpenJoystickDriverKit */,
+				0A0000000000000000000812 /* OpenJoystickDriverService */,
+				0A0000000000000000000813 /* OpenJoystickDriverCLI */,
+				0A0000000000000000000814 /* OpenJoystickDriverPresentation */,
+			);
+			productName = OpenJoystickDriver;
+			productReference = 0A0000000000000000000209 /* OpenJoystickDriver.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0A0000000000000000000601 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+			};
+			buildConfigurationList = 0A0000000000000000000701 /* Build configuration list for PBXProject "OpenJoystickDriver" */;
+			developmentRegion = "en-US";
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				"en-US",
+			);
+			mainGroup = 0A0000000000000000000301;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				0A0000000000000000000801 /* XCLocalSwiftPackageReference "." */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0A0000000000000000000305 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0A0000000000000000000501 /* OpenJoystickDriverApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0A0000000000000000000403 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A0000000000000000000104 /* OpenJoystickDriver.icns in Resources */,
+				0A0000000000000000000105 /* THIRD_PARTY_NOTICES.md in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0A0000000000000000000402 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A0000000000000000000101 /* main.swift in Sources */,
+				0A0000000000000000000102 /* HeadlessApplicationHost.swift in Sources */,
+				0A0000000000000000000103 /* AppVersionIntent.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0A0000000000000000000711 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		0A0000000000000000000712 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		0A0000000000000000000721 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				INFOPLIST_FILE = Sources/OpenJoystickDriver/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				OTHER_SWIFT_FLAGS = "-package-name openjoystickdriver";
+				PRODUCT_BUNDLE_IDENTIFIER = com.openjoystickdriver;
+				PRODUCT_NAME = OpenJoystickDriver;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		0A0000000000000000000722 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				INFOPLIST_FILE = Sources/OpenJoystickDriver/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				OTHER_SWIFT_FLAGS = "-package-name openjoystickdriver";
+				PRODUCT_BUNDLE_IDENTIFIER = com.openjoystickdriver;
+				PRODUCT_NAME = OpenJoystickDriver;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0A0000000000000000000701 /* Build configuration list for PBXProject "OpenJoystickDriver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A0000000000000000000711 /* Debug */,
+				0A0000000000000000000712 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0A0000000000000000000702 /* Build configuration list for PBXNativeTarget "OpenJoystickDriverApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A0000000000000000000721 /* Debug */,
+				0A0000000000000000000722 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		0A0000000000000000000801 /* XCLocalSwiftPackageReference "." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = .;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0A0000000000000000000811 /* OpenJoystickDriverKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OpenJoystickDriverKit;
+		};
+		0A0000000000000000000812 /* OpenJoystickDriverService */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OpenJoystickDriverService;
+		};
+		0A0000000000000000000813 /* OpenJoystickDriverCLI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OpenJoystickDriverCLI;
+		};
+		0A0000000000000000000814 /* OpenJoystickDriverPresentation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OpenJoystickDriverPresentation;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 0A0000000000000000000601 /* Project object */;
+}

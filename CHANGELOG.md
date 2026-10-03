@@ -91,6 +91,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Controller-record validation rejects protocol-default USB endpoints for every driver, not only GIP and Xbox 360, so such a record fails the catalog checks instead of the app at launch.
 - Replace the repository agent skills with `ojd-controller-catalog`, `ojd-hardware-evidence`, `ojd-swift-change`, `ojd-app-ui`, `ojd-repo-tooling`, and `ojd-build-sign-release`, also exposed to Claude Code through `.claude/skills`. The retired skills are `add-controller-openjoystickdriver`, `debug-controller-openjoystickdriver`, `design-openjoystickdriver`, `maintain-openjoystickdriver`, `organize-openjoystickdriver`, and `test-openjoystickdriver`.
 - Revise the command-line translations of 66 locales: consistent terms, native quotation marks, and decimal points in typed option values.
+- The build routes build the app with `OpenJoystickDriver.xcodeproj` instead of `swift build`.
+  Xcode extracts the App Intents metadata that Shortcuts reads, and the app bundle now also contains the SwifterKit resource bundle.
+  Open the project in Xcode to build and run the `OpenJoystickDriverApp` scheme; see [Building from source](contributing/development/building-from-source.md#building-in-xcode).
 
 ### Removed
 

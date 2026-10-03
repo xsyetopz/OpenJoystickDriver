@@ -42,18 +42,31 @@ build_app_bundle() {
     "GUI app (virtual HID backend)" \
     "Fix: regenerate the GUI provisioning profile for Identifier com.openjoystickdriver with entitlement com.apple.developer.hid.virtual.device, then reinstall profiles (./Scripts/ojd signing install-profiles)."
 
+  local configuration=Debug
+  local actions=(build)
   if [[ "$OJD_ENV" == "release" ]]; then
-    echo "Building release binaries (universal)..."
-    cd "$PROJECT_DIR" || exit
-    "$SWIFT_BIN" build -c release --product OpenJoystickDriver --arch arm64 --arch x86_64 \
-      -Xlinker -rpath -Xlinker @executable_path/../Frameworks
-    local gui_bin="$GUI_RELEASE"
-  else
-    echo "Building debug binaries (universal)..."
-    cd "$PROJECT_DIR" || exit
-    "$SWIFT_BIN" build --product OpenJoystickDriver --arch arm64 --arch x86_64 \
-      -Xlinker -rpath -Xlinker @executable_path/../Frameworks
-    local gui_bin="$PROJECT_DIR/.build/apple/Products/Debug/OpenJoystickDriver"
+    configuration=Release
+    actions=(clean build)
+  fi
+  echo "Building $configuration app (universal)..."
+  # Xcode extracts the App Intents metadata that Shortcuts reads, which `swift build` cannot.
+  # TOOLCHAINS is unset because the package must build with the selected Xcode's own toolchain.
+  env -u TOOLCHAINS xcodebuild \
+    -project "$GUI_PROJECT" \
+    -scheme "$GUI_SCHEME" \
+    -configuration "$configuration" \
+    -destination "generic/platform=macOS" \
+    -derivedDataPath "$GUI_DERIVED_DATA" \
+    ARCHS="arm64 x86_64" \
+    ONLY_ACTIVE_ARCH=NO \
+    ENABLE_DEBUG_DYLIB=NO \
+    CODE_SIGNING_ALLOWED=NO \
+    "${actions[@]}"
+  local built_app="$GUI_DERIVED_DATA/Build/Products/$configuration/OpenJoystickDriver.app"
+  if [[ ! -d "$built_app/Contents/Resources/Metadata.appintents" ]]; then
+    echo "ERROR: $built_app has no Contents/Resources/Metadata.appintents."
+    echo "Fix: build the app target of $GUI_PROJECT, which runs the App Intents metadata extraction."
+    exit 1
   fi
 
   mkdir -p "$PROJECT_DIR/.build"
@@ -66,7 +79,6 @@ build_app_bundle() {
 
   local GUI_APP="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
   local GUI_CONTENTS="$GUI_APP/Contents"
-  local GUI_MACOS="$GUI_CONTENTS/MacOS"
   local bundle_short_version="${OJD_BUNDLE_SHORT_VERSION:-$OJD_DEFAULT_BUNDLE_SHORT_VERSION}"
   local bundle_version="${OJD_BUNDLE_VERSION:-}"
   if [[ -z "$bundle_version" ]]; then
@@ -95,19 +107,9 @@ build_app_bundle() {
 
   echo "Creating app bundle..."
   rm -rf "$GUI_APP"
-  mkdir -p "$GUI_MACOS"
-  cp "$gui_bin" "$GUI_MACOS/OpenJoystickDriver"
+  ditto "$built_app" "$GUI_APP"
 
-  local BUILD_DIR
-  BUILD_DIR="$(dirname "$gui_bin")"
   local GUI_RESOURCES="$GUI_CONTENTS/Resources"
-  mkdir -p "$GUI_RESOURCES"
-  cp "$PROJECT_DIR/Sources/OpenJoystickDriver/Resources/OpenJoystickDriver.icns" \
-    "$GUI_RESOURCES/OpenJoystickDriver.icns"
-  cp "$PROJECT_DIR/THIRD_PARTY_NOTICES.md" "$GUI_RESOURCES/THIRD_PARTY_NOTICES.md"
-  for bundle in "$BUILD_DIR"/OpenJoystickDriver_*.bundle; do
-    [[ -d "$bundle" ]] && cp -R "$bundle" "$GUI_RESOURCES/"
-  done
   # SwiftUI's literal-based controls resolve Localizable.strings from the
   # process main bundle. Keep the Kit bundle as the single source of truth,
   # then mirror only its locale directories into the app bundle so AppKit,
@@ -121,7 +123,6 @@ build_app_bundle() {
   cp "$GUI_PROFILE" "$GUI_CONTENTS/embedded.provisionprofile"
   xattr -d com.apple.quarantine "$GUI_CONTENTS/embedded.provisionprofile" 2>/dev/null || true
 
-  cp "$OJD_APP_INFO_PLIST" "$GUI_CONTENTS/Info.plist"
   /usr/bin/plutil -replace CFBundleShortVersionString -string "$bundle_short_version" \
     "$GUI_CONTENTS/Info.plist"
   /usr/bin/plutil -replace CFBundleVersion -string "$bundle_version" "$GUI_CONTENTS/Info.plist"

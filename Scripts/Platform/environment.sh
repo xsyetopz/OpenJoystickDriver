@@ -91,21 +91,14 @@ SWIFT_PACKAGE_BIN="${SWIFT_PACKAGE_BIN:-$(xcrun --find swift-package 2>/dev/null
 IDENTITY="${CODESIGN_IDENTITY:--}"
 GUI_IDENTITY="${GUI_CODESIGN_IDENTITY:-$IDENTITY}"
 export GUI_IDENTITY
-GUI_DEBUG="$PROJECT_DIR/.build/debug/OpenJoystickDriver"
-GUI_RELEASE="$PROJECT_DIR/.build/apple/Products/Release/OpenJoystickDriver"
+export GUI_PROJECT="$PROJECT_DIR/OpenJoystickDriver.xcodeproj"
+export GUI_SCHEME="OpenJoystickDriverApp"
+export GUI_DERIVED_DATA="$PROJECT_DIR/.build/xcode"
 OJD_APP_INFO_PLIST="$PROJECT_DIR/Sources/OpenJoystickDriver/App/Info.plist"
 OJD_DEFAULT_BUNDLE_SHORT_VERSION="$(/usr/bin/plutil -extract CFBundleShortVersionString raw -o - "$OJD_APP_INFO_PLIST" 2>/dev/null)"
 if [[ ! "$OJD_DEFAULT_BUNDLE_SHORT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
   die "CFBundleShortVersionString in $OJD_APP_INFO_PLIST must be SemVer without build metadata"
 fi
-
-# Active binary paths (selected by OJD_ENV)
-if [[ "$OJD_ENV" == "release" ]]; then
-  GUI_BIN="$GUI_RELEASE"
-else
-  GUI_BIN="$GUI_DEBUG"
-fi
-export GUI_BIN
 
 # Template paths (source-controlled, contain ${DEVELOPMENT_TEAM} placeholder)
 GUI_ENTITLEMENTS_TEMPLATE="$PROJECT_DIR/Sources/OpenJoystickDriver/App/Host.entitlements"

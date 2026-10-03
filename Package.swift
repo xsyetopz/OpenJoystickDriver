@@ -25,7 +25,13 @@ let package = Package(
   name: "OpenJoystickDriver",
   defaultLocalization: "en-US",
   platforms: [.macOS(.v12), .iOS(.v15)],
-  products: [.library(name: "OpenJoystickDriverKit", targets: ["OpenJoystickDriverKit"])],
+  // OpenJoystickDriver.xcodeproj links the libraries that its app target imports.
+  products: [
+    .library(name: "OpenJoystickDriverKit", targets: ["OpenJoystickDriverKit"]),
+    .library(name: "OpenJoystickDriverService", targets: ["OpenJoystickDriverService"]),
+    .library(name: "OpenJoystickDriverCLI", targets: ["OpenJoystickDriverCLI"]),
+    .library(name: "OpenJoystickDriverPresentation", targets: ["OpenJoystickDriverPresentation"]),
+  ],
   dependencies: [
     swifterKitDependency,
     .package(url: "https://github.com/apple/swift-argument-parser.git", exact: "1.8.2"),
