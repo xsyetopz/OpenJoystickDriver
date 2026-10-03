@@ -16,6 +16,12 @@ public enum ApplicationServiceClientError: Error, LocalizedError, Sendable {
   }
 }
 
+/// The internal RPC client that OpenJoystickDriver's own app and `ojd` use to call the service.
+///
+/// The service accepts a connection only from a process with the same signing identifier and
+/// team ID as the service, so only OpenJoystickDriver's own signed executables can connect.
+/// Other programs use the `ojd` command and its `--json` output instead.
+/// The methods and payloads can change in any release.
 public final class ApplicationServiceClient: @unchecked Sendable {
   let stateLock = NSLock()
   let socketPath: String
