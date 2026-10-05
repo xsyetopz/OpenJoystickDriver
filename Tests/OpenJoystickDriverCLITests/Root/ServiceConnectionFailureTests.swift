@@ -15,7 +15,7 @@ struct ServiceConnectionFailureTests {
     #expect(
       ServiceConnection.failure(for: error) as? CLIFailure
         == CLIFailure(
-          .failure,
+          .duplicateName,
           "A profile with that name already exists. 'ojd profile list' shows every profile."
         )
     )
@@ -31,7 +31,7 @@ struct ServiceConnectionFailureTests {
     #expect(
       ServiceConnection.failure(for: error) as? CLIFailure
         == CLIFailure(
-          .failure,
+          .unwritableLibrary,
           "The service did not complete the request: "
             + "The remapping profile library could not be written. Check it with 'ojd status'."
         )

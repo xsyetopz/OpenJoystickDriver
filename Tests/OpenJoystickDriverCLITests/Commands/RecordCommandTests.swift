@@ -76,7 +76,7 @@ struct RecordCommandTests {
     #expect(json.code == 1)
     #expect(try json.json()["valid"] as? Bool == false)
     #expect((try json.json()["problem"] as? String)?.hasPrefix("$schema must be") == true)
-    #expect(json.standardError.hasPrefix("ojd: - is not a valid record: $schema must be"))
+    #expect(json.standardError.hasPrefix("ojd: E2011: - is not a valid record: $schema must be"))
     #expect(install.code == 1)
     #expect(directory.fileNames.isEmpty)
     #expect(missing.code == 64)

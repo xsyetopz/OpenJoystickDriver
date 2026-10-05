@@ -329,7 +329,7 @@ public struct ApplicationServiceRemappingSnapshotPayload: Codable, Equatable, Se
 public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, LocalizedError,
   Sendable
 {
-  public enum Code: String, Codable, Sendable {
+  public enum Code: String, Codable, Sendable, CaseIterable {
     case controllerUnavailable = "controller_unavailable"
     case joyConPairUnavailable = "joy_con_pair_unavailable"
     case motionUnavailable = "motion_unavailable"
@@ -354,6 +354,36 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
     case profileRecoveryRequired = "profile_recovery_required"
     case unwritableLibrary = "library_unwritable"
     case unexpected = "unexpected"
+
+    /// The stable error code of this failure, listed in `Resources/ErrorCodes.json`.
+    public var errorCode: ErrorCode {
+      switch self {
+      case .controllerUnavailable: .controllerUnavailable
+      case .joyConPairUnavailable: .joyConPairUnavailable
+      case .motionUnavailable: .motionUnavailable
+      case .argumentTooLarge: .argumentTooLarge
+      case .corruptLibrary: .corruptLibrary
+      case .duplicateName: .duplicateName
+      case .invalidArguments: .invalidArguments
+      case .invalidProfile: .invalidProfile
+      case .librarySizeExceeded: .librarySizeExceeded
+      case .profileAlreadyExists: .profileAlreadyExists
+      case .profileUpdateConflict: .profileUpdateConflict
+      case .profileCountExceeded: .profileCountExceeded
+      case .profileNotFound: .profileNotFound
+      case .responseEncodingFailed: .responseEncodingFailed
+      case .responseTooLarge: .responseTooLarge
+      case .routerEngineUnavailable: .routerEngineUnavailable
+      case .routerLibraryAndEngineUnavailable: .routerLibraryAndEngineUnavailable
+      case .routerLibraryUnavailable: .routerLibraryUnavailable
+      case .routerShutDown: .routerShutDown
+      case .transactionUnreconciled: .transactionUnreconciled
+      case .unreadableLibrary: .unreadableLibrary
+      case .profileRecoveryRequired: .profileRecoveryRequired
+      case .unwritableLibrary: .unwritableLibrary
+      case .unexpected: .remappingUnexpected
+      }
+    }
   }
 
   public let code: Code

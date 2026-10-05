@@ -729,6 +729,31 @@
 				}
 			}
 		},
+		"explain": {
+			"type": "object",
+			"required": ["area", "code", "explanation"],
+			"additionalProperties": false,
+			"properties": {
+				"area": {
+					"type": "string"
+				},
+				"code": {
+					"type": "string",
+					"pattern": "^E[0-9]{4}$"
+				},
+				"exitCode": {
+					"description": "The exit code of a command-line error.",
+					"type": "integer"
+				},
+				"explanation": {
+					"type": "string"
+				},
+				"wire": {
+					"description": "The wire value of a remapping error.",
+					"type": "string"
+				}
+			}
+		},
 		"extensionActivate": {
 			"$ref": "#/$defs/sharedExtensionState"
 		},

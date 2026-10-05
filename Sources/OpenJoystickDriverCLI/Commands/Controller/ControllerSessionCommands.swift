@@ -27,7 +27,7 @@ private func printSession(_ report: ControllerSessionReport, message: String) th
 
 private func sessionNotFound(_ selector: ControllerSelector) -> CLIFailure {
   CLIFailure(
-    .failure,
+    .controllerRequestFailed,
     CLILocalized.format(
       "cli.controller.session.not_found",
       "'%@' disconnected before the request reached it. Reconnect it and retry.",
@@ -191,7 +191,7 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
     switch result.failure {
     case .notBluetooth:
       return CLIFailure(
-        .failure,
+        .controllerRequestFailed,
         CLILocalized.format(
           "cli.controller.disconnect.not_bluetooth",
           "%@ is not connected over Bluetooth. Unplug it to disconnect it.",
@@ -200,7 +200,7 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
       )
     case .notFound:
       return CLIFailure(
-        .failure,
+        .controllerRequestFailed,
         CLILocalized.format(
           "cli.controller.session.not_found",
           "'%@' disconnected before the request reached it. Reconnect it and retry.",
@@ -213,7 +213,7 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
       let code = result.systemCode.map { " (system code \($0))" } ?? ""
       let recovery = result.recovery.map { " \($0)" } ?? ""
       return CLIFailure(
-        .failure,
+        .controllerRequestFailed,
         CLILocalized.format(
           "cli.controller.disconnect.failed",
           "Bluetooth disconnect failed during %@: %@.",

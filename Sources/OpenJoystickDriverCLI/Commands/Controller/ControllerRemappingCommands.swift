@@ -110,7 +110,7 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
     switch error {
     case .controllerUnavailable:
       CLIFailure(
-        .failure,
+        ApplicationServiceRemappingRPCError.Code.controllerUnavailable.errorCode,
         CLILocalized.format(
           "cli.controller.calibrate.unavailable",
           "%@ has no active remapping session. Activate a profile for it with "
@@ -120,7 +120,7 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
       )
     case .motionUnavailable:
       CLIFailure(
-        .failure,
+        ApplicationServiceRemappingRPCError.Code.motionUnavailable.errorCode,
         CLILocalized.format(
           "cli.controller.calibrate.no_motion",
           "%@ does not report motion.",
@@ -206,7 +206,7 @@ struct ControllerPairCommand: AsyncParsableCommand {
         })
       else {
         throw CLIFailure(
-          .failure,
+          .serviceRequestFailed,
           CLILocalized.text(
             "cli.controller.pair.missing",
             "The service did not pair the Joy-Cons. Check them with 'ojd controller list'."
@@ -269,7 +269,7 @@ struct ControllerUnpairCommand: AsyncParsableCommand {
           })
         else {
           throw CLIFailure(
-            .failure,
+            .notFound,
             CLILocalized.format(
               "cli.controller.unpair.not_found",
               "No Joy-Con pair matches '%@'.",

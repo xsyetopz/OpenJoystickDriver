@@ -57,7 +57,7 @@ A command that needs the service exits with code 69 when the service is not runn
   A program that reads one release's output keeps working with later releases of the same major version.
   Because a later release can add keys and values, validate output against the schema from the same release.
 - `--plain` output has one record per line, with tab-separated fields. The first field names the kind of record. Fields are stable identifiers and are never translated.
-- Errors use one format: `ojd: WHAT FAILED. HOW TO FIX IT.`
+- Errors use one format: `ojd: E2004: WHAT FAILED. HOW TO FIX IT.` The code after `ojd:` is stable, so a script can branch on it. An error that the service reports for remapping carries an `E3xxx` code. `ojd explain E2004` prints what a code means, and [Error codes](Error-Codes.md) lists them all.
 - Color appears only on a terminal. `NO_COLOR`, `TERM=dumb`, and `--no-color` turn it off.
 
 ## Exit Codes
@@ -69,7 +69,9 @@ A command that needs the service exits with code 69 when the service is not runn
 | 64 | Usage error: an unknown command or option, or an invalid value. |
 | 69 | The service is not running. Start it with `ojd service start`. |
 | 77 | A macOS permission is missing. |
+| 127 | An `ojd` built from the repository could not hand the command to the installed app. |
 | 130 | Interrupted with Control-C. |
+| 143 | Terminated with SIGTERM. |
 
 ## Further Reading
 

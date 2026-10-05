@@ -84,7 +84,7 @@ struct RecordDraftCommand: AsyncParsableCommand {
           )
         else {
           throw CLIFailure(
-            .failure,
+            .controllerRequestFailed,
             CLILocalized.format(
               "cli.record.draft.no_layout",
               "No control of %@ could be read from its HID report descriptor, and its bundled "

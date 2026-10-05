@@ -70,7 +70,7 @@ struct ControllerSelector: ExpressibleByArgument, Equatable, Sendable {
       )
     }
     let lines = listed.map { "  \($0.runtimeIdentifier)  \($0.identity)  \($0.name)" }
-    throw CLIFailure(.failure, ([message] + lines).joined(separator: "\n"))
+    throw CLIFailure(.notFound, ([message] + lines).joined(separator: "\n"))
   }
 
   /// Reads the connected controllers from the service and resolves this selector.

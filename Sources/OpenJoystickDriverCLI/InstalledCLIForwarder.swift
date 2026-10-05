@@ -43,13 +43,17 @@ package enum InstalledCLIForwarder {
     case .local: return
     case .forward(let target): executable = target
     case .staleInstallation:
-      fputs(
-        "ojd: The installed OpenJoystickDriver.app is older than these repository sources. "
-          + "Run './Scripts/ojd build install-fast dev', "
-          + "or set OJD_RUN_REPOSITORY_CLI=1 to run this build.\n",
-        stderr
+      Self.exit(
+        with: CLIFailure(
+          .staleInstallation,
+          CLILocalized.text(
+            "cli.error.stale_installation",
+            "The installed OpenJoystickDriver.app is older than these repository sources. "
+              + "Run './Scripts/ojd build install-fast dev', "
+              + "or set OJD_RUN_REPOSITORY_CLI=1 to run this build."
+          )
+        )
       )
-      exit(1)
     }
 
     let strings = ["ojd"] + arguments
@@ -58,8 +62,15 @@ package enum InstalledCLIForwarder {
     }
     guard pointers.allSatisfy({ $0 != nil }) else {
       release(pointers)
-      fputs("ojd: Could not allocate arguments for the installed ojd. Retry the command.\n", stderr)
-      exit(127)
+      Self.exit(
+        with: CLIFailure(
+          .installedCLIFailed,
+          CLILocalized.text(
+            "cli.error.forwarder_allocation",
+            "Could not allocate arguments for the installed ojd. Retry the command."
+          )
+        )
+      )
     }
     pointers.append(nil)
     defer { release(pointers) }
@@ -72,11 +83,21 @@ package enum InstalledCLIForwarder {
     }
     guard result == -1 else { return }
     let message = String(cString: strerror(errno))
-    fputs(
-      "ojd: Could not run the installed ojd: \(message). Reinstall OpenJoystickDriver.app.\n",
-      stderr
+    Self.exit(
+      with: CLIFailure(
+        .installedCLIFailed,
+        CLILocalized.format(
+          "cli.error.forwarder_exec",
+          "Could not run the installed ojd: %@. Reinstall OpenJoystickDriver.app.",
+          message
+        )
+      )
     )
-    exit(127)
+  }
+
+  private static func exit(with failure: CLIFailure) -> Never {
+    fputs(failure.line + "\n", stderr)
+    Darwin.exit(failure.code.rawValue)
   }
 
   private static func release(_ pointers: [UnsafeMutablePointer<CChar>?]) {

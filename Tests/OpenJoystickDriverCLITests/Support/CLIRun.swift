@@ -97,6 +97,7 @@ enum CLICommandTree {
   static func sampleOperands(for path: [String]) -> [String] {
     switch path {
     case ["setting", "get"]: ["launch-at-login"]
+    case ["explain"]: ["E2004"]
     case ["setting", "set"]: ["launch-at-login", "true"]
     case ["controller", "show"], ["controller", "watch"], ["controller", "capture"],
       ["controller", "rumble"], ["controller", "suspend"], ["controller", "resume"],

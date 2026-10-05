@@ -250,7 +250,7 @@ struct ControllerWatchCommand: AsyncParsableCommand {
     }
     guard pressed, let press else {
       throw CLIFailure(
-        .failure,
+        .aborted,
         CLILocalized.format(
           "cli.controller.watch.no_press",
           "No control was pressed within %@.",

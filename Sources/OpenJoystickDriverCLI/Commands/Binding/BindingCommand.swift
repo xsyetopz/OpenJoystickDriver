@@ -261,7 +261,7 @@ struct BindingClearCommand: AsyncParsableCommand {
         })
       {
         throw CLIFailure(
-          .failure,
+          .notFound,
           CLILocalized.format(
             "cli.binding.clear.missing",
             "'%@' has no binding for %@. Nothing changed.",

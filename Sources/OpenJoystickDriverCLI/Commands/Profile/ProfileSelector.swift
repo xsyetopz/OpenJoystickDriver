@@ -29,10 +29,10 @@ struct ProfileSelector: ExpressibleByArgument, Equatable, Sendable {
         matches.count
       )
       let lines = matches.map { "  \($0.id.uuidString)  \($0.name)" }
-      throw CLIFailure(.failure, ([message] + lines).joined(separator: "\n"))
+      throw CLIFailure(.notFound, ([message] + lines).joined(separator: "\n"))
     }
     throw CLIFailure(
-      .failure,
+      .notFound,
       CLILocalized.format(
         "cli.profile.selector.not_found",
         "No profile has the ID or name '%@'. 'ojd profile list' shows every profile.",
@@ -93,7 +93,7 @@ extension RemappingProfile {
   func validatedForCLI() throws -> Self {
     do { try validate() } catch {
       throw CLIFailure(
-        .failure,
+        .invalidInputFile,
         CLILocalized.format(
           "cli.profile.invalid",
           "The profile is not valid: %@",

@@ -219,7 +219,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
       }
       if let bundleError {
         throw CLIFailure(
-          .failure,
+          .fileAccessFailed,
           CLILocalized.format(
             "cli.diagnose.bundle_failed",
             "The support bundle was not written: %@. Choose another --bundle path.",
@@ -229,7 +229,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
       }
       if report.failureCount > 0 {
         throw CLIFailure(
-          .failure,
+          .diagnoseFailed,
           CLILocalized.format(
             "cli.diagnose.failed",
             "Failed checks: %lld. Fix them using the details above, or run "

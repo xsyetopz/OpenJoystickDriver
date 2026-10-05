@@ -151,7 +151,7 @@ private let unitFlagHelp = ArgumentHelp(
 private func requireUnit(_ unit: Bool, _ device: ApplicationServiceDeviceDescription) throws {
   guard unit, device.unitIdentifier == nil else { return }
   throw CLIFailure(
-    .failure,
+    .controllerRequestFailed,
     CLILocalized.format(
       "cli.virtual.error.no_unit",
       "%@ has no unit ID, so a choice can apply only to its whole model. Run the command "
@@ -171,7 +171,7 @@ private func printChange(
     var reason = failure.code
     if case .activationFailed(let detail) = failure { reason += ": " + detail }
     throw CLIFailure(
-      .failure,
+      .serviceRequestFailed,
       CLILocalized.format(
         "cli.virtual.error.failed",
         "The virtual gamepad for %@ did not change (%@). Check it with 'ojd virtual show'.",
@@ -375,7 +375,7 @@ struct VirtualResetCommand: AsyncParsableCommand {
     }
     guard reset else {
       throw CLIFailure(
-        .failure,
+        .serviceRequestFailed,
         CLILocalized.text(
           "cli.virtual.reset.all.failed",
           "The service could not clear the virtual gamepad choices. Check it with 'ojd status'."

@@ -10,6 +10,7 @@ struct ErrorCodeTests {
       let domain: String
       let name: String
       let status: String
+      let wire: String?
     }
     let codes: [Entry]
   }
@@ -31,6 +32,22 @@ struct ErrorCodeTests {
     #expect(active.map(\.code) == ErrorCode.allCases.map(\.rawValue))
     #expect(active.map(\.name) == ErrorCode.allCases.map { "\($0)" })
     #expect(active.map(\.domain) == ErrorCode.allCases.map(\.domain.rawValue))
+  }
+
+  @Test
+  func eachRemappingCodeIsTheCatalogEntryOfItsWireValue() throws {
+    let data = try Data(contentsOf: repositoryResource("Resources/ErrorCodes.json"))
+    let remapping = try JSONDecoder().decode(Catalog.self, from: data).codes.filter {
+      $0.domain == "remapping" && $0.status == "active"
+    }
+    // One catalog entry per RPC code, in the declaration order of the enum.
+    #expect(
+      remapping.map(\.wire) == ApplicationServiceRemappingRPCError.Code.allCases.map(\.rawValue)
+    )
+    #expect(
+      remapping.map(\.code)
+        == ApplicationServiceRemappingRPCError.Code.allCases.map(\.errorCode.rawValue)
+    )
   }
 
   @Test

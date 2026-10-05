@@ -19,13 +19,16 @@ package struct CLI {
     var command: any ParsableCommand
     do { command = try OJDCommand.parseAsRoot(arguments) } catch {
       if let match = CommandSuggestion.match(arguments: arguments) {
+        guard let suggestion = match.suggestion else {
+          return reportLibraryError(error, code: .unknownCommand)
+        }
         CLIOutput.stderr(
-          "ojd: "
+          "ojd: \(ErrorCode.unknownCommand.rawValue): "
             + CLILocalized.format(
               "cli.error.unknown_command",
               "Unknown command '%@'. Did you mean '%@'?",
               match.typed,
-              match.suggestion
+              suggestion
             )
         )
         return CLIExitCode.usage.rawValue
@@ -55,12 +58,12 @@ package struct CLI {
 
   private static func report(_ error: any Error) -> Int32 {
     switch error {
-    case let failure as CLIFailure: CLIOutput.stderr("ojd: \(failure.message)")
+    case let failure as CLIFailure: CLIOutput.stderr(failure.line)
     case is CancellationError: break
     case is CleanExit, is ExitCode, is ValidationError: return reportLibraryError(error)
     default:
       CLIOutput.stderr(
-        "ojd: "
+        "ojd: \(ErrorCode.unexpected.rawValue): "
           + CLILocalized.format(
             "cli.error.unexpected",
             "Unexpected error: %@. Run 'ojd diagnose --bundle PATH' and attach the bundle "
@@ -72,10 +75,17 @@ package struct CLI {
     return exitCode(for: error)
   }
 
-  /// Prints a parser result: help and the version on stdout, usage errors on stderr.
-  private static func reportLibraryError(_ error: any Error) -> Int32 {
+  /// Prints a parser result: help and the version on stdout, usage errors on stderr. A usage
+  /// error carries the usage code unless `code` names another.
+  private static func reportLibraryError(
+    _ error: any Error,
+    code errorCode: ErrorCode = .usage
+  ) -> Int32 {
     let code = OJDCommand.exitCode(for: error).rawValue
-    let message = OJDCommand.fullMessage(for: error)
+    var message = OJDCommand.fullMessage(for: error)
+    if errorCode != .usage, message.hasPrefix(OJDCommand._errorPrefix) {
+      message = "ojd: \(errorCode.rawValue): " + message.dropFirst(OJDCommand._errorPrefix.count)
+    }
     if !message.isEmpty {
       if code == CLIExitCode.success.rawValue {
         CLIOutput.stdout(message)

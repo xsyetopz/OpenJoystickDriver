@@ -60,7 +60,7 @@ struct LogExportCommand: AsyncParsableCommand {
         snapshots = try ApplicationServiceLogStream.allCases.map { try environment.tail($0, lines) }
       } catch {
         throw CLIFailure(
-          .failure,
+          .fileAccessFailed,
           CLILocalized.format(
             "cli.log.show.read_failed",
             "Could not read the service logs: %@. Check the folder that 'ojd log path' prints.",
@@ -71,7 +71,7 @@ struct LogExportCommand: AsyncParsableCommand {
       let url = URL(fileURLWithPath: file)
       guard force || !FileManager.default.fileExists(atPath: url.path) else {
         throw CLIFailure(
-          .failure,
+          .fileAccessFailed,
           CLILocalized.format(
             "cli.log.export.exists",
             "%@ already exists. Pass --force to replace it.",
@@ -87,7 +87,7 @@ struct LogExportCommand: AsyncParsableCommand {
         try Data(text.utf8).write(to: url, options: force ? .atomic : .withoutOverwriting)
       } catch {
         throw CLIFailure(
-          .failure,
+          .fileAccessFailed,
           CLILocalized.format(
             "cli.record.install.failed",
             "Cannot write %@: %@",

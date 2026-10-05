@@ -89,7 +89,7 @@ struct ExtensionStatusCommand: AsyncParsableCommand {
       }
       if case .unavailable(let reason) = status.registration {
         throw CLIFailure(
-          .failure,
+          .systemRequestFailed,
           CLILocalized.format(
             "cli.extension.status.unavailable",
             "macOS did not report the extension registration: %@. "
@@ -126,7 +126,7 @@ private func submit(
   case .cancelled: throw CancellationError()
   case .timedOut:
     throw CLIFailure(
-      .failure,
+      .systemRequestFailed,
       CLILocalized.text(
         "cli.extension.timeout",
         "macOS did not finish the request in time. "
@@ -135,7 +135,7 @@ private func submit(
     )
   case .failed:
     throw CLIFailure(
-      .failure,
+      .systemRequestFailed,
       CLILocalized.text(
         "cli.extension.submit_failed",
         "macOS rejected the request. Run 'ojd extension status' and check "

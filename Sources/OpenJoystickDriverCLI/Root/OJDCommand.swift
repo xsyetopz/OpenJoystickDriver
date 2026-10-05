@@ -27,11 +27,12 @@ struct OJDCommand: AsyncParsableCommand {
       VirtualCommand.self, ServiceCommand.self,
       RecordCommand.self, PermissionCommand.self, ExtensionCommand.self, SettingCommand.self,
       AccessCommand.self,
-      LogCommand.self, DiagnoseCommand.self, UpdateCommand.self,
+      LogCommand.self, DiagnoseCommand.self, UpdateCommand.self, ExplainCommand.self,
     ]
   )
 
-  static var _errorPrefix: String { "ojd: " }
+  /// The parser reports only usage errors, so each carries the usage code.
+  static var _errorPrefix: String { "ojd: \(ErrorCode.usage.rawValue): " }
 
   @OptionGroup
   var global: GlobalOptions

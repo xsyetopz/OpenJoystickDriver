@@ -68,4 +68,4 @@ GUI and CLI copy: `LOCALIZATION.md`. Tests check codes, routes, identifiers, pat
 
 Submit one logical change. List checks run and whether you tested on your own hardware.
 
-Layout: `docs/development/source-topology.md`. RPC payloads: `Sources/OpenJoystickDriverKit/ApplicationService/`. CLI help: `Sources/OpenJoystickDriverCLI/Catalog/CommandCatalog.swift`. `OpenJoystickDriverHIDTool` is internal.
+Layout: `docs/development/source-topology.md`. RPC payloads: `Sources/OpenJoystickDriverKit/ApplicationService/`. CLI help: the `CommandConfiguration` of each command under `Sources/OpenJoystickDriverCLI/Commands/`, with its text in the localization strings. `OpenJoystickDriverHIDTool` is internal.

@@ -30,7 +30,7 @@ struct ProfileMutationTests {
     #expect(profileID == original.id)
     #expect(
       await MainActor.run { library.lastError }
-        == "This profile changed elsewhere. Reload or keep editing."
+        == "This profile changed elsewhere. Reload or keep editing. (E3011)"
     )
   }
 

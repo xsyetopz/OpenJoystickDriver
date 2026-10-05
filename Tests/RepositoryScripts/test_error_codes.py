@@ -96,6 +96,34 @@ class ErrorCodeTests(unittest.TestCase):
                 with self.assertRaisesRegex(errors.ErrorCodeError, "breaks its schema"):
                     errors.load_catalog(root)
 
+    def test_a_repeated_wire_value_is_refused(self) -> None:
+        with self.assertRaisesRegex(
+            errors.ErrorCodeError, "wire same_wire is used twice"
+        ):
+            errors.check_invariants(
+                [
+                    entry("E3001", "remapping", "a", wire="same_wire"),
+                    entry("E3002", "remapping", "b", wire="same_wire"),
+                ]
+            )
+
+    def test_a_cli_exit_code_must_be_a_documented_one(self) -> None:
+        for exit_code in (2, 130):
+            with (
+                self.subTest(exit_code=exit_code),
+                self.assertRaisesRegex(errors.ErrorCodeError, "does not document"),
+            ):
+                errors.check_invariants(
+                    [entry("E2001", "cli", "a", exitCode=exit_code)]
+                )
+        for exit_code in sorted(errors.CLI_EXIT_CODES):
+            errors.check_invariants([entry("E2001", "cli", "a", exitCode=exit_code)])
+
+    def test_every_cli_exit_code_is_documented_in_the_command_line_page(self) -> None:
+        page = (ROOT / "wiki/Command-Line.md").read_text(encoding="utf-8")
+        for exit_code in sorted(errors.CLI_EXIT_CODES):
+            self.assertRegex(page, rf"\| {exit_code} \|")
+
     # The previous catalogs below are fakes: they stand for the catalog at a release tag.
     def test_a_deleted_released_code_is_refused(self) -> None:
         fake_previous = [
@@ -135,21 +163,21 @@ class ErrorCodeTests(unittest.TestCase):
     def test_write_then_check_round_trips(self) -> None:
         root = self.copy_repository()
         catalog = errors.load_catalog(root)
-        catalog.append(entry("E1010", "endpoint", "newCode"))
-        catalog.append(entry("E2001", "cli", "usage", exitCode=64))
+        catalog.append(entry("E1099", "endpoint", "newCode"))
+        catalog.append(entry("E2099", "cli", "newUsage", exitCode=64))
         catalog.append(
             {
-                **entry("E3001", "remapping", "oldWire", wire="old_wire"),
+                **entry("E3099", "remapping", "oldWire", wire="old_wire"),
                 "status": "retired",
                 "retiredIn": "0.5.0",
             }
         )
-        self.write_catalog(root, catalog)
+        self.write_catalog(root, sorted(catalog, key=lambda item: item["code"]))
         template = root / errors.TEMPLATE
         template.write_text(
             template.read_text(encoding="utf-8")
-            + '"error.E1010" = "A new code. Fix it.";\n'
-            + '"error.E2001" = "Wrong usage. Read the help.";\n',
+            + '"error.E1099" = "A new code. Fix it.";\n'
+            + '"error.E2099" = "Wrong usage. Read the help.";\n',
             encoding="utf-8",
         )
         with patch.object(errors, "released_catalog", return_value=None):
@@ -164,13 +192,13 @@ class ErrorCodeTests(unittest.TestCase):
             self.assertEqual(errors.regenerate(root, write=False), [])
         schema = json.loads((root / errors.ENDPOINT_SCHEMA).read_text(encoding="utf-8"))
         enum = schema["$defs"]["error"]["properties"]["code"]["enum"]
-        self.assertEqual(enum[-2:], ["E1009", "E1010"])
+        self.assertEqual(enum[-2:], ["E1009", "E1099"])
         page = (root / errors.WIKI_PAGE).read_text(encoding="utf-8")
-        self.assertIn("| E1010 | Endpoint | A new code. Fix it. |", page)
+        self.assertIn("| E1099 | Endpoint | A new code. Fix it. |", page)
         self.assertIn(
-            "| E2001 | Command line | Wrong usage. Read the help. Exit code 64. |", page
+            "| E2099 | Command line | Wrong usage. Read the help. Exit code 64. |", page
         )
-        self.assertIn("| E3001 | Remapping | Retired in 0.5.0. |", page)
+        self.assertIn("| E3099 | Remapping | Retired in 0.5.0. |", page)
 
     def test_an_active_code_without_english_text_is_refused(self) -> None:
         root = self.copy_repository()

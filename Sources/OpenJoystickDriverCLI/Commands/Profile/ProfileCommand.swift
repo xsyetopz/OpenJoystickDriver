@@ -52,7 +52,7 @@ func savedSummary(
 ) throws -> ProfileSummary {
   guard let profile = snapshot.profiles.first(where: { $0.id == id }) else {
     throw CLIFailure(
-      .failure,
+      .serviceRequestFailed,
       CLILocalized.text(
         "cli.profile.vanished",
         "The service did not keep the profile. Check it with 'ojd profile list'."

@@ -76,7 +76,7 @@ private func check(
   case .delivered: return
   case .unsupportedCapability:
     throw CLIFailure(
-      .failure,
+      .controllerRequestFailed,
       CLILocalized.format(
         "cli.controller.output.unsupported",
         "%@ has no %@. Run 'ojd controller show %@' to see what it supports.",
@@ -87,7 +87,7 @@ private func check(
     )
   case .notReady:
     throw CLIFailure(
-      .failure,
+      .controllerRequestFailed,
       CLILocalized.format(
         "cli.controller.output.not_ready",
         "%@ is not ready for output yet. Retry in a moment.",
@@ -96,7 +96,7 @@ private func check(
     )
   case .notFound, .cancelled:
     throw CLIFailure(
-      .failure,
+      .controllerRequestFailed,
       CLILocalized.format(
         "cli.controller.output.gone",
         "%@ disconnected before the command was sent. Reconnect it and retry.",
@@ -105,7 +105,7 @@ private func check(
     )
   case .invalidValue, .writeFailed:
     throw CLIFailure(
-      .failure,
+      .controllerRequestFailed,
       CLILocalized.format(
         "cli.controller.output.failed",
         "%@ did not accept the %@ command (%@). Check it with 'ojd log show'.",
@@ -254,7 +254,7 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
     }
     if !requested.isEmpty, ran.isEmpty {
       throw CLIFailure(
-        .failure,
+        .controllerRequestFailed,
         CLILocalized.format(
           "cli.controller.rumble.none_ran",
           "%@ has none of the requested motors. Run 'ojd controller show %@' to see its motors.",

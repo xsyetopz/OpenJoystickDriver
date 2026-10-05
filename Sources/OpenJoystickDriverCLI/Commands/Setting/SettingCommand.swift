@@ -208,7 +208,7 @@ struct SettingSetCommand: AsyncParsableCommand {
       }.value(of: key)
       guard applied == requested else {
         throw CLIFailure(
-          .failure,
+          .systemRequestFailed,
           CLILocalized.format(
             "cli.setting.set.not_applied",
             "macOS did not apply %@. Allow OpenJoystickDriver in System Settings > General > "

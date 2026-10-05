@@ -41,11 +41,13 @@ enum CLITerminal {
   }
 
   /// Confirms a destructive action: passes with `force`, asks `question` on a terminal, and
-  /// otherwise fails with a usage error that names `--force`; `needsForce` replaces its message.
+  /// otherwise fails with a confirmation error that names `--force`;
+  /// `needsForce` replaces its message.
   static func confirm(_ question: String, force: Bool, needsForce: String? = nil) throws {
     if force { return }
     guard canPrompt() else {
-      throw CLIFailure.usage(
+      throw CLIFailure(
+        .confirmationRequired,
         needsForce
           ?? CLILocalized.text(
             "cli.error.confirm_needs_force",
@@ -57,7 +59,7 @@ enum CLITerminal {
     let answer = readLine()?.trimmingCharacters(in: .whitespaces).lowercased() ?? ""
     guard answer == "y" || answer == "yes" else {
       throw CLIFailure(
-        .failure,
+        .aborted,
         CLILocalized.text("cli.error.confirm_declined", "Nothing changed.")
       )
     }

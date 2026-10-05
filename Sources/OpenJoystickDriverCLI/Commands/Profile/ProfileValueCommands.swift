@@ -166,7 +166,7 @@ struct ProfileGetCommand: AsyncParsableCommand {
       }
       guard let value = try ProfileValue(document).value(at: key.components[...]) else {
         throw CLIFailure(
-          .failure,
+          .notFound,
           CLILocalized.format(
             "cli.profile.get.missing",
             "'%@' has no value at %@.",

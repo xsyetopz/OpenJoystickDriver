@@ -153,7 +153,7 @@ struct VirtualFeedCommand: AsyncParsableCommand {
         for command in result.feedback { try CLIOutput.jsonLine(command) }
         if result.closed {
           throw CLIFailure(
-            .failure,
+            .serviceRequestFailed,
             CLILocalized.text(
               "cli.virtual.feed.error.closed",
               "The service closed the virtual gamepad. Check it with 'ojd status'."

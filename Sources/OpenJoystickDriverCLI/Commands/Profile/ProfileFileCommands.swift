@@ -149,7 +149,7 @@ struct ProfileValidateCommand: AsyncParsableCommand {
         let problem = DocumentProblem.describe(error)
         if CLIContext.current.format == .json { try CLIOutput.json(Result(problem: problem)) }
         throw CLIFailure(
-          .failure,
+          .invalidInputFile,
           CLILocalized.format(
             "cli.profile.document_invalid",
             "%@ is not a valid profile: %@",
@@ -224,7 +224,7 @@ struct ProfileExportCommand: AsyncParsableCommand {
       }
       do { try RemappingProfileFileStore.write(document, to: URL(fileURLWithPath: output)) } catch {
         throw CLIFailure(
-          .failure,
+          .fileAccessFailed,
           CLILocalized.format(
             "cli.profile.export.write_failed",
             "Cannot write %@: %@",
@@ -265,7 +265,7 @@ enum ProfileEditor {
     process.waitUntilExit()
     guard process.terminationStatus == 0 else {
       throw CLIFailure(
-        .failure,
+        .aborted,
         CLILocalized.format(
           "cli.profile.edit.editor_failed",
           "The editor exited with status %lld. Nothing changed.",

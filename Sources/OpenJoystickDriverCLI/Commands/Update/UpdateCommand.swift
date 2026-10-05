@@ -145,6 +145,6 @@ struct UpdateCheckCommand: AsyncParsableCommand {
         "Could not check for updates: %@.",
         detail
       )
-    return CLIFailure(.failure, message)
+    return CLIFailure(.updateCheckFailed, message)
   }
 }

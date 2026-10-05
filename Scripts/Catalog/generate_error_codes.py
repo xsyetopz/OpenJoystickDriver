@@ -40,6 +40,9 @@ TEMPLATE = Path(
 BEGIN = "<!-- BEGIN GENERATED: error-codes -->"
 END = "<!-- END GENERATED: error-codes -->"
 DOMAIN_PREFIX = {"endpoint": "E1", "cli": "E2", "remapping": "E3"}
+# The failure exit codes of ojd, as the wiki page Command-Line documents them. 0 is success and
+# 130 is an interrupt, which prints nothing and has no code.
+CLI_EXIT_CODES = frozenset({1, 64, 69, 77, 127})
 DOMAIN_AREA = {"endpoint": "Endpoint", "cli": "Command line", "remapping": "Remapping"}
 STRING_LINE = re.compile(r'^"([^"]+)" = "(.*)";$')
 ENDPOINT_ENUM = re.compile(
@@ -82,6 +85,17 @@ def check_invariants(entries: list[Entry]) -> None:
         f"{entry['code']} is in the {entry['domain']} domain, which uses {DOMAIN_PREFIX[entry['domain']]}xxx"
         for entry in entries
         if not entry["code"].startswith(DOMAIN_PREFIX[entry["domain"]])
+    ]
+    wires = [entry["wire"] for entry in entries if "wire" in entry]
+    problems += [
+        f"wire {wire} is used twice"
+        for wire in sorted({wire for wire in wires if wires.count(wire) > 1})
+    ]
+    problems += [
+        f"{entry['code']} has exit code {entry['exitCode']}, which ojd does not document "
+        f"(use one of {', '.join(str(code) for code in sorted(CLI_EXIT_CODES))})"
+        for entry in entries
+        if "exitCode" in entry and entry["exitCode"] not in CLI_EXIT_CODES
     ]
     if codes != sorted(codes):
         problems.append("entries are not sorted by code")

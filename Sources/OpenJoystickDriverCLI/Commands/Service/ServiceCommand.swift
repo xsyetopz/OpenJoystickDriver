@@ -63,7 +63,7 @@ struct ServiceStartCommand: AsyncParsableCommand {
   private static func launchApplication() throws {
     guard let bundle = applicationBundleURL() else {
       throw CLIFailure(
-        .failure,
+        .installationProblem,
         CLILocalized.text(
           "cli.service.start.no_bundle",
           "This ojd is not inside OpenJoystickDriver.app, so it cannot start the service. "
@@ -79,7 +79,7 @@ struct ServiceStartCommand: AsyncParsableCommand {
     )
     guard result.terminationStatus == 0, !result.timedOut else {
       throw CLIFailure(
-        .failure,
+        .systemRequestFailed,
         CLILocalized.format(
           "cli.service.start.open_failed",
           "macOS could not open %@. Open it from Finder to see why.",
@@ -112,7 +112,7 @@ struct ServiceStopCommand: AsyncParsableCommand {
       if let processIdentifier = ServiceConnection.processIdentifier() {
         guard kill(processIdentifier, SIGTERM) == 0 || errno == ESRCH else {
           throw CLIFailure(
-            .failure,
+            .systemRequestFailed,
             CLILocalized.format(
               "cli.service.stop.signal_failed",
               "Could not stop the service: %@. Quit OpenJoystickDriver from its menu.",
@@ -134,7 +134,7 @@ struct ServiceStopCommand: AsyncParsableCommand {
     while ServiceConnection.processIdentifier() != nil {
       guard Date() < deadline else {
         throw CLIFailure(
-          .failure,
+          .serviceTimeout,
           CLILocalized.format(
             "cli.service.stop.timeout",
             "The service did not stop within %@. Retry with a larger --timeout.",

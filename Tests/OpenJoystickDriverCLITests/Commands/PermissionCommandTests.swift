@@ -144,7 +144,7 @@ struct PermissionCommandTests {
     #expect(result.code == 77)
     #expect(result.standardOutput.contains("Input Monitoring"))
     #expect(result.standardOutput.contains("denied"))
-    #expect(result.standardError.hasPrefix("ojd: Input Monitoring access is still missing."))
+    #expect(result.standardError.hasPrefix("ojd: E2008: Input Monitoring access is still missing."))
     #expect(result.standardError.contains("System Settings > Privacy & Security >"))
     #expect(result.standardError.contains("Input Monitoring, then"))
     #expect(result.standardError.contains("ojd permission request"))

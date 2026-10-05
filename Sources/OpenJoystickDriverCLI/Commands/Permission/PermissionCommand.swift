@@ -171,7 +171,7 @@ extension CLIFailure {
   /// A requested permission is still not granted; `missing` holds at least one id.
   static func permissionStillMissing(_ missing: [PermissionID]) -> Self {
     Self(
-      .permissionDenied,
+      .permissionMissing,
       CLILocalized.format(
         "cli.error.permission_still_missing",
         "%@ access is still missing. Allow OpenJoystickDriver in System Settings > %@, "

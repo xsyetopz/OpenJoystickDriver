@@ -122,7 +122,7 @@ struct RecordShowCommand: AsyncParsableCommand {
       RecordStore.warn(set.problems.filter { $0.identity == identity.identity })
       guard let record = set.records[identity.identity] else {
         throw CLIFailure(
-          .failure,
+          .notFound,
           CLILocalized.format(
             "cli.record.show.not_found",
             "No controller record for %@. 'ojd record list' shows every record.",

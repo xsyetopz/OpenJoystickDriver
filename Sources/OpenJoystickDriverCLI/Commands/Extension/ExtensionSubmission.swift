@@ -31,7 +31,7 @@ enum ExtensionSubmission {
     let bundle = ServiceStartCommand.applicationBundleURL() ?? Bundle.main.bundleURL
     guard bundle.path.hasPrefix("/Applications/") else {
       throw CLIFailure(
-        .failure,
+        .installationProblem,
         CLILocalized.format(
           "cli.extension.not_installed",
           "This ojd runs from %@, not from /Applications. "
@@ -49,7 +49,7 @@ enum ExtensionSubmission {
     )
     guard FileManager.default.fileExists(atPath: dext.path) else {
       throw CLIFailure(
-        .failure,
+        .installationProblem,
         CLILocalized.format(
           "cli.extension.bundle_missing",
           "The app does not contain %@.dext. "
@@ -74,7 +74,7 @@ enum ExtensionSubmission {
       )
     } catch {
       throw CLIFailure(
-        .failure,
+        .installationProblem,
         CLILocalized.format(
           "cli.extension.codesign_failed_to_run",
           "Could not run codesign to verify the app: %@. Check that /usr/bin/codesign exists.",
@@ -86,7 +86,7 @@ enum ExtensionSubmission {
       let detail = result.output.trimmingCharacters(in: .whitespacesAndNewlines)
         .replacingOccurrences(of: "\n", with: " ")
       throw CLIFailure(
-        .failure,
+        .installationProblem,
         CLILocalized.format(
           "cli.extension.signature_invalid",
           "The app's signature is not valid (%@). "

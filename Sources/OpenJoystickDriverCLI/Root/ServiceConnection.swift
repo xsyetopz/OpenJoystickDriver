@@ -61,12 +61,14 @@ enum ServiceConnection {
     case let rejection as ApplicationServiceRemappingRPCError
     where rejection.code == .duplicateName:
       CLIFailure(
-        .failure,
+        rejection.code.errorCode,
         CLILocalized.text(
           "cli.error.duplicate_profile_name",
           "A profile with that name already exists. 'ojd profile list' shows every profile."
         )
       )
+    case let rejection as ApplicationServiceRemappingRPCError:
+      CLIFailure.serviceRequestFailed(rejection.localizedDescription, id: rejection.code.errorCode)
     default: CLIFailure.serviceRequestFailed(error.localizedDescription)
     }
   }
@@ -76,7 +78,7 @@ extension CLIFailure {
   static func timedOut(seconds: Double?) -> Self {
     guard let seconds else {
       return Self(
-        .failure,
+        .serviceTimeout,
         CLILocalized.text(
           "cli.error.service_timeout",
           "The service did not reply in time. Retry, or check it with 'ojd status'."
@@ -84,7 +86,7 @@ extension CLIFailure {
       )
     }
     return Self(
-      .failure,
+      .serviceTimeout,
       CLILocalized.format(
         "cli.error.request_timeout",
         "The service did not reply within %@. Retry with a larger --timeout.",
@@ -95,7 +97,7 @@ extension CLIFailure {
 
   static var peerRejected: Self {
     Self(
-      .failure,
+      .peerRejected,
       CLILocalized.text(
         "cli.error.peer_rejected",
         "The service rejected this ojd, because it is not signed like the app. "

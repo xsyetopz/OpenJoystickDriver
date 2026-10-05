@@ -99,7 +99,7 @@ struct LogShowCommand: AsyncParsableCommand {
         snapshots = try ApplicationServiceLogStream.allCases.map { try environment.tail($0, lines) }
       } catch {
         throw CLIFailure(
-          .failure,
+          .fileAccessFailed,
           CLILocalized.format(
             "cli.log.show.read_failed",
             "Could not read the service logs: %@. Check the folder that 'ojd log path' prints.",

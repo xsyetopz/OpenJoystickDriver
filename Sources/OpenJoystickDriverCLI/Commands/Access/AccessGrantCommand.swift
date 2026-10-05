@@ -19,7 +19,7 @@ struct AccessClient {
       let url = URL(fileURLWithPath: text).standardizedFileURL
       guard let identity = CodeSigningIdentity.of(path: url) else {
         throw CLIFailure(
-          .failure,
+          .unsignedClient,
           CLILocalized.format(
             "cli.access.client.unsigned",
             "%@ holds no signed program. Grant the program's app bundle or executable.",
@@ -44,7 +44,7 @@ struct AccessClient {
       return Self(identity: client.identity, path: client.path ?? "")
     }
     throw CLIFailure(
-      .failure,
+      .notFound,
       CLILocalized.format(
         "cli.access.client.unknown",
         "No program at %@ and no client with that ID. See the IDs with 'ojd access list'.",
@@ -155,7 +155,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
       let identity = client.identity
       guard identity.kind != .adHoc else {
         throw CLIFailure(
-          .failure,
+          .unsignedClient,
           CLILocalized.format(
             "cli.access.grant.ad_hoc",
             "%@ is ad-hoc signed or unsigned, so any local program can claim its signature. "

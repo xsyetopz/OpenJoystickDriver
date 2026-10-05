@@ -6,16 +6,17 @@ enum CommandSuggestion {
   struct Match: Equatable {
     /// The word the user typed.
     let typed: String
-    /// The full command line of the nearest subcommand, such as `ojd controller list`.
-    let suggestion: String
+    /// The full command line of the nearest subcommand, such as `ojd controller list`, or nil
+    /// when no subcommand is near.
+    let suggestion: String?
   }
 
   /// Global options that take a separate value; their value is not a command name.
   private static let valueOptions: Set<String> = ["--timeout"]
 
-  /// Walks the command words in `arguments` and returns the nearest subcommand for the first
-  /// word that names none. Returns nil once a command without subcommands is reached, because
-  /// its words are arguments, not command names.
+  /// Walks the command words in `arguments` and returns the first word that names no
+  /// subcommand, with its nearest subcommand. Returns nil once a command without subcommands
+  /// is reached, because its words are arguments, not command names.
   static func match(
     arguments: [String],
     root: any ParsableCommand.Type = OJDCommand.self
@@ -38,10 +39,11 @@ enum CommandSuggestion {
         path.append(next._commandName)
         continue
       }
-      guard let nearest = nearest(to: argument, in: subcommands.map { $0._commandName }) else {
-        return nil
-      }
-      return Match(typed: argument, suggestion: (path + [nearest]).joined(separator: " "))
+      let nearest = nearest(to: argument, in: subcommands.map { $0._commandName })
+      return Match(
+        typed: argument,
+        suggestion: nearest.map { (path + [$0]).joined(separator: " ") }
+      )
     }
     return nil
   }

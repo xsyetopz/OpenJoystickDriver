@@ -20,14 +20,21 @@ struct CommandSuggestionTests {
     )
   }
 
+  @Test(arguments: [["bogus"], ["controller", "bogus"]])
+  func anUnknownCommandWithoutANearNameHasNoSuggestion(arguments: [String]) {
+    #expect(
+      CommandSuggestion.match(arguments: arguments)
+        == CommandSuggestion.Match(typed: "bogus", suggestion: nil)
+    )
+  }
+
   @Test(arguments: [
-    ["bogus"],
     ["controller", "show", "stauts"],
     ["help", "stauts"],
     ["--", "stauts"],
     ["status", "--bogus"],
   ])
-  func noSuggestionWithoutANearCommandName(arguments: [String]) {
+  func noMatchOutsideTheCommandNames(arguments: [String]) {
     #expect(CommandSuggestion.match(arguments: arguments) == nil)
   }
 
@@ -43,6 +50,19 @@ struct CommandSuggestionTests {
 
     #expect(result.code == 64)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError == "ojd: Unknown command 'stauts'. Did you mean 'ojd status'?\n")
+    #expect(
+      result.standardError
+        == "ojd: E2002: Unknown command 'stauts'. Did you mean 'ojd status'?\n"
+    )
+  }
+
+  @Test
+  func anUnknownCommandWithoutASuggestionHasTheUnknownCommandCode() async {
+    let result = await CLIRun.run(["frobnicate"])
+
+    #expect(result.code == 64)
+    #expect(result.standardOutput.isEmpty)
+    #expect(result.standardError.hasPrefix("ojd: E2002: "))
+    #expect(result.standardError.contains("frobnicate"))
   }
 }

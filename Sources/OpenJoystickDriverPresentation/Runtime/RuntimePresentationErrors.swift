@@ -17,7 +17,20 @@ extension RuntimePresentation {
       ) : OJDLocalized.string("mapping.outputReady", fallback: "Controller output is ready")
   }
 
+  /// The message for `error`; a remapping error from the service ends with its code, such as
+  /// "(E3013)", so a report names it and `ojd explain` can look it up.
   static func userFacingError(_ error: Error) -> String {
+    let message = userFacingMessage(error)
+    guard let error = error as? ApplicationServiceRemappingRPCError else { return message }
+    return OJDLocalized.formatted(
+      "error.withCode",
+      fallback: "%@ (%@)",
+      message,
+      error.code.errorCode.rawValue
+    )
+  }
+
+  private static func userFacingMessage(_ error: Error) -> String {
     if let error = error as? ApplicationServiceRemappingRPCError {
       switch error.code {
       case .profileUpdateConflict:

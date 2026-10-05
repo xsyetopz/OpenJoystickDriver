@@ -45,7 +45,7 @@ struct RecordValidation: Encodable, Equatable {
       let problem = ControllerRecordSet.problemDescription(error)
       if CLIContext.current.format == .json { try CLIOutput.json(Self(problem: problem)) }
       throw CLIFailure(
-        .failure,
+        .invalidInputFile,
         CLILocalized.format("cli.record.invalid", "%@ is not a valid record: %@", path, problem)
       )
     }
@@ -165,7 +165,7 @@ struct RecordInstallCommand: AsyncParsableCommand {
         try data.write(to: destination, options: .atomic)
       } catch {
         throw CLIFailure(
-          .failure,
+          .fileAccessFailed,
           CLILocalized.format(
             "cli.record.install.failed",
             "Cannot write %@: %@",
@@ -250,7 +250,7 @@ struct RecordRemoveCommand: AsyncParsableCommand {
       )
       guard FileManager.default.fileExists(atPath: target.path) else {
         throw CLIFailure(
-          .failure,
+          .notFound,
           CLILocalized.format(
             "cli.record.remove.not_found",
             "You have no record for %@. 'ojd record list' shows your records.",
@@ -265,7 +265,7 @@ struct RecordRemoveCommand: AsyncParsableCommand {
         )
         do { try FileManager.default.removeItem(at: target) } catch {
           throw CLIFailure(
-            .failure,
+            .fileAccessFailed,
             CLILocalized.format(
               "cli.record.remove.failed",
               "Cannot delete %@: %@",
