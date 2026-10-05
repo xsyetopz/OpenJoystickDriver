@@ -23,7 +23,7 @@ struct EndpointServerTests {
 
   @Test
   func aDisabledEndpointHasNoSocket() throws {
-    try withServer { server, _ in
+    try withEndpointServer { server, _ in
       server.start()
       #expect(!FileManager.default.fileExists(atPath: server.socketPath))
       let status = try server.status()
@@ -33,7 +33,7 @@ struct EndpointServerTests {
 
   @Test
   func disablingRemovesTheSocketAndClosesEveryConnection() throws {
-    try withServer { server, _ in
+    try withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
       let client = try EndpointTestClient(path: server.socketPath)
@@ -51,7 +51,7 @@ struct EndpointServerTests {
 
   @Test
   func anUngrantedClientIsRefusedAndListedUntilGranted() throws {
-    try withServer { server, _ in
+    try withEndpointServer { server, _ in
       try server.setEnabled(true)
       let client = try EndpointTestClient(path: server.socketPath)
       client.send(#"{"type":"hello","protocol":1,"scopes":["read"]}"#)
@@ -71,7 +71,7 @@ struct EndpointServerTests {
 
   @Test
   func anAdHocClientIsRefusedAndCannotBeGranted() throws {
-    try withServer(identity: Self.adHoc) { server, _ in
+    try withEndpointServer(identity: Self.adHoc) { server, _ in
       try server.setEnabled(true)
       let client = try EndpointTestClient(path: server.socketPath)
       client.send(#"{"type":"hello","protocol":1,"scopes":["read"]}"#)
@@ -86,7 +86,7 @@ struct EndpointServerTests {
 
   @Test
   func aGrantedClientStreamsControllerEvents() throws {
-    try withServer { server, fixture in
+    try withEndpointServer { server, fixture in
       fixture.source.set(devices: ["pad-1"], state: ControllerState(pressed: [.faceSouth]))
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -117,7 +117,7 @@ struct EndpointServerTests {
 
   @Test
   func aLateSubscriberFirstReceivesTheConnectedControllers() throws {
-    try withServer { server, fixture in
+    try withEndpointServer { server, fixture in
       fixture.source.set(devices: ["pad-1"], state: ControllerState(pressed: [.faceSouth]))
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -132,7 +132,7 @@ struct EndpointServerTests {
 
   @Test
   func revokingClosesTheClientsConnections() throws {
-    try withServer { server, _ in
+    try withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
       let client = try EndpointTestClient.subscribed(to: server.socketPath)
@@ -147,6 +147,95 @@ struct EndpointServerTests {
     }
   }
 
+  @Test
+  func aTokenClientIsWelcomedWithoutAReadableSignature() throws {
+    try withEndpointServer(identity: nil) { server, _ in
+      try server.setEnabled(true)
+      let granted = try server.grantToken(name: "script", origins: [], scopes: [.read])
+      let client = try EndpointTestClient(path: server.socketPath)
+      client.send(tokenHello(name: "script", token: granted.token, nonce: client.nonce))
+
+      #expect(try client.readObject()["type"] as? String == "welcome")
+      #expect(
+        try server.status().connections == [
+          AccessConnection(
+            id: "token:script",
+            identifier: "script",
+            scopes: [.read],
+            transport: .socket
+          )
+        ]
+      )
+    }
+  }
+
+  @Test
+  func aWrongTokenIsRefusedAndListed() throws {
+    try withEndpointServer { server, _ in
+      try server.setEnabled(true)
+      try server.grant(Self.tool, path: "/Tool", scopes: [.read])
+      try server.grantToken(name: "script", origins: [], scopes: [.read])
+      let client = try EndpointTestClient(path: server.socketPath)
+      client.send(tokenHello(name: "script", token: "ojd_wrong", nonce: client.nonce))
+
+      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(client.readLine() == nil)
+      let refused = try server.status().refusedTokens
+      #expect(refused.map(\.transport) == [.socket])
+      #expect(refused.first?.name == nil)
+      #expect(try server.status().refused.isEmpty)
+    }
+  }
+
+  @Test
+  func eachConnectionGetsAFreshChallengeFirst() throws {
+    try withEndpointServer { server, _ in
+      try server.setEnabled(true)
+      let first = try EndpointTestClient(path: server.socketPath)
+      let second = try EndpointTestClient(path: server.socketPath)
+
+      // 32 random bytes in unpadded base64url.
+      #expect(first.nonce.count == 43)
+      #expect(first.nonce.utf8.allSatisfy { $0.isASCIIAlphanumeric || "-_".utf8.contains($0) })
+      #expect(first.nonce != second.nonce)
+      let line = #"{"type":"challenge","nonce":"\#(first.nonce)"}"#
+      #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
+    }
+  }
+
+  /// A proof is bound to its connection's nonce, so a proof seen once cannot be replayed.
+  @Test
+  func aProofForAnotherNonceIsRefused() throws {
+    try withEndpointServer(identity: nil) { server, _ in
+      try server.setEnabled(true)
+      let granted = try server.grantToken(name: "script", origins: [], scopes: [.read])
+      let other = try EndpointTestClient(path: server.socketPath)
+      let client = try EndpointTestClient(path: server.socketPath)
+      client.send(tokenHello(name: "script", token: granted.token, nonce: other.nonce))
+
+      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try server.status().refusedTokens.first?.name == nil)
+    }
+  }
+
+  @Test
+  func revokingATokenClosesItsConnections() throws {
+    try withEndpointServer(identity: nil) { server, _ in
+      try server.setEnabled(true)
+      let granted = try server.grantToken(name: "script", origins: [], scopes: [.read])
+      let client = try EndpointTestClient(path: server.socketPath)
+      client.send(tokenHello(name: "script", token: granted.token, nonce: client.nonce))
+      #expect(try client.readObject()["type"] as? String == "welcome")
+
+      let result = try server.revoke(id: "token:script", scopes: nil)
+
+      #expect(result.closedConnections == 1)
+      #expect(result.token == nil)
+      #expect(try client.readObject()["code"] as? String == "revoked")
+      #expect(try server.status().tokens.isEmpty)
+    }
+  }
+
   @Test(arguments: [
     (#"{"type":"hello","protocol":2,"scopes":["read"]}"#, "unsupported-protocol"),
     (#"nonsense"#, "invalid-message"),
@@ -155,7 +244,7 @@ struct EndpointServerTests {
     (#"{"type":"hello","protocol":1,"scopes":["read","control"]}"#, "not-granted"),
   ])
   func aBadHelloGetsAnError(hello: String, code: String) throws {
-    try withServer { server, _ in
+    try withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read, .control])
       let client = try EndpointTestClient(path: server.socketPath)
@@ -172,7 +261,7 @@ struct EndpointServerTests {
 
   @Test
   func aSecondSubscribeEndsTheConnection() throws {
-    try withServer { server, _ in
+    try withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
       let client = try EndpointTestClient.subscribed(to: server.socketPath)
@@ -185,7 +274,7 @@ struct EndpointServerTests {
 
   @Test
   func theNinthConnectionIsRefused() throws {
-    try withServer { server, _ in
+    try withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
       let clients = try (0..<EndpointServer.maximumConnections).map { _ in
@@ -202,7 +291,7 @@ struct EndpointServerTests {
 
   @Test
   func aDamagedFileIsReportedAndKeepsTheEndpointClosed() throws {
-    try withServer { server, fixture in
+    try withEndpointServer { server, fixture in
       try FileManager.default.createDirectory(
         at: fixture.directory,
         withIntermediateDirectories: true
@@ -218,7 +307,7 @@ struct EndpointServerTests {
 
   @Test
   func aStaleSocketFileIsReplaced() throws {
-    try withServer { server, fixture in
+    try withEndpointServer { server, fixture in
       try fixture.store.save(AccessGrantFile(enabled: true, grants: []))
       let stale = socket(AF_UNIX, SOCK_STREAM, 0)
       var address = try LocalServiceRPCTransport.socketAddress(path: server.socketPath)
@@ -236,101 +325,5 @@ struct EndpointServerTests {
       client.send(#"{"type":"hello","protocol":1,"scopes":["read"]}"#)
       #expect(try client.readObject()["code"] as? String == "not-granted")
     }
-  }
-
-  private struct Fixture {
-    let directory: URL
-    let store: AccessGrantStore
-    let source: FakeWatchSource
-  }
-
-  private func withServer(
-    identity: CodeSigningIdentity = tool,
-    _ body: (EndpointServer, Fixture) throws -> Void
-  ) throws {
-    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
-      UUID().uuidString,
-      isDirectory: true
-    )
-    let fixture = Fixture(
-      directory: directory,
-      store: AccessGrantStore(directory: directory),
-      source: FakeWatchSource()
-    )
-    let client = EndpointClient(identity: identity, path: "/Tool")
-    let server = EndpointServer(
-      socketPath: FileManager.default.temporaryDirectory.path
-        + "/ojd-\(UUID().uuidString.prefix(8)).sock",
-      store: fixture.store,
-      source: fixture.source,
-      version: "1.2.3"
-    ) { _ in client }
-    defer {
-      server.stop()
-      try? FileManager.default.removeItem(at: directory)
-    }
-    try body(server, fixture)
-  }
-}
-
-/// A blocking endpoint client with a 5-second read timeout.
-private final class EndpointTestClient {
-  private let descriptor: Int32
-  private var buffer = Data()
-
-  init(path: String) throws {
-    descriptor = socket(AF_UNIX, SOCK_STREAM, 0)
-    var address = try LocalServiceRPCTransport.socketAddress(path: path)
-    let status = withUnsafePointer(to: &address) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        connect(descriptor, $0, LocalServiceRPCTransport.socketAddressLength(path: path))
-      }
-    }
-    guard status == 0 else {
-      close(descriptor)
-      throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
-    }
-    try LocalServiceRPCTransport.setTimeout(descriptor, seconds: 5)
-  }
-
-  deinit { close(descriptor) }
-
-  /// A client that said hello, read its welcome, and subscribed to controllers.
-  static func subscribed(to path: String) throws -> EndpointTestClient {
-    let client = try EndpointTestClient(path: path)
-    client.send(#"{"type":"hello","protocol":1,"scopes":["read"]}"#)
-    guard try client.readObject()["type"] as? String == "welcome" else {
-      throw POSIXError(.EPROTO)
-    }
-    client.send(#"{"type":"subscribe","stream":"controllers"}"#)
-    return client
-  }
-
-  func send(_ line: String) {
-    let data = Data((line + "\n").utf8)
-    _ = data.withUnsafeBytes { Darwin.send(descriptor, $0.baseAddress, $0.count, 0) }
-  }
-
-  /// The next line, or nil when the service closed the connection or the timeout passed.
-  func readLine() -> String? {
-    var chunk = [UInt8](repeating: 0, count: 4_096)
-    while true {
-      if let newline = buffer.firstIndex(of: UInt8(ascii: "\n")) {
-        let line = String(bytes: buffer[buffer.startIndex..<newline], encoding: .utf8) ?? ""
-        buffer.removeSubrange(buffer.startIndex...newline)
-        return line
-      }
-      let count = recv(descriptor, &chunk, chunk.count, 0)
-      guard count > 0 else { return nil }
-      buffer.append(contentsOf: chunk[0..<count])
-    }
-  }
-
-  func readObject() throws -> [String: Any] {
-    try object(try #require(readLine()))
-  }
-
-  func object(_ line: String) throws -> [String: Any] {
-    try #require(JSONSerialization.jsonObject(with: Data(line.utf8)) as? [String: Any])
   }
 }

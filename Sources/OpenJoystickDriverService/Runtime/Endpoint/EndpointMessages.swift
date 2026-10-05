@@ -13,6 +13,13 @@ enum EndpointErrorCode: String, Encodable, Sendable {
   case tooSlow = "too-slow"
 }
 
+/// The first line on every connection: a random nonce that a token client signs in its `hello`.
+struct EndpointChallenge: Encodable, Sendable {
+  let type = "challenge"
+  /// 32 random bytes in unpadded base64url.
+  let nonce: String
+}
+
 /// A line that a client sends: `hello` first, then `subscribe`.
 struct EndpointRequest: Decodable, Sendable {
   enum Kind: String, Decodable, Sendable {
@@ -25,6 +32,11 @@ struct EndpointRequest: Decodable, Sendable {
   let `protocol`: Int?
   /// `hello` only.
   let scopes: [EndpointScope]?
+  /// `hello` only; the name of a token from `ojd access grant --token`, instead of the signature.
+  let tokenName: String?
+  /// `hello` only, with `tokenName`; the lowercase hex HMAC-SHA256 of the challenge, keyed with
+  /// the SHA-256 of the token.
+  let proof: String?
   /// `subscribe` only; `controllers` is the one stream.
   let stream: String?
   /// `subscribe` only; adds the virtual gamepad's values to `input` lines.

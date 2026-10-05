@@ -25,6 +25,8 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case setAccessEnabled
   case grantAccess
   case revokeAccess
+  case grantTokenAccess
+  case setWebAccess
   case remappingMotionCalibration
   case pairRemappingJoyCons
   case unpairRemappingJoyCons

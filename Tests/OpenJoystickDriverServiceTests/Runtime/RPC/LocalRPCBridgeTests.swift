@@ -15,6 +15,7 @@ struct LocalRPCBridgeTests {
     "closeVirtualFeed", "suspendController", "resumeController",
     "disconnectWirelessController", "resetSettings", "getSettings", "setSetting",
     "getAccessStatus", "setAccessEnabled", "grantAccess", "revokeAccess",
+    "grantTokenAccess", "setWebAccess",
   ]
   private static let remappingMethodNames: Set = [
     "remappingMotionCalibration", "pairRemappingJoyCons", "unpairRemappingJoyCons",

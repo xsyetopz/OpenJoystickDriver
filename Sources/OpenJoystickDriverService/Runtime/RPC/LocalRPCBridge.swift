@@ -218,6 +218,10 @@ extension ApplicationServiceServer {
       return try send(try grantAccess(try decode(AccessGrantArguments.self)))
     case .revokeAccess:
       return try send(try revokeAccess(try decode(AccessRevokeArguments.self)))
+    case .grantTokenAccess:
+      return try send(try grantTokenAccess(try decode(AccessTokenGrantArguments.self)))
+    case .setWebAccess:
+      return try send(try setWebAccess(try decode(AccessWebArguments.self)))
     case .remappingMotionCalibration:
       let value = try decodeRemapping(ApplicationServiceMotionCalibrationArguments.self)
       return try sendRemapping(try await remappingMotionCalibration(value))

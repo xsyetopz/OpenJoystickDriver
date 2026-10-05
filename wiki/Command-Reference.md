@@ -270,7 +270,7 @@ The keys are `launch-at-login`, `notification-sounds`, `include-prerelease-updat
 
 ## access
 
-Turn on the endpoint and choose which programs may read controllers through it. The endpoint is a local socket that granted programs read controller events from. For its protocol, see [Read the Endpoint](Automating-OpenJoystickDriver.md#read-the-endpoint). These commands need the service running.
+Turn on the endpoint and choose which programs may read controllers through it. The endpoint is a local socket that granted programs read controller events from, and an optional WebSocket for web pages. For its protocol, see [Read the Endpoint](Automating-OpenJoystickDriver.md#read-the-endpoint). These commands need the service running.
 
 ```text
 ojd access status
@@ -278,17 +278,25 @@ ojd access enable [--force]
 ojd access disable
 ojd access list
 ojd access grant CLIENT [--scope read|control]... [--force]
-ojd access revoke CLIENT [--scope read|control]...
+ojd access grant --token NAME [--origin URL]... [--scope read|control]... [--force]
+ojd access revoke CLIENT|token:NAME [--scope read|control]...
+ojd access web enable [--port PORT] [--force]
+ojd access web disable
 ```
 
-- `access status`: Show whether the endpoint is on, the path of its socket, and the connected clients. With `--json`, it prints `enabled`, `socketPath`, `connections`, `grants`, and `refused`.
+- `access status`: Show whether the endpoint is on, the path of its socket, and the connected clients. It also shows the WebSocket and the number of tokens. With `--json`, it prints `enabled`, `socketPath`, `connections`, `grants`, `refused`, `web`, `tokens`, and `refusedTokens`. Each connection has a `transport`: `socket` or `web`.
 - `access enable`: Turn on the endpoint. It asks first. In a script, it needs `--force`. The endpoint is off until you run this command.
 - `access disable`: Turn off the endpoint and close its connections. The grants stay.
-- `access list`: List the granted clients, and the clients that the endpoint refused in the last 24 hours. Each client has an 8-character ID.
+- `access list`: List the granted clients and tokens, and the clients and tokens that the endpoint refused in the last 24 hours. Each client has an 8-character ID, and each token has the ID `token:NAME`.
 - `access grant`: Allow a program to use the endpoint. `CLIENT` is the path of the program's app bundle or executable, or an ID from `access list`. `--scope` is `read` by default. The grant names the program's signature, so it stays valid when the program is updated or moved. It asks first, and in a script it needs `--force`.
-- `access revoke`: Remove a client's grant. With `--scope`, it removes only those scopes. The endpoint closes each connection that loses a scope.
+- `access grant --token`: Create a token named `NAME` instead of granting a program. The command prints the token once; the service keeps only its hash. A client signs the service's challenge with the token in its `hello` and does not send the token. Each `--origin`, such as `http://127.0.0.1:8080`, lets web pages from that origin use the token on the WebSocket. A token without `--origin` works only on the socket. With `--json`, it prints `token` and `grant`.
+- `access revoke`: Remove a client's or a token's grant. With `--scope`, it removes only those scopes. The endpoint closes each connection that loses a scope.
+- `access web enable`: Turn on the WebSocket on `127.0.0.1`. Without `--port`, it uses the saved port; the first time, the system picks a free port. `--port` names another from 1024 to 65535. The port is saved, and `access status` shows it. It asks first, and in a script it needs `--force`. It is independent of `access enable`.
+- `access web disable`: Turn off the WebSocket and close its connections. The tokens stay.
 
 `access grant` accepts only a program signed with a Developer ID or Apple Development certificate, or signed by Apple. It refuses an ad-hoc signed or unsigned program, because any program can claim that signature. For a program that Apple signed, such as `python3`, every script that the program runs gets the access. The `control` scope can be granted, but the endpoint serves only `read` in this release.
+
+Any local program that reads a token can use it, including programs of other users on the same Mac when the WebSocket is on. Treat a token as a password, and revoke it when you no longer need it.
 
 ## log
 

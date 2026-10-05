@@ -66,6 +66,7 @@ A program that runs all the time can read controller events from the endpoint, a
 
 The program sends and receives JSON objects, one per line, each at most 64 KiB:
 
+1. The endpoint sends `{"type":"challenge","nonce":"…"}` first. A granted program can ignore it; a [token](#use-a-token) client signs it.
 1. Within 5 seconds, the program sends `{"type":"hello","protocol":1,"scopes":["read"]}`.
 1. The endpoint answers `welcome`, with `protocol`, `version`, and the granted `scopes`, or `error`, with `code` and `message`, and closes the connection.
 1. The program sends `{"type":"subscribe","stream":"controllers"}`. Add `"output":true` for the values of the virtual gamepad.
@@ -80,6 +81,7 @@ status = json.loads(subprocess.check_output(["ojd", "--json", "access", "status"
 with socket.socket(socket.AF_UNIX) as endpoint:
     endpoint.connect(status["socketPath"])
     lines = endpoint.makefile("rw")
+    lines.readline()  # the challenge
     lines.write('{"type":"hello","protocol":1,"scopes":["read"]}\n')
     lines.flush()
     print(lines.readline(), end="")
@@ -92,6 +94,87 @@ with socket.socket(socket.AF_UNIX) as endpoint:
 ```
 
 `python3` is signed by Apple, so to run this example, grant `/usr/bin/python3`. Every Python script you run then gets the access. Grant a signed app of your own for regular use.
+
+### Use a Token
+
+A program that cannot be granted by its signature, such as a script, can use a token instead. The program does not send the token. It proves that it has the token by signing the challenge:
+
+1. Create the token: `ojd access grant --token reader`. The command prints the token once, and the service keeps only its SHA-256 hash.
+1. Join four lines, each ending with a newline: `OpenJoystickDriver endpoint hello 1`, the challenge's `nonce`, the page's origin, and the WebSocket's port. On the socket, the origin and port lines are empty.
+1. Compute the HMAC-SHA256 of those lines, keyed with the SHA-256 of the token, and write it as lowercase hex.
+1. Send the token's name and the HMAC in `hello`: `{"type":"hello","protocol":1,"scopes":["read"],"tokenName":"reader","proof":"…"}`.
+
+```python
+import hashlib
+import hmac
+import json
+
+TOKEN = "ojd_…"
+
+nonce = json.loads(lines.readline())["nonce"]
+message = "".join(line + "\n" for line in ["OpenJoystickDriver endpoint hello 1", nonce, "", ""])
+key = hashlib.sha256(TOKEN.encode()).digest()
+proof = hmac.new(key, message.encode(), hashlib.sha256).hexdigest()
+hello = {"type": "hello", "protocol": 1, "scopes": ["read"], "tokenName": "reader", "proof": proof}
+lines.write(json.dumps(hello) + "\n")
+```
+
+This replaces the `readline` and the first `write` in the example above.
+
+Any program that reads the token can use it, so store it like a password. Remove it with `ojd access revoke token:reader`.
+
+`AccessGrants.json`, in the OpenJoystickDriver Application Support folder, is secret too. The SHA-256 hashes in it are the HMAC keys, so a program that reads the file can sign challenges as any token in it. The service writes the file so that only your user can read it. Keep it out of support reports, exports, backups, and anything else that you share, and revoke every token if it leaks.
+
+### Use the WebSocket
+
+A web page, such as a stream overlay, can read the endpoint through a WebSocket:
+
+1. Turn on the WebSocket: `ojd access web enable`. It listens on `127.0.0.1`. The first time, the system picks a free port, and the service saves it, so the port stays the same. Choose a port with `--port`. `ojd access status` shows the port. The WebSocket is separate from `ojd access enable`, which turns on only the socket.
+1. Grant a token for the page's origin, with the port from `ojd access status`: `ojd access grant --token overlay --origin http://127.0.0.1:PORT`.
+1. Put the page in the `Overlays` folder that `ojd access status` shows. The WebSocket's port serves the folder at `http://127.0.0.1:PORT/`, and a folder serves its `index.html`.
+1. The page connects to `ws://127.0.0.1:PORT/endpoint` and exchanges the same messages, one JSON object per text message. It signs the challenge with its [token](#use-a-token), its origin, and the port.
+
+```javascript
+const token = "ojd_…";
+const encoder = new TextEncoder();
+
+async function proof(nonce) {
+  const secret = await crypto.subtle.digest("SHA-256", encoder.encode(token));
+  const key = await crypto.subtle.importKey("raw", secret, { name: "HMAC", hash: "SHA-256" }, false, [
+    "sign",
+  ]);
+  const lines = ["OpenJoystickDriver endpoint hello 1", nonce, location.origin, location.port];
+  const code = await crypto.subtle.sign("HMAC", key, encoder.encode(lines.map((line) => line + "\n").join("")));
+  return Array.from(new Uint8Array(code), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+// The page is served from the WebSocket's port, so its origin and port are the ones to sign.
+const endpoint = new WebSocket(`ws://${location.host}/endpoint`);
+endpoint.onmessage = async (message) => {
+  const event = JSON.parse(message.data);
+  switch (event.type) {
+    case "challenge":
+      endpoint.send(
+        JSON.stringify({
+          type: "hello",
+          protocol: 1,
+          scopes: ["read"],
+          tokenName: "overlay",
+          proof: await proof(event.nonce),
+        }),
+      );
+      break;
+    case "welcome":
+      endpoint.send(JSON.stringify({ type: "subscribe", stream: "controllers" }));
+      break;
+    case "input":
+      console.log(event);
+      break;
+  }
+};
+```
+
+The WebSocket accepts a connection only from an origin that a token is granted for, and the token must be granted for that origin. A page from another origin, such as `http://127.0.0.1:8080`, signs its own origin and the WebSocket's port. It refuses pages opened from a file, whose origin is `null`. Use `127.0.0.1` in the address, not `localhost`, which the WebSocket refuses. When another program already uses the port, `ojd access web enable` fails. When the service starts and finds the port in use, `ojd access status` shows the WebSocket as on but not listening. In both cases, choose another port with `ojd access web enable --port PORT`, and grant tokens for the new origin.
 
 The error codes are `endpoint-disabled`, `not-granted`, `unsupported-protocol`, `invalid-message`, `too-many-connections`, `revoked`, and `too-slow`. With `unsupported-protocol`, `supported` lists the protocol versions. The endpoint serves at most 8 connections. When a program reads too slowly, the endpoint keeps only the newest `input` line of each controller. When 256 lines wait, it sends `too-slow` and closes the connection.
 

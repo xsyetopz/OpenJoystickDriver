@@ -59,13 +59,17 @@ struct AccessGrantCommand: AsyncParsableCommand {
     commandName: "grant",
     abstract: CLILocalized.text(
       "cli.access.grant.abstract",
-      "Allow a signed program to use the endpoint."
+      "Allow a signed program, or a new token, to use the endpoint."
     ),
     discussion: CLILocalized.text(
       "cli.access.grant.discussion",
       "CLIENT is the program's path or an ID from 'ojd access list'. The grant names the "
         + "program's signature, so it stays valid when the program is updated or moved. "
-        + "Ad-hoc signed and unsigned programs cannot be granted. Asks for confirmation first."
+        + "Ad-hoc signed and unsigned programs cannot be granted. With --token instead of "
+        + "CLIENT, creates a token that a client signs the service's challenge with in its hello, "
+        + "on the socket or on the WebSocket from a page at one of the --origin values; the "
+        + "token is shown only once. "
+        + "Asks for confirmation first."
     )
   )
 
@@ -75,7 +79,33 @@ struct AccessGrantCommand: AsyncParsableCommand {
       valueName: "client"
     )
   )
-  var client: String
+  var client: String?
+
+  @Option(
+    name: .long,
+    help: ArgumentHelp(
+      CLILocalized.text(
+        "cli.access.grant.token",
+        "Create a token with this name instead of granting a program."
+      ),
+      valueName: "name"
+    )
+  )
+  var token: String?
+
+  @Option(
+    name: .long,
+    help: ArgumentHelp(
+      CLILocalized.text(
+        "cli.access.grant.origin",
+        "A web origin, such as http://127.0.0.1:8080, whose pages may use the token on the "
+          + "WebSocket. Repeat for more. The overlay pages that the WebSocket serves have the "
+          + "origin http://127.0.0.1:PORT, with the port that 'ojd access status' shows."
+      ),
+      valueName: "url"
+    )
+  )
+  var origin: [String] = []
 
   @Option(
     name: .long,
@@ -98,9 +128,26 @@ struct AccessGrantCommand: AsyncParsableCommand {
   @OptionGroup
   var global: GlobalOptions
 
+  func validate() throws {
+    guard (client == nil) != (token == nil) else {
+      throw ValidationError(
+        CLILocalized.text("cli.access.grant.client_or_token", "Give either CLIENT or --token NAME.")
+      )
+    }
+    guard token != nil || origin.isEmpty else {
+      throw ValidationError(
+        CLILocalized.text("cli.access.grant.origin_needs_token", "--origin needs --token.")
+      )
+    }
+  }
+
   func run() async throws {
     try await global.run {
-      let client = try await AccessClient.resolve(client) {
+      if let token {
+        try await grantToken(named: token)
+        return
+      }
+      let client = try await AccessClient.resolve(client ?? "") {
         try await ServiceConnection.request { try await $0.accessStatus() }
       }
       let identity = client.identity
@@ -141,6 +188,59 @@ struct AccessGrantCommand: AsyncParsableCommand {
     }
   }
 
+  private func grantToken(named name: String) async throws {
+    var lines = [
+      origin.isEmpty
+        ? CLILocalized.format(
+          "cli.access.grant.token_confirm",
+          "Create the token %@ with %@, for programs on this Mac?",
+          name,
+          AccessText.scopes(scope)
+        )
+        : CLILocalized.format(
+          "cli.access.grant.token_web_confirm",
+          "Create the token %@ with %@, for programs on this Mac and for pages from %@?",
+          name,
+          AccessText.scopes(scope),
+          origin.joined(separator: ", ")
+        )
+    ]
+    if scope.contains(.control) { lines.insert(Self.controlWarning, at: 0) }
+    try CLITerminal.confirm(
+      lines.joined(separator: "\n"),
+      force: force,
+      needsForce: AccessText.needsForce
+    )
+    let (origins, scopes) = (origin, scope)
+    let result = try await ServiceConnection.request {
+      try await $0.grantTokenAccess(name: name, origins: origins, scopes: scopes)
+    }
+    switch CLIContext.current.format {
+    case .json: try CLIOutput.json(result)
+    case .plain:
+      CLIOutput.plain([[result.token, result.grant.id, AccessText.scopes(result.grant.scopes)]])
+    case .human:
+      CLIOutput.success(
+        CLILocalized.format(
+          "cli.access.grant.token_success",
+          "Granted %@ to the token %@ (ID %@). Keep the token secret; it is not shown again:",
+          AccessText.scopes(result.grant.scopes),
+          result.grant.name,
+          result.grant.id
+        )
+      )
+      CLIOutput.stdout(result.token)
+    }
+  }
+
+  private static var controlWarning: String {
+    CLILocalized.text(
+      "cli.access.grant.control_warning",
+      "The control scope lets the program press buttons on a virtual gamepad, which games "
+        + "and apps treat as your input."
+    )
+  }
+
   private func question(for identity: CodeSigningIdentity) -> String {
     var lines = [
       CLILocalized.format(
@@ -161,16 +261,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
         at: 0
       )
     }
-    if scope.contains(.control) {
-      lines.insert(
-        CLILocalized.text(
-          "cli.access.grant.control_warning",
-          "The control scope lets the program press buttons on a virtual gamepad, which games "
-            + "and apps treat as your input."
-        ),
-        at: 0
-      )
-    }
+    if scope.contains(.control) { lines.insert(Self.controlWarning, at: 0) }
     return lines.joined(separator: "\n")
   }
 }
@@ -184,14 +275,17 @@ struct AccessRevokeCommand: AsyncParsableCommand {
     ),
     discussion: CLILocalized.text(
       "cli.access.revoke.discussion",
-      "CLIENT is the program's path or an ID from 'ojd access list'. Without --scope, removes "
-        + "the whole grant. Connections that lose a scope are closed."
+      "CLIENT is the program's path, an ID from 'ojd access list', or token:NAME for a token. "
+        + "Without --scope, removes the whole grant. Connections that lose a scope are closed."
     )
   )
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.access.client", "The program's path, or a client ID."),
+      CLILocalized.text(
+        "cli.access.revoke.client",
+        "The program's path, a client ID, or token:NAME."
+      ),
       valueName: "client"
     )
   )
@@ -214,10 +308,12 @@ struct AccessRevokeCommand: AsyncParsableCommand {
 
   func run() async throws {
     try await global.run {
-      let client = try await AccessClient.resolve(client) {
-        try await ServiceConnection.request { try await $0.accessStatus() }
-      }
-      let id = client.identity.accessID
+      let id =
+        client.hasPrefix("token:")
+        ? client
+        : try await AccessClient.resolve(client) {
+          try await ServiceConnection.request { try await $0.accessStatus() }
+        }.identity.accessID
       let scopes = scope.isEmpty ? nil : scope
       let result = try await ServiceConnection.request {
         try await $0.revokeAccess(id: id, scopes: scopes)
@@ -227,18 +323,18 @@ struct AccessRevokeCommand: AsyncParsableCommand {
       case .plain:
         CLIOutput.plain([
           [
-            result.id, result.grant.map { AccessText.scopes($0.scopes) } ?? "",
+            result.id, (result.grant?.scopes ?? result.token?.scopes).map(AccessText.scopes) ?? "",
             String(result.closedConnections),
           ]
         ])
       case .human:
         CLIOutput.success(
-          result.grant.map {
+          (result.grant?.scopes ?? result.token?.scopes).map {
             CLILocalized.format(
               "cli.access.revoke.partial",
               "Client %@ keeps %@. Closed connections: %@.",
               result.id,
-              AccessText.scopes($0.scopes),
+              AccessText.scopes($0),
               String(result.closedConnections)
             )
           }

@@ -2,9 +2,9 @@
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/access-grants.schema.json",
 	"title": "OpenJoystickDriver endpoint access grants",
-	"description": "The file AccessGrants.json in the OpenJoystickDriver Application Support folder. Only the service writes it, when 'ojd access enable', 'disable', 'grant', or 'revoke' runs.",
+	"description": "The file AccessGrants.json in the OpenJoystickDriver Application Support folder. Only the service writes it, when 'ojd access enable', 'disable', 'grant', 'revoke', 'web enable', or 'web disable' runs.",
 	"type": "object",
-	"required": ["enabled", "grants"],
+	"required": ["enabled", "grants", "tokens", "web"],
 	"additionalProperties": false,
 	"properties": {
 		"enabled": {
@@ -16,12 +16,85 @@
 			"items": {
 				"$ref": "#/$defs/grant"
 			}
+		},
+		"tokens": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/token"
+			}
+		},
+		"web": {
+			"description": "The WebSocket and overlay pages on 127.0.0.1.",
+			"type": "object",
+			"required": ["enabled"],
+			"additionalProperties": false,
+			"if": {
+				"properties": {
+					"enabled": {
+						"const": true
+					}
+				}
+			},
+			"then": {
+				"required": ["port"]
+			},
+			"properties": {
+				"enabled": {
+					"description": "Whether the service listens on the port.",
+					"type": "boolean"
+				},
+				"port": {
+					"description": "Absent until the first enable, which saves the port the system picked unless one was given.",
+					"type": "integer",
+					"minimum": 1024,
+					"maximum": 65535
+				}
+			}
 		}
 	},
 	"$defs": {
 		"scope": {
 			"description": "'read' receives controller events; 'control' drives a virtual gamepad.",
 			"enum": ["read", "control"]
+		},
+		"token": {
+			"description": "A named token that lets a client use the endpoint without a signature check. The token itself is not stored.",
+			"type": "object",
+			"required": ["name", "tokenSHA256", "origins", "scopes", "grantedAt"],
+			"additionalProperties": false,
+			"properties": {
+				"name": {
+					"type": "string",
+					"pattern": "^[A-Za-z0-9._-]{1,64}$"
+				},
+				"tokenSHA256": {
+					"description": "The SHA-256 of the token, in lowercase hex.",
+					"type": "string",
+					"pattern": "^[0-9a-f]{64}$"
+				},
+				"origins": {
+					"description": "The web origins whose pages may use the token on the WebSocket; empty for a token that works only on the Unix socket.",
+					"type": "array",
+					"uniqueItems": true,
+					"items": {
+						"type": "string",
+						"pattern": "^https?://[^/?#@A-Z]+$"
+					}
+				},
+				"scopes": {
+					"type": "array",
+					"minItems": 1,
+					"uniqueItems": true,
+					"items": {
+						"$ref": "#/$defs/scope"
+					}
+				},
+				"grantedAt": {
+					"description": "When 'ojd access grant --token' ran.",
+					"type": "string",
+					"format": "date-time"
+				}
+			}
 		},
 		"grant": {
 			"description": "A client the user allowed, matched by its code signature.",

@@ -2,10 +2,11 @@ import Darwin
 import Foundation
 import OpenJoystickDriverKit
 
-/// The opt-in socket on which granted local programs read controller events.
+/// The opt-in socket on which granted local programs read controller events, and the opt-in
+/// WebSocket on `127.0.0.1` for token clients such as browser overlays.
 ///
-/// `AccessGrants.json` says whether it listens and which signed clients it serves; the socket
-/// exists only while the endpoint is enabled.
+/// `AccessGrants.json` says whether each listens and which signed clients and tokens it serves;
+/// the socket exists only while the endpoint is enabled.
 ///
 /// - Note: `@unchecked Sendable` because the mutable fields are guarded by `lock`. Grant and
 ///   revoke changes and the handshake's grant check hold it too, so a client cannot be welcomed
@@ -18,6 +19,9 @@ final class EndpointServer: @unchecked Sendable {
   static let maximumLineBytes = 65_536
   static let handshakeSeconds = 5
   static let maximumQueuedLines = 256
+  /// Web connections that have not upgraded or finished their page request yet.
+  static let maximumPendingWebRequests = 16
+  static let maximumRequestBytes = 8_192
   static let socketName = "com.openjoystickdriver.endpoint.sock"
 
   /// The socket in the per-user temporary folder, which only the user can open.
@@ -44,6 +48,13 @@ final class EndpointServer: @unchecked Sendable {
     attributes: .concurrent
   )
   private var listeningDescriptor: Int32 = -1
+  let webAcceptQueue = DispatchQueue(label: "com.openjoystickdriver.endpoint.web-accept")
+  var webDescriptor: Int32 = -1
+  /// The port `webDescriptor` listens on.
+  var webPort = 0
+  /// Changes each time the WebSocket starts or stops listening; ends the old accept loop.
+  var webGeneration = 0
+  var pendingWebRequests = 0
   /// Every accepted connection, including those still in the handshake.
   var connections: [ObjectIdentifier: EndpointConnection] = [:]
   var refusals = AccessRefusalLog()
@@ -63,13 +74,24 @@ final class EndpointServer: @unchecked Sendable {
     self.identify = identify
   }
 
-  /// Listens when the endpoint is enabled; a damaged grants file keeps it closed.
+  /// Listens when the endpoint or its WebSocket is enabled; a damaged grants file keeps both
+  /// closed.
   func start() {
-    do {
-      guard try store.load().enabled else { return }
-      try lock.withLock { try listen() }
-    } catch {
+    let file: AccessGrantFile
+    do { file = try store.load() } catch {
       print("[EndpointServer] Not listening: \(error.localizedDescription)")
+      return
+    }
+    // Each listener starts on its own, so a socket that fails does not keep the WebSocket off.
+    do { if file.enabled { try lock.withLock { try listen() } } } catch {
+      print("[EndpointServer] Socket not listening: \(error.localizedDescription)")
+    }
+    do {
+      if file.web.enabled, let port = file.web.port {
+        try lock.withLock { startWebListening(try openWebListener(port: port)) }
+      }
+    } catch {
+      print("[EndpointServer] WebSocket not listening: \(error.localizedDescription)")
     }
   }
 
@@ -77,6 +99,7 @@ final class EndpointServer: @unchecked Sendable {
   func stop() {
     lock.withLock {
       stopListening()
+      stopWebListening()
       stream.stop()
       for connection in connections.values { connection.close(nil) }
     }
@@ -88,19 +111,24 @@ final class EndpointServer: @unchecked Sendable {
       return AccessStatusPayload(
         enabled: file.enabled,
         socketPath: socketPath,
-        connections: connections.values.compactMap { connection in
-          connection.session.map {
-            AccessConnection(identity: $0.client.identity, scopes: $0.scopes)
-          }
-        }.sorted { ($0.identifier, $0.id) < ($1.identifier, $1.id) },
+        connections: connections.values.compactMap(\.session)
+          .sorted { ($0.identifier, $0.id) < ($1.identifier, $1.id) },
         grants: file.grants.map(AccessGrantSummary.init),
-        refused: refusals.clients(at: Date())
+        refused: refusals.clients(at: Date()),
+        web: AccessWebStatus(
+          enabled: file.web.enabled,
+          listening: webDescriptor >= 0,
+          port: webDescriptor >= 0 ? webPort : file.web.port,
+          pagesPath: store.pagesDirectory.path
+        ),
+        tokens: file.tokens.map(\.summary),
+        refusedTokens: refusals.tokens(at: Date())
       )
     }
   }
 
-  /// Saves the flag and opens or removes the socket; disabling closes every connection with
-  /// `endpoint-disabled`.
+  /// Saves the flag and opens or removes the socket; disabling closes every socket connection
+  /// with `endpoint-disabled`.
   func setEnabled(_ enabled: Bool) throws {
     try lock.withLock {
       var file = try store.load()
@@ -116,7 +144,9 @@ final class EndpointServer: @unchecked Sendable {
         try store.save(file)
         stopListening()
         let error = EndpointError(code: .endpointDisabled, message: "The endpoint was disabled.")
-        for connection in connections.values { connection.close(error) }
+        for connection in connections.values where connection.kind == .socket {
+          connection.close(error)
+        }
       }
     }
   }
@@ -140,24 +170,55 @@ final class EndpointServer: @unchecked Sendable {
     }
   }
 
-  /// Removes `scopes`, or the whole grant when nil, and closes with `revoked` every connection
-  /// that holds a scope no longer granted.
+  /// Adds a token grant; the token is returned only here.
+  @discardableResult
+  func grantToken(
+    name: String,
+    origins: [String],
+    scopes: [EndpointScope]
+  ) throws -> AccessTokenGrantResult {
+    try lock.withLock {
+      var file = try store.load()
+      let (token, grant) = try file.grantToken(
+        name: name,
+        origins: origins,
+        scopes: scopes,
+        at: Date()
+      )
+      try store.save(file)
+      return AccessTokenGrantResult(token: token, grant: grant.summary)
+    }
+  }
+
+  /// Removes `scopes`, or the whole grant when nil, from a client or a `token:NAME` grant, and
+  /// closes with `revoked` every connection that holds a scope no longer granted.
   func revoke(id: String, scopes: [EndpointScope]?) throws -> AccessRevokeResult {
     try lock.withLock {
       var file = try store.load()
-      let remaining = try file.revoke(id: id, scopes: scopes)
+      let remainingScopes: [EndpointScope]
+      var result: (grant: AccessGrantSummary?, token: AccessTokenSummary?)
+      if id.hasPrefix("token:") {
+        let remaining = try file.revokeToken(id: id, scopes: scopes)
+        remainingScopes = remaining?.scopes ?? []
+        result.token = remaining?.summary
+      } else {
+        let remaining = try file.revoke(id: id, scopes: scopes)
+        remainingScopes = remaining?.scopes ?? []
+        result.grant = remaining.map(AccessGrantSummary.init)
+      }
       try store.save(file)
       var closed = 0
       for connection in connections.values {
-        guard let session = connection.session, session.client.identity.accessID == id,
-          !session.scopes.allSatisfy({ remaining?.scopes.contains($0) ?? false })
+        guard let session = connection.session, session.id == id,
+          !session.scopes.allSatisfy(remainingScopes.contains)
         else { continue }
         connection.close(EndpointError(code: .revoked, message: "The client's grant was revoked."))
         closed += 1
       }
       return AccessRevokeResult(
         id: id,
-        grant: remaining.map(AccessGrantSummary.init),
+        grant: result.grant,
+        token: result.token,
         closedConnections: closed
       )
     }

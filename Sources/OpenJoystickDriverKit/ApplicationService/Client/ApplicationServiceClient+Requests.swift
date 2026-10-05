@@ -337,6 +337,25 @@ extension ApplicationServiceClient {
     try await call(.revokeAccess, AccessRevokeArguments(id: id, scopes: scopes))
   }
 
+  /// Grants `scopes` to a new token that pages from `origins` may use on the WebSocket; the
+  /// result holds the token, which the service does not keep.
+  public func grantTokenAccess(
+    name: String,
+    origins: [String],
+    scopes: [EndpointScope]
+  ) async throws -> AccessTokenGrantResult {
+    try await call(
+      .grantTokenAccess,
+      AccessTokenGrantArguments(name: name, origins: origins, scopes: scopes)
+    )
+  }
+
+  /// Turns the WebSocket on or off and returns the endpoint's state afterward; a nil `port` keeps
+  /// the saved port.
+  public func setWebAccess(enabled: Bool, port: Int?) async throws -> AccessStatusPayload {
+    try await call(.setWebAccess, AccessWebArguments(enabled: enabled, port: port))
+  }
+
   public func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await call(.getRemappingSnapshot, LocalServiceRPCEmptyArguments())
   }

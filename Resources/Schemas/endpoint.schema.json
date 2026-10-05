@@ -2,7 +2,7 @@
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/endpoint.schema.json",
 	"title": "OpenJoystickDriver endpoint protocol",
-	"description": "One JSON object per line on the endpoint socket. A client sends hello, waits for welcome, then sends subscribe; the service then sends controllers stream lines. An error line is the last line before the service closes the connection.",
+	"description": "One JSON object per line on the endpoint socket, or per text message on the WebSocket. A client sends hello, waits for welcome, then sends subscribe; the service then sends controllers stream lines. An error line is the last line before the service closes the connection.",
 	"oneOf": [
 		{
 			"$ref": "#/$defs/clientLine"
@@ -24,6 +24,9 @@
 		},
 		"serviceLine": {
 			"oneOf": [
+				{
+					"$ref": "#/$defs/challenge"
+				},
 				{
 					"$ref": "#/$defs/welcome"
 				},
@@ -56,6 +59,38 @@
 						"$ref": "access-grants.schema.json#/$defs/scope"
 					},
 					"description": "The scopes the client needs; each must be granted."
+				},
+				"tokenName": {
+					"type": "string",
+					"pattern": "^[A-Za-z0-9._-]{1,64}$",
+					"description": "The name of a token from 'ojd access grant --token'; required on the WebSocket. A client with a token is not checked by its signature."
+				},
+				"proof": {
+					"type": "string",
+					"pattern": "^[0-9a-f]{64}$",
+					"description": "The lowercase hex HMAC-SHA256, keyed with the SHA-256 of the token, of four lines that each end with a newline: 'OpenJoystickDriver endpoint hello 1', the challenge's nonce, the page's origin, and the WebSocket's port. On the socket, the origin and port lines are empty."
+				}
+			},
+			"if": {
+				"required": ["tokenName"]
+			},
+			"then": {
+				"required": ["proof"]
+			}
+		},
+		"challenge": {
+			"type": "object",
+			"required": ["nonce", "type"],
+			"additionalProperties": false,
+			"description": "The first line on every connection.",
+			"properties": {
+				"type": {
+					"const": "challenge"
+				},
+				"nonce": {
+					"type": "string",
+					"pattern": "^[A-Za-z0-9_-]{43}$",
+					"description": "32 random bytes in unpadded base64url, new for each connection."
 				}
 			}
 		},

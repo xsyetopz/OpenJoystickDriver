@@ -31,11 +31,29 @@
 			}
 		},
 		"accessGrant": {
-			"$ref": "#/$defs/sharedAccessGrant"
+			"oneOf": [
+				{
+					"$ref": "#/$defs/sharedAccessGrant"
+				},
+				{
+					"type": "object",
+					"description": "With --token: the token, shown only this once, and its grant.",
+					"required": ["grant", "token"],
+					"additionalProperties": false,
+					"properties": {
+						"grant": {
+							"$ref": "#/$defs/sharedAccessToken"
+						},
+						"token": {
+							"type": "string"
+						}
+					}
+				}
+			]
 		},
 		"accessList": {
 			"type": "object",
-			"required": ["grants", "refused"],
+			"required": ["grants", "refused", "refusedTokens", "tokens"],
 			"additionalProperties": false,
 			"properties": {
 				"grants": {
@@ -48,6 +66,18 @@
 					"type": "array",
 					"items": {
 						"$ref": "#/$defs/sharedAccessRefusedClient"
+					}
+				},
+				"refusedTokens": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/sharedAccessRefusedToken"
+					}
+				},
+				"tokens": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/sharedAccessToken"
 					}
 				}
 			}
@@ -66,19 +96,31 @@
 				},
 				"id": {
 					"type": "string"
+				},
+				"token": {
+					"$ref": "#/$defs/sharedAccessToken"
 				}
 			}
 		},
 		"accessStatus": {
 			"type": "object",
-			"required": ["connections", "enabled", "grants", "refused", "socketPath"],
+			"required": [
+				"connections",
+				"enabled",
+				"grants",
+				"refused",
+				"refusedTokens",
+				"socketPath",
+				"tokens",
+				"web"
+			],
 			"additionalProperties": false,
 			"properties": {
 				"connections": {
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": ["id", "identifier", "scopes"],
+						"required": ["id", "identifier", "scopes", "transport"],
 						"additionalProperties": false,
 						"properties": {
 							"id": {
@@ -92,6 +134,9 @@
 								"items": {
 									"enum": ["read", "control"]
 								}
+							},
+							"transport": {
+								"enum": ["socket", "web"]
 							}
 						}
 					}
@@ -111,10 +156,31 @@
 						"$ref": "#/$defs/sharedAccessRefusedClient"
 					}
 				},
+				"refusedTokens": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/sharedAccessRefusedToken"
+					}
+				},
 				"socketPath": {
 					"type": "string"
+				},
+				"tokens": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/sharedAccessToken"
+					}
+				},
+				"web": {
+					"$ref": "#/$defs/sharedAccessWeb"
 				}
 			}
+		},
+		"accessWebDisable": {
+			"$ref": "#/$defs/sharedAccessWeb"
+		},
+		"accessWebEnable": {
+			"$ref": "#/$defs/sharedAccessWeb"
 		},
 		"bindingClear": {
 			"type": "object",
@@ -1261,6 +1327,92 @@
 					}
 				},
 				"teamIdentifier": {
+					"type": "string"
+				}
+			}
+		},
+		"sharedAccessRefusedToken": {
+			"type": "object",
+			"required": ["reason", "refusedAt", "scopes", "transport"],
+			"additionalProperties": false,
+			"properties": {
+				"name": {
+					"type": "string",
+					"description": "The grant the token belongs to; absent for a token that matches no grant."
+				},
+				"origin": {
+					"type": "string",
+					"description": "The page's origin; WebSocket only."
+				},
+				"reason": {
+					"type": "string"
+				},
+				"refusedAt": {
+					"type": "string"
+				},
+				"scopes": {
+					"type": "array",
+					"items": {
+						"enum": ["read", "control"]
+					}
+				},
+				"transport": {
+					"enum": ["socket", "web"]
+				}
+			}
+		},
+		"sharedAccessToken": {
+			"type": "object",
+			"required": ["grantedAt", "id", "name", "origins", "scopes"],
+			"additionalProperties": false,
+			"properties": {
+				"grantedAt": {
+					"type": "string"
+				},
+				"id": {
+					"type": "string",
+					"pattern": "^token:"
+				},
+				"name": {
+					"type": "string"
+				},
+				"origins": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"scopes": {
+					"type": "array",
+					"items": {
+						"enum": ["read", "control"]
+					}
+				}
+			}
+		},
+		"sharedAccessWeb": {
+			"type": "object",
+			"required": ["enabled", "listening", "pagesPath"],
+			"additionalProperties": false,
+			"properties": {
+				"enabled": {
+					"type": "boolean"
+				},
+				"listening": {
+					"type": "boolean"
+				},
+				"pagesPath": {
+					"type": "string"
+				},
+				"pagesURL": {
+					"type": "string"
+				},
+				"port": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 65535
+				},
+				"url": {
 					"type": "string"
 				}
 			}

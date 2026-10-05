@@ -7,6 +7,10 @@ enum AccessGrantStoreError: Error, Equatable, LocalizedError, Sendable {
   case notGrantable(CodeSigningIdentity.Kind)
   case noScope
   case serviceStopped
+  case duplicateToken(String)
+  case invalidTokenName(String)
+  case invalidOrigin(String)
+  case portUnavailable(Int)
 
   var errorDescription: String? {
     switch self {
@@ -19,14 +23,27 @@ enum AccessGrantStoreError: Error, Equatable, LocalizedError, Sendable {
         + "claim its signature."
     case .noScope: "Choose at least one scope to grant."
     case .serviceStopped: "The service is stopping. Start it, then try again."
+    case .duplicateToken(let name):
+      "A token named \(name) exists. Revoke token:\(name) first, or choose another name."
+    case .invalidTokenName(let name):
+      "\"\(name)\" is not a token name. Use 1 to 64 letters, digits, dots, hyphens, or "
+        + "underscores."
+    case .invalidOrigin(let origin):
+      "\"\(origin)\" is not a web origin. Use scheme://host[:port] with http or https, "
+        + "such as http://127.0.0.1:8080."
+    case .portUnavailable(let port):
+      "Port \(port) on 127.0.0.1 is in use or cannot be opened. Choose another with --port."
     }
   }
 }
 
-/// The contents of `AccessGrants.json`: whether the endpoint is on, and the granted clients.
+/// The contents of `AccessGrants.json`: whether the endpoint and its WebSocket are on, and the
+/// granted clients and tokens.
 struct AccessGrantFile: Codable, Equatable, Sendable {
   var enabled = false
   var grants: [AccessGrant] = []
+  var tokens: [AccessTokenGrant] = []
+  var web = AccessWebSettings()
 
   func grant(for identity: CodeSigningIdentity) -> AccessGrant? {
     grants.first { $0.identity == identity }
@@ -89,13 +106,19 @@ struct AccessGrantStore: Sendable {
     url = directory.appendingPathComponent(Self.fileName, isDirectory: false)
   }
 
+  /// The folder whose files the WebSocket's port serves as overlay pages.
+  var pagesDirectory: URL {
+    url.deletingLastPathComponent().appendingPathComponent("Overlays", isDirectory: true)
+  }
+
   func load() throws -> AccessGrantFile {
     let data: Data
     do { data = try Data(contentsOf: url) } catch CocoaError.fileReadNoSuchFile {
       return AccessGrantFile()
     }
     guard let file = try? JSONDecoder().decode(AccessGrantFile.self, from: data),
-      file.grants.allSatisfy({ $0.identity.requirement != nil && !$0.scopes.isEmpty })
+      file.grants.allSatisfy({ $0.identity.requirement != nil && !$0.scopes.isEmpty }),
+      file.hasValidTokensAndWeb
     else { throw AccessGrantStoreError.damaged }
     return file
   }
@@ -108,12 +131,13 @@ struct AccessGrantStore: Sendable {
   }
 }
 
-/// The clients the endpoint refused in the last day, newest first, so `ojd access list` can
-/// offer them for a grant.
+/// The clients and tokens the endpoint refused in the last day, newest first, so `ojd access list`
+/// can offer them for a grant.
 struct AccessRefusalLog: Sendable {
   static let retention: TimeInterval = 86_400
 
   private var entries: [(client: AccessRefusedClient, date: Date)] = []
+  private var tokenEntries: [(token: AccessRefusedToken, date: Date)] = []
 
   mutating func record(
     _ identity: CodeSigningIdentity,
@@ -135,9 +159,37 @@ struct AccessRefusalLog: Sendable {
     entries.insert((client, date), at: 0)
   }
 
+  /// Records a `hello` whose token matched no grant, when `name` is nil, or was not granted the
+  /// scopes or the origin.
+  mutating func recordToken(
+    name: String?,
+    origin: String?,
+    transport: AccessTransport,
+    scopes: [EndpointScope],
+    at date: Date
+  ) {
+    let token = AccessRefusedToken(
+      name: name,
+      origin: origin,
+      transport: transport,
+      scopes: scopes,
+      reason: "not-granted",
+      refusedAt: ISO8601DateFormatter().string(from: date)
+    )
+    tokenEntries.removeAll {
+      ($0.token.name, $0.token.origin, $0.token.transport) == (name, origin, transport)
+        || date.timeIntervalSince($0.date) > Self.retention
+    }
+    tokenEntries.insert((token, date), at: 0)
+  }
+
   mutating func remove(id: String) { entries.removeAll { $0.client.id == id } }
 
   func clients(at now: Date) -> [AccessRefusedClient] {
     entries.filter { now.timeIntervalSince($0.date) <= Self.retention }.map(\.client)
+  }
+
+  func tokens(at now: Date) -> [AccessRefusedToken] {
+    tokenEntries.filter { now.timeIntervalSince($0.date) <= Self.retention }.map(\.token)
   }
 }

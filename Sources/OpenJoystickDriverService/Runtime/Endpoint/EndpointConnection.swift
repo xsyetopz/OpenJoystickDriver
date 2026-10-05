@@ -2,66 +2,56 @@ import Darwin
 import Foundation
 import OpenJoystickDriverKit
 
-/// One endpoint client: lines are read on the caller's thread and written by a serial writer from
-/// a bounded queue.
+/// One endpoint client: messages are read on the caller's thread and written by a serial writer
+/// from a bounded queue, framed by the connection's transport.
 ///
-/// - Note: `@unchecked Sendable` because the mutable fields are guarded by `lock`, except
-///   `buffer`, which only the reading thread touches.
+/// - Note: `@unchecked Sendable` because the mutable fields are guarded by `lock`.
 final class EndpointConnection: @unchecked Sendable {
-  enum ReadResult: Equatable {
-    case line(Data)
-    case end
-    case tooLong
-  }
-
   private enum Outgoing {
     case message(Data)
     case event(ControllerWatchEvent)
   }
 
   let descriptor: Int32
+  let kind: AccessTransport
+  private let transport: any EndpointTransport
   private let lock = NSLock()
   private let writer = DispatchQueue(label: "com.openjoystickdriver.endpoint.writer")
   private var pending: [Outgoing] = []
   private var draining = false
   /// Set when the connection sends its last line; nothing is queued after it.
   private var closing = false
-  private var welcomed: EndpointClient?
-  private var grantedScopes: [EndpointScope] = []
+  private var welcomed: AccessConnection?
   private var subscribed = false
   private var wantsOutput = false
   /// The last input sent per controller to a client without output, so a poll that changed only
   /// output values sends that client nothing.
   private var lastInput: [String: ControllerState] = [:]
-  private var buffer = Data()
 
-  init(descriptor: Int32) { self.descriptor = descriptor }
+  init(descriptor: Int32, kind: AccessTransport, transport: any EndpointTransport) {
+    self.descriptor = descriptor
+    self.kind = kind
+    self.transport = transport
+  }
+
+  /// A connection on the Unix socket.
+  convenience init(descriptor: Int32) {
+    self.init(
+      descriptor: descriptor,
+      kind: .socket,
+      transport: EndpointLineTransport(descriptor: descriptor)
+    )
+  }
 
   /// The client and its scopes once the handshake succeeded.
-  var session: (client: EndpointClient, scopes: [EndpointScope])? {
-    lock.withLock { welcomed.map { ($0, grantedScopes) } }
-  }
+  var session: AccessConnection? { lock.withLock { welcomed } }
 
   var isSubscribed: Bool { lock.withLock { subscribed && !closing } }
   var wantsOutputValues: Bool { lock.withLock { subscribed && wantsOutput && !closing } }
 
-  /// Reads the next line without its newline; blocks until one arrives, the peer closes, or the
-  /// receive timeout passes.
-  func readLine() -> ReadResult {
-    var chunk = [UInt8](repeating: 0, count: 4_096)
-    while true {
-      if let newline = buffer.firstIndex(of: UInt8(ascii: "\n")) {
-        let line = buffer[buffer.startIndex..<newline]
-        buffer.removeSubrange(buffer.startIndex...newline)
-        return line.count > EndpointServer.maximumLineBytes ? .tooLong : .line(Data(line))
-      }
-      if buffer.count > EndpointServer.maximumLineBytes { return .tooLong }
-      let count = Darwin.recv(descriptor, &chunk, chunk.count, 0)
-      if count < 0, errno == EINTR { continue }
-      guard count > 0 else { return .end }
-      buffer.append(contentsOf: chunk[0..<count])
-    }
-  }
+  /// Reads the next message; blocks until one arrives, the peer closes, or the receive timeout
+  /// passes.
+  func readMessage() -> EndpointReadResult { transport.readMessage() }
 
   /// Blocks reads for at most `seconds`; zero waits without a limit.
   func setReceiveTimeout(seconds: Int) {
@@ -69,11 +59,8 @@ final class EndpointConnection: @unchecked Sendable {
     setsockopt(descriptor, SOL_SOCKET, SO_RCVTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
   }
 
-  func welcome(_ client: EndpointClient, scopes: [EndpointScope], line: EndpointWelcome) {
-    lock.withLock {
-      welcomed = client
-      grantedScopes = scopes
-    }
+  func welcome(_ session: AccessConnection, line: EndpointWelcome) {
+    lock.withLock { welcomed = session }
     send(line)
   }
 
@@ -144,7 +131,10 @@ final class EndpointConnection: @unchecked Sendable {
 
   private func closeLocked(_ error: EndpointError?) {
     guard !closing else { return }
-    pending.removeAll()
+    // Events waiting behind the error are dropped; the challenge and welcome are kept.
+    pending.removeAll {
+      if case .event = $0 { true } else { false }
+    }
     if let error, let data = try? Self.encoder().encode(error) { pending.append(.message(data)) }
     closing = true
     scheduleDrain()
@@ -174,7 +164,7 @@ final class EndpointConnection: @unchecked Sendable {
         guard let encoded = try? encoder.encode(event) else { continue }
         data = encoded
       }
-      guard write(data + [UInt8(ascii: "\n")]) else {
+      guard transport.writeMessage(data) else {
         lock.withLock {
           closing = true
           pending.removeAll()
@@ -184,19 +174,9 @@ final class EndpointConnection: @unchecked Sendable {
         return
       }
     }
-    if lock.withLock({ closing }) { shutdown(descriptor, SHUT_RDWR) }
-  }
-
-  private func write(_ data: Data) -> Bool {
-    data.withUnsafeBytes { buffer in
-      var offset = 0
-      while offset < buffer.count {
-        let sent = Darwin.send(descriptor, buffer.baseAddress! + offset, buffer.count - offset, 0)
-        if sent < 0, errno == EINTR { continue }
-        guard sent > 0 else { return false }
-        offset += sent
-      }
-      return true
+    if lock.withLock({ closing }) {
+      transport.writeClose()
+      shutdown(descriptor, SHUT_RDWR)
     }
   }
 
