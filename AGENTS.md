@@ -23,7 +23,7 @@ Run applicable commands from the repository root:
 ruff format --check Scripts Tests/RepositoryScripts
 ruff check Scripts Tests/RepositoryScripts
 pyright
-python3 -m unittest discover -s Tests/RepositoryScripts
+.build/schema-validator/bin/python -m unittest discover -s Tests/RepositoryScripts
 find Scripts -type f \( -name '*.sh' -o -name ojd \) -print0 | xargs -0 shellcheck \
   --external-sources --source-path=SCRIPTDIR
 git ls-files -z -co --exclude-standard '*.md' | xargs -0 markdownlint-cli2

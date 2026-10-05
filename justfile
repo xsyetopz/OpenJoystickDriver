@@ -99,12 +99,11 @@ check-hook:
     git diff --check HEAD^ HEAD
 
 # Run snapshot-safe validation
-check-fast: lint
+check-fast: check-schemas lint
     ./Scripts/ojd catalog regenerate --check
     ./Scripts/ojd check profiles
-    ./Scripts/ojd check schemas
     python3 Scripts/Quality/check_swift_file_length.py
-    python3 -m unittest discover -s Tests/RepositoryScripts
+    .build/schema-validator/bin/python -m unittest discover -s Tests/RepositoryScripts
     git diff --check
 
 # Enforce the code-line limits for tracked Swift files (500 in Sources, 1000 in Tests)
@@ -121,6 +120,10 @@ check: check-fast
 # Check canonical controller records
 check-profiles:
     ./Scripts/ojd check profiles
+
+# Validate schemas and create the schema Python environment that pyright and the script tests use
+check-schemas:
+    ./Scripts/ojd check schemas
 
 # Build supported native tools without opening hardware
 check-tools:
