@@ -236,7 +236,8 @@ printf '%s\n' '{"buttons":["south"],"holdMilliseconds":50}' '{}' | ojd virtual f
 - When lines arrive faster than every 8 ms, they wait in a queue of at most 256 lines, so a full queue is about 2 seconds behind. A line without `holdMilliseconds` replaces the last waiting line when that one has no `holdMilliseconds` and the same `buttons` and `dpad`. A press or release is never dropped.
 - Each rumble command that a game sends to the virtual gamepad prints on standard output as one JSON object per line. The `virtualFeed` entry of the output schema describes it.
 - The service removes the virtual gamepad when the input ends and every line has played, when you press Control-C, or when it gets no update for 2 seconds. The command sends updates while it waits for input.
-- A line that is not valid stops the command with exit code 64. The service runs at most 4 feeds at the same time.
+- A line that is not valid stops the command with exit code 64. A line is not valid when it has an unknown key or lists a button or D-pad direction twice.
+- The service runs at most 4 feeds from `ojd virtual feed` at the same time. Endpoint clients have 4 more of their own, so they cannot take these.
 
 Games and latency with `ojd virtual feed` are not verified.
 

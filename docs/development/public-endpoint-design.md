@@ -11,7 +11,7 @@ Programs that the user approves can read controller events from the service, and
 - The service listens on `/tmp/com.openjoystickdriver.<uid>.rpc`, a Unix socket with mode `0600` (`LocalServiceRPCTransport.defaultSocketPath`).
 - Each connection carries one request and one response, each a 4-byte big-endian length and a JSON frame.
 - `LocalServiceRPCServer.authenticatedPeerPID` accepts a peer only when `getpeereid` gives the service's user. `ApplicationServiceServer.isTrustedClient` then accepts only the service's own process, or a process with the same signing identifier and team ID as the service.
-- The CLI streams by polling: `ojd controller watch --all` reads each controller every 16 ms and the controller list every 250 ms (`ControllerWatchCommand+All.swift`). `ojd virtual feed` keeps a feed alive with repeated requests, and `VirtualFeedRegistry` closes a feed after its idle timeout. It allows at most 4 feeds.
+- The CLI streams by polling: `ojd controller watch --all` reads each controller every 16 ms and the controller list every 250 ms (`ControllerWatchCommand+All.swift`). `ojd virtual feed` keeps a feed alive with repeated requests, and `VirtualFeedRegistry` closes a feed after its idle timeout. It allows at most 4 feeds from `ojd virtual feed`.
 
 The internal socket stays as it is. Its one-request-per-connection framing and its code-signature rule do not fit a long-lived stream from a third-party program.
 
@@ -67,7 +67,10 @@ After `welcome`, the client sends `{"type":"subscribe","stream":"controllers","o
 With the `control` scope, the client sends `{"type":"feed","as":"hid-generic"}`. Each following line is one `ojd virtual feed` input line, and the service sends rumble lines in the `virtualFeed` shape.
 
 - One connection is one feed. Closing the connection removes the virtual gamepad, so this transport needs no heartbeat or idle timeout.
-- `VirtualFeedRegistry` is reused unchanged, with its limit of 4 feeds shared with `ojd virtual feed`.
+- Unlike `ojd virtual feed`, which waits until every line has played, closing the connection drops the frames that have not played. A client that sends a macro and then closes loses most of it, so the client stays connected until its last frame has played. Each frame plays for its `holdMilliseconds` and at least 8 ms.
+- `VirtualFeedRegistry` is reused. Endpoint clients and `ojd virtual feed` each have their own limit of 4 feeds, so a 4-player setup works over either and one cannot take the feeds of the other.
+- When 256 frames wait, the service stops reading the connection. A client that closes the connection meanwhile still ends the feed at once.
+- A virtual gamepad that takes longer than 2 seconds to start fails the `feed`, and closing the connection while it starts cancels it.
 - `control` is never implied by `read`. Each needs its own grant.
 
 ## Grants

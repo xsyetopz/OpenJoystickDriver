@@ -190,6 +190,52 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test
+  func endpointFeedsAndRPCFeedsEachHaveTheirOwnLimit() async throws {
+    let factory = FakeFeedFactory()
+    let registry = factory.registry()
+    let limit = VirtualFeedRegistry.maximumFeeds
+    for _ in 0..<limit { _ = try await registry.open(profile: "hid-generic", pool: .endpoint) }
+
+    await #expect(throws: VirtualFeedError.tooManyFeeds(limit)) {
+      try await registry.open(profile: "hid-generic", pool: .endpoint)
+    }
+    for _ in 0..<limit { _ = try await registry.open(profile: "hid-generic", pool: .rpc) }
+    await #expect(throws: VirtualFeedError.tooManyFeeds(limit)) {
+      try await registry.open(profile: "hid-generic", pool: .rpc)
+    }
+    #expect(registry.openFeedCount == 2 * limit)
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func anActivationThatHangsFailsAfterTheTimeoutAndKeepsNoFeed() async throws {
+    let factory = FakeFeedFactory()
+    factory.hangsActivation = true
+    let registry = factory.registry(activationTimeout: 0.1)
+    defer { factory.release() }
+
+    await #expect(throws: VirtualFeedError.self) {
+      try await registry.open(profile: "hid-generic")
+    }
+    #expect(registry.openFeedCount == 0)
+    try await Self.wait { factory.devices.first?.closeCount == 1 }
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func cancellingAnOpenThatHangsClosesItsDevice() async throws {
+    let factory = FakeFeedFactory()
+    factory.hangsActivation = true
+    let registry = factory.registry(activationTimeout: 60)
+    defer { factory.release() }
+    let opening = Task { try await registry.open(profile: "hid-generic") }
+    try await Self.wait { !factory.devices.isEmpty }
+
+    opening.cancel()
+    await #expect(throws: CancellationError.self) { try await opening.value }
+    #expect(registry.openFeedCount == 0)
+    try await Self.wait { factory.devices.first?.closeCount == 1 }
+  }
+
+  @Test
   func anUnknownProfileIsRefusedWithoutADevice() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
@@ -209,8 +255,8 @@ struct VirtualFeedRegistryTests {
     await #expect(throws: VirtualFeedError.self) {
       try await registry.open(profile: "hid-generic")
     }
-    #expect(factory.devices.first?.closeCount == 1)
     #expect(registry.openFeedCount == 0)
+    try await Self.wait { factory.devices.first?.closeCount == 1 }
   }
 
   @Test

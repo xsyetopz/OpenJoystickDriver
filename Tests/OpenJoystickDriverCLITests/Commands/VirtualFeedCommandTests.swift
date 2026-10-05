@@ -150,7 +150,8 @@ struct VirtualFeedCommandTests {
 
   @Test(arguments: [
     #"{"buttons":["jump"]}"#, "not json", #"{"axes":{"x":1}}"#, #"{"holdMilliseconds":60001}"#,
-    #"{"holdMilliseconds":-1}"#,
+    #"{"holdMilliseconds":-1}"#, #"{"buttons":["south","south"]}"#, #"{"dpad":["up","up"]}"#,
+    #"{"button":["south"]}"#,
   ])
   func aLineThatIsNotAFrameExitsSixtyFourAndClosesTheFeed(line: String) async throws {
     let service = try Self.service()

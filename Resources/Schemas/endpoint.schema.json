@@ -183,7 +183,7 @@
 		"frame": {
 			"type": "object",
 			"additionalProperties": false,
-			"description": "One input frame after feeding, as in 'ojd virtual feed'. Missing controls are neutral. The service shows frames in order, each for at least 8 ms; it stops reading while 256 frames wait.",
+			"description": "One input frame after feeding, as in 'ojd virtual feed'. Missing controls are neutral. The service shows frames in order, each for at least 8 ms; it stops reading while 256 frames wait. Closing the connection removes the virtual gamepad at once and drops the frames that have not played, unlike 'ojd virtual feed', so a client stays connected until its last frame has played.",
 			"properties": {
 				"buttons": {
 					"type": "array",

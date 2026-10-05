@@ -41,6 +41,27 @@ struct EndpointConnectionTests {
     connection.finish()
   }
 
+  @Test
+  func closingDropsTheRumbleLinesThatWait() throws {
+    let (connection, reader) = try Self.pair()
+    // Small buffers, so the writer blocks after a few rumble lines.
+    var size: Int32 = 2_048
+    let length = socklen_t(MemoryLayout<Int32>.size)
+    setsockopt(connection.descriptor, SOL_SOCKET, SO_SNDBUF, &size, length)
+    setsockopt(reader, SOL_SOCKET, SO_RCVBUF, &size, length)
+    let count = EndpointServer.maximumQueuedLines - 1
+    for index in 0..<count {
+      let line = ControllerOutputCommand.setRumble(.off, duration: .milliseconds(index))
+      connection.send(line, bounded: true)
+    }
+    connection.close(EndpointError(code: .revoked, message: "Revoked."))
+
+    let objects = Self.readAll(reader)
+    #expect(objects.count < count)
+    #expect(objects.last?["code"] as? String == "revoked")
+    connection.finish()
+  }
+
   private static func connected(_ id: String) -> ControllerWatchEvent {
     ControllerWatchEvent(
       type: .connected,

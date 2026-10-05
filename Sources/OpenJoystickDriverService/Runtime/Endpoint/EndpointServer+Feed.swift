@@ -7,6 +7,7 @@ extension EndpointServer {
   ///
   /// A pump exchanges with the feed each poll, so the feed stays open while the client sends
   /// nothing. When the feed's frame queue is full, reading waits, which pushes back on the client.
+  /// A client that closes the connection meanwhile ends the feed, though its unread lines wait.
   func feed(_ connection: EndpointConnection, profile: String) {
     guard let feeds else {
       connection.close(
@@ -15,7 +16,11 @@ extension EndpointServer {
       return
     }
     let token: UUID
-    do { token = try Self.waitFor { try await feeds.open(profile: profile).token } } catch {
+    do {
+      token = try Self.waitFor(connection) {
+        try await feeds.open(profile: profile, pool: .endpoint).token
+      }
+    } catch {
       connection.close(Self.feedError(error, profile: profile))
       return
     }
@@ -48,6 +53,7 @@ extension EndpointServer {
           return
         }
         while let accepted = exchanger.exchange([frame]), accepted == 0 {
+          if connection.peerHungUp { return }
           usleep(useconds_t(VirtualFeedExchangeResult.minimumFrameMilliseconds * 1_000))
         }
         if exchanger.isClosed { return }
@@ -55,12 +61,9 @@ extension EndpointServer {
     }
   }
 
-  /// The frame on a line without a `type`; nil for anything else.
+  /// The frame on the line; nil for anything else, such as a line with a `type`.
   private static func frame(_ data: Data) -> VirtualFeedFrame? {
-    guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-      object["type"] == nil
-    else { return nil }
-    return try? JSONDecoder().decode(VirtualFeedFrame.self, from: data)
+    try? JSONDecoder().decode(VirtualFeedFrame.self, from: data)
   }
 
   private static func feedError(_ error: any Error, profile: String) -> EndpointError {
@@ -80,17 +83,22 @@ extension EndpointServer {
     }
   }
 
-  /// Runs `work` and blocks the calling thread, a connection-queue thread, until it finishes.
+  /// Runs `work` and blocks the calling thread, a connection-queue thread, until it finishes;
+  /// cancels `work` once `connection` is closing or its peer hung up.
   private static func waitFor<T: Sendable>(
+    _ connection: EndpointConnection,
     _ work: @escaping @Sendable () async throws -> T
   ) throws -> T {
     let box = ResultBox<T>()
     let done = DispatchSemaphore(value: 0)
-    Task {
+    let task = Task {
       do { box.result = .success(try await work()) } catch { box.result = .failure(error) }
       done.signal()
     }
-    done.wait()
+    let poll = DispatchTimeInterval.nanoseconds(Int(ControllerWatchPoller.pollInterval))
+    while done.wait(timeout: .now() + poll) == .timedOut {
+      if connection.isClosing || connection.peerHungUp { task.cancel() }
+    }
     return try box.result!.get()
   }
 }

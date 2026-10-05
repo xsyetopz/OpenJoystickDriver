@@ -58,6 +58,86 @@ struct EndpointFeedTests {
   }
 
   @Test
+  func closingTheClientWhileTheQueueIsFullRemovesTheGamepad() throws {
+    let factory = FakeFeedFactory()
+    let feeds = factory.registry()
+    try withEndpointServer(feeds: feeds) { server, _ in
+      var client: EndpointTestClient? = try feeding(server)
+      let device = try #require(factory.devices.first)
+      for index in 0..<(VirtualFeedExchangeResult.maximumQueuedFrames + 20) {
+        let button = index.isMultiple(of: 2) ? "south" : "east"
+        client?.send(#"{"buttons":["\#(button)"],"holdMilliseconds":60000}"#)
+      }
+      try Self.wait { !device.sent.isEmpty }
+      client = nil
+      _ = client
+
+      try Self.wait { device.closeCount == 1 }
+      #expect(feeds.openFeedCount == 0)
+    }
+  }
+
+  @Test
+  func revokingControlWhileTheGamepadStartsEndsTheFeed() throws {
+    let factory = FakeFeedFactory()
+    factory.hangsActivation = true
+    let feeds = factory.registry(activationTimeout: 60)
+    defer { factory.release() }
+    try withEndpointServer(feeds: feeds) { server, _ in
+      let client = try welcomed(server)
+      client.send(#"{"type":"feed","as":"hid-generic"}"#)
+      try Self.wait { !factory.devices.isEmpty }
+      try server.revoke(id: Self.tool.accessID, scopes: [.control])
+
+      #expect(try client.readObject()["code"] as? String == "revoked")
+      try Self.wait { factory.devices.first?.closeCount == 1 }
+      #expect(feeds.openFeedCount == 0)
+    }
+  }
+
+  @Test
+  func closingTheClientWhileTheGamepadStartsEndsTheFeed() throws {
+    let factory = FakeFeedFactory()
+    factory.hangsActivation = true
+    let feeds = factory.registry(activationTimeout: 60)
+    defer { factory.release() }
+    try withEndpointServer(feeds: feeds) { server, _ in
+      var client: EndpointTestClient? = try welcomed(server)
+      client?.send(#"{"type":"feed","as":"hid-generic"}"#)
+      try Self.wait { !factory.devices.isEmpty }
+      client = nil
+      _ = client
+
+      try Self.wait { factory.devices.first?.closeCount == 1 }
+      #expect(feeds.openFeedCount == 0)
+    }
+  }
+
+  /// The client neither reads nor writes, so only the pump sees the closing connection.
+  @Test
+  func aClosingConnectionRemovesTheGamepadWhileTheReaderAndWriterBlock() throws {
+    let factory = FakeFeedFactory()
+    let feeds = factory.registry()
+    try withEndpointServer(feeds: feeds) { server, _ in
+      let transport = BlockedTransport()
+      defer { transport.release() }
+      let connection = EndpointConnection(descriptor: -1, kind: .socket, transport: transport)
+      let finished = DispatchSemaphore(value: 0)
+      Thread.detachNewThread {
+        server.feed(connection, profile: "hid-generic")
+        finished.signal()
+      }
+      try Self.wait { factory.devices.first?.activated != nil }
+      connection.close(EndpointError(code: .revoked, message: "Revoked."))
+
+      try Self.wait { factory.devices.first?.closeCount == 1 }
+      #expect(feeds.openFeedCount == 0)
+      transport.release()
+      #expect(finished.wait(timeout: .now() + 5) == .success)
+    }
+  }
+
+  @Test
   func revokingControlEndsTheFeed() throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
@@ -122,6 +202,9 @@ struct EndpointFeedTests {
     #"{"buttons":["jump"]}"#,
     #"{"axes":{"throttle":1}}"#,
     #"{"holdMilliseconds":60001}"#,
+    #"{"buttons":["south","south"]}"#,
+    #"{"dpad":["up","up"]}"#,
+    #"{"buttons":["south"],"turbo":true}"#,
     "nonsense",
   ])
   func aLineThatIsNotAFrameEndsTheFeed(line: String) throws {
@@ -221,5 +304,30 @@ struct EndpointFeedTests {
       guard Date() < deadline else { throw POSIXError(.ETIMEDOUT) }
       usleep(2_000)
     }
+  }
+}
+
+/// A transport whose reads and writes block until `release`; then reads end and writes fail.
+private final class BlockedTransport: EndpointTransport, @unchecked Sendable {
+  private let released = DispatchSemaphore(value: 0)
+
+  func release() { released.signal() }
+
+  func readMessage() -> EndpointReadResult {
+    waitForRelease()
+    return .end
+  }
+
+  func writeMessage(_ data: Data) -> Bool {
+    waitForRelease()
+    return false
+  }
+
+  func writeClose() {}
+
+  /// Passes the release on, so every blocked call returns.
+  private func waitForRelease() {
+    released.wait()
+    released.signal()
   }
 }

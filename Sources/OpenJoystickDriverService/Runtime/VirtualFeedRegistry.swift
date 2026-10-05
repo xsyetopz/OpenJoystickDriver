@@ -15,6 +15,14 @@ typealias VirtualFeedDeviceFactory =
   @Sendable (VirtualHIDProfileID, @escaping UserSpaceOutputDispatcher.OutputCommandHandler)
   throws -> any VirtualFeedDevice
 
+/// Who opened a feed; each pool has its own `VirtualFeedRegistry.maximumFeeds`, so endpoint
+/// clients cannot take the feeds of `ojd virtual feed`.
+enum VirtualFeedPool {
+  case endpoint
+  /// The local service RPC, which `ojd virtual feed` uses.
+  case rpc
+}
+
 enum VirtualFeedError: LocalizedError, Equatable {
   case unknownProfile(String)
   case tooManyFeeds(Int)
@@ -42,13 +50,17 @@ enum VirtualFeedError: LocalizedError, Equatable {
 /// the service stops.
 /// - Note: `@unchecked Sendable` because `lock` guards `sessions` and `stopped`.
 final class VirtualFeedRegistry: @unchecked Sendable {
+  /// The most open feeds per `VirtualFeedPool`.
   static let maximumFeeds = 4
+  /// How long a virtual controller may take to start before the open fails.
+  static let activationTimeoutSeconds: TimeInterval = 2
   /// Older commands are dropped first when a client does not collect them.
   static let maximumQueuedFeedback = 256
 
   private final class Session {
     let device: any VirtualFeedDevice
     let identifier: DeviceIdentifier
+    let pool: VirtualFeedPool
     var feedback: [ControllerOutputCommand] = []
     /// Frames that wait for `player`, oldest first.
     var pending: [VirtualFeedFrame] = []
@@ -60,28 +72,32 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     var lastExchange: TimeInterval
     var watchdog: Task<Void, Never>?
 
-    init(device: any VirtualFeedDevice, identifier: DeviceIdentifier) {
+    init(device: any VirtualFeedDevice, identifier: DeviceIdentifier, pool: VirtualFeedPool) {
       self.device = device
       self.identifier = identifier
+      self.pool = pool
       lastExchange = ProcessInfo.processInfo.systemUptime
     }
   }
 
   private let factory: VirtualFeedDeviceFactory
   private let idleTimeout: TimeInterval
+  private let activationTimeout: TimeInterval
   private let lock = NSLock()
   private var sessions: [UUID: Session] = [:]
   private var stopped = false
 
   init(
     factory: @escaping VirtualFeedDeviceFactory,
-    idleTimeout: TimeInterval = VirtualFeedExchangeResult.idleTimeoutSeconds
+    idleTimeout: TimeInterval = VirtualFeedExchangeResult.idleTimeoutSeconds,
+    activationTimeout: TimeInterval = VirtualFeedRegistry.activationTimeoutSeconds
   ) {
     self.factory = factory
     self.idleTimeout = idleTimeout
+    self.activationTimeout = activationTimeout
   }
 
-  func open(profile name: String) async throws -> VirtualFeedSession {
+  func open(profile name: String, pool: VirtualFeedPool = .rpc) async throws -> VirtualFeedSession {
     guard let profile = VirtualHIDProfileID(rawValue: name) else {
       throw VirtualFeedError.unknownProfile(name)
     }
@@ -96,11 +112,14 @@ final class VirtualFeedRegistry: @unchecked Sendable {
         vendorID: identity.vendorID,
         productID: identity.productID,
         serialNumber: "feed-\(token.uuidString)"
-      )
+      ),
+      pool: pool
     )
     let failure = lock.withLock { () -> VirtualFeedError? in
       if stopped { return .serviceStopped }
-      guard sessions.count < Self.maximumFeeds else { return .tooManyFeeds(Self.maximumFeeds) }
+      guard sessions.values.filter({ $0.pool == pool }).count < Self.maximumFeeds else {
+        return .tooManyFeeds(Self.maximumFeeds)
+      }
       sessions[token] = session
       return nil
     }
@@ -108,11 +127,27 @@ final class VirtualFeedRegistry: @unchecked Sendable {
       await device.close()
       throw failure
     }
-    do {
-      try await device.activate(controller: session.identifier)
-    } catch {
-      await close(token: token)
-      throw VirtualFeedError.activationFailed(String(describing: error))
+    // A hung activation must not hold the caller, which may block a connection thread.
+    let identifier = session.identifier
+    let activation = await withTimeout(seconds: activationTimeout) {
+      () async -> Result<Void, any Error> in
+      do { return .success(try await device.activate(controller: identifier)) } catch {
+        return .failure(error)
+      }
+    }
+    guard case .success = activation else {
+      // The slot frees at once; closing waits for the activation, which may still hang, so the
+      // caller does not wait for it.
+      if lock.withLock({ sessions.removeValue(forKey: token) }) != nil {
+        Task { await device.close() }
+      }
+      if Task.isCancelled { throw CancellationError() }
+      if case .failure(let error) = activation {
+        throw VirtualFeedError.activationFailed(String(describing: error))
+      }
+      throw VirtualFeedError.activationFailed(
+        "it took longer than \(activationTimeout.formatted()) seconds"
+      )
     }
     let watching = lock.withLock { () -> Bool in
       guard sessions[token] === session else { return false }

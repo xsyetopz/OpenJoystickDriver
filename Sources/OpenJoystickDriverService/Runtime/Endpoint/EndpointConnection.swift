@@ -9,6 +9,8 @@ import OpenJoystickDriverKit
 final class EndpointConnection: @unchecked Sendable {
   private enum Outgoing {
     case message(Data)
+    /// A `bounded` line, dropped like an event when the connection closes.
+    case feedback(Data)
     case event(ControllerWatchEvent)
   }
 
@@ -51,6 +53,12 @@ final class EndpointConnection: @unchecked Sendable {
   var isClosing: Bool { lock.withLock { closing } }
   var wantsOutputValues: Bool { lock.withLock { subscribed && wantsOutput && !closing } }
 
+  /// Whether the peer closed or shut down its side, even while unread messages wait.
+  var peerHungUp: Bool {
+    var entry = pollfd(fd: descriptor, events: Int16(POLLIN), revents: 0)
+    return poll(&entry, 1, 0) > 0 && entry.revents & Int16(POLLHUP | POLLERR) != 0
+  }
+
   /// Reads the next message; blocks until one arrives, the peer closes, or the receive timeout
   /// passes.
   func readMessage() -> EndpointReadResult { transport.readMessage() }
@@ -75,7 +83,8 @@ final class EndpointConnection: @unchecked Sendable {
     for event in snapshot { deliver(event) }
   }
 
-  /// Queues `line`; a `bounded` line closes the connection with `too-slow` when the queue is full.
+  /// Queues `line`; a `bounded` line closes the connection with `too-slow` when the queue is full
+  /// and is dropped when the connection closes first.
   func send(_ line: some Encodable, bounded: Bool = false) {
     guard let data = try? Self.encoder().encode(line) else { return }
     lock.withLock {
@@ -84,7 +93,7 @@ final class EndpointConnection: @unchecked Sendable {
         closeLocked(EndpointError(code: .tooSlow, message: "The client read too slowly."))
         return
       }
-      pending.append(.message(data))
+      pending.append(bounded ? .feedback(data) : .message(data))
       scheduleDrain()
     }
   }
@@ -138,9 +147,10 @@ final class EndpointConnection: @unchecked Sendable {
 
   private func closeLocked(_ error: EndpointError?) {
     guard !closing else { return }
-    // Events waiting behind the error are dropped; the challenge and welcome are kept.
+    // Events and rumble lines waiting behind the error are dropped; the challenge and welcome
+    // are kept.
     pending.removeAll {
-      if case .event = $0 { true } else { false }
+      if case .message = $0 { false } else { true }
     }
     if let error, let data = try? Self.encoder().encode(error) { pending.append(.message(data)) }
     closing = true
@@ -166,7 +176,7 @@ final class EndpointConnection: @unchecked Sendable {
       guard let next else { break }
       let data: Data
       switch next {
-      case .message(let message): data = message
+      case .message(let message), .feedback(let message): data = message
       case .event(let event):
         guard let encoded = try? encoder.encode(event) else { continue }
         data = encoded

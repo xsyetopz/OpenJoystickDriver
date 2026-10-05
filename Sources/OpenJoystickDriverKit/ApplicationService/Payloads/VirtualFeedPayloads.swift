@@ -6,7 +6,8 @@ import Foundation
 /// JSON: `{"buttons":["south"],"dpad":["up"],"axes":{"left_stick_x":0.5},"holdMilliseconds":50}`,
 /// with the names of ``RemappingButton``, ``RemappingDpadDirection``, and ``RemappingAxis``.
 /// Stick axes run from `-1` to `1` with positive Y up; triggers run from `0` to `1`. Values out
-/// of range are clamped. Buttons without virtual output, such as paddles, are ignored.
+/// of range are clamped. Buttons without virtual output, such as paddles, are ignored. Decoding
+/// throws on an unknown key and on a button or d-pad direction listed twice.
 public struct VirtualFeedFrame: Codable, Equatable, Sendable {
   /// The longest `holdMilliseconds` a frame can ask for.
   public static let maximumHoldMilliseconds = 60_000
@@ -30,7 +31,7 @@ public struct VirtualFeedFrame: Codable, Equatable, Sendable {
     self.holdMilliseconds = holdMilliseconds
   }
 
-  private enum CodingKeys: String, CodingKey {
+  private enum CodingKeys: String, CodingKey, CaseIterable {
     case buttons
     case dpad
     case axes
@@ -38,9 +39,10 @@ public struct VirtualFeedFrame: Codable, Equatable, Sendable {
   }
 
   public init(from decoder: any Decoder) throws {
+    try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    buttons = try container.decodeIfPresent(Set<RemappingButton>.self, forKey: .buttons) ?? []
-    dpad = try container.decodeIfPresent(Set<RemappingDpadDirection>.self, forKey: .dpad) ?? []
+    buttons = try Self.decodeUnique(RemappingButton.self, forKey: .buttons, in: container)
+    dpad = try Self.decodeUnique(RemappingDpadDirection.self, forKey: .dpad, in: container)
     let named = try container.decodeIfPresent([String: Double].self, forKey: .axes) ?? [:]
     axes = try named.reduce(into: [:]) { result, entry in
       guard let axis = RemappingAxis(rawValue: entry.key) else {
@@ -60,6 +62,23 @@ public struct VirtualFeedFrame: Codable, Equatable, Sendable {
         debugDescription: "holdMilliseconds is out of range: \(holdMilliseconds)"
       )
     }
+  }
+
+  private static func decodeUnique<Value: Decodable & Hashable>(
+    _ type: Value.Type,
+    forKey key: CodingKeys,
+    in container: KeyedDecodingContainer<CodingKeys>
+  ) throws -> Set<Value> {
+    let list = try container.decodeIfPresent([Value].self, forKey: key) ?? []
+    let values = Set(list)
+    guard values.count == list.count else {
+      throw DecodingError.dataCorruptedError(
+        forKey: key,
+        in: container,
+        debugDescription: "\(key.stringValue) lists a value twice"
+      )
+    }
+    return values
   }
 
   public func encode(to encoder: any Encoder) throws {
