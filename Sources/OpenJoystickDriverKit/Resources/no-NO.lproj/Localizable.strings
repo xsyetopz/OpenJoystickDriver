@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Trykk på én ekstra knapp ad gangen, og de oppdages.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Skjulte %d uaktivt pakke (til og med inkludert i eksport).";
-"developer.keepAliveNote" = "Routine uaktiv trafikk er skjult slik at kontrollør aktiviteten forblir synlig.";
+"developer.keepAliveNote" = "Rutinemessig inaktiv datatrafikk er skjult slik at kontrollerens aktivitet forblir synlig.";
 "developer.leftStick" = "Venstre spak";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Ingen kontroller som er koblet";

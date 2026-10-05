@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Stiskněte jeden tlačítko navíc a odhalené tlačítka zůstávají na seznamu, dokud nezaplníte záznam.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Ukryté %d volné balíčky (včetné stále v vývozu).";
-"developer.keepAliveNote" = "Routinná volná doprava je skryta, takže aktivita ovladače zůstává viditelná.";
+"developer.keepAliveNote" = "Běžný datový provoz v nečinnosti je skrytý, aby aktivita ovladače zůstala viditelná.";
 "developer.leftStick" = "Levá páčka";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Žádné připojené ovládače";

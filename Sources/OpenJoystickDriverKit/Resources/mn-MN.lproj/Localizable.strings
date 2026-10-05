@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Нэг удаа нэг нэмэлт товч түрүүлээд, олсон товчнууд нь та зураг авахаасаа өмнө жагсаалтад үлдэнэ.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Хөрөн нуугдаж байна %d гацсан багц (ихэн ч экспортод багтагдсан)";
-"developer.keepAliveNote" = "Удахгүй хөдөлгөөнийг нууж, замын хөдөлгөөн нь харагдана.";
+"developer.keepAliveNote" = "Тоглоомын удирдлагын үйл ажиллагаа харагдахын тулд ердийн сул зогсолтын багцууд нуугдсан.";
 "developer.leftStick" = "Зүүн стик";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Хяналтын системтэй холбогдсонгүй";

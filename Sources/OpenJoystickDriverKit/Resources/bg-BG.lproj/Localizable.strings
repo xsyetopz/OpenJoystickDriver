@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Натиснете допълнително едно бутон наведнъж, а откритите бутони остават в списъка, докато не изчистите снимката.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Скрити %d безработни опаковки (включени в износа).";
-"developer.keepAliveNote" = "Рутинният безработен трафик е скрит, така че дейността на контролера остава видима.";
+"developer.keepAliveNote" = "Обичайният трафик в неактивно състояние е скрит, за да остава видима активността на контролера.";
 "developer.leftStick" = "Ляв стик";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Няма свързани контролери";

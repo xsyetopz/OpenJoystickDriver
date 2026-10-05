@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Պարզված կոճակները շարքում են, մինչեւ որ բացեք գրավումը:";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Գաղտնի %d անօգնական փաթեթներ (այսօր էլ ներառված են արտահանման մեջ)";
-"developer.keepAliveNote" = "Հանդիպման ժամանակավոր անօգնական երթեւեկությունը թաքնվում է, որպեսզի վերահսկիչի գործունեությունը մնա տեսանելի:";
+"developer.keepAliveNote" = "Սովորական պարապուրդի փաթեթները թաքցվում են, որպեսզի վերահսկիչի գործունեությունը մնա տեսանելի:";
 "developer.leftStick" = "Ձախ լծակ";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Ոչ մի վերահսկողություն չի միացված";

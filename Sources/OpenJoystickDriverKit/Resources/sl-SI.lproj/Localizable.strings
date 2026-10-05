@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Najdite gumb, dokler ne odstranite zaslona.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Skrit %d neposredne pakete (vključene še v izvoz).";
-"developer.keepAliveNote" = "Redni neaktivni promet je skriten, tako da je aktivnost upravljavca vidna.";
+"developer.keepAliveNote" = "Običajni podatkovni promet v mirovanju je skrit, da ostane dejavnost upravljavca vidna.";
 "developer.leftStick" = "Leva palčka";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Brez povezanih upravljavcev";

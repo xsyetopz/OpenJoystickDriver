@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Tóg ar phlean amháin breise ag an am.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Cúlraithe %d pacáistí neamhfhostaithe (tá siad fós san áireamh i onnmhairí).";
-"developer.keepAliveNote" = "Tá an tráchta neamhghnách rothánta i gcúl ionas go mbeidh gníomhaíocht an rialaitheora infheicthe.";
+"developer.keepAliveNote" = "Tá gnáththrácht sonraí díomhaoin folaithe ionas go bhfanann gníomhaíocht an rialtóra infheicthe.";
 "developer.leftStick" = "Maide clé";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Ní bhfuil aon rialaitheoirí ceangailte";

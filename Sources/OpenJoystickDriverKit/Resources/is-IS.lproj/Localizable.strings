@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Ūessir eru á skráinni þar til þú klárar upptökin.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Höldin %d óvinnuförur (þá meðteknar í útflutningi).";
-"developer.keepAliveNote" = "Rútínum óvirkum umferð er dulin svo að starfsemi stjórnarmannsins sé sýnileg.";
+"developer.keepAliveNote" = "Venjubundin aðgerðalaus gagnaumferð er falin svo að virkni stýringarinnar haldist sýnileg.";
 "developer.leftStick" = "Vinstri stöng";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Engin stjórnarmeðferð tengd";

@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Druk een ekstra knoppie op 'n slag.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Verborge %d leë pakkette (nog steeds ingesluit in uitvoer).";
-"developer.keepAliveNote" = "Roetine-oomblikke verkeer word weggesteek sodat beheerderaktiwiteit sigbaar bly.";
+"developer.keepAliveNote" = "Roetine-dataverkeer sonder aktiwiteit word weggesteek sodat die kontroleerder se aktiwiteit sigbaar bly.";
 "developer.leftStick" = "Linkerstok";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Geen beheerders verbind";

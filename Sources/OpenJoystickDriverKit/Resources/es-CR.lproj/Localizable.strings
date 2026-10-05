@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Presione un botón adicional a la vez, los botones detectados permanecen listados hasta que elimine la captura.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Escondiéndose %d envases inactivos (todavía incluidos en la exportación).";
-"developer.keepAliveNote" = "El tráfico de rutina está oculto para que la actividad del controlador permanezca visible.";
+"developer.keepAliveNote" = "El tráfico rutinario de inactividad está oculto para que la actividad del controlador siga siendo visible.";
 "developer.leftStick" = "Palanca izquierda";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "No hay controladores conectados";

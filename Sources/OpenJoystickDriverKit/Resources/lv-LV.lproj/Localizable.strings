@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Spiediet vienu papildknopju vienu reizi, un atklātās spūces paliek uzskaitītas, līdz jūs atcelsiet.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Slēpta %d nepakārtotas iepakojumus (atbalsta eksportā).";
-"developer.keepAliveNote" = "Routine bezfunkcionālā satiksmes sistēma ir slēgta, lai kontrolētāja darbība būtu redzama.";
+"developer.keepAliveNote" = "Ierastā datu plūsma dīkstāves laikā ir paslēpta, lai kontrolētāja darbība paliktu redzama.";
 "developer.leftStick" = "Kreisā svira";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Neapvienoti kontroleri";

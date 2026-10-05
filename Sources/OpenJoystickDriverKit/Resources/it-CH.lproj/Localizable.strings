@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Presi un pulsante in più alla volta, i pulsanti rilevati restano elencati finché non si elimina la cattura.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Nascosto %d pacchetti inattivi (anche oggi inclusi nell'esportazione).";
-"developer.keepAliveNote" = "Il traffico di routine è nascosto in modo che l'attività del controller rimanga visibile.";
+"developer.keepAliveNote" = "Il traffico di inattività di routine è nascosto affinché l'attività del controller resti visibile.";
 "developer.leftStick" = "Levetta sinistra";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Nessun controller collegato";

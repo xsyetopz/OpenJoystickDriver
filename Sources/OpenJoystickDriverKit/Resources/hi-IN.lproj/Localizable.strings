@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "एक बार में एक अतिरिक्त बटन दबाएं, जब तक आप कैप्चर को साफ नहीं करते तब तक पता लगाने वाले बटन सूचीबद्ध रहते हैं।";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "छिपा हुआ %d निष्क्रिय पैकेट (अभी भी निर्यात में शामिल)";
-"developer.keepAliveNote" = "नियमित निष्क्रिय यातायात छिपा है ताकि नियंत्रक गतिविधि दिखाई दे।";
+"developer.keepAliveNote" = "सामान्य निष्क्रिय पैकेट छिपाए गए हैं ताकि कंट्रोलर की गतिविधि दिखाई देती रहे।";
 "developer.leftStick" = "बाएँ स्टिक";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "कोई नियंत्रक नहीं जोड़ा गया";

@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "検出されたボタンは 検出されたボタンが 検出されたボタンを 検出したまで リストに載せられます";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "隠された %d 廃品包装 (依然として輸出に含まれている)";
-"developer.keepAliveNote" = "制御器の動きが 明らかになるように 常規の無動な交通は隠されています";
+"developer.keepAliveNote" = "コントローラの動作が見えやすいように、通常のアイドル時のパケットは非表示になっています。";
 "developer.leftStick" = "左スティック";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "制御器が接続されていない";

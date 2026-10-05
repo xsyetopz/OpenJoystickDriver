@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Paspauskite vieną papildomą mygtuką vienu metu, o atrastas mygtukas liks į sąrašą, kol išvalysite užėmimą.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Paslėpta %d nepakartotiniai pakuotės (tikrai įtrauktos į eksportą).";
-"developer.keepAliveNote" = "Įvairių neveiklių srautų srautas yra paslėptas, kad kontrolerio veikla būtų matoma.";
+"developer.keepAliveNote" = "Įprastas neveiklos duomenų srautas paslėptas, kad valdiklio veikla liktų matoma.";
 "developer.leftStick" = "Kairioji svirtelė";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Nėra prijungtų valdiklių";

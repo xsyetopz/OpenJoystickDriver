@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Wykryte przyciski pozostają na liście, dopóki nie wyłączysz zdjęcia.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Ukryte %d opuszczone paczki (wciąż włączone do eksportu).";
-"developer.keepAliveNote" = "Routinewy ruch jest ukryty, więc aktywność sterownika pozostaje widoczna.";
+"developer.keepAliveNote" = "Rutynowy ruch danych w stanie bezczynności jest ukryty, aby aktywność sterownika pozostała widoczna.";
 "developer.leftStick" = "Lewy analog";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Nie ma podłączonych kontrolerów";

@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Paina yksi lisäpainikko kerrallaan, ja löydetty painikke pysyy listalla, kunnes saadaan kiinni.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Piilotettu %d Tyhjät paketit (joka on edelleen mukana vientiä varten).";
-"developer.keepAliveNote" = "Ruutin liikenne on piilotettu, joten ohjaimen toiminta on näkyvissä.";
+"developer.keepAliveNote" = "Tavanomainen joutokäynnin tietoliikenne on piilotettu, jotta ohjaimen toiminta pysyy näkyvissä.";
 "developer.leftStick" = "Vasen tikku";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Ei yhteyksiä";

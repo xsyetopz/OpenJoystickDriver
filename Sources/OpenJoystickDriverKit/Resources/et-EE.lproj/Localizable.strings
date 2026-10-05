@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Vajuta korraga ühte lisanuppu. Tuvastatud nupud jäävad loendisse, kuni tühjendad jäädvustuse.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Varjatud %d tühjad pakendid (jagu on endiselt ekspordis).";
-"developer.keepAliveNote" = "Routiniline tühjus liiklus on varjatud, nii et kontroller aktiivsus jääb nähtavaks.";
+"developer.keepAliveNote" = "Tavaline jõudeoleku andmeliiklus on peidetud, et kontrolleri tegevus püsiks nähtav.";
 "developer.leftStick" = "Vasak kang";
 "developer.loadingControllers" = "Kontrolleri diagnostika laadimine…";
 "developer.noControllers" = "Ühtegi kontrollerit pole ühendatud";

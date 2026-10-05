@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Appuyez sur un bouton supplémentaire à la fois. Les boutons détectés restent listés jusqu’à ce que vous effaciez la capture.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Caché %d les paquets vacants (toujours inclus dans l'exportation).";
-"developer.keepAliveNote" = "Le trafic de routine est caché pour que l'activité du contrôleur reste visible.";
+"developer.keepAliveNote" = "Le trafic de routine en veille est masqué afin que l’activité de la manette reste visible.";
 "developer.leftStick" = "Stick gauche";
 "developer.loadingControllers" = "Chargement des diagnostics de manette…";
 "developer.noControllers" = "Aucune manette connectée";

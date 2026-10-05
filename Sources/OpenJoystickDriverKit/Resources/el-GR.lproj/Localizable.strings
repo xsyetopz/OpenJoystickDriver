@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Κάνε ένα κουμπί παραπάνω κάθε φορά, και τα κουμπιά που εντοπίζονται παραμένουν στη λίστα μέχρι να καθαρίσεις το πιάσιμο.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Κρυμμένα %d πακέτα που δεν έχουν χρησιμοποιηθεί (ακόμα περιλαμβάνονται στην εξαγωγή).";
-"developer.keepAliveNote" = "Η ρουτίνα αδρανής κυκλοφορίας είναι κρυμμένη έτσι ώστε η δραστηριότητα του ελεγκτή να παραμένει ορατή.";
+"developer.keepAliveNote" = "Η συνηθισμένη κίνηση δεδομένων σε αδράνεια είναι κρυμμένη, ώστε η δραστηριότητα του ελεγκτή να παραμένει ορατή.";
 "developer.leftStick" = "Αριστερός μοχλός";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Δεν συνδέονται ελεγκτές";

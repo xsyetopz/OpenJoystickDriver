@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Druk op één extra knop, en de detecteerde knoppen blijven op de lijst totdat je de opname hebt verwijderd.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Verborgen %d niet-werkzame verpakkingen (nog steeds opgenomen in de uitvoer).";
-"developer.keepAliveNote" = "Routine-loze verkeer wordt verborgen zodat de controleeractiviteit zichtbaar blijft.";
+"developer.keepAliveNote" = "Routinematig inactief dataverkeer wordt verborgen, zodat de activiteit van de controller zichtbaar blijft.";
 "developer.leftStick" = "Linker stick";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Geen aangesloten controllers";

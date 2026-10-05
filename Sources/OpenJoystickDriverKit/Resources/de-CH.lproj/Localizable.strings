@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Drücke jeweils eine Zusatztaste. Erkannte Tasten bleiben gelistet, bis du die Erfassung löschst.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Verborgen %d Leerpacken (noch in der Ausfuhr enthalten).";
-"developer.keepAliveNote" = "Der routinemässige Traffic ist verborgen, so dass die Aktivität des Controllers sichtbar bleibt.";
+"developer.keepAliveNote" = "Routinemässiger Leerlauf-Datenverkehr wird ausgeblendet, damit die Controller-Aktivität sichtbar bleibt.";
 "developer.leftStick" = "Linker Stick";
 "developer.loadingControllers" = "Controllerdiagnose wird geladen…";
 "developer.noControllers" = "Keine Controller verbunden";

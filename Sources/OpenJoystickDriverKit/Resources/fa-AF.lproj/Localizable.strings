@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "فقط یه دکمه اضافی رو فشار بده تا تا دستگیری رو پاک کنی";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "پنهان شده %d بسته های بیکار (هم اکنون در صادرات شامل می شوند).";
-"developer.keepAliveNote" = "ترافیک معمول بیکار پنهان شده است تا فعالیت کنترل کننده قابل مشاهده بماند.";
+"developer.keepAliveNote" = "بسته‌های داده‌ی معمول و بیکار پنهان می‌شوند تا فعالیت کنترلر قابل مشاهده بماند.";
 "developer.leftStick" = "استیک چپ";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "هیچ کنترل کننده ای متصل نیست";

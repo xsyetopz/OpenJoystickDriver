@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Натисни један додатни дугме одједном, а откривене дугме остану на листу док не очистите снимак.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Скривено %d неактивни пакети (и даље укључени у извоз).";
-"developer.keepAliveNote" = "Рутински празног сообраћаја је скривен тако да се активност контролера остаје видљива.";
+"developer.keepAliveNote" = "Уобичајени саобраћај података у мировању је сакривен како би активност контролера остала видљива.";
 "developer.leftStick" = "Лева аналогна палица";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Нема повезаних контролера";

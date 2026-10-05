@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Натисніть одну кнопку за раз, і виявлені кнопки залишаються в списку, поки ви не очистите залов.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Сховані %d непрацюючі пакети (включені в експорт).";
-"developer.keepAliveNote" = "Рутинний бездіяльний трафік прихований, щоб активність контролера залишалася видимою.";
+"developer.keepAliveNote" = "Звичайний службовий трафік у режимі простою приховано, щоб активність контролера залишалася видимою.";
 "developer.leftStick" = "Лівий стік";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Ніяких контролерів не підключено";

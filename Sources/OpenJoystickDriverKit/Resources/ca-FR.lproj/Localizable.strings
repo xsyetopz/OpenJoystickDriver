@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Presi un botó extra a la vegada, els botons detectats es mantenen en llista fins que elimines la captura.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Escondeixut %d envasos ocios (todavía inclosos a l'exportació).";
-"developer.keepAliveNote" = "El trànsit inactiu de rutina es troba amagat per tal que l'activitat del controlador sigui visible.";
+"developer.keepAliveNote" = "El trànsit d’inactivitat de rutina està amagat perquè l’activitat del controlador es mantingui visible.";
 "developer.leftStick" = "Palanca esquerra";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "No hi ha controladors connectats";

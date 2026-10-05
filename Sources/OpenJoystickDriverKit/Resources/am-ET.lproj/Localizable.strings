@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "አንድ ተጨማሪ አዝራር በአንድ ጊዜ ይጫኑ.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "የተደበቀ %d ባዶ የሆኑ ጥቅሎች (በምርጫው ውስጥ አሁንም ተካትተዋል) ።";
-"developer.keepAliveNote" = "የዕለት ተዕለት ሥራ አጥነት ትራፊክ ተደብቆ ስለሚቆይ የቁጥጥር ተቆጣጣሪ እንቅስቃሴ ይታያል.";
+"developer.keepAliveNote" = "የመቆጣጠሪያው እንቅስቃሴ ጎልቶ እንዲታይ መደበኛ ስራ ፈት ፓኬቶች ተደብቀዋል።";
 "developer.leftStick" = "ግራ ዱላ";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "ምንም ተቆጣጣሪዎች አልተገናኙም";

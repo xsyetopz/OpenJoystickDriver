@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Apasă un buton în plus la un moment dat, butonele detectate rămân în listă până când vei elimina captura.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Ascunse %d pachete inutile (înca incluse în export).";
-"developer.keepAliveNote" = "Traficul de rutină este ascuns, astfel încât activitatea controllerului rămâne vizibilă.";
+"developer.keepAliveNote" = "Traficul de inactivitate de rutină este ascuns, astfel încât activitatea controllerului să rămână vizibilă.";
 "developer.leftStick" = "Stick stânga";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Nu există controlare conectate";

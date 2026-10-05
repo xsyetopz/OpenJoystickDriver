@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Tlačte na jeden tlačidlo, kým sa z neho nevyberáte.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Skrývaný %d voľné balíčky (občas zahrnuté do vývozu).";
-"developer.keepAliveNote" = "Routinová voľná premávka je skrytá, takže aktivita ovládača zostáva viditeľná.";
+"developer.keepAliveNote" = "Bežná dátová prevádzka v nečinnosti je skrytá, aby aktivita ovládača zostala viditeľná.";
 "developer.leftStick" = "Ľavá páčka";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Žiadne pripojené ovládače";

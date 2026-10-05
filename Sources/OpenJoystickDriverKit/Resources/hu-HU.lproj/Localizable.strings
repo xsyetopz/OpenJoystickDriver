@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Nyomja meg egy gombot egyfolytában, és a feltárott gombok addig maradnak listán, amíg nem tisztázza a fogást.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Elrejtve %d a nem működő csomagok (még a kivitelbe tartoznak).";
-"developer.keepAliveNote" = "A rutin üres forgalom elrejtve marad, így a vezérlő tevékenység látható marad.";
+"developer.keepAliveNote" = "A rutinszerű üresjárati forgalom el van rejtve, hogy a vezérlő tevékenysége látható maradjon.";
 "developer.leftStick" = "Bal kar";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Nem kapcsolódnak a vezérlőek";

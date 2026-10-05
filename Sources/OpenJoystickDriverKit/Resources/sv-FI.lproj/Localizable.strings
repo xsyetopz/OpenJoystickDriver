@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Tryck på en extra knapp i taget och detektera knapparna stannar kvar tills du tar upp det.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Dölja %d Oaktivt paket (även inkluderat i export).";
-"developer.keepAliveNote" = "Rutinmässig ledig trafik är dold så att kontrollörens aktivitet förblir synlig.";
+"developer.keepAliveNote" = "Rutinmässig inaktiv datatrafik döljs så att kontrollens aktivitet förblir synlig.";
 "developer.leftStick" = "Vänster spak";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Inga kontroller anslutna";

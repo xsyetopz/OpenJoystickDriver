@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Držite jedan dodatni dugme u isto vrijeme.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Skrivena %d U skladu s člankom 4. stavkom 1.";
-"developer.keepAliveNote" = "Rutinski prazan promet je skriven tako da aktivnost kontrolera ostaje vidljiva.";
+"developer.keepAliveNote" = "Uobičajeni podatkovni promet u mirovanju skriven je kako bi aktivnost kontrolera ostala vidljiva.";
 "developer.leftStick" = "Lijeva analogna palica";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Nema povezanih upravljača";

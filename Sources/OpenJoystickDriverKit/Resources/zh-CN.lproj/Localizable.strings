@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "按一下一个按,直到你清除捕获.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "隐藏 %d 无效包装 (仍然包含在出口中).";
-"developer.keepAliveNote" = "常规的空运被隐藏,";
+"developer.keepAliveNote" = "已隐藏常规的空闲数据包，以便清楚看到控制器的活动。";
 "developer.leftStick" = "左摇杆";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "没有连接的控制器";

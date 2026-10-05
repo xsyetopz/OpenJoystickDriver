@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "按一下每次增加一按,";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "隱藏的 %d 沒有運送的包裹 (仍包含在出口中).";
-"developer.keepAliveNote" = "常見的無動交通被隱藏,";
+"developer.keepAliveNote" = "已隱藏例行的閒置封包，讓控制器的活動清楚可見。";
 "developer.leftStick" = "左搖桿";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "沒有連接控制器";

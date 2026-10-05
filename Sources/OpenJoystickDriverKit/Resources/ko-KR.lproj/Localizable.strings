@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "한 번씩 추가 버튼을 누르면, 발견된 버튼은 캡처를 제거할 때까지 계속 표시됩니다.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "숨겨진 %d 비동기 패키지 (이하에도 수출에 포함됩니다).";
-"developer.keepAliveNote" = "일상적인 비활성 교통은 숨겨져 있어 컨트롤러 활동이 눈에 띄게 남아 있습니다.";
+"developer.keepAliveNote" = "컨트롤러 활동이 잘 보이도록 일반적인 유휴 패킷은 숨겨집니다.";
 "developer.leftStick" = "왼쪽 스틱";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "연결된 컨트롤러가 없습니다";

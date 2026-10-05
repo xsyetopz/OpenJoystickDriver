@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Botoi bat sakatu, eta harrapakina garbitu arte, aurkitutakoak zerrendan jarraitzen dute.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Ezkutatuta %d Pakete hutsak (bigarrenik esportazioan sartzen dira).";
-"developer.keepAliveNote" = "Errutinazko trafikoa ezkutatuta dago, beraz, kontrolatzailearen jarduera ikusgai geratzen da.";
+"developer.keepAliveNote" = "Inaktibitateko ohiko trafikoa ezkutatuta dago, kontroleraren jarduera ikusgai egon dadin.";
 "developer.leftStick" = "Ezkerreko palanka";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Ez dago kontrolik konektatuta.";

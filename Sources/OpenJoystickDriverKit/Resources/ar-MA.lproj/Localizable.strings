@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "اضغط على زر إضافي في كل مرة، فالأزرار المكتشفة تبقى في قائمة حتى تتمكن من إزالة الصورة";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "مخفية %d حزم غير عملة (مازالت مدرجة في الصادرات).";
-"developer.keepAliveNote" = "يتم إخفاء حركة المرور العاطفة الروتينية بحيث يبقى نشاط المراقب مرئيًا.";
+"developer.keepAliveNote" = "تُخفى حزم البيانات الروتينية الخاملة بحيث يظل نشاط وحدة التحكم مرئيًا.";
 "developer.leftStick" = "العصا اليسرى";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "لا يوجد جهاز تحكم متصل";

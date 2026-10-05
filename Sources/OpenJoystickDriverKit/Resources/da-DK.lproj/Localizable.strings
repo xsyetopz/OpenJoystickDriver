@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Tryk på én ekstra knap ad gangen, og de opdagede knapper forbliver på listen, indtil du fjerner optagelsen.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Skjulte %d Uaktiv pakker (til stadig være med i eksport).";
-"developer.keepAliveNote" = "Den rutinemæssige uaktiv trafik er skjult, så kontrollers aktivitet forbliver synlig.";
+"developer.keepAliveNote" = "Rutinemæssig inaktiv datatrafik er skjult, så controllerens aktivitet forbliver synlig.";
 "developer.leftStick" = "Venstre stick";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Ingen kontroller forbundet";

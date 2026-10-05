@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "לחץ על כפתור נוסף בכל פעם, הכפתורים שנמצאו נשארו ברשימה עד שתסיר את הקלטה.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "חבוי %d חבילות לא פעילות (עדיין מוגנת בהצוא).";
-"developer.keepAliveNote" = "תנועת אי-פעילות רגילה מוסתרת כדי שהפעילות של המנוגד תישאר ברורה.";
+"developer.keepAliveNote" = "חבילות נתונים שגרתיות של מצב סרק מוסתרות כדי שהפעילות של הבקר תישאר גלויה.";
 "developer.leftStick" = "מקל שמאלי";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "אין שליטנים מחוברים";

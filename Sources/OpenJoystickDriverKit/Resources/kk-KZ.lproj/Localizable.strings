@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Бірнеше батырманы басыңыз, ал ол батырманы тазалағанша тізімде болады.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Жасырын %d бос пакеттер (қазірге экспортқа енгізілген).";
-"developer.keepAliveNote" = "Әдеттегі бос көлік жасырылады, сондықтан басқарушының қызметі көрінеді.";
+"developer.keepAliveNote" = "Контроллер әрекеті көрінуі үшін әдеттегі бос тұрған пакеттер жасырылады.";
 "developer.leftStick" = "Сол стик";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Басқарушы құрылғылар қосылмаған";

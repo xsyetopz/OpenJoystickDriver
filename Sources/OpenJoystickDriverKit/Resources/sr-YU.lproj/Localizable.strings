@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Natisni jedan dodatni dugme odjednom, a otkrivene dugme ostanu na listu dok ne očistite snimak.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Skriveno %d neaktivni paketi (i dalje uključeni u izvoz).";
-"developer.keepAliveNote" = "Rutinski praznog soobraćaja je skriven tako da se aktivnost kontrolera ostaje vidljiva.";
+"developer.keepAliveNote" = "Uobičajeni saobraćaj podataka u mirovanju je sakriven kako bi aktivnost kontrolera ostala vidljiva.";
 "developer.leftStick" = "Leva analogna palica";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Nema povezanih kontrolera";

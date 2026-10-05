@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Ardından bir düğmeye basın ve yakalama işlemini tamamlamadan önce tespit edilen düğmeler listeye alınır.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Gizli %d İndirme paketleri (hâlâ ihracatta yer almaktadır).";
-"developer.keepAliveNote" = "Düzenli hareketsiz trafik gizlenir böylece kontrolörün etkinliği görünür kalır.";
+"developer.keepAliveNote" = "Rutin boşta veri paketleri gizlenir, böylece kontrolcü etkinliği görünür kalır.";
 "developer.leftStick" = "Sol çubuk";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Bağlı kontrolör yok";

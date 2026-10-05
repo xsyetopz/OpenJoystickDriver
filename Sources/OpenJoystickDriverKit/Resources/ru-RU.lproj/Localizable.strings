@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Нажмите дополнительную кнопку, и обнаруженные кнопки останутся в списке, пока вы не очистите запись.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Скрытые %d нерабочие упаковки (по-прежнему включены в экспорт).";
-"developer.keepAliveNote" = "Рутинный бездейственный трафик скрывается, чтобы деятельность контроллера оставалась видимой.";
+"developer.keepAliveNote" = "Обычный служебный трафик в режиме простоя скрыт, чтобы активность контроллера оставалась видимой.";
 "developer.leftStick" = "Левый стик";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Нет подключенных контроллеров";
