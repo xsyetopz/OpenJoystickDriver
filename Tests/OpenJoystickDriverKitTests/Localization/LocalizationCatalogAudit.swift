@@ -140,7 +140,7 @@ enum LocalizationCatalogAudit {
       "common.status", "common.protocol", "keyboard.tab", "console.title",
       "motion.calibration.offset", "profiles.trackball.enabled", "profiles.trigger.source",
       "shortcuts.controller.model", "shortcuts.controller.type", "shortcuts.parameter.controller",
-      "cli.access.status.socket",
+      "cli.access.status.socket", "developer.route",
     ],
     "nl-NL": [
       "cli.controller.show.label.protocol", "cli.controller.show.label.record",
@@ -149,7 +149,7 @@ enum LocalizationCatalogAudit {
       "common.status", "common.protocol", "keyboard.tab", "console.title",
       "motion.calibration.offset", "profiles.trackball.enabled", "profiles.trigger.source",
       "shortcuts.controller.model", "shortcuts.controller.type", "shortcuts.parameter.controller",
-      "cli.access.status.socket",
+      "cli.access.status.socket", "developer.route",
     ],
     "nn-NO": [
       "menu.zoom", "profiles.turbo", "inputTest.rumble", "inputTest.testRumble",

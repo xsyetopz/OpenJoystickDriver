@@ -503,13 +503,13 @@
 "developer.controller" = "Stivrejeaddji";
 "developer.controllerDetails" = "Stivrejeaddji";
 "developer.diagnosticMode" = "Diagnostihkalaš vuohki";
-"developer.emptyCapture" = "Deaddilat Start Capture, ja de deaddilat stivrejeaddji nuppástusaid.";
+"developer.emptyCapture" = "Deaddilat ”Álggat govvema”, ja de deaddilat stivrejeaddji nuppástusaid.";
 "developer.enterDiagnosticMode" = "Geahča diagnostihkalaš modealla";
 "developer.exportCapture" = "Eksportere páhkaid váldin";
 "developer.extraInputs" = "Lassi nuppástusat";
 "developer.extraInputsDescription" = "Deaddilat ovtta lassi nuppástusa oktanaga. Fuomášuvvon nuppástusat bissot listtus dassážii go buhtistit govvema.";
 "developer.hid" = "HID";
-"developer.hiddenIdlePackets" = "Čuohpaduvvon %d idle-páhkat (ain leat mielde Eksporteremis).";
+"developer.hiddenIdlePackets" = "Čuohpaduvvon %d doaibmameahttun páhka (ain leat mielde Eksporteremis).";
 "developer.keepAliveNote" = "Dábálaš doaibmameahttun johtolat lea čihkkojuvvon nu ahte stivrejeaddji doaibma lea oidnosis.";
 "developer.leftStick" = "Olgeš čuoikka";
 "developer.loadingControllers" = "Stivrenrusttega diagnostihkaid bidjan…";
@@ -521,7 +521,7 @@
 "developer.packetCapture" = "Ráfálaš diehtopáhkaid čáliheapmi";
 "developer.packetFilterActivity" = "Doaibma";
 "developer.packetFilterAll" = "Buot";
-"developer.packetColumns" = "Áigi Suorgi Bytes Dieđut";
+"developer.packetColumns" = "Áigi       Suorgi     Bytes  Dieđut";
 "developer.packetSharingWarning" = "Páhka sisdoallu rievdá stivrejeaddji mielde. Dárkkis fiilla ovdal go juogadat.";
 "developer.rawUSB" = "Roavis USB";
 "developer.ready" = "Gearggus";
