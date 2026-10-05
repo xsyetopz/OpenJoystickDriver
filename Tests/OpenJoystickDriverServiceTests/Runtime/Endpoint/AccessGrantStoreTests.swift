@@ -307,6 +307,31 @@ struct AccessGrantStoreTests {
     #expect(log.clients(at: start + 7_200 + 86_401).isEmpty)
   }
 
+  /// The wiki's Python reference client checks its proof against the same vector.
+  @Test
+  func aTokenAcceptsTheSharedProofVector() throws {
+    let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent()  // Endpoint
+      .deletingLastPathComponent()  // Runtime
+      .deletingLastPathComponent()  // OpenJoystickDriverServiceTests
+      .deletingLastPathComponent()  // Tests
+      .appendingPathComponent("RepositoryScripts/fixtures/endpoint_hello_proof.json")
+    let vector = try JSONDecoder().decode([String: String].self, from: Data(contentsOf: url))
+    let token = try #require(vector["token"])
+    let nonce = try #require(vector["nonce"])
+    let proof = try #require(vector["proof"])
+    let grant = AccessTokenGrant(
+      name: "reference",
+      tokenSHA256: AccessTokenGrant.hash(token),
+      origins: [],
+      scopes: [.control],
+      grantedAt: "2026-10-05T00:00:00Z"
+    )
+
+    #expect(grant.accepts(proof: proof, nonce: nonce, origin: "", port: ""))
+    #expect(!grant.accepts(proof: proof, nonce: nonce + "x", origin: "", port: ""))
+    #expect(tokenHello(name: "reference", token: token, nonce: nonce).contains(proof))
+  }
+
   private func withStore(_ body: (AccessGrantStore, URL) throws -> Void) throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       UUID().uuidString,

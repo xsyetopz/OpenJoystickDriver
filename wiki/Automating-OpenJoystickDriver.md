@@ -176,9 +176,9 @@ endpoint.onmessage = async (message) => {
 
 The WebSocket accepts a page only from an origin that a token is granted for, and the token must be granted for that origin. A page from another origin, such as `http://127.0.0.1:8080`, signs its own origin and the WebSocket's port. It refuses pages opened from a file, whose origin is `null`. Use `127.0.0.1` in the address, not `localhost`, which the WebSocket refuses. When another program already uses the port, `ojd access web enable` fails. When the service starts and finds the port in use, `ojd access status` shows the WebSocket as on but not listening. In both cases, choose another port with `ojd access web enable --port PORT`, and grant tokens for the new origin.
 
-The error codes are `endpoint-disabled`, `not-granted`, `unsupported-protocol`, `invalid-message`, `too-many-connections`, `revoked`, and `too-slow`. With `unsupported-protocol`, `supported` lists the protocol versions. The endpoint serves at most 8 connections. When a program reads too slowly, the endpoint keeps only the newest `input` line of each controller. When 256 lines wait, it sends `too-slow` and closes the connection.
+The error codes are `endpoint-disabled`, `not-granted`, `unsupported-protocol`, `invalid-message`, `too-many-connections`, `revoked`, `too-slow`, `too-many-feeds`, and `feed-closed`. With `unsupported-protocol`, `supported` lists the protocol versions. The endpoint serves at most 8 connections. When a program reads too slowly, the endpoint keeps only the newest `input` line of each controller. When 256 lines wait, it sends `too-slow` and closes the connection.
 
-[`endpoint.schema.json`](../Resources/Schemas/endpoint.schema.json) describes each line. The endpoint does not have the `control` scope yet, so a program cannot drive a virtual gamepad through it.
+[`endpoint.schema.json`](../Resources/Schemas/endpoint.schema.json) describes each line. To drive a virtual gamepad through the endpoint, see [Drive a Virtual Gamepad Through the Endpoint](#drive-a-virtual-gamepad-through-the-endpoint).
 
 ### Use the WebSocket From an App
 
@@ -190,6 +190,101 @@ A sandboxed app cannot connect to the socket: macOS refuses the connection with 
 1. Sign the challenge with the token, an empty origin line, and the port.
 
 Any local program that has such a token can use it, also programs of other users on the same Mac, so store it like a password. On the WebSocket, a token without origins works only from a client that sends no `Origin`, and web browsers always send one, so web pages cannot use it.
+
+### Drive a Virtual Gamepad Through the Endpoint
+
+A program with the `control` scope can drive a virtual gamepad through the endpoint, as [`ojd virtual feed`](#drive-a-virtual-gamepad) does:
+
+1. Grant the scope: `ojd access grant --token driver --scope control`. Add `--scope read` to grant both. A web page cannot use `control`.
+1. Send `hello` with `"scopes":["control"]`.
+1. After `welcome`, send `{"type":"feed","as":"hid-generic"}`. The virtual gamepad profiles are `hid-xbox-one-s-bt` and `hid-generic`.
+1. The endpoint answers `{"type":"feeding","as":"hid-generic"}` when the virtual gamepad exists.
+1. Send one frame per line. A frame has the format of an `ojd virtual feed` line, and the service plays frames with the same rules.
+1. The endpoint sends each rumble command that a game sends to the virtual gamepad as one line. The `virtualFeed` entry of the output schema describes it.
+
+Closing the connection removes the virtual gamepad at once and drops the frames that have not played. The endpoint does not report when a frame has played, so stay connected for the sum of the play times of the frames, and a short margin, because the service starts a frame a moment after it arrives. Each frame plays for its `holdMilliseconds`, and at least 8 ms. While 256 frames wait, the endpoint stops reading lines. The endpoint runs at most 4 virtual gamepads at the same time, and answers another `feed` with `too-many-feeds`. When the virtual gamepad does not start, or the service stops it, the endpoint sends `feed-closed`.
+
+This client presses the south button for 100 ms, prints the lines that the endpoint sends, such as rumble commands and errors, and stays connected until the release has played. It uses only the Python standard library. Set `TOKEN` to the token that `ojd access grant` printed:
+
+```python
+import hashlib
+import hmac
+import json
+import socket
+import subprocess
+import sys
+import threading
+import time
+
+TOKEN = "ojd_…"
+TOKEN_NAME = "driver"
+FRAMES = [{"buttons": ["south"], "holdMilliseconds": 100}, {}]
+MARGIN_SECONDS = 0.25
+
+
+def proof(token, nonce):
+    lines = ["OpenJoystickDriver endpoint hello 1", nonce, "", ""]
+    message = "".join(line + "\n" for line in lines)
+    key = hashlib.sha256(token.encode()).digest()
+    return hmac.new(key, message.encode(), hashlib.sha256).hexdigest()
+
+
+def hello(nonce):
+    return {
+        "type": "hello",
+        "protocol": 1,
+        "scopes": ["control"],
+        "tokenName": TOKEN_NAME,
+        "proof": proof(TOKEN, nonce),
+    }
+
+
+def play_seconds(frames):
+    return sum(max(frame.get("holdMilliseconds", 0), 8) for frame in frames) / 1000
+
+
+def print_lines(lines):
+    for line in lines:
+        print(line, end="")
+
+
+def main():
+    status = json.loads(subprocess.check_output(["ojd", "--json", "access", "status"]))
+    with socket.socket(socket.AF_UNIX) as endpoint:
+        endpoint.connect(status["socketPath"])
+        reader = endpoint.makefile("r")
+        writer = endpoint.makefile("w")
+
+        def send(message):
+            writer.write(json.dumps(message) + "\n")
+            writer.flush()
+
+        def receive():
+            line = reader.readline()
+            if not line:
+                sys.exit("The endpoint closed the connection.")
+            message = json.loads(line)
+            if message["type"] == "error":
+                sys.exit(f"{message['code']}: {message['message']}")
+            return message
+
+        send(hello(receive()["nonce"]))
+        receive()  # welcome
+        send({"type": "feed", "as": "hid-generic"})
+        receive()  # feeding
+        threading.Thread(target=print_lines, args=(reader,), daemon=True).start()
+        for frame in FRAMES:
+            send(frame)
+        # The service starts the first frame a moment after it arrives.
+        time.sleep(play_seconds(FRAMES) + MARGIN_SECONDS)
+        endpoint.shutdown(socket.SHUT_RDWR)  # The reader thread keeps the socket open.
+
+
+if __name__ == "__main__":
+    main()
+```
+
+To run the client, save it as `driver.py` and run `python3 driver.py`. Games and latency with the endpoint are not verified.
 
 ## Change Profiles
 

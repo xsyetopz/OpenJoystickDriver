@@ -1,0 +1,158 @@
+from __future__ import annotations
+
+import io
+import json
+import re
+import runpy
+import socket
+import tempfile
+import threading
+import unittest
+from contextlib import redirect_stdout
+from pathlib import Path
+from typing import Any
+from unittest.mock import patch
+
+from Scripts.Quality import validate_schemas
+
+ROOT = Path(__file__).resolve().parents[2]
+PAGE = ROOT / "wiki" / "Automating-OpenJoystickDriver.md"
+HEADING = "### Drive a Virtual Gamepad Through the Endpoint"
+VECTOR = Path(__file__).resolve().parent / "fixtures" / "endpoint_hello_proof.json"
+
+
+def client_source() -> str:
+    """The first Python block after HEADING in the wiki page."""
+    text = PAGE.read_text(encoding="utf-8")
+    section = text[text.index(HEADING) :]
+    match = re.search(r"^```python\n(.*?)^```$", section, re.MULTILINE | re.DOTALL)
+    if match is None:
+        raise AssertionError(f"{PAGE.name} has no Python block after {HEADING}")
+    return match.group(1)
+
+
+class EndpointReferenceClientTests(unittest.TestCase):
+    def setUp(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "driver.py"
+            path.write_text(client_source(), encoding="utf-8")
+            self.client = runpy.run_path(str(path), run_name="reference_client")
+        documents = validate_schemas.validate_schema_documents()
+        registry = validate_schemas.schema_registry(documents)
+        endpoint = documents["endpoint.schema.json"]["$id"]
+
+        def validator(name: str) -> validate_schemas.Draft202012Validator:
+            return validate_schemas.Draft202012Validator(
+                {"$ref": f"{endpoint}#/$defs/{name}"}, registry=registry
+            )
+
+        self.client_lines = validator("clientLine")
+        self.service_lines = validator("serviceLine")
+
+    def test_proof_matches_the_vector_the_swift_tests_use(self) -> None:
+        vector = json.loads(VECTOR.read_text(encoding="utf-8"))
+        self.assertEqual((vector["origin"], vector["port"]), ("", ""))
+        self.assertEqual(
+            self.client["proof"](vector["token"], vector["nonce"]), vector["proof"]
+        )
+
+    def test_client_lines_match_the_schema(self) -> None:
+        nonce = json.loads(VECTOR.read_text(encoding="utf-8"))["nonce"]
+        lines = [
+            self.client["hello"](nonce),
+            {"type": "feed", "as": "hid-generic"},
+            *self.client["FRAMES"],
+        ]
+        for line in lines:
+            with self.subTest(line=line):
+                self.client_lines.validate(line)
+
+    def test_schema_rejects_a_frame_with_a_repeated_button(self) -> None:
+        with self.assertRaises(validate_schemas.ValidationError):
+            self.client_lines.validate({"buttons": ["south", "south"]})
+
+    def test_service_lines_match_the_schema(self) -> None:
+        lines = [
+            {"type": "feeding", "as": "hid-generic"},
+            {
+                "type": "set-rumble",
+                "intensities": {
+                    "leftMain": 65535,
+                    "rightMain": 0,
+                    "leftTrigger": 0,
+                    "rightTrigger": 0,
+                    "leftHaptic": 0,
+                    "rightHaptic": 0,
+                },
+                "duration": {"milliseconds": 200},
+            },
+            {"type": "stop-rumble"},
+            {"type": "error", "code": "too-many-feeds", "message": "Full."},
+        ]
+        for line in lines:
+            with self.subTest(line=line):
+                self.service_lines.validate(line)
+
+    def test_client_runs_against_a_fake_endpoint(self) -> None:
+        """A fake endpoint, not the service: it checks the client's order of lines."""
+        nonce = json.loads(VECTOR.read_text(encoding="utf-8"))["nonce"]
+        rumble = {"type": "stop-rumble"}
+        received: list[dict[str, Any]] = []
+        with tempfile.TemporaryDirectory(dir="/tmp") as directory:
+            path = str(Path(directory) / "endpoint.sock")
+            with socket.socket(socket.AF_UNIX) as listener:
+                listener.bind(path)
+                listener.listen(1)
+                listener.settimeout(5)
+
+                def serve() -> None:
+                    connection, _ = listener.accept()
+                    with connection, connection.makefile("rw") as lines:
+
+                        def send(message: dict[str, Any]) -> None:
+                            lines.write(json.dumps(message) + "\n")
+                            lines.flush()
+
+                        send({"type": "challenge", "nonce": nonce})
+                        received.append(json.loads(lines.readline()))
+                        send(
+                            {
+                                "type": "welcome",
+                                "protocol": 1,
+                                "version": "test",
+                                "scopes": ["control"],
+                            }
+                        )
+                        received.append(json.loads(lines.readline()))
+                        send({"type": "feeding", "as": "hid-generic"})
+                        send(rumble)
+                        received.extend(json.loads(line) for line in lines)
+
+                server = threading.Thread(target=serve, daemon=True)
+                server.start()
+                status = json.dumps({"socketPath": path})
+                output = io.StringIO()
+                with (
+                    patch("subprocess.check_output", return_value=status),
+                    redirect_stdout(output),
+                ):
+                    self.client["main"]()
+                server.join(timeout=5)
+
+        self.assertFalse(server.is_alive())
+        self.assertEqual(received[0], self.client["hello"](nonce))
+        self.assertEqual(
+            received[1:],
+            [{"type": "feed", "as": "hid-generic"}, *self.client["FRAMES"]],
+        )
+        self.assertEqual(json.loads(output.getvalue()), rumble)
+
+    def test_client_stays_connected_until_the_last_frame_has_played(self) -> None:
+        # The 100 ms press, then the release for the 8 ms minimum.
+        self.assertAlmostEqual(
+            self.client["play_seconds"](self.client["FRAMES"]), 0.108
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
