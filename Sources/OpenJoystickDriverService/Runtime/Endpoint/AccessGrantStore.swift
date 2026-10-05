@@ -91,6 +91,36 @@ struct AccessGrantFile: Codable, Equatable, Sendable {
     )
     return grants[index]
   }
+
+  /// Removes `control` from grants without `controlGrantedAt`, and grants left with no scope.
+  ///
+  /// Builds before the scope worked stored it without effect, so honoring it now would turn on
+  /// input to a virtual gamepad that the user never saw work; they grant it again instead.
+  mutating func dropControlGrantedBeforeItWorked() {
+    grants = grants.compactMap { grant in
+      guard grant.scopes.contains(.control), grant.controlGrantedAt == nil else { return grant }
+      let scopes = grant.scopes.filter { $0 != .control }
+      guard !scopes.isEmpty else { return nil }
+      return AccessGrant(
+        identity: grant.identity,
+        scopes: scopes,
+        grantedAt: grant.grantedAt,
+        path: grant.path
+      )
+    }
+    tokens = tokens.compactMap { grant in
+      guard grant.scopes.contains(.control), grant.controlGrantedAt == nil else { return grant }
+      let scopes = grant.scopes.filter { $0 != .control }
+      guard !scopes.isEmpty else { return nil }
+      return AccessTokenGrant(
+        name: grant.name,
+        tokenSHA256: grant.tokenSHA256,
+        origins: grant.origins,
+        scopes: scopes,
+        grantedAt: grant.grantedAt
+      )
+    }
+  }
 }
 
 /// Reads and writes `AccessGrants.json`; the application service is its only writer.
@@ -116,10 +146,11 @@ struct AccessGrantStore: Sendable {
     do { data = try Data(contentsOf: url) } catch CocoaError.fileReadNoSuchFile {
       return AccessGrantFile()
     }
-    guard let file = try? JSONDecoder().decode(AccessGrantFile.self, from: data),
+    guard var file = try? JSONDecoder().decode(AccessGrantFile.self, from: data),
       file.grants.allSatisfy({ $0.identity.requirement != nil && !$0.scopes.isEmpty }),
       file.hasValidTokensAndWeb
     else { throw AccessGrantStoreError.damaged }
+    file.dropControlGrantedBeforeItWorked()
     return file
   }
 

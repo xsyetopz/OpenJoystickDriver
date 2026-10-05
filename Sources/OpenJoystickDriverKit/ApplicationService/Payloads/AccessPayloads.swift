@@ -31,6 +31,9 @@ public struct AccessGrant: Codable, Equatable, Sendable {
   public let grantedAt: String
   /// Where the client was when it was granted; for display only.
   public let path: String
+  /// Set whenever the grant holds `control`, marking it as granted after the scope worked; the
+  /// service drops a stored `control` without it.
+  public let controlGrantedAt: String?
 
   public init(
     identity: CodeSigningIdentity,
@@ -44,6 +47,7 @@ public struct AccessGrant: Codable, Equatable, Sendable {
     self.scopes = Array(Set(scopes)).sorted()
     self.grantedAt = grantedAt
     self.path = path
+    controlGrantedAt = scopes.contains(.control) ? grantedAt : nil
   }
 
   public var identity: CodeSigningIdentity {

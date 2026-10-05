@@ -67,6 +67,11 @@
 					"type": "string",
 					"pattern": "^[A-Za-z0-9._-]{1,64}$"
 				},
+				"controlGrantedAt": {
+					"description": "When 'control' was granted. The service drops a stored 'control' without it, which a build before the scope worked wrote.",
+					"type": "string",
+					"format": "date-time"
+				},
 				"tokenSHA256": {
 					"description": "The SHA-256 of the token, in lowercase hex.",
 					"type": "string",
@@ -126,6 +131,11 @@
 				},
 				"grantedAt": {
 					"description": "When the latest 'ojd access grant' for this client ran.",
+					"type": "string",
+					"format": "date-time"
+				},
+				"controlGrantedAt": {
+					"description": "When 'control' was granted. The service drops a stored 'control' without it, which a build before the scope worked wrote.",
 					"type": "string",
 					"format": "date-time"
 				},

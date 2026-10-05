@@ -228,6 +228,51 @@ struct AccessGrantStoreTests {
   }
 
   @Test
+  func controlIsKeptWhenItWasGrantedAfterItWorked() throws {
+    try withStore { store, _ in
+      var file = AccessGrantFile()
+      file.grant(tool, scopes: [.control], path: "/Tool", at: Date(timeIntervalSince1970: 0))
+      try file.grantToken(name: "pad", origins: [], scopes: [.control], at: Date())
+      try store.save(file)
+
+      #expect(try store.load() == file)
+      #expect(try store.load().grants.first?.scopes == [.control])
+      #expect(try store.load().tokens.first?.scopes == [.control])
+      let text = try String(contentsOf: store.url, encoding: .utf8)
+      #expect(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty)
+    }
+  }
+
+  @Test
+  func controlStoredBeforeItWorkedIsDropped() throws {
+    try withStore { store, directory in
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      let hash = String(repeating: "a", count: 64)
+      func grant(_ identifier: String, _ scopes: String) -> String {
+        #"{"kind":"apple","identifier":"\#(identifier)","scopes":\#(scopes),"#
+          + #""grantedAt":"1970-01-01T00:00:00Z","path":"/x"}"#
+      }
+      func token(_ name: String, _ scopes: String) -> String {
+        #"{"name":"\#(name)","tokenSHA256":"\#(hash)","origins":[],"scopes":\#(scopes),"#
+          + #""grantedAt":"1970-01-01T00:00:00Z"}"#
+      }
+      let text =
+        #"{"enabled":true,"grants":["#
+        + grant("both", #"["read","control"]"#) + "," + grant("pad", #"["control"]"#)
+        + #"],"tokens":["# + token("both", #"["read","control"]"#) + ","
+        + token("pad", #"["control"]"#) + #"],"web":{"enabled":false}}"#
+      #expect(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty)
+      try Data(text.utf8).write(to: store.url)
+
+      let file = try store.load()
+      #expect(file.grants.map(\.identifier) == ["both"])
+      #expect(file.grants.first?.scopes == [.read])
+      #expect(file.tokens.map(\.name) == ["both"])
+      #expect(file.tokens.first?.scopes == [.read])
+    }
+  }
+
+  @Test
   func refusedTokensAreKeptForADayByNameOriginAndTransport() {
     var log = AccessRefusalLog()
     let start = Date(timeIntervalSince1970: 0)

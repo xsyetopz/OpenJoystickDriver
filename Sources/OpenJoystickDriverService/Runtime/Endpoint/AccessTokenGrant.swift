@@ -15,6 +15,24 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
   /// Sorted, without repeats.
   let scopes: [EndpointScope]
   let grantedAt: String
+  /// Set whenever the grant holds `control`, marking it as granted after the scope worked; the
+  /// service drops a stored `control` without it.
+  let controlGrantedAt: String?
+
+  init(
+    name: String,
+    tokenSHA256: String,
+    origins: [String],
+    scopes: [EndpointScope],
+    grantedAt: String
+  ) {
+    self.name = name
+    self.tokenSHA256 = tokenSHA256
+    self.origins = origins
+    self.scopes = scopes
+    self.grantedAt = grantedAt
+    controlGrantedAt = scopes.contains(.control) ? grantedAt : nil
+  }
 
   var id: String { "token:\(name)" }
 
