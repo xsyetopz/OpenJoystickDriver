@@ -3,8 +3,8 @@ import OpenJoystickDriverKit
 
 extension EndpointServer {
   /// Runs one connection on a connection-queue thread: the handshake, the subscription, then a
-  /// wait until either side closes. `origin` is the normalized `Origin` of a WebSocket, and
-  /// `port` the port it connected to.
+  /// wait until either side closes. `origin` is the normalized `Origin` of a WebSocket, nil when
+  /// it sent none, and `port` the port it connected to.
   func serve(_ connection: EndpointConnection, origin: String? = nil, port: Int? = nil) {
     defer {
       lock.withLock {
@@ -63,7 +63,8 @@ extension EndpointServer {
   /// Answers `hello` with `welcome` or an error; true when the client was welcomed.
   ///
   /// A `hello` with a token name is checked against the token grants and skips the signature; on
-  /// the WebSocket a token is required and must be granted for the page's origin.
+  /// the WebSocket a token is required and must be granted for the page's origin, or have no
+  /// origins when the client sent no `Origin`.
   private func handshake(
     _ connection: EndpointConnection,
     peer: LocalSocketPeer?,
@@ -182,7 +183,7 @@ extension EndpointServer {
       }
     }
     guard let grant, scopes.allSatisfy(grant.scopes.contains),
-      kind == .socket || origin.map(grant.origins.contains) == true
+      kind == .socket || origin.map(grant.origins.contains) ?? grant.origins.isEmpty
     else {
       refusals.recordToken(
         name: grant?.name,

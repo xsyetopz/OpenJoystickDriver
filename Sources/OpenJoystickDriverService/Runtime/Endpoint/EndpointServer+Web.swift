@@ -146,9 +146,9 @@ extension EndpointServer {
     )
   }
 
-  /// Answers one request within the handshake time; returns the page's origin and the bytes
-  /// after the request when it upgraded to a WebSocket.
-  private func answer(_ descriptor: Int32, port: Int) -> (origin: String, rest: Data)? {
+  /// Answers one request within the handshake time; returns the upgrade when the request
+  /// upgraded to a WebSocket.
+  private func answer(_ descriptor: Int32, port: Int) -> WebUpgrade? {
     let deadline = Date().addingTimeInterval(TimeInterval(Self.handshakeSeconds))
     switch EndpointWebRequest.read(descriptor, until: deadline) {
     case .closed: return nil
@@ -164,17 +164,28 @@ extension EndpointServer {
         servePage(request, descriptor: descriptor)
         return nil
       }
-      return upgrade(request, descriptor: descriptor).map { ($0, rest) }
+      return upgrade(request, rest: rest, descriptor: descriptor)
     }
   }
 
-  /// Answers `101` to an upgrade from an origin that some token is granted for, and returns the
-  /// origin; refuses any other request.
-  private func upgrade(_ request: EndpointWebRequest, descriptor: Int32) -> String? {
-    let origins = lock.withLock { (try? store.load())?.tokens.flatMap(\.origins) ?? [] }
-    guard let origin = request.headers["origin"].flatMap(AccessTokenGrant.normalizedOrigin),
-      origins.contains(origin)
-    else {
+  /// Answers `101` to an upgrade from an origin that some token is granted for, or without
+  /// `Origin` when some token has no origins; refuses any other request.
+  ///
+  /// Browsers always send `Origin`, so only a native client, such as a sandboxed app that cannot
+  /// reach the socket, upgrades without one.
+  private func upgrade(
+    _ request: EndpointWebRequest,
+    rest: Data,
+    descriptor: Int32
+  ) -> WebUpgrade? {
+    let tokens = lock.withLock { (try? store.load())?.tokens ?? [] }
+    let header = request.headers["origin"]
+    let origin = header.flatMap(AccessTokenGrant.normalizedOrigin)
+    let granted =
+      if header == nil { tokens.contains { $0.origins.isEmpty } } else {
+        origin.map { origin in tokens.contains { $0.origins.contains(origin) } } ?? false
+      }
+    guard granted else {
       EndpointWebResponse.send(descriptor, status: 403)
       return nil
     }
@@ -199,7 +210,14 @@ extension EndpointServer {
         ("Upgrade", "websocket"), ("Connection", "Upgrade"), ("Sec-WebSocket-Accept", accept),
       ]
     )
-    return origin
+    return WebUpgrade(origin: origin, rest: rest)
+  }
+
+  /// A request that upgraded to a WebSocket: its normalized `Origin`, nil when it sent none, and
+  /// the bytes after it.
+  private struct WebUpgrade {
+    let origin: String?
+    let rest: Data
   }
 
   /// Serves a file from the overlay pages folder to a top-level or same-origin request.

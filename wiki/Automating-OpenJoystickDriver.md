@@ -174,11 +174,22 @@ endpoint.onmessage = async (message) => {
 };
 ```
 
-The WebSocket accepts a connection only from an origin that a token is granted for, and the token must be granted for that origin. A page from another origin, such as `http://127.0.0.1:8080`, signs its own origin and the WebSocket's port. It refuses pages opened from a file, whose origin is `null`. Use `127.0.0.1` in the address, not `localhost`, which the WebSocket refuses. When another program already uses the port, `ojd access web enable` fails. When the service starts and finds the port in use, `ojd access status` shows the WebSocket as on but not listening. In both cases, choose another port with `ojd access web enable --port PORT`, and grant tokens for the new origin.
+The WebSocket accepts a page only from an origin that a token is granted for, and the token must be granted for that origin. A page from another origin, such as `http://127.0.0.1:8080`, signs its own origin and the WebSocket's port. It refuses pages opened from a file, whose origin is `null`. Use `127.0.0.1` in the address, not `localhost`, which the WebSocket refuses. When another program already uses the port, `ojd access web enable` fails. When the service starts and finds the port in use, `ojd access status` shows the WebSocket as on but not listening. In both cases, choose another port with `ojd access web enable --port PORT`, and grant tokens for the new origin.
 
 The error codes are `endpoint-disabled`, `not-granted`, `unsupported-protocol`, `invalid-message`, `too-many-connections`, `revoked`, and `too-slow`. With `unsupported-protocol`, `supported` lists the protocol versions. The endpoint serves at most 8 connections. When a program reads too slowly, the endpoint keeps only the newest `input` line of each controller. When 256 lines wait, it sends `too-slow` and closes the connection.
 
-[`endpoint.schema.json`](../Resources/Schemas/endpoint.schema.json) describes each line. In a test, a sandboxed app could not connect to the endpoint: macOS refused the connection with `EPERM`, with and without a temporary-exception entitlement for the socket path. The endpoint does not have the `control` scope yet, so a program cannot drive a virtual gamepad through it.
+[`endpoint.schema.json`](../Resources/Schemas/endpoint.schema.json) describes each line. The endpoint does not have the `control` scope yet, so a program cannot drive a virtual gamepad through it.
+
+### Use the WebSocket From an App
+
+A sandboxed app cannot connect to the socket: macOS refuses the connection with `EPERM`. It can use the WebSocket instead:
+
+1. Give the app the `com.apple.security.network.client` entitlement.
+1. Turn on the WebSocket with `ojd access web enable`, and create a token without `--origin`: `ojd access grant --token myapp`.
+1. Connect to `ws://127.0.0.1:PORT/endpoint` without an `Origin` header.
+1. Sign the challenge with the token, an empty origin line, and the port.
+
+Any local program that has such a token can use it, also programs of other users on the same Mac, so store it like a password. On the WebSocket, a token without origins works only from a client that sends no `Origin`, and web browsers always send one, so web pages cannot use it.
 
 ## Change Profiles
 

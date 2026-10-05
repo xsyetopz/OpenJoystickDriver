@@ -179,7 +179,7 @@ struct EndpointWebSocketTests {
   }
 
   @Test
-  func aTokenWithoutOriginsWorksOnlyOnTheSocket() throws {
+  func aTokenWithoutOriginsIsRefusedFromAPage() throws {
     try withWeb { server, _, port, _ in
       let script = try server.grantToken(name: "script", origins: [], scopes: [.read])
       let client = try upgraded(port: port)
@@ -194,6 +194,80 @@ struct EndpointWebSocketTests {
       )
 
       #expect(try client.readObject()["code"] as? String == "not-granted")
+    }
+  }
+
+  /// A native client, such as a sandboxed app that cannot reach the socket, sends no `Origin`;
+  /// it signs an empty origin line and the port.
+  @Test
+  func aTokenWithoutOriginsWorksWithoutAnOrigin() throws {
+    try withWeb { server, _, port, _ in
+      let script = try server.grantToken(name: "script", origins: [], scopes: [.read])
+      let client = try upgraded(port: port, origin: nil)
+      client.send(
+        tokenHello(
+          name: "script",
+          token: script.token,
+          nonce: client.nonce,
+          port: String(port)
+        )
+      )
+
+      #expect(try client.readObject()["type"] as? String == "welcome")
+    }
+  }
+
+  /// Browsers always send `Origin`, so a token bound to origins is refused without one.
+  @Test
+  func aTokenWithOriginsIsRefusedWithoutAnOrigin() throws {
+    try withWeb { server, _, port, token in
+      _ = try server.grantToken(name: "script", origins: [], scopes: [.read])
+      let client = try upgraded(port: port, origin: nil)
+      client.send(
+        tokenHello(name: "overlay", token: token, nonce: client.nonce, port: String(port))
+      )
+
+      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try server.status().refusedTokens.first?.name == "overlay")
+    }
+  }
+
+  /// An `Origin` that is not a web origin comes from a page, not a native client, so it never
+  /// counts as no origin.
+  @Test(arguments: ["null", "", "chrome-extension://abc"])
+  func anInvalidOriginIsRefusedWithATokenWithoutOrigins(origin: String) throws {
+    try withWeb { server, _, port, _ in
+      _ = try server.grantToken(name: "script", origins: [], scopes: [.read])
+      let client = try EndpointWebTestClient(port: port)
+      let headers = EndpointWebTestClient.upgradeHeaders(port: port, origin: origin)
+
+      #expect(client.request("/endpoint", headers: headers)?.status == 403)
+    }
+  }
+
+  /// Without `Origin`, the proof still covers the nonce and the port.
+  @Test(arguments: ["wrong token", "other port", "socket proof"])
+  func aHelloWithoutAnOriginAndTheRightProofIsRefused(kind: String) throws {
+    try withWeb { server, _, port, _ in
+      let script = try server.grantToken(name: "script", origins: [], scopes: [.read])
+      let client = try upgraded(port: port, origin: nil)
+      let proofPort =
+        switch kind {
+        case "other port": String(port + 1)
+        case "socket proof": ""
+        default: String(port)
+        }
+      client.send(
+        tokenHello(
+          name: "script",
+          token: kind == "wrong token" ? "ojd_wrong" : script.token,
+          nonce: client.nonce,
+          port: proofPort
+        )
+      )
+
+      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try server.status().refusedTokens.first?.name == nil)
     }
   }
 
@@ -449,11 +523,11 @@ struct EndpointWebSocketTests {
     }
   }
 
-  private func upgraded(port: Int) throws -> EndpointWebTestClient {
+  private func upgraded(port: Int, origin: String? = Self.origin) throws -> EndpointWebTestClient {
     let client = try EndpointWebTestClient(port: port)
     let response = client.request(
       "/endpoint",
-      headers: EndpointWebTestClient.upgradeHeaders(port: port, origin: Self.origin)
+      headers: EndpointWebTestClient.upgradeHeaders(port: port, origin: origin)
     )
     #expect(response?.status == 101)
     try client.readChallenge()
