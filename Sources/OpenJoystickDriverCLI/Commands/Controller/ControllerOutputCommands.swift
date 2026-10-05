@@ -129,19 +129,19 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
-  @Option(help: intensityHelp("cli.controller.rumble.left"))
+  @Option(help: intensityHelp(CLILocalized.text("cli.controller.rumble.left")))
   var left: UInt8?
 
-  @Option(help: intensityHelp("cli.controller.rumble.right"))
+  @Option(help: intensityHelp(CLILocalized.text("cli.controller.rumble.right")))
   var right: UInt8?
 
   @Option(
-    help: intensityHelp("cli.controller.rumble.left_trigger")
+    help: intensityHelp(CLILocalized.text("cli.controller.rumble.left_trigger"))
   )
   var leftTrigger: UInt8?
 
   @Option(
-    help: intensityHelp("cli.controller.rumble.right_trigger")
+    help: intensityHelp(CLILocalized.text("cli.controller.rumble.right_trigger"))
   )
   var rightTrigger: UInt8?
 
@@ -155,8 +155,8 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
   )
   var duration = 0.45
 
-  private static func intensityHelp(_ key: String) -> ArgumentHelp {
-    ArgumentHelp(CLILocalized.text(key), valueName: "0-255")
+  private static func intensityHelp(_ text: String) -> ArgumentHelp {
+    ArgumentHelp(text, valueName: "0-255")
   }
 
   func validate() throws {
