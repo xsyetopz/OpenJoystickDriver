@@ -140,6 +140,15 @@ actor InputTestGatewayStub: InputTestDeviceGateway {
 
   func setOutputResult(_ result: Bool) { outputResult = result }
   func setOutputThrows(_ value: Bool) { outputThrows = value }
+  func setOutputDelay(_ nanoseconds: UInt64) { outputDelayNanoseconds = nanoseconds }
+
+  func waitForActiveOutputCall() async -> Bool {
+    for _ in 0..<10_000 {
+      if activeOutputCalls > 0 { return true }
+      try? await Task.sleep(nanoseconds: 1_000_000)
+    }
+    return activeOutputCalls > 0
+  }
 
   func waitForInputCalls(_ expectedCount: Int) async -> Bool {
     for _ in 0..<10_000 {

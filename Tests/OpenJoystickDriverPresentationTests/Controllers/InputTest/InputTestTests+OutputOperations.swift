@@ -69,13 +69,15 @@ extension InputTestTests {
   @Test
   @MainActor
   func stoppingDelayedRumbleSerializesAZeroCommandAfterCancellation() async {
-    let gateway = InputTestGatewayStub(outputDelayNanoseconds: 100_000_000)
+    // The first rumble call stays in the stub's delay until the stop cancels it.
+    let gateway = InputTestGatewayStub(outputDelayNanoseconds: 60_000_000_000)
     let model = InputTestViewModel(gateway: gateway)
     model.selectDevice(makeInputTestDevice())
     model.rumbleIntensities[.leftMain] = 200
 
     model.testRumble()
-    try? await Task.sleep(nanoseconds: 10_000_000)
+    #expect(await gateway.waitForActiveOutputCall())
+    await gateway.setOutputDelay(0)
     model.stopRumble()
 
     #expect(await gateway.waitForRumbleCalls(1))
