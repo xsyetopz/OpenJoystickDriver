@@ -46,7 +46,7 @@ struct ExplainCommandTests {
 
     #expect(run.code == 64)
     #expect(run.standardOutput.isEmpty)
-    #expect(run.standardError.hasPrefix("ojd: E2003: E9999 is not an active error code."))
+    #expect(run.standardError.hasPrefix("error[E2003]: E9999 is not an active error code."))
   }
 
   @Test

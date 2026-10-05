@@ -32,7 +32,7 @@ struct OJDCommand: AsyncParsableCommand {
   )
 
   /// The parser reports only usage errors, so each carries the usage code.
-  static var _errorPrefix: String { "ojd: \(ErrorCode.usage.rawValue): " }
+  static var _errorPrefix: String { CLIFailure.prefix(.usage) }
 
   @OptionGroup
   var global: GlobalOptions

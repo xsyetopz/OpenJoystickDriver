@@ -91,4 +91,28 @@ struct InstalledCLIForwarderTests {
     #expect(resolution == .local)
   }
 
+  @Test
+  func staleInstallationReportsE2020AndExitsOne() {
+    let failure = InstalledCLIForwarder.staleInstallationFailure
+
+    #expect(failure.line.hasPrefix("error[E2020]: "))
+    #expect(failure.code.rawValue == 1)
+  }
+
+  @Test
+  func execFailureReportsE2021WithTheSystemReasonAndExits127() {
+    let failure = InstalledCLIForwarder.execFailure("reason-from-strerror")
+
+    #expect(failure.line.hasPrefix("error[E2021]: "))
+    #expect(failure.line.contains("reason-from-strerror"))
+    #expect(failure.code.rawValue == 127)
+  }
+
+  @Test
+  func allocationFailureReportsE2021AndExits127() {
+    let failure = InstalledCLIForwarder.allocationFailure
+
+    #expect(failure.line.hasPrefix("error[E2021]: "))
+    #expect(failure.code.rawValue == 127)
+  }
 }

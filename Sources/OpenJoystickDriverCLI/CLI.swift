@@ -23,7 +23,7 @@ package struct CLI {
           return reportLibraryError(error, code: .unknownCommand)
         }
         CLIOutput.stderr(
-          "ojd: \(ErrorCode.unknownCommand.rawValue): "
+          CLIFailure.prefix(.unknownCommand)
             + CLILocalized.format(
               "cli.error.unknown_command",
               "Unknown command '%@'. Did you mean '%@'?",
@@ -63,7 +63,7 @@ package struct CLI {
     case is CleanExit, is ExitCode, is ValidationError: return reportLibraryError(error)
     default:
       CLIOutput.stderr(
-        "ojd: \(ErrorCode.unexpected.rawValue): "
+        CLIFailure.prefix(.unexpected)
           + CLILocalized.format(
             "cli.error.unexpected",
             "Unexpected error: %@. Run 'ojd diagnose --bundle PATH' and attach the bundle "
@@ -84,7 +84,7 @@ package struct CLI {
     let code = OJDCommand.exitCode(for: error).rawValue
     var message = OJDCommand.fullMessage(for: error)
     if errorCode != .usage, message.hasPrefix(OJDCommand._errorPrefix) {
-      message = "ojd: \(errorCode.rawValue): " + message.dropFirst(OJDCommand._errorPrefix.count)
+      message = CLIFailure.prefix(errorCode) + message.dropFirst(OJDCommand._errorPrefix.count)
     }
     if !message.isEmpty {
       if code == CLIExitCode.success.rawValue {

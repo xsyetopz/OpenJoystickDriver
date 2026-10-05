@@ -62,7 +62,7 @@ struct UpdateCommandTests {
 
     #expect(result.code == 1)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("ojd: "))
+    #expect(result.standardError.hasPrefix("error["))
     #expect(result.standardError.contains("offline"))
   }
 

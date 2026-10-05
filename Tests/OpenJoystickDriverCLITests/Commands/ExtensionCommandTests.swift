@@ -80,7 +80,7 @@ struct ExtensionCommandTests {
 
     #expect(result.code == 1)
     #expect(result.standardOutput == "bundle\tpresent\nregistration\tunavailable\n")
-    #expect(result.standardError.hasPrefix("ojd: E2015: macOS did not report"))
+    #expect(result.standardError.hasPrefix("error[E2015]: macOS did not report"))
     #expect(result.standardError.contains("probe failed"))
   }
 
@@ -131,7 +131,7 @@ struct ExtensionCommandTests {
 
     #expect(result.code == 1)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("ojd: E2015: macOS "))
+    #expect(result.standardError.hasPrefix("error[E2015]: macOS "))
     #expect(result.standardError.contains("ojd extension status"))
   }
 }

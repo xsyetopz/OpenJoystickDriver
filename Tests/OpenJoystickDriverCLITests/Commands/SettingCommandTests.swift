@@ -135,7 +135,7 @@ struct SettingCommandTests {
 
     #expect(result.code == 1)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("ojd: "))
+    #expect(result.standardError.hasPrefix("error["))
     #expect(result.standardError.contains("Login Items"))
   }
 
@@ -153,7 +153,7 @@ struct SettingCommandTests {
 
     #expect(result.code == 64)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("ojd: "))
+    #expect(result.standardError.hasPrefix("error["))
     #expect(received.withLock { $0.isEmpty })
   }
 

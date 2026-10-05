@@ -140,7 +140,7 @@ struct ServiceCommandTests {
     }
     #expect(result.code == 69)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("ojd: "))
+    #expect(result.standardError.hasPrefix("error["))
     #expect(result.standardError.contains("ojd service start"))
   }
 

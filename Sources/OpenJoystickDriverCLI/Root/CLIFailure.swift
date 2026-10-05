@@ -25,7 +25,7 @@ enum CLIExitCode: Int32, Sendable {
   }
 }
 
-/// An expected failure that `ojd` reports as `ojd: <code>: <message>` on stderr.
+/// An expected failure that `ojd` reports as `error[<code>]: <message>` on stderr.
 ///
 /// `id` is the stable error code, and the exit code follows from it. `message` states what
 /// failed and how to fix it, already localized.
@@ -36,7 +36,10 @@ struct CLIFailure: Error, Equatable, Sendable {
   var code: CLIExitCode { CLIExitCode(for: id) }
 
   /// The line `ojd` writes on stderr.
-  var line: String { "ojd: \(id.rawValue): \(message)" }
+  var line: String { Self.prefix(id) + message }
+
+  /// The start of each error line of `ojd`, which names the stable code.
+  static func prefix(_ id: ErrorCode) -> String { "error[\(id.rawValue)]: " }
 
   init(_ id: ErrorCode, _ message: String) {
     self.id = id

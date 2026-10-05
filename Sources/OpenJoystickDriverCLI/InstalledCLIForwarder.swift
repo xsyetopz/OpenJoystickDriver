@@ -42,18 +42,7 @@ package enum InstalledCLIForwarder {
     switch resolve(currentExecutableURL: currentExecutableURL, mainBundleURL: mainBundleURL) {
     case .local: return
     case .forward(let target): executable = target
-    case .staleInstallation:
-      Self.exit(
-        with: CLIFailure(
-          .staleInstallation,
-          CLILocalized.text(
-            "cli.error.stale_installation",
-            "The installed OpenJoystickDriver.app is older than these repository sources. "
-              + "Run './Scripts/ojd build install-fast dev', "
-              + "or set OJD_RUN_REPOSITORY_CLI=1 to run this build."
-          )
-        )
-      )
+    case .staleInstallation: Self.exit(with: staleInstallationFailure)
     }
 
     let strings = ["ojd"] + arguments
@@ -62,15 +51,7 @@ package enum InstalledCLIForwarder {
     }
     guard pointers.allSatisfy({ $0 != nil }) else {
       release(pointers)
-      Self.exit(
-        with: CLIFailure(
-          .installedCLIFailed,
-          CLILocalized.text(
-            "cli.error.forwarder_allocation",
-            "Could not allocate arguments for the installed ojd. Retry the command."
-          )
-        )
-      )
+      Self.exit(with: allocationFailure)
     }
     pointers.append(nil)
     defer { release(pointers) }
@@ -82,15 +63,39 @@ package enum InstalledCLIForwarder {
       }
     }
     guard result == -1 else { return }
-    let message = String(cString: strerror(errno))
-    Self.exit(
-      with: CLIFailure(
-        .installedCLIFailed,
-        CLILocalized.format(
-          "cli.error.forwarder_exec",
-          "Could not run the installed ojd: %@. Reinstall OpenJoystickDriver.app.",
-          message
-        )
+    Self.exit(with: execFailure(String(cString: strerror(errno))))
+  }
+
+  static var staleInstallationFailure: CLIFailure {
+    CLIFailure(
+      .staleInstallation,
+      CLILocalized.text(
+        "cli.error.stale_installation",
+        "The installed OpenJoystickDriver.app is older than these repository sources. "
+          + "Run './Scripts/ojd build install-fast dev', "
+          + "or set OJD_RUN_REPOSITORY_CLI=1 to run this build."
+      )
+    )
+  }
+
+  static var allocationFailure: CLIFailure {
+    CLIFailure(
+      .installedCLIFailed,
+      CLILocalized.text(
+        "cli.error.forwarder_allocation",
+        "Could not allocate arguments for the installed ojd. Retry the command."
+      )
+    )
+  }
+
+  /// `execv` failed with the error that `reason` describes.
+  static func execFailure(_ reason: String) -> CLIFailure {
+    CLIFailure(
+      .installedCLIFailed,
+      CLILocalized.format(
+        "cli.error.forwarder_exec",
+        "Could not run the installed ojd: %@. Reinstall OpenJoystickDriver.app.",
+        reason
       )
     )
   }

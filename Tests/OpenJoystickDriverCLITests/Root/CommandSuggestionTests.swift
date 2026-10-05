@@ -52,7 +52,7 @@ struct CommandSuggestionTests {
     #expect(result.standardOutput.isEmpty)
     #expect(
       result.standardError
-        == "ojd: E2002: Unknown command 'stauts'. Did you mean 'ojd status'?\n"
+        == "error[E2002]: Unknown command 'stauts'. Did you mean 'ojd status'?\n"
     )
   }
 
@@ -62,7 +62,7 @@ struct CommandSuggestionTests {
 
     #expect(result.code == 64)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("ojd: E2002: "))
+    #expect(result.standardError.hasPrefix("error[E2002]: "))
     #expect(result.standardError.contains("frobnicate"))
   }
 }

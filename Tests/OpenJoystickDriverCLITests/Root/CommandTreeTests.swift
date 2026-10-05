@@ -91,7 +91,7 @@ struct CommandTreeTests {
     let result = await CLIRun.run(arguments)
     #expect(result.code == 64)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("ojd: "))
+    #expect(result.standardError.hasPrefix("error["))
   }
 
   @Test
