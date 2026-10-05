@@ -6,7 +6,7 @@ import OpenJoystickDriverKit
 /// The WebSocket on `127.0.0.1`, and the overlay pages on the same port.
 extension EndpointServer {
   /// Saves the switch and the port and opens or closes the WebSocket; disabling closes every web
-  /// connection with `endpoint-disabled`. Nil keeps the saved port, and without one, or with 0,
+  /// connection with `E1001`. Nil keeps the saved port, and without one, or with 0,
   /// the system picks a free port, which is saved, so no fixed port is there for another program
   /// to take first.
   func setWebEnabled(_ enabled: Bool, port: Int?) throws {

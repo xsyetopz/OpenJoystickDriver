@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "配置文件，或用 - 表示 stdin。";
 "cli.profile.validate.valid" = "%@ 是有效的配置文件：“%@”，对应 %@（%@）。可用 'ojd profile import' 添加。";
 "cli.profile.vanished" = "服务未保留该配置文件。请用 'ojd profile list' 检查。";
+"error.E1001" = "端点已关闭。请用「ojd access enable」打开它，然后重新连接。";
+"error.E1002" = "服务拒绝了此客户端。它没有所请求范围的授权，或者它的签名或证明无效。请运行「ojd access list」，用「ojd access grant」授权该客户端，然后重新连接。";
+"error.E1003" = "服务不支持 hello 中的协议版本。请发送 supported 中的某个版本，然后重新连接。";
+"error.E1004" = "服务无法接受该行。该行无效，或到达的时机不对。请先发送 hello，再发送一个请求，并按端点架构检查每一行。";
+"error.E1005" = "端点已在处理 8 个连接。请关闭不需要的连接，然后重新连接。";
+"error.E1006" = "此客户端的授权在其连接期间被移除。请用「ojd access grant」重新授权，然后重新连接。";
+"error.E1007" = "客户端读取行太慢，有 256 行在等待。请按行到达的速度读取，然后重新连接。";
+"error.E1008" = "服务已在运行 4 个虚拟游戏手柄。请关闭不需要的 feed，然后重新发送 feed。";
+"error.E1009" = "虚拟游戏手柄已关闭，或服务没有运行任何虚拟游戏手柄。请重新连接并发送 feed。";
 "shortcuts.action.activate_profile.description" = "为控制器型号启用重映射配置文件。";
 "shortcuts.action.activate_profile.title" = "激活配置文件";
 "shortcuts.action.app_version.description" = "返回已安装 App 的版本。";

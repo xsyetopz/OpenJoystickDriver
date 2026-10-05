@@ -42,7 +42,7 @@ struct EndpointServerTests {
 
       try server.setEnabled(false)
 
-      #expect(try client.readObject()["code"] as? String == "endpoint-disabled")
+      #expect(try client.readObject()["code"] as? String == "E1001")
       #expect(client.readLine() == nil)
       #expect(!FileManager.default.fileExists(atPath: server.socketPath))
       #expect(try server.status().enabled == false)
@@ -58,7 +58,7 @@ struct EndpointServerTests {
 
       let line = try #require(client.readLine())
       #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
-      #expect(try client.object(line)["code"] as? String == "not-granted")
+      #expect(try client.object(line)["code"] as? String == "E1002")
       #expect(client.readLine() == nil)
       let refused = try server.status().refused
       #expect(refused.map(\.id) == [Self.tool.accessID])
@@ -76,7 +76,7 @@ struct EndpointServerTests {
       let client = try EndpointTestClient(path: server.socketPath)
       client.send(#"{"type":"hello","protocol":1,"scopes":["read"]}"#)
 
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
       #expect(try server.status().refused.map(\.kind) == [.adHoc])
       #expect(throws: AccessGrantStoreError.notGrantable(.adHoc)) {
         try server.grant(Self.adHoc, path: "/a.out", scopes: [.read])
@@ -142,7 +142,7 @@ struct EndpointServerTests {
       #expect(
         result == AccessRevokeResult(id: Self.tool.accessID, grant: nil, closedConnections: 1)
       )
-      #expect(try client.readObject()["code"] as? String == "revoked")
+      #expect(try client.readObject()["code"] as? String == "E1006")
       #expect(client.readLine() == nil)
     }
   }
@@ -178,7 +178,7 @@ struct EndpointServerTests {
       let client = try EndpointTestClient(path: server.socketPath)
       client.send(tokenHello(name: "script", token: "ojd_wrong", nonce: client.nonce))
 
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
       #expect(client.readLine() == nil)
       let refused = try server.status().refusedTokens
       #expect(refused.map(\.transport) == [.socket])
@@ -213,7 +213,7 @@ struct EndpointServerTests {
       let client = try EndpointTestClient(path: server.socketPath)
       client.send(tokenHello(name: "script", token: granted.token, nonce: other.nonce))
 
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
       #expect(try server.status().refusedTokens.first?.name == nil)
     }
   }
@@ -231,17 +231,17 @@ struct EndpointServerTests {
 
       #expect(result.closedConnections == 1)
       #expect(result.token == nil)
-      #expect(try client.readObject()["code"] as? String == "revoked")
+      #expect(try client.readObject()["code"] as? String == "E1006")
       #expect(try server.status().tokens.isEmpty)
     }
   }
 
   @Test(arguments: [
-    (#"{"type":"hello","protocol":2,"scopes":["read"]}"#, "unsupported-protocol"),
-    (#"nonsense"#, "invalid-message"),
-    (#"{"type":"hello","protocol":1,"scopes":[]}"#, "invalid-message"),
-    (#"{"type":"subscribe","stream":"controllers"}"#, "invalid-message"),
-    (#"{"type":"hello","protocol":1,"scopes":["read","control"]}"#, "not-granted"),
+    (#"{"type":"hello","protocol":2,"scopes":["read"]}"#, "E1003"),
+    (#"nonsense"#, "E1004"),
+    (#"{"type":"hello","protocol":1,"scopes":[]}"#, "E1004"),
+    (#"{"type":"subscribe","stream":"controllers"}"#, "E1004"),
+    (#"{"type":"hello","protocol":1,"scopes":["read","control"]}"#, "E1002"),
   ])
   func aBadHelloGetsAnError(hello: String, code: String) throws {
     try withEndpointServer { server, _ in
@@ -254,7 +254,7 @@ struct EndpointServerTests {
       #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
       let object = try client.object(line)
       #expect(object["code"] as? String == code)
-      #expect((object["supported"] as? [Int]) == (code == "unsupported-protocol" ? [1] : nil))
+      #expect((object["supported"] as? [Int]) == (code == "E1003" ? [1] : nil))
       #expect(client.readLine() == nil)
     }
   }
@@ -286,7 +286,7 @@ struct EndpointServerTests {
       let client = try EndpointTestClient(path: server.socketPath)
       client.send(#"{"type":"hello","protocol":1,"scopes":["control"]}"#)
 
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
       #expect(client.readLine() == nil)
       #expect(try server.status().refused.first?.scopes == [.control])
     }
@@ -304,7 +304,7 @@ struct EndpointServerTests {
 
       let line = try #require(client.readLine())
       #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
-      #expect(try client.object(line)["code"] as? String == "not-granted")
+      #expect(try client.object(line)["code"] as? String == "E1002")
       #expect(client.readLine() == nil)
     }
   }
@@ -317,7 +317,7 @@ struct EndpointServerTests {
       let client = try EndpointTestClient.subscribed(to: server.socketPath)
       client.send(#"{"type":"subscribe","stream":"controllers"}"#)
 
-      #expect(try client.readObject()["code"] as? String == "invalid-message")
+      #expect(try client.readObject()["code"] as? String == "E1004")
       #expect(client.readLine() == nil)
     }
   }
@@ -333,7 +333,7 @@ struct EndpointServerTests {
 
       let ninth = try EndpointTestClient(path: server.socketPath)
 
-      #expect(try ninth.readObject()["code"] as? String == "too-many-connections")
+      #expect(try ninth.readObject()["code"] as? String == "E1005")
       #expect(ninth.readLine() == nil)
       _ = clients
     }
@@ -373,7 +373,7 @@ struct EndpointServerTests {
 
       let client = try EndpointTestClient(path: server.socketPath)
       client.send(#"{"type":"hello","protocol":1,"scopes":["read"]}"#)
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
     }
   }
 }

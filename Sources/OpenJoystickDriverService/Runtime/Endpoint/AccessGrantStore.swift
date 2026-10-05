@@ -174,14 +174,13 @@ struct AccessRefusalLog: Sendable {
     _ identity: CodeSigningIdentity,
     path: String?,
     scopes: [EndpointScope],
-    reason: String,
     at date: Date
   ) {
     let client = AccessRefusedClient(
       identity: identity,
       path: path,
       scopes: scopes,
-      reason: reason,
+      reason: ErrorCode.notGranted.rawValue,
       refusedAt: ISO8601DateFormatter().string(from: date)
     )
     entries.removeAll {
@@ -204,7 +203,7 @@ struct AccessRefusalLog: Sendable {
       origin: origin,
       transport: transport,
       scopes: scopes,
-      reason: "not-granted",
+      reason: ErrorCode.notGranted.rawValue,
       refusedAt: ISO8601DateFormatter().string(from: date)
     )
     tokenEntries.removeAll {

@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Sniðskráin, eða - fyrir stdin.";
 "cli.profile.validate.valid" = "%@ er gilt snið: „%@“ fyrir %@ (%@). Bættu því við með „ojd profile import“.";
 "cli.profile.vanished" = "Þjónustan vistaði ekki sniðið. Athugaðu það með „ojd profile list“.";
+"error.E1001" = "Endapunkturinn er slökktur. Kveiktu á honum með „ojd access enable“ og tengdu aftur.";
+"error.E1002" = "Þjónustan hafnaði þessum biðlara. Hann hefur ekki leyfi fyrir umdæmunum sem hann bað um, eða undirskrift hans eða sönnun er ógild. Keyrðu „ojd access list“, veittu biðlaranum leyfi með „ojd access grant“ og tengdu aftur.";
+"error.E1003" = "Þjónustan styður ekki samskiptareglnaútgáfuna í hello. Sendu eina af útgáfunum í supported og tengdu aftur.";
+"error.E1004" = "Þjónustan gat ekki tekið við línunni. Hún er ógild eða kom á röngum tíma. Sendu fyrst hello, svo eina beiðni, og berðu hverja línu saman við skema endapunktsins.";
+"error.E1005" = "Endapunkturinn þjónar þegar 8 tengingum. Lokaðu tengingu sem þú þarft ekki og tengdu aftur.";
+"error.E1006" = "Leyfi þessa biðlara var fjarlægt meðan hann var tengdur. Veittu honum leyfi aftur með „ojd access grant“ og tengdu aftur.";
+"error.E1007" = "Biðlarinn las línur of hægt og 256 línur biðu. Lestu línur jafn hratt og þær berast og tengdu aftur.";
+"error.E1008" = "Þjónustan keyrir þegar 4 sýndarleikjastýringar. Lokaðu feed sem þú þarft ekki og sendu feed aftur.";
+"error.E1009" = "Sýndarleikjastýringunni var lokað eða þjónustan keyrir enga. Tengdu aftur og sendu feed.";
 "shortcuts.action.activate_profile.description" = "Kveikir á endurvörpunarsniði fyrir stýringargerð þess.";
 "shortcuts.action.activate_profile.title" = "Virkja snið";
 "shortcuts.action.app_version.description" = "Skilar útgáfu uppsetta forritsins.";

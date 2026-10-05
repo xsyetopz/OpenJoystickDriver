@@ -87,7 +87,7 @@ class EndpointReferenceClientTests(unittest.TestCase):
                 "duration": {"milliseconds": 200},
             },
             {"type": "stop-rumble"},
-            {"type": "error", "code": "too-many-feeds", "message": "Full."},
+            {"type": "error", "code": "E1008", "message": "Full."},
         ]
         for line in lines:
             with self.subTest(line=line):

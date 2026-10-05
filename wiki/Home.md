@@ -42,6 +42,7 @@ OpenJoystickDriver (OJD) lets you use game controllers on macOS that macOS does 
 
 - [Troubleshooting](Troubleshooting.md): Fix a controller that is not detected, a game that does not see the controller, and crashes.
 - [Known issues](Known-Issues.md): Read current bugs and limits, with a workaround for each.
+- [Error codes](Error-Codes.md): Look up the meaning of an error code and how to fix it.
 - [FAQ](FAQ.md): Read short answers to common questions.
 - [Reporting a bug](Reporting-a-Bug.md): Learn what to include in a bug report.
 

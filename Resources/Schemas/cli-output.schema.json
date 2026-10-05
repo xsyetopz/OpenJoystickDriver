@@ -1315,7 +1315,9 @@
 					"type": "string"
 				},
 				"reason": {
-					"type": "string"
+					"type": "string",
+					"pattern": "^E1[0-9]{3}$",
+					"description": "The endpoint error code of the refusal; see the wiki page Error-Codes."
 				},
 				"refusedAt": {
 					"type": "string"
@@ -1345,7 +1347,9 @@
 					"description": "The page's origin; WebSocket only."
 				},
 				"reason": {
-					"type": "string"
+					"type": "string",
+					"pattern": "^E1[0-9]{3}$",
+					"description": "The endpoint error code of the refusal; see the wiki page Error-Codes."
 				},
 				"refusedAt": {
 					"type": "string"

@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Súbor profilu, alebo - pre stdin.";
 "cli.profile.validate.valid" = "%@ je platný profil: „%@“ pre %@ (%@). Pridajte ho pomocou „ojd profile import“.";
 "cli.profile.vanished" = "Služba profil neuchovala. Skontrolujte ho pomocou „ojd profile list“.";
+"error.E1001" = "Koncový bod je vypnutý. Zapnite ho príkazom „ojd access enable“ a pripojte sa znova.";
+"error.E1002" = "Služba tohto klienta odmietla. Nemá udelený prístup k požadovaným oblastiam, alebo je jeho podpis či dôkaz neplatný. Spustite „ojd access list“, udeľte klientovi prístup príkazom „ojd access grant“ a pripojte sa znova.";
+"error.E1003" = "Služba nepodporuje verziu protokolu uvedenú v hello. Pošlite jednu z verzií v supported a pripojte sa znova.";
+"error.E1004" = "Služba riadok neprijala. Je neplatný, alebo prišiel v nesprávnom čase. Pošlite najprv hello, potom jednu požiadavku a každý riadok overte podľa schémy koncového bodu.";
+"error.E1005" = "Koncový bod už obsluhuje 8 pripojení. Zatvorte pripojenie, ktoré nepotrebujete, a pripojte sa znova.";
+"error.E1006" = "Prístup tohto klienta bol odobratý, keď bol pripojený. Udeľte mu ho znova príkazom „ojd access grant“ a pripojte sa znova.";
+"error.E1007" = "Klient čítal riadky príliš pomaly a čakalo 256 riadkov. Čítajte riadky tak rýchlo, ako prichádzajú, a pripojte sa znova.";
+"error.E1008" = "Služba už prevádzkuje 4 virtuálne gamepady. Zatvorte feed, ktorý nepotrebujete, a pošlite feed znova.";
+"error.E1009" = "Virtuálny gamepad sa zatvoril, alebo služba žiadny neprevádzkuje. Pripojte sa znova a pošlite feed.";
 "shortcuts.action.activate_profile.description" = "Zapne profil mapovania pre model jeho ovládača.";
 "shortcuts.action.activate_profile.title" = "Aktivovať profil";
 "shortcuts.action.app_version.description" = "Vráti verziu nainštalovanej aplikácie.";

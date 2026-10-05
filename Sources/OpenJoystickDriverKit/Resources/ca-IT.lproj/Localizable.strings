@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "El fitxer del perfil, o - per a stdin.";
 "cli.profile.validate.valid" = "%@ és un perfil vàlid: '%@' per a %@ (%@). Afegiu-lo amb 'ojd profile import'.";
 "cli.profile.vanished" = "El servei no ha conservat el perfil. Comproveu-lo amb 'ojd profile list'.";
+"error.E1001" = "El punt final està desactivat. Activa’l amb «ojd access enable» i torna a connectar.";
+"error.E1002" = "El servei ha rebutjat aquest client. No té concessió per als àmbits que ha demanat, o la seva signatura o prova no és vàlida. Executa «ojd access list», concedeix l’accés al client amb «ojd access grant» i torna a connectar.";
+"error.E1003" = "El servei no admet la versió del protocol que hi ha a hello. Envia una de les versions de supported i torna a connectar.";
+"error.E1004" = "El servei no ha pogut acceptar la línia. No és vàlida o ha arribat en un moment equivocat. Envia primer hello, després una sola sol·licitud, i comprova cada línia amb l’esquema del punt final.";
+"error.E1005" = "El punt final ja atén 8 connexions. Tanca una connexió que no necessitis i torna a connectar.";
+"error.E1006" = "S’ha retirat la concessió d’aquest client mentre estava connectat. Torna-li a concedir l’accés amb «ojd access grant» i torna a connectar.";
+"error.E1007" = "El client ha llegit les línies massa lentament i 256 línies han esperat. Llegeix les línies tan ràpid com arriben i torna a connectar.";
+"error.E1008" = "El servei ja executa 4 comandaments virtuals. Tanca un feed que no necessitis i torna a enviar feed.";
+"error.E1009" = "El comandament virtual s’ha tancat, o el servei no en té cap. Torna a connectar i envia feed.";
 "shortcuts.action.activate_profile.description" = "Activa un perfil de reassignament per al model del seu comandament.";
 "shortcuts.action.activate_profile.title" = "Activa el perfil";
 "shortcuts.action.app_version.description" = "Retorna la versió de l’aplicació instal·lada.";

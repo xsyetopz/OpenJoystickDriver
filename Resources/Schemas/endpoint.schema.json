@@ -226,16 +226,17 @@
 					"const": "error"
 				},
 				"code": {
+					"description": "A stable E#### code from Resources/ErrorCodes.json; ./Scripts/ojd errors regenerate keeps the enum equal to the active endpoint codes.",
 					"enum": [
-						"endpoint-disabled",
-						"not-granted",
-						"unsupported-protocol",
-						"invalid-message",
-						"too-many-connections",
-						"revoked",
-						"too-slow",
-						"too-many-feeds",
-						"feed-closed"
+						"E1001",
+						"E1002",
+						"E1003",
+						"E1004",
+						"E1005",
+						"E1006",
+						"E1007",
+						"E1008",
+						"E1009"
 					]
 				},
 				"message": {
@@ -247,13 +248,13 @@
 					"items": {
 						"type": "integer"
 					},
-					"description": "The protocol versions the service speaks; only with unsupported-protocol."
+					"description": "The protocol versions the service speaks; only with E1003."
 				}
 			},
 			"if": {
 				"properties": {
 					"code": {
-						"const": "unsupported-protocol"
+						"const": "E1003"
 					}
 				}
 			},

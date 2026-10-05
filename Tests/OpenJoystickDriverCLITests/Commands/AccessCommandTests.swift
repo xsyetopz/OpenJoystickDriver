@@ -24,7 +24,7 @@ struct AccessCommandTests {
     identity: CodeSigningIdentity(kind: .adHoc, identifier: "tool", teamIdentifier: nil),
     path: "/tmp/tool",
     scopes: [.read],
-    reason: "not-granted",
+    reason: "E1002",
     refusedAt: "2026-10-03T20:01:00Z"
   )
   private static let token = AccessTokenSummary(
@@ -38,7 +38,7 @@ struct AccessCommandTests {
     origin: "http://evil.example",
     transport: .web,
     scopes: [.read],
-    reason: "not-granted",
+    reason: "E1002",
     refusedAt: "2026-10-03T20:03:00Z"
   )
 

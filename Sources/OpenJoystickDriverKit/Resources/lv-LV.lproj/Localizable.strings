@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Profila fails vai - stdin.";
 "cli.profile.validate.valid" = "%@ ir derīgs profils: „%@“, paredzēts %@ (%@). Pievienojiet to ar „ojd profile import“.";
 "cli.profile.vanished" = "Pakalpojums nesaglabāja profilu. Pārbaudiet to ar „ojd profile list“.";
+"error.E1001" = "Galapunkts ir izslēgts. Ieslēdziet to ar „ojd access enable“ un savienojieties vēlreiz.";
+"error.E1002" = "Pakalpojums noraidīja šo klientu. Tam nav atļaujas pieprasītajām jomām, vai arī tā paraksts vai pierādījums nav derīgs. Palaidiet „ojd access list“, piešķiriet klientam atļauju ar „ojd access grant“ un savienojieties vēlreiz.";
+"error.E1003" = "Pakalpojums neatbalsta hello norādīto protokola versiju. Nosūtiet vienu no supported norādītajām versijām un savienojieties vēlreiz.";
+"error.E1004" = "Pakalpojums nevarēja pieņemt rindu. Tā nav derīga vai ieradās nepareizā laikā. Vispirms nosūtiet hello, tad vienu pieprasījumu un pārbaudiet katru rindu pret galapunkta shēmu.";
+"error.E1005" = "Galapunkts jau apkalpo 8 savienojumus. Aizveriet savienojumu, kas jums nav vajadzīgs, un savienojieties vēlreiz.";
+"error.E1006" = "Šī klienta atļauja tika noņemta, kamēr tas bija savienots. Piešķiriet to vēlreiz ar „ojd access grant“ un savienojieties vēlreiz.";
+"error.E1007" = "Klients lasīja rindas pārāk lēni, un 256 rindas gaidīja. Lasiet rindas tik ātri, cik tās ierodas, un savienojieties vēlreiz.";
+"error.E1008" = "Pakalpojums jau darbina 4 virtuālos spēļu kontrolierus. Aizveriet feed, kas jums nav vajadzīgs, un vēlreiz nosūtiet feed.";
+"error.E1009" = "Virtuālais spēļu kontrolieris aizvērās, vai arī pakalpojums nedarbina nevienu. Savienojieties vēlreiz un nosūtiet feed.";
 "shortcuts.action.activate_profile.description" = "Ieslēdz pārkartēšanas profilu attiecīgā kontroliera modelim.";
 "shortcuts.action.activate_profile.title" = "Aktivizēt profilu";
 "shortcuts.action.app_version.description" = "Atgriež instalētās lietotnes versiju.";

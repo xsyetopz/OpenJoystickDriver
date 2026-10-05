@@ -147,7 +147,7 @@ struct EndpointWebSocketTests {
         }
       client.send(hello)
 
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
       #expect(client.readLine() == nil)
       #expect(try server.status().refusedTokens.map(\.transport) == [.web])
       #expect(try server.status().refusedTokens.first?.origin == Self.origin)
@@ -173,7 +173,7 @@ struct EndpointWebSocketTests {
         )
       )
 
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
       #expect(try server.status().refusedTokens.first?.name == "other")
     }
   }
@@ -193,7 +193,7 @@ struct EndpointWebSocketTests {
         )
       )
 
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
     }
   }
 
@@ -234,7 +234,7 @@ struct EndpointWebSocketTests {
         )
       )
 
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
       #expect(client.readLine() == nil)
       #expect(try server.status().refusedTokens.first?.name == "pad")
       #expect(try server.status().refusedTokens.first?.scopes == [.control])
@@ -274,7 +274,7 @@ struct EndpointWebSocketTests {
         tokenHello(name: "overlay", token: token, nonce: client.nonce, port: String(port))
       )
 
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
       #expect(try server.status().refusedTokens.first?.name == "overlay")
     }
   }
@@ -313,7 +313,7 @@ struct EndpointWebSocketTests {
         )
       )
 
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
       #expect(try server.status().refusedTokens.first?.name == nil)
     }
   }
@@ -363,7 +363,7 @@ struct EndpointWebSocketTests {
       #expect(frame.opcode == 0x1)
       #expect(
         try client.object(String(bytes: frame.payload, encoding: .utf8) ?? "")["code"] as? String
-          == "invalid-message"
+          == "E1004"
       )
       #expect(client.readFrame()?.opcode == 0x8)
     }
@@ -395,7 +395,7 @@ struct EndpointWebSocketTests {
 
       try server.setWebEnabled(false, port: nil)
 
-      #expect(try webClient.readObject()["code"] as? String == "endpoint-disabled")
+      #expect(try webClient.readObject()["code"] as? String == "E1001")
       #expect(throws: POSIXError.self) { try EndpointWebTestClient(port: port) }
       #expect(try server.status().web.enabled == false)
       #expect(try server.status().connections.map(\.transport) == [.socket])
@@ -418,7 +418,7 @@ struct EndpointWebSocketTests {
 
       _ = try server.revoke(id: "token:overlay", scopes: nil)
 
-      #expect(try client.readObject()["code"] as? String == "revoked")
+      #expect(try client.readObject()["code"] as? String == "E1006")
     }
   }
 

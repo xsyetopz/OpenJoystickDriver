@@ -133,7 +133,7 @@ final class EndpointServer: @unchecked Sendable {
   }
 
   /// Saves the flag and opens or removes the socket; disabling closes every socket connection
-  /// with `endpoint-disabled`.
+  /// with `E1001`.
   func setEnabled(_ enabled: Bool) throws {
     try lock.withLock {
       var file = try store.load()
@@ -196,7 +196,7 @@ final class EndpointServer: @unchecked Sendable {
   }
 
   /// Removes `scopes`, or the whole grant when nil, from a client or a `token:NAME` grant, and
-  /// closes with `revoked` every connection that holds a scope no longer granted.
+  /// closes with `E1006` every connection that holds a scope no longer granted.
   func revoke(id: String, scopes: [EndpointScope]?) throws -> AccessRevokeResult {
     try lock.withLock {
       var file = try store.load()

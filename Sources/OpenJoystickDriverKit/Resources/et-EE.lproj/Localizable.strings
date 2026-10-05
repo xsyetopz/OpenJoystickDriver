@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Profiilifail või - stdin'i jaoks.";
 "cli.profile.validate.valid" = "%@ on kehtiv profiil: '%@' (%@ jaoks, %@). Lisa see käsuga 'ojd profile import'.";
 "cli.profile.vanished" = "Teenus ei säilitanud profiili. Kontrolli seda käsuga 'ojd profile list'.";
+"error.E1001" = "Lõpp-punkt on välja lülitatud. Lülita see sisse käsuga „ojd access enable“ ja ühendu uuesti.";
+"error.E1002" = "Teenus lükkas selle kliendi tagasi. Tal pole luba soovitud ulatustele või tema allkiri või tõend ei kehti. Käivita „ojd access list“, anna kliendile luba käsuga „ojd access grant“ ja ühendu uuesti.";
+"error.E1003" = "Teenus ei toeta hello sõnumis olevat protokolliversiooni. Saada üks supported loetletud versioonidest ja ühendu uuesti.";
+"error.E1004" = "Teenus ei saanud rida vastu võtta. See on kehtetu või saabus valel ajal. Saada kõigepealt hello, seejärel üks päring ning kontrolli iga rida lõpp-punkti skeemi vastu.";
+"error.E1005" = "Lõpp-punkt teenindab juba 8 ühendust. Sulge ühendus, mida sa ei vaja, ja ühendu uuesti.";
+"error.E1006" = "Selle kliendi luba eemaldati, kui ta oli ühendatud. Anna talle luba uuesti käsuga „ojd access grant“ ja ühendu uuesti.";
+"error.E1007" = "Klient luges ridu liiga aeglaselt ja 256 rida jäi ootama. Loe ridu sama kiiresti, kui need saabuvad, ja ühendu uuesti.";
+"error.E1008" = "Teenus juhib juba 4 virtuaalset mängupuldi. Sulge feed, mida sa ei vaja, ja saada feed uuesti.";
+"error.E1009" = "Virtuaalne mängupult suleti või teenusel pole ühtegi. Ühendu uuesti ja saada feed.";
 "shortcuts.action.activate_profile.description" = "Lülitab sisse ümberseadistusprofiili selle kontrolleri mudelile.";
 "shortcuts.action.activate_profile.title" = "Aktiveeri profiil";
 "shortcuts.action.app_version.description" = "Tagastab installitud rakenduse versiooni.";

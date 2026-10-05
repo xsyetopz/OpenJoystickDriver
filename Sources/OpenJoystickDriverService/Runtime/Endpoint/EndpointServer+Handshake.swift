@@ -165,7 +165,6 @@ extension EndpointServer {
         client.identity,
         path: client.path,
         scopes: scopes,
-        reason: "not-granted",
         at: Date()
       )
       return nil
@@ -214,7 +213,7 @@ extension EndpointServer {
   }
 
   /// The next request; nil after the client closed, the timeout passed, or an invalid line, which
-  /// is answered with `invalid-message`.
+  /// is answered with `E1004`.
   private func readRequest(_ connection: EndpointConnection) -> EndpointRequest? {
     switch connection.readMessage() {
     case .end: return nil

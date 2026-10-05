@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Het profielbestand, of - voor stdin.";
 "cli.profile.validate.valid" = "%@ is een geldig profiel: ‘%@’ voor %@ (%@). Voeg het toe met ‘ojd profile import’.";
 "cli.profile.vanished" = "De voorziening heeft het profiel niet bewaard. Controleer het met ‘ojd profile list’.";
+"error.E1001" = "Het eindpunt staat uit. Zet het aan met 'ojd access enable' en maak opnieuw verbinding.";
+"error.E1002" = "De service heeft deze client geweigerd. Hij heeft geen toestemming voor de gevraagde bereiken, of zijn handtekening of bewijs is ongeldig. Voer 'ojd access list' uit, geef de client toestemming met 'ojd access grant' en maak opnieuw verbinding.";
+"error.E1003" = "De service ondersteunt de protocolversie in hello niet. Stuur een van de versies in supported en maak opnieuw verbinding.";
+"error.E1004" = "De service kon de regel niet accepteren. De regel is ongeldig of kwam op het verkeerde moment. Stuur eerst hello, dan één verzoek, en controleer elke regel met het schema van het eindpunt.";
+"error.E1005" = "Het eindpunt bedient al 8 verbindingen. Sluit een verbinding die u niet nodig hebt en maak opnieuw verbinding.";
+"error.E1006" = "De toestemming van deze client is ingetrokken terwijl hij verbonden was. Geef hem opnieuw toestemming met 'ojd access grant' en maak opnieuw verbinding.";
+"error.E1007" = "De client las regels te langzaam en 256 regels wachtten. Lees regels zo snel als ze binnenkomen en maak opnieuw verbinding.";
+"error.E1008" = "De service draait al 4 virtuele gamepads. Sluit een feed die u niet nodig hebt en stuur feed opnieuw.";
+"error.E1009" = "De virtuele gamepad is gesloten, of de service draait er geen. Maak opnieuw verbinding en stuur feed.";
 "shortcuts.action.activate_profile.description" = "Schakelt een toewijzingsprofiel in voor het bijbehorende controllermodel.";
 "shortcuts.action.activate_profile.title" = "Profiel activeren";
 "shortcuts.action.app_version.description" = "Geeft de versie van de geïnstalleerde app terug.";

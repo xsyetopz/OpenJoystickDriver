@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Datoteka profila ali - za stdin.";
 "cli.profile.validate.valid" = "%@ je veljaven profil: „%@“ za %@ (%@). Dodajte ga z ukazom „ojd profile import“.";
 "cli.profile.vanished" = "Storitev profila ni obdržala. Preverite ga z „ojd profile list“.";
+"error.E1001" = "Končna točka je izklopljena. Vklopite jo z ukazom „ojd access enable“ in se znova povežite.";
+"error.E1002" = "Storitev je tega odjemalca zavrnila. Nima dovoljenja za zahtevana področja ali pa njegov podpis ali dokaz ni veljaven. Zaženite „ojd access list“, odjemalcu dodelite dovoljenje z ukazom „ojd access grant“ in se znova povežite.";
+"error.E1003" = "Storitev ne podpira različice protokola iz sporočila hello. Pošljite eno od različic iz supported in se znova povežite.";
+"error.E1004" = "Storitev vrstice ni mogla sprejeti. Ni veljavna ali je prispela ob napačnem času. Najprej pošljite hello, nato eno zahtevo in preverite vsako vrstico s shemo končne točke.";
+"error.E1005" = "Končna točka že streže 8 povezavam. Zaprite povezavo, ki je ne potrebujete, in se znova povežite.";
+"error.E1006" = "Dovoljenje tega odjemalca je bilo odstranjeno, ko je bil povezan. Znova mu ga dodelite z ukazom „ojd access grant“ in se znova povežite.";
+"error.E1007" = "Odjemalec je vrstice bral prepočasi in 256 vrstic je čakalo. Berite vrstice tako hitro, kot prihajajo, in se znova povežite.";
+"error.E1008" = "Storitev že izvaja 4 navidezne igralne krmilnike. Zaprite feed, ki ga ne potrebujete, in znova pošljite feed.";
+"error.E1009" = "Navidezni igralni krmilnik se je zaprl ali pa ga storitev ne izvaja. Znova se povežite in pošljite feed.";
 "shortcuts.action.activate_profile.description" = "Vklopi profil preslikave za model njegovega krmilnika.";
 "shortcuts.action.activate_profile.title" = "Aktiviraj profil";
 "shortcuts.action.app_version.description" = "Vrne različico nameščene aplikacije.";

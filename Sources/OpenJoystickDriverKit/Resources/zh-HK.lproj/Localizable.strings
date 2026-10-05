@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "設定檔，或用 - 表示 stdin。";
 "cli.profile.validate.valid" = "%@ 是有效的設定檔：「%@」，對應 %@（%@）。可用 'ojd profile import' 新增。";
 "cli.profile.vanished" = "服務未保留該設定檔。請用 'ojd profile list' 檢查。";
+"error.E1001" = "端點已關閉。請用「ojd access enable」開啟，然後重新連線。";
+"error.E1002" = "服務拒絕了此用戶端。它沒有所要求範圍的授權，或它的簽章或證明無效。請執行「ojd access list」，用「ojd access grant」授權該用戶端，然後重新連線。";
+"error.E1003" = "服務不支援 hello 中的協定版本。請傳送 supported 中的某個版本，然後重新連線。";
+"error.E1004" = "服務無法接受該行。該行無效，或抵達的時機不對。請先傳送 hello，再傳送一個要求，並依端點結構描述檢查每一行。";
+"error.E1005" = "端點已在處理 8 個連線。請關閉不需要的連線，然後重新連線。";
+"error.E1006" = "此用戶端的授權在其連線期間被移除。請用「ojd access grant」重新授權，然後重新連線。";
+"error.E1007" = "用戶端讀取行太慢，有 256 行在等待。請依行抵達的速度讀取，然後重新連線。";
+"error.E1008" = "服務已在執行 4 個虛擬遊戲控制器。請關閉不需要的 feed，然後重新傳送 feed。";
+"error.E1009" = "虛擬遊戲控制器已關閉，或服務沒有執行任何虛擬遊戲控制器。請重新連線並傳送 feed。";
 "shortcuts.action.activate_profile.description" = "為控制器型號啟用重新對應設定檔。";
 "shortcuts.action.activate_profile.title" = "啟用設定檔";
 "shortcuts.action.app_version.description" = "傳回已安裝 App 的版本。";

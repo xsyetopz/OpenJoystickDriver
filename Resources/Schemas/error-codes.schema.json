@@ -1,0 +1,113 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/error-codes.schema.json",
+	"title": "OpenJoystickDriver error codes",
+	"description": "The authored catalog Resources/ErrorCodes.json. Each entry gives one stable E#### code. A code is never reused: an entry that stops being used is retired and stays. The English explanation of a code is the localization key error.E####.",
+	"type": "object",
+	"required": ["codes"],
+	"additionalProperties": false,
+	"properties": {
+		"$schema": {
+			"type": "string"
+		},
+		"codes": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/entry"
+			}
+		}
+	},
+	"$defs": {
+		"entry": {
+			"type": "object",
+			"required": ["code", "domain", "name", "status"],
+			"additionalProperties": false,
+			"properties": {
+				"code": {
+					"type": "string",
+					"pattern": "^E[1-3][0-9]{3}$",
+					"description": "E1xxx is endpoint, E2xxx is cli, and E3xxx is remapping."
+				},
+				"domain": {
+					"enum": ["endpoint", "cli", "remapping"]
+				},
+				"name": {
+					"type": "string",
+					"pattern": "^[a-z][A-Za-z0-9]*$",
+					"description": "The lowerCamelCase name of the Swift ErrorCode case."
+				},
+				"status": {
+					"enum": ["active", "retired"]
+				},
+				"exitCode": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 255,
+					"description": "The exit status of ojd; cli entries only."
+				},
+				"wire": {
+					"type": "string",
+					"pattern": "^[a-z][a-z0-9_]*$",
+					"description": "The code value of the remapping RPC that this code stands for; remapping entries only."
+				},
+				"retiredIn": {
+					"type": "string",
+					"description": "The version that stopped using the code; retired entries only."
+				}
+			},
+			"allOf": [
+				{
+					"if": {
+						"properties": {
+							"domain": {
+								"const": "cli"
+							}
+						}
+					},
+					"then": {
+						"required": ["exitCode"]
+					},
+					"else": {
+						"not": {
+							"required": ["exitCode"]
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"domain": {
+								"const": "remapping"
+							}
+						}
+					},
+					"then": {
+						"required": ["wire"]
+					},
+					"else": {
+						"not": {
+							"required": ["wire"]
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"status": {
+								"const": "retired"
+							}
+						}
+					},
+					"then": {
+						"required": ["retiredIn"]
+					},
+					"else": {
+						"not": {
+							"required": ["retiredIn"]
+						}
+					}
+				}
+			]
+		}
+	}
+}

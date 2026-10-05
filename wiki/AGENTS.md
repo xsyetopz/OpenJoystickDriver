@@ -14,5 +14,5 @@
 - Use numbered lists for procedures, with one action per step. Put UI labels in bold.
 - Do not hard-wrap Markdown. Write one line per paragraph or list item.
 - Do not cite source file paths or line numbers. Ground every claim in source, tests, or recorded hardware evidence. Write "not verified" when evidence is missing.
-- Do not add JSON schemas, evidence dumps, generated matrices, or dated agent artifacts under `wiki/`. Record hardware observations in the relevant page under `docs/testing/`.
+- Do not add JSON schemas, evidence dumps, generated matrices, or dated agent artifacts under `wiki/`. Record hardware observations in the relevant page under `docs/testing/`. `Error-Codes.md` is the one exception: `./Scripts/ojd errors regenerate --write` rewrites the block between its `BEGIN GENERATED` and `END GENERATED` lines from `Resources/ErrorCodes.json`, so edit that block only through the catalog.
 - `docs/external/` is a gitignored local archive from `./Scripts/ojd docs export-external-issues`. Do not link it from tracked files. Cite the upstream URL instead. It lives outside `wiki/`, so the wiki build never reads it.

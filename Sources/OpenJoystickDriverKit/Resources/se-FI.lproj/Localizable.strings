@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Profiilafiila dahje - stdin:a várás.";
 "cli.profile.validate.valid" = "%@ lea gustovaš profiila: ”%@” %@ várás (%@). Lasit dan ”ojd profile import”:ain.";
 "cli.profile.vanished" = "Bálvalus ii vurken profiila. Dárkkis dan ”ojd profile list”-komanddain.";
+"error.E1001" = "Loahpapunkta lea jaskkodan. Boaldde dan ”ojd access enable”-gohččumiin ja čatnas fas.";
+"error.E1002" = "Bálvalus hilggui dán klieantta. Das ii leat lobi jerrojuvvon osiide, dahje su vuolláičála dahje duođaštus ii leat doaimmas. Ruođa ”ojd access list”, addte klieanttas lobi ”ojd access grant”-gohččumiin ja čatnas fas.";
+"error.E1003" = "Bálvalus ii doarjjo hello:s leahtu protokolla veršuvnna. Sádde okta supported:s leahtu veršuvnnain ja čatnas fas.";
+"error.E1004" = "Bálvalus ii sáhttán dohkkehit linjá. Dat ii leat doaimmas dahje dat bođii boasttu áigge. Sádde vuos hello, dasto okta gáibádus, ja dárkkis juohke linjá loahpapunkta skema vuostá.";
+"error.E1005" = "Loahpapunkta bálvala juo 8 oktavuođa. Gidde oktavuođa maid it dárbbaš ja čatnas fas.";
+"error.E1006" = "Dán klieantta lohpi váldojuvvui eret go lei čatnasan. Addte sutnje lobi fas ”ojd access grant”-gohččumiin ja čatnas fas.";
+"error.E1007" = "Klieanta lohkkai linjáid menddo muhtumit ja 256 linjá vurde. Loga linjáid nu jodánit go sii bohtet ja čatnas fas.";
+"error.E1008" = "Bálvalus ruođa juo 4 virtuála speallaoahpa. Gidde feed maid it dárbbaš ja sádde feed fas.";
+"error.E1009" = "Virtuála speallaoahppa giddejuvvui, dahje bálvalus ii ruođa ovtta ge. Čatnas fas ja sádde feed.";
 "shortcuts.action.activate_profile.description" = "Aktiverá heivehanprofiilla dan stivrejeaddjemálle.";
 "shortcuts.action.activate_profile.title" = "Aktivere profiila";
 "shortcuts.action.app_version.description" = "Máhcaha sajáiduvvon prográmma veršuvnna.";

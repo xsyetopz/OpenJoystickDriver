@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "An comhad próifíle, nó - le haghaidh stdin.";
 "cli.profile.validate.valid" = "Is próifíl bhailí é %@: «%@» do %@ (%@). Cuir leis é le «ojd profile import».";
 "cli.profile.vanished" = "Níor choinnigh an tseirbhís an phróifíl. Seiceáil í le «ojd profile list».";
+"error.E1001" = "Tá an críochphointe múchta. Cuir air é le 'ojd access enable' agus ceangail arís.";
+"error.E1002" = "Dhiúltaigh an tseirbhís don chliant seo. Níl cead aige do na raonta a d’iarr sé, nó níl a shíniú nó a chruthúnas bailí. Rith 'ojd access list', tabhair cead don chliant le 'ojd access grant' agus ceangail arís.";
+"error.E1003" = "Ní thacaíonn an tseirbhís leis an leagan prótacail i hello. Seol ceann de na leaganacha i supported agus ceangail arís.";
+"error.E1004" = "Níorbh fhéidir leis an tseirbhís an líne a ghlacadh. Níl sí bailí nó tháinig sí ag am mícheart. Seol hello ar dtús, ansin iarratas amháin, agus seiceáil gach líne in aghaidh scéimre an chríochphointe.";
+"error.E1005" = "Tá 8 gceangal á bhfreastal ag an gcríochphointe cheana. Dún ceangal nach bhfuil de dhíth ort agus ceangail arís.";
+"error.E1006" = "Baineadh cead an chliaint seo agus é ceangailte. Tabhair cead dó arís le 'ojd access grant' agus ceangail arís.";
+"error.E1007" = "Léigh an cliant línte rófhada, agus bhí 256 líne ag fanacht. Léigh línte chomh tapa agus a thagann siad agus ceangail arís.";
+"error.E1008" = "Tá 4 rialaitheoir fhíorúla á rith ag an tseirbhís cheana. Dún feed nach bhfuil de dhíth ort agus seol feed arís.";
+"error.E1009" = "Dúnadh an rialaitheoir fíorúil, nó níl ceann ar bith á rith ag an tseirbhís. Ceangail arís agus seol feed.";
 "shortcuts.action.activate_profile.description" = "Gníomhachtaíonn sé próifíl athmhapála do shamhail a rialtóra.";
 "shortcuts.action.activate_profile.title" = "Gníomhachtaigh próifíl";
 "shortcuts.action.app_version.description" = "Seolann sé leagan na haipe suiteáilte ar ais.";

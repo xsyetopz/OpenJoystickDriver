@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Profiilitiedosto tai - stdin-kanavalle.";
 "cli.profile.validate.valid" = "%@ on kelvollinen profiili: ”%@” kohteelle %@ (%@). Lisää se komennolla ”ojd profile import”.";
 "cli.profile.vanished" = "Palvelu ei säilyttänyt profiilia. Tarkista se komennolla ”ojd profile list”.";
+"error.E1001" = "Päätepiste on pois päältä. Kytke se päälle komennolla ”ojd access enable” ja yhdistä uudelleen.";
+"error.E1002" = "Palvelu hylkäsi tämän asiakkaan. Sillä ei ole lupaa pyytämiinsä oikeuksiin, tai sen allekirjoitus tai todiste ei kelpaa. Suorita ”ojd access list”, anna asiakkaalle lupa komennolla ”ojd access grant” ja yhdistä uudelleen.";
+"error.E1003" = "Palvelu ei tue hello-viestin protokollaversiota. Lähetä jokin supported-luettelon versioista ja yhdistä uudelleen.";
+"error.E1004" = "Palvelu ei voinut hyväksyä riviä. Se on virheellinen tai tuli väärään aikaan. Lähetä ensin hello, sitten yksi pyyntö, ja tarkista jokainen rivi päätepisteen skeemaa vasten.";
+"error.E1005" = "Päätepiste palvelee jo 8 yhteyttä. Sulje yhteys, jota et tarvitse, ja yhdistä uudelleen.";
+"error.E1006" = "Tämän asiakkaan lupa poistettiin sen ollessa yhdistettynä. Anna sille lupa uudelleen komennolla ”ojd access grant” ja yhdistä uudelleen.";
+"error.E1007" = "Asiakas luki rivejä liian hitaasti, ja 256 riviä odotti. Lue rivit yhtä nopeasti kuin ne saapuvat ja yhdistä uudelleen.";
+"error.E1008" = "Palvelu ajaa jo 4 virtuaalista ohjainta. Sulje feed, jota et tarvitse, ja lähetä feed uudelleen.";
+"error.E1009" = "Virtuaalinen ohjain suljettiin, tai palvelu ei aja yhtään. Yhdistä uudelleen ja lähetä feed.";
 "shortcuts.action.activate_profile.description" = "Ottaa uudelleenmäärityksen profiilin käyttöön ohjainmallille.";
 "shortcuts.action.activate_profile.title" = "Aktivoi profiili";
 "shortcuts.action.app_version.description" = "Palauttaa asennetun apin version.";

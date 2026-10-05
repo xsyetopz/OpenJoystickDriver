@@ -89,7 +89,7 @@ struct EndpointFeedTests {
       try Self.wait { !factory.devices.isEmpty }
       try server.revoke(id: Self.tool.accessID, scopes: [.control])
 
-      #expect(try client.readObject()["code"] as? String == "revoked")
+      #expect(try client.readObject()["code"] as? String == "E1006")
       try Self.wait { factory.devices.first?.closeCount == 1 }
       #expect(feeds.openFeedCount == 0)
     }
@@ -145,7 +145,7 @@ struct EndpointFeedTests {
       let client = try feeding(server)
       try server.revoke(id: Self.tool.accessID, scopes: [.control])
 
-      #expect(try client.readObject()["code"] as? String == "revoked")
+      #expect(try client.readObject()["code"] as? String == "E1006")
       #expect(client.readLine() == nil)
       try Self.wait { factory.devices.first?.closeCount == 1 }
       #expect(feeds.openFeedCount == 0)
@@ -178,7 +178,7 @@ struct EndpointFeedTests {
 
       let line = try #require(client.readLine())
       #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
-      #expect(try client.object(line)["code"] as? String == "too-many-feeds")
+      #expect(try client.object(line)["code"] as? String == "E1008")
       #expect(client.readLine() == nil)
       #expect(clients.count == VirtualFeedRegistry.maximumFeeds)
     }
@@ -191,7 +191,7 @@ struct EndpointFeedTests {
       let client = try welcomed(server)
       client.send(#"{"type":"feed","as":"\#(profile)"}"#)
 
-      #expect(try client.readObject()["code"] as? String == "invalid-message")
+      #expect(try client.readObject()["code"] as? String == "E1004")
       #expect(factory.devices.isEmpty)
     }
   }
@@ -216,7 +216,7 @@ struct EndpointFeedTests {
 
       let error = try #require(client.readLine())
       #expect(try JSONSchemaFiles.issues(in: error, against: "endpoint.schema.json").isEmpty)
-      #expect(try client.object(error)["code"] as? String == "invalid-message")
+      #expect(try client.object(error)["code"] as? String == "E1004")
       try Self.wait { factory.devices.first?.closeCount == 1 }
       #expect(feeds.openFeedCount == 0)
     }
@@ -233,7 +233,7 @@ struct EndpointFeedTests {
       #expect(try client.readObject()["type"] as? String == "welcome")
       client.send(#"{"type":"feed","as":"hid-generic"}"#)
 
-      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(try client.readObject()["code"] as? String == "E1002")
       #expect(factory.devices.isEmpty)
     }
   }

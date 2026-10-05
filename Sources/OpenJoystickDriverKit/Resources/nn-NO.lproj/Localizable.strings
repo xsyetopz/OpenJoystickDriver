@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Profilfila, eller - for stdin.";
 "cli.profile.validate.valid" = "%@ er ein gyldig profil: '%@' for %@ (%@). Legg han til med 'ojd profile import'.";
 "cli.profile.vanished" = "Tenesta heldt ikkje på profilen. Sjekk han med 'ojd profile list'.";
+"error.E1001" = "Endepunktet er slått av. Slå det på med «ojd access enable», og kople til på nytt.";
+"error.E1002" = "Tenesta avviste denne klienten. Han har ikkje løyve til områda han bad om, eller signaturen eller prov hans er ugyldig. Køyr «ojd access list», gi klienten løyve med «ojd access grant», og kople til på nytt.";
+"error.E1003" = "Tenesta støttar ikkje protokollversjonen i hello. Send ein av versjonane i supported, og kople til på nytt.";
+"error.E1004" = "Tenesta kunne ikkje godta linja. Ho er ugyldig, eller ho kom på feil tidspunkt. Send først hello, deretter éi førespurnad, og kontroller kvar linje mot skjemaet til endepunktet.";
+"error.E1005" = "Endepunktet tener allereie 8 tilkoplingar. Lukk ei tilkopling du ikkje treng, og kople til på nytt.";
+"error.E1006" = "Løyvet til denne klienten vart fjerna medan han var tilkopla. Gi han løyve på nytt med «ojd access grant», og kople til på nytt.";
+"error.E1007" = "Klienten las linjer for sakte, og 256 linjer venta. Les linjer så fort dei kjem, og kople til på nytt.";
+"error.E1008" = "Tenesta køyrer allereie 4 virtuelle spelkontrollarar. Lukk ein feed du ikkje treng, og send feed på nytt.";
+"error.E1009" = "Den virtuelle spelkontrollaren vart lukka, eller tenesta køyrer ingen. Kople til på nytt, og send feed.";
 "shortcuts.action.activate_profile.description" = "Slår på ein ommappingsprofil for kontrollarmodellen sin.";
 "shortcuts.action.activate_profile.title" = "Aktiver profil";
 "shortcuts.action.app_version.description" = "Returnerer versjonen av den installerte appen.";

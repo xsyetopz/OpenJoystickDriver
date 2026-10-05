@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "O ficheiro do perfil, ou - para stdin.";
 "cli.profile.validate.valid" = "%@ é um perfil válido: «%@» para %@ (%@). Adicione-o com «ojd profile import».";
 "cli.profile.vanished" = "O serviço não manteve o perfil. Verifique-o com «ojd profile list».";
+"error.E1001" = "O ponto final está desligado. Ligue-o com «ojd access enable» e volte a ligar.";
+"error.E1002" = "O serviço recusou este cliente. Ele não tem permissão para os âmbitos que pediu, ou a sua assinatura ou prova não é válida. Execute «ojd access list», conceda permissão ao cliente com «ojd access grant» e volte a ligar.";
+"error.E1003" = "O serviço não suporta a versão do protocolo em hello. Envie uma das versões em supported e volte a ligar.";
+"error.E1004" = "O serviço não conseguiu aceitar a linha. Ela não é válida ou chegou no momento errado. Envie primeiro hello, depois um pedido, e verifique cada linha com o esquema do ponto final.";
+"error.E1005" = "O ponto final já atende 8 ligações. Feche uma ligação de que não precisa e volte a ligar.";
+"error.E1006" = "A permissão deste cliente foi removida enquanto ele estava ligado. Conceda-lhe permissão de novo com «ojd access grant» e volte a ligar.";
+"error.E1007" = "O cliente leu as linhas devagar demais e 256 linhas ficaram à espera. Leia as linhas tão depressa quanto chegam e volte a ligar.";
+"error.E1008" = "O serviço já executa 4 controles virtuais. Feche um feed de que não precisa e envie feed de novo.";
+"error.E1009" = "O controle virtual foi fechado, ou o serviço não executa nenhum. Volte a ligar e envie feed.";
 "shortcuts.action.activate_profile.description" = "Ativa um perfil de remapeamento para o modelo do respetivo comando.";
 "shortcuts.action.activate_profile.title" = "Ativar perfil";
 "shortcuts.action.app_version.description" = "Devolve a versão da app instalada.";

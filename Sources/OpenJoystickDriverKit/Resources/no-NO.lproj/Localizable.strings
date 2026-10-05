@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Profilfilen, eller - for stdin.";
 "cli.profile.validate.valid" = "%@ er en gyldig profil: '%@' for %@ (%@). Legg den til med 'ojd profile import'.";
 "cli.profile.vanished" = "Tjenesten beholdt ikke profilen. Sjekk den med 'ojd profile list'.";
+"error.E1001" = "Endepunktet er slått av. Slå det på med «ojd access enable», og koble til på nytt.";
+"error.E1002" = "Tjenesten avviste denne klienten. Den har ikke tillatelse til områdene den ba om, eller signaturen eller beviset er ugyldig. Kjør «ojd access list», gi klienten tillatelse med «ojd access grant», og koble til på nytt.";
+"error.E1003" = "Tjenesten støtter ikke protokollversjonen i hello. Send en av versjonene i supported, og koble til på nytt.";
+"error.E1004" = "Tjenesten kunne ikke godta linjen. Den er ugyldig, eller den kom på feil tidspunkt. Send først hello, deretter én forespørsel, og kontroller hver linje mot skjemaet til endepunktet.";
+"error.E1005" = "Endepunktet betjener allerede 8 tilkoblinger. Lukk en tilkobling du ikke trenger, og koble til på nytt.";
+"error.E1006" = "Tillatelsen til denne klienten ble fjernet mens den var tilkoblet. Gi den tillatelse på nytt med «ojd access grant», og koble til på nytt.";
+"error.E1007" = "Klienten leste linjer for sakte, og 256 linjer ventet. Les linjer så fort de kommer, og koble til på nytt.";
+"error.E1008" = "Tjenesten kjører allerede 4 virtuelle spillkontrollere. Lukk en feed du ikke trenger, og send feed på nytt.";
+"error.E1009" = "Den virtuelle spillkontrolleren ble lukket, eller tjenesten kjører ingen. Koble til på nytt, og send feed.";
 "shortcuts.action.activate_profile.description" = "Slår på en ommappingsprofil for kontrollermodellen sin.";
 "shortcuts.action.activate_profile.title" = "Aktiver profil";
 "shortcuts.action.app_version.description" = "Returnerer versjonen av den installerte appen.";

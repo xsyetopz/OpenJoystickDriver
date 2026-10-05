@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Die Profildatei oder - für stdin.";
 "cli.profile.validate.valid" = "%@ ist ein gültiges Profil: „%@“ für %@ (%@). Mit „ojd profile import“ hinzufügen.";
 "cli.profile.vanished" = "Der Dienst hat das Profil nicht behalten. Prüfe es mit „ojd profile list“.";
+"error.E1001" = "Der Endpunkt ist aus. Schalte ihn mit „ojd access enable“ ein und verbinde dich erneut.";
+"error.E1002" = "Der Dienst hat diesen Client abgelehnt. Er hat keine Freigabe für die angeforderten Bereiche, oder seine Signatur oder sein Nachweis ist ungültig. Führe „ojd access list“ aus, gib den Client mit „ojd access grant“ frei und verbinde dich erneut.";
+"error.E1003" = "Der Dienst unterstützt die Protokollversion in hello nicht. Sende eine der Versionen in supported und verbinde dich erneut.";
+"error.E1004" = "Der Dienst konnte die Zeile nicht annehmen. Sie ist ungültig oder kam zur falschen Zeit. Sende zuerst hello, dann eine Anfrage, und prüfe jede Zeile gegen das Endpunkt-Schema.";
+"error.E1005" = "Der Endpunkt bedient bereits 8 Verbindungen. Schließe eine Verbindung, die du nicht brauchst, und verbinde dich erneut.";
+"error.E1006" = "Die Freigabe dieses Clients wurde entfernt, während er verbunden war. Gib ihn mit „ojd access grant“ erneut frei und verbinde dich erneut.";
+"error.E1007" = "Der Client hat Zeilen zu langsam gelesen, und 256 Zeilen haben gewartet. Lies Zeilen so schnell, wie sie ankommen, und verbinde dich erneut.";
+"error.E1008" = "Der Dienst betreibt bereits 4 virtuelle Gamepads. Schließe einen Feed, den du nicht brauchst, und sende feed erneut.";
+"error.E1009" = "Das virtuelle Gamepad wurde geschlossen, oder der Dienst betreibt keines. Verbinde dich erneut und sende feed.";
 "shortcuts.action.activate_profile.description" = "Aktiviert ein Neubelegungsprofil für das zugehörige Controller-Modell.";
 "shortcuts.action.activate_profile.title" = "Profil aktivieren";
 "shortcuts.action.app_version.description" = "Gibt die Version der installierten App zurück.";

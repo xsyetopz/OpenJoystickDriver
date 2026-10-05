@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Fișierul profilului sau - pentru stdin.";
 "cli.profile.validate.valid" = "%@ este un profil valid: «%@» pentru %@ (%@). Adăugați-l cu «ojd profile import».";
 "cli.profile.vanished" = "Serviciul nu a păstrat profilul. Verificați-l cu «ojd profile list».";
+"error.E1001" = "Punctul final este oprit. Pornește-l cu „ojd access enable“ și conectează-te din nou.";
+"error.E1002" = "Serviciul a refuzat acest client. Nu are permisiune pentru domeniile cerute sau semnătura ori dovada lui nu este validă. Rulează „ojd access list“, acordă permisiune clientului cu „ojd access grant“ și conectează-te din nou.";
+"error.E1003" = "Serviciul nu acceptă versiunea de protocol din hello. Trimite una dintre versiunile din supported și conectează-te din nou.";
+"error.E1004" = "Serviciul nu a putut accepta linia. Nu este validă sau a venit la momentul greșit. Trimite mai întâi hello, apoi o singură cerere, și verifică fiecare linie cu schema punctului final.";
+"error.E1005" = "Punctul final deservește deja 8 conexiuni. Închide o conexiune de care nu ai nevoie și conectează-te din nou.";
+"error.E1006" = "Permisiunea acestui client a fost eliminată cât timp era conectat. Acordă-i permisiunea din nou cu „ojd access grant“ și conectează-te din nou.";
+"error.E1007" = "Clientul a citit liniile prea încet și 256 de linii au așteptat. Citește liniile cât de repede sosesc și conectează-te din nou.";
+"error.E1008" = "Serviciul rulează deja 4 gamepaduri virtuale. Închide un feed de care nu ai nevoie și trimite din nou feed.";
+"error.E1009" = "Gamepadul virtual s-a închis sau serviciul nu rulează niciunul. Conectează-te din nou și trimite feed.";
 "shortcuts.action.activate_profile.description" = "Activează un profil de remapare pentru modelul controllerului său.";
 "shortcuts.action.activate_profile.title" = "Activează profilul";
 "shortcuts.action.app_version.description" = "Returnează versiunea aplicației instalate.";

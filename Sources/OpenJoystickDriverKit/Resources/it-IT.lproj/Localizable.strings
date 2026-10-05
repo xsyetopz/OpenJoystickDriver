@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Il file del profilo, oppure - per stdin.";
 "cli.profile.validate.valid" = "%@ è un profilo valido: '%@' per %@ (%@). Aggiungilo con 'ojd profile import'.";
 "cli.profile.vanished" = "Il servizio non ha conservato il profilo. Controllalo con 'ojd profile list'.";
+"error.E1001" = "L’endpoint è disattivato. Attivalo con «ojd access enable» e riconnettiti.";
+"error.E1002" = "Il servizio ha rifiutato questo client. Non ha l’autorizzazione per gli ambiti richiesti, oppure la sua firma o la sua prova non è valida. Esegui «ojd access list», autorizza il client con «ojd access grant» e riconnettiti.";
+"error.E1003" = "Il servizio non supporta la versione del protocollo indicata in hello. Invia una delle versioni in supported e riconnettiti.";
+"error.E1004" = "Il servizio non ha potuto accettare la riga. Non è valida oppure è arrivata nel momento sbagliato. Invia prima hello, poi una sola richiesta, e controlla ogni riga con lo schema dell’endpoint.";
+"error.E1005" = "L’endpoint serve già 8 connessioni. Chiudi una connessione che non ti serve e riconnettiti.";
+"error.E1006" = "L’autorizzazione di questo client è stata rimossa mentre era connesso. Autorizzalo di nuovo con «ojd access grant» e riconnettiti.";
+"error.E1007" = "Il client ha letto le righe troppo lentamente e 256 righe sono rimaste in attesa. Leggi le righe alla stessa velocità con cui arrivano e riconnettiti.";
+"error.E1008" = "Il servizio esegue già 4 gamepad virtuali. Chiudi un feed che non ti serve e invia di nuovo feed.";
+"error.E1009" = "Il gamepad virtuale si è chiuso, oppure il servizio non ne esegue nessuno. Riconnettiti e invia feed.";
 "shortcuts.action.activate_profile.description" = "Attiva un profilo di rimappatura per il modello del suo controller.";
 "shortcuts.action.activate_profile.title" = "Attiva profilo";
 "shortcuts.action.app_version.description" = "Restituisce la versione dell’app installata.";

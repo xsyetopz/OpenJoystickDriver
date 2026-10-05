@@ -101,6 +101,7 @@ check-hook:
 # Run snapshot-safe validation
 check-fast: check-schemas lint
     ./Scripts/ojd catalog regenerate --check
+    ./Scripts/ojd errors regenerate --check
     ./Scripts/ojd check profiles
     python3 Scripts/Quality/check_swift_file_length.py
     .build/schema-validator/bin/python -m unittest discover -s Tests/RepositoryScripts

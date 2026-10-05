@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Plik profilu lub - dla stdin.";
 "cli.profile.validate.valid" = "%@ jest prawidłowym profilem: '%@' dla %@ (%@). Dodaj go poleceniem 'ojd profile import'.";
 "cli.profile.vanished" = "Usługa nie zachowała profilu. Sprawdź go poleceniem 'ojd profile list'.";
+"error.E1001" = "Punkt końcowy jest wyłączony. Włącz go poleceniem „ojd access enable“ i połącz się ponownie.";
+"error.E1002" = "Usługa odrzuciła tego klienta. Nie ma zgody na żądane zakresy albo jego podpis lub dowód jest nieprawidłowy. Uruchom „ojd access list“, nadaj klientowi zgodę poleceniem „ojd access grant“ i połącz się ponownie.";
+"error.E1003" = "Usługa nie obsługuje wersji protokołu podanej w hello. Wyślij jedną z wersji z supported i połącz się ponownie.";
+"error.E1004" = "Usługa nie mogła przyjąć wiersza. Jest nieprawidłowy albo przyszedł w złym momencie. Wyślij najpierw hello, potem jedno żądanie i sprawdź każdy wiersz ze schematem punktu końcowego.";
+"error.E1005" = "Punkt końcowy obsługuje już 8 połączeń. Zamknij połączenie, którego nie potrzebujesz, i połącz się ponownie.";
+"error.E1006" = "Zgoda tego klienta została cofnięta, gdy był połączony. Nadaj mu zgodę ponownie poleceniem „ojd access grant“ i połącz się ponownie.";
+"error.E1007" = "Klient czytał wiersze zbyt wolno i 256 wierszy czekało. Czytaj wiersze tak szybko, jak nadchodzą, i połącz się ponownie.";
+"error.E1008" = "Usługa uruchamia już 4 wirtualne gamepady. Zamknij feed, którego nie potrzebujesz, i wyślij feed ponownie.";
+"error.E1009" = "Wirtualny gamepad został zamknięty albo usługa nie uruchamia żadnego. Połącz się ponownie i wyślij feed.";
 "shortcuts.action.activate_profile.description" = "Włącza profil mapowania dla modelu jego kontrolera.";
 "shortcuts.action.activate_profile.title" = "Aktywuj profil";
 "shortcuts.action.app_version.description" = "Zwraca wersję zainstalowanej aplikacji.";

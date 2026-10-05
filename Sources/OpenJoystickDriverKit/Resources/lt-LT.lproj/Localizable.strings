@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Profilio failas arba - stdin.";
 "cli.profile.validate.valid" = "%@ yra tinkamas profilis: „%@“, skirtas %@ (%@). Pridėkite jį naudodami „ojd profile import“.";
 "cli.profile.vanished" = "Tarnyba neišsaugojo profilio. Patikrinkite jį naudodami „ojd profile list“.";
+"error.E1001" = "Galutinis taškas išjungtas. Įjunkite jį komanda „ojd access enable“ ir prisijunkite iš naujo.";
+"error.E1002" = "Paslauga atmetė šį klientą. Jis neturi leidimo prašomoms sritims arba jo parašas ar įrodymas negalioja. Paleiskite „ojd access list“, suteikite klientui leidimą komanda „ojd access grant“ ir prisijunkite iš naujo.";
+"error.E1003" = "Paslauga nepalaiko hello nurodytos protokolo versijos. Siųskite vieną iš supported nurodytų versijų ir prisijunkite iš naujo.";
+"error.E1004" = "Paslauga negalėjo priimti eilutės. Ji netinkama arba atėjo netinkamu metu. Pirmiausia siųskite hello, tada vieną užklausą ir patikrinkite kiekvieną eilutę pagal galutinio taško schemą.";
+"error.E1005" = "Galutinis taškas jau aptarnauja 8 ryšius. Uždarykite ryšį, kurio jums nereikia, ir prisijunkite iš naujo.";
+"error.E1006" = "Šio kliento leidimas buvo pašalintas, kai jis buvo prisijungęs. Suteikite jam leidimą iš naujo komanda „ojd access grant“ ir prisijunkite iš naujo.";
+"error.E1007" = "Klientas skaitė eilutes per lėtai, ir 256 eilutės laukė. Skaitykite eilutes taip greitai, kaip jos ateina, ir prisijunkite iš naujo.";
+"error.E1008" = "Paslauga jau vykdo 4 virtualius žaidimų pultus. Uždarykite feed, kurio jums nereikia, ir vėl siųskite feed.";
+"error.E1009" = "Virtualus žaidimų pultas užsidarė arba paslauga jų nevykdo. Prisijunkite iš naujo ir siųskite feed.";
 "shortcuts.action.activate_profile.description" = "Įjungia perprogramavimo profilį šio valdiklio modeliui.";
 "shortcuts.action.activate_profile.title" = "Aktyvinti profilį";
 "shortcuts.action.app_version.description" = "Grąžina įdiegtos programos versiją.";

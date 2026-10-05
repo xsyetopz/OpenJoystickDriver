@@ -85,7 +85,7 @@ public struct AccessRefusedClient: Codable, Equatable, Sendable {
   /// The client's executable, when the service could read it.
   public let path: String?
   public let scopes: [EndpointScope]
-  /// The error code the client got, such as `not-granted`.
+  /// The error code the client got, such as `E1002`.
   public let reason: String
   /// ISO 8601 time of the latest refusal.
   public let refusedAt: String
@@ -293,7 +293,7 @@ public struct AccessRevokeResult: Codable, Equatable, Sendable {
   public let grant: AccessGrantSummary?
   /// The token grant left after the revoke; nil when no scope is left or `id` is a client.
   public let token: AccessTokenSummary?
-  /// Live connections that were closed with `revoked`.
+  /// Live connections that were closed with `E1006`.
   public let closedConnections: Int
 
   public init(

@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Datoteka profila ili - za stdin.";
 "cli.profile.validate.valid" = "%@ je valjan profil: '%@' za %@ (%@). Dodajte ga naredbom 'ojd profile import'.";
 "cli.profile.vanished" = "Usluga nije zadržala profil. Provjerite ga naredbom 'ojd profile list'.";
+"error.E1001" = "Krajnja točka je isključena. Uključite je naredbom „ojd access enable“ i ponovno se povežite.";
+"error.E1002" = "Usluga je odbila ovog klijenta. Nema dopuštenje za zatražena područja ili je njegov potpis ili dokaz nevažeći. Pokrenite „ojd access list“, dodijelite klijentu dopuštenje naredbom „ojd access grant“ i ponovno se povežite.";
+"error.E1003" = "Usluga ne podržava verziju protokola iz poruke hello. Pošaljite jednu od verzija iz supported i ponovno se povežite.";
+"error.E1004" = "Usluga nije mogla prihvatiti redak. Nevažeći je ili je stigao u pogrešno vrijeme. Prvo pošaljite hello, zatim jedan zahtjev i provjerite svaki redak prema shemi krajnje točke.";
+"error.E1005" = "Krajnja točka već poslužuje 8 veza. Zatvorite vezu koja vam ne treba i ponovno se povežite.";
+"error.E1006" = "Dopuštenje ovog klijenta uklonjeno je dok je bio povezan. Ponovno mu ga dodijelite naredbom „ojd access grant“ i ponovno se povežite.";
+"error.E1007" = "Klijent je čitao retke presporo i 256 redaka je čekalo. Čitajte retke jednako brzo kako stižu i ponovno se povežite.";
+"error.E1008" = "Usluga već pokreće 4 virtualna kontrolera. Zatvorite feed koji vam ne treba i ponovno pošaljite feed.";
+"error.E1009" = "Virtualni kontroler je zatvoren ili ga usluga ne pokreće. Ponovno se povežite i pošaljite feed.";
 "shortcuts.action.activate_profile.description" = "Uključuje profil mapiranja za model njegova kontrolera.";
 "shortcuts.action.activate_profile.title" = "Aktiviraj profil";
 "shortcuts.action.app_version.description" = "Vraća verziju instalirane aplikacije.";

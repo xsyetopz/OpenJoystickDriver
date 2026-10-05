@@ -28,6 +28,7 @@ GENERATED_RECORDS = (
     ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Controllers"
 )
 CONTROLLER_OVERRIDES = ROOT / "Resources" / "ControllerOverrides"
+ERROR_CODES = ROOT / "Resources" / "ErrorCodes.json"
 SCHEMA_PATHS = (
     SCHEMAS / "controller.schema.json",
     SCHEMAS / "controller-override.schema.json",
@@ -36,6 +37,7 @@ SCHEMA_PATHS = (
     SCHEMAS / "profile.schema.json",
     SCHEMAS / "access-grants.schema.json",
     SCHEMAS / "endpoint.schema.json",
+    SCHEMAS / "error-codes.schema.json",
 )
 
 
@@ -139,6 +141,9 @@ def main() -> int:
         validate_documents(
             documents["controller-override.schema.json"], registry, overrides
         )
+        validate_documents(
+            documents["error-codes.schema.json"], registry, [ERROR_CODES]
+        )
         validate_live_support_report(documents["report.schema.json"], registry)
         compatibility = check_compatibility(ROOT, documents)
     except (
@@ -155,9 +160,9 @@ def main() -> int:
         print(f"error: {detail}", file=sys.stderr)
         return 1
     print(
-        "Validated 5 schema documents, "
+        f"Validated {len(documents)} schema documents, "
         f"{len(controller_records)} controller records, {len(overrides)} overrides, "
-        "and one live support report."
+        "the error code catalog, and one live support report."
     )
     print(compatibility)
     return 0

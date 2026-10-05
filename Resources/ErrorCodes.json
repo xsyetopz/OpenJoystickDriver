@@ -1,0 +1,59 @@
+{
+	"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/error-codes.schema.json",
+	"codes": [
+		{
+			"code": "E1001",
+			"domain": "endpoint",
+			"name": "endpointDisabled",
+			"status": "active"
+		},
+		{
+			"code": "E1002",
+			"domain": "endpoint",
+			"name": "notGranted",
+			"status": "active"
+		},
+		{
+			"code": "E1003",
+			"domain": "endpoint",
+			"name": "unsupportedProtocol",
+			"status": "active"
+		},
+		{
+			"code": "E1004",
+			"domain": "endpoint",
+			"name": "invalidMessage",
+			"status": "active"
+		},
+		{
+			"code": "E1005",
+			"domain": "endpoint",
+			"name": "tooManyConnections",
+			"status": "active"
+		},
+		{
+			"code": "E1006",
+			"domain": "endpoint",
+			"name": "revoked",
+			"status": "active"
+		},
+		{
+			"code": "E1007",
+			"domain": "endpoint",
+			"name": "tooSlow",
+			"status": "active"
+		},
+		{
+			"code": "E1008",
+			"domain": "endpoint",
+			"name": "tooManyFeeds",
+			"status": "active"
+		},
+		{
+			"code": "E1009",
+			"domain": "endpoint",
+			"name": "feedClosed",
+			"status": "active"
+		}
+	]
+}

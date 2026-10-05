@@ -130,7 +130,7 @@ private final class FeedExchanger: @unchecked Sendable {
 
   /// Queues `frames` and sends the feedback; returns how many frames the feed accepted, or nil
   /// once the connection is closing, which closes the feed, or the feed closed, which closes the
-  /// connection with `feed-closed`.
+  /// connection with `E1009`.
   func exchange(_ frames: [VirtualFeedFrame]) -> Int? {
     lock.withLock {
       guard !closed else { return nil }

@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "El archivo del perfil, o - para stdin.";
 "cli.profile.validate.valid" = "%@ es un perfil válido: «%@» para %@ (%@). Añádelo con «ojd profile import».";
 "cli.profile.vanished" = "El servicio no ha conservado el perfil. Compruébalo con «ojd profile list».";
+"error.E1001" = "El punto final está desactivado. Actívalo con «ojd access enable» y vuelve a conectar.";
+"error.E1002" = "El servicio rechazó a este cliente. No tiene permiso para los ámbitos que pidió, o su firma o prueba no es válida. Ejecuta «ojd access list», concede permiso al cliente con «ojd access grant» y vuelve a conectar.";
+"error.E1003" = "El servicio no admite la versión del protocolo de hello. Envía una de las versiones de supported y vuelve a conectar.";
+"error.E1004" = "El servicio no pudo aceptar la línea. No es válida o llegó en un momento incorrecto. Envía primero hello, después una solicitud, y comprueba cada línea con el esquema del punto final.";
+"error.E1005" = "El punto final ya atiende 8 conexiones. Cierra una conexión que no necesites y vuelve a conectar.";
+"error.E1006" = "El permiso de este cliente se quitó mientras estaba conectado. Concédeselo de nuevo con «ojd access grant» y vuelve a conectar.";
+"error.E1007" = "El cliente leyó las líneas demasiado despacio y 256 líneas esperaron. Lee las líneas tan rápido como llegan y vuelve a conectar.";
+"error.E1008" = "El servicio ya ejecuta 4 mandos virtuales. Cierra un feed que no necesites y vuelve a enviar feed.";
+"error.E1009" = "El mando virtual se cerró, o el servicio no ejecuta ninguno. Vuelve a conectar y envía feed.";
 "shortcuts.action.activate_profile.description" = "Activa un perfil de reasignación para el modelo de su mando.";
 "shortcuts.action.activate_profile.title" = "Activar perfil";
 "shortcuts.action.app_version.description" = "Devuelve la versión de la app instalada.";

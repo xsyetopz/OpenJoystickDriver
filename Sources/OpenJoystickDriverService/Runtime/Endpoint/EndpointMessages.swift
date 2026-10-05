@@ -2,19 +2,6 @@ import Foundation
 import OpenJoystickDriverKit
 import Security
 
-/// The stable error codes of the endpoint, described in `endpoint.schema.json`.
-enum EndpointErrorCode: String, Encodable, Sendable {
-  case endpointDisabled = "endpoint-disabled"
-  case notGranted = "not-granted"
-  case unsupportedProtocol = "unsupported-protocol"
-  case invalidMessage = "invalid-message"
-  case tooManyConnections = "too-many-connections"
-  case revoked
-  case tooSlow = "too-slow"
-  case tooManyFeeds = "too-many-feeds"
-  case feedClosed = "feed-closed"
-}
-
 /// The first line on every connection: a random nonce that a token client signs in its `hello`.
 struct EndpointChallenge: Encodable, Sendable {
   let type = "challenge"
@@ -61,12 +48,13 @@ struct EndpointFeeding: Encodable, Sendable {
   let `as`: String
 }
 
+/// An error line; `code` is an endpoint-domain `ErrorCode`, described in `endpoint.schema.json`.
 struct EndpointError: Encodable, Sendable {
   let type = "error"
-  let code: EndpointErrorCode
+  let code: ErrorCode
   /// English text for logs; clients branch on `code`.
   let message: String
-  /// The protocol versions the service accepts; `unsupported-protocol` only.
+  /// The protocol versions the service accepts; `E1003` only.
   var supported: [Int]?
 }
 

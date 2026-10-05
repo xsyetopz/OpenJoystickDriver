@@ -24,6 +24,7 @@
 - **Help**
   - [Troubleshooting](Troubleshooting.md)
   - [Known issues](Known-Issues.md)
+  - [Error codes](Error-Codes.md)
   - [FAQ](FAQ.md)
   - [Reporting a bug](Reporting-a-Bug.md)
 - **Advanced**

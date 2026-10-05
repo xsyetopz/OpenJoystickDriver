@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Profil dosyası veya stdin için -.";
 "cli.profile.validate.valid" = "%@ geçerli bir profil: “%@”, %@ için (%@). “ojd profile import” ile ekleyin.";
 "cli.profile.vanished" = "Servis profili saklamadı. “ojd profile list” ile kontrol edin.";
+"error.E1001" = "Uç nokta kapalı. «ojd access enable» komutuyla açın ve yeniden bağlanın.";
+"error.E1002" = "Hizmet bu istemciyi reddetti. İstemcinin istediği kapsamlar için izni yok ya da imzası veya kanıtı geçerli değil. «ojd access list» komutunu çalıştırın, istemciye «ojd access grant» komutuyla izin verin ve yeniden bağlanın.";
+"error.E1003" = "Hizmet hello içindeki protokol sürümünü desteklemiyor. supported içindeki sürümlerden birini gönderin ve yeniden bağlanın.";
+"error.E1004" = "Hizmet satırı kabul edemedi. Satır geçersiz ya da yanlış zamanda geldi. Önce hello, sonra bir istek gönderin ve her satırı uç noktanın şemasıyla denetleyin.";
+"error.E1005" = "Uç nokta zaten 8 bağlantıya hizmet ediyor. İhtiyacınız olmayan bir bağlantıyı kapatın ve yeniden bağlanın.";
+"error.E1006" = "Bu istemcinin izni, bağlıyken kaldırıldı. Ona «ojd access grant» komutuyla yeniden izin verin ve yeniden bağlanın.";
+"error.E1007" = "İstemci satırları çok yavaş okudu ve 256 satır bekledi. Satırları geldikleri hızda okuyun ve yeniden bağlanın.";
+"error.E1008" = "Hizmet zaten 4 sanal oyun kumandası çalıştırıyor. İhtiyacınız olmayan bir feed bağlantısını kapatın ve feed komutunu yeniden gönderin.";
+"error.E1009" = "Sanal oyun kumandası kapandı ya da hizmet hiç kumanda çalıştırmıyor. Yeniden bağlanın ve feed gönderin.";
 "shortcuts.action.activate_profile.description" = "Bir yeniden atama profilini kontrolcü modeli için açar.";
 "shortcuts.action.activate_profile.title" = "Profili etkinleştir";
 "shortcuts.action.app_version.description" = "Yüklü uygulamanın sürümünü döndürür.";

@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Profilfilen, eller - för stdin.";
 "cli.profile.validate.valid" = "%@ är en giltig profil: '%@' för %@ (%@). Lägg till den med 'ojd profile import'.";
 "cli.profile.vanished" = "Tjänsten behöll inte profilen. Kontrollera den med 'ojd profile list'.";
+"error.E1001" = "Slutpunkten är avstängd. Slå på den med ”ojd access enable” och anslut igen.";
+"error.E1002" = "Tjänsten avvisade den här klienten. Den har ingen behörighet för de omfång den bad om, eller så är dess signatur eller bevis ogiltig. Kör ”ojd access list”, ge klienten behörighet med ”ojd access grant” och anslut igen.";
+"error.E1003" = "Tjänsten stöder inte protokollversionen i hello. Skicka en av versionerna i supported och anslut igen.";
+"error.E1004" = "Tjänsten kunde inte ta emot raden. Den är ogiltig eller kom vid fel tidpunkt. Skicka först hello, sedan en begäran, och kontrollera varje rad mot slutpunktens schema.";
+"error.E1005" = "Slutpunkten betjänar redan 8 anslutningar. Stäng en anslutning som du inte behöver och anslut igen.";
+"error.E1006" = "Den här klientens behörighet togs bort medan den var ansluten. Ge den behörighet igen med ”ojd access grant” och anslut igen.";
+"error.E1007" = "Klienten läste rader för långsamt och 256 rader väntade. Läs rader lika snabbt som de kommer och anslut igen.";
+"error.E1008" = "Tjänsten kör redan 4 virtuella handkontroller. Stäng en feed som du inte behöver och skicka feed igen.";
+"error.E1009" = "Den virtuella handkontrollen stängdes, eller så kör tjänsten ingen. Anslut igen och skicka feed.";
 "shortcuts.action.activate_profile.description" = "Aktiverar en ommappningsprofil för dess kontrollmodell.";
 "shortcuts.action.activate_profile.title" = "Aktivera profil";
 "shortcuts.action.app_version.description" = "Returnerar versionen av den installerade appen.";

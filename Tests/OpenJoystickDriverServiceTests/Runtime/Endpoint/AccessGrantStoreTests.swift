@@ -297,12 +297,13 @@ struct AccessGrantStoreTests {
   func refusedClientsAreKeptForADay() {
     var log = AccessRefusalLog()
     let start = Date(timeIntervalSince1970: 0)
-    log.record(tool, path: "/Tool", scopes: [.read], reason: "not-granted", at: start)
-    log.record(python, path: nil, scopes: [.read], reason: "not-granted", at: start + 3_600)
-    log.record(tool, path: "/Tool", scopes: [.control], reason: "not-granted", at: start + 7_200)
+    log.record(tool, path: "/Tool", scopes: [.read], at: start)
+    log.record(python, path: nil, scopes: [.read], at: start + 3_600)
+    log.record(tool, path: "/Tool", scopes: [.control], at: start + 7_200)
 
     #expect(log.clients(at: start + 7_200).map(\.id) == [tool.accessID, python.accessID])
     #expect(log.clients(at: start + 7_200).first?.scopes == [.control])
+    #expect(log.clients(at: start + 7_200).first?.reason == "E1002")
     #expect(log.clients(at: start + 3_600 + 86_401).map(\.id) == [tool.accessID])
     #expect(log.clients(at: start + 7_200 + 86_401).isEmpty)
   }

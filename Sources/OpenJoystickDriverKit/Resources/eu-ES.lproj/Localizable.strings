@@ -1452,6 +1452,15 @@
 "cli.profile.validate.file" = "Profilaren fitxategia, edo - stdin-erako.";
 "cli.profile.validate.valid" = "%@ baliozko profila da: «%@», %@ (%@) eredurako. Gehitu «ojd profile import» erabiliz.";
 "cli.profile.vanished" = "Zerbitzuak ez du profila mantendu. Egiaztatu «ojd profile list» komandoarekin.";
+"error.E1001" = "Amaiera-puntua itzalita dago. Piztu «ojd access enable» komandoarekin eta konektatu berriro.";
+"error.E1002" = "Zerbitzuak bezero hau baztertu du. Ez du baimenik eskatu dituen eremuetarako, edo bere sinadura edo froga ez da baliozkoa. Exekutatu «ojd access list», eman baimena bezeroari «ojd access grant» komandoarekin eta konektatu berriro.";
+"error.E1003" = "Zerbitzuak ez du hello mezuko protokolo-bertsioa onartzen. Bidali supported zerrendako bertsioetako bat eta konektatu berriro.";
+"error.E1004" = "Zerbitzuak ezin izan du lerroa onartu. Baliogabea da edo une okerrean iritsi da. Bidali lehenik hello, gero eskaera bat, eta egiaztatu lerro bakoitza amaiera-puntuaren eskemarekin.";
+"error.E1005" = "Amaiera-puntuak 8 konexio zerbitzatzen ditu jada. Itxi behar ez duzun konexio bat eta konektatu berriro.";
+"error.E1006" = "Bezero honen baimena kendu da konektatuta zegoela. Eman baimena berriro «ojd access grant» komandoarekin eta konektatu berriro.";
+"error.E1007" = "Bezeroak lerroak motelegi irakurri ditu eta 256 lerro itxaroten egon dira. Irakurri lerroak iristen diren bezain azkar eta konektatu berriro.";
+"error.E1008" = "Zerbitzuak 4 joko-agintekari birtual exekutatzen ditu jada. Itxi behar ez duzun feed bat eta bidali feed berriro.";
+"error.E1009" = "Joko-agintekari birtuala itxi da, edo zerbitzuak ez du bat ere exekutatzen. Konektatu berriro eta bidali feed.";
 "shortcuts.action.activate_profile.description" = "Birmapatze-profil bat aktibatzen du bere aginte-modeloarentzat.";
 "shortcuts.action.activate_profile.title" = "Aktibatu profila";
 "shortcuts.action.app_version.description" = "Instalatutako aplikazioaren bertsioa itzultzen du.";

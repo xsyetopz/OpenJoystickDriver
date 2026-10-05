@@ -47,19 +47,19 @@ The service answers with one line and then either streams or closes the connecti
 
 ```json
 {"type":"welcome","protocol":1,"version":"0.5.0-beta.5","scopes":["read"]}
-{"type":"error","code":"not-granted","message":"..."}
+{"type":"error","code":"E1002","message":"..."}
 ```
 
-- `protocol` is an integer. The service supports a range of versions. When the client's version is outside it, the service answers `unsupported-protocol` with `supported`, the list of versions it accepts, and closes.
-- `scopes` lists the scopes the client asks for. The service grants all of them or refuses with `not-granted`. It never grants a subset silently.
-- Error codes are stable identifiers: `endpoint-disabled`, `not-granted`, `unsupported-protocol`, `invalid-message`, `too-many-connections`, `revoked`. `message` is English text for logs, not for parsing.
+- `protocol` is an integer. The service supports a range of versions. When the client's version is outside it, the service answers `E1003` with `supported`, the list of versions it accepts, and closes.
+- `scopes` lists the scopes the client asks for. The service grants all of them or refuses with `E1002`. It never grants a subset silently.
+- Error codes are stable identifiers, `E1001` to `E1009`, listed in `Resources/ErrorCodes.json` and explained on the wiki page Error-Codes. `message` is English text for logs, not for parsing.
 
 ## Read Stream (Slice 3.3)
 
 After `welcome`, the client sends `{"type":"subscribe","stream":"controllers","output":false}`. The service then sends the same lines as `ojd controller watch --all --json`: `connected`, `input`, and `disconnected`, with `type` and `id`. `output: true` adds `output`, as `--output` does.
 
 - One poller in the service serves every subscriber. It starts with the first subscriber and stops with the last, so an idle endpoint costs nothing. The polling logic of `watchAll()` moves into `OpenJoystickDriverKit`, so the CLI and the endpoint use the same code.
-- A client that reads too slowly gets the latest `input` line for each controller, and earlier ones are dropped. `connected` and `disconnected` lines are never dropped. When 256 lines are waiting, the service closes the connection with the error `too-slow`.
+- A client that reads too slowly gets the latest `input` line for each controller, and earlier ones are dropped. `connected` and `disconnected` lines are never dropped. When 256 lines are waiting, the service closes the connection with the error `E1007`.
 - `cli-output.schema.json` already describes the event lines. A new `endpoint.schema.json` describes `hello`, `welcome`, `error`, and `subscribe`, and refers to the `controllerWatch` events, so the two cannot drift apart.
 
 ## Control Stream (Milestone 4)
@@ -99,17 +99,17 @@ ojd access revoke CLIENT [--scope SCOPE]
 
 - `CLIENT` is an app or executable path, such as `/Applications/Overlay.app`, from which `ojd` reads the signature, or the ID of a refused client from `ojd access list`.
 - `grant` and `enable` ask for confirmation on a terminal and need `--force` with `--no-input`, like other commands that change what other programs can do. Granting `control` names the risk: the client can press buttons in any game.
-- `revoke` closes that client's live connections with the error `revoked`.
+- `revoke` closes that client's live connections with the error `E1006`.
 - Every command supports `--json`, described in `cli-output.schema.json`.
 
 ## Tests (Slice 3.3)
 
 Swift tests run the endpoint on a private socket, as `FakeService` does for the CLI:
 
-- A client without a grant is refused with `not-granted`, and an ad-hoc signed client is refused.
+- A client without a grant is refused with `E1002`, and an ad-hoc signed client is refused.
 - A granted client receives `connected`, `input`, and `disconnected` lines that validate against the schema.
-- A revoked client is disconnected with `revoked`.
-- A disabled endpoint has no socket, and a wrong protocol version gets `unsupported-protocol`.
+- A revoked client is disconnected with `E1006`.
+- A disabled endpoint has no socket, and a wrong protocol version gets `E1003`.
 
 The signature checks need a client signed with a team ID, which a unit test cannot create. The tests inject the identity lookup, as `LocalServiceRPCServer` takes `authentication` today. A live check with a Developer ID signed client is a manual step.
 
@@ -126,17 +126,17 @@ The signature checks need a client signed with a team ID, which a unit test cann
 - With a token, the service skips the signature lookup, so ad-hoc signed tools and scripts work. Any process of the user that reads the token can use it.
 - `AccessGrants.json` is a secret. Its SHA-256 hashes are the HMAC keys, so whoever reads the file can sign challenges as any token in it. The service writes it with mode 0600 in a 0700 folder, and the support report does not include it. Keep it out of shared reports, exports, and backups; when it leaks, revoke every token.
 - `--origin` binds the token to web pages. A token without origins works on the Unix socket, and on the WebSocket only for a client that sends no `Origin`. The service stores each origin as `scheme://host[:port]`, with `http` or `https` only. `null` is never accepted: any website can make a browser send `Origin: null` from a sandboxed frame or a `data:` URL, so it proves nothing.
-- A wrong proof, an unknown token name, or a token used from another origin gets `not-granted`. `ojd access list` shows the refusal by token name only when the proof was right, such as for a missing scope or origin; otherwise it shows an unknown token, so a guessed name is not recorded. Refusals are kept for 24 hours.
-- `ojd access revoke token:NAME` removes the grant and closes its connections with `revoked`.
+- A wrong proof, an unknown token name, or a token used from another origin gets `E1002`. `ojd access list` shows the refusal by token name only when the proof was right, such as for a missing scope or origin; otherwise it shows an unknown token, so a guessed name is not recorded. Refusals are kept for 24 hours.
+- `ojd access revoke token:NAME` removes the grant and closes its connections with `E1006`.
 
 ### WebSocket
 
-`ojd access web enable [--port N]` opens a TCP listener on `127.0.0.1`. Without `--port`, it reuses the saved port; the first time, the system picks a free port and the service saves it, so no fixed, well-known port can be taken first by another user. `ojd access status` shows the port. It has its own switch in `AccessGrants.json` (`web.enabled`, `web.port`), off by default and independent of `ojd access enable`. `ojd access web disable` closes it and its connections with `endpoint-disabled`.
+`ojd access web enable [--port N]` opens a TCP listener on `127.0.0.1`. Without `--port`, it reuses the saved port; the first time, the system picks a free port and the service saves it, so no fixed, well-known port can be taken first by another user. `ojd access status` shows the port. It has its own switch in `AccessGrants.json` (`web.enabled`, `web.port`), off by default and independent of `ojd access enable`. `ojd access web disable` closes it and its connections with `E1001`.
 
 - WebSocket clients connect to `ws://127.0.0.1:PORT/endpoint`. The upgrade is refused unless `Host` is `127.0.0.1:PORT`, which stops DNS rebinding, and `Origin` is an origin of some token grant. An upgrade without `Origin` is accepted when some token grant has no origins.
 - The challenge is the first WebSocket message after the `101`. `hello` must carry the name of a token whose grant names the connection's `Origin`, and a proof over that origin and the port. Without `Origin`, the token's grant must have no origins, and the proof has an empty origin line and the port. The token never goes on the wire, so it stays out of logs, browser history, and any listener that impersonates the service.
-- One text frame, or one message split over continuation frames, is one line of the Unix protocol, at most 64 KiB. A binary frame or a longer message ends the connection with `invalid-message`. Client frames must be masked, as RFC 6455 requires.
-- The limits of the Unix socket are shared: 8 clients across both transports, a 5-second handshake, and `too-slow` after 256 waiting lines.
+- One text frame, or one message split over continuation frames, is one line of the Unix protocol, at most 64 KiB. A binary frame or a longer message ends the connection with `E1004`. Client frames must be masked, as RFC 6455 requires.
+- The limits of the Unix socket are shared: 8 clients across both transports, a 5-second handshake, and `E1007` after 256 waiting lines.
 - The service implements the upgrade and framing itself on a BSD socket. Network.framework's `NWProtocolWebSocket` shows request headers only to a handler that is shared by every connection, so it cannot tie a connection's `Origin` to the token in its `hello`.
 
 ### Overlay Pages
