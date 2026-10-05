@@ -69,7 +69,7 @@ generate_driverkit_project() {
     [[ -x "$generator_bin" ]] || die "DriverKitGenerator executable was not built"
     "$generator_bin" \
       --output "$output" \
-      "${generator_options[@]}" \
+      ${generator_options[@]+"${generator_options[@]}"} \
       --short-version "$DRIVERKIT_SHORT_VERSION" \
       --build-version "$DRIVERKIT_BUILD_VERSION"
   )
