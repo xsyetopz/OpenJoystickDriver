@@ -503,7 +503,7 @@
 "developer.controller" = "控制器";
 "developer.controllerDetails" = "控制器";
 "developer.diagnosticMode" = "診斷方式";
-"developer.emptyCapture" = "按下開始捕捉,";
+"developer.emptyCapture" = "按下「開始捕捉」，然後按控制器上的按鈕。";
 "developer.enterDiagnosticMode" = "輸入診斷模式";
 "developer.exportCapture" = "輸出包的捕捉";
 "developer.extraInputs" = "其他按";
@@ -735,19 +735,19 @@
 /* Motion calibration CLI. Non-English translation pending. */
 
 /* Motion calibration controls. Non-English translation pending. */
-"motion.calibration.instructions" = "請保持控制器靜止,";
-"motion.calibration.collecting" = "收集偏見";
-"motion.calibration.paused" = "取組手動停止";
-"motion.calibration.offset" = "偏差 (°/s):X %.3f · Y %.3f · Z %.3f";
+"motion.calibration.instructions" = "收集陀螺儀偏差時，請保持控制器靜止。";
+"motion.calibration.collecting" = "正在收集偏差";
+"motion.calibration.paused" = "手動收集已暫停";
+"motion.calibration.offset" = "偏差（°/s）：X %.3f · Y %.3f · Z %.3f";
 "motion.calibration.start" = "開始校準";
-"motion.calibration.pause" = "暫停活動";
+"motion.calibration.pause" = "暫停";
 "motion.calibration.title" = "運動校準";
 
 /* Calibration guidance. Non-English translation pending. */
-"motion.calibration.controllerUnavailable" = "請重新連接控制器,";
+"motion.calibration.controllerUnavailable" = "請重新連接控制器，然後重新整理校準狀態。";
 "motion.calibration.motionUnavailable" = "請為這個控制器啟用重新映射設定檔，並確認體感可用。";
-"motion.calibration.waiting" = "還是要重新檢查.";
-"motion.calibration.continues" = "收藏在這個窗口關閉時繼續.";
+"motion.calibration.waiting" = "正在等待體感樣本。重新整理以再次檢查。";
+"motion.calibration.continues" = "關閉此視窗後仍會繼續收集。使用「暫停」停止收集。";
 
 /* Gyro authoring. Native translation review pending. */
 "profiles.gyro.output" = "工產量";
