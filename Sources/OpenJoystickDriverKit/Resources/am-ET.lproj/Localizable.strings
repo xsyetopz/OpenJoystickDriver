@@ -975,7 +975,7 @@
 "cli.access.grant.client_or_token" = "CLIENT ወይም --token NAME ያቅርቡ።";
 "cli.access.grant.confirm" = "%@፣ በ%@ የተፈረመው፣ የመጨረሻ ነጥቡን በ%@ እንዲጠቀም ይፍቀዱ?";
 "cli.access.grant.control_warning" = "የcontrol ወሰን ፕሮግራሙ በምናባዊ የጨዋታ ሰሌዳ ላይ አዝራሮችን እንዲጫን ያስችለዋል፤ ጨዋታዎችና መተግበሪያዎች ይህን እንደ እርስዎ ግብዓት ይቆጥሩታል።";
-"cli.access.grant.discussion" = "CLIENT የፕሮግራሙ ዱካ ወይም ከ«ojd access list» የተገኘ መታወቂያ ነው። ፈቃዱ የፕሮግራሙን ፊርማ ይሰይማል፣ ስለዚህ ፕሮግራሙ ሲዘምን ወይም ሲዛወር ትክክለኛ ሆኖ ይቆያል። Ad-hoc የተፈረሙና ያልተፈረሙ ፕሮግራሞች ሊፈቀዱ አይችሉም። በCLIENT ፈንታ --token ሲጠቀሙ፣ ደንበኛ በhello መልእክቱ በሶኬቱ ወይም ከ--origin እሴቶች በአንዱ ካለ ገጽ በWebSocket የአገልግሎቱን ፈተና የሚፈርምበትን ቶከን ይፈጥራል፤ ቶከኑ የሚታየው አንድ ጊዜ ብቻ ነው። መጀመሪያ ማረጋገጫ ይጠይቃል።";
+"cli.access.grant.discussion" = "CLIENT የፕሮግራሙ ዱካ ወይም ከ«ojd access list» የተገኘ መታወቂያ ነው። ፈቃዱ የፕሮግራሙን ፊርማ ይሰይማል፣ ስለዚህ ፕሮግራሙ ሲዘምን ወይም ሲዛወር ትክክለኛ ሆኖ ይቆያል። Ad-hoc የተፈረሙና ያልተፈረሙ ፕሮግራሞች ሊፈቀዱ አይችሉም። በCLIENT ፈንታ --token ሲጠቀሙ፣ ደንበኛ በhello መልእክቱ በሶኬቱ፣ ከ--origin እሴቶች በአንዱ ካለ ገጽ በWebSocket ወይም --origin ለሌለው ቶከን Origin ራስጌ ከማይልክ ፕሮግራም (ለምሳሌ ከማጠሪያ ውስጥ ካለ መተግበሪያ) በWebSocket የአገልግሎቱን ፈተና የሚፈርምበትን ቶከን ይፈጥራል። ቶከኑ የሚታየው አንድ ጊዜ ብቻ ነው። መጀመሪያ ማረጋገጫ ይጠይቃል።";
 "cli.access.grant.origin" = "ገጾቹ ቶከኑን በWebSocket ላይ እንዲጠቀሙ የሚፈቀድላቸው የድር መነሻ፣ ለምሳሌ http://127.0.0.1:8080። ለተጨማሪ ይድገሙ። WebSocket የሚያገለግላቸው የOverlays ገጾች http://127.0.0.1:PORT መነሻ አላቸው፤ ወደቡ በ«ojd access status» የሚታየው ነው።";
 "cli.access.grant.origin_needs_token" = "--origin --token ያስፈልገዋል።";
 "cli.access.grant.scope" = "ለመፍቀድ ወሰን፦ read ወይም control። ለሁለቱም ይድገሙ።";

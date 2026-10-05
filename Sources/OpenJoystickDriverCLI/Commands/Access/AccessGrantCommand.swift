@@ -66,9 +66,10 @@ struct AccessGrantCommand: AsyncParsableCommand {
       "CLIENT is the program's path or an ID from 'ojd access list'. The grant names the "
         + "program's signature, so it stays valid when the program is updated or moved. "
         + "Ad-hoc signed and unsigned programs cannot be granted. With --token instead of "
-        + "CLIENT, creates a token that a client signs the service's challenge with in its hello, "
-        + "on the socket or on the WebSocket from a page at one of the --origin values; the "
-        + "token is shown only once. "
+        + "CLIENT, creates a token that a client signs the service's challenge with in its hello: "
+        + "on the socket, on the WebSocket from a page at one of the --origin values, or, for a "
+        + "token without --origin, on the WebSocket from a program that sends no Origin header, "
+        + "such as a sandboxed app. The token is shown only once. "
         + "Asks for confirmation first."
     )
   )

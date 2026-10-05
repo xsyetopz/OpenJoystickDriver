@@ -975,7 +975,7 @@
 "cli.access.grant.client_or_token" = "CLIENT か --token NAME のいずれかを指定してください。";
 "cli.access.grant.confirm" = "%@（署名: %@）に、%@ でエンドポイントの使用を許可しますか？";
 "cli.access.grant.control_warning" = "control スコープでは、プログラムが仮想ゲームパッドのボタンを押せます。ゲームやアプリはこれをあなたの入力として扱います。";
-"cli.access.grant.discussion" = "CLIENT はプログラムのパス、または 「ojd access list」 の ID です。許可はプログラムの署名に対して行われるため、プログラムを更新または移動しても有効なままです。アドホック署名のプログラムや未署名のプログラムは許可できません。CLIENT の代わりに --token を指定すると、クライアントが hello でサービスのチャレンジへの署名に使うトークンを作成します。トークンは、ソケット経由、または --origin のいずれかの値のページから WebSocket 経由で使用されます。トークンは一度だけ表示されます。先に確認を求めます。";
+"cli.access.grant.discussion" = "CLIENT はプログラムのパス、または 「ojd access list」 の ID です。許可はプログラムの署名に対して行われるため、プログラムを更新または移動しても有効なままです。アドホック署名のプログラムや未署名のプログラムは許可できません。CLIENT の代わりに --token を指定すると、クライアントが hello でサービスのチャレンジへの署名に使うトークンを作成します。トークンは、ソケット経由、--origin のいずれかの値のページから WebSocket 経由、または --origin なしのトークンの場合は Origin ヘッダを送信しないプログラム（サンドボックス化されたアプリなど）から WebSocket 経由で使用されます。トークンは一度だけ表示されます。先に確認を求めます。";
 "cli.access.grant.origin" = "WebSocket でトークンを使用できるページのウェブオリジン（例: http://127.0.0.1:8080）。複数指定するには繰り返します。WebSocket が配信するオーバーレイページのオリジンは http://127.0.0.1:PORT で、ポートは 「ojd access status」 に表示されるものです。";
 "cli.access.grant.origin_needs_token" = "--origin には --token が必要です。";
 "cli.access.grant.scope" = "許可するスコープ: read または control。両方を許可するには繰り返し指定してください。";
