@@ -105,7 +105,7 @@
 "settings.discardProfileMessage" = "Промене овог профила нису спремљене.";
 "settings.discardAction" = "Одбаци промене";
 "settings.enableDeveloperTools" = "Увођење алата за програмери";
-"settings.general" = "Генерал";
+"settings.general" = "Опште";
 "settings.notificationBannersAndSoundOff" = "Баннери и звуци су онемогућени у системским подешавањама.";
 "settings.notificationBannersOff" = "Стварање бандара";
 "settings.notificationBannersOffDetail" = "Знаци за обавештење су онемогућени у системским подешавањама.";
@@ -408,7 +408,7 @@
 "profiles.touch.surface" = "Површина";
 "profiles.touch.enabled" = "Омогућити континуирано додирљиво излаз";
 "profiles.touch.mode" = "Улога додир";
-"profiles.touch.pointer" = "Поинтер";
+"profiles.touch.pointer" = "Показивач";
 "profiles.touch.leftStick" = "Лева стабља";
 "profiles.touch.rightStick" = "Десна палка";
 "profiles.touch.pointerSensitivity" = "Показачки тачки по површини";
@@ -803,10 +803,10 @@
 "mapping.motionLean" = "У покрету је мало %@";
 "profiles.sectionMotion" = "Предлог";
 "profiles.stick.pointerArea" = "Појавник";
-"profiles.stick.pointerRing" = "Поинтер прстен";
+"profiles.stick.pointerRing" = "Прстен показивача";
 "profiles.stick.scrollWheel" = "Ролл колеса";
 "profiles.stick.steering" = "Улазни тркач";
-"profiles.stick.pointerRadius" = "Поинтерски радиус (точке)";
+"profiles.stick.pointerRadius" = "Полупречник показивача (тачке)";
 "profiles.stick.scrollDegrees" = "Ротација по линији свитања (дегради)";
 "profiles.stick.scrollAxis" = "Осе за прокат";
 "profiles.stick.horizontal" = "Горизонтални";

@@ -169,7 +169,7 @@
 "controllers.profileErrorSentence" = "Error del perfil activo: %@";
 "controllers.accessibilityDetails" = "%@. %@. Protocolo: %@. Parser: %@. Número de serie: %@. USB VID/PID: %@. Endpoint de entrada: %@. Endpoint de salida: %@.";
 "controllers.publishedAs" = "Publicado como";
-"controllers.nativeGamepadNotPublished" = "Mando nativo de macOS, no publicado";
+"controllers.nativeGamepadNotPublished" = "Control nativo de macOS, no publicado";
 "virtualProfile.advanced" = "Avanzado";
 "virtualProfile.title" = "Perfil HID virtual";
 "virtualProfile.modelScope" = "Se aplica a todos los controles conectados de este modelo.";
@@ -662,7 +662,7 @@
 "notifications.profileSwitchedBody" = "%@ → %@";
 "notifications.testBody" = "OpenJoystickDriver puede avisarte de la actividad de controles y perfiles.";
 "notifications.testTitle" = "Las notificaciones están listas";
-"profiles.virtualOutput" = "Mando virtual";
+"profiles.virtualOutput" = "Control virtual";
 "profiles.virtualDisabled" = "Desactivado";
 "profiles.virtualMapped" = "Solo controles reasignados";
 "profiles.virtualPassthrough" = "Incluir controles sin reasignar";
@@ -735,7 +735,7 @@
 /* Motion calibration CLI. First-pass translation; native review pending. */
 
 /* Motion calibration controls. First-pass translation; native review pending. */
-"motion.calibration.instructions" = "Mantén el mando quieto mientras se mide el sesgo del giroscopio.";
+"motion.calibration.instructions" = "Mantén el control quieto mientras se mide el sesgo del giroscopio.";
 "motion.calibration.collecting" = "Midiendo el sesgo";
 "motion.calibration.paused" = "Medición manual en pausa";
 "motion.calibration.offset" = "Sesgo (°/s): X %.3f · Y %.3f · Z %.3f";
@@ -744,8 +744,8 @@
 "motion.calibration.title" = "Calibración del movimiento";
 
 /* Calibration guidance. First-pass translation; native review pending. */
-"motion.calibration.controllerUnavailable" = "Vuelve a conectar el mando y actualiza el estado de calibración.";
-"motion.calibration.motionUnavailable" = "Activa un perfil de reasignación para este mando y comprueba que haya datos de movimiento disponibles.";
+"motion.calibration.controllerUnavailable" = "Vuelve a conectar el control y actualiza el estado de calibración.";
+"motion.calibration.motionUnavailable" = "Activa un perfil de reasignación para este control y comprueba que haya datos de movimiento disponibles.";
 "motion.calibration.waiting" = "Esperando datos de movimiento. Actualiza para volver a comprobarlo.";
 "motion.calibration.continues" = "La medición continúa al cerrar esta ventana. Usa Pausar para detenerla.";
 
@@ -768,7 +768,7 @@
 
 /* Trackball authoring. Translation review pending. */
 "profiles.trackball.enabled" = "La pista de fútbol";
-"profiles.trackball.hint" = "Mantenga el mando para continuar el movimiento mientras reposiciona el controlador.";
+"profiles.trackball.hint" = "Mantén presionado el botón asignado para continuar el movimiento mientras reposicionas el control.";
 "profiles.trackball.source" = "Control de pelota de pista";
 "profiles.trackball.axes" = "Eje de pista";
 "profiles.trackball.pitch" = "El lanzamiento";
@@ -840,7 +840,7 @@
 "profiles.motion.leanEnabled" = "Habilitar fuentes magras";
 "profiles.motion.leanThresholdDegrees" = "El límite de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de reducción de los niveles de";
 "profiles.motion.leanHysteresisDegrees" = "Hysteresis de liberación delgada (grados)";
-"profiles.motion.steeringEnabled" = "Habilitar el mando de movimiento";
+"profiles.motion.steeringEnabled" = "Habilitar la dirección por movimiento";
 "profiles.motion.steeringOutput" = "Eje de dirección virtual";
 "profiles.motion.steeringLeft" = "Bolso horizontal izquierdo";
 "profiles.motion.steeringRight" = "Estillo horizontal derecho";
@@ -1065,7 +1065,7 @@
 "cli.extension.approval" = "La solicitud necesita tu aprobación. Permítela en Configuración del Sistema > General > Ítems de inicio y extensiones > Extensiones de controlador.";
 "cli.extension.bundle_missing" = "La app no contiene %@.dext. Ejecuta './Scripts/ojd build install dev' y vuelve a intentarlo desde /Applications.";
 "cli.extension.codesign_failed_to_run" = "No se pudo ejecutar codesign para verificar la app: %@. Comprueba que existe /usr/bin/codesign.";
-"cli.extension.deactivate.abstract" = "Pide a macOS que desactive la extensión. Los mandos vuelven a macOS.";
+"cli.extension.deactivate.abstract" = "Pide a macOS que desactive la extensión. Los controles vuelven a macOS.";
 "cli.extension.deactivate.discussion" = "Ejecuta el ojd que está dentro de /Applications/OpenJoystickDriver.app.";
 "cli.extension.deactivated" = "La extensión está inactiva.";
 "cli.extension.not_installed" = "Este ojd se ejecuta desde %@, no desde /Applications. Ejecuta el ojd que está dentro de /Applications/OpenJoystickDriver.app.";

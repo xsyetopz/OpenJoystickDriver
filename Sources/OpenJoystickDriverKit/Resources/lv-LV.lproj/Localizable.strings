@@ -1494,7 +1494,7 @@
 "cli.explain.area.remapping" = "Pārkartēšana";
 "cli.explain.exit_code" = "Izejas kods: %@";
 "cli.explain.wire" = "Pārraides vērtība: %@";
-"cli.error.stale_installation" = "Instalētā OpenJoystickDriver.app ir vecāka par šiem repozitorija avotiem. Palaidiet „./Scripts/ojd build install-fast dev” vai iestatiet OJD_RUN_REPOSITORY_CLI=1, lai palaistu šo būvējumu.";
+"cli.error.stale_installation" = "Instalētā OpenJoystickDriver.app ir vecāka par šiem repozitorija avotiem. Palaidiet „./Scripts/ojd build install-fast dev“ vai iestatiet OJD_RUN_REPOSITORY_CLI=1, lai palaistu šo būvējumu.";
 "cli.error.forwarder_allocation" = "Neizdevās rezervēt argumentus instalētajam ojd. Palaidiet komandu vēlreiz.";
 "cli.error.forwarder_exec" = "Neizdevās palaist instalēto ojd: %@. Pārinstalējiet OpenJoystickDriver.app.";
 "error.E2001" = "ojd sastapa kļūdu, kuru tas neatpazīst. Palaidiet „ojd diagnose“ un ziņojiet par problēmu kopā ar tā izvadi.";

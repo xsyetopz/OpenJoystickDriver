@@ -899,7 +899,7 @@
 "profiles.recoveryBackupMessage" = "Um backup será criado antes que os dados danificados sejam removidos.";
 "profiles.damagedProfileMessage" = "Não foi possível ler este perfil guardado. Exclua-o para continuar usando os perfis válidos.";
 "profiles.damagedSelectionsMessage" = "Não foi possível ler a lista de perfis ativos. Reponha-a para continuar. Os seus perfis são mantidos.";
-"profiles.resetLibraryAction" = "Fazer backup e redefinir";
+"profiles.resetLibraryAction" = "Fazer cópia de segurança e repor";
 
 /* Controller session lifecycle */
 "controllers.suspended" = "Desligado";

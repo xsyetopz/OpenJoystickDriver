@@ -99,7 +99,7 @@
 "settings.currentStatus" = "Starea actuală";
 "settings.currentVersion" = "Versiunea actuală: %@";
 "settings.developerTools" = "Instrumente pentru dezvoltatori";
-"settings.developerToolsDescription" = "Află intrarea controlerului și USB instrumente de pachet.";
+"settings.developerToolsDescription" = "Află intrarea controllerului și USB instrumente de pachet.";
 "settings.discardTitle" = "Renunți la modificările nesalvate?";
 "settings.discardMessage" = "Modificările profilului nu au fost salvate.";
 "settings.discardProfileMessage" = "Modificările profilului tău nu au fost salvate.";
@@ -299,10 +299,10 @@
 "profiles.chordWindow" = "Fereastră de apăsare";
 "profiles.chords" = "Acorde";
 "profiles.controlNumber" = "Controlul %d";
-"profiles.creationValidation" = "Revizuiți numele profilului, identificatorii controlerului și ținta aplicației.";
+"profiles.creationValidation" = "Revizuiți numele profilului, identificatorii controllerului și ținta aplicației.";
 "profiles.deactivateController" = "Deactivă toate";
 "profiles.details" = "Detalii de profil";
-"profiles.notSupportedByController" = "Nu este acceptat de acest controler sau protocol.";
+"profiles.notSupportedByController" = "Nu este acceptat de acest controller sau protocol.";
 "profiles.doubleTap" = "Duală apăsare";
 "profiles.export" = "Profilul exportului";
 "profiles.hold" = "Stai puţin.";
@@ -510,19 +510,19 @@
 "developer.extraInputsDescription" = "Apasă un buton în plus la un moment dat, butonele detectate rămân în listă până când vei elimina captura.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Ascunse %d pachete inutile (înca incluse în export).";
-"developer.keepAliveNote" = "Traficul de rutină este ascuns, astfel încât activitatea controlerului rămâne vizibilă.";
+"developer.keepAliveNote" = "Traficul de rutină este ascuns, astfel încât activitatea controllerului rămâne vizibilă.";
 "developer.leftStick" = "Stick stânga";
 "developer.loadingControllers" = "Loading controller diagnostics…";
 "developer.noControllers" = "Nu există controlare conectate";
-"developer.noControllersDetail" = "Conectaţi un controler, apoi apăsaţi Refresh.";
-"developer.noDiagnosticRecipe" = "Modul de diagnosticare nu este disponibil pentru acest controler.";
+"developer.noControllersDetail" = "Conectaţi un controller, apoi apăsaţi Refresh.";
+"developer.noDiagnosticRecipe" = "Modul de diagnosticare nu este disponibil pentru acest controller.";
 "developer.noExtraInputs" = "Nu au fost detectate butoane suplimentare.";
 "developer.noPackets" = "Niciun pachet capturat";
 "developer.packetCapture" = "Captura de pachete brute";
 "developer.packetFilterActivity" = "Activitate";
 "developer.packetFilterAll" = "Toţi";
 "developer.packetColumns" = "Oră        Direcție   Octeți Date";
-"developer.packetSharingWarning" = "Conţinutul pachetului variază în funcţie de controler. Verificaţi fişierul înainte de a fi împărţit.";
+"developer.packetSharingWarning" = "Conţinutul pachetului variază în funcţie de controller. Verificaţi fişierul înainte de a fi împărţit.";
 "developer.rawUSB" = "Cârmă USB";
 "developer.ready" = "Pregătit";
 "developer.rightStick" = "Stick dreapta";
@@ -530,7 +530,7 @@
 "developer.startCapture" = "Începe să capturezi";
 "developer.starting" = "Se pornește…";
 "developer.stoppedPackets" = "Oprit · %d pachete";
-"developer.subtitle" = "Vedeți intrările de controler și USB pachete.";
+"developer.subtitle" = "Vedeți intrările de controller și USB pachete.";
 "developer.title" = "Dezvoltator";
 "developer.unavailable" = "Unelte de dezvoltare nu sunt disponibile";
 "developer.usbEndpoints" = "Endpoint-uri USB";
@@ -569,7 +569,7 @@
 "inputTest.leftX" = "X stânga";
 "inputTest.leftY" = "Y stânga";
 "inputTest.lighting" = "Lumină";
-"inputTest.lightingUnavailable" = "Controlul de iluminare nu este disponibil pentru acest controler.";
+"inputTest.lightingUnavailable" = "Controlul de iluminare nu este disponibil pentru acest controller.";
 "inputTest.live" = "Input activ";
 "inputTest.menu" = "Meniu";
 "inputTest.off" = "Dezactivat";
@@ -660,7 +660,7 @@
 "notifications.profileChanged" = "Profilul activ a fost schimbat";
 "notifications.profileDeactivatedBody" = "%@ nu mai este activă.";
 "notifications.profileSwitchedBody" = "%@ → %@";
-"notifications.testBody" = "OpenJoystickDriver poate să vă informeze despre activitatea controlerului și profilului.";
+"notifications.testBody" = "OpenJoystickDriver poate să vă informeze despre activitatea controllerului și profilului.";
 "notifications.testTitle" = "Notificările sunt gata .";
 "profiles.virtualOutput" = "Gamepad virtual";
 "profiles.virtualDisabled" = "Dezactivat";
@@ -744,7 +744,7 @@
 "motion.calibration.title" = "Calibrarea mișcării";
 
 /* Calibration guidance. Non-English translation pending. */
-"motion.calibration.controllerUnavailable" = "Reconectaţi controlerul, apoi actualizaţi starea calibrării.";
+"motion.calibration.controllerUnavailable" = "Reconectaţi controllerul, apoi actualizaţi starea calibrării.";
 "motion.calibration.motionUnavailable" = "Activați un profil de remapping pentru acest controller și verificați că mișcarea este disponibilă.";
 "motion.calibration.waiting" = "Aşteptam probe de mişcare, să ne reînnoim pentru a verifica din nou.";
 "motion.calibration.continues" = "Colectarea continuă când se închide fereastra.";
@@ -886,9 +886,9 @@
 "profiles.clearInputs" = "Curăţaţi toate intrările";
 "profiles.clearInputsMessage" = "Acest lucru elimină toate atribuțiile și procesarea intrărilor din acest profil.";
 "profiles.clearInputsTitle" = "Deschide toate intrările?";
-"profiles.emptyActivationMessage" = "Acest profil suprimează toate intrările controlerului.";
-"profiles.emptyActivationTitle" = "Activarea profilului fără intrare controler?";
-"profiles.emptyInputWarning" = "Acest profil suprimează toate intrările controlerului.";
+"profiles.emptyActivationMessage" = "Acest profil suprimează toate intrările controllerului.";
+"profiles.emptyActivationTitle" = "Activarea profilului fără intrare controller?";
+"profiles.emptyInputWarning" = "Acest profil suprimează toate intrările controllerului.";
 "profiles.restoreDefaultInput" = "Restaurați intrarea de parfait";
 "common.reset" = "Resetează";
 "profiles.useControllerDefaultColor" = "Folosește valoarea implicită a controllerului";

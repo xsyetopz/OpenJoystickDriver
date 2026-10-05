@@ -32,7 +32,7 @@
 "common.save" = "Sichern";
 "common.create" = "Erstellen";
 "common.delete" = "Löschen";
-"common.dismiss" = "Schließen";
+"common.dismiss" = "Schliessen";
 "common.reload" = "Erneut laden";
 "common.keepEditing" = "Weiter bearbeiten";
 "common.clear" = "Löschen";
@@ -119,7 +119,7 @@
 "settings.notificationsDenied" = "Mitteilungen für OpenJoystickDriver sind in den Systemeinstellungen deaktiviert.";
 "settings.openNotificationSettings" = "Mitteilungseinstellungen öffnen";
 "settings.openSystemSettings" = "Einstellungen öffnen";
-"settings.prereleaseUpdates" = "Vorabversionen einschließen";
+"settings.prereleaseUpdates" = "Vorabversionen einschliessen";
 "settings.profileActivatedShort" = "Aktiviert oder gewechselt";
 "settings.profileDeactivatedNotifications" = "Profil deaktiviert";
 "settings.profileDeactivatedShort" = "Deaktiviert";
@@ -363,7 +363,7 @@
 "error.reviewAssignments" = "Prüfe die Profilzuweisungen und versuche es erneut.";
 "error.profileLibrarySave" = "Die Profile konnten nicht gesichert werden.";
 "error.remappingUnavailable" = "Die Controller-Neubelegung ist vorübergehend nicht verfügbar.";
-"error.generic" = "OpenJoystickDriver konnte diese Aktion nicht abschließen.";
+"error.generic" = "OpenJoystickDriver konnte diese Aktion nicht abschliessen.";
 "error.notAvailable" = "OpenJoystickDriver ist derzeit nicht verfügbar.";
 "error.timeout" = "OpenJoystickDriver antwortet zu lange nicht.";
 "error.unexpected" = "OpenJoystickDriver hat ein unerwartetes Ergebnis zurückgegeben.";
@@ -399,7 +399,7 @@
 "mapping.touchpadClick" = "Touchpad-Klick";
 "mapping.touchContact" = "%@ Berührung";
 "mapping.touchGridCell" = "%@ Grille %d×%d Zelle %d,%d";
-"mapping.touchSwipe" = "%@ Schießen %@";
+"mapping.touchSwipe" = "%@ Schiessen %@";
 "mapping.touchSurfacePrimary" = "Hauptoberfläche";
 "mapping.touchSurfaceLeft" = "Linke Oberfläche";
 "mapping.touchSurfaceRight" = "Rechtsoberfläche";
@@ -510,7 +510,7 @@
 "developer.extraInputsDescription" = "Drücke jeweils eine Zusatztaste. Erkannte Tasten bleiben gelistet, bis du die Erfassung löschst.";
 "developer.hid" = "HID";
 "developer.hiddenIdlePackets" = "Verborgen %d Leerpacken (noch in der Ausfuhr enthalten).";
-"developer.keepAliveNote" = "Der routinemäßige Traffic ist verborgen, so dass die Aktivität des Controllers sichtbar bleibt.";
+"developer.keepAliveNote" = "Der routinemässige Traffic ist verborgen, so dass die Aktivität des Controllers sichtbar bleibt.";
 "developer.leftStick" = "Linker Stick";
 "developer.loadingControllers" = "Controllerdiagnose wird geladen…";
 "developer.noControllers" = "Keine Controller verbunden";
@@ -747,7 +747,7 @@
 "motion.calibration.controllerUnavailable" = "Verbinde den Controller erneut und aktualisiere den Kalibrierungsstatus.";
 "motion.calibration.motionUnavailable" = "Aktiviere ein Belegungsprofil für diesen Controller und prüfe, ob Bewegungsdaten verfügbar sind.";
 "motion.calibration.waiting" = "Warten auf Bewegungsdaten. Aktualisiere den Status, um erneut zu prüfen.";
-"motion.calibration.continues" = "Die Messung läuft nach dem Schließen dieses Fensters weiter. Wähle Pausieren, um sie anzuhalten.";
+"motion.calibration.continues" = "Die Messung läuft nach dem Schliessen dieses Fensters weiter. Wähle Pausieren, um sie anzuhalten.";
 
 /* Gyro authoring. Native translation review pending. */
 "profiles.gyro.output" = "Geistiges Ausgang";
@@ -792,11 +792,11 @@
 "profiles.stick.invertX" = "Verletzende horizontale Achse";
 "profiles.stick.invertY" = "Verteidigung der vertikalen Achse";
 "profiles.stick.mode" = "Stick-Modus";
-"profiles.stick.outerDeadzone" = "Außenzone";
+"profiles.stick.outerDeadzone" = "Aussenzone";
 "profiles.stick.pointerScale" = "Zeigerpunkte pro Grad";
 "profiles.stick.rotateOnly" = "Nur drehen";
 "profiles.stick.source" = "Strick";
-"profiles.stick.threshold" = "Schieß- und Schießschwelle";
+"profiles.stick.threshold" = "Schiess- und Schiessschwelle";
 "profiles.stick.title" = "Strick-Modus";
 /* Advanced stick, trigger, and lean authoring. Translation review pending. */
 "mapping.triggerStage" = "%@ Auslöser %@ Ziehen";
@@ -1485,7 +1485,7 @@
 "shortcuts.profile.name" = "Name";
 "shortcuts.profile.type" = "Neubelegungsprofil";
 "cli.explain.abstract" = "Erklärt einen Fehlercode: was er bedeutet und wie du ihn behebst.";
-"cli.explain.discussion" = "ojd explain listet aktive Codes auf; das Wiki listet stillgelegte auf. Es funktioniert offline, und die Groß- und Kleinschreibung des Codes spielt keine Rolle.";
+"cli.explain.discussion" = "ojd explain listet aktive Codes auf; das Wiki listet stillgelegte auf. Es funktioniert offline, und die Gross- und Kleinschreibung des Codes spielt keine Rolle.";
 "cli.explain.code" = "Der Fehlercode, zum Beispiel E2004.";
 "cli.explain.unknown" = "%@ ist kein aktiver Fehlercode. Prüfe die Schreibweise; die Wiki-Seite Error-Codes listet alle Codes auf.";
 "cli.explain.area" = "Bereich: %@";

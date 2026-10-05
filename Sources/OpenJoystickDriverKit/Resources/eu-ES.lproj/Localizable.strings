@@ -120,7 +120,7 @@
 "settings.openNotificationSettings" = "Ireki jakinarazpen-aukerak";
 "settings.openSystemSettings" = "Zabaldu zehaztasunak";
 "settings.prereleaseUpdates" = "Argitaratu aurreko eguneratzeak sartu.";
-"settings.profileActivatedShort" = "Piztuta edo piztuta";
+"settings.profileActivatedShort" = "Aktibatuta edo aldatuta";
 "settings.profileDeactivatedNotifications" = "Profila desaktibatua";
 "settings.profileDeactivatedShort" = "Desaktibatuta";
 "settings.profileNotifications" = "Profila aktibatu edo aldatu";

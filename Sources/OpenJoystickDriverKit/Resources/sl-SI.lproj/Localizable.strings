@@ -1494,7 +1494,7 @@
 "cli.explain.area.remapping" = "Ponovna preslikava";
 "cli.explain.exit_code" = "Izhodna koda: %@";
 "cli.explain.wire" = "Vrednost v protokolu: %@";
-"cli.error.stale_installation" = "Nameščena aplikacija OpenJoystickDriver.app je starejša od teh virov repozitorija. Zaženite »./Scripts/ojd build install-fast dev« ali nastavite OJD_RUN_REPOSITORY_CLI=1, da zaženete to gradnjo.";
+"cli.error.stale_installation" = "Nameščena aplikacija OpenJoystickDriver.app je starejša od teh virov repozitorija. Zaženite „./Scripts/ojd build install-fast dev“ ali nastavite OJD_RUN_REPOSITORY_CLI=1, da zaženete to gradnjo.";
 "cli.error.forwarder_allocation" = "Argumentov za nameščeni ojd ni bilo mogoče rezervirati. Znova zaženite ukaz.";
 "cli.error.forwarder_exec" = "Nameščenega ojd ni bilo mogoče zagnati: %@. Znova namestite OpenJoystickDriver.app.";
 "error.E2001" = "ojd je naletel na napako, ki je ne prepozna. Zaženite „ojd diagnose“ in težavo prijavite skupaj z izpisom.";

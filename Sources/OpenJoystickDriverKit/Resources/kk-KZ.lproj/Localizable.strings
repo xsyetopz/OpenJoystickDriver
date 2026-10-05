@@ -1491,7 +1491,7 @@
 "cli.explain.area" = "Аумақ: %@";
 "cli.explain.area.endpoint" = "Соңғы нүкте";
 "cli.explain.area.cli" = "Пәрмен жолы";
-"cli.explain.area.remapping" = "Қайта салыстыру";
+"cli.explain.area.remapping" = "Қайта тағайындау";
 "cli.explain.exit_code" = "Шығу коды: %@";
 "cli.explain.wire" = "Тасымалдау мәні: %@";
 "cli.error.stale_installation" = "Орнатылған OpenJoystickDriver.app осы репозиторий бастапқы кодтарынан ескі. Бұл құрастыруды іске қосу үшін «./Scripts/ojd build install-fast dev» пәрменін орындаңыз немесе OJD_RUN_REPOSITORY_CLI=1 орнатыңыз.";

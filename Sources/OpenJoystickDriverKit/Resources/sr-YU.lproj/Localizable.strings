@@ -803,10 +803,10 @@
 "mapping.motionLean" = "U pokretu je malo %@";
 "profiles.sectionMotion" = "Predlog";
 "profiles.stick.pointerArea" = "Pojavnik";
-"profiles.stick.pointerRing" = "Pointer prsten";
+"profiles.stick.pointerRing" = "Prsten pokazivača";
 "profiles.stick.scrollWheel" = "Roll kolesa";
 "profiles.stick.steering" = "Ulazni trkač";
-"profiles.stick.pointerRadius" = "Pointerski radius (točke)";
+"profiles.stick.pointerRadius" = "Poluprečnik pokazivača (tačke)";
 "profiles.stick.scrollDegrees" = "Rotacija po liniji svitanja (degradi)";
 "profiles.stick.scrollAxis" = "Ose za prokat";
 "profiles.stick.horizontal" = "Gorizontalni";

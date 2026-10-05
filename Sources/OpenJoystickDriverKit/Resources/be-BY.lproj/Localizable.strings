@@ -1489,7 +1489,7 @@
 "cli.explain.code" = "Код памылкі, напрыклад E2004.";
 "cli.explain.unknown" = "%@ не з’яўляецца актыўным кодам памылкі. Праверце напісанне; на старонцы віка Error-Codes ёсць усе коды.";
 "cli.explain.area" = "Вобласць: %@";
-"cli.explain.area.endpoint" = "Канчатковая кропка";
+"cli.explain.area.endpoint" = "Канцавы пункт";
 "cli.explain.area.cli" = "Камандны радок";
 "cli.explain.area.remapping" = "Пераназначэнне";
 "cli.explain.exit_code" = "Код выхаду: %@";

@@ -1494,7 +1494,7 @@
 "cli.explain.area.remapping" = "ዳግም ካርታ";
 "cli.explain.exit_code" = "የመውጫ ኮድ፦ %@";
 "cli.explain.wire" = "የሽቦ እሴት፦ %@";
-"cli.error.stale_installation" = "የተጫነው OpenJoystickDriver.app ከእነዚህ የማከማቻ ምንጮች የቆየ ነው። './Scripts/ojd build install-fast dev' ያሂዱ፣ ወይም ይህን ግንባታ ለማስኬድ OJD_RUN_REPOSITORY_CLI=1 ያዘጋጁ።";
+"cli.error.stale_installation" = "የተጫነው OpenJoystickDriver.app ከእነዚህ የማከማቻ ምንጮች የቆየ ነው። «./Scripts/ojd build install-fast dev» ያሂዱ፣ ወይም ይህን ግንባታ ለማስኬድ OJD_RUN_REPOSITORY_CLI=1 ያዘጋጁ።";
 "cli.error.forwarder_allocation" = "ለተጫነው ojd ነጋሪ እሴቶችን መመደብ አልተቻለም። ትዕዛዙን እንደገና ይሞክሩ።";
 "cli.error.forwarder_exec" = "የተጫነውን ojd ማስኬድ አልተቻለም፦ %@። OpenJoystickDriver.app ን እንደገና ይጫኑ።";
 "error.E2001" = "ojd የማያውቀው ስህተት አጋጠመው። «ojd diagnose» ያሂዱና ችግሩን ከውጤቱ ጋር ያሳውቁ።";
