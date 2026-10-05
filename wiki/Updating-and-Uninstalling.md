@@ -2,6 +2,8 @@
 
 Check for a new OpenJoystickDriver version, and remove the app and its data when you no longer need them.
 
+> **Note:** This page applies to OpenJoystickDriver 0.5.0-beta.5 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
+
 ## Contents
 
 - [Update](#update)

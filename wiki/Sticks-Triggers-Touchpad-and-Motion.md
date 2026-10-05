@@ -2,6 +2,8 @@
 
 Analog settings change how a stick, a trigger, a touch surface, or a motion sensor produces output.
 
+> **Note:** This page applies to OpenJoystickDriver 0.5.0-beta.5 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
+
 ## Contents
 
 - [Before You Begin](#before-you-begin)

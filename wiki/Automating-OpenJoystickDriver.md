@@ -2,6 +2,8 @@
 
 Use `ojd` in scripts and other programs to read controller state, change profiles, and drive a virtual gamepad.
 
+> **Note:** This page applies to OpenJoystickDriver 0.5.0-beta.5 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
+
 ## Choose the Interface
 
 `ojd` is the interface for scripts and other programs. Run it as a subprocess, read its `--json` output, and check its exit code. For the global options, output rules, and exit codes, see [Command line](Command-Line.md).

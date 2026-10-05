@@ -2,6 +2,8 @@
 
 This page explains how to add a controller that OpenJoystickDriver does not know, or change how it drives a known one, with your own controller record.
 
+> **Note:** This page applies to OpenJoystickDriver 0.5.0-beta.5 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
+
 ## Contents
 
 - [How Records Work](#how-records-work)

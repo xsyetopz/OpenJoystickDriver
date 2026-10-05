@@ -2,6 +2,8 @@
 
 This page explains what to include in a bug report so the maintainer can reproduce the problem.
 
+> **Note:** This page applies to OpenJoystickDriver 0.5.0-beta.5 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
+
 Report issues in the [issue tracker](https://github.com/xsyetopz/OpenJoystickDriver/issues).
 
 ## What To Include

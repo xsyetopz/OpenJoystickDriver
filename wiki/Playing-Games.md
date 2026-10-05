@@ -2,6 +2,8 @@
 
 This page explains how games and apps see your controller through OpenJoystickDriver (OJD), which games and apps work, and what to expect from rumble.
 
+> **Note:** This page applies to OpenJoystickDriver 0.5.0-beta.5 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
+
 ## Contents
 
 - [How Games See Your Controller](#how-games-see-your-controller)

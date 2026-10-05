@@ -2,6 +2,8 @@
 
 Find solutions for common OpenJoystickDriver (OJD) problems: a controller that is not detected, a game that does not see the controller, and crashes.
 
+> **Note:** This page applies to OpenJoystickDriver 0.5.0-beta.5 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
+
 ## Contents
 
 - [Controller Is Not Detected](#controller-is-not-detected)

@@ -2,6 +2,8 @@
 
 Learn which macOS permissions OpenJoystickDriver needs and how it protects your Mac.
 
+> **Note:** This page applies to OpenJoystickDriver 0.5.0-beta.5 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
+
 ## Contents
 
 - [Security Model](#security-model)

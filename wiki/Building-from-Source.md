@@ -2,6 +2,8 @@
 
 Build OpenJoystickDriver yourself when you need a fix before the next tester build, and see what each kind of build can do.
 
+> **Note:** This page applies to OpenJoystickDriver 0.5.0-beta.5 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
+
 ## Build OpenJoystickDriver
 
 This section explains when to build OpenJoystickDriver (OJD) from source and how to run a signed build.
