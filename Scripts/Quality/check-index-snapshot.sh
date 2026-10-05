@@ -21,7 +21,7 @@ snapshot="$({
   printf '%s\n' 'pre-commit index snapshot'
 } | GIT_AUTHOR_NAME=OpenJoystickDriver GIT_AUTHOR_EMAIL=hooks@localhost \
   GIT_COMMITTER_NAME=OpenJoystickDriver GIT_COMMITTER_EMAIL=hooks@localhost \
-  git commit-tree "$tree" "${parent[@]}")"
+  git commit-tree "$tree" ${parent[@]+"${parent[@]}"})"
 
 git worktree add --detach --quiet "$temporary_worktree" "$snapshot"
 if [[ -d "$repository_root/.build/schema-validator" ]]; then

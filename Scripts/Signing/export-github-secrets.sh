@@ -150,7 +150,7 @@ fi
 for file in "$SCRIPT_DIR"/values/*.txt; do
   name="$(basename "$file" .txt)"
   echo "Setting $name"
-  gh secret set "$name" "${repo_args[@]}" < "$file"
+  gh secret set "$name" ${repo_args[@]+"${repo_args[@]}"} < "$file"
 done
 SH
 chmod 700 "$out_dir/apply-github-secrets.sh"
@@ -187,5 +187,5 @@ echo "Full command also written to:"
 echo "  $display_out_dir/README.txt"
 
 if [[ "$apply" -eq 1 ]]; then
-  "$out_dir/apply-github-secrets.sh" "${repo_arg[@]}"
+  "$out_dir/apply-github-secrets.sh" ${repo_arg[@]+"${repo_arg[@]}"}
 fi
