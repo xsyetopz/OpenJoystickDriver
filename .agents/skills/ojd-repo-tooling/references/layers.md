@@ -6,7 +6,7 @@
 - [Adding an ojd route](#adding-an-ojd-route)
 - [Script tests](#script-tests)
 
-## Which layer owns it
+## Which Layer Owns It
 
 **Definition.**
 
@@ -27,7 +27,7 @@
 
 **Verify.** `./Scripts/ojd --help` lists the route, and `just --list` shows the recipe, if one was added.
 
-## Adding an ojd route
+## Adding an ojd Route
 
 **Definition.** A route is a `case` in `dispatch()` that validates the arity of its arguments with `require(...)`, then forwards them with `exec_target(<relative path>, [args], python=?, env=?)`. An unknown subcommand calls `die("Unknown: ... (expected: ...)")`.
 
@@ -54,7 +54,7 @@
 
 **Verify.** `./Scripts/ojd check foo` runs the target, and an unknown subcommand exits non-zero. The dispatcher test passes.
 
-## Script tests
+## Script Tests
 
 **Definition.** `unittest.TestCase` classes live in `Tests/RepositoryScripts/test_<script>.py` and import the scripts as the `Scripts.<Group>.<module>` package. Fixtures go in `Tests/RepositoryScripts/fixtures/`. Tests that write files use a `tempfile.TemporaryDirectory` copy, never the working tree.
 

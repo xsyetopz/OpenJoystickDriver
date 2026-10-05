@@ -5,7 +5,7 @@
 - [Signing diagnosis](#signing-diagnosis)
 - [Entitlement shape](#entitlement-shape)
 
-## Signing diagnosis
+## Signing Diagnosis
 
 **Definition.** The diagnosis runs in this order, and stops at the first failing step:
 
@@ -33,9 +33,9 @@
 
 **Verify.** `./Scripts/ojd signing doctor` passes, and `./Scripts/ojd check driverkit` passes.
 
-## Entitlement shape
+## Entitlement Shape
 
-**Definition.** The canonical shape is in `contributing/development/signing.md`, under "Entitlement Ownership":
+**Definition.** The canonical shape is in `docs/development/signing.md`, under "Entitlement Ownership":
 
 - The host app has `system-extension.install`, `driverkit.userclient-access` containing exactly `com.openjoystickdriver.VirtualHIDDevice`, and `hid.virtual.device`. It never has `allow-any-userclient-access`. A development host profile without a grant for that bundle ID builds the app without `userclient-access` and without the DEXT (`IOHIDUserDevice` fallback). Release still requires the exact grant.
 - The single DEXT, `com.openjoystickdriver.VirtualHIDDevice`, has `driverkit`, `driverkit.family.hid.device`, `driverkit.transport.hid`, and `driverkit.family.hid.eventservice`. It has no virtual-HID (`hid.virtual.device`) entitlement.

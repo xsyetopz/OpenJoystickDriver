@@ -45,7 +45,8 @@ Commands:
 
   env audit                   Validate the single-file env contract without printing values
   docs export-external-issues Refresh archived GitHub issue and pull-request evidence
-  docs build-wiki <dir>       Convert docs/ into GitHub wiki pages in an empty directory
+  docs build-wiki <dir>       Convert wiki/ into GitHub wiki pages in an empty directory
+  docs publish-wiki [--dry-run] Publish wiki/ to the GitHub wiki (--dry-run shows the diff only)
   github ensure-auth          Install and authenticate GitHub CLI when needed
   signing install-profiles    Copy profiles from ~/Documents/Profiles into MobileDevice
   signing configure            Generate .env.dev + .env.release from Keychain + profiles
@@ -232,9 +233,12 @@ def dispatch(argv: list[str]) -> int:
             if sub == "build-wiki":
                 require("docs build-wiki", tail, count=1)
                 exec_target("Documentation/wiki/build.py", tail, python=True)
+            if sub == "publish-wiki":
+                exec_target("Documentation/wiki/publish.py", tail, python=True)
             if rest != ["export-external-issues"]:
                 die(
-                    f"Unknown: docs {sub} (expected: export-external-issues | build-wiki)"
+                    f"Unknown: docs {sub} "
+                    "(expected: export-external-issues | build-wiki | publish-wiki)"
                 )
             exec_target("Documentation/issues/export.py", [], python=True)
         case "github":

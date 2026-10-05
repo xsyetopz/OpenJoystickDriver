@@ -6,10 +6,7 @@
 	"$defs": {
 		"accessDisable": {
 			"type": "object",
-			"required": [
-				"enabled",
-				"socketPath"
-			],
+			"required": ["enabled", "socketPath"],
 			"additionalProperties": false,
 			"properties": {
 				"enabled": {
@@ -22,10 +19,7 @@
 		},
 		"accessEnable": {
 			"type": "object",
-			"required": [
-				"enabled",
-				"socketPath"
-			],
+			"required": ["enabled", "socketPath"],
 			"additionalProperties": false,
 			"properties": {
 				"enabled": {
@@ -41,10 +35,7 @@
 		},
 		"accessList": {
 			"type": "object",
-			"required": [
-				"grants",
-				"refused"
-			],
+			"required": ["grants", "refused"],
 			"additionalProperties": false,
 			"properties": {
 				"grants": {
@@ -63,10 +54,7 @@
 		},
 		"accessRevoke": {
 			"type": "object",
-			"required": [
-				"closedConnections",
-				"id"
-			],
+			"required": ["closedConnections", "id"],
 			"additionalProperties": false,
 			"properties": {
 				"closedConnections": {
@@ -83,24 +71,14 @@
 		},
 		"accessStatus": {
 			"type": "object",
-			"required": [
-				"connections",
-				"enabled",
-				"grants",
-				"refused",
-				"socketPath"
-			],
+			"required": ["connections", "enabled", "grants", "refused", "socketPath"],
 			"additionalProperties": false,
 			"properties": {
 				"connections": {
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": [
-							"id",
-							"identifier",
-							"scopes"
-						],
+						"required": ["id", "identifier", "scopes"],
 						"additionalProperties": false,
 						"properties": {
 							"id": {
@@ -112,10 +90,7 @@
 							"scopes": {
 								"type": "array",
 								"items": {
-									"enum": [
-										"read",
-										"control"
-									]
+									"enum": ["read", "control"]
 								}
 							}
 						}
@@ -143,12 +118,7 @@
 		},
 		"bindingClear": {
 			"type": "object",
-			"required": [
-				"all",
-				"dryRun",
-				"profile",
-				"removed"
-			],
+			"required": ["all", "dryRun", "profile", "removed"],
 			"additionalProperties": false,
 			"properties": {
 				"all": {
@@ -170,10 +140,7 @@
 		},
 		"bindingList": {
 			"type": "object",
-			"required": [
-				"bindings",
-				"profile"
-			],
+			"required": ["bindings", "profile"],
 			"additionalProperties": false,
 			"properties": {
 				"bindings": {
@@ -189,11 +156,7 @@
 		},
 		"bindingSet": {
 			"type": "object",
-			"required": [
-				"binding",
-				"profile",
-				"replaced"
-			],
+			"required": ["binding", "profile", "replaced"],
 			"additionalProperties": false,
 			"properties": {
 				"binding": {
@@ -228,11 +191,7 @@
 				},
 				"offsetDegreesPerSecond": {
 					"type": "object",
-					"required": [
-						"x",
-						"y",
-						"z"
-					],
+					"required": ["x", "y", "z"],
 					"additionalProperties": false,
 					"properties": {
 						"x": {
@@ -250,19 +209,11 @@
 		},
 		"controllerCapture": {
 			"type": "object",
-			"required": [
-				"direction",
-				"hex",
-				"length",
-				"timestamp"
-			],
+			"required": ["direction", "hex", "length", "timestamp"],
 			"additionalProperties": false,
 			"properties": {
 				"direction": {
-					"enum": [
-						"rx",
-						"tx"
-					]
+					"enum": ["rx", "tx"]
 				},
 				"hex": {
 					"type": "string",
@@ -285,9 +236,7 @@
 		},
 		"controllerList": {
 			"type": "object",
-			"required": [
-				"controllers"
-			],
+			"required": ["controllers"],
 			"additionalProperties": false,
 			"properties": {
 				"controllers": {
@@ -331,10 +280,7 @@
 								"$ref": "report.schema.json#/$defs/controller/properties/protocolBinding"
 							},
 							"session": {
-								"enum": [
-									"active",
-									"suspended"
-								]
+								"enum": ["active", "suspended"]
 							},
 							"unit": {
 								"type": "string",
@@ -365,9 +311,7 @@
 		},
 		"controllerShow": {
 			"type": "object",
-			"required": [
-				"controller"
-			],
+			"required": ["controller"],
 			"additionalProperties": false,
 			"properties": {
 				"controller": {
@@ -446,10 +390,7 @@
 						},
 						"inputHealth": {
 							"type": "object",
-							"required": [
-								"recoveryCount",
-								"state"
-							],
+							"required": ["recoveryCount", "state"],
 							"additionalProperties": false,
 							"properties": {
 								"failureReason": {
@@ -478,11 +419,7 @@
 							"type": "array",
 							"items": {
 								"type": "object",
-								"required": [
-									"command",
-									"expected",
-									"id"
-								],
+								"required": ["command", "expected", "id"],
 								"additionalProperties": false,
 								"properties": {
 									"command": {
@@ -508,10 +445,7 @@
 							"additionalProperties": false,
 							"properties": {
 								"discoverySource": {
-									"enum": [
-										"hid",
-										"raw-usb"
-									]
+									"enum": ["hid", "raw-usb"]
 								},
 								"duplicateExposureRisk": {
 									"enum": [
@@ -559,9 +493,7 @@
 						"publication": {
 							"description": "Whether a virtual device publishes the controller.",
 							"type": "object",
-							"required": [
-								"state"
-							],
+							"required": ["state"],
 							"additionalProperties": false,
 							"properties": {
 								"lastAttemptedNanoseconds": {
@@ -578,17 +510,10 @@
 									"type": "string"
 								},
 								"state": {
-									"enum": [
-										"published",
-										"not-published",
-										"failed"
-									]
+									"enum": ["published", "not-published", "failed"]
 								},
 								"target": {
-									"enum": [
-										"hid-xbox-one-s-bt",
-										"hid-generic"
-									]
+									"enum": ["hid-xbox-one-s-bt", "hid-generic"]
 								}
 							}
 						},
@@ -601,27 +526,19 @@
 						"record": {
 							"description": "The effective record for the controller's model. Absent when no record matches.",
 							"type": "object",
-							"required": [
-								"layer"
-							],
+							"required": ["layer"],
 							"additionalProperties": false,
 							"properties": {
 								"file": {
 									"type": "string"
 								},
 								"layer": {
-									"enum": [
-										"bundled",
-										"user"
-									]
+									"enum": ["bundled", "user"]
 								}
 							}
 						},
 						"session": {
-							"enum": [
-								"active",
-								"suspended"
-							]
+							"enum": ["active", "suspended"]
 						},
 						"startupCommandStatus": {
 							"type": "string"
@@ -638,29 +555,18 @@
 						},
 						"virtual": {
 							"type": "object",
-							"required": [
-								"unavailable"
-							],
+							"required": ["unavailable"],
 							"additionalProperties": false,
 							"properties": {
 								"override": {
-									"enum": [
-										"hid-xbox-one-s-bt",
-										"hid-generic"
-									]
+									"enum": ["hid-xbox-one-s-bt", "hid-generic"]
 								},
 								"overrideScope": {
-									"enum": [
-										"unit",
-										"model"
-									],
+									"enum": ["unit", "model"],
 									"description": "Whether override is the controller's own choice or its model's."
 								},
 								"profile": {
-									"enum": [
-										"hid-xbox-one-s-bt",
-										"hid-generic"
-									]
+									"enum": ["hid-xbox-one-s-bt", "hid-generic"]
 								},
 								"source": {
 									"type": "string"
@@ -685,9 +591,7 @@
 			"oneOf": [
 				{
 					"type": "object",
-					"required": [
-						"control"
-					],
+					"required": ["control"],
 					"additionalProperties": false,
 					"properties": {
 						"control": {
@@ -712,9 +616,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"input"
-					],
+					"required": ["input"],
 					"additionalProperties": false,
 					"properties": {
 						"input": {
@@ -734,9 +636,7 @@
 		},
 		"diagnose": {
 			"type": "object",
-			"required": [
-				"checks"
-			],
+			"required": ["checks"],
 			"additionalProperties": false,
 			"properties": {
 				"bundle": {
@@ -746,11 +646,7 @@
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": [
-							"detail",
-							"id",
-							"status"
-						],
+						"required": ["detail", "id", "status"],
 						"additionalProperties": false,
 						"properties": {
 							"detail": {
@@ -760,12 +656,7 @@
 								"type": "string"
 							},
 							"status": {
-								"enum": [
-									"pass",
-									"warn",
-									"fail",
-									"skip"
-								]
+								"enum": ["pass", "warn", "fail", "skip"]
 							}
 						}
 					}
@@ -780,38 +671,23 @@
 		},
 		"extensionStatus": {
 			"type": "object",
-			"required": [
-				"bundle",
-				"registration"
-			],
+			"required": ["bundle", "registration"],
 			"additionalProperties": false,
 			"properties": {
 				"bundle": {
-					"enum": [
-						"present",
-						"missing",
-						"invalid"
-					]
+					"enum": ["present", "missing", "invalid"]
 				},
 				"detail": {
 					"type": "string"
 				},
 				"registration": {
-					"enum": [
-						"active",
-						"inactive",
-						"absent",
-						"unavailable"
-					]
+					"enum": ["active", "inactive", "absent", "unavailable"]
 				}
 			}
 		},
 		"logExport": {
 			"type": "object",
-			"required": [
-				"lines",
-				"path"
-			],
+			"required": ["lines", "path"],
 			"additionalProperties": false,
 			"properties": {
 				"lines": {
@@ -826,9 +702,7 @@
 		},
 		"logPath": {
 			"type": "object",
-			"required": [
-				"path"
-			],
+			"required": ["path"],
 			"additionalProperties": false,
 			"properties": {
 				"path": {
@@ -841,9 +715,7 @@
 			"oneOf": [
 				{
 					"type": "object",
-					"required": [
-						"logs"
-					],
+					"required": ["logs"],
 					"additionalProperties": false,
 					"properties": {
 						"logs": {
@@ -877,10 +749,7 @@
 										"type": "string"
 									},
 									"stream": {
-										"enum": [
-											"standardOutput",
-											"standardError"
-										]
+										"enum": ["standardOutput", "standardError"]
 									},
 									"truncated": {
 										"type": "boolean"
@@ -892,20 +761,14 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"line",
-						"stream"
-					],
+					"required": ["line", "stream"],
 					"additionalProperties": false,
 					"properties": {
 						"line": {
 							"type": "string"
 						},
 						"stream": {
-							"enum": [
-								"standardOutput",
-								"standardError"
-							]
+							"enum": ["standardOutput", "standardError"]
 						}
 					}
 				}
@@ -928,10 +791,7 @@
 		},
 		"profileDelete": {
 			"type": "object",
-			"required": [
-				"deleted",
-				"dryRun"
-			],
+			"required": ["deleted", "dryRun"],
 			"additionalProperties": false,
 			"properties": {
 				"deleted": {
@@ -947,10 +807,7 @@
 		},
 		"profileGet": {
 			"type": "object",
-			"required": [
-				"key",
-				"value"
-			],
+			"required": ["key", "value"],
 			"additionalProperties": false,
 			"properties": {
 				"key": {
@@ -959,22 +816,13 @@
 				},
 				"value": {
 					"description": "The value at key in the profile file, which profile.schema.json describes.",
-					"type": [
-						"array",
-						"boolean",
-						"number",
-						"object",
-						"string"
-					]
+					"type": ["array", "boolean", "number", "object", "string"]
 				}
 			}
 		},
 		"profileImport": {
 			"type": "object",
-			"required": [
-				"profile",
-				"replaced"
-			],
+			"required": ["profile", "replaced"],
 			"additionalProperties": false,
 			"properties": {
 				"profile": {
@@ -987,10 +835,7 @@
 		},
 		"profileList": {
 			"type": "object",
-			"required": [
-				"issues",
-				"profiles"
-			],
+			"required": ["issues", "profiles"],
 			"additionalProperties": false,
 			"properties": {
 				"issues": {
@@ -1009,10 +854,7 @@
 		},
 		"profileRecover": {
 			"type": "object",
-			"required": [
-				"dryRun",
-				"recovered"
-			],
+			"required": ["dryRun", "recovered"],
 			"additionalProperties": false,
 			"properties": {
 				"dryRun": {
@@ -1034,10 +876,7 @@
 		},
 		"profileShow": {
 			"type": "object",
-			"required": [
-				"document",
-				"profile"
-			],
+			"required": ["document", "profile"],
 			"additionalProperties": false,
 			"properties": {
 				"document": {
@@ -1050,9 +889,7 @@
 		},
 		"profileValidate": {
 			"type": "object",
-			"required": [
-				"valid"
-			],
+			"required": ["valid"],
 			"additionalProperties": false,
 			"description": "A valid profile has every property except problem. An invalid profile has only valid and problem.",
 			"properties": {
@@ -1086,16 +923,9 @@
 							"const": true
 						}
 					},
-					"required": [
-						"controller",
-						"id",
-						"name",
-						"scope"
-					],
+					"required": ["controller", "id", "name", "scope"],
 					"not": {
-						"required": [
-							"problem"
-						]
+						"required": ["problem"]
 					}
 				},
 				{
@@ -1104,30 +934,20 @@
 							"const": false
 						}
 					},
-					"required": [
-						"problem"
-					],
+					"required": ["problem"],
 					"not": {
 						"anyOf": [
 							{
-								"required": [
-									"controller"
-								]
+								"required": ["controller"]
 							},
 							{
-								"required": [
-									"id"
-								]
+								"required": ["id"]
 							},
 							{
-								"required": [
-									"name"
-								]
+								"required": ["name"]
 							},
 							{
-								"required": [
-									"scope"
-								]
+								"required": ["scope"]
 							}
 						]
 					}
@@ -1155,11 +975,7 @@
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": [
-							"byte",
-							"maximum",
-							"minimum"
-						],
+						"required": ["byte", "maximum", "minimum"],
 						"additionalProperties": false,
 						"properties": {
 							"byte": {
@@ -1181,10 +997,7 @@
 					}
 				},
 				"family": {
-					"enum": [
-						"hid.descriptor",
-						"hid.report-layout"
-					]
+					"enum": ["hid.descriptor", "hid.report-layout"]
 				},
 				"identity": {
 					"type": "string",
@@ -1194,10 +1007,7 @@
 					"type": "string"
 				},
 				"operation": {
-					"enum": [
-						"add",
-						"patch"
-					]
+					"enum": ["add", "patch"]
 				},
 				"record": {
 					"description": "The drafted controller record, as 'ojd record install' reads it.",
@@ -1205,9 +1015,7 @@
 				},
 				"report": {
 					"type": "object",
-					"required": [
-						"length"
-					],
+					"required": ["length"],
 					"additionalProperties": false,
 					"properties": {
 						"id": {
@@ -1226,11 +1034,7 @@
 		},
 		"recordInstall": {
 			"type": "object",
-			"required": [
-				"installed",
-				"record",
-				"replaced"
-			],
+			"required": ["installed", "record", "replaced"],
 			"additionalProperties": false,
 			"properties": {
 				"installed": {
@@ -1246,9 +1050,7 @@
 		},
 		"recordList": {
 			"type": "object",
-			"required": [
-				"records"
-			],
+			"required": ["records"],
 			"additionalProperties": false,
 			"properties": {
 				"records": {
@@ -1275,10 +1077,7 @@
 								"pattern": "^[0-9A-F]{4}:[0-9A-F]{4}$"
 							},
 							"layer": {
-								"enum": [
-									"bundled",
-									"user"
-								]
+								"enum": ["bundled", "user"]
 							},
 							"productID": {
 								"type": "integer",
@@ -1303,10 +1102,7 @@
 		},
 		"recordRemove": {
 			"type": "object",
-			"required": [
-				"dryRun",
-				"removed"
-			],
+			"required": ["dryRun", "removed"],
 			"additionalProperties": false,
 			"properties": {
 				"dryRun": {
@@ -1335,10 +1131,7 @@
 				"fields": {
 					"type": "object",
 					"additionalProperties": {
-						"enum": [
-							"bundled",
-							"user"
-						]
+						"enum": ["bundled", "user"]
 					}
 				},
 				"file": {
@@ -1349,26 +1142,17 @@
 					"pattern": "^[0-9A-F]{4}:[0-9A-F]{4}$"
 				},
 				"layer": {
-					"enum": [
-						"bundled",
-						"user"
-					]
+					"enum": ["bundled", "user"]
 				},
 				"record": {
 					"description": "The merged controller record.",
 					"$ref": "controller.schema.json"
 				},
 				"transport": {
-					"enum": [
-						"hid",
-						"usb"
-					]
+					"enum": ["hid", "usb"]
 				},
 				"usbExtension": {
-					"enum": [
-						"claims",
-						"does-not-claim"
-					]
+					"enum": ["claims", "does-not-claim"]
 				}
 			}
 		},
@@ -1389,20 +1173,14 @@
 		},
 		"settingList": {
 			"type": "object",
-			"required": [
-				"settings"
-			],
+			"required": ["settings"],
 			"additionalProperties": false,
 			"properties": {
 				"settings": {
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": [
-							"description",
-							"key",
-							"value"
-						],
+						"required": ["description", "key", "value"],
 						"additionalProperties": false,
 						"properties": {
 							"description": {
@@ -1424,14 +1202,7 @@
 		},
 		"sharedAccessGrant": {
 			"type": "object",
-			"required": [
-				"grantedAt",
-				"id",
-				"identifier",
-				"kind",
-				"path",
-				"scopes"
-			],
+			"required": ["grantedAt", "id", "identifier", "kind", "path", "scopes"],
 			"additionalProperties": false,
 			"properties": {
 				"grantedAt": {
@@ -1444,10 +1215,7 @@
 					"type": "string"
 				},
 				"kind": {
-					"enum": [
-						"team",
-						"apple"
-					]
+					"enum": ["team", "apple"]
 				},
 				"path": {
 					"type": "string"
@@ -1455,10 +1223,7 @@
 				"scopes": {
 					"type": "array",
 					"items": {
-						"enum": [
-							"read",
-							"control"
-						]
+						"enum": ["read", "control"]
 					}
 				},
 				"teamIdentifier": {
@@ -1468,14 +1233,7 @@
 		},
 		"sharedAccessRefusedClient": {
 			"type": "object",
-			"required": [
-				"id",
-				"identifier",
-				"kind",
-				"reason",
-				"refusedAt",
-				"scopes"
-			],
+			"required": ["id", "identifier", "kind", "reason", "refusedAt", "scopes"],
 			"additionalProperties": false,
 			"properties": {
 				"id": {
@@ -1485,11 +1243,7 @@
 					"type": "string"
 				},
 				"kind": {
-					"enum": [
-						"team",
-						"apple",
-						"ad-hoc"
-					]
+					"enum": ["team", "apple", "ad-hoc"]
 				},
 				"path": {
 					"type": "string"
@@ -1503,10 +1257,7 @@
 				"scopes": {
 					"type": "array",
 					"items": {
-						"enum": [
-							"read",
-							"control"
-						]
+						"enum": ["read", "control"]
 					}
 				},
 				"teamIdentifier": {
@@ -1516,12 +1267,7 @@
 		},
 		"sharedBindingSummary": {
 			"type": "object",
-			"required": [
-				"behavior",
-				"id",
-				"source",
-				"target"
-			],
+			"required": ["behavior", "id", "source", "target"],
 			"additionalProperties": false,
 			"properties": {
 				"behavior": {
@@ -1549,10 +1295,7 @@
 		},
 		"sharedControllerOutput": {
 			"type": "object",
-			"required": [
-				"controller",
-				"results"
-			],
+			"required": ["controller", "results"],
 			"additionalProperties": false,
 			"properties": {
 				"controller": {
@@ -1562,11 +1305,7 @@
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": [
-							"command",
-							"droppedRumbleChannels",
-							"outcome"
-						],
+						"required": ["command", "droppedRumbleChannels", "outcome"],
 						"additionalProperties": false,
 						"properties": {
 							"command": {
@@ -1596,11 +1335,7 @@
 		},
 		"sharedControllerSession": {
 			"type": "object",
-			"required": [
-				"changed",
-				"controller",
-				"session"
-			],
+			"required": ["changed", "controller", "session"],
 			"additionalProperties": false,
 			"properties": {
 				"changed": {
@@ -1610,11 +1345,7 @@
 					"type": "string"
 				},
 				"session": {
-					"enum": [
-						"active",
-						"suspended",
-						"disconnected"
-					]
+					"enum": ["active", "suspended", "disconnected"]
 				}
 			}
 		},
@@ -1673,23 +1404,14 @@
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": [
-							"contacts",
-							"surface",
-							"timestamp"
-						],
+						"required": ["contacts", "surface", "timestamp"],
 						"additionalProperties": false,
 						"properties": {
 							"contacts": {
 								"type": "array",
 								"items": {
 									"type": "object",
-									"required": [
-										"isActive",
-										"slot",
-										"x",
-										"y"
-									],
+									"required": ["isActive", "slot", "x", "y"],
 									"additionalProperties": false,
 									"properties": {
 										"isActive": {
@@ -1719,17 +1441,11 @@
 								}
 							},
 							"surface": {
-								"enum": [
-									"primary",
-									"left",
-									"right"
-								]
+								"enum": ["primary", "left", "right"]
 							},
 							"timestamp": {
 								"type": "object",
-								"required": [
-									"nanoseconds"
-								],
+								"required": ["nanoseconds"],
 								"additionalProperties": false,
 								"properties": {
 									"nanoseconds": {
@@ -1748,11 +1464,7 @@
 			"oneOf": [
 				{
 					"type": "object",
-					"required": [
-						"controller",
-						"id",
-						"type"
-					],
+					"required": ["controller", "id", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"type": {
@@ -1769,11 +1481,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"id",
-						"input",
-						"type"
-					],
+					"required": ["id", "input", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"type": {
@@ -1794,10 +1502,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"id",
-						"type"
-					],
+					"required": ["id", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"type": {
@@ -1813,11 +1518,7 @@
 		},
 		"sharedDevice": {
 			"type": "object",
-			"required": [
-				"connection",
-				"productID",
-				"vendorID"
-			],
+			"required": ["connection", "productID", "vendorID"],
 			"additionalProperties": false,
 			"properties": {
 				"connection": {
@@ -1837,37 +1538,21 @@
 		},
 		"sharedExtensionState": {
 			"type": "object",
-			"required": [
-				"state"
-			],
+			"required": ["state"],
 			"additionalProperties": false,
 			"properties": {
 				"state": {
-					"enum": [
-						"active",
-						"inactive",
-						"awaiting-approval"
-					]
+					"enum": ["active", "inactive", "awaiting-approval"]
 				}
 			}
 		},
 		"sharedJoyConPair": {
 			"type": "object",
-			"required": [
-				"gyro",
-				"left",
-				"profile",
-				"right",
-				"session"
-			],
+			"required": ["gyro", "left", "profile", "right", "session"],
 			"additionalProperties": false,
 			"properties": {
 				"gyro": {
-					"enum": [
-						"disabled",
-						"left",
-						"right"
-					]
+					"enum": ["disabled", "left", "right"]
 				},
 				"left": {
 					"type": "string"
@@ -1886,21 +1571,14 @@
 		},
 		"sharedPermissions": {
 			"type": "object",
-			"required": [
-				"permissions"
-			],
+			"required": ["permissions"],
 			"additionalProperties": false,
 			"properties": {
 				"permissions": {
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": [
-							"id",
-							"name",
-							"purpose",
-							"state"
-						],
+						"required": ["id", "name", "purpose", "state"],
 						"additionalProperties": false,
 						"properties": {
 							"id": {
@@ -1917,11 +1595,7 @@
 								"type": "string"
 							},
 							"state": {
-								"enum": [
-									"granted",
-									"denied",
-									"unknown"
-								]
+								"enum": ["granted", "denied", "unknown"]
 							}
 						}
 					}
@@ -1930,11 +1604,7 @@
 		},
 		"sharedProfileIssue": {
 			"type": "object",
-			"required": [
-				"id",
-				"kind",
-				"message"
-			],
+			"required": ["id", "kind", "message"],
 			"additionalProperties": false,
 			"properties": {
 				"id": {
@@ -1942,10 +1612,7 @@
 					"pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
 				},
 				"kind": {
-					"enum": [
-						"damagedProfile",
-						"unusableLibrary"
-					]
+					"enum": ["damagedProfile", "unusableLibrary"]
 				},
 				"message": {
 					"type": "string"
@@ -1954,10 +1621,7 @@
 		},
 		"sharedProfileResult": {
 			"type": "object",
-			"required": [
-				"changed",
-				"profile"
-			],
+			"required": ["changed", "profile"],
 			"additionalProperties": false,
 			"properties": {
 				"changed": {
@@ -1970,14 +1634,7 @@
 		},
 		"sharedProfileSummary": {
 			"type": "object",
-			"required": [
-				"active",
-				"bindings",
-				"controller",
-				"id",
-				"name",
-				"scope"
-			],
+			"required": ["active", "bindings", "controller", "id", "name", "scope"],
 			"additionalProperties": false,
 			"properties": {
 				"active": {
@@ -2006,9 +1663,7 @@
 		},
 		"sharedRecordValidation": {
 			"type": "object",
-			"required": [
-				"valid"
-			],
+			"required": ["valid"],
 			"additionalProperties": false,
 			"properties": {
 				"family": {
@@ -2022,25 +1677,16 @@
 					"pattern": "^[0-9A-F]{4}:[0-9A-F]{4}$"
 				},
 				"operation": {
-					"enum": [
-						"add",
-						"patch"
-					]
+					"enum": ["add", "patch"]
 				},
 				"problem": {
 					"type": "string"
 				},
 				"transport": {
-					"enum": [
-						"hid",
-						"usb"
-					]
+					"enum": ["hid", "usb"]
 				},
 				"usbExtension": {
-					"enum": [
-						"claims",
-						"does-not-claim"
-					]
+					"enum": ["claims", "does-not-claim"]
 				},
 				"valid": {
 					"type": "boolean"
@@ -2049,25 +1695,17 @@
 		},
 		"sharedServiceState": {
 			"type": "object",
-			"required": [
-				"state"
-			],
+			"required": ["state"],
 			"additionalProperties": false,
 			"properties": {
 				"state": {
-					"enum": [
-						"running",
-						"stopped"
-					]
+					"enum": ["running", "stopped"]
 				}
 			}
 		},
 		"sharedSetting": {
 			"type": "object",
-			"required": [
-				"key",
-				"value"
-			],
+			"required": ["key", "value"],
 			"additionalProperties": false,
 			"properties": {
 				"key": {
@@ -2088,10 +1726,7 @@
 		},
 		"sharedSkippedRecord": {
 			"type": "object",
-			"required": [
-				"file",
-				"problem"
-			],
+			"required": ["file", "problem"],
 			"additionalProperties": false,
 			"properties": {
 				"file": {
@@ -2104,10 +1739,7 @@
 		},
 		"sharedStick": {
 			"type": "object",
-			"required": [
-				"x",
-				"y"
-			],
+			"required": ["x", "y"],
 			"additionalProperties": false,
 			"properties": {
 				"x": {
@@ -2124,26 +1756,17 @@
 		},
 		"sharedVirtualChange": {
 			"type": "object",
-			"required": [
-				"controller",
-				"source"
-			],
+			"required": ["controller", "source"],
 			"additionalProperties": false,
 			"properties": {
 				"controller": {
 					"type": "string"
 				},
 				"live": {
-					"enum": [
-						"hid-xbox-one-s-bt",
-						"hid-generic"
-					]
+					"enum": ["hid-xbox-one-s-bt", "hid-generic"]
 				},
 				"requested": {
-					"enum": [
-						"hid-xbox-one-s-bt",
-						"hid-generic"
-					]
+					"enum": ["hid-xbox-one-s-bt", "hid-generic"]
 				},
 				"source": {
 					"type": "string"
@@ -2218,24 +1841,14 @@
 		},
 		"status": {
 			"type": "object",
-			"required": [
-				"extension",
-				"service",
-				"skippedRecords"
-			],
+			"required": ["extension", "service", "skippedRecords"],
 			"additionalProperties": false,
 			"properties": {
 				"controllers": {
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": [
-							"connection",
-							"id",
-							"name",
-							"productID",
-							"vendorID"
-						],
+						"required": ["connection", "id", "name", "productID", "vendorID"],
 						"additionalProperties": false,
 						"properties": {
 							"connection": {
@@ -2262,26 +1875,14 @@
 				},
 				"extension": {
 					"type": "object",
-					"required": [
-						"bundle",
-						"registration"
-					],
+					"required": ["bundle", "registration"],
 					"additionalProperties": false,
 					"properties": {
 						"bundle": {
-							"enum": [
-								"present",
-								"missing",
-								"invalid"
-							]
+							"enum": ["present", "missing", "invalid"]
 						},
 						"registration": {
-							"enum": [
-								"active",
-								"inactive",
-								"absent",
-								"unavailable"
-							]
+							"enum": ["active", "inactive", "absent", "unavailable"]
 						}
 					}
 				},
@@ -2293,40 +1894,24 @@
 				},
 				"permissions": {
 					"type": "object",
-					"required": [
-						"accessibility",
-						"inputMonitoring"
-					],
+					"required": ["accessibility", "inputMonitoring"],
 					"additionalProperties": false,
 					"properties": {
 						"accessibility": {
-							"enum": [
-								"granted",
-								"denied",
-								"unknown"
-							]
+							"enum": ["granted", "denied", "unknown"]
 						},
 						"inputMonitoring": {
-							"enum": [
-								"granted",
-								"denied",
-								"unknown"
-							]
+							"enum": ["granted", "denied", "unknown"]
 						}
 					}
 				},
 				"service": {
 					"type": "object",
-					"required": [
-						"state"
-					],
+					"required": ["state"],
 					"additionalProperties": false,
 					"properties": {
 						"state": {
-							"enum": [
-								"running",
-								"stopped"
-							]
+							"enum": ["running", "stopped"]
 						},
 						"version": {
 							"type": "string"
@@ -2343,11 +1928,7 @@
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": [
-							"connection",
-							"productID",
-							"vendorID"
-						],
+						"required": ["connection", "productID", "vendorID"],
 						"additionalProperties": false,
 						"properties": {
 							"connection": {
@@ -2410,10 +1991,7 @@
 					"type": "string"
 				},
 				"status": {
-					"enum": [
-						"up-to-date",
-						"available"
-					]
+					"enum": ["up-to-date", "available"]
 				}
 			}
 		},
@@ -2422,11 +2000,7 @@
 			"oneOf": [
 				{
 					"type": "object",
-					"required": [
-						"duration",
-						"intensities",
-						"type"
-					],
+					"required": ["duration", "intensities", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"type": {
@@ -2483,9 +2057,7 @@
 								},
 								{
 									"type": "object",
-									"required": [
-										"milliseconds"
-									],
+									"required": ["milliseconds"],
 									"additionalProperties": false,
 									"properties": {
 										"milliseconds": {
@@ -2501,9 +2073,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"type"
-					],
+					"required": ["type"],
 					"additionalProperties": false,
 					"properties": {
 						"type": {
@@ -2517,9 +2087,7 @@
 			"oneOf": [
 				{
 					"type": "object",
-					"required": [
-						"reset"
-					],
+					"required": ["reset"],
 					"additionalProperties": false,
 					"properties": {
 						"reset": {
@@ -2537,23 +2105,14 @@
 		},
 		"virtualShow": {
 			"type": "object",
-			"required": [
-				"controllers",
-				"profiles"
-			],
+			"required": ["controllers", "profiles"],
 			"additionalProperties": false,
 			"properties": {
 				"controllers": {
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": [
-							"id",
-							"name",
-							"productID",
-							"unavailable",
-							"vendorID"
-						],
+						"required": ["id", "name", "productID", "unavailable", "vendorID"],
 						"additionalProperties": false,
 						"properties": {
 							"id": {
@@ -2563,16 +2122,10 @@
 								"type": "string"
 							},
 							"override": {
-								"enum": [
-									"hid-xbox-one-s-bt",
-									"hid-generic"
-								]
+								"enum": ["hid-xbox-one-s-bt", "hid-generic"]
 							},
 							"overrideScope": {
-								"enum": [
-									"unit",
-									"model"
-								],
+								"enum": ["unit", "model"],
 								"description": "Whether override is the controller's own choice or its model's."
 							},
 							"productID": {
@@ -2581,10 +2134,7 @@
 								"maximum": 65535
 							},
 							"profile": {
-								"enum": [
-									"hid-xbox-one-s-bt",
-									"hid-generic"
-								]
+								"enum": ["hid-xbox-one-s-bt", "hid-generic"]
 							},
 							"source": {
 								"type": "string"
@@ -2603,10 +2153,7 @@
 				"profiles": {
 					"type": "array",
 					"items": {
-						"enum": [
-							"hid-xbox-one-s-bt",
-							"hid-generic"
-						]
+						"enum": ["hid-xbox-one-s-bt", "hid-generic"]
 					}
 				}
 			}

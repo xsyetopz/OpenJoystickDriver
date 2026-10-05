@@ -17,7 +17,7 @@ Produce a signed app (and DEXT when needed) from the exact intended commit, and 
 
 ## Workflow
 
-1. Read `contributing/development/signing.md`. For packaging, also read `contributing/development/tester-builds.md` or `contributing/development/releases.md`.
+1. Read `docs/development/signing.md`. For packaging, also read `docs/development/tester-builds.md` or `docs/development/releases.md`.
 1. Pick the [build route](references/build-and-install.md#build-routes). A DEXT change needs `build install dev`. An app-only change can use `build install-fast dev`.
 1. Ask the user before any install. It replaces `/Applications/OpenJoystickDriver.app` and can prompt for system extension approval.
 1. On a signing failure, follow the [signing diagnosis](references/signing.md#signing-diagnosis) order.
@@ -30,7 +30,7 @@ Produce a signed app (and DEXT when needed) from the exact intended commit, and 
 
 1. For a version bump, a tester DMG, or a release, follow [packaging](references/packaging.md). Ask before notarizing, and before any publication.
 
-## Route the problem to a card
+## Route the Problem To a Card
 
 | Situation | Card |
 | --- | --- |
@@ -58,6 +58,6 @@ Produce a signed app (and DEXT when needed) from the exact intended commit, and 
 - [Signing](references/signing.md): signing diagnosis, entitlement shape.
 - [Packaging](references/packaging.md): version bump, tester DMG, release.
 
-## Completion evidence
+## Completion Evidence
 
 The report gives the command run, the commit, and the version with build metadata. It includes the `signing doctor` result and the `diagnose report` / `diagnose dext` summary, plus the DMG path when packaging. It lists the user approvals obtained, and what remains unverified (for example Gatekeeper on another Mac, or macOS 12).

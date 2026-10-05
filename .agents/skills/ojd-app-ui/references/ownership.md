@@ -6,7 +6,7 @@
 - [Gateway seam](#gateway-seam)
 - [Single window and runtime](#single-window-and-runtime)
 
-## Presentation owners
+## Presentation Owners
 
 **Definition.** `Sources/OpenJoystickDriverPresentation/` depends on `OpenJoystickDriverKit` only. Its directories are:
 
@@ -29,9 +29,9 @@ Tests mirror these directories under `Tests/OpenJoystickDriverPresentationTests/
 
 **Verify.** `rg -n '^import OpenJoystickDriver(Service|CLI|USB)' Sources/OpenJoystickDriverPresentation` prints nothing, and `swift build` succeeds.
 
-## Gateway seam
+## Gateway Seam
 
-**Definition.** `protocol ApplicationServiceGateway` in `Runtime/ApplicationServiceGateway.swift` is composed from smaller gateway protocols. The production adapter wraps `ApplicationServiceClient`, returns typed payloads, and maps transport failures to stable presentation errors. The full call list is under "Gateway Contract" in `contributing/development/menu-bar-settings-architecture.md`.
+**Definition.** `protocol ApplicationServiceGateway` in `Runtime/ApplicationServiceGateway.swift` is composed from smaller gateway protocols. The production adapter wraps `ApplicationServiceClient`, returns typed payloads, and maps transport failures to stable presentation errors. The full call list is under "Gateway Contract" in `docs/development/menu-bar-settings-architecture.md`.
 
 **Use when.** A view model needs runtime data or an action.
 
@@ -49,7 +49,7 @@ Tests mirror these directories under `Tests/OpenJoystickDriverPresentationTests/
 
 **Verify.** The new view-model test runs against `GatewayStub`, and the Service RPC test covers the server side.
 
-## Single window and runtime
+## Single Window and Runtime
 
 **Definition.** `HeadlessApplicationHost` in the executable starts one `ApplicationServiceRuntime`, and passes Presentation an injected gateway plus closures such as stop. Presentation does not hold the runtime. `Settings/Shell/WindowController.swift` owns the single reusable settings window. The input test has its own `InputTestWindowController`.
 

@@ -4,10 +4,7 @@
 	"title": "OpenJoystickDriver endpoint access grants",
 	"description": "The file AccessGrants.json in the OpenJoystickDriver Application Support folder. Only the service writes it, when 'ojd access enable', 'disable', 'grant', or 'revoke' runs.",
 	"type": "object",
-	"required": [
-		"enabled",
-		"grants"
-	],
+	"required": ["enabled", "grants"],
 	"additionalProperties": false,
 	"properties": {
 		"enabled": {
@@ -24,29 +21,17 @@
 	"$defs": {
 		"scope": {
 			"description": "'read' receives controller events; 'control' drives a virtual gamepad.",
-			"enum": [
-				"read",
-				"control"
-			]
+			"enum": ["read", "control"]
 		},
 		"grant": {
 			"description": "A client the user allowed, matched by its code signature.",
 			"type": "object",
-			"required": [
-				"kind",
-				"identifier",
-				"scopes",
-				"grantedAt",
-				"path"
-			],
+			"required": ["kind", "identifier", "scopes", "grantedAt", "path"],
 			"additionalProperties": false,
 			"properties": {
 				"kind": {
 					"description": "'team' matches the identifier signed by an Apple-issued certificate of the team; 'apple' matches the identifier signed by Apple.",
-					"enum": [
-						"team",
-						"apple"
-					]
+					"enum": ["team", "apple"]
 				},
 				"identifier": {
 					"description": "The code signing identifier.",
@@ -84,9 +69,7 @@
 				}
 			},
 			"then": {
-				"required": [
-					"teamIdentifier"
-				]
+				"required": ["teamIdentifier"]
 			}
 		}
 	}

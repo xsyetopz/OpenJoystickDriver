@@ -4,22 +4,14 @@
 	"title": "OpenJoystickDriver profile",
 	"description": "A remapping profile, as 'ojd profile export' writes it and 'ojd profile import' reads it. The schema checks the shape and the range of each field. 'ojd profile validate' also checks the rules that span fields, such as duplicate sources and IDs.",
 	"type": "object",
-	"required": [
-		"applicationScope",
-		"bindings",
-		"device",
-		"id",
-		"name"
-	],
+	"required": ["applicationScope", "bindings", "device", "id", "name"],
 	"additionalProperties": false,
 	"properties": {
 		"applicationScope": {
 			"oneOf": [
 				{
 					"type": "object",
-					"required": [
-						"type"
-					],
+					"required": ["type"],
 					"additionalProperties": false,
 					"properties": {
 						"type": {
@@ -29,10 +21,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"bundleIdentifier",
-						"type"
-					],
+					"required": ["bundleIdentifier", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"bundleIdentifier": {
@@ -63,10 +52,7 @@
 		"device": {
 			"type": "object",
 			"description": "The controller model the profile applies to, and optionally one unit of it.",
-			"required": [
-				"productID",
-				"vendorID"
-			],
+			"required": ["productID", "vendorID"],
 			"additionalProperties": false,
 			"properties": {
 				"productID": {
@@ -94,17 +80,11 @@
 		},
 		"joyConPair": {
 			"type": "object",
-			"required": [
-				"gyroSelection"
-			],
+			"required": ["gyroSelection"],
 			"additionalProperties": false,
 			"properties": {
 				"gyroSelection": {
-					"enum": [
-						"disabled",
-						"left",
-						"right"
-					]
+					"enum": ["disabled", "left", "right"]
 				}
 			}
 		},
@@ -125,24 +105,14 @@
 		},
 		"outputPolicy": {
 			"type": "object",
-			"required": [
-				"physicalInput",
-				"virtualGamepad"
-			],
+			"required": ["physicalInput", "virtualGamepad"],
 			"additionalProperties": false,
 			"properties": {
 				"physicalInput": {
-					"enum": [
-						"shared",
-						"exclusive"
-					]
+					"enum": ["shared", "exclusive"]
 				},
 				"virtualGamepad": {
-					"enum": [
-						"disabled",
-						"mapped",
-						"passthrough"
-					]
+					"enum": ["disabled", "mapped", "passthrough"]
 				}
 			}
 		},
@@ -178,10 +148,7 @@
 		"action": {
 			"type": "object",
 			"description": "An extra action of a binding, run from the same source.",
-			"required": [
-				"destination",
-				"id"
-			],
+			"required": ["destination", "id"],
 			"additionalProperties": false,
 			"properties": {
 				"behavior": {
@@ -223,18 +190,11 @@
 		"adaptiveTriggerEffect": {
 			"type": "object",
 			"description": "An off effect has startPosition and strength 0.",
-			"required": [
-				"kind",
-				"startPosition",
-				"strength"
-			],
+			"required": ["kind", "startPosition", "strength"],
 			"additionalProperties": false,
 			"properties": {
 				"kind": {
-					"enum": [
-						"off",
-						"resistance"
-					]
+					"enum": ["off", "resistance"]
 				},
 				"startPosition": {
 					"$ref": "#/$defs/unitInterval"
@@ -272,10 +232,7 @@
 			]
 		},
 		"axisOutput": {
-			"enum": [
-				"left_stick_x",
-				"right_stick_x"
-			]
+			"enum": ["left_stick_x", "right_stick_x"]
 		},
 		"axisTuning": {
 			"type": "object",
@@ -307,22 +264,13 @@
 					"type": "boolean"
 				},
 				"responseCurve": {
-					"enum": [
-						"linear",
-						"ease_in",
-						"ease_out",
-						"smooth_step"
-					]
+					"enum": ["linear", "ease_in", "ease_out", "smooth_step"]
 				}
 			}
 		},
 		"binding": {
 			"type": "object",
-			"required": [
-				"destination",
-				"id",
-				"source"
-			],
+			"required": ["destination", "id", "source"],
 			"additionalProperties": false,
 			"properties": {
 				"additionalActions": {
@@ -414,11 +362,7 @@
 		"chord": {
 			"type": "object",
 			"description": "Sources pressed together. Their order does not matter.",
-			"required": [
-				"destination",
-				"id",
-				"sources"
-			],
+			"required": ["destination", "id", "sources"],
 			"additionalProperties": false,
 			"properties": {
 				"destination": {
@@ -428,10 +372,7 @@
 					"$ref": "#/$defs/uuid"
 				},
 				"mode": {
-					"enum": [
-						"modifier",
-						"simultaneous"
-					],
+					"enum": ["modifier", "simultaneous"],
 					"default": "modifier"
 				},
 				"sources": {
@@ -451,11 +392,7 @@
 		},
 		"color": {
 			"type": "object",
-			"required": [
-				"blue",
-				"green",
-				"red"
-			],
+			"required": ["blue", "green", "red"],
 			"additionalProperties": false,
 			"properties": {
 				"blue": {
@@ -474,11 +411,7 @@
 			"oneOf": [
 				{
 					"type": "object",
-					"required": [
-						"key",
-						"modifiers",
-						"type"
-					],
+					"required": ["key", "modifiers", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"key": {
@@ -591,12 +524,7 @@
 						"modifiers": {
 							"type": "array",
 							"items": {
-								"enum": [
-									"command",
-									"control",
-									"option",
-									"shift"
-								]
+								"enum": ["command", "control", "option", "shift"]
 							}
 						},
 						"type": {
@@ -607,10 +535,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"button",
-						"type"
-					],
+					"required": ["button", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"button": {
@@ -623,10 +548,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"direction",
-						"type"
-					],
+					"required": ["direction", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"direction": {
@@ -639,10 +561,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"axis",
-						"type"
-					],
+					"required": ["axis", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"axis": {
@@ -655,20 +574,11 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"button",
-						"type"
-					],
+					"required": ["button", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"button": {
-							"enum": [
-								"left",
-								"right",
-								"middle",
-								"back",
-								"forward"
-							]
+							"enum": ["left", "right", "middle", "back", "forward"]
 						},
 						"type": {
 							"const": "mouse_button"
@@ -677,17 +587,11 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"axis",
-						"type"
-					],
+					"required": ["axis", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"axis": {
-							"enum": [
-								"x",
-								"y"
-							]
+							"enum": ["x", "y"]
 						},
 						"type": {
 							"const": "mouse_movement"
@@ -696,17 +600,11 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"axis",
-						"type"
-					],
+					"required": ["axis", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"axis": {
-							"enum": [
-								"x",
-								"y"
-							]
+							"enum": ["x", "y"]
 						},
 						"type": {
 							"const": "scroll"
@@ -715,10 +613,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"physical",
-						"type"
-					],
+					"required": ["physical", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"physical": {
@@ -740,9 +635,7 @@
 				{
 					"not": {
 						"type": "object",
-						"required": [
-							"type"
-						],
+						"required": ["type"],
 						"properties": {
 							"type": {
 								"const": "axis"
@@ -754,10 +647,7 @@
 		},
 		"doubleTap": {
 			"type": "object",
-			"required": [
-				"destination",
-				"windowMs"
-			],
+			"required": ["destination", "windowMs"],
 			"additionalProperties": false,
 			"properties": {
 				"destination": {
@@ -771,12 +661,7 @@
 			}
 		},
 		"dpadDirection": {
-			"enum": [
-				"up",
-				"down",
-				"left",
-				"right"
-			]
+			"enum": ["up", "down", "left", "right"]
 		},
 		"gyroOutput": {
 			"type": "object",
@@ -784,12 +669,7 @@
 			"additionalProperties": false,
 			"properties": {
 				"activationMode": {
-					"enum": [
-						"always",
-						"while_held",
-						"while_released",
-						"toggle"
-					],
+					"enum": ["always", "while_held", "while_released", "toggle"],
 					"default": "always"
 				},
 				"activationSource": {
@@ -806,12 +686,7 @@
 					"default": 360
 				},
 				"mode": {
-					"enum": [
-						"disabled",
-						"mouse",
-						"left_stick",
-						"right_stick"
-					],
+					"enum": ["disabled", "mouse", "left_stick", "right_stick"],
 					"default": "disabled"
 				},
 				"pointerPointsPerDegree": {
@@ -833,30 +708,20 @@
 			},
 			"then": {
 				"not": {
-					"required": [
-						"activationSource"
-					]
+					"required": ["activationSource"]
 				}
 			},
 			"else": {
-				"required": [
-					"activationSource"
-				]
+				"required": ["activationSource"]
 			}
 		},
 		"gyroTrackball": {
 			"type": "object",
-			"required": [
-				"source"
-			],
+			"required": ["source"],
 			"additionalProperties": false,
 			"properties": {
 				"axes": {
-					"enum": [
-						"pitch",
-						"yaw",
-						"both"
-					],
+					"enum": ["pitch", "yaw", "both"],
 					"default": "both"
 				},
 				"consumesSource": {
@@ -889,10 +754,7 @@
 			"additionalProperties": false,
 			"properties": {
 				"activationMode": {
-					"enum": [
-						"hold",
-						"toggle"
-					]
+					"enum": ["hold", "toggle"]
 				},
 				"activator": {
 					"$ref": "#/$defs/discreteSource"
@@ -932,10 +794,7 @@
 		"lean": {
 			"type": "object",
 			"description": "hysteresisDegrees is less than thresholdDegrees.",
-			"required": [
-				"hysteresisDegrees",
-				"thresholdDegrees"
-			],
+			"required": ["hysteresisDegrees", "thresholdDegrees"],
 			"additionalProperties": false,
 			"properties": {
 				"hysteresisDegrees": {
@@ -952,10 +811,7 @@
 		},
 		"longHold": {
 			"type": "object",
-			"required": [
-				"destination",
-				"durationMs"
-			],
+			"required": ["destination", "durationMs"],
 			"additionalProperties": false,
 			"properties": {
 				"destination": {
@@ -1012,11 +868,7 @@
 					"default": 0
 				},
 				"space": {
-					"enum": [
-						"local",
-						"player",
-						"world"
-					],
+					"enum": ["local", "player", "world"],
 					"default": "player"
 				},
 				"steering": {
@@ -1047,11 +899,7 @@
 			"oneOf": [
 				{
 					"type": "object",
-					"required": [
-						"intensity",
-						"motor",
-						"type"
-					],
+					"required": ["intensity", "motor", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"intensity": {
@@ -1074,20 +922,11 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"indicator",
-						"type"
-					],
+					"required": ["indicator", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"indicator": {
-							"enum": [
-								0,
-								1,
-								2,
-								3,
-								4
-							]
+							"enum": [0, 1, 2, 3, 4]
 						},
 						"type": {
 							"const": "player_indicator"
@@ -1096,12 +935,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"blue",
-						"green",
-						"red",
-						"type"
-					],
+					"required": ["blue", "green", "red", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"blue": {
@@ -1120,10 +954,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"intensity",
-						"type"
-					],
+					"required": ["intensity", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"intensity": {
@@ -1136,21 +967,14 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"effect",
-						"trigger",
-						"type"
-					],
+					"required": ["effect", "trigger", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"effect": {
 							"$ref": "#/$defs/adaptiveTriggerEffect"
 						},
 						"trigger": {
-							"enum": [
-								"left",
-								"right"
-							]
+							"enum": ["left", "right"]
 						},
 						"type": {
 							"const": "adaptive_trigger"
@@ -1162,12 +986,7 @@
 		"sequence": {
 			"type": "object",
 			"description": "Sources pressed one after another, in order.",
-			"required": [
-				"destination",
-				"id",
-				"sources",
-				"windowMs"
-			],
+			"required": ["destination", "id", "sources", "windowMs"],
 			"additionalProperties": false,
 			"properties": {
 				"destination": {
@@ -1195,10 +1014,7 @@
 			"oneOf": [
 				{
 					"type": "object",
-					"required": [
-						"button",
-						"type"
-					],
+					"required": ["button", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"button": {
@@ -1211,10 +1027,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"direction",
-						"type"
-					],
+					"required": ["direction", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"direction": {
@@ -1227,10 +1040,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"axis",
-						"type"
-					],
+					"required": ["axis", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"axis": {
@@ -1243,21 +1053,14 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"axis",
-						"direction",
-						"type"
-					],
+					"required": ["axis", "direction", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"axis": {
 							"$ref": "#/$defs/axis"
 						},
 						"direction": {
-							"enum": [
-								"negative",
-								"positive"
-							]
+							"enum": ["negative", "positive"]
 						},
 						"type": {
 							"const": "axis_direction"
@@ -1266,18 +1069,11 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"stage",
-						"trigger",
-						"type"
-					],
+					"required": ["stage", "trigger", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"stage": {
-							"enum": [
-								"soft",
-								"full"
-							]
+							"enum": ["soft", "full"]
 						},
 						"trigger": {
 							"$ref": "#/$defs/triggerSide"
@@ -1289,17 +1085,11 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"direction",
-						"type"
-					],
+					"required": ["direction", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"direction": {
-							"enum": [
-								"left",
-								"right"
-							]
+							"enum": ["left", "right"]
 						},
 						"type": {
 							"const": "motion_lean"
@@ -1308,10 +1098,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"surface",
-						"type"
-					],
+					"required": ["surface", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"surface": {
@@ -1324,14 +1111,7 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"column",
-						"columns",
-						"row",
-						"rows",
-						"surface",
-						"type"
-					],
+					"required": ["column", "columns", "row", "rows", "surface", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"column": {
@@ -1365,21 +1145,11 @@
 				},
 				{
 					"type": "object",
-					"required": [
-						"direction",
-						"minimumDistance",
-						"surface",
-						"type"
-					],
+					"required": ["direction", "minimumDistance", "surface", "type"],
 					"additionalProperties": false,
 					"properties": {
 						"direction": {
-							"enum": [
-								"up",
-								"down",
-								"left",
-								"right"
-							]
+							"enum": ["up", "down", "left", "right"]
 						},
 						"minimumDistance": {
 							"type": "number",
@@ -1434,9 +1204,7 @@
 		"stickMapping": {
 			"type": "object",
 			"description": "flickHysteresis is less than flickThreshold.",
-			"required": [
-				"source"
-			],
+			"required": ["source"],
 			"additionalProperties": false,
 			"properties": {
 				"aimDegreesPerSecond": {
@@ -1493,17 +1261,11 @@
 					"default": 128
 				},
 				"rotationDirection": {
-					"enum": [
-						"clockwise",
-						"counterclockwise"
-					],
+					"enum": ["clockwise", "counterclockwise"],
 					"default": "clockwise"
 				},
 				"scrollAxis": {
-					"enum": [
-						"horizontal",
-						"vertical"
-					],
+					"enum": ["horizontal", "vertical"],
 					"default": "vertical"
 				},
 				"scrollDegreesPerLine": {
@@ -1522,10 +1284,7 @@
 					"default": 360
 				},
 				"steeringOutput": {
-					"enum": [
-						"left_stick_x",
-						"right_stick_x"
-					],
+					"enum": ["left_stick_x", "right_stick_x"],
 					"default": "left_stick_x"
 				},
 				"steeringReturnDegreesPerSecond": {
@@ -1540,10 +1299,7 @@
 			}
 		},
 		"stickSide": {
-			"enum": [
-				"left",
-				"right"
-			]
+			"enum": ["left", "right"]
 		},
 		"stickTuning": {
 			"type": "object",
@@ -1599,11 +1355,7 @@
 					"$ref": "#/$defs/uuid"
 				},
 				"mode": {
-					"enum": [
-						"pointer",
-						"left_stick",
-						"right_stick"
-					]
+					"enum": ["pointer", "left_stick", "right_stick"]
 				},
 				"pointerSensitivity": {
 					"type": "number",
@@ -1621,18 +1373,12 @@
 			}
 		},
 		"touchSurface": {
-			"enum": [
-				"primary",
-				"left",
-				"right"
-			]
+			"enum": ["primary", "left", "right"]
 		},
 		"triggerMapping": {
 			"type": "object",
 			"description": "softThreshold is less than fullThreshold, and hysteresis is less than softThreshold.",
-			"required": [
-				"source"
-			],
+			"required": ["source"],
 			"additionalProperties": false,
 			"properties": {
 				"fullThreshold": {
@@ -1680,17 +1426,11 @@
 			}
 		},
 		"triggerSide": {
-			"enum": [
-				"left",
-				"right"
-			]
+			"enum": ["left", "right"]
 		},
 		"turbo": {
 			"type": "object",
-			"required": [
-				"dutyCycle",
-				"repeatRateHz"
-			],
+			"required": ["dutyCycle", "repeatRateHz"],
 			"additionalProperties": false,
 			"properties": {
 				"dutyCycle": {

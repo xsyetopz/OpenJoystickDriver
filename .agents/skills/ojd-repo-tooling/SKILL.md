@@ -24,7 +24,7 @@ Change one tool route or gate, cover it with a Python unit test, and keep the di
 1. When a gate changes, update every place that runs it in the same change ([gate sync](references/gates.md#gate-sync)).
 1. Run `uv run --no-project --with jsonschema python -m unittest discover -s Tests/RepositoryScripts` and `just lint`. For hook changes, also run `./Scripts/ojd hooks validate`.
 
-## Route the problem to a card
+## Route the Problem To a Card
 
 | Situation | Card |
 | --- | --- |
@@ -42,13 +42,13 @@ Change one tool route or gate, cover it with a Python unit test, and keep the di
 - Tests assert on exit codes, parsed data, and forwarded arguments. Help text and prose change freely, so a test that asserts on them breaks for no reason.
 - Homebrew `python3` lacks `jsonschema`, so tests that import it fail with `ModuleNotFoundError`. Run the suite with `uv run --no-project --with jsonschema`, or through `.build/schema-validator`.
 - Hooks are managed by lefthook. Edit `lefthook.yml` and the scripts it runs, never `.git/hooks/`. `ojd hooks install` rewrites that directory.
-- Scripts contain no secrets, Team IDs, or signing identities. Those values come from the environment (`contributing/development/environment.md`).
+- Scripts contain no secrets, Team IDs, or signing identities. Those values come from the environment (`docs/development/environment.md`).
 
 ## References
 
 - [Layers](references/layers.md): which layer owns it, adding an ojd route, script tests.
 - [Gates](references/gates.md): gate sync, index-snapshot hook, Swift file gate.
 
-## Completion evidence
+## Completion Evidence
 
 The report names the route or gate changed, and the unittest that failed before the change and passes after it. It gives the results of `just lint` and the unittest suite, and lists every place the gate appears. It says whether CI was run, or only the local equivalent.

@@ -6,7 +6,7 @@
 - [Stale DEXT](#stale-dext)
 - [Module cache](#module-cache)
 
-## Build routes
+## Build Routes
 
 **Definition.** These routes come from `./Scripts/ojd --help`:
 
@@ -36,7 +36,7 @@
 
 **Verify.** Run `./Scripts/ojd diagnose dext` again. It shows one process for the installed version.
 
-## Module cache
+## Module Cache
 
 **Definition.** `./Scripts/ojd repair swiftpm-module-cache` cleans SwiftPM build products after a toolchain or target change.
 

@@ -1,6 +1,6 @@
 # Tests
 
-## Behavior tests
+## Behavior Tests
 
 **Definition.** A test calls a Swift API, through `public` or `package` access or `@testable import`, and asserts on one of the following: a typed result, state transition, event, route, exit code, identifier, or invariant. Tests use Swift Testing (`import Testing`, `@Test`, `#expect`).
 
@@ -26,16 +26,16 @@ func withLockRethrowsAndKeepsEarlierMutations() {
 
 **Verify.** `swift test --filter <TestType>` passes with the change and fails when you revert it.
 
-## Prohibited tests
+## Prohibited Tests
 
-These rules come from `AGENTS.md`, `LOCALIZATION.md`, and `contributing/development/source-topology.md`:
+These rules come from `AGENTS.md`, `LOCALIZATION.md`, and `docs/development/source-topology.md`:
 
 - No test reads Swift source, scripts, docs, or generated output to assert substrings or regex matches. Those tests break on harmless edits and pass on broken behavior.
 - No test asserts human-readable help, diagnostics, or localized prose. Wording changes per locale.
 - No `Tests/Scripts`, and no Swift test of shell or Python behavior. Python tests go in `Tests/RepositoryScripts/` (see `ojd-repo-tooling`).
 - No mock of the unit under test. It cannot catch that unit's defect.
 
-## Focused runs
+## Focused Runs
 
 | Change | Run first |
 | --- | --- |

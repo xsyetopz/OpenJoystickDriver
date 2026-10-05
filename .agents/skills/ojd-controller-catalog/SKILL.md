@@ -15,7 +15,7 @@ Change one controller identity or one factual device deviation through the autho
 
 ## Workflow
 
-1. Read `Resources/Schemas/AGENTS.md`, `contributing/development/xpad-import.md`, and `contributing/testing/controller-record.md`.
+1. Read `Resources/Schemas/AGENTS.md`, `docs/development/xpad-import.md`, and `docs/testing/controller-record.md`.
 1. Find the current record: `rg -l '"productID": <decimal pid>' Sources/OpenJoystickDriverKit/Resources/Controllers` and check `Resources/ControllerOverrides/<vid>/` for an existing override.
 1. Choose the input from the [authored-inputs card](references/catalog-inputs.md#authored-inputs): lockfile revision, override `add`, override `patch`, or a Swift driver.
 1. Write the authored change. Use decimal JSON numbers, lowercase hex file paths, and lowerCamelCase keys.
@@ -23,7 +23,7 @@ Change one controller identity or one factual device deviation through the autho
 1. Run `./Scripts/ojd catalog regenerate --check`, `./Scripts/ojd check profiles`, and `./Scripts/ojd check schemas`. For a driver change, also run the matching `swift test --filter` and `./Scripts/ojd test parsers-macos14`. The full gate list is `just check-fast` / `just check` and `AGENTS.md`.
 1. Report with the [evidence class](references/catalog-inputs.md#evidence-classes) of each claim.
 
-## Route the change to a card
+## Route the Change To a Card
 
 | Situation | Card |
 | --- | --- |
@@ -38,7 +38,7 @@ Change one controller identity or one factual device deviation through the autho
 - Never edit `Sources/OpenJoystickDriverKit/Resources/Controllers/`. The next `regenerate --write` overwrites hand edits, and `regenerate --check` fails on them in CI.
 - An `add` that collides with a Linux-derived VID/PID fails generation; use a `patch` for a device upstream already knows.
 - A `patch` sets only the top-level sections that are wrong, and each set section replaces the upstream one whole (shallow merge). Setting only the changed field drops its siblings; copying the whole record freezes upstream fields that later revisions fix.
-- Records hold operational facts only. Provenance, confidence, `experimental`, or `needsHardwareTest` fields are rejected by the strict schemas; record evidence in `contributing/testing/` pages instead.
+- Records hold operational facts only. Provenance, confidence, `experimental`, or `needsHardwareTest` fields are rejected by the strict schemas; record evidence in `docs/testing/` pages instead.
 - Shared parsing lives in Swift under `Sources/OpenJoystickDriverKit/Protocol/`. A record field that re-describes parser behavior duplicates it and drifts.
 - Do not infer a VID/PID, endpoint, or report length from a similar product. Neighbouring PIDs often differ in transport or handshake.
 - Passing generators and schema checks prove the record's shape, not that the controller works. Hand hardware claims to `ojd-hardware-evidence`.
@@ -47,6 +47,6 @@ Change one controller identity or one factual device deviation through the autho
 
 - [Catalog inputs](references/catalog-inputs.md): authored inputs, override add and patch, lockfile revision, protocol driver, evidence classes.
 
-## Completion evidence
+## Completion Evidence
 
 The report names the authored files changed, the generated records that changed (and that nothing else did), the check commands with results, the evidence class of every support claim, and any hardware, signing, or platform behavior left unverified.

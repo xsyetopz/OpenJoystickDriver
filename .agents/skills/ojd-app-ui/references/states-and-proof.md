@@ -7,7 +7,7 @@
 - [Localized copy](#localized-copy)
 - [Proof points](#proof-points)
 
-## Required states
+## Required States
 
 **Definition.** Each async surface models every state that applies to it, as an enum case or explicit property, rather than as a combination of optionals:
 
@@ -20,7 +20,7 @@
 - failed, with a retry or recovery action;
 - success.
 
-The rules in "State And Permission Rules" of `contributing/development/menu-bar-settings-architecture.md` apply:
+The rules in "State and Permission Rules" of `docs/development/menu-bar-settings-architecture.md` apply:
 
 - A superseded permission request does not open System Settings.
 - A denied result opens the matching recovery pane.
@@ -37,7 +37,7 @@ The rules in "State And Permission Rules" of `contributing/development/menu-bar-
 
 **Verify.** A test sends two requests, completes them in reverse order, and asserts that the newer state wins (see `PermissionGenerationTests.swift`).
 
-## State tests
+## State Tests
 
 **Definition.** Swift Testing tests drive a `@MainActor` view model against the `GatewayStub` actor, and assert on published state, not rendered text.
 
@@ -47,7 +47,7 @@ The rules in "State And Permission Rules" of `contributing/development/menu-bar-
 
 **Verify.** `swift test --filter OpenJoystickDriverPresentationTests.<Type>` fails without the change and passes with it.
 
-## Localized copy
+## Localized Copy
 
 **Definition.** Every user-visible string, including tooltips, accessibility labels, and compact symbol actions, is a key in `Sources/OpenJoystickDriverKit/Resources/Localization/Localizable.template.strings` (plurals go in `.stringsdict`). Views read it with `OJDLocalized.string("key", fallback: "English")`.
 
@@ -63,7 +63,7 @@ The punctuation and translation rules are in `LOCALIZATION.md`:
 
 **Verify.** Run `swift test --filter OpenJoystickDriverKitTests.LocalizationTests`. To check truncation, put a long-string locale such as German or Finnish first in the macOS languages, then run the app.
 
-## Proof points
+## Proof Points
 
 Check these in the running app. Report each one as checked or unverified.
 

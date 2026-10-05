@@ -5,7 +5,7 @@
 - [Target and directory](#target-and-directory)
 - [Naming and size](#naming-and-size)
 
-## Target and directory
+## Target and Directory
 
 **Definition.** `Package.swift` declares these dependencies, and the compiler rejects any import outside them:
 
@@ -33,7 +33,7 @@ Choose the lowest target whose dependencies cover the code:
 | AppKit and SwiftUI | `OpenJoystickDriverPresentation` |
 | `main.swift`, headless host, bundle resources | `OpenJoystickDriver` |
 
-The capability directories inside each target are listed in `contributing/development/source-topology.md` under "Directory Owners". Tests for `Sources/<Target>/A/B/File.swift` go in `Tests/<Target>Tests/A/B/`. Shared fixtures go in `Tests/OpenJoystickDriverTestSupport/` and `Tests/ProtocolPacketFixtures/`.
+The capability directories inside each target are listed in `docs/development/source-topology.md` under "Directory Owners". Tests for `Sources/<Target>/A/B/File.swift` go in `Tests/<Target>Tests/A/B/`. Shared fixtures go in `Tests/OpenJoystickDriverTestSupport/` and `Tests/ProtocolPacketFixtures/`.
 
 **Use when.** Adding a file, or moving a type across directories or targets.
 
@@ -43,7 +43,7 @@ The capability directories inside each target are listed in `contributing/develo
 
 **Verify.** `swift build` succeeds. `rg -n '^import OpenJoystickDriver(Service|CLI|USB)' Sources/OpenJoystickDriverPresentation` prints nothing.
 
-## Naming and size
+## Naming and Size
 
 **Definition.** `python3 Scripts/Quality/check_swift_file_length.py` fails when either of these holds:
 

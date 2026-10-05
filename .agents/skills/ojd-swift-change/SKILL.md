@@ -2,7 +2,7 @@
 name: ojd-swift-change
 description: >-
   Changes OpenJoystickDriver Swift behavior and its tests inside the SwiftPM
-  target and directory owners from contributing/development/source-topology.md:
+  target and directory owners from docs/development/source-topology.md:
   placement across Kit, USB, Service, CLI, and Presentation; Type+Concern file
   naming and the 500/1000 code-line limits; Swift 6 concurrency on a macOS
   12 floor (Locked, BlockingWork, actors); strict Codable decoding; and
@@ -18,14 +18,14 @@ Make one coherent behavior change at its owner, prove it with a behavior test th
 
 ## Workflow
 
-1. Read `contributing/development/source-topology.md`, `Package.swift`, and the nearest source and its mirrored test directory. When `.codegraph/` exists, use `codegraph explore "<symbol>"` to find callers before editing.
+1. Read `docs/development/source-topology.md`, `Package.swift`, and the nearest source and its mirrored test directory. When `.codegraph/` exists, use `codegraph explore "<symbol>"` to find callers before editing.
 1. Place the code with the [placement card](references/placement.md#target-and-directory): choose a target by its allowed dependencies, then pick the capability directory.
 1. Write or extend the test first in the mirrored directory and watch it fail ([test rules](references/tests.md#behavior-tests)).
 1. Make the change with the [Swift 6 idioms](references/swift-idioms.md) that the macOS 12 floor allows.
 1. Keep files within the [naming and size rules](references/placement.md#naming-and-size).
 1. Run the focused test: `swift test --filter <TestType>`. Then run `python3 Scripts/Quality/check_swift_file_length.py`, `just lint`, and `swift test --no-parallel`. For parser or protocol code, also run `./Scripts/ojd test parsers-macos14`. `just check` runs every gate. Before running `swift` or `./Scripts/ojd`, export `DEVELOPER_DIR` for the installed Xcode.
 
-## Route the problem to a card
+## Route the Problem To a Card
 
 | Situation | Card |
 | --- | --- |
@@ -53,6 +53,6 @@ Make one coherent behavior change at its owner, prove it with a behavior test th
 - [Swift idioms](references/swift-idioms.md): locked state, blocking work, strict decoding, package access, CLI errors.
 - [Tests](references/tests.md): behavior tests, prohibited tests, focused runs.
 
-## Completion evidence
+## Completion Evidence
 
 The report states the behavior changed and its owning paths. It names the test that failed before the change and passes after it, and gives the gate commands with their results and the test count. It lists any gate not run and why, plus remaining hardware, signing, or platform risk.

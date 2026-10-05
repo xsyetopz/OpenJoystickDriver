@@ -8,61 +8,20 @@ A macOS userspace gamepad driver. The signed app binary hosts the runtime and CL
 
 Xbox and PlayStation names in the UI are trademarks of Microsoft and Sony. This project is not affiliated with either. [Microsoft](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks) · [PlayStation](https://www.playstation.com/en-us/legal/copyright-and-trademark-notice/).
 
-Supported controllers and their evidence: [docs/Supported-Controllers.md](docs/Supported-Controllers.md#supported-controllers). New here: [install](docs/Getting-Started.md#installing-openjoystickdriver), [FAQ](docs/FAQ.md).
+## Documentation
 
-[1]: https://img.shields.io/github/stars/xsyetopz/OpenJoystickDriver?style=social
-[2]: https://img.shields.io/github/license/xsyetopz/OpenJoystickDriver
-[3]: https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#EA4AAA
+The user documentation is in the [wiki](https://github.com/xsyetopz/OpenJoystickDriver/wiki).
 
-## Install
+- Start: [Getting started](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Getting-Started) · [Using the app](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Using-the-App)
+- Controllers: [Supported controllers](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Supported-Controllers) · [Connecting controllers](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Connecting-Controllers)
+- Remapping: [Remapping profiles](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Remapping-Profiles)
+- Command line: [Command line](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Command-Line) · [Command reference](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Command-Reference)
+- Help: [Troubleshooting](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Troubleshooting) · [FAQ](https://github.com/xsyetopz/OpenJoystickDriver/wiki/FAQ) · [Reporting a bug](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Reporting-a-Bug)
+- All pages: [Home](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Home)
 
-1. Drag `OpenJoystickDriver.app` to `/Applications` and open it.
-1. Use the menu-bar item. Settings is ⌘,.
-1. Grant **Input Monitoring** and **Accessibility** when asked. Profiles that send keyboard or mouse events also need **Keyboard & pointer**.
-1. Connect a controller. **Open Profiles...** for assignments; **Controllers...** or **Refresh** for the menu summary.
+## Contributing
 
-One bundle, no helper app: `/Applications/OpenJoystickDriver.app`.
-
-For the `ojd` command, click **Install Command-Line Tool** in Settings, or link it yourself:
-
-```bash
-ln -s /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver /usr/local/bin/ojd
-ojd status
-```
-
-Uninstall: `ojd setting set launch-at-login false`, quit, delete the app. Optionally remove it from Input Monitoring and Accessibility.
-
-## Virtual HID Profile
-
-OJD automatically publishes each non-native controller as one of two virtual HID profiles, chosen from the controller's declared controls: `hid-xbox-one-s-bt` (Xbox One S Bluetooth, `045E:02FD`) when they fit, else `hid-generic`. Override a model's profile, or clear the override to return to automatic selection:
-
-```bash
-ojd virtual set hid-generic 045E:02FD
-ojd virtual reset --all
-```
-
-## Troubleshooting
-
-| Symptom | What to do |
-| --- | --- |
-| Runtime disconnected | `ojd service start`, then `ojd status` |
-| SDL sees 0 controllers | Grant Input Monitoring and Accessibility, restart, retry |
-| VirtualHIDDevice install fails | Rebuild the signed app; `ojd extension activate` |
-| Old XboxUSBDevice extension still listed | Deactivate it from an older OJD build, or in System Settings > General > Login Items & Extensions > Driver Extensions |
-| Input stays held or status says Needs attention | Release the controls and check controller input health with `ojd status --json` |
-| Bluetooth controller will not recover | Use Controller Details → Disconnect Wireless Controller, reconnect it manually, then verify neutral startup |
-
-```bash
-ojd diagnose --bundle support-report.json
-```
-
-More: [troubleshooting](docs/Troubleshooting.md), [report a bug](docs/Reporting-a-Bug.md), [tester builds](contributing/testing/tester-builds.md).
-
-Identical models: a `VVVV:PPPP` selector that matches both is rejected, so pass the ID from `ojd controller list` instead. To close only the selected Bluetooth link, use `ojd controller disconnect <controller>`; this never reconnects it.
-
-## Development
-
-[CONTRIBUTING.md](CONTRIBUTING.md) · [LOCALIZATION.md](LOCALIZATION.md) · [docs/Home.md](docs/Home.md) · [Scripts/README.md](Scripts/README.md) · [Tools/README.md](Tools/README.md) · [AGENTS.md](AGENTS.md)
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/README.md](docs/README.md). See also [LOCALIZATION.md](LOCALIZATION.md), [Scripts/README.md](Scripts/README.md), [Tools/README.md](Tools/README.md), and [AGENTS.md](AGENTS.md).
 
 ## License
 
@@ -72,5 +31,8 @@ Identical models: a `VVVV:PPPP` selector that matches both is rejected, so pass 
 
 [![Star History Chart][4]][5]
 
+[1]: https://img.shields.io/github/stars/xsyetopz/OpenJoystickDriver?style=social
+[2]: https://img.shields.io/github/license/xsyetopz/OpenJoystickDriver
+[3]: https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#EA4AAA
 [4]: https://api.star-history.com/chart?repos=xsyetopz/OpenJoystickDriver&type=date&legend=top-left&sealed_token=PjXIM3WljCuileJs_cIh3xVcAUk_S-XIvzSI-4YZXyrdXUDv_5yKL-bki0BDGSsz92-vhQ9_yqKPxyBC0RsY1Cd0C-e0YWUXePQkgLZcoXOiDCgazJpBqvW2rzdCZb8gK-1y7jncPZsFa8yqvijYWxA1UuP7Kw2Knvq2XnUuoMlTbtNobOEAx47QZF0U
 [5]: https://www.star-history.com/?repos=xsyetopz%2FOpenJoystickDriver&type=date&legend=top-left

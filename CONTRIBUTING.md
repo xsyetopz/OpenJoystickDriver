@@ -13,9 +13,9 @@ Run the needed command and follow its native prompts. The dispatcher automatical
 
 The pre-commit hook runs fast structural checks against the exact staged snapshot. The pre-push hook checks the outgoing tree diff for whitespace errors without repeating lint, builds, tests, or network-backed catalog generation. Run `just check` before opening a pull request; CI repeats the complete validation.
 
-Prerequisites and what works without Apple assets: `contributing/development/building-from-source.md`. Signing: `contributing/development/signing.md`. Releases and packaging: `contributing/development/releases.md`. Script routes: `Scripts/README.md`. Dev install: `./Scripts/ojd build install dev`. Do not edit `.build/driverkit/generated/`. SwifterKit comes from the `Package.resolved` remote; `OJD_USE_LOCAL_SWIFTERKIT=1` builds the sibling `../SwifterKit` working tree instead, which CI and release builds reject.
+Prerequisites and what works without Apple assets: `docs/development/building-from-source.md`. Signing: `docs/development/signing.md`. Releases and packaging: `docs/development/releases.md`. Script routes: `Scripts/README.md`. Dev install: `./Scripts/ojd build install dev`. Do not edit `.build/driverkit/generated/`. SwifterKit comes from the `Package.resolved` remote; `OJD_USE_LOCAL_SWIFTERKIT=1` builds the sibling `../SwifterKit` working tree instead, which CI and release builds reject.
 
-Create a private, notarized DMG with the [local tester-build guide](contributing/development/tester-builds.md).
+Create a private, notarized DMG with the [local tester-build guide](docs/development/tester-builds.md).
 
 ```bash
 ./Scripts/ojd diagnose record /tmp/controller-candidate.json --validate-only
@@ -23,11 +23,11 @@ Create a private, notarized DMG with the [local tester-build guide](contributing
 ojd diagnose --bundle support-report.json
 ```
 
-`--validate-only` needs no Apple Developer membership. A live USB probe may need the signed app and DEXT. Capture notes: `contributing/testing/controller-record.md`. Review product names before attaching a report.
+`--validate-only` needs no Apple Developer membership. A live USB probe may need the signed app and DEXT. Capture notes: `docs/testing/controller-record.md`. Review product names before attaching a report.
 
 Open tasks: [issues](https://github.com/xsyetopz/OpenJoystickDriver/issues).
 
-## Adding A Controller
+## Adding a Controller
 
 1. `system_profiler SPUSBDataType`. `bDeviceClass` `0xff` is vendor-specific (often GIP); `0x03` is HID.
 1. Do not hand-edit generated records. Update the pinned importer, or add `Resources/ControllerOverrides/<vid>/<vid>-<pid>.json`. Decimal JSON, no display names, no protocol defaults. Then:
@@ -37,7 +37,7 @@ Open tasks: [issues](https://github.com/xsyetopz/OpenJoystickDriver/issues).
    ./Scripts/ojd catalog regenerate --check
    ```
 
-   Source rules: `contributing/development/xpad-import.md`.
+   Source rules: `docs/development/xpad-import.md`.
 1. New protocol only: driver in `Sources/OpenJoystickDriverKit/Protocol/Drivers/`, `PhysicalProtocolDriver`, tests under `Tests/OpenJoystickDriverKitTests/`.
 1. Check:
 
@@ -68,4 +68,4 @@ GUI and CLI copy: `LOCALIZATION.md`. Tests check codes, routes, identifiers, pat
 
 Submit one logical change. List checks run and whether you tested on your own hardware.
 
-Layout: `contributing/development/source-topology.md`. RPC payloads: `Sources/OpenJoystickDriverKit/ApplicationService/`. CLI help: `Sources/OpenJoystickDriverCLI/Catalog/CommandCatalog.swift`. `OpenJoystickDriverHIDTool` is internal.
+Layout: `docs/development/source-topology.md`. RPC payloads: `Sources/OpenJoystickDriverKit/ApplicationService/`. CLI help: `Sources/OpenJoystickDriverCLI/Catalog/CommandCatalog.swift`. `OpenJoystickDriverHIDTool` is internal.

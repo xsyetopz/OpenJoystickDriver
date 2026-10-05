@@ -1,4 +1,4 @@
-# Schema Instructions
+# AGENTS.md
 
 `Resources/Schemas/` is the sole owner of OpenJoystickDriver's machine-readable document contracts.
 

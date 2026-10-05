@@ -9,7 +9,7 @@
 - [Protocol driver](#protocol-driver)
 - [Evidence classes](#evidence-classes)
 
-## Authored inputs
+## Authored Inputs
 
 **Definition.** The generator combines four authored inputs into the generated records under `Sources/OpenJoystickDriverKit/Resources/Controllers/`:
 
@@ -30,7 +30,7 @@ Sources/OpenJoystickDriverKit/Protocol/  (parsing and transport behavior, Swift)
 
 **Verify.** After `--write`, `./Scripts/ojd catalog regenerate --check` exits 0, and `git status --short Sources/OpenJoystickDriverKit/Resources/Controllers` lists only the intended records.
 
-## Override add
+## Override Add
 
 **Definition.** A complete record for a VID/PID that no pinned upstream source knows. The file sits at `Resources/ControllerOverrides/<vid>/<vid>-<pid>.json` (lowercase hex path) and has the keys `$schema`, `operation: "add"`, and `record`.
 
@@ -42,7 +42,7 @@ Sources/OpenJoystickDriverKit/Protocol/  (parsing and transport behavior, Swift)
 
 **Verify.** `./Scripts/ojd check profiles` and `./Scripts/ojd check schemas` exit 0, and the generated diff adds exactly one record.
 
-## Override patch
+## Override Patch
 
 **Definition.** A narrow `set` of top-level sections that replaces the upstream values for one device.
 
@@ -73,9 +73,9 @@ The merge is shallow: `{**upstream, **set}`. A patched section replaces the upst
 
 **Verify.** The generated diff for the device changes only the patched sections, and no field inside a patched section disappeared unintentionally.
 
-## Lockfile revision
+## Lockfile Revision
 
-**Definition.** Moving `ControllerSources.lock.json` to a newer upstream commit and updating its per-file `sha256`. `./Scripts/ojd catalog xpad [options]` generates review-only records from a pinned `xpad.c`; see `contributing/development/xpad-import.md`.
+**Definition.** Moving `ControllerSources.lock.json` to a newer upstream commit and updating its per-file `sha256`. `./Scripts/ojd catalog xpad [options]` generates review-only records from a pinned `xpad.c`; see `docs/development/xpad-import.md`.
 
 **Use when.** Upstream added or fixed the device, and the review accepts every other record change that the new revision brings.
 
@@ -83,7 +83,7 @@ The merge is shallow: `{**upstream, **set}`. A patched section replaces the upst
 
 **Verify.** Review the whole generated diff. A lockfile bump can change many records, so every change needs a reason.
 
-## Protocol driver
+## Protocol Driver
 
 **Definition.** Swift parsing, handshake, and output encoding under `Sources/OpenJoystickDriverKit/Protocol/Drivers/{Generic,Nintendo,Sony,Valve,Vendor,Xbox}/`, conforming to `PhysicalProtocolDriver` (`Protocol/Drivers/PhysicalProtocolDriver.swift`).
 
@@ -93,7 +93,7 @@ The merge is shallow: `{**upstream, **set}`. A patched section replaces the upst
 
 **Verify.** Add a packet-fixture test under the mirrored `Tests/OpenJoystickDriverKitTests/Protocol/` directory and run it with `swift test --filter`, then `./Scripts/ojd test parsers-macos14`. Follow the `ojd-swift-change` rules for file placement and naming.
 
-## Evidence classes
+## Evidence Classes
 
 | Class | Establishes | Does not establish |
 | --- | --- | --- |
@@ -102,4 +102,4 @@ The merge is shallow: `{**upstream, **set}`. A patched section replaces the upst
 | Record-probe-backed | The candidate record opens and decodes in `./Scripts/ojd diagnose record` | Every control, actuator, or consumer |
 | Hardware-verified | One recorded physical result for one claim | Other macOS versions, modes, or models |
 
-Source revisions stay in the lockfile. Evidence status goes in `contributing/testing/` pages, issues, and Git history, never in records.
+Source revisions stay in the lockfile. Evidence status goes in `docs/testing/` pages, issues, and Git history, never in records.

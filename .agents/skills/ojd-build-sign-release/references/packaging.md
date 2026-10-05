@@ -6,7 +6,7 @@
 - [Tester DMG](#tester-dmg)
 - [Release](#release)
 
-## Version bump
+## Version Bump
 
 **Definition.** `./Scripts/ojd release bump-version <version>` sets the SemVer release version, without build metadata, in `Sources/OpenJoystickDriver/App/Info.plist` (`CFBundleShortVersionString`). That is the only file it edits, and every build script and the packaging scripts read the version from there. It needs no CHANGELOG heading, so bump at the start of a cycle: `just release-bump-version <version>`. `CFBundleVersion` is derived from the commit count, and is never set by hand.
 
@@ -18,7 +18,7 @@
 
 ## Tester DMG
 
-**Definition.** Tester DMGs follow `contributing/development/tester-builds.md`:
+**Definition.** Tester DMGs follow `docs/development/tester-builds.md`:
 
 1. `just signing-install-profiles`
 1. `just signing-configure`
@@ -37,7 +37,7 @@
 
 ## Release
 
-**Definition.** The GitHub release workflow (`.github/workflows/release.yml`) creates the tag, signs and notarizes, and uploads the DMG. The follow-up reconciliation is in `contributing/development/releases.md`:
+**Definition.** The GitHub release workflow (`.github/workflows/release.yml`) creates the tag, signs and notarizes, and uploads the DMG. The follow-up reconciliation is in `docs/development/releases.md`:
 
 - run `just check` at the release commit;
 - reconcile the generated notes with the contributions;

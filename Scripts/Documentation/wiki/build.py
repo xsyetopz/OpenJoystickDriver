@@ -1,4 +1,4 @@
-"""Convert the flat `docs/` pages into GitHub wiki pages."""
+"""Convert the flat `wiki/` pages into GitHub wiki pages."""
 
 from __future__ import annotations
 
@@ -9,10 +9,9 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
-DOCS = ROOT / "docs"
+WIKI = ROOT / "wiki"
 DEFAULT_REPOSITORY = "xsyetopz/OpenJoystickDriver"
 EXCLUDED_FILES = frozenset({"AGENTS.md"})
-EXCLUDED_DIRECTORIES = frozenset({"external"})
 INLINE_LINK = re.compile(r"(\]\()([^)\s]+)")
 REFERENCE_DEFINITION = re.compile(r"^( {0,3}\[[^\]]+\]:[ \t]+)(\S+)", re.MULTILINE)
 FENCE = re.compile(r"^ {0,3}(```|~~~)")
@@ -23,20 +22,16 @@ class WikiBuildError(RuntimeError):
     pass
 
 
-def page_files(docs: pathlib.Path) -> list[pathlib.Path]:
+def page_files(source: pathlib.Path) -> list[pathlib.Path]:
     """Return the pages to publish, and reject layouts the wiki cannot serve."""
-    subfolders = sorted(
-        entry.name
-        for entry in docs.iterdir()
-        if entry.is_dir() and entry.name not in EXCLUDED_DIRECTORIES
-    )
+    subfolders = sorted(entry.name for entry in source.iterdir() if entry.is_dir())
     if subfolders:
         raise WikiBuildError(
-            f"docs/ must be flat; move the pages out of: {', '.join(subfolders)}"
+            f"wiki/ must be flat; move the pages out of: {', '.join(subfolders)}"
         )
     pages = sorted(
         entry
-        for entry in docs.iterdir()
+        for entry in source.iterdir()
         if entry.is_file()
         and entry.suffix == ".md"
         and entry.name not in EXCLUDED_FILES
@@ -102,10 +97,10 @@ def convert(
 
 
 def build(
-    docs: pathlib.Path, output: pathlib.Path, repository: str, ref: str
+    source: pathlib.Path, output: pathlib.Path, repository: str, ref: str
 ) -> list[str]:
     """Write the wiki pages into `output`, which must be empty or missing."""
-    pages = page_files(docs)
+    pages = page_files(source)
     if output.exists() and any(output.iterdir()):
         raise WikiBuildError(f"output directory is not empty: {output}")
     names = frozenset(page.stem for page in pages)
@@ -127,12 +122,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--repository",
         default=os.environ.get("GITHUB_REPOSITORY", DEFAULT_REPOSITORY),
-        help="owner/name for links to files outside docs/",
+        help="owner/name for links to files outside wiki/",
     )
     parser.add_argument("--ref", default="main", help="branch for those links")
     arguments = parser.parse_args(argv)
     try:
-        written = build(DOCS, arguments.output, arguments.repository, arguments.ref)
+        written = build(WIKI, arguments.output, arguments.repository, arguments.ref)
     except WikiBuildError as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1

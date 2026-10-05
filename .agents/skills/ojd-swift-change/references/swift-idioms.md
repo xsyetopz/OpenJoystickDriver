@@ -10,7 +10,7 @@
 
 The package uses swift-tools-version 6.3 (Swift 6 language mode, complete concurrency checking), and source targets build for `.macOS(.v12)`.
 
-## Locked state
+## Locked State
 
 **Definition.** `Locked<Value: Sendable>` in `Sources/OpenJoystickDriverKit/Concurrency/Locked.swift` is a `package final class` with a private `NSLock`, accessed through `withLock { (inout Value) in ... }`.
 
@@ -34,7 +34,7 @@ let total = counter.withLock { $0 }
 
 **Verify.** `Tests/OpenJoystickDriverKitTests/Concurrency/LockedTests.swift` covers concurrent increments and rethrow behavior.
 
-## Blocking work
+## Blocking Work
 
 **Definition.** `BlockingWork.run(label:_:)` and `BlockingWork.run(on:_:)` in `Concurrency/BlockingWork.swift` run a synchronous throwing closure on a dispatch queue, and resume the caller through a checked continuation.
 
@@ -50,7 +50,7 @@ let bytes = try await BlockingWork.run(label: "ojd.rpc.read") { try socket.read(
 
 **Verify.** `rg -n 'DispatchSemaphore|Task\.detached' Sources` finds no new blocking bridge in the changed files.
 
-## Strict decoding
+## Strict Decoding
 
 **Definition.** A custom `init(from:)` calls `try container.rejectUnknownKeys(CodingKeys.self)` (`Sources/OpenJoystickDriverKit/Remapping/Profile/Document/StrictDecoding.swift`), where `CodingKeys` is `CaseIterable`. An unknown key at any depth throws.
 
@@ -72,7 +72,7 @@ init(from decoder: any Decoder) throws {
 
 **Verify.** Add a decoding test with one extra key, and expect it to throw.
 
-## Package access
+## Package Access
 
 **Definition.** The `package` access level makes a declaration visible to every target in this package, and to nothing outside it.
 
@@ -82,7 +82,7 @@ init(from decoder: any Decoder) throws {
 
 **Verify.** `swift build` succeeds with no new `public` declarations for cross-target use.
 
-## CLI errors
+## CLI Errors
 
 **Definition.** Parsers throw `CLIParseError`, and commands throw `CLIExit`. Only `CLI.run(arguments:)` in `Sources/OpenJoystickDriverCLI/CLI.swift` maps errors to exit codes.
 

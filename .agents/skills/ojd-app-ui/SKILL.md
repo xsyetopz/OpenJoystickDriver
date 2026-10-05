@@ -18,7 +18,7 @@ Deliver one native, accessible user flow in Presentation, with its states and re
 
 ## Workflow
 
-1. Read `contributing/development/menu-bar-settings-architecture.md` (owners, gateway contract, and state rules), `LOCALIZATION.md`, the affected source, and its mirror under `Tests/OpenJoystickDriverPresentationTests/`.
+1. Read `docs/development/menu-bar-settings-architecture.md` (owners, gateway contract, and state rules), `LOCALIZATION.md`, the affected source, and its mirror under `Tests/OpenJoystickDriverPresentationTests/`.
 1. Write down the primary action, its prerequisite, the success state, and the recovery path. Then list which [required states](references/states-and-proof.md#required-states) apply.
 1. Put the change at its [owner](references/ownership.md#presentation-owners). Views hold transient visual state. `@MainActor` view models hold workflow state. Coordinators and window controllers hold AppKit lifecycle and panels.
 1. Reach the runtime only through `ApplicationServiceGateway`. When the gateway lacks a call, add it to the Kit client and the Service server first (`ojd-swift-change`), then [extend the gateway](references/ownership.md#gateway-seam).
@@ -26,7 +26,7 @@ Deliver one native, accessible user flow in Presentation, with its states and re
 1. Test view-model behavior against `GatewayStub` ([state tests](references/states-and-proof.md#state-tests)). Then run `swift test --filter OpenJoystickDriverPresentationTests`, `just lint`, and `swift test --no-parallel`.
 1. Check the [proof points](references/states-and-proof.md#proof-points) in the running app. Report any you could not check as unverified.
 
-## Route the problem to a card
+## Route the Problem To a Card
 
 | Situation | Card |
 | --- | --- |
@@ -53,6 +53,6 @@ Deliver one native, accessible user flow in Presentation, with its states and re
 - [Ownership](references/ownership.md): presentation owners, gateway seam, single window and runtime.
 - [States and proof](references/states-and-proof.md): required states, state tests, localized copy, proof points.
 
-## Completion evidence
+## Completion Evidence
 
 The report gives the user path, the states covered (with the test for each), localization keys added, and the commands run with their results. It lists the proof points checked in the running app and those left unverified, such as VoiceOver, Full Keyboard Access, appearance, reduced motion, TCC transitions, and macOS 10.15.

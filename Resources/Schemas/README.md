@@ -29,7 +29,7 @@ Controller records contain only facts consumed at runtime. Keep:
 
 `capabilities` holds only deltas against the bound parser's declared controls: `absent` and `present` are disjoint, nonempty lists of `controlID` values from the normalized controller model, and `rumble: "absent"` declares that the model has no rumble channel. Rumble is a separate key because rumble channel IDs such as `left-trigger` collide with control IDs; it is accepted only for GIP, the one driver that consumes it. A `present` control must be one the configured parser emits (for example the DualSense Edge paddles and function buttons). Quirks, capability values initialization actions, families and stored variants are Swift enums (`PhysicalProtocolID`, `PhysicalProtocolVariantID`), and a test keeps their schema enums equal to the Swift cases. Every implemented family has catalog rows, so the schema lists all of them.
 
-Do not add provenance, confidence, verification, review state, test plans, or per-controller schemas. Pin source revisions in `ControllerSources.lock.json`. Record accepted hardware observations in the stable pages under `contributing/testing/`. Support reports contain observed diagnostic state only.
+Do not add provenance, confidence, verification, review state, test plans, or per-controller schemas. Pin source revisions in `ControllerSources.lock.json`. Record accepted hardware observations in the stable pages under `docs/testing/`. Support reports contain observed diagnostic state only.
 
 CloudEvents owns `specversion`, `id`, `source`, `type`, `time`, `datacontenttype`, and `dataschema`; OJD owns the typed `data` payload. Do not invent another report shape without a live producer and consumer.
 
@@ -43,7 +43,7 @@ git diff --check
 ```
 
 `check schemas` validates all schemas, every generated controller record, every override, OJD-owned Swift `CodingKeys`, and one live support report.
-It also compares `cli-output.schema.json` with its copy at the last release tag, and fails when a change would break a program that reads that release's `--json` output; see [Using the command line](../../docs/Command-Line.md). Generate an intentional catalog change only through:
+It also compares `cli-output.schema.json` with its copy at the last release tag, and fails when a change would break a program that reads that release's `--json` output; see [Using the command line](../../wiki/Command-Line.md). Generate an intentional catalog change only through:
 
 ```bash
 ./Scripts/ojd catalog regenerate --write

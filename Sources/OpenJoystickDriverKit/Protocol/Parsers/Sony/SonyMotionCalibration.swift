@@ -1,5 +1,5 @@
 /// Independently implemented affine conversion from the Sony calibration report's endpoint facts.
-/// Report layout and validation bounds are documented in contributing/development/remapping.md.
+/// Report layout and validation bounds are documented in docs/development/remapping.md.
 struct SonyMotionCalibration {
   private enum Report {
     static let dualSenseLength = 41

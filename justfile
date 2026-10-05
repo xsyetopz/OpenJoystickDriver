@@ -150,6 +150,10 @@ env-audit:
 docs-export-external-issues:
     ./Scripts/ojd docs export-external-issues
 
+# Publish wiki/ to the GitHub wiki (pass --dry-run to preview without pushing)
+wiki *args:
+    ./Scripts/ojd docs publish-wiki {{ args }}
+
 # =========================================================================
 # Signing
 # =========================================================================

@@ -4,7 +4,7 @@ description: >-
   Probes and records physical controller behavior for OpenJoystickDriver:
   validates and live-probes a candidate controller record, reads USB_RX/EVENT
   probe output, runs DEXT, SDL3, and GameController diagnostics, plans bounded
-  rumble/LED output tests, and writes the contributing/testing page with an evidence
+  rumble/LED output tests, and writes the docs/testing page with an evidence
   class per claim. Use when a controller is not detected, input is wrong,
   reconnect fails, or rumble/LED support must be confirmed on hardware. Not for
   authoring catalog records (use ojd-controller-catalog) or fixing Swift code
@@ -17,7 +17,7 @@ Produce a repeatable evidence record for one controller in one connection mode. 
 
 ## Workflow
 
-1. Read the controller's generated record, its driver under `Sources/OpenJoystickDriverKit/Protocol/Drivers/`, and the matching page in `contributing/testing/` (see `contributing/testing/controller-record.md` and `contributing/testing/physical-output.md`).
+1. Read the controller's generated record, its driver under `Sources/OpenJoystickDriverKit/Protocol/Drivers/`, and the matching page in `docs/testing/` (see `docs/testing/controller-record.md` and `docs/testing/physical-output.md`).
 1. Write down one question, its success signal, the connection mode, and the macOS version.
 1. Pick the probe from the [probe table](references/probes.md#choose-the-probe).
 1. Validate before opening hardware: `./Scripts/ojd diagnose record /tmp/candidate.json --validate-only`.
@@ -26,7 +26,7 @@ Produce a repeatable evidence record for one controller in one connection mode. 
 1. Read the markers with the [marker card](references/probes.md#record-probe-markers) and draw conclusions only from the [failure table](references/probes.md#failure-meanings).
 1. Record the result in the [evidence ledger](references/evidence-record.md#evidence-ledger) with the [redactions](references/evidence-record.md#redaction) applied.
 
-## Route the evidence to a card
+## Route the Evidence To a Card
 
 | Observation | Card |
 | --- | --- |
@@ -54,6 +54,6 @@ Produce a repeatable evidence record for one controller in one connection mode. 
 - [Probes](references/probes.md): choosing a probe, record-probe markers, failure meanings.
 - [Evidence record](references/evidence-record.md): evidence ledger and classes, bounded physical output, redaction, handoff fields.
 
-## Completion evidence
+## Completion Evidence
 
 The report gives the controller and its decimal and hex VID/PID, the transport and mode, the OJD revision, and the macOS version. It also gives every command with its duration and exit status. For a record probe it quotes, redacted, the `RECORD_VALIDATION`, `RECORD_HANDSHAKE`, and `RECORD_SUMMARY` lines, any `RECORD_BINDING` line, and one `USB_RX`/`EVENT` pair per claimed control. A missing `RECORD_HANDSHAKE` line is reported as a failed startup with its `ERROR:` line ([marker card](references/probes.md#record-probe-markers)). It also gives the control matrix, the reconnect result, the result for each actuator, the evidence class of each claim, and the claims left unverified. Record changes go to `ojd-controller-catalog`, and code fixes go to `ojd-swift-change`.

@@ -19,21 +19,21 @@ class WikiBuildTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
-        self.docs = Path(self.temporary.name) / "docs"
-        self.docs.mkdir()
-        self.output = Path(self.temporary.name) / "wiki"
+        self.source = Path(self.temporary.name) / "wiki-source"
+        self.source.mkdir()
+        self.output = Path(self.temporary.name) / "pages"
 
     def write(self, name: str, text: str) -> None:
-        (self.docs / name).write_text(text, encoding="utf-8")
+        (self.source / name).write_text(text, encoding="utf-8")
 
     def build(self) -> list[str]:
-        return wiki.build(self.docs, self.output, REPOSITORY, "main")
+        return wiki.build(self.source, self.output, REPOSITORY, "main")
 
     def test_rewrites_page_and_repository_links(self) -> None:
         self.write(
             "Home.md",
             "[a](Guide.md) [b](Guide.md#step-one) [c](#local) "
-            "[d](../contributing/README.md#top) [e](https://example.com/x.md)\n"
+            "[d](../docs/README.md#top) [e](https://example.com/x.md)\n"
             "\n[ref]: Guide.md#step-two\n",
         )
         self.write("Guide.md", "# Guide\n")
@@ -41,7 +41,7 @@ class WikiBuildTests(unittest.TestCase):
         self.assertEqual(
             (self.output / "Home.md").read_text(encoding="utf-8"),
             "[a](Guide) [b](Guide#step-one) [c](#local) "
-            "[d](https://github.com/owner/name/blob/main/contributing/README.md#top) "
+            "[d](https://github.com/owner/name/blob/main/docs/README.md#top) "
             "[e](https://example.com/x.md)\n"
             "\n[ref]: Guide#step-two\n",
         )
@@ -52,22 +52,21 @@ class WikiBuildTests(unittest.TestCase):
         self.build()
         self.assertEqual((self.output / "Home.md").read_text(encoding="utf-8"), text)
 
-    def test_skips_agent_instructions_and_external_archive(self) -> None:
+    def test_skips_agent_instructions(self) -> None:
         self.write("Home.md", "# Home\n")
         self.write("AGENTS.md", "# Rules\n")
-        (self.docs / "external").mkdir()
         self.assertEqual(self.build(), ["Home.md"])
 
     def test_rejects_subfolders(self) -> None:
         self.write("Home.md", "# Home\n")
-        (self.docs / "guides").mkdir()
+        (self.source / "guides").mkdir()
         with self.assertRaisesRegex(wiki.WikiBuildError, "guides"):
             self.build()
 
     def test_rejects_names_that_differ_only_in_case(self) -> None:
         self.write("Home.md", "# Home\n")
         self.write("home.md", "# Home\n")
-        if len(list(self.docs.iterdir())) == 1:
+        if len(list(self.source.iterdir())) == 1:
             self.skipTest("case-insensitive file system")
         with self.assertRaisesRegex(wiki.WikiBuildError, "case"):
             self.build()
@@ -87,7 +86,7 @@ class WikiBuildTests(unittest.TestCase):
             self.build()
 
     def test_repository_docs_build(self) -> None:
-        written = wiki.build(wiki.DOCS, self.output, REPOSITORY, "main")
+        written = wiki.build(wiki.WIKI, self.output, REPOSITORY, "main")
         self.assertIn("Home.md", written)
         self.assertIn("_Sidebar.md", written)
         self.assertNotIn("AGENTS.md", written)

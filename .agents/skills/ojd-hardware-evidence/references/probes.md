@@ -6,7 +6,7 @@
 - [Record-probe markers](#record-probe-markers)
 - [Failure meanings](#failure-meanings)
 
-## Choose the probe
+## Choose the Probe
 
 **Definition.** Each `./Scripts/ojd diagnose` command answers one question. Run `./Scripts/ojd --help` to see the current list.
 
@@ -27,7 +27,7 @@
 
 **Verify.** Each command exits 0 and prints its result lines. A non-zero exit leaves the claim unproven.
 
-## Record-probe markers
+## Record-Probe Markers
 
 **Definition.** `diagnose record` (implemented in `Sources/OpenJoystickDriverHIDTool/ControllerRecordProbeRunner.swift`) prints one line per event to stdout, in this order. Errors go to stderr as `ERROR: ...`.
 
@@ -62,7 +62,7 @@ Exit statuses: `0` at least one packet arrived (even with parse errors), `1` an 
 1. One `USB_RX`/`EVENT` pair for each control claimed.
 1. The `RECORD_SUMMARY` line and the exit status. Exit `0` alone does not show that decoding worked; read `parse_errors` and the `EVENT` lines.
 
-## Failure meanings
+## Failure Meanings
 
 | Observation | The only safe conclusion |
 | --- | --- |

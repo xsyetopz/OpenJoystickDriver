@@ -6,7 +6,7 @@
 - [Index-snapshot hook](#index-snapshot-hook)
 - [Swift file gate](#swift-file-gate)
 
-## Gate sync
+## Gate Sync
 
 **Definition.** A repository check appears in up to five places:
 
@@ -26,7 +26,7 @@
 
 **Verify.** `rg -n '<check command>' AGENTS.md justfile .github/workflows Scripts/README.md` shows every intended place.
 
-## Index-snapshot hook
+## Index-Snapshot Hook
 
 **Definition.** `lefthook.yml` `pre-commit` runs `Scripts/Quality/check-index-snapshot.sh`. The script commits the index to a temporary commit, checks it out in a temporary worktree, and runs `just check-hook` there. As a result, the hook checks exactly what is being committed, and ignores unstaged edits. `pre-push` runs `Scripts/Quality/check-pushed-tips.sh` on the pushed refs.
 
@@ -36,13 +36,13 @@
 
 **Verify.** `./Scripts/ojd hooks validate` passes. `Tests/RepositoryScripts/test_git_hooks.py` covers the pre-push check. Add a case there for any hook behavior you change.
 
-## Swift file gate
+## Swift File Gate
 
 **Definition.** `Scripts/Quality/check_swift_file_length.py` counts code lines per tracked Swift file, excluding blank and comment-only lines. The limit is 500 for files under `Sources` and 1000 for files under `Tests`. The script also rejects any extension-file concern (the text after the last `+`) that is exactly `Behavior` or `Scenarios`, or that ends in a digit.
 
 **Use when.** Changing a limit or the naming rule.
 
-**Do not use when.** Never raise a limit to fit one file. Split the file by concern (`ojd-swift-change`). A limit change needs the user's approval and an update to `contributing/development/source-topology.md`.
+**Do not use when.** Never raise a limit to fit one file. Split the file by concern (`ojd-swift-change`). A limit change needs the user's approval and an update to `docs/development/source-topology.md`.
 
 **Cost removed.** A 350-line limit with no naming rule produced 150 `+BehaviorN` files and forced `private` state to become internal.
 
