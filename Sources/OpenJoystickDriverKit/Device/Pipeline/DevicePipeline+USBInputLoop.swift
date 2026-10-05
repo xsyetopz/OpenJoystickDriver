@@ -124,8 +124,12 @@ extension DevicePipeline {
     usbKeepAliveTask = nil
   }
 
+  /// Skips the writes while the session is suspended; the timer keeps running, so keep-alives
+  /// return on resume. Linux xpad sends no periodic GIP keep-alive at all.
   func runKeepAlive(handle: any USBTransportSession, generation: UInt64) async {
-    guard isCurrentUSBRun(generation), usbHandle === handle else { return }
+    guard isCurrentUSBRun(generation), usbHandle === handle, sessionState != .suspended else {
+      return
+    }
     for write in driver.keepAliveWrites() {
       guard isCurrentUSBRun(generation), usbHandle === handle else { return }
       do { try await performUSBWrite(write, handle: handle, runGeneration: generation) } catch {

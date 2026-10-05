@@ -51,6 +51,8 @@ The player LED stays dark in HID mode `1082`. OJD does not write to native pads,
 
 Still untested: the raw handshake from Linux, and GameSir Nexus with the pad in this `1010` mode.
 
+2026-10-05, owner hardware, macOS 27.0.1, commit `21e2da3a`, app quit: the G7 SE `3537:1010` (`bcdDevice` `0x0640`) over USB GIP, through `ojd diagnose record`. A 60-second baseline with the generated record printed `RECORD_HANDSHAKE driver=xbox.gip:usb result=complete` and `RECORD_SUMMARY packets=5 events=0 parse_errors=0` and exited 0. A 180-second run of the same record with `"keepAlive": false` printed `RECORD_HANDSHAKE driver=xbox.gip:usb result=complete` and `RECORD_SUMMARY packets=23 events=11 parse_errors=0` and exited 0. Without any host keep-alive, the pad still sent its own status `03 20 nn 04 80 00 00 00` every 20 seconds, all five presses of A decoded as `faceSouth`, nothing disconnected or reconnected, and the owner saw the player LED stay lit throughout. The 20-second keep-alive rhythm noted on 2026-09-25 is therefore the pad's own status cadence, which the probe answers, and not a host requirement. This holds for this model, firmware, and macOS version only; it says nothing about the GameSir `0F F2` heartbeat on other models.
+
 ## Validate Records and Input
 
 Run from the repository root:

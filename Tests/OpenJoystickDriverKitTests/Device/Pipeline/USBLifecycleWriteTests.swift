@@ -27,6 +27,28 @@ struct USBLifecycleWriteTests {
   }
 
   @Test
+  func keepAliveStopsWhileTheSessionIsSuspendedAndReturnsOnResume() async {
+    let driver = LifecycleWriteDriver(
+      sessionPlan: DriverSessionPlan(usbKeepAliveIntervalNanoseconds: 20_000_000),
+      keepAlive: [Self.write(endpoint: 0x03, bytes: [0xAA])]
+    )
+    let session = LifecycleUSBSession()
+    let pipeline = Self.pipeline(driver: driver, session: session)
+
+    await pipeline.start()
+    #expect(await waitUntil { await session.writes.count >= 1 })
+    #expect(await pipeline.suspendControllerSession())
+    try? await Task.sleep(nanoseconds: 60_000_000)
+    let countWhileSuspended = await session.writes.count
+    try? await Task.sleep(nanoseconds: 150_000_000)
+    #expect(await session.writes.count == countWhileSuspended)
+
+    #expect(await pipeline.resumeControllerSession())
+    #expect(await waitUntil { await session.writes.count > countWhileSuspended })
+    await pipeline.stop()
+  }
+
+  @Test
   func handleChangeStopsConnectionWritesButKeepsTheConsumedStateChange() async {
     let driver = LifecycleWriteDriver(
       sessionPlan: DriverSessionPlan(requiresInputConnectionBeforeOutput: true),
