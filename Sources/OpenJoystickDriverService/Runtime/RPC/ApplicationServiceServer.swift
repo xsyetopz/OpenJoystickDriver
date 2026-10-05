@@ -97,7 +97,10 @@ public final class ApplicationServiceServer: @unchecked Sendable {
       Task { completion(await self.handleLocalRPC(request)) }
     }
     try server.start()
-    let endpoint = EndpointServer(source: ApplicationServiceWatchSource(server: self))
+    let endpoint = EndpointServer(
+      source: ApplicationServiceWatchSource(server: self),
+      feeds: virtualFeeds
+    )
     endpoint.start()
     rpcServerLock.withLock {
       rpcServer = server

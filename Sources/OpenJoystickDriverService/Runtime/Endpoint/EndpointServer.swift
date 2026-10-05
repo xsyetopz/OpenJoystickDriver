@@ -40,6 +40,9 @@ final class EndpointServer: @unchecked Sendable {
   let store: AccessGrantStore
   let source: any ControllerWatchSource
   let version: String
+  /// The virtual gamepads that `feed` connections drive; shared with `ojd virtual feed`. Nil
+  /// refuses every feed.
+  let feeds: VirtualFeedRegistry?
   let identify: Identify
   let lock = NSLock()
   private let acceptQueue = DispatchQueue(label: "com.openjoystickdriver.endpoint.accept")
@@ -65,12 +68,14 @@ final class EndpointServer: @unchecked Sendable {
     store: AccessGrantStore = AccessGrantStore(),
     source: any ControllerWatchSource,
     version: String = ApplicationVersion.current,
+    feeds: VirtualFeedRegistry? = nil,
     identify: @escaping Identify = EndpointClient.identify
   ) {
     self.socketPath = socketPath
     self.store = store
     self.source = source
     self.version = version
+    self.feeds = feeds
     self.identify = identify
   }
 

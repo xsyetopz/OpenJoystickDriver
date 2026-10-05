@@ -22,9 +22,10 @@ struct EndpointFixture {
 }
 
 /// Runs `body` with an endpoint on a private socket whose clients have `identity`; nil makes
-/// every signature unreadable.
+/// every signature unreadable. `feeds` serves `feed` requests.
 func withEndpointServer(
   identity: CodeSigningIdentity? = EndpointFixture.tool,
+  feeds: VirtualFeedRegistry? = nil,
   _ body: (EndpointServer, EndpointFixture) throws -> Void
 ) throws {
   let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
@@ -42,7 +43,8 @@ func withEndpointServer(
       + "/ojd-\(UUID().uuidString.prefix(8)).sock",
     store: fixture.store,
     source: fixture.source,
-    version: "1.2.3"
+    version: "1.2.3",
+    feeds: feeds
   ) { _ in client }
   defer {
     server.stop()
@@ -91,6 +93,8 @@ final class EndpointTestClient {
       close(descriptor)
       throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
     }
+    var noSignal: Int32 = 1
+    setsockopt(descriptor, SOL_SOCKET, SO_NOSIGPIPE, &noSignal, socklen_t(MemoryLayout<Int32>.size))
     try LocalServiceRPCTransport.setTimeout(descriptor, seconds: 5)
     let challenge = try readObject()
     #expect(challenge["type"] as? String == "challenge")

@@ -2,7 +2,7 @@
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/endpoint.schema.json",
 	"title": "OpenJoystickDriver endpoint protocol",
-	"description": "One JSON object per line on the endpoint socket, or per text message on the WebSocket. A client sends hello, waits for welcome, then sends subscribe; the service then sends controllers stream lines. An error line is the last line before the service closes the connection.",
+	"description": "One JSON object per line on the endpoint socket, or per text message on the WebSocket. A client sends hello, waits for welcome, then sends subscribe or feed. After subscribe the service sends controllers stream lines; after feed and feeding the client sends frame lines and the service sends the host's rumble lines. An error line is the last line before the service closes the connection.",
 	"oneOf": [
 		{
 			"$ref": "#/$defs/clientLine"
@@ -19,6 +19,12 @@
 				},
 				{
 					"$ref": "#/$defs/subscribe"
+				},
+				{
+					"$ref": "#/$defs/feed"
+				},
+				{
+					"$ref": "#/$defs/frame"
 				}
 			]
 		},
@@ -35,6 +41,12 @@
 				},
 				{
 					"$ref": "cli-output.schema.json#/$defs/sharedControllerWatchEvent"
+				},
+				{
+					"$ref": "#/$defs/feeding"
+				},
+				{
+					"$ref": "cli-output.schema.json#/$defs/virtualFeed"
 				}
 			]
 		},
@@ -136,6 +148,75 @@
 				}
 			}
 		},
+		"feed": {
+			"type": "object",
+			"required": ["as", "type"],
+			"additionalProperties": false,
+			"description": "Publishes a virtual gamepad that the connection drives; needs the control scope. Closing the connection removes the gamepad.",
+			"properties": {
+				"type": {
+					"const": "feed"
+				},
+				"as": {
+					"$ref": "#/$defs/virtualProfile"
+				}
+			}
+		},
+		"feeding": {
+			"type": "object",
+			"required": ["as", "type"],
+			"additionalProperties": false,
+			"description": "The answer to feed: the virtual gamepad exists and takes frame lines.",
+			"properties": {
+				"type": {
+					"const": "feeding"
+				},
+				"as": {
+					"$ref": "#/$defs/virtualProfile"
+				}
+			}
+		},
+		"virtualProfile": {
+			"enum": ["hid-xbox-one-s-bt", "hid-generic"],
+			"description": "The virtual HID profile the gamepad presents."
+		},
+		"frame": {
+			"type": "object",
+			"additionalProperties": false,
+			"description": "One input frame after feeding, as in 'ojd virtual feed'. Missing controls are neutral. The service shows frames in order, each for at least 8 ms; it stops reading while 256 frames wait.",
+			"properties": {
+				"buttons": {
+					"type": "array",
+					"uniqueItems": true,
+					"items": {
+						"$ref": "profile.schema.json#/$defs/button"
+					}
+				},
+				"dpad": {
+					"type": "array",
+					"uniqueItems": true,
+					"items": {
+						"$ref": "profile.schema.json#/$defs/dpadDirection"
+					}
+				},
+				"axes": {
+					"type": "object",
+					"propertyNames": {
+						"$ref": "profile.schema.json#/$defs/axis"
+					},
+					"additionalProperties": {
+						"type": "number"
+					},
+					"description": "Sticks run from -1 to 1 with positive Y up; triggers run from 0 to 1. Values out of range are clamped."
+				},
+				"holdMilliseconds": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 60000,
+					"description": "How long the frame shows at least; without it, the frame shows until the next one."
+				}
+			}
+		},
 		"error": {
 			"type": "object",
 			"required": ["code", "message", "type"],
@@ -152,7 +233,9 @@
 						"invalid-message",
 						"too-many-connections",
 						"revoked",
-						"too-slow"
+						"too-slow",
+						"too-many-feeds",
+						"feed-closed"
 					]
 				},
 				"message": {

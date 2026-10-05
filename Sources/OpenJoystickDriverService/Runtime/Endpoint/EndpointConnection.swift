@@ -47,6 +47,8 @@ final class EndpointConnection: @unchecked Sendable {
   var session: AccessConnection? { lock.withLock { welcomed } }
 
   var isSubscribed: Bool { lock.withLock { subscribed && !closing } }
+  /// Whether the connection sent its last line or its peer went away.
+  var isClosing: Bool { lock.withLock { closing } }
   var wantsOutputValues: Bool { lock.withLock { subscribed && wantsOutput && !closing } }
 
   /// Reads the next message; blocks until one arrives, the peer closes, or the receive timeout
@@ -73,10 +75,15 @@ final class EndpointConnection: @unchecked Sendable {
     for event in snapshot { deliver(event) }
   }
 
-  func send(_ line: some Encodable) {
+  /// Queues `line`; a `bounded` line closes the connection with `too-slow` when the queue is full.
+  func send(_ line: some Encodable, bounded: Bool = false) {
     guard let data = try? Self.encoder().encode(line) else { return }
     lock.withLock {
       guard !closing else { return }
+      guard !bounded || pending.count < EndpointServer.maximumQueuedLines else {
+        closeLocked(EndpointError(code: .tooSlow, message: "The client read too slowly."))
+        return
+      }
       pending.append(.message(data))
       scheduleDrain()
     }

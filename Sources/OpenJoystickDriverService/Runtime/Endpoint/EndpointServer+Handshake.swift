@@ -2,9 +2,9 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension EndpointServer {
-  /// Runs one connection on a connection-queue thread: the handshake, the subscription, then a
-  /// wait until either side closes. `origin` is the normalized `Origin` of a WebSocket, nil when
-  /// it sent none, and `port` the port it connected to.
+  /// Runs one connection on a connection-queue thread: the handshake, then the subscription or
+  /// the feed until either side closes. `origin` is the normalized `Origin` of a WebSocket, nil
+  /// when it sent none, and `port` the port it connected to.
   func serve(_ connection: EndpointConnection, origin: String? = nil, port: Int? = nil) {
     defer {
       lock.withLock {
@@ -48,8 +48,22 @@ extension EndpointServer {
     connection.setReceiveTimeout(seconds: 0)
 
     guard let request = readRequest(connection) else { return }
+    if request.type == .feed {
+      guard connection.session?.scopes.contains(.control) == true else {
+        connection.close(
+          EndpointError(code: .notGranted, message: "Feed needs the control scope.")
+        )
+        return
+      }
+      guard let profile = request.as else {
+        connection.close(Self.invalid("Send feed with a virtual HID profile."))
+        return
+      }
+      feed(connection, profile: profile)
+      return
+    }
     guard request.type == .subscribe, request.stream == "controllers" else {
-      connection.close(Self.invalid("Send subscribe with the controllers stream."))
+      connection.close(Self.invalid("Send subscribe with the controllers stream, or feed."))
       return
     }
     guard connection.session?.scopes.contains(.read) == true else {
@@ -226,7 +240,7 @@ extension EndpointServer {
     let port: String
   }
 
-  private static func invalid(_ message: String) -> EndpointError {
+  static func invalid(_ message: String) -> EndpointError {
     EndpointError(code: .invalidMessage, message: message)
   }
 }

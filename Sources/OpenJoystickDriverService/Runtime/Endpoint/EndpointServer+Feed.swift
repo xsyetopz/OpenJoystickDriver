@@ -1,0 +1,145 @@
+import Foundation
+import OpenJoystickDriverKit
+
+extension EndpointServer {
+  /// Runs a `feed` on the connection's thread: opens a virtual gamepad, applies each frame line to
+  /// it, and sends the host's rumble commands as lines until either side closes.
+  ///
+  /// A pump exchanges with the feed each poll, so the feed stays open while the client sends
+  /// nothing. When the feed's frame queue is full, reading waits, which pushes back on the client.
+  func feed(_ connection: EndpointConnection, profile: String) {
+    guard let feeds else {
+      connection.close(
+        EndpointError(code: .feedClosed, message: "The service runs no virtual gamepads.")
+      )
+      return
+    }
+    let token: UUID
+    do { token = try Self.waitFor { try await feeds.open(profile: profile).token } } catch {
+      connection.close(Self.feedError(error, profile: profile))
+      return
+    }
+    let exchanger = FeedExchanger(feeds: feeds, token: token, connection: connection)
+    let pump = Task {
+      while !Task.isCancelled, exchanger.exchange([]) != nil {
+        try? await Task.sleep(nanoseconds: ControllerWatchPoller.pollInterval)
+      }
+    }
+    defer {
+      pump.cancel()
+      Task { await feeds.close(token: token) }
+    }
+    connection.send(EndpointFeeding(as: profile))
+
+    while true {
+      switch connection.readMessage() {
+      case .end: return
+      case .tooLong:
+        connection.close(Self.invalid("A message is longer than \(Self.maximumLineBytes) bytes."))
+        return
+      case .invalid(let reason):
+        connection.close(Self.invalid(reason))
+        return
+      case .message(let data):
+        guard let frame = Self.frame(data) else {
+          connection.close(
+            Self.invalid(#"Send frames after feeding, such as {"buttons":["south"]}."#)
+          )
+          return
+        }
+        while let accepted = exchanger.exchange([frame]), accepted == 0 {
+          usleep(useconds_t(VirtualFeedExchangeResult.minimumFrameMilliseconds * 1_000))
+        }
+        if exchanger.isClosed { return }
+      }
+    }
+  }
+
+  /// The frame on a line without a `type`; nil for anything else.
+  private static func frame(_ data: Data) -> VirtualFeedFrame? {
+    guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+      object["type"] == nil
+    else { return nil }
+    return try? JSONDecoder().decode(VirtualFeedFrame.self, from: data)
+  }
+
+  private static func feedError(_ error: any Error, profile: String) -> EndpointError {
+    switch error as? VirtualFeedError {
+    case .unknownProfile:
+      invalid("\(profile) is not a virtual HID profile.")
+    case .tooManyFeeds(let limit):
+      EndpointError(
+        code: .tooManyFeeds,
+        message: "The service already runs \(limit) virtual gamepads."
+      )
+    default:
+      EndpointError(
+        code: .feedClosed,
+        message: "The virtual gamepad did not start: \(error.localizedDescription)"
+      )
+    }
+  }
+
+  /// Runs `work` and blocks the calling thread, a connection-queue thread, until it finishes.
+  private static func waitFor<T: Sendable>(
+    _ work: @escaping @Sendable () async throws -> T
+  ) throws -> T {
+    let box = ResultBox<T>()
+    let done = DispatchSemaphore(value: 0)
+    Task {
+      do { box.result = .success(try await work()) } catch { box.result = .failure(error) }
+      done.signal()
+    }
+    done.wait()
+    return try box.result!.get()
+  }
+}
+
+/// Written by one task before the semaphore signals, read after it.
+/// - Note: `@unchecked Sendable` because the semaphore orders the write before the read.
+private final class ResultBox<T>: @unchecked Sendable {
+  var result: Result<T, any Error>?
+}
+
+/// Exchanges with one feed and sends its rumble lines; the lock keeps the pump's lines and the
+/// reader's lines in the order the feed returned them.
+///
+/// - Note: `@unchecked Sendable` because `closed` is guarded by `lock`.
+private final class FeedExchanger: @unchecked Sendable {
+  private let feeds: VirtualFeedRegistry
+  private let token: UUID
+  private weak var connection: EndpointConnection?
+  private let lock = NSLock()
+  private var closed = false
+
+  init(feeds: VirtualFeedRegistry, token: UUID, connection: EndpointConnection) {
+    self.feeds = feeds
+    self.token = token
+    self.connection = connection
+  }
+
+  var isClosed: Bool { lock.withLock { closed } }
+
+  /// Queues `frames` and sends the feedback; returns how many frames the feed accepted, or nil
+  /// once the connection is closing, which closes the feed, or the feed closed, which closes the
+  /// connection with `feed-closed`.
+  func exchange(_ frames: [VirtualFeedFrame]) -> Int? {
+    lock.withLock {
+      guard !closed else { return nil }
+      guard let connection, !connection.isClosing else {
+        // Removes the pad now; the reader may stay blocked until the connection's writer drains.
+        closed = true
+        Task { [feeds, token] in await feeds.close(token: token) }
+        return nil
+      }
+      let result = feeds.exchange(token: token, frames: frames)
+      guard !result.closed else {
+        closed = true
+        connection.close(EndpointError(code: .feedClosed, message: "The virtual gamepad closed."))
+        return nil
+      }
+      for command in result.feedback { connection.send(command, bounded: true) }
+      return result.accepted
+    }
+  }
+}

@@ -11,6 +11,8 @@ enum EndpointErrorCode: String, Encodable, Sendable {
   case tooManyConnections = "too-many-connections"
   case revoked
   case tooSlow = "too-slow"
+  case tooManyFeeds = "too-many-feeds"
+  case feedClosed = "feed-closed"
 }
 
 /// The first line on every connection: a random nonce that a token client signs in its `hello`.
@@ -20,11 +22,12 @@ struct EndpointChallenge: Encodable, Sendable {
   let nonce: String
 }
 
-/// A line that a client sends: `hello` first, then `subscribe`.
+/// A line that a client sends: `hello` first, then `subscribe` or `feed`.
 struct EndpointRequest: Decodable, Sendable {
   enum Kind: String, Decodable, Sendable {
     case hello
     case subscribe
+    case feed
   }
 
   let type: Kind
@@ -41,6 +44,8 @@ struct EndpointRequest: Decodable, Sendable {
   let stream: String?
   /// `subscribe` only; adds the virtual gamepad's values to `input` lines.
   let output: Bool?
+  /// `feed` only; the virtual HID profile of the gamepad, such as `hid-generic`.
+  let `as`: String?
 }
 
 struct EndpointWelcome: Encodable, Sendable {
@@ -48,6 +53,12 @@ struct EndpointWelcome: Encodable, Sendable {
   let `protocol`: Int
   let version: String
   let scopes: [EndpointScope]
+}
+
+/// The answer to `feed`: the virtual gamepad exists and takes frame lines.
+struct EndpointFeeding: Encodable, Sendable {
+  let type = "feeding"
+  let `as`: String
 }
 
 struct EndpointError: Encodable, Sendable {

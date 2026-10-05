@@ -6,81 +6,6 @@ import Testing
 
 @Suite(.serialized)
 struct VirtualFeedRegistryTests {
-  /// A virtual controller that records what the registry does with it.
-  private final class FakeDevice: VirtualFeedDevice, @unchecked Sendable {
-    let profile: VirtualHIDProfileID
-    let output: UserSpaceOutputDispatcher.OutputCommandHandler
-    let failsActivation: Bool
-    var failsSending = false
-    private let lock = NSLock()
-    private var activatedValue: DeviceIdentifier?
-    private var sentValue: [RemappingGamepadState] = []
-    /// `ProcessInfo.systemUptime` of each send.
-    private var sentTimesValue: [TimeInterval] = []
-    private var closeCountValue = 0
-
-    init(
-      profile: VirtualHIDProfileID,
-      output: @escaping UserSpaceOutputDispatcher.OutputCommandHandler,
-      failsActivation: Bool
-    ) {
-      self.profile = profile
-      self.output = output
-      self.failsActivation = failsActivation
-    }
-
-    var activated: DeviceIdentifier? { lock.withLock { activatedValue } }
-    var sent: [RemappingGamepadState] { lock.withLock { sentValue } }
-    var sentTimes: [TimeInterval] { lock.withLock { sentTimesValue } }
-    var closeCount: Int { lock.withLock { closeCountValue } }
-
-    func activate(controller identifier: DeviceIdentifier) throws {
-      if failsActivation { throw UserSpaceOutputDispatcher.CreationError.createFailed }
-      lock.withLock { activatedValue = identifier }
-    }
-
-    func send(_ state: RemappingGamepadState, for identifier: DeviceIdentifier) throws {
-      if failsSending { throw UserSpaceOutputDispatcher.CreationError.createFailed }
-      lock.withLock {
-        sentValue.append(state)
-        sentTimesValue.append(ProcessInfo.processInfo.systemUptime)
-      }
-    }
-
-    func close() { lock.withLock { closeCountValue += 1 } }
-
-    /// The host writes `command` to this device.
-    func receive(_ command: ControllerOutputCommand) {
-      output(activated ?? DeviceIdentifier(vendorID: 0, productID: 0), command)
-    }
-  }
-
-  /// Builds `FakeDevice`s and keeps every one it built.
-  private final class Factory: @unchecked Sendable {
-    private let lock = NSLock()
-    private var devicesValue: [FakeDevice] = []
-    var failsActivation = false
-
-    var devices: [FakeDevice] { lock.withLock { devicesValue } }
-
-    func registry(idleTimeout: TimeInterval = 60) -> VirtualFeedRegistry {
-      VirtualFeedRegistry(
-        factory: { profile, output in
-          self.lock.withLock {
-            let device = FakeDevice(
-              profile: profile,
-              output: output,
-              failsActivation: self.failsActivation
-            )
-            self.devicesValue.append(device)
-            return device
-          }
-        },
-        idleTimeout: idleTimeout
-      )
-    }
-  }
-
   /// Waits until `condition` holds.
   private static func wait(until condition: () -> Bool) async throws {
     while !condition() { try await Task.sleep(nanoseconds: 2_000_000) }
@@ -88,7 +13,7 @@ struct VirtualFeedRegistryTests {
 
   @Test(.timeLimit(.minutes(1)))
   func aFeedPublishesItsProfileSendsFramesWithYDownAndReturnsTheHostsCommands() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "hid-generic")
     let device = try #require(factory.devices.first)
@@ -127,7 +52,7 @@ struct VirtualFeedRegistryTests {
 
   @Test(.timeLimit(.minutes(1)))
   func framesPlayInOrderEachForItsHoldAndAtLeastTheMinimum() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "hid-generic")
     let device = try #require(factory.devices.first)
@@ -151,7 +76,7 @@ struct VirtualFeedRegistryTests {
 
   @Test(.timeLimit(.minutes(1)))
   func queuedFramesCoalesceOnlyWhenButtonsAndDpadMatchWithoutAHold() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "hid-generic")
     let device = try #require(factory.devices.first)
@@ -176,7 +101,7 @@ struct VirtualFeedRegistryTests {
 
   @Test
   func aFullQueueAcceptsOnlyTheFramesThatFit() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "hid-generic")
     let limit = VirtualFeedExchangeResult.maximumQueuedFrames
@@ -192,7 +117,7 @@ struct VirtualFeedRegistryTests {
 
   @Test(.timeLimit(.minutes(1)))
   func closingStopsTheFramesThatWait() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "hid-generic")
     let device = try #require(factory.devices.first)
@@ -210,7 +135,7 @@ struct VirtualFeedRegistryTests {
 
   @Test(.timeLimit(.minutes(1)))
   func aFailedSendClosesTheFeed() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "hid-generic")
     let device = try #require(factory.devices.first)
@@ -225,7 +150,7 @@ struct VirtualFeedRegistryTests {
 
   @Test
   func closingRemovesTheDeviceOnceAndLaterExchangesReportClosed() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "hid-generic")
 
@@ -239,7 +164,7 @@ struct VirtualFeedRegistryTests {
 
   @Test(.timeLimit(.minutes(1)))
   func aFeedWithoutExchangesClosesAfterTheIdleTimeout() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry(idleTimeout: 0.1)
     let session = try await registry.open(profile: "hid-generic")
     while registry.openFeedCount > 0 { try await Task.sleep(nanoseconds: 10_000_000) }
@@ -250,7 +175,7 @@ struct VirtualFeedRegistryTests {
 
   @Test
   func theFifthFeedIsRefusedAndItsDeviceClosed() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry()
     for _ in 0..<VirtualFeedRegistry.maximumFeeds {
       _ = try await registry.open(profile: "hid-generic")
@@ -266,7 +191,7 @@ struct VirtualFeedRegistryTests {
 
   @Test
   func anUnknownProfileIsRefusedWithoutADevice() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry()
 
     await #expect(throws: VirtualFeedError.unknownProfile("hid-unknown")) {
@@ -277,7 +202,7 @@ struct VirtualFeedRegistryTests {
 
   @Test
   func aFailedActivationClosesTheDeviceAndKeepsNoFeed() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     factory.failsActivation = true
     let registry = factory.registry()
 
@@ -290,7 +215,7 @@ struct VirtualFeedRegistryTests {
 
   @Test
   func stoppingClosesEveryFeedAndRefusesNewOnes() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry()
     _ = try await registry.open(profile: "hid-generic")
     _ = try await registry.open(profile: "hid-generic")
@@ -305,7 +230,7 @@ struct VirtualFeedRegistryTests {
 
   @Test
   func uncollectedCommandsKeepOnlyTheNewest() async throws {
-    let factory = Factory()
+    let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "hid-generic")
     let device = try #require(factory.devices.first)
