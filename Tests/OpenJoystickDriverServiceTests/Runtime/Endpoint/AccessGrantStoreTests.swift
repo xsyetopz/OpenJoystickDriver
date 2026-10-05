@@ -273,6 +273,45 @@ struct AccessGrantStoreTests {
   }
 
   @Test
+  func aTokenWithOriginsCannotHoldControl() {
+    var file = AccessGrantFile()
+    #expect(throws: AccessGrantStoreError.originsWithControl) {
+      try file.grantToken(
+        name: "pad",
+        origins: ["http://localhost:8080"],
+        scopes: [.read, .control],
+        at: Date()
+      )
+    }
+    #expect(file.tokens.isEmpty)
+  }
+
+  @Test
+  func controlOnATokenWithOriginsIsDroppedOnLoadWithoutInvalidatingTheFile() throws {
+    try withStore { store, directory in
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      let hash = String(repeating: "a", count: 64)
+      func token(_ name: String, _ origins: String, _ scopes: String) -> String {
+        #"{"name":"\#(name)","tokenSHA256":"\#(hash)","origins":\#(origins),"#
+          + #""scopes":\#(scopes),"grantedAt":"1970-01-01T00:00:00Z","#
+          + #""controlGrantedAt":"1970-01-01T00:00:00Z"}"#
+      }
+      let page = #"["http://localhost:8080"]"#
+      let text =
+        #"{"enabled":true,"grants":[],"tokens":["#
+        + token("both", page, #"["read","control"]"#) + ","
+        + token("page", page, #"["control"]"#) + ","
+        + token("native", "[]", #"["control"]"#) + #"],"web":{"enabled":false}}"#
+      try Data(text.utf8).write(to: store.url)
+
+      let file = try store.load()
+      #expect(file.tokens.map(\.name) == ["both", "native"])
+      #expect(file.tokens.first?.scopes == [.read])
+      #expect(file.tokens.last?.scopes == [.control])
+    }
+  }
+
+  @Test
   func refusedTokensAreKeptForADayByNameOriginAndTransport() {
     var log = AccessRefusalLog()
     let start = Date(timeIntervalSince1970: 0)

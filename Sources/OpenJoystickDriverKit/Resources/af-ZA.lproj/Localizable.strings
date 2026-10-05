@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Die control-omvang laat die program knoppies op 'n virtuele spelkontroleerder druk, wat speletjies en programme as jou invoer beskou.";
 "cli.access.grant.discussion" = "CLIENT is die program se pad of 'n ID uit „ojd access list“. Die toegangsverlening noem die program se handtekening, so dit bly geldig wanneer die program opgedateer of geskuif word. Ad-hoc-ondertekende en nie-ondertekende programme kan nie toegang kry nie. Met --token in plaas van CLIENT word 'n token geskep wat 'n kliënt gebruik om die diens se uitdaging in sy hello te onderteken, op die sok, op die WebSocket vanaf 'n bladsy by een van die --origin-waardes of, vir 'n token sonder --origin, op die WebSocket vanaf 'n program wat geen Origin-kopstuk stuur nie, soos 'n sandboks-program. 'n Bladsy kan nie die control-omvang gebruik nie. Die token word net een keer gewys. Vra eers om bevestiging.";
 "cli.access.grant.origin" = "'n Webherkoms, soos http://127.0.0.1:8080, wie se bladsye die token op die WebSocket mag gebruik. Herhaal vir meer. Die oorlegbladsye wat die WebSocket bedien, het die herkoms http://127.0.0.1:PORT, met die poort wat „ojd access status“ wys.";
+"cli.access.grant.origin_control" = "--origin kan nie met die control-bereik gekombineer word nie. 'n Bladsy beheer nooit 'n virtuele spelbeheerder nie; verleen control aan 'n token sonder --origin.";
 "cli.access.grant.origin_needs_token" = "--origin vereis --token.";
 "cli.access.grant.scope" = "'n Omvang om toe te ken: read of control. Herhaal vir albei.";
 "cli.access.grant.success" = "%@ aan %@ toegestaan (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Die diens het hierdie kliënt geweier. Dit het geen toestemming vir die bestekke wat dit gevra het nie, of sy handtekening of bewys is ongeldig. Voer 'ojd access list' uit, gee die kliënt toestemming met 'ojd access grant' en koppel weer.";
 "error.E1003" = "Die diens ken nie die protokolweergawe in hello nie. Stuur een van die weergawes in supported en koppel weer.";
 "error.E1004" = "Die diens kon die reël nie aanvaar nie. Dit is ongeldig of het op die verkeerde tyd gekom. Stuur eers hello, dan een versoek, en toets elke reël teen die eindpunt-skema.";
-"error.E1005" = "Die eindpunt bedien reeds 8 verbindings. Sluit ’n verbinding wat jy nie nodig het nie en koppel weer.";
+"error.E1005" = "Die eindpunt bedien reeds 8 verbindings per vervoerlaag (elk vir sokket en WebSocket). Sluit ’n verbinding wat jy nie nodig het nie en koppel weer.";
 "error.E1006" = "Die toestemming van hierdie kliënt is verwyder terwyl dit gekoppel was. Gee dit weer toestemming met 'ojd access grant' en koppel weer.";
 "error.E1007" = "Die kliënt het reëls te stadig gelees en 256 reëls het gewag. Lees reëls so vinnig as wat hulle aankom en koppel weer.";
 "error.E1008" = "Die diens laat reeds 4 virtuele speletjiebeheerders loop. Sluit ’n feed wat jy nie nodig het nie en stuur feed weer.";

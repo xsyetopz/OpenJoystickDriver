@@ -17,7 +17,7 @@ typealias VirtualFeedDeviceFactory =
 
 /// Who opened a feed; each pool has its own `VirtualFeedRegistry.maximumFeeds`, so endpoint
 /// clients cannot take the feeds of `ojd virtual feed`.
-enum VirtualFeedPool {
+enum VirtualFeedPool: Hashable {
   case endpoint
   /// The local service RPC, which `ojd virtual feed` uses.
   case rpc
@@ -47,8 +47,12 @@ enum VirtualFeedError: LocalizedError, Equatable {
 /// to a newer one with the same buttons and d-pad, so that only axis changes coalesce.
 ///
 /// A feed closes when its client closes it, when it gets no exchange for `idleTimeout`, or when
-/// the service stops.
-/// - Note: `@unchecked Sendable` because `lock` guards `sessions` and `stopped`.
+/// the service stops. The idle time counts from the end of the last queued frame's time, so a
+/// client that stalls keeps its feed until its queue has played, at most
+/// `VirtualFeedExchangeResult.maximumQueuedFrames` frames of up to their hold each. A frame whose
+/// send takes longer than its time plus `idleTimeout` closes the feed, so a hung device does not
+/// keep its slot.
+/// - Note: `@unchecked Sendable` because `lock` guards `sessions`, `reserved`, and `stopped`.
 final class VirtualFeedRegistry: @unchecked Sendable {
   /// The most open feeds per `VirtualFeedPool`.
   static let maximumFeeds = 4
@@ -66,8 +70,8 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     var pending: [VirtualFeedFrame] = []
     /// Shows `pending`; nil when the feed shows its last frame and waits for more.
     var player: Task<Void, Never>?
-    /// Whether `player` waits out the time of a frame it sent.
-    var showing = false
+    /// While `player` shows a frame, the uptime after which its send counts as hung.
+    var frameDeadline: TimeInterval?
     /// `ProcessInfo.systemUptime` of the last exchange.
     var lastExchange: TimeInterval
     var watchdog: Task<Void, Never>?
@@ -86,6 +90,8 @@ final class VirtualFeedRegistry: @unchecked Sendable {
   private let lock = NSLock()
   private var sessions: [UUID: Session] = [:]
   private var stopped = false
+  /// Feeds whose device is being built, so concurrent opens count against the limit.
+  private var reserved: [VirtualFeedPool: Int] = [:]
 
   init(
     factory: @escaping VirtualFeedDeviceFactory,
@@ -102,8 +108,16 @@ final class VirtualFeedRegistry: @unchecked Sendable {
       throw VirtualFeedError.unknownProfile(name)
     }
     let token = UUID()
-    let device = try factory(profile) { [weak self] _, command in
-      self?.enqueue(command, for: token)
+    // The slot is taken before the factory runs, so a refused open builds no device.
+    try reserveSlot(in: pool)
+    let device: any VirtualFeedDevice
+    do {
+      device = try factory(profile) { [weak self] _, command in
+        self?.enqueue(command, for: token)
+      }
+    } catch {
+      lock.withLock { reserved[pool, default: 1] -= 1 }
+      throw error
     }
     let identity = profile.identity
     let session = Session(
@@ -115,17 +129,15 @@ final class VirtualFeedRegistry: @unchecked Sendable {
       ),
       pool: pool
     )
-    let failure = lock.withLock { () -> VirtualFeedError? in
-      if stopped { return .serviceStopped }
-      guard sessions.values.filter({ $0.pool == pool }).count < Self.maximumFeeds else {
-        return .tooManyFeeds(Self.maximumFeeds)
-      }
+    let stoppedMeanwhile = lock.withLock { () -> Bool in
+      reserved[pool, default: 1] -= 1
+      if stopped { return true }
       sessions[token] = session
-      return nil
+      return false
     }
-    if let failure {
+    if stoppedMeanwhile {
       await device.close()
-      throw failure
+      throw VirtualFeedError.serviceStopped
     }
     // A hung activation must not hold the caller, which may block a connection thread.
     let identifier = session.identifier
@@ -159,14 +171,31 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     return VirtualFeedSession(token: token)
   }
 
+  /// Counts a feed that is about to be built against the limit of `pool`.
+  private func reserveSlot(in pool: VirtualFeedPool) throws {
+    try lock.withLock {
+      if stopped { throw VirtualFeedError.serviceStopped }
+      let taken = sessions.values.filter { $0.pool == pool }.count + reserved[pool, default: 0]
+      guard taken < Self.maximumFeeds else {
+        throw VirtualFeedError.tooManyFeeds(Self.maximumFeeds)
+      }
+      reserved[pool, default: 0] += 1
+    }
+  }
+
   /// Queues as many of `frames` as fit and returns the queued output commands; a token with no
-  /// open feed returns `closed`.
-  func exchange(token: UUID, frames: [VirtualFeedFrame]) -> VirtualFeedExchangeResult {
+  /// open feed returns `closed`. An exchange counts as activity for the idle timeout unless
+  /// `countsAsActivity` is false, which a caller that polls for feedback on its own passes.
+  func exchange(
+    token: UUID,
+    frames: [VirtualFeedFrame],
+    countsAsActivity: Bool = true
+  ) -> VirtualFeedExchangeResult {
     lock.withLock {
       guard let session = sessions[token] else {
         return VirtualFeedExchangeResult(feedback: [], closed: true)
       }
-      session.lastExchange = ProcessInfo.processInfo.systemUptime
+      if countsAsActivity { session.lastExchange = ProcessInfo.processInfo.systemUptime }
       let accepted = Self.enqueue(frames, in: session)
       if session.player == nil, !session.pending.isEmpty {
         session.player = Task { [weak self] in await self?.play(token) }
@@ -176,7 +205,7 @@ final class VirtualFeedRegistry: @unchecked Sendable {
         feedback: session.feedback,
         closed: false,
         accepted: accepted,
-        queued: session.pending.count + (session.showing ? 1 : 0)
+        queued: session.pending.count + (session.frameDeadline == nil ? 0 : 1)
       )
     }
   }
@@ -246,23 +275,27 @@ final class VirtualFeedRegistry: @unchecked Sendable {
   /// is empty. A failed send closes the feed.
   private func play(_ token: UUID) async {
     while !Task.isCancelled {
-      let next = lock.withLock { () -> (Session, VirtualFeedFrame)? in
+      let next = lock.withLock { () -> (Session, VirtualFeedFrame, Int)? in
         guard let session = sessions[token] else { return nil }
+        let now = ProcessInfo.processInfo.systemUptime
         guard !session.pending.isEmpty else {
           session.player = nil
-          session.showing = false
+          session.frameDeadline = nil
+          // The idle time starts once the last frame's time has played.
+          session.lastExchange = now
           return nil
         }
-        session.showing = true
-        return (session, session.pending.removeFirst())
-      }
-      guard let (session, frame) = next else { return }
-      do {
-        try await session.device.send(frame.gamepadState, for: session.identifier)
+        let frame = session.pending.removeFirst()
         let milliseconds = max(
           frame.holdMilliseconds ?? 0,
           VirtualFeedExchangeResult.minimumFrameMilliseconds
         )
+        session.frameDeadline = now + TimeInterval(milliseconds) / 1000 + idleTimeout
+        return (session, frame, milliseconds)
+      }
+      guard let (session, frame, milliseconds) = next else { return }
+      do {
+        try await session.device.send(frame.gamepadState, for: session.identifier)
         try await Task.sleep(nanoseconds: UInt64(milliseconds) * 1_000_000)
       } catch is CancellationError {
         return
@@ -273,17 +306,25 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     }
   }
 
-  /// Closes the feed once it goes `idleTimeout` without an exchange.
+  /// Closes the feed once it goes `idleTimeout` without an exchange, counted from the end of the
+  /// last frame's time, or once a frame's send hangs past its `frameDeadline`.
   private func watch(_ token: UUID) async {
     while !Task.isCancelled {
-      let deadline = lock.withLock { sessions[token].map { $0.lastExchange + idleTimeout } }
+      let deadline = lock.withLock { () -> TimeInterval? in
+        sessions[token].map { session in
+          if let frameDeadline = session.frameDeadline { return frameDeadline }
+          // `player` is about to show the waiting frames.
+          if !session.pending.isEmpty { return .infinity }
+          return session.lastExchange + idleTimeout
+        }
+      }
       guard let deadline else { return }
       let remaining = deadline - ProcessInfo.processInfo.systemUptime
       guard remaining > 0 else {
         await close(token: token)
         return
       }
-      try? await Task.sleep(nanoseconds: UInt64(remaining * 1_000_000_000))
+      try? await Task.sleep(nanoseconds: UInt64(min(remaining, idleTimeout) * 1_000_000_000))
     }
   }
 }

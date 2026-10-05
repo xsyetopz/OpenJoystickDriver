@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Der Bereich control erlaubt dem Programm, Tasten auf einem virtuellen Gamepad zu drücken, was Spiele und Apps als deine Eingabe behandeln.";
 "cli.access.grant.discussion" = "CLIENT ist der Pfad des Programms oder eine ID aus „ojd access list“. Die Freigabe nennt die Signatur des Programms und bleibt daher gültig, wenn das Programm aktualisiert oder verschoben wird. Ad hoc signierte und nicht signierte Programme können nicht freigegeben werden. Mit --token statt CLIENT wird ein Token erstellt, mit dem ein Client die Challenge des Dienstes in seinem hello signiert, über den Socket, über den WebSocket von einer Seite eines der --origin-Werte oder, bei einem Token ohne --origin, über den WebSocket von einem Programm, das keinen Origin-Header sendet, etwa einer Sandbox-App. Eine Seite kann den Bereich control nicht verwenden. Das Token wird nur einmal angezeigt. Fragt zuerst nach einer Bestätigung.";
 "cli.access.grant.origin" = "Ein Web-Ursprung, z. B. http://127.0.0.1:8080, dessen Seiten das Token über den WebSocket nutzen dürfen. Wiederhole die Option, um weitere hinzuzufügen. Die Overlay-Seiten, die der WebSocket ausliefert, haben den Ursprung http://127.0.0.1:PORT, mit dem Port, den „ojd access status“ anzeigt.";
+"cli.access.grant.origin_control" = "--origin lässt sich nicht mit dem Bereich control kombinieren. Eine Seite steuert nie ein virtuelles Gamepad; erteile control einem Token ohne --origin.";
 "cli.access.grant.origin_needs_token" = "--origin erfordert --token.";
 "cli.access.grant.scope" = "Ein Bereich, der erteilt wird: read oder control. Für beide wiederholen.";
 "cli.access.grant.success" = "%@ für %@ erteilt (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Der Dienst hat diesen Client abgelehnt. Er hat keine Freigabe für die angeforderten Bereiche, oder seine Signatur oder sein Nachweis ist ungültig. Führe „ojd access list“ aus, gib den Client mit „ojd access grant“ frei und verbinde dich erneut.";
 "error.E1003" = "Der Dienst unterstützt die Protokollversion in hello nicht. Sende eine der Versionen in supported und verbinde dich erneut.";
 "error.E1004" = "Der Dienst konnte die Zeile nicht annehmen. Sie ist ungültig oder kam zur falschen Zeit. Sende zuerst hello, dann eine Anfrage, und prüfe jede Zeile gegen das Endpunkt-Schema.";
-"error.E1005" = "Der Endpunkt bedient bereits 8 Verbindungen. Schließe eine Verbindung, die du nicht brauchst, und verbinde dich erneut.";
+"error.E1005" = "Der Endpunkt bedient bereits 8 Verbindungen pro Transportweg (je Socket und WebSocket). Schließe eine Verbindung, die du nicht brauchst, und verbinde dich erneut.";
 "error.E1006" = "Die Freigabe dieses Clients wurde entfernt, während er verbunden war. Gib ihn mit „ojd access grant“ erneut frei und verbinde dich erneut.";
 "error.E1007" = "Der Client hat Zeilen zu langsam gelesen, und 256 Zeilen haben gewartet. Lies Zeilen so schnell, wie sie ankommen, und verbinde dich erneut.";
 "error.E1008" = "Der Dienst betreibt bereits 4 virtuelle Gamepads. Schließe einen Feed, den du nicht brauchst, und sende feed erneut.";

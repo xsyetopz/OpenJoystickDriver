@@ -5,8 +5,10 @@ extension EndpointServer {
   /// Runs a `feed` on the connection's thread: opens a virtual gamepad, applies each frame line to
   /// it, and sends the host's rumble commands as lines until either side closes.
   ///
-  /// A pump exchanges with the feed each poll, so the feed stays open while the client sends
-  /// nothing. When the feed's frame queue is full, reading waits, which pushes back on the client.
+  /// A pump exchanges with the feed each poll to send rumble, but that does not count as activity:
+  /// a feed whose client sends no frame line for ``VirtualFeedExchangeResult/idleTimeoutSeconds``
+  /// is closed with `E1009`, so a stalled client does not hold a button or a slot. When the feed's
+  /// frame queue is full, reading waits, which pushes back on the client.
   /// A client that closes the connection meanwhile ends the feed, though its unread lines wait.
   func feed(_ connection: EndpointConnection, profile: String) {
     guard let feeds else {
@@ -140,7 +142,11 @@ private final class FeedExchanger: @unchecked Sendable {
         Task { [feeds, token] in await feeds.close(token: token) }
         return nil
       }
-      let result = feeds.exchange(token: token, frames: frames)
+      let result = feeds.exchange(
+        token: token,
+        frames: frames,
+        countsAsActivity: !frames.isEmpty
+      )
       guard !result.closed else {
         closed = true
         connection.close(EndpointError(code: .feedClosed, message: "The virtual gamepad closed."))

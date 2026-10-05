@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Laajuus control antaa ohjelman painaa virtuaalisen pelaimen painikkeita, joita pelit ja sovellukset pitävät sinun syötteenäsi.";
 "cli.access.grant.discussion" = "CLIENT on ohjelman polku tai tunnus komennosta ”ojd access list”. Oikeus viittaa ohjelman allekirjoitukseen, joten se pysyy voimassa, kun ohjelma päivitetään tai siirretään. Ad hoc -allekirjoitetuille ja allekirjoittamattomille ohjelmille ei voi myöntää oikeutta. Kun CLIENTin sijaan käytetään asetusta --token, luodaan token, jolla asiakas allekirjoittaa palvelun haasteen hello-viestissään pistokkeen kautta, WebSocketin kautta sivulta, joka on jollakin --origin-arvoista, tai ilman --origin-arvoa olevan tokenin tapauksessa WebSocketin kautta ohjelmasta, joka ei lähetä Origin-otsaketta, kuten hiekkalaatikkosovelluksesta. Sivu ei voi käyttää laajuutta control. Token näytetään vain kerran. Pyytää ensin vahvistusta.";
 "cli.access.grant.origin" = "Web-alkuperä, kuten http://127.0.0.1:8080, jonka sivut saavat käyttää tokenia WebSocketissa. Toista useammalle. WebSocketin tarjoamien peittosivujen alkuperä on http://127.0.0.1:PORT, ja portti on se, jonka ”ojd access status” näyttää.";
+"cli.access.grant.origin_control" = "--origin-valitsinta ei voi yhdistää control-oikeuteen. Sivu ei koskaan ohjaa virtuaalista ohjainta; anna control tokenille ilman --origin-valitsinta.";
 "cli.access.grant.origin_needs_token" = "Asetus --origin vaatii asetuksen --token.";
 "cli.access.grant.scope" = "Myönnettävä laajuus: read tai control. Toista molemmille.";
 "cli.access.grant.success" = "%@ myönnetty kohteelle %@ (tunnus %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Palvelu hylkäsi tämän asiakkaan. Sillä ei ole lupaa pyytämiinsä oikeuksiin, tai sen allekirjoitus tai todiste ei kelpaa. Suorita ”ojd access list”, anna asiakkaalle lupa komennolla ”ojd access grant” ja yhdistä uudelleen.";
 "error.E1003" = "Palvelu ei tue hello-viestin protokollaversiota. Lähetä jokin supported-luettelon versioista ja yhdistä uudelleen.";
 "error.E1004" = "Palvelu ei voinut hyväksyä riviä. Se on virheellinen tai tuli väärään aikaan. Lähetä ensin hello, sitten yksi pyyntö, ja tarkista jokainen rivi päätepisteen skeemaa vasten.";
-"error.E1005" = "Päätepiste palvelee jo 8 yhteyttä. Sulje yhteys, jota et tarvitse, ja yhdistä uudelleen.";
+"error.E1005" = "Päätepiste palvelee jo 8 yhteyttä kutakin siirtotapaa kohden (socket ja WebSocket erikseen). Sulje yhteys, jota et tarvitse, ja yhdistä uudelleen.";
 "error.E1006" = "Tämän asiakkaan lupa poistettiin sen ollessa yhdistettynä. Anna sille lupa uudelleen komennolla ”ojd access grant” ja yhdistä uudelleen.";
 "error.E1007" = "Asiakas luki rivejä liian hitaasti, ja 256 riviä odotti. Lue rivit yhtä nopeasti kuin ne saapuvat ja yhdistä uudelleen.";
 "error.E1008" = "Palvelu ajaa jo 4 virtuaalista ohjainta. Sulje feed, jota et tarvitse, ja lähetä feed uudelleen.";

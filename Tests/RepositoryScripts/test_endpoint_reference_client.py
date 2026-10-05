@@ -147,6 +147,69 @@ class EndpointReferenceClientTests(unittest.TestCase):
         )
         self.assertEqual(json.loads(output.getvalue()), rumble)
 
+    def run_until_feeding(self, after_feeding: Any) -> SystemExit:
+        """Runs the client against a fake endpoint that calls `after_feeding(send)` once the
+        client sent `feed`; returns the client's exit."""
+        nonce = json.loads(VECTOR.read_text(encoding="utf-8"))["nonce"]
+        with tempfile.TemporaryDirectory(dir="/tmp") as directory:
+            path = str(Path(directory) / "endpoint.sock")
+            with socket.socket(socket.AF_UNIX) as listener:
+                listener.bind(path)
+                listener.listen(1)
+                listener.settimeout(5)
+
+                def serve() -> None:
+                    connection, _ = listener.accept()
+                    with connection, connection.makefile("rw") as lines:
+
+                        def send(message: dict[str, Any]) -> None:
+                            lines.write(json.dumps(message) + "\n")
+                            lines.flush()
+
+                        send({"type": "challenge", "nonce": nonce})
+                        lines.readline()
+                        send(
+                            {
+                                "type": "welcome",
+                                "protocol": 1,
+                                "version": "test",
+                                "scopes": [],
+                            }
+                        )
+                        lines.readline()
+                        send({"type": "feeding", "as": "hid-generic"})
+                        after_feeding(send)
+
+                server = threading.Thread(target=serve, daemon=True)
+                server.start()
+                status = json.dumps({"socketPath": path})
+                with (
+                    patch("subprocess.check_output", return_value=status),
+                    redirect_stdout(io.StringIO()),
+                    self.assertRaises(SystemExit) as exit_info,
+                ):
+                    self.client["main"]()
+                server.join(timeout=5)
+        return exit_info.exception
+
+    def test_client_exits_with_the_error_line_the_endpoint_sends(self) -> None:
+        error = {
+            "type": "error",
+            "code": "E1009",
+            "message": "The virtual gamepad closed.",
+        }
+        exit_info = self.run_until_feeding(lambda send: send(error))
+
+        self.assertIn("E1009", str(exit_info.code))
+        self.assertNotIn(exit_info.code, (0, None))
+
+    def test_client_exits_when_the_endpoint_closes_before_the_release_has_played(
+        self,
+    ) -> None:
+        exit_info = self.run_until_feeding(lambda send: None)
+
+        self.assertIn("closed the connection", str(exit_info.code))
+
     def test_client_stays_connected_until_the_last_frame_has_played(self) -> None:
         # The 100 ms press, then the release for the 8 ms minimum.
         self.assertAlmostEqual(

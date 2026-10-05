@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Darbības joma control ļauj programmai nospiest virtuālā spēļu kontroliera pogas, ko spēles un lietotnes uztver kā jūsu ievadi.";
 "cli.access.grant.discussion" = "CLIENT ir programmas ceļš vai ID no „ojd access list“. Piekļuve attiecas uz programmas parakstu, tāpēc tā paliek spēkā, kad programma tiek atjaunināta vai pārvietota. Ad-hoc parakstītām un neparakstītām programmām piekļuvi piešķirt nevar. Ja CLIENT vietā norādīts --token, tiek izveidots žetons, ar ko klients savā hello paraksta pakalpojuma izaicinājumu pa ligzdu, pa WebSocket no lapas, kas atrodas vienā no --origin vērtībām, vai, ja žetons ir bez --origin, pa WebSocket no programmas, kas nesūta Origin galveni, piemēram, smilškastes lietotnes. Lapa nevar izmantot darbības jomu control. Žetons tiek parādīts tikai vienu reizi. Vispirms lūdz apstiprinājumu.";
 "cli.access.grant.origin" = "Tīmekļa izcelsme, piemēram, http://127.0.0.1:8080, kuras lapas drīkst izmantot žetonu WebSocket savienojumā. Atkārtojiet, lai pievienotu vairāk. Pārklājuma lapām, ko apkalpo WebSocket, izcelsme ir http://127.0.0.1:PORT, ar portu, ko rāda „ojd access status“.";
+"cli.access.grant.origin_control" = "--origin nevar kombinēt ar control tvērumu. Lapa nekad nevada virtuālo spēļu kontrolieri; piešķiriet control pilnvarai bez --origin.";
 "cli.access.grant.origin_needs_token" = "--origin ir nepieciešams --token.";
 "cli.access.grant.scope" = "Piešķiramā darbības joma: read vai control. Atkārtojiet abām.";
 "cli.access.grant.success" = "%@ piešķirts %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Pakalpojums noraidīja šo klientu. Tam nav atļaujas pieprasītajām jomām, vai arī tā paraksts vai pierādījums nav derīgs. Palaidiet „ojd access list“, piešķiriet klientam atļauju ar „ojd access grant“ un savienojieties vēlreiz.";
 "error.E1003" = "Pakalpojums neatbalsta hello norādīto protokola versiju. Nosūtiet vienu no supported norādītajām versijām un savienojieties vēlreiz.";
 "error.E1004" = "Pakalpojums nevarēja pieņemt rindu. Tā nav derīga vai ieradās nepareizā laikā. Vispirms nosūtiet hello, tad vienu pieprasījumu un pārbaudiet katru rindu pret galapunkta shēmu.";
-"error.E1005" = "Galapunkts jau apkalpo 8 savienojumus. Aizveriet savienojumu, kas jums nav vajadzīgs, un savienojieties vēlreiz.";
+"error.E1005" = "Galapunkts jau apkalpo 8 savienojumus katrā transportā (socket un WebSocket atsevišķi). Aizveriet savienojumu, kas jums nav vajadzīgs, un savienojieties vēlreiz.";
 "error.E1006" = "Šī klienta atļauja tika noņemta, kamēr tas bija savienots. Piešķiriet to vēlreiz ar „ojd access grant“ un savienojieties vēlreiz.";
 "error.E1007" = "Klients lasīja rindas pārāk lēni, un 256 rindas gaidīja. Lasiet rindas tik ātri, cik tās ierodas, un savienojieties vēlreiz.";
 "error.E1008" = "Pakalpojums jau darbina 4 virtuālos spēļu kontrolierus. Aizveriet feed, kas jums nav vajadzīgs, un vēlreiz nosūtiet feed.";

@@ -173,8 +173,67 @@ struct VirtualFeedRegistryTests {
     #expect(registry.exchange(token: session.token, frames: []).closed)
   }
 
+  @Test(.timeLimit(.minutes(1)))
+  func aBurstThatPlaysLongerThanTheIdleTimeoutIsNotClosed() async throws {
+    let factory = FakeFeedFactory()
+    let registry = factory.registry(idleTimeout: 0.2)
+    let session = try await registry.open(profile: "hid-generic")
+    let device = try #require(factory.devices.first)
+    let frames = (0..<6).map {
+      VirtualFeedFrame(buttons: $0.isMultiple(of: 2) ? [.south] : [.east], holdMilliseconds: 100)
+    }
+    #expect(registry.exchange(token: session.token, frames: frames).accepted == frames.count)
+
+    while device.sent.count < frames.count {
+      #expect(registry.openFeedCount == 1)
+      try await Task.sleep(nanoseconds: 20_000_000)
+    }
+    #expect(device.closeCount == 0)
+    while registry.openFeedCount > 0 { try await Task.sleep(nanoseconds: 10_000_000) }
+    #expect(device.sent.count == frames.count)
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func aFrameHeldLongerThanTheIdleTimeoutIsNotClosedBeforeItsHoldEnds() async throws {
+    let factory = FakeFeedFactory()
+    let registry = factory.registry(idleTimeout: 0.2)
+    let session = try await registry.open(profile: "hid-generic")
+    let started = ProcessInfo.processInfo.systemUptime
+    _ = registry.exchange(
+      token: session.token,
+      frames: [VirtualFeedFrame(buttons: [.south], holdMilliseconds: 800)]
+    )
+
+    try await Task.sleep(nanoseconds: 600_000_000)
+    #expect(registry.openFeedCount == 1)
+    while registry.openFeedCount > 0 { try await Task.sleep(nanoseconds: 10_000_000) }
+    // The idle time counts from the end of the hold, not from the exchange.
+    #expect(ProcessInfo.processInfo.systemUptime - started >= 0.8 + 0.2 - 0.05)
+    #expect(factory.devices.first?.closeCount == 1)
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func aSendThatHangsClosesTheFeedOnceTheFrameTimePlusTheIdleTimeoutPasses() async throws {
+    let factory = FakeFeedFactory()
+    let registry = factory.registry(idleTimeout: 0.2)
+    defer { factory.release() }
+    let session = try await registry.open(profile: "hid-generic")
+    let device = try #require(factory.devices.first)
+    device.hangsSending = true
+    let started = ProcessInfo.processInfo.systemUptime
+    _ = registry.exchange(
+      token: session.token,
+      frames: [VirtualFeedFrame(buttons: [.south], holdMilliseconds: 300)]
+    )
+
+    try await Self.wait { registry.openFeedCount == 0 }
+    #expect(ProcessInfo.processInfo.systemUptime - started >= 0.3 + 0.2 - 0.05)
+    #expect(device.closeCount == 1)
+    #expect(registry.exchange(token: session.token, frames: []).closed)
+  }
+
   @Test
-  func theFifthFeedIsRefusedAndItsDeviceClosed() async throws {
+  func theFifthFeedIsRefusedBeforeItsDeviceIsBuilt() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     for _ in 0..<VirtualFeedRegistry.maximumFeeds {
@@ -184,8 +243,7 @@ struct VirtualFeedRegistryTests {
     await #expect(throws: VirtualFeedError.tooManyFeeds(VirtualFeedRegistry.maximumFeeds)) {
       try await registry.open(profile: "hid-xbox-one-s-bt")
     }
-    #expect(factory.devices.last?.closeCount == 1)
-    #expect(factory.devices.last?.activated == nil)
+    #expect(factory.devices.count == VirtualFeedRegistry.maximumFeeds)
     #expect(registry.openFeedCount == VirtualFeedRegistry.maximumFeeds)
   }
 

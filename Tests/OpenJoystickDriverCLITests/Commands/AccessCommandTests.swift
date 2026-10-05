@@ -195,6 +195,20 @@ struct AccessCommandTests {
   }
 
   @Test
+  func aTokenWithOriginsCannotAskForControl() async throws {
+    let service = try service()
+
+    let result = await service.run([
+      "access", "grant", "--token", "pad", "--origin", "http://localhost:8080", "--scope",
+      "control", "--force",
+    ])
+
+    #expect(result.code == 64)
+    #expect(result.standardError.contains("--origin"))
+    #expect(service.arguments(of: .grantTokenAccess).isEmpty)
+  }
+
+  @Test
   func revokingATokenSendsItsIDWithoutLookingItUp() async throws {
     let service = try service()
 

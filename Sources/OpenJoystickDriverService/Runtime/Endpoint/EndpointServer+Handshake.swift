@@ -17,7 +17,8 @@ extension EndpointServer {
     let nonce = AccessTokenGrant.randomBase64URL()
     connection.send(EndpointChallenge(nonce: nonce))
     let accepted = lock.withLock { () -> Bool in
-      guard connections.count < Self.maximumConnections else { return false }
+      let sameTransport = connections.values.filter { $0.kind == connection.kind }.count
+      guard sameTransport < Self.maximumConnections else { return false }
       connections[ObjectIdentifier(connection)] = connection
       return true
     }
@@ -25,7 +26,7 @@ extension EndpointServer {
       connection.close(
         EndpointError(
           code: .tooManyConnections,
-          message: "The endpoint serves at most \(Self.maximumConnections) clients."
+          message: "The endpoint serves at most \(Self.maximumConnections) clients per transport."
         )
       )
       return
@@ -196,9 +197,9 @@ extension EndpointServer {
       }
     }
     guard let grant, scopes.allSatisfy(grant.scopes.contains),
-      kind == .socket || origin.map(grant.origins.contains) ?? grant.origins.isEmpty,
-      // Any site can script a page, so only a client without `Origin` drives a pad.
-      kind == .socket || origin == nil || !scopes.contains(.control)
+      // A token with no origins never serves a page, and no token with origins holds `control`,
+      // so a page never drives a pad.
+      kind == .socket || origin.map(grant.origins.contains) ?? grant.origins.isEmpty
     else {
       refusals.recordToken(
         name: grant?.name,

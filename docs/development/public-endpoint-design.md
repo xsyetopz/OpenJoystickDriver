@@ -1,6 +1,6 @@
 # Public Endpoint Design
 
-Status: implemented for read (slice 3.3), with token grants and the WebSocket (slice 3.4). The control stream (milestone 4) is not built yet.
+Status: implemented for read (slice 3.3), with token grants and the WebSocket (slice 3.4), and for the control stream (milestone 4).
 
 ## Goal
 
@@ -30,7 +30,7 @@ Grants matter for privacy because controller input needs the Input Monitoring pe
 - `getpeereid` must give the service's user, as on the internal socket.
 - The service identifies the peer by its audit token (`LOCAL_PEERTOKEN`, then `SecCodeCopyGuestWithAttributes` with `kSecGuestAttributeAudit`), not by its PID. A PID can be reused between `accept` and the signature check. The service then checks the client's code with `SecCodeCheckValidity`, so a modified binary fails.
 - Messages are UTF-8 JSON objects, one per line, ending in `\n`. A line is at most 64 KiB. JSON lines work with `nc -U`, Python, and Node without a framing library, and match the `--json` output of the CLI.
-- Limits: at most 8 connections, a handshake within 5 seconds, and no request from the client until the handshake succeeds.
+- Limits: at most 8 connections per transport (8 on the Unix socket and 8 on the WebSocket, so web pages cannot starve socket clients), a handshake within 5 seconds, and no request from the client until the handshake succeeds.
 
 ## Handshake
 
@@ -64,9 +64,18 @@ After `welcome`, the client sends `{"type":"subscribe","stream":"controllers","o
 
 ## Control Stream (Milestone 4)
 
-With the `control` scope, the client sends `{"type":"feed","as":"hid-generic"}`. Each following line is one `ojd virtual feed` input line, and the service sends rumble lines in the `virtualFeed` shape.
+With the `control` scope, the client sends `{"type":"feed","as":"hid-generic"}`. The service answers `{"type":"feeding","as":"hid-generic"}` once the virtual gamepad exists. Each following line is one `ojd virtual feed` input line, and the service sends rumble lines in the `virtualFeed` shape. `endpoint.schema.json` describes `feed`, `feeding`, and the frame line.
 
-- One connection is one feed. Closing the connection removes the virtual gamepad, so this transport needs no heartbeat or idle timeout.
+```json
+{"type":"feed","as":"hid-generic"}
+{"type":"feeding","as":"hid-generic"}
+{"type":"error","code":"E1008","message":"..."}
+```
+
+- **Transport:** `control` works on the Unix socket, for a signed client or a token. On the WebSocket, it works only with a token that has no origins, from a client that sends no `Origin` header. Any site can script a page, so a page never drives a pad. A `hello` that this rule refuses is recorded in `refusals`. `ojd access grant --token` refuses `--origin` together with `--scope control`. A grants file from an earlier build that holds the combination still loads; the service drops `control` from that token, and the token itself when `control` was its only scope, in the way it drops a `control` that was stored before it worked.
+- **Errors:** a `feed` without `control` gets `E1002`. A fifth endpoint feed gets `E1008`. A virtual gamepad that fails to start, or that the service stops, ends the connection with `E1009`.
+
+- One connection is one feed. Closing the connection removes the virtual gamepad. A client that stalls without closing, such as a stopped process or a half-open connection, would keep the last frame's buttons held and its feed slot, so the endpoint closes a feed with `E1009` and removes the virtual gamepad when the client sends no frame line for 2 seconds (`VirtualFeedExchangeResult.idleTimeoutSeconds`). The idle time starts only when the frame queue is empty and the last frame's play time (its `holdMilliseconds`, at least 8 ms) has elapsed, so a burst of frames or a long hold is never cut short. The service's own polls for rumble do not count as activity, and `ojd virtual feed` keeps its own exchange-based timeout.
 - Unlike `ojd virtual feed`, which waits until every line has played, closing the connection drops the frames that have not played. A client that sends a macro and then closes loses most of it, so the client stays connected until its last frame has played. Each frame plays for its `holdMilliseconds` and at least 8 ms.
 - `VirtualFeedRegistry` is reused. Endpoint clients and `ojd virtual feed` each have their own limit of 4 feeds, so a 4-player setup works over either and one cannot take the feeds of the other.
 - When 256 frames wait, the service stops reading the connection. A client that closes the connection meanwhile still ends the feed at once.
@@ -136,7 +145,7 @@ The signature checks need a client signed with a team ID, which a unit test cann
 - WebSocket clients connect to `ws://127.0.0.1:PORT/endpoint`. The upgrade is refused unless `Host` is `127.0.0.1:PORT`, which stops DNS rebinding, and `Origin` is an origin of some token grant. An upgrade without `Origin` is accepted when some token grant has no origins.
 - The challenge is the first WebSocket message after the `101`. `hello` must carry the name of a token whose grant names the connection's `Origin`, and a proof over that origin and the port. Without `Origin`, the token's grant must have no origins, and the proof has an empty origin line and the port. The token never goes on the wire, so it stays out of logs, browser history, and any listener that impersonates the service.
 - One text frame, or one message split over continuation frames, is one line of the Unix protocol, at most 64 KiB. A binary frame or a longer message ends the connection with `E1004`. Client frames must be masked, as RFC 6455 requires.
-- The limits of the Unix socket are shared: 8 clients across both transports, a 5-second handshake, and `E1007` after 256 waiting lines.
+- The limits of the Unix socket apply, with each transport counting its own 8 clients: a 5-second handshake, and `E1007` after 256 waiting lines.
 - The service implements the upgrade and framing itself on a BSD socket. Network.framework's `NWProtocolWebSocket` shows request headers only to a handler that is shared by every connection, so it cannot tie a connection's `Origin` to the token in its `hello`.
 
 ### Overlay Pages
@@ -163,5 +172,5 @@ The same listener serves the files in `~/Library/Application Support/OpenJoystic
 
 1. Script clients (agreed). Slice 3.3 has signature grants only: a grant for an interpreter covers all its scripts, and ad-hoc signed tools are refused. Slice 3.4 adds token grants: `ojd access grant --token NAME` prints a secret that the client signs the challenge with in `hello`.
 1. The socket path (agreed). The socket goes in the per-user temporary folder, and `ojd access status --json` prints its path. `~/Library/Application Support/OpenJoystickDriver/endpoint.sock` is not used, because a long user name can pass the 104-byte limit of a socket path.
-1. Sandboxed clients (open). Slice 3.3 tested an ad-hoc signed app bundle with `com.apple.security.app-sandbox` on macOS 27. Its `connect()` to a socket in the unsandboxed `DARWIN_USER_TEMP_DIR` fails with `EPERM`. It still fails with `com.apple.security.network.client`, and with `com.apple.security.temporary-exception.files.absolute-path.read-write` naming the socket, its `/private` path, or the folder. The same app connects to a socket inside its own container. So a sandboxed client cannot use the socket. A probe in the S5 slice showed that the same kind of app with `com.apple.security.network.client` reaches the WebSocket with a token; without that entitlement, its connection fails. Decision: a sandboxed client uses the WebSocket with a token that has no origins, and sends no `Origin`. Origin-bound tokens stay limited to their pages.
+1. Sandboxed clients (agreed). Slice 3.3 tested an ad-hoc signed app bundle with `com.apple.security.app-sandbox` on macOS 27. Its `connect()` to a socket in the unsandboxed `DARWIN_USER_TEMP_DIR` fails with `EPERM`. It still fails with `com.apple.security.network.client`, and with `com.apple.security.temporary-exception.files.absolute-path.read-write` naming the socket, its `/private` path, or the folder. The same app connects to a socket inside its own container. So a sandboxed client cannot use the socket. A probe in the S5 slice showed that the same kind of app with `com.apple.security.network.client` reaches the WebSocket with a token; without that entitlement, its connection fails. Decision: a sandboxed client uses the WebSocket with a token that has no origins, and sends no `Origin`. Origin-bound tokens stay limited to their pages. The same rule decides who may use `control` on the WebSocket (see Control Stream).
 1. The internal socket (agreed). It identifies its peer by PID, and the same PID-reuse race applies there. Slice 3.3 fixes it: both sockets share one peer check that reads the audit token and checks the code with `SecCodeCheckValidity`.

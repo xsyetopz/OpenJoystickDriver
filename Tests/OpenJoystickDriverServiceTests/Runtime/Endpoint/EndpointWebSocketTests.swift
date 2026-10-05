@@ -217,27 +217,15 @@ struct EndpointWebSocketTests {
     }
   }
 
-  /// A page never drives a pad, even with a control token granted for its origin.
+  /// A page never drives a pad, so a token for a page's origin cannot hold control.
   @Test
-  func aControlTokenIsRefusedFromAPage() throws {
-    try withWeb { server, _, port, _ in
-      let pad = try server.grantToken(name: "pad", origins: [Self.origin], scopes: [.control])
-      let client = try upgraded(port: port)
-      client.send(
-        tokenHello(
-          name: "pad",
-          token: pad.token,
-          nonce: client.nonce,
-          origin: Self.origin,
-          port: String(port),
-          scopes: ["control"]
-        )
-      )
-
-      #expect(try client.readObject()["code"] as? String == "E1002")
-      #expect(client.readLine() == nil)
-      #expect(try server.status().refusedTokens.first?.name == "pad")
-      #expect(try server.status().refusedTokens.first?.scopes == [.control])
+  func aControlTokenCannotBeGrantedForAPage() throws {
+    try withWeb { server, _, _, _ in
+      #expect(throws: AccessGrantStoreError.originsWithControl) {
+        try server.grantToken(name: "pad", origins: [Self.origin], scopes: [.control])
+      }
+      let tokens = try server.status().tokens
+      #expect(tokens.map(\.name) == ["overlay"])
     }
   }
 
@@ -261,6 +249,28 @@ struct EndpointWebSocketTests {
       let welcome = try client.readObject()
       #expect(welcome["type"] as? String == "welcome")
       #expect(welcome["scopes"] as? [String] == ["control"])
+    }
+  }
+
+  /// Any site can script a page, so a page never drives a pad.
+  @Test
+  func aControlTokenWithoutOriginsIsRefusedFromAPage() throws {
+    try withWeb { server, _, port, _ in
+      let pad = try server.grantToken(name: "pad", origins: [], scopes: [.control])
+      let client = try upgraded(port: port)
+      client.send(
+        tokenHello(
+          name: "pad",
+          token: pad.token,
+          nonce: client.nonce,
+          origin: Self.origin,
+          port: String(port),
+          scopes: ["control"]
+        )
+      )
+
+      #expect(try client.readObject()["code"] as? String == "E1002")
+      #expect(try server.status().refusedTokens.first?.name == "pad")
     }
   }
 
@@ -472,6 +482,59 @@ struct EndpointWebSocketTests {
         try server.setWebEnabled(true, port: free.port)
         for _ in 0..<5 { #expect(page("/", port: free.port)?.status == 200) }
       }
+    }
+  }
+
+  /// A listener swapped out while its accept loop is still blocked must not keep the new
+  /// listener's loop from starting.
+  @Test
+  func aStaleAcceptLoopDoesNotBlockTheNewListener() throws {
+    try withWeb { server, fixture, _, _ in
+      try write("<p>pad</p>", to: "index.html", in: fixture)
+      try server.setWebEnabled(false, port: nil)
+      let stale = DispatchSemaphore(value: 0)
+      defer { stale.signal() }
+      server.webAcceptQueue.async { stale.wait() }
+      let free = try server.openWebListener(port: 0)
+      close(free.descriptor)
+      try server.setWebEnabled(true, port: free.port)
+
+      #expect(page("/", port: free.port)?.status == 200)
+    }
+  }
+
+  @Test(arguments: [EMFILE, ENFILE, ENOBUFS, ENOMEM])
+  func anAcceptFailureFromResourceExhaustionIsRetried(code: Int32) {
+    #expect(EndpointServer.acceptFailure(code) == .backOff)
+  }
+
+  @Test(arguments: [EINTR, ECONNABORTED])
+  func anInterruptedAcceptIsRetriedAtOnce(code: Int32) {
+    #expect(EndpointServer.acceptFailure(code) == .retry)
+  }
+
+  @Test(arguments: [EBADF, EINVAL, ENOTSOCK])
+  func anAcceptFailureOnAClosedListenerEndsTheLoop(code: Int32) {
+    #expect(EndpointServer.acceptFailure(code) == .stop)
+  }
+
+  // MARK: - Connection cap
+
+  @Test
+  func webConnectionsDoNotUseTheSocketsConnectionSlots() throws {
+    try withWeb { server, _, port, _ in
+      try server.setEnabled(true)
+      try server.grant(EndpointFixture.tool, path: "/Tool", scopes: [.read])
+      let pages = try (0..<EndpointServer.maximumConnections).map { _ in
+        try upgraded(port: port)
+      }
+
+      let socketClient = try EndpointTestClient.subscribed(to: server.socketPath)
+      let ninth = try upgraded(port: port)
+
+      #expect(try ninth.readObject()["code"] as? String == "E1005")
+      #expect(try server.status().connections.map(\.transport) == [.socket])
+      _ = (pages, socketClient)
     }
   }
 

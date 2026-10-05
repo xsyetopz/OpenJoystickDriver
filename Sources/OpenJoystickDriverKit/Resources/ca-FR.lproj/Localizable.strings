@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "L’àmbit control permet que el programa premi botons d’un comandament virtual, que els jocs i les aplicacions tracten com la vostra entrada.";
 "cli.access.grant.discussion" = "CLIENT és la ruta del programa o un identificador de «ojd access list». La concessió es refereix a la signatura del programa, de manera que continua sent vàlida quan el programa s’actualitza o es mou. No es pot concedir l’accés a programes amb signatura ad-hoc ni a programes sense signar. Amb --token en lloc de CLIENT, crea un token amb què un client signa el repte del servei en el seu hello, pel sòcol, pel WebSocket des d’una pàgina d’un dels valors de --origin o, per a un token sense --origin, pel WebSocket des d’un programa que no envia cap capçalera Origin, com ara una aplicació en un entorn aïllat. Una pàgina no pot utilitzar l’àmbit control. El token només es mostra una vegada. Demana confirmació primer.";
 "cli.access.grant.origin" = "Un origen web, com ara http://127.0.0.1:8080, les pàgines del qual poden utilitzar el token pel WebSocket. Repetiu-ho per a més. Les pàgines de superposició que serveix el WebSocket tenen l’origen http://127.0.0.1:PORT, amb el port que mostra «ojd access status».";
+"cli.access.grant.origin_control" = "--origin no es pot combinar amb l'àmbit control. Una pàgina mai no controla un comandament virtual; concedeix control a un token sense --origin.";
 "cli.access.grant.origin_needs_token" = "--origin necessita --token.";
 "cli.access.grant.scope" = "Un àmbit que concedir: read o control. Repetiu-ho per als dos.";
 "cli.access.grant.success" = "S’ha concedit %@ a %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "El servei ha rebutjat aquest client. No té concessió per als àmbits que ha demanat, o la seva signatura o prova no és vàlida. Executa «ojd access list», concedeix l’accés al client amb «ojd access grant» i torna a connectar.";
 "error.E1003" = "El servei no admet la versió del protocol que hi ha a hello. Envia una de les versions de supported i torna a connectar.";
 "error.E1004" = "El servei no ha pogut acceptar la línia. No és vàlida o ha arribat en un moment equivocat. Envia primer hello, després una sola sol·licitud, i comprova cada línia amb l’esquema del punt final.";
-"error.E1005" = "El punt final ja atén 8 connexions. Tanca una connexió que no necessitis i torna a connectar.";
+"error.E1005" = "El punt final ja atén 8 connexions per transport (sòcol i WebSocket cadascun). Tanca una connexió que no necessitis i torna a connectar.";
 "error.E1006" = "S’ha retirat la concessió d’aquest client mentre estava connectat. Torna-li a concedir l’accés amb «ojd access grant» i torna a connectar.";
 "error.E1007" = "El client ha llegit les línies massa lentament i 256 línies han esperat. Llegeix les línies tan ràpid com arriben i torna a connectar.";
 "error.E1008" = "El servei ja executa 4 comandaments virtuals. Tanca un feed que no necessitis i torna a enviar feed.";

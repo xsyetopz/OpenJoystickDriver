@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Omfånget control låter programmet trycka på knappar på en virtuell spelkontroll, som spel och appar behandlar som din inmatning.";
 "cli.access.grant.discussion" = "CLIENT är programmets sökväg eller ett ID från ”ojd access list”. Beviljandet gäller programmets signatur, så det förblir giltigt när programmet uppdateras eller flyttas. Ad-hoc-signerade och osignerade program kan inte beviljas åtkomst. Med --token i stället för CLIENT skapas en token som en klient signerar tjänstens utmaning med i sin hello, över uttaget, över WebSocket från en sida på ett av värdena i --origin eller, för en token utan --origin, över WebSocket från ett program som inte skickar någon Origin-header, till exempel en app i en sandlåda. En sida kan inte använda omfånget control. Token visas bara en gång. Frågar efter bekräftelse först.";
 "cli.access.grant.origin" = "Ett webbursprung, till exempel http://127.0.0.1:8080, vars sidor får använda token på WebSocket. Upprepa för att lägga till fler. De överläggssidor som WebSocket serverar har ursprunget http://127.0.0.1:PORT, med den port som ”ojd access status” visar.";
+"cli.access.grant.origin_control" = "--origin kan inte kombineras med omfånget control. En sida styr aldrig en virtuell handkontroll; ge control till en token utan --origin.";
 "cli.access.grant.origin_needs_token" = "--origin kräver --token.";
 "cli.access.grant.scope" = "Ett omfång att bevilja: read eller control. Upprepa för båda.";
 "cli.access.grant.success" = "Beviljade %@ åt %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Tjänsten avvisade den här klienten. Den har ingen behörighet för de omfång den bad om, eller så är dess signatur eller bevis ogiltig. Kör ”ojd access list”, ge klienten behörighet med ”ojd access grant” och anslut igen.";
 "error.E1003" = "Tjänsten stöder inte protokollversionen i hello. Skicka en av versionerna i supported och anslut igen.";
 "error.E1004" = "Tjänsten kunde inte ta emot raden. Den är ogiltig eller kom vid fel tidpunkt. Skicka först hello, sedan en begäran, och kontrollera varje rad mot slutpunktens schema.";
-"error.E1005" = "Slutpunkten betjänar redan 8 anslutningar. Stäng en anslutning som du inte behöver och anslut igen.";
+"error.E1005" = "Slutpunkten betjänar redan 8 anslutningar per transport (socket och WebSocket var för sig). Stäng en anslutning som du inte behöver och anslut igen.";
 "error.E1006" = "Den här klientens behörighet togs bort medan den var ansluten. Ge den behörighet igen med ”ojd access grant” och anslut igen.";
 "error.E1007" = "Klienten läste rader för långsamt och 256 rader väntade. Läs rader lika snabbt som de kommer och anslut igen.";
 "error.E1008" = "Tjänsten kör redan 4 virtuella handkontroller. Stäng en feed som du inte behöver och skicka feed igen.";

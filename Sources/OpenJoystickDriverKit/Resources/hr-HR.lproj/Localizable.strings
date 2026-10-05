@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Opseg control omogućuje programu pritiskanje gumba na virtualnom gamepadu, što igre i aplikacije tretiraju kao vaš unos.";
 "cli.access.grant.discussion" = "CLIENT je putanja programa ili ID iz „ojd access list“. Dodijeljeni pristup odnosi se na potpis programa pa ostaje valjan kad se program ažurira ili premjesti. Programima potpisanim ad hoc i nepotpisanim programima ne može se dodijeliti pristup. S opcijom --token umjesto CLIENT stvara se token kojim klijent potpisuje izazov usluge u svojem hello, preko utikača, preko WebSocketa sa stranice na jednoj od vrijednosti --origin ili, za token bez --origin, preko WebSocketa iz programa koji ne šalje zaglavlje Origin, na primjer aplikacije u sandboxu. Stranica ne može koristiti opseg control. Token se prikazuje samo jednom. Najprije traži potvrdu.";
 "cli.access.grant.origin" = "Web izvor, na primjer http://127.0.0.1:8080, čije stranice smiju koristiti token na WebSocketu. Ponovite za više. Stranice preklapanja koje poslužuje WebSocket imaju izvor http://127.0.0.1:PORT, s portom koji prikazuje „ojd access status“.";
+"cli.access.grant.origin_control" = "--origin se ne može kombinirati s dosegom control. Web-stranica nikada ne upravlja virtualnim gamepadom; dodijelite control tokenu bez --origin.";
 "cli.access.grant.origin_needs_token" = "--origin zahtijeva --token.";
 "cli.access.grant.scope" = "Opseg koji se dodjeljuje: read ili control. Ponovite za oba.";
 "cli.access.grant.success" = "%@ je dodijeljen klijentu %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Usluga je odbila ovog klijenta. Nema dopuštenje za zatražena područja ili je njegov potpis ili dokaz nevažeći. Pokrenite „ojd access list“, dodijelite klijentu dopuštenje naredbom „ojd access grant“ i ponovno se povežite.";
 "error.E1003" = "Usluga ne podržava verziju protokola iz poruke hello. Pošaljite jednu od verzija iz supported i ponovno se povežite.";
 "error.E1004" = "Usluga nije mogla prihvatiti redak. Nevažeći je ili je stigao u pogrešno vrijeme. Prvo pošaljite hello, zatim jedan zahtjev i provjerite svaki redak prema shemi krajnje točke.";
-"error.E1005" = "Krajnja točka već poslužuje 8 veza. Zatvorite vezu koja vam ne treba i ponovno se povežite.";
+"error.E1005" = "Krajnja točka već poslužuje 8 veza po transportu (socket i WebSocket posebno). Zatvorite vezu koja vam ne treba i ponovno se povežite.";
 "error.E1006" = "Dopuštenje ovog klijenta uklonjeno je dok je bio povezan. Ponovno mu ga dodijelite naredbom „ojd access grant“ i ponovno se povežite.";
 "error.E1007" = "Klijent je čitao retke presporo i 256 redaka je čekalo. Čitajte retke jednako brzo kako stižu i ponovno se povežite.";
 "error.E1008" = "Usluga već pokreće 4 virtualna kontrolera. Zatvorite feed koji vam ne treba i ponovno pošaljite feed.";

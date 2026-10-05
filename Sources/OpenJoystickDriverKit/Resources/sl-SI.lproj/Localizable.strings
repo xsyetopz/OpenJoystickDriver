@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Obseg control programu omogoča pritiskanje gumbov navideznega igralnega ploščka, ki ga igre in aplikacije obravnavajo kot vaš vnos.";
 "cli.access.grant.discussion" = "CLIENT je pot do programa ali ID iz „ojd access list“. Dodelitev se nanaša na podpis programa, zato velja tudi po posodobitvi ali premiku programa. Programom, podpisanim ad-hoc, in nepodpisanim programom dostopa ni mogoče dodeliti. Z možnostjo --token namesto CLIENT ustvari žeton, s katerim odjemalec v svojem hello podpiše izziv storitve prek vtičnice, prek WebSocket s strani ene od vrednosti --origin ali, pri žetonu brez --origin, prek WebSocket iz programa, ki ne pošilja glave Origin, na primer iz aplikacije v peskovniku. Stran ne more uporabljati obsega control. Žeton je prikazan samo enkrat. Najprej zahteva potrditev.";
 "cli.access.grant.origin" = "Spletni izvor, na primer http://127.0.0.1:8080, katerega strani lahko uporabljajo žeton prek WebSocket. Ponovite za dodajanje več izvorov. Strani prekrivanj, ki jih streže WebSocket, imajo izvor http://127.0.0.1:PORT z vrati, ki jih prikaže „ojd access status“.";
+"cli.access.grant.origin_control" = "--origin ni mogoče združiti z obsegom control. Spletna stran nikoli ne upravlja navideznega igralnega ploščka; control dodelite žetonu brez --origin.";
 "cli.access.grant.origin_needs_token" = "--origin zahteva --token.";
 "cli.access.grant.scope" = "Obseg za dodelitev: read ali control. Ponovite za oba.";
 "cli.access.grant.success" = "Obseg %@ dodeljen programu %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Storitev je tega odjemalca zavrnila. Nima dovoljenja za zahtevana področja ali pa njegov podpis ali dokaz ni veljaven. Zaženite „ojd access list“, odjemalcu dodelite dovoljenje z ukazom „ojd access grant“ in se znova povežite.";
 "error.E1003" = "Storitev ne podpira različice protokola iz sporočila hello. Pošljite eno od različic iz supported in se znova povežite.";
 "error.E1004" = "Storitev vrstice ni mogla sprejeti. Ni veljavna ali je prispela ob napačnem času. Najprej pošljite hello, nato eno zahtevo in preverite vsako vrstico s shemo končne točke.";
-"error.E1005" = "Končna točka že streže 8 povezavam. Zaprite povezavo, ki je ne potrebujete, in se znova povežite.";
+"error.E1005" = "Končna točka že streže 8 povezavam na prenos (socket in WebSocket vsak zase). Zaprite povezavo, ki je ne potrebujete, in se znova povežite.";
 "error.E1006" = "Dovoljenje tega odjemalca je bilo odstranjeno, ko je bil povezan. Znova mu ga dodelite z ukazom „ojd access grant“ in se znova povežite.";
 "error.E1007" = "Odjemalec je vrstice bral prepočasi in 256 vrstic je čakalo. Berite vrstice tako hitro, kot prihajajo, in se znova povežite.";
 "error.E1008" = "Storitev že izvaja 4 navidezne igralne krmilnike. Zaprite feed, ki ga ne potrebujete, in znova pošljite feed.";

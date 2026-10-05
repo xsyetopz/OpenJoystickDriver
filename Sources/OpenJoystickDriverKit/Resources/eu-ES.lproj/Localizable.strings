@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "control eremuak programari agintea birtual baten botoiak sakatzen uzten dio, eta jokoek eta aplikazioek zure sarrera gisa hartzen dute.";
 "cli.access.grant.discussion" = "CLIENT programaren bidea edo «ojd access list» komandoaren ID bat da. Baimenak programaren sinadura aipatzen du, beraz baliozkoa izaten jarraitzen du programa eguneratzen edo mugitzen denean. Ad-hoc sinatutako eta sinatu gabeko programei ezin zaie baimenik eman. CLIENT-en ordez --token erabiltzen bada, bezero batek bere hello mezuan zerbitzuaren erronka sinatzeko erabiltzen duen token bat sortzen du, socketetik, --origin balioetako bateko orri batetik WebSocket bidez edo, --origin gabeko token baten kasuan, Origin goiburua bidaltzen ez duen programa batetik WebSocket bidez, adibidez sandbox-eko aplikazio batetik. Orri batek ezin du control eremua erabili. Tokena behin bakarrik erakusten da. Lehenik baieztapena eskatzen du.";
 "cli.access.grant.origin" = "Web jatorri bat, adibidez http://127.0.0.1:8080, zeinaren orriek tokena WebSocket-ean erabil dezaketen. Errepikatu gehiagorako. WebSocket-ak zerbitzatzen dituen overlay orriek http://127.0.0.1:PORT jatorria dute, «ojd access status» komandoak erakusten duen portuarekin.";
+"cli.access.grant.origin_control" = "--origin ezin da control esparruarekin konbinatu. Orri batek ez du inoiz joko-agindu birtualik kontrolatzen; eman control --origin gabeko token bati.";
 "cli.access.grant.origin_needs_token" = "--origin aukerak --token behar du.";
 "cli.access.grant.scope" = "Emango den eremu bat: read edo control. Errepikatu biak emateko.";
 "cli.access.grant.success" = "%@ eman zaio %@(r)i (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Zerbitzuak bezero hau baztertu du. Ez du baimenik eskatu dituen eremuetarako, edo bere sinadura edo froga ez da baliozkoa. Exekutatu «ojd access list», eman baimena bezeroari «ojd access grant» komandoarekin eta konektatu berriro.";
 "error.E1003" = "Zerbitzuak ez du hello mezuko protokolo-bertsioa onartzen. Bidali supported zerrendako bertsioetako bat eta konektatu berriro.";
 "error.E1004" = "Zerbitzuak ezin izan du lerroa onartu. Baliogabea da edo une okerrean iritsi da. Bidali lehenik hello, gero eskaera bat, eta egiaztatu lerro bakoitza amaiera-puntuaren eskemarekin.";
-"error.E1005" = "Amaiera-puntuak 8 konexio zerbitzatzen ditu jada. Itxi behar ez duzun konexio bat eta konektatu berriro.";
+"error.E1005" = "Amaiera-puntuak 8 konexio garraio bakoitzeko (socket eta WebSocket bakoitzeko) zerbitzatzen ditu jada. Itxi behar ez duzun konexio bat eta konektatu berriro.";
 "error.E1006" = "Bezero honen baimena kendu da konektatuta zegoela. Eman baimena berriro «ojd access grant» komandoarekin eta konektatu berriro.";
 "error.E1007" = "Bezeroak lerroak motelegi irakurri ditu eta 256 lerro itxaroten egon dira. Irakurri lerroak iristen diren bezain azkar eta konektatu berriro.";
 "error.E1008" = "Zerbitzuak 4 joko-agintekari birtual exekutatzen ditu jada. Itxi behar ez duzun feed bat eta bidali feed berriro.";

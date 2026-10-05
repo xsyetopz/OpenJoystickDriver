@@ -28,7 +28,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E1002 | Endpoint | The service refused this client. It has no grant for the scopes it asked for, or its signature or proof is not valid. Run 'ojd access list', grant the client with 'ojd access grant', and connect again. |
 | E1003 | Endpoint | The service does not speak the protocol version in hello. Send one of the versions in supported, and connect again. |
 | E1004 | Endpoint | The service could not accept the line. It is not valid, or it came at the wrong time. Send hello first, then one request, and check each line against the endpoint schema. |
-| E1005 | Endpoint | The endpoint already serves 8 connections. Close a connection that you do not need, and connect again. |
+| E1005 | Endpoint | The endpoint already serves 8 connections per transport (socket and WebSocket each). Close a connection that you do not need, and connect again. |
 | E1006 | Endpoint | The grant of this client was removed while it was connected. Grant it again with 'ojd access grant', and connect again. |
 | E1007 | Endpoint | The client read lines too slowly, and 256 lines waited. Read lines as fast as they arrive, and connect again. |
 | E1008 | Endpoint | The service already runs 4 virtual gamepads. Close a feed that you do not need, and send feed again. |

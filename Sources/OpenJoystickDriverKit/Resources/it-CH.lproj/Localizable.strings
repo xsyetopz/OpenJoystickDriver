@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "L’ambito control permette al programma di premere i pulsanti di un gamepad virtuale, che giochi e app trattano come il tuo input.";
 "cli.access.grant.discussion" = "CLIENT è il percorso del programma o un ID di «ojd access list». L’autorizzazione indica la firma del programma, quindi resta valida quando il programma viene aggiornato o spostato. I programmi con firma ad-hoc e quelli non firmati non possono essere autorizzati. Con --token al posto di CLIENT, crea un token con cui un client firma la sfida del servizio nel suo hello, sul socket, sul WebSocket da una pagina di uno dei valori di --origin o, per un token senza --origin, sul WebSocket da un programma che non invia l’intestazione Origin, come un’app in sandbox. Una pagina non può usare l’ambito control. Il token viene mostrato una sola volta. Chiede prima conferma.";
 "cli.access.grant.origin" = "Un’origine web, come http://127.0.0.1:8080, le cui pagine possono usare il token sul WebSocket. Ripeti per aggiungerne altre. Le pagine di overlay servite dal WebSocket hanno l’origine http://127.0.0.1:PORT, con la porta mostrata da «ojd access status».";
+"cli.access.grant.origin_control" = "--origin non può essere combinato con l'ambito control. Una pagina non pilota mai un gamepad virtuale; concedi control a un token senza --origin.";
 "cli.access.grant.origin_needs_token" = "--origin richiede --token.";
 "cli.access.grant.scope" = "Un ambito da concedere: read o control. Ripeti per entrambi.";
 "cli.access.grant.success" = "%@ concesso a %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Il servizio ha rifiutato questo client. Non ha l’autorizzazione per gli ambiti richiesti, oppure la sua firma o la sua prova non è valida. Esegui «ojd access list», autorizza il client con «ojd access grant» e riconnettiti.";
 "error.E1003" = "Il servizio non supporta la versione del protocollo indicata in hello. Invia una delle versioni in supported e riconnettiti.";
 "error.E1004" = "Il servizio non ha potuto accettare la riga. Non è valida oppure è arrivata nel momento sbagliato. Invia prima hello, poi una sola richiesta, e controlla ogni riga con lo schema dell’endpoint.";
-"error.E1005" = "L’endpoint serve già 8 connessioni. Chiudi una connessione che non ti serve e riconnettiti.";
+"error.E1005" = "L’endpoint serve già 8 connessioni per trasporto (socket e WebSocket ciascuno). Chiudi una connessione che non ti serve e riconnettiti.";
 "error.E1006" = "L’autorizzazione di questo client è stata rimossa mentre era connesso. Autorizzalo di nuovo con «ojd access grant» e riconnettiti.";
 "error.E1007" = "Il client ha letto le righe troppo lentamente e 256 righe sono rimaste in attesa. Leggi le righe alla stessa velocità con cui arrivano e riconnettiti.";
 "error.E1008" = "Il servizio esegue già 4 gamepad virtuali. Chiudi un feed che non ti serve e invia di nuovo feed.";

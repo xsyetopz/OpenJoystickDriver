@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Domeniul control permite programului să apese butoanele unui gamepad virtual, pe care jocurile și aplicațiile le tratează ca intrare a dumneavoastră.";
 "cli.access.grant.discussion" = "CLIENT este calea programului sau un ID din «ojd access list». Accesul se referă la semnătura programului, deci rămâne valabil când programul este actualizat sau mutat. Programele semnate ad-hoc și cele nesemnate nu pot primi acces. Cu --token în loc de CLIENT, creează un token cu care un client semnează provocarea serviciului în hello, prin socket, prin WebSocket de pe o pagină a uneia dintre valorile --origin sau, pentru un token fără --origin, prin WebSocket de la un program care nu trimite antetul Origin, cum ar fi o aplicație în sandbox. O pagină nu poate folosi domeniul control. Tokenul este afișat o singură dată. Cere mai întâi confirmare.";
 "cli.access.grant.origin" = "O origine web, cum ar fi http://127.0.0.1:8080, ale cărei pagini pot folosi tokenul pe WebSocket. Repetați pentru a adăuga mai multe. Paginile de suprapunere pe care le servește WebSocket au originea http://127.0.0.1:PORT, cu portul pe care îl afișează «ojd access status».";
+"cli.access.grant.origin_control" = "--origin nu poate fi combinat cu domeniul control. O pagină nu controlează niciodată un gamepad virtual; acordați control unui token fără --origin.";
 "cli.access.grant.origin_needs_token" = "--origin necesită --token.";
 "cli.access.grant.scope" = "Un domeniu de acordat: read sau control. Repetați pentru ambele.";
 "cli.access.grant.success" = "%@ acordat pentru %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Serviciul a refuzat acest client. Nu are permisiune pentru domeniile cerute sau semnătura ori dovada lui nu este validă. Rulează „ojd access list“, acordă permisiune clientului cu „ojd access grant“ și conectează-te din nou.";
 "error.E1003" = "Serviciul nu acceptă versiunea de protocol din hello. Trimite una dintre versiunile din supported și conectează-te din nou.";
 "error.E1004" = "Serviciul nu a putut accepta linia. Nu este validă sau a venit la momentul greșit. Trimite mai întâi hello, apoi o singură cerere, și verifică fiecare linie cu schema punctului final.";
-"error.E1005" = "Punctul final deservește deja 8 conexiuni. Închide o conexiune de care nu ai nevoie și conectează-te din nou.";
+"error.E1005" = "Punctul final deservește deja 8 conexiuni pe transport (socket și WebSocket fiecare). Închide o conexiune de care nu ai nevoie și conectează-te din nou.";
 "error.E1006" = "Permisiunea acestui client a fost eliminată cât timp era conectat. Acordă-i permisiunea din nou cu „ojd access grant“ și conectează-te din nou.";
 "error.E1007" = "Clientul a citit liniile prea încet și 256 de linii au așteptat. Citește liniile cât de repede sosesc și conectează-te din nou.";
 "error.E1008" = "Serviciul rulează deja 4 gamepaduri virtuale. Închide un feed de care nu ai nevoie și trimite din nou feed.";

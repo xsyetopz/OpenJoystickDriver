@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Zakres control pozwala programowi naciskać przyciski wirtualnego gamepada, które gry i aplikacje traktują jako Twoje dane wejściowe.";
 "cli.access.grant.discussion" = "CLIENT to ścieżka programu lub identyfikator z „ojd access list”. Dostęp dotyczy podpisu programu, więc pozostaje ważny po aktualizacji lub przeniesieniu programu. Programom podpisanym ad hoc i niepodpisanym nie można przyznać dostępu. Z opcją --token zamiast CLIENT tworzy token, którym klient podpisuje w swoim hello wyzwanie usługi przez gniazdo, przez WebSocket ze strony pochodzącej z jednej z wartości --origin lub, w przypadku tokenu bez --origin, przez WebSocket z programu, który nie wysyła nagłówka Origin, na przykład aplikacji w piaskownicy. Strona nie może używać zakresu control. Token jest wyświetlany tylko raz. Najpierw prosi o potwierdzenie.";
 "cli.access.grant.origin" = "Źródło internetowe, na przykład http://127.0.0.1:8080, którego strony mogą używać tokenu przez WebSocket. Powtórz, aby dodać kolejne. Strony nakładek, które udostępnia WebSocket, mają źródło http://127.0.0.1:PORT, z portem, który pokazuje „ojd access status”.";
+"cli.access.grant.origin_control" = "Opcji --origin nie można łączyć z zakresem control. Strona nigdy nie steruje wirtualnym padem; nadaj control tokenowi bez --origin.";
 "cli.access.grant.origin_needs_token" = "--origin wymaga --token.";
 "cli.access.grant.scope" = "Zakres do przyznania: read lub control. Powtórz dla obu.";
 "cli.access.grant.success" = "Przyznano %@ klientowi %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Usługa odrzuciła tego klienta. Nie ma zgody na żądane zakresy albo jego podpis lub dowód jest nieprawidłowy. Uruchom „ojd access list“, nadaj klientowi zgodę poleceniem „ojd access grant“ i połącz się ponownie.";
 "error.E1003" = "Usługa nie obsługuje wersji protokołu podanej w hello. Wyślij jedną z wersji z supported i połącz się ponownie.";
 "error.E1004" = "Usługa nie mogła przyjąć wiersza. Jest nieprawidłowy albo przyszedł w złym momencie. Wyślij najpierw hello, potem jedno żądanie i sprawdź każdy wiersz ze schematem punktu końcowego.";
-"error.E1005" = "Punkt końcowy obsługuje już 8 połączeń. Zamknij połączenie, którego nie potrzebujesz, i połącz się ponownie.";
+"error.E1005" = "Punkt końcowy obsługuje już 8 połączeń na każdy transport (socket i WebSocket osobno). Zamknij połączenie, którego nie potrzebujesz, i połącz się ponownie.";
 "error.E1006" = "Zgoda tego klienta została cofnięta, gdy był połączony. Nadaj mu zgodę ponownie poleceniem „ojd access grant“ i połącz się ponownie.";
 "error.E1007" = "Klient czytał wiersze zbyt wolno i 256 wierszy czekało. Czytaj wiersze tak szybko, jak nadchodzą, i połącz się ponownie.";
 "error.E1008" = "Usługa uruchamia już 4 wirtualne gamepady. Zamknij feed, którego nie potrzebujesz, i wyślij feed ponownie.";

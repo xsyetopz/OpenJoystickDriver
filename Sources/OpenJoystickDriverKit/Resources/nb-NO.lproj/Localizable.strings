@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Omfanget control lar programmet trykke på knapper på en virtuell spillkontroller, som spill og apper behandler som inndata fra deg.";
 "cli.access.grant.discussion" = "CLIENT er programmets sti eller en ID fra «ojd access list». Tilgangen gjelder programmets signatur, så den er fortsatt gyldig når programmet oppdateres eller flyttes. Ad hoc-signerte og usignerte programmer kan ikke få tilgang. Med --token i stedet for CLIENT opprettes et token som en klient signerer tjenestens utfordring med i hello, over socketen, over WebSocket fra en side på en av verdiene til --origin eller, for et token uten --origin, over WebSocket fra et program som ikke sender Origin-header, for eksempel en sandkasse-app. En side kan ikke bruke omfanget control. Tokenet vises bare én gang. Ber først om bekreftelse.";
 "cli.access.grant.origin" = "Et nettopphav, for eksempel http://127.0.0.1:8080, hvis sider kan bruke tokenet på WebSocket. Gjenta for å legge til flere. Overlay-sidene som WebSocket serverer, har opphavet http://127.0.0.1:PORT, med porten som «ojd access status» viser.";
+"cli.access.grant.origin_control" = "--origin kan ikke kombineres med omfanget control. En side styrer aldri en virtuell spillkontroller; gi control til et token uten --origin.";
 "cli.access.grant.origin_needs_token" = "--origin krever --token.";
 "cli.access.grant.scope" = "Et omfang som skal gis: read eller control. Gjenta for begge.";
 "cli.access.grant.success" = "%@ gitt til %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Tjenesten avviste denne klienten. Den har ikke tillatelse til områdene den ba om, eller signaturen eller beviset er ugyldig. Kjør «ojd access list», gi klienten tillatelse med «ojd access grant», og koble til på nytt.";
 "error.E1003" = "Tjenesten støtter ikke protokollversjonen i hello. Send en av versjonene i supported, og koble til på nytt.";
 "error.E1004" = "Tjenesten kunne ikke godta linjen. Den er ugyldig, eller den kom på feil tidspunkt. Send først hello, deretter én forespørsel, og kontroller hver linje mot skjemaet til endepunktet.";
-"error.E1005" = "Endepunktet betjener allerede 8 tilkoblinger. Lukk en tilkobling du ikke trenger, og koble til på nytt.";
+"error.E1005" = "Endepunktet betjener allerede 8 tilkoblinger per transport (socket og WebSocket hver for seg). Lukk en tilkobling du ikke trenger, og koble til på nytt.";
 "error.E1006" = "Tillatelsen til denne klienten ble fjernet mens den var tilkoblet. Gi den tillatelse på nytt med «ojd access grant», og koble til på nytt.";
 "error.E1007" = "Klienten leste linjer for sakte, og 256 linjer ventet. Les linjer så fort de kommer, og koble til på nytt.";
 "error.E1008" = "Tjenesten kjører allerede 4 virtuelle spillkontrollere. Lukk en feed du ikke trenger, og send feed på nytt.";

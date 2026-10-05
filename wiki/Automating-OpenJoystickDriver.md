@@ -176,7 +176,7 @@ endpoint.onmessage = async (message) => {
 
 The WebSocket accepts a page only from an origin that a token is granted for, and the token must be granted for that origin. A page from another origin, such as `http://127.0.0.1:8080`, signs its own origin and the WebSocket's port. It refuses pages opened from a file, whose origin is `null`. Use `127.0.0.1` in the address, not `localhost`, which the WebSocket refuses. When another program already uses the port, `ojd access web enable` fails. When the service starts and finds the port in use, `ojd access status` shows the WebSocket as on but not listening. In both cases, choose another port with `ojd access web enable --port PORT`, and grant tokens for the new origin.
 
-An error line has a `code` from `E1001` to `E1009`. Look up each code, its cause, and its fix on [Error codes](Error-Codes.md). With `E1003`, `supported` lists the protocol versions. The endpoint serves at most 8 connections. When a program reads too slowly, the endpoint keeps only the newest `input` line of each controller. When 256 lines wait, it sends `E1007` and closes the connection.
+An error line has a `code` from `E1001` to `E1009`. Look up each code, its cause, and its fix on [Error codes](Error-Codes.md). With `E1003`, `supported` lists the protocol versions. The endpoint serves at most 8 socket connections and 8 WebSocket connections at the same time. When a program reads too slowly, the endpoint keeps only the newest `input` line of each controller. When 256 lines wait, it sends `E1007` and closes the connection.
 
 [`endpoint.schema.json`](../Resources/Schemas/endpoint.schema.json) describes each line. To drive a virtual gamepad through the endpoint, see [Drive a Virtual Gamepad Through the Endpoint](#drive-a-virtual-gamepad-through-the-endpoint).
 
@@ -195,16 +195,16 @@ Any local program that has such a token can use it, also programs of other users
 
 A program with the `control` scope can drive a virtual gamepad through the endpoint, as [`ojd virtual feed`](#drive-a-virtual-gamepad) does:
 
-1. Grant the scope: `ojd access grant --token driver --scope control`. Add `--scope read` to grant both. A web page cannot use `control`.
+1. Grant the scope: `ojd access grant --token driver --scope control`. Add `--scope read` to grant both. A token that has `--origin` cannot have `control`, because a web page cannot use it.
 1. Send `hello` with `"scopes":["control"]`.
 1. After `welcome`, send `{"type":"feed","as":"hid-generic"}`. The virtual gamepad profiles are `hid-xbox-one-s-bt` and `hid-generic`.
 1. The endpoint answers `{"type":"feeding","as":"hid-generic"}` when the virtual gamepad exists.
 1. Send one frame per line. A frame has the format of an `ojd virtual feed` line, and the service plays frames with the same rules.
 1. The endpoint sends each rumble command that a game sends to the virtual gamepad as one line. The `virtualFeed` entry of the output schema describes it.
 
-Closing the connection removes the virtual gamepad at once and drops the frames that have not played. The endpoint does not report when a frame has played, so stay connected for the sum of the play times of the frames, and a short margin, because the service starts a frame a moment after it arrives. Each frame plays for its `holdMilliseconds`, and at least 8 ms. While 256 frames wait, the endpoint stops reading lines. The endpoint runs at most 4 virtual gamepads at the same time, and answers another `feed` with `E1008`. When the virtual gamepad does not start, or the service stops it, the endpoint sends `E1009`.
+Closing the connection removes the virtual gamepad at once and drops the frames that have not played. The endpoint does not report when a frame has played, so stay connected for the sum of the play times of the frames, and a short margin, because the service starts a frame a moment after it arrives. Each frame plays for its `holdMilliseconds`, and at least 8 ms. While 256 frames wait, the endpoint stops reading lines. When the client sends no frame line for 2 seconds after its last frame has played, the endpoint closes the connection with `E1009` and removes the virtual gamepad, so a stalled client does not hold a button. The 2 seconds start when the queue is empty and the last frame's time has elapsed, so frames that wait or play, and a long hold, never cause the close. Rumble lines that the endpoint sends do not count. To keep the gamepad after the last frame has played, send another line within 2 seconds. The endpoint runs at most 4 virtual gamepads at the same time, and answers another `feed` with `E1008`. When the virtual gamepad does not start, or the service stops it, the endpoint sends `E1009`.
 
-This client presses the south button for 100 ms, prints the lines that the endpoint sends, such as rumble commands and errors, and stays connected until the release has played. It uses only the Python standard library. Set `TOKEN` to the token that `ojd access grant` printed:
+This client presses the south button for 100 ms, prints the rumble commands that the endpoint sends, and stays connected until the release has played. When the endpoint sends an error or closes the connection earlier, it exits with the error. It uses only the Python standard library. Set `TOKEN` to the token that `ojd access grant` printed:
 
 ```python
 import hashlib
@@ -214,7 +214,6 @@ import socket
 import subprocess
 import sys
 import threading
-import time
 
 TOKEN = "ojd_…"
 TOKEN_NAME = "driver"
@@ -243,21 +242,14 @@ def play_seconds(frames):
     return sum(max(frame.get("holdMilliseconds", 0), 8) for frame in frames) / 1000
 
 
-def print_lines(lines):
-    for line in lines:
-        print(line, end="")
-
-
 def main():
     status = json.loads(subprocess.check_output(["ojd", "--json", "access", "status"]))
     with socket.socket(socket.AF_UNIX) as endpoint:
         endpoint.connect(status["socketPath"])
         reader = endpoint.makefile("r")
-        writer = endpoint.makefile("w")
 
         def send(message):
-            writer.write(json.dumps(message) + "\n")
-            writer.flush()
+            endpoint.sendall((json.dumps(message) + "\n").encode())
 
         def receive():
             line = reader.readline()
@@ -268,15 +260,37 @@ def main():
                 sys.exit(f"{message['code']}: {message['message']}")
             return message
 
+        failed = threading.Event()
+        failure = []
+
+        def print_lines():
+            try:
+                for line in reader:
+                    message = json.loads(line)
+                    if message["type"] == "error":
+                        failure.append(f"{message['code']}: {message['message']}")
+                        break
+                    print(line, end="")
+                else:
+                    failure.append("The endpoint closed the connection.")
+            except ValueError as error:
+                failure.append(f"The endpoint sent a line that is not JSON: {error}")
+            failed.set()
+
         send(hello(receive()["nonce"]))
         receive()  # welcome
         send({"type": "feed", "as": "hid-generic"})
         receive()  # feeding
-        threading.Thread(target=print_lines, args=(reader,), daemon=True).start()
-        for frame in FRAMES:
-            send(frame)
-        # The service starts the first frame a moment after it arrives.
-        time.sleep(play_seconds(FRAMES) + MARGIN_SECONDS)
+        threading.Thread(target=print_lines, daemon=True).start()
+        try:
+            for frame in FRAMES:
+                send(frame)
+        except OSError:
+            pass  # The reader reports why the endpoint closed the connection.
+        # The service starts the first frame a moment after it arrives. An error line or the end
+        # of the connection before the release has played ends the wait early and fails.
+        if failed.wait(timeout=play_seconds(FRAMES) + MARGIN_SECONDS):
+            sys.exit(failure[0])
         endpoint.shutdown(socket.SHUT_RDWR)  # The reader thread keeps the socket open.
 
 

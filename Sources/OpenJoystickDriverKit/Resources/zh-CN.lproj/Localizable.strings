@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "control 范围允许程序在虚拟游戏手柄上按下按钮，游戏和 App 会将其视为您的输入。";
 "cli.access.grant.discussion" = "CLIENT 是程序的路径，或来自 “ojd access list” 的 ID。授权针对的是程序的签名，因此程序更新或移动后仍然有效。采用 ad-hoc 签名的程序和未签名的程序无法获得授权。若以 --token 取代 CLIENT，会创建一个令牌，客户端通过 socket，或从 --origin 其中一个值的页面通过 WebSocket，或（对于不带 --origin 的令牌）从不发送 Origin 标头的程序（例如沙盒应用）通过 WebSocket，在其 hello 中用它对服务的质询进行签名。页面无法使用 control 范围。令牌只会显示一次。会先请求确认。";
 "cli.access.grant.origin" = "网页来源，例如 http://127.0.0.1:8080，其页面可通过 WebSocket 使用该令牌。重复指定即可添加更多。WebSocket 提供的叠加层页面，其来源为 http://127.0.0.1:PORT，端口为 “ojd access status” 所显示的端口。";
+"cli.access.grant.origin_control" = "--origin 不能与 control 范围同时使用。网页绝不会操控虚拟游戏手柄；请将 control 授予不带 --origin 的令牌。";
 "cli.access.grant.origin_needs_token" = "--origin 需要搭配 --token。";
 "cli.access.grant.scope" = "要授予的范围：read 或 control。两者都要请重复使用。";
 "cli.access.grant.success" = "已将 %@ 授予 %@（ID：%@）。";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "服务拒绝了此客户端。它没有所请求范围的授权，或者它的签名或证明无效。请运行「ojd access list」，用「ojd access grant」授权该客户端，然后重新连接。";
 "error.E1003" = "服务不支持 hello 中的协议版本。请发送 supported 中的某个版本，然后重新连接。";
 "error.E1004" = "服务无法接受该行。该行无效，或到达的时机不对。请先发送 hello，再发送一个请求，并按端点架构检查每一行。";
-"error.E1005" = "端点已在处理 8 个连接。请关闭不需要的连接，然后重新连接。";
+"error.E1005" = "端点已在处理 8 个连接（套接字和 WebSocket 各 8 个）。请关闭不需要的连接，然后重新连接。";
 "error.E1006" = "此客户端的授权在其连接期间被移除。请用「ojd access grant」重新授权，然后重新连接。";
 "error.E1007" = "客户端读取行太慢，有 256 行在等待。请按行到达的速度读取，然后重新连接。";
 "error.E1008" = "服务已在运行 4 个虚拟游戏手柄。请关闭不需要的 feed，然后重新发送 feed。";

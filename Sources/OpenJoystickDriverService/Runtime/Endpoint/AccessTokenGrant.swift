@@ -151,6 +151,9 @@ extension AccessGrantFile {
       throw AccessGrantStoreError.duplicateToken(name)
     }
     guard !scopes.isEmpty else { throw AccessGrantStoreError.noScope }
+    guard origins.isEmpty || !scopes.contains(.control) else {
+      throw AccessGrantStoreError.originsWithControl
+    }
     var normalized: [String] = []
     for origin in origins {
       guard let value = AccessTokenGrant.normalizedOrigin(origin) else {

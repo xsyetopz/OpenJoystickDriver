@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "A control hatókör lehetővé teszi, hogy a program gombokat nyomjon egy virtuális gamepaden, amelyet a játékok és az alkalmazások az Ön bemeneteként kezelnek.";
 "cli.access.grant.discussion" = "A CLIENT a program elérési útja vagy egy azonosító az „ojd access list” parancsból. Az engedély a program aláírására vonatkozik, ezért a program frissítésekor vagy áthelyezésekor is érvényes marad. Az ad hoc aláírású és az aláíratlan programok nem engedélyezhetők. A CLIENT helyett megadott --token egy tokent hoz létre, amellyel az ügyfél a hello üzenetében aláírja a szolgáltatás kihívását a socketen, a WebSocketen a --origin valamelyik értékéhez tartozó oldalról, vagy a --origin nélküli token esetén a WebSocketen olyan programból, amely nem küld Origin fejlécet, például egy sandboxolt alkalmazásból. Egy oldal nem használhatja a control hatókört. A token csak egyszer jelenik meg. Először megerősítést kér.";
 "cli.access.grant.origin" = "Egy webes eredet, például http://127.0.0.1:8080, amelynek oldalai használhatják a tokent a WebSocketen. Többhöz ismételje meg. A WebSocket által kiszolgált átfedőoldalak eredete http://127.0.0.1:PORT, azzal a porttal, amelyet az „ojd access status” mutat.";
+"cli.access.grant.origin_control" = "Az --origin nem kombinálható a control hatókörrel. Egy weboldal soha nem vezérel virtuális kontrollert; a control hatókört --origin nélküli tokennek adja meg.";
 "cli.access.grant.origin_needs_token" = "A --origin használatához --token szükséges.";
 "cli.access.grant.scope" = "Megadandó hatókör: read vagy control. Mindkettőhöz ismételje meg.";
 "cli.access.grant.success" = "A(z) %@ megadva a következőnek: %@ (azonosító: %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "A szolgáltatás elutasította ezt a klienst. Nincs engedélye a kért hatókörökre, vagy az aláírása vagy igazolása érvénytelen. Futtassa a „ojd access list“ parancsot, adjon engedélyt a kliensnek a „ojd access grant“ paranccsal, és csatlakozzon újra.";
 "error.E1003" = "A szolgáltatás nem támogatja a hello üzenetben megadott protokollverziót. Küldje el a supported listában szereplő verziók egyikét, és csatlakozzon újra.";
 "error.E1004" = "A szolgáltatás nem fogadhatta el a sort. Érvénytelen, vagy rossz időben érkezett. Először a hello üzenetet küldje el, majd egy kérést, és ellenőrizze minden sort a végpont sémájával.";
-"error.E1005" = "A végpont már 8 kapcsolatot szolgál ki. Zárjon be egy kapcsolatot, amelyre nincs szüksége, és csatlakozzon újra.";
+"error.E1005" = "A végpont már 8 kapcsolatot átvitelenként (socket és WebSocket külön-külön) szolgál ki. Zárjon be egy kapcsolatot, amelyre nincs szüksége, és csatlakozzon újra.";
 "error.E1006" = "A kliens engedélyét visszavonták, miközben csatlakozva volt. Adja meg újra a „ojd access grant“ paranccsal, és csatlakozzon újra.";
 "error.E1007" = "A kliens túl lassan olvasta a sorokat, és 256 sor várakozott. Olvassa a sorokat olyan gyorsan, ahogy érkeznek, és csatlakozzon újra.";
 "error.E1008" = "A szolgáltatás már 4 virtuális kontrollert futtat. Zárjon be egy feed kapcsolatot, amelyre nincs szüksége, és küldje el újra a feed üzenetet.";

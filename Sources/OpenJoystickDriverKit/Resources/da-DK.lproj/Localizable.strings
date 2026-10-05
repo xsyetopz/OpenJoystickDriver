@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Omfanget control lader programmet trykke på knapper på en virtuel gamepad, som spil og apps behandler som dit input.";
 "cli.access.grant.discussion" = "CLIENT er programmets sti eller et ID fra “ojd access list”. Adgangen knyttes til programmets signatur, så den forbliver gyldig, når programmet opdateres eller flyttes. Ad-hoc-signerede og usignerede programmer kan ikke få adgang. Med --token i stedet for CLIENT oprettes et token, som en klient signerer tjenestens udfordring med i sin hello, på socketen, på WebSocket fra en side på en af --origin-værdierne eller, for et token uden --origin, på WebSocket fra et program, der ikke sender en Origin-header, f.eks. en app i en sandbox. En side kan ikke bruge omfanget control. Tokenet vises kun én gang. Beder først om bekræftelse.";
 "cli.access.grant.origin" = "En weboprindelse, f.eks. http://127.0.0.1:8080, hvis sider må bruge tokenet på WebSocket. Gentag for flere. De overlay-sider, som WebSocket leverer, har oprindelsen http://127.0.0.1:PORT med den port, som “ojd access status” viser.";
+"cli.access.grant.origin_control" = "--origin kan ikke kombineres med omfanget control. En side styrer aldrig en virtuel gamepad; giv control til et token uden --origin.";
 "cli.access.grant.origin_needs_token" = "--origin kræver --token.";
 "cli.access.grant.scope" = "Et omfang, der skal gives: read eller control. Gentag for begge.";
 "cli.access.grant.success" = "%@ givet til %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Tjenesten afviste denne klient. Den har ingen tilladelse til de områder, den bad om, eller dens signatur eller bevis er ugyldig. Kør 'ojd access list', giv klienten tilladelse med 'ojd access grant', og opret forbindelse igen.";
 "error.E1003" = "Tjenesten forstår ikke den protokolversion, der står i hello. Send en af versionerne i supported, og opret forbindelse igen.";
 "error.E1004" = "Tjenesten kunne ikke acceptere linjen. Den er ugyldig, eller den kom på det forkerte tidspunkt. Send først hello, derefter én anmodning, og kontrollér hver linje mod slutpunktets skema.";
-"error.E1005" = "Slutpunktet betjener allerede 8 forbindelser. Luk en forbindelse, du ikke har brug for, og opret forbindelse igen.";
+"error.E1005" = "Slutpunktet betjener allerede 8 forbindelser pr. transport (socket og WebSocket hver for sig). Luk en forbindelse, du ikke har brug for, og opret forbindelse igen.";
 "error.E1006" = "Denne klients tilladelse blev fjernet, mens den var forbundet. Giv den tilladelse igen med 'ojd access grant', og opret forbindelse igen.";
 "error.E1007" = "Klienten læste linjer for langsomt, og 256 linjer ventede. Læs linjer, så hurtigt som de kommer, og opret forbindelse igen.";
 "error.E1008" = "Tjenesten kører allerede 4 virtuelle controllere. Luk en feed, du ikke har brug for, og send feed igen.";

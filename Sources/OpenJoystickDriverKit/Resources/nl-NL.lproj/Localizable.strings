@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Het bereik control laat het programma knoppen op een virtuele gamepad indrukken, die games en apps als jouw invoer behandelen.";
 "cli.access.grant.discussion" = "CLIENT is het pad van het programma of een ID uit ‘ojd access list’. De toegang verwijst naar de handtekening van het programma en blijft dus geldig wanneer het programma wordt bijgewerkt of verplaatst. Ad-hoc ondertekende en niet-ondertekende programma’s kunnen geen toegang krijgen. Met --token in plaats van CLIENT wordt een token gemaakt waarmee een client in zijn hello de uitdaging van de service ondertekent, via de socket, via de WebSocket vanaf een pagina van een van de waarden van --origin of, bij een token zonder --origin, via de WebSocket vanaf een programma dat geen Origin-header verstuurt, zoals een app in een sandbox. Een pagina kan het bereik control niet gebruiken. Het token wordt maar één keer getoond. Vraagt eerst om bevestiging.";
 "cli.access.grant.origin" = "Een weboorsprong, zoals http://127.0.0.1:8080, waarvan de pagina’s het token op de WebSocket mogen gebruiken. Herhaal om er meer toe te voegen. De overlaypagina’s die de WebSocket serveert, hebben de oorsprong http://127.0.0.1:PORT, met de poort die ‘ojd access status’ toont.";
+"cli.access.grant.origin_control" = "--origin kan niet worden gecombineerd met het bereik control. Een pagina bestuurt nooit een virtuele gamepad; geef control aan een token zonder --origin.";
 "cli.access.grant.origin_needs_token" = "--origin vereist --token.";
 "cli.access.grant.scope" = "Een bereik om te verlenen: read of control. Herhaal voor beide.";
 "cli.access.grant.success" = "%@ verleend aan %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "De service heeft deze client geweigerd. Hij heeft geen toestemming voor de gevraagde bereiken, of zijn handtekening of bewijs is ongeldig. Voer 'ojd access list' uit, geef de client toestemming met 'ojd access grant' en maak opnieuw verbinding.";
 "error.E1003" = "De service ondersteunt de protocolversie in hello niet. Stuur een van de versies in supported en maak opnieuw verbinding.";
 "error.E1004" = "De service kon de regel niet accepteren. De regel is ongeldig of kwam op het verkeerde moment. Stuur eerst hello, dan één verzoek, en controleer elke regel met het schema van het eindpunt.";
-"error.E1005" = "Het eindpunt bedient al 8 verbindingen. Sluit een verbinding die u niet nodig hebt en maak opnieuw verbinding.";
+"error.E1005" = "Het eindpunt bedient al 8 verbindingen per transport (socket en WebSocket elk apart). Sluit een verbinding die u niet nodig hebt en maak opnieuw verbinding.";
 "error.E1006" = "De toestemming van deze client is ingetrokken terwijl hij verbonden was. Geef hem opnieuw toestemming met 'ojd access grant' en maak opnieuw verbinding.";
 "error.E1007" = "De client las regels te langzaam en 256 regels wachtten. Lees regels zo snel als ze binnenkomen en maak opnieuw verbinding.";
 "error.E1008" = "De service draait al 4 virtuele gamepads. Sluit een feed die u niet nodig hebt en stuur feed opnieuw.";

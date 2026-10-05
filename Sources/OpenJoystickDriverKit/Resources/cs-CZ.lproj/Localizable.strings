@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "Rozsah control umožňuje programu mačkat tlačítka na virtuálním gamepadu, které hry a aplikace berou jako váš vstup.";
 "cli.access.grant.discussion" = "CLIENT je cesta k programu nebo ID z „ojd access list“. Oprávnění se váže na podpis programu, takže zůstane platné i po aktualizaci nebo přesunu programu. Programům podepsaným ad-hoc a nepodepsaným programům nelze přístup udělit. S --token místo CLIENT vytvoří token, kterým klient ve svém hello podepisuje výzvu služby přes soket, přes WebSocket ze stránky s jedním z původů --origin nebo, u tokenu bez --origin, přes WebSocket z programu, který neposílá hlavičku Origin, například z aplikace v izolovaném prostředí (sandboxu). Stránka nemůže používat rozsah control. Token se zobrazí jen jednou. Nejdřív požádá o potvrzení.";
 "cli.access.grant.origin" = "Webový původ, například http://127.0.0.1:8080, jehož stránky mohou token používat přes WebSocket. Pro další zopakujte. Stránky překryvů, které WebSocket poskytuje, mají původ http://127.0.0.1:PORT s portem, který ukazuje „ojd access status“.";
+"cli.access.grant.origin_control" = "--origin nelze kombinovat s oprávněním control. Webová stránka nikdy neovládá virtuální gamepad; udělte control tokenu bez --origin.";
 "cli.access.grant.origin_needs_token" = "--origin vyžaduje --token.";
 "cli.access.grant.scope" = "Rozsah, který se má udělit: read nebo control. Pro oba jej zopakujte.";
 "cli.access.grant.success" = "Oprávnění %@ uděleno programu %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Služba tohoto klienta odmítla. Nemá udělený přístup k požadovaným oborům, nebo je jeho podpis či důkaz neplatný. Spusťte „ojd access list“, udělte klientovi přístup příkazem „ojd access grant“ a připojte se znovu.";
 "error.E1003" = "Služba nepodporuje verzi protokolu uvedenou v hello. Pošlete jednu z verzí v supported a připojte se znovu.";
 "error.E1004" = "Služba řádek nepřijala. Je neplatný, nebo přišel ve špatný čas. Pošlete nejdřív hello, potom jeden požadavek a každý řádek ověřte podle schématu koncového bodu.";
-"error.E1005" = "Koncový bod už obsluhuje 8 připojení. Zavřete připojení, které nepotřebujete, a připojte se znovu.";
+"error.E1005" = "Koncový bod už obsluhuje 8 připojení na každý přenos (socket a WebSocket zvlášť). Zavřete připojení, které nepotřebujete, a připojte se znovu.";
 "error.E1006" = "Přístup tohoto klienta byl odebrán, když byl připojen. Udělte mu ho znovu příkazem „ojd access grant“ a připojte se znovu.";
 "error.E1007" = "Klient četl řádky příliš pomalu a čekalo 256 řádků. Čtěte řádky tak rychle, jak přicházejí, a připojte se znovu.";
 "error.E1008" = "Služba už provozuje 4 virtuální gamepady. Zavřete feed, který nepotřebujete, a pošlete feed znovu.";

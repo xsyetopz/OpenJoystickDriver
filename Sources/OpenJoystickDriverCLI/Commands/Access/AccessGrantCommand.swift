@@ -141,6 +141,15 @@ struct AccessGrantCommand: AsyncParsableCommand {
         CLILocalized.text("cli.access.grant.origin_needs_token", "--origin needs --token.")
       )
     }
+    guard origin.isEmpty || !scope.contains(.control) else {
+      throw ValidationError(
+        CLILocalized.text(
+          "cli.access.grant.origin_control",
+          "--origin cannot be combined with the control scope. A page never drives a virtual "
+            + "gamepad; grant control to a token without --origin."
+        )
+      )
+    }
   }
 
   func run() async throws {

@@ -15,6 +15,7 @@ final class EndpointServer: @unchecked Sendable {
   typealias Identify = @Sendable (LocalSocketPeer) -> EndpointClient?
 
   static let protocolVersion = 1
+  /// The most connections each transport serves, so web pages cannot starve socket clients.
   static let maximumConnections = 8
   static let maximumLineBytes = 65_536
   static let handshakeSeconds = 5
@@ -51,7 +52,11 @@ final class EndpointServer: @unchecked Sendable {
     attributes: .concurrent
   )
   private var listeningDescriptor: Int32 = -1
-  let webAcceptQueue = DispatchQueue(label: "com.openjoystickdriver.endpoint.web-accept")
+  /// Concurrent, so a stale listener's loop, which may stay blocked, never holds up a new one.
+  let webAcceptQueue = DispatchQueue(
+    label: "com.openjoystickdriver.endpoint.web-accept",
+    attributes: .concurrent
+  )
   var webDescriptor: Int32 = -1
   /// The port `webDescriptor` listens on.
   var webPort = 0
@@ -284,8 +289,8 @@ final class EndpointServer: @unchecked Sendable {
     while lock.withLock({ listeningDescriptor == descriptor }) {
       let accepted = Darwin.accept(descriptor, nil, nil)
       guard accepted >= 0 else {
-        if errno == EINTR { continue }
-        return
+        guard Self.pause(after: Self.acceptFailure(errno)) else { return }
+        continue
       }
       var noSignal: Int32 = 1
       setsockopt(accepted, SOL_SOCKET, SO_NOSIGPIPE, &noSignal, socklen_t(MemoryLayout<Int32>.size))
@@ -296,6 +301,38 @@ final class EndpointServer: @unchecked Sendable {
         }
         self.serve(EndpointConnection(descriptor: accepted))
       }
+    }
+  }
+
+  // MARK: - Accept failures
+
+  enum AcceptFailure: Equatable {
+    /// An interrupted or aborted accept; accept again at once.
+    case retry
+    /// The process or system is out of descriptors or memory; accept again after a pause.
+    case backOff
+    /// The listener is closed or broken.
+    case stop
+  }
+
+  static let acceptBackOffMicroseconds: useconds_t = 100_000
+
+  static func acceptFailure(_ code: Int32) -> AcceptFailure {
+    switch code {
+    case EINTR, ECONNABORTED: .retry
+    case EMFILE, ENFILE, ENOBUFS, ENOMEM: .backOff
+    default: .stop
+    }
+  }
+
+  /// Waits out a back-off; false when the loop should end.
+  static func pause(after failure: AcceptFailure) -> Bool {
+    switch failure {
+    case .retry: return true
+    case .backOff:
+      usleep(acceptBackOffMicroseconds)
+      return true
+    case .stop: return false
     }
   }
 }

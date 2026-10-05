@@ -271,7 +271,7 @@ The keys are `launch-at-login`, `notification-sounds`, `include-prerelease-updat
 
 ## access
 
-Turn on the endpoint and choose which programs may read controllers through it. The endpoint is a local socket that granted programs read controller events from, and an optional WebSocket for web pages. For its protocol, see [Read the Endpoint](Automating-OpenJoystickDriver.md#read-the-endpoint). These commands need the service running.
+Turn on the endpoint and choose which programs may read controllers or drive a virtual gamepad through it. The endpoint is a local socket that granted programs use, and an optional WebSocket for web pages. For its protocol, see [Read the Endpoint](Automating-OpenJoystickDriver.md#read-the-endpoint). These commands need the service running.
 
 ```text
 ojd access status
@@ -295,7 +295,9 @@ ojd access web disable
 - `access web enable`: Turn on the WebSocket on `127.0.0.1`. Without `--port`, it uses the saved port; the first time, the system picks a free port. `--port` names another from 1024 to 65535. The port is saved, and `access status` shows it. It asks first, and in a script it needs `--force`. It is independent of `access enable`.
 - `access web disable`: Turn off the WebSocket and close its connections. The tokens stay.
 
-`access grant` accepts only a program signed with a Developer ID or Apple Development certificate, or signed by Apple. It refuses an ad-hoc signed or unsigned program, because any program can claim that signature. For a program that Apple signed, such as `python3`, every script that the program runs gets the access. The `control` scope can be granted, but the endpoint serves only `read` in this release.
+`access grant` accepts only a program signed with a Developer ID or Apple Development certificate, or signed by Apple. It refuses an ad-hoc signed or unsigned program, because any program can claim that signature. For a program that Apple signed, such as `python3`, every script that the program runs gets the access.
+
+The `control` scope lets a program drive a virtual gamepad, so it can press buttons in any game. `read` does not include it, and `control` does not include `read`. A granted program uses `control` on the socket. On the WebSocket, only a token without `--origin` can use it, from a program that sends no `Origin` header; a web page cannot. `access grant --token` refuses `--origin` together with `--scope control`. When a grants file from an earlier build holds that combination, the service ignores the `control` scope of that token. See [Drive a virtual gamepad through the endpoint](Automating-OpenJoystickDriver.md#drive-a-virtual-gamepad-through-the-endpoint).
 
 Any local program that reads a token can use it, including programs of other users on the same Mac when the WebSocket is on. Treat a token as a password, and revoke it when you no longer need it.
 

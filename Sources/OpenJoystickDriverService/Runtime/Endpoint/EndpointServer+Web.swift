@@ -96,9 +96,10 @@ extension EndpointServer {
     while lock.withLock({ webGeneration == generation }) {
       let accepted = Darwin.accept(listener.descriptor, nil, nil)
       guard accepted >= 0 else {
-        // Closing the listener fails a blocked accept with ECONNABORTED; the loop then ends.
-        if errno == EINTR || errno == ECONNABORTED { continue }
-        return
+        // Closing the listener fails a blocked accept with ECONNABORTED; the generation check
+        // then ends the loop. Running out of descriptors or memory is retried after a pause.
+        guard Self.pause(after: Self.acceptFailure(errno)) else { return }
+        continue
       }
       // The listener closed after the check, and its number may now be a new listener's; the
       // connection is dropped and the loop ends, so it never serves the new one.

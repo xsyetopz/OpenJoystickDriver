@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "La portée control permet au programme d’appuyer sur les boutons d’une manette virtuelle, que les jeux et les apps traitent comme votre saisie.";
 "cli.access.grant.discussion" = "CLIENT est le chemin du programme ou un identifiant issu de « ojd access list ». L’autorisation désigne la signature du programme ; elle reste donc valide quand le programme est mis à jour ou déplacé. Les programmes signés ad hoc et non signés ne peuvent pas être autorisés. Avec --token à la place de CLIENT, crée un jeton avec lequel un client signe le défi du service dans son hello, sur le socket, sur le WebSocket depuis une page de l’une des valeurs de --origin ou, pour un jeton sans --origin, sur le WebSocket depuis un programme qui n’envoie aucun en-tête Origin, comme une app en bac à sable. Une page ne peut pas utiliser la portée control. Le jeton n’est affiché qu’une seule fois. Demande d’abord une confirmation.";
 "cli.access.grant.origin" = "Une origine web, comme http://127.0.0.1:8080, dont les pages peuvent utiliser le jeton sur le WebSocket. À répéter pour en ajouter. Les pages de superposition que sert le WebSocket ont pour origine http://127.0.0.1:PORT, avec le port qu’affiche « ojd access status ».";
+"cli.access.grant.origin_control" = "--origin ne peut pas être combiné avec la portée control. Une page ne pilote jamais une manette virtuelle ; accordez control à un jeton sans --origin.";
 "cli.access.grant.origin_needs_token" = "--origin nécessite --token.";
 "cli.access.grant.scope" = "Une portée à accorder : read ou control. Répétez pour les deux.";
 "cli.access.grant.success" = "%@ accordé à %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "Le service a refusé ce client. Il n’a pas d’autorisation pour les portées demandées, ou sa signature ou sa preuve n’est pas valide. Exécutez 'ojd access list', autorisez le client avec 'ojd access grant' et reconnectez-vous.";
 "error.E1003" = "Le service ne prend pas en charge la version de protocole indiquée dans hello. Envoyez l’une des versions de supported et reconnectez-vous.";
 "error.E1004" = "Le service n’a pas pu accepter la ligne. Elle n’est pas valide ou elle est arrivée au mauvais moment. Envoyez d’abord hello, puis une seule requête, et vérifiez chaque ligne avec le schéma du point de terminaison.";
-"error.E1005" = "Le point de terminaison sert déjà 8 connexions. Fermez une connexion dont vous n’avez pas besoin et reconnectez-vous.";
+"error.E1005" = "Le point de terminaison sert déjà 8 connexions par transport (socket et WebSocket chacun). Fermez une connexion dont vous n’avez pas besoin et reconnectez-vous.";
 "error.E1006" = "L’autorisation de ce client a été retirée pendant qu’il était connecté. Autorisez-le de nouveau avec 'ojd access grant' et reconnectez-vous.";
 "error.E1007" = "Le client a lu les lignes trop lentement et 256 lignes ont attendu. Lisez les lignes aussi vite qu’elles arrivent et reconnectez-vous.";
 "error.E1008" = "Le service exécute déjà 4 manettes virtuelles. Fermez un feed dont vous n’avez pas besoin et renvoyez feed.";

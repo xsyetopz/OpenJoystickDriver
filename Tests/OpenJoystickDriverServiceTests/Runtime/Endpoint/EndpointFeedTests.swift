@@ -153,18 +153,34 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func aFeedOutlivesTheIdleTimeoutWithoutClientLines() throws {
+  func aFeedWithoutFrameLinesClosesAfterTheIdleTimeout() throws {
     let factory = FakeFeedFactory()
-    let feeds = factory.registry(idleTimeout: 0.2)
+    let feeds = factory.registry(idleTimeout: 0.3)
     try withEndpointServer(feeds: feeds) { server, _ in
       let client = try feeding(server)
-      usleep(600_000)
-
-      #expect(feeds.openFeedCount == 1)
-      #expect(factory.devices.first?.closeCount == 0)
       client.send(#"{"buttons":["east"]}"#)
       let device = try #require(factory.devices.first)
       try Self.wait { device.sent.contains { $0.buttons.contains(.east) } }
+
+      #expect(try client.readObject()["code"] as? String == "E1009")
+      try Self.wait { device.closeCount == 1 }
+      #expect(feeds.openFeedCount == 0)
+    }
+  }
+
+  @Test
+  func aFeedThatKeepsSendingFramesOutlivesTheIdleTimeout() throws {
+    let factory = FakeFeedFactory()
+    let feeds = factory.registry(idleTimeout: 0.5)
+    try withEndpointServer(feeds: feeds) { server, _ in
+      let client = try feeding(server)
+      for _ in 0..<8 {
+        client.send(#"{"buttons":["east"]}"#)
+        usleep(150_000)
+      }
+
+      #expect(feeds.openFeedCount == 1)
+      #expect(factory.devices.first?.closeCount == 0)
     }
   }
 

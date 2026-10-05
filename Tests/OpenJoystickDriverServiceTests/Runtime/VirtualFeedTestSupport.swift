@@ -10,8 +10,10 @@ final class FakeFeedDevice: VirtualFeedDevice, @unchecked Sendable {
   let failsActivation: Bool
   let hangsActivation: Bool
   var failsSending = false
+  /// A hanging send returns only after `release`.
+  var hangsSending = false
   private let lock = NSLock()
-  /// The hung activation and closes, resumed by `release`.
+  /// The hung activation, sends, and closes, resumed by `release`.
   private var hung: [CheckedContinuation<Void, Never>] = []
   private var released = false
   private var activatedValue: DeviceIdentifier?
@@ -47,7 +49,8 @@ final class FakeFeedDevice: VirtualFeedDevice, @unchecked Sendable {
     lock.withLock { activatedValue = identifier }
   }
 
-  func send(_ state: RemappingGamepadState, for identifier: DeviceIdentifier) throws {
+  func send(_ state: RemappingGamepadState, for identifier: DeviceIdentifier) async throws {
+    if hangsSending { await waitForRelease() }
     if failsSending { throw UserSpaceOutputDispatcher.CreationError.createFailed }
     lock.withLock {
       sentValue.append(state)
@@ -61,7 +64,7 @@ final class FakeFeedDevice: VirtualFeedDevice, @unchecked Sendable {
     if hangsActivation { await waitForRelease() }
   }
 
-  /// Ends a hung activation and the closes that wait for it, so no task outlives the test.
+  /// Ends a hung activation or send and the closes that wait for it, so no task outlives the test.
   func release() {
     let waiting = lock.withLock {
       released = true

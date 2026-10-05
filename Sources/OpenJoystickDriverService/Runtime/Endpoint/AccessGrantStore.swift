@@ -11,6 +11,7 @@ enum AccessGrantStoreError: Error, Equatable, LocalizedError, Sendable {
   case invalidTokenName(String)
   case invalidOrigin(String)
   case portUnavailable(Int)
+  case originsWithControl
 
   var errorDescription: String? {
     switch self {
@@ -31,6 +32,9 @@ enum AccessGrantStoreError: Error, Equatable, LocalizedError, Sendable {
     case .invalidOrigin(let origin):
       "\"\(origin)\" is not a web origin. Use scheme://host[:port] with http or https, "
         + "such as http://127.0.0.1:8080."
+    case .originsWithControl:
+      "A token with origins cannot have the control scope, because a page must never drive a "
+        + "virtual gamepad. Grant control to a token without origins."
     case .portUnavailable(let port):
       "Port \(port) on 127.0.0.1 is in use or cannot be opened. Choose another with --port."
     }
@@ -121,6 +125,31 @@ struct AccessGrantFile: Codable, Equatable, Sendable {
       )
     }
   }
+
+  /// Removes `control` from tokens that have origins, and tokens left with no scope; returns the
+  /// names of the removed tokens.
+  ///
+  /// Earlier builds allowed the combination; a page never drives a pad, so the stored scope has no
+  /// use, and dropping it keeps the rest of the file valid.
+  mutating func dropControlFromTokensWithOrigins() -> [String] {
+    var removed: [String] = []
+    tokens = tokens.compactMap { grant in
+      guard grant.scopes.contains(.control), !grant.origins.isEmpty else { return grant }
+      let scopes = grant.scopes.filter { $0 != .control }
+      guard !scopes.isEmpty else {
+        removed.append(grant.name)
+        return nil
+      }
+      return AccessTokenGrant(
+        name: grant.name,
+        tokenSHA256: grant.tokenSHA256,
+        origins: grant.origins,
+        scopes: scopes,
+        grantedAt: grant.grantedAt
+      )
+    }
+    return removed
+  }
 }
 
 /// Reads and writes `AccessGrants.json`; the application service is its only writer.
@@ -151,6 +180,9 @@ struct AccessGrantStore: Sendable {
       file.hasValidTokensAndWeb
     else { throw AccessGrantStoreError.damaged }
     file.dropControlGrantedBeforeItWorked()
+    for name in file.dropControlFromTokensWithOrigins() {
+      print("[AccessGrantStore] Ignored token \(name): only control scope, with origins")
+    }
     return file
   }
 

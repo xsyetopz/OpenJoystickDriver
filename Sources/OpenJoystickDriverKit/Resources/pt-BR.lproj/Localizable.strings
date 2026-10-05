@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "O escopo control permite que o programa pressione botões de um gamepad virtual, que jogos e apps tratam como a sua entrada.";
 "cli.access.grant.discussion" = "CLIENT é o caminho do programa ou um ID de «ojd access list». A permissão se refere à assinatura do programa, então continua válida quando o programa é atualizado ou movido. Programas com assinatura ad-hoc e programas não assinados não podem receber acesso. Com --token no lugar de CLIENT, cria um token com o qual um cliente assina o desafio do serviço no hello dele, pelo soquete, pelo WebSocket a partir de uma página de um dos valores de --origin ou, no caso de um token sem --origin, pelo WebSocket a partir de um programa que não envia o cabeçalho Origin, como um app em sandbox. Uma página não pode usar o escopo control. O token é mostrado apenas uma vez. Pede confirmação primeiro.";
 "cli.access.grant.origin" = "Uma origem web, como http://127.0.0.1:8080, cujas páginas podem usar o token no WebSocket. Repita para adicionar mais. As páginas de sobreposição que o WebSocket serve têm a origem http://127.0.0.1:PORT, com a porta que «ojd access status» mostra.";
+"cli.access.grant.origin_control" = "--origin não pode ser combinado com o âmbito control. Uma página nunca controla um gamepad virtual; conceda control a um token sem --origin.";
 "cli.access.grant.origin_needs_token" = "--origin exige --token.";
 "cli.access.grant.scope" = "Um escopo a conceder: read ou control. Repita para ambos.";
 "cli.access.grant.success" = "%@ concedido a %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "O serviço recusou este cliente. Ele não tem permissão para os âmbitos que pediu, ou a sua assinatura ou prova não é válida. Execute «ojd access list», conceda permissão ao cliente com «ojd access grant» e volte a ligar.";
 "error.E1003" = "O serviço não suporta a versão do protocolo em hello. Envie uma das versões em supported e volte a ligar.";
 "error.E1004" = "O serviço não conseguiu aceitar a linha. Ela não é válida ou chegou no momento errado. Envie primeiro hello, depois um pedido, e verifique cada linha com o esquema do ponto final.";
-"error.E1005" = "O ponto final já atende 8 ligações. Feche uma ligação de que não precisa e volte a ligar.";
+"error.E1005" = "O ponto final já atende 8 ligações por transporte (socket e WebSocket cada um). Feche uma ligação de que não precisa e volte a ligar.";
 "error.E1006" = "A permissão deste cliente foi removida enquanto ele estava ligado. Conceda-lhe permissão de novo com «ojd access grant» e volte a ligar.";
 "error.E1007" = "O cliente leu as linhas devagar demais e 256 linhas ficaram à espera. Leia as linhas tão depressa quanto chegam e volte a ligar.";
 "error.E1008" = "O serviço já executa 4 controles virtuais. Feche um feed de que não precisa e envie feed de novo.";

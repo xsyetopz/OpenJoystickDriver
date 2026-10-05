@@ -977,6 +977,7 @@
 "cli.access.grant.control_warning" = "The control scope lets the program press buttons on a virtual gamepad, which games and apps treat as your input.";
 "cli.access.grant.discussion" = "CLIENT is the program's path or an ID from 'ojd access list'. The grant names the program's signature, so it stays valid when the program is updated or moved. Ad-hoc signed and unsigned programs cannot be granted. With --token instead of CLIENT, creates a token that a client signs the service's challenge with in its hello: on the socket, on the WebSocket from a page at one of the --origin values, or, for a token without --origin, on the WebSocket from a program that sends no Origin header, such as a sandboxed app. A page cannot use the control scope. The token is shown only once. Asks for confirmation first.";
 "cli.access.grant.origin" = "A web origin, such as http://127.0.0.1:8080, whose pages may use the token on the WebSocket. Repeat for more. The overlay pages that the WebSocket serves have the origin http://127.0.0.1:PORT, with the port that 'ojd access status' shows.";
+"cli.access.grant.origin_control" = "--origin cannot be combined with the control scope. A page never drives a virtual gamepad; grant control to a token without --origin.";
 "cli.access.grant.origin_needs_token" = "--origin needs --token.";
 "cli.access.grant.scope" = "A scope to grant: read or control. Repeat for both.";
 "cli.access.grant.success" = "Granted %@ to %@ (ID %@).";
@@ -1456,7 +1457,7 @@
 "error.E1002" = "The service refused this client. It has no grant for the scopes it asked for, or its signature or proof is not valid. Run 'ojd access list', grant the client with 'ojd access grant', and connect again.";
 "error.E1003" = "The service does not speak the protocol version in hello. Send one of the versions in supported, and connect again.";
 "error.E1004" = "The service could not accept the line. It is not valid, or it came at the wrong time. Send hello first, then one request, and check each line against the endpoint schema.";
-"error.E1005" = "The endpoint already serves 8 connections. Close a connection that you do not need, and connect again.";
+"error.E1005" = "The endpoint already serves 8 connections per transport (socket and WebSocket each). Close a connection that you do not need, and connect again.";
 "error.E1006" = "The grant of this client was removed while it was connected. Grant it again with 'ojd access grant', and connect again.";
 "error.E1007" = "The client read lines too slowly, and 256 lines waited. Read lines as fast as they arrive, and connect again.";
 "error.E1008" = "The service already runs 4 virtual gamepads. Close a feed that you do not need, and send feed again.";
