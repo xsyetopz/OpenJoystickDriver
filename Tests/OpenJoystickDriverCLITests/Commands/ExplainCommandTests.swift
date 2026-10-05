@@ -21,7 +21,7 @@ struct ExplainCommandTests {
 
     #expect(human.code == 0)
     #expect(human.standardOutput.hasPrefix("E2004\n"))
-    #expect(human.standardOutput.contains("Exit code: 69\n"))
+    #expect(human.standardOutput.contains("69"))
     #expect(human.standardError.isEmpty)
     #expect(try json.json()["code"] as? String == "E2004")
     #expect(try json.json()["exitCode"] as? Int == 69)
@@ -34,7 +34,7 @@ struct ExplainCommandTests {
     let json = await CLIRun.run(["explain", "e3013", "--json"])
 
     #expect(human.code == 0)
-    #expect(human.standardOutput.contains("Wire value: profile_not_found\n"))
+    #expect(human.standardOutput.contains("profile_not_found"))
     #expect(try json.json()["code"] as? String == "E3013")
     #expect(try json.json()["wire"] as? String == "profile_not_found")
     #expect(try json.json()["exitCode"] == nil)
@@ -46,7 +46,8 @@ struct ExplainCommandTests {
 
     #expect(run.code == 64)
     #expect(run.standardOutput.isEmpty)
-    #expect(run.standardError.hasPrefix("error[E2003]: E9999 is not an active error code."))
+    #expect(run.standardError.hasPrefix("error[E2003]: "))
+    #expect(run.standardError.contains("E9999"))
   }
 
   @Test

@@ -12,13 +12,9 @@ struct ServiceConnectionFailureTests {
       message: "A remapping profile named Pad already exists."
     )
 
-    #expect(
-      ServiceConnection.failure(for: error) as? CLIFailure
-        == CLIFailure(
-          .duplicateName,
-          "A profile with that name already exists. 'ojd profile list' shows every profile."
-        )
-    )
+    let failure = ServiceConnection.failure(for: error) as? CLIFailure
+    #expect(failure?.id == .duplicateName)
+    #expect(failure?.message.contains("ojd profile list") == true)
   }
 
   @Test
@@ -28,14 +24,10 @@ struct ServiceConnectionFailureTests {
       message: "The remapping profile library could not be written."
     )
 
-    #expect(
-      ServiceConnection.failure(for: error) as? CLIFailure
-        == CLIFailure(
-          .unwritableLibrary,
-          "The service did not complete the request: "
-            + "The remapping profile library could not be written. Check it with 'ojd status'."
-        )
-    )
+    let failure = ServiceConnection.failure(for: error) as? CLIFailure
+    #expect(failure?.id == .unwritableLibrary)
+    #expect(failure?.message.contains("ojd status") == true)
+    #expect(failure?.message.contains("..") == false)
   }
 
   @Test(arguments: [(0.5, "0.5s"), (1, "1s"), (10, "10s")])

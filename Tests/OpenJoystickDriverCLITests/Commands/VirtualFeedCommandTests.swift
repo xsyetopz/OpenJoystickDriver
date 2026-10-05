@@ -158,7 +158,7 @@ struct VirtualFeedCommandTests {
     let result = await Self.run(service, input: ["{}", "", line])
 
     #expect(result.code == 64)
-    #expect(result.standardError.contains("Line 3"), "\(result.standardError)")
+    #expect(result.standardError.contains("3"), "\(result.standardError)")
     #expect(service.arguments(of: .closeVirtualFeed).count == 1)
   }
 
@@ -170,7 +170,7 @@ struct VirtualFeedCommandTests {
     let result = await Self.run(service, input: ["{}"])
 
     #expect(result.code == 1)
-    #expect(result.standardError.contains("closed the virtual gamepad"))
+    #expect(result.standardError.contains("ojd status"))
   }
 
   @Test

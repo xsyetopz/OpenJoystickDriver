@@ -91,7 +91,11 @@ struct CommandTreeTests {
     let result = await CLIRun.run(arguments)
     #expect(result.code == 64)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("error["))
+    #expect(
+      [CLIFailure.prefix(.unknownCommand), CLIFailure.prefix(.usage)].contains {
+        result.standardError.hasPrefix($0)
+      }
+    )
   }
 
   @Test

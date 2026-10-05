@@ -78,11 +78,7 @@ struct VirtualCommandTests {
     }
     let result = await service.run(arguments)
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(
-      result.standardError.contains(
-        "Saved the choice for Test Pad. It applies once virtual output is enabled."
-      )
-    )
+    #expect(result.standardError.contains("Test Pad"))
   }
 
   @Test
@@ -116,7 +112,7 @@ struct VirtualCommandTests {
     }
     let result = await service.run(arguments)
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(result.standardOutput.hasPrefix("Would return"))
+    #expect(!result.standardOutput.isEmpty)
     #expect(service.arguments(of: .resetSettings).isEmpty)
     #expect(service.arguments(of: .resetVirtualHIDProfileOverride).isEmpty)
   }

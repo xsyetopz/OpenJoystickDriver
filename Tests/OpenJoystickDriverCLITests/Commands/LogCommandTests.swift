@@ -127,7 +127,7 @@ struct LogCommandTests {
 
     #expect(result.code == 64)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("error["))
+    #expect(result.standardError.hasPrefix("error[E2003]: "))
   }
 
   @Test

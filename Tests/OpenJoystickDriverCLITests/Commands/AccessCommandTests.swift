@@ -152,7 +152,13 @@ struct AccessCommandTests {
     )
     #expect((try status.json()["web"] as? [String: Any])?["port"] as? Int == 47_614)
     #expect(human.standardOutput.contains("/tmp/endpoint.sock"))
-    #expect(human.standardOutput.contains("WebSocket: off"))
+    let webOff = AccessWebStatus(
+      enabled: false,
+      listening: false,
+      port: 47_614,
+      pagesPath: "/tmp/Overlays"
+    )
+    #expect(human.standardOutput.contains(AccessText.web(webOff)))
   }
 
   @Test
@@ -255,6 +261,7 @@ struct AccessCommandTests {
     let disabled = await service.run(["access", "disable", "--json"])
 
     #expect(refused.code == 64)
+    #expect(refused.standardError.hasPrefix("error[E2009]: "))
     #expect(refused.standardError.contains("--force"))
     #expect(forced.code == 0, "\(forced.standardError)")
     #expect(try forced.json()["enabled"] as? Bool == true)
@@ -294,8 +301,9 @@ struct AccessCommandTests {
     let byID = await service.run(["access", "grant", Self.refused.id, "--force"])
 
     #expect(byPath.code == 1)
-    #expect(byPath.standardError.contains("ad-hoc"))
+    #expect(byPath.standardError.hasPrefix("error[E2017]: "))
     #expect(byID.code == 1)
+    #expect(byID.standardError.hasPrefix("error[E2017]: "))
     #expect(service.arguments(of: .grantAccess).isEmpty)
   }
 
@@ -307,8 +315,10 @@ struct AccessCommandTests {
     let unknown = await service.run(["access", "grant", "ffffffff", "--force"])
 
     #expect(unsigned.code == 1)
+    #expect(unsigned.standardError.hasPrefix("error[E2017]: "))
     #expect(unsigned.standardError.contains("/etc/hosts"))
     #expect(unknown.code == 1)
+    #expect(unknown.standardError.hasPrefix("error[E2012]: "))
     #expect(unknown.standardError.contains("ojd access list"))
     #expect(service.arguments(of: .grantAccess).isEmpty)
   }

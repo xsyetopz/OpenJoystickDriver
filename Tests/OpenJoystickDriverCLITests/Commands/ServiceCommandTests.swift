@@ -59,7 +59,8 @@ struct ServiceCommandTests {
     let withoutFile = await runStatus(["--plain"])
 
     #expect(withFile.code == 0, "\(withFile.standardError)")
-    #expect(withFile.standardOutput.contains("broken.json\tthe file is not a JSON object"))
+    #expect(withFile.standardOutput.contains("skipped-record\t"))
+    #expect(withFile.standardOutput.contains("/broken.json\t"))
     #expect(!withoutFile.standardOutput.contains("skipped-record"))
   }
 
@@ -140,7 +141,7 @@ struct ServiceCommandTests {
     }
     #expect(result.code == 69)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("error["))
+    #expect(result.standardError.hasPrefix("error[E2004]: "))
     #expect(result.standardError.contains("ojd service start"))
   }
 

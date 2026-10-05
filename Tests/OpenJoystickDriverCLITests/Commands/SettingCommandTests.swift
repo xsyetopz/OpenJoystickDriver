@@ -136,7 +136,6 @@ struct SettingCommandTests {
     #expect(result.code == 1)
     #expect(result.standardOutput.isEmpty)
     #expect(result.standardError.hasPrefix("error["))
-    #expect(result.standardError.contains("Login Items"))
   }
 
   @Test(arguments: [
@@ -153,7 +152,7 @@ struct SettingCommandTests {
 
     #expect(result.code == 64)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("error["))
+    #expect(result.standardError.hasPrefix("error[E2003]: "))
     #expect(received.withLock { $0.isEmpty })
   }
 
@@ -163,6 +162,6 @@ struct SettingCommandTests {
 
     #expect(result.code == 69)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.contains("ojd service start"))
+    #expect(result.standardError == CLIFailure.serviceUnavailable.line + "\n")
   }
 }

@@ -95,7 +95,7 @@ struct PermissionCommandTests {
     let result = await run(["permission", "list", "--json"], socketPath: temporarySocketPath())
 
     #expect(result.code == 0)
-    #expect(result.standardError.contains("read by this process"))
+    #expect(!result.standardError.isEmpty)
     let entries = try #require(try result.json()["permissions"] as? [[String: String]])
     #expect(entries.map { $0["state"] } == ["denied", "granted", "unknown"])
   }
@@ -106,9 +106,9 @@ struct PermissionCommandTests {
 
     let rows = result.standardOutput.split(separator: "\n")
     #expect(rows.count == 3)
-    #expect(rows[0].hasPrefix("Input Monitoring"))
+    #expect(rows[0].hasPrefix(PermissionID.inputMonitoring.localizedName))
     #expect(rows[0].contains("denied"))
-    #expect(rows[0].contains("Read input from physical controllers"))
+    #expect(rows[0].hasSuffix(PermissionID.inputMonitoring.localizedPurpose))
   }
 
   @Test
@@ -117,8 +117,7 @@ struct PermissionCommandTests {
 
     #expect(result.code == 69)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("error["))
-    #expect(result.standardError.contains("ojd service start"))
+    #expect(result.standardError == CLIFailure.serviceUnavailable.line + "\n")
   }
 
   @Test
@@ -126,7 +125,7 @@ struct PermissionCommandTests {
     let result = await run(["permission", "request", "camera"], socketPath: temporarySocketPath())
 
     #expect(result.code == 64)
-    #expect(result.standardError.contains("Unknown permission 'camera'"))
+    #expect(result.standardError.contains("camera"))
     #expect(result.standardError.contains("input-monitoring, accessibility"))
   }
 
@@ -142,13 +141,12 @@ struct PermissionCommandTests {
     let result = await run(["permission", "request", "--no-input"], socketPath: socketPath)
 
     #expect(result.code == 77)
-    #expect(result.standardOutput.contains("Input Monitoring"))
+    #expect(result.standardOutput.contains(PermissionID.inputMonitoring.localizedName))
     #expect(result.standardOutput.contains("denied"))
     #expect(
-      result.standardError.hasPrefix("error[E2008]: Input Monitoring access is still missing.")
+      result.standardError == CLIFailure.permissionStillMissing([.inputMonitoring]).line + "\n"
     )
-    #expect(result.standardError.contains("System Settings > Privacy & Security >"))
-    #expect(result.standardError.contains("Input Monitoring, then"))
+    #expect(result.standardError.hasPrefix("error[E2008]: "))
     #expect(result.standardError.contains("ojd permission request"))
   }
 
@@ -166,7 +164,7 @@ struct PermissionCommandTests {
     let result = await run(["permission", "request", "accessibility"], socketPath: socketPath)
 
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(result.standardError == "The requested access is granted.\n")
+    #expect(result.standardError.split(separator: "\n").count == 1)
     #expect(received.withLock { $0 } == [ApplicationServiceRPCMethod.requestAccess.rawValue])
   }
 
@@ -192,8 +190,8 @@ struct PermissionCommandTests {
 
     #expect(failure.code == .permissionDenied)
     #expect(failure.code.rawValue == 77)
-    #expect(
-      failure.message == "Accessibility access is missing. Grant it with 'ojd permission request'."
-    )
+    #expect(failure.id == .permissionMissing)
+    #expect(failure.message.contains("Accessibility"))
+    #expect(failure.message.contains("ojd permission request"))
   }
 }

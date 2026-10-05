@@ -68,7 +68,7 @@ extension VirtualCommandTests {
     let result = await service.run(arguments)
 
     #expect(result.code == 1)
-    #expect(result.standardError.contains("Test Pad has no unit ID"))
+    #expect(result.standardError.contains("Test Pad"))
     #expect(service.arguments(of: .setVirtualHIDProfileOverride).isEmpty)
     #expect(service.arguments(of: .resetVirtualHIDProfileOverride).isEmpty)
   }

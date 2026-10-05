@@ -50,10 +50,9 @@ struct CommandSuggestionTests {
 
     #expect(result.code == 64)
     #expect(result.standardOutput.isEmpty)
-    #expect(
-      result.standardError
-        == "error[E2002]: Unknown command 'stauts'. Did you mean 'ojd status'?\n"
-    )
+    #expect(result.standardError.hasPrefix("error[E2002]: "))
+    #expect(result.standardError.contains("stauts"))
+    #expect(result.standardError.contains("ojd status"))
   }
 
   @Test

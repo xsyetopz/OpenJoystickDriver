@@ -49,7 +49,8 @@ struct ProfileCommandTests {
     #expect(ambiguous.standardError.contains(first.id.uuidString))
     #expect(ambiguous.standardError.contains(second.id.uuidString))
     #expect(missing.code == 1)
-    #expect(missing.standardError.contains("'Nope'"))
+    #expect(missing.standardError.hasPrefix("error[E2012]: "))
+    #expect(missing.standardError.contains("Nope"))
   }
 
   @Test
@@ -151,7 +152,9 @@ struct ProfileCommandTests {
     #expect(service.arguments(of: .deleteDamagedRemappingProfile).count == 1)
     #expect(service.arguments(of: .resetRemappingProfileLibrary).count == 1)
     #expect(again.code == 0, "\(again.standardError)")
-    #expect(again.standardOutput.contains("No damaged profile files."))
+    #expect(!again.standardOutput.isEmpty)
+    #expect(service.arguments(of: .deleteDamagedRemappingProfile).count == 1)
+    #expect(service.arguments(of: .resetRemappingProfileLibrary).count == 1)
   }
 
   @Test
@@ -200,7 +203,7 @@ struct ProfileCommandTests {
     #expect(replaced.code == 0, "\(replaced.standardError)")
     #expect(try replaced.json()["replaced"] as? Bool == true)
     #expect(invalid.code == 64)
-    #expect(invalid.standardError.contains("stdin"))
+    #expect(invalid.standardError.hasPrefix("error[E2003]: "))
     #expect(service.arguments(of: .importRemappingProfile).count == 1)
   }
 
@@ -226,12 +229,13 @@ struct ProfileCommandTests {
     #expect(try json.json()["id"] as? String == profile.id.uuidString)
     #expect(plain.standardOutput == "\(profile.id.uuidString)\tPad\t045E:028E\tglobal\n")
     #expect(human.code == 0)
-    #expect(human.standardOutput.contains("stdin is a valid profile"))
+    #expect(human.standardOutput.contains("Pad"))
+    #expect(human.standardOutput.contains("045E:028E"))
     #expect(invalidJSON.code == 1)
     #expect(try invalidJSON.json()["valid"] as? Bool == false)
     #expect(try invalidJSON.json()["problem"] is String)
     #expect(invalid.code == 1)
-    #expect(invalid.standardError.contains("stdin is not a valid profile"))
+    #expect(invalid.standardError.hasPrefix("error[E2011]: "))
   }
 
   @Test

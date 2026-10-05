@@ -75,8 +75,9 @@ struct RecordCommandTests {
 
     #expect(json.code == 1)
     #expect(try json.json()["valid"] as? Bool == false)
-    #expect((try json.json()["problem"] as? String)?.hasPrefix("$schema must be") == true)
-    #expect(json.standardError.hasPrefix("error[E2011]: - is not a valid record: $schema must be"))
+    #expect((try json.json()["problem"] as? String)?.contains("$schema") == true)
+    #expect(json.standardError.hasPrefix("error[E2011]: "))
+    #expect(json.standardError.contains("$schema"))
     #expect(install.code == 1)
     #expect(directory.fileNames.isEmpty)
     #expect(missing.code == 64)
@@ -122,7 +123,8 @@ struct RecordCommandTests {
 
     #expect(list.code == 0)
     let skipped = try #require(try list.json()["skipped"] as? [[String: String]])
-    #expect(skipped.map { $0["problem"] } == ["the file name must be 366c-0005.json"])
+    #expect(skipped.count == 1)
+    #expect(skipped.first?["problem"]?.contains("366c-0005.json") == true)
     #expect(list.standardError.contains("wrong.json"))
     let records = try #require(try bundled.json()["records"] as? [[String: Any]])
     #expect(records.count == ControllerRecordSet.bundled.records.count)
@@ -134,6 +136,7 @@ struct RecordCommandTests {
   func showAnUnknownModelExitsOne() async {
     let result = await run(["show", "1234:ABCD"], in: Directory())
     #expect(result.code == 1)
+    #expect(result.standardError.hasPrefix("error[E2012]: "))
     #expect(result.standardError.contains("1234:ABCD"))
   }
 
