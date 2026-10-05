@@ -55,12 +55,7 @@ extension DriverLifecycleCharacterizationTests {
       interface: isSteam ? steamHIDInterface(number: 1) : nil
     )
     await deliver(subject.readyingInput, to: recording, locationID: locationID)
-    // Keep-alive writes (GameSir sends one every 500 ms) are wall-clock paced and not part of
-    // neutralization; stop them so a slow run cannot interleave one into the transcript.
-    for task in await recording.manager.hidPeriodicOutputTasks.values {
-      task.cancel()
-      await task.value
-    }
+    await stopKeepAlive(recording)
     let counts = await recordedCounts(recording)
     let identity = subject.identifier.controllerIdentity
     let result = await recording.manager.suspendController(

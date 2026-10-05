@@ -55,6 +55,15 @@ extension DriverLifecycleCharacterizationTests {
       + features.flatMap(render)
   }
 
+  /// Keep-alive writes (GameSir sends one every 500 ms) are wall-clock paced; stop them so a
+  /// slow run cannot interleave one into a recorded transcript.
+  func stopKeepAlive(_ recording: HIDStartupRecording) async {
+    for task in await recording.manager.hidPeriodicOutputTasks.values {
+      task.cancel()
+      await task.value
+    }
+  }
+
   func dualShock4BluetoothStartupSteps() async -> [String] {
     let recording = await startHIDController(
       Self.dualShock4Bluetooth,
@@ -112,13 +121,14 @@ extension DriverLifecycleCharacterizationTests {
     return ["startup"] + startup + ["connected"] + connected
   }
 
-  /// Read before the first 500 ms heartbeat fires, so the periodic output is not in the list.
+  /// Stops the 500 ms heartbeat before reading, so the periodic output is not in the list.
   func gameSirEnhancedHIDStartupSteps() async -> [String] {
     let recording = await startHIDController(
       Self.gameSirEnhancedHID,
       transport: "USB",
       locationID: 205
     )
+    await stopKeepAlive(recording)
     let steps = await recordedSteps(recording)
     await recording.manager.stop()
     return steps
