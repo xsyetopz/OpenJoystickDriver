@@ -890,7 +890,7 @@
 "profiles.emptyActivationTitle" = "Aktivujte profil bez vstupov riadiaceho ovládača?";
 "profiles.emptyInputWarning" = "Tento profil potláča všetky vstupy ovládača.";
 "profiles.restoreDefaultInput" = "Vrátiť predvolený vstup";
-"common.reset" = "Obnoviť";
+"common.reset" = "Resetovať";
 "profiles.useControllerDefaultColor" = "Použiť predvolenú hodnotu ovládača";
 "profiles.damagedProfile" = "Poškodený profil";
 "profiles.damagedLibrary" = "Poškodený zoznam aktívnych profilov";
@@ -966,7 +966,7 @@
 "cli.access.client.unsigned" = "%@ neobsahuje podpísaný program. Udeľte prístup balíku aplikácie alebo spustiteľnému súboru programu.";
 "cli.access.disable.abstract" = "Vypne koncový bod a zatvorí jeho spojenia; udelené prístupy sa zachovajú.";
 "cli.access.disable.success" = "Koncový bod je vypnutý a jeho spojenia sú zatvorené.";
-"cli.access.discussion" = "Koncový bod je lokálny socket, z ktorého udelené programy čítajú udalosti ovládačov. Je vypnutý, kým nespustíte „ojd access enable“, a služba obsluhuje iba programy, ktorých podpisu ste udelili prístup, alebo programy, ktoré posielajú token, ktorému ste udelili prístup. „ojd access web enable“ pridáva WebSocket na 127.0.0.1 pre stránky overlay.";
+"cli.access.discussion" = "Koncový bod je lokálny socket, z ktorého programy s udeleným prístupom čítajú udalosti ovládačov. Je vypnutý, kým nespustíte „ojd access enable“, a služba obsluhuje iba programy, ktorých podpisu ste udelili prístup, alebo programy, ktoré posielajú token, ktorému ste udelili prístup. „ojd access web enable“ pridáva WebSocket na 127.0.0.1 pre stránky overlay.";
 "cli.access.enable.abstract" = "Zapne koncový bod.";
 "cli.access.enable.confirm" = "Zapnúť koncový bod, aby programy, ktorým udelíte prístup, mohli čítať vstup každého ovládača?";
 "cli.access.enable.discussion" = "Najprv požiada o potvrdenie. Koncový bod môžu používať iba programy s udeleným prístupom; pridáte ich príkazom „ojd access grant“.";
@@ -979,7 +979,7 @@
 "cli.access.grant.control_warning" = "Rozsah control umožňuje programu stláčať tlačidlá virtuálneho gamepadu, ktoré hry a aplikácie považujú za váš vstup.";
 "cli.access.grant.discussion" = "CLIENT je cesta k programu alebo ID z „ojd access list“. Udelenie sa viaže na podpis programu, takže platí aj po aktualizácii alebo presune programu. Programom podpísaným ad-hoc a nepodpísaným programom nie je možné udeliť prístup. S voľbou --token namiesto CLIENT vytvorí token, ktorým klient vo svojom hello podpisuje výzvu služby cez socket, cez WebSocket zo stránky jednej z hodnôt --origin alebo, pri tokene bez --origin, cez WebSocket z programu, ktorý neposiela hlavičku Origin, napríklad z aplikácie v sandboxe. Stránka nemôže používať rozsah control. Token sa zobrazí iba raz. Najprv požiada o potvrdenie.";
 "cli.access.grant.origin" = "Webový pôvod, napríklad http://127.0.0.1:8080, ktorého stránky môžu používať token cez WebSocket. Opakovaním pridáte ďalšie. Stránky prekrytí, ktoré WebSocket poskytuje, majú pôvod http://127.0.0.1:PORT s portom, ktorý zobrazuje „ojd access status“.";
-"cli.access.grant.origin_control" = "--origin sa nedá kombinovať s oprávnením control. Webová stránka nikdy neovláda virtuálny gamepad; udeľte control tokenu bez --origin.";
+"cli.access.grant.origin_control" = "--origin sa nedá kombinovať s rozsahom control. Webová stránka nikdy neovláda virtuálny gamepad; udeľte control tokenu bez --origin.";
 "cli.access.grant.origin_needs_token" = "--origin vyžaduje --token.";
 "cli.access.grant.scope" = "Rozsah na udelenie: read alebo control. Zopakujte pre oba.";
 "cli.access.grant.success" = "Udelený rozsah %@ programu %@ (ID %@).";
@@ -1456,7 +1456,7 @@
 "cli.profile.validate.valid" = "%@ je platný profil: „%@“ pre %@ (%@). Pridajte ho pomocou „ojd profile import“.";
 "cli.profile.vanished" = "Služba profil neuchovala. Skontrolujte ho pomocou „ojd profile list“.";
 "error.E1001" = "Koncový bod je vypnutý. Zapnite ho príkazom „ojd access enable“ a pripojte sa znova.";
-"error.E1002" = "Služba tohto klienta odmietla. Nemá udelený prístup k požadovaným oblastiam, alebo je jeho podpis či dôkaz neplatný. Spustite „ojd access list“, udeľte klientovi prístup príkazom „ojd access grant“ a pripojte sa znova.";
+"error.E1002" = "Služba tohto klienta odmietla. Nemá udelený prístup k požadovaným rozsahom, alebo je jeho podpis či dôkaz neplatný. Spustite „ojd access list“, udeľte klientovi prístup príkazom „ojd access grant“ a pripojte sa znova.";
 "error.E1003" = "Služba nepodporuje verziu protokolu uvedenú v hello. Pošlite jednu z verzií v supported a pripojte sa znova.";
 "error.E1004" = "Služba riadok neprijala. Je neplatný, alebo prišiel v nesprávnom čase. Pošlite najprv hello, potom jednu požiadavku a každý riadok overte podľa schémy koncového bodu.";
 "error.E1005" = "Koncový bod už obsluhuje 8 pripojení na každý transport (socket a WebSocket zvlášť). Zatvorte pripojenie, ktoré nepotrebujete, a pripojte sa znova.";
@@ -1507,8 +1507,8 @@
 "error.E2008" = "Chýba povolenie macOS. Udeľte ho príkazom „ojd permission request“.";
 "error.E2009" = "Tento príkaz mení alebo odstraňuje údaje a vyžaduje potvrdenie. Spustite ho znova s --force.";
 "error.E2010" = "Príkaz sa zastavil pred dokončením, pretože ste odmietli, editor zlyhal alebo neprišiel žiadny vstup. Spustite ho znova.";
-"error.E2011" = "Súbor profilu alebo nahrávky je neplatný. Opravte ho podľa schémy a skúste to znova.";
-"error.E2012" = "Nezodpovedá žiadny ovládač, profil, väzba ani klient, alebo zodpovedá viac ako jeden. Zobrazte ich príslušným príkazom „list“ a uveďte presne jeden.";
+"error.E2011" = "Súbor profilu alebo záznamu je neplatný. Opravte ho podľa schémy a skúste to znova.";
+"error.E2012" = "Nezodpovedá žiadny ovládač, profil, priradenie ani klient, alebo zodpovedá viac ako jeden. Zobrazte ich príslušným príkazom „list“ a uveďte presne jeden.";
 "error.E2013" = "Ovládač to teraz nemôže urobiť. Môže byť nepodporovaný, nepripravený alebo odpojený. Skontrolujte ho príkazom „ojd controller list“.";
 "error.E2014" = "OpenJoystickDriver nie je úplne nainštalovaný alebo má neplatný podpis. Znova nainštalujte aplikáciu a spustite „ojd diagnose“.";
 "error.E2015" = "macOS nedokončil alebo neuplatnil požiadavku. Skontrolujte Nastavenia systému a skúste to znova.";
@@ -1539,7 +1539,7 @@
 "error.E3019" = "Smerovač premapovania bol vypnutý. Reštartujte službu a skúste to znova.";
 "error.E3020" = "Služba nedokázala potvrdiť, či sa posledná zmena profilu uložila. Znova načítajte profily a skontrolujte ich, kým ich zmeníte znova.";
 "error.E3021" = "Súbor profilu sa nepodarilo prečítať. Skontrolujte, či súbor existuje a či ho služba môže čítať.";
-"error.E3022" = "Poškodené súbory profilov treba opraviť alebo odstrániť, kým sa budú dať profily meniť. Opravte ich alebo odstráňte a skúste to znova.";
+"error.E3022" = "Poškodené súbory profilov treba pred zmenou profilov opraviť alebo odstrániť. Opravte ich alebo odstráňte a skúste to znova.";
 "error.E3023" = "Súbor profilu sa nepodarilo zapísať. Skontrolujte voľné miesto na disku a oprávnenia priečinka.";
 "error.E3024" = "Služba premapovania narazila na chybu, ktorú nepozná. Spustite „ojd diagnose“ a nahláste problém spolu s jeho výstupom.";
 "error.withCode" = "%@ (%@)";

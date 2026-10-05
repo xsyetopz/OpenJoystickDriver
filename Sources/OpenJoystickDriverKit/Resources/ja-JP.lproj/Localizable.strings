@@ -745,7 +745,7 @@
 
 /* Calibration guidance. Non-English translation pending. */
 "motion.calibration.controllerUnavailable" = "制御器を再接続して カリブレーション状態を更新します";
-"motion.calibration.motionUnavailable" = "このコントローラにリマッププロフィールを有効にして,動きが利用可能であることを確認します.";
+"motion.calibration.motionUnavailable" = "このコントローラにリマッププロフィールを有効にして、動きが利用可能であることを確認します。";
 "motion.calibration.waiting" = "動きサンプルを待ってる チェックを繰り返す";
 "motion.calibration.continues" = "この窓が閉ざされたら 収集が続きます";
 
@@ -960,15 +960,15 @@
 "cli.status.label.unbound" = "非対応のデバイス (%lld)";
 "cli.status.label.virtual_device" = "仮想ゲームパッド";
 "cli.status.start_hint" = "サービスの実行中にコントローラと権限が表示されます: 「ojd service start」。";
-"cli.access.abstract" = "エンドポイントを有効にし、それを通じてコントローラーを読み取れるプログラムを選びます。";
+"cli.access.abstract" = "エンドポイントを有効にし、それを通じてコントローラを読み取れるプログラムを選びます。";
 "cli.access.client" = "プログラムのパス、またはクライアント ID。";
 "cli.access.client.unknown" = "%@ にプログラムはなく、その ID のクライアントもありません。ID は「ojd access list」で確認してください。";
 "cli.access.client.unsigned" = "%@ に署名済みのプログラムはありません。プログラムのアプリバンドルまたは実行ファイルを許可してください。";
 "cli.access.disable.abstract" = "エンドポイントを無効にして接続を閉じます。許可は保持されます。";
 "cli.access.disable.success" = "エンドポイントは無効になり、接続は閉じられました。";
-"cli.access.discussion" = "エンドポイントはローカルソケットで、許可されたプログラムがコントローラーのイベントを読み取ります。「ojd access enable」 を実行するまでは無効で、サービスは署名を許可したプログラム、または許可したトークンを送信するプログラムにのみ応答します。「ojd access web enable」 は、オーバーレイページ用に 127.0.0.1 上の WebSocket を追加します。";
+"cli.access.discussion" = "エンドポイントはローカルソケットで、許可されたプログラムがコントローラのイベントを読み取ります。「ojd access enable」 を実行するまでは無効で、サービスは署名を許可したプログラム、または許可したトークンを送信するプログラムにのみ応答します。「ojd access web enable」 は、オーバーレイページ用に 127.0.0.1 上の WebSocket を追加します。";
 "cli.access.enable.abstract" = "エンドポイントを有効にします。";
-"cli.access.enable.confirm" = "エンドポイントを有効にして、許可したプログラムがすべてのコントローラーの入力を読み取れるようにしますか？";
+"cli.access.enable.confirm" = "エンドポイントを有効にして、許可したプログラムがすべてのコントローラの入力を読み取れるようにしますか？";
 "cli.access.enable.discussion" = "先に確認を求めます。エンドポイントを使えるのは許可されたプログラムのみです。「ojd access grant」で追加してください。";
 "cli.access.enable.success" = "エンドポイントは %@ で待ち受けています。";
 "cli.access.grant.abstract" = "署名済みプログラムまたは新しいトークンにエンドポイントの使用を許可します。";
@@ -995,7 +995,7 @@
 "cli.access.list.refused_tokens" = "過去 24 時間に拒否されたトークン:";
 "cli.access.list.tokens" = "許可されたトークン:";
 "cli.access.list.unknown_token" = "不明なトークン";
-"cli.access.needs_force" = "この変更により、プログラムがコントローラーにアクセスできるようになります。確認なしで実行するには --force を追加してください。";
+"cli.access.needs_force" = "この変更により、プログラムがコントローラにアクセスできるようになります。確認なしで実行するには --force を追加してください。";
 "cli.access.revoke.abstract" = "プログラムの許可、またはその一部のスコープを削除します。";
 "cli.access.revoke.client" = "プログラムのパス、クライアント ID、または token:NAME。";
 "cli.access.revoke.discussion" = "CLIENT はプログラムのパス、「ojd access list」 の ID、またはトークンの場合は token:NAME です。--scope を指定しない場合は、許可全体を削除します。スコープを失った接続は閉じられます。";
@@ -1507,7 +1507,7 @@
 "error.E2008" = "macOS の権限が不足しています。「ojd permission request」で許可してください。";
 "error.E2009" = "このコマンドはデータを変更または削除するため、確認が必要です。--force を付けて再実行してください。";
 "error.E2010" = "拒否した、エディタが失敗した、または入力がなかったため、コマンドは完了前に停止しました。もう一度実行してください。";
-"error.E2011" = "プロファイルまたは記録ファイルが無効です。スキーマに従って修正し、もう一度お試しください。";
+"error.E2011" = "プロファイルまたはレコードファイルが無効です。スキーマに従って修正し、もう一度お試しください。";
 "error.E2012" = "一致するコントローラ、プロファイル、バインディング、またはクライアントがないか、複数一致しています。対応する「list」コマンドで一覧表示し、1つだけ指定してください。";
 "error.E2013" = "コントローラは現在この操作を実行できません。未対応、準備未完了、または接続解除の可能性があります。「ojd controller list」で確認してください。";
 "error.E2014" = "OpenJoystickDriver が完全にインストールされていないか、署名が無効です。アプリを再インストールして「ojd diagnose」を実行してください。";

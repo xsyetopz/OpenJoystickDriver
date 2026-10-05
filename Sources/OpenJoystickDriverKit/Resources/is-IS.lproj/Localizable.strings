@@ -979,7 +979,7 @@
 "cli.access.grant.control_warning" = "Umfangið control leyfir forritinu að ýta á hnappa á sýndarleikjastýringu, sem leikir og forrit líta á sem inntak frá þér.";
 "cli.access.grant.discussion" = "CLIENT er slóð forritsins eða auðkenni úr „ojd access list“. Aðgangurinn vísar í undirskrift forritsins og gildir því áfram þegar forritið er uppfært eða fært. Ekki er hægt að veita forritum með ad-hoc undirskrift eða óundirrituðum forritum aðgang. Með --token í stað CLIENT er búinn til tóki sem biðlari undirritar áskorun þjónustunnar með í hello sínu, um innstunguna, um WebSocket frá síðu á einu gildi --origin eða, fyrir tóka án --origin, um WebSocket frá forriti sem sendir engan Origin-haus, til dæmis forriti í sandkassa. Síða getur ekki notað umfangið control. Tókinn birtist aðeins einu sinni. Biður fyrst um staðfestingu.";
 "cli.access.grant.origin" = "Vefuppruni, til dæmis http://127.0.0.1:8080, þar sem síður mega nota tókann á WebSocket. Endurtaktu til að bæta fleirum við. Yfirlagssíðurnar sem WebSocket þjónar hafa uppruna http://127.0.0.1:PORT, með gáttinni sem „ojd access status“ sýnir.";
-"cli.access.grant.origin_control" = "Ekki er hægt að sameina --origin og control-sviðið. Vefsíða stýrir aldrei sýndarleikjastýringu; veittu control tákni án --origin.";
+"cli.access.grant.origin_control" = "Ekki er hægt að sameina --origin og umfangið control. Síða stýrir aldrei sýndarleikjastýringu; veittu tóka án --origin umfangið control.";
 "cli.access.grant.origin_needs_token" = "--origin krefst --token.";
 "cli.access.grant.scope" = "Umfang sem veita á: read eða control. Endurtaktu fyrir bæði.";
 "cli.access.grant.success" = "%@ veitt %@ (auðkenni %@).";
@@ -1014,7 +1014,7 @@
 "cli.access.web.abstract" = "Kveiktu eða slökktu á WebSocket fyrir overlay-síður.";
 "cli.access.web.disable.abstract" = "Slökktu á WebSocket og lokaðu tengingum þess; tókar haldast.";
 "cli.access.web.disable.success" = "Slökkt er á WebSocket og tengingum þess hefur verið lokað.";
-"cli.access.web.discussion" = "WebSocket hlustar aðeins á 127.0.0.1, á /endpoint, og þjónar skrám úr Overlays-möppunni sinni á sama gátt. Síða verður að koma frá uppruna sem tóki hefur verið veittur aðgangur fyrir og undirrita áskorun þjónustunnar með þeim tóka í hello sínu; veittu aðgang með „ojd access grant --token NAME --origin URL“.";
+"cli.access.web.discussion" = "WebSocket hlustar aðeins á 127.0.0.1, á /endpoint, og þjónar skrám úr Overlays-möppunni sinni á sömu gátt. Síða verður að koma frá uppruna sem tóki hefur verið veittur aðgangur fyrir og undirrita áskorun þjónustunnar með þeim tóka í hello sínu; veittu aðgang með „ojd access grant --token NAME --origin URL“.";
 "cli.access.web.enable.abstract" = "Kveiktu á WebSocket.";
 "cli.access.web.enable.confirm" = "Kveikja á WebSocket svo að síður frá uppruna sem þú veitir tókum aðgang fyrir geti notað endapunktinn?";
 "cli.access.web.enable.discussion" = "Biður fyrst um staðfestingu. Án --port er vistaða gáttin notuð; í fyrsta sinn velur kerfið lausa gátt og þjónustan vistar hana.";
@@ -1456,7 +1456,7 @@
 "cli.profile.validate.valid" = "%@ er gilt snið: „%@“ fyrir %@ (%@). Bættu því við með „ojd profile import“.";
 "cli.profile.vanished" = "Þjónustan vistaði ekki sniðið. Athugaðu það með „ojd profile list“.";
 "error.E1001" = "Endapunkturinn er slökktur. Kveiktu á honum með „ojd access enable“ og tengdu aftur.";
-"error.E1002" = "Þjónustan hafnaði þessum biðlara. Hann hefur ekki leyfi fyrir umdæmunum sem hann bað um, eða undirskrift hans eða sönnun er ógild. Keyrðu „ojd access list“, veittu biðlaranum leyfi með „ojd access grant“ og tengdu aftur.";
+"error.E1002" = "Þjónustan hafnaði þessum biðlara. Hann hefur ekki leyfi fyrir umfangi sem hann bað um, eða undirskrift hans eða sönnun er ógild. Keyrðu „ojd access list“, veittu biðlaranum leyfi með „ojd access grant“ og tengdu aftur.";
 "error.E1003" = "Þjónustan styður ekki samskiptareglnaútgáfuna í hello. Sendu eina af útgáfunum í supported og tengdu aftur.";
 "error.E1004" = "Þjónustan gat ekki tekið við línunni. Hún er ógild eða kom á röngum tíma. Sendu fyrst hello, svo eina beiðni, og berðu hverja línu saman við skema endapunktsins.";
 "error.E1005" = "Endapunkturinn þjónar þegar 8 tengingum á hverja samskiptaleið (socket og WebSocket hvort um sig). Lokaðu tengingu sem þú þarft ekki og tengdu aftur.";
@@ -1508,8 +1508,8 @@
 "error.E2009" = "Þessi skipun breytir eða eyðir gögnum og þarf staðfestingu. Keyrðu hana aftur með --force.";
 "error.E2010" = "Skipunin stöðvaðist áður en hún kláraðist því þú hafnaðir, ritill brást eða ekkert inntak barst. Keyrðu hana aftur.";
 "error.E2011" = "Prófíl- eða upptökuskráin er ógild. Lagaðu hana samkvæmt skemanu og reyndu aftur.";
-"error.E2012" = "Enginn stýripinni, prófíll, tenging eða biðlari passar, eða fleiri en einn passa. Birtu þá með viðeigandi „list“-skipun og nefndu nákvæmlega einn.";
-"error.E2013" = "Stýripinninn getur ekki gert þetta núna. Hann gæti verið óstuddur, ekki tilbúinn eða aftengdur. Athugaðu hann með „ojd controller list“.";
+"error.E2012" = "Ekkert passar við stýringu, prófíl, tengingu eða biðlara, eða fleiri en eitt passa. Birtu þau með viðeigandi „list“-skipun og nefndu nákvæmlega eitt.";
+"error.E2013" = "Stýringin getur ekki gert þetta núna. Hún gæti verið óstudd, ekki tilbúin eða aftengd. Athugaðu hana með „ojd controller list“.";
 "error.E2014" = "OpenJoystickDriver er ekki alveg uppsett eða undirskriftin er ógild. Settu forritið upp aftur og keyrðu „ojd diagnose“.";
 "error.E2015" = "macOS lauk ekki beiðninni eða beitti henni ekki. Athugaðu Kerfisstillingar og reyndu aftur.";
 "error.E2016" = "Ekki tókst að lesa, skrifa eða eyða skrá, eða hún er þegar til. Athugaðu slóðina og heimildir hennar.";
@@ -1518,9 +1518,9 @@
 "error.E2019" = "Leit að uppfærslum kláraðist ekki. Athugaðu nettenginguna og reyndu aftur.";
 "error.E2020" = "Uppsetta OpenJoystickDriver-forritið er eldra en þetta ojd. Keyrðu „./Scripts/ojd build install-fast dev“ eða stilltu OJD_RUN_REPOSITORY_CLI=1 til að keyra þessa smíð.";
 "error.E2021" = "ojd smíðað úr safninu gat ekki afhent skipunina til uppsetta forritsins. Settu OpenJoystickDriver.app upp aftur og keyrðu skipunina aftur.";
-"error.E3001" = "Stýripinninn er ekki tengdur eða ekki tilbúinn fyrir endurvörpun. Tengdu hann aftur og reyndu aftur.";
-"error.E3002" = "Ekki tókst að para valda Joy-Con. Endurnýjaðu tengda stýripinna og reyndu aftur.";
-"error.E3003" = "Stýripinninn tilkynnir engin hreyfigögn. Veldu stýripinna með hreyfiskynjurum eða hafðu hreyfivalkosti slökkta.";
+"error.E3001" = "Stýringin er ekki tengd eða ekki tilbúin fyrir endurvörpun. Tengdu hana aftur og reyndu aftur.";
+"error.E3002" = "Ekki tókst að para valdar Joy-Con-stýringar. Endurnýjaðu tengdar stýringar og reyndu aftur.";
+"error.E3003" = "Stýringin tilkynnir engin hreyfigögn. Veldu stýringu með hreyfiskynjurum eða hafðu hreyfivalkosti slökkta.";
 "error.E3004" = "Gildi í beiðninni er stærra en þjónustan tekur við. Sendu minna gildi.";
 "error.E3005" = "Listinn yfir virka prófíla er skemmdur og ekki tókst að hlaða hann. Lagaðu eða fjarlægðu skemmdu skrána og reyndu aftur.";
 "error.E3006" = "Prófíll með þessu nafni er þegar til. Veldu annað nafn; „ojd profile list“ sýnir nöfnin sem eru í notkun.";

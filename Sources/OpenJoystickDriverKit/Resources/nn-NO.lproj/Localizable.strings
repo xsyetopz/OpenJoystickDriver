@@ -962,8 +962,8 @@
 "cli.status.start_hint" = "Kontrollarar og løyve syner seg når tenesta køyrer: «ojd service start».";
 "cli.access.abstract" = "Slå på endepunktet og vel kva program som kan lese kontrollarar gjennom det.";
 "cli.access.client" = "Stien til programmet, eller ein klient-ID.";
-"cli.access.client.unknown" = "Det finst inga program på %@ og ingen klient med den ID-en. Sjå ID-ane med «ojd access list».";
-"cli.access.client.unsigned" = "%@ inneheld inga signert program. Gi tilgang til appbunten eller den køyrbare fila til programmet.";
+"cli.access.client.unknown" = "Det finst ikkje noko program på %@ og ingen klient med den ID-en. Sjå ID-ane med «ojd access list».";
+"cli.access.client.unsigned" = "%@ inneheld ikkje noko signert program. Gi tilgang til appbunten eller den køyrbare fila til programmet.";
 "cli.access.disable.abstract" = "Slå av endepunktet og lukk tilkoplingane; tildelte tilgangar blir behaldne.";
 "cli.access.disable.success" = "Endepunktet er av, og tilkoplingane er lukka.";
 "cli.access.discussion" = "Endepunktet er ein lokal socket som program med tilgang les kontrollarhendingar frå. Det er av til du køyrer «ojd access enable», og tenesta betener berre program du har gitt tilgang til signaturen for, eller som sender eit token du har gitt tilgang. «ojd access web enable» legg til ein WebSocket på 127.0.0.1 for overlay-sider.";
@@ -985,7 +985,7 @@
 "cli.access.grant.success" = "%@ gitt til %@ (ID %@).";
 "cli.access.grant.token" = "Opprett eit token med dette namnet i staden for å gi eit program tilgang.";
 "cli.access.grant.token_confirm" = "Vil du opprette tokenet %@ med %@, for program på denne Macen?";
-"cli.access.grant.token_success" = "%@ vart gitt til tokenet %@ (ID %@). Hald tokenet løynt; det blir ikkje vist igjen:";
+"cli.access.grant.token_success" = "%@ vart gitt til tokenet %@ (ID %@). Hald tokenet hemmeleg; det blir ikkje vist igjen:";
 "cli.access.grant.token_web_confirm" = "Vil du opprette tokenet %@ med %@, for program på denne Macen og for sider frå %@?";
 "cli.access.list.abstract" = "Viser klientar og token med tilgang, og dei som vart avviste dei siste 24 timane.";
 "cli.access.list.discussion" = "Kvar klient har ein ID som «ojd access grant» og «ojd access revoke» godtek; ID-en til eit token er token:NAME.";
@@ -1456,7 +1456,7 @@
 "cli.profile.validate.valid" = "%@ er ein gyldig profil: '%@' for %@ (%@). Legg han til med 'ojd profile import'.";
 "cli.profile.vanished" = "Tenesta heldt ikkje på profilen. Sjekk han med 'ojd profile list'.";
 "error.E1001" = "Endepunktet er slått av. Slå det på med «ojd access enable», og kople til på nytt.";
-"error.E1002" = "Tenesta avviste denne klienten. Han har ikkje løyve til områda han bad om, eller signaturen eller prov hans er ugyldig. Køyr «ojd access list», gi klienten løyve med «ojd access grant», og kople til på nytt.";
+"error.E1002" = "Tenesta avviste denne klienten. Han har ikkje løyve til områda han bad om, eller signaturen eller provet er ugyldig. Køyr «ojd access list», gi klienten løyve med «ojd access grant», og kople til på nytt.";
 "error.E1003" = "Tenesta støttar ikkje protokollversjonen i hello. Send ein av versjonane i supported, og kople til på nytt.";
 "error.E1004" = "Tenesta kunne ikkje godta linja. Ho er ugyldig, eller ho kom på feil tidspunkt. Send først hello, deretter éi førespurnad, og kontroller kvar linje mot skjemaet til endepunktet.";
 "error.E1005" = "Endepunktet tener allereie 8 tilkoplingar per transport (socket og WebSocket kvar for seg). Lukk ei tilkopling du ikkje treng, og kople til på nytt.";

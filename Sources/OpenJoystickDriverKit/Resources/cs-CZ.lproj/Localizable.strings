@@ -890,7 +890,7 @@
 "profiles.emptyActivationTitle" = "Aktivujte profil bez vstupů kontrolora?";
 "profiles.emptyInputWarning" = "Tento profil potlačuje veškeré vstupy ovládače.";
 "profiles.restoreDefaultInput" = "Vrátit nastavený vstup";
-"common.reset" = "Obnovit";
+"common.reset" = "Resetovat";
 "profiles.useControllerDefaultColor" = "Použít výchozí hodnotu ovladače";
 "profiles.damagedProfile" = "Poškozený profil";
 "profiles.damagedLibrary" = "Poškozený seznam aktivních profilů";
@@ -990,7 +990,7 @@
 "cli.access.list.abstract" = "Vypíše klienty a tokeny s udělenými oprávněními a také ty, které byly odmítnuty za posledních 24 hodin.";
 "cli.access.list.discussion" = "Každý klient má ID, které přijímají „ojd access grant“ a „ojd access revoke“; ID tokenu je token:NAME.";
 "cli.access.list.granted" = "S udělenými oprávněními:";
-"cli.access.list.none" = "  Žádní";
+"cli.access.list.none" = "  Žádné";
 "cli.access.list.refused" = "Odmítnutí za posledních 24 hodin:";
 "cli.access.list.refused_tokens" = "Tokeny odmítnuté za posledních 24 hodin:";
 "cli.access.list.tokens" = "Tokeny s udělenými oprávněními:";
@@ -1456,7 +1456,7 @@
 "cli.profile.validate.valid" = "%@ je platný profil: '%@' pro %@ (%@). Přidejte jej příkazem 'ojd profile import'.";
 "cli.profile.vanished" = "Služba profil neuchovala. Zkontrolujte jej pomocí 'ojd profile list'.";
 "error.E1001" = "Koncový bod je vypnutý. Zapněte ho příkazem „ojd access enable“ a připojte se znovu.";
-"error.E1002" = "Služba tohoto klienta odmítla. Nemá udělený přístup k požadovaným oborům, nebo je jeho podpis či důkaz neplatný. Spusťte „ojd access list“, udělte klientovi přístup příkazem „ojd access grant“ a připojte se znovu.";
+"error.E1002" = "Služba tohoto klienta odmítla. Nemá udělený přístup k požadovaným rozsahům, nebo je jeho podpis či důkaz neplatný. Spusťte „ojd access list“, udělte klientovi přístup příkazem „ojd access grant“ a připojte se znovu.";
 "error.E1003" = "Služba nepodporuje verzi protokolu uvedenou v hello. Pošlete jednu z verzí v supported a připojte se znovu.";
 "error.E1004" = "Služba řádek nepřijala. Je neplatný, nebo přišel ve špatný čas. Pošlete nejdřív hello, potom jeden požadavek a každý řádek ověřte podle schématu koncového bodu.";
 "error.E1005" = "Koncový bod už obsluhuje 8 připojení na každý přenos (socket a WebSocket zvlášť). Zavřete připojení, které nepotřebujete, a připojte se znovu.";
@@ -1508,7 +1508,7 @@
 "error.E2009" = "Tento příkaz mění nebo maže data a vyžaduje potvrzení. Spusťte jej znovu s --force.";
 "error.E2010" = "Příkaz se zastavil před dokončením, protože jste odmítli, editor selhal nebo nepřišel žádný vstup. Spusťte jej znovu.";
 "error.E2011" = "Soubor profilu nebo záznamu není platný. Opravte jej podle jeho schématu a zkuste to znovu.";
-"error.E2012" = "Žádný ovladač, profil, vazba ani klient neodpovídá, nebo jich odpovídá více. Vypište je příslušným příkazem „list“ a pojmenujte jeden přesně.";
+"error.E2012" = "Žádný ovladač, profil, přiřazení ani klient neodpovídá, nebo jich odpovídá více. Vypište je příslušným příkazem „list“ a pojmenujte jeden přesně.";
 "error.E2013" = "Ovladač to teď nedokáže. Může být nepodporovaný, nepřipravený nebo odpojený. Zkontrolujte jej příkazem „ojd controller list“.";
 "error.E2014" = "OpenJoystickDriver není plně nainstalován nebo jeho podpis není platný. Nainstalujte aplikaci znovu a spusťte „ojd diagnose“.";
 "error.E2015" = "macOS požadavek nedokončil nebo neuplatnil. Zkontrolujte Nastavení systému a zkuste to znovu.";

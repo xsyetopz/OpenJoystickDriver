@@ -191,12 +191,15 @@ enum LocalizationCatalogAudit {
     "sv-FI": [
       "cli.controller.show.label.session", "settings.status", "profiles.turbo", "common.status",
       "inputTest.rumble", "profiles.physical.motor",
+      "cli.access.status.socket",
     ],
     "sv-SE": [
       "cli.controller.show.label.session", "settings.status", "profiles.turbo", "common.status",
       "inputTest.rumble", "profiles.physical.motor",
+      "cli.access.status.socket",
     ],
-    "sr-YU": ["shortcuts.controller.model"], "tr-TR": ["shortcuts.controller.model"],
+    "sr-YU": ["profiles.turbo", "profiles.physical.motor", "shortcuts.controller.model"],
+    "tr-TR": ["shortcuts.controller.model"],
   ]
 
   /// macOS ships no localization for these languages, so System Settings shows its English pane

@@ -1507,7 +1507,7 @@
 "error.E2008" = "Eine macOS-Berechtigung fehlt. Erteile sie mit „ojd permission request“.";
 "error.E2009" = "Dieser Befehl ändert oder löscht Daten und braucht eine Bestätigung. Führe ihn erneut mit --force aus.";
 "error.E2010" = "Der Befehl wurde beendet, bevor er fertig war, weil du abgelehnt hast, ein Editor fehlgeschlagen ist oder keine Eingabe kam. Führe ihn erneut aus.";
-"error.E2011" = "Die Profil- oder Aufzeichnungsdatei ist ungültig. Korrigiere sie anhand ihres Schemas und versuche es erneut.";
+"error.E2011" = "Die Profil- oder Eintragsdatei ist ungültig. Korrigiere sie anhand ihres Schemas und versuche es erneut.";
 "error.E2012" = "Kein Controller, Profil, keine Zuordnung und kein Client passt, oder es passen mehrere. Liste sie mit dem passenden „list“-Befehl auf und gib genau einen an.";
 "error.E2013" = "Der Controller kann das gerade nicht. Er wird möglicherweise nicht unterstützt, ist nicht bereit oder getrennt. Prüfe ihn mit „ojd controller list“.";
 "error.E2014" = "OpenJoystickDriver ist nicht vollständig installiert oder seine Signatur ist ungültig. Installiere die App erneut und führe „ojd diagnose“ aus.";

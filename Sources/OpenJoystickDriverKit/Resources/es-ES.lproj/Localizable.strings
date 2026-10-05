@@ -978,7 +978,7 @@
 "cli.access.grant.confirm" = "¿Permitir que %@, firmado como %@, use el punto de conexión con %@?";
 "cli.access.grant.control_warning" = "El ámbito control permite que el programa pulse botones de un mando virtual, que los juegos y las apps tratan como tu entrada.";
 "cli.access.grant.discussion" = "CLIENT es la ruta del programa o un ID de «ojd access list». El acceso se asocia a la firma del programa, así que sigue siendo válido cuando el programa se actualiza o se mueve. No se puede conceder acceso a programas con firma ad-hoc ni a programas sin firmar. Con --token en lugar de CLIENT, crea un token con el que un cliente firma el desafío del servicio en su hello, por el socket, por el WebSocket desde una página de uno de los valores de --origin o, si el token no tiene --origin, por el WebSocket desde un programa que no envía encabezado Origin, como una app en un entorno aislado. Una página no puede usar el ámbito control. El token solo se muestra una vez. Pide confirmación primero.";
-"cli.access.grant.origin" = "Un origen web, como http://127.0.0.1:8080, cuyas páginas pueden usar el token en el WebSocket. Repítelo para más. Las páginas de superposición que sirve el WebSocket tienen el origen http://127.0.0.1:PORT, con el puerto que muestra «ojd access status».";
+"cli.access.grant.origin" = "Un origen web, como http://127.0.0.1:8080, cuyas páginas pueden usar el token en el WebSocket. Repítelo para más. Las páginas de overlay que sirve el WebSocket tienen el origen http://127.0.0.1:PORT, con el puerto que muestra «ojd access status».";
 "cli.access.grant.origin_control" = "--origin no se puede combinar con el ámbito control. Una página nunca maneja un mando virtual; concede control a un token sin --origin.";
 "cli.access.grant.origin_needs_token" = "--origin necesita --token.";
 "cli.access.grant.scope" = "Un ámbito que conceder: read o control. Repítelo para ambos.";
@@ -1455,11 +1455,11 @@
 "cli.profile.validate.file" = "El archivo del perfil, o - para stdin.";
 "cli.profile.validate.valid" = "%@ es un perfil válido: «%@» para %@ (%@). Añádelo con «ojd profile import».";
 "cli.profile.vanished" = "El servicio no ha conservado el perfil. Compruébalo con «ojd profile list».";
-"error.E1001" = "El punto final está desactivado. Actívalo con «ojd access enable» y vuelve a conectar.";
+"error.E1001" = "El punto de conexión está desactivado. Actívalo con «ojd access enable» y vuelve a conectar.";
 "error.E1002" = "El servicio rechazó a este cliente. No tiene permiso para los ámbitos que pidió, o su firma o prueba no es válida. Ejecuta «ojd access list», concede permiso al cliente con «ojd access grant» y vuelve a conectar.";
 "error.E1003" = "El servicio no admite la versión del protocolo de hello. Envía una de las versiones de supported y vuelve a conectar.";
-"error.E1004" = "El servicio no pudo aceptar la línea. No es válida o llegó en un momento incorrecto. Envía primero hello, después una solicitud, y comprueba cada línea con el esquema del punto final.";
-"error.E1005" = "El punto final ya atiende 8 conexiones por transporte (socket y WebSocket cada uno). Cierra una conexión que no necesites y vuelve a conectar.";
+"error.E1004" = "El servicio no pudo aceptar la línea. No es válida o llegó en un momento incorrecto. Envía primero hello, después una solicitud, y comprueba cada línea con el esquema del punto de conexión.";
+"error.E1005" = "El punto de conexión ya atiende 8 conexiones por transporte (socket y WebSocket cada uno). Cierra una conexión que no necesites y vuelve a conectar.";
 "error.E1006" = "El permiso de este cliente se quitó mientras estaba conectado. Concédeselo de nuevo con «ojd access grant» y vuelve a conectar.";
 "error.E1007" = "El cliente leyó las líneas demasiado despacio y 256 líneas esperaron. Lee las líneas tan rápido como llegan y vuelve a conectar.";
 "error.E1008" = "El servicio ya ejecuta 4 mandos virtuales. Cierra un feed que no necesites y vuelve a enviar feed.";
