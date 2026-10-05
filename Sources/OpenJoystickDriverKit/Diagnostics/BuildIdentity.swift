@@ -24,14 +24,26 @@ public struct BuildIdentity: Codable, Equatable, Sendable {
     self.sourceState = sourceState
   }
 
-  public static func current(bundle: Bundle = .main) -> Self {
-    let info = bundle.infoDictionary ?? [:]
+  /// Reads the app bundle that contains the executable. `Bundle.main` follows the path that the
+  /// process ran under, so through the installed `/usr/local/bin/ojd` link it has no Info.plist.
+  public static func current(executableURL: URL? = Bundle.main.executableURL) -> Self {
+    let bundle = applicationBundleURL(executableURL: executableURL).flatMap(Bundle.init(url:))
+    let info = (bundle ?? .main).infoDictionary ?? [:]
     return Self(
       semanticVersion: info["CFBundleShortVersionString"] as? String ?? "unknown",
       appBundleVersion: info["CFBundleVersion"] as? String ?? "unknown",
       sourceCommit: info["OJDSourceCommit"] as? String ?? "unknown",
       sourceState: (info["OJDSourceState"] as? String).flatMap(SourceState.init) ?? .unknown
     )
+  }
+
+  /// The app bundle that contains this executable, following an installed `ojd` link.
+  package static func applicationBundleURL(executableURL: URL?) -> URL? {
+    guard let executableURL else { return nil }
+    let bundle = executableURL.resolvingSymlinksInPath().deletingLastPathComponent()  // MacOS
+      .deletingLastPathComponent()  // Contents
+      .deletingLastPathComponent()
+    return bundle.pathExtension == "app" ? bundle : nil
   }
 
   /// The release version with SemVer build metadata for provenance, such as

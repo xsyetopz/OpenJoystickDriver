@@ -57,4 +57,39 @@ struct BuildIdentityTests {
     let encodedIdentity = try #require(object["buildIdentity"] as? [String: Any])
     #expect(encodedIdentity["sourceCommit"] as? String == identity.sourceCommit)
   }
+
+  @Test
+  func currentReadsTheAppBundleThroughTheInstalledLink() throws {
+    let root = FileManager.default.temporaryDirectory
+      .appendingPathComponent(UUID().uuidString, isDirectory: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let contents = root.appendingPathComponent("OpenJoystickDriver.app/Contents")
+    let executable = contents.appendingPathComponent("MacOS/OpenJoystickDriver")
+    try FileManager.default.createDirectory(
+      at: executable.deletingLastPathComponent(),
+      withIntermediateDirectories: true
+    )
+    try Data().write(to: executable)
+    let info: [String: Any] = [
+      "CFBundleExecutable": "OpenJoystickDriver",
+      "CFBundleShortVersionString": "0.5.0-beta.5",
+      "CFBundleVersion": "1.5.1",
+      "OJDSourceCommit": String(repeating: "c", count: 40),
+      "OJDSourceState": "clean",
+    ]
+    try PropertyListSerialization.data(fromPropertyList: info, format: .xml, options: 0)
+      .write(to: contents.appendingPathComponent("Info.plist"))
+    let link = root.appendingPathComponent("bin/ojd")
+    try FileManager.default.createDirectory(
+      at: link.deletingLastPathComponent(),
+      withIntermediateDirectories: true
+    )
+    try FileManager.default.createSymbolicLink(at: link, withDestinationURL: executable)
+
+    let identity = BuildIdentity.current(executableURL: link)
+
+    #expect(identity.semanticVersion == "0.5.0-beta.5")
+    #expect(identity.appBundleVersion == "1.5.1")
+    #expect(identity.sourceState == .clean)
+  }
 }

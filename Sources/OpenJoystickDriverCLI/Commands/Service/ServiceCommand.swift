@@ -91,11 +91,7 @@ struct ServiceStartCommand: AsyncParsableCommand {
 
   /// The app bundle that contains this executable, following an installed `ojd` link.
   static func applicationBundleURL(executableURL: URL? = Bundle.main.executableURL) -> URL? {
-    guard let executableURL else { return nil }
-    let bundle = executableURL.resolvingSymlinksInPath().deletingLastPathComponent()  // MacOS
-      .deletingLastPathComponent()  // Contents
-      .deletingLastPathComponent()
-    return bundle.pathExtension == "app" ? bundle : nil
+    BuildIdentity.applicationBundleURL(executableURL: executableURL)
   }
 }
 
