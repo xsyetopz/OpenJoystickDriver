@@ -45,6 +45,8 @@ DOMAIN_PREFIX = {"endpoint": "E1", "cli": "E2", "remapping": "E3"}
 CLI_EXIT_CODES = frozenset({1, 64, 69, 77, 127})
 DOMAIN_AREA = {"endpoint": "Endpoint", "cli": "Command line", "remapping": "Remapping"}
 STRING_LINE = re.compile(r'^"([^"]+)" = "(.*)";$')
+STRING_ESCAPE = re.compile(r"\\(.)")
+STRING_ESCAPES = {"n": "\n", "t": "\t"}
 ENDPOINT_ENUM = re.compile(
     r'("error": \{.*?"code": \{[^{}\]]*?"enum": \[)[^\]]*(\])', re.DOTALL
 )
@@ -99,6 +101,16 @@ def check_invariants(entries: list[Entry]) -> None:
     ]
     if codes != sorted(codes):
         problems.append("entries are not sorted by code")
+    # A code is never deleted, so the codes of an area run from 001 without a gap.
+    for prefix in DOMAIN_PREFIX.values():
+        area = sorted(code for code in codes if code.startswith(prefix))
+        problems += [
+            f"{code} skips {wanted}; a new code is the highest code of its area plus one"
+            for code, wanted in zip(
+                area, (f"{prefix}{number:03d}" for number in range(1, len(area) + 1))
+            )
+            if code != wanted
+        ][:1]
     if problems:
         raise ErrorCodeError(f"{CATALOG} breaks its rules:\n  " + "\n  ".join(problems))
 
@@ -140,7 +152,9 @@ def english_strings(root: Path) -> dict[str, str]:
     for line in (root / TEMPLATE).read_text(encoding="utf-8").splitlines():
         match = STRING_LINE.match(line)
         if match:
-            strings[match.group(1)] = match.group(2).replace("\\n", "\n")
+            strings[match.group(1)] = STRING_ESCAPE.sub(
+                lambda escape: STRING_ESCAPES.get(escape[1], escape[1]), match.group(2)
+            )
     return strings
 
 
@@ -188,12 +202,19 @@ def render_endpoint_schema(text: str, entries: list[Entry]) -> str:
         + "\n"
         + "\t" * 5
     )
-    rendered, count = ENDPOINT_ENUM.subn(
-        lambda match: match.group(1) + enum + match.group(2), text, count=1
-    )
-    if count != 1:
-        raise ErrorCodeError(f"{ENDPOINT_SCHEMA} has no error code enum")
-    return rendered
+    expected = json.loads(text)
+    try:
+        expected["$defs"]["error"]["properties"]["code"]["enum"] = codes
+    except (KeyError, TypeError) as error:
+        raise ErrorCodeError(f"{ENDPOINT_SCHEMA} has no error code enum") from error
+    # Another object can also hold an "error" key; take the match that changes only this enum.
+    for match in ENDPOINT_ENUM.finditer(text):
+        rendered = (
+            text[: match.start()] + match[1] + enum + match[2] + text[match.end() :]
+        )
+        if json.loads(rendered) == expected:
+            return rendered
+    raise ErrorCodeError(f"{ENDPOINT_SCHEMA} has no error code enum")
 
 
 def outputs(root: Path) -> dict[Path, str]:

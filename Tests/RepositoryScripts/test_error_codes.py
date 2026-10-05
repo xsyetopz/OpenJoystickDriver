@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import shutil
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -75,6 +76,14 @@ class ErrorCodeTests(unittest.TestCase):
             errors.check_invariants(
                 [entry("E1001", "endpoint", "same"), entry("E1002", "endpoint", "same")]
             )
+
+    def test_a_new_code_must_be_the_highest_code_of_its_area_plus_one(self) -> None:
+        with self.assertRaisesRegex(errors.ErrorCodeError, "E1003 skips E1002"):
+            errors.check_invariants(
+                [entry("E1001", "endpoint", "a"), entry("E1003", "endpoint", "b")]
+            )
+        with self.assertRaisesRegex(errors.ErrorCodeError, "E2002 skips E2001"):
+            errors.check_invariants([entry("E2002", "cli", "a", exitCode=1)])
 
     def test_unsorted_entries_are_refused(self) -> None:
         with self.assertRaisesRegex(errors.ErrorCodeError, "not sorted"):
@@ -151,6 +160,42 @@ class ErrorCodeTests(unittest.TestCase):
             fake_previous, [retired, entry("E1002", "endpoint", "b")]
         )
 
+    def test_the_released_catalog_is_read_at_the_last_tag_before_head(self) -> None:
+        root = Path(tempfile.mkdtemp(prefix="ojd-errors-git-"))
+        self.addCleanup(shutil.rmtree, root)
+
+        def run_git(*args: str) -> None:
+            subprocess.run(
+                [
+                    "git",
+                    "-c",
+                    "user.name=test",
+                    "-c",
+                    "user.email=test@example.invalid",
+                    "-c",
+                    "commit.gpgsign=false",
+                    "-c",
+                    "tag.gpgsign=false",
+                    *args,
+                ],
+                cwd=root,
+                check=True,
+                capture_output=True,
+            )
+
+        run_git("init", "-q")
+        self.assertIsNone(errors.released_catalog(root))
+        (root / errors.CATALOG).parent.mkdir(parents=True)
+        released = [entry("E1001", "endpoint", "a")]
+        self.write_catalog(root, released)
+        run_git("add", "-A")
+        run_git("commit", "-q", "-m", "release")
+        run_git("tag", "0.4.0")
+        self.write_catalog(root, [*released, entry("E1002", "endpoint", "b")])
+        run_git("commit", "-q", "-am", "next")
+
+        self.assertEqual(errors.released_catalog(root), ("0.4.0", released))
+
     def test_the_guard_runs_against_the_released_catalog(self) -> None:
         root = self.copy_repository()
         fake_previous = ("0.0.0", [entry("E1999", "endpoint", "gone")])
@@ -163,11 +208,19 @@ class ErrorCodeTests(unittest.TestCase):
     def test_write_then_check_round_trips(self) -> None:
         root = self.copy_repository()
         catalog = errors.load_catalog(root)
-        catalog.append(entry("E1099", "endpoint", "newCode"))
-        catalog.append(entry("E2099", "cli", "newUsage", exitCode=64))
+
+        def next_code(prefix: str) -> str:
+            count = sum(item["code"].startswith(prefix) for item in catalog)
+            return f"{prefix}{count + 1:03d}"
+
+        new_endpoint, new_cli, new_remapping = (
+            next_code(prefix) for prefix in ("E1", "E2", "E3")
+        )
+        catalog.append(entry(new_endpoint, "endpoint", "newCode"))
+        catalog.append(entry(new_cli, "cli", "newUsage", exitCode=64))
         catalog.append(
             {
-                **entry("E3099", "remapping", "oldWire", wire="old_wire"),
+                **entry(new_remapping, "remapping", "oldWire", wire="old_wire"),
                 "status": "retired",
                 "retiredIn": "0.5.0",
             }
@@ -176,8 +229,8 @@ class ErrorCodeTests(unittest.TestCase):
         template = root / errors.TEMPLATE
         template.write_text(
             template.read_text(encoding="utf-8")
-            + '"error.E1099" = "A new code. Fix it.";\n'
-            + '"error.E2099" = "Wrong usage. Read the help.";\n',
+            + f'"error.{new_endpoint}" = "A new code. Fix it.";\n'
+            + f'"error.{new_cli}" = "Wrong usage. Read the help.";\n',
             encoding="utf-8",
         )
         with patch.object(errors, "released_catalog", return_value=None):
@@ -192,22 +245,60 @@ class ErrorCodeTests(unittest.TestCase):
             self.assertEqual(errors.regenerate(root, write=False), [])
         schema = json.loads((root / errors.ENDPOINT_SCHEMA).read_text(encoding="utf-8"))
         enum = schema["$defs"]["error"]["properties"]["code"]["enum"]
-        self.assertEqual(enum[-2:], ["E1009", "E1099"])
+        self.assertEqual(enum[-1], new_endpoint)
         page = (root / errors.WIKI_PAGE).read_text(encoding="utf-8")
-        self.assertIn("| E1099 | Endpoint | A new code. Fix it. |", page)
+        self.assertIn(f"| {new_endpoint} | Endpoint | A new code. Fix it. |", page)
         self.assertIn(
-            "| E2099 | Command line | Wrong usage. Read the help. Exit code 64. |", page
+            f"| {new_cli} | Command line | Wrong usage. Read the help. Exit code 64. |",
+            page,
         )
-        self.assertIn("| E3099 | Remapping | Retired in 0.5.0. |", page)
+        self.assertIn(f"| {new_remapping} | Remapping | Retired in 0.5.0. |", page)
+
+    def test_escapes_in_the_english_text_are_decoded(self) -> None:
+        root = self.copy_repository()
+        (root / errors.TEMPLATE).write_text(
+            '"error.E1001" = "Run \\"ojd\\" in C:\\\\x.\\tNext.";\n', encoding="utf-8"
+        )
+        self.assertEqual(
+            errors.english_strings(root), {"error.E1001": 'Run "ojd" in C:\\x.\tNext.'}
+        )
+
+    def test_only_the_error_definition_enum_is_rewritten(self) -> None:
+        decoy = ["kept"]
+        schema = {
+            "properties": {"error": {"properties": {"code": {"enum": decoy}}}},
+            "$defs": {"error": {"properties": {"code": {"enum": ["E1001"]}}}},
+        }
+        rendered = json.loads(
+            errors.render_endpoint_schema(
+                json.dumps(schema, indent="\t"),
+                [entry("E1001", "endpoint", "a"), entry("E1002", "endpoint", "b")],
+            )
+        )
+        self.assertEqual(
+            rendered["properties"]["error"]["properties"]["code"]["enum"], decoy
+        )
+        self.assertEqual(
+            rendered["$defs"]["error"]["properties"]["code"]["enum"], ["E1001", "E1002"]
+        )
 
     def test_an_active_code_without_english_text_is_refused(self) -> None:
         root = self.copy_repository()
-        self.write_catalog(
-            root, [entry("E1001", "endpoint", "a"), entry("E1099", "endpoint", "b")]
+        self.write_catalog(root, [entry("E1001", "endpoint", "a")])
+        template = root / errors.TEMPLATE
+        template.write_text(
+            "".join(
+                line
+                for line in template.read_text(encoding="utf-8").splitlines(
+                    keepends=True
+                )
+                if not line.startswith('"error.E1001"')
+            ),
+            encoding="utf-8",
         )
         with (
             patch.object(errors, "released_catalog", return_value=None),
-            self.assertRaisesRegex(errors.ErrorCodeError, "no key error.E1099"),
+            self.assertRaisesRegex(errors.ErrorCodeError, "no key error.E1001"),
         ):
             errors.outputs(root)
 
