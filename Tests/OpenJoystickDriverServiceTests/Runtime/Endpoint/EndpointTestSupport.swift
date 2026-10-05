@@ -59,14 +59,16 @@ func tokenHello(
   token: String,
   nonce: String,
   origin: String = "",
-  port: String = ""
+  port: String = "",
+  scopes: [String] = ["read"]
 ) -> String {
   let key = SymmetricKey(data: SHA256.hash(data: Data(token.utf8)))
   let message = ["OpenJoystickDriver endpoint hello 1", nonce, origin, port]
     .map { $0 + "\n" }.joined()
   let proof = HMAC<SHA256>.authenticationCode(for: Data(message.utf8), using: key)
     .map { String(format: "%02x", $0) }.joined()
-  return #"{"type":"hello","protocol":1,"scopes":["read"],"tokenName":"\#(name)","#
+  let scopes = scopes.map { #""\#($0)""# }.joined(separator: ",")
+  return #"{"type":"hello","protocol":1,"scopes":[\#(scopes)],"tokenName":"\#(name)","#
     + #""proof":"\#(proof)"}"#
 }
 

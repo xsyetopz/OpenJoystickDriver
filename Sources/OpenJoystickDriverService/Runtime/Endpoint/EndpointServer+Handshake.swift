@@ -52,6 +52,12 @@ extension EndpointServer {
       connection.close(Self.invalid("Send subscribe with the controllers stream."))
       return
     }
+    guard connection.session?.scopes.contains(.read) == true else {
+      connection.close(
+        EndpointError(code: .notGranted, message: "Subscribe needs the read scope.")
+      )
+      return
+    }
     lock.withLock { subscribe(connection, output: request.output ?? false) }
 
     // The protocol has no line after `subscribe`; any line ends the connection.
@@ -64,7 +70,7 @@ extension EndpointServer {
   ///
   /// A `hello` with a token name is checked against the token grants and skips the signature; on
   /// the WebSocket a token is required and must be granted for the page's origin, or have no
-  /// origins when the client sent no `Origin`.
+  /// origins when the client sent no `Origin`. A page cannot ask for `control`.
   private func handshake(
     _ connection: EndpointConnection,
     peer: LocalSocketPeer?,
@@ -98,12 +104,6 @@ extension EndpointServer {
         )
         return false
       }
-    }
-    guard !scopes.contains(.control) else {
-      connection.close(
-        EndpointError(code: .notGranted, message: "The control scope is not available yet.")
-      )
-      return false
     }
     return lock.withLock {
       guard let file = try? store.load(),
@@ -183,7 +183,9 @@ extension EndpointServer {
       }
     }
     guard let grant, scopes.allSatisfy(grant.scopes.contains),
-      kind == .socket || origin.map(grant.origins.contains) ?? grant.origins.isEmpty
+      kind == .socket || origin.map(grant.origins.contains) ?? grant.origins.isEmpty,
+      // Any site can script a page, so only a client without `Origin` drives a pad.
+      kind == .socket || origin == nil || !scopes.contains(.control)
     else {
       refusals.recordToken(
         name: grant?.name,

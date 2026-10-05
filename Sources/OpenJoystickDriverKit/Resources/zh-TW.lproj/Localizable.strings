@@ -975,7 +975,7 @@
 "cli.access.grant.client_or_token" = "請提供 CLIENT 或 --token NAME。";
 "cli.access.grant.confirm" = "要允許 %@（簽章：%@）以 %@ 範圍使用端點嗎？";
 "cli.access.grant.control_warning" = "control 範圍允許程式在虛擬遊戲控制器上按下按鈕，遊戲和 App 會將其視為您的輸入。";
-"cli.access.grant.discussion" = "CLIENT 是程式的路徑，或來自 「ojd access list」 的 ID。授權針對的是程式的簽章，因此程式更新或移動後仍然有效。採用 ad-hoc 簽章的程式和未簽署的程式無法獲得授權。若以 --token 取代 CLIENT，會建立一個權杖，用戶端透過 socket，或從 --origin 其中一個值的頁面透過 WebSocket，或（對於不含 --origin 的權杖）從不傳送 Origin 標頭的程式（例如沙盒 App）透過 WebSocket，在其 hello 中用它對服務的質詢進行簽署。權杖只會顯示一次。會先要求確認。";
+"cli.access.grant.discussion" = "CLIENT 是程式的路徑，或來自 「ojd access list」 的 ID。授權針對的是程式的簽章，因此程式更新或移動後仍然有效。採用 ad-hoc 簽章的程式和未簽署的程式無法獲得授權。若以 --token 取代 CLIENT，會建立一個權杖，用戶端透過 socket，或從 --origin 其中一個值的頁面透過 WebSocket，或（對於不含 --origin 的權杖）從不傳送 Origin 標頭的程式（例如沙盒 App）透過 WebSocket，在其 hello 中用它對服務的質詢進行簽署。頁面無法使用 control 範圍。權杖只會顯示一次。會先要求確認。";
 "cli.access.grant.origin" = "網頁來源，例如 http://127.0.0.1:8080，其頁面可透過 WebSocket 使用該權杖。重複指定即可新增更多。WebSocket 提供的覆蓋層頁面，其來源為 http://127.0.0.1:PORT，連接埠為 「ojd access status」 所顯示的連接埠。";
 "cli.access.grant.origin_needs_token" = "--origin 需要搭配 --token。";
 "cli.access.grant.scope" = "要授予的範圍：read 或 control。兩者都要請重複使用。";

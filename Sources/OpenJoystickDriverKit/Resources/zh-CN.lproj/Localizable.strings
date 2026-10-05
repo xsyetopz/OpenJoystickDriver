@@ -975,7 +975,7 @@
 "cli.access.grant.client_or_token" = "请提供 CLIENT 或 --token NAME。";
 "cli.access.grant.confirm" = "要允许 %@（签名：%@）以 %@ 范围使用端点吗？";
 "cli.access.grant.control_warning" = "control 范围允许程序在虚拟游戏手柄上按下按钮，游戏和 App 会将其视为您的输入。";
-"cli.access.grant.discussion" = "CLIENT 是程序的路径，或来自 “ojd access list” 的 ID。授权针对的是程序的签名，因此程序更新或移动后仍然有效。采用 ad-hoc 签名的程序和未签名的程序无法获得授权。若以 --token 取代 CLIENT，会创建一个令牌，客户端通过 socket，或从 --origin 其中一个值的页面通过 WebSocket，或（对于不带 --origin 的令牌）从不发送 Origin 标头的程序（例如沙盒应用）通过 WebSocket，在其 hello 中用它对服务的质询进行签名。令牌只会显示一次。会先请求确认。";
+"cli.access.grant.discussion" = "CLIENT 是程序的路径，或来自 “ojd access list” 的 ID。授权针对的是程序的签名，因此程序更新或移动后仍然有效。采用 ad-hoc 签名的程序和未签名的程序无法获得授权。若以 --token 取代 CLIENT，会创建一个令牌，客户端通过 socket，或从 --origin 其中一个值的页面通过 WebSocket，或（对于不带 --origin 的令牌）从不发送 Origin 标头的程序（例如沙盒应用）通过 WebSocket，在其 hello 中用它对服务的质询进行签名。页面无法使用 control 范围。令牌只会显示一次。会先请求确认。";
 "cli.access.grant.origin" = "网页来源，例如 http://127.0.0.1:8080，其页面可通过 WebSocket 使用该令牌。重复指定即可添加更多。WebSocket 提供的叠加层页面，其来源为 http://127.0.0.1:PORT，端口为 “ojd access status” 所显示的端口。";
 "cli.access.grant.origin_needs_token" = "--origin 需要搭配 --token。";
 "cli.access.grant.scope" = "要授予的范围：read 或 control。两者都要请重复使用。";

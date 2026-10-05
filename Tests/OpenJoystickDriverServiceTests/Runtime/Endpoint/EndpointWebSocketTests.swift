@@ -217,6 +217,53 @@ struct EndpointWebSocketTests {
     }
   }
 
+  /// A page never drives a pad, even with a control token granted for its origin.
+  @Test
+  func aControlTokenIsRefusedFromAPage() throws {
+    try withWeb { server, _, port, _ in
+      let pad = try server.grantToken(name: "pad", origins: [Self.origin], scopes: [.control])
+      let client = try upgraded(port: port)
+      client.send(
+        tokenHello(
+          name: "pad",
+          token: pad.token,
+          nonce: client.nonce,
+          origin: Self.origin,
+          port: String(port),
+          scopes: ["control"]
+        )
+      )
+
+      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(client.readLine() == nil)
+      #expect(try server.status().refusedTokens.first?.name == "pad")
+      #expect(try server.status().refusedTokens.first?.scopes == [.control])
+    }
+  }
+
+  /// A native client that cannot reach the socket, such as a Wine program, drives a pad over the
+  /// WebSocket with a token that has no origins.
+  @Test
+  func aControlTokenWithoutOriginsWorksWithoutAnOrigin() throws {
+    try withWeb { server, _, port, _ in
+      let pad = try server.grantToken(name: "pad", origins: [], scopes: [.control])
+      let client = try upgraded(port: port, origin: nil)
+      client.send(
+        tokenHello(
+          name: "pad",
+          token: pad.token,
+          nonce: client.nonce,
+          port: String(port),
+          scopes: ["control"]
+        )
+      )
+
+      let welcome = try client.readObject()
+      #expect(welcome["type"] as? String == "welcome")
+      #expect(welcome["scopes"] as? [String] == ["control"])
+    }
+  }
+
   /// Browsers always send `Origin`, so a token bound to origins is refused without one.
   @Test
   func aTokenWithOriginsIsRefusedWithoutAnOrigin() throws {

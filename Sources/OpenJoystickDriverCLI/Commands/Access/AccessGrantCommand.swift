@@ -69,7 +69,8 @@ struct AccessGrantCommand: AsyncParsableCommand {
         + "CLIENT, creates a token that a client signs the service's challenge with in its hello: "
         + "on the socket, on the WebSocket from a page at one of the --origin values, or, for a "
         + "token without --origin, on the WebSocket from a program that sends no Origin header, "
-        + "such as a sandboxed app. The token is shown only once. "
+        + "such as a sandboxed app. A page cannot use the control scope. The token is shown "
+        + "only once. "
         + "Asks for confirmation first."
     )
   )

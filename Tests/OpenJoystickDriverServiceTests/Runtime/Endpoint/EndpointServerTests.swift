@@ -246,7 +246,7 @@ struct EndpointServerTests {
   func aBadHelloGetsAnError(hello: String, code: String) throws {
     try withEndpointServer { server, _ in
       try server.setEnabled(true)
-      try server.grant(Self.tool, path: "/Tool", scopes: [.read, .control])
+      try server.grant(Self.tool, path: "/Tool", scopes: [.read])
       let client = try EndpointTestClient(path: server.socketPath)
       client.send(hello)
 
@@ -255,6 +255,56 @@ struct EndpointServerTests {
       let object = try client.object(line)
       #expect(object["code"] as? String == code)
       #expect((object["supported"] as? [Int]) == (code == "unsupported-protocol" ? [1] : nil))
+      #expect(client.readLine() == nil)
+    }
+  }
+
+  @Test
+  func aClientGrantedControlIsWelcomedWithControl() throws {
+    try withEndpointServer { server, _ in
+      try server.setEnabled(true)
+      try server.grant(Self.tool, path: "/Tool", scopes: [.control])
+      let client = try EndpointTestClient(path: server.socketPath)
+      client.send(#"{"type":"hello","protocol":1,"scopes":["control"]}"#)
+
+      let welcome = try client.readObject()
+      #expect(welcome["type"] as? String == "welcome")
+      #expect(welcome["scopes"] as? [String] == ["control"])
+      #expect(
+        try server.status().connections == [
+          AccessConnection(identity: Self.tool, scopes: [.control])
+        ]
+      )
+    }
+  }
+
+  @Test
+  func aClientGrantedOnlyReadIsRefusedControl() throws {
+    try withEndpointServer { server, _ in
+      try server.setEnabled(true)
+      try server.grant(Self.tool, path: "/Tool", scopes: [.read])
+      let client = try EndpointTestClient(path: server.socketPath)
+      client.send(#"{"type":"hello","protocol":1,"scopes":["control"]}"#)
+
+      #expect(try client.readObject()["code"] as? String == "not-granted")
+      #expect(client.readLine() == nil)
+      #expect(try server.status().refused.first?.scopes == [.control])
+    }
+  }
+
+  @Test
+  func aSessionWithoutReadCannotSubscribe() throws {
+    try withEndpointServer { server, _ in
+      try server.setEnabled(true)
+      try server.grant(Self.tool, path: "/Tool", scopes: [.read, .control])
+      let client = try EndpointTestClient(path: server.socketPath)
+      client.send(#"{"type":"hello","protocol":1,"scopes":["control"]}"#)
+      #expect(try client.readObject()["type"] as? String == "welcome")
+      client.send(#"{"type":"subscribe","stream":"controllers"}"#)
+
+      let line = try #require(client.readLine())
+      #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
+      #expect(try client.object(line)["code"] as? String == "not-granted")
       #expect(client.readLine() == nil)
     }
   }
