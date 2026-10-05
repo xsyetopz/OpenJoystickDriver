@@ -77,8 +77,8 @@ extension InputTestTests {
     model.testRumble()
     try? await Task.sleep(nanoseconds: 10_000_000)
     model.stopRumble()
-    try? await Task.sleep(nanoseconds: 150_000_000)
 
+    #expect(await gateway.waitForRumbleCalls(1))
     #expect(await gateway.counts().maximumConcurrentOutput == 1)
     #expect(await gateway.rumbleCalls.count == 1)
     #expect(await gateway.rumbleCalls.first?.left == 0)
