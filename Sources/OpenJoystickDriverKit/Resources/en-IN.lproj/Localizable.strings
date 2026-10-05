@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Activate profile with no controller input?";
 "profiles.emptyInputWarning" = "This profile suppresses all controller input.";
 "profiles.restoreDefaultInput" = "Restore default input";
+"common.reset" = "Reset";
+"profiles.useControllerDefaultColor" = "Use controller default";
 "profiles.damagedProfile" = "Damaged profile";
 "profiles.damagedLibrary" = "Damaged active profile list";
 "profiles.deleteDamagedButton" = "Delete Damaged Profile...";

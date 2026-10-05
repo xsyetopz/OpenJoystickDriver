@@ -66,8 +66,7 @@ final class SupportReportModel: ObservableObject {
       } else {
         supportDiagnosticsState = .unavailable(
           OJDLocalized.string(
-            "debug.serviceUnavailable",
-            fallback: "Service diagnostics are unavailable right now."
+            "debug.serviceUnavailable"
           )
         )
       }
@@ -86,8 +85,7 @@ final class SupportReportModel: ObservableObject {
         // already visible in the save panel and the user can choose a new path on retry.
         supportReportState = .error(
           OJDLocalized.string(
-            "error.supportReportSave",
-            fallback: "The support report couldn't be saved. Choose another file and try again."
+            "error.supportReportSave"
           )
         )
       }
@@ -131,8 +129,7 @@ final class SupportReportModel: ObservableObject {
       guard generation == supportLogsGeneration else { return }
       supportLogsState = .error(
         OJDLocalized.string(
-          "error.logsSave",
-          fallback: "The logs couldn't be saved. Choose another file and try again."
+          "error.logsSave"
         )
       )
     }

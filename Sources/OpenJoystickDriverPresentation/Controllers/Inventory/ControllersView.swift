@@ -54,20 +54,19 @@
     private func reportedValue(_ value: String) -> String {
       let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
       return trimmed.isEmpty
-        ? OJDLocalized.string("controllers.notReported", fallback: "Not reported") : trimmed
+        ? OJDLocalized.string("controllers.notReported") : trimmed
     }
 
     private var controllerList: some View {
       VStack(alignment: .leading, spacing: 8) {
         HStack {
-          Text(OJDLocalized.string("common.controllers", fallback: "Controllers")).font(.headline)
+          Text(OJDLocalized.string("common.controllers")).font(.headline)
             .lineLimit(1).layoutPriority(1)
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "arrow.clockwise",
             label: OJDLocalized.string(
-              "controllers.refreshAccessibility",
-              fallback: "Refresh controllers"
+              "controllers.refreshAccessibility"
             ),
             action: refresh
           ).disabled(isRefreshing)
@@ -77,15 +76,13 @@
         case .loading:
           LoadingStateView(
             message: OJDLocalized.string(
-              "status.checkingControllers",
-              fallback: "Checking connected controllers..."
+              "status.checkingControllers"
             )
           ).padding(.horizontal, 14)
         case .unavailable(let message):
           ServiceFailureStateView(
             title: OJDLocalized.string(
-              "controllers.unavailable",
-              fallback: "Controllers unavailable"
+              "controllers.unavailable"
             ),
             message: message,
             retry: refresh
@@ -93,8 +90,7 @@
         case .error(let message):
           ServiceFailureStateView(
             title: OJDLocalized.string(
-              "controllers.loadError",
-              fallback: "Could not load controllers"
+              "controllers.loadError"
             ),
             message: message,
             retry: refresh
@@ -103,8 +99,7 @@
           if let liveStatusError = screen.liveStatusError {
             ServiceFailureStateView(
               title: OJDLocalized.string(
-                "controllers.loadError",
-                fallback: "Could not load controllers"
+                "controllers.loadError"
               ),
               message: liveStatusError,
               retry: refresh
@@ -170,15 +165,13 @@
         case .loading:
           LoadingStateView(
             message: OJDLocalized.string(
-              "status.checkingControllers",
-              fallback: "Checking connected controllers..."
+              "status.checkingControllers"
             )
           ).padding(28)
         case .unavailable(let message):
           ServiceFailureStateView(
             title: OJDLocalized.string(
-              "controllers.unavailable",
-              fallback: "Controllers unavailable"
+              "controllers.unavailable"
             ),
             message: message,
             retry: refresh
@@ -186,8 +179,7 @@
         case .error(let message):
           ServiceFailureStateView(
             title: OJDLocalized.string(
-              "controllers.loadError",
-              fallback: "Could not load controllers"
+              "controllers.loadError"
             ),
             message: message,
             retry: refresh
@@ -196,12 +188,10 @@
           EmptyStateView(
             symbol: "gamecontroller",
             title: OJDLocalized.string(
-              "controllers.emptyTitle",
-              fallback: "No controller connected"
+              "controllers.emptyTitle"
             ),
             message: OJDLocalized.string(
-              "controllers.emptyMessage",
-              fallback: "Connect a controller, then choose Refresh."
+              "controllers.emptyMessage"
             )
           ).padding(28).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
@@ -240,24 +230,24 @@
     /// Family label; transport variants share their family's label.
     var displayLabel: String {
       switch protocolID {
-      case .xboxXID: OJDLocalized.string("controller.xboxOriginal", fallback: "Xbox (original)")
+      case .xboxXID: OJDLocalized.string("controller.xboxOriginal")
       case .xboxXUSB where variant == .receiver:
-        OJDLocalized.string("controller.xbox360Wireless", fallback: "Xbox 360 wireless")
-      case .xboxXUSB: OJDLocalized.string("controller.xbox360", fallback: "Xbox 360")
-      case .xboxGIP: OJDLocalized.string("controller.xboxOne", fallback: "Xbox One")
-      case .sonySixaxis: OJDLocalized.string("controller.dualShock3", fallback: "DualShock 3")
-      case .sonyDualShock4: OJDLocalized.string("controller.dualShock4", fallback: "DualShock 4")
-      case .sonyDualSense: OJDLocalized.string("controller.dualSense", fallback: "DualSense")
+        OJDLocalized.string("controller.xbox360Wireless")
+      case .xboxXUSB: OJDLocalized.string("controller.xbox360")
+      case .xboxGIP: OJDLocalized.string("controller.xboxOne")
+      case .sonySixaxis: OJDLocalized.string("controller.dualShock3")
+      case .sonyDualShock4: OJDLocalized.string("controller.dualShock4")
+      case .sonyDualSense: OJDLocalized.string("controller.dualSense")
       case .valveSteamController:
-        OJDLocalized.string("controller.steamController", fallback: "Steam Controller")
-      case .nintendoSwitch1: OJDLocalized.string("controller.switchPro", fallback: "Switch Pro")
-      case .vendorFlydigi: OJDLocalized.string("controller.flydigi", fallback: "Flydigi")
+        OJDLocalized.string("controller.steamController")
+      case .nintendoSwitch1: OJDLocalized.string("controller.switchPro")
+      case .vendorFlydigi: OJDLocalized.string("controller.flydigi")
       case .vendorPS3ThirdParty: "Third-party PS3"
       case .vendorNVIDIAShield: "NVIDIA SHIELD"
       case .vendorGameSir where variant == .usb: "GameSir G7 Pro USB"
       case .vendorGameSir: "GameSir enhanced HID"
       case .hidDescriptor, .hidReportLayout:
-        OJDLocalized.string("controller.genericHID", fallback: "Generic HID")
+        OJDLocalized.string("controller.genericHID")
       }
     }
   }
@@ -275,8 +265,7 @@
     var publishedIdentityLabel: String {
       guard physicalOwnership != .nativeGamepad else {
         return OJDLocalized.string(
-          "controllers.nativeGamepadNotPublished",
-          fallback: "Native macOS gamepad, not published"
+          "controllers.nativeGamepadNotPublished"
         )
       }
       return publishedVirtualProfile?.publishedUSBIdentityLabel

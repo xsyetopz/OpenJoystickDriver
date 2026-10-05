@@ -10,26 +10,26 @@
     case .button(let button):
       switch button {
       case .leftShoulder, .rightShoulder:
-        return OJDLocalized.string("profiles.sectionShoulders", fallback: "Shoulders")
+        return OJDLocalized.string("profiles.sectionShoulders")
       case .leftStick, .rightStick:
-        return OJDLocalized.string("profiles.sectionStickClicks", fallback: "Stick clicks")
+        return OJDLocalized.string("profiles.sectionStickClicks")
       case .start, .back, .guide, .share, .options, .touchpad, .mute, .leftTriggerClick,
         .rightTriggerClick:
-        return OJDLocalized.string("profiles.sectionSystemControls", fallback: "System controls")
-      default: return OJDLocalized.string("profiles.sectionFaceButtons", fallback: "Face buttons")
+        return OJDLocalized.string("profiles.sectionSystemControls")
+      default: return OJDLocalized.string("profiles.sectionFaceButtons")
       }
-    case .dpad: return OJDLocalized.string("profiles.sectionDpad", fallback: "D-pad")
+    case .dpad: return OJDLocalized.string("profiles.sectionDpad")
     case .axis, .axisDirection:
       switch source {
       case .axis(.leftTrigger), .axis(.rightTrigger), .axisDirection(.leftTrigger, _),
         .axisDirection(.rightTrigger, _):
-        return OJDLocalized.string("profiles.sectionTriggers", fallback: "Triggers")
-      default: return OJDLocalized.string("profiles.sectionSticks", fallback: "Sticks")
+        return OJDLocalized.string("profiles.sectionTriggers")
+      default: return OJDLocalized.string("profiles.sectionSticks")
       }
-    case .triggerStage: return OJDLocalized.string("profiles.sectionTriggers", fallback: "Triggers")
-    case .motionLean: return OJDLocalized.string("profiles.sectionMotion", fallback: "Motion")
+    case .triggerStage: return OJDLocalized.string("profiles.sectionTriggers")
+    case .motionLean: return OJDLocalized.string("profiles.sectionMotion")
     case .touchContact, .touchGrid, .touchSwipe:
-      return OJDLocalized.string("profiles.sectionTouch", fallback: "Touch")
+      return OJDLocalized.string("profiles.sectionTouch")
     }
   }
 
@@ -51,18 +51,18 @@
       var title: String {
         switch self {
         case .face:
-          return OJDLocalized.string("profiles.sectionFaceButtons", fallback: "Face buttons")
+          return OJDLocalized.string("profiles.sectionFaceButtons")
         case .shoulders:
-          return OJDLocalized.string("profiles.sectionShoulders", fallback: "Shoulders")
-        case .dpad: return OJDLocalized.string("profiles.sectionDpad", fallback: "D-pad")
-        case .sticks: return OJDLocalized.string("profiles.sectionSticks", fallback: "Sticks")
-        case .triggers: return OJDLocalized.string("profiles.sectionTriggers", fallback: "Triggers")
+          return OJDLocalized.string("profiles.sectionShoulders")
+        case .dpad: return OJDLocalized.string("profiles.sectionDpad")
+        case .sticks: return OJDLocalized.string("profiles.sectionSticks")
+        case .triggers: return OJDLocalized.string("profiles.sectionTriggers")
         case .clicks:
-          return OJDLocalized.string("profiles.sectionStickClicks", fallback: "Stick clicks")
-        case .touch: return OJDLocalized.string("profiles.sectionTouch", fallback: "Touch")
-        case .motion: return OJDLocalized.string("profiles.sectionMotion", fallback: "Motion")
+          return OJDLocalized.string("profiles.sectionStickClicks")
+        case .touch: return OJDLocalized.string("profiles.sectionTouch")
+        case .motion: return OJDLocalized.string("profiles.sectionMotion")
         case .system:
-          return OJDLocalized.string("profiles.sectionSystemControls", fallback: "System controls")
+          return OJDLocalized.string("profiles.sectionSystemControls")
         }
       }
     }
@@ -136,17 +136,16 @@
 
         HStack(spacing: 8) {
           if binding.axisTuning != nil {
-            Button(OJDLocalized.string("common.adjust", fallback: "Adjust...")) {
+            Button(OJDLocalized.string("common.adjust")) {
               onAdjust(binding)
             }.ojdAccessibilityLabel(
               OJDLocalized.formatted(
                 "capture.adjust",
-                fallback: "Adjust %@",
                 RuntimePresentation.sourceLabel(binding.source)
               )
             )
           }
-          Button(OJDLocalized.string("profiles.behavior", fallback: "Behavior...")) {
+          Button(OJDLocalized.string("profiles.behavior")) {
             onBehavior(binding)
           }
           Spacer(minLength: 0)
@@ -157,19 +156,19 @@
                 .frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
             }
           ).buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(
-            OJDLocalized.string("common.removeAssignment", fallback: "Remove assignment")
-          ).help(OJDLocalized.string("common.removeAssignment", fallback: "Remove assignment"))
+            OJDLocalized.string("common.removeAssignment")
+          ).help(OJDLocalized.string("common.removeAssignment"))
         }
       }.disabled(isEditingDisabled).frame(maxWidth: .infinity, alignment: .leading).padding(
         .vertical,
         7
-      ).ojdAccessibilityLabel(OJDLocalized.string("common.assignment", fallback: "Assignment"))
+      ).ojdAccessibilityLabel(OJDLocalized.string("common.assignment"))
         .ojdAccessibilityValue(assignmentAccessibilityValue)
     }
 
     private var sourceField: some View {
       VStack(alignment: .leading, spacing: 4) {
-        Text(OJDLocalized.string("capture.controllerControl", fallback: "Controller control")).font(
+        Text(OJDLocalized.string("capture.controllerControl")).font(
           .caption
         ).foregroundColor(Color(NSColor.secondaryLabelColor))
         Picker("", selection: sourceBinding) {
@@ -178,14 +177,14 @@
             id: \.source
           ) { option in Text(option.title).tag(option.source).disabled(!option.isSupported) }
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
-          OJDLocalized.string("capture.controllerControl", fallback: "Controller control")
+          OJDLocalized.string("capture.controllerControl")
         ).ojdAccessibilityValue(RuntimePresentation.sourceLabel(binding.source))
       }.frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var destinationField: some View {
       VStack(alignment: .leading, spacing: 4) {
-        Text(OJDLocalized.string("common.destination", fallback: "Destination")).font(.caption)
+        Text(OJDLocalized.string("common.destination")).font(.caption)
           .foregroundColor(Color(NSColor.secondaryLabelColor))
         Picker("", selection: destinationBinding) {
           ForEach(
@@ -200,7 +199,7 @@
               .disabled(!option.isSupported)
           }
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
-          OJDLocalized.string("common.destination", fallback: "Destination")
+          OJDLocalized.string("common.destination")
         ).ojdAccessibilityValue(RuntimePresentation.destinationLabel(binding.destination))
         PhysicalOutputDestinationFields(destination: destinationBinding).disabled(
           !ProfileCapabilityPolicy.supports(binding.destination, capabilities: capabilities)
@@ -210,8 +209,7 @@
         {
           Text(
             OJDLocalized.string(
-              "profiles.notSupportedByController",
-              fallback: "Not supported by this controller or protocol."
+              "profiles.notSupportedByController"
             )
           ).font(.caption).foregroundColor(Color(NSColor.systemOrange))
         }
@@ -224,14 +222,12 @@
       if binding.axisTuning == nil {
         return OJDLocalized.formatted(
           "profiles.assignmentSummary",
-          fallback: "%@ to %@",
           source,
           destination
         )
       }
       return OJDLocalized.formatted(
         "profiles.assignmentAdjustSummary",
-        fallback: "%@ to %@, Adjust available",
         source,
         destination
       )

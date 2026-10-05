@@ -22,7 +22,6 @@ struct AccessClient {
           .unsignedClient,
           CLILocalized.format(
             "cli.access.client.unsigned",
-            "%@ holds no signed program. Grant the program's app bundle or executable.",
             url.path
           )
         )
@@ -47,7 +46,6 @@ struct AccessClient {
       .notFound,
       CLILocalized.format(
         "cli.access.client.unknown",
-        "No program at %@ and no client with that ID. See the IDs with 'ojd access list'.",
         text
       )
     )
@@ -58,26 +56,16 @@ struct AccessGrantCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "grant",
     abstract: CLILocalized.text(
-      "cli.access.grant.abstract",
-      "Allow a signed program, or a new token, to use the endpoint."
+      "cli.access.grant.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.access.grant.discussion",
-      "CLIENT is the program's path or an ID from 'ojd access list'. The grant names the "
-        + "program's signature, so it stays valid when the program is updated or moved. "
-        + "Ad-hoc signed and unsigned programs cannot be granted. With --token instead of "
-        + "CLIENT, creates a token that a client signs the service's challenge with in its hello: "
-        + "on the socket, on the WebSocket from a page at one of the --origin values, or, for a "
-        + "token without --origin, on the WebSocket from a program that sends no Origin header, "
-        + "such as a sandboxed app. A page cannot use the control scope. The token is shown "
-        + "only once. "
-        + "Asks for confirmation first."
+      "cli.access.grant.discussion"
     )
   )
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.access.client", "The program's path, or a client ID."),
+      CLILocalized.text("cli.access.client"),
       valueName: "client"
     )
   )
@@ -87,8 +75,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
     name: .long,
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.access.grant.token",
-        "Create a token with this name instead of granting a program."
+        "cli.access.grant.token"
       ),
       valueName: "name"
     )
@@ -99,10 +86,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
     name: .long,
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.access.grant.origin",
-        "A web origin, such as http://127.0.0.1:8080, whose pages may use the token on the "
-          + "WebSocket. Repeat for more. The overlay pages that the WebSocket serves have the "
-          + "origin http://127.0.0.1:PORT, with the port that 'ojd access status' shows."
+        "cli.access.grant.origin"
       ),
       valueName: "url"
     )
@@ -113,8 +97,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
     name: .long,
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.access.grant.scope",
-        "A scope to grant: read or control. Repeat for both."
+        "cli.access.grant.scope"
       ),
       valueName: "scope"
     )
@@ -123,7 +106,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
 
   @Flag(
     name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.option.force", "Do not ask for confirmation."))
+    help: ArgumentHelp(CLILocalized.text("cli.option.force"))
   )
   var force = false
 
@@ -133,20 +116,18 @@ struct AccessGrantCommand: AsyncParsableCommand {
   func validate() throws {
     guard (client == nil) != (token == nil) else {
       throw ValidationError(
-        CLILocalized.text("cli.access.grant.client_or_token", "Give either CLIENT or --token NAME.")
+        CLILocalized.text("cli.access.grant.client_or_token")
       )
     }
     guard token != nil || origin.isEmpty else {
       throw ValidationError(
-        CLILocalized.text("cli.access.grant.origin_needs_token", "--origin needs --token.")
+        CLILocalized.text("cli.access.grant.origin_needs_token")
       )
     }
     guard origin.isEmpty || !scope.contains(.control) else {
       throw ValidationError(
         CLILocalized.text(
-          "cli.access.grant.origin_control",
-          "--origin cannot be combined with the control scope. A page never drives a virtual "
-            + "gamepad; grant control to a token without --origin."
+          "cli.access.grant.origin_control"
         )
       )
     }
@@ -167,8 +148,6 @@ struct AccessGrantCommand: AsyncParsableCommand {
           .unsignedClient,
           CLILocalized.format(
             "cli.access.grant.ad_hoc",
-            "%@ is ad-hoc signed or unsigned, so any local program can claim its signature. "
-              + "Sign it with a Developer ID or Apple Development certificate, then grant it.",
             identity.identifier
           )
         )
@@ -189,7 +168,6 @@ struct AccessGrantCommand: AsyncParsableCommand {
         CLIOutput.success(
           CLILocalized.format(
             "cli.access.grant.success",
-            "Granted %@ to %@ (ID %@).",
             AccessText.scopes(grant.scopes),
             grant.identifier,
             grant.id
@@ -204,13 +182,11 @@ struct AccessGrantCommand: AsyncParsableCommand {
       origin.isEmpty
         ? CLILocalized.format(
           "cli.access.grant.token_confirm",
-          "Create the token %@ with %@, for programs on this Mac?",
           name,
           AccessText.scopes(scope)
         )
         : CLILocalized.format(
           "cli.access.grant.token_web_confirm",
-          "Create the token %@ with %@, for programs on this Mac and for pages from %@?",
           name,
           AccessText.scopes(scope),
           origin.joined(separator: ", ")
@@ -234,7 +210,6 @@ struct AccessGrantCommand: AsyncParsableCommand {
       CLIOutput.success(
         CLILocalized.format(
           "cli.access.grant.token_success",
-          "Granted %@ to the token %@ (ID %@). Keep the token secret; it is not shown again:",
           AccessText.scopes(result.grant.scopes),
           result.grant.name,
           result.grant.id
@@ -246,9 +221,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
 
   private static var controlWarning: String {
     CLILocalized.text(
-      "cli.access.grant.control_warning",
-      "The control scope lets the program press buttons on a virtual gamepad, which games "
-        + "and apps treat as your input."
+      "cli.access.grant.control_warning"
     )
   }
 
@@ -256,7 +229,6 @@ struct AccessGrantCommand: AsyncParsableCommand {
     var lines = [
       CLILocalized.format(
         "cli.access.grant.confirm",
-        "Allow %@, signed %@, to use the endpoint with %@?",
         identity.identifier,
         AccessText.signer(identity.kind, identity.teamIdentifier),
         AccessText.scopes(scope)
@@ -265,9 +237,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
     if identity.kind == .apple {
       lines.insert(
         CLILocalized.text(
-          "cli.access.grant.apple_warning",
-          "Apple signed this program. If it runs scripts, such as python3 or osascript, every "
-            + "script it runs gets this access."
+          "cli.access.grant.apple_warning"
         ),
         at: 0
       )
@@ -281,21 +251,17 @@ struct AccessRevokeCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "revoke",
     abstract: CLILocalized.text(
-      "cli.access.revoke.abstract",
-      "Remove a program's grant, or some of its scopes."
+      "cli.access.revoke.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.access.revoke.discussion",
-      "CLIENT is the program's path, an ID from 'ojd access list', or token:NAME for a token. "
-        + "Without --scope, removes the whole grant. Connections that lose a scope are closed."
+      "cli.access.revoke.discussion"
     )
   )
 
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.access.revoke.client",
-        "The program's path, a client ID, or token:NAME."
+        "cli.access.revoke.client"
       ),
       valueName: "client"
     )
@@ -306,8 +272,7 @@ struct AccessRevokeCommand: AsyncParsableCommand {
     name: .long,
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.access.revoke.scope",
-        "A scope to remove: read or control. Repeat for both."
+        "cli.access.revoke.scope"
       ),
       valueName: "scope"
     )
@@ -343,7 +308,6 @@ struct AccessRevokeCommand: AsyncParsableCommand {
           (result.grant?.scopes ?? result.token?.scopes).map {
             CLILocalized.format(
               "cli.access.revoke.partial",
-              "Client %@ keeps %@. Closed connections: %@.",
               result.id,
               AccessText.scopes($0),
               String(result.closedConnections)
@@ -351,7 +315,6 @@ struct AccessRevokeCommand: AsyncParsableCommand {
           }
             ?? CLILocalized.format(
               "cli.access.revoke.success",
-              "Removed the grant of client %@. Closed connections: %@.",
               result.id,
               String(result.closedConnections)
             )

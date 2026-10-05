@@ -10,8 +10,7 @@ extension ControllerWatchCommand {
     if CLIContext.current.format == .human {
       CLIOutput.success(
         CLILocalized.text(
-          "cli.controller.watch.all_started",
-          "Watching every controller. Press controller buttons."
+          "cli.controller.watch.all_started"
         )
       )
     }
@@ -45,7 +44,6 @@ extension ControllerWatchCommand {
       CLIOutput.stdout(
         CLILocalized.format(
           "cli.controller.watch.connected",
-          "%@ connected: %@ (%@)",
           event.id,
           device.name,
           device.identity
@@ -53,7 +51,7 @@ extension ControllerWatchCommand {
       )
     case (.human, .disconnected):
       CLIOutput.stdout(
-        CLILocalized.format("cli.controller.watch.disconnected", "%@ disconnected", event.id)
+        CLILocalized.format("cli.controller.watch.disconnected", event.id)
       )
     case (.human, .input):
       if let input = event.input { CLIOutput.stdout("\(event.id) " + Self.formatted(input)) }

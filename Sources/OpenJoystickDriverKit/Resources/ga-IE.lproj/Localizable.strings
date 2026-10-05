@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Proifíl a ghníomhachtú gan iontráil rialaitheoir?";
 "profiles.emptyInputWarning" = "Cuirtear an próifíl seo ar fáil do gach iontráil rialaitheora.";
 "profiles.restoreDefaultInput" = "Athbhreisiú iontráil réamhshocraithe";
+"common.reset" = "Athshocraigh";
+"profiles.useControllerDefaultColor" = "Úsáid réamhshocrú an rialaitheora";
 "profiles.damagedProfile" = "Próifíl dhamáistithe";
 "profiles.damagedLibrary" = "Liosta damáistithe de phróifílí gníomhacha";
 "profiles.deleteDamagedButton" = "Scrios Próifíl Damáistithe…";

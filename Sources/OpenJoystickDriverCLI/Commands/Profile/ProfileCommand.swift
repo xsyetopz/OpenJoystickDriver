@@ -6,16 +6,10 @@ struct ProfileCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "profile",
     abstract: CLILocalized.text(
-      "cli.profile.abstract",
-      "Create, change, and activate remapping profiles."
+      "cli.profile.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.profile.discussion",
-      "A remapping profile turns the controls of one controller model into gamepad, keyboard, "
-        + "and pointer input. PROFILE is a profile ID or name from 'ojd profile list'. Change "
-        + "bindings with 'ojd binding', and everything else with 'ojd profile set' or "
-        + "'ojd profile edit'. Every profile command except 'ojd profile validate' needs the "
-        + "service."
+      "cli.profile.discussion"
     ),
     subcommands: [
       ProfileListCommand.self, ProfileShowCommand.self, ProfileCreateCommand.self,
@@ -54,8 +48,7 @@ func savedSummary(
     throw CLIFailure(
       .serviceRequestFailed,
       CLILocalized.text(
-        "cli.profile.vanished",
-        "The service did not keep the profile. Check it with 'ojd profile list'."
+        "cli.profile.vanished"
       )
     )
   }
@@ -65,7 +58,7 @@ func savedSummary(
 struct ProfileListCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "list",
-    abstract: CLILocalized.text("cli.profile.list.abstract", "List remapping profiles.")
+    abstract: CLILocalized.text("cli.profile.list.abstract")
   )
 
   /// The `--json` result. `issues` names each saved profile the service could not load.
@@ -99,8 +92,7 @@ struct ProfileListCommand: AsyncParsableCommand {
         if result.profiles.isEmpty {
           CLIOutput.stderr(
             CLILocalized.text(
-              "cli.profile.list.empty",
-              "No profiles. Create one with 'ojd profile create'."
+              "cli.profile.list.empty"
             )
           )
         }
@@ -111,7 +103,6 @@ struct ProfileListCommand: AsyncParsableCommand {
           CLIOutput.stderr(
             CLILocalized.format(
               "cli.profile.list.issue",
-              "The service could not load a saved profile: %@",
               issue.message
             )
           )
@@ -119,8 +110,7 @@ struct ProfileListCommand: AsyncParsableCommand {
         if !result.issues.isEmpty {
           CLIOutput.stderr(
             CLILocalized.text(
-              "cli.profile.list.recover_hint",
-              "Repair them with 'ojd profile recover'."
+              "cli.profile.list.recover_hint"
             )
           )
         }
@@ -133,8 +123,7 @@ struct ProfileShowCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "show",
     abstract: CLILocalized.text(
-      "cli.profile.show.abstract",
-      "Show a profile's settings and bindings."
+      "cli.profile.show.abstract"
     )
   )
 
@@ -172,20 +161,16 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "create",
     abstract: CLILocalized.text(
-      "cli.profile.create.abstract",
-      "Create an empty profile for one controller model."
+      "cli.profile.create.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.profile.create.discussion",
-      "The profile applies in every app unless --app names one. By default the virtual gamepad "
-        + "passes through every control that no binding uses. The profile starts inactive; "
-        + "activate it with 'ojd profile activate'."
+      "cli.profile.create.discussion"
     )
   )
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.profile.name", "The profile name, 1 to 80 characters."),
+      CLILocalized.text("cli.profile.name"),
       valueName: "name"
     )
   )
@@ -194,8 +179,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.profile.create.controller",
-        "The controller model: VVVV:PPPP, or the ID of a connected controller."
+        "cli.profile.create.controller"
       ),
       valueName: "controller"
     )
@@ -205,8 +189,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.profile.create.app",
-        "Apply the profile only while this app, by bundle ID, is in front."
+        "cli.profile.create.app"
       ),
       valueName: "bundle-id"
     )
@@ -216,9 +199,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.profile.create.virtual_gamepad",
-        "What the virtual gamepad sends: nothing (disabled), bound controls only (mapped), or "
-          + "every control no binding uses as well (passthrough)."
+        "cli.profile.create.virtual_gamepad"
       )
     )
   )
@@ -227,8 +208,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.profile.create.physical_input",
-        "Whether macOS still sees the controller (shared) or OJD takes it (exclusive)."
+        "cli.profile.create.physical_input"
       )
     )
   )
@@ -268,7 +248,6 @@ struct ProfileCreateCommand: AsyncParsableCommand {
         ProfileResult(profile: try savedSummary(created.id, in: snapshot), changed: true),
         message: CLILocalized.format(
           "cli.profile.create.done",
-          "Created '%@' (%@).",
           created.name,
           created.id.uuidString
         )
@@ -281,8 +260,7 @@ struct ProfileDuplicateCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "duplicate",
     abstract: CLILocalized.text(
-      "cli.profile.duplicate.abstract",
-      "Copy a profile under a new name. The copy starts inactive."
+      "cli.profile.duplicate.abstract"
     )
   )
 
@@ -291,7 +269,7 @@ struct ProfileDuplicateCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.profile.duplicate.name", "The name of the copy."),
+      CLILocalized.text("cli.profile.duplicate.name"),
       valueName: "new-name"
     )
   )
@@ -312,7 +290,6 @@ struct ProfileDuplicateCommand: AsyncParsableCommand {
         ProfileResult(profile: try savedSummary(copy.id, in: snapshot), changed: true),
         message: CLILocalized.format(
           "cli.profile.duplicate.done",
-          "Created '%@' (%@).",
           copy.name,
           copy.id.uuidString
         )
@@ -324,7 +301,7 @@ struct ProfileDuplicateCommand: AsyncParsableCommand {
 struct ProfileRenameCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "rename",
-    abstract: CLILocalized.text("cli.profile.rename.abstract", "Rename a profile.")
+    abstract: CLILocalized.text("cli.profile.rename.abstract")
   )
 
   @Argument(help: profileArgumentHelp)
@@ -332,7 +309,7 @@ struct ProfileRenameCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.profile.rename.name", "The new name, 1 to 80 characters."),
+      CLILocalized.text("cli.profile.rename.name"),
       valueName: "new-name"
     )
   )
@@ -351,7 +328,7 @@ struct ProfileRenameCommand: AsyncParsableCommand {
       }
       try printProfile(
         ProfileResult(profile: try savedSummary(renamed.id, in: snapshot), changed: true),
-        message: CLILocalized.format("cli.profile.rename.done", "Renamed to '%@'.", renamed.name)
+        message: CLILocalized.format("cli.profile.rename.done", renamed.name)
       )
     }
   }
@@ -360,11 +337,9 @@ struct ProfileRenameCommand: AsyncParsableCommand {
 struct ProfileDeleteCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "delete",
-    abstract: CLILocalized.text("cli.profile.delete.abstract", "Delete a profile."),
+    abstract: CLILocalized.text("cli.profile.delete.abstract"),
     discussion: CLILocalized.text(
-      "cli.profile.delete.discussion",
-      "An active profile stops applying. Asks for confirmation on a terminal; needs --force "
-        + "otherwise. Export the profile first to keep a copy."
+      "cli.profile.delete.discussion"
     )
   )
 
@@ -379,14 +354,14 @@ struct ProfileDeleteCommand: AsyncParsableCommand {
 
   @Flag(
     name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.option.force", "Do not ask for confirmation."))
+    help: ArgumentHelp(CLILocalized.text("cli.option.force"))
   )
   var force = false
 
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
-      CLILocalized.text("cli.option.dry_run", "Print what would change, and change nothing.")
+      CLILocalized.text("cli.option.dry_run")
     )
   )
   var dryRun = false
@@ -408,7 +383,6 @@ struct ProfileDeleteCommand: AsyncParsableCommand {
         try CLITerminal.confirm(
           CLILocalized.format(
             "cli.profile.delete.confirm",
-            "Delete the profile '%@'?",
             target.name
           ),
           force: force
@@ -425,13 +399,12 @@ struct ProfileDeleteCommand: AsyncParsableCommand {
           CLIOutput.stdout(
             CLILocalized.format(
               "cli.profile.delete.dry_run",
-              "Would delete the profile '%@'.",
               target.name
             )
           )
         } else {
           CLIOutput.success(
-            CLILocalized.format("cli.profile.delete.done", "Deleted the profile '%@'.", target.name)
+            CLILocalized.format("cli.profile.delete.done", target.name)
           )
         }
       }

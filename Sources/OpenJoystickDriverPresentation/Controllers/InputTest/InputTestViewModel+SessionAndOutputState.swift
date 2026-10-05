@@ -302,8 +302,7 @@
           self.outputState = succeeded ? .succeeded(operation) : .failed(operation)
           if !succeeded {
             self.outputError = OJDLocalized.string(
-              "inputTest.outputRejected",
-              fallback: "The controller rejected this output test."
+              "inputTest.outputRejected"
             )
           }
         } catch is CancellationError {

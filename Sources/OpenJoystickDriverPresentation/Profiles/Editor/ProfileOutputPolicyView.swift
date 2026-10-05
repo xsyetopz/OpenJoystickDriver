@@ -9,7 +9,7 @@
     var body: some View {
       VStack(alignment: .leading, spacing: 8) {
         Picker(
-          OJDLocalized.string("profiles.virtualOutput", fallback: "Virtual gamepad"),
+          OJDLocalized.string("profiles.virtualOutput"),
           selection: Binding(
             get: { policy.virtualGamepad },
             set: { value in
@@ -19,23 +19,21 @@
             }
           )
         ) {
-          Text(OJDLocalized.string("profiles.virtualDisabled", fallback: "Disabled")).tag(
+          Text(OJDLocalized.string("profiles.virtualDisabled")).tag(
             RemappingVirtualGamepadPolicy.disabled
           )
-          Text(OJDLocalized.string("profiles.virtualMapped", fallback: "Mapped controls only")).tag(
+          Text(OJDLocalized.string("profiles.virtualMapped")).tag(
             RemappingVirtualGamepadPolicy.mapped
           )
           Text(
             OJDLocalized.string(
-              "profiles.virtualPassthrough",
-              fallback: "Include unmapped controls"
+              "profiles.virtualPassthrough"
             )
           ).tag(RemappingVirtualGamepadPolicy.passthrough)
         }
         Toggle(
           OJDLocalized.string(
-            "profiles.exclusiveInput",
-            fallback: "Require exclusive physical input"
+            "profiles.exclusiveInput"
           ),
           isOn: Binding(
             get: { policy.requiresExclusiveInput },

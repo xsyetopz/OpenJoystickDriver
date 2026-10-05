@@ -34,8 +34,6 @@ enum ExtensionSubmission {
         .installationProblem,
         CLILocalized.format(
           "cli.extension.not_installed",
-          "This ojd runs from %@, not from /Applications. "
-            + "Run the ojd inside /Applications/OpenJoystickDriver.app.",
           bundle.path
         )
       )
@@ -52,8 +50,6 @@ enum ExtensionSubmission {
         .installationProblem,
         CLILocalized.format(
           "cli.extension.bundle_missing",
-          "The app does not contain %@.dext. "
-            + "Run './Scripts/ojd build install dev', then retry from /Applications.",
           ExtensionProbe.bundleIdentifier
         )
       )
@@ -77,7 +73,6 @@ enum ExtensionSubmission {
         .installationProblem,
         CLILocalized.format(
           "cli.extension.codesign_failed_to_run",
-          "Could not run codesign to verify the app: %@. Check that /usr/bin/codesign exists.",
           error.localizedDescription
         )
       )
@@ -89,8 +84,6 @@ enum ExtensionSubmission {
         .installationProblem,
         CLILocalized.format(
           "cli.extension.signature_invalid",
-          "The app's signature is not valid (%@). "
-            + "Rebuild it with './Scripts/ojd build install-fast dev', then retry.",
           result.timedOut ? "codesign timed out" : detail
         )
       )

@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktiverer du profilen uten kontrollørinngang?";
 "profiles.emptyInputWarning" = "Denne profilen undertrykker alle kontrollerinnspill.";
 "profiles.restoreDefaultInput" = "Restaurer standardinngang";
+"common.reset" = "Tilbakestill";
+"profiles.useControllerDefaultColor" = "Bruk kontrollerens standard";
 "profiles.damagedProfile" = "Skadet profil";
 "profiles.damagedLibrary" = "Skadet liste over aktive profiler";
 "profiles.deleteDamagedButton" = "Slett skadet profil…";

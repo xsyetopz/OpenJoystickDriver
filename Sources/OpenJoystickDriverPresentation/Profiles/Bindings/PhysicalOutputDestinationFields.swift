@@ -12,7 +12,7 @@
           switch output {
           case .rumble(let motor, let intensity):
             Picker(
-              OJDLocalized.string("profiles.physical.motor", fallback: "Motor"),
+              OJDLocalized.string("profiles.physical.motor"),
               selection: rumbleMotor(motor, intensity: intensity)
             ) {
               ForEach(PhysicalRumbleMotor.allCases, id: \.self) {
@@ -20,43 +20,43 @@
               }
             }
             unitSlider(
-              OJDLocalized.string("profiles.physical.intensity", fallback: "Intensity"),
+              OJDLocalized.string("profiles.physical.intensity"),
               value: rumbleIntensity(motor, intensity: intensity)
             )
           case .playerIndicator(let indicator):
             Picker(
-              OJDLocalized.string("profiles.physical.player", fallback: "Player indicator"),
+              OJDLocalized.string("profiles.physical.player"),
               selection: playerIndicator(indicator)
             ) {
               ForEach(PhysicalPlayerIndicator.allCases, id: \.self) {
                 Text(
                   $0 == .off
-                    ? OJDLocalized.string("common.disabled", fallback: "Disabled")
+                    ? OJDLocalized.string("common.disabled")
                     : String($0.rawValue)
                 ).tag($0)
               }
             }
           case .color(let color):
             colorSlider(
-              OJDLocalized.string("profiles.physical.red", fallback: "Red"),
+              OJDLocalized.string("profiles.physical.red"),
               value: colorComponent(color, component: 0)
             )
             colorSlider(
-              OJDLocalized.string("profiles.physical.green", fallback: "Green"),
+              OJDLocalized.string("profiles.physical.green"),
               value: colorComponent(color, component: 1)
             )
             colorSlider(
-              OJDLocalized.string("profiles.physical.blue", fallback: "Blue"),
+              OJDLocalized.string("profiles.physical.blue"),
               value: colorComponent(color, component: 2)
             )
           case .brightness(let intensity):
             unitSlider(
-              OJDLocalized.string("profiles.physical.brightness", fallback: "Brightness"),
+              OJDLocalized.string("profiles.physical.brightness"),
               value: brightness(intensity)
             )
           case .adaptiveTrigger(let trigger, let effect):
             Picker(
-              OJDLocalized.string("profiles.physical.trigger", fallback: "Adaptive trigger"),
+              OJDLocalized.string("profiles.physical.trigger"),
               selection: adaptiveTrigger(trigger, effect: effect)
             ) {
               ForEach(PhysicalAdaptiveTrigger.allCases, id: \.self) {
@@ -64,7 +64,7 @@
               }
             }
             Picker(
-              OJDLocalized.string("profiles.physical.effect", fallback: "Effect"),
+              OJDLocalized.string("profiles.physical.effect"),
               selection: adaptiveKind(trigger, effect: effect)
             ) {
               ForEach(PhysicalAdaptiveTriggerEffectKind.allCases, id: \.self) {
@@ -74,13 +74,12 @@
             if effect.kind == .resistance {
               unitSlider(
                 OJDLocalized.string(
-                  "profiles.physical.startPosition",
-                  fallback: "Resistance start"
+                  "profiles.physical.startPosition"
                 ),
                 value: adaptiveStart(trigger, effect: effect)
               )
               unitSlider(
-                OJDLocalized.string("profiles.physical.strength", fallback: "Resistance strength"),
+                OJDLocalized.string("profiles.physical.strength"),
                 value: adaptiveStrength(trigger, effect: effect)
               )
             }

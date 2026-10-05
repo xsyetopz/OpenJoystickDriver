@@ -45,8 +45,7 @@
         VStack(alignment: .leading, spacing: 4) {
           Text(
             OJDLocalized.string(
-              "profiles.actionNeedsAttention",
-              fallback: "Profile action needs attention"
+              "profiles.actionNeedsAttention"
             )
           ).font(.headline)
           Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
@@ -55,9 +54,9 @@
           )
         }
         Spacer(minLength: 0)
-        Button(OJDLocalized.string("common.dismiss", fallback: "Dismiss"), action: dismiss)
+        Button(OJDLocalized.string("common.dismiss"), action: dismiss)
       }.padding(12).background(Color(NSColor.controlBackgroundColor)).ojdAccessibilityLabel(
-        OJDLocalized.string("profiles.actionErrorTitle", fallback: "Profile action error")
+        OJDLocalized.string("profiles.actionErrorTitle")
       ).ojdAccessibilityValue(message)
     }
   }
@@ -70,10 +69,10 @@
 
     var label: String {
       switch self {
-      case .unsaved: return OJDLocalized.string("profiles.unsaved", fallback: "Unsaved changes")
-      case .saving: return OJDLocalized.string("profiles.saving", fallback: "Saving...")
-      case .saved: return OJDLocalized.string("profiles.saved", fallback: "Saved")
-      case .error: return OJDLocalized.string("profiles.saveFailed", fallback: "Save failed")
+      case .unsaved: return OJDLocalized.string("profiles.unsaved")
+      case .saving: return OJDLocalized.string("profiles.saving")
+      case .saved: return OJDLocalized.string("profiles.saved")
+      case .error: return OJDLocalized.string("profiles.saveFailed")
       }
     }
 

@@ -6,14 +6,13 @@ struct LogExportCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "export",
     abstract: CLILocalized.text(
-      "cli.log.export.abstract",
-      "Write the end of the service logs to a file, with your home folder shown as ~."
+      "cli.log.export.abstract"
     )
   )
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.log.export.file", "The file to write."),
+      CLILocalized.text("cli.log.export.file"),
       valueName: "file"
     )
   )
@@ -22,7 +21,7 @@ struct LogExportCommand: AsyncParsableCommand {
   @Option(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
-      CLILocalized.text("cli.log.show.lines", "Lines to print from each log, 1 to 10000."),
+      CLILocalized.text("cli.log.show.lines"),
       valueName: "count"
     )
   )
@@ -31,7 +30,7 @@ struct LogExportCommand: AsyncParsableCommand {
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(
-      CLILocalized.text("cli.log.export.force", "Replace the file if it exists.")
+      CLILocalized.text("cli.log.export.force")
     )
   )
   var force = false
@@ -47,7 +46,7 @@ struct LogExportCommand: AsyncParsableCommand {
   func validate() throws {
     guard (1...10_000).contains(lines) else {
       throw ValidationError(
-        CLILocalized.text("cli.log.show.lines_range", "--lines must be between 1 and 10000.")
+        CLILocalized.text("cli.log.show.lines_range")
       )
     }
   }
@@ -63,7 +62,6 @@ struct LogExportCommand: AsyncParsableCommand {
           .fileAccessFailed,
           CLILocalized.format(
             "cli.log.show.read_failed",
-            "Could not read the service logs: %@. Check the folder that 'ojd log path' prints.",
             error.localizedDescription
           )
         )
@@ -74,7 +72,6 @@ struct LogExportCommand: AsyncParsableCommand {
           .fileAccessFailed,
           CLILocalized.format(
             "cli.log.export.exists",
-            "%@ already exists. Pass --force to replace it.",
             url.path
           )
         )
@@ -90,7 +87,6 @@ struct LogExportCommand: AsyncParsableCommand {
           .fileAccessFailed,
           CLILocalized.format(
             "cli.record.install.failed",
-            "Cannot write %@: %@",
             url.path,
             error.localizedDescription
           )
@@ -103,7 +99,7 @@ struct LogExportCommand: AsyncParsableCommand {
       case .plain: CLIOutput.plain([[url.path]])
       case .human:
         CLIOutput.success(
-          CLILocalized.format("cli.log.export.written", "Wrote the service logs to %@.", url.path)
+          CLILocalized.format("cli.log.export.written", url.path)
         )
       }
     }

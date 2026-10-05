@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "تنشيط الملف بدون إدخال جهاز التحكم؟";
 "profiles.emptyInputWarning" = "هذا الملف يضغط على جميع المدخلات من جهاز التحكم.";
 "profiles.restoreDefaultInput" = "استعادة المدخل الافتراضي";
+"common.reset" = "إعادة ضبط";
+"profiles.useControllerDefaultColor" = "استخدام الإعداد الافتراضي لوحدة التحكم";
 "profiles.damagedProfile" = "ملف تعريف تالف";
 "profiles.damagedLibrary" = "قائمة ملفات التعريف النشطة تالفة";
 "profiles.deleteDamagedButton" = "حذف ملف التعريف التالف…";

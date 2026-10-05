@@ -35,7 +35,7 @@
         }
         Spacer()
       }.accessibilityElement(children: .combine).ojdAccessibilityLabel(
-        OJDLocalized.string("inputTest.status", fallback: "Input test status")
+        OJDLocalized.string("inputTest.status")
       ).ojdAccessibilityValue(statusLabel)
     }
 
@@ -85,7 +85,7 @@
       GroupBox {
         MotionCalibrationControls(model: model.motionCalibration, embedded: true)
       } label: {
-        Text(OJDLocalized.string("motion.calibration.title", fallback: "Motion calibration"))
+        Text(OJDLocalized.string("motion.calibration.title"))
       }.frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
@@ -105,7 +105,7 @@
       GroupBox {
         InputTestAxisValuesView(liveState: model.liveState, embedded: true)
       } label: {
-        Text(OJDLocalized.string("inputTest.axisValues", fallback: "Axis values"))
+        Text(OJDLocalized.string("inputTest.axisValues"))
       }
     }
 
@@ -118,7 +118,7 @@
           }
         }
       } label: {
-        Text(OJDLocalized.string("inputTest.rumble", fallback: "Rumble"))
+        Text(OJDLocalized.string("inputTest.rumble"))
       }.frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
@@ -131,7 +131,7 @@
           }
         }
       } label: {
-        Text(OJDLocalized.string("inputTest.lighting", fallback: "Lighting"))
+        Text(OJDLocalized.string("inputTest.lighting"))
       }.frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
@@ -143,12 +143,11 @@
           Divider()
           VStack(alignment: .leading, spacing: 5) {
             HStack {
-              Text(OJDLocalized.string("inputTest.duration", fallback: "Duration"))
+              Text(OJDLocalized.string("inputTest.duration"))
               Spacer()
               Text(
                 OJDLocalized.formatted(
                   "inputTest.durationValue",
-                  fallback: "%d ms",
                   Int(model.rumbleDurationMilliseconds)
                 )
               ).font(.system(.caption, design: .monospaced))
@@ -156,10 +155,10 @@
             Slider(value: rumbleDurationBinding, in: 100...2_000, step: 50)
           }.disabled(!model.canSendOutput || model.isOutputBusy)
           HStack(spacing: 8) {
-            Button(OJDLocalized.string("inputTest.testRumble", fallback: "Test Rumble")) {
+            Button(OJDLocalized.string("inputTest.testRumble")) {
               model.testRumble()
             }.disabled(!model.canSendOutput || model.isOutputBusy)
-            Button(OJDLocalized.string("common.stop", fallback: "Stop")) { model.stopRumble() }
+            Button(OJDLocalized.string("common.stop")) { model.stopRumble() }
               .disabled(!model.canStopRumble)
             Spacer()
             outputStatus(for: .rumble)
@@ -168,8 +167,7 @@
       } else {
         unavailableOutputLabel(
           OJDLocalized.string(
-            "inputTest.rumbleUnavailable",
-            fallback: "Rumble is not supported by this controller."
+            "inputTest.rumbleUnavailable"
           )
         )
       }
@@ -180,17 +178,16 @@
       if model.capabilities.lightingFeatures.isEmpty {
         unavailableOutputLabel(
           OJDLocalized.string(
-            "inputTest.lightingUnavailable",
-            fallback: "Lighting controls are not available for this controller."
+            "inputTest.lightingUnavailable"
           )
         )
       } else {
         VStack(alignment: .leading, spacing: 12) {
           if model.capabilities.supportsPlayerIndicator {
             VStack(alignment: .leading, spacing: 6) {
-              Text(OJDLocalized.string("inputTest.playerIndicator", fallback: "Player indicator"))
+              Text(OJDLocalized.string("inputTest.playerIndicator"))
               Picker("", selection: playerIndicatorBinding) {
-                Text(OJDLocalized.string("inputTest.off", fallback: "Off")).tag(
+                Text(OJDLocalized.string("inputTest.off")).tag(
                   PhysicalPlayerIndicator.off
                 )
                 Text("1").tag(PhysicalPlayerIndicator.player1)
@@ -198,29 +195,29 @@
                 Text("3").tag(PhysicalPlayerIndicator.player3)
                 Text("4").tag(PhysicalPlayerIndicator.player4)
               }.pickerStyle(.segmented).labelsHidden()
-              Button(OJDLocalized.string("common.apply", fallback: "Apply")) {
+              Button(OJDLocalized.string("common.apply")) {
                 model.applyPlayerIndicator()
               }
             }
           }
           if model.capabilities.lightingFeatures.contains(.programmableColor) {
             HStack {
-              Text(OJDLocalized.string("inputTest.color", fallback: "Color"))
+              Text(OJDLocalized.string("inputTest.color"))
               Spacer()
               OJDPhysicalColorWell(color: colorBinding).frame(width: 44, height: 24)
-              Button(OJDLocalized.string("common.apply", fallback: "Apply")) { model.applyColor() }
+              Button(OJDLocalized.string("common.apply")) { model.applyColor() }
             }
           }
           if model.capabilities.supportsProgrammableBrightness {
             VStack(alignment: .leading, spacing: 5) {
               HStack {
-                Text(OJDLocalized.string("inputTest.brightness", fallback: "Brightness"))
+                Text(OJDLocalized.string("inputTest.brightness"))
                 Spacer()
                 Text("\(Int(model.brightness))").font(.system(.caption, design: .monospaced))
               }
               HStack {
                 Slider(value: brightnessBinding, in: 0...255, step: 1)
-                Button(OJDLocalized.string("common.apply", fallback: "Apply")) {
+                Button(OJDLocalized.string("common.apply")) {
                   model.applyBrightness()
                 }
               }
@@ -243,7 +240,7 @@
           horizontal: false,
           vertical: true
         ).ojdAccessibilityLabel(
-          OJDLocalized.string("inputTest.outputError", fallback: "Physical output error")
+          OJDLocalized.string("inputTest.outputError")
         )
       }
     }
@@ -295,11 +292,11 @@
       switch model.outputState {
       case .running(let current) where current == operation: ProgressView()
       case .succeeded(let current) where current == operation:
-        Text(OJDLocalized.string("common.done", fallback: "Done")).foregroundColor(
+        Text(OJDLocalized.string("common.done")).foregroundColor(
           Color(SemanticState.healthy.presentation.tone.color)
         )
       case .failed(let current) where current == operation:
-        Text(OJDLocalized.string("common.failed", fallback: "Failed")).foregroundColor(
+        Text(OJDLocalized.string("common.failed")).foregroundColor(
           Color(SemanticState.failure.presentation.tone.color)
         )
       default: EmptyView()

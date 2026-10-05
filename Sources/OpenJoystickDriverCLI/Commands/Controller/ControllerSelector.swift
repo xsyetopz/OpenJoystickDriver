@@ -51,20 +51,16 @@ struct ControllerSelector: ExpressibleByArgument, Equatable, Sendable {
         devices.isEmpty
         ? CLILocalized.format(
           "cli.controller.selector.none_connected",
-          "No controller matches '%@', because none is connected. Connect one and run "
-            + "'ojd controller list'.",
           text
         )
         : CLILocalized.format(
           "cli.controller.selector.not_found",
-          "No connected controller matches '%@'. Use an ID or VVVV:PPPP from this list:",
           text
         )
     } else {
       listed = matches
       message = CLILocalized.format(
         "cli.controller.selector.ambiguous",
-        "'%@' matches %lld controllers. Use one of these IDs:",
         text,
         matches.count
       )

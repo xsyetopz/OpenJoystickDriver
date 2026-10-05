@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktyvuoti profilį be valdiklio įvesties?";
 "profiles.emptyInputWarning" = "Šis profilis slopina visus valdiklio įvedimus.";
 "profiles.restoreDefaultInput" = "Atkurti numatomą įvedimą";
+"common.reset" = "Atstatyti";
+"profiles.useControllerDefaultColor" = "Naudoti valdiklio numatytąją reikšmę";
 "profiles.damagedProfile" = "Pažeistas profilis";
 "profiles.damagedLibrary" = "Pažeistas aktyvių profilių sąrašas";
 "profiles.deleteDamagedButton" = "Ištrinti sugadintą profilį…";

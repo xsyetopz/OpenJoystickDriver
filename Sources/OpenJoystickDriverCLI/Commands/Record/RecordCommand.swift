@@ -6,15 +6,10 @@ struct RecordCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "record",
     abstract: CLILocalized.text(
-      "cli.record.abstract",
-      "Draft, list, check, install, or remove controller records."
+      "cli.record.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.record.discussion",
-      "A controller record tells OpenJoystickDriver how to drive one controller model. Your "
-        + "records live in ~/Library/Application Support/OpenJoystickDriver/Controllers and "
-        + "add a model or patch a bundled one. The running service applies them when the "
-        + "directory changes. Only 'ojd record draft' needs the service."
+      "cli.record.discussion"
     ),
     subcommands: [
       RecordDraftCommand.self, RecordListCommand.self, RecordShowCommand.self,
@@ -30,13 +25,10 @@ struct RecordListCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text(
-      "cli.record.list.abstract",
-      "List every controller record and the layer it comes from."
+      "cli.record.list.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.record.list.discussion",
-      "Lists the bundled records with your records applied, and names each file OJD skipped "
-        + "and why."
+      "cli.record.list.discussion"
     )
   )
 
@@ -48,7 +40,7 @@ struct RecordListCommand: AsyncParsableCommand {
 
   @Flag(
     help: ArgumentHelp(
-      CLILocalized.text("cli.record.list.bundled", "List the bundled catalog alone.")
+      CLILocalized.text("cli.record.list.bundled")
     )
   )
   var bundled = false
@@ -88,8 +80,7 @@ struct RecordShowCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "show",
     abstract: CLILocalized.text(
-      "cli.record.show.abstract",
-      "Show the effective record of one controller model and the layer of each part."
+      "cli.record.show.abstract"
     )
   )
 
@@ -107,7 +98,7 @@ struct RecordShowCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.record.identity", "The controller model, as VVVV:PPPP."),
+      CLILocalized.text("cli.record.identity"),
       valueName: "VVVV:PPPP"
     )
   )
@@ -125,7 +116,6 @@ struct RecordShowCommand: AsyncParsableCommand {
           .notFound,
           CLILocalized.format(
             "cli.record.show.not_found",
-            "No controller record for %@. 'ojd record list' shows every record.",
             identity.text
           )
         )

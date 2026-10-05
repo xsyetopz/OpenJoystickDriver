@@ -15,37 +15,37 @@
           HStack(spacing: 8) {
             captureStatus
             Picker("", selection: $model.packetFilter) {
-              Text(OJDLocalized.string("developer.packetFilterActivity", fallback: "Activity")).tag(
+              Text(OJDLocalized.string("developer.packetFilterActivity")).tag(
                 DeveloperToolsViewModel.PacketFilter.activity
               )
-              Text(OJDLocalized.string("developer.packetFilterAll", fallback: "All")).tag(
+              Text(OJDLocalized.string("developer.packetFilterAll")).tag(
                 DeveloperToolsViewModel.PacketFilter.all
               )
             }.pickerStyle(SegmentedPickerStyle()).frame(width: 150).labelsHidden()
             Spacer()
             if model.isCapturing {
               Button(
-                OJDLocalized.string("common.stop", fallback: "Stop"),
+                OJDLocalized.string("common.stop"),
                 action: model.stopCapture
               ).keyboardShortcut(.defaultAction)
             } else {
               Button(
-                OJDLocalized.string("developer.startCapture", fallback: "Start Capture"),
+                OJDLocalized.string("developer.startCapture"),
                 action: model.startCapture
               ).keyboardShortcut(.defaultAction).disabled(model.selectedDevice == nil)
             }
             Button(
-              OJDLocalized.string("common.clear", fallback: "Clear"),
+              OJDLocalized.string("common.clear"),
               action: model.clearCapture
             ).disabled(model.packets.isEmpty && model.observedExtraInputs.isEmpty)
             OJDCompactSymbolButton(
               symbolName: "doc.on.doc",
-              label: OJDLocalized.string("common.copyAll", fallback: "Copy All"),
+              label: OJDLocalized.string("common.copyAll"),
               action: model.copyPacketCapture
             ).disabled(model.packets.isEmpty)
             OJDCompactSymbolButton(
               symbolName: "square.and.arrow.up",
-              label: OJDLocalized.string("common.export", fallback: "Export..."),
+              label: OJDLocalized.string("common.export"),
               action: model.exportPacketCapture
             ).disabled(model.packets.isEmpty)
           }
@@ -56,7 +56,6 @@
             Text(
               OJDLocalized.formatted(
                 "developer.hiddenIdlePackets",
-                fallback: "Hidden %d idle packets (still included in Export).",
                 model.hiddenIdlePacketCount
               )
             ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
@@ -64,13 +63,12 @@
 
           Text(
             OJDLocalized.string(
-              "developer.packetSharingWarning",
-              fallback: "Packet contents vary by controller. Check the file before sharing."
+              "developer.packetSharingWarning"
             )
           ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         }.padding(4)
       } label: {
-        Text(OJDLocalized.string("developer.packetCapture", fallback: "Raw Packet Capture")).font(
+        Text(OJDLocalized.string("developer.packetCapture")).font(
           .headline
         )
       }
@@ -80,29 +78,28 @@
     private var captureStatus: some View {
       switch model.captureState {
       case .idle:
-        statusLabel(OJDLocalized.string("developer.ready", fallback: "Ready"), symbol: "circle")
+        statusLabel(OJDLocalized.string("developer.ready"), symbol: "circle")
       case .starting:
         statusLabel(
-          OJDLocalized.string("developer.starting", fallback: "Starting..."),
+          OJDLocalized.string("developer.starting"),
           symbol: "clock"
         )
       case .capturing:
         statusLabel(
-          OJDLocalized.string("developer.capturing", fallback: "Capturing"),
+          OJDLocalized.string("developer.capturing"),
           symbol: "record.circle"
         )
       case .stopped:
         statusLabel(
           OJDLocalized.formatted(
             "developer.stoppedPackets",
-            fallback: "Stopped · %d packets",
             model.displayedPackets.count
           ),
           symbol: "stop.circle"
         )
       case .noPackets:
         statusLabel(
-          OJDLocalized.string("developer.noPackets", fallback: "No packets captured"),
+          OJDLocalized.string("developer.noPackets"),
           symbol: "tray"
         )
       case .failed(let message):
@@ -119,19 +116,16 @@
           Text(
             model.isCapturing
               ? OJDLocalized.string(
-                "developer.waitingForPackets",
-                fallback: "Waiting for USB packets. Press a controller button."
+                "developer.waitingForPackets"
               )
               : OJDLocalized.string(
-                "developer.emptyCapture",
-                fallback: "Press Start Capture, then press controller buttons."
+                "developer.emptyCapture"
               )
           ).foregroundColor(Color(NSColor.secondaryLabelColor))
           if model.isCapturing {
             Text(
               OJDLocalized.string(
-                "developer.keepAliveNote",
-                fallback: "Routine idle traffic is hidden so controller activity stays visible."
+                "developer.keepAliveNote"
               )
             ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
           }
@@ -145,7 +139,7 @@
       HStack(spacing: 6) {
         OJDSystemSymbol(
           name: symbol,
-          fallback: OJDLocalized.string("common.status", fallback: "Status")
+          fallback: OJDLocalized.string("common.status")
         )
         Text(text)
       }.accessibilityElement(children: .combine)
@@ -166,8 +160,7 @@
       table.dataSource = context.coordinator
       let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("packet"))
       column.title = OJDLocalized.string(
-        "developer.packetColumns",
-        fallback: "Time       Direction  Bytes  Data"
+        "developer.packetColumns"
       )
       column.minWidth = 480
       table.addTableColumn(column)
@@ -178,7 +171,7 @@
       scrollView.autohidesScrollers = true
       scrollView.borderType = .bezelBorder
       scrollView.setAccessibilityLabel(
-        OJDLocalized.string("developer.packetCapture", fallback: "Raw Packet Capture")
+        OJDLocalized.string("developer.packetCapture")
       )
       return scrollView
     }

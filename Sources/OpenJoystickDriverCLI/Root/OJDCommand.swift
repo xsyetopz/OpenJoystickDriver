@@ -6,20 +6,10 @@ struct OJDCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "ojd",
     abstract: CLILocalized.text(
-      "cli.root.abstract",
-      "Configure and inspect OpenJoystickDriver, the macOS gamepad driver."
+      "cli.root.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.root.discussion",
-      """
-      Exit codes:
-        0    Success.
-        1    The command failed.
-        64   Usage error.
-        69   The service is not running. Start it with 'ojd service start'.
-        77   A macOS permission is missing.
-        130  Interrupted.
-      """
+      "cli.root.discussion"
     ),
     version: ApplicationVersion.current,
     subcommands: [

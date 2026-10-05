@@ -8,17 +8,10 @@ struct DiagnoseCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "diagnose",
     abstract: CLILocalized.text(
-      "cli.diagnose.abstract",
-      "Run every check and report what is wrong."
+      "cli.diagnose.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.diagnose.discussion",
-      """
-      Each check reports pass, warn, fail, or skip. Checks that need the service are skipped \
-      while it is stopped. Exits 1 when any check fails. --soak adds a runtime-health check \
-      that samples the service for the given time; without it that check is skipped. \
-      --bundle also writes a support report; review it before sharing.
-      """
+      "cli.diagnose.discussion"
     )
   )
 
@@ -57,7 +50,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
 
   @Option(
     help: ArgumentHelp(
-      CLILocalized.text("cli.diagnose.bundle", "Also write a support bundle to this file."),
+      CLILocalized.text("cli.diagnose.bundle"),
       valueName: "path"
     )
   )
@@ -66,8 +59,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.diagnose.soak",
-        "Also sample the service's memory, file descriptors, and CPU for this long (1-86400)."
+        "cli.diagnose.soak"
       ),
       valueName: "seconds"
     )
@@ -78,8 +70,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
     name: .customLong("interval-ms"),
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.diagnose.interval",
-        "With --soak, milliseconds between samples (100-60000)."
+        "cli.diagnose.interval"
       ),
       valueName: "ms"
     )
@@ -90,8 +81,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
     name: .customLong("rss-limit-mib"),
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.diagnose.rss_limit",
-        "With --soak, fail above this resident size in MiB; 0 disables (0-65536)."
+        "cli.diagnose.rss_limit"
       ),
       valueName: "mib"
     )
@@ -102,8 +92,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
     name: .customLong("footprint-limit-mib"),
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.diagnose.footprint_limit",
-        "With --soak, fail above this physical footprint in MiB; 0 disables (0-65536)."
+        "cli.diagnose.footprint_limit"
       ),
       valueName: "mib"
     )
@@ -115,22 +104,20 @@ struct DiagnoseCommand: AsyncParsableCommand {
     guard let soak else { return }
     guard (1...86_400).contains(soak) else {
       throw ValidationError(
-        CLILocalized.text("cli.diagnose.soak_range", "--soak must be between 1 and 86400 seconds.")
+        CLILocalized.text("cli.diagnose.soak_range")
       )
     }
     guard (100...60_000).contains(intervalMilliseconds) else {
       throw ValidationError(
         CLILocalized.text(
-          "cli.diagnose.interval_range",
-          "--interval-ms must be between 100 and 60000."
+          "cli.diagnose.interval_range"
         )
       )
     }
     guard (0...65_536).contains(residentLimitMiB), (0...65_536).contains(footprintLimitMiB) else {
       throw ValidationError(
         CLILocalized.text(
-          "cli.diagnose.limit_range",
-          "--rss-limit-mib and --footprint-limit-mib must be between 0 and 65536."
+          "cli.diagnose.limit_range"
         )
       )
     }
@@ -139,7 +126,6 @@ struct DiagnoseCommand: AsyncParsableCommand {
       throw ValidationError(
         CLILocalized.format(
           "cli.diagnose.sample_limit",
-          "--soak with this --interval-ms would take %lld samples; raise --interval-ms.",
           samples
         )
       )
@@ -164,7 +150,6 @@ struct DiagnoseCommand: AsyncParsableCommand {
       throw ValidationError(
         CLILocalized.format(
           "cli.diagnose.bundle_parent",
-          "--bundle needs an existing directory; %@ does not exist.",
           parent
         )
       )
@@ -195,7 +180,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
         do {
           let url = try Self.bundleURL(bundle)
           CLIOutput.stderr(
-            CLILocalized.text("cli.diagnose.bundle_progress", "Writing the support bundle...")
+            CLILocalized.text("cli.diagnose.bundle_progress")
           )
           try Self.writeBundle(to: url, snapshot: snapshot)
           bundleURL = url
@@ -212,7 +197,6 @@ struct DiagnoseCommand: AsyncParsableCommand {
         CLIOutput.success(
           CLILocalized.format(
             "cli.diagnose.bundle_written",
-            "Support bundle written to %@. Review it before sharing; device names are included.",
             bundleURL.path
           )
         )
@@ -222,7 +206,6 @@ struct DiagnoseCommand: AsyncParsableCommand {
           .fileAccessFailed,
           CLILocalized.format(
             "cli.diagnose.bundle_failed",
-            "The support bundle was not written: %@. Choose another --bundle path.",
             bundleError.localizedDescription
           )
         )
@@ -232,8 +215,6 @@ struct DiagnoseCommand: AsyncParsableCommand {
           .diagnoseFailed,
           CLILocalized.format(
             "cli.diagnose.failed",
-            "Failed checks: %lld. Fix them using the details above, or run "
-              + "'ojd diagnose --bundle <path>' and attach the file to a bug report.",
             report.failureCount
           )
         )

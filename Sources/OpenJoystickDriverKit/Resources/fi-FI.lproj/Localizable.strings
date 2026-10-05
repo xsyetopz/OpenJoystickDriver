@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktivoida profiili ilman ohjaajan sisäänkäyntiä?";
 "profiles.emptyInputWarning" = "Tämä profiili supistaa kaikki valvonnan sisäänkäynnit.";
 "profiles.restoreDefaultInput" = "Vastuttaa oletusarvio";
+"common.reset" = "Palauta";
+"profiles.useControllerDefaultColor" = "Käytä ohjaimen oletusta";
 "profiles.damagedProfile" = "Vaurioitunut profiili";
 "profiles.damagedLibrary" = "Vaurioitunut aktiivisten profiilien luettelo";
 "profiles.deleteDamagedButton" = "Poista vaurioitunut profiili…";

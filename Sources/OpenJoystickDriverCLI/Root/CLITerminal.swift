@@ -50,8 +50,7 @@ enum CLITerminal {
         .confirmationRequired,
         needsForce
           ?? CLILocalized.text(
-            "cli.error.confirm_needs_force",
-            "This change cannot be undone. Add --force to confirm it without a prompt."
+            "cli.error.confirm_needs_force"
           )
       )
     }
@@ -60,7 +59,7 @@ enum CLITerminal {
     guard answer == "y" || answer == "yes" else {
       throw CLIFailure(
         .aborted,
-        CLILocalized.text("cli.error.confirm_declined", "Nothing changed.")
+        CLILocalized.text("cli.error.confirm_declined")
       )
     }
   }

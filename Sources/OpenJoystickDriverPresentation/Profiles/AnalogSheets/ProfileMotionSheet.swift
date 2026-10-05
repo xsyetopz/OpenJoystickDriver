@@ -34,131 +34,120 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
-        Text(label("title", "Motion tuning")).font(.headline)
+        Text(label("title")).font(.headline)
         ScrollView {
           VStack(alignment: .leading, spacing: 12) {
             if showsGyroOutput {
               ProfileGyroFields(draft: $gyro)
               Divider()
             }
-            Picker(label("space", "Coordinate space"), selection: $draft.space) {
-              Text(label("local", "Local")).tag(RemappingMotionSpace.local)
-              Text(label("player", "Player")).tag(RemappingMotionSpace.player)
-              Text(label("world", "World")).tag(RemappingMotionSpace.world)
+            Picker(label("space"), selection: $draft.space) {
+              Text(label("local")).tag(RemappingMotionSpace.local)
+              Text(label("player")).tag(RemappingMotionSpace.player)
+              Text(label("world")).tag(RemappingMotionSpace.world)
             }
             slider(
               "pitchSensitivity",
-              "Pitch sensitivity",
               value: $draft.pitchSensitivity,
               maximum: 100
             )
-            slider("yawSensitivity", "Yaw sensitivity", value: $draft.yawSensitivity, maximum: 100)
+            slider("yawSensitivity", value: $draft.yawSensitivity, maximum: 100)
             slider(
               "smoothingHalfTimeMs",
-              "Smoothing half-time (ms)",
               value: $draft.smoothingHalfTimeMs,
               maximum: 1000
             )
             slider(
               "thresholdDegreesPerSecond",
-              "Rate threshold (degrees/s)",
               value: $draft.thresholdDegreesPerSecond,
               maximum: 1000
             )
             slider(
               "yawRelaxation",
-              "Player yaw relaxation",
               value: $draft.yawRelaxation,
               maximum: 10
             )
             slider(
               "sideReductionThreshold",
-              "World side reduction",
               value: $draft.sideReductionThreshold,
               maximum: 1
             )
             slider(
               "gravityCorrectionRate",
-              "Gravity correction rate (1/s)",
               value: $draft.gravityCorrectionRate,
               maximum: 100
             )
-            Toggle(label("invertPitch", "Invert pitch"), isOn: $draft.invertPitch)
-            Toggle(label("invertYaw", "Invert yaw"), isOn: $draft.invertYaw)
+            Toggle(label("invertPitch"), isOn: $draft.invertPitch)
+            Toggle(label("invertYaw"), isOn: $draft.invertYaw)
             Toggle(
-              label("automaticBias", "Automatic stillness calibration"),
+              label("automaticBias"),
               isOn: $draft.automaticBias
             )
             Divider()
-            Toggle(label("leanEnabled", "Enable lean sources"), isOn: $draft.leanEnabled)
+            Toggle(label("leanEnabled"), isOn: $draft.leanEnabled)
             if draft.leanEnabled {
               slider(
                 "leanThresholdDegrees",
-                "Lean threshold (degrees)",
                 value: $draft.leanThresholdDegrees,
                 maximum: 89
               )
               slider(
                 "leanHysteresisDegrees",
-                "Lean release hysteresis (degrees)",
                 value: $draft.leanHysteresisDegrees,
                 maximum: 30
               )
             }
-            Toggle(label("steeringEnabled", "Enable motion steering"), isOn: $draft.steeringEnabled)
+            Toggle(label("steeringEnabled"), isOn: $draft.steeringEnabled)
             if draft.steeringEnabled {
               Picker(
-                label("steeringOutput", "Virtual steering axis"),
+                label("steeringOutput"),
                 selection: $draft.steeringOutput
               ) {
-                Text(label("steeringLeft", "Left stick horizontal")).tag(
+                Text(label("steeringLeft")).tag(
                   RemappingMotionSteeringOutput.leftStickX
                 )
-                Text(label("steeringRight", "Right stick horizontal")).tag(
+                Text(label("steeringRight")).tag(
                   RemappingMotionSteeringOutput.rightStickX
                 )
               }
               slider(
                 "steeringDeadzoneDegrees",
-                "Steering deadzone (degrees)",
                 value: $draft.steeringDeadzoneDegrees,
                 maximum: 89
               )
               slider(
                 "steeringFullScaleDegrees",
-                "Full steering angle (degrees)",
                 value: $draft.steeringFullScaleDegrees,
                 maximum: 90
               )
               slider(
                 "steeringResponseExponent",
-                "Steering response exponent",
                 value: $draft.steeringResponseExponent,
                 maximum: 10
               )
-              Toggle(label("steeringInverted", "Invert steering"), isOn: $draft.steeringInverted)
+              Toggle(label("steeringInverted"), isOn: $draft.steeringInverted)
             }
           }.padding(.trailing, 8)
         }
         if let errorMessage { Text(errorMessage).foregroundColor(.red) }
         HStack {
-          Button(OJDLocalized.string("common.reset", fallback: "Reset")) {
+          Button(OJDLocalized.string("common.reset")) {
             draft = ProfileMotionDraft(.default)
             numericText = draft.numericText
             gyro = ProfileGyroDraft(.default)
             errorMessage = nil
           }
           if let onInherit {
-            Button(OJDLocalized.string("profiles.motion.inherit", fallback: "Use profile tuning")) {
+            Button(OJDLocalized.string("profiles.motion.inherit")) {
               onInherit()
               presentationMode.wrappedValue.dismiss()
             }
           }
           Spacer()
-          Button(OJDLocalized.string("common.cancel", fallback: "Cancel")) {
+          Button(OJDLocalized.string("common.cancel")) {
             presentationMode.wrappedValue.dismiss()
           }
-          Button(OJDLocalized.string("common.save", fallback: "Save")) {
+          Button(OJDLocalized.string("common.save")) {
             do {
               let edited = try draft.applyingNumericText(
                 numericText,
@@ -175,22 +164,21 @@
       }.padding(28).frame(width: 500, height: 600)
     }
 
-    private func label(_ key: String, _ fallback: String) -> String {
-      OJDLocalized.string("profiles.motion." + key, fallback: fallback)
+    private func label(_ key: String) -> String {
+      OJDLocalized.string("profiles.motion." + key)
     }
 
     private func slider(
       _ key: String,
-      _ fallback: String,
       value: Binding<Double>,
       maximum: Double
     ) -> some View {
       VStack(alignment: .leading, spacing: 4) {
         HStack {
-          Text(label(key, fallback))
+          Text(label(key))
           Spacer()
           TextField(
-            label(key, fallback),
+            label(key),
             text: Binding(
               get: { numericText[key] ?? String(value.wrappedValue) },
               set: { text in
@@ -203,7 +191,7 @@
                 }
               }
             )
-          ).frame(width: 100).ojdAccessibilityLabel(label(key, fallback))
+          ).frame(width: 100).ojdAccessibilityLabel(label(key))
         }
         Slider(
           value: Binding(
@@ -214,7 +202,7 @@
             }
           ),
           in: 0...maximum
-        ).ojdAccessibilityLabel(label(key, fallback))
+        ).ojdAccessibilityLabel(label(key))
       }
     }
   }

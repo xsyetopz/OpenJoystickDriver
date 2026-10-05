@@ -26,11 +26,10 @@
       var errorDescription: String? {
         switch self {
         case .cancelled:
-          return OJDLocalized.string("settings.commandLineTool.cancelled", fallback: "Cancelled.")
+          return OJDLocalized.string("settings.commandLineTool.cancelled")
         case .blockedByFile(let path):
           return OJDLocalized.formatted(
             "settings.commandLineTool.blocked",
-            fallback: "%@ is a file, not a link. Remove it, then install again.",
             path
           )
         case .failed(let detail): return detail
@@ -127,8 +126,7 @@
       throw CommandLineToolLink.Failure.failed(
         error[NSAppleScript.errorMessage] as? String
           ?? OJDLocalized.string(
-            "settings.commandLineTool.failed",
-            fallback: "macOS did not allow the change."
+            "settings.commandLineTool.failed"
           )
       )
     }

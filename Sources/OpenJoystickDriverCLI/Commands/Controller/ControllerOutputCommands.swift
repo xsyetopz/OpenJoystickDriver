@@ -59,7 +59,6 @@ private func sendOutput(_ requests: [OutputRequest], to selector: ControllerSele
     CLIOutput.success(
       CLILocalized.format(
         "cli.controller.output.sent",
-        "Sent %@ to %@.",
         report.results.map(\.command).joined(separator: ", "),
         entries.0.name
       )
@@ -79,7 +78,6 @@ private func check(
       .controllerRequestFailed,
       CLILocalized.format(
         "cli.controller.output.unsupported",
-        "%@ has no %@. Run 'ojd controller show %@' to see what it supports.",
         device.name,
         request.feature,
         device.runtimeIdentifier
@@ -90,7 +88,6 @@ private func check(
       .controllerRequestFailed,
       CLILocalized.format(
         "cli.controller.output.not_ready",
-        "%@ is not ready for output yet. Retry in a moment.",
         device.name
       )
     )
@@ -99,7 +96,6 @@ private func check(
       .controllerRequestFailed,
       CLILocalized.format(
         "cli.controller.output.gone",
-        "%@ disconnected before the command was sent. Reconnect it and retry.",
         device.name
       )
     )
@@ -108,7 +104,6 @@ private func check(
       .controllerRequestFailed,
       CLILocalized.format(
         "cli.controller.output.failed",
-        "%@ did not accept the %@ command (%@). Check it with 'ojd log show'.",
         device.name,
         request.name,
         ControllerShowCommand.kebabCase(result.outcome.rawValue)
@@ -121,13 +116,10 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "rumble",
     abstract: CLILocalized.text(
-      "cli.controller.rumble.abstract",
-      "Run a controller's rumble motors."
+      "cli.controller.rumble.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.controller.rumble.discussion",
-      "Intensities run from 0 to 255. With no intensity option, both main motors run at 180. "
-        + "Main motors also drive trackpad haptics. Set every intensity to 0 to stop rumble."
+      "cli.controller.rumble.discussion"
     )
   )
 
@@ -137,43 +129,41 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
-  @Option(help: intensityHelp("cli.controller.rumble.left", "Left main motor intensity."))
+  @Option(help: intensityHelp("cli.controller.rumble.left"))
   var left: UInt8?
 
-  @Option(help: intensityHelp("cli.controller.rumble.right", "Right main motor intensity."))
+  @Option(help: intensityHelp("cli.controller.rumble.right"))
   var right: UInt8?
 
   @Option(
-    help: intensityHelp("cli.controller.rumble.left_trigger", "Left trigger motor intensity.")
+    help: intensityHelp("cli.controller.rumble.left_trigger")
   )
   var leftTrigger: UInt8?
 
   @Option(
-    help: intensityHelp("cli.controller.rumble.right_trigger", "Right trigger motor intensity.")
+    help: intensityHelp("cli.controller.rumble.right_trigger")
   )
   var rightTrigger: UInt8?
 
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.controller.rumble.duration",
-        "Seconds to rumble, above 0 and at most 5."
+        "cli.controller.rumble.duration"
       ),
       valueName: "seconds"
     )
   )
   var duration = 0.45
 
-  private static func intensityHelp(_ key: String, _ english: String) -> ArgumentHelp {
-    ArgumentHelp(CLILocalized.text(key, english), valueName: "0-255")
+  private static func intensityHelp(_ key: String) -> ArgumentHelp {
+    ArgumentHelp(CLILocalized.text(key), valueName: "0-255")
   }
 
   func validate() throws {
     guard duration.isFinite, duration > 0, duration <= 5 else {
       throw ValidationError(
         CLILocalized.text(
-          "cli.controller.rumble.error.duration",
-          "--duration needs a number of seconds above 0 and at most 5."
+          "cli.controller.rumble.error.duration"
         )
       )
     }
@@ -202,7 +192,7 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
           duration: .milliseconds(max(1, Int((duration * 1000).rounded())))
         )
       let selector = controller
-      let feature = CLILocalized.text("cli.controller.feature.rumble", "rumble motor")
+      let feature = CLILocalized.text("cli.controller.feature.rumble")
       try await sendRumble(
         OutputRequest(name: "rumble", command: command, feature: feature),
         requested: intensities.activeMotors,
@@ -246,7 +236,6 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
       CLIOutput.stderr(
         CLILocalized.format(
           "cli.controller.rumble.dropped",
-          "warning: %@ has no %@ motor; it did not run.",
           device.name,
           ControllerShowCommand.kebabCase(motor.rawValue)
         )
@@ -257,7 +246,6 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
         .controllerRequestFailed,
         CLILocalized.format(
           "cli.controller.rumble.none_ran",
-          "%@ has none of the requested motors. Run 'ojd controller show %@' to see its motors.",
           device.name,
           device.runtimeIdentifier
         )
@@ -287,12 +275,10 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
         requested.isEmpty
           ? CLILocalized.format(
             "cli.controller.rumble.stopped",
-            "Stopped rumble on %@.",
             device.name
           )
           : CLILocalized.format(
             "cli.controller.rumble.sent",
-            "Rumbled %@ on %@.",
             ran.map { ControllerShowCommand.kebabCase($0.rawValue) }.joined(separator: ", "),
             device.name
           )
@@ -323,8 +309,7 @@ struct ControllerPlayerCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "player",
     abstract: CLILocalized.text(
-      "cli.controller.player.abstract",
-      "Set a controller's player indicator lights."
+      "cli.controller.player.abstract"
     )
   )
 
@@ -336,7 +321,7 @@ struct ControllerPlayerCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.controller.player.number", "The player number, 1 to 4, or off."),
+      CLILocalized.text("cli.controller.player.number"),
       valueName: "number"
     )
   )
@@ -349,7 +334,7 @@ struct ControllerPlayerCommand: AsyncParsableCommand {
           OutputRequest(
             name: "player",
             command: .setPlayerIndicator(number.indicator),
-            feature: CLILocalized.text("cli.controller.feature.player", "player indicator lights")
+            feature: CLILocalized.text("cli.controller.feature.player")
           )
         ],
         to: controller
@@ -381,8 +366,7 @@ struct ControllerLightCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "light",
     abstract: CLILocalized.text(
-      "cli.controller.light.abstract",
-      "Set a controller's light color or brightness."
+      "cli.controller.light.abstract"
     )
   )
 
@@ -394,7 +378,7 @@ struct ControllerLightCommand: AsyncParsableCommand {
 
   @Option(
     help: ArgumentHelp(
-      CLILocalized.text("cli.controller.light.color", "Lightbar color as hex, such as FF8000."),
+      CLILocalized.text("cli.controller.light.color"),
       valueName: "RRGGBB"
     )
   )
@@ -402,7 +386,7 @@ struct ControllerLightCommand: AsyncParsableCommand {
 
   @Option(
     help: ArgumentHelp(
-      CLILocalized.text("cli.controller.light.brightness", "LED brightness."),
+      CLILocalized.text("cli.controller.light.brightness"),
       valueName: "0-255"
     )
   )
@@ -412,8 +396,7 @@ struct ControllerLightCommand: AsyncParsableCommand {
     guard color != nil || brightness != nil else {
       throw ValidationError(
         CLILocalized.text(
-          "cli.controller.light.error.missing",
-          "Give --color, --brightness, or both."
+          "cli.controller.light.error.missing"
         )
       )
     }
@@ -427,7 +410,7 @@ struct ControllerLightCommand: AsyncParsableCommand {
           OutputRequest(
             name: "color",
             command: .setRGB(color.color),
-            feature: CLILocalized.text("cli.controller.feature.color", "programmable light color")
+            feature: CLILocalized.text("cli.controller.feature.color")
           )
         )
       }
@@ -437,8 +420,7 @@ struct ControllerLightCommand: AsyncParsableCommand {
             name: "brightness",
             command: .setLightBrightness(UnipolarValue(byte: brightness)),
             feature: CLILocalized.text(
-              "cli.controller.feature.brightness",
-              "adjustable light brightness"
+              "cli.controller.feature.brightness"
             )
           )
         )

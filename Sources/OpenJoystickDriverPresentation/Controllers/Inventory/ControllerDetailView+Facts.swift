@@ -39,20 +39,18 @@
         Alert(
           title: Text(
             OJDLocalized.string(
-              "controllers.disconnectWirelessConfirmTitle",
-              fallback: "Disconnect Wireless Controller?"
+              "controllers.disconnectWirelessConfirmTitle"
             )
           ),
           message: Text(
             OJDLocalized.formatted(
               "controllers.disconnectWirelessConfirmMessage",
-              fallback: "%@ will stay disconnected until you connect it again manually.",
               device.name
             )
           ),
           primaryButton: .destructive(
             Text(
-              OJDLocalized.string("controllers.disconnectWirelessConfirm", fallback: "Disconnect")
+              OJDLocalized.string("controllers.disconnectWirelessConfirm")
             )
           ) { Task { @MainActor in await viewModel.disconnectWirelessController(device) } },
           secondaryButton: .cancel()
@@ -69,20 +67,18 @@
         VStack(alignment: .leading, spacing: 3) {
           Text(
             OJDLocalized.string(
-              "controllers.disconnectWireless",
-              fallback: "Disconnect Wireless Controller..."
+              "controllers.disconnectWireless"
             )
           ).font(.headline)
           Text(
             OJDLocalized.string(
-              "controllers.disconnectWirelessSummary",
-              fallback: "Stop this Bluetooth connection without affecting other controllers."
+              "controllers.disconnectWirelessSummary"
             )
           ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         Spacer(minLength: 12)
         Button(
-          OJDLocalized.string("controllers.disconnectWirelessButton", fallback: "Disconnect...")
+          OJDLocalized.string("controllers.disconnectWirelessButton")
         ) { confirmsWirelessDisconnect = true }
       }
     }
@@ -91,25 +87,24 @@
       HStack(alignment: .top, spacing: 8) {
         OJDSystemSymbol(
           name: SemanticState.failure.presentation.symbolName,
-          fallback: OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+          fallback: OJDLocalized.string("common.needsAttention")
         ).foregroundColor(Color(SemanticState.failure.presentation.tone.color))
         Text(message).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
           horizontal: false,
           vertical: true
         )
       }.ojdAccessibilityLabel(
-        OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+        OJDLocalized.string("common.needsAttention")
       ).ojdAccessibilityValue(message)
     }
 
     private var inputTestAction: some View {
       HStack(alignment: .center, spacing: 12) {
         VStack(alignment: .leading, spacing: 3) {
-          Text(OJDLocalized.string("inputTest.title", fallback: "Input Test")).font(.headline)
+          Text(OJDLocalized.string("inputTest.title")).font(.headline)
           Text(
             OJDLocalized.string(
-              "inputTest.summary",
-              fallback: "Test buttons, sticks, triggers, rumble, and controller lighting."
+              "inputTest.summary"
             )
           ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
             horizontal: false,
@@ -117,7 +112,7 @@
           )
         }
         Spacer(minLength: 12)
-        Button(OJDLocalized.string("inputTest.open", fallback: "Open Input Test...")) {
+        Button(OJDLocalized.string("inputTest.open")) {
           openInputTest(device)
         }.disabled(device.sessionState == .suspended)
       }
@@ -128,34 +123,30 @@
         VStack(alignment: .leading, spacing: 3) {
           Text(
             device.sessionState == .suspended
-              ? OJDLocalized.string("controllers.suspended", fallback: "Suspended")
+              ? OJDLocalized.string("controllers.suspended")
               : OJDLocalized.string(
-                "controllers.sessionActive",
-                fallback: "Managed by OpenJoystickDriver"
+                "controllers.sessionActive"
               )
           ).font(.headline)
           Text(
             device.sessionState == .suspended
               ? OJDLocalized.string(
-                "controllers.suspendedSummary",
-                fallback: "Input and OpenJoystickDriver output are paused until you resume."
+                "controllers.suspendedSummary"
               )
               : OJDLocalized.string(
-                "controllers.disconnectSummary",
-                fallback: "Pause input, physical effects, and OpenJoystickDriver virtual output."
+                "controllers.disconnectSummary"
               )
           ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         Spacer(minLength: 12)
         if device.sessionState == .suspended {
-          Button(OJDLocalized.string("controllers.resume", fallback: "Resume")) {
+          Button(OJDLocalized.string("controllers.resume")) {
             Task { @MainActor in await viewModel.resumeController(device) }
           }
         } else {
           Button(
             OJDLocalized.string(
-              "controllers.disconnectFromOJD",
-              fallback: "Disconnect from OpenJoystickDriver"
+              "controllers.disconnectFromOJD"
             )
           ) { Task { @MainActor in await viewModel.suspendController(device) } }
         }
@@ -185,32 +176,30 @@
       switch activeProfile {
       case .loading:
         KeyValueRow(
-          label: OJDLocalized.string("controllers.activeProfile", fallback: "Active profile"),
-          value: OJDLocalized.string("status.checking", fallback: "Checking...")
+          label: OJDLocalized.string("controllers.activeProfile"),
+          value: OJDLocalized.string("status.checking")
         )
       case .noProfile:
         KeyValueRow(
-          label: OJDLocalized.string("controllers.activeProfile", fallback: "Active profile"),
-          value: OJDLocalized.string("common.none", fallback: "None")
+          label: OJDLocalized.string("controllers.activeProfile"),
+          value: OJDLocalized.string("common.none")
         )
       case .profile(let name):
         KeyValueRow(
-          label: OJDLocalized.string("controllers.activeProfile", fallback: "Active profile"),
+          label: OJDLocalized.string("controllers.activeProfile"),
           value: name
         )
       case .unavailable(let message):
         profileFailureRow(
           label: OJDLocalized.string(
-            "controllers.profileUnavailable",
-            fallback: "Active profile unavailable"
+            "controllers.profileUnavailable"
           ),
           message: message
         )
       case .error(let message):
         profileFailureRow(
           label: OJDLocalized.string(
-            "controllers.profileLoadError",
-            fallback: "Active profile could not be loaded"
+            "controllers.profileLoadError"
           ),
           message: message
         )
@@ -220,10 +209,10 @@
     private func profileFailureRow(label: String, message: String) -> some View {
       VStack(alignment: .leading, spacing: 4) {
         HStack {
-          Text(OJDLocalized.string("controllers.activeProfile", fallback: "Active profile"))
+          Text(OJDLocalized.string("controllers.activeProfile"))
             .foregroundColor(Color(NSColor.secondaryLabelColor))
           Spacer()
-          Text(OJDLocalized.string("common.needsAttention", fallback: "Needs attention"))
+          Text(OJDLocalized.string("common.needsAttention"))
             .foregroundColor(Color(NSColor.secondaryLabelColor))
         }
 
@@ -232,7 +221,7 @@
           horizontal: false,
           vertical: true
         )
-        Button(OJDLocalized.string("common.tryAgain", fallback: "Try again"), action: retry)
+        Button(OJDLocalized.string("common.tryAgain"), action: retry)
 
       }
     }
@@ -271,27 +260,27 @@
     private var controllerFacts: [(label: String, value: String)] {
       [
         (
-          OJDLocalized.string("controllers.publishedAs", fallback: "Published as"),
+          OJDLocalized.string("controllers.publishedAs"),
           device.publishedIdentityLabel
         ),
         (
-          OJDLocalized.string("common.protocol", fallback: "Protocol"),
+          OJDLocalized.string("common.protocol"),
           device.protocolBinding.displayLabel
         ),
-        (OJDLocalized.string("common.serialNumber", fallback: "Serial number"), serialNumberLabel),
-        (OJDLocalized.string("controllers.battery", fallback: "Battery"), batteryPercentageLabel),
+        (OJDLocalized.string("common.serialNumber"), serialNumberLabel),
+        (OJDLocalized.string("controllers.battery"), batteryPercentageLabel),
         (
-          OJDLocalized.string("controllers.chargingState", fallback: "Charging state"),
+          OJDLocalized.string("controllers.chargingState"),
           chargingStateLabel
         ),
-        (OJDLocalized.string("controllers.cableState", fallback: "Cable state"), cableStateLabel),
-        (OJDLocalized.string("controllers.usbIdentifier", fallback: "USB VID/PID"), usbIdentifier),
+        (OJDLocalized.string("controllers.cableState"), cableStateLabel),
+        (OJDLocalized.string("controllers.usbIdentifier"), usbIdentifier),
         (
-          OJDLocalized.string("common.inputEndpoint", fallback: "Input endpoint"),
+          OJDLocalized.string("common.inputEndpoint"),
           endpointLabel(device.inputEndpoint)
         ),
         (
-          OJDLocalized.string("common.outputEndpoint", fallback: "Output endpoint"),
+          OJDLocalized.string("common.outputEndpoint"),
           endpointLabel(device.outputEndpoint)
         ),
       ]
@@ -299,21 +288,21 @@
 
     var serialNumberLabel: String {
       guard let serialNumber = device.serialNumber else {
-        return OJDLocalized.string("controllers.notReported", fallback: "Not reported")
+        return OJDLocalized.string("controllers.notReported")
       }
       return reportedValue(serialNumber)
     }
 
     var usbIdentifier: String {
       guard device.vendorID != 0 || device.productID != 0 else {
-        return OJDLocalized.string("controllers.notReported", fallback: "Not reported")
+        return OJDLocalized.string("controllers.notReported")
       }
       return String(format: "%04X:%04X", device.vendorID, device.productID)
     }
 
     var batteryPercentageLabel: String {
       guard let percentage = device.connectionState?.power.battery.percentageText else {
-        return OJDLocalized.string("common.unknown", fallback: "Unknown")
+        return OJDLocalized.string("common.unknown")
       }
       return percentage
     }
@@ -321,34 +310,34 @@
     var chargingStateLabel: String {
       switch device.connectionState?.power.charging ?? .unknown {
       case .discharging:
-        return OJDLocalized.string("controllers.discharging", fallback: "Discharging")
-      case .charging: return OJDLocalized.string("controllers.charging", fallback: "Charging")
-      case .full: return OJDLocalized.string("controllers.batteryFull", fallback: "Full")
+        return OJDLocalized.string("controllers.discharging")
+      case .charging: return OJDLocalized.string("controllers.charging")
+      case .full: return OJDLocalized.string("controllers.batteryFull")
       case .notChargeable:
-        return OJDLocalized.string("controllers.notChargeable", fallback: "Not chargeable")
-      case .unknown: return OJDLocalized.string("common.unknown", fallback: "Unknown")
+        return OJDLocalized.string("controllers.notChargeable")
+      case .unknown: return OJDLocalized.string("common.unknown")
       }
     }
 
     var cableStateLabel: String {
       switch device.connectionState?.power.wiredPower {
       case true?:
-        return OJDLocalized.string("settings.controllerConnectedShort", fallback: "Connected")
+        return OJDLocalized.string("settings.controllerConnectedShort")
       case false?:
-        return OJDLocalized.string("settings.controllerDisconnectedShort", fallback: "Disconnected")
-      case nil: return OJDLocalized.string("common.unknown", fallback: "Unknown")
+        return OJDLocalized.string("settings.controllerDisconnectedShort")
+      case nil: return OJDLocalized.string("common.unknown")
       }
     }
 
     func reportedValue(_ value: String) -> String {
       let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
       return trimmed.isEmpty
-        ? OJDLocalized.string("controllers.notReported", fallback: "Not reported") : trimmed
+        ? OJDLocalized.string("controllers.notReported") : trimmed
     }
 
     func endpointLabel(_ endpoint: UInt8) -> String {
       endpoint == 0
-        ? OJDLocalized.string("controllers.notReported", fallback: "Not reported")
+        ? OJDLocalized.string("controllers.notReported")
         : String(format: "0x%02X", endpoint)
     }
   }

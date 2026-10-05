@@ -28,10 +28,10 @@ struct SupportDiagnosticsPresentation: Sendable, Equatable {
 
   var virtualControllerOutputLabel: String {
     switch virtualControllerOutputState {
-    case .available: return OJDLocalized.string("common.available", fallback: "Available")
-    case .unavailable: return OJDLocalized.string("common.unavailable", fallback: "Unavailable")
+    case .available: return OJDLocalized.string("common.available")
+    case .unavailable: return OJDLocalized.string("common.unavailable")
     case .needsAttention:
-      return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+      return OJDLocalized.string("common.needsAttention")
     }
   }
 
@@ -39,15 +39,13 @@ struct SupportDiagnosticsPresentation: Sendable, Equatable {
     switch virtualControllerOutputState {
     case .available:
       return OJDLocalized.string(
-        "debug.outputAvailable",
-        fallback: "Controller output is available."
+        "debug.outputAvailable"
       )
     case .unavailable:
-      return OJDLocalized.string("debug.outputOff", fallback: "Controller output is turned off.")
+      return OJDLocalized.string("debug.outputOff")
     case .needsAttention:
       return OJDLocalized.string(
-        "debug.outputNeedsAttention",
-        fallback: "Controller output needs attention."
+        "debug.outputNeedsAttention"
       )
     }
   }
@@ -55,8 +53,7 @@ struct SupportDiagnosticsPresentation: Sendable, Equatable {
   var virtualControllerCountLabel: String {
     OJDLocalized.plural(
       "debug.outputDevices",
-      count: virtualControllerCount,
-      fallback: "%d controller output devices detected"
+      count: virtualControllerCount
     )
   }
 }

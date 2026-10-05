@@ -18,7 +18,7 @@
           HStack {
             StatusBadge(status: statusLabel, semanticState: semanticState)
             Spacer()
-            Button(OJDLocalized.string("common.refresh", fallback: "Refresh")) {
+            Button(OJDLocalized.string("common.refresh")) {
               Task { @MainActor in await viewModel.refreshSystemExtensionSetup() }
             }
           }
@@ -29,7 +29,7 @@
           HStack {
             if viewModel.systemExtensionSetupState == .awaitingApproval {
               Button(
-                OJDLocalized.string("setup.openSystemSettings", fallback: "Open System Settings"),
+                OJDLocalized.string("setup.openSystemSettings"),
                 action: openSettings
               )
             }
@@ -37,40 +37,40 @@
               || viewModel.systemExtensionSetupState == .failed
               || viewModel.systemExtensionSetupState == .invalid
             {
-              Button(OJDLocalized.string("setup.repairDriver", fallback: "Repair Xbox USB Driver"))
-              { Task { @MainActor in await viewModel.repairSystemExtension() } }
+              Button(OJDLocalized.string("setup.repairDriver")) {
+                Task { @MainActor in await viewModel.repairSystemExtension() }
+              }
             }
-            Button(OJDLocalized.string("setup.controllerTest", fallback: "Controller Test")) {
+            Button(OJDLocalized.string("setup.controllerTest")) {
               navigation.requestPane(.controllers)
             }
-            Button(OJDLocalized.string("setup.copySupportReport", fallback: "Copy Support Report"))
-            { Task { @MainActor in _ = await supportReport.copySupportReport() } }
+            Button(OJDLocalized.string("setup.copySupportReport")) {
+              Task { @MainActor in _ = await supportReport.copySupportReport() }
+            }
             if viewModel.systemExtensionSetupState == .active {
               OJDDestructiveButton(
                 action: { confirmsUninstall = true },
                 label: {
-                  Text(OJDLocalized.string("cli.login.uninstall_action", fallback: "Uninstall"))
+                  Text(OJDLocalized.string("cli.login.uninstall_action"))
                 }
               )
             }
           }
         }.padding(4)
       } label: {
-        Text(OJDLocalized.string("setup.driverTitle", fallback: "Xbox USB Driver")).font(.headline)
+        Text(OJDLocalized.string("setup.driverTitle")).font(.headline)
       }.ojdAccessibilityLabel(
-        OJDLocalized.string("setup.driverAccessibility", fallback: "Xbox USB Driver setup")
+        OJDLocalized.string("setup.driverAccessibility")
       ).ojdAccessibilityValue(detail).alert(isPresented: $confirmsUninstall) {
         Alert(
-          title: Text(OJDLocalized.string("cli.login.uninstall_action", fallback: "Uninstall")),
+          title: Text(OJDLocalized.string("cli.login.uninstall_action")),
           message: Text(
             OJDLocalized.string(
-              "setup.repairDetail",
-              fallback:
-                "OpenJoystickDriver will repair the Xbox USB driver without developer tools."
+              "setup.repairDetail"
             )
           ),
           primaryButton: .destructive(
-            Text(OJDLocalized.string("cli.login.uninstall_action", fallback: "Uninstall"))
+            Text(OJDLocalized.string("cli.login.uninstall_action"))
           ) { Task { @MainActor in await viewModel.uninstallSystemExtension() } },
           secondaryButton: .cancel()
         )
@@ -79,14 +79,14 @@
 
     private var statusLabel: String {
       switch viewModel.systemExtensionSetupState {
-      case .checking: return OJDLocalized.string("setup.checking", fallback: "Checking...")
+      case .checking: return OJDLocalized.string("setup.checking")
       case .missingEmbedded, .invalid, .failed:
-        return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+        return OJDLocalized.string("common.needsAttention")
       case .needsActivation, .replacementNeeded:
-        return OJDLocalized.string("setup.activating", fallback: "Activating...")
+        return OJDLocalized.string("setup.activating")
       case .awaitingApproval:
-        return OJDLocalized.string("setup.approvalNeeded", fallback: "Approval needed")
-      case .active: return OJDLocalized.string("status.ready", fallback: "Ready")
+        return OJDLocalized.string("setup.approvalNeeded")
+      case .active: return OJDLocalized.string("status.ready")
       }
     }
 
@@ -103,34 +103,27 @@
       switch viewModel.systemExtensionSetupState {
       case .checking:
         return OJDLocalized.string(
-          "setup.checkingDetail",
-          fallback: "Checking the installed Xbox USB driver."
+          "setup.checkingDetail"
         )
       case .missingEmbedded:
         return OJDLocalized.string(
-          "setup.missingDetail",
-          fallback: "This app does not contain the Xbox USB driver. Reinstall the signed app."
+          "setup.missingDetail"
         )
       case .invalid:
         return OJDLocalized.string(
-          "setup.invalidDetail",
-          fallback: "The embedded Xbox USB driver is invalid. Repair by reinstalling this app."
+          "setup.invalidDetail"
         )
       case .needsActivation, .replacementNeeded, .failed:
         return OJDLocalized.string(
-          "setup.repairDetail",
-          fallback: "OpenJoystickDriver will repair the Xbox USB driver without developer tools."
+          "setup.repairDetail"
         )
       case .awaitingApproval:
         return OJDLocalized.string(
-          "setup.approvalDetail",
-          fallback:
-            "Approve the driver in System Settings to use supported Microsoft USB controllers."
+          "setup.approvalDetail"
         )
       case .active:
         return OJDLocalized.string(
-          "setup.activeDetail",
-          fallback: "The restricted Xbox USB driver is installed and ready."
+          "setup.activeDetail"
         )
       }
     }

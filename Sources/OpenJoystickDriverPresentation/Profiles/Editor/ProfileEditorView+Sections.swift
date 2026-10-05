@@ -49,23 +49,22 @@
     func assignmentsSection(rowLayout: ProfileAssignmentRowLayout) -> some View {
       VStack(alignment: .leading, spacing: 18) {
         HStack(alignment: .firstTextBaseline) {
-          Text(OJDLocalized.string("common.assignments", fallback: "Assignments")).font(.headline)
+          Text(OJDLocalized.string("common.assignments")).font(.headline)
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
-            label: OJDLocalized.string("common.addAssignment", fallback: "Add assignment")
+            label: OJDLocalized.string("common.addAssignment")
           ) { activeSheet = .capture }
-          Button(OJDLocalized.string("profiles.clearInputs", fallback: "Clear all inputs")) {
+          Button(OJDLocalized.string("profiles.clearInputs")) {
             confirmation = .clearInputs
           }.disabled(isEditingDisabled)
         }
         if draft.profile.bindings.isEmpty {
           EmptyStateView(
             symbol: "plus.circle",
-            title: OJDLocalized.string("profiles.noAssignments", fallback: "No assignments yet"),
+            title: OJDLocalized.string("profiles.noAssignments"),
             message: OJDLocalized.string(
-              "profiles.assignmentInstructions",
-              fallback: "Add a controller control, then choose its keyboard or pointer destination."
+              "profiles.assignmentInstructions"
             )
           )
         } else {
@@ -102,11 +101,11 @@
         }
         HStack(spacing: 10) {
           OJDDestructiveButton(action: onDelete) {
-            Text(OJDLocalized.string("common.delete", fallback: "Delete"))
+            Text(OJDLocalized.string("common.delete"))
           }.disabled(isMutationActive)
           Spacer(minLength: 8)
           saveStatusView
-          Button(OJDLocalized.string("common.save", fallback: "Save")) { save() }.disabled(
+          Button(OJDLocalized.string("common.save")) { save() }.disabled(
             draft.profile == expectedCurrent || saveInFlight || isMutationActive
           )
         }
@@ -119,7 +118,7 @@
         if saveStatus == .saving { ProgressView() }
         Text(saveStatus.label).foregroundColor(saveStatus.color)
       }.frame(minHeight: 28).ojdAccessibilityLabel(
-        OJDLocalized.string("profiles.saveStatus", fallback: "Profile save status")
+        OJDLocalized.string("profiles.saveStatus")
       ).ojdAccessibilityValue(saveStatus.accessibilityValue)
     }
 

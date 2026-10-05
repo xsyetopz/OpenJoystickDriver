@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Ակտիվացնել պրոֆիլ առանց վերահսկիչի մուտքի:";
 "profiles.emptyInputWarning" = "Այս պրոֆիլը ճնշում է բոլոր վերահսկիչ մուտքը:";
 "profiles.restoreDefaultInput" = "Վերականգնել նախնական մուտքը";
+"common.reset" = "Վերականգնել";
+"profiles.useControllerDefaultColor" = "Օգտագործել կառավարիչի լռելյայնը";
 "profiles.damagedProfile" = "Վնասված պրոֆիլ";
 "profiles.damagedLibrary" = "Ակտիվ պրոֆիլների ցանկը վնասված է";
 "profiles.deleteDamagedButton" = "Ջնջել վնասված պրոֆիլը…";

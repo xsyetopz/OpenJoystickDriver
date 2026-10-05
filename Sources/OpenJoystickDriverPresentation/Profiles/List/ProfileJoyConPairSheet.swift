@@ -31,11 +31,11 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
-        Text(OJDLocalized.string("profiles.pairJoyCons", fallback: "Pair connected Joy-Cons..."))
+        Text(OJDLocalized.string("profiles.pairJoyCons"))
           .font(.headline.weight(.semibold))
         Text(profile.name).font(.caption).foregroundColor(.secondary)
         Picker(
-          OJDLocalized.string("profiles.joyConLeft", fallback: "Left Joy-Con"),
+          OJDLocalized.string("profiles.joyConLeft"),
           selection: $leftRuntimeIdentifier
         ) {
           ForEach(Self.leftDevices(devices), id: \.runtimeIdentifier) { device in
@@ -43,7 +43,7 @@
           }
         }
         Picker(
-          OJDLocalized.string("profiles.joyConRight", fallback: "Right Joy-Con"),
+          OJDLocalized.string("profiles.joyConRight"),
           selection: $rightRuntimeIdentifier
         ) {
           ForEach(Self.rightDevices(devices), id: \.runtimeIdentifier) { device in
@@ -52,14 +52,13 @@
         }
         Text(
           OJDLocalized.string(
-            "profiles.joyConPairSessionHint",
-            fallback: "Pairing uses these exact controllers for the current app session."
+            "profiles.joyConPairSessionHint"
           )
         ).font(.caption).foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true)
         HStack {
           Spacer()
-          Button(OJDLocalized.string("common.cancel", fallback: "Cancel")) { dismiss() }
-          Button(OJDLocalized.string("profiles.pair", fallback: "Pair")) {
+          Button(OJDLocalized.string("common.cancel")) { dismiss() }
+          Button(OJDLocalized.string("profiles.pair")) {
             onPair(leftRuntimeIdentifier, rightRuntimeIdentifier)
             dismiss()
           }.disabled(leftRuntimeIdentifier.isEmpty || rightRuntimeIdentifier.isEmpty)

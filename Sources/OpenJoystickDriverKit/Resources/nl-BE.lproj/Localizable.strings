@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Profiel activeren zonder controller input?";
 "profiles.emptyInputWarning" = "Dit profiel verdringt alle controller-invoer.";
 "profiles.restoreDefaultInput" = "De standaard input herstellen";
+"common.reset" = "Herstellen";
+"profiles.useControllerDefaultColor" = "Standaard van controller gebruiken";
 "profiles.damagedProfile" = "Beschadigd profiel";
 "profiles.damagedLibrary" = "Beschadigde lijst met actieve profielen";
 "profiles.deleteDamagedButton" = "Beschadigd profiel verwijderen…";

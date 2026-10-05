@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktivirati profil brez vhoda upravljavca?";
 "profiles.emptyInputWarning" = "Ta profil prekine vse vnosne podatke kontrolerja.";
 "profiles.restoreDefaultInput" = "Vrnitev predpostavljene vneske";
+"common.reset" = "Ponastavi";
+"profiles.useControllerDefaultColor" = "Uporabi privzeto vrednost krmilnika";
 "profiles.damagedProfile" = "Poškodovan profil";
 "profiles.damagedLibrary" = "Poškodovan seznam aktivnih profilov";
 "profiles.deleteDamagedButton" = "Izbriši poškodovan profil…";

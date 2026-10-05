@@ -8,7 +8,6 @@ func decodeProfile(_ data: Data, source: String) throws -> RemappingProfile {
     throw CLIFailure.usage(
       CLILocalized.format(
         "cli.profile.document_invalid",
-        "%@ is not a valid profile: %@",
         source,
         DocumentProblem.describe(error)
       )
@@ -20,13 +19,10 @@ struct ProfileImportCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "import",
     abstract: CLILocalized.text(
-      "cli.profile.import.abstract",
-      "Add a profile from a file that 'ojd profile export' wrote."
+      "cli.profile.import.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.profile.import.discussion",
-      "Use - to read the profile from stdin. A profile with the same ID as an existing one "
-        + "replaces it."
+      "cli.profile.import.discussion"
     )
   )
 
@@ -38,7 +34,7 @@ struct ProfileImportCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.profile.import.file", "The profile file, or - for stdin."),
+      CLILocalized.text("cli.profile.import.file"),
       valueName: "file"
     )
   )
@@ -67,13 +63,11 @@ struct ProfileImportCommand: AsyncParsableCommand {
           result.replaced
             ? CLILocalized.format(
               "cli.profile.import.replaced",
-              "Replaced '%@' (%@).",
               imported.name,
               imported.id.uuidString
             )
             : CLILocalized.format(
               "cli.profile.import.added",
-              "Imported '%@' (%@).",
               imported.name,
               imported.id.uuidString
             )
@@ -87,14 +81,10 @@ struct ProfileValidateCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "validate",
     abstract: CLILocalized.text(
-      "cli.profile.validate.abstract",
-      "Check a profile file without importing it."
+      "cli.profile.validate.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.profile.validate.discussion",
-      "Checks the file against the profile schema and the rules that span fields, such as "
-        + "duplicate sources. Use - to read the profile from stdin. Needs no running service. "
-        + "Exits 1 when the profile is invalid."
+      "cli.profile.validate.discussion"
     )
   )
 
@@ -132,7 +122,7 @@ struct ProfileValidateCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.profile.validate.file", "The profile file, or - for stdin."),
+      CLILocalized.text("cli.profile.validate.file"),
       valueName: "FILE|-"
     )
   )
@@ -152,7 +142,6 @@ struct ProfileValidateCommand: AsyncParsableCommand {
           .invalidInputFile,
           CLILocalized.format(
             "cli.profile.document_invalid",
-            "%@ is not a valid profile: %@",
             file == "-" ? "stdin" : file,
             problem
           )
@@ -169,7 +158,6 @@ struct ProfileValidateCommand: AsyncParsableCommand {
         CLIOutput.stdout(
           CLILocalized.format(
             "cli.profile.validate.valid",
-            "%@ is a valid profile: '%@' for %@ (%@). Add it with 'ojd profile import'.",
             file == "-" ? "stdin" : file,
             profile.name,
             result.controller ?? "",
@@ -185,12 +173,10 @@ struct ProfileExportCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "export",
     abstract: CLILocalized.text(
-      "cli.profile.export.abstract",
-      "Print a profile as a file that 'ojd profile import' reads."
+      "cli.profile.export.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.profile.export.discussion",
-      "The profile is JSON, so --json and --plain do not change the output."
+      "cli.profile.export.discussion"
     )
   )
 
@@ -201,8 +187,7 @@ struct ProfileExportCommand: AsyncParsableCommand {
     name: [.short, .long],
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.profile.export.output",
-        "Write the profile to this file instead of stdout."
+        "cli.profile.export.output"
       ),
       valueName: "file"
     )
@@ -227,14 +212,13 @@ struct ProfileExportCommand: AsyncParsableCommand {
           .fileAccessFailed,
           CLILocalized.format(
             "cli.profile.export.write_failed",
-            "Cannot write %@: %@",
             output,
             error.localizedDescription
           )
         )
       }
       CLIOutput.success(
-        CLILocalized.format("cli.profile.export.done", "Wrote '%@' to %@.", document.name, output)
+        CLILocalized.format("cli.profile.export.done", document.name, output)
       )
     }
   }
@@ -268,7 +252,6 @@ enum ProfileEditor {
         .aborted,
         CLILocalized.format(
           "cli.profile.edit.editor_failed",
-          "The editor exited with status %lld. Nothing changed.",
           Int(process.terminationStatus)
         )
       )
@@ -279,11 +262,9 @@ enum ProfileEditor {
 struct ProfileEditCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "edit",
-    abstract: CLILocalized.text("cli.profile.edit.abstract", "Change a profile in your editor."),
+    abstract: CLILocalized.text("cli.profile.edit.abstract"),
     discussion: CLILocalized.text(
-      "cli.profile.edit.discussion",
-      "Opens the profile file in $VISUAL, $EDITOR, or vi, then validates and saves it. Needs a "
-        + "terminal. Without one, export the profile, change the file, and import it."
+      "cli.profile.edit.discussion"
     )
   )
 
@@ -298,9 +279,7 @@ struct ProfileEditCommand: AsyncParsableCommand {
       guard CLITerminal.canPrompt() else {
         throw CLIFailure.usage(
           CLILocalized.text(
-            "cli.profile.edit.needs_terminal",
-            "'ojd profile edit' needs a terminal. Use 'ojd profile export' and "
-              + "'ojd profile import' instead."
+            "cli.profile.edit.needs_terminal"
           )
         )
       }
@@ -312,7 +291,7 @@ struct ProfileEditCommand: AsyncParsableCommand {
       guard edited != current else {
         try printProfile(
           ProfileResult(profile: ProfileSummary(current, snapshot: snapshot), changed: false),
-          message: CLILocalized.text("cli.profile.edit.unchanged", "Nothing changed.")
+          message: CLILocalized.text("cli.profile.edit.unchanged")
         )
         return
       }
@@ -321,7 +300,7 @@ struct ProfileEditCommand: AsyncParsableCommand {
       }
       try printProfile(
         ProfileResult(profile: try savedSummary(edited.id, in: after), changed: true),
-        message: CLILocalized.format("cli.profile.edit.done", "Saved '%@'.", edited.name)
+        message: CLILocalized.format("cli.profile.edit.done", edited.name)
       )
     }
   }
@@ -341,9 +320,7 @@ struct ProfileEditCommand: AsyncParsableCommand {
     guard edited.id == profile.id else {
       throw CLIFailure.usage(
         CLILocalized.text(
-          "cli.profile.edit.id_changed",
-          "The edit changed the profile ID. Nothing changed; use 'ojd profile duplicate' to "
-            + "make a copy."
+          "cli.profile.edit.id_changed"
         )
       )
     }

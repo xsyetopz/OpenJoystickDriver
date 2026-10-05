@@ -57,14 +57,11 @@
       switch error as? RemappingMotionCalibrationError {
       case .controllerUnavailable:
         return OJDLocalized.string(
-          "motion.calibration.controllerUnavailable",
-          fallback: "Reconnect the controller, then refresh calibration status."
+          "motion.calibration.controllerUnavailable"
         )
       case .motionUnavailable:
         return OJDLocalized.string(
-          "motion.calibration.motionUnavailable",
-          fallback: "Enable a remapping profile for this controller "
-            + "and check that motion is available."
+          "motion.calibration.motionUnavailable"
         )
       case nil: return RuntimePresentation.userFacingError(error)
       }

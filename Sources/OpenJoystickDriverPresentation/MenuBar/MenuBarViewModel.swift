@@ -26,13 +26,13 @@
       let controllerSummary: String
       switch runtime.statusState {
       case .loading:
-        readiness = OJDLocalized.string("status.starting", fallback: "Starting...")
+        readiness = OJDLocalized.string("status.starting")
         controllerSummary = RuntimePresentation.deviceCountLabel(0)
       case .available(let status):
         readiness = status.readinessLabel
         controllerSummary = status.deviceCountLabel
       case .unavailable, .error:
-        readiness = OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+        readiness = OJDLocalized.string("common.needsAttention")
         controllerSummary = RuntimePresentation.deviceCountLabel(0)
       }
 
@@ -45,8 +45,7 @@
         profileSummary = profile.name
       } else {
         profileSummary = OJDLocalized.string(
-          "status.noActiveProfile",
-          fallback: "No active profile"
+          "status.noActiveProfile"
         )
       }
       return [readiness, controllerSummary, profileSummary].joined(separator: " · ")

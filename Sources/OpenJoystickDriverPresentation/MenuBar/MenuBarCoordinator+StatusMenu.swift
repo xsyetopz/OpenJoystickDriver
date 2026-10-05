@@ -16,35 +16,32 @@
       let alert = NSAlert()
       alert.alertStyle = .warning
       alert.messageText = OJDLocalized.string(
-        "controllers.disconnectWirelessConfirmTitle",
-        fallback: "Disconnect Wireless Controller?"
+        "controllers.disconnectWirelessConfirmTitle"
       )
       alert.informativeText = OJDLocalized.formatted(
         "controllers.disconnectWirelessConfirmMessage",
-        fallback: "%@ will stay disconnected until you connect it again manually.",
         device.name
       )
       alert.addButton(
         withTitle: OJDLocalized.string(
-          "controllers.disconnectWirelessConfirm",
-          fallback: "Disconnect"
+          "controllers.disconnectWirelessConfirm"
         )
       )
-      alert.addButton(withTitle: OJDLocalized.string("common.cancel", fallback: "Cancel"))
+      alert.addButton(withTitle: OJDLocalized.string("common.cancel"))
       guard alert.runModal() == .alertFirstButtonReturn else { return }
       Task { @MainActor in await viewModel.disconnectWirelessController(device) }
     }
 
     func makeHelpMenu() -> NSMenu {
-      let menu = NSMenu(title: OJDLocalized.string("menu.help", fallback: "Help"))
+      let menu = NSMenu(title: OJDLocalized.string("menu.help"))
       addNavigationItem(
-        title: OJDLocalized.string("menu.console", fallback: "Open Console..."),
+        title: OJDLocalized.string("menu.console"),
         pane: .console,
         symbol: "terminal",
         to: menu
       )
       let project = NSMenuItem(
-        title: OJDLocalized.string("menu.projectPage", fallback: "GitHub"),
+        title: OJDLocalized.string("menu.projectPage"),
         action: #selector(openProjectPage(_:)),
         keyEquivalent: ""
       )

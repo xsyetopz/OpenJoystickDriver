@@ -8,24 +8,24 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 12) {
-        Toggle(label("enabled", "Trackball"), isOn: $draft.enabled)
+        Toggle(label("enabled"), isOn: $draft.enabled)
         if draft.enabled {
           Text(
-            label("hint", "Hold the control to continue motion while repositioning the controller.")
+            label("hint")
           ).font(.caption)
-          Picker(label("source", "Trackball control"), selection: $draft.source) {
+          Picker(label("source"), selection: $draft.source) {
             ForEach(sources, id: \.source) { option in Text(option.title).tag(option.source) }
           }
-          Picker(label("axes", "Trackball axes"), selection: $draft.axes) {
-            Text(label("pitch", "Pitch")).tag(RemappingGyroTrackballAxes.pitch)
-            Text(label("yaw", "Yaw")).tag(RemappingGyroTrackballAxes.yaw)
-            Text(label("both", "Pitch and yaw")).tag(RemappingGyroTrackballAxes.both)
+          Picker(label("axes"), selection: $draft.axes) {
+            Text(label("pitch")).tag(RemappingGyroTrackballAxes.pitch)
+            Text(label("yaw")).tag(RemappingGyroTrackballAxes.yaw)
+            Text(label("both")).tag(RemappingGyroTrackballAxes.both)
           }
-          TextField(label("decay", "Velocity halvings per second"), text: $draft.decay)
-          Text(label("decayHint", "Zero keeps a constant speed. One halves the speed each second."))
+          TextField(label("decay"), text: $draft.decay)
+          Text(label("decayHint"))
             .font(.caption)
           Toggle(
-            label("consume", "Suppress original virtual trackball control"),
+            label("consume"),
             isOn: $draft.consumesSource
           )
         }
@@ -39,8 +39,8 @@
       }
     }
 
-    private func label(_ key: String, _ fallback: String) -> String {
-      OJDLocalized.string("profiles.trackball." + key, fallback: fallback)
+    private func label(_ key: String) -> String {
+      OJDLocalized.string("profiles.trackball." + key)
     }
   }
 #endif

@@ -30,6 +30,7 @@ git ls-files -z -co --exclude-standard '*.md' | xargs -0 markdownlint-cli2
 swift-format lint --recursive --strict Package.swift Sources Tests
 swiftlint lint --no-cache --strict
 python3 Scripts/Quality/check_swift_file_length.py
+python3 Scripts/Quality/check_localization_keys.py
 ./Scripts/ojd check driverkit
 swift test
 ```

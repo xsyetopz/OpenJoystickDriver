@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "¿Activar el perfil sin entrada del controlador?";
 "profiles.emptyInputWarning" = "Este perfil suprime todas las entradas del controlador.";
 "profiles.restoreDefaultInput" = "Restaurar la entrada predeterminada";
+"common.reset" = "Restablecer";
+"profiles.useControllerDefaultColor" = "Usar el valor predeterminado del mando";
 "profiles.damagedProfile" = "Perfil dañado";
 "profiles.damagedLibrary" = "Lista de perfiles activos dañada";
 "profiles.deleteDamagedButton" = "Eliminar perfil dañado…";

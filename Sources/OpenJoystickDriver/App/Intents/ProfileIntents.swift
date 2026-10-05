@@ -7,18 +7,16 @@
   @available(macOS 13, *)
   struct ActivateProfileIntent: AppIntent {
     static let title = LocalizedStringResource(
-      "shortcuts.action.activate_profile.title",
-      defaultValue: "Activate Profile"
+      "shortcuts.action.activate_profile.title"
     )
     static let description = IntentDescription(
       LocalizedStringResource(
-        "shortcuts.action.activate_profile.description",
-        defaultValue: "Turns on a remapping profile for its controller model."
+        "shortcuts.action.activate_profile.description"
       )
     )
 
     @Parameter(
-      title: LocalizedStringResource("shortcuts.parameter.profile", defaultValue: "Profile")
+      title: LocalizedStringResource("shortcuts.parameter.profile")
     )
     var profile: ProfileEntity
 
@@ -34,18 +32,16 @@
   @available(macOS 13, *)
   struct DeactivateProfileIntent: AppIntent {
     static let title = LocalizedStringResource(
-      "shortcuts.action.deactivate_profile.title",
-      defaultValue: "Deactivate Profile"
+      "shortcuts.action.deactivate_profile.title"
     )
     static let description = IntentDescription(
       LocalizedStringResource(
-        "shortcuts.action.deactivate_profile.description",
-        defaultValue: "Turns off a remapping profile."
+        "shortcuts.action.deactivate_profile.description"
       )
     )
 
     @Parameter(
-      title: LocalizedStringResource("shortcuts.parameter.profile", defaultValue: "Profile")
+      title: LocalizedStringResource("shortcuts.parameter.profile")
     )
     var profile: ProfileEntity
 

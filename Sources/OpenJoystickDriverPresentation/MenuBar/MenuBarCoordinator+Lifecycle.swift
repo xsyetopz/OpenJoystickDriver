@@ -146,12 +146,12 @@
       let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
       statusItem = item
       if let button = item.button {
-        button.toolTip = OJDLocalized.string("app.name", fallback: "OpenJoystickDriver")
+        button.toolTip = OJDLocalized.string("app.name")
         button.target = self
         button.action = #selector(showStatusMenu(_:))
         if let image = MenuBarStatusItemImage.make(
           applicationIcon: NSImage(named: NSImage.applicationIconName),
-          accessibilityDescription: OJDLocalized.string("app.name", fallback: "OpenJoystickDriver")
+          accessibilityDescription: OJDLocalized.string("app.name")
         ) {
           button.image = image
         }
@@ -160,7 +160,7 @@
           button.title = "OJ"
         }
       }
-      statusMenu = NSMenu(title: OJDLocalized.string("app.name", fallback: "OpenJoystickDriver"))
+      statusMenu = NSMenu(title: OJDLocalized.string("app.name"))
       // Use the action path rather than assigning a menu directly so each opening refreshes its
       // snapshot before the menu is shown.
       item.menu = nil
@@ -220,7 +220,7 @@
 
       if menuBarViewModel.needsPermissionAttention {
         let request = NSMenuItem(
-          title: OJDLocalized.string("menu.requestAccess", fallback: "Request Access..."),
+          title: OJDLocalized.string("menu.requestAccess"),
           action: #selector(requestAccessFromStatus(_:)),
           keyEquivalent: ""
         )
@@ -230,7 +230,7 @@
       }
 
       let controllers = NSMenuItem(
-        title: OJDLocalized.string("common.controllers", fallback: "Controllers"),
+        title: OJDLocalized.string("common.controllers"),
         action: nil,
         keyEquivalent: ""
       )
@@ -238,7 +238,7 @@
       menu.addItem(controllers)
 
       let show = NSMenuItem(
-        title: OJDLocalized.string("menu.show", fallback: "Show OpenJoystickDriver"),
+        title: OJDLocalized.string("menu.show"),
         action: #selector(showApplication(_:)),
         keyEquivalent: ""
       )
@@ -246,7 +246,7 @@
       menu.addItem(show)
 
       let settings = NSMenuItem(
-        title: OJDLocalized.string("menu.settings", fallback: "Settings..."),
+        title: OJDLocalized.string("menu.settings"),
         action: #selector(openSettingsFromStatus(_:)),
         keyEquivalent: ","
       )
@@ -258,7 +258,7 @@
       menu.addItem(.separator())
 
       let help = NSMenuItem(
-        title: OJDLocalized.string("menu.help", fallback: "Help"),
+        title: OJDLocalized.string("menu.help"),
         action: nil,
         keyEquivalent: ""
       )
@@ -267,7 +267,7 @@
       menu.addItem(.separator())
 
       let about = NSMenuItem(
-        title: OJDLocalized.string("menu.about", fallback: "About OpenJoystickDriver"),
+        title: OJDLocalized.string("menu.about"),
         action: #selector(showAbout(_:)),
         keyEquivalent: ""
       )
@@ -275,7 +275,7 @@
       menu.addItem(about)
 
       let quit = NSMenuItem(
-        title: OJDLocalized.string("menu.quit", fallback: "Quit OpenJoystickDriver"),
+        title: OJDLocalized.string("menu.quit"),
         action: #selector(quit(_:)),
         keyEquivalent: "q"
       )
@@ -286,7 +286,7 @@
     }
 
     private func makeControllersMenu() -> NSMenu {
-      let menu = NSMenu(title: OJDLocalized.string("common.controllers", fallback: "Controllers"))
+      let menu = NSMenu(title: OJDLocalized.string("common.controllers"))
       if !menuBarViewModel.devices.isEmpty {
         for device in menuBarViewModel.devices {
           let item = NSMenuItem(title: device.name, action: nil, keyEquivalent: "")
@@ -297,7 +297,7 @@
         menu.addItem(.separator())
       } else {
         let empty = NSMenuItem(
-          title: OJDLocalized.string("controllers.emptyTitle", fallback: "No controller connected"),
+          title: OJDLocalized.string("controllers.emptyTitle"),
           action: nil,
           keyEquivalent: ""
         )
@@ -306,7 +306,7 @@
         menu.addItem(.separator())
       }
       addNavigationItem(
-        title: OJDLocalized.string("menu.controllers", fallback: "Open Controllers..."),
+        title: OJDLocalized.string("menu.controllers"),
         pane: .controllers,
         symbol: "gamecontroller",
         to: menu
@@ -317,7 +317,7 @@
     private func makeControllerMenu(for device: ApplicationServiceDeviceDescription) -> NSMenu {
       let menu = NSMenu(title: device.name)
       addNavigationItem(
-        title: OJDLocalized.string("menu.controllers", fallback: "Open Controllers..."),
+        title: OJDLocalized.string("menu.controllers"),
         pane: .controllers,
         symbol: "info.circle",
         to: menu
@@ -325,8 +325,7 @@
       if device.connection.caseInsensitiveCompare("Bluetooth") == .orderedSame {
         let disconnect = NSMenuItem(
           title: OJDLocalized.string(
-            "controllers.disconnectWireless",
-            fallback: "Disconnect Wireless Controller..."
+            "controllers.disconnectWireless"
           ),
           action: #selector(disconnectWirelessControllerFromStatus(_:)),
           keyEquivalent: ""

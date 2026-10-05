@@ -6,15 +6,10 @@ struct AccessWebCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "web",
     abstract: CLILocalized.text(
-      "cli.access.web.abstract",
-      "Turn the WebSocket for overlay pages on or off."
+      "cli.access.web.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.access.web.discussion",
-      "The WebSocket listens on 127.0.0.1 only, at /endpoint, and serves the files of its "
-        + "Overlays folder on the same port. A page must come from an origin that a token is "
-        + "granted for, and must sign the service's challenge with that token in its hello; "
-        + "grant one with 'ojd access grant --token NAME --origin URL'."
+      "cli.access.web.discussion"
     ),
     subcommands: [AccessWebEnableCommand.self, AccessWebDisableCommand.self]
   )
@@ -26,18 +21,16 @@ struct AccessWebCommand: AsyncParsableCommand {
 struct AccessWebEnableCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "enable",
-    abstract: CLILocalized.text("cli.access.web.enable.abstract", "Turn on the WebSocket."),
+    abstract: CLILocalized.text("cli.access.web.enable.abstract"),
     discussion: CLILocalized.text(
-      "cli.access.web.enable.discussion",
-      "Asks for confirmation first. Without --port, uses the saved port; the first time, the "
-        + "system picks a free port, and the service saves it."
+      "cli.access.web.enable.discussion"
     )
   )
 
   @Option(
     name: .long,
     help: ArgumentHelp(
-      CLILocalized.text("cli.access.web.port", "The port on 127.0.0.1, from 1024 to 65535."),
+      CLILocalized.text("cli.access.web.port"),
       valueName: "port"
     )
   )
@@ -45,7 +38,7 @@ struct AccessWebEnableCommand: AsyncParsableCommand {
 
   @Flag(
     name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.option.force", "Do not ask for confirmation."))
+    help: ArgumentHelp(CLILocalized.text("cli.option.force"))
   )
   var force = false
 
@@ -55,7 +48,7 @@ struct AccessWebEnableCommand: AsyncParsableCommand {
   func validate() throws {
     if let port, !(1_024...65_535).contains(port) {
       throw ValidationError(
-        CLILocalized.text("cli.access.web.port_range", "--port must be between 1024 and 65535.")
+        CLILocalized.text("cli.access.web.port_range")
       )
     }
   }
@@ -64,9 +57,7 @@ struct AccessWebEnableCommand: AsyncParsableCommand {
     try await global.run {
       try CLITerminal.confirm(
         CLILocalized.text(
-          "cli.access.web.enable.confirm",
-          "Turn on the WebSocket, so that pages from the origins you grant tokens for can use "
-            + "the endpoint?"
+          "cli.access.web.enable.confirm"
         ),
         force: force,
         needsForce: AccessText.needsForce
@@ -84,8 +75,7 @@ struct AccessWebDisableCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "disable",
     abstract: CLILocalized.text(
-      "cli.access.web.disable.abstract",
-      "Turn off the WebSocket and close its connections; tokens are kept."
+      "cli.access.web.disable.abstract"
     )
   )
 
@@ -113,8 +103,7 @@ extension AccessWebCommand {
         web.enabled
           ? AccessText.web(web)
           : CLILocalized.text(
-            "cli.access.web.disable.success",
-            "The WebSocket is off, and its connections are closed."
+            "cli.access.web.disable.success"
           )
       )
     }

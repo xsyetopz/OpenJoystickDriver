@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Kontrolör giriş olmadan profil etkinleştirmek mi?";
 "profiles.emptyInputWarning" = "Bu profil tüm denetleyicilerin girişlerini bastırır.";
 "profiles.restoreDefaultInput" = "Öntanımlı girişleri geri yükle";
+"common.reset" = "Sıfırla";
+"profiles.useControllerDefaultColor" = "Denetleyici varsayılanını kullan";
 "profiles.damagedProfile" = "Hasarlı profil";
 "profiles.damagedLibrary" = "Hasarlı etkin profil listesi";
 "profiles.deleteDamagedButton" = "Hasarlı Profili Sil…";

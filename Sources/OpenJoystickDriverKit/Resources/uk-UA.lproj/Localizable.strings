@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Активіруйте профіль без входу контролера?";
 "profiles.emptyInputWarning" = "Цей профіль подавляє всі входи контролера.";
 "profiles.restoreDefaultInput" = "Відновити замовчування";
+"common.reset" = "Скинути";
+"profiles.useControllerDefaultColor" = "Використовувати типове значення контролера";
 "profiles.damagedProfile" = "Пошкоджений профіль";
 "profiles.damagedLibrary" = "Пошкоджений список активних профілів";
 "profiles.deleteDamagedButton" = "Видалити пошкоджений профіль…";

@@ -39,25 +39,24 @@
         Text(
           OJDLocalized.formatted(
             "capture.adjust",
-            fallback: "Adjust %@",
             RuntimePresentation.sourceLabel(binding.source)
           )
         ).font(.headline.weight(.semibold))
         SliderRow(
-          title: OJDLocalized.string("capture.deadZone", fallback: "Dead zone"),
+          title: OJDLocalized.string("capture.deadZone"),
           value: $deadzone,
           range: RemappingAxisTuning.deadzoneRange,
           suffix: "%"
         )
         SliderRow(
-          title: OJDLocalized.string("capture.gain", fallback: "Gain"),
+          title: OJDLocalized.string("capture.gain"),
           value: $gain,
           range: RemappingAxisTuning.gainRange,
           suffix: "×"
         )
-        Toggle(OJDLocalized.string("capture.invertAxis", fallback: "Invert axis"), isOn: $inverted)
+        Toggle(OJDLocalized.string("capture.invertAxis"), isOn: $inverted)
         Picker(
-          OJDLocalized.string("capture.responseCurve", fallback: "Response curve"),
+          OJDLocalized.string("capture.responseCurve"),
           selection: $curve
         ) {
           ForEach(RemappingResponseCurve.allCases, id: \.self) { value in
@@ -65,17 +64,17 @@
           }
         }
         SliderRow(
-          title: OJDLocalized.string("capture.digitalThreshold", fallback: "Digital threshold"),
+          title: OJDLocalized.string("capture.digitalThreshold"),
           value: $threshold,
           range: RemappingAxisTuning.digitalActivationThresholdRange,
           suffix: "%"
         )
         HStack {
           Spacer()
-          Button(OJDLocalized.string("common.cancel", fallback: "Cancel")) {
+          Button(OJDLocalized.string("common.cancel")) {
             presentationMode.wrappedValue.dismiss()
           }
-          Button(OJDLocalized.string("common.save", fallback: "Save")) {
+          Button(OJDLocalized.string("common.save")) {
             onSave(
               RemappingAxisTuning(
                 deadzone: deadzone,
@@ -93,10 +92,10 @@
 
     private func responseCurveLabel(_ value: RemappingResponseCurve) -> String {
       switch value {
-      case .linear: return OJDLocalized.string("capture.linear", fallback: "Linear")
-      case .easeIn: return OJDLocalized.string("capture.easeIn", fallback: "Ease in")
-      case .easeOut: return OJDLocalized.string("capture.easeOut", fallback: "Ease out")
-      case .smoothStep: return OJDLocalized.string("capture.smoothStep", fallback: "Smooth step")
+      case .linear: return OJDLocalized.string("capture.linear")
+      case .easeIn: return OJDLocalized.string("capture.easeIn")
+      case .easeOut: return OJDLocalized.string("capture.easeOut")
+      case .smoothStep: return OJDLocalized.string("capture.smoothStep")
       }
     }
   }
@@ -134,13 +133,12 @@
       VStack(alignment: .leading, spacing: 7) {
         Text(
           OJDLocalized.string(
-            "error.profileChanged",
-            fallback: "This profile changed elsewhere. Reload or keep editing."
+            "error.profileChanged"
           )
         ).font(.subheadline.weight(.semibold))
         HStack(spacing: 10) {
-          Button(OJDLocalized.string("common.reload", fallback: "Reload")) { reload() }
-          Button(OJDLocalized.string("common.keepEditing", fallback: "Keep editing")) {
+          Button(OJDLocalized.string("common.reload")) { reload() }
+          Button(OJDLocalized.string("common.keepEditing")) {
             keepEditing()
           }
         }
@@ -192,24 +190,24 @@
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(title).font(.headline.weight(.semibold))
-        TextField(OJDLocalized.string("common.profileName", fallback: "Profile name"), text: $name)
+        TextField(OJDLocalized.string("common.profileName"), text: $name)
           .textFieldStyle(RoundedBorderTextFieldStyle())
         if !name.isEmpty && trimmedName.isEmpty {
           Text(
-            OJDLocalized.string("capture.profileNameValidation", fallback: "Enter a profile name.")
+            OJDLocalized.string("capture.profileNameValidation")
           ).font(.caption).foregroundColor(Color(NSColor.systemRed)).fixedSize(
             horizontal: false,
             vertical: true
           ).ojdAccessibilityLabel(
-            OJDLocalized.string("capture.profileNameValidation", fallback: "Enter a profile name.")
+            OJDLocalized.string("capture.profileNameValidation")
           )
         }
         if !devices.isEmpty {
           Picker(
-            OJDLocalized.string("common.controller", fallback: "Controller"),
+            OJDLocalized.string("common.controller"),
             selection: selectedDeviceBinding
           ) {
-            Text(OJDLocalized.string("profiles.manualDevice", fallback: "Manual identifiers")).tag(
+            Text(OJDLocalized.string("profiles.manualDevice")).tag(
               Self.manualDeviceIdentifier
             )
             ForEach(devices, id: \.runtimeIdentifier) { device in
@@ -219,39 +217,37 @@
         }
         HStack(spacing: 12) {
           TextField(
-            OJDLocalized.string("profiles.vendorID", fallback: "Vendor ID"),
+            OJDLocalized.string("profiles.vendorID"),
             text: $vendorID
           )
           TextField(
-            OJDLocalized.string("profiles.productID", fallback: "Product ID"),
+            OJDLocalized.string("profiles.productID"),
             text: $productID
           )
         }
         Text(
           OJDLocalized.string(
-            "profiles.identifierHint",
-            fallback: "Use decimal or 0x-prefixed hexadecimal identifiers."
+            "profiles.identifierHint"
           )
         ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
-        Picker(OJDLocalized.string("profiles.target", fallback: "Target"), selection: $scopeKind) {
-          Text(OJDLocalized.string("profiles.targetGlobal", fallback: "All applications")).tag(
+        Picker(OJDLocalized.string("profiles.target"), selection: $scopeKind) {
+          Text(OJDLocalized.string("profiles.targetGlobal")).tag(
             ProfileScopeKind.global
           )
-          Text(OJDLocalized.string("profiles.targetApplication", fallback: "One application")).tag(
+          Text(OJDLocalized.string("profiles.targetApplication")).tag(
             ProfileScopeKind.application
           )
         }
         if scopeKind == .application {
           TextField(
-            OJDLocalized.string("profiles.bundleIdentifier", fallback: "Bundle identifier"),
+            OJDLocalized.string("profiles.bundleIdentifier"),
             text: $bundleIdentifier
           )
         }
         if !fieldsAreEmpty && proposedProfile == nil {
           Text(
             OJDLocalized.string(
-              "profiles.creationValidation",
-              fallback: "Review the profile name, controller identifiers, and application target."
+              "profiles.creationValidation"
             )
           ).font(.caption).foregroundColor(Color(NSColor.systemRed)).fixedSize(
             horizontal: false,
@@ -260,10 +256,10 @@
         }
         HStack {
           Spacer()
-          Button(OJDLocalized.string("common.cancel", fallback: "Cancel")) {
+          Button(OJDLocalized.string("common.cancel")) {
             presentationMode.wrappedValue.dismiss()
           }
-          Button(OJDLocalized.string("common.create", fallback: "Create")) {
+          Button(OJDLocalized.string("common.create")) {
             guard let proposedProfile else { return }
             onCreate(proposedProfile.name, proposedProfile.device, proposedProfile.applicationScope)
             presentationMode.wrappedValue.dismiss()

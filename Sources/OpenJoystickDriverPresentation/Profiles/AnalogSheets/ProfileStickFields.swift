@@ -8,94 +8,91 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 12) {
-        Toggle(label("enabled", "Enable pointer output"), isOn: $draft.enabled)
+        Toggle(label("enabled"), isOn: $draft.enabled)
         if draft.enabled {
-          Picker(label("mode", "Stick mode"), selection: $draft.mode) {
-            Text(label("aim", "Aim")).tag(RemappingStickMode.aim)
-            Text(label("flick", "Flick and rotate")).tag(RemappingStickMode.flick)
-            Text(label("flickOnly", "Flick only")).tag(RemappingStickMode.flickOnly)
-            Text(label("rotateOnly", "Rotate only")).tag(RemappingStickMode.rotateOnly)
-            Text(label("pointerArea", "Pointer area")).tag(RemappingStickMode.pointerArea)
-            Text(label("pointerRing", "Pointer ring")).tag(RemappingStickMode.pointerRing)
-            Text(label("scrollWheel", "Scroll wheel")).tag(RemappingStickMode.scrollWheel)
-            Text(label("steering", "Steering wheel")).tag(RemappingStickMode.steering)
+          Picker(label("mode"), selection: $draft.mode) {
+            Text(label("aim")).tag(RemappingStickMode.aim)
+            Text(label("flick")).tag(RemappingStickMode.flick)
+            Text(label("flickOnly")).tag(RemappingStickMode.flickOnly)
+            Text(label("rotateOnly")).tag(RemappingStickMode.rotateOnly)
+            Text(label("pointerArea")).tag(RemappingStickMode.pointerArea)
+            Text(label("pointerRing")).tag(RemappingStickMode.pointerRing)
+            Text(label("scrollWheel")).tag(RemappingStickMode.scrollWheel)
+            Text(label("steering")).tag(RemappingStickMode.steering)
           }
-          field("innerDeadzone", "Inner deadzone", $draft.innerDeadzone)
-          field("outerDeadzone", "Outer deadzone", $draft.outerDeadzone)
-          field("exponent", "Response exponent", $draft.responseExponent)
-          Toggle(label("invertX", "Invert horizontal axis"), isOn: $draft.invertX)
-          Toggle(label("invertY", "Invert vertical axis"), isOn: $draft.invertY)
+          field("innerDeadzone", $draft.innerDeadzone)
+          field("outerDeadzone", $draft.outerDeadzone)
+          field("exponent", $draft.responseExponent)
+          Toggle(label("invertX"), isOn: $draft.invertX)
+          Toggle(label("invertY"), isOn: $draft.invertY)
           if [.aim, .flick, .flickOnly, .rotateOnly].contains(draft.mode) {
-            field("pointerScale", "Pointer points per degree", $draft.pointerPointsPerDegree)
+            field("pointerScale", $draft.pointerPointsPerDegree)
           }
           if draft.mode == .aim {
-            field("aimRate", "Aim speed (degrees/s)", $draft.aimDegreesPerSecond)
+            field("aimRate", $draft.aimDegreesPerSecond)
           } else if [.flick, .flickOnly, .rotateOnly].contains(draft.mode) {
             if draft.mode != .rotateOnly {
-              field("flickDuration", "Flick duration (ms)", $draft.flickDurationMs)
+              field("flickDuration", $draft.flickDurationMs)
             }
-            field("threshold", "Flick engagement threshold", $draft.flickThreshold)
-            field("hysteresis", "Flick release hysteresis", $draft.flickHysteresis)
+            field("threshold", $draft.flickThreshold)
+            field("hysteresis", $draft.flickHysteresis)
           } else if draft.mode == .pointerArea || draft.mode == .pointerRing {
-            field("pointerRadius", "Pointer radius (points)", $draft.pointerRadiusPoints)
+            field("pointerRadius", $draft.pointerRadiusPoints)
           } else if draft.mode == .scrollWheel {
             field(
               "scrollDegrees",
-              "Rotation per scroll line (degrees)",
               $draft.scrollDegreesPerLine
             )
-            Picker(label("scrollAxis", "Scroll axis"), selection: $draft.scrollAxis) {
-              Text(label("horizontal", "Horizontal")).tag(RemappingStickScrollAxis.horizontal)
-              Text(label("vertical", "Vertical")).tag(RemappingStickScrollAxis.vertical)
+            Picker(label("scrollAxis"), selection: $draft.scrollAxis) {
+              Text(label("horizontal")).tag(RemappingStickScrollAxis.horizontal)
+              Text(label("vertical")).tag(RemappingStickScrollAxis.vertical)
             }
             rotationPicker
           } else if draft.mode == .steering {
             field(
               "steeringFullScale",
-              "Rotation at full steering (degrees)",
               $draft.steeringDegreesAtFullScale
             )
             field(
               "steeringReturnRate",
-              "Steering return speed (degrees/s)",
               $draft.steeringReturnDegreesPerSecond
             )
             Picker(
-              label("steeringOutput", "Virtual steering axis"),
+              label("steeringOutput"),
               selection: $draft.steeringOutput
             ) {
-              Text(label("leftStickX", "Left stick horizontal")).tag(
+              Text(label("leftStickX")).tag(
                 RemappingStickSteeringOutput.leftStickX
               )
-              Text(label("rightStickX", "Right stick horizontal")).tag(
+              Text(label("rightStickX")).tag(
                 RemappingStickSteeringOutput.rightStickX
               )
             }
             rotationPicker
           }
-          Toggle(label("passthrough", "Keep physical stick passthrough"), isOn: $draft.passthrough)
+          Toggle(label("passthrough"), isOn: $draft.passthrough)
         }
       }
     }
 
     private var rotationPicker: some View {
-      Picker(label("rotationDirection", "Positive rotation"), selection: $draft.rotationDirection) {
-        Text(label("clockwise", "Clockwise")).tag(RemappingStickRotationDirection.clockwise)
-        Text(label("counterclockwise", "Counterclockwise")).tag(
+      Picker(label("rotationDirection"), selection: $draft.rotationDirection) {
+        Text(label("clockwise")).tag(RemappingStickRotationDirection.clockwise)
+        Text(label("counterclockwise")).tag(
           RemappingStickRotationDirection.counterclockwise
         )
       }
     }
 
-    private func field(_ key: String, _ fallback: String, _ value: Binding<String>) -> some View {
+    private func field(_ key: String, _ value: Binding<String>) -> some View {
       VStack(alignment: .leading, spacing: 4) {
-        Text(label(key, fallback))
-        TextField(label(key, fallback), text: value).textFieldStyle(RoundedBorderTextFieldStyle())
+        Text(label(key))
+        TextField(label(key), text: value).textFieldStyle(RoundedBorderTextFieldStyle())
       }
     }
 
-    private func label(_ key: String, _ fallback: String) -> String {
-      OJDLocalized.string("profiles.stick." + key, fallback: fallback)
+    private func label(_ key: String) -> String {
+      OJDLocalized.string("profiles.stick." + key)
     }
   }
 #endif

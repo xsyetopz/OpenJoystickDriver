@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Activer le profil sans entrée du contrôleur ?";
 "profiles.emptyInputWarning" = "Ce profil supprime toutes les entrées du contrôleur.";
 "profiles.restoreDefaultInput" = "Retourner l'entrée par défaut";
+"common.reset" = "Réinitialiser";
+"profiles.useControllerDefaultColor" = "Utiliser la valeur par défaut de la manette";
 "profiles.damagedProfile" = "Profil endommagé";
 "profiles.damagedLibrary" = "Liste des profils actifs endommagée";
 "profiles.deleteDamagedButton" = "Supprimer le profil endommagé…";

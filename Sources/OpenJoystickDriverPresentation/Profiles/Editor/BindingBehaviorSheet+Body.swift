@@ -12,32 +12,32 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
-        Text(OJDLocalized.string("profiles.bindingBehavior", fallback: "Assignment behavior")).font(
+        Text(OJDLocalized.string("profiles.bindingBehavior")).font(
           .headline.weight(.semibold)
         )
         Picker(
-          OJDLocalized.string("profiles.bindingBehavior", fallback: "Assignment behavior"),
+          OJDLocalized.string("profiles.bindingBehavior"),
           selection: $behavior
         ) {
-          Text(OJDLocalized.string("profiles.hold", fallback: "Hold")).tag(
+          Text(OJDLocalized.string("profiles.hold")).tag(
             RemappingBindingBehavior.hold
           )
-          Text(OJDLocalized.string("profiles.toggle", fallback: "Toggle")).tag(
+          Text(OJDLocalized.string("profiles.toggle")).tag(
             RemappingBindingBehavior.toggle
           )
-          Text(OJDLocalized.string("profiles.tapOnPress", fallback: "Tap on press")).tag(
+          Text(OJDLocalized.string("profiles.tapOnPress")).tag(
             RemappingBindingBehavior.tapOnPress
           )
-          Text(OJDLocalized.string("profiles.tapOnRelease", fallback: "Tap on release")).tag(
+          Text(OJDLocalized.string("profiles.tapOnRelease")).tag(
             RemappingBindingBehavior.tapOnRelease
           )
-          Text(OJDLocalized.string("profiles.pulse", fallback: "Pulse")).tag(
+          Text(OJDLocalized.string("profiles.pulse")).tag(
             RemappingBindingBehavior.pulse
           )
-          Text(OJDLocalized.string("profiles.pressOnly", fallback: "Press only")).tag(
+          Text(OJDLocalized.string("profiles.pressOnly")).tag(
             RemappingBindingBehavior.press
           )
-          Text(OJDLocalized.string("profiles.releaseOnly", fallback: "Release only")).tag(
+          Text(OJDLocalized.string("profiles.releaseOnly")).tag(
             RemappingBindingBehavior.release
           )
         }.disabled(
@@ -45,7 +45,7 @@
         )
         if behavior == .pulse {
           valueSlider(
-            title: OJDLocalized.string("profiles.pulseDuration", fallback: "Pulse duration"),
+            title: OJDLocalized.string("profiles.pulseDuration"),
             value: $pulseDurationMs,
             range: RemappingBinding.pulseDurationRange,
             format: "%.0f ms"
@@ -58,20 +58,20 @@
             actions: $additionalActions
           )
         }
-        Toggle(OJDLocalized.string("profiles.turbo", fallback: "Turbo"), isOn: $turboEnabled)
+        Toggle(OJDLocalized.string("profiles.turbo"), isOn: $turboEnabled)
           .disabled(
             !binding.destination.acceptsTurbo || longHoldEnabled || doubleTapEnabled
               || behavior != .hold
           )
         if turboEnabled {
           valueSlider(
-            title: OJDLocalized.string("profiles.turboRate", fallback: "Repeat rate"),
+            title: OJDLocalized.string("profiles.turboRate"),
             value: $turboRate,
             range: RemappingTurbo.repeatRateHzRange,
             format: "%.0f Hz"
           )
           valueSlider(
-            title: OJDLocalized.string("profiles.turboDuty", fallback: "Duty cycle"),
+            title: OJDLocalized.string("profiles.turboDuty"),
             value: $turboDuty,
             range: RemappingTurbo.dutyCycleRange,
             format: "%.0f%%",
@@ -80,12 +80,12 @@
         }
         Divider()
         Toggle(
-          OJDLocalized.string("profiles.longHold", fallback: "Long hold"),
+          OJDLocalized.string("profiles.longHold"),
           isOn: $longHoldEnabled
         ).disabled(!supportsActivation || turboEnabled || behavior != .hold)
         if longHoldEnabled {
           valueSlider(
-            title: OJDLocalized.string("profiles.holdDuration", fallback: "Hold duration"),
+            title: OJDLocalized.string("profiles.holdDuration"),
             value: $longHoldDuration,
             range: RemappingLongHold.durationRange,
             format: "%.0f ms"
@@ -93,12 +93,12 @@
           destinationPicker(selection: $longHoldDestination)
         }
         Toggle(
-          OJDLocalized.string("profiles.doubleTap", fallback: "Double tap"),
+          OJDLocalized.string("profiles.doubleTap"),
           isOn: $doubleTapEnabled
         ).disabled(!supportsActivation || turboEnabled || behavior != .hold)
         if doubleTapEnabled {
           valueSlider(
-            title: OJDLocalized.string("profiles.tapWindow", fallback: "Tap window"),
+            title: OJDLocalized.string("profiles.tapWindow"),
             value: $doubleTapWindow,
             range: RemappingDoubleTap.windowRange,
             format: "%.0f ms"
@@ -107,8 +107,8 @@
         }
         HStack {
           Spacer()
-          Button(OJDLocalized.string("common.cancel", fallback: "Cancel")) { dismiss() }
-          Button(OJDLocalized.string("common.apply", fallback: "Apply")) {
+          Button(OJDLocalized.string("common.cancel")) { dismiss() }
+          Button(OJDLocalized.string("common.apply")) {
             onSave(
               behavior,
               pulseDurationMs,
@@ -157,7 +157,7 @@
     private func destinationPicker(selection: Binding<RemappingDestination>) -> some View {
       VStack(alignment: .leading, spacing: 8) {
         Picker(
-          OJDLocalized.string("common.destination", fallback: "Destination"),
+          OJDLocalized.string("common.destination"),
           selection: selection
         ) {
           ForEach(discreteDestinations(including: selection.wrappedValue), id: \.destination) {

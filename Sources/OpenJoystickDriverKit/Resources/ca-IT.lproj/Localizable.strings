@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Activar el perfil sense entrada del controlador?";
 "profiles.emptyInputWarning" = "Aquest perfil suprimeix totes les entrades del controlador.";
 "profiles.restoreDefaultInput" = "Restaurar la entrada predeterminada";
+"common.reset" = "Restableix";
+"profiles.useControllerDefaultColor" = "Utilitza el valor predeterminat del comandament";
 "profiles.damagedProfile" = "Perfil danyat";
 "profiles.damagedLibrary" = "Llista de perfils actius danyada";
 "profiles.deleteDamagedButton" = "Elimina el perfil danyat…";

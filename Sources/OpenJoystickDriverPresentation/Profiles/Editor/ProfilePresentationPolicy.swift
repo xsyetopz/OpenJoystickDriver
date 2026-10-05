@@ -13,11 +13,11 @@
 
     var title: String {
       switch self {
-      case .assignments: return OJDLocalized.string("common.assignments", fallback: "Assignments")
+      case .assignments: return OJDLocalized.string("common.assignments")
       case .combinations:
-        return OJDLocalized.string("profiles.combinations", fallback: "Combinations")
-      case .layers: return OJDLocalized.string("profiles.layers", fallback: "Layers")
-      case .controller: return OJDLocalized.string("common.controller", fallback: "Controller")
+        return OJDLocalized.string("profiles.combinations")
+      case .layers: return OJDLocalized.string("profiles.layers")
+      case .controller: return OJDLocalized.string("common.controller")
       }
     }
   }

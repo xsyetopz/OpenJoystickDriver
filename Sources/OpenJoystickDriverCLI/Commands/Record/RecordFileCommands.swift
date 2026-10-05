@@ -46,7 +46,7 @@ struct RecordValidation: Encodable, Equatable {
       if CLIContext.current.format == .json { try CLIOutput.json(Self(problem: problem)) }
       throw CLIFailure(
         .invalidInputFile,
-        CLILocalized.format("cli.record.invalid", "%@ is not a valid record: %@", path, problem)
+        CLILocalized.format("cli.record.invalid", path, problem)
       )
     }
   }
@@ -55,10 +55,7 @@ struct RecordValidation: Encodable, Equatable {
   static func usbNote(_ validated: ValidatedControllerRecord) -> String? {
     guard RecordUSBExtension(validated.record) == .doesNotClaim else { return nil }
     return CLILocalized.text(
-      "cli.record.usb_not_claimed",
-      "The family uses raw USB, and the USB extension cannot claim this controller, because its "
-        + "product list is signed by Apple. OJD reaches it only through direct USB access, when "
-        + "macOS allows it."
+      "cli.record.usb_not_claimed"
     )
   }
 }
@@ -66,7 +63,7 @@ struct RecordValidation: Encodable, Equatable {
 /// The `FILE|-` operand of `record validate` and `record install`.
 private func recordFileHelp() -> ArgumentHelp {
   ArgumentHelp(
-    CLILocalized.text("cli.record.file", "A record file, or - to read the record from stdin."),
+    CLILocalized.text("cli.record.file"),
     valueName: "FILE|-"
   )
 }
@@ -75,14 +72,10 @@ struct RecordValidateCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "validate",
     abstract: CLILocalized.text(
-      "cli.record.validate.abstract",
-      "Check a controller record without installing it."
+      "cli.record.validate.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.record.validate.discussion",
-      "Checks the record's shape, its fields against each other, and its fit with the bundled "
-        + "catalog, and says whether the controller needs the USB extension. Exits 1 when the "
-        + "record is invalid."
+      "cli.record.validate.discussion"
     )
   )
 
@@ -110,7 +103,6 @@ struct RecordValidateCommand: AsyncParsableCommand {
         CLIOutput.stdout(
           CLILocalized.format(
             "cli.record.validate.valid",
-            "%@ is a valid %@ record for %@ (%@). Install it with 'ojd record install'.",
             file,
             validated.operation.rawValue,
             result.identity ?? "",
@@ -127,14 +119,10 @@ struct RecordInstallCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "install",
     abstract: CLILocalized.text(
-      "cli.record.install.abstract",
-      "Check a controller record and install it for your user."
+      "cli.record.install.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.record.install.discussion",
-      "Writes the record as VVVV-PPPP.json in your record directory and replaces the record "
-        + "already installed for that model. The running service applies it at once. Exits 1 "
-        + "and writes nothing when the record is invalid."
+      "cli.record.install.discussion"
     )
   )
 
@@ -168,7 +156,6 @@ struct RecordInstallCommand: AsyncParsableCommand {
           .fileAccessFailed,
           CLILocalized.format(
             "cli.record.install.failed",
-            "Cannot write %@: %@",
             destination.path,
             error.localizedDescription
           )
@@ -188,7 +175,6 @@ struct RecordInstallCommand: AsyncParsableCommand {
         CLIOutput.success(
           CLILocalized.format(
             "cli.record.install.success",
-            "Installed %@. The running service applies it now.",
             destination.path
           )
         )
@@ -202,13 +188,10 @@ struct RecordRemoveCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "remove",
     abstract: CLILocalized.text(
-      "cli.record.remove.abstract",
-      "Delete your controller record for one controller model."
+      "cli.record.remove.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.record.remove.discussion",
-      "A bundled model goes back to its bundled record. Asks for confirmation on a terminal; "
-        + "needs --force otherwise."
+      "cli.record.remove.discussion"
     )
   )
 
@@ -220,7 +203,7 @@ struct RecordRemoveCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.record.identity", "The controller model, as VVVV:PPPP."),
+      CLILocalized.text("cli.record.identity"),
       valueName: "VVVV:PPPP"
     )
   )
@@ -228,14 +211,14 @@ struct RecordRemoveCommand: AsyncParsableCommand {
 
   @Flag(
     name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.option.force", "Do not ask for confirmation."))
+    help: ArgumentHelp(CLILocalized.text("cli.option.force"))
   )
   var force = false
 
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
-      CLILocalized.text("cli.option.dry_run", "Print what would change, and change nothing.")
+      CLILocalized.text("cli.option.dry_run")
     )
   )
   var dryRun = false
@@ -253,14 +236,13 @@ struct RecordRemoveCommand: AsyncParsableCommand {
           .notFound,
           CLILocalized.format(
             "cli.record.remove.not_found",
-            "You have no record for %@. 'ojd record list' shows your records.",
             identity.text
           )
         )
       }
       if !dryRun {
         try CLITerminal.confirm(
-          CLILocalized.format("cli.record.remove.confirm", "Delete %@?", target.path),
+          CLILocalized.format("cli.record.remove.confirm", target.path),
           force: force
         )
         do { try FileManager.default.removeItem(at: target) } catch {
@@ -268,7 +250,6 @@ struct RecordRemoveCommand: AsyncParsableCommand {
             .fileAccessFailed,
             CLILocalized.format(
               "cli.record.remove.failed",
-              "Cannot delete %@: %@",
               target.path,
               error.localizedDescription
             )
@@ -281,11 +262,11 @@ struct RecordRemoveCommand: AsyncParsableCommand {
       case .human:
         if dryRun {
           CLIOutput.stdout(
-            CLILocalized.format("cli.record.remove.dry_run", "Would delete %@.", target.path)
+            CLILocalized.format("cli.record.remove.dry_run", target.path)
           )
         } else {
           CLIOutput.success(
-            CLILocalized.format("cli.record.remove.success", "Deleted %@.", target.path)
+            CLILocalized.format("cli.record.remove.success", target.path)
           )
         }
       }

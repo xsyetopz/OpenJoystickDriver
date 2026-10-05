@@ -7,19 +7,19 @@
   @available(macOS 13, *)
   struct ProfileEntity: AppEntity {
     static let typeDisplayRepresentation = TypeDisplayRepresentation(
-      name: LocalizedStringResource("shortcuts.profile.type", defaultValue: "Remapping Profile")
+      name: LocalizedStringResource("shortcuts.profile.type")
     )
     static let defaultQuery = ProfileEntityQuery()
 
     let id: UUID
-    @Property(title: LocalizedStringResource("shortcuts.profile.name", defaultValue: "Name"))
+    @Property(title: LocalizedStringResource("shortcuts.profile.name"))
     var name: String
     /// `VVVV:PPPP` of the controller model that the profile applies to.
     @Property(
-      title: LocalizedStringResource("shortcuts.profile.model", defaultValue: "Controller Model")
+      title: LocalizedStringResource("shortcuts.profile.model")
     )
     var model: String
-    @Property(title: LocalizedStringResource("shortcuts.profile.active", defaultValue: "Active"))
+    @Property(title: LocalizedStringResource("shortcuts.profile.active"))
     var isActive: Bool
 
     init(_ profile: AutomationProfile) {

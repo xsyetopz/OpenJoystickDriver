@@ -6,12 +6,12 @@ import Foundation
 /// The root, every group, and every leaf command declare this group; the parser gives a flag's
 /// value to each declaration, so a leaf sees flags written anywhere on the command line.
 struct GlobalOptions: ParsableArguments {
-  @Flag(help: ArgumentHelp(CLILocalized.text("cli.option.json", "Print JSON on stdout.")))
+  @Flag(help: ArgumentHelp(CLILocalized.text("cli.option.json")))
   var json = false
 
   @Flag(
     help: ArgumentHelp(
-      CLILocalized.text("cli.option.plain", "Print tab-separated records on stdout.")
+      CLILocalized.text("cli.option.plain")
     )
   )
   var plain = false
@@ -19,17 +19,17 @@ struct GlobalOptions: ParsableArguments {
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(
-      CLILocalized.text("cli.option.quiet", "Do not print success messages on stderr.")
+      CLILocalized.text("cli.option.quiet")
     )
   )
   var quiet = false
 
-  @Flag(help: ArgumentHelp(CLILocalized.text("cli.option.no_color", "Do not use color.")))
+  @Flag(help: ArgumentHelp(CLILocalized.text("cli.option.no_color")))
   var noColor = false
 
   @Flag(
     help: ArgumentHelp(
-      CLILocalized.text("cli.option.no_input", "Never prompt; fail when a value is missing.")
+      CLILocalized.text("cli.option.no_input")
     )
   )
   var noInput = false
@@ -37,8 +37,7 @@ struct GlobalOptions: ParsableArguments {
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.option.timeout",
-        "Seconds to wait for each service request, or for 'service' commands to finish."
+        "cli.option.timeout"
       ),
       valueName: "seconds"
     )
@@ -48,12 +47,12 @@ struct GlobalOptions: ParsableArguments {
   func validate() throws {
     if json, plain {
       throw ValidationError(
-        CLILocalized.text("cli.error.json_plain", "Use either --json or --plain, not both.")
+        CLILocalized.text("cli.error.json_plain")
       )
     }
     if let timeout, !(timeout.isFinite && timeout > 0) {
       throw ValidationError(
-        CLILocalized.text("cli.error.timeout_value", "--timeout needs a number of seconds above 0.")
+        CLILocalized.text("cli.error.timeout_value")
       )
     }
   }

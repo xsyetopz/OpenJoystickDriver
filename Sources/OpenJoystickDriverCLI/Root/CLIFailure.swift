@@ -50,8 +50,7 @@ struct CLIFailure: Error, Equatable, Sendable {
     Self(
       .serviceUnavailable,
       CLILocalized.text(
-        "cli.error.service_unavailable",
-        "The OpenJoystickDriver service is not running. Start it with 'ojd service start'."
+        "cli.error.service_unavailable"
       )
     )
   }
@@ -63,7 +62,6 @@ struct CLIFailure: Error, Equatable, Sendable {
       id,
       CLILocalized.format(
         "cli.error.service_request_failed",
-        "The service did not complete the request: %@. Check it with 'ojd status'.",
         // The service's message ends with a period; the format adds its own.
         detail.hasSuffix(".") ? String(detail.dropLast()) : detail
       )
@@ -76,7 +74,6 @@ struct CLIFailure: Error, Equatable, Sendable {
       .permissionMissing,
       CLILocalized.format(
         "cli.error.permission_missing",
-        "%@ access is missing. Grant it with 'ojd permission request'.",
         permissionName
       )
     )

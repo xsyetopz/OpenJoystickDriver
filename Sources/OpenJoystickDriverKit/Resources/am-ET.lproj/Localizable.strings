@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "መቆጣጠሪያ ግብዓት ያለ መገለጫን ማግበር?";
 "profiles.emptyInputWarning" = "ይህ መገለጫ ሁሉንም የቁጥጥር ማስገቢያ ይደመሰሳል.";
 "profiles.restoreDefaultInput" = "ነባሪ ግብዓት መልሶ ማግኘት";
+"common.reset" = "ዳግም አስጀምር";
+"profiles.useControllerDefaultColor" = "የመቆጣጠሪያውን ነባሪ ተጠቀም";
 "profiles.damagedProfile" = "የተበላሸ መገለጫ";
 "profiles.damagedLibrary" = "የተበላሸ የንቁ መገለጫዎች ዝርዝር";
 "profiles.deleteDamagedButton" = "የተበላሸ መገለጫ ይሰርዙ…";

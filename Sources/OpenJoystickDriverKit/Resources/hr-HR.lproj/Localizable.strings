@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktivirati profil bez ulaza kontrolera?";
 "profiles.emptyInputWarning" = "Ovaj profil uklanja sve ulazne kontrole.";
 "profiles.restoreDefaultInput" = "Obnova podrazumevanoga ulaza";
+"common.reset" = "Resetiraj";
+"profiles.useControllerDefaultColor" = "Koristi zadano za kontroler";
 "profiles.damagedProfile" = "Oštećen profil";
 "profiles.damagedLibrary" = "Oštećen popis aktivnih profila";
 "profiles.deleteDamagedButton" = "Izbriši oštećeni profil…";

@@ -14,6 +14,11 @@ struct ControllerCommandTests {
     }
   }
 
+  /// The `controller show` rows that end in `value`; labels are localized, values are matched.
+  private static func rows(_ result: CLIRun, endingIn value: String) -> [Substring] {
+    result.standardOutput.split(separator: "\n").filter { $0.hasSuffix("  " + value) }
+  }
+
   private static func sentCommands(_ service: FakeService) throws -> [ControllerOutputCommand] {
     try service.arguments(of: .sendControllerOutput).map {
       try JSONDecoder().decode(LocalServiceRPCControllerOutputArguments.self, from: $0).command
@@ -44,7 +49,8 @@ struct ControllerCommandTests {
     let result = await service.run(["controller", "show", "pad-9"])
     #expect(result.code == 1)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.contains("'pad-9'"))
+    #expect(result.standardError.hasPrefix("error[E2012]: "))
+    #expect(result.standardError.contains("pad-9"))
     #expect(result.standardError.contains("pad-1  045E:028E  Test Pad"))
   }
 
@@ -94,10 +100,11 @@ struct ControllerCommandTests {
       "controller", "rumble", "pad-1", "--left", "100", "--left-trigger", "100",
     ])
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(result.standardError.contains("warning:"))
-    #expect(result.standardError.contains("has no left-trigger motor"))
-    #expect(result.standardError.contains("Rumbled left-main on"))
-    #expect(!result.standardError.contains("aptic"))
+    let lines = result.standardError.split(separator: "\n")
+    #expect(lines.count == 2)
+    #expect(lines.first?.contains("left-trigger") == true)
+    #expect(lines.last?.contains("left-main") == true)
+    #expect(!result.standardError.contains("haptic"))
     guard case .setRumble(let intensities, _) = try Self.sentCommands(service).first else {
       Issue.record("expected setRumble")
       return
@@ -114,7 +121,7 @@ struct ControllerCommandTests {
     )
     let result = await service.run(["controller", "player", "pad-1", "1"])
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(result.standardError.contains("Sent player to Test Pad."))
+    #expect(result.standardError.contains("Test Pad"))
   }
 
   @Test
@@ -225,8 +232,13 @@ struct ControllerCommandTests {
     ])
     let result = await service.run(["controller", "show", "pad-1"])
     #expect(result.code == 0, "\(result.standardError)")
-    let ownership = result.standardOutput.split(separator: "\n").first { $0.hasPrefix("Ownership") }
-    #expect(ownership?.hasSuffix("  route raw-usb, physical unknown, HID input unknown") == true)
+    let ownership = CLILocalized.format(
+      "cli.controller.show.ownership",
+      "raw-usb",
+      "unknown",
+      "unknown"
+    )
+    #expect(Self.rows(result, endingIn: ownership).count == 1)
   }
 
   @Test
@@ -250,8 +262,7 @@ struct ControllerCommandTests {
     #expect(publication["reason"] as? String == "native-gamepad")
     #expect(publication["target"] as? String == VirtualHIDProfileID.xboxOneSBluetooth.rawValue)
     #expect(plain.standardOutput.contains("\npublication\tnot-published\tnative-gamepad\n"))
-    let row = human.standardOutput.split(separator: "\n").first { $0.hasPrefix("Publication") }
-    #expect(row?.hasSuffix("  not-published (native-gamepad)") == true)
+    #expect(Self.rows(human, endingIn: "not-published (native-gamepad)").count == 1)
   }
 
   @Test
@@ -319,17 +330,19 @@ struct ControllerCommandTests {
     let human = await service.run(["controller", "show", "pad-1"])
     let unknown = await service.run(["controller", "show", "pad-3"])
     let absent = await service.run(["controller", "show", "pad-4", "--plain"])
+    let absentHuman = await service.run(["controller", "show", "pad-4"])
 
     #expect(json.code == 0, "\(json.standardError)")
     let controller = try #require(try json.json()["controller"] as? [String: Any])
     let power = try #require(controller["power"] as? [String: Any])
     #expect(power["charging"] as? String == "charging")
     #expect(plain.standardOutput.contains("\npower\tdischarging\t0-9%\t\n"))
-    let battery = { (run: CLIRun) in
-      run.standardOutput.split(separator: "\n").first { $0.hasPrefix("Battery") }
-    }
-    #expect(battery(human)?.hasSuffix("  73% (charging)") == true)
-    #expect(battery(unknown)?.hasSuffix("  none") == true)
+    #expect(Self.rows(human, endingIn: "73% (charging)").count == 1)
+    // An unknown level adds one row that reads `none`, next to the rows that already do.
+    let none = CLILocalized.text("cli.controller.show.none")
+    #expect(
+      Self.rows(unknown, endingIn: none).count == Self.rows(absentHuman, endingIn: none).count + 1
+    )
     #expect(!absent.standardOutput.contains("power"))
   }
 
@@ -453,12 +466,6 @@ struct ControllerCommandTests {
     return (result, "\(directory.lastPathComponent)/366c-0005.json")
   }
 
-  /// The value of the `Record` row of the human `controller show` output.
-  private static func recordRow(_ result: CLIRun) -> String? {
-    result.standardOutput.split(separator: "\n").first { $0.hasPrefix("Record ") }
-      .map { $0.dropFirst("Record".count).trimmingCharacters(in: .whitespaces) }
-  }
-
   private static let userPatch = Data(
     """
     {"$schema": "\(ControllerRecordSet.overrideSchemaID)", "operation": "patch",
@@ -475,7 +482,8 @@ struct ControllerCommandTests {
     #expect(json.result.code == 0, "\(json.result.standardError)")
     let controller = try #require(try json.result.json()["controller"] as? [String: Any])
     #expect(controller["record"] as? [String: String] == ["layer": "bundled"])
-    #expect(Self.recordRow(human.result) == "bundled")
+    let bundled = CLILocalized.text("cli.controller.show.record.bundled")
+    #expect(Self.rows(human.result, endingIn: bundled).count == 1)
     #expect(plain.result.standardOutput.contains("record\tbundled\t\n"))
   }
 
@@ -490,8 +498,10 @@ struct ControllerCommandTests {
     #expect((controller["record"] as? [String: String])?.keys.sorted() == ["file", "layer"])
     #expect((controller["record"] as? [String: String])?["layer"] == "user")
     #expect((controller["record"] as? [String: String])?["file"]?.hasSuffix(json.file) == true)
-    #expect(Self.recordRow(human.result)?.hasPrefix("your record, /") == true)
-    #expect(Self.recordRow(human.result)?.hasSuffix(human.file) == true)
+    #expect(
+      human.result.standardOutput.split(separator: "\n").filter { $0.contains(human.file) }.count
+        == 1
+    )
     #expect(plain.result.standardOutput.contains("record\tuser\t/"))
     #expect(plain.result.standardOutput.contains("\(plain.file)\n"))
   }
@@ -505,7 +515,8 @@ struct ControllerCommandTests {
     #expect(json.result.code == 0, "\(json.result.standardError)")
     let controller = try #require(try json.result.json()["controller"] as? [String: Any])
     #expect(controller["record"] == nil)
-    #expect(Self.recordRow(human.result) == "none (no record matches)")
+    let none = CLILocalized.text("cli.controller.show.record.none")
+    #expect(Self.rows(human.result, endingIn: none).count == 1)
     #expect(plain.result.standardOutput.contains("record\tnone\t\n"))
   }
 
@@ -621,11 +632,10 @@ struct ControllerCommandTests {
     let plain = await service.run(["controller", "watch", "--all", "--duration", "0.1", "--plain"])
 
     #expect(human.code == 0, "\(human.standardError)")
-    #expect(
-      human.standardOutput
-        == "pad-1 connected: Test Pad (045E:028E)\npad-1 "
-        + ControllerWatchCommand.formatted(input) + "\n"
-    )
+    let humanLines = human.standardOutput.split(separator: "\n")
+    #expect(humanLines.count == 2)
+    #expect(["pad-1", "Test Pad", "045E:028E"].allSatisfy { humanLines[0].contains($0) })
+    #expect(humanLines[1] == "pad-1 " + ControllerWatchCommand.formatted(input))
     let rows = plain.standardOutput.split(separator: "\n").map {
       $0.split(separator: "\t", omittingEmptySubsequences: false).map(String.init)
     }

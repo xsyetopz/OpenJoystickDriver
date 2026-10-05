@@ -7,12 +7,10 @@ struct StatusCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "status",
     abstract: CLILocalized.text(
-      "cli.status.abstract",
-      "Show the service, extension, permissions, and connected controllers."
+      "cli.status.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.status.discussion",
-      "Works when the service is stopped: it reports the service as stopped and exits 0."
+      "cli.status.discussion"
     )
   )
 
@@ -89,24 +87,24 @@ struct StatusCommand: AsyncParsableCommand {
   private static func printHuman(_ report: StatusReport) {
     var rows: [(String, String)] = [
       (
-        CLILocalized.text("cli.status.label.service", "Service"),
+        CLILocalized.text("cli.status.label.service"),
         report.service.state.rawValue + (report.service.version.map { " (\($0))" } ?? "")
       ),
       (
-        CLILocalized.text("cli.status.label.extension", "Extension"),
+        CLILocalized.text("cli.status.label.extension"),
         "\(report.extension.bundle.rawValue), \(report.extension.registration.rawValue)"
       ),
     ]
     if let permissions = report.permissions {
       rows.append(
         (
-          CLILocalized.text("cli.status.label.input_monitoring", "Input Monitoring"),
+          CLILocalized.text("cli.status.label.input_monitoring"),
           permissions.inputMonitoring.rawValue
         )
       )
       rows.append(
         (
-          CLILocalized.text("cli.status.label.accessibility", "Accessibility"),
+          CLILocalized.text("cli.status.label.accessibility"),
           permissions.accessibility.rawValue
         )
       )
@@ -114,12 +112,12 @@ struct StatusCommand: AsyncParsableCommand {
     if let virtual = report.virtualDevice {
       rows.append(
         (
-          CLILocalized.text("cli.status.label.virtual_device", "Virtual gamepad"),
+          CLILocalized.text("cli.status.label.virtual_device"),
           virtual.status ?? (virtual.enabled == true ? "enabled" : "disabled")
         )
       )
       if let error = virtual.overrideError {
-        rows.append((CLILocalized.text("cli.status.label.override_error", "Override error"), error))
+        rows.append((CLILocalized.text("cli.status.label.override_error"), error))
       }
     }
     let width = rows.map(\.0.count).max() ?? 0
@@ -130,8 +128,7 @@ struct StatusCommand: AsyncParsableCommand {
     if report.service.state == .stopped {
       CLIOutput.stderr(
         CLILocalized.text(
-          "cli.status.start_hint",
-          "Controllers and permissions appear when the service runs: 'ojd service start'."
+          "cli.status.start_hint"
         )
       )
     }
@@ -141,7 +138,7 @@ struct StatusCommand: AsyncParsableCommand {
     if let controllers = report.controllers {
       CLIOutput.stdout("")
       CLIOutput.stdout(
-        CLILocalized.format("cli.status.label.controllers", "Controllers (%lld)", controllers.count)
+        CLILocalized.format("cli.status.label.controllers", controllers.count)
       )
       for controller in controllers {
         let identity = deviceIdentity(
@@ -156,7 +153,7 @@ struct StatusCommand: AsyncParsableCommand {
     if let unbound = report.unboundDevices, !unbound.isEmpty {
       CLIOutput.stdout("")
       CLIOutput.stdout(
-        CLILocalized.format("cli.status.label.unbound", "Unsupported devices (%lld)", unbound.count)
+        CLILocalized.format("cli.status.label.unbound", unbound.count)
       )
       for device in unbound {
         let identity = deviceIdentity(vendorID: device.vendorID, productID: device.productID)
@@ -168,7 +165,6 @@ struct StatusCommand: AsyncParsableCommand {
       CLIOutput.stdout(
         CLILocalized.format(
           "cli.status.label.pass_through",
-          "Left to macOS (%lld)",
           passThrough.count
         )
       )
@@ -182,7 +178,6 @@ struct StatusCommand: AsyncParsableCommand {
       CLIOutput.stdout(
         CLILocalized.format(
           "cli.status.label.skipped_records",
-          "Skipped controller records (%lld)",
           report.skippedRecords.count
         )
       )

@@ -131,7 +131,7 @@
       panel.allowsMultipleSelection = false
       panel.canChooseDirectories = false
       panel.canChooseFiles = true
-      panel.title = OJDLocalized.string("profiles.import", fallback: "Import profile")
+      panel.title = OJDLocalized.string("profiles.import")
       configureJSONTypes(panel)
       guard panel.runModal() == .OK, let url = panel.url else { return }
       Task { @MainActor in
@@ -144,7 +144,7 @@
 
     func exportProfile(_ profile: RemappingProfile) {
       let panel = NSSavePanel()
-      panel.title = OJDLocalized.string("profiles.export", fallback: "Export profile")
+      panel.title = OJDLocalized.string("profiles.export")
       panel.nameFieldStringValue = "\(profile.name).json"
       configureJSONTypes(panel)
       guard panel.runModal() == .OK, let url = panel.url else { return }
@@ -212,8 +212,7 @@
           profileActionError =
             library.lastError
             ?? OJDLocalized.string(
-              "profiles.actionError",
-              fallback: "This profile action could not be completed. Try again."
+              "profiles.actionError"
             )
         }
       case .failed(let mutationID, let operation, let message),

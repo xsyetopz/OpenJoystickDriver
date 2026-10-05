@@ -6,13 +6,11 @@
   @available(macOS 13, *)
   struct AppVersionIntent: AppIntent {
     static let title = LocalizedStringResource(
-      "shortcuts.action.app_version.title",
-      defaultValue: "Get OpenJoystickDriver Version"
+      "shortcuts.action.app_version.title"
     )
     static let description = IntentDescription(
       LocalizedStringResource(
-        "shortcuts.action.app_version.description",
-        defaultValue: "Returns the version of the installed app."
+        "shortcuts.action.app_version.description"
       )
     )
 

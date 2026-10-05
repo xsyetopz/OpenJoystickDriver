@@ -7,8 +7,7 @@ struct PermissionCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "permission",
     abstract: CLILocalized.text(
-      "cli.permission.abstract",
-      "Show or request the macOS permissions OpenJoystickDriver needs."
+      "cli.permission.abstract"
     ),
     subcommands: [PermissionListCommand.self, PermissionRequestCommand.self]
   )
@@ -40,13 +39,10 @@ struct PermissionListCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text(
-      "cli.permission.list.abstract",
-      "List each permission, its state, and what OpenJoystickDriver uses it for."
+      "cli.permission.list.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.permission.list.discussion",
-      "States are granted, denied, or unknown. When the service is stopped, the state is "
-        + "read in this process and a note on stderr says so; exit code stays 0."
+      "cli.permission.list.discussion"
     )
   )
 
@@ -66,9 +62,7 @@ struct PermissionListCommand: AsyncParsableCommand {
         snapshot = Self.localSnapshot()
         CLIOutput.stderr(
           CLILocalized.text(
-            "cli.permission.list.local_state",
-            "The service is not running, so these states were read by this process. "
-              + "Start the service with 'ojd service start' for the state it sees."
+            "cli.permission.list.local_state"
           )
         )
       }
@@ -92,21 +86,17 @@ struct PermissionRequestCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "request",
     abstract: CLILocalized.text(
-      "cli.permission.request.abstract",
-      "Ask the service to request permissions; it never prompts in the terminal."
+      "cli.permission.request.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.permission.request.discussion",
-      "macOS shows its own prompt for the service. Exits 77 when a requested permission is "
-        + "still not granted. Without ids, requests input-monitoring and accessibility."
+      "cli.permission.request.discussion"
     )
   )
 
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.permission.request.ids",
-        "Permissions to request: input-monitoring or accessibility."
+        "cli.permission.request.ids"
       ),
       valueName: "id"
     )
@@ -122,7 +112,6 @@ struct PermissionRequestCommand: AsyncParsableCommand {
       throw ValidationError(
         CLILocalized.format(
           "cli.permission.request.unknown_id",
-          "Unknown permission '%@'. Use %@.",
           id,
           valid.joined(separator: ", ")
         )
@@ -152,7 +141,7 @@ struct PermissionRequestCommand: AsyncParsableCommand {
       let missing = targets.filter { report.state(of: $0) != .granted }
       guard missing.isEmpty else { throw CLIFailure.permissionStillMissing(missing) }
       CLIOutput.success(
-        CLILocalized.text("cli.permission.request.granted", "The requested access is granted.")
+        CLILocalized.text("cli.permission.request.granted")
       )
     }
   }
@@ -174,8 +163,6 @@ extension CLIFailure {
       .permissionMissing,
       CLILocalized.format(
         "cli.error.permission_still_missing",
-        "%@ access is still missing. Allow OpenJoystickDriver in System Settings > %@, "
-          + "then run 'ojd permission request' again.",
         missing.map(\.localizedName).joined(separator: ", "),
         missing.map(\.localizedSettingsPane).joined(separator: " and ")
       )

@@ -8,13 +8,13 @@
 
     var updateStatusTitle: String {
       switch preferences.updateState {
-      case .idle: return OJDLocalized.string("settings.updateIdle", fallback: "Check for updates")
-      case .checking: return OJDLocalized.string("settings.updateChecking", fallback: "Checking...")
-      case .upToDate: return OJDLocalized.string("settings.upToDate", fallback: "Up to date")
+      case .idle: return OJDLocalized.string("settings.updateIdle")
+      case .checking: return OJDLocalized.string("settings.updateChecking")
+      case .upToDate: return OJDLocalized.string("settings.upToDate")
       case .available:
-        return OJDLocalized.string("settings.updateAvailable", fallback: "Update available")
+        return OJDLocalized.string("settings.updateAvailable")
       case .failed:
-        return OJDLocalized.string("settings.updateFailed", fallback: "Update check failed")
+        return OJDLocalized.string("settings.updateFailed")
       }
     }
 
@@ -23,11 +23,10 @@
       case .idle:
         return OJDLocalized.formatted(
           "settings.currentVersion",
-          fallback: "Current version: %@",
           ApplicationVersion.current
         )
       case .checking:
-        return OJDLocalized.string("settings.contactingGitHub", fallback: "Contacting GitHub...")
+        return OJDLocalized.string("settings.contactingGitHub")
       case .upToDate(let tag): return tag
       case .available(let info): return info.tagName
       case .failed(let failure): return failure.message

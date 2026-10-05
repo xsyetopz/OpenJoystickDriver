@@ -96,6 +96,7 @@ catalog-xpad *args:
 # Run the fast structural checks used by local Git hooks
 check-hook:
     python3 Scripts/Quality/check_swift_file_length.py
+    python3 Scripts/Quality/check_localization_keys.py
     git diff --check HEAD^ HEAD
 
 # Run snapshot-safe validation
@@ -104,6 +105,7 @@ check-fast: check-schemas lint
     ./Scripts/ojd errors regenerate --check
     ./Scripts/ojd check profiles
     python3 Scripts/Quality/check_swift_file_length.py
+    python3 Scripts/Quality/check_localization_keys.py
     .build/schema-validator/bin/python -m unittest discover -s Tests/RepositoryScripts
     git diff --check
 

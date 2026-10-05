@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktivujte profil bez vstupov riadiaceho ovládača?";
 "profiles.emptyInputWarning" = "Tento profil potláča všetky vstupy ovládača.";
 "profiles.restoreDefaultInput" = "Vrátiť predvolený vstup";
+"common.reset" = "Obnoviť";
+"profiles.useControllerDefaultColor" = "Použiť predvolenú hodnotu ovládača";
 "profiles.damagedProfile" = "Poškodený profil";
 "profiles.damagedLibrary" = "Poškodený zoznam aktívnych profilov";
 "profiles.deleteDamagedButton" = "Odstrániť poškodený profil…";

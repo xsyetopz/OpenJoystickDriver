@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Virkja prófíl án innleiðslu stjórnarinnar?";
 "profiles.emptyInputWarning" = "Þessi prófíll kemur ekki í gegnum allur inngangur stjórnanda.";
 "profiles.restoreDefaultInput" = "Endurnýta sjálfgefið innrit";
+"common.reset" = "Endurstilla";
+"profiles.useControllerDefaultColor" = "Nota sjálfgildi stýringar";
 "profiles.damagedProfile" = "Skemmd notandalýsing";
 "profiles.damagedLibrary" = "Skemmdur listi yfir virk snið";
 "profiles.deleteDamagedButton" = "Eyða skemmdri notandalýsingu…";

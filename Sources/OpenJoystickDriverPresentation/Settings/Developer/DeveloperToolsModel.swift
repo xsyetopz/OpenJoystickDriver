@@ -193,8 +193,7 @@
     func exportPacketCapture() {
       let panel = NSSavePanel()
       panel.title = OJDLocalized.string(
-        "developer.exportCapture",
-        fallback: "Export Packet Capture"
+        "developer.exportCapture"
       )
       panel.nameFieldStringValue = defaultExportFilename
       panel.canCreateDirectories = true
@@ -209,8 +208,7 @@
     /// Copies the captured packets to the general pasteboard as aligned text rows.
     func copyPacketCapture() {
       let header = OJDLocalized.string(
-        "developer.packetColumns",
-        fallback: "Time       Direction  Bytes  Data"
+        "developer.packetColumns"
       )
       let firstTimestamp = packets.first?.timestamp ?? 0
       let rows = [header] + packets.map { Self.packetLine($0, firstTimestamp: firstTimestamp) }

@@ -6,15 +6,10 @@ struct RecordDraftCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "draft",
     abstract: CLILocalized.text(
-      "cli.record.draft.abstract",
-      "Draft a controller record from a connected controller."
+      "cli.record.draft.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.record.draft.discussion",
-      "Reads the controller's HID report descriptor and captures its input reports while you "
-        + "press each control, then prints a record to start from. The record maps the buttons, "
-        + "sticks, triggers, and hat the descriptor states plainly. The bytes that changed "
-        + "during the capture show where the other controls sit. Needs the service."
+      "cli.record.draft.discussion"
     )
   )
 
@@ -50,8 +45,7 @@ struct RecordDraftCommand: AsyncParsableCommand {
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.record.draft.duration",
-        "Capture input reports for this many seconds."
+        "cli.record.draft.duration"
       ),
       valueName: "seconds"
     )
@@ -67,7 +61,6 @@ struct RecordDraftCommand: AsyncParsableCommand {
           CLIOutput.success(
             CLILocalized.format(
               "cli.record.draft.started",
-              "Press every control on %@ (%@), and move each stick and trigger.",
               device.name,
               device.identity
             )
@@ -87,8 +80,6 @@ struct RecordDraftCommand: AsyncParsableCommand {
             .controllerRequestFailed,
             CLILocalized.format(
               "cli.record.draft.no_layout",
-              "No control of %@ could be read from its HID report descriptor, and its bundled "
-                + "record already names its family. 'ojd record show %@' shows that record.",
               device.identity,
               device.identity
             )
@@ -153,7 +144,6 @@ struct RecordDraftCommand: AsyncParsableCommand {
       CLIOutput.success(
         CLILocalized.format(
           "cli.record.draft.captured",
-          "Input reports captured: %lld.",
           draft.capturedReports
         )
       )
@@ -161,7 +151,6 @@ struct RecordDraftCommand: AsyncParsableCommand {
         CLIOutput.success(
           CLILocalized.format(
             "cli.record.draft.changed_byte",
-            "Byte %lld changed: %lld to %lld.",
             byte.byte,
             byte.minimum,
             byte.maximum
@@ -170,8 +159,7 @@ struct RecordDraftCommand: AsyncParsableCommand {
       }
       CLIOutput.success(
         CLILocalized.text(
-          "cli.record.draft.next",
-          "Save the record to a file, check each control, then run 'ojd record validate FILE'."
+          "cli.record.draft.next"
         )
       )
     }

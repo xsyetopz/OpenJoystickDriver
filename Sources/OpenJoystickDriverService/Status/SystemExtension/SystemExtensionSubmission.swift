@@ -113,7 +113,6 @@ package final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
       .completed(
         localization.formatted(
           "cli.extension.completed",
-          defaultValue: "System extension request finished with result %@.",
           arguments: [String(result.rawValue)]
         )
       )
@@ -128,7 +127,6 @@ package final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
       .failed(
         localization.formatted(
           "cli.extension.failed",
-          defaultValue: "System extension request failed: %@ code=%d %@",
           arguments: [nsError.domain, nsError.code, nsError.localizedDescription]
         )
       )
@@ -149,7 +147,6 @@ package final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
   ) -> OSSystemExtensionRequest.ReplacementAction {
     let message = localization.formatted(
       "cli.extension.replacing",
-      defaultValue: "Replacing %@ v%@ with v%@.",
       arguments: [existing.bundleIdentifier, existing.bundleVersion, ext.bundleVersion]
     )
     FileHandle.standardError.write(Data((message + "\n").utf8))
@@ -175,8 +172,7 @@ package final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
     setResult(
       .failed(
         localization.string(
-          "cli.extension.cancelled",
-          defaultValue: "System extension request cancelled."
+          "cli.extension.cancelled"
         )
       )
     )

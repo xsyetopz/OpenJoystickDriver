@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "بدون ورودی کنترل کننده پروفایل رو فعال کنیم؟";
 "profiles.emptyInputWarning" = "این پروفایل تمام ورودی های کنترل کننده را سرکوب می کند.";
 "profiles.restoreDefaultInput" = "بازگردانیدن ورودی پیش فرض";
+"common.reset" = "بازنشانی";
+"profiles.useControllerDefaultColor" = "استفاده از پیش‌فرض کنترلر";
 "profiles.damagedProfile" = "مشخصات آسیب دیده";
 "profiles.damagedLibrary" = "فهرست نمایه‌های فعال آسیب دیده است";
 "profiles.deleteDamagedButton" = "حذف پروفایل آسیب دیده…";

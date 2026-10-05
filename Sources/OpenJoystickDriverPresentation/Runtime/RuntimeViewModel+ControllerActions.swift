@@ -56,8 +56,7 @@ extension RuntimeViewModel {
     inputCaptureState = .unavailable(
       selector,
       OJDLocalized.string(
-        "error.noDetectedControl",
-        fallback: "No new controller control was detected."
+        "error.noDetectedControl"
       )
     )
   }
@@ -70,8 +69,7 @@ extension RuntimeViewModel {
   func pairRemappingJoyCons(left: String, right: String, profileID: UUID) async -> String? {
     guard !mutationInFlight else {
       return OJDLocalized.string(
-        "error.operationInProgress",
-        fallback: "Another profile operation is already in progress."
+        "error.actionInProgress"
       )
     }
     do {
@@ -85,8 +83,7 @@ extension RuntimeViewModel {
   func unpairRemappingJoyCons(sessionID: UUID) async -> String? {
     guard !mutationInFlight else {
       return OJDLocalized.string(
-        "error.operationInProgress",
-        fallback: "Another profile operation is already in progress."
+        "error.actionInProgress"
       )
     }
     do {

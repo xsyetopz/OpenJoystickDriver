@@ -6,12 +6,10 @@ struct SettingCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "setting",
     abstract: CLILocalized.text(
-      "cli.setting.abstract",
-      "List, read, or change OpenJoystickDriver app settings."
+      "cli.setting.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.setting.discussion",
-      "The running service applies each setting, so every setting command needs it."
+      "cli.setting.discussion"
     ),
     subcommands: [SettingListCommand.self, SettingGetCommand.self, SettingSetCommand.self]
   )
@@ -25,18 +23,16 @@ enum SettingCatalog {
   static func description(of key: ApplicationSettingKey) -> String {
     switch key {
     case .launchAtLogin:
-      CLILocalized.text("cli.setting.launch_at_login", "Open OpenJoystickDriver when you log in.")
+      CLILocalized.text("cli.setting.launch_at_login")
     case .notificationSounds:
-      CLILocalized.text("cli.setting.notification_sounds", "Play a sound with notifications.")
+      CLILocalized.text("cli.setting.notification_sounds")
     case .includePrereleaseUpdates:
       CLILocalized.text(
-        "cli.setting.include_prerelease_updates",
-        "Include pre-release versions when checking for updates."
+        "cli.setting.include_prerelease_updates"
       )
     case .developerTools:
       CLILocalized.text(
-        "cli.setting.developer_tools",
-        "Show the developer tools in the Settings window."
+        "cli.setting.developer_tools"
       )
     }
   }
@@ -50,7 +46,6 @@ enum SettingCatalog {
       throw ValidationError(
         CLILocalized.format(
           "cli.setting.unknown_key",
-          "Unknown setting '%@'. Use one of: %@.",
           name,
           keyNames
         )
@@ -68,7 +63,6 @@ enum SettingCatalog {
       throw ValidationError(
         CLILocalized.format(
           "cli.setting.bad_value",
-          "'%@' is not a value for %@. Use true or false.",
           text,
           key.rawValue
         )
@@ -97,7 +91,7 @@ struct SettingResult: Encodable, Equatable {
 struct SettingListCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "list",
-    abstract: CLILocalized.text("cli.setting.list.abstract", "List every setting and its value.")
+    abstract: CLILocalized.text("cli.setting.list.abstract")
   )
 
   /// One setting in the `--json` result.
@@ -138,16 +132,15 @@ struct SettingListCommand: AsyncParsableCommand {
 struct SettingGetCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "get",
-    abstract: CLILocalized.text("cli.setting.get.abstract", "Print the value of one setting."),
+    abstract: CLILocalized.text("cli.setting.get.abstract"),
     discussion: CLILocalized.text(
-      "cli.setting.get.discussion",
-      "Prints true or false alone, for scripts. With --json, prints the key and the value."
+      "cli.setting.get.discussion"
     )
   )
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.setting.key", "The setting to read, such as launch-at-login."),
+      CLILocalized.text("cli.setting.key"),
       valueName: "key"
     )
   )
@@ -170,17 +163,15 @@ struct SettingGetCommand: AsyncParsableCommand {
 struct SettingSetCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "set",
-    abstract: CLILocalized.text("cli.setting.set.abstract", "Change one setting."),
+    abstract: CLILocalized.text("cli.setting.set.abstract"),
     discussion: CLILocalized.text(
-      "cli.setting.set.discussion",
-      "Values are true or false. Exits 1 when macOS leaves launch-at-login off until you "
-        + "approve it in System Settings."
+      "cli.setting.set.discussion"
     )
   )
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.setting.set.key", "The setting to change, such as launch-at-login."),
+      CLILocalized.text("cli.setting.set.key"),
       valueName: "key"
     )
   )
@@ -188,7 +179,7 @@ struct SettingSetCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.setting.set.value", "The new value: true or false."),
+      CLILocalized.text("cli.setting.set.value"),
       valueName: "value"
     )
   )
@@ -211,8 +202,6 @@ struct SettingSetCommand: AsyncParsableCommand {
           .systemRequestFailed,
           CLILocalized.format(
             "cli.setting.set.not_applied",
-            "macOS did not apply %@. Allow OpenJoystickDriver in System Settings > General > "
-              + "Login Items, then run 'ojd setting get %@'.",
             key.rawValue,
             key.rawValue
           )
@@ -225,7 +214,6 @@ struct SettingSetCommand: AsyncParsableCommand {
         CLIOutput.success(
           CLILocalized.format(
             "cli.setting.set.success",
-            "Set %@ to %@.",
             key.rawValue,
             String(requested)
           )

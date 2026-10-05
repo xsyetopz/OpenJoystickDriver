@@ -14,7 +14,7 @@
         VStack(alignment: .leading, spacing: 12) {
           HStack(spacing: 12) {
             Picker(
-              OJDLocalized.string("developer.controller", fallback: "Controller"),
+              OJDLocalized.string("developer.controller"),
               selection: Binding(
                 get: { model.selectedDevice?.runtimeIdentifier ?? "" },
                 set: { model.selectDevice(runtimeIdentifier: $0) }
@@ -26,7 +26,7 @@
             }.labelsHidden().frame(maxWidth: 360)
             Spacer()
             Button(
-              OJDLocalized.string("common.refresh", fallback: "Refresh"),
+              OJDLocalized.string("common.refresh"),
               action: model.requestRefresh
             ).disabled(model.isCapturing)
           }
@@ -37,7 +37,7 @@
           }
         }.padding(4)
       } label: {
-        Text(OJDLocalized.string("developer.controllerDetails", fallback: "Controller")).font(
+        Text(OJDLocalized.string("developer.controllerDetails")).font(
           .headline
         )
       }
@@ -47,29 +47,29 @@
       VStack(alignment: .leading, spacing: 10) {
         factRow(
           DeveloperValueRow(
-            label: OJDLocalized.string("developer.usbID", fallback: "USB ID"),
+            label: OJDLocalized.string("developer.usbID"),
             value: String(format: "%04X:%04X", device.vendorID, device.productID)
           ),
           DeveloperValueRow(
-            label: OJDLocalized.string("common.protocol", fallback: "Protocol"),
+            label: OJDLocalized.string("common.protocol"),
             value: "\(protocolName(device.protocolBinding)) (\(device.protocolBinding))"
           ),
           DeveloperValueRow(
-            label: OJDLocalized.string("common.serialNumber", fallback: "Serial number"),
+            label: OJDLocalized.string("common.serialNumber"),
             value: device.serialNumber ?? "—"
           )
         )
         factRow(
           DeveloperValueRow(
-            label: OJDLocalized.string("developer.route", fallback: "Route"),
+            label: OJDLocalized.string("developer.route"),
             value: routeName(device.discoverySource)
           ),
           DeveloperValueRow(
-            label: OJDLocalized.string("developer.connection", fallback: "Connection"),
+            label: OJDLocalized.string("developer.connection"),
             value: device.connection
           ),
           DeveloperValueRow(
-            label: OJDLocalized.string("developer.usbEndpoints", fallback: "USB endpoints"),
+            label: OJDLocalized.string("developer.usbEndpoints"),
             value: String(
               format: "Input 0x%02X · Output 0x%02X",
               device.inputEndpoint,
@@ -79,15 +79,15 @@
         )
         factRow(
           DeveloperValueRow(
-            label: OJDLocalized.string("developer.buttons", fallback: "Buttons"),
+            label: OJDLocalized.string("developer.buttons"),
             value: buttonValue(model.latestInput?.pressed)
           ),
           DeveloperValueRow(
-            label: OJDLocalized.string("developer.leftStick", fallback: "Left stick"),
+            label: OJDLocalized.string("developer.leftStick"),
             value: stickValue(model.latestInput?.leftStick)
           ),
           DeveloperValueRow(
-            label: OJDLocalized.string("developer.rightStick", fallback: "Right stick"),
+            label: OJDLocalized.string("developer.rightStick"),
             value: stickValue(model.latestInput?.rightStick)
           )
         )
@@ -114,7 +114,7 @@
 
     private func buttonValue(_ pressed: Set<ControlID>?) -> String {
       guard let pressed, !pressed.isEmpty else {
-        return OJDLocalized.string("common.none", fallback: "None")
+        return OJDLocalized.string("common.none")
       }
       return ControlID.allCases.filter(pressed.contains).map(\.rawValue).joined(separator: ", ")
     }
@@ -122,32 +122,32 @@
     /// Family label; transport variants share their family's label.
     private func protocolName(_ value: ProtocolBindingID) -> String {
       switch value.protocolID {
-      case .xboxXID: OJDLocalized.string("controller.originalXbox", fallback: "Original Xbox")
+      case .xboxXID: OJDLocalized.string("controller.originalXbox")
       case .xboxXUSB where value.variant == .receiver:
-        OJDLocalized.string("controller.xbox360WirelessDeveloper", fallback: "Xbox 360 Wireless")
-      case .xboxXUSB: OJDLocalized.string("controller.xbox360", fallback: "Xbox 360")
-      case .xboxGIP: OJDLocalized.string("controller.xboxOne", fallback: "Xbox One")
-      case .sonySixaxis: OJDLocalized.string("controller.dualShock3", fallback: "DualShock 3")
-      case .sonyDualShock4: OJDLocalized.string("controller.dualShock4", fallback: "DualShock 4")
-      case .sonyDualSense: OJDLocalized.string("controller.dualSense", fallback: "DualSense")
+        OJDLocalized.string("controller.xbox360WirelessDeveloper")
+      case .xboxXUSB: OJDLocalized.string("controller.xbox360")
+      case .xboxGIP: OJDLocalized.string("controller.xboxOne")
+      case .sonySixaxis: OJDLocalized.string("controller.dualShock3")
+      case .sonyDualShock4: OJDLocalized.string("controller.dualShock4")
+      case .sonyDualSense: OJDLocalized.string("controller.dualSense")
       case .valveSteamController:
-        OJDLocalized.string("controller.steamController", fallback: "Steam Controller")
-      case .vendorFlydigi: OJDLocalized.string("controller.flydigi", fallback: "Flydigi")
+        OJDLocalized.string("controller.steamController")
+      case .vendorFlydigi: OJDLocalized.string("controller.flydigi")
       case .vendorPS3ThirdParty: "Third-party PS3"
       case .vendorNVIDIAShield: "NVIDIA SHIELD"
       case .vendorGameSir where value.variant == .usb: "GameSir G7 Pro USB"
       case .vendorGameSir: "GameSir enhanced HID"
       case .nintendoSwitch1:
-        OJDLocalized.string("controller.switchProController", fallback: "Switch Pro Controller")
+        OJDLocalized.string("controller.switchProController")
       case .hidDescriptor, .hidReportLayout:
-        OJDLocalized.string("controller.standardHID", fallback: "Standard HID")
+        OJDLocalized.string("controller.standardHID")
       }
     }
 
     private func routeName(_ value: DeviceDiscoverySource) -> String {
       switch value {
-      case .hid: return OJDLocalized.string("developer.hid", fallback: "HID")
-      case .rawUSB: return OJDLocalized.string("developer.rawUSB", fallback: "Raw USB")
+      case .hid: return OJDLocalized.string("developer.hid")
+      case .rawUSB: return OJDLocalized.string("developer.rawUSB")
       }
     }
   }

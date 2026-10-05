@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Ενεργοποιήστε το προφίλ χωρίς εισφορά του ελεγκτή;";
 "profiles.emptyInputWarning" = "Αυτό το προφίλ καταπιέζει όλες τις εισόδους του ελεγκτή.";
 "profiles.restoreDefaultInput" = "Επιστρέψει την προεπιλεγμένη είσοδο";
+"common.reset" = "Επαναφορά";
+"profiles.useControllerDefaultColor" = "Χρήση προεπιλογής του χειριστηρίου";
 "profiles.damagedProfile" = "Κατεστραμμένο προφίλ";
 "profiles.damagedLibrary" = "Κατεστραμμένη λίστα ενεργών προφίλ";
 "profiles.deleteDamagedButton" = "Διαγραφή κατεστραμμένου προφίλ…";

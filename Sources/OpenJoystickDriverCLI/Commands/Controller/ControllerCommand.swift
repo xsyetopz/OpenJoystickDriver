@@ -6,19 +6,13 @@ struct ControllerCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "controller",
     abstract: CLILocalized.text(
-      "cli.controller.abstract",
-      "List, inspect, test, and control connected controllers."
+      "cli.controller.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.controller.discussion",
-      "CONTROLLER is an ID from 'ojd controller list', or VVVV:PPPP (hex vendor and product ID) "
-        + "when exactly one connected controller has it. Every controller command needs the "
-        + "service."
+      "cli.controller.discussion"
     ) + " "
       + CLILocalized.text(
-        "cli.controller.discussion.unit",
-        "A unit ID (U-...) names one controller by its model and the USB port it uses. It stays "
-          + "the same across restarts while the controller uses that port."
+        "cli.controller.discussion.unit"
       ),
     subcommands: [
       ControllerListCommand.self, ControllerShowCommand.self, ControllerWatchCommand.self,
@@ -36,8 +30,7 @@ struct ControllerCommand: AsyncParsableCommand {
 /// The shared `CONTROLLER` argument help.
 let controllerArgumentHelp = ArgumentHelp(
   CLILocalized.text(
-    "cli.controller.argument",
-    "The controller: an ID from 'ojd controller list', or VVVV:PPPP."
+    "cli.controller.argument"
   ),
   valueName: "controller"
 )
@@ -45,7 +38,7 @@ let controllerArgumentHelp = ArgumentHelp(
 struct ControllerListCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "list",
-    abstract: CLILocalized.text("cli.controller.list.abstract", "List connected controllers.")
+    abstract: CLILocalized.text("cli.controller.list.abstract")
   )
 
   @OptionGroup
@@ -71,7 +64,7 @@ struct ControllerListCommand: AsyncParsableCommand {
       case .human:
         guard !report.controllers.isEmpty else {
           CLIOutput.stderr(
-            CLILocalized.text("cli.controller.list.empty", "No controllers are connected.")
+            CLILocalized.text("cli.controller.list.empty")
           )
           return
         }
@@ -97,7 +90,7 @@ struct ControllerListCommand: AsyncParsableCommand {
               .padding(toLength: batteryWidth, withPad: " ", startingAt: 0) + "  "
           let suspended =
             controller.session == ControllerSessionState.suspended.rawValue
-            ? "  " + CLILocalized.text("cli.controller.list.suspended", "(suspended)") : ""
+            ? "  " + CLILocalized.text("cli.controller.list.suspended") : ""
           CLIOutput.stdout(
             "\(id)  \(unit)\(identity)  \(controller.connection)  \(battery)\(controller.name)"
               + suspended
@@ -112,13 +105,10 @@ struct ControllerShowCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "show",
     abstract: CLILocalized.text(
-      "cli.controller.show.abstract",
-      "Show a controller's identity, ownership, capabilities, and virtual gamepad."
+      "cli.controller.show.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.controller.show.discussion",
-      "Also lists output checks: commands that exercise each rumble motor and light, with what "
-        + "to observe."
+      "cli.controller.show.discussion"
     )
   )
 
@@ -185,12 +175,12 @@ struct ControllerShowCommand: AsyncParsableCommand {
   /// The Record row: the layer and the user file, or that no record matches the model.
   private static func recordText(_ record: ControllerShowReport.Record?) -> String {
     guard let record else {
-      return CLILocalized.text("cli.controller.show.record.none", "none (no record matches)")
+      return CLILocalized.text("cli.controller.show.record.none")
     }
     switch record.file {
     case let file?:
-      return CLILocalized.format("cli.controller.show.record.user", "your record, %@", file)
-    case nil: return CLILocalized.text("cli.controller.show.record.bundled", "bundled")
+      return CLILocalized.format("cli.controller.show.record.user", file)
+    case nil: return CLILocalized.text("cli.controller.show.record.bundled")
     }
   }
 
@@ -213,64 +203,63 @@ struct ControllerShowCommand: AsyncParsableCommand {
   }
 
   private static func printHuman(_ detail: ControllerShowReport.Detail) {
-    let none = CLILocalized.text("cli.controller.show.none", "none")
+    let none = CLILocalized.text("cli.controller.show.none")
     func list(_ values: [String]) -> String {
       values.isEmpty ? none : values.joined(separator: ", ")
     }
     var rows: [(String, String)] = [
-      (CLILocalized.text("cli.controller.show.label.name", "Name"), detail.name),
-      (CLILocalized.text("cli.controller.show.label.id", "ID"), detail.id),
-      (CLILocalized.text("cli.controller.show.label.unit", "Unit ID"), detail.unit ?? none),
+      (CLILocalized.text("cli.controller.show.label.name"), detail.name),
+      (CLILocalized.text("cli.controller.show.label.id"), detail.id),
+      (CLILocalized.text("cli.controller.show.label.unit"), detail.unit ?? none),
       (
-        CLILocalized.text("cli.controller.show.label.identity", "Vendor:Product"),
+        CLILocalized.text("cli.controller.show.label.identity"),
         deviceIdentity(vendorID: detail.vendorID, productID: detail.productID)
       ),
-      (CLILocalized.text("cli.controller.show.label.connection", "Connection"), detail.connection),
-      (CLILocalized.text("cli.controller.show.label.protocol", "Protocol"), detail.protocol),
-      (CLILocalized.text("cli.controller.show.label.session", "Session"), detail.session),
+      (CLILocalized.text("cli.controller.show.label.connection"), detail.connection),
+      (CLILocalized.text("cli.controller.show.label.protocol"), detail.protocol),
+      (CLILocalized.text("cli.controller.show.label.session"), detail.session),
     ]
     if let power = detail.power {
       let charging = power.charging == .unknown ? "" : " (\(power.charging.rawValue))"
       rows.append(
         (
-          CLILocalized.text("cli.controller.show.label.battery", "Battery"),
+          CLILocalized.text("cli.controller.show.label.battery"),
           (power.battery.percentageText ?? none) + charging
         )
       )
     }
     rows += [
       (
-        CLILocalized.text("cli.controller.show.label.input", "Input"),
+        CLILocalized.text("cli.controller.show.label.input"),
         detail.inputHealth.state + (detail.inputHealth.failureReason.map { " (\($0))" } ?? "")
       ),
       (
-        CLILocalized.text("cli.controller.show.label.ownership", "Ownership"),
+        CLILocalized.text("cli.controller.show.label.ownership"),
         CLILocalized.format(
           "cli.controller.show.ownership",
-          "route %@, physical %@, HID input %@",
           kebabCase(detail.ownership.discoverySource),
           kebabCase(detail.ownership.physical),
           kebabCase(detail.ownership.hidInput)
         )
       ),
-      (CLILocalized.text("cli.controller.show.label.record", "Record"), recordText(detail.record)),
+      (CLILocalized.text("cli.controller.show.label.record"), recordText(detail.record)),
       (
-        CLILocalized.text("cli.controller.show.label.controls", "Controls"),
+        CLILocalized.text("cli.controller.show.label.controls"),
         list(detail.capabilities.controls)
       ),
       (
-        CLILocalized.text("cli.controller.show.label.rumble", "Rumble"),
+        CLILocalized.text("cli.controller.show.label.rumble"),
         list(detail.capabilities.rumbleMotors.map(kebabCase))
       ),
       (
-        CLILocalized.text("cli.controller.show.label.lighting", "Lighting"),
+        CLILocalized.text("cli.controller.show.label.lighting"),
         list(detail.capabilities.lightingFeatures.map(kebabCase))
       ),
     ]
     if let virtual = detail.virtual {
       rows.append(
         (
-          CLILocalized.text("cli.controller.show.label.virtual", "Virtual gamepad"),
+          CLILocalized.text("cli.controller.show.label.virtual"),
           virtual.profile.map { "\($0) (\(virtual.source ?? ""))" } ?? none
         )
       )
@@ -278,7 +267,7 @@ struct ControllerShowCommand: AsyncParsableCommand {
     if let publication = detail.publication {
       rows.append(
         (
-          CLILocalized.text("cli.controller.show.label.publication", "Publication"),
+          CLILocalized.text("cli.controller.show.label.publication"),
           publication.state + (publication.reason.map { " (\($0))" } ?? "")
         )
       )
@@ -289,7 +278,7 @@ struct ControllerShowCommand: AsyncParsableCommand {
     }
     guard !detail.outputChecks.isEmpty else { return }
     CLIOutput.stdout("")
-    CLIOutput.stdout(CLILocalized.text("cli.controller.show.label.output_checks", "Output checks"))
+    CLIOutput.stdout(CLILocalized.text("cli.controller.show.label.output_checks"))
     for check in detail.outputChecks {
       CLIOutput.stdout("  \(check.command)")
       CLIOutput.stdout("    \(check.expected)")

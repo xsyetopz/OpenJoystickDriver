@@ -6,8 +6,7 @@ struct UpdateCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "update",
     abstract: CLILocalized.text(
-      "cli.update.abstract",
-      "Check whether a newer OpenJoystickDriver release exists."
+      "cli.update.abstract"
     ),
     subcommands: [UpdateCheckCommand.self]
   )
@@ -20,13 +19,10 @@ struct UpdateCheckCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "check",
     abstract: CLILocalized.text(
-      "cli.update.check.abstract",
-      "Compare this version with the latest release tag on GitHub."
+      "cli.update.check.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.update.check.discussion",
-      "Runs only when you ask; ojd never checks on its own. It does not download or install "
-        + "anything. Exits 0 whether or not an update exists, and 1 when the check fails."
+      "cli.update.check.discussion"
     )
   )
 
@@ -41,7 +37,7 @@ struct UpdateCheckCommand: AsyncParsableCommand {
 
   @Flag(
     help: ArgumentHelp(
-      CLILocalized.text("cli.update.check.prerelease", "Include pre-release versions.")
+      CLILocalized.text("cli.update.check.prerelease")
     )
   )
   var prerelease = false
@@ -88,7 +84,7 @@ struct UpdateCheckCommand: AsyncParsableCommand {
         throw Self.failure(failure.message, network: failure.reason == .transport)
       case .idle, .checking:
         throw Self.failure(
-          CLILocalized.text("cli.update.check.incomplete", "no result"),
+          CLILocalized.text("cli.update.check.incomplete"),
           network: false
         )
       }
@@ -112,7 +108,6 @@ struct UpdateCheckCommand: AsyncParsableCommand {
         CLIOutput.stdout(
           CLILocalized.format(
             "cli.update.check.up_to_date",
-            "OpenJoystickDriver %@ is up to date (latest release: %@).",
             result.currentVersion,
             result.latestVersion
           )
@@ -121,7 +116,6 @@ struct UpdateCheckCommand: AsyncParsableCommand {
         CLIOutput.stdout(
           CLILocalized.format(
             "cli.update.check.available",
-            "OpenJoystickDriver %@ is available (you have %@): %@",
             result.latestVersion,
             result.currentVersion,
             result.releaseURL ?? ""
@@ -137,12 +131,10 @@ struct UpdateCheckCommand: AsyncParsableCommand {
       network
       ? CLILocalized.format(
         "cli.update.check.failed",
-        "Could not check for updates: %@. Check your network connection and try again.",
         detail
       )
       : CLILocalized.format(
         "cli.update.check.failed_reason",
-        "Could not check for updates: %@.",
         detail
       )
     return CLIFailure(.updateCheckFailed, message)

@@ -24,7 +24,6 @@ struct ProfileSelector: ExpressibleByArgument, Equatable, Sendable {
     guard matches.isEmpty else {
       let message = CLILocalized.format(
         "cli.profile.selector.ambiguous",
-        "'%@' names %lld profiles. Use one of these IDs:",
         text,
         matches.count
       )
@@ -35,7 +34,6 @@ struct ProfileSelector: ExpressibleByArgument, Equatable, Sendable {
       .notFound,
       CLILocalized.format(
         "cli.profile.selector.not_found",
-        "No profile has the ID or name '%@'. 'ojd profile list' shows every profile.",
         text
       )
     )
@@ -53,8 +51,7 @@ struct ProfileSelector: ExpressibleByArgument, Equatable, Sendable {
 /// The shared `PROFILE` argument help.
 let profileArgumentHelp = ArgumentHelp(
   CLILocalized.text(
-    "cli.profile.argument",
-    "The profile: its ID or its name from 'ojd profile list'."
+    "cli.profile.argument"
   ),
   valueName: "profile"
 )
@@ -83,7 +80,7 @@ struct ProfileSummary: Encodable, Equatable {
   var row: [String] { [id, name, controller, scope, String(active)] }
 
   var line: String {
-    let marker = active ? "  " + CLILocalized.text("cli.profile.active_marker", "(active)") : ""
+    let marker = active ? "  " + CLILocalized.text("cli.profile.active_marker") : ""
     return "\(id)  \(name)  \(controller)  \(scope)\(marker)"
   }
 }
@@ -96,7 +93,6 @@ extension RemappingProfile {
         .invalidInputFile,
         CLILocalized.format(
           "cli.profile.invalid",
-          "The profile is not valid: %@",
           error.localizedDescription
         )
       )

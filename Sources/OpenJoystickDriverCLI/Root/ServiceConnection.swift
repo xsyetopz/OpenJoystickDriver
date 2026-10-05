@@ -63,8 +63,7 @@ enum ServiceConnection {
       CLIFailure(
         rejection.code.errorCode,
         CLILocalized.text(
-          "cli.error.duplicate_profile_name",
-          "A profile with that name already exists. 'ojd profile list' shows every profile."
+          "cli.error.duplicate_profile_name"
         )
       )
     case let rejection as ApplicationServiceRemappingRPCError:
@@ -80,8 +79,7 @@ extension CLIFailure {
       return Self(
         .serviceTimeout,
         CLILocalized.text(
-          "cli.error.service_timeout",
-          "The service did not reply in time. Retry, or check it with 'ojd status'."
+          "cli.error.service_timeout"
         )
       )
     }
@@ -89,7 +87,6 @@ extension CLIFailure {
       .serviceTimeout,
       CLILocalized.format(
         "cli.error.request_timeout",
-        "The service did not reply within %@. Retry with a larger --timeout.",
         seconds.durationText
       )
     )
@@ -99,9 +96,7 @@ extension CLIFailure {
     Self(
       .peerRejected,
       CLILocalized.text(
-        "cli.error.peer_rejected",
-        "The service rejected this ojd, because it is not signed like the app. "
-          + "Run the ojd that ships inside OpenJoystickDriver.app."
+        "cli.error.peer_rejected"
       )
     )
   }

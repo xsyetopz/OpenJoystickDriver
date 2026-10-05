@@ -172,34 +172,31 @@
           Alert(
             title: Text(
               OJDLocalized.string(
-                "profiles.emptyActivationTitle",
-                fallback: "Activate profile with no controller input?"
+                "profiles.emptyActivationTitle"
               )
             ),
             message: Text(
               OJDLocalized.string(
-                "profiles.emptyActivationMessage",
-                fallback: "This profile suppresses all controller input."
+                "profiles.emptyActivationMessage"
               )
             ),
             primaryButton: .destructive(
-              Text(OJDLocalized.string("common.setActive", fallback: "Set active"))
+              Text(OJDLocalized.string("common.setActive"))
             ) { activateProfile() },
             secondaryButton: .cancel { self.confirmation = nil }
           )
         case .clearInputs:
           Alert(
             title: Text(
-              OJDLocalized.string("profiles.clearInputsTitle", fallback: "Clear all inputs?")
+              OJDLocalized.string("profiles.clearInputsTitle")
             ),
             message: Text(
               OJDLocalized.string(
-                "profiles.clearInputsMessage",
-                fallback: "This removes all assignments and input processing from this profile."
+                "profiles.clearInputsMessage"
               )
             ),
             primaryButton: .destructive(
-              Text(OJDLocalized.string("profiles.clearInputs", fallback: "Clear all inputs"))
+              Text(OJDLocalized.string("profiles.clearInputs"))
             ) { clearInputs() },
             secondaryButton: .cancel { self.confirmation = nil }
           )
@@ -216,11 +213,11 @@
             maxWidth: .infinity,
             alignment: .leading
           ).ojdAccessibilityLabel(
-            OJDLocalized.string("common.profileName", fallback: "Profile name")
+            OJDLocalized.string("common.profileName")
           )
           OJDCompactSymbolButton(
             symbolName: "pencil",
-            label: OJDLocalized.string("profiles.details", fallback: "Profile details")
+            label: OJDLocalized.string("profiles.details")
           ) { activeSheet = .metadata }
           primaryActivationAction
           profileActionMenu
@@ -253,12 +250,11 @@
           HStack(spacing: 8) {
             Text(
               OJDLocalized.string(
-                "profiles.emptyInputWarning",
-                fallback: "This profile suppresses all controller input."
+                "profiles.emptyInputWarning"
               )
             ).foregroundColor(Color(NSColor.systemOrange))
             Button(
-              OJDLocalized.string("profiles.restoreDefaultInput", fallback: "Restore default input")
+              OJDLocalized.string("profiles.restoreDefaultInput")
             ) { restoreDefaultInput() }
           }.font(.caption)
         }
@@ -281,8 +277,7 @@
       if profile.joyConPair == nil {
         Button(
           OJDLocalized.string(
-            isActive ? "common.deactivate" : "common.setActive",
-            fallback: isActive ? "Deactivate" : "Set active"
+            isActive ? "common.deactivate" : "common.setActive"
           )
         ) { isActive ? deactivateProfile() : requestActivation() }.disabled(isMutationActive)
       }
@@ -290,18 +285,18 @@
 
     var profileActionMenu: some View {
       Picker(
-        OJDLocalized.string("profiles.actions", fallback: "Profile actions"),
+        OJDLocalized.string("profiles.actions"),
         selection: Binding<ProfileEditorMenuAction?>(
           get: { nil },
           set: { action in if let action { performMenuAction(action) } }
         )
       ) {
-        Text(OJDLocalized.string("profiles.actions", fallback: "Profile actions")).tag(
+        Text(OJDLocalized.string("profiles.actions")).tag(
           Optional<ProfileEditorMenuAction>.none
         )
         ForEach(menuActions, id: \.self) { action in Text(action.title).tag(Optional(action)) }
       }.pickerStyle(PopUpButtonPickerStyle()).labelsHidden().frame(width: 132)
-        .ojdAccessibilityLabel(OJDLocalized.string("profiles.actions", fallback: "Profile actions"))
+        .ojdAccessibilityLabel(OJDLocalized.string("profiles.actions"))
         .disabled(isMutationActive)
     }
 
@@ -309,7 +304,7 @@
       Group {
         if ProfilePresentationPolicy.navigationStyle(for: width) == .segmented {
           Picker(
-            OJDLocalized.string("profiles.editorSection", fallback: "Profile editor section"),
+            OJDLocalized.string("profiles.editorSection"),
             selection: $selectedSection
           ) {
             ForEach(ProfilePresentationPolicy.sectionOrder) { section in
@@ -318,7 +313,7 @@
           }.pickerStyle(SegmentedPickerStyle()).labelsHidden()
         } else {
           HStack {
-            Text(OJDLocalized.string("profiles.editorSection", fallback: "Section"))
+            Text(OJDLocalized.string("profiles.editorSection"))
               .foregroundColor(Color(NSColor.secondaryLabelColor))
             Picker("", selection: $selectedSection) {
               ForEach(ProfilePresentationPolicy.sectionOrder) { section in
@@ -328,7 +323,7 @@
           }
         }
       }.padding(.horizontal, 28).padding(.vertical, 10).ojdAccessibilityLabel(
-        OJDLocalized.string("profiles.editorSection", fallback: "Profile editor section")
+        OJDLocalized.string("profiles.editorSection")
       ).ojdAccessibilityValue(selectedSection.title)
     }
   }

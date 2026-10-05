@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "没有控制器输入的配置文件?";
 "profiles.emptyInputWarning" = "控制器输入的数据.";
 "profiles.restoreDefaultInput" = "恢复默认输入";
+"common.reset" = "重置";
+"profiles.useControllerDefaultColor" = "使用控制器默认值";
 "profiles.damagedProfile" = "轮廓损坏";
 "profiles.damagedLibrary" = "活跃配置文件列表已损坏";
 "profiles.deleteDamagedButton" = "删除损坏的配置文件…";

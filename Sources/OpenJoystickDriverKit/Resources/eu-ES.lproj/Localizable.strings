@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Profil bat aktibatu kontrolatzailearen sarrerarik gabe?";
 "profiles.emptyInputWarning" = "Profil honek kontrolgailuaren sarrera guztiak ezabatu egiten ditu.";
 "profiles.restoreDefaultInput" = "Irteera iraunkorra berrezarri";
+"common.reset" = "Berrezarri";
+"profiles.useControllerDefaultColor" = "Erabili agintearen balio lehenetsia";
 "profiles.damagedProfile" = "Kaltetutako profila";
 "profiles.damagedLibrary" = "Profil aktiboen zerrenda kaltetuta";
 "profiles.deleteDamagedButton" = "Ezabatu kaltetutako profila…";

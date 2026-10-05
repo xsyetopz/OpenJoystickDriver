@@ -46,56 +46,55 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 15) {
-        Text(OJDLocalized.string("profiles.details", fallback: "Profile details")).font(
+        Text(OJDLocalized.string("profiles.details")).font(
           .headline.weight(.semibold)
         )
-        TextField(OJDLocalized.string("common.profileName", fallback: "Profile name"), text: $name)
+        TextField(OJDLocalized.string("common.profileName"), text: $name)
         HStack(spacing: 12) {
           TextField(
-            OJDLocalized.string("profiles.vendorID", fallback: "Vendor ID"),
+            OJDLocalized.string("profiles.vendorID"),
             text: $vendorID
           )
           TextField(
-            OJDLocalized.string("profiles.productID", fallback: "Product ID"),
+            OJDLocalized.string("profiles.productID"),
             text: $productID
           )
         }
         Text(
           OJDLocalized.string(
-            "profiles.identifierHint",
-            fallback: "Use decimal or 0x-prefixed hexadecimal identifiers."
+            "profiles.identifierHint"
           )
         ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
-        Picker(OJDLocalized.string("profiles.target", fallback: "Target"), selection: $scopeKind) {
-          Text(OJDLocalized.string("profiles.targetGlobal", fallback: "All applications")).tag(
+        Picker(OJDLocalized.string("profiles.target"), selection: $scopeKind) {
+          Text(OJDLocalized.string("profiles.targetGlobal")).tag(
             ProfileScopeKind.global
           )
-          Text(OJDLocalized.string("profiles.targetApplication", fallback: "One application")).tag(
+          Text(OJDLocalized.string("profiles.targetApplication")).tag(
             ProfileScopeKind.application
           )
         }
         if scopeKind == .application {
           TextField(
-            OJDLocalized.string("profiles.bundleIdentifier", fallback: "Bundle identifier"),
+            OJDLocalized.string("profiles.bundleIdentifier"),
             text: $bundleIdentifier
           )
         }
         Toggle(
-          OJDLocalized.string("profiles.joyConPair", fallback: "Paired Joy-Con profile"),
+          OJDLocalized.string("profiles.joyConPair"),
           isOn: $joyConPairEnabled
         )
         if joyConPairEnabled {
           Picker(
-            OJDLocalized.string("profiles.joyConGyro", fallback: "Pair gyro source"),
+            OJDLocalized.string("profiles.joyConGyro"),
             selection: $joyConGyroSelection
           ) {
-            Text(OJDLocalized.string("common.disabled", fallback: "Disabled")).tag(
+            Text(OJDLocalized.string("common.disabled")).tag(
               RemappingJoyConGyroSelection.disabled
             )
-            Text(OJDLocalized.string("profiles.joyConLeft", fallback: "Left Joy-Con")).tag(
+            Text(OJDLocalized.string("profiles.joyConLeft")).tag(
               RemappingJoyConGyroSelection.left
             )
-            Text(OJDLocalized.string("profiles.joyConRight", fallback: "Right Joy-Con")).tag(
+            Text(OJDLocalized.string("profiles.joyConRight")).tag(
               RemappingJoyConGyroSelection.right
             )
           }
@@ -108,8 +107,8 @@
         }
         HStack {
           Spacer()
-          Button(OJDLocalized.string("common.cancel", fallback: "Cancel")) { dismiss() }
-          Button(OJDLocalized.string("common.apply", fallback: "Apply")) { save() }
+          Button(OJDLocalized.string("common.cancel")) { dismiss() }
+          Button(OJDLocalized.string("common.apply")) { save() }
         }
       }.padding(28).frame(width: 440)
     }
@@ -119,8 +118,7 @@
         let productID = ProfileIdentifierInput.parse(productID)
       else {
         errorMessage = OJDLocalized.string(
-          "profiles.invalidIdentifiers",
-          fallback: "Enter valid 16-bit vendor and product identifiers."
+          "profiles.invalidIdentifiers"
         )
         return
       }

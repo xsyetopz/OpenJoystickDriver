@@ -12,12 +12,12 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 18) {
-        Text(OJDLocalized.string("profiles.combinations", fallback: "Combinations")).font(.headline)
+        Text(OJDLocalized.string("profiles.combinations")).font(.headline)
         combinationGroup(
-          title: OJDLocalized.string("profiles.chords", fallback: "Chords"),
-          addTitle: OJDLocalized.string("profiles.addChord", fallback: "Add chord"),
+          title: OJDLocalized.string("profiles.chords"),
+          addTitle: OJDLocalized.string("profiles.addChord"),
           isEmpty: profile.chords.isEmpty,
-          emptyMessage: OJDLocalized.string("profiles.noChords", fallback: "No chords configured."),
+          emptyMessage: OJDLocalized.string("profiles.noChords"),
           add: { openSheet(.chord) },
           content: {
             ForEach(profile.chords) { chord in
@@ -36,12 +36,11 @@
           }
         )
         combinationGroup(
-          title: OJDLocalized.string("profiles.sequences", fallback: "Sequences"),
-          addTitle: OJDLocalized.string("profiles.addSequence", fallback: "Add sequence"),
+          title: OJDLocalized.string("profiles.sequences"),
+          addTitle: OJDLocalized.string("profiles.addSequence"),
           isEmpty: profile.sequences.isEmpty,
           emptyMessage: OJDLocalized.string(
-            "profiles.noSequences",
-            fallback: "No sequences configured."
+            "profiles.noSequences"
           ),
           add: { openSheet(.sequence) },
           content: {
@@ -99,15 +98,15 @@
     var body: some View {
       VStack(alignment: .leading, spacing: 10) {
         HStack {
-          Text(OJDLocalized.string("profiles.layers", fallback: "Layers")).font(.headline)
+          Text(OJDLocalized.string("profiles.layers")).font(.headline)
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
-            label: OJDLocalized.string("profiles.addLayer", fallback: "Add layer")
+            label: OJDLocalized.string("profiles.addLayer")
           ) { openSheet(.layer) }
         }
         if profile.layers.isEmpty {
-          Text(OJDLocalized.string("profiles.noLayers", fallback: "No layers configured."))
+          Text(OJDLocalized.string("profiles.noLayers"))
             .foregroundColor(Color(NSColor.secondaryLabelColor))
         } else {
           ForEach(profile.layers) { layer in layerGroup(layer) }
@@ -128,11 +127,11 @@
             Spacer()
             OJDCompactSymbolButton(
               symbolName: "plus",
-              label: OJDLocalized.string("common.addAssignment", fallback: "Add assignment")
+              label: OJDLocalized.string("common.addAssignment")
             ) { openSheet(.layerBinding(layer)) }
             OJDCompactSymbolButton(
               symbolName: "pencil",
-              label: OJDLocalized.string("profiles.motion.title", fallback: "Motion tuning")
+              label: OJDLocalized.string("profiles.motion.title")
             ) { openSheet(.layerMotion(layer)) }.disabled(
               !capabilities.physicalInput.motion && layer.motionTuning == nil
             )
@@ -145,11 +144,11 @@
               KeyboardDestinationLabel(destination: binding.destination)
               Spacer()
               if binding.axisTuning != nil {
-                Button(OJDLocalized.string("common.adjust", fallback: "Adjust...")) {
+                Button(OJDLocalized.string("common.adjust")) {
                   openSheet(.layerAdjustment(layer.id, binding))
                 }
               }
-              Button(OJDLocalized.string("profiles.behavior", fallback: "Behavior...")) {
+              Button(OJDLocalized.string("profiles.behavior")) {
                 openSheet(.layerBehavior(layer.id, binding))
               }
               removeButton { removeBinding(layer.id, binding.id) }
@@ -162,8 +161,8 @@
     private func layerDescription(_ layer: RemappingLayer) -> String {
       let mode =
         layer.activationMode == .hold
-        ? OJDLocalized.string("profiles.hold", fallback: "Hold")
-        : OJDLocalized.string("profiles.toggle", fallback: "Toggle")
+        ? OJDLocalized.string("profiles.hold")
+        : OJDLocalized.string("profiles.toggle")
       return "\(mode): \(RuntimePresentation.sourceLabel(layer.activator))"
     }
   }
@@ -177,29 +176,29 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 18) {
-        Text(OJDLocalized.string("common.controller", fallback: "Controller")).font(.headline)
+        Text(OJDLocalized.string("common.controller")).font(.headline)
         detailsGroup
         outputGroup
         configurationGroup(
-          title: OJDLocalized.string("profiles.motion.title", fallback: "Motion tuning"),
-          summary: OJDLocalized.string("profiles.motion.space", fallback: "Coordinate space")
-            + " · " + OJDLocalized.string("profiles.gyro.output", fallback: "Gyro output"),
+          title: OJDLocalized.string("profiles.motion.title"),
+          summary: OJDLocalized.string("profiles.motion.space")
+            + " · " + OJDLocalized.string("profiles.gyro.output"),
           supported: capabilities.physicalInput.motion
         ) { openSheet(.motion) }
         configurationGroup(
-          title: OJDLocalized.string("profiles.stick.title", fallback: "Stick modes"),
+          title: OJDLocalized.string("profiles.stick.title"),
           summary: assignmentCountLabel(profile.stickMappings.count),
           supported: capabilities.supportsStickAxes,
           enabled: capabilities.supportsStickAxes || !profile.stickMappings.isEmpty
         ) { openSheet(.sticks) }
         configurationGroup(
-          title: OJDLocalized.string("profiles.trigger.title", fallback: "Trigger stages"),
+          title: OJDLocalized.string("profiles.trigger.title"),
           summary: assignmentCountLabel(profile.triggerMappings.count),
           supported: capabilities.supportsAnalogTriggers,
           enabled: capabilities.supportsAnalogTriggers || !profile.triggerMappings.isEmpty
         ) { openSheet(.triggers) }
         configurationGroup(
-          title: OJDLocalized.string("profiles.touch.title", fallback: "Touch mappings"),
+          title: OJDLocalized.string("profiles.touch.title"),
           summary: assignmentCountLabel(profile.touchMappings.count),
           supported: !capabilities.physicalInput.touchSurfaces.isEmpty,
           enabled: capabilities.physicalInput.touchContactCount > 0
@@ -215,15 +214,15 @@
     private var detailsGroup: some View {
       GroupBox {
         VStack(alignment: .leading, spacing: 8) {
-          Text(OJDLocalized.string("profiles.details", fallback: "Profile details")).font(
+          Text(OJDLocalized.string("profiles.details")).font(
             .subheadline.weight(.semibold)
           )
           KeyValueRow(
-            label: OJDLocalized.string("common.controller", fallback: "Controller"),
+            label: OJDLocalized.string("common.controller"),
             value: String(format: "%04X:%04X", profile.device.vendorID, profile.device.productID)
           )
           KeyValueRow(
-            label: OJDLocalized.string("profiles.target", fallback: "Target"),
+            label: OJDLocalized.string("profiles.target"),
             value: RuntimePresentation.profileScopeLabel(profile.applicationScope)
           )
         }.padding(4)
@@ -233,7 +232,7 @@
     private var outputGroup: some View {
       GroupBox {
         VStack(alignment: .leading, spacing: 10) {
-          Text(OJDLocalized.string("profiles.virtualOutput", fallback: "Virtual gamepad")).font(
+          Text(OJDLocalized.string("profiles.virtualOutput")).font(
             .subheadline.weight(.semibold)
           )
           ProfileOutputPolicyView(policy: profile.outputPolicy, onChange: updateOutputPolicy)
@@ -256,8 +255,7 @@
               supported
                 ? summary
                 : OJDLocalized.string(
-                  "profiles.notSupportedByController",
-                  fallback: "Not supported by this controller or protocol."
+                  "profiles.notSupportedByController"
                 )
             ).font(.caption).foregroundColor(
               supported ? Color(NSColor.secondaryLabelColor) : Color(NSColor.systemOrange)
@@ -266,24 +264,27 @@
           Spacer(minLength: 8)
           OJDCompactSymbolButton(
             symbolName: "pencil",
-            label: OJDLocalized.string("common.adjust", fallback: "Adjust")
+            label: OJDLocalized.string("common.adjust")
           ) { action() }.disabled(!(enabled ?? supported))
         }.padding(4)
       }
     }
 
     private func assignmentCountLabel(_ count: Int) -> String {
-      OJDLocalized.plural("profiles.assignments", count: count, fallback: "%d assignments")
+      OJDLocalized.plural("profiles.assignments", count: count)
     }
   }
 
   @MainActor
   private func removeButton(action: @escaping () -> Void) -> some View {
     Button(action: action) {
-      OJDSystemSymbol(name: "minus.circle", fallback: "Remove").frame(minWidth: 28, minHeight: 28)
-        .contentShape(Rectangle())
+      OJDSystemSymbol(name: "minus.circle", fallback: OJDLocalized.string("common.remove")).frame(
+        minWidth: 28,
+        minHeight: 28
+      )
+      .contentShape(Rectangle())
     }.buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(
-      OJDLocalized.string("common.remove", fallback: "Remove")
+      OJDLocalized.string("common.remove")
     )
   }
 #endif

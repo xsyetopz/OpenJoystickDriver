@@ -44,16 +44,15 @@
 
     var activationLabel: String {
       if profile.joyConPair != nil {
-        return OJDLocalized.string("profiles.joyConSessionState", fallback: "Explicit pairing")
+        return OJDLocalized.string("profiles.joyConSessionState")
       }
       return OJDLocalized.string(
-        isActive ? "profiles.active" : "profiles.notActive",
-        fallback: isActive ? "Active" : "Not active"
+        isActive ? "profiles.active" : "profiles.notActive"
       )
     }
 
     func assignmentCountLabel(_ count: Int) -> String {
-      OJDLocalized.plural("profiles.assignments", count: count, fallback: "%d assignments")
+      OJDLocalized.plural("profiles.assignments", count: count)
     }
 
     var menuActions: [ProfileEditorMenuAction] {
@@ -279,8 +278,7 @@
       finishSave()
       showingConflict = true
       saveError = OJDLocalized.string(
-        "profiles.changedElsewhere",
-        fallback: "The profile changed elsewhere."
+        "profiles.changedElsewhere"
       )
     }
 
@@ -291,8 +289,7 @@
         let latest = snapshot.profiles.first(where: { $0.id == profile.id })
       else {
         localError = OJDLocalized.string(
-          "profiles.savedButUnavailable",
-          fallback: "The profile was saved, but its latest state is unavailable."
+          "profiles.savedButUnavailable"
         )
         saveError = localError
         return
@@ -318,18 +315,17 @@
 
     var title: String {
       switch self {
-      case .duplicate: return OJDLocalized.string("common.duplicate", fallback: "Duplicate")
-      case .export: return OJDLocalized.string("profiles.export", fallback: "Export")
-      case .details: return OJDLocalized.string("profiles.details", fallback: "Details")
+      case .duplicate: return OJDLocalized.string("common.duplicate")
+      case .export: return OJDLocalized.string("profiles.export")
+      case .details: return OJDLocalized.string("profiles.details")
       case .restoreDefaultInput:
         return OJDLocalized.string(
-          "profiles.restoreDefaultInput",
-          fallback: "Restore default input"
+          "profiles.restoreDefaultInput"
         )
       case .clearInputs:
-        return OJDLocalized.string("profiles.clearInputs", fallback: "Clear all inputs")
+        return OJDLocalized.string("profiles.clearInputs")
       case .deactivateAll:
-        return OJDLocalized.string("profiles.deactivateController", fallback: "Deactivate all")
+        return OJDLocalized.string("profiles.deactivateController")
       }
     }
   }

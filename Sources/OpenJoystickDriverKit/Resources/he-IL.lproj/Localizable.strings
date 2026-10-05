@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "להפעיל פרופיל ללא הכנסת שליטה?";
 "profiles.emptyInputWarning" = "הפרופיל הזה מדכא את כל הכניסה של המפעיל.";
 "profiles.restoreDefaultInput" = "תחזיר את הכניסה המקובלת";
+"common.reset" = "איפוס";
+"profiles.useControllerDefaultColor" = "שימוש בברירת המחדל של הבקר";
 "profiles.damagedProfile" = "פרופיל פגום";
 "profiles.damagedLibrary" = "רשימת הפרופילים הפעילים פגומה";
 "profiles.deleteDamagedButton" = "מחיקת פרופיל פגום…";

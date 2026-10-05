@@ -36,35 +36,35 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
-        Text(OJDLocalized.string("profiles.touch.title", fallback: "Touch mappings")).font(
+        Text(OJDLocalized.string("profiles.touch.title")).font(
           .headline
         )
         Picker(
-          OJDLocalized.string("profiles.touch.surface", fallback: "Surface"),
+          OJDLocalized.string("profiles.touch.surface"),
           selection: $selected
         ) {
-          Text(OJDLocalized.string("mapping.touchSurfacePrimary", fallback: "Primary surface")).tag(
+          Text(OJDLocalized.string("mapping.touchSurfacePrimary")).tag(
             RemappingTouchSurface.primary
           ).disabled(!canSelect(.primary))
-          Text(OJDLocalized.string("mapping.touchSurfaceLeft", fallback: "Left surface")).tag(
+          Text(OJDLocalized.string("mapping.touchSurfaceLeft")).tag(
             RemappingTouchSurface.left
           ).disabled(!canSelect(.left))
-          Text(OJDLocalized.string("mapping.touchSurfaceRight", fallback: "Right surface")).tag(
+          Text(OJDLocalized.string("mapping.touchSurfaceRight")).tag(
             RemappingTouchSurface.right
           ).disabled(!canSelect(.right))
         }.pickerStyle(SegmentedPickerStyle())
         ScrollView { ProfileTouchFields(draft: selectedDraft).padding(.trailing, 8) }
         if let errorMessage { Text(errorMessage).foregroundColor(.red) }
         HStack {
-          Button(OJDLocalized.string("common.reset", fallback: "Reset")) {
+          Button(OJDLocalized.string("common.reset")) {
             resetSelected()
             errorMessage = nil
           }
           Spacer()
-          Button(OJDLocalized.string("common.cancel", fallback: "Cancel")) {
+          Button(OJDLocalized.string("common.cancel")) {
             presentationMode.wrappedValue.dismiss()
           }
-          Button(OJDLocalized.string("common.save", fallback: "Save")) { save() }
+          Button(OJDLocalized.string("common.save")) { save() }
         }
       }.padding(28).frame(
         width: 500,

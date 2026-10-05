@@ -47,7 +47,7 @@
         GroupBox {
           content
         } label: {
-          Text(OJDLocalized.string("inputTest.axisValues", fallback: "Axis values")).font(.headline)
+          Text(OJDLocalized.string("inputTest.axisValues")).font(.headline)
         }
       }
     }
@@ -57,12 +57,12 @@
       return HStack(alignment: .top, spacing: 14) {
         VStack(spacing: 8) {
           InputTestAxisRow(
-            label: OJDLocalized.string("inputTest.leftX", fallback: "Left X"),
+            label: OJDLocalized.string("inputTest.leftX"),
             value: snapshot.leftStick.x.normalized,
             signed: true
           )
           InputTestAxisRow(
-            label: OJDLocalized.string("inputTest.leftY", fallback: "Left Y"),
+            label: OJDLocalized.string("inputTest.leftY"),
             value: -snapshot.leftStick.y.normalized,
             signed: true
           )
@@ -70,12 +70,12 @@
         }
         VStack(spacing: 8) {
           InputTestAxisRow(
-            label: OJDLocalized.string("inputTest.rightX", fallback: "Right X"),
+            label: OJDLocalized.string("inputTest.rightX"),
             value: snapshot.rightStick.x.normalized,
             signed: true
           )
           InputTestAxisRow(
-            label: OJDLocalized.string("inputTest.rightY", fallback: "Right Y"),
+            label: OJDLocalized.string("inputTest.rightY"),
             value: -snapshot.rightStick.y.normalized,
             signed: true
           )
@@ -106,11 +106,11 @@
             y: 1
           ).offset(x: CGFloat(max(-1, min(1, x))) * 33, y: CGFloat(max(-1, min(1, y))) * 33)
         }.ojdAccessibilityLabel(title).ojdAccessibilityValue(
-          OJDLocalized.formatted("inputTest.axisPair", fallback: "X %.3f, Y %.3f", x, y)
+          OJDLocalized.formatted("inputTest.axisPair", x, y)
         )
         HStack(spacing: 10) {
-          Text(OJDLocalized.formatted("inputTest.axisX", fallback: "X %.3f", x))
-          Text(OJDLocalized.formatted("inputTest.axisY", fallback: "Y %.3f", y))
+          Text(OJDLocalized.formatted("inputTest.axisX", x))
+          Text(OJDLocalized.formatted("inputTest.axisY", y))
         }.font(.system(.caption, design: .monospaced)).foregroundColor(
           Color(NSColor.secondaryLabelColor)
         )
@@ -174,8 +174,8 @@
           )
         ).ojdAccessibilityLabel(title).ojdAccessibilityValue(
           active
-            ? OJDLocalized.string("inputTest.pressed", fallback: "Pressed")
-            : OJDLocalized.string("inputTest.released", fallback: "Released")
+            ? OJDLocalized.string("inputTest.pressed")
+            : OJDLocalized.string("inputTest.released")
         )
     }
   }
@@ -190,7 +190,7 @@
         HStack {
           Text(label)
           Spacer()
-          Text(OJDLocalized.formatted("inputTest.axisValue", fallback: "%.3f", value)).font(
+          Text(OJDLocalized.formatted("inputTest.axisValue", value)).font(
             .system(.caption, design: .monospaced)
           )
         }
@@ -215,7 +215,7 @@
           }
         }.frame(height: 10)
       }.font(.caption).ojdAccessibilityLabel(label).ojdAccessibilityValue(
-        OJDLocalized.formatted("inputTest.axisValue", fallback: "%.3f", value)
+        OJDLocalized.formatted("inputTest.axisValue", value)
       )
     }
   }

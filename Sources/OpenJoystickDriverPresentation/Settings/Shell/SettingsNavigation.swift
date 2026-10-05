@@ -17,13 +17,13 @@
 
     var title: String {
       switch self {
-      case .overview: return OJDLocalized.string("settings.overview", fallback: "Overview")
-      case .controllers: return OJDLocalized.string("common.controllers", fallback: "Controllers")
-      case .profiles: return OJDLocalized.string("common.profiles", fallback: "Profiles")
-      case .console: return OJDLocalized.string("console.title", fallback: "Console")
+      case .overview: return OJDLocalized.string("settings.overview")
+      case .controllers: return OJDLocalized.string("common.controllers")
+      case .profiles: return OJDLocalized.string("common.profiles")
+      case .console: return OJDLocalized.string("console.title")
       case .developer:
-        return OJDLocalized.string("settings.developerTools", fallback: "Developer Tools")
-      case .settings: return OJDLocalized.string("settings.title", fallback: "Settings")
+        return OJDLocalized.string("settings.developerTools")
+      case .settings: return OJDLocalized.string("settings.title")
       }
     }
 
@@ -213,16 +213,15 @@
       ) {
         Alert(
           title: Text(
-            OJDLocalized.string("settings.discardTitle", fallback: "Discard unsaved changes?")
+            OJDLocalized.string("settings.discardTitle")
           ),
           message: Text(
             OJDLocalized.string(
-              "settings.discardProfileMessage",
-              fallback: "Your profile changes have not been saved."
+              "settings.discardProfileMessage"
             )
           ),
           primaryButton: .destructive(
-            Text(OJDLocalized.string("settings.discardAction", fallback: "Discard Changes"))
+            Text(OJDLocalized.string("settings.discardAction"))
           ) { navigation.discardPendingPane() },
           secondaryButton: .cancel { navigation.cancelPendingPane() }
         )

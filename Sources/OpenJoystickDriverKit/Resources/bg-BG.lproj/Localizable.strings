@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Активирайте профила без контроллер?";
 "profiles.emptyInputWarning" = "Този профил потиска всички входове на контролера.";
 "profiles.restoreDefaultInput" = "Възстановяване на дефолтната входна информация";
+"common.reset" = "Нулиране";
+"profiles.useControllerDefaultColor" = "Използване на подразбиращото се на контролера";
 "profiles.damagedProfile" = "Повреден профил";
 "profiles.damagedLibrary" = "Повреден списък с активни профили";
 "profiles.deleteDamagedButton" = "Изтриване на повреден профил…";

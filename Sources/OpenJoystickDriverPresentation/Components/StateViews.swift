@@ -14,7 +14,7 @@
       VStack(alignment: .leading, spacing: 8) {
         OJDSystemSymbol(
           name: symbol,
-          fallback: OJDLocalized.string("common.status", fallback: "Status")
+          fallback: OJDLocalized.string("common.status")
         ).font(.title).foregroundColor(Color(NSColor.controlAccentColor))
         Text(title).font(.headline)
         Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
@@ -49,7 +49,7 @@
         HStack(alignment: .top, spacing: 10) {
           OJDSystemSymbol(
             name: SemanticState.failure.presentation.symbolName,
-            fallback: OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+            fallback: OJDLocalized.string("common.needsAttention")
           ).foregroundColor(Color(SemanticState.failure.presentation.tone.color))
           VStack(alignment: .leading, spacing: 6) {
             Text(title).font(.headline)
@@ -57,7 +57,7 @@
               horizontal: false,
               vertical: true
             )
-            Button(OJDLocalized.string("common.tryAgain", fallback: "Try again"), action: retry)
+            Button(OJDLocalized.string("common.tryAgain"), action: retry)
           }
           Spacer(minLength: 0)
         }.padding(4)

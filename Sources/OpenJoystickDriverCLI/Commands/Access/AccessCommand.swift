@@ -6,15 +6,10 @@ struct AccessCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "access",
     abstract: CLILocalized.text(
-      "cli.access.abstract",
-      "Turn on the endpoint and choose which programs may read controllers through it."
+      "cli.access.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.access.discussion",
-      "The endpoint is a local socket that granted programs read controller events from. It is "
-        + "off until you run 'ojd access enable', and the service serves only programs whose "
-        + "signature you granted, or that send a token you granted. 'ojd access web enable' "
-        + "adds a WebSocket on 127.0.0.1 for overlay pages."
+      "cli.access.discussion"
     ),
     subcommands: [
       AccessStatusCommand.self, AccessEnableCommand.self, AccessDisableCommand.self,
@@ -41,12 +36,10 @@ struct AccessEnabledResult: Encodable, Equatable {
         enabled
           ? CLILocalized.format(
             "cli.access.enable.success",
-            "The endpoint listens on %@.",
             socketPath
           )
           : CLILocalized.text(
-            "cli.access.disable.success",
-            "The endpoint is off, and its connections are closed."
+            "cli.access.disable.success"
           )
       )
     }
@@ -57,8 +50,7 @@ struct AccessStatusCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "status",
     abstract: CLILocalized.text(
-      "cli.access.status.abstract",
-      "Show whether the endpoint is on, its socket, and its connected clients."
+      "cli.access.status.abstract"
     )
   )
 
@@ -89,17 +81,16 @@ struct AccessStatusCommand: AsyncParsableCommand {
       case .human:
         CLIOutput.stdout(
           status.enabled
-            ? CLILocalized.text("cli.access.status.on", "Endpoint: on")
-            : CLILocalized.text("cli.access.status.off", "Endpoint: off")
+            ? CLILocalized.text("cli.access.status.on")
+            : CLILocalized.text("cli.access.status.off")
         )
         CLIOutput.stdout(
-          CLILocalized.format("cli.access.status.socket", "Socket: %@", status.socketPath)
+          CLILocalized.format("cli.access.status.socket", status.socketPath)
         )
         CLIOutput.stdout(AccessText.web(status.web))
         CLIOutput.stdout(
           CLILocalized.format(
             "cli.access.status.counts",
-            "Connected clients: %@. Granted clients: %@. Refused in the last 24 hours: %@.",
             String(status.connections.count),
             String(status.grants.count),
             String(status.refused.count)
@@ -108,7 +99,6 @@ struct AccessStatusCommand: AsyncParsableCommand {
         CLIOutput.stdout(
           CLILocalized.format(
             "cli.access.status.token_counts",
-            "Granted tokens: %@. Tokens refused in the last 24 hours: %@.",
             String(status.tokens.count),
             String(status.refusedTokens.count)
           )
@@ -130,17 +120,15 @@ struct AccessStatusCommand: AsyncParsableCommand {
 struct AccessEnableCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "enable",
-    abstract: CLILocalized.text("cli.access.enable.abstract", "Turn on the endpoint."),
+    abstract: CLILocalized.text("cli.access.enable.abstract"),
     discussion: CLILocalized.text(
-      "cli.access.enable.discussion",
-      "Asks for confirmation first. Only granted programs can use the endpoint; add them with "
-        + "'ojd access grant'."
+      "cli.access.enable.discussion"
     )
   )
 
   @Flag(
     name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.option.force", "Do not ask for confirmation."))
+    help: ArgumentHelp(CLILocalized.text("cli.option.force"))
   )
   var force = false
 
@@ -151,8 +139,7 @@ struct AccessEnableCommand: AsyncParsableCommand {
     try await global.run {
       try CLITerminal.confirm(
         CLILocalized.text(
-          "cli.access.enable.confirm",
-          "Turn on the endpoint, so that the programs you grant can read every controller's input?"
+          "cli.access.enable.confirm"
         ),
         force: force,
         needsForce: AccessText.needsForce
@@ -167,8 +154,7 @@ struct AccessDisableCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "disable",
     abstract: CLILocalized.text(
-      "cli.access.disable.abstract",
-      "Turn off the endpoint and close its connections; grants are kept."
+      "cli.access.disable.abstract"
     )
   )
 
@@ -187,13 +173,10 @@ struct AccessListCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text(
-      "cli.access.list.abstract",
-      "List granted clients and tokens, and those refused in the last 24 hours."
+      "cli.access.list.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.access.list.discussion",
-      "Each client has an ID that 'ojd access grant' and 'ojd access revoke' accept; a token's "
-        + "ID is token:NAME."
+      "cli.access.list.discussion"
     )
   )
 
@@ -245,9 +228,9 @@ struct AccessListCommand: AsyncParsableCommand {
             }
         )
       case .human:
-        CLIOutput.stdout(CLILocalized.text("cli.access.list.granted", "Granted:"))
+        CLIOutput.stdout(CLILocalized.text("cli.access.list.granted"))
         if status.grants.isEmpty {
-          CLIOutput.stdout(CLILocalized.text("cli.access.list.none", "  None"))
+          CLIOutput.stdout(CLILocalized.text("cli.access.list.none"))
         }
         for grant in status.grants {
           CLIOutput.stdout(
@@ -256,10 +239,10 @@ struct AccessListCommand: AsyncParsableCommand {
           )
         }
         CLIOutput.stdout(
-          CLILocalized.text("cli.access.list.refused", "Refused in the last 24 hours:")
+          CLILocalized.text("cli.access.list.refused")
         )
         if status.refused.isEmpty {
-          CLIOutput.stdout(CLILocalized.text("cli.access.list.none", "  None"))
+          CLIOutput.stdout(CLILocalized.text("cli.access.list.none"))
         }
         for client in status.refused {
           CLIOutput.stdout(
@@ -273,9 +256,9 @@ struct AccessListCommand: AsyncParsableCommand {
   }
 
   private func printTokens(_ status: AccessStatusPayload) {
-    CLIOutput.stdout(CLILocalized.text("cli.access.list.tokens", "Granted tokens:"))
+    CLIOutput.stdout(CLILocalized.text("cli.access.list.tokens"))
     if status.tokens.isEmpty {
-      CLIOutput.stdout(CLILocalized.text("cli.access.list.none", "  None"))
+      CLIOutput.stdout(CLILocalized.text("cli.access.list.none"))
     }
     for token in status.tokens {
       CLIOutput.stdout(
@@ -283,15 +266,15 @@ struct AccessListCommand: AsyncParsableCommand {
       )
     }
     CLIOutput.stdout(
-      CLILocalized.text("cli.access.list.refused_tokens", "Tokens refused in the last 24 hours:")
+      CLILocalized.text("cli.access.list.refused_tokens")
     )
     if status.refusedTokens.isEmpty {
-      CLIOutput.stdout(CLILocalized.text("cli.access.list.none", "  None"))
+      CLIOutput.stdout(CLILocalized.text("cli.access.list.none"))
     }
     for token in status.refusedTokens {
       let name =
         token.name.map { "token:\($0)" }
-        ?? CLILocalized.text("cli.access.list.unknown_token", "unknown token")
+        ?? CLILocalized.text("cli.access.list.unknown_token")
       CLIOutput.stdout(
         "  \(name)  \(AccessText.scopes(token.scopes))  \(token.transport.rawValue)  "
           + (token.origin ?? "")
@@ -304,27 +287,23 @@ struct AccessListCommand: AsyncParsableCommand {
 enum AccessText {
   static var needsForce: String {
     CLILocalized.text(
-      "cli.access.needs_force",
-      "This change gives programs access to your controllers. Add --force to confirm it without "
-        + "a prompt."
+      "cli.access.needs_force"
     )
   }
 
   /// `WebSocket: on at ws://…, pages at http://…`, or off.
   static func web(_ web: AccessWebStatus) -> String {
     guard web.enabled else {
-      return CLILocalized.text("cli.access.status.web_off", "WebSocket: off")
+      return CLILocalized.text("cli.access.status.web_off")
     }
     guard web.listening else {
       return CLILocalized.format(
         "cli.access.status.web_closed",
-        "WebSocket: on, but port %@ could not be opened",
         web.port.map(String.init) ?? ""
       )
     }
     return CLILocalized.format(
       "cli.access.status.web_on",
-      "WebSocket: on at %@; overlay pages at %@ from %@",
       web.url ?? "",
       web.pagesURL ?? "",
       web.pagesPath

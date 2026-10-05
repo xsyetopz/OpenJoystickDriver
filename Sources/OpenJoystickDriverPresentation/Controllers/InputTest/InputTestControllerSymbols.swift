@@ -46,72 +46,72 @@
     private static var xbox: Self {
       Self(
         leftShoulder: Control(
-          OJDLocalized.string("inputTest.leftBumper", fallback: "Left bumper"),
+          OJDLocalized.string("inputTest.leftBumper"),
           symbol: "lb.button.roundedbottom.horizontal",
           fallbackSymbol: "lb.circle",
           fallbackText: "LB"
         ),
         leftTrigger: Control(
-          OJDLocalized.string("inputTest.leftTrigger", fallback: "Left trigger"),
+          OJDLocalized.string("inputTest.leftTrigger"),
           symbol: "lt.button.roundedtop.horizontal",
           fallbackSymbol: "lt.circle",
           fallbackText: "LT"
         ),
         rightTrigger: Control(
-          OJDLocalized.string("inputTest.rightTrigger", fallback: "Right trigger"),
+          OJDLocalized.string("inputTest.rightTrigger"),
           symbol: "rt.button.roundedtop.horizontal",
           fallbackSymbol: "rt.circle",
           fallbackText: "RT"
         ),
         rightShoulder: Control(
-          OJDLocalized.string("inputTest.rightBumper", fallback: "Right bumper"),
+          OJDLocalized.string("inputTest.rightBumper"),
           symbol: "rb.button.roundedbottom.horizontal",
           fallbackSymbol: "rb.circle",
           fallbackText: "RB"
         ),
         view: Control(
-          OJDLocalized.string("inputTest.view", fallback: "View"),
+          OJDLocalized.string("inputTest.view"),
           symbol: "rectangle.on.rectangle.button.angledtop.vertical.left",
           fallbackSymbol: "rectangle.on.rectangle"
         ),
         guide: Control(
-          OJDLocalized.string("inputTest.xboxButton", fallback: "Xbox button"),
+          OJDLocalized.string("inputTest.xboxButton"),
           symbol: "xbox.logo",
           fallbackSymbol: "house.fill"
         ),
         menu: Control(
-          OJDLocalized.string("inputTest.menu", fallback: "Menu"),
+          OJDLocalized.string("inputTest.menu"),
           symbol: "line.3.horizontal.button.angledtop.vertical.right",
           fallbackSymbol: "line.3.horizontal"
         ),
         northFace: Control(
-          OJDLocalized.string("inputTest.yButton", fallback: "Y button"),
+          OJDLocalized.string("inputTest.yButton"),
           symbol: "y.circle",
           fallbackText: "Y"
         ),
         westFace: Control(
-          OJDLocalized.string("inputTest.xButton", fallback: "X button"),
+          OJDLocalized.string("inputTest.xButton"),
           symbol: "x.circle",
           fallbackText: "X"
         ),
         eastFace: Control(
-          OJDLocalized.string("inputTest.bButton", fallback: "B button"),
+          OJDLocalized.string("inputTest.bButton"),
           symbol: "b.circle",
           fallbackText: "B"
         ),
         southFace: Control(
-          OJDLocalized.string("inputTest.aButton", fallback: "A button"),
+          OJDLocalized.string("inputTest.aButton"),
           symbol: "a.circle",
           fallbackText: "A"
         ),
         leftStickClick: Control(
-          OJDLocalized.string("inputTest.leftStickButton", fallback: "Left stick button"),
+          OJDLocalized.string("inputTest.leftStickButton"),
           symbol: "lsb.button.angledbottom.horizontal.left",
           fallbackSymbol: "l.joystick.press.down",
           fallbackText: "LSB"
         ),
         rightStickClick: Control(
-          OJDLocalized.string("inputTest.rightStickButton", fallback: "Right stick button"),
+          OJDLocalized.string("inputTest.rightStickButton"),
           symbol: "rsb.button.angledbottom.horizontal.right",
           fallbackSymbol: "r.joystick.press.down",
           fallbackText: "RSB"
@@ -122,55 +122,55 @@
     private static var generic: Self {
       Self(
         leftShoulder: Control(
-          OJDLocalized.string("inputTest.leftBumperGeneric", fallback: "LB / L1")
+          OJDLocalized.string("inputTest.leftBumperGeneric")
         ),
         leftTrigger: Control(
-          OJDLocalized.string("inputTest.leftTriggerGeneric", fallback: "LT / L2")
+          OJDLocalized.string("inputTest.leftTriggerGeneric")
         ),
         rightTrigger: Control(
-          OJDLocalized.string("inputTest.rightTriggerGeneric", fallback: "RT / R2")
+          OJDLocalized.string("inputTest.rightTriggerGeneric")
         ),
         rightShoulder: Control(
-          OJDLocalized.string("inputTest.rightBumperGeneric", fallback: "RB / R1")
+          OJDLocalized.string("inputTest.rightBumperGeneric")
         ),
         view: Control(
-          OJDLocalized.string("inputTest.view", fallback: "View"),
+          OJDLocalized.string("inputTest.view"),
           symbol: "rectangle.on.rectangle",
           fallbackText: "View"
         ),
         guide: Control(
-          OJDLocalized.string("inputTest.home", fallback: "Home"),
+          OJDLocalized.string("inputTest.home"),
           symbol: "house.fill",
           fallbackSymbol: "gamecontroller.fill"
         ),
         menu: Control(
-          OJDLocalized.string("inputTest.menu", fallback: "Menu"),
+          OJDLocalized.string("inputTest.menu"),
           symbol: "line.3.horizontal",
           fallbackText: "Menu"
         ),
         northFace: Control(
-          OJDLocalized.string("inputTest.yTriangle", fallback: "Y / Triangle"),
+          OJDLocalized.string("inputTest.yTriangle"),
           fallbackText: "Y"
         ),
         westFace: Control(
-          OJDLocalized.string("inputTest.xSquare", fallback: "X / Square"),
+          OJDLocalized.string("inputTest.xSquare"),
           fallbackText: "X"
         ),
         eastFace: Control(
-          OJDLocalized.string("inputTest.bCircle", fallback: "B / Circle"),
+          OJDLocalized.string("inputTest.bCircle"),
           fallbackText: "B"
         ),
         southFace: Control(
-          OJDLocalized.string("inputTest.aCross", fallback: "A / Cross"),
+          OJDLocalized.string("inputTest.aCross"),
           fallbackText: "A"
         ),
         leftStickClick: Control(
-          OJDLocalized.string("inputTest.leftStickButton", fallback: "Left stick button"),
+          OJDLocalized.string("inputTest.leftStickButton"),
           symbol: "l.joystick.press.down",
           fallbackText: "L3"
         ),
         rightStickClick: Control(
-          OJDLocalized.string("inputTest.rightStickButton", fallback: "Right stick button"),
+          OJDLocalized.string("inputTest.rightStickButton"),
           symbol: "r.joystick.press.down",
           fallbackText: "R3"
         )

@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "컨트롤러 입력 없이 프로파일을 활성화하세요?";
 "profiles.emptyInputWarning" = "이 프로파일은 모든 컨트롤러 입력을 억제합니다.";
 "profiles.restoreDefaultInput" = "기본 입력값을 복원";
+"common.reset" = "재설정";
+"profiles.useControllerDefaultColor" = "컨트롤러 기본값 사용";
 "profiles.damagedProfile" = "손상된 프로필";
 "profiles.damagedLibrary" = "손상된 활성 프로파일 목록";
 "profiles.deleteDamagedButton" = "손상된 프로필 삭제…";

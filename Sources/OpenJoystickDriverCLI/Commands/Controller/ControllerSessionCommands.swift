@@ -30,7 +30,6 @@ private func sessionNotFound(_ selector: ControllerSelector) -> CLIFailure {
     .controllerRequestFailed,
     CLILocalized.format(
       "cli.controller.session.not_found",
-      "'%@' disconnected before the request reached it. Reconnect it and retry.",
       selector.text
     )
   )
@@ -40,8 +39,7 @@ struct ControllerSuspendCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "suspend",
     abstract: CLILocalized.text(
-      "cli.controller.suspend.abstract",
-      "Stop OpenJoystickDriver from driving a controller until you resume it."
+      "cli.controller.suspend.abstract"
     )
   )
 
@@ -73,10 +71,9 @@ struct ControllerSuspendCommand: AsyncParsableCommand {
           changed: result.succeeded
         ),
         message: result.succeeded
-          ? CLILocalized.format("cli.controller.suspend.done", "Suspended %@.", device.name)
+          ? CLILocalized.format("cli.controller.suspend.done", device.name)
           : CLILocalized.format(
             "cli.controller.suspend.already",
-            "%@ is already suspended.",
             device.name
           )
       )
@@ -88,8 +85,7 @@ struct ControllerResumeCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "resume",
     abstract: CLILocalized.text(
-      "cli.controller.resume.abstract",
-      "Let OpenJoystickDriver drive a suspended controller again."
+      "cli.controller.resume.abstract"
     )
   )
 
@@ -121,10 +117,9 @@ struct ControllerResumeCommand: AsyncParsableCommand {
           changed: result.succeeded
         ),
         message: result.succeeded
-          ? CLILocalized.format("cli.controller.resume.done", "Resumed %@.", device.name)
+          ? CLILocalized.format("cli.controller.resume.done", device.name)
           : CLILocalized.format(
             "cli.controller.resume.already",
-            "%@ is already active.",
             device.name
           )
       )
@@ -136,13 +131,10 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "disconnect",
     abstract: CLILocalized.text(
-      "cli.controller.disconnect.abstract",
-      "Disconnect a Bluetooth controller."
+      "cli.controller.disconnect.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.controller.disconnect.discussion",
-      "Closes the Bluetooth connection. The controller stays paired and reconnects when you "
-        + "turn it on again. Waits at least 6 seconds for Bluetooth to confirm."
+      "cli.controller.disconnect.discussion"
     )
   )
 
@@ -177,7 +169,6 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
         ),
         message: CLILocalized.format(
           "cli.controller.disconnect.done",
-          "Disconnected %@.",
           device.name
         )
       )
@@ -194,7 +185,6 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
         .controllerRequestFailed,
         CLILocalized.format(
           "cli.controller.disconnect.not_bluetooth",
-          "%@ is not connected over Bluetooth. Unplug it to disconnect it.",
           device.name
         )
       )
@@ -203,7 +193,6 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
         .controllerRequestFailed,
         CLILocalized.format(
           "cli.controller.session.not_found",
-          "'%@' disconnected before the request reached it. Reconnect it and retry.",
           device.runtimeIdentifier
         )
       )
@@ -216,7 +205,6 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
         .controllerRequestFailed,
         CLILocalized.format(
           "cli.controller.disconnect.failed",
-          "Bluetooth disconnect failed during %@: %@.",
           stage,
           cause + code
         ) + recovery

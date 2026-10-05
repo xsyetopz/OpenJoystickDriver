@@ -2,7 +2,7 @@ import OpenJoystickDriverKit
 
 func duplicatedProfile(_ source: RemappingProfile) -> RemappingProfile {
   RemappingProfile(
-    name: OJDLocalized.formatted("profiles.copyName", fallback: "%@ Copy", source.name),
+    name: OJDLocalized.formatted("profiles.copyName", source.name),
     device: source.device,
     applicationScope: source.applicationScope,
     outputPolicy: source.outputPolicy,

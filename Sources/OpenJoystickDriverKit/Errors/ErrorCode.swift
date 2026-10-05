@@ -93,6 +93,6 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
 
   /// What went wrong and how to fix it, in the language of the user.
   public var localizedExplanation: String {
-    Localization().string("error.\(rawValue)", defaultValue: nil)
+    Localization().string("error.\(rawValue)")
   }
 }

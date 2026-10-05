@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktivere go profiila mas ii leat stivrejeaddji sisaváldin?";
 "profiles.emptyInputWarning" = "Dát profiila hehtte buot stivrejeaddji sisaváldima.";
 "profiles.restoreDefaultInput" = "Máhcahit standárda sisačáliheami";
+"common.reset" = "Nuppástuhttit";
+"profiles.useControllerDefaultColor" = "Geavat kontrolleara standárdda";
 "profiles.damagedProfile" = "Billahuvvan profiila";
 "profiles.damagedLibrary" = "Billahuvvan aktiiva profiillaid listu";
 "profiles.deleteDamagedButton" = "Sihko billahuvvan profiila…";

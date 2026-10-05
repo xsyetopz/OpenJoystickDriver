@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktívan profil, nincs vezérlő bejuttatás?";
 "profiles.emptyInputWarning" = "Ez a profil elnyomja az összes vezérlő beadását.";
 "profiles.restoreDefaultInput" = "Visszaállítása a megadott beadvány";
+"common.reset" = "Visszaállítás";
+"profiles.useControllerDefaultColor" = "A vezérlő alapértelmezésének használata";
 "profiles.damagedProfile" = "Sérült profil";
 "profiles.damagedLibrary" = "Sérült aktív profillista";
 "profiles.deleteDamagedButton" = "Sérült profil törlése…";

@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Activarea profilului fără intrare controler?";
 "profiles.emptyInputWarning" = "Acest profil suprimează toate intrările controlerului.";
 "profiles.restoreDefaultInput" = "Restaurați intrarea de parfait";
+"common.reset" = "Resetează";
+"profiles.useControllerDefaultColor" = "Folosește valoarea implicită a controlerului";
 "profiles.damagedProfile" = "Profil deteriorat";
 "profiles.damagedLibrary" = "Listă de profiluri active deteriorată";
 "profiles.deleteDamagedButton" = "Ștergeți profilul deteriorat…";

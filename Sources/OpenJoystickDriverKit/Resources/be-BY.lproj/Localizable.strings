@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Актываваць профіль без ўваходу кантролера?";
 "profiles.emptyInputWarning" = "Гэты профіль падаўжае ўсе ўваходы кантролера.";
 "profiles.restoreDefaultInput" = "Вярнуць папярэдні ўклад";
+"common.reset" = "Скінуць";
+"profiles.useControllerDefaultColor" = "Выкарыстоўваць прадвызначанае значэнне кантролера";
 "profiles.damagedProfile" = "Пашкоджаны профіль";
 "profiles.damagedLibrary" = "Пашкоджаны спіс актыўных профіляў";
 "profiles.deleteDamagedButton" = "Выдаліць пашкоджаны профіль…";

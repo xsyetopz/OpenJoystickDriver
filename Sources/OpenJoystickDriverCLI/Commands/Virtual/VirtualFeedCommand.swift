@@ -6,18 +6,10 @@ struct VirtualFeedCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "feed",
     abstract: CLILocalized.text(
-      "cli.virtual.feed.abstract",
-      "Publish a virtual gamepad that standard input drives."
+      "cli.virtual.feed.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.virtual.feed.discussion",
-      "Reads one JSON object per line: 'buttons' and 'dpad' list the pressed controls, such as "
-        + "south and up, and 'axes' maps axis names, such as left_stick_x, to values. Missing "
-        + "controls are neutral. Sticks run from -1 to 1 with Y up; triggers run from 0 to 1. "
-        + "Frames play in order, each for at least 8 ms; 'holdMilliseconds' keeps a frame longer, "
-        + "up to 60000. Prints each output command that games send to the gamepad, such as "
-        + "rumble, as one JSON object per line. Stops when every frame has played after the input "
-        + "ends."
+      "cli.virtual.feed.discussion"
     )
   )
 
@@ -42,7 +34,7 @@ struct VirtualFeedCommand: AsyncParsableCommand {
   @Option(
     name: .customLong("as"),
     help: ArgumentHelp(
-      CLILocalized.text("cli.virtual.feed.profile", "The virtual gamepad profile to publish."),
+      CLILocalized.text("cli.virtual.feed.profile"),
       valueName: "profile"
     )
   )
@@ -65,8 +57,6 @@ struct VirtualFeedCommand: AsyncParsableCommand {
           CLIOutput.success(
             CLILocalized.format(
               "cli.virtual.feed.started",
-              "Publishing a %@ virtual gamepad. Write frames on standard input; end the input or "
-                + "press Control-C to stop.",
               name
             )
           )
@@ -135,7 +125,6 @@ struct VirtualFeedCommand: AsyncParsableCommand {
         throw CLIFailure.usage(
           CLILocalized.format(
             "cli.virtual.feed.error.frame",
-            "Line %@ is not a valid frame. 'ojd virtual feed --help' shows the format.",
             String(line)
           )
         )
@@ -155,8 +144,7 @@ struct VirtualFeedCommand: AsyncParsableCommand {
           throw CLIFailure(
             .serviceRequestFailed,
             CLILocalized.text(
-              "cli.virtual.feed.error.closed",
-              "The service closed the virtual gamepad. Check it with 'ojd status'."
+              "cli.virtual.feed.error.closed"
             )
           )
         }

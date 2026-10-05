@@ -13,18 +13,16 @@ enum DocumentProblem {
     case let .typeMismatch(_, context):
       return CLILocalized.format(
         "cli.document.wrong_type",
-        "the field '%@' has the wrong type",
         path(context.codingPath)
       )
     case let .dataCorrupted(context):
       // Only the JSON parser attaches an underlying error at the document root.
       if context.codingPath.isEmpty, context.underlyingError != nil {
-        return CLILocalized.text("cli.document.not_json", "it is not valid JSON")
+        return CLILocalized.text("cli.document.not_json")
       }
       if context.codingPath.isEmpty { return context.debugDescription }
       return CLILocalized.format(
         "cli.document.field_problem",
-        "'%@': %@",
         path(context.codingPath),
         context.debugDescription
       )
@@ -34,7 +32,7 @@ enum DocumentProblem {
   }
 
   private static func missing(_ codingPath: [any CodingKey]) -> String {
-    CLILocalized.format("cli.document.missing_field", "the field '%@' is missing", path(codingPath))
+    CLILocalized.format("cli.document.missing_field", path(codingPath))
   }
 
   /// A path such as `bindings[0].source`.

@@ -6,14 +6,10 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "recover",
     abstract: CLILocalized.text(
-      "cli.profile.recover.abstract",
-      "Remove damaged profile files and reset a damaged active profile list."
+      "cli.profile.recover.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.profile.recover.discussion",
-      "Acts on each issue that 'ojd profile list' reports. The service first backs up each file "
-        + "beside the original, under a name that contains .backup-. Asks for confirmation on a "
-        + "terminal; needs --force otherwise."
+      "cli.profile.recover.discussion"
     )
   )
 
@@ -25,14 +21,14 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
 
   @Flag(
     name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.option.force", "Do not ask for confirmation."))
+    help: ArgumentHelp(CLILocalized.text("cli.option.force"))
   )
   var force = false
 
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
-      CLILocalized.text("cli.option.dry_run", "Print what would change, and change nothing.")
+      CLILocalized.text("cli.option.dry_run")
     )
   )
   var dryRun = false
@@ -51,8 +47,7 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
       if !dryRun, !issues.isEmpty {
         try CLITerminal.confirm(
           CLILocalized.text(
-            "cli.profile.recover.confirm",
-            "Remove the damaged profile files and reset a damaged active profile list?"
+            "cli.profile.recover.confirm"
           ),
           force: force
         )
@@ -81,7 +76,7 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
       case .human:
         if issues.isEmpty {
           CLIOutput.stdout(
-            CLILocalized.text("cli.profile.recover.none", "No damaged profile files.")
+            CLILocalized.text("cli.profile.recover.none")
           )
         }
         for issue in issues { Self.printAction(issue, dryRun: dryRun) }
@@ -96,7 +91,6 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
       CLIOutput.stdout(
         CLILocalized.format(
           "cli.profile.recover.remove.dry_run",
-          "Would remove the damaged profile file of issue %@.",
           id
         )
       )
@@ -104,20 +98,18 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
       CLIOutput.success(
         CLILocalized.format(
           "cli.profile.recover.remove.done",
-          "Removed the damaged profile file of issue %@.",
           id
         )
       )
     case (.unusableLibrary, true):
       CLIOutput.stdout(
         CLILocalized.text(
-          "cli.profile.recover.reset.dry_run",
-          "Would reset the active profile list."
+          "cli.profile.recover.reset.dry_run"
         )
       )
     case (.unusableLibrary, false):
       CLIOutput.success(
-        CLILocalized.text("cli.profile.recover.reset.done", "Reset the active profile list.")
+        CLILocalized.text("cli.profile.recover.reset.done")
       )
     }
   }

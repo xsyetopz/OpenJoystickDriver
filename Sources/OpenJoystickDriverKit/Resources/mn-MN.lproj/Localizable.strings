@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Хяналтын системгүйгээр профилийг идэвхжүүлнэ үү?";
 "profiles.emptyInputWarning" = "Энэ профил нь бүх хяналтын өгөгдлийг устгадаг.";
 "profiles.restoreDefaultInput" = "Хувьцааж өгөх";
+"common.reset" = "Дахин тохируулах";
+"profiles.useControllerDefaultColor" = "Хянагчийн анхдагчийг ашиглах";
 "profiles.damagedProfile" = "Хохирсон профайл";
 "profiles.damagedLibrary" = "Идэвхтэй профайлын жагсаалт гэмтсэн";
 "profiles.deleteDamagedButton" = "Гэмтсэн профайлыг устгах…";

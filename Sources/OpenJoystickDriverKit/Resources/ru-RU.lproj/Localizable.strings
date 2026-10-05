@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Активировать профиль без ввода контроллера?";
 "profiles.emptyInputWarning" = "Этот профиль подавляет все входы контроллера.";
 "profiles.restoreDefaultInput" = "Восстановить дефолтный вход";
+"common.reset" = "Сбросить";
+"profiles.useControllerDefaultColor" = "Использовать значение контроллера по умолчанию";
 "profiles.damagedProfile" = "Поврежденный профиль";
 "profiles.damagedLibrary" = "Повреждённый список активных профилей";
 "profiles.deleteDamagedButton" = "Удалить поврежденный профиль…";

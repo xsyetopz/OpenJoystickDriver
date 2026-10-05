@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "制御器入力なしのプロフィールを起動する？";
 "profiles.emptyInputWarning" = "このプロフィールでは,すべてのコントローラー入力が抑制されます.";
 "profiles.restoreDefaultInput" = "デフォルト入力を再現する";
+"common.reset" = "リセット";
+"profiles.useControllerDefaultColor" = "コントローラのデフォルトを使用";
 "profiles.damagedProfile" = "破損したプロフィール";
 "profiles.damagedLibrary" = "アクティブなプロファイルの一覧が破損しています";
 "profiles.deleteDamagedButton" = "破損したプロファイルを削除…";

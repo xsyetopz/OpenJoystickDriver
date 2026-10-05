@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktivera profil utan kontrollör?";
 "profiles.emptyInputWarning" = "Denna profil undertrycker alla kontroller.";
 "profiles.restoreDefaultInput" = "Återställa standardinmatning";
+"common.reset" = "Återställ";
+"profiles.useControllerDefaultColor" = "Använd kontrollens standard";
 "profiles.damagedProfile" = "Skadad profil";
 "profiles.damagedLibrary" = "Skadad lista över aktiva profiler";
 "profiles.deleteDamagedButton" = "Ta bort skadad profil…";

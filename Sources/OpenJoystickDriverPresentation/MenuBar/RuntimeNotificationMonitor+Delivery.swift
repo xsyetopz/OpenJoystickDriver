@@ -24,12 +24,10 @@
         guard preferenceIsEnabled(ApplicationPreferenceKeys.controllerNotifications) else { return }
         delivery.deliver(
           title: OJDLocalized.string(
-            "notifications.controllerConnected",
-            fallback: "Controller connected"
+            "notifications.controllerConnected"
           ),
           body: OJDLocalized.formatted(
             "notifications.controllerConnectedBody",
-            fallback: "%@ is ready to use.",
             name
           ),
           sound: notificationSoundIsEnabled
@@ -43,12 +41,10 @@
         else { return }
         delivery.deliver(
           title: OJDLocalized.string(
-            "notifications.controllerDisconnected",
-            fallback: "Controller disconnected"
+            "notifications.controllerDisconnected"
           ),
           body: OJDLocalized.formatted(
             "notifications.controllerDisconnectedBody",
-            fallback: "%@ is no longer connected.",
             name
           ),
           sound: notificationSoundIsEnabled
@@ -62,8 +58,7 @@
         guard preferenceIsEnabled(preferenceKey, fallbackKey: fallbackKey) else { return }
         delivery.deliver(
           title: OJDLocalized.string(
-            "notifications.profileChanged",
-            fallback: "Active profile changed"
+            "notifications.profileChanged"
           ),
           body: profileChangeBody(from: previousName, to: currentName),
           sound: notificationSoundIsEnabled
@@ -72,12 +67,10 @@
         guard preferenceIsEnabled(ApplicationPreferenceKeys.controllerNotifications) else { return }
         delivery.deliver(
           title: OJDLocalized.string(
-            "notifications.controllerNeedsAttention",
-            fallback: "Controller needs attention"
+            "notifications.controllerNeedsAttention"
           ),
           body: OJDLocalized.formatted(
             "notifications.controllerNeedsAttentionBody",
-            fallback: "%@ input stopped updating. Release its controls or disconnect it.",
             name
           ),
           sound: notificationSoundIsEnabled
@@ -99,24 +92,21 @@
       case (.some(let previous), .some(let current)):
         return OJDLocalized.formatted(
           "notifications.profileSwitchedBody",
-          fallback: "%@ -> %@",
           previous,
           current
         )
       case (.none, .some(let current)):
         return OJDLocalized.formatted(
           "notifications.profileActivatedBody",
-          fallback: "%@ is now active.",
           current
         )
       case (.some(let previous), .none):
         return OJDLocalized.formatted(
           "notifications.profileDeactivatedBody",
-          fallback: "%@ is no longer active.",
           previous
         )
       case (.none, .none):
-        return OJDLocalized.string("status.noActiveProfile", fallback: "No active profile")
+        return OJDLocalized.string("status.noActiveProfile")
       }
     }
   }

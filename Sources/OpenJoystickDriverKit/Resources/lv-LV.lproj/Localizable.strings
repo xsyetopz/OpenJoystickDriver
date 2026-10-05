@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktivēt profilus bez kontroles ievades?";
 "profiles.emptyInputWarning" = "Šis profils aiztur visus vadības vadības ierīču ievades.";
 "profiles.restoreDefaultInput" = "Atgriež sākotnējo ievadījumu";
+"common.reset" = "Atiestatīt";
+"profiles.useControllerDefaultColor" = "Izmantot kontroliera noklusējumu";
 "profiles.damagedProfile" = "Bojāts profils";
 "profiles.damagedLibrary" = "Bojāts aktīvo profilu saraksts";
 "profiles.deleteDamagedButton" = "Dzēst bojāto profilu…";

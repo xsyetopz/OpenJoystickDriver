@@ -10,7 +10,7 @@
       GeometryReader { proxy in
         ScrollView {
           VStack(alignment: .leading, spacing: 20) {
-            PageHeader(title: OJDLocalized.string("settings.title", fallback: "Settings"))
+            PageHeader(title: OJDLocalized.string("settings.title"))
             primarySettings(width: proxy.size.width - 48)
 
             notificationSettings
@@ -22,18 +22,17 @@
                 OJDSystemSymbol(
                   name: SemanticState.attention.presentation.symbolName,
                   fallback: OJDLocalized.string(
-                    "common.needsAttention",
-                    fallback: "Needs attention"
+                    "common.needsAttention"
                   )
                 ).foregroundColor(Color(SemanticState.attention.presentation.tone.color))
                 Text(errorMessage).fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 12)
                 if preferences.notificationAuthorization == .denied {
                   Button(
-                    OJDLocalized.string("settings.openSystemSettings", fallback: "Open Settings")
+                    OJDLocalized.string("settings.openSystemSettings")
                   ) { preferences.openNotificationSettings() }
                 }
-                Button(OJDLocalized.string("common.dismiss", fallback: "Dismiss")) {
+                Button(OJDLocalized.string("common.dismiss")) {
                   preferences.dismissError()
                 }
               }.padding(10).background(Color(NSColor.controlBackgroundColor)).cornerRadius(8)
@@ -63,10 +62,9 @@
     private var generalSettings: some View {
       GroupBox {
         switchSetting(
-          title: OJDLocalized.string("settings.startAtLogin", fallback: "Start at login"),
+          title: OJDLocalized.string("settings.startAtLogin"),
           description: OJDLocalized.string(
-            "settings.startAtLoginDescription",
-            fallback: "Open OpenJoystickDriver in the menu bar when you log in."
+            "settings.startAtLoginDescription"
           ),
           isOn: Binding(
             get: { preferences.startAtLogin },
@@ -75,7 +73,7 @@
           isEnabled: preferences.launchAtLoginIsAvailable
         ).padding(4).frame(maxWidth: .infinity, minHeight: 104, alignment: .topLeading)
       } label: {
-        Text(OJDLocalized.string("settings.general", fallback: "General")).font(.headline)
+        Text(OJDLocalized.string("settings.general")).font(.headline)
       }.frame(maxWidth: .infinity)
     }
 
@@ -84,26 +82,22 @@
         VStack(alignment: .leading, spacing: 10) {
           HStack(alignment: .top, spacing: 24) {
             notificationEventGroup(
-              title: OJDLocalized.string("settings.controllers", fallback: "Controllers"),
+              title: OJDLocalized.string("settings.controllers"),
               firstTitle: OJDLocalized.string(
-                "settings.controllerConnectedShort",
-                fallback: "Connected"
+                "settings.controllerConnectedShort"
               ),
               firstAccessibility: OJDLocalized.string(
-                "settings.controllerNotifications",
-                fallback: "Controller connected"
+                "settings.controllerNotifications"
               ),
               firstIsOn: Binding(
                 get: { preferences.controllerNotifications },
                 set: { preferences.setControllerNotifications($0) }
               ),
               secondTitle: OJDLocalized.string(
-                "settings.controllerDisconnectedShort",
-                fallback: "Disconnected"
+                "settings.controllerDisconnectedShort"
               ),
               secondAccessibility: OJDLocalized.string(
-                "settings.controllerDisconnectedNotifications",
-                fallback: "Controller disconnected"
+                "settings.controllerDisconnectedNotifications"
               ),
               secondIsOn: Binding(
                 get: { preferences.controllerDisconnectedNotifications },
@@ -111,26 +105,22 @@
               )
             )
             notificationEventGroup(
-              title: OJDLocalized.string("settings.profiles", fallback: "Profiles"),
+              title: OJDLocalized.string("settings.profiles"),
               firstTitle: OJDLocalized.string(
-                "settings.profileActivatedShort",
-                fallback: "Activated or switched"
+                "settings.profileActivatedShort"
               ),
               firstAccessibility: OJDLocalized.string(
-                "settings.profileNotifications",
-                fallback: "Profile activated or switched"
+                "settings.profileNotifications"
               ),
               firstIsOn: Binding(
                 get: { preferences.profileNotifications },
                 set: { preferences.setProfileNotifications($0) }
               ),
               secondTitle: OJDLocalized.string(
-                "settings.profileDeactivatedShort",
-                fallback: "Deactivated"
+                "settings.profileDeactivatedShort"
               ),
               secondAccessibility: OJDLocalized.string(
-                "settings.profileDeactivatedNotifications",
-                fallback: "Profile deactivated"
+                "settings.profileDeactivatedNotifications"
               ),
               secondIsOn: Binding(
                 get: { preferences.profileDeactivatedNotifications },
@@ -142,7 +132,7 @@
           Divider()
           HStack(alignment: .top, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
-              Text(OJDLocalized.string("settings.notificationSounds", fallback: "Play a sound"))
+              Text(OJDLocalized.string("settings.notificationSounds"))
               Text(notificationDeliveryStatus).font(.caption).foregroundColor(
                 notificationDeliveryNeedsAttention
                   ? Color(NSColor.systemOrange) : Color(NSColor.secondaryLabelColor)
@@ -150,29 +140,28 @@
               if notificationDeliveryNeedsAttention {
                 Button(
                   OJDLocalized.string(
-                    "settings.openNotificationSettings",
-                    fallback: "Open Notification Settings"
+                    "settings.openNotificationSettings"
                   )
                 ) { preferences.openNotificationSettings() }
               }
             }
             Spacer(minLength: 12)
             Toggle(
-              OJDLocalized.string("settings.notificationSounds", fallback: "Play a sound"),
+              OJDLocalized.string("settings.notificationSounds"),
               isOn: Binding(
                 get: { preferences.notificationSounds },
                 set: { preferences.setNotificationSounds($0) }
               )
             ).toggleStyle(.switch).labelsHidden().ojdAccessibilityLabel(
-              OJDLocalized.string("settings.notificationSounds", fallback: "Play a sound")
+              OJDLocalized.string("settings.notificationSounds")
             )
             Button(
-              OJDLocalized.string("settings.testNotification", fallback: "Send Test Notification")
+              OJDLocalized.string("settings.testNotification")
             ) { preferences.sendTestNotification() }
           }
         }.padding(4).frame(maxWidth: .infinity, alignment: .topLeading)
       } label: {
-        Text(OJDLocalized.string("settings.notifications", fallback: "Notifications")).font(
+        Text(OJDLocalized.string("settings.notifications")).font(
           .headline
         )
       }.frame(maxWidth: .infinity)
@@ -187,8 +176,7 @@
     private var notificationDeliveryStatus: String {
       guard preferences.notificationAuthorization == .allowed else {
         return OJDLocalized.string(
-          "settings.notificationPermissionRequired",
-          fallback: "Permission is required before notifications can be delivered."
+          "settings.notificationPermissionRequired"
         )
       }
       switch (
@@ -197,28 +185,23 @@
       ) {
       case (.none, false):
         return OJDLocalized.string(
-          "settings.notificationBannersAndSoundOff",
-          fallback: "Banners and sounds are disabled in System Settings."
+          "settings.notificationBannersAndSoundOff"
         )
       case (.none, _):
         return OJDLocalized.string(
-          "settings.notificationBannersOffDetail",
-          fallback: "Notification banners are disabled in System Settings."
+          "settings.notificationBannersOffDetail"
         )
       case (_, false):
         return OJDLocalized.string(
-          "settings.notificationSoundOffDetail",
-          fallback: "Notification sounds are disabled in System Settings."
+          "settings.notificationSoundOffDetail"
         )
       case (.banner, true), (.alert, true):
         return OJDLocalized.string(
-          "settings.notificationDeliveryReady",
-          fallback: "Banners, Notification Center, and sounds are enabled."
+          "settings.notificationDeliveryReady"
         )
       case (.unknown, _), (_, nil):
         return OJDLocalized.string(
-          "settings.notificationDeliveryAllowed",
-          fallback: "Notification delivery is allowed."
+          "settings.notificationDeliveryAllowed"
         )
       }
     }
@@ -235,11 +218,11 @@
             }
             Spacer()
             if case .available = preferences.updateState {
-              Button(OJDLocalized.string("settings.viewUpdate", fallback: "View Update")) {
+              Button(OJDLocalized.string("settings.viewUpdate")) {
                 preferences.openAvailableUpdate()
               }
             }
-            Button(OJDLocalized.string("settings.checkUpdates", fallback: "Check Now")) {
+            Button(OJDLocalized.string("settings.checkUpdates")) {
               preferences.checkForUpdates()
             }.disabled(preferences.updateState == .checking)
           }
@@ -247,15 +230,13 @@
           HStack {
             Text(
               OJDLocalized.string(
-                "settings.prereleaseUpdates",
-                fallback: "Include prerelease updates"
+                "settings.prereleaseUpdates"
               )
             )
             Spacer(minLength: 12)
             Toggle(
               OJDLocalized.string(
-                "settings.prereleaseUpdates",
-                fallback: "Include prerelease updates"
+                "settings.prereleaseUpdates"
               ),
               isOn: Binding(
                 get: { preferences.includePrereleaseUpdates },
@@ -263,14 +244,13 @@
               )
             ).toggleStyle(.switch).labelsHidden().ojdAccessibilityLabel(
               OJDLocalized.string(
-                "settings.prereleaseUpdates",
-                fallback: "Include prerelease updates"
+                "settings.prereleaseUpdates"
               )
             )
           }
         }.padding(4)
       } label: {
-        Text(OJDLocalized.string("settings.updates", fallback: "Updates")).font(.headline)
+        Text(OJDLocalized.string("settings.updates")).font(.headline)
       }
     }
 
@@ -278,12 +258,10 @@
       GroupBox {
         switchSetting(
           title: OJDLocalized.string(
-            "settings.enableDeveloperTools",
-            fallback: "Enable Developer Tools"
+            "settings.enableDeveloperTools"
           ),
           description: OJDLocalized.string(
-            "settings.developerToolsDescription",
-            fallback: "Show controller input and USB packet tools."
+            "settings.developerToolsDescription"
           ),
           isOn: Binding(
             get: { preferences.developerToolsEnabled },
@@ -291,7 +269,7 @@
           )
         ).padding(4).frame(maxWidth: .infinity, minHeight: 104, alignment: .topLeading)
       } label: {
-        Text(OJDLocalized.string("settings.developerTools", fallback: "Developer Tools")).font(
+        Text(OJDLocalized.string("settings.developerTools")).font(
           .headline
         )
       }.frame(maxWidth: .infinity)

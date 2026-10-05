@@ -88,8 +88,7 @@
     @ViewBuilder
     func ojdAccessibilitySelection(_ selected: Bool) -> some View {
       let value = OJDLocalized.string(
-        selected ? "common.selected" : "common.notSelected",
-        fallback: selected ? "Selected" : "Not selected"
+        selected ? "common.selected" : "common.notSelected"
       )
       accessibilityValue(Text(value)).accessibilityAddTraits(selected ? .isSelected : [])
     }
@@ -112,7 +111,7 @@
         }
       }.listStyle(SidebarListStyle()).frame(minWidth: 170, idealWidth: 190, maxWidth: 240)
         .ojdAccessibilityLabel(
-          OJDLocalized.string("settings.navigation", fallback: "Settings navigation")
+          OJDLocalized.string("settings.navigation")
         )
     }
 

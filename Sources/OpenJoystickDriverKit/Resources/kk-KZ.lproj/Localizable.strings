@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Басқарушы кірмесісіз профильді қосу?";
 "profiles.emptyInputWarning" = "Бұл профиль барлық контроллер кірісін басып тастайды.";
 "profiles.restoreDefaultInput" = "Әдетті кірісті қалпына келтіру";
+"common.reset" = "Бастапқы күйге қайтару";
+"profiles.useControllerDefaultColor" = "Контроллердің әдепкі мәнін пайдалану";
 "profiles.damagedProfile" = "Зақымдалған профиль";
 "profiles.damagedLibrary" = "Белсенді профильдер тізімі зақымдалған";
 "profiles.deleteDamagedButton" = "Зақымдалған профильді жою…";

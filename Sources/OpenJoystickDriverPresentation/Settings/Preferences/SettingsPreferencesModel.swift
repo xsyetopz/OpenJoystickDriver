@@ -114,8 +114,7 @@
         startAtLogin = launchAtLogin.isEnabled
         if enabled && !startAtLogin {
           errorMessage = OJDLocalized.string(
-            "settings.startAtLoginApprovalRequired",
-            fallback: "Allow OpenJoystickDriver in System Settings > General > Login Items."
+            "settings.startAtLoginApprovalRequired"
           )
         } else {
           errorMessage = nil
@@ -255,12 +254,10 @@
       if preference == .test {
         notificationDelivery.deliver(
           title: OJDLocalized.string(
-            "notifications.testTitle",
-            fallback: "Notifications are ready"
+            "notifications.testTitle"
           ),
           body: OJDLocalized.string(
-            "notifications.testBody",
-            fallback: "OpenJoystickDriver can notify you about controller and profile activity."
+            "notifications.testBody"
           ),
           sound: notificationSounds
         )
@@ -283,8 +280,7 @@
       errorMessage =
         errorDescription
         ?? OJDLocalized.string(
-          "settings.notificationsDenied",
-          fallback: "Notifications are disabled for OpenJoystickDriver in System Settings."
+          "settings.notificationsDenied"
         )
     }
 

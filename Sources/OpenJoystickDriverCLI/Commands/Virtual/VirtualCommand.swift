@@ -6,18 +6,13 @@ struct VirtualCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "virtual",
     abstract: CLILocalized.text(
-      "cli.virtual.abstract",
-      "Show and choose the virtual gamepad OpenJoystickDriver publishes for a controller."
+      "cli.virtual.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.virtual.discussion",
-      "A choice applies to every controller of the same model. 'reset' returns a model to "
-        + "automatic selection."
+      "cli.virtual.discussion"
     ) + " "
       + CLILocalized.text(
-        "cli.virtual.discussion.unit",
-        "With --unit, 'set' applies to one controller by its unit ID, and 'reset' returns that "
-          + "controller to its model's choice."
+        "cli.virtual.discussion.unit"
       ),
     subcommands: [
       VirtualShowCommand.self, VirtualSetCommand.self, VirtualResetCommand.self,
@@ -75,8 +70,7 @@ struct VirtualShowCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "show",
     abstract: CLILocalized.text(
-      "cli.virtual.show.abstract",
-      "Show each controller's virtual gamepad and the profiles you can choose."
+      "cli.virtual.show.abstract"
     )
   )
 
@@ -113,7 +107,7 @@ struct VirtualShowCommand: AsyncParsableCommand {
   private static func printHuman(_ report: VirtualShowReport) {
     if report.controllers.isEmpty {
       CLIOutput.stderr(
-        CLILocalized.text("cli.controller.list.empty", "No controllers are connected.")
+        CLILocalized.text("cli.controller.list.empty")
       )
     }
     let idWidth = report.controllers.map(\.id.count).max() ?? 0
@@ -121,18 +115,17 @@ struct VirtualShowCommand: AsyncParsableCommand {
       let id = controller.id.padding(toLength: idWidth, withPad: " ", startingAt: 0)
       let profile: String
       if controller.unavailable {
-        profile = CLILocalized.text("cli.virtual.show.unavailable", "no virtual gamepad fits")
+        profile = CLILocalized.text("cli.virtual.show.unavailable")
       } else if let live = controller.profile {
         profile = "\(live) (\(controller.source ?? ""))"
       } else {
-        profile = CLILocalized.text("cli.virtual.show.none", "no virtual gamepad")
+        profile = CLILocalized.text("cli.virtual.show.none")
       }
       CLIOutput.stdout("\(id)  \(controller.name)  \(profile)")
     }
     CLIOutput.stdout(
       CLILocalized.format(
         "cli.virtual.show.profiles",
-        "Profiles: %@",
         report.profiles.joined(separator: ", ")
       )
     )
@@ -142,8 +135,7 @@ struct VirtualShowCommand: AsyncParsableCommand {
 /// The `--unit` flag of `virtual set` and `virtual reset`.
 private let unitFlagHelp = ArgumentHelp(
   CLILocalized.text(
-    "cli.virtual.unit",
-    "Apply to this controller only, by its unit ID, instead of to its whole model."
+    "cli.virtual.unit"
   )
 )
 
@@ -154,8 +146,6 @@ private func requireUnit(_ unit: Bool, _ device: ApplicationServiceDeviceDescrip
     .controllerRequestFailed,
     CLILocalized.format(
       "cli.virtual.error.no_unit",
-      "%@ has no unit ID, so a choice can apply only to its whole model. Run the command "
-        + "without --unit.",
       device.name
     )
   )
@@ -174,7 +164,6 @@ private func printChange(
       .serviceRequestFailed,
       CLILocalized.format(
         "cli.virtual.error.failed",
-        "The virtual gamepad for %@ did not change (%@). Check it with 'ojd virtual show'.",
         device.name,
         reason
       )
@@ -193,7 +182,6 @@ private func printChange(
     CLIOutput.success(
       CLILocalized.format(
         "cli.virtual.stored",
-        "Saved the choice for %@. It applies once virtual output is enabled.",
         device.name
       )
     )
@@ -201,9 +189,8 @@ private func printChange(
     CLIOutput.success(
       CLILocalized.format(
         "cli.virtual.changed",
-        "%@ now publishes %@ (%@).",
         device.name,
-        report.live ?? CLILocalized.text("cli.virtual.show.none", "no virtual gamepad"),
+        report.live ?? CLILocalized.text("cli.virtual.show.none"),
         report.source
       )
     )
@@ -214,8 +201,7 @@ struct VirtualSetCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "set",
     abstract: CLILocalized.text(
-      "cli.virtual.set.abstract",
-      "Choose the virtual gamepad for a controller's model."
+      "cli.virtual.set.abstract"
     )
   )
 
@@ -224,7 +210,7 @@ struct VirtualSetCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.virtual.set.profile", "The virtual gamepad profile."),
+      CLILocalized.text("cli.virtual.set.profile"),
       valueName: "profile"
     )
   )
@@ -264,13 +250,10 @@ struct VirtualResetCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "reset",
     abstract: CLILocalized.text(
-      "cli.virtual.reset.abstract",
-      "Return a controller's model, or every model, to automatic virtual gamepad selection."
+      "cli.virtual.reset.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.virtual.reset.discussion",
-      "--all also clears choices for models that are not connected. It asks first on a "
-        + "terminal and needs --force otherwise."
+      "cli.virtual.reset.discussion"
     )
   )
 
@@ -282,7 +265,7 @@ struct VirtualResetCommand: AsyncParsableCommand {
 
   @Flag(
     name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.virtual.reset.all", "Reset every controller model."))
+    help: ArgumentHelp(CLILocalized.text("cli.virtual.reset.all"))
   )
   var all = false
 
@@ -291,14 +274,14 @@ struct VirtualResetCommand: AsyncParsableCommand {
 
   @Flag(
     name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.option.force", "Do not ask for confirmation."))
+    help: ArgumentHelp(CLILocalized.text("cli.option.force"))
   )
   var force = false
 
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
-      CLILocalized.text("cli.option.dry_run", "Print what would change, and change nothing.")
+      CLILocalized.text("cli.option.dry_run")
     )
   )
   var dryRun = false
@@ -306,14 +289,13 @@ struct VirtualResetCommand: AsyncParsableCommand {
   func validate() throws {
     guard all != (controller != nil) else {
       throw ValidationError(
-        CLILocalized.text("cli.virtual.reset.error.target", "Give either a CONTROLLER or --all.")
+        CLILocalized.text("cli.virtual.reset.error.target")
       )
     }
     guard !(all && unit) else {
       throw ValidationError(
         CLILocalized.text(
-          "cli.virtual.reset.error.unit_all",
-          "--unit needs a CONTROLLER, not --all."
+          "cli.virtual.reset.error.unit_all"
         )
       )
     }
@@ -332,7 +314,6 @@ struct VirtualResetCommand: AsyncParsableCommand {
       CLIOutput.stdout(
         CLILocalized.format(
           "cli.virtual.reset.dry_run",
-          "Would return %@ to automatic virtual gamepad selection.",
           device.name
         )
       )
@@ -357,14 +338,12 @@ struct VirtualResetCommand: AsyncParsableCommand {
 
   private func resetAll() async throws {
     let summary = CLILocalized.text(
-      "cli.virtual.reset.all.summary",
-      "Return every controller model to automatic virtual gamepad selection?"
+      "cli.virtual.reset.all.summary"
     )
     if dryRun {
       CLIOutput.stdout(
         CLILocalized.text(
-          "cli.virtual.reset.all.dry_run",
-          "Would return every controller model to automatic virtual gamepad selection."
+          "cli.virtual.reset.all.dry_run"
         )
       )
       return
@@ -377,8 +356,7 @@ struct VirtualResetCommand: AsyncParsableCommand {
       throw CLIFailure(
         .serviceRequestFailed,
         CLILocalized.text(
-          "cli.virtual.reset.all.failed",
-          "The service could not clear the virtual gamepad choices. Check it with 'ojd status'."
+          "cli.virtual.reset.all.failed"
         )
       )
     }
@@ -388,8 +366,7 @@ struct VirtualResetCommand: AsyncParsableCommand {
     case .human:
       CLIOutput.success(
         CLILocalized.text(
-          "cli.virtual.reset.all.done",
-          "Every controller model now selects its virtual gamepad automatically."
+          "cli.virtual.reset.all.done"
         )
       )
     }

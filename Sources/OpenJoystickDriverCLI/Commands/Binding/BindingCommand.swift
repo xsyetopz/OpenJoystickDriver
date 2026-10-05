@@ -6,21 +6,10 @@ struct BindingCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "binding",
     abstract: CLILocalized.text(
-      "cli.binding.abstract",
-      "List, set, and clear the bindings of a remapping profile."
+      "cli.binding.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.binding.discussion",
-      "A binding sends a TARGET when a controller SOURCE is used.\n\n"
-        + "SOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], "
-        + "trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, "
-        + "touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW, or "
-        + "touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\n"
-        + "TARGET: key:KEY[:mods=command,control,option,shift], mouse:BUTTON, move:x|y, "
-        + "scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, or "
-        + "physical:... for rumble, lights, and adaptive triggers.\n\n"
-        + "'ojd profile show' prints bindings in these forms. Edit chords, sequences, and "
-        + "layers with 'ojd profile edit'."
+      "cli.binding.discussion"
     ),
     subcommands: [BindingListCommand.self, BindingSetCommand.self, BindingClearCommand.self]
   )
@@ -47,7 +36,7 @@ struct BindingSummary: Encodable, Equatable {
 struct BindingListCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "list",
-    abstract: CLILocalized.text("cli.binding.list.abstract", "List a profile's bindings.")
+    abstract: CLILocalized.text("cli.binding.list.abstract")
   )
 
   struct Result: Encodable, Equatable {
@@ -84,7 +73,6 @@ struct BindingListCommand: AsyncParsableCommand {
           CLIOutput.stderr(
             CLILocalized.format(
               "cli.binding.list.empty",
-              "'%@' has no bindings. Add one with 'ojd binding set'.",
               document.name
             )
           )
@@ -99,8 +87,7 @@ struct BindingSetCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "set",
     abstract: CLILocalized.text(
-      "cli.binding.set.abstract",
-      "Bind a controller source to a target, replacing the source's current binding."
+      "cli.binding.set.abstract"
     ),
     discussion: BindingCommand.configuration.discussion
   )
@@ -116,7 +103,7 @@ struct BindingSetCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.binding.set.source", "The controller control, such as button:south."),
+      CLILocalized.text("cli.binding.set.source"),
       valueName: "source"
     )
   )
@@ -124,7 +111,7 @@ struct BindingSetCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.binding.set.target", "What it sends, such as key:space."),
+      CLILocalized.text("cli.binding.set.target"),
       valueName: "target"
     )
   )
@@ -166,7 +153,6 @@ struct BindingSetCommand: AsyncParsableCommand {
         CLIOutput.success(
           CLILocalized.format(
             "cli.binding.set.done",
-            "'%@' now binds %@.",
             updated.name,
             ProfileText.binding(binding)
           )
@@ -180,14 +166,10 @@ struct BindingClearCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "clear",
     abstract: CLILocalized.text(
-      "cli.binding.clear.abstract",
-      "Remove the bindings of the given sources, or every binding."
+      "cli.binding.clear.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.binding.clear.discussion",
-      "--all also removes the profile's chords, sequences, and layers, and asks for "
-        + "confirmation on a terminal; it needs --force otherwise. Stick, trigger, touch, motion, "
-        + "and output settings stay."
+      "cli.binding.clear.discussion"
     )
   )
 
@@ -203,7 +185,7 @@ struct BindingClearCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.binding.clear.sources", "The sources whose bindings to remove."),
+      CLILocalized.text("cli.binding.clear.sources"),
       valueName: "source"
     )
   )
@@ -212,8 +194,7 @@ struct BindingClearCommand: AsyncParsableCommand {
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.binding.clear.all",
-        "Remove every binding, chord, sequence, and layer."
+        "cli.binding.clear.all"
       )
     )
   )
@@ -221,14 +202,14 @@ struct BindingClearCommand: AsyncParsableCommand {
 
   @Flag(
     name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.option.force", "Do not ask for confirmation."))
+    help: ArgumentHelp(CLILocalized.text("cli.option.force"))
   )
   var force = false
 
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
-      CLILocalized.text("cli.option.dry_run", "Print what would change, and change nothing.")
+      CLILocalized.text("cli.option.dry_run")
     )
   )
   var dryRun = false
@@ -239,7 +220,7 @@ struct BindingClearCommand: AsyncParsableCommand {
   func validate() throws {
     guard all != !sources.isEmpty else {
       throw ValidationError(
-        CLILocalized.text("cli.binding.clear.usage", "Give one or more sources, or --all.")
+        CLILocalized.text("cli.binding.clear.usage")
       )
     }
   }
@@ -264,7 +245,6 @@ struct BindingClearCommand: AsyncParsableCommand {
           .notFound,
           CLILocalized.format(
             "cli.binding.clear.missing",
-            "'%@' has no binding for %@. Nothing changed.",
             current.name,
             ProfileText.source(missing)
           )
@@ -275,7 +255,6 @@ struct BindingClearCommand: AsyncParsableCommand {
           try CLITerminal.confirm(
             CLILocalized.format(
               "cli.binding.clear.confirm",
-              "Remove every binding, chord, sequence, and layer from '%@'?",
               current.name
             ),
             force: force
@@ -302,13 +281,11 @@ struct BindingClearCommand: AsyncParsableCommand {
           dryRun
           ? CLILocalized.format(
             "cli.binding.clear.dry_run",
-            "Bindings that would be removed from '%@': %lld.",
             current.name,
             result.removed.count
           )
           : CLILocalized.format(
             "cli.binding.clear.done",
-            "Bindings removed from '%@': %lld.",
             current.name,
             result.removed.count
           )
@@ -320,9 +297,6 @@ struct BindingClearCommand: AsyncParsableCommand {
         CLIOutput.stderr(
           CLILocalized.format(
             "cli.binding.clear.blocks_input",
-            "'%@' is active on a connected controller and now blocks all of its input. "
-              + "Add a binding with 'ojd binding set', or stop the profile with "
-              + "'ojd profile deactivate'.",
             current.name
           )
         )

@@ -8,39 +8,39 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 12) {
-        Picker(label("output", "Gyro output"), selection: $draft.mode) {
-          Text(label("disabled", "Disabled")).tag(RemappingGyroOutputMode.disabled)
-          Text(label("mouse", "Mouse pointer")).tag(RemappingGyroOutputMode.mouse)
-          Text(label("leftStick", "Left stick")).tag(RemappingGyroOutputMode.leftStick)
-          Text(label("rightStick", "Right stick")).tag(RemappingGyroOutputMode.rightStick)
+        Picker(label("output"), selection: $draft.mode) {
+          Text(label("disabled")).tag(RemappingGyroOutputMode.disabled)
+          Text(label("mouse")).tag(RemappingGyroOutputMode.mouse)
+          Text(label("leftStick")).tag(RemappingGyroOutputMode.leftStick)
+          Text(label("rightStick")).tag(RemappingGyroOutputMode.rightStick)
         }
         if draft.mode != .disabled {
           ProfileTrackballFields(draft: $draft.trackball)
           if draft.mode == .mouse {
             TextField(
-              label("pointerScale", "Pointer points per degree"),
+              label("pointerScale"),
               text: $draft.pointerPointsPerDegree
             )
           } else {
             TextField(
-              label("stickScale", "Full stick speed (degrees/s)"),
+              label("stickScale"),
               text: $draft.fullStickDegreesPerSecond
             )
           }
-          Picker(label("activation", "Gyro activation"), selection: $draft.activationMode) {
-            Text(label("always", "Always active")).tag(RemappingGyroActivationMode.always)
-            Text(label("whileHeld", "While held")).tag(RemappingGyroActivationMode.whileHeld)
-            Text(label("whileReleased", "While released")).tag(
+          Picker(label("activation"), selection: $draft.activationMode) {
+            Text(label("always")).tag(RemappingGyroActivationMode.always)
+            Text(label("whileHeld")).tag(RemappingGyroActivationMode.whileHeld)
+            Text(label("whileReleased")).tag(
               RemappingGyroActivationMode.whileReleased
             )
-            Text(label("toggle", "Toggle on press")).tag(RemappingGyroActivationMode.toggle)
+            Text(label("toggle")).tag(RemappingGyroActivationMode.toggle)
           }
           if draft.activationMode != .always {
             Toggle(
-              label("consume", "Suppress original virtual activation control"),
+              label("consume"),
               isOn: $draft.consumesActivationSource
             )
-            Picker(label("source", "Activation control"), selection: $draft.activationSource) {
+            Picker(label("source"), selection: $draft.activationSource) {
               ForEach(sources, id: \.source) { option in Text(option.title).tag(option.source) }
             }
           }
@@ -55,8 +55,8 @@
       }
     }
 
-    private func label(_ key: String, _ fallback: String) -> String {
-      OJDLocalized.string("profiles.gyro." + key, fallback: fallback)
+    private func label(_ key: String) -> String {
+      OJDLocalized.string("profiles.gyro." + key)
     }
   }
 #endif

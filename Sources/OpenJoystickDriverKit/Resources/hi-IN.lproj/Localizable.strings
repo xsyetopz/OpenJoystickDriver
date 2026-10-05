@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "नियंत्रक के बिना प्रोफ़ाइल सक्रिय करें?";
 "profiles.emptyInputWarning" = "यह प्रोफ़ाइल सभी नियंत्रक इनपुट को दबाता है।";
 "profiles.restoreDefaultInput" = "डिफ़ॉल्ट इनपुट को पुनर्स्थापित करें";
+"common.reset" = "रीसेट करें";
+"profiles.useControllerDefaultColor" = "कंट्रोलर का डिफ़ॉल्ट उपयोग करें";
 "profiles.damagedProfile" = "क्षतिग्रस्त प्रोफ़ाइल";
 "profiles.damagedLibrary" = "सक्रिय प्रोफ़ाइल सूची क्षतिग्रस्त है";
 "profiles.deleteDamagedButton" = "क्षतिग्रस्त प्रोफ़ाइल हटाएं…";

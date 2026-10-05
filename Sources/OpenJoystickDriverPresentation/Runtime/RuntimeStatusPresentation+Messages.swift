@@ -78,8 +78,6 @@ extension RuntimeStatusPresentation {
       messages.append(
         OJDLocalized.formatted(
           "virtualProfile.storeError",
-          fallback:
-            "Virtual HID profile overrides can't be read (%@). Controllers select automatically.",
           virtualHIDProfileOverrideError
         )
       )

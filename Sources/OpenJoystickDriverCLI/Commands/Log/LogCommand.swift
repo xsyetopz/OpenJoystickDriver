@@ -6,8 +6,7 @@ struct LogCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "log",
     abstract: CLILocalized.text(
-      "cli.log.abstract",
-      "Show the service logs or print where they are."
+      "cli.log.abstract"
     ),
     subcommands: [LogShowCommand.self, LogPathCommand.self, LogExportCommand.self]
   )
@@ -24,8 +23,7 @@ struct LogPathCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "path",
     abstract: CLILocalized.text(
-      "cli.log.path.abstract",
-      "Print the folder that holds the service logs. Open it with: open \"$(ojd log path)\""
+      "cli.log.path.abstract"
     )
   )
 
@@ -48,19 +46,16 @@ struct LogPathCommand: AsyncParsableCommand {
 struct LogShowCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "show",
-    abstract: CLILocalized.text("cli.log.show.abstract", "Print the end of the service logs."),
+    abstract: CLILocalized.text("cli.log.show.abstract"),
     discussion: CLILocalized.text(
-      "cli.log.show.discussion",
-      "On a terminal the output goes through $PAGER (default 'less -FRX'; set PAGER to an empty "
-        + "value to turn paging off). --follow keeps printing new lines until you press "
-        + "Control-C; with --json it prints one JSON object per line."
+      "cli.log.show.discussion"
     )
   )
 
   @Flag(
     name: .shortAndLong,
     help: ArgumentHelp(
-      CLILocalized.text("cli.log.show.follow", "Keep printing lines as the service writes them.")
+      CLILocalized.text("cli.log.show.follow")
     )
   )
   var follow = false
@@ -68,7 +63,7 @@ struct LogShowCommand: AsyncParsableCommand {
   @Option(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
-      CLILocalized.text("cli.log.show.lines", "Lines to print from each log, 1 to 10000."),
+      CLILocalized.text("cli.log.show.lines"),
       valueName: "count"
     )
   )
@@ -86,7 +81,7 @@ struct LogShowCommand: AsyncParsableCommand {
   func validate() throws {
     guard (1...10_000).contains(lines) else {
       throw ValidationError(
-        CLILocalized.text("cli.log.show.lines_range", "--lines must be between 1 and 10000.")
+        CLILocalized.text("cli.log.show.lines_range")
       )
     }
   }
@@ -102,7 +97,6 @@ struct LogShowCommand: AsyncParsableCommand {
           .fileAccessFailed,
           CLILocalized.format(
             "cli.log.show.read_failed",
-            "Could not read the service logs: %@. Check the folder that 'ojd log path' prints.",
             error.localizedDescription
           )
         )
@@ -157,12 +151,12 @@ struct LogShowCommand: AsyncParsableCommand {
     for snapshot in snapshots {
       text += "== \(snapshot.stream.rawValue): \(snapshot.path) ==\n"
       if !snapshot.exists {
-        text += CLILocalized.text("cli.log.show.missing", "(log file does not exist)") + "\n"
+        text += CLILocalized.text("cli.log.show.missing") + "\n"
       } else if snapshot.lines.isEmpty {
-        text += CLILocalized.text("cli.log.show.empty", "(log file is empty)") + "\n"
+        text += CLILocalized.text("cli.log.show.empty") + "\n"
       }
       if snapshot.truncated {
-        text += CLILocalized.text("cli.log.show.truncated", "(earlier log content omitted)") + "\n"
+        text += CLILocalized.text("cli.log.show.truncated") + "\n"
       }
       for line in snapshot.lines { text += line + "\n" }
     }

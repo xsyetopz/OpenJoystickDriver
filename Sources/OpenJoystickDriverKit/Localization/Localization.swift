@@ -9,11 +9,13 @@ public struct Localization: Sendable {
   /// SwiftPM resource bundle. Tests pin this instead of `Bundle.main`.
   public static var moduleBundle: Bundle { .module }
 
+  /// Sentinel that tells a missing key apart from any catalog value.
+  private static let missingValue = "\u{0}OJD.missing"
+
   private let localizationNames: [String]
   private let localizedLanguage: String?
-  private let preferredBundle: Bundle?
-  private let sourceEnglishBundle: Bundle?
-  private let isSourceLanguage: Bool
+  /// Preferred locale first, then the `en-US` source catalog.
+  private let lookupBundles: [Bundle]
   private let formattingLocale: Locale
 
   public init(bundle: Bundle? = nil, preferredLanguages: [String] = Locale.preferredLanguages) {
@@ -25,10 +27,15 @@ public struct Localization: Sendable {
     )
     self.localizationNames = localizationNames
     self.localizedLanguage = localizedLanguage
-    self.preferredBundle = Self.localizedBundle(for: localizedLanguage, in: bundle)
-    self.sourceEnglishBundle = Self.sourceEnglishBundle(in: bundle)
-    self.isSourceLanguage =
-      localizedLanguage?.caseInsensitiveCompare(Self.sourceLocalization) == .orderedSame
+    let preferredBundle = Self.localizedBundle(for: localizedLanguage, in: bundle)
+    let sourceBundle = Self.sourceEnglishBundle(in: bundle)
+    self.lookupBundles = [preferredBundle, sourceBundle].compactMap { $0 }.reduce(into: []) {
+      bundles,
+      candidate in
+      if !bundles.contains(where: { $0.bundleURL == candidate.bundleURL }) {
+        bundles.append(candidate)
+      }
+    }
     if let localizedLanguage {
       self.formattingLocale = Locale(
         identifier: localizedLanguage.replacingOccurrences(of: "-", with: "_")
@@ -38,69 +45,23 @@ public struct Localization: Sendable {
     }
   }
 
-  /// Best packaged translation for `key`, then `defaultValue`, then the key.
-  public func string(_ key: String, defaultValue: String? = nil, comment: String = "") -> String {
-    let fallback = defaultValue ?? key
-    guard let preferredBundle else { return fallback }
-
-    let value = NSLocalizedString(
-      key,
-      tableName: "Localizable",
-      bundle: preferredBundle,
-      value: fallback,
-      comment: comment
-    )
-    guard value == fallback, !isSourceLanguage else { return value }
-
-    // Incomplete locale: prefer source English over a raw key.
-    guard let sourceBundle = sourceEnglishBundle, sourceBundle !== preferredBundle else {
-      return value
+  /// Best packaged translation for `key`, then the `en-US` source catalog, then the key itself.
+  public func string(_ key: String) -> String {
+    for bundle in lookupBundles {
+      let value = bundle.localizedString(
+        forKey: key,
+        value: Self.missingValue,
+        table: "Localizable"
+      )
+      if value != Self.missingValue { return value }
     }
-    return NSLocalizedString(
-      key,
-      tableName: "Localizable",
-      bundle: sourceBundle,
-      value: fallback,
-      comment: comment
-    )
+    return key
   }
 
   /// Formats `count` through a `Localizable.stringsdict` plural (`%#@count@`).
   /// Foundation picks the CLDR category; callers should not branch on `count == 1`.
-  public func plural(
-    _ key: String,
-    count: Int,
-    defaultValue: String? = nil,
-    comment: String = ""
-  ) -> String {
-    let fallback = defaultValue ?? key
-    guard let preferredBundle else {
-      return Self.format(fallback, count: count, locale: formattingLocale)
-    }
-
-    let value = NSLocalizedString(
-      key,
-      tableName: "Localizable",
-      bundle: preferredBundle,
-      value: fallback,
-      comment: comment
-    )
-    guard value == fallback, !isSourceLanguage else {
-      return Self.format(value, count: count, locale: formattingLocale)
-    }
-
-    // Incomplete locale: format source English, not a raw `%#@count@` string.
-    guard let sourceBundle = sourceEnglishBundle else {
-      return Self.format(value, count: count, locale: formattingLocale)
-    }
-    let sourceValue = NSLocalizedString(
-      key,
-      tableName: "Localizable",
-      bundle: sourceBundle,
-      value: fallback,
-      comment: comment
-    )
-    return Self.format(sourceValue, count: count, locale: formattingLocale)
+  public func plural(_ key: String, count: Int) -> String {
+    Self.format(string(key), count: count, locale: formattingLocale)
   }
 
   /// Formats with the user's locale. Placeholder types stay those in the source catalog.
@@ -108,13 +69,8 @@ public struct Localization: Sendable {
     formatted(key, arguments: arguments)
   }
 
-  public func formatted(
-    _ key: String,
-    defaultValue: String? = nil,
-    locale: Locale = .current,
-    arguments: [CVarArg]
-  ) -> String {
-    String(format: string(key, defaultValue: defaultValue), locale: locale, arguments: arguments)
+  public func formatted(_ key: String, locale: Locale = .current, arguments: [CVarArg]) -> String {
+    String(format: string(key), locale: locale, arguments: arguments)
   }
 
   /// The localization selected for the injected preference order, if any.

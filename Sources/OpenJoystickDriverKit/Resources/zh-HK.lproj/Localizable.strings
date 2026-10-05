@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "沒有控制器輸入的配置文件?";
 "profiles.emptyInputWarning" = "這樣的配置文件將所有控制器輸入都壓制.";
 "profiles.restoreDefaultInput" = "恢復預設輸入";
+"common.reset" = "重設";
+"profiles.useControllerDefaultColor" = "使用控制器預設值";
 "profiles.damagedProfile" = "個人資料損壞";
 "profiles.damagedLibrary" = "使用中的設定檔清單已損壞";
 "profiles.deleteDamagedButton" = "刪除損壞的設定檔…";

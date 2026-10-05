@@ -103,22 +103,19 @@ struct LocalizationTests {
     #expect(
       resolver.plural(
         "status.controllerConnected",
-        count: 1,
-        defaultValue: "%d controllers connected"
+        count: 1
       ) == "1 controller connected"
     )
     #expect(
       resolver.plural(
         "status.controllerConnected",
-        count: 2,
-        defaultValue: "%d controllers connected"
+        count: 2
       ) == "2 controllers connected"
     )
     #expect(
       resolver.plural(
         "debug.outputDevices",
-        count: 0,
-        defaultValue: "%d controller output devices detected"
+        count: 0
       ) == "No controller output devices detected"
     )
   }
@@ -127,10 +124,9 @@ struct LocalizationTests {
   func preferredLanguageSelectionUsesTheLocaleCatalog() {
     let resolver = Localization(preferredLanguages: ["et-EE", "en-US"])
     #expect(resolver.resolvedLanguage?.lowercased() == "et-ee")
-    #expect(resolver.string("common.refresh", defaultValue: "Refresh") == "Värskenda")
+    #expect(resolver.string("common.refresh") == "Värskenda")
 
-    let missing = resolver.string("test.missing.key", defaultValue: "Source fallback")
-    #expect(missing == "Source fallback")
+    #expect(resolver.string("test.missing.key") == "test.missing.key")
   }
 
   @Test
@@ -169,9 +165,9 @@ struct LocalizationTests {
     let bundle = try #require(Bundle(path: root.path))
     let resolver = Localization(bundle: bundle, preferredLanguages: ["fr-FR"])
     #expect(resolver.resolvedLanguage == "fr-FR")
-    #expect(resolver.string("frOnly", defaultValue: "Caller fallback") == "French value")
-    #expect(resolver.string("shared", defaultValue: "Caller fallback") == "English source")
-    #expect(resolver.string("missing", defaultValue: "Caller fallback") == "Caller fallback")
+    #expect(resolver.string("frOnly") == "French value")
+    #expect(resolver.string("shared") == "English source")
+    #expect(resolver.string("missing") == "missing")
   }
 
   @Test
@@ -216,14 +212,12 @@ struct LocalizationTests {
     let resolver = Localization(preferredLanguages: ["en-US"])
     let value = resolver.plural(
       "status.controllerConnected",
-      count: 3,
-      defaultValue: "%d controllers connected"
+      count: 3
     )
     #expect(value == "3 controllers connected")
 
     let about = resolver.formatted(
       "about.version",
-      defaultValue: "Version %@\nController input for macOS",
       arguments: ["1.2.3" as CVarArg]
     )
     #expect(about == "Version 1.2.3\nController input for macOS")

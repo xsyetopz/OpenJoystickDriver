@@ -17,16 +17,16 @@
     }
 
     private var advancedTitle: String {
-      OJDLocalized.string("virtualProfile.advanced", fallback: "Advanced")
+      OJDLocalized.string("virtualProfile.advanced")
     }
 
     private var content: some View {
       VStack(alignment: .leading, spacing: 10) {
         Picker(
-          OJDLocalized.string("virtualProfile.title", fallback: "Virtual HID profile"),
+          OJDLocalized.string("virtualProfile.title"),
           selection: overrideBinding
         ) {
-          Text(OJDLocalized.string("mapping.automatic", fallback: "Automatic")).tag(
+          Text(OJDLocalized.string("mapping.automatic")).tag(
             VirtualHIDProfileID?.none
           )
           ForEach(VirtualHIDProfileID.allCases, id: \.self) { profile in
@@ -37,15 +37,14 @@
         }.disabled(overrideState.inFlight)
         Text(
           OJDLocalized.string(
-            "virtualProfile.modelScope",
-            fallback: "Applies to every connected controller of this model."
+            "virtualProfile.modelScope"
           )
         ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
           horizontal: false,
           vertical: true
         )
         KeyValueRow(
-          label: OJDLocalized.string("virtualProfile.live", fallback: "Live profile"),
+          label: OJDLocalized.string("virtualProfile.live"),
           value: liveProfileLabel
         )
         if overrideState.inFlight {
@@ -58,14 +57,14 @@
           HStack(alignment: .top, spacing: 8) {
             OJDSystemSymbol(
               name: SemanticState.failure.presentation.symbolName,
-              fallback: OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+              fallback: OJDLocalized.string("common.needsAttention")
             ).foregroundColor(Color(SemanticState.failure.presentation.tone.color))
             Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
               horizontal: false,
               vertical: true
             )
           }.ojdAccessibilityLabel(
-            OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+            OJDLocalized.string("common.needsAttention")
           ).ojdAccessibilityValue(message)
         }
       }
@@ -98,8 +97,7 @@
       }
       if status.unavailable {
         return OJDLocalized.string(
-          "virtualProfile.unavailable",
-          fallback: "No virtual HID profile can represent this controller."
+          "virtualProfile.unavailable"
         )
       }
       guard let profile = status.profile else {
@@ -112,7 +110,7 @@
     }
 
     private var updatingLabel: String {
-      OJDLocalized.string("virtualProfile.updating", fallback: "Updating virtual HID profile...")
+      OJDLocalized.string("virtualProfile.updating")
     }
 
     private var problems: [String] {

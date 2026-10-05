@@ -4,37 +4,36 @@ import OpenJoystickDriverKit
 enum RuntimePresentation {
   static func permissionLabel(_ state: RuntimePermissionState) -> String {
     switch state {
-    case .granted: return OJDLocalized.string("status.allowed", fallback: "Allowed")
-    case .denied: return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
-    case .unknown: return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
-    case .unavailable: return OJDLocalized.string("common.unavailable", fallback: "Unavailable")
+    case .granted: return OJDLocalized.string("status.allowed")
+    case .denied: return OJDLocalized.string("common.needsAttention")
+    case .unknown: return OJDLocalized.string("common.needsAttention")
+    case .unavailable: return OJDLocalized.string("common.unavailable")
     }
   }
 
   static func readinessLabel(_ readiness: RuntimeReadiness) -> String {
     switch readiness {
-    case .ready: return OJDLocalized.string("status.ready", fallback: "Ready")
+    case .ready: return OJDLocalized.string("status.ready")
     case .needsAttention:
-      return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+      return OJDLocalized.string("common.needsAttention")
     case .noController:
-      return OJDLocalized.string("status.connectController", fallback: "Connect a controller")
+      return OJDLocalized.string("status.connectController")
     }
   }
 
   static func postEventAccessLabel(_ state: RemappingPostEventAccessState?) -> String {
     switch state {
-    case .granted: return OJDLocalized.string("status.allowed", fallback: "Allowed")
+    case .granted: return OJDLocalized.string("status.allowed")
     case .notAuthorized:
-      return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
-    case nil: return OJDLocalized.string("status.checking", fallback: "Checking")
+      return OJDLocalized.string("common.needsAttention")
+    case nil: return OJDLocalized.string("status.checking")
     }
   }
 
   static func deviceCountLabel(_ count: Int) -> String {
     OJDLocalized.plural(
       "status.controllerConnected",
-      count: count,
-      fallback: "%d controllers connected"
+      count: count
     )
   }
 
@@ -42,26 +41,25 @@ enum RuntimePresentation {
 
   static func profileScopeLabel(_ scope: RemappingApplicationScope) -> String {
     switch scope {
-    case .global: return OJDLocalized.string("mapping.allApps", fallback: "All apps")
-    case .application: return OJDLocalized.string("mapping.specificApp", fallback: "A specific app")
+    case .global: return OJDLocalized.string("mapping.allApps")
+    case .application: return OJDLocalized.string("mapping.specificApp")
     }
   }
 
   static var noVirtualHIDProfileLabel: String {
-    OJDLocalized.string("virtualProfile.none", fallback: "No virtual HID profile")
+    OJDLocalized.string("virtualProfile.none")
   }
 
   /// The wire source of a virtual HID profile: `automatic`, `override`, or
   /// `automatic-after-rejecting`.
   static func virtualHIDProfileSourceLabel(_ source: String) -> String {
     switch source {
-    case "automatic": return OJDLocalized.string("mapping.automatic", fallback: "Automatic")
+    case "automatic": return OJDLocalized.string("mapping.automatic")
     case "override":
-      return OJDLocalized.string("virtualProfile.sourceOverride", fallback: "Override")
+      return OJDLocalized.string("virtualProfile.sourceOverride")
     case "automatic-after-rejecting":
       return OJDLocalized.string(
-        "virtualProfile.sourceAutomaticAfterRejecting",
-        fallback: "Automatic, override rejected"
+        "virtualProfile.sourceAutomaticAfterRejecting"
       )
     default: return source
     }
@@ -74,40 +72,32 @@ enum RuntimePresentation {
     switch failure {
     case .unknownProfile:
       return OJDLocalized.string(
-        "virtualProfile.failure.unknownProfile",
-        fallback: "This virtual HID profile is unknown. Nothing was stored."
+        "virtualProfile.failure.unknownProfile"
       )
     case .controllerNotFound:
       return OJDLocalized.string(
-        "virtualProfile.failure.controllerNotFound",
-        fallback: "The controller disconnected or can't be found. The override is unchanged."
+        "virtualProfile.failure.controllerNotFound"
       )
     case .overrideRejectedByController:
       return OJDLocalized.string(
-        "virtualProfile.failure.overrideRejected",
-        fallback:
-          "The override is stored, but this controller can't use it, so it selects automatically."
+        "virtualProfile.failure.overrideRejected"
       )
     case .activationFailed(let detail):
       return OJDLocalized.formatted(
         "virtualProfile.failure.activationFailed",
-        fallback: "Activation failed, so the previous virtual HID profile was restored: %@",
         detail
       )
     case .outputDisabled:
       return OJDLocalized.string(
-        "virtualProfile.failure.outputDisabled",
-        fallback: "The override is stored and applies once virtual output is enabled."
+        "virtualProfile.failure.outputDisabled"
       )
     case .serverStopped:
       return OJDLocalized.string(
-        "virtualProfile.failure.serverStopped",
-        fallback: "The service stopped. The override is unchanged."
+        "virtualProfile.failure.serverStopped"
       )
     case .persistenceFailed:
       return OJDLocalized.string(
-        "virtualProfile.failure.persistenceFailed",
-        fallback: "The override couldn't be saved. Nothing was stored."
+        "virtualProfile.failure.persistenceFailed"
       )
     }
   }
@@ -118,40 +108,34 @@ enum RuntimePresentation {
     case .dpad(let direction):
       return OJDLocalized.formatted(
         "mapping.dpadDirection",
-        fallback: "D-pad %@",
         humanized(direction.rawValue)
       )
     case .axis(let axis): return axisLabel(axis)
     case .axisDirection(let axis, let direction):
       return OJDLocalized.formatted(
         "mapping.axisDirection",
-        fallback: "%@ %@",
         axisLabel(axis),
         humanized(direction.rawValue)
       )
     case .triggerStage(let trigger, let stage):
       return OJDLocalized.formatted(
         "mapping.triggerStage",
-        fallback: "%@ trigger %@ pull",
         humanized(trigger.rawValue),
         humanized(stage.rawValue)
       )
     case .motionLean(let direction):
       return OJDLocalized.formatted(
         "mapping.motionLean",
-        fallback: "Motion lean %@",
         humanized(direction.rawValue)
       )
     case .touchContact(let surface):
       return OJDLocalized.formatted(
         "mapping.touchContact",
-        fallback: "%@ touch",
         touchSurfaceLabel(surface)
       )
     case .touchGrid(let grid):
       return OJDLocalized.formatted(
         "mapping.touchGridCell",
-        fallback: "%@ grid %d×%d cell %d,%d",
         touchSurfaceLabel(grid.surface),
         grid.columns,
         grid.rows,
@@ -161,7 +145,6 @@ enum RuntimePresentation {
     case .touchSwipe(let swipe):
       return OJDLocalized.formatted(
         "mapping.touchSwipe",
-        fallback: "%@ swipe %@",
         touchSurfaceLabel(swipe.surface),
         humanized(swipe.direction.rawValue)
       )
@@ -170,9 +153,9 @@ enum RuntimePresentation {
 
   private static func touchSurfaceLabel(_ surface: RemappingTouchSurface) -> String {
     switch surface {
-    case .primary: OJDLocalized.string("mapping.touchSurfacePrimary", fallback: "Primary surface")
-    case .left: OJDLocalized.string("mapping.touchSurfaceLeft", fallback: "Left surface")
-    case .right: OJDLocalized.string("mapping.touchSurfaceRight", fallback: "Right surface")
+    case .primary: OJDLocalized.string("mapping.touchSurfacePrimary")
+    case .left: OJDLocalized.string("mapping.touchSurfaceLeft")
+    case .right: OJDLocalized.string("mapping.touchSurfaceRight")
     }
   }
 
@@ -189,19 +172,16 @@ enum RuntimePresentation {
     case .mouseButton(let button):
       return OJDLocalized.formatted(
         "mapping.mouseButton",
-        fallback: "Mouse %@ button",
         humanized(button.rawValue)
       )
     case .mouseMovement(let axis):
       return OJDLocalized.formatted(
         "mapping.pointerMovement",
-        fallback: "Pointer %@ movement",
         humanized(axis.rawValue)
       )
     case .scroll(let axis):
       return OJDLocalized.formatted(
         "mapping.scroll",
-        fallback: "Scroll %@",
         humanized(axis.rawValue)
       )
     case .physical(let output): return physicalOutputLabel(output)
@@ -213,34 +193,29 @@ enum RuntimePresentation {
     case .rumble(let motor, let intensity):
       return OJDLocalized.formatted(
         "mapping.physicalRumble",
-        fallback: "%@ rumble (%@%%)",
         humanized(motor.rawValue),
         String(Int((intensity * 100).rounded()))
       )
     case .playerIndicator(let indicator):
       return OJDLocalized.formatted(
         "mapping.physicalPlayerIndicator",
-        fallback: "Player indicator %@",
         indicator == .off
-          ? OJDLocalized.string("common.disabled", fallback: "Disabled")
+          ? OJDLocalized.string("common.disabled")
           : String(indicator.rawValue)
       )
     case .color(let color):
       return OJDLocalized.formatted(
         "mapping.physicalColor",
-        fallback: "Controller color %@",
         String(format: "#%02X%02X%02X", color.red, color.green, color.blue)
       )
     case .brightness(let intensity):
       return OJDLocalized.formatted(
         "mapping.physicalBrightness",
-        fallback: "Controller brightness (%@%%)",
         String(Int((intensity * 100).rounded()))
       )
     case .adaptiveTrigger(let trigger, let effect):
       return OJDLocalized.formatted(
         "mapping.physicalAdaptiveTrigger",
-        fallback: "%@ adaptive trigger: %@",
         humanized(trigger.rawValue),
         humanized(effect.kind.rawValue)
       )

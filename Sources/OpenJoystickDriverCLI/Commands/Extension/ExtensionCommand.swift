@@ -7,8 +7,7 @@ struct ExtensionCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "extension",
     abstract: CLILocalized.text(
-      "cli.extension.abstract",
-      "Show, activate, or deactivate the OpenJoystickDriver DriverKit system extension."
+      "cli.extension.abstract"
     ),
     subcommands: [
       ExtensionStatusCommand.self, ExtensionActivateCommand.self, ExtensionDeactivateCommand.self,
@@ -45,13 +44,10 @@ struct ExtensionStatusCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "status",
     abstract: CLILocalized.text(
-      "cli.extension.status.abstract",
-      "Show whether the extension is in the app and registered with macOS."
+      "cli.extension.status.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.extension.status.discussion",
-      "Bundle is present, missing, or invalid. Registration is active, inactive, absent, or "
-        + "unavailable; unavailable exits 1. Works when the service is stopped."
+      "cli.extension.status.discussion"
     )
   )
 
@@ -72,14 +68,12 @@ struct ExtensionStatusCommand: AsyncParsableCommand {
         CLIOutput.stdout(
           CLILocalized.format(
             "cli.extension.status.bundle",
-            "Embedded extension:  %@",
             report.bundle.rawValue
           )
         )
         CLIOutput.stdout(
           CLILocalized.format(
             "cli.extension.status.registration",
-            "macOS registration:  %@",
             report.registration.rawValue
           )
         )
@@ -92,8 +86,6 @@ struct ExtensionStatusCommand: AsyncParsableCommand {
           .systemRequestFailed,
           CLILocalized.format(
             "cli.extension.status.unavailable",
-            "macOS did not report the extension registration: %@. "
-              + "Retry, or run 'systemextensionsctl list'.",
             reason
           )
         )
@@ -128,18 +120,14 @@ private func submit(
     throw CLIFailure(
       .systemRequestFailed,
       CLILocalized.text(
-        "cli.extension.timeout",
-        "macOS did not finish the request in time. "
-          + "Check System Settings for an approval prompt, then run 'ojd extension status'."
+        "cli.extension.timeout"
       )
     )
   case .failed:
     throw CLIFailure(
       .systemRequestFailed,
       CLILocalized.text(
-        "cli.extension.submit_failed",
-        "macOS rejected the request. Run 'ojd extension status' and check "
-          + "'systemextensionsctl list'."
+        "cli.extension.submit_failed"
       )
     )
   }
@@ -150,9 +138,7 @@ private func submit(
     if result == .awaitingApproval {
       CLIOutput.stderr(
         CLILocalized.text(
-          "cli.extension.approval",
-          "The request needs your approval. Allow it in System Settings > General > "
-            + "Login Items & Extensions > Driver Extensions."
+          "cli.extension.approval"
         )
       )
     } else {
@@ -165,12 +151,10 @@ struct ExtensionActivateCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "activate",
     abstract: CLILocalized.text(
-      "cli.extension.activate.abstract",
-      "Ask macOS to activate the extension. It may need approval in System Settings."
+      "cli.extension.activate.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.extension.activate.discussion",
-      "Run the ojd inside /Applications/OpenJoystickDriver.app. Waiting for approval exits 0."
+      "cli.extension.activate.discussion"
     )
   )
 
@@ -182,7 +166,7 @@ struct ExtensionActivateCommand: AsyncParsableCommand {
       try await submit(
         .activate,
         done: .active,
-        message: CLILocalized.text("cli.extension.activated", "The extension is active.")
+        message: CLILocalized.text("cli.extension.activated")
       )
     }
   }
@@ -192,12 +176,10 @@ struct ExtensionDeactivateCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "deactivate",
     abstract: CLILocalized.text(
-      "cli.extension.deactivate.abstract",
-      "Ask macOS to deactivate the extension. Controllers return to macOS."
+      "cli.extension.deactivate.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.extension.deactivate.discussion",
-      "Run the ojd inside /Applications/OpenJoystickDriver.app."
+      "cli.extension.deactivate.discussion"
     )
   )
 
@@ -209,7 +191,7 @@ struct ExtensionDeactivateCommand: AsyncParsableCommand {
       try await submit(
         .deactivate,
         done: .inactive,
-        message: CLILocalized.text("cli.extension.deactivated", "The extension is inactive.")
+        message: CLILocalized.text("cli.extension.deactivated")
       )
     }
   }

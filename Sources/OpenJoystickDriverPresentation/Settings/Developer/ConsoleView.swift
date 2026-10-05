@@ -13,9 +13,9 @@
 
     var title: String {
       switch self {
-      case .all: return OJDLocalized.string("console.all", fallback: "All")
-      case .standardOutput: return OJDLocalized.string("console.output", fallback: "Output")
-      case .standardError: return OJDLocalized.string("console.errors", fallback: "Errors")
+      case .all: return OJDLocalized.string("console.all")
+      case .standardOutput: return OJDLocalized.string("console.output")
+      case .standardError: return OJDLocalized.string("console.errors")
       }
     }
   }
@@ -111,10 +111,10 @@
     var body: some View {
       VStack(alignment: .leading, spacing: 12) {
         HStack {
-          PageHeader(title: OJDLocalized.string("console.title", fallback: "Console"))
+          PageHeader(title: OJDLocalized.string("console.title"))
           Spacer()
           Picker(
-            OJDLocalized.string("console.stream", fallback: "Stream"),
+            OJDLocalized.string("console.stream"),
             selection: $model.selection
           ) {
             ForEach(ConsoleStreamSelection.allCases) { selection in
@@ -123,19 +123,19 @@
           }.pickerStyle(.segmented).frame(width: 220)
           OJDCompactSymbolButton(
             symbolName: "arrow.clockwise",
-            label: OJDLocalized.string("common.refresh", fallback: "Refresh"),
+            label: OJDLocalized.string("common.refresh"),
             action: model.refresh
           )
           OJDCompactSymbolButton(
             symbolName: "doc.on.doc",
-            label: OJDLocalized.string("console.copyAll", fallback: "Copy All"),
+            label: OJDLocalized.string("console.copyAll"),
             action: model.copyAll
           ).disabled(model.displayedLines.isEmpty)
         }
 
         if let errorMessage = model.errorMessage {
           ServiceFailureStateView(
-            title: OJDLocalized.string("console.loadError", fallback: "Could not read logs"),
+            title: OJDLocalized.string("console.loadError"),
             message: errorMessage,
             retry: model.refresh
           )
@@ -143,7 +143,7 @@
           ScrollView(.vertical) {
             VStack(alignment: .leading, spacing: 2) {
               if model.displayedLines.isEmpty {
-                Text(OJDLocalized.string("console.empty", fallback: "No log entries."))
+                Text(OJDLocalized.string("console.empty"))
                   .foregroundColor(Color(NSColor.secondaryLabelColor)).padding(12)
               } else {
                 ForEach(Array(model.displayedLines.enumerated()), id: \.offset) { _, line in

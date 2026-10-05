@@ -89,8 +89,8 @@
       .background(
         EmptyView().sheet(isPresented: $screen.isCreatingProfile) {
           ProfileNameSheet(
-            title: OJDLocalized.string("profiles.new", fallback: "New profile"),
-            initialName: OJDLocalized.string("profiles.defaultName", fallback: "My controller"),
+            title: OJDLocalized.string("profiles.new"),
+            initialName: OJDLocalized.string("profiles.defaultName"),
             devices: connectedDevices
           ) { name, device, scope in createProfile(named: name, for: device, scope: scope) }
         }
@@ -110,31 +110,29 @@
         switch alert {
         case .delete(let id):
           Alert(
-            title: Text(OJDLocalized.string("profiles.deleteTitle", fallback: "Delete profile?")),
+            title: Text(OJDLocalized.string("profiles.deleteTitle")),
             message: Text(
               OJDLocalized.string(
-                "profiles.deleteMessage",
-                fallback: "This removes the profile from OpenJoystickDriver."
+                "profiles.deleteMessage"
               )
             ),
             primaryButton: .destructive(
-              Text(OJDLocalized.string("common.delete", fallback: "Delete"))
+              Text(OJDLocalized.string("common.delete"))
             ) { deleteProfile(id) },
             secondaryButton: .cancel { activeAlert = nil }
           )
         case .discard:
           Alert(
             title: Text(
-              OJDLocalized.string("settings.discardTitle", fallback: "Discard unsaved changes?")
+              OJDLocalized.string("settings.discardTitle")
             ),
             message: Text(
               OJDLocalized.string(
-                "profiles.discardMessage",
-                fallback: "Your changes to this profile have not been saved."
+                "profiles.discardMessage"
               )
             ),
             primaryButton: .destructive(
-              Text(OJDLocalized.string("settings.discardAction", fallback: "Discard Changes"))
+              Text(OJDLocalized.string("settings.discardAction"))
             ) {
               guard let action = profileEditorTransition.discardPendingAction() else {
                 activeAlert = nil
@@ -149,16 +147,15 @@
         case .deleteDamagedProfile(let issueID):
           Alert(
             title: Text(
-              OJDLocalized.string("profiles.damagedProfile", fallback: "Damaged profile")
+              OJDLocalized.string("profiles.damagedProfile")
             ),
             message: Text(
               OJDLocalized.string(
-                "profiles.recoveryBackupMessage",
-                fallback: "A backup will be created before damaged data is removed."
+                "profiles.recoveryBackupMessage"
               )
             ),
             primaryButton: .destructive(
-              Text(OJDLocalized.string("common.delete", fallback: "Delete"))
+              Text(OJDLocalized.string("common.delete"))
             ) { recoverProfileIssue(issueID, resetLibrary: false) },
             secondaryButton: .cancel { activeAlert = nil }
           )
@@ -166,18 +163,16 @@
           Alert(
             title: Text(
               OJDLocalized.string(
-                "profiles.damagedLibrary",
-                fallback: "Damaged active profile list"
+                "profiles.damagedLibrary"
               )
             ),
             message: Text(
               OJDLocalized.string(
-                "profiles.recoveryBackupMessage",
-                fallback: "A backup will be created before damaged data is removed."
+                "profiles.recoveryBackupMessage"
               )
             ),
             primaryButton: .destructive(
-              Text(OJDLocalized.string("profiles.resetLibraryAction", fallback: "Back Up & Reset"))
+              Text(OJDLocalized.string("profiles.resetLibraryAction"))
             ) { recoverProfileIssue(issueID, resetLibrary: true) },
             secondaryButton: .cancel { activeAlert = nil }
           )
@@ -244,16 +239,16 @@
     var profileList: some View {
       VStack(alignment: .leading, spacing: 8) {
         HStack {
-          Text(OJDLocalized.string("common.profiles", fallback: "Profiles")).font(.headline)
+          Text(OJDLocalized.string("common.profiles")).font(.headline)
             .lineLimit(1).layoutPriority(1)
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
-            label: OJDLocalized.string("profiles.new", fallback: "New profile")
+            label: OJDLocalized.string("profiles.new")
           ) { isCreatingProfile = true }.disabled(isProfileActionBlocked)
           OJDCompactSymbolButton(
             symbolName: "square.and.arrow.down",
-            label: OJDLocalized.string("profiles.import", fallback: "Import profile"),
+            label: OJDLocalized.string("profiles.import"),
             action: importProfile
           ).disabled(isProfileActionBlocked)
         }.padding(.horizontal, 14).padding(.top, 18)
@@ -261,17 +256,17 @@
         switch viewModel.remappingState {
         case .loading:
           LoadingStateView(
-            message: OJDLocalized.string("profiles.loading", fallback: "Loading profiles...")
+            message: OJDLocalized.string("profiles.loading")
           ).padding(.horizontal, 14)
         case .unavailable(let message), .error(let message):
           VStack(alignment: .leading, spacing: 6) {
             Text(
-              OJDLocalized.string("profiles.loadError", fallback: "Profiles could not be loaded.")
+              OJDLocalized.string("profiles.loadError")
             ).font(.caption.weight(.semibold))
             Text(message).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
               .fixedSize(horizontal: false, vertical: true)
             Button(
-              OJDLocalized.string("common.tryAgain", fallback: "Try again"),
+              OJDLocalized.string("common.tryAgain"),
               action: refreshProfiles
             )
           }.padding(.horizontal, 14)
@@ -293,8 +288,8 @@
               OJDSystemSymbol(
                 name: semanticState.presentation.symbolName,
                 fallback: isActive(profile)
-                  ? OJDLocalized.string("profiles.active", fallback: "Active")
-                  : OJDLocalized.string("profiles.notActive", fallback: "Not active")
+                  ? OJDLocalized.string("profiles.active")
+                  : OJDLocalized.string("profiles.notActive")
               ).foregroundColor(Color(semanticState.presentation.tone.color))
             }
             VStack(alignment: .leading, spacing: 2) {
@@ -315,7 +310,7 @@
               OJDSystemSymbol(
                 name: issue.kind == .damagedProfile
                   ? "exclamationmark.triangle.fill" : "xmark.octagon.fill",
-                fallback: OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+                fallback: OJDLocalized.string("common.needsAttention")
               ).foregroundColor(
                 Color(
                   (issue.kind == .damagedProfile ? SemanticState.attention : .failure).presentation
@@ -327,12 +322,10 @@
               Text(
                 OJDLocalized.string(
                   issue.kind == .damagedProfile
-                    ? "profiles.damagedProfile" : "profiles.damagedLibrary",
-                  fallback: issue.kind == .damagedProfile
-                    ? "Damaged profile" : "Damaged active profile list"
+                    ? "profiles.damagedProfile" : "profiles.damagedLibrary"
                 )
               ).lineLimit(1)
-              Text(OJDLocalized.string("common.needsAttention", fallback: "Needs attention")).font(
+              Text(OJDLocalized.string("common.needsAttention")).font(
                 .caption
               ).foregroundColor(Color(NSColor.secondaryLabelColor))
             }

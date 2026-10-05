@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktywować profil bez wprowadzania sterownika?";
 "profiles.emptyInputWarning" = "Ten profil tłumi wszystkie wpisy kontrolera.";
 "profiles.restoreDefaultInput" = "Przywrócić domyślny wpis";
+"common.reset" = "Resetuj";
+"profiles.useControllerDefaultColor" = "Użyj ustawienia domyślnego kontrolera";
 "profiles.damagedProfile" = "Uszkodzony profil";
 "profiles.damagedLibrary" = "Uszkodzona lista aktywnych profili";
 "profiles.deleteDamagedButton" = "Usuń uszkodzony profil…";

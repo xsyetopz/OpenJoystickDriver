@@ -21,9 +21,7 @@
       #expect(
         model.errorMessage
           == OJDLocalized.string(
-            "motion.calibration.motionUnavailable",
-            fallback: "Enable a remapping profile for this controller "
-              + "and check that motion is available."
+            "motion.calibration.motionUnavailable"
           )
       )
     }

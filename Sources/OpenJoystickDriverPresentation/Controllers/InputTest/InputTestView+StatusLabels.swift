@@ -8,20 +8,19 @@
 
     var statusLabel: String {
       switch model.sessionState {
-      case .idle: return OJDLocalized.string("inputTest.idle", fallback: "Ready")
-      case .starting: return OJDLocalized.string("inputTest.starting", fallback: "Starting...")
-      case .live: return OJDLocalized.string("inputTest.live", fallback: "Input active")
-      case .stale: return OJDLocalized.string("inputTest.stale", fallback: "Input interrupted")
+      case .idle: return OJDLocalized.string("inputTest.idle")
+      case .starting: return OJDLocalized.string("inputTest.starting")
+      case .live: return OJDLocalized.string("inputTest.live")
+      case .stale: return OJDLocalized.string("inputTest.stale")
       case .disconnected:
-        return OJDLocalized.string("inputTest.disconnected", fallback: "Controller disconnected")
+        return OJDLocalized.string("inputTest.disconnected")
       case .permissionRequired:
         return OJDLocalized.string(
-          "inputTest.permissionRequired",
-          fallback: "Input Monitoring permission required"
+          "inputTest.permissionRequired"
         )
       case .unavailable:
-        return OJDLocalized.string("inputTest.unavailable", fallback: "Input unavailable")
-      case .error: return OJDLocalized.string("common.failed", fallback: "Failed")
+        return OJDLocalized.string("inputTest.unavailable")
+      case .error: return OJDLocalized.string("common.failed")
       }
     }
 
@@ -39,27 +38,27 @@
 
     func motorLabel(_ motor: PhysicalRumbleMotor) -> String {
       switch motor {
-      case .leftMain: return OJDLocalized.string("inputTest.leftMain", fallback: "Left main")
-      case .rightMain: return OJDLocalized.string("inputTest.rightMain", fallback: "Right main")
+      case .leftMain: return OJDLocalized.string("inputTest.leftMain")
+      case .rightMain: return OJDLocalized.string("inputTest.rightMain")
       case .leftTrigger:
-        return OJDLocalized.string("inputTest.leftTrigger", fallback: "Left trigger")
+        return OJDLocalized.string("inputTest.leftTrigger")
       case .rightTrigger:
-        return OJDLocalized.string("inputTest.rightTrigger", fallback: "Right trigger")
-      case .leftHaptic: return OJDLocalized.string("inputTest.leftHaptic", fallback: "Left haptic")
+        return OJDLocalized.string("inputTest.rightTrigger")
+      case .leftHaptic: return OJDLocalized.string("inputTest.leftHaptic")
       case .rightHaptic:
-        return OJDLocalized.string("inputTest.rightHaptic", fallback: "Right haptic")
+        return OJDLocalized.string("inputTest.rightHaptic")
       }
     }
 
     func reported(_ value: String) -> String {
       let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
       return trimmed.isEmpty
-        ? OJDLocalized.string("controllers.notReported", fallback: "Not reported") : trimmed
+        ? OJDLocalized.string("controllers.notReported") : trimmed
     }
 
     func usbIdentifier(_ device: ApplicationServiceDeviceDescription) -> String {
       guard device.vendorID != 0 || device.productID != 0 else {
-        return OJDLocalized.string("controllers.notReported", fallback: "Not reported")
+        return OJDLocalized.string("controllers.notReported")
       }
       return String(format: "%04X:%04X", device.vendorID, device.productID)
     }

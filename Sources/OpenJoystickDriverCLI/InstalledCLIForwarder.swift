@@ -70,10 +70,7 @@ package enum InstalledCLIForwarder {
     CLIFailure(
       .staleInstallation,
       CLILocalized.text(
-        "cli.error.stale_installation",
-        "The installed OpenJoystickDriver.app is older than these repository sources. "
-          + "Run './Scripts/ojd build install-fast dev', "
-          + "or set OJD_RUN_REPOSITORY_CLI=1 to run this build."
+        "cli.error.stale_installation"
       )
     )
   }
@@ -82,8 +79,7 @@ package enum InstalledCLIForwarder {
     CLIFailure(
       .installedCLIFailed,
       CLILocalized.text(
-        "cli.error.forwarder_allocation",
-        "Could not allocate arguments for the installed ojd. Retry the command."
+        "cli.error.forwarder_allocation"
       )
     )
   }
@@ -94,7 +90,6 @@ package enum InstalledCLIForwarder {
       .installedCLIFailed,
       CLILocalized.format(
         "cli.error.forwarder_exec",
-        "Could not run the installed ojd: %@. Reinstall OpenJoystickDriver.app.",
         reason
       )
     )

@@ -9,12 +9,11 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 15) {
-        Text(OJDLocalized.string("capture.pressControl", fallback: "Press a controller control"))
+        Text(OJDLocalized.string("capture.pressControl"))
           .font(.headline.weight(.semibold))
         Text(
           OJDLocalized.string(
-            "capture.chooseControl",
-            fallback: "Choose a control below, or listen briefly for the next input."
+            "capture.chooseControl"
           )
         ).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
           horizontal: false,
@@ -22,7 +21,7 @@
         )
 
         Picker(
-          OJDLocalized.string("capture.controllerControl", fallback: "Controller control"),
+          OJDLocalized.string("capture.controllerControl"),
           selection: sourceBinding
         ) {
           ForEach(SourceOption.options(including: source, capabilities: capabilities), id: \.source)
@@ -32,7 +31,7 @@
         touchSourceControls
         if !connectedDevices.isEmpty {
           Picker(
-            OJDLocalized.string("common.controller", fallback: "Controller"),
+            OJDLocalized.string("common.controller"),
             selection: selectedDeviceBinding
           ) {
             ForEach(connectedDevices, id: \.runtimeIdentifier) { device in
@@ -42,22 +41,20 @@
           if let selector = selectedDeviceSelector {
             Button(
               isListening
-                ? OJDLocalized.string("capture.listeningButton", fallback: "Listening...")
-                : OJDLocalized.string("capture.listen", fallback: "Listen for control")
+                ? OJDLocalized.string("capture.listeningButton")
+                : OJDLocalized.string("capture.listen")
             ) { beginListening(for: selector) }.disabled(isListening)
           }
         } else {
           Text(
             OJDLocalized.string(
-              "capture.connectForLive",
-              fallback:
-                "Connect a controller to enable live capture. Manual selection is still available."
+              "capture.connectForLive"
             )
           ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         captureStatus
         Picker(
-          OJDLocalized.string("common.destination", fallback: "Destination"),
+          OJDLocalized.string("common.destination"),
 
           selection: destinationBinding
         ) {
@@ -69,7 +66,7 @@
             ),
             id: \.destination
           ) { option in Text(option.title).tag(option.destination).disabled(!option.isSupported) }
-        }.ojdAccessibilityLabel(OJDLocalized.string("common.destination", fallback: "Destination"))
+        }.ojdAccessibilityLabel(OJDLocalized.string("common.destination"))
 
           .ojdAccessibilityValue(destinationAccessibilityValue)
         if case .keyboard = destination {
@@ -81,14 +78,14 @@
         }
         HStack {
           Spacer()
-          Button(OJDLocalized.string("common.cancel", fallback: "Cancel")) { cancelCapture() }
-          Button(OJDLocalized.string("common.addAssignment", fallback: "Add assignment")) {
+          Button(OJDLocalized.string("common.cancel")) { cancelCapture() }
+          Button(OJDLocalized.string("common.addAssignment")) {
             onAdd(source, destination)
             viewModel.cancelInputCapture()
           }.disabled(!canAddAssignment)
         }
       }.padding(28).frame(width: 470).ojdAccessibilityLabel(
-        OJDLocalized.string("capture.title", fallback: "Controller control capture")
+        OJDLocalized.string("capture.title")
       ).background(
         EscapeKeyMonitor(isCapturing: { keyboardCaptureActive }, onEscape: { cancelCapture() })
       ).onAppear { selectInitialDevice() }.onDisappear { stopListening() }.onReceive(
@@ -107,28 +104,26 @@
           Stepper(
             OJDLocalized.formatted(
               "capture.touchColumns",
-              fallback: "Grid columns: %d",
               grid.columns
             ),
             value: touchGridValue(\.columns),
             in: RemappingTouchGridSource.dimensionRange
           )
           Stepper(
-            OJDLocalized.formatted("capture.touchRows", fallback: "Grid rows: %d", grid.rows),
+            OJDLocalized.formatted("capture.touchRows", grid.rows),
             value: touchGridValue(\.rows),
             in: RemappingTouchGridSource.dimensionRange
           )
           Stepper(
             OJDLocalized.formatted(
               "capture.touchColumn",
-              fallback: "Cell column: %d",
               grid.column + 1
             ),
             value: touchGridValue(\.column),
             in: 0...max(0, grid.columns - 1)
           )
           Stepper(
-            OJDLocalized.formatted("capture.touchRow", fallback: "Cell row: %d", grid.row + 1),
+            OJDLocalized.formatted("capture.touchRow", grid.row + 1),
             value: touchGridValue(\.row),
             in: 0...max(0, grid.rows - 1)
           )
@@ -138,7 +133,6 @@
           Text(
             OJDLocalized.formatted(
               "capture.touchSwipeDistance",
-              fallback: "Minimum swipe distance: %.0f%%",
               swipe.minimumDistance * 100
             )
           )
@@ -276,7 +270,7 @@
 
     private func cancelCapture() {
       stopListening()
-      announce(OJDLocalized.string("capture.canceled", fallback: "Controller capture canceled."))
+      announce(OJDLocalized.string("capture.canceled"))
       presentationMode.wrappedValue.dismiss()
     }
 
@@ -322,7 +316,7 @@
 
     private var destinationAccessibilityValue: String {
       if case .keyboard = destination, keyboardDestinationCleared {
-        return OJDLocalized.string("keyboard.noKey", fallback: "No key selected")
+        return OJDLocalized.string("keyboard.noKey")
       }
       return RuntimePresentation.destinationLabel(destination)
     }

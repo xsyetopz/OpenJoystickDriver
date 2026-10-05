@@ -13,7 +13,7 @@
         GroupBox {
           content
         } label: {
-          Text(OJDLocalized.string("inputTest.controls", fallback: "Live input")).font(.headline)
+          Text(OJDLocalized.string("inputTest.controls")).font(.headline)
         }
       }
     }
@@ -37,14 +37,14 @@
         Divider()
         HStack(alignment: .top, spacing: 24) {
           InputTestStickView(
-            title: OJDLocalized.string("inputTest.leftStick", fallback: "Left stick"),
+            title: OJDLocalized.string("inputTest.leftStick"),
             x: snapshot.leftStick.x.normalized,
             y: -snapshot.leftStick.y.normalized,
             clickPresentation: symbols.leftStickClick,
             clickActive: pressed.contains(.leftStickClick)
           )
           InputTestStickView(
-            title: OJDLocalized.string("inputTest.rightStick", fallback: "Right stick"),
+            title: OJDLocalized.string("inputTest.rightStick"),
             x: snapshot.rightStick.x.normalized,
             y: -snapshot.rightStick.y.normalized,
             clickPresentation: symbols.rightStickClick,
@@ -58,7 +58,7 @@
         if !additionalButtons.isEmpty {
           Divider()
           VStack(alignment: .leading, spacing: 8) {
-            Text(OJDLocalized.string("inputTest.additionalButtons", fallback: "Additional buttons"))
+            Text(OJDLocalized.string("inputTest.additionalButtons"))
               .font(.subheadline.weight(.semibold))
             VStack(alignment: .leading, spacing: 8) {
               ForEach(additionalButtons, id: \.self) { control in
@@ -97,27 +97,27 @@
       let directions = RuntimePresentation.dpadDirections(hat)
       return VStack(spacing: 6) {
         indicator(
-          OJDLocalized.string("inputTest.dpadUp", fallback: "D-pad up"),
+          OJDLocalized.string("inputTest.dpadUp"),
           symbol: "dpad.up.filled",
           fallbackSymbol: "arrowtriangle.up.fill",
           active: directions.contains(.up)
         )
         HStack(spacing: 6) {
           indicator(
-            OJDLocalized.string("inputTest.dpadLeft", fallback: "D-pad left"),
+            OJDLocalized.string("inputTest.dpadLeft"),
             symbol: "dpad.left.filled",
             fallbackSymbol: "arrowtriangle.left.fill",
             active: directions.contains(.left)
           )
           indicator(
-            OJDLocalized.string("inputTest.dpadRight", fallback: "D-pad right"),
+            OJDLocalized.string("inputTest.dpadRight"),
             symbol: "dpad.right.filled",
             fallbackSymbol: "arrowtriangle.right.fill",
             active: directions.contains(.right)
           )
         }
         indicator(
-          OJDLocalized.string("inputTest.dpadDown", fallback: "D-pad down"),
+          OJDLocalized.string("inputTest.dpadDown"),
           symbol: "dpad.down.filled",
           fallbackSymbol: "arrowtriangle.down.fill",
           active: directions.contains(.down)

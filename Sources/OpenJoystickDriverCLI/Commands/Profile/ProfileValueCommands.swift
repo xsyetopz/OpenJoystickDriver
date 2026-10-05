@@ -125,8 +125,7 @@ struct ProfileKey: ExpressibleByArgument, Equatable, Sendable {
 
 private let profileKeyHelp = ArgumentHelp(
   CLILocalized.text(
-    "cli.profile.key",
-    "The key: names and array indexes joined by dots, such as bindings.0.behavior."
+    "cli.profile.key"
   ),
   valueName: "key"
 )
@@ -134,12 +133,9 @@ private let profileKeyHelp = ArgumentHelp(
 struct ProfileGetCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "get",
-    abstract: CLILocalized.text("cli.profile.get.abstract", "Print one value from a profile."),
+    abstract: CLILocalized.text("cli.profile.get.abstract"),
     discussion: CLILocalized.text(
-      "cli.profile.get.discussion",
-      "KEY is a path into the profile file that 'ojd profile export' prints, such as "
-        + "stickMappings.0.tuning.innerDeadzone. Prints a string alone and any other value as "
-        + "JSON. With --json, prints the key and the value."
+      "cli.profile.get.discussion"
     )
   )
 
@@ -169,7 +165,6 @@ struct ProfileGetCommand: AsyncParsableCommand {
           .notFound,
           CLILocalized.format(
             "cli.profile.get.missing",
-            "'%@' has no value at %@.",
             document.name,
             key.text
           )
@@ -186,13 +181,9 @@ struct ProfileGetCommand: AsyncParsableCommand {
 struct ProfileSetCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "set",
-    abstract: CLILocalized.text("cli.profile.set.abstract", "Change one value in a profile."),
+    abstract: CLILocalized.text("cli.profile.set.abstract"),
     discussion: CLILocalized.text(
-      "cli.profile.set.discussion",
-      "KEY is a path into the profile file, as in 'ojd profile get'. VALUE is read as JSON, or "
-        + "as a string when it is not JSON, so 0.2 is a number and space is a string. null "
-        + "removes the key or the array item, and the index one past the end of an array adds "
-        + "an item. The whole profile is checked before it is saved, and the ID cannot change."
+      "cli.profile.set.discussion"
     )
   )
 
@@ -204,7 +195,7 @@ struct ProfileSetCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.profile.set.value", "The new value, as JSON or as a string."),
+      CLILocalized.text("cli.profile.set.value"),
       valueName: "value"
     )
   )
@@ -223,7 +214,7 @@ struct ProfileSetCommand: AsyncParsableCommand {
       guard edited != current else {
         try printProfile(
           ProfileResult(profile: ProfileSummary(current, snapshot: snapshot), changed: false),
-          message: CLILocalized.text("cli.profile.edit.unchanged", "Nothing changed.")
+          message: CLILocalized.text("cli.profile.edit.unchanged")
         )
         return
       }
@@ -234,7 +225,6 @@ struct ProfileSetCommand: AsyncParsableCommand {
         ProfileResult(profile: try savedSummary(edited.id, in: after), changed: true),
         message: CLILocalized.format(
           "cli.profile.set.done",
-          "Set %@ in '%@'.",
           key.text,
           edited.name
         )
@@ -252,7 +242,6 @@ struct ProfileSetCommand: AsyncParsableCommand {
       throw CLIFailure.usage(
         CLILocalized.format(
           "cli.profile.set.missing",
-          "'%@' has no place for %@. Set a key that exists, or set its parent to a whole value.",
           profile.name,
           key.text
         )
@@ -263,7 +252,6 @@ struct ProfileSetCommand: AsyncParsableCommand {
       throw CLIFailure.usage(
         CLILocalized.format(
           "cli.profile.set.invalid",
-          "Setting %@ makes the profile invalid: %@",
           key.text,
           DocumentProblem.describe(error)
         )
@@ -272,8 +260,7 @@ struct ProfileSetCommand: AsyncParsableCommand {
     guard edited.id == profile.id else {
       throw CLIFailure.usage(
         CLILocalized.text(
-          "cli.profile.set.id_changed",
-          "The profile ID cannot change. Use 'ojd profile duplicate' to make a copy."
+          "cli.profile.set.id_changed"
         )
       )
     }

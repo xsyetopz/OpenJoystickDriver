@@ -8,13 +8,11 @@
   @available(macOS 13, *)
   struct GetControllersIntent: AppIntent {
     static let title = LocalizedStringResource(
-      "shortcuts.action.get_controllers.title",
-      defaultValue: "Get Controllers"
+      "shortcuts.action.get_controllers.title"
     )
     static let description = IntentDescription(
       LocalizedStringResource(
-        "shortcuts.action.get_controllers.description",
-        defaultValue: "Returns the connected controllers."
+        "shortcuts.action.get_controllers.description"
       )
     )
 
@@ -32,19 +30,16 @@
   @available(macOS 13, *)
   struct GetBatteryLevelIntent: AppIntent {
     static let title = LocalizedStringResource(
-      "shortcuts.action.battery_level.title",
-      defaultValue: "Get Battery Level"
+      "shortcuts.action.battery_level.title"
     )
     static let description = IntentDescription(
       LocalizedStringResource(
-        "shortcuts.action.battery_level.description",
-        defaultValue:
-          "Returns a controller's battery charge in percent, the lowest value of a reported range."
+        "shortcuts.action.battery_level.description"
       )
     )
 
     @Parameter(
-      title: LocalizedStringResource("shortcuts.parameter.controller", defaultValue: "Controller")
+      title: LocalizedStringResource("shortcuts.parameter.controller")
     )
     var controller: ControllerEntity
 
@@ -68,7 +63,6 @@
     var errorDescription: String? {
       Localization().formatted(
         "shortcuts.error.battery_unknown",
-        defaultValue: "%@ does not report its battery level.",
         arguments: [controller]
       )
     }

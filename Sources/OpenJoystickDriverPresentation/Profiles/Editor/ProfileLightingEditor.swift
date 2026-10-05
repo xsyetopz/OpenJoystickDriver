@@ -13,8 +13,7 @@
         VStack(alignment: .leading, spacing: 10) {
           Toggle(
             OJDLocalized.string(
-              "profiles.useControllerDefaultColor",
-              fallback: "Use controller default"
+              "profiles.useControllerDefaultColor"
             ),
             isOn: Binding(
               get: { color == nil },
@@ -25,14 +24,14 @@
           )
           if color != nil {
             HStack {
-              Text(OJDLocalized.string("inputTest.color", fallback: "Color"))
+              Text(OJDLocalized.string("inputTest.color"))
               Spacer()
               OJDPhysicalColorWell(color: colorBinding).frame(width: 44, height: 24)
             }
           }
         }.padding(4)
       } label: {
-        Text(OJDLocalized.string("inputTest.lighting", fallback: "Lighting"))
+        Text(OJDLocalized.string("inputTest.lighting"))
       }
     }
 

@@ -20,7 +20,7 @@
         GroupBox {
           content
         } label: {
-          Text(OJDLocalized.string("motion.calibration.title", fallback: "Motion calibration"))
+          Text(OJDLocalized.string("motion.calibration.title"))
         }
       }
     }
@@ -29,31 +29,27 @@
       VStack(alignment: .leading, spacing: 8) {
         Text(
           OJDLocalized.string(
-            "motion.calibration.instructions",
-            fallback: "Keep the controller still while collecting gyro bias."
+            "motion.calibration.instructions"
           )
         ).font(.caption).fixedSize(horizontal: false, vertical: true)
         if let status = model.status {
           if !status.hasMotionBaseline {
             Text(
               OJDLocalized.string(
-                "motion.calibration.waiting",
-                fallback: "Waiting for motion samples. Refresh to check again."
+                "motion.calibration.waiting"
               )
             ).font(.caption).fixedSize(horizontal: false, vertical: true)
           }
           Text(
             status.isCollecting
-              ? OJDLocalized.string("motion.calibration.collecting", fallback: "Collecting bias")
+              ? OJDLocalized.string("motion.calibration.collecting")
               : OJDLocalized.string(
-                "motion.calibration.paused",
-                fallback: "Manual collection paused"
+                "motion.calibration.paused"
               )
           )
           Text(
             OJDLocalized.formatted(
               "motion.calibration.offset",
-              fallback: "Bias (°/s): X %.3f · Y %.3f · Z %.3f",
               status.offsetDegreesPerSecond.x,
               status.offsetDegreesPerSecond.y,
               status.offsetDegreesPerSecond.z
@@ -62,8 +58,7 @@
           if status.isCollecting {
             Text(
               OJDLocalized.string(
-                "motion.calibration.continues",
-                fallback: "Collection continues when this window closes. Use Pause to stop it."
+                "motion.calibration.continues"
               )
             ).font(.caption).fixedSize(horizontal: false, vertical: true)
           }
@@ -75,19 +70,19 @@
           )
         }
         HStack {
-          Button(OJDLocalized.string("common.refresh", fallback: "Refresh")) {
+          Button(OJDLocalized.string("common.refresh")) {
             Task { await model.refresh() }
           }
           if model.isBusy { ProgressView() }
         }
         HStack {
-          Button(OJDLocalized.string("motion.calibration.start", fallback: "Start calibration")) {
+          Button(OJDLocalized.string("motion.calibration.start")) {
             Task { await model.perform(.start) }
           }.disabled(model.status?.hasMotionBaseline != true || model.status?.isCollecting == true)
-          Button(OJDLocalized.string("motion.calibration.pause", fallback: "Pause")) {
+          Button(OJDLocalized.string("motion.calibration.pause")) {
             Task { await model.perform(.pause) }
           }.disabled(model.status?.isCollecting != true)
-          Button(OJDLocalized.string("common.reset", fallback: "Reset")) {
+          Button(OJDLocalized.string("common.reset")) {
             Task { await model.perform(.reset) }
           }.disabled(model.status == nil)
         }

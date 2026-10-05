@@ -11,7 +11,7 @@
       GeometryReader { proxy in
         ScrollView {
           VStack(alignment: .leading, spacing: 20) {
-            PageHeader(title: OJDLocalized.string("settings.overview", fallback: "Overview"))
+            PageHeader(title: OJDLocalized.string("settings.overview"))
             SystemExtensionSetupCard(
               viewModel: viewModel,
               supportReport: supportReport,
@@ -33,21 +33,19 @@
           if needsPermissionRestart {
             Button(
               OJDLocalized.string(
-                "permissions.restartApplication",
-                fallback: "Restart OpenJoystickDriver"
+                "permissions.restartApplication"
               ),
               action: restartApplication
             )
           }
         }.padding(4)
       } label: {
-        Text(OJDLocalized.string("settings.accessReadiness", fallback: "Access & readiness")).font(
+        Text(OJDLocalized.string("settings.accessReadiness")).font(
           .headline
         )
       }.ojdAccessibilityLabel(
         OJDLocalized.string(
-          "settings.accessReadinessAccessibility",
-          fallback: "Access and readiness"
+          "settings.accessReadinessAccessibility"
         )
       ).ojdAccessibilityValue(accessSummaryValue)
     }
@@ -84,7 +82,7 @@
 
     private var inputMonitoringCard: some View {
       AccessRequirementCard(
-        title: OJDLocalized.string("common.inputMonitoring", fallback: "Input Monitoring"),
+        title: OJDLocalized.string("common.inputMonitoring"),
         value: inputMonitoringStatus.value,
         symbol: "keyboard",
         tone: inputMonitoringStatus.tone,
@@ -100,7 +98,7 @@
 
     private var accessibilityCard: some View {
       AccessRequirementCard(
-        title: OJDLocalized.string("common.accessibility", fallback: "Accessibility"),
+        title: OJDLocalized.string("common.accessibility"),
         value: accessibilityStatus.value,
         symbol: "lock.shield",
         tone: accessibilityStatus.tone,
@@ -116,7 +114,7 @@
 
     private var postEventCard: some View {
       AccessRequirementCard(
-        title: OJDLocalized.string("common.keyboardPointer", fallback: "Keyboard & pointer"),
+        title: OJDLocalized.string("common.keyboardPointer"),
         value: postEventStatus.value,
         symbol: "cursorarrow",
         tone: postEventStatus.tone,
@@ -127,7 +125,7 @@
 
     private var notificationCard: some View {
       AccessRequirementCard(
-        title: OJDLocalized.string("settings.notifications", fallback: "Notifications"),
+        title: OJDLocalized.string("settings.notifications"),
         value: notificationStatus.value,
         symbol: "bell",
         tone: notificationStatus.tone,
@@ -154,21 +152,21 @@
     private var postEventStatus: OverviewAccessStatus {
       guard case .available(let status) = viewModel.statusState else {
         return OverviewAccessStatus(
-          value: OJDLocalized.string("status.checking", fallback: "Checking..."),
+          value: OJDLocalized.string("status.checking"),
           tone: .neutral,
           isActionable: true
         )
       }
       guard let requiresPostEventAccess = status.requiresPostEventAccess else {
         return OverviewAccessStatus(
-          value: OJDLocalized.string("status.checking", fallback: "Checking..."),
+          value: OJDLocalized.string("status.checking"),
           tone: .neutral,
           isActionable: true
         )
       }
       guard requiresPostEventAccess else {
         return OverviewAccessStatus(
-          value: OJDLocalized.string("status.notNeeded", fallback: "Not needed"),
+          value: OJDLocalized.string("status.notNeeded"),
           tone: .neutral,
           isActionable: false
         )
@@ -176,19 +174,19 @@
       switch status.postEventAccess {
       case .granted:
         return OverviewAccessStatus(
-          value: OJDLocalized.string("status.allowed", fallback: "Allowed"),
+          value: OJDLocalized.string("status.allowed"),
           tone: .positive,
           isActionable: false
         )
       case .notAuthorized:
         return OverviewAccessStatus(
-          value: OJDLocalized.string("common.needsAttention", fallback: "Needs attention"),
+          value: OJDLocalized.string("common.needsAttention"),
           tone: .caution,
           isActionable: true
         )
       case nil:
         return OverviewAccessStatus(
-          value: OJDLocalized.string("status.checking", fallback: "Checking..."),
+          value: OJDLocalized.string("status.checking"),
           tone: .neutral,
           isActionable: true
         )
@@ -199,39 +197,39 @@
       switch notificationPermission.state {
       case .checking:
         return OverviewAccessStatus(
-          value: OJDLocalized.string("status.checking", fallback: "Checking..."),
+          value: OJDLocalized.string("status.checking"),
           tone: .neutral,
           isActionable: false
         )
       case .allowed:
         if notificationPermission.settings.alertStyle == .none {
           return OverviewAccessStatus(
-            value: OJDLocalized.string("settings.notificationBannersOff", fallback: "Banners off"),
+            value: OJDLocalized.string("settings.notificationBannersOff"),
             tone: .caution,
             isActionable: true
           )
         }
         if notificationPermission.settings.soundsEnabled == false {
           return OverviewAccessStatus(
-            value: OJDLocalized.string("settings.notificationSoundOff", fallback: "Sound off"),
+            value: OJDLocalized.string("settings.notificationSoundOff"),
             tone: .caution,
             isActionable: true
           )
         }
         return OverviewAccessStatus(
-          value: OJDLocalized.string("status.allowed", fallback: "Allowed"),
+          value: OJDLocalized.string("status.allowed"),
           tone: .positive,
           isActionable: false
         )
       case .notDetermined:
         return OverviewAccessStatus(
-          value: OJDLocalized.string("common.notRequested", fallback: "Not requested"),
+          value: OJDLocalized.string("common.notRequested"),
           tone: .caution,
           isActionable: true
         )
       case .denied:
         return OverviewAccessStatus(
-          value: OJDLocalized.string("common.needsAttention", fallback: "Needs attention"),
+          value: OJDLocalized.string("common.needsAttention"),
           tone: .caution,
           isActionable: true
         )
@@ -254,13 +252,13 @@
       switch state {
       case .granted:
         return OverviewAccessStatus(
-          value: OJDLocalized.string("status.allowed", fallback: "Allowed"),
+          value: OJDLocalized.string("status.allowed"),
           tone: .positive,
           isActionable: false
         )
       case .denied, .unknown:
         return OverviewAccessStatus(
-          value: OJDLocalized.string("common.needsAttention", fallback: "Needs attention"),
+          value: OJDLocalized.string("common.needsAttention"),
           tone: .caution,
           isActionable: true
         )
@@ -268,20 +266,20 @@
         switch viewModel.permissionState {
         case .loading, .requesting:
           return OverviewAccessStatus(
-            value: OJDLocalized.string("status.checking", fallback: "Checking..."),
+            value: OJDLocalized.string("status.checking"),
             tone: .neutral,
             isActionable: true
           )
         case .available, .unavailable, .error:
           return OverviewAccessStatus(
-            value: OJDLocalized.string("common.needsAttention", fallback: "Needs attention"),
+            value: OJDLocalized.string("common.needsAttention"),
             tone: .caution,
             isActionable: true
           )
         }
       case .unavailable:
         return OverviewAccessStatus(
-          value: OJDLocalized.string("common.unavailable", fallback: "Unavailable"),
+          value: OJDLocalized.string("common.unavailable"),
           tone: .caution,
           isActionable: true
         )
@@ -294,7 +292,7 @@
           HStack(alignment: .firstTextBaseline) {
             StatusBadge(status: statusTitle, semanticState: statusSemanticState)
             Spacer()
-            Button(OJDLocalized.string("common.refresh", fallback: "Refresh")) {
+            Button(OJDLocalized.string("common.refresh")) {
               Task { @MainActor in await viewModel.refresh() }
             }
           }
@@ -304,16 +302,16 @@
           )
         }.padding(4)
       }.ojdAccessibilityLabel(
-        OJDLocalized.string("settings.controllerStatus", fallback: "Controller status")
+        OJDLocalized.string("settings.controllerStatus")
       ).ojdAccessibilityValue(statusDetail)
     }
 
     private var statusTitle: String {
       switch viewModel.statusState {
-      case .loading: return OJDLocalized.string("status.starting", fallback: "Starting...")
+      case .loading: return OJDLocalized.string("status.starting")
       case .available(let status): return status.readinessLabel
       case .unavailable, .error:
-        return OJDLocalized.string("common.needsAttention", fallback: "Needs attention")
+        return OJDLocalized.string("common.needsAttention")
       }
     }
 
@@ -329,8 +327,7 @@
       switch viewModel.statusState {
       case .loading:
         return OJDLocalized.string(
-          "status.checkingControllerAccess",
-          fallback: "Checking controller access..."
+          "status.checkingControllerAccess"
         )
       case .unavailable(let message), .error(let message): return message
       case .available(let status): return status.deviceCountLabel

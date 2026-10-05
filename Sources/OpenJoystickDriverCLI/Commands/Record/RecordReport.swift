@@ -24,7 +24,6 @@ enum RecordStore {
       throw CLIFailure.usage(
         CLILocalized.format(
           "cli.record.error.unreadable",
-          "Cannot read %@: %@",
           path,
           error.localizedDescription
         )
@@ -38,7 +37,6 @@ enum RecordStore {
       CLIOutput.stderr(
         CLILocalized.format(
           "cli.record.skipped",
-          "Skipped %@: %@",
           file.url.path,
           file.problem ?? ""
         )

@@ -19,8 +19,7 @@ func validateDuration(_ duration: Double?) throws {
   if let duration, !(duration.isFinite && duration > 0) {
     throw ValidationError(
       CLILocalized.text(
-        "cli.controller.error.duration",
-        "--duration needs a number of seconds above 0."
+        "cli.controller.error.duration"
       )
     )
   }
@@ -28,8 +27,7 @@ func validateDuration(_ duration: Double?) throws {
 
 let durationHelp = ArgumentHelp(
   CLILocalized.text(
-    "cli.controller.option.duration",
-    "Stop after this many seconds. Without it, run until you press Control-C."
+    "cli.controller.option.duration"
   ),
   valueName: "seconds"
 )
@@ -72,19 +70,13 @@ struct ControllerWatchCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "watch",
     abstract: CLILocalized.text(
-      "cli.controller.watch.abstract",
-      "Print a controller's input state each time it changes."
+      "cli.controller.watch.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.controller.watch.discussion",
-      "With --json, prints one JSON object per line. Stick Y points up. With --first-press, "
-        + "prints the first control pressed and exits; it fails when --duration passes first."
+      "cli.controller.watch.discussion"
     ) + " "
       + CLILocalized.text(
-        "cli.controller.watch.discussion.all",
-        "With --all, each line starts with the controller ID, and a line reports each controller "
-          + "that connects or disconnects. The first lines report the controllers already "
-          + "connected."
+        "cli.controller.watch.discussion.all"
       )
   )
 
@@ -97,8 +89,7 @@ struct ControllerWatchCommand: AsyncParsableCommand {
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.controller.watch.all",
-        "Watch every controller, and report each one that connects or disconnects."
+        "cli.controller.watch.all"
       )
     )
   )
@@ -110,8 +101,7 @@ struct ControllerWatchCommand: AsyncParsableCommand {
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.controller.watch.first_press",
-        "Print the first control pressed, then exit."
+        "cli.controller.watch.first_press"
       )
     )
   )
@@ -120,8 +110,7 @@ struct ControllerWatchCommand: AsyncParsableCommand {
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.controller.watch.output",
-        "Also print what the virtual gamepad sends. Its stick Y points down, as in the HID report."
+        "cli.controller.watch.output"
       )
     )
   )
@@ -138,16 +127,14 @@ struct ControllerWatchCommand: AsyncParsableCommand {
     if all == (controller != nil) {
       throw ValidationError(
         CLILocalized.text(
-          "cli.controller.watch.error.target",
-          "Give a CONTROLLER or --all, but not both."
+          "cli.controller.watch.error.target"
         )
       )
     }
     if all, firstPress {
       throw ValidationError(
         CLILocalized.text(
-          "cli.controller.watch.error.first_press_all",
-          "--first-press needs a CONTROLLER; it does not work with --all."
+          "cli.controller.watch.error.first_press_all"
         )
       )
     }
@@ -196,7 +183,6 @@ struct ControllerWatchCommand: AsyncParsableCommand {
       CLIOutput.success(
         CLILocalized.format(
           "cli.controller.watch.started",
-          "Watching %@ (%@). Press controller buttons.",
           device.name,
           device.identity
         )
@@ -220,7 +206,7 @@ struct ControllerWatchCommand: AsyncParsableCommand {
       return false
     }
     if previous == nil, CLIContext.current.format == .human {
-      CLIOutput.stderr(CLILocalized.text("cli.controller.watch.no_input", "No input received."))
+      CLIOutput.stderr(CLILocalized.text("cli.controller.watch.no_input"))
     }
   }
 
@@ -232,7 +218,6 @@ struct ControllerWatchCommand: AsyncParsableCommand {
       CLIOutput.success(
         CLILocalized.format(
           "cli.controller.watch.press_prompt",
-          "Press a control on %@ (%@).",
           device.name,
           device.identity
         )
@@ -253,7 +238,6 @@ struct ControllerWatchCommand: AsyncParsableCommand {
         .aborted,
         CLILocalized.format(
           "cli.controller.watch.no_press",
-          "No control was pressed within %@.",
           (duration ?? 0).durationText
         )
       )
@@ -319,13 +303,10 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "capture",
     abstract: CLILocalized.text(
-      "cli.controller.capture.abstract",
-      "Print the raw packets a controller sends and receives."
+      "cli.controller.capture.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.controller.capture.discussion",
-      "Prints each new packet as it arrives: time, direction (rx or tx), length, and hex bytes. "
-        + "With --json, prints one JSON object per line."
+      "cli.controller.capture.discussion"
     )
   )
 
@@ -356,15 +337,13 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
         var cursor = PacketLogSnapshotCursor(snapshot: try await read())
         CLIOutput.stderr(
           CLILocalized.text(
-            "cli.controller.capture.warning",
-            "Packet contents vary by controller. Check them before sharing."
+            "cli.controller.capture.warning"
           )
         )
         if CLIContext.current.format == .human {
           CLIOutput.success(
             CLILocalized.format(
               "cli.controller.capture.started",
-              "Capturing packets from %@ (%@). Press controller buttons.",
               device.name,
               device.identity
             )
@@ -380,7 +359,7 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
         }
         if !received, CLIContext.current.format == .human {
           CLIOutput.stderr(
-            CLILocalized.text("cli.controller.capture.no_packets", "No packets received.")
+            CLILocalized.text("cli.controller.capture.no_packets")
           )
         }
       }

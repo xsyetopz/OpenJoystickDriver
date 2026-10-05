@@ -6,14 +6,10 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "calibrate",
     abstract: CLILocalized.text(
-      "cli.controller.calibrate.abstract",
-      "Show or change a controller's motion calibration."
+      "cli.controller.calibrate.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.controller.calibrate.discussion",
-      "Without an action, prints the calibration. start collects gyro drift while the "
-        + "controller lies still, pause stops collecting, and reset forgets the calibration. "
-        + "Motion lean and steering bindings use the calibration."
+      "cli.controller.calibrate.discussion"
     )
   )
 
@@ -37,8 +33,7 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.controller.calibrate.action",
-        "What to do: start, pause, or reset. Omit it to print the calibration."
+        "cli.controller.calibrate.action"
       ),
       valueName: "action"
     )
@@ -84,14 +79,13 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
       case .human:
         let state =
           status.isCollecting
-          ? CLILocalized.text("cli.controller.calibrate.collecting", "collecting")
+          ? CLILocalized.text("cli.controller.calibrate.collecting")
           : status.hasMotionBaseline
-            ? CLILocalized.text("cli.controller.calibrate.calibrated", "calibrated")
-            : CLILocalized.text("cli.controller.calibrate.uncalibrated", "not calibrated")
+            ? CLILocalized.text("cli.controller.calibrate.calibrated")
+            : CLILocalized.text("cli.controller.calibrate.uncalibrated")
         CLIOutput.stdout(
           CLILocalized.format(
             "cli.controller.calibrate.status",
-            "%@: %@, gyro offset x %@ y %@ z %@ degrees per second",
             device.name,
             state,
             String(format: "%.3f", offset.x),
@@ -113,8 +107,6 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
         ApplicationServiceRemappingRPCError.Code.controllerUnavailable.errorCode,
         CLILocalized.format(
           "cli.controller.calibrate.unavailable",
-          "%@ has no active remapping session. Activate a profile for it with "
-            + "'ojd profile activate'.",
           device.name
         )
       )
@@ -123,7 +115,6 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
         ApplicationServiceRemappingRPCError.Code.motionUnavailable.errorCode,
         CLILocalized.format(
           "cli.controller.calibrate.no_motion",
-          "%@ does not report motion.",
           device.name
         )
       )
@@ -154,19 +145,16 @@ struct ControllerPairCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "pair",
     abstract: CLILocalized.text(
-      "cli.controller.pair.abstract",
-      "Combine a left and a right Joy-Con into one controller."
+      "cli.controller.pair.abstract"
     ),
     discussion: CLILocalized.text(
-      "cli.controller.pair.discussion",
-      "The pair uses PROFILE, which must be a paired Joy-Con profile. 'ojd controller unpair' "
-        + "separates them again."
+      "cli.controller.pair.discussion"
     )
   )
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.controller.pair.left", "The left Joy-Con."),
+      CLILocalized.text("cli.controller.pair.left"),
       valueName: "left"
     )
   )
@@ -174,7 +162,7 @@ struct ControllerPairCommand: AsyncParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      CLILocalized.text("cli.controller.pair.right", "The right Joy-Con."),
+      CLILocalized.text("cli.controller.pair.right"),
       valueName: "right"
     )
   )
@@ -208,8 +196,7 @@ struct ControllerPairCommand: AsyncParsableCommand {
         throw CLIFailure(
           .serviceRequestFailed,
           CLILocalized.text(
-            "cli.controller.pair.missing",
-            "The service did not pair the Joy-Cons. Check them with 'ojd controller list'."
+            "cli.controller.pair.missing"
           )
         )
       }
@@ -217,7 +204,6 @@ struct ControllerPairCommand: AsyncParsableCommand {
         JoyConPairResult(pair),
         message: CLILocalized.format(
           "cli.controller.pair.done",
-          "Paired the Joy-Cons as %@ with '%@'.",
           pair.sessionID.uuidString,
           pair.profileName
         )
@@ -238,16 +224,14 @@ struct ControllerUnpairCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "unpair",
     abstract: CLILocalized.text(
-      "cli.controller.unpair.abstract",
-      "Separate a Joy-Con pair into two controllers."
+      "cli.controller.unpair.abstract"
     )
   )
 
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.controller.unpair.pair",
-        "The pair: its session ID from 'ojd controller pair', or the ID of either Joy-Con."
+        "cli.controller.unpair.pair"
       ),
       valueName: "pair"
     )
@@ -272,7 +256,6 @@ struct ControllerUnpairCommand: AsyncParsableCommand {
             .notFound,
             CLILocalized.format(
               "cli.controller.unpair.not_found",
-              "No Joy-Con pair matches '%@'.",
               text
             )
           )
@@ -282,7 +265,7 @@ struct ControllerUnpairCommand: AsyncParsableCommand {
       }
       try ControllerPairCommand.print(
         JoyConPairResult(removed),
-        message: CLILocalized.text("cli.controller.unpair.done", "Separated the Joy-Cons.")
+        message: CLILocalized.text("cli.controller.unpair.done")
       )
     }
   }

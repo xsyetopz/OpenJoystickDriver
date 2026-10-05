@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktiveerida profiili ilma juhtimisseadmetega?";
 "profiles.emptyInputWarning" = "See profiil lükkab kõik kontrolleride sisendused.";
 "profiles.restoreDefaultInput" = "Taastage eelmudelik sisend";
+"common.reset" = "Lähtesta";
+"profiles.useControllerDefaultColor" = "Kasuta kontrolleri vaikeväärtust";
 "profiles.damagedProfile" = "Kahjustatud profiil";
 "profiles.damagedLibrary" = "Aktiivsete profiilide loend on kahjustatud";
 "profiles.deleteDamagedButton" = "Kustuta kahjustatud profiil…";

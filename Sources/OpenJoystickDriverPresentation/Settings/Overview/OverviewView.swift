@@ -53,9 +53,9 @@
         Text(title).font(.body.weight(.medium)).fixedSize(horizontal: false, vertical: true)
         Text(value).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         if let action {
-          Button(OJDLocalized.string("common.request", fallback: "Request..."), action: action)
+          Button(OJDLocalized.string("common.request"), action: action)
             .frame(minHeight: 28).ojdAccessibilityLabel(
-              OJDLocalized.formatted("settings.requestAccess", fallback: "Request %@ access", title)
+              OJDLocalized.formatted("settings.requestAccess", title)
             ).ojdAccessibilityValue(value)
         }
         Spacer(minLength: 0)
@@ -74,11 +74,11 @@
       HStack(spacing: 7) {
         OJDSystemSymbol(
           name: semanticState.presentation.symbolName,
-          fallback: OJDLocalized.string("common.status", fallback: "Status")
+          fallback: OJDLocalized.string("common.status")
         ).accessibilityHidden(true)
         Text(status).font(.headline.weight(.semibold))
       }.foregroundColor(Color(semanticState.presentation.tone.color)).ojdAccessibilityLabel(
-        OJDLocalized.string("common.status", fallback: "Status")
+        OJDLocalized.string("common.status")
       ).ojdAccessibilityValue(status)
     }
   }

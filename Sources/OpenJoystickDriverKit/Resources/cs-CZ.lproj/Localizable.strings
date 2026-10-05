@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktivujte profil bez vstupů kontrolora?";
 "profiles.emptyInputWarning" = "Tento profil potlačuje veškeré vstupy ovládače.";
 "profiles.restoreDefaultInput" = "Vrátit nastavený vstup";
+"common.reset" = "Obnovit";
+"profiles.useControllerDefaultColor" = "Použít výchozí hodnotu ovladače";
 "profiles.damagedProfile" = "Poškozený profil";
 "profiles.damagedLibrary" = "Poškozený seznam aktivních profilů";
 "profiles.deleteDamagedButton" = "Smazat poškozený profil…";

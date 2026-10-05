@@ -26,7 +26,6 @@ package struct CLI {
           CLIFailure.prefix(.unknownCommand)
             + CLILocalized.format(
               "cli.error.unknown_command",
-              "Unknown command '%@'. Did you mean '%@'?",
               match.typed,
               suggestion
             )
@@ -66,8 +65,6 @@ package struct CLI {
         CLIFailure.prefix(.unexpected)
           + CLILocalized.format(
             "cli.error.unexpected",
-            "Unexpected error: %@. Run 'ojd diagnose --bundle PATH' and attach the bundle "
-              + "to a bug report.",
             String(describing: error).replacingOccurrences(of: "\n", with: " ")
           )
       )

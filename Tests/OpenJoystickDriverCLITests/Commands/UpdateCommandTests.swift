@@ -62,7 +62,7 @@ struct UpdateCommandTests {
 
     #expect(result.code == 1)
     #expect(result.standardOutput.isEmpty)
-    #expect(result.standardError.hasPrefix("error["))
+    #expect(result.standardError.hasPrefix("error[E2019]: "))
     #expect(result.standardError.contains("offline"))
   }
 
@@ -73,9 +73,17 @@ struct UpdateCommandTests {
     let networkResult = await run(["update", "check"], state: .failed(network))
     let versionResult = await run(["update", "check"], state: .failed(version))
 
-    #expect(networkResult.standardError.contains("network connection"))
+    // Only the network message has its own format, which adds the hint about the connection.
+    let networkMessage = CLILocalized.format(
+      "cli.update.check.failed",
+      "timed out"
+    )
+    let versionMessage = CLILocalized.format(
+      "cli.update.check.failed_reason",
+      "not SemVer"
+    )
+    #expect(networkResult.standardError == "error[E2019]: " + networkMessage + "\n")
     #expect(versionResult.code == 1)
-    #expect(versionResult.standardError.contains("not SemVer"))
-    #expect(!versionResult.standardError.contains("network connection"))
+    #expect(versionResult.standardError == "error[E2019]: " + versionMessage + "\n")
   }
 }

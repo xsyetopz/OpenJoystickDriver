@@ -68,7 +68,6 @@
       model.selectDevice(device)
       window?.title = OJDLocalized.formatted(
         "inputTest.windowTitle",
-        fallback: "Input Test — %@",
         device.publishedVirtualProfile?.productName ?? device.name
       )
       model.open()
@@ -124,7 +123,7 @@
         let item = NSToolbarItem(itemIdentifier: itemIdentifier)
         item.target = self
         item.action = #selector(refreshController(_:))
-        item.label = OJDLocalized.string("common.refresh", fallback: "Refresh Controller")
+        item.label = OJDLocalized.string("common.refresh")
         item.paletteLabel = item.label
         item.toolTip = item.label
         item.image = NSImage(

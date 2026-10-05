@@ -12,6 +12,10 @@ One Foundation catalog in `OpenJoystickDriverKit`. macOS preferred-language orde
 
 `Package.swift` default is `en-US`. `Scripts/Build/bundles.sh` copies Kit locales into the app. Kit `Localization` falls back to `en-US`. App: `OJDLocalized`. CLI: `CLILocalized`.
 
+English text lives only in the `en-US` catalog. Call sites pass a key and nothing else: there is no `fallback:` or `defaultValue:` argument, so a key missing from `en-US` renders as the raw key. Add the key to `en-US` and to every other locale and template before using it.
+
+`python3 Scripts/Quality/check_localization_keys.py` fails when a literal key passed to `OJDLocalized`, `CLILocalized`, `Localization`, or `LocalizedStringResource` is missing from `en-US`. It checks a literal prefix of a dynamic key such as `"error.\(rawValue)"` against the catalog. It cannot check keys held in variables or passed through helper parameters; it lists them as `key not scanned`.
+
 83 `.lproj` bundles. Five plurals. Every non-English locale, including Northern Sámi (`se-FI`, `se-NO`), has a fluent first-pass translation. English source catalogs are `en-US`, `C`, and `en-*`. `et-EE` is the reviewed start. Do not restore retired catalogs.
 
 ## Punctuation

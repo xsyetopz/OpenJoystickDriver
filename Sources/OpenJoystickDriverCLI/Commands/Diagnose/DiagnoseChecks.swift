@@ -59,8 +59,8 @@ enum DiagnoseChecks {
   private static func skipped(_ id: String, _ snapshot: DiagnoseServiceSnapshot) -> DiagnoseCheck {
     let reason =
       snapshot.availability == .stopped
-      ? CLILocalized.text("cli.diagnose.skip.service_stopped", "service not running")
-      : CLILocalized.text("cli.diagnose.skip.service_failed", "service did not answer")
+      ? CLILocalized.text("cli.diagnose.skip.service_stopped")
+      : CLILocalized.text("cli.diagnose.skip.service_failed")
     return DiagnoseCheck(id, .skip, reason)
   }
 
@@ -72,15 +72,14 @@ enum DiagnoseChecks {
       bundle = DiagnoseCheck(
         "extension-bundle",
         .pass,
-        CLILocalized.text("cli.diagnose.extension.bundle_present", "embedded in the app")
+        CLILocalized.text("cli.diagnose.extension.bundle_present")
       )
     case .missing:
       bundle = DiagnoseCheck(
         "extension-bundle",
         .fail,
         CLILocalized.text(
-          "cli.diagnose.extension.bundle_missing",
-          "not embedded in the app; reinstall OpenJoystickDriver"
+          "cli.diagnose.extension.bundle_missing"
         )
       )
     case .invalid:
@@ -89,7 +88,6 @@ enum DiagnoseChecks {
         .fail,
         CLILocalized.format(
           "cli.diagnose.extension.bundle_invalid",
-          "unexpected bundle identifier %@; reinstall OpenJoystickDriver",
           summary.detail ?? ""
         )
       )
@@ -100,15 +98,14 @@ enum DiagnoseChecks {
       registration = DiagnoseCheck(
         "extension-registration",
         .pass,
-        CLILocalized.text("cli.diagnose.extension.active", "active in macOS")
+        CLILocalized.text("cli.diagnose.extension.active")
       )
     case .inactive:
       registration = DiagnoseCheck(
         "extension-registration",
         .warn,
         CLILocalized.text(
-          "cli.diagnose.extension.inactive",
-          "registered but not active; approve it with 'ojd extension activate'"
+          "cli.diagnose.extension.inactive"
         )
       )
     case .absent:
@@ -116,8 +113,7 @@ enum DiagnoseChecks {
         "extension-registration",
         .warn,
         CLILocalized.text(
-          "cli.diagnose.extension.absent",
-          "not registered with macOS; run 'ojd extension activate'"
+          "cli.diagnose.extension.absent"
         )
       )
     case .unavailable:
@@ -126,7 +122,6 @@ enum DiagnoseChecks {
         .warn,
         CLILocalized.format(
           "cli.diagnose.extension.unavailable",
-          "macOS did not report the registration: %@",
           summary.detail ?? ""
         )
       )
@@ -141,15 +136,14 @@ enum DiagnoseChecks {
       return DiagnoseCheck(
         "service",
         .pass,
-        CLILocalized.format("cli.diagnose.service.running", "running %@", version)
+        CLILocalized.format("cli.diagnose.service.running", version)
       )
     case .stopped:
       return DiagnoseCheck(
         "service",
         .warn,
         CLILocalized.text(
-          "cli.diagnose.service.stopped",
-          "not running; start it with 'ojd service start'"
+          "cli.diagnose.service.stopped"
         )
       )
     case .failed(let message): return DiagnoseCheck("service", .fail, message)
@@ -174,15 +168,14 @@ enum DiagnoseChecks {
         id,
         .fail,
         CLILocalized.text(
-          "cli.diagnose.permission.denied",
-          "denied; grant it with 'ojd permission request'"
+          "cli.diagnose.permission.denied"
         )
       )
     case .unknown:
       DiagnoseCheck(
         id,
         .warn,
-        CLILocalized.text("cli.diagnose.permission.unknown", "state unknown")
+        CLILocalized.text("cli.diagnose.permission.unknown")
       )
     }
   }
@@ -195,7 +188,7 @@ enum DiagnoseChecks {
       return DiagnoseCheck(
         id,
         .fail,
-        CLILocalized.format("cli.diagnose.virtual.error", "virtual gamepad error: %@", message)
+        CLILocalized.format("cli.diagnose.virtual.error", message)
       )
     }
     if let error = status.virtualHIDProfileOverrideError {
@@ -204,7 +197,6 @@ enum DiagnoseChecks {
         .warn,
         CLILocalized.format(
           "cli.diagnose.virtual.override",
-          "stored profile overrides unreadable: %@",
           error
         )
       )
@@ -213,7 +205,7 @@ enum DiagnoseChecks {
       return DiagnoseCheck(
         id,
         .warn,
-        CLILocalized.text("cli.diagnose.virtual.disabled", "virtual gamepad disabled")
+        CLILocalized.text("cli.diagnose.virtual.disabled")
       )
     }
     return DiagnoseCheck(id, .pass, backend)
@@ -228,7 +220,6 @@ enum DiagnoseChecks {
         .warn,
         CLILocalized.format(
           "cli.diagnose.records.skipped",
-          "skipped %@; check them with 'ojd record list'",
           files.joined(separator: "; ")
         )
       )
@@ -238,7 +229,6 @@ enum DiagnoseChecks {
       .pass,
       CLILocalized.format(
         "cli.diagnose.records.applied",
-        "user records applied: %lld",
         records.userFiles.count
       )
     )
@@ -252,7 +242,6 @@ enum DiagnoseChecks {
         .pass,
         CLILocalized.format(
           "cli.diagnose.usb.ok",
-          "Vendor-specific USB controllers visible: %lld",
           count
         )
       )
@@ -262,7 +251,6 @@ enum DiagnoseChecks {
         .warn,
         CLILocalized.format(
           "cli.diagnose.usb.failed",
-          "USB scan failed: %@. Grant Input Monitoring to OpenJoystickDriver.",
           error.localizedDescription
         )
       )
@@ -278,7 +266,7 @@ enum DiagnoseChecks {
       return DiagnoseCheck(
         id,
         .skip,
-        CLILocalized.text("cli.diagnose.soak.not_requested", "not requested; use --soak SECONDS")
+        CLILocalized.text("cli.diagnose.soak.not_requested")
       )
     }
     guard snapshot.availability == .running, let processID = ServiceConnection.processIdentifier()
@@ -293,7 +281,6 @@ enum DiagnoseChecks {
     CLIOutput.stderr(
       CLILocalized.format(
         "cli.diagnose.soak.progress",
-        "Sampling the service for %@...",
         Double(soak.seconds).durationText
       )
     )

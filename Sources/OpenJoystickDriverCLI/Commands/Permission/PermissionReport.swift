@@ -25,17 +25,17 @@ enum PermissionID: String, CaseIterable, Sendable {
 
   var localizedName: String {
     switch self {
-    case .inputMonitoring: CLILocalized.text("cli.permission.name.input_monitoring", name)
-    case .accessibility: CLILocalized.text("cli.permission.name.accessibility", name)
-    case .driverExtension: CLILocalized.text("cli.permission.name.driver_extension", name)
+    case .inputMonitoring: CLILocalized.text("cli.permission.name.input_monitoring")
+    case .accessibility: CLILocalized.text("cli.permission.name.accessibility")
+    case .driverExtension: CLILocalized.text("cli.permission.name.driver_extension")
     }
   }
 
   var localizedPurpose: String {
     switch self {
-    case .inputMonitoring: CLILocalized.text("cli.permission.purpose.input_monitoring", purpose)
-    case .accessibility: CLILocalized.text("cli.permission.purpose.accessibility", purpose)
-    case .driverExtension: CLILocalized.text("cli.permission.purpose.driver_extension", purpose)
+    case .inputMonitoring: CLILocalized.text("cli.permission.purpose.input_monitoring")
+    case .accessibility: CLILocalized.text("cli.permission.purpose.accessibility")
+    case .driverExtension: CLILocalized.text("cli.permission.purpose.driver_extension")
     }
   }
 
@@ -44,15 +44,13 @@ enum PermissionID: String, CaseIterable, Sendable {
     switch self {
     case .inputMonitoring:
       CLILocalized.text(
-        "cli.permission.pane.input_monitoring",
-        "Privacy & Security > Input Monitoring"
+        "cli.permission.pane.input_monitoring"
       )
     case .accessibility:
-      CLILocalized.text("cli.permission.pane.accessibility", "Privacy & Security > Accessibility")
+      CLILocalized.text("cli.permission.pane.accessibility")
     case .driverExtension:
       CLILocalized.text(
-        "cli.permission.pane.driver_extension",
-        "General > Login Items & Extensions > Driver Extensions"
+        "cli.permission.pane.driver_extension"
       )
     }
   }

@@ -890,6 +890,8 @@
 "profiles.emptyActivationTitle" = "Aktiveer profiel sonder beheerder invoer?";
 "profiles.emptyInputWarning" = "Hierdie profiel onderdruk alle beheerder invoer.";
 "profiles.restoreDefaultInput" = "Herstel verstek invoer";
+"common.reset" = "Herstel";
+"profiles.useControllerDefaultColor" = "Gebruik die beheerder se verstek";
 "profiles.damagedProfile" = "Beskadigde profiel";
 "profiles.damagedLibrary" = "Beskadigde lys van aktiewe profiele";
 "profiles.deleteDamagedButton" = "Skrap beskadigde profiel…";

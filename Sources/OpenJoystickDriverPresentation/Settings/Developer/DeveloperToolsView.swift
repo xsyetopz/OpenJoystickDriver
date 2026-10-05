@@ -15,10 +15,9 @@
         ScrollView {
           VStack(alignment: .leading, spacing: 20) {
             PageHeader(
-              title: OJDLocalized.string("developer.title", fallback: "Developer"),
+              title: OJDLocalized.string("developer.title"),
               subtitle: OJDLocalized.string(
-                "developer.subtitle",
-                fallback: "View controller input and USB packets."
+                "developer.subtitle"
               )
             )
             content(compact: proxy.size.width < 760)
@@ -33,30 +32,26 @@
       case .idle, .loading:
         LoadingStateView(
           message: OJDLocalized.string(
-            "developer.loadingControllers",
-            fallback: "Loading controller diagnostics..."
+            "developer.loadingControllers"
           )
         )
       case .noControllers:
         EmptyStateView(
           symbol: "gamecontroller",
           title: OJDLocalized.string(
-            "developer.noControllers",
-            fallback: "No controllers connected"
+            "developer.noControllers"
           ),
           message: OJDLocalized.string(
-            "developer.noControllersDetail",
-            fallback: "Connect a controller, then press Refresh."
+            "developer.noControllersDetail"
           )
         )
-        Button(OJDLocalized.string("common.refresh", fallback: "Refresh")) {
+        Button(OJDLocalized.string("common.refresh")) {
           Task { @MainActor in await model.refresh() }
         }
       case .unavailable(let message):
         ServiceFailureStateView(
           title: OJDLocalized.string(
-            "developer.unavailable",
-            fallback: "Developer tools are unavailable"
+            "developer.unavailable"
           ),
           message: message
         ) { Task { @MainActor in await model.refresh() } }
@@ -73,9 +68,7 @@
         VStack(alignment: .leading, spacing: 10) {
           Text(
             OJDLocalized.string(
-              "developer.extraInputsDescription",
-              fallback: "Press one extra button at a time. Detected buttons stay listed until "
-                + "you clear the capture."
+              "developer.extraInputsDescription"
             )
           ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
             horizontal: false,
@@ -84,7 +77,7 @@
 
           if model.observedExtraInputs.isEmpty {
             Text(
-              OJDLocalized.string("developer.noExtraInputs", fallback: "No extra buttons detected.")
+              OJDLocalized.string("developer.noExtraInputs")
             ).foregroundColor(Color(NSColor.secondaryLabelColor))
           } else {
             Text(
@@ -98,7 +91,7 @@
           }
         }.padding(4).frame(maxWidth: .infinity, alignment: .leading)
       } label: {
-        Text(OJDLocalized.string("developer.extraInputs", fallback: "Extra Buttons")).font(
+        Text(OJDLocalized.string("developer.extraInputs")).font(
           .headline
         )
       }
@@ -108,20 +101,19 @@
       GroupBox {
         VStack(alignment: .leading, spacing: 10) {
           HStack(spacing: 8) {
-            OJDSystemSymbol(name: "lock.shield", fallback: "Locked")
+            OJDSystemSymbol(name: "lock.shield", fallback: nil)
             Text(
               OJDLocalized.string(
-                "developer.noDiagnosticRecipe",
-                fallback: "Diagnostic mode is not available for this controller."
+                "developer.noDiagnosticRecipe"
               )
             ).font(.body.weight(.medium))
           }
           Button(
-            OJDLocalized.string("developer.enterDiagnosticMode", fallback: "Enter Diagnostic Mode")
+            OJDLocalized.string("developer.enterDiagnosticMode")
           ) {}.disabled(!model.diagnosticRecipeAvailable)
         }.padding(4).frame(maxWidth: .infinity, alignment: .leading)
       } label: {
-        Text(OJDLocalized.string("developer.diagnosticMode", fallback: "Diagnostic Mode")).font(
+        Text(OJDLocalized.string("developer.diagnosticMode")).font(
           .headline
         )
       }

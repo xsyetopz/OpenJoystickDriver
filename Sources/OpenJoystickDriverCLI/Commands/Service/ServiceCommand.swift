@@ -7,8 +7,7 @@ struct ServiceCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "service",
     abstract: CLILocalized.text(
-      "cli.service.abstract",
-      "Start or stop the OpenJoystickDriver service, or wait until it accepts requests."
+      "cli.service.abstract"
     ),
     subcommands: [ServiceStartCommand.self, ServiceStopCommand.self, ServiceWaitCommand.self]
   )
@@ -39,8 +38,7 @@ struct ServiceStartCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "start",
     abstract: CLILocalized.text(
-      "cli.service.start.abstract",
-      "Open the app in the background and wait until its service accepts requests."
+      "cli.service.start.abstract"
     )
   )
 
@@ -55,7 +53,7 @@ struct ServiceStartCommand: AsyncParsableCommand {
       }
       try ServiceStateResult.print(
         .running,
-        message: CLILocalized.text("cli.service.running", "The service is running.")
+        message: CLILocalized.text("cli.service.running")
       )
     }
   }
@@ -65,9 +63,7 @@ struct ServiceStartCommand: AsyncParsableCommand {
       throw CLIFailure(
         .installationProblem,
         CLILocalized.text(
-          "cli.service.start.no_bundle",
-          "This ojd is not inside OpenJoystickDriver.app, so it cannot start the service. "
-            + "Open the installed app, or run the ojd inside it."
+          "cli.service.start.no_bundle"
         )
       )
     }
@@ -82,7 +78,6 @@ struct ServiceStartCommand: AsyncParsableCommand {
         .systemRequestFailed,
         CLILocalized.format(
           "cli.service.start.open_failed",
-          "macOS could not open %@. Open it from Finder to see why.",
           bundle.path
         )
       )
@@ -99,8 +94,7 @@ struct ServiceStopCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "stop",
     abstract: CLILocalized.text(
-      "cli.service.stop.abstract",
-      "Stop the service and wait until it exits. Connected controllers return to macOS."
+      "cli.service.stop.abstract"
     )
   )
 
@@ -115,7 +109,6 @@ struct ServiceStopCommand: AsyncParsableCommand {
             .systemRequestFailed,
             CLILocalized.format(
               "cli.service.stop.signal_failed",
-              "Could not stop the service: %@. Quit OpenJoystickDriver from its menu.",
               String(cString: strerror(errno))
             )
           )
@@ -124,7 +117,7 @@ struct ServiceStopCommand: AsyncParsableCommand {
       }
       try ServiceStateResult.print(
         .stopped,
-        message: CLILocalized.text("cli.service.stopped", "The service is stopped.")
+        message: CLILocalized.text("cli.service.stopped")
       )
     }
   }
@@ -137,7 +130,6 @@ struct ServiceStopCommand: AsyncParsableCommand {
           .serviceTimeout,
           CLILocalized.format(
             "cli.service.stop.timeout",
-            "The service did not stop within %@. Retry with a larger --timeout.",
             timeout.durationText
           )
         )
@@ -151,8 +143,7 @@ struct ServiceWaitCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "wait",
     abstract: CLILocalized.text(
-      "cli.service.wait.abstract",
-      "Wait until the service accepts requests. --timeout bounds the wait (default 5 seconds)."
+      "cli.service.wait.abstract"
     )
   )
 
@@ -164,7 +155,7 @@ struct ServiceWaitCommand: AsyncParsableCommand {
       try await Self.waitUntilReady(timeout: CLIContext.current.waitTimeout)
       try ServiceStateResult.print(
         .running,
-        message: CLILocalized.text("cli.service.running", "The service is running.")
+        message: CLILocalized.text("cli.service.running")
       )
     }
   }
@@ -187,8 +178,6 @@ struct ServiceWaitCommand: AsyncParsableCommand {
       .serviceUnavailable,
       CLILocalized.format(
         "cli.service.wait.timeout",
-        "The service did not accept requests within %@. "
-          + "Start it with 'ojd service start', or retry with a larger --timeout.",
         timeout.durationText
       )
     )

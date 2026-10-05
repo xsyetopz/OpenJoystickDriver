@@ -12,14 +12,14 @@
 
     var body: some View {
       VStack(alignment: .leading, spacing: 8) {
-        Text(OJDLocalized.string("profiles.additionalActions", fallback: "Additional actions"))
+        Text(OJDLocalized.string("profiles.additionalActions"))
           .font(.headline)
         ScrollView {
           VStack(alignment: .leading, spacing: 10) {
             ForEach(actions) { action in
               VStack(alignment: .leading, spacing: 5) {
                 Picker(
-                  OJDLocalized.string("common.destination", fallback: "Destination"),
+                  OJDLocalized.string("common.destination"),
                   selection: destinationBinding(action)
                 ) {
                   ForEach(
@@ -34,15 +34,15 @@
                 PhysicalOutputDestinationFields(destination: destinationBinding(action))
                 HStack {
                   Button(
-                    OJDLocalized.string("profiles.bindingBehavior", fallback: "Assignment behavior")
+                    OJDLocalized.string("profiles.bindingBehavior")
                   ) { editing = action }
-                  Button(OJDLocalized.string("profiles.moveUp", fallback: "Move up")) {
+                  Button(OJDLocalized.string("profiles.moveUp")) {
                     move(action, by: -1)
                   }.disabled(actions.first?.id == action.id)
-                  Button(OJDLocalized.string("profiles.moveDown", fallback: "Move down")) {
+                  Button(OJDLocalized.string("profiles.moveDown")) {
                     move(action, by: 1)
                   }.disabled(actions.last?.id == action.id)
-                  Button(OJDLocalized.string("common.remove", fallback: "Remove")) {
+                  Button(OJDLocalized.string("common.remove")) {
                     actions.removeAll { $0.id == action.id }
                   }
                 }
@@ -50,7 +50,7 @@
             }
           }
         }.frame(height: actions.isEmpty ? 0 : 170)
-        Button(OJDLocalized.string("profiles.addAction", fallback: "Add action")) {
+        Button(OJDLocalized.string("profiles.addAction")) {
           guard
             let destination = DestinationOption.options(for: source, capabilities: capabilities)
               .first?.destination

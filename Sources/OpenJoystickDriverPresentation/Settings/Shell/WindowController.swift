@@ -82,7 +82,7 @@
         defer: false
       )
       window.hidesOnDeactivate = false
-      window.title = OJDLocalized.string("app.name", fallback: "OpenJoystickDriver")
+      window.title = OJDLocalized.string("app.name")
       window.isReleasedWhenClosed = false
       window.contentView = host
       super.init(window: window)
@@ -197,7 +197,7 @@
       let item = NSToolbarItem(itemIdentifier: itemIdentifier)
       item.target = self
       item.action = #selector(performToggleSidebar(_:))
-      item.label = OJDLocalized.string("settings.navigation", fallback: "Settings navigation")
+      item.label = OJDLocalized.string("settings.navigation")
       item.paletteLabel = item.label
       item.toolTip = item.label
       item.image = NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: item.label)
