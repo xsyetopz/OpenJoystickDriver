@@ -58,6 +58,9 @@
 						},
 						"input": {
 							"$ref": "controller.schema.json#/$defs/input"
+						},
+						"tuning": {
+							"$ref": "controller.schema.json#/$defs/tuning"
 						}
 					}
 				}

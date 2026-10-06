@@ -3,6 +3,9 @@
   "vendorID": 1356,
   "productID": 2508,
   "protocol": {
-    "family": "sony.dualshock4"
+    "family": "sony.dualshock4",
+    "quirks": [
+      "factory-calibration"
+    ]
   }
 }

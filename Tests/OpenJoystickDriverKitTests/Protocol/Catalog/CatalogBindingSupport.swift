@@ -101,8 +101,12 @@ func recordID(_ vendorID: UInt16, _ productID: UInt16) -> String {
 }
 
 extension DeviceRuntimeProfile {
-  /// This profile under another record ID; everything it runs with is unchanged.
-  func withRecordID(_ recordID: String?) -> DeviceRuntimeProfile {
+  /// This profile under another record ID, and with `tuning` when given; everything else it runs
+  /// with is unchanged.
+  func withRecordID(
+    _ recordID: String?,
+    tuning newTuning: ControllerTuning? = nil
+  ) -> DeviceRuntimeProfile {
     DeviceRuntimeProfile(
       recordID: recordID,
       transportProfile: transportProfile,
@@ -117,7 +121,8 @@ extension DeviceRuntimeProfile {
       ownership: ownership,
       rumbleTemplate: rumbleTemplate,
       startupWrites: startupWrites,
-      inputLayout: inputLayout
+      inputLayout: inputLayout,
+      tuning: newTuning ?? tuning
     )
   }
 }

@@ -7,10 +7,9 @@ extension UserSpaceOutputDispatcher {
   }
 
   static func stickTransfer(for identifier: DeviceIdentifier) -> StickTransfer {
-    if identifier.controllerIdentity.vendorID == 0x11C1
-      && identifier.controllerIdentity.productID == 0x5600
-    {
-      return StickTransfer(deadzone: 0.02, rescalesDeadzone: true)
+    let catalog = DeviceCatalog.current.withLock { $0 }
+    if let deadzone = catalog.record(for: identifier)?.tuning.stickDeadzone {
+      return StickTransfer(deadzone: deadzone, rescalesDeadzone: true)
     }
     return StickTransfer(deadzone: 0, rescalesDeadzone: false)
   }

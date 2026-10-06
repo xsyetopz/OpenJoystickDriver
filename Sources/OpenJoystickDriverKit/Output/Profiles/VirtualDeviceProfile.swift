@@ -29,6 +29,8 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
   public let productName: String
   public let manufacturer: String
   public let transport: String
+  /// The control glyphs and system symbol the published product shows.
+  public let glyphFamily: VirtualIdentityGlyphFamily
 
   /// Stable non-spoof Generic HID identity. Its name, version, descriptor, and report
   /// layout form one consumer contract; incompatible layouts require a new product ID.
@@ -38,7 +40,8 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
     versionNumber: 0x0408,
     productName: "OpenJoystickDriver Generic HID Gamepad",
     manufacturer: "OpenJoystickDriver",
-    transport: "USB"
+    transport: "USB",
+    glyphFamily: .generic
   )
 
   /// Xbox One S Bluetooth identity published by the `hid-xbox-one-s-bt` virtual profile.
@@ -51,6 +54,7 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
     versionNumber: 0x0000,
     productName: "Xbox Wireless Controller",
     manufacturer: "Microsoft",
-    transport: "Bluetooth"
+    transport: "Bluetooth",
+    glyphFamily: .xbox
   )
 }

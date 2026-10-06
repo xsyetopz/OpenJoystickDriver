@@ -125,6 +125,48 @@ extension StartupLifetimeTests {
     #expect(await pipeline.hidStartupWrites().isEmpty)
   }
 
+  /// The pipeline runs the driver's plan with the record's tuning; untuned fields keep the driver
+  /// defaults.
+  @Test
+  func pipelinePlanAppliesTheRecordTuning() async throws {
+    let identifier = DeviceIdentifier(vendorID: 0x057E, productID: 0x2009)
+    let record = try #require(ProtocolDriverRegistry().record(for: identifier))
+    let tuning = ControllerTuning(
+      hidStartupIntervalMilliseconds: 40,
+      minimumHIDOutputIntervalMilliseconds: 10,
+      hidStartupRecoveryIntervalMilliseconds: 300,
+      hidStartupRecoveryRounds: 4
+    )
+    let defaults = Switch1Driver(isBluetooth: true).sessionPlan
+    let pipeline = DevicePipeline(
+      identifier: identifier,
+      transport: .hid(locationID: 83),
+      driver: Switch1Driver(isBluetooth: true),
+      dispatcher: LoggingOutputDispatcher(),
+      binding: ProtocolBinding(
+        protocolID: .nintendoSwitch1,
+        variant: .bluetoothClassic,
+        accessBackend: .ioHID,
+        interfaceNumber: nil,
+        rule: .catalogRecord,
+        matchedPredicates: [],
+        record: record.withRecordID(record.recordID, tuning: tuning)
+      )
+    )
+    let plan = await pipeline.sessionPlan()
+    #expect(plan.hidStartupIntervalNanoseconds == 40_000_000)
+    #expect(plan.minimumHIDOutputIntervalNanoseconds == 10_000_000)
+    #expect(plan.hidStartupRecoveryIntervalNanoseconds == 300_000_000)
+    #expect(plan.hidStartupRecoveryRounds == 4)
+    #expect(plan.hasStartupRecovery == defaults.hasStartupRecovery)
+    #expect(defaults.hidStartupRecoveryRounds == 2)
+    #expect(
+      DualShock4Driver().sessionPlan
+        .tuned(ControllerTuning(inputLivenessTimeoutMilliseconds: 2_500))
+        .inputReportLivenessTimeoutNanoseconds == 2_500_000_000
+    )
+  }
+
   @Test
   func featureReadsFollowTheBoundVariant() {
     #expect(DualShock4Driver(prefersBluetooth: true).startupFeatureReads().map(\.reportID) == [5])

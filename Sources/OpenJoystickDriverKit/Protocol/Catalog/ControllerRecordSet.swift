@@ -199,9 +199,11 @@ public struct ControllerRecordSet: Sendable {
       else { throw ControllerRecordProblem("vendorID must be 1...65535 and productID 0...65535") }
       let identity = ControllerIdentity(vendorID: vendorID, productID: productID)
       guard let fields = document["set"] as? [String: Any], !fields.isEmpty,
-        Set(fields.keys).isSubset(of: ["protocol", "usb", "ownership", "output", "input"])
+        Set(fields.keys).isSubset(of: ["protocol", "usb", "ownership", "output", "input", "tuning"])
       else {
-        throw ControllerRecordProblem("set must hold protocol, usb, ownership, output, or input")
+        throw ControllerRecordProblem(
+          "set must hold protocol, usb, ownership, output, input, or tuning"
+        )
       }
       guard let upstream = bundled.records[identity],
         let base = try JSONSerialization.jsonObject(with: upstream.document) as? [String: Any]
@@ -210,7 +212,21 @@ public struct ControllerRecordSet: Sendable {
           "\(identityText(identity)) is not a bundled controller; use an add record"
         )
       }
-      let merged = base.merging(fields) { _, patched in patched }
+      var merged = base.merging(fields) { _, patched in patched }
+      // Every protocol field is scoped to its family, so a patch that keeps the family merges
+      // into the bundled block (RFC 7396) and keeps the fields it does not name. Its quirks join
+      // the bundled quirks, so a patch cannot drop the quirks that select a model's calibration.
+      if var patched = fields["protocol"] as? [String: Any],
+        let bundledProtocol = base["protocol"] as? [String: Any],
+        patched["family"] as? String == bundledProtocol["family"] as? String
+      {
+        if let bundledQuirks = bundledProtocol["quirks"] as? [String],
+          let patchedQuirks = patched["quirks"] as? [String]
+        {
+          patched["quirks"] = bundledQuirks + patchedQuirks.filter { !bundledQuirks.contains($0) }
+        }
+        merged["protocol"] = bundledProtocol.merging(patched) { _, value in value }
+      }
       guard
         try JSONSerialization.data(withJSONObject: merged, options: .sortedKeys)
           != JSONSerialization.data(withJSONObject: base, options: .sortedKeys)

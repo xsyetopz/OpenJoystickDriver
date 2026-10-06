@@ -88,7 +88,8 @@ struct DeviceCatalog: Sendable {
       ownership: record.ownership ?? .macOS,
       rumbleTemplate: record.rumbleTemplate,
       startupWrites: record.startupWrites,
-      inputLayout: record.inputLayout
+      inputLayout: record.inputLayout,
+      tuning: record.tuning
     )
   }
 
@@ -119,7 +120,8 @@ struct DeviceCatalog: Sendable {
       ownership: .macOS,
       rumbleTemplate: nil,
       startupWrites: [],
-      inputLayout: nil
+      inputLayout: nil,
+      tuning: .none
     )
   }
 

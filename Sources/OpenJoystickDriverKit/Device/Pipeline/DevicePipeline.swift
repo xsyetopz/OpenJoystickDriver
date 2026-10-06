@@ -56,6 +56,8 @@ actor DevicePipeline {
   let identifier: DeviceIdentifier
   let transport: Transport
   let driver: any PhysicalProtocolDriver
+  /// The driver's session plan with the bound record's tuning applied.
+  let plan: DriverSessionPlan
   let dispatcher: any OutputDispatcher
   /// Set for a controller macOS serves natively: OJD parses and routes its input, publishes no
   /// virtual gamepad for it, and writes to it only what this allowance names.
@@ -162,7 +164,8 @@ actor DevicePipeline {
     self.uptimeNanoseconds = uptimeNanoseconds
     self.externalOutputAllowed = externalOutputAllowed
     self.sessionState = sessionState
-    self.inputConnectionActive = !self.driver.sessionPlan.requiresInputConnectionBeforeOutput
+    self.plan = self.driver.sessionPlan.tuned(binding?.record?.tuning ?? .none)
+    self.inputConnectionActive = !plan.requiresInputConnectionBeforeOutput
     self.packetLog = PacketLogBuffer(maxEntries: maxPacketLogEntries)
   }
 }

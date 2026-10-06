@@ -35,6 +35,9 @@
 		},
 		"input": {
 			"$ref": "#/$defs/input"
+		},
+		"tuning": {
+			"$ref": "#/$defs/tuning"
 		}
 	},
 	"$defs": {
@@ -350,13 +353,69 @@
 					"if": {
 						"properties": {
 							"family": {
+								"const": "sony.dualshock4"
+							}
+						},
+						"required": ["family"]
+					},
+					"then": {
+						"properties": {
+							"quirks": {
+								"items": {
+									"enum": ["factory-calibration", "wireless-adapter", "strikepad"]
+								},
+								"not": {
+									"allOf": [
+										{
+											"contains": {
+												"const": "wireless-adapter"
+											}
+										},
+										{
+											"contains": {
+												"const": "strikepad"
+											}
+										}
+									]
+								},
+								"type": "array"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"family": {
+								"const": "vendor.nvidia-shield"
+							}
+						},
+						"required": ["family"]
+					},
+					"then": {
+						"properties": {
+							"quirks": {
+								"items": {
+									"enum": ["shield-2015"]
+								},
+								"type": "array"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"family": {
 								"not": {
 									"enum": [
 										"xbox.gip",
 										"nintendo.switch1",
 										"valve.steam-controller",
 										"vendor.gamesir",
-										"vendor.ps3-third-party"
+										"vendor.ps3-third-party",
+										"sony.dualshock4",
+										"vendor.nvidia-shield"
 									]
 								}
 							}
@@ -484,6 +543,43 @@
 				}
 			},
 			"minProperties": 1
+		},
+		"tuning": {
+			"type": "object",
+			"additionalProperties": false,
+			"minProperties": 1,
+			"properties": {
+				"stickDeadzone": {
+					"type": "number",
+					"exclusiveMinimum": 0,
+					"exclusiveMaximum": 1
+				},
+				"inputLivenessTimeoutMs": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 60000
+				},
+				"hidStartupIntervalMs": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 60000
+				},
+				"minimumHIDOutputIntervalMs": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 60000
+				},
+				"hidStartupRecoveryIntervalMs": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 60000
+				},
+				"hidStartupRecoveryRounds": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 10
+				}
+			}
 		},
 		"ownership": {
 			"enum": ["macos", "ojd"]
@@ -1076,6 +1172,108 @@
 						"required": ["output"]
 					}
 				]
+			},
+			"then": {
+				"properties": {
+					"protocol": {
+						"not": {
+							"anyOf": [
+								{
+									"properties": {
+										"family": {
+											"enum": ["xbox.xid", "xbox.xusb", "xbox.gip"]
+										}
+									},
+									"required": ["family"]
+								},
+								{
+									"properties": {
+										"family": {
+											"const": "vendor.gamesir"
+										},
+										"variant": {
+											"const": "usb"
+										}
+									},
+									"required": ["family", "variant"]
+								}
+							]
+						}
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"tuning": {
+						"required": ["inputLivenessTimeoutMs"]
+					}
+				},
+				"required": ["tuning"]
+			},
+			"then": {
+				"properties": {
+					"protocol": {
+						"properties": {
+							"family": {
+								"const": "sony.dualshock4"
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"tuning": {
+						"anyOf": [
+							{
+								"required": ["hidStartupRecoveryIntervalMs"]
+							},
+							{
+								"required": ["hidStartupRecoveryRounds"]
+							}
+						]
+					}
+				},
+				"required": ["tuning"]
+			},
+			"then": {
+				"properties": {
+					"protocol": {
+						"properties": {
+							"family": {
+								"const": "nintendo.switch1"
+							},
+							"quirks": {
+								"not": {
+									"contains": {
+										"enum": ["switch-2", "input-only"]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"tuning": {
+						"anyOf": [
+							{
+								"required": ["hidStartupIntervalMs"]
+							},
+							{
+								"required": ["minimumHIDOutputIntervalMs"]
+							}
+						]
+					}
+				},
+				"required": ["tuning"]
 			},
 			"then": {
 				"properties": {

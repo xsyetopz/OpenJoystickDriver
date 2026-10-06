@@ -55,6 +55,46 @@ struct ControllerRecordSetTests {
     #expect(bundled.fieldLayers == ["protocol": .bundled])
   }
 
+  /// A same-family protocol patch keeps the bundled quirks it does not name; a family change
+  /// replaces the block, because every protocol field belongs to its family.
+  @Test
+  func protocolPatchKeepsUnnamedFieldsOnlyWithinTheFamily() throws {
+    let shareOffsetGIP = ControllerIdentity(vendorID: 0x045E, productID: 0x0B12)
+    let kept = try ControllerRecordSet.validate(
+      Self.patch(shareOffsetGIP, set: ["protocol": ["family": "xbox.gip", "keepAlive": false]])
+    )
+    #expect(kept.record.profile.quirks == [.shareOffset])
+    #expect(kept.record.profile.gipKeepAlivePolicy == .disabled)
+    let refamilied = try ControllerRecordSet.validate(
+      Self.patch(Self.bundledHID, set: ["protocol": ["family": "hid.descriptor"]])
+    )
+    #expect(refamilied.record.profile.physicalProtocolID == .hidDescriptor)
+  }
+
+  /// A same-family patch adds its quirks to the bundled quirks instead of replacing them.
+  @Test
+  func protocolPatchAddsItsQuirksToTheBundledQuirks() throws {
+    let dualShock4 = ControllerIdentity(vendorID: 0x054C, productID: 0x09CC)
+    let patched = try ControllerRecordSet.validate(
+      Self.patch(
+        dualShock4,
+        set: ["protocol": ["family": "sony.dualshock4", "quirks": ["strikepad"]]]
+      )
+    )
+    #expect(patched.record.profile.quirks == [.factoryCalibration, .strikePad])
+  }
+
+  @Test
+  func tuningPatchSetsTheRecordTuning() throws {
+    let validated = try ControllerRecordSet.validate(
+      Self.patch(Self.bundledHID, set: ["tuning": ["inputLivenessTimeoutMs": 2_500]])
+    )
+    #expect(validated.record.fieldLayers["tuning"] == .user)
+    #expect(
+      validated.record.profile.tuning == ControllerTuning(inputLivenessTimeoutMilliseconds: 2_500)
+    )
+  }
+
   @Test
   func addForANewIdentityIsAUserRecord() throws {
     let validated = try ControllerRecordSet.validate(Self.add(Self.unbundled, family: "xbox.gip"))
@@ -84,7 +124,11 @@ struct ControllerRecordSetTests {
     )
     #expect(
       Self.problem(try Self.patch(Self.bundledGIP, set: ["capabilities": ["rumble": "absent"]]))
-        == "set must hold protocol, usb, ownership, output, or input"
+        == "set must hold protocol, usb, ownership, output, input, or tuning"
+    )
+    #expect(
+      Self.problem(try Self.patch(Self.bundledGIP, set: ["tuning": ["hidStartupIntervalMs": 5]]))
+        == "record.tuning: HID startup and output timings apply only to HID controllers"
     )
     #expect(Self.problem(Data("[]".utf8)) == "the file is not a JSON object")
     let unknownKey = try Self.json([

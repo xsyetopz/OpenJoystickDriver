@@ -33,7 +33,7 @@ public struct USBCommandChannel: Equatable, Sendable {
 public struct DriverSessionPlan: Equatable, Sendable {
   /// Maximum age of the last fresh input report before held controls are retired; nil when the
   /// protocol has no report liveness contract.
-  public let inputReportLivenessTimeoutNanoseconds: UInt64?
+  public internal(set) var inputReportLivenessTimeoutNanoseconds: UInt64?
   /// True when output must wait until a logical controller connects inside the transport.
   public let requiresInputConnectionBeforeOutput: Bool
   /// True when the driver parses IOKit-decoded element values instead of raw input reports; only
@@ -46,7 +46,7 @@ public struct DriverSessionPlan: Equatable, Sendable {
   /// Interval between USB keep-alive writes; nil when the protocol sends none.
   public let usbKeepAliveIntervalNanoseconds: UInt64?
   /// Delay between consecutive HID startup and startup-recovery writes.
-  public let hidStartupIntervalNanoseconds: UInt64
+  public internal(set) var hidStartupIntervalNanoseconds: UInt64
   /// True when HID startup writes go before the startup feature reads; otherwise after them.
   public let outputPrecedesFeatureReads: Bool
   /// True when failed HID startup writes must keep virtual output gated.
@@ -56,10 +56,14 @@ public struct DriverSessionPlan: Equatable, Sendable {
   public let validatesFeatureReplies: Bool
   /// True when replies to startup writes are re-requested for a bounded window after startup.
   public let hasStartupRecovery: Bool
+  /// Delay between startup recovery rounds.
+  public internal(set) var hidStartupRecoveryIntervalNanoseconds: UInt64
+  /// Startup recovery rounds after the first startup; the session expires after the last.
+  public internal(set) var hidStartupRecoveryRounds: Int
   /// Interval between HID keep-alive writes; nil when the protocol sends none.
   public let hidKeepAliveIntervalNanoseconds: UInt64?
   /// Minimum spacing between user-output HID output reports (rumble, lighting); 0 is unlimited.
-  public let minimumHIDOutputIntervalNanoseconds: UInt64
+  public internal(set) var minimumHIDOutputIntervalNanoseconds: UInt64
   /// True when the driver sets no player indicator itself: the manager picks a free slot per
   /// controller and the pipeline writes it with the USB startup writes, or, when output waits for
   /// an input connection, each time the logical controller connects.
@@ -79,6 +83,8 @@ public struct DriverSessionPlan: Equatable, Sendable {
     requiresStartupOutput: Bool = false,
     validatesFeatureReplies: Bool = false,
     hasStartupRecovery: Bool = false,
+    hidStartupRecoveryIntervalNanoseconds: UInt64 = 200_000_000,
+    hidStartupRecoveryRounds: Int = 2,
     hidKeepAliveIntervalNanoseconds: UInt64? = nil,
     minimumHIDOutputIntervalNanoseconds: UInt64 = 0,
     assignsStartupPlayerIndicator: Bool = false,
@@ -95,10 +101,34 @@ public struct DriverSessionPlan: Equatable, Sendable {
     self.requiresStartupOutput = requiresStartupOutput
     self.validatesFeatureReplies = validatesFeatureReplies
     self.hasStartupRecovery = hasStartupRecovery
+    self.hidStartupRecoveryIntervalNanoseconds = hidStartupRecoveryIntervalNanoseconds
+    self.hidStartupRecoveryRounds = hidStartupRecoveryRounds
     self.hidKeepAliveIntervalNanoseconds = hidKeepAliveIntervalNanoseconds
     self.minimumHIDOutputIntervalNanoseconds = minimumHIDOutputIntervalNanoseconds
     self.assignsStartupPlayerIndicator = assignsStartupPlayerIndicator
     self.usbCommandChannel = usbCommandChannel
+  }
+
+  /// This plan with the record's tuned timings in place of the driver defaults.
+  func tuned(_ tuning: ControllerTuning) -> Self {
+    func nanoseconds(_ milliseconds: Int) -> UInt64 {
+      UInt64(milliseconds) * DeviceTransportProfile.nanosecondsPerMillisecond
+    }
+    var plan = self
+    if let value = tuning.inputLivenessTimeoutMilliseconds {
+      plan.inputReportLivenessTimeoutNanoseconds = nanoseconds(value)
+    }
+    if let value = tuning.hidStartupIntervalMilliseconds {
+      plan.hidStartupIntervalNanoseconds = nanoseconds(value)
+    }
+    if let value = tuning.minimumHIDOutputIntervalMilliseconds {
+      plan.minimumHIDOutputIntervalNanoseconds = nanoseconds(value)
+    }
+    if let value = tuning.hidStartupRecoveryIntervalMilliseconds {
+      plan.hidStartupRecoveryIntervalNanoseconds = nanoseconds(value)
+    }
+    if let value = tuning.hidStartupRecoveryRounds { plan.hidStartupRecoveryRounds = value }
+    return plan
   }
 }
 

@@ -3,6 +3,10 @@
   "vendorID": 1356,
   "productID": 2976,
   "protocol": {
-    "family": "sony.dualshock4"
+    "family": "sony.dualshock4",
+    "quirks": [
+      "factory-calibration",
+      "wireless-adapter"
+    ]
   }
 }

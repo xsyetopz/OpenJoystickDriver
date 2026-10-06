@@ -3,6 +3,9 @@
   "vendorID": 2389,
   "productID": 29200,
   "protocol": {
-    "family": "vendor.nvidia-shield"
+    "family": "vendor.nvidia-shield",
+    "quirks": [
+      "shield-2015"
+    ]
   }
 }

@@ -2,7 +2,6 @@ import Foundation
 
 private let shieldStateReportID: UInt8 = 0x01
 private let shieldTouchReportID: UInt8 = 0x02
-private let shieldV103ProductID: UInt16 = 0x7210
 private let shieldV103StateLength = 16
 private let shieldV104StateLength = 23
 private let shieldV103RumbleReportID: UInt8 = 0x01
@@ -34,8 +33,9 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
   private let isV103: Bool
   private var state = ControllerState.neutral
 
-  /// Creates a driver for the SHIELD controller with `productID`; only V103 has plain rumble.
-  public init(productID: UInt16) { isV103 = productID == shieldV103ProductID }
+  /// Creates a driver for the 2017 controller, or for the 2015 controller when its record declares
+  /// the `shield-2015` quirk; only the 2015 controller has plain rumble.
+  public init(isShield2015: Bool) { isV103 = isShield2015 }
 
   public func resetProtocolState() { state = .neutral }
 

@@ -8,7 +8,7 @@ extension DevicePipeline {
     guard sessionState == .active else { return }
     let event = parsed.map(normalized)
     if event != nil { lastObservedInputReportNanoseconds = now }
-    if let timeout = driver.sessionPlan.inputReportLivenessTimeoutNanoseconds {
+    if let timeout = plan.inputReportLivenessTimeoutNanoseconds {
       if let last = lastLiveInputReportNanoseconds ?? inputHealthMonitoringStartedNanoseconds,
         now - last >= timeout
       {

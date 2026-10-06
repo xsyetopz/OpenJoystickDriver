@@ -42,11 +42,27 @@ extension DualShock4DriverTests {
     return Data(report)
   }
 
+  /// The bundled records select SDL's models by product, and only Sony's own pads trust their
+  /// factory calibration.
   @Test
-  func modelFollowsSDLProductIDs() {
-    #expect(DualShock4Model(vendorID: 0x054C, productID: 0x0BA0) == .wirelessAdapter)
-    #expect(DualShock4Model(vendorID: 0x054C, productID: 0x05C5) == .strikePad)
-    #expect(DualShock4Model(vendorID: 0x054C, productID: 0x09CC) == .standard)
+  func bundledRecordsSelectSDLModelsAndCalibration() {
+    let catalog = DeviceCatalog()
+    func quirks(_ productID: UInt16) -> [ControllerQuirk]? {
+      catalog.record(for: DeviceIdentifier(vendorID: 0x054C, productID: productID))?.quirks
+    }
+    #expect(quirks(0x0BA0).map(DualShock4Model.init(quirks:)) == .wirelessAdapter)
+    #expect(quirks(0x05C5).map(DualShock4Model.init(quirks:)) == .strikePad)
+    #expect(quirks(0x09CC).map(DualShock4Model.init(quirks:)) == .standard)
+    for identifier in catalog.hidProfileIdentifiers {
+      guard let record = catalog.record(for: identifier),
+        record.physicalProtocolID == .sonyDualShock4
+      else { continue }
+      #expect(
+        record.quirks.contains(.factoryCalibration)
+          == (identifier.controllerIdentity.vendorID == 0x054C),
+        "\(identifier)"
+      )
+    }
   }
 
   @Test

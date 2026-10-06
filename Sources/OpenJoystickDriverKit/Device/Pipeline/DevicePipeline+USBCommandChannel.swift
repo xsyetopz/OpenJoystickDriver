@@ -9,7 +9,7 @@ extension DevicePipeline {
     intervalNanoseconds: UInt64
   ) async -> Bool {
     // macOS owns a native controller's output, so an observe-only pipeline sends no commands.
-    guard isActive, !observesOnly, let channel = driver.sessionPlan.usbCommandChannel,
+    guard isActive, !observesOnly, let channel = plan.usbCommandChannel,
       let session = await openUSBCommandSession(channel)
     else { return false }
     for (index, packet) in packets.enumerated() {

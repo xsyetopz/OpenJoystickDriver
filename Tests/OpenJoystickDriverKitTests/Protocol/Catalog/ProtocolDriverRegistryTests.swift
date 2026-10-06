@@ -167,6 +167,34 @@ struct ProtocolDriverRegistryTests {
     #expect(ds4USB.transport == .usb)
   }
 
+  /// The DualShock 4 and SHIELD drivers take their model and calibration from the record quirks.
+  @Test
+  func recordQuirksConfigureTheirDrivers() throws {
+    func ds4(_ vendorID: UInt16, _ productID: UInt16) throws -> DualShock4Driver {
+      try #require(
+        try catalogParser(DeviceIdentifier(vendorID: vendorID, productID: productID))
+          as? DualShock4Driver
+      )
+    }
+    let standard = try ds4(0x054C, 0x09CC)
+    #expect(standard.model == .standard)
+    #expect(standard.usesFactoryCalibration)
+    #expect(try ds4(0x054C, 0x05C5).model == .strikePad)
+    let adapter = try ds4(0x054C, 0x0BA0)
+    #expect(adapter.model == .wirelessAdapter)
+    #expect(adapter.sessionPlan.requiresInputConnectionBeforeOutput)
+    #expect(!(try ds4(0x0079, 0x181B).usesFactoryCalibration))
+
+    func shield(_ productID: UInt16) throws -> NVIDIAShieldDriver {
+      try #require(
+        try catalogParser(DeviceIdentifier(vendorID: 0x0955, productID: productID))
+          as? NVIDIAShieldDriver
+      )
+    }
+    #expect(try shield(0x7210).outputCapabilities == .dualMainRumble)
+    #expect(try shield(0x7214).outputCapabilities == .none)
+  }
+
   @Test
   func everyFamilyAndVariantBuildsThroughTheValidatingFactory() throws {
     var built: Set<String> = []

@@ -26,7 +26,10 @@ public struct VirtualIdentityPresentation: Equatable, Hashable, Sendable {
   public static let generic = Self(glyphFamily: .generic, controllerSymbolName: "gamecontroller")
 
   public static func forProfile(_ profile: VirtualDeviceProfile) -> Self {
-    profile.vendorID == 0x045E ? .xbox : .generic
+    switch profile.glyphFamily {
+    case .xbox: .xbox
+    case .generic: .generic
+    }
   }
 }
 

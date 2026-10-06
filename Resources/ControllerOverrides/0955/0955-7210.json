@@ -1,0 +1,12 @@
+{
+	"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+	"operation": "patch",
+	"vendorID": 2389,
+	"productID": 29200,
+	"set": {
+		"protocol": {
+			"family": "vendor.nvidia-shield",
+			"quirks": ["shield-2015"]
+		}
+	}
+}

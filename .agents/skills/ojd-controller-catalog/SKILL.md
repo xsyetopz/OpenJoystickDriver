@@ -37,7 +37,7 @@ Change one controller identity or one factual device deviation through the autho
 
 - Never edit `Sources/OpenJoystickDriverKit/Resources/Controllers/`. The next `regenerate --write` overwrites hand edits, and `regenerate --check` fails on them in CI.
 - An `add` that collides with a Linux-derived VID/PID fails generation; use a `patch` for a device upstream already knows.
-- A `patch` sets only the top-level sections that are wrong, and each set section replaces the upstream one whole (shallow merge). Setting only the changed field drops its siblings; copying the whole record freezes upstream fields that later revisions fix.
+- A `patch` sets only the top-level sections that are wrong, and each set section replaces the upstream one whole (shallow merge), except a same-family `protocol`, which keeps upstream fields it does not name. Setting only the changed field drops its siblings; copying the whole record freezes upstream fields that later revisions fix.
 - Records hold operational facts only. Provenance, confidence, `experimental`, or `needsHardwareTest` fields are rejected by the strict schemas; record evidence in `docs/testing/` pages instead.
 - Shared parsing lives in Swift under `Sources/OpenJoystickDriverKit/Protocol/`. A record field that re-describes parser behavior duplicates it and drifts.
 - Do not infer a VID/PID, endpoint, or report length from a similar product. Neighbouring PIDs often differ in transport or handshake.

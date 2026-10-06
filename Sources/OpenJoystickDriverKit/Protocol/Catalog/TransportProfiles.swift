@@ -128,6 +128,18 @@ public enum ControllerQuirk: String, CaseIterable, Sendable {
   /// Third-party PS3 pad whose hat bits are untrusted, so any nonzero D-pad pressure byte holds
   /// its direction (SDL `SDL_hidapi_ps3.c`, Saitek Cyborg V.3 Rumble Pad).
   case dpadPressure = "dpad-pressure"
+  /// DualShock 4 whose factory motion calibration report is trusted. SDL `SDL_hidapi_ps4.c` reads
+  /// it only on Sony's own controllers; other pads keep the nominal scale.
+  case factoryCalibration = "factory-calibration"
+  /// Sony's DualShock 4 wireless adapter (SDL `USB_PRODUCT_SONY_DS4_DONGLE`): output waits for a
+  /// paired pad, and its calibration uses the Bluetooth gyro order.
+  case wirelessAdapter = "wireless-adapter"
+  /// STRIKEPAD grip (SDL `USB_PRODUCT_SONY_DS4_STRIKEPAD`): doubled gyro scale and doubled,
+  /// negated accelerometer scale.
+  case strikePad = "strikepad"
+  /// 2015 NVIDIA SHIELD controller (SDL `SDL_hidapi_shield.c` V103): plain rumble output report
+  /// and a touchpad click; without it the driver runs the input-only 2017 controller.
+  case shield2015 = "shield-2015"
 
   /// The protocol driver that declares this quirk.
   public var protocolID: PhysicalProtocolID {
@@ -138,6 +150,8 @@ public enum ControllerQuirk: String, CaseIterable, Sendable {
     case .innerGrips, .lightingSlots: .vendorGameSir
     case .triton, .neptune: .valveSteamController
     case .dpadPressure: .vendorPS3ThirdParty
+    case .factoryCalibration, .wirelessAdapter, .strikePad: .sonyDualShock4
+    case .shield2015: .vendorNVIDIAShield
     }
   }
 }
@@ -173,6 +187,40 @@ public enum ControllerOwnership: String, Sendable {
   case ojd
 }
 
+/// A record's `tuning` section; each nil field keeps the driver's default.
+public struct ControllerTuning: Equatable, Sendable {
+  /// Radial stick deadzone of the output dispatcher, in 0<..<1 of full deflection.
+  public let stickDeadzone: Float?
+  /// Input silence after which a DualShock 4 session counts as stale.
+  public let inputLivenessTimeoutMilliseconds: Int?
+  /// Gap between the HID startup writes.
+  public let hidStartupIntervalMilliseconds: Int?
+  /// Minimum gap between HID output reports.
+  public let minimumHIDOutputIntervalMilliseconds: Int?
+  /// Gap between the Switch 1 startup recovery rounds.
+  public let hidStartupRecoveryIntervalMilliseconds: Int?
+  /// Switch 1 startup recovery rounds before the session expires.
+  public let hidStartupRecoveryRounds: Int?
+
+  public static let none = Self()
+
+  public init(
+    stickDeadzone: Float? = nil,
+    inputLivenessTimeoutMilliseconds: Int? = nil,
+    hidStartupIntervalMilliseconds: Int? = nil,
+    minimumHIDOutputIntervalMilliseconds: Int? = nil,
+    hidStartupRecoveryIntervalMilliseconds: Int? = nil,
+    hidStartupRecoveryRounds: Int? = nil
+  ) {
+    self.stickDeadzone = stickDeadzone
+    self.inputLivenessTimeoutMilliseconds = inputLivenessTimeoutMilliseconds
+    self.hidStartupIntervalMilliseconds = hidStartupIntervalMilliseconds
+    self.minimumHIDOutputIntervalMilliseconds = minimumHIDOutputIntervalMilliseconds
+    self.hidStartupRecoveryIntervalMilliseconds = hidStartupRecoveryIntervalMilliseconds
+    self.hidStartupRecoveryRounds = hidStartupRecoveryRounds
+  }
+}
+
 /// Complete runtime profile for one physical controller model.
 public struct DeviceRuntimeProfile: Equatable, Sendable {
   /// The catalog record's `vvvv-pppp` file stem; nil for a family profile, which has no record.
@@ -196,6 +244,8 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public let startupWrites: [RecordStartupWrite]
   /// The record's input-report layout; set exactly for the `hid.report-layout` family.
   public let inputLayout: ControllerInputLayout?
+  /// The record's timing and deadzone values; nil fields keep the driver defaults.
+  public let tuning: ControllerTuning
 
   /// Whether this row is reached through raw USB rather than IOHID.
   public var usesRawUSB: Bool {

@@ -7,6 +7,9 @@
 		"productID": 22016,
 		"protocol": {
 			"family": "hid.descriptor"
+		},
+		"tuning": {
+			"stickDeadzone": 0.02
 		}
 	}
 }

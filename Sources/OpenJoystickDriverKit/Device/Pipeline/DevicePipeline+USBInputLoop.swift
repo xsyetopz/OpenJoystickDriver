@@ -109,7 +109,7 @@ extension DevicePipeline {
   /// controller reports, which an idle controller may not do for many seconds.
   func startUSBKeepAlive(handle: any USBTransportSession, generation: UInt64) {
     stopUSBKeepAlive()
-    guard let interval = driver.sessionPlan.usbKeepAliveIntervalNanoseconds else { return }
+    guard let interval = plan.usbKeepAliveIntervalNanoseconds else { return }
     usbKeepAliveTask = Task {
       while true {
         do { try await Task.sleep(nanoseconds: interval) } catch { return }
@@ -168,7 +168,7 @@ extension DevicePipeline {
 
   func evaluateIdleSleep() async {
     guard isActive else { return }
-    if let timeout = driver.sessionPlan.inputReportLivenessTimeoutNanoseconds,
+    if let timeout = plan.inputReportLivenessTimeoutNanoseconds,
       let last = lastLiveInputReportNanoseconds ?? inputHealthMonitoringStartedNanoseconds,
       uptimeNanoseconds() - last >= timeout
     {

@@ -14,7 +14,7 @@ extension DevicePipeline {
   func start() {
     guard !isActive, !hasStopped else { return }
     isActive = true
-    if driver.sessionPlan.inputReportLivenessTimeoutNanoseconds != nil {
+    if plan.inputReportLivenessTimeoutNanoseconds != nil {
       inputHealthMonitoringStartedNanoseconds = uptimeNanoseconds()
     }
     startIdleMonitor()
@@ -99,7 +99,7 @@ extension DevicePipeline {
     return true
   }
 
-  func sessionPlan() -> DriverSessionPlan { driver.sessionPlan }
+  func sessionPlan() -> DriverSessionPlan { plan }
 
   func consumeFeatureReply(_ data: Data, request: PhysicalHIDFeatureReadRequest) -> Bool {
     guard isActive else { return false }
@@ -118,7 +118,7 @@ extension DevicePipeline {
 
   /// False for an observe-only pipeline, which never sends startup output.
   func requiresSuccessfulHIDStartupOutput() -> Bool {
-    !observesOnly && driver.sessionPlan.requiresStartupOutput
+    !observesOnly && plan.requiresStartupOutput
   }
 
   func hidStartupFeatureReads() -> [PhysicalHIDFeatureReadRequest] {
@@ -150,7 +150,7 @@ extension DevicePipeline {
   }
 
   func requiresInputConnectionBeforeOutput() -> Bool {
-    driver.sessionPlan.requiresInputConnectionBeforeOutput
+    plan.requiresInputConnectionBeforeOutput
   }
 
   func hidDeactivationWrites() -> [PhysicalOutputWrite] {
@@ -219,7 +219,7 @@ extension DevicePipeline {
     let state: ControllerInputHealthState
     if awaitingNeutralAfterLivenessLoss {
       state = .waitingForNeutral
-    } else if let timeout = driver.sessionPlan.inputReportLivenessTimeoutNanoseconds, let age,
+    } else if let timeout = plan.inputReportLivenessTimeoutNanoseconds, let age,
       age >= timeout
     {
       state = .stale
@@ -229,7 +229,7 @@ extension DevicePipeline {
     let failureReason: ControllerInputHealthFailureReason?
     if state == .healthy {
       failureReason = nil
-    } else if let timeout = driver.sessionPlan.inputReportLivenessTimeoutNanoseconds,
+    } else if let timeout = plan.inputReportLivenessTimeoutNanoseconds,
       let observationAge, observationAge < timeout
     {
       failureReason = .freshnessNotAdvancing

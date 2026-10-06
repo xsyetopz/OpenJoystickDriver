@@ -43,7 +43,8 @@ public final class DualShock4Driver: PhysicalProtocolDriver {
   public let sessionPlan: DriverSessionPlan
   public internal(set) var latestInputReportFormat: String?
   /// Whether a validated factory calibration report is installed. SDL ignores the report on
-  /// controllers without Sony's vendor ID, so third-party pads keep the nominal scale.
+  /// controllers without Sony's vendor ID, so only records with the `factory-calibration` quirk
+  /// install it and third-party pads keep the nominal scale.
   let usesFactoryCalibration: Bool
   /// The bound variant; startup follows Bluetooth whenever this or the observed reports say so.
   let isBluetoothVariant: Bool

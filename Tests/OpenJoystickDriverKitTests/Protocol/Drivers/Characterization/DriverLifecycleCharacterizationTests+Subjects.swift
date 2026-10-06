@@ -63,6 +63,7 @@ extension DriverLifecycleCharacterizationTests {
     host: .usb,
     protocolID: .sonyDualShock4,
     variant: .usb,
+    quirks: [.factoryCalibration],
     input: [dualShock4Report(timestamp: 1), dualShock4Report(timestamp: 2)]
   )
   static let dualShock4Bluetooth = Subject(
@@ -70,6 +71,7 @@ extension DriverLifecycleCharacterizationTests {
     host: .bluetoothClassic,
     protocolID: .sonyDualShock4,
     variant: .bluetoothClassic,
+    quirks: [.factoryCalibration],
     input: [dualShock4Report(timestamp: 1), dualShock4Report(timestamp: 2)]
   )
   static let dualSenseUSB = Subject(
@@ -136,7 +138,8 @@ extension DriverLifecycleCharacterizationTests {
     identifier: identifier(0x0955, 0x7210),
     host: .usb,
     protocolID: .vendorNVIDIAShield,
-    variant: nil
+    variant: nil,
+    quirks: [.shield2015]
   )
   static let gameSirUSB = Subject(
     identifier: identifier(0x3537, 0x1003),

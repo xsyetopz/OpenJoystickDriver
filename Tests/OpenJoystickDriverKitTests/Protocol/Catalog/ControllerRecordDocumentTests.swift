@@ -106,6 +106,9 @@ struct ControllerRecordDocumentTests {
       ["family": "valve.steam-controller", "variant": "wired", "quirks": ["triton", "neptune"]],
       ["family": "valve.steam-controller", "variant": "bluetooth-le", "quirks": ["neptune"]],
       ["family": "sony.dualshock4", "quirks": ["gyro"]],
+      ["family": "sony.dualshock4", "quirks": ["wireless-adapter", "strikepad"]],
+      ["family": "sony.dualshock4", "quirks": ["shield-2015"]],
+      ["family": "vendor.nvidia-shield", "quirks": ["factory-calibration"]],
       ["family": "xbox.gip", "startupPackets": ["xbox.gip/power-on"]],
       ["family": "xbox.gip", "initialization": ["powerOn"]],
       ["family": "xbox.gip", "initialization": [String]()],
@@ -266,6 +269,66 @@ struct ControllerRecordDocumentTests {
     "report": ["length": 1] as [String: Int],
     "buttons": [["control": "face-south", "byte": 0, "mask": 1] as [String: any Sendable]],
   ]
+
+  @Test
+  func decodesTuningWhereADriverReadsIt() throws {
+    let ds4 = try decode(
+      protocol: ["family": "sony.dualshock4"],
+      extra: ["tuning": ["stickDeadzone": 0.05, "inputLivenessTimeoutMs": 1_500]]
+    )
+    #expect(
+      ds4.tuning
+        == ControllerTuning(stickDeadzone: 0.05, inputLivenessTimeoutMilliseconds: 1_500)
+    )
+    let switch1 = try decode(
+      protocol: ["family": "nintendo.switch1"],
+      extra: [
+        "tuning": [
+          "hidStartupIntervalMs": 40, "hidStartupRecoveryIntervalMs": 300,
+          "hidStartupRecoveryRounds": 4,
+        ]
+      ]
+    )
+    #expect(
+      switch1.tuning
+        == ControllerTuning(
+          hidStartupIntervalMilliseconds: 40,
+          hidStartupRecoveryIntervalMilliseconds: 300,
+          hidStartupRecoveryRounds: 4
+        )
+    )
+    #expect(try decode(protocol: ["family": "xbox.gip"]).tuning == .none)
+  }
+
+  @Test(
+    arguments: [
+      ("sony.dualshock4", ["stickDeadzone": 0]), ("sony.dualshock4", ["stickDeadzone": 1]),
+      ("sony.dualshock4", ["inputLivenessTimeoutMs": 0]),
+      ("nintendo.switch1", ["hidStartupRecoveryRounds": 11]),
+      ("nintendo.switch1", ["hidStartupRecoveryIntervalMs": 0]),
+      ("hid.descriptor", ["minimumHIDOutputIntervalMs": 60_001]),
+      ("hid.descriptor", ["deadzone": 0.1]), ("hid.descriptor", [:]),
+      ("hid.descriptor", ["inputLivenessTimeoutMs": 1_000]),
+      ("sony.dualsense", ["hidStartupRecoveryRounds": 2]),
+      ("xbox.gip", ["hidStartupIntervalMs": 20]),
+    ] as [(String, [String: any Sendable])]
+  )
+  func rejectsTuningOutOfRangeOrOutsideItsFamily(family: String, tuning: [String: any Sendable]) {
+    #expect(throws: DecodingError.self) {
+      try decode(protocol: ["family": family], extra: ["tuning": tuning])
+    }
+  }
+
+  @Test(arguments: [["switch-2"], ["input-only"]])
+  func rejectsRecoveryTuningForSwitchDriversWithoutRecovery(quirks: [String]) throws {
+    _ = try decode(protocol: ["family": "nintendo.switch1", "quirks": quirks])
+    #expect(throws: DecodingError.self) {
+      try decode(
+        protocol: ["family": "nintendo.switch1", "quirks": quirks],
+        extra: ["tuning": ["hidStartupRecoveryRounds": 2]]
+      )
+    }
+  }
 
   private static func controllerSchema() throws -> [String: Any] {
     let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()

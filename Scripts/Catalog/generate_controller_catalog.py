@@ -27,7 +27,7 @@ RECORD_SCHEMA_ID = (
     "Resources/Schemas/controller.schema.json"
 )
 # Top-level record sections a patch override may replace.
-PATCH_FIELDS = frozenset({"protocol", "usb", "ownership", "output", "input"})
+PATCH_FIELDS = frozenset({"protocol", "usb", "ownership", "output", "input", "tuning"})
 
 
 # DualSense Edge function buttons and back paddles, present beyond the DualSense
@@ -646,6 +646,11 @@ def apply_overrides(
         if upstream is None:
             raise CatalogError(f"orphan patch override for {key}")
         merged = {**upstream, **payload}
+        # Every protocol field is scoped to its family, so a patch that keeps the family
+        # merges into the upstream block (RFC 7396) and keeps the fields it does not name.
+        patched = payload.get("protocol")
+        if patched and patched["family"] == upstream["protocol"]["family"]:
+            merged["protocol"] = {**upstream["protocol"], **patched}
         if merged == upstream:
             raise CatalogError(f"redundant patch override for {key}")
         records[key] = merged

@@ -1,6 +1,6 @@
 extension DevicePipeline {
   func minimumPhysicalOutputIntervalNanoseconds() -> UInt64 {
-    driver.sessionPlan.minimumHIDOutputIntervalNanoseconds
+    plan.minimumHIDOutputIntervalNanoseconds
   }
 
   func defaultColor() -> ControllerColor? { driver.defaultColor }
@@ -10,7 +10,7 @@ extension DevicePipeline {
   ) throws(ControllerOutputError) -> PhysicalOutputPlan { try driver.encode(command) }
 
   func hidKeepAlivePlan() -> (writes: [PhysicalOutputWrite], interval: UInt64)? {
-    guard isActive, let interval = driver.sessionPlan.hidKeepAliveIntervalNanoseconds else {
+    guard isActive, let interval = plan.hidKeepAliveIntervalNanoseconds else {
       return nil
     }
     return (driver.keepAliveWrites(), interval)

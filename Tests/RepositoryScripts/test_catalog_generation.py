@@ -228,6 +228,36 @@ class HIDRecordTests(unittest.TestCase):
             with self.assertRaises(catalog.CatalogError):
                 catalog.load_overrides(validator=None, override_dir=root)
 
+    def test_patch_override_adds_tuning(self) -> None:
+        import tempfile
+        from pathlib import Path
+
+        tuning = {"stickDeadzone": 0.02}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "11c1" / "11c1-5600.json"
+            path.parent.mkdir()
+            path.write_text(
+                json.dumps(
+                    {
+                        "$schema": (
+                            "https://raw.githubusercontent.com/xsyetopz/"
+                            "OpenJoystickDriver/main/Resources/Schemas/"
+                            "controller-override.schema.json"
+                        ),
+                        "operation": "patch",
+                        "vendorID": 0x11C1,
+                        "productID": 0x5600,
+                        "set": {"tuning": tuning},
+                    }
+                )
+            )
+            overrides = catalog.load_overrides(validator=None, override_dir=root)
+        upstream = {"protocol": {"family": "hid.descriptor"}}
+        records = {(0x11C1, 0x5600): upstream}
+        catalog.apply_overrides(records, overrides)
+        self.assertEqual(records[(0x11C1, 0x5600)], {**upstream, "tuning": tuning})
+
 
 SDL_FIXTURE = """\
 #define MAKE_CONTROLLER_ID( nVID, nPID )\t(unsigned int)( (unsigned int)nVID << 16 | (unsigned int)nPID )
@@ -471,6 +501,36 @@ class SDLControllerListTests(unittest.TestCase):
         self.assertEqual(counts, {"conflict": 1})
         catalog.apply_overrides(records, overrides)
         self.assertEqual(records, {(0x1532, 0x1000): override})
+
+    def test_protocol_patch_merges_only_within_its_family(self) -> None:
+        upstream = {
+            "protocol": {"family": "xbox.gip", "quirks": ["share-offset"]},
+            "usb": {"interface": 0},
+        }
+        records = {(1, 1): upstream, (1, 2): upstream, (1, 3): upstream}
+        catalog.apply_overrides(
+            records,
+            [
+                (
+                    "patch",
+                    (1, 1),
+                    {"protocol": {"family": "xbox.gip", "keepAlive": False}},
+                ),
+                (
+                    "patch",
+                    (1, 2),
+                    {"protocol": {"family": "xbox.gip", "quirks": ["x"]}},
+                ),
+                ("patch", (1, 3), {"protocol": {"family": "hid.descriptor"}}),
+            ],
+        )
+        self.assertEqual(
+            records[(1, 1)]["protocol"],
+            {"family": "xbox.gip", "quirks": ["share-offset"], "keepAlive": False},
+        )
+        self.assertEqual(records[(1, 2)]["protocol"]["quirks"], ["x"])
+        self.assertEqual(records[(1, 3)]["protocol"], {"family": "hid.descriptor"})
+        self.assertEqual(records[(1, 3)]["usb"], {"interface": 0})
 
     def test_third_party_dualsense_is_admitted_and_360_product_ids_are_skipped(
         self,

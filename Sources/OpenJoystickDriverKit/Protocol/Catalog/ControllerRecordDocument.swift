@@ -21,12 +21,13 @@ struct ControllerRecordDocument: Decodable {
   let startupWrites: [RecordStartupWrite]
   /// Present exactly for the `hid.report-layout` family.
   let inputLayout: ControllerInputLayout?
+  let tuning: ControllerTuning
 
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)
     try container.rejectUnknown(allowed: [
       "$schema", "vendorID", "productID", "protocol", "usb", "capabilities", "ownership", "output",
-      "input",
+      "input", "tuning",
     ])
     let schema = try container.decode(String.self, for: "$schema")
     guard schema == Self.schemaID else {
@@ -56,7 +57,9 @@ struct ControllerRecordDocument: Decodable {
     rumbleTemplate = output?.rumble
     startupWrites = output?.startup ?? []
     inputLayout = try container.decodeOptional(InputLayout.self, for: "input")?.layout
+    tuning = try container.decodeOptional(Tuning.self, for: "tuning")?.tuning ?? .none
     try validateOwnershipAndOutput(codingPath: decoder.codingPath)
+    try validateTuning(codingPath: decoder.codingPath)
     // Only these deltas have a driver that acts on them: GIP drops rumble, DualSense Edge adds
     // exactly its paddles and function buttons.
     let presentAllowed =
@@ -257,6 +260,8 @@ struct ControllerRecordDocument: Decodable {
           "a Switch 2 row selects one layout"
         } else if protocolID == .valveSteamController && quirks.count > 1 {
           "a Steam Controller row selects at most one hardware generation"
+        } else if quirks.contains(.wirelessAdapter) && quirks.contains(.strikePad) {
+          "a DualShock 4 row selects at most one model"
         } else if quirks.contains(.neptune) && protocolVariant != .wired {
           "the Steam Deck controller is an internal USB device"
         } else if protocolID == .vendorGameSir && protocolVariant == .usb && !quirks.isEmpty {

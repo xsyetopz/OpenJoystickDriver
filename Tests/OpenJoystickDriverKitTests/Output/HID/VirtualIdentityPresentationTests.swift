@@ -10,6 +10,21 @@ struct VirtualIdentityPresentationTests {
     #expect(VirtualDeviceProfile.xboxOneS.presentation.controllerSymbolName == "xbox.logo")
   }
 
+  /// The persona declares its glyphs; a Microsoft vendor ID alone does not select Xbox symbols.
+  @Test
+  func personaGlyphFamilyDecidesSymbolsNotVendorID() {
+    let persona = VirtualDeviceProfile(
+      vendorID: 0x045E,
+      productID: 0x02FD,
+      versionNumber: 0,
+      productName: "Custom Pad",
+      manufacturer: "Custom",
+      transport: "USB",
+      glyphFamily: .generic
+    )
+    #expect(persona.presentation == .generic)
+  }
+
   @Test
   func genericHIDUsesGenericSymbol() {
     #expect(VirtualDeviceProfile.openJoystickDriverGenericHID.presentation == .generic)

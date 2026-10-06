@@ -139,7 +139,7 @@ extension DevicePipeline {
     handle: any USBTransportSession,
     runGeneration: UInt64? = nil
   ) async -> Bool {
-    let retryDelays = driver.sessionPlan.usbStartupRetryDelays
+    let retryDelays = plan.usbStartupRetryDelays
     lastUSBStartupError = nil
     for attempt in 0...retryDelays.count {
       guard isCurrentUSBOperation(runGeneration) else { return false }
@@ -187,7 +187,7 @@ extension DevicePipeline {
   /// The driver's startup writes, then the assigned player slot unless the slot waits for an
   /// input connection.
   func usbStartupWrites() -> [PhysicalOutputWrite] {
-    guard !driver.sessionPlan.requiresInputConnectionBeforeOutput else {
+    guard !plan.requiresInputConnectionBeforeOutput else {
       return driver.startupWrites()
     }
     return driver.startupWrites() + assignedPlayerIndicatorWrites()
@@ -210,7 +210,7 @@ extension DevicePipeline {
     runGeneration: UInt64? = nil
   ) async throws {
     let writes = usbStartupWrites()
-    let interval = driver.sessionPlan.usbStartupIntervalNanoseconds
+    let interval = plan.usbStartupIntervalNanoseconds
     for (index, write) in writes.enumerated() {
       let handleIsCurrent: Bool
       if let currentHandle = usbHandle {

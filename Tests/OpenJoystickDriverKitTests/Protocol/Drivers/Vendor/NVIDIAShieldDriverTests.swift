@@ -26,8 +26,8 @@ private enum ShieldReport {
 }
 
 /// A fresh driver per use: drivers keep the last parsed state.
-private var v103: NVIDIAShieldDriver { NVIDIAShieldDriver(productID: 0x7210) }
-private var v104: NVIDIAShieldDriver { NVIDIAShieldDriver(productID: 0x7214) }
+private var v103: NVIDIAShieldDriver { NVIDIAShieldDriver(isShield2015: true) }
+private var v104: NVIDIAShieldDriver { NVIDIAShieldDriver(isShield2015: false) }
 
 @Suite
 struct NVIDIAShieldDriverTests {

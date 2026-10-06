@@ -67,7 +67,7 @@ Sources/OpenJoystickDriverKit/Protocol/  (parsing and transport behavior, Swift)
 
 **Do not use when.** The whole record is wrong. In that case either the upstream revision needs a bump, or the device is not the one upstream describes; check before overriding.
 
-The merge is shallow: `{**upstream, **set}`. A patched section replaces the upstream section whole, so `set.usb` must carry every `usb` field the device needs, not only the one that changed. The generator also rejects an orphan patch (no upstream record) and a redundant patch (one that changes nothing).
+The merge is shallow: `{**upstream, **set}`. A patched section replaces the upstream section whole, so `set.usb` must carry every `usb` field the device needs, not only the one that changed. The exception is a `set.protocol` that keeps the upstream family: it merges one level into the upstream block (RFC 7396, lists replace), so upstream quirks it does not name stay. The generator also rejects an orphan patch (no upstream record) and a redundant patch (one that changes nothing).
 
 **Cost removed.** A full-record copy stops tracking upstream fixes. A patch keeps every section that it does not set.
 

@@ -128,6 +128,16 @@ struct VirtualInputEventTests {
     }
   }
 
+  /// A record's `tuning.stickDeadzone` reaches the dispatcher as a rescaling dead zone.
+  @Test
+  func recordTuningSetsTheStickDeadZone() {
+    let tuned = DeviceIdentifier(vendorID: 0x11C1, productID: 0x5600)
+    #expect(
+      UserSpaceOutputDispatcher.stickTransfer(for: tuned)
+        == .init(deadzone: 0.02, rescalesDeadzone: true)
+    )
+  }
+
   @Test
   func xidSoutheastSurvivesParserToReport() throws {
     var packet = [UInt8](repeating: 0, count: 20)

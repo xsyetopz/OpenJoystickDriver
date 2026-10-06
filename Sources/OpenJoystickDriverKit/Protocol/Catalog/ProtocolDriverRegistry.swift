@@ -193,11 +193,8 @@ public final class ProtocolDriverRegistry: Sendable {
       return .success(
         DualShock4Driver(
           prefersBluetooth: variant == .bluetoothClassic,
-          usesFactoryCalibration: identifier.controllerIdentity.vendorID == 0x054C,
-          model: DualShock4Model(
-            vendorID: identifier.controllerIdentity.vendorID,
-            productID: identifier.controllerIdentity.productID
-          )
+          usesFactoryCalibration: record.quirks.contains(.factoryCalibration),
+          model: DualShock4Model(quirks: record.quirks)
         )
       )
     case .sonyDualSense:
@@ -256,7 +253,7 @@ public final class ProtocolDriverRegistry: Sendable {
         )
       )
     case .vendorNVIDIAShield:
-      return .success(NVIDIAShieldDriver(productID: identifier.controllerIdentity.productID))
+      return .success(NVIDIAShieldDriver(isShield2015: record.quirks.contains(.shield2015)))
     case .vendorGameSir:
       switch variant {
       case .usb:

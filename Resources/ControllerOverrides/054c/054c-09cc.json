@@ -1,0 +1,12 @@
+{
+	"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+	"operation": "patch",
+	"vendorID": 1356,
+	"productID": 2508,
+	"set": {
+		"protocol": {
+			"family": "sony.dualshock4",
+			"quirks": ["factory-calibration"]
+		}
+	}
+}

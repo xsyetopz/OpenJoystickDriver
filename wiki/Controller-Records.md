@@ -11,6 +11,8 @@ This page explains how to add a controller that OpenJoystickDriver does not know
 - [Describe a Controller's Input Reports](#describe-a-controllers-input-reports)
 - [Add Rumble To a Controller](#add-rumble-to-a-controller)
 - [Send Fixed Reports At Startup](#send-fixed-reports-at-startup)
+- [Tune Timings and the Stick Deadzone](#tune-timings-and-the-stick-deadzone)
+- [Select a Model With a Quirk](#select-a-model-with-a-quirk)
 - [Draft a Record From a Connected Controller][toc-1]
 - [Install a Record](#install-a-record)
 - [Check Which Records Apply](#check-which-records-apply)
@@ -26,7 +28,7 @@ A controller record tells OpenJoystickDriver which protocol family drives one co
 A record has one of two operations:
 
 - `add`: a complete record for a model that has no bundled record.
-- `patch`: new values for the `protocol`, `usb`, `ownership`, `output`, or `input` fields of a bundled record. The other fields stay bundled.
+- `patch`: new values for the `protocol`, `usb`, `ownership`, `output`, `input`, or `tuning` fields of a bundled record. The other fields stay bundled. A field you set replaces the bundled field whole, except `protocol`: when it names the bundled family, OJD keeps the bundled protocol values you leave out, and the `quirks` you list are added to the bundled quirks. A patch cannot remove a bundled quirk. A `protocol` with a different family replaces the bundled one whole, with its quirks.
 
 A record for a model that uses raw USB works only when macOS lets OpenJoystickDriver open the device directly. The Xbox USB part of the [OJD driver extension](Connecting-Controllers.md#xbox-usb-driver-extension) claims only the Xbox models in its signed product list, and your record cannot add a model to that list. `ojd record validate` says when this applies.
 
@@ -120,6 +122,41 @@ A HID controller that needs a fixed report before it sends input can name it in 
 - `transport` limits the write to `usb`, `bluetooth-classic`, or `bluetooth-le`. Without it, OpenJoystickDriver sends the write on every transport.
 
 List 1 to 16 writes. OpenJoystickDriver sends them in order after the protocol driver's own startup, only when it opens the controller. A failed write is logged and the next one is still sent. Raw-USB families do not take `output.startup`.
+
+## Tune Timings and the Stick Deadzone
+
+A record's `tuning` field changes a value that the protocol driver otherwise sets. Name at least one value. A value you leave out keeps the driver's default.
+
+```json
+"tuning": {
+  "stickDeadzone": 0.02,
+  "hidStartupRecoveryRounds": 3
+}
+```
+
+| Field | Range | Applies to | What it sets |
+| --- | --- | --- | --- |
+| `stickDeadzone` | more than 0, less than 1 | every family | The radial deadzone of both sticks on the virtual gamepad, as a fraction of full deflection. Movement past the deadzone is rescaled to the full range. |
+| `inputLivenessTimeoutMs` | 1 to 60000 | `sony.dualshock4` | How long the controller can send no input before OpenJoystickDriver releases its held controls. The default is 1000. |
+| `hidStartupIntervalMs` | 0 to 60000 | HID families | The gap between the startup writes. |
+| `minimumHIDOutputIntervalMs` | 0 to 60000 | HID families | The shortest gap between rumble and lighting reports. 0 sends them without a limit. |
+| `hidStartupRecoveryIntervalMs` | 1 to 60000 | `nintendo.switch1` | The gap between startup recovery rounds. The default is 200. |
+| `hidStartupRecoveryRounds` | 1 to 10 | `nintendo.switch1` | The startup recovery rounds before OpenJoystickDriver gives up. The default is 2. |
+
+Raw-USB families, such as `xbox.gip`, do not take the two HID timings. The two recovery values apply only to a Switch 1 controller without the `switch-2` or `input-only` quirk, because those controllers have no startup recovery. `ojd record validate` rejects a value outside its range or its families.
+
+A `tuning` in a `patch` replaces the bundled `tuning` whole, so repeat a bundled value that you want to keep. Timings apply the next time the controller connects.
+
+## Select a Model With a Quirk
+
+Some families drive several models that differ in one detail. A quirk in the record's `protocol.quirks` selects the detail:
+
+- `factory-calibration` (`sony.dualshock4`): read the motion calibration from the controller. Without it, OpenJoystickDriver uses nominal calibration, as for third-party DualShock 4 controllers.
+- `wireless-adapter` (`sony.dualshock4`): the Sony DUALSHOCK 4 USB wireless adapter. Output waits until a controller connects to the adapter.
+- `strikepad` (`sony.dualshock4`): a controller whose motion reports half the acceleration in the opposite direction on all axes.
+- `shield-2015` (`vendor.nvidia-shield`): the 2015 SHIELD controller, which has rumble. Without it, the driver treats the controller as the 2017 model, which is input-only on macOS.
+
+A DualShock 4 record takes at most one of `wireless-adapter` and `strikepad`. Because a `patch` adds quirks and cannot remove them, a patch cannot change a bundled model quirk to the other one.
 
 ## Draft a Record From a Connected Controller
 

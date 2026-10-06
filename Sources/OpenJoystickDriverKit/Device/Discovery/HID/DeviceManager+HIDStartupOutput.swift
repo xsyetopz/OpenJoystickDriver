@@ -132,11 +132,7 @@ extension DeviceManager {
     )
     guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return false }
     if plan.hasStartupRecovery {
-      await runHIDStartupRecovery(
-        pipeline: pipeline,
-        connection: connection,
-        interval: plan.hidStartupIntervalNanoseconds
-      )
+      await runHIDStartupRecovery(pipeline: pipeline, connection: connection, plan: plan)
     }
     return succeeded
   }
@@ -144,14 +140,17 @@ extension DeviceManager {
   private func runHIDStartupRecovery(
     pipeline: DevicePipeline,
     connection: HIDDeviceConnection,
-    interval: UInt64
+    plan: DriverSessionPlan
   ) async {
     let locationID = connection.routingLocationID
-    for round in 0..<3 {
-      do { try await Task.sleep(nanoseconds: 200_000_000) } catch { return }
+    let interval = plan.hidStartupIntervalNanoseconds
+    for round in 0...plan.hidStartupRecoveryRounds {
+      do { try await Task.sleep(nanoseconds: plan.hidStartupRecoveryIntervalNanoseconds) } catch {
+        return
+      }
       guard !Task.isCancelled, await isCurrentHIDStartupPipeline(pipeline, connection: connection)
       else { return }
-      if round == 2 {
+      if round == plan.hidStartupRecoveryRounds {
         await pipeline.expireHIDStartupRecovery()
         return
       }

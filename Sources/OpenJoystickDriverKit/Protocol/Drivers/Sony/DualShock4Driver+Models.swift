@@ -20,11 +20,14 @@ public enum DualShock4Model: Equatable, Sendable {
   /// half the acceleration it should, and in the opposite direction on all axes".
   case strikePad
 
-  public init(vendorID: UInt16, productID: UInt16) {
-    switch (vendorID, productID) {
-    case (0x054C, 0x0BA0): self = .wirelessAdapter
-    case (0x054C, 0x05C5): self = .strikePad
-    default: self = .standard
+  /// The model a controller record selects with the `wireless-adapter` or `strikepad` quirk.
+  public init(quirks: [ControllerQuirk]) {
+    if quirks.contains(.wirelessAdapter) {
+      self = .wirelessAdapter
+    } else if quirks.contains(.strikePad) {
+      self = .strikePad
+    } else {
+      self = .standard
     }
   }
 
