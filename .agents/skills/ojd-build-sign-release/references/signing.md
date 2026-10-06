@@ -13,9 +13,9 @@
 1. `./Scripts/ojd signing audit` compares the local assets with the expected ones.
 1. `./Scripts/ojd signing configure` rewrites `.env.dev` or `.env.release` from the installed assets.
 1. `./Scripts/ojd signing doctor` fails closed on any of these:
-   - the DEXT profile is missing;
-   - the host allowlist is not exactly `com.openjoystickdriver.VirtualHIDDevice`;
-   - the USB entitlement, when present, has the wrong shape;
+   - the DEXT profile (`OpenJoystickDriver_XboxUSBDevice.provisionprofile`, or `OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile` for release) is missing;
+   - the host allowlist is not exactly `com.openjoystickdriver.XboxUSBDevice`;
+   - the USB entitlement has the wrong shape;
    - a forbidden entitlement is present.
 1. Inspect the artifacts directly:
 
@@ -37,12 +37,12 @@
 
 **Definition.** The canonical shape is in `docs/development/signing.md`, under "Entitlement Ownership":
 
-- The host app has `system-extension.install`, `driverkit.userclient-access` containing exactly `com.openjoystickdriver.VirtualHIDDevice`, and `hid.virtual.device`. It never has `allow-any-userclient-access`. A development host profile without a grant for that bundle ID builds the app without `userclient-access` and without the DEXT (`IOHIDUserDevice` fallback). Release still requires the exact grant.
-- The single DEXT, `com.openjoystickdriver.VirtualHIDDevice`, has `driverkit`, `driverkit.family.hid.device`, `driverkit.transport.hid`, and `driverkit.family.hid.eventservice`. It has no virtual-HID (`hid.virtual.device`) entitlement.
-- `driverkit.transport.usb` is optional. When present it has exactly the seven approved Microsoft VID/PID pairs and no wildcard. Without it the build signs factory-only (the `HIDFactory` personality, no Xbox USB ownership via the `XboxUSB` personality). The team's `transport.usb` capability is already assigned; enable it on the `com.openjoystickdriver.VirtualHIDDevice` App ID and regenerate the DriverKit profile instead of requesting it again.
+- The host app has `system-extension.install`, `driverkit.userclient-access` containing exactly `com.openjoystickdriver.XboxUSBDevice`, and `hid.virtual.device`. It never has `allow-any-userclient-access`. `hid.virtual.device` belongs to the app (`com.openjoystickdriver`) profile only, because it creates the virtual gamepads through `IOHIDUserDevice`.
+- The single DEXT, `com.openjoystickdriver.XboxUSBDevice`, has only `driverkit` and `driverkit.transport.usb`. It has no `hid.virtual.device` entitlement, and Apple says that entitlement must not be in a DEXT.
+- `driverkit.transport.usb` has exactly the seven approved Microsoft VID/PID pairs and no wildcard. The host profiles grant `driverkit.userclient-access` only for `com.openjoystickdriver.XboxUSBDevice`, so a DEXT with another bundle ID is not embedded. Enable `transport.usb` on the `com.openjoystickdriver.XboxUSBDevice` App ID and regenerate the DriverKit profile instead of requesting it again.
 
 **Use when.** Reviewing a signing change, or a profile regenerated after a capability change.
 
 **Do not use when.** A controller outside those seven pairs needs support. Such a controller uses the app's direct IOUSBHost route (`ojd-controller-catalog`), not a DriverKit grant.
 
-**Verify.** `codesign -d --entitlements - --xml` on the embedded `.dext` lists the four HID/DriverKit entitlements, and the seven pairs and nothing more when the USB grant exists.
+**Verify.** `codesign -d --entitlements - --xml` on the embedded `.dext` lists `driverkit` and `driverkit.transport.usb`, with the seven pairs and nothing more when the USB grant exists.
