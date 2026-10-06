@@ -7,7 +7,7 @@ struct LocalizationTests {
   @Test
   func packagesTheCompleteLocaleInventory() {
     let localizations = Localization.availableLocalizations()
-    #expect(localizations.count == 20)
+    #expect(localizations.count == 22)
     let normalized = Set(localizations.map { $0.lowercased() })
     #expect(normalized.contains("en-us"))
     #expect(normalized.contains("ar-sa"))

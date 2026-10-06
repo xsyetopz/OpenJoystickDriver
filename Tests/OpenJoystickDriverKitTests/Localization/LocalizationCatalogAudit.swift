@@ -52,6 +52,17 @@ enum LocalizationCatalogAudit {
     "fr-CA": frenchTerms.union(["developer.packetColumnDirection"]),
     "fr-FR": frenchTerms,
     "hi-IN": ["keyboard.escape", "keyboard.return"],
+    "id-ID": [
+      "cli.controller.show.label.input", "cli.explain.area", "cli.explain.area.endpoint",
+      "common.runtime", "common.status", "console.output", "console.stream", "debug.runtime",
+      "debug.title", "developer.packetColumnData", "inputTest.home", "inputTest.menu",
+      "inputTest.tabInput", "inputTest.tabOutput", "keyboard.capsLock", "keyboard.command",
+      "keyboard.control", "keyboard.escape", "keyboard.option", "keyboard.return", "keyboard.shift",
+      "keyboard.tab", "mapping.guide", "mapping.mode", "menu.edit", "menu.zoom",
+      "motion.calibration.offset", "profiles.physical.motor", "profiles.stick.horizontal",
+      "profiles.target", "profiles.trackball.enabled", "profiles.turbo", "settings.debug",
+      "settings.runtime", "settings.status", "shortcuts.controller.model",
+    ],
     "it-IT": [
       "capture.controller", "cli.access.status.socket", "cli.controller.show.label.input",
       "cli.controller.show.label.record", "common.controller", "console.output", "console.title",
@@ -99,6 +110,12 @@ enum LocalizationCatalogAudit {
       "keyboard.capsLock", "keyboard.command", "keyboard.control", "keyboard.delete",
       "keyboard.escape", "keyboard.option", "keyboard.return", "keyboard.shift", "keyboard.tab",
       "mapping.guide",
+    ],
+    "th-TH": [
+      "inputTest.home", "keyboard.capsLock", "keyboard.command", "keyboard.control",
+      "keyboard.delete", "keyboard.escape", "keyboard.forwardDelete", "keyboard.option",
+      "keyboard.pageDown", "keyboard.pageUp", "keyboard.return", "keyboard.shift",
+      "keyboard.space", "keyboard.tab",
     ],
     "tr-TR": [
       "keyboard.control", "keyboard.escape", "keyboard.option", "keyboard.return", "keyboard.shift",

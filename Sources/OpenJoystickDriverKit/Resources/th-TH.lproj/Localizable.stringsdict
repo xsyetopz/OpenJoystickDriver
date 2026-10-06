@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>status.controllerConnected</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>เชื่อมต่อคอนโทรลเลอร์ %d ตัว</string>
+			<key>zero</key>
+			<string>เชื่อมต่อคอนโทรลเลอร์ %d ตัว</string>
+			<key>two</key>
+			<string>เชื่อมต่อคอนโทรลเลอร์ %d ตัว</string>
+			<key>few</key>
+			<string>เชื่อมต่อคอนโทรลเลอร์ %d ตัว</string>
+			<key>many</key>
+			<string>เชื่อมต่อคอนโทรลเลอร์ %d ตัว</string>
+			<key>other</key>
+			<string>เชื่อมต่อคอนโทรลเลอร์ %d ตัว</string>
+		</dict>
+	</dict>
+	<key>status.activeProfilesCount</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>โปรไฟล์ที่ใช้งานอยู่ %d รายการ</string>
+			<key>zero</key>
+			<string>โปรไฟล์ที่ใช้งานอยู่ %d รายการ</string>
+			<key>two</key>
+			<string>โปรไฟล์ที่ใช้งานอยู่ %d รายการ</string>
+			<key>few</key>
+			<string>โปรไฟล์ที่ใช้งานอยู่ %d รายการ</string>
+			<key>many</key>
+			<string>โปรไฟล์ที่ใช้งานอยู่ %d รายการ</string>
+			<key>other</key>
+			<string>โปรไฟล์ที่ใช้งานอยู่ %d รายการ</string>
+		</dict>
+	</dict>
+	<key>profiles.assignments</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>การกำหนด %d รายการ</string>
+			<key>zero</key>
+			<string>การกำหนด %d รายการ</string>
+			<key>two</key>
+			<string>การกำหนด %d รายการ</string>
+			<key>few</key>
+			<string>การกำหนด %d รายการ</string>
+			<key>many</key>
+			<string>การกำหนด %d รายการ</string>
+			<key>other</key>
+			<string>การกำหนด %d รายการ</string>
+		</dict>
+	</dict>
+	<key>debug.devices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>ไม่พบ</string>
+			<key>one</key>
+			<string>พบ %d รายการ</string>
+			<key>two</key>
+			<string>พบ %d รายการ</string>
+			<key>few</key>
+			<string>พบ %d รายการ</string>
+			<key>many</key>
+			<string>พบ %d รายการ</string>
+			<key>other</key>
+			<string>พบ %d รายการ</string>
+		</dict>
+	</dict>
+	<key>debug.outputDevices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>ไม่พบอุปกรณ์เอาต์พุตของคอนโทรลเลอร์</string>
+			<key>one</key>
+			<string>พบอุปกรณ์เอาต์พุตของคอนโทรลเลอร์ %d รายการ</string>
+			<key>two</key>
+			<string>พบอุปกรณ์เอาต์พุตของคอนโทรลเลอร์ %d รายการ</string>
+			<key>few</key>
+			<string>พบอุปกรณ์เอาต์พุตของคอนโทรลเลอร์ %d รายการ</string>
+			<key>many</key>
+			<string>พบอุปกรณ์เอาต์พุตของคอนโทรลเลอร์ %d รายการ</string>
+			<key>other</key>
+			<string>พบอุปกรณ์เอาต์พุตของคอนโทรลเลอร์ %d รายการ</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>status.controllerConnected</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d pengontrol terhubung</string>
+			<key>zero</key>
+			<string>%d pengontrol terhubung</string>
+			<key>two</key>
+			<string>%d pengontrol terhubung</string>
+			<key>few</key>
+			<string>%d pengontrol terhubung</string>
+			<key>many</key>
+			<string>%d pengontrol terhubung</string>
+			<key>other</key>
+			<string>%d pengontrol terhubung</string>
+		</dict>
+	</dict>
+	<key>status.activeProfilesCount</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d profil aktif</string>
+			<key>zero</key>
+			<string>%d profil aktif</string>
+			<key>two</key>
+			<string>%d profil aktif</string>
+			<key>few</key>
+			<string>%d profil aktif</string>
+			<key>many</key>
+			<string>%d profil aktif</string>
+			<key>other</key>
+			<string>%d profil aktif</string>
+		</dict>
+	</dict>
+	<key>profiles.assignments</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d penetapan</string>
+			<key>zero</key>
+			<string>%d penetapan</string>
+			<key>two</key>
+			<string>%d penetapan</string>
+			<key>few</key>
+			<string>%d penetapan</string>
+			<key>many</key>
+			<string>%d penetapan</string>
+			<key>other</key>
+			<string>%d penetapan</string>
+		</dict>
+	</dict>
+	<key>debug.devices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>Tidak ada yang terdeteksi</string>
+			<key>one</key>
+			<string>%d terdeteksi</string>
+			<key>two</key>
+			<string>%d terdeteksi</string>
+			<key>few</key>
+			<string>%d terdeteksi</string>
+			<key>many</key>
+			<string>%d terdeteksi</string>
+			<key>other</key>
+			<string>%d terdeteksi</string>
+		</dict>
+	</dict>
+	<key>debug.outputDevices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>Tidak ada perangkat output pengontrol yang terdeteksi</string>
+			<key>one</key>
+			<string>%d perangkat output pengontrol terdeteksi</string>
+			<key>two</key>
+			<string>%d perangkat output pengontrol terdeteksi</string>
+			<key>few</key>
+			<string>%d perangkat output pengontrol terdeteksi</string>
+			<key>many</key>
+			<string>%d perangkat output pengontrol terdeteksi</string>
+			<key>other</key>
+			<string>%d perangkat output pengontrol terdeteksi</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
