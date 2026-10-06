@@ -159,8 +159,11 @@ Some families drive several models that differ in one detail. A quirk in the rec
 - `scuf-envision` (`hid.descriptor`): input comes only from report 6, buttons 1 to 10 are mapped, and Z and Rz swap with Rx and Ry.
 - `z-rz-brake-left` (`hid.descriptor`): Z and Rz are the right stick, Brake is LT and Accelerator is RT, and button 13 is Home. A controller without a record gets this layout when its report descriptor has Z, Rz, a Brake or Accelerator, and no Rx or Ry.
 - `dragonrise` (`hid.descriptor`): Z and Rz are the right stick, buttons follow the DirectInput order (1 to 4 are Y, B, A, X), and buttons 7 and 8 are digital L2 and R2.
+- `unprobed-sensors` and `unprobed-touchpad` (`sony.dualsense`): a third-party DualSense that does not answer the capability probe still has motion sensors or a touchpad, and either quirk reads its input in the alternate report layout.
+- `forced-vibration` (`sony.dualsense`): a third-party DualSense keeps vibration when its probe reply omits it.
+- `receiver` (`sony.dualsense`): a third-party DualSense wireless receiver, which reports with no controller paired. OJD treats the controller as connected only while the packet sequence advances.
 
-A DualShock 4 record takes at most one of `wireless-adapter` and `strikepad`, and a `hid.descriptor` record takes at most one layout quirk. Because a `patch` adds quirks and cannot remove them, a patch cannot change a bundled model or layout quirk to another one.
+A DualShock 4 record takes at most one of `wireless-adapter` and `strikepad`, and a `hid.descriptor` record takes at most one layout quirk. A `sony.dualsense` record with a vendor ID other than Sony's (`054C`) runs as a third-party controller, and its quirks describe that model; a Sony record takes no quirks. Because a `patch` adds quirks and cannot remove them, a patch cannot change a bundled model or layout quirk to another one.
 
 ## Draft a Record From a Connected Controller
 

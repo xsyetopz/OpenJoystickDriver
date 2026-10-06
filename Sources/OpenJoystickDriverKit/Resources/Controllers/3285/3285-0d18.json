@@ -3,6 +3,10 @@
   "vendorID": 12933,
   "productID": 3352,
   "protocol": {
-    "family": "sony.dualsense"
+    "family": "sony.dualsense",
+    "quirks": [
+      "forced-vibration",
+      "receiver"
+    ]
   }
 }

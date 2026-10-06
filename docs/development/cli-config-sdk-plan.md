@@ -70,6 +70,8 @@ The maintainer approves each commit.
    The GIP announce and XUSB inquiry resend counters stay in Swift, with the stateful framing of those protocols.
    A `patch` of `protocol` that keeps the bundled family merges into the bundled block (RFC 7396), and its `quirks` join the bundled quirks (maintainer decision, 2026-10-06), so a user patch cannot drop the quirks that now carry DualShock 4 calibration and Shield rumble.
    A user patch can set `tuning`, which replaces the bundled `tuning` whole.
+   The `hid.descriptor` axis layouts and the third-party DualSense model values are record quirks; a non-Sony vendor ID still selects third-party DualSense mode.
+   Follow-ups, kept in Swift for this beta: the `JoyConHalf` table (`JoyConPair.swift`), which Presentation, Service, and profile validation call, and the Switch 2 vibration UUID table (`Switch2BluetoothLEHub.swift`), which `Switch2BluetoothLECentral` uses.
 1. **Configuration layer.**
    - A global defaults file, `~/Library/Application Support/OpenJoystickDriver/Defaults.json`, for deadzone and timing defaults.
      Precedence, lowest first: driver default, global file, bundled record, user record, active profile.

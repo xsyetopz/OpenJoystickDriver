@@ -60,6 +60,18 @@ struct ControllerRecordDocument: Decodable {
     tuning = try container.decodeOptional(Tuning.self, for: "tuning")?.tuning ?? .none
     try validateOwnershipAndOutput(codingPath: decoder.codingPath)
     try validateTuning(codingPath: decoder.codingPath)
+    // The vendor ID selects third-party DualSense mode; its model quirks mean nothing on Sony's.
+    guard
+      !(protocolInfo.protocolID == .sonyDualSense && vendorID == Int(dualSenseSonyVendorID)
+        && !protocolInfo.quirks.isEmpty)
+    else {
+      throw DecodingError.dataCorrupted(
+        .init(
+          codingPath: decoder.codingPath + [DocumentKey("protocol")],
+          debugDescription: "a Sony DualSense declares no third-party quirks"
+        )
+      )
+    }
     // Only these deltas have a driver that acts on them: GIP drops rumble, DualSense Edge adds
     // exactly its paddles and function buttons.
     let presentAllowed =

@@ -214,6 +214,45 @@ struct ProtocolDriverRegistryTests {
     #expect(driver.axisLayout == layout)
   }
 
+  /// A non-Sony DualSense record selects third-party mode, and its quirks give SDL's model values.
+  @Test(
+    arguments: [
+      (0x0F0D, 0x0184, [], false, false), (0x1532, 0x100B, [.sensors, .touchpad], false, false),
+      (0x1532, 0x100C, [.sensors, .touchpad], false, true),
+      (0x1532, 0x1012, [.touchpad], false, false), (0x1532, 0x1024, [.touchpad], false, false),
+      (0x1532, 0x1026, [.touchpad], false, true),
+      (0x3285, 0x0D18, [], true, true), (0x3285, 0x0D19, [], true, false),
+    ] as [(UInt16, UInt16, DualSenseFeatures, Bool, Bool)]
+  )
+  func recordQuirksDescribeTheThirdPartyDualSense(
+    vendorID: UInt16,
+    productID: UInt16,
+    unprobedFeatures: DualSenseFeatures,
+    forcesVibration: Bool,
+    isDongle: Bool
+  ) throws {
+    let driver = try #require(
+      try catalogParser(DeviceIdentifier(vendorID: vendorID, productID: productID))
+        as? DualSenseDriver
+    )
+    let model = try #require(driver.thirdParty)
+    #expect(model.unprobedFeatures == unprobedFeatures)
+    #expect(model.usesAlternateReportUnprobed == !unprobedFeatures.isEmpty)
+    #expect(model.forcesVibration == forcesVibration)
+    #expect(model.isDongle == isDongle)
+  }
+
+  @Test
+  func sonyDualSenseRecordsRunInSonyMode() throws {
+    for productID: UInt16 in [0x0CE6, 0x0DF2, 0x0E5F] {
+      let driver = try #require(
+        try catalogParser(DeviceIdentifier(vendorID: 0x054C, productID: productID))
+          as? DualSenseDriver
+      )
+      #expect(driver.thirdParty == nil)
+    }
+  }
+
   @Test
   func everyFamilyAndVariantBuildsThroughTheValidatingFactory() throws {
     var built: Set<String> = []

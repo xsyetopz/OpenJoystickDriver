@@ -3,6 +3,9 @@
   "vendorID": 5426,
   "productID": 4114,
   "protocol": {
-    "family": "sony.dualsense"
+    "family": "sony.dualsense",
+    "quirks": [
+      "unprobed-touchpad"
+    ]
   }
 }

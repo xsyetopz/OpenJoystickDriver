@@ -150,6 +150,16 @@ public enum ControllerQuirk: String, CaseIterable, Sendable {
   /// DragonRise generic USB PCB: Z/Rz right stick and DirectInput button order, where 1-4 are Y,
   /// B, A, X and 7-8 are digital L2 and R2.
   case dragonRise = "dragonrise"
+  /// Third-party DualSense with sensors though it does not answer the probe (SDL's Razer list).
+  /// A non-Sony vendor ID alone selects third-party mode; these quirks describe the model.
+  case unprobedSensors = "unprobed-sensors"
+  /// Third-party DualSense with a touchpad though it does not answer the probe (SDL's Razer
+  /// list). Either unprobed quirk also selects the alternate report without a probe reply.
+  case unprobedTouchpad = "unprobed-touchpad"
+  /// Third-party DualSense whose probe reply omits the vibration it has (SDL's NACON entry).
+  case forcedVibration = "forced-vibration"
+  /// Third-party DualSense wireless receiver that keeps reporting with no controller paired.
+  case receiver = "receiver"
 
   /// The protocol driver that declares this quirk.
   public var protocolID: PhysicalProtocolID {
@@ -163,6 +173,7 @@ public enum ControllerQuirk: String, CaseIterable, Sendable {
     case .factoryCalibration, .wirelessAdapter, .strikePad: .sonyDualShock4
     case .shield2015: .vendorNVIDIAShield
     case .wr007, .scufEnvision, .zRzBrakeLeft, .dragonRise: .hidDescriptor
+    case .unprobedSensors, .unprobedTouchpad, .forcedVibration, .receiver: .sonyDualSense
     }
   }
 }

@@ -209,7 +209,7 @@ public final class ProtocolDriverRegistry: Sendable {
             of: record.capabilityDelta.presentControls
           ),
           vendorID: identifier.controllerIdentity.vendorID,
-          productID: identifier.controllerIdentity.productID
+          quirks: record.quirks
         )
       )
     case .nintendoSwitch1:

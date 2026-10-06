@@ -1,0 +1,12 @@
+{
+	"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+	"operation": "patch",
+	"vendorID": 12933,
+	"productID": 3352,
+	"set": {
+		"protocol": {
+			"family": "sony.dualsense",
+			"quirks": ["forced-vibration", "receiver"]
+		}
+	}
+}

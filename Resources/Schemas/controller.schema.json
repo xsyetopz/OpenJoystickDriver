@@ -437,6 +437,31 @@
 					"if": {
 						"properties": {
 							"family": {
+								"const": "sony.dualsense"
+							}
+						},
+						"required": ["family"]
+					},
+					"then": {
+						"properties": {
+							"quirks": {
+								"items": {
+									"enum": [
+										"unprobed-sensors",
+										"unprobed-touchpad",
+										"forced-vibration",
+										"receiver"
+									]
+								},
+								"type": "array"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"family": {
 								"not": {
 									"enum": [
 										"xbox.gip",
@@ -446,7 +471,8 @@
 										"vendor.ps3-third-party",
 										"sony.dualshock4",
 										"vendor.nvidia-shield",
-										"hid.descriptor"
+										"hid.descriptor",
+										"sony.dualsense"
 									]
 								}
 							}
@@ -1140,6 +1166,34 @@
 									]
 								}
 							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"vendorID": {
+						"const": 1356
+					},
+					"protocol": {
+						"properties": {
+							"family": {
+								"const": "sony.dualsense"
+							}
+						},
+						"required": ["family"],
+						"type": "object"
+					}
+				},
+				"required": ["vendorID", "protocol"]
+			},
+			"then": {
+				"properties": {
+					"protocol": {
+						"not": {
+							"required": ["quirks"]
 						}
 					}
 				}

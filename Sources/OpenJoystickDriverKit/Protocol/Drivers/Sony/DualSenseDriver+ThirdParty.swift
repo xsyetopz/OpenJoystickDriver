@@ -46,8 +46,8 @@ struct DualSenseFeatures: OptionSet {
 /// switches it to SDL's alternate input report, which moves the touch contacts to payload bytes
 /// 31 and 35 and carries a 16-bit microsecond sensor timestamp at 27. A controller that does not
 /// answer keeps the standard report with no sensors, touchpad or output, except the Razer models
-/// SDL names, which never answer. Output is limited to the reported features and never includes
-/// adaptive triggers.
+/// SDL names, which never answer and whose records name their features in quirks. Output is
+/// limited to the reported features and never includes adaptive triggers.
 struct DualSenseThirdPartyModel: Equatable {
   /// Features assumed before the probe, which stand when the controller does not answer.
   let unprobedFeatures: DualSenseFeatures
@@ -58,24 +58,16 @@ struct DualSenseThirdPartyModel: Equatable {
   /// A wireless receiver that keeps reporting while no controller is paired to it.
   let isDongle: Bool
 
-  init(vendorID: UInt16, productID: UInt16) {
-    let identity = [vendorID, productID]
-    switch identity {
-    // Razer Wolverine V2 Pro wired and wireless: sensors and touchpad, no vibration.
-    case [0x1532, 0x100B], [0x1532, 0x100C]:
-      unprobedFeatures = [.sensors, .touchpad]
-      usesAlternateReportUnprobed = true
-    // Razer Kitsune and Raiju V3 Pro wired and wireless: touchpad only.
-    case [0x1532, 0x1012], [0x1532, 0x1024], [0x1532, 0x1026]:
-      unprobedFeatures = [.touchpad]
-      usesAlternateReportUnprobed = true
-    default:
-      unprobedFeatures = []
-      usesAlternateReportUnprobed = false
-    }
-    // NACON Revolution 5 Pro wired and wireless.
-    forcesVibration = identity == [0x3285, 0x0D18] || identity == [0x3285, 0x0D19]
-    isDongle = [[0x3285, 0x0D18], [0x1532, 0x100C], [0x1532, 0x1026]].contains(identity)
+  /// The model a controller record describes with its `sony.dualsense` quirks.
+  init(quirks: [ControllerQuirk]) {
+    var features: DualSenseFeatures = []
+    if quirks.contains(.unprobedSensors) { features.insert(.sensors) }
+    if quirks.contains(.unprobedTouchpad) { features.insert(.touchpad) }
+    unprobedFeatures = features
+    // The sensor timestamp and the touch contacts exist only in the alternate report.
+    usesAlternateReportUnprobed = !features.isEmpty
+    forcesVibration = quirks.contains(.forcedVibration)
+    isDongle = quirks.contains(.receiver)
   }
 }
 

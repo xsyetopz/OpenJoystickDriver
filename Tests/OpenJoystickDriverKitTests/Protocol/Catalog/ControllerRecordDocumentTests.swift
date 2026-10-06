@@ -49,6 +49,28 @@ struct ControllerRecordDocumentTests {
     }
   }
 
+  @Test
+  func decodesThirdPartyDualSenseModelQuirks() throws {
+    let quirks: [ControllerQuirk] = [
+      .unprobedSensors, .unprobedTouchpad, .forcedVibration, .receiver,
+    ]
+    let document = try decode(
+      protocol: ["family": "sony.dualsense", "quirks": quirks.map(\.rawValue)],
+      vendorID: 0x1532
+    )
+    #expect(document.protocolInfo.quirks == quirks)
+  }
+
+  @Test
+  func rejectsThirdPartyQuirksOnASonyDualSense() {
+    #expect(throws: DecodingError.self) {
+      try decode(
+        protocol: ["family": "sony.dualsense", "quirks": ["receiver"]],
+        vendorID: 0x054C
+      )
+    }
+  }
+
   @Test(arguments: PhysicalProtocolID.allCases.filter(\.storesVariant))
   func decodesEveryStoredVariant(family: PhysicalProtocolID) throws {
     for variant in family.variants {
@@ -120,6 +142,7 @@ struct ControllerRecordDocumentTests {
       ["family": "hid.descriptor", "quirks": ["wr007", "dragonrise"]],
       ["family": "hid.descriptor", "quirks": ["wireless-adapter"]],
       ["family": "sony.dualshock4", "quirks": ["wr007"]],
+      ["family": "sony.dualsense", "quirks": ["wireless-adapter"]],
       ["family": "xbox.gip", "startupPackets": ["xbox.gip/power-on"]],
       ["family": "xbox.gip", "initialization": ["powerOn"]],
       ["family": "xbox.gip", "initialization": [String]()],
@@ -380,10 +403,11 @@ struct ControllerRecordDocumentTests {
     protocol protocolInfo: [String: any Sendable],
     usb: [String: any Sendable]? = nil,
     capabilities: [String: any Sendable]? = nil,
-    extra: [String: any Sendable] = [:]
+    extra: [String: any Sendable] = [:],
+    vendorID: Int = 0x045E
   ) throws -> ControllerRecordDocument {
     var record: [String: Any] = [
-      "$schema": ControllerRecordDocument.schemaID, "vendorID": 0x045E, "productID": 0x02EA,
+      "$schema": ControllerRecordDocument.schemaID, "vendorID": vendorID, "productID": 0x02EA,
       "protocol": protocolInfo,
     ]
     record.merge(extra) { current, _ in current }

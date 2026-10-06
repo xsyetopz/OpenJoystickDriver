@@ -62,19 +62,19 @@ public final class DualSenseDriver: PhysicalProtocolDriver {
   var dongleConnected = false
   var pendingConnectionState: ControllerInputConnectionState?
 
-  /// Creates a new DualSense parser for the controller with `vendorID` and `productID`.
+  /// Creates a new DualSense parser for a controller from `vendorID`; a non-Sony controller
+  /// takes its model from the record `quirks`.
   public init(
     prefersBluetooth: Bool = false,
     hasEdgeButtons: Bool = false,
     vendorID: UInt16 = 0x054C,
-    productID: UInt16 = 0
+    quirks: [ControllerQuirk] = []
   ) {
     self.hasEdgeButtons = hasEdgeButtons
     isBluetoothVariant = prefersBluetooth
     connectionMode = prefersBluetooth ? .bluetooth : .usb
     let model =
-      vendorID == dualSenseSonyVendorID
-      ? nil : DualSenseThirdPartyModel(vendorID: vendorID, productID: productID)
+      vendorID == dualSenseSonyVendorID ? nil : DualSenseThirdPartyModel(quirks: quirks)
     thirdParty = model
     features = model?.unprobedFeatures ?? .all
     if model?.usesAlternateReportUnprobed == true { useAlternateReport() }
