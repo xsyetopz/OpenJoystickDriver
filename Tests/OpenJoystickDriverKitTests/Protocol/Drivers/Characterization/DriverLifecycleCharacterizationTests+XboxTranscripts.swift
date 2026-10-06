@@ -12,10 +12,10 @@ extension DriverLifecycleCharacterizationTests {
         "capabilities rumble=[leftMain,leftTrigger,rightMain,rightTrigger] binary=[]",
         "capabilities lighting=[]", "capabilities triggers=[]",
         "usb.startup interval=50000000 retries=[1000000000, 2000000000] packets=3", "  n=5",
-        "    0520000100", "  n=7", "    0a200003000114", "  n=6", "    062000020100",
-        "usb.keepAlive interval=4000000000", "  ep=0x01 timeout=2000 n=7", "    03200003000000",
+        "    0520010100", "  n=7", "    0a200203000114", "  n=6", "    062001020100",
+        "usb.keepAlive interval=4000000000", "  ep=0x01 timeout=2000 n=7", "    03200103000000",
         "usb.deferred inputs=1 packets=4", "  n=13", "    012001090002201c0000000000", "  n=5",
-        "    0520000100", "  n=7", "    0a200003000114", "  n=6", "    062000020100",
+        "    0520010100", "  n=7", "    0a200203000114", "  n=6", "    062001020100",
         "usb.deferred drained=0", "usb.connection[connected] packets=0",
         "usb.connection[disconnected] packets=0",
         "hid.startupOutput[USB] interval=0 required=false beforeReads=false reports=0",
@@ -37,7 +37,7 @@ extension DriverLifecycleCharacterizationTests {
         "presence input#0 change=nil", "liveness timeout=nil", "liveness observation=nil",
         "liveness format=nil", "battery=nil",
         "out[cold].usbRumble motors=[leftMain,rightMain,leftTrigger,rightTrigger]",
-        "  ep=0x01 timeout=2000 n=13", "    09000009000f20104080ff00ff",
+        "  ep=0x01 timeout=2000 n=13", "    09000109000f20104080ff00ff",
       ]
     )
   }
@@ -49,10 +49,10 @@ extension DriverLifecycleCharacterizationTests {
         "capabilities rumble=[leftMain,leftTrigger,rightMain,rightTrigger] binary=[]",
         "capabilities lighting=[]", "capabilities triggers=[]",
         "usb.startup interval=50000000 retries=[1000000000, 2000000000] packets=3", "  n=5",
-        "    0520000100", "  n=7", "    0a200003000114", "  n=6", "    062000020100",
+        "    0520010100", "  n=7", "    0a200203000114", "  n=6", "    062001020100",
         "usb.keepAlive nil", "usb.deferred inputs=1 packets=4", "  n=13",
-        "    012001090002201c0000000000", "  n=5", "    0520000100", "  n=7", "    0a200003000114",
-        "  n=6", "    062000020100", "usb.deferred drained=0",
+        "    012001090002201c0000000000", "  n=5", "    0520010100", "  n=7", "    0a200203000114",
+        "  n=6", "    062001020100", "usb.deferred drained=0",
         "usb.connection[connected] packets=0", "usb.connection[disconnected] packets=0",
         "hid.startupOutput[USB] interval=0 required=false beforeReads=false reports=0",
         "hid.featureReads[USB] validates=false requests=[]",
@@ -73,7 +73,7 @@ extension DriverLifecycleCharacterizationTests {
         "presence input#0 change=nil", "liveness timeout=nil", "liveness observation=nil",
         "liveness format=nil", "battery=nil",
         "out[cold].usbRumble motors=[leftMain,rightMain,leftTrigger,rightTrigger]",
-        "  ep=0x07 timeout=2000 n=13", "    09000009000f20104080ff00ff",
+        "  ep=0x07 timeout=2000 n=13", "    09000109000f20104080ff00ff",
       ]
     )
   }

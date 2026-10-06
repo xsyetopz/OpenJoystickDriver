@@ -11,10 +11,10 @@ extension DriverLifecycleCharacterizationTests {
     #expect(
       try zeroRumbleLines(Self.namedSubjects[0..<10]) == [
         "gipUSB off [leftMain,leftTrigger,rightMain,rightTrigger]", "  plan interval=0 reports=1",
-        "  ep=0x01 timeout=2000 n=13", "    09000009000f00000000ff00ff",
+        "  ep=0x01 timeout=2000 n=13", "    09000109000f00000000ff00ff",
         "gipKeepAliveDisabled off [leftMain,leftTrigger,rightMain,rightTrigger]",
         "  plan interval=0 reports=1", "  ep=0x07 timeout=2000 n=13",
-        "    09000009000f00000000ff00ff", "xidGamepad off [leftMain,rightMain]",
+        "    09000109000f00000000ff00ff", "xidGamepad off [leftMain,rightMain]",
         "  plan interval=0 reports=1", "  ep=0x02 timeout=2000 n=6", "    000600000000",
         "xusbWired off [leftMain,rightMain]", "  plan interval=0 reports=1",
         "  ep=0x01 timeout=2000 n=8", "    0008000000000000",
@@ -71,8 +71,8 @@ extension DriverLifecycleCharacterizationTests {
     #expect(
       try gipChannelSubsetLines() == [
         "triggers", "  plan interval=0 reports=1", "  ep=0x01 timeout=2000 n=13",
-        "    09000009000f20100000ff00ff", "main", "  plan interval=0 reports=1",
-        "  ep=0x01 timeout=2000 n=13", "    09000009000f00004080ff00ff",
+        "    09000109000f20100000ff00ff", "main", "  plan interval=0 reports=1",
+        "  ep=0x01 timeout=2000 n=13", "    09000109000f00004080ff00ff",
       ]
     )
   }

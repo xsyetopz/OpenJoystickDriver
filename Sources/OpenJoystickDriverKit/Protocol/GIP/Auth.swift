@@ -83,7 +83,7 @@ final class GIPAuthHandler {
 
   /// Wrap an auth sub-protocol payload in a GIP CMD 0x06 packet.
   private func authPacket(payload: [UInt8], sequencer: inout GIPSequencer) -> [UInt8] {
-    let seq = sequencer.next(for: GIPCommand.authenticate)
+    let seq = sequencer.next(for: GIPCommand.authenticate, options: GIPOption.internal)
     var packet: [UInt8] = [GIPCommand.authenticate, GIPOption.internal, seq]
 
     // Length encoding: if payload > 127 bytes, use extended 2-byte length

@@ -161,6 +161,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Quit within a second on SIGTERM or SIGINT instead of hanging in AppKit's termination loop.
 - Send the full 49-byte DualShock 3 and Sixaxis output report so player LEDs change over USB.
 - Start the menu-bar app without an app bundle instead of crashing on notification setup.
+- Number GIP (Xbox One and Series) host messages as the Linux GIP driver does: system messages share one counter, security messages and vendor messages such as rumble each have their own, and no counter sends 0, because each starts at 1 and wraps from 255 to 1. Each command previously had its own counter that started at 0. Not hardware-verified.
 
 ## [0.5.0-beta.4] - 2026-09-15
 

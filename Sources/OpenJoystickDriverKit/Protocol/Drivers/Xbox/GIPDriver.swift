@@ -92,14 +92,16 @@ public final class GIPDriver: PhysicalProtocolDriver {
   /// Sends the GIP init sequence to the controller.
   public func startupWrites() -> [PhysicalOutputWrite] {
     startupPackets.map { packet in
-      usbWrite(packet.packet(sequence: sequencer.next(for: packet.command)))
+      var bytes = packet.packet(sequence: 0)
+      bytes[2] = sequencer.next(for: bytes[0], options: bytes[1])
+      return usbWrite(bytes)
     }
   }
 
   /// Builds the periodic host-side GIP status packet (CMD=0x03).
   public func keepAliveWrites() -> [PhysicalOutputWrite] {
     guard keepAlivePolicy == .enabled else { return [] }
-    let seq = sequencer.next(for: GIPCommand.status)
+    let seq = sequencer.next(for: GIPCommand.status, options: GIPOption.internal)
     return [
       usbWrite([
         GIPCommand.status, GIPOption.internal, seq, gipStatusSubCommandLength, 0x00, 0x00, 0x00,
@@ -234,7 +236,7 @@ public final class GIPDriver: PhysicalProtocolDriver {
     pendingWrites += startupWrites()
   }
 
-  /// A new transport session is a new GIP session: sequences restart at zero, as on first
+  /// A new transport session is a new GIP session: sequences restart at 1, as on first
   /// attach, and no partial frame, pending write or announce count carries over.
   public func resetProtocolState() {
     sequencer = GIPSequencer()
@@ -261,7 +263,7 @@ public final class GIPDriver: PhysicalProtocolDriver {
     default: throw .unsupportedCapability(command.capability)
     }
     let packet = rumbleFrame(
-      sequence: sequencer.next(for: GIPCommand.rumble),
+      sequence: sequencer.next(for: GIPCommand.rumble, options: 0),
       mainMotors: (intensities.leftMain.byte, intensities.rightMain.byte),
       triggerMotors: (intensities.leftTrigger.byte, intensities.rightTrigger.byte)
     )

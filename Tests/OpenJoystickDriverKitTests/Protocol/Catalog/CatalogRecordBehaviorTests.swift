@@ -9,23 +9,29 @@ import Testing
 struct CatalogRecordBehaviorTests {
   private let registry = ProtocolDriverRegistry()
 
-  private static let powerOn: [UInt8] = [5, 32, 0, 1, 0]
-  private static let ledOn: [UInt8] = [10, 32, 0, 3, 0, 1, 20]
-  private static let authDone: [UInt8] = [6, 32, 0, 2, 1, 0]
-  private static let xboxOneSInit: [UInt8] = [5, 32, 1, 15, 6]
-  private static let horiAck: [UInt8] = [1, 32, 0, 9, 0, 4, 32, 58, 0, 0, 0, 128, 0]
-  private static let rumbleBegin: [UInt8] = [9, 0, 0, 9, 0, 15, 0, 0, 29, 29, 255, 0, 0]
-  private static let rumbleEnd: [UInt8] = [9, 0, 1, 9, 0, 15, 0, 0, 0, 0, 0, 0, 0]
+  private static func powerOn(_ sequence: UInt8) -> [UInt8] { [5, 32, sequence, 1, 0] }
+  private static func ledOn(_ sequence: UInt8) -> [UInt8] { [10, 32, sequence, 3, 0, 1, 20] }
+  private static let authDone: [UInt8] = [6, 32, 1, 2, 1, 0]
+  private static func xboxOneSInit(_ sequence: UInt8) -> [UInt8] { [5, 32, sequence, 15, 6] }
+  private static func horiAck(_ sequence: UInt8) -> [UInt8] {
+    [1, 32, sequence, 9, 0, 4, 32, 58, 0, 0, 0, 128, 0]
+  }
+  private static func rumbleBegin(_ sequence: UInt8) -> [UInt8] {
+    [9, 0, sequence, 9, 0, 15, 0, 0, 29, 29, 255, 0, 0]
+  }
+  private static func rumbleEnd(_ sequence: UInt8) -> [UInt8] {
+    [9, 0, sequence, 9, 0, 15, 0, 0, 0, 0, 0, 0, 0]
+  }
 
   static let startupSequences: [(UInt16, UInt16, [[UInt8]])] = [
-    (0x045E, 0x0B12, [powerOn, ledOn, authDone]),
-    (0x045E, 0x02EA, [powerOn, xboxOneSInit, ledOn, authDone]),
-    (0x045E, 0x0B00, [powerOn, xboxOneSInit, [77, 16, 0, 2, 7, 0], ledOn, authDone]),
-    (0x0E6F, 0x0165, [horiAck, powerOn, ledOn, authDone]),
-    (0x0F0D, 0x0067, [horiAck, powerOn, ledOn, authDone]),
-    (0x24C6, 0x541A, [powerOn, ledOn, authDone, rumbleBegin, rumbleEnd]),
-    (0x24C6, 0x542A, [powerOn, ledOn, authDone, rumbleBegin, rumbleEnd]),
-    (0x24C6, 0x543A, [powerOn, ledOn, authDone, rumbleBegin, rumbleEnd]),
+    (0x045E, 0x0B12, [powerOn(1), ledOn(2), authDone]),
+    (0x045E, 0x02EA, [powerOn(1), xboxOneSInit(2), ledOn(3), authDone]),
+    (0x045E, 0x0B00, [powerOn(1), xboxOneSInit(2), [77, 16, 1, 2, 7, 0], ledOn(3), authDone]),
+    (0x0E6F, 0x0165, [horiAck(1), powerOn(2), ledOn(3), authDone]),
+    (0x0F0D, 0x0067, [horiAck(1), powerOn(2), ledOn(3), authDone]),
+    (0x24C6, 0x541A, [powerOn(1), ledOn(2), authDone, rumbleBegin(1), rumbleEnd(2)]),
+    (0x24C6, 0x542A, [powerOn(1), ledOn(2), authDone, rumbleBegin(1), rumbleEnd(2)]),
+    (0x24C6, 0x543A, [powerOn(1), ledOn(2), authDone, rumbleBegin(1), rumbleEnd(2)]),
   ]
 
   @Test(arguments: startupSequences)

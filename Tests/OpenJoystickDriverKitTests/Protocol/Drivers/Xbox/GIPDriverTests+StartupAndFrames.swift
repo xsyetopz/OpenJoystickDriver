@@ -8,29 +8,24 @@ extension GIPDriverTests {
   @Test
   func testSequencerIncrements() {
     var seq = GIPSequencer()
-    #expect(seq.next(for: 5) == 0)
-    #expect(seq.next(for: 5) == 1)
-    // Different command starts at 0
-    #expect(seq.next(for: 32) == 0)
-    // Original command continues
-    #expect(seq.next(for: 5) == 2)
+    #expect(seq.next(for: 5, options: 0x20) == 1)
+    #expect(seq.next(for: 5, options: 0x20) == 2)
+    // System messages share one counter
+    #expect(seq.next(for: 10, options: 0x20) == 3)
+    // Security messages have their own counter
+    #expect(seq.next(for: 6, options: 0x20) == 1)
+    // Vendor messages have their own counter
+    #expect(seq.next(for: 9, options: 0x00) == 1)
+    #expect(seq.next(for: 5, options: 0x20) == 4)
   }
 
   @Test
   func testSequencerWrapsAt255() {
     var seq = GIPSequencer()
-    for _ in 0..<255 { _ = seq.next(for: 1) }
-    #expect(seq.next(for: 1) == 255)
-    #expect(seq.next(for: 1) == 0)
-  }
-
-  @Test
-  func testSequencerReset() {
-    var seq = GIPSequencer()
-    _ = seq.next(for: 5)
-    _ = seq.next(for: 5)
-    seq.reset(commandID: 5)
-    #expect(seq.next(for: 5) == 0)
+    for _ in 0..<254 { _ = seq.next(for: 1, options: 0x20) }
+    #expect(seq.next(for: 1, options: 0x20) == 255)
+    // Sequence 0 is never sent
+    #expect(seq.next(for: 1, options: 0x20) == 1)
   }
 
   @Test
@@ -109,7 +104,7 @@ extension GIPDriverTests {
     #expect(try parser.parseReport(packet) == nil)
     let responses = parser.drainPendingWrites().usbBytes
     #expect(responses.count == 1)
-    #expect(responses.first?.prefix(3) == [GIPCommand.authenticate, GIPOption.internal, 0])
+    #expect(responses.first?.prefix(3) == [GIPCommand.authenticate, GIPOption.internal, 1])
     #expect(
       responses.first?[4...6] == [
         GIPAuthType.host, GIPAuthType.version, GIPAuthState.hostInit.rawValue,
