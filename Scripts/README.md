@@ -16,7 +16,7 @@ ruff check Scripts Tests/RepositoryScripts
 pyright
 find Scripts -type f \( -name '*.sh' -o -name ojd \) -print0 | xargs -0 shellcheck \
   --external-sources --source-path=SCRIPTDIR
-git ls-files -z -co --exclude-standard '*.md' | xargs -0 markdownlint-cli2
+git ls-files -z -co --exclude-standard -- '*.md' ':!.agents/' | xargs -0 markdownlint-cli2
 swift-format lint --recursive --strict Package.swift Sources Tests
 swiftlint lint --no-cache --strict
 .build/schema-validator/bin/python -m unittest discover -s Tests/RepositoryScripts

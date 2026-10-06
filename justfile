@@ -68,7 +68,7 @@ lint:
     ruff check Scripts Tests/RepositoryScripts
     pyright
     find Scripts -type f \( -name '*.sh' -o -name ojd \) -print0 | xargs -0 shellcheck --external-sources --source-path=SCRIPTDIR
-    git ls-files -z -co --exclude-standard '*.md' | xargs -0 markdownlint-cli2
+    git ls-files -z -co --exclude-standard -- '*.md' ':!.agents/' | xargs -0 markdownlint-cli2
     swift-format lint --recursive --strict Package.swift Sources Tests
     xcode="${DEVELOPER_DIR:-$(find /Applications -maxdepth 1 -type d -name 'Xcode*.app' -exec test -x '{}/Contents/Developer/usr/bin/xcodebuild' ';' -print | sort -r | head -n1)/Contents/Developer}"; DEVELOPER_DIR="$xcode" swiftlint lint --no-cache --strict
 

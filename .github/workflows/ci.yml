@@ -73,7 +73,7 @@ jobs:
         run: find Scripts -type f \( -name '*.sh' -o -name ojd \) -print0 | xargs -0 shellcheck --external-sources --source-path=SCRIPTDIR
 
       - name: Check Markdown
-        run: git ls-files -z -co --exclude-standard '*.md' | xargs -0 markdownlint-cli2
+        run: git ls-files -z -co --exclude-standard -- '*.md' ':!.agents/' | xargs -0 markdownlint-cli2
 
       - name: Check native tools
         run: ./Scripts/ojd check tools
