@@ -16,8 +16,8 @@ You need the following items:
 
 - A Mac with the Xcode command-line tools. A few build steps need full Xcode.
 - An Apple Developer team.
-- Two development provisioning profiles, one for the app and one for the driver extension `com.openjoystickdriver.VirtualHIDDevice`. The files must be named `OpenJoystickDriver.provisionprofile` and `OpenJoystickDriver_VirtualHIDDevice.provisionprofile`. The app profile must include the `com.apple.developer.hid.virtual.device` entitlement. The extension profile must include `com.apple.developer.driverkit`, `com.apple.developer.driverkit.family.hid.device`, `com.apple.developer.driverkit.transport.hid`, and `com.apple.developer.driverkit.family.hid.eventservice`. The default profile name is `OpenJoystickDriver (VirtualHIDDevice)`. To use other profiles, set `DEXT_PROVISIONING_PROFILE` and `DEXT_BUILD_PROFILE`.
-- Optional: the `com.apple.developer.driverkit.transport.usb` entitlement in the extension profile, with Apple's exact seven VID:PID pairs. Without it the build signs the virtual HID device part only, and OJD cannot own Xbox USB controllers. The publisher team already has this capability from Apple. Enable it on the `com.openjoystickdriver.VirtualHIDDevice` App ID, then download the extension profile again.
+- Two development provisioning profiles, one for the app and one for the driver extension `com.openjoystickdriver.XboxUSBDevice`. The files must be named `OpenJoystickDriver.provisionprofile` and `OpenJoystickDriver_XboxUSBDevice.provisionprofile`. The app profile must include the `com.apple.developer.hid.virtual.device` entitlement, and its `com.apple.developer.driverkit.userclient-access` entitlement must name `com.openjoystickdriver.XboxUSBDevice`. The extension profile must include `com.apple.developer.driverkit` and `com.apple.developer.driverkit.transport.usb` with Apple's exact seven VID:PID pairs, and no HID entitlement. The default profile name is `OpenJoystickDriver (XboxUSBDevice)`. To use other profiles, set `DEXT_PROVISIONING_PROFILE` and `DEXT_BUILD_PROFILE`.
+- The publisher team already has the `transport.usb` capability from Apple. Enable it on the `com.openjoystickdriver.XboxUSBDevice` App ID, then download the extension profile again.
 - Your Mac in the list of devices in each profile.
 
 An editor such as Visual Studio Code is enough to edit code. You do not need the Xcode IDE for daily work.
@@ -58,7 +58,7 @@ There is no scripted unsigned or ad-hoc app build. The build scripts stop if the
    ./Scripts/ojd build install dev
    ```
 
-   This command always builds the system extension too.
+   This command builds the system extension too. When the app profile has no `userclient-access` grant for `com.openjoystickdriver.XboxUSBDevice`, the build skips the extension and the app has no driver extension.
 
 1. Open OJD from **Applications**.
 
@@ -72,18 +72,18 @@ This section lists what works with each kind of OpenJoystickDriver (OJD) build.
 
 | Condition | Result |
 | --- | --- |
-| Development signing with the correct profile | `build install dev` needs the app profile and the `OpenJoystickDriver_VirtualHIDDevice.provisionprofile` profile. It always builds the system extension. Only Macs in the profiles can run it. |
+| Development signing with the correct profile | `build install dev` needs the app profile and the `OpenJoystickDriver_XboxUSBDevice.provisionprofile` profile. It builds the system extension. Only Macs in the profiles can run it. |
 | Profile without the virtual device entitlement | The build scripts stop. |
 | Ad-hoc signing for the app | No scripted build exists. |
 | Ad-hoc signing for the system extension | `build dext` stops with "DriverKit extensions cannot use ad-hoc signing". |
 | Plain `swift build` binary | It has no entitlements. Expected: OJD reads controllers and cannot publish the virtual controller. Not verified. |
-| Extension profile without the `com.apple.developer.driverkit.transport.usb` entitlement | The build signs the virtual HID device part only. Everything works except Xbox One and Xbox Series controllers on USB. `OJD_DRIVERKIT_WITHOUT_USB=1` forces this build. |
+| Extension profile without the exact `com.apple.developer.driverkit.transport.usb` entitlement | The build stops. |
 | Only the Command Line Tools, no Xcode | Not verified for `swift build` and `swift test`. |
 | Tester DMG | Signed and notarized by the maintainer. It runs on macOS 12 or later and needs no Apple developer account. |
 
 ### Which Controllers Need the Xbox USB Part
 
-Only these Xbox USB product IDs need the Xbox USB part of the driver extension: `045E:02D1`, `02DD`, `02E3`, `02EA`, `0B00`, `0B0A`, and `0B12`. OJD talks to the extension only for these controllers.
+Only these Xbox USB product IDs need the driver extension: `045E:02D1`, `02DD`, `02E3`, `02EA`, `0B00`, `0B0A`, and `0B12`. OJD talks to the extension only for these controllers.
 
 ### Security Settings
 

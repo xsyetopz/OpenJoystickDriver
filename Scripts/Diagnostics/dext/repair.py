@@ -9,8 +9,8 @@ import time
 from pathlib import Path
 from typing import NoReturn
 
-DEXT_ID = "com.openjoystickdriver.VirtualHIDDevice"
-PROCESS_NAME = "VirtualHIDDevice"
+DEXT_ID = "com.openjoystickdriver.XboxUSBDevice"
+PROCESS_NAME = "XboxUSBDevice"
 
 
 def die(message: str) -> NoReturn:

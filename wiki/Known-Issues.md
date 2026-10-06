@@ -26,14 +26,11 @@ If you unplug a USB controller or dongle while OJD runs, OJD may crash. It may a
 
 The virtual controller override in the controller detail applies to every connected controller with the same VID:PID. This is by design.
 
-## An Old Separate Xbox USB Extension Is Still Active
+## An Old Virtual HID Extension Is Still Active
 
-Earlier OJD builds installed a second extension, `com.openjoystickdriver.XboxUSBDevice`. It no longer exists. OJD now has one extension, `com.openjoystickdriver.VirtualHIDDevice`. OJD does not remove the old extension, and it can still claim the controller.
+An earlier beta installed a different extension, `com.openjoystickdriver.VirtualHIDDevice`. It no longer exists. OJD now has one extension, `com.openjoystickdriver.XboxUSBDevice`, and the app publishes the virtual controller itself. OJD does not remove the old extension, so it can stay listed after you update.
 
-To remove it yourself, use one of these ways:
-
-- Deactivate it from an older OJD build.
-- Open **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions** and remove it there.
+To turn it off, open **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions** and turn off `com.openjoystickdriver.VirtualHIDDevice`.
 
 Do not turn off SIP or AMFI.
 

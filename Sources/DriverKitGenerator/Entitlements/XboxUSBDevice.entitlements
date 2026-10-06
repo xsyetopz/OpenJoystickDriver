@@ -4,12 +4,6 @@
 <dict>
 	<key>com.apple.developer.driverkit</key>
 	<true/>
-	<key>com.apple.developer.driverkit.family.hid.device</key>
-	<true/>
-	<key>com.apple.developer.driverkit.family.hid.eventservice</key>
-	<true/>
-	<key>com.apple.developer.driverkit.transport.hid</key>
-	<true/>
 	<key>com.apple.developer.driverkit.transport.usb</key>
 	<array>
 		<dict>

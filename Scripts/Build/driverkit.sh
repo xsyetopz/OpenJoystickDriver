@@ -9,23 +9,17 @@ fi
 
 DRIVERKIT_ROOT="$PROJECT_DIR/.build/driverkit"
 DRIVERKIT_SCHEME="SwifterKitRuntime"
-DRIVERKIT_BUNDLE_ID="com.openjoystickdriver.VirtualHIDDevice"
-DRIVERKIT_PRODUCT_NAME="VirtualHIDDevice"
+DRIVERKIT_BUNDLE_ID="com.openjoystickdriver.XboxUSBDevice"
+DRIVERKIT_PRODUCT_NAME="XboxUSBDevice"
 DRIVERKIT_GENERATED="$DRIVERKIT_ROOT/generated"
 DRIVERKIT_DERIVED_DATA="$DRIVERKIT_ROOT/derived-data"
 DRIVERKIT_PROJECT="$DRIVERKIT_GENERATED/SwifterKitRuntime.xcodeproj"
-DRIVERKIT_PROFILE_SPECIFIER="${DEXT_BUILD_PROFILE:-OpenJoystickDriver (VirtualHIDDevice)}"
-DRIVERKIT_AUTHORED_ENTITLEMENTS="$PROJECT_DIR/Sources/DriverKitGenerator/Entitlements/${DRIVERKIT_PRODUCT_NAME}.entitlements"
-DRIVERKIT_SIGNING_ENTITLEMENTS="$DRIVERKIT_AUTHORED_ENTITLEMENTS"
+DRIVERKIT_PROFILE_SPECIFIER="${DEXT_BUILD_PROFILE:-OpenJoystickDriver (XboxUSBDevice)}"
+DRIVERKIT_SIGNING_ENTITLEMENTS="$PROJECT_DIR/Sources/DriverKitGenerator/Entitlements/XboxUSBDevice.entitlements"
 _driverkit_profile_suffix=""
 [[ "${OJD_ENV:-dev}" == "release" ]] && _driverkit_profile_suffix="_DevID"
 DRIVERKIT_DEFAULT_PROFILE="$HOME/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_${DRIVERKIT_PRODUCT_NAME}${_driverkit_profile_suffix}.provisionprofile"
 DRIVERKIT_PROFILE="${DEXT_PROVISIONING_PROFILE:-$DRIVERKIT_DEFAULT_PROFILE}"
-# 1 builds the USB personality, which needs Apple's transport.usb grant for this bundle ID. A
-# signed build follows the profile; generation and validation build it unless
-# OJD_DRIVERKIT_WITHOUT_USB=1.
-DRIVERKIT_INCLUDE_USB=1
-[[ "${OJD_DRIVERKIT_WITHOUT_USB:-0}" == "1" ]] && DRIVERKIT_INCLUDE_USB=0
 
 # Mirrors Package.swift: the sibling checkout is used only when OJD_USE_LOCAL_SWIFTERKIT=1.
 _swifterkit_is_local() {
@@ -56,8 +50,6 @@ _driverkit_versions() {
 
 generate_driverkit_project() {
   local output="${1:-$DRIVERKIT_GENERATED}"
-  local generator_options=()
-  [[ "$DRIVERKIT_INCLUDE_USB" == "1" ]] || generator_options+=(--without-usb-personality)
   _reject_local_swifterkit
   _driverkit_versions
   (
@@ -69,7 +61,6 @@ generate_driverkit_project() {
     [[ -x "$generator_bin" ]] || die "DriverKitGenerator executable was not built"
     "$generator_bin" \
       --output "$output" \
-      ${generator_options[@]+"${generator_options[@]}"} \
       --short-version "$DRIVERKIT_SHORT_VERSION" \
       --build-version "$DRIVERKIT_BUILD_VERSION"
   )
@@ -77,18 +68,19 @@ generate_driverkit_project() {
 
 _validate_driverkit_metadata() {
   local tree="$1" short_version="$2" build_version="$3"
-  python3 - "$tree" "$short_version" "$build_version" "$DRIVERKIT_BUNDLE_ID" \
-    "$DRIVERKIT_INCLUDE_USB" <<'PY'
+  python3 - "$tree" "$short_version" "$build_version" "$DRIVERKIT_BUNDLE_ID" <<'PY'
 import plistlib
 import sys
 from pathlib import Path
 
-tree, short_version, build_version, bundle_id, include_usb = sys.argv[1:]
+tree, short_version, build_version, bundle_id = sys.argv[1:]
 root = Path(tree)
 info = plistlib.loads((root / "Info.plist").read_bytes())
 entitlements = plistlib.loads((root / "SwifterKitRuntime.entitlements").read_bytes())
-if bundle_id != "com.openjoystickdriver.VirtualHIDDevice":
-    raise SystemExit("tooling bundle identity changed")
+expected = {
+    "com.apple.developer.driverkit",
+    "com.apple.developer.driverkit.transport.usb",
+}
 if info.get("CFBundleIdentifier") != "$(PRODUCT_BUNDLE_IDENTIFIER)":
     raise SystemExit("generated plist does not delegate bundle identity to Xcode")
 if info.get("CFBundleShortVersionString") != short_version:
@@ -96,45 +88,31 @@ if info.get("CFBundleShortVersionString") != short_version:
 if info.get("CFBundleVersion") != build_version:
     raise SystemExit("generated build version mismatch")
 personalities = info.get("IOKitPersonalities", {})
-expected_names = {"HIDFactory", "XboxUSB"} if include_usb == "1" else {"HIDFactory"}
-if set(personalities) != expected_names:
+if set(personalities) != {"SwiftDriver"}:
     raise SystemExit(f"generated personalities mismatch: {sorted(personalities)}")
-for name, personality in personalities.items():
-    if personality.get("IOUserClass") != f"SwifterKit{name}RuntimeService":
-        raise SystemExit(f"generated {name} runtime service class mismatch")
-    if personality.get("IOUserServerName") != "$(PRODUCT_BUNDLE_IDENTIFIER)":
-        raise SystemExit(f"generated {name} user-server identity mismatch")
-factory = personalities["HIDFactory"]
-if factory.get("IOProviderClass") != "IOUserResources":
-    raise SystemExit("generated factory provider class mismatch")
-if factory.get("IOResourceMatch") != "IOKit":
-    raise SystemExit("generated factory resource match mismatch")
-if factory.get("HIDDeviceProperties", {}).get("IOClass") != "AppleUserHIDDevice":
-    raise SystemExit("generated factory device personality mismatch")
-expected = {
-    "com.apple.developer.driverkit": True,
-    "com.apple.developer.driverkit.family.hid.device": True,
-    "com.apple.developer.driverkit.transport.hid": True,
-    "com.apple.developer.driverkit.family.hid.eventservice": True,
-}
-if include_usb == "1":
-    expected["com.apple.developer.driverkit.transport.usb"] = [
-        {"idVendor": 1118, "idProductArray": [721, 733, 739, 746, 2816, 2826, 2834]}
-    ]
-    usb = personalities["XboxUSB"]
-    if usb.get("IOProviderClass") != "IOUSBHostInterface" or usb.get("idVendor") != 1118:
-        raise SystemExit("generated USB personality provider or vendor mismatch")
-    expected_interface = {
-        "bConfigurationValue": 1,
-        "bInterfaceNumber": 0,
-        "bInterfaceClass": 255,
-        "bInterfaceSubClass": 71,
-        "bInterfaceProtocol": 208,
-    }
-    if any(usb.get(key) != value for key, value in expected_interface.items()):
-        raise SystemExit("generated USB interface personality mismatch")
-if entitlements != expected:
+personality = personalities["SwiftDriver"]
+if personality.get("IOUserClass") != "SwifterKitRuntimeService":
+    raise SystemExit("generated runtime service class mismatch")
+if personality.get("IOUserServerName") != "$(PRODUCT_BUNDLE_IDENTIFIER)":
+    raise SystemExit("generated user-server identity mismatch")
+if set(entitlements) != expected or entitlements.get("com.apple.developer.driverkit") is not True:
     raise SystemExit(f"generated DriverKit entitlements mismatch: {sorted(entitlements)}")
+expected_usb = [{"idVendor": 1118, "idProductArray": [721, 733, 739, 746, 2816, 2826, 2834]}]
+if entitlements.get("com.apple.developer.driverkit.transport.usb") != expected_usb:
+    raise SystemExit("generated USB entitlement does not match the selected personality")
+if bundle_id != "com.openjoystickdriver.XboxUSBDevice":
+    raise SystemExit("tooling bundle identity changed")
+if personality.get("IOProviderClass") != "IOUSBHostInterface" or personality.get("idVendor") != 1118:
+    raise SystemExit("generated USB personality provider or vendor mismatch")
+expected_interface = {
+    "bConfigurationValue": 1,
+    "bInterfaceNumber": 0,
+    "bInterfaceClass": 255,
+    "bInterfaceSubClass": 71,
+    "bInterfaceProtocol": 208,
+}
+if any(personality.get(key) != value for key, value in expected_interface.items()):
+    raise SystemExit("generated USB interface personality mismatch")
 PY
 }
 
@@ -155,14 +133,11 @@ expected = {
 for key, value in expected.items():
     if info.get(key) != value:
         raise SystemExit(f"built DriverKit metadata mismatch: {key}={info.get(key)!r}")
-personalities = info.get("IOKitPersonalities", {})
-if "HIDFactory" not in personalities:
-    raise SystemExit("built DriverKit factory personality is missing")
-for name, personality in personalities.items():
-    if personality.get("IOUserClass") != f"SwifterKit{name}RuntimeService":
-        raise SystemExit(f"built DriverKit {name} service class mismatch")
-    if personality.get("IOUserServerName") != bundle_id:
-        raise SystemExit(f"built DriverKit {name} user-server identity mismatch")
+personality = info.get("IOKitPersonalities", {}).get("SwiftDriver", {})
+if personality.get("IOUserClass") != "SwifterKitRuntimeService":
+    raise SystemExit("built DriverKit service class mismatch")
+if personality.get("IOUserServerName") != bundle_id:
+    raise SystemExit("built DriverKit user-server identity mismatch")
 PY
   [[ -x "$product/$DRIVERKIT_PRODUCT_NAME" ]] \
     || die "built DriverKit executable is missing"
@@ -197,8 +172,8 @@ PY
 
 # Sets OJD_HOST_USERCLIENT to 1 when the GUI profile grants user-client access to the DEXT, or
 # to 0 when a development profile has no grant for it (no key, or a list naming only other bundle
-# IDs): Apple has not granted it yet, so the app is built without the DEXT and publishes through
-# IOHIDUserDevice. Any other value, allow-any access, or a release profile without the grant is
+# IDs): Apple has not granted it yet, so the app is built without the DEXT and without Xbox USB
+# ownership. Any other value, allow-any access, or a release profile without the grant is
 # fatal.
 _require_host_access_profile() {
   local profile="$1" decoded="$DRIVERKIT_ROOT/profile-entitlements.plist"
@@ -240,7 +215,7 @@ _resolve_host_entitlements() {
   _require_host_access_profile "$profile"
   resolve_entitlements "$GUI_ENTITLEMENTS_TEMPLATE" "$output"
   if [[ "$OJD_HOST_USERCLIENT" != "1" ]]; then
-    echo "Host profile lacks DriverKit user-client access; building without the DEXT (IOHIDUserDevice fallback)"
+    echo "Host profile lacks DriverKit user-client access; building without the DEXT (no Xbox USB ownership)"
     python3 - "$output" <<'PY'
 import plistlib
 import sys
@@ -254,32 +229,18 @@ PY
   fi
 }
 
-# Checks the dext profile and sets DRIVERKIT_INCLUDE_USB and DRIVERKIT_SIGNING_ENTITLEMENTS:
-# a profile without Apple's USB transport grant builds the factory personality only.
 _require_driverkit_profile() {
   local profile="$1" decoded="$DRIVERKIT_ROOT/dext-profile-entitlements.plist"
   mkdir -p "$DRIVERKIT_ROOT"
   decode_provisioning_profile "$profile" > "$decoded" \
     || die "Could not decode DriverKit provisioning profile"
-  local usb
-  usb="$(python3 - "$decoded" <<'PY'
+  python3 - "$decoded" <<'PY'
 import plistlib
 import sys
 
 entitlements = plistlib.loads(open(sys.argv[1], "rb").read()).get("Entitlements", {})
 if entitlements.get("com.apple.developer.driverkit") is not True:
     raise SystemExit("DriverKit provisioning profile is missing the DriverKit base entitlement")
-if entitlements.get("com.apple.developer.driverkit.allow-any-userclient-access"):
-    raise SystemExit("DriverKit provisioning profile grants forbidden allow-any access")
-for key in (
-    "com.apple.developer.driverkit.family.hid.device",
-    "com.apple.developer.driverkit.transport.hid",
-    "com.apple.developer.driverkit.family.hid.eventservice",
-):
-    if entitlements.get(key) is not True:
-        raise SystemExit(f"VirtualHIDDevice profile is missing {key}")
-if "com.apple.developer.hid.virtual.device" in entitlements:
-    raise SystemExit("VirtualHIDDevice profile contains the app-only virtual HID entitlement")
 production_usb = [
     {"idVendor": 1118, "idProduct": 721},
     {"idVendor": 1118, "idProduct": 746},
@@ -290,33 +251,22 @@ production_usb = [
     {"idVendor": 1118, "idProduct": 733},
 ]
 actual_usb = entitlements.get("com.apple.developer.driverkit.transport.usb")
-if actual_usb is None:
-    print(0)
-elif actual_usb == production_usb:
-    print(1)
-else:
+if actual_usb != production_usb:
     raise SystemExit(
         "DriverKit profile USB entitlement differs from Apple's exact seven-device grant: "
         f"{actual_usb!r}"
     )
+for key in (
+    "com.apple.developer.hid.virtual.device",
+    "com.apple.developer.driverkit.family.hid.device",
+    "com.apple.developer.driverkit.transport.hid",
+    "com.apple.developer.driverkit.family.hid.eventservice",
+):
+    if key in entitlements:
+        raise SystemExit(f"USB DEXT profile contains forbidden HID entitlement: {key}")
+if entitlements.get("com.apple.developer.driverkit.allow-any-userclient-access"):
+    raise SystemExit("DriverKit provisioning profile grants forbidden allow-any access")
 PY
-)" || exit 1
-  DRIVERKIT_INCLUDE_USB="$usb"
-  DRIVERKIT_SIGNING_ENTITLEMENTS="$DRIVERKIT_AUTHORED_ENTITLEMENTS"
-  if [[ "$usb" != "1" ]]; then
-    echo "DriverKit profile has no USB transport grant; building the HID factory personality only"
-    DRIVERKIT_SIGNING_ENTITLEMENTS="$DRIVERKIT_ROOT/${DRIVERKIT_PRODUCT_NAME}-factory.entitlements"
-    python3 - "$DRIVERKIT_AUTHORED_ENTITLEMENTS" "$DRIVERKIT_SIGNING_ENTITLEMENTS" <<'PY'
-import plistlib
-import sys
-
-with open(sys.argv[1], "rb") as handle:
-    entitlements = plistlib.load(handle)
-entitlements.pop("com.apple.developer.driverkit.transport.usb", None)
-with open(sys.argv[2], "wb") as handle:
-    plistlib.dump(entitlements, handle)
-PY
-  fi
 }
 
 _require_signed_host_access() {
@@ -367,12 +317,14 @@ for key, value in expected.items():
         raise SystemExit(f"signed DriverKit entitlement mismatch for {key}: {signed.get(key)!r}")
 if signed.get("com.apple.developer.driverkit.allow-any-userclient-access"):
     raise SystemExit("signed dext grants forbidden allow-any DriverKit access")
-if "com.apple.developer.driverkit.transport.usb" in signed and (
-    "com.apple.developer.driverkit.transport.usb" not in expected
+for key in (
+    "com.apple.developer.hid.virtual.device",
+    "com.apple.developer.driverkit.family.hid.device",
+    "com.apple.developer.driverkit.transport.hid",
+    "com.apple.developer.driverkit.family.hid.eventservice",
 ):
-    raise SystemExit("signed factory-only dext contains USB transport")
-if "com.apple.developer.hid.virtual.device" in signed:
-    raise SystemExit("signed dext contains the app-only virtual HID entitlement")
+    if key in signed:
+        raise SystemExit(f"signed USB DEXT contains forbidden HID entitlement: {key}")
 PY
 }
 
@@ -460,56 +412,24 @@ build_dext_bundle() {
   _require_signed_host_access "$app" "$GUI_PROFILE"
 }
 
-# Generates the dext twice, checks that the outputs match and the metadata, and leaves the
-# first generation in "$DRIVERKIT_ROOT/validation-one-<variant>".
-_validate_driverkit_generation() {
-  local variant="$1"
-  local first="$DRIVERKIT_ROOT/validation-one-$variant"
-  local second="$DRIVERKIT_ROOT/validation-two-$variant"
+validate_driverkit() {
+  _driverkit_versions
+  local first="$DRIVERKIT_ROOT/validation-one"
+  local second="$DRIVERKIT_ROOT/validation-two"
   rm -rf "$first" "$second" "$DRIVERKIT_DERIVED_DATA"
   generate_driverkit_project "$first"
   generate_driverkit_project "$second"
   diff -qr "$first" "$second" >/dev/null \
-    || die "two fresh SwifterKit generations of the $variant extension are not byte-for-byte identical"
-  rm -rf "$second"
+    || die "two fresh SwifterKit generations are not byte-for-byte identical"
   _validate_driverkit_metadata \
     "$first" "$DRIVERKIT_SHORT_VERSION" "$DRIVERKIT_BUILD_VERSION"
-  if generate_driverkit_project "$first" >/dev/null 2>&1; then
-    die "generator overwrote an existing destination"
-  fi
-}
-
-# Builds the generated project unsigned for both architectures; needs no Apple grant.
-_validate_driverkit_unsigned_build() {
-  DRIVERKIT_GENERATED="$DRIVERKIT_ROOT/validation-one-$1"
-  DRIVERKIT_PROJECT="$DRIVERKIT_GENERATED/SwifterKitRuntime.xcodeproj"
-  _driverkit_xcodebuild Debug \
-    CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= \
-    ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO
-  local product="$DRIVERKIT_DERIVED_DATA/Build/Products/Debug-driverkit/${DRIVERKIT_PRODUCT_NAME}.dext"
-  _validate_driverkit_product "$product"
-  local architectures
-  architectures="$(lipo -archs "$product/$DRIVERKIT_PRODUCT_NAME")"
-  [[ " $architectures " == *" arm64 "* && " $architectures " == *" x86_64 "* ]] \
-    || die "installed DriverKit SDK did not produce arm64 and x86_64 slices for $1: $architectures"
-}
-
-validate_driverkit() {
-  _driverkit_versions
-  DRIVERKIT_INCLUDE_USB=1
-  _validate_driverkit_generation full
-  DRIVERKIT_INCLUDE_USB=0
-  _validate_driverkit_generation factory
-  DRIVERKIT_INCLUDE_USB=1
-  # The generator writes USB matching as idProductArray, while Apple's grant lists each pair.
-  python3 - "$DRIVERKIT_AUTHORED_ENTITLEMENTS" \
-    "$DRIVERKIT_ROOT/validation-one-factory/SwifterKitRuntime.entitlements" <<'PY'
+  python3 - "$DRIVERKIT_SIGNING_ENTITLEMENTS" <<'PY'
 import plistlib
 import sys
 
-authored, generated = (plistlib.loads(open(path, "rb").read()) for path in sys.argv[1:])
+entitlements = plistlib.loads(open(sys.argv[1], "rb").read())
 key = "com.apple.developer.driverkit.transport.usb"
-expected_usb = [
+expected = [
     {"idVendor": 1118, "idProduct": 721},
     {"idVendor": 1118, "idProduct": 746},
     {"idVendor": 1118, "idProduct": 2834},
@@ -518,14 +438,12 @@ expected_usb = [
     {"idVendor": 1118, "idProduct": 2826},
     {"idVendor": 1118, "idProduct": 733},
 ]
-if authored.pop(key, None) != expected_usb:
+if entitlements.get(key) != expected:
     raise SystemExit("authored USB entitlement differs from Apple's exact seven-device grant")
-if authored != generated:
-    raise SystemExit(
-        "authored VirtualHIDDevice entitlements differ from the SwifterKit-generated set: "
-        f"authored={authored!r}, generated={generated!r}"
-    )
 PY
+  if generate_driverkit_project "$first" >/dev/null 2>&1; then
+    die "generator overwrote an existing destination"
+  fi
 
   local tracked_native
   tracked_native="$(
@@ -607,7 +525,17 @@ for name in ("OpenJoystickDriverUSB", "DriverKitGenerator"):
         raise SystemExit(f"{name} does not declare exactly the SwifterKit product dependency")
 PY
 
-  _validate_driverkit_unsigned_build full
+  DRIVERKIT_GENERATED="$first"
+  DRIVERKIT_PROJECT="$first/SwifterKitRuntime.xcodeproj"
+  _driverkit_xcodebuild Debug \
+    CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= \
+    ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO
+  local product="$DRIVERKIT_DERIVED_DATA/Build/Products/Debug-driverkit/${DRIVERKIT_PRODUCT_NAME}.dext"
+  _validate_driverkit_product "$product"
+  local architectures
+  architectures="$(lipo -archs "$product/$DRIVERKIT_PRODUCT_NAME")"
+  [[ " $architectures " == *" arm64 "* && " $architectures " == *" x86_64 "* ]] \
+    || die "installed DriverKit SDK did not produce arm64 and x86_64 slices: $architectures"
   echo "DriverKit generation, architecture, and unsigned universal build validation passed."
 }
 
@@ -615,10 +543,6 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
   case "${1:-}" in
     generate)
       shift
-      if [[ "${1:-}" == "--without-usb-personality" ]]; then
-        DRIVERKIT_INCLUDE_USB=0
-        shift
-      fi
       [[ $# -le 1 ]] || die "driverkit generate accepts at most one output path"
       output="${1:-$DRIVERKIT_GENERATED}"
       [[ "$output" == /* ]] || output="$PWD/$output"
@@ -629,6 +553,6 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
       [[ $# -eq 0 ]] || die "validate driverkit does not accept arguments"
       validate_driverkit
       ;;
-    *) die "expected generate [--without-usb-personality] [output] or validate" ;;
+    *) die "expected generate [output] or validate" ;;
   esac
 fi

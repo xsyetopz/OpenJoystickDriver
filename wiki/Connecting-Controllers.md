@@ -67,7 +67,7 @@ The pane shows the controller details, including its USB ID, connection type, an
 
 ## Xbox USB Driver Extension
 
-OJD has one DriverKit system extension, `com.openjoystickdriver.VirtualHIDDevice`. It is embedded in the app and has two parts. The virtual HID device factory always runs and needs no controller. The Xbox USB part owns the USB interfaces of genuine Xbox One and Xbox Series controllers. One approval in **System Settings** covers both parts. The Xbox USB part only serves Xbox One and Xbox Series controllers that connect by USB with one of these VID:PID values:
+OJD has one DriverKit system extension, `com.openjoystickdriver.XboxUSBDevice`. It is embedded in the app and owns the USB interfaces of genuine Xbox One and Xbox Series controllers. It only serves Xbox One and Xbox Series controllers that connect by USB with one of these VID:PID values:
 
 - `045E:02D1`
 - `045E:02DD`
@@ -77,9 +77,9 @@ OJD has one DriverKit system extension, `com.openjoystickdriver.VirtualHIDDevice
 - `045E:0B0A`
 - `045E:0B12`
 
-Every other controller does not need the Xbox USB part. OJD reads those controllers directly from the app. The Xbox USB part does not publish a virtual controller. The app publishes it.
+Every other controller does not need the extension. OJD reads those controllers directly from the app. The extension does not publish a virtual controller. The app publishes it.
 
-A build without the `com.apple.developer.driverkit.transport.usb` entitlement has the virtual HID device part only. See [Build options and limits](Building-from-Source.md).
+A build whose app profile has no `userclient-access` grant for the extension has no driver extension, so **Driver Extensions** in **System Settings** lists nothing from OJD. See [Build options and limits](Building-from-Source.md).
 
 ### Approve the Extension
 

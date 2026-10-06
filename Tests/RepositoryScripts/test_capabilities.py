@@ -286,7 +286,7 @@ class CapabilityResolverTests(unittest.TestCase):
             downloads.mkdir()
             names = (
                 "OpenJoystickDriver.provisionprofile",
-                "OpenJoystickDriver_VirtualHIDDevice.provisionprofile",
+                "OpenJoystickDriver_XboxUSBDevice.provisionprofile",
             )
             for name in names:
                 (downloads / name).write_text(name, encoding="utf-8")

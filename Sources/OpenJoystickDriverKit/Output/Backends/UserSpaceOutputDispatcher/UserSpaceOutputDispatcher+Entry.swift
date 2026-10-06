@@ -4,25 +4,17 @@ extension UserSpaceOutputDispatcher {
   /// The virtual gamepad state last built for `identifier`'s input report; nil when no virtual
   /// device exists for it.
   public func virtualOutputState(for identifier: DeviceIdentifier) -> VirtualGamepadState? {
-    registryLock.withLock { entries[identifier]?.inputReportState.snapshot().state }
+    registryLock.withLock { entries[identifier]?.inputReportState.currentState() }
   }
 
   final class Entry: Sendable {
     let sender: UserSpaceReportSender
     let inputReportState: UserSpaceInputReportState
 
-    convenience init(
-      backend: any VirtualDeviceBackend,
-      inputReportState: UserSpaceInputReportState
-    ) {
-      self.init(inputReportState: inputReportState)
-      sender.attach(backend)
-    }
-
-    /// An entry whose backend is attached later, once the host report handler exists.
-    init(inputReportState: UserSpaceInputReportState) {
+    init(backend: any VirtualDeviceBackend, inputReportState: UserSpaceInputReportState) {
       sender = UserSpaceReportSender()
       self.inputReportState = inputReportState
+      sender.attach(backend)
     }
 
     deinit { beginClose() }

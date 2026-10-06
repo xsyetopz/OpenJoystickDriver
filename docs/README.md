@@ -24,7 +24,7 @@ This directory holds the development notes and hardware-evidence records for Ope
 - [Remapping Calibration](development/remapping-calibration.md): Physical motion conversion, factory calibration, and fusion.
 - [Remapping Input Samples](development/remapping-input-samples.md): Motion, touch, extra-control, and paired-controller input.
 - [Remapping Motion Processing](development/remapping-motion.md): Per-device motion processing, projections, tuning, and layer overrides.
-- [Signing The App and VirtualHIDDevice DEXT](development/signing.md): The two independently provisioned code items and their signing steps.
+- [Signing The App and XboxUSBDevice DEXT](development/signing.md): The two independently provisioned code items and their signing steps.
 - [Source Topology](development/source-topology.md): SwiftPM targets, capability directories, and durable source owners.
 - [Create A Local Tester Build](development/tester-builds.md): Maintainer steps for making a tester build.
 - [USB DriverKit Entitlement Candidates](development/usb-entitlement-candidates.md): Catalog identities that are candidates for a USB DriverKit entitlement application.

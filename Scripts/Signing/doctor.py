@@ -18,11 +18,12 @@ PROFILES = pathlib.Path(
     )
 ).expanduser()
 HOST_DEVELOPMENT = PROFILES / "OpenJoystickDriver.provisionprofile"
-DRIVER_DEVELOPMENT = PROFILES / "OpenJoystickDriver_VirtualHIDDevice.provisionprofile"
+DRIVER_DEVELOPMENT = PROFILES / "OpenJoystickDriver_XboxUSBDevice.provisionprofile"
 HOST_RELEASE = PROFILES / "OpenJoystickDriver_DevID.provisionprofile"
-DRIVER_RELEASE = PROFILES / "OpenJoystickDriver_VirtualHIDDevice_DevID.provisionprofile"
-DEXT_BUNDLE_ID = "com.openjoystickdriver.VirtualHIDDevice"
-HID_FACTORY_KEYS = (
+DRIVER_RELEASE = PROFILES / "OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile"
+DEXT_BUNDLE_ID = "com.openjoystickdriver.XboxUSBDevice"
+FORBIDDEN_DEXT_KEYS = (
+    "com.apple.developer.hid.virtual.device",
     "com.apple.developer.driverkit.family.hid.device",
     "com.apple.developer.driverkit.transport.hid",
     "com.apple.developer.driverkit.family.hid.eventservice",
@@ -211,25 +212,17 @@ def userclient_access_errors(
     return []
 
 
-def dext_profile_errors(label: str, profile: dict) -> tuple[bool, list[str]]:
-    """Returns whether the profile grants the USB transport, and its errors.
+def dext_profile_errors(label: str, profile: dict) -> list[str]:
+    """Returns the errors of a DEXT profile.
 
-    Without Apple's transport.usb grant the build signs the HID factory personality only.
+    The profile must grant driverkit and Apple's exact seven-device transport.usb grant,
+    and no HID entitlement.
     """
-    expected: dict[str, object] = {"com.apple.developer.driverkit": True}
-    expected.update(dict.fromkeys(HID_FACTORY_KEYS, True))
-    errors = entitlement_errors(
-        label,
-        profile,
-        expected,
-        forbidden=("com.apple.developer.hid.virtual.device",),
-    )
-    usb = profile.get("Entitlements", {}).get(USB_TRANSPORT)
-    if usb is not None and usb != PRODUCTION_USB:
-        errors.append(
-            f"{label}: {USB_TRANSPORT} differs from Apple's exact seven-device grant"
-        )
-    return usb == PRODUCTION_USB, errors
+    expected: dict[str, object] = {
+        "com.apple.developer.driverkit": True,
+        USB_TRANSPORT: PRODUCTION_USB,
+    }
+    return entitlement_errors(label, profile, expected, forbidden=FORBIDDEN_DEXT_KEYS)
 
 
 def load(label: str, path: pathlib.Path) -> tuple[dict | None, list[str]]:
@@ -255,7 +248,6 @@ def main() -> int:
     host, host_errors = load("host development profile", HOST_DEVELOPMENT)
     errors.extend(host_errors)
     driver, driver_errors = load("DriverKit development profile", DRIVER_DEVELOPMENT)
-    usb_granted = False
     userclient_granted = False
     userclient_value = None
 
@@ -292,10 +284,7 @@ def main() -> int:
     if driver_needed:
         errors.extend(driver_errors)
     if driver is not None:
-        usb_granted, driver_entitlement_errors = dext_profile_errors(
-            "DriverKit development profile", driver
-        )
-        errors.extend(driver_entitlement_errors)
+        errors.extend(dext_profile_errors("DriverKit development profile", driver))
 
     if host is not None and driver is not None:
         common = certificate_sha1s(host) & certificate_sha1s(driver) & apple_development
@@ -329,17 +318,19 @@ def main() -> int:
         if driver is None:
             print(f"  [SKIP] {driver_errors[0]}; not needed while the DEXT is omitted")
         else:
-            print("  [OK] required DriverKit profile entitlements are present")
+            print(
+                "  [OK] DriverKit profile has driverkit and Apple's exact seven-device "
+                "USB grant, and no HID entitlement"
+            )
         if userclient_granted:
             print(f"  [OK] host profile grants user-client access to {DEXT_BUNDLE_ID}")
         else:
             print(
                 f"  [SKIP] host profile {USERCLIENT_ACCESS} is {userclient_value!r}; "
-                "development builds omit the DEXT and use IOHIDUserDevice until Apple "
-                f"grants it for {DEXT_BUNDLE_ID}"
+                f"development builds omit {DEXT_BUNDLE_ID}, so Xbox USB ownership is "
+                "unavailable until Apple grants user-client access to it; virtual "
+                "gamepads still use IOHIDUserDevice"
             )
-        if driver is not None:
-            report_usb_grant(usb_granted)
         print()
 
     release_ready = report_release_signing(developer_id)
@@ -363,17 +354,6 @@ def main() -> int:
     return 0
 
 
-def report_usb_grant(usb_granted: bool) -> None:
-    if usb_granted:
-        print("  [OK] DriverKit profile contains Apple's exact seven-device USB grant")
-    else:
-        print(
-            "  [SKIP] DriverKit profile has no USB transport grant; builds are "
-            "factory-only (no Xbox USB ownership) until the profile includes it for "
-            f"{DEXT_BUNDLE_ID}"
-        )
-
-
 def report_release_signing(developer_id: set[str]) -> bool:
     if not HOST_RELEASE.is_file() and not DRIVER_RELEASE.is_file():
         print("Publisher release signing: NOT CONFIGURED (optional for development)")
@@ -386,7 +366,6 @@ def report_release_signing(developer_id: set[str]) -> bool:
         "DriverKit Developer ID profile", DRIVER_RELEASE
     )
     release_errors.extend(driver_release_errors)
-    usb_granted = False
     if release is not None:
         release_errors.extend(
             entitlement_errors(
@@ -407,10 +386,9 @@ def report_release_signing(developer_id: set[str]) -> bool:
                 "Application identity/private key"
             )
     if driver_release is not None:
-        usb_granted, driver_entitlement_errors = dext_profile_errors(
-            "DriverKit Developer ID profile", driver_release
+        release_errors.extend(
+            dext_profile_errors("DriverKit Developer ID profile", driver_release)
         )
-        release_errors.extend(driver_entitlement_errors)
         if not certificate_sha1s(driver_release) & developer_id:
             release_errors.append(
                 "DriverKit Developer ID profile does not match an installed "
@@ -425,7 +403,6 @@ def report_release_signing(developer_id: set[str]) -> bool:
 
     print("Publisher release signing: READY")
     print("  [OK] each profile matches an installed Developer ID identity")
-    report_usb_grant(usb_granted)
     print()
     return True
 

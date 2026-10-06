@@ -131,7 +131,7 @@ def profile_name(path: str) -> str:
     return name if isinstance(name, str) else ""
 
 
-dext_bundle_id = "com.openjoystickdriver.VirtualHIDDevice"
+dext_bundle_id = "com.openjoystickdriver.XboxUSBDevice"
 
 
 # Prefer exact certificate match with provisioning profiles (handles multiple teams/idents cleanly).
@@ -303,24 +303,19 @@ def require_host_profile(
 
 def require_dext_profile(path: str, label: str) -> None:
     entitlements = decode_profile(path).get("Entitlements") or {}
-    required = (
-        "com.apple.developer.driverkit",
-        "com.apple.developer.driverkit.family.hid.device",
-        "com.apple.developer.driverkit.transport.hid",
-        "com.apple.developer.driverkit.family.hid.eventservice",
-    )
-    for key in required:
-        if entitlements.get(key) is not True:
-            raise SystemExit(f"ERROR: {label} is missing {key}")
-    # Optional: without it the build signs the HID factory personality only.
+    if entitlements.get("com.apple.developer.driverkit") is not True:
+        raise SystemExit(f"ERROR: {label} is missing com.apple.developer.driverkit")
     actual_usb = entitlements.get("com.apple.developer.driverkit.transport.usb")
-    if actual_usb is not None and actual_usb != production_usb:
+    if actual_usb != production_usb:
         raise SystemExit(
-            f"ERROR: {label} USB entitlement does not match Apple's issued configuration: "
-            f"{actual_usb!r}"
+            f"ERROR: {label} com.apple.developer.driverkit.transport.usb is "
+            f"{actual_usb!r}; expected Apple's exact seven-device grant for VID 1118"
         )
     forbidden = (
         hid_entitlement,
+        "com.apple.developer.driverkit.family.hid.device",
+        "com.apple.developer.driverkit.transport.hid",
+        "com.apple.developer.driverkit.family.hid.eventservice",
         "com.apple.developer.driverkit.allow-any-userclient-access",
     )
     for key in forbidden:

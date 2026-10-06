@@ -7,22 +7,24 @@ from unittest.mock import patch
 
 from Scripts.Signing import configure, doctor
 
-DEXT = "com.openjoystickdriver.VirtualHIDDevice"
+DEXT = "com.openjoystickdriver.XboxUSBDevice"
+USB = "com.apple.developer.driverkit.transport.usb"
+FORBIDDEN_DEXT_KEYS = (
+    "com.apple.developer.hid.virtual.device",
+    "com.apple.developer.driverkit.family.hid.device",
+    "com.apple.developer.driverkit.transport.hid",
+    "com.apple.developer.driverkit.family.hid.eventservice",
+    "com.apple.developer.driverkit.allow-any-userclient-access",
+)
 USERCLIENT = "com.apple.developer.driverkit.userclient-access"
 HOST = {
     "com.apple.developer.system-extension.install": True,
     "com.apple.developer.hid.virtual.device": True,
     USERCLIENT: [DEXT],
 }
-FACTORY_DEXT = {
-    "com.apple.developer.driverkit": True,
-    "com.apple.developer.driverkit.family.hid.device": True,
-    "com.apple.developer.driverkit.transport.hid": True,
-    "com.apple.developer.driverkit.family.hid.eventservice": True,
-}
 FULL_DEXT = {
-    **FACTORY_DEXT,
-    "com.apple.developer.driverkit.transport.usb": doctor.PRODUCTION_USB,
+    "com.apple.developer.driverkit": True,
+    USB: doctor.PRODUCTION_USB,
 }
 
 
@@ -37,25 +39,23 @@ class ConfigureProfileTests(unittest.TestCase):
         ):
             function("profile", "label", **kwargs)
 
-    def test_dext_profile_accepts_factory_and_full_grants(self) -> None:
-        self.check(configure.require_dext_profile, FACTORY_DEXT)
+    def test_dext_profile_accepts_exact_usb_grant(self) -> None:
         self.check(configure.require_dext_profile, FULL_DEXT)
 
-    def test_dext_profile_rejects_missing_factory_key(self) -> None:
-        with self.assertRaises(SystemExit):
-            self.check(
-                configure.require_dext_profile,
-                without(FULL_DEXT, "com.apple.developer.driverkit.transport.hid"),
-            )
+    def test_dext_profile_rejects_missing_driverkit_or_usb_grant(self) -> None:
+        for key in FULL_DEXT:
+            with self.subTest(key=key), self.assertRaises(SystemExit):
+                self.check(configure.require_dext_profile, without(FULL_DEXT, key))
 
     def test_dext_profile_rejects_wrong_usb_and_forbidden_keys(self) -> None:
+        wrong_usb = (
+            [],
+            doctor.PRODUCTION_USB[:-1],
+            [*doctor.PRODUCTION_USB, {"idVendor": 1118, "idProduct": 1}],
+        )
         for entitlements in (
-            {**FACTORY_DEXT, "com.apple.developer.driverkit.transport.usb": []},
-            {**FULL_DEXT, "com.apple.developer.hid.virtual.device": True},
-            {
-                **FULL_DEXT,
-                "com.apple.developer.driverkit.allow-any-userclient-access": True,
-            },
+            *({**FULL_DEXT, USB: value} for value in wrong_usb),
+            *({**FULL_DEXT, key: True} for key in FORBIDDEN_DEXT_KEYS),
         ):
             with self.subTest(entitlements=entitlements), self.assertRaises(SystemExit):
                 self.check(configure.require_dext_profile, entitlements)
@@ -101,14 +101,26 @@ class DoctorProfileTests(unittest.TestCase):
             len(doctor.userclient_access_errors("host", wrong, allow_ungranted=True)), 1
         )
 
-    def test_dext_profile_usb_grant_is_optional(self) -> None:
+    def test_dext_profile_accepts_exact_usb_grant(self) -> None:
         self.assertEqual(
-            doctor.dext_profile_errors("dext", {"Entitlements": FACTORY_DEXT}),
-            (False, []),
+            doctor.dext_profile_errors("dext", {"Entitlements": FULL_DEXT}), []
         )
-        self.assertEqual(
-            doctor.dext_profile_errors("dext", {"Entitlements": FULL_DEXT}), (True, [])
-        )
+
+    def test_dext_profile_requires_driverkit_and_exact_usb_grant(self) -> None:
+        for key in FULL_DEXT:
+            with self.subTest(key=key):
+                profile = {"Entitlements": without(FULL_DEXT, key)}
+                self.assertEqual(len(doctor.dext_profile_errors("dext", profile)), 1)
+        for value in ([], doctor.PRODUCTION_USB[:-1]):
+            with self.subTest(usb=value):
+                profile = {"Entitlements": {**FULL_DEXT, USB: value}}
+                self.assertEqual(len(doctor.dext_profile_errors("dext", profile)), 1)
+
+    def test_dext_profile_rejects_forbidden_entitlements(self) -> None:
+        for key in FORBIDDEN_DEXT_KEYS:
+            with self.subTest(key=key):
+                profile = {"Entitlements": {**FULL_DEXT, key: True}}
+                self.assertTrue(doctor.dext_profile_errors("dext", profile))
 
 
 if __name__ == "__main__":

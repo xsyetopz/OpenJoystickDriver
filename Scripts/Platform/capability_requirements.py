@@ -28,7 +28,7 @@ def requirements_for(argv: list[str]) -> tuple[Capability, ...]:
             Capability.SWIFTLINT,
             Capability.FULL_XCODE,
         )
-    if route[:2] == ("driverkit", "generate") and len(route) <= 4:
+    if route[:2] == ("driverkit", "generate") and len(route) <= 3:
         return (Capability.SWIFT_TOOLCHAIN, Capability.FULL_XCODE)
     if route == ("build", "dev") or route in {
         ("build", "install", "dev"),

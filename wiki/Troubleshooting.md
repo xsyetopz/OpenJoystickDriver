@@ -47,12 +47,12 @@ The built-in catalog has 696 records. A record without a physical test is unveri
 
 ### Special Cases
 
-- **Xbox One or Xbox Series controller on USB:** These controllers need the Xbox USB part of the OJD driver extension. In **Overview**, check the **Xbox USB Driver** card. If it shows **Approval needed**, click **Open System Settings** and approve it. If it shows **Needs attention**, click **Repair Xbox USB Driver**. For more information, see [Xbox USB driver extension](Connecting-Controllers.md).
+- **Xbox One or Xbox Series controller on USB:** These controllers need the OJD driver extension. In **Overview**, check the **Xbox USB Driver** card. If it shows **Approval needed**, click **Open System Settings** and approve it. If it shows **Needs attention**, click **Repair Xbox USB Driver**. For more information, see [Xbox USB driver extension](Connecting-Controllers.md).
 - **Clone or fake controller:** It may report itself in a way the catalog does not cover. For more information, see [Clone and fake controllers](Supported-Controllers.md).
 - **Dongle:** A dongle problem is separate from a controller problem. Test the controller in another connection mode if it has one.
 - **Runtime disconnected:** Run `ojd service start`, then run `ojd status`.
 - **SDL sees 0 controllers:** Grant **Input Monitoring** and **Accessibility**, restart OJD, and try again.
-- **VirtualHIDDevice install fails:** Rebuild the signed app, then run `ojd extension activate`.
+- **Xbox USB driver extension install fails:** Rebuild the signed app, then run `ojd extension activate`.
 - **Input stays held, or the status says Needs attention:** Release the controls. Then check the controller input health with `ojd status --json`.
 
 ### Check From the Terminal

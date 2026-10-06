@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import NoReturn
 
 APP_PROCESS_NAME = "OpenJoystickDriver"
-DRIVERKIT_PROCESS_NAME = "VirtualHIDDevice"
+DRIVERKIT_PROCESS_NAME = "XboxUSBDevice"
 DEFAULT_DESTINATION = Path("/Applications/OpenJoystickDriver.app")
 APPLICATION_JOB_PATTERN = re.compile(
     r"application\.com\.openjoystickdriver\.[A-Za-z0-9.-]+"
@@ -211,7 +211,7 @@ def retire_driverkit_instances() -> None:
     process_identifiers = driverkit_process_identifiers()
     if not process_identifiers:
         return
-    print(f"Retiring {len(process_identifiers)} stale VirtualHIDDevice process(es)")
+    print(f"Retiring {len(process_identifiers)} stale XboxUSBDevice process(es)")
     for process_identifier in process_identifiers:
         try:
             os.kill(process_identifier, signal.SIGKILL)
@@ -228,7 +228,7 @@ def retire_driverkit_instances() -> None:
             return
         time.sleep(0.1)
     raise InstallFailure(
-        "A stale VirtualHIDDevice process survived termination. Reboot once, then rerun the install."
+        "A stale XboxUSBDevice process survived termination. Reboot once, then rerun the install."
     )
 
 

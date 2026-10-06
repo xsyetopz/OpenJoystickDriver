@@ -6,8 +6,8 @@ import Security
 
 /// Publishes one virtual gamepad for each connected physical controller.
 ///
-/// A ``VirtualHIDDevicePublisher``, when given and able, publishes each device; otherwise
-/// IOKit `IOHIDUserDevice` does. This path does not run in the USB DriverKit extension.
+/// Every supported macOS publishes through IOKit `IOHIDUserDevice`. This path
+/// does not run in the USB DriverKit extension.
 public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
   VirtualOutputControllerActivating, RemappingGamepadSink, RemappingGamepadOutputControlling,
   @unchecked Sendable
@@ -20,8 +20,6 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
   internal let lifecycle = LifecycleState()
   internal let testBackendFactory:
     (@Sendable (DeviceIdentifier) async throws -> any VirtualDeviceBackend)?
-  /// Tried before `IOHIDUserDevice` (or the test backend) for each new device.
-  internal let devicePublisher: (any VirtualHIDDevicePublisher)?
   internal let registryLock = NSLock()
   internal var entries: [DeviceIdentifier: Entry] = [:]
   internal var creationTasks: [DeviceIdentifier: Task<Entry, Error>] = [:]
@@ -38,7 +36,6 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
   public init(
     profile: VirtualDeviceProfile,
     format: any VirtualGamepadReportFormat,
-    devicePublisher: (any VirtualHIDDevicePublisher)? = nil,
     onOutputCommand: OutputCommandHandler? = nil,
     onControllerDidStop: (@Sendable (DeviceIdentifier) async -> Void)? = nil
   ) throws {
@@ -47,7 +44,6 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
     self.onOutputCommand = onOutputCommand
     self.onControllerDidStop = onControllerDidStop
     self.testBackendFactory = nil
-    self.devicePublisher = devicePublisher
 
     guard Self.hasRequiredVirtualDeviceEntitlement else {
       throw CreationError.missingEntitlement(Self.requiredVirtualDeviceEntitlement)
@@ -57,17 +53,14 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
   init(
     testBackendFactory:
       @escaping @Sendable (DeviceIdentifier) async throws -> any VirtualDeviceBackend,
-    devicePublisher: (any VirtualHIDDevicePublisher)? = nil,
     format: any VirtualGamepadReportFormat = OJDGenericGamepadFormat(),
-    onOutputCommand: OutputCommandHandler? = nil,
     onControllerDidStop: (@Sendable (DeviceIdentifier) async -> Void)? = nil
   ) {
     profile = .openJoystickDriverGenericHID
     self.format = format
-    self.onOutputCommand = onOutputCommand
+    onOutputCommand = nil
     self.onControllerDidStop = onControllerDidStop
     self.testBackendFactory = testBackendFactory
-    self.devicePublisher = devicePublisher
   }
 
   deinit { beginClose() }

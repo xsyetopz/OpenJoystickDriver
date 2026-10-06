@@ -13,7 +13,7 @@ from .package_common import (
     default_bundle_short_version,
     detach_if_mounted,
     die,
-    embedded_dexts,
+    embedded_dext,
     make_dmg,
     mounted,
     release_environment,
@@ -103,15 +103,14 @@ def main(argv: list[str]) -> int:
         )
         if not app_path.is_dir():
             die(f"App bundle not found: {app_path}")
-        for dext in embedded_dexts(app_path):
-            verify_bundle_versions(
-                app_path / "Contents/Info.plist",
-                dext / "Info.plist",
-                env["OJD_BUNDLE_VERSION"],
-                version,
-                commit,
-                "clean",
-            )
+        verify_bundle_versions(
+            app_path / "Contents/Info.plist",
+            embedded_dext(app_path) / "Info.plist",
+            env["OJD_BUNDLE_VERSION"],
+            version,
+            commit,
+            "clean",
+        )
         print("\n=== Verify signed app before notarization ===")
         run(
             [

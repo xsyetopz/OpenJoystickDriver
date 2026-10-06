@@ -61,8 +61,8 @@ GUI and CLI copy: `LOCALIZATION.md`. Tests check codes, routes, identifiers, pat
 - Deployment floor: macOS 12. Future iOS and iPadOS companion apps: iOS 15 and iPadOS 15.
 - Kit has no SwifterKit. USB adapter: `Sources/OpenJoystickDriverUSB/`. Generator: `Sources/DriverKitGenerator/` and `Scripts/Build/driverkit.sh`.
 - No manual DriverKit build or post-generation patch. `./Scripts/ojd check driverkit`.
-- Host `com.apple.developer.driverkit.userclient-access` must be exactly `com.openjoystickdriver.VirtualHIDDevice`.
-- `com.openjoystickdriver.VirtualHIDDevice` is the only DEXT. It has two personalities: `HIDFactory` (SwifterKit HID device factory) and `XboxUSB` (Microsoft GIP USB interfaces). `./Scripts/ojd driverkit generate [--without-usb-personality] [path]` generates it. Without Apple's `transport.usb` grant for this App ID, builds sign factory-only (`OJD_DRIVERKIT_WITHOUT_USB=1` forces that). At runtime the service publishes virtual gamepads through it only when its service is running, and otherwise falls back to `IOHIDUserDevice`.
+- Host `com.apple.developer.driverkit.userclient-access` must be exactly `com.openjoystickdriver.XboxUSBDevice`.
+- `com.openjoystickdriver.XboxUSBDevice` is the only DEXT. It has one personality, `XboxUSB` (Microsoft GIP USB interfaces), and only the `com.apple.developer.driverkit` and `com.apple.developer.driverkit.transport.usb` entitlements. `./Scripts/ojd driverkit generate [path]` generates it. The app and service publish virtual gamepads through `IOHIDUserDevice`, which needs `com.apple.developer.hid.virtual.device` on the app profile; that entitlement never goes in the DEXT.
 
 ## Pull Requests
 

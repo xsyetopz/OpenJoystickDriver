@@ -68,7 +68,7 @@ An ordered list of fixed output or feature writes with delays, for pads that nee
 ## What Stays In Swift
 
 - Stateful protocols: GIP handshakes, Switch subcommands, DualShock 4 and DualSense checksums and Bluetooth framing, Steam Controller sessions, keep-alives. These stay protocol-family drivers. Records select them and carry their quirks.
-- USB interfaces claimed through the `XboxUSB` personality of the `com.openjoystickdriver.VirtualHIDDevice` extension. Its USB entitlement is a product list Apple signs, so a user record cannot make it claim a new product. A user record with a raw-USB family works only through direct IOUSBHost access, when macOS allows it. `validate` reports this.
+- USB interfaces claimed through the `XboxUSB` personality of the `com.openjoystickdriver.XboxUSBDevice` extension. Its USB entitlement is a product list Apple signs, so a user record cannot make it claim a new product. A user record with a raw-USB family works only through direct IOUSBHost access, when macOS allows it. `validate` reports this.
 - Virtual pad identities, which are limited by what games accept.
 
 ## Mode-Switching Pads

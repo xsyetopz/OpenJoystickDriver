@@ -105,15 +105,15 @@ def cleanup_workdirs(paths: tuple[Path, ...], mount_dir: Path) -> None:
             path.unlink(missing_ok=True)
 
 
-REQUIRED_DEXT = "com.openjoystickdriver.VirtualHIDDevice.dext"
-
-
-def embedded_dexts(app_path: Path) -> list[Path]:
-    """Every dext embedded in the app; VirtualHIDDevice is required."""
-    directory = app_path / "Contents/Library/SystemExtensions"
-    if not (directory / REQUIRED_DEXT).is_dir():
-        die(f"Embedded DriverKit extension not found: {directory / REQUIRED_DEXT}")
-    return sorted(path for path in directory.glob("*.dext") if path.is_dir())
+def embedded_dext(app_path: Path) -> Path:
+    """The XboxUSBDevice dext embedded in the app; it is required."""
+    dext = (
+        app_path
+        / "Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext"
+    )
+    if not dext.is_dir():
+        die(f"Embedded DriverKit extension not found: {dext}")
+    return dext
 
 
 def verify_bundle_versions(

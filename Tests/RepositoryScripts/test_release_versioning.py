@@ -63,7 +63,7 @@ def expect_executable_failure(*args: str) -> None:
 
 
 def validate_tester_packaging_flow(*, fail_after_dmg: bool) -> None:
-    dext_names = ["com.openjoystickdriver.VirtualHIDDevice.dext"]
+    dext_name = "com.openjoystickdriver.XboxUSBDevice.dext"
     with tempfile.TemporaryDirectory() as directory:
         project = Path(directory)
         events: list[str] = []
@@ -90,13 +90,12 @@ def validate_tester_packaging_flow(*, fail_after_dmg: bool) -> None:
             if command[-2:] == ["build", "release"]:
                 assert env is not None
                 captured_env.update(env)
-                for name in dext_names:
-                    dext = (
-                        project
-                        / ".build/debug/OpenJoystickDriver.app/Contents/Library/SystemExtensions"
-                        / name
-                    )
-                    dext.mkdir(parents=True)
+                dext = (
+                    project
+                    / ".build/debug/OpenJoystickDriver.app/Contents/Library/SystemExtensions"
+                    / dext_name
+                )
+                dext.mkdir(parents=True)
             elif command[0] == "/usr/bin/ditto":
                 shutil.copytree(command[1], command[2])
             elif "notarize.sh" in " ".join(command):
@@ -139,8 +138,8 @@ def validate_tester_packaging_flow(*, fail_after_dmg: bool) -> None:
         else:
             assert result == 0
             assert len(artifacts) == 1
-            assert verified_dexts == sorted(dext_names)
-            assert f"embedded {', '.join(sorted(dext_names))}." in captured_build_info
+            assert verified_dexts == [dext_name]
+            assert f"embedded {dext_name}." in captured_build_info
             assert events == ["notarize", "stapler", "gatekeeper", "dmg"]
             assert artifacts[0].name == (
                 "OpenJoystickDriver-0.5.0-beta.4-tester-1.0.42-aaaaaaaaaaaa-macOS.dmg"

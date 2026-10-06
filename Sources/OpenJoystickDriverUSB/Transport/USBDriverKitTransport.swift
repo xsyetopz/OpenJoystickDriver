@@ -11,7 +11,7 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
 
   public func devices() async throws -> [USBTransportDevice] {
     let services = try await client.services(
-      matching: VirtualHIDExtensionConfiguration.xboxUSB.serviceMatch
+      matching: USBDriverKitExtensionConfiguration.driver.serviceMatch
     )
     servicesByID = Dictionary(uniqueKeysWithValues: services.map { ($0.id, $0) })
     return services.compactMap(Self.device)

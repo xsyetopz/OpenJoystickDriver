@@ -13,10 +13,10 @@
     <key>com.apple.developer.system-extension.install</key>
     <true/>
 
-    <!-- Limits DriverKit user-client access to the generated DEXT (HID factory and USB transport). -->
+    <!-- Limits DriverKit user-client access to the generated USB transport DEXT. -->
     <key>com.apple.developer.driverkit.userclient-access</key>
     <array>
-        <string>com.openjoystickdriver.VirtualHIDDevice</string>
+        <string>com.openjoystickdriver.XboxUSBDevice</string>
     </array>
 
     <!-- Required because the main application executable creates IOHIDUserDevice

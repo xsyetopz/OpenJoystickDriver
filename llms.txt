@@ -4,7 +4,7 @@
 
 The same binary is the CLI. Ground support claims in source, tests, schemas, or recorded hardware evidence. Do not copy the compatibility matrix here.
 
-Do not edit generated controller records or `.build/driverkit/generated/`. `OpenJoystickDriverKit` must not import SwifterKit. The host user-client entitlement must be exactly `com.openjoystickdriver.VirtualHIDDevice`, the only DriverKit extension. The virtual-device entitlement stays on the app, never the DriverKit extension.
+Do not edit generated controller records or `.build/driverkit/generated/`. `OpenJoystickDriverKit` must not import SwifterKit. The host user-client entitlement must be exactly `com.openjoystickdriver.XboxUSBDevice`, the only DriverKit extension. The virtual-device entitlement stays on the app, never the DriverKit extension.
 
 ## Docs
 

@@ -23,7 +23,7 @@ Apple notarized the release app, and the maintainer signed it. Tester builds use
 
 ### System Extension
 
-The OJD driver extension, `com.openjoystickdriver.VirtualHIDDevice`, is a DriverKit system extension. It runs in user space, not in the kernel. macOS asks for your approval before it starts. One approval covers both of its parts: the virtual HID device factory, and the Xbox USB part that OJD uses only for Xbox One and Xbox Series controllers on USB. For more information, see [Xbox USB driver extension](Connecting-Controllers.md).
+The OJD driver extension, `com.openjoystickdriver.XboxUSBDevice`, is a DriverKit system extension. It runs in user space, not in the kernel. macOS asks for your approval before it starts. OJD uses it only for Xbox One and Xbox Series controllers on USB. The virtual controller comes from the app, not from the extension. For more information, see [Xbox USB driver extension](Connecting-Controllers.md).
 
 ### Data On Your Mac
 
