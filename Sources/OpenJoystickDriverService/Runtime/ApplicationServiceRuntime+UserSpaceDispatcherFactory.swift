@@ -20,6 +20,18 @@ extension ApplicationServiceRuntime {
       },
       overrideProvider: {
         overrides.override(vendorID: $0.vendorID, productID: $0.productID, unit: $0.unitIdentifier)
+      },
+      identityProvider: {
+        overrides.persona(vendorID: $0.vendorID, productID: $0.productID, unit: $0.unitIdentifier)?
+          .identity
+      },
+      identityBuilder: { profileID, identity in
+        let profile = try profileID.makeProfile()
+        return try makeUserSpaceOutputDispatcher(
+          profile: profile.identity.applying(identity),
+          format: profile.reportFormat,
+          context: context
+        )
       }
     )
   }

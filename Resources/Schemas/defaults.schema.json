@@ -1,0 +1,15 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/defaults.schema.json",
+	"type": "object",
+	"additionalProperties": false,
+	"required": ["$schema", "tuning"],
+	"properties": {
+		"$schema": {
+			"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/defaults.schema.json"
+		},
+		"tuning": {
+			"$ref": "controller.schema.json#/$defs/tuning"
+		}
+	}
+}

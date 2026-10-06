@@ -108,6 +108,48 @@ struct UserSpaceDeviceCreationTests {
     #expect(properties[kIOHIDMaxOutputReportSizeKey as String] as? Int == maxOutputReportSize)
   }
 
+  /// A custom persona replaces the identity strings and IDs of the published device, and keeps the
+  /// built-in descriptor, the transport, and the virtual LocationID.
+  @Test(arguments: VirtualHIDProfileID.allCases)
+  func personaIdentityIsPublishedOverTheBuiltInDescriptor(_ profileID: VirtualHIDProfileID) throws {
+    let builtIn = try profileID.makeProfile()
+    let persona = VirtualPersona.Identity(
+      vendorID: 0x1234,
+      productID: 0x5678,
+      versionNumber: nil,
+      productName: "Custom Pad",
+      manufacturer: "Custom Maker",
+      glyphFamily: .xbox
+    )
+    let identifier = DeviceIdentifier(vendorID: 1, productID: 2, locationID: 3)
+    func properties(_ profile: VirtualDeviceProfile) -> [String: Any] {
+      UserSpaceOutputDispatcher.deviceProperties(
+        profile: profile,
+        format: builtIn.reportFormat,
+        identifier: identifier
+      )
+    }
+    let plain = properties(builtIn.identity)
+    let custom = properties(builtIn.identity.applying(persona))
+
+    #expect(custom[kIOHIDVendorIDKey as String] as? Int == 0x1234)
+    #expect(custom[kIOHIDProductIDKey as String] as? Int == 0x5678)
+    #expect(custom[kIOHIDProductKey as String] as? String == "Custom Pad")
+    #expect(custom[kIOHIDManufacturerKey as String] as? String == "Custom Maker")
+    #expect(custom[kIOHIDVersionNumberKey as String] as? Int == builtIn.identity.versionNumber)
+    #expect(
+      custom[kIOHIDTransportKey as String] as? String == plain[kIOHIDTransportKey as String]
+        as? String
+    )
+    #expect(
+      custom[kIOHIDReportDescriptorKey as String] as? Data
+        == plain[kIOHIDReportDescriptorKey as String] as? Data
+    )
+    #expect(
+      custom[kIOHIDLocationIDKey as String] as? Int == plain[kIOHIDLocationIDKey as String] as? Int
+    )
+  }
+
   @Test(arguments: VirtualHIDProfileID.allCases)
   func publishedIdentityMatchesTheProfileForEveryProductionProfile(
     _ profileID: VirtualHIDProfileID

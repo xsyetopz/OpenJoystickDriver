@@ -8,10 +8,13 @@ import Testing
 struct ProfileOverrideServerFixture {
   let server: ApplicationServiceServer
   let defaults: UserDefaults
+  let personaDirectory: URL
   let suiteName: String
   let log: RetargetEventLog
 
-  var store: VirtualHIDProfileOverrideStore { VirtualHIDProfileOverrideStore(defaults: defaults) }
+  var store: VirtualHIDProfileOverrideStore {
+    VirtualHIDProfileOverrideStore(directory: personaDirectory)
+  }
 
   func change(
     _ change: ApplicationServiceServer.VirtualHIDProfileOverrideChange,
@@ -32,6 +35,7 @@ struct ProfileOverrideServerFixture {
   func tearDown() async {
     await server.automaticUserSpaceDispatcher()?.close()
     defaults.removePersistentDomain(forName: suiteName)
+    try? FileManager.default.removeItem(at: personaDirectory)
   }
 }
 

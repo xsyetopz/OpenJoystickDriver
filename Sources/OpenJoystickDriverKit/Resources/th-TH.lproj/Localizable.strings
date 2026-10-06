@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "ได้รับสิทธิ์เข้าถึงที่ขอแล้ว";
 "cli.permission.request.ids" = "สิทธิ์ที่จะขอ: input-monitoring หรือ accessibility";
 "cli.permission.request.unknown_id" = "ไม่รู้จักสิทธิ์ “%@” ใช้ %@";
+"cli.config.abstract" = "แสดงการกำหนดค่าที่ OpenJoystickDriver ใช้ และเลเยอร์ที่กำหนดแต่ละค่า";
+"cli.config.discussion" = "ค่าจะซ้อนกันเป็นเลเยอร์ เรียงจากต่ำสุดก่อน: ค่าเริ่มต้นของไดรเวอร์, Defaults.json, เรกคอร์ดที่มากับแอป, เรกคอร์ดของคุณ, โปรไฟล์ที่ใช้งานอยู่ คีย์การปรับแต่งแต่ละคีย์จะใช้ค่าจากเลเยอร์สูงสุดที่กำหนดคีย์นั้น";
+"cli.config.show.abstract" = "พิมพ์ค่าการปรับแต่งแต่ละค่าและเลเยอร์ที่กำหนดค่านั้น";
+"cli.config.show.controller" = "แสดงการปรับแต่งที่มีผลของคอนโทรลเลอร์หนึ่งตัวในรูปแบบ VVVV:PPPP แทนค่าเริ่มต้นส่วนกลาง";
+"cli.config.show.defaults_ignored" = "ข้าม %@ แล้ว: %@";
+"cli.config.show.discussion" = "หากไม่ระบุ --controller จะพิมพ์คีย์ที่ Defaults.json กำหนด หากระบุ จะพิมพ์เรกคอร์ดของคอนโทรลเลอร์หลังซ้อน Defaults.json, เรกคอร์ดของคุณ และเรกคอร์ดที่มากับแอปเป็นเลเยอร์แล้ว คีย์ที่ไม่มีเลเยอร์ใดกำหนดจะแสดงเป็น “ค่าเริ่มต้นของไดรเวอร์”";
+"cli.config.show.unset" = "ค่าเริ่มต้นของไดรเวอร์";
 "cli.setting.abstract" = "แสดงรายการ อ่าน หรือเปลี่ยนการตั้งค่าแอพ OpenJoystickDriver";
 "cli.setting.bad_value" = "“%@” ไม่ใช่ค่าของ %@ ใช้ true หรือ false";
 "cli.setting.developer_tools" = "แสดงเครื่องมือนักพัฒนาในหน้าต่างการตั้งค่า";

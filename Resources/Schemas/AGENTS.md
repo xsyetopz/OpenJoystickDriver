@@ -3,7 +3,7 @@
 `Resources/Schemas/` is the sole owner of OpenJoystickDriver's machine-readable document contracts.
 
 - Use JSON Schema Draft 2020-12.
-- Reuse the controller, controller-override, report, cli-output, profile, or error-codes schema family. `cli-output.schema.json` has one `$defs` entry per `ojd` command, named by its command path in lowerCamelCase.
+- Reuse the controller, controller-override, defaults, persona, report, cli-output, profile, or error-codes schema family. `cli-output.schema.json` has one `$defs` entry per `ojd` command, named by its command path in lowerCamelCase.
 - Do not add schemas scoped to one controller, consumer, diagnostic command, experiment, date, issue, pull request, or agent task.
 - Keep shared parser behavior out of controller records. Schemas describe only fields emitted or consumed by an existing repository-owned interface.
 - Controller records contain operational facts only. Do not add provenance, verification, confidence, evidence-level, source-note, or review-state fields or flags such as `experimental` and `needsHardwareTest`. Keep source revisions in `ControllerSources.lock.json` and accepted test observations in human-readable testing documents, issues, and Git history.

@@ -37,7 +37,7 @@ extension VirtualOutputTests {
 
     #expect(reset.failure == nil)
     #expect(live(first) == .xboxOneSBluetooth)
-    #expect(fixture.defaults.object(forKey: VirtualHIDProfileOverrideStore.defaultsKey) == nil)
+    #expect(fixture.store.files.isEmpty)
     await fixture.tearDown()
   }
 
@@ -48,7 +48,7 @@ extension VirtualOutputTests {
     let result = await fixture.change(.set("hid-generic"), unit: true)
 
     #expect(result.failure == .controllerNotFound)
-    #expect(fixture.defaults.object(forKey: VirtualHIDProfileOverrideStore.defaultsKey) == nil)
+    #expect(fixture.store.files.isEmpty)
     await fixture.tearDown()
   }
 }

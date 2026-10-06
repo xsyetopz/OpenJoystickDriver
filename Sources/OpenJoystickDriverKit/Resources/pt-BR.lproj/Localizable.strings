@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "O acesso solicitado foi concedido.";
 "cli.permission.request.ids" = "Permissões a solicitar: input-monitoring ou accessibility.";
 "cli.permission.request.unknown_id" = "Permissão desconhecida «%@». Use %@.";
+"cli.config.abstract" = "Mostra a configuração que o OpenJoystickDriver aplica e qual camada definiu cada valor.";
+"cli.config.discussion" = "Os valores se sobrepõem em camadas, da mais baixa para a mais alta: padrão do driver, Defaults.json, registro incluído, seu registro, perfil ativo. Cada chave de ajuste usa o valor da camada mais alta que a define.";
+"cli.config.show.abstract" = "Imprime cada valor de ajuste e a camada que o definiu.";
+"cli.config.show.controller" = "Mostra o ajuste efetivo de um controle, como VVVV:PPPP, em vez dos padrões globais.";
+"cli.config.show.defaults_ignored" = "%@ ignorado: %@";
+"cli.config.show.discussion" = "Sem --controller, imprime as chaves que o Defaults.json define. Com ele, imprime o registro do controle depois que Defaults.json, seu registro e o registro incluído são sobrepostos. Uma chave que nenhuma camada define mostra «padrão do driver».";
+"cli.config.show.unset" = "padrão do driver";
 "cli.setting.abstract" = "Lista, lê ou altera os ajustes do app OpenJoystickDriver.";
 "cli.setting.bad_value" = "«%@» não é um valor válido para %@. Use true ou false.";
 "cli.setting.developer_tools" = "Mostra as ferramentas de desenvolvedor na janela de Ajustes.";

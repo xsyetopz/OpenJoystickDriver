@@ -1,32 +1,52 @@
 import Foundation
 
-/// Why stored virtual HID profile overrides cannot be read.
+/// Why the persona directory cannot be read.
 public enum VirtualHIDProfileOverrideError: Error, Equatable, Sendable {
-  /// An entry names a profile OJD does not recognize.
-  case unsupportedValue(String)
-  /// The stored value is not a JSON array of well-formed, unique controller-model entries.
-  case unsupportedSchema
+  /// The directory exists but cannot be listed, created, or written.
+  case unreadableDirectory(String)
 }
 
-/// Per-controller-model and per-unit Advanced overrides of the virtual HID profile, stored in
-/// `UserDefaults`.
-///
-/// The value under `defaultsKey` is JSON data holding an array of
-/// `{"vendorID": Int, "productID": Int, "unit": String?, "profile": String}` entries, one per
-/// VID:PID model and one per unit (see ``UnitIdentity``). A unit's entry wins over its model's.
-/// An absent key means no overrides. When the stored value cannot be read, every controller selects
-/// automatically, the store never rewrites the value, and `set` and `reset` throw the load error
-/// until `resetAll()` removes the key.
-///
-/// Unchecked because the only stored state is `UserDefaults`, which is thread-safe.
-public struct VirtualHIDProfileOverrideStore: @unchecked Sendable {
-  public static let defaultsKey = "VirtualHIDProfileOverrides"
+/// One persona: a built-in report descriptor and, optionally, the identity published over it.
+public struct VirtualPersona: Equatable, Sendable {
+  /// The identity strings, IDs, and glyph family a user defined over the descriptor.
+  public struct Identity: Equatable, Sendable {
+    public let vendorID: UInt16
+    public let productID: UInt16
+    public let versionNumber: Int?
+    public let productName: String
+    public let manufacturer: String
+    public let glyphFamily: VirtualIdentityGlyphFamily
+  }
 
-  private struct Entry: Codable {
-    let vendorID: Int
-    let productID: Int
-    let unit: String?
-    let profile: String
+  public let descriptor: VirtualHIDProfileID
+  /// Nil for a persona that only selects the descriptor, which `ojd virtual` writes.
+  public let identity: Identity?
+}
+
+/// One file in the persona directory and whether OJD applied it.
+public struct VirtualPersonaFile: Equatable, Sendable {
+  public let url: URL
+  /// Why OJD skipped the file, or nil when it applied it.
+  public let problem: String?
+}
+
+/// Per-controller-model and per-unit personas, stored as `Personas/<id>.json` files that follow
+/// `persona.schema.json`.
+///
+/// A file matches a VID:PID model, or one unit of it (see ``UnitIdentity``). A unit's persona wins
+/// over its model's. A file that fails validation, or repeats the match of an earlier file in
+/// file-name order, is skipped and listed in ``problems``. A missing directory holds no personas.
+/// `set` writes `vvvv-pppp.json` or `vvvv-pppp-<unit>.json`, and keeps the identity of a persona
+/// that already matches.
+public struct VirtualHIDProfileOverrideStore: Sendable {
+  public static let schemaID =
+    "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
+    + "Resources/Schemas/persona.schema.json"
+
+  /// `~/Library/Application Support/OpenJoystickDriver/Personas`.
+  public static var userDirectory: URL {
+    ControllerDefaults.userFile.deletingLastPathComponent()
+      .appendingPathComponent("Personas", isDirectory: true)
   }
 
   /// A controller model, or one unit of it when `unit` is set.
@@ -34,127 +54,246 @@ public struct VirtualHIDProfileOverrideStore: @unchecked Sendable {
     let vendorID: UInt16
     let productID: UInt16
     var unit: String?
+
+    var fileName: String {
+      String(format: "%04x-%04x", vendorID, productID) + (unit.map { "-\($0)" } ?? "") + ".json"
+    }
   }
 
-  /// Serializes read-modify-write updates, which `UserDefaults` alone does not make atomic.
-  private static let updateLock = NSLock()
+  private struct Found {
+    let persona: VirtualPersona
+    let url: URL
+  }
 
-  private let defaults: UserDefaults
+  private struct Loaded {
+    var personas: [Model: Found] = [:]
+    var files: [VirtualPersonaFile] = []
+  }
 
-  public init(defaults: UserDefaults = .standard) { self.defaults = defaults }
+  private let directory: URL
 
-  /// Why the stored overrides cannot be read; nil when they are absent or valid.
+  public init(directory: URL = Self.userDirectory) { self.directory = directory }
+
+  /// Why the directory cannot be read; nil when it is absent or readable.
   public var loadError: VirtualHIDProfileOverrideError? {
     if case .failure(let error) = load() { return error }
     return nil
   }
 
-  /// The override for one controller: the entry for `unit`, else the entry for its model. Nil
-  /// when it selects automatically, including while the stored overrides cannot be read.
+  /// Every file in the directory, in file-name order, with the reason OJD skipped it.
+  public var files: [VirtualPersonaFile] {
+    if case .success(let loaded) = load() { return loaded.files }
+    return []
+  }
+
+  /// The files OJD skipped.
+  public var problems: [VirtualPersonaFile] { files.filter { $0.problem != nil } }
+
+  /// The persona for one controller: the one for `unit`, else the one for its model; nil when it
+  /// selects automatically.
+  public func persona(vendorID: UInt16, productID: UInt16, unit: String? = nil) -> VirtualPersona? {
+    guard case .success(let loaded) = load() else { return nil }
+    if let unit,
+      let found = loaded.personas[Model(vendorID: vendorID, productID: productID, unit: unit)]
+    {
+      return found.persona
+    }
+    return loaded.personas[Model(vendorID: vendorID, productID: productID)]?.persona
+  }
+
+  /// The descriptor of ``persona(vendorID:productID:unit:)``.
   public func override(
     vendorID: UInt16,
     productID: UInt16,
     unit: String? = nil
   ) -> VirtualHIDProfileID? {
-    guard case .success(let overrides) = load() else { return nil }
-    if let unit,
-      let profile = overrides[Model(vendorID: vendorID, productID: productID, unit: unit)]
-    {
-      return profile
-    }
-    return overrides[Model(vendorID: vendorID, productID: productID)]
+    persona(vendorID: vendorID, productID: productID, unit: unit)?.descriptor
   }
 
-  /// The override stored for exactly this model, or this unit when `unit` is set.
+  /// The descriptor stored for exactly this model, or this unit when `unit` is set.
   public func storedOverride(
     vendorID: UInt16,
     productID: UInt16,
     unit: String?
   ) -> VirtualHIDProfileID? {
-    guard case .success(let overrides) = load() else { return nil }
-    return overrides[Model(vendorID: vendorID, productID: productID, unit: unit)]
+    guard case .success(let loaded) = load() else { return nil }
+    return loaded.personas[Model(vendorID: vendorID, productID: productID, unit: unit)]?
+      .persona.descriptor
   }
 
-  /// Stores `profile` as the override for one controller model, or for one unit of it.
+  /// Stores `profile` as the descriptor of one controller model, or of one unit of it.
   ///
-  /// - Throws: The load error while the stored overrides cannot be read.
+  /// - Throws: The load error while the directory cannot be read or written.
   public func set(
     _ profile: VirtualHIDProfileID,
     vendorID: UInt16,
     productID: UInt16,
     unit: String? = nil
   ) throws(VirtualHIDProfileOverrideError) {
-    try update { $0[Model(vendorID: vendorID, productID: productID, unit: unit)] = profile }
+    let model = Model(vendorID: vendorID, productID: productID, unit: unit)
+    let existing = try load().get().personas[model]
+    if existing?.persona.descriptor == profile { return }
+    var match: [String: Any] = ["vendorID": Int(vendorID), "productID": Int(productID)]
+    match["unit"] = unit
+    var document: [String: Any] = [
+      "$schema": Self.schemaID, "match": match, "descriptor": profile.rawValue,
+    ]
+    if let identity = existing?.persona.identity {
+      var fields: [String: Any] = [
+        "vendorID": Int(identity.vendorID), "productID": Int(identity.productID),
+        "productName": identity.productName, "manufacturer": identity.manufacturer,
+        "glyphFamily": identity.glyphFamily.rawValue,
+      ]
+      fields["versionNumber"] = identity.versionNumber
+      document["identity"] = fields
+    }
+    do {
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      let data = try JSONSerialization.data(
+        withJSONObject: document,
+        options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+      )
+      try data.write(
+        to: existing?.url ?? directory.appendingPathComponent(model.fileName),
+        options: .atomic
+      )
+    } catch { throw .unreadableDirectory(error.localizedDescription) }
   }
 
-  /// Returns one controller model, or one unit of it, to automatic selection. Resetting a unit
-  /// leaves its model's override in effect.
+  /// Returns one controller model, or one unit of it, to automatic selection by removing its
+  /// descriptor-only persona file. Resetting a unit leaves its model's persona in effect, and a
+  /// persona with a custom identity stays: delete its file to remove it.
   ///
-  /// - Throws: The load error while the stored overrides cannot be read.
+  /// - Throws: The load error while the directory cannot be read or written.
   public func reset(
     vendorID: UInt16,
     productID: UInt16,
     unit: String? = nil
   ) throws(VirtualHIDProfileOverrideError) {
-    try update { $0[Model(vendorID: vendorID, productID: productID, unit: unit)] = nil }
-  }
-
-  /// Removes every override, including a stored value that cannot be read.
-  public func resetAll() {
-    Self.updateLock.withLock { defaults.removeObject(forKey: Self.defaultsKey) }
-  }
-
-  private func update(
-    _ change: (inout [Model: VirtualHIDProfileID]) -> Void
-  ) throws(VirtualHIDProfileOverrideError) {
-    Self.updateLock.lock()
-    defer { Self.updateLock.unlock() }
     let loaded = try load().get()
-    var overrides = loaded
-    change(&overrides)
-    guard overrides != loaded else { return }
-    save(overrides)
+    guard let found = loaded.personas[Model(vendorID: vendorID, productID: productID, unit: unit)],
+      found.persona.identity == nil
+    else { return }
+    do { try FileManager.default.removeItem(at: found.url) } catch {
+      throw .unreadableDirectory(error.localizedDescription)
+    }
   }
 
-  private func load() -> Result<[Model: VirtualHIDProfileID], VirtualHIDProfileOverrideError> {
-    guard let stored = defaults.object(forKey: Self.defaultsKey) else { return .success([:]) }
-    guard let data = stored as? Data,
-      let entries = try? JSONDecoder().decode([Entry].self, from: data)
-    else { return .failure(.unsupportedSchema) }
-    var overrides: [Model: VirtualHIDProfileID] = [:]
-    for entry in entries {
-      guard let vendorID = UInt16(exactly: entry.vendorID),
-        let productID = UInt16(exactly: entry.productID)
-      else { return .failure(.unsupportedSchema) }
-      guard let profile = VirtualHIDProfileID(rawValue: entry.profile) else {
-        return .failure(.unsupportedValue(entry.profile))
-      }
-      let model = Model(vendorID: vendorID, productID: productID, unit: entry.unit)
-      guard overrides.updateValue(profile, forKey: model) == nil else {
-        return .failure(.unsupportedSchema)
-      }
+  /// Removes every descriptor-only persona file. Files with a custom identity and files OJD
+  /// skipped stay.
+  public func resetAll() {
+    guard case .success(let loaded) = load() else { return }
+    for found in loaded.personas.values where found.persona.identity == nil {
+      try? FileManager.default.removeItem(at: found.url)
     }
-    return .success(overrides)
   }
 
-  private func save(_ overrides: [Model: VirtualHIDProfileID]) {
-    guard !overrides.isEmpty else {
-      defaults.removeObject(forKey: Self.defaultsKey)
-      return
+  private func load() -> Result<Loaded, VirtualHIDProfileOverrideError> {
+    let urls: [URL]
+    do {
+      urls = try FileManager.default.contentsOfDirectory(
+        at: directory,
+        includingPropertiesForKeys: nil,
+        options: [.skipsHiddenFiles]
+      ).filter { $0.pathExtension == "json" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+    } catch CocoaError.fileReadNoSuchFile {
+      return .success(Loaded())
+    } catch { return .failure(.unreadableDirectory(error.localizedDescription)) }
+    var loaded = Loaded()
+    for url in urls {
+      do {
+        let (model, persona) = try Self.parse(Data(contentsOf: url))
+        if let first = loaded.personas[model] {
+          throw ControllerRecordProblem("same match as \(first.url.lastPathComponent)")
+        }
+        loaded.personas[model] = Found(persona: persona, url: url)
+        loaded.files.append(VirtualPersonaFile(url: url, problem: nil))
+      } catch {
+        loaded.files.append(
+          VirtualPersonaFile(url: url, problem: ControllerRecordSet.problemDescription(error))
+        )
+      }
     }
-    let entries = overrides.sorted {
-      ($0.key.vendorID, $0.key.productID, $0.key.unit ?? "")
-        < ($1.key.vendorID, $1.key.productID, $1.key.unit ?? "")
-    }.map {
-      Entry(
-        vendorID: Int($0.key.vendorID),
-        productID: Int($0.key.productID),
-        unit: $0.key.unit,
-        profile: $0.value.rawValue
+    return .success(loaded)
+  }
+
+  /// Decodes one `persona.schema.json` document.
+  private static func parse(_ data: Data) throws -> (Model, VirtualPersona) {
+    guard let object = try? JSONSerialization.jsonObject(with: data),
+      let document = object as? [String: Any]
+    else { throw ControllerRecordProblem("the file is not a JSON object") }
+    guard document["$schema"] as? String == schemaID else {
+      throw ControllerRecordProblem("$schema must be \(schemaID)")
+    }
+    guard Set(document.keys).isSubset(of: ["$schema", "match", "descriptor", "identity"]),
+      document["match"] != nil, document["descriptor"] != nil
+    else { throw ControllerRecordProblem("the file must hold $schema, match, and descriptor") }
+    guard let descriptor = (document["descriptor"] as? String).flatMap(VirtualHIDProfileID.init)
+    else { throw ControllerRecordProblem("descriptor must be hid-xbox-one-s-bt or hid-generic") }
+    let match = try fields(document["match"], named: "match", optional: ["unit"])
+    let unit = match["unit"] as? String
+    if match["unit"] != nil, !(unit.map(UnitIdentity.isWellFormed) ?? false) {
+      throw ControllerRecordProblem("match.unit is not a unit ID")
+    }
+    let model = Model(
+      vendorID: try id(match["vendorID"], "match.vendorID", from: 1),
+      productID: try id(match["productID"], "match.productID", from: 0),
+      unit: unit
+    )
+    return (model, VirtualPersona(descriptor: descriptor, identity: try identity(document)))
+  }
+
+  private static func identity(_ document: [String: Any]) throws -> VirtualPersona.Identity? {
+    guard document["identity"] != nil else { return nil }
+    let fields = try fields(
+      document["identity"],
+      named: "identity",
+      required: ["vendorID", "productID", "productName", "manufacturer", "glyphFamily"],
+      optional: ["versionNumber"]
+    )
+    func text(_ key: String) throws -> String {
+      guard let value = fields[key] as? String, !value.isEmpty else {
+        throw ControllerRecordProblem("identity.\(key) must be a nonempty string")
+      }
+      return value
+    }
+    guard let glyph = VirtualIdentityGlyphFamily(rawValue: try text("glyphFamily")) else {
+      throw ControllerRecordProblem("identity.glyphFamily must be xbox or generic")
+    }
+    let version = try fields["versionNumber"].map { try id($0, "identity.versionNumber", from: 0) }
+    return VirtualPersona.Identity(
+      vendorID: try id(fields["vendorID"], "identity.vendorID", from: 1),
+      productID: try id(fields["productID"], "identity.productID", from: 0),
+      versionNumber: version.map(Int.init),
+      productName: try text("productName"),
+      manufacturer: try text("manufacturer"),
+      glyphFamily: glyph
+    )
+  }
+
+  private static func fields(
+    _ value: Any?,
+    named name: String,
+    required: Set<String> = ["vendorID", "productID"],
+    optional: Set<String>
+  ) throws -> [String: Any] {
+    guard let object = value as? [String: Any],
+      Set(object.keys).isSubset(of: required.union(optional)),
+      required.isSubset(of: Set(object.keys))
+    else {
+      throw ControllerRecordProblem(
+        "\(name) must hold \(required.union(optional).sorted().joined(separator: ", "))"
       )
     }
-    // Encoding an array of integers and strings cannot fail.
-    guard let data = try? JSONEncoder().encode(entries) else { return }
-    defaults.set(data, forKey: Self.defaultsKey)
+    return object
+  }
+
+  private static func id(_ value: Any?, _ name: String, from minimum: Int) throws -> UInt16 {
+    // swiftlint:disable:next legacy_objc_type
+    guard let number = value as? NSNumber, CFGetTypeID(number) != CFBooleanGetTypeID(),
+      let integer = Int(exactly: number.doubleValue), integer >= minimum,
+      let id = UInt16(exactly: integer)
+    else { throw ControllerRecordProblem("\(name) must be \(minimum)...65535") }
+    return id
   }
 }

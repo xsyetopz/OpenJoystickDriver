@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "İstenen erişim verildi.";
 "cli.permission.request.ids" = "İstenecek izinler: input-monitoring veya accessibility.";
 "cli.permission.request.unknown_id" = "Bilinmeyen izin “%@”. %@ kullanın.";
+"cli.config.abstract" = "OpenJoystickDriver’ın uyguladığı yapılandırmayı ve her değeri hangi katmanın belirlediğini gösterir.";
+"cli.config.discussion" = "Değerler en düşük katmandan başlayarak katmanlanır: sürücü varsayılanı, Defaults.json, pakete dahil kayıt, sizin kaydınız, etkin profil. Her ayar anahtarı, onu belirleyen en yüksek katmanın değerini alır.";
+"cli.config.show.abstract" = "Her ayar değerini ve onu belirleyen katmanı yazdırır.";
+"cli.config.show.controller" = "Genel varsayılanlar yerine tek bir kontrolcünün etkin ayarını VVVV:PPPP biçiminde gösterir.";
+"cli.config.show.defaults_ignored" = "%@ yok sayıldı: %@";
+"cli.config.show.discussion" = "--controller olmadan Defaults.json’ın belirlediği anahtarları yazdırır. Seçenekle birlikte, Defaults.json, sizin kaydınız ve pakete dahil kayıt katmanlandıktan sonra kontrolcünün kaydını yazdırır. Hiçbir katmanın belirlemediği anahtar “sürücü varsayılanı” olarak görünür.";
+"cli.config.show.unset" = "sürücü varsayılanı";
 "cli.setting.abstract" = "OpenJoystickDriver uygulama ayarlarını listeler, okur veya değiştirir.";
 "cli.setting.bad_value" = "“%@”, %@ için geçerli bir değer değil. true veya false kullanın.";
 "cli.setting.developer_tools" = "Ayarlar penceresinde geliştirici araçlarını gösterir.";

@@ -30,7 +30,7 @@ A controller record tells OpenJoystickDriver which protocol family drives one co
 A record has one of two operations:
 
 - `add`: a complete record for a model that has no bundled record.
-- `patch`: new values for the `protocol`, `usb`, `ownership`, `output`, `input`, `tuning`, or `bluetoothLE` fields of a bundled record. The other fields stay bundled. A field you set replaces the bundled field whole, except `protocol`: when it names the bundled family, OJD keeps the bundled protocol values you leave out, and the `quirks` you list are added to the bundled quirks. A patch cannot remove a bundled quirk. A `protocol` with a different family replaces the bundled one whole, with its quirks.
+- `patch`: new values for the `protocol`, `usb`, `ownership`, `output`, `input`, `tuning`, or `bluetoothLE` fields of a bundled record. The other fields stay bundled. A field you set replaces the bundled field whole, except `tuning`, which merges per value, and `protocol`: when it names the bundled family, OJD keeps the bundled protocol values you leave out, and the `quirks` you list are added to the bundled quirks. A patch cannot remove a bundled quirk. A `protocol` with a different family replaces the bundled one whole, with its quirks.
 
 A record for a model that uses raw USB works only when macOS lets OpenJoystickDriver open the device directly. The Xbox USB part of the [OJD driver extension](Connecting-Controllers.md#xbox-usb-driver-extension) claims only the Xbox models in its signed product list, and your record cannot add a model to that list. `ojd record validate` says when this applies.
 
@@ -147,7 +147,36 @@ A record's `tuning` field changes a value that the protocol driver otherwise set
 
 Raw-USB families, such as `xbox.gip`, do not take the two HID timings. The two recovery values apply only to a Switch 1 controller without the `switch-2` or `input-only` quirk, because those controllers have no startup recovery. `ojd record validate` rejects a value outside its range or its families.
 
-A `tuning` in a `patch` replaces the bundled `tuning` whole, so repeat a bundled value that you want to keep. Timings apply when the running service connects the controller again after the record changes.
+A `tuning` in a `patch` merges per value into the bundled `tuning`: a value you leave out keeps its bundled value. Timings apply when the running service connects the controller again after the record changes.
+
+### Set a Default for Every Controller
+
+`~/Library/Application Support/OpenJoystickDriver/Defaults.json` sets a `tuning` default for every controller. It uses the same values as a record, and [`defaults.schema.json`](../Resources/Schemas/defaults.schema.json) describes it.
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/defaults.schema.json",
+  "tuning": { "stickDeadzone": 0.05 }
+}
+```
+
+Each value takes the first layer that sets it, from the strongest down: your record, the bundled record, `Defaults.json`, then the driver's own default. A value in `Defaults.json` applies only to the families that read it, as in the table above. The file is optional. An invalid file is ignored whole, and `ojd config show` reports why. `ojd config show` prints each value and the layer that set it.
+
+The record's `stickDeadzone` shapes the virtual gamepad's stick report. A profile's `innerDeadzone` calibrates a stick that the profile maps to aim, flick, pointer, scroll, or steering output. The two do not inherit from each other: a deadzone in a record or in `Defaults.json` does not change what a profile mapping does. `ojd config show --controller` lists the active profile's `innerDeadzone` values in the `profile` layer next to the record's keys, when the service runs.
+
+### Change the Virtual Gamepad Identity
+
+A persona file in `~/Library/Application Support/OpenJoystickDriver/Personas` chooses the virtual gamepad that games see for one controller model, or for one controller unit. [`persona.schema.json`](../Resources/Schemas/persona.schema.json) describes it.
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/persona.schema.json",
+  "match": { "vendorID": 1356, "productID": 3302 },
+  "descriptor": "hid-xbox-one-s-bt"
+}
+```
+
+`match` names the model by VID:PID in decimal. Add `unit` with a `U-` ID from `ojd controller show` to match one controller. A unit file wins over a model file. `descriptor` is a built-in report descriptor: `hid-xbox-one-s-bt` or `hid-generic`. An optional `identity` gives a vendor ID, product ID, product name, manufacturer, and glyph family (`xbox` or `generic`). OpenJoystickDriver publishes the virtual gamepad with that identity over the built-in descriptor. The transport, the report layout, and the virtual LocationID stay those of the built-in profile, and `versionNumber` defaults to the built-in profile's. A changed `identity` applies the next time the controller connects, or when the `descriptor` changes while it is connected. A file that fails validation is skipped, and the status reports it. The old `VirtualHIDProfileOverrides` setting is gone and is not migrated, so recreate your overrides as persona files.
 
 ## Select a Model With a Quirk
 

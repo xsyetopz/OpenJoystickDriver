@@ -84,7 +84,7 @@ extension AutomaticDispatcherCoordinator {
     descriptions: [ApplicationServiceDeviceDescription],
     isEligible: @escaping Eligibility,
     profileProvider: @escaping ProfileProvider,
-    factory: @escaping Factory
+    factory: @escaping (DeviceIdentifier) -> Factory
   ) async throws {
     guard !closed, entries.isEmpty else {
       throw UserSpaceOutputDispatcher.CreationError.createFailed
@@ -97,7 +97,7 @@ extension AutomaticDispatcherCoordinator {
           descriptions: descriptions,
           isEligible: isEligible,
           profileProvider: profileProvider,
-          factory: factory
+          factory: factory(identifier)
         )
       }
     } catch {

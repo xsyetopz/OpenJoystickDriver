@@ -1,0 +1,75 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/persona.schema.json",
+	"type": "object",
+	"additionalProperties": false,
+	"required": ["$schema", "match", "descriptor"],
+	"properties": {
+		"$schema": {
+			"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/persona.schema.json"
+		},
+		"match": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["vendorID", "productID"],
+			"properties": {
+				"vendorID": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 65535
+				},
+				"productID": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"unit": {
+					"type": "string",
+					"pattern": "^U-[A-Za-z0-9_-]{16}$"
+				}
+			}
+		},
+		"descriptor": {
+			"enum": ["hid-xbox-one-s-bt", "hid-generic"]
+		},
+		"identity": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"vendorID",
+				"productID",
+				"productName",
+				"manufacturer",
+				"glyphFamily"
+			],
+			"properties": {
+				"vendorID": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 65535
+				},
+				"productID": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"versionNumber": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"productName": {
+					"type": "string",
+					"minLength": 1
+				},
+				"manufacturer": {
+					"type": "string",
+					"minLength": 1
+				},
+				"glyphFamily": {
+					"enum": ["xbox", "generic"]
+				}
+			}
+		}
+	}
+}

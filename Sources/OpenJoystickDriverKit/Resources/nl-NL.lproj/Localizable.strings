@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "De gevraagde toegang is verleend.";
 "cli.permission.request.ids" = "Aan te vragen toegang: input-monitoring of accessibility.";
 "cli.permission.request.unknown_id" = "Onbekende toegang ‘%@’. Gebruik %@.";
+"cli.config.abstract" = "Toont de configuratie die OpenJoystickDriver toepast en welke laag elke waarde heeft ingesteld.";
+"cli.config.discussion" = "Waarden lagen op elkaar, de laagste eerst: standaard van het stuurprogramma, Defaults.json, meegeleverd record, jouw record, actief profiel. Elke afstelsleutel krijgt de waarde van de hoogste laag die hem instelt.";
+"cli.config.show.abstract" = "Drukt elke afstelwaarde af en de laag die hem heeft ingesteld.";
+"cli.config.show.controller" = "Toont de effectieve afstelling van één controller, als VVVV:PPPP, in plaats van de algemene standaardwaarden.";
+"cli.config.show.defaults_ignored" = "%@ genegeerd: %@";
+"cli.config.show.discussion" = "Zonder --controller worden de sleutels afgedrukt die Defaults.json instelt. Met --controller wordt het record van de controller afgedrukt nadat Defaults.json, jouw record en het meegeleverde record op elkaar zijn gelegd. Een sleutel die geen enkele laag instelt, toont ‘standaard van het stuurprogramma’.";
+"cli.config.show.unset" = "standaard van het stuurprogramma";
 "cli.setting.abstract" = "Toont, leest of wijzigt de instellingen van de app OpenJoystickDriver.";
 "cli.setting.bad_value" = "‘%@’ is geen waarde voor %@. Gebruik true of false.";
 "cli.setting.developer_tools" = "Toon de ontwikkelaarstools in het instellingenvenster.";

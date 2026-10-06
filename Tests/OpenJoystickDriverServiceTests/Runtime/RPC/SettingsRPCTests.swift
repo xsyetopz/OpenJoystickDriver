@@ -145,6 +145,7 @@ struct SettingsRPCTests {
         context:
       ),
       defaults: defaults,
+      personaDirectory: directory.appendingPathComponent("Personas", isDirectory: true),
       launchAtLogin: LaunchAtLoginControl(
         isEnabled: { login.withLock { $0 } },
         setEnabled: { enabled in

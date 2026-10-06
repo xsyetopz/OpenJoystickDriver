@@ -139,7 +139,8 @@ struct LocalRPCBridgeTests {
       userSpaceDispatcherFactory: ApplicationServiceRuntime.makeAutomaticUserSpaceDispatcher(
         context:
       ),
-      defaults: defaults
+      defaults: defaults,
+      personaDirectory: directory.appendingPathComponent("Personas", isDirectory: true)
     )
     try await body(server)
   }

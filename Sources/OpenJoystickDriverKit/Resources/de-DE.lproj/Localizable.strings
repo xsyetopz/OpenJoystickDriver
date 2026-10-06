@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "Der angeforderte Zugriff ist erteilt.";
 "cli.permission.request.ids" = "Anzufordernde Berechtigungen: input-monitoring oder accessibility.";
 "cli.permission.request.unknown_id" = "Unbekannte Berechtigung „%@“. Verwende %@.";
+"cli.config.abstract" = "Zeigt die Konfiguration, die OpenJoystickDriver anwendet, und welche Ebene jeden Wert festgelegt hat.";
+"cli.config.discussion" = "Die Werte liegen in Ebenen, von der niedrigsten zur höchsten: Treiberstandard, Defaults.json, mitgelieferter Eintrag, dein Eintrag, aktives Profil. Jeder Tuning-Schlüssel übernimmt den Wert der höchsten Ebene, die ihn festlegt.";
+"cli.config.show.abstract" = "Gibt jeden Tuning-Wert und die Ebene aus, die ihn festgelegt hat.";
+"cli.config.show.controller" = "Zeigt das effektive Tuning eines Controllers als VVVV:PPPP an, statt der globalen Standardwerte.";
+"cli.config.show.defaults_ignored" = "%@ ignoriert: %@";
+"cli.config.show.discussion" = "Ohne --controller werden die Schlüssel ausgegeben, die Defaults.json festlegt. Mit --controller wird der Eintrag des Controllers ausgegeben, nachdem Defaults.json, dein Eintrag und der mitgelieferte Eintrag in Ebenen zusammengeführt wurden. Ein Schlüssel, den keine Ebene festlegt, zeigt „Treiberstandard“.";
+"cli.config.show.unset" = "Treiberstandard";
 "cli.setting.abstract" = "Listet die Einstellungen der App OpenJoystickDriver auf, liest oder ändert sie.";
 "cli.setting.bad_value" = "„%@“ ist kein Wert für %@. Verwende true oder false.";
 "cli.setting.developer_tools" = "Zeigt die Entwicklerwerkzeuge im Einstellungsfenster an.";

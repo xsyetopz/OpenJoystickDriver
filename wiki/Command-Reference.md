@@ -16,6 +16,7 @@ This page lists every `ojd` command. Every command also accepts the global optio
 - [permission](#permission)
 - [extension](#extension)
 - [setting](#setting)
+- [config](#config)
 - [access](#access)
 - [log](#log)
 - [diagnose](#diagnose)
@@ -268,6 +269,16 @@ ojd setting set KEY true|false
 ```
 
 The keys are `launch-at-login`, `notification-sounds`, `include-prerelease-updates`, and `developer-tools`. `setting get` prints `true` or `false` alone. With `--json`, `setting list` prints `settings`, each with `key`, `value`, and `description`, and `setting get` and `setting set` print `key` and `value`.
+
+## config
+
+Show the effective tuning values and the layer that set each one. It works without the service, which adds only the profile rows.
+
+```text
+ojd config show [--controller VVVV:PPPP]
+```
+
+Without `--controller`, it shows `Defaults.json` against the driver defaults. With it, it shows the record for that model: each value comes from `driver`, `global`, `bundled`, or `user`. When the service runs and a profile is active for that model, it adds one `profile` row per stick mapping, keyed as `profile get` names it, such as `stickMappings.0.tuning.innerDeadzone`. A profile value calibrates that mapping and does not replace the record's `stickDeadzone`. See [Set a Default for Every Controller](Controller-Records.md#set-a-default-for-every-controller). With `--json`, it prints `profile` (the active profile's name, when it shows rows), `defaultsFile`, `defaultsProblem` when the file is invalid, and `values`, each with `key`, `layer`, and `value` when set. `--plain` prints `key`, `value`, and `layer` per line.
 
 ## access
 

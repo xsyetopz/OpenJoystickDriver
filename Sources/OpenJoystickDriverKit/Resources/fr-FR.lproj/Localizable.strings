@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "L’accès demandé est accordé.";
 "cli.permission.request.ids" = "Autorisations à demander : input-monitoring ou accessibility.";
 "cli.permission.request.unknown_id" = "Autorisation inconnue « %@ ». Utilisez %@.";
+"cli.config.abstract" = "Affiche la configuration qu’applique OpenJoystickDriver et la couche qui a défini chaque valeur.";
+"cli.config.discussion" = "Les valeurs se superposent en couches, de la plus basse à la plus haute : valeur par défaut du pilote, Defaults.json, fiche fournie, votre fiche, profil actif. Chaque clé de réglage prend la valeur de la couche la plus haute qui la définit.";
+"cli.config.show.abstract" = "Affiche chaque valeur de réglage et la couche qui l’a définie.";
+"cli.config.show.controller" = "Affiche le réglage effectif d’une manette, sous la forme VVVV:PPPP, au lieu des valeurs par défaut globales.";
+"cli.config.show.defaults_ignored" = "%@ ignoré : %@";
+"cli.config.show.discussion" = "Sans --controller, affiche les clés que définit Defaults.json. Avec cette option, affiche la fiche de la manette une fois Defaults.json, votre fiche et la fiche fournie superposés. Une clé qu’aucune couche ne définit affiche « valeur par défaut du pilote ».";
+"cli.config.show.unset" = "valeur par défaut du pilote";
 "cli.setting.abstract" = "Liste, lit ou modifie les paramètres de l’app OpenJoystickDriver.";
 "cli.setting.bad_value" = "« %@ » n’est pas une valeur valide pour %@. Utilisez true ou false.";
 "cli.setting.developer_tools" = "Affiche les outils de développement dans la fenêtre des paramètres.";

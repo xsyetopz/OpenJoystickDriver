@@ -6,45 +6,70 @@ import Testing
 struct VirtualHIDProfileOverrideStoreTests {
   private typealias Store = VirtualHIDProfileOverrideStore
 
-  private func withDefaults(_ body: (UserDefaults) throws -> Void) throws {
-    let suite = "VirtualHIDProfileOverrideStoreTests.\(UUID().uuidString)"
-    let defaults = try #require(UserDefaults(suiteName: suite))
-    defer { defaults.removePersistentDomain(forName: suite) }
-    try body(defaults)
+  private static let unit = "U-AbCd_123-xyzW09q"
+
+  private func withDirectory(_ body: (URL) throws -> Void) throws {
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("PersonaStoreTests-\(UUID().uuidString)", isDirectory: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    try body(directory)
   }
 
-  private func storeJSON(_ json: String, in defaults: UserDefaults) {
-    defaults.set(Data(json.utf8), forKey: Store.defaultsKey)
+  private func write(_ json: String, named name: String, in directory: URL) throws {
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    try Data(json.utf8).write(to: directory.appendingPathComponent(name))
   }
+
+  private func persona(
+    vendorID: Int,
+    productID: Int,
+    unit: String? = nil,
+    descriptor: String = "hid-generic",
+    identity: String? = nil
+  ) -> String {
+    let match =
+      #"{"vendorID":\#(vendorID),"productID":\#(productID)"#
+      + (unit.map { #","unit":"\#($0)""# } ?? "") + "}"
+    return #"{"$schema":"\#(Store.schemaID)","match":\#(match),"descriptor":"\#(descriptor)""#
+      + (identity.map { #","identity":\#($0)"# } ?? "") + "}"
+  }
+
+  private static let identityJSON =
+    #"{"vendorID":4660,"productID":22136,"productName":"Arcade Stick","#
+    + #""manufacturer":"Acme","glyphFamily":"generic"}"#
 
   @Test
-  func anAbsentKeyHasNoOverrides() throws {
-    try withDefaults { defaults in
-      let store = Store(defaults: defaults)
+  func anAbsentDirectoryHasNoPersonas() throws {
+    try withDirectory { directory in
+      let store = Store(directory: directory)
       #expect(store.override(vendorID: 0x045E, productID: 0x02EA) == nil)
       #expect(store.loadError == nil)
+      #expect(store.files.isEmpty)
     }
   }
 
   @Test
-  func anOverrideRoundTripsThroughTheDocumentedJSON() throws {
-    try withDefaults { defaults in
-      try Store(defaults: defaults).set(.generic, vendorID: 0x045E, productID: 0x02EA)
+  func anOverrideRoundTripsThroughAPersonaFile() throws {
+    try withDirectory { directory in
+      try Store(directory: directory).set(.generic, vendorID: 0x045E, productID: 0x02EA)
 
-      #expect(Store(defaults: defaults).override(vendorID: 0x045E, productID: 0x02EA) == .generic)
-      let data = try #require(defaults.data(forKey: Store.defaultsKey))
-      let entries = try #require(try JSONSerialization.jsonObject(with: data) as? [[String: Any]])
-      #expect(entries.count == 1)
-      #expect(entries.first?["vendorID"] as? Int == 0x045E)
-      #expect(entries.first?["productID"] as? Int == 0x02EA)
-      #expect(entries.first?["profile"] as? String == "hid-generic")
+      #expect(Store(directory: directory).override(vendorID: 0x045E, productID: 0x02EA) == .generic)
+      let url = directory.appendingPathComponent("045e-02ea.json")
+      let object = try JSONSerialization.jsonObject(with: Data(contentsOf: url))
+      let document = try #require(object as? [String: Any])
+      #expect(document["$schema"] as? String == Store.schemaID)
+      #expect(document["descriptor"] as? String == "hid-generic")
+      let match = try #require(document["match"] as? [String: Any])
+      #expect(match["vendorID"] as? Int == 0x045E)
+      #expect(match["productID"] as? Int == 0x02EA)
+      #expect(match["unit"] == nil)
     }
   }
 
   @Test
   func overridesAreIsolatedPerControllerModel() throws {
-    try withDefaults { defaults in
-      let store = Store(defaults: defaults)
+    try withDirectory { directory in
+      let store = Store(directory: directory)
       try store.set(.generic, vendorID: 0x045E, productID: 0x02EA)
       try store.set(.xboxOneSBluetooth, vendorID: 0x054C, productID: 0x0CE6)
 
@@ -57,102 +82,145 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func aUnitOverrideBeatsItsModelAndResettingItFallsBack() throws {
-    try withDefaults { defaults in
-      let store = Store(defaults: defaults)
+  func aUnitPersonaBeatsItsModelAndResettingItFallsBack() throws {
+    try withDirectory { directory in
+      let store = Store(directory: directory)
       try store.set(.generic, vendorID: 1, productID: 2)
-      try store.set(.xboxOneSBluetooth, vendorID: 1, productID: 2, unit: "U-AbCd_123-xyzW09q")
+      try store.set(.xboxOneSBluetooth, vendorID: 1, productID: 2, unit: Self.unit)
 
-      let restored = Store(defaults: defaults)
       #expect(
-        restored.override(vendorID: 1, productID: 2, unit: "U-AbCd_123-xyzW09q")
-          == .xboxOneSBluetooth
+        store.override(vendorID: 1, productID: 2, unit: Self.unit) == .xboxOneSBluetooth
       )
-      #expect(restored.override(vendorID: 1, productID: 2, unit: "U-0000000000000000") == .generic)
-      #expect(restored.override(vendorID: 1, productID: 2) == .generic)
-      #expect(restored.storedOverride(vendorID: 1, productID: 2, unit: "U-0000000000000000") == nil)
-      let data = try #require(defaults.data(forKey: Store.defaultsKey))
-      let entries = try #require(try JSONSerialization.jsonObject(with: data) as? [[String: Any]])
-      #expect(entries.compactMap { $0["unit"] as? String } == ["U-AbCd_123-xyzW09q"])
+      #expect(store.override(vendorID: 1, productID: 2, unit: "U-0000000000000000") == .generic)
+      #expect(store.override(vendorID: 1, productID: 2) == .generic)
+      #expect(store.storedOverride(vendorID: 1, productID: 2, unit: "U-0000000000000000") == nil)
 
-      try restored.reset(vendorID: 1, productID: 2, unit: "U-AbCd_123-xyzW09q")
-      #expect(restored.override(vendorID: 1, productID: 2, unit: "U-AbCd_123-xyzW09q") == .generic)
+      try store.reset(vendorID: 1, productID: 2, unit: Self.unit)
+      #expect(store.override(vendorID: 1, productID: 2, unit: Self.unit) == .generic)
     }
   }
 
   @Test
-  func resettingTheLastOverrideRemovesTheKey() throws {
-    try withDefaults { defaults in
-      let store = Store(defaults: defaults)
-      try store.set(.generic, vendorID: 1, productID: 2)
-      try store.reset(vendorID: 1, productID: 2)
-      #expect(defaults.object(forKey: Store.defaultsKey) == nil)
+  func aFileThatIsNotAPersonaIsSkippedAndTheRestApply() throws {
+    try withDirectory { directory in
+      try write(persona(vendorID: 1, productID: 2), named: "a.json", in: directory)
+      try write(#"{"match":{}}"#, named: "b.json", in: directory)
+      try write(
+        persona(vendorID: 3, productID: 4, descriptor: "xbox-360"),
+        named: "c.json",
+        in: directory
+      )
+      let store = Store(directory: directory)
+
+      #expect(store.loadError == nil)
+      #expect(store.override(vendorID: 1, productID: 2) == .generic)
+      #expect(store.override(vendorID: 3, productID: 4) == nil)
+      #expect(store.problems.map(\.url.lastPathComponent) == ["b.json", "c.json"])
+      #expect(store.files.first?.problem == nil)
     }
   }
 
   @Test
-  func anUnknownProfileIsAnErrorSelectsAutomaticallyAndIsNeverRewritten() throws {
-    try withDefaults { defaults in
-      let json =
-        #"[{"vendorID":1118,"productID":746,"profile":"xbox-360"},"#
-        + #"{"vendorID":1356,"productID":3302,"profile":"hid-generic"}]"#
-      storeJSON(json, in: defaults)
-      let store = Store(defaults: defaults)
+  func theSecondFileWithTheSameMatchIsSkipped() throws {
+    try withDirectory { directory in
+      try write(persona(vendorID: 1, productID: 2), named: "a.json", in: directory)
+      try write(
+        persona(vendorID: 1, productID: 2, descriptor: "hid-xbox-one-s-bt"),
+        named: "b.json",
+        in: directory
+      )
+      let store = Store(directory: directory)
 
-      #expect(store.loadError == .unsupportedValue("xbox-360"))
-      #expect(store.override(vendorID: 1118, productID: 746) == nil)
-      #expect(store.override(vendorID: 1356, productID: 3302) == nil)
-      #expect(throws: VirtualHIDProfileOverrideError.unsupportedValue("xbox-360")) {
-        try store.set(.generic, vendorID: 1, productID: 2)
-      }
-      #expect(throws: VirtualHIDProfileOverrideError.unsupportedValue("xbox-360")) {
-        try store.reset(vendorID: 1118, productID: 746)
-      }
-      #expect(defaults.data(forKey: Store.defaultsKey) == Data(json.utf8))
-    }
-  }
-
-  @Test(arguments: [
-    #"{"vendorID":1,"productID":2,"profile":"hid-generic"}"#,
-    #"[{"vendorID":1,"profile":"hid-generic"}]"#,
-    #"[{"vendorID":70000,"productID":2,"profile":"hid-generic"}]"#,
-    #"[{"vendorID":1,"productID":2,"profile":"hid-generic"},"#
-      + #"{"vendorID":1,"productID":2,"profile":"hid-xbox-one-s-bt"}]"#, "not json",
-  ])
-  func anUnreadableSchemaIsAnErrorAndIsNeverRewritten(json: String) throws {
-    try withDefaults { defaults in
-      storeJSON(json, in: defaults)
-      let store = Store(defaults: defaults)
-
-      #expect(store.loadError == .unsupportedSchema)
-      #expect(store.override(vendorID: 1, productID: 2) == nil)
-      #expect(throws: VirtualHIDProfileOverrideError.unsupportedSchema) {
-        try store.set(.generic, vendorID: 1, productID: 2)
-      }
-      #expect(defaults.data(forKey: Store.defaultsKey) == Data(json.utf8))
+      #expect(store.override(vendorID: 1, productID: 2) == .generic)
+      #expect(store.problems.map(\.url.lastPathComponent) == ["b.json"])
+      #expect(store.problems.first?.problem?.contains("a.json") == true)
     }
   }
 
   @Test
-  func aNonDataValueIsAnUnreadableSchema() throws {
-    try withDefaults { defaults in
-      defaults.set("hid-generic", forKey: Store.defaultsKey)
-      #expect(Store(defaults: defaults).loadError == .unsupportedSchema)
+  func aPersonaDefinesAnIdentityOverABuiltInDescriptor() throws {
+    try withDirectory { directory in
+      try write(
+        persona(vendorID: 1, productID: 2, identity: Self.identityJSON),
+        named: "stick.json",
+        in: directory
+      )
+      let found = try #require(Store(directory: directory).persona(vendorID: 1, productID: 2))
+
+      #expect(found.descriptor == .generic)
+      #expect(found.identity?.vendorID == 4660)
+      #expect(found.identity?.productID == 22136)
+      #expect(found.identity?.productName == "Arcade Stick")
+      #expect(found.identity?.manufacturer == "Acme")
+      #expect(found.identity?.glyphFamily == .generic)
     }
   }
 
   @Test
-  func resetAllClearsAnUnreadableValueAndReenablesWrites() throws {
-    try withDefaults { defaults in
-      storeJSON(#"[{"vendorID":1,"productID":2,"profile":"retired"}]"#, in: defaults)
-      let store = Store(defaults: defaults)
+  func anIncompleteIdentityMakesTheFileInvalid() throws {
+    try withDirectory { directory in
+      try write(
+        persona(vendorID: 1, productID: 2, identity: #"{"vendorID":4660,"productID":1}"#),
+        named: "stick.json",
+        in: directory
+      )
+      let store = Store(directory: directory)
+
+      #expect(store.persona(vendorID: 1, productID: 2) == nil)
+      #expect(store.problems.count == 1)
+    }
+  }
+
+  @Test
+  func resetAllKeepsPersonasWithAnIdentityAndFilesItSkipped() throws {
+    try withDirectory { directory in
+      let store = Store(directory: directory)
+      try store.set(.generic, vendorID: 5, productID: 6)
+      try write(
+        persona(vendorID: 1, productID: 2, identity: Self.identityJSON),
+        named: "stick.json",
+        in: directory
+      )
+      try write("not json", named: "broken.json", in: directory)
 
       store.resetAll()
 
-      #expect(defaults.object(forKey: Store.defaultsKey) == nil)
-      #expect(store.loadError == nil)
+      #expect(store.override(vendorID: 5, productID: 6) == nil)
+      #expect(store.persona(vendorID: 1, productID: 2)?.identity != nil)
+      #expect(store.files.map(\.url.lastPathComponent) == ["broken.json", "stick.json"])
+    }
+  }
+
+  @Test
+  func settingAnOverrideKeepsTheIdentityOfTheMatchingPersona() throws {
+    try withDirectory { directory in
+      try write(
+        persona(vendorID: 1, productID: 2, identity: Self.identityJSON),
+        named: "stick.json",
+        in: directory
+      )
+      let store = Store(directory: directory)
+
       try store.set(.xboxOneSBluetooth, vendorID: 1, productID: 2)
-      #expect(store.override(vendorID: 1, productID: 2) == .xboxOneSBluetooth)
+
+      let found = try #require(store.persona(vendorID: 1, productID: 2))
+      #expect(found.descriptor == .xboxOneSBluetooth)
+      #expect(found.identity?.productName == "Arcade Stick")
+      #expect(store.files.map(\.url.lastPathComponent) == ["stick.json"])
+    }
+  }
+
+  @Test
+  func anUnreadableDirectoryIsAnErrorAndWritesFail() throws {
+    try withDirectory { directory in
+      try Data().write(to: directory)
+      let store = Store(directory: directory)
+
+      #expect(store.loadError != nil)
+      #expect(store.override(vendorID: 1, productID: 2) == nil)
+      #expect(throws: VirtualHIDProfileOverrideError.self) {
+        try store.set(.generic, vendorID: 1, productID: 2)
+      }
     }
   }
 }

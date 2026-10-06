@@ -1,11 +1,18 @@
 import Foundation
 
-/// Where one part of an effective controller record comes from.
-public enum ControllerRecordLayer: String, Codable, Sendable {
+/// Where one part of an effective controller record comes from. The cases are in precedence
+/// order, lowest first: a later layer wins over an earlier one.
+public enum ControllerRecordLayer: String, Codable, CaseIterable, Sendable {
+  /// OJD's built-in default, used when no other layer sets a value.
+  case driver
+  /// The user's `Defaults.json`.
+  case global
   /// The signed catalog in the app bundle.
   case bundled
   /// A file in the user's controller-record directory.
   case user
+  /// The active remapping profile.
+  case profile
 }
 
 /// The operation of a user controller record, from `controller-override.schema.json`.
@@ -25,11 +32,40 @@ public struct ControllerRecord: Sendable {
   /// The layer of each top-level field of `document`, except `$schema`, `vendorID`, and
   /// `productID`.
   public let fieldLayers: [String: ControllerRecordLayer]
+  /// The layer of each effective `tuning` key, by its JSON name: `bundled`, `user`, or `global`.
+  /// A key no layer sets is absent, and the driver default applies.
+  public let tuningLayers: [String: ControllerRecordLayer]
   /// The user file that adds or patches this record, or nil for a bundled record.
   public let userFile: URL?
   /// The protocol family, such as `xbox.gip`.
   public let family: String
+  /// The tuning keys this record's family reads.
+  let tuningScope: Set<ControllerTuning.Key>
   let profile: DeviceRuntimeProfile
+
+  /// The effective tuning: the global defaults under the record's own values, per key.
+  public var tuning: ControllerTuning { profile.tuning }
+
+  /// This record with the global `defaults` under its own tuning, per key. A default applies
+  /// only for a key the family reads and the record's layers leave unset.
+  func applying(defaults: ControllerTuning) -> Self {
+    let keys = defaults.setKeys.intersection(tuningScope).subtracting(profile.tuning.setKeys)
+    guard !keys.isEmpty else { return self }
+    var layers = tuningLayers
+    for key in keys { layers[key.rawValue] = .global }
+    var profile = profile
+    profile.tuning = defaults.keeping(keys).overlaid(by: profile.tuning)
+    return Self(
+      identity: identity,
+      document: document,
+      fieldLayers: fieldLayers,
+      tuningLayers: layers,
+      userFile: userFile,
+      family: family,
+      tuningScope: tuningScope,
+      profile: profile
+    )
+  }
 
   /// Whether the family reaches the controller through raw USB rather than HID.
   public var usesRawUSB: Bool { profile.usesRawUSB }
@@ -85,6 +121,18 @@ public struct ControllerRecordSet: Sendable {
   public let records: [ControllerIdentity: ControllerRecord]
   /// Every `.json` file in the user directory, in file-name order.
   public let userFiles: [ControllerRecordFile]
+  /// The global defaults under every record's tuning; none for the bundled catalog alone.
+  public let defaults: ControllerDefaults?
+
+  init(
+    records: [ControllerIdentity: ControllerRecord],
+    userFiles: [ControllerRecordFile],
+    defaults: ControllerDefaults? = nil
+  ) {
+    self.records = records
+    self.userFiles = userFiles
+    self.defaults = defaults
+  }
 
   /// The user files OJD skipped.
   public var problems: [ControllerRecordFile] { userFiles.filter { $0.problem != nil } }
@@ -127,8 +175,24 @@ public struct ControllerRecordSet: Sendable {
 
   /// The bundled catalog with every valid `.json` file in `directory` applied. A missing
   /// directory holds no records; one that cannot be read is listed in ``userFiles`` with its
-  /// reason.
-  public static func load(userDirectory directory: URL = userDirectory) -> Self {
+  /// reason. The global defaults in `defaultsFile`, `Defaults.json` beside `directory` unless
+  /// given, go under every record's tuning.
+  public static func load(
+    userDirectory directory: URL = userDirectory,
+    defaultsFile: URL? = nil
+  ) -> Self {
+    let defaults = ControllerDefaults.load(
+      from: defaultsFile ?? ControllerDefaults.file(besides: directory)
+    )
+    let loaded = loadRecords(userDirectory: directory)
+    return Self(
+      records: loaded.records.mapValues { $0.applying(defaults: defaults.tuning) },
+      userFiles: loaded.userFiles,
+      defaults: defaults
+    )
+  }
+
+  private static func loadRecords(userDirectory directory: URL) -> Self {
     let urls: [URL]
     do {
       urls = try FileManager.default.contentsOfDirectory(
@@ -235,6 +299,12 @@ public struct ControllerRecordSet: Sendable {
         )
       }
       var merged = base.merging(fields) { _, patched in patched }
+      // A patch names the tuning keys it sets and keeps the bundled record's other keys.
+      if let patched = fields["tuning"] as? [String: Any],
+        let bundledTuning = base["tuning"] as? [String: Any]
+      {
+        merged["tuning"] = bundledTuning.merging(patched) { _, value in value }
+      }
       // Every protocol field is scoped to its family, so a patch that keeps the family merges
       // into the bundled block (RFC 7396) and keeps the fields it does not name. Its quirks join
       // the bundled quirks, so a patch cannot drop the quirks that select a model's calibration.
@@ -255,9 +325,16 @@ public struct ControllerRecordSet: Sendable {
       else { throw ControllerRecordProblem("the patch changes nothing in the bundled record") }
       var layers = upstream.fieldLayers
       for key in fields.keys { layers[key] = .user }
+      var tuningLayers = upstream.tuningLayers
+      for key in (fields["tuning"] as? [String: Any] ?? [:]).keys { tuningLayers[key] = .user }
       return ValidatedControllerRecord(
         operation: .patch,
-        record: try makeRecord(merged, layers: layers, userFile: file)
+        record: try makeRecord(
+          merged,
+          layers: layers,
+          tuningLayers: tuningLayers,
+          userFile: file
+        )
       )
     default: throw ControllerRecordProblem("operation must be add or patch")
     }
@@ -314,9 +391,11 @@ public struct ControllerRecordSet: Sendable {
   private static func makeRecord(
     _ record: [String: Any],
     layers: [String: ControllerRecordLayer],
+    tuningLayers: [String: ControllerRecordLayer]? = nil,
     userFile: URL?
   ) throws -> ControllerRecord {
     let decoded = try decode(record)
+    let set = decoded.document.tuning.setKeys
     return ControllerRecord(
       identity: decoded.identity,
       document: try JSONSerialization.data(
@@ -324,8 +403,15 @@ public struct ControllerRecordSet: Sendable {
         options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
       ),
       fieldLayers: layers,
+      tuningLayers: tuningLayers
+        ?? Dictionary(
+          uniqueKeysWithValues: set.map { ($0.rawValue, layers["tuning"] ?? .bundled) }
+        ),
       userFile: userFile,
       family: decoded.document.protocolInfo.protocolID.rawValue,
+      tuningScope: Set(
+        ControllerTuning.Key.allCases.filter { decoded.document.tuningScopeViolation($0) == nil }
+      ),
       profile: try DeviceCatalog.makeRuntimeProfile(decoded.document)
     )
   }

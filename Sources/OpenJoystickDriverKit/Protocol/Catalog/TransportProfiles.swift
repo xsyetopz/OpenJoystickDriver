@@ -271,7 +271,7 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   /// The record's input-report layout; set exactly for the `hid.report-layout` family.
   public let inputLayout: ControllerInputLayout?
   /// The record's timing and deadzone values; nil fields keep the driver defaults.
-  public let tuning: ControllerTuning
+  public internal(set) var tuning: ControllerTuning
   /// The record's Bluetooth LE vibration characteristic UUID; set only for Switch 2 controllers.
   public var bluetoothLEVibrationCharacteristic: String?
 

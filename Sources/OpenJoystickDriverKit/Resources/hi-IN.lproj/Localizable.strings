@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "माँगी गई पहुँच दे दी गई है।";
 "cli.permission.request.ids" = "माँगी जाने वाली अनुमतियाँ: input-monitoring या accessibility।";
 "cli.permission.request.unknown_id" = "अज्ञात अनुमति “%@”। %@ इस्तेमाल करें।";
+"cli.config.abstract" = "OpenJoystickDriver जो कॉन्फ़िगरेशन लागू करता है और हर मान किस लेयर ने सेट किया, यह दिखाएँ।";
+"cli.config.discussion" = "मान लेयर में लगते हैं, सबसे निचली से शुरू करके: ड्राइवर डिफ़ॉल्ट, Defaults.json, बंडल किया गया रिकॉर्ड, आपका रिकॉर्ड, सक्रिय प्रोफ़ाइल। हर ट्यूनिंग कुंजी उस सबसे ऊँची लेयर का मान लेती है जो उसे सेट करती है।";
+"cli.config.show.abstract" = "हर ट्यूनिंग मान और उसे सेट करने वाली लेयर प्रिंट करें।";
+"cli.config.show.controller" = "वैश्विक डिफ़ॉल्ट के बजाय एक कंट्रोलर की प्रभावी ट्यूनिंग VVVV:PPPP रूप में दिखाएँ।";
+"cli.config.show.defaults_ignored" = "%@ अनदेखा किया गया: %@";
+"cli.config.show.discussion" = "--controller के बिना, Defaults.json जो कुंजियाँ सेट करता है उन्हें प्रिंट करता है। इसके साथ, Defaults.json, आपका रिकॉर्ड और बंडल किया गया रिकॉर्ड लेयर होने के बाद कंट्रोलर का रिकॉर्ड प्रिंट करता है। जिस कुंजी को कोई लेयर सेट नहीं करती, वह “ड्राइवर डिफ़ॉल्ट” दिखाती है।";
+"cli.config.show.unset" = "ड्राइवर डिफ़ॉल्ट";
 "cli.setting.abstract" = "OpenJoystickDriver ऐप की सेटिंग्स की सूची दिखाएँ, पढ़ें या बदलें।";
 "cli.setting.bad_value" = "“%@”, %@ के लिए मान्य मान नहीं है। true या false इस्तेमाल करें।";
 "cli.setting.developer_tools" = "सेटिंग्स विंडो में डेवलपर टूल दिखाएँ।";

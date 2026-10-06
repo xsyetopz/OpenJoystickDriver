@@ -73,6 +73,10 @@ Most commands send requests to the OpenJoystickDriver service, which runs inside
 
 A command that needs the service exits with code 69 when the service is not running. `ojd status` works without the service and reports it as stopped.
 
+## Configuration
+
+`ojd config show` prints each effective tuning value and the layer that set it: the driver default, `Defaults.json`, the bundled record, or your record. It reads the files directly, so it works without the service. With `--controller` and the service running, it also lists the active profile's stick deadzones in the `profile` layer. See [Controller records](Controller-Records.md#set-a-default-for-every-controller).
+
 ## Output
 
 - Data goes to standard output. Progress messages, warnings, and errors go to standard error.

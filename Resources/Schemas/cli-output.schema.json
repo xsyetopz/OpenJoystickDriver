@@ -236,6 +236,66 @@
 				}
 			}
 		},
+		"configShow": {
+			"type": "object",
+			"required": ["defaultsFile", "values"],
+			"additionalProperties": false,
+			"properties": {
+				"controller": {
+					"description": "The controller whose record was layered, as VVVV:PPPP. Absent without --controller.",
+					"type": "string",
+					"pattern": "^[0-9A-F]{4}:[0-9A-F]{4}$"
+				},
+				"defaultsFile": {
+					"description": "The Defaults.json path, whether or not the file exists.",
+					"type": "string"
+				},
+				"profile": {
+					"description": "The active profile whose stick values the profile rows show. Absent without --controller, without a running service, or without an active profile for the controller.",
+					"type": "string"
+				},
+				"defaultsProblem": {
+					"description": "Why OJD ignored Defaults.json. Absent when it applies or does not exist.",
+					"type": "string"
+				},
+				"values": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": ["key", "layer"],
+						"additionalProperties": false,
+						"properties": {
+							"key": {
+								"description": "A record tuning key, or for a profile row the profile file path of the value.",
+								"anyOf": [
+									{
+										"enum": [
+											"stickDeadzone",
+											"inputLivenessTimeoutMs",
+											"hidStartupRecoveryIntervalMs",
+											"hidStartupRecoveryRounds",
+											"hidStartupIntervalMs",
+											"minimumHIDOutputIntervalMs"
+										]
+									},
+									{
+										"pattern": "^stickMappings\\.[0-9]+\\.tuning\\.innerDeadzone$"
+									}
+								]
+							},
+							"layer": {
+								"description": "The layer that set the value, lowest first.",
+								"enum": ["driver", "global", "bundled", "user", "profile"]
+							},
+							"value": {
+								"description": "Absent while only the driver default applies.",
+								"type": "number"
+							}
+						}
+					}
+				}
+			}
+		},
 		"controllerCalibrate": {
 			"type": "object",
 			"required": [

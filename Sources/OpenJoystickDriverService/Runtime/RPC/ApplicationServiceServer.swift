@@ -58,6 +58,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     virtualOutputTransitionTimeouts: VirtualOutputTransitionTimeouts = .standard,
     virtualOutputTransitionClock: VirtualOutputTransitionClock = .system,
     defaults: UserDefaults = .standard,
+    personaDirectory: URL = VirtualHIDProfileOverrideStore.userDirectory,
     launchAtLogin: LaunchAtLoginControl = .system
   ) {
     self.deviceManager = deviceManager
@@ -81,7 +82,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     self.feedbackGate = VirtualOutputFeedbackGate(deviceManager: deviceManager)
     self.defaults = defaults
     self.launchAtLogin = launchAtLogin
-    self.virtualHIDProfileOverrides = VirtualHIDProfileOverrideStore(defaults: defaults)
+    self.virtualHIDProfileOverrides = VirtualHIDProfileOverrideStore(directory: personaDirectory)
     self.userSpaceEnabled = false
     self.userSpaceCloseSlot = nil
   }

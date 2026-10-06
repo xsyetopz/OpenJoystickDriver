@@ -16,7 +16,7 @@ struct OJDCommand: AsyncParsableCommand {
       StatusCommand.self, ControllerCommand.self, ProfileCommand.self, BindingCommand.self,
       VirtualCommand.self, ServiceCommand.self,
       RecordCommand.self, PermissionCommand.self, ExtensionCommand.self, SettingCommand.self,
-      AccessCommand.self,
+      ConfigCommand.self, AccessCommand.self,
       LogCommand.self, DiagnoseCommand.self, UpdateCommand.self, ExplainCommand.self,
     ]
   )

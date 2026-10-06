@@ -57,4 +57,19 @@ public struct VirtualDeviceProfile: Equatable, Sendable {
     transport: "Bluetooth",
     glyphFamily: .xbox
   )
+
+  /// This profile with the identity of a persona over it. The transport and, unless the persona
+  /// sets one, the version number stay those of the built-in profile, so the report descriptor
+  /// and the report layout keep their contract.
+  public func applying(_ identity: VirtualPersona.Identity) -> Self {
+    Self(
+      vendorID: identity.vendorID,
+      productID: identity.productID,
+      versionNumber: identity.versionNumber ?? versionNumber,
+      productName: identity.productName,
+      manufacturer: identity.manufacturer,
+      transport: transport,
+      glyphFamily: identity.glyphFamily
+    )
+  }
 }

@@ -38,6 +38,8 @@ SCHEMA_PATHS = (
     SCHEMAS / "access-grants.schema.json",
     SCHEMAS / "endpoint.schema.json",
     SCHEMAS / "error-codes.schema.json",
+    SCHEMAS / "defaults.schema.json",
+    SCHEMAS / "persona.schema.json",
 )
 
 

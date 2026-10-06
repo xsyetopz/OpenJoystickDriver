@@ -55,24 +55,8 @@ extension ControllerRecordDocument {
   /// recovery, and HID startup and output pacing.
   func validateTuning(codingPath: [any CodingKey]) throws {
     let path = codingPath + [DocumentKey("tuning")]
-    let quirks = protocolInfo.quirks
-    let violation: String? =
-      if tuning.inputLivenessTimeoutMilliseconds != nil,
-        protocolInfo.protocolID != .sonyDualShock4
-      {
-        "inputLivenessTimeoutMs requires the sony.dualshock4 family"
-      } else if tuning.hidStartupRecoveryIntervalMilliseconds != nil
-        || tuning.hidStartupRecoveryRounds != nil,
-        protocolInfo.protocolID != .nintendoSwitch1 || quirks.contains(.switch2)
-          || quirks.contains(.inputOnly)
-      {
-        "startup recovery tuning requires a Switch 1 controller with startup recovery"
-      } else if tuning.hidStartupIntervalMilliseconds != nil
-        || tuning.minimumHIDOutputIntervalMilliseconds != nil,
-        protocolInfo.protocolID.usesRawUSB(storedVariant: protocolInfo.protocolVariant)
-      {
-        "HID startup and output timings apply only to HID controllers"
-      } else { nil }
+    let violation = ControllerTuning.Key.allCases.filter(tuning.setKeys.contains).lazy
+      .compactMap(tuningScopeViolation).first
     if let violation {
       throw DecodingError.dataCorrupted(.init(codingPath: path, debugDescription: violation))
     }

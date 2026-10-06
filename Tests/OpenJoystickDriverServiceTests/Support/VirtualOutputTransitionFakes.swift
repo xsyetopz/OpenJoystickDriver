@@ -113,6 +113,12 @@ struct VirtualOutputTransitionFixture {
   let server: ApplicationServiceServer
   let defaults: UserDefaults
   let suiteName: String
+  /// Empty and removed by `tearDown`, so no test reads the user's personas.
+  let personaDirectory = FileManager.default.temporaryDirectory
+    .appendingPathComponent(
+      "OpenJoystickDriverTests.Personas.\(UUID().uuidString)",
+      isDirectory: true
+    )
 
   init(
     factory: VirtualOutputTransitionFactory,
@@ -143,7 +149,8 @@ struct VirtualOutputTransitionFixture {
       connectedIdentifierProvider: { identifiers },
       virtualOutputTransitionTimeouts: timeouts,
       virtualOutputTransitionClock: clock,
-      defaults: defaults
+      defaults: defaults,
+      personaDirectory: personaDirectory
     )
   }
 
@@ -161,5 +168,6 @@ struct VirtualOutputTransitionFixture {
   func tearDown() async {
     await server.stop()
     defaults.removePersistentDomain(forName: suiteName)
+    try? FileManager.default.removeItem(at: personaDirectory)
   }
 }

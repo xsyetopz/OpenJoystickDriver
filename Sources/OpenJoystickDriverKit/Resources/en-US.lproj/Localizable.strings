@@ -1127,7 +1127,14 @@
 "cli.permission.request.granted" = "The requested access is granted.";
 "cli.permission.request.ids" = "Permissions to request: input-monitoring or accessibility.";
 "cli.permission.request.unknown_id" = "Unknown permission '%@'. Use %@.";
-"cli.setting.abstract" = "List, read, or change OpenJoystickDriver app settings.";
+"cli.config.abstract" = "Show the configuration OpenJoystickDriver applies and which layer set each value.";
+"cli.config.discussion" = "Values layer, lowest first: driver default, Defaults.json, bundled record, your record, active profile. Each tuning key takes the value of the highest layer that sets it.";
+"cli.config.show.abstract" = "Print each tuning value and the layer that set it.";
+"cli.config.show.controller" = "Show the effective tuning of one controller, as VVVV:PPPP, instead of the global defaults.";
+"cli.config.show.defaults_ignored" = "Ignored %@: %@";
+"cli.config.show.discussion" = "Without --controller, prints the keys Defaults.json sets. With it, prints the controller's record after Defaults.json, your record, and the bundled record are layered. A key no layer sets shows 'driver default'.";
+"cli.config.show.unset" = "driver default";
+"cli.setting.abstract" ="List, read, or change OpenJoystickDriver app settings.";
 "cli.setting.bad_value" = "'%@' is not a value for %@. Use true or false.";
 "cli.setting.developer_tools" = "Show the developer tools in the Settings window.";
 "cli.setting.discussion" = "The running service applies each setting, so every setting command needs it.";

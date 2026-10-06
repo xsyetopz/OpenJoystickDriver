@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "所请求的访问权限已授予。";
 "cli.permission.request.ids" = "要请求的权限：input-monitoring 或 accessibility。";
 "cli.permission.request.unknown_id" = "未知权限 “%@”。请使用 %@。";
+"cli.config.abstract" = "显示 OpenJoystickDriver 应用的配置，以及设置每个值的层。";
+"cli.config.discussion" = "值按层叠加，从最低层开始：驱动程序默认值、Defaults.json、内置记录、您的记录、活动配置文件。每个调校键取设置它的最高层的值。";
+"cli.config.show.abstract" = "打印每个调校值以及设置它的层。";
+"cli.config.show.controller" = "以 VVVV:PPPP 的形式显示单个控制器的有效调校，而不是全局默认值。";
+"cli.config.show.defaults_ignored" = "已忽略 %@：%@";
+"cli.config.show.discussion" = "不带 --controller 时，打印 Defaults.json 设置的键。带该选项时，在 Defaults.json、您的记录和内置记录叠加后，打印该控制器的记录。没有任何层设置的键显示为“驱动程序默认值”。";
+"cli.config.show.unset" = "驱动程序默认值";
 "cli.setting.abstract" = "列出、读取或更改 OpenJoystickDriver App 设置。";
 "cli.setting.bad_value" = "“%@” 不是 %@ 的有效值。请使用 true 或 false。";
 "cli.setting.developer_tools" = "在“设置”窗口中显示开发者工具。";

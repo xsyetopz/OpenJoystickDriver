@@ -13,12 +13,14 @@ extension VirtualOutputTests {
     outputEnabled: Bool = true,
     activationGate: (VirtualHIDProfileID, InstallationGate)? = nil,
     timeouts: VirtualOutputTransitionTimeouts = .standard,
-    configure: (UserDefaults) -> Void = { _ in }
+    configure: (URL) -> Void = { _ in }
   ) async throws -> ProfileOverrideServerFixture {
     let suiteName = "OpenJoystickDriverTests.ProfileOverrideRPC.\(UUID().uuidString)"
     let defaults = try #require(UserDefaults(suiteName: suiteName))
-    configure(defaults)
-    let store = VirtualHIDProfileOverrideStore(defaults: defaults)
+    let personaDirectory = FileManager.default.temporaryDirectory
+      .appendingPathComponent(suiteName, isDirectory: true)
+    configure(personaDirectory)
+    let store = VirtualHIDProfileOverrideStore(directory: personaDirectory)
     let log = RetargetEventLog()
     let descriptions = provider(identifiers.map { description($0) })
     let overrideProvider: @Sendable (ApplicationServiceDeviceDescription) -> VirtualHIDProfileID? =
@@ -60,12 +62,14 @@ extension VirtualOutputTests {
       },
       connectedIdentifierProvider: { identifiers },
       virtualOutputTransitionTimeouts: timeouts,
-      defaults: defaults
+      defaults: defaults,
+      personaDirectory: personaDirectory
     )
     if outputEnabled { _ = await server.activateVirtualOutputBackendForCurrentDevices() }
     return ProfileOverrideServerFixture(
       server: server,
       defaults: defaults,
+      personaDirectory: personaDirectory,
       suiteName: suiteName,
       log: log
     )
@@ -108,7 +112,7 @@ extension VirtualOutputTests {
         )
     )
     #expect(fixture.store.override(vendorID: 1, productID: 2) == nil)
-    #expect(fixture.defaults.object(forKey: VirtualHIDProfileOverrideStore.defaultsKey) == nil)
+    #expect(fixture.store.files.isEmpty)
     await fixture.tearDown()
   }
 
@@ -121,7 +125,7 @@ extension VirtualOutputTests {
     #expect(result.failure == .unknownProfile)
     #expect(result.requested == nil)
     #expect(result.live == .xboxOneSBluetooth)
-    #expect(fixture.defaults.object(forKey: VirtualHIDProfileOverrideStore.defaultsKey) == nil)
+    #expect(fixture.store.files.isEmpty)
     #expect(fixture.log.built().count == 1)
     await fixture.tearDown()
   }
@@ -135,7 +139,7 @@ extension VirtualOutputTests {
 
     #expect(otherModel.failure == .controllerNotFound)
     #expect(otherSession.failure == .controllerNotFound)
-    #expect(fixture.defaults.object(forKey: VirtualHIDProfileOverrideStore.defaultsKey) == nil)
+    #expect(fixture.store.files.isEmpty)
     await fixture.tearDown()
   }
 
@@ -167,14 +171,14 @@ extension VirtualOutputTests {
 
     #expect(result.failure == .serverStopped)
     #expect(result.requested == .generic)
-    #expect(fixture.defaults.object(forKey: VirtualHIDProfileOverrideStore.defaultsKey) == nil)
+    #expect(fixture.store.files.isEmpty)
     await fixture.tearDown()
   }
 
   @Test
   func failedActivationRestoresThePriorStoredOverride() async throws {
     let fixture = try await profileOverrideServer(failure: (.xboxOneSBluetooth, .activation)) {
-      VirtualHIDProfileOverrideStore(defaults: $0).setGenericForTest()
+      VirtualHIDProfileOverrideStore(directory: $0).setGenericForTest()
     }
     #expect(fixture.log.built().map(\.profile) == [.generic])
 
@@ -280,7 +284,7 @@ extension VirtualOutputTests {
         perControllerNanoseconds: 50_000_000,
         totalNanoseconds: 10_000_000_000
       )
-    ) { VirtualHIDProfileOverrideStore(defaults: $0).setGenericForTest() }
+    ) { VirtualHIDProfileOverrideStore(directory: $0).setGenericForTest() }
 
     let result = await fixture.change(.set("hid-xbox-one-s-bt"))
 

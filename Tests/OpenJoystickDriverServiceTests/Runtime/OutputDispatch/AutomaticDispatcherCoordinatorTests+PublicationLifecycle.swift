@@ -395,7 +395,7 @@ extension AutomaticDispatcherCoordinatorTests {
       descriptions: [description],
       isEligible: { _, _ in true },
       profileProvider: { _ in nil },
-      factory: factory
+      factory: { _ in factory }
     )
 
     #expect(builds.next() == 0)

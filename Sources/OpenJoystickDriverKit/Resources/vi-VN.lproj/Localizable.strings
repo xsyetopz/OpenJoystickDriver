@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "Quyền truy cập được yêu cầu đã được cấp.";
 "cli.permission.request.ids" = "Các quyền để yêu cầu: input-monitoring hoặc accessibility.";
 "cli.permission.request.unknown_id" = "Quyền “%@” không xác định. Hãy dùng %@.";
+"cli.config.abstract" = "Hiển thị cấu hình mà OpenJoystickDriver áp dụng và lớp nào đã đặt từng giá trị.";
+"cli.config.discussion" = "Các giá trị xếp thành lớp, từ thấp nhất: mặc định của trình điều khiển, Defaults.json, bản ghi đi kèm, bản ghi của bạn, hồ sơ đang hoạt động. Mỗi khóa tinh chỉnh lấy giá trị của lớp cao nhất đặt khóa đó.";
+"cli.config.show.abstract" = "In từng giá trị tinh chỉnh và lớp đã đặt giá trị đó.";
+"cli.config.show.controller" = "Hiển thị tinh chỉnh hiệu lực của một bộ điều khiển, dạng VVVV:PPPP, thay cho mặc định chung.";
+"cli.config.show.defaults_ignored" = "Đã bỏ qua %@: %@";
+"cli.config.show.discussion" = "Không có --controller, in các khóa mà Defaults.json đặt. Khi có, in bản ghi của bộ điều khiển sau khi Defaults.json, bản ghi của bạn và bản ghi đi kèm được xếp thành lớp. Khóa mà không lớp nào đặt sẽ hiển thị “mặc định của trình điều khiển”.";
+"cli.config.show.unset" = "mặc định của trình điều khiển";
 "cli.setting.abstract" = "Liệt kê, đọc hoặc thay đổi cài đặt ứng dụng OpenJoystickDriver.";
 "cli.setting.bad_value" = "“%@” không phải là giá trị của %@. Hãy dùng true hoặc false.";
 "cli.setting.developer_tools" = "Hiển thị công cụ nhà phát triển trong cửa sổ Cài đặt.";

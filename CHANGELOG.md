@@ -8,6 +8,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Added
 
+- `~/Library/Application Support/OpenJoystickDriver/Defaults.json` sets a `tuning` default for every controller (`Resources/Schemas/defaults.schema.json`). A value takes the first layer that sets it: user record, bundled record, `Defaults.json`, driver default. `ojd config show [--controller VVVV:PPPP] [--json]` prints each effective value and the layer that set it. See the [command reference](wiki/Command-Reference.md#config).
 - Every error has a stable code. The endpoint's error lines carry `E1001` to `E1009` in `code` instead of the old kebab-case names, and a refusal records `E1002`. The command line prints `error[E2xxx]: <message>` to stderr, remapping errors from the service carry `E3xxx` codes (the app shows them as a suffix, for example `(E3011)`), and [Error codes](wiki/Error-Codes.md) lists them all.
 - `ojd explain CODE` prints what an error code means, its area, and its exit code or wire value. It works offline and ignores case. An unknown code is a usage error. See the [command reference](wiki/Command-Reference.md).
 - Catalog the Microsoft Bluetooth Xbox controllers SDL lists (Xbox One S `045E:02E0`/`02FD`, Elite 2 `0B05`/`0B22`, Adaptive `0B0C`/`0B21`, and Series `0B13`/`0B20`) as `hid.descriptor`. The layout now comes from the report descriptor: the Linux firmware mode (Z/Rz right stick, Brake and Accelerator triggers, View on Consumer AC Back, Share on Consumer Record, Guide on Consumer AC Home) and the Windows mode (Rx/Ry right stick, Z/Rz triggers, Guide on System Main Menu) are both mapped, following xpadneo's recorded descriptors. The GameSir G7 SE is now recognized by its descriptor instead of a product-ID list. Rumble over Bluetooth (output report `0x03`) is not sent yet. None is hardware-verified.
@@ -47,6 +48,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Changed
 
+- **BREAKING:** The `VirtualHIDProfileOverrides` user default is removed, with no migration. Persona overrides are now files in `~/Library/Application Support/OpenJoystickDriver/Personas`, one per model or unit, described by `Resources/Schemas/persona.schema.json`. Testers recreate their overrides as persona files. A persona file can also carry an `identity` (VID, PID, strings, glyph family); it is published over the built-in report descriptor, and applies the next time the controller connects.
+- A `tuning` in a user `patch` record now merges per value into the bundled `tuning`, where it replaced it whole.
 - The help of each `ojd` subcommand no longer repeats the global options in its USAGE line and option list; it points to `ojd --help`, which lists them. Shell completion scripts still offer them on every command. `ojd virtual feed --plain` is now a usage error, because the command prints only JSON lines.
 
 - **BREAKING:** A `control` grant that an earlier build of this release stored, when the endpoint served only `read`, no longer loads quietly without the scope. `AccessGrants.json` with a `control` scope that has no `controlGrantedAt` is now damaged: the service refuses it, as it refuses any damaged file, and never honors that scope. If you tested an earlier beta.5 build, delete `AccessGrants.json` and recreate your access grants with `ojd access grant`.

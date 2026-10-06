@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "要求したアクセス権が許可されました。";
 "cli.permission.request.ids" = "要求する権限: input-monitoring または accessibility。";
 "cli.permission.request.unknown_id" = "不明な権限「%@」です。%@ を使用してください。";
+"cli.config.abstract" = "OpenJoystickDriver が適用する構成と、各値を設定したレイヤを表示します。";
+"cli.config.discussion" = "値は下位から順にレイヤとして重なります: ドライバのデフォルト、Defaults.json、同梱レコード、ユーザのレコード、有効なプロファイル。各チューニングキーは、そのキーを設定する最上位レイヤの値を使用します。";
+"cli.config.show.abstract" = "各チューニング値と、その値を設定したレイヤを出力します。";
+"cli.config.show.controller" = "グローバルのデフォルトではなく、1 台のコントローラの有効なチューニングを VVVV:PPPP の形式で表示します。";
+"cli.config.show.defaults_ignored" = "%@ を無視しました: %@";
+"cli.config.show.discussion" = "--controller を指定しない場合は、Defaults.json が設定するキーを出力します。指定した場合は、Defaults.json、ユーザのレコード、同梱レコードを重ねたあとのコントローラのレコードを出力します。どのレイヤも設定しないキーには「ドライバのデフォルト」と表示されます。";
+"cli.config.show.unset" = "ドライバのデフォルト";
 "cli.setting.abstract" = "OpenJoystickDriver のアプリ設定を一覧表示、読み取り、変更します。";
 "cli.setting.bad_value" = "「%@」は %@ の値として使えません。true または false を使用してください。";
 "cli.setting.developer_tools" = "設定ウインドウに開発者ツールを表示します。";

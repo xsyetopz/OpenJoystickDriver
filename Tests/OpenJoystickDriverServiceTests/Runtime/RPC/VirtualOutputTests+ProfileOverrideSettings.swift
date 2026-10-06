@@ -33,7 +33,7 @@ extension VirtualOutputTests {
     await gate.release()
     #expect(await set.value.live == .generic)
     #expect(await reset.value)
-    #expect(fixture.defaults.object(forKey: VirtualHIDProfileOverrideStore.defaultsKey) == nil)
+    #expect(fixture.store.files.isEmpty)
     let state = fixture.server.automaticUserSpaceDispatcher()?.profileState(
       runtimeIdentifier: DeviceIdentifier(vendorID: 1, productID: 2).runtimeIdentifier
     )
@@ -51,7 +51,7 @@ extension VirtualOutputTests {
         perControllerNanoseconds: 50_000_000,
         totalNanoseconds: 10_000_000_000
       )
-    ) { VirtualHIDProfileOverrideStore(defaults: $0).setGenericForTest() }
+    ) { VirtualHIDProfileOverrideStore(directory: $0).setGenericForTest() }
     let resetFinished = CompletionFlag()
     let server = fixture.server
 
@@ -66,7 +66,7 @@ extension VirtualOutputTests {
     #expect(resetFinished.isMarked)
     await gate.release()
     #expect(await reset.value == false)
-    #expect(fixture.defaults.object(forKey: VirtualHIDProfileOverrideStore.defaultsKey) == nil)
+    #expect(fixture.store.files.isEmpty)
     await fixture.tearDown()
   }
 
@@ -80,7 +80,7 @@ extension VirtualOutputTests {
         perControllerNanoseconds: 50_000_000,
         totalNanoseconds: 10_000_000_000
       )
-    ) { VirtualHIDProfileOverrideStore(defaults: $0).setGenericForTest() }
+    ) { VirtualHIDProfileOverrideStore(directory: $0).setGenericForTest() }
     let result = await fixture.change(.set("hid-xbox-one-s-bt"))
     guard case .activationFailed = result.failure else {
       Issue.record("Expected activation-failed, got \(String(describing: result.failure))")
@@ -141,15 +141,13 @@ extension VirtualOutputTests {
 
   @Test
   func statusSurfacesUnreadableOverrides() async throws {
-    let stored = Data(#"[{"vendorID":1,"productID":2,"profile":"xone-hid"}]"#.utf8)
-    let fixture = try await profileOverrideServer {
-      $0.set(stored, forKey: VirtualHIDProfileOverrideStore.defaultsKey)
-    }
+    // A regular file where the persona directory belongs cannot be listed.
+    let fixture = try await profileOverrideServer { try? Data().write(to: $0) }
 
     let data = await fixture.server.getStatus()
     let status = try JSONDecoder().decode(ApplicationServiceStatusPayload.self, from: data)
 
-    #expect(status.virtualHIDProfileOverrideError == "unsupported-value: xone-hid")
+    #expect(status.virtualHIDProfileOverrideError?.hasPrefix("unreadable-directory:") == true)
     let result = await fixture.change(.set("hid-generic"))
     #expect(result.failure == .persistenceFailed)
     #expect(result.live == .xboxOneSBluetooth)
@@ -164,7 +162,7 @@ extension VirtualOutputTests {
     let reset = await fixture.server.resetSettings()
 
     #expect(reset)
-    #expect(fixture.defaults.object(forKey: VirtualHIDProfileOverrideStore.defaultsKey) == nil)
+    #expect(fixture.store.files.isEmpty)
     let state = fixture.server.automaticUserSpaceDispatcher()?.profileState(
       runtimeIdentifier: DeviceIdentifier(vendorID: 1, productID: 2).runtimeIdentifier
     )

@@ -38,11 +38,16 @@ final class ControllerRecordWatcher {
       fputs("[Records] Cannot create \(directory.path): \(error.localizedDescription)\n", stderr)
     }
     apply()
-    let watcher = FileChangeWatcher(directories: [directory]) { [weak self] in
-      guard let self else { return }
-      let changed = self.apply()
-      if !changed.isEmpty { self.onChange(changed) }
-    }
+    // The parent folder holds `Defaults.json`, which sits under every record's tuning.
+    let watcher = FileChangeWatcher(
+      directories: [directory, directory.deletingLastPathComponent()],
+      watchesFile: { $0.pathExtension == "json" },
+      onChange: { [weak self] in
+        guard let self else { return }
+        let changed = self.apply()
+        if !changed.isEmpty { self.onChange(changed) }
+      }
+    )
     self.watcher = watcher
     watcher.start()
   }
@@ -58,6 +63,9 @@ final class ControllerRecordWatcher {
     let records = ControllerRecordSet.load(userDirectory: directory)
     for file in records.problems {
       fputs("[Records] Skipped \(file.url.path): \(file.problem ?? "")\n", stderr)
+    }
+    if let problem = records.defaults?.problem, let url = records.defaults?.url {
+      fputs("[Records] Ignored \(url.path): \(problem)\n", stderr)
     }
     let applied = records.userFiles.count - records.problems.count
     print("[Records] Applied \(applied) user controller record(s)")

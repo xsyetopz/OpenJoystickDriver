@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "تم منح الوصول المطلوب.";
 "cli.permission.request.ids" = "الأذونات المطلوب طلبها: input-monitoring أو accessibility.";
 "cli.permission.request.unknown_id" = "إذن غير معروف «%@». استخدم %@.";
+"cli.config.abstract" = "اعرض الإعدادات التي يطبّقها OpenJoystickDriver والطبقة التي حدّدت كل قيمة.";
+"cli.config.discussion" = "تترتب القيم في طبقات، من الأدنى إلى الأعلى: الإعداد الافتراضي للمشغّل، Defaults.json، السجل المرفق، سجلك، الملف الشخصي النشط. يأخذ كل مفتاح ضبط قيمة أعلى طبقة تحدّده.";
+"cli.config.show.abstract" = "اطبع كل قيمة ضبط والطبقة التي حدّدتها.";
+"cli.config.show.controller" = "اعرض الضبط الفعلي لوحدة تحكم واحدة، بالصيغة VVVV:PPPP، بدلًا من الإعدادات الافتراضية العامة.";
+"cli.config.show.defaults_ignored" = "تم تجاهل %@: %@";
+"cli.config.show.discussion" = "من دون --controller، يطبع المفاتيح التي يحدّدها Defaults.json. ومعه، يطبع سجل وحدة التحكم بعد ترتيب Defaults.json وسجلك والسجل المرفق في طبقات. المفتاح الذي لا تحدّده أي طبقة يظهر بالقيمة «الإعداد الافتراضي للمشغّل».";
+"cli.config.show.unset" = "الإعداد الافتراضي للمشغّل";
 "cli.setting.abstract" = "اعرض إعدادات تطبيق OpenJoystickDriver أو اقرأها أو غيّرها.";
 "cli.setting.bad_value" = "«%@» ليست قيمة صالحة لـ %@. استخدم true أو false.";
 "cli.setting.developer_tools" = "أظهر أدوات المطوّر في نافذة الإعدادات.";

@@ -188,8 +188,7 @@ extension VirtualHIDProfileOverrideError {
   /// The description reported as `virtualHIDProfileOverrideError` in service status.
   public var statusDescription: String {
     switch self {
-    case .unsupportedValue(let value): "unsupported-value: \(value)"
-    case .unsupportedSchema: "unsupported-schema"
+    case .unreadableDirectory(let reason): "unreadable-directory: \(reason)"
     }
   }
 }

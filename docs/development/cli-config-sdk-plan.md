@@ -69,7 +69,7 @@ The maintainer approves each commit.
    Protocol defaults stay in the driver; a record value overrides them.
    The GIP announce and XUSB inquiry resend counters stay in Swift, with the stateful framing of those protocols.
    A `patch` of `protocol` that keeps the bundled family merges into the bundled block (RFC 7396), and its `quirks` join the bundled quirks (maintainer decision, 2026-10-06), so a user patch cannot drop the quirks that now carry DualShock 4 calibration and Shield rumble.
-   A user patch can set `tuning`, which replaces the bundled `tuning` whole.
+   A user patch can set `tuning`, which merges per key into the bundled `tuning` (changed in slice 4, so each key reports its own layer).
    The `hid.descriptor` axis layouts and the third-party DualSense model values are record quirks; a non-Sony vendor ID still selects third-party DualSense mode.
 1. **Configuration layer.**
    - A global defaults file, `~/Library/Application Support/OpenJoystickDriver/Defaults.json`, for deadzone and timing defaults.

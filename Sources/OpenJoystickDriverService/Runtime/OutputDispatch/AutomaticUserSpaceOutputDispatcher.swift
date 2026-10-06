@@ -15,6 +15,12 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   private let builder: @Sendable (VirtualHIDProfileID) throws -> any VirtualOutputDispatching
   private let overrideProvider:
     @Sendable (ApplicationServiceDeviceDescription) -> VirtualHIDProfileID?
+  /// The identity of the controller's custom persona, which `identityBuilder` publishes over the
+  /// built-in descriptor.
+  private let identityProvider:
+    @Sendable (ApplicationServiceDeviceDescription) -> VirtualPersona.Identity?
+  private let identityBuilder:
+    @Sendable (VirtualHIDProfileID, VirtualPersona.Identity) throws -> any VirtualOutputDispatching
   /// Internal so tests can observe when a stop reaches the coordinator.
   let coordinator = AutomaticDispatcherCoordinator()
   private let stateLock = NSLock()
@@ -33,6 +39,9 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   /// Each controller's selected profile and how it was selected. Selection runs once per
   /// physical session, and only a successful `retarget` changes it, so delivery never reselects.
   private var selections: [DeviceIdentifier: VirtualHIDProfileSelector.Selection] = [:]
+  /// The persona identity each controller's backends publish. It changes with `selections`, so a
+  /// persona edited while the controller is connected applies from its next session.
+  private var identities: [DeviceIdentifier: VirtualPersona.Identity] = [:]
 
   init(
     deviceManager: DeviceManager,
@@ -42,7 +51,16 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     descriptionsProvider: (@Sendable () async -> [ApplicationServiceDeviceDescription])? = nil,
     overrideProvider:
       @escaping @Sendable (ApplicationServiceDeviceDescription) -> VirtualHIDProfileID? = { _ in nil
-      }
+      },
+    identityProvider:
+      @escaping @Sendable (ApplicationServiceDeviceDescription) -> VirtualPersona.Identity? = { _ in
+        nil
+      },
+    identityBuilder:
+      (
+        @Sendable (VirtualHIDProfileID, VirtualPersona.Identity) throws ->
+          any VirtualOutputDispatching
+      )? = nil
   ) {
     self.deviceManager = deviceManager
     self.ownershipProvider =
@@ -76,6 +94,19 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     }
     self.builder = builder
     self.overrideProvider = overrideProvider
+    self.identityProvider = identityProvider
+    self.identityBuilder = identityBuilder ?? { profileID, _ in try builder(profileID) }
+  }
+
+  /// Builds a backend for `identifier`'s selected profile, with its persona identity when it has
+  /// one. The identity is read when the backend is built, after selection recorded it.
+  private func factory(for identifier: DeviceIdentifier) -> AutomaticDispatcherCoordinator.Factory {
+    { [self] profileID in
+      guard let identity = stateLock.withLock({ identities[identifier] }) else {
+        return try builder(profileID)
+      }
+      return try identityBuilder(profileID, identity)
+    }
   }
 
   var suppressOutput: Bool {
@@ -95,7 +126,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
       profileProvider: { [weak self] description in
         self?.profile(for: identifier, description: description, generation: generation)
       },
-      factory: builder
+      factory: factory(for: identifier)
     )
     await synchronizeDiagnostics()
   }
@@ -120,7 +151,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
         else { return nil }
         return self.profile(for: identifier, description: description, generation: generation)
       },
-      factory: builder
+      factory: { [self] in factory(for: $0) }
     )
     await synchronizeDiagnostics()
   }
@@ -205,7 +236,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
         isEligible: { [weak self] identifier, profile in
           await self?.isEligible(identifier, profile: profile) ?? false
         },
-        factory: builder
+        factory: factory(for: identifier)
       )
     else { throw RemappingEventEngineError.sinkUnavailable }
     do {
@@ -228,6 +259,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
       descriptionCacheGeneration[identifier, default: 0] &+= 1
       _ = unavailableControllers.remove(identifier)
       _ = selections.removeValue(forKey: identifier)
+      _ = identities.removeValue(forKey: identifier)
     }
     await coordinator.stop(identifier)
     await synchronizeDiagnostics()
@@ -254,7 +286,12 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   ) -> VirtualHIDProfileID? {
     if let selection = stateLock.withLock({ selections[identifier] }) { return selection.profileID }
     let selection = select(for: description)
-    commit(selection, for: identifier, generation: generation)
+    commit(
+      selection,
+      identity: identityProvider(description),
+      for: identifier,
+      generation: generation
+    )
     return selection?.profileID
   }
 
@@ -274,11 +311,13 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   /// keeps no entry.
   private func commit(
     _ selection: VirtualHIDProfileSelector.Selection?,
+    identity: VirtualPersona.Identity?,
     for identifier: DeviceIdentifier,
     generation: UInt64
   ) {
     stateLock.withLock {
       guard descriptionCacheGeneration[identifier, default: 0] == generation else { return }
+      identities[identifier] = identity
       if let selection {
         selections[identifier] = selection
         _ = unavailableControllers.remove(identifier)
@@ -353,9 +392,15 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     guard let description = await cachedDescription(for: identifier),
       let selection = select(for: description)
     else { return }
-    let current = stateLock.withLock { selections[identifier] }
+    let (current, liveIdentity) = stateLock.withLock {
+      (selections[identifier], identities[identifier])
+    }
     guard current != selection else { return }
+    var identity = liveIdentity
     if current?.profileID != selection.profileID {
+      // The replacement is built with the persona identity of the new selection.
+      identity = identityProvider(description)
+      stateLock.withLock { identities[identifier] = identity }
       do {
         try await coordinator.retarget(
           identifier,
@@ -363,14 +408,15 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
           isEligible: { [weak self] identifier, profile in
             await self?.isEligible(identifier, profile: profile) ?? false
           },
-          factory: builder
+          factory: factory(for: identifier)
         )
       } catch {
+        stateLock.withLock { identities[identifier] = liveIdentity }
         await synchronizeDiagnostics()
         throw error
       }
     }
-    commit(selection, for: identifier, generation: generation)
+    commit(selection, identity: identity, for: identifier, generation: generation)
     await synchronizeDiagnostics()
   }
 

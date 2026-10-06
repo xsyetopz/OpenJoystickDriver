@@ -1127,6 +1127,13 @@
 "cli.permission.request.granted" = "Akses yang diminta diberikan.";
 "cli.permission.request.ids" = "Izin yang diminta: input-monitoring atau accessibility.";
 "cli.permission.request.unknown_id" = "Izin tidak dikenal “%@”. Gunakan %@.";
+"cli.config.abstract" = "Tampilkan konfigurasi yang diterapkan OpenJoystickDriver dan lapisan yang menetapkan setiap nilai.";
+"cli.config.discussion" = "Nilai disusun berlapis, dari yang terendah: default driver, Defaults.json, rekaman bawaan, rekaman Anda, profil aktif. Setiap kunci penyetelan memakai nilai dari lapisan tertinggi yang menetapkannya.";
+"cli.config.show.abstract" = "Cetak setiap nilai penyetelan dan lapisan yang menetapkannya.";
+"cli.config.show.controller" = "Tampilkan penyetelan efektif satu pengontrol, sebagai VVVV:PPPP, bukan default global.";
+"cli.config.show.defaults_ignored" = "%@ diabaikan: %@";
+"cli.config.show.discussion" = "Tanpa --controller, mencetak kunci yang ditetapkan Defaults.json. Dengan opsi itu, mencetak rekaman pengontrol setelah Defaults.json, rekaman Anda, dan rekaman bawaan disusun berlapis. Kunci yang tidak ditetapkan lapisan mana pun menampilkan “default driver”.";
+"cli.config.show.unset" = "default driver";
 "cli.setting.abstract" = "Tampilkan daftar, baca, atau ubah pengaturan app OpenJoystickDriver.";
 "cli.setting.bad_value" = "“%@” bukan nilai untuk %@. Gunakan true atau false.";
 "cli.setting.developer_tools" = "Tampilkan alat pengembang di jendela Pengaturan.";
