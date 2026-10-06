@@ -521,7 +521,10 @@
 "developer.packetCapture" = "Acquisizione di pacchetti grezzi";
 "developer.packetFilterActivity" = "Attività";
 "developer.packetFilterAll" = "Tutti";
-"developer.packetColumns" = "Ora        Direzione  Byte   Dati";
+"developer.packetColumnTime" = "Ora";
+"developer.packetColumnDirection" = "Direzione";
+"developer.packetColumnBytes" = "Byte";
+"developer.packetColumnData" = "Dati";
 "developer.packetSharingWarning" = "Il contenuto dei pacchetti varia a seconda del controller. Controlla il file prima di condividerlo.";
 "developer.rawUSB" = "USB grezzo";
 "developer.ready" = "Pronto";

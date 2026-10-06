@@ -521,7 +521,10 @@
 "developer.packetCapture" = "Захват необработанных пакетов";
 "developer.packetFilterActivity" = "Активность";
 "developer.packetFilterAll" = "Все";
-"developer.packetColumns" = "Время      Направл.   Байты  Данные";
+"developer.packetColumnTime" = "Время";
+"developer.packetColumnDirection" = "Направление";
+"developer.packetColumnBytes" = "Байты";
+"developer.packetColumnData" = "Данные";
 "developer.packetSharingWarning" = "Содержимое пакетов зависит от контроллера. Проверьте файл, прежде чем делиться им.";
 "developer.rawUSB" = "Необработанный USB";
 "developer.ready" = "Готово к работе";

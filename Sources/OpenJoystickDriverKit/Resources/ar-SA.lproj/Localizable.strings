@@ -521,7 +521,10 @@
 "developer.packetCapture" = "التقاط الحزم الخام";
 "developer.packetFilterActivity" = "النشاط";
 "developer.packetFilterAll" = "الكل";
-"developer.packetColumns" = "الوقت      الاتجاه    البايتات  البيانات";
+"developer.packetColumnTime" = "الوقت";
+"developer.packetColumnDirection" = "الاتجاه";
+"developer.packetColumnBytes" = "البايتات";
+"developer.packetColumnData" = "البيانات";
 "developer.packetSharingWarning" = "تختلف محتويات الحزم باختلاف وحدة التحكم. تحقق من الملف قبل مشاركته.";
 "developer.rawUSB" = "USB الخام";
 "developer.ready" = "جاهز";

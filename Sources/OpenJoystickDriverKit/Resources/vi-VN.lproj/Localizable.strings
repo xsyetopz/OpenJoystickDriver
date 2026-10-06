@@ -521,7 +521,10 @@
 "developer.packetCapture" = "Ghi gói tin thô";
 "developer.packetFilterActivity" = "Hoạt động";
 "developer.packetFilterAll" = "Tất cả";
-"developer.packetColumns" = "Thời gian  Hướng      Byte   Dữ liệu";
+"developer.packetColumnTime" = "Thời gian";
+"developer.packetColumnDirection" = "Hướng";
+"developer.packetColumnBytes" = "Byte";
+"developer.packetColumnData" = "Dữ liệu";
 "developer.packetSharingWarning" = "Nội dung gói tin khác nhau tùy bộ điều khiển. Hãy kiểm tra tệp trước khi chia sẻ.";
 "developer.rawUSB" = "USB thô";
 "developer.ready" = "Sẵn sàng";

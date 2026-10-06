@@ -158,12 +158,19 @@
       table.rowHeight = 20
       table.delegate = context.coordinator
       table.dataSource = context.coordinator
-      let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("packet"))
-      column.title = OJDLocalized.string(
-        "developer.packetColumns"
-      )
-      column.minWidth = 480
-      table.addTableColumn(column)
+      table.columnAutoresizingStyle = .lastColumnOnlyAutoresizingStyle
+      for (identifier, title, width) in [
+        ("time", OJDLocalized.string("developer.packetColumnTime"), 80.0),
+        ("direction", OJDLocalized.string("developer.packetColumnDirection"), 90.0),
+        ("bytes", OJDLocalized.string("developer.packetColumnBytes"), 60.0),
+        ("data", OJDLocalized.string("developer.packetColumnData"), 300.0),
+      ] {
+        let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(identifier))
+        column.title = title
+        column.width = width
+        column.minWidth = width
+        table.addTableColumn(column)
+      }
       let scrollView = NSScrollView()
       scrollView.documentView = table
       scrollView.hasVerticalScroller = true
@@ -217,18 +224,13 @@
         }
         let packet = packets[row]
         let firstTimestamp = packets.first?.timestamp ?? packet.timestamp
-        let direction = packet.direction.rawValue.uppercased().padding(
-          toLength: 9,
-          withPad: " ",
-          startingAt: 0
-        )
-        textField.stringValue = String(
-          format: "+%7.3fs  %@  %5d  %@",
-          packet.timestamp - firstTimestamp,
-          direction,
-          packet.length,
-          packet.hex
-        )
+        switch tableColumn?.identifier.rawValue {
+        case "time":
+          textField.stringValue = String(format: "+%.3fs", packet.timestamp - firstTimestamp)
+        case "direction": textField.stringValue = packet.direction.rawValue.uppercased()
+        case "bytes": textField.stringValue = String(packet.length)
+        default: textField.stringValue = packet.hex
+        }
         return cell
       }
     }

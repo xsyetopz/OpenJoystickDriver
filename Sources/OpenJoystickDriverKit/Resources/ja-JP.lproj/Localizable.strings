@@ -521,7 +521,10 @@
 "developer.packetCapture" = "生パケットキャプチャ";
 "developer.packetFilterActivity" = "アクティビティ";
 "developer.packetFilterAll" = "すべて";
-"developer.packetColumns" = "時刻       方向        バイト  データ";
+"developer.packetColumnTime" = "時刻";
+"developer.packetColumnDirection" = "方向";
+"developer.packetColumnBytes" = "バイト";
+"developer.packetColumnData" = "データ";
 "developer.packetSharingWarning" = "パケットの内容はコントローラによって異なります。共有する前にファイルを確認してください。";
 "developer.rawUSB" = "生の USB";
 "developer.ready" = "準備完了";

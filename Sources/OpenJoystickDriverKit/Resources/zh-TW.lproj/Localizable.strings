@@ -521,7 +521,10 @@
 "developer.packetCapture" = "原始封包擷取";
 "developer.packetFilterActivity" = "活動";
 "developer.packetFilterAll" = "全部";
-"developer.packetColumns" = "時間       方向        位元組  資料";
+"developer.packetColumnTime" = "時間";
+"developer.packetColumnDirection" = "方向";
+"developer.packetColumnBytes" = "位元組";
+"developer.packetColumnData" = "資料";
 "developer.packetSharingWarning" = "封包內容會因控制器而異。分享前請先檢查檔案。";
 "developer.rawUSB" = "原始 USB";
 "developer.ready" = "準備就緒";

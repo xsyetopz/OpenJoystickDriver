@@ -521,7 +521,10 @@
 "developer.packetCapture" = "原始数据包捕捉";
 "developer.packetFilterActivity" = "活动";
 "developer.packetFilterAll" = "全部";
-"developer.packetColumns" = "时间       方向        字节    数据";
+"developer.packetColumnTime" = "时间";
+"developer.packetColumnDirection" = "方向";
+"developer.packetColumnBytes" = "字节";
+"developer.packetColumnData" = "数据";
 "developer.packetSharingWarning" = "数据包内容因控制器而异。分享前请检查文件。";
 "developer.rawUSB" = "原始 USB";
 "developer.ready" = "就绪";

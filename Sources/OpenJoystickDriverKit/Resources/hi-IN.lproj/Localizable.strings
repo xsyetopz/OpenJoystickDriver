@@ -521,7 +521,10 @@
 "developer.packetCapture" = "रॉ पैकेट कैप्चर";
 "developer.packetFilterActivity" = "गतिविधि";
 "developer.packetFilterAll" = "सभी";
-"developer.packetColumns" = "समय       दिशा        बाइट   डेटा";
+"developer.packetColumnTime" = "समय";
+"developer.packetColumnDirection" = "दिशा";
+"developer.packetColumnBytes" = "बाइट";
+"developer.packetColumnData" = "डेटा";
 "developer.packetSharingWarning" = "पैकेट सामग्री कंट्रोलर के अनुसार भिन्न होती है। साझा करने से पहले फ़ाइल की जाँच करें।";
 "developer.rawUSB" = "रॉ USB";
 "developer.ready" = "तैयार";

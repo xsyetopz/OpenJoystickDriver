@@ -521,7 +521,10 @@
 "developer.packetCapture" = "Ruwe pakketopname";
 "developer.packetFilterActivity" = "Activiteit";
 "developer.packetFilterAll" = "Alle";
-"developer.packetColumns" = "Tijd       Richting   Bytes  Data";
+"developer.packetColumnTime" = "Tijd";
+"developer.packetColumnDirection" = "Richting";
+"developer.packetColumnBytes" = "Bytes";
+"developer.packetColumnData" = "Gegevens";
 "developer.packetSharingWarning" = "De inhoud van pakketten verschilt per controller. Controleer het bestand voordat je het deelt.";
 "developer.rawUSB" = "Ruwe USB";
 "developer.ready" = "Gereed";

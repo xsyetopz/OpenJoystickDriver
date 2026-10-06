@@ -523,7 +523,10 @@
 "developer.packetCapture" = "Raw Packet Capture";
 "developer.packetFilterActivity" = "Activity";
 "developer.packetFilterAll" = "All";
-"developer.packetColumns" = "Time       Direction  Bytes  Data";
+"developer.packetColumnTime" = "Time";
+"developer.packetColumnDirection" = "Direction";
+"developer.packetColumnBytes" = "Bytes";
+"developer.packetColumnData" = "Data";
 "developer.packetSharingWarning" = "Packet contents vary by controller. Check the file before sharing.";
 "developer.rawUSB" = "Raw USB";
 "developer.ready" = "Ready";

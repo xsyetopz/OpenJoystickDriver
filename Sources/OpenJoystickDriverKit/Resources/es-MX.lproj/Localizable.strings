@@ -521,7 +521,10 @@
 "developer.packetCapture" = "Captura de paquetes en bruto";
 "developer.packetFilterActivity" = "Actividad";
 "developer.packetFilterAll" = "Todos";
-"developer.packetColumns" = "Hora       Dirección  Bytes  Datos";
+"developer.packetColumnTime" = "Hora";
+"developer.packetColumnDirection" = "Dirección";
+"developer.packetColumnBytes" = "Bytes";
+"developer.packetColumnData" = "Datos";
 "developer.packetSharingWarning" = "El contenido de los paquetes varía según el control. Revise el archivo antes de compartirlo.";
 "developer.rawUSB" = "USB sin procesar";
 "developer.ready" = "Listo";

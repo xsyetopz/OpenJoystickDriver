@@ -521,7 +521,10 @@
 "developer.packetCapture" = "Ham Paket Yakalama";
 "developer.packetFilterActivity" = "Etkinlik";
 "developer.packetFilterAll" = "Tümü";
-"developer.packetColumns" = "Zaman      Yön         Bayt    Veri";
+"developer.packetColumnTime" = "Zaman";
+"developer.packetColumnDirection" = "Yön";
+"developer.packetColumnBytes" = "Bayt";
+"developer.packetColumnData" = "Veri";
 "developer.packetSharingWarning" = "Paket içeriği kontrolcüye göre değişir. Paylaşmadan önce dosyayı kontrol edin.";
 "developer.rawUSB" = "Ham USB";
 "developer.ready" = "Hazır";

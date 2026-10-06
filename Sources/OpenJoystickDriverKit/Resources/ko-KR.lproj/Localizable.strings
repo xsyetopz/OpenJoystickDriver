@@ -521,7 +521,10 @@
 "developer.packetCapture" = "원시 패킷 캡처";
 "developer.packetFilterActivity" = "활동";
 "developer.packetFilterAll" = "모두";
-"developer.packetColumns" = "시간       방향        바이트  데이터";
+"developer.packetColumnTime" = "시간";
+"developer.packetColumnDirection" = "방향";
+"developer.packetColumnBytes" = "바이트";
+"developer.packetColumnData" = "데이터";
 "developer.packetSharingWarning" = "패킷 내용은 컨트롤러에 따라 달라집니다. 공유하기 전에 파일을 확인하세요.";
 "developer.rawUSB" = "원시 USB";
 "developer.ready" = "준비됨";

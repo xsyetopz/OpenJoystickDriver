@@ -207,9 +207,16 @@
 
     /// Copies the captured packets to the general pasteboard as aligned text rows.
     func copyPacketCapture() {
-      let header = OJDLocalized.string(
-        "developer.packetColumns"
-      )
+      // The widths match `packetLine`.
+      // FSI and PDI (UAX #9) isolate each label, so labels keep column order in any script.
+      let header = [
+        (OJDLocalized.string("developer.packetColumnTime"), 9),
+        (OJDLocalized.string("developer.packetColumnDirection"), 9),
+        (OJDLocalized.string("developer.packetColumnBytes"), 5),
+        (OJDLocalized.string("developer.packetColumnData"), 0),
+      ].map { label, width in
+        "\u{2068}\(label)\u{2069}" + String(repeating: " ", count: max(width - label.count, 0))
+      }.joined(separator: "  ")
       let firstTimestamp = packets.first?.timestamp ?? 0
       let rows = [header] + packets.map { Self.packetLine($0, firstTimestamp: firstTimestamp) }
       let pasteboard = NSPasteboard.general

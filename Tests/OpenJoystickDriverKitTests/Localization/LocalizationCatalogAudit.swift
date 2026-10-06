@@ -15,7 +15,8 @@ enum LocalizationCatalogAudit {
   ]
 
   private static let spanishTerms: Set<String> = [
-    "inputTest.color", "keyboard.control", "profiles.controlNumber", "profiles.motion.local",
+    "developer.packetColumnBytes", "inputTest.color", "keyboard.control", "profiles.controlNumber",
+    "profiles.motion.local",
     "profiles.physical.motor", "profiles.stick.horizontal", "profiles.stick.vertical",
     "profiles.trackball.enabled", "profiles.turbo", "settings.general",
   ]
@@ -48,7 +49,7 @@ enum LocalizationCatalogAudit {
     ],
     "es-ES": spanishTerms.union(["menu.zoom"]),
     "es-MX": spanishTerms,
-    "fr-CA": frenchTerms,
+    "fr-CA": frenchTerms.union(["developer.packetColumnDirection"]),
     "fr-FR": frenchTerms,
     "hi-IN": ["keyboard.escape", "keyboard.return"],
     "it-IT": [
@@ -75,8 +76,9 @@ enum LocalizationCatalogAudit {
       "common.controllers", "common.protocol", "common.runtime", "common.service", "common.status",
       "common.stop", "console.stream", "console.title", "controllers.label", "controllers.protocol",
       "controllers.title", "debug.controllers", "debug.runtime", "developer.controller",
-      "developer.controllerDetails", "developer.route", "inputTest.home", "inputTest.menu",
-      "inputTest.rumble", "keyboard.capsLock", "keyboard.command", "keyboard.control",
+      "developer.controllerDetails", "developer.packetColumnBytes", "developer.route",
+      "inputTest.home", "inputTest.menu", "inputTest.rumble", "keyboard.capsLock",
+      "keyboard.command", "keyboard.control",
       "keyboard.escape", "keyboard.option", "keyboard.return", "keyboard.shift", "keyboard.tab",
       "mapping.guide", "mapping.physicalRumble", "mapping.start", "menu.help", "menu.zoom",
       "motion.calibration.offset", "profiles.activator", "profiles.physical.effect",
@@ -87,7 +89,8 @@ enum LocalizationCatalogAudit {
       "shortcuts.controller.type", "shortcuts.parameter.controller",
     ],
     "pt-BR": [
-      "capture.linear", "common.status", "console.title", "inputTest.menu", "keyboard.control",
+      "capture.linear", "common.status", "console.title", "developer.packetColumnBytes",
+      "inputTest.menu", "keyboard.control",
       "menu.zoom",
       "profiles.motion.local", "profiles.physical.motor", "profiles.stick.horizontal",
       "profiles.stick.vertical", "profiles.trackball.enabled", "profiles.turbo", "settings.status",

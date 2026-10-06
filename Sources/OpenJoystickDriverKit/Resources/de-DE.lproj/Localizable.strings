@@ -521,7 +521,10 @@
 "developer.packetCapture" = "Roh-Paketerfassung";
 "developer.packetFilterActivity" = "Aktivität";
 "developer.packetFilterAll" = "Alle";
-"developer.packetColumns" = "Zeit       Richtung   Bytes  Daten";
+"developer.packetColumnTime" = "Zeit";
+"developer.packetColumnDirection" = "Richtung";
+"developer.packetColumnBytes" = "Byte";
+"developer.packetColumnData" = "Daten";
 "developer.packetSharingWarning" = "Paketinhalt hängt vom Controller ab. Prüfe die Datei vor dem Teilen.";
 "developer.rawUSB" = "Roh-USB";
 "developer.ready" = "Bereit";
