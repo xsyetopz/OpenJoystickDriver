@@ -7,12 +7,11 @@ struct LocalizationTests {
   @Test
   func packagesTheCompleteLocaleInventory() {
     let localizations = Localization.availableLocalizations()
-    #expect(localizations.count == 83)
+    #expect(localizations.count == 18)
     let normalized = Set(localizations.map { $0.lowercased() })
     #expect(normalized.contains("en-us"))
     #expect(normalized.contains("ar-sa"))
-    #expect(normalized.contains("he-il"))
-    #expect(normalized.contains("fa-ir"))
+    #expect(normalized.contains("zh-hk"))
     #expect(normalized.contains("c"))
   }
 
@@ -65,6 +64,24 @@ struct LocalizationTests {
   }
 
   @Test
+  func noLocaleUsesSubtitleLinesAsValues() {
+    for locale in Localization.availableLocalizations() {
+      let keys = LocalizationCatalogAudit.dialogueDashKeys(for: locale)
+      #expect(keys.isEmpty, "\(locale) starts \(keys.sorted()) with a dialogue dash")
+    }
+  }
+
+  @Test
+  func differentSourceTextsKeepDifferentTranslations() {
+    for locale in Localization.availableLocalizations() {
+      let groups = LocalizationCatalogAudit.sharedValueCollisions(for: locale).values.map {
+        $0.sorted()
+      }
+      #expect(groups.isEmpty, "\(locale) gives one value to \(groups.sorted { "\($0)" < "\($1)" })")
+    }
+  }
+
+  @Test
   func packagedCatalogIncludesCLIAndInputTestProductKeys() {
     let keys = LocalizationCatalogAudit.keys(for: Localization.sourceLocalization)
     for required in [
@@ -95,7 +112,7 @@ struct LocalizationTests {
         == expectedCategories
     )
     #expect(
-      LocalizationCatalogAudit.pluralCategories(for: "ru-RU")["profiles.assignments"]
+      LocalizationCatalogAudit.pluralCategories(for: "ja-JP")["profiles.assignments"]
         == expectedCategories
     )
 
@@ -122,9 +139,9 @@ struct LocalizationTests {
 
   @Test
   func preferredLanguageSelectionUsesTheLocaleCatalog() {
-    let resolver = Localization(preferredLanguages: ["et-EE", "en-US"])
-    #expect(resolver.resolvedLanguage?.lowercased() == "et-ee")
-    #expect(resolver.string("common.refresh") == "Värskenda")
+    let resolver = Localization(preferredLanguages: ["fr-FR", "en-US"])
+    #expect(resolver.resolvedLanguage?.lowercased() == "fr-fr")
+    #expect(resolver.string("common.refresh") == "Actualiser")
 
     #expect(resolver.string("test.missing.key") == "test.missing.key")
   }

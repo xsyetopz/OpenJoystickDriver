@@ -15,7 +15,7 @@
 			<key>one</key>
 			<string>%d manette connectée</string>
 			<key>zero</key>
-			<string>%d manettes connectées</string>
+			<string>%d manette connectée</string>
 			<key>two</key>
 			<string>%d manettes connectées</string>
 			<key>few</key>
@@ -39,7 +39,7 @@
 			<key>one</key>
 			<string>%d profil actif</string>
 			<key>zero</key>
-			<string>%d profils actifs</string>
+			<string>%d profil actif</string>
 			<key>two</key>
 			<string>%d profils actifs</string>
 			<key>few</key>
@@ -63,7 +63,7 @@
 			<key>one</key>
 			<string>%d attribution</string>
 			<key>zero</key>
-			<string>%d attributions</string>
+			<string>%d attribution</string>
 			<key>two</key>
 			<string>%d attributions</string>
 			<key>few</key>

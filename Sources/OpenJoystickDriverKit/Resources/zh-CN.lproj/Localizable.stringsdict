@@ -37,17 +37,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d 个活跃配置文件</string>
+			<string>%d 个活动配置文件</string>
 			<key>zero</key>
-			<string>%d 个活跃配置文件</string>
+			<string>%d 个活动配置文件</string>
 			<key>two</key>
-			<string>%d 个活跃配置文件</string>
+			<string>%d 个活动配置文件</string>
 			<key>few</key>
-			<string>%d 个活跃配置文件</string>
+			<string>%d 个活动配置文件</string>
 			<key>many</key>
-			<string>%d 个活跃配置文件</string>
+			<string>%d 个活动配置文件</string>
 			<key>other</key>
-			<string>%d 个活跃配置文件</string>
+			<string>%d 个活动配置文件</string>
 		</dict>
 	</dict>
 	<key>profiles.assignments</key>

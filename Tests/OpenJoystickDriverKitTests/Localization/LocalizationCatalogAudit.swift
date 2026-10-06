@@ -9,229 +9,99 @@ enum LocalizationCatalogAudit {
     "controller.standardHID", "controller.steamController", "controller.switchPro",
     "controller.switchProController", "controller.xbox360", "controller.xbox360Wireless",
     "controller.xbox360WirelessDeveloper", "controller.xboxOne", "controller.xboxOriginal",
-    "controllers.usbIdentifier", "developer.hid", "developer.usbID", "inputTest.aCross",
-    "inputTest.yTriangle", "mapping.buttonNorth", "mapping.buttonSouth", "mapping.dpadDirection",
-    "mapping.paddle1", "mapping.paddle2", "mapping.paddle3", "mapping.paddle4",
-    "mapping.rightJoyConSL", "menu.projectPage", "profiles.sectionDpad",
-    "setup.driverAccessibility", "setup.driverTitle",
+    "controllers.usbIdentifier", "developer.hid", "developer.usbID", "inputTest.yTriangle",
+    "mapping.buttonNorth", "mapping.dpadDirection", "mapping.paddle1", "mapping.paddle2",
+    "mapping.paddle3", "mapping.paddle4", "menu.projectPage", "profiles.sectionDpad",
+  ]
+
+  private static let spanishTerms: Set<String> = [
+    "inputTest.color", "keyboard.control", "profiles.controlNumber", "profiles.motion.local",
+    "profiles.physical.motor", "profiles.stick.horizontal", "profiles.stick.vertical",
+    "profiles.trackball.enabled", "profiles.turbo", "settings.general",
+  ]
+  private static let frenchTerms: Set<String> = [
+    "capture.destination", "capture.gain", "cli.controller.show.label.session",
+    "cli.status.label.extension", "cli.status.label.service", "common.destination",
+    "common.service", "console.title", "inputTest.menu", "keyboard.option", "mapping.guide",
+    "mapping.mode", "mapping.options", "mapping.start", "motion.calibration.pause",
+    "profiles.activationMode", "profiles.motion.local", "profiles.sectionSticks",
+    "profiles.stick.horizontal", "profiles.stick.source", "profiles.stick.vertical",
+    "profiles.touch.surface", "profiles.trackball.enabled", "profiles.turbo",
+    "settings.notifications", "settings.service",
   ]
 
   private static let sourceIdenticalTermsByLocale: [String: Set<String>] = [
-    "af-ZA": [
-      "cli.controller.show.label.battery", "settings.status", "controllers.battery",
-      "profiles.turbo", "common.status", "common.stop", "keyboard.tab", "profiles.physical.motor",
-      "shortcuts.controller.model",
-    ],
-    "ca-AD": [
-      "cli.controller.show.label.controls", "cli.controller.show.label.protocol", "menu.zoom",
-      "settings.general", "controllers.protocol", "profiles.controlNumber", "profiles.turbo",
-      "mapping.mode", "common.protocol", "inputTest.color", "inputTest.rumble", "keyboard.control",
-      "console.errors", "profiles.motion.local", "profiles.physical.motor",
-      "shortcuts.controller.model",
-    ],
-    "ca-ES": [
-      "cli.controller.show.label.controls", "cli.controller.show.label.protocol", "menu.zoom",
-      "settings.general", "controllers.protocol", "profiles.controlNumber", "profiles.turbo",
-      "mapping.mode", "common.protocol", "inputTest.color", "inputTest.rumble", "keyboard.control",
-      "console.errors", "profiles.motion.local", "profiles.physical.motor",
-      "shortcuts.controller.model",
-    ],
-    "ca-FR": [
-      "cli.controller.show.label.controls", "cli.controller.show.label.protocol", "menu.zoom",
-      "settings.general", "controllers.protocol", "profiles.controlNumber", "profiles.turbo",
-      "mapping.mode", "common.protocol", "inputTest.color", "inputTest.rumble", "keyboard.control",
-      "console.errors", "profiles.motion.local", "profiles.physical.motor",
-      "shortcuts.controller.model",
-    ],
-    "ca-IT": [
-      "cli.controller.show.label.controls", "cli.controller.show.label.protocol", "menu.zoom",
-      "settings.general", "controllers.protocol", "profiles.controlNumber", "profiles.turbo",
-      "mapping.mode", "common.protocol", "inputTest.color", "inputTest.rumble", "keyboard.control",
-      "console.errors", "profiles.motion.local", "profiles.physical.motor",
-      "shortcuts.controller.model",
-    ],
-    "cs-CZ": [
-      "profiles.turbo", "profiles.trackball.enabled", "profiles.physical.motor",
-      "shortcuts.controller.model",
-    ],
-    "da-DK": [
-      "cli.controller.show.label.input", "cli.controller.show.label.session", "menu.zoom",
-      "settings.status", "capture.destination", "profiles.turbo", "mapping.start",
-      "profiles.touch.pointer", "common.status", "common.destination", "inputTest.rumble",
-      "inputTest.testRumble", "motion.calibration.pause", "profiles.stick.pointerRing",
-      "profiles.physical.motor",
-      "shortcuts.controller.model", "shortcuts.controller.type", "shortcuts.parameter.controller",
-      "cli.access.status.socket",
-    ],
-    "de-AT": [
-      "cli.controller.show.label.name", "settings.status", "capture.linear", "profiles.turbo",
-      "common.status", "developer.route", "profiles.trackball.enabled", "profiles.physical.motor",
-      "shortcuts.controller.name", "shortcuts.controller.type", "shortcuts.parameter.controller",
-      "shortcuts.profile.name",
-      "cli.access.status.socket",
-    ],
-    "de-CH": [
-      "cli.controller.show.label.name", "settings.status", "capture.linear", "profiles.turbo",
-      "common.status", "developer.route", "profiles.trackball.enabled", "profiles.physical.motor",
-      "shortcuts.controller.name", "shortcuts.controller.type", "shortcuts.parameter.controller",
-      "shortcuts.profile.name",
-      "cli.access.status.socket",
+    "ar-SA": [
+      "keyboard.command", "keyboard.control", "keyboard.escape", "keyboard.option",
+      "keyboard.return", "keyboard.shift", "keyboard.tab",
     ],
     "de-DE": [
-      "cli.controller.show.label.name", "settings.status", "capture.linear", "profiles.turbo",
-      "common.status", "developer.route", "profiles.trackball.enabled", "profiles.physical.motor",
+      "capture.controller", "capture.linear", "cli.access.status.socket",
+      "cli.controller.show.label.name", "common.controller", "common.status", "console.stream",
+      "controllers.label", "developer.controller", "developer.controllerDetails",
+      "developer.route", "inputTest.home", "keyboard.control", "keyboard.escape", "mapping.guide",
+      "mapping.start", "profiles.physical.motor", "profiles.sectionSticks",
+      "profiles.stick.horizontal", "profiles.stick.source", "profiles.trackball.enabled",
+      "profiles.trigger.source", "profiles.turbo", "settings.status", "settings.updates",
       "shortcuts.controller.name", "shortcuts.controller.type", "shortcuts.parameter.controller",
       "shortcuts.profile.name",
-      "cli.access.status.socket",
-    ], "es-AR": ["profiles.turbo"], "es-CR": ["profiles.turbo"], "es-ES": ["profiles.turbo"],
-    "es-MX": ["profiles.turbo"], "et-EE": ["profiles.turbo"], "fi-FI": ["profiles.turbo"],
-    "fr-BE": [
-      "cli.controller.show.label.session", "cli.status.label.extension", "cli.status.label.service",
-      "settings.service", "capture.destination", "profiles.activationMode",
-      "profiles.touch.surface", "common.service", "common.destination", "console.title",
-      "motion.calibration.pause",
     ],
-    "fr-CA": [
-      "cli.controller.show.label.session", "cli.status.label.extension", "cli.status.label.service",
-      "settings.service", "capture.destination", "profiles.activationMode",
-      "profiles.touch.surface", "common.service", "common.destination", "console.title",
-      "motion.calibration.pause",
-    ],
-    "fr-CH": [
-      "cli.controller.show.label.session", "cli.status.label.extension", "cli.status.label.service",
-      "settings.service", "capture.destination", "profiles.activationMode",
-      "profiles.touch.surface", "common.service", "common.destination", "console.title",
-      "motion.calibration.pause",
-    ],
-    "fr-FR": [
-      "cli.controller.show.label.session", "cli.status.label.extension", "cli.status.label.service",
-      "settings.service", "capture.destination", "profiles.activationMode",
-      "profiles.touch.surface", "common.service", "common.destination", "console.title",
-      "motion.calibration.pause",
-    ], "ga-IE": ["profiles.turbo", "common.stop", "profiles.trackball.yaw"],
-    "hr-HR": [
-      "profiles.turbo", "inputTest.testRumble", "profiles.physical.motor",
-      "shortcuts.controller.model",
-      "cli.access.status.socket",
-    ],
-    "hu-HU": ["profiles.trackball.yaw", "profiles.physical.motor"],
-    "it-CH": [
-      "cli.controller.show.label.record", "menu.zoom", "settings.debug", "profiles.turbo",
-      "debug.title",
-      "shortcuts.controller.type", "shortcuts.parameter.controller",
-      "cli.access.status.socket",
-    ],
+    "es-ES": spanishTerms,
+    "es-MX": spanishTerms,
+    "fr-CA": frenchTerms,
+    "fr-FR": frenchTerms,
+    "hi-IN": ["keyboard.escape", "keyboard.return"],
     "it-IT": [
-      "cli.controller.show.label.input", "cli.controller.show.label.record", "menu.zoom",
-      "settings.debug", "profiles.turbo", "debug.title",
+      "capture.controller", "cli.access.status.socket", "cli.controller.show.label.input",
+      "cli.controller.show.label.record", "common.controller", "console.output", "console.title",
+      "controllers.label", "debug.title", "developer.controller", "developer.controllerDetails",
+      "inputTest.home", "inputTest.menu", "inputTest.tabInput", "inputTest.tabOutput",
+      "mapping.start", "menu.zoom", "motion.calibration.offset", "profiles.sectionTouch",
+      "profiles.trackball.enabled", "profiles.turbo", "settings.debug",
       "shortcuts.controller.type", "shortcuts.parameter.controller",
-      "cli.access.status.socket",
-    ], "lt-LT": ["profiles.turbo"], "lv-LV": ["profiles.turbo"],
-    "nb-NO": [
-      "menu.zoom", "settings.status", "profiles.turbo", "mapping.start", "common.status",
-      "inputTest.rumble", "inputTest.testRumble", "motion.calibration.pause",
-      "profiles.physical.motor",
-      "cli.access.status.socket",
     ],
-    "nl-BE": [
-      "cli.controller.show.label.protocol", "cli.controller.show.label.record",
-      "cli.status.label.controllers", "settings.status",
-      "settings.updates", "controllers.protocol", "profiles.activator", "profiles.sectionTriggers",
-      "common.status", "common.protocol", "keyboard.tab", "console.title",
-      "motion.calibration.offset", "profiles.trackball.enabled", "profiles.trigger.source",
-      "shortcuts.controller.model", "shortcuts.controller.type", "shortcuts.parameter.controller",
-      "cli.access.status.socket", "developer.route",
+    "ja-JP": ["keyboard.capsLock", "keyboard.escape", "keyboard.return"],
+    "ko-KR": [
+      "keyboard.capsLock", "keyboard.command", "keyboard.control", "keyboard.escape",
+      "keyboard.option", "keyboard.return", "keyboard.shift",
     ],
     "nl-NL": [
-      "cli.controller.show.label.protocol", "cli.controller.show.label.record",
-      "cli.status.label.controllers", "settings.status",
-      "settings.updates", "controllers.protocol", "profiles.activator", "profiles.sectionTriggers",
-      "common.status", "common.protocol", "keyboard.tab", "console.title",
-      "motion.calibration.offset", "profiles.trackball.enabled", "profiles.trigger.source",
-      "shortcuts.controller.model", "shortcuts.controller.type", "shortcuts.parameter.controller",
-      "cli.access.status.socket", "developer.route",
+      "capture.controller", "cli.access.status.socket", "cli.controller.show.label.protocol",
+      "cli.controller.show.label.record", "cli.controller.show.label.rumble",
+      "cli.status.label.controllers", "cli.status.label.service", "common.controller",
+      "common.controllers", "common.protocol", "common.runtime", "common.service", "common.status",
+      "common.stop", "console.title", "controllers.label", "controllers.protocol",
+      "controllers.title", "debug.controllers", "debug.runtime", "developer.controller",
+      "developer.controllerDetails", "developer.route", "inputTest.home", "inputTest.menu",
+      "inputTest.rumble", "keyboard.capsLock", "keyboard.command", "keyboard.control",
+      "keyboard.escape", "keyboard.option", "keyboard.return", "keyboard.shift", "keyboard.tab",
+      "mapping.guide", "mapping.physicalRumble", "mapping.start", "menu.zoom",
+      "motion.calibration.offset", "profiles.activator", "profiles.physical.effect",
+      "profiles.physical.motor", "profiles.sectionSticks", "profiles.sectionTriggers",
+      "profiles.stick.source", "profiles.trackball.enabled", "profiles.trigger.source",
+      "profiles.turbo", "settings.controllerCount", "settings.controllers", "settings.runtime",
+      "settings.service", "settings.status", "settings.updates", "shortcuts.controller.model",
+      "shortcuts.controller.type", "shortcuts.parameter.controller",
     ],
-    "nn-NO": [
-      "menu.zoom", "profiles.turbo", "inputTest.rumble", "inputTest.testRumble",
-      "motion.calibration.offset", "motion.calibration.pause", "profiles.physical.motor",
-      "cli.access.status.socket",
+    "pt-BR": [
+      "capture.linear", "common.status", "console.title", "inputTest.menu", "keyboard.capsLock",
+      "keyboard.control", "keyboard.return", "keyboard.shift", "menu.zoom",
+      "profiles.motion.local", "profiles.physical.motor", "profiles.stick.horizontal",
+      "profiles.stick.vertical", "profiles.trackball.enabled", "profiles.turbo", "settings.status",
     ],
-    "no-NO": [
-      "menu.zoom", "settings.status", "profiles.turbo", "mapping.start", "common.status",
-      "inputTest.rumble", "inputTest.testRumble", "motion.calibration.pause",
-      "profiles.physical.motor",
-      "cli.access.status.socket",
-    ], "pl-PL": ["profiles.turbo", "inputTest.menu", "shortcuts.controller.model"],
-    "pt-BR": ["menu.zoom", "profiles.turbo", "keyboard.capsLock", "profiles.physical.motor"],
-    "pt-PT": ["menu.zoom", "profiles.turbo", "keyboard.capsLock", "profiles.physical.motor"],
-    "ro-RO": [
-      "cli.controller.show.label.protocol", "menu.zoom", "profiles.activator", "profiles.turbo",
-      "inputTest.testRumble", "profiles.motion.local", "profiles.trigger.source",
-      "profiles.physical.motor",
-      "shortcuts.controller.model", "shortcuts.controller.type", "shortcuts.parameter.controller",
-      "cli.access.status.socket",
-    ],
-    "se-FI": [
-      "menu.zoom", "profiles.turbo", "inputTest.rumble", "keyboard.capsLock", "keyboard.tab",
-      "motion.calibration.offset",
-    ],
-    "se-NO": [
-      "menu.zoom", "profiles.turbo", "inputTest.rumble", "keyboard.capsLock", "keyboard.tab",
-      "motion.calibration.offset",
-    ],
-    "sk-SK": [
-      "profiles.turbo", "profiles.trackball.enabled", "profiles.physical.motor",
-      "shortcuts.controller.model",
-      "cli.access.status.socket",
-    ],
-    "sl-SI": [
-      "profiles.turbo", "inputTest.testRumble", "profiles.physical.motor",
+    "tr-TR": [
+      "keyboard.control", "keyboard.escape", "keyboard.return", "keyboard.shift", "keyboard.tab",
+      "profiles.physical.motor", "profiles.trackball.enabled", "profiles.turbo",
       "shortcuts.controller.model",
     ],
-    "sv-FI": [
-      "cli.controller.show.label.session", "settings.status", "profiles.turbo", "common.status",
-      "inputTest.rumble", "profiles.physical.motor",
-      "cli.access.status.socket",
-    ],
-    "sv-SE": [
-      "cli.controller.show.label.session", "settings.status", "profiles.turbo", "common.status",
-      "inputTest.rumble", "profiles.physical.motor",
-      "cli.access.status.socket",
-    ],
-    "sr-YU": ["profiles.turbo", "profiles.physical.motor", "shortcuts.controller.model"],
-    "tr-TR": ["shortcuts.controller.model"],
-  ]
-
-  /// macOS ships no localization for these languages, so System Settings shows its English pane
-  /// and permission names, and the CLI names them the way the user sees them.
-  private static let englishSystemSettingsPanes: Set<String> = [
-    "cli.permission.pane.accessibility", "cli.permission.pane.driver_extension",
-    "cli.permission.pane.input_monitoring",
-  ]
-  private static let englishSystemSettingsNames: Set<String> = [
-    "cli.permission.name.accessibility", "cli.permission.name.input_monitoring",
-  ]
-  private static let englishSystemSettingsTermsByLocale: [String: Set<String>] = [
-    "af-ZA": englishSystemSettingsPanes.union(englishSystemSettingsNames),
-    // The app already names both permissions in Amharic; only the pane paths stay English.
-    "am-ET": englishSystemSettingsPanes,
-    "et-EE": englishSystemSettingsPanes.union(englishSystemSettingsNames),
-    "eu-ES": englishSystemSettingsPanes.union(englishSystemSettingsNames),
-    "ga-IE": englishSystemSettingsPanes.union(englishSystemSettingsNames),
-    "lt-LT": englishSystemSettingsPanes.union(englishSystemSettingsNames),
-    "lv-LV": englishSystemSettingsPanes.union(englishSystemSettingsNames),
-    "se-FI": englishSystemSettingsPanes.union(englishSystemSettingsNames),
-    "se-NO": englishSystemSettingsPanes.union(englishSystemSettingsNames),
-    "sl-SI": englishSystemSettingsPanes.union(englishSystemSettingsNames),
   ]
 
   static func allowedSourceIdenticalEnglishProseKeys(for localization: String) -> Set<String> {
-    func terms(in table: [String: Set<String>]) -> Set<String> {
-      table.first { $0.key.caseInsensitiveCompare(localization) == .orderedSame }?.value ?? []
-    }
-    return nonLinguisticSourceIdenticalKeys.union(terms(in: sourceIdenticalTermsByLocale)).union(
-      terms(in: englishSystemSettingsTermsByLocale)
-    )
+    let terms =
+      sourceIdenticalTermsByLocale.first {
+        $0.key.caseInsensitiveCompare(localization) == .orderedSame
+      }?.value ?? []
+    return nonLinguisticSourceIdenticalKeys.union(terms)
   }
 
   static func keys(for localization: String) -> Set<String> {
@@ -282,6 +152,42 @@ enum LocalizationCatalogAudit {
       }
     }
     return result
+  }
+
+  /// Source texts that one word may translate in any language.
+  private static let sharedTranslationSourceGroups: [Set<String>] = [
+    ["deactivated", "disabled", "off"], ["delete", "remove", "uninstall"],
+  ]
+
+  /// Keys whose value starts like a subtitle line (`- Yes.`) where the source has no `-` token.
+  static func dialogueDashKeys(for localization: String) -> Set<String> {
+    let sourceStrings = stringsData(for: Localization.sourceLocalization).map(parseStrings) ?? [:]
+    let localizedStrings = stringsData(for: localization).map(parseStrings) ?? [:]
+    return Set(
+      localizedStrings.compactMap { key, value in
+        guard value.range(of: #"^\s*[-–—]\s"#, options: .regularExpression) != nil,
+          let source = sourceStrings[key],
+          source.range(of: #"(^|\s)-(\s|$)"#, options: .regularExpression) == nil
+        else { return nil }
+        return key
+      }
+    )
+  }
+
+  /// Values shared by three or more different source texts, the shape of a copy-paste error.
+  static func sharedValueCollisions(for localization: String) -> [String: Set<String>] {
+    let sourceStrings = stringsData(for: Localization.sourceLocalization).map(parseStrings) ?? [:]
+    let localizedStrings = stringsData(for: localization).map(parseStrings) ?? [:]
+    let keysByValue = Dictionary(grouping: localizedStrings.keys) { localizedStrings[$0] ?? "" }
+    return keysByValue.filter { _, keys in
+      let sources = Set(keys.compactMap { sourceStrings[$0].map(normalizedSource) })
+      return sources.count >= 3
+        && !sharedTranslationSourceGroups.contains { sources.isSubset(of: $0) }
+    }.mapValues(Set.init)
+  }
+
+  private static func normalizedSource(_ value: String) -> String {
+    value.replacingOccurrences(of: #"[.…:]+$"#, with: "", options: .regularExpression).lowercased()
   }
 
   private static func resourceData(for localization: String, extension: String) -> Data? {

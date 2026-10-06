@@ -15,7 +15,7 @@
 			<key>one</key>
 			<string>%d وحدة تحكم متصلة</string>
 			<key>zero</key>
-			<string>%d وحدة تحكم متصلة</string>
+			<string>لا توجد وحدات تحكم متصلة (%d)</string>
 			<key>two</key>
 			<string>%d وحدتا تحكم متصلتان</string>
 			<key>few</key>
@@ -39,13 +39,13 @@
 			<key>one</key>
 			<string>%d ملف تعريف نشط</string>
 			<key>zero</key>
-			<string>%d ملف تعريف نشط</string>
+			<string>لا توجد ملفات تعريف نشطة (%d)</string>
 			<key>two</key>
 			<string>%d ملفا تعريف نشطان</string>
 			<key>few</key>
 			<string>%d ملفات تعريف نشطة</string>
 			<key>many</key>
-			<string>%d ملف تعريف نشطاً</string>
+			<string>%d ملف تعريف نشط</string>
 			<key>other</key>
 			<string>%d ملف تعريف نشط</string>
 		</dict>
@@ -63,13 +63,13 @@
 			<key>one</key>
 			<string>%d تعيين</string>
 			<key>zero</key>
-			<string>%d تعيين</string>
+			<string>لا توجد تعيينات (%d)</string>
 			<key>two</key>
 			<string>%d تعيينان</string>
 			<key>few</key>
 			<string>%d تعيينات</string>
 			<key>many</key>
-			<string>%d تعييناً</string>
+			<string>%d تعيين</string>
 			<key>other</key>
 			<string>%d تعيين</string>
 		</dict>
@@ -85,17 +85,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>لم يُكتشف شيء</string>
+			<string>لم يُكتشف أي جهاز</string>
 			<key>one</key>
-			<string>اكتُشف %d</string>
+			<string>اكتُشف %d جهاز</string>
 			<key>two</key>
-			<string>اكتُشف %d</string>
+			<string>اكتُشف جهازان (%d)</string>
 			<key>few</key>
-			<string>اكتُشف %d</string>
+			<string>اكتُشفت %d أجهزة</string>
 			<key>many</key>
-			<string>اكتُشف %d</string>
+			<string>اكتُشف %d جهاز</string>
 			<key>other</key>
-			<string>اكتُشف %d</string>
+			<string>اكتُشف %d جهاز</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
@@ -109,11 +109,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>لم تُكتشف أجهزة إخراج لوحدة التحكم</string>
+			<string>لم يُكتشف أي جهاز إخراج لوحدة التحكم</string>
 			<key>one</key>
 			<string>اكتُشف %d جهاز إخراج لوحدة التحكم</string>
 			<key>two</key>
-			<string>اكتُشف %d جهازا إخراج لوحدة التحكم</string>
+			<string>اكتُشف جهازا إخراج لوحدة التحكم (%d)</string>
 			<key>few</key>
 			<string>اكتُشفت %d أجهزة إخراج لوحدة التحكم</string>
 			<key>many</key>
