@@ -73,15 +73,30 @@ extension VirtualOutputTests {
   @Test
   func aLateRetargetReselectsOnlyAfterEarlierQueuedChanges() async throws {
     let gate = InstallationGate()
+    // The per-controller timeout fires when the test says, once the activation waits at the gate.
+    // A real 50 ms timer also bounded the setup activation, which a loaded machine overran.
+    let trigger = VirtualOutputTimeoutTrigger()
     let fixture = try await profileOverrideServer(
       activationGate: (.xboxOneSBluetooth, gate),
       timeouts: VirtualOutputTransitionTimeouts(
         stageNanoseconds: 2_000_000_000,
         perControllerNanoseconds: 50_000_000,
         totalNanoseconds: 10_000_000_000
-      )
+      ),
+      clock: trigger.clock
     ) { VirtualHIDProfileOverrideStore(directory: $0).setGenericForTest() }
-    let result = await fixture.change(.set("hid-xbox-one-s-bt"))
+    let server = fixture.server
+    let change = Task {
+      await server.changeVirtualHIDProfileOverride(
+        .set("hid-xbox-one-s-bt"),
+        vendorID: 1,
+        productID: 2,
+        runtimeIdentifier: nil
+      )
+    }
+    await gate.waitForEntry()
+    await trigger.expire(nanoseconds: 50_000_000)
+    let result = await change.value
     guard case .activationFailed = result.failure else {
       Issue.record("Expected activation-failed, got \(String(describing: result.failure))")
       return

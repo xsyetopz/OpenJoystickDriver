@@ -13,6 +13,7 @@ extension VirtualOutputTests {
     outputEnabled: Bool = true,
     activationGate: (VirtualHIDProfileID, InstallationGate)? = nil,
     timeouts: VirtualOutputTransitionTimeouts = .standard,
+    clock: VirtualOutputTransitionClock = .system,
     configure: (URL) -> Void = { _ in }
   ) async throws -> ProfileOverrideServerFixture {
     let suiteName = "OpenJoystickDriverTests.ProfileOverrideRPC.\(UUID().uuidString)"
@@ -62,6 +63,7 @@ extension VirtualOutputTests {
       },
       connectedIdentifierProvider: { identifiers },
       virtualOutputTransitionTimeouts: timeouts,
+      virtualOutputTransitionClock: clock,
       defaults: defaults,
       personaDirectory: personaDirectory
     )
