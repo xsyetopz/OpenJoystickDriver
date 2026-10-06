@@ -79,4 +79,61 @@ struct CoreHIDAccessBackendTests {
     #expect(receivedTimeout == .seconds(2))
     if case .success = result { Issue.record("A failed set-report request unexpectedly succeeded") }
   }
+
+  // Fanatec ClubSport Wheel Base V2.5 (0EB7:0004): X/Z/Rz are 16-bit, logical 0...65535.
+  // CoreHID reported the wheel centre (0x8000) as -32768; captured on hardware.
+  @Test
+  func unsignedSixteenBitElementValuesAreNotSignExtended() {
+    let cases: [(raw: Int, expected: Int)] = [
+      (0, 0), (32_767, 32_767), (-32_768, 32_768), (-26_597, 38_939), (-1, 65_535),
+    ]
+    for (raw, expected) in cases {
+      #expect(
+        CoreHIDElementInteger.value(signExtended: raw, reportSize: 16, logicalMinimum: 0)
+          == expected
+      )
+    }
+  }
+
+  @Test
+  func signedAndUnsignedEightBitElementValuesKeepTheirMeaning() {
+    #expect(
+      CoreHIDElementInteger.value(signExtended: -128, reportSize: 8, logicalMinimum: -128) == -128
+    )
+    #expect(
+      CoreHIDElementInteger.value(signExtended: -1, reportSize: 8, logicalMinimum: -127) == -1
+    )
+    #expect(CoreHIDElementInteger.value(signExtended: -1, reportSize: 8, logicalMinimum: 0) == 255)
+    #expect(CoreHIDElementInteger.value(signExtended: 200, reportSize: 8, logicalMinimum: 0) == 200)
+  }
+
+  @Test
+  func unsignedWheelCentreNormalizesToCentreInGenericHIDParser() {
+    let parser = GenericHIDParser(identifier: DeviceIdentifier(vendorID: 0x0EB7, productID: 0x0004))
+    func x(_ raw: Int) -> [ControllerEvent] {
+      parser.parse(
+        elementValue: HIDElementValue(
+          usagePage: 0x01,
+          usage: 0x30,
+          logicalMinimum: 0,
+          logicalMaximum: 65_535,
+          integerValue: CoreHIDElementInteger.value(
+            signExtended: Int(Int16(truncatingIfNeeded: raw)),
+            reportSize: 16,
+            logicalMinimum: 0
+          )
+        )
+      )
+    }
+    guard case .leftStickChanged(let centre, _)? = x(0x8000).first,
+      case .leftStickChanged(let right, _)? = x(0xFFFF).first,
+      case .leftStickChanged(let left, _)? = x(0).first
+    else {
+      Issue.record("expected left stick events")
+      return
+    }
+    #expect(abs(centre) < 0.001)
+    #expect(right == 1)
+    #expect(left == -1)
+  }
 }

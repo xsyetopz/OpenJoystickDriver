@@ -50,6 +50,16 @@ enum CoreHIDInputReport {
   }
 }
 
+/// CoreHID returns element values sign-extended from the field's report size, so an
+/// unsigned 16-bit axis (logical 0...65535) above 32767 arrives negative. Fields whose
+/// logical minimum is non-negative are reinterpreted as unsigned at their report size.
+enum CoreHIDElementInteger {
+  static func value(signExtended raw: Int, reportSize: UInt32, logicalMinimum: Int) -> Int {
+    guard raw < 0, logicalMinimum >= 0, reportSize > 0, reportSize < 64 else { return raw }
+    return raw & ((1 << Int(reportSize)) - 1)
+  }
+}
+
 @available(macOS 15, *)
 enum CoreHIDElementReportID {
   static func value(_ reportID: HIDReportID?) -> UInt32? { reportID.map { UInt32($0.rawValue) } }
@@ -369,7 +379,11 @@ actor CoreHIDAccessBackend: HIDAccessBackend {
                   usage: UInt32(element.usage.usage ?? 0),
                   logicalMinimum: Int(element.logicalMinimum ?? 0),
                   logicalMaximum: Int(element.logicalMaximum ?? 0),
-                  integerValue: value.integerValue(asTypeTruncatingIfNeeded: Int.self),
+                  integerValue: CoreHIDElementInteger.value(
+                    signExtended: value.integerValue(asTypeTruncatingIfNeeded: Int.self),
+                    reportSize: element.reportSize,
+                    logicalMinimum: Int(element.logicalMinimum ?? 0)
+                  ),
                   reportID: CoreHIDElementReportID.value(element.reportID)
                 )
               )
