@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "ID perangkat";
 "cli.controller.show.label.virtual" = "Gamepad virtual";
 "cli.controller.show.label.publication" = "Publikasi";
+"cli.controller.show.label.output_owner" = "Pemilik output";
+"cli.controller.show.output_owner.macos" = "macOS (bawaan). Getaran dan Pencahayaan hanya mencantumkan apa yang tidak dikerjakan macOS.";
+"cli.controller.show.label.tuning" = "Penyetelan";
 "cli.controller.show.none" = "tidak ada";
 "cli.controller.show.record.bundled" = "bawaan";
 "cli.controller.show.record.none" = "tidak ada (tidak ada catatan yang cocok)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "File profil tidak dapat ditulis. Periksa ruang disk yang tersisa dan izin folder.";
 "error.E3024" = "Layanan pemetaan ulang mengalami kesalahan yang tidak dikenalinya. Jalankan “ojd diagnose” dan laporkan masalah beserta outputnya.";
 "error.E3025" = "Profil tidak menghasilkan output. Tambahkan penetapan atau warna lampu ke dalamnya, atau aktifkan dengan --allow-empty.";
+"error.E3026" = "Profil pasangan Joy-Con mengambil giroskop dari Joy-Con lainnya. Kalibrasi gerak pengontrol yang dipilih profil untuk giroskop.";
+"error.E3027" = "Tidak ada profil pemetaan ulang yang aktif untuk pengontrol, sehingga gerak tidak diproses. Aktifkan profil untuknya, bawa app target ke depan, lalu coba lagi.";
+"error.E3028" = "Sesi pemetaan ulang pengontrol berubah saat permintaan berjalan. Coba lagi.";
 "error.withCode" = "%@ (%@)";

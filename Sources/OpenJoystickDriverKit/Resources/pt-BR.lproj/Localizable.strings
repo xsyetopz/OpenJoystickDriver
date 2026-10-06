@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "ID da Unidade";
 "cli.controller.show.label.virtual" = "Gamepad Virtual";
 "cli.controller.show.label.publication" = "Publicação";
+"cli.controller.show.label.output_owner" = "Responsável pela saída";
+"cli.controller.show.output_owner.macos" = "macOS (nativo). Vibração e Iluminação listam apenas o que o macOS deixa por fazer.";
+"cli.controller.show.label.tuning" = "Ajustes";
 "cli.controller.show.none" = "nenhum";
 "cli.controller.show.record.bundled" = "incluído";
 "cli.controller.show.record.none" = "nenhum (nenhum registro corresponde)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "Não foi possível gravar um arquivo de perfil. Verifique o espaço livre em disco e as permissões da pasta.";
 "error.E3024" = "O serviço de remapeamento encontrou um erro que não reconhece. Execute «ojd diagnose» e relate o problema junto com a saída.";
 "error.E3025" = "O perfil não produz nenhuma saída. Adicione a ele uma atribuição ou uma cor de luz, ou ative-o com --allow-empty.";
+"error.E3026" = "O perfil do par de Joy-Con usa o giroscópio do outro Joy-Con. Calibre o movimento do controle que o perfil seleciona para o giroscópio.";
+"error.E3027" = "Nenhum perfil de remapeamento está ativo para o controle, então ele não processa movimento. Ative um perfil para ele, traga o app de destino para a frente e tente novamente.";
+"error.E3028" = "A sessão de remapeamento do controle mudou enquanto a solicitação era executada. Tente novamente.";
 "error.withCode" = "%@ (%@)";

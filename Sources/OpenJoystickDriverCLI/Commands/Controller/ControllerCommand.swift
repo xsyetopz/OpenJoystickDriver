@@ -160,8 +160,10 @@ struct ControllerShowCommand: AsyncParsableCommand {
       ["controls", detail.capabilities.controls.joined(separator: ",")],
       ["rumble-motors", detail.capabilities.rumbleMotors.joined(separator: ",")],
       ["lighting", detail.capabilities.lightingFeatures.joined(separator: ",")],
+      ["output-owner", detail.capabilities.outputOwner],
     ]
     rows.append(["record", detail.record?.layer ?? "none", detail.record?.file ?? ""])
+    if let tuning = detail.tuning { rows.append(["tuning"] + tuning.rows) }
     if let virtual = detail.virtual {
       rows.append(["virtual-profile", virtual.profile ?? "", virtual.source ?? ""])
     }
@@ -256,6 +258,20 @@ struct ControllerShowCommand: AsyncParsableCommand {
         list(detail.capabilities.lightingFeatures.map(kebabCase))
       ),
     ]
+    // The output lists above hold only what macOS leaves undone, so say why.
+    if detail.capabilities.outputOwner == ControllerOwnership.macOS.rawValue {
+      rows.append(
+        (
+          CLILocalized.text("cli.controller.show.label.output_owner"),
+          CLILocalized.text("cli.controller.show.output_owner.macos")
+        )
+      )
+    }
+    if let tuning = detail.tuning {
+      rows.append(
+        (CLILocalized.text("cli.controller.show.label.tuning"), tuning.rows.joined(separator: ", "))
+      )
+    }
     if let virtual = detail.virtual {
       rows.append(
         (

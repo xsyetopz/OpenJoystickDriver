@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "Identifiant d’unité";
 "cli.controller.show.label.virtual" = "Manette virtuelle";
 "cli.controller.show.label.publication" = "État de publication";
+"cli.controller.show.label.output_owner" = "Responsable de la sortie";
+"cli.controller.show.output_owner.macos" = "macOS (natif). Vibration et Éclairage n’indiquent que ce que macOS laisse de côté.";
+"cli.controller.show.label.tuning" = "Réglages";
 "cli.controller.show.none" = "aucune";
 "cli.controller.show.record.bundled" = "intégrée";
 "cli.controller.show.record.none" = "aucune (aucune fiche ne correspond)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "Un fichier de profil n’a pas pu être écrit. Vérifiez l’espace disque libre et les autorisations du dossier.";
 "error.E3024" = "Le service de remappage a rencontré une erreur qu’il ne reconnaît pas. Exécutez « ojd diagnose » et signalez le problème avec sa sortie.";
 "error.E3025" = "Le profil ne produit aucune sortie. Ajoutez-lui une affectation ou une couleur de voyant, ou activez-le avec --allow-empty.";
+"error.E3026" = "Le profil de la paire de Joy-Con prend le gyroscope de l’autre Joy-Con. Calibrez le mouvement de la manette que le profil sélectionne pour le gyroscope.";
+"error.E3027" = "Aucun profil de remappage n’est actif pour la manette, elle ne traite donc pas le mouvement. Activez un profil pour elle, amenez l’app cible au premier plan et réessayez.";
+"error.E3028" = "La session de remappage de la manette a changé pendant la requête. Réessayez.";
 "error.withCode" = "%@ (%@)";

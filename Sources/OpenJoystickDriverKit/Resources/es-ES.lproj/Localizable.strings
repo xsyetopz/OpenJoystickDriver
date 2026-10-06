@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "ID de unidad";
 "cli.controller.show.label.virtual" = "Mando virtual";
 "cli.controller.show.label.publication" = "Publicación";
+"cli.controller.show.label.output_owner" = "Propietario de la salida";
+"cli.controller.show.output_owner.macos" = "macOS (nativo). Vibración e Iluminación solo muestran lo que macOS deja sin hacer.";
+"cli.controller.show.label.tuning" = "Ajustes";
 "cli.controller.show.none" = "ninguno";
 "cli.controller.show.record.bundled" = "incluido";
 "cli.controller.show.record.none" = "ninguno (ningún registro coincide)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "No se pudo escribir un archivo de perfil. Revisa el espacio libre en disco y los permisos de la carpeta.";
 "error.E3024" = "El servicio de reasignación encontró un error que no reconoce. Ejecuta «ojd diagnose» e informa del problema con su salida.";
 "error.E3025" = "El perfil no genera ninguna salida. Añádele una asignación o un color de luz, o actívalo con --allow-empty.";
+"error.E3026" = "El perfil del par de Joy-Con toma el giroscopio del otro Joy-Con. Calibra el movimiento del mando que el perfil selecciona para el giroscopio.";
+"error.E3027" = "Ningún perfil de reasignación está activo para el mando, así que no procesa movimiento. Activa un perfil para él, trae la app de destino al primer plano e inténtalo de nuevo.";
+"error.E3028" = "La sesión de reasignación del mando cambió mientras se ejecutaba la solicitud. Inténtalo de nuevo.";
 "error.withCode" = "%@ (%@)";

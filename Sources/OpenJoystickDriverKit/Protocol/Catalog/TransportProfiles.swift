@@ -205,7 +205,7 @@ public enum GIPKeepAlivePolicy: String, Codable, Sendable {
 }
 
 /// Who serves a HID controller that macOS also supports as a native gamepad.
-public enum ControllerOwnership: String, Sendable {
+public enum ControllerOwnership: String, Codable, Sendable {
   /// macOS serves it; OJD publishes no virtual controller and sends only the output macOS
   /// leaves undone. A controller macOS does not support is OJD's either way.
   case macOS = "macos"
@@ -214,7 +214,7 @@ public enum ControllerOwnership: String, Sendable {
 }
 
 /// A record's `tuning` section; each nil field keeps the driver's default.
-public struct ControllerTuning: Equatable, Sendable {
+public struct ControllerTuning: Codable, Equatable, Sendable {
   /// Radial stick deadzone of the output dispatcher, in 0<..<1 of full deflection.
   public let stickDeadzone: Float?
   /// Input silence after which a DualShock 4 session counts as stale.

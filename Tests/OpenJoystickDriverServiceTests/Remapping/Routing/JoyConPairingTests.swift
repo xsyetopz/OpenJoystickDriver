@@ -133,7 +133,7 @@ struct JoyConPairingRoutingTests {
       profile: profile
     )
     try await harness.router.dispatchCausally(changes: [gyroMotion()], from: left)
-    await #expect(throws: RemappingMotionCalibrationError.motionUnavailable) {
+    await #expect(throws: RemappingMotionCalibrationRefusal.gyroNotSelected) {
       try await harness.router.motionCalibration(for: left.runtimeIdentifier)
     }
     try await harness.router.dispatchCausally(changes: [gyroMotion()], from: right)

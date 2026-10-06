@@ -10,7 +10,20 @@ public struct RemappingMotionCalibrationStatus: Codable, Equatable, Sendable {
 
 public enum RemappingMotionCalibrationError: Error, Equatable, Sendable {
   case controllerUnavailable
+  /// The controller reports no motion data.
   case motionUnavailable
+}
+
+/// Why the service refused a motion calibration request for a controller that is connected; each
+/// case has its own stable error code, where ``RemappingMotionCalibrationError/motionUnavailable``
+/// means the controller reports no motion data.
+public enum RemappingMotionCalibrationRefusal: Error, Equatable, Sendable {
+  /// The Joy-Con pair profile takes its gyro from another controller, or from none.
+  case gyroNotSelected
+  /// No eligible remapping profile is active for the controller, so no motion is processed.
+  case profileInactive
+  /// The controller's remapping session or route changed while the request ran.
+  case sessionChanged
 }
 
 extension RemappingEngineState {

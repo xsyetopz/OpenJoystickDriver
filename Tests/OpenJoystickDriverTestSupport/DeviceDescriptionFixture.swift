@@ -9,7 +9,9 @@ extension ApplicationServiceDeviceDescription {
     productID: UInt16 = 0x028E,
     outputs: PhysicalControllerOutputCapabilities = .none,
     unit: String? = nil,
-    power: ControllerConnectionState.Power? = nil
+    power: ControllerConnectionState.Power? = nil,
+    physicalOutputOwner: ControllerOwnership = .ojd,
+    tuning: ControllerTuning = .none
   ) -> ApplicationServiceDeviceDescription {
     ApplicationServiceDeviceDescription(
       name: name,
@@ -21,6 +23,8 @@ extension ApplicationServiceDeviceDescription {
       serialNumber: nil,
       bindingResult: .hidDescriptorFixture,
       physicalOutputCapabilities: outputs,
+      physicalOutputOwner: physicalOutputOwner,
+      tuning: tuning,
       connectionState: power.map {
         ControllerConnectionState(transport: .usb, backend: .ioHID, isConnected: true, power: $0)
       },

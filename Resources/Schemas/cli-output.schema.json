@@ -407,6 +407,7 @@
 								"controls",
 								"lightingFeatures",
 								"motion",
+								"outputOwner",
 								"rumbleMotors",
 								"touchContactCount"
 							],
@@ -432,6 +433,10 @@
 								},
 								"motion": {
 									"type": "boolean"
+								},
+								"outputOwner": {
+									"description": "Who drives the controller's output. With macos, macOS serves the controller natively, so the rumble and lighting lists hold only what macOS leaves undone.",
+									"enum": ["macos", "ojd"]
 								},
 								"rumbleMotors": {
 									"type": "array",
@@ -608,6 +613,10 @@
 						},
 						"startupCommandStatus": {
 							"type": "string"
+						},
+						"tuning": {
+							"description": "The effective record's tuning as applied. Absent when the record sets no tuning.",
+							"$ref": "controller.schema.json#/$defs/tuning"
 						},
 						"unit": {
 							"type": "string",

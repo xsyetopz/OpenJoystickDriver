@@ -6,6 +6,23 @@ import Testing
 
 extension RemappingRequestCoordinatorTests {
   @Test
+  func eachMotionCalibrationCauseHasItsOwnStableCode() {
+    let causes: [(any Error, ApplicationServiceRemappingRPCError.Code, String)] = [
+      (RemappingMotionCalibrationError.controllerUnavailable, .controllerUnavailable, "E3001"),
+      (RemappingMotionCalibrationError.motionUnavailable, .motionUnavailable, "E3003"),
+      (RemappingMotionCalibrationRefusal.gyroNotSelected, .motionGyroNotSelected, "E3026"),
+      (RemappingMotionCalibrationRefusal.profileInactive, .motionProfileInactive, "E3027"),
+      (RemappingMotionCalibrationRefusal.sessionChanged, .motionSessionChanged, "E3028"),
+    ]
+    for (cause, code, number) in causes {
+      let error = RemappingRequestCoordinator.rpcError(cause)
+      #expect(error.code == code)
+      #expect(error.code.errorCode.rawValue == number)
+      #expect(!error.message.isEmpty)
+    }
+  }
+
+  @Test
   func calibrationRequestsValidateIdentifiersAndReportUnavailableMotion() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }

@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "معرّف الجهاز";
 "cli.controller.show.label.virtual" = "وحدة تحكم افتراضية";
 "cli.controller.show.label.publication" = "النشر";
+"cli.controller.show.label.output_owner" = "مالك المخرجات";
+"cli.controller.show.output_owner.macos" = "macOS (أصلي). يسرد الاهتزاز والإضاءة ما يتركه macOS دون تنفيذ فقط.";
+"cli.controller.show.label.tuning" = "الضبط";
 "cli.controller.show.none" = "لا شيء";
 "cli.controller.show.record.bundled" = "مضمّن";
 "cli.controller.show.record.none" = "لا شيء (لا يوجد سجل مطابق)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "تعذّرت كتابة ملف تعريف. افحص مساحة القرص الحرة وأذونات المجلد.";
 "error.E3024" = "واجهت خدمة إعادة التعيين خطأً لا تتعرّف عليه. شغّل «ojd diagnose» وأبلغ عن المشكلة مع مخرجاتها.";
 "error.E3025" = "لا ينتج ملف التعريف أي مخرجات. أضف إليه تعيينًا أو لون إضاءة، أو فعّله باستخدام --allow-empty.";
+"error.E3026" = "يأخذ ملف تعريف زوج Joy-Con بيانات الجيروسكوب من وحدة Joy-Con الأخرى. عايِر حركة وحدة التحكم التي يحددها ملف التعريف للجيروسكوب.";
+"error.E3027" = "لا يوجد ملف تعريف لإعادة التعيين نشط لوحدة التحكم، لذلك لا تعالج الحركة. فعّل ملف تعريف لها، وأحضر التطبيق الهدف إلى الواجهة، ثم حاول مرة أخرى.";
+"error.E3028" = "تغيّرت جلسة إعادة التعيين لوحدة التحكم أثناء تنفيذ الطلب. حاول مرة أخرى.";
 "error.withCode" = "%@ (%@)";

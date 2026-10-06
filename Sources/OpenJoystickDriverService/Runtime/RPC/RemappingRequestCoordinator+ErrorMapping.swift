@@ -15,6 +15,25 @@ extension RemappingRequestCoordinator {
           : "Motion calibration requires an eligible controller with motion samples."
       )
     }
+    if let error = error as? RemappingMotionCalibrationRefusal {
+      switch error {
+      case .gyroNotSelected:
+        return ApplicationServiceRemappingRPCError(
+          code: .motionGyroNotSelected,
+          message: "The Joy-Con pair profile takes its gyro from another controller."
+        )
+      case .profileInactive:
+        return ApplicationServiceRemappingRPCError(
+          code: .motionProfileInactive,
+          message: "Motion calibration requires an active remapping profile for the controller."
+        )
+      case .sessionChanged:
+        return ApplicationServiceRemappingRPCError(
+          code: .motionSessionChanged,
+          message: "The controller's remapping session changed during the request."
+        )
+      }
+    }
     if let error = error as? RemappingJoyConPairError {
       return ApplicationServiceRemappingRPCError(
         code: .joyConPairUnavailable,

@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "单元 ID";
 "cli.controller.show.label.virtual" = "虚拟游戏手柄";
 "cli.controller.show.label.publication" = "发布状态";
+"cli.controller.show.label.output_owner" = "输出由谁负责";
+"cli.controller.show.output_owner.macos" = "macOS（原生）。振动和灯光只列出 macOS 未处理的部分。";
+"cli.controller.show.label.tuning" = "调校";
 "cli.controller.show.none" = "无";
 "cli.controller.show.record.bundled" = "内置";
 "cli.controller.show.record.none" = "无（没有匹配的记录）";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "无法写入配置文件。请检查磁盘可用空间和文件夹权限。";
 "error.E3024" = "重新映射服务遇到了无法识别的错误。请运行“ojd diagnose”，并连同其输出一起报告问题。";
 "error.E3025" = "该配置文件不会产生任何输出。请为其添加映射或灯光颜色，或使用 --allow-empty 激活。";
+"error.E3026" = "Joy-Con 配对配置文件使用另一只 Joy-Con 的陀螺仪。请校准该配置文件为陀螺仪所选的控制器的体感。";
+"error.E3027" = "该控制器没有已激活的重新映射配置文件，因此不会处理体感数据。请为其激活一个配置文件，将目标 App 切换到前台，然后重试。";
+"error.E3028" = "请求运行期间，该控制器的重新映射会话发生了变化。请重试。";
 "error.withCode" = "%@ (%@)";

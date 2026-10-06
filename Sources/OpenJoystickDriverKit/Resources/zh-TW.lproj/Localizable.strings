@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "單元 ID";
 "cli.controller.show.label.virtual" = "虛擬遊戲控制器";
 "cli.controller.show.label.publication" = "發布狀態";
+"cli.controller.show.label.output_owner" = "輸出由誰負責";
+"cli.controller.show.output_owner.macos" = "macOS（原生）。震動和燈光只列出 macOS 未處理的部分。";
+"cli.controller.show.label.tuning" = "調校";
 "cli.controller.show.none" = "無";
 "cli.controller.show.record.bundled" = "內建";
 "cli.controller.show.record.none" = "無（沒有相符的記錄）";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "無法寫入設定檔。請檢查磁碟可用空間和資料夾權限。";
 "error.E3024" = "重新對應服務遇到了無法識別的錯誤。請執行「ojd diagnose」，並連同其輸出一起回報問題。";
 "error.E3025" = "此設定檔不會產生任何輸出。請為其加入對應或燈光顏色，或使用 --allow-empty 啟用。";
+"error.E3026" = "Joy-Con 配對設定檔使用另一隻 Joy-Con 的陀螺儀。請校正該設定檔為陀螺儀所選的控制器的體感。";
+"error.E3027" = "該控制器沒有已啟用的重新對應設定檔，因此不會處理體感資料。請為其啟用一個設定檔，將目標 App 切換到前景，然後重試。";
+"error.E3028" = "要求執行期間，該控制器的重新對應工作階段已變更。請重試。";
 "error.withCode" = "%@ (%@)";

@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "ユニット ID";
 "cli.controller.show.label.virtual" = "仮想ゲームパッド";
 "cli.controller.show.label.publication" = "公開状態";
+"cli.controller.show.label.output_owner" = "出力の担当";
+"cli.controller.show.output_owner.macos" = "macOS（ネイティブ）。振動とライトには、macOS が処理しない分だけが表示されます。";
+"cli.controller.show.label.tuning" = "チューニング";
 "cli.controller.show.none" = "なし";
 "cli.controller.show.record.bundled" = "同梱";
 "cli.controller.show.record.none" = "なし (一致するレコードはありません)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "プロファイルファイルを書き込めませんでした。ディスクの空き容量とフォルダの権限を確認してください。";
 "error.E3024" = "リマッピングサービスが認識できないエラーが発生しました。「ojd diagnose」を実行し、その出力とともに問題を報告してください。";
 "error.E3025" = "このプロファイルは出力を生成しません。割り当てまたはライトの色を追加するか、--allow-empty を付けて有効にしてください。";
+"error.E3026" = "Joy-Con ペアのプロファイルは、もう一方の Joy-Con のジャイロを使います。プロファイルがジャイロに選んでいるコントローラのモーションをキャリブレーションしてください。";
+"error.E3027" = "このコントローラにはリマッピングのプロファイルが有効になっていないため、モーションを処理しません。プロファイルを有効にし、対象アプリを前面に出して、もう一度お試しください。";
+"error.E3028" = "リクエストの実行中にコントローラのリマッピングセッションが変わりました。もう一度お試しください。";
 "error.withCode" = "%@（%@）";

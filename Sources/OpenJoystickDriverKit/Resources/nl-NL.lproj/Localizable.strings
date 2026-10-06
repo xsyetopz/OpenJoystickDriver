@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "Apparaat-ID";
 "cli.controller.show.label.virtual" = "Virtuele gamepad";
 "cli.controller.show.label.publication" = "Publicatie";
+"cli.controller.show.label.output_owner" = "Uitvoereigenaar";
+"cli.controller.show.output_owner.macos" = "macOS (native). Rumble en Verlichting tonen alleen wat macOS ongedaan laat.";
+"cli.controller.show.label.tuning" = "Afstelling";
 "cli.controller.show.none" = "geen";
 "cli.controller.show.record.bundled" = "meegeleverd";
 "cli.controller.show.record.none" = "geen (geen record komt overeen)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "Een profielbestand kon niet worden geschreven. Controleer de vrije schijfruimte en de maprechten.";
 "error.E3024" = "De hertoewijzingsservice kwam een fout tegen die hij niet herkent. Voer „ojd diagnose” uit en meld het probleem samen met de uitvoer.";
 "error.E3025" = "Het profiel produceert geen uitvoer. Voeg er een koppeling of een lichtkleur aan toe, of activeer het met --allow-empty.";
+"error.E3026" = "Het profiel van het Joy-Con-paar haalt de gyro van de andere Joy-Con. Kalibreer de beweging van de controller die het profiel voor de gyro kiest.";
+"error.E3027" = "Er is geen hertoewijzingsprofiel actief voor de controller, dus hij verwerkt geen beweging. Activeer een profiel ervoor, breng de doel-app naar voren en probeer het opnieuw.";
+"error.E3028" = "De hertoewijzingssessie van de controller is gewijzigd tijdens het verzoek. Probeer het opnieuw.";
 "error.withCode" = "%@ (%@)";

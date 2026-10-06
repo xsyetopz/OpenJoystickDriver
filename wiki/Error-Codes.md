@@ -79,6 +79,9 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E3023 | Remapping | A profile file could not be written. Check the free disk space and the folder permissions. Wire value `library_unwritable`. |
 | E3024 | Remapping | The remapping service hit an error it does not recognize. Run 'ojd diagnose' and report the problem with its output. Wire value `unexpected`. |
 | E3025 | Remapping | The profile produces no output. Add a binding or a light color to it, or activate it with --allow-empty. Wire value `profile_produces_no_output`. |
+| E3026 | Remapping | The Joy-Con pair profile takes its gyro from the other Joy-Con. Calibrate the motion of the controller that the profile selects for the gyro. Wire value `motion_gyro_not_selected`. |
+| E3027 | Remapping | No remapping profile is active for the controller, so it does not process motion. Activate a profile for it, bring its target app to the front, and try again. Wire value `motion_profile_inactive`. |
+| E3028 | Remapping | The remapping session of the controller changed while the request ran. Try again. Wire value `motion_session_changed`. |
 <!-- END GENERATED: error-codes -->
 
 ## Further reading

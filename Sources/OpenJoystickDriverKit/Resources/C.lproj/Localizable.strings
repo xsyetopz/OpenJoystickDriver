@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "Unit ID";
 "cli.controller.show.label.virtual" = "Virtual gamepad";
 "cli.controller.show.label.publication" = "Publication";
+"cli.controller.show.label.output_owner" = "Output owner";
+"cli.controller.show.output_owner.macos" = "macOS (native). Rumble and Lighting list only what macOS leaves undone.";
+"cli.controller.show.label.tuning" = "Tuning";
 "cli.controller.show.none" = "none";
 "cli.controller.show.record.bundled" = "bundled";
 "cli.controller.show.record.none" = "none (no record matches)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "A profile file could not be written. Check the free disk space and the folder permissions.";
 "error.E3024" = "The remapping service hit an error it does not recognize. Run 'ojd diagnose' and report the problem with its output.";
 "error.E3025" = "The profile produces no output. Add a binding or a light color to it, or activate it with --allow-empty.";
+"error.E3026" = "The Joy-Con pair profile takes its gyro from the other Joy-Con. Calibrate the motion of the controller that the profile selects for the gyro.";
+"error.E3027" = "No remapping profile is active for the controller, so it does not process motion. Activate a profile for it, bring its target app to the front, and try again.";
+"error.E3028" = "The remapping session of the controller changed while the request ran. Try again.";
 "error.withCode" = "%@ (%@)";

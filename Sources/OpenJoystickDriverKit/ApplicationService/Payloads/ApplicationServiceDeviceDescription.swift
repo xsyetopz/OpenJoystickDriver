@@ -46,6 +46,11 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   public let preferredBackends: [String]
   /// Exact source-backed motors and lighting features of the active parser.
   public let physicalOutputCapabilities: PhysicalControllerOutputCapabilities
+  /// Who drives the controller's output: `macOS` when it serves the controller natively, so
+  /// ``physicalOutputCapabilities`` holds only what macOS leaves undone.
+  public let physicalOutputOwner: ControllerOwnership
+  /// The record's timing and deadzone values as applied to this controller.
+  public let tuning: ControllerTuning
   /// Normalized controls and sample formats the active parser emits for this record.
   public let capabilities: ControllerCapabilities
   /// Link and latest power state of the physical controller.
@@ -83,6 +88,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     postHandshakeSettleMs: Int = 0,
     preferredBackends: [String] = [],
     physicalOutputCapabilities: PhysicalControllerOutputCapabilities = .none,
+    physicalOutputOwner: ControllerOwnership = .ojd,
+    tuning: ControllerTuning = .none,
     capabilities: ControllerCapabilities = ControllerCapabilities(controls: []),
     connectionState: ControllerConnectionState? = nil,
     sessionState: ControllerSessionState = .active,
@@ -112,6 +119,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.postHandshakeSettleMs = postHandshakeSettleMs
     self.preferredBackends = preferredBackends
     self.physicalOutputCapabilities = physicalOutputCapabilities
+    self.physicalOutputOwner = physicalOutputOwner
+    self.tuning = tuning
     self.capabilities = capabilities
     self.connectionState = connectionState
     self.sessionState = sessionState
@@ -157,6 +166,11 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
       PhysicalControllerOutputCapabilities.self,
       forKey: .physicalOutputCapabilities
     )
+    self.physicalOutputOwner = try container.decode(
+      ControllerOwnership.self,
+      forKey: .physicalOutputOwner
+    )
+    self.tuning = try container.decode(ControllerTuning.self, forKey: .tuning)
     self.capabilities = try container.decode(ControllerCapabilities.self, forKey: .capabilities)
     self.connectionState = try container.decodeIfPresent(
       ControllerConnectionState.self,
@@ -200,6 +214,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case postHandshakeSettleMs
     case preferredBackends
     case physicalOutputCapabilities
+    case physicalOutputOwner
+    case tuning
     case capabilities
     case connectionState
     case sessionState
@@ -233,6 +249,8 @@ extension ApplicationServiceDeviceDescription {
       postHandshakeSettleMs: snapshot.postHandshakeSettleMs,
       preferredBackends: snapshot.preferredBackends,
       physicalOutputCapabilities: snapshot.physicalOutputCapabilities,
+      physicalOutputOwner: snapshot.physicalOutputOwner,
+      tuning: snapshot.tuning,
       capabilities: snapshot.capabilities,
       connectionState: snapshot.connectionState,
       sessionState: snapshot.sessionState,

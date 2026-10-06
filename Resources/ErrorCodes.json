@@ -376,6 +376,27 @@
 			"name": "profileProducesNoOutput",
 			"status": "active",
 			"wire": "profile_produces_no_output"
+		},
+		{
+			"code": "E3026",
+			"domain": "remapping",
+			"name": "motionGyroNotSelected",
+			"status": "active",
+			"wire": "motion_gyro_not_selected"
+		},
+		{
+			"code": "E3027",
+			"domain": "remapping",
+			"name": "motionProfileInactive",
+			"status": "active",
+			"wire": "motion_profile_inactive"
+		},
+		{
+			"code": "E3028",
+			"domain": "remapping",
+			"name": "motionSessionChanged",
+			"status": "active",
+			"wire": "motion_session_changed"
 		}
 	]
 }

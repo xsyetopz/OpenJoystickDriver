@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "Geräte-ID";
 "cli.controller.show.label.virtual" = "Virtuelles Gamepad";
 "cli.controller.show.label.publication" = "Veröffentlichung";
+"cli.controller.show.label.output_owner" = "Ausgabe durch";
+"cli.controller.show.output_owner.macos" = "macOS (nativ). Vibration und Beleuchtung zeigen nur, was macOS offenlässt.";
+"cli.controller.show.label.tuning" = "Feinabstimmung";
 "cli.controller.show.none" = "keine";
 "cli.controller.show.record.bundled" = "mitgeliefert";
 "cli.controller.show.record.none" = "keiner (kein Eintrag passt)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "Eine Profildatei konnte nicht geschrieben werden. Prüfe den freien Speicherplatz und die Ordnerberechtigungen.";
 "error.E3024" = "Der Neuzuordnungsdienst ist auf einen unbekannten Fehler gestoßen. Führe „ojd diagnose“ aus und melde das Problem zusammen mit der Ausgabe.";
 "error.E3025" = "Das Profil erzeugt keine Ausgabe. Füge ihm eine Belegung oder eine Lichtfarbe hinzu oder aktiviere es mit --allow-empty.";
+"error.E3026" = "Das Profil des Joy-Con-Paars bezieht das Gyroskop vom anderen Joy-Con. Kalibriere die Bewegung des Controllers, den das Profil für das Gyroskop auswählt.";
+"error.E3027" = "Für den Controller ist kein Neuzuordnungsprofil aktiv, daher verarbeitet er keine Bewegung. Aktiviere ein Profil dafür, bringe die Ziel-App in den Vordergrund und versuche es noch einmal.";
+"error.E3028" = "Die Neuzuordnungssitzung des Controllers hat sich während der Anfrage geändert. Versuche es noch einmal.";
 "error.withCode" = "%@ (%@)";

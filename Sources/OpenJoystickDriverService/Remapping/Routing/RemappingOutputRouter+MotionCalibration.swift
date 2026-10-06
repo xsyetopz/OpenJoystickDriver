@@ -43,7 +43,7 @@ extension RemappingRoutingCore {
       switch pair.profile.joyConPair?.gyroSelection {
       case .left where identifier != pair.left, .right where identifier != pair.right, .disabled,
         .none:
-        throw RemappingMotionCalibrationError.motionUnavailable
+        throw RemappingMotionCalibrationRefusal.gyroNotSelected
       case .left, .right: break
       }
     }
@@ -55,10 +55,11 @@ extension RemappingRoutingCore {
       throw RemappingMotionCalibrationError.controllerUnavailable
     }
     guard case .remapping(let profile) = route.selection, route.eligibility == .eligible else {
-      throw RemappingMotionCalibrationError.motionUnavailable
+      throw RemappingMotionCalibrationRefusal.profileInactive
     }
-    guard let sessionID, await engine.motionSessionIdentifier(for: engineIdentifier) == sessionID
-    else { throw RemappingMotionCalibrationError.motionUnavailable }
+    guard let sessionID else { throw RemappingMotionCalibrationError.motionUnavailable }
+    guard await engine.motionSessionIdentifier(for: engineIdentifier) == sessionID
+    else { throw RemappingMotionCalibrationRefusal.sessionChanged }
     try requireOperationalPermit(permit)
     if let command {
       return try await engine.calibrateMotion(
@@ -73,13 +74,13 @@ extension RemappingRoutingCore {
     }
     try requireOperationalPermit(permit)
     guard await engine.motionSessionIdentifier(for: engineIdentifier) == sessionID else {
-      throw RemappingMotionCalibrationError.motionUnavailable
+      throw RemappingMotionCalibrationRefusal.sessionChanged
     }
     try requireOperationalPermit(permit)
     guard connectedIdentifiers.contains(identifier),
       case .remapping(let currentProfile) = routes[identifier]?.selection,
       currentProfile == profile, routes[identifier]?.eligibility == .eligible
-    else { throw RemappingMotionCalibrationError.motionUnavailable }
+    else { throw RemappingMotionCalibrationRefusal.sessionChanged }
     return status
   }
 }

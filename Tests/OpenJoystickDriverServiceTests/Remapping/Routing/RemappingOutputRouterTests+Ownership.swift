@@ -20,7 +20,7 @@ extension RemappingOutputRouterTests {
       try await harness.router.motionCalibration(for: device.runtimeIdentifier, command: .start)
     }
     harness.foreground.set("com.example.Other")
-    await #expect(throws: RemappingMotionCalibrationError.motionUnavailable) {
+    await #expect(throws: RemappingMotionCalibrationRefusal.profileInactive) {
       try await harness.router.motionCalibration(for: device.runtimeIdentifier, command: .reset)
     }
     #expect(await harness.router.status(for: device)?.eligibility == .targetApplicationNotFrontmost)

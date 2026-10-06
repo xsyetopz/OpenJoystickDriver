@@ -28,6 +28,43 @@ struct ControllerShowReport: Encodable, Equatable {
     let binaryRumbleMotors: [String]
     let lightingFeatures: [String]
     let adaptiveTriggers: [String]
+    /// `macos` when macOS serves the controller natively, so the output lists above hold only what
+    /// macOS leaves undone; `ojd` when OJD drives all of the controller's output.
+    let outputOwner: String
+  }
+
+  /// The record's `tuning` as applied, named as in the record file; a value the record does not
+  /// set is absent.
+  struct Tuning: Encodable, Equatable {
+    let stickDeadzone: Float?
+    let inputLivenessTimeoutMs: Int?
+    let hidStartupIntervalMs: Int?
+    let minimumHIDOutputIntervalMs: Int?
+    let hidStartupRecoveryIntervalMs: Int?
+    let hidStartupRecoveryRounds: Int?
+
+    /// Nil when the record sets no tuning.
+    init?(_ tuning: ControllerTuning) {
+      guard tuning != .none else { return nil }
+      stickDeadzone = tuning.stickDeadzone
+      inputLivenessTimeoutMs = tuning.inputLivenessTimeoutMilliseconds
+      hidStartupIntervalMs = tuning.hidStartupIntervalMilliseconds
+      minimumHIDOutputIntervalMs = tuning.minimumHIDOutputIntervalMilliseconds
+      hidStartupRecoveryIntervalMs = tuning.hidStartupRecoveryIntervalMilliseconds
+      hidStartupRecoveryRounds = tuning.hidStartupRecoveryRounds
+    }
+
+    /// The set values as `name=value`, in record-file order.
+    var rows: [String] {
+      [
+        stickDeadzone.map { "stickDeadzone=\($0)" },
+        inputLivenessTimeoutMs.map { "inputLivenessTimeoutMs=\($0)" },
+        hidStartupIntervalMs.map { "hidStartupIntervalMs=\($0)" },
+        minimumHIDOutputIntervalMs.map { "minimumHIDOutputIntervalMs=\($0)" },
+        hidStartupRecoveryIntervalMs.map { "hidStartupRecoveryIntervalMs=\($0)" },
+        hidStartupRecoveryRounds.map { "hidStartupRecoveryRounds=\($0)" },
+      ].compactMap { $0 }
+    }
   }
 
   struct Virtual: Encodable, Equatable {
@@ -85,6 +122,8 @@ struct ControllerShowReport: Encodable, Equatable {
     let ownership: Ownership
     let quirks: [String]
     let record: Record?
+    /// Absent when the controller's record sets no tuning.
+    let tuning: Tuning?
     let capabilities: Capabilities
     let virtual: Virtual?
     let publication: Publication?
@@ -129,6 +168,7 @@ struct ControllerShowReport: Encodable, Equatable {
       ),
       quirks: device.quirks,
       record: record.map(Record.init),
+      tuning: Tuning(device.tuning),
       capabilities: Capabilities(
         controls: ControlID.allCases.filter(device.capabilities.controls.contains).map(\.rawValue),
         touchContactCount: Int(device.capabilities.touchContactCount),
@@ -136,7 +176,8 @@ struct ControllerShowReport: Encodable, Equatable {
         rumbleMotors: output.rumbleMotors.map(\.rawValue),
         binaryRumbleMotors: output.binaryRumbleMotors.map(\.rawValue),
         lightingFeatures: output.lightingFeatures.map(\.rawValue),
-        adaptiveTriggers: output.adaptiveTriggers.map(\.rawValue)
+        adaptiveTriggers: output.adaptiveTriggers.map(\.rawValue),
+        outputOwner: device.physicalOutputOwner.rawValue
       ),
       virtual: device.virtualHIDProfile.map {
         Virtual(

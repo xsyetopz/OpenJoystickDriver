@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "Cihaz Kimliği";
 "cli.controller.show.label.virtual" = "Sanal Oyun Kontrolcüsü";
 "cli.controller.show.label.publication" = "Yayımlama";
+"cli.controller.show.label.output_owner" = "Çıktı sahibi";
+"cli.controller.show.output_owner.macos" = "macOS (yerel). Titreşim ve Aydınlatma yalnızca macOS’un yapmadığı işleri listeler.";
+"cli.controller.show.label.tuning" = "Ayarlar";
 "cli.controller.show.none" = "yok";
 "cli.controller.show.record.bundled" = "birlikte gelen";
 "cli.controller.show.record.none" = "yok (eşleşen kayıt yok)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "Bir profil dosyası yazılamadı. Boş disk alanını ve klasör izinlerini kontrol edin.";
 "error.E3024" = "Yeniden atama servisi tanımadığı bir hatayla karşılaştı. “ojd diagnose” komutunu çalıştırın ve sorunu çıktısıyla birlikte bildirin.";
 "error.E3025" = "Profil çıktı üretmiyor. Profile bir atama veya ışık rengi ekleyin ya da --allow-empty ile etkinleştirin.";
+"error.E3026" = "Joy-Con çiftinin profili jiroskopu diğer Joy-Con’dan alır. Profilin jiroskop için seçtiği kontrolcünün hareketini kalibre edin.";
+"error.E3027" = "Kontrolcü için etkin bir yeniden atama profili yok, bu yüzden hareketi işlemiyor. Kontrolcü için bir profil etkinleştirin, hedef uygulamayı öne getirin ve yeniden deneyin.";
+"error.E3028" = "İstek çalışırken kontrolcünün yeniden atama oturumu değişti. Yeniden deneyin.";
 "error.withCode" = "%@ (%@)";

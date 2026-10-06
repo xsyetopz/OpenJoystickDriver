@@ -368,6 +368,9 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
     case unwritableLibrary = "library_unwritable"
     case unexpected = "unexpected"
     case profileProducesNoOutput = "profile_produces_no_output"
+    case motionGyroNotSelected = "motion_gyro_not_selected"
+    case motionProfileInactive = "motion_profile_inactive"
+    case motionSessionChanged = "motion_session_changed"
 
     /// The stable error code of this failure, listed in `Resources/ErrorCodes.json`.
     public var errorCode: ErrorCode {
@@ -397,6 +400,9 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
       case .unwritableLibrary: .unwritableLibrary
       case .unexpected: .remappingUnexpected
       case .profileProducesNoOutput: .profileProducesNoOutput
+      case .motionGyroNotSelected: .motionGyroNotSelected
+      case .motionProfileInactive: .motionProfileInactive
+      case .motionSessionChanged: .motionSessionChanged
       }
     }
   }

@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "ID thiết bị";
 "cli.controller.show.label.virtual" = "Tay cầm ảo";
 "cli.controller.show.label.publication" = "Cung cấp";
+"cli.controller.show.label.output_owner" = "Bên phụ trách đầu ra";
+"cli.controller.show.output_owner.macos" = "macOS (gốc). Rung và Đèn chỉ liệt kê những gì macOS chưa làm.";
+"cli.controller.show.label.tuning" = "Tinh chỉnh";
 "cli.controller.show.none" = "không có";
 "cli.controller.show.record.bundled" = "đi kèm";
 "cli.controller.show.record.none" = "không có (không bản ghi nào khớp)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "Không thể ghi một tệp cấu hình. Hãy kiểm tra dung lượng đĩa trống và quyền của thư mục.";
 "error.E3024" = "Dịch vụ ánh xạ lại gặp một lỗi mà nó không nhận ra. Hãy chạy “ojd diagnose” và báo cáo sự cố kèm đầu ra của nó.";
 "error.E3025" = "Cấu hình không tạo ra đầu ra. Hãy thêm một liên kết hoặc màu đèn vào cấu hình, hoặc kích hoạt bằng --allow-empty.";
+"error.E3026" = "Cấu hình của cặp Joy-Con lấy con quay hồi chuyển từ Joy-Con còn lại. Hãy hiệu chỉnh chuyển động của bộ điều khiển mà cấu hình chọn cho con quay hồi chuyển.";
+"error.E3027" = "Không có cấu hình ánh xạ lại nào đang hoạt động cho bộ điều khiển, nên nó không xử lý chuyển động. Hãy kích hoạt một cấu hình cho nó, đưa ứng dụng đích lên trước, rồi thử lại.";
+"error.E3028" = "Phiên ánh xạ lại của bộ điều khiển đã thay đổi khi yêu cầu đang chạy. Hãy thử lại.";
 "error.withCode" = "%@ (%@)";

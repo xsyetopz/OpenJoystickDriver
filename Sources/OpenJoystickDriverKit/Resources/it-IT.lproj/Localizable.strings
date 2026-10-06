@@ -1236,6 +1236,9 @@
 "cli.controller.show.label.unit" = "ID unità";
 "cli.controller.show.label.virtual" = "Gamepad virtuale";
 "cli.controller.show.label.publication" = "Pubblicazione";
+"cli.controller.show.label.output_owner" = "Gestore dell’output";
+"cli.controller.show.output_owner.macos" = "macOS (nativo). Vibrazione e Illuminazione elencano solo ciò che macOS lascia non eseguito.";
+"cli.controller.show.label.tuning" = "Regolazioni";
 "cli.controller.show.none" = "nessuno";
 "cli.controller.show.record.bundled" = "incluso";
 "cli.controller.show.record.none" = "nessuno (nessun record corrisponde)";
@@ -1562,4 +1565,7 @@
 "error.E3023" = "Non è stato possibile scrivere un file di profilo. Controlla lo spazio libero su disco e i permessi della cartella.";
 "error.E3024" = "Il servizio di rimappatura ha incontrato un errore che non riconosce. Esegui «ojd diagnose» e segnala il problema insieme al suo output.";
 "error.E3025" = "Il profilo non produce alcun output. Aggiungi un’assegnazione o un colore della luce, oppure attivalo con --allow-empty.";
+"error.E3026" = "Il profilo della coppia di Joy-Con prende il giroscopio dall’altro Joy-Con. Calibra il movimento del controller che il profilo seleziona per il giroscopio.";
+"error.E3027" = "Nessun profilo di rimappatura è attivo per il controller, quindi non elabora il movimento. Attiva un profilo per il controller, porta in primo piano l’app di destinazione e riprova.";
+"error.E3028" = "La sessione di rimappatura del controller è cambiata mentre la richiesta era in corso. Riprova.";
 "error.withCode" = "%@ (%@)";

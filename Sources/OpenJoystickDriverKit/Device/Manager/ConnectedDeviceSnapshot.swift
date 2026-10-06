@@ -42,6 +42,11 @@ public struct ConnectedDeviceSnapshot: Sendable {
   public let preferredBackends: [String]
   /// Exact source-backed motors and lighting features of the active parser.
   public let physicalOutputCapabilities: PhysicalControllerOutputCapabilities
+  /// Who drives the controller's output: `macOS` when it serves the controller natively, so
+  /// ``physicalOutputCapabilities`` holds only what macOS leaves undone.
+  public let physicalOutputOwner: ControllerOwnership
+  /// The record's timing and deadzone values as applied to this controller.
+  public let tuning: ControllerTuning
   /// Normalized controls and sample formats the active parser emits for this record.
   public let capabilities: ControllerCapabilities
   /// Link and latest power state of the physical controller.
