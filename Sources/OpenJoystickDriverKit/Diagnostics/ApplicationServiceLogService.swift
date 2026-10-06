@@ -34,6 +34,8 @@ public struct ApplicationServiceLogSnapshot: Codable, Equatable, Sendable {
 public enum ApplicationServiceLogService {
   public static let defaultMaximumLines = 100
   public static let defaultMaximumBytes = 262_144
+  /// The accepted range of a requested line count.
+  public static let linesRange = 1...10_000
   public static let sharingWarning =
     "Application service logs may contain device names, identifiers, or diagnostic paths. "
     + "Review before sharing."
@@ -139,6 +141,23 @@ public enum ApplicationServiceLogService {
       fileSizeBytes: fileSize,
       lines: selectedLines,
       truncated: offset > 0 || selectedLines.count < allLines.count
+    )
+  }
+
+  /// `text` with each path under `home` written as `~`, as the support report leaves out
+  /// filesystem paths. A longer folder name that starts with `home` is left alone.
+  public static func redactingHome(_ text: String, home: String) -> String {
+    let home = home.hasSuffix("/") ? String(home.dropLast()) : home
+    guard !home.isEmpty,
+      let expression = try? NSRegularExpression(
+        pattern: NSRegularExpression.escapedPattern(for: home) + #"(?=$|[/\s"':,;)\]])"#,
+        options: .anchorsMatchLines
+      )
+    else { return text }
+    return expression.stringByReplacingMatches(
+      in: text,
+      range: NSRange(text.startIndex..., in: text),
+      withTemplate: "~"
     )
   }
 }

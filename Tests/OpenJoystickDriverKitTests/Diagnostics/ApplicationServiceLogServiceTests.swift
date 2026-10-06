@@ -5,6 +5,23 @@ import Testing
 
 struct ApplicationServiceLogServiceTests {
   @Test
+  func exportShowsTheHomeFolderAsATilde() {
+    let text = """
+      == standardOutput: /Users/me/Library/Logs/ojd.log ==
+      opened /Users/me
+      kept /Users/meow/file and "/Users/me/a b"
+      """
+    #expect(
+      ApplicationServiceLogService.redactingHome(text, home: "/Users/me/")
+        == """
+        == standardOutput: ~/Library/Logs/ojd.log ==
+        opened ~
+        kept /Users/meow/file and "~/a b"
+        """
+    )
+  }
+
+  @Test
   func missingLogReturnsAnEmptyTypedSnapshot() throws {
     let url = temporaryURL()
     let snapshot = try ApplicationServiceLogService.tail(

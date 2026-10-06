@@ -87,4 +87,23 @@ struct ControllerOutputCommandTests {
       try DualSenseDriver().encode(.setLightBrightness(.max))
     }
   }
+
+  @Test
+  func manualTestRumblesBothMainMotorsOnlyWhenNoChannelIsGiven() {
+    let fallback = UnipolarValue(byte: 180)
+    #expect(
+      RumbleIntensities.manualTest(
+        leftMain: nil,
+        rightMain: nil,
+        leftTrigger: nil,
+        rightTrigger: nil
+      )
+        == RumbleIntensities(leftMain: fallback, rightMain: fallback)
+    )
+    #expect(
+      RumbleIntensities.manualTest(leftMain: nil, rightMain: nil, leftTrigger: 9, rightTrigger: nil)
+        == RumbleIntensities(leftTrigger: UnipolarValue(byte: 9))
+    )
+    #expect(RumbleDuration.maximumSeconds == 5)
+  }
 }

@@ -60,15 +60,6 @@ package struct AutomationAmbiguousModelError: Error, Equatable, LocalizedError, 
   }
 }
 
-/// `VVVV:PPPP`, four hex digits each, case-insensitive.
-package func parseControllerModel(_ text: String) -> (vendorID: UInt16, productID: UInt16)? {
-  let parts = text.split(separator: ":", omittingEmptySubsequences: false)
-  guard parts.count == 2, parts.allSatisfy({ $0.count == 4 && $0.allSatisfy(\.isHexDigit) }),
-    let vendorID = UInt16(parts[0], radix: 16), let productID = UInt16(parts[1], radix: 16)
-  else { return nil }
-  return (vendorID, productID)
-}
-
 private func automationModel(vendorID: UInt16, productID: UInt16) -> String {
   String(format: "%04X:%04X", vendorID, productID)
 }
@@ -114,10 +105,11 @@ extension AutomationService {
   package func controllers(ids: [String]) async throws -> [AutomationController] {
     let devices = await connectedDevices()
     return try ids.compactMap { id in
-      let byID = devices.first { $0.unitIdentifier == id || $0.runtimeIdentifier == id }
-      if let device = byID { return AutomationController(device) }
-      guard let (vendorID, productID) = parseControllerModel(id) else { return nil }
-      let matches = devices.filter { $0.vendorID == vendorID && $0.productID == productID }
+      if let device = ControllerSelection.id(id).matches(in: devices).first {
+        return AutomationController(device)
+      }
+      guard let model = ControllerSelection(id), case .model = model else { return nil }
+      let matches = model.matches(in: devices)
       guard matches.count <= 1 else {
         throw AutomationAmbiguousModelError(
           model: id,

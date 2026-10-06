@@ -32,4 +32,13 @@ struct ControllerColorTests {
       }
     }
   }
+
+  @Test
+  func parsesSixHexDigitsWithAnOptionalHash() {
+    #expect(ControllerColor(hex: "#FF0080") == ControllerColor(red: 255, green: 0, blue: 128))
+    #expect(ControllerColor(hex: "0a0b0c") == ControllerColor(red: 10, green: 11, blue: 12))
+    for invalid in ["", "#", "FFF", "#FF00800", "GG0000", "+F0000", "##FF0000"] {
+      #expect(ControllerColor(hex: invalid) == nil)
+    }
+  }
 }

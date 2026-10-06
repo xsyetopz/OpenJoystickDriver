@@ -44,7 +44,7 @@ struct LogExportCommand: AsyncParsableCommand {
   }
 
   func validate() throws {
-    guard (1...10_000).contains(lines) else {
+    guard ApplicationServiceLogService.linesRange.contains(lines) else {
       throw ValidationError(
         CLILocalized.text("cli.log.show.lines_range")
       )
@@ -76,7 +76,7 @@ struct LogExportCommand: AsyncParsableCommand {
           )
         )
       }
-      let text = Self.redactingHome(
+      let text = ApplicationServiceLogService.redactingHome(
         LogShowCommand.humanText(snapshots),
         home: FileManager.default.homeDirectoryForCurrentUser.path
       )
@@ -103,22 +103,5 @@ struct LogExportCommand: AsyncParsableCommand {
         )
       }
     }
-  }
-
-  /// `text` with each path under `home` written as `~`, as the support report leaves out
-  /// filesystem paths. A longer folder name that starts with `home` is left alone.
-  static func redactingHome(_ text: String, home: String) -> String {
-    let home = home.hasSuffix("/") ? String(home.dropLast()) : home
-    guard !home.isEmpty,
-      let expression = try? NSRegularExpression(
-        pattern: NSRegularExpression.escapedPattern(for: home) + #"(?=$|[/\s"':,;)\]])"#,
-        options: .anchorsMatchLines
-      )
-    else { return text }
-    return expression.stringByReplacingMatches(
-      in: text,
-      range: NSRange(text.startIndex..., in: text),
-      withTemplate: "~"
-    )
   }
 }

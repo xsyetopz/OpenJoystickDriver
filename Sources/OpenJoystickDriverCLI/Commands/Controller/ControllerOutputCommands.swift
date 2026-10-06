@@ -153,14 +153,14 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
       valueName: "seconds"
     )
   )
-  var duration = 0.45
+  var duration = RumbleDuration.manualTestSeconds
 
   private static func intensityHelp(_ text: String) -> ArgumentHelp {
     ArgumentHelp(text, valueName: "0-255")
   }
 
   func validate() throws {
-    guard duration.isFinite, duration > 0, duration <= 5 else {
+    guard duration.isFinite, duration > 0, duration <= RumbleDuration.maximumSeconds else {
       throw ValidationError(
         CLILocalized.text(
           "cli.controller.rumble.error.duration"
@@ -171,13 +171,11 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
 
   /// The requested intensities; both main motors at 180 when no option names one.
   var intensities: RumbleIntensities {
-    let noneGiven = [left, right, leftTrigger, rightTrigger].allSatisfy { $0 == nil }
-    let fallback: UInt8 = noneGiven ? 180 : 0
-    return RumbleIntensities(
-      leftMain: UnipolarValue(byte: left ?? fallback),
-      rightMain: UnipolarValue(byte: right ?? fallback),
-      leftTrigger: UnipolarValue(byte: leftTrigger ?? 0),
-      rightTrigger: UnipolarValue(byte: rightTrigger ?? 0)
+    .manualTest(
+      leftMain: left,
+      rightMain: right,
+      leftTrigger: leftTrigger,
+      rightTrigger: rightTrigger
     )
   }
 
@@ -348,15 +346,8 @@ struct ColorArgument: ExpressibleByArgument, Equatable, Sendable {
   let color: ControllerColor
 
   init?(argument: String) {
-    let hex = argument.hasPrefix("#") ? String(argument.dropFirst()) : argument
-    guard hex.count == 6, hex.allSatisfy(\.isHexDigit), let value = UInt32(hex, radix: 16) else {
-      return nil
-    }
-    color = ControllerColor(
-      red: UInt8(value >> 16 & 0xFF),
-      green: UInt8(value >> 8 & 0xFF),
-      blue: UInt8(value & 0xFF)
-    )
+    guard let color = ControllerColor(hex: argument) else { return nil }
+    self.color = color
   }
 
   static func == (lhs: Self, rhs: Self) -> Bool { lhs.color == rhs.color }

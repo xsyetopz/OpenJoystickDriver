@@ -13,9 +13,6 @@ struct VirtualFeedCommand: AsyncParsableCommand {
     )
   )
 
-  /// How often an idle feed tells the service that it is still open.
-  static let heartbeatSeconds = 0.5
-
   /// Standard input split into lines, read only when the feed asks for the next one; tests
   /// replace it.
   @TaskLocal
@@ -131,7 +128,9 @@ struct VirtualFeedCommand: AsyncParsableCommand {
       }
       let draining = next.finished && queued > 0
       let now = ProcessInfo.processInfo.systemUptime
-      if !next.pending.isEmpty || draining || now - lastExchange >= heartbeatSeconds {
+      if !next.pending.isEmpty || draining
+        || now - lastExchange >= VirtualFeedExchangeResult.heartbeatSeconds
+      {
         lastExchange = now
         let frames = next.pending
         let result = try await ServiceConnection.withDeadline(seconds: timeout) {

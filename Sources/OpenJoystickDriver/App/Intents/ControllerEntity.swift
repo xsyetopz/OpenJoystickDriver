@@ -1,6 +1,7 @@
 #if canImport(AppIntents)
   import AppIntents
   import Foundation
+  import OpenJoystickDriverKit
   import OpenJoystickDriverService
 
   /// A connected controller that Shortcuts actions take and return.
@@ -48,7 +49,7 @@
 
     /// A typed `VVVV:PPPP` resolves like a saved model; other text filters the suggestions.
     func entities(matching string: String) async throws -> [ControllerEntity] {
-      if parseControllerModel(string) != nil {
+      if ControllerSelection.model(string) != nil {
         return try await service.controllers(ids: [string]).map(ControllerEntity.init)
       }
       return await service.controllers()

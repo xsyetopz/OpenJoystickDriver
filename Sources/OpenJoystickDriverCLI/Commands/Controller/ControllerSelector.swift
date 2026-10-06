@@ -8,26 +8,16 @@ import OpenJoystickDriverService
 /// can change when the controller is unplugged and replugged (see `RuntimeDeviceIdentity`). A unit
 /// ID (`U-…`) lasts while the controller stays on the same port (see ``UnitIdentity``).
 struct ControllerSelector: ExpressibleByArgument, Equatable, Sendable {
-  enum Kind: Equatable, Sendable {
-    case id(String)
-    case model(vendorID: UInt16, productID: UInt16)
-  }
-
-  let kind: Kind
+  let kind: ControllerSelection
   let text: String
 
   init?(argument: String) {
-    guard !argument.isEmpty else { return nil }
+    guard let kind = ControllerSelection(argument) else { return nil }
     text = argument
-    kind = Self.model(argument).map { .model(vendorID: $0.0, productID: $0.1) } ?? .id(argument)
+    self.kind = kind
   }
 
   static var defaultCompletionKind: CompletionKind { .default }
-
-  /// `VVVV:PPPP`, four hex digits each, case-insensitive.
-  static func model(_ text: String) -> (UInt16, UInt16)? {
-    parseControllerModel(text).map { ($0.vendorID, $0.productID) }
-  }
 
   /// The one connected controller this selector names.
   ///
@@ -35,13 +25,7 @@ struct ControllerSelector: ExpressibleByArgument, Equatable, Sendable {
   func resolve(
     in devices: [ApplicationServiceDeviceDescription]
   ) throws -> ApplicationServiceDeviceDescription {
-    let matches: [ApplicationServiceDeviceDescription]
-    switch kind {
-    case .id(let id):
-      matches = devices.filter { $0.runtimeIdentifier == id || $0.unitIdentifier == id }
-    case .model(let vendorID, let productID):
-      matches = devices.filter { $0.vendorID == vendorID && $0.productID == productID }
-    }
+    let matches = kind.matches(in: devices)
     if matches.count == 1, let device = matches.first { return device }
     let message: String
     let listed: [ApplicationServiceDeviceDescription]

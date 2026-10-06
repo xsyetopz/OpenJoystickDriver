@@ -43,6 +43,17 @@ package struct ExtensionStatus: Sendable, Equatable {
     self.installed = installed
   }
 
+  /// The `systemextensionsctl` record, the unexpected bundle identifier, or the reason the state
+  /// is unavailable; nil when there is nothing to add. A record wins over an invalid bundle.
+  package var detail: String? {
+    switch (bundle, registration) {
+    case (_, .active(let record)), (_, .inactive(let record)): record
+    case (_, .unavailable(let reason)): reason
+    case (.invalid(let identifier), _): identifier
+    default: nil
+    }
+  }
+
   package static let unavailable = Self(
     bundle: .missing,
     registration: .unavailable("System-extension status has not been checked.")

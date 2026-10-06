@@ -1,5 +1,6 @@
 import Darwin
 import Foundation
+import OpenJoystickDriverKit
 
 package enum InstalledCLIForwarder {
   enum Resolution: Equatable {
@@ -8,9 +9,8 @@ package enum InstalledCLIForwarder {
     case staleInstallation(URL)
   }
 
-  static let installedExecutableURL = URL(
-    fileURLWithPath: "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
-  )
+  static let installedExecutableURL = BuildIdentity.installedApplicationBundleURL
+    .appendingPathComponent("Contents/MacOS/OpenJoystickDriver", isDirectory: false)
 
   static func resolve(
     currentExecutableURL: URL,

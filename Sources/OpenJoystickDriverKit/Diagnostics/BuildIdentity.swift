@@ -46,6 +46,44 @@ public struct BuildIdentity: Codable, Equatable, Sendable {
     return bundle.pathExtension == "app" ? bundle : nil
   }
 
+  /// Where the installer puts the app.
+  package static let installedApplicationBundleURL = URL(
+    fileURLWithPath: "/Applications/OpenJoystickDriver.app",
+    isDirectory: true
+  )
+
+  /// Whether `bundle` runs from `/Applications`, the only place macOS accepts system-extension
+  /// requests from.
+  package static func isInstalled(_ bundle: URL) -> Bool {
+    bundle.path.hasPrefix("/Applications/")
+  }
+
+  /// Why `codesign --verify --deep --strict` rejects `bundle`, or nil when it accepts it.
+  /// Throws when `codesign` does not run.
+  package static func signatureProblem(of bundle: URL) throws -> String? {
+    let result = try BoundedProcessRunner.run(
+      executableURL: URL(fileURLWithPath: "/usr/bin/codesign"),
+      arguments: ["--verify", "--deep", "--strict", bundle.path],
+      timeoutSeconds: 15,
+      maximumOutputBytes: 262_144
+    )
+    if result.timedOut { return "codesign timed out" }
+    guard result.terminationStatus != 0 else { return nil }
+    return result.output.trimmingCharacters(in: .whitespacesAndNewlines)
+      .replacingOccurrences(of: "\n", with: " ")
+  }
+
+  /// Launches `bundle` in the background with `open -g`; returns whether `open` succeeded.
+  package static func openInBackground(_ bundle: URL) throws -> Bool {
+    let result = try BoundedProcessRunner.run(
+      executableURL: URL(fileURLWithPath: "/usr/bin/open"),
+      arguments: ["-g", bundle.path],
+      timeoutSeconds: 10,
+      maximumOutputBytes: 16_384
+    )
+    return result.terminationStatus == 0 && !result.timedOut
+  }
+
   /// The release version with SemVer build metadata for provenance, such as
   /// `0.5.0+build.1.4.89.sha.0123456789ab.dirty`. Metadata never orders versions.
   public var display: String {

@@ -141,6 +141,9 @@ public struct LocalServiceRPCVirtualFeedExchangeArguments: Codable, Sendable {
 /// The service closes a feed that receives no exchange for ``idleTimeoutSeconds``.
 public struct VirtualFeedExchangeResult: Codable, Equatable, Sendable {
   public static let idleTimeoutSeconds: Double = 2
+  /// How often an idle client exchanges to keep its feed open, well inside
+  /// ``idleTimeoutSeconds``.
+  public static let heartbeatSeconds = 0.5
   public static let maximumQueuedFrames = 256
   public static let minimumFrameMilliseconds = 8
 

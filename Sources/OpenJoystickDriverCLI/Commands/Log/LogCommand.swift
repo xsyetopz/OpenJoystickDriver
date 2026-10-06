@@ -79,7 +79,7 @@ struct LogShowCommand: AsyncParsableCommand {
   }
 
   func validate() throws {
-    guard (1...10_000).contains(lines) else {
+    guard ApplicationServiceLogService.linesRange.contains(lines) else {
       throw ValidationError(
         CLILocalized.text("cli.log.show.lines_range")
       )

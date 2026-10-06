@@ -102,26 +102,34 @@ struct DiagnoseCommand: AsyncParsableCommand {
   func validate() throws {
     if let bundle { _ = try Self.bundleURL(bundle) }
     guard let soak else { return }
-    guard (1...86_400).contains(soak) else {
+    guard ApplicationServiceRuntimeHealthSampler.secondsRange.contains(soak) else {
       throw ValidationError(
         CLILocalized.text("cli.diagnose.soak_range")
       )
     }
-    guard (100...60_000).contains(intervalMilliseconds) else {
+    guard
+      ApplicationServiceRuntimeHealthSampler.intervalMillisecondsRange.contains(
+        intervalMilliseconds
+      )
+    else {
       throw ValidationError(
         CLILocalized.text(
           "cli.diagnose.interval_range"
         )
       )
     }
-    guard (0...65_536).contains(residentLimitMiB), (0...65_536).contains(footprintLimitMiB) else {
+    let limitRange = RuntimeHealthPolicy.limitMiBRange
+    guard limitRange.contains(residentLimitMiB), limitRange.contains(footprintLimitMiB) else {
       throw ValidationError(
         CLILocalized.text(
           "cli.diagnose.limit_range"
         )
       )
     }
-    let samples = Int((Double(soak * 1_000) / Double(intervalMilliseconds)).rounded(.up)) + 1
+    let samples = ApplicationServiceRuntimeHealthSampler.sampleCount(
+      seconds: soak,
+      intervalMilliseconds: intervalMilliseconds
+    )
     guard samples <= ApplicationServiceRuntimeHealthSampler.maximumSampleCount else {
       throw ValidationError(
         CLILocalized.format(

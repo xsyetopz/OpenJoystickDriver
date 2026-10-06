@@ -102,6 +102,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
   Xcode extracts the App Intents metadata that Shortcuts reads, and the app bundle now also contains the SwifterKit resource bundle.
   Open the project in Xcode to build and run the `OpenJoystickDriverApp` scheme; see [Building from source](docs/development/building-from-source.md#building-in-xcode).
 - OpenJoystickDriver has one DriverKit extension again, `com.openjoystickdriver.XboxUSBDevice`, and it appears under **Driver Extensions** in **System Settings** when the app profile grants it. The `com.openjoystickdriver.VirtualHIDDevice` extension and its HID factory are removed, and so are `--without-usb-personality` and `OJD_DRIVERKIT_WITHOUT_USB`. The app publishes virtual gamepads itself through `IOHIDUserDevice`. OJD does not remove a `VirtualHIDDevice` extension that an earlier beta activated; see [Known issues](wiki/Known-Issues.md#an-old-virtual-hid-extension-is-still-active).
+- The command-line logic that the app and other clients need now lives in `OpenJoystickDriverKit` and `OpenJoystickDriverService`: the rumble defaults and limit, the hex color parser, the soak, log line, and port limits, the home-folder redaction of log exports, the `/Applications/` install, codesign, and `open -g` checks, the feed heartbeat, the `VVVV:PPPP` controller selector (`ControllerSelection`), and the `ojd diagnose` checks (`DiagnosticsService`).
+  Command behavior and output do not change.
 
 ### Removed
 

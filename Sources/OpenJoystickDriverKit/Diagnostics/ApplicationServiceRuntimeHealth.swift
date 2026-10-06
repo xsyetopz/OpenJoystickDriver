@@ -3,8 +3,6 @@ import Foundation
 
 private let runtimeHealthNanosecondsPerSecond: Double = 1_000_000_000
 private let runtimeHealthNanosecondsPerMillisecond: UInt64 = 1_000_000
-private let runtimeHealthSecondsRange = 1...86_400
-private let runtimeHealthIntervalMillisecondsRange = 100...60_000
 private let runtimeHealthCPUPercentScale = 100.0
 
 public enum RuntimeMemoryTrend: String, Codable, Sendable {
@@ -43,6 +41,20 @@ public struct RuntimeHealthPolicy: Codable, Equatable, Sendable {
     self.maximumPhysicalFootprintBytes = maximumPhysicalFootprintBytes
     self.maximumFileDescriptorGrowth = max(1, maximumFileDescriptorGrowth)
     self.maximumThreadGrowth = max(1, maximumThreadGrowth)
+  }
+
+  /// The accepted range of a memory limit in MiB; 0 means no limit.
+  public static let limitMiBRange = 0...65_536
+
+  /// The standard policy with memory limits in MiB, where 0 means no limit.
+  public init(residentLimitMiB: Int, footprintLimitMiB: Int) {
+    func bytes(_ mebibytes: Int) -> UInt64? {
+      mebibytes == 0 ? nil : UInt64(mebibytes) * 1_048_576
+    }
+    self.init(
+      maximumResidentBytes: bytes(residentLimitMiB),
+      maximumPhysicalFootprintBytes: bytes(footprintLimitMiB)
+    )
   }
 }
 
@@ -274,6 +286,14 @@ public enum RuntimeHealthSamplingError: LocalizedError, Sendable {
 
 public enum ApplicationServiceRuntimeHealthSampler {
   public static let maximumSampleCount = 100_000
+  public static let secondsRange = 1...86_400
+  public static let intervalMillisecondsRange = 100...60_000
+
+  /// The number of samples a run of `seconds` at `intervalMilliseconds` takes, both ends
+  /// included.
+  public static func sampleCount(seconds: Int, intervalMilliseconds: Int) -> Int {
+    Int(ceil(Double(seconds * 1_000) / Double(intervalMilliseconds))) + 1
+  }
 
   public static func sample(
     processID: Int32,
@@ -281,10 +301,12 @@ public enum ApplicationServiceRuntimeHealthSampler {
     intervalMilliseconds: Int = 1_000,
     policy: RuntimeHealthPolicy = .standard
   ) async throws -> RuntimeHealthSummary {
-    guard runtimeHealthSecondsRange.contains(seconds),
-      runtimeHealthIntervalMillisecondsRange.contains(intervalMilliseconds)
+    guard secondsRange.contains(seconds), intervalMillisecondsRange.contains(intervalMilliseconds)
     else { throw RuntimeHealthSamplingError.invalidConfiguration }
-    let estimatedSampleCount = Int(ceil(Double(seconds * 1_000) / Double(intervalMilliseconds))) + 1
+    let estimatedSampleCount = sampleCount(
+      seconds: seconds,
+      intervalMilliseconds: intervalMilliseconds
+    )
     guard estimatedSampleCount <= maximumSampleCount else {
       throw RuntimeHealthSamplingError.tooManySamples(estimatedSampleCount)
     }

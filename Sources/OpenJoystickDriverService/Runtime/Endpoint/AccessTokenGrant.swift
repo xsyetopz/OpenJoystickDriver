@@ -127,8 +127,8 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
 }
 
 /// The WebSocket's switch and port; off by default.
-struct AccessWebSettings: Codable, Equatable, Sendable {
-  static let ports = 1_024...65_535
+package struct AccessWebSettings: Codable, Equatable, Sendable {
+  package static let ports = 1_024...65_535
 
   var enabled = false
   /// Nil until the first enable, which saves the port the system picked unless one was given.

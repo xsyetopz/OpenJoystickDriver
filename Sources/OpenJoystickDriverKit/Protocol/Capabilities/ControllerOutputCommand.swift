@@ -53,6 +53,24 @@ public struct RumbleIntensities: Equatable, Hashable, Sendable {
   public var activeMotors: [PhysicalRumbleMotor] {
     PhysicalRumbleMotor.allCases.filter { self[$0] != .min }
   }
+
+  /// The intensities of a manual rumble test: each named channel at its byte, and both main
+  /// motors at 180 when no channel is named.
+  public static func manualTest(
+    leftMain: UInt8?,
+    rightMain: UInt8?,
+    leftTrigger: UInt8?,
+    rightTrigger: UInt8?
+  ) -> Self {
+    let noneGiven = [leftMain, rightMain, leftTrigger, rightTrigger].allSatisfy { $0 == nil }
+    let fallback: UInt8 = noneGiven ? 180 : 0
+    return Self(
+      leftMain: UnipolarValue(byte: leftMain ?? fallback),
+      rightMain: UnipolarValue(byte: rightMain ?? fallback),
+      leftTrigger: UnipolarValue(byte: leftTrigger ?? 0),
+      rightTrigger: UnipolarValue(byte: rightTrigger ?? 0)
+    )
+  }
 }
 
 /// How long a `set-rumble` command runs: a bounded number of milliseconds, or until the next
@@ -60,6 +78,11 @@ public struct RumbleIntensities: Equatable, Hashable, Sendable {
 public enum RumbleDuration: Equatable, Hashable, Sendable {
   case milliseconds(Int)
   case held
+
+  /// The duration of a manual rumble test that names none.
+  public static let manualTestSeconds = 0.45
+  /// The longest bounded duration, `maxRumbleDurationMs`, in seconds.
+  public static let maximumSeconds = Double(maxRumbleDurationMs) / 1_000
 }
 
 /// One normalized physical output command.

@@ -29,7 +29,7 @@ enum ExtensionSubmission {
 
   private static func requireInstalledBundle() throws {
     let bundle = ServiceStartCommand.applicationBundleURL() ?? Bundle.main.bundleURL
-    guard bundle.path.hasPrefix("/Applications/") else {
+    guard BuildIdentity.isInstalled(bundle) else {
       throw CLIFailure(
         .installationProblem,
         CLILocalized.format(
@@ -60,14 +60,9 @@ enum ExtensionSubmission {
   /// rejects the request with an unhelpful error.
   private static func requireValidSignature() throws {
     let bundle = ServiceStartCommand.applicationBundleURL() ?? Bundle.main.bundleURL
-    let result: BoundedProcessResult
+    let problem: String?
     do {
-      result = try BoundedProcessRunner.run(
-        executableURL: URL(fileURLWithPath: "/usr/bin/codesign"),
-        arguments: ["--verify", "--deep", "--strict", bundle.path],
-        timeoutSeconds: 15,
-        maximumOutputBytes: 262_144
-      )
+      problem = try BuildIdentity.signatureProblem(of: bundle)
     } catch {
       throw CLIFailure(
         .installationProblem,
@@ -77,15 +72,10 @@ enum ExtensionSubmission {
         )
       )
     }
-    guard result.terminationStatus == 0, !result.timedOut else {
-      let detail = result.output.trimmingCharacters(in: .whitespacesAndNewlines)
-        .replacingOccurrences(of: "\n", with: " ")
+    if let problem {
       throw CLIFailure(
         .installationProblem,
-        CLILocalized.format(
-          "cli.extension.signature_invalid",
-          result.timedOut ? "codesign timed out" : detail
-        )
+        CLILocalized.format("cli.extension.signature_invalid", problem)
       )
     }
   }

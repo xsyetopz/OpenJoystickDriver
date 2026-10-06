@@ -11,6 +11,19 @@ public struct ControllerColor: Codable, Hashable, Sendable {
     self.blue = blue
   }
 
+  /// Parses `RRGGBB` hex, with an optional leading `#`.
+  public init?(hex text: String) {
+    let hex = text.hasPrefix("#") ? String(text.dropFirst()) : text
+    guard hex.count == 6, hex.allSatisfy(\.isHexDigit), let value = UInt32(hex, radix: 16) else {
+      return nil
+    }
+    self.init(
+      red: UInt8(value >> 16 & 0xFF),
+      green: UInt8(value >> 8 & 0xFF),
+      blue: UInt8(value & 0xFF)
+    )
+  }
+
   private enum CodingKeys: String, CodingKey, CaseIterable {
     case red
     case green

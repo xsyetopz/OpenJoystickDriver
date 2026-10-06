@@ -31,12 +31,7 @@ struct ExtensionStatusReport: Encodable, Equatable {
     let summary = StatusReport.Extension(status)
     bundle = summary.bundle
     registration = summary.registration
-    switch (status.bundle, status.registration) {
-    case (_, .active(let record)), (_, .inactive(let record)): detail = record
-    case (_, .unavailable(let reason)): detail = reason
-    case (.invalid(let identifier), _): detail = identifier
-    default: detail = nil
-    }
+    detail = status.detail
   }
 }
 

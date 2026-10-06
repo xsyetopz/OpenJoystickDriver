@@ -34,7 +34,7 @@ func controllerDisplayName(productName: String?, vendorID: UInt16, productID: UI
 let usbDetectionPollNanoseconds: UInt64 = 500_000_000
 let devicePermissionWatchNanoseconds: UInt64 = 1_000_000_000
 let deviceDiscoveryNanosecondsPerMillisecond: UInt64 = 1_000_000
-let maxRumbleDurationMs = 5_000
+public let maxRumbleDurationMs = 5_000
 let usbVendorSpecificClass: UInt8 = 0xFF
 
 struct RumbleStopTokenRegistry {

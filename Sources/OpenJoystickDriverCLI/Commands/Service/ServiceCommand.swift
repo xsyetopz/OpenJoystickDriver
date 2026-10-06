@@ -67,13 +67,7 @@ struct ServiceStartCommand: AsyncParsableCommand {
         )
       )
     }
-    let result = try BoundedProcessRunner.run(
-      executableURL: URL(fileURLWithPath: "/usr/bin/open"),
-      arguments: ["-g", bundle.path],
-      timeoutSeconds: 10,
-      maximumOutputBytes: 16_384
-    )
-    guard result.terminationStatus == 0, !result.timedOut else {
+    guard try BuildIdentity.openInBackground(bundle) else {
       throw CLIFailure(
         .systemRequestFailed,
         CLILocalized.format(

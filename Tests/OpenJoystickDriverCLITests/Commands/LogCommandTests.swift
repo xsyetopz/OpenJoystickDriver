@@ -155,23 +155,6 @@ struct LogCommandTests {
   }
 
   @Test
-  func exportShowsTheHomeFolderAsATilde() {
-    let text = """
-      == standardOutput: /Users/me/Library/Logs/ojd.log ==
-      opened /Users/me
-      kept /Users/meow/file and "/Users/me/a b"
-      """
-    #expect(
-      LogExportCommand.redactingHome(text, home: "/Users/me/")
-        == """
-        == standardOutput: ~/Library/Logs/ojd.log ==
-        opened ~
-        kept /Users/meow/file and "~/a b"
-        """
-    )
-  }
-
-  @Test
   func pagerCommandFollowsThePagerVariable() {
     #expect(LogShowCommand.pagerCommand(environment: [:]) == "less -FRX")
     #expect(LogShowCommand.pagerCommand(environment: ["PAGER": "more"]) == "more")

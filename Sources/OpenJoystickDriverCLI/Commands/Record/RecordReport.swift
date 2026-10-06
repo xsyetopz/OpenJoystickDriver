@@ -50,7 +50,7 @@ struct RecordIdentity: ExpressibleByArgument, Equatable, Sendable {
   let identity: ControllerIdentity
 
   init?(argument: String) {
-    guard let (vendorID, productID) = ControllerSelector.model(argument) else { return nil }
+    guard let (vendorID, productID) = ControllerSelection.model(argument) else { return nil }
     identity = ControllerIdentity(vendorID: vendorID, productID: productID)
   }
 
