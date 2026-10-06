@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "Muestra el ajuste efectivo de un control, como VVVV:PPPP, en lugar de los valores predeterminados globales.";
 "cli.config.show.defaults_ignored" = "%@ ignorado: %@";
 "cli.config.show.discussion" = "Sin --controller, imprime las claves que establece Defaults.json. Con él, imprime el registro del control una vez apilados Defaults.json, tu registro y el registro incluido. Una clave que ninguna capa establece muestra «valor predeterminado del driver».";
+"cli.config.show.read_by" = "lo leen: %@";
+"cli.config.show.unread" = "Defaults.json define %@, pero ningún control conectado la lee. Familias que la leen: %@.";
 "cli.config.show.unset" = "valor predeterminado del driver";
 "cli.setting.abstract" = "Lista, lee o cambia los ajustes de la app OpenJoystickDriver.";
 "cli.setting.bad_value" = "«%@» no es un valor válido para %@. Usa true o false.";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "Perfiles: %@";
 "cli.virtual.show.unavailable" = "ningún control virtual se ajusta";
 "cli.diagnose.records.applied" = "registros de usuario aplicados: %lld";
+"cli.diagnose.records.config_ok" = "Defaults.json y los archivos de persona son válidos";
+"cli.diagnose.records.config_problems" = "ignorados u omitidos: %@; corrígelos y compruébalo con 'ojd status'";
 "cli.diagnose.records.skipped" = "omitidos: %@; revísalos con «ojd record list»";
 "cli.record.abstract" = "Redacta, lista, comprueba, instala o elimina registros de control.";
 "cli.record.discussion" = "Un registro de control indica a OpenJoystickDriver cómo manejar un modelo de control. Tus registros están en ~/Library/Application Support/OpenJoystickDriver/Controllers y agregan un modelo o modifican uno incluido. El servicio en ejecución los aplica cuando cambia el directorio. Solo «ojd record draft» necesita el servicio.";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "Comprueba un registro de control sin instalarlo.";
 "cli.record.validate.discussion" = "Comprueba la forma del registro, sus campos entre sí y su encaje con el catálogo incluido, e indica si el control necesita la extensión USB. Termina con 1 cuando el registro no es válido.";
 "cli.record.validate.valid" = "%@ es un registro %@ válido para %@ (%@). Instálalo con «ojd record install».";
+"cli.status.label.ignored_defaults" = "Archivo de valores predeterminados ignorado";
+"cli.status.label.skipped_personas" = "Archivos de persona omitidos (%lld)";
 "cli.status.label.skipped_records" = "Registros de control omitidos (%lld)";
 "cli.binding.abstract" = "Lista, define y borra las asignaciones de un perfil de reasignación.";
 "cli.binding.actions_invalid" = "--actions-json no es una lista de acciones válida: %@";

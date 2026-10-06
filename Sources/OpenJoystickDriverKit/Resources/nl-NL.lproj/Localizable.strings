@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "Toont de effectieve afstelling van één controller, als VVVV:PPPP, in plaats van de algemene standaardwaarden.";
 "cli.config.show.defaults_ignored" = "%@ genegeerd: %@";
 "cli.config.show.discussion" = "Zonder --controller worden de sleutels afgedrukt die Defaults.json instelt. Met --controller wordt het record van de controller afgedrukt nadat Defaults.json, jouw record en het meegeleverde record op elkaar zijn gelegd. Een sleutel die geen enkele laag instelt, toont ‘standaard van het stuurprogramma’.";
+"cli.config.show.read_by" = "gelezen door: %@";
+"cli.config.show.unread" = "Defaults.json stelt %@ in, maar geen aangesloten controller leest die sleutel. Families die hem lezen: %@.";
 "cli.config.show.unset" = "standaard van het stuurprogramma";
 "cli.setting.abstract" = "Toont, leest of wijzigt de instellingen van de app OpenJoystickDriver.";
 "cli.setting.bad_value" = "‘%@’ is geen waarde voor %@. Gebruik true of false.";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "Profielen: %@";
 "cli.virtual.show.unavailable" = "geen virtueel gamepad past";
 "cli.diagnose.records.applied" = "gebruikersrecords toegepast: %lld";
+"cli.diagnose.records.config_ok" = "Defaults.json en persona-bestanden zijn geldig";
+"cli.diagnose.records.config_problems" = "genegeerd of overgeslagen: %@; herstel ze en controleer met 'ojd status'";
 "cli.diagnose.records.skipped" = "%@ overgeslagen; controleer ze met ‘ojd record list’";
 "cli.record.abstract" = "Maakt concepten van controllerrecords, toont, controleert, installeert of verwijdert ze.";
 "cli.record.discussion" = "Een controllerrecord vertelt OpenJoystickDriver hoe één controllermodel moet worden aangestuurd. Je records staan in ~/Library/Application Support/OpenJoystickDriver/Controllers en voegen een model toe of passen een meegeleverd model aan. De draaiende service past ze toe wanneer de map verandert. Alleen ‘ojd record draft’ heeft de service nodig.";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "Controleert een controllerrecord zonder het te installeren.";
 "cli.record.validate.discussion" = "Controleert de vorm van het record, de velden onderling en de aansluiting op de meegeleverde catalogus, en meldt of de controller de USB-extensie nodig heeft. Sluit af met 1 als het record ongeldig is.";
 "cli.record.validate.valid" = "%@ is een geldig %@-record voor %@ (%@). Installeer het met ‘ojd record install’.";
+"cli.status.label.ignored_defaults" = "Genegeerd standaardwaardenbestand";
+"cli.status.label.skipped_personas" = "Overgeslagen persona-bestanden (%lld)";
 "cli.status.label.skipped_records" = "Overgeslagen controllerrecords (%lld)";
 "cli.binding.abstract" = "Toon, stel in en wis de koppelingen van een toewijzingsprofiel.";
 "cli.binding.actions_invalid" = "--actions-json is geen geldige actielijst: %@";

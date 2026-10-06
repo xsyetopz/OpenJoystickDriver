@@ -341,6 +341,18 @@ extension ApplicationServiceServer {
   /// Clears every virtual HID profile override.
   func resetVirtualHIDProfileSettings() { virtualHIDProfileOverrides.resetAll() }
 
+  /// Applies a change to the persona files. A connected controller whose persona identity or
+  /// profile changed gets a new virtual device, and the others keep theirs.
+  func reloadPersonas() async {
+    let retargeted = await virtualOutputTransitionCoordinator.enqueueResult { [weak self] in
+      guard let self else { return true }
+      return await self.retargetConnectedControllers()
+    }
+    if retargeted == false {
+      fputs("[Personas] A controller kept its earlier virtual device\n", stderr)
+    }
+  }
+
   /// Reselects every connected controller's profile, each within the per-controller timeout;
   /// false when any replacement failed or timed out.
   func retargetConnectedControllers() async -> Bool {

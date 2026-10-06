@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "グローバルのデフォルトではなく、1 台のコントローラの有効なチューニングを VVVV:PPPP の形式で表示します。";
 "cli.config.show.defaults_ignored" = "%@ を無視しました: %@";
 "cli.config.show.discussion" = "--controller を指定しない場合は、Defaults.json が設定するキーを出力します。指定した場合は、Defaults.json、ユーザのレコード、同梱レコードを重ねたあとのコントローラのレコードを出力します。どのレイヤも設定しないキーには「ドライバのデフォルト」と表示されます。";
+"cli.config.show.read_by" = "読み取るファミリ: %@";
+"cli.config.show.unread" = "Defaults.json は %@ を設定していますが、接続中のコントローラはこのキーを読み取りません。読み取るファミリ: %@。";
 "cli.config.show.unset" = "ドライバのデフォルト";
 "cli.setting.abstract" = "OpenJoystickDriver のアプリ設定を一覧表示、読み取り、変更します。";
 "cli.setting.bad_value" = "「%@」は %@ の値として使えません。true または false を使用してください。";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "プロファイル: %@";
 "cli.virtual.show.unavailable" = "適合する仮想ゲームパッドなし";
 "cli.diagnose.records.applied" = "適用されたユーザーレコード: %lld";
+"cli.diagnose.records.config_ok" = "Defaults.json とペルソナファイルは有効です";
+"cli.diagnose.records.config_problems" = "無視またはスキップ: %@。修正して「ojd status」で確認してください";
 "cli.diagnose.records.skipped" = "%@ をスキップしました。「ojd record list」で確認してください";
 "cli.record.abstract" = "コントローラのレコードの下書き作成、一覧表示、確認、インストール、削除を行います。";
 "cli.record.discussion" = "コントローラのレコードは、OpenJoystickDriver に 1 つのコントローラモデルの扱い方を伝えます。ユーザーのレコードは ~/Library/Application Support/OpenJoystickDriver/Controllers に保存され、モデルを追加するか、同梱のモデルを上書きします。実行中のサービスは、ディレクトリが変更されると自動的に適用します。サービスを必要とするのは 「ojd record draft」 だけです。";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "コントローラのレコードをインストールせずに確認します。";
 "cli.record.validate.discussion" = "レコードの構造、フィールド間の整合性、同梱カタログとの適合性を確認し、コントローラに USB 機能拡張が必要かどうかを示します。レコードが無効な場合は終了コード 1 で終了します。";
 "cli.record.validate.valid" = "%@ は有効な %@ レコードです。対象: %@ (%@)。「ojd record install」でインストールできます。";
+"cli.status.label.ignored_defaults" = "無視されたデフォルトファイル";
+"cli.status.label.skipped_personas" = "スキップされたペルソナファイル (%lld)";
 "cli.status.label.skipped_records" = "スキップされたコントローラレコード (%lld)";
 "cli.binding.abstract" = "リマッピングプロファイルの割り当てを一覧表示、設定、消去します。";
 "cli.binding.actions_invalid" = "--actions-json は有効なアクションリストではありません: %@";

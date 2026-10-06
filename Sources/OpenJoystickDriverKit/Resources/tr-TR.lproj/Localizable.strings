@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "Genel varsayılanlar yerine tek bir kontrolcünün etkin ayarını VVVV:PPPP biçiminde gösterir.";
 "cli.config.show.defaults_ignored" = "%@ yok sayıldı: %@";
 "cli.config.show.discussion" = "--controller olmadan Defaults.json’ın belirlediği anahtarları yazdırır. Seçenekle birlikte, Defaults.json, sizin kaydınız ve pakete dahil kayıt katmanlandıktan sonra kontrolcünün kaydını yazdırır. Hiçbir katmanın belirlemediği anahtar “sürücü varsayılanı” olarak görünür.";
+"cli.config.show.read_by" = "okuyanlar: %@";
+"cli.config.show.unread" = "Defaults.json %@ anahtarını ayarlıyor, ancak bağlı hiçbir denetleyici bu anahtarı okumuyor. Bu anahtarı okuyan aileler: %@.";
 "cli.config.show.unset" = "sürücü varsayılanı";
 "cli.setting.abstract" = "OpenJoystickDriver uygulama ayarlarını listeler, okur veya değiştirir.";
 "cli.setting.bad_value" = "“%@”, %@ için geçerli bir değer değil. true veya false kullanın.";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "Profiller: %@";
 "cli.virtual.show.unavailable" = "uygun sanal oyun kontrolcüsü yok";
 "cli.diagnose.records.applied" = "uygulanan kullanıcı kayıtları: %lld";
+"cli.diagnose.records.config_ok" = "Defaults.json ve persona dosyaları geçerli";
+"cli.diagnose.records.config_problems" = "yok sayıldı veya atlandı: %@; düzeltin ve 'ojd status' ile kontrol edin";
 "cli.diagnose.records.skipped" = "%@ atlandı; “ojd record list” ile denetleyin";
 "cli.record.abstract" = "Kontrolcü kayıtlarının taslağını oluşturur, listeler, denetler, yükler veya kaldırır.";
 "cli.record.discussion" = "Bir kontrolcü kaydı, OpenJoystickDriver’a bir kontrolcü modelini nasıl yöneteceğini söyler. Kayıtlarınız ~/Library/Application Support/OpenJoystickDriver/Controllers içinde bulunur ve bir model ekler ya da birlikte gelen bir modeli yamalar. Çalışan servis, klasör değiştiğinde bunları uygular. Yalnızca “ojd record draft” servise ihtiyaç duyar.";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "Bir kontrolcü kaydını yüklemeden denetler.";
 "cli.record.validate.discussion" = "Kaydın biçimini, alanlarının birbiriyle uyumunu ve birlikte gelen katalogla uyumunu denetler ve kontrolcünün USB uzantısına ihtiyaç duyup duymadığını söyler. Kayıt geçersizse 1 koduyla çıkar.";
 "cli.record.validate.valid" = "%@ geçerli bir %@ kaydıdır; kontrolcü: %@ (%@). “ojd record install” ile yükleyin.";
+"cli.status.label.ignored_defaults" = "Yok sayılan varsayılanlar dosyası";
+"cli.status.label.skipped_personas" = "Atlanan persona dosyaları (%lld)";
 "cli.status.label.skipped_records" = "Atlanan Kontrolcü Kayıtları (%lld)";
 "cli.binding.abstract" = "Bir yeniden atama profilinin atamalarını listeler, ayarlar ve temizler.";
 "cli.binding.actions_invalid" = "--actions-json geçerli bir eylem listesi değil: %@";

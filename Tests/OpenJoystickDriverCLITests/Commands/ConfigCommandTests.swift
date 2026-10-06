@@ -141,6 +141,111 @@ struct ConfigCommandTests {
     #expect(try values(run).count == ControllerTuning.Key.allCases.count)
   }
 
+  private func record(family: String) throws -> ControllerRecord {
+    try #require(ControllerRecordSet.bundled.records.values.first { $0.family == family })
+  }
+
+  private func connected(_ record: ControllerRecord) -> ApplicationServiceDeviceDescription {
+    .fixture(
+      id: "pad-1",
+      vendorID: record.identity.vendorID,
+      productID: record.identity.productID
+    )
+  }
+
+  /// `config show --json` with `defaults` written and `devices` connected to a fake service.
+  private func runWithService(
+    defaults: String,
+    devices: [ApplicationServiceDeviceDescription]
+  ) async throws -> CLIRun {
+    let root = Root()
+    try root.writeDefaults(defaults)
+    let service = try FakeService(devices: devices)
+    return await RecordStore.$directory.withValue(root.url.appendingPathComponent("Controllers")) {
+      await service.run(["config", "show", "--json"])
+    }
+  }
+
+  @Test
+  func showListsTheFamiliesThatReadEachKeyWithoutAController() async throws {
+    let run = await run(["show", "--json"], in: Root())
+
+    #expect(run.code == 0, "\(run.standardError)")
+    let values = try values(run)
+    #expect(values["inputLivenessTimeoutMs"]?["families"] as? [String] == ["sony.dualshock4"])
+    let deadzone = try #require(values["stickDeadzone"]?["families"] as? [String])
+    #expect(deadzone.contains("xbox.gip") && deadzone.contains("sony.dualshock4"))
+    let recovery = try #require(values["hidStartupRecoveryRounds"]?["families"] as? [String])
+    #expect(recovery == ["nintendo.switch1"])
+  }
+
+  @Test
+  func showForAControllerListsNoFamilies() async throws {
+    let run = await run(["show", "--controller", try bareIdentity(), "--json"], in: Root())
+
+    #expect(run.code == 0, "\(run.standardError)")
+    #expect(try values(run).values.allSatisfy { $0["families"] == nil })
+  }
+
+  @Test
+  func showPrintsTheFamiliesNextToEachKeyInHumanOutput() async throws {
+    let run = await run(["show"], in: Root())
+
+    #expect(run.code == 0, "\(run.standardError)")
+    let line = try #require(
+      run.standardOutput.split(separator: "\n").first { $0.hasPrefix("inputLivenessTimeoutMs") }
+    )
+    #expect(line.hasSuffix("sony.dualshock4"))
+  }
+
+  @Test
+  func showWarnsWhenNoConnectedControllerReadsAKeyDefaultsJSONSets() async throws {
+    let gip = try record(family: "xbox.gip")
+
+    let run = try await runWithService(
+      defaults: #"{"inputLivenessTimeoutMs":900,"stickDeadzone":0.2}"#,
+      devices: [connected(gip)]
+    )
+
+    #expect(run.code == 0, "\(run.standardError)")
+    #expect(run.standardError.contains("inputLivenessTimeoutMs"))
+    #expect(run.standardError.contains("sony.dualshock4"))
+    #expect(!run.standardError.contains("stickDeadzone"))
+    #expect(try values(run)["inputLivenessTimeoutMs"]?["value"] as? Double == 900)
+  }
+
+  @Test
+  func showDoesNotWarnWhenAConnectedControllerReadsTheKey() async throws {
+    let run = try await runWithService(
+      defaults: #"{"inputLivenessTimeoutMs":900}"#,
+      devices: [connected(try record(family: "sony.dualshock4"))]
+    )
+
+    #expect(run.code == 0, "\(run.standardError)")
+    #expect(run.standardError.isEmpty)
+  }
+
+  @Test
+  func showDoesNotWarnWithoutAConnectedController() async throws {
+    let run = try await runWithService(defaults: #"{"inputLivenessTimeoutMs":900}"#, devices: [])
+
+    #expect(run.code == 0, "\(run.standardError)")
+    #expect(run.standardError.isEmpty)
+  }
+
+  @Test
+  func showDoesNotWarnWithoutARunningService() async throws {
+    let root = Root()
+    try root.writeDefaults(#"{"inputLivenessTimeoutMs":900}"#)
+
+    let run = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
+      await self.run(["show", "--json"], in: root)
+    }
+
+    #expect(run.code == 0, "\(run.standardError)")
+    #expect(run.standardError.isEmpty)
+  }
+
   @Test
   func showFailsForAControllerWithoutARecord() async {
     let run = await run(["show", "--controller", "FFFF:FFFF"], in: Root())

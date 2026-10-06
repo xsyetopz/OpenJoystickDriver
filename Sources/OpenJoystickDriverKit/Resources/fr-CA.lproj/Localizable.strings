@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "Affiche le réglage effectif d’une manette, sous la forme VVVV:PPPP, au lieu des valeurs par défaut globales.";
 "cli.config.show.defaults_ignored" = "%@ ignoré : %@";
 "cli.config.show.discussion" = "Sans --controller, imprime les clés que définit Defaults.json. Avec cette option, imprime la fiche de la manette une fois Defaults.json, votre fiche et la fiche fournie superposés. Une clé qu’aucune couche ne définit affiche « valeur par défaut du pilote ».";
+"cli.config.show.read_by" = "lu par : %@";
+"cli.config.show.unread" = "Defaults.json définit %@, mais aucune manette connectée ne la lit. Familles qui la lisent : %@.";
 "cli.config.show.unset" = "valeur par défaut du pilote";
 "cli.setting.abstract" = "Liste, lit ou modifie les réglages de l’app OpenJoystickDriver.";
 "cli.setting.bad_value" = "« %@ » n’est pas une valeur valide pour %@. Utilisez true ou false.";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "Profils : %@";
 "cli.virtual.show.unavailable" = "aucune manette virtuelle ne convient";
 "cli.diagnose.records.applied" = "fiches utilisateur appliquées : %lld";
+"cli.diagnose.records.config_ok" = "Defaults.json et les fichiers de persona sont valides";
+"cli.diagnose.records.config_problems" = "ignoré ou passé : %@; corrigez-les et vérifiez avec 'ojd status'";
 "cli.diagnose.records.skipped" = "ignorés : %@ ; vérifiez-les avec « ojd record list »";
 "cli.record.abstract" = "Ébaucher, lister, vérifier, installer ou supprimer des fiches de manette.";
 "cli.record.discussion" = "Une fiche de manette indique à OpenJoystickDriver comment piloter un modèle de manette. Vos fiches se trouvent dans ~/Library/Application Support/OpenJoystickDriver/Controllers et ajoutent un modèle ou modifient un modèle intégré. Le service en cours d’exécution les applique quand le dossier change. Seule « ojd record draft » a besoin du service.";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "Vérifier une fiche de manette sans l’installer.";
 "cli.record.validate.discussion" = "Vérifie la forme de la fiche, la cohérence de ses champs entre eux et son adéquation au catalogue intégré, et indique si la manette a besoin de l’extension USB. Se termine avec le code 1 lorsque la fiche est invalide.";
 "cli.record.validate.valid" = "%@ est une fiche %@ valide pour %@ (%@). Installez-la avec « ojd record install ».";
+"cli.status.label.ignored_defaults" = "Fichier de valeurs par défaut ignoré";
+"cli.status.label.skipped_personas" = "Fichiers de persona ignorés (%lld)";
 "cli.status.label.skipped_records" = "Fiches de manette ignorées (%lld)";
 "cli.binding.abstract" = "Lister, définir et effacer les affectations d’un profil de remappage.";
 "cli.binding.actions_invalid" = "--actions-json n’est pas une liste d’actions valide : %@";

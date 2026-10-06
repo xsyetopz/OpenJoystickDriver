@@ -15,6 +15,7 @@ package final class ApplicationServiceRuntime {
   private var systemPowerObserver: SystemPowerNotificationObserver?
   private var controllerRecordWatcher: ControllerRecordWatcher?
   private var profileWatcher: FileChangeWatcher?
+  private var personaWatcher: FileChangeWatcher?
   private var systemPowerEventSession: DeviceManagerSystemPowerEventSession?
   private var started = false
   private var shutdownSignalSources: [DispatchSourceSignal] = []
@@ -88,6 +89,7 @@ package final class ApplicationServiceRuntime {
     self.controllerRecordWatcher = controllerRecordWatcher
     controllerRecordWatcher.start()
     startProfileWatcher()
+    startPersonaWatcher()
     let systemPowerEventSession = DeviceManagerSystemPowerEventSession()
     self.systemPowerEventSession = systemPowerEventSession
     let systemPowerObserver = SystemPowerNotificationObserver { event in
@@ -122,6 +124,8 @@ package final class ApplicationServiceRuntime {
     controllerRecordWatcher = nil
     profileWatcher?.stop()
     profileWatcher = nil
+    personaWatcher?.stop()
+    personaWatcher = nil
     let systemPowerObserver = systemPowerObserver
     self.systemPowerObserver = nil
     let systemPowerEventSession = systemPowerEventSession
@@ -167,6 +171,19 @@ package final class ApplicationServiceRuntime {
     )
     self.profileWatcher = profileWatcher
     profileWatcher.start()
+  }
+
+  /// Re-creates a connected controller's virtual device when a change to the persona files
+  /// changes its identity. A missing directory is watched once it exists.
+  private func startPersonaWatcher() {
+    let applicationServiceServer = applicationServiceServer
+    let personaWatcher = FileChangeWatcher(
+      directories: [VirtualHIDProfileOverrideStore.userDirectory],
+      watchesFile: { $0.pathExtension == "json" },
+      onChange: { Task { await applicationServiceServer.reloadPersonas() } }
+    )
+    self.personaWatcher = personaWatcher
+    personaWatcher.start()
   }
 
   private func serviceLog(_ message: String) { print(message) }

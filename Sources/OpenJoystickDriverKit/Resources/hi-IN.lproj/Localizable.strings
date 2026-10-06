@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "वैश्विक डिफ़ॉल्ट के बजाय एक कंट्रोलर की प्रभावी ट्यूनिंग VVVV:PPPP रूप में दिखाएँ।";
 "cli.config.show.defaults_ignored" = "%@ अनदेखा किया गया: %@";
 "cli.config.show.discussion" = "--controller के बिना, Defaults.json जो कुंजियाँ सेट करता है उन्हें प्रिंट करता है। इसके साथ, Defaults.json, आपका रिकॉर्ड और बंडल किया गया रिकॉर्ड लेयर होने के बाद कंट्रोलर का रिकॉर्ड प्रिंट करता है। जिस कुंजी को कोई लेयर सेट नहीं करती, वह “ड्राइवर डिफ़ॉल्ट” दिखाती है।";
+"cli.config.show.read_by" = "इन्हें पढ़ते हैं: %@";
+"cli.config.show.unread" = "Defaults.json %@ सेट करता है, लेकिन कोई जुड़ा हुआ कंट्रोलर इसे नहीं पढ़ता। इसे पढ़ने वाले परिवार: %@।";
 "cli.config.show.unset" = "ड्राइवर डिफ़ॉल्ट";
 "cli.setting.abstract" = "OpenJoystickDriver ऐप की सेटिंग्स की सूची दिखाएँ, पढ़ें या बदलें।";
 "cli.setting.bad_value" = "“%@”, %@ के लिए मान्य मान नहीं है। true या false इस्तेमाल करें।";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "प्रोफ़ाइल: %@";
 "cli.virtual.show.unavailable" = "कोई वर्चुअल गेमपैड फ़िट नहीं बैठता";
 "cli.diagnose.records.applied" = "लागू किए गए उपयोगकर्ता रिकॉर्ड: %lld";
+"cli.diagnose.records.config_ok" = "Defaults.json और persona फ़ाइलें मान्य हैं";
+"cli.diagnose.records.config_problems" = "अनदेखा या छोड़ा गया: %@; इन्हें ठीक करें और 'ojd status' से जाँचें";
 "cli.diagnose.records.skipped" = "छोड़े गए: %@; उन्हें “ojd record list” से जाँचें";
 "cli.record.abstract" = "कंट्रोलर रिकॉर्ड का मसौदा बनाएँ, सूचीबद्ध करें, जाँचें, इंस्टॉल करें या हटाएँ।";
 "cli.record.discussion" = "कंट्रोलर रिकॉर्ड OpenJoystickDriver को बताता है कि एक कंट्रोलर मॉडल को कैसे चलाना है। आपके रिकॉर्ड ~/Library/Application Support/OpenJoystickDriver/Controllers में रहते हैं और कोई मॉडल जोड़ते हैं या बंडल किए गए मॉडल को बदलते हैं। डायरेक्टरी बदलने पर चल रही सेवा उन्हें लागू करती है। सेवा की ज़रूरत केवल “ojd record draft” को है।";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "इंस्टॉल किए बिना कंट्रोलर रिकॉर्ड जाँचें।";
 "cli.record.validate.discussion" = "रिकॉर्ड का ढाँचा, उसके फ़ील्ड का आपसी मेल और बंडल किए गए कैटलॉग से उसकी संगति जाँचता है, और बताता है कि कंट्रोलर को USB एक्सटेंशन चाहिए या नहीं। रिकॉर्ड अमान्य होने पर कोड 1 के साथ बाहर निकलता है।";
 "cli.record.validate.valid" = "%@ एक मान्य %@ रिकॉर्ड है, %@ (%@) के लिए। इसे “ojd record install” से इंस्टॉल करें।";
+"cli.status.label.ignored_defaults" = "अनदेखी की गई डिफ़ॉल्ट फ़ाइल";
+"cli.status.label.skipped_personas" = "छोड़ी गई persona फ़ाइलें (%lld)";
 "cli.status.label.skipped_records" = "छोड़े गए कंट्रोलर रिकॉर्ड (%lld)";
 "cli.binding.abstract" = "रीमैपिंग प्रोफ़ाइल के असाइनमेंट की सूची दिखाएँ, उन्हें सेट करें और साफ़ करें।";
 "cli.binding.actions_invalid" = "--actions-json मान्य कार्रवाई सूची नहीं है: %@";

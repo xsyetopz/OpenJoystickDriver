@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "Hiển thị tinh chỉnh hiệu lực của một bộ điều khiển, dạng VVVV:PPPP, thay cho mặc định chung.";
 "cli.config.show.defaults_ignored" = "Đã bỏ qua %@: %@";
 "cli.config.show.discussion" = "Không có --controller, in các khóa mà Defaults.json đặt. Khi có, in bản ghi của bộ điều khiển sau khi Defaults.json, bản ghi của bạn và bản ghi đi kèm được xếp thành lớp. Khóa mà không lớp nào đặt sẽ hiển thị “mặc định của trình điều khiển”.";
+"cli.config.show.read_by" = "được đọc bởi: %@";
+"cli.config.show.unread" = "Defaults.json đặt %@, nhưng không có bộ điều khiển nào đang kết nối đọc khóa này. Các họ đọc khóa này: %@.";
 "cli.config.show.unset" = "mặc định của trình điều khiển";
 "cli.setting.abstract" = "Liệt kê, đọc hoặc thay đổi cài đặt ứng dụng OpenJoystickDriver.";
 "cli.setting.bad_value" = "“%@” không phải là giá trị của %@. Hãy dùng true hoặc false.";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "Cấu hình: %@";
 "cli.virtual.show.unavailable" = "không có tay cầm ảo phù hợp";
 "cli.diagnose.records.applied" = "bản ghi người dùng đã áp dụng: %lld";
+"cli.diagnose.records.config_ok" = "Defaults.json và các tệp persona hợp lệ";
+"cli.diagnose.records.config_problems" = "đã bỏ qua: %@; hãy sửa rồi kiểm tra bằng 'ojd status'";
 "cli.diagnose.records.skipped" = "đã bỏ qua %@; hãy kiểm tra bằng “ojd record list”";
 "cli.record.abstract" = "Soạn thảo, liệt kê, kiểm tra, cài đặt hoặc gỡ các bản ghi bộ điều khiển.";
 "cli.record.discussion" = "Một bản ghi bộ điều khiển cho OpenJoystickDriver biết cách điều khiển một kiểu máy bộ điều khiển. Các bản ghi của bạn nằm trong ~/Library/Application Support/OpenJoystickDriver/Controllers và thêm một kiểu máy hoặc vá một kiểu máy đi kèm. Dịch vụ đang chạy áp dụng chúng khi thư mục thay đổi. Chỉ “ojd record draft” cần dịch vụ.";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "Kiểm tra một bản ghi bộ điều khiển mà không cài đặt.";
 "cli.record.validate.discussion" = "Kiểm tra cấu trúc của bản ghi, các trường đối chiếu với nhau, và độ khớp với danh mục đi kèm, đồng thời cho biết bộ điều khiển có cần phần mở rộng USB hay không. Thoát với mã 1 khi bản ghi không hợp lệ.";
 "cli.record.validate.valid" = "%@ là bản ghi %@ hợp lệ cho %@ (%@). Hãy cài đặt bằng “ojd record install”.";
+"cli.status.label.ignored_defaults" = "Tệp mặc định bị bỏ qua";
+"cli.status.label.skipped_personas" = "Các tệp persona bị bỏ qua (%lld)";
 "cli.status.label.skipped_records" = "Bản ghi bộ điều khiển bị bỏ qua (%lld)";
 "cli.binding.abstract" = "Liệt kê, đặt và xóa các liên kết của một cấu hình ánh xạ lại.";
 "cli.binding.actions_invalid" = "--actions-json không phải là danh sách thao tác hợp lệ: %@";

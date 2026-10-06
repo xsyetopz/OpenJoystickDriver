@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "แสดงการปรับแต่งที่มีผลของคอนโทรลเลอร์หนึ่งตัวในรูปแบบ VVVV:PPPP แทนค่าเริ่มต้นส่วนกลาง";
 "cli.config.show.defaults_ignored" = "ข้าม %@ แล้ว: %@";
 "cli.config.show.discussion" = "หากไม่ระบุ --controller จะพิมพ์คีย์ที่ Defaults.json กำหนด หากระบุ จะพิมพ์เรกคอร์ดของคอนโทรลเลอร์หลังซ้อน Defaults.json, เรกคอร์ดของคุณ และเรกคอร์ดที่มากับแอปเป็นเลเยอร์แล้ว คีย์ที่ไม่มีเลเยอร์ใดกำหนดจะแสดงเป็น “ค่าเริ่มต้นของไดรเวอร์”";
+"cli.config.show.read_by" = "อ่านโดย: %@";
+"cli.config.show.unread" = "Defaults.json ตั้งค่า %@ แต่ไม่มีคอนโทรลเลอร์ที่เชื่อมต่ออยู่อ่านคีย์นี้ กลุ่มที่อ่านคีย์นี้: %@";
 "cli.config.show.unset" = "ค่าเริ่มต้นของไดรเวอร์";
 "cli.setting.abstract" = "แสดงรายการ อ่าน หรือเปลี่ยนการตั้งค่าแอพ OpenJoystickDriver";
 "cli.setting.bad_value" = "“%@” ไม่ใช่ค่าของ %@ ใช้ true หรือ false";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "โปรไฟล์: %@";
 "cli.virtual.show.unavailable" = "ไม่มีเกมแพดเสมือนที่เหมาะสม";
 "cli.diagnose.records.applied" = "ใช้ระเบียนของผู้ใช้แล้ว: %lld";
+"cli.diagnose.records.config_ok" = "Defaults.json และไฟล์เพอร์โซนาถูกต้อง";
+"cli.diagnose.records.config_problems" = "ละเว้นหรือข้าม: %@; แก้ไขแล้วตรวจสอบด้วย 'ojd status'";
 "cli.diagnose.records.skipped" = "ข้าม %@ ตรวจสอบด้วย “ojd record list”";
 "cli.record.abstract" = "ร่าง แสดงรายการ ตรวจสอบ ติดตั้ง หรือเอาระเบียนคอนโทรลเลอร์ออก";
 "cli.record.discussion" = "ระเบียนคอนโทรลเลอร์บอก OpenJoystickDriver ว่าจะขับคอนโทรลเลอร์หนึ่งรุ่นอย่างไร ระเบียนของคุณอยู่ใน ~/Library/Application Support/OpenJoystickDriver/Controllers และเพิ่มรุ่นใหม่หรือแก้ไขรุ่นที่รวมมาให้ บริการที่ทำงานอยู่จะใช้ระเบียนเมื่อไดเรกทอรีเปลี่ยนแปลง มีเพียง “ojd record draft” ที่ต้องใช้บริการ";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "ตรวจสอบระเบียนคอนโทรลเลอร์โดยไม่ติดตั้ง";
 "cli.record.validate.discussion" = "ตรวจสอบรูปแบบของระเบียน ความสอดคล้องของช่องต่างๆ และความเข้ากันกับแค็ตตาล็อกที่รวมมาให้ และบอกว่าคอนโทรลเลอร์ต้องใช้ส่วนขยาย USB หรือไม่ ออกด้วยรหัส 1 เมื่อระเบียนไม่ถูกต้อง";
 "cli.record.validate.valid" = "%@ เป็นระเบียน %@ ที่ถูกต้องสำหรับ %@ (%@) ติดตั้งด้วย “ojd record install”";
+"cli.status.label.ignored_defaults" = "ไฟล์ค่าเริ่มต้นที่ถูกละเว้น";
+"cli.status.label.skipped_personas" = "ไฟล์เพอร์โซนาที่ข้าม (%lld)";
 "cli.status.label.skipped_records" = "ระเบียนคอนโทรลเลอร์ที่ข้าม (%lld)";
 "cli.binding.abstract" = "แสดงรายการ ตั้งค่า และล้างการกำหนดของโปรไฟล์การแมปใหม่";
 "cli.binding.actions_invalid" = "--actions-json ไม่ใช่รายการการทำงานที่ถูกต้อง: %@";

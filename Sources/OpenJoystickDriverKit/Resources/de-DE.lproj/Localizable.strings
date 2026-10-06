@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "Zeigt das effektive Tuning eines Controllers als VVVV:PPPP an, statt der globalen Standardwerte.";
 "cli.config.show.defaults_ignored" = "%@ ignoriert: %@";
 "cli.config.show.discussion" = "Ohne --controller werden die Schlüssel ausgegeben, die Defaults.json festlegt. Mit --controller wird der Eintrag des Controllers ausgegeben, nachdem Defaults.json, dein Eintrag und der mitgelieferte Eintrag in Ebenen zusammengeführt wurden. Ein Schlüssel, den keine Ebene festlegt, zeigt „Treiberstandard“.";
+"cli.config.show.read_by" = "gelesen von: %@";
+"cli.config.show.unread" = "Defaults.json legt %@ fest, aber kein verbundener Controller liest diesen Schlüssel. Familien, die ihn lesen: %@.";
 "cli.config.show.unset" = "Treiberstandard";
 "cli.setting.abstract" = "Listet die Einstellungen der App OpenJoystickDriver auf, liest oder ändert sie.";
 "cli.setting.bad_value" = "„%@“ ist kein Wert für %@. Verwende true oder false.";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "Profile: %@";
 "cli.virtual.show.unavailable" = "kein virtuelles Gamepad passt";
 "cli.diagnose.records.applied" = "Benutzereinträge angewendet: %lld";
+"cli.diagnose.records.config_ok" = "Defaults.json und Persona-Dateien sind gültig";
+"cli.diagnose.records.config_problems" = "ignoriert oder übersprungen: %@; beheben und mit 'ojd status' prüfen";
 "cli.diagnose.records.skipped" = "übersprungen: %@; prüfe sie mit „ojd record list“";
 "cli.record.abstract" = "Controller-Einträge entwerfen, auflisten, prüfen, installieren oder entfernen.";
 "cli.record.discussion" = "Ein Controller-Eintrag sagt OpenJoystickDriver, wie ein Controller-Modell angesteuert wird. Deine Einträge liegen in ~/Library/Application Support/OpenJoystickDriver/Controllers und fügen ein Modell hinzu oder passen ein mitgeliefertes an. Der laufende Dienst wendet sie an, sobald sich der Ordner ändert. Nur „ojd record draft“ braucht den Dienst.";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "Einen Controller-Eintrag prüfen, ohne ihn zu installieren.";
 "cli.record.validate.discussion" = "Prüft die Form des Eintrags, seine Felder untereinander und seine Passung zum mitgelieferten Katalog und sagt, ob der Controller die USB-Erweiterung braucht. Endet mit 1, wenn der Eintrag ungültig ist.";
 "cli.record.validate.valid" = "%@ ist ein gültiger %@-Eintrag für %@ (%@). Installiere ihn mit „ojd record install“.";
+"cli.status.label.ignored_defaults" = "Ignorierte Standardwerte-Datei";
+"cli.status.label.skipped_personas" = "Übersprungene Persona-Dateien (%lld)";
 "cli.status.label.skipped_records" = "Übersprungene Controller-Einträge (%lld)";
 "cli.binding.abstract" = "Belegungen eines Neubelegungsprofils auflisten, festlegen und entfernen.";
 "cli.binding.actions_invalid" = "--actions-json ist keine gültige Aktionsliste: %@";

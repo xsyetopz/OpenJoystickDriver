@@ -17,6 +17,14 @@ enum RecordStore {
 
   static func load() -> ControllerRecordSet { ControllerRecordSet.load(userDirectory: directory) }
 
+  /// The persona files OJD reads, beside the record directory as in the user's support folder.
+  static func personaFiles() -> [VirtualPersonaFile] {
+    VirtualHIDProfileOverrideStore(
+      directory: directory.deletingLastPathComponent()
+        .appendingPathComponent("Personas", isDirectory: true)
+    ).files
+  }
+
   /// The bytes of `FILE`, or of stdin for `-`.
   static func read(_ path: String) throws -> Data {
     if path == "-" { return standardInput() }
@@ -90,6 +98,18 @@ struct SkippedRecord: Encodable, Equatable {
   init(_ file: ControllerRecordFile) {
     self.file = file.url.path
     problem = file.problem ?? ""
+  }
+
+  init(_ file: VirtualPersonaFile) {
+    self.file = file.url.path
+    problem = file.problem ?? ""
+  }
+
+  /// The `Defaults.json` OJD ignored, or nil when it applied the file or the file is absent.
+  init?(_ defaults: ControllerDefaults?) {
+    guard let defaults, let problem = defaults.problem else { return nil }
+    file = defaults.url.path
+    self.problem = problem
   }
 }
 

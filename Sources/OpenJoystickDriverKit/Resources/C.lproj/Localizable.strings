@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "Show the effective tuning of one controller, as VVVV:PPPP, instead of the global defaults.";
 "cli.config.show.defaults_ignored" = "Ignored %@: %@";
 "cli.config.show.discussion" = "Without --controller, prints the keys Defaults.json sets. With it, prints the controller's record after Defaults.json, your record, and the bundled record are layered. A key no layer sets shows 'driver default'.";
+"cli.config.show.read_by" = "read by: %@";
+"cli.config.show.unread" = "Defaults.json sets %@, but no connected controller reads it. Families that read it: %@.";
 "cli.config.show.unset" = "driver default";
 "cli.setting.abstract" = "List, read, or change OpenJoystickDriver app settings.";
 "cli.setting.bad_value" = "'%@' is not a value for %@. Use true or false.";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "Profiles: %@";
 "cli.virtual.show.unavailable" = "no virtual gamepad fits";
 "cli.diagnose.records.applied" = "user records applied: %lld";
+"cli.diagnose.records.config_ok" = "Defaults.json and persona files are valid";
+"cli.diagnose.records.config_problems" = "ignored or skipped %@; fix them and check with 'ojd status'";
 "cli.diagnose.records.skipped" = "skipped %@; check them with 'ojd record list'";
 "cli.record.abstract" = "Draft, list, check, install, or remove controller records.";
 "cli.record.discussion" = "A controller record tells OpenJoystickDriver how to drive one controller model. Your records live in ~/Library/Application Support/OpenJoystickDriver/Controllers and add a model or patch a bundled one. The running service applies them when the directory changes. Only 'ojd record draft' needs the service.";
@@ -1354,6 +1358,8 @@
 "cli.record.validate.abstract" = "Check a controller record without installing it.";
 "cli.record.validate.discussion" = "Checks the record's shape, its fields against each other, and its fit with the bundled catalog, and says whether the controller needs the USB extension. Exits 1 when the record is invalid.";
 "cli.record.validate.valid" = "%@ is a valid %@ record for %@ (%@). Install it with 'ojd record install'.";
+"cli.status.label.ignored_defaults" = "Ignored defaults file";
+"cli.status.label.skipped_personas" = "Skipped persona files (%lld)";
 "cli.status.label.skipped_records" = "Skipped controller records (%lld)";
 "cli.binding.abstract" = "List, set, and clear the bindings of a remapping profile.";
 "cli.binding.actions_invalid" = "--actions-json is not a valid action list: %@";

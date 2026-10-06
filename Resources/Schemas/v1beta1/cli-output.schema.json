@@ -290,6 +290,14 @@
 							"value": {
 								"description": "Absent while only the driver default applies.",
 								"type": "number"
+							},
+							"families": {
+								"description": "The protocol families whose drivers read the key. Present for a tuning key without --controller.",
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "string"
+								}
 							}
 						}
 					}
@@ -2212,6 +2220,15 @@
 					}
 				},
 				"skippedRecords": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/sharedSkippedRecord"
+					}
+				},
+				"ignoredDefaults": {
+					"$ref": "#/$defs/sharedSkippedRecord"
+				},
+				"skippedPersonas": {
 					"type": "array",
 					"items": {
 						"$ref": "#/$defs/sharedSkippedRecord"

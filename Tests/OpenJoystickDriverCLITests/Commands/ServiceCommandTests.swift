@@ -65,6 +65,39 @@ struct ServiceCommandTests {
   }
 
   @Test
+  func statusNamesAnIgnoredDefaultsFileAndSkippedPersonaFiles() async throws {
+    let support = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "ojd-status-\(UUID().uuidString)",
+      isDirectory: true
+    )
+    let personas = support.appendingPathComponent("Personas", isDirectory: true)
+    try FileManager.default.createDirectory(
+      at: support.appendingPathComponent("Controllers"),
+      withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(at: personas, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: support) }
+    try Data("{".utf8).write(to: support.appendingPathComponent("Defaults.json"))
+    try Data("{".utf8).write(to: personas.appendingPathComponent("broken.json"))
+
+    let json = await runStatus(["--json"], records: support.appendingPathComponent("Controllers"))
+    let plain = await runStatus(["--plain"], records: support.appendingPathComponent("Controllers"))
+    let clean = await runStatus(["--json"])
+
+    let report = try json.json()
+    let defaults = try #require(report["ignoredDefaults"] as? [String: String])
+    #expect(defaults["file"]?.hasSuffix("/Defaults.json") == true)
+    #expect(defaults["problem"] == "the file is not a JSON object")
+    let skipped = try #require(report["skippedPersonas"] as? [[String: String]])
+    #expect(skipped.map { $0["file"]?.hasSuffix("/Personas/broken.json") } == [true])
+    #expect(plain.standardOutput.contains("ignored-defaults\t"))
+    #expect(plain.standardOutput.contains("skipped-persona\t"))
+    let cleanReport = try clean.json()
+    #expect(cleanReport["ignoredDefaults"] == nil)
+    #expect((cleanReport["skippedPersonas"] as? [Any])?.isEmpty == true)
+  }
+
+  @Test
   func statusReportsTheRunningServiceInJSONAndPlainRows() async throws {
     let socketPath = temporarySocketPath()
     let payload = ApplicationServiceStatusPayload(

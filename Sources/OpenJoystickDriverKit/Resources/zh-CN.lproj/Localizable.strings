@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "以 VVVV:PPPP 的形式显示单个控制器的有效调校，而不是全局默认值。";
 "cli.config.show.defaults_ignored" = "已忽略 %@：%@";
 "cli.config.show.discussion" = "不带 --controller 时，打印 Defaults.json 设置的键。带该选项时，在 Defaults.json、您的记录和内置记录叠加后，打印该控制器的记录。没有任何层设置的键显示为“驱动程序默认值”。";
+"cli.config.show.read_by" = "读取它的系列：%@";
+"cli.config.show.unread" = "Defaults.json 设置了 %@，但没有已连接的控制器读取它。读取它的系列：%@。";
 "cli.config.show.unset" = "驱动程序默认值";
 "cli.setting.abstract" = "列出、读取或更改 OpenJoystickDriver App 设置。";
 "cli.setting.bad_value" = "“%@” 不是 %@ 的有效值。请使用 true 或 false。";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "配置文件：%@";
 "cli.virtual.show.unavailable" = "没有合适的虚拟游戏手柄";
 "cli.diagnose.records.applied" = "已应用的用户记录：%lld";
+"cli.diagnose.records.config_ok" = "Defaults.json 和人设文件有效";
+"cli.diagnose.records.config_problems" = "已忽略或跳过 %@；请修复后用「ojd status」检查";
 "cli.diagnose.records.skipped" = "已跳过 %@；请用“ojd record list”检查";
 "cli.record.abstract" = "起草、列出、检查、安装或移除控制器记录。";
 "cli.record.discussion" = "控制器记录告诉 OpenJoystickDriver 如何驱动某一型号的控制器。你的记录存储在 ~/Library/Application Support/OpenJoystickDriver/Controllers，可添加型号，或修补内置型号。目录发生变化时，运行中的服务会应用这些记录。只有“ojd record draft”需要服务。";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "检查控制器记录，但不安装。";
 "cli.record.validate.discussion" = "检查记录的结构、各字段之间的一致性以及与内置目录的契合度，并说明该控制器是否需要 USB 扩展。记录无效时以退出码 1 退出。";
 "cli.record.validate.valid" = "%@ 是有效的 %@ 记录，适用于 %@ (%@)。请用“ojd record install”安装。";
+"cli.status.label.ignored_defaults" = "已忽略的默认值文件";
+"cli.status.label.skipped_personas" = "已跳过的人设文件 (%lld)";
 "cli.status.label.skipped_records" = "已跳过的控制器记录 (%lld)";
 "cli.binding.abstract" = "列出、设置和清除重新映射配置文件的映射。";
 "cli.binding.actions_invalid" = "--actions-json 不是有效的动作列表：%@";

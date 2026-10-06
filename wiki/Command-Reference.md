@@ -44,10 +44,12 @@ With `--json`, the output is one object with these keys:
 - `unboundDevices`: devices that OpenJoystickDriver does not support, each with `vendorID`, `productID`, `connection`, and `reason`.
 - `passThroughDevices`: devices that OpenJoystickDriver leaves to macOS.
 - `skippedRecords`: your controller record files that OpenJoystickDriver skipped, each with `file` and `problem`.
+- `ignoredDefaults`: your `Defaults.json` when OpenJoystickDriver ignored it whole, with `file` and `problem`. The key is absent when the file is valid or does not exist.
+- `skippedPersonas`: your persona files that OpenJoystickDriver skipped, each with `file` and `problem`.
 
 Keys that need the service are absent when it is stopped.
 
-With `--plain`, the first field of each line is `service`, `extension`, `permission`, `virtual-device`, `controller`, `unbound`, `pass-through`, or `skipped-record`.
+With `--plain`, the first field of each line is `service`, `extension`, `permission`, `virtual-device`, `controller`, `unbound`, `pass-through`, `skipped-record`, `ignored-defaults`, or `skipped-persona`.
 
 ## controller
 
@@ -281,7 +283,7 @@ Show the effective tuning values and the layer that set each one. It works witho
 ojd config show [--controller VVVV:PPPP]
 ```
 
-Without `--controller`, it shows `Defaults.json` against the driver defaults. With it, it shows the record for that model: each value comes from `driver`, `global`, `bundled`, or `user`. When the service runs and a profile is active for that model, it adds one `profile` row per stick mapping, keyed as `profile get` names it, such as `stickMappings.0.tuning.innerDeadzone`. A profile value calibrates that mapping and does not replace the record's `stickDeadzone`. See [Set a Default for Every Controller](Controller-Records.md#set-a-default-for-every-controller). With `--json`, it prints `profile` (the active profile's name, when it shows rows), `defaultsFile`, `defaultsProblem` when the file is invalid, and `values`, each with `key`, `layer`, and `value` when set. `--plain` prints `key`, `value`, and `layer` per line.
+Without `--controller`, it shows `Defaults.json` against the driver defaults, and marks each key with the protocol families whose drivers read it, such as `read by: sony.dualshock4` for `inputLivenessTimeoutMs`. The families come from the controller records, so they follow the catalog. When the service runs with a controller connected and `Defaults.json` sets a key that no connected controller reads, it prints one warning for that key on stderr, which `--json` and `--plain` leave out of stdout. Without the service or without a connected controller, it prints no warning. With `--controller`, it shows the record for that model: each value comes from `driver`, `global`, `bundled`, or `user`. When the service runs and a profile is active for that model, it adds one `profile` row per stick mapping, keyed as `profile get` names it, such as `stickMappings.0.tuning.innerDeadzone`. A profile value calibrates that mapping and does not replace the record's `stickDeadzone`. See [Set a Default for Every Controller](Controller-Records.md#set-a-default-for-every-controller). With `--json`, it prints `profile` (the active profile's name, when it shows rows), `defaultsFile`, `defaultsProblem` when the file is invalid, and `values`, each with `key`, `layer`, `value` when set, and `families` (the reading families) without `--controller`. `--plain` prints `key`, `value`, and `layer` per line, plus the families joined by commas without `--controller`.
 
 ## access
 
@@ -337,7 +339,7 @@ Run every check and report what is wrong.
 ojd diagnose [--bundle PATH] [--soak SECONDS]
 ```
 
-The checks are `service`, `extension-bundle`, `extension-registration`, `input-monitoring`, `accessibility`, `controller-records`, `usb-access`, `virtual-device`, and `runtime-health`. Each reports `pass`, `warn`, `fail`, or `skip`. The `controller-records` check warns when OpenJoystickDriver skipped one of your controller record files. Checks that need the service are skipped while it is stopped. The command exits with code 1 when any check fails.
+The checks are `service`, `extension-bundle`, `extension-registration`, `input-monitoring`, `accessibility`, `controller-records`, `config-files`, `usb-access`, `virtual-device`, and `runtime-health`. Each reports `pass`, `warn`, `fail`, or `skip`. The `controller-records` check warns when OpenJoystickDriver skipped one of your controller record files. The `config-files` check warns when it ignored your `Defaults.json` or skipped one of your persona files. Checks that need the service are skipped while it is stopped. The command exits with code 1 when any check fails.
 
 - `--bundle PATH`: Also write a support report to `PATH`. Read it before you share it.
 - `--soak SECONDS`: Run the `runtime-health` check. It samples the service's memory, file descriptors, and CPU for 1 to 86400 seconds. Without `--soak`, that check is skipped. `--interval-ms`, `--rss-limit-mib`, and `--footprint-limit-mib` tune the sampling and set failure limits.

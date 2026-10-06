@@ -61,6 +61,11 @@ extension ControllerTuning {
   }
 }
 
+extension ControllerRecord {
+  /// Whether this controller's driver reads `key`; `Defaults.json` sets it only where this holds.
+  public func reads(_ key: ControllerTuning.Key) -> Bool { tuningScope.contains(key) }
+}
+
 extension ControllerRecordDocument {
   /// Why `key` does not apply to this record's family, or nil when a driver reads it.
   func tuningScopeViolation(_ key: ControllerTuning.Key) -> String? {

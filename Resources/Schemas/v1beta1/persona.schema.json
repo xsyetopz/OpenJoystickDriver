@@ -54,6 +54,7 @@
 					"maximum": 65535
 				},
 				"versionNumber": {
+					"description": "The published HID version number, which SDL puts in its controller GUID. Without it, the version of the built-in profile stays: 0x0408 (1032) for the generic HID profile, 0x0000 for the Xbox One S profile.",
 					"type": "integer",
 					"minimum": 0,
 					"maximum": 65535

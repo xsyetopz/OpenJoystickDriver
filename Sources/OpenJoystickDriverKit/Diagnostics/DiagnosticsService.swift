@@ -194,6 +194,36 @@ public enum DiagnosticsService {
     )
   }
 
+  /// The check for `Defaults.json` and the persona files: it warns when OJD ignored the defaults
+  /// file or skipped a persona file, and names each.
+  public static func configFilesCheck(
+    defaults: ControllerDefaults?,
+    personas: [VirtualPersonaFile]
+  ) -> DiagnoseCheck {
+    var files: [String] = []
+    if let defaults, let problem = defaults.problem {
+      files.append("\(defaults.url.lastPathComponent) (\(problem))")
+    }
+    files += personas.compactMap { file in
+      file.problem.map { "\(file.url.lastPathComponent) (\($0))" }
+    }
+    guard files.isEmpty else {
+      return DiagnoseCheck(
+        "config-files",
+        .warn,
+        localization.formatted(
+          "cli.diagnose.records.config_problems",
+          arguments: [files.joined(separator: "; ")]
+        )
+      )
+    }
+    return DiagnoseCheck(
+      "config-files",
+      .pass,
+      localization.string("cli.diagnose.records.config_ok")
+    )
+  }
+
   /// The USB check from the number of vendor-specific controllers a probe found, or its error.
   public static func usbCheck(_ result: Result<Int, any Error>) -> DiagnoseCheck {
     switch result {

@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "Показывает действующую настройку одного контроллера в виде VVVV:PPPP вместо глобальных значений по умолчанию.";
 "cli.config.show.defaults_ignored" = "Игнорируется %@: %@";
 "cli.config.show.discussion" = "Без --controller выводит ключи, которые задаёт Defaults.json. С этим параметром выводит запись контроллера после наложения Defaults.json, вашей записи и встроенной записи. Ключ, который не задаёт ни один слой, отображается как «значение драйвера по умолчанию».";
+"cli.config.show.read_by" = "читают: %@";
+"cli.config.show.unread" = "Defaults.json задаёт %@, но ни один подключённый контроллер не читает этот ключ. Семейства, которые его читают: %@.";
 "cli.config.show.unset" = "значение драйвера по умолчанию";
 "cli.setting.abstract" = "Показывает, читает или изменяет настройки приложения OpenJoystickDriver.";
 "cli.setting.bad_value" = "«%@» не является значением для %@. Используйте true или false.";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "Профили: %@";
 "cli.virtual.show.unavailable" = "нет подходящего виртуального геймпада";
 "cli.diagnose.records.applied" = "применено пользовательских записей: %lld";
+"cli.diagnose.records.config_ok" = "Defaults.json и файлы персон допустимы";
+"cli.diagnose.records.config_problems" = "проигнорировано или пропущено: %@; исправьте и проверьте командой «ojd status»";
 "cli.diagnose.records.skipped" = "пропущено: %@; проверьте их командой «ojd record list»";
 "cli.record.abstract" = "Создаёт черновики, показывает, проверяет, устанавливает или удаляет записи контроллеров.";
 "cli.record.discussion" = "Запись контроллера сообщает OpenJoystickDriver, как работать с одной моделью контроллера. Ваши записи хранятся в ~/Library/Application Support/OpenJoystickDriver/Controllers и добавляют модель или изменяют встроенную. Работающая служба применяет их при изменении каталога. Служба нужна только «ojd record draft».";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "Проверяет запись контроллера без установки.";
 "cli.record.validate.discussion" = "Проверяет структуру записи, согласованность её полей и соответствие встроенному каталогу, а также сообщает, нужно ли контроллеру расширение USB. Завершается с кодом 1, если запись недопустима.";
 "cli.record.validate.valid" = "%@ — допустимая запись %@ для %@ (%@). Установите её командой «ojd record install».";
+"cli.status.label.ignored_defaults" = "Проигнорированный файл значений по умолчанию";
+"cli.status.label.skipped_personas" = "Пропущенные файлы персон (%lld)";
 "cli.status.label.skipped_records" = "Пропущенные записи контроллеров (%lld)";
 "cli.binding.abstract" = "Показывает, задаёт и очищает привязки профиля переназначения.";
 "cli.binding.actions_invalid" = "--actions-json не является допустимым списком действий: %@";

@@ -39,8 +39,8 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   /// Each controller's selected profile and how it was selected. Selection runs once per
   /// physical session, and only a successful `retarget` changes it, so delivery never reselects.
   private var selections: [DeviceIdentifier: VirtualHIDProfileSelector.Selection] = [:]
-  /// The persona identity each controller's backends publish. It changes with `selections`, so a
-  /// persona edited while the controller is connected applies from its next session.
+  /// The persona identity each controller's backends publish. It changes through `retarget`,
+  /// which a change to the persona files triggers, and a new session reads it again.
   private var identities: [DeviceIdentifier: VirtualPersona.Identity] = [:]
 
   init(
@@ -395,16 +395,20 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     let (current, liveIdentity) = stateLock.withLock {
       (selections[identifier], identities[identifier])
     }
-    guard current != selection else { return }
+    let currentIdentity = identityProvider(description)
+    let identityChanged = currentIdentity != liveIdentity
+    guard current != selection || identityChanged else { return }
     var identity = liveIdentity
-    if current?.profileID != selection.profileID {
-      // The replacement is built with the persona identity of the new selection.
-      identity = identityProvider(description)
+    if current?.profileID != selection.profileID || identityChanged {
+      // The replacement is built with the persona identity as it is now. The identity is fixed
+      // when a device is created, so an identity change alone rebuilds the same profile.
+      identity = currentIdentity
       stateLock.withLock { identities[identifier] = identity }
       do {
         try await coordinator.retarget(
           identifier,
           target: selection.profileID,
+          rebuildsLiveTarget: identityChanged,
           isEligible: { [weak self] identifier, profile in
             await self?.isEligible(identifier, profile: profile) ?? false
           },

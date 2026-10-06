@@ -39,7 +39,14 @@ enum DiagnoseChecks {
     checks.append(DiagnosticsService.serviceCheck(snapshot))
     checks.append(contentsOf: DiagnosticsService.permissionChecks(snapshot))
     checks.append(DiagnosticsService.virtualDeviceCheck(snapshot))
-    checks.append(DiagnosticsService.recordCheck(RecordStore.load()))
+    let records = RecordStore.load()
+    checks.append(DiagnosticsService.recordCheck(records))
+    checks.append(
+      DiagnosticsService.configFilesCheck(
+        defaults: records.defaults,
+        personas: RecordStore.personaFiles()
+      )
+    )
     checks.append(await usbCheck())
     checks.append(await soakCheck(snapshot: snapshot, soak: soak))
     return checks

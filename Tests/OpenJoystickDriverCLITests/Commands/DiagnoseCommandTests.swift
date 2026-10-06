@@ -240,4 +240,37 @@ struct DiagnoseCommandTests {
     #expect(records["status"] == "warn")
     #expect(records["detail"]?.contains("broken.json (the file is not a JSON object)") == true)
   }
+
+  @Test
+  func anIgnoredDefaultsFileOrSkippedPersonaWarnsButDoesNotFail() async throws {
+    let support = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "ojd-diagnose-\(UUID().uuidString)",
+      isDirectory: true
+    )
+    let personas = support.appendingPathComponent("Personas", isDirectory: true)
+    try FileManager.default.createDirectory(
+      at: support.appendingPathComponent("Controllers"),
+      withIntermediateDirectories: true
+    )
+    try FileManager.default.createDirectory(at: personas, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: support) }
+    try Data("{".utf8).write(to: support.appendingPathComponent("Defaults.json"))
+    try Data("{".utf8).write(to: personas.appendingPathComponent("broken.json"))
+
+    let result = await run(
+      ["--json"],
+      socketPath: temporarySocketPath(),
+      records: support.appendingPathComponent("Controllers")
+    )
+
+    #expect(result.code == 0)
+    let checks = try #require(try result.json()["checks"] as? [[String: String]])
+    let config = try #require(checks.first { $0["id"] == "config-files" })
+    #expect(config["status"] == "warn")
+    #expect(config["detail"]?.contains("Defaults.json (the file is not a JSON object)") == true)
+    #expect(config["detail"]?.contains("broken.json (the file is not a JSON object)") == true)
+    let clean = await run(["--json"], socketPath: temporarySocketPath())
+    let cleanChecks = try #require(try clean.json()["checks"] as? [[String: String]])
+    #expect(cleanChecks.first { $0["id"] == "config-files" }?["status"] == "pass")
+  }
 }

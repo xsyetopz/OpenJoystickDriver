@@ -128,14 +128,17 @@ extension AutomaticDispatcherCoordinator {
 
   /// Replaces the controller's live backend with one for `target`, keeping the live backend
   /// publishing until the replacement has activated. A live backend that already publishes
-  /// `target` is left unchanged. Without a live backend, as during suppression or recovery, the
-  /// publication context adopts `target`, so the next installation publishes it.
+  /// `target` is left unchanged unless `rebuildsLiveTarget` is set, as when only the persona
+  /// identity changed, which is fixed when the device is created. Without a live backend, as
+  /// during suppression or recovery, the publication context adopts `target`, so the next
+  /// installation publishes it.
   ///
   /// - Throws: The build or activation failure, or `CancellationError` when the controller
   ///   stopped, the coordinator closed, or the replacement could not be installed.
   func retarget(
     _ controller: DeviceIdentifier,
     target: VirtualHIDProfileID,
+    rebuildsLiveTarget: Bool = false,
     isEligible: @escaping Eligibility,
     factory: @escaping Factory
   ) async throws {
@@ -154,7 +157,7 @@ extension AutomaticDispatcherCoordinator {
       }
       return
     }
-    guard current != target else { return }
+    guard current != target || rebuildsLiveTarget else { return }
     let lease = try await acquire(
       controller,
       target: target,
@@ -185,7 +188,9 @@ extension AutomaticDispatcherCoordinator {
       current.sessionGeneration == sessionGeneration,
       current.publicationGeneration == publicationGeneration, !suppressed
     else { throw CancellationError() }
-    if current.target == target, let lease = current.installed?.acquire() { return lease }
+    if !replacesLiveBackend, current.target == target, let lease = current.installed?.acquire() {
+      return lease
+    }
 
     let pending: Pending
     if let existing = current.pending, existing.request.target == target {

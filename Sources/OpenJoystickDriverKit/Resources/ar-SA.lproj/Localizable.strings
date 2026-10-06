@@ -1133,6 +1133,8 @@
 "cli.config.show.controller" = "اعرض الضبط الفعلي لوحدة تحكم واحدة، بالصيغة VVVV:PPPP، بدلًا من الإعدادات الافتراضية العامة.";
 "cli.config.show.defaults_ignored" = "تم تجاهل %@: %@";
 "cli.config.show.discussion" = "من دون --controller، يطبع المفاتيح التي يحدّدها Defaults.json. ومعه، يطبع سجل وحدة التحكم بعد ترتيب Defaults.json وسجلك والسجل المرفق في طبقات. المفتاح الذي لا تحدّده أي طبقة يظهر بالقيمة «الإعداد الافتراضي للمشغّل».";
+"cli.config.show.read_by" = "يقرؤه: %@";
+"cli.config.show.unread" = "يعيّن Defaults.json القيمة %@، لكن لا توجد وحدة تحكم متصلة تقرؤها. العائلات التي تقرؤها: %@.";
 "cli.config.show.unset" = "الإعداد الافتراضي للمشغّل";
 "cli.setting.abstract" = "اعرض إعدادات تطبيق OpenJoystickDriver أو اقرأها أو غيّرها.";
 "cli.setting.bad_value" = "«%@» ليست قيمة صالحة لـ %@. استخدم true أو false.";
@@ -1303,6 +1305,8 @@
 "cli.virtual.show.profiles" = "ملفات التعريف: %@";
 "cli.virtual.show.unavailable" = "لا توجد وحدة تحكم افتراضية مناسبة";
 "cli.diagnose.records.applied" = "سجلات المستخدم المطبّقة: %lld";
+"cli.diagnose.records.config_ok" = "ملف Defaults.json وملفات الشخصية صالحة";
+"cli.diagnose.records.config_problems" = "تم تجاهل أو تخطي %@؛ أصلحها وتحقق عبر 'ojd status'";
 "cli.diagnose.records.skipped" = "تم تخطي %@؛ افحصها باستخدام «ojd record list»";
 "cli.record.abstract" = "صُغ مسودات سجلات وحدات التحكم أو اعرضها أو افحصها أو ثبّتها أو أزلها.";
 "cli.record.discussion" = "يخبر سجل وحدة التحكم OpenJoystickDriver بكيفية تشغيل طراز واحد من وحدات التحكم. توجد سجلاتك في ~/Library/Application Support/OpenJoystickDriver/Controllers، وتضيف طرازًا أو تعدّل طرازًا مضمّنًا. تطبّقها الخدمة العاملة عند تغيّر المجلد. ولا يحتاج إلى الخدمة سوى «ojd record draft».";
@@ -1355,6 +1359,8 @@
 "cli.record.validate.abstract" = "افحص سجل وحدة تحكم دون تثبيته.";
 "cli.record.validate.discussion" = "يفحص شكل السجل، وحقوله بالنسبة لبعضها، وتوافقه مع الكتالوج المضمّن، ويذكر ما إذا كانت وحدة التحكم تحتاج إلى امتداد USB. ينتهي بالرمز 1 عندما يكون السجل غير صالح.";
 "cli.record.validate.valid" = "%@ سجل %@ صالح لـ %@ (%@). ثبّته باستخدام «ojd record install».";
+"cli.status.label.ignored_defaults" = "ملف الإعدادات الافتراضية المتجاهَل";
+"cli.status.label.skipped_personas" = "ملفات الشخصية المتخطاة (%lld)";
 "cli.status.label.skipped_records" = "سجلات وحدات التحكم المتخطاة (%lld)";
 "cli.binding.abstract" = "اعرض تعيينات ملف تعريف إعادة التعيين واضبطها وامسحها.";
 "cli.binding.actions_invalid" = "--actions-json ليس قائمة إجراءات صالحة: %@";

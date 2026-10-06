@@ -80,14 +80,22 @@ struct StatusReport: Encodable, Equatable {
   /// User controller records OJD skipped. Read from the files, so present while the service is
   /// stopped.
   let skippedRecords: [SkippedRecord]
+  /// The `Defaults.json` OJD ignored whole; absent when it applied the file or there is none.
+  let ignoredDefaults: SkippedRecord?
+  /// Persona files OJD skipped. Read from the files, so present while the service is stopped.
+  let skippedPersonas: [SkippedRecord]
 
   init(
     payload: ApplicationServiceStatusPayload?,
     extensionStatus: ExtensionStatus,
-    skippedRecords: [SkippedRecord] = []
+    skippedRecords: [SkippedRecord] = [],
+    ignoredDefaults: SkippedRecord? = nil,
+    skippedPersonas: [SkippedRecord] = []
   ) {
     self.extension = Extension(extensionStatus)
     self.skippedRecords = skippedRecords
+    self.ignoredDefaults = ignoredDefaults
+    self.skippedPersonas = skippedPersonas
     guard let payload else {
       service = Service(state: .stopped, version: nil)
       permissions = nil

@@ -31,10 +31,14 @@ struct StatusCommand: AsyncParsableCommand {
       do { payload = try await ServiceConnection.request { try await $0.getStatus() } } catch let
         failure as CLIFailure where failure.code == .serviceUnavailable
       { payload = nil }
+      let records = RecordStore.load()
       let report = StatusReport(
         payload: payload,
         extensionStatus: Self.extensionProbe(),
-        skippedRecords: RecordStore.load().problems.map(SkippedRecord.init)
+        skippedRecords: records.problems.map(SkippedRecord.init),
+        ignoredDefaults: SkippedRecord(records.defaults),
+        skippedPersonas: RecordStore.personaFiles().filter { $0.problem != nil }
+          .map(SkippedRecord.init)
       )
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(report)
@@ -80,6 +84,12 @@ struct StatusCommand: AsyncParsableCommand {
     }
     for skipped in report.skippedRecords {
       rows.append(["skipped-record", skipped.file, skipped.problem])
+    }
+    if let ignored = report.ignoredDefaults {
+      rows.append(["ignored-defaults", ignored.file, ignored.problem])
+    }
+    for skipped in report.skippedPersonas {
+      rows.append(["skipped-persona", skipped.file, skipped.problem])
     }
     return rows
   }
@@ -182,6 +192,23 @@ struct StatusCommand: AsyncParsableCommand {
         )
       )
       for skipped in report.skippedRecords {
+        CLIOutput.stdout("  \(skipped.file)  \(skipped.problem)")
+      }
+    }
+    if let ignored = report.ignoredDefaults {
+      CLIOutput.stdout("")
+      CLIOutput.stdout(CLILocalized.text("cli.status.label.ignored_defaults"))
+      CLIOutput.stdout("  \(ignored.file)  \(ignored.problem)")
+    }
+    if !report.skippedPersonas.isEmpty {
+      CLIOutput.stdout("")
+      CLIOutput.stdout(
+        CLILocalized.format(
+          "cli.status.label.skipped_personas",
+          report.skippedPersonas.count
+        )
+      )
+      for skipped in report.skippedPersonas {
         CLIOutput.stdout("  \(skipped.file)  \(skipped.problem)")
       }
     }
