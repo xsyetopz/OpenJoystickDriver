@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/controller.schema.json",
   "vendorID": 1118,
   "productID": 2821,
   "protocol": {

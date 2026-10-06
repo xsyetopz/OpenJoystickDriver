@@ -257,6 +257,23 @@ class BaselineTests(unittest.TestCase):
         self.assertEqual(schema_compatibility.last_release_tag(root), "0.1.0")
         self.assertIsNone(schema_compatibility.documents_at(root, "0.1.0"))
 
+    def test_reads_the_schemas_from_the_versioned_directory(self) -> None:
+        root = self.make_repository()
+        versioned = root / "Resources" / "Schemas" / "v1beta1"
+        versioned.mkdir()
+        (versioned / ROOT).write_text(
+            json.dumps({"$defs": {"a": {}}}), encoding="utf-8"
+        )
+        (versioned / "report.schema.json").write_text("{}", encoding="utf-8")
+        git(root, "add", ".")
+        git(root, "commit", "--quiet", "-m", "versioned")
+        git(root, "tag", "0.1.0")
+
+        self.assertEqual(
+            schema_compatibility.documents_at(root, "0.1.0"),
+            {ROOT: {"$defs": {"a": {}}}, "report.schema.json": {}},
+        )
+
     def test_a_release_commit_compares_with_the_release_before_it(self) -> None:
         root = self.make_repository()
         self.commit(root, ROOT, {"$defs": {"a": {}}})

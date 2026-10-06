@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/profile.schema.json",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/profile.schema.json",
 	"title": "OpenJoystickDriver profile",
 	"description": "A remapping profile, as 'ojd profile export' writes it and 'ojd profile import' reads it. The schema checks the shape and the range of each field. 'ojd profile validate' also checks the rules that span fields, such as duplicate sources and IDs.",
 	"type": "object",

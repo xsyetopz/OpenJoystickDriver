@@ -3,11 +3,14 @@ import Foundation
 /// Strict runtime representation of the one current controller-record contract.
 ///
 /// JSONDecoder normally ignores unknown keys. This decoder instead rejects
-/// removed or misspelled fields and requires the exact current schema identity.
+/// removed or misspelled fields and requires a `$schema` from ``knownSchemaIDs``.
 struct ControllerRecordDocument: Decodable {
+  /// The `$schema` that OJD writes: the current version of the controller contract.
   static let schemaID =
     "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
-    + "Resources/Schemas/controller.schema.json"
+    + "Resources/Schemas/v1beta1/controller.schema.json"
+  /// The `$schema` values OJD accepts. A version that is not here is rejected, not converted.
+  static let knownSchemaIDs: Set<String> = [schemaID]
 
   let vendorID: Int
   let productID: Int
@@ -32,11 +35,11 @@ struct ControllerRecordDocument: Decodable {
       "ownership", "output", "input", "tuning",
     ])
     let schema = try container.decode(String.self, for: "$schema")
-    guard schema == Self.schemaID else {
+    guard Self.knownSchemaIDs.contains(schema) else {
       throw DecodingError.dataCorruptedError(
         forKey: DocumentKey("$schema"),
         in: container,
-        debugDescription: "$schema must identify the current controller contract"
+        debugDescription: "$schema must identify a known controller contract version"
       )
     }
     vendorID = try container.decode(Int.self, for: "vendorID")

@@ -23,7 +23,7 @@ except ImportError:
     raise SystemExit(2)
 
 ROOT = Path(__file__).resolve().parents[2]
-SCHEMAS = ROOT / "Resources" / "Schemas"
+SCHEMAS = ROOT / "Resources" / "Schemas" / "v1beta1"
 GENERATED_RECORDS = (
     ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Controllers"
 )
@@ -64,7 +64,9 @@ def schema_registry(documents: dict[str, dict[str, object]]) -> Registry:
     for name, document in documents.items():
         identifier = document.get("$id")
         if not isinstance(identifier, str) or not identifier:
-            raise SchemaError(f"Resources/Schemas/{name} must declare a nonempty $id")
+            raise SchemaError(
+                f"Resources/Schemas/v1beta1/{name} must declare a nonempty $id"
+            )
         resources.append((identifier, Resource.from_contents(document)))
     return Registry().with_resources(resources)
 

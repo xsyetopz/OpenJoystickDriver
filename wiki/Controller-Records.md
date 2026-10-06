@@ -18,6 +18,7 @@ This page explains how to add a controller that OpenJoystickDriver does not know
 - [Install a Record](#install-a-record)
 - [Check Which Records Apply](#check-which-records-apply)
 - [Remove a Record](#remove-a-record)
+- [Schema Versions and Compatibility](#schema-versions-and-compatibility)
 - [Further Reading](#further-reading)
 
 [toc-1]: #draft-a-record-from-a-connected-controller
@@ -151,11 +152,11 @@ A `tuning` in a `patch` merges per value into the bundled `tuning`: a value you 
 
 ### Set a Default for Every Controller
 
-`~/Library/Application Support/OpenJoystickDriver/Defaults.json` sets a `tuning` default for every controller. It uses the same values as a record, and [`defaults.schema.json`](../Resources/Schemas/defaults.schema.json) describes it.
+`~/Library/Application Support/OpenJoystickDriver/Defaults.json` sets a `tuning` default for every controller. It uses the same values as a record, and [`defaults.schema.json`](../Resources/Schemas/v1beta1/defaults.schema.json) describes it.
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/defaults.schema.json",
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/defaults.schema.json",
   "tuning": { "stickDeadzone": 0.05 }
 }
 ```
@@ -166,11 +167,11 @@ The record's `stickDeadzone` shapes the virtual gamepad's stick report. A profil
 
 ### Change the Virtual Gamepad Identity
 
-A persona file in `~/Library/Application Support/OpenJoystickDriver/Personas` chooses the virtual gamepad that games see for one controller model, or for one controller unit. [`persona.schema.json`](../Resources/Schemas/persona.schema.json) describes it.
+A persona file in `~/Library/Application Support/OpenJoystickDriver/Personas` chooses the virtual gamepad that games see for one controller model, or for one controller unit. [`persona.schema.json`](../Resources/Schemas/v1beta1/persona.schema.json) describes it.
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/persona.schema.json",
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/persona.schema.json",
   "match": { "vendorID": 1356, "productID": 3302 },
   "descriptor": "hid-xbox-one-s-bt"
 }
@@ -224,7 +225,7 @@ The record maps what the HID report descriptor states plainly: buttons 1 to 11 i
 ## Install a Record
 
 1. Find the VID:PID of your controller. For more information, see [Finding your controller ID](Connecting-Controllers.md#finding-your-controller-id).
-1. Write the record file. Set `$schema` to `https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json`.
+1. Write the record file. Set `$schema` to `https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/controller-override.schema.json`.
 1. Check the file. Run `ojd record validate FILE`.
 1. Install the file. Run `ojd record install FILE`.
 
@@ -244,6 +245,16 @@ OpenJoystickDriver skips a file that is not valid and uses the bundled record fo
 1. Confirm the deletion.
 
 A bundled model then goes back to its bundled record.
+
+## Schema Versions and Compatibility
+
+Each file that OJD reads declares its schema version in `$schema`, and the version is a directory in the schema URL: `Resources/Schemas/v1beta1/`. OJD accepts a fixed set of known `$schema` IDs and rejects every other one, including the old ID without the version directory. It does not convert files.
+
+- Before 1.0, a `v1beta1` schema may change incompatibly. The release notes list each such change and how to update a file.
+- At 1.0 the schemas are promoted to `v1`. A `v1` schema takes only additive changes: a new optional field, or a new value where a reader can ignore it.
+- A change that is not additive needs a new version, `v2`. OJD names the IDs it accepts, so a file for an unknown version is rejected rather than half read.
+
+The `--json` output schema has its own release check: within a major version it only gains keys and values. See [Using the command line](Command-Line.md).
 
 ## Further Reading
 

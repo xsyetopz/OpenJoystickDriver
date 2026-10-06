@@ -16,7 +16,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 PROFILE_DIR = ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Controllers"
 SCHEMA_ID = (
     "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
-    "Resources/Schemas/controller.schema.json"
+    "Resources/Schemas/v1beta1/controller.schema.json"
 )
 LINUX_REPOSITORY = "torvalds/linux"
 XPAD_PATH = "drivers/input/joystick/xpad.c"

@@ -50,7 +50,7 @@ The service answers with one line and then either streams or closes the connecti
 {"type":"error","code":"E1002","message":"..."}
 ```
 
-- `protocol` is an integer. The service supports a range of versions. When the client's version is outside it, the service answers `E1003` with `supported`, the list of versions it accepts, and closes.
+- `protocol` is an integer. The service accepts only protocol version 1. For any other version it answers `E1003` with `supported: [1]` and closes. The version is part of the HMAC proof: the proof label is `OpenJoystickDriver endpoint hello 1`, so a new protocol version changes the label.
 - `scopes` lists the scopes the client asks for. The service grants all of them or refuses with `E1002`. It never grants a subset silently.
 - Error codes are stable identifiers, `E1001` to `E1009`, listed in `Resources/ErrorCodes.json` and explained on the wiki page Error-Codes. `message` is English text for logs, not for parsing.
 

@@ -1,7 +1,7 @@
 import Foundation
 import OpenJoystickDriverTestSupport
 
-/// Validates `--json` output against `Resources/Schemas/cli-output.schema.json`.
+/// Validates `--json` output against `Resources/Schemas/v1beta1/cli-output.schema.json`.
 ///
 /// Each command's output is the `$defs` entry named by its path in lowerCamelCase, such as
 /// `controllerShow` for `ojd controller show`.

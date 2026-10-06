@@ -19,7 +19,10 @@ from pathlib import Path
 from typing import Any, NamedTuple
 
 ROOT_SCHEMA = "cli-output.schema.json"
-SCHEMAS = "Resources/Schemas"
+SCHEMA_VERSION = "v1beta1"
+# Where a tag keeps its schemas: the versioned directory, then the flat one that releases before
+# the version segment used. This reads old tags only; OJD itself has no decoder for the flat layout.
+SCHEMA_DIRECTORIES = (f"Resources/Schemas/{SCHEMA_VERSION}", "Resources/Schemas")
 INFO_PLIST = Path("Sources/OpenJoystickDriver/App/Info.plist")
 
 Documents = dict[str, dict[str, Any]]
@@ -47,14 +50,19 @@ def last_release_tag(root: Path) -> str:
 
 def documents_at(root: Path, tag: str) -> Documents | None:
     """The schema documents at `tag`, or None when `tag` has no `cli-output.schema.json`."""
-    names = git(root, "ls-tree", "--name-only", f"{tag}:{SCHEMAS}").split()
-    if ROOT_SCHEMA not in names:
-        return None
-    return {
-        name: json.loads(git(root, "show", f"{tag}:{SCHEMAS}/{name}"))
-        for name in names
-        if name.endswith(".schema.json")
-    }
+    for directory in SCHEMA_DIRECTORIES:
+        try:
+            names = git(root, "ls-tree", "--name-only", f"{tag}:{directory}").split()
+        except subprocess.CalledProcessError:
+            continue
+        if ROOT_SCHEMA not in names:
+            continue
+        return {
+            name: json.loads(git(root, "show", f"{tag}:{directory}/{name}"))
+            for name in names
+            if name.endswith(".schema.json")
+        }
+    return None
 
 
 class Location(NamedTuple):

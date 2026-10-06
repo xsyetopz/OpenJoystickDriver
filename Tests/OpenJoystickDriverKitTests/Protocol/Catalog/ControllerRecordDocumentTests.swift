@@ -407,7 +407,7 @@ struct ControllerRecordDocumentTests {
     let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent()
-    let url = root.appendingPathComponent("Resources/Schemas/controller.schema.json")
+    let url = root.appendingPathComponent("Resources/Schemas/v1beta1/controller.schema.json")
     return try #require(JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any])
   }
 

@@ -19,7 +19,7 @@ public struct SupportReport: Codable, Sendable {
   public static let source = "urn:openjoystickdriver:support"
   public static let dataSchema =
     "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/"
-    + "report.schema.json#/$defs/supportDiagnosticData"
+    + "v1beta1/report.schema.json#/$defs/supportDiagnosticData"
 
   public struct Privacy: Codable, Sendable {
     public let includesRawSerialNumbers: Bool

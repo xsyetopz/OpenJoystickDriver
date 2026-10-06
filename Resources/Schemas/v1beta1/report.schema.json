@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/report.schema.json",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/report.schema.json",
 	"type": "object",
 	"required": [
 		"specversion",
@@ -34,7 +34,7 @@
 			"const": "application/json"
 		},
 		"dataschema": {
-			"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/report.schema.json#/$defs/supportDiagnosticData"
+			"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/report.schema.json#/$defs/supportDiagnosticData"
 		},
 		"data": {
 			"$ref": "#/$defs/supportDiagnosticData"

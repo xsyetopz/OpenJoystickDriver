@@ -28,7 +28,7 @@ ojd --no-input --json controller list | jq -r '.controllers[] | [.id, .name, .un
 
 Keys and values in `--json` output are stable identifiers, and OJD never translates them. A command that streams, such as `ojd controller watch` or `ojd virtual feed`, prints one JSON object per line.
 
-[`cli-output.schema.json`](../Resources/Schemas/cli-output.schema.json) describes the output of each command. Each command has one entry in `$defs`, named after its command path in lowerCamelCase: the entry for `ojd controller show` is `controllerShow`. Entries that start with `shared` are shapes that more than one command uses. The schema rejects keys that its release does not print, and a later release can add keys. Validate output against the schema from the same release.
+[`cli-output.schema.json`](../Resources/Schemas/v1beta1/cli-output.schema.json) describes the output of each command. Each command has one entry in `$defs`, named after its command path in lowerCamelCase: the entry for `ojd controller show` is `controllerShow`. Entries that start with `shared` are shapes that more than one command uses. The schema rejects keys that its release does not print, and a later release can add keys. Validate output against the schema from the same release.
 
 Do not parse the human-readable output. It is translated, and it can change in each release.
 
@@ -178,7 +178,7 @@ The WebSocket accepts a page only from an origin that a token is granted for, an
 
 An error line has a `code` from `E1001` to `E1009`. Look up each code, its cause, and its fix on [Error codes](Error-Codes.md). With `E1003`, `supported` lists the protocol versions. The endpoint serves at most 8 socket connections and 8 WebSocket connections at the same time. When a program reads too slowly, the endpoint keeps only the newest `input` line of each controller. When 256 lines wait, it sends `E1007` and closes the connection.
 
-[`endpoint.schema.json`](../Resources/Schemas/endpoint.schema.json) describes each line. To drive a virtual gamepad through the endpoint, see [Drive a Virtual Gamepad Through the Endpoint](#drive-a-virtual-gamepad-through-the-endpoint).
+[`endpoint.schema.json`](../Resources/Schemas/v1beta1/endpoint.schema.json) describes each line. To drive a virtual gamepad through the endpoint, see [Drive a Virtual Gamepad Through the Endpoint](#drive-a-virtual-gamepad-through-the-endpoint).
 
 ### Use the WebSocket From an App
 
@@ -302,7 +302,7 @@ To run the client, save it as `driver.py` and run `python3 driver.py`. Games and
 
 ## Change Profiles
 
-A profile is a JSON file. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields.
+A profile is a JSON file. [`profile.schema.json`](../Resources/Schemas/v1beta1/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields.
 
 - `ojd profile get PROFILE KEY` prints one value. `ojd profile set PROFILE KEY VALUE` changes one value. `KEY` is a path of member names and array indexes, joined by dots.
 - `ojd profile export PROFILE` prints the whole file. `ojd profile import FILE` adds it again, or replaces the profile with the same ID. Use `-` as `FILE` to read standard input.

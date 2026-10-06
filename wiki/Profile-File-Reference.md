@@ -58,7 +58,7 @@ A profile file contains one profile object. An exported profile file has the sam
 
 A profile with `device.unit` applies only to the controller with that unit ID, and wins over an active profile for the whole model in the same application scope. Activating it replaces only the active profile of that unit and scope.
 
-OJD rejects unknown keys anywhere in a profile. The file has no schema version field. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes the file. Rules that span fields, such as a source used twice, are not in the schema. Check a file against both with `ojd profile validate FILE`.
+OJD rejects unknown keys anywhere in a profile. The file has no schema version field. [`profile.schema.json`](../Resources/Schemas/v1beta1/profile.schema.json) describes the file. Rules that span fields, such as a source used twice, are not in the schema. Check a file against both with `ojd profile validate FILE`.
 
 ## Limits
 

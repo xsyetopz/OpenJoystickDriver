@@ -1,12 +1,12 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/persona.schema.json",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/persona.schema.json",
 	"type": "object",
 	"additionalProperties": false,
 	"required": ["$schema", "match", "descriptor"],
 	"properties": {
 		"$schema": {
-			"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/persona.schema.json"
+			"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/persona.schema.json"
 		},
 		"match": {
 			"type": "object",

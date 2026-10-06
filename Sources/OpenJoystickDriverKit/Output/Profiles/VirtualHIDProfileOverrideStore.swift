@@ -39,9 +39,12 @@ public struct VirtualPersonaFile: Equatable, Sendable {
 /// `set` writes `vvvv-pppp.json` or `vvvv-pppp-<unit>.json`, and keeps the identity of a persona
 /// that already matches.
 public struct VirtualHIDProfileOverrideStore: Sendable {
+  /// The `$schema` that OJD writes.
   public static let schemaID =
     "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
-    + "Resources/Schemas/persona.schema.json"
+    + "Resources/Schemas/v1beta1/persona.schema.json"
+  /// The `$schema` values OJD accepts. A version that is not here is rejected.
+  public static let knownSchemaIDs: Set<String> = [schemaID]
 
   /// `~/Library/Application Support/OpenJoystickDriver/Personas`.
   public static var userDirectory: URL {
@@ -222,8 +225,10 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     guard let object = try? JSONSerialization.jsonObject(with: data),
       let document = object as? [String: Any]
     else { throw ControllerRecordProblem("the file is not a JSON object") }
-    guard document["$schema"] as? String == schemaID else {
-      throw ControllerRecordProblem("$schema must be \(schemaID)")
+    guard let schema = document["$schema"] as? String, knownSchemaIDs.contains(schema) else {
+      throw ControllerRecordProblem(
+        "$schema must be one of \(knownSchemaIDs.sorted().joined(separator: ", "))"
+      )
     }
     guard Set(document.keys).isSubset(of: ["$schema", "match", "descriptor", "identity"]),
       document["match"] != nil, document["descriptor"] != nil

@@ -140,6 +140,32 @@ struct ControllerRecordSetTests {
     #expect(Self.problem(badFamily) == "record.protocol: unknown family xbox.unknown")
   }
 
+  /// A file declares its version through `$schema`, and an ID outside the known set, such as the
+  /// unversioned one that releases before `v1beta1` used, is rejected rather than converted.
+  @Test
+  func theUnversionedSchemaIDsAreRejected() throws {
+    func unversioned(_ id: String) -> String {
+      id.replacingOccurrences(of: "Schemas/v1beta1/", with: "Schemas/")
+    }
+    let oldOverride = try Self.json([
+      "$schema": unversioned(Self.overrideSchema), "operation": "patch", "vendorID": 0x366C,
+      "productID": 5, "set": ["usb": ["postHandshakeSettleMs": 5]],
+    ])
+    #expect(Self.problem(oldOverride) == "$schema must be one of \(Self.overrideSchema)")
+    let oldRecord = try Self.json([
+      "$schema": Self.overrideSchema, "operation": "add",
+      "record": [
+        "$schema": unversioned(Self.recordSchema), "vendorID": 0x1234, "productID": 0xABCD,
+        "protocol": ["family": "xbox.gip"],
+      ],
+    ])
+    #expect(Self.problem(oldRecord)?.contains("$schema") == true)
+    let oldDefaults = Data(
+      #"{"$schema": "\#(unversioned(ControllerDefaults.schemaID))", "tuning": {}}"#.utf8
+    )
+    #expect(throws: ControllerRecordProblem.self) { try ControllerDefaults.validate(oldDefaults) }
+  }
+
   @Test
   func loadAppliesValidFilesAndReportsTheRest() throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(

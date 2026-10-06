@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/controller-override.schema.json",
 	"oneOf": [
 		{
 			"type": "object",
@@ -8,7 +8,7 @@
 			"required": ["$schema", "operation", "record"],
 			"properties": {
 				"$schema": {
-					"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json"
+					"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/controller-override.schema.json"
 				},
 				"operation": {
 					"const": "add"
@@ -24,7 +24,7 @@
 			"required": ["$schema", "operation", "vendorID", "productID", "set"],
 			"properties": {
 				"$schema": {
-					"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json"
+					"const": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/controller-override.schema.json"
 				},
 				"operation": {
 					"const": "patch"

@@ -117,7 +117,7 @@
 		]
 	},
 	"datacontenttype": "application\/json",
-	"dataschema": "https:\/\/raw.githubusercontent.com\/xsyetopz\/OpenJoystickDriver\/main\/Resources\/Schemas\/report.schema.json#\/$defs\/supportDiagnosticData",
+	"dataschema": "https:\/\/raw.githubusercontent.com\/xsyetopz\/OpenJoystickDriver\/main\/Resources\/Schemas\/v1beta1\/report.schema.json#\/$defs\/supportDiagnosticData",
 	"id": "0DC52DF7-70D2-4CC0-8B39-7B8FA8E08731",
 	"source": "urn:openjoystickdriver:support",
 	"specversion": "1.0",

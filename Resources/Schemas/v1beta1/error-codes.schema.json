@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/error-codes.schema.json",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/error-codes.schema.json",
 	"title": "OpenJoystickDriver error codes",
 	"description": "The authored catalog Resources/ErrorCodes.json. Each entry gives one stable E#### code. A code is never reused: an entry that stops being used is retired and stays. The English explanation of a code is the localization key error.E####.",
 	"type": "object",

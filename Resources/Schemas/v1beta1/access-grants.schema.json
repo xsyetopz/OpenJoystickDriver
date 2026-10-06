@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/access-grants.schema.json",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/access-grants.schema.json",
 	"title": "OpenJoystickDriver endpoint access grants",
 	"description": "The file AccessGrants.json in the OpenJoystickDriver Application Support folder. Only the service writes it, when 'ojd access enable', 'disable', 'grant', 'revoke', 'web enable', or 'web disable' runs.",
 	"type": "object",

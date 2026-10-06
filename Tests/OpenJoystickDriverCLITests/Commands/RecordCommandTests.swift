@@ -147,7 +147,7 @@ struct RecordCommandTests {
       """
       {"$schema": "\(ControllerRecordSet.overrideSchemaID)", "operation": "add", "record": {
        "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/\
-      Resources/Schemas/controller.schema.json",
+      Resources/Schemas/v1beta1/controller.schema.json",
        "vendorID": 1406, "productID": 8447,
        "protocol": {"family": "nintendo.switch1", "quirks": ["switch-2"]}}}
       """.utf8

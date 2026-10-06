@@ -24,7 +24,7 @@ OVERRIDE_DIR = ROOT / "Resources" / "ControllerOverrides"
 OUTPUT_DIR = ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Controllers"
 RECORD_SCHEMA_ID = (
     "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
-    "Resources/Schemas/controller.schema.json"
+    "Resources/Schemas/v1beta1/controller.schema.json"
 )
 # Top-level record sections a patch override may replace.
 PATCH_FIELDS = frozenset(
@@ -601,7 +601,7 @@ def load_overrides(
     seen: set[tuple[int, int]] = set()
     schema_id = (
         "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
-        "Resources/Schemas/controller-override.schema.json"
+        "Resources/Schemas/v1beta1/controller-override.schema.json"
     )
     for path in sorted(override_dir.glob("*/*.json")):
         document = json.loads(path.read_text())

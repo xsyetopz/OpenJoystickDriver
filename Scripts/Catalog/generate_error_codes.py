@@ -3,7 +3,7 @@
 `Resources/ErrorCodes.json` is the only authored list of E#### codes.
 This script validates it, guards against reusing a released code,
 and rewrites the two files that copy it:
-the `code` enum of `Resources/Schemas/endpoint.schema.json`
+the `code` enum of `Resources/Schemas/v1beta1/endpoint.schema.json`
 and the generated block of `wiki/Error-Codes.md`.
 """
 
@@ -31,8 +31,8 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parents[2]
 CATALOG = Path("Resources/ErrorCodes.json")
-CATALOG_SCHEMA = Path("Resources/Schemas/error-codes.schema.json")
-ENDPOINT_SCHEMA = Path("Resources/Schemas/endpoint.schema.json")
+CATALOG_SCHEMA = Path("Resources/Schemas/v1beta1/error-codes.schema.json")
+ENDPOINT_SCHEMA = Path("Resources/Schemas/v1beta1/endpoint.schema.json")
 WIKI_PAGE = Path("wiki/Error-Codes.md")
 TEMPLATE = Path(
     "Sources/OpenJoystickDriverKit/Resources/Localization/Localizable.template.strings"

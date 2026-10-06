@@ -1,6 +1,6 @@
 import Foundation
 
-/// Reads the schemas in `Resources/Schemas` and validates JSON values against them.
+/// Reads the schemas in `Resources/Schemas/v1beta1` and validates JSON values against them.
 ///
 /// The validator implements the Draft 2020-12 keywords the schema family uses and reports any
 /// other keyword, so a check is never silently weaker than the schema.
@@ -9,7 +9,7 @@ package enum JSONSchemaFiles {
     .deletingLastPathComponent()  // OpenJoystickDriverTestSupport
     .deletingLastPathComponent()  // Tests
     .deletingLastPathComponent()
-    .appendingPathComponent("Resources/Schemas", isDirectory: true)
+    .appendingPathComponent("Resources/Schemas/v1beta1", isDirectory: true)
 
   package static func document(named name: String) throws -> [String: Any] {
     let data = try Data(contentsOf: directory.appendingPathComponent(name))

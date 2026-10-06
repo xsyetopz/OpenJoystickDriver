@@ -215,7 +215,7 @@ class HIDRecordTests(unittest.TestCase):
                     {
                         "$schema": (
                             "https://raw.githubusercontent.com/xsyetopz/"
-                            "OpenJoystickDriver/main/Resources/Schemas/"
+                            "OpenJoystickDriver/main/Resources/Schemas/v1beta1/"
                             "controller-override.schema.json"
                         ),
                         "operation": "patch",
@@ -242,7 +242,7 @@ class HIDRecordTests(unittest.TestCase):
                     {
                         "$schema": (
                             "https://raw.githubusercontent.com/xsyetopz/"
-                            "OpenJoystickDriver/main/Resources/Schemas/"
+                            "OpenJoystickDriver/main/Resources/Schemas/v1beta1/"
                             "controller-override.schema.json"
                         ),
                         "operation": "patch",

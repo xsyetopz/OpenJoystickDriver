@@ -1,5 +1,5 @@
 {
-	"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/error-codes.schema.json",
+	"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/error-codes.schema.json",
 	"codes": [
 		{
 			"code": "E1001",

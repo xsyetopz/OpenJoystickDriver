@@ -10,7 +10,7 @@ struct ControllerRecordWatcherTests {
     """
     {"$schema": "\(ControllerRecordSet.overrideSchemaID)", "operation": "add",
      "record": {"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/\
-    Resources/Schemas/controller.schema.json", "vendorID": 4660, "productID": 43981,
+    Resources/Schemas/v1beta1/controller.schema.json", "vendorID": 4660, "productID": 43981,
      "protocol": {"family": "xbox.gip"}}}
     """.utf8
   )

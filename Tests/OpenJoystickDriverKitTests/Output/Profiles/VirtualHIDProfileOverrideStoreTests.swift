@@ -121,6 +121,21 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
+  func aFileWithTheUnversionedSchemaIsSkipped() throws {
+    try withDirectory { directory in
+      let unversioned = persona(vendorID: 1, productID: 2).replacingOccurrences(
+        of: "Schemas/v1beta1/",
+        with: "Schemas/"
+      )
+      try write(unversioned, named: "old.json", in: directory)
+      let store = Store(directory: directory)
+
+      #expect(store.override(vendorID: 1, productID: 2) == nil)
+      #expect(store.problems.first?.problem?.contains("$schema must be one of") == true)
+    }
+  }
+
+  @Test
   func theSecondFileWithTheSameMatchIsSkipped() throws {
     try withDirectory { directory in
       try write(persona(vendorID: 1, productID: 2), named: "a.json", in: directory)

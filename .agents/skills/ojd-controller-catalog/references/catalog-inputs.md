@@ -21,7 +21,7 @@ Sources/OpenJoystickDriverKit/Protocol/  (parsing and transport behavior, Swift)
 ```
 
 - `ControllerSources.lock.json` (repository root) pins `linux` and `sdl` upstream commits with a SHA-256 per file.
-- `Resources/ControllerOverrides/` holds one JSON file per device, with `"operation": "add"` or `"operation": "patch"`, validated by `Resources/Schemas/controller-override.schema.json`.
+- `Resources/ControllerOverrides/` holds one JSON file per device, with `"operation": "add"` or `"operation": "patch"`, validated by `Resources/Schemas/v1beta1/controller-override.schema.json`.
 - `Resources/Schemas/` owns the document shapes. Its `AGENTS.md` sets the rules: strict schemas, one live schema per artifact class, no versioned successor files.
 
 **Use when.** Every catalog change starts at one of these inputs.
@@ -50,7 +50,7 @@ Sources/OpenJoystickDriverKit/Protocol/  (parsing and transport behavior, Swift)
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+  "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/controller-override.schema.json",
   "operation": "patch",
   "vendorID": 1118,
   "productID": 721,

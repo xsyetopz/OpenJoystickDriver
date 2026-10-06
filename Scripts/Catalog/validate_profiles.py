@@ -20,7 +20,7 @@ except ImportError:
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RECORD_DIR = ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Controllers"
-SCHEMA_PATH = ROOT / "Resources" / "Schemas" / "controller.schema.json"
+SCHEMA_PATH = ROOT / "Resources" / "Schemas" / "v1beta1" / "controller.schema.json"
 
 
 class ValidationError(Exception):

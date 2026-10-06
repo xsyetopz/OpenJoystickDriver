@@ -2,7 +2,7 @@ import Foundation
 import OpenJoystickDriverKit
 import Testing
 
-/// `Resources/Schemas/profile.schema.json` accepts what the strict decoder accepts.
+/// `Resources/Schemas/v1beta1/profile.schema.json` accepts what the strict decoder accepts.
 struct ProfileSchemaTests {
   /// Uses every kind of source, destination, physical output, and mapping.
   static let richDocument = #"""

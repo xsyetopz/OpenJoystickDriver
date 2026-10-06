@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/endpoint.schema.json",
+	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/endpoint.schema.json",
 	"title": "OpenJoystickDriver endpoint protocol",
 	"description": "One JSON object per line on the endpoint socket, or per text message on the WebSocket. A client sends hello, waits for welcome, then sends subscribe or feed. After subscribe the service sends controllers stream lines; after feed and feeding the client sends frame lines and the service sends the host's rumble lines. An error line is the last line before the service closes the connection.",
 	"oneOf": [

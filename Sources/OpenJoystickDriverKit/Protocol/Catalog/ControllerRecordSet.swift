@@ -113,9 +113,12 @@ public struct ControllerRecordProblem: Error, Equatable, Sendable, CustomStringC
 /// A user file that fails validation is skipped and listed in ``userFiles`` with its reason. The
 /// bundled catalog must be valid: a release must not ship a broken record.
 public struct ControllerRecordSet: Sendable {
+  /// The `$schema` that OJD writes into a user record.
   public static let overrideSchemaID =
     "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/"
-    + "Resources/Schemas/controller-override.schema.json"
+    + "Resources/Schemas/v1beta1/controller-override.schema.json"
+  /// The `$schema` values OJD accepts in a user record. A version that is not here is rejected.
+  public static let knownOverrideSchemaIDs: Set<String> = [overrideSchemaID]
 
   /// The effective record of every identity.
   public let records: [ControllerIdentity: ControllerRecord]
@@ -254,8 +257,11 @@ public struct ControllerRecordSet: Sendable {
     guard let object = try? JSONSerialization.jsonObject(with: data),
       let document = object as? [String: Any]
     else { throw ControllerRecordProblem("the file is not a JSON object") }
-    guard document["$schema"] as? String == overrideSchemaID else {
-      throw ControllerRecordProblem("$schema must be \(overrideSchemaID)")
+    guard let schema = document["$schema"] as? String, knownOverrideSchemaIDs.contains(schema)
+    else {
+      throw ControllerRecordProblem(
+        "$schema must be one of \(knownOverrideSchemaIDs.sorted().joined(separator: ", "))"
+      )
     }
     switch document["operation"] as? String {
     case ControllerRecordOperation.add.rawValue:
