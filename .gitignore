@@ -4,6 +4,9 @@
 .tmp/
 .ojd-diagnostics/
 
+# <https://developer.apple.com/download/all/?q=glossaries>
+glossaries/
+
 # Internal planning and evidence (local only)
 /.claude/handoff.md
 # Regenerate with `./Scripts/ojd docs export-external-issues`.

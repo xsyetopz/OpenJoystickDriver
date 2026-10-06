@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>status.controllerConnected</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d bộ điều khiển đã kết nối</string>
+			<key>zero</key>
+			<string>%d bộ điều khiển đã kết nối</string>
+			<key>two</key>
+			<string>%d bộ điều khiển đã kết nối</string>
+			<key>few</key>
+			<string>%d bộ điều khiển đã kết nối</string>
+			<key>many</key>
+			<string>%d bộ điều khiển đã kết nối</string>
+			<key>other</key>
+			<string>%d bộ điều khiển đã kết nối</string>
+		</dict>
+	</dict>
+	<key>status.activeProfilesCount</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d cấu hình đang hoạt động</string>
+			<key>zero</key>
+			<string>%d cấu hình đang hoạt động</string>
+			<key>two</key>
+			<string>%d cấu hình đang hoạt động</string>
+			<key>few</key>
+			<string>%d cấu hình đang hoạt động</string>
+			<key>many</key>
+			<string>%d cấu hình đang hoạt động</string>
+			<key>other</key>
+			<string>%d cấu hình đang hoạt động</string>
+		</dict>
+	</dict>
+	<key>profiles.assignments</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d phép gán</string>
+			<key>zero</key>
+			<string>%d phép gán</string>
+			<key>two</key>
+			<string>%d phép gán</string>
+			<key>few</key>
+			<string>%d phép gán</string>
+			<key>many</key>
+			<string>%d phép gán</string>
+			<key>other</key>
+			<string>%d phép gán</string>
+		</dict>
+	</dict>
+	<key>debug.devices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>Không phát hiện thiết bị nào</string>
+			<key>one</key>
+			<string>Đã phát hiện %d</string>
+			<key>two</key>
+			<string>Đã phát hiện %d</string>
+			<key>few</key>
+			<string>Đã phát hiện %d</string>
+			<key>many</key>
+			<string>Đã phát hiện %d</string>
+			<key>other</key>
+			<string>Đã phát hiện %d</string>
+		</dict>
+	</dict>
+	<key>debug.outputDevices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>Không phát hiện thiết bị đầu ra bộ điều khiển nào</string>
+			<key>one</key>
+			<string>Đã phát hiện %d thiết bị đầu ra bộ điều khiển</string>
+			<key>two</key>
+			<string>Đã phát hiện %d thiết bị đầu ra bộ điều khiển</string>
+			<key>few</key>
+			<string>Đã phát hiện %d thiết bị đầu ra bộ điều khiển</string>
+			<key>many</key>
+			<string>Đã phát hiện %d thiết bị đầu ra bộ điều khiển</string>
+			<key>other</key>
+			<string>Đã phát hiện %d thiết bị đầu ra bộ điều khiển</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

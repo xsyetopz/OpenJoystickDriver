@@ -92,10 +92,22 @@ enum LocalizationCatalogAudit {
       "profiles.motion.local", "profiles.physical.motor", "profiles.stick.horizontal",
       "profiles.stick.vertical", "profiles.trackball.enabled", "profiles.turbo", "settings.status",
     ],
+    "ru-RU": [
+      "keyboard.capsLock", "keyboard.command", "keyboard.control", "keyboard.delete",
+      "keyboard.escape", "keyboard.option", "keyboard.return", "keyboard.shift", "keyboard.tab",
+      "mapping.guide",
+    ],
     "tr-TR": [
       "keyboard.control", "keyboard.escape", "keyboard.option", "keyboard.return", "keyboard.shift",
       "keyboard.tab", "profiles.physical.motor", "profiles.trackball.enabled", "profiles.turbo",
       "shortcuts.controller.model",
+    ],
+    "vi-VN": [
+      "cli.access.status.socket", "inputTest.home", "inputTest.menu", "keyboard.capsLock",
+      "keyboard.command", "keyboard.control", "keyboard.delete", "keyboard.escape",
+      "keyboard.option", "keyboard.pageDown", "keyboard.pageUp", "keyboard.return",
+      "keyboard.shift", "keyboard.tab", "mapping.guide", "profiles.trackball.enabled",
+      "profiles.turbo",
     ],
     "zh-CN": ["keyboard.option", "keyboard.shift"],
     "zh-TW": ["keyboard.escape", "keyboard.option"],
