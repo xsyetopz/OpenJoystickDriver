@@ -176,6 +176,88 @@ struct RemappingOutputPolicyTests {
   }
 
   @Test
+  func producesNoOutputCountsEveryOutputFamily() {
+    let policy = RemappingOutputPolicy(virtualGamepad: .mapped)
+    #expect(makeProfile(outputPolicy: policy).producesNoOutput)
+    #expect(!makeProfile().producesNoOutput)
+    let passthrough = RemappingOutputPolicy(virtualGamepad: .passthrough)
+    #expect(!makeProfile(outputPolicy: passthrough).producesNoOutput)
+    let keyboard = RemappingDestination.keyboard(key: .space, modifiers: [])
+    let physical = RemappingDestination.physical(.color(ControllerColor(red: 1, green: 2, blue: 3)))
+    for destination in [keyboard, physical, .gamepadButton(.south)] {
+      let binding = RemappingBinding(source: .button(.south), destination: destination)
+      #expect(!makeProfile(outputPolicy: policy, bindings: [binding]).producesNoOutput)
+      let layer = RemappingLayer(
+        name: "Layer",
+        activationMode: .hold,
+        activator: .button(.leftShoulder),
+        bindings: [binding]
+      )
+      #expect(!makeProfile(outputPolicy: policy, layers: [layer]).producesNoOutput)
+    }
+    let chord = RemappingChord(sources: [.button(.south), .button(.east)], destination: keyboard)
+    #expect(!makeProfile(outputPolicy: policy, chords: [chord]).producesNoOutput)
+    let sequence = RemappingSequence(
+      sources: [.button(.south), .button(.east)],
+      windowMs: 500,
+      destination: physical
+    )
+    #expect(!makeProfile(outputPolicy: policy, sequences: [sequence]).producesNoOutput)
+    #expect(
+      !makeProfile(
+        outputPolicy: policy,
+        bindings: [
+          RemappingBinding(
+            source: .button(.south),
+            destination: .physical(.color(ControllerColor(red: 0, green: 0, blue: 0))),
+            longHold: RemappingLongHold(durationMs: 500, destination: keyboard)
+          )
+        ]
+      ).producesNoOutput
+    )
+    #expect(
+      !RemappingProfile(
+        name: "Light color",
+        device: RemappingDeviceScope(vendorID: 1, productID: 2),
+        applicationScope: .global,
+        outputPolicy: policy,
+        physicalColor: ControllerColor(red: 1, green: 2, blue: 3),
+        bindings: []
+      ).producesNoOutput
+    )
+    #expect(
+      !RemappingProfile(
+        name: "Gyro mouse",
+        device: RemappingDeviceScope(vendorID: 1, productID: 2),
+        applicationScope: .global,
+        outputPolicy: policy,
+        gyroOutput: RemappingGyroOutput(mode: .mouse),
+        bindings: []
+      ).producesNoOutput
+    )
+    #expect(
+      !RemappingProfile(
+        name: "Stick mouse",
+        device: RemappingDeviceScope(vendorID: 1, productID: 2),
+        applicationScope: .global,
+        outputPolicy: policy,
+        stickMappings: [RemappingStickMapping(source: .left)],
+        bindings: []
+      ).producesNoOutput
+    )
+    #expect(
+      !RemappingProfile(
+        name: "Touch pointer",
+        device: RemappingDeviceScope(vendorID: 1, productID: 2),
+        applicationScope: .global,
+        outputPolicy: policy,
+        touchMappings: [RemappingTouchMapping(surface: .primary, mode: .pointer)],
+        bindings: []
+      ).producesNoOutput
+    )
+  }
+
+  @Test
   func restoringAndClearingInputPreserveOnlyTheRequiredProfileState() {
     let profile = RemappingProfile(
       id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
@@ -221,6 +303,7 @@ struct RemappingOutputPolicyTests {
 
     let cleared = profile.clearingAllInput()
     #expect(cleared.suppressesAllControllerInput)
+    #expect(!cleared.producesNoOutput)
     #expect(cleared.outputPolicy.physicalInput == .exclusive)
     #expect(cleared.id == profile.id)
     #expect(cleared.name == profile.name)

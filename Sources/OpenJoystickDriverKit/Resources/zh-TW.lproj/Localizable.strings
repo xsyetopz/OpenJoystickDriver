@@ -943,6 +943,7 @@
 "cli.help.global_options" = "每個指令也接受全域選項；「ojd --help」會列出它們。";
 "cli.error.env_timeout" = "OJD_TIMEOUT 需要大於 0 的秒數。";
 "cli.error.env_color" = "OJD_COLOR 需要 auto、always 或 never。";
+"cli.error.env_no_input" = "OJD_NO_INPUT 需要 1、true、yes、0、false 或 no。";
 "cli.virtual.feed.error.plain" = "--plain 不適用於輸出 JSON 行的「virtual feed」。請移除 --plain。";
 "cli.controller.watch.examples" = "範例：\n  # 列印 10 秒的輸入\n  ojd controller watch 045E:028E --duration 10\n  # 以 JSON 列印最先按下的控制項\n  ojd controller watch 045E:028E --first-press --json\n  # 監看所有控制器及其虛擬遊戲手把傳送的內容\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "範例：\n  # 讓兩個主馬達以 180 的強度運轉 0.45 秒\n  ojd controller rumble 045E:028E\n  # 讓兩個主馬達以最大強度運轉 2 秒\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "記錄檔案，或用 - 從 stdin 讀取記錄。";
 "cli.record.identity" = "控制器型號，格式為 VVVV:PPPP。";
 "cli.record.install.abstract" = "檢查控制器記錄，並為目前的使用者安裝。";
-"cli.record.install.discussion" = "將記錄以 VVVV-PPPP.json 寫入您的記錄目錄，並取代該型號已安裝的記錄。執行中的服務會立即套用。記錄無效時以結束碼 1 結束，且不會寫入任何內容。";
+"cli.record.install.confirm" = "要取代 %@ 嗎？";
+"cli.record.install.discussion" = "將記錄以 VVVV-PPPP.json 寫入您的記錄目錄。執行中的服務會立即套用。取代該型號已安裝的記錄時，在終端機中會要求確認；否則需要 --force。--dry-run 只檢查記錄，不會寫入任何內容。記錄無效時以結束碼 1 結束，且不會寫入任何內容。";
+"cli.record.install.dry_run" = "將會安裝 %@。";
 "cli.record.install.failed" = "無法寫入 %@：%@";
 "cli.record.install.success" = "已安裝 %@。執行中的服務現在會套用它。";
 "cli.record.invalid" = "%@ 不是有效的記錄：%@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "配對：來自 「ojd controller pair」 的工作階段 ID，或任一 Joy-Con 的 ID。";
 "cli.profile.abstract" = "建立、變更和啟用重新對應設定檔。";
 "cli.profile.activate.abstract" = "將設定檔套用到其控制器型號。";
-"cli.profile.activate.allow_empty" = "即使設定檔會阻擋所有控制器輸入，也將其啟用。";
-"cli.profile.activate.discussion" = "該設定檔會取代同一控制器型號和 App 範圍內目前使用中的設定檔。關閉虛擬遊戲控制器且沒有對應的設定檔會阻擋控制器的所有輸入；啟用這樣的設定檔需要 --allow-empty。";
+"cli.profile.activate.allow_empty" = "即使設定檔不會產生任何輸出，也將其啟用。";
+"cli.profile.activate.discussion" = "該設定檔會取代同一控制器型號和 App 範圍內目前使用中的設定檔。虛擬遊戲控制器設為 mapped 且不向遊戲控制器、鍵盤、指標或控制器傳送任何內容，也不設定燈光顏色的設定檔不會產生任何輸出；啟用這樣的設定檔需要 --allow-empty。";
 "cli.profile.activate.done" = "已啟用「%@」，用於 %@。";
-"cli.profile.activate.empty" = "此設定檔會阻擋所有控制器輸入。請加上 --allow-empty 來啟用它。";
+"cli.profile.activate.empty" = "此設定檔不會產生任何輸出。請加上 --allow-empty 來啟用它。";
 "cli.profile.active_marker" = "（使用中）";
 "cli.profile.argument" = "設定檔：其 ID，或來自 「ojd profile list」 的名稱。";
 "cli.profile.create.abstract" = "為某一控制器型號建立空設定檔。";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "必須先修復或移除損毀的設定檔，才能變更設定檔。請修復或移除後重試。";
 "error.E3023" = "無法寫入設定檔。請檢查磁碟可用空間和資料夾權限。";
 "error.E3024" = "重新對應服務遇到了無法識別的錯誤。請執行「ojd diagnose」，並連同其輸出一起回報問題。";
+"error.E3025" = "此設定檔不會產生任何輸出。請為其加入對應或燈光顏色，或使用 --allow-empty 啟用。";
 "error.withCode" = "%@ (%@)";

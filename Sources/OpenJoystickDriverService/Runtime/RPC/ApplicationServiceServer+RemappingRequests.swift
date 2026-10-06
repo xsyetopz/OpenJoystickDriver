@@ -74,9 +74,10 @@ extension ApplicationServiceServer {
   }
 
   package func activateRemappingProfile(
-    id: UUID
+    id: UUID,
+    allowEmpty: Bool
   ) async throws -> ApplicationServiceRemappingSnapshotPayload {
-    try await remappingRequests.activate(id: id).get()
+    try await remappingRequests.activate(id: id, allowEmpty: allowEmpty).get()
   }
 
   func deactivateRemappingProfile(

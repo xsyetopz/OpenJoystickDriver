@@ -943,6 +943,7 @@
 "cli.help.global_options" = "Mọi lệnh đều nhận các tùy chọn chung; “ojd --help” liệt kê chúng.";
 "cli.error.env_timeout" = "OJD_TIMEOUT cần một số giây lớn hơn 0.";
 "cli.error.env_color" = "OJD_COLOR cần là auto, always hoặc never.";
+"cli.error.env_no_input" = "OJD_NO_INPUT cần là 1, true, yes, 0, false hoặc no.";
 "cli.virtual.feed.error.plain" = "--plain không áp dụng cho “virtual feed”, lệnh in các dòng JSON. Hãy bỏ --plain.";
 "cli.controller.watch.examples" = "Ví dụ:\n  # In đầu vào trong 10 giây\n  ojd controller watch 045E:028E --duration 10\n  # In điều khiển đầu tiên được nhấn, dưới dạng JSON\n  ojd controller watch 045E:028E --first-press --json\n  # Theo dõi mọi tay cầm và những gì tay cầm ảo của chúng gửi\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "Ví dụ:\n  # Chạy cả hai động cơ chính ở mức 180 trong 0,45 giây\n  ojd controller rumble 045E:028E\n  # Chạy cả hai động cơ chính hết công suất trong 2 giây\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "Một tệp bản ghi, hoặc - để đọc bản ghi từ stdin.";
 "cli.record.identity" = "Kiểu máy bộ điều khiển, dạng VVVV:PPPP.";
 "cli.record.install.abstract" = "Kiểm tra một bản ghi bộ điều khiển và cài đặt cho người dùng của bạn.";
-"cli.record.install.discussion" = "Ghi bản ghi dưới dạng VVVV-PPPP.json trong thư mục bản ghi của bạn và thay thế bản ghi đã cài cho kiểu máy đó. Dịch vụ đang chạy áp dụng nó ngay. Thoát với mã 1 và không ghi gì khi bản ghi không hợp lệ.";
+"cli.record.install.confirm" = "Thay thế %@?";
+"cli.record.install.discussion" = "Ghi bản ghi dưới dạng VVVV-PPPP.json trong thư mục bản ghi của bạn. Dịch vụ đang chạy áp dụng nó ngay. Thay thế bản ghi đã cài cho kiểu máy đó sẽ hỏi xác nhận trên terminal; cần --force trong trường hợp khác. --dry-run kiểm tra bản ghi và không ghi gì. Thoát với mã 1 và không ghi gì khi bản ghi không hợp lệ.";
+"cli.record.install.dry_run" = "Sẽ cài đặt %@.";
 "cli.record.install.failed" = "Không thể ghi %@: %@";
 "cli.record.install.success" = "Đã cài đặt %@. Dịch vụ đang chạy áp dụng nó ngay bây giờ.";
 "cli.record.invalid" = "%@ không phải là bản ghi hợp lệ: %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "Cặp: ID phiên của nó từ “ojd controller pair”, hoặc ID của một trong hai Joy-Con.";
 "cli.profile.abstract" = "Tạo, thay đổi và kích hoạt các cấu hình ánh xạ lại.";
 "cli.profile.activate.abstract" = "Áp dụng một cấu hình cho kiểu máy bộ điều khiển của nó.";
-"cli.profile.activate.allow_empty" = "Kích hoạt cấu hình ngay cả khi nó chặn toàn bộ đầu vào của bộ điều khiển.";
-"cli.profile.activate.discussion" = "Cấu hình thay thế cấu hình đang hoạt động của cùng kiểu máy bộ điều khiển và phạm vi ứng dụng. Một cấu hình tắt tay cầm ảo và không có liên kết nào sẽ chặn mọi đầu vào từ bộ điều khiển; kích hoạt nó cần --allow-empty.";
+"cli.profile.activate.allow_empty" = "Kích hoạt cấu hình ngay cả khi nó không tạo ra đầu ra nào.";
+"cli.profile.activate.discussion" = "Cấu hình thay thế cấu hình đang hoạt động của cùng kiểu máy bộ điều khiển và phạm vi ứng dụng. Một cấu hình đặt tay cầm ảo ở mapped mà không gửi gì tới tay cầm, bàn phím, con trỏ hay bộ điều khiển và không đặt màu đèn sẽ không tạo ra đầu ra; kích hoạt nó cần --allow-empty.";
 "cli.profile.activate.done" = "Đã kích hoạt “%@” cho %@.";
-"cli.profile.activate.empty" = "Cấu hình này chặn toàn bộ đầu vào của bộ điều khiển. Thêm --allow-empty để kích hoạt.";
+"cli.profile.activate.empty" = "Cấu hình này không tạo ra đầu ra. Thêm --allow-empty để kích hoạt.";
 "cli.profile.active_marker" = "(đang hoạt động)";
 "cli.profile.argument" = "Cấu hình: ID hoặc tên của nó từ “ojd profile list”.";
 "cli.profile.create.abstract" = "Tạo một cấu hình trống cho một kiểu máy bộ điều khiển.";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "Các tệp cấu hình bị hỏng phải được sửa hoặc xóa trước khi có thể thay đổi cấu hình. Hãy sửa hoặc xóa chúng, rồi thử lại.";
 "error.E3023" = "Không thể ghi một tệp cấu hình. Hãy kiểm tra dung lượng đĩa trống và quyền của thư mục.";
 "error.E3024" = "Dịch vụ ánh xạ lại gặp một lỗi mà nó không nhận ra. Hãy chạy “ojd diagnose” và báo cáo sự cố kèm đầu ra của nó.";
+"error.E3025" = "Cấu hình không tạo ra đầu ra. Hãy thêm một liên kết hoặc màu đèn vào cấu hình, hoặc kích hoạt bằng --allow-empty.";
 "error.withCode" = "%@ (%@)";

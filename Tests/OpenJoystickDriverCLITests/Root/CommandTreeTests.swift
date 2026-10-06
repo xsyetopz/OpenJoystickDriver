@@ -100,9 +100,20 @@ struct CommandTreeTests {
 
   @Test(arguments: [
     ["OJD_TIMEOUT": "abc"], ["OJD_TIMEOUT": "0"], ["OJD_TIMEOUT": "nan"], ["OJD_COLOR": "yes"],
+    ["OJD_NO_INPUT": "2"], ["OJD_NO_INPUT": "on"],
   ])
   func anInvalidVariableIsRejected(environment: [String: String]) {
     #expect(throws: ValidationError.self) { try EnvironmentFallback(environment) }
+  }
+
+  @Test
+  func noInputAcceptsTheUsualBooleanWords() throws {
+    for value in ["1", "true", "YES"] {
+      #expect(try EnvironmentFallback(["OJD_NO_INPUT": value]).noInput, "\(value)")
+    }
+    for value in ["", "0", "False", "no"] {
+      #expect(try !EnvironmentFallback(["OJD_NO_INPUT": value]).noInput, "\(value)")
+    }
   }
 
   @Test(arguments: CLICommandTree.leafPaths)

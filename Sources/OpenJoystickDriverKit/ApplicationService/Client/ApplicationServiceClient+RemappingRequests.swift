@@ -92,11 +92,12 @@ extension ApplicationServiceClient {
   }
 
   public func activateRemappingProfile(
-    id: UUID
+    id: UUID,
+    allowEmpty: Bool
   ) async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await call(
       .activateRemappingProfile,
-      ApplicationServiceRemappingProfileIDArguments(profileID: id)
+      ApplicationServiceRemappingActivateArguments(profileID: id, allowEmpty: allowEmpty)
     )
   }
 

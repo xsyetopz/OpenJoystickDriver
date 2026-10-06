@@ -943,6 +943,7 @@
 "cli.help.global_options" = "Setiap perintah juga menerima opsi global; “ojd --help” mencantumkannya.";
 "cli.error.env_timeout" = "OJD_TIMEOUT memerlukan jumlah detik di atas 0.";
 "cli.error.env_color" = "OJD_COLOR memerlukan auto, always, atau never.";
+"cli.error.env_no_input" = "OJD_NO_INPUT memerlukan 1, true, yes, 0, false, atau no.";
 "cli.virtual.feed.error.plain" = "--plain tidak berlaku untuk “virtual feed”, yang mencetak baris JSON. Hilangkan --plain.";
 "cli.controller.watch.examples" = "Contoh:\n  # Cetak input selama 10 detik\n  ojd controller watch 045E:028E --duration 10\n  # Cetak kontrol pertama yang ditekan, sebagai JSON\n  ojd controller watch 045E:028E --first-press --json\n  # Pantau semua kontroler dan apa yang dikirim gamepad virtualnya\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "Contoh:\n  # Jalankan kedua motor utama pada 180 selama 0,45 detik\n  ojd controller rumble 045E:028E\n  # Jalankan kedua motor utama pada kekuatan penuh selama 2 detik\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "File catatan, atau - untuk membaca catatan dari stdin.";
 "cli.record.identity" = "Model pengontrol, sebagai VVVV:PPPP.";
 "cli.record.install.abstract" = "Periksa catatan pengontrol dan instal untuk pengguna Anda.";
-"cli.record.install.discussion" = "Menulis catatan sebagai VVVV-PPPP.json di direktori catatan Anda dan mengganti catatan yang sudah terinstal untuk model itu. Layanan yang berjalan langsung menerapkannya. Keluar dengan kode 1 dan tidak menulis apa pun jika catatan tidak valid.";
+"cli.record.install.confirm" = "Ganti %@?";
+"cli.record.install.discussion" = "Menulis catatan sebagai VVVV-PPPP.json di direktori catatan Anda. Layanan yang berjalan langsung menerapkannya. Mengganti catatan yang sudah terinstal untuk model itu meminta konfirmasi di terminal; memerlukan --force jika tidak. --dry-run memeriksa catatan dan tidak menulis apa pun. Keluar dengan kode 1 dan tidak menulis apa pun jika catatan tidak valid.";
+"cli.record.install.dry_run" = "Akan menginstal %@.";
 "cli.record.install.failed" = "Tidak dapat menulis %@: %@";
 "cli.record.install.success" = "%@ terinstal. Layanan yang berjalan menerapkannya sekarang.";
 "cli.record.invalid" = "%@ bukan catatan yang valid: %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "Pasangan: ID sesinya dari “ojd controller pair”, atau ID salah satu Joy-Con.";
 "cli.profile.abstract" = "Buat, ubah, dan aktifkan profil pemetaan ulang.";
 "cli.profile.activate.abstract" = "Terapkan profil ke model pengontrolnya.";
-"cli.profile.activate.allow_empty" = "Aktifkan profil meskipun memblokir semua input pengontrol.";
-"cli.profile.activate.discussion" = "Profil menggantikan profil aktif dengan model pengontrol dan cakupan app yang sama. Profil yang mematikan gamepad virtual dan tidak memiliki penetapan memblokir semua input dari pengontrol; mengaktifkannya memerlukan --allow-empty.";
+"cli.profile.activate.allow_empty" = "Aktifkan profil meskipun tidak menghasilkan output.";
+"cli.profile.activate.discussion" = "Profil menggantikan profil aktif dengan model pengontrol dan cakupan app yang sama. Profil dengan gamepad virtual diatur ke mapped yang tidak mengirim apa pun ke gamepad, keyboard, penunjuk, atau pengontrol dan tidak menetapkan warna lampu tidak menghasilkan output; mengaktifkannya memerlukan --allow-empty.";
 "cli.profile.activate.done" = "“%@” diaktifkan untuk %@.";
-"cli.profile.activate.empty" = "Profil ini memblokir semua input pengontrol. Tambahkan --allow-empty untuk mengaktifkannya.";
+"cli.profile.activate.empty" = "Profil ini tidak menghasilkan output. Tambahkan --allow-empty untuk mengaktifkannya.";
 "cli.profile.active_marker" = "(aktif)";
 "cli.profile.argument" = "Profil: ID atau namanya dari “ojd profile list”.";
 "cli.profile.create.abstract" = "Buat profil kosong untuk satu model pengontrol.";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "File profil yang rusak harus diperbaiki atau dihapus sebelum profil dapat berubah. Perbaiki atau hapus, lalu coba lagi.";
 "error.E3023" = "File profil tidak dapat ditulis. Periksa ruang disk yang tersisa dan izin folder.";
 "error.E3024" = "Layanan pemetaan ulang mengalami kesalahan yang tidak dikenalinya. Jalankan “ojd diagnose” dan laporkan masalah beserta outputnya.";
+"error.E3025" = "Profil tidak menghasilkan output. Tambahkan penetapan atau warna lampu ke dalamnya, atau aktifkan dengan --allow-empty.";
 "error.withCode" = "%@ (%@)";

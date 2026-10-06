@@ -61,6 +61,7 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
   case profileRecoveryRequired = "E3022"
   case unwritableLibrary = "E3023"
   case remappingUnexpected = "E3024"
+  case profileProducesNoOutput = "E3025"
 
   /// The part of the product that raises a code; the first digit of the number.
   public enum Domain: String, Sendable {
@@ -86,7 +87,7 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
       .responseEncodingFailed, .responseTooLarge, .routerEngineUnavailable,
       .routerLibraryAndEngineUnavailable, .routerLibraryUnavailable, .routerShutDown,
       .transactionUnreconciled, .unreadableLibrary, .profileRecoveryRequired, .unwritableLibrary,
-      .remappingUnexpected:
+      .remappingUnexpected, .profileProducesNoOutput:
       .remapping
     }
   }

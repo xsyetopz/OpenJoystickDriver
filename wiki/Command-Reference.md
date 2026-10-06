@@ -117,7 +117,7 @@ ojd profile set PROFILE KEY VALUE
 - `profile duplicate`: Copy a profile under a new name. The copy is inactive.
 - `profile rename`: Give a profile a new name of 1 to 80 characters.
 - `profile delete`: Delete a profile. An active profile stops applying. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing.
-- `profile activate`: Apply a profile. It replaces the active profile of the same controller model and app scope. A profile with the virtual gamepad set to `mapped` or `disabled` and no bindings blocks all input from the controller. To activate such a profile, add `--allow-empty`.
+- `profile activate`: Apply a profile. It replaces the active profile of the same controller model and app scope. A profile with the virtual gamepad set to `mapped` that sends nothing to the gamepad, keyboard, pointer, or controller and sets no light color produces no output. To activate such a profile, add `--allow-empty`.
 - `profile deactivate`: Stop applying a profile. The controller then sends its own input.
 - `profile edit`: Open the profile file in `$VISUAL`, `$EDITOR`, or `vi`, then check and save it. Use it to change chords, sequences, layers, stick and trigger tuning, and the app scope. It needs a terminal. Without one, export the profile, change the file, and import it. For the file format, see [Profile file reference](Profile-File-Reference.md).
 - `profile recover`: Repair the problems that `profile list` reports. It acts on each issue: it removes a damaged profile file and resets a damaged active profile list. The service first backs up each file beside the original, under a name that contains `.backup-`. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing. With `--plain`, it prints one line for each issue, with its ID and kind.
@@ -196,7 +196,7 @@ ojd record draft CONTROLLER [--duration SECONDS]
 ojd record list [--bundled]
 ojd record show VVVV:PPPP
 ojd record validate FILE|-
-ojd record install FILE|-
+ojd record install FILE|- [--force] [--dry-run]
 ojd record remove VVVV:PPPP [--force] [--dry-run]
 ```
 
@@ -206,10 +206,10 @@ ojd record remove VVVV:PPPP [--force] [--dry-run]
 - `record list`: List every controller record, with its model, protocol family, layer (`bundled` or `user`), and file. It names each of your files that OpenJoystickDriver skipped, and why, on stderr. `--bundled` lists the bundled records alone.
 - `record show`: Show one model's effective record and the layer of each top-level field. It exits with code 1 when no record exists for the model.
 - `record validate`: Check a record without installing it. It shows the operation (`add` or `patch`), the model, the family, the file name, and whether the USB driver extension can claim the controller. It exits with code 1 when the record is not valid.
-- `record install`: Check a record and write it to your record folder as `vvvv-pppp.json`. It replaces the record already installed for that model. It exits with code 1 and writes nothing when the record is not valid.
+- `record install`: Check a record and write it to your record folder as `vvvv-pppp.json`. To replace the record already installed for that model, it asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) checks the record and prints where it would go, and writes nothing. It exits with code 1 and writes nothing when the record is not valid.
 - `record remove`: Delete your record for a model. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing. It exits with code 1 when you have no record for the model.
 
-With `--json`, `record draft` prints `identity`, `name`, `operation`, `family`, `report` (`id` and `length`, absent when no report was chosen), `capturedReports`, `changedBytes`, each with `byte`, `minimum`, and `maximum`, and `record`. With `--plain`, it prints one line for each changed byte: its offset, lowest value, and highest value. `record list` prints `records`, each with `identity`, `vendorID`, `productID`, `family`, `layer`, and `file`, and `skipped`, each with `file` and `problem`. `skipped` is absent with `--bundled`. `record show` prints `identity`, `family`, `layer`, `file`, `transport` (`hid` or `usb`), `usbExtension` (`claims` or `does-not-claim`, for `usb` only), `fields`, and `record`. `record validate` prints `valid`, and `problem` or the record's `operation`, `identity`, `family`, `fileName`, `transport`, and `usbExtension`. `record install` prints `installed`, `replaced`, and `record`, and `record remove` prints `removed` and `dryRun`.
+With `--json`, `record draft` prints `identity`, `name`, `operation`, `family`, `report` (`id` and `length`, absent when no report was chosen), `capturedReports`, `changedBytes`, each with `byte`, `minimum`, and `maximum`, and `record`. With `--plain`, it prints one line for each changed byte: its offset, lowest value, and highest value. `record list` prints `records`, each with `identity`, `vendorID`, `productID`, `family`, `layer`, and `file`, and `skipped`, each with `file` and `problem`. `skipped` is absent with `--bundled`. `record show` prints `identity`, `family`, `layer`, `file`, `transport` (`hid` or `usb`), `usbExtension` (`claims` or `does-not-claim`, for `usb` only), `fields`, and `record`. `record validate` prints `valid`, and `problem` or the record's `operation`, `identity`, `family`, `fileName`, `transport`, and `usbExtension`. `record install` prints `installed`, `replaced`, `dryRun`, and `record`, and `record remove` prints `removed` and `dryRun`.
 
 ## service
 

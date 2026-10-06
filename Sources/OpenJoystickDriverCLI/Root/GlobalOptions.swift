@@ -103,7 +103,11 @@ struct EnvironmentFallback {
   init() {}
 
   init(_ environment: [String: String]) throws {
-    noInput = !["", "0"].contains(environment["OJD_NO_INPUT"] ?? "")
+    switch (environment["OJD_NO_INPUT"] ?? "").lowercased() {
+    case "", "0", "false", "no": noInput = false
+    case "1", "true", "yes": noInput = true
+    default: throw ValidationError(CLILocalized.text("cli.error.env_no_input"))
+    }
     if let value = environment["OJD_TIMEOUT"], !value.isEmpty {
       guard let seconds = Double(value), GlobalOptions.isTimeout(seconds) else {
         throw ValidationError(CLILocalized.text("cli.error.env_timeout"))

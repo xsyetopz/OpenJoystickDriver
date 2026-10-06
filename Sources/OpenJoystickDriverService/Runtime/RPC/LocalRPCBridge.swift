@@ -258,8 +258,10 @@ extension ApplicationServiceServer {
       let value = try decodeRemapping(ApplicationServiceRemappingProfileArguments.self)
       return try sendRemapping(try await importRemappingProfile(value.profile))
     case .activateRemappingProfile:
-      let value = try decodeRemapping(ApplicationServiceRemappingProfileIDArguments.self)
-      return try sendRemapping(try await activateRemappingProfile(id: value.profileID))
+      let value = try decodeRemapping(ApplicationServiceRemappingActivateArguments.self)
+      return try sendRemapping(
+        try await activateRemappingProfile(id: value.profileID, allowEmpty: value.allowEmpty)
+      )
     case .deactivateRemappingProfile:
       let value = try decodeRemapping(ApplicationServiceRemappingModelArguments.self)
       return try sendRemapping(

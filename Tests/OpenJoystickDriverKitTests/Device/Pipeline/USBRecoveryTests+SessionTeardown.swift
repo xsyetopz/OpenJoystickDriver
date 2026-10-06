@@ -199,6 +199,40 @@ extension USBPipelineRecoveryTests {
   }
 
   @Test
+  func controllerRecordReloadReadmitsOnlyTheChangedModelAndKeepsItsSuspension() async throws {
+    let other = USBTransportDevice(
+      route: .ioUSBHost,
+      serviceID: 2,
+      vendorID: 0x3537,
+      productID: 0x1022,
+      locationID: 8
+    )
+    let sessions = (0..<3).map { _ in RecoveryUSBSession(readError: .timeout) }
+    let provider = RecoveryUSBProvider(sessions: sessions, devices: [device, other])
+    let manager = makeManager(using: provider)
+    await manager.start()
+    #expect(await waitUntil(timeout: .seconds(5)) { await provider.openCount == 2 })
+    let suspended = await manager.suspendController(
+      vendorID: identifier.controllerIdentity.vendorID,
+      productID: identifier.controllerIdentity.productID,
+      runtimeIdentifier: identifier.runtimeIdentifier
+    )
+    #expect(suspended.state == .suspended)
+    let opened = await provider.openedDevices
+    let changedSession = sessions[try #require(opened.firstIndex(of: device))]
+    let otherSession = sessions[try #require(opened.firstIndex(of: other))]
+
+    await manager.reloadControllerRecords(changing: [identifier.controllerIdentity])
+    #expect(await waitUntil(timeout: .seconds(5)) { await provider.openCount == 3 })
+    #expect(await changedSession.closeCount == 1)
+    #expect(await otherSession.closeCount == 0)
+    #expect(await provider.openedDevices.last == device)
+    let pipeline = try #require(await manager.pipelines[identifier])
+    #expect(await pipeline.controllerSessionState() == .suspended)
+    await manager.stop()
+  }
+
+  @Test
   func controllerRecordReloadKeepsControllersWhoseRecordDidNotChange() async {
     let first = RecoveryUSBSession(readError: .timeout)
     let second = RecoveryUSBSession(readError: .timeout)

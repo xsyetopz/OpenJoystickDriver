@@ -86,7 +86,7 @@
     }
 
     func requestActivation() {
-      if profile.suppressesAllControllerInput {
+      if profile.producesNoOutput {
         confirmation = .activateEmpty
       } else {
         activateProfile()

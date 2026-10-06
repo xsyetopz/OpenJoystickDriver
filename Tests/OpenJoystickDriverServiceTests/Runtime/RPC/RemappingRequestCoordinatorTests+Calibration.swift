@@ -32,7 +32,7 @@ extension RemappingRequestCoordinatorTests {
 
     let original = profile(name: "Calibration")
     _ = try await harness.coordinator.create(original).get()
-    _ = try await harness.coordinator.activate(id: original.id).get()
+    _ = try await harness.coordinator.activate(id: original.id, allowEmpty: false).get()
     try await harness.routerHarness.router.dispatchCausally(.activation, from: device)
     let status = try await harness.coordinator.motionCalibration(
       .init(runtimeIdentifier: device.runtimeIdentifier)

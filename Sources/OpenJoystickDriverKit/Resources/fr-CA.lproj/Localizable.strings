@@ -943,6 +943,7 @@
 "cli.help.global_options" = "Chaque commande accepte aussi les options globales ; « ojd --help » les liste.";
 "cli.error.env_timeout" = "OJD_TIMEOUT attend un nombre de secondes supérieur à 0.";
 "cli.error.env_color" = "OJD_COLOR attend auto, always ou never.";
+"cli.error.env_no_input" = "OJD_NO_INPUT attend 1, true, yes, 0, false ou no.";
 "cli.virtual.feed.error.plain" = "--plain ne s’applique pas à « virtual feed », qui affiche des lignes JSON. Retirez --plain.";
 "cli.controller.watch.examples" = "Exemples :\n  # Afficher l’entrée pendant 10 secondes\n  ojd controller watch 045E:028E --duration 10\n  # Afficher la première commande actionnée, en JSON\n  ojd controller watch 045E:028E --first-press --json\n  # Surveiller toutes les manettes et ce qu’envoie leur manette virtuelle\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "Exemples :\n  # Faire tourner les deux moteurs principaux à 180 pendant 0,45 seconde\n  ojd controller rumble 045E:028E\n  # Faire tourner les deux moteurs principaux à pleine puissance pendant 2 secondes\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "Un fichier de fiche, ou - pour lire la fiche depuis l’entrée standard.";
 "cli.record.identity" = "Le modèle de manette, sous la forme VVVV:PPPP.";
 "cli.record.install.abstract" = "Vérifier une fiche de manette et l’installer pour votre utilisateur.";
-"cli.record.install.discussion" = "Écrit la fiche sous le nom VVVV-PPPP.json dans votre dossier de fiches et remplace la fiche déjà installée pour ce modèle. Le service en cours d’exécution l’applique immédiatement. Se termine avec le code 1 et n’écrit rien lorsque la fiche est invalide.";
+"cli.record.install.confirm" = "Remplacer %@ ?";
+"cli.record.install.discussion" = "Écrit la fiche sous le nom VVVV-PPPP.json dans votre dossier de fiches. Le service en cours d’exécution l’applique immédiatement. Remplacer la fiche déjà installée pour ce modèle demande confirmation dans un terminal ; exige --force sinon. --dry-run vérifie la fiche et n’écrit rien. Se termine avec le code 1 et n’écrit rien lorsque la fiche est invalide.";
+"cli.record.install.dry_run" = "Installerait %@.";
 "cli.record.install.failed" = "Impossible d’écrire %@ : %@";
 "cli.record.install.success" = "Installation de %@ terminée. Le service en cours d’exécution l’applique maintenant.";
 "cli.record.invalid" = "%@ n’est pas une fiche valide : %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "La paire : son identifiant de session issu de « ojd controller pair », ou l’identifiant de l’un des Joy-Con.";
 "cli.profile.abstract" = "Créer, modifier et activer des profils de remappage.";
 "cli.profile.activate.abstract" = "Appliquer un profil au modèle de sa manette.";
-"cli.profile.activate.allow_empty" = "Activer le profil même s’il bloque toute l’entrée de la manette.";
-"cli.profile.activate.discussion" = "Le profil remplace le profil actif du même modèle de manette et de la même portée d’app. Un profil qui désactive la manette virtuelle et n’a aucune affectation bloque toute l’entrée de la manette; l’activer exige --allow-empty.";
+"cli.profile.activate.allow_empty" = "Activer le profil même s’il ne produit aucune sortie.";
+"cli.profile.activate.discussion" = "Le profil remplace le profil actif du même modèle de manette et de la même portée d’app. Un profil dont la manette virtuelle est réglée sur mapped, qui n’envoie rien à celle-ci, au clavier, au pointeur ni à la manette et ne définit aucune couleur de voyant, ne produit aucune sortie; l’activer exige --allow-empty.";
 "cli.profile.activate.done" = "Profil « %@ » activé pour %@.";
-"cli.profile.activate.empty" = "Ce profil bloque toute l’entrée de la manette. Ajoutez --allow-empty pour l’activer.";
+"cli.profile.activate.empty" = "Ce profil ne produit aucune sortie. Ajoutez --allow-empty pour l’activer.";
 "cli.profile.active_marker" = "(actif)";
 "cli.profile.argument" = "Le profil : son identifiant ou son nom issu de « ojd profile list ».";
 "cli.profile.create.abstract" = "Créer un profil vide pour un modèle de manette.";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "Les fichiers de profil corrompus doivent être réparés ou supprimés avant de pouvoir modifier les profils. Réparez-les ou supprimez-les et réessayez.";
 "error.E3023" = "Un fichier de profil n’a pas pu être écrit. Vérifiez l’espace disque libre et les autorisations du dossier.";
 "error.E3024" = "Le service de remappage a rencontré une erreur qu’il ne reconnaît pas. Exécutez « ojd diagnose » et signalez le problème avec sa sortie.";
+"error.E3025" = "Le profil ne produit aucune sortie. Ajoutez-lui une affectation ou une couleur de voyant, ou activez-le avec --allow-empty.";
 "error.withCode" = "%@ (%@)";

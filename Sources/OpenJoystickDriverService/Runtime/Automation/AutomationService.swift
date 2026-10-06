@@ -8,7 +8,10 @@ package protocol AutomationService: Sendable {
   /// The controllers that the service drives now.
   func connectedDevices() async -> [ApplicationServiceDeviceDescription]
   func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload
-  func activateRemappingProfile(id: UUID) async throws -> ApplicationServiceRemappingSnapshotPayload
+  func activateRemappingProfile(
+    id: UUID,
+    allowEmpty: Bool
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload
   func deactivateRemappingProfile(
     id: UUID
   ) async throws
@@ -134,8 +137,10 @@ extension AutomationService {
   }
 
   /// Activates the profile with `id` and returns it as the service now reports it.
+  ///
+  /// Shortcuts cannot confirm, so a profile that produces no output is refused.
   package func activateProfile(id: UUID) async throws -> AutomationProfile {
-    try Self.profile(id: id, in: try await activateRemappingProfile(id: id))
+    try Self.profile(id: id, in: try await activateRemappingProfile(id: id, allowEmpty: false))
   }
 
   /// Deactivates the profile with `id` and returns it as the service now reports it.

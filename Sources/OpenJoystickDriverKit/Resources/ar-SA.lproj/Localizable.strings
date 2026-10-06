@@ -943,6 +943,7 @@
 "cli.help.global_options" = "كل أمر يقبل الخيارات العامة أيضًا؛ يعرضها «ojd --help».";
 "cli.error.env_timeout" = "يحتاج OJD_TIMEOUT إلى عدد ثوانٍ أكبر من 0.";
 "cli.error.env_color" = "يحتاج OJD_COLOR إلى auto أو always أو never.";
+"cli.error.env_no_input" = "يحتاج OJD_NO_INPUT إلى 1 أو true أو yes أو 0 أو false أو no.";
 "cli.virtual.feed.error.plain" = "لا ينطبق --plain على «virtual feed» الذي يطبع أسطر JSON. احذف --plain.";
 "cli.controller.watch.examples" = "أمثلة:\n  # طباعة المدخلات لمدة 10 ثوانٍ\n  ojd controller watch 045E:028E --duration 10\n  # طباعة أول عنصر تحكم يُضغط عليه بصيغة JSON\n  ojd controller watch 045E:028E --first-press --json\n  # مراقبة كل وحدات التحكم وما ترسله لوحة الألعاب الافتراضية الخاصة بها\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "أمثلة:\n  # تشغيل المحركين الرئيسيين بقوة 180 لمدة 0.45 ثانية\n  ojd controller rumble 045E:028E\n  # تشغيل المحركين الرئيسيين بكامل القوة لمدة ثانيتين\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "ملف سجل، أو - لقراءة السجل من stdin.";
 "cli.record.identity" = "طراز وحدة التحكم، بصيغة VVVV:PPPP.";
 "cli.record.install.abstract" = "افحص سجل وحدة تحكم وثبّته لمستخدمك.";
-"cli.record.install.discussion" = "يكتب السجل باسم VVVV-PPPP.json في مجلد سجلاتك ويستبدل السجل المثبّت سابقًا لذلك الطراز. تطبّقه الخدمة العاملة فورًا. ينتهي بالرمز 1 ولا يكتب شيئًا عندما يكون السجل غير صالح.";
+"cli.record.install.confirm" = "هل تريد استبدال %@؟";
+"cli.record.install.discussion" = "يكتب السجل باسم VVVV-PPPP.json في مجلد سجلاتك، وتطبّقه الخدمة العاملة فورًا. استبدال السجل المثبّت سابقًا لذلك الطراز يطلب تأكيدًا في الطرفية؛ وإلا فيلزم استخدام --force. يفحص --dry-run السجل ولا يكتب شيئًا. ينتهي بالرمز 1 ولا يكتب شيئًا عندما يكون السجل غير صالح.";
+"cli.record.install.dry_run" = "سيتم تثبيت %@.";
 "cli.record.install.failed" = "تعذّرت كتابة %@: %@";
 "cli.record.install.success" = "تم تثبيت %@. تطبّقه الخدمة العاملة الآن.";
 "cli.record.invalid" = "%@ ليس سجلًا صالحًا: %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "الزوج: معرّف جلسته من «ojd controller pair»، أو معرّف أي من وحدتي Joy-Con.";
 "cli.profile.abstract" = "أنشئ ملفات تعريف إعادة التعيين وغيّرها وفعّلها.";
 "cli.profile.activate.abstract" = "طبّق ملف تعريف على طراز وحدة التحكم الخاص به.";
-"cli.profile.activate.allow_empty" = "فعّل ملف التعريف حتى لو كان يحجب كل إدخال وحدة التحكم.";
-"cli.profile.activate.discussion" = "يحل ملف التعريف محل ملف التعريف النشط لطراز وحدة التحكم ونطاق التطبيق نفسيهما. ملف التعريف الذي يوقف وحدة التحكم الافتراضية ولا تعيينات فيه يحجب كل إدخال وحدة التحكم؛ وتفعيله يحتاج إلى --allow-empty.";
+"cli.profile.activate.allow_empty" = "فعّل ملف التعريف حتى لو لم يُنتج أي مخرجات.";
+"cli.profile.activate.discussion" = "يحل ملف التعريف محل ملف التعريف النشط لطراز وحدة التحكم ونطاق التطبيق نفسيهما. ملف التعريف الذي تكون وحدة التحكم الافتراضية فيه على «mapped»، ولا يرسل شيئًا إلى وحدة التحكم الافتراضية أو لوحة المفاتيح أو المؤشر أو وحدة التحكم، ولا يضبط لون إضاءة، لا ينتج أي مخرجات؛ وتفعيله يحتاج إلى --allow-empty.";
 "cli.profile.activate.done" = "تم تفعيل «%@» لـ %@.";
-"cli.profile.activate.empty" = "يحجب ملف التعريف هذا كل إدخال وحدة التحكم. أضف --allow-empty لتفعيله.";
+"cli.profile.activate.empty" = "لا ينتج ملف التعريف هذا أي مخرجات. أضف --allow-empty لتفعيله.";
 "cli.profile.active_marker" = "(نشط)";
 "cli.profile.argument" = "ملف التعريف: معرّفه أو اسمه من «ojd profile list».";
 "cli.profile.create.abstract" = "أنشئ ملف تعريف فارغًا لطراز وحدة تحكم واحد.";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "يجب إصلاح ملفات التعريف التالفة أو إزالتها قبل تغيير ملفات التعريف. أصلحها أو أزلها ثم حاول مرة أخرى.";
 "error.E3023" = "تعذّرت كتابة ملف تعريف. افحص مساحة القرص الحرة وأذونات المجلد.";
 "error.E3024" = "واجهت خدمة إعادة التعيين خطأً لا تتعرّف عليه. شغّل «ojd diagnose» وأبلغ عن المشكلة مع مخرجاتها.";
+"error.E3025" = "لا ينتج ملف التعريف أي مخرجات. أضف إليه تعيينًا أو لون إضاءة، أو فعّله باستخدام --allow-empty.";
 "error.withCode" = "%@ (%@)";

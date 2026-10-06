@@ -65,18 +65,14 @@ extension RemappingProfile {
     {
       return false
     }
-    return !Self.containsVirtualGamepadOutput(
-      bindings: bindings,
-      chords: chords,
-      sequences: sequences
-    )
-      && !layers.contains {
-        Self.containsVirtualGamepadOutput(
-          bindings: $0.bindings,
-          chords: $0.chords,
-          sequences: $0.sequences
-        )
-      }
+    return !containsDestination(where: \.isVirtualGamepad)
+  }
+
+  /// Whether the profile emits nothing: no virtual gamepad, system-input, or physical output,
+  /// and no light color. Activating such a profile leaves the controller inert.
+  public var producesNoOutput: Bool {
+    suppressesAllControllerInput && physicalColor == nil && !requiresSystemInputAccess
+      && !containsDestination { _ in true }
   }
 
   /// Restores unmodified virtual controller input without changing profile content.
@@ -118,36 +114,33 @@ extension RemappingProfile {
       return true
     }
     if outputPolicy.virtualGamepad == .disabled || gyroOutput.mode == .mouse { return true }
-    if Self.containsSystemInput(bindings: bindings, chords: chords, sequences: sequences) {
-      return true
-    }
-    return layers.contains {
-      Self.containsSystemInput(bindings: $0.bindings, chords: $0.chords, sequences: $0.sequences)
-    }
+    return containsDestination(where: \.isSystemInput)
   }
 
-  private static func containsSystemInput(
-    bindings: [RemappingBinding],
-    chords: [RemappingChord],
-    sequences: [RemappingSequence]
-  ) -> Bool {
-    bindings.flatMap(\.expandedActions).contains {
-      $0.destination.isSystemInput || $0.longHold?.destination.isSystemInput == true
-        || $0.doubleTap?.destination.isSystemInput == true
-    } || chords.contains { $0.destination.isSystemInput }
-      || sequences.contains { $0.destination.isSystemInput }
+  /// Whether a binding, chord, or sequence, in any layer or activation, targets a match.
+  private func containsDestination(where matches: (RemappingDestination) -> Bool) -> Bool {
+    Self.containsDestination(bindings: bindings, chords: chords, sequences: sequences, matches)
+      || layers.contains {
+        Self.containsDestination(
+          bindings: $0.bindings,
+          chords: $0.chords,
+          sequences: $0.sequences,
+          matches
+        )
+      }
   }
 
-  private static func containsVirtualGamepadOutput(
+  private static func containsDestination(
     bindings: [RemappingBinding],
     chords: [RemappingChord],
-    sequences: [RemappingSequence]
+    sequences: [RemappingSequence],
+    _ matches: (RemappingDestination) -> Bool
   ) -> Bool {
     bindings.flatMap(\.expandedActions).contains { binding in
-      binding.destination.isVirtualGamepad || binding.longHold?.destination.isVirtualGamepad == true
-        || binding.doubleTap?.destination.isVirtualGamepad == true
-    } || chords.contains { $0.destination.isVirtualGamepad }
-      || sequences.contains { $0.destination.isVirtualGamepad }
+      matches(binding.destination) || binding.longHold.map { matches($0.destination) } == true
+        || binding.doubleTap.map { matches($0.destination) } == true
+    } || chords.contains { matches($0.destination) }
+      || sequences.contains { matches($0.destination) }
   }
 
   private func replacingInputConfiguration(

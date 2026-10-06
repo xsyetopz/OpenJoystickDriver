@@ -56,6 +56,7 @@ extension RemappingRequestCoordinator {
     case .profileAlreadyExists: code = .profileAlreadyExists
     case .profileNotFound: code = .profileNotFound
     case .pairProfileRequiresExplicitSession: code = .invalidArguments
+    case .profileProducesNoOutput: code = .profileProducesNoOutput
     case .profileUpdateConflict: code = .profileUpdateConflict
     case .unreadableLibrary: code = .unreadableLibrary
     case .unwritableLibrary: code = .unwritableLibrary

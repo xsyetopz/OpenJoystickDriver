@@ -188,6 +188,35 @@ struct ControllerRecordSetTests {
   }
 
   @Test
+  func loadIgnoresFilesThatAreNotJSON() throws {
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "ojd-records-\(UUID().uuidString)",
+      isDirectory: true
+    )
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    try Data("notes".utf8).write(to: directory.appendingPathComponent("README.txt"))
+    try Data("{".utf8).write(to: directory.appendingPathComponent("1234-abcd.json.bak"))
+
+    #expect(ControllerRecordSet.load(userDirectory: directory).userFiles.isEmpty)
+  }
+
+  @Test
+  func anUnreadableDirectoryIsReportedAndKeepsTheBundledRecords() throws {
+    // A regular file stands in for a directory that cannot be listed.
+    let path = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "ojd-records-\(UUID().uuidString)"
+    )
+    try Data().write(to: path)
+    defer { try? FileManager.default.removeItem(at: path) }
+
+    let set = ControllerRecordSet.load(userDirectory: path)
+    #expect(set.problems.map(\.url) == [path])
+    #expect(set.problems.first?.problem?.hasPrefix("cannot read the directory: ") == true)
+    #expect(set.records.count == ControllerRecordSet.bundled.records.count)
+  }
+
+  @Test
   func activatingTheSameRecordsChangesNothing() {
     #expect(ControllerRecordSet.bundled.activate().isEmpty)
   }

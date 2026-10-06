@@ -59,11 +59,11 @@ These options work on every command, before or after the command name. `ojd --js
 
 These variables stand in for a global option that the command line leaves out. A flag beats its variable, and an empty variable counts as unset.
 
-- `OJD_NO_INPUT`: Any value other than `0` acts as `--no-input`.
+- `OJD_NO_INPUT`: `1`, `true`, or `yes` acts as `--no-input`, and `0`, `false`, or `no` does not, in any letter case.
 - `OJD_TIMEOUT`: Seconds, as for `--timeout`.
 - `OJD_COLOR`: `auto` follows the rules under [Output](#output), `always` uses color even off a terminal or with `NO_COLOR` set, and `never` acts as `--no-color`.
 
-An invalid `OJD_TIMEOUT` or `OJD_COLOR` value is a usage error and exits with code 64.
+Any other `OJD_NO_INPUT` value, or an invalid `OJD_TIMEOUT` or `OJD_COLOR` value, is a usage error and exits with code 64.
 
 For contributors: an `ojd` built from the repository hands each command to the installed app's `ojd`. Set `OJD_RUN_REPOSITORY_CLI=1` to run the repository build itself instead.
 

@@ -943,6 +943,7 @@
 "cli.help.global_options" = "Ogni comando accetta anche le opzioni globali; «ojd --help» le elenca.";
 "cli.error.env_timeout" = "OJD_TIMEOUT richiede un numero di secondi maggiore di 0.";
 "cli.error.env_color" = "OJD_COLOR richiede auto, always o never.";
+"cli.error.env_no_input" = "OJD_NO_INPUT richiede 1, true, yes, 0, false o no.";
 "cli.virtual.feed.error.plain" = "--plain non si applica a «virtual feed», che stampa righe JSON. Ometti --plain.";
 "cli.controller.watch.examples" = "Esempi:\n  # Mostra l’input per 10 secondi\n  ojd controller watch 045E:028E --duration 10\n  # Mostra il primo controllo premuto, come JSON\n  ojd controller watch 045E:028E --first-press --json\n  # Osserva ogni controller e ciò che invia il suo gamepad virtuale\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "Esempi:\n  # Aziona entrambi i motori principali a 180 per 0,45 secondi\n  ojd controller rumble 045E:028E\n  # Aziona entrambi i motori principali a piena potenza per 2 secondi\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "Un file di record, oppure - per leggere il record da stdin.";
 "cli.record.identity" = "Il modello di controller, come VVVV:PPPP.";
 "cli.record.install.abstract" = "Controlla un record del controller e lo installa per il tuo utente.";
-"cli.record.install.discussion" = "Scrive il record come VVVV-PPPP.json nella tua cartella dei record e sostituisce il record già installato per quel modello. Il servizio in esecuzione lo applica subito. Termina con 1 e non scrive nulla se il record non è valido.";
+"cli.record.install.confirm" = "Sostituire %@?";
+"cli.record.install.discussion" = "Scrive il record come VVVV-PPPP.json nella tua cartella dei record. Il servizio in esecuzione lo applica subito. Sostituire il record già installato per quel modello chiede conferma in un terminale; altrimenti serve --force. --dry-run controlla il record e non scrive nulla. Termina con 1 e non scrive nulla se il record non è valido.";
+"cli.record.install.dry_run" = "Installerebbe %@.";
 "cli.record.install.failed" = "Impossibile scrivere %@: %@";
 "cli.record.install.success" = "Installato: %@. Il servizio in esecuzione lo applica ora.";
 "cli.record.invalid" = "%@ non è un record valido: %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "La coppia: il suo ID di sessione da «ojd controller pair», oppure l’ID di uno dei due Joy-Con.";
 "cli.profile.abstract" = "Crea, modifica e attiva i profili di rimappatura.";
 "cli.profile.activate.abstract" = "Applica un profilo al suo modello di controller.";
-"cli.profile.activate.allow_empty" = "Attiva il profilo anche se blocca tutto l’input del controller.";
-"cli.profile.activate.discussion" = "Il profilo sostituisce il profilo attivo dello stesso modello di controller e ambito app. Un profilo che disattiva il gamepad virtuale e non ha assegnazioni blocca tutto l’input del controller; per attivarlo serve --allow-empty.";
+"cli.profile.activate.allow_empty" = "Attiva il profilo anche se non produce alcun output.";
+"cli.profile.activate.discussion" = "Il profilo sostituisce il profilo attivo dello stesso modello di controller e ambito app. Un profilo con il gamepad virtuale impostato su mapped che non invia nulla al gamepad, alla tastiera, al puntatore o al controller, e non imposta alcun colore della luce, non produce alcun output; per attivarlo serve --allow-empty.";
 "cli.profile.activate.done" = "Attivato «%@» per %@.";
-"cli.profile.activate.empty" = "Questo profilo blocca tutto l’input del controller. Aggiungi --allow-empty per attivarlo.";
+"cli.profile.activate.empty" = "Questo profilo non produce alcun output. Aggiungi --allow-empty per attivarlo.";
 "cli.profile.active_marker" = "(attivo)";
 "cli.profile.argument" = "Il profilo: il suo ID o il suo nome da «ojd profile list».";
 "cli.profile.create.abstract" = "Crea un profilo vuoto per un modello di controller.";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "I file di profilo danneggiati devono essere riparati o rimossi prima di poter modificare i profili. Riparali o rimuovili e riprova.";
 "error.E3023" = "Non è stato possibile scrivere un file di profilo. Controlla lo spazio libero su disco e i permessi della cartella.";
 "error.E3024" = "Il servizio di rimappatura ha incontrato un errore che non riconosce. Esegui «ojd diagnose» e segnala il problema insieme al suo output.";
+"error.E3025" = "Il profilo non produce alcun output. Aggiungi un’assegnazione o un colore della luce, oppure attivalo con --allow-empty.";
 "error.withCode" = "%@ (%@)";

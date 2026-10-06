@@ -95,6 +95,7 @@ extension DeviceManager {
   // MARK: - Raw USB detection
 
   func runUSBDetection() async {
+    defer { resumeRecordReloadWaiters() }
     guard !isStopping, let provider = usbTransportProvider else { return }
     let generation = lifecycleGeneration
     print("[DeviceManager] Raw USB detection started")
@@ -103,6 +104,9 @@ extension DeviceManager {
     var serviceToIdentifiers: [USBTransportServiceIdentity: [DeviceIdentifier]] = [:]
 
     while isCurrentUSBDetection(generation) {
+      await reloadPendingRecords(in: &enumeration, serviceToIdentifiers: &serviceToIdentifiers)
+      resumeRecordReloadWaiters()
+      guard isCurrentUSBDetection(generation) else { return }
       let poll = await pollUSBEnumeration(from: provider)
       guard isCurrentUSBDetection(generation) else { return }
       let events = enumeration.events(for: poll)
@@ -143,6 +147,37 @@ extension DeviceManager {
       releaseNativeShadowedUSBServices(in: &enumeration)
       try? await Task.sleep(nanoseconds: usbDetectionPollNanoseconds)
     }
+  }
+
+  /// Removes each acknowledged service of a model in `pendingRecordReloads` and leaves it
+  /// unacknowledged, so the poll that follows admits it with the current records. The model's HID
+  /// connections are admitted again in between, so each route is chosen again. A removal keeps
+  /// the user's suspension.
+  private func reloadPendingRecords(
+    in enumeration: inout USBEnumerationTracker,
+    serviceToIdentifiers: inout [USBTransportServiceIdentity: [DeviceIdentifier]]
+  ) async {
+    guard !pendingRecordReloads.isEmpty else { return }
+    let changed = pendingRecordReloads
+    pendingRecordReloads = []
+    let devices = enumeration.acknowledgedDevices.values.filter {
+      changed.contains([$0.vendorID, $0.productID])
+    }
+    for device in devices {
+      let suspended = suspendedControllerIdentities.intersection(
+        serviceToIdentifiers[device.serviceIdentity] ?? []
+      )
+      await removeUSBDevice(device, serviceToIdentifiers: &serviceToIdentifiers)
+      suspendedControllerIdentities.formUnion(suspended)
+      enumeration.unacknowledge(device)
+    }
+    await readmitHIDConnections(changing: changed)
+  }
+
+  private func resumeRecordReloadWaiters() {
+    let waiters = recordReloadWaiters
+    recordReloadWaiters = []
+    for waiter in waiters { waiter.resume() }
   }
 
   /// Tears down every role of a detached service in one pass: all roles leave the inventory

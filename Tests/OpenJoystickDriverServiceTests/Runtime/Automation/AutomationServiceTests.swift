@@ -19,8 +19,14 @@ struct AutomationServiceTests {
     }
 
     /// The snapshot after activation, as the service returns it; the fake keeps no state.
-    func activateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
-      snapshot(active: active.union([id]))
+    ///
+    /// Shortcuts cannot confirm an empty profile, so the fake rejects `allowEmpty`.
+    func activateRemappingProfile(
+      id: UUID,
+      allowEmpty: Bool
+    ) throws -> ApplicationServiceRemappingSnapshotPayload {
+      guard !allowEmpty else { throw UnconfirmedEmptyActivation() }
+      return snapshot(active: active.union([id]))
     }
 
     func deactivateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
@@ -46,6 +52,7 @@ struct AutomationServiceTests {
   }
 
   private struct SnapshotUnavailable: Error {}
+  private struct UnconfirmedEmptyActivation: Error {}
 
   /// A service whose profile library cannot be read.
   private struct FailingService: AutomationService {
@@ -55,7 +62,10 @@ struct AutomationServiceTests {
       throw SnapshotUnavailable()
     }
 
-    func activateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+    func activateRemappingProfile(
+      id: UUID,
+      allowEmpty: Bool
+    ) throws -> ApplicationServiceRemappingSnapshotPayload {
       throw SnapshotUnavailable()
     }
 

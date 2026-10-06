@@ -139,8 +139,10 @@ extension RemappingProfileLibrary {
     )
   }
 
+  /// Activates the profile; one that produces no output needs `allowEmpty`.
   @discardableResult
-  func activate(profileID: UUID) throws -> RemappingProfileMutationImpact {
+  func activate(profileID: UUID, allowEmpty: Bool = false) throws -> RemappingProfileMutationImpact
+  {
     var proposed = try loadIfNeeded()
     try requireRecoveredLibrary()
     guard let profile = proposed.profiles.first(where: { $0.id == profileID }) else {
@@ -148,6 +150,9 @@ extension RemappingProfileLibrary {
     }
     guard profile.joyConPair == nil else {
       throw RemappingProfileLibraryError.pairProfileRequiresExplicitSession
+    }
+    guard allowEmpty || !profile.producesNoOutput else {
+      throw RemappingProfileLibraryError.profileProducesNoOutput(profileID)
     }
     let model = RemappingProfileModel(profile.device)
     let units = Dictionary(uniqueKeysWithValues: proposed.profiles.map { ($0.id, $0.device.unit) })

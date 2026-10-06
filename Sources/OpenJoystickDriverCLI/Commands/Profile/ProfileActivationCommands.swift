@@ -33,14 +33,15 @@ struct ProfileActivateCommand: AsyncParsableCommand {
       let (selector, allowEmpty) = (profile, allowEmpty)
       let (target, before, after) = try await ServiceConnection.request { client in
         let (target, before) = try await selector.resolve(with: client)
-        guard allowEmpty || !target.suppressesAllControllerInput else {
+        guard allowEmpty || !target.producesNoOutput else {
           throw CLIFailure.usage(
             CLILocalized.text(
               "cli.profile.activate.empty"
             )
           )
         }
-        return (target, before, try await client.activateRemappingProfile(id: target.id))
+        let after = try await client.activateRemappingProfile(id: target.id, allowEmpty: allowEmpty)
+        return (target, before, after)
       }
       let wasActive = ProfileSummary(target, snapshot: before).active
       try printProfile(

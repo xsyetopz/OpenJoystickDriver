@@ -10,6 +10,7 @@ enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
   case profileAlreadyExists(UUID)
   case profileNotFound(UUID)
   case pairProfileRequiresExplicitSession
+  case profileProducesNoOutput(UUID)
   case profileUpdateConflict(UUID)
   case unreadableLibrary
   case unwritableLibrary
@@ -26,6 +27,9 @@ enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
     case .profileNotFound(let id): "The remapping profile \(id.uuidString) does not exist."
     case .pairProfileRequiresExplicitSession:
       "Paired Joy-Con profiles are started with an explicit pair session."
+    case .profileProducesNoOutput(let id):
+      "The remapping profile \(id.uuidString) produces no output; activating it needs "
+        + "allowEmpty."
     case .profileUpdateConflict(let id):
       "The remapping profile \(id.uuidString) changed since it was read."
     case .unreadableLibrary: "A remapping profile file could not be read."

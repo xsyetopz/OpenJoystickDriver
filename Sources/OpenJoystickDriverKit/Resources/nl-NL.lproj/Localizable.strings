@@ -943,6 +943,7 @@
 "cli.help.global_options" = "Elke opdracht accepteert ook de algemene opties; ‘ojd --help’ toont ze.";
 "cli.error.env_timeout" = "OJD_TIMEOUT vereist een aantal seconden boven 0.";
 "cli.error.env_color" = "OJD_COLOR vereist auto, always of never.";
+"cli.error.env_no_input" = "OJD_NO_INPUT vereist 1, true, yes, 0, false of no.";
 "cli.virtual.feed.error.plain" = "--plain geldt niet voor ‘virtual feed’, dat JSON-regels afdrukt. Laat --plain weg.";
 "cli.controller.watch.examples" = "Voorbeelden:\n  # Toon de invoer gedurende 10 seconden\n  ojd controller watch 045E:028E --duration 10\n  # Toon de eerste ingedrukte besturing, als JSON\n  ojd controller watch 045E:028E --first-press --json\n  # Volg elke controller en wat de virtuele gamepad verstuurt\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "Voorbeelden:\n  # Laat beide hoofdmotoren 0,45 seconden op 180 draaien\n  ojd controller rumble 045E:028E\n  # Laat beide hoofdmotoren 2 seconden op volle sterkte draaien\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "Een recordbestand, of - om het record van stdin te lezen.";
 "cli.record.identity" = "Het controllermodel, als VVVV:PPPP.";
 "cli.record.install.abstract" = "Controleert een controllerrecord en installeert het voor jouw gebruiker.";
-"cli.record.install.discussion" = "Schrijft het record als VVVV-PPPP.json in je recordmap en vervangt het record dat al voor dat model is geïnstalleerd. De draaiende service past het direct toe. Sluit af met 1 en schrijft niets als het record ongeldig is.";
+"cli.record.install.confirm" = "%@ vervangen?";
+"cli.record.install.discussion" = "Schrijft het record als VVVV-PPPP.json in je recordmap. De draaiende service past het direct toe. Het record vervangen dat al voor dat model is geïnstalleerd vraagt om bevestiging in een terminal; vereist anders --force. --dry-run controleert het record en schrijft niets. Sluit af met 1 en schrijft niets als het record ongeldig is.";
+"cli.record.install.dry_run" = "Zou %@ installeren.";
 "cli.record.install.failed" = "Kan %@ niet schrijven: %@";
 "cli.record.install.success" = "%@ geïnstalleerd. De draaiende service past het nu toe.";
 "cli.record.invalid" = "%@ is geen geldig record: %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "Het paar: de sessie-ID uit ‘ojd controller pair’, of de ID van een van beide Joy-Cons.";
 "cli.profile.abstract" = "Maak toewijzingsprofielen, wijzig ze en activeer ze.";
 "cli.profile.activate.abstract" = "Pas een profiel toe op het bijbehorende controllermodel.";
-"cli.profile.activate.allow_empty" = "Activeer het profiel ook als het alle invoer van de controller blokkeert.";
-"cli.profile.activate.discussion" = "Het profiel vervangt het actieve profiel van hetzelfde controllermodel en hetzelfde app-bereik. Een profiel dat de virtuele gamepad uitschakelt en geen koppelingen heeft, blokkeert alle invoer van de controller; om zo’n profiel te activeren is --allow-empty nodig.";
+"cli.profile.activate.allow_empty" = "Activeer het profiel ook als het geen uitvoer produceert.";
+"cli.profile.activate.discussion" = "Het profiel vervangt het actieve profiel van hetzelfde controllermodel en hetzelfde app-bereik. Een profiel waarbij de virtuele gamepad op mapped staat en dat niets naar de gamepad, het toetsenbord, de aanwijzer of de controller stuurt en geen lichtkleur instelt, produceert geen uitvoer; om zo’n profiel te activeren is --allow-empty nodig.";
 "cli.profile.activate.done" = "‘%@’ geactiveerd voor %@.";
-"cli.profile.activate.empty" = "Dit profiel blokkeert alle invoer van de controller. Voeg --allow-empty toe om het te activeren.";
+"cli.profile.activate.empty" = "Dit profiel produceert geen uitvoer. Voeg --allow-empty toe om het te activeren.";
 "cli.profile.active_marker" = "(actief)";
 "cli.profile.argument" = "Het profiel: de ID of de naam uit ‘ojd profile list’.";
 "cli.profile.create.abstract" = "Maak een leeg profiel voor één controllermodel.";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "Beschadigde profielbestanden moeten worden hersteld of verwijderd voordat profielen kunnen worden gewijzigd. Herstel of verwijder ze en probeer het opnieuw.";
 "error.E3023" = "Een profielbestand kon niet worden geschreven. Controleer de vrije schijfruimte en de maprechten.";
 "error.E3024" = "De hertoewijzingsservice kwam een fout tegen die hij niet herkent. Voer „ojd diagnose” uit en meld het probleem samen met de uitvoer.";
+"error.E3025" = "Het profiel produceert geen uitvoer. Voeg er een koppeling of een lichtkleur aan toe, of activeer het met --allow-empty.";
 "error.withCode" = "%@ (%@)";

@@ -15,6 +15,19 @@ public struct ApplicationServiceRemappingProfileIDArguments: Codable, Sendable {
   private enum CodingKeys: String, CodingKey { case profileID }
 }
 
+/// Activates a profile; `allowEmpty` admits a profile that produces no output.
+public struct ApplicationServiceRemappingActivateArguments: Codable, Sendable {
+  public let profileID: UUID
+  public let allowEmpty: Bool
+
+  public init(profileID: UUID, allowEmpty: Bool) {
+    self.profileID = profileID
+    self.allowEmpty = allowEmpty
+  }
+
+  private enum CodingKeys: String, CodingKey { case profileID, allowEmpty }
+}
+
 /// Identifies a damaged persisted profile from one specific library snapshot.
 public struct ApplicationServiceRemappingProfileIssueArguments: Codable, Sendable {
   public let issueID: UUID
@@ -354,6 +367,7 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
     case profileRecoveryRequired = "profile_recovery_required"
     case unwritableLibrary = "library_unwritable"
     case unexpected = "unexpected"
+    case profileProducesNoOutput = "profile_produces_no_output"
 
     /// The stable error code of this failure, listed in `Resources/ErrorCodes.json`.
     public var errorCode: ErrorCode {
@@ -382,6 +396,7 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
       case .profileRecoveryRequired: .profileRecoveryRequired
       case .unwritableLibrary: .unwritableLibrary
       case .unexpected: .remappingUnexpected
+      case .profileProducesNoOutput: .profileProducesNoOutput
       }
     }
   }

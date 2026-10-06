@@ -943,6 +943,7 @@
 "cli.help.global_options" = "Her komut genel seçenekleri de kabul eder; “ojd --help” bunları listeler.";
 "cli.error.env_timeout" = "OJD_TIMEOUT, 0’dan büyük bir saniye sayısı ister.";
 "cli.error.env_color" = "OJD_COLOR auto, always veya never ister.";
+"cli.error.env_no_input" = "OJD_NO_INPUT 1, true, yes, 0, false veya no ister.";
 "cli.virtual.feed.error.plain" = "--plain, JSON satırları yazdıran “virtual feed” için geçerli değildir. --plain seçeneğini kullanmayın.";
 "cli.controller.watch.examples" = "Örnekler:\n  # Girdiyi 10 saniye boyunca yazdır\n  ojd controller watch 045E:028E --duration 10\n  # Basılan ilk kontrolü JSON olarak yazdır\n  ojd controller watch 045E:028E --first-press --json\n  # Tüm kontrolcüleri ve sanal oyun kumandalarının gönderdiğini izle\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "Örnekler:\n  # Her iki ana motoru 0,45 saniye boyunca 180 değerinde çalıştır\n  ojd controller rumble 045E:028E\n  # Her iki ana motoru 2 saniye boyunca tam güçte çalıştır\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "Bir kayıt dosyası veya kaydı stdin’den okumak için -.";
 "cli.record.identity" = "Kontrolcü modeli, VVVV:PPPP biçiminde.";
 "cli.record.install.abstract" = "Bir kontrolcü kaydını denetler ve kullanıcınız için yükler.";
-"cli.record.install.discussion" = "Kaydı, kayıt klasörünüze VVVV-PPPP.json olarak yazar ve o model için zaten yüklü olan kaydın yerini alır. Çalışan servis onu hemen uygular. Kayıt geçersizse 1 koduyla çıkar ve hiçbir şey yazmaz.";
+"cli.record.install.confirm" = "%@ değiştirilsin mi?";
+"cli.record.install.discussion" = "Kaydı, kayıt klasörünüze VVVV-PPPP.json olarak yazar. Çalışan servis onu hemen uygular. O model için zaten yüklü olan kaydı değiştirmek terminalde onay ister; aksi hâlde --force gerekir. --dry-run kaydı denetler ve hiçbir şey yazmaz. Kayıt geçersizse 1 koduyla çıkar ve hiçbir şey yazmaz.";
+"cli.record.install.dry_run" = "%@ yüklenirdi.";
 "cli.record.install.failed" = "%@ yazılamıyor: %@";
 "cli.record.install.success" = "%@ yüklendi. Çalışan servis onu şimdi uygular.";
 "cli.record.invalid" = "%@ geçerli bir kayıt değil: %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "Çift: “ojd controller pair” çıktısındaki oturum kimliği veya iki Joy-Con’dan birinin kimliği.";
 "cli.profile.abstract" = "Yeniden atama profilleri oluşturur, değiştirir ve etkinleştirir.";
 "cli.profile.activate.abstract" = "Bir profili kontrolcü modeline uygular.";
-"cli.profile.activate.allow_empty" = "Profil tüm kontrolcü girişini engellese bile etkinleştirir.";
-"cli.profile.activate.discussion" = "Profil, aynı kontrolcü modelinin ve uygulama kapsamının etkin profilinin yerini alır. Sanal oyun kontrolcüsünü kapatan ve ataması olmayan bir profil kontrolcüden gelen tüm girişi engeller; bunu etkinleştirmek için --allow-empty gerekir.";
+"cli.profile.activate.allow_empty" = "Profil hiçbir çıktı üretmese bile etkinleştirir.";
+"cli.profile.activate.discussion" = "Profil, aynı kontrolcü modelinin ve uygulama kapsamının etkin profilinin yerini alır. Sanal oyun kontrolcüsü mapped olarak ayarlı olup ona, klavyeye, işaretçiye veya kontrolcüye hiçbir şey göndermeyen ve ışık rengi belirlemeyen bir profil çıktı üretmez; bunu etkinleştirmek için --allow-empty gerekir.";
 "cli.profile.activate.done" = "“%@”, %@ için etkinleştirildi.";
-"cli.profile.activate.empty" = "Bu profil tüm kontrolcü girişini engelliyor. Etkinleştirmek için --allow-empty ekleyin.";
+"cli.profile.activate.empty" = "Bu profil çıktı üretmiyor. Etkinleştirmek için --allow-empty ekleyin.";
 "cli.profile.active_marker" = "(etkin)";
 "cli.profile.argument" = "Profil: kimliği veya “ojd profile list” çıktısındaki adı.";
 "cli.profile.create.abstract" = "Bir kontrolcü modeli için boş bir profil oluşturur.";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "Profiller değiştirilebilmeden önce bozuk profil dosyaları onarılmalı veya kaldırılmalıdır. Onarın veya kaldırın ve yeniden deneyin.";
 "error.E3023" = "Bir profil dosyası yazılamadı. Boş disk alanını ve klasör izinlerini kontrol edin.";
 "error.E3024" = "Yeniden atama servisi tanımadığı bir hatayla karşılaştı. “ojd diagnose” komutunu çalıştırın ve sorunu çıktısıyla birlikte bildirin.";
+"error.E3025" = "Profil çıktı üretmiyor. Profile bir atama veya ışık rengi ekleyin ya da --allow-empty ile etkinleştirin.";
 "error.withCode" = "%@ (%@)";

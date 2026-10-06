@@ -943,6 +943,7 @@
 "cli.help.global_options" = "모든 명령은 전역 옵션도 받습니다. 목록은 ‘ojd --help’에서 확인하세요.";
 "cli.error.env_timeout" = "OJD_TIMEOUT에는 0보다 큰 초 단위 숫자가 필요합니다.";
 "cli.error.env_color" = "OJD_COLOR에는 auto, always, never 중 하나가 필요합니다.";
+"cli.error.env_no_input" = "OJD_NO_INPUT에는 1, true, yes, 0, false, no 중 하나가 필요합니다.";
 "cli.virtual.feed.error.plain" = "--plain은 JSON 줄을 출력하는 ‘virtual feed’에 적용되지 않습니다. --plain을 빼세요.";
 "cli.controller.watch.examples" = "예시:\n  # 10초 동안 입력 출력\n  ojd controller watch 045E:028E --duration 10\n  # 처음 누른 컨트롤을 JSON으로 출력\n  ojd controller watch 045E:028E --first-press --json\n  # 모든 컨트롤러와 해당 가상 게임패드가 보내는 내용을 관찰\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "예시:\n  # 주 모터 두 개를 세기 180으로 0.45초 동안 작동\n  ojd controller rumble 045E:028E\n  # 주 모터 두 개를 최대 세기로 2초 동안 작동\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "레코드 파일 또는 stdin에서 레코드를 읽으려면 -를 사용합니다.";
 "cli.record.identity" = "VVVV:PPPP 형식의 컨트롤러 모델입니다.";
 "cli.record.install.abstract" = "컨트롤러 레코드를 확인하고 현재 사용자용으로 설치합니다.";
-"cli.record.install.discussion" = "레코드를 VVVV-PPPP.json으로 레코드 디렉터리에 기록하고, 해당 모델에 이미 설치된 레코드를 교체합니다. 실행 중인 서비스가 즉시 적용합니다. 레코드가 올바르지 않으면 아무것도 기록하지 않고 종료 코드 1로 끝납니다.";
+"cli.record.install.confirm" = "%@을(를) 교체하시겠습니까?";
+"cli.record.install.discussion" = "레코드를 VVVV-PPPP.json으로 레코드 디렉터리에 기록합니다. 실행 중인 서비스가 즉시 적용합니다. 해당 모델에 이미 설치된 레코드를 교체할 때는 터미널에서 확인을 요청하고, 그렇지 않으면 --force가 필요합니다. --dry-run은 레코드를 확인하기만 하고 아무것도 기록하지 않습니다. 레코드가 올바르지 않으면 아무것도 기록하지 않고 종료 코드 1로 끝납니다.";
+"cli.record.install.dry_run" = "%@을(를) 설치합니다.";
 "cli.record.install.failed" = "%@을(를) 기록할 수 없습니다: %@";
 "cli.record.install.success" = "%@을(를) 설치했습니다. 실행 중인 서비스가 지금 적용합니다.";
 "cli.record.invalid" = "%@은(는) 올바른 레코드가 아닙니다: %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "페어: ‘ojd controller pair’에서 나온 세션 ID 또는 두 Joy-Con 중 하나의 ID입니다.";
 "cli.profile.abstract" = "리매핑 프로파일을 만들고, 변경하고, 활성화합니다.";
 "cli.profile.activate.abstract" = "프로파일을 해당 컨트롤러 모델에 적용합니다.";
-"cli.profile.activate.allow_empty" = "컨트롤러의 모든 입력을 차단하는 프로파일이라도 활성화합니다.";
-"cli.profile.activate.discussion" = "이 프로파일은 같은 컨트롤러 모델과 앱 범위에서 활성 상태인 프로파일을 대체합니다. 가상 게임패드를 끄고 할당도 없는 프로파일은 컨트롤러의 모든 입력을 차단하며, 이런 프로파일을 활성화하려면 --allow-empty가 필요합니다.";
+"cli.profile.activate.allow_empty" = "출력을 전혀 만들지 않는 프로파일이라도 활성화합니다.";
+"cli.profile.activate.discussion" = "이 프로파일은 같은 컨트롤러 모델과 앱 범위에서 활성 상태인 프로파일을 대체합니다. 가상 게임패드를 mapped로 설정하고 게임패드, 키보드, 포인터, 컨트롤러 어디에도 아무것도 보내지 않고 조명 색상도 설정하지 않는 프로파일은 출력을 만들지 않으며, 이런 프로파일을 활성화하려면 --allow-empty가 필요합니다.";
 "cli.profile.activate.done" = "‘%@’을(를) %@에 활성화했습니다.";
-"cli.profile.activate.empty" = "이 프로파일은 컨트롤러의 모든 입력을 차단합니다. 활성화하려면 --allow-empty를 추가하세요.";
+"cli.profile.activate.empty" = "이 프로파일은 출력을 만들지 않습니다. 활성화하려면 --allow-empty를 추가하세요.";
 "cli.profile.active_marker" = "(활성)";
 "cli.profile.argument" = "프로파일: ID 또는 ‘ojd profile list’에 나오는 이름입니다.";
 "cli.profile.create.abstract" = "컨트롤러 모델 하나를 위한 빈 프로파일을 만듭니다.";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "프로파일을 변경하기 전에 손상된 프로파일 파일을 복구하거나 제거해야 합니다. 복구하거나 제거한 뒤 다시 시도하세요.";
 "error.E3023" = "프로파일 파일을 쓰지 못했습니다. 디스크 여유 공간과 폴더 권한을 확인하세요.";
 "error.E3024" = "리매핑 서비스가 알 수 없는 오류를 만났습니다. ‘ojd diagnose’를 실행하고 출력과 함께 문제를 보고하세요.";
+"error.E3025" = "프로파일이 출력을 만들지 않습니다. 할당 또는 조명 색상을 추가하거나 --allow-empty로 활성화하세요.";
 "error.withCode" = "%@ (%@)";

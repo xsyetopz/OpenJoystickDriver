@@ -17,7 +17,7 @@ extension RemappingRequestCoordinatorTests {
       bindings: []
     )
     _ = try await harness.coordinator.create(profile).get()
-    let automaticActivation = await harness.coordinator.activate(id: profile.id)
+    let automaticActivation = await harness.coordinator.activate(id: profile.id, allowEmpty: false)
     guard case .failure(let activationError) = automaticActivation else {
       Issue.record("Expected pair profiles to require an explicit session.")
       return
@@ -62,7 +62,7 @@ extension RemappingRequestCoordinatorTests {
     snapshot = try await harness.coordinator.importProfile(imported).get()
     #expect(snapshot.profiles == [imported])
 
-    snapshot = try await harness.coordinator.activate(id: original.id).get()
+    snapshot = try await harness.coordinator.activate(id: original.id, allowEmpty: false).get()
     #expect(snapshot.activeProfiles.map(\.profileID) == [original.id])
 
     snapshot = try await harness.coordinator.deactivate(vendorID: 1118, productID: 654).get()
@@ -90,7 +90,7 @@ extension RemappingRequestCoordinatorTests {
     defer { harness.routerHarness.removeFiles() }
     let original = profile(name: "Desktop", key: .space)
     _ = try await harness.coordinator.create(original).get()
-    _ = try await harness.coordinator.activate(id: original.id).get()
+    _ = try await harness.coordinator.activate(id: original.id, allowEmpty: false).get()
     let device = remappingRouterDevice(1)
     try await harness.routerHarness.router.dispatchCausally(
       changes: [.press(.faceSouth)],
@@ -127,7 +127,7 @@ extension RemappingRequestCoordinatorTests {
 
     let original = profile(name: "Desktop", key: .space)
     _ = try await harness.coordinator.create(original).get()
-    _ = try await harness.coordinator.activate(id: original.id).get()
+    _ = try await harness.coordinator.activate(id: original.id, allowEmpty: false).get()
     let device = remappingRouterDevice(1)
     try await harness.routerHarness.router.dispatchCausally(
       changes: [.press(.faceSouth)],
@@ -167,7 +167,7 @@ extension RemappingRequestCoordinatorTests {
     defer { harness.routerHarness.removeFiles() }
     let original = profile(name: "Desktop")
     _ = try await harness.coordinator.create(original).get()
-    _ = try await harness.coordinator.activate(id: original.id).get()
+    _ = try await harness.coordinator.activate(id: original.id, allowEmpty: false).get()
     let device = remappingRouterDevice(1)
     try await harness.routerHarness.router.dispatchCausally(
 
@@ -193,7 +193,7 @@ extension RemappingRequestCoordinatorTests {
     defer { harness.routerHarness.removeFiles() }
     let mapped = profile(name: "Desktop")
     _ = try await harness.coordinator.create(mapped).get()
-    _ = try await harness.coordinator.activate(id: mapped.id).get()
+    _ = try await harness.coordinator.activate(id: mapped.id, allowEmpty: false).get()
     let first = remappingRouterDevice(1)
     let second = remappingRouterDevice(2)
     try await harness.routerHarness.router.dispatchCausally(.activation, from: first)
@@ -241,7 +241,7 @@ extension RemappingRequestCoordinatorTests {
     let mapped = profile(name: "Desktop")
     _ = try await stoppedHarness.coordinator.create(mapped).get()
     try await stoppedHarness.routerHarness.router.shutdown()
-    let activation = await stoppedHarness.coordinator.activate(id: mapped.id)
+    let activation = await stoppedHarness.coordinator.activate(id: mapped.id, allowEmpty: false)
     guard case .failure(let activationError) = activation else {
       Issue.record("Expected activation failure after router shutdown.")
       return
@@ -261,7 +261,7 @@ extension RemappingRequestCoordinatorTests {
     defer { harness.removeFiles() }
     let original = profile(name: "Desktop")
     _ = try await harness.coordinator.create(original).get()
-    _ = try await harness.coordinator.activate(id: original.id).get()
+    _ = try await harness.coordinator.activate(id: original.id, allowEmpty: false).get()
     let oldDevice = remappingRouterDevice(1)
     let newDevice = remappingRouterDevice(2, vendorID: 1356, productID: 2508)
 
@@ -294,7 +294,7 @@ extension RemappingRequestCoordinatorTests {
     defer { harness.removeFiles() }
     let original = profile(name: "Desktop")
     _ = try await harness.coordinator.create(original).get()
-    _ = try await harness.coordinator.activate(id: original.id).get()
+    _ = try await harness.coordinator.activate(id: original.id, allowEmpty: false).get()
     let device = remappingRouterDevice(1)
     try await harness.router.dispatchCausally(changes: [.press(.faceSouth)], from: device)
     let exactPriorBytes = try libraryFiles(in: harness.directory)

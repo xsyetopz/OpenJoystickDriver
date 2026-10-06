@@ -943,6 +943,7 @@
 "cli.help.global_options" = "Todos los comandos aceptan también las opciones globales; «ojd --help» las lista.";
 "cli.error.env_timeout" = "OJD_TIMEOUT necesita un número de segundos mayor que 0.";
 "cli.error.env_color" = "OJD_COLOR necesita auto, always o never.";
+"cli.error.env_no_input" = "OJD_NO_INPUT necesita 1, true, yes, 0, false o no.";
 "cli.virtual.feed.error.plain" = "--plain no se aplica a «virtual feed», que imprime líneas JSON. Omite --plain.";
 "cli.controller.watch.examples" = "Ejemplos:\n  # Muestra la entrada durante 10 segundos\n  ojd controller watch 045E:028E --duration 10\n  # Muestra el primer control pulsado, como JSON\n  ojd controller watch 045E:028E --first-press --json\n  # Observa todos los mandos y lo que envía su mando virtual\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "Ejemplos:\n  # Activa los dos motores principales a 180 durante 0,45 segundos\n  ojd controller rumble 045E:028E\n  # Activa los dos motores principales a plena potencia durante 2 segundos\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "Un archivo de registro, o - para leer el registro desde la entrada estándar.";
 "cli.record.identity" = "El modelo de mando, como VVVV:PPPP.";
 "cli.record.install.abstract" = "Comprueba un registro de mando y lo instala para tu usuario.";
-"cli.record.install.discussion" = "Escribe el registro como VVVV-PPPP.json en tu directorio de registros y reemplaza el registro ya instalado para ese modelo. El servicio en ejecución lo aplica al instante. Termina con 1 y no escribe nada cuando el registro no es válido.";
+"cli.record.install.confirm" = "¿Reemplazar %@?";
+"cli.record.install.discussion" = "Escribe el registro como VVVV-PPPP.json en tu directorio de registros. El servicio en ejecución lo aplica al instante. Reemplazar el registro ya instalado para ese modelo pide confirmación en una terminal; en otro caso necesita --force. --dry-run comprueba el registro y no escribe nada. Termina con 1 y no escribe nada cuando el registro no es válido.";
+"cli.record.install.dry_run" = "Instalaría %@.";
 "cli.record.install.failed" = "No se puede escribir %@: %@";
 "cli.record.install.success" = "Instalación de %@ completada. El servicio en ejecución lo aplica ahora.";
 "cli.record.invalid" = "%@ no es un registro válido: %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "La pareja: su ID de sesión de «ojd controller pair», o el ID de cualquiera de los Joy-Con.";
 "cli.profile.abstract" = "Crea, cambia y activa perfiles de reasignación.";
 "cli.profile.activate.abstract" = "Aplica un perfil a su modelo de mando.";
-"cli.profile.activate.allow_empty" = "Activa el perfil aunque bloquee toda la entrada del mando.";
-"cli.profile.activate.discussion" = "El perfil sustituye al perfil activo del mismo modelo de mando y ámbito de app. Un perfil que desactiva el gamepad virtual y no tiene asignaciones bloquea toda la entrada del mando; para activarlo hace falta --allow-empty.";
+"cli.profile.activate.allow_empty" = "Activa el perfil aunque no genere ninguna salida.";
+"cli.profile.activate.discussion" = "El perfil sustituye al perfil activo del mismo modelo de mando y ámbito de app. Un perfil con el gamepad virtual en mapped que no envía nada al gamepad, al teclado, al puntero ni al mando, y no establece ningún color de luz, no genera ninguna salida; para activarlo hace falta --allow-empty.";
 "cli.profile.activate.done" = "Se ha activado «%@» para %@.";
-"cli.profile.activate.empty" = "Este perfil bloquea toda la entrada del mando. Añade --allow-empty para activarlo.";
+"cli.profile.activate.empty" = "Este perfil no genera ninguna salida. Añade --allow-empty para activarlo.";
 "cli.profile.active_marker" = "(activo)";
 "cli.profile.argument" = "El perfil: su ID o su nombre de «ojd profile list».";
 "cli.profile.create.abstract" = "Crea un perfil vacío para un modelo de mando.";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "Hay que reparar o eliminar los archivos de perfil dañados antes de que los perfiles puedan cambiar. Repáralos o elimínalos y vuelve a intentarlo.";
 "error.E3023" = "No se pudo escribir un archivo de perfil. Revisa el espacio libre en disco y los permisos de la carpeta.";
 "error.E3024" = "El servicio de reasignación encontró un error que no reconoce. Ejecuta «ojd diagnose» e informa del problema con su salida.";
+"error.E3025" = "El perfil no genera ninguna salida. Añádele una asignación o un color de luz, o actívalo con --allow-empty.";
 "error.withCode" = "%@ (%@)";

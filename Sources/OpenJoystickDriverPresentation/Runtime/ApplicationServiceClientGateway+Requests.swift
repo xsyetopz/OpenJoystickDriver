@@ -99,7 +99,7 @@ extension ApplicationServiceClientGateway {
   func activateRemappingProfile(id: UUID) async throws -> ApplicationServiceRemappingSnapshotPayload
   {
     await ensureConnection()
-    return try await client.activateRemappingProfile(id: id)
+    return try await client.activateRemappingProfile(id: id, allowEmpty: true)
   }
 
   func deactivateRemappingProfile(

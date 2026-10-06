@@ -38,7 +38,8 @@ public struct ControllerRecord: Sendable {
   public var layer: ControllerRecordLayer { userFile == nil ? .bundled : .user }
 }
 
-/// One file in the user's controller-record directory, and whether OJD could apply it.
+/// One file in the user's controller-record directory, or the directory itself when it cannot be
+/// read, and whether OJD could apply it.
 public struct ControllerRecordFile: Sendable {
   public let url: URL
   /// The identity the file names, when it could be read.
@@ -75,7 +76,7 @@ public struct ControllerRecordSet: Sendable {
 
   /// The effective record of every identity.
   public let records: [ControllerIdentity: ControllerRecord]
-  /// Every file in the user directory, in file-name order.
+  /// Every `.json` file in the user directory, in file-name order.
   public let userFiles: [ControllerRecordFile]
 
   /// The user files OJD skipped.
@@ -117,16 +118,28 @@ public struct ControllerRecordSet: Sendable {
     String(format: "%04x-%04x.json", identity.vendorID, identity.productID)
   }
 
-  /// The bundled catalog with every valid file in `directory` applied. A missing directory holds
-  /// no records.
+  /// The bundled catalog with every valid `.json` file in `directory` applied. A missing
+  /// directory holds no records; one that cannot be read is listed in ``userFiles`` with its
+  /// reason.
   public static func load(userDirectory directory: URL = userDirectory) -> Self {
-    let manager = FileManager.default
-    let urls =
-      ((try? manager.contentsOfDirectory(
+    let urls: [URL]
+    do {
+      urls = try FileManager.default.contentsOfDirectory(
         at: directory,
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
-      )) ?? []).sorted { $0.lastPathComponent < $1.lastPathComponent }
+      ).filter { $0.pathExtension == "json" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+    } catch CocoaError.fileReadNoSuchFile {
+      urls = []
+    } catch {
+      let file = ControllerRecordFile(
+        url: directory,
+        identity: nil,
+        operation: nil,
+        problem: "cannot read the directory: \(error.localizedDescription)"
+      )
+      return Self(records: bundled.records, userFiles: [file])
+    }
     var records = bundled.records
     var files: [ControllerRecordFile] = []
     for url in urls {

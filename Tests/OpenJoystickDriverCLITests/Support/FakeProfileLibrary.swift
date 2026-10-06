@@ -112,7 +112,22 @@ final class FakeProfileLibrary: @unchecked Sendable {
         lock.withLock {
           profiles = profiles.map { $0.id == update.profile.id ? update.profile : $0 }
         }
-      case .deleteRemappingProfile, .activateRemappingProfile, .deactivateRemappingProfileByID:
+      case .activateRemappingProfile:
+        guard
+          let request = try? decoder.decode(
+            ApplicationServiceRemappingActivateArguments.self,
+            from: arguments
+          )
+        else { return nil }
+        let activated = lock.withLock {
+          guard let profile = profiles.first(where: { $0.id == request.profileID }),
+            request.allowEmpty || !profile.producesNoOutput
+          else { return false }
+          active.insert(profile.id)
+          return true
+        }
+        guard activated else { return nil }
+      case .deleteRemappingProfile, .deactivateRemappingProfileByID:
         guard
           let id = try? decoder.decode(
             ApplicationServiceRemappingProfileIDArguments.self,
@@ -122,7 +137,6 @@ final class FakeProfileLibrary: @unchecked Sendable {
         lock.withLock {
           switch method {
           case .deleteRemappingProfile: profiles.removeAll { $0.id == id }
-          case .activateRemappingProfile: active.insert(id)
           default: active.remove(id)
           }
         }

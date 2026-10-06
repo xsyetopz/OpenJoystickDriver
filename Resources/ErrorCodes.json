@@ -369,6 +369,13 @@
 			"name": "remappingUnexpected",
 			"status": "active",
 			"wire": "unexpected"
+		},
+		{
+			"code": "E3025",
+			"domain": "remapping",
+			"name": "profileProducesNoOutput",
+			"status": "active",
+			"wire": "profile_produces_no_output"
 		}
 	]
 }

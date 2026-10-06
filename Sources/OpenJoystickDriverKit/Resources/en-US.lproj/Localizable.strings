@@ -943,6 +943,7 @@
 "cli.help.global_options" = "Every command also takes the global options; 'ojd --help' lists them.";
 "cli.error.env_timeout" = "OJD_TIMEOUT needs a number of seconds above 0.";
 "cli.error.env_color" = "OJD_COLOR needs auto, always, or never.";
+"cli.error.env_no_input" = "OJD_NO_INPUT needs 1, true, yes, 0, false, or no.";
 "cli.virtual.feed.error.plain" = "--plain does not apply to 'virtual feed', which prints JSON lines. Leave out --plain.";
 "cli.controller.watch.examples" = "Examples:\n  # Print input for 10 seconds\n  ojd controller watch 045E:028E --duration 10\n  # Print the first control pressed, as JSON\n  ojd controller watch 045E:028E --first-press --json\n  # Watch every controller and what its virtual gamepad sends\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "Examples:\n  # Run both main motors at 180 for 0.45 seconds\n  ojd controller rumble 045E:028E\n  # Run both main motors at full strength for 2 seconds\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "A record file, or - to read the record from stdin.";
 "cli.record.identity" = "The controller model, as VVVV:PPPP.";
 "cli.record.install.abstract" = "Check a controller record and install it for your user.";
-"cli.record.install.discussion" = "Writes the record as VVVV-PPPP.json in your record directory and replaces the record already installed for that model. The running service applies it at once. Exits 1 and writes nothing when the record is invalid.";
+"cli.record.install.confirm" = "Replace %@?";
+"cli.record.install.discussion" = "Writes the record as VVVV-PPPP.json in your record directory, and the running service applies it at once. Replacing the record already installed for that model asks for confirmation on a terminal; needs --force otherwise. --dry-run checks the record and writes nothing. Exits 1 and writes nothing when the record is invalid.";
+"cli.record.install.dry_run" = "Would install %@.";
 "cli.record.install.failed" = "Cannot write %@: %@";
 "cli.record.install.success" = "Installed %@. The running service applies it now.";
 "cli.record.invalid" = "%@ is not a valid record: %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "The pair: its session ID from 'ojd controller pair', or the ID of either Joy-Con.";
 "cli.profile.abstract" = "Create, change, and activate remapping profiles.";
 "cli.profile.activate.abstract" = "Apply a profile to its controller model.";
-"cli.profile.activate.allow_empty" = "Activate the profile even when it blocks all controller input.";
-"cli.profile.activate.discussion" = "The profile replaces the active profile of the same controller model and app scope. A profile that turns off the virtual gamepad and has no bindings blocks all input from the controller; activating one needs --allow-empty.";
+"cli.profile.activate.allow_empty" = "Activate the profile even when it produces no output.";
+"cli.profile.activate.discussion" = "The profile replaces the active profile of the same controller model and app scope. A profile with the virtual gamepad set to mapped that sends nothing to the gamepad, keyboard, pointer, or controller and sets no light color produces no output; activating one needs --allow-empty.";
 "cli.profile.activate.done" = "Activated '%@' for %@.";
-"cli.profile.activate.empty" = "This profile blocks all controller input. Add --allow-empty to activate it.";
+"cli.profile.activate.empty" = "This profile produces no output. Add --allow-empty to activate it.";
 "cli.profile.active_marker" = "(active)";
 "cli.profile.argument" = "The profile: its ID or its name from 'ojd profile list'.";
 "cli.profile.create.abstract" = "Create an empty profile for one controller model.";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "Damaged profile files must be repaired or removed before profiles can change. Repair or remove them, then try again.";
 "error.E3023" = "A profile file could not be written. Check the free disk space and the folder permissions.";
 "error.E3024" = "The remapping service hit an error it does not recognize. Run 'ojd diagnose' and report the problem with its output.";
+"error.E3025" = "The profile produces no output. Add a binding or a light color to it, or activate it with --allow-empty.";
 "error.withCode" = "%@ (%@)";

@@ -132,9 +132,10 @@ extension RemappingRequestCoordinator {
   }
 
   func activate(
-    id: UUID
+    id: UUID,
+    allowEmpty: Bool
   ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
-    await mutate { try await library.activate(profileID: id) }
+    await mutate { try await library.activate(profileID: id, allowEmpty: allowEmpty) }
   }
 
   func deactivate(

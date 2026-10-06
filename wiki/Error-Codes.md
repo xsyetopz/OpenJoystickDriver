@@ -78,6 +78,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E3022 | Remapping | Damaged profile files must be repaired or removed before profiles can change. Repair or remove them, then try again. Wire value `profile_recovery_required`. |
 | E3023 | Remapping | A profile file could not be written. Check the free disk space and the folder permissions. Wire value `library_unwritable`. |
 | E3024 | Remapping | The remapping service hit an error it does not recognize. Run 'ojd diagnose' and report the problem with its output. Wire value `unexpected`. |
+| E3025 | Remapping | The profile produces no output. Add a binding or a light color to it, or activate it with --allow-empty. Wire value `profile_produces_no_output`. |
 <!-- END GENERATED: error-codes -->
 
 ## Further reading

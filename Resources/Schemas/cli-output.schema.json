@@ -1125,9 +1125,12 @@
 		},
 		"recordInstall": {
 			"type": "object",
-			"required": ["installed", "record", "replaced"],
+			"required": ["dryRun", "installed", "record", "replaced"],
 			"additionalProperties": false,
 			"properties": {
+				"dryRun": {
+					"type": "boolean"
+				},
 				"installed": {
 					"type": "string"
 				},

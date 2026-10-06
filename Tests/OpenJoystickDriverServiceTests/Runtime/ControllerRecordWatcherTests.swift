@@ -80,4 +80,74 @@ struct ControllerRecordWatcherTests {
     #expect(applied == 2)
     #expect(changes == 1)
   }
+
+  @Test
+  func appliesAgainWhenTheDirectoryIsDeletedAndRecreated() async throws {
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "ojd-watch-\(UUID().uuidString)/Controllers",
+      isDirectory: true
+    )
+    defer { try? FileManager.default.removeItem(at: directory.deletingLastPathComponent()) }
+    var applied: [Int] = []
+    let watcher = ControllerRecordWatcher(
+      directory: directory,
+      activate: { records in
+        applied.append(records.userFiles.count)
+        return [ControllerIdentity(vendorID: 0x1234, productID: 0xabcd)]
+      },
+      onChange: { _ in }
+    )
+    watcher.start()
+    defer { watcher.stop() }
+    #expect(applied == [0])
+
+    try FileManager.default.removeItem(at: directory)
+    // Let the deletion settle, so the watch on the old directory is gone before the new one exists.
+    for _ in 0..<30 where applied.count < 2 { try await Task.sleep(nanoseconds: 100_000_000) }
+    #expect(applied == [0, 0])
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    try Self.addRecord.write(
+      to: directory.appendingPathComponent("1234-abcd.json"),
+      options: .atomic
+    )
+    for _ in 0..<50 where applied.last != 1 { try await Task.sleep(nanoseconds: 100_000_000) }
+    #expect(applied.last == 1)
+  }
+
+  @Test
+  func appliesOnceADirectoryThatCouldNotBeCreatedExists() async throws {
+    let root = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "ojd-watch-\(UUID().uuidString)",
+      isDirectory: true
+    )
+    let directory = root.appendingPathComponent("Controllers", isDirectory: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    // A regular file where the parent directory belongs makes the creation at start fail.
+    try Data().write(to: root)
+    var applied: [Int] = []
+    var changes = 0
+    let watcher = ControllerRecordWatcher(
+      directory: directory,
+      activate: { records in
+        // The unreadable directory is a problem entry in `userFiles`; count only valid records.
+        applied.append(records.userFiles.count - records.problems.count)
+        return [ControllerIdentity(vendorID: 0x1234, productID: 0xabcd)]
+      },
+      onChange: { _ in changes += 1 }
+    )
+    watcher.start()
+    defer { watcher.stop() }
+    #expect(!FileManager.default.fileExists(atPath: directory.path))
+    #expect(applied == [0])
+
+    try FileManager.default.removeItem(at: root)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    try Self.addRecord.write(
+      to: directory.appendingPathComponent("1234-abcd.json"),
+      options: .atomic
+    )
+    for _ in 0..<50 where applied.last != 1 { try await Task.sleep(nanoseconds: 100_000_000) }
+    #expect(applied.last == 1)
+    #expect(changes >= 1)
+  }
 }

@@ -106,7 +106,7 @@ Add `--app BUNDLE-ID` to limit the profile to one app. The new profile is inacti
 1. Select the profile in the list.
 1. Click **Set active**.
 
-If the profile has no assignments and suppresses all controller input, the app shows the alert **Activate profile with no controller input?**. Click **Set active** only if you want that result. To restore default input, click **Restore default input** first.
+If the profile produces no output, so that the controller does nothing while it is active, the app shows the alert **Activate profile with no controller input?**. Click **Set active** only if you want that result. To restore default input, click **Restore default input** first.
 
 To deactivate the profile, click **Deactivate**. To deactivate every profile for the controller, open the **Profile actions** menu and select **Deactivate all**.
 
@@ -117,7 +117,7 @@ ojd profile activate "My controller"
 ojd profile deactivate "My controller"
 ```
 
-The `activate` command refuses a profile that suppresses all input. Add `--allow-empty` to override. Paired Joy-Con profiles have no **Set active** button. For more information, see [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md).
+The `activate` command refuses a profile that produces no output. Add `--allow-empty` to override. Paired Joy-Con profiles have no **Set active** button. For more information, see [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md).
 
 ### Save Changes
 

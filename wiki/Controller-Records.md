@@ -39,7 +39,7 @@ macOS serves some controllers natively through the Game Controller framework. Op
 - `macos`: macOS drives the controller when it can. This is the default.
 - `ojd`: OpenJoystickDriver opens the controller exclusively even when macOS supports it, and drives it like a controller macOS does not know.
 
-A raw-USB family, such as `xbox.gip`, has no `ownership` field, because macOS cannot serve those controllers. A new `ownership` value applies the next time the controller connects, so unplug it and plug it in again.
+A raw-USB family, such as `xbox.gip`, has no `ownership` field, because macOS cannot serve those controllers. A new `ownership` value applies when the running service connects the controller again after the record changes. You do not need to unplug it.
 
 ## Describe a Controller's Input Reports
 
@@ -145,7 +145,7 @@ A record's `tuning` field changes a value that the protocol driver otherwise set
 
 Raw-USB families, such as `xbox.gip`, do not take the two HID timings. The two recovery values apply only to a Switch 1 controller without the `switch-2` or `input-only` quirk, because those controllers have no startup recovery. `ojd record validate` rejects a value outside its range or its families.
 
-A `tuning` in a `patch` replaces the bundled `tuning` whole, so repeat a bundled value that you want to keep. Timings apply the next time the controller connects.
+A `tuning` in a `patch` replaces the bundled `tuning` whole, so repeat a bundled value that you want to keep. Timings apply when the running service connects the controller again after the record changes.
 
 ## Select a Model With a Quirk
 
@@ -175,7 +175,7 @@ The record maps what the HID report descriptor states plainly: buttons 1 to 11 i
 1. Check the file. Run `ojd record validate FILE`.
 1. Install the file. Run `ojd record install FILE`.
 
-The running service applies the record when the folder changes. You do not need to restart it.
+The running service applies the record when the folder changes. It connects each connected controller of that model again with the new record, and leaves other controllers connected. A controller that you disconnected stays disconnected. You do not need to restart the service or unplug the controller.
 
 ## Check Which Records Apply
 

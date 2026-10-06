@@ -88,7 +88,7 @@ struct RecordCommandTests {
     let directory = Directory()
 
     let install = await run(["install", "-", "--json"], in: directory, stdin: Self.patch)
-    let again = await run(["install", "-", "--json"], in: directory, stdin: Self.patch)
+    let again = await run(["install", "-", "--force", "--json"], in: directory, stdin: Self.patch)
     let list = await run(["list", "--plain"], in: directory)
     let show = await run(["show", "366c:0005", "--json"], in: directory)
     let plainShow = await run(["show", "366C:0005", "--plain"], in: directory)
@@ -138,6 +138,33 @@ struct RecordCommandTests {
     #expect(result.code == 1)
     #expect(result.standardError.hasPrefix("error[E2012]: "))
     #expect(result.standardError.contains("1234:ABCD"))
+  }
+
+  @Test
+  func installNeedsForceToReplaceWithoutATerminalAndHonorsDryRun() async throws {
+    let directory = Directory()
+    let installed = Data("{}".utf8)
+    let dryRun = await run(
+      ["install", "-", "--dry-run", "--json"],
+      in: directory,
+      stdin: Self.patch
+    )
+    #expect(dryRun.code == 0, "\(dryRun.standardError)")
+    #expect(try dryRun.json()["dryRun"] as? Bool == true)
+    #expect(try dryRun.json()["replaced"] as? Bool == false)
+    #expect(directory.fileNames.isEmpty)
+
+    try directory.write(installed, as: "366c-0005.json")
+    let unforced = await run(["install", "-", "--no-input"], in: directory, stdin: Self.patch)
+    let replacing = await run(["install", "-", "-n", "--json"], in: directory, stdin: Self.patch)
+    let file = directory.url.appendingPathComponent("366c-0005.json")
+    #expect(unforced.code == 64)
+    #expect(try replacing.json()["replaced"] as? Bool == true)
+    #expect(try Data(contentsOf: file) == installed)
+
+    let forced = await run(["install", "-", "--force"], in: directory, stdin: Self.patch)
+    #expect(forced.code == 0, "\(forced.standardError)")
+    #expect(try Data(contentsOf: file) == Self.patch)
   }
 
   @Test

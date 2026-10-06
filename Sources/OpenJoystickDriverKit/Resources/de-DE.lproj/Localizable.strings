@@ -943,6 +943,7 @@
 "cli.help.global_options" = "Jeder Befehl akzeptiert auch die globalen Optionen; „ojd --help“ listet sie auf.";
 "cli.error.env_timeout" = "OJD_TIMEOUT erwartet eine Anzahl von Sekunden größer als 0.";
 "cli.error.env_color" = "OJD_COLOR erwartet auto, always oder never.";
+"cli.error.env_no_input" = "OJD_NO_INPUT erwartet 1, true, yes, 0, false oder no.";
 "cli.virtual.feed.error.plain" = "--plain gilt nicht für „virtual feed“, das JSON-Zeilen ausgibt. Lass --plain weg.";
 "cli.controller.watch.examples" = "Beispiele:\n  # Eingaben 10 Sekunden lang ausgeben\n  ojd controller watch 045E:028E --duration 10\n  # Das erste gedrückte Bedienelement als JSON ausgeben\n  ojd controller watch 045E:028E --first-press --json\n  # Alle Controller und die Ausgabe ihres virtuellen Gamepads beobachten\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "Beispiele:\n  # Beide Hauptmotoren 0,45 Sekunden lang mit 180 laufen lassen\n  ojd controller rumble 045E:028E\n  # Beide Hauptmotoren 2 Sekunden lang mit voller Stärke laufen lassen\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "Eine Eintragsdatei oder -, um den Eintrag von der Standardeingabe zu lesen.";
 "cli.record.identity" = "Das Controller-Modell als VVVV:PPPP.";
 "cli.record.install.abstract" = "Einen Controller-Eintrag prüfen und für dein Konto installieren.";
-"cli.record.install.discussion" = "Schreibt den Eintrag als VVVV-PPPP.json in dein Eintragsverzeichnis und ersetzt den Eintrag, der für dieses Modell schon installiert ist. Der laufende Dienst wendet ihn sofort an. Endet mit 1 und schreibt nichts, wenn der Eintrag ungültig ist.";
+"cli.record.install.confirm" = "%@ ersetzen?";
+"cli.record.install.discussion" = "Schreibt den Eintrag als VVVV-PPPP.json in dein Eintragsverzeichnis. Der laufende Dienst wendet ihn sofort an. Beim Ersetzen des Eintrags, der für dieses Modell schon installiert ist, wird in einem Terminal zuerst nachgefragt, sonst ist --force nötig. --dry-run prüft den Eintrag und schreibt nichts. Endet mit 1 und schreibt nichts, wenn der Eintrag ungültig ist.";
+"cli.record.install.dry_run" = "Würde %@ installieren.";
 "cli.record.install.failed" = "%@ kann nicht geschrieben werden: %@";
 "cli.record.install.success" = "%@ wurde installiert. Der laufende Dienst wendet den Eintrag jetzt an.";
 "cli.record.invalid" = "%@ ist kein gültiger Eintrag: %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "Das Paar: seine Sitzungs-ID aus „ojd controller pair“ oder die ID eines der beiden Joy-Con.";
 "cli.profile.abstract" = "Neubelegungsprofile erstellen, ändern und aktivieren.";
 "cli.profile.activate.abstract" = "Ein Profil auf sein Controller-Modell anwenden.";
-"cli.profile.activate.allow_empty" = "Das Profil auch dann aktivieren, wenn es alle Controller-Eingaben blockiert.";
-"cli.profile.activate.discussion" = "Das Profil ersetzt das aktive Profil für dasselbe Controller-Modell und denselben App-Bereich. Ein Profil, das das virtuelle Gamepad ausschaltet und keine Belegungen hat, blockiert alle Eingaben des Controllers; zum Aktivieren ist --allow-empty nötig.";
+"cli.profile.activate.allow_empty" = "Das Profil auch dann aktivieren, wenn es keine Ausgabe erzeugt.";
+"cli.profile.activate.discussion" = "Das Profil ersetzt das aktive Profil für dasselbe Controller-Modell und denselben App-Bereich. Ein Profil, bei dem das virtuelle Gamepad auf mapped steht und das nichts an das Gamepad, die Tastatur, den Zeiger oder den Controller sendet und keine Lichtfarbe festlegt, erzeugt keine Ausgabe; zum Aktivieren ist --allow-empty nötig.";
 "cli.profile.activate.done" = "„%@“ für %@ aktiviert.";
-"cli.profile.activate.empty" = "Dieses Profil blockiert alle Controller-Eingaben. Füge --allow-empty hinzu, um es zu aktivieren.";
+"cli.profile.activate.empty" = "Dieses Profil erzeugt keine Ausgabe. Füge --allow-empty hinzu, um es zu aktivieren.";
 "cli.profile.active_marker" = "(aktiv)";
 "cli.profile.argument" = "Das Profil: seine ID oder sein Name aus „ojd profile list“.";
 "cli.profile.create.abstract" = "Ein leeres Profil für ein Controller-Modell erstellen.";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "Beschädigte Profildateien müssen repariert oder entfernt werden, bevor Profile geändert werden können. Repariere oder entferne sie und versuche es erneut.";
 "error.E3023" = "Eine Profildatei konnte nicht geschrieben werden. Prüfe den freien Speicherplatz und die Ordnerberechtigungen.";
 "error.E3024" = "Der Neuzuordnungsdienst ist auf einen unbekannten Fehler gestoßen. Führe „ojd diagnose“ aus und melde das Problem zusammen mit der Ausgabe.";
+"error.E3025" = "Das Profil erzeugt keine Ausgabe. Füge ihm eine Belegung oder eine Lichtfarbe hinzu oder aktiviere es mit --allow-empty.";
 "error.withCode" = "%@ (%@)";

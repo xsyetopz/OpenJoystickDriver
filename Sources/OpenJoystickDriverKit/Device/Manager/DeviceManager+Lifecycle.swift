@@ -66,23 +66,68 @@ extension DeviceManager {
     print("[DeviceManager] Suspended for system sleep")
   }
 
-  /// Re-admits every controller so each binds with the current controller records, when a
-  /// controller OJD sees has a vendor and product ID in `identities`, whose records changed.
+  /// Re-admits each connected controller with a vendor and product ID in `identities`, whose
+  /// records changed, so it binds with the current controller records. Other controllers keep
+  /// their sessions.
   ///
-  /// Sessions are torn down as for system sleep and detection starts again, so connected
-  /// controllers re-attach through hot-plug detection. Does nothing while stopped or asleep; a
-  /// later start or wake reads the current records anyway.
+  /// Each affected connection is torn down as for a detach and admitted again, but keeps the
+  /// user's suspension. With raw-USB detection running, its next poll does this for USB and HID
+  /// connections together, so a controller reachable by both picks its route again, and this
+  /// returns once they are torn down. Does nothing while stopped or asleep; a later start or wake
+  /// reads the current records anyway.
   public func reloadControllerRecords(changing identities: Set<ControllerIdentity>) async {
     guard isStarted, !isStopping, !isSystemSleeping else { return }
     guard seesController(in: identities) else {
       print("[DeviceManager] Controller records changed - no connected controller affected")
       return
     }
-    isStopping = true
-    await tearDownControllerSessions()
-    isStopping = false
-    print("[DeviceManager] Controller records changed - re-admitting controllers")
-    await start()
+    print("[DeviceManager] Controller records changed - re-admitting affected controllers")
+    let changed = Set(identities.map { [$0.vendorID, $0.productID] })
+    if usbTransportProvider != nil, !detectionTasks.isEmpty {
+      pendingRecordReloads.formUnion(changed)
+      await withCheckedContinuation { recordReloadWaiters.append($0) }
+    } else {
+      await readmitHIDConnections(changing: changed)
+    }
+  }
+
+  /// Tears down and admits again each current HID connection that OJD tracks and whose vendor and
+  /// product ID pair is in `changed`, including one that yielded to raw USB.
+  func readmitHIDConnections(changing changed: Set<[UInt16]>) async {
+    guard let snapshots = await hidManager.currentConnectionSnapshots() else { return }
+    for snapshot in snapshots {
+      let connection = snapshot.connection
+      guard !isStopping, let vendorID = connection.physicalDevice.vendorID,
+        let productID = connection.physicalDevice.productID,
+        changed.contains([vendorID, productID]), tracksHIDConnection(connection.connectionID)
+      else { continue }
+      clearUnboundDevice(.hid(connection.connectionID))
+      clearPassThroughDevice(connection.connectionID)
+      if yieldedHIDConnections.removeValue(forKey: connection.connectionID) != nil {
+        _ = await hidManager.reacquireInputClaim(locationID: connection.routingLocationID)
+      }
+      let bound = deviceInfos.filter { $0.value.hidConnectionID == connection.connectionID }.keys
+      for identifier in bound {
+        let suspended = suspendedControllerIdentities.contains(identifier)
+        await tearDownHIDDevice(identifier: identifier, connection: connection)
+        if suspended { suspendedControllerIdentities.insert(identifier) }
+      }
+      hidRoleConnections.removeValue(forKey: connection.connectionID)
+      guard !isStopping else { return }
+      // As in HID detection, a native connection binds inline.
+      if connection.physicalDevice.nativePassThrough {
+        await handleHIDDeviceConnected(connection: connection, ownership: snapshot.ownership)
+      } else {
+        scheduleHIDDeviceInitialization(connection: connection, ownership: snapshot.ownership)
+      }
+    }
+  }
+
+  private func tracksHIDConnection(_ connectionID: UUID) -> Bool {
+    deviceInfos.values.contains { $0.hidConnectionID == connectionID }
+      || unboundDevices[.hid(connectionID)] != nil || passThroughDevices[connectionID] != nil
+      || yieldedHIDConnections[connectionID] != nil
+      || hidInitializationTasks.values.contains { $0.connection.connectionID == connectionID }
   }
 
   private func seesController(in identities: Set<ControllerIdentity>) -> Bool {

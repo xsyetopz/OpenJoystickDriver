@@ -943,6 +943,7 @@
 "cli.help.global_options" = "每个命令也接受全局选项；“ojd --help”会列出它们。";
 "cli.error.env_timeout" = "OJD_TIMEOUT 需要大于 0 的秒数。";
 "cli.error.env_color" = "OJD_COLOR 需要 auto、always 或 never。";
+"cli.error.env_no_input" = "OJD_NO_INPUT 需要 1、true、yes、0、false 或 no。";
 "cli.virtual.feed.error.plain" = "--plain 不适用于输出 JSON 行的“virtual feed”。请去掉 --plain。";
 "cli.controller.watch.examples" = "示例：\n  # 打印 10 秒的输入\n  ojd controller watch 045E:028E --duration 10\n  # 以 JSON 打印最先按下的控件\n  ojd controller watch 045E:028E --first-press --json\n  # 监视所有控制器及其虚拟游戏手柄发送的内容\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "示例：\n  # 让两个主马达以 180 的强度运行 0.45 秒\n  ojd controller rumble 045E:028E\n  # 让两个主马达以最大强度运行 2 秒\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "记录文件，或用 - 从 stdin 读取记录。";
 "cli.record.identity" = "控制器型号，格式为 VVVV:PPPP。";
 "cli.record.install.abstract" = "检查控制器记录，并为当前用户安装。";
-"cli.record.install.discussion" = "将记录以 VVVV-PPPP.json 写入你的记录目录，并替换该型号已安装的记录。运行中的服务会立即应用。记录无效时以退出码 1 退出，且不写入任何内容。";
+"cli.record.install.confirm" = "替换 %@？";
+"cli.record.install.discussion" = "将记录以 VVVV-PPPP.json 写入你的记录目录。运行中的服务会立即应用。替换该型号已安装的记录时，在终端中会请求确认；否则需要 --force。--dry-run 只检查记录，不写入任何内容。记录无效时以退出码 1 退出，且不写入任何内容。";
+"cli.record.install.dry_run" = "将会安装 %@。";
 "cli.record.install.failed" = "无法写入 %@：%@";
 "cli.record.install.success" = "已安装 %@。运行中的服务现在会应用它。";
 "cli.record.invalid" = "%@ 不是有效的记录：%@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "配对：来自 “ojd controller pair” 的会话 ID，或任一 Joy-Con 的 ID。";
 "cli.profile.abstract" = "创建、更改和激活重新映射配置文件。";
 "cli.profile.activate.abstract" = "将配置文件应用到其控制器型号。";
-"cli.profile.activate.allow_empty" = "即使配置文件会阻止所有控制器输入，也将其激活。";
-"cli.profile.activate.discussion" = "该配置文件会替换同一控制器型号和 App 范围内当前活动的配置文件。关闭虚拟游戏手柄且没有映射的配置文件会阻止控制器的所有输入；激活这样的配置文件需要 --allow-empty。";
+"cli.profile.activate.allow_empty" = "即使配置文件不产生任何输出，也将其激活。";
+"cli.profile.activate.discussion" = "该配置文件会替换同一控制器型号和 App 范围内当前活动的配置文件。虚拟游戏手柄设为 mapped 且不向游戏手柄、键盘、指针或控制器发送任何内容，也不设置灯光颜色的配置文件不会产生任何输出；激活这样的配置文件需要 --allow-empty。";
 "cli.profile.activate.done" = "已激活“%@”，用于 %@。";
-"cli.profile.activate.empty" = "此配置文件会阻止所有控制器输入。请加上 --allow-empty 来激活它。";
+"cli.profile.activate.empty" = "此配置文件不会产生任何输出。请加上 --allow-empty 来激活它。";
 "cli.profile.active_marker" = "（活动）";
 "cli.profile.argument" = "配置文件：其 ID，或来自 “ojd profile list” 的名称。";
 "cli.profile.create.abstract" = "为某一控制器型号创建空配置文件。";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "必须先修复或移除损坏的配置文件，才能更改配置文件。请修复或移除后重试。";
 "error.E3023" = "无法写入配置文件。请检查磁盘可用空间和文件夹权限。";
 "error.E3024" = "重新映射服务遇到了无法识别的错误。请运行“ojd diagnose”，并连同其输出一起报告问题。";
+"error.E3025" = "该配置文件不会产生任何输出。请为其添加映射或灯光颜色，或使用 --allow-empty 激活。";
 "error.withCode" = "%@ (%@)";

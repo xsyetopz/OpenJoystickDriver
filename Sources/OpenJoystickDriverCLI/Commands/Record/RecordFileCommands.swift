@@ -130,11 +130,26 @@ struct RecordInstallCommand: AsyncParsableCommand {
   struct Result: Encodable, Equatable {
     let installed: String
     let replaced: Bool
+    let dryRun: Bool
     let record: RecordValidation
   }
 
   @Argument(help: recordFileHelp())
   var file: String
+
+  @Flag(
+    name: [.short, .long],
+    help: ArgumentHelp(CLILocalized.text("cli.option.force"))
+  )
+  var force = false
+
+  @Flag(
+    name: [.customShort("n"), .long],
+    help: ArgumentHelp(
+      CLILocalized.text("cli.option.dry_run")
+    )
+  )
+  var dryRun = false
 
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
@@ -145,41 +160,58 @@ struct RecordInstallCommand: AsyncParsableCommand {
       let validated = try RecordValidation.check(file, data: data)
       let destination = RecordStore.directory.appendingPathComponent(validated.fileName)
       let replaced = FileManager.default.fileExists(atPath: destination.path)
-      do {
-        try FileManager.default.createDirectory(
-          at: RecordStore.directory,
-          withIntermediateDirectories: true
-        )
-        try data.write(to: destination, options: .atomic)
-      } catch {
-        throw CLIFailure(
-          .fileAccessFailed,
-          CLILocalized.format(
-            "cli.record.install.failed",
-            destination.path,
-            error.localizedDescription
-          )
+      if replaced, !dryRun {
+        try CLITerminal.confirm(
+          CLILocalized.format("cli.record.install.confirm", destination.path),
+          force: force
         )
       }
+      if !dryRun { try write(data, to: destination) }
       switch CLIContext.current.format {
       case .json:
         try CLIOutput.json(
           Result(
             installed: destination.path,
             replaced: replaced,
+            dryRun: dryRun,
             record: RecordValidation(validated)
           )
         )
       case .plain: CLIOutput.plain([[destination.path]])
       case .human:
-        CLIOutput.success(
-          CLILocalized.format(
-            "cli.record.install.success",
-            destination.path
+        if dryRun {
+          CLIOutput.stdout(
+            CLILocalized.format("cli.record.install.dry_run", destination.path)
           )
-        )
+        } else {
+          CLIOutput.success(
+            CLILocalized.format(
+              "cli.record.install.success",
+              destination.path
+            )
+          )
+        }
       }
       if let note = RecordValidation.usbNote(validated) { CLIOutput.stderr(note) }
+    }
+  }
+
+  private func write(_ data: Data, to destination: URL) throws {
+    do {
+      try FileManager.default.createDirectory(
+        at: RecordStore.directory,
+        withIntermediateDirectories: true
+      )
+      try data.write(to: destination, options: .atomic)
+    } catch {
+      throw CLIFailure(
+        .fileAccessFailed,
+        CLILocalized.format(
+          "cli.record.install.failed",
+          destination.path,
+          error.localizedDescription
+        )
+      )
     }
   }
 }

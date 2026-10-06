@@ -28,8 +28,8 @@ final class ControllerRecordWatcher {
     self.onChange = onChange
   }
 
-  /// Applies the current records and starts watching. Does not watch when the directory cannot be
-  /// created or opened; the bundled catalog and any records already read still apply.
+  /// Applies the current records and starts watching. A directory that cannot be created or opened
+  /// is watched once it exists; until then the bundled catalog and any records already read apply.
   func start() {
     guard watcher == nil else { return }
     do {

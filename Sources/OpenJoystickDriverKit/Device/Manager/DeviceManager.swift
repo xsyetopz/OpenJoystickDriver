@@ -117,6 +117,11 @@ public actor DeviceManager {
   var nativeShadowedUSBServices: [USBTransportServiceIdentity: DeviceIdentifier] = [:]
   /// HID connections left to macOS by native pass-through, keyed by connection ID.
   var passThroughDevices: [UUID: PassThroughHIDDevice] = [:]
+  /// Vendor and product ID pairs whose controller records changed, for raw-USB detection to
+  /// re-admit on its next poll.
+  var pendingRecordReloads: Set<[UInt16]> = []
+  /// Record reloads that wait for raw-USB detection to remove their controllers.
+  var recordReloadWaiters: [CheckedContinuation<Void, Never>] = []
 
   /// Creates a manager that sends all output to `dispatcher`.
   ///

@@ -943,6 +943,7 @@
 "cli.help.global_options" = "すべてのコマンドでグローバルオプションも使えます。一覧は「ojd --help」で確認できます。";
 "cli.error.env_timeout" = "OJD_TIMEOUT には 0 より大きい秒数を指定してください。";
 "cli.error.env_color" = "OJD_COLOR には auto、always、never のいずれかを指定してください。";
+"cli.error.env_no_input" = "OJD_NO_INPUT には 1、true、yes、0、false、no のいずれかを指定してください。";
 "cli.virtual.feed.error.plain" = "--plain は JSON 行を出力する「virtual feed」には使えません。--plain を外してください。";
 "cli.controller.watch.examples" = "例:\n  # 10 秒間入力を表示\n  ojd controller watch 045E:028E --duration 10\n  # 最初に押されたコントロールを JSON で表示\n  ojd controller watch 045E:028E --first-press --json\n  # すべてのコントローラと、その仮想ゲームパッドが送る内容を監視\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "例:\n  # 2 つのメインモーターを強さ 180 で 0.45 秒間動かす\n  ojd controller rumble 045E:028E\n  # 2 つのメインモーターを最大の強さで 2 秒間動かす\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
@@ -1307,7 +1308,9 @@
 "cli.record.file" = "レコードファイル。- を指定すると stdin から読み込みます。";
 "cli.record.identity" = "コントローラのモデル (VVVV:PPPP 形式)。";
 "cli.record.install.abstract" = "コントローラのレコードを確認し、現在のユーザー用にインストールします。";
-"cli.record.install.discussion" = "レコードを VVVV-PPPP.json としてレコードディレクトリに書き込み、そのモデル用にすでにインストールされているレコードを置き換えます。実行中のサービスはすぐに適用します。レコードが無効な場合は何も書き込まず、終了コード 1 で終了します。";
+"cli.record.install.confirm" = "%@ を置き換えますか？";
+"cli.record.install.discussion" = "レコードを VVVV-PPPP.json としてレコードディレクトリに書き込みます。実行中のサービスはすぐに適用します。そのモデル用にすでにインストールされているレコードを置き換える場合、ターミナルでは確認を求め、それ以外の場合は --force が必要です。--dry-run はレコードを確認するだけで、何も書き込みません。レコードが無効な場合は何も書き込まず、終了コード 1 で終了します。";
+"cli.record.install.dry_run" = "%@ をインストールします。";
 "cli.record.install.failed" = "%@ を書き込めません: %@";
 "cli.record.install.success" = "%@ をインストールしました。実行中のサービスが今すぐ適用します。";
 "cli.record.invalid" = "%@ は有効なレコードではありません: %@";
@@ -1388,10 +1391,10 @@
 "cli.controller.unpair.pair" = "ペア: 「ojd controller pair」が表示するセッション ID、またはどちらかの Joy-Con の ID。";
 "cli.profile.abstract" = "リマッピングプロファイルを作成、変更、有効化します。";
 "cli.profile.activate.abstract" = "プロファイルを対象のコントローラモデルに適用します。";
-"cli.profile.activate.allow_empty" = "コントローラの入力をすべて遮断するプロファイルでも有効にします。";
-"cli.profile.activate.discussion" = "このプロファイルは、同じコントローラモデルとアプリの範囲で有効なプロファイルを置き換えます。仮想ゲームパッドを無効にし、割り当てもないプロファイルは、コントローラの入力をすべて遮断します。そのようなプロファイルを有効にするには --allow-empty が必要です。";
+"cli.profile.activate.allow_empty" = "出力を一切生成しないプロファイルでも有効にします。";
+"cli.profile.activate.discussion" = "このプロファイルは、同じコントローラモデルとアプリの範囲で有効なプロファイルを置き換えます。仮想ゲームパッドが mapped に設定され、ゲームパッド、キーボード、ポインタ、コントローラのいずれにも何も送らず、ライトの色も設定しないプロファイルは、出力を生成しません。そのようなプロファイルを有効にするには --allow-empty が必要です。";
 "cli.profile.activate.done" = "「%@」を %@ 用に有効にしました。";
-"cli.profile.activate.empty" = "このプロファイルはコントローラの入力をすべて遮断します。有効にするには --allow-empty を付けてください。";
+"cli.profile.activate.empty" = "このプロファイルは出力を一切生成しません。有効にするには --allow-empty を付けてください。";
 "cli.profile.active_marker" = "(アクティブ)";
 "cli.profile.argument" = "プロファイル: その ID、または「ojd profile list」に表示される名前。";
 "cli.profile.create.abstract" = "1 つのコントローラモデル用の空のプロファイルを作成します。";
@@ -1557,4 +1560,5 @@
 "error.E3022" = "プロファイルを変更する前に、破損したプロファイルファイルを修復または削除する必要があります。修復または削除して、もう一度お試しください。";
 "error.E3023" = "プロファイルファイルを書き込めませんでした。ディスクの空き容量とフォルダの権限を確認してください。";
 "error.E3024" = "リマッピングサービスが認識できないエラーが発生しました。「ojd diagnose」を実行し、その出力とともに問題を報告してください。";
+"error.E3025" = "このプロファイルは出力を生成しません。割り当てまたはライトの色を追加するか、--allow-empty を付けて有効にしてください。";
 "error.withCode" = "%@（%@）";
