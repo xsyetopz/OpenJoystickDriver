@@ -11,20 +11,20 @@
 "permissions.restartApplication" = "OpenJoystickDriver पुनः आरंभ करें";
 "menu.edit" = "संपादित करें";
 "menu.undo" = "पहले जैसा करें";
-"menu.redo" = "दोहराएँ";
+"menu.redo" = "फिर करें";
 "menu.cut" = "कट करें";
 "menu.copy" = "कॉपी करें";
-"menu.paste" = "पेस्ट करें";
+"menu.paste" = "पेस्ट";
 "menu.selectAll" = "सभी चुनें";
 "menu.window" = "विंडो";
-"menu.minimize" = "छोटा करें";
+"menu.minimize" = "मिनिमाइज़ करें";
 "menu.zoom" = "ज़ूम";
 "menu.bringAllToFront" = "सभी को आगे लाएँ";
 "menu.console" = "कंसोल खोलें…";
 "menu.help" = "सहायता";
 "menu.projectPage" = "GitHub";
 "menu.show" = "OpenJoystickDriver दिखाएँ";
-"common.ok" = "OK";
+"common.ok" = "ठीक";
 "about.version" = "वर्शन %@\nmacOS के लिए कंट्रोलर इनपुट";
 "common.refresh" = "रीफ़्रेश करें";
 "common.tryAgain" = "फिर कोशिश करें";
@@ -32,8 +32,8 @@
 "common.save" = "सहेजें";
 "common.create" = "बनाएँ";
 "common.delete" = "डिलीट करें";
-"common.dismiss" = "खारिज करें";
-"common.reload" = "फिर से लोड करें";
+"common.dismiss" = "ख़ारिज करें";
+"common.reload" = "फिर लोड करें";
 "common.keepEditing" = "संपादन जारी रखें";
 "common.clear" = "साफ़ करें";
 "common.collect" = "इकट्ठा करें";
@@ -52,7 +52,7 @@
 "status.ready" = "तैयार";
 "status.allowed" = "अनुमति दी गई";
 "status.needsAttention" = "ध्यान देने की ज़रूरत";
-"status.unavailable" = "उपलब्ध नहीं";
+"status.unavailable" = "अनुपलब्ध";
 "status.notNeeded" = "ज़रूरी नहीं";
 "status.notSelected" = "चयनित नहीं";
 "status.connectController" = "कंट्रोलर कनेक्ट करें";
@@ -369,7 +369,7 @@
 "error.unexpected" = "OpenJoystickDriver ने अप्रत्याशित परिणाम लौटाया।";
 "mapping.allowed" = "अनुमति दी गई";
 "mapping.needsAttention" = "ध्यान देने की ज़रूरत";
-"mapping.unavailable" = "उपलब्ध नहीं";
+"mapping.unavailable" = "अनुपलब्ध";
 "mapping.ready" = "तैयार";
 "mapping.connectController" = "कंट्रोलर कनेक्ट करें";
 "mapping.checking" = "जाँच";
@@ -438,7 +438,7 @@
 "common.notSelected" = "चयनित नहीं";
 "common.none" = "कोई नहीं";
 "common.available" = "उपलब्ध";
-"common.unavailable" = "उपलब्ध नहीं";
+"common.unavailable" = "अनुपलब्ध";
 "common.needsAttention" = "ध्यान देने की ज़रूरत";
 "common.status" = "स्थिति";
 "common.service" = "सेवा";
@@ -460,7 +460,7 @@
 "common.add" = "जोड़ें";
 "common.apply" = "लागू करें";
 "common.copyAll" = "सभी कॉपी करें";
-"common.done" = "हो गया";
+"common.done" = "पूर्ण";
 "common.export" = "एक्सपोर्ट करें…";
 "common.failed" = "विफल";
 "common.inputMonitoring" = "इनपुट मॉनिटरिंग";
@@ -520,7 +520,7 @@
 "developer.noPackets" = "कोई पैकेट कैप्चर नहीं हुआ";
 "developer.packetCapture" = "रॉ पैकेट कैप्चर";
 "developer.packetFilterActivity" = "गतिविधि";
-"developer.packetFilterAll" = "सब";
+"developer.packetFilterAll" = "सभी";
 "developer.packetColumns" = "समय       दिशा        बाइट   डेटा";
 "developer.packetSharingWarning" = "पैकेट सामग्री कंट्रोलर के अनुसार भिन्न होती है। साझा करने से पहले फ़ाइल की जाँच करें।";
 "developer.rawUSB" = "रॉ USB";
@@ -626,7 +626,7 @@
 "keyboard.command" = "कमांड";
 "keyboard.control" = "कंट्रोल";
 "keyboard.option" = "ऑप्शन";
-"keyboard.shift" = "शिफ्ट";
+"keyboard.shift" = "शिफ़्ट";
 "mapping.automatic" = "स्वचालित";
 "setup.activating" = "सक्रिय किया जा रहा है…";
 "setup.activeDetail" = "प्रतिबंधित Xbox USB ड्राइवर इंस्टॉल है और तैयार है।";
@@ -644,7 +644,7 @@
 "setup.repairDetail" = "OpenJoystickDriver डेवलपर टूल के बिना Xbox USB ड्राइवर को ठीक करेगा।";
 "setup.repairDriver" = "Xbox USB ड्राइवर ठीक करें";
 "cli.login.uninstall_action" = "अनइंस्टॉल करें";
-"console.all" = "सब";
+"console.all" = "सभी";
 "console.copyAll" = "सभी कॉपी";
 "console.empty" = "कोई लॉग प्रविष्टि नहीं।";
 "console.errors" = "त्रुटियाँ";
@@ -810,7 +810,7 @@
 "profiles.stick.scrollDegrees" = "प्रति स्क्रॉल लाइन घुमाव (डिग्री)";
 "profiles.stick.scrollAxis" = "स्क्रॉल अक्ष";
 "profiles.stick.horizontal" = "क्षैतिज";
-"profiles.stick.vertical" = "ऊर्ध्वाधर";
+"profiles.stick.vertical" = "लंबवत";
 "profiles.stick.steeringFullScale" = "पूर्ण स्टीयरिंग पर घुमाव (डिग्री)";
 "profiles.stick.steeringReturnRate" = "स्टीयरिंग वापसी गति (डिग्री/सेकंड)";
 "profiles.stick.steeringOutput" = "वर्चुअल स्टीयरिंग अक्ष";
@@ -906,7 +906,7 @@
 "controllers.sessionActive" = "OpenJoystickDriver द्वारा प्रबंधित";
 "controllers.suspendedSummary" = "फिर से शुरू करने तक इनपुट और OpenJoystickDriver आउटपुट रुके रहेंगे।";
 "controllers.disconnectSummary" = "इनपुट, फ़िज़िकल इफ़ेक्ट और OpenJoystickDriver का वर्चुअल आउटपुट रोकें।";
-"controllers.resume" = "फिर से शुरू करें";
+"controllers.resume" = "जारी रखें";
 "controllers.disconnectFromOJD" = "OpenJoystickDriver से डिस्कनेक्ट करें";
 "error.controllerSessionChangeRejected" = "कंट्रोलर सत्र बदला नहीं जा सका।";
 

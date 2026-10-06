@@ -17,7 +17,7 @@
 "menu.paste" = "Incolla";
 "menu.selectAll" = "Seleziona tutto";
 "menu.window" = "Finestra";
-"menu.minimize" = "Riduci a icona";
+"menu.minimize" = "Contrai";
 "menu.zoom" = "Zoom";
 "menu.bringAllToFront" = "Porta tutto in primo piano";
 "menu.console" = "Apri console…";
@@ -93,7 +93,7 @@
 "settings.controllerDisconnectedNotifications" = "Controller scollegato";
 "settings.controllerDisconnectedShort" = "Disconnesso";
 "settings.controllerNotifications" = "Controller collegato";
-"settings.diagnostics" = "Diagnostica";
+"settings.diagnostics" = "Diagnosi";
 "settings.service" = "Servizio";
 "settings.devices" = "Dispositivi";
 "settings.currentStatus" = "Stato attuale";
@@ -230,7 +230,7 @@
 "capture.noButton" = "Al momento non è tenuto premuto nessun pulsante.";
 "capture.buttonsHeld" = "Pulsanti tenuti premuti: %@";
 "capture.profileChanged" = "Questo profilo è stato modificato altrove. Ricarica o continua a modificare.";
-"capture.profileName" = "Nome del profilo";
+"capture.profileName" = "Nome profilo";
 "capture.profileNameValidation" = "Inserisci il nome del profilo.";
 "capture.controller" = "Controller";
 "profiles.new" = "Nuovo profilo";
@@ -325,7 +325,7 @@
 "profiles.target" = "Applica a";
 "profiles.targetApplication" = "Un’applicazione";
 "profiles.targetGlobal" = "Tutte le applicazioni";
-"profiles.toggle" = "Alterna";
+"profiles.toggle" = "Attiva/Disattiva";
 "profiles.turbo" = "Turbo";
 "profiles.turboDuty" = "Ciclo di lavoro";
 "profiles.turboRate" = "Frequenza di ripetizione";
@@ -336,7 +336,7 @@
 "debug.controllers" = "Controller";
 "debug.unavailable" = "Esecuzione · Non disponibile";
 "debug.needsAttention" = "Esecuzione · Richiede attenzione";
-"debug.diagnostics" = "Diagnostica";
+"debug.diagnostics" = "Diagnosi";
 "debug.collect" = "Raccogli";
 "debug.collectAccessibility" = "Raccogli diagnostica";
 "debug.saveReport" = "Salva report…";
@@ -610,7 +610,7 @@
 "inputTest.xboxButton" = "Pulsante Xbox";
 "inputTest.yButton" = "Pulsante Y";
 "inputTest.yTriangle" = "Y / Triangolo";
-"keyboard.capsLock" = "Bloc Maiusc";
+"keyboard.capsLock" = "Blocco maiuscole";
 "keyboard.delete" = "Elimina";
 "keyboard.downArrow" = "Freccia giù";
 "keyboard.escape" = "Esc";
@@ -618,7 +618,7 @@
 "keyboard.leftArrow" = "Freccia sinistra";
 "keyboard.pageDown" = "Pagina giù";
 "keyboard.pageUp" = "Pagina su";
-"keyboard.return" = "Invio";
+"keyboard.return" = "A capo";
 "keyboard.rightArrow" = "Freccia destra";
 "keyboard.space" = "Spazio";
 "keyboard.tab" = "Tabulatore";
@@ -663,7 +663,7 @@
 "notifications.testBody" = "OpenJoystickDriver può avvisarti dell’attività di controller e profili.";
 "notifications.testTitle" = "Le notifiche sono pronte";
 "profiles.virtualOutput" = "Gamepad virtuale";
-"profiles.virtualDisabled" = "Disattivato";
+"profiles.virtualDisabled" = "Disabilitato";
 "profiles.virtualMapped" = "Solo controlli riassegnati";
 "profiles.virtualPassthrough" = "Includi controlli non riassegnati";
 "profiles.exclusiveInput" = "Richiedi accesso esclusivo all’input fisico";
@@ -687,9 +687,9 @@
 
 "profiles.addAction" = "Aggiungi azione";
 
-"profiles.moveUp" = "Sposta su";
+"profiles.moveUp" = "Sposta verso l’alto";
 
-"profiles.moveDown" = "Sposta giù";
+"profiles.moveDown" = "Sposta verso il basso";
 
 "mapping.leftFunctionButton" = "Pulsante funzione sinistro";
 
@@ -751,7 +751,7 @@
 
 /* Gyro authoring. Native translation review pending. */
 "profiles.gyro.output" = "Output giroscopio";
-"profiles.gyro.disabled" = "Disattivato";
+"profiles.gyro.disabled" = "Disabilitato";
 "profiles.gyro.mouse" = "Puntatore del mouse";
 "profiles.gyro.leftStick" = "Levetta sinistra";
 "profiles.gyro.rightStick" = "Levetta destra";
@@ -849,7 +849,7 @@
 "profiles.motion.steeringResponseExponent" = "Esponente di risposta dello sterzo";
 "profiles.motion.steeringInverted" = "Inverti sterzo";
 
-"common.disabled" = "Disattivato";
+"common.disabled" = "Disabilitato";
 "profiles.joyConPair" = "Profilo Joy-Con abbinato";
 "profiles.joyConGyro" = "Sorgente giroscopio dell’abbinamento";
 "profiles.joyConLeft" = "Joy-Con sinistro";

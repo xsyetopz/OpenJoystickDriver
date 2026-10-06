@@ -47,6 +47,7 @@ Read every value back against `en-US` before you ship it.
 - Keep the part of speech: a noun label stays a noun, and an action button stays a verb.
 - Use one term per concept in a file: controller, profile, mapping, service, extension, pairing.
   Keep a diagnose "check" distinct from the controller device.
+- For a standard macOS term (menu items, keys, common buttons), use the term Apple's macOS glossary uses in that language when it has the same sense.
 - Leave English only for product names, CLI tokens and option values, identifiers, and a loanword that macOS itself uses in that language.
 - Do not ship unreviewed machine translation.
 
@@ -54,7 +55,7 @@ Read every value back against `en-US` before you ship it.
 
 1. Copy the template key shape into the target `.lproj` pair.
 1. Translate values. Keep keys, placeholders (`%@`, `%d`, `%#@count@`), and runtime identifiers (names, VID/PID, paths).
-1. One key per label. Sentence case. Native ellipsis when the action opens another surface.
+1. One key per label. Follow Apple's capitalization and verb form for the language. Native ellipsis when the action opens another surface.
 1. RTL: check mixed-direction names and paths.
 
 Capability messages describe the controller or active protocol, not a permanent profile error. Compact symbol actions still require localized text because that text is used for older-system fallbacks, tooltips, and accessibility labels.

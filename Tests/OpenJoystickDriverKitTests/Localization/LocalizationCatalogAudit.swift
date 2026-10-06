@@ -46,7 +46,7 @@ enum LocalizationCatalogAudit {
       "shortcuts.controller.name", "shortcuts.controller.type", "shortcuts.parameter.controller",
       "shortcuts.profile.name",
     ],
-    "es-ES": spanishTerms,
+    "es-ES": spanishTerms.union(["menu.zoom"]),
     "es-MX": spanishTerms,
     "fr-CA": frenchTerms,
     "fr-FR": frenchTerms,
@@ -60,7 +60,10 @@ enum LocalizationCatalogAudit {
       "profiles.trackball.enabled", "profiles.turbo", "settings.debug",
       "shortcuts.controller.type", "shortcuts.parameter.controller",
     ],
-    "ja-JP": ["keyboard.capsLock", "keyboard.escape", "keyboard.return"],
+    "ja-JP": [
+      "keyboard.capsLock", "keyboard.escape", "keyboard.option", "keyboard.return",
+      "keyboard.shift",
+    ],
     "ko-KR": [
       "keyboard.capsLock", "keyboard.command", "keyboard.control", "keyboard.escape",
       "keyboard.option", "keyboard.return", "keyboard.shift",
@@ -70,12 +73,12 @@ enum LocalizationCatalogAudit {
       "cli.controller.show.label.record", "cli.controller.show.label.rumble",
       "cli.status.label.controllers", "cli.status.label.service", "common.controller",
       "common.controllers", "common.protocol", "common.runtime", "common.service", "common.status",
-      "common.stop", "console.title", "controllers.label", "controllers.protocol",
+      "common.stop", "console.stream", "console.title", "controllers.label", "controllers.protocol",
       "controllers.title", "debug.controllers", "debug.runtime", "developer.controller",
       "developer.controllerDetails", "developer.route", "inputTest.home", "inputTest.menu",
       "inputTest.rumble", "keyboard.capsLock", "keyboard.command", "keyboard.control",
       "keyboard.escape", "keyboard.option", "keyboard.return", "keyboard.shift", "keyboard.tab",
-      "mapping.guide", "mapping.physicalRumble", "mapping.start", "menu.zoom",
+      "mapping.guide", "mapping.physicalRumble", "mapping.start", "menu.help", "menu.zoom",
       "motion.calibration.offset", "profiles.activator", "profiles.physical.effect",
       "profiles.physical.motor", "profiles.sectionSticks", "profiles.sectionTriggers",
       "profiles.stick.source", "profiles.trackball.enabled", "profiles.trigger.source",
@@ -84,16 +87,18 @@ enum LocalizationCatalogAudit {
       "shortcuts.controller.type", "shortcuts.parameter.controller",
     ],
     "pt-BR": [
-      "capture.linear", "common.status", "console.title", "inputTest.menu", "keyboard.capsLock",
-      "keyboard.control", "keyboard.return", "keyboard.shift", "menu.zoom",
+      "capture.linear", "common.status", "console.title", "inputTest.menu", "keyboard.control",
+      "menu.zoom",
       "profiles.motion.local", "profiles.physical.motor", "profiles.stick.horizontal",
       "profiles.stick.vertical", "profiles.trackball.enabled", "profiles.turbo", "settings.status",
     ],
     "tr-TR": [
-      "keyboard.control", "keyboard.escape", "keyboard.return", "keyboard.shift", "keyboard.tab",
-      "profiles.physical.motor", "profiles.trackball.enabled", "profiles.turbo",
+      "keyboard.control", "keyboard.escape", "keyboard.option", "keyboard.return", "keyboard.shift",
+      "keyboard.tab", "profiles.physical.motor", "profiles.trackball.enabled", "profiles.turbo",
       "shortcuts.controller.model",
     ],
+    "zh-CN": ["keyboard.option", "keyboard.shift"],
+    "zh-TW": ["keyboard.escape", "keyboard.option"],
   ]
 
   static func allowedSourceIdenticalEnglishProseKeys(for localization: String) -> Set<String> {

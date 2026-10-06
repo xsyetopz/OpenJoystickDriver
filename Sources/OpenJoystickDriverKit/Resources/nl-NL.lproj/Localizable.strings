@@ -1,7 +1,7 @@
 "app.name" = "OpenJoystickDriver";
 "menu.about" = "Over OpenJoystickDriver";
 "menu.requestAccess" = "Toegang vragen…";
-"menu.refresh" = "Vernieuwen";
+"menu.refresh" = "Vernieuw";
 "menu.overview" = "Overzicht…";
 "menu.controllers" = "Controllers…";
 "menu.profiles" = "Profielen…";
@@ -10,8 +10,8 @@
 "menu.quit" = "Sluit OpenJoystickDriver af";
 "permissions.restartApplication" = "Herstart OpenJoystickDriver";
 "menu.edit" = "Wijzig";
-"menu.undo" = "Maak ongedaan";
-"menu.redo" = "Herhaal";
+"menu.undo" = "Herstel";
+"menu.redo" = "Opnieuw";
 "menu.cut" = "Knip";
 "menu.copy" = "Kopieer";
 "menu.paste" = "Plak";
@@ -19,14 +19,14 @@
 "menu.window" = "Venster";
 "menu.minimize" = "Minimaliseer";
 "menu.zoom" = "Zoom";
-"menu.bringAllToFront" = "Plaats alles op de voorgrond";
+"menu.bringAllToFront" = "Alles op voorgrond";
 "menu.console" = "Open console…";
-"menu.help" = "Hulp";
+"menu.help" = "Help";
 "menu.projectPage" = "GitHub";
 "menu.show" = "Toon OpenJoystickDriver";
 "common.ok" = "OK";
 "about.version" = "Versie %@\nControllerinvoer voor macOS";
-"common.refresh" = "Vernieuwen";
+"common.refresh" = "Vernieuw";
 "common.tryAgain" = "Probeer opnieuw";
 "common.cancel" = "Annuleer";
 "common.save" = "Bewaar";
@@ -148,7 +148,7 @@
 "controllers.chargingState" = "Oplaadstatus";
 "controllers.cableState" = "Kabelstatus";
 "controllers.discharging" = "Wordt ontladen";
-"controllers.charging" = "Wordt opgeladen";
+"controllers.charging" = "Bezig met opladen";
 "controllers.batteryFull" = "Vol";
 "controllers.notChargeable" = "Niet oplaadbaar";
 "controllers.batteryAccessibilityDetails" = "Batterij: %@. Oplaadstatus: %@. Kabelstatus: %@.";
@@ -300,7 +300,7 @@
 "profiles.chords" = "Akkoorden";
 "profiles.controlNumber" = "Besturing %d";
 "profiles.creationValidation" = "Controleer de profielnaam, de controlleridentificaties en het doel van de toepassing.";
-"profiles.deactivateController" = "Alles deactiveren";
+"profiles.deactivateController" = "Deactiveer alles";
 "profiles.details" = "Profielgegevens";
 "profiles.notSupportedByController" = "Niet ondersteund door deze controller of dit protocol.";
 "profiles.doubleTap" = "Dubbeltik";
@@ -317,7 +317,7 @@
 "profiles.noChords" = "Geen akkoorden geconfigureerd.";
 "profiles.noLayers" = "Geen lagen geconfigureerd.";
 "profiles.noSequences" = "Geen sequenties geconfigureerd.";
-"profiles.productID" = "Product-ID";
+"profiles.productID" = "Productcode";
 "profiles.sequenceHelp" = "De bestemming wordt geactiveerd wanneer de besturingen in deze volgorde worden ingedrukt.";
 "profiles.sequenceWindow" = "Voltooiingsvenster";
 "profiles.sequences" = "Sequenties";
@@ -325,11 +325,11 @@
 "profiles.target" = "Doel";
 "profiles.targetApplication" = "Eén toepassing";
 "profiles.targetGlobal" = "Alle toepassingen";
-"profiles.toggle" = "Schakelen";
+"profiles.toggle" = "Aan/uit";
 "profiles.turbo" = "Turbo";
 "profiles.turboDuty" = "Inschakelduur";
 "profiles.turboRate" = "Herhalingssnelheid";
-"profiles.vendorID" = "Leverancier-ID";
+"profiles.vendorID" = "Fabrikantcode";
 "debug.title" = "Foutopsporing";
 "debug.currentStatus" = "Huidige status";
 "debug.runtime" = "Runtime";
@@ -505,7 +505,7 @@
 "developer.diagnosticMode" = "Diagnosemodus";
 "developer.emptyCapture" = "Klik op “Start de opname” en druk daarna op de knoppen van de controller.";
 "developer.enterDiagnosticMode" = "Diagnosemodus starten";
-"developer.exportCapture" = "Pakketopname exporteren";
+"developer.exportCapture" = "Exporteer pakketopname";
 "developer.extraInputs" = "Extra knoppen";
 "developer.extraInputsDescription" = "Druk op één extra knop tegelijk. Gedetecteerde knoppen blijven in de lijst staan totdat je de opname wist.";
 "developer.hid" = "HID";
@@ -600,7 +600,7 @@
 "inputTest.tabMotion" = "Beweging";
 "inputTest.tabOutput" = "Uitvoer";
 "inputTest.summary" = "Test knoppen, sticks, triggers, rumble en controllerverlichting.";
-"inputTest.testRumble" = "Rumble testen";
+"inputTest.testRumble" = "Test rumble";
 "inputTest.title" = "Invoertest";
 "inputTest.unavailable" = "Invoer niet beschikbaar";
 "inputTest.view" = "Bekijk";
@@ -643,14 +643,14 @@
 "setup.openSystemSettings" = "Open Systeeminstellingen";
 "setup.repairDetail" = "OpenJoystickDriver herstelt het Xbox-USB-stuurprogramma zonder ontwikkelaarshulpmiddelen.";
 "setup.repairDriver" = "Herstel Xbox-USB-stuurprogramma";
-"cli.login.uninstall_action" = "Verwijderen";
+"cli.login.uninstall_action" = "Verwijder installatie";
 "console.all" = "Alles";
 "console.copyAll" = "Kopieer alles";
 "console.empty" = "Geen logboekitems.";
 "console.errors" = "Fouten";
 "console.loadError" = "Logboeken konden niet worden gelezen";
 "console.output" = "Uitvoer";
-"console.stream" = "Stroom";
+"console.stream" = "Stream";
 "console.title" = "Console";
 "notifications.controllerConnected" = "Controller verbonden";
 "notifications.controllerConnectedBody" = "%@ is klaar voor gebruik.";
@@ -665,8 +665,8 @@
 "profiles.virtualOutput" = "Virtuele gamepad";
 "profiles.virtualDisabled" = "Uitgeschakeld";
 "profiles.virtualMapped" = "Alleen toegewezen besturingen";
-"profiles.virtualPassthrough" = "Niet-toegewezen besturingen opnemen";
-"profiles.exclusiveInput" = "Exclusieve toegang tot fysieke invoer vereisen";
+"profiles.virtualPassthrough" = "Neem niet-toegewezen besturingen op";
+"profiles.exclusiveInput" = "Vereis exclusieve toegang tot fysieke invoer";
 "profiles.actions" = "Profielacties";
 "profiles.editorSection" = "Profiel-editor-sectie";
 "profiles.combinations" = "Combinaties";
@@ -685,11 +685,11 @@
 
 "profiles.additionalActions" = "Extra acties";
 
-"profiles.addAction" = "Actie toevoegen";
+"profiles.addAction" = "Voeg actie toe";
 
-"profiles.moveUp" = "Omhoog verplaatsen";
+"profiles.moveUp" = "Omhoog";
 
-"profiles.moveDown" = "Omlaag verplaatsen";
+"profiles.moveDown" = "Omlaag";
 
 "mapping.leftFunctionButton" = "Linker functieknop";
 
@@ -728,7 +728,7 @@
 "profiles.motion.yawRelaxation" = "Giertolerantie in spelerruimte";
 "profiles.motion.sideReductionThreshold" = "Zijdelingse demping in wereldruimte";
 "profiles.motion.gravityCorrectionRate" = "Correctiesnelheid voor zwaartekracht (1/s)";
-"profiles.motion.invertPitch" = "Kantelen omkeren";
+"profiles.motion.invertPitch" = "Keer kantelen om";
 "profiles.motion.invertYaw" = "Gieren omkeren";
 "profiles.motion.automaticBias" = "Automatische kalibratie bij stilstand";
 
@@ -790,7 +790,7 @@
 "profiles.stick.hysteresis" = "Hysterese bij loslaten van flick";
 "profiles.stick.innerDeadzone" = "Binnenste dode zone";
 "profiles.stick.invertX" = "Horizontale as omkeren";
-"profiles.stick.invertY" = "Verticale as omkeren";
+"profiles.stick.invertY" = "Keer verticale as om";
 "profiles.stick.mode" = "Stick-modus";
 "profiles.stick.outerDeadzone" = "Buitenste dode zone";
 "profiles.stick.pointerScale" = "Aanwijzerpunten per graad";
@@ -819,25 +819,25 @@
 "profiles.stick.rotationDirection" = "Positieve rotatie";
 "profiles.stick.clockwise" = "Met de klok mee";
 "profiles.stick.counterclockwise" = "Tegen de klok in";
-"profiles.stick.passthrough" = "Fysieke stick doorgeven";
+"profiles.stick.passthrough" = "Geef fysieke stick door";
 "profiles.trigger.title" = "Triggerfasen";
 "profiles.trigger.source" = "Trigger";
 "profiles.trigger.left" = "Linker trigger";
 "profiles.trigger.right" = "Rechter trigger";
-"profiles.trigger.enabled" = "Tweetraps-trigger inschakelen";
+"profiles.trigger.enabled" = "Schakel tweetraps-trigger in";
 "profiles.trigger.mode" = "Interactie tussen trapjes";
 "profiles.trigger.softThreshold" = "Drempel voor lichte trek (0...1)";
 "profiles.trigger.fullThreshold" = "Volledige trekdrempel (0...1)";
 "profiles.trigger.hysteresis" = "Hysterese bij loslaten";
 "profiles.trigger.skipWindow" = "Venster voor snelle trek (ms)";
-"profiles.trigger.passthrough" = "Analoge trigger doorgeven";
+"profiles.trigger.passthrough" = "Geef analoge trigger door";
 "profiles.trigger.simultaneous" = "Licht en vol samen";
 "profiles.trigger.exclusive" = "Vol vervangt licht";
 "profiles.trigger.preferFull" = "Snel volle trek voorrang geven";
 "profiles.trigger.preferFullCombined" = "Snel vol voorrang; laat combineren";
 "profiles.trigger.responsivePreferFull" = "Reactief licht; liever snel vol";
 "profiles.trigger.responsivePreferFullCombined" = "Reactief licht; laat combineren";
-"profiles.motion.leanEnabled" = "Kantelbronnen inschakelen";
+"profiles.motion.leanEnabled" = "Schakel kantelbronnen in";
 "profiles.motion.leanThresholdDegrees" = "Kantelrempel (graden)";
 "profiles.motion.leanHysteresisDegrees" = "Hysterese bij loslaten van kanteling (graden)";
 "profiles.motion.steeringEnabled" = "Bewegingssturing mogelijk maken";
@@ -847,7 +847,7 @@
 "profiles.motion.steeringDeadzoneDegrees" = "Dode zone voor sturen (graden)";
 "profiles.motion.steeringFullScaleDegrees" = "Volledige stuurhoek (graden)";
 "profiles.motion.steeringResponseExponent" = "Responsexponent voor sturen";
-"profiles.motion.steeringInverted" = "Sturen omkeren";
+"profiles.motion.steeringInverted" = "Keer sturen om";
 
 "common.disabled" = "Uitgeschakeld";
 "profiles.joyConPair" = "Gepaard met Joy-Con-profiel";
@@ -856,9 +856,9 @@
 "profiles.joyConRight" = "Joy-Con rechts";
 "profiles.pairJoyCons" = "Verbonden Joy-Cons koppelen…";
 "profiles.joyConPairActive" = "Koppeling actief";
-"profiles.unpairJoyCons" = "Ontkoppelen";
+"profiles.unpairJoyCons" = "Verwijder koppeling";
 "profiles.joyConPairSessionHint" = "Het koppelen gebruikt deze exacte controllers voor de huidige app-sessie.";
-"profiles.pair" = "Koppelen";
+"profiles.pair" = "Koppel";
 "error.joyConPairUnavailable" = "De geselecteerde Joy-Cons konden niet worden gekoppeld. Ververs de verbonden controllers en probeer het opnieuw.";
 "profiles.joyConExplicitSession" = "Gestart met een expliciete koppelsessie";
 "profiles.joyConSessionState" = "Uitdrukkelijk koppelen";
@@ -883,39 +883,39 @@
 "profiles.physical.startPosition" = "Start van weerstand";
 "profiles.physical.strength" = "Weerstandssterkte";
 
-"profiles.clearInputs" = "Alle ingangen verwijderen";
+"profiles.clearInputs" = "Verwijder alle ingangen";
 "profiles.clearInputsMessage" = "Hierdoor worden alle opdrachten en invoerverwerking van dit profiel verwijderd.";
 "profiles.clearInputsTitle" = "Alle ingangen verwijderen?";
 "profiles.emptyActivationMessage" = "Dit profiel onderdrukt alle controller-invoer.";
 "profiles.emptyActivationTitle" = "Profiel activeren zonder controllerinvoer?";
 "profiles.emptyInputWarning" = "Dit profiel onderdrukt alle controller-invoer.";
 "profiles.restoreDefaultInput" = "Standaardinvoer herstellen";
-"common.reset" = "Herstellen";
+"common.reset" = "Stel opnieuw in";
 "profiles.useControllerDefaultColor" = "Standaard van controller gebruiken";
 "profiles.damagedProfile" = "Beschadigd profiel";
 "profiles.damagedLibrary" = "Beschadigde lijst met actieve profielen";
-"profiles.deleteDamagedButton" = "Beschadigd profiel verwijderen…";
-"profiles.resetLibraryButton" = "Back-up maken en actieve profielen resetten…";
+"profiles.deleteDamagedButton" = "Verwijder beschadigd profiel…";
+"profiles.resetLibraryButton" = "Maak back-up en stel actieve profielen opnieuw in…";
 "profiles.recoveryBackupMessage" = "Er wordt een back-up gemaakt voordat beschadigde gegevens worden verwijderd.";
 "profiles.damagedProfileMessage" = "Dit opgeslagen profiel kon niet worden gelezen. Verwijder het om de geldige profielen te blijven gebruiken.";
 "profiles.damagedSelectionsMessage" = "De lijst met actieve profielen kon niet worden gelezen. Reset deze om door te gaan. Je profielen blijven behouden.";
-"profiles.resetLibraryAction" = "Back-up en resetten";
+"profiles.resetLibraryAction" = "Maak back-up en stel opnieuw in";
 
 /* Controller session lifecycle */
 "controllers.suspended" = "Onderbroken";
 "controllers.sessionActive" = "Beheerd door OpenJoystickDriver";
 "controllers.suspendedSummary" = "Invoer en uitvoer van OpenJoystickDriver zijn gepauzeerd totdat je hervat.";
 "controllers.disconnectSummary" = "Onderbreek invoer, fysieke effecten en virtuele uitvoer van OpenJoystickDriver.";
-"controllers.resume" = "Hervatten";
-"controllers.disconnectFromOJD" = "Loskoppelen van OpenJoystickDriver";
+"controllers.resume" = "Hervat";
+"controllers.disconnectFromOJD" = "Verbreek verbinding met OpenJoystickDriver";
 "error.controllerSessionChangeRejected" = "De controllersessie kon niet worden gewijzigd.";
 
-"controllers.disconnectWireless" = "Draadloze controller loskoppelen…";
-"controllers.disconnectWirelessButton" = "Loskoppelen…";
+"controllers.disconnectWireless" = "Verbreek verbinding met draadloze controller…";
+"controllers.disconnectWirelessButton" = "Verbreek verbinding…";
 "controllers.disconnectWirelessSummary" = "Beëindig deze Bluetooth-verbinding zonder andere controllers te beïnvloeden.";
 "controllers.disconnectWirelessConfirmTitle" = "Draadloze controller loskoppelen?";
 "controllers.disconnectWirelessConfirmMessage" = "%@ blijft losgekoppeld totdat je de controller handmatig opnieuw verbindt.";
-"controllers.disconnectWirelessConfirm" = "Loskoppelen";
+"controllers.disconnectWirelessConfirm" = "Verbreek verbinding";
 
 "notifications.controllerNeedsAttention" = "Controller heeft aandacht nodig";
 "notifications.controllerNeedsAttentionBody" = "De invoer van %@ wordt niet meer bijgewerkt. Laat de bedieningselementen los of koppel de controller los.";
@@ -1142,11 +1142,11 @@
 "settings.commandLineTool.blocked" = "%@ is een bestand, geen link. Verwijder het en installeer daarna opnieuw.";
 "settings.commandLineTool.cancelled" = "Geannuleerd.";
 "settings.commandLineTool.failed" = "macOS heeft de wijziging niet toegestaan.";
-"settings.commandLineTool.install" = "Opdrachtregelprogramma installeren";
+"settings.commandLineTool.install" = "Installeer opdrachtregelprogramma";
 "settings.commandLineTool.installed" = "Geïnstalleerd. Voer ojd uit in Terminal; bij het verwijderen wordt %@ verwijderd.";
 "settings.commandLineTool.linkedElsewhere" = "%@ verwijst naar %@. Bij het installeren wordt het in plaats daarvan aan deze app gekoppeld.";
 "settings.commandLineTool.notInstalled" = "Koppelt %@ aan deze app, zodat je ojd in Terminal kunt uitvoeren. macOS vraagt om een beheerderswachtwoord.";
-"settings.commandLineTool.uninstall" = "Verwijderen";
+"settings.commandLineTool.uninstall" = "Verwijder installatie";
 "cli.controller.abstract" = "Aangesloten controllers weergeven, inspecteren, testen en bedienen.";
 "cli.controller.argument" = "De controller: een ID uit 'ojd controller list' of VVVV:PPPP.";
 "cli.controller.capture.abstract" = "Toon de ruwe pakketten die een controller verstuurt en ontvangt.";
@@ -1465,15 +1465,15 @@
 "error.E1008" = "De service draait al 4 virtuele gamepads. Sluit een feed die je niet nodig hebt en stuur feed opnieuw.";
 "error.E1009" = "De virtuele gamepad is gesloten, of de service draait er geen. Maak opnieuw verbinding en stuur feed.";
 "shortcuts.action.activate_profile.description" = "Schakelt een toewijzingsprofiel in voor het bijbehorende controllermodel.";
-"shortcuts.action.activate_profile.title" = "Profiel activeren";
+"shortcuts.action.activate_profile.title" = "Activeer profiel";
 "shortcuts.action.app_version.description" = "Geeft de versie van de geïnstalleerde app terug.";
-"shortcuts.action.app_version.title" = "OpenJoystickDriver-versie ophalen";
+"shortcuts.action.app_version.title" = "Haal OpenJoystickDriver-versie op";
 "shortcuts.action.battery_level.description" = "Geeft het batterijniveau van een controller terug in procenten. Als de controller een bereik meldt, wordt de laagste waarde van het bereik teruggegeven.";
-"shortcuts.action.battery_level.title" = "Batterijniveau ophalen";
+"shortcuts.action.battery_level.title" = "Haal batterijniveau op";
 "shortcuts.action.deactivate_profile.description" = "Schakelt een toewijzingsprofiel uit.";
-"shortcuts.action.deactivate_profile.title" = "Profiel deactiveren";
+"shortcuts.action.deactivate_profile.title" = "Deactiveer profiel";
 "shortcuts.action.get_controllers.description" = "Geeft de verbonden controllers terug.";
-"shortcuts.action.get_controllers.title" = "Controllers ophalen";
+"shortcuts.action.get_controllers.title" = "Haal controllers op";
 "shortcuts.controller.model" = "Model";
 "shortcuts.controller.name" = "Naam";
 "shortcuts.controller.type" = "Controller";

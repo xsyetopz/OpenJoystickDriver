@@ -18,7 +18,7 @@
 "menu.selectAll" = "Seleccionar todo";
 "menu.window" = "Ventana";
 "menu.minimize" = "Minimizar";
-"menu.zoom" = "Ampliar";
+"menu.zoom" = "Zoom";
 "menu.bringAllToFront" = "Traer todo al frente";
 "menu.console" = "Abrir consola…";
 "menu.help" = "Ayuda";
@@ -32,7 +32,7 @@
 "common.save" = "Guardar";
 "common.create" = "Crear";
 "common.delete" = "Eliminar";
-"common.dismiss" = "Descartar";
+"common.dismiss" = "Cerrar";
 "common.reload" = "Volver a cargar";
 "common.keepEditing" = "Seguir editando";
 "common.clear" = "Borrar";
@@ -73,7 +73,7 @@
 "status.checkingInput" = "Comprobando";
 "settings.navigation" = "Navegación de ajustes";
 "settings.choosePane" = "Elige un panel de ajustes";
-"settings.overview" = "Resumen";
+"settings.overview" = "Visión general";
 "settings.controllers" = "Mandos";
 "settings.profiles" = "Perfiles";
 "settings.debug" = "Depuración";
@@ -98,12 +98,12 @@
 "settings.devices" = "Dispositivos";
 "settings.currentStatus" = "Estado actual";
 "settings.currentVersion" = "Versión actual: %@";
-"settings.developerTools" = "Herramientas de desarrollo";
+"settings.developerTools" = "Herramientas para desarrolladores";
 "settings.developerToolsDescription" = "Mostrar herramientas de entrada del mando y de paquetes USB.";
 "settings.discardTitle" = "¿Descartar los cambios no guardados?";
 "settings.discardMessage" = "Los cambios del perfil no se han guardado.";
 "settings.discardProfileMessage" = "Los cambios de tu perfil no se han guardado.";
-"settings.discardAction" = "Descartar cambios";
+"settings.discardAction" = "No guardar cambios";
 "settings.enableDeveloperTools" = "Activar herramientas de desarrollo";
 "settings.general" = "General";
 "settings.notificationBannersAndSoundOff" = "Los banners y los sonidos están desactivados en Ajustes del Sistema.";
@@ -118,7 +118,7 @@
 "settings.notifications" = "Notificaciones";
 "settings.notificationsDenied" = "Las notificaciones de OpenJoystickDriver están desactivadas en Ajustes del Sistema.";
 "settings.openNotificationSettings" = "Abrir ajustes de notificaciones";
-"settings.openSystemSettings" = "Abrir ajustes";
+"settings.openSystemSettings" = "Abrir Ajustes";
 "settings.prereleaseUpdates" = "Incluir actualizaciones preliminares";
 "settings.profileActivatedShort" = "Activado o cambiado";
 "settings.profileDeactivatedNotifications" = "Perfil desactivado";
@@ -317,7 +317,7 @@
 "profiles.noChords" = "No hay acordes configurados.";
 "profiles.noLayers" = "No hay capas configuradas.";
 "profiles.noSequences" = "No se han configurado secuencias.";
-"profiles.productID" = "ID de producto";
+"profiles.productID" = "ID del producto";
 "profiles.sequenceHelp" = "El destino se dispara cuando se presionan los controles en este orden.";
 "profiles.sequenceWindow" = "Ventana de finalización";
 "profiles.sequences" = "Secuencias";
@@ -329,7 +329,7 @@
 "profiles.turbo" = "Turbo";
 "profiles.turboDuty" = "Ciclo de trabajo";
 "profiles.turboRate" = "Frecuencia de repetición";
-"profiles.vendorID" = "ID de fabricante";
+"profiles.vendorID" = "ID del fabricante";
 "debug.title" = "Depuración";
 "debug.currentStatus" = "Estado actual";
 "debug.runtime" = "Ejecución";
@@ -610,7 +610,7 @@
 "inputTest.xboxButton" = "Botón Xbox";
 "inputTest.yButton" = "Botón Y";
 "inputTest.yTriangle" = "Y / Triángulo";
-"keyboard.capsLock" = "Bloq Mayús";
+"keyboard.capsLock" = "Bloqueo Mayúsculas";
 "keyboard.delete" = "Eliminar";
 "keyboard.downArrow" = "Flecha abajo";
 "keyboard.escape" = "Esc";
@@ -626,7 +626,7 @@
 "keyboard.command" = "Comando";
 "keyboard.control" = "Control";
 "keyboard.option" = "Opción";
-"keyboard.shift" = "Mayús";
+"keyboard.shift" = "Mayúsculas";
 "mapping.automatic" = "Automático";
 "setup.activating" = "Activando…";
 "setup.activeDetail" = "El controlador USB de Xbox restringido está instalado y listo.";

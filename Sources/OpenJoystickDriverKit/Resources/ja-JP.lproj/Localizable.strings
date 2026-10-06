@@ -19,7 +19,7 @@
 "menu.window" = "ウインドウ";
 "menu.minimize" = "しまう";
 "menu.zoom" = "拡大/縮小";
-"menu.bringAllToFront" = "すべてを前面に移動";
+"menu.bringAllToFront" = "すべてを手前に移動";
 "menu.console" = "コンソールを開く…";
 "menu.help" = "ヘルプ";
 "menu.projectPage" = "GitHub";
@@ -86,7 +86,7 @@
 "settings.contactingGitHub" = "GitHubに接続中…";
 "settings.controllerConnectedShort" = "接続済み";
 "settings.controllerStatus" = "コントローラの状態";
-"settings.status" = "状態";
+"settings.status" = "状況";
 "settings.requestAccess" = "「%@」へのアクセスを要求";
 "settings.runtime" = "ランタイム";
 "settings.controllerCount" = "コントローラ";
@@ -98,12 +98,12 @@
 "settings.devices" = "デバイス";
 "settings.currentStatus" = "現在の状態";
 "settings.currentVersion" = "現在のバージョン: %@";
-"settings.developerTools" = "開発者ツール";
+"settings.developerTools" = "デベロッパツール";
 "settings.developerToolsDescription" = "コントローラ入力とUSBパケットのツールを表示します。";
 "settings.discardTitle" = "保存していない変更を破棄しますか？";
 "settings.discardMessage" = "プロファイルの変更は保存されていません。";
 "settings.discardProfileMessage" = "プロファイルの変更は保存されていません。";
-"settings.discardAction" = "変更を破棄";
+"settings.discardAction" = "変更内容を破棄";
 "settings.enableDeveloperTools" = "開発者ツールを有効にする";
 "settings.general" = "一般";
 "settings.notificationBannersAndSoundOff" = "システム設定でバナーとサウンドがオフになっています。";
@@ -329,7 +329,7 @@
 "profiles.turbo" = "ターボ";
 "profiles.turboDuty" = "デューティ比";
 "profiles.turboRate" = "繰り返し速度";
-"profiles.vendorID" = "ベンダーID";
+"profiles.vendorID" = "製造元ID";
 "debug.title" = "デバッグ";
 "debug.currentStatus" = "現在の状態";
 "debug.runtime" = "ランタイム";
@@ -440,7 +440,7 @@
 "common.available" = "利用可能";
 "common.unavailable" = "利用できません";
 "common.needsAttention" = "対応が必要";
-"common.status" = "状態";
+"common.status" = "状況";
 "common.service" = "サービス";
 "common.devices" = "デバイス";
 "common.runtime" = "ランタイム";
@@ -531,7 +531,7 @@
 "developer.starting" = "起動中…";
 "developer.stoppedPackets" = "停止 · %dパケット";
 "developer.subtitle" = "コントローラの入力と USB パケットを表示します。";
-"developer.title" = "開発者";
+"developer.title" = "デベロッパ";
 "developer.unavailable" = "開発者ツールは利用できません";
 "developer.usbEndpoints" = "USBエンドポイント";
 "developer.usbID" = "USB ID";
@@ -625,8 +625,8 @@
 "keyboard.upArrow" = "上矢印";
 "keyboard.command" = "コマンド";
 "keyboard.control" = "コントロール";
-"keyboard.option" = "オプション";
-"keyboard.shift" = "シフト";
+"keyboard.option" = "Option";
+"keyboard.shift" = "Shift";
 "mapping.automatic" = "自動";
 "setup.activating" = "有効化中…";
 "setup.activeDetail" = "制限付きXbox USBドライバがインストールされ、準備ができています。";
@@ -809,8 +809,8 @@
 "profiles.stick.pointerRadius" = "ポインタの半径（ポイント）";
 "profiles.stick.scrollDegrees" = "スクロール1行あたりの回転角（度）";
 "profiles.stick.scrollAxis" = "スクロール軸";
-"profiles.stick.horizontal" = "水平";
-"profiles.stick.vertical" = "垂直";
+"profiles.stick.horizontal" = "横方向";
+"profiles.stick.vertical" = "縦方向";
 "profiles.stick.steeringFullScale" = "ステアリング最大時の回転角（度）";
 "profiles.stick.steeringReturnRate" = "ステアリングの戻り速度（度/秒）";
 "profiles.stick.steeringOutput" = "仮想ステアリング軸";
@@ -856,7 +856,7 @@
 "profiles.joyConRight" = "右Joy-Con";
 "profiles.pairJoyCons" = "接続中のJoy-Conをペアリング…";
 "profiles.joyConPairActive" = "ペアリング中";
-"profiles.unpairJoyCons" = "ペアを解除";
+"profiles.unpairJoyCons" = "ペアリング解除";
 "profiles.joyConPairSessionHint" = "ペアリングでは、現在のアプリセッションの間、これらのコントローラをそのまま使用します。";
 "profiles.pair" = "ペアリング";
 "error.joyConPairUnavailable" = "選択したJoy-Conをペアリングできませんでした。接続中のコントローラを更新して、もう一度お試しください。";
@@ -872,7 +872,7 @@
 
 /* Physical mapping value editor. Translation review pending. */
 "profiles.physical.motor" = "モーター";
-"profiles.physical.intensity" = "強さ";
+"profiles.physical.intensity" = "強度";
 "profiles.physical.player" = "プレイヤーインジケータ";
 "profiles.physical.red" = "赤";
 "profiles.physical.green" = "緑";
@@ -915,7 +915,7 @@
 "controllers.disconnectWirelessSummary" = "他のコントローラに影響を与えずに、このBluetooth接続を終了します。";
 "controllers.disconnectWirelessConfirmTitle" = "ワイヤレスコントローラを切断しますか？";
 "controllers.disconnectWirelessConfirmMessage" = "%@は、手動で再接続するまで切断されたままになります。";
-"controllers.disconnectWirelessConfirm" = "切断";
+"controllers.disconnectWirelessConfirm" = "接続解除";
 
 "notifications.controllerNeedsAttention" = "コントローラに対応が必要です";
 "notifications.controllerNeedsAttentionBody" = "%@の入力が更新されなくなりました。操作を離すか、切断してください。";
@@ -1542,4 +1542,4 @@
 "error.E3022" = "プロファイルを変更する前に、破損したプロファイルファイルを修復または削除する必要があります。修復または削除して、もう一度お試しください。";
 "error.E3023" = "プロファイルファイルを書き込めませんでした。ディスクの空き容量とフォルダの権限を確認してください。";
 "error.E3024" = "リマッピングサービスが認識できないエラーが発生しました。「ojd diagnose」を実行し、その出力とともに問題を報告してください。";
-"error.withCode" = "%@ (%@)";
+"error.withCode" = "%@（%@）";

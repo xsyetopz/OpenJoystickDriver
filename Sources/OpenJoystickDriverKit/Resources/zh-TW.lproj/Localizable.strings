@@ -10,7 +10,7 @@
 "menu.quit" = "結束 OpenJoystickDriver";
 "permissions.restartApplication" = "重新啟動 OpenJoystickDriver";
 "menu.edit" = "編輯";
-"menu.undo" = "復原";
+"menu.undo" = "還原";
 "menu.redo" = "重做";
 "menu.cut" = "剪下";
 "menu.copy" = "拷貝";
@@ -19,12 +19,12 @@
 "menu.window" = "視窗";
 "menu.minimize" = "縮到最小";
 "menu.zoom" = "縮放";
-"menu.bringAllToFront" = "將此程式所有視窗移到最前";
+"menu.bringAllToFront" = "將此程式所有視窗移至最前";
 "menu.console" = "打開主控台…";
 "menu.help" = "輔助說明";
 "menu.projectPage" = "GitHub";
 "menu.show" = "顯示 OpenJoystickDriver";
-"common.ok" = "OK";
+"common.ok" = "好";
 "about.version" = "版本 %@\n適用於 macOS 的控制器輸入";
 "common.refresh" = "重新整理";
 "common.tryAgain" = "再試一次";
@@ -49,7 +49,7 @@
 "common.saveLogs" = "儲存記錄…";
 "status.starting" = "正在啟動…";
 "status.checking" = "正在檢查…";
-"status.ready" = "就緒";
+"status.ready" = "準備就緒";
 "status.allowed" = "已允許";
 "status.needsAttention" = "需要注意";
 "status.unavailable" = "無法使用";
@@ -91,7 +91,7 @@
 "settings.runtime" = "執行階段";
 "settings.controllerCount" = "控制器";
 "settings.controllerDisconnectedNotifications" = "控制器已斷線";
-"settings.controllerDisconnectedShort" = "已斷線";
+"settings.controllerDisconnectedShort" = "已中斷連線";
 "settings.controllerNotifications" = "控制器已連接";
 "settings.diagnostics" = "診斷";
 "settings.service" = "服務";
@@ -103,7 +103,7 @@
 "settings.discardTitle" = "要捨棄未儲存的更改嗎？";
 "settings.discardMessage" = "你的設定檔更改尚未儲存。";
 "settings.discardProfileMessage" = "你的設定檔更改尚未儲存。";
-"settings.discardAction" = "捨棄更改";
+"settings.discardAction" = "捨棄所作更動";
 "settings.enableDeveloperTools" = "啟用開發者工具";
 "settings.general" = "一般";
 "settings.notificationBannersAndSoundOff" = "系統設定中已關閉橫幅和聲音。";
@@ -157,7 +157,7 @@
 "controllers.profileNone" = "無";
 "controllers.profileUnavailable" = "使用中的設定檔無法使用";
 "controllers.profileLoadError" = "無法載入使用中的設定檔";
-"controllers.protocol" = "協定";
+"controllers.protocol" = "通訊協定";
 "controllers.serialNumber" = "序號";
 "controllers.usbIdentifier" = "USB VID/PID";
 "controllers.inputEndpoint" = "輸入端點";
@@ -329,7 +329,7 @@
 "profiles.turbo" = "連發";
 "profiles.turboDuty" = "工作週期";
 "profiles.turboRate" = "重複率";
-"profiles.vendorID" = "供應商 ID";
+"profiles.vendorID" = "廠商識別碼";
 "debug.title" = "除錯";
 "debug.currentStatus" = "目前狀態";
 "debug.runtime" = "執行階段";
@@ -370,7 +370,7 @@
 "mapping.allowed" = "已允許";
 "mapping.needsAttention" = "需要注意";
 "mapping.unavailable" = "無法使用";
-"mapping.ready" = "就緒";
+"mapping.ready" = "準備就緒";
 "mapping.connectController" = "連接控制器";
 "mapping.checking" = "正在檢查";
 "mapping.allApps" = "所有 App";
@@ -446,7 +446,7 @@
 "common.runtime" = "執行階段";
 "common.controllers" = "控制器";
 "common.profiles" = "設定檔";
-"common.protocol" = "協定";
+"common.protocol" = "通訊協定";
 "common.serialNumber" = "序號";
 "common.inputEndpoint" = "輸入端點";
 "common.outputEndpoint" = "輸出端點";
@@ -524,14 +524,14 @@
 "developer.packetColumns" = "時間       方向        位元組  資料";
 "developer.packetSharingWarning" = "封包內容會因控制器而異。分享前請先檢查檔案。";
 "developer.rawUSB" = "原始 USB";
-"developer.ready" = "就緒";
+"developer.ready" = "準備就緒";
 "developer.rightStick" = "右搖桿";
 "developer.route" = "路徑";
 "developer.startCapture" = "開始擷取";
 "developer.starting" = "正在啟動…";
 "developer.stoppedPackets" = "已停止 · %d 個封包";
 "developer.subtitle" = "檢視控制器輸入和 USB 封包。";
-"developer.title" = "開發人員";
+"developer.title" = "開發者";
 "developer.unavailable" = "無法使用開發工具";
 "developer.usbEndpoints" = "USB 端點";
 "developer.usbID" = "USB ID";
@@ -557,7 +557,7 @@
 "inputTest.duration" = "時長";
 "inputTest.durationValue" = "%d ms";
 "inputTest.home" = "主畫面";
-"inputTest.idle" = "就緒";
+"inputTest.idle" = "準備就緒";
 "inputTest.leftBumper" = "左肩鍵";
 "inputTest.leftBumperGeneric" = "LB / L1";
 "inputTest.leftHaptic" = "左觸覺";
@@ -613,7 +613,7 @@
 "keyboard.capsLock" = "大寫鎖定";
 "keyboard.delete" = "刪除";
 "keyboard.downArrow" = "向下箭頭";
-"keyboard.escape" = "Esc 鍵";
+"keyboard.escape" = "Escape";
 "keyboard.forwardDelete" = "向前刪除";
 "keyboard.leftArrow" = "向左箭頭";
 "keyboard.pageDown" = "下一頁";
@@ -625,7 +625,7 @@
 "keyboard.upArrow" = "向上箭頭";
 "keyboard.command" = "Command 鍵";
 "keyboard.control" = "Control 鍵";
-"keyboard.option" = "Option 鍵";
+"keyboard.option" = "Option";
 "keyboard.shift" = "Shift 鍵";
 "mapping.automatic" = "自動";
 "setup.activating" = "正在啟用…";
@@ -650,7 +650,7 @@
 "console.errors" = "錯誤";
 "console.loadError" = "無法讀取日誌";
 "console.output" = "輸出";
-"console.stream" = "資料流";
+"console.stream" = "串流";
 "console.title" = "主控台";
 "notifications.controllerConnected" = "控制器已連接";
 "notifications.controllerConnectedBody" = "%@ 已可以使用。";
@@ -687,9 +687,9 @@
 
 "profiles.addAction" = "新增動作";
 
-"profiles.moveUp" = "上移";
+"profiles.moveUp" = "向上移動";
 
-"profiles.moveDown" = "下移";
+"profiles.moveDown" = "向下移動";
 
 "mapping.leftFunctionButton" = "左功能按鈕";
 
@@ -890,7 +890,7 @@
 "profiles.emptyActivationTitle" = "要啟用沒有控制器輸入的設定檔嗎？";
 "profiles.emptyInputWarning" = "此設定檔會抑制所有控制器輸入。";
 "profiles.restoreDefaultInput" = "恢復預設輸入";
-"common.reset" = "重設";
+"common.reset" = "重置";
 "profiles.useControllerDefaultColor" = "使用控制器預設值";
 "profiles.damagedProfile" = "設定檔已損壞";
 "profiles.damagedLibrary" = "使用中的設定檔清單已損壞";
@@ -1213,7 +1213,7 @@
 "cli.controller.show.label.output_checks" = "輸出檢查";
 "cli.controller.show.label.ownership" = "擁有者";
 "cli.controller.show.ownership" = "路徑 %@，實體 %@，HID 輸入 %@";
-"cli.controller.show.label.protocol" = "協定";
+"cli.controller.show.label.protocol" = "通訊協定";
 "cli.controller.show.label.record" = "記錄";
 "cli.controller.show.label.rumble" = "震動";
 "cli.controller.show.label.session" = "工作階段";

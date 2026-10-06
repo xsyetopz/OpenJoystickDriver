@@ -18,7 +18,7 @@
 "menu.selectAll" = "Seleccionar todo";
 "menu.window" = "Ventana";
 "menu.minimize" = "Minimizar";
-"menu.zoom" = "Ampliar";
+"menu.zoom" = "Maximizar";
 "menu.bringAllToFront" = "Traer todo al frente";
 "menu.console" = "Abrir consola…";
 "menu.help" = "Ayuda";
@@ -98,12 +98,12 @@
 "settings.devices" = "Dispositivos";
 "settings.currentStatus" = "Estado actual";
 "settings.currentVersion" = "Versión actual: %@";
-"settings.developerTools" = "Herramientas de desarrollo";
+"settings.developerTools" = "Herramientas para desarrolladores";
 "settings.developerToolsDescription" = "Mostrar herramientas de entrada del control y de paquetes USB.";
 "settings.discardTitle" = "¿Descartar los cambios no guardados?";
 "settings.discardMessage" = "Los cambios del perfil no se han guardado.";
 "settings.discardProfileMessage" = "Los cambios de tu perfil no se han guardado.";
-"settings.discardAction" = "Descartar cambios";
+"settings.discardAction" = "No guardar cambios";
 "settings.enableDeveloperTools" = "Activar herramientas de desarrollo";
 "settings.general" = "General";
 "settings.notificationBannersAndSoundOff" = "Los banners y los sonidos están desactivados en Ajustes del Sistema.";
@@ -118,7 +118,7 @@
 "settings.notifications" = "Notificaciones";
 "settings.notificationsDenied" = "Las notificaciones de OpenJoystickDriver están desactivadas en Ajustes del Sistema.";
 "settings.openNotificationSettings" = "Abrir ajustes de notificaciones";
-"settings.openSystemSettings" = "Abrir ajustes";
+"settings.openSystemSettings" = "Abrir Configuración";
 "settings.prereleaseUpdates" = "Incluir actualizaciones preliminares";
 "settings.profileActivatedShort" = "Activado o cambiado";
 "settings.profileDeactivatedNotifications" = "Perfil desactivado";
@@ -128,7 +128,7 @@
 "settings.startAtLoginApprovalRequired" = "Permite OpenJoystickDriver en Ajustes del Sistema > General > Elementos de inicio.";
 "settings.startAtLoginDescription" = "Abre OpenJoystickDriver en la barra de menús al iniciar sesión.";
 "settings.testNotification" = "Enviar notificación de prueba";
-"settings.title" = "Ajustes";
+"settings.title" = "Configuración";
 "settings.upToDate" = "Actualizado";
 "settings.updateAvailable" = "Actualización disponible";
 "settings.updateChecking" = "Buscando…";
@@ -230,7 +230,7 @@
 "capture.noButton" = "No hay ningún botón pulsado actualmente.";
 "capture.buttonsHeld" = "Botones pulsados: %@";
 "capture.profileChanged" = "Este perfil se ha modificado en otro sitio. Vuelve a cargar o sigue editando.";
-"capture.profileName" = "Nombre del perfil";
+"capture.profileName" = "Nombre de perfil";
 "capture.profileNameValidation" = "Introduce un nombre de perfil.";
 "capture.controller" = "Control";
 "profiles.new" = "Perfil nuevo";
@@ -317,7 +317,7 @@
 "profiles.noChords" = "No hay acordes configurados.";
 "profiles.noLayers" = "No hay capas configuradas.";
 "profiles.noSequences" = "No se han configurado secuencias.";
-"profiles.productID" = "ID de producto";
+"profiles.productID" = "ID del producto";
 "profiles.sequenceHelp" = "El destino se dispara cuando se presionan los controles en este orden.";
 "profiles.sequenceWindow" = "Ventana de finalización";
 "profiles.sequences" = "Secuencias";
@@ -325,11 +325,11 @@
 "profiles.target" = "Objetivo";
 "profiles.targetApplication" = "Una aplicación";
 "profiles.targetGlobal" = "Todas las aplicaciones";
-"profiles.toggle" = "Alternar";
+"profiles.toggle" = "Activar/desactivar";
 "profiles.turbo" = "Turbo";
 "profiles.turboDuty" = "Ciclo de trabajo";
 "profiles.turboRate" = "Frecuencia de repetición";
-"profiles.vendorID" = "ID de proveedor";
+"profiles.vendorID" = "ID del fabricante";
 "debug.title" = "Depuración";
 "debug.currentStatus" = "Estado actual";
 "debug.runtime" = "Ejecución";
@@ -460,7 +460,7 @@
 "common.add" = "Agregar";
 "common.apply" = "Aplicar";
 "common.copyAll" = "Copiar todo";
-"common.done" = "Hecho";
+"common.done" = "OK";
 "common.export" = "Exportar…";
 "common.failed" = "Error";
 "common.inputMonitoring" = "Monitoreo de entrada";
@@ -616,8 +616,8 @@
 "keyboard.escape" = "Esc";
 "keyboard.forwardDelete" = "Suprimir";
 "keyboard.leftArrow" = "Flecha izquierda";
-"keyboard.pageDown" = "Avance de página";
-"keyboard.pageUp" = "Retroceso de página";
+"keyboard.pageDown" = "Avanzar página";
+"keyboard.pageUp" = "Retroceder página";
 "keyboard.return" = "Retorno";
 "keyboard.rightArrow" = "Flecha derecha";
 "keyboard.space" = "Espacio";

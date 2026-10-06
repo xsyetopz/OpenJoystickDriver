@@ -10,16 +10,16 @@
 "menu.quit" = "結束 OpenJoystickDriver";
 "permissions.restartApplication" = "重新啟動 OpenJoystickDriver";
 "menu.edit" = "編輯";
-"menu.undo" = "復原";
+"menu.undo" = "還原";
 "menu.redo" = "重做";
 "menu.cut" = "剪下";
-"menu.copy" = "拷貝";
+"menu.copy" = "複製";
 "menu.paste" = "貼上";
 "menu.selectAll" = "全選";
 "menu.window" = "視窗";
-"menu.minimize" = "縮到最小";
+"menu.minimize" = "縮到最細";
 "menu.zoom" = "縮放";
-"menu.bringAllToFront" = "將此程式所有視窗移到最前";
+"menu.bringAllToFront" = "將所有視窗移到最前";
 "menu.console" = "打開主控台…";
 "menu.help" = "輔助說明";
 "menu.projectPage" = "GitHub";
@@ -49,7 +49,7 @@
 "common.saveLogs" = "儲存記錄…";
 "status.starting" = "正在啟動…";
 "status.checking" = "正在檢查…";
-"status.ready" = "就緒";
+"status.ready" = "準備就緒";
 "status.allowed" = "已允許";
 "status.needsAttention" = "需要注意";
 "status.unavailable" = "無法使用";
@@ -118,7 +118,7 @@
 "settings.notifications" = "通知";
 "settings.notificationsDenied" = "系統設定中已關閉 OpenJoystickDriver 的通知。";
 "settings.openNotificationSettings" = "打開通知設定";
-"settings.openSystemSettings" = "打開設定";
+"settings.openSystemSettings" = "開啟設定";
 "settings.prereleaseUpdates" = "包含預先發行更新";
 "settings.profileActivatedShort" = "已啟用或已切換";
 "settings.profileDeactivatedNotifications" = "設定檔已停用";
@@ -157,7 +157,7 @@
 "controllers.profileNone" = "無";
 "controllers.profileUnavailable" = "使用中的設定檔無法使用";
 "controllers.profileLoadError" = "無法載入使用中的設定檔";
-"controllers.protocol" = "協定";
+"controllers.protocol" = "通訊協定";
 "controllers.serialNumber" = "序號";
 "controllers.usbIdentifier" = "USB VID/PID";
 "controllers.inputEndpoint" = "輸入端點";
@@ -276,7 +276,7 @@
 "profiles.sectionDpad" = "方向鍵";
 "profiles.sectionTriggers" = "扳機";
 "profiles.sectionSticks" = "搖桿";
-"profiles.copyName" = "%@拷貝";
+"profiles.copyName" = "%@副本";
 "profiles.changedElsewhere" = "設定檔已在其他位置更改。";
 "profiles.savedButUnavailable" = "設定檔已儲存，但其最新狀態無法使用。";
 "profiles.saveUnavailable" = "無法儲存設定檔。請完成目前動作後再試一次。";
@@ -370,7 +370,7 @@
 "mapping.allowed" = "已允許";
 "mapping.needsAttention" = "需要注意";
 "mapping.unavailable" = "無法使用";
-"mapping.ready" = "就緒";
+"mapping.ready" = "準備就緒";
 "mapping.connectController" = "連接控制器";
 "mapping.checking" = "正在檢查";
 "mapping.allApps" = "所有 App";
@@ -446,7 +446,7 @@
 "common.runtime" = "執行階段";
 "common.controllers" = "控制器";
 "common.profiles" = "設定檔";
-"common.protocol" = "協定";
+"common.protocol" = "通訊協定";
 "common.serialNumber" = "序號";
 "common.inputEndpoint" = "輸入端點";
 "common.outputEndpoint" = "輸出端點";
@@ -524,14 +524,14 @@
 "developer.packetColumns" = "時間       方向        位元組  資料";
 "developer.packetSharingWarning" = "封包內容會因控制器而異。分享前請先檢查檔案。";
 "developer.rawUSB" = "原始 USB";
-"developer.ready" = "就緒";
+"developer.ready" = "準備就緒";
 "developer.rightStick" = "右搖桿";
 "developer.route" = "路徑";
 "developer.startCapture" = "開始擷取";
 "developer.starting" = "正在啟動…";
 "developer.stoppedPackets" = "已停止 · %d 個封包";
 "developer.subtitle" = "查看控制器輸入和 USB 封包。";
-"developer.title" = "開發人員";
+"developer.title" = "開發者";
 "developer.unavailable" = "無法使用開發工具";
 "developer.usbEndpoints" = "USB 端點";
 "developer.usbID" = "USB ID";
@@ -557,7 +557,7 @@
 "inputTest.duration" = "時長";
 "inputTest.durationValue" = "%d ms";
 "inputTest.home" = "主畫面";
-"inputTest.idle" = "就緒";
+"inputTest.idle" = "準備就緒";
 "inputTest.leftBumper" = "左肩鍵";
 "inputTest.leftBumperGeneric" = "LB / L1";
 "inputTest.leftHaptic" = "左觸覺";
@@ -650,7 +650,7 @@
 "console.errors" = "錯誤";
 "console.loadError" = "無法讀取日誌";
 "console.output" = "輸出";
-"console.stream" = "資料流";
+"console.stream" = "串流";
 "console.title" = "主控台";
 "notifications.controllerConnected" = "控制器已連接";
 "notifications.controllerConnectedBody" = "%@ 已可以使用。";
@@ -687,9 +687,9 @@
 
 "profiles.addAction" = "新增動作";
 
-"profiles.moveUp" = "上移";
+"profiles.moveUp" = "向上移動";
 
-"profiles.moveDown" = "下移";
+"profiles.moveDown" = "向下移動";
 
 "mapping.leftFunctionButton" = "左功能按鈕";
 
@@ -1203,7 +1203,7 @@
 "cli.controller.show.abstract" = "顯示控制器的身分、擁有者、功能和虛擬遊戲控制器。";
 "cli.controller.show.discussion" = "同時列出輸出檢查：會測試每個震動馬達和燈光的指令，以及要觀察的現象。";
 "cli.controller.show.label.battery" = "電池";
-"cli.controller.show.label.connection" = "連接";
+"cli.controller.show.label.connection" = "連線";
 "cli.controller.show.label.controls" = "控制項";
 "cli.controller.show.label.id" = "ID";
 "cli.controller.show.label.identity" = "供應商：產品";

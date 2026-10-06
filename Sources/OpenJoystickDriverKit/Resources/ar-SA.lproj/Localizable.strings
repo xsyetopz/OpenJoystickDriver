@@ -18,7 +18,7 @@
 "menu.selectAll" = "تحديد الكل";
 "menu.window" = "نافذة";
 "menu.minimize" = "تصغير";
-"menu.zoom" = "تكبير";
+"menu.zoom" = "تكبير/تصغير";
 "menu.bringAllToFront" = "إحضار الكل إلى الأمام";
 "menu.console" = "فتح وحدة السجلات…";
 "menu.help" = "مساعدة";
@@ -329,7 +329,7 @@
 "profiles.turbo" = "توربو";
 "profiles.turboDuty" = "دورة العمل";
 "profiles.turboRate" = "معدل التكرار";
-"profiles.vendorID" = "معرّف المورّد";
+"profiles.vendorID" = "معرّف البائع";
 "debug.title" = "تصحيح الأخطاء";
 "debug.currentStatus" = "الحالة الحالية";
 "debug.runtime" = "وقت التشغيل";
@@ -810,7 +810,7 @@
 "profiles.stick.scrollDegrees" = "الدوران لكل سطر تمرير (درجة)";
 "profiles.stick.scrollAxis" = "محور التمرير";
 "profiles.stick.horizontal" = "أفقي";
-"profiles.stick.vertical" = "عمودي";
+"profiles.stick.vertical" = "رأسي";
 "profiles.stick.steeringFullScale" = "الدوران عند التوجيه الكامل (درجة)";
 "profiles.stick.steeringReturnRate" = "سرعة عودة التوجيه (درجة/ثانية)";
 "profiles.stick.steeringOutput" = "محور التوجيه الافتراضي";
@@ -890,7 +890,7 @@
 "profiles.emptyActivationTitle" = "هل تريد تفعيل ملف تعريف بلا إدخال من وحدة التحكم؟";
 "profiles.emptyInputWarning" = "يكتم ملف التعريف هذا كل إدخال من وحدة التحكم.";
 "profiles.restoreDefaultInput" = "استعادة الإدخال الافتراضي";
-"common.reset" = "إعادة ضبط";
+"common.reset" = "إعادة تعيين";
 "profiles.useControllerDefaultColor" = "استخدام الإعداد الافتراضي لوحدة التحكم";
 "profiles.damagedProfile" = "ملف تعريف تالف";
 "profiles.damagedLibrary" = "قائمة ملفات التعريف النشطة تالفة";
@@ -915,7 +915,7 @@
 "controllers.disconnectWirelessSummary" = "أوقف اتصال Bluetooth هذا دون التأثير في وحدات التحكم الأخرى.";
 "controllers.disconnectWirelessConfirmTitle" = "هل تريد فصل وحدة التحكم اللاسلكية؟";
 "controllers.disconnectWirelessConfirmMessage" = "ستبقى %@ مفصولة حتى توصلها مرة أخرى يدويًا.";
-"controllers.disconnectWirelessConfirm" = "فصل";
+"controllers.disconnectWirelessConfirm" = "قطع الاتصال";
 
 "notifications.controllerNeedsAttention" = "وحدة التحكم تحتاج إلى انتباه";
 "notifications.controllerNeedsAttentionBody" = "توقف تحديث إدخال %@. حرّر عناصر التحكم فيها أو افصلها.";

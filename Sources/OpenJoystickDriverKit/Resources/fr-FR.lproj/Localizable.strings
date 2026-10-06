@@ -32,7 +32,7 @@
 "common.save" = "Enregistrer";
 "common.create" = "Créer";
 "common.delete" = "Supprimer";
-"common.dismiss" = "Ignorer";
+"common.dismiss" = "Fermer";
 "common.reload" = "Recharger";
 "common.keepEditing" = "Continuer la modification";
 "common.clear" = "Effacer";
@@ -98,12 +98,12 @@
 "settings.devices" = "Appareils";
 "settings.currentStatus" = "État actuel";
 "settings.currentVersion" = "Version actuelle : %@";
-"settings.developerTools" = "Outils développeur";
+"settings.developerTools" = "Outils de développement";
 "settings.developerToolsDescription" = "Afficher les outils d’entrée de manette et de paquets USB.";
 "settings.discardTitle" = "Ignorer les modifications non enregistrées ?";
 "settings.discardMessage" = "Les modifications du profil n’ont pas été enregistrées.";
 "settings.discardProfileMessage" = "Les modifications de votre profil n’ont pas été enregistrées.";
-"settings.discardAction" = "Ignorer les modifications";
+"settings.discardAction" = "Annuler les modifications";
 "settings.enableDeveloperTools" = "Activer les outils développeur";
 "settings.general" = "Général";
 "settings.notificationBannersAndSoundOff" = "Les bannières et les sons sont désactivés dans Réglages Système.";
@@ -118,7 +118,7 @@
 "settings.notifications" = "Notifications";
 "settings.notificationsDenied" = "Les notifications d’OpenJoystickDriver sont désactivées dans Réglages Système.";
 "settings.openNotificationSettings" = "Ouvrir les réglages de notification";
-"settings.openSystemSettings" = "Ouvrir les réglages";
+"settings.openSystemSettings" = "Ouvrir Réglages";
 "settings.prereleaseUpdates" = "Inclure les préversions";
 "settings.profileActivatedShort" = "Activé ou changé";
 "settings.profileDeactivatedNotifications" = "Profil désactivé";
@@ -128,7 +128,7 @@
 "settings.startAtLoginApprovalRequired" = "Autorisez OpenJoystickDriver dans Réglages Système > Général > Éléments d’ouverture.";
 "settings.startAtLoginDescription" = "Ouvrir OpenJoystickDriver dans la barre des menus à la connexion.";
 "settings.testNotification" = "Envoyer une notification test";
-"settings.title" = "Paramètres";
+"settings.title" = "Réglages";
 "settings.upToDate" = "À jour";
 "settings.updateAvailable" = "Mise à jour disponible";
 "settings.updateChecking" = "Vérification…";
@@ -317,7 +317,7 @@
 "profiles.noChords" = "Aucun accord configuré.";
 "profiles.noLayers" = "Aucune couche configurée.";
 "profiles.noSequences" = "Aucune séquence configurée.";
-"profiles.productID" = "ID produit";
+"profiles.productID" = "Identifiant du produit";
 "profiles.sequenceHelp" = "La destination se déclenche lorsque les commandes sont enfoncées dans cet ordre.";
 "profiles.sequenceWindow" = "Fenêtre d’achèvement";
 "profiles.sequences" = "Séquences";
@@ -626,7 +626,7 @@
 "keyboard.command" = "Commande";
 "keyboard.control" = "Contrôle";
 "keyboard.option" = "Option";
-"keyboard.shift" = "Majuscule";
+"keyboard.shift" = "Maj";
 "mapping.automatic" = "Automatique";
 "setup.activating" = "Activation…";
 "setup.activeDetail" = "Le pilote USB Xbox restreint est installé et prêt.";
@@ -687,9 +687,9 @@
 
 "profiles.addAction" = "Ajouter une action";
 
-"profiles.moveUp" = "Monter";
+"profiles.moveUp" = "Déplacer vers le haut";
 
-"profiles.moveDown" = "Descendre";
+"profiles.moveDown" = "Déplacer vers le bas";
 
 "mapping.leftFunctionButton" = "Bouton de fonction gauche";
 

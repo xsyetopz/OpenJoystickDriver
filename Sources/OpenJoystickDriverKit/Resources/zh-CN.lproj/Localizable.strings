@@ -24,10 +24,10 @@
 "menu.help" = "帮助";
 "menu.projectPage" = "GitHub";
 "menu.show" = "显示 OpenJoystickDriver";
-"common.ok" = "OK";
+"common.ok" = "好";
 "about.version" = "版本 %@\n适用于 macOS 的控制器输入";
 "common.refresh" = "刷新";
-"common.tryAgain" = "重试";
+"common.tryAgain" = "再试一次";
 "common.cancel" = "取消";
 "common.save" = "存储";
 "common.create" = "创建";
@@ -103,7 +103,7 @@
 "settings.discardTitle" = "要丢弃未存储的更改吗？";
 "settings.discardMessage" = "你的配置文件更改尚未存储。";
 "settings.discardProfileMessage" = "你的配置文件更改尚未存储。";
-"settings.discardAction" = "丢弃更改";
+"settings.discardAction" = "放弃更改";
 "settings.enableDeveloperTools" = "启用开发者工具";
 "settings.general" = "通用";
 "settings.notificationBannersAndSoundOff" = "系统设置中已关闭横幅和声音。";
@@ -625,8 +625,8 @@
 "keyboard.upArrow" = "上箭头";
 "keyboard.command" = "Command 键";
 "keyboard.control" = "Control 键";
-"keyboard.option" = "Option 键";
-"keyboard.shift" = "Shift 键";
+"keyboard.option" = "Option";
+"keyboard.shift" = "Shift";
 "mapping.automatic" = "自动";
 "setup.activating" = "正在激活…";
 "setup.activeDetail" = "受限 Xbox USB 驱动程序已安装并就绪。";
@@ -663,7 +663,7 @@
 "notifications.testBody" = "OpenJoystickDriver 可以就控制器和配置文件活动向你发送通知。";
 "notifications.testTitle" = "通知已就绪";
 "profiles.virtualOutput" = "虚拟游戏手柄";
-"profiles.virtualDisabled" = "已禁用";
+"profiles.virtualDisabled" = "已停用";
 "profiles.virtualMapped" = "仅重新映射的控件";
 "profiles.virtualPassthrough" = "包含未重新映射的控件";
 "profiles.exclusiveInput" = "要求独占访问物理输入";
@@ -687,9 +687,9 @@
 
 "profiles.addAction" = "添加操作";
 
-"profiles.moveUp" = "上移";
+"profiles.moveUp" = "向上移动";
 
-"profiles.moveDown" = "下移";
+"profiles.moveDown" = "向下移动";
 
 "mapping.leftFunctionButton" = "左功能按钮";
 
@@ -751,7 +751,7 @@
 
 /* Gyro authoring. Native translation review pending. */
 "profiles.gyro.output" = "陀螺仪输出";
-"profiles.gyro.disabled" = "已禁用";
+"profiles.gyro.disabled" = "已停用";
 "profiles.gyro.mouse" = "鼠标指针";
 "profiles.gyro.leftStick" = "左摇杆";
 "profiles.gyro.rightStick" = "右摇杆";
@@ -849,7 +849,7 @@
 "profiles.motion.steeringResponseExponent" = "转向响应指数";
 "profiles.motion.steeringInverted" = "反转转向";
 
-"common.disabled" = "已禁用";
+"common.disabled" = "已停用";
 "profiles.joyConPair" = "配对 Joy-Con 配置文件";
 "profiles.joyConGyro" = "配对陀螺仪来源";
 "profiles.joyConLeft" = "左 Joy-Con";
@@ -906,7 +906,7 @@
 "controllers.sessionActive" = "由 OpenJoystickDriver 管理";
 "controllers.suspendedSummary" = "输入和 OpenJoystickDriver 输出会暂停，直到你恢复。";
 "controllers.disconnectSummary" = "暂停输入、实体效果和 OpenJoystickDriver 虚拟输出。";
-"controllers.resume" = "恢复";
+"controllers.resume" = "继续";
 "controllers.disconnectFromOJD" = "与 OpenJoystickDriver 断开";
 "error.controllerSessionChangeRejected" = "无法更改控制器会话。";
 

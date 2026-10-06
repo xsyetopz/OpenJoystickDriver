@@ -19,7 +19,7 @@
 "menu.window" = "Fenster";
 "menu.minimize" = "Minimieren";
 "menu.zoom" = "Zoomen";
-"menu.bringAllToFront" = "Alle in den Vordergrund";
+"menu.bringAllToFront" = "Alle nach vorne bringen";
 "menu.console" = "Konsole öffnen…";
 "menu.help" = "Hilfe";
 "menu.projectPage" = "GitHub";
@@ -33,7 +33,7 @@
 "common.create" = "Erstellen";
 "common.delete" = "Löschen";
 "common.dismiss" = "Schließen";
-"common.reload" = "Erneut laden";
+"common.reload" = "Neu laden";
 "common.keepEditing" = "Weiter bearbeiten";
 "common.clear" = "Löschen";
 "common.collect" = "Erfassen";
@@ -687,9 +687,9 @@
 
 "profiles.addAction" = "Aktion hinzufügen";
 
-"profiles.moveUp" = "Nach oben";
+"profiles.moveUp" = "Nach oben bewegen";
 
-"profiles.moveDown" = "Nach unten";
+"profiles.moveDown" = "Nach unten bewegen";
 
 "mapping.leftFunctionButton" = "Linke Funktionstaste";
 
@@ -902,7 +902,7 @@
 "profiles.resetLibraryAction" = "Sichern & Zurücksetzen";
 
 /* Controller session lifecycle */
-"controllers.suspended" = "Pausiert";
+"controllers.suspended" = "Angehalten";
 "controllers.sessionActive" = "Von OpenJoystickDriver verwaltet";
 "controllers.suspendedSummary" = "Eingabe und Ausgabe von OpenJoystickDriver sind pausiert, bis du fortsetzt.";
 "controllers.disconnectSummary" = "Eingabe, physische Effekte und die virtuelle Ausgabe von OpenJoystickDriver pausieren.";

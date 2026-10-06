@@ -11,8 +11,8 @@
 "permissions.restartApplication" = "OpenJoystickDriver 다시 시작";
 "menu.edit" = "편집";
 "menu.undo" = "실행 취소";
-"menu.redo" = "다시 실행";
-"menu.cut" = "잘라내기";
+"menu.redo" = "실행 복귀";
+"menu.cut" = "오려두기";
 "menu.copy" = "복사";
 "menu.paste" = "붙여넣기";
 "menu.selectAll" = "모두 선택";
@@ -24,7 +24,7 @@
 "menu.help" = "도움말";
 "menu.projectPage" = "GitHub";
 "menu.show" = "OpenJoystickDriver 보기";
-"common.ok" = "OK";
+"common.ok" = "확인";
 "about.version" = "버전 %@\nmacOS용 컨트롤러 입력";
 "common.refresh" = "새로 고침";
 "common.tryAgain" = "다시 시도";
@@ -276,7 +276,7 @@
 "profiles.sectionDpad" = "방향 패드";
 "profiles.sectionTriggers" = "트리거";
 "profiles.sectionSticks" = "스틱";
-"profiles.copyName" = "%@ 복제본";
+"profiles.copyName" = "%@ 복사본";
 "profiles.changedElsewhere" = "프로파일이 다른 곳에서 변경되었습니다.";
 "profiles.savedButUnavailable" = "프로파일은 저장되었지만 최신 상태를 사용할 수 없습니다.";
 "profiles.saveUnavailable" = "프로파일을 저장할 수 없습니다. 현재 동작을 마친 다음 다시 시도하십시오.";
@@ -424,7 +424,7 @@
 "mapping.paddle3" = "패들 3";
 "mapping.paddle4" = "패들 4";
 "mapping.profile" = "프로파일";
-"mapping.mute" = "음소거";
+"mapping.mute" = "소리 끔";
 "mapping.mode" = "모드";
 "mapping.leftTriggerClick" = "왼쪽 트리거 클릭";
 "mapping.rightTriggerClick" = "오른쪽 트리거 클릭";
@@ -663,7 +663,7 @@
 "notifications.testBody" = "OpenJoystickDriver는 컨트롤러 및 프로파일 활동에 대해 알려줄 수 있습니다.";
 "notifications.testTitle" = "알림이 준비되었습니다";
 "profiles.virtualOutput" = "가상 게임패드";
-"profiles.virtualDisabled" = "비활성화";
+"profiles.virtualDisabled" = "비활성화됨";
 "profiles.virtualMapped" = "매핑된 컨트롤만";
 "profiles.virtualPassthrough" = "매핑되지 않은 컨트롤 포함";
 "profiles.exclusiveInput" = "물리적 입력에 대한 독점 접근 요구";
@@ -740,7 +740,7 @@
 "motion.calibration.paused" = "수동 수집 일시 중지됨";
 "motion.calibration.offset" = "편향 (°/s): X %.3f · Y %.3f · Z %.3f";
 "motion.calibration.start" = "보정 시작";
-"motion.calibration.pause" = "일시 중지";
+"motion.calibration.pause" = "일시 정지";
 "motion.calibration.title" = "모션 보정";
 
 /* Calibration guidance. Non-English translation pending. */
@@ -751,7 +751,7 @@
 
 /* Gyro authoring. Native translation review pending. */
 "profiles.gyro.output" = "자이로 출력";
-"profiles.gyro.disabled" = "비활성화";
+"profiles.gyro.disabled" = "비활성화됨";
 "profiles.gyro.mouse" = "마우스 포인터";
 "profiles.gyro.leftStick" = "왼쪽 스틱";
 "profiles.gyro.rightStick" = "오른쪽 스틱";
@@ -849,7 +849,7 @@
 "profiles.motion.steeringResponseExponent" = "스티어링 응답 지수";
 "profiles.motion.steeringInverted" = "스티어링 반전";
 
-"common.disabled" = "비활성화";
+"common.disabled" = "비활성화됨";
 "profiles.joyConPair" = "페어링된 Joy-Con 프로파일";
 "profiles.joyConGyro" = "페어 자이로 소스";
 "profiles.joyConLeft" = "왼쪽 Joy-Con";
@@ -906,7 +906,7 @@
 "controllers.sessionActive" = "OpenJoystickDriver에서 관리 중";
 "controllers.suspendedSummary" = "다시 시작할 때까지 입력과 OpenJoystickDriver 출력이 일시 중지됩니다.";
 "controllers.disconnectSummary" = "입력, 물리적 효과, OpenJoystickDriver 가상 출력을 일시 중지합니다.";
-"controllers.resume" = "다시 시작";
+"controllers.resume" = "재개";
 "controllers.disconnectFromOJD" = "OpenJoystickDriver에서 연결 해제";
 "error.controllerSessionChangeRejected" = "컨트롤러 세션을 변경할 수 없습니다.";
 
