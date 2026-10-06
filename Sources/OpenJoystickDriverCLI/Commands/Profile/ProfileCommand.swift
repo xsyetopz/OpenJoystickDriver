@@ -20,7 +20,7 @@ struct ProfileCommand: AsyncParsableCommand {
     ]
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
@@ -73,7 +73,7 @@ struct ProfileListCommand: AsyncParsableCommand {
     let issues: [Issue]
   }
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -136,7 +136,7 @@ struct ProfileShowCommand: AsyncParsableCommand {
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -165,7 +165,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
     ),
     discussion: CLILocalized.text(
       "cli.profile.create.discussion"
-    )
+    ) + "\n\n" + CLILocalized.text("cli.profile.create.examples")
   )
 
   @Argument(
@@ -214,7 +214,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   )
   var physicalInput: RemappingPhysicalInputPolicy = .shared
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -275,7 +275,7 @@ struct ProfileDuplicateCommand: AsyncParsableCommand {
   )
   var name: String
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -315,7 +315,7 @@ struct ProfileRenameCommand: AsyncParsableCommand {
   )
   var name: String
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -366,7 +366,7 @@ struct ProfileDeleteCommand: AsyncParsableCommand {
   )
   var dryRun = false
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {

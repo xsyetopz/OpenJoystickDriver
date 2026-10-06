@@ -14,7 +14,7 @@ struct SettingCommand: AsyncParsableCommand {
     subcommands: [SettingListCommand.self, SettingGetCommand.self, SettingSetCommand.self]
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
@@ -103,7 +103,7 @@ struct SettingListCommand: AsyncParsableCommand {
 
   struct Result: Encodable, Equatable { let settings: [Entry] }
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -146,7 +146,7 @@ struct SettingGetCommand: AsyncParsableCommand {
   )
   var key: String
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func validate() throws { _ = try SettingCatalog.key(key) }
@@ -185,7 +185,7 @@ struct SettingSetCommand: AsyncParsableCommand {
   )
   var value: String
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func validate() throws { _ = try SettingCatalog.value(value, for: SettingCatalog.key(key)) }

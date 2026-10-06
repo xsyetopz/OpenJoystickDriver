@@ -15,7 +15,7 @@ struct AccessWebCommand: AsyncParsableCommand {
     subcommands: [AccessWebEnableCommand.self, AccessWebDisableCommand.self]
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
@@ -43,7 +43,7 @@ struct AccessWebEnableCommand: AsyncParsableCommand {
   )
   var force = false
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func validate() throws {
@@ -80,7 +80,7 @@ struct AccessWebDisableCommand: AsyncParsableCommand {
     )
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {

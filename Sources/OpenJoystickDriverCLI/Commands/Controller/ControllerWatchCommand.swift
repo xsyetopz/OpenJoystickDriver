@@ -77,10 +77,10 @@ struct ControllerWatchCommand: AsyncParsableCommand {
     ) + " "
       + CLILocalized.text(
         "cli.controller.watch.discussion.all"
-      )
+      ) + "\n\n" + CLILocalized.text("cli.controller.watch.examples")
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Argument(help: controllerArgumentHelp)
@@ -310,7 +310,7 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
     )
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Argument(help: controllerArgumentHelp)

@@ -22,7 +22,7 @@ struct StatusCommand: AsyncParsableCommand {
     )
   }
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {

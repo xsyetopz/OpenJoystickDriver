@@ -60,7 +60,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
     ),
     discussion: CLILocalized.text(
       "cli.access.grant.discussion"
-    )
+    ) + "\n\n" + CLILocalized.text("cli.access.grant.examples")
   )
 
   @Argument(
@@ -110,7 +110,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
   )
   var force = false
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func validate() throws {
@@ -279,7 +279,7 @@ struct AccessRevokeCommand: AsyncParsableCommand {
   )
   var scope: [EndpointScope] = []
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {

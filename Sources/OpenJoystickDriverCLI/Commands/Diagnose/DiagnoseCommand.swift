@@ -45,7 +45,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
     AppleGameControllerSupportAuditor.auditCurrentSystem()
   }
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Option(

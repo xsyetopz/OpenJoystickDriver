@@ -12,7 +12,7 @@ struct PermissionCommand: AsyncParsableCommand {
     subcommands: [PermissionListCommand.self, PermissionRequestCommand.self]
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   static func print(_ report: PermissionReport) throws {
@@ -46,7 +46,7 @@ struct PermissionListCommand: AsyncParsableCommand {
     )
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -103,7 +103,7 @@ struct PermissionRequestCommand: AsyncParsableCommand {
   )
   var ids: [String] = []
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func validate() throws {

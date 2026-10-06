@@ -11,7 +11,7 @@ struct UpdateCommand: AsyncParsableCommand {
     subcommands: [UpdateCheckCommand.self]
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
@@ -42,7 +42,7 @@ struct UpdateCheckCommand: AsyncParsableCommand {
   )
   var prerelease = false
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   /// The `--json` result.

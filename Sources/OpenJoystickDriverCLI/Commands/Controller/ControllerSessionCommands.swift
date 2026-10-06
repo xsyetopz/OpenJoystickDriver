@@ -43,7 +43,7 @@ struct ControllerSuspendCommand: AsyncParsableCommand {
     )
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Argument(help: controllerArgumentHelp)
@@ -89,7 +89,7 @@ struct ControllerResumeCommand: AsyncParsableCommand {
     )
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Argument(help: controllerArgumentHelp)
@@ -138,7 +138,7 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
     )
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Argument(help: controllerArgumentHelp)

@@ -120,10 +120,10 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
     ),
     discussion: CLILocalized.text(
       "cli.controller.rumble.discussion"
-    )
+    ) + "\n\n" + CLILocalized.text("cli.controller.rumble.examples")
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Argument(help: controllerArgumentHelp)
@@ -311,7 +311,7 @@ struct ControllerPlayerCommand: AsyncParsableCommand {
     )
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Argument(help: controllerArgumentHelp)
@@ -358,10 +358,11 @@ struct ControllerLightCommand: AsyncParsableCommand {
     commandName: "light",
     abstract: CLILocalized.text(
       "cli.controller.light.abstract"
-    )
+    ),
+    discussion: CLILocalized.text("cli.controller.light.examples")
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Argument(help: controllerArgumentHelp)

@@ -25,7 +25,7 @@ struct ProfileActivateCommand: AsyncParsableCommand {
   )
   var allowEmpty = false
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -66,7 +66,7 @@ struct ProfileDeactivateCommand: AsyncParsableCommand {
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {

@@ -16,6 +16,13 @@ package struct CLI {
 
   /// Parses and runs one `ojd` invocation, prints its failure, and returns its exit code.
   static func execute(arguments: [String]) async -> Int32 {
+    let completing = arguments.contains("--generate-completion-script")
+    return await GlobalOptions.$subcommandVisibility.withValue(completing ? .default : .hidden) {
+      await parseAndRun(arguments: arguments)
+    }
+  }
+
+  private static func parseAndRun(arguments: [String]) async -> Int32 {
     var command: any ParsableCommand
     do { command = try OJDCommand.parseAsRoot(arguments) } catch {
       if let match = CommandSuggestion.match(arguments: arguments) {
@@ -82,6 +89,11 @@ package struct CLI {
     var message = OJDCommand.fullMessage(for: error)
     if errorCode != .usage, message.hasPrefix(OJDCommand._errorPrefix) {
       message = CLIFailure.prefix(errorCode) + message.dropFirst(OJDCommand._errorPrefix.count)
+    }
+    // Only the root help lists the global options; subcommand help points to it.
+    let isHelp = message.hasPrefix("OVERVIEW: ") || message.hasPrefix("USAGE: ")
+    if code == CLIExitCode.success.rawValue, isHelp, message != OJDCommand.helpMessage() {
+      message += "\n" + CLILocalized.text("cli.help.global_options")
     }
     if !message.isEmpty {
       if code == CLIExitCode.success.rawValue {

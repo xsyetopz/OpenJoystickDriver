@@ -14,7 +14,7 @@ struct BindingCommand: AsyncParsableCommand {
     subcommands: [BindingListCommand.self, BindingSetCommand.self, BindingClearCommand.self]
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
@@ -47,7 +47,7 @@ struct BindingListCommand: AsyncParsableCommand {
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -89,7 +89,8 @@ struct BindingSetCommand: AsyncParsableCommand {
     abstract: CLILocalized.text(
       "cli.binding.set.abstract"
     ),
-    discussion: BindingCommand.configuration.discussion
+    discussion: BindingCommand.configuration.discussion + "\n\n"
+      + CLILocalized.text("cli.binding.set.examples")
   )
 
   struct Result: Encodable, Equatable {
@@ -120,7 +121,7 @@ struct BindingSetCommand: AsyncParsableCommand {
   @OptionGroup
   var options: BindingOptions
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -214,7 +215,7 @@ struct BindingClearCommand: AsyncParsableCommand {
   )
   var dryRun = false
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func validate() throws {

@@ -46,6 +46,27 @@ struct CLITerminalTests {
   }
 
   @Test
+  func forceColorBeatsTheEnvironmentButNotTheNoColorFlag() {
+    var context = CLIContext()
+    context.forceColor = true
+    let environment = ["NO_COLOR": "1", "TERM": "dumb"]
+    #expect(
+      CLITerminal.usesColor(on: .standardOutput, context: context, environment: environment) { _ in
+        false
+      }
+    )
+    context.noColor = true
+    #expect(
+      !CLITerminal.usesColor(
+        on: .standardOutput,
+        context: context,
+        environment: environment,
+        isTerminal: terminal
+      )
+    )
+  }
+
+  @Test
   func noInputForbidsPrompts() {
     var context = CLIContext()
     context.noInput = true

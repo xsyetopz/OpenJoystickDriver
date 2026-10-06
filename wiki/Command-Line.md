@@ -28,20 +28,44 @@ ojd status
 
 The [command reference](Command-Reference.md) lists every command. `ojd --help` lists them too, and `ojd COMMAND --help` shows the options of one command.
 
+To start, run `ojd status` to check the service, extension, and permissions, `ojd diagnose` to run every check, and `ojd controller list` to list connected controllers.
+
+## Shell Completion
+
+`ojd --generate-completion-script SHELL` prints a completion script for `zsh`, `bash`, or `fish`. For example, in zsh:
+
+```shell
+ojd --generate-completion-script zsh > ~/.zfunc/_ojd
+```
+
+The folder must be on your `fpath`.
+
 ## Global Options
 
-These options work on every command, before or after the command name. `ojd --json status` and `ojd status --json` do the same thing.
+These options work on every command, before or after the command name. `ojd --json status` and `ojd status --json` do the same thing. `ojd --help` lists them, and the help of each command points there instead of repeating them.
 
 - `--json`: Print JSON on standard output.
 - `--plain`: Print one record per line on standard output, with tab-separated fields.
 - `-q`, `--quiet`: Do not print success messages on standard error.
 - `--no-color`: Do not use color.
 - `--no-input`: Never ask a question. A command that needs a missing value fails and names the option that gives it.
-- `--timeout SECONDS`: How long to wait for each request to the service. The default is 0.5 seconds. For `service` commands, it bounds the whole command, and the default is 5 seconds. The value must be a number above 0.
+- `--timeout SECONDS`: How long to wait for each request to the service. The default is 0.5 seconds. For `service`, `virtual set`, and `virtual reset` commands, it bounds the whole command, and the default is 5 seconds. For `permission request`, the default is 10 seconds. The value must be a number above 0.
 - `-h`, `--help`: Show help on standard output.
 - `--version`: Show the version alone, for example `0.5.0-beta.5`.
 
 `--json` and `--plain` cannot be used together.
+
+## Environment Variables
+
+These variables stand in for a global option that the command line leaves out. A flag beats its variable, and an empty variable counts as unset.
+
+- `OJD_NO_INPUT`: Any value other than `0` acts as `--no-input`.
+- `OJD_TIMEOUT`: Seconds, as for `--timeout`.
+- `OJD_COLOR`: `auto` follows the rules under [Output](#output), `always` uses color even off a terminal or with `NO_COLOR` set, and `never` acts as `--no-color`.
+
+An invalid `OJD_TIMEOUT` or `OJD_COLOR` value is a usage error and exits with code 64.
+
+For contributors: an `ojd` built from the repository hands each command to the installed app's `ojd`. Set `OJD_RUN_REPOSITORY_CLI=1` to run the repository build itself instead.
 
 ## The Service
 
@@ -58,7 +82,7 @@ A command that needs the service exits with code 69 when the service is not runn
   Because a later release can add keys and values, validate output against the schema from the same release.
 - `--plain` output has one record per line, with tab-separated fields. The first field names the kind of record. Fields are stable identifiers and are never translated.
 - Errors use one format: `error[E2004]: WHAT FAILED. HOW TO FIX IT.` The code in the brackets is stable, so a script can branch on it. An error that the service reports for remapping carries an `E3xxx` code. `ojd explain E2004` prints what a code means, and [Error codes](Error-Codes.md) lists them all.
-- Color appears only on a terminal. `NO_COLOR`, `TERM=dumb`, and `--no-color` turn it off.
+- Color appears only on a terminal. `NO_COLOR`, `TERM=dumb`, `--no-color`, and `OJD_COLOR=never` turn it off. `OJD_COLOR=always` turns it on anywhere, except under `--no-color`.
 
 ## Exit Codes
 

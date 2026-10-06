@@ -21,7 +21,7 @@ struct ExplainCommand: AsyncParsableCommand {
   )
   var code: String
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   private struct Result: Encodable {

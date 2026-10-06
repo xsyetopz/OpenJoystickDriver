@@ -40,7 +40,7 @@ struct ProfileImportCommand: AsyncParsableCommand {
   )
   var file: String
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -128,7 +128,7 @@ struct ProfileValidateCommand: AsyncParsableCommand {
   )
   var file: String
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -194,7 +194,7 @@ struct ProfileExportCommand: AsyncParsableCommand {
   )
   var output: String?
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -271,7 +271,7 @@ struct ProfileEditCommand: AsyncParsableCommand {
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {

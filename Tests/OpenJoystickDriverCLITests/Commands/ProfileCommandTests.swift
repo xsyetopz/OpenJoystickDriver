@@ -180,6 +180,18 @@ struct ProfileCommandTests {
   }
 
   @Test
+  func activatePrintsOnePlainRow() async throws {
+    let racing = FakeProfileLibrary.profile("Racing")
+    let service = try Self.service(FakeProfileLibrary([racing]))
+
+    let result = await service.run(["profile", "activate", "Racing", "--plain"])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(result.standardOutput.hasPrefix("\(racing.id.uuidString)\tRacing\t"))
+    #expect(result.standardOutput.split(separator: "\n").count == 1)
+  }
+
+  @Test
   func exportWritesADocumentThatImportReadsBackFromStandardInput() async throws {
     let binding = RemappingBinding(source: .button(.east), destination: .mouseButton(.left))
     let original = FakeProfileLibrary.profile("Pad", bindings: [binding])

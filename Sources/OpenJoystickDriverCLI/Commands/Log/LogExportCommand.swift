@@ -35,7 +35,7 @@ struct LogExportCommand: AsyncParsableCommand {
   )
   var force = false
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   private struct Result: Encodable {

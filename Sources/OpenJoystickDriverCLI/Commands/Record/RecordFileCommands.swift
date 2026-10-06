@@ -82,7 +82,7 @@ struct RecordValidateCommand: AsyncParsableCommand {
   @Argument(help: recordFileHelp())
   var file: String
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -123,7 +123,7 @@ struct RecordInstallCommand: AsyncParsableCommand {
     ),
     discussion: CLILocalized.text(
       "cli.record.install.discussion"
-    )
+    ) + "\n\n" + CLILocalized.text("cli.record.install.examples")
   )
 
   /// The `--json` result.
@@ -136,7 +136,7 @@ struct RecordInstallCommand: AsyncParsableCommand {
   @Argument(help: recordFileHelp())
   var file: String
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -223,7 +223,7 @@ struct RecordRemoveCommand: AsyncParsableCommand {
   )
   var dryRun = false
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {

@@ -23,7 +23,7 @@ struct ControllerCommand: AsyncParsableCommand {
     ]
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
@@ -41,7 +41,7 @@ struct ControllerListCommand: AsyncParsableCommand {
     abstract: CLILocalized.text("cli.controller.list.abstract")
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -112,7 +112,7 @@ struct ControllerShowCommand: AsyncParsableCommand {
     )
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Argument(help: controllerArgumentHelp)

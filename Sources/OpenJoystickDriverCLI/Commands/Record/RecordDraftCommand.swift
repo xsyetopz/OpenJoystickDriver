@@ -36,7 +36,7 @@ struct RecordDraftCommand: AsyncParsableCommand {
     HIDDescriptorReportFormat.copyPhysicalReportDescriptor(vendorID: $0, productID: $1)
   }
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Argument(help: controllerArgumentHelp)

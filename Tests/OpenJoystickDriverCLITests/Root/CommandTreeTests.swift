@@ -58,6 +58,53 @@ struct CommandTreeTests {
     }
   }
 
+  @Test
+  func onlyTheRootHelpListsTheGlobalOptions() async {
+    let footer = CLILocalized.text("cli.help.global_options")
+    let root = await CLIRun.run(["--help"])
+    let leaf = await CLIRun.run(["controller", "list", "--help"])
+
+    #expect(root.standardOutput.contains("--json"))
+    #expect(!root.standardOutput.contains(footer))
+    #expect(!leaf.standardOutput.contains("--json"))
+    #expect(leaf.standardOutput.contains(footer))
+  }
+
+  @Test(arguments: ["zsh", "bash", "fish"])
+  func completionScriptsOfferTheGlobalOptionsOnSubcommands(shell: String) async {
+    let result = await CLIRun.run(["--generate-completion-script", shell])
+
+    #expect(result.code == 0)
+    let lines = result.standardOutput.split(separator: "\n")
+    #expect(lines.contains { $0.contains("controller") && $0.contains("list") }, "\(shell)")
+    #expect(lines.filter { $0.contains("--json") || $0.contains("'json'") }.count > 1, "\(shell)")
+  }
+
+  @Test
+  func environmentFillsOnlyTheUnsetFlags() throws {
+    let environment = ["OJD_NO_INPUT": "1", "OJD_TIMEOUT": "7", "OJD_COLOR": "always"]
+    let unset = try GlobalOptions.parse([]).context(environment: environment)
+    #expect(unset.noInput && unset.forceColor && !unset.noColor)
+    #expect(unset.timeout == 7)
+
+    let flags = try GlobalOptions.parse(["--timeout", "2", "--no-color"])
+      .context(environment: environment)
+    #expect(flags.timeout == 2)
+    #expect(flags.noColor && !flags.forceColor)
+
+    let off = try GlobalOptions.parse([])
+      .context(environment: ["OJD_NO_INPUT": "0", "OJD_TIMEOUT": "", "OJD_COLOR": "never"])
+    #expect(!off.noInput && off.noColor && !off.forceColor)
+    #expect(off.timeout == nil)
+  }
+
+  @Test(arguments: [
+    ["OJD_TIMEOUT": "abc"], ["OJD_TIMEOUT": "0"], ["OJD_TIMEOUT": "nan"], ["OJD_COLOR": "yes"],
+  ])
+  func anInvalidVariableIsRejected(environment: [String: String]) {
+    #expect(throws: ValidationError.self) { try EnvironmentFallback(environment) }
+  }
+
   @Test(arguments: CLICommandTree.leafPaths)
   func globalOptionsReachTheLeafBeforeAndAfterTheSubcommand(path: [String]) throws {
     let flags = ["--json", "--quiet", "--no-color", "--no-input", "--timeout", "2.5"]

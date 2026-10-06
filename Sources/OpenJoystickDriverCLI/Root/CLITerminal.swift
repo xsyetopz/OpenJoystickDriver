@@ -24,6 +24,7 @@ enum CLITerminal {
   /// Whether text written to `stream` may carry ANSI color.
   ///
   /// Color needs a terminal, and is off with `--no-color`, `NO_COLOR` set, or `TERM=dumb`.
+  /// `OJD_COLOR=always` turns it on regardless, except under `--no-color`.
   static func usesColor(
     on stream: Stream,
     context: CLIContext = .current,
@@ -31,6 +32,7 @@ enum CLITerminal {
     isTerminal: (Int32) -> Bool = { isatty($0) == 1 }
   ) -> Bool {
     guard !context.noColor, CLIOutput.capture == nil else { return false }
+    if context.forceColor { return true }
     guard environment["NO_COLOR"] == nil, environment["TERM"] != "dumb" else { return false }
     return isTerminal(stream.descriptor)
   }

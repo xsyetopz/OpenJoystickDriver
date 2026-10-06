@@ -181,4 +181,14 @@ struct VirtualFeedCommandTests {
     #expect(result.code == 64)
     #expect(service.arguments(of: .openVirtualFeed).isEmpty)
   }
+
+  @Test
+  func plainIsAUsageError() async throws {
+    let service = try Self.service()
+    let result = await Self.run(service, input: ["{}"], ["--plain"])
+
+    #expect(result.code == 64)
+    #expect(result.standardError.contains("--plain"))
+    #expect(service.arguments(of: .openVirtualFeed).isEmpty)
+  }
 }

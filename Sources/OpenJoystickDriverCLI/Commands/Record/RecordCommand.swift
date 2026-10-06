@@ -17,7 +17,7 @@ struct RecordCommand: AsyncParsableCommand {
     ]
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
@@ -45,7 +45,7 @@ struct RecordListCommand: AsyncParsableCommand {
   )
   var bundled = false
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -104,7 +104,7 @@ struct RecordShowCommand: AsyncParsableCommand {
   )
   var identity: RecordIdentity
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {

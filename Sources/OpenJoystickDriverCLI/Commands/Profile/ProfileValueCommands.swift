@@ -151,7 +151,7 @@ struct ProfileGetCommand: AsyncParsableCommand {
   @Argument(help: profileKeyHelp)
   var key: ProfileKey
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -184,7 +184,7 @@ struct ProfileSetCommand: AsyncParsableCommand {
     abstract: CLILocalized.text("cli.profile.set.abstract"),
     discussion: CLILocalized.text(
       "cli.profile.set.discussion"
-    )
+    ) + "\n\n" + CLILocalized.text("cli.profile.set.examples")
   )
 
   @Argument(help: profileArgumentHelp)
@@ -201,7 +201,7 @@ struct ProfileSetCommand: AsyncParsableCommand {
   )
   var value: String
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {

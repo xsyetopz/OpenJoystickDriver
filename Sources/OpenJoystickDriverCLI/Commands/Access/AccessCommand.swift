@@ -18,7 +18,7 @@ struct AccessCommand: AsyncParsableCommand {
     ]
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
@@ -54,7 +54,7 @@ struct AccessStatusCommand: AsyncParsableCommand {
     )
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -132,7 +132,7 @@ struct AccessEnableCommand: AsyncParsableCommand {
   )
   var force = false
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -158,7 +158,7 @@ struct AccessDisableCommand: AsyncParsableCommand {
     )
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -187,7 +187,7 @@ struct AccessListCommand: AsyncParsableCommand {
     let refusedTokens: [AccessRefusedToken]
   }
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {

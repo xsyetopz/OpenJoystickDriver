@@ -33,7 +33,7 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
   )
   var dryRun = false
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {

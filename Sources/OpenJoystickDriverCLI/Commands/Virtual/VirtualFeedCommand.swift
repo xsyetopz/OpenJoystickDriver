@@ -25,7 +25,7 @@ struct VirtualFeedCommand: AsyncParsableCommand {
     }
   }
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   @Option(
@@ -39,6 +39,10 @@ struct VirtualFeedCommand: AsyncParsableCommand {
 
   func run() async throws {
     try await global.run {
+      // Feedback is always JSON lines, so there is no plain form.
+      if CLIContext.current.format == .plain {
+        throw CLIFailure.usage(CLILocalized.text("cli.virtual.feed.error.plain"))
+      }
       let client = try await ServiceConnection.open()
       defer { client.disconnect() }
       let timeout = CLIContext.current.requestTimeout

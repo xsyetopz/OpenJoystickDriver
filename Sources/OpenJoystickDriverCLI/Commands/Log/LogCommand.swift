@@ -15,7 +15,7 @@ struct LogCommand: AsyncParsableCommand {
   @TaskLocal
   static var environment = LogEnvironment.system
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
@@ -27,7 +27,7 @@ struct LogPathCommand: AsyncParsableCommand {
     )
   )
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   private struct Result: Encodable { let path: String }
@@ -69,7 +69,7 @@ struct LogShowCommand: AsyncParsableCommand {
   )
   var lines = ApplicationServiceLogService.defaultMaximumLines
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   private struct Snapshots: Encodable { let logs: [ApplicationServiceLogSnapshot] }

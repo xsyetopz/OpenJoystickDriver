@@ -40,7 +40,7 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
   )
   var action: RemappingMotionCalibrationCommand?
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -171,7 +171,7 @@ struct ControllerPairCommand: AsyncParsableCommand {
   @Option(help: profileArgumentHelp)
   var profile: ProfileSelector
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
@@ -238,7 +238,7 @@ struct ControllerUnpairCommand: AsyncParsableCommand {
   )
   var pair: String
 
-  @OptionGroup
+  @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   func run() async throws {
