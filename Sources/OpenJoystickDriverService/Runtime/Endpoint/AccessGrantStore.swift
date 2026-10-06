@@ -96,34 +96,14 @@ struct AccessGrantFile: Codable, Equatable, Sendable {
     return grants[index]
   }
 
-  /// Removes `control` from grants without `controlGrantedAt`, and grants left with no scope.
+  /// Whether every `control` scope carries `controlGrantedAt`, which the service writes with it.
   ///
   /// Builds before the scope worked stored it without effect, so honoring it now would turn on
-  /// input to a virtual gamepad that the user never saw work; they grant it again instead.
-  mutating func dropControlGrantedBeforeItWorked() {
-    grants = grants.compactMap { grant in
-      guard grant.scopes.contains(.control), grant.controlGrantedAt == nil else { return grant }
-      let scopes = grant.scopes.filter { $0 != .control }
-      guard !scopes.isEmpty else { return nil }
-      return AccessGrant(
-        identity: grant.identity,
-        scopes: scopes,
-        grantedAt: grant.grantedAt,
-        path: grant.path
-      )
-    }
-    tokens = tokens.compactMap { grant in
-      guard grant.scopes.contains(.control), grant.controlGrantedAt == nil else { return grant }
-      let scopes = grant.scopes.filter { $0 != .control }
-      guard !scopes.isEmpty else { return nil }
-      return AccessTokenGrant(
-        name: grant.name,
-        tokenSHA256: grant.tokenSHA256,
-        origins: grant.origins,
-        scopes: scopes,
-        grantedAt: grant.grantedAt
-      )
-    }
+  /// input to a virtual gamepad that the user never saw work. A file with such a scope is damaged
+  /// instead, and the user grants again.
+  var controlScopesAreMarked: Bool {
+    grants.allSatisfy { !$0.scopes.contains(.control) || $0.controlGrantedAt != nil }
+      && tokens.allSatisfy { !$0.scopes.contains(.control) || $0.controlGrantedAt != nil }
   }
 
   /// Removes `control` from tokens that have origins, and tokens left with no scope; returns the
@@ -177,9 +157,8 @@ struct AccessGrantStore: Sendable {
     }
     guard var file = try? JSONDecoder().decode(AccessGrantFile.self, from: data),
       file.grants.allSatisfy({ $0.identity.requirement != nil && !$0.scopes.isEmpty }),
-      file.hasValidTokensAndWeb
+      file.hasValidTokensAndWeb, file.controlScopesAreMarked
     else { throw AccessGrantStoreError.damaged }
-    file.dropControlGrantedBeforeItWorked()
     for name in file.dropControlFromTokensWithOrigins() {
       print("[AccessGrantStore] Ignored token \(name): only control scope, with origins")
     }

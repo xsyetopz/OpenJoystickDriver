@@ -527,6 +527,12 @@ def build_sdl_records(
             (["switch-2"] if key in SWITCH_2_IDENTITIES else [])
             + (["bluetooth-only"] if key in BLUETOOTH_ONLY_IDENTITIES else [])
             + SDL_QUIRKS.get(controller_type, [])
+            # SDL runs a non-Sony PS5Controller through its third-party DualSense path.
+            + (
+                ["third-party"]
+                if family == "sony.dualsense" and key[0] != SONY_VENDOR_ID
+                else []
+            )
         )
         if quirks:
             protocol["quirks"] = quirks

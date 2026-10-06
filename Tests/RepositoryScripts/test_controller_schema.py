@@ -475,6 +475,145 @@ class InputLayoutTests(unittest.TestCase):
                 self.assertFalse(self.validator.is_valid(document))
 
 
+STEAM = {"family": "valve.steam-controller"}
+SWITCH1 = {"family": "nintendo.switch1"}
+DS4 = {"family": "sony.dualshock4"}
+DUALSENSE_MODEL_QUIRKS = (
+    "unprobed-sensors",
+    "unprobed-touchpad",
+    "forced-vibration",
+    "receiver",
+)
+
+
+class SwiftParityTests(unittest.TestCase):
+    """Rules `ControllerRecordDocument` enforces, which the schema must state too."""
+
+    def setUp(self) -> None:
+        self.validator = validate_profiles.validator()
+
+    def check(self, accepted: dict[str, Any], rejected: dict[str, Any]) -> None:
+        for name, document in accepted.items():
+            with self.subTest(f"accepts {name}"):
+                self.assertTrue(self.validator.is_valid(document))
+        for name, document in rejected.items():
+            with self.subTest(f"rejects {name}"):
+                self.assertFalse(self.validator.is_valid(document))
+
+    def test_dualsense_third_party_quirk(self) -> None:
+        self.check(
+            {
+                "third-party alone": record({**DUALSENSE, "quirks": ["third-party"]}),
+                "every model quirk": record(
+                    {
+                        **DUALSENSE,
+                        "quirks": ["third-party", *DUALSENSE_MODEL_QUIRKS],
+                    }
+                ),
+                "Sony record without quirks": record(DUALSENSE, vendorID=0x054C),
+            },
+            {
+                f"{quirk} without third-party": record(
+                    {**DUALSENSE, "quirks": [quirk]}, vendorID=0x1532
+                )
+                for quirk in DUALSENSE_MODEL_QUIRKS
+            },
+        )
+
+    def test_switch_2_quirks_in_either_order(self) -> None:
+        self.check(
+            {
+                f"{first} {second}": record({**SWITCH1, "quirks": [first, second]})
+                for first, second in (
+                    ("switch-2", "joy-con-right"),
+                    ("joy-con-right", "switch-2"),
+                    ("gamecube", "switch-2"),
+                    ("joy-con-left", "switch-2"),
+                )
+            },
+            {
+                "layout without switch-2 in either order": record(
+                    {**SWITCH1, "quirks": ["gamecube", "joy-con-left"]}
+                ),
+                "reversed input-only": record(
+                    {**SWITCH1, "quirks": ["input-only", "switch-2"]}
+                ),
+                "reversed with three quirks": record(
+                    {
+                        **SWITCH1,
+                        "quirks": ["gamecube", "switch-2", "joy-con-left"],
+                    }
+                ),
+            },
+        )
+
+    def test_steam_neptune_is_wired(self) -> None:
+        self.check(
+            {
+                "neptune wired": record(
+                    {**STEAM, "variant": "wired", "quirks": ["neptune"]}
+                ),
+                "wired without neptune": record({**STEAM, "variant": "wired"}),
+            },
+            {
+                f"neptune {variant}": record(
+                    {**STEAM, "variant": variant, "quirks": ["neptune"]}
+                )
+                for variant in ("dongle", "bluetooth-le")
+            },
+        )
+
+    def test_tuning_is_limited_to_its_families(self) -> None:
+        liveness = {"inputLivenessTimeoutMs": 500}
+        recovery = {"hidStartupRecoveryIntervalMs": 100, "hidStartupRecoveryRounds": 2}
+        interval = {"hidStartupIntervalMs": 10}
+        output = {"minimumHIDOutputIntervalMs": 8}
+        self.check(
+            {
+                "liveness on DualShock 4": record(DS4, tuning=liveness),
+                "recovery on Switch 1": record(SWITCH1, tuning=recovery),
+                "recovery on a Joy-Con": record(
+                    {**SWITCH1, "quirks": ["joy-con-left"]}, tuning=recovery
+                ),
+                "startup interval on DualSense": record(DUALSENSE, tuning=interval),
+                "output interval on DualSense": record(DUALSENSE, tuning=output),
+                "startup interval on GameSir enhanced HID": record(
+                    {
+                        "family": "vendor.gamesir",
+                        "variant": "enhanced-hid",
+                        "quirks": ["inner-grips"],
+                    },
+                    tuning=interval,
+                ),
+                "stick deadzone on GIP": record(GIP, tuning={"stickDeadzone": 0.1}),
+            },
+            {
+                "liveness on DualSense": record(DUALSENSE, tuning=liveness),
+                "liveness on GIP": record(GIP, tuning=liveness),
+                "recovery interval on DualSense": record(
+                    DUALSENSE, tuning={"hidStartupRecoveryIntervalMs": 100}
+                ),
+                "recovery rounds on DualShock 4": record(
+                    DS4, tuning={"hidStartupRecoveryRounds": 2}
+                ),
+                "recovery on Switch 2": record(
+                    {**SWITCH1, "quirks": ["switch-2", "gamecube"]}, tuning=recovery
+                ),
+                "recovery on input-only Switch 1": record(
+                    {**SWITCH1, "quirks": ["input-only"]}, tuning=recovery
+                ),
+                "startup interval on GIP": record(GIP, tuning=interval),
+                "output interval on XUSB": record(XUSB, tuning=output),
+                "startup interval on XID": record(
+                    {"family": "xbox.xid", "variant": "gamepad"}, tuning=interval
+                ),
+                "output interval on GameSir USB": record(
+                    {"family": "vendor.gamesir", "variant": "usb"}, tuning=output
+                ),
+            },
+        )
+
+
 class CapabilityOverlapTests(unittest.TestCase):
     def test_validator_rejects_overlapping_capabilities(self) -> None:
         import json

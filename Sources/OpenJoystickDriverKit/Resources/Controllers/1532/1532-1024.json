@@ -5,6 +5,7 @@
   "protocol": {
     "family": "sony.dualsense",
     "quirks": [
+      "third-party",
       "unprobed-touchpad"
     ]
   }

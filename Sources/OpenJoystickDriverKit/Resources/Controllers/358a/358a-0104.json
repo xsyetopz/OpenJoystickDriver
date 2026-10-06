@@ -3,6 +3,9 @@
   "vendorID": 13706,
   "productID": 260,
   "protocol": {
-    "family": "sony.dualsense"
+    "family": "sony.dualsense",
+    "quirks": [
+      "third-party"
+    ]
   }
 }

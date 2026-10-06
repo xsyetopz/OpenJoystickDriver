@@ -15,8 +15,8 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
   /// Sorted, without repeats.
   let scopes: [EndpointScope]
   let grantedAt: String
-  /// Set whenever the grant holds `control`, marking it as granted after the scope worked; the
-  /// service drops a stored `control` without it.
+  /// Set whenever the grant holds `control`, marking it as granted after the scope worked; a file
+  /// with a `control` scope but no mark is damaged.
   let controlGrantedAt: String?
 
   init(

@@ -52,7 +52,7 @@ struct ControllerRecordDocumentTests {
   @Test
   func decodesThirdPartyDualSenseModelQuirks() throws {
     let quirks: [ControllerQuirk] = [
-      .unprobedSensors, .unprobedTouchpad, .forcedVibration, .receiver,
+      .thirdParty, .unprobedSensors, .unprobedTouchpad, .forcedVibration, .receiver,
     ]
     let document = try decode(
       protocol: ["family": "sony.dualsense", "quirks": quirks.map(\.rawValue)],
@@ -62,12 +62,14 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test
-  func rejectsThirdPartyQuirksOnASonyDualSense() {
-    #expect(throws: DecodingError.self) {
-      try decode(
-        protocol: ["family": "sony.dualsense", "quirks": ["receiver"]],
-        vendorID: 0x054C
-      )
+  func rejectsDualSenseModelQuirksWithoutTheThirdPartyQuirk() {
+    for vendorID in [0x054C, 0x1532] {
+      #expect(throws: DecodingError.self) {
+        try decode(
+          protocol: ["family": "sony.dualsense", "quirks": ["receiver"]],
+          vendorID: vendorID
+        )
+      }
     }
   }
 

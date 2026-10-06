@@ -161,11 +161,12 @@ Some families drive several models that differ in one detail. A quirk in the rec
 - `scuf-envision` (`hid.descriptor`): input comes only from report 6, buttons 1 to 10 are mapped, and Z and Rz swap with Rx and Ry.
 - `z-rz-brake-left` (`hid.descriptor`): Z and Rz are the right stick, Brake is LT and Accelerator is RT, and button 13 is Home. A controller without a record gets this layout when its report descriptor has Z, Rz, a Brake or Accelerator, and no Rx or Ry.
 - `dragonrise` (`hid.descriptor`): Z and Rz are the right stick, buttons follow the DirectInput order (1 to 4 are Y, B, A, X), and buttons 7 and 8 are digital L2 and R2.
+- `third-party` (`sony.dualsense`): the controller is not a Sony DualSense. The driver reads feature report `0x03` for its features and limits output to them, as SDL's `HIDAPI_DriverPS5` does.
 - `unprobed-sensors` and `unprobed-touchpad` (`sony.dualsense`): a third-party DualSense that does not answer the capability probe still has motion sensors or a touchpad, and either quirk reads its input in the alternate report layout.
 - `forced-vibration` (`sony.dualsense`): a third-party DualSense keeps vibration when its probe reply omits it.
 - `receiver` (`sony.dualsense`): a third-party DualSense wireless receiver, which reports with no controller paired. OJD treats the controller as connected only while the packet sequence advances.
 
-A DualShock 4 record takes at most one of `wireless-adapter` and `strikepad`, and a `hid.descriptor` record takes at most one layout quirk. A `sony.dualsense` record with a vendor ID other than Sony's (`054C`) runs as a third-party controller, and its quirks describe that model; a Sony record takes no quirks. Because a `patch` adds quirks and cannot remove them, a patch cannot change a bundled model or layout quirk to another one.
+A DualShock 4 record takes at most one of `wireless-adapter` and `strikepad`, and a `hid.descriptor` record takes at most one layout quirk. A `sony.dualsense` record runs as a third-party controller only with the `third-party` quirk, whatever its vendor ID, and the other DualSense quirks describe that model and need it; a record without quirks is a Sony DualSense. The catalog gives the `third-party` quirk to every `sony.dualsense` record whose vendor ID is not Sony's (`054C`). Because a `patch` adds quirks and cannot remove them, a patch cannot change a bundled model or layout quirk to another one.
 
 ## Connect a Switch 2 Controller Over Bluetooth LE
 

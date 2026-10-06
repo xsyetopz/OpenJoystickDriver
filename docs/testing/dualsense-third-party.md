@@ -1,6 +1,6 @@
 # Third-Party DualSense Controllers
 
-Some licensed PS5 controllers from HORI, PDP, Razer, NACON and Backbone speak the DualSense protocol without every DualSense feature. OJD catalogs every non-Sony `PS5Controller` identity in SDL's controller list as `sony.dualsense`. When the vendor ID is not Sony's, the DualSense driver follows the non-Sony path of SDL's `HIDAPI_DriverPS5` in `SDL_hidapi_ps5.c`. The exception is the Backbone One PlayStation Edition Gen 2 (`358a:0304`). SDL rejects it because it "doesn't appear to use the DualSense protocol", so it is catalogued as `hid.descriptor`.
+Some licensed PS5 controllers from HORI, PDP, Razer, NACON and Backbone speak the DualSense protocol without every DualSense feature. OJD catalogs every non-Sony `PS5Controller` identity in SDL's controller list as `sony.dualsense`. When a record carries the `third-party` quirk, which the catalog gives every record whose vendor ID is not Sony's, the DualSense driver follows the non-Sony path of SDL's `HIDAPI_DriverPS5` in `SDL_hidapi_ps5.c`. The exception is the Backbone One PlayStation Edition Gen 2 (`358a:0304`). SDL rejects it because it "doesn't appear to use the DualSense protocol", so it is catalogued as `hid.descriptor`.
 
 No third-party DualSense controller has hardware evidence.
 

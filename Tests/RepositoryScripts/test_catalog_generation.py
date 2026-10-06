@@ -547,7 +547,11 @@ class SDLControllerListTests(unittest.TestCase):
             sorted(records), [(0x054C, 0x0CE6), (0x1532, 0x0A15), (0x1532, 0x100B)]
         )
         self.assertEqual(
-            records[(0x1532, 0x100B)]["protocol"], {"family": "sony.dualsense"}
+            records[(0x1532, 0x100B)]["protocol"],
+            {"family": "sony.dualsense", "quirks": ["third-party"]},
+        )
+        self.assertEqual(
+            records[(0x054C, 0x0CE6)]["protocol"], {"family": "sony.dualsense"}
         )
         self.assertEqual(counts, {"added": 3, "interface-signature": 2})
 

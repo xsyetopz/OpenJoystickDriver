@@ -244,30 +244,39 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func controlStoredBeforeItWorkedIsDropped() throws {
+  func controlStoredBeforeItWorkedDamagesTheFileAndIsNeverHonored() throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let hash = String(repeating: "a", count: 64)
-      func grant(_ identifier: String, _ scopes: String) -> String {
-        #"{"kind":"apple","identifier":"\#(identifier)","scopes":\#(scopes),"#
+      func grant(_ scopes: String) -> String {
+        #"{"kind":"apple","identifier":"x","scopes":\#(scopes),"#
           + #""grantedAt":"1970-01-01T00:00:00Z","path":"/x"}"#
       }
-      func token(_ name: String, _ scopes: String) -> String {
-        #"{"name":"\#(name)","tokenSHA256":"\#(hash)","origins":[],"scopes":\#(scopes),"#
+      func token(_ scopes: String) -> String {
+        #"{"name":"pad","tokenSHA256":"\#(hash)","origins":[],"scopes":\#(scopes),"#
           + #""grantedAt":"1970-01-01T00:00:00Z"}"#
       }
+      for scopes in [#"["control"]"#, #"["read","control"]"#] {
+        for (grants, tokens) in [(grant(scopes), ""), ("", token(scopes))] {
+          let text =
+            #"{"enabled":true,"grants":[\#(grants)],"tokens":[\#(tokens)],"#
+            + #""web":{"enabled":false}}"#
+          #expect(
+            !(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty),
+            "\(text)"
+          )
+          try Data(text.utf8).write(to: store.url)
+          #expect(throws: AccessGrantStoreError.damaged, "\(text)") { try store.load() }
+          #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+        }
+      }
+      // Without `control`, the same grants load as they are.
       let text =
-        #"{"enabled":true,"grants":["#
-        + grant("both", #"["read","control"]"#) + "," + grant("pad", #"["control"]"#)
-        + #"],"tokens":["# + token("both", #"["read","control"]"#) + ","
-        + token("pad", #"["control"]"#) + #"],"web":{"enabled":false}}"#
-      #expect(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty)
+        #"{"enabled":true,"grants":["# + grant(#"["read"]"#) + #"],"tokens":["#
+        + token(#"["read"]"#) + #"],"web":{"enabled":false}}"#
       try Data(text.utf8).write(to: store.url)
-
       let file = try store.load()
-      #expect(file.grants.map(\.identifier) == ["both"])
       #expect(file.grants.first?.scopes == [.read])
-      #expect(file.tokens.map(\.name) == ["both"])
       #expect(file.tokens.first?.scopes == [.read])
     }
   }

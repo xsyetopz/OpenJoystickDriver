@@ -64,15 +64,15 @@ struct ControllerRecordDocument: Decodable {
     try validateOwnershipAndOutput(codingPath: decoder.codingPath)
     try validateTuning(codingPath: decoder.codingPath)
     try validateBluetoothLE(codingPath: decoder.codingPath)
-    // The vendor ID selects third-party DualSense mode; its model quirks mean nothing on Sony's.
+    // Every DualSense quirk is a third-party model quirk, which means nothing without the mode.
     guard
-      !(protocolInfo.protocolID == .sonyDualSense && vendorID == Int(dualSenseSonyVendorID)
-        && !protocolInfo.quirks.isEmpty)
+      !(protocolInfo.protocolID == .sonyDualSense && !protocolInfo.quirks.isEmpty
+        && !protocolInfo.quirks.contains(.thirdParty))
     else {
       throw DecodingError.dataCorrupted(
         .init(
           codingPath: decoder.codingPath + [DocumentKey("protocol")],
-          debugDescription: "a Sony DualSense declares no third-party quirks"
+          debugDescription: "DualSense model quirks require the third-party quirk"
         )
       )
     }

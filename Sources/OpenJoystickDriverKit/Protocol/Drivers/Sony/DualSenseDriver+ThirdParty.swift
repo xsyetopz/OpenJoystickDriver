@@ -1,6 +1,5 @@
 import Foundation
 
-let dualSenseSonyVendorID: UInt16 = 0x054C
 /// SDL's `k_EPS5FeatureReportIdCapabilities`; a valid reply is 48 bytes with `0x28` at byte 2.
 let dualSenseCapabilitiesReportID: UInt8 = 0x03
 let dualSenseCapabilitiesReportLength = 48
@@ -39,8 +38,8 @@ struct DualSenseFeatures: OptionSet {
   init(rawValue: UInt8) { self.rawValue = rawValue }
 }
 
-/// A non-Sony controller that speaks the DualSense protocol, handled as SDL's
-/// `HIDAPI_DriverPS5` handles non-Sony vendor IDs.
+/// A controller that speaks the DualSense protocol but is not Sony's, which its record marks with
+/// the `third-party` quirk. It is handled as SDL's `HIDAPI_DriverPS5` handles non-Sony vendor IDs.
 ///
 /// SDL reads capability report `0x03`. A valid reply lists the controller's features and
 /// switches it to SDL's alternate input report, which moves the touch contacts to payload bytes

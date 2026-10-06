@@ -161,6 +161,23 @@
 								"maxItems": 1,
 								"type": "array"
 							}
+						},
+						"if": {
+							"properties": {
+								"quirks": {
+									"contains": {
+										"const": "neptune"
+									}
+								}
+							},
+							"required": ["quirks"]
+						},
+						"then": {
+							"properties": {
+								"variant": {
+									"const": "wired"
+								}
+							}
 						}
 					}
 				},
@@ -335,16 +352,19 @@
 										"maxItems": 1
 									},
 									{
-										"items": false,
+										"contains": {
+											"const": "switch-2"
+										},
+										"items": {
+											"enum": [
+												"switch-2",
+												"joy-con-left",
+												"joy-con-right",
+												"gamecube"
+											]
+										},
 										"minItems": 2,
-										"prefixItems": [
-											{
-												"const": "switch-2"
-											},
-											{
-												"enum": ["joy-con-left", "joy-con-right", "gamecube"]
-											}
-										]
+										"maxItems": 2
 									}
 								],
 								"type": "array"
@@ -448,8 +468,12 @@
 					"then": {
 						"properties": {
 							"quirks": {
+								"contains": {
+									"const": "third-party"
+								},
 								"items": {
 									"enum": [
+										"third-party",
 										"unprobed-sensors",
 										"unprobed-touchpad",
 										"forced-vibration",
@@ -1180,34 +1204,6 @@
 									]
 								}
 							}
-						}
-					}
-				}
-			}
-		},
-		{
-			"if": {
-				"properties": {
-					"vendorID": {
-						"const": 1356
-					},
-					"protocol": {
-						"properties": {
-							"family": {
-								"const": "sony.dualsense"
-							}
-						},
-						"required": ["family"],
-						"type": "object"
-					}
-				},
-				"required": ["vendorID", "protocol"]
-			},
-			"then": {
-				"properties": {
-					"protocol": {
-						"not": {
-							"required": ["quirks"]
 						}
 					}
 				}

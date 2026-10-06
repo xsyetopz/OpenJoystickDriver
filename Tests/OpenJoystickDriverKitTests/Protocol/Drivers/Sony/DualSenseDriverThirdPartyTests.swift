@@ -52,9 +52,17 @@ struct DualSenseDriverThirdPartyTests {
     #expect(!driver.sessionPlan.requiresInputConnectionBeforeOutput)
   }
 
+  /// The record's `third-party` quirk selects the mode; the vendor ID plays no part.
+  @Test
+  func modelQuirksWithoutTheThirdPartyQuirkRunInSonyMode() {
+    let driver = DualSenseDriver(quirks: [.unprobedTouchpad])
+    #expect(driver.thirdParty == nil)
+    #expect(DualSenseDriver(quirks: [.thirdParty]).thirdParty != nil)
+  }
+
   @Test
   func thirdPartyProbeSetsFeaturesAndOutput() throws {
-    let driver = DualSenseDriver(vendorID: 0x0F0D)
+    let driver = DualSenseDriver(quirks: [.thirdParty])
     #expect(driver.startupFeatureReads().map(\.reportID) == [0x03, 0x05])
     #expect(!driver.outputCapabilities.supportsRumble)
     #expect(throws: ControllerOutputError.self) { try driver.encode(.stopRumble) }
@@ -79,7 +87,7 @@ struct DualSenseDriverThirdPartyTests {
 
   @Test
   func probeReplyWithoutMarkerIsRejected() {
-    let driver = DualSenseDriver(vendorID: 0x0F0D)
+    let driver = DualSenseDriver(quirks: [.thirdParty])
     var reply = [UInt8](Self.capabilityReply(features: 0x4E))
     reply[2] = 0x27
     #expect(!driver.consumeFeatureReply(Data(reply), request: Self.probe))
@@ -89,14 +97,14 @@ struct DualSenseDriverThirdPartyTests {
 
   @Test
   func naconRevolution5ProHasVibrationItsProbeOmits() {
-    let driver = DualSenseDriver(vendorID: 0x3285, quirks: [.forcedVibration])
+    let driver = DualSenseDriver(quirks: [.thirdParty, .forcedVibration])
     #expect(driver.consumeFeatureReply(Self.capabilityReply(features: 0x42), request: Self.probe))
     #expect(driver.outputCapabilities.supportsRumble)
   }
 
   @Test
   func unprobedThirdPartyControllerReportsNoTouchOrMotion() throws {
-    let driver = DualSenseDriver(vendorID: 0x0F0D)
+    let driver = DualSenseDriver(quirks: [.thirdParty])
     var report = [UInt8](repeating: 0, count: 64)
     report[0] = 0x01
     report[8] = 0x08
@@ -108,10 +116,7 @@ struct DualSenseDriverThirdPartyTests {
 
   @Test
   func razerWolverineUsesAlternateLayoutWithoutAProbe() throws {
-    let driver = DualSenseDriver(
-      vendorID: 0x1532,
-      quirks: [.unprobedSensors, .unprobedTouchpad]
-    )
+    let driver = DualSenseDriver(quirks: [.thirdParty, .unprobedSensors, .unprobedTouchpad])
     let first = try #require(
       try driver.parse(
         report: Self.alternateReport(timestamp: 0xFFF0, touchCounter: 0x05),
@@ -133,7 +138,7 @@ struct DualSenseDriverThirdPartyTests {
 
   @Test
   func digitalTriggerWithIdleAnalogByteReadsFullyPulled() throws {
-    let driver = DualSenseDriver(vendorID: 0x1532, quirks: [.unprobedTouchpad])
+    let driver = DualSenseDriver(quirks: [.thirdParty, .unprobedTouchpad])
     let event = try #require(
       try driver.parse(
         report: Self.alternateReport(buttons1: 0x0C, triggers: (0, 64)),
@@ -146,7 +151,7 @@ struct DualSenseDriverThirdPartyTests {
 
   @Test
   func dongleConnectsOnNewSequencesAndDisconnectsWhenTheyStop() throws {
-    let driver = DualSenseDriver(vendorID: 0x1532, quirks: [.unprobedTouchpad, .receiver])
+    let driver = DualSenseDriver(quirks: [.thirdParty, .unprobedTouchpad, .receiver])
     #expect(driver.sessionPlan.requiresInputConnectionBeforeOutput)
     // The first report only anchors the sequence.
     #expect(
@@ -177,7 +182,7 @@ struct DualSenseDriverThirdPartyTests {
 
   @Test
   func wiredThirdPartyControllerNeedsNoConnection() throws {
-    let driver = DualSenseDriver(vendorID: 0x1532, quirks: [.unprobedTouchpad])
+    let driver = DualSenseDriver(quirks: [.thirdParty, .unprobedTouchpad])
     #expect(!driver.sessionPlan.requiresInputConnectionBeforeOutput)
     #expect(
       try driver.parse(report: Self.alternateReport(sequence: 1), receivedAt: Self.at(0)) != nil

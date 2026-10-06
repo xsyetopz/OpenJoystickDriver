@@ -61,6 +61,7 @@
 			"description": "A named token that lets a client use the endpoint without a signature check. The token itself is not stored.",
 			"type": "object",
 			"required": ["name", "tokenSHA256", "origins", "scopes", "grantedAt"],
+			"$ref": "#/$defs/controlIsMarked",
 			"additionalProperties": false,
 			"properties": {
 				"name": {
@@ -68,7 +69,7 @@
 					"pattern": "^[A-Za-z0-9._-]{1,64}$"
 				},
 				"controlGrantedAt": {
-					"description": "When 'control' was granted. The service drops a stored 'control' without it, which a build before the scope worked wrote.",
+					"description": "When 'control' was granted; required with that scope.",
 					"type": "string",
 					"format": "date-time"
 				},
@@ -135,7 +136,7 @@
 					"format": "date-time"
 				},
 				"controlGrantedAt": {
-					"description": "When 'control' was granted. The service drops a stored 'control' without it, which a build before the scope worked wrote.",
+					"description": "When 'control' was granted; required with that scope.",
 					"type": "string",
 					"format": "date-time"
 				},
@@ -144,15 +145,37 @@
 					"type": "string"
 				}
 			},
+			"allOf": [
+				{
+					"if": {
+						"properties": {
+							"kind": {
+								"const": "team"
+							}
+						}
+					},
+					"then": {
+						"required": ["teamIdentifier"]
+					}
+				},
+				{
+					"$ref": "#/$defs/controlIsMarked"
+				}
+			]
+		},
+		"controlIsMarked": {
 			"if": {
 				"properties": {
-					"kind": {
-						"const": "team"
+					"scopes": {
+						"items": {
+							"const": "read"
+						}
 					}
-				}
+				},
+				"required": ["scopes"]
 			},
-			"then": {
-				"required": ["teamIdentifier"]
+			"else": {
+				"required": ["controlGrantedAt"]
 			}
 		}
 	}

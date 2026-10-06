@@ -31,8 +31,8 @@ public struct AccessGrant: Codable, Equatable, Sendable {
   public let grantedAt: String
   /// Where the client was when it was granted; for display only.
   public let path: String
-  /// Set whenever the grant holds `control`, marking it as granted after the scope worked; the
-  /// service drops a stored `control` without it.
+  /// Set whenever the grant holds `control`, marking it as granted after the scope worked; a file
+  /// with a `control` scope but no mark is damaged.
   public let controlGrantedAt: String?
 
   public init(

@@ -46,7 +46,7 @@ SDL's `src/joystick/controller_list.h` is the second pinned upstream (currently 
 | `PS3Controller`, Sony vendor ID | `sony.sixaxis` |
 | `PS3Controller`, other vendor IDs | `vendor.ps3-third-party`, which probes for SDL's `PS3ThirdParty` report format |
 | `PS4Controller` | `sony.dualshock4` |
-| `PS5Controller` | `sony.dualsense`; the driver probes non-Sony controllers for their features as SDL does |
+| `PS5Controller` | `sony.dualsense`, with the `third-party` quirk for a non-Sony vendor ID; the driver probes such controllers for their features as SDL does |
 | `SwitchProController` | `nintendo.switch1` |
 | `SwitchJoyConLeft`, `SwitchJoyConRight` | `nintendo.switch1` with the `joy-con-left` or `joy-con-right` quirk |
 | `XBox360Controller` | `xbox.xusb:wired` |

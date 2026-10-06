@@ -208,7 +208,6 @@ public final class ProtocolDriverRegistry: Sendable {
           hasEdgeButtons: DualSenseDriver.edgeControls.isSubset(
             of: record.capabilityDelta.presentControls
           ),
-          vendorID: identifier.controllerIdentity.vendorID,
           quirks: record.quirks
         )
       )
