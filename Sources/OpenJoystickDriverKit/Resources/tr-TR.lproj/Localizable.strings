@@ -945,7 +945,7 @@
 "cli.error.env_color" = "OJD_COLOR auto, always veya never ister.";
 "cli.error.env_no_input" = "OJD_NO_INPUT 1, true, yes, 0, false veya no ister.";
 "cli.virtual.feed.error.plain" = "--plain, JSON satırları yazdıran “virtual feed” için geçerli değildir. --plain seçeneğini kullanmayın.";
-"cli.controller.watch.examples" = "Örnekler:\n  # Girdiyi 10 saniye boyunca yazdır\n  ojd controller watch 045E:028E --duration 10\n  # Basılan ilk kontrolü JSON olarak yazdır\n  ojd controller watch 045E:028E --first-press --json\n  # Tüm kontrolcüleri ve sanal oyun kumandalarının gönderdiğini izle\n  ojd controller watch --all --output";
+"cli.controller.watch.examples" = "Örnekler:\n  # Girdiyi 10 saniye boyunca yazdır\n  ojd controller watch 045E:028E --duration 10\n  # Basılan ilk kontrolü JSON olarak yazdır\n  ojd controller watch 045E:028E --first-press --json\n  # Tüm kontrolcüleri ve sanal oyun kontrolcülerinin gönderdiğini izle\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "Örnekler:\n  # Her iki ana motoru 0,45 saniye boyunca 180 değerinde çalıştır\n  ojd controller rumble 045E:028E\n  # Her iki ana motoru 2 saniye boyunca tam güçte çalıştır\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
 "cli.controller.light.examples" = "Örnekler:\n  # Işık çubuğunu turuncuya ayarla\n  ojd controller light 054C:09CC --color FF8000\n  # Rengi ve düşük bir parlaklığı ayarla\n  ojd controller light 054C:09CC --color 0000FF --brightness 40";
 "cli.profile.create.examples" = "Örnekler:\n  # Bir kontrolcü modeli için profil oluştur\n  ojd profile create Racing --controller 045E:028E\n  # Yalnızca Safari öndeyken uygula\n  ojd profile create Browsing --controller 045E:028E --app com.apple.Safari";

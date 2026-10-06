@@ -945,7 +945,7 @@
 "cli.error.env_color" = "OJD_COLOR 需要 auto、always 或 never。";
 "cli.error.env_no_input" = "OJD_NO_INPUT 需要 1、true、yes、0、false 或 no。";
 "cli.virtual.feed.error.plain" = "--plain 不適用於輸出 JSON 行的「virtual feed」。請移除 --plain。";
-"cli.controller.watch.examples" = "範例：\n  # 列印 10 秒的輸入\n  ojd controller watch 045E:028E --duration 10\n  # 以 JSON 列印最先按下的控制項\n  ojd controller watch 045E:028E --first-press --json\n  # 監看所有控制器及其虛擬遊戲手把傳送的內容\n  ojd controller watch --all --output";
+"cli.controller.watch.examples" = "範例：\n  # 列印 10 秒的輸入\n  ojd controller watch 045E:028E --duration 10\n  # 以 JSON 列印最先按下的控制項\n  ojd controller watch 045E:028E --first-press --json\n  # 監看所有控制器及其虛擬遊戲控制器傳送的內容\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "範例：\n  # 讓兩個主馬達以 180 的強度運轉 0.45 秒\n  ojd controller rumble 045E:028E\n  # 讓兩個主馬達以最大強度運轉 2 秒\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
 "cli.controller.light.examples" = "範例：\n  # 將燈條設為橘色\n  ojd controller light 054C:09CC --color FF8000\n  # 設定顏色和較低的亮度\n  ojd controller light 054C:09CC --color 0000FF --brightness 40";
 "cli.profile.create.examples" = "範例：\n  # 為某一控制器型號建立設定檔\n  ojd profile create Racing --controller 045E:028E\n  # 只在 Safari 位於最前面時套用\n  ojd profile create Browsing --controller 045E:028E --app com.apple.Safari";

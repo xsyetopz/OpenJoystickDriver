@@ -945,7 +945,7 @@
 "cli.error.env_color" = "يحتاج OJD_COLOR إلى auto أو always أو never.";
 "cli.error.env_no_input" = "يحتاج OJD_NO_INPUT إلى 1 أو true أو yes أو 0 أو false أو no.";
 "cli.virtual.feed.error.plain" = "لا ينطبق --plain على «virtual feed» الذي يطبع أسطر JSON. احذف --plain.";
-"cli.controller.watch.examples" = "أمثلة:\n  # طباعة المدخلات لمدة 10 ثوانٍ\n  ojd controller watch 045E:028E --duration 10\n  # طباعة أول عنصر تحكم يُضغط عليه بصيغة JSON\n  ojd controller watch 045E:028E --first-press --json\n  # مراقبة كل وحدات التحكم وما ترسله لوحة الألعاب الافتراضية الخاصة بها\n  ojd controller watch --all --output";
+"cli.controller.watch.examples" = "أمثلة:\n  # طباعة المدخلات لمدة 10 ثوانٍ\n  ojd controller watch 045E:028E --duration 10\n  # طباعة أول عنصر تحكم يُضغط عليه بصيغة JSON\n  ojd controller watch 045E:028E --first-press --json\n  # مراقبة كل وحدات التحكم وما ترسله وحدة التحكم الافتراضية الخاصة بها\n  ojd controller watch --all --output";
 "cli.controller.rumble.examples" = "أمثلة:\n  # تشغيل المحركين الرئيسيين بقوة 180 لمدة 0.45 ثانية\n  ojd controller rumble 045E:028E\n  # تشغيل المحركين الرئيسيين بكامل القوة لمدة ثانيتين\n  ojd controller rumble 045E:028E --left 255 --right 255 --duration 2";
 "cli.controller.light.examples" = "أمثلة:\n  # ضبط شريط الإضاءة على اللون البرتقالي\n  ojd controller light 054C:09CC --color FF8000\n  # ضبط اللون مع سطوع منخفض\n  ojd controller light 054C:09CC --color 0000FF --brightness 40";
 "cli.profile.create.examples" = "أمثلة:\n  # إنشاء ملف تعريف لطراز وحدة تحكم\n  ojd profile create Racing --controller 045E:028E\n  # تطبيقه فقط أثناء ظهور Safari في المقدمة\n  ojd profile create Browsing --controller 045E:028E --app com.apple.Safari";
